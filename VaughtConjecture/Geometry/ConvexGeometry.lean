@@ -16,8 +16,9 @@ A family `P : Finset (Finset α)` of *closed sets* on a finite ground set `A : F
 satisfies anti-exchange.  These are the standard closed-set axioms; singletons need not be closed in
 general.
 
-* `hull A P S` is the least closed superset of `S` (for `S ⊆ A`), computed as the points of `A`
-  lying in every closed superset of `S` (`hull_subset_iff`).
+* `hull A P S` is the set of points of `A` lying in every closed superset of `S`; in a convex
+  geometry and for `S ⊆ A` it is the least closed superset of `S` (`IsConvexGeometry.hull_mem`,
+  `hull_subset_iff`).
 * `extremes P B` is the set of points `x ∈ B` such that `B \ {x}` is closed.  For a closed `B`
   in a convex geometry this is the usual notion of extreme point: `x ∉ hull (B \ {x})`
   (`IsConvexGeometry.mem_extremes_iff`).  For a set that is not closed the two notions differ.
@@ -122,7 +123,7 @@ theorem extremes_hull_subset (hS : S ⊆ A) : extremes P (hull A P S) ⊆ S := b
   exact notMem_erase x _ (hull_subset hxP hsub hxH)
 
 /-- Restriction does not change the extremes of a subset of the face. -/
-theorem extremes_restrict (hCB : C ⊆ B) : extremes (restrict P B) C = extremes P C := by
+@[simp] theorem extremes_restrict (hCB : C ⊆ B) : extremes (restrict P B) C = extremes P C := by
   ext x
   simp only [mem_extremes, mem_restrict]
   exact ⟨fun h ↦ ⟨h.1, h.2.1⟩, fun h ↦ ⟨h.1, h.2, (erase_subset _ _).trans hCB⟩⟩
@@ -167,9 +168,9 @@ include hP
 /-- Every hull in a convex geometry is closed. -/
 theorem hull_mem : hull A P S ∈ P := Geometry.hull_mem hP.ground_mem hP.infClosed
 
-/-- A subset of the ground set is its own hull exactly when it is closed. -/
-theorem hull_eq_self_iff (hS : S ⊆ A) : hull A P S = S ↔ S ∈ P :=
-  ⟨fun h ↦ h ▸ hP.hull_mem, fun h ↦ hull_eq_self h hS⟩
+/-- A set is its own hull exactly when it is closed. -/
+theorem hull_eq_self_iff : hull A P S = S ↔ S ∈ P :=
+  ⟨fun h ↦ h ▸ hP.hull_mem, fun h ↦ hull_eq_self h (hP.subset_of_mem h)⟩
 
 /-- **Accessibility.**  A closed set strictly inside a closed set `C` can be enlarged by a
 single point of `C` to a closed set.  The proof takes a smallest closed set strictly between and
@@ -231,7 +232,7 @@ theorem exists_coatom (hB : B ∈ P) (hne : B ≠ A) : ∃ x ∈ extremes P A, B
 
 /-- **Krein–Milman for convex geometries.**  Every closed set is the hull of its extreme
 points. -/
-theorem hull_extremes (hB : B ∈ P) : hull A P (extremes P B) = B := by
+@[simp] theorem hull_extremes (hB : B ∈ P) : hull A P (extremes P B) = B := by
   have hBA := hP.subset_of_mem hB
   have hHB : hull A P (extremes P B) ⊆ B := hull_subset hB extremes_subset
   by_contra hne

@@ -37,7 +37,7 @@ theorem mem_intervalPlan :
   rw [intervalPlan, mem_filter, mem_powerset]
 
 /-- The ground set is order-convex in itself. -/
-theorem self_mem_intervalPlan : A ∈ intervalPlan A :=
+@[simp high] theorem self_mem_intervalPlan : A ∈ intervalPlan A :=
   mem_intervalPlan.mpr ⟨Subset.rfl, fun _ _ _ _ _ hz _ _ ↦ hz⟩
 
 /-- Order-convex subsets are closed under intersection. -/
@@ -114,9 +114,8 @@ theorem isPlan_intervalPlan (A : Finset α) : IsPlan A (intervalPlan A) := by
         · exact (mem_intervalPlan_iff_of_mem haP (mem_intervalPlan.mp hB).1).mp hB
         · exact (mem_intervalPlan_iff_of_mem hbP (mem_intervalPlan.mp hB).1).mp hB
     -- Glue the interval plans on `A \ {a}` and `A \ {b}` along the common face `A \ {a, b}`.
-    have hface : (A.erase a).erase b ∈ intervalPlan A := by
-      rw [erase_erase_eq_inter]
-      exact infClosed_intervalPlan haP hbP
+    have hface : (A.erase a).erase b ∈ intervalPlan A :=
+      (by grind : A.erase a ∩ A.erase b = (A.erase a).erase b) ▸ infClosed_intervalPlan haP hbP
     have hsa : (A.erase a).erase b ⊆ A.erase a := erase_subset _ _
     have hsb : (A.erase a).erase b ⊆ A.erase b := erase_subset_erase b (erase_subset a A)
     rw [he]

@@ -39,6 +39,7 @@ theorem image_setClosure [DecidableEq N] (h : ClosureOperator (Finset M))
     (hf : ∀ F : Finset M, (↑F : Set M) ⊆ A → (h F).image f = k (F.image f)) :
     f '' setClosure h A = setClosure k (f '' A) := by
   ext y
+  simp only [Set.mem_image, mem_setClosure_iff]
   constructor
   · rintro ⟨x, ⟨F, hFA, hx⟩, rfl⟩
     refine ⟨F.image f, ?_, ?_⟩

@@ -9,9 +9,10 @@ import VaughtConjecture.Geometry.IntervalPlan
 /-!
 # What two generators do not give
 
-Every closed set of a plan is the hull of its two extreme points
-(`IsPlan.exists_subset_card_le_two_hull_eq`).  `roadmap/SEMANTIC_CONTRACT.md`, item 2, warns
-against reading more into this.  This file records concrete witnesses.
+Every closed set of a plan is the hull of its at most two extreme points
+(`IsConvexGeometry.hull_extremes`, `IsPlan.card_extremes_le_two`).
+`roadmap/SEMANTIC_CONTRACT.md`, item 2, warns against reading more into this.  This file records
+concrete witnesses.
 
 * **Not every convex geometry is a plan.**  All subsets of `Fin 3` form a convex geometry
   (`isConvexGeometry_powerset_univ_fin_three`) that is not a plan
@@ -25,9 +26,10 @@ against reading more into this.  This file records concrete witnesses.
   has `n + 1` points (`exists_isPlan_card_hull_pair`), so no bound on the size of the hull of a
   pair of points of the ground set holds for all plans (`not_exists_bound_card_hull_pair`).
 * **No linear interval representation.**  In the star plan the point `1` lies in the three closed
-  pairs `{0, 1}`, `{1, 2}`, `{1, 3}`, which is impossible in the interval plan of a linear order;
-  so the star plan is not an interval plan under any injective relabelling into a linear order
-  (`starPlan_ne_intervalPlan`).
+  pairs `{0, 1}`, `{1, 2}`, `{1, 3}`, which is impossible for order-convex sets of a linear order;
+  so under no injective relabelling into a linear order are the closed sets of the star plan even
+  among the order-convex sets (`starPlan_image_not_subset_intervalPlan`).  In particular the star
+  plan is not an interval plan.
 
 All finite facts are checked by `decide`.
 -/
@@ -62,10 +64,10 @@ theorem hull_starPlan : hull univ starPlan {0, 3} = univ := by decide
 /-- The generating pair `{0, 3}` of the ground set of the star plan is not closed. -/
 theorem pair_notMem_starPlan : ({0, 3} : Finset (Fin 4)) ∉ starPlan := by decide
 
-/-- The star plan is not the interval plan of a linear order: under no injective relabelling
-into a linear order does it become the family of order-convex subsets. -/
-theorem starPlan_ne_intervalPlan {β : Type*} [LinearOrder β] (f : Fin 4 → β)
-    (hf : Function.Injective f) : starPlan.image (image f) ≠ intervalPlan (univ.image f) := by
+/-- The star plan does not embed in an interval plan: under no injective relabelling into a
+linear order are all its closed sets order-convex.  In particular it is not an interval plan. -/
+theorem starPlan_image_not_subset_intervalPlan {β : Type*} [LinearOrder β] (f : Fin 4 → β)
+    (hf : Function.Injective f) : ¬ starPlan.image (image f) ⊆ intervalPlan (univ.image f) := by
   intro h
   -- For `j ∈ {0, 2, 3}` the pair `{1, j}` is closed, so no other `f k` lies between `f 1`
   -- and `f j`.
@@ -74,9 +76,8 @@ theorem starPlan_ne_intervalPlan {β : Type*} [LinearOrder β] (f : Fin 4 → β
     have hpair : ({1, j} : Finset (Fin 4)) ∈ starPlan := by
       simp only [mem_insert, mem_singleton] at hj
       rcases hj with rfl | rfl | rfl <;> decide
-    have hmem : ({f 1, f j} : Finset β) ∈ intervalPlan (univ.image f) := by
-      rw [← h]
-      exact mem_image.mpr ⟨{1, j}, hpair, by simp⟩
+    have hmem : ({f 1, f j} : Finset β) ∈ intervalPlan (univ.image f) :=
+      h (mem_image.mpr ⟨{1, j}, hpair, by simp⟩)
     have hconv := (mem_intervalPlan.mp hmem).2
     have hfk : f k ∉ ({f 1, f j} : Finset β) := by
       simp [hf.ne hk1, hf.ne hkj]

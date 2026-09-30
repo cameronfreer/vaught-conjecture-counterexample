@@ -23,8 +23,9 @@ three-point set form a convex geometry whose ground set has three extreme points
 (`not_isPlan_powerset_univ_fin_three` in `VaughtConjecture.Geometry.Examples`).  Consequences
 developed here:
 
-* closed sets are closed under intersection (`IsPlan.infClosed`), contain all singletons
-  (`IsPlan.singleton_mem`), and restrict to plans on closed faces (`IsPlan.restrict`);
+* closed sets are closed under intersection (`IsPlan.infClosed`), every singleton of the ground
+  set is closed (`IsPlan.singleton_mem`), and plans restrict to plans on closed faces
+  (`IsPlan.restrict`);
 * the **two-generator property**: every closed set is the hull of its at most two extreme points
   (`IsConvexGeometry.hull_extremes`, `IsPlan.card_extremes_le_two`), so every hull is generated
   by at most two of its generators (`IsPlan.exists_subset_card_le_two_hull_eq`), and the
@@ -35,6 +36,13 @@ see `VaughtConjecture.Geometry.Examples`.
 
 See `roadmap/README.md`, Layer 1, `roadmap/EXPOSITIONS.md` §1, and
 `roadmap/SEMANTIC_CONTRACT.md`, item 2.
+
+## References
+
+The recursive plan is Definition 2.1.1 ("amalgamation plan"), and restriction to a visible face
+is Definition 2.1.5, of R. W. Knight, *A counterexample to Vaught's Conjecture using generalised
+Stone spaces* (draft, 20 February 2026) [Kni26].  The reading of plans as convex geometries is
+the formalization's own.
 -/
 
 namespace VaughtConjecture.Geometry
@@ -43,16 +51,11 @@ open Finset
 
 variable {α : Type*} [DecidableEq α] {A B C S : Finset α} {P Q R : Finset (Finset α)} {x : α}
 
-/-- Deleting two points one after the other is intersecting the two one-point deletions. -/
-theorem erase_erase_eq_inter (A : Finset α) (a b : α) :
-    (A.erase a).erase b = A.erase a ∩ A.erase b := by
-  rw [erase_inter, inter_eq_right.mpr (erase_subset _ _), erase_right_comm]
-
 /-- `IsPlan A P`: the family `P` is a recursive visible-face plan on the finite set `A`.  The
 base plans are `{∅}` on `∅` and `{∅, {a}}` on `{a}`.  A plan on `A` glues plans `Q` on
 `A \ {a}` and `R` on `A \ {b}` for distinct `a, b ∈ A`, provided the common face `A \ {a, b}` is
 visible in `Q` and `Q`, `R` have the same members below it; the result is `Q ∪ R` together with
-`A` itself. -/
+`A` itself (the amalgamation plan of [Kni26, Definition 2.1.1]). -/
 inductive IsPlan : Finset α → Finset (Finset α) → Prop
   /-- The plan on the empty set. -/
   | empty : IsPlan ∅ {∅}
@@ -283,9 +286,8 @@ theorem IsConvexGeometry.isPlan (hP : IsConvexGeometry A P)
         · exact h.1
         · exact h.1
     -- Glue the two restrictions along the common face `A \ {a, b}`, which is closed.
-    have hface : (A.erase a).erase b ∈ P := by
-      rw [erase_erase_eq_inter]
-      exact hP.infClosed haP hbP
+    have hface : (A.erase a).erase b ∈ P :=
+      (by grind : A.erase a ∩ A.erase b = (A.erase a).erase b) ▸ hP.infClosed haP hbP
     rw [he]
     refine IsPlan.step haA hbA hab (sub haP (card_erase_lt_of_mem haA))
       (sub hbP (card_erase_lt_of_mem hbA)) (mem_restrict.mpr ⟨hface, erase_subset _ _⟩)
@@ -345,7 +347,7 @@ theorem exists_subset_card_le_two_hull_eq (hP : IsPlan A P) (hS : S ⊆ A) :
 
 /-- A set of at most two points of the ground set is recovered from its hull as the extreme points
 of the hull.  In particular distinct such sets have distinct hulls. -/
-theorem extremes_hull (hP : IsPlan A P) (hS : S ⊆ A) (h2 : #S ≤ 2) :
+@[simp] theorem extremes_hull (hP : IsPlan A P) (hS : S ⊆ A) (h2 : #S ≤ 2) :
     extremes P (hull A P S) = S := by
   rcases Nat.lt_or_ge 1 #S with h | h
   · refine eq_of_subset_of_card_le (extremes_hull_subset hS) ?_
