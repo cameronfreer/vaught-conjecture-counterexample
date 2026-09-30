@@ -71,17 +71,28 @@ noncomputable def amalgam : Scheme.{u} (m + 2) where
   rows := (amalgamRows h).comap
     (CellScheme.IsLowerEmbedding.reindex (amalgamCellScheme h) (amalgamEnum h).toEquiv)
 
+/-- The amalgamated scheme has `amalgamCard Sa Sb` cells. -/
 @[simp] theorem amalgam_card : (amalgam h).card = amalgamCard Sa Sb := rfl
 
+/-- The ground set of the amalgamated scheme is all of `Fin (m + 2)`. -/
 @[simp] theorem amalgam_ground : (amalgam h).toCellScheme.ground = univ := rfl
 
+/-- The faces of the amalgamated scheme are those of the amalgamated cell scheme. -/
 @[simp] theorem amalgam_faces : (amalgam h).toCellScheme.faces = amalgamFaces Sa Sb := rfl
 
+/-- The scope of a cell of the amalgamated scheme is the scope of the enumerated cell. -/
 @[simp] theorem amalgam_scope (d : Fin (amalgam h).card) :
     (amalgam h).toCellScheme.scope d = (amalgamCellScheme h).scope (amalgamEnum h d) := rfl
 
+/-- The grade of a cell of the amalgamated scheme is the grade of the enumerated cell. -/
 @[simp] theorem amalgam_grade (d : Fin (amalgam h).card) :
     (amalgam h).toCellScheme.grade d = (amalgamCellScheme h).grade (amalgamEnum h d) := rfl
+
+/-- A row of the amalgamated scheme is the row of the enumerated cell in the amalgam. -/
+theorem amalgam_row (s : Fin (amalgam h).card)
+    (t : (amalgam h).toCellScheme.below ((amalgam h).toCellScheme.gradedIndex s)) :
+    (amalgam h).rows.row s t = (amalgamRows h).row (amalgamEnum h s) ⟨amalgamEnum h t.1, t.2⟩ :=
+  rfl
 
 /-- The amalgamated scheme is well formed. -/
 theorem isWellFormed_amalgam (hSa : Sa.IsWellFormed) (hSb : Sb.IsWellFormed)
@@ -107,19 +118,18 @@ theorem isBountiful_amalgam (hSa : Sa.IsWellFormed) (hSb : Sb.IsWellFormed)
 /-- No cell of the amalgamated scheme has the full scope. -/
 theorem amalgam_scope_ne_univ (d : Fin (amalgam h).card) :
     (amalgam h).toCellScheme.scope d ≠ univ :=
-  amalgamScope_ne_univ h _
+  amalgamCellScheme_scope_ne_univ h _
 
 /-- Every graded face of the amalgamated scheme other than those of full scope is the graded index
 of a cell, when the given schemes are complete. -/
-theorem exists_gradedIndex_eq_amalgam' (hSaC : Sa.toCellScheme.IsComplete)
+theorem exists_gradedIndex_eq_amalgam (hSaC : Sa.toCellScheme.IsComplete)
     (hSbC : Sb.toCellScheme.IsComplete) {X : Finset (Fin (m + 2)) × ℕ}
     (hX : X ∈ (amalgam h).toCellScheme.gradedFaces) (hne : X.1 ≠ univ) :
     ∃ d, (amalgam h).toCellScheme.gradedIndex d = X := by
-  obtain ⟨x, hx⟩ := exists_gradedIndex_eq_amalgam h hSaC hSbC hX hne
-  refine ⟨(amalgamEnum h).symm x, ?_⟩
-  change (amalgamCellScheme h).gradedIndex (amalgamEnum h ((amalgamEnum h).symm x)) = X
-  rw [OrderIso.apply_symm_apply]
-  exact hx
+  obtain ⟨x, hx⟩ := exists_gradedIndex_eq_amalgamCellScheme h hSaC hSbC hX hne
+  -- The graded index of a cell of `amalgam h` is that of its enumerated cell, by definition.
+  exact ⟨(amalgamEnum h).symm x,
+    (congrArg (amalgamCellScheme h).gradedIndex ((amalgamEnum h).apply_symm_apply x)).trans hx⟩
 
 /-! ### The literal faces -/
 
@@ -131,16 +141,20 @@ noncomputable def posLeft (i : Fin Sa.card) : Fin (amalgam h).card :=
 noncomputable def posRight (j : Fin Sb.card) : Fin (amalgam h).card :=
   (amalgamEnum h).symm (Merge.rightFun _ _ j)
 
+/-- The positions of the cells of `Sa` in the amalgam increase with the cells. -/
 theorem strictMono_posLeft : StrictMono (posLeft h) :=
   (amalgamEnum h).symm.strictMono.comp (Merge.left _ (overlap h)).strictMono
 
+/-- The positions of the cells of `Sb` in the amalgam increase with the cells. -/
 theorem strictMono_posRight : StrictMono (posRight h) :=
   (amalgamEnum h).symm.strictMono.comp (Merge.right _ (overlap h)).strictMono
 
+/-- The cell of the amalgam at the position of a cell of `Sa` is that cell. -/
 @[simp] theorem amalgamEnum_posLeft (i : Fin Sa.card) :
     amalgamEnum h (posLeft h i) = .inl i :=
   (amalgamEnum h).apply_symm_apply _
 
+/-- The cell of the amalgam at the position of a cell of `Sb` is the image of that cell. -/
 @[simp] theorem amalgamEnum_posRight (j : Fin Sb.card) :
     amalgamEnum h (posRight h j) = Merge.rightFun _ _ j :=
   (amalgamEnum h).apply_symm_apply _
@@ -201,8 +215,7 @@ theorem comap_left_amalgam (hSa : Sa.IsWellFormed) (hSb : Sb.IsWellFormed) :
       amalgamScope_inl, preimage_map]
   · rw [Scheme.comap_grade, cellMap_left_eq h hki.symm, amalgam_grade, amalgamEnum_posLeft]
     rfl
-  · rw [Scheme.comap_row]
-    change (amalgamRows h).row (amalgamEnum h _) ⟨amalgamEnum h _, _⟩ = _
+  · rw [Scheme.comap_row, amalgam_row]
     have hs' : amalgamEnum h ((amalgam h).cellMap (left m) s) = .inl s' := by
       rw [cellMap_left_eq h hs.symm, amalgamEnum_posLeft]
     have ht' : amalgamEnum h ((amalgam h).cellMap (left m) t.1) = .inl t'.1 := by
@@ -225,8 +238,7 @@ theorem comap_right_amalgam (hSa : Sa.IsWellFormed) (hSb : Sb.IsWellFormed) :
       amalgamScope_right, preimage_map]
   · rw [Scheme.comap_grade, cellMap_right_eq h hkj.symm, amalgam_grade, amalgamEnum_posRight,
       amalgamGrade_right]
-  · rw [Scheme.comap_row]
-    change (amalgamRows h).row (amalgamEnum h _) ⟨amalgamEnum h _, _⟩ = _
+  · rw [Scheme.comap_row, amalgam_row]
     have hs' : amalgamEnum h ((amalgam h).cellMap (right m) s) = Merge.rightFun _ _ s' := by
       rw [cellMap_right_eq h hs.symm, amalgamEnum_posRight]
     have ht' : amalgamEnum h ((amalgam h).cellMap (right m) t.1) = Merge.rightFun _ _ t'.1 := by
@@ -361,6 +373,8 @@ theorem restrictFace_left_amalgamType :
   refine congrArg some (StageType.ext (comap_left_amalgam _ ta.isWellFormed tb.isWellFormed)
     fun k i hki ↦ ?_)
   rw [StageType.comap_label]
+  -- The label of `amalgamType` is `amalgamLabel` of the enumerated cell, and its cells are those
+  -- of its scheme `amalgam`: both by definition.
   change amalgamLabel hta htb (amalgamEnum _ ((amalgam _).cellMap (left m) k)) = _
   rw [cellMap_left_eq _ hki.symm, amalgamEnum_posLeft]
   rfl
@@ -373,6 +387,7 @@ theorem restrictFace_right_amalgamType :
   refine congrArg some (StageType.ext (comap_right_amalgam _ ta.isWellFormed tb.isWellFormed)
     fun k j hkj ↦ ?_)
   rw [StageType.comap_label]
+  -- As for the first coatom: unfold the label and the cells of `amalgamType`.
   change amalgamLabel hta htb (amalgamEnum _ ((amalgam _).cellMap (right m) k)) = _
   rw [cellMap_right_eq _ hkj.symm, amalgamEnum_posRight]
   exact amalgamLabel_rightFun hta htb j
@@ -393,11 +408,11 @@ the graded index of a cell. -/
 theorem exists_gradedIndex_eq_amalgamType (hla : ta.IsLegal) (hlb : tb.IsLegal)
     {X : Finset (Fin (m + 2)) × ℕ} (hX : X ∈ (amalgamType hta htb).toCellScheme.gradedFaces)
     (hne : X.1 ≠ univ) : ∃ d, (amalgamType hta htb).toCellScheme.gradedIndex d = X :=
-  exists_gradedIndex_eq_amalgam' _ hla.isComplete hlb.isComplete hX hne
+  exists_gradedIndex_eq_amalgam _ hla.isComplete hlb.isComplete hX hne
 
 /-- No cell of the amalgam has the full scope; in particular the amalgam is not complete, and
 hence not legal. -/
-theorem scope_ne_univ_amalgamType (d : Fin (amalgamType hta htb).card) :
+theorem amalgamType_scope_ne_univ (d : Fin (amalgamType hta htb).card) :
     (amalgamType hta htb).toCellScheme.scope d ≠ univ :=
   amalgam_scope_ne_univ _ d
 
@@ -406,7 +421,7 @@ theorem not_isComplete_amalgamType :
     ¬ (amalgamType hta htb).toCellScheme.IsComplete := fun hc ↦ by
   obtain ⟨d, hd⟩ := hc ((univ : Finset (Fin (m + 2))), 1)
     ⟨(amalgamType hta htb).univ_mem_faces, Nat.one_pos, by simp⟩
-  exact scope_ne_univ_amalgamType hta htb d (congrArg Prod.fst hd)
+  exact amalgamType_scope_ne_univ hta htb d (congrArg Prod.fst hd)
 
 /-- The amalgam is not legal: it is not complete. -/
 theorem not_isLegal_amalgamType : ¬ (amalgamType hta htb).IsLegal := fun hl ↦

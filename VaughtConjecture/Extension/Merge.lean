@@ -67,6 +67,7 @@ def equivSum : Merge ea eb ≃ Fin ca ⊕ {j : Fin cb // j ∉ Set.range eb} whe
   left_inv x := by cases x <;> rfl
   right_inv x := by rcases x with i | ⟨j, hj⟩ <;> rfl
 
+/-- The merge is finite: it is a sum of two finite types. -/
 noncomputable instance : Fintype (Merge ea eb) := by
   classical
   exact Fintype.ofEquiv _ (equivSum ea eb).symm
@@ -83,6 +84,7 @@ def key : Merge ea eb → ℕ ×ₗ ℕ ×ₗ ℕ
   | inl i => toLex (countLeft ea i, toLex (0, (i : ℕ)))
   | inr j _ => toLex (countRight eb j, toLex (1, (j : ℕ)))
 
+/-- Distinct points of the merge have distinct keys. -/
 theorem key_injective : Function.Injective (key ea eb) := by
   rintro (i | ⟨j, hj⟩) (i' | ⟨j', hj'⟩) h
   · exact congrArg inl (Fin.ext (congrArg (fun x ↦ (ofLex (ofLex x).2).2) h))
@@ -91,10 +93,12 @@ theorem key_injective : Function.Injective (key ea eb) := by
   · obtain rfl : j = j' := Fin.ext (congrArg (fun x ↦ (ofLex (ofLex x).2).2) h)
     rfl
 
+/-- The merge is ordered by the key. -/
 instance : LinearOrder (Merge ea eb) := LinearOrder.lift' (key ea eb) (key_injective ea eb)
 
 variable {ea eb}
 
+/-- The order of the merge is the order of the keys. -/
 theorem lt_iff_key {x y : Merge ea eb} : x < y ↔ key ea eb x < key ea eb y := Iff.rfl
 
 /-- Comparison of keys. -/
@@ -119,9 +123,11 @@ theorem countRight_eb (t : Fin r) : countRight eb (eb t) = t := by
     simp
   rw [countRight, this, Fin.card_Iio]
 
+/-- The number of common points up to a point of the first chain increases with the point. -/
 theorem countLeft_mono : Monotone (countLeft ea) := fun _ _ h ↦
   card_le_card (monotone_filter_right _ fun _ _ h' ↦ h'.trans h)
 
+/-- The number of common points below a point of the second chain increases with the point. -/
 theorem countRight_mono : Monotone (countRight eb) := fun _ _ h ↦
   card_le_card (monotone_filter_right _ fun _ _ h' ↦ h'.trans_le h)
 
@@ -133,6 +139,7 @@ def left : Fin ca ↪o Merge ea eb :=
     · exact Or.inl hc
     · exact Or.inr ⟨hc, Or.inr ⟨rfl, h⟩⟩
 
+/-- The first chain sends a point `i` to `inl i`. -/
 @[simp] theorem left_apply (i : Fin ca) : left ea eb i = inl i := rfl
 
 open Classical in
@@ -141,13 +148,17 @@ point of the first chain. -/
 noncomputable def rightFun (j : Fin cb) : Merge ea eb :=
   if h : j ∈ Set.range eb then inl (ea (Classical.choose (Set.mem_range.mp h))) else inr j h
 
+/-- A point of the common subchain of the second chain is sent to the corresponding point of
+the first chain. -/
 theorem rightFun_eb (t : Fin r) : rightFun ea eb (eb t) = inl (ea t) := by
   have h : eb t ∈ Set.range eb := ⟨t, rfl⟩
   rw [rightFun, dite_eq_left h, eb.injective (Classical.choose_spec (Set.mem_range.mp h))]
 
+/-- A point of the second chain outside its common subchain is sent to `inr`. -/
 theorem rightFun_of_notMem {j : Fin cb} (h : j ∉ Set.range eb) : rightFun ea eb j = inr j h := by
   rw [rightFun, dite_eq_right h]
 
+/-- The second chain is sent into the merge in increasing order. -/
 theorem strictMono_rightFun : StrictMono (rightFun ea eb) := by
   intro j j' hjj'
   by_cases hj : j ∈ Set.range eb <;> by_cases hj' : j' ∈ Set.range eb
@@ -183,9 +194,12 @@ theorem strictMono_rightFun : StrictMono (rightFun ea eb) := by
 noncomputable def right : Fin cb ↪o Merge ea eb :=
   OrderEmbedding.ofStrictMono (rightFun ea eb) (strictMono_rightFun ea eb)
 
+/-- `Merge.right` sends a point of the common subchain of the second chain to the
+corresponding point of the first chain. -/
 theorem right_apply_eb (t : Fin r) : right ea eb (eb t) = inl (ea t) :=
   rightFun_eb ea eb t
 
+/-- `Merge.right` sends a point of the second chain outside its common subchain to `inr`. -/
 theorem right_apply_of_notMem {j : Fin cb} (h : j ∉ Set.range eb) : right ea eb j = inr j h :=
   rightFun_of_notMem ea eb h
 

@@ -202,8 +202,7 @@ theorem exists_pinned_extension_of_surjective {P : StageType.{u} α n} {f : Fin 
       Function.Embedding.ext fun i ↦ by
         simp only [Function.Embedding.trans_apply, Equiv.coe_toEmbedding, Fin.coe_castSuccEmb]
         rw [Equiv.symm_apply_eq]
-        change (i : Fin n).castSucc = extendByLast f (F.symm i).castSucc
-        rw [extendByLast_castSucc]
+        simp only [E, Equiv.ofBijective_apply, extendByLast_castSucc]
         exact congrArg Fin.castSucc (F.apply_symm_apply i).symm
     have hP : p.reindex F.symm = P := by
       have h := map_reindex_restrictFace P f F.symm

@@ -45,7 +45,7 @@ it is not complete; this file proves its other laws:
 * its rows are coded, and consistent, when those of `Sa` and `Sb` are (`isCoded_amalgamRows`,
   `isConsistent_amalgamRows`);
 * every graded face other than those of full scope is the graded index of a cell, when `Sa` and
-  `Sb` are complete (`exists_gradedIndex_eq_amalgam`);
+  `Sb` are complete (`exists_gradedIndex_eq_amalgamCellScheme`);
 * its rows are **bountiful** when those of `Sa` and `Sb` are (`isBountiful_amalgamRows`): this is
   [Kni26, Lemma 4.3.2], by the boundary lift of `VaughtConjecture.Extension.Gluing`.
 
@@ -292,6 +292,7 @@ variable {Sa Sb : Scheme.{u} (m + 1)} (h : Sa.comap (face m) = Sb.comap (face m)
 noncomputable def overlap : Fin (Sa.comap (face m)).card ↪o Fin Sb.card :=
   (Fin.castOrderIso (congrArg Scheme.card h)).toOrderEmbedding.trans (Sb.cellMap (face m))
 
+/-- A cell of the common face in `Sb` is the enumerated cell of the common face of `Sb`. -/
 theorem overlap_apply (t : Fin (Sa.comap (face m)).card) :
     overlap h t = Sb.cellMap (face m) (Fin.cast (congrArg Scheme.card h) t) := rfl
 
@@ -383,20 +384,26 @@ def amalgamCellScheme : CellScheme (AmalgamCell h) (Fin (m + 2)) where
   scope := amalgamScope h
   grade := amalgamGrade h
 
+/-- The faces of the amalgam: the ground set, and the faces of `Sa` and of `Sb`, moved. -/
 theorem mem_amalgamFaces {C : Finset (Fin (m + 2))} :
     C ∈ amalgamFaces Sa Sb ↔ C = univ ∨ (∃ C' ∈ Sa.toCellScheme.faces, C'.map (left m) = C) ∨
       ∃ C' ∈ Sb.toCellScheme.faces, C'.map (right m) = C := by
   simp [amalgamFaces]
 
+/-- The scope of a cell of `Sa` in the amalgam is its scope, moved to the first coatom. -/
 @[simp] theorem amalgamScope_inl (i : Fin Sa.card) :
     (amalgamCellScheme h).scope (.inl i) = (Sa.toCellScheme.scope i).map (left m) := rfl
 
+/-- The scope of a cell of `Sb` outside the common face is its scope, moved to the second
+coatom. -/
 @[simp] theorem amalgamScope_inr (j : Fin Sb.card) (hj : j ∉ Set.range (overlap h)) :
     (amalgamCellScheme h).scope (.inr j hj) = (Sb.toCellScheme.scope j).map (right m) := rfl
 
+/-- The grade of a cell of `Sa` in the amalgam is its grade. -/
 @[simp] theorem amalgamGrade_inl (i : Fin Sa.card) :
     (amalgamCellScheme h).grade (.inl i) = Sa.toCellScheme.grade i := rfl
 
+/-- The grade of a cell of `Sb` outside the common face is its grade. -/
 @[simp] theorem amalgamGrade_inr (j : Fin Sb.card) (hj : j ∉ Set.range (overlap h)) :
     (amalgamCellScheme h).grade (.inr j hj) = Sb.toCellScheme.grade j := rfl
 
@@ -491,23 +498,15 @@ theorem image_right_below (X : Finset (Fin (m + 1)) × ℕ) :
   ext d
   constructor
   · rintro ⟨j, hj, rfl⟩
-    refine ⟨?_, ?_⟩
-    · change (amalgamCellScheme h).scope _ ⊆ _
-      rw [amalgamScope_right]
-      exact map_subset_map.mpr hj.1
-    · change (amalgamCellScheme h).grade _ ≤ _
-      rw [amalgamGrade_right]
-      exact hj.2
+    rw [CellScheme.mem_below, CellScheme.gradedIndex_le_iff, amalgamScope_right,
+      amalgamGrade_right]
+    exact ⟨map_subset_map.mpr hj.1, hj.2⟩
   · intro hd
     obtain ⟨j, rfl⟩ := mem_range_right_of_scope_subset h
       (hd.1.trans (map_subset_map.mpr (subset_univ _)))
-    have hs := hd.1
-    have hg := hd.2
-    change (amalgamCellScheme h).scope _ ⊆ _ at hs
-    change (amalgamCellScheme h).grade _ ≤ _ at hg
-    rw [amalgamScope_right] at hs
-    rw [amalgamGrade_right] at hg
-    exact ⟨j, ⟨map_subset_map.mp hs, hg⟩, rfl⟩
+    rw [CellScheme.mem_below, CellScheme.gradedIndex_le_iff, amalgamScope_right,
+      amalgamGrade_right] at hd
+    exact ⟨j, ⟨map_subset_map.mp hd.1, hd.2⟩, rfl⟩
 
 /-- The cells below a cell of `Sb` outside the common face. -/
 theorem image_right_below_inr (j : Fin Sb.card) (hj : j ∉ Set.range (overlap h)) :
@@ -523,13 +522,27 @@ noncomputable def amalgamRows : (amalgamCellScheme h).Rows.{u} where
     | .inr j hj => Sb.rows.row j ∘ ((isLowerEmbedding_right h).belowEquiv
         (image_right_below_inr h j hj)).symm
 
+/-- The row of a cell of `Sa` in the amalgam is its row in `Sa`, read through the cells of `Sa`
+below it. -/
+theorem amalgamRows_row_inl (i : Fin Sa.card) :
+    (amalgamRows h).row (.inl i) = Sa.rows.row i ∘ ((isLowerEmbedding_left h).belowEquiv
+      ((isLowerEmbedding_left h).image_below_gradedIndex i)).symm :=
+  rfl
+
+/-- The row of a cell of `Sb` outside the common face in the amalgam is its row in `Sb`, read
+through the cells of `Sb` below it. -/
+theorem amalgamRows_row_inr (j : Fin Sb.card) (hj : j ∉ Set.range (overlap h)) :
+    (amalgamRows h).row (.inr j hj) = Sb.rows.row j ∘ ((isLowerEmbedding_right h).belowEquiv
+      (image_right_below_inr h j hj)).symm :=
+  rfl
+
 /-- The row of a cell of `Sa` at a cell of `Sa` is its row in `Sa`. -/
 theorem amalgamRows_inl_inl (i i' : Fin Sa.card)
     (q : (Merge.inl i' : AmalgamCell h) ∈
       (amalgamCellScheme h).below ((amalgamCellScheme h).gradedIndex (.inl i))) :
     (amalgamRows h).row (.inl i) ⟨.inl i', q⟩ =
       Sa.rows.row i ⟨i', ((isLowerEmbedding_left h).le_iff i' i).mp q⟩ := by
-  change Sa.rows.row i (((isLowerEmbedding_left h).belowEquiv _).symm _) = _
+  rw [amalgamRows_row_inl, Function.comp_apply]
   congr 1
   rw [Equiv.symm_apply_eq]
   exact Subtype.ext rfl
@@ -540,7 +553,7 @@ theorem amalgamRows_inr_right (j : Fin Sb.card) (hj : j ∉ Set.range (overlap h
     (q : Merge.rightFun _ (overlap h) t.1 ∈
       (amalgamCellScheme h).below ((amalgamCellScheme h).gradedIndex (.inr j hj))) :
     (amalgamRows h).row (.inr j hj) ⟨Merge.rightFun _ (overlap h) t.1, q⟩ = Sb.rows.row j t := by
-  change Sb.rows.row j (((isLowerEmbedding_right h).belowEquiv _).symm _) = _
+  rw [amalgamRows_row_inr, Function.comp_apply]
   congr 1
   rw [Equiv.symm_apply_eq]
   exact Subtype.ext rfl
@@ -619,7 +632,8 @@ theorem subset_or_subset_of_mem_amalgamFaces {C : Finset (Fin (m + 2))}
   · exact Or.inr (map_subset_map.mpr (subset_univ _))
 
 /-- No cell of the amalgam has the full scope. -/
-theorem amalgamScope_ne_univ (x : AmalgamCell h) : (amalgamCellScheme h).scope x ≠ univ := by
+theorem amalgamCellScheme_scope_ne_univ (x : AmalgamCell h) :
+    (amalgamCellScheme h).scope x ≠ univ := by
   rcases x with i | ⟨j, hj⟩
   · intro he
     have := mem_univ (Fin.last (m + 1))
@@ -710,13 +724,13 @@ theorem isWellFormed_amalgamCellScheme (hSa : Sa.IsWellFormed) (hSb : Sb.IsWellF
     rcases x with i | ⟨j, hj⟩
     · refine ⟨mem_insert_of_mem (mem_union_left _ ?_), hSa.isWellFormed.grade_pos i, ?_⟩
       · exact mem_map_of_mem _ (hSa.isWellFormed.scope_mem i)
-      · change Sa.toCellScheme.grade i ≤ #((Sa.toCellScheme.scope i).map (left m))
-        rw [card_map]
+      · rw [CellScheme.gradedIndex_snd, CellScheme.gradedIndex_fst, amalgamGrade_inl,
+          amalgamScope_inl, card_map]
         exact hSa.isWellFormed.grade_le_card i
     · refine ⟨mem_insert_of_mem (mem_union_right _ ?_), hSb.isWellFormed.grade_pos j, ?_⟩
       · exact mem_map_of_mem _ (hSb.isWellFormed.scope_mem j)
-      · change Sb.toCellScheme.grade j ≤ #((Sb.toCellScheme.scope j).map (right m))
-        rw [card_map]
+      · rw [CellScheme.gradedIndex_snd, CellScheme.gradedIndex_fst, amalgamGrade_inr,
+          amalgamScope_inr, card_map]
         exact hSb.isWellFormed.grade_le_card j
 
 /-- The rows of the amalgam are coded when those of `Sa` and `Sb` are. -/
@@ -736,20 +750,13 @@ theorem isConsistent_amalgamRows (hSa : Sa.rows.IsConsistent) (hSb : Sb.rows.IsC
     rw [comap_amalgamRows_left]
     convert hSa i using 1
     funext t
-    change Sa.rows.row i (((isLowerEmbedding_left h).belowEquiv
-      ((isLowerEmbedding_left h).image_below_gradedIndex i)).symm
-        (((isLowerEmbedding_left h).belowEquiv
-          ((isLowerEmbedding_left h).image_below_gradedIndex i)) t)) = _
-    rw [Equiv.symm_apply_apply]
+    rw [Function.comp_apply, amalgamRows_row_inl, Function.comp_apply, Equiv.symm_apply_apply]
   · refine (CellScheme.Rows.isLawfulBelow_comap_iff (isLowerEmbedding_right h)
       (image_right_below_inr h j hj)).mp ?_
     rw [comap_amalgamRows_right]
     convert hSb j using 1
     funext t
-    change Sb.rows.row j
-      (((isLowerEmbedding_right h).belowEquiv (image_right_below_inr h j hj)).symm
-        (((isLowerEmbedding_right h).belowEquiv (image_right_below_inr h j hj)) t)) = _
-    rw [Equiv.symm_apply_apply]
+    rw [Function.comp_apply, amalgamRows_row_inr, Function.comp_apply, Equiv.symm_apply_apply]
 
 /-- The rows of the amalgam lift capped between graded faces inside the first coatom when those of
 `Sa` are bountiful. -/
@@ -787,7 +794,7 @@ theorem isBountiful_amalgamRows (hSa : Sa.IsWellFormed) (hSb : Sb.IsWellFormed)
   refine CellScheme.Rows.isBountiful_of_coatoms_of_scope_ne (A := univ)
     (a := Fin.last (m + 1)) (b := Fin.castSucc (Fin.last m)) hD (mem_univ _) (mem_univ _)
     (fun B hB hne ↦ ?_) (univ_map_left ▸ hua) (univ_map_right ▸ hub) ?_ ?_
-    (amalgamScope_ne_univ h)
+    (amalgamCellScheme_scope_ne_univ h)
   · rw [← univ_map_left, ← univ_map_right]
     exact subset_or_subset_of_mem_amalgamFaces hB hne
   · rw [← map_univ_map_face]
@@ -815,7 +822,7 @@ theorem isBountiful_amalgamRows (hSa : Sa.IsWellFormed) (hSb : Sb.IsWellFormed)
 
 /-- **Completeness away from the full face**: when `Sa` and `Sb` are complete, every graded face
 of the amalgam whose face is not the ground set is the graded index of a cell. -/
-theorem exists_gradedIndex_eq_amalgam (hSaC : Sa.toCellScheme.IsComplete)
+theorem exists_gradedIndex_eq_amalgamCellScheme (hSaC : Sa.toCellScheme.IsComplete)
     (hSbC : Sb.toCellScheme.IsComplete) {X : Finset (Fin (m + 2)) × ℕ}
     (hX : X ∈ (amalgamCellScheme h).gradedFaces) (hne : X.1 ≠ univ) :
     ∃ d, (amalgamCellScheme h).gradedIndex d = X := by
@@ -826,17 +833,14 @@ theorem exists_gradedIndex_eq_amalgam (hSaC : Sa.toCellScheme.IsComplete)
     have hs : Sa.toCellScheme.scope i = X' := congrArg Prod.fst hi
     have hg : Sa.toCellScheme.grade i = X2 := congrArg Prod.snd hi
     refine ⟨.inl i, Prod.ext ?_ hg⟩
-    change (Sa.toCellScheme.scope i).map (left m) = X'.map (left m)
-    rw [hs]
+    rw [CellScheme.gradedIndex_fst, amalgamScope_inl, hs]
   · obtain ⟨X', hX', rfl⟩ := exists_face_right h hX.1 hXb
     obtain ⟨j, hj⟩ := hSbC (X', X2) ⟨hX', hX.2.1, by simpa using hX.2.2⟩
     have hs : Sb.toCellScheme.scope j = X' := congrArg Prod.fst hj
     have hg : Sb.toCellScheme.grade j = X2 := congrArg Prod.snd hj
     refine ⟨Merge.rightFun _ _ j, Prod.ext ?_ ?_⟩
-    · change (amalgamCellScheme h).scope _ = X'.map (right m)
-      rw [amalgamScope_right, hs]
-    · change (amalgamCellScheme h).grade _ = X2
-      rw [amalgamGrade_right, hg]
+    · rw [CellScheme.gradedIndex_fst, amalgamScope_right, hs]
+    · rw [CellScheme.gradedIndex_snd, amalgamGrade_right, hg]
 
 end Amalgam
 
