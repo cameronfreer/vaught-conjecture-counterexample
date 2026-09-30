@@ -33,7 +33,16 @@ labels containing its values.  The **normal form** of `w` is `Label.strongEncode
   at `K`, with values in the coded alphabet with block bound `2 · #cells + 1` and offset bound
   `K + 1`, such that `w ⇒ w'`, `w' ⇒ w`, and a witness bounded by `K` sends `w'` to `w`.  Below
   a pair `X` (`CellScheme.Rows.IsLawfulBelow.exists_stronglyCoded`) the grade bound is the grade
-  of `X`, so the representative is the row of a new strongly coded cell of that grade.
+  of `X`, so the representative is admissible as the row of a new cell of that grade that is
+  strongly coded (`CellScheme.Rows.IsStronglyCodedAt`).
+
+**Strongly coded, not short.**  The representatives produced here have finite parts up to
+`K + 1`: they are strongly coded at `K` but in general not short at `K` (`Label.IsShort`; the code
+of `3` at `K = 1` has finite part `2`, `VaughtConjecture.Extension.TransformationExamples`).  So a
+row built from a representative need not satisfy the shortness branch of the section theorem
+(`CellScheme.Rows.IsLawful.map_of_isShort_or`) at its grade.  Where 2.5 and 2.6 need the
+full-scope rows to be short, the shortness comes from how the field layer builds their profiles
+(checkpoints 2.5 and 2.6), not from this normal form.
 
 The lawfulness of the representative, its strong coding, and the decoding identity are separate
 statements, as are the cap statements of `VaughtConjecture.Extension.Encoders`.
@@ -84,8 +93,10 @@ variable {ι α : Type*} {D : CellScheme ι α} {R : D.Rows.{u}} {w : ι → Lab
 finitely many cells of grade at most `K`.  Some lawful section `w'` is strongly coded at `K`, takes
 its values in the coded alphabet with block bound `2 · #cells + 1` and offset bound `K + 1`,
 transforms to `w` and is transformed to by `w`, and is sent to `w` by a witness bounded by `K`.
-No coding of `w` or of the rows is assumed.  Used by 2.5 and 2.6: the boundary labels of a seed
-are replaced by a strongly coded catalogue vector, whose decoding restores them literally. -/
+No coding of `w` or of the rows is assumed.  The finite parts of `w'` reach `K + 1`, so `w'` is
+strongly coded at `K` but need not be short at `K`.  Used by 2.5 and 2.6: the boundary labels of
+a seed are replaced by a strongly coded catalogue vector, whose decoding restores them
+literally. -/
 theorem IsLawful.exists_stronglyCoded [Finite ι] (hw : R.IsLawful w) (hK : ∀ d, D.grade d ≤ K) :
     ∃ w' : ι → Label.{u}, R.IsLawful w' ∧ (∀ d, Label.IsStronglyCoded K (w' d)) ∧
       (∀ d, w' d ∈ codedAlphabet (2 * Nat.card ι + 1) (K + 1)) ∧
@@ -110,8 +121,11 @@ theorem IsLawful.exists_stronglyCoded [Finite ι] (hw : R.IsLawful w) (hK : ∀ 
 many cells.  Some `r'` lawful below `X` is strongly coded at the grade of `X`, takes its values in
 the coded alphabet with block bound `2 · #cells + 1` and offset bound the grade of `X` plus one,
 transforms to `r` and is transformed to by `r`, and is sent to `r` by a witness bounded by the
-grade of `X`.  Used by 2.5 and 2.6: `r'` is the row of a new cell of scope and grade those of `X`,
-and that cell is strongly coded (`CellScheme.Rows.IsStronglyCodedAt`). -/
+grade of `X`.  The finite parts of `r'` reach the grade of `X` plus one, so `r'` need not be
+short at the grade of `X`.  Used by 2.5 and 2.6: `r'` is the row of a new cell of scope and grade
+those of `X`, and that cell is strongly coded (`CellScheme.Rows.IsStronglyCodedAt`); shortness
+of a full-scope row, where the section theorem needs it, comes from how the field layer builds
+its profile. -/
 theorem IsLawfulBelow.exists_stronglyCoded {X : Finset α × ℕ} [Finite (D.below X)]
     {r : D.below X → Label.{u}} (hr : R.IsLawfulBelow X r) :
     ∃ r' : D.below X → Label.{u}, R.IsLawfulBelow X r' ∧

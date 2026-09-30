@@ -18,6 +18,11 @@ encoders); semantic contract, item 3.
   strongly coded at grade `1`, since `3 > 1 + 1`; it has a lawful representative strongly coded
   at grade `1` that transforms to it and back, and a witness bounded by `1` decodes it
   (`exists_stronglyCoded_pointSection`).
+* **Strongly coded, not short.**  At grade `1` the code of the label `3` relative to `{3}` has
+  finite part `2`: it is strongly coded at `1` but not short at `1`
+  (`isStronglyCoded_and_not_isShort_strongEncode`).  So the representatives of the normal form are
+  not short at their grade, and the shortness branch of the section theorem does not apply to a
+  row built from them by itself.
 * **An encoder round trip.**  For `V = {3, ω + 5, ω + 7, ⊤}` at grade `1`, the decoder reads back
   each label, the codes are strongly coded at grade `1` although the labels `3`, `ω + 5`, and
   `ω + 7` are not, and the two labels `ω + 5 < ω + 7` of one band keep distinct, ordered codes
@@ -77,6 +82,34 @@ private theorem exists_stronglyCoded_pointSection :
     isLawful_pointSection.exists_stronglyCoded (K := 1) fun _ ↦ le_rfl
   exact ⟨w', hl, hs, h₁, h₂, ν, hν, hd⟩
 
+/-! ### A code that is strongly coded but not short -/
+
+/-- **A code that is strongly coded but not short.**  At grade `1`, the code of the label `3`
+relative to `{3}` is `ω * r + 2` for some `r`: its finite part `2 = 1 + 1` makes it strongly coded
+at `1` and not short at `1`. -/
+private theorem isStronglyCoded_and_not_isShort_strongEncode :
+    IsStronglyCoded 1 (strongEncode ({3} : Finset Label.{u}) 1 3) ∧
+      ¬ IsShort 1 (strongEncode ({3} : Finset Label.{u}) 1 3) := by
+  refine ⟨isStronglyCoded_strongEncode _, fun h ↦ ?_⟩
+  have h3 : (3 : Ordinal.{u}) = ((3 : ℕ) : Ordinal.{u}) := by norm_cast
+  -- Spreading at `1` sends `3 = ω * 0 + 3` to `ω * (ω * 0 + 3) + 2 = ω * 3 + 2`.
+  have hs : spreadOrd 1 (3 : Ordinal.{u}) = ω * 3 + (2 : ℕ) := by
+    have h1 : (3 : Ordinal.{u}) % ω = 3 := by rw [h3, Ordinal.natCast_mod_omega0]
+    have h2 : (3 : Ordinal.{u}) / ω = 0 :=
+      Ordinal.div_eq_zero_of_lt (h3 ▸ Ordinal.natCast_lt_omega0 3)
+    rw [spreadOrd, h1, h2, ite_eq_right (by rw [h3]; exact_mod_cast (by decide : ¬ 3 ≤ 1))]
+    simp
+  have he : (3 : Label.{u}) = ((3 : Ordinal.{u}) : Label.{u}) := rfl
+  rw [strongEncode_apply, image_singleton, he, spread_coe, hs, bandEncode_coe] at h
+  -- The band `3` of `ω * 3 + 2` is a value band, so the band coding keeps the finite part `2`.
+  have hv : (ω * 3 + (2 : ℕ) : Ordinal.{u}) / ω ∈
+      valueBands ({((ω * 3 + (2 : ℕ) : Ordinal.{u}) : Label.{u})} : Finset Label.{u}) :=
+    div_mem_valueBands (by simp)
+  have := isShort_coe.mp h
+  rw [bandEncodeOrd, ite_eq_left hv, omega0_mul_add_natCast_mod, omega0_mul_add_natCast_mod]
+    at this
+  exact absurd this (by exact_mod_cast (by decide : ¬ 2 ≤ 1))
+
 /-! ### An encoder round trip -/
 
 /-- The label `ω · 1 + j`. -/
@@ -86,6 +119,12 @@ private noncomputable abbrev omega0Add (j : ℕ) : Label.{u} :=
 /-- The labels `3`, `ω + 5`, `ω + 7`, and `⊤`. -/
 private noncomputable abbrev roundTripSet : Finset Label.{u} :=
   {3, omega0Add 5, omega0Add 7, ⊤}
+
+/-- The encoder reflects the order of the labels of `V`, since the decoder reads them back. -/
+private theorem strongEncode_le_strongEncode_iff {V : Finset Label.{u}} {K : ℕ} {x y : Label.{u}}
+    (hx : x ∈ V) (hy : y ∈ V) : strongEncode V K x ≤ strongEncode V K y ↔ x ≤ y :=
+  ⟨fun h ↦ strongDecode_strongEncode (K := K) hx ▸ strongDecode_strongEncode (K := K) hy ▸
+    monotone_strongDecode h, fun h ↦ monotone_strongEncode h⟩
 
 /-- `ω + 5 < ω + 7`. -/
 private theorem omega0Add_five_lt_seven : omega0Add.{u} 5 < omega0Add 7 :=
