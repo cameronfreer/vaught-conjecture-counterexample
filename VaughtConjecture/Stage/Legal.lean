@@ -37,26 +37,16 @@ the stage `α` of the type.  For `β ≤ α` it is the reduction of [Kni26, Defi
 content is `StageType.reduce_label` with `Label.reduce_of_lt` (a label below `β` is kept) and
 `Label.reduce_eq_top_iff` (a label at or above `β` becomes the formal top).  For `α ≤ β` it
 changes no label (`StageType.reduce_label_of_le`) and only relabels the stage:
-`t.reduce hβ = t.castLE hαβ` (`reduce_eq_castLE`), where `castLE` reads a stage type at stage `α`
-as one at the larger stage `β`.  Relabelling is invisible to reduction (`reduce_castLE`) and to
-legality (`isLegal_castLE_iff`).
+`t.reduce hβ = t.castLE hαβ` (`StageType.reduce_eq_castLE`, in `VaughtConjecture.Stage.Basic`),
+where `castLE` reads a stage type at stage `α` as one at the larger stage `β`.  Relabelling is
+invisible to reduction (`StageType.reduce_castLE`) and to legality (`isLegal_castLE_iff`).
 
-**Lifting across a face restriction.**  The cell map of the restriction along `f` maps the cells
-below a pair onto the cells below its image (`Scheme.image_cellMap_below`), so the restricted rows
-lift capped (`CellScheme.Rows.CappedLift`) between two pairs exactly when the rows lift capped
-between their images (`Scheme.cappedLift_comap_iff`).  In particular a type whose face along `f`
-is defined and bountiful lifts capped between the images of the graded faces of that face, with no
-assumption on its rows outside the face (`StageType.cappedLift_of_restrictFace`).
-
-## Placement
-
-`StageType.castLE`, `castLE_toScheme`, `castLE_label`, `castLE_refl`, `castLE_castLE`,
-`reduce_eq_castLE`, and `reduce_castLE` belong in the "Stage reduction" section of
-`VaughtConjecture.Stage.Basic`, beside `StageType.reduce_label_of_le` and `StageType.reduce_self`;
-only `isLegal_castLE_iff` stays here.  `Scheme.cappedLift_comap_iff` belongs in
-`VaughtConjecture.Stage.Bountiful`, beside `Scheme.isBountiful_comap`, and
-`Scheme.image_cellMap_below` belongs in `VaughtConjecture.Stage.Scheme`, beside
-`Scheme.map_comap_gradedIndex`.  They are stated here so that those files are unchanged.
+**Lifting across a defined face.**  The restricted rows lift capped
+(`CellScheme.Rows.CappedLift`) between two pairs exactly when the rows lift capped between their
+images (`Scheme.cappedLift_comap_iff`, in `VaughtConjecture.Stage.Bountiful`).  In particular a
+type whose face along `f` is defined and bountiful lifts capped between the images of the graded
+faces of that face, with no assumption on its rows outside the face
+(`StageType.cappedLift_of_restrictFace`).
 
 ## References
 
@@ -65,9 +55,7 @@ Types are [Kni26, Definition 3.1.1], over the domains with their semantics of
 [Kni26, Lemma 2.5.13 and Definitions 2.5.12, 2.5.14, and 2.5.15]; stage reduction and the
 restriction to a face of the plan are [Kni26, Definition 3.1.2], the preservation of the
 laws under restriction is [Kni26, Lemma 2.5.5 and Proposition 2.6.3], and the countability of
-the type spaces is [Kni26, Proposition 3.1.4], for R. W. Knight,
-*A counterexample to Vaught's Conjecture using generalised Stone spaces* (draft, 20 February
-2026).
+the type spaces is [Kni26, Proposition 3.1.4].
 -/
 
 universe u
@@ -114,31 +102,6 @@ theorem IsLegal.comap (hS : S.IsLegal) (hf : univ.map f ∈ S.toCellScheme.faces
 theorem IsLegal.reindex (hS : S.IsLegal) (e : Fin m ≃ Fin n) :
     (S.comap e.toEmbedding).IsLegal :=
   hS.comap _ (by simpa [map_univ_equiv] using hS.isWellFormed.univ_mem_faces)
-
-/-! ### Capped lifting across a face restriction -/
-
-variable (S)
-
-/-- The cell map of the restriction along `f` maps the cells below a pair onto the cells below its
-image. -/
-theorem image_cellMap_below (X : Finset (Fin m) × ℕ) :
-    S.cellMap f '' (S.comap f).toCellScheme.below X =
-      S.toCellScheme.below (Prod.map (Finset.map f) id X) := by
-  have h : S.cellMap f '' (S.comap f).toCellScheme.below X =
-      Subtype.val '' (S.cellEquiv f '' (S.cellEquiv f ⁻¹' (S.toCellScheme.comap f).below X)) := by
-    rw [Set.image_image]
-    rfl
-  rw [h, Equiv.image_preimage]
-  exact CellScheme.image_val_below_comap _ f X
-
-/-- The restricted rows lift capped from `X` to `Y` exactly when the rows lift capped between the
-images of `X` and `Y`. -/
-theorem cappedLift_comap_iff {X Y : Finset (Fin m) × ℕ} (h : X ≤ Y) :
-    (S.comap f).rows.CappedLift h ↔
-      S.rows.CappedLift (X := Prod.map (Finset.map f) id X) (Y := Prod.map (Finset.map f) id Y)
-        ⟨map_subset_map.mpr h.1, h.2⟩ :=
-  CellScheme.Rows.cappedLift_comap_iff (S.isLowerEmbedding_comap f) (S.image_cellMap_below f X)
-    (S.image_cellMap_below f Y) rfl
 
 end Scheme
 
@@ -195,46 +158,13 @@ theorem countable_setOf_isLegal (hα : (Set.Iio α).Countable) (n : ℕ) :
   have := StageType.countable hα n
   Set.to_countable _
 
-/-! ### Reduction and relabelling of the stage -/
+/-! ### Relabelling the stage -/
 
 variable (t)
-
-/-- A stage type at stage `α` read at a larger stage `β`: the same scheme and labels, each of
-which occurs at stage `β`. -/
-def castLE (h : α ≤ β) : StageType.{u} β n :=
-  { t with atStage := fun d ↦ (t.atStage d).mono h }
-
-/-- Relabelling the stage keeps the scheme. -/
-@[simp] theorem castLE_toScheme (h : α ≤ β) : (t.castLE h).toScheme = t.toScheme := rfl
-
-/-- Relabelling the stage keeps the labels. -/
-@[simp] theorem castLE_label (h : α ≤ β) (d : Fin t.card) : (t.castLE h).label d = t.label d :=
-  rfl
-
-/-- Relabelling to the same stage is the identity. -/
-@[simp] theorem castLE_refl : t.castLE le_rfl = t := rfl
-
-/-- Relabelling twice is relabelling once. -/
-@[simp] theorem castLE_castLE (h : α ≤ β) (h' : β ≤ γ) :
-    (t.castLE h).castLE h' = t.castLE (h.trans h') :=
-  rfl
 
 /-- Relabelling the stage does not change legality. -/
 @[simp] theorem isLegal_castLE_iff (h : α ≤ β) : (t.castLE h).IsLegal ↔ t.IsLegal :=
   Iff.rfl
-
-/-- **Reduction to a larger stage only relabels the stage**: for `α ≤ β`, the reduction of a
-stage type at stage `α` to `β` is the type itself, read at stage `β`. -/
-theorem reduce_eq_castLE (hβ : Order.IsSuccPrelimit β) (h : α ≤ β) :
-    t.reduce hβ = t.castLE h :=
-  ext rfl fun i j hij ↦ by
-    rw [Fin.ext hij]
-    exact t.reduce_label_of_le hβ h j
-
-/-- Reduction does not see the stage at which a type is read. -/
-@[simp] theorem reduce_castLE (h : α ≤ β) (hγ : Order.IsSuccPrelimit γ) :
-    (t.castLE h).reduce hγ = t.reduce hγ :=
-  rfl
 
 /-! ### Capped lifting across a defined face -/
 

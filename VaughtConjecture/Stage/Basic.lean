@@ -52,6 +52,10 @@ the section of a stage type at stage `3` on two points, with labels `1` and `2`,
 therefore reduced only to stages that are zero or limits, as in [Kni26, §3.1].  Reductions
 compose (`reduce_reduce`), reduction to the stage of the type is the identity (`reduce_self`), and
 reduction commutes with face maps (`restrictFace_reduce`) and reindexing (`reindex_reduce`).
+Reduction to a stage at least the stage of the type changes no label (`reduce_label_of_le`) and
+only relabels the stage: `t.reduce hβ = t.castLE hαβ` (`reduce_eq_castLE`), where `t.castLE hαβ`
+reads a stage type at stage `α` as one at the larger stage `β`, with the same scheme and labels;
+relabelling is invisible to reduction (`reduce_castLE`).
 
 ## References
 
@@ -334,6 +338,39 @@ theorem reduce_reduce (hβ : Order.IsSuccPrelimit β) (hγ : Order.IsSuccPrelimi
 theorem reduce_label_of_le (hβ : Order.IsSuccPrelimit β) (hαβ : α ≤ β) (d : Fin t.card) :
     (t.reduce hβ).label d = t.label d :=
   ((t.atStage d).mono hαβ).reduce_eq
+
+/-- A stage type at stage `α` read at a larger stage `β`: the same scheme and labels, each of
+which occurs at stage `β`. -/
+def castLE (h : α ≤ β) : StageType.{u} β n :=
+  { t with atStage := fun d ↦ (t.atStage d).mono h }
+
+/-- Relabelling the stage keeps the scheme. -/
+@[simp] theorem castLE_toScheme (h : α ≤ β) : (t.castLE h).toScheme = t.toScheme := rfl
+
+/-- Relabelling the stage keeps the labels. -/
+@[simp] theorem castLE_label (h : α ≤ β) (d : Fin t.card) : (t.castLE h).label d = t.label d :=
+  rfl
+
+/-- Relabelling to the same stage is the identity. -/
+@[simp] theorem castLE_refl : t.castLE le_rfl = t := rfl
+
+/-- Relabelling twice is relabelling once. -/
+@[simp] theorem castLE_castLE (h : α ≤ β) (h' : β ≤ γ) :
+    (t.castLE h).castLE h' = t.castLE (h.trans h') :=
+  rfl
+
+/-- **Reduction to a larger stage only relabels the stage**: for `α ≤ β`, the reduction of a
+stage type at stage `α` to `β` is the type itself, read at stage `β`. -/
+theorem reduce_eq_castLE (hβ : Order.IsSuccPrelimit β) (h : α ≤ β) :
+    t.reduce hβ = t.castLE h :=
+  ext rfl fun i j hij ↦ by
+    rw [Fin.ext hij]
+    exact t.reduce_label_of_le hβ h j
+
+/-- Reduction does not see the stage at which a type is read. -/
+@[simp] theorem reduce_castLE (h : α ≤ β) (hγ : Order.IsSuccPrelimit γ) :
+    (t.castLE h).reduce hγ = t.reduce hγ :=
+  rfl
 
 /-- Stage reduction commutes with restriction to a closed face. -/
 theorem comap_reduce (hβ : Order.IsSuccPrelimit β) (hf : univ.map f ∈ t.toCellScheme.faces) :

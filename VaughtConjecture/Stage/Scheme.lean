@@ -35,7 +35,8 @@ Because the enumeration is canonical, the restriction is strictly functorial, wi
 strictly monotone enumeration of the visible cells is the cell map (`cellMap_eq_of_strictMono`).
 Graded indices are transported along `f` by `Prod.map (Finset.map f) id`, `(C, j) ↦ (f '' C, j)`,
 which identifies the graded faces of the restriction with the graded faces of `S` inside the range
-of `f` (`mem_gradedFaces_comap`); completeness, codedness, and consistency pass to the restriction.
+of `f` (`mem_gradedFaces_comap`), and the cell map sends the cells below a pair onto the cells below
+its image (`image_cellMap_below`); completeness, codedness, and consistency pass to the restriction.
 
 ## References
 
@@ -230,6 +231,18 @@ theorem map_comap_gradedIndex (i : Fin (S.comap f).card) :
     Prod.map (Finset.map f) id ((S.comap f).toCellScheme.gradedIndex i) =
       S.toCellScheme.gradedIndex (S.cellMap f i) :=
   Prod.ext (S.map_comap_scope f i) rfl
+
+/-- The cell map of the restriction along `f` maps the cells below a pair onto the cells below its
+image. -/
+theorem image_cellMap_below (X : Finset (Fin m) × ℕ) :
+    S.cellMap f '' (S.comap f).toCellScheme.below X =
+      S.toCellScheme.below (Prod.map (Finset.map f) id X) := by
+  have h : S.cellMap f '' (S.comap f).toCellScheme.below X =
+      Subtype.val '' (S.cellEquiv f '' (S.cellEquiv f ⁻¹' (S.toCellScheme.comap f).below X)) := by
+    rw [Set.image_image]
+    rfl
+  rw [h, Equiv.image_preimage]
+  exact CellScheme.image_val_below_comap _ f X
 
 /-- The graded faces of the restriction are those whose image is a graded face. -/
 theorem mem_gradedFaces_comap {X : Finset (Fin m) × ℕ} :
