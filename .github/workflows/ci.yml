@@ -24,7 +24,7 @@ jobs:
     # Mathlib cache misses the ~2100 modules downstream of the fork's changes.  Those, plus
     # InfinitaryLogic itself, are built once per dependency pin and then carried between runs
     # by the `deps` GitHub cache below; a cold run (new pin) is slow, a warm run takes minutes.
-    timeout-minutes: 360
+    timeout-minutes: 150
     steps:
       - uses: actions/checkout@v5
         with:
