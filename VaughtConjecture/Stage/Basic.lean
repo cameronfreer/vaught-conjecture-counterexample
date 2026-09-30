@@ -46,10 +46,12 @@ locality uses the reduction rule `Label.TransformsTo.reduce` [Kni26, §3.1], whi
 because stage reduction to a stage that is zero or a limit commutes with visibility replacement.
 At a successor stage `γ + 1` this fails: visibility replacement changes the finite part of an
 ordinal label and can move a label below `γ + 1` to one at or above it, so reduction and the
-transformation relation do not commute; stage types are therefore reduced only to stages that
-are zero or limits, as in [Kni26, §3.1].  Reductions compose (`reduce_reduce`), reduction to the
-stage of the type is the identity (`reduce_self`), and reduction commutes with face maps
-(`restrictFace_reduce`) and reindexing (`reindex_reduce`).
+transformation relation do not commute, and the reduction of a lawful section need not be lawful:
+the section of a stage type at stage `3` on two points, with labels `1` and `2`, reduces at stage
+`2` to a section that is not lawful (`VaughtConjecture.Stage.Examples`).  Stage types are
+therefore reduced only to stages that are zero or limits, as in [Kni26, §3.1].  Reductions
+compose (`reduce_reduce`), reduction to the stage of the type is the identity (`reduce_self`), and
+reduction commutes with face maps (`restrictFace_reduce`) and reindexing (`reindex_reduce`).
 
 ## References
 
@@ -73,7 +75,8 @@ variable {ι α : Type*} {D : CellScheme ι α} {R : D.Rows.{u}} {p : ι → Lab
   {β : Ordinal.{u}}
 
 /-- **Stage reduction of lawful sections.**  At a stage `β` that is zero or a limit, the stage
-reduction of a lawful section is lawful. -/
+reduction of a lawful section is lawful.  The hypothesis on `β` is necessary
+(`VaughtConjecture.Stage.Examples`). -/
 theorem reduce (h : R.IsLawful p) (hβ : Order.IsSuccPrelimit β) :
     R.IsLawful (Label.reduce β ∘ p) where
   orderly d := (h.orderly d).reduce β
@@ -152,11 +155,18 @@ noncomputable def comap (hf : univ.map f ∈ t.toCellScheme.faces) : StageType.{
   exact (t.cellMap_eq_of_strictMono _ strictMono_id (fun d ↦ by
     simp [Function.Embedding.coe_refl]) h.symm).symm
 
+/-- A face spanned by `g` is closed in the restriction to the face spanned by `f` exactly when the
+face spanned by the composite is closed in the type. -/
+theorem map_univ_mem_comap_faces_iff (hf : univ.map f ∈ t.toCellScheme.faces) :
+    univ.map g ∈ (t.comap f hf).toCellScheme.faces ↔
+      univ.map (g.trans f) ∈ t.toCellScheme.faces := by
+  simp [map_map]
+
 /-- Two restrictions compose to the restriction along the composite. -/
 theorem comap_comap (hf : univ.map f ∈ t.toCellScheme.faces)
-    (hg : univ.map g ∈ (t.comap f hf).toCellScheme.faces)
-    (hgf : univ.map (g.trans f) ∈ t.toCellScheme.faces) :
-    (t.comap f hf).comap g hg = t.comap (g.trans f) hgf := by
+    (hg : univ.map g ∈ (t.comap f hf).toCellScheme.faces) :
+    (t.comap f hf).comap g hg =
+      t.comap (g.trans f) ((t.map_univ_mem_comap_faces_iff f g hf).mp hg) := by
   refine ext (t.toScheme.comap_comap f g) fun i j h ↦ ?_
   simp only [comap_label]
   congr 1
@@ -217,9 +227,7 @@ face map along `g` at `u` is the face map along the composite, including defined
 theorem restrictFace_trans {u : StageType.{u} α m} (hu : restrictFace f t = some u) :
     restrictFace g u = restrictFace (g.trans f) t := by
   obtain ⟨hf, rfl⟩ := (restrictFace_eq_some_iff t f).mp hu
-  have hiff : univ.map g ∈ (t.comap f hf).toCellScheme.faces ↔
-      univ.map (g.trans f) ∈ t.toCellScheme.faces := by
-    simp [map_map]
+  have hiff := t.map_univ_mem_comap_faces_iff f g hf
   by_cases hgf : univ.map (g.trans f) ∈ t.toCellScheme.faces
   · rw [restrictFace_of_mem _ g (hiff.mpr hgf), restrictFace_of_mem t _ hgf, comap_comap]
   · rw [restrictFace_of_notMem _ g (mt hiff.mp hgf), restrictFace_of_notMem t _ hgf]
@@ -249,6 +257,14 @@ along `e`, which is always defined. -/
 noncomputable def reindex (e : Fin m ≃ Fin n) : StageType.{u} α m :=
   t.comap e.toEmbedding (by simpa [map_univ_equiv] using t.univ_mem_faces)
 
+/-- The scheme of a reindexed stage type is the restricted scheme. -/
+@[simp] theorem reindex_toScheme (e : Fin m ≃ Fin n) :
+    (t.reindex e).toScheme = t.toScheme.comap e.toEmbedding := rfl
+
+/-- The labels of a reindexed stage type are the labels of the corresponding cells. -/
+@[simp] theorem reindex_label (e : Fin m ≃ Fin n) (i : Fin (t.reindex e).card) :
+    (t.reindex e).label i = t.label (t.cellMap e.toEmbedding i) := rfl
+
 /-- The face map along a bijection is reindexing. -/
 @[simp] theorem restrictFace_equiv (e : Fin m ≃ Fin n) :
     restrictFace e.toEmbedding t = some (t.reindex e) :=
@@ -273,7 +289,7 @@ theorem map_reindex_restrictFace (e : Fin k ≃ Fin m) :
   t.comap_refl _
 
 /-- Reindexing twice is reindexing along the composite. -/
-theorem reindex_reindex (e : Fin m ≃ Fin n) (e' : Fin k ≃ Fin m) :
+@[simp] theorem reindex_reindex (e : Fin m ≃ Fin n) (e' : Fin k ≃ Fin m) :
     (t.reindex e).reindex e' = t.reindex (e'.trans e) := by
   have h := t.restrictFace_reindex e'.toEmbedding e
   rw [restrictFace_equiv, ← Equiv.trans_toEmbedding, restrictFace_equiv] at h

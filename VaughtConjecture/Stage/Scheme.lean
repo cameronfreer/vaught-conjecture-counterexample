@@ -33,7 +33,7 @@ Because the enumeration is canonical, the restriction is strictly functorial, wi
 `S.comap (Function.Embedding.refl _) = S` (`comap_refl`) and
 `(S.comap f).comap g = S.comap (g.trans f)` (`comap_comap`).  Both follow from one fact: any
 strictly monotone enumeration of the visible cells is the cell map (`cellMap_eq_of_strictMono`).
-Graded indices are transported along `f` by `CellScheme.pushGraded f`, `(C, j) ↦ (f '' C, j)`,
+Graded indices are transported along `f` by `Prod.map (Finset.map f) id`, `(C, j) ↦ (f '' C, j)`,
 which identifies the graded faces of the restriction with the graded faces of `S` inside the range
 of `f` (`mem_gradedFaces_comap`); completeness, codedness, and consistency pass to the restriction.
 
@@ -58,21 +58,6 @@ namespace CellScheme
 
 variable {ι κ α β : Type*}
 
-/-- The image of a graded index along an embedding of ground types: `(C, j) ↦ (f '' C, j)`. -/
-def pushGraded (f : β ↪ α) (X : Finset β × ℕ) : Finset α × ℕ := (X.1.map f, X.2)
-
-/-- The face of a pushed graded index is the image of the face. -/
-@[simp] theorem pushGraded_fst (f : β ↪ α) (X : Finset β × ℕ) : (pushGraded f X).1 = X.1.map f :=
-  rfl
-
-/-- The grade of a pushed graded index is unchanged. -/
-@[simp] theorem pushGraded_snd (f : β ↪ α) (X : Finset β × ℕ) : (pushGraded f X).2 = X.2 := rfl
-
-/-- Pushing graded indices along an embedding preserves and reflects the graded order. -/
-@[simp] theorem pushGraded_le_pushGraded_iff (f : β ↪ α) {X Y : Finset β × ℕ} :
-    pushGraded f X ≤ pushGraded f Y ↔ X ≤ Y := by
-  simp [pushGraded, Prod.le_def]
-
 /-- A cell scheme is **complete** [Kni26, §2.5]: every graded face is the graded
 index of some cell. -/
 def IsComplete (D : CellScheme ι α) : Prop :=
@@ -85,12 +70,14 @@ theorem IsComplete.reindex {D : CellScheme ι α} (hD : D.IsComplete) {φ : κ �
   obtain ⟨t, rfl⟩ := hφ d
   exact ⟨t, hd⟩
 
-/-- The pullback of a complete scheme along an embedding is complete: a graded face of the
-pullback pushes forward to a graded face, whose cell is visible through the embedding. -/
+/-- The pullback of a complete scheme along an embedding is complete: the image
+`Prod.map (Finset.map f) id X` of a graded face `X` of the pullback is a graded face, whose cell is
+visible through the embedding. -/
 theorem IsComplete.comap {D : CellScheme ι α} (hD : D.IsComplete) (f : β ↪ α) :
     (D.comap f).IsComplete := by
   intro X ⟨hX, hpos, hle⟩
-  obtain ⟨d, hd⟩ := hD (pushGraded f X) ⟨(mem_comap_faces D f).mp hX, hpos, by simpa using hle⟩
+  obtain ⟨d, hd⟩ := hD (Prod.map (Finset.map f) id X)
+    ⟨(mem_comap_faces D f).mp hX, hpos, by simpa using hle⟩
   have hsc : D.scope d = X.1.map f := congrArg Prod.fst hd
   refine ⟨⟨d, by simp [hsc]⟩, Prod.ext ?_ ?_⟩
   · simp [hsc, preimage_map]
@@ -166,6 +153,9 @@ noncomputable def comap : Scheme.{u} m where
   rows := S.rows.comap ((CellScheme.IsLowerEmbedding.comap _ f).comp
     (CellScheme.IsLowerEmbedding.reindex _ (S.cellEquiv f)))
 
+/-- The number of cells of the restriction is the number of visible cells. -/
+theorem comap_card : (S.comap f).card = #(S.visibleCells f) := rfl
+
 /-- The **cell map** of the restriction along `f`: the visible cells of `S` in increasing
 order. -/
 noncomputable def cellMap : Fin (S.comap f).card ↪o Fin S.card :=
@@ -186,8 +176,7 @@ theorem cellMap_mem (i : Fin (S.comap f).card) : S.cellMap f i ∈ S.visibleCell
 /-- The number of cells visible through `f` is the size of any strictly monotone enumeration of
 them. -/
 theorem card_visibleCells_eq_of_strictMono {e : Fin k → Fin S.card} (he : StrictMono e)
-    (hr : ∀ d, d ∈ Set.range e ↔ d ∈ S.visibleCells f) : (S.comap f).card = k := by
-  change #(S.visibleCells f) = k
+    (hr : ∀ d, d ∈ Set.range e ↔ d ∈ S.visibleCells f) : #(S.visibleCells f) = k := by
   have hV : S.visibleCells f = univ.image e := by
     ext d
     simp [← hr d, Set.mem_range]
@@ -206,9 +195,6 @@ theorem cellMap_eq_of_strictMono {e : Fin k → Fin S.card} (he : StrictMono e)
 theorem isLowerEmbedding_comap :
     (S.comap f).toCellScheme.IsLowerEmbedding S.toCellScheme (S.cellMap f) :=
   (CellScheme.IsLowerEmbedding.comap _ f).comp (CellScheme.IsLowerEmbedding.reindex _ _)
-
-/-- The number of cells of the restriction is the number of visible cells. -/
-theorem comap_card : (S.comap f).card = #(S.visibleCells f) := rfl
 
 /-- The ground set of the restriction is the preimage of the ground set. -/
 @[simp] theorem comap_ground :
@@ -236,19 +222,20 @@ theorem comap_card : (S.comap f).card = #(S.visibleCells f) := rfl
 
 /-- The scope of a cell of the restriction maps onto the scope of its cell. -/
 theorem map_comap_scope (i : Fin (S.comap f).card) :
-    ((S.comap f).toCellScheme.scope i).map f = S.toCellScheme.scope (S.cellMap f i) :=
-  (S.toCellScheme.map_comap_scope f (S.cellEquiv f i) :)
+    ((S.comap f).toCellScheme.scope i).map f = S.toCellScheme.scope (S.cellMap f i) := by
+  rw [comap_scope]
+  exact map_preimage_eq_of_subset_range (mem_visibleCells.mp (S.cellMap_mem f i))
 
-/-- The graded index of a cell of the restriction pushes forward to that of its cell. -/
-theorem pushGraded_comap_gradedIndex (i : Fin (S.comap f).card) :
-    CellScheme.pushGraded f ((S.comap f).toCellScheme.gradedIndex i) =
+/-- The graded index of a cell of the restriction maps onto that of its cell. -/
+theorem map_comap_gradedIndex (i : Fin (S.comap f).card) :
+    Prod.map (Finset.map f) id ((S.comap f).toCellScheme.gradedIndex i) =
       S.toCellScheme.gradedIndex (S.cellMap f i) :=
   Prod.ext (S.map_comap_scope f i) rfl
 
-/-- The graded faces of the restriction are those whose push-forward is a graded face. -/
+/-- The graded faces of the restriction are those whose image is a graded face. -/
 theorem mem_gradedFaces_comap {X : Finset (Fin m) × ℕ} :
     X ∈ (S.comap f).toCellScheme.gradedFaces ↔
-      CellScheme.pushGraded f X ∈ S.toCellScheme.gradedFaces := by
+      Prod.map (Finset.map f) id X ∈ S.toCellScheme.gradedFaces := by
   rw [CellScheme.mem_gradedFaces, CellScheme.mem_gradedFaces, mem_comap_faces]
   simp
 
@@ -262,7 +249,8 @@ theorem mem_gradedFaces_comap {X : Finset (Fin m) × ℕ} :
   have key {i : Fin (S.comap _).card} {j : Fin S.card} (h : (i : ℕ) = j) :
       S.cellMap (Function.Embedding.refl (Fin n)) i = j :=
     (S.cellMap_eq_of_strictMono _ strictMono_id hr h.symm).symm
-  refine ext (S.card_visibleCells_eq_of_strictMono _ strictMono_id hr) ?_ ?_ ?_ ?_ ?_
+  refine ext ((S.comap_card _).trans (S.card_visibleCells_eq_of_strictMono _ strictMono_id hr))
+    ?_ ?_ ?_ ?_ ?_
   · ext; simp
   · ext; simp
   · intro i j h; ext; simp [key h]
@@ -296,14 +284,15 @@ theorem mem_range_cellMap_comp_iff (d : Fin S.card) :
 
 /-- **Composition of restrictions**: restricting along `f` and then along `g` is restricting
 along the composite `g.trans f`.  No guard is needed at the level of data. -/
-theorem comap_comap : (S.comap f).comap g = S.comap (g.trans f) := by
+@[simp] theorem comap_comap : (S.comap f).comap g = S.comap (g.trans f) := by
   have he : StrictMono fun i ↦ S.cellMap f ((S.comap f).cellMap g i) :=
     (S.cellMap f).strictMono.comp ((S.comap f).cellMap g).strictMono
   have hr := S.mem_range_cellMap_comp_iff f g
   have key {i : Fin ((S.comap f).comap g).card} {j : Fin (S.comap (g.trans f)).card}
       (h : (i : ℕ) = j) : S.cellMap f ((S.comap f).cellMap g i) = S.cellMap (g.trans f) j :=
     S.cellMap_eq_of_strictMono _ he hr h
-  refine ext (S.card_visibleCells_eq_of_strictMono _ he hr).symm ?_ ?_ ?_ ?_ ?_
+  refine ext ((S.card_visibleCells_eq_of_strictMono _ he hr).symm.trans (S.comap_card _).symm)
+    ?_ ?_ ?_ ?_ ?_
   · ext; simp
   · ext; simp [map_map]
   · intro i j h; ext; simp [← key h]
