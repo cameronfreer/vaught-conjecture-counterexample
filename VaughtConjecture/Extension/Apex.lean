@@ -42,8 +42,8 @@ is the hypothesis for adding the apex and the legality field of a completion bel
 scheme is legal below the full grade.  Append one cell of full scope and full grade `n`, labelled
 with the formal top.  The hypothesis `0 < n` makes `(univ, n)` a graded face (grades are positive),
 so that the new cell has a graded face as its graded index.  Its row is the coded copy of the
-labels of `t`, their image under a band coding (`CellScheme.Rows.IsLawful.exists_bandEncode`),
-with the code of the formal top at the new cell: it is coded and lawful, and the band decoding
+labels of `t`, their image under a block coding (`CellScheme.Rows.IsLawful.exists_bandEncode`),
+with the code of the formal top at the new cell: it is coded and lawful, and the block decoding
 transforms it back to the labels.  The result is legal (`StageType.isLegal_addApex`):
 
 * consistency: the old rows are those of `t`, and the new row is lawful;
