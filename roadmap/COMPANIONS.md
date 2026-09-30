@@ -145,8 +145,10 @@ added upstream: invariance of `L_{ω₁,ω}` satisfaction under isomorphism acro
 (`LomegaEquiv.of_equiv` and `encodeViaEquiv_models` require one universe); the Scott
 characterization across universes (`scottSentence_characterizes` requires one universe, but
 `realize_scottFormula_iff_BFEquiv` (`Scott/Formula`) and `PotentialIso.ofExtensionFamily` already
-work across universes, and only the countable back-and-forth step,
-`PotentialIso.countable_toEquiv_graph`, is stated for one universe); a named
+work across universes, while the stabilization step (`StabilizesAt`,
+`stabilizationOrdinal_stabilizes_of`, through which `scottSentence_characterizes_of` passes) and
+the countable back-and-forth step `PotentialIso.countable_toEquiv_graph` are stated for one
+universe); a named
 lemma that the Scott sentence of a code isolates its class on a presentation (currently the
 content of the proof of `isolatedPresentation_of_surjective`, whose statement is existential).
 
@@ -375,7 +377,7 @@ run_cmd do
   let bad := closure.filter fun m => m != root && forbidden.any (·.isPrefixOf m)
   unless bad.isEmpty do
     for m in bad do logError m!"{root} imports {m}, which its import closure must avoid"
-    throwError "import guard failed for {root} ({bad.size} forbidden modules)"
+    throwError "import guard failed for {root} ({bad.size} forbidden module(s))"
   logInfo m!"import guard: the import closure of {root} ({closure.size} modules) avoids {forbidden}"
 ```
 
