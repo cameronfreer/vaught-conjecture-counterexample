@@ -12,16 +12,17 @@ The hypotheses of `VaughtConjecture.MainTheorem.Assembly` on abstract types of c
 countable ordinals, with or without `2 ^ ℵ₁` further classes, and a single class), with the
 observations "is the class `s`", which separate distinct classes.
 
-* The **tail domains** of the countable ordinals (stage `ξ` keeps the ordinals `≥ ξ`) satisfy
-  every hypothesis, and the composition gives exactly `ℵ₁` classes; the persistent core is empty.
-* **Logical agreement is needed**: adjoining `2 ^ ℵ₁` further classes lying in every domain
-  keeps the domain laws, countable losses, and nonempty losses, but gives more than `ℵ₁` classes;
-  so no family of observations separating the classes is constant on the domains.
+* The **tail domains** of the countable ordinals (stage `ξ` keeps the ordinals `≥ ξ`, so every
+  stage at or above `ω₁` is empty) satisfy every hypothesis, and the composition gives exactly
+  `ℵ₁` classes; the persistent core is empty.
+* **Logical agreement is needed**: adjoining `2 ^ ℵ₁` further classes lying in every domain below
+  `ω₁` keeps the domain laws, countable losses, and nonempty losses, but gives more than `ℵ₁`
+  classes; so no family of observations separating the classes is constant on the domains.
 * **Countable losses are needed**: adjoining `2 ^ ℵ₁` further classes all lost at the first
   successor keeps the domain laws, nonempty losses, and logical agreement, but gives more than
   `ℵ₁` classes.
-* **Nonempty losses are needed**: a single class in every domain satisfies the domain laws,
-  countable losses, and logical agreement, and there are fewer than `ℵ₁` classes.
+* **Nonempty losses are needed**: a single class in every domain below `ω₁` satisfies the domain
+  laws, countable losses, and logical agreement, and there are fewer than `ℵ₁` classes.
 
 The tail domains repeat the private tail filtration of `VaughtConjecture.Counting.Separation`,
 as expansion domains; that example is private to its file.
@@ -77,7 +78,8 @@ private theorem not_add_one_le (ξ : Ordinal.{0}) : ¬ ξ + 1 ≤ ξ :=
 
 /-! ### The tail domains -/
 
-/-- The tail domains of the countable ordinals: stage `ξ` keeps the ordinals `≥ ξ`. -/
+/-- The tail domains of the countable ordinals: stage `ξ` keeps the ordinals `≥ ξ`, so the
+stages at or above `ω₁` are empty. -/
 private def tail : ExpansionDomains CountableOrdinal where
   domain ξ := {x | ξ ≤ x.1}
   zero := eq_univ_of_forall fun x ↦ (zero_le : (0 : Ordinal) ≤ x.1)
@@ -85,6 +87,8 @@ private def tail : ExpansionDomains CountableOrdinal where
   limit l hl _ x hx := by
     by_contra h
     exact not_add_one_le x.1 (mem_iInter₂.1 hx _ (hl.succ_lt (not_le.1 h)))
+  domain_eq_empty_of_omega_one_le _ h :=
+    eq_empty_of_forall_notMem fun x hx ↦ (h.trans hx).not_gt x.2
 
 /-- A class in the loss of the tail domains at `ξ` is the ordinal `ξ`. -/
 private theorem eq_of_mem_tail_loss {ξ : Ordinal.{0}} {x : CountableOrdinal}
@@ -123,18 +127,21 @@ example : (⋂ ξ < ω₁, tail.domain ξ) = ∅ :=
 
 /-! ### Logical agreement is needed -/
 
-/-- The tail domains with the further classes adjoined to every domain. -/
+/-- The tail domains with the further classes adjoined to every domain below `ω₁`. -/
 private def adjoinPersistent : ExpansionDomains (CountableOrdinal ⊕ FurtherClasses) where
-  domain ξ := {z | Sum.elim (· ∈ tail.domain ξ) (fun _ ↦ True) z}
+  domain ξ := {z | Sum.elim (· ∈ tail.domain ξ) (fun _ ↦ ξ < ω₁) z}
   zero := eq_univ_of_forall fun
     | .inl x => by simp [tail.zero]
-    | .inr _ => trivial
+    | .inr _ => Ordinal.omega_pos 1
   antitone _ _ h
     | .inl _, hx => tail.antitone h hx
-    | .inr _, _ => trivial
+    | .inr _, hx => h.trans_lt hx
   limit l hl hlt
     | .inl x, hx => tail.limit l hl hlt (mem_iInter₂.2 fun ξ hξ ↦ mem_iInter₂.1 hx ξ hξ)
-    | .inr _, _ => trivial
+    | .inr _, _ => hlt
+  domain_eq_empty_of_omega_one_le ξ h := eq_empty_of_forall_notMem fun
+    | .inl x, hx => by simp [tail.domain_eq_empty_of_omega_one_le ξ h] at hx
+    | .inr _, hx => h.not_gt hx
 
 /-- **Logical agreement cannot be dropped**: the domains with the further classes adjoined have
 countable and nonempty losses and more than `ℵ₁` classes, so no family of observations
@@ -148,7 +155,7 @@ example : adjoinPersistent.HasCountableLosses ∧ adjoinPersistent.HasNonemptyLo
     refine ⟨fun ξ hξ ↦ ((tail_hasCountableLosses.countable_loss ξ hξ).image Sum.inl).mono ?_⟩
     rintro (x | y) ⟨h₁, h₂⟩
     · exact mem_image_of_mem _ ⟨h₁, h₂⟩
-    · exact (h₂ trivial).elim
+    · exact (h₂ (add_one_lt_omega_one hξ)).elim
   have hn : adjoinPersistent.HasNonemptyLosses := ⟨fun ξ hξ ↦
     have ⟨x, hx⟩ := tail_hasNonemptyLosses.nonempty_loss ξ hξ
     ⟨.inl x, hx⟩⟩
@@ -172,6 +179,9 @@ private def adjoinLost : ExpansionDomains (CountableOrdinal ⊕ FurtherClasses) 
       have h1 : (1 : Ordinal.{0}) < l := by
         simpa using hl.succ_lt (pos_iff_ne_zero.2 hl.ne_bot)
       exact absurd (mem_iInter₂.1 hx 1 h1) one_ne_zero
+  domain_eq_empty_of_omega_one_le ξ h := eq_empty_of_forall_notMem fun
+    | .inl x, hx => by simp [tail.domain_eq_empty_of_omega_one_le ξ h] at hx
+    | .inr _, hx => (Ordinal.omega_pos 1).not_ge (h.trans_eq hx)
 
 /-- **Countable losses cannot be dropped**: the domains with the further classes lost at the first
 successor have nonempty losses and logical agreement for the observations "is the class `s`",
@@ -193,23 +203,24 @@ example : adjoinLost.HasNonemptyLosses ∧
 
 /-! ### Nonempty losses are needed -/
 
-/-- A single class in every domain. -/
+/-- A single class in every domain below `ω₁`. -/
 private def constant : ExpansionDomains Unit where
-  domain _ := univ
-  zero := rfl
-  antitone _ _ _ := le_rfl
-  limit _ _ _ := subset_univ _
+  domain ξ := {_u | ξ < ω₁}
+  zero := eq_univ_of_forall fun _ ↦ Ordinal.omega_pos 1
+  antitone _ _ h _ hx := h.trans_lt hx
+  limit _ _ hlt _ _ := hlt
+  domain_eq_empty_of_omega_one_le _ h := eq_empty_of_forall_notMem fun _ hx ↦ h.not_gt hx
 
-/-- **Nonempty losses cannot be dropped**: a single class in every domain has countable losses
-and logical agreement for the observations `z = s`, which separate its one class, and fewer than
-`ℵ₁` classes. -/
+/-- **Nonempty losses cannot be dropped**: a single class in every domain below `ω₁` has countable
+losses and logical agreement for the observations `z = s`, which separate its one class, and fewer
+than `ℵ₁` classes. -/
 example : constant.HasCountableLosses ∧
     constant.HasLogicalAgreement (fun s z : Unit ↦ z = s) ∧ #Unit < ℵ₁ ∧
     ¬ constant.HasNonemptyLosses :=
-  ⟨⟨fun _ _ ↦ countable_univ.mono sdiff_subset⟩,
+  ⟨⟨fun _ _ ↦ Set.to_countable _⟩,
     ⟨fun _ ↦ ⟨0, Ordinal.omega_pos 1, fun _ _ _ _ ↦ by simp⟩⟩,
     by simp [one_lt_aleph0.trans aleph0_lt_aleph_one],
-    fun ⟨h⟩ ↦ by simpa [constant] using h 0 (Ordinal.omega_pos 1)⟩
+    fun ⟨h⟩ ↦ by simpa [constant, one_lt_omega_one] using h 0 (Ordinal.omega_pos 1)⟩
 
 /-! ### The density sentence -/
 

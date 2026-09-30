@@ -32,7 +32,9 @@ set of classes admitting a model expansion to the stage `ω + ω · ξ`:
 * `ExpansionDomains` (reduction item 1; Layer 5): `D 0` is every class, the domains decrease, and
   at a nonzero limit below `ω₁` the domain contains the intersection of the earlier ones.  Layer 5
   is to prove this for the actual expansion domains, the limit clause by the coherent
-  countable-limit expansions (checkpoint 5, unique limit expansions).
+  countable-limit expansions (checkpoint 5, unique limit expansions).  As for a `Filtration`, the
+  domains at and above `ω₁` are empty, so expansion domains are determined by their stages below
+  `ω₁` (`ExpansionDomains.ext`).
 * `ExpansionDomains.HasCountableLosses` (reduction item 2; **terminal countability**): each
   successor loss `D ξ \ D (ξ + 1)` below `ω₁` is countable.  Layer 5 is to map each loss into the
   terminal classes at a fixed stage, and Layer 4 to count those by the countable family of
@@ -105,10 +107,12 @@ open scoped Ordinal
 /-! ### Expansion domains and their hypotheses -/
 
 /-- **Expansion domains** on a type `X` of classes (reduction item 1 of the roadmap; Layer 5): a
-family of sets of classes indexed by the ordinals, of which only the stages below `ω₁` are used,
-with `D 0` every class, decreasing, and continuous at the nonzero limits below `ω₁`.  For the
-density sentence, the domain at `ξ` is to be the set of classes admitting a model expansion to
-the stage `ω + ω · ξ`; that it has these properties is a statement of Layer 5, not proved here. -/
+family of sets of classes indexed by the stages below `ω₁`, with `D 0` every class, decreasing,
+and continuous at the nonzero limits below `ω₁`.  As in `Counting.Filtration`, the index is
+`Ordinal.{0}` and the domains at stages `ξ ≥ ω₁` are empty, so expansion domains are determined
+by their stages below `ω₁` (`ExpansionDomains.ext`).  For the density sentence, the domain at
+`ξ < ω₁` is to be the set of classes admitting a model expansion to the stage `ω + ω · ξ`; that
+it has these properties is a statement of Layer 5, not proved here. -/
 structure ExpansionDomains (X : Type u) where
   /-- The domain at stage `ξ`. -/
   domain : Ordinal.{0} → Set X
@@ -119,10 +123,23 @@ structure ExpansionDomains (X : Type u) where
   /-- At a nonzero limit below `ω₁`, the domain contains the intersection of the earlier ones
   (for the actual expansion domains: the coherent countable-limit expansions of Layer 5). -/
   limit : ∀ l, Order.IsSuccLimit l → l < ω₁ → (⋂ ξ < l, domain ξ) ⊆ domain l
+  /-- No data is carried at or above `ω₁`: the domains there are empty. -/
+  domain_eq_empty_of_omega_one_le : ∀ ξ, ω₁ ≤ ξ → domain ξ = ∅
 
 namespace ExpansionDomains
 
 variable {X : Type u} (D : ExpansionDomains X)
+
+/-- Expansion domains agreeing below `ω₁` are equal: at and above `ω₁` both domains are empty. -/
+@[ext]
+theorem ext {D E : ExpansionDomains X} (h : ∀ ξ, ξ < ω₁ → D.domain ξ = E.domain ξ) : D = E := by
+  obtain ⟨D, _, _, _, hD⟩ := D
+  obtain ⟨E, _, _, _, hE⟩ := E
+  congr
+  funext ξ
+  rcases lt_or_ge ξ ω₁ with hξ | hξ
+  · exact h ξ hξ
+  · rw [hD ξ hξ, hE ξ hξ]
 
 /-- **Terminal countability** (reduction item 2 of the roadmap): every successor loss below `ω₁`
 is countable.  For the density sentence this is a statement of Layers 4–5 (the losses mapped
@@ -191,22 +208,16 @@ theorem aleph_one_le_mk (hn : D.HasNonemptyLosses) : ℵ₁ ≤ #X :=
 
 variable (D)
 
-/-- The **filtration** of expansion domains with countable and nonempty losses: the domains
-below `ω₁`, and the empty set at and above `ω₁`. -/
+/-- The **filtration** of expansion domains with countable and nonempty losses: the same
+domains. -/
 def toFiltration (hc : D.HasCountableLosses) (hn : D.HasNonemptyLosses) : Filtration X where
-  domain ξ := {x | ξ < ω₁ ∧ x ∈ D.domain ξ}
-  zero := eq_univ_of_forall fun x ↦ ⟨Ordinal.omega_pos 1, D.zero ▸ mem_univ x⟩
-  antitone _ _ h _ hx := ⟨h.trans_lt hx.1, D.antitone h hx.2⟩
-  limit l hl hlt _ hx :=
-    ⟨hlt, D.limit l hl hlt (mem_iInter₂.2 fun ξ hξ ↦ (mem_iInter₂.1 hx ξ hξ).2)⟩
-  loss_countable ξ hξ := by
-    refine Set.Countable.mono ?_ (hc.countable_loss ξ hξ)
-    rintro x ⟨⟨-, hx⟩, hx'⟩
-    exact ⟨hx, fun h ↦ hx' ⟨(isSuccLimit_omega 1).succ_lt hξ, h⟩⟩
-  cofinal_losses β hβ := by
-    obtain ⟨x, hx, hx'⟩ := hn.nonempty_loss β hβ
-    exact ⟨β, le_rfl, hβ, x, ⟨hβ, hx⟩, fun h ↦ hx' h.2⟩
-  domain_eq_empty_of_omega_one_le _ h := eq_empty_of_forall_notMem fun _ hx ↦ h.not_gt hx.1
+  domain := D.domain
+  zero := D.zero
+  antitone := D.antitone
+  limit := D.limit
+  loss_countable := hc.countable_loss
+  cofinal_losses β hβ := ⟨β, le_rfl, hβ, hn.nonempty_loss β hβ⟩
+  domain_eq_empty_of_omega_one_le := D.domain_eq_empty_of_omega_one_le
 
 variable {D}
 
@@ -216,8 +227,7 @@ theorem HasLogicalAgreement.uniform_toFiltration {S : Type v} {truth : S → X �
     (ha : D.HasLogicalAgreement truth) (hc : D.HasCountableLosses) (hn : D.HasNonemptyLosses)
     (s : S) : ∃ ξ, ξ < ω₁ ∧ ∀ p ∈ (D.toFiltration hc hn).domain ξ,
       ∀ q ∈ (D.toFiltration hc hn).domain ξ, (truth s p ↔ truth s q) :=
-  have ⟨ξ, hξ, h⟩ := ha.uniform s
-  ⟨ξ, hξ, fun p hp q hq ↦ h p hp.2 q hq.2⟩
+  ha.uniform s
 
 /-- **Exactly `ℵ₁` classes** from expansion domains with countable and nonempty losses and
 logical agreement for observations separating distinct classes, through
