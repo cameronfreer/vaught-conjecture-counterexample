@@ -79,4 +79,8 @@ theorem countable_sigma (hα : (Set.Iio α).Countable) : Countable (Σ n, StageT
 
 end StageType
 
+/-- The ordinals below `ω` form a countable type. -/
+instance countable_Iio_omega0_coe : Countable (Set.Iio (ω : Ordinal.{u})) :=
+  (Cardinal.countable_Iio_of_lt_omega_one omega0_lt_omega_one).to_subtype
+
 end VaughtConjecture

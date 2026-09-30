@@ -60,9 +60,8 @@ the cap-to-model theorem, and the latter the cap-to-model theorem, all of Layer 
 
 ## Placement
 
-`StageType.receivingFamily` with its lemmas, `Realization.HasFiniteCutReceiving` with its
-transport, and the instance `Label.countable_permittedCutoff` belong in earlier files; their
-destinations are in the placement list of `VaughtConjecture.Language.Basic`.
+`Realization.HasFiniteCutReceiving` with its transport belongs in the receiving module of
+Layer 3.
 
 ## References
 
@@ -81,27 +80,6 @@ open FirstOrder Language Structure Ordinal Label StageType baseLanguage
 variable {α : Ordinal.{u}} {M : Type v} {N : Type w} {n : ℕ}
 
 /-! ### Receiving -/
-
-namespace StageType
-
-/-- The **receiving family** of a stage type `d` at a cutoff `c`: the stage types on the scheme of
-`d` with the observation of `d` at `c`. -/
-def receivingFamily (d : StageType.{u} α n) (c : Label.{u}) : Set (StageType.{u} α n) :=
-  {q | q.toScheme = d.toScheme ∧
-    ∀ (i : Fin q.card) (j : Fin d.card), (i : ℕ) = j → min (q.label i) c = min (d.label j) c}
-
-/-- Membership in the receiving family: the scheme and the observation at the cutoff. -/
-theorem mem_receivingFamily {d q : StageType.{u} α n} {c : Label.{u}} :
-    q ∈ receivingFamily d c ↔ q.toScheme = d.toScheme ∧
-      ∀ (i : Fin q.card) (j : Fin d.card), (i : ℕ) = j → min (q.label i) c = min (d.label j) c :=
-  Iff.rfl
-
-/-- A stage type is in each of its receiving families. -/
-theorem self_mem_receivingFamily (d : StageType.{u} α n) (c : Label.{u}) :
-    d ∈ receivingFamily d c :=
-  ⟨rfl, fun _ _ h ↦ by rw [Fin.ext h]⟩
-
-end StageType
 
 namespace Realization
 
@@ -134,22 +112,6 @@ theorem IsIso.hasFiniteCutReceiving_iff {S : Realization.{u, w} α N} (h : R.IsI
   exact (hasFiniteCutReceiving_map_iff e).symm
 
 end Realization
-
-/-! ### Placement: a countability instance for `Label/Cap`
-
-This instance belongs in `VaughtConjecture.Label.Cap` (see the placement list of
-`VaughtConjecture.Language.Basic`). -/
-
-section Placement
-
-/-- The permitted cutoffs at stage `ω` are countably many: they are the natural numbers. -/
-instance Label.countable_permittedCutoff :
-    Countable {c : Label.{u} // IsPermittedCutoff (ω : Ordinal.{u}) c} :=
-  Set.Countable.to_subtype <|
-    ((Cardinal.countable_Iio_of_lt_omega_one omega0_lt_omega_one).image
-      fun δ : Ordinal.{u} ↦ (δ : Label.{u})).mono fun _ hc ↦ isPermittedCutoff_iff.mp hc
-
-end Placement
 
 namespace baseLanguage
 

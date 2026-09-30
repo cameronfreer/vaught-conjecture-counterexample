@@ -45,6 +45,11 @@ The corresponding nonemptiness of the uniformity and dominance instances at limi
 [Kni26, Lemma 4.2.2] for the seed) is not proved here; the three lemmas together give
 [Kni26, Lemma 4.4.1].
 
+**Receiving.**  The receiving family of a stage type `d` at a cutoff `c` (`receivingFamily d c`)
+consists of the stage types on the scheme of `d` with the observation of `d` at `c`; it contains
+`d` (`self_mem_receivingFamily`).  The bottom-pattern family of a labelling depends on the
+labelling only through which of its values are bottom (`bottomPatternFamily_congr`).
+
 **Transport.**  Along a bijection `e` of the `n + 1` points that maps the initial segment to itself
 by `σ`, cofaces of `p` reindex to cofaces of `p.reindex σ` (`reindex_mem_cofaces`), and the
 families reindex with their parameters; the uniformity and dominance families are invariant under
@@ -137,6 +142,13 @@ theorem mem_bottomPatternFamily : q ∈ bottomPatternFamily S ρ ↔ q.toScheme 
       (q.label i = ⊥ ↔ ρ j = ⊥) :=
   Iff.rfl
 
+/-- The bottom-pattern family of a labelling depends only on which of its values are bottom. -/
+theorem bottomPatternFamily_congr {S : Scheme.{u} (n + 1)} {ρ ρ' : Fin S.card → Label.{u}}
+    (h : ∀ j, ρ j = ⊥ ↔ ρ' j = ⊥) :
+    (bottomPatternFamily S ρ : Set (StageType.{u} α (n + 1))) = bottomPatternFamily S ρ' := by
+  ext q
+  simp only [mem_bottomPatternFamily, h]
+
 /-- Membership in the uniformity family: a label in the band `[γ, γ + ω)`. -/
 theorem mem_uniformityFamily : q ∈ uniformityFamily γ ↔
     ∃ d, (γ : Label.{u}) ≤ q.label d ∧ q.label d < ((γ + Ordinal.omega0 : Ordinal.{u}) : Label) :=
@@ -171,6 +183,25 @@ theorem bottomPatternFamily_subset_saturationFamily :
 theorem dominanceFamily_anti {γ γ' : Ordinal.{u}} (h : γ ≤ γ') :
     (dominanceFamily γ' : Set (StageType.{u} α (n + 1))) ⊆ dominanceFamily γ :=
   fun _ ⟨d, hg, hd⟩ ↦ ⟨d, hg, lt_of_le_of_lt (by simpa using h) hd⟩
+
+/-! ### The receiving family -/
+
+/-- The **receiving family** of a stage type `d` at a cutoff `c`: the stage types on the scheme of
+`d` with the observation of `d` at `c`. -/
+def receivingFamily (d : StageType.{u} α n) (c : Label.{u}) : Set (StageType.{u} α n) :=
+  {q | q.toScheme = d.toScheme ∧
+    ∀ (i : Fin q.card) (j : Fin d.card), (i : ℕ) = j → min (q.label i) c = min (d.label j) c}
+
+/-- Membership in the receiving family: the scheme and the observation at the cutoff. -/
+theorem mem_receivingFamily {d q : StageType.{u} α n} {c : Label.{u}} :
+    q ∈ receivingFamily d c ↔ q.toScheme = d.toScheme ∧
+      ∀ (i : Fin q.card) (j : Fin d.card), (i : ℕ) = j → min (q.label i) c = min (d.label j) c :=
+  Iff.rfl
+
+/-- A stage type is in each of its receiving families. -/
+theorem self_mem_receivingFamily (d : StageType.{u} α n) (c : Label.{u}) :
+    d ∈ receivingFamily d c :=
+  ⟨rfl, fun _ _ h ↦ by rw [Fin.ext h]⟩
 
 /-! ### Reindexing -/
 

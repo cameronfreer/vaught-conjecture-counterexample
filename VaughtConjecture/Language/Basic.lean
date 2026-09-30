@@ -32,27 +32,6 @@ which the roadmap's `HasThinAlephOneSpectrum`,
 `Sentenceω.isThinOnNatModels_of_countable_sentence_splits` would need a language in
 `Language.{0, 0}`.
 
-## Placement
-
-The following declarations of this layer belong in earlier files, and are tracked here:
-
-* the instance `countable_Iio_omega0_coe` (countably many ordinals below `ω`, in this file) in
-  `VaughtConjecture.Stage.Countable`;
-* the instance `Label.countable_permittedCutoff` (countably many permitted cutoffs at stage `ω`, in
-  `VaughtConjecture.Language.Density`) in `VaughtConjecture.Label.Cap`;
-* `Realization.HasLegalTypes` (in `VaughtConjecture.Language.Structure`) in
-  `VaughtConjecture.Realization.Basic`;
-* `Realization.IsModel.hasLegalTypes` (in `VaughtConjecture.Language.Structure`), and
-  `Realization.IsModel.exists_arity_eq`, `exists_le_arity` and `IsModel.infinite` (in
-  `VaughtConjecture.Language.Satisfaction`) in `VaughtConjecture.Realization.Model`;
-* `StageType.bottomPatternFamily_congr` (in `VaughtConjecture.Language.Sentence`), and
-  `StageType.receivingFamily` with its lemmas (in `VaughtConjecture.Language.Density`) in
-  `VaughtConjecture.Realization.Families`;
-* `Realization.HasFiniteCutReceiving` with its transport (in `VaughtConjecture.Language.Density`)
-  in the receiving module of Layer 3.
-
-They are stated here so that those files are unchanged.
-
 ## References
 
 This is the language `L` of [Kni26, Definition 3.3.1], whose countability is
@@ -121,17 +100,5 @@ instance countable_sigma_relations : Countable (Σ n, baseLanguage.{u}.Relations
   inferInstance
 
 end baseLanguage
-
-/-! ### Placement: a countability instance for `Stage/Countable`
-
-This instance belongs in `VaughtConjecture.Stage.Countable` (see the placement list above). -/
-
-section Placement
-
-/-- The ordinals below `ω` form a countable type. -/
-instance countable_Iio_omega0_coe : Countable (Set.Iio (ω : Ordinal.{u})) :=
-  (Cardinal.countable_Iio_of_lt_omega_one omega0_lt_omega_one).to_subtype
-
-end Placement
 
 end VaughtConjecture

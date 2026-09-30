@@ -44,12 +44,6 @@ realizations with legal types an isomorphism of structures is an isomorphism of 
 isomorphic type assignments have isomorphic realizations and conversely
 (`baseLanguage.isIso_toRealization_iff`, from the round trips).
 
-## Placement
-
-`Realization.HasLegalTypes` and `Realization.IsModel.hasLegalTypes` belong in earlier files (the
-legality field of `Realization.IsModel` can then be stated through the former); their destinations
-are in the placement list of `VaughtConjecture.Language.Basic`.
-
 ## References
 
 The structure of a realization is [Kni26, Definition 3.3.4], and the correspondence between
@@ -76,15 +70,6 @@ theorem relMap_trans_symm_toEmbedding {L : Language} [L.Structure M] [L.Structur
 namespace Realization
 
 variable (R : Realization.{u, v} ω M)
-
-/-- A realization **has legal types** when every type it assigns is legal. -/
-def HasLegalTypes {α : Ordinal.{u}} (R : Realization.{u, v} α M) : Prop :=
-  ∀ ⦃n : ℕ⦄ (t : Fin n ↪ M) (p : StageType.{u} α n), R.eval t = some p → p.IsLegal
-
-/-- A model has legal types. -/
-theorem IsModel.hasLegalTypes {α : Ordinal.{u}} {R : Realization.{u, v} α M} (hR : R.IsModel) :
-    R.HasLegalTypes :=
-  hR.isLegal
 
 /-- The **structure of a realization** at stage `ω` [Kni26, Definition 3.3.4]: the relation `P_p`
 holds of a tuple exactly when the tuple is injective and has the stage type of `p`. -/

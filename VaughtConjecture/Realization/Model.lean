@@ -50,8 +50,9 @@ conditions of the source: for generalized saturation they are exactly its nonemp
 (`StageType.nonempty_cofaces_inter_saturationFamily_iff`), and a nonempty bottom-pattern family
 is that of the labels of any of its members, a lawful section extending the labels of `p`
 (`StageType.nonempty_cofaces_inter_bottomPatternFamily_iff`).  So there the guarded clauses are
-equivalent to those of the source.  That a model is infinite will use the dominance clause at
-`γ = 0` at a positive stage.
+equivalent to those of the source.  A model has legal types (`IsModel.hasLegalTypes`), and at a
+positive stage it has occurrences of every arity, by the dominance clause at `γ = 0`, so it is
+infinite (`IsModel.exists_arity_eq`, `IsModel.infinite`).
 
 **Transport and reduction.**  Modelhood is preserved and reflected by transport along a bijection
 of carriers (`isModel_map_iff`), hence invariant under isomorphism (`IsIso.isModel_iff`), where an
@@ -189,6 +190,47 @@ variable {R}
 /-- A model has an occurrence. -/
 theorem IsModel.nonempty_occurrence (hR : R.IsModel) : Nonempty R.Occurrence :=
   hR.isCovering.nonempty_occurrence
+
+/-- A model has legal types. -/
+theorem IsModel.hasLegalTypes {α : Ordinal.{u}} {R : Realization.{u, v} α M} (hR : R.IsModel) :
+    R.HasLegalTypes :=
+  hR.isLegal
+
+/-- A model at a positive stage has an occurrence of every arity: the empty face of any
+occurrence is closed, so the empty tuple is typed, and the dominance clause at `γ = 0` extends
+every occurrence by a new point. -/
+theorem IsModel.exists_arity_eq {α : Ordinal.{u}} {R : Realization.{u, v} α M}
+    (hR : R.IsModel) (hα : 0 < α) (k : ℕ) : ∃ x : R.Occurrence, x.arity = k := by
+  induction k with
+  | zero =>
+    obtain ⟨x⟩ := hR.nonempty_occurrence
+    have h := Realization.eval_face hR.isConsistent x (Function.Embedding.ofIsEmpty (α := Fin 0))
+    have hs : (R.eval (Function.Embedding.ofIsEmpty (α := Fin 0))).isSome := by
+      rw [show (Function.Embedding.ofIsEmpty (α := Fin 0)).trans x.tuple
+        = Function.Embedding.ofIsEmpty from by ext i; exact i.elim0] at h
+      rw [h, StageType.isSome_restrictFace_iff]
+      simpa using x.type.isWellFormed.isWellFormed.isPlan.empty_mem
+    obtain ⟨p, hp⟩ := Option.isSome_iff_exists.mp hs
+    exact ⟨⟨0, _, p, hp⟩, rfl⟩
+  | succ k ih =>
+    obtain ⟨x, rfl⟩ := ih
+    obtain ⟨u, -, q, -, hq⟩ := hR.dominance x 0 hα
+    exact ⟨⟨_, u, q, hq⟩, rfl⟩
+
+/-- A model at a positive stage has occurrences of arbitrarily large arity. -/
+theorem IsModel.exists_le_arity {α : Ordinal.{u}} {R : Realization.{u, v} α M}
+    (hR : R.IsModel) (hα : 0 < α) (k : ℕ) : ∃ x : R.Occurrence, k ≤ x.arity :=
+  (hR.exists_arity_eq hα k).imp fun _ h ↦ h.ge
+
+/-- **A model at a positive stage is infinite.** -/
+theorem IsModel.infinite {α : Ordinal.{u}} {R : Realization.{u, v} α M}
+    (hR : R.IsModel) (hα : 0 < α) : Infinite M := by
+  refine not_finite_iff_infinite.mp fun _ ↦ ?_
+  have := Fintype.ofFinite M
+  obtain ⟨x, hx⟩ := hR.exists_le_arity hα (Fintype.card M + 1)
+  have h := Fintype.card_le_of_embedding x.tuple
+  rw [Fintype.card_fin] at h
+  omega
 
 /-- **The saturation clause of the source**: at a stage that is zero or a limit, a model realizes,
 over every occurrence of type `p`, a coface of `p` on every legal scheme `S` whose face along the

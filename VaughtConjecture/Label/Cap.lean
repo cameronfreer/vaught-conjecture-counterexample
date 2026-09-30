@@ -129,4 +129,13 @@ theorem IsPermittedCutoff.exists_min_eq_min_reduce_ne (h : IsPermittedCutoff α 
   ⟨c, ⊤, .inl h.2, atStage_top, by simp, by
     rw [reduce_of_lt h.2, reduce_top]; exact h.2.ne_top⟩
 
+/-- The permitted cutoffs at stage `ω` are countably many: they are the natural numbers. -/
+instance countable_permittedCutoff :
+    Countable {c : Label.{u} // IsPermittedCutoff Ordinal.omega0.{u} c} :=
+  Set.Countable.to_subtype <|
+    (Set.countable_range fun k : ℕ ↦ ((k : Ordinal.{u}) : Label.{u})).mono fun _ hc ↦ by
+      obtain ⟨δ, hδ, rfl⟩ := isPermittedCutoff_iff.mp hc
+      obtain ⟨k, rfl⟩ := Ordinal.lt_omega0.mp hδ
+      exact ⟨k, rfl⟩
+
 end VaughtConjecture.Label
