@@ -17,7 +17,9 @@ A stage type (`StageType α n`) is the unrestricted structure: a well-formed sch
 and a lawful label section at stage `α`.  Nothing forces its rows to be consistent, bountiful, or
 complete.  The types of [Kni26, Definition 3.1.1] are built over a domain with its semantics
 ([Kni26, Definition 2.6.1]), whose semantics is coded, consistent, bountiful, and complete; this
-is **legality**.
+is **legality**.  Definition 2.6.1 also asks that `⟨B,j⟩`, `P↾B`, `D⟨B,j⟩`, and `E⟨B,j⟩` be
+recoverable from a cell; here that holds by representation (the rows are a field of the scheme),
+and `Scheme.IsCoded` is only the range normalisation of [Kni26, Lemma 2.5.13].
 
 * `Scheme.IsLegal S`: the scheme is well formed, its rows are coded (`Scheme.IsCoded`),
   consistent (`CellScheme.Rows.IsConsistent`), and bountiful (`CellScheme.Rows.IsBountiful`), and
@@ -28,15 +30,17 @@ is **legality**.
   Legal stage types are closed under the face maps where defined (`IsLegal.restrictFace`),
   reindexing (`IsLegal.reindex`), and stage reduction (`isLegal_reduce_iff`); at a stage with
   countably many ordinals below it there are countably many of them on `n` points
-  (`countable_setOf_isLegal`, from `StageType.countable`).
+  (`countable_setOf_isLegal`, from `StageType.countable`), the faithful form of
+  [Kni26, Proposition 3.1.4].
 
 **Reduction and the stage.**  `StageType.reduce` takes no bound relating the target stage `β` to
-the stage `α` of the type.  For `β ≤ α` it is the reduction of [Kni26, Definition 3.1.2]: a label
-below `β` is kept (`reduce_label_of_lt`) and a label at or above `β` becomes the formal top
-(`reduce_label_eq_top_iff`).  For `α ≤ β` it changes no label (`StageType.reduce_label_of_le`) and
-only relabels the stage: `t.reduce hβ = t.castLE hαβ` (`reduce_eq_castLE`), where `castLE` reads a
-stage type at stage `α` as one at the larger stage `β`.  Relabelling is invisible to reduction
-(`reduce_castLE`) and to legality (`isLegal_castLE_iff`).
+the stage `α` of the type.  For `β ≤ α` it is the reduction of [Kni26, Definition 3.1.2], whose
+content is `StageType.reduce_label` with `Label.reduce_of_lt` (a label below `β` is kept) and
+`Label.reduce_eq_top_iff` (a label at or above `β` becomes the formal top).  For `α ≤ β` it
+changes no label (`StageType.reduce_label_of_le`) and only relabels the stage:
+`t.reduce hβ = t.castLE hαβ` (`reduce_eq_castLE`), where `castLE` reads a stage type at stage `α`
+as one at the larger stage `β`.  Relabelling is invisible to reduction (`reduce_castLE`) and to
+legality (`isLegal_castLE_iff`).
 
 **Lifting across a face restriction.**  The cell map of the restriction along `f` maps the cells
 below a pair onto the cells below its image (`Scheme.image_cellMap_below`), so the restricted rows
@@ -47,16 +51,22 @@ assumption on its rows outside the face (`StageType.cappedLift_of_restrictFace`)
 
 ## Placement
 
+`StageType.castLE`, `castLE_toScheme`, `castLE_label`, `castLE_refl`, `castLE_castLE`,
+`reduce_eq_castLE`, and `reduce_castLE` belong in the "Stage reduction" section of
+`VaughtConjecture.Stage.Basic`, beside `StageType.reduce_label_of_le` and `StageType.reduce_self`;
+only `isLegal_castLE_iff` stays here.  `Scheme.cappedLift_comap_iff` belongs in
+`VaughtConjecture.Stage.Bountiful`, beside `Scheme.isBountiful_comap`, and
 `Scheme.image_cellMap_below` belongs in `VaughtConjecture.Stage.Scheme`, beside
-`Scheme.map_comap_gradedIndex`; it is stated here so that that file is unchanged.
+`Scheme.map_comap_gradedIndex`.  They are stated here so that those files are unchanged.
 
 ## References
 
 Types are [Kni26, Definition 3.1.1], over the domains with their semantics of
 [Kni26, Definition 2.6.1]; coding, consistency, bountifulness, and completeness of a semantics are
 [Kni26, Lemma 2.5.13 and Definitions 2.5.12, 2.5.14, and 2.5.15]; stage reduction and the
-restriction to a face of the plan are [Kni26, Definition 3.1.2], and the preservation of the
-laws under restriction is [Kni26, Lemma 2.5.5 and Proposition 2.6.3], for R. W. Knight,
+restriction to a face of the plan are [Kni26, Definition 3.1.2], the preservation of the
+laws under restriction is [Kni26, Lemma 2.5.5 and Proposition 2.6.3], and the countability of
+the type spaces is [Kni26, Proposition 3.1.4], for R. W. Knight,
 *A counterexample to Vaught's Conjecture using generalised Stone spaces* (draft, 20 February
 2026).
 -/
@@ -75,7 +85,9 @@ variable {n m : ℕ} (S : Scheme.{u} n) (f : Fin m ↪ Fin n)
 
 /-- A scheme on `n` points is **legal**: it is well formed, and its rows are coded, consistent,
 and bountiful, and it is complete; that is, it is a domain with a semantics as required for the
-types of [Kni26, Definition 3.1.1]. -/
+types of [Kni26, Definition 3.1.1].  The recoverability of `⟨B,j⟩`, `P↾B`, `D⟨B,j⟩`, and
+`E⟨B,j⟩` from a cell in [Kni26, Definition 2.6.1] holds by representation (the rows are a field of
+the scheme); `IsCoded` is only the range normalisation of [Kni26, Lemma 2.5.13]. -/
 structure IsLegal : Prop where
   /-- The scheme is well formed. -/
   isWellFormed : S.IsWellFormed
@@ -176,7 +188,9 @@ theorem IsLegal.reduce (ht : t.IsLegal) (hβ : Order.IsSuccPrelimit β) : (t.red
   ht
 
 /-- **Countably many legal stage types**: if there are countably many ordinals below the stage
-`α`, there are countably many legal stage types at stage `α` on `n` points. -/
+`α`, there are countably many legal stage types at stage `α` on `n` points.  This is the faithful
+form of [Kni26, Proposition 3.1.4]: the type space at stage `α` on `n` points is the set of legal
+stage types. -/
 theorem countable_setOf_isLegal (hα : (Set.Iio α).Countable) (n : ℕ) :
     {t : StageType.{u} α n | t.IsLegal}.Countable :=
   have := StageType.countable hα n
@@ -222,18 +236,6 @@ theorem reduce_eq_castLE (hβ : Order.IsSuccPrelimit β) (h : α ≤ β) :
 @[simp] theorem reduce_castLE (h : α ≤ β) (hγ : Order.IsSuccPrelimit γ) :
     (t.castLE h).reduce hγ = t.reduce hγ :=
   rfl
-
-/-- **Reduction to a smaller stage** [Kni26, Definition 3.1.2]: a label below the target stage
-`β` is kept. -/
-theorem reduce_label_of_lt (hβ : Order.IsSuccPrelimit β) {d : Fin t.card}
-    (hd : t.label d < β) : (t.reduce hβ).label d = t.label d :=
-  Label.reduce_of_lt hd
-
-/-- **Reduction to a smaller stage** [Kni26, Definition 3.1.2]: a label becomes the formal top
-exactly when it is at or above the target stage `β`. -/
-theorem reduce_label_eq_top_iff (hβ : Order.IsSuccPrelimit β) (d : Fin t.card) :
-    (t.reduce hβ).label d = ⊤ ↔ (β : Label.{u}) ≤ t.label d :=
-  Label.reduce_eq_top_iff
 
 /-! ### Capped lifting across a defined face -/
 

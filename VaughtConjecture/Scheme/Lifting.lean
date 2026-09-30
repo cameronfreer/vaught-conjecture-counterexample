@@ -38,15 +38,23 @@ end that bountifulness leaves out:
   their images (`CappedLift.comap`, `CappedLift.of_comap`, `cappedLift_comap_iff`).
 
 No bountifulness of the ambient rows is assumed anywhere: a lift at one pair is a property of that
-pair alone, and the lift across a face restriction (`Scheme.cappedLift_comap_iff` in
-`VaughtConjecture.Stage.Legal`) needs only bountifulness on the face.
+pair alone.  The transfer across a face restriction (`Scheme.cappedLift_comap_iff` in
+`VaughtConjecture.Stage.Legal`) assumes no bountifulness at all, and the lift across a defined
+face (`StageType.cappedLift_of_restrictFace`, same file) needs only bountifulness on the face.
 
 ## Placement
 
-`IsLowerEmbedding.belowEquiv_inclusion` belongs in the `IsLowerEmbedding` namespace of
-`VaughtConjecture.Scheme.Transport`, beside `IsLowerEmbedding.belowEquiv`; it is stated here so
-that that file is unchanged.  `IsBountiful.comap_of_image_eq` follows from `CappedLift.comap`
-applied at every pair of graded faces.
+`Rows.CappedLift`, `cappedLift_iff_forall_exists`, `cappedLift_refl`, `CappedLift.trans`, and
+`cappedLift_of_below_eq_empty` belong in `VaughtConjecture.Scheme.Bountiful`, with
+`Rows.IsBountiful` then *defined* as capped lifting at every pair of graded faces, so that
+`isBountiful_iff_cappedLift` becomes the definitional unfolding; after the move
+`cappedLift_iff_forall_exists` replaces the base `isBountiful_iff_forall_exists`, which becomes
+`simp only [isBountiful_iff_cappedLift, cappedLift_iff_forall_exists]`.  `CappedLift.of_equiv`,
+`CappedLift.comap`, `CappedLift.of_comap`, and `cappedLift_comap_iff` belong in
+`VaughtConjecture.Scheme.Transport` (where `IsBountiful.comap_of_image_eq` follows from
+`CappedLift.comap` applied at every pair of graded faces), and
+`IsLowerEmbedding.belowEquiv_inclusion` in its `IsLowerEmbedding` namespace, beside
+`IsLowerEmbedding.belowEquiv`.  They are stated here so that those files are unchanged.
 
 ## References
 

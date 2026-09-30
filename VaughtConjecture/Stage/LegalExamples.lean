@@ -18,8 +18,8 @@ scheme is not complete (`not_isLegal_bare`).  A `StageType` alone is the unrestr
 
 **Legal.**  `point` is the stage type on one point with a single cell of scope `{0}` and grade
 `1`, the faces `∅` and `{0}`, mute rows, and the bottom label: the one-point scheme with the mute
-semantics of [Kni26, Lemma 4.2.2].  Mute rows are consistent and bountiful, and the only graded
-face is `({0}, 1)`, so it is legal (`isLegal_point`).
+semantics of the last clause of [Kni26, Lemma 4.2.2].  Mute rows are consistent and bountiful,
+and the only graded face is `({0}, 1)`, so it is legal (`isLegal_point`).
 
 ## References
 
