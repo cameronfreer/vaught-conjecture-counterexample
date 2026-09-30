@@ -11,7 +11,7 @@ import VaughtConjecture.Extension.PinnedExtension
 import VaughtConjecture.Geometry.IntervalPlan
 
 /-!
-# Examples: a legal scheme violating the offset bound, and coding transport over it
+# Examples: a legal scheme violating the offset bound, and the preservation of coding over it
 
 Roadmap, Library conventions (legality imposes coding as the range normalization only) and
 Layer 3 (the coatom extension construction: coding of the completion); semantic contract, item 3.
@@ -26,8 +26,9 @@ plus one, so the scheme is not strongly coded (`not_isStronglyCoded_pointRow_thr
 for these legal inputs.  Both carry a legal stage type at every stage, their bottom labelling
 (`isLegal_toStageType_pointRow_three`, `isLegal_toStageType_pointRow_omega0_add_five`).
 
-**Coding transport over it.**  A proof of a coding statement that used the offset bound of its
-inputs would not apply here; the transport lemmas of `VaughtConjecture.Extension.Coding` do.
+**Preservation of coding over it.**  A proof of a coding statement that used the offset bound of
+its inputs would not apply here; the lemmas of `VaughtConjecture.Extension.Coding` showing that
+coding is preserved by the amalgam and by appended cells do.
 
 * The amalgam of `pointRow 3` with itself over the empty face is coded
   (`isCoded_amalgam_pointRow_three`) and not strongly coded
@@ -36,10 +37,10 @@ inputs would not apply here; the transport lemmas of `VaughtConjecture.Extension
   value `x`, and no cell of full scope, as in the amalgam; `apexRow x` appends the apex, a cell of
   scope `{0, 1}` and grade `2` with row bottom.  The cells of `pairRow x` are a lower set of those
   of `apexRow x`, with the same rows (`isLowerEmbedding_castSucc`, `comap_apexRow`).  So
-  `apexRow 3` is coded (`isCoded_apexRow_three`), by the transport lemma with the new cell
-  strongly coded, although it is not strongly coded (`not_isStronglyCoded_apexRow_three`); and it
-  is consistent (`isConsistent_apexRow_three`), by the consistency transport with the apex row
-  lawful below its cell, hence orderly (`isOrderly_apexRow_three`): its orderliness is derived
+  `apexRow 3` is coded (`isCoded_apexRow_three`), as coding is preserved by appending a strongly
+  coded cell, although it is not strongly coded (`not_isStronglyCoded_apexRow_three`); and it is
+  consistent (`isConsistent_apexRow_three`), as consistency is preserved by appending a cell whose
+  row is lawful below it, hence orderly (`isOrderly_apexRow_three`): its orderliness is derived
   from its consistency, not assumed.
 
 **Finiteness.**  Over a finite type of cells, the labellings strongly coded at the grades of
