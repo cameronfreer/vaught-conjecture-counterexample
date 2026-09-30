@@ -19,6 +19,13 @@ left undischarged for the construction is progress on a target, not its completi
 of `README.md` ("Library conventions") apply, including the terminology table and the keep-list.
 The literature these milestones rely on is recorded in `LITERATURE.md`, §7.
 
+**Status.**  The seven targets A1, A2, A3, B1, B2, B3, and C are established results: their
+proofs are known, and are the arguments given with each below.  They remain formalization targets
+here.  The deliberate `sorry` targets of the sketch and the ingredients marked "to be located or
+added upstream" are what is not yet formalized.  The status covers these seven statements only,
+not their non-claims and not further definability claims (`README.md`, "Status of the optional
+results").
+
 ## Notation
 
 * `Q`: the isomorphism classes of countable models of `Φ`, presented by codes of models on `ℕ`
@@ -193,7 +200,7 @@ realizations and the chart language (layer 2), finite-cut receiving and top-free
 
 The generic arguments "a definable orbit isolates its type" and "countable atomic implies prime"
 are separate from the construction and lie below the chart theorems; the second allows targets
-of arbitrary cardinality and carriers in independent universes.  Chart JEP/AP (B1) is a finite
+of arbitrary cardinality and carriers in arbitrary universes.  Chart JEP/AP (B1) is a finite
 statement that does not depend on this chain.
 
 ### B1. Joint embedding and amalgamation of top-free charts
@@ -210,9 +217,9 @@ the properties `ChartAmalgamation` and `ChartJointEmbedding` (definitions), and
 `chartJointEmbedding_of_chartAmalgamation` (proved: amalgamation over the empty chart gives joint
 embedding when every chart restricts to one empty chart).
 
-**Upstream ingredients.**  None for the finite statement.  Mathlib's `FirstOrder.Language.JointEmbedding`
-and `FirstOrder.Language.Amalgamation` (`ModelTheory/Fraisse`) concern classes of finitely
-generated structures under all embeddings and are not used.
+**Upstream ingredients.**  None for the finite statement.  Mathlib's
+`FirstOrder.Language.JointEmbedding` and `FirstOrder.Language.Amalgamation` (`ModelTheory/Fraisse`)
+concern classes of finitely generated structures under all embeddings and are not used.
 
 **Instantiation.**  The charts occurring in the top-free realizations at block `ξ`.
 
@@ -295,7 +302,7 @@ base reduct.  Search the pinned libraries before reproducing these generic argum
 4. **Primeness** (generic, a separate theorem).  A countable structure all of whose types are
    isolated embeds elementarily into every model of its complete theory: enumerate only the
    source, extend finite tuples preserving every first-order formula, and take the union.  The
-   target is any model of the complete theory, in an independent universe, with no receiving or
+   target is any model of the complete theory, in an arbitrary universe, with no receiving or
    countability assumption.  Sketch: `nonempty_elementaryEmbedding_of_typesIsolated` (target).
    Ingredients: Mathlib's `ElementaryEmbedding` (`ModelTheory/ElementaryMaps`); the primeness
    argument itself is not in the pinned libraries: to be located or added upstream.
