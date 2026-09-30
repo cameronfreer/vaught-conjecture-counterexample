@@ -287,7 +287,8 @@ theorem IsConvexGeometry.isPlan (hP : IsConvexGeometry A P)
         · exact h.1
     -- Glue the two restrictions along the common face `A \ {a, b}`, which is closed.
     have hface : (A.erase a).erase b ∈ P :=
-      (by grind : A.erase a ∩ A.erase b = (A.erase a).erase b) ▸ hP.infClosed haP hbP
+      (by rw [inter_erase, inter_eq_left.mpr (erase_subset _ _)] :
+          A.erase a ∩ A.erase b = (A.erase a).erase b) ▸ hP.infClosed haP hbP
     rw [he]
     refine IsPlan.step haA hbA hab (sub haP (card_erase_lt_of_mem haA))
       (sub hbP (card_erase_lt_of_mem hbA)) (mem_restrict.mpr ⟨hface, erase_subset _ _⟩)

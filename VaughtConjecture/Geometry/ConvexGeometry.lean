@@ -34,8 +34,8 @@ set) and its recursive description are in `VaughtConjecture.Geometry.Plan`.  See
 
 ## Reference
 
-P. H. Edelman and R. E. Jamison, *The theory of convex geometries*, Geom. Dedicata 19 (1985),
-247–270: the closed-set axioms, the equivalence of anti-exchange with accessibility, and the
+[EJ85] P. H. Edelman and R. E. Jamison, *The theory of convex geometries*, Geom. Dedicata 19
+(1985), 247–270: the closed-set axioms, the equivalence of anti-exchange with accessibility, and the
 representation of closed sets as hulls of their extreme points.
 -/
 

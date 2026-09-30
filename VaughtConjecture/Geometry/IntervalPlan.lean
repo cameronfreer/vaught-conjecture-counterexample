@@ -115,7 +115,8 @@ theorem isPlan_intervalPlan (A : Finset α) : IsPlan A (intervalPlan A) := by
         · exact (mem_intervalPlan_iff_of_mem hbP (mem_intervalPlan.mp hB).1).mp hB
     -- Glue the interval plans on `A \ {a}` and `A \ {b}` along the common face `A \ {a, b}`.
     have hface : (A.erase a).erase b ∈ intervalPlan A :=
-      (by grind : A.erase a ∩ A.erase b = (A.erase a).erase b) ▸ infClosed_intervalPlan haP hbP
+      (by rw [inter_erase, inter_eq_left.mpr (erase_subset _ _)] :
+          A.erase a ∩ A.erase b = (A.erase a).erase b) ▸ infClosed_intervalPlan haP hbP
     have hsa : (A.erase a).erase b ⊆ A.erase a := erase_subset _ _
     have hsb : (A.erase a).erase b ⊆ A.erase b := erase_subset_erase b (erase_subset a A)
     rw [he]
