@@ -217,9 +217,9 @@ the properties `ChartAmalgamation` and `ChartJointEmbedding` (definitions), and
 `chartJointEmbedding_of_chartAmalgamation` (proved: amalgamation over the empty chart gives joint
 embedding when every chart restricts to one empty chart).
 
-**Upstream ingredients.**  None for the finite statement.  Mathlib's `FirstOrder.Language.JointEmbedding`
-and `FirstOrder.Language.Amalgamation` (`ModelTheory/Fraisse`) concern classes of finitely
-generated structures under all embeddings and are not used.
+**Upstream ingredients.**  None for the finite statement.  Mathlib's
+`FirstOrder.Language.JointEmbedding` and `FirstOrder.Language.Amalgamation` (`ModelTheory/Fraisse`)
+concern classes of finitely generated structures under all embeddings and are not used.
 
 **Instantiation.**  The charts occurring in the top-free realizations at block `ξ`.
 
