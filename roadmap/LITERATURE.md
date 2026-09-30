@@ -67,7 +67,7 @@ Open with the exact infinitary statement, the stronger sentence-minimality inter
 5. Structural stable refinement, the three terminal comparisons, and countable terminal fibres.
 6. Domain continuity, sharp one-block comparison, and independent terminal-loss witnesses.
 
-Put characteristic theory, global stopping, detailed compatibility interfaces, and optional closure/definability consequences in appendices or companion work. Provide a theorem-to-Lean-declaration table and pinned build/audit information, distinguishing kernel checks from review that the definitions express the intended mathematics. This ordering lets the reader see exactly what the finite lemma has to accomplish before reading its technical proof.
+Put characteristic theory, global stopping, detailed compatibility interfaces, and optional closure/definability consequences in appendices or companion work. Provide a theorem-to-Lean-declaration table and pinned build/audit information, distinguishing kernel checks from the human check that the definitions express the intended mathematics. This ordering lets the reader see exactly what the finite lemma has to accomplish before reading its technical proof.
 
 ## Bibliographic access record
 

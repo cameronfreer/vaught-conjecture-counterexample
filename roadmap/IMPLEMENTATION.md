@@ -104,13 +104,16 @@ from per-cap lifts to simultaneous preservation under the hypothesis that restri
 injective, i.e. uniqueness of extension; that hypothesis is not available in general (see
 `README.md`, Layer 0: do not assume injectivity).  The construction obtains simultaneous cap
 preservation differently.  The per-cap lift applies only at caps where the face prescription
-is compatible with the ambient labelling.  These compatible caps are downward closed and
-bounded, and since a chart carries finitely many labels they induce only finitely many distinct
-observations, so a largest compatible cap exists (up to the observation it induces).  An
-extension preserving the observation at the largest cap at which the face prescription is
-compatible preserves it at every smaller cap, because caps nest under `min`
-(`min (min x c') c = min x c` for `c ≤ c'`).  This is the intended argument, still to be
-proved.  Preserve caps on
+is compatible with the ambient labelling, and the compatible caps are downward closed.  Two
+cases.  If the prescription differs from the ambient face at some coordinate, the compatible
+caps are exactly those below the least such disagreement, so a largest compatible cap `c*`
+exists; an extension preserving the observation at `c*` preserves it at every smaller cap,
+because caps nest under `min` (`min (min x c') c = min x c` for `c ≤ c'`).  If the prescription
+agrees with the ambient face at every permitted cap, the compatible caps have no maximum at a
+limit stage, and preservation at a single proper cap does not control the labels above it (a
+proper label above the cap and the formal top have the same observation there); simultaneous
+preservation then needs the exact or literal-top forms of receiving (layer 3), not the cap
+calculus.  This is the intended argument, still to be proved.  Preserve caps on
 **all** target coordinates, including auxiliaries and future catalogue fields (catalogue fields
 are to be defined by the forthcoming layer-3 specification).  A statement
 that recovers only a few labels from the observation does not weaken the lifting requirement.
@@ -238,9 +241,11 @@ In the pinned InfinitaryLogic:
 - the Gδ/Polish model-code spaces;
 - `internalScottRank_le_of_orbits_determined` (`Scott/OrbitRank`), used only by the companion
   full-chart orbit theory below.
+
 `SuggestedInterfaces.lean` checks representative names, so a pin bump that removes one fails
-when the sketch is checked (the checks are run by CI).  Coding a `Type w` carrier on `ℕ` needs a transfer of infinitary isomorphism across
-universes; do not assume that a statement within a single universe covers it.
+when the sketch is checked (the checks are run by CI).  Coding a `Type w` carrier on `ℕ` needs a
+transfer of infinitary isomorphism across universes; do not assume that a statement within a
+single universe covers it.
 
 ## Automation and API discipline
 
@@ -312,13 +317,17 @@ base reduct.  Search the pinned libraries before reproducing these generic argum
 2. Use a generic first-order theorem: a definable automorphism orbit isolates the tuple's
    complete type over the structure's own theory.  Transfer universal implications to
    arbitrary models of that theory, and identify a singleton in the space of complete types.
-   Uniqueness within the one model is not enough.  This gives atomicity, without strengthening
-   the hypotheses on the realization.
+   Uniqueness within the one model is not enough.  Applied to the charts under the hypotheses
+   of target 1, this gives atomicity without strengthening the hypotheses on the realization.
 3. First-order formulas have finite quantifier rank.  Back-and-forth agreement at the
    quantifier rank of an orbit formula determines that tuple's orbit.  Quote the pinned
    InfinitaryLogic's `internalScottRank_le_of_orbits_determined` (`Scott/OrbitRank`) to obtain
-   `internalScottRank ≤ ω` in its convention (the supremum of the orbit ranks plus one).  No
-   rank equality, and no identification with the expansion or departure height, is intended.
+   `internalScottRank ≤ ω` in its convention, the supremum over all tuples of the orbit rank
+   plus one, `⨆ a, orbitRank a + 1` (so finite but unbounded orbit ranks give exactly `ω`); the
+   bridge from level-`k` back-and-forth agreement to agreement on formulas of quantifier rank
+   `≤ k` is `BFEquiv_implies_agree_formulas_omega` (`Scott/QuantifierRank`, countable `M`).
+   Hypotheses: those of target 1.  No rank equality, and no identification with the expansion
+   or departure height, is intended.
 4. Prove that countable atomic implies prime as a **separate generic theorem**: enumerate only
    the source, extend finite tuples preserving every first-order formula, and take their
    union.  The target is any model of the complete theory, in an independent universe, with no
