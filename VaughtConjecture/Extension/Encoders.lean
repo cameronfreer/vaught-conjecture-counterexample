@@ -14,43 +14,47 @@ Roadmap, Layer 3, 3.1, row 6, checkpoint 2.3 (coded encoders and decoders; the n
 identities kept apart from lawfulness and from cap preservation) and 3.1 (catalogues and
 decoders); semantic contract, item 3.
 
-The band coding `bandEncode V K` of `VaughtConjecture.Extension.CodedSection` relabels the bands
+The block coding `bandEncode V K` of `VaughtConjecture.Extension.CodedSection` relabels the blocks
 of the labels of a finite set `V` and keeps their finite parts, so its codes lie below `ω ^ 2`
-(the range normalization of [Kni26, Lemma 2.5.13]) but need not be strongly coded
-(`Label.IsStronglyCoded`, finite part at most `K + 1`).  The **strongly coded encoder** first
-gives every ordinal whose finite part exceeds `K` a band of its own and then applies the band
+(the range normalization of [Kni26, Lemma 2.5.13]) but need not be strongly coded at `K`
+(`Label.IsStronglyCoded K`: bottom or `ω · i + j` with `j ≤ K + 1`, a bound on the finite part in
+addition to the bound `ω ^ 2` of coding).  The **strongly coded encoder** first
+gives every ordinal whose finite part exceeds `K` a block of its own and then applies the block
 coding; every code it produces is strongly coded at `K`.  This is a theorem about the codes this
 encoder constructs, not a bound on the rows of arbitrary legal inputs, which are only coded.
 
 The codes are strongly coded at `K`, not short at `K` (`Label.IsShort`): a label whose finite
 part exceeds `K` is sent to finite part `K + 1` (`Label.isShort_spread`), and the code of `3` at
 `K = 1` is not short at `1` (`VaughtConjecture.Extension.TransformationExamples`).  A row built
-from codes need not satisfy the shortness branch of the section theorem at its grade; where 2.5
-and 2.6 need short full-scope rows, the shortness comes from how the field layer builds their
-profiles, not from the encoder.
+from codes need not satisfy the shortness branch of the section theorem at its grade; shortness
+of a new row of full scope is a property of the construction of that row, not of the encoder.
 
 **Spreading** (`Label.spread K`).  An ordinal `ω * b + n` (`n < ω`) goes to `ω * (ω * b) + n` if
-`n ≤ K` and to `ω * (ω * b + n) + (K + 1)` otherwise: the part of each band up to `K` is kept in
-one band, and each point above `K` gets a band of its own, at finite part `K + 1`.  The
+`n ≤ K` and to `ω * (ω * b + n) + (K + 1)` otherwise: the part of each block up to `K` is kept in
+one block, and each point above `K` gets a block of its own, at finite part `K + 1`.  The
 **unspreading** `Label.unspread K` sends `ω * (ω * b + j) + x` to `ω * b + min x K` if `j = 0` and
 to `ω * b + max j K` otherwise, so that `unspread K ∘ spread K = id` (`Label.unspread_spread`).
 Both are monotone, send only bottom to bottom, and commute with visibility replacement at every
-threshold `k ≤ K`; they are witnesses bounded by `K` (`Label.isWitness_spread`,
-`Label.isWitness_unspread`).
+threshold `k ≤ K`; they are witnesses bounded by grade `K` (`Label.isWitness_spread`,
+`Label.isWitness_unspread`).  A *witness bounded by grade `K`* is a witness whose suppressor is the
+formal top at the grades `≤ K` and bottom above (`stepSuppressor K`); the bound is on the grades,
+not on the values of the witness.
 
 **The encoder and decoder.**  For a finite set `V` of labels,
 `Label.strongEncode V K = bandEncode (V.image (spread K)) K ∘ spread K` and
-`Label.strongDecode V K = unspread K ∘ bandDecode (V.image (spread K))`.
+`Label.strongDecode V K = unspread K ∘ bandDecode (V.image (spread K))`.  The *normal form* of a
+labelling `w` with values in `V` is `strongEncode V K ∘ w`
+(`VaughtConjecture.Extension.NormalForm`).
 
-* *Witness laws.*  Both are witnesses bounded by `K` (`Label.isWitness_strongEncode`,
+* *Witness laws.*  Both are witnesses bounded by grade `K` (`Label.isWitness_strongEncode`,
   `Label.isWitness_strongDecode`); the encoder sends only bottom to bottom
-  (`Label.strongEncode_eq_bot_iff`).  So are the band coding and decoding themselves
+  (`Label.strongEncode_eq_bot_iff`).  So are the block coding and decoding themselves
   (`Label.isWitness_bandEncode_stepSuppressor`, and `Label.isWitness_bandDecode_stepSuppressor`,
-  the truncation at `K` of `Label.isWitness_bandDecode`).
+  `Label.isWitness_bandDecode` with its suppressor truncated above `K`).
 * *Coding.*  Every code is strongly coded at `K` (`Label.isStronglyCoded_strongEncode`) and lies
   in the coded alphabet with block bound `2 * #V + 1` and offset bound `K + 1`
   (`Label.strongEncode_mem_codedAlphabet`); the formal top has a proper code.
-* *Numerical decoding identities.*  The decoder reads back every label of `V`
+* *Numerical decoding identities.*  The decoder recovers every label of `V`
   (`Label.strongDecode_strongEncode`), so the encoder is injective on `V`
   (`Label.injOn_strongEncode`); both are monotone (`Label.monotone_strongEncode`,
   `Label.monotone_strongDecode`), so both commute with `min` (`Monotone.map_min`).
@@ -58,11 +62,11 @@ threshold `k ≤ K`; they are witnesses bounded by `K` (`Label.isWitness_spread`
   preserved are the labels `c` of `V`: capping commutes with decoding at the code of `c`
   (`Label.strongDecode_min_strongEncode`), so two codes that agree capped at the code of `c`
   decode to labels that agree capped at `c` (`Label.min_strongDecode_eq_min_strongDecode`, and
-  `Label.min_strongDecode_eq_of_min_eq` when one code is read back); capped agreement at `c` is
-  preserved and reflected by the encoder (`Label.forall_min_strongEncode_eq_iff`).  The caps used
-  by 2.5 and 2.6 are self-visible at the grade bound `K`, and so are their codes
-  (`Label.isSelfVisible_strongEncode`), so capping a lawful code section at such a code keeps it
-  lawful ([Kni26, Lemma 2.5.8]).
+  `Label.min_strongDecode_eq_of_min_eq` when one code is the code of a label of `V`); capped
+  agreement at `c` is preserved and reflected by the encoder
+  (`Label.forall_min_strongEncode_eq_iff`).  The code of a cap self-visible at the grade bound `K`
+  is self-visible at `K` (`Label.isSelfVisible_strongEncode`), so capping a lawful code section at
+  such a code keeps it lawful ([Kni26, Lemma 2.5.8]).
 * *Lawfulness* (`CellScheme.Rows.IsLawful.strongEncode`): the encoded section of a lawful
   section is lawful, for every `V`, since the encoder is a bottom-reflecting witness.  The
   decoder does not reflect bottom (it sends the codes below `ω` to bottom), and the decoded section
@@ -70,22 +74,20 @@ threshold `k ≤ K`; they are witnesses bounded by `K` (`Label.isWitness_spread`
   (`CellScheme.Rows.IsLawful.strongDecode_of_ownerwise`, in
   `VaughtConjecture.Extension.OwnerwiseDecoding`).
 
-**The existential coded copies are redundant.**  The band coding is itself a bottom-reflecting
-witness bounded by `K` (`Label.isWitness_bandEncode_stepSuppressor`), so
-`CellScheme.Rows.IsLawful.map_of_bot_reflecting` makes `bandEncode V K ∘ w` lawful for every
-finite set `V` of labels and every lawful section `w` on cells of grade at most `K`, with no
-finiteness of the cells, as `CellScheme.Rows.IsLawful.strongEncode` does for the strongly coded
-encoder.  The existential `CellScheme.Rows.IsLawful.exists_bandEncode` of
-`VaughtConjecture.Extension.CodedSection`, and the witness transfer `Label.IsWitness.bandEncode`
-by which it is proved, are therefore to be replaced by this universal form, in that file or in
-the consolidation; the uses of `exists_bandEncode` through `.choose` in
-`VaughtConjecture.Extension.ApexLayer` can take `V := univ.image w`.
+**Coded copies relative to every finite set of labels.**  The block coding is itself a
+bottom-reflecting witness bounded by grade `K` (`Label.isWitness_bandEncode_stepSuppressor`), so
+`CellScheme.Rows.IsLawful.map_of_bot_reflecting` makes the coded copy `bandEncode V K ∘ w` lawful
+for every finite set `V` of labels and every lawful section `w` on cells of grade at most `K`, with
+no finiteness of the cells, as `CellScheme.Rows.IsLawful.strongEncode` does for the strongly coded
+encoder.  This contains the existential `CellScheme.Rows.IsLawful.exists_bandEncode` of
+`VaughtConjecture.Extension.CodedSection` (on finitely many cells, take `V := univ.image w`), with
+no witness transfer (`Label.IsWitness.bandEncode`).
 
 ## Placement
 
-The label statements belong in a `Label/Coding.lean` beside the band coding, and the lawfulness
+The label statements belong in a `Label/Coding.lean` beside the block coding, and the lawfulness
 statements in `VaughtConjecture.Scheme.Row`.  They are stated here so that those folders are
-unchanged.  The band arithmetic they use is stated once, in
+unchanged.  The block arithmetic they use is stated once, in
 `VaughtConjecture.Extension.WitnessAlgebra`.
 
 ## References
@@ -126,7 +128,7 @@ noncomputable def unspread (K : ℕ) : Label.{u} → Label.{u} :=
 
 variable {K k i : ℕ}
 
-/-- The band index of a spread ordinal, as a natural number. -/
+/-- The block index of a spread ordinal, as a natural number. -/
 private def spreadBand (K n : ℕ) : ℕ := if n ≤ K then 0 else n
 
 /-- The finite part of a spread ordinal. -/
@@ -140,7 +142,7 @@ private theorem spreadOrd_omega0_mul_add (b : Ordinal.{u}) (n : ℕ) :
   · simp [h]
   · simp [h, show ¬ (n : Ordinal.{u}) ≤ K by exact_mod_cast h]
 
-/-- The value of an unspread ordinal in its band, as a natural number. -/
+/-- The value of an unspread ordinal in its block, as a natural number. -/
 private def unspreadFin (K j x : ℕ) : ℕ := if j = 0 then min x K else max j K
 
 /-- Unspreading of `ω * (ω * b + j) + x`. -/
@@ -271,7 +273,7 @@ theorem monotone_unspread (K : ℕ) : Monotone (unspread K : Label.{u} → Label
   (Monotone.withTop_map fun _ _ ↦ unspreadOrd_mono).withBot_map
 
 /-- A map on labels that fixes bottom, is monotone, sends only bottom to bottom, and commutes
-with visibility replacement at every threshold `k ≤ K`, is a witness bounded by `K`. -/
+with visibility replacement at every threshold `k ≤ K`, is a witness bounded by grade `K`. -/
 private theorem isWitness_of_bot_reflecting {f : Label.{u} → Label.{u}} (hbot : f ⊥ = ⊥)
     (hmono : Monotone f) (hrefl : ∀ x, f x = ⊥ → x = ⊥)
     (hcomm : ∀ x, ∀ k ≤ K, ∀ i ≤ k, f (visibilityReplace k i x) = visibilityReplace k i (f x)) :
@@ -286,13 +288,13 @@ private theorem isWitness_of_bot_reflecting {f : Label.{u} → Label.{u}} (hbot 
     · rw [stepSuppressor_of_lt (not_le.mp hk), le_bot_iff] at hx
       rw [hrefl x hx, visibilityReplace_bot, hbot, visibilityReplace_bot]
 
-/-- **Spreading is a witness bounded by `K`.** -/
+/-- **Spreading is a witness bounded by grade `K`.** -/
 theorem isWitness_spread (K : ℕ) : IsWitness (stepSuppressor.{u} K) (spread K) :=
   isWitness_of_bot_reflecting rfl (monotone_spread K) (fun _ ↦ spread_eq_bot_iff.mp)
     fun x k hk i hi ↦ by
       induction x using recBotCoeTop <;> simp [spreadOrd_visibilityReplace hk hi]
 
-/-- **Unspreading is a witness bounded by `K`.** -/
+/-- **Unspreading is a witness bounded by grade `K`.** -/
 theorem isWitness_unspread (K : ℕ) : IsWitness (stepSuppressor.{u} K) (unspread K) :=
   isWitness_of_bot_reflecting rfl (monotone_unspread K) (fun _ ↦ unspread_eq_bot_iff.mp)
     fun x k hk i hi ↦ by
@@ -312,26 +314,27 @@ theorem isShort_spread (K : ℕ) (x : Label.{u}) : IsShort (K + 1) (spread K x) 
   | top => exact isShort_top _
   | coe o => exact isShort_coe.mpr (spreadOrd_mod_le K o)
 
-/-! ### The band coding as a witness bounded by `K` -/
+/-! ### The block coding as a witness bounded by grade `K` -/
 
 variable {V : Finset Label.{u}}
 
-/-- **The band coding is a witness bounded by `K`**: it commutes with visibility replacement at
-the thresholds `≤ K` and sends only bottom to bottom.  So `bandEncode V K ∘ w` is lawful for every
-`V` and every lawful `w` on cells of grade at most `K`
+/-- **The block coding is a witness bounded by grade `K`**: it commutes with visibility replacement
+at the thresholds `≤ K` and sends only bottom to bottom.  So `bandEncode V K ∘ w` is lawful for
+every `V` and every lawful `w` on cells of grade at most `K`
 (`CellScheme.Rows.IsLawful.map_of_bot_reflecting`). -/
 theorem isWitness_bandEncode_stepSuppressor (V : Finset Label.{u}) (K : ℕ) :
     IsWitness (stepSuppressor.{u} K) (bandEncode V K) :=
   isWitness_of_bot_reflecting rfl monotone_bandEncode (fun _ ↦ bandEncode_eq_bot_iff.mp)
     fun x _ hk i _ ↦ bandEncode_visibilityReplace hk i x
 
-/-- **The band decoding is a witness bounded by `K`**, for every `K`: the truncation at `K` of
-the band decoding with the constant suppressor `⊤`. -/
+/-- **The block decoding is a witness bounded by grade `K`**, for every `K`: the block decoding
+with the constant suppressor `⊤` (`Label.isWitness_bandDecode`), its suppressor truncated above
+`K`. -/
 theorem isWitness_bandDecode_stepSuppressor (V : Finset Label.{u}) (K : ℕ) :
     IsWitness (stepSuppressor.{u} K) (bandDecode V) :=
   isWitness_bandDecode.truncate K
 
-/-- The number of code bands is at most twice the number of labels. -/
+/-- The number of code blocks is at most twice the number of labels. -/
 private theorem card_codeBands_le (V : Finset Label.{u}) : #(codeBands V) ≤ 2 * #V := by
   classical
   have hv : #(valueBands V) ≤ #V := by
@@ -342,8 +345,8 @@ private theorem card_codeBands_le (V : Finset Label.{u}) : #(codeBands V) ≤ 2 
     _ ≤ #(valueBands V) + #(valueBands V) := add_le_add_right card_image_le _
     _ ≤ 2 * #V := by omega
 
-/-- The band code of a label short at `j ≥ K` lies in the coded alphabet with block bound the
-number of code bands plus one and offset bound `j`. -/
+/-- The block code of a label short at `j ≥ K` lies in the coded alphabet with block bound the
+number of code blocks plus one and offset bound `j`. -/
 private theorem bandEncode_mem_codedAlphabet {j : ℕ} (hK : K ≤ j) {x : Label.{u}}
     (hx : IsShort j x) :
     bandEncode V K x ∈ codedAlphabet (#(codeBands V) + 1) j := by
@@ -363,11 +366,11 @@ private theorem bandEncode_mem_codedAlphabet {j : ℕ} (hK : K ≤ j) {x : Label
 /-! ### The strongly coded encoder and its decoder -/
 
 /-- The **strongly coded encoder** relative to a finite set `V` of labels at grade `K`: spreading
-at `K` followed by the band coding of the spread labels of `V`. -/
+at `K` followed by the block coding of the spread labels of `V`. -/
 noncomputable def strongEncode (V : Finset Label.{u}) (K : ℕ) : Label.{u} → Label.{u} :=
   bandEncode (V.image (spread K)) K ∘ spread K
 
-/-- The **strongly coded decoder** relative to `V` at grade `K`: the band decoding of the spread
+/-- The **strongly coded decoder** relative to `V` at grade `K`: the block decoding of the spread
 labels of `V` followed by unspreading at `K`. -/
 noncomputable def strongDecode (V : Finset Label.{u}) (K : ℕ) : Label.{u} → Label.{u} :=
   unspread K ∘ bandDecode (V.image (spread K))
@@ -392,22 +395,26 @@ theorem monotone_strongEncode : Monotone (strongEncode V K) :=
 theorem monotone_strongDecode : Monotone (strongDecode V K) :=
   (monotone_unspread K).comp (isWitness_bandDecode_stepSuppressor _ K).monotone
 
-/-- **The encoder is a witness bounded by `K`.**  Used by 2.5 and 2.6: the boundary labels
-transform to their strongly coded representative, which is lawful. -/
+/-- **The encoder is a witness bounded by grade `K`.**  So a labelling of cells of grade at most `K`
+transforms to its normal form (`Label.transformsTo_strongEncode_comp`), which is lawful when the
+labelling is (`CellScheme.Rows.IsLawful.strongEncode`). -/
 theorem isWitness_strongEncode : IsWitness (stepSuppressor.{u} K) (strongEncode V K) :=
   (isWitness_spread K).comp_of_bot_reflecting (isWitness_bandEncode_stepSuppressor _ K)
     fun _ ↦ bandEncode_eq_bot_iff.mp
 
-/-- **The decoder is a witness bounded by `K`.**  Used by 2.5 and 2.6: it is the decoder of the
-section theorem, which realizes a catalogue vector as a lawful section. -/
+/-- **The decoder is a witness bounded by grade `K`.**  So the normal form of a labelling transforms
+back to it (`Label.strongEncode_comp_transformsTo`), and the decoded section of a lawful section is
+lawful under the hypotheses of ownerwise decoding
+(`CellScheme.Rows.IsLawful.strongDecode_of_ownerwise`). -/
 theorem isWitness_strongDecode : IsWitness (stepSuppressor.{u} K) (strongDecode V K) :=
   (isWitness_bandDecode_stepSuppressor _ K).comp_of_bot_reflecting (isWitness_unspread K)
     fun _ ↦ unspread_eq_bot_iff.mp
 
 /-- **Every code is strongly coded at `K`**: its finite part is at most `K + 1`.  It need not be
-short at `K` (`VaughtConjecture.Extension.TransformationExamples`).  Used by 2.5 and 2.6: the row
-of a new cell of grade `K` built from codes is strongly coded
-(`CellScheme.Rows.IsStronglyCodedAt`), so it keeps the coding of the extended scheme. -/
+short at `K` (`VaughtConjecture.Extension.TransformationExamples`).  So a new cell of grade `K`
+whose row takes its values among the codes is strongly coded (`CellScheme.Rows.IsStronglyCodedAt`),
+and appending it keeps coding (`CellScheme.Rows.isCoded_of_isLowerEmbedding_of_isStronglyCodedAt`).
+-/
 theorem isStronglyCoded_strongEncode (x : Label.{u}) : IsStronglyCoded K (strongEncode V K x) := by
   have h := bandEncode_mem_codedAlphabet (V := V.image (spread K)) (Nat.le_succ K)
     (isShort_spread K x)
@@ -416,8 +423,8 @@ theorem isStronglyCoded_strongEncode (x : Label.{u}) : IsStronglyCoded K (strong
   · exact .inr ⟨a, b, hb, h⟩
 
 /-- **The codes lie in one coded alphabet**, with block bound `2 * #V + 1` and offset bound
-`K + 1`.  Used by 2.5 and 2.6: the catalogue at grade `K` is finite, its vectors taking values in
-this alphabet (`Label.finite_setOf_isStronglyCoded_lt`). -/
+`K + 1`.  So a catalogue at grade `K` whose vectors take their values among the codes is finite
+(`Label.finite_setOf_isStronglyCoded_lt`). -/
 theorem strongEncode_mem_codedAlphabet (x : Label.{u}) :
     strongEncode V K x ∈ codedAlphabet (2 * #V + 1) (K + 1) := by
   have hcard : #(codeBands (V.image (spread K))) + 1 ≤ 2 * #V + 1 :=
@@ -440,22 +447,22 @@ theorem strongEncode_mem_codedAlphabet (x : Label.{u}) :
 
 /-! #### Numerical decoding identities -/
 
-/-- **The decoder reads back every label of `V`.** -/
+/-- **The decoder recovers every label of `V`.** -/
 theorem strongDecode_strongEncode {z : Label.{u}} (hz : z ∈ V) :
     strongDecode V K (strongEncode V K z) = z := by
   rw [strongDecode_apply, strongEncode_apply, bandDecode_bandEncode (mem_image_of_mem _ hz),
     unspread_spread]
 
-/-- The encoder is injective on `V`: the decoder is a left inverse on `V`.  Used by 2.5 and 2.6
-through `Label.forall_min_strongEncode_eq_iff`. -/
+/-- The encoder is injective on `V`: the decoder is a left inverse on `V`.  It gives the reflection
+of capped agreement by the encoder (`Label.forall_min_strongEncode_eq_iff`). -/
 theorem injOn_strongEncode : Set.InjOn (strongEncode V K) V :=
   Set.LeftInvOn.injOn (f₁' := strongDecode V K) fun _ hx ↦ strongDecode_strongEncode hx
 
 /-! #### Cap preservation -/
 
 /-- **The code of a cap self-visible at `K` is self-visible at `K`**, since the encoder is a
-witness bounded by `K`.  Used by 2.5 and 2.6: capping a lawful code section at the code of such a
-cap keeps it lawful ([Kni26, Lemma 2.5.8], `CellScheme.Rows.IsLawful.min_const_of_isSelfVisible`),
+witness bounded by grade `K`.  So capping a lawful code section at the code of such a cap keeps it
+lawful ([Kni26, Lemma 2.5.8], `CellScheme.Rows.IsLawful.min_const_of_isSelfVisible`),
 and the capped code section decodes to the capped decoded section
 (`Label.strongDecode_min_strongEncode`). -/
 theorem isSelfVisible_strongEncode {c : Label.{u}} (hc : IsSelfVisible K c) :
@@ -465,26 +472,25 @@ theorem isSelfVisible_strongEncode {c : Label.{u}} (hc : IsSelfVisible K c) :
 /-- **Capping commutes with decoding at the code of a cap of `V`**: for a cap `c` in `V`, the
 decoded label of any code `x` capped at `c` is the decoded label of `x` capped at the code of `c`.
 So `min (strongDecode V K x) c` is determined by `min x (strongEncode V K c)`.  This is numerical,
-per coordinate, and separate from lawfulness.  Used by 2.6, cell by cell: a lift of the encoded
-prescription capped at the code of a cap decodes to the decoded lift capped at the cap. -/
+per coordinate, and separate from lawfulness.  Applied cell by cell, a labelling by codes capped at
+the code of a cap decodes to the decoded labelling capped at the cap. -/
 theorem strongDecode_min_strongEncode {c : Label.{u}} (hc : c ∈ V) (x : Label.{u}) :
     strongDecode V K (min x (strongEncode V K c)) = min (strongDecode V K x) c := by
   rw [monotone_strongDecode.map_min, strongDecode_strongEncode hc]
 
 /-- **Capped agreement of codes decodes**, per coordinate: for a cap `c` in `V`, two codes that
 agree capped at the code of `c` decode to labels that agree capped at `c`.  The caps preserved are
-the labels of `V`; those used by 2.5 and 2.6 are moreover self-visible at the grade bound `K`,
-and so are their codes (`Label.isSelfVisible_strongEncode`).  Used by 2.6, cell by cell: a lift
-that agrees with the encoded ambient labelling at the code of a cap decodes to one that agrees
-with the decoded ambient labelling at the cap. -/
+the labels of `V`; when such a cap is self-visible at the grade bound `K`, so is its code
+(`Label.isSelfVisible_strongEncode`).  Applied cell by cell, two labellings by codes that agree
+capped at the code of a cap decode to labellings that agree capped at the cap. -/
 theorem min_strongDecode_eq_min_strongDecode {x x' c : Label.{u}} (hc : c ∈ V)
     (h : min x' (strongEncode V K c) = min x (strongEncode V K c)) :
     min (strongDecode V K x') c = min (strongDecode V K x) c := by
   rw [← strongDecode_min_strongEncode hc, h, strongDecode_min_strongEncode hc]
 
 /-- **Capped agreement is preserved and reflected by the encoder**, for labellings with values in
-`V` and a cap in `V`.  Used by 2.5 and 2.6: an ambient labelling and a prescription that agree at
-a cap are encoded to codes that agree at the code of the cap, and conversely. -/
+`V` and a cap in `V`: two such labellings agree capped at the cap exactly when their encodings
+agree capped at the code of the cap. -/
 theorem forall_min_strongEncode_eq_iff {D : Type*} {q q' : D → Label.{u}} {c : Label.{u}}
     (hq : ∀ d, q d ∈ V) (hq' : ∀ d, q' d ∈ V) (hc : c ∈ V) :
     (∀ d, min (strongEncode V K (q' d)) (strongEncode V K c) =
@@ -496,9 +502,10 @@ theorem forall_min_strongEncode_eq_iff {D : Type*} {q q' : D → Label.{u}} {c :
 
 /-- **Capped agreement with a code decodes**: a code `x` that agrees with the code of a label `y`
 of `V` capped at the code of a cap `c` in `V` decodes to a label that agrees with `y` capped at
-`c`; the case of `Label.min_strongDecode_eq_min_strongDecode` in which the second code is read
-back.  Used by 2.6, cell by cell: a lift of the encoded prescription at the code of a cap decodes
-to a lift that preserves the ambient observation at the cap on every cell. -/
+`c`; the case of `Label.min_strongDecode_eq_min_strongDecode` in which the second code is the code
+of a label of `V`.  Applied cell by cell, a labelling by codes that agrees with the encoding of a
+labelling with values in `V`, capped at the code of a cap, decodes to a labelling that agrees with
+it capped at the cap. -/
 theorem min_strongDecode_eq_of_min_eq {x y c : Label.{u}} (hy : y ∈ V) (hc : c ∈ V)
     (h : min x (strongEncode V K c) = min (strongEncode V K y) (strongEncode V K c)) :
     min (strongDecode V K x) c = min y c := by
@@ -516,8 +523,8 @@ variable {ι α : Type*} {D : CellScheme ι α} {R : D.Rows.{u}} {p : ι → Lab
   {V : Finset Label.{u}}
 
 /-- **The encoded section of a lawful section is lawful**, for every finite set `V` of labels,
-when the grades are at most `K`, with no finiteness of the cells.  Used by 2.5 and 2.6: the
-strongly coded representative of the boundary labels is lawful. -/
+when the grades are at most `K`, with no finiteness of the cells.  In particular the normal form
+of a lawful section is lawful (`VaughtConjecture.Extension.NormalForm`). -/
 theorem IsLawful.strongEncode (hp : R.IsLawful p) (hK : ∀ d, D.grade d ≤ K) :
     R.IsLawful (Label.strongEncode V K ∘ p) :=
   hp.map_of_bot_reflecting hK isWitness_strongEncode fun _ ↦ strongEncode_eq_bot_iff.mp

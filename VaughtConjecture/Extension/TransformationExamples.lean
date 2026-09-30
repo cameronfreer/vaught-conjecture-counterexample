@@ -8,48 +8,49 @@ import VaughtConjecture.Extension.OwnerwiseDecoding
 import VaughtConjecture.Geometry.IntervalPlan
 
 /-!
-# Examples: strongly coded representatives, encoder round trips, composition, and decoding
+# Examples: strongly coded normal forms, encoder round trips, composition, and decoding
 
 Roadmap, Layer 3, 3.1, row 6, checkpoint 2.3 (transformation algebra, normal forms, coded
 encoders); semantic contract, item 3.
 
-* **A strongly coded representative.**  On the cell scheme with one cell of scope `{0}` and grade
+* **A strongly coded normal form.**  On the cell scheme with one cell of scope `{0}` and grade
   `1` whose row takes the value `3` (the cell of `pointRow 3` in
   `VaughtConjecture.Extension.CodingExamples`), the section with label `3` is lawful and not
-  strongly coded at grade `1`, since `3 > 1 + 1`; it has a lawful representative strongly coded
-  at grade `1` that transforms to it and back, and a witness bounded by `1` decodes it
+  strongly coded at grade `1`, since `3 > 1 + 1`; it has a lawful normal form strongly coded at
+  grade `1` that transforms to it and back, and a witness bounded by grade `1` (a witness whose
+  suppressor is the formal top at grades `≤ 1` and bottom above, whatever its values) decodes it
   (`exists_stronglyCoded_pointSection`).
 * **Strongly coded, not short.**  At grade `1` the code of the label `3` relative to `{3}` has
   finite part `2`: it is strongly coded at `1` but not short at `1`
-  (`isStronglyCoded_and_not_isShort_strongEncode`).  So the representatives of the normal form are
-  not short at their grade, and the shortness branch of the section theorem does not apply to a
+  (`isStronglyCoded_and_not_isShort_strongEncode`).  So the normal forms are not short at their
+  grade, and the shortness branch of the section theorem does not apply to a
   row built from them by itself.
-* **An encoder round trip.**  For `V = {3, ω + 5, ω + 7, ⊤}` at grade `1`, the decoder reads back
+* **An encoder round trip.**  For `V = {3, ω + 5, ω + 7, ⊤}` at grade `1`, the decoder recovers
   each label, the codes are strongly coded at grade `1` although the labels `3`, `ω + 5`, and
-  `ω + 7` are not, and the two labels `ω + 5 < ω + 7` of one band keep distinct, ordered codes
+  `ω + 7` are not, and the two labels `ω + 5 < ω + 7` of one block keep distinct, ordered codes
   (`strongEncode_roundTrip`).
 * **Composition needs bottom reflection only off the short labels.**  Stage reduction to stage `1`
-  and the band decoding for `{0}` are witnesses bounded by `0`, and the band decoding sends the
-  value `0` of the first to bottom although `0` is not bottom, so the hypothesis of
-  `Label.IsWitness.comp_of_bot_reflecting` fails; their composite is not a witness bounded by `0`
-  (`not_isWitness_bandDecode_comp_reduce`), while
-  `Label.IsWitness.exists_eq_comp_of_isShort` gives a witness bounded by `0` equal to the
-  composite at every label short at `0` (`exists_eq_bandDecode_comp_reduce`).
-* **The decoder regression.**  On two cells `a`, `b` of grade `1` and one scope, with rows
-  `(1, 1)` for `a` and `(1, 2)` for `b`, the section `(1, ω * 5 + 1)` is lawful
+  and the block decoding for `{0}` are witnesses bounded by grade `0`, and the block decoding sends
+  the value `0` of the first to bottom although `0` is not bottom, so the hypothesis of
+  `Label.IsWitness.comp_of_bot_reflecting` fails; their composite is not a witness bounded by grade
+  `0` (`not_isWitness_bandDecode_comp_reduce`), while `Label.IsWitness.exists_eq_comp_of_isShort`
+  gives a witness bounded by grade `0` equal to the composite at every label short at `0`
+  (`exists_eq_bandDecode_comp_reduce`).
+* **A lawful section whose decoding is not lawful.**  On two cells `a`, `b` of grade `1` and one
+  scope, with rows `(1, 1)` for `a` and `(1, 2)` for `b`, the section `(1, ω * 5 + 1)` is lawful
   (`isLawful_pairSection`).  The decoder does not reflect bottom: relative to the empty set of
   labels it sends `1` to bottom (`strongDecode_empty_one`), so the section decodes to `(⊥, ⊤)`,
   which is not lawful, since `(1, 2)` does not transform to `(⊥, ⊤)` at grade `1`; the unconditional
-  decoding claim fails (`not_isLawful_strongDecode_pairSection`).  On the same rows, relative to
-  the labels of the section, the decoded normal form is the section itself and is lawful by
-  ownerwise decoding, `a` a new owner with a short row and `b` an inherited owner reading back
-  the section (`isLawful_strongDecode_strongEncode_pairSection`): the failure of bottom
-  reflection alone does not establish the failure of lawful decoding.
+  decoding claim fails (`not_isLawful_strongDecode_pairSection`).  On the same rows, relative to the
+  labels of the section, the decoded normal form is the section itself and is lawful by ownerwise
+  decoding, `a` a new owner with a short row and `b` an inherited owner below which the decoded
+  labels are those of the section (`isLawful_strongDecode_strongEncode_pairSection`): the failure of
+  bottom reflection alone does not establish the failure of lawful decoding.
 
 ## References
 
 Witnesses are [Kni26, Definition 2.3.9]; the range normalization of rows below `ω ^ 2` is that of
-[Kni26, Lemma 2.5.13], and the strong coding of the representatives is proved in this library.
+[Kni26, Lemma 2.5.13], and the strong coding of the normal forms is proved in this library.
 -/
 
 universe u
@@ -61,7 +62,7 @@ open scoped Ordinal
 
 namespace TransformationExamples
 
-/-! ### A strongly coded representative -/
+/-! ### A strongly coded normal form -/
 
 /-- The cell scheme with one cell of scope `{0}` and grade `1`. -/
 private def pointScheme : CellScheme (Fin 1) (Fin 1) :=
@@ -78,9 +79,9 @@ private theorem isLawful_pointSection : pointRows.{u}.IsLawful fun _ ↦ (3 : La
     exact TransformsTo.refl _ _
   availability _ t _ _ := ⟨t, rfl, le_rfl⟩
 
-/-- **A strongly coded representative of a section that is not strongly coded.**  The label `3`
-is not strongly coded at grade `1`; the lawful section with label `3` has a lawful representative
-strongly coded at grade `1`, transforming to it and back, and decoded by a witness bounded by
+/-- **A strongly coded normal form of a section that is not strongly coded.**  The label `3` is
+not strongly coded at grade `1`; the lawful section with label `3` has a lawful normal form
+strongly coded at grade `1`, transforming to it and back, and decoded by a witness bounded by grade
 `1`. -/
 private theorem exists_stronglyCoded_pointSection :
     ¬ IsStronglyCoded 1 (3 : Label.{u}) ∧
@@ -112,7 +113,7 @@ private theorem isStronglyCoded_and_not_isShort_strongEncode :
     simp
   have he : (3 : Label.{u}) = ((3 : Ordinal.{u}) : Label.{u}) := rfl
   rw [strongEncode_apply, image_singleton, he, spread_coe, hs, bandEncode_coe] at h
-  -- The band `3` of `ω * 3 + 2` is a value band, so the band coding keeps the finite part `2`.
+  -- The block `3` of `ω * 3 + 2` is a value block, so the block coding keeps the finite part `2`.
   have hv : (ω * 3 + (2 : ℕ) : Ordinal.{u}) / ω ∈
       valueBands ({((ω * 3 + (2 : ℕ) : Ordinal.{u}) : Label.{u})} : Finset Label.{u}) :=
     div_mem_valueBands (by simp)
@@ -131,7 +132,7 @@ private noncomputable abbrev omega0Add (j : ℕ) : Label.{u} :=
 private noncomputable abbrev roundTripSet : Finset Label.{u} :=
   {3, omega0Add 5, omega0Add 7, ⊤}
 
-/-- The encoder reflects the order of the labels of `V`, since the decoder reads them back. -/
+/-- The encoder reflects the order of the labels of `V`, since the decoder recovers them. -/
 private theorem strongEncode_le_strongEncode_iff {V : Finset Label.{u}} {K : ℕ} {x y : Label.{u}}
     (hx : x ∈ V) (hy : y ∈ V) : strongEncode V K x ≤ strongEncode V K y ↔ x ≤ y :=
   ⟨fun h ↦ strongDecode_strongEncode (K := K) hx ▸ strongDecode_strongEncode (K := K) hy ▸
@@ -144,7 +145,7 @@ private theorem omega0Add_five_lt_seven : omega0Add.{u} 5 < omega0Add 7 :=
 
 /-- **An encoder round trip.**  For `V = {3, ω + 5, ω + 7, ⊤}` at grade `1`: the labels `3`,
 `ω + 5`, and `ω + 7` are not strongly coded at grade `1`, but their codes and the code of `⊤` are;
-the decoder reads back every label of `V`; and the codes of `ω + 5 < ω + 7`, in one band, are
+the decoder recovers every label of `V`; and the codes of `ω + 5 < ω + 7`, in one block, are
 ordered strictly. -/
 private theorem strongEncode_roundTrip :
     (¬ IsStronglyCoded 1 (3 : Label.{u}) ∧ ¬ IsStronglyCoded 1 (omega0Add.{u} 5) ∧
@@ -168,8 +169,8 @@ private theorem visibilityReplace_zero_zero (x : Label.{u}) : visibilityReplace 
   IsSelfVisible.visibilityReplace_eq (by
     induction x using recBotCoeTop <;> simp) 0
 
-/-- Stage reduction to stage `1` is a witness bounded by `0`: it keeps `⊥` and `0` and sends every
-other label to the formal top. -/
+/-- Stage reduction to stage `1` is a witness bounded by grade `0`: it keeps `⊥` and `0` and sends
+every other label to the formal top. -/
 private theorem isWitness_reduce_one : IsWitness (stepSuppressor.{u} 0) (Label.reduce 1) where
   antitone := (IsWitness.id_step 0).antitone
   isSelfVisible := (IsWitness.id_step 0).isSelfVisible
@@ -182,7 +183,7 @@ private theorem isWitness_reduce_one : IsWitness (stepSuppressor.{u} 0) (Label.r
     · rw [stepSuppressor_of_lt hk, le_bot_iff, reduce_eq_bot_iff] at hx
       rw [hx, visibilityReplace_bot, reduce_bot, visibilityReplace_bot]
 
-/-- The band decoding for `{0}` is a witness bounded by `0`. -/
+/-- The block decoding for `{0}` is a witness bounded by grade `0`. -/
 private theorem isWitness_bandDecode_zero :
     IsWitness (stepSuppressor.{u} 0) (bandDecode {(0 : Label.{u})}) :=
   isWitness_bandDecode_stepSuppressor _ 0
@@ -191,11 +192,11 @@ private theorem isWitness_bandDecode_zero :
 private theorem reduce_one_zero : Label.reduce 1 (0 : Label.{u}) = 0 :=
   reduce_of_lt (by exact_mod_cast (zero_lt_one : (0 : Ordinal.{u}) < 1))
 
-/-- The band decoding for `{0}` sends ordinal zero to bottom. -/
+/-- The block decoding for `{0}` sends ordinal zero to bottom. -/
 private theorem bandDecode_zero : bandDecode {(0 : Label.{u})} (0 : Label.{u}) = ⊥ :=
   bandDecodeOrd_of_eq_zero (by simp)
 
-/-- **The hypothesis of guarded composition fails**: the band decoding for `{0}` sends the value
+/-- **The hypothesis of guarded composition fails**: the block decoding for `{0}` sends the value
 `0` of stage reduction to stage `1` to bottom, and `0` is not bottom. -/
 private theorem not_bot_reflecting :
     bandDecode {(0 : Label.{u})} (Label.reduce 1 0) = ⊥ ∧ Label.reduce 1 (0 : Label.{u}) ≠ ⊥ := by
@@ -213,16 +214,16 @@ private theorem not_isWitness_bandDecode_comp_reduce :
     reduce_of_le (by simp), bandDecode_top] at h1
   exact top_ne_bot h1
 
-/-- **The composition on short labels needs no bottom reflection**: some witness bounded by `0`
-agrees with the band decoding for `{0}` after stage reduction to stage `1` at every label short at
-`0`. -/
+/-- **The composition on short labels needs no bottom reflection**: some witness bounded by grade
+`0` agrees with the block decoding for `{0}` after stage reduction to stage `1` at every label short
+at `0`. -/
 private theorem exists_eq_bandDecode_comp_reduce :
     ∃ ρ, IsWitness (stepSuppressor.{u} 0) ρ ∧
       ∀ x, IsShort 0 x → ρ x = bandDecode {(0 : Label.{u})} (Label.reduce 1 x) :=
   isWitness_reduce_one.exists_eq_comp_of_isShort isWitness_bandDecode_zero le_rfl
 
 
-/-! ### The decoder regression -/
+/-! ### A lawful section whose decoding is not lawful -/
 
 /-- The cell scheme with two cells of scope `{0}` and grade `1`: `false` (the cell `a`) and
 `true` (the cell `b`). -/
@@ -261,7 +262,7 @@ private noncomputable def pairShifter (x : Label.{u}) : Label.{u} :=
 /-- `pairShifter` fixes bottom. -/
 private theorem pairShifter_bot : pairShifter (⊥ : Label.{u}) = ⊥ := ite_eq_left bot_le
 
-/-- `pairShifter` is a witness bounded by `1`. -/
+/-- `pairShifter` is a witness bounded by grade `1`. -/
 private theorem isWitness_pairShifter : IsWitness (stepSuppressor.{u} 1) pairShifter where
   antitone := (IsWitness.id_step 1).antitone
   isSelfVisible := (IsWitness.id_step 1).isSelfVisible
@@ -321,8 +322,8 @@ private theorem isLawful_pairSection : pairRows.{u}.IsLawful pairSection where
   availability s _ _ _ := ⟨true, rfl, pairSection_le s⟩
 
 /-- **The decoder does not reflect bottom**: relative to the empty set of labels at grade `1`, it
-sends the label `1`, which is not bottom, to bottom (the band coding reserves the code rank `0`,
-so every code below `ω` is read as bottom), and it sends `ω * 5 + 1` to the formal top. -/
+sends the label `1`, which is not bottom, to bottom (the block coding reserves the code rank `0`,
+so every code below `ω` is decoded as bottom), and it sends `ω * 5 + 1` to the formal top. -/
 private theorem strongDecode_empty_one :
     strongDecode (∅ : Finset Label.{u}) 1 1 = ⊥ ∧ (1 : Label.{u}) ≠ ⊥ ∧
       strongDecode (∅ : Finset Label.{u}) 1 omega0FiveOne = ⊤ := by
@@ -342,7 +343,7 @@ not lawful for the rows `(1, 1)` of `a` and `(1, 2)` of `b`: the row `(1, 2)` of
 transform, at grade `1`, to `(⊥, ⊤)`, since a shifter sending `1` to bottom sends its
 visibility replacement `2` to bottom as well.  So the unconditional decoding claim fails for the
 strongly coded decoder.  The hypotheses of ownerwise decoding fail at `b`, as they must: its row
-is not short at grade `1`, and the decoded labels do not read back a lawful section. -/
+is not short at grade `1`, and the decoded labels are not those of a lawful section. -/
 private theorem not_isLawful_strongDecode_pairSection :
     pairRows.{u}.IsLawful pairSection ∧
       strongDecode ∅ 1 ∘ pairSection.{u} = (fun b ↦ if b then ⊤ else ⊥) ∧
@@ -382,10 +383,10 @@ private theorem pairSection_mem (b : Bool) : pairSection.{u} b ∈ pairValues :=
   cases b <;> simp [pairSection]
 
 /-- **Lawful decoding holds when the ownerwise hypotheses do**, on the same rows.  Relative to the
-labels `{1, ω * 5 + 1}` of the section `(1, ω * 5 + 1)`, the decoder reads it back literally from
+labels `{1, ω * 5 + 1}` of the section `(1, ω * 5 + 1)`, the decoder recovers it literally from
 its normal form, and the decoded section is lawful by ownerwise decoding: the new owner `a` has
-the row `(1, 1)`, short at grade `1`, and the inherited owner `b` reads back the lawful section
-`(1, ω * 5 + 1)` on its whole lower domain.  The decoder family is the same and never reflects
+the row `(1, 1)`, short at grade `1`, and below the inherited owner `b` the decoded labels are
+those of the lawful section `(1, ω * 5 + 1)`.  The decoder family is the same and never reflects
 bottom (codes below `ω` go to `⊥` for every alphabet; `strongDecode_empty_one` for the empty
 one): the failure of bottom reflection alone does not establish the failure of lawful
 decoding. -/
@@ -393,12 +394,12 @@ private theorem isLawful_strongDecode_strongEncode_pairSection :
     strongDecode pairValues 1 ∘ (strongEncode pairValues 1 ∘ pairSection.{u}) = pairSection ∧
       pairRows.{u}.IsLawful (strongDecode pairValues 1 ∘ (strongEncode pairValues 1 ∘ pairSection))
       := by
-  have hread (d : Bool) :
+  have hdecode (d : Bool) :
       strongDecode pairValues 1 (strongEncode pairValues 1 (pairSection.{u} d)) = pairSection d :=
     strongDecode_strongEncode (pairSection_mem d)
-  refine ⟨funext hread, ?_⟩
+  refine ⟨funext hdecode, ?_⟩
   refine (isLawful_pairSection.strongEncode fun _ ↦ le_rfl).strongDecode_of_ownerwise
-    isLawful_pairSection (fun _ ↦ le_rfl) {false} (fun c hc d ↦ ?_) fun c _ d ↦ hread d
+    isLawful_pairSection (fun _ ↦ le_rfl) {false} (fun c hc d ↦ ?_) fun c _ d ↦ hdecode d
   obtain rfl : c = false := hc
   exact show IsShort 1 ((1 : Ordinal.{u}) : Label.{u}) from
     isShort_coe.mpr (by exact_mod_cast (Ordinal.natCast_mod_omega0 1).le)

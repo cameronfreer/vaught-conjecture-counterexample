@@ -14,45 +14,49 @@ vectors); semantic contract, item 3.
 
 The rows of a legal scheme are coded only in the sense of the range normalization of
 [Kni26, Lemma 2.5.13]: their values lie below `ω ^ 2` (`Scheme.IsCoded`).  A construction that
-adds a cell needs a row for it, and wants that row strongly coded (`Label.IsStronglyCoded`,
-finite part at most the grade plus one) and drawn from a finite catalogue.  This file proves that
-every lawful section on finitely many cells of grade at most `K` has such a representative; the
-strong coding is a property of the representative that the encoder constructs, proved here, and
-no bound on the finite parts of the given section or of the given rows is assumed or derived.
+adds a cell needs a row for it, and wants that row strongly coded and drawn from a finite
+catalogue.  A label is *strongly coded* at grade `k` (`Label.IsStronglyCoded k`) when it is bottom
+or an ordinal `ω · i + j` with `j ≤ k + 1`: it is coded (below `ω ^ 2`), and in addition its
+finite part is at most `k + 1`.  This file proves that every lawful section on finitely many cells
+of grade at most `K` has a strongly coded normal form; the strong coding is a property of the
+normal form that the encoder constructs, proved here, and no bound on the finite parts of the
+given section or of the given rows is assumed or derived.
 
 **Normal forms.**  Let `w` be a labelling of cells of grade at most `K`, and `V` a finite set of
 labels containing its values.  The **normal form** of `w` is `Label.strongEncode V K ∘ w`.
 
 * `w` and its normal form transform into each other (`Label.transformsTo_strongEncode_comp`,
-  `Label.strongEncode_comp_transformsTo`), and the decoder, a witness bounded by `K`, reads `w`
-  back from it (`Label.strongDecode_comp_strongEncode_comp`).  Transformation is not transitive,
-  so this two-sided relation is recorded as two statements, not as an equivalence relation.
+  `Label.strongEncode_comp_transformsTo`), and the decoder, a witness bounded by grade `K` (a
+  witness whose suppressor is the formal top at the grades `≤ K` and bottom above, whatever its
+  values), recovers `w` from it (`Label.strongDecode_comp_strongEncode_comp`).  Transformation is
+  not transitive, so this two-sided relation is recorded as two statements, not as an equivalence
+  relation.
 * If `w` is lawful, so is its normal form (`CellScheme.Rows.IsLawful.strongEncode`).
-* **Strongly coded representatives** (`CellScheme.Rows.IsLawful.exists_stronglyCoded`): over
-  finitely many cells, every lawful section `w` has a lawful representative `w'`, strongly coded
+* **Strongly coded normal forms** (`CellScheme.Rows.IsLawful.exists_stronglyCoded`): over
+  finitely many cells, every lawful section `w` has a lawful normal form `w'`, strongly coded
   at `K`, with values in the coded alphabet with block bound `2 · #cells + 1` and offset bound
-  `K + 1`, such that `w ⇒ w'`, `w' ⇒ w`, and a witness bounded by `K` sends `w'` to `w`.  Below
-  a pair `X` (`CellScheme.Rows.IsLawfulBelow.exists_stronglyCoded`) the grade bound is the grade
-  of `X`, so the representative is admissible as the row of a new cell of that grade that is
+  `K + 1`, such that `w ⇒ w'`, `w' ⇒ w`, and a witness bounded by grade `K` sends `w'` to `w`.
+  Below a pair `X` (`CellScheme.Rows.IsLawfulBelow.exists_stronglyCoded`) the grade bound is the
+  grade of `X`, so the normal form is admissible as the row of a new cell of that grade that is
   strongly coded (`CellScheme.Rows.IsStronglyCodedAt`).
 
-**Strongly coded, not short.**  The representatives produced here have finite parts up to
+**Strongly coded, not short.**  The normal forms produced here have finite parts up to
 `K + 1`: they are strongly coded at `K` but in general not short at `K` (`Label.IsShort`; the code
 of `3` at `K = 1` has finite part `2`, `VaughtConjecture.Extension.TransformationExamples`).  So a
-row built from a representative need not satisfy the shortness branch of the section theorem
-(`CellScheme.Rows.IsLawful.map_of_isShort_or`) at its grade.  Where 2.5 and 2.6 need the
-full-scope rows to be short, the shortness comes from how the field layer builds their profiles
-(checkpoints 2.5 and 2.6), not from this normal form: it is the hypothesis on the rows of the new
-owners in ownerwise decoding (`CellScheme.Rows.IsLawful.strongDecode_of_ownerwise`), whose
-inherited owners are discharged by literal readback (`Label.strongDecode_comp_strongEncode_comp`).
+row built from a normal form need not satisfy the shortness branch of the section theorem
+(`CellScheme.Rows.IsLawful.map_of_isShort_or`) at its grade.  Shortness of a new row of full
+scope is a property of the construction of that row, not of this normal form: it is the
+hypothesis on the rows of the new owners in ownerwise decoding
+(`CellScheme.Rows.IsLawful.strongDecode_of_ownerwise`), whose inherited owners satisfy the mapped
+locality because decoding recovers the labelling (`Label.strongDecode_comp_strongEncode_comp`).
 
-The lawfulness of the representative, its strong coding, and the decoding identity are separate
+The lawfulness of the normal form, its strong coding, and the decoding identity are separate
 statements, as are the cap statements of `VaughtConjecture.Extension.Encoders`.
 
 ## References
 
 The coding of rows below `ω ^ 2` is the range normalization of [Kni26, Lemma 2.5.13]; the strong
-coding of the representative is a theorem of this library about the representative it constructs.
+coding of the normal form is a theorem of this library about the normal form it constructs.
 Lawful sections are [Kni26, Definition 2.5.4] and transformations [Kni26, Definition 2.3.9].
 -/
 
@@ -66,22 +70,22 @@ namespace Label
 
 variable {D : Type*} {grade : D → ℕ} {V : Finset Label.{u}} {K : ℕ}
 
-/-- **A labelling transforms to its normal form.**  Used by 2.5 and 2.6: the boundary labels
-transform to their strongly coded representative. -/
+/-- **A labelling transforms to its normal form**, on cells of grade at most `K`, since the encoder
+is a witness bounded by grade `K`. -/
 theorem transformsTo_strongEncode_comp (hK : ∀ d, grade d ≤ K) (w : D → Label.{u}) :
     TransformsTo grade w (strongEncode V K ∘ w) :=
   isWitness_strongEncode.transformsTo_comp hK w
 
-/-- **The decoder reads a labelling back from its normal form**, when `V` contains its values.
-Used by 2.5 and 2.6: the literal readback by which the inherited owners are discharged in
-ownerwise decoding (`CellScheme.Rows.IsLawful.strongDecode_of_ownerwise`). -/
+/-- **The decoder recovers a labelling from its normal form**, when `V` contains its values.  So
+the decoded labels of the normal form of a lawful section `p` are those of `p`, the hypothesis on
+the inherited owners in ownerwise decoding (`CellScheme.Rows.IsLawful.strongDecode_of_ownerwise`).
+-/
 theorem strongDecode_comp_strongEncode_comp {w : D → Label.{u}} (hV : ∀ d, w d ∈ V) :
     strongDecode V K ∘ (strongEncode V K ∘ w) = w :=
   funext fun d ↦ strongDecode_strongEncode (hV d)
 
-/-- **The normal form transforms back to the labelling**, when `V` contains its values.  Used by
-2.5 and 2.6: the strongly coded representative of the boundary labels transforms back to them,
-through the decoder. -/
+/-- **The normal form transforms back to the labelling**, when `V` contains its values, through
+the decoder, a witness bounded by grade `K`. -/
 theorem strongEncode_comp_transformsTo (hK : ∀ d, grade d ≤ K) {w : D → Label.{u}}
     (hV : ∀ d, w d ∈ V) : TransformsTo grade (strongEncode V K ∘ w) w := by
   have h := (isWitness_strongDecode (V := V)).transformsTo_comp hK (strongEncode V K ∘ w)
@@ -93,14 +97,14 @@ namespace CellScheme.Rows
 
 variable {ι α : Type*} {D : CellScheme ι α} {R : D.Rows.{u}} {w : ι → Label.{u}} {K : ℕ}
 
-/-- **Strongly coded representatives of lawful sections.**  Let `w` be a lawful section on
+/-- **Strongly coded normal forms of lawful sections.**  Let `w` be a lawful section on
 finitely many cells of grade at most `K`.  Some lawful section `w'` is strongly coded at `K`, takes
 its values in the coded alphabet with block bound `2 · #cells + 1` and offset bound `K + 1`,
-transforms to `w` and is transformed to by `w`, and is sent to `w` by a witness bounded by `K`.
-No coding of `w` or of the rows is assumed.  The finite parts of `w'` reach `K + 1`, so `w'` is
-strongly coded at `K` but need not be short at `K`.  Used by 2.5 and 2.6: the boundary labels of
-a seed are replaced by a strongly coded catalogue vector, whose decoding restores them
-literally. -/
+transforms to `w` and is transformed to by `w`, and is sent to `w` by a witness bounded by grade
+`K`: the normal form of `w` relative to its set of values.  No coding of `w` or of the rows is
+assumed.  The finite parts of `w'` reach `K + 1`, so `w'` is strongly coded at `K` but need not be
+short at `K`.  It replaces a lawful section by a strongly coded one, with values in a finite
+coded alphabet, from which decoding recovers the section. -/
 theorem IsLawful.exists_stronglyCoded [Finite ι] (hw : R.IsLawful w) (hK : ∀ d, D.grade d ≤ K) :
     ∃ w' : ι → Label.{u}, R.IsLawful w' ∧ (∀ d, Label.IsStronglyCoded K (w' d)) ∧
       (∀ d, w' d ∈ codedAlphabet (2 * Nat.card ι + 1) (K + 1)) ∧
@@ -121,15 +125,15 @@ theorem IsLawful.exists_stronglyCoded [Finite ι] (hw : R.IsLawful w) (hK : ∀ 
   · exact mem_codedAlphabet.mpr (.inl h)
   · exact mem_codedAlphabet.mpr (.inr ⟨a, ha.trans hcard, b, hb, h⟩)
 
-/-- **Strongly coded representatives below a pair.**  Let `r` be lawful below `X`, on finitely
+/-- **Strongly coded normal forms below a pair.**  Let `r` be lawful below `X`, on finitely
 many cells.  Some `r'` lawful below `X` is strongly coded at the grade of `X`, takes its values in
 the coded alphabet with block bound `2 · #cells + 1` and offset bound the grade of `X` plus one,
 transforms to `r` and is transformed to by `r`, and is sent to `r` by a witness bounded by the
 grade of `X`.  The finite parts of `r'` reach the grade of `X` plus one, so `r'` need not be
-short at the grade of `X`.  Used by 2.5 and 2.6: `r'` is the row of a new cell of scope and grade
-those of `X`, and that cell is strongly coded (`CellScheme.Rows.IsStronglyCodedAt`); shortness
-of a full-scope row, where the section theorem needs it, comes from how the field layer builds
-its profile. -/
+short at the grade of `X`.  So `r'` can be the row of a new cell of scope and grade those of `X`,
+and that cell is strongly coded (`CellScheme.Rows.IsStronglyCodedAt`); shortness of a new row of
+full scope, where the section theorem needs it, is a property of the construction of that row.
+-/
 theorem IsLawfulBelow.exists_stronglyCoded {X : Finset α × ℕ} [Finite (D.below X)]
     {r : D.below X → Label.{u}} (hr : R.IsLawfulBelow X r) :
     ∃ r' : D.below X → Label.{u}, R.IsLawfulBelow X r' ∧

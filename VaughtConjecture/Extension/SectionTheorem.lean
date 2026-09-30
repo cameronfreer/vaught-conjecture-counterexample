@@ -23,19 +23,21 @@ a lawful section.  Three operations on `p` keep it lawful, with the rows unchang
   and, at the grade of a pair, `CellScheme.Rows.IsLawfulBelow.min_const_of_isSelfVisible`.
   Capping at a cutoff that is not self-visible need not keep lawfulness.
 * **The section theorem** (`CellScheme.Rows.IsLawful.map_of_isShort_or`, roadmap, 3.1): for a
-  witness `ν` bounded by `K`, `ν ∘ p` is lawful provided every owner (a cell with its row) is
-  **short** (every entry of its row is short at its grade, `Label.IsShort`) or satisfies the
-  **mapped locality** `E(s) ⇒ (d ↦ min (ν (p d)) (ν (p s)))`.  Orderliness and availability pass
-  through `ν` once; locality is proved owner by owner, at a short owner by
-  `Label.TransformsTo.map_of_isShort` and at any other owner by the hypothesis.  Neither
-  lawfulness of `ν ∘ p`, nor bottom reflection of `ν`, nor shortness of every row is assumed.
-  For the strongly coded decoder, which does not reflect bottom, the owners are discharged
-  ownerwise (`CellScheme.Rows.IsLawful.strongDecode_of_ownerwise`): new owners by the shortness
-  of their rows, inherited owners by literal readback of a lawful section.
-* **A bottom-reflecting witness** `ν` bounded by `K`
+  witness `ν` bounded by grade `K` (a witness whose suppressor is the formal top at the grades `≤ K`
+  and bottom above; the bound is on the grades, not on the values of `ν`), `ν ∘ p` is lawful
+  provided every owner (a cell with its row) is **short** (every entry of its row is short at its
+  grade, `Label.IsShort`) or satisfies the **mapped locality**
+  `E(s) ⇒ (d ↦ min (ν (p d)) (ν (p s)))`.  Orderliness and availability pass through `ν` once;
+  locality is proved owner by owner, at a short owner by `Label.TransformsTo.map_of_isShort` and at
+  any other owner by the hypothesis.  Neither lawfulness of `ν ∘ p`, nor bottom reflection of `ν`,
+  nor shortness of every row is assumed.  For the strongly coded decoder, which does not reflect
+  bottom, the owners are treated one by one (`CellScheme.Rows.IsLawful.strongDecode_of_ownerwise`):
+  new owners by the shortness of their rows, inherited owners because the decoded labels below them
+  are those of a lawful section.
+* **A bottom-reflecting witness** `ν` bounded by grade `K`
   (`CellScheme.Rows.IsLawful.map_of_bot_reflecting`): `ν ∘ p` is lawful when `ν` sends a label to
   bottom only if it is bottom.  This is the section theorem with every owner on the branch of
-  the mapped locality, which `Label.TransformsTo.map_of_bot_reflecting` supplies.
+  the mapped locality, which `Label.TransformsTo.map_of_bot_reflecting` proves.
 
 Lawfulness below a pair is lawfulness for the pulled-back rows (`Rows.isLawfulBelow_iff`), so
 the last two statements apply below a pair as they stand.
@@ -70,8 +72,8 @@ namespace IsLawful
 /-- **Capping a lawful section** [Kni26, Lemma 2.5.8].  If the cap `c` is self-visible at the
 grade of every cell whose label is at least `c`, the section capped at `c` is lawful.  At a cell
 whose label is below `c` the capped section agrees with `p`; at the others its label is `c`, and
-the locality of such an owner is capped at `c` (`Label.TransformsTo.min_const`).  Used by 2.5
-through `CellScheme.Rows.IsLawfulBelow.min_const`. -/
+the locality of such an owner is capped at `c` (`Label.TransformsTo.min_const`).  It gives the
+same statement below a pair (`CellScheme.Rows.IsLawfulBelow.min_const`). -/
 theorem min_const (hp : R.IsLawful p) {c : Label.{u}}
     (hc : ∀ d, c ≤ p d → IsSelfVisible (D.grade d) c) : R.IsLawful fun d ↦ min (p d) c where
   orderly d := by
@@ -99,15 +101,14 @@ theorem min_const_of_isSelfVisible (hp : R.IsLawful p) (hK : ∀ d, D.grade d �
   hp.min_const fun d _ ↦ hc.mono (hK d)
 
 /-- **The section theorem** (roadmap, Layer 3, 3.1).  Let `p` be lawful, the grades at most `K`,
-and `ν` a witness bounded by `K`.  If every owner `s` is short (every entry of its row is short at
-the grade of `s`) or satisfies the mapped locality `E(s) ⇒ (d ↦ min (ν (p d)) (ν (p s)))`, then
-`ν ∘ p` is lawful.  No bottom reflection of `ν` and no shortness of the other rows is assumed.
-Used by 2.5 and 2.6 through ownerwise decoding
-(`CellScheme.Rows.IsLawful.strongDecode_of_ownerwise`): the decoded section of a seed construction
-is lawful, its new full-scope owners taking the shortness branch, by how the field layer builds
-their rows (not by the normal form, whose representatives have finite parts up to `K + 1`), and
-each inherited owner the branch of the mapped locality, by literal readback of the original
-section. -/
+and `ν` a witness bounded by grade `K`.  If every owner `s` is short (every entry of its row is
+short at the grade of `s`) or satisfies the mapped locality
+`E(s) ⇒ (d ↦ min (ν (p d)) (ν (p s)))`, then `ν ∘ p` is lawful.  No bottom reflection of `ν` and
+no shortness of the other rows is assumed.  It proves ownerwise decoding
+(`CellScheme.Rows.IsLawful.strongDecode_of_ownerwise`): the decoded section is lawful when the new
+owners have short rows (a property of the construction of those rows, not of the normal form,
+whose finite parts reach `K + 1`) and the decoded labels below each inherited owner are those of
+a lawful section, which gives its mapped locality. -/
 theorem map_of_isShort_or (hp : R.IsLawful p) (hK : ∀ d, D.grade d ≤ K)
     (hν : IsWitness (stepSuppressor K) ν)
     (howner : ∀ s, (∀ t, IsShort (D.grade s) (R.row s t)) ∨
@@ -124,10 +125,10 @@ theorem map_of_isShort_or (hp : R.IsLawful p) (hK : ∀ d, D.grade d ≤ K)
     exact ⟨u, hu, hν.monotone hle⟩
 
 /-- **Lawfulness through a bottom-reflecting witness.**  If the grades are at most `K` and `ν` is
-a witness bounded by `K` that sends a label to bottom only if it is bottom, then `ν ∘ p` is
+a witness bounded by grade `K` that sends a label to bottom only if it is bottom, then `ν ∘ p` is
 lawful: the section theorem with every owner on the branch of the mapped locality
-(`Label.TransformsTo.map_of_bot_reflecting`).  Used by 2.5 and 2.6: the strongly coded
-representative of the boundary labels (`Label.strongEncode`) is lawful. -/
+(`Label.TransformsTo.map_of_bot_reflecting`).  It proves that the normal form of a lawful section
+is lawful (`CellScheme.Rows.IsLawful.strongEncode`). -/
 theorem map_of_bot_reflecting (hp : R.IsLawful p) (hK : ∀ d, D.grade d ≤ K)
     (hν : IsWitness (stepSuppressor K) ν) (hbot : ∀ x, ν x = ⊥ → x = ⊥) : R.IsLawful (ν ∘ p) :=
   hp.map_of_isShort_or hK hν fun s ↦ .inr (TransformsTo.map_of_bot_reflecting
@@ -147,8 +148,8 @@ theorem IsLawfulBelow.min_const {X : Finset α × ℕ} {r : D.below X → Label.
   isLawfulBelow_iff.mpr ((isLawfulBelow_iff.mp hr).min_const hc)
 
 /-- **Capping a labelling lawful below a pair at a cap self-visible at its grade**, the special
-case of [Kni26, Lemma 2.5.8] at the grade of `X`.  Used by 2.5: each lift of a prescription caps
-the ambient labelling at the lift's cap, a label self-visible at the target grade. -/
+case of [Kni26, Lemma 2.5.8] at the grade of `X`: a labelling lawful below `X` stays lawful when
+capped at a label self-visible at the grade of `X`, such as the cap of a lift to `X`. -/
 theorem IsLawfulBelow.min_const_of_isSelfVisible {X : Finset α × ℕ} {r : D.below X → Label.{u}}
     (hr : R.IsLawfulBelow X r) {c : Label.{u}} (hc : IsSelfVisible X.2 c) :
     R.IsLawfulBelow X fun d ↦ min (r d) c :=
