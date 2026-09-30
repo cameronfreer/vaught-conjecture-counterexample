@@ -4,9 +4,8 @@ This document sharpens [`README.md`](README.md) into an implementation order wit
 semantic guards and acceptance checkpoints.  Where the two differ, this one prevails; in
 particular the upper bound below goes through Scott separation on the persistent core, and
 thinness through the library's thinness theorem for countable sentence splits, not through
-Morley's dichotomy.  `README.md` remains
-the mathematical roadmap, `SEMANTIC_CONTRACT.md` fixes the meanings to preserve, and
-[`Suggested.lean`](Suggested.lean) / [`SuggestedInterfaces.lean`](SuggestedInterfaces.lean) give
+Morley's dichotomy.  `README.md` remains the mathematical roadmap, `SEMANTIC_CONTRACT.md` fixes
+the meanings to preserve, and [`Suggested.lean`](Suggested.lean) / [`SuggestedInterfaces.lean`](SuggestedInterfaces.lean) give
 selected, nonexhaustive Lean statements.  Do not turn their abstract structure fields into
 substitutes for the constructions.
 
