@@ -41,11 +41,14 @@ the construction).
   lawful section `p` (the original section, recovered by decoding along the exact base table),
   the mapped locality of `c` is the locality of `p` at `c`: the branch of the mapped locality,
   with no condition on the row and no bottom reflection.
-* **The combination** (`CellScheme.Rows.IsLawful.strongDecode_of_ownerwise`): if every cell of
+* **Ownerwise decoding** (`CellScheme.Rows.IsLawful.strongDecode_of_ownerwise`): if every cell of
   `N` has a short row and the decoded labels below every cell outside `N` are those of `p`, the
-  decoded section `Label.strongDecode V K ∘ q` is lawful.  Orderliness and availability pass
-  through the decoder, a witness bounded by grade `K` (`Label.isWitness_strongDecode`): a witness
-  whose suppressor is the formal top at the grades `≤ K` and bottom above, whatever its values.
+  decoded section `Label.strongDecode V K ∘ q` is lawful.  It applies the section theorem
+  directly: a new owner takes the shortness branch, whose locality is the statement of the first
+  lemma (not invoked there), and an inherited owner the branch of the mapped locality, by the
+  second.  Orderliness and availability pass through the decoder, a witness bounded by grade `K`
+  (`Label.isWitness_strongDecode`): a witness whose suppressor is the formal top at the grades
+  `≤ K` and bottom above, whatever its values.
 
 This replaces the unconditional decoding of a bottom-reflecting decoder.  The failure of bottom
 reflection alone does not make lawful decoding fail: in the counterexample, the same rows and the
@@ -93,8 +96,10 @@ theorem IsLawful.strongDecode_locality_of_decode_eq_on_below (hp : R.IsLawful p)
 /-- **Locality of a new owner, by the shortness of its row.**  Let `q` be lawful and `s` a cell
 of grade at most `K` whose row is short at the grade of `s`.  Then the row of `s` transforms to
 the decoded labels capped at the decoded label of `s`, with no condition on the decoded values:
-the shortness branch of the section theorem (`Label.TransformsTo.map_of_isShort`).  It is the
-locality of a new owner with a short row in ownerwise decoding. -/
+the shortness branch of the section theorem (`Label.TransformsTo.map_of_isShort`).  It states
+separately the locality that ownerwise decoding obtains at a new owner with a short row;
+`CellScheme.Rows.IsLawful.strongDecode_of_ownerwise` takes the shortness branch of the section
+theorem directly and does not invoke it. -/
 theorem IsLawful.strongDecode_locality_of_isShort_row (hq : R.IsLawful q) {s : ι}
     (hsK : D.grade s ≤ K) (hshort : ∀ t, IsShort (D.grade s) (R.row s t)) :
     TransformsTo (fun d : D.below (D.gradedIndex s) ↦ D.grade d) (R.row s)

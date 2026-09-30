@@ -164,8 +164,8 @@ its finite part satisfies the offset bound `j ≤ k + 1` displayed in that lemma
 distinct: coding bounds the label, strong coding also bounds its finite part in terms of the
 grade.  Every coded label is strongly coded at some grade
 (`Label.lt_omega0_sq_iff_exists_isStronglyCoded`), but `3` is coded and not strongly coded at
-grade `1`.  Strong coding is not part of legality; a
-construction that needs it imposes it on the rows it builds. -/
+grade `1`.  Strong coding is not part of legality; a construction that needs it imposes it on the
+rows it builds. -/
 def IsStronglyCoded (k : ℕ) (x : Label.{u}) : Prop :=
   x = ⊥ ∨ ∃ i j : ℕ, j ≤ k + 1 ∧ x = ((ω * i + j : Ordinal.{u}) : Label.{u})
 

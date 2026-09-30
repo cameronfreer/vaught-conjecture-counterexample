@@ -17,8 +17,12 @@ A value map `ν` is a **witness bounded by grade `K`** when `(stepSuppressor K, 
 bottom above, which bounds the grades where the guard is vacuous, not the values of `ν`.  Such a
 `ν` fixes bottom, is monotone, commutes with visibility replacement at every threshold `k ≤ K`
 without a guard, and above `K` sends the replacements of a label to bottom whenever it sends the
-label to bottom.  This file proves the rules for such witnesses that the completion of a seed
-(`VaughtConjecture.Extension.Seed`) uses, each with the statement it is used to prove.
+label to bottom.  This file proves the rules for such witnesses on which the lawfulness of
+transformed sections rests: the section theorem (`VaughtConjecture.Extension.SectionTheorem`), the
+normal forms (`VaughtConjecture.Extension.NormalForm`), and ownerwise decoding
+(`VaughtConjecture.Extension.OwnerwiseDecoding`); the maxima of shifters are for the shifters of
+the new cells in the completion of a seed, not formalized here.  Each rule is stated with the
+statement it is used to prove.
 
 * **Block arithmetic.**  An ordinal `o` is `ω * (o / ω) + o % ω`, its block and its finite part.
   The rules for ordinals `ω * a + x` with `x < ω` (`omega0_mul_add_div`, `omega0_mul_add_mod`,
@@ -37,8 +41,7 @@ label to bottom.  This file proves the rules for such witnesses that the complet
 * **Composition without bottom reflection on short labels**
   (`IsWitness.exists_eq_comp_of_isShort`): for witnesses `τ` bounded by grade `m` and `ν` bounded
   by a grade `K ≥ m`, some witness bounded by grade `m` agrees with `ν ∘ τ` at every label short at
-  `m`.  The
-  composite `ν ∘ τ` itself need not be a witness, and the library's guarded composition
+  `m`.  The composite `ν ∘ τ` itself need not be a witness, and the library's guarded composition
   `IsWitness.comp_of_bot_reflecting` needs bottom reflection for it
   (`VaughtConjecture.Extension.TransformationExamples`).
 * **The capped witness** (`TransformsTo.exists_isWitness_capped`): the locality at a cell `c`
@@ -49,8 +52,7 @@ label to bottom.  This file proves the rules for such witnesses that the complet
 * **Mapped locality** (`TransformsTo.map_of_isShort`, `TransformsTo.map_of_bot_reflecting`): a
   locality `E ⇒ (d ↦ min (p d) (p c))` gives `E ⇒ (d ↦ min (ν (p d)) (ν (p c)))` for a witness
   `ν` bounded by a grade `K ≥` the grade of `c`, when the source row `E` is short at the grade of
-  `c`, or
-  when `ν` reflects bottom.
+  `c`, or when `ν` reflects bottom.
 * **Maxima of shifters** (`IsWitness.max`, and over a nonempty finite set
   `IsWitness.finsetSup`) and **postcomposition** (`IsWitness.transformsTo_comp`): a witness
   bounded by grade `K` transforms every labelling of cells of grade `≤ K` to its image.
@@ -60,17 +62,16 @@ is `TransformsTo.min_const` (a related target-capping variant of [Kni26, Lemma 2
 transformation does not reverse two sources of the same grade (the fixed-grade case of
 `TransformsTo.le_of_le`).
 
-**No normal form for witnesses with a step suppressor.**  The completion of a seed needs no normal
-form for a witness whose suppressor is a step function of the grade: every witness it uses is
-bounded by a grade `K`, that is, its suppressor is `stepSuppressor K` itself, and the laws of such
-witnesses take the place of a normalization.  These are the rules above (`isWitness_comp_flatten`,
-`IsWitness.exists_eq_comp_of_isShort`, `TransformsTo.exists_isWitness_capped`, `IsWitness.max`,
-`IsWitness.finsetSup`, `IsWitness.transformsTo_comp`), the truncation of the suppressor above a
-grade (`IsWitness.truncate`) of the library, and the
-witness laws of the encoders (`Label.isWitness_spread`, `Label.isWitness_unspread`,
-`Label.isWitness_bandEncode_stepSuppressor`, `Label.isWitness_bandDecode_stepSuppressor`,
-`Label.isWitness_strongEncode`, `Label.isWitness_strongDecode`, in
-`VaughtConjecture.Extension.Encoders`).
+**Witnesses bounded by a grade suffice.**  The witnesses of the section theorem, of the normal
+forms, and of ownerwise decoding are witnesses bounded by a grade `K`: their suppressor is
+`stepSuppressor K` itself, and no witness with another suppressor is brought to that form.  The
+laws they need are the rules above (`isWitness_comp_flatten`,
+`IsWitness.exists_eq_comp_of_isShort`, `TransformsTo.exists_isWitness_capped`,
+`IsWitness.transformsTo_comp`), the replacement of the suppressor by bottom above a grade
+(`IsWitness.truncate`) of the library, and the witness laws of the encoders
+(`Label.isWitness_spread`, `Label.isWitness_unspread`, `Label.isWitness_bandEncode_stepSuppressor`,
+`Label.isWitness_bandDecode_stepSuppressor`, `Label.isWitness_strongEncode`,
+`Label.isWitness_strongDecode`, in `VaughtConjecture.Extension.Encoders`).
 
 ## Placement
 
@@ -409,10 +410,10 @@ theorem TransformsTo.map_of_isShort {E p : D → Label.{u}} {c : D}
     (hvis : IsSelfVisible (grade c) (p c)) (hloc : TransformsTo grade E fun d ↦ min (p d) (p c))
     (hν : IsWitness (stepSuppressor K) ν) :
     TransformsTo grade E fun d ↦ min (ν (p d)) (ν (p c)) := by
-  obtain ⟨τ, hτ, -, hdecode⟩ := hloc.exists_isWitness_capped hmax hvis
+  obtain ⟨τ, hτ, -, hcap⟩ := hloc.exists_isWitness_capped hmax hvis
   obtain ⟨ρ, hρ, hρτ⟩ := hτ.exists_eq_comp_of_isShort hν hcK
   refine ⟨_, ρ, hρ, fun d ↦ ?_⟩
-  rw [stepSuppressor_of_le (hmax d), min_top_right, hρτ _ (hshort d), hdecode,
+  rw [stepSuppressor_of_le (hmax d), min_top_right, hρτ _ (hshort d), hcap,
     hν.monotone.map_min]
 
 /-- **Mapped locality through a bottom-reflecting witness.**  As `TransformsTo.map_of_isShort`,
@@ -425,18 +426,19 @@ theorem TransformsTo.map_of_bot_reflecting {E p : D → Label.{u}} {c : D}
     (hloc : TransformsTo grade E fun d ↦ min (p d) (p c)) (hν : IsWitness (stepSuppressor K) ν)
     (hbot : ∀ x, ν x = ⊥ → x = ⊥) :
     TransformsTo grade E fun d ↦ min (ν (p d)) (ν (p c)) := by
-  obtain ⟨τ, hτ, -, hdecode⟩ := hloc.exists_isWitness_capped hmax hvis
+  obtain ⟨τ, hτ, -, hcap⟩ := hloc.exists_isWitness_capped hmax hvis
   refine ⟨_, _, hτ.comp_of_bot_reflecting (hν.of_le_stepSuppressor hcK) fun x ↦ hbot (τ x),
     fun d ↦ ?_⟩
-  rw [stepSuppressor_of_le (hmax d), min_top_right, Function.comp_apply, hdecode,
+  rw [stepSuppressor_of_le (hmax d), min_top_right, Function.comp_apply, hcap,
     hν.monotone.map_min]
 
 /-! ### Maximum and postcomposition -/
 
 /-- **The maximum of two shifters** with the same suppressor is a shifter for it: the guard of
-the maximum implies the guards of both.  It combines two witnesses with one suppressor, such as
-the capped witness of an owner (`TransformsTo.exists_isWitness_capped`) and a second witness
-bounded by the same grade, into one. -/
+the maximum implies the guards of both.  It gives the shifter of the locality of a new cell of
+full scope in the completion of a seed: the maximum of the capped witness of an owner
+(`TransformsTo.exists_isWitness_capped`) and a second witness bounded by the same grade, with
+values in a new band. -/
 theorem IsWitness.max (hσ : IsWitness g σ) (hτ : IsWitness g τ) :
     IsWitness g fun x ↦ max (σ x) (τ x) where
   antitone := hσ.antitone
@@ -449,7 +451,9 @@ theorem IsWitness.max (hσ : IsWitness g σ) (hτ : IsWitness g τ) :
       visibilityReplace_max hi]
 
 /-- **The maximum of finitely many shifters** with the same suppressor, over a nonempty finite
-set, is a shifter for it.  It combines finitely many witnesses with one suppressor into one. -/
+set, is a shifter for it.  It gives the shifter of the interpolation across cells of different
+grades in the completion of a seed, the maximum of finitely many shifters with one suppressor,
+which enters the decoder of that construction. -/
 theorem IsWitness.finsetSup {ι : Type*} {s : Finset ι} (hs : s.Nonempty)
     {σ : ι → Label.{u} → Label.{u}} (h : ∀ j ∈ s, IsWitness g (σ j)) :
     IsWitness g fun x ↦ s.sup fun j ↦ σ j x := by

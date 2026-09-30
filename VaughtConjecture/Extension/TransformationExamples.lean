@@ -23,8 +23,8 @@ encoders); semantic contract, item 3.
 * **Strongly coded, not short.**  At grade `1` the code of the label `3` relative to `{3}` has
   finite part `2`: it is strongly coded at `1` but not short at `1`
   (`isStronglyCoded_and_not_isShort_strongEncode`).  So the normal forms are not short at their
-  grade, and the shortness branch of the section theorem does not apply to a
-  row built from them by itself.
+  grade, and the shortness branch of the section theorem does not apply to a row built from them
+  by itself.
 * **An encoder round trip.**  For `V = {3, ω + 5, ω + 7, ⊤}` at grade `1`, the decoder recovers
   each label, the codes are strongly coded at grade `1` although the labels `3`, `ω + 5`, and
   `ω + 7` are not, and the two labels `ω + 5 < ω + 7` of one block keep distinct, ordered codes

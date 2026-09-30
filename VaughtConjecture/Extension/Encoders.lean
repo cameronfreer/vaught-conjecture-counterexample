@@ -18,10 +18,10 @@ The block coding `bandEncode V K` of `VaughtConjecture.Extension.CodedSection` r
 of the labels of a finite set `V` and keeps their finite parts, so its codes lie below `ω ^ 2`
 (the range normalization of [Kni26, Lemma 2.5.13]) but need not be strongly coded at `K`
 (`Label.IsStronglyCoded K`: bottom or `ω · i + j` with `j ≤ K + 1`, a bound on the finite part in
-addition to the bound `ω ^ 2` of coding).  The **strongly coded encoder** first
-gives every ordinal whose finite part exceeds `K` a block of its own and then applies the block
-coding; every code it produces is strongly coded at `K`.  This is a theorem about the codes this
-encoder constructs, not a bound on the rows of arbitrary legal inputs, which are only coded.
+addition to the bound `ω ^ 2` of coding).  The **strongly coded encoder** first gives every
+ordinal whose finite part exceeds `K` a block of its own and then applies the block coding; every
+code it produces is strongly coded at `K`.  This is a theorem about the codes this encoder
+constructs, not a bound on the rows of arbitrary legal inputs, which are only coded.
 
 The codes are strongly coded at `K`, not short at `K` (`Label.IsShort`): a label whose finite
 part exceeds `K` is sent to finite part `K + 1` (`Label.isShort_spread`), and the code of `3` at
@@ -50,7 +50,7 @@ labelling `w` with values in `V` is `strongEncode V K ∘ w`
   `Label.isWitness_strongDecode`); the encoder sends only bottom to bottom
   (`Label.strongEncode_eq_bot_iff`).  So are the block coding and decoding themselves
   (`Label.isWitness_bandEncode_stepSuppressor`, and `Label.isWitness_bandDecode_stepSuppressor`,
-  `Label.isWitness_bandDecode` with its suppressor truncated above `K`).
+  `Label.isWitness_bandDecode` with its suppressor replaced by bottom above `K`).
 * *Coding.*  Every code is strongly coded at `K` (`Label.isStronglyCoded_strongEncode`) and lies
   in the coded alphabet with block bound `2 * #V + 1` and offset bound `K + 1`
   (`Label.strongEncode_mem_codedAlphabet`); the formal top has a proper code.
@@ -87,8 +87,8 @@ no witness transfer (`Label.IsWitness.bandEncode`).
 
 The label statements belong in a `Label/Coding.lean` beside the block coding, and the lawfulness
 statements in `VaughtConjecture.Scheme.Row`.  They are stated here so that those folders are
-unchanged.  The block arithmetic they use is stated once, in
-`VaughtConjecture.Extension.WitnessAlgebra`.
+unchanged.  The block arithmetic they use is that of `VaughtConjecture.Extension.WitnessAlgebra`;
+`VaughtConjecture.Extension.CodedSection` keeps private copies of some of those rules.
 
 ## References
 
@@ -328,8 +328,8 @@ theorem isWitness_bandEncode_stepSuppressor (V : Finset Label.{u}) (K : ℕ) :
     fun x _ hk i _ ↦ bandEncode_visibilityReplace hk i x
 
 /-- **The block decoding is a witness bounded by grade `K`**, for every `K`: the block decoding
-with the constant suppressor `⊤` (`Label.isWitness_bandDecode`), its suppressor truncated above
-`K`. -/
+with the constant suppressor `⊤` (`Label.isWitness_bandDecode`), its suppressor replaced by bottom
+above `K`. -/
 theorem isWitness_bandDecode_stepSuppressor (V : Finset Label.{u}) (K : ℕ) :
     IsWitness (stepSuppressor.{u} K) (bandDecode V) :=
   isWitness_bandDecode.truncate K
@@ -413,8 +413,8 @@ theorem isWitness_strongDecode : IsWitness (stepSuppressor.{u} K) (strongDecode 
 /-- **Every code is strongly coded at `K`**: its finite part is at most `K + 1`.  It need not be
 short at `K` (`VaughtConjecture.Extension.TransformationExamples`).  So a new cell of grade `K`
 whose row takes its values among the codes is strongly coded (`CellScheme.Rows.IsStronglyCodedAt`),
-and appending it keeps coding (`CellScheme.Rows.isCoded_of_isLowerEmbedding_of_isStronglyCodedAt`).
--/
+and appending it preserves coding
+(`CellScheme.Rows.isCoded_of_isLowerEmbedding_of_isStronglyCodedAt`). -/
 theorem isStronglyCoded_strongEncode (x : Label.{u}) : IsStronglyCoded K (strongEncode V K x) := by
   have h := bandEncode_mem_codedAlphabet (V := V.image (spread K)) (Nat.le_succ K)
     (isShort_spread K x)
@@ -462,9 +462,7 @@ theorem injOn_strongEncode : Set.InjOn (strongEncode V K) V :=
 
 /-- **The code of a cap self-visible at `K` is self-visible at `K`**, since the encoder is a
 witness bounded by grade `K`.  So capping a lawful code section at the code of such a cap keeps it
-lawful ([Kni26, Lemma 2.5.8], `CellScheme.Rows.IsLawful.min_const_of_isSelfVisible`),
-and the capped code section decodes to the capped decoded section
-(`Label.strongDecode_min_strongEncode`). -/
+lawful ([Kni26, Lemma 2.5.8], `CellScheme.Rows.IsLawful.min_const_of_isSelfVisible`). -/
 theorem isSelfVisible_strongEncode {c : Label.{u}} (hc : IsSelfVisible K c) :
     IsSelfVisible K (strongEncode V K c) :=
   isWitness_strongEncode.isSelfVisible_apply hc (by simp)
