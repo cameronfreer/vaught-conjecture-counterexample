@@ -40,10 +40,11 @@ map along `e` (`restrictFace_equiv`) and commutes with all face maps (`restrictF
 
 **Stage reduction.**  At a stage `β` that is zero or a limit (`Order.IsSuccPrelimit β`), the
 reduction `t.reduce hβ : StageType β n` keeps the scheme and rows and applies `Label.reduce β`
-to the section.  The reduced section is lawful (`CellScheme.Rows.IsLawful.reduce`): the order and
-availability laws need only that reduction preserves self-visibility and is monotone, while
-locality uses the reduction rule `Label.TransformsTo.reduce` [Kni26, §3.1], which holds
-because stage reduction to a stage that is zero or a limit commutes with visibility replacement.
+to the section.  The reduced section is lawful (`CellScheme.Rows.IsLawful.reduce`, in
+`VaughtConjecture.Scheme.Row`): the order and availability laws need only that reduction
+preserves self-visibility and is monotone, while locality uses the reduction rule
+`Label.TransformsTo.reduce` [Kni26, §3.1], which holds because stage reduction to a stage that is
+zero or a limit commutes with visibility replacement.
 At a successor stage `γ + 1` this fails: visibility replacement changes the finite part of an
 ordinal label and can move a label below `γ + 1` to one at or above it, so reduction and the
 transformation relation do not commute, and the reduction of a lawful section need not be lawful:
@@ -71,27 +72,6 @@ universe u
 namespace VaughtConjecture
 
 open Finset Label
-
-/-! ### Reduction of lawful sections -/
-
-namespace CellScheme.Rows.IsLawful
-
-variable {ι α : Type*} {D : CellScheme ι α} {R : D.Rows.{u}} {p : ι → Label.{u}}
-  {β : Ordinal.{u}}
-
-/-- **Stage reduction of lawful sections.**  At a stage `β` that is zero or a limit, the stage
-reduction of a lawful section is lawful.  The hypothesis on `β` is necessary
-(`VaughtConjecture.Stage.Examples`). -/
-theorem reduce (h : R.IsLawful p) (hβ : Order.IsSuccPrelimit β) :
-    R.IsLawful (Label.reduce β ∘ p) where
-  orderly d := (h.orderly d).reduce β
-  locality s := by
-    simpa [Function.comp_def, (monotone_reduce β).map_min] using (h.locality s).reduce hβ
-  availability s t hst hg := by
-    obtain ⟨u, hu, hle⟩ := h.availability s t hst hg
-    exact ⟨u, hu, monotone_reduce β hle⟩
-
-end CellScheme.Rows.IsLawful
 
 /-! ### Stage types -/
 

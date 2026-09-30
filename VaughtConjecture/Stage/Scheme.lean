@@ -18,8 +18,8 @@ cells are `Fin card`, in their order, with its semantic rows (`CellScheme.Rows`)
 data.  Its laws are separate: `Scheme.IsWellFormed` (the ground set is all of `Fin n` and the cell
 scheme is well formed) and `Scheme.IsCoded` (every row value is bottom or an ordinal
 `ω · i + j`, that is, lies below `ω ^ 2`).  Consistency of the rows is the base predicate
-`CellScheme.Rows.IsConsistent`, and completeness (`CellScheme.IsComplete`: every graded face is
-the graded index of a cell) is defined here.
+`CellScheme.Rows.IsConsistent`, and completeness is the base predicate `CellScheme.IsComplete`
+(every graded face is the graded index of a cell).
 
 **Face restriction.**  For an embedding `f : Fin m ↪ Fin n`, `S.comap f : Scheme m` is the
 pullback of the cell scheme along `f` (`CellScheme.comap`), whose cells are the cells of `S`
@@ -52,38 +52,6 @@ universe u
 namespace VaughtConjecture
 
 open Finset
-
-/-! ### Graded indices along an embedding and complete schemes -/
-
-namespace CellScheme
-
-variable {ι κ α β : Type*}
-
-/-- A cell scheme is **complete** [Kni26, §2.5]: every graded face is the graded
-index of some cell. -/
-def IsComplete (D : CellScheme ι α) : Prop :=
-  ∀ X ∈ D.gradedFaces, ∃ d, D.gradedIndex d = X
-
-/-- A scheme is complete after reindexing along a surjective map of cells. -/
-theorem IsComplete.reindex {D : CellScheme ι α} (hD : D.IsComplete) {φ : κ → ι}
-    (hφ : Function.Surjective φ) : (D.reindex φ).IsComplete := fun X hX ↦ by
-  obtain ⟨d, hd⟩ := hD X hX
-  obtain ⟨t, rfl⟩ := hφ d
-  exact ⟨t, hd⟩
-
-/-- The pullback of a complete scheme along an embedding is complete: the image
-`Prod.map (Finset.map f) id X` of a graded face `X` of the pullback is a graded face, whose cell is
-visible through the embedding. -/
-theorem IsComplete.comap {D : CellScheme ι α} (hD : D.IsComplete) (f : β ↪ α) :
-    (D.comap f).IsComplete := by
-  intro X hX
-  obtain ⟨d, hd⟩ := hD _ ((mem_gradedFaces_comap D f).mp hX)
-  have hsc : D.scope d = X.1.map f := congrArg Prod.fst hd
-  refine ⟨⟨d, by simp [hsc]⟩, Prod.ext ?_ ?_⟩
-  · simp [hsc, preimage_map]
-  · simpa using congrArg Prod.snd hd
-
-end CellScheme
 
 /-! ### Schemes on `n` points -/
 

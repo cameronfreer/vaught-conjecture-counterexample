@@ -38,7 +38,10 @@ when it is a lawful section of the rows restricted to the scheme `D⟨X⟩` of c
 (`isLawfulBelow_iff`); along a lower embedding mapping the cells below `X` onto the cells below
 `Y`, lawfulness below `X` is lawfulness below `Y` (`isLawfulBelow_comap_iff`).  Lawful sections
 restrict to every lower set (`IsLawful.isLawfulBelow`) and from a lower set to a smaller one
-(`IsLawfulBelow.mono`).
+(`IsLawfulBelow.mono`).  At a stage `β` that is zero or a limit, the stage reduction
+`Label.reduce β ∘ p` of a lawful section `p` is lawful (`IsLawful.reduce`), by the reduction rule
+`Label.TransformsTo.reduce`; at a successor stage it need not be
+(`VaughtConjecture.Stage.Examples`).
 
 The constant bottom labelling is lawful for all rows (`isLawful_bot`), and a cell whose row is
 bottom at the cell itself has bottom label in every lawful section
@@ -208,6 +211,18 @@ theorem restrict [DecidableEq α] (h : R.IsLawful p) (B : Finset α) :
 theorem isLawfulBelow (h : R.IsLawful p) (X : Finset α × ℕ) :
     R.IsLawfulBelow X fun d ↦ p d :=
   isLawfulBelow_iff.mpr (h.comap (IsLowerEmbedding.subtypeVal_below D X))
+
+/-- **Stage reduction of lawful sections.**  At a stage `β` that is zero or a limit, the stage
+reduction of a lawful section is lawful.  The hypothesis on `β` is necessary
+(`VaughtConjecture.Stage.Examples`). -/
+theorem reduce {β : Ordinal.{u}} (h : R.IsLawful p) (hβ : Order.IsSuccPrelimit β) :
+    R.IsLawful (Label.reduce β ∘ p) where
+  orderly d := (h.orderly d).reduce β
+  locality s := by
+    simpa [Function.comp_def, (monotone_reduce β).map_min] using (h.locality s).reduce hβ
+  availability s t hst hg := by
+    obtain ⟨u, hu, hle⟩ := h.availability s t hst hg
+    exact ⟨u, hu, monotone_reduce β hle⟩
 
 end IsLawful
 

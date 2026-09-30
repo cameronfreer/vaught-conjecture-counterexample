@@ -28,18 +28,12 @@ countable set as soon as there are countably many ordinals below `α`
 * `StageType.countable_sigma`: the same holds for the stage types of all finite arities together,
   the relation symbols of the language at stage `α`.
 
-No bound on the rows other than the coding is used.
-
-The label-level statements `Label.countable_setOf_atStage` and
-`Label.countable_setOf_lt_omega0_sq` belong in `VaughtConjecture.Label.Basic`;
-`Rows.IsLawful.reduce` (`VaughtConjecture.Stage.Basic`) in `VaughtConjecture.Scheme.Row`;
-`CellScheme.IsComplete` (`VaughtConjecture.Stage.Scheme`) and `CellScheme.countable` in
-`VaughtConjecture.Scheme.Cell`; they are stated here so that those files are unchanged.
+No bound on the rows other than the coding is used.  The countability of cell schemes is in
+`VaughtConjecture.Scheme.Cell`, and that of the labels in `VaughtConjecture.Label.Basic`.
 
 ## References
 
-This is [Kni26, Proposition 3.1.4], for R. W. Knight, *A counterexample to Vaught's Conjecture
-using generalised Stone spaces* (draft, 20 February 2026).
+This is [Kni26, Proposition 3.1.4].
 -/
 
 universe u
@@ -48,37 +42,6 @@ namespace VaughtConjecture
 
 open Cardinal Ordinal
 
-namespace Label
-
-/-- If there are countably many ordinals below `α`, then there are countably many labels at stage
-`α`. -/
-theorem countable_setOf_atStage {α : Ordinal.{u}} (hα : (Set.Iio α).Countable) :
-    {x : Label.{u} | AtStage α x}.Countable := by
-  refine (((hα.image fun o : Ordinal.{u} ↦ (o : Label.{u})).insert ⊥).insert ⊤).mono ?_
-  intro x hx
-  rcases atStage_iff.mp hx with rfl | ⟨o, ho, rfl⟩ | rfl
-  · simp
-  · simp [ho]
-  · simp
-
-/-- The labels below `ω ^ 2`, that is, bottom and the ordinals `ω · i + j`, form a countable
-set. -/
-theorem countable_setOf_lt_omega0_sq :
-    {x : Label.{u} | x < ((ω ^ 2 : Ordinal.{u}) : Label.{u})}.Countable := by
-  have h : (Set.Iio (ω ^ 2 : Ordinal.{u})).Countable := by
-    rw [← le_aleph0_iff_set_countable, Cardinal.mk_Iio_ordinal, pow_two, card_mul, card_omega0]
-    simp
-  exact (countable_setOf_atStage h).mono fun _ hx ↦ .inl hx
-
-end Label
-
-/-- Cell schemes with finitely many cells over a countable ground type form a countable type. -/
-instance CellScheme.countable {ι α : Type*} [Finite ι] [Countable α] :
-    Countable (CellScheme ι α) :=
-  Function.Injective.countable (f := fun D : CellScheme ι α ↦ (D.ground, D.faces, D.scope, D.grade))
-    fun D E h ↦ by
-      simp only [Prod.mk.injEq] at h
-      exact CellScheme.ext h.1 h.2.1 h.2.2.1 h.2.2.2
 
 namespace StageType
 

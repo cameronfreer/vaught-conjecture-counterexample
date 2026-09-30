@@ -3,6 +3,7 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
+import Mathlib.Data.Set.Countable
 import Mathlib.Order.InitialSeg
 import VaughtConjecture.Geometry.Plan
 
@@ -55,6 +56,12 @@ this is the graded order on scope–grade pairs, not a new relation.
   (`IsLowerEmbedding.belowEquiv`) that is a lower embedding of the schemes of cells below them
   and commutes with restriction (`IsLowerEmbedding.belowEquiv_inclusion`); semantic rows and
   lawful sections transport along lower embeddings.
+* `IsComplete D`: every graded face is the graded index of a cell.  Completeness passes to
+  reindexing along a surjective map of cells (`IsComplete.reindex`) and to the pullback along an
+  embedding (`IsComplete.comap`).
+
+Cell schemes with finitely many cells over a countable ground type form a countable type
+(`CellScheme.countable`).
 -/
 
 namespace VaughtConjecture
@@ -343,6 +350,32 @@ theorem IsWellFormed.comap [DecidableEq α] [DecidableEq β] {D : CellScheme ι 
 
 end Comap
 
+/-! ### Complete schemes -/
+
+/-- A cell scheme is **complete** [Kni26, §2.5]: every graded face is the graded
+index of some cell. -/
+def IsComplete (D : CellScheme ι α) : Prop :=
+  ∀ X ∈ D.gradedFaces, ∃ d, D.gradedIndex d = X
+
+/-- A scheme is complete after reindexing along a surjective map of cells. -/
+theorem IsComplete.reindex {D : CellScheme ι α} (hD : D.IsComplete) {φ : κ → ι}
+    (hφ : Function.Surjective φ) : (D.reindex φ).IsComplete := fun X hX ↦ by
+  obtain ⟨d, hd⟩ := hD X hX
+  obtain ⟨t, rfl⟩ := hφ d
+  exact ⟨t, hd⟩
+
+/-- The pullback of a complete scheme along an embedding is complete: the image
+`Prod.map (Finset.map f) id X` of a graded face `X` of the pullback is a graded face, whose cell is
+visible through the embedding. -/
+theorem IsComplete.comap {D : CellScheme ι α} (hD : D.IsComplete) (f : β ↪ α) :
+    (D.comap f).IsComplete := by
+  intro X hX
+  obtain ⟨d, hd⟩ := hD _ ((mem_gradedFaces_comap D f).mp hX)
+  have hsc : D.scope d = X.1.map f := congrArg Prod.fst hd
+  refine ⟨⟨d, by simp [hsc]⟩, Prod.ext ?_ ?_⟩
+  · simp [hsc, preimage_map]
+  · simpa using congrArg Prod.snd hd
+
 /-! ### Lower embeddings -/
 
 /-- A map of cells `φ : κ → ι` is a **lower embedding** of `E` into `D` if it is injective,
@@ -539,6 +572,15 @@ theorem IsLowerEmbedding.belowRestrictEquiv_symm (hZ : Z.1 ⊆ B) :
   (IsLowerEmbedding.belowRestrictEquiv D hZ).symm
 
 end BelowRestrict
+
+/-! ### Countability -/
+
+/-- Cell schemes with finitely many cells over a countable ground type form a countable type. -/
+instance countable [Finite ι] [Countable α] : Countable (CellScheme ι α) :=
+  Function.Injective.countable (f := fun D : CellScheme ι α ↦ (D.ground, D.faces, D.scope, D.grade))
+    fun D E h ↦ by
+      simp only [Prod.mk.injEq] at h
+      exact CellScheme.ext h.1 h.2.1 h.2.2.1 h.2.2.2
 
 end CellScheme
 
