@@ -19,7 +19,7 @@ countable chain construction, checkpoint 3), not the layer numbering of either d
 | Layer 0, Summit 0: general results | used in 1–5 (below) | with their first application |
 | Layer 1, Summit 1: finite semantic kernel, closed charts | 1; stage types, faces of 2 | 1 |
 | Layer 2, Summit 2: realizations, syntax, chain construction | 2; chain construction of 3 | 3; 4 |
-| Layer 3, Summit 3: finite extensions, receiving, recovery | 3; first uses of 1 | 2–5 (2.1–2.7) |
+| Layer 3, Summit 3: finite extensions, receiving, recovery | 3; first uses of 1 | 2–5 (below) |
 | Layer 4, Summit 4: continuation, terminal comparisons | 4 | 5 |
 | Layer 5, Summit 5: expansion domains and logical agreement | 5 | 5 (unique limit expansions), 6 |
 | Layer 6, Summit 6: the two independent bounds | 5 and the spine | 6 |
@@ -34,7 +34,7 @@ theorem), 3 (the first uses of rows 5 and 6: top-free existence and general mode
 4 (items 3.2 and 3.3 for rows 1–3, the recovery statement of rows 3 and 4 for every
 restriction-compatible labelling, the first use of row 1, and the cap-to-model theorem), and 5
 (items 3.2 and 3.3 for row 4 after the structural candidate, and the first uses of rows 2–4).
-Within checkpoint 2, the completion of the coatom extension construction (row 6) has its own
+Checkpoint 2 is subdivided: the completion of the coatom extension construction (row 6) is
 checkpoints 2.1–2.7 (below), the seven checkpoints of `README.md`, Layer 3, 3.1, under "Row 6".
 The companion milestones are summarized under "Companion boundaries".
 
@@ -213,7 +213,7 @@ LOW, and the cap-to-model theorem) and consists of four items, built in this ord
    band map of the capped row with a base (zero or a limit) that the capped row does not fall
    below there.  It replaces the transitivity step in the proof of
    [Kni26, Lemma 5.3.5] for the rows other than the top-witness row.  Row 6 is reduced to the
-   coatom extension property at a stage, in its apex form, whose proof is the completion of the
+   coatom extension property at a stage, whose proof, in its apex form, is the completion of the
    amalgam of [Kni26, Definition 4.3.1] by cells of full scope (checkpoints 2.1–2.7 below).
 2. **One occurrence, then labelled evaluation.**  The realization extends by **one actual
    occurrence** of the constructed scheme over the private context, by a row-specific model
@@ -402,63 +402,83 @@ or lemmas with no application.
 
 Row 6 is reduced to the coatom extension property at a stage (`README.md`, Layer 3, 3.1, under
 "Row 6"): any two legal stage types on the two coatoms of `m + 2` points that agree literally on
-their common face are the literal faces, labels included, of one legal stage type on `m + 2`
-points.  Its apex form asks in addition for a cell of full scope and full grade carrying the
-maximum label [Kni26, Corollary 4.3.22], and the plain form follows from it.  Established: the
-amalgam [Kni26, Definition 4.3.1], with consistent and bountiful rows [Kni26, Lemma 4.3.2] and
-literal restrictions to both coatoms, labels included, and not complete (no cell of full scope);
-the exact pinned extension, [Kni26, Proposition 4.3.23], and amalgamation over a common face from
-the plain form, with nothing used about the stage; [Kni26, Proposition 4.3.24] for legal schemes,
-by the bottom labelling.  The stage enters only in the proof of the property.  That proof, in the
-apex form, is the completion of the amalgam by cells of full scope, in seven checkpoints of the
-mathematics (not a count of pull requests; the larger ones split):
+their common face (a closed face of both) are the literal faces, labels included, of one legal
+stage type on `m + 2` points.  Its apex form asks in addition for a cell of full scope and full
+grade carrying the maximum label [Kni26, Corollary 4.3.22], and the plain form follows from it.
+Established: the amalgam [Kni26, Definition 4.3.1], with consistent and bountiful rows
+[Kni26, Lemma 4.3.2] and literal restrictions to both coatoms, labels included, and not complete
+(no cell of full scope); the exact pinned extension, [Kni26, Proposition 4.3.23], and
+amalgamation over a common face from the plain form, with nothing used about the stage;
+[Kni26, Proposition 4.3.24] for legal schemes, by the bottom labelling.  The cells of the amalgam,
+with their rows and labels, are the boundary of its completion.  The stage enters only in the
+proof of the property.  That proof, in the apex form, is the completion of the amalgam by cells
+of full scope, in seven checkpoints of the mathematics (not a count of pull requests; the larger
+ones split):
 
 - **2.1. The seed.**  The finite input of the completion is defined from the amalgam (both
-  coatom types, their common face, the amalgamated rows).  A seed is the finite object the
-  recursion of 2.6 consumes; every condition on it is stated explicitly (legality, lifting,
-  literal restrictions).  The apex theorem is proved conditionally on a seed: from a seed, the
-  apex form with literal restrictions to both coatoms.
+  coatom types, their common face, the amalgamated rows).  A seed is that input together with
+  the conditions it must satisfy, each stated explicitly (legality, lifting, literal
+  restrictions); the recursion of 2.6 starts from a seed.  That the amalgam of two legal coatom
+  types is a seed is proved here, from `Coatom.isConsistent_amalgamType`,
+  `Coatom.isBountiful_amalgamType`, and the restriction theorems
+  `Coatom.restrictFace_left_amalgamType` and `Coatom.restrictFace_right_amalgamType`.  The apex
+  theorem is stated with the conclusion of the recursion of 2.6 as a hypothesis and proved from
+  it: the truncation to the stage (below), the apex, and the literal restrictions to both
+  coatoms.
 - **2.2. Coding.**  The construction works under the library's coding (row entries below `ω²`),
   not under the offset bound of [Kni26, Lemma 2.5.13] (its clause beginning "Indeed": finite part
   at most the grade plus one), which is not correct as stated (`README.md`, Layer 1).
   Acceptance includes an input violating that bound, universe polymorphism, and orderliness of
-  the constructed rows derived from consistency rather than assumed.  No later checkpoint begins
-  until this one is settled.  If the weaker coding cannot be carried through, identify the first
-  indispensable use of the bound; do not strengthen the legality predicate.
+  the constructed rows derived from consistency rather than assumed.  No later checkpoint of the
+  completion (2.3–2.7) begins until this one is settled.  If the weaker coding cannot be carried
+  through, identify the first indispensable use of the bound; do not strengthen the legality
+  predicate.
 - **2.3. Transformation algebra.**  Lawful transformations, normal forms, coded encoders and
-  decoders; the numerical decoding identities are kept separate from lawfulness and from cap
-  preservation.
-- **2.4. Lifting and alignment.**  Carrying sections across grade cuts and source prefixes,
-  owner alignment, restoration of lower prescriptions; the cap preserved on every coordinate,
-  and the locality of inherited long rows explicit.
+  decoders (defined with 2.3); the numerical decoding identities are kept separate from
+  lawfulness and from cap preservation.
+- **2.4. Lifting and alignment.**  Carrying sections across grade cuts (the restrictions to the
+  cells of grade at most a given grade) and source prefixes (defined with 2.4), owner alignment,
+  restoration of lower prescriptions (the prescribed labels at the grades below the one being
+  built); the cap preserved on every coordinate, and the locality of inherited long rows
+  explicit.
 - **2.5. The two small arities.**  `m = 0` and `m = 1` as two separately stated constructions on
   their actual rows: arbitrary lawful prescriptions, literal top, the boundary retained, the cap
   preserved on every auxiliary cell.
-- **2.6. Recursion on the grade.**  One genuine successor step from a checked predecessor first,
-  then the general step; lawfulness, consistency, the prefix equations, and unrestricted lifting
-  are distinct statements.
+- **2.6. Recursion on the grade.**  One grade step from the predecessor grade already
+  established first, then the general step; lawfulness, consistency, the prefix equations, and
+  unrestricted lifting (the last two defined with 2.6) are distinct statements.
 - **2.7. The theorem.**  At a stage that is zero or a limit the apex form holds; hence the plain
   form and row 6.  The improvement from limit stages to zero-or-limit stages is a separate lemma,
   with the zero stage handled explicitly.  That truncation to the stage fails at successor stages
   does not prove that the property fails there; that would need its own counterexample.  Whether
   it holds at successor stages is open and not needed.
 
-The completion constructs lawful finite extensions and nothing more.  It imports only the
-finite geometry and label algebra of layer 1, the stage types, and the amalgam; it does not
-depend on realizations, receiving, or any later step toward the main theorem.  Where their
-hypotheses fit, it truncates the completed lawful labelling to the stage once, as in the proof of
-[Kni26, Corollary 4.3.22], rather than every intermediate decoded value, and proves that the
-truncation keeps both prescribed faces literally (`CellScheme.Rows.IsLawful.reduce`,
-`Label.AtStage.reduce_eq`); it reuses the capped-lifting calculus and the section theorem; it
-does not carry historical intermediate constructions.
+The completion constructs lawful finite extensions and nothing more.  It imports only Layers
+0–1, the stage types, the amalgam, and the section theorem of `README.md`, Layer 3, 3.1 (with
+the shared decoding lemma); it does not depend on realizations, receiving, or any later step
+toward the main theorem.  At a stage that is zero or a limit, it truncates the completed lawful
+labelling to the stage once, as in the proof of [Kni26, Corollary 4.3.22], rather than every
+intermediate decoded value, and proves that the truncation keeps both prescribed faces literally
+(`CellScheme.Rows.IsLawful.reduce`, `Label.AtStage.reduce_eq`); it reuses the capped-lifting
+calculus and the section theorem; it carries no intermediate construction that the proof does
+not use.
 
-The naive completion of [Kni26, Definition 4.3.14] (full-scope cells indexed by all lawful coded
-patterns, same-grade rows given by meet heights) is unproved, not refuted: tie propagation between
-full-scope cells is real, but for a single prescribed face separation cannot occur inside the
-face.  It is not relied on, and neither are the printed proof of [Kni26, Lemma 4.3.20] and the
-joint lifting of [Kni26, Lemma 4.3.19] (`README.md`, Layer 1 and Layer 3, 3.1).  The construction
-chosen builds grade by grade over one fixed ordered boundary, chooses the serving cell before the
-other side's extension, and tops out in a single apex cell.
+The bountifulness of the naive completion of [Kni26, Definition 4.3.14] (full-scope cells
+indexed by all lawful coded patterns, same-grade rows given by meet heights), the statement of
+[Kni26, Lemma 4.3.20], is unproved, not refuted; Definition 4.3.6 needs explicit bindings before
+that statement is definite.  Ties do propagate between full-scope cells: a tie of a lawful
+section at a value below the cap that is not self-visible at the grade of a full-scope cell
+forces equal row entries there, hence the same tie in every lawful section.  Bountifulness
+prescribes one face, and there such a tie is already a tie of the prescription, so this
+mechanism separates no two cells of the face (the instance of Lemma 4.3.19 separates cells of
+different coatoms).  No counterexample is known.  Neither that statement, nor the printed proof
+of Lemma 4.3.20, nor the joint lifting of [Kni26, Lemma 4.3.19] is relied on: conclusions 1–3
+of Lemma 4.3.19 cannot hold together under the natural readings of efficiency
+([Kni26, Definition 4.3.6], whose bindings the text leaves open), since an instance with cap 2
+and prescriptions 3 and 4 forces 3 = 4 (`README.md`, Layer 1 and Layer 3, 3.1).  The
+construction chosen builds grade by grade over the boundary, in one fixed order of its cells,
+chooses the full-scope cell that serves each lift (defined with 2.6) before extending on the
+other coatom, and tops out in a single apex cell.
 
 ## Companion boundaries
 
