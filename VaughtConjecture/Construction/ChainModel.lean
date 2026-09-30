@@ -77,9 +77,9 @@ specific to the exact family is the tuple service, from `Construction.Requiremen
 of the type of a tuple to be realized over the tuple, that is, for the singleton family `{q}`,
 and (E) is exactly the extension statement that serves singletons.  A family of targets
 `U : StageType α n → Set (StageType α (n + 1))` would be served by the same requirements with
-`{q}` replaced by `U p`, by the same proofs, and with (E) replaced by the extension statement
-for `U`; this is not parametrized here, since the families of (C) are served through the
-singletons of their members.
+`{q}` replaced by `U p`, by the same proofs, and with (E) replaced, for the tuple service, by
+the extension statement for `U` (absorbing a point still uses one-point extensions); this is not
+parametrized here, since the families of (C) are served through the singletons of their members.
 
 **The chain.**  By the Rasiowa–Sikorski lemma (`Construction.exists_monotone_forall_exists_mem`)
 there is a chain of conditions, starting at any given condition `c₀`, that meets every requirement
@@ -130,7 +130,8 @@ uses the other's:
 * the zero-point lemmas there (StageType.card_eq_zero, StageType.faces_eq_of_zero,
   StageType.eq_of_zero, StageType.isSome_restrictFace_of_zero) and the private zero-point helpers
   with the instance `StageType.instSubsingletonZero` here;
-* the one-point scheme there (Scheme.onePoint, Scheme.isLegal_onePoint, and its bottom labelling
+* the one-point scheme there (Scheme.onePoint, Scheme.isLegal_onePoint,
+  IsLegal.isLegal_toStageType, and its bottom labelling
   Scheme.IsLegal.toStageType) and `StageType.onePoint` with `StageType.isLegal_onePoint` here;
 * the one-point extension there (StageType.exists_extension, [Kni26, Proposition 4.3.23]) and
   `Construction.nonempty_cofaces_of_hasExactPinnedExtensions` here;
