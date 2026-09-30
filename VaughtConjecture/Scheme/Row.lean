@@ -58,11 +58,10 @@ mute rows (`comap_mute`).
 
 ## References
 
-Semantic rows are the semantics of Definition 2.5.3, lawful sections the labellings respecting
-them (Definition 2.5.4: locality is its first clause, availability its second), and consistency
-is Definition 2.5.12, of R. W. Knight, *A counterexample to Vaught's Conjecture using
-generalised Stone spaces* (draft, 20 February 2026) [Kni26]; mute rows are the mute semantics of
-the last clause of Lemma 4.2.2.
+Semantic rows are the semantics of [Kni26, Definition 2.5.3], lawful sections the labellings
+respecting them ([Kni26, Definition 2.5.4]: locality is its first clause, availability its
+second), and consistency is [Kni26, Definition 2.5.12]; mute rows are the mute semantics of the
+last clause of [Kni26, Lemma 4.2.2], and stage reduction is [Kni26, Definition 3.1.2].
 -/
 
 universe u

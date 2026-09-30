@@ -43,8 +43,7 @@ its image (`image_cellMap_below`); completeness, codedness, and consistency pass
 Schemes with their rows are the domains with their semantics of [Kni26, §2.6], called schemes
 here; face restriction is the horizontal restriction of [Kni26, Definition 3.1.2], whose
 restriction of a semantics is [Kni26, Lemma 2.5.5]; completeness is [Kni26, Definition 2.5.15]
-and the coding of row values follows [Kni26, Lemma 2.5.13], for R. W. Knight, *A counterexample
-to Vaught's Conjecture using generalised Stone spaces* (draft, 20 February 2026).
+and the coding of row values follows [Kni26, Lemma 2.5.13].
 -/
 
 universe u

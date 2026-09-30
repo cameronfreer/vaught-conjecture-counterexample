@@ -31,8 +31,7 @@ below a pair onto the cells below its image (`Scheme.image_cellMap_below`).
 
 Bountifulness is [Kni26, Definition 2.5.14]; face restriction is the restriction to a face of the
 plan of [Kni26, Definition 3.1.2], and that this restriction is again bountiful is clause 3 of
-[Kni26, Proposition 2.6.3], for R. W. Knight, *A counterexample to Vaught's Conjecture using
-generalised Stone spaces* (draft, 20 February 2026).
+[Kni26, Proposition 2.6.3].
 -/
 
 universe u

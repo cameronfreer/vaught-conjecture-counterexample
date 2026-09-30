@@ -62,9 +62,7 @@ relabelling is invisible to reduction (`reduce_castLE`).
 
 Stage types are [Kni26, Definition 3.1.1], stage reduction is [Kni26, Definition 3.1.2], and the
 face maps are the horizontal restrictions of [Kni26, Definitions 3.1.2 and 3.1.5] (the
-restriction to a face of the plan, and its transport along a one-to-one map), for R. W. Knight,
-*A counterexample to Vaught's Conjecture using generalised Stone spaces* (draft, 20 February
-2026).
+restriction to a face of the plan, and its transport along a one-to-one map).
 -/
 
 universe u
