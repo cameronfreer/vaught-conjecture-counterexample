@@ -207,8 +207,9 @@ LOW, and the cap-to-model theorem) and consists of four items, built in this ord
    applications.  The two-witness splice is also proved here: for a top-labelled cell `Σ` of
    grade `J ≤ K` below a top-witness cell `Θ`, a witness from `E(Σ)` to the labels below `Σ`
    and a witness from `E(Σ)` to the row of `Θ` capped at its entry at `Σ` combine into a
-   witness from `E(Σ)` to the labels where they are below `α` and to the band map of the capped
-   row where they are top.  It replaces the transitivity step in the proof of
+   witness from `E(Σ)` to the labels where they are below `α` and, where they are top, to the
+   band map of the capped row with a base (zero or a limit) that the capped row does not fall
+   below there.  It replaces the transitivity step in the proof of
    [Kni26, Lemma 5.3.5] for the rows other than the top-witness row.
 2. **One occurrence, then labelled evaluation.**  The realization extends by **one actual
    occurrence** of the constructed scheme over the private context, by a row-specific model
