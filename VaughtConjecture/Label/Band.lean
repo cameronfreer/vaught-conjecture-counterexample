@@ -37,10 +37,11 @@ sent to `α` or above, and sends the remaining labels to `c`.
 
 ## References
 
-The band rule is the post-composition used in the proof of Lemma 5.3.5 of R. W. Knight, *A
-counterexample to Vaught's Conjecture using generalised Stone spaces* (draft, 20 February 2026)
-[Kni26], and the band map is the map it composes with; the transformation relation is [Kni26,
-Definition 2.3.9].
+The band rule is the post-composition of the top-witness row in the proof of Lemma 5.3.5 of
+R. W. Knight, *A counterexample to Vaught's Conjecture using generalised Stone spaces* (draft,
+20 February 2026) [Kni26], and the band map is the map it composes with; the remaining rows of
+that proof need a splice of two witnesses, not stated here.  The transformation relation is
+[Kni26, Definition 2.3.9].
 -/
 
 universe u
@@ -217,7 +218,9 @@ or a limit, and let the family of cells be finite with all grades `≤ K`.  Supp
 each source label `p d` below `α` or to the formal top, and to the formal top only when
 `β ≤ p d`.  Then `p` transforms to any labelling `q` that agrees with `σ ∘ p` where it is below
 `α` and is the band map of the source label where `σ ∘ p` is the formal top.  This is the
-post-composition used in the proof of [Kni26, Lemma 5.3.5]. -/
+post-composition of the top-witness row in the proof of [Kni26, Lemma 5.3.5]; the other rows of
+that proof need a two-witness splice (the band map applied to a row `r` with `p ⇒ r`, at grades
+`≤ J ≤ K`), which is left to Layer 3. -/
 theorem IsWitness.transformsTo_bandMap [Finite D] (hσ : IsWitness (stepSuppressor K) σ)
     (hα : IsSuccLimit α) (hβ : IsSuccPrelimit β) (hgr : ∀ d, grade d ≤ K)
     (hbound : ∀ d, σ (p d) < α ∨ σ (p d) = ⊤) (hlow : ∀ d, σ (p d) < α → q d = σ (p d))
