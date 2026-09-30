@@ -5,21 +5,22 @@ Authors: Cameron Freer
 -/
 import Mathlib.Data.Finset.Lattice.Fold
 import Mathlib.Data.Finset.Max
+import Mathlib.Order.SupClosed
 
 /-!
 # Finite convex geometries on a finite ground set
 
 A family `P : Finset (Finset α)` of *closed sets* on a finite ground set `A : Finset α` is a
 **convex geometry** (`IsConvexGeometry A P`) if its members are subsets of `A`, the empty set and
-`A` are closed, closed sets are closed under intersection, and the hull operator satisfies
-anti-exchange.  These are the standard closed-set axioms; singletons need not be closed in
+`A` are closed, closed sets are closed under intersection (`InfClosed`), and the hull operator
+satisfies anti-exchange.  These are the standard closed-set axioms; singletons need not be closed in
 general.
 
 * `hull A P S` is the least closed superset of `S` (for `S ⊆ A`), computed as the points of `A`
-  lying in every closed superset of `S`.
+  lying in every closed superset of `S` (`hull_subset_iff`).
 * `extremes P B` is the set of points `x ∈ B` such that `B \ {x}` is closed.  For a closed `B`
   in a convex geometry this is the usual notion of extreme point: `x ∉ hull (B \ {x})`
-  (`IsConvexGeometry.mem_extremes_iff`).
+  (`IsConvexGeometry.mem_extremes_iff`).  For a set that is not closed the two notions differ.
 * `restrict P B` is the family of closed sets contained in `B`; restriction to a closed face is
   again a convex geometry (`IsConvexGeometry.restrict`), with the same hulls and extremes.
 * Anti-exchange is equivalent, for intersection-closed families, to one-point accessibility
@@ -51,8 +52,10 @@ superset of `S` (`hull_mem`, `subset_hull`, `hull_subset`). -/
 def hull (A : Finset α) (P : Finset (Finset α)) (S : Finset α) : Finset α :=
   {x ∈ A | ∀ B ∈ P, S ⊆ B → x ∈ B}
 
-/-- The extreme points of `B` relative to `P`: the points whose removal from `B` leaves a
-member of `P`. -/
+/-- The points of `B` whose removal from `B` leaves a member of `P`.  For a closed `B` in a
+convex geometry these are the extreme points of `B`, the points outside the hull of the rest of
+`B` (`IsConvexGeometry.mem_extremes_iff`); for a set that is not closed the two notions
+differ. -/
 def extremes (P : Finset (Finset α)) (B : Finset α) : Finset α :=
   {x ∈ B | B.erase x ∈ P}
 
@@ -61,16 +64,16 @@ def restrict (P : Finset (Finset α)) (B : Finset α) : Finset (Finset α) :=
   {C ∈ P | C ⊆ B}
 
 /-- Membership in a hull: a point of the ground set lying in every closed superset. -/
-@[simp] theorem mem_hull : x ∈ hull A P S ↔ x ∈ A ∧ ∀ B ∈ P, S ⊆ B → x ∈ B := mem_filter
+@[simp, grind =] theorem mem_hull : x ∈ hull A P S ↔ x ∈ A ∧ ∀ B ∈ P, S ⊆ B → x ∈ B := mem_filter
 
 /-- Membership in the extremes: a point whose removal leaves a closed set. -/
-@[simp] theorem mem_extremes : x ∈ extremes P B ↔ x ∈ B ∧ B.erase x ∈ P := mem_filter
+@[simp, grind =] theorem mem_extremes : x ∈ extremes P B ↔ x ∈ B ∧ B.erase x ∈ P := mem_filter
 
 /-- Membership in a restriction: a closed set contained in the face. -/
-@[simp] theorem mem_restrict : C ∈ restrict P B ↔ C ∈ P ∧ C ⊆ B := mem_filter
+@[simp, grind =] theorem mem_restrict : C ∈ restrict P B ↔ C ∈ P ∧ C ⊆ B := mem_filter
 
 /-- A hull lies in the ground set. -/
-theorem hull_subset_domain : hull A P S ⊆ A := filter_subset _ _
+theorem hull_subset_ground : hull A P S ⊆ A := filter_subset _ _
 
 /-- A subset of the ground set lies in its hull. -/
 theorem subset_hull (hS : S ⊆ A) : S ⊆ hull A P S :=
@@ -79,6 +82,11 @@ theorem subset_hull (hS : S ⊆ A) : S ⊆ hull A P S :=
 /-- A hull lies in every closed superset. -/
 theorem hull_subset (hB : B ∈ P) (hSB : S ⊆ B) : hull A P S ⊆ B :=
   fun _ hx ↦ (mem_hull.mp hx).2 B hB hSB
+
+/-- **Universal property of the hull.**  For `S` in the ground set and a closed `B`, the hull of
+`S` lies in `B` exactly when `S` does. -/
+theorem hull_subset_iff (hB : B ∈ P) (hS : S ⊆ A) : hull A P S ⊆ B ↔ S ⊆ B :=
+  ⟨(subset_hull hS).trans, hull_subset hB⟩
 
 /-- Hulls are monotone. -/
 theorem hull_mono (hST : S ⊆ T) : hull A P S ⊆ hull A P T := fun _ hx ↦
@@ -90,13 +98,12 @@ theorem hull_eq_self (hB : B ∈ P) (hBA : B ⊆ A) : hull A P B = B :=
 
 /-- If the ground set is closed and closed sets are closed under intersection, every hull is
 closed. -/
-theorem hull_mem (hA : A ∈ P) (hinter : ∀ ⦃B C⦄, B ∈ P → C ∈ P → B ∩ C ∈ P) :
-    hull A P S ∈ P := by
+theorem hull_mem (hA : A ∈ P) (hinter : InfClosed (P : Set (Finset α))) : hull A P S ∈ P := by
   have he : hull A P S = (insert A {B ∈ P | S ⊆ B}).inf' (insert_nonempty _ _) id := by
     ext x
-    simp [mem_hull, mem_inf']
+    simp [mem_inf']
   rw [he]
-  refine inf'_induction _ _ (fun _ hB _ hC ↦ hinter hB hC) fun B hB ↦ ?_
+  refine hinter.finsetInf'_mem _ fun B hB ↦ ?_
   rcases mem_insert.mp hB with rfl | hB
   · exact hA
   · exact (mem_filter.mp hB).1
@@ -122,7 +129,7 @@ theorem extremes_restrict (hCB : C ⊆ B) : extremes (restrict P B) C = extremes
 
 /-- In an intersection-closed family, the hull of a subset of a closed face `B ⊆ A` is the same
 whether computed in `A` or in the restriction to `B`. -/
-theorem hull_restrict (hinter : ∀ ⦃B C⦄, B ∈ P → C ∈ P → B ∩ C ∈ P) (hB : B ∈ P)
+theorem hull_restrict (hinter : InfClosed (P : Set (Finset α))) (hB : B ∈ P)
     (hBA : B ⊆ A) (hSB : S ⊆ B) : hull B (restrict P B) S = hull A P S := by
   ext x
   simp only [mem_hull, mem_restrict]
@@ -145,9 +152,9 @@ structure IsConvexGeometry (A : Finset α) (P : Finset (Finset α)) : Prop where
   /-- The empty set is closed. -/
   empty_mem : ∅ ∈ P
   /-- The ground set is closed. -/
-  domain_mem : A ∈ P
+  ground_mem : A ∈ P
   /-- Closed sets are closed under intersection. -/
-  inter_mem ⦃B C : Finset α⦄ : B ∈ P → C ∈ P → B ∩ C ∈ P
+  infClosed : InfClosed (P : Set (Finset α))
   /-- Anti-exchange at closed sets. -/
   antiExchange ⦃B : Finset α⦄ : B ∈ P → ∀ ⦃x y : α⦄, x ≠ y → x ∉ B →
     x ∈ hull A P (insert y B) → y ∉ hull A P (insert x B)
@@ -158,7 +165,7 @@ variable (hP : IsConvexGeometry A P)
 include hP
 
 /-- Every hull in a convex geometry is closed. -/
-theorem hull_mem : hull A P S ∈ P := Geometry.hull_mem hP.domain_mem hP.inter_mem
+theorem hull_mem : hull A P S ∈ P := Geometry.hull_mem hP.ground_mem hP.infClosed
 
 /-- A subset of the ground set is its own hull exactly when it is closed. -/
 theorem hull_eq_self_iff (hS : S ⊆ A) : hull A P S = S ↔ S ∈ P :=
@@ -192,19 +199,19 @@ theorem exists_insert_mem (hB : B ∈ P) (hC : C ∈ P) (hBC : B ⊂ C) :
 theorem restrict (hB : B ∈ P) : IsConvexGeometry B (Geometry.restrict P B) where
   subset_of_mem _ hC := (mem_restrict.mp hC).2
   empty_mem := mem_restrict.mpr ⟨hP.empty_mem, empty_subset _⟩
-  domain_mem := mem_restrict.mpr ⟨hB, Subset.rfl⟩
-  inter_mem C D hC hD := mem_restrict.mpr
-    ⟨hP.inter_mem (mem_restrict.mp hC).1 (mem_restrict.mp hD).1,
+  ground_mem := mem_restrict.mpr ⟨hB, Subset.rfl⟩
+  infClosed C hC D hD := mem_restrict.mpr
+    ⟨hP.infClosed (mem_restrict.mp hC).1 (mem_restrict.mp hD).1,
       inter_subset_left.trans (mem_restrict.mp hC).2⟩
   antiExchange C hC x y hxy hxC hx := by
     obtain ⟨hCP, hCB⟩ := mem_restrict.mp hC
     by_cases hyB : y ∈ B
-    · have hxB : x ∈ B := hull_subset_domain hx
+    · have hxB : x ∈ B := hull_subset_ground hx
       have hBA := hP.subset_of_mem hB
-      rw [hull_restrict hP.inter_mem hB hBA (insert_subset hyB hCB)] at hx
-      rw [hull_restrict hP.inter_mem hB hBA (insert_subset hxB hCB)]
+      rw [hull_restrict hP.infClosed hB hBA (insert_subset hyB hCB)] at hx
+      rw [hull_restrict hP.infClosed hB hBA (insert_subset hxB hCB)]
       exact hP.antiExchange hCP hxy hxC hx
-    · exact fun hy ↦ hyB (hull_subset_domain hy)
+    · exact fun hy ↦ hyB (hull_subset_ground hy)
 
 /-- Every closed set other than the ground set lies in a closed coatom `A \ {x}`, whose removed
 point `x` is therefore an extreme point of `A`. -/
@@ -212,7 +219,7 @@ theorem exists_coatom (hB : B ∈ P) (hne : B ≠ A) : ∃ x ∈ extremes P A, B
   obtain ⟨C, hC, hmax⟩ := exists_max_image {C ∈ P | B ⊆ C ∧ C ≠ A} card
     ⟨B, mem_filter.mpr ⟨hB, Subset.rfl, hne⟩⟩
   obtain ⟨hCP, hBC, hCA⟩ := mem_filter.mp hC
-  obtain ⟨x, hxA, hxC, hxP⟩ := hP.exists_insert_mem hCP hP.domain_mem
+  obtain ⟨x, hxA, hxC, hxP⟩ := hP.exists_insert_mem hCP hP.ground_mem
     (Finset.ssubset_iff_subset_ne.mpr ⟨hP.subset_of_mem hCP, hCA⟩)
   have he : insert x C = A := by
     by_contra hn
@@ -255,22 +262,22 @@ instance : Decidable (IsConvexGeometry A P) :=
   decidable_of_iff ((∀ B ∈ P, B ⊆ A) ∧ ∅ ∈ P ∧ A ∈ P ∧ (∀ B ∈ P, ∀ C ∈ P, B ∩ C ∈ P) ∧
       ∀ B ∈ P, ∀ x ∈ A, ∀ y ∈ A, x ≠ y → x ∉ B →
         x ∈ hull A P (insert y B) → y ∉ hull A P (insert x B))
-    ⟨fun ⟨h1, h2, h3, h4, h5⟩ ↦ ⟨h1, h2, h3, fun B C hB hC ↦ h4 B hB C hC,
+    ⟨fun ⟨h1, h2, h3, h4, h5⟩ ↦ ⟨h1, h2, h3, fun B hB C hC ↦ h4 B hB C hC,
         fun B hB x y hxy hxB hx hy ↦
-          h5 B hB x (hull_subset_domain hx) y (hull_subset_domain hy) hxy hxB hx hy⟩,
-      fun h ↦ ⟨h.subset_of_mem, h.empty_mem, h.domain_mem, fun _ hB _ hC ↦ h.inter_mem hB hC,
+          h5 B hB x (hull_subset_ground hx) y (hull_subset_ground hy) hxy hxB hx hy⟩,
+      fun h ↦ ⟨h.subset_of_mem, h.empty_mem, h.ground_mem, fun _ hB _ hC ↦ h.infClosed hB hC,
         fun B hB x _ y _ ↦ @h.antiExchange B hB x y⟩⟩
 
 /-- **Anti-exchange from accessibility.**  An intersection-closed family containing `∅` and `A`,
 in which every closed set other than `A` can be enlarged by one point to a closed set, is a
 convex geometry.  The proof takes a largest closed superset of `B` omitting both points. -/
 theorem IsConvexGeometry.of_accessible (hsub : ∀ ⦃B⦄, B ∈ P → B ⊆ A) (h0 : ∅ ∈ P) (hA : A ∈ P)
-    (hinter : ∀ ⦃B C⦄, B ∈ P → C ∈ P → B ∩ C ∈ P)
+    (hinter : InfClosed (P : Set (Finset α)))
     (hacc : ∀ ⦃B⦄, B ∈ P → B ≠ A → ∃ x ∉ B, insert x B ∈ P) : IsConvexGeometry A P where
   subset_of_mem := hsub
   empty_mem := h0
-  domain_mem := hA
-  inter_mem := hinter
+  ground_mem := hA
+  infClosed := hinter
   antiExchange B hB x y hxy hxB hx hy := by
     have hyB : y ∉ B := by
       intro hyB
@@ -279,7 +286,7 @@ theorem IsConvexGeometry.of_accessible (hsub : ∀ ⦃B⦄, B ∈ P → B ⊆ A)
     obtain ⟨C, hC, hmax⟩ := exists_max_image {C ∈ P | B ⊆ C ∧ x ∉ C ∧ y ∉ C} card
       ⟨B, mem_filter.mpr ⟨hB, Subset.rfl, hxB, hyB⟩⟩
     obtain ⟨hCP, hBC, hxC, hyC⟩ := mem_filter.mp hC
-    obtain ⟨z, hzC, hzP⟩ := hacc hCP (by rintro rfl; exact hxC (hull_subset_domain hx))
+    obtain ⟨z, hzC, hzP⟩ := hacc hCP (by rintro rfl; exact hxC (hull_subset_ground hx))
     have hzx : z ≠ x := by
       rintro rfl
       have := hull_subset hzP (insert_subset_insert z hBC) hy

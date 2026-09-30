@@ -11,12 +11,11 @@ import VaughtConjecture.Geometry.Plan
 
 For a finite subset `A` of a linear order, the order-convex subsets of `A` form a plan
 (`isPlan_intervalPlan`): deleting the least or the greatest point of `A` gives the two glued
-subplans.  The hull of two points is the set of points of `A` between them
-(`hull_intervalPlan_pair`).
-
-This supplies plans on finite sets of every size, and shows that two generators do not bound the
-size of a hull (`VaughtConjecture.Geometry.Examples`).  Interval plans are only one family of
-plans: not every plan has this linear form.  See `roadmap/SEMANTIC_CONTRACT.md`, item 2.
+subplans.  In particular there are plans on finite sets of every size.  The hull of two
+points is the set of points of `A` between them (`hull_intervalPlan_pair`), so hulls of pairs
+of points in interval plans can have any finite size (`VaughtConjecture.Geometry.Examples`).
+Interval plans are only one family of plans: not every plan has this linear form.  See
+`roadmap/SEMANTIC_CONTRACT.md`, item 2.
 -/
 
 namespace VaughtConjecture.Geometry
@@ -32,9 +31,25 @@ def intervalPlan (A : Finset α) : Finset (Finset α) :=
 
 /-- Membership in the interval plan: a subset of `A` containing every point of `A` between two
 of its points. -/
+@[simp, grind =]
 theorem mem_intervalPlan :
     B ∈ intervalPlan A ↔ B ⊆ A ∧ ∀ x ∈ B, ∀ y ∈ B, ∀ z ∈ A, x ≤ z → z ≤ y → z ∈ B := by
   rw [intervalPlan, mem_filter, mem_powerset]
+
+/-- The ground set is order-convex in itself. -/
+theorem self_mem_intervalPlan : A ∈ intervalPlan A :=
+  mem_intervalPlan.mpr ⟨Subset.rfl, fun _ _ _ _ _ hz _ _ ↦ hz⟩
+
+/-- Order-convex subsets are closed under intersection. -/
+theorem infClosed_intervalPlan : InfClosed (intervalPlan A : Set (Finset α)) := by
+  intro B hB C hC
+  rw [mem_coe] at hB hC ⊢
+  rw [inf_eq_inter]
+  obtain ⟨hBA, hB⟩ := mem_intervalPlan.mp hB
+  obtain ⟨-, hC⟩ := mem_intervalPlan.mp hC
+  refine mem_intervalPlan.mpr ⟨inter_subset_left.trans hBA, fun x hx y hy z hz hxz hzy ↦ ?_⟩
+  rw [mem_inter] at hx hy ⊢
+  exact ⟨hB x hx.1 y hy.1 z hz hxz hzy, hC x hx.2 y hy.2 z hz hxz hzy⟩
 
 /-- Inside an order-convex subset `D` of `A`, order-convexity in `D` and in `A` agree. -/
 theorem mem_intervalPlan_iff_of_mem (hD : D ∈ intervalPlan A) (hBD : B ⊆ D) :
@@ -63,69 +78,54 @@ theorem isPlan_intervalPlan (A : Finset α) : IsPlan A (intervalPlan A) := by
   induction hn : #A using Nat.strong_induction_on generalizing A with
   | _ n ih =>
     subst hn
-    rcases Nat.lt_or_ge 1 #A with hA | hA
-    · have hne : A.Nonempty := card_pos.mp (by omega)
-      set a := A.min' hne
-      set b := A.max' hne
-      have hab : a ≠ b := (min'_lt_max'_of_card A hA).ne
-      have haP : A.erase a ∈ intervalPlan A :=
-        erase_mem_intervalPlan_of_le fun z hz ↦ min'_le A z hz
-      have hbP : A.erase b ∈ intervalPlan A :=
-        erase_mem_intervalPlan_of_ge fun z hz ↦ le_max' A z hz
-      have hab' : (A.erase a).erase b = A.erase a ∩ A.erase b := by
-        ext x
-        simp only [mem_erase, mem_inter]
-        tauto
-      have hfaceA : (A.erase a).erase b ∈ intervalPlan A := by
-        rw [hab']
-        obtain ⟨-, h₁⟩ := mem_intervalPlan.mp haP
-        obtain ⟨-, h₂⟩ := mem_intervalPlan.mp hbP
-        refine mem_intervalPlan.mpr ⟨inter_subset_left.trans (erase_subset _ _), ?_⟩
-        simp only [mem_inter]
-        exact fun x hx y hy z hz hxz hzy ↦
-          ⟨h₁ x hx.1 y hy.1 z hz hxz hzy, h₂ x hx.2 y hy.2 z hz hxz hzy⟩
-      have he :
-          intervalPlan A = insert A (intervalPlan (A.erase a) ∪ intervalPlan (A.erase b)) := by
-        ext B
-        simp only [mem_insert, mem_union]
-        constructor
-        · intro hB
-          by_cases hBA : B = A
-          · exact Or.inl hBA
-          by_cases haB : a ∈ B
-          · by_cases hbB : b ∈ B
-            · refine absurd ((mem_intervalPlan.mp hB).1.antisymm fun z hz ↦ ?_) hBA
-              exact (mem_intervalPlan.mp hB).2 a haB b hbB z hz (min'_le A z hz) (le_max' A z hz)
-            · have hsub : B ⊆ A.erase b := fun z hz ↦
-                mem_erase.mpr ⟨fun h ↦ hbB (h ▸ hz), (mem_intervalPlan.mp hB).1 hz⟩
-              exact Or.inr (Or.inr ((mem_intervalPlan_iff_of_mem hbP hsub).mpr hB))
-          · have hsub : B ⊆ A.erase a := fun z hz ↦
-              mem_erase.mpr ⟨fun h ↦ haB (h ▸ hz), (mem_intervalPlan.mp hB).1 hz⟩
-            exact Or.inr (Or.inl ((mem_intervalPlan_iff_of_mem haP hsub).mpr hB))
-        · rintro (rfl | hB | hB)
-          · exact mem_intervalPlan.mpr ⟨Subset.rfl, fun _ _ _ _ _ hz _ _ ↦ hz⟩
-          · exact (mem_intervalPlan_iff_of_mem haP (mem_intervalPlan.mp hB).1).mp hB
-          · exact (mem_intervalPlan_iff_of_mem hbP (mem_intervalPlan.mp hB).1).mp hB
-      have hsa : (A.erase a).erase b ⊆ A.erase a := erase_subset _ _
-      have hsb : (A.erase a).erase b ⊆ A.erase b := hab' ▸ inter_subset_right
-      rw [he]
-      refine IsPlan.step (min'_mem A hne) (max'_mem A hne) hab
-        (ih _ (card_erase_lt_of_mem (min'_mem A hne)) _ rfl)
-        (ih _ (card_erase_lt_of_mem (max'_mem A hne)) _ rfl)
-        ((mem_intervalPlan_iff_of_mem haP hsa).mpr hfaceA) fun C hC ↦ ?_
-      rw [mem_intervalPlan_iff_of_mem haP (hC.trans hsa),
-        mem_intervalPlan_iff_of_mem hbP (hC.trans hsb)]
-    · have he : intervalPlan A = A.powerset := by
-        refine filter_true_of_mem fun B hB x hx y hy z hz _ _ ↦ ?_
-        rwa [card_le_one.mp hA z hz x (mem_powerset.mp hB hx)]
-      rw [he]
-      rcases A.eq_empty_or_nonempty with rfl | hne
-      · exact IsPlan.empty
-      · obtain ⟨a, rfl⟩ := card_eq_one.mp (le_antisymm hA hne.card_pos)
-        have hs : ({a} : Finset α).powerset = {∅, {a}} := by
-          ext B
-          simp [subset_singleton_iff]
-        exact hs ▸ IsPlan.singleton a
+    rcases le_or_gt #A 1 with hA | hA
+    · exact .of_card_le_one hA (fun _ hB ↦ (mem_intervalPlan.mp hB).1) (by simp)
+        self_mem_intervalPlan
+    -- Deleting the least point `a` or the greatest point `b` of `A` leaves an order-convex set.
+    have hne : A.Nonempty := card_pos.mp (by omega)
+    set a := A.min' hne
+    set b := A.max' hne
+    have hab : a ≠ b := (min'_lt_max'_of_card A hA).ne
+    have haP : A.erase a ∈ intervalPlan A :=
+      erase_mem_intervalPlan_of_le fun z hz ↦ min'_le A z hz
+    have hbP : A.erase b ∈ intervalPlan A :=
+      erase_mem_intervalPlan_of_ge fun z hz ↦ le_max' A z hz
+    -- Every order-convex proper subset of `A` omits `a` or `b`.
+    have he :
+        intervalPlan A = insert A (intervalPlan (A.erase a) ∪ intervalPlan (A.erase b)) := by
+      ext B
+      simp only [mem_insert, mem_union]
+      constructor
+      · intro hB
+        by_cases hBA : B = A
+        · exact Or.inl hBA
+        by_cases haB : a ∈ B
+        · by_cases hbB : b ∈ B
+          · refine absurd ((mem_intervalPlan.mp hB).1.antisymm fun z hz ↦ ?_) hBA
+            exact (mem_intervalPlan.mp hB).2 a haB b hbB z hz (min'_le A z hz) (le_max' A z hz)
+          · have hsub : B ⊆ A.erase b := fun z hz ↦
+              mem_erase.mpr ⟨fun h ↦ hbB (h ▸ hz), (mem_intervalPlan.mp hB).1 hz⟩
+            exact Or.inr (Or.inr ((mem_intervalPlan_iff_of_mem hbP hsub).mpr hB))
+        · have hsub : B ⊆ A.erase a := fun z hz ↦
+            mem_erase.mpr ⟨fun h ↦ haB (h ▸ hz), (mem_intervalPlan.mp hB).1 hz⟩
+          exact Or.inr (Or.inl ((mem_intervalPlan_iff_of_mem haP hsub).mpr hB))
+      · rintro (rfl | hB | hB)
+        · exact self_mem_intervalPlan
+        · exact (mem_intervalPlan_iff_of_mem haP (mem_intervalPlan.mp hB).1).mp hB
+        · exact (mem_intervalPlan_iff_of_mem hbP (mem_intervalPlan.mp hB).1).mp hB
+    -- Glue the interval plans on `A \ {a}` and `A \ {b}` along the common face `A \ {a, b}`.
+    have hface : (A.erase a).erase b ∈ intervalPlan A := by
+      rw [erase_erase_eq_inter]
+      exact infClosed_intervalPlan haP hbP
+    have hsa : (A.erase a).erase b ⊆ A.erase a := erase_subset _ _
+    have hsb : (A.erase a).erase b ⊆ A.erase b := erase_subset_erase b (erase_subset a A)
+    rw [he]
+    refine IsPlan.step (min'_mem A hne) (max'_mem A hne) hab
+      (ih _ (card_erase_lt_of_mem (min'_mem A hne)) _ rfl)
+      (ih _ (card_erase_lt_of_mem (max'_mem A hne)) _ rfl)
+      ((mem_intervalPlan_iff_of_mem haP hsa).mpr hface) fun C hC ↦ ?_
+    rw [mem_intervalPlan_iff_of_mem haP (hC.trans hsa),
+      mem_intervalPlan_iff_of_mem hbP (hC.trans hsb)]
 
 /-- In an interval plan the hull of two points `a ≤ b` of `A` is the set of points of `A`
 between them. -/

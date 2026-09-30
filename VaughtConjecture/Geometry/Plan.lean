@@ -16,16 +16,19 @@ the *visible faces* or closed sets, built recursively (`IsPlan A P`):
   `A \ {a, b}` is visible in `Q` and on whose subsets `Q` and `R` agree glue to the plan
   `insert A (Q ∪ R)` on `A`.
 
-The main theorem `isPlan_iff_isConvexGeometry` identifies plans with the finite convex geometries
-(`IsConvexGeometry`) in which every closed set with at least two points has exactly two extreme
-points.  Not every convex geometry is a plan.  Consequences developed here:
+The main theorem `isPlan_iff_isConvexGeometry_and_card_extremes` identifies plans with the
+finite convex geometries (`IsConvexGeometry`) in which every closed set with at least two points
+has exactly two extreme points.  Not every convex geometry is a plan: all subsets of a
+three-point set form a convex geometry whose ground set has three extreme points
+(`not_isPlan_powerset_univ_fin_three` in `VaughtConjecture.Geometry.Examples`).  Consequences
+developed here:
 
-* closed sets are closed under intersection (`IsPlan.inter_mem`), contain all singletons
+* closed sets are closed under intersection (`IsPlan.infClosed`), contain all singletons
   (`IsPlan.singleton_mem`), and restrict to plans on closed faces (`IsPlan.restrict`);
 * the **two-generator property**: every closed set is the hull of its at most two extreme points
   (`IsConvexGeometry.hull_extremes`, `IsPlan.card_extremes_le_two`), so every hull is generated
-  by at most two of its generators (`IsPlan.exists_generator`), and the generating pair of a
-  hull is recovered as its extremes (`IsPlan.extremes_hull`).
+  by at most two of its generators (`IsPlan.exists_subset_card_le_two_hull_eq`), and the
+  generating pair of a hull is recovered as its extremes (`IsPlan.extremes_hull`).
 
 The pair of extremes of a closed set need not itself be closed, and its hull need not be small;
 see `VaughtConjecture.Geometry.Examples`.
@@ -39,6 +42,11 @@ namespace VaughtConjecture.Geometry
 open Finset
 
 variable {α : Type*} [DecidableEq α] {A B C S : Finset α} {P Q R : Finset (Finset α)} {x : α}
+
+/-- Deleting two points one after the other is intersecting the two one-point deletions. -/
+theorem erase_erase_eq_inter (A : Finset α) (a b : α) :
+    (A.erase a).erase b = A.erase a ∩ A.erase b := by
+  rw [erase_inter, inter_eq_right.mpr (erase_subset _ _), erase_right_comm]
 
 /-- `IsPlan A P`: the family `P` is a recursive visible-face plan on the finite set `A`.  The
 base plans are `{∅}` on `∅` and `{∅, {a}}` on `{a}`.  A plan on `A` glues plans `Q` on
@@ -59,7 +67,7 @@ inductive IsPlan : Finset α → Finset (Finset α) → Prop
 
 namespace IsPlan
 
-/-- Every visible face is a subset of the domain. -/
+/-- Every visible face is a subset of the ground set. -/
 theorem subset_of_mem (hP : IsPlan A P) (hB : B ∈ P) : B ⊆ A := by
   induction hP generalizing B with
   | empty => simp_all
@@ -73,8 +81,8 @@ theorem subset_of_mem (hP : IsPlan A P) (hB : B ∈ P) : B ⊆ A := by
     · exact (ihQ hB).trans (erase_subset _ _)
     · exact (ihR hB).trans (erase_subset _ _)
 
-/-- The domain is a visible face. -/
-theorem domain_mem (hP : IsPlan A P) : A ∈ P := by
+/-- The ground set is a visible face. -/
+theorem ground_mem (hP : IsPlan A P) : A ∈ P := by
   cases hP <;> simp
 
 /-- The empty set is a visible face. -/
@@ -112,7 +120,10 @@ private theorem mem_step_right {a b : α} (hb : b ∈ A) (hQ : IsPlan (A.erase a
   · exact h
 
 /-- Visible faces are closed under intersection. -/
-theorem inter_mem (hP : IsPlan A P) (hB : B ∈ P) (hC : C ∈ P) : B ∩ C ∈ P := by
+theorem infClosed (hP : IsPlan A P) : InfClosed (P : Set (Finset α)) := by
+  intro B hB C hC
+  rw [mem_coe] at hB hC ⊢
+  rw [inf_eq_inter]
   induction hP generalizing B C with
   | empty => simp_all
   | singleton a =>
@@ -142,7 +153,7 @@ theorem inter_mem (hP : IsPlan A P) (hB : B ∈ P) (hC : C ∈ P) : B ∩ C ∈ 
     · exact Or.inr (Or.inr (inter_comm B C ▸ cross hC hB))
     · exact Or.inr (Or.inr (ihR hB hC))
 
-/-- **Accessibility**: every visible face other than the domain extends by one point to a
+/-- **Accessibility**: every visible face other than the ground set extends by one point to a
 visible face. -/
 theorem exists_insert_mem (hP : IsPlan A P) (hB : B ∈ P) (hne : B ≠ A) :
     ∃ x ∉ B, insert x B ∈ P := by
@@ -167,7 +178,7 @@ theorem exists_insert_mem (hP : IsPlan A P) (hB : B ∈ P) (hne : B ≠ A) :
       · obtain ⟨x, hx, hxR⟩ := ihR hB he
         exact ⟨x, hx, mem_insert_of_mem (mem_union_right _ hxR)⟩
 
-/-- In a glued plan on `A` at `a, b`, the extreme points of the domain are exactly `a` and `b`:
+/-- In a glued plan on `A` at `a, b`, the extreme points of the ground set are exactly `a` and `b`:
 the only visible one-point deletions of `A` are `A \ {a}` and `A \ {b}`. -/
 private theorem extremes_step {a b : α} (ha : a ∈ A) (hb : b ∈ A) (hQ : IsPlan (A.erase a) Q)
     (hR : IsPlan (A.erase b) R) : extremes (insert A (Q ∪ R)) A = {a, b} := by
@@ -181,8 +192,8 @@ private theorem extremes_step {a b : α} (ha : a ∈ A) (hb : b ∈ A) (hQ : IsP
     · refine Or.inr (by_contra fun hxb ↦ notMem_erase b A ?_)
       exact hR.subset_of_mem h (mem_erase.mpr ⟨Ne.symm hxb, hb⟩)
   · rintro (rfl | rfl)
-    · exact ⟨ha, Or.inr (Or.inl hQ.domain_mem)⟩
-    · exact ⟨hb, Or.inr (Or.inr hR.domain_mem)⟩
+    · exact ⟨ha, Or.inr (Or.inl hQ.ground_mem)⟩
+    · exact ⟨hb, Or.inr (Or.inr hR.ground_mem)⟩
 
 /-- Every visible face with at least two points has exactly two extreme points. -/
 theorem card_extremes (hP : IsPlan A P) (hB : B ∈ P) (hcard : 1 < #B) :
@@ -211,8 +222,26 @@ theorem card_extremes (hP : IsPlan A P) (hB : B ∈ P) (hcard : 1 < #B) :
 
 /-- A plan is a convex geometry: anti-exchange follows from accessibility. -/
 theorem isConvexGeometry (hP : IsPlan A P) : IsConvexGeometry A P :=
-  .of_accessible (fun _ ↦ hP.subset_of_mem) hP.empty_mem hP.domain_mem
-    (fun _ _ ↦ hP.inter_mem) fun _ ↦ hP.exists_insert_mem
+  .of_accessible (fun _ ↦ hP.subset_of_mem) hP.empty_mem hP.ground_mem hP.infClosed
+    fun _ ↦ hP.exists_insert_mem
+
+/-- On a ground set with at most one point, a family of subsets containing `∅` and the ground set
+is a plan (the base plan `{∅}` or `{∅, {a}}`). -/
+theorem of_card_le_one (hA : #A ≤ 1) (hsub : ∀ ⦃B⦄, B ∈ P → B ⊆ A) (h0 : ∅ ∈ P) (hAP : A ∈ P) :
+    IsPlan A P := by
+  rcases A.eq_empty_or_nonempty with rfl | hne
+  · suffices he : P = {∅} from he ▸ IsPlan.empty
+    ext B
+    simp only [mem_singleton]
+    exact ⟨fun hB ↦ subset_empty.mp (hsub hB), fun h ↦ h ▸ h0⟩
+  · obtain ⟨a, rfl⟩ := card_eq_one.mp (le_antisymm hA hne.card_pos)
+    suffices he : P = {∅, {a}} from he ▸ IsPlan.singleton a
+    ext B
+    simp only [mem_insert, mem_singleton]
+    refine ⟨fun hB ↦ subset_singleton_iff.mp (hsub hB), ?_⟩
+    rintro (rfl | rfl)
+    · exact h0
+    · exact hAP
 
 end IsPlan
 
@@ -225,70 +254,57 @@ theorem IsConvexGeometry.isPlan (hP : IsConvexGeometry A P)
   induction hn : #A using Nat.strong_induction_on generalizing A P with
   | _ n ih =>
     subst hn
-    rcases Nat.lt_or_ge 1 #A with hA | hA
-    · obtain ⟨a, b, hab, hext⟩ := card_eq_two.mp (htwo A hP.domain_mem hA)
-      have ha : a ∈ extremes P A := by simp [hext]
-      have hb : b ∈ extremes P A := by simp [hext]
-      obtain ⟨haA, haP⟩ := mem_extremes.mp ha
-      obtain ⟨hbA, hbP⟩ := mem_extremes.mp hb
-      have sub {C : Finset α} (hC : C ∈ P) (hlt : #C < #A) : IsPlan C (Geometry.restrict P C) := by
-        refine ih _ hlt (hP.restrict hC) (fun B hB hcard ↦ ?_) rfl
-        rw [extremes_restrict (mem_restrict.mp hB).2]
-        exact htwo B (mem_restrict.mp hB).1 hcard
-      have hab' : (A.erase a).erase b = A.erase a ∩ A.erase b := by
-        ext x
-        simp only [mem_erase, mem_inter]
-        tauto
-      have hface : (A.erase a).erase b ∈ P := hab' ▸ hP.inter_mem haP hbP
-      have hsub : (A.erase a).erase b ⊆ A.erase b := by
-        rw [hab']
-        exact inter_subset_right
-      have he :
-          P = insert A (Geometry.restrict P (A.erase a) ∪ Geometry.restrict P (A.erase b)) := by
-        ext C
-        simp only [mem_insert, mem_union, mem_restrict]
-        refine ⟨fun hC ↦ ?_, ?_⟩
-        · by_cases hCA : C = A
-          · exact Or.inl hCA
-          obtain ⟨x, hx, hCx⟩ := hP.exists_coatom hC hCA
-          rw [hext, mem_insert, mem_singleton] at hx
-          rcases hx with rfl | rfl
-          · exact Or.inr (Or.inl ⟨hC, hCx⟩)
-          · exact Or.inr (Or.inr ⟨hC, hCx⟩)
-        · rintro (rfl | h | h)
-          · exact hP.domain_mem
-          · exact h.1
-          · exact h.1
-      rw [he]
-      refine IsPlan.step haA hbA hab (sub haP (card_erase_lt_of_mem haA))
-        (sub hbP (card_erase_lt_of_mem hbA)) (mem_restrict.mpr ⟨hface, erase_subset _ _⟩)
-        fun C hC ↦ ?_
-      simp only [mem_restrict]
-      exact ⟨fun h ↦ ⟨h.1, hC.trans hsub⟩, fun h ↦ ⟨h.1, hC.trans (erase_subset _ _)⟩⟩
-    · rcases A.eq_empty_or_nonempty with rfl | hne
-      · suffices he : P = {∅} from he ▸ IsPlan.empty
-        ext B
-        simp only [mem_singleton]
-        exact ⟨fun hB ↦ subset_empty.mp (hP.subset_of_mem hB), fun h ↦ h ▸ hP.empty_mem⟩
-      · obtain ⟨a, rfl⟩ := card_eq_one.mp (le_antisymm hA hne.card_pos)
-        suffices he : P = {∅, {a}} from he ▸ IsPlan.singleton a
-        ext B
-        simp only [mem_insert, mem_singleton]
-        refine ⟨fun hB ↦ subset_singleton_iff.mp (hP.subset_of_mem hB), ?_⟩
-        rintro (rfl | rfl)
-        · exact hP.empty_mem
-        · exact hP.domain_mem
+    rcases le_or_gt #A 1 with hA | hA
+    · exact .of_card_le_one hA hP.subset_of_mem hP.empty_mem hP.ground_mem
+    -- The two extreme points `a, b` of `A` give the closed coatoms `A \ {a}` and `A \ {b}`.
+    obtain ⟨a, b, hab, hext⟩ := card_eq_two.mp (htwo A hP.ground_mem hA)
+    obtain ⟨haA, haP⟩ := mem_extremes.mp (by simp [hext] : a ∈ extremes P A)
+    obtain ⟨hbA, hbP⟩ := mem_extremes.mp (by simp [hext] : b ∈ extremes P A)
+    -- The restriction to a smaller closed set is a plan, by induction.
+    have sub {C : Finset α} (hC : C ∈ P) (hlt : #C < #A) : IsPlan C (Geometry.restrict P C) := by
+      refine ih _ hlt (hP.restrict hC) (fun B hB hcard ↦ ?_) rfl
+      rw [extremes_restrict (mem_restrict.mp hB).2]
+      exact htwo B (mem_restrict.mp hB).1 hcard
+    -- Every closed set other than `A` lies in one of the two coatoms.
+    have he :
+        P = insert A (Geometry.restrict P (A.erase a) ∪ Geometry.restrict P (A.erase b)) := by
+      ext C
+      simp only [mem_insert, mem_union, mem_restrict]
+      refine ⟨fun hC ↦ ?_, ?_⟩
+      · by_cases hCA : C = A
+        · exact Or.inl hCA
+        obtain ⟨x, hx, hCx⟩ := hP.exists_coatom hC hCA
+        rw [hext, mem_insert, mem_singleton] at hx
+        rcases hx with rfl | rfl
+        · exact Or.inr (Or.inl ⟨hC, hCx⟩)
+        · exact Or.inr (Or.inr ⟨hC, hCx⟩)
+      · rintro (rfl | h | h)
+        · exact hP.ground_mem
+        · exact h.1
+        · exact h.1
+    -- Glue the two restrictions along the common face `A \ {a, b}`, which is closed.
+    have hface : (A.erase a).erase b ∈ P := by
+      rw [erase_erase_eq_inter]
+      exact hP.infClosed haP hbP
+    rw [he]
+    refine IsPlan.step haA hbA hab (sub haP (card_erase_lt_of_mem haA))
+      (sub hbP (card_erase_lt_of_mem hbA)) (mem_restrict.mpr ⟨hface, erase_subset _ _⟩)
+      fun C hC ↦ ?_
+    simp only [mem_restrict]
+    exact ⟨fun h ↦ ⟨h.1, hC.trans (erase_subset_erase b (erase_subset a A))⟩,
+      fun h ↦ ⟨h.1, hC.trans (erase_subset _ _)⟩⟩
 
 /-- **Plans are exactly the convex geometries with two extremes.**  A family is a recursive
 visible-face plan on `A` iff it is a convex geometry on `A` in which every closed set with at
 least two points has exactly two extreme points. -/
-theorem isPlan_iff_isConvexGeometry :
+theorem isPlan_iff_isConvexGeometry_and_card_extremes :
     IsPlan A P ↔ IsConvexGeometry A P ∧ ∀ B ∈ P, 1 < #B → #(extremes P B) = 2 :=
   ⟨fun hP ↦ ⟨hP.isConvexGeometry, fun _ ↦ hP.card_extremes⟩, fun h ↦ h.1.isPlan h.2⟩
 
 /-- Being a plan is decidable, through its characterization as a two-extreme convex
 geometry. -/
-instance : Decidable (IsPlan A P) := decidable_of_iff _ isPlan_iff_isConvexGeometry.symm
+instance : Decidable (IsPlan A P) :=
+  decidable_of_iff _ isPlan_iff_isConvexGeometry_and_card_extremes.symm
 
 namespace IsPlan
 
@@ -305,7 +321,7 @@ theorem card_extremes_le_two (hP : IsPlan A P) (hB : B ∈ P) : #(extremes P B) 
   · have := card_le_card (extremes_subset (P := P) (B := B))
     omega
 
-/-- Every singleton of the domain is a visible face: the hull of `{x}` has no extreme point
+/-- Every singleton of the ground set is a visible face: the hull of `{x}` has no extreme point
 other than `x`, so it cannot have two points. -/
 theorem singleton_mem (hP : IsPlan A P) (hx : x ∈ A) : {x} ∈ P := by
   have hH : hull A P {x} ∈ P := hP.isConvexGeometry.hull_mem
@@ -319,15 +335,15 @@ theorem singleton_mem (hP : IsPlan A P) (hx : x ∈ A) : {x} ∈ P := by
     eq_singleton_iff_unique_mem.mpr ⟨hxH, fun y hy ↦ card_le_one.mp h1 y hy x hxH⟩
   exact he ▸ hH
 
-/-- **Two generators.**  The hull of any subset of the domain is the hull of at most two of its
-points, namely the extreme points of the hull. -/
-theorem exists_generator (hP : IsPlan A P) (hS : S ⊆ A) :
+/-- **Two generators.**  The hull of any subset of the ground set is the hull of at most two of
+its points, namely the extreme points of the hull. -/
+theorem exists_subset_card_le_two_hull_eq (hP : IsPlan A P) (hS : S ⊆ A) :
     ∃ T ⊆ S, #T ≤ 2 ∧ hull A P T = hull A P S :=
   ⟨extremes P (hull A P S), extremes_hull_subset hS,
     hP.card_extremes_le_two hP.isConvexGeometry.hull_mem,
     hP.isConvexGeometry.hull_extremes hP.isConvexGeometry.hull_mem⟩
 
-/-- A set of at most two points of the domain is recovered from its hull as the extreme points
+/-- A set of at most two points of the ground set is recovered from its hull as the extreme points
 of the hull.  In particular distinct such sets have distinct hulls. -/
 theorem extremes_hull (hP : IsPlan A P) (hS : S ⊆ A) (h2 : #S ≤ 2) :
     extremes P (hull A P S) = S := by
@@ -338,7 +354,7 @@ theorem extremes_hull (hP : IsPlan A P) (hS : S ⊆ A) (h2 : #S ≤ 2) :
     exact h2
   rcases S.eq_empty_or_nonempty with rfl | hne
   · rw [hull_eq_self hP.empty_mem (empty_subset _)]
-    rfl
+    exact subset_empty.mp extremes_subset
   obtain ⟨a, rfl⟩ := card_eq_one.mp (le_antisymm h hne.card_pos)
   rw [hull_eq_self (hP.singleton_mem (singleton_subset_iff.mp hS)) hS]
   ext x
