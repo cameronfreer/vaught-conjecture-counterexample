@@ -143,6 +143,22 @@ theorem visibilityReplace_of_lt_omega0 (ho : o < ω) (k i : ℕ) :
     visibilityReplace k i (n : Ordinal.{u}) = if n < k then (i : Ordinal.{u}) else n := by
   simp [visibilityReplace_of_lt_omega0 (natCast_lt_omega0 n)]
 
+/-- Visibility replacement of ordinal zero. -/
+@[simp] theorem visibilityReplace_zero (k i : ℕ) :
+    visibilityReplace k i (0 : Ordinal.{u}) = if 0 < k then (i : Ordinal.{u}) else 0 := by
+  simpa using visibilityReplace_natCast.{u} k i 0
+
+/-- Visibility replacement of ordinal one. -/
+@[simp] theorem visibilityReplace_one (k i : ℕ) :
+    visibilityReplace k i (1 : Ordinal.{u}) = if 1 < k then (i : Ordinal.{u}) else 1 := by
+  simpa using visibilityReplace_natCast.{u} k i 1
+
+/-- Visibility replacement of a numeral ordinal. -/
+@[simp] theorem visibilityReplace_ofNat (k i n : ℕ) [n.AtLeastTwo] :
+    visibilityReplace k i (ofNat(n) : Ordinal.{u}) =
+      if ofNat(n) < k then (i : Ordinal.{u}) else ofNat(n) :=
+  visibilityReplace_natCast k i n
+
 /-- Visibility replacement is monotone when the new value does not exceed the threshold. -/
 theorem monotone_visibilityReplace (hi : i ≤ k) :
     Monotone (visibilityReplace k i : Ordinal.{u} → Ordinal.{u}) := by
