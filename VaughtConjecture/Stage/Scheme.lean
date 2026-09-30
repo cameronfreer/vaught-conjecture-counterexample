@@ -37,6 +37,8 @@ Graded indices are transported along `f` by `Prod.map (Finset.map f) id`, `(C, j
 which identifies the graded faces of the restriction with the graded faces of `S` inside the range
 of `f` (`mem_gradedFaces_comap`), and the cell map sends the cells below a pair onto the cells below
 its image (`image_cellMap_below`); completeness, codedness, and consistency pass to the restriction.
+Along a bijection of the points the cell map is surjective (`surjective_cellMap_equiv`), and the
+faces of a well-formed scheme form a plan on all of its points (`IsWellFormed.isPlan`).
 
 ## References
 
@@ -307,9 +309,13 @@ namespace IsWellFormed
 variable {S} (hS : S.IsWellFormed)
 include hS
 
+/-- The faces of a well-formed scheme form a plan on all of its points. -/
+theorem isPlan : Geometry.IsPlan univ S.toCellScheme.faces :=
+  hS.ground_eq ▸ hS.isWellFormed.isPlan
+
 /-- The whole ground set is a face. -/
 theorem univ_mem_faces : (univ : Finset (Fin n)) ∈ S.toCellScheme.faces :=
-  hS.ground_eq ▸ hS.isWellFormed.isPlan.ground_mem
+  hS.isPlan.ground_mem
 
 /-- **Restriction to a closed face** of a well-formed scheme is well formed. -/
 theorem comap (hf : univ.map f ∈ S.toCellScheme.faces) : (S.comap f).IsWellFormed where

@@ -19,7 +19,8 @@ Its `n`-ary relation symbols are the legal stage types themselves (`baseLanguage
 the subtype `{p : StageType ω n // p.IsLegal}`); `baseLanguage.type p` is the stage type of the
 symbol `p`, and `baseLanguage.symbol` makes a symbol of a legal stage type.  Two structures of the
 base language are equal when the same relations hold of the same tuples
-(`baseLanguage.structure_ext`).
+(`baseLanguage.structure_ext`, the case of `Structure.ext_of_isRelational`, which holds for every
+relational language).
 
 The language is countable: there are countably many stage types at stage `ω` on `n` points
 (`StageType.countable_of_lt_omega_one`, as `ω < ω₁`), hence countably many relation symbols of
@@ -42,6 +43,16 @@ using generalised Stone spaces* (draft, 20 February 2026).
 -/
 
 universe u
+
+/-- **Extensionality** for structures of a relational language: with no function symbols, two
+structures on the same carrier are equal when the same relations hold of the same tuples.  It
+holds for an arbitrary relational language and is a candidate for upstreaming. -/
+theorem FirstOrder.Language.Structure.ext_of_isRelational {L : FirstOrder.Language}
+    [L.IsRelational] {M : Type*} {s t : L.Structure M}
+    (h : ∀ ⦃n : ℕ⦄ (r : L.Relations n) (xs : Fin n → M),
+      @Structure.RelMap L M s n r xs ↔ @Structure.RelMap L M t n r xs) : s = t :=
+  Structure.ext (funext fun _ ↦ funext fun f ↦ isEmptyElim f)
+    (funext fun _ ↦ funext fun r ↦ funext fun xs ↦ propext (h r xs))
 
 namespace VaughtConjecture
 
@@ -95,8 +106,7 @@ structures are equal when the same relations hold of the same tuples. -/
 theorem structure_ext {M : Type*} {s t : baseLanguage.{u}.Structure M}
     (h : ∀ ⦃n : ℕ⦄ (p : baseLanguage.{u}.Relations n) (xs : Fin n → M),
       @Structure.RelMap _ M s n p xs ↔ @Structure.RelMap _ M t n p xs) : s = t :=
-  Structure.ext (funext fun _ ↦ funext fun f ↦ isEmptyElim f)
-    (funext fun _ ↦ funext fun p ↦ funext fun xs ↦ propext (h p xs))
+  Structure.ext_of_isRelational h
 
 /-- **Countably many relation symbols of each arity** [Kni26, Proposition 3.1.4]: there are
 countably many legal stage types at stage `ω` on `n` points. -/

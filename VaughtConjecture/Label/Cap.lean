@@ -27,6 +27,9 @@ an ordinal below the stage, possibly ordinal zero (`isPermittedCutoff_iff`).
   (`IsPermittedCutoff.exists_min_eq_min_reduce_ne`).  Agreement below a proper cutoff therefore
   never establishes agreement at the formal top.  Nor is a capped observation of lawful data
   claimed to be lawful: nothing here concerns lawfulness.
+
+There are countably many permitted cutoffs at stage `ω`, namely the natural numbers
+(`countable_permittedCutoff`).
 -/
 
 universe u

@@ -210,7 +210,7 @@ set in the support of `x` has the same hull inside `x` and inside `y`.  The type
 restriction of the type of `y` to a closed face, by exact consistency. -/
 theorem hull_eq_of_support_subset (hR : R.IsConsistent) {y : R.Occurrence}
     (hxy : x.support ⊆ y.support) (hF : F ⊆ x.support) : x.hull F = y.hull F := by
-  obtain ⟨f, hf, hfy⟩ := (le_iff_exists_restrictFace hR).mp hxy
+  obtain ⟨f, hf, hfy⟩ := (le_iff_exists_restrictFace hR).mp (le_def.mpr hxy)
   obtain ⟨hfc, hx⟩ := (StageType.restrictFace_eq_some_iff _ _).mp hfy
   have hfi (i : Fin x.arity) : y.tuple (f i) = x.tuple i := DFunLike.congr_fun hf i
   have hcoords : (x.coords F).map f = y.coords F := by
@@ -230,7 +230,8 @@ a common larger occurrence. -/
 theorem hull_eq_hull (hR : R.IsConsistent) (hc : R.IsCovering) {y : R.Occurrence}
     (hx : F ⊆ x.support) (hy : F ⊆ y.support) : x.hull F = y.hull F := by
   obtain ⟨z, -, hxz, hyz⟩ := hc.directedOn_setOf_subset_support F x hx y hy
-  rw [hull_eq_of_support_subset hR hxz hx, hull_eq_of_support_subset hR hyz hy]
+  rw [hull_eq_of_support_subset hR (le_def.mp hxz) hx,
+    hull_eq_of_support_subset hR (le_def.mp hyz) hy]
 
 end Occurrence
 

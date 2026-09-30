@@ -123,7 +123,7 @@ theorem univ_mem_faces (t : StageType.{u} α n) : (univ : Finset (Fin n)) ∈ t.
 
 /-- The faces of a stage type form a plan on all of its points. -/
 theorem isPlan (t : StageType.{u} α n) : Geometry.IsPlan univ t.toCellScheme.faces :=
-  t.isWellFormed.ground_eq ▸ t.isWellFormed.isWellFormed.isPlan
+  t.isWellFormed.isPlan
 
 /-! ### Restriction to a closed face -/
 
