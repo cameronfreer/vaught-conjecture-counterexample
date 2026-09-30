@@ -9,9 +9,9 @@ import Mathlib.Order.SuccPred.Basic
 /-!
 # Domains with countable complements and disjoint successor losses
 
-Roadmap, "Mathematical interface to the endpoint" and Layers 5–6; semantic contract item 9.  Two
-generic facts about a family of domains `D` in a type `Q` of isomorphism classes, with no
-topology, measurability, or rank function.
+Roadmap, the reduction of the main theorem to expansion domains, and Layers 5–6; semantic
+contract item 9.  Two general facts about domains `D ⊆ Q` in a type `Q` of isomorphism classes,
+with no topology, measurability, or rank function.
 
 * `countable_split_of_uniform_domain`: a predicate constant on a domain with countable complement
   has a countable truth side or a countable false side.  With the countable complements given by
@@ -23,9 +23,11 @@ topology, measurability, or rank function.
   the lower-bound choice; it uses neither countability of losses nor logical comparison.  For
   ordinals `Order.succ ξ` is definitionally `ξ + 1`, the form used by `compl_countable_of_loss`.
 
-The complementary cardinality statement for exhausting domains is InfinitaryLogic's
-`InfinitaryLogic.mk_eq_aleph_one_of_domains`, and countable complements from countable successor
-losses is `InfinitaryLogic.compl_countable_of_loss`; neither is restated here.
+Countable complements from countable successor losses is InfinitaryLogic's
+`InfinitaryLogic.compl_countable_of_loss`, not restated here.  (InfinitaryLogic's
+`mk_eq_aleph_one_of_domains` assumes that every point leaves some domain below `ω₁`, a global
+eventual-departure hypothesis that the main theorem does not assume; it is not the route to the
+cardinality bound here.)
 -/
 
 namespace VaughtConjecture.Counting
