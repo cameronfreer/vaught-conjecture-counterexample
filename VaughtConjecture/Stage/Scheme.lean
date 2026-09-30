@@ -18,8 +18,8 @@ cells are `Fin card`, in their order, with its semantic rows (`CellScheme.Rows`)
 data.  Its laws are separate: `Scheme.IsWellFormed` (the ground set is all of `Fin n` and the cell
 scheme is well formed) and `Scheme.IsCoded` (every row value is bottom or an ordinal
 `ω · i + j`, that is, lies below `ω ^ 2`).  Consistency of the rows is the base predicate
-`CellScheme.Rows.IsConsistent`, and completeness (`CellScheme.IsComplete`: every graded face is
-the graded index of a cell) is defined here.
+`CellScheme.Rows.IsConsistent`, and completeness is the base predicate `CellScheme.IsComplete`
+(every graded face is the graded index of a cell).
 
 **Face restriction.**  For an embedding `f : Fin m ↪ Fin n`, `S.comap f : Scheme m` is the
 pullback of the cell scheme along `f` (`CellScheme.comap`), whose cells are the cells of `S`
@@ -35,15 +35,15 @@ Because the enumeration is canonical, the restriction is strictly functorial, wi
 strictly monotone enumeration of the visible cells is the cell map (`cellMap_eq_of_strictMono`).
 Graded indices are transported along `f` by `Prod.map (Finset.map f) id`, `(C, j) ↦ (f '' C, j)`,
 which identifies the graded faces of the restriction with the graded faces of `S` inside the range
-of `f` (`mem_gradedFaces_comap`); completeness, codedness, and consistency pass to the restriction.
+of `f` (`mem_gradedFaces_comap`), and the cell map sends the cells below a pair onto the cells below
+its image (`image_cellMap_below`); completeness, codedness, and consistency pass to the restriction.
 
 ## References
 
 Schemes with their rows are the domains with their semantics of [Kni26, §2.6], called schemes
 here; face restriction is the horizontal restriction of [Kni26, Definition 3.1.2], whose
 restriction of a semantics is [Kni26, Lemma 2.5.5]; completeness is [Kni26, Definition 2.5.15]
-and the coding of row values follows [Kni26, Lemma 2.5.13], for R. W. Knight, *A counterexample
-to Vaught's Conjecture using generalised Stone spaces* (draft, 20 February 2026).
+and the coding of row values follows [Kni26, Lemma 2.5.13].
 -/
 
 universe u
@@ -51,39 +51,6 @@ universe u
 namespace VaughtConjecture
 
 open Finset
-
-/-! ### Graded indices along an embedding and complete schemes -/
-
-namespace CellScheme
-
-variable {ι κ α β : Type*}
-
-/-- A cell scheme is **complete** [Kni26, §2.5]: every graded face is the graded
-index of some cell. -/
-def IsComplete (D : CellScheme ι α) : Prop :=
-  ∀ X ∈ D.gradedFaces, ∃ d, D.gradedIndex d = X
-
-/-- A scheme is complete after reindexing along a surjective map of cells. -/
-theorem IsComplete.reindex {D : CellScheme ι α} (hD : D.IsComplete) {φ : κ → ι}
-    (hφ : Function.Surjective φ) : (D.reindex φ).IsComplete := fun X hX ↦ by
-  obtain ⟨d, hd⟩ := hD X hX
-  obtain ⟨t, rfl⟩ := hφ d
-  exact ⟨t, hd⟩
-
-/-- The pullback of a complete scheme along an embedding is complete: the image
-`Prod.map (Finset.map f) id X` of a graded face `X` of the pullback is a graded face, whose cell is
-visible through the embedding. -/
-theorem IsComplete.comap {D : CellScheme ι α} (hD : D.IsComplete) (f : β ↪ α) :
-    (D.comap f).IsComplete := by
-  intro X ⟨hX, hpos, hle⟩
-  obtain ⟨d, hd⟩ := hD (Prod.map (Finset.map f) id X)
-    ⟨(mem_comap_faces D f).mp hX, hpos, by simpa using hle⟩
-  have hsc : D.scope d = X.1.map f := congrArg Prod.fst hd
-  refine ⟨⟨d, by simp [hsc]⟩, Prod.ext ?_ ?_⟩
-  · simp [hsc, preimage_map]
-  · simpa using congrArg Prod.snd hd
-
-end CellScheme
 
 /-! ### Schemes on `n` points -/
 
@@ -232,12 +199,23 @@ theorem map_comap_gradedIndex (i : Fin (S.comap f).card) :
       S.toCellScheme.gradedIndex (S.cellMap f i) :=
   Prod.ext (S.map_comap_scope f i) rfl
 
+/-- The cell map of the restriction along `f` maps the cells below a pair onto the cells below its
+image. -/
+theorem image_cellMap_below (X : Finset (Fin m) × ℕ) :
+    S.cellMap f '' (S.comap f).toCellScheme.below X =
+      S.toCellScheme.below (Prod.map (Finset.map f) id X) := by
+  have h : S.cellMap f '' (S.comap f).toCellScheme.below X =
+      Subtype.val '' (S.cellEquiv f '' (S.cellEquiv f ⁻¹' (S.toCellScheme.comap f).below X)) := by
+    rw [Set.image_image]
+    rfl
+  rw [h, Equiv.image_preimage]
+  exact CellScheme.image_val_below_comap _ f X
+
 /-- The graded faces of the restriction are those whose image is a graded face. -/
 theorem mem_gradedFaces_comap {X : Finset (Fin m) × ℕ} :
     X ∈ (S.comap f).toCellScheme.gradedFaces ↔
-      Prod.map (Finset.map f) id X ∈ S.toCellScheme.gradedFaces := by
-  rw [CellScheme.mem_gradedFaces, CellScheme.mem_gradedFaces, mem_comap_faces]
-  simp
+      Prod.map (Finset.map f) id X ∈ S.toCellScheme.gradedFaces :=
+  CellScheme.mem_gradedFaces_comap _ f
 
 /-! ### Functoriality of restriction -/
 

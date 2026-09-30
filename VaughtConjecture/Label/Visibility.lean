@@ -35,9 +35,8 @@ Visibility replacement of an ordinal at threshold `k` with value `i` replaces it
 
 ## References
 
-Visibility replacement is Definition 2.2.3, and the characterization of self-visible ordinals
-(`isSelfVisible_coe`) is Lemma 2.2.4, of R. W. Knight, *A counterexample to Vaught's Conjecture
-using generalised Stone spaces* (draft, 20 February 2026) [Kni26].
+Visibility replacement is [Kni26, Definition 2.2.3], and the characterization of self-visible
+ordinals (`isSelfVisible_coe`) is [Kni26, Lemma 2.2.4].
 -/
 
 universe u

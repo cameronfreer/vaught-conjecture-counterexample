@@ -35,9 +35,7 @@ nevertheless preserves the transformation relation under two guards.
 ## References
 
 The jump rule is the post-composition used in the case of the formal top of the proof of
-Lemma 5.3.10 of R. W. Knight, *A counterexample to Vaught's Conjecture using generalised Stone
-spaces* (draft, 20 February 2026) [Kni26]; the transformation relation is [Kni26, Definition
-2.3.9].
+[Kni26, Lemma 5.3.10]; the transformation relation is [Kni26, Definition 2.3.9].
 -/
 
 universe u
