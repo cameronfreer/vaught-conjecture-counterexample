@@ -48,6 +48,20 @@ def IsPermittedCutoff (α : Ordinal.{u}) (c : Label.{u}) : Prop := ⊥ < c ∧ c
 @[simp] theorem isPermittedCutoff_zero : IsPermittedCutoff α (0 : Label.{u}) ↔ 0 < α :=
   isPermittedCutoff_coe
 
+/-- The ordinal `1` is a permitted cutoff exactly at the stages `α > 1`. -/
+@[simp] theorem isPermittedCutoff_one : IsPermittedCutoff α (1 : Label.{u}) ↔ 1 < α :=
+  isPermittedCutoff_coe
+
+/-- A natural number `n` is a permitted cutoff exactly at the stages `α > n`. -/
+@[simp] theorem isPermittedCutoff_natCast (n : ℕ) :
+    IsPermittedCutoff α (n : Label.{u}) ↔ (n : Ordinal.{u}) < α :=
+  isPermittedCutoff_coe
+
+/-- A numeral `n` is a permitted cutoff exactly at the stages `α > n`. -/
+@[simp] theorem isPermittedCutoff_ofNat (n : ℕ) [n.AtLeastTwo] :
+    IsPermittedCutoff α (ofNat(n) : Label.{u}) ↔ (ofNat(n) : Ordinal.{u}) < α :=
+  isPermittedCutoff_natCast n
+
 /-- The bottom label is never a permitted cutoff. -/
 @[simp] theorem not_isPermittedCutoff_bot : ¬ IsPermittedCutoff α (⊥ : Label.{u}) :=
   fun h ↦ h.1.false
