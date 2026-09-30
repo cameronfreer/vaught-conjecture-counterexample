@@ -113,11 +113,12 @@ compatible cap, because caps nest under `min` (`min (min x m) c = min x c` for `
 `m = ⊥`, no permitted cap is compatible: simultaneous preservation is vacuous, and the cap
 calculus supplies no extension of `p` at all.  If `p` is literally the face of `a`, the ambient
 section itself is an extension preserving every observation.  (Agreement at every permitted
-cap is equality at a nonzero limit stage, where the caps `0` and `y + 1` separate any two
-labels at the stage, but not at a successor stage `β + 1`, where `β` and the formal top agree
+cap is equality at a nonzero limit stage, where for labels `x < y` at the stage the cap `0`
+(if `x = ⊥`) or `x + 1` separates them, but not at a successor stage `β + 1`, where `β` and the formal top agree
 at every permitted cap; hence the split on literal difference.)  Simultaneous preservation
 therefore needs neither injectivity nor any exact form of receiving, given per-cap
-bountifulness and the fact that the ambient section restricts to the ambient face.  This is
+bountifulness and the fact that the ambient section restricts to the ambient face (in the
+`m = ⊥` case, given some extension).  This is
 the intended argument, still to be proved.  Preserve caps on
 **all** target coordinates, including auxiliaries and future catalogue fields (catalogue fields
 are to be defined by the forthcoming layer-3 specification).  A statement
