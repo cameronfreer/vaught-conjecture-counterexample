@@ -30,8 +30,10 @@ on `n + 1` points, each intersected with the cofaces of `p`:
 `n + 1` points whose face along the initial segment is the scheme of `p`, and the bottom pattern
 additionally over the lawful sections `ρ` of `S` (with no stage bound) that extend the labels of
 `p`.  At a stage that is zero or a limit these side conditions are exactly the nonemptiness of
-`cofaces p ∩ saturationFamily S` (`nonempty_cofaces_inter_saturationFamily_iff`), and they make
-both families nonempty, as in [Kni26, Lemma 4.4.4]:
+`cofaces p ∩ saturationFamily S` (`nonempty_cofaces_inter_saturationFamily_iff`), and a
+bottom-pattern instance is nonempty exactly when its family is that of a section satisfying the
+side conditions (`nonempty_cofaces_inter_bottomPatternFamily_iff`: the labels of any member are
+such a section).  The side conditions make both families nonempty, as in [Kni26, Lemma 4.4.4]:
 
 * a lawful section extending `p` reduces to a coface with the same bottom pattern
   (`ofIsLawful_mem_cofaces`, `nonempty_cofaces_inter_bottomPatternFamily`);
@@ -39,8 +41,9 @@ both families nonempty, as in [Kni26, Lemma 4.4.4]:
   (`exists_isLawful_extend_label`, `nonempty_cofaces_inter_saturationFamily`).
 
 The corresponding nonemptiness of the uniformity and dominance instances at limit stages
-([Kni26, Lemmas 4.4.2 and 4.4.3], by amalgamation through [Kni26, Proposition 4.3.23] and its
-corollaries) is not proved here; the three lemmas together give [Kni26, Lemma 4.4.1].
+([Kni26, Lemmas 4.4.2 and 4.4.3], by amalgamation through [Kni26, Corollary 4.3.22], with
+[Kni26, Lemma 4.2.2] for the seed) is not proved here; the three lemmas together give
+[Kni26, Lemma 4.4.1].
 
 **Transport.**  Along a bijection `e` of the `n + 1` points that maps the initial segment to itself
 by `σ`, cofaces of `p` reindex to cofaces of `p.reindex σ` (`reindex_mem_cofaces`), and the
@@ -70,10 +73,16 @@ generalized-saturation and bottom-pattern clauses of a model.
 `StageType.cappedLift_of_restrictFace`; `StageType.label_congr`, `StageType.ofIsLawful`, its
 `simp` lemmas, `StageType.restrictFace_ofIsLawful`, and `StageType.reduce_eq_ofIsLawful` in
 `VaughtConjecture.Stage.Basic`, where `StageType.reduce` can then be defined through
-`StageType.ofIsLawful`; `Ordinal.add_omega0_le_of_isSuccPrelimit` in
-`VaughtConjecture.Label.OrdinalVisibility`, under `Ordinal`, and
-`Label.exists_lt_lt_isSelfVisible` in `VaughtConjecture.Label.Visibility`.  They are stated here
-so that those files are unchanged.
+`StageType.ofIsLawful`; `StageType.surjective_cellMap_equiv`, a general reindexing fact, in
+`VaughtConjecture.Stage.Scheme`, which holds `Scheme.cellMap`, stated there for schemes;
+`Ordinal.add_omega0_le_of_isSuccPrelimit` in `VaughtConjecture.Label.OrdinalVisibility`, under
+`Ordinal`, and `Label.exists_lt_lt_isSelfVisible` in `VaughtConjecture.Label.Visibility`.  They
+are stated here so that those files are unchanged.  Moving
+`Ordinal.add_omega0_le_of_isSuccPrelimit` requires amending the implementation note of
+`VaughtConjecture.Label.OrdinalVisibility`, which admits in the root `Ordinal` namespace only
+names containing `visibilityReplace`, `Ordinal.lt_iff_mul_lt_of_dvd` with its `ω` case, and
+private helpers, justified by dot notation: the note would list it as a general ordinal fact and
+a candidate for Mathlib.
 
 ## References
 
@@ -492,6 +501,32 @@ theorem nonempty_cofaces_inter_saturationFamily_iff (hα : Order.IsSuccPrelimit 
     nonempty_cofaces_inter_saturationFamily hα hS hf hp⟩
   subst hS
   exact ⟨hq.1, castSucc_mem_faces_of_mem_cofaces hq, comap_toScheme_of_mem_cofaces hq⟩
+
+/-- **The side conditions of the bottom pattern**: at a stage that is zero or a limit, some coface
+of `p` has the bottom pattern of `ρ` on `S` exactly when `S` satisfies the side conditions of
+generalized saturation and the family is that of a lawful section of `S` extending the labels of
+`p`.  Forward, the labels of any member are such a section. -/
+theorem nonempty_cofaces_inter_bottomPatternFamily_iff (hα : Order.IsSuccPrelimit α)
+    {ρ : Fin S.card → Label.{u}} :
+    (p.cofaces ∩ bottomPatternFamily S ρ).Nonempty ↔ S.IsLegal ∧
+      univ.map Fin.castSuccEmb ∈ S.toCellScheme.faces ∧ S.comap Fin.castSuccEmb = p.toScheme ∧
+      ∃ ρ' : Fin S.card → Label.{u}, S.rows.IsLawful ρ' ∧
+        (∀ (i : Fin (S.comap Fin.castSuccEmb).card) (j : Fin p.card), (i : ℕ) = j →
+          ρ' (S.cellMap Fin.castSuccEmb i) = p.label j) ∧
+        (bottomPatternFamily S ρ' : Set (StageType.{u} α (n + 1))) = bottomPatternFamily S ρ := by
+  refine ⟨fun ⟨q, hq, hS, hpat⟩ ↦ ?_, fun ⟨hS, hf, hp, ρ', hρ', hext, he⟩ ↦
+    he ▸ nonempty_cofaces_inter_bottomPatternFamily hα hS hf hp hρ' hext⟩
+  subst hS
+  obtain ⟨hf, hqp⟩ := (restrictFace_eq_some_iff _ _).mp hq.2
+  refine ⟨hq.1, hf, comap_toScheme_of_mem_cofaces hq, q.label, q.isLawful,
+    fun i j hij ↦ label_congr hqp hij, Set.ext fun r ↦ ?_⟩
+  have hgr {s t : Scheme.{u} (n + 1)} (h : s = t) {i : Fin s.card} {j : Fin t.card}
+      (hij : (i : ℕ) = j) : s.toCellScheme.grade i = t.toCellScheme.grade j := by
+    subst h
+    rw [Fin.ext hij]
+  refine ⟨fun ⟨h1, h2⟩ ↦ ⟨h1, fun i j hij hg ↦ ?_⟩, fun ⟨h1, h2⟩ ↦ ⟨h1, fun i j hij hg ↦ ?_⟩⟩
+  · rw [h2 i j hij hg, ← hpat j j rfl (hgr h1 hij ▸ hg)]
+  · rw [h2 i j hij hg, hpat j j rfl (hgr h1 hij ▸ hg)]
 
 end Nonempty
 

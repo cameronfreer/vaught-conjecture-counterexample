@@ -29,24 +29,29 @@ member of the families of `VaughtConjecture.Realization.Families`:
   (`IsModel.saturation`);
 * the bottom pattern, for every scheme `S` and labelling `ρ` of its cells with a coface of `p` in
   the family (`IsModel.bottomPattern`);
-* uniformity, for every `γ` below the stage that is zero or a limit (`IsModel.uniformity`);
+* uniformity, for every `γ` that is zero or a limit and below the stage (`IsModel.uniformity`);
 * high-arity dominance, for every `γ` below the stage (`IsModel.dominance`).
 
 **Limit stages and nonempty instances.**  The source defines models only at limit stages
-([Kni26, Definition 3.2.1], "α a limit"), and at such stages every instance of the four families
-is nonempty ([Kni26, Lemma 4.4.1], proved through [Kni26, Lemmas 4.4.2–4.4.4] and
-[Kni26, Proposition 4.3.23]).  Here `IsModel` is defined at every stage.  The uniformity and
+`α ≤ ω₁` ([Kni26, Definition 3.2.1]), and at such stages every instance of the four families is
+nonempty ([Kni26, Lemma 4.4.1], proved through [Kni26, Lemmas 4.4.2–4.4.4], the first two by
+amalgamation through [Kni26, Corollary 4.3.22], with [Kni26, Lemma 4.2.2] for the seed).  Here
+`IsModel` is defined at every stage.  The uniformity and
 dominance clauses are stated as in the source, for every `γ` in the range of the source; at a
 successor stage they can fail outright: at stage `1` the uniformity family for `γ = 0` is empty,
 so there is no model at stage `1` (`VaughtConjecture.Realization.ModelExamples`).  The
 generalized-saturation and bottom-pattern clauses are stated guarded, for the instances with a
 member among the cofaces of `p`.  At a stage that is zero or a limit the side conditions of the
-source make those instances nonempty, and for generalized saturation they are exactly its
-nonemptiness (`StageType.nonempty_cofaces_inter_saturationFamily_iff`,
-`StageType.nonempty_cofaces_inter_bottomPatternFamily`, as in [Kni26, Lemma 4.4.4]), so there the
-guarded clauses are equivalent to those of the source (`IsModel.saturation_of_isLegal`,
-`IsModel.bottomPattern_of_isLawful`).  That a model is infinite will use the dominance clause at
-`γ = 0`.
+source make those instances nonempty (`StageType.nonempty_cofaces_inter_saturationFamily`,
+`StageType.nonempty_cofaces_inter_bottomPatternFamily`, as in [Kni26, Lemma 4.4.4]), so the
+guarded clauses imply those of the source (`IsModel.saturation_of_isLegal`,
+`IsModel.bottomPattern_of_isLawful`).  Conversely, a nonempty instance satisfies the side
+conditions of the source: for generalized saturation they are exactly its nonemptiness
+(`StageType.nonempty_cofaces_inter_saturationFamily_iff`), and a nonempty bottom-pattern family
+is that of the labels of any of its members, a lawful section extending the labels of `p`
+(`StageType.nonempty_cofaces_inter_bottomPatternFamily_iff`).  So there the guarded clauses are
+equivalent to those of the source.  That a model is infinite will use the dominance clause at
+`γ = 0` at a positive stage.
 
 **Transport and reduction.**  Modelhood is preserved and reflected by transport along a bijection
 of carriers (`isModel_map_iff`), hence invariant under isomorphism (`IsIso.isModel_iff`), where an
@@ -165,8 +170,10 @@ whenever the instance has a member among the cofaces of its type.
 
 The source defines models only at limit stages `α`, where every instance is nonempty
 [Kni26, Lemma 4.4.1]; here the definition is made at every stage, and at a stage that is zero or
-a limit the guarded clauses are equivalent to those of the source
-(`IsModel.saturation_of_isLegal`, `IsModel.bottomPattern_of_isLawful`). -/
+a limit the guarded clauses are equivalent to those of the source: they imply them
+(`IsModel.saturation_of_isLegal`, `IsModel.bottomPattern_of_isLawful`), and every nonempty
+instance is one of the source (`StageType.nonempty_cofaces_inter_saturationFamily_iff`,
+`StageType.nonempty_cofaces_inter_bottomPatternFamily_iff`). -/
 structure IsModel : Prop where
   /-- The carrier is nonempty. -/
   nonempty : Nonempty M
@@ -183,7 +190,7 @@ structure IsModel : Prop where
   bottomPattern (x : R.Occurrence) (S : Scheme.{u} (x.arity + 1)) (ρ : Fin S.card → Label.{u}) :
     (x.type.cofaces ∩ bottomPatternFamily S ρ).Nonempty →
       R.RealizesOver x.tuple (bottomPatternFamily S ρ)
-  /-- Clause 4(b), uniformity, for `γ` zero or a limit below the stage. -/
+  /-- Clause 4(b), uniformity, for `γ` that is zero or a limit and below the stage. -/
   uniformity (x : R.Occurrence) (γ : Ordinal.{u}) : Order.IsSuccPrelimit γ → γ < α →
     R.RealizesOver x.tuple (uniformityFamily γ)
   /-- Clause 4(c), high-arity dominance, for `γ` below the stage. -/
@@ -319,7 +326,7 @@ end Reduce
 
 /-- **Reduction of models** [Kni26, Definition 5.1.1]: the stage reduction of a model at a stage
 `α` that is zero or a limit to a limit stage `0 < β ≤ α` is a model; this is [Kni26, Lemma 5.2.1]
-for `β ≠ 0`.  The case `β = 0` of that lemma is not covered: the reduction of the bottom-pattern
+for `β ≠ 0`.  The reduction to stage 0 is not covered: the reduction of the bottom-pattern
 clause lifts at a positive self-visible cap `c ≤ β`, and there is none when `β = 0`.  The base
 stage of the construction is `ω`. -/
 theorem IsModel.reduce (hR : R.IsModel) (hα : Order.IsSuccPrelimit α) (hβ : Order.IsSuccLimit β)
