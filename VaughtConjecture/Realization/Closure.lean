@@ -78,7 +78,7 @@ when it is the support of an occurrence. -/
 theorem isClosed_coe_iff (S : Finset M) :
     (R.closure hR hc).IsClosed ↑S ↔ R.IsSupport S := by
   rw [← finiteHull_eq_self_iff hR hc, ← coe_inj, ← closure_coe hR hc]
-  exact ⟨fun h ↦ h.closure_eq, fun h ↦ ClosureOperator.isClosed_iff_closure_le.mpr h.le⟩
+  exact ClosureOperator.isClosed_iff _
 
 /-- A finite set of points is closed for the canonical closure exactly when it is the set of
 points of an occurrence. -/

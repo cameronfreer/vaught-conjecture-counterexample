@@ -45,8 +45,11 @@ itself is not closed (`finiteHull_eq_self_iff`), so that no tuple enumerating th
 
 ## Placement
 
-The geometry lemmas `Geometry.hull_insert_hull` and `Geometry.hull_preimage` belong in
-`VaughtConjecture.Geometry.ConvexGeometry`, beside `Geometry.hull_restrict`; `StageType.isPlan`
+The geometry lemma `Geometry.hull_insert_hull` belongs in
+`VaughtConjecture.Geometry.ConvexGeometry`, beside `Geometry.hull_restrict`, and
+`Geometry.hull_preimage` in `VaughtConjecture.Geometry.Plan`, beside `Geometry.IsPlan.preimage`
+(which has `Finset.preimage` and `Finset.map_preimage_eq_of_subset_range` in scope);
+`StageType.isPlan`
 in `VaughtConjecture.Stage.Basic` (or as `Scheme.IsWellFormed.isPlan` in
 `VaughtConjecture.Stage.Scheme`, beside `Scheme.IsWellFormed.univ_mem_faces`); and the stage-type
 corollary `StageType.hull_comap` of `Geometry.hull_preimage` in `VaughtConjecture.Stage.Basic`.
@@ -73,12 +76,12 @@ theorem hull_insert_hull (hS : S ⊆ A) (j : α) :
   ext x
   simp only [mem_hull, insert_subset_iff]
   refine and_congr_right fun _ ↦ forall₂_congr fun B hB ↦ imp_congr_left ?_
-  exact and_congr_right fun _ ↦ ⟨(subset_hull hS).trans, hull_subset hB⟩
+  exact and_congr_right fun _ ↦ hull_subset_iff hB hS
 
 /-- **Hulls in a pullback.**  Let `P` be intersection-closed and `f : β ↪ α` an embedding whose
-range meets the ground set `A` in a member of `P`.  The hull of `G` in the pullback of `P` along
-`f` (the sets whose image lies in `P`, on the preimage of `A`) is the preimage of the hull of the
-image of `G`. -/
+range meets the ground set `A` in a member of `P`.  The hull of a subset `G` of the preimage of
+`A` in the pullback of `P` along `f` (the sets whose image lies in `P`, on the preimage of `A`) is
+the preimage of the hull of the image of `G`. -/
 theorem hull_preimage (hinter : InfClosed (P : Set (Finset α))) {f : β ↪ α}
     (hf : (A.preimage f f.injective.injOn).map f ∈ P) {G : Finset β}
     (hG : G ⊆ A.preimage f f.injective.injOn) :
