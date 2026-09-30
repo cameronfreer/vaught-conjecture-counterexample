@@ -210,9 +210,8 @@ set in the support of `x` has the same hull inside `x` and inside `y`.  The type
 restriction of the type of `y` to a closed face, by exact consistency. -/
 theorem hull_eq_of_support_subset (hR : R.IsConsistent) {y : R.Occurrence}
     (hxy : x.support ⊆ y.support) (hF : F ⊆ x.support) : x.hull F = y.hull F := by
-  obtain ⟨f, hf⟩ := y.exists_trans_eq hxy
-  obtain ⟨hfc, hx⟩ := (StageType.restrictFace_eq_some_iff _ _).mp
-    (restrictFace_eq_of_eval hR y.eval_tuple f (hf ▸ x.eval_tuple))
+  obtain ⟨f, hf, hfy⟩ := (le_iff_exists_restrictFace hR).mp hxy
+  obtain ⟨hfc, hx⟩ := (StageType.restrictFace_eq_some_iff _ _).mp hfy
   have hfi (i : Fin x.arity) : y.tuple (f i) = x.tuple i := DFunLike.congr_fun hf i
   have hcoords : (x.coords F).map f = y.coords F := by
     ext j

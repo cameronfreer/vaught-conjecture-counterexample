@@ -180,6 +180,15 @@ theorem isSome_toRealization_eval_iff (t : Fin n ↪ M) :
   simp only [toRealization]
   split_ifs with h <;> simp [h]
 
+/-- A tuple has the stage type of a relation in the realization of a structure when the relation
+holds of it and no other relation does. -/
+theorem toRealization_eval_eq_some_of_unique {t : Fin n ↪ M} {p : baseLanguage.{u}.Relations n}
+    (hp : RelMap p ⇑t) (hu : ∀ q : baseLanguage.{u}.Relations n, RelMap q ⇑t → q = p) :
+    (toRealization M).eval t = some (type p) := by
+  have hex : ∃ p, RelMap p ⇑t := ⟨p, hp⟩
+  simp only [toRealization, hex, ↓reduceDIte]
+  exact congrArg (some ∘ type) (hu _ hex.choose_spec)
+
 /-- A tuple is untyped in the realization of a structure exactly when no relation holds of it. -/
 theorem toRealization_eval_eq_none_iff (t : Fin n ↪ M) :
     (toRealization M).eval t = none ↔ ∀ p : baseLanguage.{u}.Relations n, ¬ RelMap p ⇑t := by
@@ -214,9 +223,7 @@ theorem toRealization_eval_eq_some_iff (t : Fin n ↪ M) (p : baseLanguage.{u}.R
   refine ⟨fun hp ↦ ?_, fun hp ↦ ?_⟩
   · obtain ⟨p', hp', h'⟩ := exists_relMap_of_toRealization_eval hp
     rwa [type_injective hp'] at h'
-  · have hex : ∃ p, RelMap p ⇑t := ⟨p, hp⟩
-    simp only [toRealization, hex, ↓reduceDIte]
-    exact congrArg (some ∘ type) (h.unique _ _ _ hex.choose_spec hp)
+  · exact toRealization_eval_eq_some_of_unique hp fun q hq ↦ h.unique _ _ _ hq hp
 
 /-- In a type assignment, a relation holds of a tuple exactly when the tuple is injective and has
 the stage type of the relation in the realization. -/
@@ -279,9 +286,8 @@ theorem toRealization_map (h : IsTypeAssignment M) (e : M ≃[baseLanguage.{u}] 
     (relMap_trans_symm_toEmbedding e p t).symm
   refine Option.ext fun q ↦ ⟨fun hq ↦ ?_, fun hq ↦ ?_⟩
   · obtain ⟨p, rfl, hp⟩ := exists_relMap_of_toRealization_eval hq
-    have hex : ∃ p, RelMap p ⇑t := ⟨p, (hrel p).mpr hp⟩
-    simp only [toRealization, hex, ↓reduceDIte]
-    exact congrArg (some ∘ type) (h.unique _ _ _ ((hrel _).mp hex.choose_spec) hp)
+    exact toRealization_eval_eq_some_of_unique ((hrel p).mpr hp) fun q hq ↦
+      h.unique _ _ _ ((hrel q).mp hq) hp
   · obtain ⟨p, rfl, hp⟩ := exists_relMap_of_toRealization_eval hq
     exact (h.toRealization_eval_eq_some_iff t' p).mpr ((hrel p).mp hp)
 

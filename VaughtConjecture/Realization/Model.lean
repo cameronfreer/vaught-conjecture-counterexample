@@ -204,12 +204,8 @@ theorem IsModel.exists_arity_eq {α : Ordinal.{u}} {R : Realization.{u, v} α M}
   induction k with
   | zero =>
     obtain ⟨x⟩ := hR.nonempty_occurrence
-    have h := Realization.eval_face hR.isConsistent x (Function.Embedding.ofIsEmpty (α := Fin 0))
-    have hs : (R.eval (Function.Embedding.ofIsEmpty (α := Fin 0))).isSome := by
-      rw [show (Function.Embedding.ofIsEmpty (α := Fin 0)).trans x.tuple
-        = Function.Embedding.ofIsEmpty from by ext i; exact i.elim0] at h
-      rw [h, StageType.isSome_restrictFace_iff]
-      simpa using x.type.isWellFormed.isWellFormed.isPlan.empty_mem
+    have hs := (isSome_eval_face_iff hR.isConsistent x
+      (Function.Embedding.ofIsEmpty (α := Fin 0))).mpr (by simpa using x.type.isPlan.empty_mem)
     obtain ⟨p, hp⟩ := Option.isSome_iff_exists.mp hs
     exact ⟨⟨0, _, p, hp⟩, rfl⟩
   | succ k ih =>
