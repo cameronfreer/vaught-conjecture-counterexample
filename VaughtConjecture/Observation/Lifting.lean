@@ -19,11 +19,11 @@ The *observation fibre* of `q` is `obsY ⁻¹' {obsY q}`, the set of sections ob
 every face section `p` observed like `r q` is the face of some section observed like `q`:
 `∀ p, obsX p = obsX (r q) → ∃ q', r q' = p ∧ obsY q' = obsY q`.
 
-* `VaughtConjecture.Observation.surjOn_fiber_iff`: lifting at `q` is `Set.SurjOn r` from the observation
-  fibre of `q` onto the observation fibre of `r q`.  No hypothesis is needed.
-* `VaughtConjecture.Observation.image_fiber_eq_iff`: if the observations are compatible at `q` (sections
-  observed like `q` have faces observed like `r q`, i.e. `Set.MapsTo r` between the two fibres),
-  then lifting at `q` is equality of the image of the fibre of `q` with the fibre of `r q`.
+* `surjOn_fiber_iff`: lifting at `q` is `Set.SurjOn r` from the observation fibre of `q` onto
+  the observation fibre of `r q`.  No hypothesis is needed.
+* `image_fiber_eq_iff`: if the observations are compatible at `q` (sections observed like `q`
+  have faces observed like `r q`, i.e. `Set.MapsTo r` between the two fibres), then lifting at
+  `q` is equality of the image of the fibre of `q` with the fibre of `r q`.
 
 Both statements are pointwise in `q`; the global lifting property quantifies them over all
 `q`.  The second reduces to the first through Mathlib's `Set.image_eq_iff_surjOn_mapsTo`.
