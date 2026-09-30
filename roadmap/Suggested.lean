@@ -28,7 +28,8 @@ universe u v w z
 
 Here X and Y already denote lawful section spaces. OX and OY are observation
 spaces, not necessarily spaces of lawful sections. Apply the statement separately
-at every PERMITTED cap; no assertion about unrestricted caps is hidden here.
+at every cap self-visible at the target grade (not at the permitted cutoffs of
+receiving); no assertion about other caps is hidden here.
 -/
 
 namespace ObservationLifting
