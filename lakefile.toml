@@ -1,0 +1,30 @@
+name = "VaughtConjecture"
+version = "0.1.0"
+license = "Apache-2.0"
+keywords = ["math", "model theory", "infinitary logic", "vaught conjecture"]
+defaultTargets = ["VaughtConjecture"]
+# A pure Lean package: cached module outputs are reusable across platforms.
+platformIndependent = true
+
+# The only pins are `lean-toolchain` and the `InfinitaryLogic` revision below.  Mathlib is NOT
+# required directly: it is inherited from InfinitaryLogic's manifest (the `cameronfreer/mathlib4`
+# fork commit carrying the in-flight ModelTheory/Infinitary and Ordinal.lift PR stack), and the
+# toolchain must equal InfinitaryLogic's (checked by `scripts/check.sh`).  To bump: change
+# `rev`, run `lake update InfinitaryLogic`, copy its `lean-toolchain`, and commit the manifest.
+#
+# TEMPORARY PIN: the head of cameronfreer/infinitary-logic#130 (the Lean 4.35.0-rc3 port).
+# Replace with that PR's merge commit as soon as it lands.
+[[require]]
+name = "InfinitaryLogic"
+git = "https://github.com/cameronfreer/infinitary-logic"
+rev = "98f1b48664152c5a6c8fe0592c7aeca927551a41"
+
+# Authoritative: every module under `VaughtConjecture/` is built whether or not the root re-exports it,
+# so an orphan file cannot escape the build or the audits.  The root `VaughtConjecture.lean` is
+# intentionally empty and nothing imports it.
+[[lean_lib]]
+name = "VaughtConjecture"
+globs = ["VaughtConjecture.*"]
+# Mathlib's linter set, a 1500-line ceiling per file, and warnings as errors.  Both `longFile`
+# and `longFileDefValue` must agree, or the linter nags on every short file.
+leanOptions = { autoImplicit = false, relaxedAutoImplicit = false, pp.unicode.fun = true, weak.linter.mathlibStandardSet = true, weak.linter.style.longFile = 1500, weak.linter.style.longFileDefValue = 1500, warningAsError = true }

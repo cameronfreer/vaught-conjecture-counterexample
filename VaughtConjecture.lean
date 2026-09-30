@@ -1,0 +1,2 @@
+-- Intentionally empty root.  The `VaughtConjecture` library's globs build every module under `VaughtConjecture/`;
+-- nothing imports this file and a new module never has to touch it.
