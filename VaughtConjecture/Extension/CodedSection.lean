@@ -20,15 +20,16 @@ coded lawful labelling of the other cells that transforms back to their actual l
 constructs it: the coded copy of the labels.
 
 **The block coding.**  Fix a finite set `V` of labels and a threshold `K`.  The *value blocks*
-(`Label.valueBands V`) are the quotients `o / ω` of the ordinals `o` in `V`, and the *code blocks*
-(`Label.codeBands V`) are the value blocks with their successors.  The block coding
-`Label.bandEncode V K` sends an ordinal `o = ω * b + n` (`n < ω`) to `ω * r + n` if `b` is a value
-block and to `ω * r + K` otherwise, where `r` is the number of code blocks at most `b`
-(`Label.codeRank`); it fixes `⊥` and sends the formal top to `ω * (N + 1) + K`, `N` the number of
-code blocks.  Every code lies below `ω ^ 2` (`Label.bandEncode_lt`).  The block decoding
-`Label.bandDecode V` sends `ω * (i + 1) + n` to `ω * e + n` for the `i`-th code block `e`, the codes
-of rank `0` to `⊥`, and larger codes to the formal top.  Both depend on `V` (and the coding on
-`K`); they are not a coding of all labels at once.
+(`Label.valueBands V`) are the quotients `o / ω` of the ordinals `o` in `V` (a block
+`[ω * b, ω * b + ω)` is indexed by `b`), and the *code blocks* (`Label.codeBands V`) are the value
+blocks with their successors.  The block coding `Label.bandEncode V K` sends an ordinal
+`o = ω * b + n` (`n < ω`) to `ω * r + n` if `b` is a value block and to `ω * r + K` otherwise, where
+`r` is the number of code blocks at most `b` (`Label.codeRank`); it fixes `⊥` and sends the formal
+top to `ω * (N + 1) + K`, `N` the number of code blocks.  Every code lies below `ω ^ 2`
+(`Label.bandEncode_lt`).  The block decoding `Label.bandDecode V` sends `ω * (i + 1) + n` to
+`ω * e + n` for the `i`-th code block `e`, the codes of rank `0` to `⊥`, and larger codes to the
+formal top.  Both depend on `V` (and the coding on `K`); they are not a coding of all labels at
+once.
 
 * The coding is monotone (`Label.monotone_bandEncode`), and strictly increasing at the labels of
   `V` (`Label.bandEncode_lt_bandEncode`), since a value block is followed by its successor among the
@@ -38,10 +39,11 @@ of rank `0` to `⊥`, and larger codes to the formal top.  Both depend on `V` (a
 * The decoding recovers every label of `V` and the formal top (`Label.bandDecode_bandEncode`,
   `Label.bandDecode_bandEncode_top`), and with the constant suppressor `⊤` it is a transformation
   witness (`Label.isWitness_bandDecode`): it relabels blocks and fixes finite parts.
-* **Witness transfer** (`Label.IsWitness.bandEncode`): a witness `(g, σ)` whose suppressor takes
-  its values at grades `≤ K` in `V` gives the witness `(bandEncode ∘ g, bandEncode ∘ σ)`, the
-  suppressor truncated above `K`.  The guard of the coded shifter implies the guard of `σ`, because
-  the coding is strictly increasing at the values of `g`.
+* **Witness transfer** (`Label.IsWitness.bandEncode`): a witness `(g, σ)` whose suppressor takes its
+  values at grades `≤ K` in `V` gives the witness `(bandEncode ∘ g, bandEncode ∘ σ)`, the coded
+  suppressor replaced by bottom above `K` (the shifter is coded at every label).  The guard of the
+  coded shifter implies the guard of `σ`, because the coding is strictly increasing at the values of
+  `g`.
 
 **Coded copies** (`CellScheme.Rows.IsLawful.exists_bandEncode`).  The *coded copy* of a labelling
 `w` relative to a finite set `V` containing its labels is `bandEncode V K ∘ w`: every value lies
@@ -49,9 +51,6 @@ below `ω ^ 2`, and the block decoding recovers `w` from it.  For a lawful secti
 finitely many cells of grade at most `K`, some finite `V` containing every label of `w` makes the
 coded copy `bandEncode V K ∘ w` lawful: take for `V` the labels of `w` and the values of one
 locality witness for each cell, and transfer the witnesses.  Nothing about the rows is assumed.
-
-**The block coding in the transformation algebra.**  The coded encoders and decoders of the
-transformation algebra (roadmap, checkpoint 2.3) are built from this block coding.
 
 ## Placement
 
@@ -493,7 +492,8 @@ theorem bandDecode_bandEncode {z : Label.{u}} (hz : z ∈ V) :
 variable {g : ℕ → Label.{u}} {σ : Label.{u} → Label.{u}}
 
 /-- **Witness transfer.**  If the suppressor `g` takes its values at the grades `≤ K` in `V`, then
-coding the shifter and the suppressor, truncated above `K`, gives a witness. -/
+coding the shifter, and coding the suppressor and replacing it by bottom above `K`, gives a
+witness. -/
 theorem IsWitness.bandEncode (hw : IsWitness g σ) (hV : ∀ n ≤ K, g n ∈ V) :
     IsWitness (fun n ↦ if n ≤ K then bandEncode V K (g n) else ⊥) (bandEncode V K ∘ σ) where
   antitone n n' h := by

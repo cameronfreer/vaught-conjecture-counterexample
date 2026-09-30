@@ -16,7 +16,7 @@ the coatom extension property with apex), checkpoint 2.1; semantic contract, ite
 **The completion below the full grade** (`CompletionBelowFullGrade I`) of a seed `I` is the
 conclusion of the recursion on the grade (roadmap, checkpoint 2.6): a scheme on `m + 2` points
 that extends the amalgam of `I` by cells of full scope only, with a lawful labelling extending the
-glued one.  Each condition is a separate field:
+glued one.  Each clause is a separate field:
 
 * the old cells: an order embedding of the cells of the amalgam, a lower embedding that keeps
   scopes, rows, and labels literally, whose image contains every cell of scope other than the

@@ -9,10 +9,10 @@ import VaughtConjecture.Extension.CoatomAmalgam
 # The seed of the completion of the coatom extension
 
 Roadmap, Layer 3 (the coatom extension construction: the finite input of the completion of the
-amalgam, with the conditions it satisfies), checkpoint 2.1; semantic contract, items 2–4.
+amalgam, with the clauses it satisfies), checkpoint 2.1; semantic contract, items 2–4.
 
 **A seed** (`Seed α m`) is the finite input of the completion of the coatom extension on `m + 2`
-points, together with the conditions it must satisfy, each stated as a separate field:
+points, together with the clauses it satisfies, each stated as a separate field:
 
 * the data: two stage types `left` and `right` on the coatoms of `m + 1` points, their common face
   `face` on `m` points, and the amalgam, a stage type on `m + 2` points with the glued lawful
