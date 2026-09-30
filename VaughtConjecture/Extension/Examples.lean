@@ -26,9 +26,8 @@ embedding onto `{0, 2}` by the new point.
 
 ## References
 
-The one-point types are those of [Kni26, Lemma 4.2.2], and the amalgam is [Kni26,
-Definition 4.3.1], for R. W. Knight, *A counterexample to Vaught's Conjecture using generalised
-Stone spaces* (draft, 20 February 2026) [Kni26].
+The one-point types are those of [Kni26, Lemma 4.2.2], and the amalgam is
+[Kni26, Definition 4.3.1].
 -/
 
 namespace VaughtConjecture.StageType

@@ -63,8 +63,7 @@ are stated here so that those files are unchanged.
 ## References
 
 The amalgam is [Kni26, Definition 4.3.1] and its bountifulness [Kni26, Lemma 4.3.2]; the plan
-is the amalgamation plan of [Kni26, Definition 2.1.1], for R. W. Knight, *A counterexample to
-Vaught's Conjecture using generalised Stone spaces* (draft, 20 February 2026) [Kni26].
+is the amalgamation plan of [Kni26, Definition 2.1.1].
 -/
 
 universe u

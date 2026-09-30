@@ -40,8 +40,7 @@ is stated here so that that file is unchanged.
 ## References
 
 The amalgam is [Kni26, Definition 4.3.1] and its consistency and bountifulness are
-[Kni26, Lemma 4.3.2], for R. W. Knight, *A counterexample to Vaught's Conjecture using generalised
-Stone spaces* (draft, 20 February 2026) [Kni26].
+[Kni26, Lemma 4.3.2].
 -/
 
 universe u

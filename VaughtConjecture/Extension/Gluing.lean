@@ -23,7 +23,7 @@ consistency, bountifulness, or completeness of `R` is assumed unless it is a hyp
   below `U` and `V` (`Rows.IsLawfulBelow.glue`).
 * **Lifting within a face** (`Rows.cappedLift_of_fst_eq`): for pairs `X ≤ Y` on the same face,
   any rows lift capped from `X` to `Y`: keep the prescription below `X` and cap the ambient labels
-  above it.  This is the case `B = C` of the proof of [Kni26, Lemma 4.3.20].
+  above it.  This is the case `B = C = A` of the proof of [Kni26, Lemma 4.3.2].
 * **Bountifulness at a fixed grade** (`Rows.isBountiful_iff_forall_cappedLift_fst`): rows are
   bountiful exactly when they lift capped from every graded face `X` to `(C, grade of X)`, for every
   graded face `(C, j)` above `X`.
@@ -41,17 +41,15 @@ consistency, bountifulness, or completeness of `R` is assumed unless it is a hyp
 ## Placement
 
 `Rows.isLawfulBelow_iff_forall` and `Rows.IsLawfulBelow.glue` belong in
-`VaughtConjecture.Scheme.Row`, after the lawful sections, and `Label.transformsTo_comp_equiv_iff`
-in `VaughtConjecture.Label.Transform`, beside `TransformsTo.reindex`; the lifting statements belong
-in `VaughtConjecture.Scheme.Bountiful`, after `CellScheme.Rows.CappedLift.trans`.  They are stated
+`VaughtConjecture.Scheme.Row`, after the lawful sections, and the lifting statements in
+`VaughtConjecture.Scheme.Bountiful`, after `CellScheme.Rows.CappedLift.trans`.  They are stated
 here so that those files are unchanged.
 
 ## References
 
 Bountifulness is [Kni26, Definition 2.5.14]; the union of the semantics of two domains on the
-coatoms `A \ {a}` and `A \ {b}` is consistent and bountiful by [Kni26, Lemma 4.3.2], and the case
-`B = C` is in the proof of [Kni26, Lemma 4.3.20], for R. W. Knight, *A counterexample to Vaught's
-Conjecture using generalised Stone spaces* (draft, 20 February 2026).
+coatoms `A \ {a}` and `A \ {b}` is consistent and bountiful by [Kni26, Lemma 4.3.2], and lifting
+within a face is the case `B = C = A` of its proof.
 -/
 
 universe u
@@ -59,14 +57,6 @@ universe u
 namespace VaughtConjecture
 
 open Finset Label
-
-/-- A transformation relation is unchanged by reindexing its cells along an equivalence. -/
-theorem Label.transformsTo_comp_equiv_iff {D D' : Type*} (e : D' ≃ D) {grade : D → ℕ}
-    {p q : D → Label.{u}} :
-    TransformsTo (grade ∘ e) (p ∘ e) (q ∘ e) ↔ TransformsTo grade p q := by
-  refine ⟨fun h ↦ ?_, fun h ↦ h.reindex e⟩
-  have h' := h.reindex e.symm
-  simpa only [Function.comp_assoc, e.self_comp_symm, Function.comp_id] using h'
 
 namespace CellScheme.Rows
 
@@ -141,6 +131,11 @@ theorem restrict_extendBot {X : Finset α × ℕ} (q : D.below X → Label.{u}) 
     (fun d : D.below X ↦ extendBot X q d) = q :=
   funext fun d ↦ extendBot_of_mem q d.2
 
+/-- The extension by bottom of a labelling is lawful below `X` exactly when the labelling is. -/
+theorem isLawfulBelow_extendBot {X : Finset α × ℕ} {q : D.below X → Label.{u}} :
+    R.IsLawfulBelow X (fun d ↦ extendBot X q d) ↔ R.IsLawfulBelow X q := by
+  rw [restrict_extendBot]
+
 /-! ### Lifting within a face -/
 
 variable {X Y I U V O : Finset α × ℕ}
@@ -165,10 +160,8 @@ theorem cappedLift_of_fst_eq (h : X ≤ Y) (hXY : X.1 = Y.1) : R.CappedLift h :=
     by_cases hdX : d ∈ D.below X
     · rw [hwX d hdX, ← hpq ⟨d, hdX⟩]
     · rw [hwY d hd hdX, min_assoc, min_self]
-  obtain ⟨hoq, hlq, haq⟩ := isLawfulBelow_iff_forall.mp
-    (show R.IsLawfulBelow Y (fun d ↦ extendBot Y q d) by rwa [restrict_extendBot])
-  obtain ⟨hop, hlp, hap⟩ := isLawfulBelow_iff_forall.mp
-    (show R.IsLawfulBelow X (fun d ↦ extendBot X p d) by rwa [restrict_extendBot])
+  obtain ⟨hoq, hlq, haq⟩ := isLawfulBelow_iff_forall.mp (isLawfulBelow_extendBot.mpr hq)
+  obtain ⟨hop, hlp, hap⟩ := isLawfulBelow_iff_forall.mp (isLawfulBelow_extendBot.mpr hp)
   have hl : R.IsLawfulBelow Y (fun d ↦ w d) := by
     refine isLawfulBelow_iff_forall.mpr ⟨fun d hd ↦ ?_, fun s hs ↦ ?_, fun s t ht hst hg ↦ ?_⟩
     · by_cases hdX : d ∈ D.below X
@@ -191,6 +184,7 @@ theorem cappedLift_of_fst_eq (h : X ≤ Y) (hXY : X.1 = Y.1) : R.CappedLift h :=
               min (min (extendBot Y q d.1) (extendBot Y q s)) c := by
           funext d
           have hdY : d.1 ∈ D.below Y := mem_below_of_le d.2 hs
+          -- Move the cap next to `w d`, where `hcap` reads it as the ambient label capped.
           rw [hwY s hs hsX, extendBot_of_mem q hdY, extendBot_of_mem q hs,
             show min (w d) (min (q ⟨s, hs⟩) c) = min (min (w d) c) (q ⟨s, hs⟩) by ac_rfl,
             hcap d.1 hdY]
@@ -261,17 +255,11 @@ theorem cappedLift_of_union (hIU : I ≤ U) (hOU : O ≤ U) (hOV : O ≤ V) (hUY
   have hlV : R.IsLawfulBelow V (fun d ↦ w d) := by
     convert hv using 1
     exact funext fun d ↦ hwV d d.2
-  refine ⟨fun d ↦ w d, IsLawfulBelow.glue hlU hlV hcover, fun d ↦ ?_, fun d ↦ ?_⟩
-  · rcases hcover d d.2 with hd | hd
-    · change min (w d.1) c = _
-      rw [hwU d hd]
-      exact hucap ⟨d, hd⟩
-    · change min (w d.1) c = _
-      rw [hwV d hd]
-      exact hvcap ⟨d, hd⟩
-  · change w d.1 = p d
-    rw [hwU d.1 (D.below_mono hIU d.2)]
-    exact hup d
+  refine ⟨fun d ↦ w d, IsLawfulBelow.glue hlU hlV hcover, fun d ↦ ?_,
+    fun d ↦ (hwU d.1 (D.below_mono hIU d.2)).trans (hup d)⟩
+  rcases hcover d d.2 with hd | hd
+  · exact (congrArg (min · c) (hwU d hd)).trans (hucap ⟨d, hd⟩)
+  · exact (congrArg (min · c) (hwV d hd)).trans (hvcap ⟨d, hd⟩)
 
 /-! ### Coatoms and the full face -/
 
@@ -312,7 +300,7 @@ theorem cappedLift_coatom_full (hD : D.IsWellFormed) (ha : a ∈ A) (hb : b ∈ 
     · exact hD.cappedLift R (Or.inl h0) hOV
     · refine hproper ⟨habF, Nat.pos_of_ne_zero h0, min_le_right _ _⟩
         ⟨hbF, (Nat.pos_of_ne_zero h0).trans_le (min_le_left _ _), hjb⟩ hOV fun he ↦ ?_
-      exact notMem_erase b A (show b ∈ A.erase b by rw [show A.erase b = A from he]; exact hb)
+      exact erase_eq_self.mp he hb
 
 /-- **Bountifulness from the coatoms.**  On a scheme whose faces other than `A` lie in
 `A \ {a}` or `A \ {b}`, rows are bountiful if they lift capped between graded faces with a proper
@@ -338,12 +326,10 @@ theorem isBountiful_of_coatoms (ha : a ∈ A) (hb : b ∈ A)
     rcases hfaces _ hX.1 hXA with hXa | hXb
     · have hj : X.2 ≤ #(B.erase a) := hX.2.2.trans (card_le_card hXa)
       refine (hproper (Y := (B.erase a, X.2)) hX ⟨haF, hX.2.1, hj⟩ ⟨hXa, le_rfl⟩
-        fun he ↦ ?_).trans (hfulla X.2 hj)
-      exact notMem_erase a B (show a ∈ B.erase a by rw [show B.erase a = B from he]; exact ha)
+        fun he ↦ erase_eq_self.mp he ha).trans (hfulla X.2 hj)
     · have hj : X.2 ≤ #(B.erase b) := hX.2.2.trans (card_le_card hXb)
       refine (hproper (Y := (B.erase b, X.2)) hX ⟨hbF, hX.2.1, hj⟩ ⟨hXb, le_rfl⟩
-        fun he ↦ ?_).trans (hfullb X.2 hj)
-      exact notMem_erase b B (show b ∈ B.erase b by rw [show B.erase b = B from he]; exact hb)
+        fun he ↦ erase_eq_self.mp he hb).trans (hfullb X.2 hj)
   · exact hproper (Y := (B, X.2)) hX ⟨hY.1, hX.2.1, h.2.trans hY.2.2⟩ _ hYA
 
 /-- **The union of two bountiful coatom semantics is bountiful** [Kni26, Lemma 4.3.2].  On a

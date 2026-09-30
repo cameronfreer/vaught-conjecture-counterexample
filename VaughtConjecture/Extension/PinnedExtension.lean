@@ -61,10 +61,9 @@ This file reduces the exact pinned extension to the coatom extension constructio
 
 ## References
 
-The coatom extension is [Kni26, Corollary 4.3.22], built on the amalgam of Definition 4.3.1 and
-its completion of Definition 4.3.14; the one-point extension and the existence of types on every
-domain are Propositions 4.3.23 and 4.3.24, for R. W. Knight, *A counterexample to Vaught's
-Conjecture using generalised Stone spaces* (draft, 20 February 2026) [Kni26].
+The coatom extension is [Kni26, Corollary 4.3.22], built on the amalgam of
+[Kni26, Definition 4.3.1] and its completion of [Kni26, Definition 4.3.14]; the one-point
+extension and the existence of types on every domain are [Kni26, Propositions 4.3.23 and 4.3.24].
 -/
 
 universe u
