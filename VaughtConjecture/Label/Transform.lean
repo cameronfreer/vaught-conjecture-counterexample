@@ -34,8 +34,8 @@ are kept apart: `IsWitness` is a proposition about given functions.
   preservation of self-visibility at the grade (`TransformsTo.isSelfVisible`);
 * lowering the suppressor (`IsWitness.of_le`, `IsWitness.of_le_stepSuppressor`), truncation of
   the suppressor above a grade (`IsWitness.truncate`), capping the suppressor by a self-visible
-  label (`IsWitness.cap`), and the cap rule for the target (`TransformsTo.min_const`,
-  [Kni26, Lemma 2.3.12]);
+  label (`IsWitness.cap`), and the cap rule for the target (`TransformsTo.min_const`, a
+  related target-capping variant of [Kni26, Lemma 2.3.12]);
 * guarded composition (`IsWitness.comp_of_bot_reflecting`): a shifter normalized at grade `m`
   may be followed by a shifter normalized at grade `m` that reflects bottom on the values of the
   first;
@@ -52,8 +52,10 @@ is available only in the guarded form above.
 
 ## References
 
-The transformation relation is Definition 2.3.9, the cap rule is Lemma 2.3.12, and the reduction
-rule is Lemma 3.1.3 of R. W. Knight, *A counterexample to Vaught's Conjecture using generalised
+The transformation relation is Definition 2.3.9, the cap rule `TransformsTo.min_const` is a
+related target-capping variant of Lemma 2.3.12 (which caps the source at a selected source value
+and the target at the corresponding target value), and the reduction rule is Lemma 3.1.3 of
+R. W. Knight, *A counterexample to Vaught's Conjecture using generalised
 Stone spaces* (draft, 20 February 2026) [Kni26].  Nontransitivity contradicts Lemma 2.3.14 of
 [Kni26] as printed.
 -/
@@ -186,7 +188,8 @@ theorem IsWitness.truncate (hw : IsWitness g σ) (K : ℕ) :
 theorem IsWitness.id_step (K : ℕ) : IsWitness (stepSuppressor.{u} K) id :=
   IsWitness.id_top.truncate K
 
-/-- **The cap rule** [Kni26, Lemma 2.3.12].  If every grade is at most `K` and `c` is
+/-- **The cap rule**, a related target-capping variant of [Kni26, Lemma 2.3.12] (the source `p`
+is retained and only the target is capped).  If every grade is at most `K` and `c` is
 self-visible at `K`, then a transformation to `q` gives a transformation to `q` capped at `c`. -/
 theorem TransformsTo.min_const (h : TransformsTo grade p q) {K : ℕ} (hK : ∀ d, grade d ≤ K)
     {c : Label.{u}} (hc : IsSelfVisible K c) : TransformsTo grade p (fun d ↦ min (q d) c) := by
