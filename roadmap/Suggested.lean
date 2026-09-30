@@ -7,13 +7,15 @@ import Mathlib.ModelTheory.Fraisse
 
 `README.md` and `IMPLEMENTATION.md` are authoritative; this file is nonexhaustive and leaves the
 formalization free.
-This file is a HUMAN-OWNED SKETCH OF THEOREM STATEMENTS, NOT PART OF THE LIBRARY.
+This file is a SKETCH OF THEOREM STATEMENTS, NOT PART OF THE LIBRARY.
 The bodies marked `sorry` are theorem statements still to be proved. Definitions have
 actual bodies. The file is outside the library build; check it with
 `lake env lean -DautoImplicit=false -Dlinter.mathlibStandardSet=true roadmap/Suggested.lean`.
 No new verified Lean result is claimed.
 
-Mathlib and the pinned infinitary-logic library are intended dependencies.
+Mathlib and the pinned infinitary-logic library are the current dependencies; section 3 also
+names statements of ComputableModelTheory, not yet pinned (`IMPLEMENTATION.md`, "Dependency
+pins").
 The concrete finite construction is specified in README and SEMANTIC_CONTRACT;
 proving these general statements alone does not construct it.
 -/
@@ -116,11 +118,12 @@ system of `SuggestedInterfaces.lean`, and a map `rel` sending a chart to a relat
 language `L` (the stage chart language, or its definitional expansion by the hull operations).
 The concrete charts, the hull operations, and the amalgamation proof are not constructed here.
 
-The classical theorems applied in steps 3–6 are quoted after the repin
+The classical theorems applied in steps 3–6 are not yet pinned
 (`IMPLEMENTATION.md`, "Dependency pins") and are not named in Lean here: from
 ComputableModelTheory, `representativeClass`, `isFraisse_representativeClass`, the existence
-theorem, and `exists_factor_tuple_of_age_subset`; from InfinitaryLogic, the orbit-formula rank
-bounds.  Mathlib's `IsUltrahomogeneous.extend_embedding` is available now.
+theorem, and `exists_factor_tuple_of_age_subset`.  The orbit formula of a chart and the
+orbit theory are companion material (`SuggestedCompanions.lean`, section B).  Mathlib's
+`IsUltrahomogeneous.extend_embedding` is available now.
 -/
 
 namespace ClassicalLimit
@@ -220,10 +223,10 @@ read as a structure `S p` on `Fin m` whose chart relations are literally its fac
 let every finitely generated substructure of `M` be isomorphic to some `S p` (the age of `M` is
 contained in the representative class of the charts).  Then the evaluation read from the
 relations reconstructs the realization.  Intended proof: factor each tuple through a
-representative (ComputableModelTheory's `exists_factor_tuple_of_age_subset`, quoted after the
-repin) and read the relations there; `hid` and `hcomp` are the identity and composition laws of
+representative (ComputableModelTheory's `exists_factor_tuple_of_age_subset`, not yet
+pinned) and read the relations there; `hid` and `hcomp` are the identity and composition laws of
 exact partial restriction. -/
-theorem reconstructs_evalOfRel {M : Type} [L.Structure M]
+theorem reconstructs_evalOfRel
     (hid : ∀ {n : ℕ} (p : Chart n), restrict (Function.Embedding.refl _) p = some p)
     (hcomp : ∀ {k n m : ℕ} (f : Fin k ↪ Fin n) (g : Fin n ↪ Fin m) (p : Chart m) (q : Chart n),
       restrict g p = some q → restrict (f.trans g) p = restrict f q)
@@ -241,48 +244,14 @@ root `t` of type `p` and a one-point donor `d` over it, there is one occurrence 
 points whose restriction to the first `n` is literally `t`, whose evaluation is some `q`, and
 whose `q` stands in the relation `agree q d` (agreement below the requested cutoff, one cutoff at
 a time: for a donor with top labels, the occurrence depends on the cutoff).  Freshness of the new
-point is the injectivity of `u`. -/
+point is the injectivity of `u`.  Receiving at a permitted cutoff `δ` is
+`ReceivesOn restrict eval (agreeBelow δ)`, asserted for each `δ` separately. -/
 def ReceivesOn (eval : {n : ℕ} → (Fin n ↪ M) → Option (Chart n))
     (agree : ∀ {n : ℕ}, Chart n → Chart n → Prop) : Prop :=
   ∀ {n : ℕ} (t : Fin n ↪ M) (p : Chart n) (d : Chart (n + 1)),
     eval t = some p → restrict Fin.castSuccEmb d = some p →
     ∃ (u : Fin (n + 1) ↪ M) (q : Chart (n + 1)),
       Fin.castSuccEmb.trans u = t ∧ eval u = some q ∧ agree q d
-
-/-- The first-order formula `φ` defines the automorphism orbit of `a`. -/
-def OrbitDefinedBy {n : ℕ} (a : Fin n → M) (φ : L.Formula (Fin n)) : Prop :=
-  ∀ b : Fin n → M, φ.Realize b ↔ ∃ e : M ≃[L] M, ⇑e ∘ a = b
-
-/-- The **orbit formula of a chart**: `θ(x̄) := ∃ z̄, P_p(z̄) ∧ ⋀_i x_i = z_{b(i)}`, for a chart
-`p` on `m` points and the positions `b` of the tuple among its points (repetitions allowed).  It
-uses only a chart relation and equality, so it is a formula of the relational stage chart
-language as well. -/
-noncomputable def chartOrbitFormula {n m : ℕ} (p : Chart m) (b : Fin n → Fin m) :
-    L.Formula (Fin n) :=
-  BoundedFormula.exs
-    ((rel p).boundedFormula (fun j => Term.var (Sum.inr j)) ⊓
-      BoundedFormula.iInf fun i : Fin n =>
-        (Term.var (Sum.inl i)).bdEqual (Term.var (Sum.inr (b i))))
-
-/-- **Orbit formulas from finite charts** (target).  Under the reconstruction predicate and
-chart homogeneity (two actual occurrences of the same chart are carried to each other by an
-automorphism), the orbit formula of an actual chart containing the tuple `a` defines its
-automorphism orbit.  The empty tuple and repeated coordinates are included.  For a top-free
-witness, chart homogeneity is ultrahomogeneity of the definitional expansion together with the
-correspondence of charts and finite substructures, read in the relational language through the
-automorphism and embedding correspondence of `HULL_ALGEBRA.md`, §5 (the hull operations are
-preserved and reflected by embeddings, so automorphisms of the reduct are automorphisms of the
-expansion; definability alone does not give this for arbitrary embeddings).  The isolation,
-atomicity, primeness, and rank theorems applied to such formulas are quoted after the repin
-(`COMPANIONS.md`, B3). -/
-theorem orbitDefinedBy_chartOrbitFormula {eval : {n : ℕ} → (Fin n ↪ M) → Option (Chart n)}
-    (hrec : Reconstructs restrict rel eval)
-    (hhom : ∀ {m : ℕ} (u v : Fin m ↪ M) (p : Chart m), eval u = some p → eval v = some p →
-      ∃ e : M ≃[L] M, ⇑e ∘ ⇑u = ⇑v)
-    {n m : ℕ} (a : Fin n → M) (u : Fin m ↪ M) (b : Fin n → Fin m) (p : Chart m)
-    (hu : ⇑u ∘ b = a) (hp : eval u = some p) :
-    OrbitDefinedBy a (chartOrbitFormula rel p b) := by
-  sorry
 
 end ClassicalLimit
 

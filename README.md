@@ -11,14 +11,14 @@ It builds on [Mathlib](https://github.com/leanprover-community/mathlib4) and
 $L_{\omega_1,\omega}$, Scott analysis, model-code spaces, Morley counting).  The intended
 construction obtains its countable models by constructing a finite age of labelled charts and
 reconstructing its classical Fraïssé limit, with the classical theorems taken from the
-computable-model-theory library (ComputableModelTheory) after the repin described in
-[`roadmap/IMPLEMENTATION.md`](roadmap/IMPLEMENTATION.md).
+computable-model-theory library (ComputableModelTheory) once pinned (see
+[`roadmap/IMPLEMENTATION.md`](roadmap/IMPLEMENTATION.md), "Dependency pins").
 
 ## Layout
 
 - `VaughtConjecture/` — the library.  Every module under it is built and audited (the lakefile globs are
   authoritative; `VaughtConjecture.lean` is an intentionally empty root).  Organized by mathematical topic.
-- `roadmap/` — the human-owned roadmap: [`roadmap/README.md`](roadmap/README.md) is the
+- `roadmap/` — the roadmap: [`roadmap/README.md`](roadmap/README.md) is the
   mathematical roadmap and [`roadmap/IMPLEMENTATION.md`](roadmap/IMPLEMENTATION.md) the
   implementation order with its checkpoints, with the semantic contract, expositions, Lean
   sketches, and sources alongside.  New mathematics is added only when it advances a roadmap target.

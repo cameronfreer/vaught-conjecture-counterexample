@@ -16,7 +16,7 @@ import InfinitaryLogic.Scott.RefinementCount
 /-!
 # Selected statements for the companion milestones
 
-`COMPANIONS.md` is authoritative; this file is a nonexhaustive, human-owned sketch of targets
+`COMPANIONS.md` is authoritative; this file is a nonexhaustive sketch of targets
 that lie OUTSIDE the library build and outside the core theorem.  The bodies marked `sorry` are
 deliberate targets, still to be proved.  The other declarations are proved here, or are
 definitions of properties (never structures whose fields assert the desired conclusions).  No
@@ -29,7 +29,7 @@ file with
 
 The three sections correspond to the three milestones: (A) the filtration and the theory `T∞`,
 (B) homogeneity of the top-free charts and the orbit theory, (C) the geometric obstruction.
-The generic theorems of B are quoted from the two libraries after the repin
+The generic theorems of B are quoted from the two libraries once pinned
 (`IMPLEMENTATION.md`, "Dependency pins"); the corresponding `sorry` targets below record their
 statement shapes at the current pins and are not `#check`ed against those libraries.
 -/
@@ -171,10 +171,10 @@ end Filtration
 
 /-! ## B. Homogeneity of top-free charts and its consequences -/
 
-/- The chart amalgamation and joint embedding properties (formerly target B1) are now part of
-the core, step 2 of the top-free witnesses: `ChartAmalgamation`, `ChartJointEmbedding`, and
+/- The chart amalgamation and joint embedding properties (B1) belong to the core, step 2 of the
+top-free witnesses: `ChartAmalgamation`, `ChartJointEmbedding`, and
 `chartJointEmbedding_of_chartAmalgamation` are in `Suggested.lean` (`Roadmap.ClassicalLimit`),
-with the reconstruction predicate and the orbit formula of a chart. -/
+with the reconstruction predicate. -/
 
 namespace Orbits
 
@@ -196,14 +196,73 @@ theorem realize_comp_iff_of_agrees_with_automorphism (f : M → M) {n : ℕ} (a 
 def OrbitDefinedBy {n : ℕ} (a : Fin n → M) (φ : L.Formula (Fin n)) : Prop :=
   ∀ b : Fin n → M, φ.Realize b ↔ ∃ e : M ≃[L] M, ⇑e ∘ a = b
 
+section ChartOrbitFormula
+
+open Structure
+
+variable {Chart : ℕ → Type z} (rel : ∀ {n : ℕ}, Chart n → L.Relations n)
+
+/-- **Literal recovery of chart relations**, with injectivity of labelled tuples (as in
+`Suggested.lean`, section 3): the relation of the chart `p` holds at a tuple exactly when the
+tuple is injective and its evaluation is `p`. -/
+def RecoversRelations (eval : {n : ℕ} → (Fin n ↪ M) → Option (Chart n)) : Prop :=
+  ∀ {n : ℕ} (a : Fin n → M) (p : Chart n),
+    RelMap (rel p) a ↔ ∃ t : Fin n ↪ M, ⇑t = a ∧ eval t = some p
+
+/-- The **orbit formula of a chart**: `θ(x̄) := ∃ z̄, P_p(z̄) ∧ ⋀_i x_i = z_{b(i)}`, for a chart
+`p` on `m` points and the positions `b` of the tuple among its points (repetitions allowed).  It
+uses only a chart relation and equality, so it is a formula of the relational stage chart
+language. -/
+noncomputable def chartOrbitFormula {n m : ℕ} (p : Chart m) (b : Fin n → Fin m) :
+    L.Formula (Fin n) :=
+  BoundedFormula.exs
+    ((rel p).boundedFormula (fun j => Term.var (Sum.inr j)) ⊓
+      BoundedFormula.iInf fun i : Fin n =>
+        (Term.var (Sum.inl i)).bdEqual (Term.var (Sum.inr (b i))))
+
+/-- **Orbit formulas from finite charts** (B3.1).  Under literal recovery of the chart relations
+and chart homogeneity (two actual occurrences of the same chart are carried to each other by an
+automorphism), the orbit formula of an actual chart containing the tuple `a` defines its
+automorphism orbit.  The empty tuple and repeated coordinates are included.  For a top-free
+witness, chart homogeneity follows from ultrahomogeneity of the expansion by the hull
+operations, since every automorphism of the expansion is an automorphism of its relational
+reduct; only this direction is used (`README.md`, Layer 0). -/
+theorem orbitDefinedBy_chartOrbitFormula {eval : {n : ℕ} → (Fin n ↪ M) → Option (Chart n)}
+    (hrec : RecoversRelations rel eval)
+    (hhom : ∀ {m : ℕ} (u v : Fin m ↪ M) (p : Chart m), eval u = some p → eval v = some p →
+      ∃ e : M ≃[L] M, ⇑e ∘ ⇑u = ⇑v)
+    {n m : ℕ} (a : Fin n → M) (u : Fin m ↪ M) (b : Fin n → Fin m) (p : Chart m)
+    (hu : ⇑u ∘ b = a) (hp : eval u = some p) :
+    OrbitDefinedBy a (chartOrbitFormula rel p b) := by
+  have hpu : RelMap (rel p) ⇑u := (hrec u p).2 ⟨u, rfl, hp⟩
+  simp only [OrbitDefinedBy, chartOrbitFormula, BoundedFormula.realize_exs,
+    BoundedFormula.realize_inf, BoundedFormula.realize_rel, BoundedFormula.realize_iInf,
+    BoundedFormula.realize_bdEqual, Term.realize_var, Sum.elim_inl, Sum.elim_inr]
+  intro c
+  constructor
+  · rintro ⟨z, hz, hc⟩
+    obtain ⟨v, hv, hvp⟩ := (hrec _ p).1 hz
+    obtain ⟨e, he⟩ := hhom u v p hp hvp
+    refine ⟨e, funext fun i => ?_⟩
+    have := congrFun he (b i)
+    simp only [Function.comp_apply] at this ⊢
+    rw [← hu]; simp only [Function.comp_apply]; rw [this, hv]
+    exact (hc i).symm
+  · rintro ⟨e, rfl⟩
+    refine ⟨⇑e ∘ ⇑u, ?_, fun i => ?_⟩
+    · exact (e.map_rel (rel p) ⇑u).2 hpu
+    · rw [← hu]; rfl
+
+end ChartOrbitFormula
+
 variable [Nonempty M]
 
 /-- **A definable orbit isolates the complete type** (target, generic).  If `φ` defines the
 automorphism orbit of `a`, then `φ` isolates the complete type of `a` over the complete theory
 of `M`: the only complete type containing `φ` is the type of `a`.  Uniqueness of realizations
 inside `M` alone is not the statement; the singleton is in the space of complete types, so the
-universal implications `∀ x̄, φ → ψ` transfer to every model of the theory.  To be quoted after
-the repin: the composite of ComputableModelTheory's `isolatesTuple_of_orbit_formula` (under
+universal implications `∀ x̄, φ → ψ` transfer to every model of the theory.  Not yet pinned; to be
+quoted as the composite of ComputableModelTheory's `isolatesTuple_of_orbit_formula` (under
 `[Nonempty M]`) and `IsolatesTuple.typesWith_eq_singleton`. -/
 theorem typesWith_eq_singleton_of_orbitDefinedBy {n : ℕ} {a : Fin n → M}
     {φ : L.Formula (Fin n)} (hφ : OrbitDefinedBy a φ) :
@@ -227,7 +286,7 @@ theorem typesIsolated_of_orbitDefinedBy
 /-- **Countable atomic implies prime** (target, generic).  A countable structure all of whose
 types are isolated embeds elementarily into every model of its complete theory, in an arbitrary
 universe and of arbitrary cardinality.  Intended proof: enumerate only `M`, extend finite partial
-maps preserving every first-order formula, and take the union.  To be quoted after the repin:
+maps preserving every first-order formula, and take the union.  Not yet pinned:
 ComputableModelTheory's `exists_elementaryEmbedding_of_countable_atomic`, with `TypesIsolated`
 identified with its `IsAtomic` over the complete theory. -/
 theorem nonempty_elementaryEmbedding_of_typesIsolated [Countable M]
@@ -251,7 +310,7 @@ omit [Nonempty M] in
 orbit formula has finite quantifier rank, and back-and-forth equivalence at that level forces
 agreement on it (`BFEquiv_implies_agreeQR`, under relationality, with no countability of `M`);
 `BFEquiv.ofOrdinalLift` and `BFEquiv.toOrdinalLift` pass between the ordinal universes.  The
-bound is `≤ ω`, not `< ω`.  To be quoted after the repin: InfinitaryLogic's internal rank bound
+bound is `≤ ω`, not `< ω`.  Not yet pinned: InfinitaryLogic's internal rank bound
 from orbit formulas, with `qrank_toLω_lt_omega0` for the finite rank. -/
 theorem internalScottRank_le_omega0_of_orbitDefinedBy [L.IsRelational]
     (h : ∀ (n : ℕ) (a : Fin n → M), ∃ φ : L.Formula (Fin n), OrbitDefinedBy a φ) :

@@ -157,7 +157,7 @@ set_option linter.hashCommand false in
 -- (`README.md`, Layer 0).  The classical existence theorem, representative classes, the
 -- factorization of tuples through the age, orbit isolation, countable prime structures (all in
 -- ComputableModelTheory), the orbit-formula rank bounds and local-automorphism preservation, and
--- the rank comparison of the Scott process (InfinitaryLogic) are to be quoted after the repin
+-- the rank comparison of the Scott process (InfinitaryLogic) are not yet pinned
 -- (`IMPLEMENTATION.md`, "Dependency pins"); they are not at the current pins and are not checked.
 set_option linter.hashCommand false in
 #check FirstOrder.Language.age
@@ -190,13 +190,15 @@ Receiving: exact literal root + one actual occurrence + requested capped/LOW equ
 HullOperations: definable total binary hull operations; generated-substructure closure equals
   hull closure; finite charts are the finite substructures; embeddings preserved and reflected.
 ClassicalLimit: finite top-free charts as finite structures; hereditary closure, joint embedding,
-  amalgamation with the literal square (before any infinite model); classical existence (quoted
-  after the repin); reconstruction meeting SEMANTIC_CONTRACT.md, item 11; consistency, covering,
+  amalgamation with the literal square (before any infinite model); classical existence (not yet
+  pinned); reconstruction meeting SEMANTIC_CONTRACT.md, item 11; consistency, covering,
   top-freeness from the factorization of tuples; receiving from row 5 and ultrahomogeneity
   (per cutoff for donors with top); modelhood, infinitude, terminality.  Statement shapes:
   `Suggested.lean`, section 3.
-ChainConstruction (retained, not used by the main theorem): finite master + root absorption +
-  supported-invisible permanence + union, for the saturated model of [Kni26, Proposition 4.4.5].
+ChainConstruction (not used by the main theorem): finite master + root absorption +
+  supported-invisible permanence + union; retained for an effective presentation, conditional on
+  effective input data.  The saturated model of [Kni26, Proposition 4.4.5] is the classical
+  limit of the uncapped age of all legal stage types.
 StableLift: consistency-only uniqueness; consistency/covering lawfulness; cap modelhood.
 Comparison: finite-donor one-sided transfer; rooted BF; singleton terminal conditions.
 Domains: expansion uniqueness + limit existence; terminal losses countable and nonempty.
