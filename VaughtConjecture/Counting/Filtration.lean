@@ -14,7 +14,9 @@ the ordinals, of which only the stages `ξ < ω₁` carry information, with
 
 * `D 0 = univ`, `D` antitone, and continuity at limit stages below `ω₁`;
 * countable successor losses `D ξ \ D (ξ + 1)` for `ξ < ω₁`;
-* cofinally many nonempty successor losses below `ω₁`.
+* cofinally many nonempty successor losses below `ω₁`;
+* `D ξ = ∅` for `ω₁ ≤ ξ`, so no data is carried at or above `ω₁` and two filtrations agreeing
+  below `ω₁` are equal (`Filtration.ext`).
 
 The **persistent core** `Filtration.core` is `⋂ ξ < ω₁, D ξ`.  Countable complements
 (`Filtration.compl_countable`) are InfinitaryLogic's `InfinitaryLogic.compl_countable_of_loss`,
@@ -27,10 +29,11 @@ is the form of the hypotheses of `compl_countable_of_loss`, and for ordinals `Or
 definitionally `ξ + 1`, so `exists_injective_mem_sdiff_succ` of `Counting.Domains` applies
 unchanged.  The roadmap sketch `SentenceAgreementDomains` indexes its domains by
 `Set.Iio (aleph 1).ord` and assumes countable complements outright; here the complements are
-derived from countable losses and limit continuity, and the stages at or above `ω₁` are simply
-never consulted (`(aleph 1).ord = ω₁` by `Cardinal.ord_aleph`).  Restricting `domain` to
-`Set.Iio ω₁` gives the sketch's `domain` and `complement_countable` fields; its `homogeneous` and
-`separates` fields are the hypotheses of `Filtration.mk_eq_aleph_one_of_separation`.
+derived from countable losses and limit continuity, and the stages at or above `ω₁` carry no
+data: every such domain is empty (`(aleph 1).ord = ω₁` by `Cardinal.ord_aleph`).  Restricting
+`domain` to `Set.Iio ω₁` is therefore injective and gives the sketch's `domain` and
+`complement_countable` fields; its `homogeneous` and `separates` fields are the hypotheses of
+`Filtration.mk_eq_aleph_one_of_separation`.
 -/
 
 namespace VaughtConjecture.Counting
@@ -42,8 +45,8 @@ universe u
 
 /-- A **filtration** of a type `X` of classes by domains indexed by the countable ordinals:
 `D 0 = univ`, antitone, continuous at limits below `ω₁`, with countable successor losses below
-`ω₁` and cofinally many nonempty successor losses below `ω₁`.  Stages `ξ ≥ ω₁` carry no
-constraint beyond antitonicity and are never used. -/
+`ω₁` and cofinally many nonempty successor losses below `ω₁`.  The domains at stages `ξ ≥ ω₁`
+are empty, so a filtration is determined by its stages below `ω₁`. -/
 structure Filtration (X : Type u) where
   /-- The domain at stage `ξ`. -/
   domain : Ordinal.{0} → Set X
@@ -57,14 +60,28 @@ structure Filtration (X : Type u) where
   loss_countable : ∀ ξ, ξ < ω₁ → (domain ξ \ domain (ξ + 1)).Countable
   /-- Nonempty successor losses occur cofinally below `ω₁`. -/
   cofinal_losses : ∀ β, β < ω₁ → ∃ ξ, β ≤ ξ ∧ ξ < ω₁ ∧ (domain ξ \ domain (ξ + 1)).Nonempty
+  /-- No data is carried at or above `ω₁`: the domains there are empty. -/
+  domain_of_omega_one_le : ∀ ξ, ω₁ ≤ ξ → domain ξ = ∅
 
 namespace Filtration
 
 variable {X : Type u} (F : Filtration X)
 
+/-- Two filtrations agreeing below `ω₁` are equal: at and above `ω₁` both domains are empty. -/
+@[ext]
+theorem ext {F G : Filtration X} (h : ∀ ξ, ξ < ω₁ → F.domain ξ = G.domain ξ) : F = G := by
+  obtain ⟨D, _, _, _, _, _, hD⟩ := F
+  obtain ⟨E, _, _, _, _, _, hE⟩ := G
+  congr
+  funext ξ
+  rcases lt_or_ge ξ ω₁ with hξ | hξ
+  · exact h ξ hξ
+  · rw [hD ξ hξ, hE ξ hξ]
+
 /-- The **persistent core**: the classes lying in every domain below `ω₁`. -/
 def core : Set X := ⋂ ξ < ω₁, F.domain ξ
 
+@[simp]
 theorem mem_core_iff {x : X} : x ∈ F.core ↔ ∀ ξ, ξ < ω₁ → x ∈ F.domain ξ :=
   mem_iInter₂
 

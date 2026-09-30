@@ -15,8 +15,8 @@ ordinals as in `VaughtConjecture.Counting.Filtration`:
 
 * `aleph_one_le_mk_of_cofinal`: cofinally many nonempty successor losses below `ω₁` give
   `ℵ₁ ≤ #X`.  One point is chosen from each nonempty loss (`exists_injective_mem_sdiff_succ`);
-  a cofinal set of countable ordinals is uncountable (`not_countable_of_cofinal`).  Neither
-  countability of losses nor continuity is used.
+  a cofinal set of countable ordinals is uncountable (Mathlib's `Ordinal.iSup_lt_omega_one`).
+  Neither countability of losses nor continuity is used.
 * `mk_eq_aleph_one_of_countable_core`: with countable complements below `ω₁` and a countable
   persistent core `⋂ ξ < ω₁, D ξ`, in fact `#X = ℵ₁`.  Outside the core every point leaves some
   domain below `ω₁`, so InfinitaryLogic's `InfinitaryLogic.mk_eq_aleph_one_of_domains` (a union
@@ -31,8 +31,7 @@ The `Filtration` versions combine these with InfinitaryLogic's `compl_countable_
 `Filtration.mk_eq_aleph_one_of_separation` is the counting endpoint, and
 `Filtration.countable_truth_side` is the sentence split of `countable_split_of_uniform_domain`.
 
-A countable union of countable sets is Mathlib's `Set.Countable.biUnion` / `Set.countable_iUnion`
-and is not restated.  Two private examples close the file: the tail filtration of the countable
+Two private examples close the file: the tail filtration of the countable
 ordinals satisfies every hypothesis, and adjoining a persistent block of size `2 ^ ℵ₁` keeps every
 filtration axiom but not the cardinality, so the countable-core hypothesis cannot be dropped.
 -/
@@ -44,20 +43,15 @@ open scoped Ordinal
 
 universe u v
 
-/-- A set of countable ordinals that is cofinal in `ω₁` is uncountable.  This is the case of
-InfinitaryLogic's `countable_iff_rank_bounded` for the identity rank, whose fibres are
-subsingletons. -/
-theorem not_countable_of_cofinal {T : Set Ordinal.{0}} (hT : ∀ ξ ∈ T, ξ < ω₁)
-    (hcof : ∀ β, β < ω₁ → ∃ ξ ∈ T, β ≤ ξ) : ¬ T.Countable := by
-  intro hc
-  have hfib : ∀ α, α < ω₁ → Countable {x : T // x.1 = α} := fun α _ ↦
-    have : Subsingleton {x : T // x.1 = α} :=
-      ⟨fun a b ↦ Subtype.ext (Subtype.ext (a.2.trans b.2.symm))⟩
-    inferInstance
-  obtain ⟨β, hβ, hlt⟩ := (InfinitaryLogic.countable_iff_rank_bounded (X := T) Subtype.val
-    (fun ξ ↦ hT ξ ξ.2) hfib univ).1 (countable_univ_iff.2 hc)
-  obtain ⟨ξ, hξ, hβξ⟩ := hcof β hβ
-  exact (hlt ⟨ξ, hξ⟩ trivial).not_ge hβξ
+/-- A set of countable ordinals that is cofinal in `ω₁` is uncountable: the supremum of a
+countable set of countable ordinals is countable (Mathlib's `Ordinal.iSup_lt_omega_one`), and
+its successor is still below `ω₁`. -/
+private theorem not_countable_of_cofinal {T : Set Ordinal.{0}} (hT : ∀ ξ ∈ T, ξ < ω₁)
+    (hcof : ∀ β, β < ω₁ → ∃ ξ ∈ T, β ≤ ξ) : ¬ T.Countable := fun hc ↦ by
+  have := hc.to_subtype
+  have hs := Ordinal.iSup_lt_omega_one fun x : T ↦ hT x x.2
+  obtain ⟨ξ, hξ, hle⟩ := hcof _ ((isSuccLimit_omega 1).succ_lt hs)
+  exact (Order.lt_succ _).not_ge (hle.trans (Ordinal.le_iSup (fun x : T ↦ x.1) ⟨ξ, hξ⟩))
 
 /-- **Lower bound from cofinal losses.**  If nonempty successor losses of an antitone family of
 domains occur cofinally below `ω₁`, then there are at least `ℵ₁` classes. -/
@@ -168,6 +162,7 @@ private def tail : Filtration (Iio (ω₁ : Ordinal.{0})) where
     exact Subsingleton.countable fun a ha b hb ↦ Subtype.ext ((key a ha).trans (key b hb).symm)
   cofinal_losses β hβ := ⟨β, le_rfl, hβ, ⟨⟨β, hβ⟩, le_refl β,
     (Order.lt_add_one_iff.2 (le_refl β)).not_ge⟩⟩
+  domain_of_omega_one_le _ h := eq_empty_of_forall_notMem fun x hx ↦ (h.trans hx).not_gt x.2
 
 /-- Membership in a tail domain. -/
 private theorem mem_tail_domain {ξ : Ordinal.{0}} {x : Iio (ω₁ : Ordinal.{0})} :
@@ -189,32 +184,35 @@ private theorem mk_tail : #(Iio (ω₁ : Ordinal.{0})) = ℵ₁ :=
       have hq' : q ≠ s := by rintro rfl; exact notMem_tail_domain_add_one q hq
       simp only [hp', hq']⟩
 
-/-- Adjoining a persistent block `Y` to a filtration: the classes of `Y` lie in every domain.
-All filtration axioms survive, and the persistent core contains `Y`. -/
+/-- Adjoining a persistent block `Y` to a filtration: the classes of `Y` lie in every domain
+below `ω₁`.  All filtration axioms survive, and the persistent core contains `Y`. -/
 private def adjoin {X : Type u} (F : Filtration X) (Y : Type u) : Filtration (X ⊕ Y) where
-  domain ξ := {z | Sum.elim (· ∈ F.domain ξ) (fun _ ↦ True) z}
+  domain ξ := {z | Sum.elim (· ∈ F.domain ξ) (fun _ ↦ ξ < ω₁) z}
   zero := eq_univ_of_forall fun
-    | .inl x => show x ∈ F.domain 0 from F.zero ▸ mem_univ x
-    | .inr _ => trivial
+    | .inl x => by simp [F.zero]
+    | .inr _ => Ordinal.omega_pos 1
   antitone _ _ h
     | .inl _, hx => F.antitone h hx
-    | .inr _, _ => trivial
+    | .inr _, hx => h.trans_lt hx
   limit l hl hlt
     | .inl x, hx => F.limit l hl hlt (mem_iInter₂.2 fun ξ hξ ↦ mem_iInter₂.1 hx ξ hξ)
-    | .inr _, _ => trivial
+    | .inr _, _ => hlt
   loss_countable ξ hξ := by
     refine ((F.loss_countable ξ hξ).image Sum.inl).mono ?_
     rintro (x | y) ⟨h₁, h₂⟩
     · exact mem_image_of_mem _ ⟨h₁, h₂⟩
-    · exact (h₂ trivial).elim
+    · exact (h₂ ((isSuccLimit_omega 1).succ_lt h₁)).elim
   cofinal_losses β hβ := by
     obtain ⟨ξ, hβξ, hξ, x, hx⟩ := F.cofinal_losses β hβ
     exact ⟨ξ, hβξ, hξ, .inl x, hx⟩
+  domain_of_omega_one_le ξ h := eq_empty_of_forall_notMem fun
+    | .inl x, hx => by simp [F.domain_of_omega_one_le ξ h] at hx
+    | .inr _, hx => h.not_gt hx
 
 /-- The tail filtration satisfies every hypothesis, and its classes number exactly `ℵ₁`. -/
 example : #(Iio (ω₁ : Ordinal.{0})) = ℵ₁ ∧ tail.core = ∅ := by
   refine ⟨mk_tail, eq_empty_of_forall_notMem fun x hx ↦ ?_⟩
-  exact notMem_tail_domain_add_one x (mem_iInter₂.1 hx _ ((isSuccLimit_omega 1).succ_lt x.2))
+  exact notMem_tail_domain_add_one x (tail.mem_core_iff.1 hx _ ((isSuccLimit_omega 1).succ_lt x.2))
 
 /-- **The countable-core hypothesis is needed.**  Adjoining `2 ^ ℵ₁` persistent classes to the
 tail filtration gives a filtration (every axiom holds) with an uncountable core and more than
