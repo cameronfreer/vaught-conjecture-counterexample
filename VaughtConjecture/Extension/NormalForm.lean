@@ -42,7 +42,9 @@ of `3` at `K = 1` has finite part `2`, `VaughtConjecture.Extension.Transformatio
 row built from a representative need not satisfy the shortness branch of the section theorem
 (`CellScheme.Rows.IsLawful.map_of_isShort_or`) at its grade.  Where 2.5 and 2.6 need the
 full-scope rows to be short, the shortness comes from how the field layer builds their profiles
-(checkpoints 2.5 and 2.6), not from this normal form.
+(checkpoints 2.5 and 2.6), not from this normal form: it is the hypothesis on the rows of the new
+owners in ownerwise decoding (`CellScheme.Rows.IsLawful.strongDecode_of_ownerwise`), whose
+inherited owners are discharged by literal readback (`Label.strongDecode_comp_strongEncode_comp`).
 
 The lawfulness of the representative, its strong coding, and the decoding identity are separate
 statements, as are the cap statements of `VaughtConjecture.Extension.Encoders`.
@@ -70,7 +72,9 @@ theorem transformsTo_strongEncode_comp (hK : ∀ d, grade d ≤ K) (w : D → La
     TransformsTo grade w (strongEncode V K ∘ w) :=
   isWitness_strongEncode.transformsTo_comp hK w
 
-/-- **The decoder reads a labelling back from its normal form**, when `V` contains its values. -/
+/-- **The decoder reads a labelling back from its normal form**, when `V` contains its values.
+Used by 2.5 and 2.6: the literal readback by which the inherited owners are discharged in
+ownerwise decoding (`CellScheme.Rows.IsLawful.strongDecode_of_ownerwise`). -/
 theorem strongDecode_comp_strongEncode_comp {w : D → Label.{u}} (hV : ∀ d, w d ∈ V) :
     strongDecode V K ∘ (strongEncode V K ∘ w) = w :=
   funext fun d ↦ strongDecode_strongEncode (hV d)

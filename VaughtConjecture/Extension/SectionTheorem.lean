@@ -29,6 +29,9 @@ a lawful section.  Three operations on `p` keep it lawful, with the rows unchang
   through `ν` once; locality is proved owner by owner, at a short owner by
   `Label.TransformsTo.map_of_isShort` and at any other owner by the hypothesis.  Neither
   lawfulness of `ν ∘ p`, nor bottom reflection of `ν`, nor shortness of every row is assumed.
+  For the strongly coded decoder, which does not reflect bottom, the owners are discharged
+  ownerwise (`CellScheme.Rows.IsLawful.strongDecode_of_ownerwise`): new owners by the shortness
+  of their rows, inherited owners by literal readback of a lawful section.
 * **A bottom-reflecting witness** `ν` bounded by `K`
   (`CellScheme.Rows.IsLawful.map_of_bot_reflecting`): `ν ∘ p` is lawful when `ν` sends a label to
   bottom only if it is bottom.  This is the section theorem with every owner on the branch of
@@ -99,10 +102,12 @@ theorem min_const_of_isSelfVisible (hp : R.IsLawful p) (hK : ∀ d, D.grade d �
 and `ν` a witness bounded by `K`.  If every owner `s` is short (every entry of its row is short at
 the grade of `s`) or satisfies the mapped locality `E(s) ⇒ (d ↦ min (ν (p d)) (ν (p s)))`, then
 `ν ∘ p` is lawful.  No bottom reflection of `ν` and no shortness of the other rows is assumed.
-Used by 2.5 and 2.6: the decoded section of a seed construction is lawful, its full-scope owners
-being short by how the field layer builds their profiles (not by the normal form, whose
-representatives have finite parts up to `K + 1`) and each inherited owner satisfying its mapped
-locality. -/
+Used by 2.5 and 2.6 through ownerwise decoding
+(`CellScheme.Rows.IsLawful.strongDecode_of_ownerwise`): the decoded section of a seed construction
+is lawful, its new full-scope owners taking the shortness branch, by how the field layer builds
+their rows (not by the normal form, whose representatives have finite parts up to `K + 1`), and
+each inherited owner the branch of the mapped locality, by literal readback of the original
+section. -/
 theorem map_of_isShort_or (hp : R.IsLawful p) (hK : ∀ d, D.grade d ≤ K)
     (hν : IsWitness (stepSuppressor K) ν)
     (howner : ∀ s, (∀ t, IsShort (D.grade s) (R.row s t)) ∨

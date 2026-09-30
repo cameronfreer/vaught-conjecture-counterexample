@@ -4,10 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Extension.NormalForm
+import VaughtConjecture.Extension.OwnerwiseDecoding
 import VaughtConjecture.Geometry.IntervalPlan
 
 /-!
-# Examples: strongly coded representatives, encoder round trips, and composition
+# Examples: strongly coded representatives, encoder round trips, composition, and decoding
 
 Roadmap, Layer 3, 3.1, row 6, checkpoint 2.3 (transformation algebra, normal forms, coded
 encoders); semantic contract, item 3.
@@ -34,6 +35,16 @@ encoders); semantic contract, item 3.
   (`not_isWitness_bandDecode_comp_reduce`), while
   `Label.IsWitness.exists_eq_comp_of_isShort` gives a witness bounded by `0` equal to the
   composite at every label short at `0` (`exists_eq_bandDecode_comp_reduce`).
+* **The decoder regression.**  On two cells `a`, `b` of grade `1` and one scope, with rows
+  `(1, 1)` for `a` and `(1, 2)` for `b`, the section `(1, ω * 5 + 1)` is lawful
+  (`isLawful_pairSection`).  The decoder does not reflect bottom: relative to the empty set of
+  labels it sends `1` to bottom (`strongDecode_empty_one`), so the section decodes to `(⊥, ⊤)`,
+  which is not lawful, since `(1, 2)` does not transform to `(⊥, ⊤)` at grade `1`; the unconditional
+  decoding claim fails (`not_isLawful_strongDecode_pairSection`).  On the same rows, relative to
+  the labels of the section, the decoded normal form is the section itself and is lawful by
+  ownerwise decoding, `a` a new owner with a short row and `b` an inherited owner reading back
+  the section (`isLawful_strongDecode_strongEncode_pairSection`): the failure of bottom
+  reflection alone does not establish the failure of lawful decoding.
 
 ## References
 
@@ -209,6 +220,187 @@ private theorem exists_eq_bandDecode_comp_reduce :
     ∃ ρ, IsWitness (stepSuppressor.{u} 0) ρ ∧
       ∀ x, IsShort 0 x → ρ x = bandDecode {(0 : Label.{u})} (Label.reduce 1 x) :=
   isWitness_reduce_one.exists_eq_comp_of_isShort isWitness_bandDecode_zero le_rfl
+
+
+/-! ### The decoder regression -/
+
+/-- The cell scheme with two cells of scope `{0}` and grade `1`: `false` (the cell `a`) and
+`true` (the cell `b`). -/
+private def pairScheme : CellScheme Bool (Fin 1) :=
+  ⟨univ, Geometry.intervalPlan univ, fun _ ↦ univ, fun _ ↦ 1⟩
+
+/-- The rows of `pairScheme`: the row of `a` is `(1, 1)` and the row of `b` is `(1, 2)`. -/
+private def pairRows : pairScheme.Rows.{u} := ⟨fun s t ↦ if s && t.1 then 2 else 1⟩
+
+/-- The label `ω * 5 + 1`. -/
+private noncomputable abbrev omega0FiveOne : Label.{u} :=
+  ((ω * (5 : ℕ) + (1 : ℕ) : Ordinal.{u}) : Label.{u})
+
+/-- The section `(1, ω * 5 + 1)` of `pairScheme`. -/
+private noncomputable def pairSection : Bool → Label.{u} := fun b ↦ if b then omega0FiveOne else 1
+
+/-- `1 ≤ ω * 5 + 1`. -/
+private theorem one_le_omega0FiveOne : (1 : Label.{u}) ≤ omega0FiveOne :=
+  WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr (by simp))
+
+/-- The label `ω * 5 + 1` is self-visible at `1`. -/
+private theorem isSelfVisible_omega0FiveOne : IsSelfVisible 1 omega0FiveOne.{u} :=
+  isSelfVisible_coe.mpr (by rw [omega0_mul_add_natCast_mod])
+
+/-- The labels of `pairSection` are at most `ω * 5 + 1`. -/
+private theorem pairSection_le (b : Bool) : pairSection.{u} b ≤ omega0FiveOne := by
+  cases b
+  · exact one_le_omega0FiveOne
+  · exact le_rfl
+
+/-- The shifter of the locality of `b`: it fixes the labels `≤ 1` and sends the others to
+`ω * 5 + 1`. -/
+private noncomputable def pairShifter (x : Label.{u}) : Label.{u} :=
+  if x ≤ 1 then x else omega0FiveOne
+
+/-- `pairShifter` fixes bottom. -/
+private theorem pairShifter_bot : pairShifter (⊥ : Label.{u}) = ⊥ := ite_eq_left bot_le
+
+/-- `pairShifter` is a witness bounded by `1`. -/
+private theorem isWitness_pairShifter : IsWitness (stepSuppressor.{u} 1) pairShifter where
+  antitone := (IsWitness.id_step 1).antitone
+  isSelfVisible := (IsWitness.id_step 1).isSelfVisible
+  map_bot := pairShifter_bot
+  monotone x y h := by
+    unfold pairShifter
+    split_ifs with hx hy hy
+    · exact h
+    · exact hx.trans one_le_omega0FiveOne
+    · exact absurd (h.trans hy) hx
+    · exact le_rfl
+  visibilityReplace_comm x k hx i hi := by
+    rcases le_or_gt k 1 with hk | hk
+    · by_cases hx1 : x ≤ 1
+      · unfold pairShifter
+        rw [ite_eq_left hx1,
+          ite_eq_left (visibilityReplace_le_of_le hi (isSelfVisible_one.mpr hk) hx1)]
+      · have h1 : ¬ visibilityReplace k i x ≤ 1 :=
+          fun h ↦ hx1 ((le_visibilityReplace (by omega) x).trans h)
+        unfold pairShifter
+        rw [ite_eq_right hx1, ite_eq_right h1,
+          (isSelfVisible_omega0FiveOne.mono hk).visibilityReplace_eq]
+    · rw [stepSuppressor_of_lt hk, le_bot_iff] at hx
+      have hx0 : x = ⊥ := by
+        unfold pairShifter at hx
+        split_ifs at hx
+        · exact hx
+        · exact absurd hx (by simp)
+      rw [hx0, visibilityReplace_bot, pairShifter_bot, visibilityReplace_bot]
+
+/-- `2` is not at most `1`, as labels. -/
+private theorem not_two_le_one : ¬ (2 : Label.{u}) ≤ 1 :=
+  not_le.mpr (WithBot.coe_lt_coe.mpr (WithTop.coe_lt_coe.mpr one_lt_two))
+
+/-- **The section `(1, ω * 5 + 1)` is lawful** for the rows `(1, 1)` of `a` and `(1, 2)` of `b`.
+The locality of `b` is witnessed by `pairShifter`, which sends `1` to `1` and `2` to `ω * 5 + 1`;
+that of `a` is the identity. -/
+private theorem isLawful_pairSection : pairRows.{u}.IsLawful pairSection where
+  orderly d := by
+    cases d
+    · simp [pairSection, pairScheme]
+    · exact isSelfVisible_omega0FiveOne
+  locality s := by
+    cases s
+    · -- The capped target is the constant `1`, the row of `a`.
+      convert TransformsTo.refl _ (pairRows.row false) using 1
+      funext d
+      simp only [pairRows, Bool.false_and, Bool.false_eq_true, ↓reduceIte, pairSection]
+      exact min_eq_right (by split_ifs <;> simp)
+    · refine ⟨_, pairShifter, isWitness_pairShifter, fun ⟨b, hb⟩ ↦ ?_⟩
+      dsimp only
+      rw [stepSuppressor_of_le (by simp [pairScheme]), min_top_right,
+        show pairSection true = omega0FiveOne from rfl, min_eq_left (pairSection_le b)]
+      cases b
+      · exact (ite_eq_left le_rfl).symm
+      · exact (ite_eq_right not_two_le_one).symm
+  availability s _ _ _ := ⟨true, rfl, pairSection_le s⟩
+
+/-- **The decoder does not reflect bottom**: relative to the empty set of labels at grade `1`, it
+sends the label `1`, which is not bottom, to bottom (the band coding reserves the code rank `0`,
+so every code below `ω` is read as bottom), and it sends `ω * 5 + 1` to the formal top. -/
+private theorem strongDecode_empty_one :
+    strongDecode (∅ : Finset Label.{u}) 1 1 = ⊥ ∧ (1 : Label.{u}) ≠ ⊥ ∧
+      strongDecode (∅ : Finset Label.{u}) 1 omega0FiveOne = ⊤ := by
+  have hcb : codeBands ((∅ : Finset Label.{u}).image (spread 1)) = ∅ := by
+    simp [codeBands, valueBands]
+  refine ⟨?_, by simp, ?_⟩
+  · rw [strongDecode_apply, show (1 : Label.{u}) = ((1 : Ordinal.{u}) : Label.{u}) from rfl,
+      bandDecode_coe, bandDecodeOrd_of_eq_zero (Ordinal.div_eq_zero_of_lt Ordinal.one_lt_omega0),
+      unspread_bot]
+  · rw [strongDecode_apply, bandDecode_coe, bandDecodeOrd_of_lt, unspread_top]
+    rw [hcb, omega0_mul_add_natCast_div, card_empty]
+    exact Nat.cast_lt.mpr (by decide)
+
+/-- **The decoded section of a lawful section need not be lawful.**  The lawful section
+`(1, ω * 5 + 1)` decodes, relative to the empty set of labels at grade `1`, to `(⊥, ⊤)`, which is
+not lawful for the rows `(1, 1)` of `a` and `(1, 2)` of `b`: the row `(1, 2)` of `b` does not
+transform, at grade `1`, to `(⊥, ⊤)`, since a shifter sending `1` to bottom sends its
+visibility replacement `2` to bottom as well.  So the unconditional decoding claim fails for the
+strongly coded decoder.  The hypotheses of ownerwise decoding fail at `b`, as they must: its row
+is not short at grade `1`, and the decoded labels do not read back a lawful section. -/
+private theorem not_isLawful_strongDecode_pairSection :
+    pairRows.{u}.IsLawful pairSection ∧
+      strongDecode ∅ 1 ∘ pairSection.{u} = (fun b ↦ if b then ⊤ else ⊥) ∧
+      ¬ pairRows.{u}.IsLawful (strongDecode ∅ 1 ∘ pairSection) ∧
+      ¬ ∀ t, IsShort (pairScheme.grade true) (pairRows.{u}.row true t) := by
+  obtain ⟨h1, -, h5⟩ := strongDecode_empty_one.{u}
+  have hdec : strongDecode ∅ 1 ∘ pairSection.{u} = (fun b ↦ if b then ⊤ else ⊥) := by
+    funext b
+    cases b
+    · exact h1
+    · exact h5
+  refine ⟨isLawful_pairSection, hdec, fun h ↦ ?_, fun h ↦ ?_⟩
+  · obtain ⟨g, τ, hw, heq⟩ := h.locality true
+    rw [hdec] at heq
+    have ha := heq ⟨false, (mem_below _).mpr le_rfl⟩
+    have hb := heq ⟨true, (mem_below _).mpr le_rfl⟩
+    simp only [pairRows, pairScheme, Bool.and_true, Bool.and_false, Bool.false_eq_true,
+      ↓reduceIte, min_self, bot_le, min_eq_left] at ha hb
+    -- The value at `b` forces `g 1 = ⊤`, so `τ 1 = ⊥` and `τ 2 = ⊤`.
+    have hg : g 1 = ⊤ := top_le_iff.mp (hb.le.trans (min_le_right _ _))
+    rw [hg, min_top_right] at ha hb
+    have hc := hw.visibilityReplace_comm 1 2 (ha ▸ bot_le) 2 le_rfl
+    rw [← ha, visibilityReplace_bot] at hc
+    simp only [visibilityReplace_one, Nat.one_lt_ofNat, ↓reduceIte, Nat.cast_ofNat] at hc
+    exact top_ne_bot (hb.trans hc)
+  · have h2 := isShort_coe.mp
+      (show IsShort 1 ((2 : Ordinal.{u}) : Label.{u}) from h ⟨true, (mem_below _).mpr le_rfl⟩)
+    rw [show (2 : Ordinal.{u}) = ((2 : ℕ) : Ordinal.{u}) by norm_cast,
+      Ordinal.natCast_mod_omega0] at h2
+    exact absurd h2 (by exact_mod_cast (by decide : ¬ 2 ≤ 1))
+
+/-- The labels of `pairSection`. -/
+private noncomputable abbrev pairValues : Finset Label.{u} := {1, omega0FiveOne}
+
+/-- The labels of `pairSection` lie in `pairValues`. -/
+private theorem pairSection_mem (b : Bool) : pairSection.{u} b ∈ pairValues := by
+  cases b <;> simp [pairSection]
+
+/-- **Lawful decoding holds when the ownerwise hypotheses do**, on the same rows.  Relative to the
+labels `{1, ω * 5 + 1}` of the section `(1, ω * 5 + 1)`, the decoder reads it back literally from
+its normal form, and the decoded section is lawful by ownerwise decoding: the new owner `a` has
+the row `(1, 1)`, short at grade `1`, and the inherited owner `b` reads back the lawful section
+`(1, ω * 5 + 1)` on its whole lower domain.  The decoder is the same, and does not reflect bottom
+(`strongDecode_empty_one`): the failure of bottom reflection alone does not establish the failure
+of lawful decoding. -/
+private theorem isLawful_strongDecode_strongEncode_pairSection :
+    strongDecode pairValues 1 ∘ (strongEncode pairValues 1 ∘ pairSection.{u}) = pairSection ∧
+      pairRows.{u}.IsLawful (strongDecode pairValues 1 ∘ (strongEncode pairValues 1 ∘ pairSection))
+      := by
+  have hread (d : Bool) :
+      strongDecode pairValues 1 (strongEncode pairValues 1 (pairSection.{u} d)) = pairSection d :=
+    strongDecode_strongEncode (pairSection_mem d)
+  refine ⟨funext hread, ?_⟩
+  refine (isLawful_pairSection.strongEncode fun _ ↦ le_rfl).strongDecode_of_ownerwise
+    isLawful_pairSection (fun _ ↦ le_rfl) {false} (fun c hc d ↦ ?_) fun c _ d ↦ hread d
+  obtain rfl : c = false := hc
+  exact show IsShort 1 ((1 : Ordinal.{u}) : Label.{u}) from
+    isShort_coe.mpr (by exact_mod_cast (Ordinal.natCast_mod_omega0 1).le)
 
 end TransformationExamples
 

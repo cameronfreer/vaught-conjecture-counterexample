@@ -54,14 +54,21 @@ threshold `k ≤ K`; they are witnesses bounded by `K` (`Label.isWitness_spread`
   (`Label.strongDecode_strongEncode`), so the encoder is injective on `V`
   (`Label.injOn_strongEncode`); both are monotone (`Label.monotone_strongEncode`,
   `Label.monotone_strongDecode`), so both commute with `min` (`Monotone.map_min`).
-* *Cap preservation.*  Capped agreement at a cap `c` in `V` is preserved and reflected by the
-  encoder (`Label.forall_min_strongEncode_eq_iff`), and a code that agrees with the code of a
-  label `y` of `V` capped at the code of `c` decodes to a label that agrees with `y` capped at `c`
-  (`Label.min_strongDecode_eq_of_min_eq`).
+* *Cap preservation*, numerical, per coordinate, and separate from lawfulness.  The caps
+  preserved are the labels `c` of `V`: capping commutes with decoding at the code of `c`
+  (`Label.strongDecode_min_strongEncode`), so two codes that agree capped at the code of `c`
+  decode to labels that agree capped at `c` (`Label.min_strongDecode_eq_min_strongDecode`, and
+  `Label.min_strongDecode_eq_of_min_eq` when one code is read back); capped agreement at `c` is
+  preserved and reflected by the encoder (`Label.forall_min_strongEncode_eq_iff`).  The caps used
+  by 2.5 and 2.6 are self-visible at the grade bound `K`, and so are their codes
+  (`Label.isSelfVisible_strongEncode`), so capping a lawful code section at such a code keeps it
+  lawful ([Kni26, Lemma 2.5.8]).
 * *Lawfulness* (`CellScheme.Rows.IsLawful.strongEncode`): the encoded section of a lawful
   section is lawful, for every `V`, since the encoder is a bottom-reflecting witness.  The
-  decoder does not reflect bottom (it sends the codes below `ω` to bottom), so the lawfulness of a
-  decoded section is the section theorem (`CellScheme.Rows.IsLawful.strongDecode`).
+  decoder does not reflect bottom (it sends the codes below `ω` to bottom), and the decoded section
+  of a lawful section need not be lawful; decoding is lawful ownerwise
+  (`CellScheme.Rows.IsLawful.strongDecode_of_ownerwise`, in
+  `VaughtConjecture.Extension.OwnerwiseDecoding`).
 
 **The existential coded copies are redundant.**  The band coding is itself a bottom-reflecting
 witness bounded by `K` (`Label.isWitness_bandEncode_stepSuppressor`), so
@@ -446,6 +453,35 @@ theorem injOn_strongEncode : Set.InjOn (strongEncode V K) V :=
 
 /-! #### Cap preservation -/
 
+/-- **The code of a cap self-visible at `K` is self-visible at `K`**, since the encoder is a
+witness bounded by `K`.  Used by 2.5 and 2.6: capping a lawful code section at the code of such a
+cap keeps it lawful ([Kni26, Lemma 2.5.8], `CellScheme.Rows.IsLawful.min_const_of_isSelfVisible`),
+and the capped code section decodes to the capped decoded section
+(`Label.strongDecode_min_strongEncode`). -/
+theorem isSelfVisible_strongEncode {c : Label.{u}} (hc : IsSelfVisible K c) :
+    IsSelfVisible K (strongEncode V K c) :=
+  isWitness_strongEncode.isSelfVisible_apply hc (by simp)
+
+/-- **Capping commutes with decoding at the code of a cap of `V`**: for a cap `c` in `V`, the
+decoded label of any code `x` capped at `c` is the decoded label of `x` capped at the code of `c`.
+So `min (strongDecode V K x) c` is determined by `min x (strongEncode V K c)`.  This is numerical,
+per coordinate, and separate from lawfulness.  Used by 2.6, cell by cell: a lift of the encoded
+prescription capped at the code of a cap decodes to the decoded lift capped at the cap. -/
+theorem strongDecode_min_strongEncode {c : Label.{u}} (hc : c ∈ V) (x : Label.{u}) :
+    strongDecode V K (min x (strongEncode V K c)) = min (strongDecode V K x) c := by
+  rw [monotone_strongDecode.map_min, strongDecode_strongEncode hc]
+
+/-- **Capped agreement of codes decodes**, per coordinate: for a cap `c` in `V`, two codes that
+agree capped at the code of `c` decode to labels that agree capped at `c`.  The caps preserved are
+the labels of `V`; those used by 2.5 and 2.6 are moreover self-visible at the grade bound `K`,
+and so are their codes (`Label.isSelfVisible_strongEncode`).  Used by 2.6, cell by cell: a lift
+that agrees with the encoded ambient labelling at the code of a cap decodes to one that agrees
+with the decoded ambient labelling at the cap. -/
+theorem min_strongDecode_eq_min_strongDecode {x x' c : Label.{u}} (hc : c ∈ V)
+    (h : min x' (strongEncode V K c) = min x (strongEncode V K c)) :
+    min (strongDecode V K x') c = min (strongDecode V K x) c := by
+  rw [← strongDecode_min_strongEncode hc, h, strongDecode_min_strongEncode hc]
+
 /-- **Capped agreement is preserved and reflected by the encoder**, for labellings with values in
 `V` and a cap in `V`.  Used by 2.5 and 2.6: an ambient labelling and a prescription that agree at
 a cap are encoded to codes that agree at the code of the cap, and conversely. -/
@@ -458,20 +494,19 @@ theorem forall_min_strongEncode_eq_iff {D : Type*} {q q' : D → Label.{u}} {c :
   simp only [← (monotone_strongEncode (V := V) (K := K)).map_min]
   exact forall_congr' fun d ↦ injOn_strongEncode.eq_iff (hmin _ (hq' d)) (hmin _ (hq d))
 
-/-- **Capped agreement decodes**: a code `x` that agrees with the code of a label `y` of `V`
-capped at the code of a cap `c` in `V` decodes to a label that agrees with `y` capped at `c`.
-Used by 2.6, cell by cell: a lift of the encoded prescription at the code of a cap decodes to a
-lift that preserves the ambient observation at the cap on every cell. -/
+/-- **Capped agreement with a code decodes**: a code `x` that agrees with the code of a label `y`
+of `V` capped at the code of a cap `c` in `V` decodes to a label that agrees with `y` capped at
+`c`; the case of `Label.min_strongDecode_eq_min_strongDecode` in which the second code is read
+back.  Used by 2.6, cell by cell: a lift of the encoded prescription at the code of a cap decodes
+to a lift that preserves the ambient observation at the cap on every cell. -/
 theorem min_strongDecode_eq_of_min_eq {x y c : Label.{u}} (hy : y ∈ V) (hc : c ∈ V)
     (h : min x (strongEncode V K c) = min (strongEncode V K y) (strongEncode V K c)) :
     min (strongDecode V K x) c = min y c := by
-  have := congrArg (strongDecode V K) h
-  rwa [monotone_strongDecode.map_min, monotone_strongDecode.map_min,
-    strongDecode_strongEncode hc, strongDecode_strongEncode hy] at this
+  rw [min_strongDecode_eq_min_strongDecode hc h, strongDecode_strongEncode hy]
 
 end VaughtConjecture.Label
 
-/-! ### Lawfulness along the encoder and the decoder -/
+/-! ### Lawfulness along the encoder -/
 
 namespace VaughtConjecture.CellScheme.Rows
 
@@ -486,15 +521,5 @@ strongly coded representative of the boundary labels is lawful. -/
 theorem IsLawful.strongEncode (hp : R.IsLawful p) (hK : ∀ d, D.grade d ≤ K) :
     R.IsLawful (Label.strongEncode V K ∘ p) :=
   hp.map_of_bot_reflecting hK isWitness_strongEncode fun _ ↦ strongEncode_eq_bot_iff.mp
-
-/-- **The decoded section of a lawful section is lawful** when every owner is short or satisfies
-its mapped locality: the section theorem with the decoder, a witness bounded by `K`.  Used by
-2.5 and 2.6: a catalogue vector realized as a lawful section decodes to a lawful section. -/
-theorem IsLawful.strongDecode (hp : R.IsLawful p) (hK : ∀ d, D.grade d ≤ K)
-    (howner : ∀ s, (∀ t, IsShort (D.grade s) (R.row s t)) ∨
-      TransformsTo (fun d : D.below (D.gradedIndex s) ↦ D.grade d) (R.row s)
-        (fun d ↦ min (Label.strongDecode V K (p d)) (Label.strongDecode V K (p s)))) :
-    R.IsLawful (Label.strongDecode V K ∘ p) :=
-  hp.map_of_isShort_or hK isWitness_strongDecode howner
 
 end VaughtConjecture.CellScheme.Rows
