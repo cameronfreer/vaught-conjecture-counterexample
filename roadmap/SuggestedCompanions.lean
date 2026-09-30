@@ -252,7 +252,7 @@ theorem typesIsolated_of_orbitDefinedBy
   ⟨φ, typesWith_eq_singleton_of_orbitDefinedBy hφ⟩
 
 /-- **Countable atomic implies prime** (target, generic).  A countable structure all of whose
-types are isolated embeds elementarily into every model of its complete theory, in an independent
+types are isolated embeds elementarily into every model of its complete theory, in an arbitrary
 universe and of arbitrary cardinality.  Intended proof: enumerate only `M`, extend finite partial
 maps preserving every first-order formula, and take the union. -/
 theorem nonempty_elementaryEmbedding_of_typesIsolated [Countable M]

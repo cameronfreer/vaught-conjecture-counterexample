@@ -75,10 +75,10 @@ end ChartSystem
 
 /-- Unique extension (injective restriction) turns per-cap lifts into simultaneous preservation.
 Compatibility and the exact extension equation remain explicit; observations need not
-themselves be lawful.  Injectivity of restriction is not available in general; the construction
-instead obtains simultaneous preservation from a lift at the largest compatible cap, by the
-nesting of caps under `min`, or from the ambient section itself when the prescription is
-literally its face (see `IMPLEMENTATION.md`, layer 1). -/
+themselves be lawful.  Injectivity of restriction is not available in general, and a largest
+compatible self-visible cap need not exist; simultaneous preservation is not proved otherwise
+and is not needed, since density asks for one extension for each cutoff (see
+`IMPLEMENTATION.md`, layer 1). -/
 theorem preserves_all_compatible_observations
     {A : Type u} {B : Type v} {Cut : Type w} {O : Type z}
     (restrict : A → B) (observe : Cut → A → O) (compatible : B → A → Cut → Prop)
@@ -155,9 +155,10 @@ set_option linter.hashCommand false in
 /- Proposed substantive targets (not declared as axioms or claimed proved here):
 
 FiniteSemantics: construct the concrete ChartSystem and prove countability of charts,
-  legal face restriction, stage reduction, lawful lifting with all retained caps.
+  legal face restriction, stage reduction, lawful lifting at every cap self-visible at the
+  target grade (bountifulness, one cap at a time; not the permitted cutoffs of receiving).
 Receiving: exact literal root + one actual occurrence + requested capped/LOW equations on it
-  (LOW: to be defined by the forthcoming layer-3 specification).
+  (LOW and `Correct`: defined in Layer 3 of README.md, item 3.3).
 ChainConstruction: finite master + root absorption + supported-invisible permanence + union.
 StableLift: consistency-only uniqueness; consistency/covering lawfulness; cap modelhood.
 Comparison: finite-donor one-sided transfer; rooted BF; singleton terminal conditions.

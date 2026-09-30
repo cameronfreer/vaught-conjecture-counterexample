@@ -1,6 +1,6 @@
 # A definable binary-operation presentation of the canonical hull
 
-**Status:** a proposed mathematical deduction from the current hull and coordinate-formula theorems. The argument below is explicit, but this deduction has not been formalized or elaborated here. It is optional and is not a new premise of the main theorem on the spectrum.
+**Status:** the construction of the operations and the equality (1) of the canonical closure with generated-substructure closure are established results: their proofs are known, and are the argument below, from the hull and coordinate-formula theorems, which are themselves established results with known proofs, to be formalized here. They remain formalization targets here and have not been formalized or elaborated in this library. The inclusions (2) are a short deduction from (1), recorded in §4; they are not counted among the established results, and no reverse inclusion or equality with \(\operatorname{dcl}\) or \(\operatorname{acl}\) is claimed. The development is optional and is not a new premise of the main theorem on the spectrum.
 
 ## Statement
 
@@ -21,13 +21,13 @@ Here definable/algebraic closure is taken in the actual base-language structure.
 
 Index an operation by a base-stage finite type \(q\) of arity \(m\ge2\), an ordered pair of coordinate indices \(i_0,i_1\) containing its extreme coordinates, and a target coordinate \(j<m\). There are countably many such indices.
 
-Use the existing first-order formula
+Use the first-order formula
 \[
 \theta_{q,i_0,i_1,j}(x_0,x_1,y)=
 \exists z_0\cdots z_{m-1}\bigl(P_q(\bar z)\land
 z_{i_0}=x_0\land z_{i_1}=x_1\land z_j=y\bigr).
 \]
-The chart relation includes injectivity in the realization structure. If \(\theta(a,b,y)\) has any witness, that witness is an actual \(q\)-chart with the prescribed endpoints. The current two-charts theorem says that any other such chart agrees coordinate by coordinate. Therefore \(\theta(a,b,y)\) has at most one solution, for **every** pair \(a,b\), not merely for a separately supplied chart. This passage uses a witness to activate the existing uniqueness theorem; it does not assume existence for an arbitrary pair.
+The chart relation includes injectivity in the realization structure. If \(\theta(a,b,y)\) has any witness, that witness is an actual \(q\)-chart with the prescribed endpoints. The two-charts theorem (an established result with a known proof, to be formalized here) says that any other such chart agrees coordinate by coordinate. Therefore \(\theta(a,b,y)\) has at most one solution, for **every** pair \(a,b\), not merely for a separately supplied chart. This passage uses a witness to apply the uniqueness theorem; it does not assume existence for an arbitrary pair.
 
 Define
 \[
@@ -54,7 +54,7 @@ for every index and every pair. Monotonicity implies that the right-hand side of
 
 ## 3. Every hull point is obtained by one operation on original generators
 
-Let \(x\in\operatorname{cl}(A)\). The existing pair-witness theorem supplies a finite \(T\subseteq A\), with \(|T|\le2\), such that \(x\in h(T)\). Empty and singleton sets are closed, so the cases \(|T|\le1\) contribute only points already in \(A\).
+Let \(x\in\operatorname{cl}(A)\). The pair-witness theorem (an established result with a known proof, to be formalized here) supplies a finite \(T\subseteq A\), with \(|T|\le2\), such that \(x\in h(T)\). Empty and singleton sets are closed (an established result with a known proof, to be formalized here), so the cases \(|T|\le1\) contribute only points already in \(A\).
 
 Otherwise write \(T=\{a,b\}\) with \(a\ne b\). The finite hull \(H=h(T)\) is an actual chart support. Its extreme points lie in every generating set: if an extreme point were absent from \(T\), removing it would leave a smaller closed set containing \(T\), contrary to minimality of \(H\). Since a nonsingleton closed set has exactly two extremes, its extremes are precisely \(a,b\).
 
@@ -68,6 +68,6 @@ The set \(\operatorname{cl}(A)\) contains \(A\) and is closed under every operat
 
 Each output is uniquely first-order definable over its two arguments; equation (1) gives the inclusion in definable closure. The expansion is definitional on the class, so it does not change its isomorphism classes or countable spectrum. It does not make the original class first-order axiomatizable.
 
-The existing finite-hull preservation theorems also let higher-stage realizations be compared with their base reducts. Once their immediate global finite-character corollaries are proved, the same hull-generation assertion can be expressed using the base language on those higher-stage models.
+The finite-hull preservation theorems (established results with known proofs, to be formalized here) also let higher-stage realizations be compared with their base reducts. Once their immediate global finite-character corollaries are proved, the same hull-generation assertion can be expressed using the base language on those higher-stage models.
 
 What this does **not** prove: equality with full definable or algebraic closure; quantifier elimination; unrestricted Fraïssé amalgamation; a two-point closed root for receiving; a bound on the size of a pair hull; or a first-order Vaught counterexample. To prove \(\operatorname{dcl}(A)\subseteq\operatorname{cl}(A)\), one would need a separate argument excluding unique definitions of points outside the hull. No such argument is supplied here.
