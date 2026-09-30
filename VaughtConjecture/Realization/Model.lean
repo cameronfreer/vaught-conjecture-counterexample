@@ -69,19 +69,6 @@ and a positive ordinal below `β` for the bottom pattern (`IsModel.reduce_bottom
 therefore needs `β ≠ 0`).  The stage `α` must be zero or a limit so that the lifted labels can be
 reduced to stage `α` lawfully; stages of models in the source are limits.
 
-**Directed covers.**  Occurrences are preordered by inclusion of supports; under exact consistency
-`x ≤ y` says that `x` is a face of `y` with the restricted type
-(`Occurrence.le_iff_exists_restrictFace`).  Under covering the occurrences containing any finite
-set are nonempty (`IsCovering.nonempty_setOf_subset_support`) and directed
-(`IsCovering.directedOn_setOf_subset_support`); in particular the occurrences form a directed
-preorder (`IsCovering.isDirected`).
-
-## Placement
-
-`Realization.Occurrence.comap` and its `simp` lemmas belong in
-`VaughtConjecture.Realization.Transport`, beside `Realization.Occurrence.map`.  They are stated
-here so that that file is unchanged.
-
 ## References
 
 Models are [Kni26, Definition 3.2.1]: its clause 1 (arity: a defined value on `n` points is a type
@@ -230,22 +217,6 @@ theorem IsModel.bottomPattern_of_isLawful (hR : R.IsModel) (hα : Order.IsSuccPr
     ).inter_cofaces hR.isConsistent hR.isLegal
 
 /-! ### Transport along a bijection of carriers -/
-
-/-- The occurrence of `R` underlying an occurrence of the transport: the preimage tuple with the
-same type. -/
-def Occurrence.comap (e : M ≃ N) (y : (R.map e).Occurrence) : R.Occurrence where
-  arity := y.arity
-  tuple := y.tuple.trans e.symm.toEmbedding
-  type := y.type
-  eval_tuple := y.eval_tuple
-
-/-- The tuple of the underlying occurrence is the preimage tuple. -/
-@[simp] theorem Occurrence.comap_tuple (e : M ≃ N) (y : (R.map e).Occurrence) :
-    (y.comap e).tuple = y.tuple.trans e.symm.toEmbedding := rfl
-
-/-- The type of the underlying occurrence is unchanged. -/
-@[simp] theorem Occurrence.comap_type (e : M ≃ N) (y : (R.map e).Occurrence) :
-    (y.comap e).type = y.type := rfl
 
 /-- **Transport of models** along a bijection of carriers. -/
 theorem IsModel.map (hR : R.IsModel) (e : M ≃ N) : (R.map e).IsModel where
@@ -412,50 +383,5 @@ theorem IsIso.isModel_iff (h : R.IsIso S) : R.IsModel ↔ S.IsModel := by
   exact (isModel_map_iff e).symm
 
 end Iso
-
-/-! ### Directed covers -/
-
-section Directed
-
-/-- Occurrences are preordered by inclusion of supports. -/
-instance : Preorder R.Occurrence :=
-  Preorder.lift Occurrence.support
-
-/-- One occurrence lies below another when its support is contained in the other's. -/
-theorem Occurrence.le_def {y z : R.Occurrence} : y ≤ z ↔ y.support ⊆ z.support :=
-  Iff.rfl
-
-/-- **The face preorder**: under exact consistency, `y ≤ z` exactly when `y` is a face of `z`
-with the restricted type. -/
-theorem Occurrence.le_iff_exists_restrictFace (hR : R.IsConsistent) {y z : R.Occurrence} :
-    y ≤ z ↔ ∃ f : Fin y.arity ↪ Fin z.arity, f.trans z.tuple = y.tuple ∧
-      StageType.restrictFace f z.type = some y.type := by
-  refine ⟨fun h ↦ ?_, fun ⟨f, hf, _⟩ ↦ ?_⟩
-  · obtain ⟨f, hf⟩ := z.exists_trans_eq h
-    exact ⟨f, hf, restrictFace_eq_of_eval hR z.eval_tuple f (hf ▸ y.eval_tuple)⟩
-  · rw [le_def, Occurrence.support, Occurrence.support, ← hf, ← Finset.map_map]
-    exact map_subset_map.mpr (subset_univ _)
-
-/-- Under covering, some occurrence contains any given finite set. -/
-theorem IsCovering.nonempty_setOf_subset_support (hc : R.IsCovering) (F : Finset M) :
-    {y : R.Occurrence | F ⊆ y.support}.Nonempty :=
-  hc.exists_subset_support F
-
-/-- Under covering, the occurrences containing a finite set are directed. -/
-theorem IsCovering.directedOn_setOf_subset_support (hc : R.IsCovering) (F : Finset M) :
-    DirectedOn (· ≤ ·) {y : R.Occurrence | F ⊆ y.support} := by
-  classical
-  intro y hy z _
-  obtain ⟨w, hw⟩ := hc.exists_subset_support (y.support ∪ z.support)
-  exact ⟨w, hy.trans (subset_union_left.trans hw), subset_union_left.trans hw,
-    subset_union_right.trans hw⟩
-
-/-- **Directed covers**: under covering the occurrences form a directed preorder. -/
-theorem IsCovering.isDirected (hc : R.IsCovering) : IsDirected R.Occurrence (· ≤ ·) := by
-  have h := hc.directedOn_setOf_subset_support ∅
-  simp only [Finset.empty_subset, Set.ofPred_true] at h
-  exact directedOn_univ_iff.mp h
-
-end Directed
 
 end VaughtConjecture.Realization

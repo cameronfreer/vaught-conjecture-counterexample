@@ -29,6 +29,13 @@ consistency and covering alone:
   (`StageType.hull_comap`, from `Geometry.hull_preimage`).  Two occurrences are compared inside
   a common larger occurrence, which exists by covering.
 
+**Directed covers.**  Occurrences are preordered by inclusion of supports; under exact consistency
+`x ≤ y` says that `x` is a face of `y` with the restricted type
+(`Occurrence.le_iff_exists_restrictFace`).  Under covering the occurrences containing any finite
+set are nonempty (`IsCovering.nonempty_setOf_subset_support`) and directed
+(`IsCovering.directedOn_setOf_subset_support`); in particular the occurrences form a directed
+preorder (`IsCovering.isDirected`).
+
 The **canonical finite hull** `R.finiteHull F` is the hull of `F` in any occurrence containing
 it (`finiteHull_eq`).  It is a closure operator on finite sets (`Realization.hullClosure`), the
 least support containing `F` (`finiteHull_subset_of_isSupport`); its closed sets
@@ -149,6 +156,51 @@ theorem IsCovering.exists_subset_support (hc : R.IsCovering) (F : Finset M) :
   refine ⟨⟨m, u, p, hp⟩, fun a ha ↦ Occurrence.mem_support _ |>.mpr ⟨f (F.equivFin ⟨a, ha⟩), ?_⟩⟩
   simpa using DFunLike.congr_fun hf (F.equivFin ⟨a, ha⟩)
 
+/-! ### Directed covers -/
+
+section Directed
+
+/-- Occurrences are preordered by inclusion of supports. -/
+instance : Preorder R.Occurrence :=
+  Preorder.lift Occurrence.support
+
+/-- One occurrence lies below another when its support is contained in the other's. -/
+theorem Occurrence.le_def {y z : R.Occurrence} : y ≤ z ↔ y.support ⊆ z.support :=
+  Iff.rfl
+
+/-- **The face preorder**: under exact consistency, `y ≤ z` exactly when `y` is a face of `z`
+with the restricted type. -/
+theorem Occurrence.le_iff_exists_restrictFace (hR : R.IsConsistent) {y z : R.Occurrence} :
+    y ≤ z ↔ ∃ f : Fin y.arity ↪ Fin z.arity, f.trans z.tuple = y.tuple ∧
+      StageType.restrictFace f z.type = some y.type := by
+  refine ⟨fun h ↦ ?_, fun ⟨f, hf, _⟩ ↦ ?_⟩
+  · obtain ⟨f, hf⟩ := z.exists_trans_eq h
+    exact ⟨f, hf, restrictFace_eq_of_eval hR z.eval_tuple f (hf ▸ y.eval_tuple)⟩
+  · rw [le_def, Occurrence.support, Occurrence.support, ← hf, ← Finset.map_map]
+    exact map_subset_map.mpr (subset_univ _)
+
+/-- Under covering, some occurrence contains any given finite set. -/
+theorem IsCovering.nonempty_setOf_subset_support (hc : R.IsCovering) (F : Finset M) :
+    {y : R.Occurrence | F ⊆ y.support}.Nonempty :=
+  hc.exists_subset_support F
+
+/-- Under covering, the occurrences containing a finite set are directed. -/
+theorem IsCovering.directedOn_setOf_subset_support (hc : R.IsCovering) (F : Finset M) :
+    DirectedOn (· ≤ ·) {y : R.Occurrence | F ⊆ y.support} := by
+  classical
+  intro y hy z _
+  obtain ⟨w, hw⟩ := hc.exists_subset_support (y.support ∪ z.support)
+  exact ⟨w, hy.trans (subset_union_left.trans hw), subset_union_left.trans hw,
+    subset_union_right.trans hw⟩
+
+/-- **Directed covers**: under covering the occurrences form a directed preorder. -/
+theorem IsCovering.isDirected (hc : R.IsCovering) : IsDirected R.Occurrence (· ≤ ·) := by
+  have h := hc.directedOn_setOf_subset_support ∅
+  simp only [Finset.empty_subset, Set.ofPred_true] at h
+  exact directedOn_univ_iff.mp h
+
+end Directed
+
 namespace Occurrence
 
 variable {x : R.Occurrence}
@@ -178,10 +230,8 @@ finite set has the same hull inside any two occurrences containing it: both are 
 a common larger occurrence. -/
 theorem hull_eq_hull (hR : R.IsConsistent) (hc : R.IsCovering) {y : R.Occurrence}
     (hx : F ⊆ x.support) (hy : F ⊆ y.support) : x.hull F = y.hull F := by
-  classical
-  obtain ⟨z, hz⟩ := hc.exists_subset_support (x.support ∪ y.support)
-  rw [hull_eq_of_support_subset hR (subset_union_left.trans hz) hx,
-    hull_eq_of_support_subset hR (subset_union_right.trans hz) hy]
+  obtain ⟨z, -, hxz, hyz⟩ := hc.directedOn_setOf_subset_support F x hx y hy
+  rw [hull_eq_of_support_subset hR hxz hx, hull_eq_of_support_subset hR hyz hy]
 
 end Occurrence
 
