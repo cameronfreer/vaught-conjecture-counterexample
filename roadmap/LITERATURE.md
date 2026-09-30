@@ -20,9 +20,9 @@ Anti-exchange closure and finitary extension are established notions. In this li
 
 ## 3. Scott analysis and potential isomorphism
 
-**Reference:** Larson [Lar14], especially its formula/projection and Scott-process development.
+**References:** Scott [Sco65]; Karp [Kar65]; Larson [Lar14], especially its formula/projection and Scott-process development.
 
-Scott analysis organizes finite-tuple information through ordinal stages. The actual interface here is bounded back-and-forth: whole finite-cover transfer yields the successor step, and the current pointed comparison API can be stated using those standard relations.
+Scott analysis [Sco65] organizes finite-tuple information through ordinal stages. Agreement on all sentences of quantifier rank at most \(\alpha\) is characterized by back-and-forth systems of length \(\alpha\) [Kar65]. The actual interface here is bounded back-and-forth: whole finite-cover transfer yields the successor step, and the current pointed comparison API can be stated using those standard relations.
 
 **Application here:** present comparison as a construction of ordinary partial isomorphisms, with roots retained only inside the selected extendible family. The expansion tower is not automatically the complete Scott process. Its block index is not automatically Scott rank. A paper should state the proved one-way comparison and reserve equality or full representation results for separate theorems.
 
@@ -71,4 +71,4 @@ Put characteristic theory, global stopping, detailed compatibility interfaces, a
 
 ## Bibliographic access record
 
-The full HTML research papers [Ada16], [Lar14], and [ES10] were inspected. [EJ85], [HM77], [LE65], and [Vau74] bibliographic details and the relevant classical connections were checked through those primary research papers' statements and references, not by claiming to have read inaccessible original scans. Knight's author-hosted historical description and Oxford's bibliographic record for [Kni07] were inspected. The original journal full-text fetches for [Kni07] and [Mor70] were not usable. Stable identifiers and the corresponding records are collected in `REFERENCES.bib`.
+The full HTML research papers [Ada16], [Lar14], and [ES10] were inspected. [EJ85], [HM77], [LE65], and [Vau74] bibliographic details and the relevant classical connections were checked through those primary research papers' statements and references, not by claiming to have read inaccessible original scans. [Sco65] and [Kar65] are cited from their standard bibliographic records in the proceedings of the 1963 Berkeley symposium; their full texts were not re-inspected for this document. Knight's author-hosted historical description and Oxford's bibliographic record for [Kni07] were inspected. The original journal full-text fetches for [Kni07] and [Mor70] were not usable. Stable identifiers and the corresponding records are collected in `REFERENCES.bib`.
