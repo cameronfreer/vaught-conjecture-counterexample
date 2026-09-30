@@ -28,6 +28,14 @@ label is an ordinal (`IsProper`); the formal top is not an ordinal and lies abov
 
 Stage reduction is not capped observation (`VaughtConjecture.Label.Cap`): reduction keeps the
 formal top, while a cap at a proper cutoff forgets it.
+
+## Implementation notes
+
+The numerals `0`, `1`, `2`, … and the casts `(n : Label)` of natural numbers have their own
+`simp` lemmas (`isProper_natCast`, `atStage_ofNat`, and so on), so `simp` decides the predicates
+of this file and of `VaughtConjecture.Label.Cap` and `VaughtConjecture.Label.Visibility` on
+them.  The spelling `((n : Ordinal) : Label)` is normalized by `simp [WithBot.coe_natCast]`;
+`WithBot.coe_natCast` is not a `simp` lemma in the pinned Mathlib.
 -/
 
 universe u
@@ -64,6 +72,19 @@ def IsProper (x : Label.{u}) : Prop := ∃ o : Ordinal.{u}, (o : Label.{u}) = x
 /-- The formal top is not proper. -/
 @[simp] theorem not_isProper_top : ¬ IsProper (⊤ : Label.{u}) := fun ⟨_, h⟩ ↦ by simp at h
 
+/-- Ordinal zero is proper. -/
+@[simp] theorem isProper_zero : IsProper (0 : Label.{u}) := isProper_coe 0
+
+/-- The ordinal `1` is proper. -/
+@[simp] theorem isProper_one : IsProper (1 : Label.{u}) := isProper_coe 1
+
+/-- Every natural number is proper. -/
+@[simp] theorem isProper_natCast (n : ℕ) : IsProper (n : Label.{u}) := isProper_coe n
+
+/-- Every numeral is proper. -/
+@[simp] theorem isProper_ofNat (n : ℕ) [n.AtLeastTwo] : IsProper (ofNat(n) : Label.{u}) :=
+  isProper_natCast n
+
 /-- A label is proper exactly when it is neither bottom nor the formal top. -/
 theorem isProper_iff_ne : IsProper x ↔ x ≠ ⊥ ∧ x ≠ ⊤ := by
   induction x using recBotCoeTop <;> simp
@@ -86,6 +107,18 @@ def AtStage (α : Ordinal.{u}) (x : Label.{u}) : Prop := x < α ∨ x = ⊤
 
 /-- Ordinal zero occurs at stage `α` exactly when `α` is positive. -/
 @[simp] theorem atStage_zero : AtStage α (0 : Label.{u}) ↔ 0 < α := atStage_coe
+
+/-- The ordinal `1` occurs at stage `α` exactly when `1 < α`. -/
+@[simp] theorem atStage_one : AtStage α (1 : Label.{u}) ↔ 1 < α := atStage_coe
+
+/-- A natural number `n` occurs at stage `α` exactly when `n < α`. -/
+@[simp] theorem atStage_natCast (n : ℕ) : AtStage α (n : Label.{u}) ↔ (n : Ordinal.{u}) < α :=
+  atStage_coe
+
+/-- A numeral `n` occurs at stage `α` exactly when `n < α`. -/
+@[simp] theorem atStage_ofNat (n : ℕ) [n.AtLeastTwo] :
+    AtStage α (ofNat(n) : Label.{u}) ↔ (ofNat(n) : Ordinal.{u}) < α :=
+  atStage_natCast n
 
 /-- The labels at stage `α`: bottom, an ordinal below `α`, or the formal top. -/
 theorem atStage_iff : AtStage α x ↔ x = ⊥ ∨ (∃ o < α, (o : Label.{u}) = x) ∨ x = ⊤ := by

@@ -14,6 +14,8 @@ The directly proved property is that every infinitary sentence has a countable t
 
 **References:** Edelman–Jamison [EJ85]; Adaricheva [Ada16], Definitions 1–2 and the discussion of algebraic closure systems.
 
+**Source of the plans:** the recursive amalgamation plans and their restriction to visible faces are Knight [Kni26], Definitions 2.1.1 and 2.1.5; their reading as two-extreme convex geometries is the formalization's.
+
 Anti-exchange closure and finitary extension are established notions. In this literature, “algebraic closure operator” means finite character, not model-theoretic `acl`.
 
 **Application here:** the current plan equivalence and global hull theorem put the support geometry literally inside this framework, with the additional two-extreme-point restriction. That restriction must be stated: the construction does not range over all convex geometries. The new binary-operation deduction is in `HULL_ALGEBRA.md`; it is not a theorem attributed to these references. Avoid calling the property “convex dimension two,” which is different terminology.
@@ -71,4 +73,4 @@ Put characteristic theory, global stopping, detailed compatibility interfaces, a
 
 ## Bibliographic access record
 
-The full HTML research papers [Ada16], [Lar14], and [ES10] were inspected. [EJ85], [HM77], [LE65], and [Vau74] bibliographic details and the relevant classical connections were checked through those primary research papers' statements and references, not by claiming to have read inaccessible original scans. Knight's author-hosted historical description and Oxford's bibliographic record for [Kni07] were inspected. The original journal full-text fetches for [Kni07] and [Mor70] were not usable. Stable identifiers and the corresponding records are collected in `REFERENCES.bib`.
+The full HTML research papers [Ada16], [Lar14], and [ES10] were inspected. [Kni26] is the draft manuscript of the construction itself (Definitions 2.1.1 and 2.1.5 cited for the plans). [EJ85], [HM77], [LE65], and [Vau74] bibliographic details and the relevant classical connections were checked through those primary research papers' statements and references, not by claiming to have read inaccessible original scans. Knight's author-hosted historical description and Oxford's bibliographic record for [Kni07] were inspected. The original journal full-text fetches for [Kni07] and [Mor70] were not usable. Stable identifiers and the corresponding records are collected in `REFERENCES.bib`.

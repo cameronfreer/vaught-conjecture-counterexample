@@ -36,7 +36,6 @@ are kept apart: `IsWitness` is a proposition about given functions.
   the suppressor above a grade (`IsWitness.truncate`), capping the suppressor by a self-visible
   label (`IsWitness.cap`), and the cap rule for the target (`TransformsTo.min_const`,
   [Kni26, Lemma 2.3.12]);
-* the upper envelope of two shifters with one suppressor (`IsWitness.max`);
 * guarded composition (`IsWitness.comp_of_bot_reflecting`): a shifter normalized at grade `m`
   may be followed by a shifter normalized at grade `m` that reflects bottom on the values of the
   first;
@@ -194,22 +193,7 @@ theorem TransformsTo.min_const (h : TransformsTo grade p q) {K : ℕ} (hK : ∀ 
   obtain ⟨g, σ, hw, heq⟩ := h
   exact ⟨_, σ, hw.cap hc, fun d ↦ by simp only [ite_eq_left (hK d), heq, min_assoc]⟩
 
-/-! ### Maximum and guarded composition -/
-
-/-- **The upper envelope of two shifters.**  The pointwise maximum of two shifters with a common
-suppressor is a shifter for it.  For instance, the identity is a shifter for the suppressor
-`g` of every witness (`IsWitness.id_top` lowered by `IsWitness.of_le`), so for a shifter `σ` of
-`g` the inflationary map `x ↦ max x (σ x)` is again a shifter of `g`. -/
-theorem IsWitness.max (hσ : IsWitness g σ) (hτ : IsWitness g τ) :
-    IsWitness g (fun x ↦ max (σ x) (τ x)) where
-  antitone := hσ.antitone
-  isSelfVisible := hσ.isSelfVisible
-  map_bot := by simp [hσ.map_bot, hτ.map_bot]
-  monotone := fun _ _ h ↦ max_le_max (hσ.monotone h) (hτ.monotone h)
-  visibilityReplace_comm x k hx i hi := by
-    rw [hσ.visibilityReplace_comm x k ((le_max_left _ _).trans hx) i hi,
-      hτ.visibilityReplace_comm x k ((le_max_right _ _).trans hx) i hi,
-      visibilityReplace_max hi]
+/-! ### Guarded composition -/
 
 /-- The normalized suppressor is monotone in the grade at which it is normalized. -/
 theorem monotone_stepSuppressor : Monotone (stepSuppressor.{u} : ℕ → ℕ → Label.{u}) :=
@@ -376,7 +360,8 @@ private theorem isSelfVisible_one_two_one_top_bot_top (b : Bool) :
 
 /-- **The transformation relation is not transitive**, even on labellings that are self-visible
 at the grade, and already for two cells of grade one.  This contradicts Lemma 2.3.14 of [Kni26]
-as printed; only the guarded composition `IsWitness.comp_of_bot_reflecting` holds. -/
+as printed; the library proves only the guarded composition
+`IsWitness.comp_of_bot_reflecting`. -/
 theorem TransformsTo.not_transitive :
     ¬ ∀ (grade : Bool → ℕ) (p q r : Bool → Label.{u}), (∀ d, IsSelfVisible (grade d) (p d)) →
       (∀ d, IsSelfVisible (grade d) (q d)) → (∀ d, IsSelfVisible (grade d) (r d)) →
