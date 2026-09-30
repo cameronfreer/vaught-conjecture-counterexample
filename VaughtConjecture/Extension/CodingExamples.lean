@@ -23,7 +23,8 @@ below its cell, the only graded face is that of the cell, and a pair lifts cappe
 `x = 3` and for `x = ω + 5` the row value has finite part `3`, respectively `5`, above the grade
 plus one, so the scheme is not strongly coded (`not_isStronglyCoded_pointRow_three`,
 `not_isStronglyCoded_pointRow_omega0_add_five`): the offset bound of [Kni26, Lemma 2.5.13] fails
-for these legal inputs.  Each carries a legal stage type at every stage, its bottom labelling.
+for these legal inputs.  Both carry a legal stage type at every stage, their bottom labelling
+(`isLegal_toStageType_pointRow_three`, `isLegal_toStageType_pointRow_omega0_add_five`).
 
 **Coding transport over it.**  A proof of a coding statement that used the offset bound of its
 inputs would not apply here; the transport lemmas of `VaughtConjecture.Extension.Coding` do.
@@ -38,12 +39,16 @@ inputs would not apply here; the transport lemmas of `VaughtConjecture.Extension
   `apexRow 3` is coded (`isCoded_apexRow_three`), by the transport lemma with the new cell
   strongly coded, although it is not strongly coded (`not_isStronglyCoded_apexRow_three`); and it
   is consistent (`isConsistent_apexRow_three`), by the consistency transport with the apex row
-  lawful below its cell.
+  lawful below its cell, hence orderly (`isOrderly_apexRow_three`): its orderliness is derived
+  from its consistency, not assumed.
+
+**Finiteness.**  Over a finite type of cells, the labellings strongly coded at the grades of
+their cells and below `ω · (i + 1)` form a finite set (`finite_setOf_forall_isStronglyCoded_lt`),
+by `Set.Finite.pi'` from `Label.finite_setOf_isStronglyCoded_lt`.
 
 ## References
 
-The offset bound is that of [Kni26, Lemma 2.5.13], the amalgam is [Kni26, Definition 4.3.1], and
-its completion by cells of full scope is [Kni26, Definition 4.3.14].
+The offset bound is that of [Kni26, Lemma 2.5.13], and the amalgam is [Kni26, Definition 4.3.1].
 -/
 
 universe u
@@ -123,17 +128,17 @@ private theorem isLegal_pointRow_three : (pointRow (3 : Label.{u})).IsLegal :=
 private theorem isLegal_pointRow_omega0_add_five : (pointRow omega0AddFive.{u}).IsLegal :=
   isLegal_pointRow (Label.lt_omega0_sq_iff.mpr (.inr ⟨1, 5, rfl⟩))
     (Label.isSelfVisible_coe.mpr (by
-      rw [Ordinal.omega0_mul_add_natCast_mod_omega0]
+      rw [Ordinal.mul_add_mod_self, Ordinal.natCast_mod_omega0]
       exact_mod_cast (by decide : 1 ≤ 5)))
 
 /-- `pointRow 3` is not strongly coded: `3` is not strongly coded at grade `1`. -/
 private theorem not_isStronglyCoded_pointRow_three :
-    ¬ (pointRow (3 : Label.{u})).IsStronglyCoded := fun h ↦ by
+    ¬ (pointRow (3 : Label.{u})).rows.IsStronglyCoded := fun h ↦ by
   simpa [pointRow] using h (0 : Fin 1) ⟨(0 : Fin 1), CellScheme.mem_below_gradedIndex _ _⟩
 
 /-- `pointRow (ω + 5)` is not strongly coded: `ω + 5` is not strongly coded at grade `1`. -/
 private theorem not_isStronglyCoded_pointRow_omega0_add_five :
-    ¬ (pointRow omega0AddFive.{u}).IsStronglyCoded := fun h ↦
+    ¬ (pointRow omega0AddFive.{u}).rows.IsStronglyCoded := fun h ↦
   absurd ((Label.isStronglyCoded_coe_omega0_mul_add 1 1 5).mp
     (h (0 : Fin 1) ⟨(0 : Fin 1), CellScheme.mem_below_gradedIndex _ _⟩)) (by decide)
 
@@ -141,6 +146,11 @@ private theorem not_isStronglyCoded_pointRow_omega0_add_five :
 private theorem isLegal_toStageType_pointRow_three (α : Ordinal.{u}) :
     (isLegal_pointRow_three.toStageType α).IsLegal :=
   isLegal_pointRow_three.isLegal_toStageType α
+
+/-- `pointRow (ω + 5)` carries a legal stage type at every stage, its bottom labelling. -/
+private theorem isLegal_toStageType_pointRow_omega0_add_five (α : Ordinal.{u}) :
+    (isLegal_pointRow_omega0_add_five.toStageType α).IsLegal :=
+  isLegal_pointRow_omega0_add_five.isLegal_toStageType α
 
 /-! ### The amalgam of the violating scheme with itself -/
 
@@ -211,13 +221,14 @@ private theorem row_eq_bot_of_notMem_range (x : Label.{u}) {s : Fin 3}
 /-- **`apexRow 3` is coded**: its inherited rows are coded (with the value `3` at grade `1`) and
 its new row, the apex row, is strongly coded. -/
 private theorem isCoded_apexRow_three : (apexRow (3 : Label.{u})).IsCoded :=
-  Scheme.isCoded_of_isLowerEmbedding (isLowerEmbedding_castSucc 3) (comap_apexRow 3)
+  Scheme.isCoded_of_isLowerEmbedding_of_isStronglyCodedAt (isLowerEmbedding_castSucc 3)
+    (comap_apexRow 3)
     (S := pairRow 3) (fun _ _ ↦ three_lt_omega0_sq) fun _ hs ↦
       Rows.isStronglyCodedAt_of_forall_eq_bot (row_eq_bot_of_notMem_range 3 hs)
 
 /-- `apexRow 3` is not strongly coded: its first cell has row value `3` at grade `1`. -/
 private theorem not_isStronglyCoded_apexRow_three :
-    ¬ (apexRow (3 : Label.{u})).IsStronglyCoded := fun h ↦ by
+    ¬ (apexRow (3 : Label.{u})).rows.IsStronglyCoded := fun h ↦ by
   simpa [apexRow] using h (0 : Fin 3) ⟨(0 : Fin 3), CellScheme.mem_below_gradedIndex _ _⟩
 
 /-- **`apexRow 3` is consistent**: the rows of `pairRow 3` are, and the apex row, bottom, is
@@ -228,6 +239,20 @@ private theorem isConsistent_apexRow_three : (apexRow (3 : Label.{u})).rows.IsCo
       convert Rows.isLawfulBelow_bot (R := (apexRow (3 : Label.{u})).rows) _ using 1
       funext t
       exact row_eq_bot_of_notMem_range 3 hs t
+
+/-- **`apexRow 3` is orderly**, as its rows are consistent. -/
+private theorem isOrderly_apexRow_three : (apexRow (3 : Label.{u})).rows.IsOrderly :=
+  isConsistent_apexRow_three.isOrderly
+
+/-! ### Finiteness -/
+
+/-- Over a finite type of cells, the labellings strongly coded at the grades `k d` of their cells
+and below `ω · (i + 1)` form a finite set. -/
+private theorem finite_setOf_forall_isStronglyCoded_lt {ι : Type*} [Finite ι] (k : ι → ℕ)
+    (i : ℕ) :
+    {p : ι → Label.{u} | ∀ d, Label.IsStronglyCoded (k d) (p d) ∧
+      p d < ((ω * (i + 1) : Ordinal.{u}) : Label.{u})}.Finite :=
+  Set.Finite.pi' fun d ↦ Label.finite_setOf_isStronglyCoded_lt (k d) i
 
 end CodingExamples
 
