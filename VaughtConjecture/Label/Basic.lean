@@ -30,6 +30,10 @@ label is an ordinal (`IsProper`); the formal top is not an ordinal and lies abov
 Stage reduction is not capped observation (`VaughtConjecture.Label.Cap`): reduction keeps the
 formal top, while a cap at a proper cutoff forgets it.
 
+If there are countably many ordinals below `α`, there are countably many labels at stage `α`
+(`countable_setOf_atStage`); in particular the labels below `ω ^ 2` form a countable set
+(`countable_setOf_lt_omega0_sq`).
+
 ## Implementation notes
 
 The numerals `0`, `1`, `2`, … and the casts `(n : Label)` of natural numbers have their own
@@ -238,6 +242,34 @@ theorem le_of_le_reduce_add_one {y z : Label.{u}} (hy : y ≤ o) (h : y ≤ redu
   rcases le_or_gt z o with hz | hz
   · rwa [reduce_add_one_of_le hz] at h
   · exact hy.trans hz.le
+
+/-! ### Countability -/
+
+section Countability
+
+open Cardinal Ordinal
+
+/-- If there are countably many ordinals below `α`, then there are countably many labels at stage
+`α`. -/
+theorem countable_setOf_atStage {α : Ordinal.{u}} (hα : (Set.Iio α).Countable) :
+    {x : Label.{u} | AtStage α x}.Countable := by
+  refine (((hα.image fun o : Ordinal.{u} ↦ (o : Label.{u})).insert ⊥).insert ⊤).mono ?_
+  intro x hx
+  rcases atStage_iff.mp hx with rfl | ⟨o, ho, rfl⟩ | rfl
+  · simp
+  · simp [ho]
+  · simp
+
+/-- The labels below `ω ^ 2`, that is, bottom and the ordinals `ω · i + j`, form a countable
+set. -/
+theorem countable_setOf_lt_omega0_sq :
+    {x : Label.{u} | x < ((ω ^ 2 : Ordinal.{u}) : Label.{u})}.Countable := by
+  have h : (Set.Iio (ω ^ 2 : Ordinal.{u})).Countable := by
+    rw [← le_aleph0_iff_set_countable, Cardinal.mk_Iio_ordinal, pow_two, card_mul, card_omega0]
+    simp [aleph0_mul_aleph0]
+  exact (countable_setOf_atStage h).mono fun _ hx ↦ .inl hx
+
+end Countability
 
 end Label
 

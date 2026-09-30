@@ -52,8 +52,7 @@ would be reported by the build.
 
 ## References
 
-Visibility replacement is Definition 2.2.3 of R. W. Knight, *A counterexample to Vaught's
-Conjecture using generalised Stone spaces* (draft, 20 February 2026) [Kni26].
+Visibility replacement is [Kni26, Definition 2.2.3].
 -/
 
 universe u
