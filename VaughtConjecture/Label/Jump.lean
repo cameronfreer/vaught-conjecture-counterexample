@@ -32,13 +32,12 @@ nevertheless preserves the transformation relation under two guards.
   lowered to it above `K` (`IsWitness.sup`).
 * The guard on the targets cannot be dropped (`TransformsTo.not_forall_reduce_one`).
 
-The ordinal-level band arithmetic above a multiple of `ω` (`Ordinal.visibilityReplace_add`,
-`Ordinal.visibilityReplace_le_add`, `Ordinal.exists_visibilityReplace_visibilityReplace`) extends
-`VaughtConjecture/Label/OrdinalVisibility.lean`.
+The ordinal-level lemmas here extend `VaughtConjecture/Label/OrdinalVisibility.lean` and will
+move there.
 
 ## References
 
-The jump rule is the post-composition needed in the case of the formal top of the proof of
+The jump rule is the post-composition used in the case of the formal top of the proof of
 Lemma 5.3.10 of R. W. Knight, *A counterexample to Vaught's Conjecture using generalised Stone
 spaces* (draft, 20 February 2026) [Kni26]; the transformation relation is [Kni26, Definition
 2.3.9].
@@ -62,13 +61,8 @@ theorem visibilityReplace_add (hα : IsSuccPrelimit α) (k i : ℕ) (o : Ordinal
   rw [visibilityReplace, visibilityReplace, Ordinal.mul_add_div _ omega0_ne_zero,
     Ordinal.mul_add_mod_self, mul_add, add_assoc]
 
-/-- The finite part of `α + K` is `K` when `α` is zero or a limit. -/
-theorem add_natCast_mod_omega0 (hα : IsSuccPrelimit α) (K : ℕ) : (α + K) % ω = K := by
-  obtain ⟨b, rfl⟩ := isSuccPrelimit_iff_omega0_dvd.mp hα
-  rw [Ordinal.mul_add_mod_self, natCast_mod_omega0]
-
 /-- An ordinal at most `α + K` lies below `α` or is `α + j` for a natural number `j ≤ K`. -/
-theorem lt_or_exists_eq_add_of_le_add (h : o ≤ α + K) : o < α ∨ ∃ j ≤ K, o = α + j := by
+private theorem lt_or_exists_eq_add_of_le_add (h : o ≤ α + K) : o < α ∨ ∃ j ≤ K, o = α + j := by
   rcases lt_or_ge o α with hlt | hle
   · exact .inl hlt
   have hK : o - α ≤ K := Ordinal.sub_le.mpr h

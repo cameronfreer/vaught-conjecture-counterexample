@@ -37,9 +37,10 @@ sent to `α` or above, and sends the remaining labels to `c`.
 
 ## References
 
-The band map and the band rule are the post-composition needed in the proof of Lemma 5.3.5 of
-R. W. Knight, *A counterexample to Vaught's Conjecture using generalised Stone spaces* (draft,
-20 February 2026) [Kni26]; the transformation relation is [Kni26, Definition 2.3.9].
+The band rule is the post-composition used in the proof of Lemma 5.3.5 of R. W. Knight, *A
+counterexample to Vaught's Conjecture using generalised Stone spaces* (draft, 20 February 2026)
+[Kni26], and the band map is the map it composes with; the transformation relation is [Kni26,
+Definition 2.3.9].
 -/
 
 universe u
@@ -48,24 +49,19 @@ namespace VaughtConjecture.Label
 
 open Ordinal Order
 
-variable {D : Type*} {grade : D → ℕ} {p q : D → Label.{u}} {g : ℕ → Label.{u}}
-  {σ : Label.{u} → Label.{u}} {α β ν : Ordinal.{u}} {K k i : ℕ} {x y c : Label.{u}}
+variable {D : Type*} {grade : D → ℕ} {p q : D → Label.{u}}
+  {σ : Label.{u} → Label.{u}} {α β ν : Ordinal.{u}} {K k i : ℕ} {x c : Label.{u}}
+
+/-- The finite part of `α + K` is `K` when `α` is zero or a limit. -/
+private theorem add_natCast_mod_omega0 (hα : IsSuccPrelimit α) (K : ℕ) : (α + K) % ω = K := by
+  obtain ⟨b, rfl⟩ := isSuccPrelimit_iff_omega0_dvd.mp hα
+  rw [Ordinal.mul_add_mod_self, natCast_mod_omega0]
 
 /-- At a stage `α` that is zero or a limit, the ordinal `α + K` is self-visible at every
 threshold `k ≤ K`. -/
 theorem isSelfVisible_coe_add (hα : IsSuccPrelimit α) (hk : k ≤ K) :
     IsSelfVisible k ((α + K : Ordinal.{u}) : Label.{u}) :=
   isSelfVisible_coe.mpr (by rw [add_natCast_mod_omega0 hα]; exact_mod_cast hk)
-
-/-- A witness whose suppressor is the formal top at every grade `≤ K` gives a witness with the
-suppressor normalized at `K`. -/
-theorem IsWitness.of_eq_top (hw : IsWitness g σ) (hg : ∀ k ≤ K, g k = ⊤) :
-    IsWitness (stepSuppressor K) σ :=
-  hw.of_le (fun n ↦ by
-      unfold stepSuppressor
-      split_ifs with h
-      exacts [(hg n h).ge, bot_le])
-    (IsWitness.id_step K).antitone (IsWitness.id_step K).isSelfVisible
 
 /-! ### Translation -/
 
@@ -131,7 +127,7 @@ noncomputable def bandMap (α β : Ordinal.{u}) (K : ℕ) (x : Label.{u}) : Labe
   simp only [bandMap, translate_top, min_eq_right le_top]
 
 /-- The band map sends an ordinal `ν` to `α + min (ν - β) K`. -/
-theorem bandMap_coe (α β : Ordinal.{u}) (K : ℕ) (ν : Ordinal.{u}) :
+@[simp] theorem bandMap_coe (α β : Ordinal.{u}) (K : ℕ) (ν : Ordinal.{u}) :
     bandMap α β K ν = ((α + min (ν - β) K : Ordinal.{u}) : Label.{u}) := by
   rw [bandMap, translate_coe, ← min_add_add_left, WithTop.coe_min, WithBot.coe_min]
 
@@ -155,11 +151,6 @@ theorem bandMap_of_le (h : ((β + K : Ordinal.{u}) : Label.{u}) ≤ x) :
 theorem monotone_bandMap (α β : Ordinal.{u}) (K : ℕ) : Monotone (bandMap α β K) :=
   (monotone_translate α β).min monotone_const
 
-/-- The band map commutes with `min`. -/
-theorem bandMap_min (x y : Label.{u}) :
-    bandMap α β K (min x y) = min (bandMap α β K x) (bandMap α β K y) :=
-  (monotone_bandMap α β K).map_min
-
 /-- The band map sends every label other than bottom to a label at least `α`. -/
 theorem coe_le_bandMap (hx : x ≠ ⊥) : (α : Label.{u}) ≤ bandMap α β K x :=
   le_min (coe_le_translate hx) (WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr le_self_add))
@@ -167,13 +158,6 @@ theorem coe_le_bandMap (hx : x ≠ ⊥) : (α : Label.{u}) ≤ bandMap α β K x
 /-- The band map is at most `α + K`. -/
 theorem bandMap_le (x : Label.{u}) : bandMap α β K x ≤ ((α + K : Ordinal.{u}) : Label.{u}) :=
   min_le_right _ _
-
-/-- When `α` is zero or a limit, the values of the band map at labels at least `β + K` are
-self-visible at every threshold `k ≤ K`. -/
-theorem isSelfVisible_bandMap_of_le (hα : IsSuccPrelimit α) (hk : k ≤ K)
-    (h : ((β + K : Ordinal.{u}) : Label.{u}) ≤ x) : IsSelfVisible k (bandMap α β K x) := by
-  rw [bandMap_of_le h]
-  exact isSelfVisible_coe_add hα hk
 
 /-- When `α` and `β` are zero or limits, the band map commutes on the labels `≥ β` with
 visibility replacement at every threshold `k ≤ K` and every value `i ≤ k`. -/
