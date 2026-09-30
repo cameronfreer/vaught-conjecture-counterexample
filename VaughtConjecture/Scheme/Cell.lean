@@ -23,7 +23,8 @@ may share a graded index (physical multiplicities are kept).  The laws are separ
 (`CellScheme.IsWellFormed`): there are finitely many cells, the faces form a plan on the ground set
 (`Geometry.IsPlan`), and every cell's graded index `(scope, grade)` is a *graded face*: its scope is
 closed and its grade lies in `[1, |scope|]` (`gradedFaces`).  A well-formed scheme is therefore
-finite data.
+finite data, and no cell lies below a pair of grade `0` or a pair on the empty face
+(`IsWellFormed.below_eq_empty`).
 
 Graded indices `Finset α × ℕ` carry Mathlib's product order, `(C, i) ≤ (B, j) ↔ C ⊆ B ∧ i ≤ j`;
 this is the graded order on scope–grade pairs, not a new relation.
@@ -32,8 +33,9 @@ this is the graded order on scope–grade pairs, not a new relation.
   a cell `s` is a labelling of `D.below (D.gradedIndex s)` (`VaughtConjecture.Scheme.Row`).
 * `D.visible S` is the set of cells whose scope lies in `S`.
 * `D.reindex φ` reads the cells of `D` through a map of index types; `D.restrict B` is the
-  restriction to a face `B`, with the faces inside `B` and the cells visible in `B`; and `D.comap f`
-  is the pullback along an embedding `f : β ↪ α` of ground types, with the faces whose image is
+  restriction to a face `B`, with the faces inside `B` and the cells visible in `B` (the cells
+  below a pair inside `B` are the same there, `image_val_below_restrict`); and `D.comap f` is the
+  pullback along an embedding `f : β ↪ α` of ground types, with the faces whose image is
   closed and the cells visible through `f`, their scopes pulled back.  Restriction to a closed face
   and pullback along an embedding whose range meets the ground set in a closed face preserve
   well-formedness (`IsWellFormed.restrict`, `IsWellFormed.comap`), as does reindexing along any
@@ -161,6 +163,19 @@ def visible (S : Set α) : Set ι := {d | (D.scope d : Set α) ⊆ S}
 theorem below_subset_visible (X : Finset α × ℕ) : D.below X ⊆ D.visible (X.1 : Set α) :=
   fun _ hd ↦ coe_subset.mpr hd.1
 
+/-- In a well-formed scheme, no cell lies below a pair of grade `0` or a pair on the empty face. -/
+theorem IsWellFormed.below_eq_empty {D : CellScheme ι α} [DecidableEq α] (hD : D.IsWellFormed)
+    {X : Finset α × ℕ} (hX : X.2 = 0 ∨ X.1 = ∅) : D.below X = ∅ := by
+  refine Set.eq_empty_of_forall_notMem fun d hd ↦ ?_
+  have hpos := hD.grade_pos d
+  have hcard := hD.grade_le_card d
+  rcases hX with hX | hX
+  · have : D.grade d ≤ X.2 := hd.2
+    omega
+  · have : D.scope d = ∅ := subset_empty.mp (hX ▸ hd.1)
+    simp [this] at hcard
+    omega
+
 /-! ### Reindexing, restriction to a face, and pullback -/
 
 /-- The scheme whose cells are read through `φ : κ → ι`: the cell `t` has the scope and grade of
@@ -224,6 +239,15 @@ def restrict (B : Finset α) : CellScheme (D.visible (B : Set α)) α where
 /-- A cell of a restriction has its original graded index. -/
 @[simp] theorem gradedIndex_restrict (B : Finset α) (d : D.visible (B : Set α)) :
     (D.restrict B).gradedIndex d = D.gradedIndex d := rfl
+
+/-- The cells below a pair whose face lies in `B` are the same in the restriction to `B` and in
+the scheme. -/
+theorem image_val_below_restrict {B : Finset α} {X : Finset α × ℕ} (hX : X.1 ⊆ B) :
+    ((↑) : D.visible (B : Set α) → ι) '' (D.restrict B).below X = D.below X := by
+  ext d
+  refine ⟨?_, fun hd ↦ ⟨⟨d, coe_subset.mpr (hd.1.trans hX)⟩, hd, rfl⟩⟩
+  rintro ⟨d, hd, rfl⟩
+  exact hd
 
 /-- The restriction of a well-formed scheme to a closed face is well formed. -/
 theorem IsWellFormed.restrict {D : CellScheme ι α} (hD : D.IsWellFormed) {B : Finset α}
