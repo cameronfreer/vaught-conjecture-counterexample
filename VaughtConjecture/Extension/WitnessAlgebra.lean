@@ -26,14 +26,14 @@ label to bottom.  This file proves the rules for such witnesses that the complet
   their forms with a natural number `x`) are stated once, here, for this file and for
   `VaughtConjecture.Extension.Encoders`.
 * **Short labels** (`IsShort m x`): bottom, the formal top, or an ordinal whose finite part is at
-  most `m` (`isShort_coe`).  The **truncation of finite parts** at `m`, `flatten m`, replaces a
+  most `m` (`isShort_coe`).  The **flattening of finite parts** at `m`, `flatten m`, replaces a
   finite part above `m` by `m` (`flatten_coe`); it is monotone (`monotone_flatten`), fixes the short
   labels (`IsShort.flatten_eq`), and commutes with visibility replacement at thresholds `k ≤ m`
   (`flatten_visibilityReplace`).
 * **Repair of the bottom guard** (`isWitness_comp_flatten`): a monotone map fixing bottom that
   commutes with visibility replacement at the thresholds `≤ m` becomes a witness bounded by grade
-  `m` after truncation of finite parts at `m`, because a map commuting with the replacements at
-  `m` sends every truncated point of a block to bottom once it sends one of them to bottom.
+  `m` after flattening of finite parts at `m`, because a map commuting with the replacements at
+  `m` sends every flattened point of a block to bottom once it sends one of them to bottom.
 * **Composition without bottom reflection on short labels**
   (`IsWitness.exists_eq_comp_of_isShort`): for witnesses `τ` bounded by grade `m` and `ν` bounded
   by a grade `K ≥ m`, some witness bounded by grade `m` agrees with `ν ∘ τ` at every label short at
@@ -178,7 +178,7 @@ end Blocks
 variable {D : Type*} {grade : D → ℕ} {g : ℕ → Label.{u}} {σ τ ν f : Label.{u} → Label.{u}}
   {m K k i : ℕ} {x c : Label.{u}}
 
-/-! ### Short labels and truncation of finite parts -/
+/-! ### Short labels and flattening of finite parts -/
 
 /-- A label is **short** at grade `m`: it is bottom, the formal top, or an ordinal whose finite
 part is at most `m`.  An owner is short when every entry of its row is short at its grade, and
@@ -199,40 +199,40 @@ def IsShort (m : ℕ) (x : Label.{u}) : Prop := ∀ o : Ordinal.{u}, (o : Label.
 @[simp] theorem isShort_coe {o : Ordinal.{u}} : IsShort m (o : Label.{u}) ↔ o % ω ≤ m :=
   ⟨fun h ↦ h o rfl, fun h _ he ↦ by rwa [WithTop.coe_injective (WithBot.coe_injective he)]⟩
 
-/-- The truncation of the finite part of an ordinal at `m`: its finite part is replaced by the
+/-- The flattening of the finite part of an ordinal at `m`: its finite part is replaced by the
 smaller of it and `m`, in the same block. -/
 noncomputable def flattenOrd (m : ℕ) (o : Ordinal.{u}) : Ordinal.{u} :=
   ω * (o / ω) + min (o % ω) m
 
-/-- The **truncation of finite parts** of labels at `m`: bottom and the formal top are fixed, and an
+/-- The **flattening of finite parts** of labels at `m`: bottom and the formal top are fixed, and an
 ordinal `ω * b + n` (`n < ω`) goes to `ω * b + min n m`. -/
 noncomputable def flatten (m : ℕ) : Label.{u} → Label.{u} :=
   WithBot.map (WithTop.map (flattenOrd m))
 
-/-- Truncation of finite parts fixes bottom. -/
+/-- Flattening of finite parts fixes bottom. -/
 @[simp] theorem flatten_bot (m : ℕ) : flatten m (⊥ : Label.{u}) = ⊥ := rfl
 
-/-- Truncation of finite parts fixes the formal top. -/
+/-- Flattening of finite parts fixes the formal top. -/
 @[simp] theorem flatten_top (m : ℕ) : flatten m (⊤ : Label.{u}) = ⊤ := rfl
 
-/-- Truncation of the finite part of an ordinal label. -/
+/-- Flattening of the finite part of an ordinal label. -/
 @[simp] theorem flatten_coe (m : ℕ) (o : Ordinal.{u}) :
     flatten m (o : Label.{u}) = (flattenOrd m o : Label.{u}) := rfl
 
-/-- The truncated finite part is finite. -/
+/-- The flattened finite part is finite. -/
 private theorem min_mod_lt (m : ℕ) (o : Ordinal.{u}) : min (o % ω) (m : Ordinal.{u}) < ω :=
   (min_le_left _ _).trans_lt (mod_lt _ omega0_ne_zero)
 
-/-- Truncation of the finite part keeps the block. -/
+/-- Flattening of the finite part keeps the block. -/
 private theorem flattenOrd_div (m : ℕ) (o : Ordinal.{u}) : flattenOrd m o / ω = o / ω := by
   rw [flattenOrd, omega0_mul_add_div (min_mod_lt m o)]
 
-/-- The finite part after truncation. -/
+/-- The finite part after flattening. -/
 private theorem flattenOrd_mod (m : ℕ) (o : Ordinal.{u}) :
     flattenOrd m o % ω = min (o % ω) (m : Ordinal.{u}) := by
   rw [flattenOrd, omega0_mul_add_mod (min_mod_lt m o)]
 
-/-- Truncation of finite parts of ordinals is monotone. -/
+/-- Flattening of finite parts of ordinals is monotone. -/
 private theorem flattenOrd_mono (m : ℕ) {o o' : Ordinal.{u}} (h : o ≤ o') :
     flattenOrd m o ≤ flattenOrd m o' := by
   rcases (div_le_left h ω).lt_or_eq with hlt | he
@@ -240,15 +240,15 @@ private theorem flattenOrd_mono (m : ℕ) {o o' : Ordinal.{u}} (h : o ≤ o') :
   · rw [flattenOrd, flattenOrd, he]
     exact add_le_add_right (min_le_min_right _ (mod_le_mod_of_div_eq h he)) _
 
-/-- **Truncation of finite parts is monotone.** -/
+/-- **Flattening of finite parts is monotone.** -/
 theorem monotone_flatten (m : ℕ) : Monotone (flatten m : Label.{u} → Label.{u}) :=
   (Monotone.withTop_map fun _ _ ↦ flattenOrd_mono m).withBot_map
 
-/-- Truncation of finite parts sends a label to bottom only if it is bottom. -/
+/-- Flattening of finite parts sends a label to bottom only if it is bottom. -/
 @[simp] theorem flatten_eq_bot_iff : flatten m x = ⊥ ↔ x = ⊥ := by
   induction x using recBotCoeTop <;> simp
 
-/-- **Truncation of finite parts at `m` fixes the labels short at `m`.** -/
+/-- **Flattening of finite parts at `m` fixes the labels short at `m`.** -/
 theorem IsShort.flatten_eq (h : IsShort m x) : flatten m x = x := by
   induction x using recBotCoeTop with
   | bot => rfl
@@ -256,7 +256,7 @@ theorem IsShort.flatten_eq (h : IsShort m x) : flatten m x = x := by
   | coe o =>
     rw [flatten_coe, flattenOrd, min_eq_left (isShort_coe.mp h), div_add_mod]
 
-/-- **Truncation of finite parts commutes with visibility replacement** at every threshold `k ≤ m`
+/-- **Flattening of finite parts commutes with visibility replacement** at every threshold `k ≤ m`
 and every value `i ≤ k`. -/
 theorem flatten_visibilityReplace (hk : k ≤ m) (hi : i ≤ k) (x : Label.{u}) :
     flatten m (visibilityReplace k i x) = visibilityReplace k i (flatten m x) := by
@@ -275,8 +275,8 @@ theorem flatten_visibilityReplace (hk : k ≤ m) (hi : i ≤ k) (x : Label.{u}) 
 
 /-! ### Repair of the bottom guard -/
 
-/-- A map commuting with visibility replacement at `m` that sends one truncated point of a block
-to bottom sends every truncated point of that block to bottom. -/
+/-- A map commuting with visibility replacement at `m` that sends one flattened point of a block
+to bottom sends every flattened point of that block to bottom. -/
 private theorem apply_flatten_eq_bot (hmono : Monotone f)
     (hcomm : ∀ x, ∀ k ≤ m, ∀ i ≤ k, f (visibilityReplace k i x) = visibilityReplace k i (f x))
     {o o' : Ordinal.{u}} (he : o / ω = o' / ω) (ho : f (flatten m (o : Label.{u})) = ⊥) :
@@ -290,7 +290,7 @@ private theorem apply_flatten_eq_bot (hmono : Monotone f)
     rw [flattenOrd, hn, he, Nat.mono_cast.map_min]
   rcases Nat.eq_zero_or_pos m with rfl | hm
   · rw [flatten_coe, hflatten, Nat.min_zero, Nat.cast_zero, add_zero, h0]
-  · -- Otherwise the truncated point is a replacement of the block start at threshold `m`.
+  · -- Otherwise the flattened point is a replacement of the block start at threshold `m`.
     have hvr : Ordinal.visibilityReplace m (min n m) (ω * (o / ω)) = flattenOrd m o' := by
       rw [hflatten, Ordinal.visibilityReplace_of_lt (by rw [mul_mod]; exact_mod_cast hm),
         mul_div_cancel _ omega0_ne_zero]
@@ -324,7 +324,7 @@ theorem isWitness_comp_flatten (hbot : f ⊥ = ⊥) (hmono : Monotone f)
 
 /-- **Composition without bottom reflection on short labels.**  For a witness `τ` bounded by grade
 `m` and a witness `ν` bounded by a grade `K ≥ m`, some witness bounded by grade `m` agrees with
-`ν ∘ τ` at every label short at `m`: the composite after truncation of finite parts at `m`.  It
+`ν ∘ τ` at every label short at `m`: the composite after flattening of finite parts at `m`.  It
 gives the mapped locality of a short row (`TransformsTo.map_of_isShort`), and through it the
 locality of the short owners in the section theorem. -/
 theorem IsWitness.exists_eq_comp_of_isShort (hτ : IsWitness (stepSuppressor m) τ)
