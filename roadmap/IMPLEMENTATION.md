@@ -23,7 +23,7 @@ countable chain construction, checkpoint 3), not the layer numbering of either d
 | Layer 4, Summit 4: structural continuation and terminal comparisons | 4 | 5 |
 | Layer 5, Summit 5: expansion domains and logical agreement | 5 | 5 (unique limit expansions), 6 |
 | Layer 6, Summit 6: the two independent bounds | 5 and the spine | 6 |
-| (none; companion) | full-chart orbit theory (companion part) | companion checkpoint, not a core checkpoint |
+| (none; companions) | companion milestones A–C (`COMPANIONS.md`), summarized under "Companion boundaries" | companion milestones, not core checkpoints |
 
 ## Environment
 
@@ -51,7 +51,9 @@ representative examples.
 Under-specified extensions are not part of this roadmap.  Separate companion roadmaps may
 cover hull algebra/cardinality (`HULL_ALGEBRA.md`), model-code topology, `T∞` (the set of
 sentences true in all but countably many classes) and its logical filtration, effective syntax,
-and uncountable models.  They are not prerequisites of this core.
+and uncountable models; `COMPANIONS.md` organizes the filtration and `T∞`, chart homogeneity,
+and a geometric obstruction as three optional milestones.  They are not prerequisites of this
+core.
 
 ## The mathematical spine
 
@@ -246,7 +248,7 @@ In the pinned InfinitaryLogic:
   its eventual-departure hypothesis discharged on the complement of the core;
 - the Gδ/Polish model-code spaces;
 - `internalScottRank_le_of_orbits_determined` (`Scott/OrbitRank`), used only by the companion
-  full-chart orbit theory below.
+  full-chart orbit theory (milestone B of `COMPANIONS.md`).
 
 `SuggestedInterfaces.lean` checks representative names, so a pin bump that removes one fails
 when the sketch is checked (the checks are run by CI).  Coding a `Type w` carrier on `ℕ` needs a
@@ -306,47 +308,25 @@ top-free classes converging sentencewise; the joint embedding and amalgamation p
 (JEP/AP) of finite closed charts; local automorphisms of self-embeddings; and the arbitrary-carrier Scott/`T∞` theory
 dichotomy.  These do not assert strong AP, a proper self-embedding, uncountable categoricity,
 Scott-rank equality, or existence of a model of all of `T∞`.  The main theorem is proved
-without them; if any is added, give it a separate definite completion criterion.  The
-full-chart orbit theory below is such an addition.
+without them; if any is added, give it a separate definite completion criterion.
+[`COMPANIONS.md`](COMPANIONS.md) gives these topics and the full-chart orbit theory below such
+criteria, as three milestones (A: filtration and infinitary theory; B: top-free chart homogeneity
+and its consequences; C: a geometric obstruction).
 
 ### Full-chart orbit theory: a companion checkpoint
 
-These targets concern the **full stage chart language**; none transfers automatically to the
-base reduct.  Search the pinned libraries before reproducing these generic arguments.
+The targets of this checkpoint are now milestones B and C of [`COMPANIONS.md`](COMPANIONS.md),
+which states each with its hypotheses, upstream ingredients, instantiation, regressions, and
+non-claims, and gives the companion sketch [`SuggestedCompanions.lean`](SuggestedCompanions.lean).
+In summary: in the full stage chart language (not the base reduct), a countable nonempty top-free
+realization with exact consistency, covering, and finite-cut receiving has automorphism orbits
+defined by explicit first-order chart formulas, hence isolated complete types, atomicity,
+internal Scott rank at most `ω` in the library's convention, and, by a separate generic theorem,
+primeness among models of its complete theory in arbitrary universes; separately, consistency and
+covering alone exclude every infinite set whose permutations all extend to automorphisms, a
+theorem kept below receiving by an import guard.  Milestone A of `COMPANIONS.md` treats the
+definable cuts, witness convergence, and the Scott/`T∞` dichotomy listed above.
 
-1. For a finite tuple in a countable nonempty top-free realization, choose an actual containing
-   chart.  Existentially quantify its coordinates, assert its chart relation, and identify the
-   free tuple with its selected coordinates.  Prove that the resulting first-order formula
-   defines the automorphism orbit, using closed-chart homogeneity.  Permit repeated
-   coordinates and empty tuples.  Hypotheses: exact consistency, covering, finite-cut
-   receiving, and top-freeness.
-2. Use a generic first-order theorem: a definable automorphism orbit isolates the tuple's
-   complete type over the structure's own theory.  Transfer universal implications to
-   arbitrary models of that theory, and identify a singleton in the space of complete types.
-   Uniqueness within the one model is not enough.  Applied to the charts under the hypotheses
-   of target 1, this gives atomicity without strengthening the hypotheses on the realization.
-3. First-order formulas have finite quantifier rank.  Back-and-forth agreement at the
-   quantifier rank of an orbit formula determines that tuple's orbit.  Quote the pinned
-   InfinitaryLogic's `internalScottRank_le_of_orbits_determined` (`Scott/OrbitRank`) to obtain
-   `internalScottRank ≤ ω` in its convention, the supremum over all tuples of the orbit rank
-   plus one, `⨆ a, orbitRank a + 1` (so finite but unbounded orbit ranks give exactly `ω`); the
-   bridge from level-`k` back-and-forth agreement to agreement on formulas of quantifier rank
-   `≤ k` is `BFEquiv_implies_agree_formulas_omega` (`Scott/QuantifierRank`, countable `M`).
-   Hypotheses: those of target 1.  No rank equality, and no identification with the expansion
-   or departure height, is intended.
-4. Prove that countable atomic implies prime as a **separate generic theorem**: enumerate only
-   the source, extend finite tuples preserving every first-order formula, and take their
-   union.  The target is any model of the complete theory, in an independent universe, with no
-   receiving or countability assumption.
-5. Separately, two-generation and pointwise hull fixation exclude every infinite set whose
-   permutations all extend to automorphisms.  Three points give a hull generated by at most two
-   of them; swapping the remaining point with a fourth while fixing those generators is
-   impossible.  This needs only consistency and covering, not top-freeness, modelhood,
-   receiving, or countability.
-
-Keep generic first-order isolation and primeness below the theorems specialized to charts, and
-the hull obstruction below receiving.
-
-**Completion criterion.** This companion checkpoint is complete when the five targets above are
-proved for the full chart language, each under exactly its stated hypotheses.  It is not a core
-checkpoint, and the main theorem does not depend on it.
+**Completion criterion.**  This companion checkpoint is complete when milestones B and C of
+`COMPANIONS.md` meet their completion criteria.  It is not a core checkpoint, and the main
+theorem does not depend on it.

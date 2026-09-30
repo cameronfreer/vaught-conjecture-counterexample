@@ -108,14 +108,16 @@ jobs:
 
       # The roadmap's sketches are outside the library build but must keep elaborating against
       # the pinned dependencies (their `#check`s of upstream entry points fail on a pin bump
-      # that removes one).  `Suggested.lean` has deliberate `sorry`s, so it is checked without
-      # warnings-as-errors.  Run after the cache saves, so a failing sketch check cannot
-      # discard a freshly built dependency cache.
+      # that removes one).  `Suggested.lean` and `SuggestedCompanions.lean` have deliberate
+      # `sorry`s, so they are checked without warnings-as-errors.  Run after the cache saves, so a
+      # failing sketch check cannot discard a freshly built dependency cache.
       - name: Check the roadmap sketches
         run: |
           lake env lean -DautoImplicit=false -DwarningAsError=true \
             -Dlinter.mathlibStandardSet=true roadmap/SuggestedInterfaces.lean
           lake env lean -DautoImplicit=false -Dlinter.mathlibStandardSet=true roadmap/Suggested.lean
+          lake env lean -DautoImplicit=false -Dlinter.mathlibStandardSet=true \
+            roadmap/SuggestedCompanions.lean
 
       # Toolchain in sync with InfinitaryLogic; no `sorry`; headers; every declaration in
       # the `VaughtConjecture` namespace uses only the standard axioms.
