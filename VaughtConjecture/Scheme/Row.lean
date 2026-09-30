@@ -57,7 +57,7 @@ Semantic rows are the semantics of Definition 2.5.3, lawful sections the labelli
 them (Definition 2.5.4: locality is its first clause, availability its second), and consistency
 is Definition 2.5.12, of R. W. Knight, *A counterexample to Vaught's Conjecture using
 generalised Stone spaces* (draft, 20 February 2026) [Kni26]; mute rows are the mute semantics of
-the last clause of Lemma 4.2.2 (numbering to be verified against the manuscript).
+the last clause of Lemma 4.2.2.
 -/
 
 universe u

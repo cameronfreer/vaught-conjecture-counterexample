@@ -52,8 +52,7 @@ bountiful (`isBountiful_mute`): every cap ball is the singleton of the bottom la
 ## References
 
 Bountifulness is Definition 2.5.14 of R. W. Knight, *A counterexample to Vaught's Conjecture
-using generalised Stone spaces* (draft, 20 February 2026) [Kni26] (numbering to be verified
-against the manuscript).
+using generalised Stone spaces* (draft, 20 February 2026) [Kni26].
 -/
 
 universe u
