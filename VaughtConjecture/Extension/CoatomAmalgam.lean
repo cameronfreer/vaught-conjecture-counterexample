@@ -344,7 +344,9 @@ noncomputable def amalgamType : StageType.{u} α (m + 2) where
   label := amalgamLabel hta htb ∘ amalgamEnum (comap_eq_of_restrictFace hta htb)
   isWellFormed := isWellFormed_amalgam _ ta.isWellFormed tb.isWellFormed (univ_map_face_mem hta)
   isCoded := isCoded_amalgam _ ta.isCoded tb.isCoded
-  isLawful := (CellScheme.Rows.isLawful_comap_reindex_iff _).mpr (isLawful_amalgamLabel hta htb)
+  isLawful :=
+    (CellScheme.Rows.isLawful_comap_equiv_iff (CellScheme.IsLowerEmbedding.reindex _ _)).mpr
+      (isLawful_amalgamLabel hta htb)
   atStage _ := atStage_amalgamLabel hta htb _
 
 /-- The first coatom is a closed face of the amalgam. -/

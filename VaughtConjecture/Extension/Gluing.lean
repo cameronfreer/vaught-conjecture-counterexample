@@ -3,7 +3,7 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
-import VaughtConjecture.Scheme.Lifting
+import VaughtConjecture.Scheme.Bountiful
 
 /-!
 # Gluing lawful labellings, and capped lifting across two faces
@@ -43,7 +43,8 @@ consistency, bountifulness, or completeness of `R` is assumed unless it is a hyp
 `Rows.isLawfulBelow_iff_forall` and `Rows.IsLawfulBelow.glue` belong in
 `VaughtConjecture.Scheme.Row`, after the lawful sections, and `Label.transformsTo_comp_equiv_iff`
 in `VaughtConjecture.Label.Transform`, beside `TransformsTo.reindex`; the lifting statements belong
-in `VaughtConjecture.Scheme.Lifting`.  They are stated here so that those files are unchanged.
+in `VaughtConjecture.Scheme.Bountiful`, after `CellScheme.Rows.CappedLift.trans`.  They are stated
+here so that those files are unchanged.
 
 ## References
 
