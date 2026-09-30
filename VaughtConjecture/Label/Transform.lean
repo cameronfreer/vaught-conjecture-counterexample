@@ -289,8 +289,8 @@ private theorem TransformsTo.one_two_one_top :
         have ho : o < 2 := WithTop.coe_lt_coe.mp (WithBot.coe_lt_coe.mp h2)
         have hω : o < ω := ho.trans (by exact_mod_cast natCast_lt_omega0 2)
         have hi2 : (i : Ordinal.{u}) < 2 := by exact_mod_cast (hi.trans hk).trans_lt one_lt_two
-        simp only [visibilityReplace_coe, replaceFinitePart_of_lt_omega0 hω, WithBot.coe_lt_coe,
-          WithTop.coe_lt_coe]
+        simp only [visibilityReplace_coe, Ordinal.visibilityReplace_of_lt_omega0 hω,
+          WithBot.coe_lt_coe, WithTop.coe_lt_coe]
         split_ifs <;> assumption
       | top => simp at h2
     · rw [stepSuppressor_of_lt hk, le_bot_iff, reduce_eq_bot_iff] at hx
@@ -334,8 +334,8 @@ private theorem TransformsTo.not_one_two_bot_top :
   have hg : g 1 = ⊤ := top_le_iff.mp (h₂.le.trans (min_le_right _ _))
   rw [hg, min_top_right] at h₁ h₂
   have h := hw.visibilityReplace_comm _ 2 (h₁ ▸ bot_le) 2 le_rfl
-  have h12 : replaceFinitePart 2 2 (1 : Ordinal.{u}) = 2 := by
-    rw [replaceFinitePart_of_lt_omega0 (by simp)]
+  have h12 : Ordinal.visibilityReplace 2 2 (1 : Ordinal.{u}) = 2 := by
+    rw [Ordinal.visibilityReplace_of_lt_omega0 (by simp)]
     simp
   rw [visibilityReplace_coe, h12, ← h₁, visibilityReplace_bot, ← h₂] at h
   exact top_ne_bot h
