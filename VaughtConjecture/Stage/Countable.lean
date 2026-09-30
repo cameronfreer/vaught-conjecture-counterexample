@@ -42,7 +42,6 @@ namespace VaughtConjecture
 
 open Cardinal Ordinal
 
-
 namespace StageType
 
 variable {α : Ordinal.{u}}

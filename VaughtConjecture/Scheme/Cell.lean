@@ -537,42 +537,6 @@ end BelowEquiv
 
 end IsLowerEmbedding
 
-/-! ### Cells below a pair inside a face -/
-
-section BelowRestrict
-
-variable [DecidableEq α] {B : Finset α} {Z : Finset α × ℕ}
-
-/-- For a pair `Z` whose face lies in `B`, the cells below `Z` in `D` are the cells below `Z` in
-the restriction `D.restrict B`. -/
-def belowRestrictEquiv (hZ : Z.1 ⊆ B) : D.below Z ≃ (D.restrict B).below Z where
-  toFun d := ⟨⟨d.1, coe_subset.mpr (d.2.1.trans hZ)⟩, d.2⟩
-  invFun t := ⟨t.1.1, t.2⟩
-  left_inv _ := rfl
-  right_inv _ := rfl
-
-/-- The cell underlying the image of a cell below `Z` in the restriction. -/
-@[simp] theorem belowRestrictEquiv_apply_val_val (hZ : Z.1 ⊆ B) (d : D.below Z) :
-    (D.belowRestrictEquiv hZ d).1.1 = d.1 := rfl
-
-/-- The cell underlying the preimage of a cell below `Z` in the restriction. -/
-@[simp] theorem belowRestrictEquiv_symm_apply_val (hZ : Z.1 ⊆ B) (t : (D.restrict B).below Z) :
-    ((D.belowRestrictEquiv hZ).symm t).1 = t.1.1 := rfl
-
-/-- Reading the cells below `Z` in the restriction is a lower embedding. -/
-theorem IsLowerEmbedding.belowRestrictEquiv (hZ : Z.1 ⊆ B) :
-    (D.reindex ((↑) : D.below Z → ι)).IsLowerEmbedding
-      ((D.restrict B).reindex ((↑) : (D.restrict B).below Z → _)) (D.belowRestrictEquiv hZ) :=
-  IsLowerEmbedding.of_equiv _ fun _ ↦ rfl
-
-/-- Reading the cells below `Z` of the restriction in the scheme is a lower embedding. -/
-theorem IsLowerEmbedding.belowRestrictEquiv_symm (hZ : Z.1 ⊆ B) :
-    ((D.restrict B).reindex ((↑) : (D.restrict B).below Z → _)).IsLowerEmbedding
-      (D.reindex ((↑) : D.below Z → ι)) (D.belowRestrictEquiv hZ).symm :=
-  (IsLowerEmbedding.belowRestrictEquiv D hZ).symm
-
-end BelowRestrict
-
 /-! ### Countability -/
 
 /-- Cell schemes with finitely many cells over a countable ground type form a countable type. -/
