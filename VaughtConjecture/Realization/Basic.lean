@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import Mathlib.Logic.Equiv.Fintype
-import VaughtConjecture.Stage.Legal
+import VaughtConjecture.Stage.Basic
 
 /-!
 # Realizations: exact partial evaluation, consistency, and covering
@@ -26,9 +26,6 @@ raw data.  Its two structural laws are separate propositions:
   says nothing about the subtuples of an untyped tuple, which may or may not be typed.
 * **covering** (`Realization.IsCovering`): every injective finite tuple is a face
   `f.trans u` of a typed tuple `u`.
-
-A realization **has legal types** (`Realization.HasLegalTypes`) when every type it assigns is
-legal (`StageType.IsLegal`).
 
 An **occurrence** (`Realization.Occurrence`) is a typed tuple together with its type.  Under
 consistency every visible face of an occurrence is an occurrence with its literal face tuple
@@ -82,10 +79,6 @@ def IsConsistent : Prop :=
 def IsCovering : Prop :=
   ∀ ⦃n : ℕ⦄ (t : Fin n ↪ M),
     ∃ (m : ℕ) (u : Fin m ↪ M) (f : Fin n ↪ Fin m), f.trans u = t ∧ (R.eval u).isSome
-
-/-- A realization **has legal types** when every type it assigns is legal. -/
-def HasLegalTypes {α : Ordinal.{u}} (R : Realization.{u, v} α M) : Prop :=
-  ∀ ⦃n : ℕ⦄ (t : Fin n ↪ M) (p : StageType.{u} α n), R.eval t = some p → p.IsLegal
 
 /-! ### Occurrences -/
 

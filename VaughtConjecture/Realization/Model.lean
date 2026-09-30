@@ -50,7 +50,8 @@ conditions of the source: for generalized saturation they are exactly its nonemp
 (`StageType.nonempty_cofaces_inter_saturationFamily_iff`), and a nonempty bottom-pattern family
 is that of the labels of any of its members, a lawful section extending the labels of `p`
 (`StageType.nonempty_cofaces_inter_bottomPatternFamily_iff`).  So there the guarded clauses are
-equivalent to those of the source.  A model has legal types (`IsModel.hasLegalTypes`), and at a
+equivalent to those of the source.  A realization **has legal types** (`HasLegalTypes`) when
+every type it assigns is legal; a model does (`IsModel.hasLegalTypes`), and at a
 positive stage it has occurrences of every arity, by the dominance clause at `γ = 0`, so it is
 infinite (`IsModel.exists_arity_eq`, `IsModel.infinite`).
 
@@ -69,6 +70,12 @@ The caps are `⊥` for saturation (`IsModel.reduce_saturation`, any `β` that is
 and a positive ordinal below `β` for the bottom pattern (`IsModel.reduce_bottomPattern`, which
 therefore needs `β ≠ 0`).  The stage `α` must be zero or a limit so that the lifted labels can be
 reduced to stage `α` lawfully; stages of models in the source are limits.
+
+**Finite-cut receiving.**  A realization has the finite-cut receiving property
+(`HasFiniteCutReceiving`) when over every occurrence, for every coface `d` of its type and every
+permitted cutoff `c`, some point extends the occurrence to one with a type in the receiving family
+of `d` at `c` (`StageType.receivingFamily`); the property is invariant under transport and
+isomorphism (`hasFiniteCutReceiving_map_iff`, `IsIso.hasFiniteCutReceiving_iff`).
 
 ## References
 
@@ -147,6 +154,10 @@ theorem RealizesOver.reduce {β : Ordinal.{u}} (hβ : Order.IsSuccPrelimit β)
 end RealizesOver
 
 /-! ### Models -/
+
+/-- A realization **has legal types** when every type it assigns is legal. -/
+def HasLegalTypes {α : Ordinal.{u}} (R : Realization.{u, v} α M) : Prop :=
+  ∀ ⦃n : ℕ⦄ (t : Fin n ↪ M) (p : StageType.{u} α n), R.eval t = some p → p.IsLegal
 
 variable (R : Realization.{u, v} α M)
 
@@ -421,5 +432,39 @@ theorem IsIso.isModel_iff (h : R.IsIso S) : R.IsModel ↔ S.IsModel := by
   exact (isModel_map_iff e).symm
 
 end Iso
+
+/-! ### Finite-cut receiving -/
+
+section Receiving
+
+variable (R)
+
+/-- The **finite-cut receiving property**: over every occurrence, for every coface `d` of its type
+and every permitted cutoff `c`, some point extends the occurrence to one with a type on the scheme
+of `d` with the observation of `d` at `c`. -/
+def HasFiniteCutReceiving : Prop :=
+  ∀ (x : R.Occurrence), ∀ d ∈ x.type.cofaces, ∀ c : Label.{u}, IsPermittedCutoff α c →
+    R.RealizesOver x.tuple (receivingFamily d c)
+
+variable {R}
+
+/-- **Transport of receiving**: the finite-cut receiving property is preserved and reflected by
+transport along a bijection of carriers. -/
+theorem hasFiniteCutReceiving_map_iff (e : M ≃ N) :
+    (R.map e).HasFiniteCutReceiving ↔ R.HasFiniteCutReceiving := by
+  refine ⟨fun h x d hd c hc ↦ ?_, fun h y d hd c hc ↦
+    (realizesOver_map_iff e).mpr (h (y.comap e) d hd c hc)⟩
+  have key : (x.map e).tuple.trans e.symm.toEmbedding = x.tuple := by
+    ext
+    exact e.symm_apply_apply _
+  exact key ▸ (realizesOver_map_iff (R := R) e).mp (h (x.map e) d hd c hc)
+
+/-- Isomorphic realizations have the finite-cut receiving property together. -/
+theorem IsIso.hasFiniteCutReceiving_iff {S : Realization.{u, w} α N} (h : R.IsIso S) :
+    R.HasFiniteCutReceiving ↔ S.HasFiniteCutReceiving := by
+  obtain ⟨e, rfl⟩ := h
+  exact (hasFiniteCutReceiving_map_iff e).symm
+
+end Receiving
 
 end VaughtConjecture.Realization
