@@ -88,10 +88,10 @@ theorem preserves_all_compatible_observations
 An instance of this structure is not a proof of the countable-loss or receiving constructions
 in the README. -/
 structure ObservationFiltration (Q : Type 1) (O : Type u) (truth : O → Q → Prop) where
-  domain : Ordinal.{0} → Set Q
-  complement_countable : ∀ η, η < (Cardinal.aleph 1).ord → (domain η)ᶜ.Countable
-  homogeneous : ∀ o, ∃ η, η < (Cardinal.aleph 1).ord ∧
-    ∀ p ∈ domain η, ∀ q ∈ domain η, (truth o p ↔ truth o q)
+  /-- The domains, indexed by the countable stages only: no data is carried at or above `ω₁`. -/
+  domain : Set.Iio (Cardinal.aleph 1).ord → Set Q
+  complement_countable : ∀ η, (domain η)ᶜ.Countable
+  homogeneous : ∀ o, ∃ η, ∀ p ∈ domain η, ∀ q ∈ domain η, (truth o p ↔ truth o q)
   separates : ∀ p q, p ≠ q → ∃ o, ¬ (truth o p ↔ truth o q)
 
 namespace ObservationFiltration
@@ -100,20 +100,19 @@ variable {Q : Type 1} {O : Type u} {truth : O → Q → Prop}
 variable (F : ObservationFiltration Q O truth)
 
 /-- Scott separation makes the persistent core subsingleton; departure is unnecessary. -/
-theorem persistent_subsingleton :
-    (⋂ η < (Cardinal.aleph 1).ord, F.domain η).Subsingleton := by
+theorem persistent_subsingleton : (⋂ η, F.domain η).Subsingleton := by
   intro p hp q hq
   by_contra hne
   obtain ⟨o, ho⟩ := F.separates p q hne
-  obtain ⟨η, hη, hh⟩ := F.homogeneous o
-  exact ho (hh p (Set.mem_iInter₂.mp hp η hη) q (Set.mem_iInter₂.mp hq η hη))
+  obtain ⟨η, hh⟩ := F.homogeneous o
+  exact ho (hh p (Set.mem_iInter.mp hp η) q (Set.mem_iInter.mp hq η))
 
 include F in
 /-- Each observation has one countable truth side, without measurability on `Q`. -/
 theorem countable_truth_side (o : O) :
     ({q | truth o q} : Set Q).Countable ∨ ({q | ¬ truth o q} : Set Q).Countable := by
-  obtain ⟨η, hη, hh⟩ := F.homogeneous o
-  have hc := F.complement_countable η hη
+  obtain ⟨η, hh⟩ := F.homogeneous o
+  have hc := F.complement_countable η
   by_cases h : ∃ q ∈ F.domain η, truth o q
   · obtain ⟨q, hq, ht⟩ := h
     exact Or.inr (hc.mono fun p hp hpd => hp ((hh p hpd q hq).mpr ht))
