@@ -18,11 +18,12 @@ countable chain construction, checkpoint 3), not the layer numbering of either d
 | --- | --- | --- |
 | Layer 0, Summit 0: general results | used in 1 (lifting), 2 (finite hulls), 3 (chain construction), 4 (directed limits, back-and-forth, subsingleton covers), 5 (countable losses) | with their first application |
 | Layer 1, Summit 1: finite semantic kernel and closed charts | 1; stage types and partial faces of 2 | 1 |
-| Layer 2, Summit 2: realizations, syntax, chain construction | 2; chain construction of 3 | 3 |
+| Layer 2, Summit 2: realizations, syntax, chain construction | 2; chain construction of 3 | 3, 4 (fidelity theorem) |
 | Layer 3, Summit 3: finite extension constructions, realization over the root, recovery of donor labels | 3; first applications of 1 | 2, 4 (and top-free existence in 3) |
-| Layer 4, Summit 4: stable continuation and terminal comparisons | 4 | 5 |
+| Layer 4, Summit 4: structural continuation and terminal comparisons | 4 | 5 |
 | Layer 5, Summit 5: expansion domains and logical agreement | 5 | 5 (unique limit expansions), 6 |
-| Layer 6, Summit 6: the two bounds | 5 and the spine | 6 |
+| Layer 6, Summit 6: the two independent bounds | 5 and the spine | 6 |
+| (none; companion) | full-chart orbit theory (companion part) | companion checkpoint, not a core checkpoint |
 
 ## Environment
 
@@ -67,8 +68,9 @@ establishes:
 Countable-loss induction gives countable complements.  Scott separation makes the persistent
 core `⋂_η Dη` subsingleton.  Its complement is covered by `ℵ₁` many countable exceptions, so
 `|Q| ≤ ℵ₁`; disjoint cofinal losses give the reverse inequality.  This counting argument
-(countable complements and Scott separation give at most `ℵ₁` classes) is that of
-Harnik–Makkai [HM77] and Larson [Lar14].  Separately, homogeneous domains give one countable
+(countable complements and Scott separation give at most `ℵ₁` classes) belongs to the setting
+of minimal counterexamples of Harnik–Makkai [HM77]; see Larson [Lar14], Remark 10.9, and its
+discussion of minimal counterexamples.  Separately, homogeneous domains give one countable
 truth side for each sentence, and the library's thinness theorem
 `Sentenceω.isThinOnNatModels_of_countable_sentence_splits` (`Descriptive/SentenceSplits`) rules
 out a perfect antichain.  Neither Morley's dichotomy nor eventual stopping belongs in this
@@ -101,9 +103,14 @@ The sketch lemma `preserves_all_compatible_observations` (`SuggestedInterfaces.l
 from per-cap lifts to simultaneous preservation under the hypothesis that restriction is
 injective, i.e. uniqueness of extension; that hypothesis is not available in general (see
 `README.md`, Layer 0: do not assume injectivity).  The construction obtains simultaneous cap
-preservation differently: caps are nested under `min` (`min (min x c') c = min x c` for
-`c ≤ c'`), so an extension preserving the observation at the largest permitted cap preserves it
-at every smaller cap.  This is the intended argument, still to be proved.  Preserve caps on
+preservation differently.  The per-cap lift applies only at caps where the face prescription
+is compatible with the ambient labelling.  These compatible caps are downward closed and
+bounded, and since a chart carries finitely many labels they induce only finitely many distinct
+observations, so a largest compatible cap exists (up to the observation it induces).  An
+extension preserving the observation at the largest cap at which the face prescription is
+compatible preserves it at every smaller cap, because caps nest under `min`
+(`min (min x c') c = min x c` for `c ≤ c'`).  This is the intended argument, still to be
+proved.  Preserve caps on
 **all** target coordinates, including auxiliaries and future catalogue fields (catalogue fields
 are to be defined by the forthcoming layer-3 specification).  A statement
 that recovers only a few labels from the observation does not weaken the lifting requirement.
@@ -127,10 +134,10 @@ an evaluated two-point root.
 At stage `ω`, take one `n`-ary relation symbol for each legal stage type of arity `n`, and no
 functions.  Prove symbol countability; spell out the finite coding and bounded
 bottom/natural/top tables if a computable coding of the symbols is included.  The structural
-base theory records injective tuples, unique labels, exact face coherence, and covering.  Define
-the density sentence by these structural clauses and the one-point capped-extension clause; it
-is the sentence of the main theorem.
-Keep nonemptiness explicit until its redundancy is proved.  Cutoffs here are natural numbers,
+base theory records injective tuples, unique labels, exact face coherence, covering, and
+nonemptiness.  Define the density sentence by these structural clauses and the one-point
+capped-extension clause; it is the sentence of the main theorem.  Keep nonemptiness explicit
+until its redundancy is proved.  Cutoffs here are natural numbers,
 including zero.
 
 Density quantifies `∀ root, ∀ donor, ∀ cutoff, ∃ extension` on the fixed donor scheme.
@@ -219,9 +226,15 @@ In the pinned InfinitaryLogic:
 - `exists_countable_aElementary_substructure`;
 - the generic finite-support closure (`FiniteSupportClosure`) with its two-generator
   cardinality theorem (`TwoGeneratorCardinality`);
-- `compl_countable_of_loss` and `mk_eq_aleph_one_of_domains` (`OrdinalCountability`).  The
-  latter assumes global eventual departure (every point leaves some domain), so it is applied
-  to the complement of the persistent core, not to `Q`;
+- `compl_countable_of_loss` (`OrdinalCountability`), which gives the countable domain
+  complements.  The same module's `mk_eq_aleph_one_of_domains` is not used for the upper
+  bound: `|Q| ≤ ℵ₁` is the direct cover of the spine (the persistent core is a subsingleton
+  and each complement `Q \ Dη` is countable).  That theorem assumes global eventual departure
+  (every point leaves some domain) and nonempty domains, and yields the equality only from
+  both.  On the complement of the persistent core, departure holds, but nonemptiness requires
+  every domain to contain a class outside the core, which is the lower-bound input.  It may
+  therefore be quoted, if at all, only for the final equality once both bounds are known, with
+  its eventual-departure hypothesis discharged on the complement of the core;
 - the Gδ/Polish model-code spaces.
 `SuggestedInterfaces.lean` checks representative names, so a pin bump that removes one fails
 when the sketch is checked (the checks are run by CI).  Coding a `Type w` carrier on `ℕ` needs a transfer of infinitary isomorphism across
@@ -256,7 +269,9 @@ Each checkpoint needs both its abstract API and a concrete application:
    existence.
 4. The receiving property of each finite extension construction (ordinary finite-cut
    receiving, the constrained residual comparison, hollow growth, and the capped stable
-   candidate), with all its equations on one actual occurrence and at every permitted cap.
+   candidate), with all its equations on one actual occurrence and at every permitted cap;
+   and the fidelity theorem of layer 2, the equivalence of the density sentence with the
+   four-family sentence, whose model-to-density direction uses ordinary receiving.
 5. Structural continuation, three terminal comparisons, unique limit expansions.
 6. Domain hypotheses of the counting theorem, independent bounds, thinness and all-countable
    bridge.
