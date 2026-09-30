@@ -15,8 +15,9 @@ $L_{\omega_1,\omega}$, Scott analysis, model-code spaces, Morley counting).
 - `VaughtConjecture/` — the library.  Every module under it is built and audited (the lakefile globs are
   authoritative; `VaughtConjecture.lean` is an intentionally empty root).  Organized by mathematical topic.
 - `roadmap/` — the human-owned specification: [`roadmap/README.md`](roadmap/README.md) is the
-  roadmap (layers and summits), with the semantic contract, expositions, sketches, and sources
-  alongside it.  New mathematics is added only when it advances a roadmap target.
+  mathematical roadmap and [`roadmap/IMPLEMENTATION.md`](roadmap/IMPLEMENTATION.md) the
+  implementation order with its checkpoints, with the semantic contract, expositions, sketches,
+  and sources alongside.  New mathematics is added only when it advances a roadmap target.
 - `scripts/`, `.github/` — build and audit infrastructure.
 
 ## Building and checking

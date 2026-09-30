@@ -6,7 +6,7 @@ Develop a reusable library of finite closed diagrams, extension of bounded obser
 
 The organizing invariant is a **continuous decreasing family of expansion domains with countable successor losses and increasing logical agreement**. Do not require a total stopping rank, exhaustive rank layers, characteristic arity, a canonical terminal representative, or a Borel structure on the quotient of models.
 
-This README is the definitive mathematical roadmap. `Suggested.lean` records selected interfaces and human-owned theorem targets; finishing only that file is not completion. `SEMANTIC_CONTRACT.md` fixes the meanings that a rewrite must preserve. `EXPOSITIONS.md` gives three informal accounts. 
+This README is the mathematical roadmap; `IMPLEMENTATION.md` refines it into an implementation order with semantic guards and acceptance checkpoints, and prevails where the two differ. `Suggested.lean` records selected interfaces and human-owned theorem targets; finishing only that file is not completion. `SEMANTIC_CONTRACT.md` fixes the meanings that a rewrite must preserve. `EXPOSITIONS.md` gives three informal accounts. 
 
 
 ## Mathematical interface to the endpoint
