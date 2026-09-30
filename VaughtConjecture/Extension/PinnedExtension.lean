@@ -3,6 +3,7 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
+import VaughtConjecture.Extension.Basic
 import VaughtConjecture.Stage.Legal
 
 /-!
@@ -71,89 +72,6 @@ universe u
 namespace VaughtConjecture
 
 open Finset
-
-/-! ### Extending an embedding by one point -/
-
-section Embeddings
-
-variable {m n k : ℕ}
-
-/-- The embedding of `Fin (m + 1)` into `Fin n` that is `f` on `Fin m` and sends the last point to
-a point `x` outside the range of `f`. -/
-def snocEmb (f : Fin m ↪ Fin n) (x : Fin n) (hx : x ∉ Set.range f) : Fin (m + 1) ↪ Fin n where
-  toFun := Fin.snoc (α := fun _ ↦ Fin n) f x
-  inj' i j h := by
-    induction i using Fin.lastCases with
-    | last =>
-      induction j using Fin.lastCases with
-      | last => rfl
-      | cast j => exact absurd ⟨j, by simpa using h.symm⟩ hx
-    | cast i =>
-      induction j using Fin.lastCases with
-      | last => exact absurd ⟨i, by simpa using h⟩ hx
-      | cast j => simpa using h
-
-@[simp] theorem snocEmb_castSucc (f : Fin m ↪ Fin n) (x : Fin n) (hx : x ∉ Set.range f)
-    (i : Fin m) : snocEmb f x hx i.castSucc = f i :=
-  Fin.snoc_castSucc (α := fun _ ↦ Fin n) ..
-
-@[simp] theorem snocEmb_last (f : Fin m ↪ Fin n) (x : Fin n) (hx : x ∉ Set.range f) :
-    snocEmb f x hx (Fin.last m) = x :=
-  Fin.snoc_last (α := fun _ ↦ Fin n) ..
-
-/-- The point `snocEmb` adds is the last point. -/
-theorem castSuccEmb_trans_snocEmb (f : Fin m ↪ Fin n) (x : Fin n) (hx : x ∉ Set.range f) :
-    Fin.castSuccEmb.trans (snocEmb f x hx) = f :=
-  Function.Embedding.ext fun i ↦ by simp
-
-/-- The range of `snocEmb` is the range of `f` with `x` added. -/
-theorem univ_map_snocEmb (f : Fin m ↪ Fin n) (x : Fin n) (hx : x ∉ Set.range f) :
-    univ.map (snocEmb f x hx) = insert x (univ.map f) := by
-  ext y
-  simp only [mem_map, mem_univ, true_and, mem_insert]
-  constructor
-  · rintro ⟨i, rfl⟩
-    induction i using Fin.lastCases with
-    | last => simp
-    | cast i => exact Or.inr ⟨i, by simp⟩
-  · rintro (rfl | ⟨i, rfl⟩)
-    · exact ⟨Fin.last m, by simp⟩
-    · exact ⟨i.castSucc, by simp⟩
-
-/-- The face `f` followed by the new point: the embedding of `Fin (m + 1)` into `Fin (n + 1)`
-that is `f` on `Fin m` and sends the last point to the last point. -/
-def extendByLast (f : Fin m ↪ Fin n) : Fin (m + 1) ↪ Fin (n + 1) :=
-  snocEmb (f.trans Fin.castSuccEmb) (Fin.last n) fun ⟨i, hi⟩ ↦ by
-    simpa using (Fin.castSucc_lt_last (f i)).ne hi
-
-@[simp] theorem extendByLast_castSucc (f : Fin m ↪ Fin n) (i : Fin m) :
-    extendByLast f i.castSucc = (f i).castSucc := by
-  simp [extendByLast]
-
-@[simp] theorem extendByLast_last (f : Fin m ↪ Fin n) :
-    extendByLast f (Fin.last m) = Fin.last n := by
-  simp [extendByLast]
-
-/-- The face `f` followed by the new point restricts to `f` on the old points. -/
-theorem castSuccEmb_trans_extendByLast (f : Fin m ↪ Fin n) :
-    Fin.castSuccEmb.trans (extendByLast f) = f.trans Fin.castSuccEmb :=
-  Function.Embedding.ext fun i ↦ by simp
-
-/-- Extending a composite by the new point is composing the extensions. -/
-theorem extendByLast_trans (g : Fin k ↪ Fin m) (f : Fin m ↪ Fin n) :
-    (extendByLast g).trans (extendByLast f) = extendByLast (g.trans f) :=
-  Function.Embedding.ext fun i ↦ by
-    induction i using Fin.lastCases with
-    | last => simp
-    | cast i => simp
-
-/-- The range of `extendByLast f` is the range of `f`, moved to the old points, with the new
-point added. -/
-theorem univ_map_extendByLast (f : Fin m ↪ Fin n) :
-    univ.map (extendByLast f) = insert (Fin.last n) ((univ.map f).map Fin.castSuccEmb) := by
-  rw [extendByLast, univ_map_snocEmb, ← map_map]
-
-end Embeddings
 
 namespace StageType
 
@@ -252,13 +170,15 @@ theorem exists_pinned_extension (hα : HasCoatomExtensions.{u} α) {P : StageTyp
       simpa using hy
     obtain ⟨x, hx, hxP⟩ := hplan.exists_insert_mem hfP hne
     have hx' : x ∉ Set.range f := fun ⟨i, hi⟩ ↦ hx (by simp [← hi])
-    set f' := snocEmb f x hx'
-    have hf'P : univ.map f' ∈ P.toCellScheme.faces := by rwa [univ_map_snocEmb]
+    set f' := Fin.Embedding.snoc f hx'
+    -- `Fin.Embedding.init_snoc`, with `Fin.Embedding.init` unfolded.
+    have hff' : Fin.castSuccEmb.trans f' = f := Fin.Embedding.init_snoc f hx'
+    have hf'P : univ.map f' ∈ P.toCellScheme.faces := by rwa [Fin.Embedding.univ_map_snoc]
     set p' := P.comap f' hf'P
     have hPf' : restrictFace f' P = some p' := restrictFace_of_mem P f' hf'P
     have hp' : p'.IsLegal := hP.restrictFace f' hPf'
     have hp'p : restrictFace Fin.castSuccEmb p' = some p := by
-      rw [restrictFace_trans P f' _ hPf', castSuccEmb_trans_snocEmb, hPf]
+      rw [restrictFace_trans P f' _ hPf', hff', hPf]
     -- One coatom extension: amalgamate `p'` and `d` over `p`.
     obtain ⟨t, ht, htp', htd⟩ := hα m p' d p hp' hd hp'p hdp
     -- The remaining points: `t` is a one-point coface of the enlarged face `p'`.
@@ -268,7 +188,7 @@ theorem exists_pinned_extension (hα : HasCoatomExtensions.{u} α) {P : StageTyp
       exact ((Fintype.bijective_iff_injective_and_card f).mpr ⟨f.injective, by simp [he]⟩).2
     obtain ⟨Q, hQ, hQP, hQt⟩ := ih (n - (m + 1)) (by omega) hPf' ht htp' rfl
     refine ⟨Q, hQ, hQP, ?_⟩
-    rw [← castSuccEmb_trans_snocEmb f x hx', ← extendByLast_trans,
+    rw [← hff', ← extendByLast_trans,
       ← restrictFace_trans Q _ _ hQt, htd]
 
 /-! ### The face must be closed -/
@@ -376,11 +296,13 @@ theorem exists_amalgam (hα : HasCoatomExtensions.{u} α) {P : StageType.{u} α 
       simpa using hy
     obtain ⟨x, hx, hxR⟩ := hplan.exists_insert_mem hgR hne
     have hx' : x ∉ Set.range g := fun ⟨i, hi⟩ ↦ hx (by simp [← hi])
-    set g' := snocEmb g x hx'
-    have hg'R : univ.map g' ∈ R.toCellScheme.faces := by rwa [univ_map_snocEmb]
+    set g' := Fin.Embedding.snoc g hx'
+    -- `Fin.Embedding.init_snoc`, with `Fin.Embedding.init` unfolded.
+    have hgg' : Fin.castSuccEmb.trans g' = g := Fin.Embedding.init_snoc g hx'
+    have hg'R : univ.map g' ∈ R.toCellScheme.faces := by rwa [Fin.Embedding.univ_map_snoc]
     have hRg' : restrictFace g' R = some (R.comap g' hg'R) := restrictFace_of_mem R g' hg'R
     have hp'p : restrictFace Fin.castSuccEmb (R.comap g' hg'R) = some p := by
-      rw [restrictFace_trans R g' _ hRg', castSuccEmb_trans_snocEmb, hRg]
+      rw [restrictFace_trans R g' _ hRg', hgg', hRg]
     -- Extend `P` over its face `f` by the enlarged face of `R`.
     obtain ⟨P', hP', hP'P, hP'f⟩ :=
       exists_pinned_extension hα hP hPf (hR.restrictFace g' hRg') hp'p
@@ -394,7 +316,7 @@ theorem exists_amalgam (hα : HasCoatomExtensions.{u} α) {P : StageType.{u} α 
     · rw [← restrictFace_trans Q i' _ hQP', hP'P]
     · have h := congrArg (Fin.castSuccEmb.trans ·) hij
       rw [← Function.Embedding.trans_assoc, ← Function.Embedding.trans_assoc,
-        castSuccEmb_trans_extendByLast, castSuccEmb_trans_snocEmb] at h
+        castSuccEmb_trans_extendByLast, hgg'] at h
       rw [← h, Function.Embedding.trans_assoc]
 
 end StageType

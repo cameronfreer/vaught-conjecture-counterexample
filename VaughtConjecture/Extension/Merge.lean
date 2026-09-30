@@ -3,7 +3,6 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
-import Mathlib.Data.Fintype.Sort
 import Mathlib.Data.Fintype.Sum
 import Mathlib.Data.Prod.Lex
 import Mathlib.Order.Interval.Finset.Fin
@@ -30,6 +29,12 @@ common face, in the order of each chain).
   embeddings; `Merge.right` sends `eb t` to `Merge.left (ea t)` (`Merge.right_apply_eb`), so the
   two chains are identified along the common subchain and both orders are retained.
 * `Merge.card`: the merge has `ca + (cb - r)` points.
+
+## Placement
+
+Nothing here is about schemes: `Merge` is general order theory on finite chains, and belongs in an
+`Order/` folder of the library (and is a candidate for Mathlib).  It is stated here beside its
+only application, the amalgam of `VaughtConjecture.Extension.CoatomAmalgam`.
 -/
 
 namespace VaughtConjecture

@@ -3,9 +3,11 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
+import VaughtConjecture.Extension.Basic
 import VaughtConjecture.Extension.Gluing
 import VaughtConjecture.Extension.Merge
-import VaughtConjecture.Extension.PinnedExtension
+import VaughtConjecture.Scheme.Transport
+import VaughtConjecture.Stage.Scheme
 
 /-!
 # The amalgamated scheme of two coatom schemes

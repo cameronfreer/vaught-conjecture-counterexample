@@ -3,7 +3,9 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
+import Mathlib.Data.Fintype.Sort
 import VaughtConjecture.Extension.CoatomScheme
+import VaughtConjecture.Stage.Legal
 
 /-!
 # The amalgam of two coatom stage types, with its literal faces
