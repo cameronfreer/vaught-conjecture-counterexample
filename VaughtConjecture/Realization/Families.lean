@@ -142,13 +142,6 @@ theorem mem_bottomPatternFamily : q ∈ bottomPatternFamily S ρ ↔ q.toScheme 
       (q.label i = ⊥ ↔ ρ j = ⊥) :=
   Iff.rfl
 
-/-- The bottom-pattern family of a labelling depends only on which of its values are bottom. -/
-theorem bottomPatternFamily_congr {S : Scheme.{u} (n + 1)} {ρ ρ' : Fin S.card → Label.{u}}
-    (h : ∀ j, ρ j = ⊥ ↔ ρ' j = ⊥) :
-    (bottomPatternFamily S ρ : Set (StageType.{u} α (n + 1))) = bottomPatternFamily S ρ' := by
-  ext q
-  simp only [mem_bottomPatternFamily, h]
-
 /-- Membership in the uniformity family: a label in the band `[γ, γ + ω)`. -/
 theorem mem_uniformityFamily : q ∈ uniformityFamily γ ↔
     ∃ d, (γ : Label.{u}) ≤ q.label d ∧ q.label d < ((γ + Ordinal.omega0 : Ordinal.{u}) : Label) :=
@@ -178,6 +171,13 @@ theorem castSucc_mem_faces_of_mem_cofaces (hq : q ∈ p.cofaces) :
 theorem bottomPatternFamily_subset_saturationFamily :
     bottomPatternFamily S ρ ⊆ (saturationFamily S : Set (StageType.{u} α (n + 1))) :=
   fun _ h ↦ h.1
+
+/-- The bottom-pattern family of a labelling depends only on which of its values are bottom. -/
+theorem bottomPatternFamily_congr {S : Scheme.{u} (n + 1)} {ρ ρ' : Fin S.card → Label.{u}}
+    (h : ∀ j, ρ j = ⊥ ↔ ρ' j = ⊥) :
+    (bottomPatternFamily S ρ : Set (StageType.{u} α (n + 1))) = bottomPatternFamily S ρ' := by
+  ext q
+  simp only [mem_bottomPatternFamily, h]
 
 /-- Dominance families shrink as `γ` grows. -/
 theorem dominanceFamily_anti {γ γ' : Ordinal.{u}} (h : γ ≤ γ') :
