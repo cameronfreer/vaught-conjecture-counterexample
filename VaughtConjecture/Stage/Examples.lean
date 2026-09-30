@@ -5,7 +5,6 @@ Authors: Cameron Freer
 -/
 import Mathlib.Data.Fin.VecNotation
 import Mathlib.Tactic.FinCases
-import Mathlib.Tactic.NormNum
 import VaughtConjecture.Geometry.IntervalPlan
 import VaughtConjecture.Stage.Basic
 
@@ -120,7 +119,7 @@ private noncomputable def succ : StageType.{0} 3 2 where
     · simp [succLabel]
     · simp only [succLabel, Fin.mk_one, Matrix.cons_val_one, Matrix.cons_val_fin_one,
         Label.atStage_ofNat]
-      exact_mod_cast (by norm_num : 2 < 3)
+      exact_mod_cast (by decide : 2 < 3)
 
 /-- **Reduction at a successor stage**: the reduction of the section of `succ` (the labels
 `succLabel` for the rows `succRows`) to the successor stage `2` is not lawful, so stage reduction
@@ -134,7 +133,7 @@ private theorem not_isLawful_reduce_two_succ :
   have h1 := heq ⟨0, ha⟩
   have h2 := heq ⟨1, succCells.mem_below_gradedIndex 1⟩
   have r1 : Label.reduce (2 : Ordinal.{0}) (1 : Label.{0}) = 1 :=
-    Label.reduce_of_lt (by exact_mod_cast (show (1 : Ordinal.{0}) < 2 by norm_num))
+    Label.reduce_of_lt (by exact_mod_cast one_lt_two)
   have r2 : Label.reduce (2 : Ordinal.{0}) (2 : Label.{0}) = ⊤ := Label.reduce_of_le le_rfl
   simp only [Function.comp_apply, succLabel, succRows, succCells, Matrix.cons_val_zero,
     Matrix.cons_val_one, r1, r2, min_top_right] at h1 h2
@@ -142,7 +141,7 @@ private theorem not_isLawful_reduce_two_succ :
   -- `h1 : 1 = min (σ 1) (g 1)` and `h2 : ⊤ = min (σ 2) (g 2)`
   have hg2 : g 2 = ⊤ := top_le_iff.mp (h2.le.trans (min_le_right _ _))
   have hσ2 : σ 2 = ⊤ := top_le_iff.mp (h2.le.trans (min_le_left _ _))
-  have hg1 : g 1 = ⊤ := top_le_iff.mp (hg2 ▸ hw.antitone (by norm_num : 1 ≤ 2))
+  have hg1 : g 1 = ⊤ := top_le_iff.mp (hg2 ▸ hw.antitone (by decide : 1 ≤ 2))
   rw [hg1, min_top_right] at h1
   have key := hw.visibilityReplace_comm 1 2 (by rw [← h1, hg2]; exact le_top) 2 le_rfl
   rw [← h1, (by simp : Label.visibilityReplace 2 2 (1 : Label.{0}) = 2), hσ2] at key

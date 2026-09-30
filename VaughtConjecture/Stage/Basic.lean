@@ -163,7 +163,7 @@ theorem map_univ_mem_comap_faces_iff (hf : univ.map f ∈ t.toCellScheme.faces) 
   simp [map_map]
 
 /-- Two restrictions compose to the restriction along the composite. -/
-theorem comap_comap (hf : univ.map f ∈ t.toCellScheme.faces)
+@[simp] theorem comap_comap (hf : univ.map f ∈ t.toCellScheme.faces)
     (hg : univ.map g ∈ (t.comap f hf).toCellScheme.faces) :
     (t.comap f hf).comap g hg =
       t.comap (g.trans f) ((t.map_univ_mem_comap_faces_iff f g hf).mp hg) := by

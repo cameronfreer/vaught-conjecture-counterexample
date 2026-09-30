@@ -31,7 +31,9 @@ countable set as soon as there are countably many ordinals below `α`
 No bound on the rows other than the coding is used.
 
 The label-level statements `Label.countable_setOf_atStage` and
-`Label.countable_setOf_lt_omega0_sq` belong in `VaughtConjecture.Label.Basic`, and
+`Label.countable_setOf_lt_omega0_sq` belong in `VaughtConjecture.Label.Basic`; `Rows.IsLawful.reduce`
+(`VaughtConjecture.Stage.Basic`) in `VaughtConjecture.Scheme.Row`; `CellScheme.IsComplete`
+(`VaughtConjecture.Stage.Scheme`) and
 `CellScheme.countable` in `VaughtConjecture.Scheme.Cell`; they are stated here so that those files
 are unchanged.
 
