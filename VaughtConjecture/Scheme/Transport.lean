@@ -50,7 +50,8 @@ Once moved, the following become one-line consequences, to be derived from them 
 re-derived inline in `CellScheme.IsComplete.comap`); `Rows.comap_reindex_comap_symm`
 (`comap_comap_symm (IsLowerEmbedding.reindex D e)`); `Rows.isLawful_comap_reindex_iff`
 (`isLawful_comap_equiv_iff (IsLowerEmbedding.reindex D e)`); `IsBountiful.restrict`
-(`IsBountiful.comap_of_image_eq` with the identity map of faces); and
+(`IsBountiful.comap_of_image_eq` with the identity map of faces, given the image equation
+`Subtype.val '' (D.restrict B).below X = D.below X`, a lemma of its own); and
 `IsLowerEmbedding.reindex_symm D e` (`(IsLowerEmbedding.reindex D e).symm`).
 
 ## References
@@ -79,8 +80,8 @@ variable (D) (f : β ↪ α)
 of the pair. -/
 theorem gradedIndex_comap_le_iff (d : D.visible (Set.range f)) {X : Finset β × ℕ} :
     (D.comap f).gradedIndex d ≤ X ↔ D.gradedIndex d ≤ Prod.map (Finset.map f) id X := by
-  rw [gradedIndex_le_iff, gradedIndex_le_iff, ← map_subset_map (f := f), map_comap_scope,
-    comap_grade, Prod.map_fst, Prod.map_snd, id_eq]
+  rw [gradedIndex_le_iff, gradedIndex_le_iff, ← map_subset_map (f := f), map_comap_scope]
+  simp
 
 /-- The graded faces of the pullback are the pairs whose image is a graded face. -/
 theorem mem_gradedFaces_comap {X : Finset β × ℕ} :
