@@ -12,10 +12,11 @@ import VaughtConjecture.Language.Density
 /-!
 # The spectrum of a sentence on coded countable models
 
-Roadmap, Layer 6 (the two independent bounds, thinness by descriptive separation, the upper bound
-by Scott separation on the persistent core, and the all-countable-carrier bridge) and the
-reduction of the main theorem to expansion domains; `IMPLEMENTATION.md`, checkpoint 6 (thinness
-and the all-countable bridge); semantic contract, item 1.
+Roadmap, Layer 6 (the two bounds, each proved without the other: thinness by descriptive
+separation and the upper bound by Scott separation on the persistent core; and the reduction to
+`ℕ` of the models on all countable carriers) and the reduction of the main theorem to expansion
+domains; `IMPLEMENTATION.md`, checkpoint 6 (thinness and the reduction to `ℕ`); semantic
+contract, item 1.
 
 **The statement.**  `HasThinAlephOneSpectrum φ` is the statement of the roadmap sketch
 `Suggested.lean`, verbatim: the models of `φ` coded on `ℕ` have exactly `ℵ₁` isomorphism classes
@@ -27,8 +28,8 @@ isomorphism antichain, not a bound below the continuum.
 a sentence `θ` on a class of coded models of `φ` (`classTruth φ θ`) is actual satisfaction of `θ`
 by any representative code; it is well defined because the models of a sentence form an
 isomorphism-invariant set of codes (the library's `isomorphismInvariant_modelsOf`).  The quotient
-map is a presentation of the classes in the sense of the library's descriptive theorems, with
-truth read back as satisfaction on codes (`classTruth_mk`).
+map is a presentation of the classes in the sense of the library's descriptive theorems, and
+the truth of a sentence on the class of a code is its satisfaction by the code (`classTruth_mk`).
 
 * **Scott separation** (`classTruth_separates`): distinct classes are separated by a sentence,
   since each class is isolated by a Scott sentence (`exists_classTruth_iff_eq`, the library's
@@ -62,24 +63,20 @@ whose domains every sentence is eventually uniform (`IsUniformOnFiltration`):
   finite models of the density sentence rests on the cap-to-model theorem of Layer 3
   (`infinite_of_realize_densitySentence_of_capToModel`), so the reduction of every countable model
   of the density sentence to a code is stated with that hypothesis, in
-  `VaughtConjecture.Endpoint.Assembly`.
+  `VaughtConjecture.MainTheorem.Assembly`.
+
+**Infinitary satisfaction across carrier universes.**  Isomorphic structures on carriers in
+different universes satisfy the same infinitary formulas (`realize_boundedFormulaω_equiv`,
+`realize_sentenceω_equiv`), which the ℕ-carrier reduction uses; every infinitary formula has
+countable quantifier rank (`qrank_lt_omega_one`), which gives logical agreement from agreement up
+to each quantifier rank.
 
 Nothing in this file assumes a statement of Layers 3–6; of Layer 6 it proves only the compositions
 from a filtration, which, with the uniformity of sentences, is a hypothesis here.
 
 ## Placement
 
-The following general results are stated here and belong elsewhere:
-
-* `realize_boundedFormulaω_equiv` and `realize_sentenceω_equiv` (transport of infinitary
-  satisfaction along an isomorphism between carriers in different universes): the
-  infinitary-logic library's `BoundedFormulaω.realize_equiv` and `LomegaEquiv.of_equiv` require
-  one carrier universe, and should be generalized in place to carriers in different universes,
-  which makes these two redundant;
-* `qrank_lt_omega_one` (every infinitary formula has countable quantifier rank) in the
-  infinitary-logic library's `Lomega1omega/QuantifierRank`;
-* `classTruth` with its lemmas, and `exists_mem_modelsOf_equiv`, in the infinitary-logic
-  library's `Descriptive/StructureIsoSetoid` and `Descriptive/CodeTransport`.
+This file belongs to Layer 6 of `roadmap/README.md`.
 
 ## References
 
@@ -89,14 +86,14 @@ Conjecture using generalised Stone spaces* (draft, 20 February 2026).
 
 universe u v w z
 
-namespace VaughtConjecture.Endpoint
+namespace VaughtConjecture.MainTheorem
 
 open FirstOrder Language Structure Cardinal Set Counting
 open scoped Ordinal
 
-/-! ### Placement: infinitary satisfaction across carrier universes -/
+/-! ### Infinitary satisfaction across carrier universes -/
 
-section Placement
+section CarrierUniverses
 
 variable {L : Language.{u, v}} {M : Type w} {N : Type z} [L.Structure M] [L.Structure N]
 
@@ -142,7 +139,7 @@ theorem qrank_lt_omega_one {α : Type*} {n : ℕ} (φ : L.BoundedFormulaω α n)
   | iSup φs ih => exact Ordinal.iSup_lt_omega_one ih
   | iInf φs ih => exact Ordinal.iSup_lt_omega_one ih
 
-end Placement
+end CarrierUniverses
 
 /-! ### The statement -/
 
@@ -310,4 +307,4 @@ theorem mk_eq_mk_iff_isIso {c d : ModelsOf densitySentence.{u}} :
 
 end Density
 
-end VaughtConjecture.Endpoint
+end VaughtConjecture.MainTheorem

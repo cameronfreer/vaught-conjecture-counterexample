@@ -3,20 +3,21 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
-import VaughtConjecture.Endpoint.Assembly
+import VaughtConjecture.MainTheorem.Assembly
 
 /-!
 # Examples of the conditional composition
 
-Checks of the hypotheses of `VaughtConjecture.Endpoint.Assembly` on toy types of classes, with
-the observations "is the class `s`", which separate distinct classes.
+The hypotheses of `VaughtConjecture.MainTheorem.Assembly` on abstract types of classes (the
+countable ordinals, with or without `2 ^ ℵ₁` further classes, and a single class), with the
+observations "is the class `s`", which separate distinct classes.
 
 * The **tail domains** of the countable ordinals (stage `ξ` keeps the ordinals `≥ ξ`) satisfy
   every hypothesis, and the composition gives exactly `ℵ₁` classes; the persistent core is empty.
-* **Logical agreement is needed**: adjoining a block of `2 ^ ℵ₁` classes lying in every domain
+* **Logical agreement is needed**: adjoining `2 ^ ℵ₁` further classes lying in every domain
   keeps the domain laws, countable losses, and nonempty losses, but gives more than `ℵ₁` classes;
   so no family of observations separating the classes is constant on the domains.
-* **Countable losses are needed**: adjoining a block of `2 ^ ℵ₁` classes all lost at the first
+* **Countable losses are needed**: adjoining `2 ^ ℵ₁` further classes all lost at the first
   successor keeps the domain laws, nonempty losses, and logical agreement, but gives more than
   `ℵ₁` classes.
 * **Nonempty losses are needed**: a single class in every domain satisfies the domain laws,
@@ -26,7 +27,7 @@ The tail domains repeat the private tail filtration of `VaughtConjecture.Countin
 as expansion domains; that example is private to its file.
 -/
 
-namespace VaughtConjecture.Endpoint
+namespace VaughtConjecture.MainTheorem
 
 open Cardinal Set
 open scoped Ordinal
@@ -36,14 +37,14 @@ section Examples
 /-- The countable ordinals. -/
 private abbrev CountableOrdinal : Type 1 := Iio (ω₁ : Ordinal.{0})
 
-/-- A block of `2 ^ ℵ₁` classes. -/
+/-- The `2 ^ ℵ₁` further classes: the sets of countable ordinals. -/
 private abbrev Block : Type 1 := Set CountableOrdinal
 
 /-- There are exactly `ℵ₁` countable ordinals. -/
 private theorem mk_countableOrdinal : #CountableOrdinal = ℵ₁ := by
   simp [mk_Iio_ordinal]
 
-/-- Adjoining the block gives more than `ℵ₁` classes. -/
+/-- Adjoining the further classes gives more than `ℵ₁` classes. -/
 private theorem aleph_one_lt_mk_sum : ℵ₁ < #(CountableOrdinal ⊕ Block) :=
   calc ℵ₁ < 2 ^ ℵ₁ := cantor _
     _ = #Block := by rw [mk_set, mk_countableOrdinal]
@@ -109,7 +110,7 @@ private theorem tail_hasLogicalAgreement :
     tail.HasLogicalAgreement fun (s x : CountableOrdinal) ↦ x = s :=
   ⟨fun s ↦ ⟨s.1 + 1, add_one_lt_omega_one s.2, uniform_eq (notMem_tail_domain_add_one s)⟩⟩
 
-/-- **The composition fires on the tail domains**: exactly `ℵ₁` classes, from the four
+/-- **The composition applies to the tail domains**: exactly `ℵ₁` classes, from the four
 hypotheses and separation. -/
 example : #CountableOrdinal = ℵ₁ :=
   tail.mk_eq_aleph_one tail_hasCountableLosses tail_hasNonemptyLosses tail_hasLogicalAgreement
@@ -122,7 +123,7 @@ example : (⋂ ξ < ω₁, tail.domain ξ) = ∅ :=
 
 /-! ### Logical agreement is needed -/
 
-/-- The tail domains with the block adjoined to every domain. -/
+/-- The tail domains with the further classes adjoined to every domain. -/
 private def adjoinPersistent : ExpansionDomains (CountableOrdinal ⊕ Block) where
   domain ξ := {z | Sum.elim (· ∈ tail.domain ξ) (fun _ ↦ True) z}
   zero := eq_univ_of_forall fun
@@ -135,9 +136,9 @@ private def adjoinPersistent : ExpansionDomains (CountableOrdinal ⊕ Block) whe
     | .inl x, hx => tail.limit l hl hlt (mem_iInter₂.2 fun ξ hξ ↦ mem_iInter₂.1 hx ξ hξ)
     | .inr _, _ => trivial
 
-/-- **Logical agreement cannot be dropped**: the domains with the block adjoined have countable
-and nonempty losses and more than `ℵ₁` classes, so no family of observations separating the
-classes is constant on the domains. -/
+/-- **Logical agreement cannot be dropped**: the domains with the further classes adjoined have
+countable and nonempty losses and more than `ℵ₁` classes, so no family of observations
+separating the classes is constant on the domains. -/
 example : adjoinPersistent.HasCountableLosses ∧ adjoinPersistent.HasNonemptyLosses ∧
     ℵ₁ < #(CountableOrdinal ⊕ Block) ∧
     ∀ (truth : CountableOrdinal ⊕ Block → CountableOrdinal ⊕ Block → Prop),
@@ -156,7 +157,7 @@ example : adjoinPersistent.HasCountableLosses ∧ adjoinPersistent.HasNonemptyLo
 
 /-! ### Countable losses are needed -/
 
-/-- The tail domains with the block adjoined to the first domain only. -/
+/-- The tail domains with the further classes adjoined to the first domain only. -/
 private def adjoinLost : ExpansionDomains (CountableOrdinal ⊕ Block) where
   domain ξ := {z | Sum.elim (· ∈ tail.domain ξ) (fun _ ↦ ξ = 0) z}
   zero := eq_univ_of_forall fun
@@ -172,7 +173,7 @@ private def adjoinLost : ExpansionDomains (CountableOrdinal ⊕ Block) where
         simpa using hl.succ_lt (pos_iff_ne_zero.2 hl.ne_bot)
       exact absurd (mem_iInter₂.1 hx 1 h1) one_ne_zero
 
-/-- **Countable losses cannot be dropped**: the domains with the block lost at the first
+/-- **Countable losses cannot be dropped**: the domains with the further classes lost at the first
 successor have nonempty losses and logical agreement for the observations "is the class `s`",
 which separate the classes, and more than `ℵ₁` classes. -/
 example : adjoinLost.HasNonemptyLosses ∧
@@ -221,4 +222,4 @@ example (D : ExpansionDomains DensityClass)
 
 end Examples
 
-end VaughtConjecture.Endpoint
+end VaughtConjecture.MainTheorem

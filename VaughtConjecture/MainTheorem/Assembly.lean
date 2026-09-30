@@ -3,13 +3,13 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
-import VaughtConjecture.Endpoint.Spectrum
+import VaughtConjecture.MainTheorem.Spectrum
 
 /-!
 # The main theorem as a conditional composition
 
 Roadmap, the reduction of the main theorem to expansion domains, Layer 5 (expansion domains and
-logical agreement) and Layer 6 (the two independent bounds); `IMPLEMENTATION.md`, checkpoints 5
+logical agreement) and Layer 6 (the upper and lower bounds); `IMPLEMENTATION.md`, checkpoints 5
 and 6; semantic contract, items 1, 8 and 9.
 
 This file states, as named hypotheses, the statements of Layers 3–6 of the roadmap that the main
@@ -60,7 +60,7 @@ set of classes admitting a model expansion to the stage `ω + ω · ξ`:
   of the density sentence, hence for the reduction of every countable model to a code.
 
 Scott separation and descriptive separation are not hypotheses: they are proved in
-`VaughtConjecture.Endpoint.Spectrum` (`classTruth_separates`,
+`VaughtConjecture.MainTheorem.Spectrum` (`classTruth_separates`,
 `isThinOnNatModels_of_countable_truth_sides`) as instantiations of theorems of the
 infinitary-logic library.
 The persistent core `⋂ ξ < ω₁, D ξ` is proved to be a subsingleton from Scott separation and
@@ -87,7 +87,7 @@ departure of every class is assumed.
   isomorphism classes of the models on all countable carriers at once is not made here.
 
 The hypothesis structures on the domains are stated for an arbitrary type of classes, so that
-their composition can be checked on examples (`VaughtConjecture.Endpoint.Examples`).
+their composition can be checked on examples (`VaughtConjecture.MainTheorem.Examples`).
 
 ## References
 
@@ -97,7 +97,7 @@ Conjecture using generalised Stone spaces* (draft, 20 February 2026).
 
 universe u v w x y
 
-namespace VaughtConjecture.Endpoint
+namespace VaughtConjecture.MainTheorem
 
 open FirstOrder Language Structure Cardinal Set Counting baseLanguage
 open scoped Ordinal
@@ -184,8 +184,8 @@ theorem core_subsingleton {S : Type v} {truth : S → X → Prop} (ha : D.HasLog
   persistent_subsingleton_of_separation D.domain truth hsep ha.uniform
 
 /-- **The lower bound**: nonempty successor losses give at least `ℵ₁` classes.  Neither
-countability of the losses nor logical agreement is used, so the lower bound is independent of the
-upper bound and uses no cardinality conclusion or eventual departure. -/
+countability of the losses nor logical agreement is used, so the lower bound does not rest on the
+upper bound, and it uses no cardinality conclusion or eventual departure. -/
 theorem aleph_one_le_mk (hn : D.HasNonemptyLosses) : ℵ₁ ≤ #X :=
   aleph_one_le_mk_of_cofinal D.antitone fun β hβ ↦ ⟨β, le_rfl, hβ, hn.nonempty_loss β hβ⟩
 
@@ -319,4 +319,4 @@ theorem vaughtCounterexample_of_expansionDomains (D : ExpansionDomains DensityCl
     densitySentence_hasThinAlephOneSpectrum_of_expansionDomains D ha hc hn,
     fun _ _ _ h ↦ exists_mem_modelsOf_densitySentence_equiv_of_capToModel hcap h⟩
 
-end VaughtConjecture.Endpoint
+end VaughtConjecture.MainTheorem
