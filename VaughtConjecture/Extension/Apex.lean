@@ -9,7 +9,7 @@ import VaughtConjecture.Extension.Gluing
 import VaughtConjecture.Stage.Legal
 
 /-!
-# The apex layer: a full cell of full grade above a scheme complete below it
+# Adding the apex: a full cell of full grade above a scheme complete below it
 
 Roadmap, Layer 3 (the coatom extension construction: the apex of [Kni26, Corollary 4.3.22], a
 cell of full scope and full grade carrying the largest label); semantic contract, items 3–4.
@@ -35,16 +35,16 @@ through `f` (`Scheme.cellMap_eq_of_strictMono`), in the form
 legal below the full grade when it is well formed, its rows are coded, consistent, and bountiful,
 every cell has grade below `n`, and every graded face of grade below `n` is the graded index of a
 cell: every law of a legal scheme, with completeness only below the full grade.  This one predicate
-is the hypothesis of the apex layer and the legality field of a completion below the full grade
+is the hypothesis for adding the apex and the legality field of a completion below the full grade
 (`VaughtConjecture.Extension.CompletionBelowFullGrade`).
 
-**The apex layer** (`StageType.apexLayer`).  Let `t` be a stage type on `n` points, `0 < n`, whose
+**Adding the apex** (`StageType.addApex`).  Let `t` be a stage type on `n` points, `0 < n`, whose
 scheme is legal below the full grade.  Append one cell of full scope and full grade `n`, labelled
 with the formal top.  The hypothesis `0 < n` makes `(univ, n)` a graded face (grades are positive),
-so that the new cell has a graded face as its graded index.  Its row is a coded copy of the labels
-of `t` (`CellScheme.Rows.IsLawful.exists_bandEncode`), with the code of the formal top at the new
-cell: it is coded and lawful, and the band decoding transforms it back to the labels.  The result
-is legal (`StageType.isLegal_apexLayer`):
+so that the new cell has a graded face as its graded index.  Its row is the coded copy of the
+labels of `t`, their image under a band coding (`CellScheme.Rows.IsLawful.exists_bandEncode`),
+with the code of the formal top at the new cell: it is coded and lawful, and the band decoding
+transforms it back to the labels.  The result is legal (`StageType.isLegal_addApex`):
 
 * consistency: the old rows are those of `t`, and the new row is lawful;
 * bountifulness: below the full grade the lifts are those of `t`, and a lift to a pair of full
@@ -54,15 +54,15 @@ is legal (`StageType.isLegal_apexLayer`):
   cell.
 
 The new cell is the apex: its graded index is `(univ, n)` and its label `⊤` is the largest
-(`StageType.exists_apex_apexLayer`), and the faces along embeddings onto proper subsets are those of
-`t` (`StageType.restrictFace_apexLayer`).  The apex layer itself uses no hypothesis on the stage:
-the apex label `⊤` occurs at every stage.  (The stage enters before it: the completion of the
-coatom extension truncates its labels to a stage that is zero or a limit, and then appends the
-apex; see `VaughtConjecture.Extension.CompletionBelowFullGrade`.)
+(`StageType.exists_apex_addApex`), and the faces along embeddings onto proper subsets are those of
+`t` (`StageType.restrictFace_addApex`).  Adding the apex uses no hypothesis on the stage: the apex
+label `⊤` occurs at every stage.  (The stage enters before it: the completion of a seed is the
+truncation to a stage that is zero or a limit, which reduces the labels to the stage, followed by
+adding the apex; see `VaughtConjecture.Extension.CompletionBelowFullGrade`.)
 
 A bottom row at the apex would not do: a cell whose row is bottom at itself has bottom label in
 every lawful section (`CellScheme.Rows.IsLawful.eq_bot_of_row_self_eq_bot`), which is why the row
-of the apex is a coded copy of the labels.
+of the apex is the coded copy of the labels.
 
 ## Placement
 
@@ -78,7 +78,7 @@ are unchanged.
 
 The apex is the cell `Ξ` of full scope and full grade with `q(Ξ) = max ran q` of
 [Kni26, Corollary 4.3.22]; completeness is [Kni26, Definition 2.5.15] and bountifulness
-[Kni26, Definition 2.5.14]; the row of the apex is coded, as in the range normalisation of
+[Kni26, Definition 2.5.14]; the row of the apex is coded, as in the range normalization of
 [Kni26, Lemma 2.5.13].
 -/
 
@@ -446,7 +446,7 @@ private theorem eq_of_mem_gradedFaces_of_snd_eq {X : Finset (Fin n) × ℕ}
 
 /-- A scheme on `n` points is **legal below the full grade**: every law of a legal scheme
 (`Scheme.IsLegal`), with completeness only below the full grade `n`, and every cell of grade below
-`n`.  Appending a cell of full scope and full grade makes it legal (`StageType.isLegal_apexLayer`).
+`n`.  Appending a cell of full scope and full grade makes it legal (`StageType.isLegal_addApex`).
 -/
 structure IsLegalBelowFullGrade (S : Scheme.{u} n) : Prop where
   /-- The scheme is well formed. -/
@@ -506,7 +506,7 @@ theorem isComplete_appendFullCell
 
 end Scheme
 
-/-! ### The apex layer -/
+/-! ### Adding the apex -/
 
 namespace StageType
 
@@ -534,7 +534,7 @@ noncomputable def apexRow : Fin (t.card + 1) → Label.{u} :=
   Fin.snoc (α := fun _ ↦ Label.{u}) (bandEncode (apexCodes ht) n ∘ t.label)
     (bandEncode (apexCodes ht) n ⊤)
 
-/-- The labels of the apex layer: the labels of `t`, and the formal top at the apex. -/
+/-- The labels after adding the apex: the labels of `t`, and the formal top at the apex. -/
 def apexLabel : Fin (t.card + 1) → Label.{u} := Fin.snoc (α := fun _ ↦ Label.{u}) t.label ⊤
 
 /-- The apex row at an old cell. -/
@@ -546,7 +546,7 @@ def apexLabel : Fin (t.card + 1) → Label.{u} := Fin.snoc (α := fun _ ↦ Labe
 @[simp] theorem apexRow_last : apexRow ht (Fin.last _) = bandEncode (apexCodes ht) n ⊤ :=
   Fin.snoc_last (α := fun _ ↦ Label.{u}) ..
 
-/-- The label of an old cell of the apex layer. -/
+/-- The label of an old cell after adding the apex. -/
 @[simp] theorem apexLabel_castSucc (d : Fin t.card) : apexLabel (t := t) d.castSucc = t.label d :=
   Fin.snoc_castSucc (α := fun _ ↦ Label.{u}) ..
 
@@ -554,7 +554,7 @@ def apexLabel : Fin (t.card + 1) → Label.{u} := Fin.snoc (α := fun _ ↦ Labe
 @[simp] theorem apexLabel_last : apexLabel (t := t) (Fin.last _) = ⊤ :=
   Fin.snoc_last (α := fun _ ↦ Label.{u}) ..
 
-/-- **The apex row is lawful**: it is a coded copy of the labels of `t`, and the code of the
+/-- **The apex row is lawful**: it is the coded copy of the labels of `t`, and the code of the
 formal top lies above every code. -/
 theorem isLawful_apexRow :
     (t.toScheme.appendFullCell n (apexRow ht) ht.not_le).rows.IsLawful (apexRow ht) := by
@@ -572,8 +572,8 @@ theorem isLawful_apexRow :
     | last => rw [apexRow_last]
     | cast d => rw [apexRow_castSucc]; exact bandEncode_le_bandEncode_top _
 
-/-- **The labels of the apex layer are lawful**: the decoding transforms the apex row back to the
-labels, with the formal top at the apex. -/
+/-- **The labels after adding the apex are lawful**: the decoding transforms the apex row back to
+the labels, with the formal top at the apex. -/
 theorem isLawful_apexLabel :
     (t.toScheme.appendFullCell n (apexRow ht) ht.not_le).rows.IsLawful (apexLabel (t := t)) := by
   refine Scheme.isLawful_appendFullCell ?_ ?_ ?_ fun d hd ↦ absurd hd (ht.grade_lt d).ne
@@ -592,11 +592,11 @@ theorem isLawful_apexLabel :
 
 variable (hn : 0 < n)
 
-/-- The **apex layer** of a stage type legal below the full grade: one cell of full scope and full
+/-- **Adding the apex** to a stage type legal below the full grade: one cell of full scope and full
 grade `n` appended last, labelled with the formal top, whose row is the coded copy of the labels
 (`StageType.apexRow`).  The hypothesis `0 < n` makes `(univ, n)` a graded face (grades are
 positive), so the new cell has a graded face as its graded index. -/
-noncomputable def apexLayer : StageType.{u} α n where
+noncomputable def addApex : StageType.{u} α n where
   toScheme := t.toScheme.appendFullCell n (apexRow ht) ht.not_le
   label := apexLabel
   isWellFormed := Scheme.isWellFormed_appendFullCell t.isWellFormed hn le_rfl
@@ -610,49 +610,49 @@ noncomputable def apexLayer : StageType.{u} α n where
     | last => rw [apexLabel_last]; exact atStage_top
     | cast d => rw [apexLabel_castSucc]; exact t.atStage d
 
-/-- The label of an old cell of the apex layer is its label in `t`. -/
-@[simp] theorem apexLayer_label_castSucc (d : Fin t.card) :
-    (t.apexLayer ht hn).label d.castSucc = t.label d :=
+/-- The label of an old cell after adding the apex is its label in `t`. -/
+@[simp] theorem addApex_label_castSucc (d : Fin t.card) :
+    (t.addApex ht hn).label d.castSucc = t.label d :=
   apexLabel_castSucc d
 
 /-- The label of the apex is the formal top. -/
-@[simp] theorem apexLayer_label_last : (t.apexLayer ht hn).label (Fin.last _) = ⊤ :=
+@[simp] theorem addApex_label_last : (t.addApex ht hn).label (Fin.last _) = ⊤ :=
   apexLabel_last
 
 /-- The apex has full scope. -/
-theorem apexLayer_scope_last : (t.apexLayer ht hn).toCellScheme.scope (Fin.last _) = univ :=
+theorem addApex_scope_last : (t.addApex ht hn).toCellScheme.scope (Fin.last _) = univ :=
   Scheme.appendFullCellScheme_scope_last _ _
 
-/-- **The apex layer is legal**: consistency, bountifulness, and completeness at the full grade.
-The apex layer uses no hypothesis on the stage. -/
-theorem isLegal_apexLayer : (t.apexLayer ht hn).IsLegal :=
+/-- **Adding the apex gives a legal stage type**: consistency, bountifulness, and completeness at
+the full grade.  It uses no hypothesis on the stage. -/
+theorem isLegal_addApex : (t.addApex ht hn).IsLegal :=
   isLegal_iff.mpr ⟨Scheme.isConsistent_appendFullCell ht.isConsistent (isLawful_apexRow ht),
     Scheme.isBountiful_appendFullCell (h := ht.not_le) ht.isBountiful,
     Scheme.isComplete_appendFullCell (h := ht.not_le) ht.exists_gradedIndex_eq⟩
 
 /-- **The apex**: the new cell has full scope and full grade `n`, and carries the largest label,
 the formal top. -/
-theorem exists_apex_apexLayer : ∃ d, (t.apexLayer ht hn).toCellScheme.gradedIndex d = (univ, n) ∧
-    ∀ e, (t.apexLayer ht hn).label e ≤ (t.apexLayer ht hn).label d :=
+theorem exists_apex_addApex : ∃ d, (t.addApex ht hn).toCellScheme.gradedIndex d = (univ, n) ∧
+    ∀ e, (t.addApex ht hn).label e ≤ (t.addApex ht hn).label d :=
   ⟨Fin.last _, Scheme.appendFullCellScheme_gradedIndex_last _ _,
-    fun _ ↦ by rw [apexLayer_label_last]; exact le_top⟩
+    fun _ ↦ by rw [addApex_label_last]; exact le_top⟩
 
-/-- **The proper faces of the apex layer are those of `t`**: along an embedding whose image is
-not the whole ground set, the face maps of the apex layer and of `t` agree, including
+/-- **The proper faces after adding the apex are those of `t`**: along an embedding whose image is
+not the whole ground set, the face maps of `t.addApex ht hn` and of `t` agree, including
 definedness. -/
-theorem restrictFace_apexLayer (f : Fin m ↪ Fin n) (hf : univ.map f ≠ univ) :
-    restrictFace f (t.apexLayer ht hn) = restrictFace f t := by
-  refine restrictFace_eq_of_strictMono (t := t.apexLayer ht hn) (s := t) f
+theorem restrictFace_addApex (f : Fin m ↪ Fin n) (hf : univ.map f ≠ univ) :
+    restrictFace f (t.addApex ht hn) = restrictFace f t := by
+  refine restrictFace_eq_of_strictMono (t := t.addApex ht hn) (s := t) f
     (φ := (Fin.castSucc : Fin t.card → Fin (t.card + 1))) Fin.strictMono_castSucc
     (Scheme.isLowerEmbedding_castSucc n (apexRow ht) ht.not_le)
     (Scheme.appendFullCellScheme_scope_castSucc _ _) (Scheme.comap_rows_castSucc (h := ht.not_le))
     rfl rfl
-    (apexLayer_label_castSucc ht hn) fun z hz ↦ ?_
+    (addApex_label_castSucc ht hn) fun z hz ↦ ?_
   induction z using Fin.lastCases with
   | last =>
     refine absurd (eq_univ_of_forall fun x ↦ ?_) hf
     have hx : x ∈ Set.range f :=
-      hz (mem_coe.mpr ((apexLayer_scope_last ht hn).symm ▸ mem_univ x))
+      hz (mem_coe.mpr ((addApex_scope_last ht hn).symm ▸ mem_univ x))
     obtain ⟨y, rfl⟩ := hx
     exact mem_map_of_mem _ (mem_univ y)
   | cast z => exact ⟨z, rfl⟩

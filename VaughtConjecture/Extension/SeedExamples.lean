@@ -9,7 +9,7 @@ import VaughtConjecture.Extension.CompletionBelowFullGrade
 # Examples: the seed of two one-point types, and its completion
 
 Roadmap, Layer 3 (the coatom extension construction, from a seed through its completion below the
-full grade and the apex layer), checkpoint 2.1.
+full grade and the addition of the apex), checkpoint 2.1.
 
 `point` is the legal stage type on one point carried by the one-point scheme `Scheme.onePoint` (a
 single cell of grade `1`, mute rows) with the bottom label; it is a copy of the private `point`
@@ -18,8 +18,8 @@ has two cells, of scopes `{0}` and `{1}` and grade `1`, and mute rows; it is a s
 (`Seed.ofCoatoms`).  Appending one cell of full scope `{0, 1}` and grade `1`, with mute row and
 bottom label, gives a completion below the full grade by hand: its rows are mute, hence consistent
 and bountiful, and its only graded faces of grade `1` are `({0}, 1)`, `({1}, 1)`, and
-`({0, 1}, 1)`.  At the stage `0`, which is zero, its completion (truncation to the stage, then the
-apex layer) is a legal stage type on two points whose faces along the two coatoms are literally
+`({0, 1}, 1)`.  At the stage `0`, which is zero, its completion (truncation to the stage, then
+adding the apex) is a legal stage type on two points whose faces along the two coatoms are literally
 `point`, with an apex of graded index `({0, 1}, 2)` labelled with the formal top.
 -/
 
