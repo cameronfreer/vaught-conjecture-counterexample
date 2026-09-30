@@ -32,7 +32,12 @@ threshold `k` with value `i`, the finite part of `o` is replaced by `i` when it 
 * For `i ≤ k` it is monotone (`Ordinal.monotone_visibilityReplace`); for `k ≤ i + 1` it is
   inflationary (`Ordinal.le_visibilityReplace`).
 * Replacing again at the full threshold forgets the first value
-  (`Ordinal.visibilityReplace_self_visibilityReplace`).
+  (`Ordinal.visibilityReplace_self_visibilityReplace`), and a finite part replaced below the
+  threshold is restored by a second replacement
+  (`Ordinal.exists_visibilityReplace_visibilityReplace`).
+* At a stage `α` that is zero or a limit, visibility replacement commutes with adding `α` on the
+  left (`Ordinal.visibilityReplace_add`), and with a value `i ≤ K` it keeps an ordinal at most
+  `α + K` at most `α + K` (`Ordinal.visibilityReplace_le_add`).
 
 The extension to labels, fixing the bottom label and the formal top, is
 `VaughtConjecture.Label.visibilityReplace`.
@@ -40,22 +45,21 @@ The extension to labels, fixing the bottom label and the formal top, is
 ## Implementation notes
 
 Visibility replacement is specific to this development; it is declared in the root `Ordinal`
-namespace only so that dot notation applies to ordinals.  Only names containing
+namespace only so that dot notation applies to ordinals.  Only public names containing
 `visibilityReplace`, together with the general statement `Ordinal.lt_iff_mul_lt_of_dvd` and its
-`ω` case, are declared there; a clash with a later Mathlib declaration would be reported by the
-build.
+`ω` case, and private helpers, are declared there; a clash with a later Mathlib declaration
+would be reported by the build.
 
 ## References
 
-Visibility replacement is Definition 2.2.3 of R. W. Knight, *A counterexample to Vaught's
-Conjecture using generalised Stone spaces* (draft, 20 February 2026) [Kni26].
+Visibility replacement is [Kni26, Definition 2.2.3].
 -/
 
 universe u
 
 namespace Ordinal
 
-variable {α o : Ordinal.{u}} {k i : ℕ}
+variable {α o : Ordinal.{u}} {K k i : ℕ}
 
 /-! ### Bands -/
 
@@ -204,5 +208,46 @@ theorem le_visibilityReplace (h : k ≤ i + 1) (o : Ordinal.{u}) : o ≤ visibil
     rw [hn] at hk ⊢
     exact_mod_cast Nat.lt_succ_iff.mp ((Nat.cast_lt.mp hk).trans_le h)
   · exact (visibilityReplace_of_le (not_lt.mp hk) i).ge
+
+/-- Visibility replacement commutes with adding, on the left, an ordinal that is zero or a
+limit. -/
+theorem visibilityReplace_add (hα : Order.IsSuccPrelimit α) (k i : ℕ) (o : Ordinal.{u}) :
+    visibilityReplace k i (α + o) = α + visibilityReplace k i o := by
+  obtain ⟨b, rfl⟩ := isSuccPrelimit_iff_omega0_dvd.mp hα
+  rw [visibilityReplace, visibilityReplace, Ordinal.mul_add_div _ omega0_ne_zero,
+    Ordinal.mul_add_mod_self, mul_add, add_assoc]
+
+/-- An ordinal at most `α + K` lies below `α` or is `α + j` for a natural number `j ≤ K`. -/
+private theorem lt_or_exists_eq_add_of_le_add (h : o ≤ α + K) : o < α ∨ ∃ j ≤ K, o = α + j := by
+  rcases lt_or_ge o α with hlt | hle
+  · exact .inl hlt
+  have hK : o - α ≤ K := Ordinal.sub_le.mpr h
+  obtain ⟨j, hj⟩ := Ordinal.lt_omega0.mp (hK.trans_lt (natCast_lt_omega0 K))
+  rw [hj] at hK
+  exact .inr ⟨j, by exact_mod_cast hK, by rw [← hj, Ordinal.add_sub_cancel_of_le hle]⟩
+
+/-- At a stage `α` that is zero or a limit, visibility replacement with a value `i ≤ K` keeps an
+ordinal at most `α + K` at most `α + K`. -/
+theorem visibilityReplace_le_add (hα : Order.IsSuccPrelimit α) (h : o ≤ α + K) (hi : i ≤ K)
+    (k : ℕ) : visibilityReplace k i o ≤ α + K := by
+  rcases lt_or_exists_eq_add_of_le_add h with ho | ⟨j, hj, rfl⟩
+  · exact ((visibilityReplace_lt_iff hα k i).mpr ho).le.trans le_self_add
+  · rw [visibilityReplace_add hα, visibilityReplace_of_lt_omega0 (natCast_lt_omega0 j)]
+    gcongr
+    split_ifs <;> exact_mod_cast ‹_ ≤ K›
+
+/-- A replaced finite part below the threshold can be restored by a second replacement. -/
+theorem exists_visibilityReplace_visibilityReplace (hi : i < k) (o : Ordinal.{u}) :
+    ∃ j < k, visibilityReplace k j (visibilityReplace k i o) = o := by
+  by_cases ho : o % ω < k
+  · obtain ⟨j, hj⟩ := Ordinal.lt_omega0.mp (Ordinal.mod_lt o omega0_ne_zero)
+    have hik : ((i : ℕ) : Ordinal.{u}) < k := by exact_mod_cast hi
+    refine ⟨j, by exact_mod_cast hj ▸ ho, ?_⟩
+    rw [visibilityReplace_of_lt ho, visibilityReplace_of_lt (by
+        rwa [Ordinal.mul_add_mod_self, natCast_mod_omega0]),
+      Ordinal.mul_add_div _ omega0_ne_zero, Ordinal.div_eq_zero_of_lt (natCast_lt_omega0 i),
+      add_zero, ← hj, Ordinal.div_add_mod]
+  · exact ⟨i, hi, by rw [visibilityReplace_of_le (not_lt.mp ho),
+      visibilityReplace_of_le (not_lt.mp ho)]⟩
 
 end Ordinal

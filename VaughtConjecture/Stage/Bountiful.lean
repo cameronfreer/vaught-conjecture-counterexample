@@ -22,12 +22,16 @@ along an equivalence of cells (`CellScheme.Rows.IsBountiful.reindex`).  No condi
 needed: in particular the statement holds whether or not the range of `f` is a closed face, and
 so whether or not the corresponding face map of stage types is defined.
 
+Capped lifting between two pairs (`CellScheme.Rows.CappedLift`) needs no bountifulness at all:
+the restricted rows lift capped between two pairs exactly when the rows lift capped between their
+images (`Scheme.cappedLift_comap_iff`), since the cell map of the restriction sends the cells
+below a pair onto the cells below its image (`Scheme.image_cellMap_below`).
+
 ## References
 
 Bountifulness is [Kni26, Definition 2.5.14]; face restriction is the restriction to a face of the
 plan of [Kni26, Definition 3.1.2], and that this restriction is again bountiful is clause 3 of
-[Kni26, Proposition 2.6.3], for R. W. Knight, *A counterexample to Vaught's Conjecture using
-generalised Stone spaces* (draft, 20 February 2026).
+[Kni26, Proposition 2.6.3].
 -/
 
 universe u
@@ -40,6 +44,16 @@ variable {n m : ℕ} (f : Fin m ↪ Fin n)
 theorem isBountiful_comap {S : Scheme.{u} n} (hS : S.rows.IsBountiful) :
     (S.comap f).rows.IsBountiful :=
   (hS.comap f).reindex (S.cellEquiv f)
+
+/-- The restricted rows lift capped from `X` to `Y` exactly when the rows lift capped between the
+images of `X` and `Y`.  No bountifulness is assumed. -/
+theorem cappedLift_comap_iff (S : Scheme.{u} n) (f : Fin m ↪ Fin n) {X Y : Finset (Fin m) × ℕ}
+    (h : X ≤ Y) :
+    (S.comap f).rows.CappedLift h ↔
+      S.rows.CappedLift (X := Prod.map (Finset.map f) id X) (Y := Prod.map (Finset.map f) id Y)
+        ⟨Finset.map_subset_map.mpr h.1, h.2⟩ :=
+  CellScheme.Rows.cappedLift_comap_iff (S.isLowerEmbedding_comap f) (S.image_cellMap_below f X)
+    (S.image_cellMap_below f Y) rfl
 
 /-- Regression: the restriction of a scheme with mute rows has bountiful rows, through
 `isBountiful_comap` rather than by recomputing the restricted rows. -/

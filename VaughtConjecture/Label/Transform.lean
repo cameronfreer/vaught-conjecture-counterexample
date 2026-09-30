@@ -32,10 +32,11 @@ are kept apart: `IsWitness` is a proposition about given functions.
   (`TransformsTo.reindex`), and the bottom cases (`TransformsTo.bot`, `TransformsTo.eq_bot`);
 * monotonicity in the source and antitonicity in the grade (`TransformsTo.le_of_le`), and
   preservation of self-visibility at the grade (`TransformsTo.isSelfVisible`);
-* lowering the suppressor (`IsWitness.of_le`, `IsWitness.of_le_stepSuppressor`), truncation of
-  the suppressor above a grade (`IsWitness.truncate`), capping the suppressor by a self-visible
-  label (`IsWitness.cap`), and the cap rule for the target (`TransformsTo.min_const`, a
-  related target-capping variant of [Kni26, Lemma 2.3.12]);
+* lowering the suppressor (`IsWitness.of_le`, `IsWitness.of_le_stepSuppressor`), the pointwise
+  maximum of two suppressors (`IsWitness.sup`), truncation of the suppressor above a grade
+  (`IsWitness.truncate`), capping the suppressor by a self-visible label (`IsWitness.cap`), and
+  the cap rule for the target (`TransformsTo.min_const`, a related target-capping variant of
+  [Kni26, Lemma 2.3.12]);
 * guarded composition (`IsWitness.comp_of_bot_reflecting`): a shifter normalized at grade `m`
   may be followed by a shifter normalized at grade `m` that reflects bottom on the values of the
   first;
@@ -52,12 +53,10 @@ is available only in the guarded form above.
 
 ## References
 
-The transformation relation is Definition 2.3.9, the cap rule `TransformsTo.min_const` is a
-related target-capping variant of Lemma 2.3.12 (which caps the source at a selected source value
-and the target at the corresponding target value), and the reduction rule is Lemma 3.1.3 of
-R. W. Knight, *A counterexample to Vaught's Conjecture using generalised
-Stone spaces* (draft, 20 February 2026) [Kni26].  Nontransitivity contradicts Lemma 2.3.14 of
-[Kni26] as printed.
+The transformation relation is [Kni26, Definition 2.3.9], the cap rule `TransformsTo.min_const`
+is a related target-capping variant of [Kni26, Lemma 2.3.12] (which caps the source at a selected
+source value and the target at the corresponding target value), and the reduction rule is
+[Kni26, Lemma 3.1.3].  Nontransitivity contradicts [Kni26, Lemma 2.3.14] as printed.
 -/
 
 universe u
@@ -195,6 +194,15 @@ theorem TransformsTo.min_const (h : TransformsTo grade p q) {K : ℕ} (hK : ∀ 
     {c : Label.{u}} (hc : IsSelfVisible K c) : TransformsTo grade p (fun d ↦ min (q d) c) := by
   obtain ⟨g, σ, hw, heq⟩ := h
   exact ⟨_, σ, hw.cap hc, fun d ↦ by simp only [ite_eq_left (hK d), heq, min_assoc]⟩
+
+/-- The pointwise maximum of two suppressors of a shifter is a suppressor of it. -/
+theorem IsWitness.sup (hg : IsWitness g σ) (hg' : IsWitness g' σ) : IsWitness (g ⊔ g') σ where
+  antitone := hg.antitone.sup hg'.antitone
+  isSelfVisible n := (hg.isSelfVisible n).max (hg'.isSelfVisible n)
+  map_bot := hg.map_bot
+  monotone := hg.monotone
+  visibilityReplace_comm x k hx i hi := (le_sup_iff.mp hx).elim
+    (hg.visibilityReplace_comm x k · i hi) (hg'.visibilityReplace_comm x k · i hi)
 
 /-! ### Guarded composition -/
 
@@ -360,9 +368,8 @@ private theorem isSelfVisible_one_two_one_top_bot_top (b : Bool) :
   cases b <;> simp
 
 /-- **The transformation relation is not transitive**, even on labellings that are self-visible
-at the grade, and already for two cells of grade one.  This contradicts Lemma 2.3.14 of [Kni26]
-as printed; the library proves only the guarded composition
-`IsWitness.comp_of_bot_reflecting`. -/
+at the grade, and already for two cells of grade one.  This contradicts [Kni26, Lemma 2.3.14] as
+printed; the library proves only the guarded composition `IsWitness.comp_of_bot_reflecting`. -/
 theorem TransformsTo.not_transitive :
     ¬ ∀ (grade : Bool → ℕ) (p q r : Bool → Label.{u}), (∀ d, IsSelfVisible (grade d) (p d)) →
       (∀ d, IsSelfVisible (grade d) (q d)) → (∀ d, IsSelfVisible (grade d) (r d)) →

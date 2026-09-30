@@ -42,10 +42,9 @@ See `roadmap/README.md`, Layer 1, `roadmap/EXPOSITIONS.md` §1, and
 
 ## References
 
-The recursive plan is Definition 2.1.1 ("amalgamation plan"), and restriction to a visible face
-is Definition 2.1.5, of R. W. Knight, *A counterexample to Vaught's Conjecture using generalised
-Stone spaces* (draft, 20 February 2026) [Kni26].  The reading of plans as convex geometries is
-the formalization's own.
+The recursive plan is [Kni26, Definition 2.1.1] ("amalgamation plan"), and restriction to a
+visible face is [Kni26, Definition 2.1.5].  The reading of plans as convex geometries is the
+formalization's own.
 -/
 
 namespace VaughtConjecture.Geometry
