@@ -18,31 +18,39 @@ countable chain construction, checkpoint 3), not the layer numbering of either d
 | --- | --- | --- |
 | Layer 0, Summit 0: general results | used in 1–5 (below) | with their first application |
 | Layer 1, Summit 1: finite semantic kernel, closed charts | 1; stage types, faces of 2 | 1 |
-| Layer 2, Summit 2: realizations, syntax, chain construction | 2; chain construction of 3 | 3; 4 |
+| Layer 2, Summit 2: realizations, syntax, hull operations | 2 | 3; 4 |
 | Layer 3, Summit 3: finite extensions, receiving, recovery | 3; first uses of 1 | 2–5 (below) |
+| Top-free witnesses: the finite age, its classical limit | 3 (steps 1–7) | 3 (1–6); 4, 5 (7) |
 | Layer 4, Summit 4: continuation, terminal comparisons | 4 | 5 |
 | Layer 5, Summit 5: expansion domains and logical agreement | 5 | 5 (unique limit expansions), 6 |
 | Layer 6, Summit 6: the two independent bounds | 5 and the spine | 6 |
 | (none; companions) | milestones A–C (`COMPANIONS.md`) | not core checkpoints |
 
-The general results of Layer 0 are used in layers 1 (lifting), 2 (finite hulls), 3 (chain
-construction), 4 (directed limits, back-and-forth, subsingleton covers), and 5 (countable
-losses), each at the checkpoint of its first application.  Layer 2 of `README.md` reaches
+The general results of Layer 0 are used in layers 1 (lifting), 2 (finite hulls), 3 (the
+classical limit: Fraïssé existence, ultrahomogeneous extension, factorization of tuples through
+the age), 4 (directed limits, back-and-forth, subsingleton covers), and 5 (countable losses),
+each at the checkpoint of its first application.  Layer 2 of `README.md` reaches
 checkpoint 3 and, with the fidelity theorem, checkpoint 4.  Layer 3 of `README.md` is spread over
 four checkpoints: 2 (item 3.1, the construction of every row of its table with its section
-theorem), 3 (the first uses of rows 5 and 6: top-free existence and general model existence),
+theorem), 3 (the first uses of rows 5 and 6: the amalgamation of top-free charts and receiving
+in the classical limit),
 4 (items 3.2 and 3.3 for rows 1–3, the recovery statement of rows 3 and 4 for every
 restriction-compatible labelling, the first use of row 1, and the cap-to-model theorem), and 5
 (items 3.2 and 3.3 for row 4 after the structural candidate, and the first uses of rows 2–4).
 Checkpoint 2 is subdivided: the completion of the coatom extension construction (row 6) is
 checkpoints 2.1–2.7 (below), the seven checkpoints of `README.md`, Layer 3, 3.1, under "Row 6".
-The companion milestones are summarized under "Companion boundaries".
+The construction of the top-free witnesses, the finite age and its classical limit, is the
+section of that name in `README.md`, after Layer 3; its seven steps, with their acceptance
+criteria and checkpoints, are under "The top-free witnesses: milestone order and acceptance"
+below.  The companion milestones are summarized under "Companion boundaries".
 
 ## Environment
 
 Lean `v4.35.0-rc3`; InfinitaryLogic at the revision pinned in `lakefile.toml`; Mathlib
-inherited from InfinitaryLogic's manifest.  Nothing else is imported.  Search the
-pinned InfinitaryLogic first and delete any local lemma that duplicates one already upstream.
+inherited from InfinitaryLogic's manifest.  Nothing else is imported at present.  After the
+repin under "Dependency pins" below, ComputableModelTheory is the one further dependency.
+Search the pinned libraries first and delete any local lemma that duplicates one already
+upstream.
 
 ## Scope and completion
 
@@ -55,17 +63,20 @@ with the continuum.
 
 The core is complete only after every finite construction, realization over a root, recovery
 of donor labels, syntax correspondence, the equivalence of the density sentence with the
-four-family sentence (layer 2), and statement of the main theorem below is proved.
+four-family sentence (layer 2), the top-free witness at every countable block (the
+reconstruction of a classical limit meeting its acceptance criterion), and statement of the main
+theorem below is proved.
 Completion is not limited to the signatures in the sketches.  Each definition needs its usable
 basic API: projections, extensionality, identity/composition, restriction, transport, and
 representative examples.
 
 Under-specified extensions are not part of this roadmap.  Separate companion roadmaps may
-cover hull algebra/cardinality (`HULL_ALGEBRA.md`), model-code topology, `T∞` (the set of
-sentences true in all but countably many classes) and its logical filtration, effective syntax,
-and uncountable models; `COMPANIONS.md` organizes the filtration and `T∞`, chart homogeneity,
-and a geometric obstruction as three optional milestones.  They are not prerequisites of this
-core.
+cover the definability consequences of the hull operations and hull cardinality
+(`HULL_ALGEBRA.md`, §4; the operations themselves are core, layer 2), model-code topology,
+`T∞` (the set of sentences true in all but countably many classes) and its logical filtration,
+effective syntax, and uncountable models; `COMPANIONS.md` organizes the filtration and `T∞`,
+chart homogeneity, and a geometric obstruction as three optional milestones.  They are not
+prerequisites of this core.
 
 ## The mathematical spine
 
@@ -164,6 +175,17 @@ density sentence by these structural clauses and the one-point capped-extension 
 sentence of the main theorem.  Keep nonemptiness explicit until its redundancy is proved.  Cutoffs
 here are natural numbers, including zero.
 
+**Hull operations.**  At every stage, construct the definable total binary hull operations
+(`HULL_ALGEBRA.md`) and prove the four facts of `README.md`, Layer 2: definability and
+totality with values in the hull of the arguments; generated-substructure closure equals hull
+closure, so finitely generated substructures are the finite closed sets; finite charts are the
+finite substructures (a chart is read as its partial realization with the operations computed in
+it); and embeddings of the relational reducts of exactly consistent covering realizations
+preserve and reflect the operations, chart embeddings being exactly the embeddings of the finite
+structures.  The last is proved from the chart witnessing each operation, not from definability
+alone.  Nothing else of `HULL_ALGEBRA.md` is core: the inclusions in `dcl` and `acl`, hull
+cardinality, and uncountable consequences stay optional.
+
 Density quantifies `∀ root, ∀ donor, ∀ cutoff, ∃ extension` on the fixed donor scheme.
 Different cutoffs may use different points.  Prove both satisfaction directions, the
 realization/structure round trips, isomorphism preservation and reflection, and no finite
@@ -178,7 +200,7 @@ that layer), which needs only the coatom extension construction; the cap-to-mode
 therefore proved at checkpoint 4 with the fidelity theorem, before stable modelhood uses it again
 at checkpoint 5.
 
-### 3. Finite extensions, realization over roots, recovery of labels, and one chain construction
+### 3. Finite extensions, realization over roots, recovery of labels, and the classical limit
 
 Layer 3 of `README.md` is the specification of this layer.  It defines the vocabulary (root,
 donor type and donor occurrence, receiving over a root, permitted cutoff and self-visible cap,
@@ -243,24 +265,27 @@ LOW, and the cap-to-model theorem) and consists of four items, built in this ord
    receiving, first used by the one-sided donor transfer (and by the four-family-to-density
    direction of layer 2); exact residual receiving, by the residual comparison; exact
    hollow-growth receiving, by the hollow comparison; capped receiving for the stable candidate,
-   by stable modelhood; the top-free pinned extension, by the top-free capped chain
-   construction; the exact pinned extension, by general model existence.  Each row records its
+   by stable modelhood; the top-free pinned extension, by receiving in the classical limit
+   (step 6 below); the exact pinned extension, through the plain form of the coatom extension
+   property, by the amalgamation of top-free charts (step 2 below).  Each row records its
    exact hypotheses, its conclusion, and its import boundary.  Rows 1–4 conclude on one
    occurrence over the literal root and have recovery theorems; rows 5 and 6 are extension
    statements about charts, without an occurrence or a recovery theorem.  The positive-length
    root restrictions and the empty-root base cases are explicit, and the cap-to-model theorem is
    stated with the table.
 
-Use one countable chain construction on finite master conditions, with the exact and the capped
-finite extension hypotheses stated separately.  Derive partial states from the master; do not
-store synchronized copies.  Absorb the root before deciding its request.  A supported invisible
-face is not an unsupported tuple.  Resolve repeated and delayed requests monotonically.  Use
-Mathlib's cofinal-chain machinery and prove the coherent union once.
+The countable models of the main theorem are the top-free witnesses, constructed by the finite
+age and its classical limit (seven steps, under "The top-free witnesses: milestone order and
+acceptance" below), not by a chain construction.  Derive the partial realization of a finite
+chart from the chart; do not store synchronized copies.  A supported invisible face is not an
+unsupported tuple.
 
-First applications: general model existence (row 6) and the top-free capped construction (row 5).
-The modules of the finite extension constructions must not import the infinite chain construction.
-Direct limits of structures, a generic result of infinitary logic, stay outside this layer: they
-replace no finite extension construction and no decoding or recovery statement.
+First applications: the amalgamation of top-free charts (step 2, from the plain form of the
+coatom extension property and capping) and receiving in the classical limit (step 6, rows 6
+and 5).  The modules of the finite extension constructions import neither the classical limit
+nor the chain construction.  Direct limits of structures and the classical existence theorem
+belong to the two libraries: they replace no finite extension construction and no decoding or
+recovery statement.
 
 ### 4. Stable continuation and terminal comparison
 
@@ -303,6 +328,71 @@ persistent core has at most one element) and `countable_truth_side`.  The `ℵ�
 persistent core is a subsingleton and the remaining classes lie in `ℵ₁ · ℵ₀` many exceptions,
 so `|Q| ≤ ℵ₁`) is a target still to be proved, not a lemma of the sketch.
 
+## The top-free witnesses: milestone order and acceptance
+
+`README.md`, section "The top-free witnesses: the finite age and its classical limit", is the
+specification.  At the stage `λ = λ_η` (a nonzero countable limit), `L_λ` is the relational
+stage chart language and `L^h_λ` its definitional expansion by the hull operations; the age of
+top-free charts is the representative class of the finite `L^h_λ`-structures of the top-free
+legal stage types at `λ`.  The steps are proved in this order; in particular amalgamation (step
+2) precedes the existence of any infinite model (step 3), so that the limit is built from the
+age and not recognized afterwards in a model constructed otherwise.
+
+1. **Finite top-free charts.**  Acceptance: the family is constructed as data (a finite
+   `L^h_λ`-structure for each top-free legal stage type at `λ`, its relations literally the
+   visible faces with their types and no relation at a supported invisible face); the index is
+   countable and contains the empty chart; each member is finitely generated.  Regressions: the
+   empty chart, a one-point chart, a chart with an invisible pair, distinct cells sharing a
+   graded index.
+2. **Hereditary closure, amalgamation, joint embedding.**  Acceptance: the finitely generated
+   substructures of a member are exactly its closed faces with their literal restrictions;
+   amalgamation of two top-free charts over a common face, by the plain form of the coatom
+   extension property followed by capping at a proper cap self-visible at the arity of the
+   amalgam and above all labels of both charts, with the literal commuting square
+   `f₁.trans g₁ = f₂.trans g₂` and literal restrictions to both charts; joint embedding as the
+   case of the empty chart; the hypotheses of `isFraisse_representativeClass` in exactly its
+   form (literal square).  Regressions: the empty common chart, a common chart equal to one of
+   the two, equal charts with equal face embeddings, a common chart that is the hull of two of
+   its points and has more than two points, images meeting outside the common chart (no strong
+   amalgamation is claimed).  No infinite model is imported.
+3. **Classical existence.**  Acceptance: `isFraisse_representativeClass` applied to the family,
+   then the classical existence theorem, giving a countable `L^h_λ`-structure with
+   `IsFraisseLimit`; the countability hypotheses (`[Countable (Σ l, L.Functions l)]`, countably
+   many isomorphism types) are proved for `L^h_λ` and the age, not assumed.
+4. **Reconstruction of partial evaluation.**  Acceptance: the evaluation of an injective tuple is
+   defined from the chart relations of the limit, and the literal recovery and uniqueness
+   clauses of the acceptance criterion (`SEMANTIC_CONTRACT.md`, item 11) are proved from the
+   factorization of tuples through representatives.
+5. **Consistency, covering, top-freeness, nonempty carrier.**  Acceptance: each proved from the
+   factorization of one finite tuple through one representative; exact partial restriction with
+   `none` at invisible faces; covering for arbitrary tuples `Fin n → M`, the empty tuple and
+   repeated coordinates included; every evaluated type in the age.
+6. **Receiving.**  Acceptance: for every root, one-point donor type, and permitted cutoff, an
+   occurrence over the literal root from row 5 and `IsUltrahomogeneous.extend_embedding`, with
+   all its equations on that one occurrence; exact receiving for top-free donors (cutoff above
+   every label of the donor); for donors containing top, one extension for each cutoff, with no
+   claim of one extension for all cutoffs or of recovery of a top.  Regressions: the empty
+   root, a donor with top labels at two different cutoffs, a donor with bottom labels.
+7. **Modelhood, infinitude, terminality.**  Acceptance: modelhood by the cap-to-model theorem
+   (checkpoint 4); infinitude from receiving and the one-point extension of legal stage types;
+   terminality from top-freeness and the new band required at the next block, using only the
+   reduction of models (layer 2).  The placement of the base class in the loss at `η`, by
+   expansion uniqueness, belongs to layer 5 (checkpoint 5).
+
+**Dependency boundaries.**  The age argument (steps 1–7) imports Mathlib, InfinitaryLogic,
+ComputableModelTheory, layers 0–2, and the finite kernel (layer 1, the coatom extension
+construction with rows 5 and 6, and the cap-to-model theorem).  The classical part, steps 3–5,
+imports no `Construction/` module and no module of rows 1–4, of structural continuation, or of
+the expansion domains; steps 6 and 7 add only row 5, the cap-to-model theorem, and the
+reduction of models.  The upstream
+theorems import no module of this repository.  The chain construction (`Construction/`, the
+chain unions of partial realizations, and the conditional chain construction of models) is
+retained only for the statements listed in `README.md` under "The chain construction" (the
+saturated model of [Kni26, Proposition 4.4.5] from explicit finite extension hypotheses, and a
+construction by explicit enumeration as the starting point of an effective presentation); no
+checkpoint of the main theorem depends on it, and it is never a second proof of top-free
+existence.
+
 ## Upstream building blocks
 
 In the pinned InfinitaryLogic:
@@ -330,13 +420,106 @@ In the pinned InfinitaryLogic:
   therefore be quoted, if at all, only for the final equality once both bounds are known, with
   its eventual-departure hypothesis discharged on the complement of the core;
 - the Gδ/Polish model-code spaces;
-- `internalScottRank_le_of_orbits_determined` (`Scott/OrbitRank`), used only by the companion
-  full-chart orbit theory (milestone B of `COMPANIONS.md`).
+- `internalScottRank_le_of_orbits_determined` (`Scott/OrbitRank`), which the orbit-formula
+  rank bound of `README.md`, Layer 0, applies; used only by the companion full-chart orbit
+  theory (milestone B of `COMPANIONS.md`).
+
+In the pinned Mathlib (`Mathlib/ModelTheory/Fraisse.lean`): `age`, `Hereditary`,
+`JointEmbedding`, `Amalgamation`, `IsFraisse`, `IsUltrahomogeneous`, `IsFraisseLimit`,
+`IsUltrahomogeneous.extend_embedding`, `IsFraisseLimit.nonempty_equiv`, and
+`age.fg_substructure`, with the hypotheses recorded in `README.md`, Layer 0.  Mathlib has no
+existence theorem for Fraïssé limits.
+
+To be quoted after the repin (not available at the current pins, and therefore not checked by
+the sketches): from ComputableModelTheory, the classical Fraïssé theorems (`representativeClass`,
+`isFraisse_representativeClass`, `FGCofinal`, `ExtensionRich`, `isFraisseLimit_of_extensionRich`,
+`SequenceExtension`, `amalgamationRich_of_sequenceExtension`, `age_directLimit_eq`,
+`countable_directLimit`, `isFraisseLimit_directLimit`, and the existence theorem), the
+factorization of tuples through the age (`exists_factor_tuple_of_age_subset`,
+`exists_factor_embedding_of_age_subset`), and orbit isolation and countable prime structures
+(`IsolatesTuple`, `IsAtomic`, `isolatesTuple_of_orbit_formula`, `isAtomic_of_orbit_formulas`,
+`IsolatesTuple.realize_iff`, `IsolatesTuple.typesWith_eq_singleton`,
+`exists_elementaryEmbedding_of_countable_atomic`); from InfinitaryLogic, `qrank_toLω_lt_omega0`,
+the explicit finite threshold and the internal rank bound from orbit formulas, the preservation
+of infinitary formulas by maps agreeing locally with automorphisms, and the rank comparison of
+the Scott process (`selfStabilizesCompletely_iff_orbitRank_le`,
+`bfStabilizationOrdinal_self_eq_iSup_orbitRank`, `stabilizesAt_of_orbitRank_le`,
+`rank_le_of_orbitRank_le`, `lift_rank_le_internalScottRank`,
+`internalScottRank_le_lift_rank_add_one`).  Their statement shapes and hypotheses are in
+`README.md`, Layer 0; where the repinned versions name them differently, those names prevail.
 
 `SuggestedInterfaces.lean` checks representative names, so a pin bump that removes one fails
 when the sketch is checked (the checks are run by CI).  Coding a `Type w` carrier on `ℕ` needs a
 transfer of infinitary isomorphism across universes; do not assume that a statement within a
 single universe covers it.
+
+### Dependency pins
+
+The intended repins, made together in `lakefile.toml` and `lake-manifest.json` once the upstream
+versions exist:
+
+- **InfinitaryLogic**: from the current revision (`a58f81a`, the merge of its pull request #134)
+  to a version containing the rank comparison of the Scott process (its pull request #140, merged
+  as `a640bbb`) and the orbit-formula rank theorems and local-automorphism preservation of
+  `README.md`, Layer 0.
+- **ComputableModelTheory**: added as a direct dependency, at a version containing its pull
+  requests #37 (toolchain `v4.35.0-rc3` and its own repin of InfinitaryLogic), #38
+  (extension-rich families) and #39 (representative classes and extension-rich direct limits),
+  the classical existence theorem, and the modules on orbit isolation and countable prime
+  structures and on the factorization of tuples through the age.
+- **Mathlib and the toolchain** agree across the three: one Lean toolchain (`v4.35.0-rc3` at
+  present) and one Mathlib commit (at present the fork commit `346a4bd`, inherited from
+  InfinitaryLogic).  The manifest holds one revision of each dependency, so ComputableModelTheory
+  must be built against the InfinitaryLogic revision pinned here, and the toolchain check of
+  `scripts/check.sh` extends to ComputableModelTheory.
+
+Until then, the statements of the two libraries not at the current pins are named in prose only
+(`README.md`, Layer 0), never `#check`ed in the sketches.
+
+### Applications of library theorems
+
+The development produces the following, and only these, as hypotheses of library theorems:
+
+- **the ages:** for each countable block `η`, the family of finite top-free charts at `λ_η` as
+  finite `L^h_λ`-structures, with finite generation, a countable inhabited index, hereditary
+  closure, joint embedding, and amalgamation with the literal commuting square (steps 1–2);
+- **orbit formulas from finite charts:** in a countable top-free model read in the full,
+  relational stage chart language, for each finite tuple `a` (the empty tuple and repeated
+  coordinates included), the formula `θ_a(x̄) := ∃ z̄, P_p(z̄) ∧ ⋀_i x_i = z_{ι(i)}` of an
+  actual chart `z̄` of type `p` containing `a` at the positions `ι`, with the proof that it
+  defines the automorphism orbit of `a`; this uses chart homogeneity, which for a top-free
+  witness is ultrahomogeneity together with layer 2 (automorphisms of `L_λ`- and
+  `L^h_λ`-structures coincide, the operations being definable) and for an arbitrary countable
+  top-free model with finite-cut receiving is a back-and-forth argument (`COMPANIONS.md`, B2);
+- **the local automorphism property:** every self-embedding of a countable top-free model agrees
+  with an automorphism on each finite tuple (`COMPANIONS.md`, B2).
+
+It then quotes:
+
+- classical existence and `isFraisse_representativeClass` (ComputableModelTheory), for the limit
+  (step 3);
+- the factorization of tuples through the age (ComputableModelTheory), for the reconstruction
+  (steps 4–5);
+- `IsUltrahomogeneous.extend_embedding` (Mathlib), for receiving (step 6);
+- `isolatesTuple_of_orbit_formula`, `isAtomic_of_orbit_formulas`, and
+  `exists_elementaryEmbedding_of_countable_atomic` (ComputableModelTheory), for the atomicity of
+  a top-free witness and its primeness among models of its complete first-order theory
+  (`COMPANIONS.md`, B3);
+- the finite threshold and the internal rank bound from orbit formulas (InfinitaryLogic, under
+  `[L.IsRelational]`, so applied in `L_λ`, not `L^h_λ`), for `internalScottRank ≤ ω`
+  (`COMPANIONS.md`, B3);
+- the local-automorphism preservation theorem (InfinitaryLogic), for the preservation of every
+  `L_{ω₁,ω}` formula on finite tuples by self-embeddings (`COMPANIONS.md`, B2);
+- the rank comparison of the Scott process (InfinitaryLogic), for stabilization at `ω` of the
+  process of an infinite top-free witness of length `δ` with `ω + 1 < δ`, and its rank at most
+  `ω` when it terminates.
+
+Qualifications: these conclusions concern the full stage chart language and the witness's own
+first-order theory, not its base reduct and not every model of the infinitary sentence; the
+internal rank is in the library's all-levels convention (`≤ ω`, not `< ω`, and no equality);
+the rank of the process is not identified with the internal rank, and neither with the block
+index or the expansion height.  Only the ages are needed for the main theorem; the orbit
+formulas and the local automorphism property are used by companion milestone B.
 
 ## Automation and API discipline
 
@@ -369,22 +552,26 @@ Each checkpoint needs both its abstract API and a concrete application:
    restrictions, and its consistent and bountiful rows are established, and row 6 follows from
    the coatom extension property, with nothing used about the stage; the proof of that property
    in its apex form, the completion of the amalgam, is checkpoints 2.1–2.7.
-3. Realizations, literal syntax correspondence, countable chain construction, general model
-   existence (the first use of row 6, the exact pinned extension) and top-free existence (the
-   first use of row 5, the top-free pinned extension).
+3. Realizations, literal syntax correspondence, the hull operations with their four facts;
+   then steps 1–6 of the top-free witnesses, in order: finite top-free charts, hereditary
+   closure and amalgamation and joint embedding (through the plain form of the coatom extension
+   property, the first use of row 6), classical existence, reconstruction, consistency and
+   covering and top-freeness, and receiving (the first use of row 5).
 4. Items 3.2 and 3.3 for rows 1–3: for each row, the extension of the realization by one actual
    occurrence over the literal root and the recovery theorem (by `Correct` and labelled
    evaluation, by LOW, or through the gate), with all its equations on that occurrence and at
    every permitted cutoff; the recovery statement of rows 3 and 4 for every
    restriction-compatible labelling whose private face lies in the prescribed bottom class; the
-   first use of row 1, the one-sided donor transfer; the cap-to-model theorem; and the fidelity
-   theorem of layer 2, the equivalence of the density sentence with the four-family sentence,
-   whose two directions use row 1 and the cap-to-model theorem.
+   first use of row 1, the one-sided donor transfer; the cap-to-model theorem, with the
+   modelhood and infinitude of the top-free witnesses (step 7); and the fidelity theorem of
+   layer 2, the equivalence of the density sentence with the four-family sentence, whose two
+   directions use row 1 and the cap-to-model theorem.
 5. Structural continuation (the structural stable candidate); then items 3.2 and 3.3 for row 4
    (the acquisition of its calibrated data, its occurrence, and the evaluation of the stable
    labelling by the recovery statement of checkpoint 4); three terminal comparisons (the first
    uses of rows 2 and 3), stable modelhood (the first use of row 4, with the cap-to-model
-   theorem), unique limit expansions.
+   theorem), unique limit expansions, and the terminality of the top-free witnesses with the
+   placement of their base classes in the losses (step 7).
 6. Domain hypotheses of the counting theorem, independent bounds, thinness and all-countable
    bridge.
 
@@ -483,13 +670,14 @@ other coatom, and tops out in a single apex cell.
 ## Companion boundaries
 
 Companion topics: definable domain/logical cuts with strict loss-rank lower bounds; canonical
-top-free classes converging sentencewise; the joint embedding and amalgamation properties (JEP/AP)
-of finite closed charts; local automorphisms of self-embeddings; and the arbitrary-carrier
-Scott/`T∞` theory dichotomy.  These do not assert strong AP, a proper self-embedding, uncountable
+top-free classes converging sentencewise; local automorphisms of self-embeddings; and the
+arbitrary-carrier Scott/`T∞` theory dichotomy.  The joint embedding and amalgamation properties
+of finite top-free charts, formerly a companion topic, are step 2 of the top-free witnesses and
+belong to the core.  These do not assert strong AP, a proper self-embedding, uncountable
 categoricity, Scott-rank equality, or existence of a model of all of `T∞`.  The main theorem is
 proved without them; if any is added, give it a separate definite completion criterion.  Direct
-limits of structures, a generic result of infinitary logic, belong with the generic library and
-these companion results, not with the finite constructions of layer 3.
+limits of structures and the classical existence theorem belong to the two libraries, not to
+the finite constructions of layer 3.
 [`COMPANIONS.md`](COMPANIONS.md) gives these topics and the full-chart orbit theory below such
 criteria, as three milestones (A: filtration and infinitary theory; B: top-free chart homogeneity
 and its consequences; C: a geometric obstruction).
@@ -502,11 +690,14 @@ non-claims, and gives the companion sketch [`SuggestedCompanions.lean`](Suggeste
 In summary: in the full stage chart language (not the base reduct), a countable nonempty top-free
 realization with exact consistency, covering, and finite-cut receiving has automorphism orbits
 defined by explicit first-order chart formulas, hence isolated complete types, atomicity,
-internal Scott rank at most `ω` in the library's convention, and, by a separate generic theorem,
-primeness among models of its complete theory in arbitrary universes; separately, consistency and
-covering alone exclude every infinite set whose permutations all extend to automorphisms, a
-theorem kept below receiving by an import guard.  Milestone A of `COMPANIONS.md` treats the
-definable cuts, witness convergence, and the Scott/`T∞` dichotomy listed above.
+internal Scott rank at most `ω` in the library's convention, and primeness among models of its
+complete theory in arbitrary universes.  The development proves the orbit formulas and the
+local automorphism property; the isolation, atomicity, primeness, rank, and preservation
+theorems are quoted from the two libraries ("Applications of library theorems" above).
+Separately, consistency and covering alone exclude every infinite set whose permutations all
+extend to automorphisms, a theorem kept below receiving by an import guard.  Milestone A of
+`COMPANIONS.md` treats the definable cuts, witness convergence, and the Scott/`T∞` dichotomy
+listed above.
 
 **Completion criterion.**  This companion checkpoint is complete when milestones B and C of
 `COMPANIONS.md` meet their completion criteria.  It is not a core checkpoint, and the main
