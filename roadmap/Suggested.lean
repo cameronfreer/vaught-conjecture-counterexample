@@ -127,7 +127,9 @@ theorem countable_complement {Q : Type u} (D : Ordinal.{0} → Set Q)
   rw [Cardinal.ord_aleph] at hsucc hlim ⊢
   exact InfinitaryLogic.compl_countable_of_loss D h0 hsucc hlim
 
-/-- No topology, measurability, nonempty domain, or rank function is required. -/
+/-- No topology, measurability, nonempty domain, or rank function is required.
+Proved in the library as `VaughtConjecture.Counting.countable_split_of_uniform_domain`
+(with `D` implicit); the statement is kept here as part of the target list. -/
 theorem countable_split_of_uniform_domain {Q : Type u} (D : Set Q)
     (P : Q → Prop) (hsmall : Dᶜ.Countable)
     (huniform : ∀ q ∈ D, ∀ s ∈ D, P q ↔ P s) :
@@ -140,7 +142,10 @@ theorem countable_split_of_uniform_domain {Q : Type u} (D : Set Q)
   · left
     exact Set.Countable.mono (fun q hq hqd => hex ⟨q, hqd, hq⟩) hsmall
 
-/-- The lower bound is independent of small losses and logical comparison. -/
+/-- The lower bound is independent of small losses and logical comparison.
+Proved in the library, for any linear successor order and any set of indices with nonempty
+successor losses, as `VaughtConjecture.Counting.exists_injective_mem_sdiff_succ`; the statement
+is kept here, with its `sorry`, as part of the target list. -/
 theorem exists_injective_loss_choice {Q : Type u} (D : Ordinal.{0} → Set Q)
     (hanti : Antitone D)
     (hne : ∀ ξ, ξ < firstUncountable → (D ξ \ D (ξ + 1)).Nonempty) :

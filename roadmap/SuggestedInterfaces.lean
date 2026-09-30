@@ -10,6 +10,7 @@ import InfinitaryLogic.Karp.PotentialIso
 import InfinitaryLogic.FiniteSupportClosure
 import InfinitaryLogic.TwoGeneratorCardinality
 import InfinitaryLogic.OrdinalCountability
+import InfinitaryLogic.Scott.OrbitRank
 
 /-! # Selected interfaces for the implementation roadmap
 
@@ -116,7 +117,9 @@ theorem persistent_subsingleton : (⋂ η, F.domain η).Subsingleton := by
 
 include F in
 /-- Each sentence (the predicate `truth θ` on the classes) has one countable truth side,
-without measurability on `Q`. -/
+without measurability on `Q`.  The library has the underlying split lemma,
+`VaughtConjecture.Counting.countable_split_of_uniform_domain`; the proof is repeated here only
+because this sketch does not import the library. -/
 theorem countable_truth_side (θ : Sent) :
     ({q | truth θ q} : Set Q).Countable ∨ ({q | ¬ truth θ q} : Set Q).Countable := by
   obtain ⟨η, hh⟩ := F.homogeneous θ
@@ -145,6 +148,8 @@ set_option linter.hashCommand false in
 #check InfinitaryLogic.compl_countable_of_loss
 set_option linter.hashCommand false in
 #check InfinitaryLogic.mk_eq_aleph_one_of_domains
+set_option linter.hashCommand false in
+#check FirstOrder.Language.internalScottRank_le_of_orbits_determined
 
 /- Proposed substantive targets (not declared as axioms or claimed proved here):
 
