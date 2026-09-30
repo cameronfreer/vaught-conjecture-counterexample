@@ -12,14 +12,14 @@ Roadmap, the reduction of the main theorem to expansion domains, Layer 5 (expans
 logical agreement) and Layer 6 (the two independent bounds); `IMPLEMENTATION.md`, checkpoints 5
 and 6; semantic contract, items 1, 8 and 9.
 
-This file states, as named hypotheses, the statements of Layers 3–5 of the roadmap that the main
+This file states, as named hypotheses, the statements of Layers 3–6 of the roadmap that the main
 theorem needs, and proves that they suffice.  **None of these hypotheses is proved here, and
 nothing here constructs the objects they describe**: they are statements still to be proved by the
-finite extension constructions of Layer 3, the terminal comparisons and counting of Layer 4, and
-the expansion domains and logical agreement of Layer 5.  An instance of any of these structures
-is not a substitute for those constructions (semantic contract, closing paragraph; roadmap,
-Summit 6).  The main theorem of the roadmap has no such hypotheses; the theorems here are
-conditional.
+finite extension constructions of Layer 3, the terminal comparisons and counting of Layer 4, the
+expansion domains and logical agreement of Layer 5, and the lower bound of Layer 6.  An instance
+of any of these structures is not a substitute for those constructions (semantic contract, closing
+paragraph; roadmap, Summit 6).  The main theorem of the roadmap has no such hypotheses; the
+theorems here are conditional.
 
 ## The hypotheses
 
@@ -38,12 +38,13 @@ set of classes admitting a model expansion to the stage `ω + ω · ξ`:
   terminal classes at a fixed stage, and Layer 4 to count those by the countable family of
   singleton conditions, through the rigid-core, residual, and hollow comparisons (the first uses
   of rows 2 and 3 of the table of Layer 3; checkpoint 5; semantic contract, item 8).
-* `ExpansionDomains.HasLogicalAgreement` (reduction item 3; **increasing logical agreement**):
-  the truth of every sentence is constant on some domain below `ω₁`, the form of
-  `SentenceAgreementDomains` in the roadmap sketch `SuggestedInterfaces.lean`.  Layer 5 is to prove
-  the sharp comparison, that the classes in `D η` agree on every sentence of quantifier rank at
-  most `η`, by the one-sided finite-donor transfer (the first use of row 1 of the table of
-  Layer 3); `ExpansionDomains.HasLogicalAgreement.of_qrank_le` derives the hypothesis from it.
+* `ExpansionDomains.HasLogicalAgreement` (**increasing logical agreement**, the consequence of
+  reduction item 3 used here): the truth of every sentence is constant on some domain below `ω₁`,
+  the form of `SentenceAgreementDomains` in the roadmap sketch `SuggestedInterfaces.lean`.  Layer 5
+  is to prove reduction item 3 itself, the sharp comparison that the classes in `D η` agree on
+  every sentence of quantifier rank at most `η`, by the one-sided finite-donor transfer (the first
+  use of row 1 of the table of Layer 3); `ExpansionDomains.HasLogicalAgreement.of_qrank_le`
+  derives the hypothesis from it.
 * `ExpansionDomains.HasNonemptyLosses` (reduction item 4; **the lower bound**): each successor
   loss below `ω₁` is nonempty.  Layer 6 is to construct a top-free terminal model at every
   countable block (the top-free chain construction, with the top-free pinned extension, row 5 of
@@ -56,10 +57,12 @@ set of classes admitting a model expansion to the stage `ω + ω · ξ`:
 * `CapToModel` (the **cap-to-model theorem** of Layer 3, item 3.4; checkpoint 4): a realization at
   stage `ω` with legal types on a nonempty carrier that is exactly consistent, covering, and has
   the finite-cut receiving property is a model.  It is used only for the absence of finite models
-  of the density sentence, hence for the all-countable-carrier form.
+  of the density sentence, hence for the reduction of every countable model to a code.
 
-Scott separation and descriptive separation are not hypotheses: they are theorems of the
-infinitary-logic library (`classTruth_separates`, `isThinOnNatModels_of_countable_truth_sides`).
+Scott separation and descriptive separation are not hypotheses: they are proved in
+`VaughtConjecture.Endpoint.Spectrum` (`classTruth_separates`,
+`isThinOnNatModels_of_countable_truth_sides`) as instantiations of theorems of the
+infinitary-logic library.
 The persistent core `⋂ ξ < ω₁, D ξ` is proved to be a subsingleton from Scott separation and
 logical agreement (`ExpansionDomains.core_subsingleton`); it need not be empty, and no eventual
 departure of every class is assumed.
@@ -76,10 +79,12 @@ departure of every class is assumed.
   descriptive separation);
 * `exists_mem_modelsOf_densitySentence_equiv_of_capToModel`: under the cap-to-model theorem, every
   countable model of the density sentence, on a carrier in any universe, is isomorphic to a coded
-  model on `ℕ`, so the spectrum on `ℕ` is the spectrum on all countable carriers;
+  model on `ℕ`;
 * `vaughtCounterexample_of_expansionDomains`: under all these hypotheses, a countable relational
-  language and a sentence of `L_{ω₁,ω}` whose countable models, on any countable carrier, number
-  exactly `ℵ₁` up to isomorphism, with no perfect set of pairwise nonisomorphic coded models.
+  language and a sentence of `L_{ω₁,ω}` whose models coded on `ℕ` have exactly `ℵ₁` isomorphism
+  classes with no perfect set of pairwise nonisomorphic ones, and every countable model of which,
+  on a carrier in any universe, is isomorphic to a coded one.  A spectrum statement counting the
+  isomorphism classes of the models on all countable carriers at once is not made here.
 
 The hypothesis structures on the domains are stated for an arbitrary type of classes, so that
 their composition can be checked on examples (`VaughtConjecture.Endpoint.Examples`).
@@ -134,9 +139,10 @@ structure HasNonemptyLosses : Prop where
   /-- Each successor loss below `ω₁` is nonempty. -/
   nonempty_loss : ∀ ξ, ξ < ω₁ → (D.domain ξ \ D.domain (ξ + 1)).Nonempty
 
-/-- **Increasing logical agreement** (reduction item 3 of the roadmap), for observations
-`truth s` on the classes: each observation is constant on some domain below `ω₁`.  For the density
-sentence, with the sentences as observations, this is a statement of Layer 5, not proved here. -/
+/-- **Increasing logical agreement** (the consequence of reduction item 3 of the roadmap used
+here; see `of_qrank_le`), for observations `truth s` on the classes: each observation is constant
+on some domain below `ω₁`.  For the density sentence, with the sentences as observations, this is
+a statement of Layer 5, not proved here. -/
 structure HasLogicalAgreement {S : Type v} (truth : S → X → Prop) : Prop where
   /-- Each observation is constant on some domain below `ω₁`. -/
   uniform : ∀ s, ∃ ξ, ξ < ω₁ ∧ ∀ p ∈ D.domain ξ, ∀ q ∈ D.domain ξ, (truth s p ↔ truth s q)
@@ -170,14 +176,16 @@ theorem countable_truth_side (hc : D.HasCountableLosses) {S : Type v} {truth : S
 
 /-- **The persistent core is a subsingleton**: if the observations separate distinct classes and
 each is constant on some domain below `ω₁`, then at most one class lies in every domain below
-`ω₁`.  The core need not be empty. -/
+`ω₁`.  The core need not be empty.  This is a semantic certificate for the spectrum (semantic
+contract, item 1): the upper bound assumes no eventual departure of every class. -/
 theorem core_subsingleton {S : Type v} {truth : S → X → Prop} (ha : D.HasLogicalAgreement truth)
     (hsep : ∀ p q, p ≠ q → ∃ s, ¬ (truth s p ↔ truth s q)) :
     (⋂ ξ < ω₁, D.domain ξ).Subsingleton :=
   persistent_subsingleton_of_separation D.domain truth hsep ha.uniform
 
 /-- **The lower bound**: nonempty successor losses give at least `ℵ₁` classes.  Neither
-countability of the losses nor logical agreement is used. -/
+countability of the losses nor logical agreement is used.  This is a semantic certificate for the
+spectrum (semantic contract, item 1): the lower bound is independent of the upper bound. -/
 theorem aleph_one_le_mk (hn : D.HasNonemptyLosses) : ℵ₁ ≤ #X :=
   aleph_one_le_mk_of_cofinal D.antitone fun β hβ ↦ ⟨β, le_rfl, hβ, hn.nonempty_loss β hβ⟩
 
@@ -202,10 +210,14 @@ def toFiltration (hc : D.HasCountableLosses) (hn : D.HasNonemptyLosses) : Filtra
 
 variable {D}
 
-/-- Below `ω₁`, the filtration of expansion domains has the expansion domains. -/
-@[simp] theorem toFiltration_domain_of_lt (hc : D.HasCountableLosses) (hn : D.HasNonemptyLosses)
-    {ξ : Ordinal.{0}} (hξ : ξ < ω₁) : (D.toFiltration hc hn).domain ξ = D.domain ξ :=
-  ext fun _ ↦ and_iff_right hξ
+/-- **Logical agreement on the filtration**: an observation constant on some expansion domain
+below `ω₁` is constant on the domain of the filtration at the same stage. -/
+theorem HasLogicalAgreement.uniform_toFiltration {S : Type v} {truth : S → X → Prop}
+    (ha : D.HasLogicalAgreement truth) (hc : D.HasCountableLosses) (hn : D.HasNonemptyLosses)
+    (s : S) : ∃ ξ, ξ < ω₁ ∧ ∀ p ∈ (D.toFiltration hc hn).domain ξ,
+      ∀ q ∈ (D.toFiltration hc hn).domain ξ, (truth s p ↔ truth s q) :=
+  have ⟨ξ, hξ, h⟩ := ha.uniform s
+  ⟨ξ, hξ, fun p hp q hq ↦ h p hp.2 q hq.2⟩
 
 /-- **Exactly `ℵ₁` classes** from expansion domains with countable and nonempty losses and
 logical agreement for observations separating distinct classes, through
@@ -213,9 +225,7 @@ logical agreement for observations separating distinct classes, through
 theorem mk_eq_aleph_one (hc : D.HasCountableLosses) (hn : D.HasNonemptyLosses) {S : Type v}
     {truth : S → X → Prop} (ha : D.HasLogicalAgreement truth)
     (hsep : ∀ p q, p ≠ q → ∃ s, ¬ (truth s p ↔ truth s q)) : #X = ℵ₁ :=
-  (D.toFiltration hc hn).mk_eq_aleph_one_of_separation truth hsep fun s ↦
-    have ⟨ξ, hξ, h⟩ := ha.uniform s
-    ⟨ξ, hξ, fun p hp q hq ↦ h p hp.2 q hq.2⟩
+  (D.toFiltration hc hn).mk_eq_aleph_one_of_separation truth hsep (ha.uniform_toFiltration hc hn)
 
 end ExpansionDomains
 
@@ -274,30 +284,28 @@ theorem exists_mem_modelsOf_densitySentence_equiv_of_capToModel (hcap : CapToMod
 /-- **Thinness, conditionally**: expansion domains of the classes of the density sentence with
 countable losses (terminal countability) and logical agreement give no perfect set of pairwise
 nonisomorphic coded models.  The lower bound is not used.  The hypotheses are statements of
-Layers 4–5 of the roadmap, not proved here. -/
+Layers 3–5 of the roadmap, not proved here. -/
 theorem densitySentence_isThinOnNatModels_of_expansionDomains (D : ExpansionDomains DensityClass)
-    (hc : D.HasCountableLosses) (ha : D.HasLogicalAgreement densityTruth) :
+    (ha : D.HasLogicalAgreement densityTruth) (hc : D.HasCountableLosses) :
     densitySentence.{0}.IsThinOnNatModels :=
   isThinOnNatModels_of_countable_truth_sides (D.countable_truth_side hc ha)
 
 /-- **The main theorem, conditionally**: expansion domains of the classes of the density sentence
 with logical agreement (Layer 5), countable losses (terminal countability, Layers 4–5), and
 nonempty losses (the lower bound, Layer 6) give exactly `ℵ₁` classes of models coded on `ℕ` and
-no perfect set of pairwise nonisomorphic ones.  The hypotheses are statements of Layers 3–5 of
+no perfect set of pairwise nonisomorphic ones.  The hypotheses are statements of Layers 3–6 of
 the roadmap, not proved here. -/
 theorem densitySentence_hasThinAlephOneSpectrum_of_expansionDomains
     (D : ExpansionDomains DensityClass) (ha : D.HasLogicalAgreement densityTruth)
     (hc : D.HasCountableLosses) (hn : D.HasNonemptyLosses) :
     HasThinAlephOneSpectrum densitySentence.{0} :=
-  hasThinAlephOneSpectrum_of_filtration (D.toFiltration hc hn) fun θ ↦
-    have ⟨ξ, hξ, h⟩ := ha.uniform θ
-    ⟨ξ, hξ, fun p hp q hq ↦ h p hp.2 q hq.2⟩
+  hasThinAlephOneSpectrum_of_filtration (D.toFiltration hc hn) (ha.uniform_toFiltration hc hn)
 
 /-- **A thin uncountable infinitary class, conditionally**: under the hypotheses of the main
 theorem and the cap-to-model theorem, there are a countable relational language and a sentence
 of `L_{ω₁,ω}` whose models coded on `ℕ` have exactly `ℵ₁` isomorphism classes with no perfect
 set of pairwise nonisomorphic ones, and every countable model of which, on a carrier in the
-universe `w`, is isomorphic to a coded one.  The hypotheses are statements of Layers 3–5 of the
+universe `w`, is isomorphic to a coded one.  The hypotheses are statements of Layers 3–6 of the
 roadmap, not proved here. -/
 theorem vaughtCounterexample_of_expansionDomains (D : ExpansionDomains DensityClass)
     (ha : D.HasLogicalAgreement densityTruth) (hc : D.HasCountableLosses)

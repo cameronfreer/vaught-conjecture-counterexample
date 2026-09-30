@@ -25,16 +25,17 @@ isomorphism antichain, not a bound below the continuum.
 
 **Truth on classes.**  For a countable relational language `L` and a sentence `φ`, the truth of
 a sentence `θ` on a class of coded models of `φ` (`classTruth φ θ`) is actual satisfaction of `θ`
-by any representative code; it is well defined because isomorphic coded structures satisfy the
-same sentences.  The quotient map is a presentation of the classes in the sense of the library's
-descriptive theorems, with truth read back as satisfaction on codes (`classTruth_mk`).
+by any representative code; it is well defined because the models of a sentence form an
+isomorphism-invariant set of codes (the library's `isomorphismInvariant_modelsOf`).  The quotient
+map is a presentation of the classes in the sense of the library's descriptive theorems, with
+truth read back as satisfaction on codes (`classTruth_mk`).
 
 * **Scott separation** (`classTruth_separates`): distinct classes are separated by a sentence,
-  by the library's `exists_sentence_of_countable_of_presentation` (Scott sentences isolate each
-  class; a singleton is countable).
+  since each class is isolated by a Scott sentence (`exists_classTruth_iff_eq`, the library's
+  `isolatedPresentation_of_surjective`).
 * **Descriptive separation** (`isThinOnNatModels_of_countable_truth_sides`): if every sentence
   has a countable truth side or a countable false side on the classes, then `φ` is thin on its
-  coded models, by the library's
+  coded models, an instantiation of the library's
   `SmallVocabulary.isThinOnNatModels_of_countable_sentence_splits` (invariant analytic separation
   and López–Escobar, transported to an arbitrary countable relational language through the
   small-vocabulary presentation).  It is used for thinness only.
@@ -55,14 +56,15 @@ whose domains every sentence is eventually uniform (`IsUniformOnFiltration`):
   is exactly consistent, covering, and has the finite-cut receiving property
   (`mem_modelsOf_densitySentence_iff`); isomorphism of two coded models is isomorphism of their
   realizations (`structureIsoSetoid_r_iff_isIso`), so the classes are the classes of the coded
-  realizations (`classMk_eq_classMk_iff`);
+  realizations (`mk_eq_mk_iff_isIso`);
 * the **ℕ-carrier reduction** (`exists_mem_modelsOf_equiv`): every countably infinite model of a
   sentence, on a carrier in any universe, is isomorphic to a coded model on `ℕ`.  The absence of
   finite models of the density sentence rests on the cap-to-model theorem of Layer 3
-  (`infinite_of_realize_densitySentence_of_capToModel`), so the all-countable-carrier form is
-  stated with that hypothesis, in `VaughtConjecture.Endpoint.Assembly`.
+  (`infinite_of_realize_densitySentence_of_capToModel`), so the reduction of every countable model
+  of the density sentence to a code is stated with that hypothesis, in
+  `VaughtConjecture.Endpoint.Assembly`.
 
-Nothing in this file assumes or proves a statement of Layers 3–5: the filtration and the
+Nothing in this file assumes or proves a statement of Layers 3–6: the filtration and the
 uniformity of sentences are hypotheses of the counting composition.
 
 ## Placement
@@ -70,14 +72,14 @@ uniformity of sentences are hypotheses of the counting composition.
 The following general results are stated here and belong elsewhere:
 
 * `realize_boundedFormulaω_equiv` and `realize_sentenceω_equiv` (transport of infinitary
-  satisfaction along an isomorphism between carriers in different universes) in the
-  infinitary-logic library, beside `BoundedFormulaω.realize_equiv` and `LomegaEquiv.of_equiv`,
-  which require one carrier universe;
+  satisfaction along an isomorphism between carriers in different universes): the
+  infinitary-logic library's `BoundedFormulaω.realize_equiv` and `LomegaEquiv.of_equiv` require
+  one carrier universe, and should be generalized in place to carriers in different universes,
+  which makes these two redundant;
 * `qrank_lt_omega_one` (every infinitary formula has countable quantifier rank) in the
   infinitary-logic library's `Lomega1omega/QuantifierRank`;
-* `mem_modelsOf_iff_of_structureIsoSetoid`, `classTruth` with its lemmas, and
-  `exists_mem_modelsOf_equiv` in the infinitary-logic library's `Descriptive/StructureIsoSetoid`
-  and `Descriptive/CodeTransport`.
+* `classTruth` with its lemmas, and `exists_mem_modelsOf_equiv`, in the infinitary-logic
+  library's `Descriptive/StructureIsoSetoid` and `Descriptive/CodeTransport`.
 
 ## References
 
@@ -154,32 +156,19 @@ def HasThinAlephOneSpectrum {L : Language.{0, 1}} [L.IsRelational]
   Cardinal.mk (Quotient (isoSetoid φ)) = Cardinal.aleph 1 ∧
     ¬ φ.HasPerfectSetOfPairwiseNonisomorphicNatModels
 
-/-- The thin `ℵ₁` spectrum, with thinness in the library's form. -/
-theorem hasThinAlephOneSpectrum_iff {L : Language.{0, 1}} [L.IsRelational]
-    [Countable (Σ n, L.Relations n)] {φ : L.Sentenceω} :
-    HasThinAlephOneSpectrum φ ↔ #(Quotient (isoSetoid φ)) = ℵ₁ ∧ φ.IsThinOnNatModels :=
-  Iff.rfl
-
 /-! ### Truth on the classes of coded models -/
 
 section ClassTruth
 
 variable {L : Language.{u, v}} [L.IsRelational]
 
-/-- Isomorphic coded structures satisfy the same sentences. -/
-theorem mem_modelsOf_iff_of_structureIsoSetoid {c d : StructureSpace L}
-    (h : (structureIsoSetoid L).r c d) (θ : L.Sentenceω) : c ∈ ModelsOf θ ↔ d ∈ ModelsOf θ := by
-  obtain ⟨e⟩ := h
-  rw [SmallVocabulary.mem_modelsOf_iff_realize, SmallVocabulary.mem_modelsOf_iff_realize]
-  exact @LomegaEquiv.of_equiv L ℕ ℕ c.toStructure d.toStructure e θ
-
 variable (φ : L.Sentenceω)
 
 /-- The **truth of a sentence on a class** of coded models of `φ`: satisfaction by any
-representative code. -/
+representative code (well defined by the library's `isomorphismInvariant_modelsOf`). -/
 def classTruth (θ : L.Sentenceω) : Quotient (isoSetoid φ) → Prop :=
   Quotient.lift (fun c : ModelsOf φ ↦ c.1 ∈ ModelsOf θ) fun _ _ h ↦
-    propext (mem_modelsOf_iff_of_structureIsoSetoid (isoSetoid_r_iff.mp h) θ)
+    propext (isomorphismInvariant_modelsOf θ _ _ (isoSetoid_r_iff.mp h))
 
 variable {φ}
 
@@ -190,14 +179,13 @@ variable {φ}
 
 variable [Countable (Σ n, L.Relations n)]
 
-/-- **Scott isolation of a class**: each class of coded models is defined by a sentence
-(the library's `exists_sentence_of_countable_of_presentation`, for a singleton). -/
+/-- **Scott isolation of a class**: each class of coded models is defined by a sentence, the
+Scott sentence of a representative code (the library's `isolatedPresentation_of_surjective`, for
+the quotient map as a presentation). -/
 theorem exists_classTruth_iff_eq (q : Quotient (isoSetoid φ)) :
-    ∃ σ : L.Sentenceω, ∀ p, classTruth φ σ p ↔ p = q := by
-  obtain ⟨σ, hσ⟩ := exists_sentence_of_countable_of_presentation Subtype.val
-    (Quotient.mk (isoSetoid φ)) Quotient.mk_surjective (fun _ _ h ↦ Quotient.sound h)
-    (classTruth φ) (fun _ _ ↦ Iff.rfl) (countable_singleton q)
-  exact ⟨σ, fun p ↦ hσ p⟩
+    ∃ σ : L.Sentenceω, ∀ p, classTruth φ σ p ↔ p = q :=
+  isolatedPresentation_of_surjective Subtype.val (Quotient.mk (isoSetoid φ))
+    Quotient.mk_surjective (fun _ _ h ↦ Quotient.sound h) (classTruth φ) (fun _ _ ↦ Iff.rfl) q
 
 /-- **Scott separation**: distinct classes of coded models are separated by a sentence. -/
 theorem classTruth_separates {p q : Quotient (isoSetoid φ)} (h : p ≠ q) :
@@ -206,7 +194,8 @@ theorem classTruth_separates {p q : Quotient (isoSetoid φ)} (h : p ≠ q) :
   exact ⟨σ, by simp [hσ, h]⟩
 
 /-- **Descriptive separation**: if every sentence holds on only countably many classes or fails
-on only countably many classes, then `φ` is thin on its coded models. -/
+on only countably many classes, then `φ` is thin on its coded models (an instantiation of the
+library's `SmallVocabulary.isThinOnNatModels_of_countable_sentence_splits`). -/
 theorem isThinOnNatModels_of_countable_truth_sides
     (hsplit : ∀ θ : L.Sentenceω, {q | classTruth φ θ q}.Countable ∨
       {q | ¬ classTruth φ θ q}.Countable) :
@@ -237,12 +226,6 @@ theorem isThinOnNatModels_of_filtration (F : Filtration (Quotient (isoSetoid φ)
   isThinOnNatModels_of_countable_truth_sides fun θ ↦
     have ⟨_, hξ, h⟩ := hF θ
     F.countable_truth_side _ hξ h
-
-/-- The persistent core of a filtration on whose domains every sentence is eventually uniform has
-at most one class (Scott separation). -/
-theorem core_subsingleton_of_filtration (F : Filtration (Quotient (isoSetoid φ)))
-    (hF : IsUniformOnFiltration φ F) : F.core.Subsingleton :=
-  F.core_subsingleton (classTruth φ) (fun _ _ ↦ classTruth_separates) hF
 
 /-- **Exactly `ℵ₁` classes from a filtration**: if every sentence is uniform on some domain of a
 filtration of the classes, the coded models of `φ` have exactly `ℵ₁` isomorphism classes. -/
@@ -320,7 +303,7 @@ theorem structureIsoSetoid_r_iff_isIso {c d : StructureSpace baseLanguage.{u}}
 /-- **The classes of coded models of the density sentence are the classes of their
 realizations**: two coded models have the same class exactly when their realizations are
 isomorphic. -/
-theorem classMk_eq_classMk_iff {c d : ModelsOf densitySentence.{u}} :
+theorem mk_eq_mk_iff_isIso {c d : ModelsOf densitySentence.{u}} :
     Quotient.mk (isoSetoid densitySentence.{u}) c = Quotient.mk (isoSetoid densitySentence) d ↔
       (codeRealization c.1).IsIso (codeRealization d.1) :=
   Quotient.eq.trans (isoSetoid_r_iff.trans (structureIsoSetoid_r_iff_isIso c.2 d.2))

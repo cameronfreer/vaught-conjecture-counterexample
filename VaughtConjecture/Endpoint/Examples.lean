@@ -199,8 +199,8 @@ private def constant : ExpansionDomains Unit where
   limit _ _ _ := subset_univ _
 
 /-- **Nonempty losses cannot be dropped**: a single class in every domain has countable losses
-and logical agreement for any observations, which separate its one class, and fewer than `ℵ₁`
-classes. -/
+and logical agreement for the observations `z = s`, which separate its one class, and fewer than
+`ℵ₁` classes. -/
 example : constant.HasCountableLosses ∧
     constant.HasLogicalAgreement (fun s z : Unit ↦ z = s) ∧ #Unit < ℵ₁ ∧
     ¬ constant.HasNonemptyLosses :=
