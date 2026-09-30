@@ -3,7 +3,7 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
-import Mathlib.Logic.Equiv.Fin.Basic
+import Mathlib.Logic.Equiv.Fintype
 import VaughtConjecture.Stage.Basic
 
 /-!
@@ -31,8 +31,9 @@ An **occurrence** (`Realization.Occurrence`) is a typed tuple together with its 
 consistency every visible face of an occurrence is an occurrence with its literal face tuple
 (`Realization.eval_face`, `Realization.Occurrence.face`), and reindexing a tuple along a
 bijection of coordinates reindexes its type, including definedness
-(`Realization.eval_equiv_trans`).  Covering can be taken in the form of the source, with the
-given tuple as an *initial segment* of a typed tuple (`Realization.IsCovering.exists_castAdd`).
+(`Realization.eval_equiv_trans`, `Realization.Occurrence.reindex`).  Under consistency, covering
+is equivalent to the form of the source, with the given tuple as an *initial segment* of a typed
+tuple (`Realization.IsCovering.exists_castAdd`, `Realization.isCovering_iff_exists_castAdd`).
 
 ## References
 
@@ -175,6 +176,16 @@ noncomputable def Occurrence.reindex (hR : R.IsConsistent) (x : R.Occurrence)
   type := x.type.reindex e
   eval_tuple := eval_equiv_trans_of_eval hR x.eval_tuple e
 
+/-- The tuple of a reindexed occurrence is the reindexed tuple. -/
+@[simp] theorem Occurrence.reindex_tuple (hR : R.IsConsistent) (x : R.Occurrence)
+    (e : Fin m ≃ Fin x.arity) : (x.reindex hR e).tuple = e.toEmbedding.trans x.tuple :=
+  rfl
+
+/-- The type of a reindexed occurrence is the reindexed type. -/
+@[simp] theorem Occurrence.reindex_type (hR : R.IsConsistent) (x : R.Occurrence)
+    (e : Fin m ≃ Fin x.arity) : (x.reindex hR e).type = x.type.reindex e :=
+  rfl
+
 /-! ### Covering -/
 
 /-- Under covering there is an occurrence (a typed tuple, for instance one covering the empty
@@ -184,20 +195,6 @@ theorem IsCovering.nonempty_occurrence (hc : R.IsCovering) : Nonempty R.Occurren
   obtain ⟨p, hp⟩ := Option.isSome_iff_exists.mp hu
   exact ⟨⟨m, u, p, hp⟩⟩
 
-/-- An embedding of `Fin n` into `Fin (n + k)` extends to a bijection of `Fin (n + k)` restricting
-to it on the initial segment. -/
-private theorem exists_equiv_castAdd (f : Fin n ↪ Fin (n + k)) :
-    ∃ e : Fin (n + k) ≃ Fin (n + k), ∀ i, e (Fin.castAdd k i) = f i := by
-  classical
-  have hcard : Fintype.card ((Set.range f)ᶜ : Set (Fin (n + k))) = k := by
-    rw [Fintype.card_compl_set, Fintype.card_fin, Set.card_range_of_injective f.injective,
-      Fintype.card_fin, Nat.add_sub_cancel_left]
-  let e₁ : Fin n ≃ Set.range f := Equiv.ofInjective f f.injective
-  let e₂ : Fin k ≃ ((Set.range f)ᶜ : Set (Fin (n + k))) := (Fintype.equivFinOfCardEq hcard).symm
-  refine ⟨finSumFinEquiv.symm.trans ((Equiv.sumCongr e₁ e₂).trans (Equiv.Set.sumCompl _)),
-    fun i ↦ ?_⟩
-  simp [e₁, e₂]
-
 /-- **Covering by initial segments** [Kni26, §3.2]: under consistency and covering, every
 injective tuple is the initial segment of a typed tuple.  The covering typed tuple is reindexed
 so that the given tuple comes first. -/
@@ -206,10 +203,20 @@ theorem IsCovering.exists_castAdd (hR : R.IsConsistent) (hc : R.IsCovering) (t :
   obtain ⟨m, u, f, rfl, hu⟩ := hc t
   obtain ⟨k, rfl⟩ := Nat.exists_eq_add_of_le
     (by simpa using Fintype.card_le_of_embedding f : n ≤ m)
-  obtain ⟨e, he⟩ := exists_equiv_castAdd f
+  obtain ⟨e, he⟩ :=
+    Equiv.Perm.exists_extending_pair (Fin.castAdd k) f (Fin.castAdd_injective n k) f.injective
   refine ⟨k, e.toEmbedding.trans u, ?_, by rwa [isSome_eval_equiv_trans hR]⟩
   ext i
   simp [he]
+
+/-- **Covering by initial segments, characterized**: an exactly consistent realization is covering
+exactly when every injective tuple is the initial segment of a typed tuple. -/
+theorem isCovering_iff_exists_castAdd (hR : R.IsConsistent) :
+    R.IsCovering ↔ ∀ ⦃n : ℕ⦄ (t : Fin n ↪ M), ∃ (k : ℕ) (u : Fin (n + k) ↪ M),
+      (Fin.castAddEmb k).trans u = t ∧ (R.eval u).isSome := by
+  refine ⟨fun hc _ ↦ hc.exists_castAdd hR, fun h n t ↦ ?_⟩
+  obtain ⟨k, u, hu, hs⟩ := h t
+  exact ⟨_, u, _, hu, hs⟩
 
 end Realization
 

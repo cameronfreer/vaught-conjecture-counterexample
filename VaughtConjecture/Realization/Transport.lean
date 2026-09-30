@@ -8,15 +8,15 @@ import VaughtConjecture.Realization.Basic
 /-!
 # Transport of realizations along bijections and stage reduction
 
-Roadmap, Layer 2 (isomorphism transport and reduction of models; reindexing and stage reduction
-identities before dependent transport spreads) and Library conventions (face restriction, stage
-reduction, and capped observation are different operations); semantic contract, item 5.
+Roadmap, Layer 2 (isomorphism transport and reduction of models) and Library conventions (face
+restriction, stage reduction, and capped observation are different operations); semantic
+contract, item 5.
 
 * **Transport.**  A bijection of carriers `e : M ≃ N` carries a realization `R` on `M` to the
   realization `R.map e` on `N` giving a tuple of `N` the type of its preimage
-  (`Realization.map_eval_trans`).  Transport is functorial (`map_refl`, `map_map`), so `R.map e`
-  is the unique realization on `N` isomorphic to `R` along `e`, and it preserves and reflects
-  exact consistency and covering (`isConsistent_map_iff`, `isCovering_map_iff`).
+  (`Realization.map_eval_trans`).  `R.map e` is the unique realization agreeing with `R` along
+  `e` (`eq_map_of_eval_trans`).  Transport is functorial (`map_refl`, `map_map`), and it preserves
+  and reflects exact consistency and covering (`isConsistent_map_iff`, `isCovering_map_iff`).
 * **Stage reduction.**  At a stage `β` that is zero or a limit, `R.reduce hβ` reduces every
   actual type to stage `β` (`StageType.reduce`) and leaves untyped tuples untyped.  Since stage
   reduction does not change the scheme and commutes with face maps, including definedness
@@ -28,10 +28,9 @@ reduction, and capped observation are different operations); semantic contract, 
 ## References
 
 Stage reduction of realizations is the reduction of [Kni26, Definition 5.1.1] (unique by
-[Kni26, Lemma 5.2.1]), pointwise the vertical map of [Kni26, Definition 3.1.2]; transport along
-a bijection of carriers is the relabelling implicit in [Kni26, Definition 3.1.5], for
-R. W. Knight, *A counterexample to Vaught's Conjecture using generalised Stone spaces* (draft,
-20 February 2026).
+[Kni26, Lemma 5.2.1]), pointwise the vertical map of [Kni26, Definition 3.1.2], for R. W. Knight,
+*A counterexample to Vaught's Conjecture using generalised Stone spaces* (draft, 20 February
+2026).  Carrier transport is transport of structure along a bijection.
 -/
 
 universe u v w x

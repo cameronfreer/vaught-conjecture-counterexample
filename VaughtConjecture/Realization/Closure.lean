@@ -77,9 +77,8 @@ theorem finite_closure (hA : A.Finite) : (R.closure hR hc A).Finite := by
 when it is the support of an occurrence. -/
 theorem isClosed_coe_iff (S : Finset M) :
     (R.closure hR hc).IsClosed ↑S ↔ R.IsSupport S := by
-  rw [ClosureOperator.isClosed_iff]
-  change R.closure hR hc ↑S = ↑S ↔ _
-  rw [closure_coe, coe_inj, finiteHull_eq_self_iff hR hc]
+  rw [← finiteHull_eq_self_iff hR hc, ← coe_inj, ← closure_coe hR hc]
+  exact ⟨fun h ↦ h.closure_eq, fun h ↦ ClosureOperator.isClosed_iff_closure_le.mpr h.le⟩
 
 /-- A finite set of points is closed for the canonical closure exactly when it is the set of
 points of an occurrence. -/
@@ -102,6 +101,8 @@ theorem closure_antiExchange (hA : R.closure hR hc A = A) {b : M} (hab : a ≠ b
 @[simp] theorem Occurrence.support_map (e : M ≃ N) (x : R.Occurrence) :
     (x.map e).support = x.support.map e.toEmbedding := by
   rw [Occurrence.support, Occurrence.support, Finset.map_map]
+  -- the two sides differ only in `univ : Finset (Fin (x.map e).arity)` versus
+  -- `univ : Finset (Fin x.arity)`, equal by unfolding the `arity` field
   rfl
 
 /-- The hull inside a transported occurrence is the image of the hull. -/
@@ -111,9 +112,12 @@ theorem Occurrence.hull_map (e : M ≃ N) (x : R.Occurrence) (F : Finset M) :
     refine Finset.ext fun (i : Fin x.arity) ↦ ((x.map e).mem_coords (i := i)).trans ?_
     exact mem_map_equiv.trans ((Iff.of_eq (congrArg (· ∈ F) (e.symm_apply_apply (x.tuple i)))).trans
       x.mem_coords.symm)
+  -- `Fin (x.map e).arity` is definitionally `Fin x.arity`, but `rw` cannot see through the
+  -- dependent `arity` field, so the hull is unfolded by `change`.
   change (Geometry.hull univ x.type.toCellScheme.faces ((x.map e).coords (F.map e.toEmbedding))).map
     (x.tuple.trans e.toEmbedding) = _
   rw [hcoords, ← Finset.map_map]
+  -- the right side is `Occurrence.hull x F` mapped along `e`, which unfolds to the left side
   rfl
 
 include hR hc in
@@ -135,7 +139,13 @@ theorem image_closure (e : M ≃ N) (A : Set M) :
 
 /-! ### Stage reduction -/
 
-/-- The hull inside a reduced occurrence is the hull inside the occurrence. -/
+/-- The support of a reduced occurrence is the support of the occurrence. -/
+@[simp] theorem Occurrence.support_reduce (hβ : Order.IsSuccPrelimit β) (x : R.Occurrence) :
+    (x.reduce hβ).support = x.support :=
+  rfl
+
+/-- The hull inside a reduced occurrence is the hull inside the occurrence: reduction keeps the
+tuple and the scheme of the type. -/
 @[simp] theorem Occurrence.hull_reduce (hβ : Order.IsSuccPrelimit β) (x : R.Occurrence)
     (F : Finset M) : (x.reduce hβ).hull F = x.hull F :=
   rfl
@@ -145,8 +155,8 @@ include hR hc in
 @[simp] theorem finiteHull_reduce (hβ : Order.IsSuccPrelimit β) :
     (R.reduce hβ).finiteHull = R.finiteHull := funext fun F ↦ by
   obtain ⟨x, hx⟩ := hc.exists_subset_support F
-  rw [finiteHull_eq hR hc x hx, finiteHull_eq (hR.reduce hβ) (hc.reduce hβ) (x.reduce hβ) hx,
-    Occurrence.hull_reduce]
+  rw [finiteHull_eq hR hc x hx, finiteHull_eq (hR.reduce hβ) (hc.reduce hβ) (x.reduce hβ)
+    (by rwa [Occurrence.support_reduce]), Occurrence.hull_reduce]
 
 /-- **Stage reduction keeps the canonical closure.** -/
 theorem closure_reduce (hβ : Order.IsSuccPrelimit β) :
