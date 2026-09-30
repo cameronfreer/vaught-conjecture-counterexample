@@ -27,8 +27,8 @@ for these legal inputs.  Both carry a legal stage type at every stage, their bot
 (`isLegal_toStageType_pointRow_three`, `isLegal_toStageType_pointRow_omega0_add_five`).
 
 **Preservation of coding over it.**  A proof of a coding statement that used the offset bound of
-its inputs would not apply here; the lemmas of `VaughtConjecture.Extension.Coding` showing that
-coding is preserved by the amalgam and by appended cells do.
+its inputs would not apply here; the preservation of coding by the amalgam
+(`Coatom.isCoded_amalgam`) and by appended cells (`VaughtConjecture.Extension.Coding`) does.
 
 * The amalgam of `pointRow 3` with itself over the empty face is coded
   (`isCoded_amalgam_pointRow_three`) and not strongly coded
