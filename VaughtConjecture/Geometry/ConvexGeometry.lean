@@ -29,6 +29,12 @@ general.
 The subclass used by the construction (exactly two extreme points on every nonsingleton closed
 set) and its recursive description are in `VaughtConjecture.Geometry.Plan`.  See
 `roadmap/README.md`, Layer 1, and `roadmap/SEMANTIC_CONTRACT.md`, item 2.
+
+## Reference
+
+P. H. Edelman and R. E. Jamison, *The theory of convex geometries*, Geom. Dedicata 19 (1985),
+247–270: the closed-set axioms, the equivalence of anti-exchange with accessibility, and the
+representation of closed sets as hulls of their extreme points.
 -/
 
 namespace VaughtConjecture.Geometry
@@ -55,13 +61,13 @@ def restrict (P : Finset (Finset α)) (B : Finset α) : Finset (Finset α) :=
   {C ∈ P | C ⊆ B}
 
 /-- Membership in a hull: a point of the ground set lying in every closed superset. -/
-theorem mem_hull : x ∈ hull A P S ↔ x ∈ A ∧ ∀ B ∈ P, S ⊆ B → x ∈ B := mem_filter
+@[simp] theorem mem_hull : x ∈ hull A P S ↔ x ∈ A ∧ ∀ B ∈ P, S ⊆ B → x ∈ B := mem_filter
 
 /-- Membership in the extremes: a point whose removal leaves a closed set. -/
-theorem mem_extremes : x ∈ extremes P B ↔ x ∈ B ∧ B.erase x ∈ P := mem_filter
+@[simp] theorem mem_extremes : x ∈ extremes P B ↔ x ∈ B ∧ B.erase x ∈ P := mem_filter
 
 /-- Membership in a restriction: a closed set contained in the face. -/
-theorem mem_restrict : C ∈ restrict P B ↔ C ∈ P ∧ C ⊆ B := mem_filter
+@[simp] theorem mem_restrict : C ∈ restrict P B ↔ C ∈ P ∧ C ⊆ B := mem_filter
 
 /-- A hull lies in the ground set. -/
 theorem hull_subset_domain : hull A P S ⊆ A := filter_subset _ _
