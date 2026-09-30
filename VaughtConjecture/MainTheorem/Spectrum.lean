@@ -12,9 +12,10 @@ import VaughtConjecture.Language.Density
 /-!
 # The spectrum of a sentence on coded countable models
 
-Roadmap, Layer 6 (the two bounds, each proved without the other: thinness by descriptive
-separation and the upper bound by Scott separation on the persistent core; and the reduction to
-`ℕ` of the models on all countable carriers) and the reduction of the main theorem to expansion
+Roadmap, Layer 6 (thinness by descriptive separation and the upper bound by Scott separation on
+the persistent core, neither using the other; and the reduction to `ℕ` of the models on all
+countable carriers; the lower bound is a hypothesis of
+`VaughtConjecture.MainTheorem.Assembly`) and the reduction of the main theorem to expansion
 domains; `IMPLEMENTATION.md`, checkpoint 6 (thinness and the reduction to `ℕ`); semantic
 contract, item 1.
 
@@ -71,12 +72,16 @@ different universes satisfy the same infinitary formulas (`realize_boundedFormul
 countable quantifier rank (`qrank_lt_omega_one`), which gives logical agreement from agreement up
 to each quantifier rank.
 
-Nothing in this file assumes a statement of Layers 3–6; of Layer 6 it proves only the compositions
-from a filtration, which, with the uniformity of sentences, is a hypothesis here.
+Nothing in this file assumes a statement of Layers 3–6.  Of Layer 6 it proves the parts that need
+no construction: Scott and descriptive separation on the classes, thinness and exactly `ℵ₁`
+classes from a filtration on whose domains every sentence is eventually uniform (the filtration
+and the uniformity are hypotheses of those theorems), and the reduction to `ℕ` of countably
+infinite models.
 
 ## Placement
 
-This file belongs to Layer 6 of `roadmap/README.md`.
+This file belongs to Layer 6 of `roadmap/README.md`; the statements here that belong upstream are
+listed in `roadmap/COMPANIONS.md` (Scott sentences and code transport).
 
 ## References
 
