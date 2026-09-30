@@ -47,9 +47,11 @@ face (`StageType.cappedLift_of_restrictFace`, same file) needs only bountifulnes
 `Rows.CappedLift`, `cappedLift_iff_forall_exists`, `cappedLift_refl`, `CappedLift.trans`, and
 `cappedLift_of_below_eq_empty` belong in `VaughtConjecture.Scheme.Bountiful`, with
 `Rows.IsBountiful` then *defined* as capped lifting at every pair of graded faces, so that
-`isBountiful_iff_cappedLift` becomes the definitional unfolding; after the move
-`cappedLift_iff_forall_exists` replaces the base `isBountiful_iff_forall_exists`, which becomes
-`simp only [isBountiful_iff_cappedLift, cappedLift_iff_forall_exists]`.  `CappedLift.of_equiv`,
+`isBountiful_iff_cappedLift` becomes the definitional unfolding; after the move the base
+`isBountiful_iff_forall_exists` is kept as the corollary
+`simp only [isBountiful_iff_cappedLift, cappedLift_iff_forall_exists]`, and `IsBountiful.cappedLift`
+is the direct application; `IsWellFormed.below_eq_empty` is a fact about well-formed cell schemes
+for `VaughtConjecture.Scheme.Cell`.  `CappedLift.of_equiv`,
 `CappedLift.comap`, `CappedLift.of_comap`, and `cappedLift_comap_iff` belong in
 `VaughtConjecture.Scheme.Transport` (where `IsBountiful.comap_of_image_eq` follows from
 `CappedLift.comap` applied at every pair of graded faces), and
