@@ -345,9 +345,7 @@ private theorem TransformsTo.not_one_two_bot_top :
   have hg : g 1 = ⊤ := top_le_iff.mp (h₂.le.trans (min_le_right _ _))
   rw [hg, min_top_right] at h₁ h₂
   have h := hw.visibilityReplace_comm _ 2 (h₁ ▸ bot_le) 2 le_rfl
-  have h12 : Ordinal.visibilityReplace 2 2 (1 : Ordinal.{u}) = 2 := by
-    rw [Ordinal.visibilityReplace_of_lt_omega0 (by simp)]
-    simp
+  have h12 : Ordinal.visibilityReplace 2 2 (1 : Ordinal.{u}) = 2 := by simp
   rw [visibilityReplace_coe, h12, ← h₁, visibilityReplace_bot, ← h₂] at h
   exact top_ne_bot h
 
