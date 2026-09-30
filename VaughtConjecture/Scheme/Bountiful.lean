@@ -38,6 +38,11 @@ grows (`capBall_anti`); at the cap `⊤` the ball of a lawful labelling is a sin
 bountiful rows extend every lawful labelling below `X` to one below `Y`
 (`IsBountiful.surjOn_isLawfulBelow`).  Bountifulness passes to the restriction to a face
 (`IsBountiful.restrict`).
+
+## References
+
+Bountifulness is Definition 2.5.14 of R. W. Knight, *A counterexample to Vaught's Conjecture
+using generalised Stone spaces* (draft, 20 February 2026) [Kni26].
 -/
 
 universe u
@@ -93,9 +98,10 @@ theorem mapsTo_capBall (h : X ≤ Y) (c : Label.{u}) (q : D.below Y → Label.{u
       (R.capBall X c (q ∘ Set.inclusion (D.below_mono h))) :=
   fun _ ⟨hl, he⟩ ↦ ⟨hl.mono h, fun _ ↦ he _⟩
 
-/-- The rows are **bountiful**: for all graded faces `X ≤ Y`, every cap `c` self-visible at the
-grade of `Y`, and every `q` lawful below `Y`, restriction from the cells below `Y` to those below
-`X` maps the cap ball of `q` at `c` onto the cap ball of the restriction of `q`. -/
+/-- The rows are **bountiful** [Kni26, Definition 2.5.14]: for all graded faces `X ≤ Y`, every
+cap `c` self-visible at the grade of `Y`, and every `q` lawful below `Y`, restriction from the
+cells below `Y` to those below `X` maps the cap ball of `q` at `c` onto the cap ball of the
+restriction of `q`. -/
 def IsBountiful : Prop :=
   ∀ ⦃X Y : Finset α × ℕ⦄, X ∈ D.gradedFaces → Y ∈ D.gradedFaces → ∀ (h : X ≤ Y) (c : Label.{u}),
     IsSelfVisible Y.2 c → ∀ q : D.below Y → Label.{u}, R.IsLawfulBelow Y q →

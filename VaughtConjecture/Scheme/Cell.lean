@@ -199,7 +199,7 @@ def below (X : Finset α × ℕ) : Set ι := {d | D.gradedIndex d ≤ X}
 theorem below_mono : Monotone D.below := fun _ _ h _ hd ↦ le_trans hd h
 
 /-- A cell lies below its own graded index. -/
-@[simp] theorem mem_below_gradedIndex (d : ι) : d ∈ D.below (D.gradedIndex d) :=
+theorem mem_below_gradedIndex (d : ι) : d ∈ D.below (D.gradedIndex d) :=
   (mem_below D).mpr le_rfl
 
 /-- The cells *visible* in `S`: those whose scope lies in `S`. -/

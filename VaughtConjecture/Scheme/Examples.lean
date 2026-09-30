@@ -19,6 +19,12 @@ bottom labelling.  Mute rows pull back to mute rows (`comap_mute`).
 `twoCells` is a concrete well-formed scheme on the one-point ground set `{0}` with two cells of the
 same graded index `({0}, 1)`, illustrating physical multiplicities; with mute rows it is consistent
 and bountiful (`twoCells_isWellFormed`, `isConsistent_mute`, `isBountiful_mute`).
+
+## References
+
+Mute rows are the mute semantics of the last clause of Lemma 4.2.2 of R. W. Knight, *A
+counterexample to Vaught's Conjecture using generalised Stone spaces* (draft, 20 February 2026)
+[Kni26].
 -/
 
 universe u
@@ -32,7 +38,7 @@ variable {ι κ α β : Type*} {D : CellScheme ι α} {E : CellScheme κ β}
 namespace Rows
 
 variable (D) in
-/-- The **mute** rows: every row is constantly bottom. -/
+/-- The **mute** rows: every row is constantly bottom [Kni26, Lemma 4.2.2]. -/
 def mute : D.Rows.{u} := ⟨fun _ _ ↦ ⊥⟩
 
 /-- A value of a mute row. -/
@@ -66,17 +72,17 @@ theorem isBountiful_mute : (mute D : D.Rows.{u}).IsBountiful := by
 end Rows
 
 /-- A scheme on the ground set `{0}` with two cells, both of scope `{0}` and grade `1`. -/
-def twoCells : CellScheme (Fin 2) ℕ where
+private def twoCells : CellScheme (Fin 2) ℕ where
   ground := {0}
   faces := {∅, {0}}
   scope _ := {0}
   grade _ := 1
 
 /-- The two cells of `twoCells` share their graded index. -/
-theorem twoCells_gradedIndex (d : Fin 2) : twoCells.gradedIndex d = ({0}, 1) := rfl
+private theorem twoCells_gradedIndex (d : Fin 2) : twoCells.gradedIndex d = ({0}, 1) := rfl
 
 /-- `twoCells` is a well-formed scheme; its plan law is decided. -/
-theorem twoCells_isWellFormed : twoCells.IsWellFormed :=
+private theorem twoCells_isWellFormed : twoCells.IsWellFormed :=
   ⟨by decide, fun _ ↦ by simp [twoCells]⟩
 
 end VaughtConjecture.CellScheme

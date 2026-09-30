@@ -42,6 +42,13 @@ each row `R.row s` is lawful below the graded index of `s`; consistent rows are 
 (`IsConsistent.isOrderly`) and consistency pulls back along lower embeddings
 (`IsConsistent.comap`).  Since the bottom labelling is always lawful, the mere existence of lawful
 sections carries no information; consistency is the statement about the rows themselves.
+
+## References
+
+Semantic rows are the semantics of Definition 2.5.3, lawful sections the labellings respecting
+them (Definition 2.5.4: locality is its first clause, availability its second), and consistency
+is Definition 2.5.12, of R. W. Knight, *A counterexample to Vaught's Conjecture using
+generalised Stone spaces* (draft, 20 February 2026) [Kni26].
 -/
 
 universe u
@@ -52,8 +59,8 @@ open Label
 
 variable {ι κ α β : Type*} {D : CellScheme ι α} {E : CellScheme κ β}
 
-/-- The **semantic rows** of a cell scheme: for every cell `s`, a labelling `row s` of the cells
-below `s`. -/
+/-- The **semantic rows** of a cell scheme [Kni26, Definition 2.5.3]: for every cell `s`, a
+labelling `row s` of the cells below `s`. -/
 @[ext]
 structure Rows (D : CellScheme ι α) where
   /-- The semantic row of a cell: a labelling of the cells below it. -/
@@ -92,8 +99,8 @@ def restrict [DecidableEq α] (B : Finset α) : (D.restrict B).Rows :=
 
 /-! ### Lawful sections -/
 
-/-- A labelling `p` of the cells is a **lawful section** of the rows `R`: it satisfies the order,
-locality, and availability laws. -/
+/-- A labelling `p` of the cells is a **lawful section** of the rows `R` [Kni26, Definition
+2.5.4]: it satisfies the order, locality, and availability laws. -/
 structure IsLawful (p : ι → Label.{u}) : Prop where
   /-- Order: the label of every cell is self-visible at the grade of the cell. -/
   orderly (d : ι) : IsSelfVisible (D.grade d) (p d)
@@ -111,8 +118,8 @@ rows restricted to the scheme `D⟨X⟩` of cells below `X`. -/
 def IsLawfulBelow (X : Finset α × ℕ) (r : D.below X → Label.{u}) : Prop :=
   (R.comap (IsLowerEmbedding.subtypeVal_below D X)).IsLawful r
 
-/-- The rows are **consistent**: the row of every cell `s` is lawful below the graded index of
-`s`. -/
+/-- The rows are **consistent** [Kni26, Definition 2.5.12]: the row of every cell `s` is lawful
+below the graded index of `s`. -/
 def IsConsistent : Prop := ∀ s, R.IsLawfulBelow (D.gradedIndex s) (R.row s)
 
 variable {R}
