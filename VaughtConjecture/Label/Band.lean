@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Label.Cap
-import VaughtConjecture.Label.Jump
+import VaughtConjecture.Label.Transform
 
 /-!
 # The band map and the band rule
