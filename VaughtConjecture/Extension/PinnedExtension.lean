@@ -26,9 +26,11 @@ This file reduces the exact pinned extension to the coatom extension constructio
   coatoms of `Fin (m + 2)` omitting the last point (`Fin.castSuccEmb`) and the point `m`
   (`extendByLast Fin.castSuccEmb`), which have the same face on the common `m` points, are the
   literal faces of one legal stage type on `m + 2` points [Kni26, Corollary 4.3.22].  It is a
-  hypothesis here, not a theorem: the completion of the amalgamated scheme by cells of full scope
-  ([Kni26, Definition 4.3.14]) and the bountifulness of its rows ([Kni26, Lemma 4.3.20]) are not
-  constructed in this file.
+  hypothesis here, not a theorem.  The amalgam of the two stage types, with its two literal faces
+  and its consistent and bountiful rows, is constructed in
+  `VaughtConjecture.Extension.CoatomAmalgam` ([Kni26, Definition 4.3.1 and Lemma 4.3.2]); it has
+  no cell of full scope, and its completion by such cells ([Kni26, Definition 4.3.14]), with the
+  bountifulness of the completed rows ([Kni26, Lemma 4.3.20]), is not constructed.
 * **The exact pinned extension** (`StageType.exists_pinned_extension`, row 6): under that
   hypothesis, for every legal `P` at stage `α`, every closed face `f` of `P` with restriction `p`,
   and every legal one-point coface `d` of `p`, there is a legal one-point pinned extension of `P`
@@ -48,6 +50,13 @@ This file reduces the exact pinned extension to the coatom extension constructio
   (`StageType.exists_extension`), and two legal stage types with a common face are faces of one
   legal stage type (`StageType.exists_amalgam`); and every legal scheme carries a legal stage type,
   its bottom labelling (`Scheme.IsLegal.toStageType`).
+
+## Placement
+
+`StageType.card_eq_zero`, `StageType.faces_eq_of_zero`, `StageType.eq_of_zero`, and
+`StageType.isSome_restrictFace_of_zero` belong in `VaughtConjecture.Stage.Basic`, and
+`Scheme.IsLegal.toStageType` with `Scheme.IsLegal.isLegal_toStageType` in
+`VaughtConjecture.Stage.Legal`.  They are stated here so that those files are unchanged.
 
 ## References
 
