@@ -3,6 +3,7 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
+import Mathlib.Data.Finset.Preimage
 import VaughtConjecture.Geometry.ConvexGeometry
 
 /-!
@@ -29,7 +30,9 @@ developed here:
 * the **two-generator property**: every closed set is the hull of its at most two extreme points
   (`IsConvexGeometry.hull_extremes`, `IsPlan.card_extremes_le_two`), so every hull is generated
   by at most two of its generators (`IsPlan.exists_subset_card_le_two_hull_eq`), and the
-  generating pair of a hull is recovered as its extremes (`IsPlan.extremes_hull`).
+  generating pair of a hull is recovered as its extremes (`IsPlan.extremes_hull`);
+* plans pull back along an embedding whose range contains the ground set: the faces of the
+  pullback are the sets whose image is a face (`IsPlan.preimage`).
 
 The pair of extremes of a closed set need not itself be closed, and its hull need not be small;
 see `VaughtConjecture.Geometry.Examples`.
@@ -367,3 +370,70 @@ of the hull.  In particular distinct such sets have distinct hulls. -/
 end IsPlan
 
 end VaughtConjecture.Geometry
+
+/-! ### Pulling plans back along an embedding -/
+
+/-- A finite set inside the range of an embedding is the image of its preimage. -/
+theorem Finset.map_preimage_eq_of_subset_range {α β : Type*} {f : β ↪ α} {s : Finset α}
+    (hs : (s : Set α) ⊆ Set.range f) : (s.preimage f f.injective.injOn).map f = s :=
+  Finset.coe_injective (by simpa using Set.image_preimage_eq_of_subset hs)
+
+namespace VaughtConjecture.Geometry.IsPlan
+
+open Finset
+
+variable {α β : Type*} [DecidableEq α] [DecidableEq β] {f : β ↪ α}
+
+/-- A plan on a ground set inside the range of an embedding pulls back to a plan: the faces of
+the pullback are the sets whose image is a face. -/
+theorem preimage {A : Finset α} {P : Finset (Finset α)} (hP : IsPlan A P)
+    (hA : (A : Set α) ⊆ Set.range f) :
+    IsPlan (A.preimage f f.injective.injOn)
+      (P.preimage (Finset.map f) (map_injective f).injOn) := by
+  induction hP with
+  | empty =>
+    have h₁ : (∅ : Finset α).preimage f f.injective.injOn = ∅ := by ext; simp
+    have h₂ : ({∅} : Finset (Finset α)).preimage (Finset.map f) (map_injective f).injOn = {∅} := by
+      ext; simp
+    rw [h₁, h₂]
+    exact .empty
+  | singleton a =>
+    obtain ⟨b, rfl⟩ := hA (mem_coe.mpr (mem_singleton_self a))
+    have h₁ : ({f b} : Finset α).preimage f f.injective.injOn = {b} := by ext; simp
+    have h₂ : ({∅, {f b}} : Finset (Finset α)).preimage (Finset.map f)
+        (map_injective f).injOn = {∅, {b}} := by
+      ext C
+      simp only [mem_preimage, mem_insert, mem_singleton, map_eq_empty]
+      rw [← map_singleton f b, (map_injective f).eq_iff]
+    rw [h₁, h₂]
+    exact .singleton b
+  | @step A a b Q R ha hb hab hQ hR hface hagree ihQ ihR =>
+    obtain ⟨a', rfl⟩ := hA ha
+    obtain ⟨b', rfl⟩ := hA hb
+    have hA' : (A.preimage f f.injective.injOn).map f = A :=
+      map_preimage_eq_of_subset_range hA
+    have hsub (x : α) : ((A.erase x : Finset α) : Set α) ⊆ Set.range f :=
+      (coe_subset.mpr (erase_subset x A)).trans hA
+    have herase (x : β) : (A.erase (f x)).preimage f f.injective.injOn =
+        (A.preimage f f.injective.injOn).erase x := by
+      ext y; simp [f.injective.eq_iff]
+    have hmap (x y : β) : (((A.preimage f f.injective.injOn).erase x).erase y).map f =
+        (A.erase (f x)).erase (f y) := by
+      rw [map_erase, map_erase, hA']
+    have ihQ := ihQ (hsub _)
+    have ihR := ihR (hsub _)
+    rw [herase] at ihQ ihR
+    have hfam : (insert A (Q ∪ R)).preimage (Finset.map f) (map_injective f).injOn =
+        insert (A.preimage f f.injective.injOn)
+          (Q.preimage (Finset.map f) (map_injective f).injOn ∪
+            R.preimage (Finset.map f) (map_injective f).injOn) := by
+      ext C
+      simp only [mem_preimage, mem_insert, mem_union]
+      rw [← hA', (map_injective f).eq_iff, hA']
+    rw [hfam]
+    refine .step (mem_preimage.mpr ha) (mem_preimage.mpr hb) (fun h ↦ hab (h ▸ rfl)) ihQ ihR
+      (mem_preimage.mpr (by rwa [hmap])) fun C hC ↦ ?_
+    simp only [mem_preimage]
+    exact hagree _ (by rw [← hmap]; exact map_subset_map.mpr hC)
+
+end VaughtConjecture.Geometry.IsPlan
