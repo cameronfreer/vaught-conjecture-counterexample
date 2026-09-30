@@ -19,7 +19,7 @@ of `o`.  Visibility replacement at threshold `k` with value `i` replaces the fin
 (`replaceFinitePart`).  On labels (`visibilityReplace k i`) it fixes the bottom label and the
 formal top.  A label is *self-visible* at `k` (`IsSelfVisible k x`) if visibility replacement at
 threshold `k` with value `k` fixes it; for an ordinal this says that its finite part is at least
-`k` (`isSelfVisible_coe`).
+`k` (`isSelfVisible_coe`), and for a natural number `n` that `k ≤ n` (`isSelfVisible_natCast`).
 
 * Visibility replacement stays in the band of its argument (`omega0_mul_div_le_replaceFinitePart`,
   `replaceFinitePart_lt`), so it commutes with stage reduction at every stage `α` that is zero or a
@@ -40,18 +40,14 @@ variable {α o o' : Ordinal.{u}} {k k' i : ℕ} {x y c : Label.{u}}
 
 /-! ### Bands of ordinals -/
 
-/-- An ordinal lies below the next multiple of `ω` above its band start. -/
-theorem lt_omega0_mul_div_add_omega0 (o : Ordinal.{u}) : o < ω * (o / ω) + ω := by
-  simpa [mul_add_one] using Ordinal.lt_mul_succ_div o omega0_ne_zero
+/-- The quotient of `b * a + r` by `b`, for `r < b`. -/
+private theorem mul_add_div_of_lt {b r : Ordinal.{u}} (a : Ordinal.{u}) (hr : r < b) :
+    (b * a + r) / b = a := by
+  rw [Ordinal.mul_add_div _ hr.ne_bot, Ordinal.div_eq_zero_of_lt hr, add_zero]
 
-/-- The quotient by `ω` of an ordinal in the band of `ω * a`. -/
-theorem omega0_mul_add_div {r : Ordinal.{u}} (a : Ordinal.{u}) (hr : r < ω) :
-    (ω * a + r) / ω = a := by
-  rw [Ordinal.mul_add_div _ omega0_ne_zero, Ordinal.div_eq_zero_of_lt hr, add_zero]
-
-/-- The finite part of an ordinal in the band of `ω * a`. -/
-theorem omega0_mul_add_mod {r : Ordinal.{u}} (a : Ordinal.{u}) (hr : r < ω) :
-    (ω * a + r) % ω = r := by
+/-- The remainder of `b * a + r` modulo `b`, for `r < b`. -/
+private theorem mul_add_mod_of_lt {b r : Ordinal.{u}} (a : Ordinal.{u}) (hr : r < b) :
+    (b * a + r) % b = r := by
   rw [Ordinal.mul_add_mod_self, Ordinal.mod_eq_of_lt hr]
 
 /-- At a stage that is zero or a limit (a multiple of `ω`), a band lies entirely below the stage
@@ -101,12 +97,12 @@ theorem replaceFinitePart_lt (k i : ℕ) (o : Ordinal.{u}) :
 /-- Visibility replacement keeps the quotient by `ω`. -/
 theorem replaceFinitePart_div (k i : ℕ) (o : Ordinal.{u}) :
     replaceFinitePart k i o / ω = o / ω :=
-  omega0_mul_add_div _ (ite_lt_omega0 k i o)
+  mul_add_div_of_lt _ (ite_lt_omega0 k i o)
 
 /-- The finite part after visibility replacement. -/
 theorem replaceFinitePart_mod (k i : ℕ) (o : Ordinal.{u}) :
     replaceFinitePart k i o % ω = if o % ω < k then (i : Ordinal.{u}) else o % ω :=
-  omega0_mul_add_mod _ (ite_lt_omega0 k i o)
+  mul_add_mod_of_lt _ (ite_lt_omega0 k i o)
 
 /-- At a stage that is zero or a limit, visibility replacement keeps an ordinal below the stage
 exactly when it was below. -/
@@ -114,7 +110,7 @@ theorem replaceFinitePart_lt_iff (hα : Order.IsSuccPrelimit α) (k i : ℕ) :
     replaceFinitePart k i o < α ↔ o < α := by
   rw [lt_iff_of_mem_band hα (omega0_mul_div_le_replaceFinitePart k i o)
       (replaceFinitePart_lt k i o),
-    lt_iff_of_mem_band hα (Ordinal.mul_div_le o ω) (lt_omega0_mul_div_add_omega0 o)]
+    lt_iff_of_mem_band hα (Ordinal.mul_div_le o ω) (Ordinal.lt_mul_div_add o omega0_ne_zero)]
 
 /-- On the finite ordinals visibility replacement replaces the ordinal itself. -/
 theorem replaceFinitePart_of_lt_omega0 (ho : o < ω) (k i : ℕ) :
@@ -248,10 +244,12 @@ value `k` fixes it: bottom, the formal top, or an ordinal whose finite part is a
 def IsSelfVisible (k : ℕ) (x : Label.{u}) : Prop := visibilityReplace k k x = x
 
 /-- The bottom label is self-visible at every threshold. -/
-@[simp, grind .] theorem isSelfVisible_bot (k : ℕ) : IsSelfVisible k (⊥ : Label.{u}) := rfl
+@[simp, grind .] theorem isSelfVisible_bot (k : ℕ) : IsSelfVisible k (⊥ : Label.{u}) :=
+  visibilityReplace_bot k k
 
 /-- The formal top is self-visible at every threshold. -/
-@[simp, grind .] theorem isSelfVisible_top (k : ℕ) : IsSelfVisible k (⊤ : Label.{u}) := rfl
+@[simp, grind .] theorem isSelfVisible_top (k : ℕ) : IsSelfVisible k (⊤ : Label.{u}) :=
+  visibilityReplace_top k k
 
 /-- An ordinal label is self-visible at `k` exactly when its finite part is at least `k`. -/
 @[simp, grind =] theorem isSelfVisible_coe :
@@ -261,6 +259,23 @@ def IsSelfVisible (k : ℕ) (x : Label.{u}) : Prop := visibilityReplace k k x = 
   have := congrArg (· % ω) h'
   simp only [replaceFinitePart_mod, hk, ite_true] at this
   exact hk.ne' this
+
+/-- Ordinal zero is self-visible only at threshold zero. -/
+@[simp] theorem isSelfVisible_zero : IsSelfVisible k (0 : Label.{u}) ↔ k = 0 := by
+  simpa using isSelfVisible_coe (k := k) (o := 0)
+
+/-- The ordinal `1` is self-visible exactly at the thresholds `≤ 1`. -/
+@[simp] theorem isSelfVisible_one : IsSelfVisible k (1 : Label.{u}) ↔ k ≤ 1 :=
+  isSelfVisible_coe.trans <| by rw [Ordinal.mod_eq_of_lt one_lt_omega0]; exact_mod_cast Iff.rfl
+
+/-- A natural number `n` is self-visible exactly at the thresholds `≤ n`. -/
+@[simp] theorem isSelfVisible_natCast (n : ℕ) : IsSelfVisible k (n : Label.{u}) ↔ k ≤ n :=
+  isSelfVisible_coe.trans <| by rw [Ordinal.natCast_mod_omega0, Nat.cast_le]
+
+/-- A numeral `n` is self-visible exactly at the thresholds `≤ n`. -/
+@[simp] theorem isSelfVisible_ofNat (n : ℕ) [n.AtLeastTwo] :
+    IsSelfVisible k (ofNat(n) : Label.{u}) ↔ k ≤ ofNat(n) :=
+  isSelfVisible_natCast n
 
 /-- A self-visible label is fixed by visibility replacement at its threshold, with any value. -/
 theorem IsSelfVisible.visibilityReplace_eq (h : IsSelfVisible k x) (i : ℕ) :

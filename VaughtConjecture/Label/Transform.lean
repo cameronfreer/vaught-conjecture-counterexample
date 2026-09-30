@@ -269,7 +269,7 @@ section Nontransitive
 open Ordinal
 
 /-- The sources `(1, 2)`, at grade one, transform to `(1, ⊤)`. -/
-theorem TransformsTo.one_two_one_top :
+private theorem TransformsTo.one_two_one_top :
     TransformsTo (fun _ : Bool ↦ 1)
       (fun b ↦ ((if b then 2 else 1 : Ordinal.{u}) : Label.{u}))
       (fun b ↦ if b then ⊤ else ((1 : Ordinal.{u}) : Label.{u})) := by
@@ -294,7 +294,7 @@ theorem TransformsTo.one_two_one_top :
         split_ifs <;> assumption
       | top => simp at h2
     · rw [stepSuppressor_of_lt hk, le_bot_iff, reduce_eq_bot_iff] at hx
-      simp [hx]
+      simp [hx, reduce_bot]
   · have h12 : ((1 : Ordinal.{u}) : Label.{u}) < ((2 : Ordinal.{u}) : Label.{u}) :=
       WithBot.coe_lt_coe.mpr (WithTop.coe_lt_coe.mpr one_lt_two)
     intro b
@@ -305,7 +305,7 @@ theorem TransformsTo.one_two_one_top :
       exact (reduce_of_le le_rfl).symm
 
 /-- The labels `(1, ⊤)`, at grade one, transform to `(⊥, ⊤)`. -/
-theorem TransformsTo.one_top_bot_top :
+private theorem TransformsTo.one_top_bot_top :
     TransformsTo (fun _ : Bool ↦ 1)
       (fun b ↦ if b then ⊤ else ((1 : Ordinal.{u}) : Label.{u}))
       (fun b ↦ if b then ⊤ else ⊥) := by
@@ -323,7 +323,7 @@ theorem TransformsTo.one_top_bot_top :
 
 /-- The sources `(1, 2)`, at grade one, do not transform to `(⊥, ⊤)`: a shifter sending `1` to
 `⊥` must send the visibility replacement `2` of `1` to `⊥` as well. -/
-theorem TransformsTo.not_one_two_bot_top :
+private theorem TransformsTo.not_one_two_bot_top :
     ¬ TransformsTo (fun _ : Bool ↦ 1)
       (fun b ↦ ((if b then 2 else 1 : Ordinal.{u}) : Label.{u}))
       (fun b ↦ if b then ⊤ else ⊥) := by
@@ -347,19 +347,11 @@ theorem TransformsTo.not_transitive :
   fun h ↦ not_one_two_bot_top (h _ _ _ one_two_one_top one_top_bot_top)
 
 /-- The three labellings of the nontransitivity example are self-visible at grade one. -/
-theorem isSelfVisible_one_two_one_top_bot_top (b : Bool) :
+private theorem isSelfVisible_one_two_one_top_bot_top (b : Bool) :
     IsSelfVisible 1 ((if b then 2 else 1 : Ordinal.{u}) : Label.{u}) ∧
       IsSelfVisible 1 (if b then ⊤ else ((1 : Ordinal.{u}) : Label.{u})) ∧
       IsSelfVisible 1 (if b then (⊤ : Label.{u}) else ⊥) := by
-  have h1 : IsSelfVisible 1 ((1 : Ordinal.{u}) : Label.{u}) :=
-    isSelfVisible_coe.mpr (by
-      rw [Ordinal.mod_eq_of_lt (by exact_mod_cast natCast_lt_omega0 1), Nat.cast_one])
-  have h2 : IsSelfVisible 1 ((2 : Ordinal.{u}) : Label.{u}) :=
-    isSelfVisible_coe.mpr (by
-      rw [Ordinal.mod_eq_of_lt (by exact_mod_cast natCast_lt_omega0 2)]; exact_mod_cast one_le_two)
-  cases b
-  · exact ⟨h1, h1, isSelfVisible_bot 1⟩
-  · exact ⟨h2, isSelfVisible_top 1, isSelfVisible_top 1⟩
+  cases b <;> simp
 
 end Nontransitive
 

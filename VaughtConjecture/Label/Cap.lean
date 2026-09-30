@@ -44,6 +44,10 @@ def IsPermittedCutoff (α : Ordinal.{u}) (c : Label.{u}) : Prop := ⊥ < c ∧ c
     IsPermittedCutoff α (δ : Label.{u}) ↔ δ < α := by
   simp [IsPermittedCutoff]
 
+/-- Ordinal zero is a permitted cutoff exactly at the positive stages. -/
+@[simp] theorem isPermittedCutoff_zero : IsPermittedCutoff α (0 : Label.{u}) ↔ 0 < α :=
+  isPermittedCutoff_coe
+
 /-- The bottom label is never a permitted cutoff. -/
 @[simp] theorem not_isPermittedCutoff_bot : ¬ IsPermittedCutoff α (⊥ : Label.{u}) :=
   fun h ↦ h.1.false
