@@ -32,10 +32,12 @@ formal top, while a cap at a proper cutoff forgets it.
 ## Implementation notes
 
 The numerals `0`, `1`, `2`, … and the casts `(n : Label)` of natural numbers have their own
-`simp` lemmas (`isProper_natCast`, `atStage_ofNat`, and so on), so `simp` decides the predicates
+`simp` lemmas (`isProper_natCast`, `atStage_ofNat`, and so on), so `simp` reduces the predicates
 of this file and of `VaughtConjecture.Label.Cap` and `VaughtConjecture.Label.Visibility` on
-them.  The spelling `((n : Ordinal) : Label)` is normalized by `simp [WithBot.coe_natCast]`;
-`WithBot.coe_natCast` is not a `simp` lemma in the pinned Mathlib.
+them to a comparison of ordinals (of natural numbers for `IsSelfVisible` and
+`visibilityReplace`, which `simp` then decides; a comparison such as `3 < 5` between ordinal
+numerals needs `exact_mod_cast`).  The spelling `((n : Ordinal) : Label)` is normalized by
+`simp [WithBot.coe_natCast]`; `WithBot.coe_natCast` is not a `simp` lemma in the pinned Mathlib.
 -/
 
 universe u
