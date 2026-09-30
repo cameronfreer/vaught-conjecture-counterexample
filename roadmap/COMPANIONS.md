@@ -80,9 +80,10 @@ of the classes outside `D_η`, and `ℓ_η` the disjunction of the Scott sentenc
 the loss.  For (3): `w_η` satisfies `ℓ_η` and `w_{η+1}` does not, both lie in `D_η`, and they
 agree on every sentence of rank at most `η`; hence `η < qrank ℓ_η`.
 
-**Regressions.**  `η = 0`, where `D_0 = Q` is defined by a sentence of rank `0` (the bound in (3)
-concerns losses and `D_{η+1}`, not `D_η`); a nonzero countable limit `η`, where `D_η = ⋂_{ξ<η} D_ξ`
-and the agreement used is the one at the limit itself; a loss consisting of a single class.
+**Degenerate cases.**  `η = 0`, where `D_0 = Q` is defined by a sentence of rank `0` (the bound in
+(3) concerns losses and `D_{η+1}`, not `D_η`); a nonzero countable limit `η`, where
+`D_η = ⋂_{ξ<η} D_ξ` and the agreement used is the one at the limit itself; a loss consisting of a
+single class.
 
 **Non-claims.**  No effective or uniform choice of `δ_η` or `ℓ_η`: they depend on enumerations of
 countable sets of classes.  No upper bound on their quantifier rank.  No claim that `δ_η` is a
@@ -106,7 +107,7 @@ statement holds for any choice of witnesses in the domains.
 **Instantiation.**  `w_η` the base class of the top-free witness at block `η`; the threshold for
 `ψ` is `qrank ψ`, a countable ordinal.
 
-**Regressions.**  `ψ` of rank `0`; `η = qrank ψ` exactly (the threshold is attained, not only
+**Degenerate cases.**  `ψ` of rank `0`; `η = qrank ψ` exactly (the threshold is attained, not only
 exceeded); `η` a limit; the exclusion of `ψ, ¬ψ ∈ T∞` together, which uses the uncountability of
 `Q`.
 
@@ -163,10 +164,10 @@ content of the proof of `isolatedPresentation_of_surjective`, whose statement is
 any cardinality either is `L_{ω₁,ω}`-equivalent to a countable model of `Φ` through a Scott
 sentence, or has theory `T∞`.
 
-**Regressions.**  `N` countable (case (S) with its own Scott sentence; so no countable model of `Φ`
-satisfies `T∞`); `N` on `ℕ` and on another countable carrier; `N` in a universe different from
-the codes'; the finite case, excluded by hypothesis (a finite structure is not coded on `ℕ`, and
-for a sentence with finite models the dichotomy can fail).
+**Degenerate cases.**  `N` countable (case (S) with its own Scott sentence; so no countable model of
+`Φ` satisfies `T∞`); `N` on `ℕ` and on another countable carrier; `N` in a universe different from
+the codes'; the finite case, excluded by hypothesis (a finite structure is not coded on `ℕ`, and for
+a sentence with finite models the dichotomy can fail).
 
 **Non-claims.**  Case (S) gives infinitary agreement, not an isomorphism between differently
 sized models.  No uncountable model of `Φ` is asserted to exist, in either case.  No model of all
@@ -223,7 +224,7 @@ concern classes of finitely generated structures under all embeddings and are no
 
 **Instantiation.**  The charts occurring in the top-free realizations at block `ξ`.
 
-**Regressions.**  The empty root (`k = 0`, giving JEP); a root equal to one of the two charts;
+**Degenerate cases.**  The empty root (`k = 0`, giving JEP); a root equal to one of the two charts;
 `p₁ = p₂` with `f₁ = f₂`; a root that is the hull of two of its points but has more than two
 points (`SEMANTIC_CONTRACT.md`, item 2); distinct cells sharing a graded index.
 
@@ -252,9 +253,9 @@ repeated coordinates are allowed), `PotentialIso.family_bfEquiv`, and
 **Instantiation.**  The top-free witness at block `ξ`, as a structure in the stage chart
 language at `λ_ξ`.
 
-**Regressions.**  The empty tuple (the identity automorphism); tuples with repeated coordinates;
-`f` the identity; a two-point tuple whose hull is large; charts of different sizes containing the
-same tuple.
+**Degenerate cases.**  The empty tuple (the identity automorphism); tuples with repeated
+coordinates; `f` the identity; a two-point tuple whose hull is large; charts of different sizes
+containing the same tuple.
 
 **Non-claims.**  No proper (non-surjective) self-embedding is constructed or asserted to exist.
 Nothing about realizations with top labels, about embeddings between different realizations, or
@@ -311,7 +312,7 @@ base reduct.  Search the pinned libraries before reproducing these generic argum
 its orbits are defined by the existential formulas `θ_a`; it is atomic; its internal Scott rank is
 at most `ω`; it is a prime model of its complete first-order theory in that language.
 
-**Regressions.**  The empty tuple (its orbit formula is `∃ z̄, P_p(z̄)` for the chosen chart);
+**Degenerate cases.**  The empty tuple (its orbit formula is `∃ z̄, P_p(z̄)` for the chosen chart);
 repeated coordinates (`ι` not injective); a tuple lying in charts of different sizes (the orbit
 formula does not depend on the chart chosen, up to equivalence in `M`); universe independence
 (source in `Type w`, target in `Type w'` for primeness; `Ordinal.{w}` for the internal Scott
@@ -423,7 +424,7 @@ the stage language at `ω`, their expansions at every stage, the top-free realiz
 structural stable candidate before its modelhood is proved.  In particular no model of `Φ` has an
 infinite set all of whose permutations are induced by automorphisms.
 
-**Regressions.**  A set of exactly four points (the threshold of the argument); sets of at most
+**Degenerate cases.**  A set of exactly four points (the threshold of the argument); sets of at most
 three points, about which nothing is claimed; uncountable carriers; realizations that are not
 models.
 

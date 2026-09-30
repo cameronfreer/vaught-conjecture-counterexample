@@ -9,7 +9,8 @@ import VaughtConjecture.Counting.Filtration
 /-!
 # Counting classes: cofinal losses, a countable persistent core, and Scott separation
 
-Roadmap, Layer 0, "Counting and observation", and the Layer 6 endpoint via Scott separation.
+Roadmap, Layer 0, "Counting and observation", and the counting theorem of Layer 6 via Scott
+separation.
 For decreasing domains `D ξ` on a type `X` of classes, indexed by the countable
 ordinals as in `VaughtConjecture.Counting.Filtration`:
 
@@ -28,7 +29,7 @@ ordinals as in `VaughtConjecture.Counting.Filtration`:
   point.  It need not be empty.
 
 The `Filtration` versions combine these with InfinitaryLogic's `compl_countable_of_loss`:
-`Filtration.mk_eq_aleph_one_of_separation` is the counting endpoint, and
+`Filtration.mk_eq_aleph_one_of_separation` is the counting theorem, and
 `Filtration.countable_truth_side` is the sentence split of `countable_split_of_uniform_domain`.
 
 Two private examples close the file: the tail filtration of the countable
@@ -125,7 +126,7 @@ theorem core_subsingleton {S : Type v} (truth : S → X → Prop)
     F.core.Subsingleton :=
   persistent_subsingleton_of_separation F.domain truth separates homogeneous
 
-/-- **Counting endpoint.**  A filtration whose classes are separated by observations, each
+/-- **Counting theorem.**  A filtration whose classes are separated by observations, each
 constant on some domain below `ω₁`, has exactly `ℵ₁` classes. -/
 theorem mk_eq_aleph_one_of_separation {S : Type v} (truth : S → X → Prop)
     (separates : ∀ p q, p ≠ q → ∃ s, ¬ (truth s p ↔ truth s q))

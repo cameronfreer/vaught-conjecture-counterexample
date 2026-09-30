@@ -8,18 +8,18 @@ import VaughtConjecture.Label.Basic
 /-!
 # Permitted cutoffs and capped observation
 
-Roadmap, "Library conventions" (observations `obs_c(q)`, the permitted-cap test, and the
+Roadmap, "Library conventions" (observations `obs_c(q)`, the permitted-cutoff test, and the
 distinction between stage reduction and capped observation); semantic contract, item 3; the
 expositions, §2.
 
-The capped observation of a label `x` at a cutoff `c` is `min x c`; no separate operation is
-introduced, and capping twice, monotonicity, and so on are Mathlib's lemmas about `min`.  At
-stage `α` a cutoff is *permitted* (`IsPermittedCutoff α c`) if `⊥ < c < α`: it is an ordinal
-below the stage, possibly ordinal zero (`isPermittedCutoff_iff`).
+The capped observation of a label `x` at a cap `c` (the capping value) is `min x c`; no separate
+operation is introduced, and capping twice, monotonicity, and so on are Mathlib's lemmas about
+`min`.  At stage `α` a cap is a *permitted cutoff* (`IsPermittedCutoff α c`) if `⊥ < c < α`: it is
+an ordinal below the stage, possibly ordinal zero (`isPermittedCutoff_iff`).
 
 * Capping at an ordinal `α` and stage reduction to `α` have the same equality kernel
   (`min_eq_min_iff_reduce_eq`): both record a label below `α` exactly and identify all others.
-* Stage reduction to `α` does not change a capped observation at a cutoff `≤ α`
+* Stage reduction to `α` does not change a capped observation at a cap `c ≤ α`
   (`min_reduce_of_le`), so stage reduction preserves and reflects capped agreement at every
   permitted cutoff (`min_reduce_eq_min_reduce_iff`).
 * **Capping is not stage reduction.**  A cap at a permitted cutoff identifies the formal top with
@@ -89,13 +89,13 @@ theorem IsPermittedCutoff.atStage_min (h : IsPermittedCutoff α c) (x : Label.{u
     AtStage α (min x c) :=
   .inl ((min_le_right x c).trans_lt h.2)
 
-/-- Stage reduction to `α` does not change a capped observation at a cutoff `c ≤ α`. -/
+/-- Stage reduction to `α` does not change a capped observation at a cap `c ≤ α`. -/
 theorem min_reduce_of_le (hc : c ≤ α) (x : Label.{u}) : min (reduce α x) c = min x c := by
   by_cases hx : x < α
   · rw [reduce_of_lt hx]
   · rw [reduce_of_le (not_lt.mp hx), min_eq_right le_top, min_eq_right (hc.trans (not_lt.mp hx))]
 
-/-- Stage reduction to `α` preserves and reflects capped agreement at every cutoff `c ≤ α`. -/
+/-- Stage reduction to `α` preserves and reflects capped agreement at every cap `c ≤ α`. -/
 theorem min_reduce_eq_min_reduce_iff (hc : c ≤ α) :
     min (reduce α x) c = min (reduce α y) c ↔ min x c = min y c := by
   rw [min_reduce_of_le hc, min_reduce_of_le hc]

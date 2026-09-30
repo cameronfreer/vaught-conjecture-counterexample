@@ -8,7 +8,8 @@ import InfinitaryLogic.OrdinalCountability
 /-!
 # Filtrations of a class space by countable-loss domains
 
-Roadmap, Layer 0, "Counting and observation", and the Layer 6 endpoint via Scott separation.
+Roadmap, Layer 0, "Counting and observation", and the counting theorem of Layer 6 via Scott
+separation.
 A `Filtration X` on a type `X` of isomorphism classes is a family of domains `D ξ ⊆ X` indexed by
 the ordinals, of which only the stages `ξ < ω₁` carry information, with
 
