@@ -104,16 +104,21 @@ from per-cap lifts to simultaneous preservation under the hypothesis that restri
 injective, i.e. uniqueness of extension; that hypothesis is not available in general (see
 `README.md`, Layer 0: do not assume injectivity).  The construction obtains simultaneous cap
 preservation differently.  The per-cap lift applies only at caps where the face prescription
-is compatible with the ambient labelling, and the compatible caps are downward closed.  Two
-cases.  If the prescription differs from the ambient face at some coordinate, the compatible
-caps are exactly those below the least such disagreement, so a largest compatible cap `c*`
-exists; an extension preserving the observation at `c*` preserves it at every smaller cap,
-because caps nest under `min` (`min (min x c') c = min x c` for `c ≤ c'`).  If the prescription
-agrees with the ambient face at every permitted cap, the compatible caps have no maximum at a
-limit stage, and preservation at a single proper cap does not control the labels above it (a
-proper label above the cap and the formal top have the same observation there); simultaneous
-preservation then needs the exact or literal-top forms of receiving (layer 3), not the cap
-calculus.  This is the intended argument, still to be proved.  Preserve caps on
+agrees with the face of the ambient section up to the cap.  Split on literal difference.  If
+the prescription `p` differs from the face `a` of the ambient section at some coordinate, let
+`m` be the least value of `min (pᵢ, aᵢ)` over the differing coordinates (`m` is never the
+formal top).  The compatible caps are exactly the permitted caps at or below `m`.  If `m` is an
+ordinal it is the largest compatible cap, and a lift at `m` preserves the observation at every
+compatible cap, because caps nest under `min` (`min (min x m) c = min x c` for `c ≤ m`).  If
+`m = ⊥`, no permitted cap is compatible: simultaneous preservation is vacuous, and the cap
+calculus supplies no extension of `p` at all.  If `p` is literally the face of `a`, the ambient
+section itself is an extension preserving every observation.  (Agreement at every permitted
+cap is equality at a nonzero limit stage, where the caps `0` and `y + 1` separate any two
+labels at the stage, but not at a successor stage `β + 1`, where `β` and the formal top agree
+at every permitted cap; hence the split on literal difference.)  Simultaneous preservation
+therefore needs neither injectivity nor any exact form of receiving, given per-cap
+bountifulness and the fact that the ambient section restricts to the ambient face.  This is
+the intended argument, still to be proved.  Preserve caps on
 **all** target coordinates, including auxiliaries and future catalogue fields (catalogue fields
 are to be defined by the forthcoming layer-3 specification).  A statement
 that recovers only a few labels from the observation does not weaken the lifting requirement.
