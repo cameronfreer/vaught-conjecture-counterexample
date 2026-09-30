@@ -247,8 +247,14 @@ repeated coordinates are allowed), `PotentialIso.family_bfEquiv`, and
 `exists_automorphism_of_bfEquiv_all` (`Scott/OrbitRank`); `BoundedFormulaω.realize_equiv`
 (`Lomega1omega/Theory`).  For a top-free witness, homogeneity is also immediate from
 ultrahomogeneity (`IsFraisseLimit`), the two actual charts spanning finite substructures of the
-definitional expansion (`README.md`, Layer 2, facts 2–4), and automorphisms of the expansion being
-those of `M`, the operations being definable.
+definitional expansion (`README.md`, Layer 2, facts 2–4).  Orbit formulas and the rank bounds
+stay in the relational stage chart language `L_λ`.  The passage from ultrahomogeneity of the
+`L^h_λ`-structure to chart homogeneity in `L_λ` uses the automorphism and embedding
+correspondence of `HULL_ALGEBRA.md`, §5: the hull operations are preserved and reflected by
+embeddings of the relational reducts, so every automorphism of the `L_λ`-reduct is an
+automorphism of the `L^h_λ`-expansion, and conversely.  Definability of the operations alone
+gives this for automorphisms but not for arbitrary embeddings; for embeddings it is the
+preservation theorem of §5.
 
 **Instantiation.**  The top-free witness at block `ξ`, as a structure in the stage chart
 language at `λ_ξ`.

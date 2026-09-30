@@ -284,8 +284,8 @@ First applications: the amalgamation of top-free charts (step 2, from the plain 
 coatom extension property and capping) and receiving in the classical limit (step 6, rows 6
 and 5).  The modules of the finite extension constructions import neither the classical limit
 nor the chain construction.  Direct limits of structures and the classical existence theorem
-belong to the two libraries: they replace no finite extension construction and no decoding or
-recovery statement.
+(to be quoted after the repin) belong to the two libraries: they replace no finite extension
+construction and no decoding or recovery statement.
 
 ### 4. Stable continuation and terminal comparison
 
@@ -356,7 +356,8 @@ age and not recognized afterwards in a model constructed otherwise.
    its points and has more than two points, images meeting outside the common chart (no strong
    amalgamation is claimed).  No infinite model is imported.
 3. **Classical existence.**  Acceptance: `isFraisse_representativeClass` applied to the family,
-   then the classical existence theorem, giving a countable `L^h_λ`-structure with
+   then the classical existence theorem (to be quoted after the repin), giving a countable
+   `L^h_λ`-structure with
    `IsFraisseLimit`; the countability hypotheses (`[Countable (Σ l, L.Functions l)]`, countably
    many isomorphism types) are proved for `L^h_λ` and the age, not assumed.
 4. **Reconstruction of partial evaluation.**  Acceptance: the evaluation of an injective tuple is
@@ -374,10 +375,15 @@ age and not recognized afterwards in a model constructed otherwise.
    claim of one extension for all cutoffs or of recovery of a top.  Regressions: the empty
    root, a donor with top labels at two different cutoffs, a donor with bottom labels.
 7. **Modelhood, infinitude, terminality.**  Acceptance: modelhood by the cap-to-model theorem
-   (checkpoint 4); infinitude from receiving and the one-point extension of legal stage types;
-   terminality from top-freeness and the new band required at the next block, using only the
-   reduction of models (layer 2).  The placement of the base class in the loss at `η`, by
-   expansion uniqueness, belongs to layer 5 (checkpoint 5).
+   (checkpoint 4); infinitude, with freshness of the received point over the whole finite
+   chart: for a finite set `F`, the root is an actual occurrence `t` containing `F` (covering)
+   and the donor a one-point coface of its type ([Kni26, Proposition 4.3.23], which supplies
+   only the coface, a stage type on one more point, not a point of the realization); the
+   receiving criterion, all equations on one injective occurrence extending `t` literally, puts
+   the new point outside the whole chart `t`, hence outside `F`; terminality from top-freeness
+   and the new band required at the next block, using only the reduction of models (layer 2).
+   The placement of the base class in the loss at `η`, by expansion uniqueness, belongs to
+   layer 5 (checkpoint 5).
 
 **Dependency boundaries.**  The age argument (steps 1–7) imports Mathlib, InfinitaryLogic,
 ComputableModelTheory, layers 0–2, and the finite kernel (layer 1, the coatom extension
@@ -391,7 +397,9 @@ retained only for the statements listed in `README.md` under "The chain construc
 saturated model of [Kni26, Proposition 4.4.5] from explicit finite extension hypotheses, and a
 construction by explicit enumeration as the starting point of an effective presentation); no
 checkpoint of the main theorem depends on it, and it is never a second proof of top-free
-existence.
+existence.  The effective route is conditional on effective input data, an effective
+enumeration of the age and an effective amalgamation procedure; the classical Fraïssé
+construction uses choice and supplies no computable presentation.
 
 ## Upstream building blocks
 
@@ -434,7 +442,8 @@ To be quoted after the repin (not available at the current pins, and therefore n
 the sketches): from ComputableModelTheory, the classical Fraïssé theorems (`representativeClass`,
 `isFraisse_representativeClass`, `FGCofinal`, `ExtensionRich`, `isFraisseLimit_of_extensionRich`,
 `SequenceExtension`, `amalgamationRich_of_sequenceExtension`, `age_directLimit_eq`,
-`countable_directLimit`, `isFraisseLimit_directLimit`, and the existence theorem), the
+`countable_directLimit`, `isFraisseLimit_directLimit`, and the existence theorem, an intended
+dependency not yet stated there; see "Dependency pins"), the
 factorization of tuples through the age (`exists_factor_tuple_of_age_subset`,
 `exists_factor_embedding_of_age_subset`), and orbit isolation and countable prime structures
 (`IsolatesTuple`, `IsAtomic`, `isolatesTuple_of_orbit_formula`, `isAtomic_of_orbit_formulas`,
@@ -466,7 +475,11 @@ versions exist:
   requests #37 (toolchain `v4.35.0-rc3` and its own repin of InfinitaryLogic), #38
   (extension-rich families) and #39 (representative classes and extension-rich direct limits),
   the classical existence theorem, and the modules on orbit isolation and countable prime
-  structures and on the factorization of tuples through the age.
+  structures and on the factorization of tuples through the age.  **The classical existence
+  theorem is an intended dependency of ComputableModelTheory, not an available pinned
+  theorem.**  The theorem itself is classical, but its statement in ComputableModelTheory and
+  its verification there are separate steps still to happen; no statement of this roadmap
+  relies on it as pinned until this subsection records a pin containing it.
 - **Mathlib and the toolchain** agree across the three: one Lean toolchain (`v4.35.0-rc3` at
   present) and one Mathlib commit (at present the fork commit `346a4bd`, inherited from
   InfinitaryLogic).  The manifest holds one revision of each dependency, so ComputableModelTheory
@@ -488,16 +501,22 @@ The development produces the following, and only these, as hypotheses of library
   coordinates included), the formula `θ_a(x̄) := ∃ z̄, P_p(z̄) ∧ ⋀_i x_i = z_{ι(i)}` of an
   actual chart `z̄` of type `p` containing `a` at the positions `ι`, with the proof that it
   defines the automorphism orbit of `a`; this uses chart homogeneity, which for a top-free
-  witness is ultrahomogeneity together with layer 2 (automorphisms of `L_λ`- and
-  `L^h_λ`-structures coincide, the operations being definable) and for an arbitrary countable
-  top-free model with finite-cut receiving is a back-and-forth argument (`COMPANIONS.md`, B2);
+  witness is ultrahomogeneity together with layer 2 and for an arbitrary countable top-free
+  model with finite-cut receiving is a back-and-forth argument (`COMPANIONS.md`, B2).  Orbit
+  formulas and the rank bounds stay in the relational stage chart language `L_λ`.  The passage
+  from ultrahomogeneity of the `L^h_λ`-structure to chart homogeneity in `L_λ` uses the
+  automorphism and embedding correspondence of `HULL_ALGEBRA.md`, §5: the hull operations are
+  preserved and reflected by embeddings of the relational reducts, so every automorphism of the
+  `L_λ`-reduct is an automorphism of the `L^h_λ`-expansion, and conversely.  Definability of the
+  operations alone gives this for automorphisms but not for arbitrary embeddings; for embeddings
+  it is the preservation theorem of §5;
 - **the local automorphism property:** every self-embedding of a countable top-free model agrees
   with an automorphism on each finite tuple (`COMPANIONS.md`, B2).
 
 It then quotes:
 
-- classical existence and `isFraisse_representativeClass` (ComputableModelTheory), for the limit
-  (step 3);
+- classical existence (to be quoted after the repin) and `isFraisse_representativeClass`
+  (ComputableModelTheory), for the limit (step 3);
 - the factorization of tuples through the age (ComputableModelTheory), for the reconstruction
   (steps 4–5);
 - `IsUltrahomogeneous.extend_embedding` (Mathlib), for receiving (step 6);
@@ -555,7 +574,8 @@ Each checkpoint needs both its abstract API and a concrete application:
 3. Realizations, literal syntax correspondence, the hull operations with their four facts;
    then steps 1–6 of the top-free witnesses, in order: finite top-free charts, hereditary
    closure and amalgamation and joint embedding (through the plain form of the coatom extension
-   property, the first use of row 6), classical existence, reconstruction, consistency and
+   property, the first use of row 6), classical existence (to be quoted after the repin),
+   reconstruction, consistency and
    covering and top-freeness, and receiving (the first use of row 5).
 4. Items 3.2 and 3.3 for rows 1–3: for each row, the extension of the realization by one actual
    occurrence over the literal root and the recovery theorem (by `Correct` and labelled
@@ -676,7 +696,8 @@ of finite top-free charts, formerly a companion topic, are step 2 of the top-fre
 belong to the core.  These do not assert strong AP, a proper self-embedding, uncountable
 categoricity, Scott-rank equality, or existence of a model of all of `T∞`.  The main theorem is
 proved without them; if any is added, give it a separate definite completion criterion.  Direct
-limits of structures and the classical existence theorem belong to the two libraries, not to
+limits of structures and the classical existence theorem (to be quoted after the repin) belong
+to the two libraries, not to
 the finite constructions of layer 3.
 [`COMPANIONS.md`](COMPANIONS.md) gives these topics and the full-chart orbit theory below such
 criteria, as three milestones (A: filtration and infinitary theory; B: top-free chart homogeneity

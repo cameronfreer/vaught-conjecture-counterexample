@@ -268,9 +268,13 @@ noncomputable def chartOrbitFormula {n m : ℕ} (p : Chart m) (b : Fin n → Fin
 chart homogeneity (two actual occurrences of the same chart are carried to each other by an
 automorphism), the orbit formula of an actual chart containing the tuple `a` defines its
 automorphism orbit.  The empty tuple and repeated coordinates are included.  For a top-free
-witness, chart homogeneity is ultrahomogeneity together with the correspondence of charts and
-finite substructures.  The isolation, atomicity, primeness, and rank theorems applied to such
-formulas are quoted after the repin (`COMPANIONS.md`, B3). -/
+witness, chart homogeneity is ultrahomogeneity of the definitional expansion together with the
+correspondence of charts and finite substructures, read in the relational language through the
+automorphism and embedding correspondence of `HULL_ALGEBRA.md`, §5 (the hull operations are
+preserved and reflected by embeddings, so automorphisms of the reduct are automorphisms of the
+expansion; definability alone does not give this for arbitrary embeddings).  The isolation,
+atomicity, primeness, and rank theorems applied to such formulas are quoted after the repin
+(`COMPANIONS.md`, B3). -/
 theorem orbitDefinedBy_chartOrbitFormula {eval : {n : ℕ} → (Fin n ↪ M) → Option (Chart n)}
     (hrec : Reconstructs restrict rel eval)
     (hhom : ∀ {m : ℕ} (u v : Fin m ↪ M) (p : Chart m), eval u = some p → eval v = some p →
