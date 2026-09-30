@@ -43,7 +43,7 @@ The following declarations of this layer belong in earlier files, and are tracke
 * `Realization.HasLegalTypes` (in `VaughtConjecture.Language.Structure`) in
   `VaughtConjecture.Realization.Basic`;
 * `Realization.IsModel.hasLegalTypes` (in `VaughtConjecture.Language.Structure`), and
-  `Realization.IsModel.exists_le_arity` and `Realization.IsModel.infinite` (in
+  `Realization.IsModel.exists_arity_eq`, `exists_le_arity` and `IsModel.infinite` (in
   `VaughtConjecture.Language.Satisfaction`) in `VaughtConjecture.Realization.Model`;
 * `StageType.bottomPatternFamily_congr` (in `VaughtConjecture.Language.Sentence`), and
   `StageType.receivingFamily` with its lemmas (in `VaughtConjecture.Language.Density`) in

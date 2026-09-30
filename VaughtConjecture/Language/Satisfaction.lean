@@ -36,10 +36,9 @@ up to isomorphism.
 
 **No finite models.**  A model at a positive stage is infinite
 (`Realization.IsModel.infinite`): covering gives an occurrence, and the dominance clause at
-`γ = 0` extends every occurrence by a new point, so there are occurrences of arbitrarily large
-arity (`Realization.IsModel.exists_le_arity`), though not necessarily of every arity, since a
-face of an occurrence may be invisible.  Hence every structure satisfying the four-family
-sentence is infinite (`infinite_of_realize_fourFamilySentence`).
+`γ = 0` extends every occurrence by a new point, and the empty face is closed, so there are
+occurrences of every arity (`Realization.IsModel.exists_arity_eq`).  Hence every structure
+satisfying the four-family sentence is infinite (`infinite_of_realize_fourFamilySentence`).
 
 ## Placement
 
@@ -68,16 +67,31 @@ namespace Realization
 
 variable {α : Ordinal.{u}} {R : Realization.{u, v} α M}
 
-/-- A model at a positive stage has occurrences of arbitrarily large arity: the dominance clause
-at `γ = 0` extends every occurrence by a new point. -/
-theorem IsModel.exists_le_arity (hR : R.IsModel) (hα : 0 < α) (k : ℕ) :
-    ∃ x : R.Occurrence, k ≤ x.arity := by
+/-- A model at a positive stage has an occurrence of every arity: the empty face of any
+occurrence is closed, so the empty tuple is typed, and the dominance clause at `γ = 0` extends
+every occurrence by a new point. -/
+theorem IsModel.exists_arity_eq (hR : R.IsModel) (hα : 0 < α) (k : ℕ) :
+    ∃ x : R.Occurrence, x.arity = k := by
   induction k with
-  | zero => exact hR.nonempty_occurrence.elim fun x ↦ ⟨x, Nat.zero_le _⟩
+  | zero =>
+    obtain ⟨x⟩ := hR.nonempty_occurrence
+    have h := Realization.eval_face hR.isConsistent x (Function.Embedding.ofIsEmpty (α := Fin 0))
+    have hs : (R.eval (Function.Embedding.ofIsEmpty (α := Fin 0))).isSome := by
+      rw [show (Function.Embedding.ofIsEmpty (α := Fin 0)).trans x.tuple
+        = Function.Embedding.ofIsEmpty from by ext i; exact i.elim0] at h
+      rw [h, StageType.isSome_restrictFace_iff]
+      simpa using x.type.isWellFormed.isWellFormed.isPlan.empty_mem
+    obtain ⟨p, hp⟩ := Option.isSome_iff_exists.mp hs
+    exact ⟨⟨0, _, p, hp⟩, rfl⟩
   | succ k ih =>
-    obtain ⟨x, hx⟩ := ih
+    obtain ⟨x, rfl⟩ := ih
     obtain ⟨u, -, q, -, hq⟩ := hR.dominance x 0 hα
-    exact ⟨⟨_, u, q, hq⟩, Nat.succ_le_succ hx⟩
+    exact ⟨⟨_, u, q, hq⟩, rfl⟩
+
+/-- A model at a positive stage has occurrences of arbitrarily large arity. -/
+theorem IsModel.exists_le_arity (hR : R.IsModel) (hα : 0 < α) (k : ℕ) :
+    ∃ x : R.Occurrence, k ≤ x.arity :=
+  (hR.exists_arity_eq hα k).imp fun _ h ↦ h.ge
 
 /-- **A model at a positive stage is infinite.** -/
 theorem IsModel.infinite (hR : R.IsModel) (hα : 0 < α) : Infinite M := by
