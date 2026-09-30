@@ -21,36 +21,40 @@ constructs it.
 
 **The band coding.**  Fix a finite set `V` of labels and a threshold `K`.  The *value bands*
 (`Label.valueBands V`) are the quotients `o / ω` of the ordinals `o` in `V`, and the *code bands*
-(`Label.codeBands V`) are the value bands with their successors.  The coding `Label.encode V K`
-sends an ordinal `o = ω * b + n` (`n < ω`) to `ω * r + n` if `b` is a value band and to
-`ω * r + K` otherwise, where `r` is the number of code bands at most `b` (`Label.codeRank`); it
-fixes `⊥` and sends the formal top to `ω * (N + 1) + K`, `N` the number of code bands.  Every code
-lies below `ω ^ 2` (`Label.encode_lt`).  The decoding `Label.decode V` sends `ω * (i + 1) + n` to
-`ω * e + n` for the `i`-th code band `e`, the codes of rank `0` to `⊥`, and larger codes to the
-formal top.
+(`Label.codeBands V`) are the value bands with their successors.  The band coding
+`Label.bandEncode V K` sends an ordinal `o = ω * b + n` (`n < ω`) to `ω * r + n` if `b` is a value
+band and to `ω * r + K` otherwise, where `r` is the number of code bands at most `b`
+(`Label.codeRank`); it fixes `⊥` and sends the formal top to `ω * (N + 1) + K`, `N` the number of
+code bands.  Every code lies below `ω ^ 2` (`Label.bandEncode_lt`).  The band decoding
+`Label.bandDecode V` sends `ω * (i + 1) + n` to `ω * e + n` for the `i`-th code band `e`, the codes
+of rank `0` to `⊥`, and larger codes to the formal top.  Both depend on `V` (and the coding on
+`K`); they are not a coding of all labels at once.
 
-* The coding is monotone (`Label.monotone_encode`), and strictly increasing at the labels of `V`
-  (`Label.encode_lt_encode`), since a value band is followed by its successor among the code
-  bands; it commutes with visibility replacement at every threshold `k ≤ K`
-  (`Label.encode_visibilityReplace`), since a band that is not a value band is sent to a code whose
-  finite part is `K`, and so it keeps self-visibility at those thresholds.
-* The decoding reads back every label of `V` and the formal top (`Label.decode_encode`,
-  `Label.decode_encode_top`), and with the constant suppressor `⊤` it is a transformation witness
-  (`Label.isWitness_decode`): it relabels bands and fixes finite parts.
-* **Witness transfer** (`Label.IsWitness.encode`): a witness `(g, σ)` whose suppressor takes its
-  values at grades `≤ K` in `V` gives the witness `(encode ∘ g, encode ∘ σ)`, the suppressor
-  truncated above `K`.  The guard of the coded shifter implies the guard of `σ`, because the
-  coding is strictly increasing at the values of `g`.
+* The coding is monotone (`Label.monotone_bandEncode`), and strictly increasing at the labels of
+  `V` (`Label.bandEncode_lt_bandEncode`), since a value band is followed by its successor among the
+  code bands; it commutes with visibility replacement at every threshold `k ≤ K`
+  (`Label.bandEncode_visibilityReplace`), since a band that is not a value band is sent to a code
+  whose finite part is `K`, and so it keeps self-visibility at those thresholds.
+* The decoding reads back every label of `V` and the formal top (`Label.bandDecode_bandEncode`,
+  `Label.bandDecode_bandEncode_top`), and with the constant suppressor `⊤` it is a transformation
+  witness (`Label.isWitness_bandDecode`): it relabels bands and fixes finite parts.
+* **Witness transfer** (`Label.IsWitness.bandEncode`): a witness `(g, σ)` whose suppressor takes
+  its values at grades `≤ K` in `V` gives the witness `(bandEncode ∘ g, bandEncode ∘ σ)`, the
+  suppressor truncated above `K`.  The guard of the coded shifter implies the guard of `σ`, because
+  the coding is strictly increasing at the values of `g`.
 
-**Coded copies** (`CellScheme.Rows.IsLawful.exists_encode`): for a lawful section `w` of rows over
-finitely many cells of grade at most `K`, some finite `V` containing `⊤` and every label of `w`
-makes `encode V K ∘ w` lawful: take for `V` the labels of `w` and the values of one locality
-witness for each cell, and transfer the witnesses.  Nothing about the rows is assumed.
+**Coded copies** (`CellScheme.Rows.IsLawful.exists_bandEncode`): for a lawful section `w` of rows
+over finitely many cells of grade at most `K`, some finite `V` containing every label of `w` makes
+`bandEncode V K ∘ w` lawful: take for `V` the labels of `w` and the values of one locality witness
+for each cell, and transfer the witnesses.  Nothing about the rows is assumed.
+
+**Reuse.**  The coded encoders and decoders of the transformation algebra (roadmap, checkpoint 2.3)
+are to reuse this band coding, not to define a second one.
 
 ## Placement
 
 The band coding belongs in a `Label/Coding.lean` beside `VaughtConjecture.Label.Transform`, and
-`CellScheme.Rows.IsLawful.exists_encode` in `VaughtConjecture.Scheme.Row`, after the lawful
+`CellScheme.Rows.IsLawful.exists_bandEncode` in `VaughtConjecture.Scheme.Row`, after the lawful
 sections.  They are stated here so that those folders are unchanged.
 
 ## References
@@ -136,49 +140,50 @@ noncomputable def codeBandEmb : Fin #(codeBands V) ↪o Ordinal.{u} :=
 open Classical in
 /-- The coding of an ordinal: `ω * r + n` for `o = ω * b + n` in a value band `b` of code rank
 `r`, and `ω * r + K` if `b` is not a value band. -/
-noncomputable def encodeOrd (o : Ordinal.{u}) : Ordinal.{u} :=
+noncomputable def bandEncodeOrd (o : Ordinal.{u}) : Ordinal.{u} :=
   ω * (codeRank V (o / ω) : Ordinal.{u}) + if o / ω ∈ valueBands V then o % ω else (K : Ordinal)
 
 /-- The code of the formal top: `ω * (N + 1) + K`, for `N` code bands. -/
-noncomputable def topCode : Ordinal.{u} := ω * ((#(codeBands V) + 1 : ℕ) : Ordinal.{u}) + K
+noncomputable def bandTopCode : Ordinal.{u} := ω * ((#(codeBands V) + 1 : ℕ) : Ordinal.{u}) + K
 
-/-- The **band coding** of labels: bottom is fixed, an ordinal is sent to `encodeOrd V K`, and the
-formal top to `topCode V K`. -/
-noncomputable def encode : Label.{u} → Label.{u} :=
-  recBotCoeTop ⊥ (fun o ↦ (encodeOrd V K o : Label.{u})) (topCode V K : Label.{u})
+/-- The **band coding** of labels: bottom is fixed, an ordinal is sent to `bandEncodeOrd V K`, and
+the formal top to `bandTopCode V K`. -/
+noncomputable def bandEncode : Label.{u} → Label.{u} :=
+  recBotCoeTop ⊥ (fun o ↦ (bandEncodeOrd V K o : Label.{u})) (bandTopCode V K : Label.{u})
 
 open Classical in
 /-- The decoding of an ordinal code: `ω * (i + 1) + n` is read as `ω * e + n` for the `i`-th code
 band `e`; codes of rank `0` are read as `⊥`, and larger codes as the formal top. -/
-noncomputable def decodeOrd (z : Ordinal.{u}) : Label.{u} :=
+noncomputable def bandDecodeOrd (z : Ordinal.{u}) : Label.{u} :=
   if h : ∃ i : Fin #(codeBands V), z / ω = ((i + 1 : ℕ) : Ordinal.{u}) then
     ((ω * codeBandEmb V h.choose + z % ω : Ordinal.{u}) : Label.{u})
   else if z / ω = 0 then ⊥ else ⊤
 
 /-- The **band decoding** of labels: bottom and the formal top are fixed, and an ordinal code is
-read by `decodeOrd V`. -/
-noncomputable def decode : Label.{u} → Label.{u} :=
-  recBotCoeTop ⊥ (decodeOrd V) ⊤
+read by `bandDecodeOrd V`. -/
+noncomputable def bandDecode : Label.{u} → Label.{u} :=
+  recBotCoeTop ⊥ (bandDecodeOrd V) ⊤
 
 variable {V K}
 
 /-- The coding fixes bottom. -/
-@[simp] theorem encode_bot : encode V K ⊥ = ⊥ := rfl
+@[simp] theorem bandEncode_bot : bandEncode V K ⊥ = ⊥ := rfl
 
 /-- The coding of an ordinal. -/
-@[simp] theorem encode_coe (o : Ordinal.{u}) : encode V K o = (encodeOrd V K o : Label.{u}) := rfl
+@[simp] theorem bandEncode_coe (o : Ordinal.{u}) :
+    bandEncode V K o = (bandEncodeOrd V K o : Label.{u}) := rfl
 
 /-- The coding of the formal top. -/
-@[simp] theorem encode_top : encode V K ⊤ = (topCode V K : Label.{u}) := rfl
+@[simp] theorem bandEncode_top : bandEncode V K ⊤ = (bandTopCode V K : Label.{u}) := rfl
 
 /-- The decoding fixes bottom. -/
-@[simp] theorem decode_bot : decode V ⊥ = ⊥ := rfl
+@[simp] theorem bandDecode_bot : bandDecode V ⊥ = ⊥ := rfl
 
 /-- The decoding of an ordinal code. -/
-@[simp] theorem decode_coe (z : Ordinal.{u}) : decode V z = decodeOrd V z := rfl
+@[simp] theorem bandDecode_coe (z : Ordinal.{u}) : bandDecode V z = bandDecodeOrd V z := rfl
 
 /-- The decoding fixes the formal top. -/
-@[simp] theorem decode_top : decode V ⊤ = ⊤ := rfl
+@[simp] theorem bandDecode_top : bandDecode V ⊤ = ⊤ := rfl
 
 /-! #### Code bands and ranks -/
 
@@ -247,43 +252,44 @@ theorem exists_codeBandEmb_eq {e : Ordinal.{u}} (he : e ∈ codeBands V) :
 /-! #### Properties of the coding -/
 
 /-- The finite part used by the coding is finite. -/
-private theorem encodeOrd_mod_lt (o : Ordinal.{u}) :
+private theorem bandEncodeOrd_mod_lt (o : Ordinal.{u}) :
     (if o / ω ∈ valueBands V then o % ω else (K : Ordinal.{u})) < ω := by
   split_ifs
   · exact Ordinal.mod_lt _ omega0_ne_zero
   · exact natCast_lt_omega0 K
 
 /-- A lower code rank gives a lower code. -/
-private theorem encodeOrd_lt_of_codeRank_lt {o o' : Ordinal.{u}}
-    (h : codeRank V (o / ω) < codeRank V (o' / ω)) : encodeOrd V K o < encodeOrd V K o' :=
-  omega0_mul_add_lt (encodeOrd_mod_lt o) (by exact_mod_cast h) _
+private theorem bandEncodeOrd_lt_of_codeRank_lt {o o' : Ordinal.{u}}
+    (h : codeRank V (o / ω) < codeRank V (o' / ω)) : bandEncodeOrd V K o < bandEncodeOrd V K o' :=
+  omega0_mul_add_lt (bandEncodeOrd_mod_lt o) (by exact_mod_cast h) _
 
 /-- The code of an ordinal lies below the code of the formal top. -/
-private theorem encodeOrd_lt_topCode (o : Ordinal.{u}) : encodeOrd V K o < topCode V K :=
-  omega0_mul_add_lt (encodeOrd_mod_lt o)
+private theorem bandEncodeOrd_lt_bandTopCode (o : Ordinal.{u}) :
+    bandEncodeOrd V K o < bandTopCode V K :=
+  omega0_mul_add_lt (bandEncodeOrd_mod_lt o)
     (by exact_mod_cast Nat.lt_succ_of_le (codeRank_le (o / ω))) _
 
 /-- The coding of ordinals is monotone. -/
-private theorem encodeOrd_mono {o o' : Ordinal.{u}} (h : o ≤ o') :
-    encodeOrd V K o ≤ encodeOrd V K o' := by
+private theorem bandEncodeOrd_mono {o o' : Ordinal.{u}} (h : o ≤ o') :
+    bandEncodeOrd V K o ≤ bandEncodeOrd V K o' := by
   have hb : o / ω ≤ o' / ω := Ordinal.div_le_left h ω
   rcases (codeRank_mono hb : codeRank V (o / ω) ≤ codeRank V (o' / ω)).lt_or_eq with hr | hr
-  · exact (encodeOrd_lt_of_codeRank_lt hr).le
+  · exact (bandEncodeOrd_lt_of_codeRank_lt hr).le
   by_cases hB : o / ω ∈ valueBands V
   · -- The band of `o` is followed by its successor among the code bands: same band.
     have he : o / ω = o' / ω := hb.eq_or_lt.resolve_right fun hlt ↦
       (codeRank_lt_of_mem_valueBands hB hlt).ne hr
-    rw [encodeOrd, encodeOrd, ← he, hr, ite_eq_left hB, ite_eq_left hB]
+    rw [bandEncodeOrd, bandEncodeOrd, ← he, hr, ite_eq_left hB, ite_eq_left hB]
     exact add_le_add_right (mod_le_mod_of_div_eq h he) _
   · -- The band of `o'` is not a value band either.
     have hB' : o' / ω ∉ valueBands V := fun hB' ↦ by
       rcases hb.eq_or_lt with he | hlt
       · exact hB (he ▸ hB')
       · exact (codeRank_lt_codeRank (mem_codeBands_of_mem_valueBands hB') hlt le_rfl).ne hr
-    rw [encodeOrd, encodeOrd, hr, ite_eq_right hB, ite_eq_right hB']
+    rw [bandEncodeOrd, bandEncodeOrd, hr, ite_eq_right hB, ite_eq_right hB']
 
 /-- **The coding is monotone.** -/
-theorem monotone_encode : Monotone (encode V K) := by
+theorem monotone_bandEncode : Monotone (bandEncode V K) := by
   intro x y h
   induction x using recBotCoeTop with
   | bot => exact bot_le
@@ -291,103 +297,104 @@ theorem monotone_encode : Monotone (encode V K) := by
   | coe o =>
     induction y using recBotCoeTop with
     | bot => exact absurd h (not_le.mpr (WithBot.bot_lt_coe _))
-    | top => exact WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr (encodeOrd_lt_topCode o).le)
+    | top =>
+      exact WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr (bandEncodeOrd_lt_bandTopCode o).le)
     | coe o' =>
       exact WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr
-        (encodeOrd_mono (WithTop.coe_le_coe.mp (WithBot.coe_le_coe.mp h))))
+        (bandEncodeOrd_mono (WithTop.coe_le_coe.mp (WithBot.coe_le_coe.mp h))))
 
 /-- The coding of a label is bottom only for bottom. -/
-@[simp] theorem encode_eq_bot_iff {x : Label.{u}} : encode V K x = ⊥ ↔ x = ⊥ := by
+@[simp] theorem bandEncode_eq_bot_iff {x : Label.{u}} : bandEncode V K x = ⊥ ↔ x = ⊥ := by
   induction x using recBotCoeTop <;> simp
 
 /-- **The coding is strictly increasing at the labels of `V`.** -/
-theorem encode_lt_encode {z y : Label.{u}} (hz : z ∈ V) (h : z < y) :
-    encode V K z < encode V K y := by
+theorem bandEncode_lt_bandEncode {z y : Label.{u}} (hz : z ∈ V) (h : z < y) :
+    bandEncode V K z < bandEncode V K y := by
   induction z using recBotCoeTop with
   | bot =>
     refine bot_lt_iff_ne_bot.mpr fun he ↦ ?_
-    exact h.ne' (encode_eq_bot_iff.mp he)
+    exact h.ne' (bandEncode_eq_bot_iff.mp he)
   | top => exact absurd h (not_lt.mpr le_top)
   | coe o =>
     have hB := div_mem_valueBands hz
     induction y using recBotCoeTop with
     | bot => exact absurd h (not_lt.mpr bot_le)
-    | top => exact WithBot.coe_lt_coe.mpr (WithTop.coe_lt_coe.mpr (encodeOrd_lt_topCode o))
+    | top => exact WithBot.coe_lt_coe.mpr (WithTop.coe_lt_coe.mpr (bandEncodeOrd_lt_bandTopCode o))
     | coe o' =>
       have ho : o < o' := WithTop.coe_lt_coe.mp (WithBot.coe_lt_coe.mp h)
       refine WithBot.coe_lt_coe.mpr (WithTop.coe_lt_coe.mpr ?_)
       rcases (Ordinal.div_le_left ho.le ω).eq_or_lt with he | hlt
-      · rw [encodeOrd, encodeOrd, ← he, ite_eq_left hB, ite_eq_left hB]
+      · rw [bandEncodeOrd, bandEncodeOrd, ← he, ite_eq_left hB, ite_eq_left hB]
         exact add_lt_add_right (mod_lt_mod_of_div_eq ho he) _
-      · exact encodeOrd_lt_of_codeRank_lt (codeRank_lt_of_mem_valueBands hB hlt)
+      · exact bandEncodeOrd_lt_of_codeRank_lt (codeRank_lt_of_mem_valueBands hB hlt)
 
 /-- **The coding commutes with visibility replacement** at every threshold `k ≤ K`. -/
-theorem encode_visibilityReplace {k : ℕ} (hk : k ≤ K) (i : ℕ) (x : Label.{u}) :
-    encode V K (visibilityReplace k i x) = visibilityReplace k i (encode V K x) := by
+theorem bandEncode_visibilityReplace {k : ℕ} (hk : k ≤ K) (i : ℕ) (x : Label.{u}) :
+    bandEncode V K (visibilityReplace k i x) = visibilityReplace k i (bandEncode V K x) := by
   have hK : ¬ (K : Ordinal.{u}) < k := by exact_mod_cast hk.not_gt
   induction x using recBotCoeTop with
   | bot => rfl
   | top =>
-    simp only [visibilityReplace_top, encode_top, visibilityReplace_coe, topCode]
+    simp only [visibilityReplace_top, bandEncode_top, visibilityReplace_coe, bandTopCode]
     rw [visibilityReplace_omega0_mul_add (natCast_lt_omega0 K), ite_eq_right hK]
   | coe o =>
-    simp only [visibilityReplace_coe, encode_coe, encodeOrd, Ordinal.visibilityReplace_div]
-    rw [visibilityReplace_omega0_mul_add (encodeOrd_mod_lt o)]
+    simp only [visibilityReplace_coe, bandEncode_coe, bandEncodeOrd, Ordinal.visibilityReplace_div]
+    rw [visibilityReplace_omega0_mul_add (bandEncodeOrd_mod_lt o)]
     by_cases hB : o / ω ∈ valueBands V
     · rw [ite_eq_left hB, ite_eq_left hB, Ordinal.visibilityReplace_mod]
     · rw [ite_eq_right hB, ite_eq_right hB, ite_eq_right hK]
 
 /-- The coding keeps self-visibility at every threshold `k ≤ K`. -/
-theorem IsSelfVisible.encode {k : ℕ} (hk : k ≤ K) {x : Label.{u}} (hx : IsSelfVisible k x) :
-    IsSelfVisible k (encode V K x) := by
-  rw [IsSelfVisible, ← encode_visibilityReplace hk, hx]
+theorem IsSelfVisible.bandEncode {k : ℕ} (hk : k ≤ K) {x : Label.{u}} (hx : IsSelfVisible k x) :
+    IsSelfVisible k (bandEncode V K x) := by
+  rw [IsSelfVisible, ← bandEncode_visibilityReplace hk, hx]
 
 /-- The code of the formal top is self-visible at every threshold `k ≤ K`. -/
-theorem isSelfVisible_encode_top {k : ℕ} (hk : k ≤ K) : IsSelfVisible k (encode V K ⊤) :=
-  (isSelfVisible_top k).encode hk
+theorem isSelfVisible_bandEncode_top {k : ℕ} (hk : k ≤ K) : IsSelfVisible k (bandEncode V K ⊤) :=
+  (isSelfVisible_top k).bandEncode hk
 
 /-- **Every code lies below `ω ^ 2`.** -/
-theorem encode_lt (x : Label.{u}) :
-    encode V K x < ((Ordinal.omega0 ^ 2 : Ordinal.{u}) : Label.{u}) := by
+theorem bandEncode_lt (x : Label.{u}) :
+    bandEncode V K x < ((Ordinal.omega0 ^ 2 : Ordinal.{u}) : Label.{u}) := by
   induction x using recBotCoeTop with
   | bot => exact WithBot.bot_lt_coe _
   | top => exact WithBot.coe_lt_coe.mpr (WithTop.coe_lt_coe.mpr
       (omega0_mul_natCast_add_lt _ (natCast_lt_omega0 K)))
   | coe o => exact WithBot.coe_lt_coe.mpr (WithTop.coe_lt_coe.mpr
-      (omega0_mul_natCast_add_lt _ (encodeOrd_mod_lt o)))
+      (omega0_mul_natCast_add_lt _ (bandEncodeOrd_mod_lt o)))
 
 /-- Every code lies at most the code of the formal top. -/
-theorem encode_le_encode_top (x : Label.{u}) : encode V K x ≤ encode V K ⊤ :=
-  monotone_encode le_top
+theorem bandEncode_le_bandEncode_top (x : Label.{u}) : bandEncode V K x ≤ bandEncode V K ⊤ :=
+  monotone_bandEncode le_top
 
 /-! #### The decoding -/
 
 /-- The decoding of a code of rank `i + 1`. -/
-theorem decodeOrd_of_eq {z : Ordinal.{u}} (i : Fin #(codeBands V))
+theorem bandDecodeOrd_of_eq {z : Ordinal.{u}} (i : Fin #(codeBands V))
     (h : z / ω = ((i + 1 : ℕ) : Ordinal.{u})) :
-    decodeOrd V z = ((ω * codeBandEmb V i + z % ω : Ordinal.{u}) : Label.{u}) := by
+    bandDecodeOrd V z = ((ω * codeBandEmb V i + z % ω : Ordinal.{u}) : Label.{u}) := by
   have hex : ∃ i : Fin #(codeBands V), z / ω = ((i + 1 : ℕ) : Ordinal.{u}) := ⟨i, h⟩
   have hi : hex.choose = i := Fin.ext (by
     have := hex.choose_spec.symm.trans h
     exact Nat.succ_injective (by exact_mod_cast this))
-  rw [decodeOrd, dite_eq_left hex, hi]
+  rw [bandDecodeOrd, dite_eq_left hex, hi]
 
 /-- The decoding of a code of rank `0`. -/
-theorem decodeOrd_of_eq_zero {z : Ordinal.{u}} (h : z / ω = 0) : decodeOrd V z = ⊥ := by
+theorem bandDecodeOrd_of_eq_zero {z : Ordinal.{u}} (h : z / ω = 0) : bandDecodeOrd V z = ⊥ := by
   have hex : ¬ ∃ i : Fin #(codeBands V), z / ω = ((i + 1 : ℕ) : Ordinal.{u}) := by
     rintro ⟨i, hi⟩
     rw [h] at hi
     exact absurd (by exact_mod_cast hi.symm : (i : ℕ) + 1 = 0) (Nat.succ_ne_zero _)
-  rw [decodeOrd, dite_eq_right hex, ite_eq_left h]
+  rw [bandDecodeOrd, dite_eq_right hex, ite_eq_left h]
 
 /-- The decoding of a code of rank above the number of code bands. -/
-theorem decodeOrd_of_lt {z : Ordinal.{u}} (h : ((#(codeBands V) : ℕ) : Ordinal.{u}) < z / ω) :
-    decodeOrd V z = ⊤ := by
+theorem bandDecodeOrd_of_lt {z : Ordinal.{u}} (h : ((#(codeBands V) : ℕ) : Ordinal.{u}) < z / ω) :
+    bandDecodeOrd V z = ⊤ := by
   have hex : ¬ ∃ i : Fin #(codeBands V), z / ω = ((i + 1 : ℕ) : Ordinal.{u}) := by
     rintro ⟨i, hi⟩
     rw [hi] at h
     exact absurd (by exact_mod_cast h : #(codeBands V) < i + 1) (not_lt.mpr i.isLt)
-  rw [decodeOrd, dite_eq_right hex, ite_eq_right (fun h0 ↦ by simp [h0] at h)]
+  rw [bandDecodeOrd, dite_eq_right hex, ite_eq_right (fun h0 ↦ by simp [h0] at h)]
 
 /-- The three kinds of codes: rank `0`, rank `i + 1` for a code band, and rank above the number
 of code bands. -/
@@ -403,27 +410,28 @@ private theorem codeRank_trichotomy (c : Ordinal.{u}) :
   · exact Or.inr (Or.inl ⟨⟨n, hn⟩, rfl⟩)
 
 /-- Visibility replacement fixes the decoding of a code, band by band. -/
-private theorem decodeOrd_visibilityReplace (k i : ℕ) (z : Ordinal.{u}) :
-    decodeOrd V (Ordinal.visibilityReplace k i z) = visibilityReplace k i (decodeOrd V z) := by
+private theorem bandDecodeOrd_visibilityReplace (k i : ℕ) (z : Ordinal.{u}) :
+    bandDecodeOrd V (Ordinal.visibilityReplace k i z) =
+      visibilityReplace k i (bandDecodeOrd V z) := by
   have hdiv := Ordinal.visibilityReplace_div k i z
   rcases codeRank_trichotomy (V := V) (z / ω) with h | ⟨j, h⟩ | h
-  · rw [decodeOrd_of_eq_zero h, decodeOrd_of_eq_zero (hdiv.trans h), visibilityReplace_bot]
-  · rw [decodeOrd_of_eq j h, decodeOrd_of_eq j (hdiv.trans h), visibilityReplace_coe,
+  · rw [bandDecodeOrd_of_eq_zero h, bandDecodeOrd_of_eq_zero (hdiv.trans h), visibilityReplace_bot]
+  · rw [bandDecodeOrd_of_eq j h, bandDecodeOrd_of_eq j (hdiv.trans h), visibilityReplace_coe,
       visibilityReplace_omega0_mul_add (Ordinal.mod_lt _ omega0_ne_zero),
       Ordinal.visibilityReplace_mod]
-  · rw [decodeOrd_of_lt h, decodeOrd_of_lt (hdiv ▸ h), visibilityReplace_top]
+  · rw [bandDecodeOrd_of_lt h, bandDecodeOrd_of_lt (hdiv ▸ h), visibilityReplace_top]
 
 /-- The decoding of ordinal codes is monotone. -/
-private theorem decodeOrd_mono {z z' : Ordinal.{u}} (hz : z ≤ z') :
-    decodeOrd V z ≤ decodeOrd V z' := by
+private theorem bandDecodeOrd_mono {z z' : Ordinal.{u}} (hz : z ≤ z') :
+    bandDecodeOrd V z ≤ bandDecodeOrd V z' := by
   have hc : z / ω ≤ z' / ω := Ordinal.div_le_left hz ω
   rcases codeRank_trichotomy (V := V) (z / ω) with h | ⟨j, h⟩ | h
-  · rw [decodeOrd_of_eq_zero h]
+  · rw [bandDecodeOrd_of_eq_zero h]
     exact bot_le
   · rcases codeRank_trichotomy (V := V) (z' / ω) with h' | ⟨j', h'⟩ | h'
     · rw [h, h'] at hc
       exact absurd (by exact_mod_cast hc : (j : ℕ) + 1 ≤ 0) (Nat.not_succ_le_zero _)
-    · rw [decodeOrd_of_eq j h, decodeOrd_of_eq j' h']
+    · rw [bandDecodeOrd_of_eq j h, bandDecodeOrd_of_eq j' h']
       refine WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr ?_)
       have hjj : (j : ℕ) ≤ j' := by
         rw [h, h'] at hc
@@ -433,13 +441,13 @@ private theorem decodeOrd_mono {z z' : Ordinal.{u}} (hz : z ≤ z') :
         exact add_le_add_right (mod_le_mod_of_div_eq hz (h.trans h'.symm)) _
       · exact (omega0_mul_add_lt (Ordinal.mod_lt _ omega0_ne_zero)
           ((codeBandEmb V).strictMono (Fin.mk_lt_mk.mpr hlt)) _).le
-    · rw [decodeOrd_of_lt h']
+    · rw [bandDecodeOrd_of_lt h']
       exact le_top
-  · rw [decodeOrd_of_lt h, decodeOrd_of_lt (h.trans_le hc)]
+  · rw [bandDecodeOrd_of_lt h, bandDecodeOrd_of_lt (h.trans_le hc)]
 
 /-- **The decoding is a transformation witness** with the constant suppressor `⊤`: it fixes
 bottom, is monotone, and commutes with every visibility replacement. -/
-theorem isWitness_decode : IsWitness (fun _ ↦ (⊤ : Label.{u})) (decode V) where
+theorem isWitness_bandDecode : IsWitness (fun _ ↦ (⊤ : Label.{u})) (bandDecode V) where
   antitone := antitone_const
   isSelfVisible _ := isSelfVisible_top _
   map_bot := rfl
@@ -451,30 +459,31 @@ theorem isWitness_decode : IsWitness (fun _ ↦ (⊤ : Label.{u})) (decode V) wh
       induction y using recBotCoeTop with
       | bot => exact absurd h (not_le.mpr (WithBot.bot_lt_coe _))
       | top => exact le_top
-      | coe z' => exact decodeOrd_mono (WithTop.coe_le_coe.mp (WithBot.coe_le_coe.mp h))
+      | coe z' => exact bandDecodeOrd_mono (WithTop.coe_le_coe.mp (WithBot.coe_le_coe.mp h))
   visibilityReplace_comm x k _ i _ := by
     induction x using recBotCoeTop with
     | bot => rfl
     | top => rfl
-    | coe z => exact decodeOrd_visibilityReplace k i z
+    | coe z => exact bandDecodeOrd_visibilityReplace k i z
 
 /-- The decoding reads back the formal top. -/
-theorem decode_encode_top : decode V (encode V K ⊤) = ⊤ :=
-  decodeOrd_of_lt (by
-    rw [topCode, omega0_mul_add_div (natCast_lt_omega0 K)]
+theorem bandDecode_bandEncode_top : bandDecode V (bandEncode V K ⊤) = ⊤ :=
+  bandDecodeOrd_of_lt (by
+    rw [bandTopCode, omega0_mul_add_div (natCast_lt_omega0 K)]
     exact_mod_cast Nat.lt_succ_self _)
 
 /-- **The decoding reads back every label of `V`.** -/
-theorem decode_encode {z : Label.{u}} (hz : z ∈ V) : decode V (encode V K z) = z := by
+theorem bandDecode_bandEncode {z : Label.{u}} (hz : z ∈ V) :
+    bandDecode V (bandEncode V K z) = z := by
   induction z using recBotCoeTop with
   | bot => rfl
-  | top => exact decode_encode_top
+  | top => exact bandDecode_bandEncode_top
   | coe o =>
     have hB := div_mem_valueBands hz
     obtain ⟨i, hi⟩ := exists_codeBandEmb_eq (mem_codeBands_of_mem_valueBands hB)
-    have hr : encodeOrd V K o / ω = ((i + 1 : ℕ) : Ordinal.{u}) := by
-      rw [encodeOrd, omega0_mul_add_div (encodeOrd_mod_lt o), ← hi, codeRank_codeBandEmb]
-    rw [encode_coe, decode_coe, decodeOrd_of_eq i hr, hi, encodeOrd, ite_eq_left hB,
+    have hr : bandEncodeOrd V K o / ω = ((i + 1 : ℕ) : Ordinal.{u}) := by
+      rw [bandEncodeOrd, omega0_mul_add_div (bandEncodeOrd_mod_lt o), ← hi, codeRank_codeBandEmb]
+    rw [bandEncode_coe, bandDecode_coe, bandDecodeOrd_of_eq i hr, hi, bandEncodeOrd, ite_eq_left hB,
       omega0_mul_add_mod (Ordinal.mod_lt _ omega0_ne_zero), Ordinal.div_add_mod]
 
 /-! #### Witness transfer -/
@@ -483,30 +492,30 @@ variable {g : ℕ → Label.{u}} {σ : Label.{u} → Label.{u}}
 
 /-- **Witness transfer.**  If the suppressor `g` takes its values at the grades `≤ K` in `V`, then
 coding the shifter and the suppressor, truncated above `K`, gives a witness. -/
-theorem IsWitness.encode (hw : IsWitness g σ) (hV : ∀ n ≤ K, g n ∈ V) :
-    IsWitness (fun n ↦ if n ≤ K then encode V K (g n) else ⊥) (encode V K ∘ σ) where
+theorem IsWitness.bandEncode (hw : IsWitness g σ) (hV : ∀ n ≤ K, g n ∈ V) :
+    IsWitness (fun n ↦ if n ≤ K then bandEncode V K (g n) else ⊥) (bandEncode V K ∘ σ) where
   antitone n n' h := by
     beta_reduce
     split_ifs with h' h''
-    · exact monotone_encode (hw.antitone h)
+    · exact monotone_bandEncode (hw.antitone h)
     · exact absurd (h.trans h') h''
     · exact bot_le
     · exact le_rfl
   isSelfVisible n := by
     split_ifs with hn
-    · exact (hw.isSelfVisible n).encode hn
+    · exact (hw.isSelfVisible n).bandEncode hn
     · exact isSelfVisible_bot n
   map_bot := by simp [hw.map_bot]
-  monotone := monotone_encode.comp hw.monotone
+  monotone := monotone_bandEncode.comp hw.monotone
   visibilityReplace_comm x k hx i hi := by
     simp only [Function.comp_apply] at hx ⊢
     split_ifs at hx with hk
     · -- The guard of `σ` holds: the coding is strictly increasing at the value `g k ∈ V`.
-      have hg : σ x ≤ g k := not_lt.mp fun hlt ↦ (encode_lt_encode (hV k hk) hlt).not_ge hx
-      rw [hw.visibilityReplace_comm x k hg i hi, encode_visibilityReplace hk]
-    · have hb : σ x = ⊥ := encode_eq_bot_iff.mp (le_bot_iff.mp hx)
+      have hg : σ x ≤ g k := not_lt.mp fun hlt ↦ (bandEncode_lt_bandEncode (hV k hk) hlt).not_ge hx
+      rw [hw.visibilityReplace_comm x k hg i hi, bandEncode_visibilityReplace hk]
+    · have hb : σ x = ⊥ := bandEncode_eq_bot_iff.mp (le_bot_iff.mp hx)
       rw [hw.visibilityReplace_comm x k (hb ▸ bot_le) i hi, hb, visibilityReplace_bot,
-        encode_bot, visibilityReplace_bot]
+        bandEncode_bot, visibilityReplace_bot]
 
 end VaughtConjecture.Label
 
@@ -519,29 +528,28 @@ open Finset Label
 variable {ι α : Type*} [Finite ι] {D : CellScheme ι α} {R : D.Rows.{u}} {w : ι → Label.{u}}
 
 /-- **Coded copies of lawful sections.**  If `w` is a lawful section of rows over finitely many
-cells of grade at most `K`, then for some finite set `V` of labels containing `⊤` and every label
-of `w`, the coded labelling `encode V K ∘ w` is lawful: `V` holds the labels of `w` and the values
-at grades `≤ K` of one locality witness for each cell, and the witnesses are transferred. -/
-theorem IsLawful.exists_encode (hw : R.IsLawful w) {K : ℕ} (hK : ∀ d, D.grade d ≤ K) :
-    ∃ V : Finset Label.{u}, ⊤ ∈ V ∧ (∀ d, w d ∈ V) ∧ R.IsLawful (encode V K ∘ w) := by
+cells of grade at most `K`, then for some finite set `V` of labels containing every label of `w`,
+the coded labelling `bandEncode V K ∘ w` is lawful: `V` holds the labels of `w` and the values at
+grades `≤ K` of one locality witness for each cell, and the witnesses are transferred. -/
+theorem IsLawful.exists_bandEncode (hw : R.IsLawful w) {K : ℕ} (hK : ∀ d, D.grade d ≤ K) :
+    ∃ V : Finset Label.{u}, (∀ d, w d ∈ V) ∧ R.IsLawful (bandEncode V K ∘ w) := by
   classical
   have := Fintype.ofFinite ι
   choose g σ hg heq using hw.locality
   set V : Finset Label.{u} :=
-    insert ⊤ (univ.image w ∪ (univ ×ˢ range (K + 1)).image fun p : ι × ℕ ↦ g p.1 p.2)
+    univ.image w ∪ (univ ×ˢ range (K + 1)).image fun p : ι × ℕ ↦ g p.1 p.2
   have hgV (s : ι) (n : ℕ) (hn : n ≤ K) : g s n ∈ V :=
-    mem_insert_of_mem (mem_union_right _ (mem_image.mpr
-      ⟨(s, n), mem_product.mpr ⟨mem_univ _, mem_range.mpr (Nat.lt_succ_of_le hn)⟩, rfl⟩))
-  refine ⟨V, mem_insert_self _ _,
-    fun d ↦ mem_insert_of_mem (mem_union_left _ (mem_image_of_mem _ (mem_univ d))), ?_, ?_, ?_⟩
-  · exact fun d ↦ (hw.orderly d).encode (hK d)
+    mem_union_right _ (mem_image.mpr
+      ⟨(s, n), mem_product.mpr ⟨mem_univ _, mem_range.mpr (Nat.lt_succ_of_le hn)⟩, rfl⟩)
+  refine ⟨V, fun d ↦ mem_union_left _ (mem_image_of_mem _ (mem_univ d)), ?_, ?_, ?_⟩
+  · exact fun d ↦ (hw.orderly d).bandEncode (hK d)
   · intro s
-    refine ⟨_, _, (hg s).encode (hgV s), fun d ↦ ?_⟩
+    refine ⟨_, _, (hg s).bandEncode (hgV s), fun d ↦ ?_⟩
     simp only [Function.comp_apply, ite_eq_left (hK d)]
-    rw [← monotone_encode.map_min, ← monotone_encode.map_min]
+    rw [← monotone_bandEncode.map_min, ← monotone_bandEncode.map_min]
     exact congrArg _ (heq s d)
   · intro s t hst hgr
     obtain ⟨u, hu, hle⟩ := hw.availability s t hst hgr
-    exact ⟨u, hu, monotone_encode hle⟩
+    exact ⟨u, hu, monotone_bandEncode hle⟩
 
 end VaughtConjecture.CellScheme.Rows
