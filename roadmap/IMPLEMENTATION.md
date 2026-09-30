@@ -392,9 +392,9 @@ age and not recognized afterwards in a model constructed otherwise.
 
 **Dependency boundaries.**  The age argument (steps 1–7) imports Mathlib, InfinitaryLogic,
 ComputableModelTheory (prospective), layers 0–2, and the finite kernel (layer 1, the coatom
-extension construction with rows 5 and 6, and the cap-to-model theorem).  The classical part, steps
-3–5, imports no `Construction/` module and no module of rows 1–4, of structural continuation, or of
-the expansion domains; steps 6 and 7 add only row 5, the cap-to-model theorem, and the reduction of
+extension construction with rows 5 and 6, and the cap-to-model theorem).  Steps 1–7 import no
+`Construction/` module; the classical part, steps 3–5, imports no module of rows 1–4, of structural
+continuation, or of the expansion domains; steps 6 and 7 add only row 5, the cap-to-model theorem, and the reduction of
 models.  The upstream theorems import no module of this repository.  The chain construction
 (`Construction/`, the chain unions of partial realizations, and the conditional chain construction
 of models) is needed neither for top-free existence nor for saturated existence: the saturated model
