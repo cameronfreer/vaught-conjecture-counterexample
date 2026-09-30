@@ -38,16 +38,16 @@ section Examples
 private abbrev CountableOrdinal : Type 1 := Iio (ω₁ : Ordinal.{0})
 
 /-- The `2 ^ ℵ₁` further classes: the sets of countable ordinals. -/
-private abbrev Block : Type 1 := Set CountableOrdinal
+private abbrev FurtherClasses : Type 1 := Set CountableOrdinal
 
 /-- There are exactly `ℵ₁` countable ordinals. -/
 private theorem mk_countableOrdinal : #CountableOrdinal = ℵ₁ := by
   simp [mk_Iio_ordinal]
 
 /-- Adjoining the further classes gives more than `ℵ₁` classes. -/
-private theorem aleph_one_lt_mk_sum : ℵ₁ < #(CountableOrdinal ⊕ Block) :=
+private theorem aleph_one_lt_mk_sum : ℵ₁ < #(CountableOrdinal ⊕ FurtherClasses) :=
   calc ℵ₁ < 2 ^ ℵ₁ := cantor _
-    _ = #Block := by rw [mk_set, mk_countableOrdinal]
+    _ = #FurtherClasses := by rw [mk_set, mk_countableOrdinal]
     _ ≤ _ := mk_le_of_injective Sum.inr_injective
 
 /-- The observations "is the class `s`" separate distinct classes. -/
@@ -124,7 +124,7 @@ example : (⋂ ξ < ω₁, tail.domain ξ) = ∅ :=
 /-! ### Logical agreement is needed -/
 
 /-- The tail domains with the further classes adjoined to every domain. -/
-private def adjoinPersistent : ExpansionDomains (CountableOrdinal ⊕ Block) where
+private def adjoinPersistent : ExpansionDomains (CountableOrdinal ⊕ FurtherClasses) where
   domain ξ := {z | Sum.elim (· ∈ tail.domain ξ) (fun _ ↦ True) z}
   zero := eq_univ_of_forall fun
     | .inl x => by simp [tail.zero]
@@ -140,8 +140,8 @@ private def adjoinPersistent : ExpansionDomains (CountableOrdinal ⊕ Block) whe
 countable and nonempty losses and more than `ℵ₁` classes, so no family of observations
 separating the classes is constant on the domains. -/
 example : adjoinPersistent.HasCountableLosses ∧ adjoinPersistent.HasNonemptyLosses ∧
-    ℵ₁ < #(CountableOrdinal ⊕ Block) ∧
-    ∀ (truth : CountableOrdinal ⊕ Block → CountableOrdinal ⊕ Block → Prop),
+    ℵ₁ < #(CountableOrdinal ⊕ FurtherClasses) ∧
+    ∀ (truth : CountableOrdinal ⊕ FurtherClasses → CountableOrdinal ⊕ FurtherClasses → Prop),
       (∀ p q, p ≠ q → ∃ s, ¬ (truth s p ↔ truth s q)) →
         ¬ adjoinPersistent.HasLogicalAgreement truth := by
   have hc : adjoinPersistent.HasCountableLosses := by
@@ -158,7 +158,7 @@ example : adjoinPersistent.HasCountableLosses ∧ adjoinPersistent.HasNonemptyLo
 /-! ### Countable losses are needed -/
 
 /-- The tail domains with the further classes adjoined to the first domain only. -/
-private def adjoinLost : ExpansionDomains (CountableOrdinal ⊕ Block) where
+private def adjoinLost : ExpansionDomains (CountableOrdinal ⊕ FurtherClasses) where
   domain ξ := {z | Sum.elim (· ∈ tail.domain ξ) (fun _ ↦ ξ = 0) z}
   zero := eq_univ_of_forall fun
     | .inl x => by simp [tail.zero]
@@ -177,12 +177,13 @@ private def adjoinLost : ExpansionDomains (CountableOrdinal ⊕ Block) where
 successor have nonempty losses and logical agreement for the observations "is the class `s`",
 which separate the classes, and more than `ℵ₁` classes. -/
 example : adjoinLost.HasNonemptyLosses ∧
-    adjoinLost.HasLogicalAgreement (fun s z : CountableOrdinal ⊕ Block ↦ z = s) ∧
-    ℵ₁ < #(CountableOrdinal ⊕ Block) ∧ ¬ adjoinLost.HasCountableLosses := by
+    adjoinLost.HasLogicalAgreement (fun s z : CountableOrdinal ⊕ FurtherClasses ↦ z = s) ∧
+    ℵ₁ < #(CountableOrdinal ⊕ FurtherClasses) ∧ ¬ adjoinLost.HasCountableLosses := by
   have hn : adjoinLost.HasNonemptyLosses := ⟨fun ξ hξ ↦
     have ⟨x, hx⟩ := tail_hasNonemptyLosses.nonempty_loss ξ hξ
     ⟨.inl x, hx⟩⟩
-  have ha : adjoinLost.HasLogicalAgreement (fun s z : CountableOrdinal ⊕ Block ↦ z = s) := by
+  have ha :
+      adjoinLost.HasLogicalAgreement (fun s z : CountableOrdinal ⊕ FurtherClasses ↦ z = s) := by
     refine ⟨fun
       | .inl s => ⟨s.1 + 1, add_one_lt_omega_one s.2, uniform_eq ?_⟩
       | .inr _ => ⟨1, one_lt_omega_one, uniform_eq one_ne_zero⟩⟩
