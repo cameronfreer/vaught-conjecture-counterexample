@@ -62,7 +62,7 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: .lake/packages
-          key: deps-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
+          key: deps-v2-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
 
       # The project's own outputs (`.lake/build`), keyed on the pins plus the exact commit,
       # with a prefix fallback to the most recent compatible build.  `lake build` decides
@@ -77,10 +77,15 @@ jobs:
             build-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-
 
       # Only on a cold dependency cache: fetch the public Mathlib cache for the modules the
-      # fork shares with upstream (the rest are rebuilt by `lake build`).
-      - name: Fetch Mathlib cache (cold dependency cache only)
+      # fork shares with upstream, then compile InfinitaryLogic and the uncached Mathlib
+      # modules it needs, so that the saved dependency cache is complete.  (The main build
+      # only compiles what the library imports, which would leave later runs rebuilding
+      # whatever this commit happened not to import.)
+      - name: Fetch Mathlib cache and build dependencies (cold dependency cache only)
         if: steps.deps-cache.outputs.cache-hit != 'true'
-        run: lake exe cache get
+        run: |
+          lake exe cache get
+          lake build InfinitaryLogic
 
       - name: Build
         run: lake build
