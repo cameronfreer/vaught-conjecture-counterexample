@@ -34,14 +34,17 @@ its inputs would not apply here; the preservation of coding by the amalgam
   (`isCoded_amalgam_pointRow_three`) and not strongly coded
   (`not_isStronglyCoded_amalgam_pointRow_three`: strong coding would pull back to the input).
 * `pairRow x` is the scheme on two points with the cells `({0}, 1)` and `({1}, 1)`, both with row
-  value `x`, and no cell of full scope, as in the amalgam; `apexRow x` appends the apex, a cell of
-  scope `{0, 1}` and grade `2` with row bottom.  The cells of `pairRow x` are a lower set of those
-  of `apexRow x`, with the same rows (`isLowerEmbedding_castSucc`, `comap_apexRow`).  So
-  `apexRow 3` is coded (`isCoded_apexRow_three`), as coding is preserved by appending a strongly
-  coded cell, although it is not strongly coded (`not_isStronglyCoded_apexRow_three`); and it is
-  consistent (`isConsistent_apexRow_three`), as consistency is preserved by appending a cell whose
-  row is lawful below it, hence orderly (`isOrderly_apexRow_three`): its orderliness is derived
-  from its consistency, not assumed.
+  value `x`, and no cell of full scope, as in the amalgam; `apexRow x` appends a cell of full scope
+  `{0, 1}` and full grade `2` whose row is bottom.  This cell is not an apex: a cell whose row is
+  bottom at itself has bottom label in every lawful section
+  (`CellScheme.Rows.IsLawful.eq_bot_of_row_self_eq_bot`), while the apex carries the label `⊤`.
+  The cells of `pairRow x` are a lower set of those of `apexRow x`, with the same rows
+  (`isLowerEmbedding_castSucc`, `comap_apexRow`).  So `apexRow 3` is coded
+  (`isCoded_apexRow_three`), as coding is preserved by appending a strongly coded cell, although it
+  is not strongly coded (`not_isStronglyCoded_apexRow_three`); and it is consistent
+  (`isConsistent_apexRow_three`), as consistency is preserved by appending a cell whose row is
+  lawful below it, hence orderly (`isOrderly_apexRow_three`): its orderliness is derived from its
+  consistency, not assumed.
 
 **Finiteness.**  Over a finite type of cells, the labellings strongly coded at the grades of
 their cells and below `ω · (i + 1)` form a finite set (`finite_setOf_forall_isStronglyCoded_lt`),
@@ -170,7 +173,7 @@ private theorem not_isStronglyCoded_amalgam_pointRow_three :
     have h' := h.comap (Coatom.isLowerEmbedding_left rfl)
     rwa [Coatom.comap_amalgamRows_left] at h'
 
-/-! ### Appending an apex -/
+/-! ### Appending a full-scope cell with bottom row -/
 
 /-- The scheme on two points with the cells `({0}, 1)` and `({1}, 1)`, all faces, and row value
 `x`: no cell has full scope. -/
@@ -179,8 +182,8 @@ private def pairRow (x : Label.{u}) : Scheme.{u} 2 where
   toCellScheme := ⟨univ, Geometry.intervalPlan univ, ![({0} : Finset (Fin 2)), {1}], fun _ ↦ 1⟩
   rows := ⟨fun _ _ ↦ x⟩
 
-/-- `pairRow x` with the apex appended: a third cell of scope `{0, 1}` and grade `2` whose row is
-bottom. -/
+/-- `pairRow x` with a full-scope cell appended: a third cell of scope `{0, 1}` and grade `2` whose
+row is bottom. -/
 private def apexRow (x : Label.{u}) : Scheme.{u} 2 where
   card := 3
   toCellScheme :=
@@ -211,7 +214,7 @@ private theorem comap_apexRow (x : Label.{u}) :
   ext s t
   fin_cases s <;> rfl
 
-/-- The only new cell of `apexRow x` is the apex, whose row is bottom. -/
+/-- The only new cell of `apexRow x` is the full-scope cell, whose row is bottom. -/
 private theorem row_eq_bot_of_notMem_range (x : Label.{u}) {s : Fin 3}
     (hs : s ∉ Set.range (Fin.castSucc : Fin 2 → Fin 3)) (t) : (apexRow x).rows.row s t = ⊥ := by
   fin_cases s
@@ -220,7 +223,7 @@ private theorem row_eq_bot_of_notMem_range (x : Label.{u}) {s : Fin 3}
   · rfl
 
 /-- **`apexRow 3` is coded**: its inherited rows are coded (with the value `3` at grade `1`) and
-its new row, the apex row, is strongly coded. -/
+its new row, bottom, is strongly coded. -/
 private theorem isCoded_apexRow_three : (apexRow (3 : Label.{u})).IsCoded :=
   Scheme.isCoded_of_isLowerEmbedding_of_isStronglyCodedAt (isLowerEmbedding_castSucc 3)
     (comap_apexRow 3)
@@ -232,8 +235,8 @@ private theorem not_isStronglyCoded_apexRow_three :
     ¬ (apexRow (3 : Label.{u})).rows.IsStronglyCoded := fun h ↦ by
   simpa [apexRow] using h (0 : Fin 3) ⟨(0 : Fin 3), CellScheme.mem_below_gradedIndex _ _⟩
 
-/-- **`apexRow 3` is consistent**: the rows of `pairRow 3` are, and the apex row, bottom, is
-lawful below the apex. -/
+/-- **`apexRow 3` is consistent**: the rows of `pairRow 3` are, and the new row, bottom, is
+lawful below the new cell. -/
 private theorem isConsistent_apexRow_three : (apexRow (3 : Label.{u})).rows.IsConsistent :=
   Rows.isConsistent_of_isLowerEmbedding (isLowerEmbedding_castSucc 3) (comap_apexRow 3)
     (isConsistent_const 3 fun _ ↦ by simp [pairRow]) fun s hs ↦ by
