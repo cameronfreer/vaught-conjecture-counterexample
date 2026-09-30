@@ -15,9 +15,9 @@ must be coded); semantic contract, item 3 (rows are coded labellings).
 
 The rows of a scheme are coded (`Scheme.IsCoded`: every row value lies below `ω ^ 2`), while the
 labels of a stage type are arbitrary labels at its stage.  A cell above every other cell whose
-label is the formal top (the apex of `VaughtConjecture.Extension.ApexLayer`) needs, as its row, a
+label is the formal top (the apex of `VaughtConjecture.Extension.Apex`) needs, as its row, a
 coded lawful labelling of the other cells that transforms back to their actual labels.  This file
-constructs it.
+constructs it: the coded copy of the labels.
 
 **The band coding.**  Fix a finite set `V` of labels and a threshold `K`.  The *value bands*
 (`Label.valueBands V`) are the quotients `o / ω` of the ordinals `o` in `V`, and the *code bands*
@@ -35,7 +35,7 @@ of rank `0` to `⊥`, and larger codes to the formal top.  Both depend on `V` (a
   code bands; it commutes with visibility replacement at every threshold `k ≤ K`
   (`Label.bandEncode_visibilityReplace`), since a band that is not a value band is sent to a code
   whose finite part is `K`, and so it keeps self-visibility at those thresholds.
-* The decoding reads back every label of `V` and the formal top (`Label.bandDecode_bandEncode`,
+* The decoding recovers every label of `V` and the formal top (`Label.bandDecode_bandEncode`,
   `Label.bandDecode_bandEncode_top`), and with the constant suppressor `⊤` it is a transformation
   witness (`Label.isWitness_bandDecode`): it relabels bands and fixes finite parts.
 * **Witness transfer** (`Label.IsWitness.bandEncode`): a witness `(g, σ)` whose suppressor takes
@@ -43,13 +43,15 @@ of rank `0` to `⊥`, and larger codes to the formal top.  Both depend on `V` (a
   suppressor truncated above `K`.  The guard of the coded shifter implies the guard of `σ`, because
   the coding is strictly increasing at the values of `g`.
 
-**Coded copies** (`CellScheme.Rows.IsLawful.exists_bandEncode`): for a lawful section `w` of rows
-over finitely many cells of grade at most `K`, some finite `V` containing every label of `w` makes
-`bandEncode V K ∘ w` lawful: take for `V` the labels of `w` and the values of one locality witness
-for each cell, and transfer the witnesses.  Nothing about the rows is assumed.
+**Coded copies** (`CellScheme.Rows.IsLawful.exists_bandEncode`).  The *coded copy* of a labelling
+`w` relative to a finite set `V` containing its labels is `bandEncode V K ∘ w`: every value lies
+below `ω ^ 2`, and the band decoding recovers `w` from it.  For a lawful section `w` of rows over
+finitely many cells of grade at most `K`, some finite `V` containing every label of `w` makes the
+coded copy `bandEncode V K ∘ w` lawful: take for `V` the labels of `w` and the values of one
+locality witness for each cell, and transfer the witnesses.  Nothing about the rows is assumed.
 
-**Reuse.**  The coded encoders and decoders of the transformation algebra (roadmap, checkpoint 2.3)
-are to reuse this band coding, not to define a second one.
+**The band coding in the transformation algebra.**  The coded encoders and decoders of the
+transformation algebra (roadmap, checkpoint 2.3) are built from this band coding.
 
 ## Placement
 
@@ -59,7 +61,7 @@ sections.  They are stated here so that those folders are unchanged.
 
 ## References
 
-Rows are coded as in the range normalisation of [Kni26, Lemma 2.5.13]; transformation witnesses
+Rows are coded as in the range normalization of [Kni26, Lemma 2.5.13]; transformation witnesses
 are [Kni26, Definition 2.3.9], and visibility replacement is [Kni26, Definition 2.2.3].
 -/
 
@@ -466,13 +468,13 @@ theorem isWitness_bandDecode : IsWitness (fun _ ↦ (⊤ : Label.{u})) (bandDeco
     | top => rfl
     | coe z => exact bandDecodeOrd_visibilityReplace k i z
 
-/-- The decoding reads back the formal top. -/
+/-- The decoding recovers the formal top. -/
 theorem bandDecode_bandEncode_top : bandDecode V (bandEncode V K ⊤) = ⊤ :=
   bandDecodeOrd_of_lt (by
     rw [bandTopCode, omega0_mul_add_div (natCast_lt_omega0 K)]
     exact_mod_cast Nat.lt_succ_self _)
 
-/-- **The decoding reads back every label of `V`.** -/
+/-- **The decoding recovers every label of `V`.** -/
 theorem bandDecode_bandEncode {z : Label.{u}} (hz : z ∈ V) :
     bandDecode V (bandEncode V K z) = z := by
   induction z using recBotCoeTop with
@@ -529,7 +531,7 @@ variable {ι α : Type*} [Finite ι] {D : CellScheme ι α} {R : D.Rows.{u}} {w 
 
 /-- **Coded copies of lawful sections.**  If `w` is a lawful section of rows over finitely many
 cells of grade at most `K`, then for some finite set `V` of labels containing every label of `w`,
-the coded labelling `bandEncode V K ∘ w` is lawful: `V` holds the labels of `w` and the values at
+the coded copy `bandEncode V K ∘ w` is lawful: `V` holds the labels of `w` and the values at
 grades `≤ K` of one locality witness for each cell, and the witnesses are transferred. -/
 theorem IsLawful.exists_bandEncode (hw : R.IsLawful w) {K : ℕ} (hK : ∀ d, D.grade d ≤ K) :
     ∃ V : Finset Label.{u}, (∀ d, w d ∈ V) ∧ R.IsLawful (bandEncode V K ∘ w) := by
