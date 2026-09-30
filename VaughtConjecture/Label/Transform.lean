@@ -13,7 +13,7 @@ retains its guards, and no transitivity is declared); semantic contract, item 3.
 
 Let `D` be a family of cells with grades `grade : D → ℕ`, and let `p q : D → Label` be
 labellings.  A *witness* consists of a *suppressor* `g : ℕ → Label` and a *shifter*
-`σ : Label → Label` subject to five laws (`Witness g σ`):
+`σ : Label → Label` subject to five laws (`IsWitness g σ`, [Kni26, Definition 2.3.9]):
 
 1. `g` is antitone;
 2. each `g n` is self-visible at `n`;
@@ -24,7 +24,7 @@ labellings.  A *witness* consists of a *suppressor* `g : ℕ → Label` and a *s
 
 The labelling `p` *transforms to* `q` (`TransformsTo grade p q`) if some witness satisfies
 `q d = min (σ (p d)) (g (grade d))` for every cell `d`.  The raw data `(g, σ)` and their laws
-are kept apart: `Witness` is a proposition about given functions.
+are kept apart: `IsWitness` is a proposition about given functions.
 
 ## Rules proved here
 
@@ -32,14 +32,17 @@ are kept apart: `Witness` is a proposition about given functions.
   (`TransformsTo.reindex`), and the bottom cases (`TransformsTo.bot`, `TransformsTo.eq_bot`);
 * monotonicity in the source and antitonicity in the grade (`TransformsTo.le_of_le`), and
   preservation of self-visibility at the grade (`TransformsTo.isSelfVisible`);
-* lowering the suppressor (`Witness.of_le`), truncation of the suppressor above a grade
-  (`Witness.truncate`), capping the suppressor by a self-visible label (`Witness.cap`), and the
-  capped target (`TransformsTo.min_const`);
-* the pointwise maximum of two shifters with one suppressor (`Witness.max`);
-* guarded composition (`Witness.comp_of_bot`): a shifter normalized at grade `m` may be
-  followed by a bottom-reflecting shifter normalized at a grade `K ≥ m`;
+* lowering the suppressor (`IsWitness.of_le`, `IsWitness.of_le_stepSuppressor`), truncation of
+  the suppressor above a grade (`IsWitness.truncate`), capping the suppressor by a self-visible
+  label (`IsWitness.cap`), and the cap rule for the target (`TransformsTo.min_const`,
+  [Kni26, Lemma 2.3.12]);
+* the upper envelope of two shifters with one suppressor (`IsWitness.max`);
+* guarded composition (`IsWitness.comp_of_bot_reflecting`): a shifter normalized at grade `m`
+  may be followed by a shifter normalized at grade `m` that reflects bottom on the values of the
+  first;
 * stage reduction at a stage that is zero or a limit, of the target and of the witness
-  (`TransformsTo.reduce_self`, `Witness.reduce`, `TransformsTo.reduce`).
+  (`TransformsTo.reduce_self`, `IsWitness.reduce`, and the reduction rule
+  `TransformsTo.reduce`, [Kni26, Lemma 3.1.3]).
 
 ## Nontransitivity
 
@@ -47,6 +50,13 @@ The relation is **not transitive**, even on labellings that are self-visible at 
 at grade one, `(1, 2) ⇒ (1, ⊤)` and `(1, ⊤) ⇒ (⊥, ⊤)`, but not `(1, 2) ⇒ (⊥, ⊤)`
 (`TransformsTo.not_transitive`).  No `Trans` or `IsTrans` instance is declared, and composition
 is available only in the guarded form above.
+
+## References
+
+The transformation relation is Definition 2.3.9, the cap rule is Lemma 2.3.12, and the reduction
+rule is Lemma 3.1.3 of R. W. Knight, *A counterexample to Vaught's Conjecture using generalised
+Stone spaces* (draft, 20 February 2026) [Kni26].  Nontransitivity contradicts Lemma 2.3.14 of
+[Kni26] as printed.
 -/
 
 universe u
@@ -56,8 +66,9 @@ namespace VaughtConjecture.Label
 variable {D D' : Type*} {grade : D → ℕ} {p q : D → Label.{u}}
   {g g' : ℕ → Label.{u}} {σ τ ν : Label.{u} → Label.{u}}
 
-/-- The laws of a transformation witness: a suppressor `g` and a shifter `σ`. -/
-structure Witness (g : ℕ → Label.{u}) (σ : Label.{u} → Label.{u}) : Prop where
+/-- The laws of a transformation witness: a suppressor `g` and a shifter `σ`
+[Kni26, Definition 2.3.9]. -/
+structure IsWitness (g : ℕ → Label.{u}) (σ : Label.{u} → Label.{u}) : Prop where
   /-- The suppressor is antitone. -/
   antitone : Antitone g
   /-- Each value of the suppressor is self-visible at its grade. -/
@@ -74,7 +85,7 @@ structure Witness (g : ℕ → Label.{u}) (σ : Label.{u} → Label.{u}) : Prop 
 /-- The labelling `p` *transforms to* `q` over the grades `grade`: for some witness `(g, σ)`,
 `q d = min (σ (p d)) (g (grade d))` for every cell `d`. -/
 def TransformsTo (grade : D → ℕ) (p q : D → Label.{u}) : Prop :=
-  ∃ g σ, Witness g σ ∧ ∀ d, q d = min (σ (p d)) (g (grade d))
+  ∃ g σ, IsWitness g σ ∧ ∀ d, q d = min (σ (p d)) (g (grade d))
 
 /-- The suppressor normalized at grade `K`: the formal top at grades `≤ K` and bottom above. -/
 def stepSuppressor (K : ℕ) (n : ℕ) : Label.{u} := if n ≤ K then ⊤ else ⊥
@@ -90,22 +101,22 @@ def stepSuppressor (K : ℕ) (n : ℕ) : Label.{u} := if n ≤ K then ⊤ else �
 /-! ### Basic witnesses and rules -/
 
 /-- The identity shifter with the constant suppressor `⊤` is a witness. -/
-theorem Witness.id_top : Witness (fun _ ↦ (⊤ : Label.{u})) id :=
+theorem IsWitness.id_top : IsWitness (fun _ ↦ (⊤ : Label.{u})) id :=
   ⟨antitone_const, fun _ ↦ isSelfVisible_top _, rfl, monotone_id, fun _ _ _ _ _ ↦ rfl⟩
 
 /-- The constant shifter `⊥` with the constant suppressor `⊤` is a witness. -/
-theorem Witness.bot_top : Witness (fun _ ↦ (⊤ : Label.{u})) (fun _ ↦ ⊥) :=
+theorem IsWitness.bot_top : IsWitness (fun _ ↦ (⊤ : Label.{u})) (fun _ ↦ ⊥) :=
   ⟨antitone_const, fun _ ↦ isSelfVisible_top _, rfl, monotone_const,
     fun _ _ _ _ _ ↦ (visibilityReplace_bot _ _).symm⟩
 
 /-- Every labelling transforms to itself. -/
 theorem TransformsTo.refl (grade : D → ℕ) (p : D → Label.{u}) : TransformsTo grade p p :=
-  ⟨_, _, Witness.id_top, fun _ ↦ (min_top_right _).symm⟩
+  ⟨_, _, IsWitness.id_top, fun _ ↦ (min_top_right _).symm⟩
 
 /-- Every labelling transforms to the constant bottom labelling. -/
 theorem TransformsTo.bot (grade : D → ℕ) (p : D → Label.{u}) :
     TransformsTo grade p (fun _ ↦ ⊥) :=
-  ⟨_, _, Witness.bot_top, fun _ ↦ (min_eq_left bot_le).symm⟩
+  ⟨_, _, IsWitness.bot_top, fun _ ↦ (min_eq_left bot_le).symm⟩
 
 /-- A transformation pulls back along any map of cell families. -/
 theorem TransformsTo.reindex (h : TransformsTo grade p q) (φ : D' → D) :
@@ -126,7 +137,7 @@ theorem TransformsTo.le_of_le (h : TransformsTo grade p q) {d d' : D} (hp : p d 
   exact min_le_min (hw.monotone hp) (hw.antitone hg)
 
 /-- Under the guard, a shifter preserves self-visibility at the threshold. -/
-theorem Witness.isSelfVisible_apply (hw : Witness g σ) {k : ℕ} {x : Label.{u}}
+theorem IsWitness.isSelfVisible_apply (hw : IsWitness g σ) {k : ℕ} {x : Label.{u}}
     (hx : IsSelfVisible k x) (hg : σ x ≤ g k) : IsSelfVisible k (σ x) := by
   have := hw.visibilityReplace_comm x k hg k le_rfl
   rwa [hx, eq_comm] at this
@@ -144,15 +155,15 @@ theorem TransformsTo.isSelfVisible (h : TransformsTo grade p q) {d : D}
 
 /-- A witness remains a witness for any lower antitone suppressor that is self-visible at each
 grade. -/
-theorem Witness.of_le (hw : Witness g σ) (hle : g' ≤ g) (anti : Antitone g')
-    (vis : ∀ n, IsSelfVisible n (g' n)) : Witness g' σ :=
+theorem IsWitness.of_le (hw : IsWitness g σ) (hle : g' ≤ g) (anti : Antitone g')
+    (vis : ∀ n, IsSelfVisible n (g' n)) : IsWitness g' σ :=
   ⟨anti, vis, hw.map_bot, hw.monotone,
     fun x k hx i hi ↦ hw.visibilityReplace_comm x k (hx.trans (hle k)) i hi⟩
 
 /-- **Capping the suppressor.**  For a label `c` self-visible at `K`, capping the suppressor by
 `c` at grades `≤ K` and replacing it by bottom above `K` gives a witness. -/
-theorem Witness.cap (hw : Witness g σ) {K : ℕ} {c : Label.{u}} (hc : IsSelfVisible K c) :
-    Witness (fun n ↦ if n ≤ K then min (g n) c else ⊥) σ := by
+theorem IsWitness.cap (hw : IsWitness g σ) {K : ℕ} {c : Label.{u}} (hc : IsSelfVisible K c) :
+    IsWitness (fun n ↦ if n ≤ K then min (g n) c else ⊥) σ := by
   refine hw.of_le (fun n ↦ ?_) (fun n m hnm ↦ ?_) (fun n ↦ ?_)
   · split_ifs
     · exact min_le_left _ _
@@ -168,16 +179,16 @@ theorem Witness.cap (hw : Witness g σ) {K : ℕ} {c : Label.{u}} (hc : IsSelfVi
 
 /-- **Truncating the suppressor.**  Replacing the suppressor by bottom above a grade `K` gives
 a witness. -/
-theorem Witness.truncate (hw : Witness g σ) (K : ℕ) :
-    Witness (fun n ↦ if n ≤ K then g n else ⊥) σ := by
+theorem IsWitness.truncate (hw : IsWitness g σ) (K : ℕ) :
+    IsWitness (fun n ↦ if n ≤ K then g n else ⊥) σ := by
   simpa only [min_top_right] using hw.cap (isSelfVisible_top K)
 
 /-- The identity shifter with the suppressor normalized at `K` is a witness. -/
-theorem Witness.id_step (K : ℕ) : Witness (stepSuppressor.{u} K) id :=
-  Witness.id_top.truncate K
+theorem IsWitness.id_step (K : ℕ) : IsWitness (stepSuppressor.{u} K) id :=
+  IsWitness.id_top.truncate K
 
-/-- **The cap rule.**  If every grade is at most `K` and `c` is self-visible at `K`, then a
-transformation to `q` gives a transformation to `q` capped at `c`. -/
+/-- **The cap rule** [Kni26, Lemma 2.3.12].  If every grade is at most `K` and `c` is
+self-visible at `K`, then a transformation to `q` gives a transformation to `q` capped at `c`. -/
 theorem TransformsTo.min_const (h : TransformsTo grade p q) {K : ℕ} (hK : ∀ d, grade d ≤ K)
     {c : Label.{u}} (hc : IsSelfVisible K c) : TransformsTo grade p (fun d ↦ min (q d) c) := by
   obtain ⟨g, σ, hw, heq⟩ := h
@@ -185,9 +196,12 @@ theorem TransformsTo.min_const (h : TransformsTo grade p q) {K : ℕ} (hK : ∀ 
 
 /-! ### Maximum and guarded composition -/
 
-/-- The pointwise maximum of two shifters with a common suppressor is a shifter for it. -/
-theorem Witness.max (hσ : Witness g σ) (hτ : Witness g τ) :
-    Witness g (fun x ↦ max (σ x) (τ x)) where
+/-- **The upper envelope of two shifters.**  The pointwise maximum of two shifters with a common
+suppressor is a shifter for it.  For instance, the identity is a shifter for the suppressor
+`g` of every witness (`IsWitness.id_top` lowered by `IsWitness.of_le`), so for a shifter `σ` of
+`g` the inflationary map `x ↦ max x (σ x)` is again a shifter of `g`. -/
+theorem IsWitness.max (hσ : IsWitness g σ) (hτ : IsWitness g τ) :
+    IsWitness g (fun x ↦ max (σ x) (τ x)) where
   antitone := hσ.antitone
   isSelfVisible := hσ.isSelfVisible
   map_bot := by simp [hσ.map_bot, hτ.map_bot]
@@ -197,12 +211,23 @@ theorem Witness.max (hσ : Witness g σ) (hτ : Witness g τ) :
       hτ.visibilityReplace_comm x k ((le_max_right _ _).trans hx) i hi,
       visibilityReplace_max hi]
 
-/-- **Guarded composition.**  A shifter normalized at grade `m` followed by a shifter normalized
-at a grade `K ≥ m` that reflects bottom is a shifter normalized at `m`.  Bottom reflection is
-used only above `m`, where it recovers the guard of the first shifter. -/
-theorem Witness.comp_of_bot {m K : ℕ} (hτ : Witness (stepSuppressor m) τ)
-    (hν : Witness (stepSuppressor K) ν) (hmK : m ≤ K) (hbot : ∀ x, ν x = ⊥ → x = ⊥) :
-    Witness (stepSuppressor.{u} m) (ν ∘ τ) where
+/-- The normalized suppressor is monotone in the grade at which it is normalized. -/
+theorem monotone_stepSuppressor : Monotone (stepSuppressor.{u} : ℕ → ℕ → Label.{u}) :=
+  fun _ _ hmK n ↦ by unfold stepSuppressor; split_ifs <;> simp_all; omega
+
+/-- A shifter normalized at grade `K` is a shifter normalized at every grade `m ≤ K`. -/
+theorem IsWitness.of_le_stepSuppressor {m K : ℕ} (hν : IsWitness (stepSuppressor K) ν)
+    (hmK : m ≤ K) : IsWitness (stepSuppressor.{u} m) ν :=
+  hν.of_le (monotone_stepSuppressor hmK) (IsWitness.id_step m).antitone
+    (IsWitness.id_step m).isSelfVisible
+
+/-- **Guarded composition.**  A shifter `τ` normalized at grade `m` followed by a shifter `ν`
+normalized at grade `m` is a shifter normalized at `m`, provided `ν` sends a value of `τ` to
+bottom only when that value is bottom.  A second shifter normalized at a grade `K ≥ m` is
+normalized at `m` by `IsWitness.of_le_stepSuppressor`. -/
+theorem IsWitness.comp_of_bot_reflecting {m : ℕ} (hτ : IsWitness (stepSuppressor m) τ)
+    (hν : IsWitness (stepSuppressor m) ν) (hbot : ∀ x, ν (τ x) = ⊥ → τ x = ⊥) :
+    IsWitness (stepSuppressor.{u} m) (ν ∘ τ) where
   antitone := hτ.antitone
   isSelfVisible := hτ.isSelfVisible
   map_bot := by simp [hτ.map_bot, hν.map_bot]
@@ -211,9 +236,11 @@ theorem Witness.comp_of_bot {m K : ℕ} (hτ : Witness (stepSuppressor m) τ)
     simp only [Function.comp_apply] at hx ⊢
     by_cases hk : k ≤ m
     · rw [hτ.visibilityReplace_comm x k (by simp [hk]) i hi,
-        hν.visibilityReplace_comm _ k (by simp [hk.trans hmK]) i hi]
+        hν.visibilityReplace_comm _ k (by simp [hk]) i hi]
+    -- Above `m` the guard forces `ν (τ x) = ⊥`; bottom reflection recovers `τ x = ⊥`, which is
+    -- the guard of the first shifter.
     · rw [stepSuppressor_of_lt (not_le.mp hk), le_bot_iff] at hx
-      have hτx : τ x = ⊥ := hbot _ hx
+      have hτx : τ x = ⊥ := hbot x hx
       rw [hτ.visibilityReplace_comm x k (by simp [hτx]) i hi, hτx, visibilityReplace_bot,
         hν.map_bot, visibilityReplace_bot]
 
@@ -229,8 +256,8 @@ theorem TransformsTo.reduce_self {α : Ordinal.{u}} (hα : Order.IsSuccPrelimit 
 
 /-- At a stage `α` that is zero or a limit, reducing both the suppressor and the shifter of a
 witness gives a witness. -/
-theorem Witness.reduce {α : Ordinal.{u}} (hα : Order.IsSuccPrelimit α) (hw : Witness g σ) :
-    Witness (reduce α ∘ g) (reduce α ∘ σ) where
+theorem IsWitness.reduce {α : Ordinal.{u}} (hα : Order.IsSuccPrelimit α) (hw : IsWitness g σ) :
+    IsWitness (reduce α ∘ g) (reduce α ∘ σ) where
   antitone := (monotone_reduce α).comp_antitone hw.antitone
   isSelfVisible n := (hw.isSelfVisible n).reduce α
   map_bot := by simp [hw.map_bot]
@@ -255,8 +282,8 @@ theorem Witness.reduce {α : Ordinal.{u}} (hα : Order.IsSuccPrelimit α) (hw : 
     have hle : σ x ≤ σ (visibilityReplace k k x) := hw.monotone (le_visibilityReplace (by omega) x)
     exact (not_lt.mpr hασ) (hle.trans_lt (h5 ▸ (visibilityReplace_lt_iff hα).mpr hy))
 
-/-- At a stage `α` that is zero or a limit, a transformation to `q` gives a transformation to
-the stage reduction of `q`. -/
+/-- **The reduction rule** [Kni26, Lemma 3.1.3].  At a stage `α` that is zero or a limit, a
+transformation to `q` gives a transformation to the stage reduction of `q`. -/
 theorem TransformsTo.reduce {α : Ordinal.{u}} (hα : Order.IsSuccPrelimit α)
     (h : TransformsTo grade p q) : TransformsTo grade p (reduce α ∘ q) := by
   obtain ⟨g, σ, hw, heq⟩ := h
@@ -269,12 +296,12 @@ section Nontransitive
 open Ordinal
 
 /-- The sources `(1, 2)`, at grade one, transform to `(1, ⊤)`. -/
-theorem TransformsTo.one_two_one_top :
+private theorem TransformsTo.one_two_one_top :
     TransformsTo (fun _ : Bool ↦ 1)
       (fun b ↦ ((if b then 2 else 1 : Ordinal.{u}) : Label.{u}))
       (fun b ↦ if b then ⊤ else ((1 : Ordinal.{u}) : Label.{u})) := by
-  refine ⟨stepSuppressor 1, Label.reduce 2, ⟨(Witness.id_step 1).antitone,
-    (Witness.id_step 1).isSelfVisible, reduce_bot, monotone_reduce 2, ?_⟩, ?_⟩
+  refine ⟨stepSuppressor 1, Label.reduce 2, ⟨(IsWitness.id_step 1).antitone,
+    (IsWitness.id_step 1).isSelfVisible, reduce_bot, monotone_reduce 2, ?_⟩, ?_⟩
   · intro x k hx i hi
     rcases le_or_gt k 1 with hk | hk
     · by_cases h2 : ((2 : Ordinal.{u}) : Label.{u}) ≤ x
@@ -289,12 +316,12 @@ theorem TransformsTo.one_two_one_top :
         have ho : o < 2 := WithTop.coe_lt_coe.mp (WithBot.coe_lt_coe.mp h2)
         have hω : o < ω := ho.trans (by exact_mod_cast natCast_lt_omega0 2)
         have hi2 : (i : Ordinal.{u}) < 2 := by exact_mod_cast (hi.trans hk).trans_lt one_lt_two
-        simp only [visibilityReplace_coe, replaceFinitePart_of_lt_omega0 hω, WithBot.coe_lt_coe,
-          WithTop.coe_lt_coe]
+        simp only [visibilityReplace_coe, Ordinal.visibilityReplace_of_lt_omega0 hω,
+          WithBot.coe_lt_coe, WithTop.coe_lt_coe]
         split_ifs <;> assumption
       | top => simp at h2
     · rw [stepSuppressor_of_lt hk, le_bot_iff, reduce_eq_bot_iff] at hx
-      simp [hx]
+      simp [hx, reduce_bot]
   · have h12 : ((1 : Ordinal.{u}) : Label.{u}) < ((2 : Ordinal.{u}) : Label.{u}) :=
       WithBot.coe_lt_coe.mpr (WithTop.coe_lt_coe.mpr one_lt_two)
     intro b
@@ -305,7 +332,7 @@ theorem TransformsTo.one_two_one_top :
       exact (reduce_of_le le_rfl).symm
 
 /-- The labels `(1, ⊤)`, at grade one, transform to `(⊥, ⊤)`. -/
-theorem TransformsTo.one_top_bot_top :
+private theorem TransformsTo.one_top_bot_top :
     TransformsTo (fun _ : Bool ↦ 1)
       (fun b ↦ if b then ⊤ else ((1 : Ordinal.{u}) : Label.{u}))
       (fun b ↦ if b then ⊤ else ⊥) := by
@@ -323,7 +350,7 @@ theorem TransformsTo.one_top_bot_top :
 
 /-- The sources `(1, 2)`, at grade one, do not transform to `(⊥, ⊤)`: a shifter sending `1` to
 `⊥` must send the visibility replacement `2` of `1` to `⊥` as well. -/
-theorem TransformsTo.not_one_two_bot_top :
+private theorem TransformsTo.not_one_two_bot_top :
     ¬ TransformsTo (fun _ : Bool ↦ 1)
       (fun b ↦ ((if b then 2 else 1 : Ordinal.{u}) : Label.{u}))
       (fun b ↦ if b then ⊤ else ⊥) := by
@@ -334,32 +361,29 @@ theorem TransformsTo.not_one_two_bot_top :
   have hg : g 1 = ⊤ := top_le_iff.mp (h₂.le.trans (min_le_right _ _))
   rw [hg, min_top_right] at h₁ h₂
   have h := hw.visibilityReplace_comm _ 2 (h₁ ▸ bot_le) 2 le_rfl
-  have h12 : replaceFinitePart 2 2 (1 : Ordinal.{u}) = 2 := by
-    rw [replaceFinitePart_of_lt_omega0 (by simp)]
+  have h12 : Ordinal.visibilityReplace 2 2 (1 : Ordinal.{u}) = 2 := by
+    rw [Ordinal.visibilityReplace_of_lt_omega0 (by simp)]
     simp
   rw [visibilityReplace_coe, h12, ← h₁, visibilityReplace_bot, ← h₂] at h
   exact top_ne_bot h
 
-/-- **The transformation relation is not transitive**, already for two cells of grade one. -/
-theorem TransformsTo.not_transitive :
-    ¬ ∀ p q r : Bool → Label.{u}, TransformsTo (fun _ ↦ 1) p q →
-      TransformsTo (fun _ ↦ 1) q r → TransformsTo (fun _ ↦ 1) p r :=
-  fun h ↦ not_one_two_bot_top (h _ _ _ one_two_one_top one_top_bot_top)
-
 /-- The three labellings of the nontransitivity example are self-visible at grade one. -/
-theorem isSelfVisible_one_two_one_top_bot_top (b : Bool) :
+private theorem isSelfVisible_one_two_one_top_bot_top (b : Bool) :
     IsSelfVisible 1 ((if b then 2 else 1 : Ordinal.{u}) : Label.{u}) ∧
       IsSelfVisible 1 (if b then ⊤ else ((1 : Ordinal.{u}) : Label.{u})) ∧
       IsSelfVisible 1 (if b then (⊤ : Label.{u}) else ⊥) := by
-  have h1 : IsSelfVisible 1 ((1 : Ordinal.{u}) : Label.{u}) :=
-    isSelfVisible_coe.mpr (by
-      rw [Ordinal.mod_eq_of_lt (by exact_mod_cast natCast_lt_omega0 1), Nat.cast_one])
-  have h2 : IsSelfVisible 1 ((2 : Ordinal.{u}) : Label.{u}) :=
-    isSelfVisible_coe.mpr (by
-      rw [Ordinal.mod_eq_of_lt (by exact_mod_cast natCast_lt_omega0 2)]; exact_mod_cast one_le_two)
-  cases b
-  · exact ⟨h1, h1, isSelfVisible_bot 1⟩
-  · exact ⟨h2, isSelfVisible_top 1, isSelfVisible_top 1⟩
+  cases b <;> simp
+
+/-- **The transformation relation is not transitive**, even on labellings that are self-visible
+at the grade, and already for two cells of grade one.  This contradicts Lemma 2.3.14 of [Kni26]
+as printed; only the guarded composition `IsWitness.comp_of_bot_reflecting` holds. -/
+theorem TransformsTo.not_transitive :
+    ¬ ∀ (grade : Bool → ℕ) (p q r : Bool → Label.{u}), (∀ d, IsSelfVisible (grade d) (p d)) →
+      (∀ d, IsSelfVisible (grade d) (q d)) → (∀ d, IsSelfVisible (grade d) (r d)) →
+      TransformsTo grade p q → TransformsTo grade q r → TransformsTo grade p r :=
+  fun h ↦ not_one_two_bot_top (h _ _ _ _ (fun b ↦ (isSelfVisible_one_two_one_top_bot_top b).1)
+    (fun b ↦ (isSelfVisible_one_two_one_top_bot_top b).2.1)
+    (fun b ↦ (isSelfVisible_one_two_one_top_bot_top b).2.2) one_two_one_top one_top_bot_top)
 
 end Nontransitive
 

@@ -15,9 +15,9 @@ structure are used unchanged: `⊥` is the bottom label `-∞`, `⊤` is the for
 ordinal `o` is the label `((o : WithTop Ordinal) : Label)`, written `(o : Label)`.
 
 Four kinds of label are distinguished.  The bottom label lies strictly below ordinal zero
-(`bot_lt_coe_zero`); ordinal zero is the least label that is not bottom (`coe_zero_le_iff`); a
-*proper* label is an ordinal (`IsProper`); the formal top is not an ordinal and lies above all
-of them.
+(Mathlib's `WithBot.bot_lt_coe`); ordinal zero is the least label that is not bottom
+(`WithBot.coe_bot_le`), so the only label below it is bottom (`WithBot.lt_coe_bot`); a *proper*
+label is an ordinal (`IsProper`); the formal top is not an ordinal and lies above all of them.
 
 * `AtStage α x`: the label `x` occurs at stage `α`, that is, `x` is `⊥`, an ordinal `< α`, or `⊤`
   (expositions, §1: labels at stage `α` lie in `{-∞} ∪ α ∪ {∞}`).
@@ -50,19 +50,7 @@ def recBotCoeTop {motive : Label.{u} → Sort*} (bot : motive ⊥)
   | some ⊤ => top
   | some (some o) => coe o
 
-/-! ### Bottom, ordinal zero, proper labels, and top -/
-
-/-- The bottom label lies strictly below ordinal zero. -/
-theorem bot_lt_coe_zero : (⊥ : Label.{u}) < ((0 : Ordinal.{u}) : Label.{u}) :=
-  WithBot.bot_lt_coe _
-
-/-- Ordinal zero is the least label other than bottom. -/
-theorem coe_zero_le_iff : ((0 : Ordinal.{u}) : Label.{u}) ≤ x ↔ x ≠ ⊥ := by
-  induction x using recBotCoeTop <;> simp
-
-/-- The only label below ordinal zero is bottom. -/
-theorem lt_coe_zero_iff : x < ((0 : Ordinal.{u}) : Label.{u}) ↔ x = ⊥ := by
-  rw [← not_le, coe_zero_le_iff, not_not]
+/-! ### Proper labels -/
 
 /-- A label is *proper* if it is an ordinal, that is, neither bottom nor the formal top. -/
 def IsProper (x : Label.{u}) : Prop := ∃ o : Ordinal.{u}, (o : Label.{u}) = x
@@ -96,6 +84,9 @@ def AtStage (α : Ordinal.{u}) (x : Label.{u}) : Prop := x < α ∨ x = ⊤
 @[simp, grind =] theorem atStage_coe : AtStage α (o : Label.{u}) ↔ o < α := by
   simp [AtStage]
 
+/-- Ordinal zero occurs at stage `α` exactly when `α` is positive. -/
+@[simp] theorem atStage_zero : AtStage α (0 : Label.{u}) ↔ 0 < α := atStage_coe
+
 /-- The labels at stage `α`: bottom, an ordinal below `α`, or the formal top. -/
 theorem atStage_iff : AtStage α x ↔ x = ⊥ ∨ (∃ o < α, (o : Label.{u}) = x) ∨ x = ⊤ := by
   induction x using recBotCoeTop <;> simp
@@ -123,10 +114,10 @@ noncomputable def reduce (α : Ordinal.{u}) (x : Label.{u}) : Label.{u} :=
 @[simp] theorem reduce_of_le (h : (α : Label.{u}) ≤ x) : reduce α x = ⊤ := ite_eq_right h.not_gt
 
 /-- Stage reduction fixes the bottom label. -/
-@[simp] theorem reduce_bot : reduce α (⊥ : Label.{u}) = ⊥ := reduce_of_lt (WithBot.bot_lt_coe _)
+theorem reduce_bot : reduce α (⊥ : Label.{u}) = ⊥ := reduce_of_lt (WithBot.bot_lt_coe _)
 
 /-- Stage reduction fixes the formal top. -/
-@[simp] theorem reduce_top : reduce α (⊤ : Label.{u}) = ⊤ := reduce_of_le le_top
+theorem reduce_top : reduce α (⊤ : Label.{u}) = ⊤ := reduce_of_le le_top
 
 /-- Stage reduction never lowers a label. -/
 theorem le_reduce (α : Ordinal.{u}) (x : Label.{u}) : x ≤ reduce α x := by
