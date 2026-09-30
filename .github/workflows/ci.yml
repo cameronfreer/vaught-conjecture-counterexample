@@ -26,7 +26,7 @@ jobs:
     # by the `deps` GitHub cache below; a cold run (new pin) is slow, a warm run takes minutes.
     timeout-minutes: 150
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
 
