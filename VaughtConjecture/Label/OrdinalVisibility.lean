@@ -45,10 +45,10 @@ The extension to labels, fixing the bottom label and the formal top, is
 ## Implementation notes
 
 Visibility replacement is specific to this development; it is declared in the root `Ordinal`
-namespace only so that dot notation applies to ordinals.  Only names containing
+namespace only so that dot notation applies to ordinals.  Only public names containing
 `visibilityReplace`, together with the general statement `Ordinal.lt_iff_mul_lt_of_dvd` and its
-`ω` case, are declared there; a clash with a later Mathlib declaration would be reported by the
-build.
+`ω` case, and private helpers, are declared there; a clash with a later Mathlib declaration
+would be reported by the build.
 
 ## References
 

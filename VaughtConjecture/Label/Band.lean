@@ -47,7 +47,7 @@ universe u
 
 namespace VaughtConjecture.Label
 
-open Ordinal Order
+open Order
 
 variable {D : Type*} {grade : D → ℕ} {p q : D → Label.{u}}
   {σ : Label.{u} → Label.{u}} {α β ν : Ordinal.{u}} {K k i : ℕ} {x c : Label.{u}}

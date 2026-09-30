@@ -46,7 +46,6 @@ open Order
 
 namespace VaughtConjecture.Label
 
-open Ordinal
 
 variable {D : Type*} {grade : D → ℕ} {p q : D → Label.{u}} {g : ℕ → Label.{u}}
   {σ : Label.{u} → Label.{u}} {α : Ordinal.{u}} {K k i : ℕ} {x : Label.{u}}
