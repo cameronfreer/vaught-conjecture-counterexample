@@ -26,14 +26,20 @@ The band map is monotone, lies between `α` and `α + K` off bottom, and, when `
 or limits, commutes on the labels `≥ β` with visibility replacement at every threshold `k ≤ K`
 (`bandMap_visibilityReplace`).
 
-**The band rule** (`Witness.transformsTo_bandMap`).  Let `σ` be a shifter normalized at `K`,
+**The band rule** (`IsWitness.transformsTo_bandMap`).  Let `σ` be a shifter normalized at `K`,
 `α` a limit, and `β` zero or a limit, on a finite family of cells of grades `≤ K`.  If the
 source labelling `p` is sent by `σ` below `α` or to the formal top, and to the formal top only
 from labels `≥ β`, then `p` transforms to the labelling that keeps the values of `σ ∘ p` below
 `α` and replaces each formal top by the band map of its source label.  The shifter
-(`Witness.band`) keeps the values of `σ` below `α` capped at a permitted cutoff `c`, self-visible
+(`IsWitness.band`) keeps the values of `σ` below `α` capped at a permitted cutoff `c`, self-visible
 at `K`, that bounds the finitely many values used; it applies the band map to the labels `≥ β`
 sent to `α` or above, and sends the remaining labels to `c`.
+
+## References
+
+The band map and the band rule are the post-composition needed in the proof of Lemma 5.3.5 of
+R. W. Knight, *A counterexample to Vaught's Conjecture using generalised Stone spaces* (draft,
+20 February 2026) [Kni26]; the transformation relation is [Kni26, Definition 2.3.9].
 -/
 
 universe u
@@ -45,9 +51,6 @@ open Ordinal Order
 variable {D : Type*} {grade : D → ℕ} {p q : D → Label.{u}} {g : ℕ → Label.{u}}
   {σ : Label.{u} → Label.{u}} {α β ν : Ordinal.{u}} {K k i : ℕ} {x y c : Label.{u}}
 
-private theorem coe_le_coe' {a b : Ordinal.{u}} : (a : Label.{u}) ≤ b ↔ a ≤ b := by
-  rw [WithBot.coe_le_coe, WithTop.coe_le_coe]
-
 /-- At a stage `α` that is zero or a limit, the ordinal `α + K` is self-visible at every
 threshold `k ≤ K`. -/
 theorem isSelfVisible_coe_add (hα : IsSuccPrelimit α) (hk : k ≤ K) :
@@ -56,13 +59,13 @@ theorem isSelfVisible_coe_add (hα : IsSuccPrelimit α) (hk : k ≤ K) :
 
 /-- A witness whose suppressor is the formal top at every grade `≤ K` gives a witness with the
 suppressor normalized at `K`. -/
-theorem Witness.of_eq_top (hw : Witness g σ) (hg : ∀ k ≤ K, g k = ⊤) :
-    Witness (stepSuppressor K) σ :=
+theorem IsWitness.of_eq_top (hw : IsWitness g σ) (hg : ∀ k ≤ K, g k = ⊤) :
+    IsWitness (stepSuppressor K) σ :=
   hw.of_le (fun n ↦ by
       unfold stepSuppressor
       split_ifs with h
       exacts [(hg n h).ge, bot_le])
-    (Witness.id_step K).antitone (Witness.id_step K).isSelfVisible
+    (IsWitness.id_step K).antitone (IsWitness.id_step K).isSelfVisible
 
 /-! ### Translation -/
 
@@ -91,7 +94,7 @@ theorem monotone_translate (α β : Ordinal.{u}) : Monotone (translate α β) :=
 theorem coe_le_translate (hx : x ≠ ⊥) : (α : Label.{u}) ≤ translate α β x := by
   induction x using recBotCoeTop with
   | bot => exact absurd rfl hx
-  | coe ν => exact coe_le_coe'.mpr le_self_add
+  | coe ν => exact WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr le_self_add)
   | top => exact le_top
 
 /-- When `α` and `β` are zero or limits, translation from `β` to `α` commutes with visibility
@@ -103,10 +106,11 @@ theorem translate_visibilityReplace (hα : IsSuccPrelimit α) (hβ : IsSuccPreli
   | bot => rfl
   | coe ν =>
     obtain ⟨δ, rfl⟩ : ∃ δ, ν = β + δ :=
-      ⟨ν - β, (Ordinal.add_sub_cancel_of_le (coe_le_coe'.mp hx)).symm⟩
+      ⟨ν - β,
+        (Ordinal.add_sub_cancel_of_le (WithTop.coe_le_coe.mp (WithBot.coe_le_coe.mp hx))).symm⟩
     simp only [visibilityReplace_coe, translate_coe]
-    rw [replaceFinitePart_add hβ, Ordinal.add_sub_cancel, Ordinal.add_sub_cancel,
-      replaceFinitePart_add hα]
+    rw [Ordinal.visibilityReplace_add hβ, Ordinal.add_sub_cancel, Ordinal.add_sub_cancel,
+      Ordinal.visibilityReplace_add hα]
   | top => rfl
 
 /-! ### The band map -/
@@ -129,9 +133,7 @@ noncomputable def bandMap (α β : Ordinal.{u}) (K : ℕ) (x : Label.{u}) : Labe
 /-- The band map sends an ordinal `ν` to `α + min (ν - β) K`. -/
 theorem bandMap_coe (α β : Ordinal.{u}) (K : ℕ) (ν : Ordinal.{u}) :
     bandMap α β K ν = ((α + min (ν - β) K : Ordinal.{u}) : Label.{u}) := by
-  rw [bandMap, translate_coe, ← min_add_add_left]
-  have h : Monotone fun o : Ordinal.{u} ↦ (o : Label.{u}) := fun a b h ↦ coe_le_coe'.mpr h
-  exact h.map_min
+  rw [bandMap, translate_coe, ← min_add_add_left, WithTop.coe_min, WithBot.coe_min]
 
 /-- The band map sends every ordinal `ν ≤ β` to `α`. -/
 theorem bandMap_coe_of_le (h : ν ≤ β) (K : ℕ) : bandMap α β K ν = α := by
@@ -141,8 +143,7 @@ theorem bandMap_coe_of_le (h : ν ≤ β) (K : ℕ) : bandMap α β K ν = α :=
 theorem bandMap_coe_add_natCast (K j : ℕ) :
     bandMap α β K ((β + j : Ordinal.{u}) : Label.{u}) =
       ((α + (min j K : ℕ) : Ordinal.{u}) : Label.{u}) := by
-  have hcast : Monotone (Nat.cast : ℕ → Ordinal.{u}) := fun a b h ↦ Nat.cast_le.mpr h
-  rw [bandMap_coe, Ordinal.add_sub_cancel, hcast.map_min]
+  rw [bandMap_coe, Ordinal.add_sub_cancel, Nat.mono_cast.map_min]
 
 /-- The band map sends every label at least `β + K` to `α + K`. -/
 theorem bandMap_of_le (h : ((β + K : Ordinal.{u}) : Label.{u}) ≤ x) :
@@ -161,7 +162,7 @@ theorem bandMap_min (x y : Label.{u}) :
 
 /-- The band map sends every label other than bottom to a label at least `α`. -/
 theorem coe_le_bandMap (hx : x ≠ ⊥) : (α : Label.{u}) ≤ bandMap α β K x :=
-  le_min (coe_le_translate hx) (coe_le_coe'.mpr le_self_add)
+  le_min (coe_le_translate hx) (WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr le_self_add))
 
 /-- The band map is at most `α + K`. -/
 theorem bandMap_le (x : Label.{u}) : bandMap α β K x ≤ ((α + K : Ordinal.{u}) : Label.{u}) :=
@@ -189,9 +190,9 @@ limits, and let `c` be a permitted cutoff at stage `α` that is self-visible at 
 that caps the values of `σ` below `α` at `c`, applies the band map from `β` to `α` truncated at
 `K` to the labels `≥ β` that `σ` sends to `α` or above, and sends the remaining labels to `c`, is
 normalized at `K`. -/
-theorem Witness.band (hσ : Witness (stepSuppressor K) σ) (hα : IsSuccPrelimit α)
+theorem IsWitness.band (hσ : IsWitness (stepSuppressor K) σ) (hα : IsSuccPrelimit α)
     (hβ : IsSuccPrelimit β) (hc : IsPermittedCutoff α c) (hcK : IsSelfVisible K c) :
-    Witness (stepSuppressor K) fun x ↦
+    IsWitness (stepSuppressor K) fun x ↦
       if σ x < α then min (σ x) c else if (β : Label.{u}) ≤ x then bandMap α β K x else c := by
   set τ : Label.{u} → Label.{u} := fun x ↦
     if σ x < α then min (σ x) c else if (β : Label.{u}) ≤ x then bandMap α β K x else c
@@ -242,8 +243,9 @@ theorem Witness.band (hσ : Witness (stepSuppressor K) σ) (hα : IsSuccPrelimit
 or a limit, and let the family of cells be finite with all grades `≤ K`.  Suppose that `σ` sends
 each source label `p d` below `α` or to the formal top, and to the formal top only when
 `β ≤ p d`.  Then `p` transforms to any labelling `q` that agrees with `σ ∘ p` where it is below
-`α` and is the band map of the source label where `σ ∘ p` is the formal top. -/
-theorem Witness.transformsTo_bandMap [Finite D] (hσ : Witness (stepSuppressor K) σ)
+`α` and is the band map of the source label where `σ ∘ p` is the formal top.  This is the
+post-composition used in the proof of [Kni26, Lemma 5.3.5]. -/
+theorem IsWitness.transformsTo_bandMap [Finite D] (hσ : IsWitness (stepSuppressor K) σ)
     (hα : IsSuccLimit α) (hβ : IsSuccPrelimit β) (hgr : ∀ d, grade d ≤ K)
     (hbound : ∀ d, σ (p d) < α ∨ σ (p d) = ⊤) (hlow : ∀ d, σ (p d) < α → q d = σ (p d))
     (htop : ∀ d, σ (p d) = ⊤ → (β : Label.{u}) ≤ p d ∧ q d = bandMap α β K (p d)) :
@@ -251,7 +253,7 @@ theorem Witness.transformsTo_bandMap [Finite D] (hσ : Witness (stepSuppressor K
   obtain ⟨c, h0c, hcα, hcK, hbd⟩ := exists_isSelfVisible_bound hα.isSuccPrelimit K
     (b := ((0 : Ordinal.{u}) : Label.{u}))
     (WithBot.coe_lt_coe.mpr (WithTop.coe_lt_coe.mpr hα.pos)) (σ ∘ p)
-  refine ⟨_, _, hσ.band hα.isSuccPrelimit hβ ⟨bot_lt_coe_zero.trans_le h0c, hcα⟩ hcK,
+  refine ⟨_, _, hσ.band hα.isSuccPrelimit hβ ⟨(WithBot.bot_lt_coe _).trans_le h0c, hcα⟩ hcK,
     fun d ↦ ?_⟩
   rw [stepSuppressor_of_le (hgr d), min_top_right]
   rcases hbound d with hd | hd
