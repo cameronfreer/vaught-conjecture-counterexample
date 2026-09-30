@@ -56,9 +56,10 @@ transforms it back to the labels.  The result is legal (`StageType.isLegal_addAp
 The new cell is the apex: its graded index is `(univ, n)` and its label `⊤` is the largest
 (`StageType.exists_apex_addApex`), and the faces along embeddings onto proper subsets are those of
 `t` (`StageType.restrictFace_addApex`).  Adding the apex uses no hypothesis on the stage: the apex
-label `⊤` occurs at every stage.  (The stage enters before it: the completion of a seed is the
-truncation to a stage that is zero or a limit, which reduces the labels to the stage, followed by
-adding the apex; see `VaughtConjecture.Extension.CompletionBelowFullGrade`.)
+label `⊤` occurs at every stage.  (The stage enters before it: the completion
+(`CompletionBelowFullGrade.completion`) truncates a completion below the full grade of a seed to a
+stage that is zero or a limit, reducing its labels to the stage, and then adds the apex; see
+`VaughtConjecture.Extension.CompletionBelowFullGrade`.)
 
 A bottom row at the apex would not do: a cell whose row is bottom at itself has bottom label in
 every lawful section (`CellScheme.Rows.IsLawful.eq_bot_of_row_self_eq_bot`), which is why the row
