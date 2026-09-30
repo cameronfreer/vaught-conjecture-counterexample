@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Extension.Basic
+import VaughtConjecture.Geometry.IntervalPlan
 import VaughtConjecture.Stage.Legal
 
 /-!
@@ -22,48 +23,57 @@ literally `d`.
 
 This file reduces the exact pinned extension to the coatom extension construction.
 
-* `StageType.HasCoatomExtensions α` is the statement of the coatom extension construction at stage
-  `α`, in the arrangement used here: any two legal stage types on `m + 1` points, placed on the
-  coatoms of `Fin (m + 2)` omitting the last point (`Fin.castSuccEmb`) and the point `m`
+* `StageType.HasApexCoatomExtensions α` is [Kni26, Corollary 4.3.22] at stage `α`, in the
+  arrangement used here: any two legal stage types on `m + 1` points, placed on the coatoms of
+  `Fin (m + 2)` omitting the last point (`Fin.castSuccEmb`) and the point `m`
   (`extendByLast Fin.castSuccEmb`), which have the same face on the common `m` points, are the
-  literal faces of one legal stage type on `m + 2` points [Kni26, Corollary 4.3.22].  It is a
-  hypothesis here, not a theorem.  The amalgam of the two stage types, with its two literal faces
+  literal faces of one legal stage type on `m + 2` points having a cell of full scope and full
+  grade that carries the largest label (the apex).  `StageType.HasCoatomExtensions α` is the same
+  statement without the apex, and follows from it
+  (`StageType.HasApexCoatomExtensions.hasCoatomExtensions`).  Both are existence statements, and
+  hypotheses here, not theorems: the amalgam of the two stage types, with its two literal faces
   and its consistent and bountiful rows, is constructed in
   `VaughtConjecture.Extension.CoatomAmalgam` ([Kni26, Definition 4.3.1 and Lemma 4.3.2]); it has
   no cell of full scope, and its completion by such cells ([Kni26, Definition 4.3.14]), with the
   bountifulness of the completed rows ([Kni26, Lemma 4.3.20]), is not constructed.
-* **The exact pinned extension** (`StageType.exists_pinned_extension`, row 6): under that
+* **The exact pinned extension** (`StageType.exists_pinned_extension`, row 6): under the weaker
   hypothesis, for every legal `P` at stage `α`, every closed face `f` of `P` with restriction `p`,
   and every legal one-point coface `d` of `p`, there is a legal one-point pinned extension of `P`
   exact over `f`.  It is built by one coatom extension for each point of `P` outside the face:
   a point `x` with the face extended by `x` closed (accessibility of the plan) is added to the
   face, the coatom extension amalgamates the restriction of `P` to the enlarged face with `d`,
-  and the result is a one-point coface of the enlarged face.
+  and the result is a one-point coface of the enlarged face.  Nothing about the stage `α` is used.
 * **The face of the whole chart** (`StageType.exists_pinned_extension_of_surjective`): when `f`
   is onto, no coatom extension is needed; `d` itself, reindexed, is the extension.  The **empty
   chart** is this case (`StageType.exists_pinned_extension_of_isEmpty`).  The **empty face** is an
   instance of the general statement with `m = 0`.
-* **The face must be closed** (`StageType.univ_map_mem_faces_of_pinned`): if some stage type
+* **The face must be closed**
+  (`StageType.univ_map_mem_faces_of_isSome_restrictFace_extendByLast`): if some stage type
   restricts to `P` along `Fin.castSuccEmb` and has a face along `extendByLast f`, then `f` spans a
   closed face of `P`.
-* The amalgamation corollaries [Kni26, Propositions 4.3.23 and 4.3.24]: under the same
-  hypothesis every legal stage type has a legal one-point extension
-  (`StageType.exists_extension`), and two legal stage types with a common face are faces of one
-  legal stage type (`StageType.exists_amalgam`); and every legal scheme carries a legal stage type,
-  its bottom labelling (`Scheme.IsLegal.toStageType`).
+* Every legal scheme carries a legal stage type at every stage, its bottom labelling
+  (`Scheme.IsLegal.toStageType`, [Kni26, Proposition 4.3.24] for the domains that are legal
+  schemes); in particular the one-point scheme with mute rows (`Scheme.onePoint`) is legal
+  (`Scheme.isLegal_onePoint`) and gives a legal one-point stage type at every stage.
+* The amalgamation corollaries: under the same hypothesis every legal stage type has a legal
+  one-point extension (`StageType.exists_extension`, [Kni26, Proposition 4.3.23]), and two legal
+  stage types with a common face are faces of one legal stage type (`StageType.exists_amalgam`).
 
 ## Placement
 
 `StageType.card_eq_zero`, `StageType.faces_eq_of_zero`, `StageType.eq_of_zero`, and
-`StageType.isSome_restrictFace_of_zero` belong in `VaughtConjecture.Stage.Basic`, and
+`StageType.isSome_restrictFace_of_zero` belong in `VaughtConjecture.Stage.Basic`;
 `Scheme.IsLegal.toStageType` with `Scheme.IsLegal.isLegal_toStageType` in
-`VaughtConjecture.Stage.Legal`.  They are stated here so that those files are unchanged.
+`VaughtConjecture.Stage.Legal`; and `Scheme.onePoint` with `Scheme.isLegal_onePoint` in
+`VaughtConjecture.Stage.LegalExamples`, where they would replace the private `point`.  They are
+stated here so that those files are unchanged.
 
 ## References
 
 The coatom extension is [Kni26, Corollary 4.3.22], built on the amalgam of
 [Kni26, Definition 4.3.1] and its completion of [Kni26, Definition 4.3.14]; the one-point
-extension and the existence of types on every domain are [Kni26, Propositions 4.3.23 and 4.3.24].
+extension and the existence of types on every domain are [Kni26, Propositions 4.3.23 and 4.3.24];
+the one-point scheme with mute rows is the last clause of [Kni26, Lemma 4.2.2].
 -/
 
 universe u
@@ -72,6 +82,51 @@ namespace VaughtConjecture
 
 open Finset
 
+/-! ### Stage types on every legal scheme -/
+
+namespace Scheme
+
+variable {n : ℕ} {S : Scheme.{u} n}
+
+/-- The stage type at stage `α` on a legal scheme with every label bottom. -/
+def IsLegal.toStageType (hS : S.IsLegal) (α : Ordinal.{u}) : StageType.{u} α n where
+  toScheme := S
+  label _ := ⊥
+  isWellFormed := hS.isWellFormed
+  isCoded := hS.isCoded
+  isLawful := CellScheme.Rows.isLawful_bot
+  atStage _ := Label.atStage_bot
+
+/-- **Every legal scheme carries a legal stage type** [Kni26, Proposition 4.3.24]: its bottom
+labelling. -/
+theorem IsLegal.isLegal_toStageType (hS : S.IsLegal) (α : Ordinal.{u}) :
+    (hS.toStageType α).IsLegal :=
+  hS
+
+/-- The **one-point scheme**: a single cell of scope `{0}` and grade `1`, the faces `∅` and `{0}`
+(the interval plan on `Fin 1`), and mute rows. -/
+def onePoint : Scheme.{u} 1 where
+  card := 1
+  toCellScheme := ⟨univ, Geometry.intervalPlan univ, fun _ ↦ univ, fun _ ↦ 1⟩
+  rows := CellScheme.Rows.mute _
+
+/-- **The one-point scheme is legal**: mute rows are consistent and bountiful, and the only graded
+face is `({0}, 1)`, the graded index of its cell. -/
+theorem isLegal_onePoint : onePoint.{u}.IsLegal where
+  isWellFormed := ⟨rfl, ⟨inferInstance, Geometry.isPlan_intervalPlan _, fun _ ↦ by
+    simp [onePoint, CellScheme.gradedIndex]⟩⟩
+  isCoded _ _ := WithBot.bot_lt_coe _
+  isConsistent := CellScheme.Rows.isConsistent_mute
+  isBountiful := CellScheme.Rows.isBountiful_mute
+  isComplete := fun ⟨C, j⟩ ⟨_, hpos, hle⟩ ↦ ⟨(0 : Fin 1), by
+    have hC : #C ≤ 1 := card_le_univ C
+    have hC' : C = univ := (card_eq_iff_eq_univ C).mp (by simp only at hpos hle ⊢; simp; omega)
+    simp only at hpos hle
+    ext <;> simp [CellScheme.gradedIndex, onePoint, hC']
+    omega⟩
+
+end Scheme
+
 namespace StageType
 
 variable {α : Ordinal.{u}} {n m k : ℕ}
@@ -79,16 +134,46 @@ variable {α : Ordinal.{u}} {n m k : ℕ}
 /-! ### The coatom extension property -/
 
 variable (α) in
-/-- The **coatom extension property** at stage `α` [Kni26, Corollary 4.3.22], in the arrangement
-used for pinned extensions: any two legal stage types `ta` and `tb` on `m + 1` points with the same
-face along `Fin.castSuccEmb`, a closed face, are the faces of one legal stage type on `m + 2`
-points along the coatom omitting the last point (`Fin.castSuccEmb`) and the coatom omitting the
-point `m` (`extendByLast Fin.castSuccEmb`). -/
+/-- The **coatom extension property** at stage `α`: [Kni26, Corollary 4.3.22] without the maximal
+full cell, in the arrangement used for pinned extensions.  Any two legal stage types `ta` and `tb`
+on `m + 1` points with the same face along `Fin.castSuccEmb`, a closed face, are the faces of one
+legal stage type on `m + 2` points along the coatom omitting the last point (`Fin.castSuccEmb`)
+and the coatom omitting the point `m` (`extendByLast Fin.castSuccEmb`).
+
+This is an existence statement, a hypothesis and not a theorem, while the completion of the amalgam
+of `VaughtConjecture.Extension.CoatomAmalgam` is not constructed.  `exists_pinned_extension` uses
+nothing about the stage `α`: the limit stage of row 6 enters only when this hypothesis is
+discharged, through the stronger `HasApexCoatomExtensions`. -/
 def HasCoatomExtensions : Prop :=
   ∀ (m : ℕ) (ta tb : StageType.{u} α (m + 1)) (p : StageType.{u} α m), ta.IsLegal → tb.IsLegal →
     restrictFace Fin.castSuccEmb ta = some p → restrictFace Fin.castSuccEmb tb = some p →
     ∃ t : StageType.{u} α (m + 2), t.IsLegal ∧ restrictFace Fin.castSuccEmb t = some ta ∧
       restrictFace (extendByLast Fin.castSuccEmb) t = some tb
+
+variable (α) in
+/-- The **coatom extension property with apex** at stage `α`: [Kni26, Corollary 4.3.22] in full,
+in the arrangement used for pinned extensions.  Any two legal stage types `ta` and `tb` on `m + 1`
+points with the same face along `Fin.castSuccEmb` are the faces, along `Fin.castSuccEmb` and
+`extendByLast Fin.castSuccEmb`, of one legal stage type `t` on `m + 2` points which moreover has a
+cell `Ξ` of full scope and full grade `m + 2` carrying the largest label of `t`,
+`q(Ξ) = max ran q`.
+
+This is an existence statement, a hypothesis and not a theorem, while the completion of the amalgam
+of `VaughtConjecture.Extension.CoatomAmalgam` is not constructed; it is the form in which the
+completion is to be proved, and the apex is what high-arity dominance [Kni26, Lemma 4.4.3] uses. -/
+def HasApexCoatomExtensions : Prop :=
+  ∀ (m : ℕ) (ta tb : StageType.{u} α (m + 1)) (p : StageType.{u} α m), ta.IsLegal → tb.IsLegal →
+    restrictFace Fin.castSuccEmb ta = some p → restrictFace Fin.castSuccEmb tb = some p →
+    ∃ t : StageType.{u} α (m + 2), t.IsLegal ∧ restrictFace Fin.castSuccEmb t = some ta ∧
+      restrictFace (extendByLast Fin.castSuccEmb) t = some tb ∧
+      ∃ d, t.toCellScheme.gradedIndex d = (univ, m + 2) ∧ ∀ e, t.label e ≤ t.label d
+
+/-- The coatom extension property with apex implies the coatom extension property: forget the
+apex. -/
+theorem HasApexCoatomExtensions.hasCoatomExtensions (hext : HasApexCoatomExtensions.{u} α) :
+    HasCoatomExtensions.{u} α := fun m ta tb p hta htb hpa hpb ↦
+  let ⟨t, ht, hta', htb', _⟩ := hext m ta tb p hta htb hpa hpb
+  ⟨t, ht, hta', htb'⟩
 
 /-! ### The face of the whole chart -/
 
@@ -149,7 +234,7 @@ property.  For a legal stage type `P` at stage `α`, a closed face `f` of `P` wi
 and a legal one-point coface `d` of `p`, there is a legal one-point pinned extension `Q` of `P`
 whose face along `extendByLast f` is exactly `d`.  One coatom extension is used for each point of
 `P` outside the face. -/
-theorem exists_pinned_extension (hα : HasCoatomExtensions.{u} α) {P : StageType.{u} α n}
+theorem exists_pinned_extension (hext : HasCoatomExtensions.{u} α) {P : StageType.{u} α n}
     (hP : P.IsLegal) {f : Fin m ↪ Fin n} {p : StageType.{u} α m} {d : StageType.{u} α (m + 1)}
     (hPf : restrictFace f P = some p) (hd : d.IsLegal)
     (hdp : restrictFace Fin.castSuccEmb d = some p) :
@@ -179,7 +264,7 @@ theorem exists_pinned_extension (hα : HasCoatomExtensions.{u} α) {P : StageTyp
     have hp'p : restrictFace Fin.castSuccEmb p' = some p := by
       rw [restrictFace_trans P f' _ hPf', hff', hPf]
     -- One coatom extension: amalgamate `p'` and `d` over `p`.
-    obtain ⟨t, ht, htp', htd⟩ := hα m p' d p hp' hd hp'p hdp
+    obtain ⟨t, ht, htp', htd⟩ := hext m p' d p hp' hd hp'p hdp
     -- The remaining points: `t` is a one-point coface of the enlarged face `p'`.
     have hmn : m < n := by
       have hle : m ≤ n := by simpa using Fintype.card_le_of_embedding f
@@ -194,8 +279,8 @@ theorem exists_pinned_extension (hα : HasCoatomExtensions.{u} α) {P : StageTyp
 
 /-- **The face must be closed.**  If a stage type `Q` restricts to `P` along `Fin.castSuccEmb`
 and has a face along `extendByLast f`, then `f` spans a closed face of `P`. -/
-theorem univ_map_mem_faces_of_pinned {Q : StageType.{u} α (n + 1)} {P : StageType.{u} α n}
-    {f : Fin m ↪ Fin n} (hQP : restrictFace Fin.castSuccEmb Q = some P)
+theorem univ_map_mem_faces_of_isSome_restrictFace_extendByLast {Q : StageType.{u} α (n + 1)}
+    {P : StageType.{u} α n} {f : Fin m ↪ Fin n} (hQP : restrictFace Fin.castSuccEmb Q = some P)
     (hQf : (restrictFace (extendByLast f) Q).isSome) : univ.map f ∈ P.toCellScheme.faces := by
   obtain ⟨hc, rfl⟩ := (restrictFace_eq_some_iff Q _).mp hQP
   have he := (isSome_restrictFace_iff Q _).mp hQf
@@ -246,24 +331,27 @@ theorem isSome_restrictFace_of_zero (t : StageType.{u} α n) (e : Fin 0 ↪ Fin 
 
 /-! ### Amalgamation -/
 
-/-- **One-point extension** [Kni26, Proposition 4.3.23], from the coatom extension property: given
-a legal stage type on one point at stage `α`, every legal stage type at stage `α` is the face along
-`Fin.castSuccEmb` of a legal stage type on one more point.  This is the exact pinned extension over
-the empty face. -/
-theorem exists_extension (hα : HasCoatomExtensions.{u} α) {P : StageType.{u} α n}
-    (hP : P.IsLegal) {d : StageType.{u} α 1} (hd : d.IsLegal) :
-    ∃ Q : StageType.{u} α (n + 1), Q.IsLegal ∧ restrictFace Fin.castSuccEmb Q = some P ∧
-      restrictFace (extendByLast (Function.Embedding.ofIsEmpty : Fin 0 ↪ Fin n)) Q = some d := by
+/-- **One-point extension** [Kni26, Proposition 4.3.23], from the coatom extension property:
+every legal stage type at stage `α` is the face along `Fin.castSuccEmb` of a legal stage type on
+one more point.  This is the exact pinned extension over the empty face, with the new point
+carrying the legal one-point stage type of the one-point scheme (`Scheme.isLegal_onePoint`); any
+other legal one-point stage type can be prescribed there by `exists_pinned_extension`. -/
+theorem exists_extension (hext : HasCoatomExtensions.{u} α) {P : StageType.{u} α n}
+    (hP : P.IsLegal) :
+    ∃ Q : StageType.{u} α (n + 1), Q.IsLegal ∧ restrictFace Fin.castSuccEmb Q = some P := by
+  set d := Scheme.isLegal_onePoint.{u}.toStageType α
   obtain ⟨p, hp⟩ := Option.isSome_iff_exists.mp
     (P.isSome_restrictFace_of_zero (Function.Embedding.ofIsEmpty : Fin 0 ↪ Fin n))
   obtain ⟨p', hp'⟩ := Option.isSome_iff_exists.mp (d.isSome_restrictFace_of_zero Fin.castSuccEmb)
-  exact exists_pinned_extension hα hP hp hd (hp'.trans (congrArg some (eq_of_zero p' p)))
+  obtain ⟨Q, hQ, hQP, -⟩ := exists_pinned_extension hext hP hp
+    (Scheme.isLegal_onePoint.isLegal_toStageType α) (hp'.trans (congrArg some (eq_of_zero p' p)))
+  exact ⟨Q, hQ, hQP⟩
 
 /-- **Amalgamation over a common face**, from the coatom extension property: two legal stage types
 `P` and `R` whose faces along `f` and `g` are the same stage type `p` are the faces of one legal
 stage type, along embeddings `i` and `j` with `i ∘ f = j ∘ g`.  The points of `R` outside the face
 are added one at a time, each by an exact pinned extension. -/
-theorem exists_amalgam (hα : HasCoatomExtensions.{u} α) {P : StageType.{u} α n}
+theorem exists_amalgam (hext : HasCoatomExtensions.{u} α) {P : StageType.{u} α n}
     {R : StageType.{u} α k} (hP : P.IsLegal) (hR : R.IsLegal) {f : Fin m ↪ Fin n}
     {g : Fin m ↪ Fin k} {p : StageType.{u} α m} (hPf : restrictFace f P = some p)
     (hRg : restrictFace g R = some p) :
@@ -304,7 +392,7 @@ theorem exists_amalgam (hα : HasCoatomExtensions.{u} α) {P : StageType.{u} α 
       rw [restrictFace_trans R g' _ hRg', hgg', hRg]
     -- Extend `P` over its face `f` by the enlarged face of `R`.
     obtain ⟨P', hP', hP'P, hP'f⟩ :=
-      exists_pinned_extension hα hP hPf (hR.restrictFace g' hRg') hp'p
+      exists_pinned_extension hext hP hPf (hR.restrictFace g' hRg') hp'p
     have hmk : m < k := by
       have hle : m ≤ k := by simpa using Fintype.card_le_of_embedding g
       refine lt_of_le_of_ne hle fun he ↦ hsurj ?_
@@ -319,28 +407,5 @@ theorem exists_amalgam (hα : HasCoatomExtensions.{u} α) {P : StageType.{u} α 
       rw [← h, Function.Embedding.trans_assoc]
 
 end StageType
-
-/-! ### Stage types on every legal scheme -/
-
-namespace Scheme
-
-variable {n : ℕ} {S : Scheme.{u} n}
-
-/-- The stage type at stage `α` on a legal scheme with every label bottom. -/
-def IsLegal.toStageType (hS : S.IsLegal) (α : Ordinal.{u}) : StageType.{u} α n where
-  toScheme := S
-  label _ := ⊥
-  isWellFormed := hS.isWellFormed
-  isCoded := hS.isCoded
-  isLawful := CellScheme.Rows.isLawful_bot
-  atStage _ := Label.atStage_bot
-
-/-- **Every legal scheme carries a legal stage type** [Kni26, Proposition 4.3.24]: its bottom
-labelling. -/
-theorem IsLegal.isLegal_toStageType (hS : S.IsLegal) (α : Ordinal.{u}) :
-    (hS.toStageType α).IsLegal :=
-  hS
-
-end Scheme
 
 end VaughtConjecture

@@ -24,13 +24,15 @@ the labels of `ta` and `tb` glue to a lawful labelling of the amalgam, since eve
 of the two coatoms.  This gives the stage type `Coatom.amalgamType hta htb` on `m + 2` points
 whose faces along `Fin.castSuccEmb` and `extendByLast Fin.castSuccEmb` are literally `ta` and `tb`,
 labels included (`Coatom.restrictFace_left_amalgamType`, `Coatom.restrictFace_right_amalgamType`).
-When `ta` and `tb` are legal, its rows are consistent and bountiful [Kni26, Lemma 4.3.2] and every
-graded face other than those of full scope is the graded index of a cell
-(`Coatom.isLegal_amalgamType_iff`): the amalgam is legal exactly when it is complete at the full
-face, which it is not, since it has no cell of full scope.  Adding cells of full scope, and
-labels for them, is the completion of [Kni26, Definition 4.3.14], not constructed here; the
-coatom extension property `StageType.HasCoatomExtensions` of
-`VaughtConjecture.Extension.PinnedExtension` asks for such a completion.
+When `ta` and `tb` are legal, its rows are consistent and bountiful [Kni26, Lemma 4.3.2]
+(`Coatom.isConsistent_amalgamType`, `Coatom.isBountiful_amalgamType`) and every graded face other
+than those of full scope is the graded index of a cell (`Coatom.exists_gradedIndex_eq_amalgamType`):
+the amalgam is complete except at the full face, where it has no cell, so it is not complete and
+not legal (`Coatom.not_isComplete_amalgamType`, `Coatom.not_isLegal_amalgamType`).  Adding cells of
+full scope, and labels for them, is the completion of [Kni26, Definition 4.3.14], not constructed
+here; the coatom extension properties `StageType.HasApexCoatomExtensions` and
+`StageType.HasCoatomExtensions` of `VaughtConjecture.Extension.PinnedExtension` ask for such a
+completion.
 
 ## Placement
 
@@ -405,6 +407,10 @@ theorem not_isComplete_amalgamType :
   obtain ⟨d, hd⟩ := hc ((univ : Finset (Fin (m + 2))), 1)
     ⟨(amalgamType hta htb).univ_mem_faces, Nat.one_pos, by simp⟩
   exact scope_ne_univ_amalgamType hta htb d (congrArg Prod.fst hd)
+
+/-- The amalgam is not legal: it is not complete. -/
+theorem not_isLegal_amalgamType : ¬ (amalgamType hta htb).IsLegal := fun hl ↦
+  not_isComplete_amalgamType hta htb hl.isComplete
 
 end StageType
 

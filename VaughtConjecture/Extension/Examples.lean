@@ -14,15 +14,17 @@ Roadmap, Layer 3 (the coatom extension construction; the exact pinned extension,
 table of 3.4, with its base cases); semantic contract, item 4 (absence of a face is mathematical
 information).
 
-**The amalgam of two one-point types.**  `point` is the legal stage type on one point with a single
-cell of grade `1`, mute rows, and the bottom label.  The amalgam of `point` with itself over the
-empty face is a stage type on two points whose faces along the two coatoms are literally `point`,
-whose rows are consistent and bountiful, and which is not complete: it has no cell of full scope.
+**The amalgam of two one-point types.**  `point` is the legal stage type on one point carried by
+the one-point scheme `Scheme.onePoint` (a single cell of grade `1`, mute rows) with the bottom
+label.  The amalgam of `point` with itself over the empty face is a stage type on two points whose
+faces along the two coatoms are literally `point`, whose rows are consistent and bountiful, and
+which is not complete, hence not legal: it has no cell of full scope.
 
 **The face must be closed.**  `bare` is the stage type on three points with no cells whose faces
-form the interval plan on `Fin 3`.  The pair `{0, 2}` is not an interval, so no stage type on four
-points restricts to `bare` along `Fin.castSuccEmb` and has a face along the extension of the
-embedding onto `{0, 2}` by the new point.
+form the interval plan on `Fin 3`; it is a copy of the private stage type of the same name in
+`VaughtConjecture.Stage.Examples`, which has no public counterpart.  The pair `{0, 2}` is not an
+interval, so no stage type on four points restricts to `bare` along `Fin.castSuccEmb` and has a
+face along the extension of the embedding onto `{0, 2}` by the new point.
 
 ## References
 
@@ -36,28 +38,13 @@ open Finset
 
 /-! ### The amalgam of two one-point types -/
 
-/-- The one-point stage type: a single cell of scope `{0}` and grade `1`, mute rows, and the
-bottom label. -/
-private def point : StageType.{0} 0 1 where
-  card := 1
-  toCellScheme := ⟨univ, Geometry.intervalPlan univ, fun _ ↦ univ, fun _ ↦ 1⟩
-  rows := CellScheme.Rows.mute _
-  label _ := ⊥
-  isWellFormed := ⟨rfl, ⟨inferInstance, Geometry.isPlan_intervalPlan _, fun _ ↦ by
-    simp [CellScheme.gradedIndex]⟩⟩
-  isCoded _ _ := WithBot.bot_lt_coe _
-  isLawful := CellScheme.Rows.isLawful_bot
-  atStage _ := Label.atStage_bot
+/-- The one-point stage type at stage `0`: the one-point scheme with the bottom label. -/
+private noncomputable abbrev point : StageType.{0} 0 1 :=
+  Scheme.isLegal_onePoint.toStageType 0
 
 /-- The one-point stage type is legal. -/
 private theorem isLegal_point : point.IsLegal :=
-  isLegal_iff.mpr ⟨CellScheme.Rows.isConsistent_mute, CellScheme.Rows.isBountiful_mute,
-    fun ⟨C, j⟩ ⟨_, hpos, hle⟩ ↦ ⟨(0 : Fin 1), by
-      have hC : #C ≤ 1 := card_le_univ C
-      have hC': C = univ := (card_eq_iff_eq_univ C).mp (by simp only at hpos hle ⊢; simp; omega)
-      simp only at hpos hle
-      ext <;> simp [CellScheme.gradedIndex, point, hC']
-      omega⟩⟩
+  Scheme.isLegal_onePoint.isLegal_toStageType 0
 
 /-- The face of `point` on no points. -/
 private theorem restrictFace_point :
@@ -65,21 +52,22 @@ private theorem restrictFace_point :
   Option.isSome_iff_exists.mp (point.isSome_restrictFace_of_zero _)
 
 /-- The amalgam of `point` with itself over the empty face has the two literal faces `point`,
-bountiful rows, and no cell of full scope, so it is not complete. -/
+bountiful rows, and no cell of full scope, so it is not complete, and not legal. -/
 private example : ∃ t : StageType.{0} 0 2,
     restrictFace Fin.castSuccEmb t = some point ∧
     restrictFace (extendByLast Fin.castSuccEmb) t = some point ∧
-    t.rows.IsConsistent ∧ t.rows.IsBountiful ∧ ¬ t.toCellScheme.IsComplete := by
+    t.rows.IsConsistent ∧ t.rows.IsBountiful ∧ ¬ t.toCellScheme.IsComplete ∧ ¬ t.IsLegal := by
   obtain ⟨p, hp⟩ := restrictFace_point
   exact ⟨Coatom.amalgamType hp hp, Coatom.restrictFace_left_amalgamType hp hp,
     Coatom.restrictFace_right_amalgamType hp hp,
     Coatom.isConsistent_amalgamType hp hp isLegal_point isLegal_point,
     Coatom.isBountiful_amalgamType hp hp isLegal_point isLegal_point,
-    Coatom.not_isComplete_amalgamType hp hp⟩
+    Coatom.not_isComplete_amalgamType hp hp, Coatom.not_isLegal_amalgamType hp hp⟩
 
 /-! ### The face must be closed -/
 
-/-- A stage type on three points with no cells, whose faces are the intervals of `Fin 3`. -/
+/-- A stage type on three points with no cells, whose faces are the intervals of `Fin 3` (a copy
+of the private `bare` of `VaughtConjecture.Stage.Examples`). -/
 private def bare : StageType.{0} 0 3 where
   card := 0
   toCellScheme := ⟨univ, Geometry.intervalPlan univ, Fin.elim0, Fin.elim0⟩
@@ -99,7 +87,7 @@ private def outer : Fin 2 ↪ Fin 3 :=
 private example : ¬ ∃ Q : StageType.{0} 0 4, restrictFace Fin.castSuccEmb Q = some bare ∧
     (restrictFace (extendByLast outer) Q).isSome := by
   rintro ⟨Q, hQ, hQf⟩
-  have h := univ_map_mem_faces_of_pinned hQ hQf
+  have h := univ_map_mem_faces_of_isSome_restrictFace_extendByLast hQ hQf
   exact absurd h (by decide)
 
 end VaughtConjecture.StageType
