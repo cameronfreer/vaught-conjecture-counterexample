@@ -106,13 +106,21 @@ from per-cap lifts to simultaneous preservation under the hypothesis that restri
 injective, i.e. uniqueness of extension; that hypothesis is not available in general (see
 `README.md`, Layer 0: do not assume injectivity).  The construction obtains simultaneous cap
 preservation differently.  The per-cap lift applies only at caps where the face prescription
-is compatible with the ambient labelling.  These compatible caps are downward closed and
-bounded, and since a chart carries finitely many labels they induce only finitely many distinct
-observations, so a largest compatible cap exists (up to the observation it induces).  An
-extension preserving the observation at the largest cap at which the face prescription is
-compatible preserves it at every smaller cap, because caps nest under `min`
-(`min (min x c') c = min x c` for `c ≤ c'`).  This is the intended argument, still to be
-proved.  Preserve caps on
+agrees with the face of the ambient section up to the cap.  Split on literal difference.  If
+the prescription `p` differs from the face `a` of the ambient section at some coordinate, let
+`m` be the least value of `min (pᵢ, aᵢ)` over the differing coordinates (`m` is never the
+formal top).  The compatible caps are exactly the permitted caps at or below `m`.  If `m` is an
+ordinal it is the largest compatible cap, and a lift at `m` preserves the observation at every
+compatible cap, because caps nest under `min` (`min (min x m) c = min x c` for `c ≤ m`).  If
+`m = ⊥`, no permitted cap is compatible: simultaneous preservation is vacuous, and the cap
+calculus supplies no extension of `p` at all.  If `p` is literally the face of `a`, the ambient
+section itself is an extension preserving every observation.  (Agreement at every permitted
+cap is equality at a nonzero limit stage, where the caps `0` and `y + 1` separate any two
+labels at the stage, but not at a successor stage `β + 1`, where `β` and the formal top agree
+at every permitted cap; hence the split on literal difference.)  Simultaneous preservation
+therefore needs neither injectivity nor any exact form of receiving, given per-cap
+bountifulness and the fact that the ambient section restricts to the ambient face.  This is
+the intended argument, still to be proved.  Preserve caps on
 **all** target coordinates, including auxiliaries and future catalogue fields (catalogue fields
 are to be defined by the forthcoming layer-3 specification).  A statement
 that recovers only a few labels from the observation does not weaken the lifting requirement.
@@ -239,10 +247,16 @@ In the pinned InfinitaryLogic:
   its eventual-departure hypothesis discharged on the complement of the core;
 - the Gδ/Polish model-code spaces;
 - `internalScottRank_le_of_orbits_determined` (`Scott/OrbitRank`), used only by the companion
+<<<<<<< HEAD
   full-chart orbit theory (milestone B of `COMPANIONS.md`).
+=======
+  full-chart orbit theory below.
+
+>>>>>>> origin/roadmap/implementation
 `SuggestedInterfaces.lean` checks representative names, so a pin bump that removes one fails
-when the sketch is checked (the checks are run by CI).  Coding a `Type w` carrier on `ℕ` needs a transfer of infinitary isomorphism across
-universes; do not assume that a statement within a single universe covers it.
+when the sketch is checked (the checks are run by CI).  Coding a `Type w` carrier on `ℕ` needs a
+transfer of infinitary isomorphism across universes; do not assume that a statement within a
+single universe covers it.
 
 ## Automation and API discipline
 
@@ -316,6 +330,45 @@ covering alone exclude every infinite set whose permutations all extend to autom
 theorem kept below receiving by an import guard.  Milestone A of `COMPANIONS.md` treats the
 definable cuts, witness convergence, and the Scott/`T∞` dichotomy listed above.
 
+<<<<<<< HEAD
 **Completion criterion.**  This companion checkpoint is complete when milestones B and C of
 `COMPANIONS.md` meet their completion criteria.  It is not a core checkpoint, and the main
 theorem does not depend on it.
+=======
+1. For a finite tuple in a countable nonempty top-free realization, choose an actual containing
+   chart.  Existentially quantify its coordinates, assert its chart relation, and identify the
+   free tuple with its selected coordinates.  Prove that the resulting first-order formula
+   defines the automorphism orbit, using closed-chart homogeneity.  Permit repeated
+   coordinates and empty tuples.  Hypotheses: exact consistency, covering, finite-cut
+   receiving, and top-freeness.
+2. Use a generic first-order theorem: a definable automorphism orbit isolates the tuple's
+   complete type over the structure's own theory.  Transfer universal implications to
+   arbitrary models of that theory, and identify a singleton in the space of complete types.
+   Uniqueness within the one model is not enough.  Applied to the charts under the hypotheses
+   of target 1, this gives atomicity without strengthening the hypotheses on the realization.
+3. First-order formulas have finite quantifier rank.  Back-and-forth agreement at the
+   quantifier rank of an orbit formula determines that tuple's orbit.  Quote the pinned
+   InfinitaryLogic's `internalScottRank_le_of_orbits_determined` (`Scott/OrbitRank`) to obtain
+   `internalScottRank ≤ ω` in its convention, the supremum over all tuples of the orbit rank
+   plus one, `⨆ a, orbitRank a + 1` (so finite but unbounded orbit ranks give exactly `ω`); the
+   bridge from level-`k` back-and-forth agreement to agreement on formulas of quantifier rank
+   `≤ k` is `BFEquiv_implies_agree_formulas_omega` (`Scott/QuantifierRank`, countable `M`).
+   Hypotheses: those of target 1.  No rank equality, and no identification with the expansion
+   or departure height, is intended.
+4. Prove that countable atomic implies prime as a **separate generic theorem**: enumerate only
+   the source, extend finite tuples preserving every first-order formula, and take their
+   union.  The target is any model of the complete theory, in an independent universe, with no
+   receiving or countability assumption.
+5. Separately, two-generation and pointwise hull fixation exclude every infinite set whose
+   permutations all extend to automorphisms.  Three points give a hull generated by at most two
+   of them; swapping the remaining point with a fourth while fixing those generators is
+   impossible.  This needs only consistency and covering, not top-freeness, modelhood,
+   receiving, or countability.
+
+Keep generic first-order isolation and primeness below the theorems specialized to charts, and
+the hull obstruction below receiving.
+
+**Completion criterion.** This companion checkpoint is complete when the five targets above are
+proved for the full chart language, each under exactly its stated hypotheses.  It is not a core
+checkpoint, and the main theorem does not depend on it.
+>>>>>>> origin/roadmap/implementation

@@ -76,8 +76,9 @@ end ChartSystem
 /-- Unique extension (injective restriction) turns per-cap lifts into simultaneous preservation.
 Compatibility and the exact extension equation remain explicit; observations need not
 themselves be lawful.  Injectivity of restriction is not available in general; the construction
-instead obtains simultaneous preservation from the nesting of caps under `min`
-(see `IMPLEMENTATION.md`, layer 1). -/
+instead obtains simultaneous preservation from a lift at the largest compatible cap, by the
+nesting of caps under `min`, or from the ambient section itself when the prescription is
+literally its face (see `IMPLEMENTATION.md`, layer 1). -/
 theorem preserves_all_compatible_observations
     {A : Type u} {B : Type v} {Cut : Type w} {O : Type z}
     (restrict : A → B) (observe : Cut → A → O) (compatible : B → A → Cut → Prop)
