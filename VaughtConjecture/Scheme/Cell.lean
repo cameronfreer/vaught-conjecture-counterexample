@@ -36,7 +36,7 @@ this is the graded order on scope–grade pairs, not a new relation.
   is the pullback along an embedding `f : β ↪ α` of ground types, with the faces whose image is
   closed and the cells visible through `f`, their scopes pulled back.  Restriction to a closed face
   and pullback along an embedding whose range meets the ground set in a closed face preserve
-  well-formedness (`IsWellFormed.restrict`, `IsWellFormed.comap`), as does reindexing along an
+  well-formedness (`IsWellFormed.restrict`, `IsWellFormed.comap`), as does reindexing along any
   map from a finite type of cells (`IsWellFormed.reindex`).
 * `IsLowerEmbedding E D φ`: the cell map `φ` is injective, preserves grades, preserves and reflects
   the graded order, and its image contains every cell below the image of a cell.  Apart from the
