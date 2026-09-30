@@ -21,12 +21,15 @@ pinned InfinitaryLogic first and delete any local lemma that duplicates one alre
 
 Construct an explicitly countable relational language and an `L_{ω₁,ω}` sentence whose
 countable models have exactly `ℵ₁` isomorphism classes and no perfect isomorphism antichain.
+The sentence is the density sentence of layer 2 (the structural clauses and the one-point
+capped-extension clause).
 State both the natural-number-code and the all-countable-carrier formulations, with the
 no-finite-model bridge explicit.  This is not a first-order Vaught result and is not a
 comparison with the continuum.
 
 The core is complete only after every finite construction, realization over a root, recovery
-of donor labels, syntax correspondence, and statement of the main theorem below is proved.
+of donor labels, syntax correspondence, the equivalence of the density sentence with the
+four-family sentence (layer 2), and statement of the main theorem below is proved.
 Completion is not limited to the signatures in the sketches.  Each definition needs its usable
 basic API: projections, extensionality, identity/composition, restriction, transport, and
 representative examples.
@@ -104,15 +107,17 @@ At stage `ω`, take one `n`-ary relation symbol for each legal stage type of ari
 functions.  Prove symbol countability; spell out the finite coding and bounded
 bottom/natural/top tables if a computable coding of the symbols is included.  The structural
 base theory records injective tuples, unique labels, exact face coherence, and covering.  Define
-the density sentence by these structural clauses and the one-point capped-extension clause.
+the density sentence by these structural clauses and the one-point capped-extension clause; it
+is the sentence of the main theorem.
 Keep nonemptiness explicit until its redundancy is proved.  Cutoffs here are natural numbers,
 including zero.
 
 Density quantifies `∀ root, ∀ donor, ∀ cutoff, ∃ extension` on the fixed donor scheme.
 Different cutoffs may use different points.  Prove both satisfaction directions, the
 realization/structure round trips, isomorphism preservation and reflection, and no finite
-models.  Equivalence to a request-family sentence is a separate fidelity theorem; its
-model-to-density direction still uses ordinary receiving.
+models.  Its equivalence with the four-family sentence (the structural clauses together with the four
+extension families of `SEMANTIC_CONTRACT.md`, item 5) is a required fidelity theorem and part of
+the completion criterion; its model-to-density direction still uses ordinary receiving.
 
 ### 3. Finite extensions, realization over roots, recovery of labels, and one chain construction
 

@@ -230,11 +230,13 @@ def HasThinAlephOneSpectrum {L : Language.{0, 1}} [L.IsRelational]
   Cardinal.mk (Quotient (isoSetoid φ)) = Cardinal.aleph 1 ∧
     ¬ φ.HasPerfectSetOfPairwiseNonisomorphicNatModels
 
-/- Required concrete theorem:
+/- Required concrete theorem, where `concreteSentence` is the density sentence (the structural
+clauses and the one-point capped-extension clause):
   theorem concreteSentence_hasThinAlephOneSpectrum :
     HasThinAlephOneSpectrum concreteSentence := ...
-plus the no-finite-model theorem, actual structure/realization correspondence,
-and the all-countable-carrier spectrum and perfect-set variants.
+plus the no-finite-model theorem, actual structure/realization correspondence, the
+required equivalence of `concreteSentence` with the four-family sentence, and the
+all-countable-carrier spectrum and perfect-set variants.
 
 No firstFailure, characteristic-arity, canonical-stop, global-departure, or
 Scott-rank-equality target is a premise of this theorem.
