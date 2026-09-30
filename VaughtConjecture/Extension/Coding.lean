@@ -28,8 +28,8 @@ needs, under the range normalization alone: no input is assumed to satisfy the o
   (`Label.lt_omega0_sq_iff_exists_isStronglyCoded`), so the range normalization is strong coding
   with no bound on the offset in terms of the grade.
 * The **coded alphabet** `Label.codedAlphabet i j`, the finite set of `⊥` and the ordinals
-  `ω · a + b` with `a ≤ i` and `b ≤ j`: the labels below `ω ^ 2` that lie in one of the blocks
-  `[ω · a, ω · a + ω)` with `a ≤ i` and have finite part at most `j`.  The labels below `ω ^ 2`
+  `ω · a + b` with `a ≤ i` and `b ≤ j`: `⊥` together with the ordinals of the blocks
+  `[ω · a, ω · a + ω)`, `a ≤ i`, whose finite part is at most `j`.  The labels below `ω ^ 2`
   form an infinite set (`Label.infinite_setOf_lt_omega0_sq`), so a finite catalogue needs a finite
   alphabet; the labels strongly coded at `k` and below `ω · (i + 1)` lie in one
   (`Label.finite_setOf_isStronglyCoded_lt`).
@@ -87,17 +87,24 @@ are the rows of the inputs, so (b) applies with the `IsCoded` of the inputs, and
 the two inputs is coded by (a).  The apex row is the coded copy of the labels
 (`VaughtConjecture.Extension.Apex`), below `ω ^ 2` by `Label.bandEncode_lt`, so (b) applies.
 Every other new row, of grade `k`, takes its values in a coded alphabet fixed by `k` (the
-ordinals `ω · b + k`, the strongly coded normal forms of lawful labellings, and their visibility
-replacements at grades `≤ k`), so it is coded, indeed strongly coded (d), whatever the coding of
-the inputs.  The catalogue is finite when its vectors take their values in a coded alphabet (e).
-Consistency, capped lifting, lawful sections, normal forms, and decoding involve no coding of the
-inputs.  The coding of an input row, and not its offset bound, enters once: a cutoff taken from
-the values of an input row, in the lifting above that row, must lie below `ω ^ 2`, which
-`IsCoded` gives.
+ordinals `ω · b + k`, the normal forms of lawful labellings, and their visibility replacements at
+grades `≤ k`), so it is coded, indeed strongly coded (d), whatever the coding of the inputs.  The
+catalogue is finite when its vectors take their values in a coded alphabet (e).
+
+*In the construction (not proved here):* consistency, capped lifting, lawful sections, normal
+forms, and decoding involve no coding of the inputs.  The coding of an input row, and not its
+offset bound, enters once: a new row that extends an input row by one entry puts that entry in a
+block `[ω · n, ω · n + ω)` above every value of the input row, and such a block with `n` finite,
+which keeps the new entry below `ω ^ 2`, exists because the values of the input row lie below
+`ω ^ 2`, which `IsCoded` gives.
 
 ## Placement
 
-Where these statements belong in the library is recorded in `roadmap/IMPLEMENTATION.md`.
+The label statements belong in `VaughtConjecture.Label.Basic`; `CellScheme.Rows.IsCoded`, its
+strong form, and the lemmas on their preservation in `VaughtConjecture.Scheme.Row`; and
+`Scheme.isCoded_iff` with the lemmas for schemes in `VaughtConjecture.Stage.Scheme`.  They are
+stated here so that those files are unchanged.  The module plan of the library is in
+`roadmap/IMPLEMENTATION.md`.
 
 ## References
 
@@ -239,11 +246,12 @@ theorem lt_omega0_sq_iff_exists_isStronglyCoded :
 /-! ### The coded alphabet -/
 
 /-- The **coded alphabet** with block bound `i` and offset bound `j`: bottom together with the
-ordinals `ω · a + b` for `a ≤ i` and `b ≤ j`, that is, the values in the blocks
-`[ω · a, ω · a + ω)` with `a ≤ i` whose finite part is at most `j`.  It is a finite set of labels
-below `ω ^ 2`, in which the codes of the strongly coded encoder lie
-(`Label.strongEncode_mem_codedAlphabet`), and in which a finite catalogue and the new rows of the
-completion of the amalgam take their values. -/
+ordinals `ω · a + b` for `a ≤ i` and `b ≤ j`, that is, `⊥` together with the ordinals of the
+blocks `[ω · a, ω · a + ω)`, `a ≤ i`, whose finite part is at most `j`.  It is a finite set of
+labels below `ω ^ 2`, in which the codes of the strongly coded encoder lie
+(`Label.strongEncode_mem_codedAlphabet`) and a finite catalogue takes its values; taking values in
+a coded alphabet fixed by the grade is the form required of the new rows of the completion
+(module docstring). -/
 noncomputable def codedAlphabet (i j : ℕ) : Finset Label.{u} :=
   insert ⊥ ((range (i + 1) ×ˢ range (j + 1)).image
     fun ab ↦ ((ω * ab.1 + ab.2 : Ordinal.{u}) : Label.{u}))
@@ -260,9 +268,8 @@ theorem mem_codedAlphabet {i j : ℕ} :
   · rintro ⟨a, ha, b, hb, rfl⟩
     exact ⟨a, b, ⟨ha, hb⟩, rfl⟩
 
-/-- Every label of the coded alphabet lies below `ω ^ 2`, so appending cells whose rows take
-values in a coded alphabet preserves coding, by (b).  This gives the coding of the new rows of the
-completion of the amalgam, which take their values in a coded alphabet fixed by their grade. -/
+/-- Every label of the coded alphabet lies below `ω ^ 2`: appending cells whose rows take values
+in a coded alphabet preserves coding (`CellScheme.Rows.isCoded_of_isLowerEmbedding`). -/
 theorem lt_omega0_sq_of_mem_codedAlphabet {i j : ℕ} (h : x ∈ codedAlphabet i j) :
     x < ((ω ^ 2 : Ordinal.{u}) : Label.{u}) := by
   rcases mem_codedAlphabet.mp h with h | ⟨a, -, b, -, h⟩
@@ -364,8 +371,8 @@ theorem isCoded_of_isLowerEmbedding (hφ : E.IsLowerEmbedding D φ) (hRQ : R.com
   · exact hnew s hs t
 
 /-- **Coding is preserved by appending strongly coded cells**: if the rows `R` pull back to coded
-rows along `φ` and every new cell is strongly coded, then `R` is coded.  Only the new rows are asked
-to be strongly coded; the inherited rows need only be coded. -/
+rows along `φ` and every new cell is strongly coded, then `R` is coded.  Only the new rows are
+assumed to be strongly coded; the inherited rows need only be coded. -/
 theorem isCoded_of_isLowerEmbedding_of_isStronglyCodedAt (hφ : E.IsLowerEmbedding D φ)
     (hRQ : R.comap hφ = Q) (hQ : Q.IsCoded) (hnew : ∀ s ∉ Set.range φ, R.IsStronglyCodedAt s) :
     R.IsCoded :=
