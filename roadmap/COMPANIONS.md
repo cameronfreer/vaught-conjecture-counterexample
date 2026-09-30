@@ -200,7 +200,7 @@ realizations and the chart language (layer 2), finite-cut receiving and top-free
 
 The generic arguments "a definable orbit isolates its type" and "countable atomic implies prime"
 are separate from the construction and lie below the chart theorems; the second allows targets
-of arbitrary cardinality and carriers in independent universes.  Chart JEP/AP (B1) is a finite
+of arbitrary cardinality and carriers in arbitrary universes.  Chart JEP/AP (B1) is a finite
 statement that does not depend on this chain.
 
 ### B1. Joint embedding and amalgamation of top-free charts

@@ -155,7 +155,8 @@ set_option linter.hashCommand false in
 /- Proposed substantive targets (not declared as axioms or claimed proved here):
 
 FiniteSemantics: construct the concrete ChartSystem and prove countability of charts,
-  legal face restriction, stage reduction, lawful lifting with all retained caps.
+  legal face restriction, stage reduction, lawful lifting at every cap self-visible at the
+  target grade (bountifulness, one cap at a time; not the permitted cutoffs of receiving).
 Receiving: exact literal root + one actual occurrence + requested capped/LOW equations on it
   (LOW and `Correct`: defined in Layer 3 of README.md, item 3.3).
 ChainConstruction: finite master + root absorption + supported-invisible permanence + union.

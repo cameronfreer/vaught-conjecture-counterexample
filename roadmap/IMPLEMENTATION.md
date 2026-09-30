@@ -31,9 +31,10 @@ losses), each at the checkpoint of its first application.  Layer 2 of `README.md
 checkpoint 3 and, with the fidelity theorem, checkpoint 4.  Layer 3 of `README.md` is spread over
 four checkpoints: 2 (item 3.1, the construction of every row of its table with its section
 theorem), 3 (the first uses of rows 5 and 6: top-free existence and general model existence),
-4 (items 3.2 and 3.3 for rows 1–4, the first use of row 1, and the cap-to-model theorem), and 5
-(the first uses of rows 2–4).  The companion milestones are summarized under "Companion
-boundaries".
+4 (items 3.2 and 3.3 for rows 1–3, the recovery statement of rows 3 and 4 for every
+restriction-compatible labelling, the first use of row 1, and the cap-to-model theorem), and 5
+(items 3.2 and 3.3 for row 4 after the structural candidate, and the first uses of rows 2–4).
+The companion milestones are summarized under "Companion boundaries".
 
 ## Environment
 
@@ -197,12 +198,18 @@ LOW, and the cap-to-model theorem) and consists of four items, built in this ord
    coordinate, auxiliaries and future fields included; future fields retained literally.  Per-cap
    lifting is not simultaneous preservation, which is neither proved nor needed (layer 1 above).
    The shared decoding lemma supplies the lawful sections: from a lawful input and a cellwise
-   value map that is a witness bounded by the top grade, the mapped section is lawful provided
-   each owner has short rows or satisfies mapped locality.  Long-row locality of an inherited
-   owner is the transport of the original rows' lawfulness along the exact base table, using the
-   decoder's bottom reflection.  The growth construction (rows 3 and 4) and the LOW construction
-   (row 2) are both required applications.  The two-witness splice for the rows of the proof of
-   [Kni26, Lemma 5.3.5] other than the top-witness row is also proved here.
+   value map that is a witness bounded by the top grade (a witness of [Kni26, Definition 2.3.9]
+   whose suppressor is top up to that grade and bottom above, so that clause 5 still constrains
+   it above the grade), the mapped section is lawful provided each owner has short rows or
+   satisfies mapped locality.  Long-row locality of an inherited owner is the transport of the
+   original rows' lawfulness along the exact base table, using the decoder's bottom reflection.
+   The growth construction (rows 3 and 4) and the LOW construction (row 2) are both required
+   applications.  The two-witness splice is also proved here: for a top-labelled cell `Σ` of
+   grade `J ≤ K` below a top-witness cell `Θ`, a witness from `E(Σ)` to the labels below `Σ`
+   and a witness from `E(Σ)` to the row of `Θ` capped at its entry at `Σ` combine into a
+   witness from `E(Σ)` to the labels where they are below `α` and to the band map of the capped
+   row where they are top.  It replaces the transitivity step in the proof of
+   [Kni26, Lemma 5.3.5] for the rows other than the top-witness row.
 2. **One occurrence, then labelled evaluation.**  The realization extends by **one actual
    occurrence** of the constructed scheme over the private context, by a row-specific model
    clause: the bottom-pattern clause with the display and the gate (row 1); row 1 itself, with
@@ -210,17 +217,20 @@ LOW, and the cap-to-model theorem) and consists of four items, built in this ord
    Root, private context, donor values, and gate equation all concern that occurrence.  For
    rows 3 and 4 the recovery statement is proved for every restriction-compatible labelling
    whose private face lies in the prescribed bottom class, then applied to the actual labels
-   (row 3) or to the stable labelling (row 4).  Rows 3 and 4 share the constructed scheme and
-   the recovery statement; their acquired data, the labelling evaluated, and their existence
-   hypotheses stay separate.
+   (row 3) or to the stable labelling (row 4).  That statement uses no stable labelling; the
+   acquisition of row 4's calibrated data, its occurrence, and its evaluation need the
+   structural candidate and come at checkpoint 5.  Rows 3 and 4 share the constructed scheme
+   and the recovery statement; their acquired data, the labelling evaluated, and their
+   existence hypotheses stay separate.
 3. **`Correct`, LOW, and the recovery statements.**  `Correct` consists of three clauses capped
    at the value of the private cap, which can be top: bottom, reference with its offset
    replacement, and a marker lower bound; it has no gate.  LOW is gate-free: its forcing puts
    every donor-top field above the cutoff and the private gap value once the cutoff exceeds the
    non-top donor maximum, and its recovery returns the donor exactly, tops included, from
    agreement with the display below a cutoff above the rounded non-top donor maximum.  Agreement
-   below a cutoff, exact recovery of proper labels, literal-top recovery (from LOW, or from
-   `Correct` when the private cap is top), and above-threshold inequalities are different
+   below a cutoff, exact recovery of the labels that are not top (bottom and proper, from LOW
+   or from the bottom and reference clauses of `Correct`), literal-top recovery (from LOW, or
+   from `Correct` when the private cap is top), and above-threshold inequalities are different
    conclusions.  Agreement below one permitted cutoff cannot distinguish a proper label above
    the cutoff from top.  Each recovery lemma lists the observations it reads and does not
    require recovery of the whole type of the constructed occurrence.
@@ -257,8 +267,10 @@ receiving/modelhood as different theorem layers.
 Construct the stable realization and literal reduct before proving modelhood.  Normalize any
 genuine expansion pointwise to the structural candidate; handle undefined tuples using the
 literal reduct.  Derive modelhood separately by cap receiving (row 4 of the table of Layer 3
-of `README.md`) and the cap-to-model theorem of checkpoint 4.  Keep positive-root requirements
-and the empty-root base case explicit.
+of `README.md`) and the cap-to-model theorem of checkpoint 4.  Row 4's calibrated data, its
+occurrence, and the evaluation of the stable labelling by the recovery statement of checkpoint
+4 are built here, after the structural candidate.  Keep positive-root requirements and the
+empty-root base case explicit.
 
 Use selected-chart rooted back-and-forth, not a second fair-chain comparison.  The chosen root
 must belong to the extendible family; atomic agreement alone does not suffice.  Count terminal
@@ -352,15 +364,19 @@ Each checkpoint needs both its abstract API and a concrete application:
 3. Realizations, literal syntax correspondence, countable chain construction, general model
    existence (the first use of row 6, the exact pinned extension) and top-free existence (the
    first use of row 5, the top-free pinned extension).
-4. Items 3.2 and 3.3 for rows 1–4: for each row, the extension of the realization by one actual
+4. Items 3.2 and 3.3 for rows 1–3: for each row, the extension of the realization by one actual
    occurrence over the literal root and the recovery theorem (by `Correct` and labelled
    evaluation, by LOW, or through the gate), with all its equations on that occurrence and at
-   every permitted cutoff; the first use of row 1, the one-sided donor transfer; the
-   cap-to-model theorem; and the fidelity theorem of layer 2, the equivalence of the density
-   sentence with the four-family sentence, whose two directions use row 1 and the cap-to-model
-   theorem.
-5. Structural continuation, three terminal comparisons (the first uses of rows 2 and 3), stable
-   modelhood (the first use of row 4, with the cap-to-model theorem), unique limit expansions.
+   every permitted cutoff; the recovery statement of rows 3 and 4 for every
+   restriction-compatible labelling whose private face lies in the prescribed bottom class; the
+   first use of row 1, the one-sided donor transfer; the cap-to-model theorem; and the fidelity
+   theorem of layer 2, the equivalence of the density sentence with the four-family sentence,
+   whose two directions use row 1 and the cap-to-model theorem.
+5. Structural continuation (the structural stable candidate); then items 3.2 and 3.3 for row 4
+   (the acquisition of its calibrated data, its occurrence, and the evaluation of the stable
+   labelling by the recovery statement of checkpoint 4); three terminal comparisons (the first
+   uses of rows 2 and 3), stable modelhood (the first use of row 4, with the cap-to-model
+   theorem), unique limit expansions.
 6. Domain hypotheses of the counting theorem, independent bounds, thinness and all-countable
    bridge.
 
