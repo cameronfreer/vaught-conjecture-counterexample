@@ -90,6 +90,16 @@ jobs:
       - name: Build
         run: lake build
 
+      # The roadmap's sketches are outside the library build but must keep elaborating against
+      # the pinned dependencies (their `#check`s of upstream entry points fail on a pin bump
+      # that removes one).  `Suggested.lean` has deliberate `sorry`s, so it is checked without
+      # warnings-as-errors.
+      - name: Check the roadmap sketches
+        run: |
+          lake env lean -DautoImplicit=false -DwarningAsError=true \
+            -Dlinter.mathlibStandardSet=true roadmap/SuggestedInterfaces.lean
+          lake env lean -DautoImplicit=false -Dlinter.mathlibStandardSet=true roadmap/Suggested.lean
+
       # Save the dependency cache right after a successful build, before the audits, so an
       # audit failure cannot discard a valid cache.
       - name: Save dependency cache
