@@ -3,7 +3,6 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
-import Mathlib.Data.Set.Finite.Lattice
 import VaughtConjecture.Extension.CoatomScheme
 
 /-!
@@ -82,8 +81,9 @@ the new rows is sufficient, not required.  `VaughtConjecture.Extension.CodingExa
 legal schemes with the row values `3` and `ω + 5` at a cell of grade `1`, so not strongly coded,
 to which the transport lemmas apply.
 
-*An analysis of the construction chosen, not a proved fact.*  Checkpoints 2.3–2.6 of the roadmap
-(transformation algebra, lifting and alignment, the two small arities, the recursion on the
+*An analysis of the construction chosen, not a proved fact.*  Checkpoints 2.3–2.6 of the
+completion (the roadmap's Layer 3, the coatom extension construction: transformation algebra,
+lifting and alignment, the two small arities, the recursion on the
 grade) are not yet formalized.  In the construction chosen, the coding of the inputs enters only
 to conclude the coding of the output: the inherited rows are copied literally, so (b) applies
 with the input's `IsCoded`; the amalgam of the two inputs is coded by (a); the apex row is bottom
@@ -277,7 +277,7 @@ theorem mem_codedAlphabet_of_isStronglyCoded_of_lt {i : ℕ} (h : IsStronglyCode
 
 /-- **Finitely many strongly coded labels lie below `ω · (i + 1)`**: they lie in the coded
 alphabet with block bound `i` and offset bound `k + 1`.  The labels below `ω · (i + 1)` alone
-do not form a finite set, for `i ≥ 1`.  Used by checkpoint 2.3, where the values of a catalogue
+do not form a finite set.  Used by checkpoint 2.3, where the values of a catalogue
 vector are strongly coded at its grade and bounded. -/
 theorem finite_setOf_isStronglyCoded_lt (k i : ℕ) :
     {x : Label.{u} | IsStronglyCoded k x ∧ x < ((ω * (i + 1) : Ordinal.{u}) : Label.{u})}.Finite :=
