@@ -51,7 +51,8 @@ families reindex with their parameters; the uniformity and dominance families ar
 every reindexing (`reindex_mem_uniformityFamily_iff`, `reindex_mem_dominanceFamily_iff`).  A
 bijection fixing the initial segment pointwise is the identity, so the literal invariance under
 such bijections says nothing.  Dominance families shrink as `γ` grows (`dominanceFamily_anti`);
-uniformity families for different `γ` are not comparable, since their bands are disjoint.  Every
+uniformity families for different `γ` that are zero or limits are not comparable, since the bands
+`[γ, γ + ω)` of distinct such `γ` are disjoint.  Every
 bottom-pattern family lies in the saturation family of its scheme
 (`bottomPatternFamily_subset_saturationFamily`).
 
