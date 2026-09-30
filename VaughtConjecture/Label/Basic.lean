@@ -24,7 +24,8 @@ label is an ordinal (`IsProper`); the formal top is not an ordinal and lies abov
 * `reduce α x`: stage reduction of a single label to stage `α`.  Labels `< α` are kept and every
   other label becomes the formal top; this is the label-level content of the reduction of a
   stage type to a lower stage.  Its image is exactly the labels at stage `α`
-  (`reduce_eq_self_iff`), and reductions compose (`reduce_reduce_of_le`).
+  (`reduce_eq_self_iff`), and reductions compose (`reduce_reduce_of_le`).  At a successor stage
+  `o + 1` it keeps exactly the labels `≤ o` (`reduce_add_one_of_le`, `reduce_add_one_of_lt`).
 
 Stage reduction is not capped observation (`VaughtConjecture.Label.Cap`): reduction keeps the
 formal top, while a cap at a proper cutoff forgets it.
@@ -213,6 +214,30 @@ theorem reduce_reduce_of_le (h : β ≤ α) (x : Label.{u}) :
 @[simp] theorem reduce_reduce (α : Ordinal.{u}) (x : Label.{u}) :
     reduce α (reduce α x) = reduce α x :=
   reduce_reduce_of_le le_rfl x
+
+/-- A label lies below the successor stage `o + 1` exactly when it is at most `o`. -/
+theorem lt_coe_add_one_iff : x < ((o + 1 : Ordinal.{u}) : Label.{u}) ↔ x ≤ o := by
+  induction x using recBotCoeTop with
+  | bot => exact iff_of_true (WithBot.bot_lt_coe _) bot_le
+  | coe a => rw [WithBot.coe_lt_coe, WithTop.coe_lt_coe, WithBot.coe_le_coe, WithTop.coe_le_coe,
+      Order.lt_add_one_iff]
+  | top =>
+    exact iff_of_false not_top_lt (not_le.mpr (WithBot.coe_lt_coe.mpr (WithTop.coe_lt_top o)))
+
+/-- Stage reduction to a successor stage `o + 1` keeps a label at most `o`. -/
+@[simp] theorem reduce_add_one_of_le (h : x ≤ o) : reduce (o + 1) x = x :=
+  reduce_of_lt (lt_coe_add_one_iff.mpr h)
+
+/-- Stage reduction to a successor stage `o + 1` sends a label above `o` to the formal top. -/
+@[simp] theorem reduce_add_one_of_lt (h : (o : Label.{u}) < x) : reduce (o + 1) x = ⊤ :=
+  reduce_of_le (not_lt.mp (mt lt_coe_add_one_iff.mp (not_le.mpr h)))
+
+/-- A label at most `o` that is below the stage reduction of `z` to `o + 1` is below `z`. -/
+theorem le_of_le_reduce_add_one {y z : Label.{u}} (hy : y ≤ o) (h : y ≤ reduce (o + 1) z) :
+    y ≤ z := by
+  rcases le_or_gt z o with hz | hz
+  · rwa [reduce_add_one_of_le hz] at h
+  · exact hy.trans hz.le
 
 end Label
 
