@@ -1,14 +1,12 @@
 # Knight's counterexample to Vaught's conjecture for $L_{\omega_1,\omega}$
 
-An independent, from-scratch Lean 4 formalization of Knight's construction: a countable
-relational language and an $L_{\omega_1,\omega}$ sentence with exactly $\aleph_1$ countable
-models up to isomorphism and no perfect set of pairwise non-isomorphic countable models.
+A Lean 4 formalization of Knight's construction: a countable relational language and an
+$L_{\omega_1,\omega}$ sentence with exactly $\aleph_1$ countable models up to isomorphism and no
+perfect set of pairwise non-isomorphic countable models.
 
 It builds on [Mathlib](https://github.com/leanprover-community/mathlib4) and
 [InfinitaryLogic](https://github.com/cameronfreer/infinitary-logic) (syntax and semantics of
 $L_{\omega_1,\omega}$, Scott analysis, model-code spaces, Morley counting) and on nothing else.
-The earlier implementation in `cameronfreer/vaught-conjecture` is a mathematical specification
-and comparison oracle, not a dependency: this library never imports it.
 
 ## The roadmap
 
@@ -16,8 +14,8 @@ and comparison oracle, not a dependency: this library never imports it.
 
 - [`roadmap/README.md`](roadmap/README.md) — the definitive roadmap: the expansion-domain
   interface to the endpoint, library conventions, and layers 0–6 with their summits.
-- [`roadmap/SEMANTIC_CONTRACT.md`](roadmap/SEMANTIC_CONTRACT.md) — the ten meanings a rewrite
-  must preserve.  Completion means proving these concrete conditions and deriving the endpoint,
+- [`roadmap/SEMANTIC_CONTRACT.md`](roadmap/SEMANTIC_CONTRACT.md) — the ten meanings the
+  formalization must preserve.  Completion means proving these concrete conditions and deriving the endpoint,
   not constructing a record whose fields assert them.
 - [`roadmap/Suggested.lean`](roadmap/Suggested.lean) — selected interfaces and theorem targets.
   A target sketch with deliberate `sorry`s, outside the build; finishing it alone is not
