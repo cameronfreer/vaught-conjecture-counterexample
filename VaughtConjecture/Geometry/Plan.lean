@@ -32,7 +32,8 @@ developed here:
   by at most two of its generators (`IsPlan.exists_subset_card_le_two_hull_eq`), and the
   generating pair of a hull is recovered as its extremes (`IsPlan.extremes_hull`);
 * plans pull back along an embedding whose range contains the ground set: the faces of the
-  pullback are the sets whose image is a face (`IsPlan.preimage`).
+  pullback are the sets whose image is a face (`IsPlan.preimage`), and the hull of a set there is
+  the preimage of the hull of its image (`hull_preimage`).
 
 The pair of extremes of a closed set need not itself be closed, and its hull need not be small;
 see `VaughtConjecture.Geometry.Examples`.
@@ -436,3 +437,34 @@ theorem preimage {A : Finset α} {P : Finset (Finset α)} (hP : IsPlan A P)
     exact hagree _ (by rw [← hmap]; exact map_subset_map.mpr hC)
 
 end VaughtConjecture.Geometry.IsPlan
+
+namespace VaughtConjecture.Geometry
+
+open Finset
+
+variable {α β : Type*} [DecidableEq α] [DecidableEq β] {A : Finset α} {P : Finset (Finset α)}
+
+/-- **Hulls in a pullback.**  Let `P` be intersection-closed and `f : β ↪ α` an embedding whose
+range meets the ground set `A` in a member of `P`.  The hull of a subset `G` of the preimage of
+`A` in the pullback of `P` along `f` (the sets whose image lies in `P`, on the preimage of `A`) is
+the preimage of the hull of the image of `G`. -/
+theorem hull_preimage (hinter : InfClosed (P : Set (Finset α))) {f : β ↪ α}
+    (hf : (A.preimage f f.injective.injOn).map f ∈ P) {G : Finset β}
+    (hG : G ⊆ A.preimage f f.injective.injOn) :
+    hull (A.preimage f f.injective.injOn) (P.preimage (Finset.map f) (map_injective f).injOn) G =
+      (hull A P (G.map f)).preimage f f.injective.injOn := by
+  ext i
+  simp only [mem_hull, mem_preimage]
+  refine and_congr_right fun _ ↦
+    ⟨fun h C hC hGC ↦ ?_, fun h D hD hGD ↦ (mem_map' f).mp (h _ hD (map_subset_map.mpr hGD))⟩
+  set B := (A.preimage f f.injective.injOn).map f
+  have hD : ((C ∩ B).preimage f f.injective.injOn).map f ∈ P := by
+    rw [map_preimage_eq_of_subset_range fun a ha ↦ ?_]
+    · exact mem_coe.mp (hinter (mem_coe.mpr hC) (mem_coe.mpr hf))
+    · obtain ⟨b, -, rfl⟩ := mem_map.mp (mem_inter.mp (mem_coe.mp ha)).2
+      exact ⟨b, rfl⟩
+  have hGD : G ⊆ (C ∩ B).preimage f f.injective.injOn := fun g hg ↦
+    mem_preimage.mpr (mem_inter.mpr ⟨hGC (mem_map_of_mem f hg), mem_map_of_mem f (hG hg)⟩)
+  exact (mem_inter.mp (mem_preimage.mp (h _ hD hGD))).1
+
+end VaughtConjecture.Geometry

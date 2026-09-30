@@ -34,6 +34,9 @@ scheme of `Scheme.comap` with the labels of the visible cells); otherwise it is 
   A composite through an invisible face whose range is that whole face stays undefined
   (`restrictFace_trans_eq_none`).
 
+The faces of a stage type form a plan on all of its points (`isPlan`), and the hull of a set in
+a restriction is the preimage of the hull of its image (`hull_comap`).
+
 Reindexing along a bijection `e : Fin m ≃ Fin n` is total (`StageType.reindex`); it is the face
 map along `e` (`restrictFace_equiv`) and commutes with all face maps (`restrictFace_reindex`,
 `map_reindex_restrictFace`).
@@ -106,6 +109,10 @@ positions. -/
 theorem univ_mem_faces (t : StageType.{u} α n) : (univ : Finset (Fin n)) ∈ t.toCellScheme.faces :=
   t.isWellFormed.univ_mem_faces
 
+/-- The faces of a stage type form a plan on all of its points. -/
+theorem isPlan (t : StageType.{u} α n) : Geometry.IsPlan univ t.toCellScheme.faces :=
+  t.isWellFormed.ground_eq ▸ t.isWellFormed.isWellFormed.isPlan
+
 /-! ### Restriction to a closed face -/
 
 variable (t : StageType.{u} α n) (f : Fin m ↪ Fin n) (g : Fin k ↪ Fin m)
@@ -156,6 +163,18 @@ theorem map_univ_mem_comap_faces_iff (hf : univ.map f ∈ t.toCellScheme.faces) 
   exact t.cellMap_eq_of_strictMono _
     ((t.cellMap f).strictMono.comp ((t.toScheme.comap f).cellMap g).strictMono)
     (t.mem_range_cellMap_comp_iff f g) h
+
+/-- **Hulls in a restriction.**  The hull of a set of points in the restriction of a stage type to
+a closed face is the preimage of the hull of its image (`Geometry.hull_preimage`). -/
+theorem hull_comap (hf : univ.map f ∈ t.toCellScheme.faces) (G : Finset (Fin m)) :
+    Geometry.hull univ (t.comap f hf).toCellScheme.faces G =
+      (Geometry.hull univ t.toCellScheme.faces (G.map f)).preimage f f.injective.injOn := by
+  have hfaces : (t.comap f hf).toCellScheme.faces =
+      t.toCellScheme.faces.preimage (Finset.map f) (map_injective f).injOn := by
+    ext C
+    simp
+  rw [hfaces, ← Geometry.hull_preimage t.isPlan.infClosed (by rwa [preimage_univ]) (by simp),
+    preimage_univ]
 
 /-! ### Exact partial face maps -/
 
