@@ -52,8 +52,7 @@ bountiful (`isBountiful_mute`): every cap ball is the singleton of the bottom la
 ## References
 
 Bountifulness is Definition 2.5.14 of R. W. Knight, *A counterexample to Vaught's Conjecture
-using generalised Stone spaces* (draft, 20 February 2026) [Kni26] (numbering to be verified
-against the manuscript).
+using generalised Stone spaces* (draft, 20 February 2026) [Kni26].
 -/
 
 universe u
@@ -91,7 +90,7 @@ theorem capBall_anti (h : c ≤ c') : R.capBall X c' q ⊆ R.capBall X c q := fu
   ⟨hl, fun d ↦ by rw [← min_eq_right h, ← min_assoc, he d, min_assoc]⟩
 
 /-- At the cap `⊤`, the cap ball of a lawful labelling is the singleton of that labelling. -/
-theorem capBall_top (hq : R.IsLawfulBelow X q) : R.capBall X ⊤ q = {q} := by
+@[simp] theorem capBall_top (hq : R.IsLawfulBelow X q) : R.capBall X ⊤ q = {q} := by
   ext q'
   simp only [mem_capBall, min_top_right, Set.mem_singleton_iff]
   refine ⟨fun h ↦ funext h.2, ?_⟩
@@ -99,7 +98,7 @@ theorem capBall_top (hq : R.IsLawfulBelow X q) : R.capBall X ⊤ q = {q} := by
   exact ⟨hq, fun _ ↦ rfl⟩
 
 /-- At the cap `⊥`, the cap ball is the set of all lawful labellings. -/
-theorem capBall_bot : R.capBall X ⊥ q = {q' | R.IsLawfulBelow X q'} := by
+@[simp] theorem capBall_bot : R.capBall X ⊥ q = {q' | R.IsLawfulBelow X q'} := by
   ext q'
   simp
 

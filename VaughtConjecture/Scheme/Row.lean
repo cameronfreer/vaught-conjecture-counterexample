@@ -57,7 +57,7 @@ Semantic rows are the semantics of Definition 2.5.3, lawful sections the labelli
 them (Definition 2.5.4: locality is its first clause, availability its second), and consistency
 is Definition 2.5.12, of R. W. Knight, *A counterexample to Vaught's Conjecture using
 generalised Stone spaces* (draft, 20 February 2026) [Kni26]; mute rows are the mute semantics of
-the last clause of Lemma 4.2.2 (numbering to be verified against the manuscript).
+the last clause of Lemma 4.2.2.
 -/
 
 universe u
@@ -274,13 +274,13 @@ def mute : D.Rows.{u} := ⟨fun _ _ ↦ ⊥⟩
 @[simp] theorem comap_mute (hφ : E.IsLowerEmbedding D φ) : (mute D).comap hφ = mute E := rfl
 
 /-- The lawful sections of mute rows: only the bottom labelling. -/
-theorem isLawful_mute_iff {p : ι → Label.{u}} : (mute D).IsLawful p ↔ p = fun _ ↦ ⊥ := by
+@[simp] theorem isLawful_mute_iff {p : ι → Label.{u}} : (mute D).IsLawful p ↔ p = fun _ ↦ ⊥ := by
   refine ⟨fun h ↦ funext fun s ↦ h.eq_bot_of_row_self_eq_bot s rfl, ?_⟩
   rintro rfl
   exact isLawful_bot
 
 /-- Below every pair, the only labelling lawful for mute rows is the bottom labelling. -/
-theorem isLawfulBelow_mute_iff {X : Finset α × ℕ} {r : D.below X → Label.{u}} :
+@[simp] theorem isLawfulBelow_mute_iff {X : Finset α × ℕ} {r : D.below X → Label.{u}} :
     (mute D).IsLawfulBelow X r ↔ r = fun _ ↦ ⊥ := by
   rw [isLawfulBelow_iff, comap_mute, isLawful_mute_iff]
 
