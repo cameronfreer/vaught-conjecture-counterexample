@@ -64,8 +64,8 @@ whose domains every sentence is eventually uniform (`IsUniformOnFiltration`):
   of the density sentence to a code is stated with that hypothesis, in
   `VaughtConjecture.Endpoint.Assembly`.
 
-Nothing in this file assumes or proves a statement of Layers 3–6: the filtration and the
-uniformity of sentences are hypotheses of the counting composition.
+Nothing in this file assumes a statement of Layers 3–6; of Layer 6 it proves only the compositions
+from a filtration, which, with the uniformity of sentences, is a hypothesis here.
 
 ## Placement
 

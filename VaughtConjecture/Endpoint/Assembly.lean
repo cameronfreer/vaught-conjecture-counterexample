@@ -176,16 +176,16 @@ theorem countable_truth_side (hc : D.HasCountableLosses) {S : Type v} {truth : S
 
 /-- **The persistent core is a subsingleton**: if the observations separate distinct classes and
 each is constant on some domain below `ω₁`, then at most one class lies in every domain below
-`ω₁`.  The core need not be empty.  This is a semantic certificate for the spectrum (semantic
-contract, item 1): the upper bound assumes no eventual departure of every class. -/
+`ω₁`.  The core need not be empty, so the upper bound assumes no eventual departure of every
+class (no global eventual-departure theorem occurs in the reduction). -/
 theorem core_subsingleton {S : Type v} {truth : S → X → Prop} (ha : D.HasLogicalAgreement truth)
     (hsep : ∀ p q, p ≠ q → ∃ s, ¬ (truth s p ↔ truth s q)) :
     (⋂ ξ < ω₁, D.domain ξ).Subsingleton :=
   persistent_subsingleton_of_separation D.domain truth hsep ha.uniform
 
 /-- **The lower bound**: nonempty successor losses give at least `ℵ₁` classes.  Neither
-countability of the losses nor logical agreement is used.  This is a semantic certificate for the
-spectrum (semantic contract, item 1): the lower bound is independent of the upper bound. -/
+countability of the losses nor logical agreement is used, so the lower bound is independent of the
+upper bound and uses no cardinality conclusion or eventual departure. -/
 theorem aleph_one_le_mk (hn : D.HasNonemptyLosses) : ℵ₁ ≤ #X :=
   aleph_one_le_mk_of_cofinal D.antitone fun β hβ ↦ ⟨β, le_rfl, hβ, hn.nonempty_loss β hβ⟩
 
