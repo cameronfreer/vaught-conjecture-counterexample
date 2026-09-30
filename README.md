@@ -41,8 +41,9 @@ commit the manifest.
 Work lands through pull requests, one topic each, in tranches of a few hundred to a thousand
 lines: implementation, review against the [TauCeti review
 rubrics](https://github.com/TauCetiProject/TauCetiReview/tree/main/rubrics) (used as guidance),
-then external review before merging.  Each PR names the roadmap layer it advances, or
-`Roadmap: none` for infrastructure.  Mathlib style throughout; no compatibility shims.
+then external review before merging.  Each PR names the layer of
+[`roadmap/README.md`](roadmap/README.md) it advances (`Roadmap: Layer 3`), or `Roadmap: none` for
+infrastructure.  Mathlib style throughout; no compatibility shims.
 Prose, docstrings, and declaration names use mathematical terminology only: they speak of
 mathematical objects, hypotheses, constructions, and theorems, never of workflow roles such as
 producer, consumer, supplier, or certificate (see the table under "Library conventions" in

@@ -1,4 +1,5 @@
-<!-- One topic per PR.  Name the roadmap layer/summit this advances, or `Roadmap: none`. -->
+<!-- One topic per PR.  Name the layer of roadmap/README.md (Layers 0–6) this advances, e.g.
+     `Roadmap: Layer 3`, or `Roadmap: none`. -->
 Roadmap: 
 
 ## Summary

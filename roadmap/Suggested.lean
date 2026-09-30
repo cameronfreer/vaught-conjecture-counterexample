@@ -1,5 +1,4 @@
 import InfinitaryLogic.OrdinalCountability
-import InfinitaryLogic.ModelTheory.MorleyCounting
 import InfinitaryLogic.Descriptive.StructureIsoSetoid
 
 /-!
@@ -9,7 +8,7 @@ import InfinitaryLogic.Descriptive.StructureIsoSetoid
 formalization free.
 This file is a HUMAN-OWNED SKETCH OF THEOREM STATEMENTS, NOT PART OF THE LIBRARY.
 The bodies marked `sorry` are theorem statements still to be proved. Definitions have
-actual bodies. The file is outside the build and is not checked by CI; check it with
+actual bodies. The file is outside the library build; check it with
 `lake env lean -DautoImplicit=false -Dlinter.mathlibStandardSet=true roadmap/Suggested.lean`.
 No new verified Lean result is claimed.
 
@@ -216,7 +215,7 @@ end Hull
 /-! ## The main theorem, stated with actual library objects
 
 The concrete language and sentence must come from the independent finite
-construction, with the semantic specification unchanged. This predicate may not be
+construction, with the semantic contract (SEMANTIC_CONTRACT.md) unchanged. This predicate may not be
 assumed in place of any construction. The final theorem has no hypotheses
 asserting this predicate or the receiving/classification conclusions.
 -/

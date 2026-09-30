@@ -10,11 +10,25 @@ the mathematical roadmap, `SEMANTIC_CONTRACT.md` fixes the meanings to preserve,
 selected, nonexhaustive Lean statements.  Do not turn their abstract structure fields into
 substitutes for the constructions.
 
+The two documents number their parts differently.  The table maps the layers and summits of
+`README.md` to the layers and checkpoints below.  The checkpoint order is the build order
+(the finite extension constructions, checkpoint 2, before the realizations, syntax, and
+countable chain construction, checkpoint 3), not the layer numbering of either document.
+
+| `README.md` | Layers here | Checkpoints |
+| --- | --- | --- |
+| Layer 0, Summit 0: general results | used in 1 (lifting), 2 (finite hulls), 3 (chain construction), 4 (directed limits, back-and-forth, subsingleton covers), 5 (countable losses) | with their first application |
+| Layer 1, Summit 1: finite semantic kernel and closed charts | 1; stage types and partial faces of 2 | 1 |
+| Layer 2, Summit 2: realizations, syntax, chain construction | 2; chain construction of 3 | 3 |
+| Layer 3, Summit 3: finite extension constructions, realization over the root, recovery of donor labels | 3; first applications of 1 | 2, 4 (and top-free existence in 3) |
+| Layer 4, Summit 4: stable continuation and terminal comparisons | 4 | 5 |
+| Layer 5, Summit 5: expansion domains and logical agreement | 5 | 5 (unique limit expansions), 6 |
+| Layer 6, Summit 6: the two bounds | 5 and the spine | 6 |
+
 ## Environment
 
-Lean `v4.35.0-rc3`; InfinitaryLogic at the revision pinned in `lakefile.toml` (temporarily the
-head of its Lean `4.35.0-rc3` port, to be replaced by that port's merge commit once merged and
-green); Mathlib inherited from InfinitaryLogic's manifest.  Nothing else is imported.  Search the
+Lean `v4.35.0-rc3`; InfinitaryLogic at the revision pinned in `lakefile.toml`; Mathlib
+inherited from InfinitaryLogic's manifest.  Nothing else is imported.  Search the
 pinned InfinitaryLogic first and delete any local lemma that duplicates one already upstream.
 
 ## Scope and completion
@@ -35,8 +49,9 @@ basic API: projections, extensionality, identity/composition, restriction, trans
 representative examples.
 
 Under-specified extensions are not part of this roadmap.  Separate companion roadmaps may
-cover hull algebra/cardinality (`HULL_ALGEBRA.md`), model-code topology, `T∞` and its logical
-filtration, effective syntax, and uncountable models.  They are not prerequisites of this core.
+cover hull algebra/cardinality (`HULL_ALGEBRA.md`), model-code topology, `T∞` (the set of
+sentences true in all but countably many classes) and its logical filtration, effective syntax,
+and uncountable models.  They are not prerequisites of this core.
 
 ## The mathematical spine
 
@@ -179,9 +194,14 @@ differences.
 
 Prove the one-sided finite-donor transfer first, using only target consistency and finite-cut
 receiving.  Symmetrize for back-and-forth: one block buys one level, with no extra `ω` factor.
-Handle repeated coordinates and empty tuples.  Apply the observation-filtration theorem
-(`ObservationFiltration` in `SuggestedInterfaces.lean`) once, keeping the cardinality conclusion
-separate from the descriptive thinness conclusion.
+Handle repeated coordinates and empty tuples.  Apply the sentence-agreement argument once,
+keeping the cardinality conclusion separate from the descriptive thinness conclusion.  In
+`SuggestedInterfaces.lean`, `SentenceAgreementDomains` is a structure (countable-stage domains
+with countable complements, eventual constancy of each sentence on them, and separation of
+distinct classes by a sentence) with two proved lemmas: `persistent_subsingleton` (the
+persistent core has at most one element) and `countable_truth_side`.  The `ℵ₁` step (the
+persistent core is a subsingleton and the remaining classes lie in `ℵ₁ · ℵ₀` many exceptions,
+so `|Q| ≤ ℵ₁`) is a target still to be proved, not a lemma of the sketch.
 
 ## Upstream building blocks
 
@@ -204,8 +224,8 @@ In the pinned InfinitaryLogic:
   latter assumes global eventual departure (every point leaves some domain), so it is applied
   to the complement of the persistent core, not to `Q`;
 - the Gδ/Polish model-code spaces.
-`SuggestedInterfaces.lean` checks representative names so a pin bump that removes one fails
-loudly.  Coding a `Type w` carrier on `ℕ` needs a transfer of infinitary isomorphism across
+`SuggestedInterfaces.lean` checks representative names, so a pin bump that removes one fails
+when the sketch is checked (the checks are run by CI).  Coding a `Type w` carrier on `ℕ` needs a transfer of infinitary isomorphism across
 universes; do not assume that a statement within a single universe covers it.
 
 ## Automation and API discipline
@@ -254,9 +274,9 @@ or lemmas with no application.
 
 ## Companion boundaries
 
-Companion topics with precise comparison targets: definable domain/logical cuts with strict
-loss-rank lower bounds; canonical top-free classes converging sentencewise; finite closed-chart
-JEP/AP; local automorphisms of self-embeddings; and the arbitrary-carrier Scott/`T∞` theory
+Companion topics: definable domain/logical cuts with strict loss-rank lower bounds; canonical
+top-free classes converging sentencewise; the joint embedding and amalgamation properties
+(JEP/AP) of finite closed charts; local automorphisms of self-embeddings; and the arbitrary-carrier Scott/`T∞` theory
 dichotomy.  These do not assert strong AP, a proper self-embedding, uncountable categoricity,
 Scott-rank equality, or existence of a model of all of `T∞`.  The main theorem is proved
 without them; if any is added, give it a separate definite completion criterion.
