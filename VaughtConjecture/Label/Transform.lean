@@ -53,12 +53,10 @@ is available only in the guarded form above.
 
 ## References
 
-The transformation relation is Definition 2.3.9, the cap rule `TransformsTo.min_const` is a
-related target-capping variant of Lemma 2.3.12 (which caps the source at a selected source value
-and the target at the corresponding target value), and the reduction rule is Lemma 3.1.3 of
-R. W. Knight, *A counterexample to Vaught's Conjecture using generalised
-Stone spaces* (draft, 20 February 2026) [Kni26].  Nontransitivity contradicts Lemma 2.3.14 of
-[Kni26] as printed.
+The transformation relation is [Kni26, Definition 2.3.9], the cap rule `TransformsTo.min_const`
+is a related target-capping variant of [Kni26, Lemma 2.3.12] (which caps the source at a selected
+source value and the target at the corresponding target value), and the reduction rule is
+[Kni26, Lemma 3.1.3].  Nontransitivity contradicts [Kni26, Lemma 2.3.14] as printed.
 -/
 
 universe u
@@ -370,9 +368,8 @@ private theorem isSelfVisible_one_two_one_top_bot_top (b : Bool) :
   cases b <;> simp
 
 /-- **The transformation relation is not transitive**, even on labellings that are self-visible
-at the grade, and already for two cells of grade one.  This contradicts Lemma 2.3.14 of [Kni26]
-as printed; the library proves only the guarded composition
-`IsWitness.comp_of_bot_reflecting`. -/
+at the grade, and already for two cells of grade one.  This contradicts [Kni26, Lemma 2.3.14] as
+printed; the library proves only the guarded composition `IsWitness.comp_of_bot_reflecting`. -/
 theorem TransformsTo.not_transitive :
     ¬ ∀ (grade : Bool → ℕ) (p q r : Bool → Label.{u}), (∀ d, IsSelfVisible (grade d) (p d)) →
       (∀ d, IsSelfVisible (grade d) (q d)) → (∀ d, IsSelfVisible (grade d) (r d)) →
