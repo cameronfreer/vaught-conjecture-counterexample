@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Label.Basic
-import VaughtConjecture.Ordinal.VisibilityReplace
+import VaughtConjecture.Label.OrdinalVisibility
 
 /-!
 # Visibility replacement

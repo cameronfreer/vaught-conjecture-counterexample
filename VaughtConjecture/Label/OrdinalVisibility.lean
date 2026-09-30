@@ -8,6 +8,9 @@ import Mathlib.SetTheory.Ordinal.Arithmetic
 /-!
 # Visibility replacement of ordinals
 
+Roadmap, Layer 1 (visibility replacement); the ordinal-level part of
+`VaughtConjecture.Label.visibilityReplace`.
+
 Every ordinal `o` is uniquely `ω * (o / ω) + o % ω` with `o % ω < ω` (`Ordinal.div_add_mod`); the
 summand `o % ω` is its *finite part*, and the ordinals sharing `o / ω` form the *band*
 `[ω * (o / ω), ω * (o / ω) + ω)` of `o` (the upper end is `Ordinal.lt_mul_div_add`).
@@ -16,10 +19,16 @@ summand `o % ω` is its *finite part*, and the ordinals sharing `o / ω` form th
 threshold `k` with value `i`, the finite part of `o` is replaced by `i` when it is below `k`, and
 `o` is left unchanged otherwise.
 
+* For a multiple `α` of `b`, the ordinals in `[b * a, b * a + b)` lie either all below `α` or all
+  at or above it (`Ordinal.lt_iff_mul_lt_of_dvd`); for `b = ω` this says that at a stage that is
+  zero or a limit a band lies either below the stage or at or above it
+  (`Ordinal.lt_iff_omega0_mul_div_lt_of_isSuccPrelimit`).
 * Visibility replacement stays in the band of its argument
   (`Ordinal.omega0_mul_div_le_visibilityReplace`, `Ordinal.visibilityReplace_lt`), so at a stage
   that is zero or a limit it keeps an ordinal below the stage exactly when it was below
-  (`Ordinal.visibilityReplace_lt_iff`, from `Ordinal.lt_iff_of_mem_band`).
+  (`Ordinal.visibilityReplace_lt_iff`).
+* On a natural number `n` it gives `i` if `n < k` and `n` otherwise
+  (`Ordinal.visibilityReplace_natCast`).
 * For `i ≤ k` it is monotone (`Ordinal.monotone_visibilityReplace`); for `k ≤ i + 1` it is
   inflationary (`Ordinal.le_visibilityReplace`).
 * Replacing again at the full threshold forgets the first value
@@ -27,6 +36,14 @@ threshold `k` with value `i`, the finite part of `o` is replaced by `i` when it 
 
 The extension to labels, fixing the bottom label and the formal top, is
 `VaughtConjecture.Label.visibilityReplace`.
+
+## Implementation notes
+
+Visibility replacement is specific to this development; it is declared in the root `Ordinal`
+namespace only so that dot notation applies to ordinals.  Only names containing
+`visibilityReplace`, together with the general statement `Ordinal.lt_iff_mul_lt_of_dvd` and its
+`ω` case, are declared there; a clash with a later Mathlib declaration would be reported by the
+build.
 
 ## References
 
@@ -42,24 +59,25 @@ variable {α o : Ordinal.{u}} {k i : ℕ}
 
 /-! ### Bands -/
 
-/-- The quotient of `b * a + r` by `b`, for `r < b`. -/
-private theorem mul_add_div_of_lt {b r : Ordinal.{u}} (a : Ordinal.{u}) (hr : r < b) :
-    (b * a + r) / b = a := by
-  rw [Ordinal.mul_add_div _ hr.ne_bot, Ordinal.div_eq_zero_of_lt hr, add_zero]
-
-/-- The remainder of `b * a + r` modulo `b`, for `r < b`. -/
-private theorem mul_add_mod_of_lt {b r : Ordinal.{u}} (a : Ordinal.{u}) (hr : r < b) :
-    (b * a + r) % b = r := by
-  rw [Ordinal.mul_add_mod_self, Ordinal.mod_eq_of_lt hr]
-
-/-- At a stage that is zero or a limit (a multiple of `ω`), a band lies entirely below the stage
-or entirely at or above it. -/
-theorem lt_iff_of_mem_band {a y : Ordinal.{u}} (hα : Order.IsSuccPrelimit α) (hy₀ : ω * a ≤ y)
-    (hy : y < ω * a + ω) : y < α ↔ ω * a < α := by
-  obtain ⟨b, rfl⟩ := Ordinal.isSuccPrelimit_iff_omega0_dvd.mp hα
+/-- For a multiple `α` of `b`, the ordinals in `[b * a, b * a + b)` lie either all below `α` or all
+at or above it. -/
+theorem lt_iff_mul_lt_of_dvd {b a y : Ordinal.{u}} (hα : b ∣ α) (hy₀ : b * a ≤ y)
+    (hy : y < b * a + b) : y < α ↔ b * a < α := by
+  obtain ⟨c, rfl⟩ := hα
   refine ⟨hy₀.trans_lt, fun h ↦ hy.trans_le ?_⟩
+  have hb : 0 < b := by
+    rcases eq_or_ne b 0 with rfl | hb
+    · simp at h
+    · exact pos_iff_ne_zero.mpr hb
   rw [← Ordinal.mul_succ]
-  exact mul_le_mul_right (Order.succ_le_of_lt ((mul_lt_mul_iff_right₀ omega0_pos).mp h)) _
+  exact mul_le_mul_right (Order.succ_le_of_lt ((mul_lt_mul_iff_right₀ hb).mp h)) _
+
+/-- At a stage that is zero or a limit (a multiple of `ω`), an ordinal `y` is below the stage
+exactly when `ω * (y / ω)` is. -/
+theorem lt_iff_omega0_mul_div_lt_of_isSuccPrelimit (hα : Order.IsSuccPrelimit α)
+    (y : Ordinal.{u}) : y < α ↔ ω * (y / ω) < α :=
+  lt_iff_mul_lt_of_dvd (isSuccPrelimit_iff_omega0_dvd.mp hα) (mul_div_le y ω)
+    (lt_mul_div_add y omega0_ne_zero)
 
 /-! ### Visibility replacement -/
 
@@ -80,7 +98,7 @@ theorem visibilityReplace_of_le (h : (k : Ordinal.{u}) ≤ o % ω) (i : ℕ) :
   simp [visibilityReplace, h.not_gt, Ordinal.div_add_mod]
 
 /-- The replaced value of the finite part is finite. -/
-private theorem ite_lt_omega0 (k i : ℕ) (o : Ordinal.{u}) :
+private theorem visibilityReplace_finitePart_lt_omega0 (k i : ℕ) (o : Ordinal.{u}) :
     (if o % ω < k then (i : Ordinal.{u}) else o % ω) < ω := by
   split_ifs
   · exact natCast_lt_omega0 i
@@ -94,30 +112,36 @@ theorem omega0_mul_div_le_visibilityReplace (k i : ℕ) (o : Ordinal.{u}) :
 /-- Visibility replacement does not leave the band: upper end. -/
 theorem visibilityReplace_lt (k i : ℕ) (o : Ordinal.{u}) :
     visibilityReplace k i o < ω * (o / ω) + ω :=
-  add_lt_add_right (ite_lt_omega0 k i o) _
+  add_lt_add_right (visibilityReplace_finitePart_lt_omega0 k i o) _
 
 /-- Visibility replacement keeps the quotient by `ω`. -/
 theorem visibilityReplace_div (k i : ℕ) (o : Ordinal.{u}) :
-    visibilityReplace k i o / ω = o / ω :=
-  mul_add_div_of_lt _ (ite_lt_omega0 k i o)
+    visibilityReplace k i o / ω = o / ω := by
+  rw [visibilityReplace, Ordinal.mul_add_div _ omega0_ne_zero,
+    Ordinal.div_eq_zero_of_lt (visibilityReplace_finitePart_lt_omega0 k i o), add_zero]
 
 /-- The finite part after visibility replacement. -/
 theorem visibilityReplace_mod (k i : ℕ) (o : Ordinal.{u}) :
-    visibilityReplace k i o % ω = if o % ω < k then (i : Ordinal.{u}) else o % ω :=
-  mul_add_mod_of_lt _ (ite_lt_omega0 k i o)
+    visibilityReplace k i o % ω = if o % ω < k then (i : Ordinal.{u}) else o % ω := by
+  rw [visibilityReplace, Ordinal.mul_add_mod_self,
+    Ordinal.mod_eq_of_lt (visibilityReplace_finitePart_lt_omega0 k i o)]
 
 /-- At a stage that is zero or a limit, visibility replacement keeps an ordinal below the stage
 exactly when it was below. -/
 theorem visibilityReplace_lt_iff (hα : Order.IsSuccPrelimit α) (k i : ℕ) :
     visibilityReplace k i o < α ↔ o < α := by
-  rw [lt_iff_of_mem_band hα (omega0_mul_div_le_visibilityReplace k i o)
-      (visibilityReplace_lt k i o),
-    lt_iff_of_mem_band hα (Ordinal.mul_div_le o ω) (Ordinal.lt_mul_div_add o omega0_ne_zero)]
+  rw [lt_iff_omega0_mul_div_lt_of_isSuccPrelimit hα, visibilityReplace_div,
+    ← lt_iff_omega0_mul_div_lt_of_isSuccPrelimit hα]
 
 /-- On the finite ordinals visibility replacement replaces the ordinal itself. -/
 theorem visibilityReplace_of_lt_omega0 (ho : o < ω) (k i : ℕ) :
     visibilityReplace k i o = if o < k then (i : Ordinal.{u}) else o := by
   simp [visibilityReplace, Ordinal.div_eq_zero_of_lt ho, Ordinal.mod_eq_of_lt ho]
+
+/-- Visibility replacement of a natural number `n` gives `i` if `n < k`, and `n` otherwise. -/
+@[simp] theorem visibilityReplace_natCast (k i n : ℕ) :
+    visibilityReplace k i (n : Ordinal.{u}) = if n < k then (i : Ordinal.{u}) else n := by
+  simp [visibilityReplace_of_lt_omega0 (natCast_lt_omega0 n)]
 
 /-- Visibility replacement is monotone when the new value does not exceed the threshold. -/
 theorem monotone_visibilityReplace (hi : i ≤ k) :
