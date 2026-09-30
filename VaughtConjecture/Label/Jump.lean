@@ -274,8 +274,7 @@ private theorem TransformsTo.not_zero_one_reduce_one :
   have hg : g 1 = ⊤ := top_le_iff.mp (h₂.le.trans (min_le_right _ _))
   rw [hg, min_top_right] at h₁ h₂
   have h := hw.visibilityReplace_comm ((0 : Ordinal.{u}) : Label.{u}) 1 (hg ▸ le_top) 1 le_rfl
-  have h01 : Ordinal.visibilityReplace 1 1 (0 : Ordinal.{u}) = 1 := by
-    rw [Ordinal.visibilityReplace_of_lt_omega0 omega0_pos, ite_eq_left (by simp), Nat.cast_one]
+  have h01 : Ordinal.visibilityReplace 1 1 (0 : Ordinal.{u}) = 1 := by simp
   rw [← h₁, visibilityReplace_coe, h01, ← h₂] at h
   exact (WithBot.coe_lt_coe.mpr (WithTop.coe_lt_top 1)).ne' h
 
