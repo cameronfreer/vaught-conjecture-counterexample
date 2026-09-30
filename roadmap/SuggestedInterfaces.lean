@@ -11,6 +11,7 @@ import InfinitaryLogic.FiniteSupportClosure
 import InfinitaryLogic.TwoGeneratorCardinality
 import InfinitaryLogic.OrdinalCountability
 import InfinitaryLogic.Scott.OrbitRank
+import Mathlib.ModelTheory.Fraisse
 
 /-! # Selected interfaces for the implementation roadmap
 
@@ -152,6 +153,33 @@ set_option linter.hashCommand false in
 set_option linter.hashCommand false in
 #check FirstOrder.Language.internalScottRank_le_of_orbits_determined
 
+-- Mathlib's Fraïssé interface, applied by the classical limit of the top-free witnesses
+-- (`README.md`, Layer 0).  The classical existence theorem, representative classes, the
+-- factorization of tuples through the age, orbit isolation, countable prime structures (all in
+-- ComputableModelTheory), the orbit-formula rank bounds and local-automorphism preservation, and
+-- the rank comparison of the Scott process (InfinitaryLogic) are to be quoted after the repin
+-- (`IMPLEMENTATION.md`, "Dependency pins"); they are not at the current pins and are not checked.
+set_option linter.hashCommand false in
+#check FirstOrder.Language.age
+set_option linter.hashCommand false in
+#check FirstOrder.Language.Hereditary
+set_option linter.hashCommand false in
+#check FirstOrder.Language.JointEmbedding
+set_option linter.hashCommand false in
+#check FirstOrder.Language.Amalgamation
+set_option linter.hashCommand false in
+#check FirstOrder.Language.IsFraisse
+set_option linter.hashCommand false in
+#check FirstOrder.Language.IsUltrahomogeneous
+set_option linter.hashCommand false in
+#check FirstOrder.Language.IsFraisseLimit
+set_option linter.hashCommand false in
+#check FirstOrder.Language.IsUltrahomogeneous.extend_embedding
+set_option linter.hashCommand false in
+#check FirstOrder.Language.IsFraisseLimit.nonempty_equiv
+set_option linter.hashCommand false in
+#check FirstOrder.Language.age.fg_substructure
+
 /- Proposed substantive targets (not declared as axioms or claimed proved here):
 
 FiniteSemantics: construct the concrete ChartSystem and prove countability of charts,
@@ -159,7 +187,16 @@ FiniteSemantics: construct the concrete ChartSystem and prove countability of ch
   target grade (bountifulness, one cap at a time; not the permitted cutoffs of receiving).
 Receiving: exact literal root + one actual occurrence + requested capped/LOW equations on it
   (LOW and `Correct`: defined in Layer 3 of README.md, item 3.3).
-ChainConstruction: finite master + root absorption + supported-invisible permanence + union.
+HullOperations: definable total binary hull operations; generated-substructure closure equals
+  hull closure; finite charts are the finite substructures; embeddings preserved and reflected.
+ClassicalLimit: finite top-free charts as finite structures; hereditary closure, joint embedding,
+  amalgamation with the literal square (before any infinite model); classical existence (quoted
+  after the repin); reconstruction meeting SEMANTIC_CONTRACT.md, item 11; consistency, covering,
+  top-freeness from the factorization of tuples; receiving from row 5 and ultrahomogeneity
+  (per cutoff for donors with top); modelhood, infinitude, terminality.  Statement shapes:
+  `Suggested.lean`, section 3.
+ChainConstruction (retained, not used by the main theorem): finite master + root absorption +
+  supported-invisible permanence + union, for the saturated model of [Kni26, Proposition 4.4.5].
 StableLift: consistency-only uniqueness; consistency/covering lawfulness; cap modelhood.
 Comparison: finite-donor one-sided transfer; rooted BF; singleton terminal conditions.
 Domains: expansion uniqueness + limit existence; terminal losses countable and nonempty.

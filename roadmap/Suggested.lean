@@ -1,5 +1,6 @@
 import InfinitaryLogic.OrdinalCountability
 import InfinitaryLogic.Descriptive.StructureIsoSetoid
+import Mathlib.ModelTheory.Fraisse
 
 /-!
 # Selected interfaces for the roadmap
@@ -105,6 +106,181 @@ Finite-family synchronization and reindexing should remain general lemmas.
 -/
 
 end DirectedLimits
+
+/-! ## 3. The top-free witnesses: the finite age and its classical limit
+
+Statement shapes for the hypotheses and the reconstruction of `README.md`, section "The
+top-free witnesses: the finite age and its classical limit".  Charts are abstract here: a type
+`Chart n` of charts on `n` points with exact partial restriction `restrict`, as in the chart
+system of `SuggestedInterfaces.lean`, and a map `rel` sending a chart to a relation symbol of a
+language `L` (the stage chart language, or its definitional expansion by the hull operations).
+The concrete charts, the hull operations, and the amalgamation proof are not constructed here.
+
+The classical theorems applied in steps 3–6 are quoted after the repin
+(`IMPLEMENTATION.md`, "Dependency pins") and are not named in Lean here: from
+ComputableModelTheory, `representativeClass`, `isFraisse_representativeClass`, the existence
+theorem, and `exists_factor_tuple_of_age_subset`; from InfinitaryLogic, the orbit-formula rank
+bounds.  Mathlib's `IsUltrahomogeneous.extend_embedding` is available now.
+-/
+
+namespace ClassicalLimit
+
+open FirstOrder Language Structure
+
+variable (Chart : ℕ → Type u)
+variable (restrict : {n m : ℕ} → (Fin n ↪ Fin m) → Chart m → Option (Chart n))
+
+/-- **Amalgamation of charts** (step 2), with the literal commuting root equation
+`f₁.trans g₁ = f₂.trans g₂`.  Two charts restricting to the same chart along `f₁` and `f₂` are
+both restrictions of one chart.  This is not strong amalgamation (the images of `g₁` and `g₂` may
+overlap outside the image of the root).  The target is to prove it for the top-free finite
+closed charts at a nonzero countable limit stage, from the plain form of the coatom extension
+property followed by capping; after the definitional expansion by the hull operations it is
+Mathlib's `FirstOrder.Language.Amalgamation` for the age of top-free charts. -/
+def ChartAmalgamation : Prop :=
+  ∀ {k m₁ m₂ : ℕ} (f₁ : Fin k ↪ Fin m₁) (f₂ : Fin k ↪ Fin m₂) (p₁ : Chart m₁) (p₂ : Chart m₂)
+    (r : Chart k), restrict f₁ p₁ = some r → restrict f₂ p₂ = some r →
+    ∃ (m : ℕ) (g₁ : Fin m₁ ↪ Fin m) (g₂ : Fin m₂ ↪ Fin m) (p : Chart m),
+      f₁.trans g₁ = f₂.trans g₂ ∧ restrict g₁ p = some p₁ ∧ restrict g₂ p = some p₂
+
+/-- **Joint embedding of charts** (step 2): any two charts are restrictions of one chart. -/
+def ChartJointEmbedding : Prop :=
+  ∀ {m₁ m₂ : ℕ} (p₁ : Chart m₁) (p₂ : Chart m₂),
+    ∃ (m : ℕ) (g₁ : Fin m₁ ↪ Fin m) (g₂ : Fin m₂ ↪ Fin m) (p : Chart m),
+      restrict g₁ p = some p₁ ∧ restrict g₂ p = some p₂
+
+variable {Chart restrict}
+
+/-- Amalgamation over the empty chart gives joint embedding, when every chart restricts to one
+empty chart.  The empty root is an instance of amalgamation, not a separate construction. -/
+theorem chartJointEmbedding_of_chartAmalgamation (hAP : ChartAmalgamation Chart restrict)
+    (e : Chart 0)
+    (hempty : ∀ {m : ℕ} (p : Chart m), restrict Function.Embedding.ofIsEmpty p = some e) :
+    ChartJointEmbedding Chart restrict := by
+  intro m₁ m₂ p₁ p₂
+  obtain ⟨m, g₁, g₂, p, -, h₁, h₂⟩ :=
+    hAP Function.Embedding.ofIsEmpty Function.Embedding.ofIsEmpty p₁ p₂ e (hempty p₁) (hempty p₂)
+  exact ⟨m, g₁, g₂, p, h₁, h₂⟩
+
+variable {L : Language.{v, w}} (rel : ∀ {n : ℕ}, Chart n → L.Relations n)
+variable {M : Type z} [L.Structure M]
+
+/-- **Literal recovery of chart relations**, with injectivity of labelled tuples: the relation of
+the chart `p` holds at a tuple exactly when the tuple is injective and its evaluation is `p`. -/
+def RecoversRelations (eval : {n : ℕ} → (Fin n ↪ M) → Option (Chart n)) : Prop :=
+  ∀ {n : ℕ} (a : Fin n → M) (p : Chart n),
+    RelMap (rel p) a ↔ ∃ t : Fin n ↪ M, ⇑t = a ∧ eval t = some p
+
+variable (restrict) in
+/-- **Exact partial restriction**: the evaluation of a face of an evaluated tuple is the literal
+restriction of its type; an invisible face (`restrict f p = none`) evaluates to `none`. -/
+def ExactRestriction (eval : {n : ℕ} → (Fin n ↪ M) → Option (Chart n)) : Prop :=
+  ∀ {n m : ℕ} (t : Fin m ↪ M) (p : Chart m) (f : Fin n ↪ Fin m),
+    eval t = some p → eval (f.trans t) = restrict f p
+
+/-- **Covering** of arbitrary tuples, the empty tuple and repeated coordinates included: every
+tuple factors literally through the points of an actual occurrence. -/
+def CoversTuples (eval : {n : ℕ} → (Fin n ↪ M) → Option (Chart n)) : Prop :=
+  ∀ {n : ℕ} (a : Fin n → M), ∃ (m : ℕ) (u : Fin m ↪ M) (b : Fin n → Fin m) (p : Chart m),
+    ⇑u ∘ b = a ∧ eval u = some p
+
+variable (restrict) in
+/-- **The reconstruction predicate** (`SEMANTIC_CONTRACT.md`, item 11, without receiving):
+literal recovery of the chart relations with injectivity of labelled tuples, exact partial
+restriction, and covering.  It says nothing about the function symbols of `L`: the hull
+operations of the limit need not coincide with those recomputed from the reconstruction. -/
+def Reconstructs (eval : {n : ℕ} → (Fin n ↪ M) → Option (Chart n)) : Prop :=
+  RecoversRelations rel eval ∧ ExactRestriction restrict eval ∧ CoversTuples eval
+
+/-- Uniqueness of labelled tuples: at most one chart relation holds at a tuple. -/
+theorem eq_of_relMap_of_relMap {eval : {n : ℕ} → (Fin n ↪ M) → Option (Chart n)}
+    (h : RecoversRelations rel eval) {n : ℕ} {a : Fin n → M} {p q : Chart n}
+    (hp : RelMap (rel p) a) (hq : RelMap (rel q) a) : p = q := by
+  obtain ⟨t, rfl, htp⟩ := (h a p).mp hp
+  obtain ⟨t', ht', htq⟩ := (h t q).mp hq
+  have htt : t' = t := DFunLike.coe_injective ht'
+  subst htt
+  exact Option.some_injective _ (htp.symm.trans htq)
+
+/-- Injectivity of labelled tuples: a tuple at which a chart relation holds is injective. -/
+theorem injective_of_relMap {eval : {n : ℕ} → (Fin n ↪ M) → Option (Chart n)}
+    (h : RecoversRelations rel eval) {n : ℕ} {a : Fin n → M} {p : Chart n}
+    (hp : RelMap (rel p) a) : Function.Injective a := by
+  obtain ⟨t, rfl, -⟩ := (h a p).mp hp
+  exact t.injective
+
+open Classical in
+/-- The evaluation read from the relations: the chart whose relation holds at the tuple, and
+`none` when no chart relation holds. -/
+noncomputable def evalOfRel {n : ℕ} (t : Fin n ↪ M) : Option (Chart n) :=
+  if h : ∃ p : Chart n, RelMap (rel p) ⇑t then some h.choose else none
+
+/-- **Reconstruction from the age** (target; steps 4–5).  Let each chart `p` on `m` points be
+read as a structure `S p` on `Fin m` whose chart relations are literally its faces (`hS`), and
+let every finitely generated substructure of `M` be isomorphic to some `S p` (the age of `M` is
+contained in the representative class of the charts).  Then the evaluation read from the
+relations reconstructs the realization.  Intended proof: factor each tuple through a
+representative (ComputableModelTheory's `exists_factor_tuple_of_age_subset`, quoted after the
+repin) and read the relations there; `hid` and `hcomp` are the identity and composition laws of
+exact partial restriction. -/
+theorem reconstructs_evalOfRel {M : Type} [L.Structure M]
+    (hid : ∀ {n : ℕ} (p : Chart n), restrict (Function.Embedding.refl _) p = some p)
+    (hcomp : ∀ {k n m : ℕ} (f : Fin k ↪ Fin n) (g : Fin n ↪ Fin m) (p : Chart m) (q : Chart n),
+      restrict g p = some q → restrict (f.trans g) p = restrict f q)
+    (S : ∀ {m : ℕ}, Chart m → L.Structure (Fin m))
+    (hS : ∀ {m : ℕ} (p : Chart m) {n : ℕ} (f : Fin n → Fin m) (q : Chart n),
+      (S p).RelMap (rel q) f ↔ ∃ g : Fin n ↪ Fin m, ⇑g = f ∧ restrict g p = some q)
+    (hage : L.age M ⊆
+      {N | ∃ (m : ℕ) (p : Chart m), Nonempty (@Language.Equiv L N (Fin m) N.str (S p))}) :
+    Reconstructs restrict rel (evalOfRel rel (M := M)) := by
+  sorry
+
+variable (restrict) in
+/-- **Receiving with all equations attached to one occurrence** (step 6).  For an evaluated
+root `t` of type `p` and a one-point donor `d` over it, there is one occurrence `u` on `n + 1`
+points whose restriction to the first `n` is literally `t`, whose evaluation is some `q`, and
+whose `q` stands in the relation `agree q d` (agreement below the requested cutoff, one cutoff at
+a time: for a donor with top labels, the occurrence depends on the cutoff).  Freshness of the new
+point is the injectivity of `u`. -/
+def ReceivesOn (eval : {n : ℕ} → (Fin n ↪ M) → Option (Chart n))
+    (agree : ∀ {n : ℕ}, Chart n → Chart n → Prop) : Prop :=
+  ∀ {n : ℕ} (t : Fin n ↪ M) (p : Chart n) (d : Chart (n + 1)),
+    eval t = some p → restrict Fin.castSuccEmb d = some p →
+    ∃ (u : Fin (n + 1) ↪ M) (q : Chart (n + 1)),
+      Fin.castSuccEmb.trans u = t ∧ eval u = some q ∧ agree q d
+
+/-- The first-order formula `φ` defines the automorphism orbit of `a`. -/
+def OrbitDefinedBy {n : ℕ} (a : Fin n → M) (φ : L.Formula (Fin n)) : Prop :=
+  ∀ b : Fin n → M, φ.Realize b ↔ ∃ e : M ≃[L] M, ⇑e ∘ a = b
+
+/-- The **orbit formula of a chart**: `θ(x̄) := ∃ z̄, P_p(z̄) ∧ ⋀_i x_i = z_{b(i)}`, for a chart
+`p` on `m` points and the positions `b` of the tuple among its points (repetitions allowed).  It
+uses only a chart relation and equality, so it is a formula of the relational stage chart
+language as well. -/
+noncomputable def chartOrbitFormula {n m : ℕ} (p : Chart m) (b : Fin n → Fin m) :
+    L.Formula (Fin n) :=
+  BoundedFormula.exs
+    ((rel p).boundedFormula (fun j => Term.var (Sum.inr j)) ⊓
+      BoundedFormula.iInf fun i : Fin n =>
+        (Term.var (Sum.inl i)).bdEqual (Term.var (Sum.inr (b i))))
+
+/-- **Orbit formulas from finite charts** (target).  Under the reconstruction predicate and
+chart homogeneity (two actual occurrences of the same chart are carried to each other by an
+automorphism), the orbit formula of an actual chart containing the tuple `a` defines its
+automorphism orbit.  The empty tuple and repeated coordinates are included.  For a top-free
+witness, chart homogeneity is ultrahomogeneity together with the correspondence of charts and
+finite substructures.  The isolation, atomicity, primeness, and rank theorems applied to such
+formulas are quoted after the repin (`COMPANIONS.md`, B3). -/
+theorem orbitDefinedBy_chartOrbitFormula {eval : {n : ℕ} → (Fin n ↪ M) → Option (Chart n)}
+    (hrec : Reconstructs restrict rel eval)
+    (hhom : ∀ {m : ℕ} (u v : Fin m ↪ M) (p : Chart m), eval u = some p → eval v = some p →
+      ∃ e : M ≃[L] M, ⇑e ∘ ⇑u = ⇑v)
+    {n m : ℕ} (a : Fin n → M) (u : Fin m ↪ M) (b : Fin n → Fin m) (p : Chart m)
+    (hu : ⇑u ∘ b = a) (hp : eval u = some p) :
+    OrbitDefinedBy a (chartOrbitFormula rel p b) := by
+  sorry
+
+end ClassicalLimit
 
 /-! ## 5. Countable losses and observations: no stopping-rank hypothesis -/
 

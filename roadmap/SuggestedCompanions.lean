@@ -29,6 +29,9 @@ file with
 
 The three sections correspond to the three milestones: (A) the filtration and the theory `T∞`,
 (B) homogeneity of the top-free charts and the orbit theory, (C) the geometric obstruction.
+The generic theorems of B are quoted from the two libraries after the repin
+(`IMPLEMENTATION.md`, "Dependency pins"); the corresponding `sorry` targets below record their
+statement shapes at the current pins and are not `#check`ed against those libraries.
 -/
 
 set_option autoImplicit false
@@ -168,42 +171,10 @@ end Filtration
 
 /-! ## B. Homogeneity of top-free charts and its consequences -/
 
-namespace Charts
-
-variable (Chart : ℕ → Type u)
-variable (restrict : {n m : ℕ} → (Fin n ↪ Fin m) → Chart m → Option (Chart n))
-
-/-- **Amalgamation of charts**, with the literal commuting root equation `f₁.trans g₁ =
-f₂.trans g₂`.  Two charts restricting to the same chart along `f₁` and `f₂` are both restrictions
-of one chart.  This is not strong amalgamation (the images of `g₁` and `g₂` may overlap outside
-the image of the root) and concerns the specified charts only, not arbitrary induced finite
-substructures.  The target is to prove it for the top-free finite closed charts. -/
-def ChartAmalgamation : Prop :=
-  ∀ {k m₁ m₂ : ℕ} (f₁ : Fin k ↪ Fin m₁) (f₂ : Fin k ↪ Fin m₂) (p₁ : Chart m₁) (p₂ : Chart m₂)
-    (r : Chart k), restrict f₁ p₁ = some r → restrict f₂ p₂ = some r →
-    ∃ (m : ℕ) (g₁ : Fin m₁ ↪ Fin m) (g₂ : Fin m₂ ↪ Fin m) (p : Chart m),
-      f₁.trans g₁ = f₂.trans g₂ ∧ restrict g₁ p = some p₁ ∧ restrict g₂ p = some p₂
-
-/-- **Joint embedding of charts**: any two charts are restrictions of one chart. -/
-def ChartJointEmbedding : Prop :=
-  ∀ {m₁ m₂ : ℕ} (p₁ : Chart m₁) (p₂ : Chart m₂),
-    ∃ (m : ℕ) (g₁ : Fin m₁ ↪ Fin m) (g₂ : Fin m₂ ↪ Fin m) (p : Chart m),
-      restrict g₁ p = some p₁ ∧ restrict g₂ p = some p₂
-
-variable {Chart restrict}
-
-/-- Amalgamation over the empty chart gives joint embedding, when every chart restricts to one
-empty chart.  The empty root is an instance of amalgamation, not a separate construction. -/
-theorem chartJointEmbedding_of_chartAmalgamation (hAP : ChartAmalgamation Chart restrict)
-    (e : Chart 0)
-    (hempty : ∀ {m : ℕ} (p : Chart m), restrict Function.Embedding.ofIsEmpty p = some e) :
-    ChartJointEmbedding Chart restrict := by
-  intro m₁ m₂ p₁ p₂
-  obtain ⟨m, g₁, g₂, p, -, h₁, h₂⟩ :=
-    hAP Function.Embedding.ofIsEmpty Function.Embedding.ofIsEmpty p₁ p₂ e (hempty p₁) (hempty p₂)
-  exact ⟨m, g₁, g₂, p, h₁, h₂⟩
-
-end Charts
+/- The chart amalgamation and joint embedding properties (formerly target B1) are now part of
+the core, step 2 of the top-free witnesses: `ChartAmalgamation`, `ChartJointEmbedding`, and
+`chartJointEmbedding_of_chartAmalgamation` are in `Suggested.lean` (`Roadmap.ClassicalLimit`),
+with the reconstruction predicate and the orbit formula of a chart. -/
 
 namespace Orbits
 
@@ -231,7 +202,9 @@ variable [Nonempty M]
 automorphism orbit of `a`, then `φ` isolates the complete type of `a` over the complete theory
 of `M`: the only complete type containing `φ` is the type of `a`.  Uniqueness of realizations
 inside `M` alone is not the statement; the singleton is in the space of complete types, so the
-universal implications `∀ x̄, φ → ψ` transfer to every model of the theory. -/
+universal implications `∀ x̄, φ → ψ` transfer to every model of the theory.  To be quoted after
+the repin: the composite of ComputableModelTheory's `isolatesTuple_of_orbit_formula` (under
+`[Nonempty M]`) and `IsolatesTuple.typesWith_eq_singleton`. -/
 theorem typesWith_eq_singleton_of_orbitDefinedBy {n : ℕ} {a : Fin n → M}
     {φ : L.Formula (Fin n)} (hφ : OrbitDefinedBy a φ) :
     (L.completeTheory M).typesWith (Formula.equivSentence φ) =
@@ -254,7 +227,9 @@ theorem typesIsolated_of_orbitDefinedBy
 /-- **Countable atomic implies prime** (target, generic).  A countable structure all of whose
 types are isolated embeds elementarily into every model of its complete theory, in an arbitrary
 universe and of arbitrary cardinality.  Intended proof: enumerate only `M`, extend finite partial
-maps preserving every first-order formula, and take the union. -/
+maps preserving every first-order formula, and take the union.  To be quoted after the repin:
+ComputableModelTheory's `exists_elementaryEmbedding_of_countable_atomic`, with `TypesIsolated`
+identified with its `IsAtomic` over the complete theory. -/
 theorem nonempty_elementaryEmbedding_of_typesIsolated [Countable M]
     (hM : TypesIsolated L M) (N : Type w') [L.Structure N] [N ⊨ L.completeTheory M] :
     Nonempty (M ↪ₑ[L] N) := by
@@ -274,11 +249,11 @@ theorem internalScottRank_le_omega0_of_finite_levels
 omit [Nonempty M] in
 /-- **Internal Scott rank at most `ω`** from first-order orbit formulas (target, generic).  The
 orbit formula has finite quantifier rank, and back-and-forth equivalence at that level forces
-agreement on it.  `[Countable M]` is the hypothesis of that agreement,
-`BFEquiv_implies_agree_formulas_omega`; its levels are in `Ordinal.{0}`, and
-`BFEquiv.ofOrdinalLift` and `BFEquiv.toOrdinalLift` pass to `Ordinal.{w}`.  The finite rank of a
-first-order formula in `L_{ω₁,ω}` is to be added upstream. -/
-theorem internalScottRank_le_omega0_of_orbitDefinedBy [L.IsRelational] [Countable M]
+agreement on it (`BFEquiv_implies_agreeQR`, under relationality, with no countability of `M`);
+`BFEquiv.ofOrdinalLift` and `BFEquiv.toOrdinalLift` pass between the ordinal universes.  The
+bound is `≤ ω`, not `< ω`.  To be quoted after the repin: InfinitaryLogic's internal rank bound
+from orbit formulas, with `qrank_toLω_lt_omega0` for the finite rank. -/
+theorem internalScottRank_le_omega0_of_orbitDefinedBy [L.IsRelational]
     (h : ∀ (n : ℕ) (a : Fin n → M), ∃ φ : L.Formula (Fin n), OrbitDefinedBy a φ) :
     internalScottRank (L := L) M ≤ Ordinal.omega0 := by
   sorry
@@ -461,6 +436,8 @@ set_option linter.hashCommand false in
 #check FirstOrder.Language.Formula.realize_toLω
 set_option linter.hashCommand false in
 #check FirstOrder.Language.BFEquiv_implies_agree_formulas_omega
+set_option linter.hashCommand false in
+#check FirstOrder.Language.BFEquiv_implies_agreeQR
 set_option linter.hashCommand false in
 #check FirstOrder.Language.BFEquiv.ofOrdinalLift
 set_option linter.hashCommand false in
