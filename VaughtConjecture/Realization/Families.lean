@@ -279,14 +279,8 @@ theorem reduce_mem_bottomPatternFamily (hq : q ∈ bottomPatternFamily S ρ) :
 theorem reduce_mem_uniformityFamily (hγ : γ < β) (hq : q ∈ uniformityFamily γ) :
     q.reduce hβ ∈ uniformityFamily γ := by
   obtain ⟨d, hγd, hdγ⟩ := hq
-  have hlt : q.label d < β := by
-    induction h : q.label d using recBotCoeTop with
-    | bot => exact WithBot.bot_lt_coe _
-    | coe o =>
-      rw [h] at hdγ
-      exact_mod_cast (show o < γ + Ordinal.omega0 by exact_mod_cast hdγ).trans_le
-        (Ordinal.add_omega0_le_of_isSuccPrelimit hβ hγ)
-    | top => exact absurd (h ▸ hdγ) (not_lt.mpr le_top)
+  have hlt : q.label d < β :=
+    hdγ.trans_le (by exact_mod_cast Ordinal.add_omega0_le_of_isSuccPrelimit hβ hγ)
   exact ⟨d, by simpa [reduce_of_lt hlt] using hγd, by simpa [reduce_of_lt hlt] using hdγ⟩
 
 /-- Stage reduction keeps the dominance family: it never lowers a label. -/

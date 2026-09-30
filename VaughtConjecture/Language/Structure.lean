@@ -92,11 +92,9 @@ theorem relMap_toStructure_embedding (p : baseLanguage.{u}.Relations n) (t : Fin
 /-- **Transport of structures**: the structure of the transport of a realization along a bijection
 of carriers is the structure induced by the bijection. -/
 theorem toStructure_map (e : M ≃ N) :
-    (R.map e).toStructure = @Equiv.inducedStructure baseLanguage.{u} M N R.toStructure e := by
-  refine Structure.ext (funext fun _ ↦ funext fun f ↦ isEmptyElim f) ?_
-  funext k p xs
-  refine propext ⟨fun ⟨h, hp⟩ ↦ ⟨e.symm.injective.comp h, hp⟩, fun ⟨h, hp⟩ ↦ ⟨?_, hp⟩⟩
-  exact (Function.Injective.of_comp_iff e.symm.injective xs).mp h
+    (R.map e).toStructure = @Equiv.inducedStructure baseLanguage.{u} M N R.toStructure e :=
+  structure_ext fun _ _ xs ↦ ⟨fun ⟨h, hp⟩ ↦ ⟨e.symm.injective.comp h, hp⟩,
+    fun ⟨h, hp⟩ ↦ ⟨(Function.Injective.of_comp_iff e.symm.injective xs).mp h, hp⟩⟩
 
 variable {R} {S : Realization.{u, w} ω N}
 
@@ -237,10 +235,8 @@ end IsTypeAssignment
 /-- **Round trip on structures**: the structure of the realization of a type assignment is the
 type assignment. -/
 theorem toStructure_toRealization (h : IsTypeAssignment M) :
-    (toRealization M).toStructure = ‹baseLanguage.{u}.Structure M› := by
-  refine Structure.ext (funext fun _ ↦ funext fun f ↦ isEmptyElim f) ?_
-  funext k p xs
-  exact propext (h.relMap_iff p xs).symm
+    (toRealization M).toStructure = ‹baseLanguage.{u}.Structure M› :=
+  structure_ext fun _ p xs ↦ (h.relMap_iff p xs).symm
 
 end ToRealization
 

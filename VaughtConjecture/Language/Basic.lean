@@ -17,7 +17,9 @@ The **base language** (`baseLanguage`) is the relational language with one `n`-a
 symbol `P_p` for each legal stage type `p` at stage `ω` on `n` points, and no function symbols.
 Its `n`-ary relation symbols are the legal stage types themselves (`baseLanguage.Relations n` is
 the subtype `{p : StageType ω n // p.IsLegal}`); `baseLanguage.type p` is the stage type of the
-symbol `p`, and `baseLanguage.symbol` makes a symbol of a legal stage type.
+symbol `p`, and `baseLanguage.symbol` makes a symbol of a legal stage type.  Two structures of the
+base language are equal when the same relations hold of the same tuples
+(`baseLanguage.structure_ext`).
 
 The language is countable: there are countably many stage types at stage `ω` on `n` points
 (`StageType.countable_of_lt_omega_one`, as `ω < ω₁`), hence countably many relation symbols of
@@ -87,6 +89,14 @@ theorem type_injective : Function.Injective (type : baseLanguage.{u}.Relations n
 /-- The base language is relational. -/
 instance isRelational : IsRelational baseLanguage.{u} :=
   fun _ ↦ inferInstanceAs (IsEmpty Empty)
+
+/-- **Extensionality** for structures of the base language: with no function symbols, two
+structures are equal when the same relations hold of the same tuples. -/
+theorem structure_ext {M : Type*} {s t : baseLanguage.{u}.Structure M}
+    (h : ∀ ⦃n : ℕ⦄ (p : baseLanguage.{u}.Relations n) (xs : Fin n → M),
+      @Structure.RelMap _ M s n p xs ↔ @Structure.RelMap _ M t n p xs) : s = t :=
+  Structure.ext (funext fun _ ↦ funext fun f ↦ isEmptyElim f)
+    (funext fun _ ↦ funext fun p ↦ funext fun xs ↦ propext (h p xs))
 
 /-- **Countably many relation symbols of each arity** [Kni26, Proposition 3.1.4]: there are
 countably many legal stage types at stage `ω` on `n` points. -/
