@@ -1,0 +1,107 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  ELAN_VER: v4.2.3
+  ELAN_SHA256: df0b2b3a439961ffcbb3985214365ffe40f49bc871df04dff268c7d8e21ca8b2
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    # Mathlib is the cameronfreer/mathlib4 fork required by InfinitaryLogic, so the public
+    # Mathlib cache misses the ~2100 modules downstream of the fork's changes.  Those, plus
+    # InfinitaryLogic itself, are built once per dependency pin and then carried between runs
+    # by the `deps` GitHub cache below; a cold run (new pin) is slow, a warm run takes minutes.
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      # The runner's ~14 GB free disk cannot hold a restored `.lake` plus a freshly fetched
+      # Mathlib cache of a new pin.  Drop the large preinstalled toolchains we never use.
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc \
+            /usr/local/.ghcup /opt/hostedtoolcache/CodeQL
+          df -h /
+
+      - name: Install elan (pinned + checksum) and the toolchain
+        run: |
+          curl -sSL -H "Accept: application/octet-stream" \
+            "https://github.com/leanprover/elan/releases/download/${ELAN_VER}/elan-x86_64-unknown-linux-gnu.tar.gz" \
+            -o elan.tar.gz
+          echo "${ELAN_SHA256}  elan.tar.gz" | sha256sum -c -
+          tar -xzf elan.tar.gz elan-init
+          ./elan-init -y --default-toolchain none
+          rm -f elan.tar.gz elan-init
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+          export PATH="$HOME/.elan/bin:$PATH"
+          elan toolchain install "$(cat lean-toolchain)"
+          lean --version
+          lake --version
+
+      # Dependency outputs (`.lake/packages`: Mathlib fork, InfinitaryLogic, and the small
+      # libraries), keyed on the two pins only.  Any branch restores the newest cache for
+      # its pins; it is saved by whichever run first builds a new pin, so a repin PR warms
+      # itself and `main` inherits the result.
+      - name: Restore dependency cache
+        id: deps-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: .lake/packages
+          key: deps-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
+
+      # The project's own outputs (`.lake/build`), keyed on the pins plus the exact commit,
+      # with a prefix fallback to the most recent compatible build.  `lake build` decides
+      # freshness from traces, so a stale restore only costs the changed modules.
+      - name: Restore root build cache
+        id: root-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: .lake/build
+          key: build-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.sha }}
+          restore-keys: |
+            build-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-
+
+      # Only on a cold dependency cache: fetch the public Mathlib cache for the modules the
+      # fork shares with upstream (the rest are rebuilt by `lake build`).
+      - name: Fetch Mathlib cache (cold dependency cache only)
+        if: steps.deps-cache.outputs.cache-hit != 'true'
+        run: lake exe cache get
+
+      - name: Build
+        run: lake build
+
+      # Save the dependency cache right after a successful build, before the audits, so an
+      # audit failure cannot discard a valid cache.
+      - name: Save dependency cache
+        if: steps.deps-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: .lake/packages
+          key: ${{ steps.deps-cache.outputs.cache-primary-key }}
+
+      - name: Save root build cache
+        if: github.ref == 'refs/heads/main' && steps.root-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: .lake/build
+          key: ${{ steps.root-cache.outputs.cache-primary-key }}
+
+      # Toolchain in sync with InfinitaryLogic; no `sorry`; no legacy imports; every
+      # declaration in the `Knight` namespace uses only the standard axioms.
+      - name: Audits
+        run: bash scripts/check.sh --no-build

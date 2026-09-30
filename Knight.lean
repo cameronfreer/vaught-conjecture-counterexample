@@ -1,0 +1,2 @@
+-- Intentionally empty root.  The `Knight` library's globs build every module under `Knight/`;
+-- nothing imports this file and a new module never has to touch it.
