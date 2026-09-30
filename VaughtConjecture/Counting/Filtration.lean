@@ -61,7 +61,7 @@ structure Filtration (X : Type u) where
   /-- Nonempty successor losses occur cofinally below `ω₁`. -/
   cofinal_losses : ∀ β, β < ω₁ → ∃ ξ, β ≤ ξ ∧ ξ < ω₁ ∧ (domain ξ \ domain (ξ + 1)).Nonempty
   /-- No data is carried at or above `ω₁`: the domains there are empty. -/
-  domain_of_omega_one_le : ∀ ξ, ω₁ ≤ ξ → domain ξ = ∅
+  domain_eq_empty_of_omega_one_le : ∀ ξ, ω₁ ≤ ξ → domain ξ = ∅
 
 namespace Filtration
 

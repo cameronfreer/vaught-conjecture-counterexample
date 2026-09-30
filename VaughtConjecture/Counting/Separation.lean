@@ -162,7 +162,8 @@ private def tail : Filtration (Iio (ω₁ : Ordinal.{0})) where
     exact Subsingleton.countable fun a ha b hb ↦ Subtype.ext ((key a ha).trans (key b hb).symm)
   cofinal_losses β hβ := ⟨β, le_rfl, hβ, ⟨⟨β, hβ⟩, le_refl β,
     (Order.lt_add_one_iff.2 (le_refl β)).not_ge⟩⟩
-  domain_of_omega_one_le _ h := eq_empty_of_forall_notMem fun x hx ↦ (h.trans hx).not_gt x.2
+  domain_eq_empty_of_omega_one_le _ h :=
+    eq_empty_of_forall_notMem fun x hx ↦ (h.trans hx).not_gt x.2
 
 /-- Membership in a tail domain. -/
 private theorem mem_tail_domain {ξ : Ordinal.{0}} {x : Iio (ω₁ : Ordinal.{0})} :
@@ -205,8 +206,8 @@ private def adjoin {X : Type u} (F : Filtration X) (Y : Type u) : Filtration (X 
   cofinal_losses β hβ := by
     obtain ⟨ξ, hβξ, hξ, x, hx⟩ := F.cofinal_losses β hβ
     exact ⟨ξ, hβξ, hξ, .inl x, hx⟩
-  domain_of_omega_one_le ξ h := eq_empty_of_forall_notMem fun
-    | .inl x, hx => by simp [F.domain_of_omega_one_le ξ h] at hx
+  domain_eq_empty_of_omega_one_le ξ h := eq_empty_of_forall_notMem fun
+    | .inl x, hx => by simp [F.domain_eq_empty_of_omega_one_le ξ h] at hx
     | .inr _, hx => h.not_gt hx
 
 /-- The tail filtration satisfies every hypothesis, and its classes number exactly `ℵ₁`. -/
