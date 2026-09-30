@@ -51,7 +51,8 @@ families reindex with their parameters; the uniformity and dominance families ar
 every reindexing (`reindex_mem_uniformityFamily_iff`, `reindex_mem_dominanceFamily_iff`).  A
 bijection fixing the initial segment pointwise is the identity, so the literal invariance under
 such bijections says nothing.  Dominance families shrink as `γ` grows (`dominanceFamily_anti`);
-uniformity families for different `γ` are not comparable, since their bands are disjoint.  Every
+uniformity families for different `γ` that are zero or limits are not comparable, since the bands
+`[γ, γ + ω)` of distinct such `γ` are disjoint.  Every
 bottom-pattern family lies in the saturation family of its scheme
 (`bottomPatternFamily_subset_saturationFamily`).
 
@@ -80,8 +81,9 @@ generalized-saturation and bottom-pattern clauses of a model.
 are stated here so that those files are unchanged.  Moving
 `Ordinal.add_omega0_le_of_isSuccPrelimit` requires amending the implementation note of
 `VaughtConjecture.Label.OrdinalVisibility`, which admits in the root `Ordinal` namespace only
-names containing `visibilityReplace`, `Ordinal.lt_iff_mul_lt_of_dvd` with its `ω` case, and
-private helpers, justified by dot notation: the note would list it as a general ordinal fact and
+names containing `visibilityReplace` (for dot notation on ordinals) and
+`Ordinal.lt_iff_mul_lt_of_dvd` with its `ω` case: the note would list it as a general ordinal fact
+and
 a candidate for Mathlib.
 
 ## References
@@ -270,8 +272,8 @@ def bottomPatternFamily (S : Scheme.{u} (n + 1)) (ρ : Fin S.card → Label.{u})
     q.toCellScheme.grade i ≤ n → (q.label i = ⊥ ↔ ρ j = ⊥)}
 
 /-- **Uniformity** [Kni26, Definition 3.2.1, clause 4(b)]: the stage types on `n + 1` points with
-a label in the band `[γ, γ + ω)`.  The clause of a model uses it for `γ` zero or a limit below the
-stage. -/
+a label in the band `[γ, γ + ω)`.  The clause of a model uses it for every `γ` that is zero or a
+limit and below the stage. -/
 def uniformityFamily (γ : Ordinal.{u}) : Set (StageType.{u} α (n + 1)) :=
   {q | ∃ d, (γ : Label.{u}) ≤ q.label d ∧ q.label d < ((γ + Ordinal.omega0 : Ordinal.{u}) : Label)}
 
