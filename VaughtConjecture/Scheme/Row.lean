@@ -238,10 +238,8 @@ theorem mono {q : D.below Y → Label.{u}} (h : R.IsLawfulBelow Y q) (hXY : X �
 /-- A labelling lawful below a pair lying above every cell is a lawful section. -/
 theorem isLawful {r : D.below X → Label.{u}} (h : R.IsLawfulBelow X r)
     (hX : ∀ d, d ∈ D.below X) : R.IsLawful fun d ↦ r ⟨d, hX d⟩ := by
-  have hψ : D.IsLowerEmbedding (D.reindex ((↑) : D.below X → ι)) fun d ↦ ⟨d, hX d⟩ :=
-    ⟨fun _ _ h ↦ congrArg Subtype.val h, fun _ ↦ rfl, fun _ _ ↦ Iff.rfl,
-      fun _ d _ ↦ ⟨d.1, rfl⟩⟩
-  exact (isLawfulBelow_iff.mp h).comap hψ
+  exact (isLawfulBelow_iff.mp h).comap
+    (IsLowerEmbedding.reindex_symm D (Equiv.subtypeUnivEquiv hX))
 
 end IsLawfulBelow
 
