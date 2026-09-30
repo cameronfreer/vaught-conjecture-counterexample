@@ -34,11 +34,11 @@ The standard bridge identifies invariant Borel classes of countable structures w
 
 **Application here:** use the usual model-code space and permutation action. The quotient is only a set of classes. No measurable classifying map or Borel structure on that quotient is required. This is a concrete application of the existing bridge, not a new descriptive rank theory.
 
-## 5. Morley counting and the witnessed perfect-set alternative
+## 5. Counting by Scott separation, and Morley counting as an alternative not used
 
-**Reference:** Morley [Mor70]. The exact witnessed alternative used in the formalization is recorded in the current `Spectrum/Sentence.lean` and the pinned infinitary-logic library.
+**References:** Harnik–Makkai [HM77]; Larson [Lar14]. For the alternative that is not used: Morley [Mor70].
 
-**Application here:** distinguish the theorem giving a perfect-antichain witness in the large alternative from the bare cardinal list. Thinness excludes that witnessed alternative and yields the upper bound `ℵ₁`. The lower bound is supplied by the new construction, not by Morley counting. State the perfect-set failure separately from any cardinal form requiring a failure of CH.
+**Application here:** the upper bound `ℵ₁` is the counting argument of [HM77] and [Lar14]: the expansion domains have countable complements, and Scott separation (distinct classes are separated by a sentence) together with agreement on the domains leaves at most one class in every domain, so the classes are covered by one point and `ℵ₁` many countable sets. Thinness is proved separately, from the countable truth sides, by the pinned infinitary-logic library's thinness theorem for countable sentence splits (`Sentenceω.isThinOnNatModels_of_countable_sentence_splits`). Morley's theorem, in the witnessed form that gives a perfect antichain in the large alternative, would also yield the upper bound from thinness; that route is not used. The lower bound is supplied by the new construction, not by a counting theorem. State the perfect-set failure separately from any cardinal form requiring a failure of CH.
 
 The original Morley paper's metadata was located, but its full text was not accessible during this review. Do not treat this bibliography check as an independent reconstruction of its proof.
 

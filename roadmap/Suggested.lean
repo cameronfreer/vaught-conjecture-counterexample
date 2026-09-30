@@ -159,8 +159,11 @@ theorem exists_injective_loss_choice {Q : Type u} (D : Ordinal.{0} → Set Q)
 * use expansion uniqueness to put its base class in that block's loss.
 
 The thinness theorem must use actual satisfaction on model codes.
-Never put an assumed Borel structure on Q. Use the existing IL class-presentation,
-sentence-separation, small-vocabulary, and witnessed-Morley theorems.
+Never put an assumed Borel structure on Q. Use the existing InfinitaryLogic (the pinned
+infinitary-logic library) class-presentation, Scott-separation, and small-vocabulary results,
+and its thinness theorem for countable sentence splits
+(`Sentenceω.isThinOnNatModels_of_countable_sentence_splits`). The upper bound is Scott
+separation on the persistent core; Morley's dichotomy is an alternative that is not used.
 -/
 
 end Domains

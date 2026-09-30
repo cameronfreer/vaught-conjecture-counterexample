@@ -2,8 +2,9 @@
 
 This document sharpens [`README.md`](README.md) into an implementation order with explicit
 semantic guards and acceptance checkpoints.  Where the two differ, this one prevails; in
-particular the upper bound below goes through Scott separation on the persistent core and the
-library's invariant sentence separation, not through Morley's dichotomy.  `README.md` remains
+particular the upper bound below goes through Scott separation on the persistent core, and
+thinness through the library's thinness theorem for countable sentence splits, not through
+Morley's dichotomy.  `README.md` remains
 the mathematical roadmap, `SEMANTIC_CONTRACT.md` fixes the meanings to preserve, and
 [`Suggested.lean`](Suggested.lean) / [`SuggestedInterfaces.lean`](SuggestedInterfaces.lean) give
 selected, nonexhaustive Lean statements.  Do not turn their abstract structure fields into
@@ -48,10 +49,13 @@ establishes:
 
 Countable-loss induction gives countable complements.  Scott separation makes the persistent
 core `⋂_η Dη` subsingleton.  Its complement is covered by `ℵ₁` many countable exceptions, so
-`|Q| ≤ ℵ₁`; disjoint cofinal losses give the reverse inequality.  Separately, homogeneous
-domains give one countable truth side for each sentence; the library's invariant
-sentence-separation theorem rules out a perfect antichain.  Neither Morley's dichotomy nor
-eventual stopping belongs in this proof.  There is no measurable structure or measurable choice
+`|Q| ≤ ℵ₁`; disjoint cofinal losses give the reverse inequality.  This counting argument
+(countable complements and Scott separation give at most `ℵ₁` classes) is that of
+Harnik–Makkai [HM77] and Larson [Lar14].  Separately, homogeneous domains give one countable
+truth side for each sentence, and the library's thinness theorem
+`Sentenceω.isThinOnNatModels_of_countable_sentence_splits` (`Descriptive/SentenceSplits`) rules
+out a perfect antichain.  Neither Morley's dichotomy nor eventual stopping belongs in this
+proof.  There is no measurable structure or measurable choice
 of representatives on `Q`.
 
 The general counting argument above needs cofinal nonemptiness, not nonemptiness of every
@@ -167,13 +171,25 @@ separate from the descriptive thinness conclusion.
 
 ## Upstream building blocks
 
-In the pinned InfinitaryLogic: `PotentialIso.ofExtensionFamily` and the countable
-potential-isomorphism corollaries (`Karp/`), Scott isolation and the countable disjunction on
-presentations (`Descriptive/ScottDefinability`, `SentenceSplits`, `ObservableConstancy`),
-`exists_countable_aElementary_substructure`, the generic finite-support closure
-(`FiniteSupportClosure`) with its two-generator cardinality theorem
-(`TwoGeneratorCardinality`), `compl_countable_of_loss` and `mk_eq_aleph_one_of_domains`
-(`OrdinalCountability`), Morley counting and the Gδ/Polish model-code spaces.
+In the pinned InfinitaryLogic:
+
+- `PotentialIso.ofExtensionFamily` and the countable potential-isomorphism corollaries
+  (`Karp/`);
+- Scott isolation and countable definability on a presentation of the classes
+  (`Descriptive/ScottDefinability`, e.g. `exists_sentence_of_countable_of_presentation`), and
+  constancy of sentence families off countably many classes (`Descriptive/ObservableConstancy`);
+- thinness from single-sentence splits on a presentation of the classes,
+  `Sentenceω.isThinOnNatModels_of_countable_sentence_splits` (`Descriptive/SentenceSplits`).
+  Its only hypotheses are that the truth predicate is actual satisfaction read through the
+  presentation and that every sentence has a countable truth side; it does not use Scott
+  isolation, ranks, measurability on `Q`, or Borelness of the class;
+- `exists_countable_aElementary_substructure`;
+- the generic finite-support closure (`FiniteSupportClosure`) with its two-generator
+  cardinality theorem (`TwoGeneratorCardinality`);
+- `compl_countable_of_loss` and `mk_eq_aleph_one_of_domains` (`OrdinalCountability`).  The
+  latter assumes global eventual departure (every point leaves some domain), so it is applied
+  to the complement of the persistent core, not to `Q`;
+- the Gδ/Polish model-code spaces.
 `SuggestedInterfaces.lean` checks representative names so a pin bump that removes one fails
 loudly.  Coding a `Type w` carrier on `ℕ` needs a transfer of infinitary isomorphism across
 universes; do not assume that a statement within a single universe covers it.

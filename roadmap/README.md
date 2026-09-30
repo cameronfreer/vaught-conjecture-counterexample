@@ -23,7 +23,7 @@ Establish, for countable indices:
 3. Models in \(D_\eta\) agree on every sentence of quantifier rank at most \(\eta\).
 4. Each successor loss is nonempty, by an independent top-free construction.
 
-The first two imply countable domain complements. The third gives countable truth or falsehood sides for every sentence. The existing invariant-separation and witnessed-Morley theorems yield thinness and the upper bound. The fourth gives the lower bound by disjointness of losses. The literal sentence correspondence and absence of finite models give the all-countable-carrier version. No global eventual-departure theorem occurs in this reduction.
+The first two imply countable domain complements. The third gives countable truth or falsehood sides for every sentence, and the library's thinness theorem for countable sentence splits turns these into thinness. For the upper bound, Scott separation (distinct classes are separated by a sentence) and the third condition make the persistent core \(\bigcap_{\eta<\omega_1}D_\eta\) a subsingleton; every other class lies in one of the \(\aleph_1\) many countable complements \(Q\setminus D_\eta\), so \(|Q|\le\aleph_1\). Morley's dichotomy would also give the upper bound from thinness; it is not used. The fourth gives the lower bound by disjointness of losses. The literal sentence correspondence and absence of finite models give the all-countable-carrier version. No global eventual-departure theorem occurs in this reduction.
 
 The first three conditions do not by themselves yield the lower bound. Nonempty domains alone are not a substitute for nonempty losses. Nor does high-stage existence alone produce terminal witnesses.
 
@@ -135,7 +135,7 @@ Map successor losses into fixed-stage terminal classes and obtain countability. 
 
 ### Layer 6 — The two independent bounds
 
-For the upper bound, apply invariant sentence separation and the witnessed Morley alternative. State thinness as absence of a perfect isomorphism antichain, not cardinality below the continuum. Measurability belongs on model codes; no quotient-Borel hypothesis is permitted.
+For thinness, apply the library's thinness theorem for countable sentence splits to the countable truth sides of Layer 5. For the upper bound, apply Scott separation on the persistent core: distinct classes are separated by a sentence, so by the agreement of Layer 5 at most one class lies in every domain, and every other class lies in one of \(\aleph_1\) many countable complements. Morley's dichotomy (the witnessed perfect-set alternative) is an alternative route to the upper bound that is not used. State thinness as absence of a perfect isomorphism antichain, not cardinality below the continuum. Measurability belongs on model codes; no quotient-Borel hypothesis is permitted.
 
 For the lower bound, construct a top-free terminal model at every countable block. Prove that its base class is in that block's loss using expansion uniqueness, then choose from pairwise disjoint losses. The proof of the lower bound must not use terminal countability, a cardinality conclusion, or eventual departure of every model.
 
