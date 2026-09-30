@@ -23,8 +23,8 @@ $L_{\omega_1,\omega}$, Scott analysis, model-code spaces, Morley counting) and o
 - [`roadmap/EXPOSITIONS.md`](roadmap/EXPOSITIONS.md), [`SIMPLIFICATIONS.md`](roadmap/SIMPLIFICATIONS.md),
   [`HULL_ALGEBRA.md`](roadmap/HULL_ALGEBRA.md) — informal accounts and what is proposal rather
   than result.
-- [`roadmap/SOURCE_AUDIT.md`](roadmap/SOURCE_AUDIT.md) — provenance in the earlier source, with
-  the labels `A1`–`A14` the other documents cite.
+- [`roadmap/SOURCE_AUDIT.md`](roadmap/SOURCE_AUDIT.md) — the provenance labels `A1`–`A14` the
+  other documents cite.
 - [`roadmap/LITERATURE.md`](roadmap/LITERATURE.md), [`REFERENCES.bib`](roadmap/REFERENCES.bib).
 
 ## Layout
