@@ -269,8 +269,8 @@ base reduct.  Search the pinned libraries before reproducing these generic argum
 3. **Scott bound.**  First-order formulas have finite quantifier rank; back-and-forth
    equivalence at the rank of an orbit formula determines the tuple's orbit.  Quote
    `internalScottRank_le_of_orbits_determined` (`Scott/OrbitRank`) to obtain
-   `internalScottRank ≤ ω` in the library's convention (the supremum of the orbit ranks plus
-   one).  Sketch: `internalScottRank_le_omega0_of_finite_levels` (proved) and
+   `internalScottRank ≤ ω` in the library's convention, the supremum over all tuples of the orbit
+   rank plus one, `⨆ a, orbitRank a + 1` (so finite but unbounded orbit ranks give exactly `ω`).  Sketch: `internalScottRank_le_omega0_of_finite_levels` (proved) and
    `internalScottRank_le_omega0_of_orbitDefinedBy` (target).  Ingredients: `Formula.toLω`,
    `Formula.realize_toLω` (`Lomega1omega/Operations`), `BFEquiv_implies_agree_formulas_omega`
    (`Scott/QuantifierRank`).  To be located or added upstream: finiteness of the quantifier rank
