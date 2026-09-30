@@ -1,15 +1,16 @@
-import Mathlib
 import InfinitaryLogic.OrdinalCountability
 import InfinitaryLogic.ModelTheory.MorleyCounting
-import InfinitaryLogic.Conditional.MorleyPerfect
+import InfinitaryLogic.Descriptive.StructureIsoSetoid
 
 /-!
 # Selected interfaces for the roadmap
 
-`README.md` is authoritative; this file is nonexhaustive and leaves the formalization free.
+`README.md` and `IMPLEMENTATION.md` are authoritative; this file is nonexhaustive and leaves the
+formalization free.
 This file is a HUMAN-OWNED SKETCH OF THEOREM STATEMENTS, NOT PART OF THE LIBRARY.
 The bodies marked `sorry` are theorem statements still to be proved. Definitions have
-actual bodies. The file is outside the build and is not checked by CI.
+actual bodies. The file is outside the build and is not checked by CI; check it with
+`lake env lean -DautoImplicit=false -Dlinter.mathlibStandardSet=true roadmap/Suggested.lean`.
 No new verified Lean result is claimed.
 
 Mathlib and the pinned infinitary-logic library are intended dependencies.
