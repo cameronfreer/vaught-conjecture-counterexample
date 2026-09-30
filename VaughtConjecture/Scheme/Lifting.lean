@@ -124,6 +124,7 @@ theorem IsBountiful.cappedLift (hR : R.IsBountiful) (hX : X ∈ D.gradedFaces)
   hR hX hY h
 
 /-- Every pair lifts capped to itself. -/
+@[simp]
 theorem cappedLift_refl (X : Finset α × ℕ) : R.CappedLift (le_refl X) :=
   fun _ _ _ _ p hp ↦ ⟨p, hp, rfl⟩
 
