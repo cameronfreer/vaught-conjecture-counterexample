@@ -274,13 +274,13 @@ def mute : D.Rows.{u} := ⟨fun _ _ ↦ ⊥⟩
 @[simp] theorem comap_mute (hφ : E.IsLowerEmbedding D φ) : (mute D).comap hφ = mute E := rfl
 
 /-- The lawful sections of mute rows: only the bottom labelling. -/
-theorem isLawful_mute_iff {p : ι → Label.{u}} : (mute D).IsLawful p ↔ p = fun _ ↦ ⊥ := by
+@[simp] theorem isLawful_mute_iff {p : ι → Label.{u}} : (mute D).IsLawful p ↔ p = fun _ ↦ ⊥ := by
   refine ⟨fun h ↦ funext fun s ↦ h.eq_bot_of_row_self_eq_bot s rfl, ?_⟩
   rintro rfl
   exact isLawful_bot
 
 /-- Below every pair, the only labelling lawful for mute rows is the bottom labelling. -/
-theorem isLawfulBelow_mute_iff {X : Finset α × ℕ} {r : D.below X → Label.{u}} :
+@[simp] theorem isLawfulBelow_mute_iff {X : Finset α × ℕ} {r : D.below X → Label.{u}} :
     (mute D).IsLawfulBelow X r ↔ r = fun _ ↦ ⊥ := by
   rw [isLawfulBelow_iff, comap_mute, isLawful_mute_iff]
 
