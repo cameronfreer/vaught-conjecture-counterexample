@@ -140,6 +140,14 @@ theorem cellMap_mem (i : Fin (S.comap f).card) : S.cellMap f i ∈ S.visibleCell
 @[simp] theorem range_cellMap : Set.range (S.cellMap f) = S.visibleCells f :=
   range_orderEmbOfFin _ _
 
+/-- Reindexing along a bijection of the points keeps every cell: the cell map is surjective. -/
+theorem surjective_cellMap_equiv (e : Fin n ≃ Fin n) :
+    Function.Surjective (S.cellMap e.toEmbedding) := fun d ↦ by
+  have hd : d ∈ Set.range (S.cellMap e.toEmbedding) := by
+    rw [range_cellMap, mem_coe, mem_visibleCells]
+    exact fun x _ ↦ ⟨e.symm x, by simp⟩
+  exact hd
+
 /-- The number of cells visible through `f` is the size of any strictly monotone enumeration of
 them. -/
 theorem card_visibleCells_eq_of_strictMono {e : Fin k → Fin S.card} (he : StrictMono e)

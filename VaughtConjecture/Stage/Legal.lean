@@ -3,6 +3,7 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
+import VaughtConjecture.Label.Cap
 import VaughtConjecture.Stage.Bountiful
 import VaughtConjecture.Stage.Countable
 
@@ -178,6 +179,111 @@ theorem cappedLift_of_restrictFace {u : StageType.{u} α m} (hu : restrictFace f
       ⟨map_subset_map.mpr h.1, h.2⟩ := by
   obtain ⟨hf, rfl⟩ := (restrictFace_eq_some_iff t f).mp hu
   exact (t.toScheme.cappedLift_comap_iff f h).mp (hb.cappedLift hX hY h)
+
+end StageType
+
+/-! ### Extending lawful labels from a closed face -/
+
+namespace Scheme
+
+variable {n m : ℕ} {S : Scheme.{u} n} {f : Fin m ↪ Fin n}
+
+/-- **Extension from a closed face.**  Let `S` be legal and let the range of `f` be a closed face.
+A lawful section `ℓ` of the restriction along `f` whose capped observation at a cap `c`
+self-visible at `n` agrees with that of a lawful section `Q` of `S` on the face extends to a
+lawful section of `S` with the capped observation of `Q` everywhere.  This is bountifulness of `S`
+from the pair of the face to the pair `(univ, n)`, or the bottom end when `m = 0`. -/
+theorem IsLegal.exists_isLawful_extend (hS : S.IsLegal) (hf : univ.map f ∈ S.toCellScheme.faces)
+    {c : Label.{u}} (hc : IsSelfVisible n c) {ℓ : Fin (S.comap f).card → Label.{u}}
+    (hℓ : (S.comap f).rows.IsLawful ℓ) {Q : Fin S.card → Label.{u}} (hQ : S.rows.IsLawful Q)
+    (hQℓ : ∀ i, min (Q (S.cellMap f i)) c = min (ℓ i) c) :
+    ∃ r : Fin S.card → Label.{u}, S.rows.IsLawful r ∧ (∀ d, min (r d) c = min (Q d) c) ∧
+      ∀ i, r (S.cellMap f i) = ℓ i := by
+  have hφ := S.isLowerEmbedding_comap f
+  set X' : Finset (Fin m) × ℕ := (univ, m)
+  set X : Finset (Fin n) × ℕ := (univ.map f, m)
+  set Y : Finset (Fin n) × ℕ := (univ, n)
+  have hX : S.cellMap f '' (S.comap f).toCellScheme.below X' = S.toCellScheme.below X :=
+    S.image_cellMap_below f X'
+  have hmn : m ≤ n := by simpa using Fintype.card_le_of_embedding f
+  have hXY : X ≤ Y := ⟨subset_univ _, hmn⟩
+  have allE (i : Fin (S.comap f).card) : i ∈ (S.comap f).toCellScheme.below X' :=
+    ⟨subset_univ _, ((hS.isWellFormed.comap f hf).isWellFormed.grade_le_card i).trans
+      (by simpa using card_le_univ ((S.comap f).toCellScheme.scope i))⟩
+  have allD (d : Fin S.card) : d ∈ S.toCellScheme.below Y :=
+    ⟨subset_univ _, (hS.isWellFormed.isWellFormed.grade_le_card d).trans
+      (by simpa using card_le_univ (S.toCellScheme.scope d))⟩
+  have hl : S.rows.CappedLift hXY := by
+    by_cases hm : m = 0
+    · exact hS.isWellFormed.isWellFormed.cappedLift S.rows (Or.inl hm) hXY
+    · exact hS.isBountiful.cappedLift ⟨hf, Nat.pos_of_ne_zero hm, by simp [X]⟩
+        ⟨hS.isWellFormed.univ_mem_faces, show 0 < n by omega, by simp [Y]⟩ hXY
+  set e := hφ.belowEquiv hX
+  have he (i : Fin (S.comap f).card) : (e ⟨i, allE i⟩ : Fin S.card) = S.cellMap f i := rfl
+  have hp : S.rows.IsLawfulBelow X fun d ↦ ℓ (e.symm d).1 := by
+    refine (CellScheme.Rows.isLawfulBelow_comap_iff hφ hX).mp ?_
+    have h : ((fun d ↦ ℓ (e.symm d).1) ∘ e) = fun t ↦ ℓ t.1 := funext fun t ↦ by simp
+    rw [h]
+    exact hℓ.isLawfulBelow X'
+  obtain ⟨q, hq, hqc, hqr⟩ := (CellScheme.Rows.cappedLift_iff_forall_exists hXY).mp hl c hc _
+    (fun d ↦ Q d.1) hp (hQ.isLawfulBelow Y) fun d ↦ by
+      conv_lhs => rw [show (d : Fin S.card) = S.cellMap f (e.symm d).1 by
+        rw [← he, Subtype.coe_eta, e.apply_symm_apply]]
+      exact hQℓ _
+  refine ⟨fun d ↦ q ⟨d, allD d⟩, hq.isLawful allD, fun d ↦ hqc _, fun i ↦ ?_⟩
+  have := hqr ⟨S.cellMap f i, he i ▸ (e ⟨i, allE i⟩).2⟩
+  simpa [show e.symm ⟨S.cellMap f i, _⟩ = ⟨i, allE i⟩ from
+    e.symm_apply_eq.mpr (Subtype.ext (he i).symm)] using this
+
+end Scheme
+
+namespace StageType
+
+variable {α β : Ordinal.{u}} {n m : ℕ}
+
+section Extend
+
+variable {f : Fin m ↪ Fin n} {S : Scheme.{u} n} {p : StageType.{u} α m}
+
+/-- **Extension of the labels of a face**: if `S` is legal, the range of `f` is a closed face, and
+the face of `S` there is the scheme of `p`, then the labels of `p` extend to a lawful section of
+`S` (bountifulness at the cap `⊥`). -/
+theorem exists_isLawful_extend_label (hS : S.IsLegal) (hf : univ.map f ∈ S.toCellScheme.faces)
+    (hp : S.comap f = p.toScheme) : ∃ ρ : Fin S.card → Label.{u}, S.rows.IsLawful ρ ∧
+      ∀ (i : Fin (S.comap f).card) (j : Fin p.card), (i : ℕ) = j →
+        ρ (S.cellMap f i) = p.label j := by
+  obtain ⟨P, ℓ, _, _, hℓ, _⟩ := p
+  subst hp
+  obtain ⟨ρ, hρ, -, hext⟩ := hS.exists_isLawful_extend hf (isSelfVisible_bot n) hℓ
+    CellScheme.Rows.isLawful_bot fun _ ↦ by simp
+  exact ⟨ρ, hρ, fun i j hij ↦ by rw [hext, Fin.ext hij]⟩
+
+end Extend
+
+section Lift
+
+variable {f : Fin m ↪ Fin n} {p : StageType.{u} α m} {q' : StageType.{u} β n} {c : Label.{u}}
+
+/-- **Lifting a face across stage reduction.**  If a legal `q'` at stage `β` has, along `f`, the
+face `p.reduce hβ`, then for a cap `c ≤ β` self-visible at `n` there is a lawful section of the
+scheme of `q'` with the capped observation of `q'` at `c` that extends the labels of `p` along
+`f`. -/
+theorem exists_isLawful_lift (hβ : Order.IsSuccPrelimit β) (hq' : q'.IsLegal)
+    (hface : restrictFace f q' = some (p.reduce hβ)) (hc : IsSelfVisible n c)
+    (hcβ : c ≤ β) : ∃ ρ : Fin q'.card → Label.{u}, q'.rows.IsLawful ρ ∧
+      (∀ d, min (ρ d) c = min (q'.label d) c) ∧
+      ∀ (i : Fin (q'.toScheme.comap f).card) (j : Fin p.card), (i : ℕ) = j →
+        ρ (q'.cellMap f i) = p.label j := by
+  obtain ⟨hf, heq⟩ := (restrictFace_eq_some_iff _ _).mp hface
+  obtain ⟨P, ℓ, hw, hcod, hℓ, hat⟩ := p
+  have hP : q'.toScheme.comap f = P := congrArg toScheme heq
+  subst hP
+  obtain ⟨ρ, hρ, hρc, hext⟩ := Scheme.IsLegal.exists_isLawful_extend hq' hf hc hℓ q'.isLawful
+    fun i ↦ (congrArg (min · c) (label_congr heq (i := i) (j := i) rfl)).trans
+      (min_reduce_of_le hcβ _)
+  exact ⟨ρ, hρ, hρc, fun i j hij ↦ by rw [hext, Fin.ext hij]⟩
+
+end Lift
 
 end StageType
 

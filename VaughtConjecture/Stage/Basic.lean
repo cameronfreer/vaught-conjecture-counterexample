@@ -105,6 +105,12 @@ positions. -/
   obtain rfl : p = p' := funext fun i ↦ hl i i rfl
   rfl
 
+/-- Equal stage types have equal labels at cells with equal positions. -/
+theorem label_congr {t t' : StageType.{u} α n} (h : t = t') {i : Fin t.card} {j : Fin t'.card}
+    (hij : (i : ℕ) = j) : t.label i = t'.label j := by
+  subst h
+  rw [Fin.ext hij]
+
 /-- The whole ground set is a face of a stage type. -/
 theorem univ_mem_faces (t : StageType.{u} α n) : (univ : Finset (Fin n)) ∈ t.toCellScheme.faces :=
   t.isWellFormed.univ_mem_faces
@@ -385,6 +391,53 @@ theorem restrictFace_reduce (hβ : Order.IsSuccPrelimit β) :
 /-- Stage reduction commutes with reindexing. -/
 theorem reindex_reduce (hβ : Order.IsSuccPrelimit β) (e : Fin m ≃ Fin n) :
     (t.reduce hβ).reindex e = (t.reindex e).reduce hβ := rfl
+
+/-! ### Stage types from lawful sections -/
+
+/-- The stage type at a zero-or-limit stage `α` on a well-formed scheme with coded rows, with the
+stage reduction of a lawful section `ρ` as labels. -/
+noncomputable def ofIsLawful (hα : Order.IsSuccPrelimit α) (S : Scheme.{u} n)
+    (hw : S.IsWellFormed) (hc : S.IsCoded) (ρ : Fin S.card → Label.{u})
+    (hρ : S.rows.IsLawful ρ) : StageType.{u} α n where
+  toScheme := S
+  label := Label.reduce α ∘ ρ
+  isWellFormed := hw
+  isCoded := hc
+  isLawful := hρ.reduce hα
+  atStage _ := atStage_reduce α _
+
+section OfIsLawful
+
+variable (hα : Order.IsSuccPrelimit α) (S : Scheme.{u} n) (hw : S.IsWellFormed) (hc : S.IsCoded)
+  (ρ : Fin S.card → Label.{u}) (hρ : S.rows.IsLawful ρ)
+
+/-- The scheme of `ofIsLawful` is the given scheme. -/
+@[simp] theorem ofIsLawful_toScheme : (ofIsLawful hα S hw hc ρ hρ).toScheme = S := rfl
+
+/-- The labels of `ofIsLawful` are the reduced labels of the section. -/
+@[simp] theorem ofIsLawful_label (d : Fin S.card) :
+    (ofIsLawful hα S hw hc ρ hρ).label d = Label.reduce α (ρ d) := rfl
+
+variable {S hw hc ρ hρ}
+
+/-- A stage type built from a lawful section extending the labels of `p` along a closed face has
+the face `p` there. -/
+theorem restrictFace_ofIsLawful {f : Fin m ↪ Fin n} (hf : univ.map f ∈ S.toCellScheme.faces)
+    {p : StageType.{u} α m} (hp : S.comap f = p.toScheme)
+    (hext : ∀ (i : Fin (S.comap f).card) (j : Fin p.card), (i : ℕ) = j →
+      ρ (S.cellMap f i) = p.label j) :
+    restrictFace f (ofIsLawful hα S hw hc ρ hρ) = some p := by
+  rw [restrictFace_of_mem _ f hf]
+  refine congrArg some (ext hp fun i j hij ↦ ?_)
+  exact (congrArg (Label.reduce α) (hext i j hij)).trans (p.atStage j).reduce_eq
+
+end OfIsLawful
+
+/-- **Stage reduction through `ofIsLawful`**: the stage reduction of a type is `ofIsLawful`
+applied to its own labels. -/
+theorem reduce_eq_ofIsLawful (hβ : Order.IsSuccPrelimit β) (t : StageType.{u} α n) :
+    t.reduce hβ = ofIsLawful hβ t.toScheme t.isWellFormed t.isCoded t.label t.isLawful :=
+  rfl
 
 end StageType
 
