@@ -385,9 +385,10 @@ private theorem pairSection_mem (b : Bool) : pairSection.{u} b ∈ pairValues :=
 labels `{1, ω * 5 + 1}` of the section `(1, ω * 5 + 1)`, the decoder reads it back literally from
 its normal form, and the decoded section is lawful by ownerwise decoding: the new owner `a` has
 the row `(1, 1)`, short at grade `1`, and the inherited owner `b` reads back the lawful section
-`(1, ω * 5 + 1)` on its whole lower domain.  The decoder is the same, and does not reflect bottom
-(`strongDecode_empty_one`): the failure of bottom reflection alone does not establish the failure
-of lawful decoding. -/
+`(1, ω * 5 + 1)` on its whole lower domain.  The decoder family is the same and never reflects
+bottom (codes below `ω` go to `⊥` for every alphabet; `strongDecode_empty_one` for the empty
+one): the failure of bottom reflection alone does not establish the failure of lawful
+decoding. -/
 private theorem isLawful_strongDecode_strongEncode_pairSection :
     strongDecode pairValues 1 ∘ (strongEncode pairValues 1 ∘ pairSection.{u}) = pairSection ∧
       pairRows.{u}.IsLawful (strongDecode pairValues 1 ∘ (strongEncode pairValues 1 ∘ pairSection))
