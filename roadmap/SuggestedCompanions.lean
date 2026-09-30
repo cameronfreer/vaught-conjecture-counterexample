@@ -67,7 +67,7 @@ theorem lt_qrank_of_defines_loss {Sent : Type u} {Q : Type v} (truth : Sent → 
 /-- **Sentencewise convergence on a cocountable domain.**  If a sentence has constant truth value
 on a domain with countable complement in an uncountable set of classes, then its value at any
 class of the domain is membership in `T∞`.  Applied with `D = D_η` for `η` at least the rank of
-the sentence, and with a canonical top-free witness class in `D_η`, this is the witness
+the sentence, and with a top-free witness class in `D_η`, this is the witness
 convergence of `COMPANIONS.md`: truth converges sentence by sentence, with the rank as threshold.
 Nothing is asserted about convergence of codes or of embeddings. -/
 theorem truth_iff_mem_cocountableTheory {Sent : Type u} {Q : Type v} (truth : Sent → Q → Prop)
@@ -262,8 +262,8 @@ theorem nonempty_elementaryEmbedding_of_typesIsolated [Countable M]
 
 omit [Nonempty M] in
 /-- **Internal Scott rank at most `ω`** from orbits determined at finite levels.  This is the
-library's convention (supremum of the orbit ranks plus one); no equality of ranks is asserted. -/
-theorem internalScottRank_le_omega0_of_finite_levels [L.IsRelational]
+library's convention, `⨆ a, orbitRank a + 1`; no equality of ranks is asserted. -/
+theorem internalScottRank_le_omega0_of_finite_levels
     (h : ∀ (n : ℕ) (a : Fin n → M), ∃ k : ℕ,
       ∀ b : Fin n → M, BFEquiv (L := L) (k : Ordinal.{w}) n a b → ∃ e : M ≃[L] M, ⇑e ∘ a = b) :
     internalScottRank (L := L) M ≤ Ordinal.omega0 := by
@@ -274,9 +274,10 @@ theorem internalScottRank_le_omega0_of_finite_levels [L.IsRelational]
 omit [Nonempty M] in
 /-- **Internal Scott rank at most `ω`** from first-order orbit formulas (target, generic).  The
 orbit formula has finite quantifier rank, and back-and-forth equivalence at that level forces
-agreement on it.  The finite rank of a first-order formula in `L_{ω₁,ω}` and the independence of
-back-and-forth equivalence at natural-number levels from the ordinal universe are to be located
-or added upstream. -/
+agreement on it.  `[Countable M]` is the hypothesis of that agreement,
+`BFEquiv_implies_agree_formulas_omega`; its levels are in `Ordinal.{0}`, and
+`BFEquiv.ofOrdinalLift` and `BFEquiv.toOrdinalLift` pass to `Ordinal.{w}`.  The finite rank of a
+first-order formula in `L_{ω₁,ω}` is to be added upstream. -/
 theorem internalScottRank_le_omega0_of_orbitDefinedBy [L.IsRelational] [Countable M]
     (h : ∀ (n : ℕ) (a : Fin n → M), ∃ φ : L.Formula (Fin n), OrbitDefinedBy a φ) :
     internalScottRank (L := L) M ≤ Ordinal.omega0 := by
@@ -460,6 +461,14 @@ set_option linter.hashCommand false in
 #check FirstOrder.Language.Formula.realize_toLω
 set_option linter.hashCommand false in
 #check FirstOrder.Language.BFEquiv_implies_agree_formulas_omega
+set_option linter.hashCommand false in
+#check FirstOrder.Language.BFEquiv.ofOrdinalLift
+set_option linter.hashCommand false in
+#check FirstOrder.Language.BFEquiv.toOrdinalLift
+set_option linter.hashCommand false in
+#check FirstOrder.Language.realize_scottFormula_iff_BFEquiv
+set_option linter.hashCommand false in
+#check FirstOrder.Language.PotentialIso.countable_toEquiv_graph
 set_option linter.hashCommand false in
 #check FirstOrder.Language.internalScottRank_le_of_orbits_determined
 set_option linter.hashCommand false in

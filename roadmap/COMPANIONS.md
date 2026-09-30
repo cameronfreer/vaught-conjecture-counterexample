@@ -6,7 +6,9 @@ is proved without them, and no core layer or checkpoint depends on them.  Each m
 independently completable: none uses a theorem of another milestone, and each lists the core
 results it takes as hypotheses.  [`SuggestedCompanions.lean`](SuggestedCompanions.lean) records
 selected statements in their generic form, some proved and some left as deliberate `sorry`
-targets; [`SEMANTIC_CONTRACT.md`](SEMANTIC_CONTRACT.md) applies unchanged.
+targets; [`SEMANTIC_CONTRACT.md`](SEMANTIC_CONTRACT.md) applies unchanged.  Layer numbers here
+are those of `README.md` (layers 0–6); the table at the head of `IMPLEMENTATION.md` relates them
+to that document's layers and checkpoints.
 
 **What counts as completion.**  A milestone is complete when its theorems are proved about the
 concrete objects of the construction (charts, realizations, the density sentence `Φ`, the
@@ -141,7 +143,10 @@ countable elementary substructure in some class, or asserting the dichotomy).
 (`Descriptive/CodeTransport`); `LomegaEquiv.of_equiv` (`Lomega1omega/Theory`).  To be located or
 added upstream: invariance of `L_{ω₁,ω}` satisfaction under isomorphism across carrier universes
 (`LomegaEquiv.of_equiv` and `encodeViaEquiv_models` require one universe); the Scott
-characterization across universes (`scottSentence_characterizes` requires one universe); a named
+characterization across universes (`scottSentence_characterizes` requires one universe, but
+`realize_scottFormula_iff_BFEquiv` (`Scott/Formula`) and `PotentialIso.ofExtensionFamily` already
+work across universes, and only the countable back-and-forth step,
+`PotentialIso.countable_toEquiv_graph`, is stated for one universe); a named
 lemma that the Scott sentence of a code isolates its class on a presentation (currently the
 content of the proof of `isolatedPresentation_of_surjective`, whose statement is existential).
 
@@ -158,9 +163,12 @@ for a sentence with finite models the dichotomy can fail).
 sized models.  No uncountable model of `Φ` is asserted to exist, in either case.  No model of all
 of `T∞` is asserted to exist.  No uncountable categoricity, no statement about `L_{∞,ω}`.
 
-**Completion criterion (A).**  A1–A3 are proved for `Φ`, `Q`, `D_η`, and `w_η`, from the core
-hypotheses listed above, with the generic lemmas proved and the dichotomy proved on an arbitrary
-carrier in an arbitrary universe through the countable-exception argument quoted above.
+**Completion criterion (A).**  A1–A3 are proved for `Φ`, `Q`, `D_η`, and `w_η`, with the generic
+lemmas proved and the dichotomy proved on an arbitrary carrier in an arbitrary universe through
+the countable-exception argument quoted above.  Completion presupposes that the core results
+listed at the head of A are proved in the core, in particular the countable losses (and
+complements), the sharp agreement, and the existence of the top-free witnesses; a version of
+A1–A3 taking them as hypotheses is progress on A, not its completion (as in the preamble).
 
 ## Milestone B — top-free chart homogeneity and its consequences
 
@@ -207,8 +215,8 @@ generated structures under all embeddings and are not used.
 **Instantiation.**  The charts occurring in the top-free realizations at block `ξ`.
 
 **Regressions.**  The empty root (`k = 0`, giving JEP); a root equal to one of the two charts;
-`p₁ = p₂` with `f₁ = f₂`; a root whose support is a closed face that is not the hull of two of
-its points; distinct cells sharing a graded index.
+`p₁ = p₂` with `f₁ = f₂`; a root that is the hull of two of its points but has more than two
+points (`SEMANTIC_CONTRACT.md`, item 2); distinct cells sharing a graded index.
 
 **Non-claims.**  Not strong amalgamation: the images of `g₁` and `g₂` may meet outside the image
 of the root.  Not amalgamation of arbitrary induced finite substructures: a subset that is not
@@ -262,21 +270,26 @@ base reduct.  Search the pinned libraries before reproducing these generic argum
    the space of complete types.  Uniqueness within the one model is not enough.  This gives
    atomicity without strengthening the hypotheses on the realization.  Sketch:
    `typesWith_eq_singleton_of_orbitDefinedBy` (target), `TypesIsolated`,
-   `typesIsolated_of_orbitDefinedBy` (proved).  Ingredients: Mathlib's `Theory.CompleteType`,
+   `typesIsolated_of_orbitDefinedBy` (proved from the target
+   `typesWith_eq_singleton_of_orbitDefinedBy`).  Ingredients: Mathlib's `Theory.CompleteType`,
    `Theory.typeOf`, `Theory.typesWith`, `Formula.equivSentence`, `completeTheory`
    (`ModelTheory/Types`, `ModelTheory/Semantics`).  A notion of isolated type or atomic model is
-   not in the pinned libraries: to be located or added upstream.
+   not in the pinned libraries: to be located or added upstream.  InfinitaryLogic's
+   `isolatingFormula` (`ModelTheory/TypeIsolation`) is a different notion: an `L_{ω₁,ω}` formula
+   isolating a realized infinitary type among the types realized in one structure.
 3. **Scott bound.**  First-order formulas have finite quantifier rank; back-and-forth
    equivalence at the rank of an orbit formula determines the tuple's orbit.  Quote
    `internalScottRank_le_of_orbits_determined` (`Scott/OrbitRank`) to obtain
    `internalScottRank ≤ ω` in the library's convention, the supremum over all tuples of the orbit
-   rank plus one, `⨆ a, orbitRank a + 1` (so finite but unbounded orbit ranks give exactly `ω`).  Sketch: `internalScottRank_le_omega0_of_finite_levels` (proved) and
-   `internalScottRank_le_omega0_of_orbitDefinedBy` (target).  Ingredients: `Formula.toLω`,
+   rank plus one, `⨆ a, orbitRank a + 1` (so finite but unbounded orbit ranks give exactly `ω`).
+   Sketch: `internalScottRank_le_omega0_of_finite_levels` (proved) and
+   `internalScottRank_le_omega0_of_orbitDefinedBy` (target; its hypothesis `[Countable M]` is
+   that of the bridge `BFEquiv_implies_agree_formulas_omega`).  Ingredients: `Formula.toLω`,
    `Formula.realize_toLω` (`Lomega1omega/Operations`), `BFEquiv_implies_agree_formulas_omega`
-   (`Scott/QuantifierRank`).  To be located or added upstream: finiteness of the quantifier rank
-   of `toLω` of a first-order formula, and independence of back-and-forth equivalence at natural
-   levels from the ordinal universe (`internalScottRank` uses `Ordinal.{w}` for a carrier in
-   `Type w`, the quantifier rank uses `Ordinal.{0}`).
+   (`Scott/QuantifierRank`), and, between the ordinal universes (`internalScottRank` uses
+   `Ordinal.{w}` for a carrier in `Type w`, the quantifier rank and the bridge use `Ordinal.{0}`),
+   `BFEquiv.ofOrdinalLift` and `BFEquiv.toOrdinalLift` (`Scott/BackAndForth`).  To be added
+   upstream: finiteness of the quantifier rank of `toLω` of a first-order formula.
 4. **Primeness** (generic, a separate theorem).  A countable structure all of whose types are
    isolated embeds elementarily into every model of its complete theory: enumerate only the
    source, extend finite tuples preserving every first-order formula, and take the union.  The
@@ -330,38 +343,65 @@ countability.  The canonical finite hulls come from layer 2 and the geometry fro
 
 **Import guard.**  The module proving this theorem and the modules it imports must not include
 any module of the finite extension constructions or receiving (layer 3), of the countable chain
-construction or model existence (layers 2 and 3), of stable continuation (layer 4), or of the
+construction or model existence (layers 2 and 3), of structural continuation (layer 4), or of the
 expansion domains (layer 5).  The guard is on the import closure, not only on the direct imports.
-Proposed addition to `scripts/check.sh` (a proposal: the module names are to be fixed when these
-modules exist, and the same check applies to the generic modules of B3.2 and B3.4, whose import
-closure must avoid every construction module):
+The check reads Lean's own record of the import closure, not the source text, so every form of
+import (`public`, `meta`, `import all`, the root module `VaughtConjecture`, indented lines) is
+covered.  The addition to `scripts/check.sh` below is a proposal, not yet part of `scripts/`: the
+module names are to be fixed when these modules exist, and the same check applies to the generic
+modules of B3.2 and B3.4, whose import closure must avoid every construction module.  It consists
+of a driver body `scripts/ImportGuard.lean`, in the pattern of `scripts/AxiomAudit.lean`, run
+through `lake env lean`:
+
+```lean
+/-
+Import guard body for the `VaughtConjecture` library.
+
+`scripts/check.sh` generates, for each guarded module, a driver that imports that module and
+appends the command below.  It fails if the import closure of the module contains a module whose
+name has one of the forbidden prefixes (as a sequence of name components).
+-/
+import Lean
+
+open Lean in
+run_cmd do
+  let some root ← IO.getEnv "IMPORT_GUARD_MODULE" | throwError "IMPORT_GUARD_MODULE is not set"
+  let some pre ← IO.getEnv "IMPORT_GUARD_FORBIDDEN" | throwError "IMPORT_GUARD_FORBIDDEN is not set"
+  let root := root.toName
+  let forbidden := ((pre.splitOn " ").filter (· ≠ "")).map String.toName
+  let closure := (← getEnv).allImportedModuleNames
+  unless closure.contains root do
+    throwError "import guard: the driver does not import {root}"
+  let bad := closure.filter fun m => m != root && forbidden.any (·.isPrefixOf m)
+  unless bad.isEmpty do
+    for m in bad do logError m!"{root} imports {m}, which its import closure must avoid"
+    throwError "import guard failed for {root} ({bad.size} forbidden modules)"
+  logInfo m!"import guard: the import closure of {root} ({closure.size} modules) avoids {forbidden}"
+```
+
+and, in `scripts/check.sh` after the build:
 
 ```sh
 echo "== import guards"
-# import_guard MODULE ERE: fail if the transitive closure of MODULE's imports within
-# VaughtConjecture contains a module whose name matches ERE.
+# import_guard MODULE PREFIX...: fail if the import closure of the built MODULE contains a module
+# named PREFIX or PREFIX.<components>, for one of the PREFIXes.
 import_guard() {
-  local root=$1 forbidden=$2 seen=" " queue=$1 m f
-  [ -f "$(printf '%s' "$root" | tr . /).lean" ] || { echo "ERROR: $root not found" >&2; return 1; }
-  while [ -n "$queue" ]; do
-    m=${queue%% *}; queue=${queue#"$m"}; queue=${queue# }
-    case "$seen" in *" $m "*) continue ;; esac
-    seen="$seen$m "
-    if [ "$m" != "$root" ] && printf '%s\n' "$m" | grep -qE "$forbidden"; then
-      echo "ERROR: $root imports $m, which its import closure must avoid" >&2
-      return 1
-    fi
-    f="$(printf '%s' "$m" | tr . /).lean"
-    [ -f "$f" ] || continue
-    queue="$queue $(sed -nE 's/^(public )?import (VaughtConjecture(\.[A-Za-z0-9_]+)+).*/\2/p' "$f" | tr '\n' ' ')"
-  done
-  echo "ok: import closure of $root avoids $forbidden"
+  local root=$1; shift
+  mkdir -p .lake/import-guard
+  { echo "import $root"; echo "import Lean"; sed -n '/^open Lean in/,$p' scripts/ImportGuard.lean; } \
+    > ".lake/import-guard/$root.lean"
+  IMPORT_GUARD_MODULE=$root IMPORT_GUARD_FORBIDDEN="$*" lake env lean ".lake/import-guard/$root.lean"
 }
-# Placeholders: <HullObstruction> is the module of milestone C; the alternatives name the module
-# prefixes of layers 2 (chain construction), 3, 4, and 5.
+# Placeholders: <HullObstruction> is the module of milestone C; the prefixes name the modules of
+# layers 2 (chain construction), 3, 4, and 5.
 import_guard VaughtConjecture.<HullObstruction> \
-  '^VaughtConjecture\.(<ChainConstruction>|<Receiving>|<StableContinuation>|<Domains>)(\.|$)'
+  VaughtConjecture.<ChainConstruction> VaughtConjecture.<Receiving> \
+  VaughtConjecture.<StructuralContinuation> VaughtConjecture.<Domains>
 ```
+
+A prefix matches whole name components: `VaughtConjecture.Receiving` excludes
+`VaughtConjecture.Receiving` and `VaughtConjecture.Receiving.Core`, not
+`VaughtConjecture.ReceivingData`.
 
 **Upstream ingredients.**  The generic finite-support closure (`FiniteSupportClosure`, with
 `setClosure`) and the whole-hull two-generation hypothesis of `TwoGeneratorCardinality` (the hull
@@ -374,8 +414,9 @@ the stage language at `ω`, their expansions at every stage, the top-free realiz
 structural stable candidate before its modelhood is proved.  In particular no model of `Φ` has an
 infinite set all of whose permutations are induced by automorphisms.
 
-**Regressions.**  A set of exactly four points (the actual threshold); sets of at most three
-points, about which nothing is claimed; uncountable carriers; realizations that are not models.
+**Regressions.**  A set of exactly four points (the threshold of the argument); sets of at most
+three points, about which nothing is claimed; uncountable carriers; realizations that are not
+models.
 
 **Non-claims.**  This is a restriction imposed by the geometry, not by the model-existence
 machinery.  It does not exclude infinite sets of order-indiscernibles, infinite orbits, or

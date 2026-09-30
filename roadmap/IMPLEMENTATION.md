@@ -248,6 +248,7 @@ In the pinned InfinitaryLogic:
 - the Gδ/Polish model-code spaces;
 - `internalScottRank_le_of_orbits_determined` (`Scott/OrbitRank`), used only by the companion
   full-chart orbit theory (milestone B of `COMPANIONS.md`).
+
 `SuggestedInterfaces.lean` checks representative names, so a pin bump that removes one fails
 when the sketch is checked (the checks are run by CI).  Coding a `Type w` carrier on `ℕ` needs a
 transfer of infinitary isomorphism across universes; do not assume that a statement within a
