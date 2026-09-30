@@ -49,6 +49,15 @@ type whose face along `f` is defined and bountiful lifts capped between the imag
 faces of that face, with no assumption on its rows outside the face
 (`StageType.cappedLift_of_restrictFace`).
 
+**Extending lawful labels from a closed face.**  By bountifulness, a lawful section of the
+restriction of a legal scheme to a closed face whose capped observation at a self-visible cap
+agrees with that of a lawful section `Q` of the scheme extends to a lawful section with the
+capped observation of `Q` (`Scheme.IsLegal.exists_isLawful_extend`).  At the cap `⊥` the labels
+of a stage type on the face extend (`StageType.exists_isLawful_extend_label`); and if the face of
+a legal `q'` at stage `β` is the reduction of `p`, the labels of `p` extend to a lawful section
+with the capped observation of `q'` at a self-visible cap `c ≤ β`
+(`StageType.exists_isLawful_lift`).
+
 ## References
 
 Types are [Kni26, Definition 3.1.1], over the domains with their semantics of

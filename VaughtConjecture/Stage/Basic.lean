@@ -61,6 +61,12 @@ only relabels the stage: `t.reduce hβ = t.castLE hαβ` (`reduce_eq_castLE`), w
 reads a stage type at stage `α` as one at the larger stage `β`, with the same scheme and labels;
 relabelling is invisible to reduction (`reduce_castLE`).
 
+**Stage types from lawful sections.**  At a stage `α` that is zero or a limit, a well-formed
+scheme with coded rows and a lawful section `ρ` give the stage type `ofIsLawful` with the
+reduction of `ρ` as labels; if `ρ` extends the labels of `p` along a closed face, its face there
+is `p` (`restrictFace_ofIsLawful`).  Stage reduction is `ofIsLawful` applied to the labels of a
+type (`reduce_eq_ofIsLawful`).
+
 ## References
 
 Stage types are [Kni26, Definition 3.1.1], stage reduction is [Kni26, Definition 3.1.2], and the
