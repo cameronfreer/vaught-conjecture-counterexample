@@ -81,7 +81,7 @@ infinite models.
 ## Placement
 
 This file belongs to Layer 6 of `roadmap/README.md`; the statements here that belong upstream are
-listed in `roadmap/COMPANIONS.md` (Scott sentences and code transport).
+listed in `roadmap/COMPANIONS.md`, A3, **Upstream ingredients**.
 
 ## References
 
