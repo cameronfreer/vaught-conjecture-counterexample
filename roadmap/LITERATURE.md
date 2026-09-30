@@ -14,6 +14,8 @@ The directly proved property is that every infinitary sentence has a countable t
 
 **References:** Edelman–Jamison [EJ85]; Adaricheva [Ada16], Definitions 1–2 and the discussion of algebraic closure systems.
 
+**Source of the plans:** the recursive amalgamation plans and their restriction to visible faces are Knight [Kni26], Definitions 2.1.1 and 2.1.5; their reading as two-extreme convex geometries is the formalization's.
+
 Anti-exchange closure and finitary extension are established notions. In this literature, “algebraic closure operator” means finite character, not model-theoretic `acl`.
 
 **Application here:** the current plan equivalence and global hull theorem put the support geometry literally inside this framework, with the additional two-extreme-point restriction. That restriction must be stated: the construction does not range over all convex geometries. The new binary-operation deduction is in `HULL_ALGEBRA.md`; it is not a theorem attributed to these references. Avoid calling the property “convex dimension two,” which is different terminology.
