@@ -10,17 +10,17 @@ import InfinitaryLogic.FiniteSupportClosure
 
 InfinitaryLogic's `FiniteSupportClosure.setClosure c` extends a closure operator `c` on the
 finite subsets of a type to all subsets by finite character, and `setClosure_unique` shows that
-this is the only finite-character extension agreeing with `c` on finite inputs.  This file
-supplies the remaining item of the roadmap's Layer 0 "Finite closure": equality or equivariance
-on finite hulls extends to the global closure.
+this is the only finite-character extension agreeing with `c` on finite inputs.  This file shows
+that equality or equivariance on finite hulls extends to the global closure.
 
 * `image_setClosure`: if a map `f` carries the `h`-hull of every finite subset of `A` onto the
   `k`-hull of its image, then `f` carries the `h`-closure of `A` onto the `k`-closure of `f '' A`.
   The map need not be injective, and the hypothesis is only required below `A`; an equivalence
-  `e : M ≃ N` with `(h F).image e = k (F.image e)` for all `F` is the motivating case.
+  `e : M ≃ N` with `(h F).image e = k (F.image e)` for all `F` is the motivating case, and it
+  transports closures between different carriers.
 * `setClosure_congr`: two finite hull operators agreeing on the finite subsets of `A` have the
-  same closure of `A`.  (Agreement on all finite sets is `ClosureOperator.ext` followed by
-  `congrArg`; the local form is what transport between different carriers needs.)
+  same closure of `A`.  This is the case `f = id` of `image_setClosure`; agreement on all finite
+  sets is `ClosureOperator.ext` followed by `congrArg`.
 
 No model theory is involved.  See `roadmap/README.md`, Layer 0, "Finite closure".
 -/
@@ -53,15 +53,11 @@ theorem image_setClosure [DecidableEq N] (h : ClosureOperator (Finset M))
     exact ⟨x, ⟨F, hFA, hx⟩, rfl⟩
 
 /-- Two finite hull operators that agree on every finite subset of `A` give the same closure
-of `A`. -/
+of `A`: the case `f = id` of `image_setClosure`. -/
 theorem setClosure_congr (h k : ClosureOperator (Finset M)) {A : Set M}
     (hhk : ∀ F : Finset M, (↑F : Set M) ⊆ A → h F = k F) :
     setClosure h A = setClosure k A := by
-  ext x
-  constructor
-  · rintro ⟨F, hFA, hx⟩
-    exact ⟨F, hFA, hhk F hFA ▸ hx⟩
-  · rintro ⟨F, hFA, hx⟩
-    exact ⟨F, hFA, (hhk F hFA).symm ▸ hx⟩
+  classical
+  simpa using image_setClosure h k id (by simpa using hhk)
 
 end VaughtConjecture.Closure
