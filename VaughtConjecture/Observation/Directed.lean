@@ -14,7 +14,9 @@ Roadmap, Layer 0, "Directed finite observations".  A monotone function `f : P �
 either is eventually constant along `Filter.atTop` or tends to `atTop`.  The outcome is recorded
 by its `ℕ∞`-valued limit `⨆ p, (f p : ℕ∞)`: a finite value `n` means `f` is eventually `n`, and
 `⊤` means `f` escapes every bound.  (That the casts converge to this supremum in the order
-topology is Mathlib's `tendsto_atTop_iSup`; no new notion of convergence is introduced.)
+topology is Mathlib's `tendsto_atTop_iSup`, and the dichotomy is the `ℕ` case of Mathlib's
+topological `tendsto_atTop_of_monotone`; no new notion of convergence is introduced, and the
+statements here avoid the topology imports.)
 
 * `eventually_eq_of_iSup_natCast_eq`, `tendsto_atTop_atTop_of_iSup_natCast_eq_top`, and the
   dichotomy `eventually_eq_or_tendsto_atTop`: these hold on any preorder, directed or not.  By
@@ -28,11 +30,12 @@ topology is Mathlib's `tendsto_atTop_iSup`; no new notion of convergence is intr
   and every function with infinite limit exceeds `N`.  On a nonempty directed preorder,
   `Filter.eventually_atTop` turns this into a single threshold `p₀`.
 * `eventually_comp_eq_iff` and `tendsto_comp_atTop_atTop_iff`: **cofinal reindexing**.  Along a map
-  `g : Q → P` with `Tendsto g atTop atTop` (for monotone `g` on a nonempty directed `Q` this is
-  cofinality of the range, by `Monotone.tendsto_atTop_atTop_iff`; for a cofinal subset take
-  `g = Subtype.val`), the eventual value and the escape of `f ∘ g` are those of `f`.  These two
-  hold for monotone `f` into any partial order, respectively preorder.  The corresponding
-  invariance of the `ℕ∞` limit is Mathlib's `Monotone.iSup_comp_tendsto_atTop`.
+  `g : Q → P` with `Tendsto g l atTop` for a proper filter `l` on `Q` (for `l = atTop` and
+  monotone `g` on a nonempty directed `Q` this is cofinality of the range, by
+  `Monotone.tendsto_atTop_atTop_iff`; for a cofinal subset take `g = Subtype.val`), the eventual
+  value and the escape of `f ∘ g` are those of `f`.  These two hold for monotone `f` into any
+  partial order, respectively preorder.  The corresponding invariance of the `ℕ∞` limit is
+  Mathlib's `Monotone.iSup_comp_tendsto_atTop`.
 -/
 
 namespace VaughtConjecture.Observation
@@ -55,10 +58,8 @@ theorem eventually_eq_of_iSup_natCast_eq (hf : Monotone f) {n : ℕ}
 
 /-- A monotone `ℕ`-valued function whose `ℕ∞` supremum is `⊤` tends to `atTop`. -/
 theorem tendsto_atTop_atTop_of_iSup_natCast_eq_top (hf : Monotone f) (h : ⨆ p, (f p : ℕ∞) = ⊤) :
-    Tendsto f atTop atTop := by
-  refine hf.tendsto_atTop_atTop fun n ↦ ?_
-  obtain ⟨_, ⟨p, rfl⟩, hp⟩ := not_bddAbove_iff.1 (ENat.iSup_natCast_eq_top.1 h) n
-  exact ⟨p, hp.le⟩
+    Tendsto f atTop atTop :=
+  tendsto_atTop_atTop_of_monotone' hf (ENat.iSup_natCast_eq_top.1 h)
 
 /-- **Dichotomy.**  A monotone `ℕ`-valued function on a preorder is eventually constant or tends
 to `atTop`. -/
@@ -108,28 +109,25 @@ theorem eventually_forall_natCast_eq_iSup_or_lt {ι : Type*} [Finite ι] {f : ι
 
 section Reindex
 
-variable [Preorder Q] [Nonempty Q] [IsDirectedOrder Q] {g : Q → P}
+variable {l : Filter Q} [l.NeBot] {g : Q → P}
 
-/-- **Cofinal reindexing preserves the eventual value.**  Along `g` tending to `atTop` on a
-nonempty directed preorder, a monotone `f` into a partial order is eventually `n` iff `f ∘ g` is
-eventually `n`. -/
+/-- **Cofinal reindexing preserves the eventual value.**  Along `g` tending to `atTop` with
+respect to a proper filter `l`, a monotone `f` into a partial order is eventually `n` iff `f ∘ g`
+is eventually `n`. -/
 theorem eventually_comp_eq_iff {β : Type*} [PartialOrder β] {f : P → β} (hf : Monotone f)
-    (hg : Tendsto g atTop atTop) {n : β} :
-    (∀ᶠ q in atTop, f (g q) = n) ↔ ∀ᶠ p in atTop, f p = n := by
+    (hg : Tendsto g l atTop) {n : β} :
+    (∀ᶠ q in l, f (g q) = n) ↔ ∀ᶠ p in atTop, f p = n := by
   refine ⟨fun h ↦ ?_, fun h ↦ hg.eventually h⟩
   obtain ⟨q₀, hq₀⟩ := h.exists
   filter_upwards [eventually_ge_atTop (g q₀)] with p hp
   obtain ⟨q, hpq, hq⟩ := ((hg.eventually_ge_atTop p).and h).exists
   exact le_antisymm (hq ▸ hf hpq) (hq₀ ▸ hf hp)
 
-/-- **Cofinal reindexing preserves escape.**  Along `g` tending to `atTop` on a nonempty directed
-preorder, a monotone `f` into a preorder tends to `atTop` iff `f ∘ g` does. -/
+/-- **Cofinal reindexing preserves escape.**  Along `g` tending to `atTop` with respect to a
+proper filter `l`, a monotone `f` into a preorder tends to `atTop` iff `f ∘ g` does. -/
 theorem tendsto_comp_atTop_atTop_iff {β : Type*} [Preorder β] {f : P → β} (hf : Monotone f)
-    (hg : Tendsto g atTop atTop) :
-    Tendsto (f ∘ g) atTop atTop ↔ Tendsto f atTop atTop := by
-  refine ⟨fun h ↦ hf.tendsto_atTop_atTop fun n ↦ ?_, fun h ↦ h.comp hg⟩
-  obtain ⟨q, hq⟩ := (h.eventually_ge_atTop n).exists
-  exact ⟨g q, hq⟩
+    (hg : Tendsto g l atTop) : Tendsto (f ∘ g) l atTop ↔ Tendsto f atTop atTop :=
+  ⟨tendsto_atTop_of_monotone_of_subseq hf, fun h ↦ h.comp hg⟩
 
 end Reindex
 
