@@ -8,7 +8,11 @@ non-isomorphic countable models, together with the general theory it rests on.
 
 It builds on [Mathlib](https://github.com/leanprover-community/mathlib4) and
 [InfinitaryLogic](https://github.com/cameronfreer/infinitary-logic) (syntax and semantics of
-$L_{\omega_1,\omega}$, Scott analysis, model-code spaces, Morley counting).
+$L_{\omega_1,\omega}$, Scott analysis, model-code spaces, Morley counting).  The intended
+construction obtains its countable models by constructing a finite age of labelled charts and
+reconstructing its classical Fraïssé limit, with the classical theorems taken from the
+computable-model-theory library (ComputableModelTheory) after the repin described in
+[`roadmap/IMPLEMENTATION.md`](roadmap/IMPLEMENTATION.md).
 
 ## Layout
 
