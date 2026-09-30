@@ -21,10 +21,17 @@ of the family.
   their new coordinates.  It is again a potential isomorphism, whose empty pair is the root.
 * `exists_equiv_comp_eq`: for countable `M` and `N`, some isomorphism `e : M ≃[L] N` extends the
   root, `e ∘ a = b`.
-* `exists_sameAtomicType_forall_comp_ne`: membership of the root in the family cannot be weakened
-  to atomic compatibility.  In the two-element order `0 < 1`, the tuples `(0)` and `(1)` have the
-  same atomic type, and the diagonal family is a potential isomorphism, but no automorphism sends
-  `0` to `1`.
+* `exists_potentialIso_sameAtomicType_notMem_family`: the two-element order `0 < 1` has a
+  potential isomorphism with itself and one-element tuples `a`, `b` of the same atomic type such
+  that `⟨1, a, b⟩` is not in its family and no automorphism sends `a` to `b`.  So membership of
+  the root in the family cannot be weakened to atomic compatibility.
+
+For `M = N`, `exists_equiv_comp_eq` is InfinitaryLogic's
+`FirstOrder.Language.exists_automorphism_of_bfEquiv_all` (`InfinitaryLogic.Scott.OrbitRank`)
+composed with `FirstOrder.Language.PotentialIso.family_bfEquiv`, and `aboveRoot` is the
+family-based analogue of that module's pointed potential isomorphism `pointedPotentialIso`; the
+proof here follows the same pointed back-and-forth argument.  The addition is the two-structure
+form, `M` and `N` possibly distinct.
 
 Mathlib's `FirstOrder.Language.FGEquiv.equiv_between_cg` also extends a given finite partial
 isomorphism, but assumes that *every* finitely generated partial isomorphism extends in both
@@ -52,8 +59,28 @@ def aboveRoot {M N : Type*} [L.Structure M] [L.Structure N] {k : ℕ} {a : Fin k
     (fun hcd m ↦ by simp only [Fin.append_snoc]; exact P.forth _ hcd m)
     (fun hcd n' ↦ by simp only [Fin.append_snoc]; exact P.back _ hcd n')
 
+@[simp]
+theorem mem_aboveRoot_family {M N : Type*} [L.Structure M] [L.Structure N] {k : ℕ}
+    {a : Fin k → M} {b : Fin k → N} {P : PotentialIso L M N} {h : ⟨k, a, b⟩ ∈ P.family} {n : ℕ}
+    {c : Fin n → M} {d : Fin n → N} :
+    (⟨n, c, d⟩ : Σ n, (Fin n → M) × (Fin n → N)) ∈ (aboveRoot P h).family ↔
+      (⟨k + n, Fin.append a c, Fin.append b d⟩ : Σ n, (Fin n → M) × (Fin n → N)) ∈ P.family :=
+  Iff.rfl
+
+/-- Above the empty pair, `aboveRoot` has the same family as `P`. -/
+theorem aboveRoot_empty_mem_family {M N : Type*} [L.Structure M] [L.Structure N]
+    (P : PotentialIso L M N) : (aboveRoot P P.empty_mem).family = P.family := by
+  ext ⟨n, c, d⟩
+  have key : ∀ m (hm : m = n), (⟨m, c ∘ Fin.cast hm, d ∘ Fin.cast hm⟩ :
+      Σ n, (Fin n → M) × (Fin n → N)) = ⟨n, c, d⟩ := by rintro _ rfl; rfl
+  rw [mem_aboveRoot_family, Fin.elim0_append, Fin.elim0_append, key]
+
 /-- **Rooted back-and-forth.**  For countable structures, every member `⟨k, a, b⟩` of a potential
-isomorphism is extended by an isomorphism: some `e : M ≃[L] N` satisfies `e ∘ a = b`. -/
+isomorphism is extended by an isomorphism: some `e : M ≃[L] N` satisfies `e ∘ a = b`.
+
+For `M = N` this is InfinitaryLogic's `FirstOrder.Language.exists_automorphism_of_bfEquiv_all`
+composed with `FirstOrder.Language.PotentialIso.family_bfEquiv`; the proof follows the pointed
+back-and-forth argument there, with `aboveRoot` in place of the pointed potential isomorphism. -/
 theorem exists_equiv_comp_eq {M N : Type w} [L.Structure M] [L.Structure N] [Countable M]
     [Countable N] {k : ℕ} {a : Fin k → M} {b : Fin k → N} (P : PotentialIso L M N)
     (h : ⟨k, a, b⟩ ∈ P.family) : ∃ e : M ≃[L] N, ⇑e ∘ a = b := by
@@ -68,22 +95,24 @@ section Example
 
 attribute [local instance] Language.orderStructure
 
-/-- **Atomic compatibility of a root is not enough.**  In the two-element order `Fin 2`, which is
-potentially isomorphic to itself, the one-element tuples `(0)` and `(1)` have the same atomic type,
-but no automorphism sends `0` to `1`. -/
-theorem exists_sameAtomicType_forall_comp_ne :
-    ∃ a b : Fin 1 → Fin 2, SameAtomicType (L := Language.order) a b ∧
-      ∀ e : Fin 2 ≃[Language.order] Fin 2, ⇑e ∘ a ≠ b := by
-  refine ⟨![0], ![1], fun idx ↦ ?_, fun e he ↦ ?_⟩
-  · rcases idx with ⟨i, j⟩ | ⟨⟨⟩, f⟩
-    · simp [AtomicIdx.holds, Subsingleton.elim i j]
-    · change (![0] ∘ f) 0 ≤ (![0] ∘ f) 1 ↔ (![1] ∘ f) 0 ≤ (![1] ∘ f) 1
-      simp
-  · have h0 : e 0 = 1 := congrFun he 0
+/-- **Atomic compatibility of a root is not enough.**  The two-element order `Fin 2` has a
+potential isomorphism `P` with itself and one-element tuples `a`, `b` of the same atomic type such
+that `⟨1, a, b⟩ ∉ P.family` and no automorphism `e` satisfies `e ∘ a = b`. -/
+theorem exists_potentialIso_sameAtomicType_notMem_family :
+    ∃ (P : PotentialIso Language.order (Fin 2) (Fin 2)) (a b : Fin 1 → Fin 2),
+      SameAtomicType (L := Language.order) a b ∧ ⟨1, a, b⟩ ∉ P.family ∧
+        ∀ e : Fin 2 ≃[Language.order] Fin 2, ⇑e ∘ a ≠ b := by
+  have hne : ∀ e : Fin 2 ≃[Language.order] Fin 2, ⇑e ∘ ![0] ≠ ![1] := fun e he ↦ by
+    have h0 : e 0 = 1 := congrFun he 0
     have h01 : e 0 ≤ e 1 := (e.map_rel (orderRel.le : Language.order.Relations 2) ![0, 1]).2
       (show (0 : Fin 2) ≤ 1 by decide)
     rw [h0] at h01
     exact absurd (e.injective (h0.trans (le_antisymm h01 (Fin.le_last _)))) (by decide)
+  refine ⟨PotentialIso.refl _, ![0], ![1], fun idx ↦ ?_,
+    fun h ↦ (exists_equiv_comp_eq _ h).elim hne, hne⟩
+  rcases idx with ⟨i, j⟩ | ⟨⟨⟩, f⟩
+  · simp [AtomicIdx.holds, Subsingleton.elim i j]
+  · simp [AtomicIdx.holds, Structure.RelMap, Matrix.cons_val_fin_one]
 
 end Example
 
