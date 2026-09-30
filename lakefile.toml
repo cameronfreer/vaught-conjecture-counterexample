@@ -11,12 +11,13 @@ platformIndependent = true
 # fork commit carrying the in-flight ModelTheory/Infinitary and Ordinal.lift PR stack), and the
 # toolchain must equal InfinitaryLogic's (checked by `scripts/check.sh`).  To bump: change
 # `rev`, run `lake update InfinitaryLogic`, copy its `lean-toolchain`, and commit the manifest.
-# Pinned to the merge commit of cameronfreer/infinitary-logic#140 (Scott processes: rank
-# comparison), which includes #134 and the Lean 4.35.0-rc3 port (#130).
+# Pinned to the merge commit of cameronfreer/infinitary-logic#141 (orbit-formula thresholds and
+# local-automorphism preservation), which includes #140 (Scott processes: rank comparison), #134
+# and the Lean 4.35.0-rc3 port (#130).
 [[require]]
 name = "InfinitaryLogic"
 git = "https://github.com/cameronfreer/infinitary-logic"
-rev = "a640bbb511562825f0f308e8dbeb78a1357cb6e5"
+rev = "cca69494dd16ffa5c9e2bfef8827b094321cedc2"
 
 # Authoritative: every module under `VaughtConjecture/` is built whether or not the root re-exports it,
 # so an orphan file cannot escape the build or the audits.  The root `VaughtConjecture.lean` is
