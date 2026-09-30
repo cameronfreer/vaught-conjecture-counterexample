@@ -24,7 +24,12 @@ Visibility replacement of an ordinal at threshold `k` with value `i` replaces it
 * For `i ≤ k` it is monotone (`monotone_visibilityReplace`), hence commutes with `min` and `max`,
   and it cannot push a label above a self-visible bound (`visibilityReplace_le_of_le`).
 * Replacing again at the full threshold forgets the first value
-  (`visibilityReplace_self_visibilityReplace`).
+  (`visibilityReplace_self_visibilityReplace`); a replacement below the threshold is undone by a
+  second one (`exists_visibilityReplace_visibilityReplace`).
+* At a stage `α` that is zero or a limit, `α + K` is self-visible at every `k ≤ K`
+  (`isSelfVisible_coe_add`), and replacement with a value `i ≤ K` keeps a label at most `α + K`
+  at most `α + K` (`visibilityReplace_le_coe_add`); finitely many labels below `α` have a common
+  bound below `α` that is self-visible at a given threshold (`exists_isSelfVisible_bound`).
 * On a natural number `n` it gives `i` if `n < k` and `n` otherwise (`visibilityReplace_natCast`,
   with `visibilityReplace_zero`, `visibilityReplace_one`, `visibilityReplace_ofNat` for numerals).
 
@@ -41,7 +46,7 @@ namespace VaughtConjecture.Label
 
 open Ordinal
 
-variable {α o : Ordinal.{u}} {k k' i : ℕ} {x y c : Label.{u}}
+variable {α o : Ordinal.{u}} {K k k' i : ℕ} {x y c : Label.{u}}
 
 /-! ### Visibility replacement of labels -/
 
@@ -141,6 +146,28 @@ theorem le_visibilityReplace (h : k ≤ i + 1) (x : Label.{u}) : x ≤ visibilit
   | coe o => simpa using Ordinal.le_visibilityReplace h o
   | top => exact le_rfl
 
+/-- At a stage `α` that is zero or a limit, visibility replacement with a value `i ≤ K` keeps a
+label at most `α + K` at most `α + K`. -/
+theorem visibilityReplace_le_coe_add (hα : Order.IsSuccPrelimit α)
+    (h : x ≤ ((α + K : Ordinal.{u}) : Label.{u})) (hi : i ≤ K) (k : ℕ) :
+    visibilityReplace k i x ≤ ((α + K : Ordinal.{u}) : Label.{u}) := by
+  induction x using recBotCoeTop with
+  | bot => exact bot_le
+  | coe o => exact WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr
+      (Ordinal.visibilityReplace_le_add hα (WithTop.coe_le_coe.mp (WithBot.coe_le_coe.mp h)) hi k))
+  | top => exact absurd h (not_le.mpr (WithBot.coe_lt_coe.mpr (WithTop.coe_lt_top _)))
+
+/-- A label is recovered from its visibility replacement below the threshold by a second
+visibility replacement below the threshold. -/
+theorem exists_visibilityReplace_visibilityReplace (hi : i < k) (x : Label.{u}) :
+    ∃ j < k, visibilityReplace k j (visibilityReplace k i x) = x := by
+  induction x using recBotCoeTop with
+  | bot => exact ⟨i, hi, rfl⟩
+  | coe o =>
+    obtain ⟨j, hj, h⟩ := Ordinal.exists_visibilityReplace_visibilityReplace hi o
+    exact ⟨j, hj, by simp only [visibilityReplace_coe, h]⟩
+  | top => exact ⟨i, hi, rfl⟩
+
 /-! ### Self-visible labels -/
 
 /-- A label is *self-visible* at threshold `k` if visibility replacement at threshold `k` with
@@ -182,6 +209,18 @@ def IsSelfVisible (k : ℕ) (x : Label.{u}) : Prop := visibilityReplace k k x = 
 @[simp] theorem isSelfVisible_ofNat (n : ℕ) [n.AtLeastTwo] :
     IsSelfVisible k (ofNat(n) : Label.{u}) ↔ k ≤ ofNat(n) :=
   isSelfVisible_natCast n
+
+/-- The finite part of `α + K` is `K` when `α` is zero or a limit. -/
+private theorem add_natCast_mod_omega0 (hα : Order.IsSuccPrelimit α) (K : ℕ) :
+    (α + K) % ω = K := by
+  obtain ⟨b, rfl⟩ := isSuccPrelimit_iff_omega0_dvd.mp hα
+  rw [Ordinal.mul_add_mod_self, natCast_mod_omega0]
+
+/-- At a stage `α` that is zero or a limit, the ordinal `α + K` is self-visible at every
+threshold `k ≤ K`. -/
+theorem isSelfVisible_coe_add (hα : Order.IsSuccPrelimit α) (hk : k ≤ K) :
+    IsSelfVisible k ((α + K : Ordinal.{u}) : Label.{u}) :=
+  isSelfVisible_coe.mpr (by rw [add_natCast_mod_omega0 hα]; exact_mod_cast hk)
 
 /-- A self-visible label is fixed by visibility replacement at its threshold, with any value. -/
 theorem IsSelfVisible.visibilityReplace_eq (h : IsSelfVisible k x) (i : ℕ) :
@@ -226,5 +265,22 @@ theorem visibilityReplace_min_of_isSelfVisible (hi : i ≤ k) (hc : IsSelfVisibl
     (x : Label.{u}) :
     visibilityReplace k i (min x c) = min (visibilityReplace k i x) c := by
   rw [visibilityReplace_min hi, hc.visibilityReplace_eq]
+
+/-- Finitely many labels, together with a label `b` below a stage `α` that is zero or a limit,
+have a common upper bound below `α` that is self-visible at a given threshold `n`: every one of
+the labels that lies below `α` lies below it. -/
+theorem exists_isSelfVisible_bound {ι : Type*} [Finite ι] (hα : Order.IsSuccPrelimit α) (n : ℕ)
+    {b : Label.{u}} (hb : b < α) (f : ι → Label.{u}) :
+    ∃ c, b ≤ c ∧ c < α ∧ IsSelfVisible n c ∧ ∀ t, f t < α → f t ≤ c := by
+  have := Fintype.ofFinite ι
+  set s := max b (Finset.univ.sup fun t ↦ if f t < α then f t else ⊥)
+  have hs : s < α := max_lt hb ((Finset.sup_lt_iff (WithBot.bot_lt_coe _)).mpr fun t _ ↦ by
+    split_ifs with h
+    exacts [h, WithBot.bot_lt_coe _])
+  have hsc : s ≤ visibilityReplace n n s := le_visibilityReplace (by omega) s
+  refine ⟨_, (le_max_left _ _).trans hsc, (visibilityReplace_lt_iff hα).mpr hs,
+    visibilityReplace_self_visibilityReplace le_rfl s, fun t ht ↦ ?_⟩
+  refine le_trans ?_ ((le_max_right _ _).trans hsc)
+  simpa [ht] using Finset.le_sup (f := fun t ↦ if f t < α then f t else ⊥) (Finset.mem_univ t)
 
 end VaughtConjecture.Label
