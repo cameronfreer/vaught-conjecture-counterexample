@@ -15,7 +15,7 @@ concrete objects of the construction (charts, realizations, the density sentence
 expansion domains), each under exactly its stated hypotheses, together with the generic theorems
 they specialize.  A structure whose fields assert the desired conclusions, with projection lemmas
 reading them back, does not complete any target.  A generic theorem proved with its hypotheses
-left undischarged for the construction is progress on a target, not its completion.  The rules
+not yet proved for the construction is progress on a target, not its completion.  The rules
 of `README.md` ("Library conventions") apply, including the terminology table and the keep-list.
 The literature these milestones rely on is recorded in `LITERATURE.md`, §7.
 
@@ -80,9 +80,10 @@ of the classes outside `D_η`, and `ℓ_η` the disjunction of the Scott sentenc
 the loss.  For (3): `w_η` satisfies `ℓ_η` and `w_{η+1}` does not, both lie in `D_η`, and they
 agree on every sentence of rank at most `η`; hence `η < qrank ℓ_η`.
 
-**Regressions.**  `η = 0`, where `D_0 = Q` is defined by a sentence of rank `0` (the bound in (3)
-concerns losses and `D_{η+1}`, not `D_η`); a nonzero countable limit `η`, where `D_η = ⋂_{ξ<η} D_ξ`
-and the agreement used is the one at the limit itself; a loss consisting of a single class.
+**Special cases.**  `η = 0`, where `D_0 = Q` is defined by a sentence of rank `0` (the bound in
+(3) concerns losses and `D_{η+1}`, not `D_η`); a nonzero countable limit `η`, where
+`D_η = ⋂_{ξ<η} D_ξ` and the agreement used is the one at the limit itself; a loss consisting of a
+single class.
 
 **Non-claims.**  No effective or uniform choice of `δ_η` or `ℓ_η`: they depend on enumerations of
 countable sets of classes.  No upper bound on their quantifier rank.  No claim that `δ_η` is a
@@ -106,7 +107,7 @@ statement holds for any choice of witnesses in the domains.
 **Instantiation.**  `w_η` the base class of the top-free witness at block `η`; the threshold for
 `ψ` is `qrank ψ`, a countable ordinal.
 
-**Regressions.**  `ψ` of rank `0`; `η = qrank ψ` exactly (the threshold is attained, not only
+**Special cases.**  `ψ` of rank `0`; `η = qrank ψ` exactly (the threshold is attained, not only
 exceeded); `η` a limit; the exclusion of `ψ, ¬ψ ∈ T∞` together, which uses the uncountability of
 `Q`.
 
@@ -158,15 +159,21 @@ the countable back-and-forth step `PotentialIso.countable_toEquiv_graph` are sta
 universe); a named
 lemma that the Scott sentence of a code isolates its class on a presentation (currently the
 content of the proof of `isolatedPresentation_of_surjective`, whose statement is existential).
+Statements proved in `VaughtConjecture.MainTheorem.Spectrum` for want of upstream versions, with
+their natural upstream homes: `realize_boundedFormulaω_equiv` and `realize_sentenceω_equiv` become
+redundant once `BoundedFormulaω.realize_equiv` and `LomegaEquiv.of_equiv` are generalized in
+place to carriers in different universes; `qrank_lt_omega_one` (`Lomega1omega/QuantifierRank`);
+`classTruth` with its lemmas (`Descriptive/StructureIsoSetoid`) and `exists_mem_modelsOf_equiv`
+(`Descriptive/CodeTransport`).
 
 **Instantiation.**  The sentence `Φ`, its presentation `Q`, and its `T∞`: every model of `Φ` of
 any cardinality either is `L_{ω₁,ω}`-equivalent to a countable model of `Φ` through a Scott
 sentence, or has theory `T∞`.
 
-**Regressions.**  `N` countable (case (S) with its own Scott sentence; so no countable model of `Φ`
-satisfies `T∞`); `N` on `ℕ` and on another countable carrier; `N` in a universe different from
-the codes'; the finite case, excluded by hypothesis (a finite structure is not coded on `ℕ`, and
-for a sentence with finite models the dichotomy can fail).
+**Special cases.**  `N` countable (case (S) with its own Scott sentence; so no countable model of
+`Φ` satisfies `T∞`); `N` on `ℕ` and on another countable carrier; `N` in a universe different from
+the codes'; the finite case, excluded by hypothesis (a finite structure is not coded on `ℕ`, and for
+a sentence with finite models the dichotomy can fail).
 
 **Non-claims.**  Case (S) gives infinitary agreement, not an isomorphism between differently
 sized models.  No uncountable model of `Φ` is asserted to exist, in either case.  No model of all
@@ -223,7 +230,7 @@ concern classes of finitely generated structures under all embeddings and are no
 
 **Instantiation.**  The charts occurring in the top-free realizations at block `ξ`.
 
-**Regressions.**  The empty root (`k = 0`, giving JEP); a root equal to one of the two charts;
+**Special cases.**  The empty root (`k = 0`, giving JEP); a root equal to one of the two charts;
 `p₁ = p₂` with `f₁ = f₂`; a root that is the hull of two of its points but has more than two
 points (`SEMANTIC_CONTRACT.md`, item 2); distinct cells sharing a graded index.
 
@@ -252,9 +259,9 @@ repeated coordinates are allowed), `PotentialIso.family_bfEquiv`, and
 **Instantiation.**  The top-free witness at block `ξ`, as a structure in the stage chart
 language at `λ_ξ`.
 
-**Regressions.**  The empty tuple (the identity automorphism); tuples with repeated coordinates;
-`f` the identity; a two-point tuple whose hull is large; charts of different sizes containing the
-same tuple.
+**Special cases.**  The empty tuple (the identity automorphism); tuples with repeated
+coordinates; `f` the identity; a two-point tuple whose hull is large; charts of different sizes
+containing the same tuple.
 
 **Non-claims.**  No proper (non-surjective) self-embedding is constructed or asserted to exist.
 Nothing about realizations with top labels, about embeddings between different realizations, or
@@ -293,10 +300,10 @@ base reduct.  Search the pinned libraries before reproducing these generic argum
    rank plus one, `⨆ a, orbitRank a + 1` (so finite but unbounded orbit ranks give exactly `ω`).
    Sketch: `internalScottRank_le_omega0_of_finite_levels` (proved) and
    `internalScottRank_le_omega0_of_orbitDefinedBy` (target; its hypothesis `[Countable M]` is
-   that of the bridge `BFEquiv_implies_agree_formulas_omega`).  Ingredients: `Formula.toLω`,
+   that of the lemma `BFEquiv_implies_agree_formulas_omega`).  Ingredients: `Formula.toLω`,
    `Formula.realize_toLω` (`Lomega1omega/Operations`), `BFEquiv_implies_agree_formulas_omega`
    (`Scott/QuantifierRank`), and, between the ordinal universes (`internalScottRank` uses
-   `Ordinal.{w}` for a carrier in `Type w`, the quantifier rank and the bridge use `Ordinal.{0}`),
+   `Ordinal.{w}` for a carrier in `Type w`, the quantifier rank and that lemma use `Ordinal.{0}`),
    `BFEquiv.ofOrdinalLift` and `BFEquiv.toOrdinalLift` (`Scott/BackAndForth`).  To be added
    upstream: finiteness of the quantifier rank of `toLω` of a first-order formula.
 4. **Primeness** (generic, a separate theorem).  A countable structure all of whose types are
@@ -311,7 +318,7 @@ base reduct.  Search the pinned libraries before reproducing these generic argum
 its orbits are defined by the existential formulas `θ_a`; it is atomic; its internal Scott rank is
 at most `ω`; it is a prime model of its complete first-order theory in that language.
 
-**Regressions.**  The empty tuple (its orbit formula is `∃ z̄, P_p(z̄)` for the chosen chart);
+**Special cases.**  The empty tuple (its orbit formula is `∃ z̄, P_p(z̄)` for the chosen chart);
 repeated coordinates (`ι` not injective); a tuple lying in charts of different sizes (the orbit
 formula does not depend on the chart chosen, up to equivalence in `M`); universe independence
 (source in `Type w`, target in `Type w'` for primeness; `Ordinal.{w}` for the internal Scott
@@ -423,7 +430,7 @@ the stage language at `ω`, their expansions at every stage, the top-free realiz
 structural stable candidate before its modelhood is proved.  In particular no model of `Φ` has an
 infinite set all of whose permutations are induced by automorphisms.
 
-**Regressions.**  A set of exactly four points (the threshold of the argument); sets of at most
+**Special cases.**  A set of exactly four points (the threshold of the argument); sets of at most
 three points, about which nothing is claimed; uncountable carriers; realizations that are not
 models.
 
