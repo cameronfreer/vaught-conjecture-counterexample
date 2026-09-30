@@ -11,8 +11,8 @@ import Mathlib.Data.Set.Countable
 Roadmap, Layer 0, "Counting and observation"; semantic contract item 8.  A type `I` is countable
 as soon as countably many conditions `P c` cover it and each condition holds of at most one
 element.  The conditions may overlap: no disjointness, canonical descriptor, or classifying
-invariant is required.  The intended client counts terminal isomorphism classes through the
-countable index `(Σ n, S n) ⊕ ℕ ⊕ Unit`, where each condition is satisfied by at most one class.
+invariant is required.  This is applied to count terminal isomorphism classes through the countable
+index `(Σ n, S n) ⊕ ℕ ⊕ Unit`, where each condition is satisfied by at most one class.
 -/
 
 namespace VaughtConjecture.Counting

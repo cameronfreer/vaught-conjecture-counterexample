@@ -15,18 +15,16 @@ types: an observed value need not be a lawful section, and no cap endomorphism o
 assumed.  Nor is `r` assumed injective.
 
 The *observation fibre* of `q` is `obsY ⁻¹' {obsY q}`, the set of sections observed like `q`
-(Mathlib's preimage of a singleton; no separate "ball" is defined).  *Lifting at `q`* says that
-every face section `p` observed like `r q` is the face of some section observed like `q`:
-`∀ p, obsX p = obsX (r q) → ∃ q', r q' = p ∧ obsY q' = obsY q`.
+(Mathlib's preimage of a singleton; no separate "ball" is defined).  *Lifting at `q`* is, by
+definition of `Set.SurjOn`, the statement `SurjOn r (obsY ⁻¹' {obsY q}) (obsX ⁻¹' {obsX (r q)})`:
+every face section observed like `r q` is the face of some section observed like `q`.
 
-* `surjOn_fiber_iff`: lifting at `q` is `Set.SurjOn r` from the observation fibre of `q` onto
-  the observation fibre of `r q`.  No hypothesis is needed.
 * `image_fiber_eq_iff`: if the observations are compatible at `q` (sections observed like `q`
   have faces observed like `r q`, i.e. `Set.MapsTo r` between the two fibres), then lifting at
   `q` is equality of the image of the fibre of `q` with the fibre of `r q`.
 
-Both statements are pointwise in `q`; the global lifting property quantifies them over all
-`q`.  The second reduces to the first through Mathlib's `Set.image_eq_iff_surjOn_mapsTo`.
+The statement is pointwise in `q`; the global lifting property quantifies it over all `q`.  It
+is Mathlib's `Set.image_eq_iff_surjOn_mapsTo` with the `MapsTo` conjunct discharged.
 -/
 
 namespace VaughtConjecture.Observation
@@ -35,23 +33,14 @@ open Set
 
 variable {X Y OX OY : Type*} (r : Y → X) (obsX : X → OX) (obsY : Y → OY) (q : Y)
 
-/-- **Lifting is fibre surjectivity.**  Every face section observed like `r q` is the face of a
-section observed like `q` iff `r` maps the observation fibre of `q` onto the observation fibre of
-`r q`. -/
-theorem surjOn_fiber_iff :
-    SurjOn r (obsY ⁻¹' {obsY q}) (obsX ⁻¹' {obsX (r q)}) ↔
-      ∀ p, obsX p = obsX (r q) → ∃ q', r q' = p ∧ obsY q' = obsY q := by
-  simp only [SurjOn, subset_def, mem_preimage, mem_singleton_iff, mem_image]
-  exact forall_congr' fun _ ↦ imp_congr_right fun _ ↦ exists_congr fun _ ↦ and_comm
-
 /-- **Lifting is fibre image equality under compatibility.**  If every section observed like `q`
-has its face observed like `r q`, then every face section observed like `r q` lifts to a section
-observed like `q` iff the image under `r` of the observation fibre of `q` is exactly the
-observation fibre of `r q`. -/
+has its face observed like `r q`, then the image under `r` of the observation fibre of `q` is
+exactly the observation fibre of `r q` iff `r` maps the former onto the latter, i.e. iff every
+face section observed like `r q` lifts to a section observed like `q`. -/
 theorem image_fiber_eq_iff (hcompat : ∀ q', obsY q' = obsY q → obsX (r q') = obsX (r q)) :
     r '' (obsY ⁻¹' {obsY q}) = obsX ⁻¹' {obsX (r q)} ↔
-      ∀ p, obsX p = obsX (r q) → ∃ q', r q' = p ∧ obsY q' = obsY q := by
-  rw [image_eq_iff_surjOn_mapsTo, surjOn_fiber_iff, and_iff_left_iff_imp]
+      SurjOn r (obsY ⁻¹' {obsY q}) (obsX ⁻¹' {obsX (r q)}) := by
+  rw [image_eq_iff_surjOn_mapsTo, and_iff_left_iff_imp]
   exact fun _ q' hq' ↦ hcompat q' hq'
 
 end VaughtConjecture.Observation
