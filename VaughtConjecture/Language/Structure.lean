@@ -35,19 +35,20 @@ assignments on `M` are exactly the structures of realizations on `M`
 of a structure always has legal types (`baseLanguage.hasLegalTypes_toRealization`).
 
 **Transport and isomorphism.**  The structure of the transport `R.map e` of a realization along a
-bijection of carriers is the structure induced by `e` (`Realization.toStructure_map`).  An
-isomorphism of realizations is an isomorphism of their structures (`Realization.Iso.toEquiv`), and
-conversely for realizations with legal types an isomorphism of structures is an isomorphism of
-realizations (`Realization.isIso_iff_nonempty_equiv`).  On the structure side, isomorphic type
-assignments have isomorphic realizations and conversely
-(`baseLanguage.isIso_toRealization_iff`).
+bijection of carriers is the structure induced by `e` (`Realization.toStructure_map`).  So an
+isomorphism of realizations is an isomorphism of their structures
+(`Realization.Iso.toStructureEquiv`, from `Equiv.inducedStructureEquiv`), and conversely for
+realizations with legal types an isomorphism of structures is an isomorphism of realizations
+(`Realization.isIso_iff_nonempty_equiv`); the converse pulls tuples back along the isomorphism
+(`relMap_trans_symm_toEmbedding`, stated for an arbitrary language).  On the structure side,
+isomorphic type assignments have isomorphic realizations and conversely
+(`baseLanguage.isIso_toRealization_iff`, from the round trips).
 
 ## Placement
 
-`Realization.HasLegalTypes` belongs in `VaughtConjecture.Realization.Basic`, and
-`Realization.IsModel.hasLegalTypes` in `VaughtConjecture.Realization.Model`, where the legality
-field of `Realization.IsModel` can then be stated through it.  They are stated here so that those
-files are unchanged.
+`Realization.HasLegalTypes` and `Realization.IsModel.hasLegalTypes` belong in earlier files (the
+legality field of `Realization.IsModel` can then be stated through the former); their destinations
+are in the placement list of `VaughtConjecture.Language.Basic`.
 
 ## References
 
@@ -64,6 +65,13 @@ namespace VaughtConjecture
 open FirstOrder Language Structure Ordinal baseLanguage
 
 variable {M : Type v} {N : Type w} {n : ℕ}
+
+/-- **Pulling a tuple back along an isomorphism of structures**: a relation holds of an injective
+tuple of the target exactly when it holds of its pullback `t.trans e.symm.toEmbedding`. -/
+theorem relMap_trans_symm_toEmbedding {L : Language} [L.Structure M] [L.Structure N]
+    (e : M ≃[L] N) {k : ℕ} (r : L.Relations k) (t : Fin k ↪ N) :
+    RelMap r ⇑(t.trans (e : M ≃ N).symm.toEmbedding) ↔ RelMap r ⇑t :=
+  e.symm.map_rel r t
 
 namespace Realization
 
@@ -107,22 +115,26 @@ theorem toStructure_map (e : M ≃ N) :
 
 variable {R} {S : Realization.{u, w} ω N}
 
-/-- An **isomorphism of realizations** is an isomorphism of their structures. -/
-def Iso.toEquiv (i : R.Iso S) : @Language.Equiv baseLanguage.{u} M N R.toStructure S.toStructure :=
+/-- An **isomorphism of realizations** is an isomorphism of their structures: along `e`, the
+structure of `R.map e` is the structure induced by `e` (`toStructure_map`), and `e` is an
+isomorphism onto the induced structure (`Equiv.inducedStructureEquiv`). -/
+def Iso.toStructureEquiv (i : R.Iso S) :
+    @Language.Equiv baseLanguage.{u} M N R.toStructure S.toStructure :=
   letI := R.toStructure
   letI := S.toStructure
   { toEquiv := i.1
     map_fun' := fun f ↦ isEmptyElim f
-    map_rel' := fun {k} p xs ↦ by
+    map_rel' := fun p xs ↦ by
       obtain ⟨e, rfl⟩ := i
-      change (∃ h, R.eval ((⟨e ∘ xs, h⟩ : Fin k ↪ N).trans e.symm.toEmbedding) = _) ↔ _
-      refine ⟨fun ⟨h, hp⟩ ↦ ⟨h.of_comp, ?_⟩, fun ⟨h, hp⟩ ↦ ⟨e.injective.comp h, ?_⟩⟩ <;>
-        convert hp using 3 <;> ext <;> simp }
+      have h := @Language.Equiv.map_rel _ M N R.toStructure (Equiv.inducedStructure e)
+        (Equiv.inducedStructureEquiv e) _ p xs
+      rwa [Equiv.toFun_inducedStructureEquiv, ← toStructure_map] at h }
 
 /-- The underlying bijection of the isomorphism of structures is that of the isomorphism of
 realizations. -/
-@[simp] theorem Iso.toEquiv_toEquiv (i : R.Iso S) :
-    @Language.Equiv.toEquiv baseLanguage.{u} M N R.toStructure S.toStructure i.toEquiv = i.1 :=
+@[simp] theorem Iso.toStructureEquiv_toEquiv (i : R.Iso S) :
+    @Language.Equiv.toEquiv baseLanguage.{u} M N R.toStructure S.toStructure
+      i.toStructureEquiv = i.1 :=
   rfl
 
 /-- **Isomorphisms of structures are isomorphisms of realizations**: for realizations with legal
@@ -135,11 +147,10 @@ theorem map_eq_of_equiv (hR : R.HasLegalTypes) (hS : S.HasLegalTypes)
   let := S.toStructure
   ext k t : 1
   rw [map_eval]
-  set t' : Fin k ↪ M := t.trans (e : M ≃ N).symm.toEmbedding
-  have ht : e ∘ t' = t := funext fun i ↦ by simp [t']
   have key (q : baseLanguage.{u}.Relations k) :
-      R.eval t' = some (type q) ↔ S.eval t = some (type q) := by
-    rw [← relMap_toStructure_embedding, ← relMap_toStructure_embedding, ← e.map_rel, ht]
+      R.eval (t.trans (e : M ≃ N).symm.toEmbedding) = some (type q) ↔ S.eval t = some (type q) := by
+    rw [← relMap_toStructure_embedding, ← relMap_toStructure_embedding,
+      relMap_trans_symm_toEmbedding]
   refine Option.ext fun q ↦ ⟨fun h ↦ ?_, fun h ↦ ?_⟩
   · exact (key (symbol q (hR _ _ h))).mp h
   · exact (key (symbol q (hS _ _ h))).mpr h
@@ -148,7 +159,7 @@ theorem map_eq_of_equiv (hR : R.HasLegalTypes) (hS : S.HasLegalTypes)
 types. -/
 theorem isIso_iff_nonempty_equiv (hR : R.HasLegalTypes) (hS : S.HasLegalTypes) :
     R.IsIso S ↔ Nonempty (@Language.Equiv baseLanguage.{u} M N R.toStructure S.toStructure) :=
-  ⟨fun ⟨i⟩ ↦ ⟨i.toEquiv⟩, fun ⟨e⟩ ↦ ⟨⟨_, map_eq_of_equiv hR hS e⟩⟩⟩
+  ⟨fun ⟨i⟩ ↦ ⟨i.toStructureEquiv⟩, fun ⟨e⟩ ↦ ⟨⟨_, map_eq_of_equiv hR hS e⟩⟩⟩
 
 end Realization
 
@@ -279,9 +290,8 @@ theorem toRealization_map (h : IsTypeAssignment M) (e : M ≃[baseLanguage.{u}] 
   ext k t : 1
   rw [Realization.map_eval]
   set t' : Fin k ↪ M := t.trans (e : M ≃ N).symm.toEmbedding
-  have ht : e ∘ t' = t := funext fun i ↦ by simp [t']
-  have hrel (p : baseLanguage.{u}.Relations k) : RelMap p ⇑t ↔ RelMap p ⇑t' := by
-    rw [← e.map_rel, ht]
+  have hrel (p : baseLanguage.{u}.Relations k) : RelMap p ⇑t ↔ RelMap p ⇑t' :=
+    (relMap_trans_symm_toEmbedding e p t).symm
   refine Option.ext fun q ↦ ⟨fun hq ↦ ?_, fun hq ↦ ?_⟩
   · obtain ⟨p, rfl, hp⟩ := exists_relMap_of_toRealization_eval hq
     have hex : ∃ p, RelMap p ⇑t := ⟨p, (hrel p).mpr hp⟩
@@ -294,11 +304,8 @@ theorem toRealization_map (h : IsTypeAssignment M) (e : M ≃[baseLanguage.{u}] 
 assignments are isomorphic structures exactly when their realizations are isomorphic. -/
 theorem isIso_toRealization_iff (hM : IsTypeAssignment M) (hN : IsTypeAssignment N) :
     (toRealization M).IsIso (toRealization N) ↔ Nonempty (M ≃[baseLanguage.{u}] N) := by
-  refine ⟨fun ⟨⟨e, he⟩⟩ ↦ ⟨⟨e, fun f ↦ isEmptyElim f, fun {k} p xs ↦ ?_⟩⟩,
-    fun ⟨e⟩ ↦ ⟨⟨e, toRealization_map hM e⟩⟩⟩
-  rw [hN.relMap_iff, hM.relMap_iff, ← he]
-  refine ⟨fun ⟨hx, hp⟩ ↦ ⟨hx.of_comp, ?_⟩, fun ⟨hx, hp⟩ ↦ ⟨e.injective.comp hx, ?_⟩⟩ <;>
-    rw [Realization.map_eval] at * <;> convert hp using 3 <;> ext <;> simp
+  rw [Realization.isIso_iff_nonempty_equiv hasLegalTypes_toRealization hasLegalTypes_toRealization,
+    toStructure_toRealization hM, toStructure_toRealization hN]
 
 end Iso
 

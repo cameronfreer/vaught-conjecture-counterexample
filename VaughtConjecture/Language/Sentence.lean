@@ -21,7 +21,9 @@ countable index type are the library's `ciInf` and `ciSup`.
 
 * `atom p f` is the atomic formula `P_p(x_{f 0}, …, x_{f (m-1)})`, and `atomOfSet U f` is the
   disjunction `P_U` of the `P_p` over the members `p` of a set `U` of relation symbols
-  [Kni26, Definition 3.3.2]; `distinct n` says that the bound variables are pairwise distinct.
+  [Kni26, Definition 3.3.2]; `BoundedFormulaω.distinct n` says that the bound variables are
+  pairwise distinct.  It, its realization, and the realization `BoundedFormulaω.realize_alls` of
+  universal closures at the empty tuple are stated for an arbitrary language.
 
 **The structural clauses** [Kni26, Definition 3.3.3, clauses 1–3], and nonemptiness of the
 carrier, a condition of the models of [Kni26, Definition 3.2.1]:
@@ -65,7 +67,10 @@ correspondence with models of stage `ω` is `VaughtConjecture.Language.Satisfact
 ## Placement
 
 `StageType.bottomPatternFamily_congr` belongs in `VaughtConjecture.Realization.Families`, beside
-`StageType.mem_bottomPatternFamily`.  It is stated here so that that file is unchanged.
+`StageType.mem_bottomPatternFamily`; it is on the placement list of
+`VaughtConjecture.Language.Basic`.  The formula helpers `BoundedFormulaω.distinct`,
+`BoundedFormulaω.realize_distinct`, and `BoundedFormulaω.realize_alls` hold for an arbitrary
+language and are candidates for upstreaming.
 
 ## References
 
@@ -76,6 +81,33 @@ R. W. Knight, *A counterexample to Vaught's Conjecture using generalised Stone s
 -/
 
 universe u v w
+
+/-! ### Formula helpers for an arbitrary language -/
+
+namespace FirstOrder.Language.BoundedFormulaω
+
+variable {L : Language} {α M : Type*} [L.Structure M] {n : ℕ}
+
+/-- The bound variables are pairwise distinct: `⋀_{i ≠ j} x_i ≠ x_j`. -/
+noncomputable def distinct (n : ℕ) : L.BoundedFormulaω α n :=
+  ciInf fun ij : {ij : Fin n × Fin n // ij.1 ≠ ij.2} ↦
+    (equal (Term.var (Sum.inr ij.1.1)) (Term.var (Sum.inr ij.1.2))).not
+
+/-- The distinctness formula holds exactly of the injective tuples. -/
+@[simp] theorem realize_distinct {v : α → M} {xs : Fin n → M} :
+    (distinct n : L.BoundedFormulaω α n).Realize v xs ↔ Function.Injective xs := by
+  simp only [distinct, realize_ciInf, realize_not, realize_equal, Term.realize_var, Sum.elim_inr,
+    Subtype.forall, Prod.forall]
+  exact ⟨fun h i j hij ↦ by_contra fun hne ↦ h i j hne hij, fun h i j hne hij ↦ hne (h hij)⟩
+
+/-- Realization of the universal closure of a formula, read at the empty tuple.  This differs from
+`BoundedFormulaInf.realize_alls`, which reads the closure at `default` as a formula; it is a
+candidate for upstreaming. -/
+theorem realize_alls {v : α → M} (φ : L.BoundedFormulaω α n) :
+    Realize φ.alls v Fin.elim0 ↔ ∀ ys : Fin n → M, φ.Realize v ys :=
+  BoundedFormulaInf.realize_alls
+
+end FirstOrder.Language.BoundedFormulaω
 
 namespace VaughtConjecture
 
@@ -115,11 +147,6 @@ noncomputable def atomOfSet (U : Set (baseLanguage.{u}.Relations m)) (f : Fin m 
     baseLanguage.{u}.BoundedFormulaω Empty n :=
   ciSup fun p : U ↦ atom p.1 f
 
-/-- The bound variables are pairwise distinct: `⋀_{i ≠ j} x_i ≠ x_j`. -/
-noncomputable def distinct (n : ℕ) : baseLanguage.{u}.BoundedFormulaω Empty n :=
-  ciInf fun ij : {ij : Fin n × Fin n // ij.1 ≠ ij.2} ↦
-    (equal (Term.var (Sum.inr ij.1.1)) (Term.var (Sum.inr ij.1.2))).not
-
 variable [baseLanguage.{u}.Structure M] {v : Empty → M} {xs : Fin n → M}
 
 /-- An atomic formula holds of the tuple read through `f`. -/
@@ -131,17 +158,6 @@ variable [baseLanguage.{u}.Structure M] {v : Empty → M} {xs : Fin n → M}
 @[simp] theorem realize_atomOfSet (U : Set (baseLanguage.{u}.Relations m)) (f : Fin m → Fin n) :
     (atomOfSet U f).Realize v xs ↔ ∃ p ∈ U, RelMap p (xs ∘ f) := by
   simp [atomOfSet, realize_ciSup]
-
-/-- The distinctness formula holds exactly of the injective tuples. -/
-@[simp] theorem realize_distinct : (distinct n).Realize v xs ↔ Function.Injective xs := by
-  simp only [distinct, realize_ciInf, realize_not, realize_equal, Term.realize_var, Sum.elim_inr,
-    Subtype.forall, Prod.forall]
-  exact ⟨fun h i j hij ↦ by_contra fun hne ↦ h i j hne hij, fun h i j hne hij ↦ hne (h hij)⟩
-
-/-- Realization of the universal closure of a formula at the empty tuple. -/
-theorem realize_alls (φ : baseLanguage.{u}.BoundedFormulaω Empty n) :
-    BoundedFormulaω.Realize φ.alls v Fin.elim0 ↔ ∀ ys : Fin n → M, φ.Realize v ys :=
-  BoundedFormulaInf.realize_alls
 
 end Formulas
 

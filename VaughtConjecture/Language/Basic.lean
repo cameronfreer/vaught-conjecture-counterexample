@@ -19,11 +19,39 @@ Its `n`-ary relation symbols are the legal stage types themselves (`baseLanguage
 the subtype `{p : StageType ω n // p.IsLegal}`); `baseLanguage.type p` is the stage type of the
 symbol `p`, and `baseLanguage.symbol` makes a symbol of a legal stage type.
 
-The language is countable: there are countably many ordinals below `ω`
-(`baseLanguage.countable_Iio_omega0`), hence countably many legal stage types on `n` points
-(`StageType.countable_setOf_isLegal`), and countably many relation symbols of all arities
-together.  These are the hypotheses under which the coded structure spaces of the infinitary-logic
-library apply to the language.
+The language is countable: there are countably many stage types at stage `ω` on `n` points
+(`StageType.countable_of_lt_omega_one`, as `ω < ω₁`), hence countably many relation symbols of
+each arity, and countably many of all arities together.
+
+**Universe level.**  The language is `Language.{0, u + 1}`: its relation symbols are stage types,
+whose labels are ordinals of `Ordinal.{u}`.  The coded structure spaces of the infinitary-logic
+library apply to it through the `SmallVocabulary` transport.  At `u = 0` it is `Language.{0, 1}`,
+which the roadmap's `HasThinAlephOneSpectrum`,
+`SmallVocabulary.isThinOnNatModels_of_countable_sentence_splits`, and
+`exists_sentence_of_countable_of_presentation` accept; the unprefixed
+`Sentenceω.isThinOnNatModels_of_countable_sentence_splits` would need a language in
+`Language.{0, 0}`.
+
+## Placement
+
+The following declarations of this layer belong in earlier files, and are tracked here:
+
+* the instance `countable_Iio_omega0_coe` (countably many ordinals below `ω`, in this file) in
+  `VaughtConjecture.Stage.Countable`;
+* the instance `Label.countable_permittedCutoff` (countably many permitted cutoffs at stage `ω`, in
+  `VaughtConjecture.Language.Density`) in `VaughtConjecture.Label.Cap`;
+* `Realization.HasLegalTypes` (in `VaughtConjecture.Language.Structure`) in
+  `VaughtConjecture.Realization.Basic`;
+* `Realization.IsModel.hasLegalTypes` (in `VaughtConjecture.Language.Structure`), and
+  `Realization.IsModel.exists_le_arity` and `Realization.IsModel.infinite` (in
+  `VaughtConjecture.Language.Satisfaction`) in `VaughtConjecture.Realization.Model`;
+* `StageType.bottomPatternFamily_congr` (in `VaughtConjecture.Language.Sentence`), and
+  `StageType.receivingFamily` with its lemmas (in `VaughtConjecture.Language.Density`) in
+  `VaughtConjecture.Realization.Families`;
+* `Realization.HasFiniteCutReceiving` with its transport (in `VaughtConjecture.Language.Density`)
+  in the receiving module of Layer 3.
+
+They are stated here so that those files are unchanged.
 
 ## References
 
@@ -81,18 +109,11 @@ theorem type_injective : Function.Injective (type : baseLanguage.{u}.Relations n
 instance isRelational : IsRelational baseLanguage.{u} :=
   fun _ ↦ inferInstanceAs (IsEmpty Empty)
 
-/-- There are countably many ordinals below `ω`. -/
-theorem countable_Iio_omega0 : (Set.Iio (ω : Ordinal.{u})).Countable :=
-  Cardinal.countable_Iio_of_lt_omega_one omega0_lt_omega_one
-
-/-- The ordinals below `ω` form a countable type. -/
-instance countable_Iio_omega0_coe : Countable (Set.Iio (ω : Ordinal.{u})) :=
-  countable_Iio_omega0.to_subtype
-
 /-- **Countably many relation symbols of each arity** [Kni26, Proposition 3.1.4]: there are
 countably many legal stage types at stage `ω` on `n` points. -/
 instance countable_relations (n : ℕ) : Countable (baseLanguage.{u}.Relations n) :=
-  (StageType.countable_setOf_isLegal countable_Iio_omega0 n).to_subtype
+  have := StageType.countable_of_lt_omega_one (α := (ω : Ordinal.{u})) omega0_lt_omega_one n
+  Subtype.countable
 
 /-- **The base language is countable**: countably many relation symbols of all arities
 together. -/
@@ -100,5 +121,17 @@ instance countable_sigma_relations : Countable (Σ n, baseLanguage.{u}.Relations
   inferInstance
 
 end baseLanguage
+
+/-! ### Placement: a countability instance for `Stage/Countable`
+
+This instance belongs in `VaughtConjecture.Stage.Countable` (see the placement list above). -/
+
+section Placement
+
+/-- The ordinals below `ω` form a countable type. -/
+instance countable_Iio_omega0_coe : Countable (Set.Iio (ω : Ordinal.{u})) :=
+  (Cardinal.countable_Iio_of_lt_omega_one omega0_lt_omega_one).to_subtype
+
+end Placement
 
 end VaughtConjecture

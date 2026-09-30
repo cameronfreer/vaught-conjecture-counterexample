@@ -36,15 +36,16 @@ up to isomorphism.
 
 **No finite models.**  A model at a positive stage is infinite
 (`Realization.IsModel.infinite`): covering gives an occurrence, and the dominance clause at
-`γ = 0` extends every occurrence by a new point, so there are occurrences of every finite arity.
-Hence every structure satisfying the four-family sentence is infinite
-(`infinite_of_realize_fourFamilySentence`).
+`γ = 0` extends every occurrence by a new point, so there are occurrences of arbitrarily large
+arity (`Realization.IsModel.exists_le_arity`), though not necessarily of every arity, since a
+face of an occurrence may be invisible.  Hence every structure satisfying the four-family
+sentence is infinite (`infinite_of_realize_fourFamilySentence`).
 
 ## Placement
 
 `Realization.IsModel.exists_le_arity` and `Realization.IsModel.infinite` belong in
-`VaughtConjecture.Realization.Model`, beside `Realization.IsModel.nonempty_occurrence`.  They are
-stated here so that that file is unchanged.
+`VaughtConjecture.Realization.Model`, beside `Realization.IsModel.nonempty_occurrence`; they are on
+the placement list of `VaughtConjecture.Language.Basic`.
 
 ## References
 
@@ -67,8 +68,8 @@ namespace Realization
 
 variable {α : Ordinal.{u}} {R : Realization.{u, v} α M}
 
-/-- A model at a positive stage has occurrences of every finite arity: the dominance clause at
-`γ = 0` extends every occurrence by a new point. -/
+/-- A model at a positive stage has occurrences of arbitrarily large arity: the dominance clause
+at `γ = 0` extends every occurrence by a new point. -/
 theorem IsModel.exists_le_arity (hR : R.IsModel) (hα : 0 < α) (k : ℕ) :
     ∃ x : R.Occurrence, k ≤ x.arity := by
   induction k with
@@ -195,7 +196,7 @@ theorem realize_fourFamilySentence_iff :
 /-- **Satisfaction of the structural sentence**: it holds in a structure exactly when the
 structure is a type assignment on a nonempty carrier whose realization is exactly consistent and
 covering. -/
-theorem realize_structuralSentence_iff_isConsistent :
+theorem realize_structuralSentence_iff_toRealization :
     structuralSentence.Realize M ↔ IsTypeAssignment M ∧ Nonempty M ∧
       (toRealization M).IsConsistent ∧ (toRealization M).IsCovering :=
   (realize_structuralSentence_iff M).trans isStructural_iff
@@ -232,7 +233,7 @@ when its carrier is nonempty and it is exactly consistent and covering. -/
 theorem realize_toStructure_structuralSentence_iff (hR : R.HasLegalTypes) :
     @Sentenceω.Realize _ structuralSentence M R.toStructure ↔
       Nonempty M ∧ R.IsConsistent ∧ R.IsCovering := by
-  rw [@realize_structuralSentence_iff_isConsistent M R.toStructure, toRealization_toStructure hR]
+  rw [@realize_structuralSentence_iff_toRealization M R.toStructure, toRealization_toStructure hR]
   exact and_iff_right (isTypeAssignment_toStructure R)
 
 /-- **Satisfaction by the structure of a realization**: for a realization with legal types, its
