@@ -26,11 +26,13 @@ file with
   lake env lean -DautoImplicit=false -Dlinter.mathlibStandardSet=true \
     roadmap/SuggestedCompanions.lean
 
-The three sections correspond to the three milestones: (A) the filtration and the theory `T∞`,
-(B) homogeneity of the top-free charts and the orbit theory, (C) the geometric obstruction.
-The generic theorems of B are quoted from the two libraries once pinned
-(`IMPLEMENTATION.md`, "Dependency pins"); the corresponding `sorry` targets below record their
-statement shapes at the current pins and are not `#check`ed against those libraries.
+The three sections correspond to the three milestones: (A) the filtration and the theory `T∞`, (B)
+homogeneity of the top-free charts and the orbit theory, (C) the geometric obstruction. The generic
+theorems of B are quoted from the two libraries: from ComputableModelTheory, prospective (neither
+available upstream nor pinned); from InfinitaryLogic, available upstream and not yet available at
+our pinned dependency (`IMPLEMENTATION.md`, "Dependency pins"); the corresponding `sorry` targets
+below record their statement shapes at the current pins and are not `#check`ed against those
+libraries.
 -/
 
 set_option autoImplicit false
@@ -299,14 +301,14 @@ end Orbits
 
 /-! ## C. A geometric obstruction
 
-The generic shape of the two-point bound: an extreme-point map `ext` on sets, commuting with a
-set `Aut` of self-maps (for a realization, `ext A` is the set of the two extreme points of the
-finite hull of `A`, and `Aut` its automorphisms, which preserve the two intrinsic extremes of a
-finite hull).  If a set `A ⊆ S` contains a point that is not extreme and a point that is, then
-not every permutation of `S` extends to a map in `Aut`.  Applied to three distinct points, whose
-hull has its two extremes among them, it bounds every set of absolute indiscernibles by two.
-The instance for a realization, from exact consistency and covering alone, is a statement still
-to be proved (`COMPANIONS.md`, C). -/
+The generic shape of the two-point bound: an extreme-point map `ext` on sets, commuting at the set
+`A` with a set `Aut` of self-maps (for a realization, `ext A` is the set of the two extreme points
+of the finite hull of `A`, and `Aut` its automorphisms, which preserve the two intrinsic extremes of
+a finite hull).  If a set `A ⊆ S` contains a point that is not extreme and a point that is, then not
+every permutation of `S` extends to a map in `Aut`.  Applied to three distinct points, whose hull
+has its two extremes among them, it bounds every set of absolute indiscernibles by two. The instance
+for a realization, from exact consistency and covering alone, is a statement still to be proved
+(`COMPANIONS.md`, C). -/
 
 namespace HullObstruction
 
@@ -314,9 +316,9 @@ variable {M : Type u} (ext : Set M → Set M) (Aut : Set (M → M))
 
 /-- **The swap of a non-extreme and an extreme point.**  With `x` not extreme and `y` extreme in
 `A ⊆ S`, the transposition of `x` and `y` does not extend to a map in `Aut` commuting with
-`ext`: such a map sends `A` onto itself and `y` to `x`. -/
+`ext` at `A`: such a map sends `A` onto itself and `y` to `x`. -/
 theorem false_of_swap_extreme {S A : Set M} (hAS : A ⊆ S)
-    (hext : ∀ g ∈ Aut, ∀ B : Set M, g '' ext B = ext (g '' B))
+    (hext : ∀ g ∈ Aut, g '' ext A = ext (g '' A))
     (hperm : ∀ σ : Equiv.Perm S, ∃ g ∈ Aut, ∀ s : S, g s = σ s)
     {x y : M} (hx : x ∈ A) (hy : y ∈ A) (hxe : x ∉ ext A) (hye : y ∈ ext A) : False := by
   classical
@@ -355,7 +357,7 @@ theorem false_of_swap_extreme {S A : Set M} (hAS : A ⊆ S)
           · subst hay; simpa using hx
           · rwa [Equiv.swap_apply_of_ne_of_ne hax hay]
   have hxmem : x ∈ ext A := by
-    rw [← himg, ← hext g hg A]
+    rw [← himg, ← hext g hg]
     refine ⟨y, hye, ?_⟩
     rw [hgA y hy, Equiv.swap_apply_right]
   exact hxe hxmem

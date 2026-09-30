@@ -11,8 +11,8 @@ It builds on [Mathlib](https://github.com/leanprover-community/mathlib4) and
 $L_{\omega_1,\omega}$, Scott analysis, model-code spaces, Morley counting).  The intended
 construction obtains its countable models by constructing a finite age of labelled charts and
 reconstructing its classical Fraïssé limit, with the classical theorems taken from the
-computable-model-theory library (ComputableModelTheory) once pinned (see
-[`roadmap/IMPLEMENTATION.md`](roadmap/IMPLEMENTATION.md), "Dependency pins").
+computable-model-theory library (ComputableModelTheory) (prospective: neither available upstream
+nor pinned; see [`roadmap/IMPLEMENTATION.md`](roadmap/IMPLEMENTATION.md), "Dependency pins").
 
 ## Layout
 

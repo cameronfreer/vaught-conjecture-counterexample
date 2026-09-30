@@ -406,8 +406,8 @@ classical limit of the top-free witnesses, or the retained chain construction), 
 continuation (layer 4), or of the expansion domains (layer 5).  The guard is on the import closure,
 not only on the direct imports.  The check reads Lean's own record of the import closure, not the
 source text, so every form of import (`public`, `meta`, `import all`, the root module
-`VaughtConjecture`, indented lines) is covered.  The generic theorems of B3.2 and B3.4 are
-quoted from ComputableModelTheory, whose modules import Mathlib only, so they need no guard
+`VaughtConjecture`, indented lines) is covered.  The generic theorems of B3.2 and B3.4 are quoted
+from ComputableModelTheory (prospective), whose modules import Mathlib only, so they need no guard
 here.  The addition to `scripts/check.sh` below is a proposal, not yet part of `scripts/`: the
 module names are to be fixed when these modules exist.  It consists of a driver body
 `scripts/ImportGuard.lean`, in the pattern of `scripts/AxiomAudit.lean`, run through `lake env

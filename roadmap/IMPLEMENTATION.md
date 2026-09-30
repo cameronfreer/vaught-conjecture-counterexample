@@ -316,10 +316,11 @@ stable-label fixedness is a characterization under stated hypotheses.
 
 Prove unique partial expansions and countable-limit existence.  Coherence of a family of lower
 expansions is derived from uniqueness, not a hidden hypothesis.  Map successor losses to
-terminal classes.  Independently construct top-free terminal models at each countable block;
+terminal classes.  Take the top-free witnesses (the section on them) at each countable block;
 expansion uniqueness, with same-carrier transport, is what places their **base classes** in the
 corresponding successor differences: together they exclude another, higher expansion of the base
-reduct.  Eventual stopping of every model is a consequence of the filtration, not an input.
+reduct.  Eventual stopping is not an input: conditions 1–4 give it for every class outside the
+persistent core, which has at most one class, and no statement here assumes it for every model.
 
 Prove the one-sided finite-donor transfer first, using only target consistency and finite-cut
 receiving (row 1).  Symmetrize for back-and-forth: one block buys one level, with no extra `ω`
@@ -390,23 +391,24 @@ age and not recognized afterwards in a model constructed otherwise.
    transport, belongs to layer 5 (checkpoint 5).
 
 **Dependency boundaries.**  The age argument (steps 1–7) imports Mathlib, InfinitaryLogic,
-ComputableModelTheory, layers 0–2, and the finite kernel (layer 1, the coatom extension
-construction with rows 5 and 6, and the cap-to-model theorem).  The classical part, steps 3–5,
-imports no `Construction/` module and no module of rows 1–4, of structural continuation, or of
-the expansion domains; steps 6 and 7 add only row 5, the cap-to-model theorem, and the
-reduction of models.  The upstream
-theorems import no module of this repository.  The chain construction (`Construction/`, the
-chain unions of partial realizations, and the conditional chain construction of models) is
-needed neither for top-free existence nor for saturated existence: the saturated model of
-[Kni26, Proposition 4.4.5] is the classical limit of the uncapped age of all legal stage types
+ComputableModelTheory (prospective), layers 0–2, and the finite kernel (layer 1, the coatom
+extension construction with rows 5 and 6, and the cap-to-model theorem).  The classical part, steps
+3–5, imports no `Construction/` module and no module of rows 1–4, of structural continuation, or of
+the expansion domains; steps 6 and 7 add only row 5, the cap-to-model theorem, and the reduction of
+models.  The upstream theorems import no module of this repository.  The chain construction
+(`Construction/`, the chain unions of partial realizations, and the conditional chain construction
+of models) is needed neither for top-free existence nor for saturated existence: the saturated model
+of [Kni26, Proposition 4.4.5] is the classical limit of the uncapped age of all legal stage types
 (hereditary, amalgamating by the plain form of the coatom extension property, countably many
 isomorphism types).  No checkpoint of the main theorem depends on the chain construction.  It is
-retained for an effective presentation, conditional on effective input data (an effective
-enumeration of the age and an effective amalgamation procedure; the classical Fraïssé
-construction uses choice and supplies no computable presentation), and as the existing
-conditional development whose partial-realization statements (`StageType.chartRealization`,
-`StageType.isConsistent_chartRealization`, `StageType.chartRealization_eval_eq_none_iff`) are
-reused in steps 1, 4, and 5; its chain-union statements are not used by steps 1–7.
+retained for an effective presentation only, conditional on effective input data (an effective
+enumeration of the age and an effective amalgamation procedure; the classical Fraïssé construction
+uses choice and supplies no computable presentation).  The partial-realization statements of the
+conditional chain development (`StageType.chartRealization`,
+`StageType.isConsistent_chartRealization`, `StageType.chartRealization_eval_eq_none_iff`, in
+`Construction/PartialRealization.lean`, not yet in the library) are to be reused in steps 1, 4, and
+5 from a module outside `Construction/`, so that the boundary above holds; the chain-union
+statements are not used by steps 1–7.
 
 ## Upstream building blocks
 
@@ -455,7 +457,8 @@ theorem), the factorization of tuples through the age (`exists_factor_tuple_of_a
 (`IsolatesTuple`, `IsAtomic`, `isolatesTuple_of_orbit_formula`, `isAtomic_of_orbit_formulas`,
 `IsolatesTuple.realize_iff`, `IsolatesTuple.typesWith_eq_singleton`,
 `exists_elementaryEmbedding_of_countable_atomic`); from InfinitaryLogic, available upstream (merged
-at `cca6949`) and not yet available at our pinned dependency, applied here once the manifest records
+at `a640bbb`, contained in `cca6949`) and not yet available at our pinned dependency, applied here
+once the manifest records
 that pin and the signatures are checked against it: the rank comparison of the Scott process
 (`selfStabilizesCompletely_iff_orbitRank_le`, `bfStabilizationOrdinal_self_eq_iSup_orbitRank`,
 `stabilizesAt_of_orbitRank_le`, `rank_le_of_orbitRank_le`, `lift_rank_le_internalScottRank`,
@@ -507,7 +510,7 @@ The intended repins, made together in `lakefile.toml` and `lake-manifest.json` o
 versions exist:
 
 - **InfinitaryLogic**: from the current revision (`a58f81a`, the merge of its pull request #134) to
-  the intended pin `cca6949`, the merge of its pull request #141 on top of `a640bbb` (the merge of
+  `cca6949`, the merge of its pull request #141 on top of `a640bbb` (the merge of
   #140): it contains the rank comparison of the Scott process (#140) and the orbit-formula threshold
   and rank bound and local-automorphism preservation of `README.md`, Layer 0 (#141).  Toolchain and
   Mathlib are the same as at the current pin.  These statements are available upstream (merged in
@@ -581,8 +584,8 @@ against it ("Dependency pins").  Three qualifications:
    ranks.  There is neither a uniform finite bound nor an equality with the rank of a Scott
    process or with the expansion height.
 3. Atomicity and primeness remain separate applications: the orbit formulas feed both the
-   first-order route (isolation, atomicity, primeness, from ComputableModelTheory) and the
-   infinitary rank route (InfinitaryLogic); the rank route is not derived from atomicity.
+   first-order route (isolation, atomicity, primeness, from ComputableModelTheory, prospective) and
+   the infinitary rank route (InfinitaryLogic); the rank route is not derived from atomicity.
 
 Languages: the Fraïssé construction uses the functional hull expansion `L^h_λ`; the orbit-rank
 applications use the relational stage chart language `L_λ` (the threshold and rank theorems need
