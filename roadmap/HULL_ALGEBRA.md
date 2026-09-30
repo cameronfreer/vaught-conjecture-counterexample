@@ -1,6 +1,6 @@
 # A definable binary-operation presentation of the canonical hull
 
-**Status:** a proposed mathematical deduction from the current hull and coordinate-formula theorems. The argument below is explicit, but this deduction has not been formalized or elaborated here. It is optional and is not a new premise of the main theorem on the spectrum.
+**Status:** the construction of the operations and the equality (1) of the canonical closure with generated-substructure closure are established results: their proofs are known, and are the argument below, from the hull and coordinate-formula theorems. They remain formalization targets here and have not been formalized or elaborated in this library. The inclusions (2) are a short deduction from (1), recorded in §4; they are not counted among the established results, and no reverse inclusion or equality with \(\operatorname{dcl}\) or \(\operatorname{acl}\) is claimed. The development is optional and is not a new premise of the main theorem on the spectrum.
 
 ## Statement
 
@@ -70,4 +70,4 @@ Each output is uniquely first-order definable over its two arguments; equation (
 
 The existing finite-hull preservation theorems also let higher-stage realizations be compared with their base reducts. Once their immediate global finite-character corollaries are proved, the same hull-generation assertion can be expressed using the base language on those higher-stage models.
 
-What this does **not** prove: equality with full definable or algebraic closure; quantifier elimination; unrestricted Fraïssé amalgamation; a two-point closed root for receiving; a bound on the size of a pair hull; or a first-order Vaught counterexample. To prove \(\operatorname{dcl}(A)\subseteq\operatorname{cl}(A)\), one would need a separate argument excluding unique definitions of points outside the hull. No such argument is supplied here.
+What this does **not** prove: equality with full definable or algebraic closure; quantifier elimination; unrestricted Fraïssé amalgamation; a two-point closed root for capped extension; a bound on the size of a pair hull; or a first-order Vaught counterexample. To prove \(\operatorname{dcl}(A)\subseteq\operatorname{cl}(A)\), one would need a separate argument excluding unique definitions of points outside the hull. No such argument is supplied here.

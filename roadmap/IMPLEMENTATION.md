@@ -19,7 +19,7 @@ countable chain construction, checkpoint 3), not the layer numbering of either d
 | Layer 0, Summit 0: general results | used in 1 (lifting), 2 (finite hulls), 3 (chain construction), 4 (directed limits, back-and-forth, subsingleton covers), 5 (countable losses) | with their first application |
 | Layer 1, Summit 1: finite semantic kernel and closed charts | 1; stage types and partial faces of 2 | 1 |
 | Layer 2, Summit 2: realizations, syntax, chain construction | 2; chain construction of 3 | 3, 4 (fidelity theorem) |
-| Layer 3, Summit 3: finite extension constructions, realization over the root, recovery of donor labels | 3; first applications of 1 | 2, 4 (and top-free existence in 3) |
+| Layer 3, Summit 3: finite extension constructions, realization over the root, recovery of donor labels | 3; first applications of 1 | 2 (items 3.1–3.2, every row's construction), 3 (row 5's first use, top-free existence), 4 (items 3.3–3.4 for rows 1–4, row 1's first use), 5 (first uses of rows 2–4) |
 | Layer 4, Summit 4: structural continuation and terminal comparisons | 4 | 5 |
 | Layer 5, Summit 5: expansion domains and logical agreement | 5 | 5 (unique limit expansions), 6 |
 | Layer 6, Summit 6: the two independent bounds | 5 and the spine | 6 |
@@ -94,7 +94,7 @@ cell multiplicities: distinct cells can share a graded index.  Preserve the actu
 semantics until an order-independence theorem is proved.
 
 Distinguish generic orderly rows from the bounded row coding of legal schemes (orderly rows and
-legality are to be defined by the forthcoming layer-3 specification).  Distinguish
+legality are defined in Layer 3 of `README.md`).  Distinguish
 bottom, ordinal zero, proper labels, and formal top.  Stage labels are below the stage or top;
 bottom is below zero.  A permitted cutoff satisfies `⊥ < δ < α`, which allows ordinal zero.  The
 transformation relation is **nontransitive**; prove only the guarded composition, cap, jump,
@@ -118,16 +118,17 @@ section itself is an extension preserving every observation.  (Agreement at ever
 cap is equality at a nonzero limit stage, where for labels `x < y` at the stage the cap `0`
 (if `x = ⊥`) or `x + 1` separates them, but not at a successor stage `β + 1`, where `β` and the formal top agree
 at every permitted cap; hence the split on literal difference.)  Simultaneous preservation
-therefore needs neither injectivity nor any exact form of receiving, given per-cap
+therefore needs neither injectivity nor any exact form of capped extension, given per-cap
 bountifulness and the fact that the ambient section restricts to the ambient face (in the
 `m = ⊥` case, given some extension).  This is
 the intended argument, still to be proved.  Preserve caps on
 **all** target coordinates, including auxiliaries and future catalogue fields (catalogue fields
-are to be defined by the forthcoming layer-3 specification).  A statement
+are defined in Layer 3 of `README.md`).  A statement
 that recovers only a few labels from the observation does not weaken the lifting requirement.
 
-First applications: the coatom extension construction and the two ownerwise decoding proofs
-(both to be defined by the forthcoming layer-3 specification).  Avoid a general categorical formalism before these examples work.
+First applications: the coatom extension construction and the two required applications of the
+shared ownerwise decoding lemma, to the hollow-growth and LOW constructions (Layer 3 of
+`README.md`, items 3.2 and 3.5).  Avoid a general categorical formalism before these examples work.
 
 ### 2. Types, partial faces, realizations, and explicit syntax
 
@@ -154,24 +155,54 @@ including zero.
 Density quantifies `∀ root, ∀ donor, ∀ cutoff, ∃ extension` on the fixed donor scheme.
 Different cutoffs may use different points.  Prove both satisfaction directions, the
 realization/structure round trips, isomorphism preservation and reflection, and no finite
-models.  Its equivalence with the four-family sentence (the structural clauses together with the four
-extension families of `SEMANTIC_CONTRACT.md`, item 5) is a required fidelity theorem and part of
-the completion criterion; its model-to-density direction still uses ordinary receiving.
+models.  The density sentence is the preferred presentation.  Its equivalence with the
+four-family sentence (the structural clauses together with the four extension families of
+`SEMANTIC_CONTRACT.md`, item 5, and [Kni26, Definition 3.2.1], clause 4) is a required fidelity
+theorem and part of the completion criterion.  Its direction from the four-family sentence to the
+density sentence still uses the finite-cut capped-extension statement (row 1 of the table of
+Layer 3 of `README.md`), which therefore remains a prerequisite of completion.
 
 ### 3. Finite extensions, realization over roots, recovery of labels, and one chain construction
 
-Construct the concrete legal finite extensions first.  Preserve arbitrary compatible input
-sizes, designated freshness, literal roots, arbitrary padding, bottom patterns, and literal-top
-prescriptions.  Prove the inherited long-row locality separately from the shared short-owner
-decoding argument (long-row locality and short-owner decoding are to be defined by the
-forthcoming layer-3 specification).
+Layer 3 of `README.md` is the specification of this layer.  It defines the vocabulary (root,
+donor occurrence, capped extension over a root, private context, master chart and master row,
+padding, freshness, bottom pattern, literal-top prescription, catalogue fields, orderly rows,
+legality, owners, ownerwise decoding, long-row locality, gate and gate equations, the coatom
+extension construction, pinned extension, `Correct`, and LOW) and consists of five items, built
+in this order:
 
-The realization of a diagram over the root yields **one actual occurrence**.  Root, private
-cap, donor, and gate equations all concern it.  `Correct` records capped observations; LOW adds
-the forcing that recovers donor tops.  (Gate equations, `Correct`, and LOW are to be defined by
-the forthcoming layer-3 specification.)  Exact recovery of proper labels and the lower bound for
-high labels are different conclusions.  Agreement below one proper cutoff cannot distinguish a
-sufficiently high proper label from top.
+1. **Statements of the finite extension constructions.**  For each: input data, compatibility
+   conditions, the constructed finite object (a legal scheme and a lawful witness, as data), and
+   its literal equations.  Arbitrary permitted root sizes and padding; designated freshness;
+   literal retention of the root and of the master chart with its master row; bottom patterns
+   and literal-top prescriptions given separately; cap preservation on every target coordinate,
+   auxiliaries and future catalogue fields included.  Lifting one cap at a time is distinct from
+   simultaneous preservation of all caps, which needs the two further hypotheses of layer 1
+   above (the ambient section restricts to the ambient face; some extension exists when no
+   permitted cap is compatible).
+2. **The shared decoding lemma.**  Ownerwise decoding is proved once: if every owner's decoded
+   value satisfies its row, the decoded labelling is lawful and cap-compatible.  Short owners use
+   the common lemma; each inherited long-row owner uses its own long-row locality proof.  The
+   hollow-growth and LOW constructions are both required applications.
+3. **One occurrence, then labelled evaluation.**  The realization extends by **one actual
+   occurrence** of the constructed scheme; root, private context, donor values, and gate
+   equations all concern it.  The recovery statement is proved for every lawful
+   restriction-compatible labelling with the prescribed bottom pattern, then applied to that
+   occurrence.  The hollow-growth and stable-candidate constructions share one recovery
+   statement; their existence hypotheses stay separate.
+4. **`Correct` and LOW.**  `Correct` fixes the bottom, reference, and marker readings below the
+   cap; LOW adds the forcing that recovers literal donor tops.  Exact recovery of proper labels,
+   literal-top recovery, and above-threshold inequalities are different conclusions.  Agreement
+   below one proper cutoff cannot distinguish a sufficiently high proper label from top.  Each
+   recovery lemma lists the observations it reads and does not require recovery of the whole
+   type of the constructed occurrence.
+5. **Extension statements and first uses** (the table of `README.md`, Layer 3): finite-cut
+   capped extension, first used by the one-sided donor transfer (and by the four-family-to-density
+   direction of layer 2); exact residual extension, by the residual comparison; hollow-growth
+   extension, by the hollow comparison; capped extension for the stable candidate, by stable
+   modelhood; top-free pinned extension, by the top-free capped chain construction.  Each row
+   records its exact hypotheses, its conclusion on one occurrence, and its import boundary.  The
+   positive-length root restriction and the empty-root base case are explicit.
 
 Use one countable chain construction on finite master conditions, with the exact and the capped
 finite extension hypotheses stated separately.  Derive partial states from the master; do not
@@ -180,19 +211,21 @@ face is not an unsupported tuple.  Resolve repeated and delayed requests monoton
 Mathlib's cofinal-chain machinery and prove the coherent union once.
 
 First applications: general model existence and the top-free capped construction.  The modules
-of the finite extension constructions must not import the infinite chain construction.
+of the finite extension constructions must not import the infinite chain construction.  Direct
+limits of structures, a generic result of infinitary logic, stay outside this layer: they replace
+no finite extension construction and no decoding or recovery statement.
 
 ### 4. Stable continuation and terminal comparison
 
 Build rooted covers and their monotone natural offsets.  The completed value lives in `ℕ∞`,
 decoded back to labels: infinity decodes to formal top, not `α + ω`.  Keep consistency-only
 stable uniqueness/naturality, consistency-plus-covering stable lawfulness, and
-receiving/modelhood as different theorem layers.
+capped extension/modelhood as different theorem layers.
 
 Construct the stable realization and literal reduct before proving modelhood.  Normalize any
 genuine expansion pointwise to the structural candidate; handle undefined tuples using the
-literal reduct.  Derive modelhood separately by cap receiving.  Keep positive-root requirements
-and the empty-root bootstrap explicit.
+literal reduct.  Derive modelhood separately by capped extension (row 4 of the table of Layer 3
+of `README.md`).  Keep positive-root requirements and the empty-root base case explicit.
 
 Use selected-chart rooted back-and-forth, not a second fair-chain comparison.  The chosen root
 must belong to the extendible family; atomic agreement alone does not suffice.  Count terminal
@@ -210,7 +243,7 @@ expansion uniqueness is what places their **base classes** in the corresponding 
 differences.
 
 Prove the one-sided finite-donor transfer first, using only target consistency and finite-cut
-receiving.  Symmetrize for back-and-forth: one block buys one level, with no extra `ω` factor.
+capped extension (row 1).  Symmetrize for back-and-forth: one block buys one level, with no extra `ω` factor.
 Handle repeated coordinates and empty tuples.  Apply the sentence-agreement argument once,
 keeping the cardinality conclusion separate from the descriptive thinness conclusion.  In
 `SuggestedInterfaces.lean`, `SentenceAgreementDomains` is a structure (countable-stage domains
@@ -278,16 +311,21 @@ single universe covers it.
 Each checkpoint needs both its abstract API and a concrete application:
 
 1. Finite geometry, scalar label algebra, transport regressions.
-2. Legal finite extension constructions and lifting; small, empty, top/bottom and invisible
-   cases.
+2. Items 3.1 and 3.2 of Layer 3 of `README.md`: the legal finite extension construction of
+   every row of its table, as data with its literal equations, per-cap lifting, and
+   simultaneous cap preservation on every target coordinate; the shared decoding lemma with its
+   applications to the hollow-growth and LOW constructions; small, empty, top/bottom and
+   invisible cases.
 3. Realizations, literal syntax correspondence, countable chain construction and top-free
-   existence.
-4. The receiving property of each finite extension construction (ordinary finite-cut
-   receiving, the constrained residual comparison, hollow growth, and the capped stable
-   candidate), with all its equations on one actual occurrence and at every permitted cap;
-   and the fidelity theorem of layer 2, the equivalence of the density sentence with the
-   four-family sentence, whose model-to-density direction uses ordinary receiving.
-5. Structural continuation, three terminal comparisons, unique limit expansions.
+   existence (the first use of row 5, the top-free pinned extension).
+4. Items 3.3 and 3.4 for rows 1–4: for each row, the extension of the realization by one actual
+   occurrence over the literal root and the recovery theorem by labelled evaluation (`Correct`,
+   and LOW where literal tops are recovered), with all its equations on that occurrence and at
+   every permitted cap; the first use of row 1, the one-sided donor transfer; and the fidelity
+   theorem of layer 2, the equivalence of the density sentence with the four-family sentence,
+   whose four-family-to-density direction uses row 1.
+5. Structural continuation, three terminal comparisons (the first uses of rows 2 and 3), stable
+   modelhood (the first use of row 4), unique limit expansions.
 6. Domain hypotheses of the counting theorem, independent bounds, thinness and all-countable
    bridge.
 
@@ -308,7 +346,9 @@ top-free classes converging sentencewise; the joint embedding and amalgamation p
 (JEP/AP) of finite closed charts; local automorphisms of self-embeddings; and the arbitrary-carrier Scott/`T∞` theory
 dichotomy.  These do not assert strong AP, a proper self-embedding, uncountable categoricity,
 Scott-rank equality, or existence of a model of all of `T∞`.  The main theorem is proved
-without them; if any is added, give it a separate definite completion criterion.
+without them; if any is added, give it a separate definite completion criterion.  Direct limits
+of structures, a generic result of infinitary logic, belong with the generic library and these
+companion results, not with the finite constructions of layer 3.
 [`COMPANIONS.md`](COMPANIONS.md) gives these topics and the full-chart orbit theory below such
 criteria, as three milestones (A: filtration and infinitary theory; B: top-free chart homogeneity
 and its consequences; C: a geometric obstruction).
@@ -319,12 +359,12 @@ The targets of this checkpoint are now milestones B and C of [`COMPANIONS.md`](C
 which states each with its hypotheses, upstream ingredients, instantiation, regressions, and
 non-claims, and gives the companion sketch [`SuggestedCompanions.lean`](SuggestedCompanions.lean).
 In summary: in the full stage chart language (not the base reduct), a countable nonempty top-free
-realization with exact consistency, covering, and finite-cut receiving has automorphism orbits
+realization with exact consistency, covering, and finite-cut capped extension has automorphism orbits
 defined by explicit first-order chart formulas, hence isolated complete types, atomicity,
 internal Scott rank at most `ω` in the library's convention, and, by a separate generic theorem,
 primeness among models of its complete theory in arbitrary universes; separately, consistency and
 covering alone exclude every infinite set whose permutations all extend to automorphisms, a
-theorem kept below receiving by an import guard.  Milestone A of `COMPANIONS.md` treats the
+theorem kept below capped extension by an import guard.  Milestone A of `COMPANIONS.md` treats the
 definable cuts, witness convergence, and the Scott/`T∞` dichotomy listed above.
 
 **Completion criterion.**  This companion checkpoint is complete when milestones B and C of
