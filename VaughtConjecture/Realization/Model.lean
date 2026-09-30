@@ -23,24 +23,30 @@ of `u` is a coface of the type of `t` (`RealizesOver.inter_cofaces`).
 
 A **model** (`Realization.IsModel`) is a realization on a nonempty carrier whose types are legal,
 which is exactly consistent and covering, and which realizes, over every occurrence of type `p`, a
-member of each of the four families of `VaughtConjecture.Realization.Families` whenever that family
-has a member among the cofaces of `p`:
+member of the families of `VaughtConjecture.Realization.Families`:
 
-* generalized saturation, for every scheme `S` on one more point (`IsModel.saturation`);
-* the bottom pattern, for every scheme `S` and labelling `ρ` of its cells (`IsModel.bottomPattern`);
+* generalized saturation, for every scheme `S` on one more point with a coface of `p` on `S`
+  (`IsModel.saturation`);
+* the bottom pattern, for every scheme `S` and labelling `ρ` of its cells with a coface of `p` in
+  the family (`IsModel.bottomPattern`);
 * uniformity, for every `γ` below the stage that is zero or a limit (`IsModel.uniformity`);
 * high-arity dominance, for every `γ` below the stage (`IsModel.dominance`).
 
-**Nonempty instances.**  The clauses are required only of nonempty instances.  A family can be
-empty: at the successor stage `1` no stage type has a label in `[0, ω)`
-(`VaughtConjecture.Realization.ModelExamples`), so the unguarded uniformity clause would exclude
-every realization with an occurrence.  At a stage that is zero or a limit, the side conditions of
-the source make the saturation and bottom-pattern instances nonempty
-(`StageType.nonempty_cofaces_inter_saturationFamily`,
-`StageType.nonempty_cofaces_inter_bottomPatternFamily`); for these two families the guarded
-clauses are therefore the clauses of the source.  For uniformity and dominance the guarded clauses
-follow from those of the source; the converse needs the nonemptiness of those instances, which is
-not proved here.
+**Limit stages and nonempty instances.**  The source defines models only at limit stages
+([Kni26, Definition 3.2.1], "α a limit"), and at such stages every instance of the four families
+is nonempty ([Kni26, Lemma 4.4.1], proved through [Kni26, Lemmas 4.4.2–4.4.4] and
+[Kni26, Proposition 4.3.23]).  Here `IsModel` is defined at every stage.  The uniformity and
+dominance clauses are stated as in the source, for every `γ` in the range of the source; at a
+successor stage they can fail outright: at stage `1` the uniformity family for `γ = 0` is empty,
+so there is no model at stage `1` (`VaughtConjecture.Realization.ModelExamples`).  The
+generalized-saturation and bottom-pattern clauses are stated guarded, for the instances with a
+member among the cofaces of `p`.  At a stage that is zero or a limit the side conditions of the
+source make those instances nonempty, and for generalized saturation they are exactly its
+nonemptiness (`StageType.nonempty_cofaces_inter_saturationFamily_iff`,
+`StageType.nonempty_cofaces_inter_bottomPatternFamily`, as in [Kni26, Lemma 4.4.4]), so there the
+guarded clauses are equivalent to those of the source (`IsModel.saturation_of_isLegal`,
+`IsModel.bottomPattern_of_isLawful`).  That a model is infinite will use the dominance clause at
+`γ = 0`.
 
 **Transport and reduction.**  Modelhood is preserved and reflected by transport along a bijection
 of carriers (`isModel_map_iff`), hence invariant under isomorphism (`IsIso.isModel_iff`), where an
@@ -48,21 +54,28 @@ isomorphism `R.Iso S` is a bijection of carriers carrying `R` to `S` and isomorp
 equivalence relation (`isoSetoid`) preserved by stage reduction (`IsIso.reduce`).  The reduction
 of a model at a stage `α` that is zero or a limit to a limit stage `0 < β ≤ α` is a model
 (`IsModel.reduce`).  Each family reduces into itself (`StageType.reduce_mem_saturationFamily`, …),
-and each nonempty instance at `β` lifts to a nonempty instance at `α`: a coface at `β` of the
+so the uniformity and dominance clauses reduce directly (`IsModel.reduce_uniformity`,
+`IsModel.reduce_dominance`): the band `[γ, γ + ω)` of `γ < β` lies below `β`.  For the guarded
+clauses, each nonempty instance at `β` lifts to a nonempty instance at `α`: a coface at `β` of the
 reduced type lifts, by bountifulness of its scheme, to a coface at `α` with the same scheme and
-the same capped observation at a self-visible cap below `β`
-(`StageType.exists_isLawful_lift`).  The caps are `⊥` for saturation (`IsModel.reduce_saturation`,
-any `β` that is zero or a limit), a positive ordinal below `β` for the bottom pattern
-(`IsModel.reduce_bottomPattern`, which therefore needs `β ≠ 0`), and an ordinal above the band or
-bound in question for uniformity and dominance (`IsModel.reduce_uniformity`,
-`IsModel.reduce_dominance`).  The stage `α` must be zero or a limit so that the lifted labels can
-be reduced to stage `α` lawfully; stages of models in the source are limits.
+the same capped observation at a self-visible cap below `β` (`StageType.exists_isLawful_lift`).
+The caps are `⊥` for saturation (`IsModel.reduce_saturation`, any `β` that is zero or a limit)
+and a positive ordinal below `β` for the bottom pattern (`IsModel.reduce_bottomPattern`, which
+therefore needs `β ≠ 0`).  The stage `α` must be zero or a limit so that the lifted labels can be
+reduced to stage `α` lawfully; stages of models in the source are limits.
 
 **Directed covers.**  Occurrences are preordered by inclusion of supports; under exact consistency
 `x ≤ y` says that `x` is a face of `y` with the restricted type
-(`Occurrence.le_iff_exists_restrictFace`).  Under covering the occurrences form a directed
-preorder (`IsCovering.isDirected`), and so do the occurrences containing any finite set
-(`IsCovering.directedOn_subset_support`).
+(`Occurrence.le_iff_exists_restrictFace`).  Under covering the occurrences containing any finite
+set are nonempty (`IsCovering.nonempty_setOf_subset_support`) and directed
+(`IsCovering.directedOn_setOf_subset_support`); in particular the occurrences form a directed
+preorder (`IsCovering.isDirected`).
+
+## Placement
+
+`Realization.Occurrence.comap` and its `simp` lemmas belong in
+`VaughtConjecture.Realization.Transport`, beside `Realization.Occurrence.map`.  They are stated
+here so that that file is unchanged.
 
 ## References
 
@@ -146,7 +159,14 @@ variable (R : Realization.{u, v} α M)
 
 /-- A **model** at stage `α` [Kni26, Definition 3.2.1]: a realization on a nonempty carrier with
 legal types that is exactly consistent and covering and that, over every occurrence, realizes a
-member of each nonempty instance of the four families among the cofaces of its type. -/
+member of each instance of the four families: of the uniformity and dominance families for every
+`γ` in the range of the source, and of the generalized-saturation and bottom-pattern families
+whenever the instance has a member among the cofaces of its type.
+
+The source defines models only at limit stages `α`, where every instance is nonempty
+[Kni26, Lemma 4.4.1]; here the definition is made at every stage, and at a stage that is zero or
+a limit the guarded clauses are equivalent to those of the source
+(`IsModel.saturation_of_isLegal`, `IsModel.bottomPattern_of_isLawful`). -/
 structure IsModel : Prop where
   /-- The carrier is nonempty. -/
   nonempty : Nonempty M
@@ -165,11 +185,10 @@ structure IsModel : Prop where
       R.RealizesOver x.tuple (bottomPatternFamily S ρ)
   /-- Clause 4(b), uniformity, for `γ` zero or a limit below the stage. -/
   uniformity (x : R.Occurrence) (γ : Ordinal.{u}) : Order.IsSuccPrelimit γ → γ < α →
-    (x.type.cofaces ∩ uniformityFamily γ).Nonempty →
-      R.RealizesOver x.tuple (uniformityFamily γ)
+    R.RealizesOver x.tuple (uniformityFamily γ)
   /-- Clause 4(c), high-arity dominance, for `γ` below the stage. -/
   dominance (x : R.Occurrence) (γ : Ordinal.{u}) : γ < α →
-    (x.type.cofaces ∩ dominanceFamily γ).Nonempty → R.RealizesOver x.tuple (dominanceFamily γ)
+    R.RealizesOver x.tuple (dominanceFamily γ)
 
 variable {R}
 
@@ -213,6 +232,14 @@ def Occurrence.comap (e : M ≃ N) (y : (R.map e).Occurrence) : R.Occurrence whe
   type := y.type
   eval_tuple := y.eval_tuple
 
+/-- The tuple of the underlying occurrence is the preimage tuple. -/
+@[simp] theorem Occurrence.comap_tuple (e : M ≃ N) (y : (R.map e).Occurrence) :
+    (y.comap e).tuple = y.tuple.trans e.symm.toEmbedding := rfl
+
+/-- The type of the underlying occurrence is unchanged. -/
+@[simp] theorem Occurrence.comap_type (e : M ≃ N) (y : (R.map e).Occurrence) :
+    (y.comap e).type = y.type := rfl
+
 /-- **Transport of models** along a bijection of carriers. -/
 theorem IsModel.map (hR : R.IsModel) (e : M ≃ N) : (R.map e).IsModel where
   nonempty := hR.nonempty.map e
@@ -221,9 +248,8 @@ theorem IsModel.map (hR : R.IsModel) (e : M ≃ N) : (R.map e).IsModel where
   isCovering := hR.isCovering.map e
   saturation y S hne := (realizesOver_map_iff e).mpr (hR.saturation (y.comap e) S hne)
   bottomPattern y S ρ hne := (realizesOver_map_iff e).mpr (hR.bottomPattern (y.comap e) S ρ hne)
-  uniformity y γ hγ hγα hne :=
-    (realizesOver_map_iff e).mpr (hR.uniformity (y.comap e) γ hγ hγα hne)
-  dominance y γ hγα hne := (realizesOver_map_iff e).mpr (hR.dominance (y.comap e) γ hγα hne)
+  uniformity y γ hγ hγα := (realizesOver_map_iff e).mpr (hR.uniformity (y.comap e) γ hγ hγα)
+  dominance y γ hγα := (realizesOver_map_iff e).mpr (hR.dominance (y.comap e) γ hγα)
 
 /-- Modelhood is preserved and reflected by transport. -/
 @[simp] theorem isModel_map_iff (e : M ≃ N) : (R.map e).IsModel ↔ R.IsModel :=
@@ -233,13 +259,14 @@ theorem IsModel.map (hR : R.IsModel) (e : M ≃ N) : (R.map e).IsModel where
 
 section Reduce
 
-variable (hR : R.IsModel) (hα : Order.IsSuccPrelimit α)
-include hR hα
+variable (hR : R.IsModel)
+include hR
 
 /-- **Saturation reduces**: at every stage `β` that is zero or a limit, the stage reduction of a
 model satisfies the saturation clause.  A coface at `β` lifts at the cap `⊥`. -/
-theorem IsModel.reduce_saturation (hβ : Order.IsSuccPrelimit β) (y : (R.reduce hβ).Occurrence)
-    (S : Scheme.{u} (y.arity + 1)) (hne : (y.type.cofaces ∩ saturationFamily S).Nonempty) :
+theorem IsModel.reduce_saturation (hα : Order.IsSuccPrelimit α) (hβ : Order.IsSuccPrelimit β)
+    (y : (R.reduce hβ).Occurrence) (S : Scheme.{u} (y.arity + 1))
+    (hne : (y.type.cofaces ∩ saturationFamily S).Nonempty) :
     (R.reduce hβ).RealizesOver y.tuple (saturationFamily S) := by
   obtain ⟨x, rfl⟩ := Occurrence.exists_reduce_eq hβ y
   obtain ⟨q', hq', hS⟩ := hne
@@ -250,7 +277,7 @@ theorem IsModel.reduce_saturation (hβ : Order.IsSuccPrelimit β) (y : (R.reduce
 
 /-- **The bottom pattern reduces** to every limit stage `β > 0`.  A coface at `β` lifts at a
 positive self-visible cap below `β`, which keeps the bottom pattern. -/
-theorem IsModel.reduce_bottomPattern (hβ : Order.IsSuccLimit β)
+theorem IsModel.reduce_bottomPattern (hα : Order.IsSuccPrelimit α) (hβ : Order.IsSuccLimit β)
     (y : (R.reduce hβ.isSuccPrelimit).Occurrence) (S : Scheme.{u} (y.arity + 1))
     (ρ : Fin S.card → Label.{u}) (hne : (y.type.cofaces ∩ bottomPatternFamily S ρ).Nonempty) :
     (R.reduce hβ.isSuccPrelimit).RealizesOver y.tuple (bottomPatternFamily S ρ) := by
@@ -272,53 +299,29 @@ theorem IsModel.reduce_bottomPattern (hβ : Order.IsSuccLimit β)
 variable {β : Ordinal.{u}} (hβ : Order.IsSuccPrelimit β) (hβα : β ≤ α)
 include hβ hβα
 
-/-- **Uniformity reduces** to every stage `β ≤ α` that is zero or a limit.  A coface at `β` with
-a label `o` in the band of `γ` lifts at the self-visible cap `o + (n + 2)`, which keeps `o`. -/
+/-- **Uniformity reduces** to every stage `β ≤ α` that is zero or a limit: for `γ < β` the band
+`[γ, γ + ω)` lies below `β`, so stage reduction keeps a realized member of the family. -/
 theorem IsModel.reduce_uniformity (y : (R.reduce hβ).Occurrence) (γ : Ordinal.{u})
-    (hγ : Order.IsSuccPrelimit γ) (hγβ : γ < β)
-    (hne : (y.type.cofaces ∩ uniformityFamily γ).Nonempty) :
+    (hγ : Order.IsSuccPrelimit γ) (hγβ : γ < β) :
     (R.reduce hβ).RealizesOver y.tuple (uniformityFamily γ) := by
   obtain ⟨x, rfl⟩ := Occurrence.exists_reduce_eq hβ y
-  obtain ⟨q', hq', d, hγd, hdγ⟩ := hne
-  obtain ⟨o, ho⟩ : IsProper (q'.label d) := isProper_iff_ne.mpr
-    ⟨ne_bot_of_gt ((WithBot.bot_lt_coe _).trans_le hγd), ne_top_of_lt hdγ⟩
-  have hoβ : o < β := lt_of_lt_add_omega0 hβ hγβ (by rw [← ho] at hdγ; exact_mod_cast hdγ)
-  obtain ⟨c, hoc, hcβ, hc⟩ := exists_lt_lt_isSelfVisible hβ hoβ (x.arity + 1)
-  obtain ⟨ρ, hρ, hρc, hext⟩ := exists_isLawful_lift (p := x.type) hβ hq'.1 hq'.2 hc
-    (by exact_mod_cast hcβ.le)
-  have hoc' : (o : Label.{u}) < c := by exact_mod_cast hoc
-  have hρd : ρ d = o := by
-    have h := hρc d
-    rw [← ho, min_eq_left hoc'.le] at h
-    rcases min_choice (ρ d) (c : Label.{u}) with h' | h'
-    · rwa [h'] at h
-    · exact absurd (h' ▸ h) hoc'.ne'
-  refine (hR.uniformity x γ hγ (hγβ.trans_le hβα) ⟨_, ofIsLawful_mem_cofaces_of_lift hα hβ hq' hρ
-    hext, d, ?_⟩).reduce hβ fun _ ↦ reduce_mem_uniformityFamily hβ hγβ
-  rw [ofIsLawful_label, hρd, reduce_of_lt (by exact_mod_cast hoβ.trans_le hβα), ho]
-  exact ⟨hγd, hdγ⟩
+  exact (hR.uniformity x γ hγ (hγβ.trans_le hβα)).reduce hβ fun _ ↦
+    reduce_mem_uniformityFamily hβ hγβ
 
-/-- **Dominance reduces** to every stage `β ≤ α` that is zero or a limit.  A coface at `β` lifts
-at a self-visible cap between `γ` and `β`, which keeps a label above `γ`. -/
-theorem IsModel.reduce_dominance (y : (R.reduce hβ).Occurrence) (γ : Ordinal.{u}) (hγβ : γ < β)
-    (hne : (y.type.cofaces ∩ dominanceFamily γ).Nonempty) :
+/-- **Dominance reduces** to every stage `β ≤ α` that is zero or a limit: stage reduction never
+lowers a label. -/
+theorem IsModel.reduce_dominance (y : (R.reduce hβ).Occurrence) (γ : Ordinal.{u}) (hγβ : γ < β) :
     (R.reduce hβ).RealizesOver y.tuple (dominanceFamily γ) := by
   obtain ⟨x, rfl⟩ := Occurrence.exists_reduce_eq hβ y
-  obtain ⟨q', hq', d, hg, hγd⟩ := hne
-  obtain ⟨c, hγc, hcβ, hc⟩ := exists_lt_lt_isSelfVisible hβ hγβ (x.arity + 1)
-  obtain ⟨ρ, hρ, hρc, hext⟩ := exists_isLawful_lift (p := x.type) hβ hq'.1 hq'.2 hc
-    (by exact_mod_cast hcβ.le)
-  have hρd : (γ : Label.{u}) < ρ d := by
-    have h : (γ : Label.{u}) < min (q'.label d) c := lt_min hγd (by exact_mod_cast hγc)
-    rw [← hρc d] at h
-    exact h.trans_le (min_le_left _ _)
-  exact (hR.dominance x γ (hγβ.trans_le hβα) ⟨_, ofIsLawful_mem_cofaces_of_lift hα hβ hq' hρ hext,
-    d, hg, hρd.trans_le (le_reduce α _)⟩).reduce hβ fun _ ↦ reduce_mem_dominanceFamily hβ
+  exact (hR.dominance x γ (hγβ.trans_le hβα)).reduce hβ fun _ ↦ reduce_mem_dominanceFamily hβ
 
 end Reduce
 
 /-- **Reduction of models** [Kni26, Definition 5.1.1]: the stage reduction of a model at a stage
-`α` that is zero or a limit to a limit stage `0 < β ≤ α` is a model. -/
+`α` that is zero or a limit to a limit stage `0 < β ≤ α` is a model; this is [Kni26, Lemma 5.2.1]
+for `β ≠ 0`.  The case `β = 0` of that lemma is not covered: the reduction of the bottom-pattern
+clause lifts at a positive self-visible cap `c ≤ β`, and there is none when `β = 0`.  The base
+stage of the construction is `ω`. -/
 theorem IsModel.reduce (hR : R.IsModel) (hα : Order.IsSuccPrelimit α) (hβ : Order.IsSuccLimit β)
     (hβα : β ≤ α) : (R.reduce hβ.isSuccPrelimit).IsModel where
   nonempty := hR.nonempty
@@ -329,8 +332,8 @@ theorem IsModel.reduce (hR : R.IsModel) (hα : Order.IsSuccPrelimit α) (hβ : O
   isCovering := hR.isCovering.reduce _
   saturation := hR.reduce_saturation hα _
   bottomPattern := hR.reduce_bottomPattern hα hβ
-  uniformity := hR.reduce_uniformity hα _ hβα
-  dominance := hR.reduce_dominance hα _ hβα
+  uniformity := hR.reduce_uniformity _ hβα
+  dominance := hR.reduce_dominance _ hβα
 
 /-! ### Isomorphisms -/
 
@@ -426,22 +429,25 @@ theorem Occurrence.le_iff_exists_restrictFace (hR : R.IsConsistent) {y z : R.Occ
   · rw [le_def, Occurrence.support, Occurrence.support, ← hf, ← Finset.map_map]
     exact map_subset_map.mpr (subset_univ _)
 
-/-- **Directed covers**: under covering the occurrences form a directed preorder. -/
-theorem IsCovering.isDirected (hc : R.IsCovering) : IsDirected R.Occurrence (· ≤ ·) := by
-  classical
-  refine ⟨fun y z ↦ ?_⟩
-  obtain ⟨w, hw⟩ := hc.exists_subset_support (y.support ∪ z.support)
-  exact ⟨w, subset_union_left.trans hw, subset_union_right.trans hw⟩
+/-- Under covering, some occurrence contains any given finite set. -/
+theorem IsCovering.nonempty_setOf_subset_support (hc : R.IsCovering) (F : Finset M) :
+    {y : R.Occurrence | F ⊆ y.support}.Nonempty :=
+  hc.exists_subset_support F
 
-/-- Under covering, the occurrences containing a finite set are nonempty and directed. -/
-theorem IsCovering.directedOn_subset_support (hc : R.IsCovering) (F : Finset M) :
-    {y : R.Occurrence | F ⊆ y.support}.Nonempty ∧
-      DirectedOn (· ≤ ·) {y : R.Occurrence | F ⊆ y.support} := by
+/-- Under covering, the occurrences containing a finite set are directed. -/
+theorem IsCovering.directedOn_setOf_subset_support (hc : R.IsCovering) (F : Finset M) :
+    DirectedOn (· ≤ ·) {y : R.Occurrence | F ⊆ y.support} := by
   classical
-  refine ⟨hc.exists_subset_support F, fun y hy z _ ↦ ?_⟩
+  intro y hy z _
   obtain ⟨w, hw⟩ := hc.exists_subset_support (y.support ∪ z.support)
   exact ⟨w, hy.trans (subset_union_left.trans hw), subset_union_left.trans hw,
     subset_union_right.trans hw⟩
+
+/-- **Directed covers**: under covering the occurrences form a directed preorder. -/
+theorem IsCovering.isDirected (hc : R.IsCovering) : IsDirected R.Occurrence (· ≤ ·) := by
+  have h := hc.directedOn_setOf_subset_support ∅
+  simp only [Finset.empty_subset, Set.ofPred_true] at h
+  exact directedOn_univ_iff.mp h
 
 end Directed
 

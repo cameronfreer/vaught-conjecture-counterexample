@@ -10,18 +10,19 @@ import VaughtConjecture.Geometry.IntervalPlan
 import VaughtConjecture.Realization.Model
 
 /-!
-# An empty family, and a consistent covering realization that is not a model
+# No model at a successor stage, and a consistent covering realization that is not a model
 
 Roadmap, Layer 2 (the four unchanged extension families); semantic contract, item 5.
 
-**An empty family.**  At the successor stage `1` no stage type on `n + 1` points has a label in
-the band `[0, ω)` (`uniformityFamily_zero_eq_empty`): such a label would be the ordinal `0`, which
-is self-visible only at grade `0`, while every cell has positive grade.  So no realization at
-stage `1` realizes a member of this family over any tuple
+**No model at a successor stage.**  At the successor stage `1` no stage type on `n + 1` points has
+a label in the band `[0, ω)` (`uniformityFamily_zero_eq_empty`): such a label would be the ordinal
+`0`, which is self-visible only at grade `0`, while every cell has positive grade.  So no
+realization at stage `1` realizes a member of this family over any tuple
 (`not_realizesOver_uniformityFamily_zero`), although `0` is a limit-or-zero ordinal below the stage
-`1`.  An existential-closure clause required of every instance, empty or not, would therefore
-exclude every realization at stage `1` with an occurrence; the clauses of `Realization.IsModel` are
-required of the nonempty instances only.
+`1`.  The uniformity clause of `Realization.IsModel` at `γ = 0` asks for such a member over every
+occurrence, so no realization at stage `1` with an occurrence is a model; since every model has an
+occurrence, there is no model at stage `1` (`not_isModel_of_stage_one`).  The source defines
+models only at limit stages [Kni26, Definition 3.2.1].
 
 **Consistency and covering are not modelhood.**  The *chart* of a stage type `q` on `k` points is
 the realization on `Fin k` whose evaluation is the face map of `q`.  It is exactly consistent and
@@ -31,13 +32,18 @@ segment lives on the nonempty carrier `Fin 1` and satisfies every law of a model
 existential closure.  It is not a model (`not_isModel_chart_pointOfPair`): `pair` is a coface of
 `pointOfPair` with its own scheme, so the saturation instance of that scheme is nonempty, but no
 tuple on two points of `Fin 1` exists.
+
+## References
+
+Models are [Kni26, Definition 3.2.1], for R. W. Knight, *A counterexample to Vaught's Conjecture
+using generalised Stone spaces* (draft, 20 February 2026).
 -/
 
 namespace VaughtConjecture.Realization
 
 open Finset Label StageType
 
-/-! ### An empty uniformity family at a successor stage -/
+/-! ### No model at a successor stage -/
 
 /-- At the successor stage `1` no stage type on `n + 1` points has a label in `[0, ω)`. -/
 private theorem uniformityFamily_zero_eq_empty (n : ℕ) :
@@ -61,6 +67,12 @@ private theorem not_realizesOver_uniformityFamily_zero {M : Type} (R : Realizati
   rintro ⟨-, -, q, hq, -⟩
   rw [uniformityFamily_zero_eq_empty] at hq
   exact hq
+
+/-- **No model at stage `1`**: over an occurrence of a model, the uniformity clause at `γ = 0` would
+realize a label in `[0, ω)`. -/
+private theorem not_isModel_of_stage_one {M : Type} (R : Realization.{0, 0} 1 M) : ¬ R.IsModel :=
+  fun h ↦ h.nonempty_occurrence.elim fun x ↦ not_realizesOver_uniformityFamily_zero R x.tuple
+    (h.uniformity x 0 Ordinal.isSuccPrelimit_zero zero_lt_one)
 
 /-! ### Charts -/
 
@@ -151,7 +163,6 @@ private theorem not_isModel_chart_pointOfPair : ¬ (chart pointOfPair).IsModel :
   obtain ⟨u, -⟩ := h.saturation pointOccurrence pair.toScheme ⟨pair, pair_mem_cofaces, rfl⟩
   have h2 := Fintype.card_le_of_embedding u
   rw [Fintype.card_fin, Fintype.card_fin] at h2
-  change 1 + 1 ≤ 1 at h2
-  omega
+  simp [pointOccurrence] at h2
 
 end VaughtConjecture.Realization
