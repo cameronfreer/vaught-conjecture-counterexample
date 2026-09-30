@@ -42,10 +42,9 @@ See `roadmap/README.md`, Layer 1, `roadmap/EXPOSITIONS.md` §1, and
 
 ## References
 
-The recursive plan is Definition 2.1.1 ("amalgamation plan"), and restriction to a visible face
-is Definition 2.1.5, of R. W. Knight, *A counterexample to Vaught's Conjecture using generalised
-Stone spaces* (draft, 20 February 2026) [Kni26].  The reading of plans as convex geometries is
-the formalization's own.
+The recursive plan is [Kni26, Definition 2.1.1] ("amalgamation plan"), and restriction to a
+visible face is [Kni26, Definition 2.1.5].  The reading of plans as convex geometries is the
+formalization's own.
 -/
 
 namespace VaughtConjecture.Geometry
@@ -104,7 +103,7 @@ private theorem subset_erase_erase {a b : α} (ha : S ⊆ A.erase a) (hb : S ⊆
   mem_erase.mpr ⟨(mem_erase.mp (hb hx)).1, ha hx⟩
 
 /-- In a glued plan, the faces below the left deletion `A \ {a}` are exactly those of `Q`. -/
-private theorem mem_step_left {a b : α} (ha : a ∈ A) (hQ : IsPlan (A.erase a) Q)
+theorem mem_step_left {a b : α} (ha : a ∈ A) (hQ : IsPlan (A.erase a) Q)
     (hR : IsPlan (A.erase b) R) (hagree : ∀ C ⊆ (A.erase a).erase b, C ∈ Q ↔ C ∈ R)
     (hS : S ⊆ A.erase a) : S ∈ insert A (Q ∪ R) ↔ S ∈ Q := by
   refine ⟨fun h ↦ ?_, fun h ↦ mem_insert_of_mem (mem_union_left _ h)⟩
@@ -115,7 +114,7 @@ private theorem mem_step_left {a b : α} (ha : a ∈ A) (hQ : IsPlan (A.erase a)
   · exact (hagree S (subset_erase_erase hS (hR.subset_of_mem h))).mpr h
 
 /-- In a glued plan, the faces below the right deletion `A \ {b}` are exactly those of `R`. -/
-private theorem mem_step_right {a b : α} (hb : b ∈ A) (hQ : IsPlan (A.erase a) Q)
+theorem mem_step_right {a b : α} (hb : b ∈ A) (hQ : IsPlan (A.erase a) Q)
     (hagree : ∀ C ⊆ (A.erase a).erase b, C ∈ Q ↔ C ∈ R)
     (hS : S ⊆ A.erase b) : S ∈ insert A (Q ∪ R) ↔ S ∈ R := by
   refine ⟨fun h ↦ ?_, fun h ↦ mem_insert_of_mem (mem_union_right _ h)⟩

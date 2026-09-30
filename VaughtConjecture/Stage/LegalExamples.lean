@@ -23,8 +23,8 @@ and the only graded face is `({0}, 1)`, so it is legal (`isLegal_point`).
 
 ## References
 
-R. W. Knight, *A counterexample to Vaught's Conjecture using generalised Stone spaces* (draft,
-20 February 2026) [Kni26].
+Legality follows [Kni26, Definitions 2.6.1 and 3.1.1]; the mute semantics is the last clause of
+[Kni26, Lemma 4.2.2].
 -/
 
 namespace VaughtConjecture.StageType

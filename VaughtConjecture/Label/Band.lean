@@ -37,10 +37,9 @@ sent to `α` or above, and sends the remaining labels to `c`.
 
 ## References
 
-The band rule is the post-composition of the top-witness row in the proof of Lemma 5.3.5 of
-R. W. Knight, *A counterexample to Vaught's Conjecture using generalised Stone spaces* (draft,
-20 February 2026) [Kni26], and the band map is the map it composes with; the remaining rows of
-that proof need a splice of two witnesses, not stated here.  The transformation relation is
+The band rule is the post-composition of the top-witness row in the proof of
+[Kni26, Lemma 5.3.5], and the band map is the map it composes with; the remaining rows of that
+proof need a splice of two witnesses, not stated here.  The transformation relation is
 [Kni26, Definition 2.3.9].
 -/
 
