@@ -19,8 +19,9 @@ left undischarged for the construction is progress on a target, not its completi
 of `README.md` ("Library conventions") apply, including the terminology table and the keep-list.
 The literature these milestones rely on is recorded in `LITERATURE.md`, §7.
 
-**Status.**  The targets A1, A2, A3, B2, B3, and C are established results: their proofs are
-known, and are the arguments given with each below.  They remain formalization targets here.
+**Status.**  The targets A1, A2, A3, B2, and B3 are established results: their proofs are known,
+and are the arguments given with each below.  They remain formalization targets here.  C, in its
+two-point form, is a statement still to be proved here, with its argument given below.
 B1, the joint embedding and amalgamation of top-free charts, is part of the core: it is step
 2 of the construction of the top-free witnesses (`README.md`, section "The top-free witnesses:
 the finite age and its classical limit"), and its entry below is a pointer.  The deliberate
@@ -185,6 +186,18 @@ listed at the head of A are proved in the core, in particular the countable loss
 complements), the sharp agreement, and the existence of the top-free witnesses; a version of
 A1–A3 taking them as hypotheses is progress on A, not its completion (as in the preamble).
 
+### A separate library milestone: bounded back-and-forth separation
+
+An intended generic interface of InfinitaryLogic, not yet pinned (`IMPLEMENTATION.md`,
+"Upstream building blocks"): an analytic family of pairwise nonisomorphic pairs has a uniform
+countable back-and-forth separation level, and with cocountable back-and-forth concentration
+(given here by the expansion domains, on which classes agree at bounded rank) this yields
+thinness without sentence minimality and without López–Escobar.  The forced back-and-forth tree
+construction and its rank comparison are statements still to be proved, and the imports of a
+tree-boundedness theorem need inspection first.  The working thinness route, from countable truth
+sides, is kept; the Gδ/Polish results stay optional; an improvement is described as reduced
+dependencies, not as a smaller trusted kernel.  Milestone A does not depend on this interface.
+
 ## Milestone B — top-free chart homogeneity and its consequences
 
 Setting: a stage `λ = λ_ξ`, the stage chart language at `λ` (relational), and a countable
@@ -254,9 +267,9 @@ span substructures isomorphic to the finite structure of that type (step 4 of th
 witnesses, by the factorization of tuples), the isomorphism between them extends to an
 automorphism of `M`, and every automorphism of an `L^h_λ`-structure is an automorphism of its
 `L_λ`-reduct.  Only this direction is used.  The converse holds for a realization with its
-definitional expansion (`HULL_ALGEBRA.md`, §5); for `M` it would first need its operations to
-be the definable hull operations of the reconstructed realization, which
-`SEMANTIC_CONTRACT.md`, item 11, does not require.
+definitional expansion (`HULL_ALGEBRA.md`, §5), and for `M` once the reconstruction roundtrip
+(`SEMANTIC_CONTRACT.md`, item 11) identifies its operations with the definable hull operations
+of the reconstructed realization; it is not used.
 
 **Instantiation.**  The top-free witness at block `ξ`, as a structure in the stage chart
 language at `λ_ξ`.
@@ -359,23 +372,26 @@ is part of the core and is not a condition of this milestone.
 ## Milestone C — a geometric obstruction
 
 **Statement.**  Let a realization on a carrier `M` of any cardinality satisfy exact consistency
-and covering.  Then no infinite subset `S ⊆ M` has the property that every permutation of `S`
-extends to an automorphism of the realization.  (Four distinct points already suffice.)
+and covering, read as a structure in its full stage chart language.  Every set of **absolute
+indiscernibles** (a set `S ⊆ M` every permutation of which extends to an automorphism of `M`) has
+at most two elements.
 
-**Proof.**  Two-generation: of three distinct points, one lies in the hull of the other two,
-since the hull of the three is a nonsingleton closed set whose two extreme points lie among them
-and generate it.  Pointwise hull fixation: an automorphism fixing two points fixes their hull
-pointwise, since the chart on that hull is determined by its type and its extreme coordinates
-(`SEMANTIC_CONTRACT.md`, item 10), an argument to be carried out from exact consistency, covering,
-and the finite geometry alone.  Then, with `p` in the hull of `q` and `r` and a fourth point `s`,
-the transposition of `p` and `s` fixes `q` and `r` but moves `p`.  Sketch: `false_of_swap`,
-`false_of_four_points`, and `not_forall_perm_extends_of_infinite` (all proved, for an abstract
-binary hull and a set of self-maps); `mem_closure_pair_of_twoGeneration` and
-`not_forall_perm_extends_of_twoGeneration` (proved) derive the three-point form from whole-hull
-two-generation of a closure operator on finite sets.
+**Proof.**  Let `x`, `y`, `z` be three distinct points of `S`.  Their hull `H` is a nonsingleton
+finite closed set, and its two extreme points lie among `x`, `y`, `z` (an extreme point of the
+hull of a set lies in the set, `HULL_ALGEBRA.md`, §3); so one of the three is not an extreme
+point of `H` and another is.  An automorphism carries actual charts to actual charts of the same
+type, hence the hull of a finite set to the hull of its image and the two intrinsic extreme
+points of that hull to those of the image hull.  The transposition of a non-extreme and an
+extreme point of `H`, fixing the third point, would extend to an automorphism mapping `H` onto
+itself and an extreme point to a non-extreme one, which is impossible.  Sketch:
+`false_of_swap_extreme` (proved, for an abstract extreme-point map commuting with a set of
+self-maps).
 
-**Hypotheses.**  Exact consistency and covering only: not top-freeness, modelhood, receiving, or
-countability.  The canonical finite hulls come from layer 2 and the geometry from layer 1.
+**Hypotheses.**  Exact consistency and covering only: neither receiving nor top-freeness, nor
+modelhood or countability.  The canonical finite hulls and their generation by two extreme points
+come from layer 2 (`README.md`, Layer 2, item 1) and the geometry from layer 1.
+
+**Status.**  A statement still to be proved here; the argument is the one above.
 
 **Import guard.**  The module proving this theorem and the modules it imports must not include any
 module of the finite extension constructions or receiving (layer 3), of model existence (the
@@ -441,27 +457,35 @@ A prefix matches whole name components: `VaughtConjecture.Receiving` excludes
 `VaughtConjecture.Receiving` and `VaughtConjecture.Receiving.Core`, not
 `VaughtConjecture.ReceivingData`.
 
-**Upstream ingredients.**  The generic finite-support closure (`FiniteSupportClosure`, with
-`setClosure`) and the whole-hull two-generation hypothesis of `TwoGeneratorCardinality` (the hull
-of every finite set is the hull of at most two of its points), which the canonical finite hulls
-of layer 2 are to satisfy; Mathlib's `ClosureOperator`, `Equiv.swap`, and
-`Set.Infinite.natEmbedding`.
+**Upstream ingredients.**  Mathlib's `Equiv.swap`; the finite hulls and their extreme points
+from layer 2.  No cardinality material (`TwoGeneratorCardinality`) is used.
 
 **Instantiation.**  Every realization with exact consistency and covering: models of `Φ` read in
 the stage language at `ω`, their expansions at every stage, the top-free realizations, and the
-structural stable candidate before its modelhood is proved.  In particular no model of `Φ` has an
-infinite set all of whose permutations are induced by automorphisms.
+structural stable candidate before its modelhood is proved.  In particular no model of `Φ` has
+three points all of whose permutations are induced by automorphisms.
 
-**Regressions.**  A set of exactly four points (the threshold of the argument); sets of at most
-three points, about which nothing is claimed; uncountable carriers; realizations that are not
-models.
+**Regressions.**  A set of exactly three points (the threshold of the argument); sets of at most
+two points, about which nothing is claimed; three points whose hull has more than three points;
+uncountable carriers; realizations that are not models.
 
-**Non-claims.**  This is a restriction imposed by the geometry, not by the model-existence
-machinery.  It does not exclude infinite sets of order-indiscernibles, infinite orbits, or
-weaker homogeneity (for instance, sets on which the automorphisms act transitively), and it says
-nothing about the size of automorphism groups.
+**Non-claims.**  No claim of sharpness (that some realization has two absolute indiscernibles),
+of the same bound in a reduct language (the base reduct, or any language without the chart
+relations of the stage), or that hull closure is full definable closure.  It does not exclude
+infinite sets of order-indiscernibles, infinite orbits, or weaker homogeneity (for instance, sets
+on which the automorphisms act transitively), and it says nothing about the size of automorphism
+groups.
 
 **Completion criterion (C).**  The generic theorem is proved in a module with no construction
-imports; two-generation and pointwise hull fixation are proved for realizations from exact
-consistency and covering; the instance for an arbitrary realization is stated and proved; and the
-import guard is in place and passes.
+imports; the preservation of the two extreme points of a finite hull by automorphisms is proved
+for realizations from exact consistency and covering; the instance for an arbitrary realization
+is stated and proved; and the import guard is in place and passes.
+
+## Downstream: the direct cardinal ceiling
+
+The uncountable consequences stay downstream of the core and of these milestones.  Their carrier
+bound is the direct argument of `HULL_ALGEBRA.md`, §6: once infinite hulls preserve cardinality
+and every proper closed set is countable, closing a subset of cardinality `ℵ₁` of a
+hypothetically larger carrier gives an uncountable proper closed set; no free-set theorem is
+used.  It is a statement still to be proved here, and neither it nor any other optional
+consequence blocks the core reconstruction.

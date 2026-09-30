@@ -190,8 +190,10 @@ def CoversTuples (eval : {n : ℕ} → (Fin n ↪ M) → Option (Chart n)) : Pro
 variable (restrict) in
 /-- **The reconstruction predicate** (`SEMANTIC_CONTRACT.md`, item 11, without receiving):
 literal recovery of the chart relations with injectivity of labelled tuples, exact partial
-restriction, and covering.  It says nothing about the function symbols of `L`: the hull
-operations of the limit need not coincide with those recomputed from the reconstruction. -/
+restriction, and covering.  It concerns the relations only: the identification of the function
+symbols with the definable hull operations is the reconstruction roundtrip of
+`SEMANTIC_CONTRACT.md`, item 11 (a statement still to be proved), which uses local chart
+coverage and no homogeneity. -/
 def Reconstructs (eval : {n : ℕ} → (Fin n ↪ M) → Option (Chart n)) : Prop :=
   RecoversRelations rel eval ∧ ExactRestriction restrict eval ∧ CoversTuples eval
 

@@ -177,15 +177,17 @@ sentence of the main theorem.  Keep nonemptiness explicit until its redundancy i
 here are natural numbers, including zero.
 
 **Hull operations.**  At every stage, construct the definable total binary hull operations
-(`HULL_ALGEBRA.md`) and prove the four facts of `README.md`, Layer 2: definability and
-totality with values in the hull of the arguments; generated-substructure closure equals hull
-closure, so finitely generated substructures are the finite closed sets; finite charts are the
-finite substructures (a chart is read as its partial realization with the operations computed in
-it); and embeddings of the relational reducts of exactly consistent covering realizations
-preserve and reflect the operations, chart embeddings being exactly the embeddings of the finite
-structures.  The last is proved from the chart witnessing each operation, not from definability
-alone.  Nothing else of `HULL_ALGEBRA.md` is core: the inclusions in `dcl` and `acl`, hull
-cardinality, and uncountable consequences stay optional.
+(`HULL_ALGEBRA.md`) and prove the five facts of `README.md`, Layer 2, and only these: finite
+hulls and their generation by two extreme points; definable total hull operations with values in
+the hull of the arguments; preservation of the operations by chart embeddings (and by embeddings
+of the relational reducts of exactly consistent covering realizations), including the default
+value where no chart witness exists; closed images of embeddings; and the correspondence between
+finite expanded substructures and actual charts (a chart is read as its partial realization with
+the operations computed in it).  Preservation is proved from the chart witnessing each operation,
+not from definability alone.  The closed-image proofs import no cardinality material.  Nothing
+else of `HULL_ALGEBRA.md` is core: cardinal bounds, uncountable maximality, the descriptive
+consequences, the inclusions in `dcl` and `acl`, and the equality (1) for infinite sets stay
+downstream.
 
 Density quantifies `∀ root, ∀ donor, ∀ cutoff, ∃ extension` on the fixed donor scheme.
 Different cutoffs may use different points.  Prove both satisfaction directions, the
@@ -315,8 +317,9 @@ stable-label fixedness is a characterization under stated hypotheses.
 Prove unique partial expansions and countable-limit existence.  Coherence of a family of lower
 expansions is derived from uniqueness, not a hidden hypothesis.  Map successor losses to
 terminal classes.  Independently construct top-free terminal models at each countable block;
-expansion uniqueness is what places their **base classes** in the corresponding successor
-differences.
+expansion uniqueness, with same-carrier transport, is what places their **base classes** in the
+corresponding successor differences: together they exclude another, higher expansion of the base
+reduct.  Eventual stopping of every model is a consequence of the filtration, not an input.
 
 Prove the one-sided finite-donor transfer first, using only target consistency and finite-cut
 receiving (row 1).  Symmetrize for back-and-forth: one block buys one level, with no extra `ω`
@@ -383,8 +386,8 @@ age and not recognized afterwards in a model constructed otherwise.
    receiving criterion, all equations on one injective occurrence extending `t` literally, puts
    the new point outside the whole chart `t`, hence outside `F`; terminality from top-freeness
    and the new band required at the next block, using only the reduction of models (layer 2).
-   The placement of the base class in the loss at `η`, by expansion uniqueness, belongs to
-   layer 5 (checkpoint 5).
+   The placement of the base class in the loss at `η`, by expansion uniqueness and same-carrier
+   transport, belongs to layer 5 (checkpoint 5).
 
 **Dependency boundaries.**  The age argument (steps 1–7) imports Mathlib, InfinitaryLogic,
 ComputableModelTheory, layers 0–2, and the finite kernel (layer 1, the coatom extension
@@ -460,6 +463,20 @@ the Scott process (`selfStabilizesCompletely_iff_orbitRank_le`,
 `internalScottRank_le_lift_rank_add_one`).  Their statement shapes and hypotheses are in
 `README.md`, Layer 0; where the repinned versions name them differently, those names prevail.
 
+**An intended generic interface of InfinitaryLogic (not yet pinned; a separate library
+milestone).**  An analytic family of pairwise nonisomorphic pairs of countable structures (on
+model codes) has a uniform countable back-and-forth separation level: one countable `α` at which
+every pair of the family fails to be back-and-forth equivalent.  With cocountable back-and-forth
+concentration (for each countable `α`, all but countably many classes are pairwise
+back-and-forth equivalent at level `α`, as on the expansion domains), this gives thinness
+without sentence minimality and without López–Escobar.  The forced back-and-forth tree
+construction and its rank comparison are statements still to be proved; a tree-boundedness
+theorem is available, but its imports need inspection before it is used.  The interface is
+recorded as an intended one.  It does not replace the working thinness route
+(`Sentenceω.isThinOnNatModels_of_countable_sentence_splits`, from countable truth sides), the
+Gδ/Polish model-code results stay optional, and any improvement it brings is described as reduced
+dependencies of the thinness proof, not as a smaller trusted kernel.
+
 `SuggestedInterfaces.lean` checks representative names, so a pin bump that removes one fails
 when the sketch is checked (the checks are run by CI).  Coding a `Type w` carrier on `ℕ` needs a
 transfer of infinitary isomorphism across universes; do not assume that a statement within a
@@ -523,9 +540,9 @@ The development produces the following, and only these, as hypotheses of library
   of that type (step 4, by the factorization of tuples), the isomorphism between them extends
   to an automorphism of `M`, and every automorphism of an `L^h_λ`-structure is an automorphism
   of its `L_λ`-reduct.  Only this direction is used.  The converse holds for a realization with
-  its definitional expansion (`HULL_ALGEBRA.md`, §5); for `M` it would first need its
-  operations to be the definable hull operations of the reconstructed realization, which
-  `SEMANTIC_CONTRACT.md`, item 11, does not require;
+  its definitional expansion (`HULL_ALGEBRA.md`, §5), and for `M` once the reconstruction
+  roundtrip (`SEMANTIC_CONTRACT.md`, item 11) identifies its operations with the definable hull
+  operations of the reconstructed realization; it is not used;
 - **the local automorphism property:** every self-embedding of a countable top-free model agrees
   with an automorphism on each finite tuple (`COMPANIONS.md`, B2).
 
@@ -587,7 +604,7 @@ Each checkpoint needs both its abstract API and a concrete application:
    restrictions, and its consistent and bountiful rows are established, and row 6 follows from
    the coatom extension property, with nothing used about the stage; the proof of that property
    in its apex form, the completion of the amalgam, is checkpoints 2.1–2.7.
-3. Realizations, literal syntax correspondence, the hull operations with their four facts;
+3. Realizations, literal syntax correspondence, the hull operations with their five facts;
    then steps 1–6 of the top-free witnesses, in order: finite top-free charts, hereditary
    closure and amalgamation and joint embedding (through the plain form of the coatom extension
    property, the first use of row 6), classical existence (not yet pinned),
@@ -731,8 +748,9 @@ internal Scott rank at most `ω` in the library's convention, and primeness amon
 complete theory in arbitrary universes.  The development proves the orbit formulas and the
 local automorphism property; the isolation, atomicity, primeness, rank, and preservation
 theorems are quoted from the two libraries ("Applications of library theorems" above).
-Separately, consistency and covering alone exclude every infinite set whose permutations all
-extend to automorphisms, a theorem kept below receiving by an import guard.  Milestone A of
+Separately, consistency and covering alone bound every set of absolute indiscernibles (a set
+whose permutations all extend to automorphisms) by two points, a theorem kept below receiving by
+an import guard.  Milestone A of
 `COMPANIONS.md` treats the definable cuts, witness convergence, and the Scott/`T∞` dichotomy
 listed above.
 

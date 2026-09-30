@@ -321,135 +321,66 @@ end Orbits
 
 /-! ## C. A geometric obstruction
 
-The generic shape: a binary hull in which, of any three distinct points, one lies in the hull of
-the other two (two-generation), and a family of self-maps each fixing pointwise the hull of any
-two points it fixes (pointwise hull fixation).  For a realization, the hull is the canonical
-finite hull and the maps are its automorphisms; both hypotheses are to be proved from exact
-consistency and covering alone. -/
+The generic shape of the two-point bound: an extreme-point map `ext` on sets, commuting with a
+set `Aut` of self-maps (for a realization, `ext A` is the set of the two extreme points of the
+finite hull of `A`, and `Aut` its automorphisms, which preserve the two intrinsic extremes of a
+finite hull).  If a set `A ⊆ S` contains a point that is not extreme and a point that is, then
+not every permutation of `S` extends to a map in `Aut`.  Applied to three distinct points, whose
+hull has its two extremes among them, it bounds every set of absolute indiscernibles by two.
+The instance for a realization, from exact consistency and covering alone, is a statement still
+to be proved (`COMPANIONS.md`, C). -/
 
 namespace HullObstruction
 
-variable {M : Type u} (hull : M → M → Set M) (Aut : Set (M → M))
+variable {M : Type u} (ext : Set M → Set M) (Aut : Set (M → M))
 
-/-- The core step: with `p` in the hull of `q` and `r`, the transposition of `p` with a fourth
-point `s` fixing `q` and `r` cannot extend to a map in `Aut`. -/
-theorem false_of_swap {S : Set M}
-    (hfix : ∀ g ∈ Aut, ∀ x y, g x = x → g y = y → ∀ z ∈ hull x y, g z = z)
+/-- **The swap of a non-extreme and an extreme point.**  With `x` not extreme and `y` extreme in
+`A ⊆ S`, the transposition of `x` and `y` does not extend to a map in `Aut` commuting with
+`ext`: such a map sends `A` onto itself and `y` to `x`. -/
+theorem false_of_swap_extreme {S A : Set M} (hAS : A ⊆ S)
+    (hext : ∀ g ∈ Aut, ∀ B : Set M, g '' ext B = ext (g '' B))
     (hperm : ∀ σ : Equiv.Perm S, ∃ g ∈ Aut, ∀ s : S, g s = σ s)
-    {p q r s : M} (hp : p ∈ S) (hq : q ∈ S) (hr : r ∈ S) (hs : s ∈ S)
-    (hqp : q ≠ p) (hqs : q ≠ s) (hrp : r ≠ p) (hrs : r ≠ s) (hps : p ≠ s)
-    (hmem : p ∈ hull q r) : False := by
+    {x y : M} (hx : x ∈ A) (hy : y ∈ A) (hxe : x ∉ ext A) (hye : y ∈ ext A) : False := by
   classical
-  obtain ⟨g, hg, hgσ⟩ := hperm (Equiv.swap ⟨p, hp⟩ ⟨s, hs⟩)
-  have hgq : g q = q := by
-    have := hgσ ⟨q, hq⟩
-    rw [Equiv.swap_apply_of_ne_of_ne (by simpa [Subtype.ext_iff] using hqp)
-      (by simpa [Subtype.ext_iff] using hqs)] at this
-    exact this
-  have hgr : g r = r := by
-    have := hgσ ⟨r, hr⟩
-    rw [Equiv.swap_apply_of_ne_of_ne (by simpa [Subtype.ext_iff] using hrp)
-      (by simpa [Subtype.ext_iff] using hrs)] at this
-    exact this
-  have hgp : g p = s := by
-    have := hgσ ⟨p, hp⟩
-    rw [Equiv.swap_apply_left] at this
-    exact this
-  exact hps ((hfix g hg q r hgq hgr p hmem).symm.trans hgp)
-
-/-- **No four points have all their permutations extended.**  Under two-generation and pointwise
-hull fixation, no set containing four distinct points has every permutation extended by a map in
-`Aut`. -/
-theorem false_of_four_points {S : Set M}
-    (htwo : ∀ x y z : M, x ≠ y → y ≠ z → x ≠ z →
-      z ∈ hull x y ∨ x ∈ hull y z ∨ y ∈ hull x z)
-    (hfix : ∀ g ∈ Aut, ∀ x y, g x = x → g y = y → ∀ z ∈ hull x y, g z = z)
-    (hperm : ∀ σ : Equiv.Perm S, ∃ g ∈ Aut, ∀ s : S, g s = σ s)
-    {a b c d : M} (ha : a ∈ S) (hb : b ∈ S) (hc : c ∈ S) (hd : d ∈ S)
-    (hab : a ≠ b) (hac : a ≠ c) (had : a ≠ d) (hbc : b ≠ c) (hbd : b ≠ d) (hcd : c ≠ d) :
-    False := by
-  rcases htwo a b c hab hbc hac with h | h | h
-  · exact false_of_swap hull Aut hfix hperm hc ha hb hd hac had hbc hbd hcd h
-  · exact false_of_swap hull Aut hfix hperm ha hb hc hd hab.symm hbd hac.symm hcd had h
-  · exact false_of_swap hull Aut hfix hperm hb ha hc hd hab had hbc.symm hcd hbd h
-
-/-- **The obstruction.**  Under two-generation and pointwise hull fixation, no infinite set has
-all its permutations extended by maps in `Aut`. -/
-theorem not_forall_perm_extends_of_infinite {S : Set M} (hS : S.Infinite)
-    (htwo : ∀ x y z : M, x ≠ y → y ≠ z → x ≠ z →
-      z ∈ hull x y ∨ x ∈ hull y z ∨ y ∈ hull x z)
-    (hfix : ∀ g ∈ Aut, ∀ x y, g x = x → g y = y → ∀ z ∈ hull x y, g z = z) :
-    ¬ ∀ σ : Equiv.Perm S, ∃ g ∈ Aut, ∀ s : S, g s = σ s := by
-  intro hperm
-  let f := hS.natEmbedding
-  have hne : ∀ i j : ℕ, i ≠ j → (f i : M) ≠ f j := fun i j hij h =>
-    hij (f.injective (Subtype.ext h))
-  exact false_of_four_points hull Aut htwo hfix hperm (f 0).2 (f 1).2 (f 2).2 (f 3).2
-    (hne 0 1 (by decide)) (hne 0 2 (by decide)) (hne 0 3 (by decide))
-    (hne 1 2 (by decide)) (hne 1 3 (by decide)) (hne 2 3 (by decide))
-
-/-- **Two-generation for three points**, from the whole-hull two-generation hypothesis of the
-library's `TwoGeneratorCardinality` (the hull of every finite set is the hull of at most two of
-its points): of three distinct points, one lies in the closure of the other two. -/
-theorem mem_closure_pair_of_twoGeneration [DecidableEq M] (c : ClosureOperator (Finset M))
-    (hgen : ∀ S : Finset M, ∃ T ⊆ S, T.card ≤ 2 ∧ c T = c S) {x y z : M}
-    (hxy : x ≠ y) (hyz : y ≠ z) (hxz : x ≠ z) :
-    z ∈ c {x, y} ∨ x ∈ c {y, z} ∨ y ∈ c {x, z} := by
-  obtain ⟨T, hTS, hT2, hTc⟩ := hgen {x, y, z}
-  have hmem : ∀ w ∈ ({x, y, z} : Finset M), w ∈ c T := fun w hw => by
-    rw [hTc]; exact c.le_closure _ hw
-  have hcard : ({x, y, z} : Finset M).card = 3 := by
-    rw [Finset.card_insert_of_notMem (by simp [hxy, hxz]),
-      Finset.card_pair hyz]
-  by_cases hz : z ∈ T
-  · by_cases hx : x ∈ T
-    · by_cases hy : y ∈ T
-      · have : ({x, y, z} : Finset M) ⊆ T := by
-          intro w hw; simp only [Finset.mem_insert, Finset.mem_singleton] at hw
-          rcases hw with rfl | rfl | rfl <;> assumption
-        have := Finset.card_le_card this
-        omega
-      · right; right
-        have hT : T ⊆ {x, z} := by
-          intro w hw
-          have := hTS hw
-          simp only [Finset.mem_insert, Finset.mem_singleton] at this ⊢
-          rcases this with rfl | rfl | rfl
-          · exact Or.inl rfl
-          · exact absurd hw hy
-          · exact Or.inr rfl
-        exact c.monotone hT (hmem y (by simp))
-    · right; left
-      have hT : T ⊆ {y, z} := by
-        intro w hw
-        have := hTS hw
-        simp only [Finset.mem_insert, Finset.mem_singleton] at this ⊢
-        rcases this with rfl | rfl | rfl
-        · exact absurd hw hx
-        · exact Or.inl rfl
-        · exact Or.inr rfl
-      exact c.monotone hT (hmem x (by simp))
-  · left
-    have hT : T ⊆ {x, y} := by
-      intro w hw
-      have := hTS hw
-      simp only [Finset.mem_insert, Finset.mem_singleton] at this ⊢
-      rcases this with rfl | rfl | rfl
-      · exact Or.inl rfl
-      · exact Or.inr rfl
-      · exact absurd hw hz
-    exact c.monotone hT (hmem z (by simp))
-
-/-- The obstruction for a finite-hull closure operator with whole-hull two-generation. -/
-theorem not_forall_perm_extends_of_twoGeneration [DecidableEq M] (c : ClosureOperator (Finset M))
-    (hgen : ∀ S : Finset M, ∃ T ⊆ S, T.card ≤ 2 ∧ c T = c S)
-    (hfix : ∀ g ∈ Aut, ∀ x y, g x = x → g y = y → ∀ z ∈ c {x, y}, g z = z)
-    {S : Set M} (hS : S.Infinite) :
-    ¬ ∀ σ : Equiv.Perm S, ∃ g ∈ Aut, ∀ s : S, g s = σ s :=
-  not_forall_perm_extends_of_infinite (fun x y => (↑(c {x, y}) : Set M)) Aut hS
-    (fun _ _ _ hxy hyz hxz => by
-      simpa only [Finset.mem_coe] using mem_closure_pair_of_twoGeneration c hgen hxy hyz hxz)
-    (fun g hg x y hx hy z hz => hfix g hg x y hx hy z (Finset.mem_coe.mp hz))
+  obtain ⟨g, hg, hgσ⟩ := hperm (Equiv.swap ⟨x, hAS hx⟩ ⟨y, hAS hy⟩)
+  have hgA : ∀ a ∈ A, g a = Equiv.swap x y a := by
+    intro a ha
+    have := hgσ ⟨a, hAS ha⟩
+    rw [this]
+    by_cases hax : a = x
+    · subst hax; simp
+    · by_cases hay : a = y
+      · subst hay; simp
+      · rw [Equiv.swap_apply_of_ne_of_ne (by simpa [Subtype.ext_iff] using hax)
+          (by simpa [Subtype.ext_iff] using hay), Equiv.swap_apply_of_ne_of_ne hax hay]
+  have himg : g '' A = A := by
+    ext a
+    constructor
+    · rintro ⟨b, hb, rfl⟩
+      rw [hgA b hb]
+      by_cases hbx : b = x
+      · subst hbx; simpa using hy
+      · by_cases hby : b = y
+        · subst hby; simpa using hx
+        · rwa [Equiv.swap_apply_of_ne_of_ne hbx hby]
+    · intro ha
+      refine ⟨Equiv.swap x y a, ?_, ?_⟩
+      · by_cases hax : a = x
+        · subst hax; simpa using hy
+        · by_cases hay : a = y
+          · subst hay; simpa using hx
+          · rwa [Equiv.swap_apply_of_ne_of_ne hax hay]
+      · rw [hgA _ ?_, Equiv.swap_apply_self]
+        by_cases hax : a = x
+        · subst hax; simpa using hy
+        · by_cases hay : a = y
+          · subst hay; simpa using hx
+          · rwa [Equiv.swap_apply_of_ne_of_ne hax hay]
+  have hxmem : x ∈ ext A := by
+    rw [← himg, ← hext g hg A]
+    refine ⟨y, hye, ?_⟩
+    rw [hgA y hy, Equiv.swap_apply_right]
+  exact hxe hxmem
 
 end HullObstruction
 
