@@ -93,7 +93,9 @@ their composition can be checked on examples (`VaughtConjecture.MainTheorem.Exam
 
 ## References
 
-The main theorem is [Kni26, Theorem 1.0.1], for R. W. Knight, *A counterexample to Vaught's
+The cardinality statement of the main theorem, exactly `ℵ₁` countable models up to isomorphism,
+is [Kni26, Theorem 11.1.9], and the failure of Vaught's Conjecture in `L_{ω₁,ω}` is
+[Kni26, Theorem 11.1.10], immediate from it, for R. W. Knight, *A counterexample to Vaught's
 Conjecture using generalised Stone spaces* (draft, 20 February 2026).
 -/
 

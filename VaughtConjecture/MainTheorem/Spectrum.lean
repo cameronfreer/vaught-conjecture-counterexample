@@ -85,8 +85,9 @@ listed in `roadmap/COMPANIONS.md`, A3, **Upstream ingredients**.
 
 ## References
 
-The main theorem is [Kni26, Theorem 1.0.1], for R. W. Knight, *A counterexample to Vaught's
-Conjecture using generalised Stone spaces* (draft, 20 February 2026).
+The cardinality statement of the main theorem, exactly `ℵ₁` countable models up to isomorphism,
+is [Kni26, Theorem 11.1.9], for R. W. Knight, *A counterexample to Vaught's Conjecture using
+generalised Stone spaces* (draft, 20 February 2026).
 -/
 
 universe u v w z
