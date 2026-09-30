@@ -56,8 +56,8 @@ theorem isLawful_mute_iff {p : ι → Label.{u}} : (mute D).IsLawful p ↔ p = f
 
 /-- Below every pair, the only labelling lawful for mute rows is the bottom labelling. -/
 theorem isLawfulBelow_mute_iff {X : Finset α × ℕ} {r : D.below X → Label.{u}} :
-    (mute D).IsLawfulBelow X r ↔ r = fun _ ↦ ⊥ :=
-  isLawful_mute_iff
+    (mute D).IsLawfulBelow X r ↔ r = fun _ ↦ ⊥ := by
+  rw [isLawfulBelow_iff, comap_mute, isLawful_mute_iff]
 
 /-- Mute rows are consistent. -/
 theorem isConsistent_mute : (mute D : D.Rows.{u}).IsConsistent := fun _ ↦ isLawfulBelow_bot _
@@ -83,6 +83,6 @@ private theorem twoCells_gradedIndex (d : Fin 2) : twoCells.gradedIndex d = ({0}
 
 /-- `twoCells` is a well-formed scheme; its plan law is decided. -/
 private theorem twoCells_isWellFormed : twoCells.IsWellFormed :=
-  ⟨by decide, fun _ ↦ by simp [twoCells]⟩
+  ⟨inferInstance, by decide, fun _ ↦ by simp [twoCells]⟩
 
 end VaughtConjecture.CellScheme

@@ -3,23 +3,27 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
+import Mathlib.Order.InitialSeg
 import VaughtConjecture.Geometry.Plan
 
 /-!
 # Cell schemes: graded cells over a plan
 
-Roadmap, Library conventions (raw finite data separate from their laws; a scheme owns its cells,
-scopes, grades, rows, and face geometry) and Layer 1 (graded cells); semantic contract, item 3
-(cell scopes and grades); the expositions, §1 (a cell has a closed support and a positive grade
-bounded by the size of that support).
+Roadmap, Library conventions (raw data separate from their laws; a scheme carries its cells,
+scopes, grades, and face geometry) and Layer 1 (graded cells); semantic contract, item 3 (cell
+scopes and grades); the expositions, §1 (a cell has a closed support and a positive grade bounded
+by the size of that support).  The semantic rows of a scheme are separate data
+(`CellScheme.Rows D`, in `VaughtConjecture.Scheme.Row`); the bundle of a scheme with its rows
+belongs to the stage types (next tranche).
 
-A **cell scheme** `D : CellScheme ι α` is raw finite data: a ground set `D.ground`, a family of
-closed faces `D.faces`, and for every cell `d : ι` a **scope** `D.scope d` and a **grade**
+A **cell scheme** `D : CellScheme ι α` is raw data: a finite ground set `D.ground`, a finite family
+of closed faces `D.faces`, and for every cell `d : ι` a **scope** `D.scope d` and a **grade**
 `D.grade d`.  Cells are the points of the index type `ι`, not scope–grade pairs, so distinct cells
 may share a graded index (physical multiplicities are kept).  The laws are separate
-(`CellScheme.IsWellFormed`): the faces form a plan on the ground set (`Geometry.IsPlan`), and every
-cell's graded index `(scope, grade)` is a *graded face*: its scope is closed and its grade lies in
-`[1, |scope|]` (`gradedFaces`).
+(`CellScheme.IsWellFormed`): there are finitely many cells, the faces form a plan on the ground set
+(`Geometry.IsPlan`), and every cell's graded index `(scope, grade)` is a *graded face*: its scope is
+closed and its grade lies in `[1, |scope|]` (`gradedFaces`).  A well-formed scheme is therefore
+finite data.
 
 Graded indices `Finset α × ℕ` carry Mathlib's product order, `(C, i) ≤ (B, j) ↔ C ⊆ B ∧ i ≤ j`;
 this is the graded order on scope–grade pairs, not a new relation.
@@ -32,11 +36,16 @@ this is the graded order on scope–grade pairs, not a new relation.
   is the pullback along an embedding `f : β ↪ α` of ground types, with the faces whose image is
   closed and the cells visible through `f`, their scopes pulled back.  Restriction to a closed face
   and pullback along an embedding whose range meets the ground set in a closed face preserve
-  well-formedness (`IsWellFormed.restrict`, `IsWellFormed.comap`).
+  well-formedness (`IsWellFormed.restrict`, `IsWellFormed.comap`), as does reindexing along an
+  injective map (`IsWellFormed.reindex`).
 * `IsLowerEmbedding E D φ`: the cell map `φ` is injective, preserves grades, preserves and reflects
-  the graded order, and its image contains every cell below the image of a cell.  Reindexing along
-  an equivalence, restriction, and pullback are lower embeddings, as is the inclusion of a lower
-  set `D.below X`; semantic rows and lawful sections transport along lower embeddings.
+  the graded order, and its image contains every cell below the image of a cell.  Apart from the
+  grades, this says that `φ` is an initial segment (`InitialSeg`) for the graded preorders
+  `s ≤ t ↔ gradedIndex s ≤ gradedIndex t` (`IsLowerEmbedding.toInitialSeg`).  Lower embeddings
+  compose (`IsLowerEmbedding.comp`); reindexing along an equivalence and its inverse, restriction,
+  and pullback are lower embeddings, as are the inclusion of a lower set `D.below X` and the
+  induced maps of lower sets (`IsLowerEmbedding.below`); semantic rows and lawful sections
+  transport along lower embeddings.
 -/
 
 namespace VaughtConjecture
@@ -47,8 +56,9 @@ variable {ι κ α β : Type*}
 
 /-! ### Cell schemes -/
 
-/-- A **cell scheme**: the raw data of a ground set, a family of closed faces, and a family of
-cells indexed by `ι`, each with a scope and a grade.  The laws are `CellScheme.IsWellFormed`. -/
+/-- A **cell scheme**: the raw data of a finite ground set, a finite family of closed faces, and a
+family of cells indexed by `ι`, each with a scope and a grade.  The laws, including the finiteness
+of the family of cells, are `CellScheme.IsWellFormed`. -/
 @[ext]
 structure CellScheme (ι α : Type*) where
   /-- The ground set. -/
@@ -87,9 +97,12 @@ def gradedFaces : Set (Finset α × ℕ) := {X | X.1 ∈ D.faces ∧ 0 < X.2 ∧
     X ∈ D.gradedFaces ↔ X.1 ∈ D.faces ∧ 0 < X.2 ∧ X.2 ≤ #X.1 :=
   Iff.rfl
 
-/-- The laws of a cell scheme: the faces form a plan on the ground set, and the graded index of
-every cell is a graded face (its scope is closed and its grade lies in `[1, |scope|]`). -/
+/-- The laws of a cell scheme: there are finitely many cells, the faces form a plan on the ground
+set, and the graded index of every cell is a graded face (its scope is closed and its grade lies
+in `[1, |scope|]`). -/
 structure IsWellFormed [DecidableEq α] : Prop where
+  /-- There are finitely many cells. -/
+  finite : Finite ι
   /-- The faces form a recursive visible-face plan on the ground set. -/
   isPlan : Geometry.IsPlan D.ground D.faces
   /-- Every cell has a closed scope and a grade between one and the size of its scope. -/
@@ -168,10 +181,11 @@ def reindex (φ : κ → ι) : CellScheme κ α where
 @[simp] theorem gradedIndex_reindex (φ : κ → ι) (t : κ) :
     (D.reindex φ).gradedIndex t = D.gradedIndex (φ t) := rfl
 
-/-- Reindexing a well-formed scheme gives a well-formed scheme. -/
+/-- Reindexing a well-formed scheme along an injective map gives a well-formed scheme. -/
 theorem IsWellFormed.reindex [DecidableEq α] {D : CellScheme ι α} (hD : D.IsWellFormed)
-    (φ : κ → ι) : (D.reindex φ).IsWellFormed :=
-  ⟨hD.isPlan, fun t ↦ hD.gradedIndex_mem (φ t)⟩
+    {φ : κ → ι} (hφ : Function.Injective φ) : (D.reindex φ).IsWellFormed :=
+  have := hD.finite
+  ⟨.of_injective φ hφ, hD.isPlan, fun t ↦ hD.gradedIndex_mem (φ t)⟩
 
 section Restrict
 
@@ -207,6 +221,7 @@ def restrict (B : Finset α) : CellScheme (D.visible (B : Set α)) α where
 /-- The restriction of a well-formed scheme to a closed face is well formed. -/
 theorem IsWellFormed.restrict {D : CellScheme ι α} (hD : D.IsWellFormed) {B : Finset α}
     (hB : B ∈ D.faces) : (D.restrict B).IsWellFormed where
+  finite := have := hD.finite; Subtype.finite
   isPlan := hD.isPlan.restrict hB
   gradedIndex_mem d :=
     ⟨Geometry.mem_restrict.mpr ⟨hD.scope_mem d, coe_subset.mp d.2⟩, hD.grade_pos d,
@@ -253,6 +268,7 @@ theorem IsWellFormed.comap [DecidableEq α] [DecidableEq β] {D : CellScheme ι 
     (hD : D.IsWellFormed)
     (hf : (D.ground.preimage f f.injective.injOn).map f ∈ D.faces) :
     (D.comap f).IsWellFormed where
+  finite := have := hD.finite; Subtype.finite
   isPlan := by
     set B := (D.ground.preimage f f.injective.injOn).map f
     have hBr : (B : Set α) ⊆ Set.range f := by simp [B]
@@ -278,8 +294,10 @@ end Comap
 
 /-- A map of cells `φ : κ → ι` is a **lower embedding** of `E` into `D` if it is injective,
 preserves grades, preserves and reflects the graded order, and every cell of `D` below the image
-of a cell is itself in the image.  Lower embeddings identify each lower set `E.below
-(E.gradedIndex s)` with `D.below (D.gradedIndex (φ s))`. -/
+of a cell is itself in the image.  Apart from the grades, this says that `φ` is an initial segment
+(`InitialSeg`) for the graded preorders on cells (`IsLowerEmbedding.toInitialSeg`).  Lower
+embeddings identify each lower set `E.below (E.gradedIndex s)` with
+`D.below (D.gradedIndex (φ s))`. -/
 structure IsLowerEmbedding (E : CellScheme κ β) (D : CellScheme ι α) (φ : κ → ι) : Prop where
   /-- The cell map is injective. -/
   injective : Function.Injective φ
@@ -292,7 +310,29 @@ structure IsLowerEmbedding (E : CellScheme κ β) (D : CellScheme ι α) (φ : �
 
 namespace IsLowerEmbedding
 
-variable {φ : κ → ι}
+variable {μ γ : Type*} {F : CellScheme μ γ} {φ : κ → ι} {ψ : μ → κ}
+
+/-- A lower embedding as an initial segment of the graded preorders on cells,
+`s ≤ t ↔ gradedIndex s ≤ gradedIndex t`. -/
+def toInitialSeg {D : CellScheme ι α} (hφ : E.IsLowerEmbedding D φ) :
+    InitialSeg (fun s t : κ ↦ E.gradedIndex s ≤ E.gradedIndex t)
+      (fun s t : ι ↦ D.gradedIndex s ≤ D.gradedIndex t) where
+  toFun := φ
+  inj' := hφ.injective
+  map_rel_iff' {s t} := hφ.le_iff s t
+  mem_range_of_rel' t d := hφ.mem_range t d
+
+/-- The initial segment of a lower embedding is the cell map. -/
+@[simp] theorem coe_toInitialSeg {D : CellScheme ι α} (hφ : E.IsLowerEmbedding D φ) :
+    ⇑hφ.toInitialSeg = φ := rfl
+
+/-- An initial segment of the graded preorders on cells that preserves grades is a lower
+embedding. -/
+theorem of_initialSeg {D : CellScheme ι α}
+    (f : InitialSeg (fun s t : κ ↦ E.gradedIndex s ≤ E.gradedIndex t)
+      (fun s t : ι ↦ D.gradedIndex s ≤ D.gradedIndex t))
+    (hf : ∀ t, D.grade (f t) = E.grade t) : E.IsLowerEmbedding D f :=
+  ⟨f.injective, hf, fun _ _ ↦ f.map_rel_iff, fun _ _ ↦ f.mem_range_of_rel⟩
 
 /-- A lower embedding preserves and reflects equality of graded indices. -/
 theorem gradedIndex_eq_iff {D : CellScheme ι α} (hφ : E.IsLowerEmbedding D φ) (s t : κ) :
@@ -300,12 +340,22 @@ theorem gradedIndex_eq_iff {D : CellScheme ι α} (hφ : E.IsLowerEmbedding D φ
   simp only [le_antisymm_iff, hφ.le_iff]
 
 /-- The identity is a lower embedding of a scheme into itself. -/
-theorem id (D : CellScheme ι α) : D.IsLowerEmbedding D id :=
+protected theorem id (D : CellScheme ι α) : D.IsLowerEmbedding D id :=
   ⟨Function.injective_id, fun _ ↦ rfl, fun _ _ ↦ Iff.rfl, fun _ d _ ↦ ⟨d, rfl⟩⟩
+
+/-- Lower embeddings compose. -/
+theorem comp {D : CellScheme ι α} (hφ : E.IsLowerEmbedding D φ) (hψ : F.IsLowerEmbedding E ψ) :
+    F.IsLowerEmbedding D (φ ∘ ψ) :=
+  of_initialSeg (hψ.toInitialSeg.trans hφ.toInitialSeg) fun t ↦
+    (hφ.grade_eq (ψ t)).trans (hψ.grade_eq t)
 
 /-- Reindexing along an equivalence is a lower embedding. -/
 theorem reindex (D : CellScheme ι α) (e : κ ≃ ι) : (D.reindex e).IsLowerEmbedding D e :=
   ⟨e.injective, fun _ ↦ rfl, fun _ _ ↦ Iff.rfl, fun _ d _ ↦ e.surjective d⟩
+
+/-- The inverse of an equivalence is a lower embedding of a scheme into its reindexing. -/
+theorem reindex_symm (D : CellScheme ι α) (e : κ ≃ ι) : D.IsLowerEmbedding (D.reindex e) e.symm :=
+  ⟨e.symm.injective, fun _ ↦ by simp, fun _ _ ↦ by simp, fun _ d _ ↦ e.symm.surjective d⟩
 
 /-- The inclusion of the cells below a pair is a lower embedding of `D⟨X⟩` into `D`. -/
 theorem subtypeVal_below (D : CellScheme ι α) (X : Finset α × ℕ) :
@@ -320,6 +370,19 @@ theorem inclusion_below (D : CellScheme ι α) {X Y : Finset α × ℕ} (h : X �
   ⟨Set.inclusion_injective _, fun _ ↦ rfl, fun _ _ ↦ Iff.rfl,
     fun t d hd ↦ ⟨⟨d.1, le_trans hd t.2⟩, rfl⟩⟩
 
+/-- For a lower embedding `φ` and a cell `s`, the induced map from the cells below `s` to the
+cells below `φ s` is a lower embedding of the schemes of cells below them. -/
+theorem below {D : CellScheme ι α} (hφ : E.IsLowerEmbedding D φ) (s : κ) :
+    (E.reindex ((↑) : E.below (E.gradedIndex s) → κ)).IsLowerEmbedding
+      (D.reindex ((↑) : D.below (D.gradedIndex (φ s)) → ι))
+      (fun t ↦ ⟨φ t, (hφ.le_iff t s).mpr t.2⟩) := by
+  refine ⟨fun a b h ↦ Subtype.ext (hφ.injective (congrArg Subtype.val h)),
+    fun t ↦ hφ.grade_eq t, fun a b ↦ hφ.le_iff a b, fun t d hd ↦ ?_⟩
+  obtain ⟨d', hd'⟩ := hφ.mem_range t d hd
+  have hd's : E.gradedIndex d' ≤ E.gradedIndex s :=
+    le_trans ((hφ.le_iff d' t).mp (hd' ▸ hd)) t.2
+  exact ⟨⟨d', hd's⟩, Subtype.ext hd'⟩
+
 /-- The inclusion of the cells visible in a face is a lower embedding of the restriction. -/
 theorem restrict [DecidableEq α] (D : CellScheme ι α) (B : Finset α) :
     (D.restrict B).IsLowerEmbedding D (↑) :=
@@ -332,11 +395,48 @@ theorem comap (D : CellScheme ι α) (f : β ↪ α) :
     (D.comap f).IsLowerEmbedding D (↑) := by
   refine ⟨Subtype.val_injective, fun _ ↦ rfl, fun s t ↦ ?_,
     fun t d hd ↦ ⟨⟨d, (coe_subset.mpr hd.1).trans t.2⟩, rfl⟩⟩
-  refine and_congr_left' ?_
-  change D.scope s ⊆ D.scope t ↔ (D.comap f).scope s ⊆ (D.comap f).scope t
+  simp only [gradedIndex_le_iff, gradedIndex_fst, gradedIndex_snd, comap_grade]
   rw [← map_subset_map (f := f), map_comap_scope, map_comap_scope]
 
 end IsLowerEmbedding
+
+/-! ### Cells below a pair inside a face -/
+
+section BelowRestrict
+
+variable [DecidableEq α] {B : Finset α} {Z : Finset α × ℕ}
+
+/-- For a pair `Z` whose face lies in `B`, the cells below `Z` in `D` are the cells below `Z` in
+the restriction `D.restrict B`. -/
+def belowRestrictEquiv (hZ : Z.1 ⊆ B) : D.below Z ≃ (D.restrict B).below Z where
+  toFun d := ⟨⟨d.1, coe_subset.mpr (d.2.1.trans hZ)⟩, d.2⟩
+  invFun t := ⟨t.1.1, t.2⟩
+  left_inv _ := rfl
+  right_inv _ := rfl
+
+/-- The cell underlying the image of a cell below `Z` in the restriction. -/
+@[simp] theorem belowRestrictEquiv_apply_val_val (hZ : Z.1 ⊆ B) (d : D.below Z) :
+    (D.belowRestrictEquiv hZ d).1.1 = d.1 := rfl
+
+/-- The cell underlying the preimage of a cell below `Z` in the restriction. -/
+@[simp] theorem belowRestrictEquiv_symm_apply_val (hZ : Z.1 ⊆ B) (t : (D.restrict B).below Z) :
+    ((D.belowRestrictEquiv hZ).symm t).1 = t.1.1 := rfl
+
+/-- Reading the cells below `Z` in the restriction is a lower embedding. -/
+theorem IsLowerEmbedding.belowRestrictEquiv (hZ : Z.1 ⊆ B) :
+    (D.reindex ((↑) : D.below Z → ι)).IsLowerEmbedding
+      ((D.restrict B).reindex ((↑) : (D.restrict B).below Z → _)) (D.belowRestrictEquiv hZ) :=
+  ⟨(D.belowRestrictEquiv hZ).injective, fun _ ↦ rfl, fun _ _ ↦ Iff.rfl,
+    fun _ t _ ↦ (D.belowRestrictEquiv hZ).surjective t⟩
+
+/-- Reading the cells below `Z` of the restriction in the scheme is a lower embedding. -/
+theorem IsLowerEmbedding.belowRestrictEquiv_symm (hZ : Z.1 ⊆ B) :
+    ((D.restrict B).reindex ((↑) : (D.restrict B).below Z → _)).IsLowerEmbedding
+      (D.reindex ((↑) : D.below Z → ι)) (D.belowRestrictEquiv hZ).symm :=
+  ⟨(D.belowRestrictEquiv hZ).symm.injective, fun _ ↦ rfl, fun _ _ ↦ Iff.rfl,
+    fun _ d _ ↦ (D.belowRestrictEquiv hZ).symm.surjective d⟩
+
+end BelowRestrict
 
 end CellScheme
 

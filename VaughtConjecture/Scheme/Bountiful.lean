@@ -146,34 +146,21 @@ theorem IsBountiful.surjOn_isLawfulBelow (hR : R.IsBountiful) (hX : X ∈ D.grad
   have := hR hX hY h ⊥ (isSelfVisible_bot _) (fun _ ↦ ⊥) (isLawfulBelow_bot Y)
   rwa [capBall_bot, capBall_bot] at this
 
-/-- **Restriction to a face.**  The restriction of bountiful rows to a face is bountiful: below a
-graded face of the restriction, the cells of the restriction are exactly the cells of the scheme,
-so lawfulness, cap balls, and extensions transfer. -/
+/-- **Restriction to a face.**  The restriction of bountiful rows to a face is bountiful. -/
 theorem IsBountiful.restrict [DecidableEq α] (hR : R.IsBountiful) (B : Finset α) :
     (R.restrict B).IsBountiful := by
   intro X Y hX hY h c hc q hq p hp
   have hYB : Y.1 ⊆ B := (Geometry.mem_restrict.mp hY.1).2
   have hXB : X.1 ⊆ B := h.1.trans hYB
-  -- The cells below a pair inside `B`, read in the scheme and in its restriction.
-  let toE (Z : Finset α × ℕ) (hZ : Z.1 ⊆ B) (d : D.below Z) : (D.restrict B).below Z :=
-    ⟨⟨d.1, Finset.coe_subset.mpr (d.2.1.trans hZ)⟩, d.2⟩
-  let toD (Z : Finset α × ℕ) (t : (D.restrict B).below Z) : D.below Z := ⟨t.1.1, t.2⟩
-  have hE (Z : Finset α × ℕ) (hZ : Z.1 ⊆ B) :
-      (D.reindex ((↑) : D.below Z → ι)).IsLowerEmbedding
-        ((D.restrict B).reindex ((↑) : (D.restrict B).below Z → _)) (toE Z hZ) :=
-    ⟨fun a b hab ↦ Subtype.ext (congrArg (fun t ↦ t.1.1) hab), fun _ ↦ rfl, fun _ _ ↦ Iff.rfl,
-      fun _ t _ ↦ ⟨toD Z t, rfl⟩⟩
-  have hD (Z : Finset α × ℕ) (hZ : Z.1 ⊆ B) :
-      ((D.restrict B).reindex ((↑) : (D.restrict B).below Z → _)).IsLowerEmbedding
-        (D.reindex ((↑) : D.below Z → ι)) (toD Z) :=
-    ⟨fun a b hab ↦ Subtype.ext (Subtype.ext (congrArg (fun d : D.below Z ↦ d.1) hab)),
-      fun _ ↦ rfl,
-      fun _ _ ↦ Iff.rfl, fun _ d _ ↦ ⟨toE Z hZ d, rfl⟩⟩
   have hXD : X ∈ D.gradedFaces := ⟨(Geometry.mem_restrict.mp hX.1).1, hX.2⟩
   have hYD : Y ∈ D.gradedFaces := ⟨(Geometry.mem_restrict.mp hY.1).1, hY.2⟩
-  obtain ⟨q', ⟨hl, he⟩, hr⟩ := hR hXD hYD h c hc _ (IsLawful.comap hq (hE Y hYB))
-    ⟨IsLawful.comap hp.1 (hE X hXB), fun d ↦ hp.2 (toE X hXB d)⟩
-  exact ⟨q' ∘ toD Y, ⟨IsLawful.comap hl (hD Y hYB), fun t ↦ he (toD Y t)⟩,
-    funext fun t ↦ congrFun hr (toD X t)⟩
+  obtain ⟨q', ⟨hl, he⟩, hr⟩ := hR hXD hYD h c hc _
+    ((isLawfulBelow_iff.mp hq).comap (IsLowerEmbedding.belowRestrictEquiv D hYB))
+    ⟨(isLawfulBelow_iff.mp hp.1).comap (IsLowerEmbedding.belowRestrictEquiv D hXB),
+      fun d ↦ hp.2 (D.belowRestrictEquiv hXB d)⟩
+  exact ⟨q' ∘ (D.belowRestrictEquiv hYB).symm,
+    ⟨(isLawfulBelow_iff.mp hl).comap (IsLowerEmbedding.belowRestrictEquiv_symm D hYB),
+      fun t ↦ he ((D.belowRestrictEquiv hYB).symm t)⟩,
+    funext fun t ↦ congrFun hr ((D.belowRestrictEquiv hXB).symm t)⟩
 
 end VaughtConjecture.CellScheme.Rows
