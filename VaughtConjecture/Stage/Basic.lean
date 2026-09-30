@@ -56,9 +56,10 @@ reduction commutes with face maps (`restrictFace_reduce`) and reindexing (`reind
 ## References
 
 Stage types are [Kni26, Definition 3.1.1], stage reduction is [Kni26, Definition 3.1.2], and the
-face maps are the horizontal restrictions of [Kni26, Definition 3.1.5] (numbering to be verified
-against the manuscript), for R. W. Knight, *A counterexample to Vaught's Conjecture using
-generalised Stone spaces* (draft, 20 February 2026).
+face maps are the horizontal restrictions of [Kni26, Definitions 3.1.2 and 3.1.5] (the
+restriction to a face of the plan, and its transport along a one-to-one map), for R. W. Knight,
+*A counterexample to Vaught's Conjecture using generalised Stone spaces* (draft, 20 February
+2026).
 -/
 
 universe u

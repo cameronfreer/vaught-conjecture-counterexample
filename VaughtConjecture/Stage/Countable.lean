@@ -38,9 +38,8 @@ The label-level statements `Label.countable_setOf_atStage` and
 
 ## References
 
-This is [Kni26, Proposition 3.1.4] (numbering to be verified against the manuscript), for
-R. W. Knight, *A counterexample to Vaught's Conjecture using generalised Stone spaces* (draft,
-20 February 2026).
+This is [Kni26, Proposition 3.1.4], for R. W. Knight, *A counterexample to Vaught's Conjecture
+using generalised Stone spaces* (draft, 20 February 2026).
 -/
 
 universe u
