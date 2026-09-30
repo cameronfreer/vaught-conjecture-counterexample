@@ -54,8 +54,7 @@ def aboveRoot {M N : Type*} [L.Structure M] [L.Structure N] {k : ℕ} {a : Fin k
     (by simpa using h)
     (fun {n c d} hcd ↦ by
       have := (P.compatible _ hcd).relabel (Fin.natAdd k : Fin n → Fin (k + n))
-      rwa [show Fin.append a c ∘ Fin.natAdd k = c from funext (Fin.append_right a c),
-        show Fin.append b d ∘ Fin.natAdd k = d from funext (Fin.append_right b d)] at this)
+      simpa [Function.comp_def, Fin.append_right] using this)
     (fun hcd m ↦ by simp only [Fin.append_snoc]; exact P.forth _ hcd m)
     (fun hcd n' ↦ by simp only [Fin.append_snoc]; exact P.back _ hcd n')
 
@@ -79,8 +78,7 @@ theorem aboveRoot_empty_mem_family {M N : Type*} [L.Structure M] [L.Structure N]
 isomorphism is extended by an isomorphism: some `e : M ≃[L] N` satisfies `e ∘ a = b`.
 
 For `M = N` this is InfinitaryLogic's `FirstOrder.Language.exists_automorphism_of_bfEquiv_all`
-composed with `FirstOrder.Language.PotentialIso.family_bfEquiv`; the proof follows the pointed
-back-and-forth argument there, with `aboveRoot` in place of the pointed potential isomorphism. -/
+composed with `FirstOrder.Language.PotentialIso.family_bfEquiv`. -/
 theorem exists_equiv_comp_eq {M N : Type w} [L.Structure M] [L.Structure N] [Countable M]
     [Countable N] {k : ℕ} {a : Fin k → M} {b : Fin k → N} (P : PotentialIso L M N)
     (h : ⟨k, a, b⟩ ∈ P.family) : ∃ e : M ≃[L] N, ⇑e ∘ a = b := by
@@ -95,6 +93,9 @@ section Example
 
 attribute [local instance] Language.orderStructure
 
+/-- `Language.orderStructure` interprets the order symbol as the order of `Fin 2`. -/
+local instance : Language.order.OrderedStructure (Fin 2) := ⟨fun _ ↦ Iff.rfl⟩
+
 /-- **Atomic compatibility of a root is not enough.**  The two-element order `Fin 2` has a
 potential isomorphism `P` with itself and one-element tuples `a`, `b` of the same atomic type such
 that `⟨1, a, b⟩ ∉ P.family` and no automorphism `e` satisfies `e ∘ a = b`. -/
@@ -104,10 +105,9 @@ theorem exists_potentialIso_sameAtomicType_notMem_family :
         ∀ e : Fin 2 ≃[Language.order] Fin 2, ⇑e ∘ a ≠ b := by
   have hne : ∀ e : Fin 2 ≃[Language.order] Fin 2, ⇑e ∘ ![0] ≠ ![1] := fun e he ↦ by
     have h0 : e 0 = 1 := congrFun he 0
-    have h01 : e 0 ≤ e 1 := (e.map_rel (orderRel.le : Language.order.Relations 2) ![0, 1]).2
-      (show (0 : Fin 2) ≤ 1 by decide)
-    rw [h0] at h01
-    exact absurd (e.injective (h0.trans (le_antisymm h01 (Fin.le_last _)))) (by decide)
+    have := HomClass.strictMono e (by decide : (0 : Fin 2) < 1)
+    rw [h0] at this
+    exact absurd this (not_lt.2 (Fin.le_last _))
   refine ⟨PotentialIso.refl _, ![0], ![1], fun idx ↦ ?_,
     fun h ↦ (exists_equiv_comp_eq _ h).elim hne, hne⟩
   rcases idx with ⟨i, j⟩ | ⟨⟨⟩, f⟩
