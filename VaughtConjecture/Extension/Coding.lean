@@ -45,7 +45,7 @@ range of `φ` being the new cells:
   values below `ω ^ 2` (`CellScheme.Rows.isCoded_of_isLowerEmbedding`, and
   `Scheme.isCoded_of_isLowerEmbedding` for schemes), for instance values in a coded alphabet
   (`Label.lt_omega0_sq_of_mem_codedAlphabet`);
-* (c) **the apex**: a new cell whose row is bottom is strongly coded
+* (c) **a bottom row**: a new cell whose row is constantly bottom is strongly coded
   (`CellScheme.Rows.isStronglyCodedAt_of_forall_eq_bot`), so appending it preserves coding;
 * (d) **strong coding of the new rows** is a sufficient condition for (b): a cell is strongly
   coded (`CellScheme.Rows.IsStronglyCodedAt`) when its row is strongly coded at its grade, and if
@@ -84,7 +84,8 @@ strongly coded, and to which these lemmas apply.
 *Hypotheses on the completion, not proved here.*  The coding of the completion follows from
 (a)–(d) and the coding of its inputs when its rows have the following forms.  The inherited rows
 are the rows of the inputs, so (b) applies with the `IsCoded` of the inputs, and the amalgam of
-the two inputs is coded by (a).  The apex row is bottom (c).  Every other new row, of grade `k`,
+the two inputs is coded by (a).  The apex of the completion carries a row that is not bottom, a
+coded copy of the labels; its coding is treated with the apex.  Every other new row, of grade `k`,
 takes its values in a coded alphabet fixed by `k` (the ordinals `ω · b + k`, the normal forms of
 lawful labellings, and their visibility replacements at grades `≤ k`), so it is coded, indeed
 strongly coded (d), whatever the coding of the inputs.  The catalogue is finite when its vectors
@@ -321,7 +322,7 @@ theorem IsStronglyCodedAt.lt_omega0_sq {s : ι} (h : R.IsStronglyCodedAt s)
 theorem IsStronglyCoded.isCoded (h : R.IsStronglyCoded) : R.IsCoded :=
   fun s t ↦ (h s).lt_omega0_sq t
 
-/-- A row that is constantly bottom (an apex row) is strongly coded. -/
+/-- A row that is constantly bottom is strongly coded. -/
 theorem isStronglyCodedAt_of_forall_eq_bot {s : ι} (h : ∀ t, R.row s t = ⊥) :
     R.IsStronglyCodedAt s :=
   fun t ↦ h t ▸ Label.isStronglyCoded_bot _
