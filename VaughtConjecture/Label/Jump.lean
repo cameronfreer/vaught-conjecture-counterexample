@@ -1,0 +1,274 @@
+/-
+Copyright (c) 2026 Cameron Freer. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Cameron Freer
+-/
+import VaughtConjecture.Label.Transform
+
+/-!
+# The jump rule: stage reduction at a successor stage
+
+Roadmap, Layer 1 (the bounded transformations used by the construction: the jump rule; guarded
+composition retains its guards); semantic contract, item 3.
+
+Let `α` be zero or a limit ordinal and `K` a natural number.  The *jump* at `α + K` keeps the
+labels `≤ α + K` and sends every other label to the formal top.  It is stage reduction to the
+successor stage `α + K + 1` (`reduce_add_one_of_le`, `reduce_add_one_of_lt`), and no separate
+operation is introduced.  Unlike stage reduction to a stage that is zero or a limit
+(`TransformsTo.reduce`), it does not commute with visibility replacement: replacing a finite part
+below the threshold can move a label of the band of `α` across `α + K`.  Post-composition with it
+nevertheless preserves the transformation relation under two guards.
+
+* `Witness.le_coe_add_of_visibilityReplace`: at a threshold `k ≤ K` where the suppressor is at
+  least `α + K`, a shifter that sends the visibility replacement of `x` to at most `α + K` sends
+  `x` itself to at most `α + K`.  The label `x` is recovered from its replacement by a second
+  replacement (`exists_visibilityReplace_visibilityReplace`), with which the shifter commutes.
+* `Witness.reduce_add_one`: if the suppressor is below `α` at every grade above `K`, reducing
+  the suppressor and the shifter of a witness to stage `α + K + 1` gives a witness.
+* **The jump rule** (`TransformsTo.reduce_add_one`): on a finite family of cells whose targets are
+  below `α` at every grade above `K`, a transformation to `q` gives a transformation to the
+  reduction of `q` to stage `α + K + 1`.  Finiteness provides a label below `α`, self-visible at
+  the largest grade, that bounds the targets (`exists_isSelfVisible_bound`); the suppressor is
+  lowered to it above `K` (`Witness.sup`).
+* The guard on the targets cannot be dropped (`TransformsTo.not_zero_one_reduce_one`).
+-/
+
+universe u
+
+namespace VaughtConjecture.Label
+
+open Ordinal Order
+
+variable {D : Type*} {grade : D → ℕ} {p q : D → Label.{u}} {g g' : ℕ → Label.{u}}
+  {σ : Label.{u} → Label.{u}} {α o : Ordinal.{u}} {K k i : ℕ} {x : Label.{u}}
+
+private theorem coe_le_coe' {a b : Ordinal.{u}} : (a : Label.{u}) ≤ b ↔ a ≤ b := by
+  rw [WithBot.coe_le_coe, WithTop.coe_le_coe]
+
+private theorem coe_lt_coe' {a b : Ordinal.{u}} : (a : Label.{u}) < b ↔ a < b := by
+  rw [WithBot.coe_lt_coe, WithTop.coe_lt_coe]
+
+private theorem coe_lt_top' (a : Ordinal.{u}) : (a : Label.{u}) < ⊤ :=
+  WithBot.coe_lt_coe.mpr (WithTop.coe_lt_top a)
+
+/-! ### Band arithmetic above a multiple of `ω` -/
+
+/-- Visibility replacement commutes with adding, on the left, an ordinal that is zero or a
+limit. -/
+theorem replaceFinitePart_add (hα : IsSuccPrelimit α) (k i : ℕ) (o : Ordinal.{u}) :
+    replaceFinitePart k i (α + o) = α + replaceFinitePart k i o := by
+  obtain ⟨b, rfl⟩ := isSuccPrelimit_iff_omega0_dvd.mp hα
+  rw [replaceFinitePart, replaceFinitePart, Ordinal.mul_add_div _ omega0_ne_zero,
+    Ordinal.mul_add_mod_self, mul_add, add_assoc]
+
+/-- The finite part of `α + K` is `K` when `α` is zero or a limit. -/
+theorem add_natCast_mod_omega0 (hα : IsSuccPrelimit α) (K : ℕ) :
+    (α + K) % ω = K := by
+  obtain ⟨b, rfl⟩ := isSuccPrelimit_iff_omega0_dvd.mp hα
+  exact omega0_mul_add_mod _ (natCast_lt_omega0 K)
+
+/-- An ordinal at most `α + K` lies below `α` or is `α + j` for a natural number `j ≤ K`. -/
+theorem lt_or_exists_eq_add_of_le_add (h : o ≤ α + K) : o < α ∨ ∃ j ≤ K, o = α + j := by
+  rcases lt_or_ge o α with hlt | hle
+  · exact .inl hlt
+  have hK : o - α ≤ K := Ordinal.sub_le.mpr h
+  obtain ⟨j, hj⟩ := Ordinal.lt_omega0.mp (hK.trans_lt (natCast_lt_omega0 K))
+  rw [hj] at hK
+  exact .inr ⟨j, by exact_mod_cast hK, by rw [← hj, Ordinal.add_sub_cancel_of_le hle]⟩
+
+/-- At a stage `α` that is zero or a limit, visibility replacement with a value `i ≤ K` keeps an
+ordinal at most `α + K` at most `α + K`. -/
+theorem replaceFinitePart_le_add (hα : IsSuccPrelimit α) (h : o ≤ α + K) (hi : i ≤ K) (k : ℕ) :
+    replaceFinitePart k i o ≤ α + K := by
+  rcases lt_or_exists_eq_add_of_le_add h with ho | ⟨j, hj, rfl⟩
+  · exact ((replaceFinitePart_lt_iff hα k i).mpr ho).le.trans le_self_add
+  · rw [replaceFinitePart_add hα, replaceFinitePart_of_lt_omega0 (natCast_lt_omega0 j)]
+    gcongr
+    split_ifs <;> exact_mod_cast ‹_ ≤ K›
+
+/-- At a stage `α` that is zero or a limit, visibility replacement with a value `i ≤ K` keeps a
+label at most `α + K` at most `α + K`. -/
+theorem visibilityReplace_le_coe_add (hα : IsSuccPrelimit α)
+    (h : x ≤ ((α + K : Ordinal.{u}) : Label.{u})) (hi : i ≤ K) (k : ℕ) :
+    visibilityReplace k i x ≤ ((α + K : Ordinal.{u}) : Label.{u}) := by
+  induction x using recBotCoeTop with
+  | bot => exact bot_le
+  | coe o => exact coe_le_coe'.mpr (replaceFinitePart_le_add hα (coe_le_coe'.mp h) hi k)
+  | top => exact absurd h (not_le.mpr (coe_lt_top' _))
+
+/-- A replaced finite part below the threshold can be restored by a second replacement. -/
+theorem exists_replaceFinitePart_replaceFinitePart (hi : i < k) (o : Ordinal.{u}) :
+    ∃ j < k, replaceFinitePart k j (replaceFinitePart k i o) = o := by
+  by_cases ho : o % ω < k
+  · obtain ⟨j, hj⟩ := Ordinal.lt_omega0.mp (Ordinal.mod_lt o omega0_ne_zero)
+    have hik : ((i : ℕ) : Ordinal.{u}) < k := by exact_mod_cast hi
+    refine ⟨j, by exact_mod_cast hj ▸ ho, ?_⟩
+    rw [replaceFinitePart_of_lt ho, replaceFinitePart_of_lt (by
+        rwa [omega0_mul_add_mod _ (natCast_lt_omega0 i)]),
+      omega0_mul_add_div _ (natCast_lt_omega0 i), ← hj, Ordinal.div_add_mod]
+  · exact ⟨i, hi, by rw [replaceFinitePart_of_le (not_lt.mp ho),
+      replaceFinitePart_of_le (not_lt.mp ho)]⟩
+
+/-- A label is recovered from its visibility replacement below the threshold by a second
+visibility replacement below the threshold. -/
+theorem exists_visibilityReplace_visibilityReplace (hi : i < k) (x : Label.{u}) :
+    ∃ j < k, visibilityReplace k j (visibilityReplace k i x) = x := by
+  induction x using recBotCoeTop with
+  | bot => exact ⟨i, hi, rfl⟩
+  | coe o =>
+    obtain ⟨j, hj, h⟩ := exists_replaceFinitePart_replaceFinitePart hi o
+    exact ⟨j, hj, by simp only [visibilityReplace_coe, h]⟩
+  | top => exact ⟨i, hi, rfl⟩
+
+/-! ### Stage reduction at a successor stage -/
+
+/-- A label lies below the successor stage `o + 1` exactly when it is at most `o`. -/
+theorem lt_coe_add_one_iff : x < ((o + 1 : Ordinal.{u}) : Label.{u}) ↔ x ≤ o := by
+  induction x using recBotCoeTop with
+  | bot => exact iff_of_true (WithBot.bot_lt_coe _) bot_le
+  | coe a => rw [coe_lt_coe', coe_le_coe', Order.lt_add_one_iff]
+  | top => exact iff_of_false not_top_lt (not_le.mpr (coe_lt_top' o))
+
+/-- Stage reduction to a successor stage `o + 1` keeps a label at most `o`. -/
+@[simp] theorem reduce_add_one_of_le (h : x ≤ o) : reduce (o + 1) x = x :=
+  reduce_of_lt (lt_coe_add_one_iff.mpr h)
+
+/-- Stage reduction to a successor stage `o + 1` sends a label above `o` to the formal top. -/
+@[simp] theorem reduce_add_one_of_lt (h : (o : Label.{u}) < x) : reduce (o + 1) x = ⊤ :=
+  reduce_of_le (not_lt.mp (mt lt_coe_add_one_iff.mp (not_le.mpr h)))
+
+/-- A label at most `o` that is below the stage reduction of `z` to `o + 1` is below `z`. -/
+theorem le_of_le_reduce_add_one {y z : Label.{u}} (hy : y ≤ o) (h : y ≤ reduce (o + 1) z) :
+    y ≤ z := by
+  rcases le_or_gt z o with hz | hz
+  · rwa [reduce_add_one_of_le hz] at h
+  · exact hy.trans hz.le
+
+/-! ### Finite bounds below a stage -/
+
+/-- Finitely many labels, together with a label `b` below a stage `α` that is zero or a limit,
+have a common upper bound below `α` that is self-visible at a given threshold `n`: every one of
+the labels that lies below `α` lies below it. -/
+theorem exists_isSelfVisible_bound {ι : Type*} [Finite ι] (hα : IsSuccPrelimit α) (n : ℕ)
+    {b : Label.{u}} (hb : b < α) (f : ι → Label.{u}) :
+    ∃ c, b ≤ c ∧ c < α ∧ IsSelfVisible n c ∧ ∀ t, f t < α → f t ≤ c := by
+  have := Fintype.ofFinite ι
+  set s := max b (Finset.univ.sup fun t ↦ if f t < α then f t else ⊥)
+  have hs : s < α := max_lt hb ((Finset.sup_lt_iff (WithBot.bot_lt_coe _)).mpr fun t _ ↦ by
+    split_ifs with h
+    exacts [h, WithBot.bot_lt_coe _])
+  have hsc : s ≤ visibilityReplace n n s := le_visibilityReplace (by omega) s
+  refine ⟨_, (le_max_left _ _).trans hsc, (visibilityReplace_lt_iff hα).mpr hs,
+    visibilityReplace_self_visibilityReplace le_rfl s, fun t ht ↦ ?_⟩
+  refine le_trans ?_ ((le_max_right _ _).trans hsc)
+  simpa [ht] using Finset.le_sup (f := fun t ↦ if f t < α then f t else ⊥) (Finset.mem_univ t)
+
+/-! ### The jump rule -/
+
+/-- The pointwise maximum of two suppressors of a shifter is a suppressor of it. -/
+theorem Witness.sup (hg : Witness g σ) (hg' : Witness g' σ) : Witness (g ⊔ g') σ where
+  antitone := hg.antitone.sup hg'.antitone
+  isSelfVisible n := (hg.isSelfVisible n).max (hg'.isSelfVisible n)
+  map_bot := hg.map_bot
+  monotone := hg.monotone
+  visibilityReplace_comm x k hx i hi := (le_sup_iff.mp hx).elim
+    (hg.visibilityReplace_comm x k · i hi) (hg'.visibilityReplace_comm x k · i hi)
+
+/-- **The band mate controls the shifter.**  Let `α` be zero or a limit, `k ≤ K`, and `i ≤ k`.
+If the suppressor at `k` is at least `α + K` and the shifter sends the visibility replacement of
+`x` at threshold `k` with value `i` to at most `α + K`, then it sends `x` to at most `α + K`. -/
+theorem Witness.le_coe_add_of_visibilityReplace (hw : Witness g σ) (hα : IsSuccPrelimit α)
+    (hk : k ≤ K) (hi : i ≤ k) (hg : ((α + K : Ordinal.{u}) : Label.{u}) ≤ g k)
+    (h : σ (visibilityReplace k i x) ≤ ((α + K : Ordinal.{u}) : Label.{u})) :
+    σ x ≤ ((α + K : Ordinal.{u}) : Label.{u}) := by
+  rcases hi.lt_or_eq with hi | rfl
+  · obtain ⟨j, hj, hx⟩ := exists_visibilityReplace_visibilityReplace hi x
+    calc σ x = σ (visibilityReplace k j (visibilityReplace k i x)) := by rw [hx]
+      _ = visibilityReplace k j (σ (visibilityReplace k i x)) :=
+        hw.visibilityReplace_comm _ k (h.trans hg) j hj.le
+      _ ≤ _ := visibilityReplace_le_coe_add hα h (hj.le.trans hk) k
+  · exact (hw.monotone (le_visibilityReplace (by omega) x)).trans h
+
+/-- Let `α` be zero or a limit.  If the suppressor of a witness is below `α` at every grade above
+`K`, then reducing the suppressor and the shifter to the successor stage `α + K + 1` gives a
+witness. -/
+theorem Witness.reduce_add_one (hw : Witness g σ) (hα : IsSuccPrelimit α)
+    (hg : ∀ k, K < k → g k < α) :
+    Witness (Label.reduce (α + (K : Ordinal.{u}) + 1) ∘ g)
+      (Label.reduce (α + (K : Ordinal.{u}) + 1) ∘ σ) where
+  antitone := (monotone_reduce _).comp_antitone hw.antitone
+  isSelfVisible n := (hw.isSelfVisible n).reduce _
+  map_bot := by simp [hw.map_bot]
+  monotone := (monotone_reduce _).comp hw.monotone
+  visibilityReplace_comm x k hx i hi := by
+    have hατ : (α : Label.{u}) ≤ ((α + K : Ordinal.{u}) : Label.{u}) := coe_le_coe'.mpr le_self_add
+    simp only [Function.comp_apply] at hx ⊢
+    rcases le_or_gt k K with hk | hk
+    · rcases le_or_gt (σ x) ((α + K : Ordinal.{u}) : Label.{u}) with hσ | hσ
+      · rw [reduce_add_one_of_le hσ] at hx ⊢
+        rw [hw.visibilityReplace_comm x k (le_of_le_reduce_add_one hσ hx) i hi,
+          reduce_add_one_of_le (visibilityReplace_le_coe_add hα hσ (hi.trans hk) k)]
+      · rw [reduce_add_one_of_lt hσ, top_le_iff, reduce_eq_top_iff] at hx
+        have hg' : ((α + K : Ordinal.{u}) : Label.{u}) < g k :=
+          not_le.mp fun h ↦ (not_lt.mpr hx) (lt_coe_add_one_iff.mpr h)
+        rw [reduce_add_one_of_lt hσ, visibilityReplace_top, reduce_add_one_of_lt (not_le.mp
+          fun h ↦ (not_le.mpr hσ) (hw.le_coe_add_of_visibilityReplace hα hk hi hg'.le h))]
+    · rw [reduce_add_one_of_le ((hg k hk).le.trans hατ)] at hx
+      have hσx : σ x < α := ((le_reduce _ _).trans hx).trans_lt (hg k hk)
+      rw [reduce_add_one_of_le (hσx.le.trans hατ)] at hx ⊢
+      rw [hw.visibilityReplace_comm x k hx i hi,
+        reduce_add_one_of_le (((visibilityReplace_lt_iff hα).mpr hσx).le.trans hατ)]
+
+/-- **The jump rule.**  Let `α` be zero or a limit, and let the family of cells be finite.  If
+every cell of grade above `K` has its target below `α`, then a transformation to `q` gives a
+transformation to the reduction of `q` to the successor stage `α + K + 1`, which keeps the
+target labels `≤ α + K` and sends the others to the formal top. -/
+theorem TransformsTo.reduce_add_one [Finite D] (hα : IsSuccPrelimit α)
+    (h : TransformsTo grade p q) (hq : ∀ d, K < grade d → q d < α) :
+    TransformsTo grade p (Label.reduce (α + (K : Ordinal.{u}) + 1) ∘ q) := by
+  obtain ⟨g, σ, hw, heq⟩ := h
+  have := Fintype.ofFinite D
+  have hn (d : D) : grade d ≤ Finset.univ.sup grade := Finset.le_sup (Finset.mem_univ d)
+  obtain ⟨c, -, hcα, hc, hqc⟩ := exists_isSelfVisible_bound hα (Finset.univ.sup grade)
+    (WithBot.bot_lt_coe _) fun d ↦ if K < grade d then q d else ⊥
+  have hw₁ := (hw.cap hc).sup (hw.truncate K)
+  refine ⟨_, _, hw₁.reduce_add_one (K := K) hα fun m hm ↦ ?_, fun d ↦ ?_⟩
+  · simp only [Pi.sup_apply, ite_eq_right (not_le.mpr hm), max_bot_right]
+    split_ifs
+    exacts [(min_le_right _ _).trans_lt hcα, WithBot.bot_lt_coe _]
+  · simp only [Function.comp_apply, ← (monotone_reduce _).map_min]
+    congr 1
+    by_cases hd : grade d ≤ K
+    · rw [Pi.sup_apply, ite_eq_left hd, max_eq_right, heq d]
+      split_ifs
+      exacts [min_le_left _ _, bot_le]
+    · have hd' : K < grade d := not_le.mp hd
+      have hqd : q d ≤ c := by simpa [hd'] using hqc d (by simpa [hd'] using hq d hd')
+      rw [Pi.sup_apply, ite_eq_right hd, ite_eq_left (hn d), max_bot_right, ← min_assoc,
+        ← heq d, min_eq_left hqd]
+
+/-! ### The guard cannot be dropped -/
+
+/-- **The guard of the jump rule cannot be dropped.**  At grade one, the labelling `(0, 1)` does
+not transform to `(0, ⊤)`, its stage reduction to `1 = 0 + 0 + 1`, although it transforms to
+itself: a shifter fixing `0` commutes with visibility replacement at threshold one and must send
+`1` to `1`.  Here `α = K = 0`, and the target `1` at grade `1 > K` is not below `α`. -/
+theorem TransformsTo.not_zero_one_reduce_one :
+    ¬ TransformsTo (fun _ : Bool ↦ 1)
+      (fun b ↦ ((if b then 1 else 0 : Ordinal.{u}) : Label.{u}))
+      (Label.reduce 1 ∘ fun b ↦ ((if b then 1 else 0 : Ordinal.{u}) : Label.{u})) := by
+  rintro ⟨g, τ, hw, heq⟩
+  have h₁ := heq false
+  have h₂ := heq true
+  simp only [Function.comp_apply, Bool.false_eq_true, ↓reduceIte] at h₁ h₂
+  rw [reduce_of_lt (coe_lt_coe'.mpr zero_lt_one)] at h₁
+  rw [reduce_of_le le_rfl] at h₂
+  have hg : g 1 = ⊤ := top_le_iff.mp (h₂.le.trans (min_le_right _ _))
+  rw [hg, min_top_right] at h₁ h₂
+  have h := hw.visibilityReplace_comm ((0 : Ordinal.{u}) : Label.{u}) 1 (hg ▸ le_top) 1 le_rfl
+  have h01 : replaceFinitePart 1 1 (0 : Ordinal.{u}) = 1 := by
+    rw [replaceFinitePart_of_lt_omega0 omega0_pos, ite_eq_left (by simp), Nat.cast_one]
+  rw [← h₁, visibilityReplace_coe, h01, ← h₂] at h
+  exact (coe_lt_top' 1).ne' h
+
+end VaughtConjecture.Label
