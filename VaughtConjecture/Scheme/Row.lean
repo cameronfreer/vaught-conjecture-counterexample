@@ -29,13 +29,15 @@ satisfies three laws:
   with a given graded index, so it depends on the multiplicities of cells.
 
 Rows pull back along a lower embedding of schemes (`Rows.comap`, functorially: `comap_id`,
-`comap_comap`), and lawful sections pull back with them (`IsLawful.comap`).  Instances are the
-restriction to a face (`Rows.restrict`, `IsLawful.restrict`), the pullback along an embedding of
-ground sets, reindexing along an equivalence of cells (in both directions,
-`isLawful_comap_reindex_iff`), and the lower sets: a labelling `r` of the cells below a pair `X` is
-*lawful below `X`* (`Rows.IsLawfulBelow R X r`) when it is a lawful section of the rows restricted
-to the scheme `D⟨X⟩` of cells below `X` (`isLawfulBelow_iff`).  Lawful sections restrict to every
-lower set (`IsLawful.isLawfulBelow`) and from a lower set to a smaller one
+`comap_comap`), and lawful sections pull back with them (`IsLawful.comap`); along an equivalence
+of cells that is a lower embedding, in both directions (`isLawful_comap_equiv_iff`).  Instances
+are the restriction to a face (`Rows.restrict`, `IsLawful.restrict`), the pullback along an
+embedding of ground sets, reindexing along an equivalence of cells, and the lower sets: a
+labelling `r` of the cells below a pair `X` is *lawful below `X`* (`Rows.IsLawfulBelow R X r`)
+when it is a lawful section of the rows restricted to the scheme `D⟨X⟩` of cells below `X`
+(`isLawfulBelow_iff`); along a lower embedding mapping the cells below `X` onto the cells below
+`Y`, lawfulness below `X` is lawfulness below `Y` (`isLawfulBelow_comap_iff`).  Lawful sections
+restrict to every lower set (`IsLawful.isLawfulBelow`) and from a lower set to a smaller one
 (`IsLawfulBelow.mono`).
 
 The constant bottom labelling is lawful for all rows (`isLawful_bot`), and a cell whose row is
@@ -209,21 +211,32 @@ theorem isLawfulBelow (h : R.IsLawful p) (X : Finset α × ℕ) :
 
 end IsLawful
 
-/-- Rows pulled back along an equivalence of cells and then back along its inverse are the
-original rows. -/
-theorem comap_reindex_comap_symm (R : D.Rows) (e : κ ≃ ι) :
-    (R.comap (IsLowerEmbedding.reindex D e)).comap (IsLowerEmbedding.reindex_symm D e) = R := by
+/-! ### Lawful sections along equivalences -/
+
+/-- Rows pulled back along an equivalence of cells that is a lower embedding and then back along
+its inverse are the original rows. -/
+theorem comap_comap_symm (R : D.Rows.{u}) {e : κ ≃ ι} (h : E.IsLowerEmbedding D e) :
+    (R.comap h).comap h.symm = R := by
   ext s t
   exact R.row_congr (e.apply_symm_apply s) (e.apply_symm_apply t)
 
-/-- **Transport along an equivalence of cells**: `p ∘ e` is lawful for the reindexed rows exactly
-when `p` is lawful. -/
-theorem isLawful_comap_reindex_iff (e : κ ≃ ι) {p : ι → Label.{u}} :
-    (R.comap (IsLowerEmbedding.reindex D e)).IsLawful (p ∘ e) ↔ R.IsLawful p := by
-  refine ⟨fun h ↦ ?_, fun h ↦ h.comap _⟩
-  have h' := h.comap (IsLowerEmbedding.reindex_symm D e)
-  rwa [comap_reindex_comap_symm, Function.comp_assoc, e.self_comp_symm,
-    Function.comp_id] at h'
+/-- **Transport along an equivalence of cells** that is a lower embedding: `p ∘ e` is lawful for
+the pulled-back rows exactly when `p` is lawful. -/
+theorem isLawful_comap_equiv_iff {R : D.Rows.{u}} {e : κ ≃ ι} (h : E.IsLowerEmbedding D e)
+    {p : ι → Label.{u}} : (R.comap h).IsLawful (p ∘ e) ↔ R.IsLawful p := by
+  refine ⟨fun hp ↦ ?_, fun hp ↦ hp.comap h⟩
+  have h' := hp.comap h.symm
+  rwa [comap_comap_symm, Function.comp_assoc, e.self_comp_symm, Function.comp_id] at h'
+
+/-- For a lower embedding `φ` mapping the cells below `X` onto the cells below `Y`, a labelling of
+the cells below `Y` is lawful below `Y` exactly when its transport along `belowEquiv` is lawful
+below `X` for the pulled-back rows. -/
+theorem isLawfulBelow_comap_iff {R : D.Rows.{u}} (hφ : E.IsLowerEmbedding D φ)
+    {X : Finset β × ℕ} {Y : Finset α × ℕ} (h : φ '' E.below X = D.below Y)
+    {r : D.below Y → Label.{u}} :
+    (R.comap hφ).IsLawfulBelow X (r ∘ hφ.belowEquiv h) ↔ R.IsLawfulBelow Y r :=
+  isLawful_comap_equiv_iff (R := R.comap (IsLowerEmbedding.subtypeVal_below D Y))
+    (hφ.isLowerEmbedding_belowEquiv h)
 
 namespace IsLawfulBelow
 

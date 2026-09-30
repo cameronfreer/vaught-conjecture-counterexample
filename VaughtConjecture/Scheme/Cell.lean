@@ -37,15 +37,22 @@ this is the graded order on scope–grade pairs, not a new relation.
   closed and the cells visible through `f`, their scopes pulled back.  Restriction to a closed face
   and pullback along an embedding whose range meets the ground set in a closed face preserve
   well-formedness (`IsWellFormed.restrict`, `IsWellFormed.comap`), as does reindexing along any
-  map from a finite type of cells (`IsWellFormed.reindex`).
+  map from a finite type of cells (`IsWellFormed.reindex`).  The graded faces of `D.comap f` are
+  the pairs whose image under `(C, j) ↦ (f '' C, j)` is a graded face of `D`
+  (`mem_gradedFaces_comap`), and the cells below a pair in the pullback are the cells below its
+  image (`image_val_below_comap`).
 * `IsLowerEmbedding E D φ`: the cell map `φ` is injective, preserves grades, preserves and reflects
   the graded order, and its image contains every cell below the image of a cell.  Apart from the
   grades, this says that `φ` is an initial segment (`InitialSeg`) for the graded preorders
   `s ≤ t ↔ gradedIndex s ≤ gradedIndex t` (`IsLowerEmbedding.toInitialSeg`).  Lower embeddings
   compose (`IsLowerEmbedding.comp`); reindexing along an equivalence and its inverse, restriction,
   and pullback are lower embeddings, as are the inclusion of a lower set `D.below X` and the
-  induced maps of lower sets (`IsLowerEmbedding.below`); semantic rows and lawful sections
-  transport along lower embeddings.
+  induced maps of lower sets (`IsLowerEmbedding.below`).  The inverse of an equivalence of cells
+  that is a lower embedding is a lower embedding (`IsLowerEmbedding.symm`), and a lower embedding
+  mapping the cells below `X` onto the cells below `Y` induces an equivalence of these lower sets
+  (`IsLowerEmbedding.belowEquiv`) that is a lower embedding of the schemes of cells below them
+  and commutes with restriction (`IsLowerEmbedding.belowEquiv_inclusion`); semantic rows and
+  lawful sections transport along lower embeddings.
 -/
 
 namespace VaughtConjecture
@@ -262,6 +269,28 @@ theorem map_comap_scope (d : D.visible (Set.range f)) :
     ((D.comap f).scope d).map f = D.scope d :=
   map_preimage_eq_of_subset_range d.2
 
+/-- A cell of the pullback lies below a pair exactly when its original cell lies below the image
+of the pair. -/
+theorem gradedIndex_comap_le_iff (d : D.visible (Set.range f)) {X : Finset β × ℕ} :
+    (D.comap f).gradedIndex d ≤ X ↔ D.gradedIndex d ≤ Prod.map (Finset.map f) id X := by
+  rw [gradedIndex_le_iff, gradedIndex_le_iff, ← map_subset_map (f := f), map_comap_scope]
+  simp
+
+/-- The graded faces of the pullback are the pairs whose image is a graded face. -/
+theorem mem_gradedFaces_comap {X : Finset β × ℕ} :
+    X ∈ (D.comap f).gradedFaces ↔ Prod.map (Finset.map f) id X ∈ D.gradedFaces := by
+  simp
+
+/-- The cells below a pair in the pullback are the cells below the image of the pair. -/
+theorem image_val_below_comap (X : Finset β × ℕ) :
+    ((↑) : D.visible (Set.range f) → ι) '' (D.comap f).below X =
+      D.below (Prod.map (Finset.map f) id X) := by
+  ext d
+  refine ⟨?_, fun hd ↦ ⟨⟨d, ?_⟩, (gradedIndex_comap_le_iff D f _).mpr hd, rfl⟩⟩
+  · rintro ⟨d, hd, rfl⟩
+    exact (gradedIndex_comap_le_iff D f d).mp hd
+  · exact (coe_subset.mpr hd.1).trans (by simp)
+
 /-- The pullback of a well-formed scheme along an embedding whose range meets the ground set in
 a closed face is well formed. -/
 theorem IsWellFormed.comap [DecidableEq α] [DecidableEq β] {D : CellScheme ι α}
@@ -359,9 +388,17 @@ theorem of_equiv {E : CellScheme κ α} {D : CellScheme ι α} (e : κ ≃ ι)
 theorem reindex (D : CellScheme ι α) (e : κ ≃ ι) : (D.reindex e).IsLowerEmbedding D e :=
   of_equiv e fun _ ↦ rfl
 
+variable {D} in
+/-- The inverse of an equivalence of cells that is a lower embedding is a lower embedding. -/
+theorem symm {e : κ ≃ ι} (h : E.IsLowerEmbedding D e) : D.IsLowerEmbedding E e.symm where
+  injective := e.symm.injective
+  grade_eq d := by rw [← h.grade_eq, e.apply_symm_apply]
+  le_iff s t := by rw [← h.le_iff, e.apply_symm_apply, e.apply_symm_apply]
+  mem_range _ d _ := e.symm.surjective d
+
 /-- The inverse of an equivalence is a lower embedding of a scheme into its reindexing. -/
 theorem reindex_symm (D : CellScheme ι α) (e : κ ≃ ι) : D.IsLowerEmbedding (D.reindex e) e.symm :=
-  of_equiv e.symm fun _ ↦ by simp
+  (reindex D e).symm
 
 /-- The inclusion of the cells below a pair is a lower embedding of `D⟨X⟩` into `D`. -/
 theorem subtypeVal_below (D : CellScheme ι α) (X : Finset α × ℕ) :
@@ -404,6 +441,43 @@ theorem comap (D : CellScheme ι α) (f : β ↪ α) :
   simp only [gradedIndex_le_iff, gradedIndex_fst, gradedIndex_snd, comap_grade]
   rw [← map_subset_map (f := f), map_comap_scope, map_comap_scope]
 
+/-! #### Equivalences of lower sets -/
+
+section BelowEquiv
+
+variable {D}
+
+/-- For a lower embedding `φ` mapping the cells below `X` onto the cells below `Y`, the induced
+equivalence of these lower sets. -/
+noncomputable def belowEquiv {X : Finset β × ℕ} {Y : Finset α × ℕ} (hφ : E.IsLowerEmbedding D φ)
+    (h : φ '' E.below X = D.below Y) : E.below X ≃ D.below Y :=
+  Set.BijOn.equiv φ ⟨(Set.image_eq_iff_surjOn_mapsTo.mp h).2, hφ.injective.injOn,
+    (Set.image_eq_iff_surjOn_mapsTo.mp h).1⟩
+
+/-- The cell underlying the image of a cell under `belowEquiv` is its image under `φ`. -/
+@[simp] theorem coe_belowEquiv {X : Finset β × ℕ} {Y : Finset α × ℕ}
+    (hφ : E.IsLowerEmbedding D φ) (h : φ '' E.below X = D.below Y) (t : E.below X) :
+    (hφ.belowEquiv h t : ι) = φ t := rfl
+
+/-- The equivalence of lower sets induced by a lower embedding is a lower embedding of the
+schemes of cells below them. -/
+theorem isLowerEmbedding_belowEquiv {X : Finset β × ℕ} {Y : Finset α × ℕ}
+    (hφ : E.IsLowerEmbedding D φ) (h : φ '' E.below X = D.below Y) :
+    (E.reindex ((↑) : E.below X → κ)).IsLowerEmbedding (D.reindex ((↑) : D.below Y → ι))
+      (hφ.belowEquiv h) :=
+  ⟨(hφ.belowEquiv h).injective, fun t ↦ hφ.grade_eq t, fun s t ↦ hφ.le_iff s t,
+    fun _ d _ ↦ (hφ.belowEquiv h).surjective d⟩
+
+/-- The equivalences of lower sets induced by a lower embedding commute with restriction. -/
+theorem belowEquiv_inclusion {φ : κ → ι} (hφ : E.IsLowerEmbedding D φ)
+    {X' Y' : Finset β × ℕ} {X Y : Finset α × ℕ} (h' : X' ≤ Y') (h : X ≤ Y)
+    (hX : φ '' E.below X' = D.below X) (hY : φ '' E.below Y' = D.below Y) (d : E.below X') :
+    hφ.belowEquiv hY (Set.inclusion (E.below_mono h') d) =
+      Set.inclusion (D.below_mono h) (hφ.belowEquiv hX d) :=
+  Subtype.ext rfl
+
+end BelowEquiv
+
 end IsLowerEmbedding
 
 /-! ### Cells below a pair inside a face -/
@@ -438,7 +512,7 @@ theorem IsLowerEmbedding.belowRestrictEquiv (hZ : Z.1 ⊆ B) :
 theorem IsLowerEmbedding.belowRestrictEquiv_symm (hZ : Z.1 ⊆ B) :
     ((D.restrict B).reindex ((↑) : (D.restrict B).below Z → _)).IsLowerEmbedding
       (D.reindex ((↑) : D.below Z → ι)) (D.belowRestrictEquiv hZ).symm :=
-  IsLowerEmbedding.of_equiv _ fun _ ↦ rfl
+  (IsLowerEmbedding.belowRestrictEquiv D hZ).symm
 
 end BelowRestrict
 

@@ -54,9 +54,8 @@ is the direct application; `IsWellFormed.below_eq_empty` is a fact about well-fo
 for `VaughtConjecture.Scheme.Cell`.  `CappedLift.of_equiv`,
 `CappedLift.comap`, `CappedLift.of_comap`, and `cappedLift_comap_iff` belong in
 `VaughtConjecture.Scheme.Transport` (where `IsBountiful.comap_of_image_eq` follows from
-`CappedLift.comap` applied at every pair of graded faces), and
-`IsLowerEmbedding.belowEquiv_inclusion` in its `IsLowerEmbedding` namespace, beside
-`IsLowerEmbedding.belowEquiv`.  They are stated here so that those files are unchanged.
+`CappedLift.comap` applied at every pair of graded faces).  They are stated here so that those
+files are unchanged.
 
 ## References
 
@@ -72,14 +71,6 @@ namespace VaughtConjecture.CellScheme
 open Finset Label
 
 variable {ι κ α β : Type*} {D : CellScheme ι α} {E : CellScheme κ β}
-
-/-- The equivalences of lower sets induced by a lower embedding commute with restriction. -/
-theorem IsLowerEmbedding.belowEquiv_inclusion {φ : κ → ι} (hφ : E.IsLowerEmbedding D φ)
-    {X' Y' : Finset β × ℕ} {X Y : Finset α × ℕ} (h' : X' ≤ Y') (h : X ≤ Y)
-    (hX : φ '' E.below X' = D.below X) (hY : φ '' E.below Y' = D.below Y) (d : E.below X') :
-    hφ.belowEquiv hY (Set.inclusion (E.below_mono h') d) =
-      Set.inclusion (D.below_mono h) (hφ.belowEquiv hX d) :=
-  Subtype.ext rfl
 
 namespace Rows
 

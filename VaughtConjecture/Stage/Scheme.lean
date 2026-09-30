@@ -75,9 +75,8 @@ theorem IsComplete.reindex {D : CellScheme ι α} (hD : D.IsComplete) {φ : κ �
 visible through the embedding. -/
 theorem IsComplete.comap {D : CellScheme ι α} (hD : D.IsComplete) (f : β ↪ α) :
     (D.comap f).IsComplete := by
-  intro X ⟨hX, hpos, hle⟩
-  obtain ⟨d, hd⟩ := hD (Prod.map (Finset.map f) id X)
-    ⟨(mem_comap_faces D f).mp hX, hpos, by simpa using hle⟩
+  intro X hX
+  obtain ⟨d, hd⟩ := hD _ ((mem_gradedFaces_comap D f).mp hX)
   have hsc : D.scope d = X.1.map f := congrArg Prod.fst hd
   refine ⟨⟨d, by simp [hsc]⟩, Prod.ext ?_ ?_⟩
   · simp [hsc, preimage_map]
@@ -235,9 +234,8 @@ theorem map_comap_gradedIndex (i : Fin (S.comap f).card) :
 /-- The graded faces of the restriction are those whose image is a graded face. -/
 theorem mem_gradedFaces_comap {X : Finset (Fin m) × ℕ} :
     X ∈ (S.comap f).toCellScheme.gradedFaces ↔
-      Prod.map (Finset.map f) id X ∈ S.toCellScheme.gradedFaces := by
-  rw [CellScheme.mem_gradedFaces, CellScheme.mem_gradedFaces, mem_comap_faces]
-  simp
+      Prod.map (Finset.map f) id X ∈ S.toCellScheme.gradedFaces :=
+  CellScheme.mem_gradedFaces_comap _ f
 
 /-! ### Functoriality of restriction -/
 
