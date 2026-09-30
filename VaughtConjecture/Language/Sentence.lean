@@ -103,6 +103,7 @@ noncomputable def distinct (n : ℕ) : L.BoundedFormulaω α n :=
 /-- Realization of the universal closure of a formula, read at the empty tuple.  This differs from
 `BoundedFormulaInf.realize_alls`, which reads the closure at `default` as a formula; it is a
 candidate for upstreaming. -/
+@[simp]
 theorem realize_alls {v : α → M} (φ : L.BoundedFormulaω α n) :
     Realize φ.alls v Fin.elim0 ↔ ∀ ys : Fin n → M, φ.Realize v ys :=
   BoundedFormulaInf.realize_alls
