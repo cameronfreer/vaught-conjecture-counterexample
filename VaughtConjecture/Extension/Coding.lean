@@ -20,11 +20,11 @@ needs, under the range normalization alone: no input is assumed to satisfy the o
 
 **Coding of labels.**
 
-* `Label.IsStronglyCoded k x`: `x` is bottom or `ω · i + j` with `j ≤ k + 1`, the range of a row of
-  grade `k` in [Kni26, Lemma 2.5.13]: coded, and in addition bounded in its finite part.  On
-  ordinals, `IsStronglyCoded k o ↔ o < ω ^ 2 ∧ o % ω ≤ k + 1` (`Label.isStronglyCoded_coe`): strong
-  coding bounds the finite part from above, where self-visibility (`Label.isSelfVisible_coe`) bounds
-  it from below.  A label lies below `ω ^ 2` exactly when it is strongly coded at some grade
+* `Label.IsStronglyCoded k x`: `x` is bottom or `ω · i + j` with `j ≤ k + 1`, the range of a row
+  of grade `k` in [Kni26, Lemma 2.5.13].  On ordinals, `IsStronglyCoded k o ↔ o < ω ^ 2 ∧
+  o % ω ≤ k + 1` (`Label.isStronglyCoded_coe`): strong coding bounds the finite part from above,
+  where self-visibility (`Label.isSelfVisible_coe`) bounds it from below.  A label lies below
+  `ω ^ 2` exactly when it is strongly coded at some grade
   (`Label.lt_omega0_sq_iff_exists_isStronglyCoded`), so the range normalization is strong coding
   with no bound on the offset in terms of the grade.
 * The **coded alphabet** `Label.codedAlphabet i j`, the finite set of `⊥` and the ordinals
@@ -84,12 +84,12 @@ strongly coded, and to which these lemmas apply.
 *Hypotheses on the completion, not proved here.*  The coding of the completion follows from
 (a)–(d) and the coding of its inputs when its rows have the following forms.  The inherited rows
 are the rows of the inputs, so (b) applies with the `IsCoded` of the inputs, and the amalgam of
-the two inputs is coded by (a).  The apex row is the coded copy of the labels
-(`VaughtConjecture.Extension.Apex`), below `ω ^ 2` by `Label.bandEncode_lt`, so (b) applies.
-Every other new row, of grade `k`, takes its values in a coded alphabet fixed by `k` (the
-ordinals `ω · b + k`, the normal forms of lawful labellings, and their visibility replacements at
-grades `≤ k`), so it is coded, indeed strongly coded (d), whatever the coding of the inputs.  The
-catalogue is finite when its vectors take their values in a coded alphabet (e).
+the two inputs is coded by (a).  The apex of the completion carries a row that is not bottom, a
+coded copy of the labels; its coding is treated with the apex.  Every other new row, of grade `k`,
+takes its values in a coded alphabet fixed by `k` (the ordinals `ω · b + k`, the normal forms of
+lawful labellings, and their visibility replacements at grades `≤ k`), so it is coded, indeed
+strongly coded (d), whatever the coding of the inputs.  The catalogue is finite when its vectors
+take their values in a coded alphabet (e).
 
 *In the construction (not proved here):* consistency, capped lifting, lawful sections, normal
 forms, and decoding involve no coding of the inputs.  The coding of an input row, and not its
@@ -158,14 +158,8 @@ theorem infinite_setOf_lt_omega0_sq :
 /-! ### Strong coding -/
 
 /-- A label is **strongly coded** at grade `k`: it is bottom or an ordinal `ω · i + j` with
-`j ≤ k + 1`.  Equivalently (`Label.isStronglyCoded_coe`), it is coded, that is, below `ω ^ 2` (the
-range normalization of [Kni26, Lemma 2.5.13], which legality imposes on rows), and in addition
-its finite part satisfies the offset bound `j ≤ k + 1` displayed in that lemma.  The two are
-distinct: coding bounds the label, strong coding also bounds its finite part in terms of the
-grade.  Every coded label is strongly coded at some grade
-(`Label.lt_omega0_sq_iff_exists_isStronglyCoded`), but `3` is coded and not strongly coded at
-grade `1`.  Strong coding is not part of legality; a construction that needs it imposes it on the
-rows it builds. -/
+`j ≤ k + 1`.  This is the range of a row of grade `k` displayed in [Kni26, Lemma 2.5.13]; it is
+not part of legality, and a construction that needs it imposes it on the rows it builds. -/
 def IsStronglyCoded (k : ℕ) (x : Label.{u}) : Prop :=
   x = ⊥ ∨ ∃ i j : ℕ, j ≤ k + 1 ∧ x = ((ω * i + j : Ordinal.{u}) : Label.{u})
 
@@ -248,10 +242,9 @@ theorem lt_omega0_sq_iff_exists_isStronglyCoded :
 /-- The **coded alphabet** with block bound `i` and offset bound `j`: bottom together with the
 ordinals `ω · a + b` for `a ≤ i` and `b ≤ j`, that is, `⊥` together with the ordinals of the
 blocks `[ω · a, ω · a + ω)`, `a ≤ i`, whose finite part is at most `j`.  It is a finite set of
-labels below `ω ^ 2`, in which the codes of the strongly coded encoder lie
-(`Label.strongEncode_mem_codedAlphabet`) and a finite catalogue takes its values; taking values in
-a coded alphabet fixed by the grade is the form required of the new rows of the completion
-(module docstring). -/
+labels below `ω ^ 2`, in which a finite catalogue takes its values; taking values in a coded
+alphabet fixed by the grade is the form required of the new rows of the completion (module
+docstring). -/
 noncomputable def codedAlphabet (i j : ℕ) : Finset Label.{u} :=
   insert ⊥ ((range (i + 1) ×ˢ range (j + 1)).image
     fun ab ↦ ((ω * ab.1 + ab.2 : Ordinal.{u}) : Label.{u}))
@@ -290,9 +283,8 @@ theorem mem_codedAlphabet_of_isStronglyCoded_of_lt {i : ℕ} (h : IsStronglyCode
 
 /-- **Finitely many strongly coded labels lie below `ω · (i + 1)`**: they lie in the coded
 alphabet with block bound `i` and offset bound `k + 1`.  The labels below `ω · (i + 1)` alone
-do not form a finite set.  So over finitely many cells, the labellings with values strongly
-coded at their grade and below `ω · (i + 1)` form a finite set, (e), and so does a catalogue
-whose vectors take such values. -/
+do not form a finite set.  This gives the finiteness of a catalogue whose vectors take values
+strongly coded at their grade and below `ω · (i + 1)`. -/
 theorem finite_setOf_isStronglyCoded_lt (k i : ℕ) :
     {x : Label.{u} | IsStronglyCoded k x ∧ x < ((ω * (i + 1) : Ordinal.{u}) : Label.{u})}.Finite :=
   (codedAlphabet i (k + 1)).finite_toSet.subset fun _ hx ↦
