@@ -24,9 +24,10 @@ so whether or not the corresponding face map of stage types is defined.
 
 ## References
 
-Bountifulness is Definition 2.5.14 and face restriction is the horizontal restriction of §3.1 of
-R. W. Knight, *A counterexample to Vaught's Conjecture using generalised Stone spaces* (draft,
-20 February 2026) (numbering to be verified against the manuscript).
+Bountifulness is [Kni26, Definition 2.5.14]; face restriction is the restriction to a face of the
+plan of [Kni26, Definition 3.1.2], and that this restriction is again bountiful is clause 3 of
+[Kni26, Proposition 2.6.3], for R. W. Knight, *A counterexample to Vaught's Conjecture using
+generalised Stone spaces* (draft, 20 February 2026).
 -/
 
 universe u
@@ -50,7 +51,7 @@ private theorem isBountiful_comap_of_rows_eq_mute {S : Scheme.{u} n}
 private theorem comap_rows_of_rows_eq_mute {S : Scheme.{u} n}
     (hS : S.rows = CellScheme.Rows.mute S.toCellScheme) :
     (S.comap f).rows = CellScheme.Rows.mute (S.comap f).toCellScheme := by
-  rw [show (S.comap f).rows = S.rows.comap (S.isLowerEmbedding_comap f) from rfl, hS,
-    CellScheme.Rows.comap_mute]
+  ext s t
+  simp [hS]
 
 end VaughtConjecture.Scheme

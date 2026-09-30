@@ -15,11 +15,12 @@ a lawful labelling); the expositions, §2.
 
 Bountifulness (`CellScheme.Rows.IsBountiful`) passes to the rows pulled back along a lower
 embedding `φ` of `E` into `D`, provided the graded faces of `E` are sent to graded faces of `D` by
-a monotone map of faces `g` (grades unchanged) under which `φ` maps the cells below each graded
-face `X` of `E` onto the cells below its image (`IsBountiful.comap_of_image_eq`).  The cells below
-`X` and below its image are then identified by an equivalence (`IsLowerEmbedding.belowEquiv`)
-that is a lower embedding of the schemes of cells below them in both directions, so lawfulness
-below `X` is lawfulness below the image (`Rows.isLawfulBelow_comap_iff`) and cap balls correspond.
+a map of faces `g`, monotone on the faces of `E` (grades unchanged), under which `φ` maps the
+cells below each graded face `X` of `E` onto the cells below its image
+(`IsBountiful.comap_of_image_eq`).  The cells below `X` and below its image are then identified
+by an equivalence (`IsLowerEmbedding.belowEquiv`) that is a lower embedding of the schemes of
+cells below them in both directions, so lawfulness below `X` is lawfulness below the image
+(`Rows.isLawfulBelow_comap_iff`) and cap balls correspond.
 
 Instances:
 
@@ -34,11 +35,30 @@ Along the way, the inverse of an equivalence of cells that is a lower embedding 
 embedding (`IsLowerEmbedding.symm`), and lawful sections transport along such an equivalence in
 both directions (`Rows.isLawful_comap_equiv_iff`).
 
+## Placement
+
+`gradedIndex_comap_le_iff`, `mem_gradedFaces_comap`, and `image_val_below_comap` belong in the
+`Comap` section of `VaughtConjecture.Scheme.Cell`; `IsLowerEmbedding.symm`,
+`IsLowerEmbedding.belowEquiv`, `IsLowerEmbedding.coe_belowEquiv`, and
+`IsLowerEmbedding.isLowerEmbedding_belowEquiv` in the `IsLowerEmbedding` namespace of
+`VaughtConjecture.Scheme.Cell`; `Rows.comap_comap_symm`, `Rows.isLawful_comap_equiv_iff`, and
+`Rows.isLawfulBelow_comap_iff` in `VaughtConjecture.Scheme.Row`, beside the reindexing lemmas;
+and `IsBountiful.comap_of_image_eq`, `IsBountiful.comap`, and `IsBountiful.reindex` in
+`VaughtConjecture.Scheme.Bountiful`.  They are stated here so that those files are unchanged.
+Once moved, the following become one-line consequences, to be derived from them or removed:
+`Scheme.mem_gradedFaces_comap` (`CellScheme.mem_gradedFaces_comap S.toCellScheme f`, a fact also
+re-derived inline in `CellScheme.IsComplete.comap`); `Rows.comap_reindex_comap_symm`
+(`comap_comap_symm (IsLowerEmbedding.reindex D e)`); `Rows.isLawful_comap_reindex_iff`
+(`isLawful_comap_equiv_iff (IsLowerEmbedding.reindex D e)`); `IsBountiful.restrict`
+(`IsBountiful.comap_of_image_eq` with the identity map of faces); and
+`IsLowerEmbedding.reindex_symm D e` (`(IsLowerEmbedding.reindex D e).symm`).
+
 ## References
 
-Bountifulness is Definition 2.5.14 of R. W. Knight, *A counterexample to Vaught's Conjecture
-using generalised Stone spaces* (draft, 20 February 2026) [Kni26] (numbering to be verified
-against the manuscript).
+Bountifulness is [Kni26, Definition 2.5.14]; the restriction of a semantics to a face of the plan
+is [Kni26, Lemma 2.5.5], and its transport along a one-to-one map is clause 5 of
+[Kni26, Proposition 2.6.3], for R. W. Knight, *A counterexample to Vaught's Conjecture using
+generalised Stone spaces* (draft, 20 February 2026).
 -/
 
 universe u
@@ -59,8 +79,8 @@ variable (D) (f : β ↪ α)
 of the pair. -/
 theorem gradedIndex_comap_le_iff (d : D.visible (Set.range f)) {X : Finset β × ℕ} :
     (D.comap f).gradedIndex d ≤ X ↔ D.gradedIndex d ≤ Prod.map (Finset.map f) id X := by
-  rw [gradedIndex_le_iff, gradedIndex_le_iff, ← map_subset_map (f := f), map_comap_scope]
-  rfl
+  rw [gradedIndex_le_iff, gradedIndex_le_iff, ← map_subset_map (f := f), map_comap_scope,
+    comap_grade, Prod.map_fst, Prod.map_snd, id_eq]
 
 /-- The graded faces of the pullback are the pairs whose image is a graded face. -/
 theorem mem_gradedFaces_comap {X : Finset β × ℕ} :
@@ -149,20 +169,21 @@ theorem isLawfulBelow_comap_iff (hφ : E.IsLowerEmbedding D φ) {X : Finset β �
 /-! ### Transport of bountifulness -/
 
 /-- **Transport of bountifulness.**  Let `φ` be a lower embedding of `E` into `D` and `g` a
-monotone map of faces such that, for every graded face `X = (C, j)` of `E`, the pair
-`(g C, j)` is a graded face of `D` and `φ` maps the cells below `X` onto the cells below
-`(g C, j)`.  Then the pullback of bountiful rows along `φ` is bountiful. -/
+map of faces, monotone on the faces of `E`, such that, for every graded face `X = (C, j)` of
+`E`, the pair `(g C, j)` is a graded face of `D` and `φ` maps the cells below `X` onto the cells
+below `(g C, j)`.  Then the pullback of bountiful rows along `φ` is bountiful. -/
 theorem IsBountiful.comap_of_image_eq (hR : R.IsBountiful) (hφ : E.IsLowerEmbedding D φ)
-    {g : Finset β → Finset α} (hg : Monotone g)
+    {g : Finset β → Finset α} (hg : MonotoneOn g E.faces)
     (hfaces : ∀ X ∈ E.gradedFaces, Prod.map g id X ∈ D.gradedFaces)
     (himage : ∀ X ∈ E.gradedFaces, φ '' E.below X = D.below (Prod.map g id X)) :
     (R.comap hφ).IsBountiful := by
   intro X Y hX hY hXY c hc q hq p ⟨hp, hpq⟩
   set eX := hφ.belowEquiv (himage X hX)
   set eY := hφ.belowEquiv (himage Y hY)
-  have hle : Prod.map g id X ≤ Prod.map g id Y := ⟨hg hXY.1, hXY.2⟩
+  have hle : Prod.map g id X ≤ Prod.map g id Y := ⟨hg hX.1 hY.1 hXY.1, hXY.2⟩
   have hinc (t : E.below X) :
-      eY (Set.inclusion (E.below_mono hXY) t) = Set.inclusion (D.below_mono hle) (eX t) := rfl
+      eY (Set.inclusion (E.below_mono hXY) t) = Set.inclusion (D.below_mono hle) (eX t) :=
+    Subtype.ext (by simp [eX, eY])
   have hinc' (d : D.below (Prod.map g id X)) :
       eY.symm (Set.inclusion (D.below_mono hle) d) = Set.inclusion (E.below_mono hXY) (eX.symm d) :=
     eY.symm_apply_eq.mpr (by rw [hinc, eX.apply_symm_apply])
@@ -180,14 +201,15 @@ theorem IsBountiful.comap_of_image_eq (hR : R.IsBountiful) (hφ : E.IsLowerEmbed
 inclusion of the cells visible through an embedding `f : β ↪ α` is bountiful. -/
 theorem IsBountiful.comap (hR : R.IsBountiful) (f : β ↪ α) :
     (R.comap (IsLowerEmbedding.comap D f)).IsBountiful :=
-  hR.comap_of_image_eq _ (fun _ _ h ↦ map_subset_map.mpr h)
+  hR.comap_of_image_eq _ (fun _ _ _ _ h ↦ map_subset_map.mpr h)
     (fun _ hX ↦ (mem_gradedFaces_comap D f).mp hX) fun X _ ↦ image_val_below_comap D f X
 
 /-- **Reindexing along an equivalence of cells.**  Bountifulness is preserved by reindexing the
 cells along an equivalence. -/
 theorem IsBountiful.reindex (hR : R.IsBountiful) (e : κ ≃ ι) :
     (R.comap (IsLowerEmbedding.reindex D e)).IsBountiful :=
-  hR.comap_of_image_eq _ monotone_id (fun _ hX ↦ hX) fun X _ ↦ e.image_preimage (D.below X)
+  hR.comap_of_image_eq _ (monotone_id.monotoneOn _) (fun _ hX ↦ hX) fun X _ ↦
+    e.image_preimage (D.below X)
 
 end Rows
 
