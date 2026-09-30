@@ -165,6 +165,12 @@ the countable back-and-forth step `PotentialIso.countable_toEquiv_graph` are sta
 universe); a named
 lemma that the Scott sentence of a code isolates its class on a presentation (currently the
 content of the proof of `isolatedPresentation_of_surjective`, whose statement is existential).
+Statements proved in `VaughtConjecture.MainTheorem.Spectrum` for want of upstream versions, with
+their natural upstream homes: `realize_boundedFormulaω_equiv` and `realize_sentenceω_equiv` become
+redundant once `BoundedFormulaω.realize_equiv` and `LomegaEquiv.of_equiv` are generalized in
+place to carriers in different universes; `qrank_lt_omega_one` (`Lomega1omega/QuantifierRank`);
+`classTruth` with its lemmas (`Descriptive/StructureIsoSetoid`) and `exists_mem_modelsOf_equiv`
+(`Descriptive/CodeTransport`).
 
 **Instantiation.**  The sentence `Φ`, its presentation `Q`, and its `T∞`: every model of `Φ` of
 any cardinality either is `L_{ω₁,ω}`-equivalent to a countable model of `Φ` through a Scott
