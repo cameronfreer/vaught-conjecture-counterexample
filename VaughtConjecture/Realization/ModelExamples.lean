@@ -15,7 +15,7 @@ import VaughtConjecture.Realization.Model
 Roadmap, Layer 2 (the four unchanged extension families); semantic contract, item 5.
 
 **No model at a successor stage.**  At the successor stage `1` no stage type on `n + 1` points has
-a label in the band `[0, ω)` (`uniformityFamily_zero_eq_empty`): such a label would be the ordinal
+a label in the block `[0, ω)` (`uniformityFamily_zero_eq_empty`): such a label would be the ordinal
 `0`, which is self-visible only at grade `0`, while every cell has positive grade.  So no
 realization at stage `1` realizes a member of this family over any tuple
 (`not_realizesOver_uniformityFamily_zero`), although `0` is a limit-or-zero ordinal below the stage
