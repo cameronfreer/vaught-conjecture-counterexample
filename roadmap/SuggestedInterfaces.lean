@@ -156,9 +156,11 @@ set_option linter.hashCommand false in
 -- Mathlib's Fraïssé interface, applied by the classical limit of the top-free witnesses
 -- (`README.md`, Layer 0).  The classical existence theorem, representative classes, the
 -- factorization of tuples through the age, orbit isolation, and countable prime structures (all
--- in ComputableModelTheory) are not yet pinned.  The orbit-formula rank bounds, local-automorphism
--- preservation, and the rank comparison of the Scott process (InfinitaryLogic) are available at
--- the intended pin `cca6949`, not yet in the manifest (`IMPLEMENTATION.md`, "Dependency pins").
+-- in ComputableModelTheory) are prospective: neither available upstream nor pinned.  The
+-- orbit-formula rank bounds, local-automorphism preservation, and the rank comparison of the
+-- Scott process (InfinitaryLogic) are available upstream (merged in InfinitaryLogic at
+-- `cca6949`), not yet available at our pinned dependency: applied here once the manifest records
+-- that pin and the signatures are checked against it (`IMPLEMENTATION.md`, "Dependency pins").
 -- None of them is at the current pins, and none is checked.
 set_option linter.hashCommand false in
 #check FirstOrder.Language.age
@@ -191,8 +193,8 @@ Receiving: exact literal root + one actual occurrence + requested capped/LOW equ
 HullOperations: definable total binary hull operations; generated-substructure closure equals
   hull closure; finite charts are the finite substructures; embeddings preserved and reflected.
 ClassicalLimit: finite top-free charts as finite structures; hereditary closure, joint embedding,
-  amalgamation with the literal square (before any infinite model); classical existence (not yet
-  pinned); reconstruction meeting SEMANTIC_CONTRACT.md, item 11; consistency, covering,
+  amalgamation with the literal square (before any infinite model); classical existence
+  (prospective); reconstruction meeting SEMANTIC_CONTRACT.md, item 11; consistency, covering,
   top-freeness from the factorization of tuples; receiving from row 5 and ultrahomogeneity
   (per cutoff for donors with top); modelhood, infinitude, terminality.  Statement shapes:
   `Suggested.lean`, section 3.

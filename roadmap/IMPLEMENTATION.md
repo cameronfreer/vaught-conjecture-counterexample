@@ -287,7 +287,7 @@ First applications: the amalgamation of top-free charts (step 2, from the plain 
 coatom extension property and capping) and receiving in the classical limit (step 6, rows 6
 and 5).  The modules of the finite extension constructions import neither the classical limit
 nor the chain construction.  Direct limits of structures and the classical existence theorem
-(not yet pinned) belong to the two libraries: they replace no finite extension
+(prospective) belong to the two libraries: they replace no finite extension
 construction and no decoding or recovery statement.
 
 ### 4. Stable continuation and terminal comparison
@@ -360,7 +360,7 @@ age and not recognized afterwards in a model constructed otherwise.
    its points and has more than two points.  Strong amalgamation is not claimed or needed.  No
    infinite model is imported.
 3. **Classical existence.**  Acceptance: `isFraisse_representativeClass` applied to the family,
-   then the classical existence theorem (not yet pinned), giving a countable
+   then the classical existence theorem (prospective), giving a countable
    `L^h_λ`-structure with
    `IsFraisseLimit`; the countability hypotheses (`[Countable (Σ l, L.Functions l)]`, countably
    many isomorphism types) are proved for `L^h_λ` and the age, not assumed.
@@ -445,25 +445,26 @@ In the pinned Mathlib (`Mathlib/ModelTheory/Fraisse.lean`): `age`, `Hereditary`,
 `age.fg_substructure`, with the hypotheses recorded in `README.md`, Layer 0.  Mathlib has no
 existence theorem for Fraïssé limits.
 
-Not yet pinned (not available at the current pins, and therefore not checked by
-the sketches): from ComputableModelTheory, the classical Fraïssé theorems (`representativeClass`,
-`isFraisse_representativeClass`, `FGCofinal`, `ExtensionRich`, `isFraisseLimit_of_extensionRich`,
-`SequenceExtension`, `amalgamationRich_of_sequenceExtension`, `age_directLimit_eq`,
-`countable_directLimit`, `isFraisseLimit_directLimit`, and the existence theorem), the
-factorization of tuples through the age (`exists_factor_tuple_of_age_subset`,
+Not at the current pins, and therefore not checked by the sketches: from ComputableModelTheory
+(prospective: neither available upstream nor pinned), the classical Fraïssé theorems
+(`representativeClass`, `isFraisse_representativeClass`, `FGCofinal`, `ExtensionRich`,
+`isFraisseLimit_of_extensionRich`, `SequenceExtension`, `amalgamationRich_of_sequenceExtension`,
+`age_directLimit_eq`, `countable_directLimit`, `isFraisseLimit_directLimit`, and the existence
+theorem), the factorization of tuples through the age (`exists_factor_tuple_of_age_subset`,
 `exists_factor_embedding_of_age_subset`), and orbit isolation and countable prime structures
 (`IsolatesTuple`, `IsAtomic`, `isolatesTuple_of_orbit_formula`, `isAtomic_of_orbit_formulas`,
 `IsolatesTuple.realize_iff`, `IsolatesTuple.typesWith_eq_singleton`,
-`exists_elementaryEmbedding_of_countable_atomic`); from InfinitaryLogic, at the intended pin
-`cca6949`, the rank comparison of the Scott process (`selfStabilizesCompletely_iff_orbitRank_le`,
-`bfStabilizationOrdinal_self_eq_iSup_orbitRank`, `stabilizesAt_of_orbitRank_le`,
-`rank_le_of_orbitRank_le`, `lift_rank_le_internalScottRank`,
+`exists_elementaryEmbedding_of_countable_atomic`); from InfinitaryLogic, available upstream (merged
+at `cca6949`) and not yet available at our pinned dependency, applied here once the manifest records
+that pin and the signatures are checked against it: the rank comparison of the Scott process
+(`selfStabilizesCompletely_iff_orbitRank_le`, `bfStabilizationOrdinal_self_eq_iSup_orbitRank`,
+`stabilizesAt_of_orbitRank_le`, `rank_le_of_orbitRank_le`, `lift_rank_le_internalScottRank`,
 `internalScottRank_le_lift_rank_add_one`).  Their statement shapes and hypotheses are in
 `README.md`, Layer 0; where the repinned versions name them differently, those names prevail.
 
-An available dependency, subject to the pin (the InfinitaryLogic pull request #141, merged at
-`cca6949`; the intended pin `cca6949` is not yet recorded in the manifest, so these names are not
-`#check`ed):
+Available upstream (merged in InfinitaryLogic at `cca6949`, its pull request #141), not yet
+available at our pinned dependency: applied here once the manifest records that pin and the
+signatures are checked against it.  No sketch assumes or `#check`s them before then:
 `BoundedFormula.qrank_toLω_lt_omega0` (`Lomega1omega/QuantifierRank`);
 `orbit_determined_of_orbitFormula`, `exists_finite_orbit_threshold`,
 `orbitRank_lt_omega0_of_orbitFormula`, and `internalScottRank_le_omega0_of_orbitFormulas`
@@ -473,28 +474,27 @@ countability or nonemptiness); `BoundedFormulaω.realize_comp_of_localAutomorphi
 `BoundedFormulaω.realize_comp_append_of_localAutomorphisms` (`Lomega1omega/LocalAutomorphism`,
 any language and carrier).
 
-**An intended generic interface of InfinitaryLogic (not yet pinned; a statement still to be
-proved upstream, a separate library milestone).**  Statement: for a countable relational
-language, every analytic set `A` of pairs of structures on `ℕ` containing no isomorphic pair is
-uniformly separated at some countable back-and-forth level: there is `α < ω₁` such that no pair
-`(M, N) ∈ A` is back-and-forth equivalent at level `α`.  Three checkpoints: (1) a coded forced
-back-and-forth tree whose assignment is Borel, whose infinite branches correspond to
+**An intended generic interface of InfinitaryLogic (prospective: neither available upstream nor
+pinned; a statement still to be proved upstream, a separate library milestone).**  Statement: for a
+countable relational language, every analytic set `A` of pairs of structures on `ℕ` containing no
+isomorphic pair is uniformly separated at some countable back-and-forth level: there is `α < ω₁`
+such that no pair `(M, N) ∈ A` is back-and-forth equivalent at level `α`.  Three checkpoints: (1) a
+coded forced back-and-forth tree whose assignment is Borel, whose infinite branches correspond to
 isomorphisms, and whose rank is bounded below through back-and-forth equivalence, with the rank
-convention stated precisely (no ordinal offset assumed); (2) uniform separation from the
-boundedness of analytic families of well-founded trees; (3) two applications: cocountable
-concentration in one back-and-forth class at every countable level excludes a perfect
-isomorphism antichain, and an invariant relatively Borel subset of a Borel class of structures is
-saturated under some countable back-and-forth level, so that under concentration one side is
-countable in isomorphism classes.  Dependency direction: basic topology, analytic coding, and
-well-founded ranks, then analytic tree boundedness, then uniform back-and-forth separation, then
-thinness and invariant-Borel concentration; López–Escobar, invariant separation, and the
-model-theoretic boundedness route are excluded from this path by import and proof-dependency
-guards.  Combined with the cocountable concentration of the expansion domains (classes in `D_η`
-agree at back-and-forth level `η`), it would give thinness without sentence minimality and
-without López–Escobar.  It does not replace the working thinness route
-(`Sentenceω.isThinOnNatModels_of_countable_sentence_splits`, from countable truth sides), the
-Gδ/Polish model-code results stay optional, and any improvement it brings is described as reduced
-dependencies of the thinness proof, not as a smaller trusted kernel.
+convention stated precisely (no ordinal offset assumed); (2) uniform separation from the boundedness
+of analytic families of well-founded trees; (3) two applications: cocountable concentration in one
+back-and-forth class at every countable level excludes a perfect isomorphism antichain, and an
+invariant relatively Borel subset of a Borel class of structures is saturated under some countable
+back-and-forth level, so that under concentration one side is countable in isomorphism
+classes.  Dependency direction: basic topology, analytic coding, and well-founded ranks, then
+analytic tree boundedness, then uniform back-and-forth separation, then thinness and invariant-Borel
+concentration; López–Escobar, invariant separation, and the model-theoretic boundedness route are
+excluded from this path by import and proof-dependency guards.  Combined with the cocountable
+concentration of the expansion domains (classes in `D_η` agree at back-and-forth level `η`), it
+would give thinness without sentence minimality and without López–Escobar.  It does not replace the
+working thinness route (`Sentenceω.isThinOnNatModels_of_countable_sentence_splits`, from countable
+truth sides), the Gδ/Polish model-code results stay optional, and any improvement it brings is
+described as reduced dependencies of the thinness proof, not as a smaller trusted kernel.
 
 `SuggestedInterfaces.lean` checks representative names, so a pin bump that removes one fails
 when the sketch is checked (the checks are run by CI).  Coding a `Type w` carrier on `ℕ` needs a
@@ -506,13 +506,14 @@ single universe covers it.
 The intended repins, made together in `lakefile.toml` and `lake-manifest.json` once the upstream
 versions exist:
 
-- **InfinitaryLogic**: from the current revision (`a58f81a`, the merge of its pull request #134)
-  to the intended pin `cca6949`, the merge of its pull request #141 on top of `a640bbb` (the
-  merge of #140): it contains the rank comparison of the Scott process (#140) and the
-  orbit-formula threshold and rank bound and local-automorphism preservation of `README.md`,
-  Layer 0 (#141).  Toolchain and Mathlib are unchanged.  The intended pin is not yet recorded in
-  the manifest; the roadmap cites these names as available at that pin, and no sketch
-  `#check`s them until the manifest moves.  The imports are the narrow modules
+- **InfinitaryLogic**: from the current revision (`a58f81a`, the merge of its pull request #134) to
+  the intended pin `cca6949`, the merge of its pull request #141 on top of `a640bbb` (the merge of
+  #140): it contains the rank comparison of the Scott process (#140) and the orbit-formula threshold
+  and rank bound and local-automorphism preservation of `README.md`, Layer 0 (#141).  Toolchain and
+  Mathlib are the same as at the current pin.  These statements are available upstream (merged in
+  InfinitaryLogic at `cca6949`), not yet available at our pinned dependency: applied here once the
+  manifest records that pin and the signatures are checked against it.  No sketch assumes or
+  `#check`s them before then.  The imports are the narrow modules
   `InfinitaryLogic.Scott.OrbitFormulaThreshold` and
   `InfinitaryLogic.Lomega1omega.LocalAutomorphism`, never `InfinitaryLogic.All`.
 - **ComputableModelTheory**: added as a direct dependency, at a version containing its pull
@@ -520,8 +521,8 @@ versions exist:
   own pin, `38c4bae`, predates #140), #38 (extension-rich families) and #39 (representative
   classes and extension-rich direct limits), both open, the classical existence theorem, and
   the modules on orbit isolation and countable prime structures and on the factorization of
-  tuples through the age.  **The classical existence theorem is an intended dependency of
-  ComputableModelTheory, not an available pinned theorem.**  The theorem itself is classical,
+  tuples through the age.  **The classical existence theorem is prospective: neither available
+  upstream nor pinned.**  The theorem itself is classical,
   but its statement and proof in ComputableModelTheory do not yet exist; no statement of this
   roadmap relies on it as pinned until this subsection records a pin containing it.
 - **Mathlib and the toolchain** agree across the three: one Lean toolchain (`v4.35.0-rc3` at
@@ -530,15 +531,16 @@ versions exist:
   must be built against the InfinitaryLogic revision pinned here, and the toolchain check of
   `scripts/check.sh` extends to ComputableModelTheory.
 
-**Intended dependencies not yet stated upstream:** the classical existence theorem, the
-factorization of tuples through the age, and orbit isolation and countable prime structures
-(ComputableModelTheory, where #38 and #39 are open).  No statement of this roadmap relies on any
-of them as pinned until this subsection records a pin containing it.  The statements of
-InfinitaryLogic's pull request #141 are not in this list: they are merged, at the intended pin
-`cca6949` above.
+**Prospective dependencies (neither available upstream nor pinned):** the classical existence
+theorem, the factorization of tuples through the age, and orbit isolation and countable prime
+structures (ComputableModelTheory, where #38 and #39 are open).  No statement of this roadmap relies
+on any of them as pinned until this subsection records a pin containing it.  The statements of
+InfinitaryLogic's pull request #141 are not in this list: they are available upstream (merged in
+InfinitaryLogic at `cca6949`), not yet available at our pinned dependency: applied here once the
+manifest records that pin and the signatures are checked against it.
 
-Until then, the statements of the two libraries not at the current pins (marked *not yet
-pinned* elsewhere) are named in prose only
+Until then, the statements of the two libraries not at the current pins (marked *available
+upstream* or *prospective* elsewhere) are named in prose only
 (`README.md`, Layer 0), never `#check`ed in the sketches.
 
 ### Applications of library theorems
@@ -567,8 +569,9 @@ Everything after these two interfaces is an application:
 | Local agreement of a self-embedding | `realize_embedding_comp_of_localAutomorphisms` |
 | The same local agreement, with finite parameters | `realize_comp_append_of_localAutomorphisms` |
 
-These are an available dependency at the intended pin `cca6949` ("Dependency pins"), which is not
-yet recorded in the manifest.  Three qualifications:
+These are available upstream (merged in InfinitaryLogic at `cca6949`), not yet available at our
+pinned dependency: applied here once the manifest records that pin and the signatures are checked
+against it ("Dependency pins").  Three qualifications:
 
 1. Countability belongs to the construction-specific homogeneity proof (the back-and-forth of
    `COMPANIONS.md`, B2, or ultrahomogeneity of the countable limit), not to the generic rank
@@ -599,7 +602,7 @@ not `InfinitaryLogic.All`; they bring no López–Escobar or descriptive-set-the
 
 The development also quotes:
 
-- classical existence (not yet pinned) and `isFraisse_representativeClass`
+- classical existence (prospective) and `isFraisse_representativeClass`
   (ComputableModelTheory), for the limit (step 3);
 - the factorization of tuples through the age (ComputableModelTheory), for the reconstruction
   (steps 4–5);
@@ -653,7 +656,7 @@ Each checkpoint needs both its abstract API and a concrete application:
 3. Realizations, literal syntax correspondence, the hull operations with their five facts;
    then steps 1–6 of the top-free witnesses, in order: finite top-free charts, hereditary
    closure and amalgamation and joint embedding (through the plain form of the coatom extension
-   property, the first use of row 6), classical existence (not yet pinned),
+   property, the first use of row 6), classical existence (prospective),
    reconstruction, consistency and
    covering and top-freeness, and receiving (the first use of row 5).
 4. Items 3.2 and 3.3 for rows 1–3: for each row, the extension of the realization by one actual
@@ -775,7 +778,7 @@ of finite top-free charts are step 2 of the top-free witnesses and
 belong to the core.  These do not assert strong AP, a proper self-embedding, uncountable
 categoricity, Scott-rank equality, or existence of a model of all of `T∞`.  The main theorem is
 proved without them; if any is added, give it a separate definite completion criterion.  Direct
-limits of structures and the classical existence theorem (not yet pinned) belong
+limits of structures and the classical existence theorem (prospective) belong
 to the two libraries, not to
 the finite constructions of layer 3.
 [`COMPANIONS.md`](COMPANIONS.md) gives these topics and the full-chart orbit theory below such

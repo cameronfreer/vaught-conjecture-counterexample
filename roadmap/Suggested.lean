@@ -14,8 +14,8 @@ actual bodies. The file is outside the library build; check it with
 No new verified Lean result is claimed.
 
 Mathlib and the pinned infinitary-logic library are the current dependencies; section 3 also
-names statements of ComputableModelTheory, not yet pinned (`IMPLEMENTATION.md`, "Dependency
-pins").
+names statements of ComputableModelTheory, prospective: neither available upstream nor pinned
+(`IMPLEMENTATION.md`, "Dependency pins").
 The concrete finite construction is specified in README and SEMANTIC_CONTRACT;
 proving these general statements alone does not construct it.
 -/
@@ -118,7 +118,7 @@ system of `SuggestedInterfaces.lean`, and a map `rel` sending a chart to a relat
 language `L` (the stage chart language, or its definitional expansion by the hull operations).
 The concrete charts, the hull operations, and the amalgamation proof are not constructed here.
 
-The classical theorems applied in steps 3–6 are not yet pinned
+The classical theorems applied in steps 3–6 are prospective (neither available upstream nor pinned)
 (`IMPLEMENTATION.md`, "Dependency pins") and are not named in Lean here: from
 ComputableModelTheory, `representativeClass`, `isFraisse_representativeClass`, the existence
 theorem, and `exists_factor_tuple_of_age_subset`.  The orbit formula of a chart and the
@@ -220,14 +220,13 @@ open Classical in
 noncomputable def evalOfRel {n : ℕ} (t : Fin n ↪ M) : Option (Chart n) :=
   if h : ∃ p : Chart n, RelMap (rel p) ⇑t then some h.choose else none
 
-/-- **Reconstruction from the age** (target; steps 4–5).  Let each chart `p` on `m` points be
-read as a structure `S p` on `Fin m` whose chart relations are literally its faces (`hS`), and
-let every finitely generated substructure of `M` be isomorphic to some `S p` (the age of `M` is
-contained in the representative class of the charts).  Then the evaluation read from the
-relations reconstructs the realization.  Intended proof: factor each tuple through a
-representative (ComputableModelTheory's `exists_factor_tuple_of_age_subset`, not yet
-pinned) and read the relations there; `hid` and `hcomp` are the identity and composition laws of
-exact partial restriction. -/
+/-- **Reconstruction from the age** (target; steps 4–5).  Let each chart `p` on `m` points be read
+as a structure `S p` on `Fin m` whose chart relations are literally its faces (`hS`), and let every
+finitely generated substructure of `M` be isomorphic to some `S p` (the age of `M` is contained in
+the representative class of the charts).  Then the evaluation read from the relations reconstructs
+the realization.  Intended proof: factor each tuple through a representative
+(ComputableModelTheory's `exists_factor_tuple_of_age_subset`, prospective) and read the relations
+there; `hid` and `hcomp` are the identity and composition laws of exact partial restriction. -/
 theorem reconstructs_evalOfRel
     (hid : ∀ {n : ℕ} (p : Chart n), restrict (Function.Embedding.refl _) p = some p)
     (hcomp : ∀ {k n m : ℕ} (f : Fin k ↪ Fin n) (g : Fin n ↪ Fin m) (p : Chart m) (q : Chart n),

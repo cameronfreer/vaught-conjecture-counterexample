@@ -182,14 +182,15 @@ variable {L : Language.{u, v}} {M : Type w} [L.Structure M]
 /- The generic consequences of the two interfaces of B are library theorems, not restated here:
 InfinitaryLogic's `BoundedFormulaω.realize_comp_of_localAutomorphisms`,
 `BoundedFormulaω.realize_embedding_comp_of_localAutomorphisms`, and
-`BoundedFormulaω.realize_comp_append_of_localAutomorphisms` (preservation of infinitary formulas
-by maps agreeing locally with automorphisms), and `exists_finite_orbit_threshold`,
+`BoundedFormulaω.realize_comp_append_of_localAutomorphisms` (preservation of infinitary formulas by
+maps agreeing locally with automorphisms), and `exists_finite_orbit_threshold`,
 `orbitRank_lt_omega0_of_orbitFormula`, and `internalScottRank_le_omega0_of_orbitFormulas`
-(`[L.IsRelational]`; the bound `≤ ω` from orbit formulas).  They are available at the intended
-InfinitaryLogic pin `cca6949` (`IMPLEMENTATION.md`, "Dependency pins"), which is not yet in the
-manifest, so they are named here and not `#check`ed.  The construction-side statements are the
-orbit formula of a chart (`orbitDefinedBy_chartOrbitFormula`, below) and the local agreement
-property. -/
+(`[L.IsRelational]`; the bound `≤ ω` from orbit formulas).  They are available upstream (merged in
+InfinitaryLogic at `cca6949`), not yet available at our pinned dependency: applied here once the
+manifest records that pin and the signatures are checked against it (`IMPLEMENTATION.md`,
+"Dependency pins").  Until then no statement here assumes them, and they are named, not
+`#check`ed.  The construction-side statements are the orbit formula of a chart
+(`orbitDefinedBy_chartOrbitFormula`, below) and the local agreement property. -/
 
 /-- The first-order formula `φ` defines the automorphism orbit of `a`. -/
 def OrbitDefinedBy {n : ℕ} (a : Fin n → M) (φ : L.Formula (Fin n)) : Prop :=
@@ -257,12 +258,13 @@ end ChartOrbitFormula
 variable [Nonempty M]
 
 /-- **A definable orbit isolates the complete type** (target, generic).  If `φ` defines the
-automorphism orbit of `a`, then `φ` isolates the complete type of `a` over the complete theory
-of `M`: the only complete type containing `φ` is the type of `a`.  Uniqueness of realizations
-inside `M` alone is not the statement; the singleton is in the space of complete types, so the
-universal implications `∀ x̄, φ → ψ` transfer to every model of the theory.  Not yet pinned; to be
-quoted as the composite of ComputableModelTheory's `isolatesTuple_of_orbit_formula` (under
-`[Nonempty M]`) and `IsolatesTuple.typesWith_eq_singleton`. -/
+automorphism orbit of `a`, then `φ` isolates the complete type of `a` over the complete theory of
+`M`: the only complete type containing `φ` is the type of `a`.  Uniqueness of realizations inside
+`M` alone is not the statement; the singleton is in the space of complete types, so the universal
+implications `∀ x̄, φ → ψ` transfer to every model of the theory.  Prospective (neither available
+upstream nor pinned); to be quoted as the composite of ComputableModelTheory's
+`isolatesTuple_of_orbit_formula` (under `[Nonempty M]`) and `IsolatesTuple.typesWith_eq_singleton`.
+-/
 theorem typesWith_eq_singleton_of_orbitDefinedBy {n : ℕ} {a : Fin n → M}
     {φ : L.Formula (Fin n)} (hφ : OrbitDefinedBy a φ) :
     (L.completeTheory M).typesWith (Formula.equivSentence φ) =
@@ -282,12 +284,12 @@ theorem typesIsolated_of_orbitDefinedBy
   let ⟨φ, hφ⟩ := h n a
   ⟨φ, typesWith_eq_singleton_of_orbitDefinedBy hφ⟩
 
-/-- **Countable atomic implies prime** (target, generic).  A countable structure all of whose
-types are isolated embeds elementarily into every model of its complete theory, in an arbitrary
-universe and of arbitrary cardinality.  Intended proof: enumerate only `M`, extend finite partial
-maps preserving every first-order formula, and take the union.  Not yet pinned:
-ComputableModelTheory's `exists_elementaryEmbedding_of_countable_atomic`, with `TypesIsolated`
-identified with its `IsAtomic` over the complete theory. -/
+/-- **Countable atomic implies prime** (target, generic).  A countable structure all of whose types
+are isolated embeds elementarily into every model of its complete theory, in an arbitrary universe
+and of arbitrary cardinality.  Intended proof: enumerate only `M`, extend finite partial maps
+preserving every first-order formula, and take the union.  Prospective (neither available upstream
+nor pinned): ComputableModelTheory's `exists_elementaryEmbedding_of_countable_atomic`, with
+`TypesIsolated` identified with its `IsAtomic` over the complete theory. -/
 theorem nonempty_elementaryEmbedding_of_typesIsolated [Countable M]
     (hM : TypesIsolated L M) (N : Type w') [L.Structure N] [N ⊨ L.completeTheory M] :
     Nonempty (M ↪ₑ[L] N) := by

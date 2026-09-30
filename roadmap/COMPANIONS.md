@@ -19,17 +19,17 @@ left undischarged for the construction is progress on a target, not its completi
 of `README.md` ("Library conventions") apply, including the terminology table and the keep-list.
 The literature these milestones rely on is recorded in `LITERATURE.md`, §7.
 
-**Status.**  The targets A1, A2, A3, B2, and B3 are established results: their proofs are known,
-and are the arguments given with each below.  They remain formalization targets here.  C, in its
-two-point form, is a statement still to be proved here, with its argument given below.
-B1, the joint embedding and amalgamation of top-free charts, is part of the core: it is step
-2 of the construction of the top-free witnesses (`README.md`, section "The top-free witnesses:
-the finite age and its classical limit"), and its entry below is a pointer.  The deliberate
-`sorry` targets of the sketch, the ingredients marked "to be located or added upstream", and
-the theorems marked "not yet pinned" (statements of the two libraries that are not
-at the current pins; `IMPLEMENTATION.md`, "Dependency pins") are what is not yet formalized or
-available.  The status covers these statements only, not their non-claims and not further
-definability claims (`README.md`, "Status of the optional results").
+**Status.**  The targets A1, A2, A3, B2, and B3 are established results: their proofs are known, and
+are the arguments given with each below.  They remain formalization targets here.  C, in its
+two-point form, is a statement still to be proved here, with its argument given below.  B1, the
+joint embedding and amalgamation of top-free charts, is part of the core: it is step 2 of the
+construction of the top-free witnesses (`README.md`, section "The top-free witnesses: the finite age
+and its classical limit"), and its entry below is a pointer.  The deliberate `sorry` targets of the
+sketch, the ingredients marked "to be located or added upstream", and the theorems marked "available
+upstream" or "prospective" (statements of the two libraries that are not at the current pins;
+`IMPLEMENTATION.md`, "Dependency pins") are what is not yet formalized or available.  The status
+covers these statements only, not their non-claims and not further definability claims (`README.md`,
+"Status of the optional results").
 
 ## Notation
 
@@ -50,10 +50,10 @@ definability claims (`README.md`, "Status of the optional results").
   for the lower bound (layer 6), and `w_η ∈ Q` its base class; by expansion uniqueness `w_η` lies
   in the loss at `η`.
 
-Upstream names below were checked in the pinned InfinitaryLogic and Mathlib, except those
-marked "not yet pinned", whose names are those specified for the pinned versions
-of InfinitaryLogic and ComputableModelTheory (`README.md`, Layer 0); the sketch `#check`s only
-names available at the current pins.
+Upstream names below were checked in the pinned InfinitaryLogic and Mathlib, except those marked
+"available upstream" or "prospective", whose names are those specified for the pinned versions of
+InfinitaryLogic and ComputableModelTheory (`README.md`, Layer 0); the sketch `#check`s only names
+available at the current pins.
 
 ## Milestone A — filtration and infinitary theory
 
@@ -188,12 +188,12 @@ A1–A3 taking them as hypotheses is progress on A, not its completion (as in th
 
 ### A separate library milestone: bounded back-and-forth separation
 
-An intended generic interface of InfinitaryLogic, a statement still to be proved upstream and not
-yet pinned (`IMPLEMENTATION.md`, "Upstream building blocks", with its three checkpoints and
-dependency direction): for a countable relational language, every analytic set of pairs of
-structures on `ℕ` containing no isomorphic pair is uniformly separated at some countable
-back-and-forth level.  With cocountable back-and-forth concentration (given here by the
-expansion domains, on which classes agree at bounded level) this yields thinness without
+An intended generic interface of InfinitaryLogic, prospective (neither available upstream nor
+pinned), a statement still to be proved upstream (`IMPLEMENTATION.md`, "Upstream building blocks",
+with its three checkpoints and dependency direction): for a countable relational language, every
+analytic set of pairs of structures on `ℕ` containing no isomorphic pair is uniformly separated at
+some countable back-and-forth level.  With cocountable back-and-forth concentration (given here by
+the expansion domains, on which classes agree at bounded level) this yields thinness without
 sentence minimality and without López–Escobar.  The working thinness route, from countable truth
 sides, is kept; the Gδ/Polish results stay optional; an improvement is described as reduced
 dependencies, not as a smaller trusted kernel.  Milestone A does not depend on this interface.
@@ -218,18 +218,19 @@ witnesses satisfy the setting by steps 3–6 of their construction.
 4. **atomicity** (B3.2) and the **Scott bound** (B3.3);
 5. **primeness** (B3.4).
 
-The development proves the finite-chart statements of this chain: exact top-free receiving,
-chart homogeneity, the local automorphism property, and the orbit formulas: the two interfaces
-of `IMPLEMENTATION.md`, "Applications of library theorems".  Everything after them is an
-application of a library theorem, never reproved here: "a definable orbit isolates its type",
-atomicity, and "countable atomic implies prime" from ComputableModelTheory (not yet pinned), the
-last with targets of arbitrary cardinality and carriers in arbitrary universes; the orbit-formula
-threshold, the internal rank bound, and the preservation of infinitary formulas by maps agreeing
-locally with automorphisms from InfinitaryLogic (`exists_finite_orbit_threshold`,
-`orbitRank_lt_omega0_of_orbitFormula`, `internalScottRank_le_omega0_of_orbitFormulas`,
+The development proves the finite-chart statements of this chain: exact top-free receiving, chart
+homogeneity, the local automorphism property, and the orbit formulas: the two interfaces of
+`IMPLEMENTATION.md`, "Applications of library theorems".  Everything after them is an application of
+a library theorem, never reproved here: "a definable orbit isolates its type", atomicity, and
+"countable atomic implies prime" from ComputableModelTheory (prospective), the last with targets of
+arbitrary cardinality and carriers in arbitrary universes; the orbit-formula threshold, the internal
+rank bound, and the preservation of infinitary formulas by maps agreeing locally with automorphisms
+from InfinitaryLogic (`exists_finite_orbit_threshold`, `orbitRank_lt_omega0_of_orbitFormula`,
+`internalScottRank_le_omega0_of_orbitFormulas`,
 `BoundedFormulaω.realize_embedding_comp_of_localAutomorphisms`,
-`BoundedFormulaω.realize_comp_append_of_localAutomorphisms`), available at the intended pin
-`cca6949`, not yet recorded in the manifest.
+`BoundedFormulaω.realize_comp_append_of_localAutomorphisms`), available upstream (merged in
+InfinitaryLogic at `cca6949`), not yet available at our pinned dependency: applied here once the
+manifest records that pin and the signatures are checked against it.
 
 ### B1. Joint embedding and amalgamation of top-free charts (in the core)
 
@@ -252,28 +253,30 @@ of `M` agrees with an automorphism on each finite tuple `a`: some automorphism `
 `M ⊨ φ(a) ↔ M ⊨ φ(f ∘ a)`.
 
 **Hypotheses.**  The setting above (countability is used by the back-and-forth construction, which
-is construction-specific).  The development proves homogeneity and the local agreement property
-(the second interface); the consequence is an application of InfinitaryLogic's
-`BoundedFormulaω.realize_embedding_comp_of_localAutomorphisms` (and, with finitely many
-parameters, `BoundedFormulaω.realize_comp_append_of_localAutomorphisms`), available at the
-intended pin: any language, no relationality, countability, infinitude, or nonemptiness, and
-injectivity of the map a consequence of its hypothesis.  It is not reproved here.
+is construction-specific).  The development proves homogeneity and the local agreement property (the
+second interface); the consequence is an application of InfinitaryLogic's
+`BoundedFormulaω.realize_embedding_comp_of_localAutomorphisms` (and, with finitely many parameters,
+`BoundedFormulaω.realize_comp_append_of_localAutomorphisms`), available upstream (merged in
+InfinitaryLogic at `cca6949`), not yet available at our pinned dependency: applied here once the
+manifest records that pin and the signatures are checked against it.  Its hypotheses: any language,
+no relationality, countability, infinitude, or nonemptiness, and injectivity of the map a
+consequence of its hypothesis.  It is not reproved here.
 
 **Upstream ingredients.**  `PotentialIso.ofExtensionFamily` (`Karp/PotentialIso`) for the family
 "both tuples sit at the same positions of actual charts of the same type" (arbitrary tuples, so
 repeated coordinates are allowed), `PotentialIso.family_bfEquiv`, and
-`exists_automorphism_of_bfEquiv_all` (`Scott/OrbitRank`).  For a top-free witness, homogeneity is also immediate from
-ultrahomogeneity (`IsFraisseLimit`), the two actual charts spanning finite substructures of the
-definitional expansion (`README.md`, Layer 2, facts 2–4).  Orbit formulas and the rank bounds
-stay in the relational stage chart language `L_λ`.  Chart homogeneity in `L_λ` follows from
-ultrahomogeneity of the `L^h_λ`-structure `M`: the points of two actual occurrences of one type
-span substructures isomorphic to the finite structure of that type (step 4 of the top-free
-witnesses, by the factorization of tuples), the isomorphism between them extends to an
-automorphism of `M`, and every automorphism of an `L^h_λ`-structure is an automorphism of its
-`L_λ`-reduct.  Only this direction is used.  The converse holds for a realization with its
-definitional expansion (`HULL_ALGEBRA.md`, §5), and for `M` once the reconstruction roundtrip
-(`SEMANTIC_CONTRACT.md`, item 11) identifies its operations with the definable hull operations
-of the reconstructed realization; it is not used.
+`exists_automorphism_of_bfEquiv_all` (`Scott/OrbitRank`).  For a top-free witness, homogeneity is
+also immediate from ultrahomogeneity (`IsFraisseLimit`), the two actual charts spanning finite
+substructures of the definitional expansion (`README.md`, Layer 2, items 3–5).  Orbit formulas and
+the rank bounds stay in the relational stage chart language `L_λ`.  Chart homogeneity in `L_λ`
+follows from ultrahomogeneity of the `L^h_λ`-structure `M`: the points of two actual occurrences of
+one type span substructures isomorphic to the finite structure of that type (step 4 of the top-free
+witnesses, by the factorization of tuples), the isomorphism between them extends to an automorphism
+of `M`, and every automorphism of an `L^h_λ`-structure is an automorphism of its `L_λ`-reduct.  Only
+this direction is used.  The converse holds for a realization with its definitional expansion
+(`HULL_ALGEBRA.md`, §5), and for `M` once the reconstruction roundtrip (`SEMANTIC_CONTRACT.md`, item
+11) identifies its operations with the definable hull operations of the reconstructed realization;
+it is not used.
 
 **Instantiation.**  The top-free witness at block `ξ`, as a structure in the stage chart
 language at `λ_ξ`.
@@ -302,43 +305,45 @@ base reduct.  The development proves the orbit formulas; the generic theorems ar
    `orbitDefinedBy_chartOrbitFormula` (proved, from literal recovery of the chart relations,
    `RecoversRelations`, and chart homogeneity).
 2. **Isolation and atomicity** (generic).  A definable automorphism orbit isolates the tuple's
-   complete type over the structure's own complete first-order theory: universal implications
-   `∀ x̄, θ_a → ψ` transfer to arbitrary models of that theory, and `θ_a` picks out a singleton in
-   the space of complete types.  Uniqueness within the one model is not enough.  This gives
-   atomicity without strengthening the hypotheses on the realization.  Sketch:
+   complete type over the structure's own complete first-order theory: universal implications `∀ x̄,
+   θ_a → ψ` transfer to arbitrary models of that theory, and `θ_a` picks out a singleton in the
+   space of complete types.  Uniqueness within the one model is not enough.  This gives atomicity
+   without strengthening the hypotheses on the realization.  Sketch:
    `typesWith_eq_singleton_of_orbitDefinedBy` (target), `TypesIsolated`,
    `typesIsolated_of_orbitDefinedBy` (proved from the target
    `typesWith_eq_singleton_of_orbitDefinedBy`).  Ingredients: Mathlib's `Theory.CompleteType`,
    `Theory.typeOf`, `Theory.typesWith`, `Formula.equivSentence`, `completeTheory`
-   (`ModelTheory/Types`, `ModelTheory/Semantics`).  Not yet pinned, from
-   ComputableModelTheory: `IsolatesTuple` and `IsAtomic`, `isolatesTuple_of_orbit_formula`
-   (under `[Nonempty M]`; orbit formulas of `L` without constants naming the tuple),
-   `isAtomic_of_orbit_formulas`, and `IsolatesTuple.typesWith_eq_singleton` (under
-   `[Nonempty M] [M ⊨ T]`); the sketch target is the composite of
-   `isolatesTuple_of_orbit_formula` and `IsolatesTuple.typesWith_eq_singleton`, and
-   `TypesIsolated` is `IsAtomic` over the complete theory, stated through the type space.
-   InfinitaryLogic's `isolatingFormula` (`ModelTheory/TypeIsolation`) is a different notion: an
-   `L_{ω₁,ω}` formula isolating a realized infinitary type among the types realized in one
-   structure.
+   (`ModelTheory/Types`, `ModelTheory/Semantics`).  Prospective (neither available upstream nor
+   pinned), from ComputableModelTheory: `IsolatesTuple` and `IsAtomic`,
+   `isolatesTuple_of_orbit_formula` (under `[Nonempty M]`; orbit formulas of `L` without constants
+   naming the tuple), `isAtomic_of_orbit_formulas`, and `IsolatesTuple.typesWith_eq_singleton`
+   (under `[Nonempty M] [M ⊨ T]`); the sketch target is the composite of
+   `isolatesTuple_of_orbit_formula` and `IsolatesTuple.typesWith_eq_singleton`, and `TypesIsolated`
+   is `IsAtomic` over the complete theory, stated through the type space. InfinitaryLogic's
+   `isolatingFormula` (`ModelTheory/TypeIsolation`) is a different notion: an `L_{ω₁,ω}` formula
+   isolating a realized infinitary type among the types realized in one structure.
 3. **Scott bound** (an application).  From the orbit formulas of B3.1, InfinitaryLogic's
    `exists_finite_orbit_threshold` and `orbitRank_lt_omega0_of_orbitFormula` give each tuple a
-   finite threshold, and `internalScottRank_le_omega0_of_orbitFormulas` gives
-   `internalScottRank ≤ ω` in the library's convention, the supremum over all tuples of the orbit
-   rank plus one, `⨆ a, orbitRank a + 1` (so finite but unbounded orbit ranks give exactly `ω`).
-   These are available at the intended pin `cca6949`, under `[L.IsRelational]` and without
-   countability, nonemptiness, or infinitude of `M`; they are not reproved here.  The stage chart
-   language is relational, so they apply to `M` in it, not in the definitional expansion.  The
-   conclusion is `≤ ω`, not `< ω`, and not an equality.  The rank comparison of the Scott process
-   (InfinitaryLogic, at the same pin) then gives, under `[L.IsRelational] [Infinite M]`,
-   stabilization at `ω` of the process of length `δ` when `ω + 1 < δ`, and rank at most `ω` when
-   the process terminates; the rank of the process is not identified with the internal rank.
+   finite threshold, and `internalScottRank_le_omega0_of_orbitFormulas` gives `internalScottRank ≤
+   ω` in the library's convention, the supremum over all tuples of the orbit rank plus one, `⨆ a,
+   orbitRank a + 1` (so finite but unbounded orbit ranks give exactly `ω`). These are available
+   upstream (merged in InfinitaryLogic at `cca6949`), not yet available at our pinned dependency:
+   applied here once the manifest records that pin and the signatures are checked against it.  They
+   hold under `[L.IsRelational]` and without countability, nonemptiness, or infinitude of `M`; they
+   are not reproved here.  The stage chart language is relational, so they apply to `M` in it, not
+   in the definitional expansion.  The conclusion is `≤ ω`, not `< ω`, and not an equality.  The
+   rank comparison of the Scott process (InfinitaryLogic, on the same terms) then gives, under
+   `[L.IsRelational] [Infinite M]`, stabilization at `ω` of the process of length `δ` when `ω + 1 <
+   δ`, and rank at most `ω` when the process terminates; the rank of the process is not identified
+   with the internal rank.
 4. **Primeness** (generic, a separate theorem).  A countable structure all of whose types are
    isolated embeds elementarily into every model of its complete theory: enumerate only the
    source, extend finite tuples preserving every first-order formula, and take the union.  The
    target is any model of the complete theory, in an arbitrary universe, with no receiving or
    countability assumption.  Sketch: `nonempty_elementaryEmbedding_of_typesIsolated` (target).
-   Ingredients: Mathlib's `ElementaryEmbedding` (`ModelTheory/ElementaryMaps`).  Not yet
-   pinned, from ComputableModelTheory: `exists_elementaryEmbedding_of_countable_atomic`,
+   Ingredients: Mathlib's `ElementaryEmbedding` (`ModelTheory/ElementaryMaps`).  Prospective
+   (neither available upstream nor pinned), from ComputableModelTheory:
+   `exists_elementaryEmbedding_of_countable_atomic`,
    under `[Countable M] [Nonempty M] [N ⊨ L.completeTheory M]`, with separate universes,
    function symbols allowed, and no countability of the language or of `N`; the sketch target is
    its composite with the identification of `TypesIsolated` with `IsAtomic`.
@@ -431,22 +436,16 @@ run_cmd do
 and, in `scripts/check.sh` after the build:
 
 ```sh
-echo "== import guards"
-# import_guard MODULE PREFIX...: fail if the import closure of the built MODULE contains a module
-# named PREFIX or PREFIX.<components>, for one of the PREFIXes.
-import_guard() {
-  local root=$1; shift
-  mkdir -p .lake/import-guard
-  { echo "import $root"; echo "import Lean"; sed -n '/^open Lean in/,$p' scripts/ImportGuard.lean; } \
-    > ".lake/import-guard/$root.lean"
-  IMPORT_GUARD_MODULE=$root IMPORT_GUARD_FORBIDDEN="$*" lake env lean ".lake/import-guard/$root.lean"
-}
-# Placeholders: <HullObstruction> is the module of milestone C; the prefixes name the modules of
-# model existence (the classical limit and the chain construction), layer 3, 4, and 5.
-import_guard VaughtConjecture.<HullObstruction> \
-  VaughtConjecture.<ClassicalLimit> VaughtConjecture.<ChainConstruction> \
-  VaughtConjecture.<Receiving> \
-  VaughtConjecture.<StructuralContinuation> VaughtConjecture.<Domains>
+echo "== import guards" # import_guard MODULE PREFIX...: fail if the import closure of the built
+MODULE contains a module # named PREFIX or PREFIX.<components>, for one of the PREFIXes.
+import_guard() { local root=$1; shift mkdir -p .lake/import-guard { echo "import $root"; echo
+"import Lean"; sed -n '/^open Lean in/,$p' scripts/ImportGuard.lean; } \ >
+".lake/import-guard/$root.lean" IMPORT_GUARD_MODULE=$root IMPORT_GUARD_FORBIDDEN="$*" lake env lean
+".lake/import-guard/$root.lean" } # Placeholders: <HullObstruction> is the module of milestone C;
+the prefixes name the modules of # model existence (the classical limit and the chain construction),
+layer 3, 4, and 5. import_guard VaughtConjecture.<HullObstruction> \
+VaughtConjecture.<ClassicalLimit> VaughtConjecture.<ChainConstruction> \
+VaughtConjecture.<Receiving> \ VaughtConjecture.<StructuralContinuation> VaughtConjecture.<Domains>
 ```
 
 A prefix matches whole name components: `VaughtConjecture.Receiving` excludes
