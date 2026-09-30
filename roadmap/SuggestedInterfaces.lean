@@ -94,7 +94,7 @@ theorem preserves_all_compatible_observations
 /-- Domains of sentence agreement: countable-stage domains with countable complements, on each
 of which every sentence (a predicate `truth θ` on the classes) is eventually constant, together
 with separation of distinct classes by a sentence.  Applied AFTER countable-loss induction.
-An instance of this structure is not a proof of the countable-loss or capped-extension constructions
+An instance of this structure is not a proof of the countable-loss or receiving constructions
 in the README. -/
 structure SentenceAgreementDomains (Q : Type 1) (Sent : Type u) (truth : Sent → Q → Prop) where
   /-- The domains, indexed by the countable stages only: no data is carried at or above `ω₁`. -/
@@ -156,7 +156,7 @@ set_option linter.hashCommand false in
 
 FiniteSemantics: construct the concrete ChartSystem and prove countability of charts,
   legal face restriction, stage reduction, lawful lifting with all retained caps.
-CappedExtension: exact literal root + one actual occurrence + requested capped/LOW equations on it
+Receiving: exact literal root + one actual occurrence + requested capped/LOW equations on it
   (LOW and `Correct`: defined in Layer 3 of README.md, item 3.4).
 ChainConstruction: finite master + root absorption + supported-invisible permanence + union.
 StableLift: consistency-only uniqueness; consistency/covering lawfulness; cap modelhood.

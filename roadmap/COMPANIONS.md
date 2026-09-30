@@ -182,15 +182,15 @@ A1–A3 taking them as hypotheses is progress on A, not its completion (as in th
 ## Milestone B — top-free chart homogeneity and its consequences
 
 Setting: a stage `λ = λ_ξ`, the stage chart language at `λ`, and a countable nonempty top-free
-realization at `λ` satisfying exact consistency, covering, and finite-cut capped extension, read as a
+realization at `λ` satisfying exact consistency, covering, and finite-cut receiving, read as a
 structure `M` in that language.  Core results used: the finite semantic kernel (layer 1),
-realizations and the chart language (layer 2), finite-cut capped extension and top-free existence
+realizations and the chart language (layer 2), finite-cut receiving and top-free existence
 (layer 3).
 
 **Dependency chain** (deliberately short):
 
-1. **exact top-free extension**: over any actual root, a chart of the prescribed type extending
-   the root's chart is realized over the literal root.  To be derived from finite-cut capped extension
+1. **exact top-free receiving**: over any actual root, a chart of the prescribed type extending
+   the root's chart is realized over the literal root.  To be derived from finite-cut receiving
    with a cutoff above the finitely many labels of the prescribed chart; this uses top-freeness
    (agreement below such a cutoff is equality when no label is top);
 2. **chart homogeneity** (B2);
@@ -271,7 +271,7 @@ base reduct.  Search the pinned libraries before reproducing these generic argum
    `θ_a(x̄) := ∃ z̄, P_p(z̄) ∧ ⋀_i x_i = z_{ι(i)}`.
    Prove that this first-order formula defines the automorphism orbit of `a`, using chart
    homogeneity (B2).  Repeated coordinates and the empty tuple are permitted.  Hypotheses: exact
-   consistency, covering, finite-cut capped extension, and top-freeness (countability for B2).  Sketch:
+   consistency, covering, finite-cut receiving, and top-freeness (countability for B2).  Sketch:
    the property `OrbitDefinedBy`.
 2. **Isolation and atomicity** (generic).  A definable automorphism orbit isolates the tuple's
    complete type over the structure's own complete first-order theory: universal implications
@@ -302,7 +302,7 @@ base reduct.  Search the pinned libraries before reproducing these generic argum
 4. **Primeness** (generic, a separate theorem).  A countable structure all of whose types are
    isolated embeds elementarily into every model of its complete theory: enumerate only the
    source, extend finite tuples preserving every first-order formula, and take the union.  The
-   target is any model of the complete theory, in an arbitrary universe, with no capped-extension or
+   target is any model of the complete theory, in an arbitrary universe, with no receiving or
    countability assumption.  Sketch: `nonempty_elementaryEmbedding_of_typesIsolated` (target).
    Ingredients: Mathlib's `ElementaryEmbedding` (`ModelTheory/ElementaryMaps`); the primeness
    argument itself is not in the pinned libraries: to be located or added upstream.
@@ -325,7 +325,7 @@ models is a standard consequence and is not required.
 
 **Completion criterion (B).**  B1 is proved for the top-free finite closed charts; B2 and B3 are
 proved for every countable nonempty top-free realization satisfying exact consistency, covering,
-and finite-cut capped extension, each under exactly its stated hypotheses; the generic isolation and
+and finite-cut receiving, each under exactly its stated hypotheses; the generic isolation and
 primeness theorems are proved in modules that import no construction module (checked by an
 import guard of the form given under C).
 
@@ -347,11 +347,11 @@ binary hull and a set of self-maps); `mem_closure_pair_of_twoGeneration` and
 `not_forall_perm_extends_of_twoGeneration` (proved) derive the three-point form from whole-hull
 two-generation of a closure operator on finite sets.
 
-**Hypotheses.**  Exact consistency and covering only: not top-freeness, modelhood, capped extension, or
+**Hypotheses.**  Exact consistency and covering only: not top-freeness, modelhood, receiving, or
 countability.  The canonical finite hulls come from layer 2 and the geometry from layer 1.
 
 **Import guard.**  The module proving this theorem and the modules it imports must not include
-any module of the finite extension constructions or capped extension (layer 3), of the countable chain
+any module of the finite extension constructions or receiving (layer 3), of the countable chain
 construction or model existence (layers 2 and 3), of structural continuation (layer 4), or of the
 expansion domains (layer 5).  The guard is on the import closure, not only on the direct imports.
 The check reads Lean's own record of the import closure, not the source text, so every form of
@@ -404,13 +404,13 @@ import_guard() {
 # Placeholders: <HullObstruction> is the module of milestone C; the prefixes name the modules of
 # layers 2 (chain construction), 3, 4, and 5.
 import_guard VaughtConjecture.<HullObstruction> \
-  VaughtConjecture.<ChainConstruction> VaughtConjecture.<CappedExtension> \
+  VaughtConjecture.<ChainConstruction> VaughtConjecture.<Receiving> \
   VaughtConjecture.<StructuralContinuation> VaughtConjecture.<Domains>
 ```
 
-A prefix matches whole name components: `VaughtConjecture.CappedExtension` excludes
-`VaughtConjecture.CappedExtension` and `VaughtConjecture.CappedExtension.Core`, not
-`VaughtConjecture.CappedExtensionData`.
+A prefix matches whole name components: `VaughtConjecture.Receiving` excludes
+`VaughtConjecture.Receiving` and `VaughtConjecture.Receiving.Core`, not
+`VaughtConjecture.ReceivingData`.
 
 **Upstream ingredients.**  The generic finite-support closure (`FiniteSupportClosure`, with
 `setClosure`) and the whole-hull two-generation hypothesis of `TwoGeneratorCardinality` (the hull

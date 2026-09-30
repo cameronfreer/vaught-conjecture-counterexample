@@ -118,7 +118,7 @@ section itself is an extension preserving every observation.  (Agreement at ever
 cap is equality at a nonzero limit stage, where for labels `x < y` at the stage the cap `0`
 (if `x = ⊥`) or `x + 1` separates them, but not at a successor stage `β + 1`, where `β` and the formal top agree
 at every permitted cap; hence the split on literal difference.)  Simultaneous preservation
-therefore needs neither injectivity nor any exact form of capped extension, given per-cap
+therefore needs neither injectivity nor any exact form of receiving, given per-cap
 bountifulness and the fact that the ambient section restricts to the ambient face (in the
 `m = ⊥` case, given some extension).  This is
 the intended argument, still to be proved.  Preserve caps on
@@ -159,13 +159,13 @@ models.  The density sentence is the preferred presentation.  Its equivalence wi
 four-family sentence (the structural clauses together with the four extension families of
 `SEMANTIC_CONTRACT.md`, item 5, and [Kni26, Definition 3.2.1], clause 4) is a required fidelity
 theorem and part of the completion criterion.  Its direction from the four-family sentence to the
-density sentence still uses the finite-cut capped-extension statement (row 1 of the table of
+density sentence still uses the finite-cut receiving statement (row 1 of the table of
 Layer 3 of `README.md`), which therefore remains a prerequisite of completion.
 
 ### 3. Finite extensions, realization over roots, recovery of labels, and one chain construction
 
 Layer 3 of `README.md` is the specification of this layer.  It defines the vocabulary (root,
-donor occurrence, capped extension over a root, private context, master chart and master row,
+donor occurrence, receiving over a root, private context, master chart and master row,
 padding, freshness, bottom pattern, literal-top prescription, catalogue fields, orderly rows,
 legality, owners, ownerwise decoding, long-row locality, gate and gate equations, the coatom
 extension construction, pinned extension, `Correct`, and LOW) and consists of five items, built
@@ -197,9 +197,9 @@ in this order:
    recovery lemma lists the observations it reads and does not require recovery of the whole
    type of the constructed occurrence.
 5. **Extension statements and first uses** (the table of `README.md`, Layer 3): finite-cut
-   capped extension, first used by the one-sided donor transfer (and by the four-family-to-density
-   direction of layer 2); exact residual extension, by the residual comparison; hollow-growth
-   extension, by the hollow comparison; capped extension for the stable candidate, by stable
+   receiving, first used by the one-sided donor transfer (and by the four-family-to-density
+   direction of layer 2); exact residual receiving, by the residual comparison; hollow-growth
+   receiving, by the hollow comparison; capped receiving for the stable candidate, by stable
    modelhood; top-free pinned extension, by the top-free capped chain construction.  Each row
    records its exact hypotheses, its conclusion on one occurrence, and its import boundary.  The
    positive-length root restriction and the empty-root base case are explicit.
@@ -220,11 +220,11 @@ no finite extension construction and no decoding or recovery statement.
 Build rooted covers and their monotone natural offsets.  The completed value lives in `ℕ∞`,
 decoded back to labels: infinity decodes to formal top, not `α + ω`.  Keep consistency-only
 stable uniqueness/naturality, consistency-plus-covering stable lawfulness, and
-capped extension/modelhood as different theorem layers.
+receiving/modelhood as different theorem layers.
 
 Construct the stable realization and literal reduct before proving modelhood.  Normalize any
 genuine expansion pointwise to the structural candidate; handle undefined tuples using the
-literal reduct.  Derive modelhood separately by capped extension (row 4 of the table of Layer 3
+literal reduct.  Derive modelhood separately by cap receiving (row 4 of the table of Layer 3
 of `README.md`).  Keep positive-root requirements and the empty-root base case explicit.
 
 Use selected-chart rooted back-and-forth, not a second fair-chain comparison.  The chosen root
@@ -243,8 +243,8 @@ expansion uniqueness is what places their **base classes** in the corresponding 
 differences.
 
 Prove the one-sided finite-donor transfer first, using only target consistency and finite-cut
-capped extension (row 1).  Symmetrize for back-and-forth: one block buys one level, with no extra `ω` factor.
-Handle repeated coordinates and empty tuples.  Apply the sentence-agreement argument once,
+receiving (row 1).  Symmetrize for back-and-forth: one block buys one level, with no extra `ω`
+factor.  Handle repeated coordinates and empty tuples.  Apply the sentence-agreement argument once,
 keeping the cardinality conclusion separate from the descriptive thinness conclusion.  In
 `SuggestedInterfaces.lean`, `SentenceAgreementDomains` is a structure (countable-stage domains
 with countable complements, eventual constancy of each sentence on them, and separation of
@@ -359,12 +359,12 @@ The targets of this checkpoint are now milestones B and C of [`COMPANIONS.md`](C
 which states each with its hypotheses, upstream ingredients, instantiation, regressions, and
 non-claims, and gives the companion sketch [`SuggestedCompanions.lean`](SuggestedCompanions.lean).
 In summary: in the full stage chart language (not the base reduct), a countable nonempty top-free
-realization with exact consistency, covering, and finite-cut capped extension has automorphism orbits
+realization with exact consistency, covering, and finite-cut receiving has automorphism orbits
 defined by explicit first-order chart formulas, hence isolated complete types, atomicity,
 internal Scott rank at most `ω` in the library's convention, and, by a separate generic theorem,
 primeness among models of its complete theory in arbitrary universes; separately, consistency and
 covering alone exclude every infinite set whose permutations all extend to automorphisms, a
-theorem kept below capped extension by an import guard.  Milestone A of `COMPANIONS.md` treats the
+theorem kept below receiving by an import guard.  Milestone A of `COMPANIONS.md` treats the
 definable cuts, witness convergence, and the Scott/`T∞` dichotomy listed above.
 
 **Completion criterion.**  This companion checkpoint is complete when milestones B and C of

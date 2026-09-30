@@ -175,7 +175,7 @@ end Domains
 /-! ## Optional: finite-character closure and its naturality
 
 These definitions/theorems can be reused for any finite hull. They add no new
-capped-extension requirement and are not needed for the main theorem on the spectrum.
+receiving requirement and are not needed for the main theorem on the spectrum.
 -/
 
 namespace Hull
@@ -222,7 +222,7 @@ end Hull
 The concrete language and sentence must come from the independent finite
 construction, with the semantic contract (SEMANTIC_CONTRACT.md) unchanged. This predicate may not be
 assumed in place of any construction. The final theorem has no hypotheses
-asserting this predicate or the capped-extension/classification conclusions.
+asserting this predicate or the receiving/classification conclusions.
 -/
 
 open FirstOrder Language

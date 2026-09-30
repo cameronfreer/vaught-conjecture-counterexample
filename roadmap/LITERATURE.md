@@ -1,6 +1,6 @@
 # Established literature connections and a paper plan
 
-These connections separate standard background from the new finite construction. They do not claim that the cited papers already prove the present capped-extension property, identify its closure with model-theoretic algebraic closure, or establish the main theorem.
+These connections separate standard background from the new finite construction. They do not claim that the cited papers already prove the present receiving property, identify its closure with model-theoretic algebraic closure, or establish the main theorem.
 
 ## 1. Minimal scattered infinitary sentences
 
@@ -71,7 +71,7 @@ Open with the exact infinitary statement, the stronger sentence-minimality inter
 1. A general theorem about continuous decreasing expansion domains, countable losses, and logical agreement; state the standard descriptive consequences here.
 2. Finite convex geometry, graded semantic rows, and the precise cap-lifting lemma.
 3. The actual language/sentence and countable finite-master construction.
-4. Ordinary and constrained capped extension: the finite construction, realization over the root, and recovery of donor labels.
+4. Ordinary and constrained receiving: the finite construction, realization over the root, and recovery of donor labels.
 5. Structural stable refinement, the three terminal comparisons, and countable terminal fibres.
 6. Domain continuity, sharp one-block comparison, and independent terminal-loss witnesses.
 
