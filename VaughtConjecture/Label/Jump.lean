@@ -34,7 +34,7 @@ nevertheless preserves the transformation relation under two guards.
 
 The ordinal-level band arithmetic above a multiple of `ω` (`Ordinal.visibilityReplace_add`,
 `Ordinal.visibilityReplace_le_add`, `Ordinal.exists_visibilityReplace_visibilityReplace`) extends
-`VaughtConjecture/Ordinal/VisibilityReplace.lean`.
+`VaughtConjecture/Label/OrdinalVisibility.lean`.
 
 ## References
 
