@@ -38,7 +38,10 @@ The inclusions of `Sa` and `Sb` are lower embeddings (`isLowerEmbedding_left`,
 it is not complete; this file proves its other laws:
 
 * it is well formed when `Sa` and `Sb` are, and the common face is closed in `Sa`
-  (`isWellFormed_amalgamCellScheme`);
+  (`isWellFormed_amalgamCellScheme`): its faces are the glued plan of the recursive step
+  (`isPlan_amalgamFaces`), which restricts to the plans of `Sa` and `Sb` on the two coatoms
+  (`map_left_mem_amalgamFaces_iff`, `map_right_mem_amalgamFaces_iff`, by
+  `Geometry.IsPlan.mem_step_left` and `Geometry.IsPlan.mem_step_right`);
 * its rows are coded, and consistent, when those of `Sa` and `Sb` are (`isCoded_amalgamRows`,
   `isConsistent_amalgamRows`);
 * every graded face other than those of full scope is the graded index of a cell, when `Sa` and
@@ -630,38 +633,80 @@ theorem amalgamScope_ne_univ (x : AmalgamCell h) : (amalgamCellScheme h).scope x
     rw [univ_map_right] at h'
     exact notMem_erase _ _ h'
 
+/-- The faces of `Sa`, moved to the first coatom, form a plan on it. -/
+theorem isPlan_map_left (hSa : Sa.IsWellFormed) :
+    Geometry.IsPlan (univ.erase (Fin.last (m + 1)))
+      (Sa.toCellScheme.faces.map (mapEmbedding (left m)).toEmbedding) := by
+  have hP := hSa.isWellFormed.isPlan
+  rw [hSa.ground_eq] at hP
+  rw [← univ_map_left]
+  exact hP.map (left m)
+
+/-- The faces of `Sb`, moved to the second coatom, form a plan on it. -/
+theorem isPlan_map_right (hSb : Sb.IsWellFormed) :
+    Geometry.IsPlan (univ.erase (Fin.castSucc (Fin.last m)))
+      (Sb.toCellScheme.faces.map (mapEmbedding (right m)).toEmbedding) := by
+  have hP := hSb.isWellFormed.isPlan
+  rw [hSb.ground_eq] at hP
+  rw [← univ_map_right]
+  exact hP.map (right m)
+
+include h in
+/-- Below the common face, the faces of `Sa` moved to the first coatom and the faces of `Sb`
+moved to the second coatom are the same. -/
+theorem mem_map_left_iff_mem_map_right {C : Finset (Fin (m + 2))}
+    (hC : C ⊆ (univ.erase (Fin.last (m + 1))).erase (Fin.castSucc (Fin.last m))) :
+    C ∈ Sa.toCellScheme.faces.map (mapEmbedding (left m)).toEmbedding ↔
+      C ∈ Sb.toCellScheme.faces.map (mapEmbedding (right m)).toEmbedding := by
+  rw [← map_univ_map_face, subset_map_iff] at hC
+  obtain ⟨C', hC', rfl⟩ := hC
+  have h1 : C'.map (left m) ∈ Sa.toCellScheme.faces.map (mapEmbedding (left m)).toEmbedding ↔
+      C' ∈ Sa.toCellScheme.faces :=
+    mem_map' (mapEmbedding (left m)).toEmbedding
+  have h2 : C'.map (left m) ∈ Sb.toCellScheme.faces.map (mapEmbedding (right m)).toEmbedding ↔
+      C' ∈ Sb.toCellScheme.faces := by
+    rw [map_left_eq_map_right hC']
+    exact mem_map' (mapEmbedding (right m)).toEmbedding
+  rw [h1, h2]
+  exact mem_faces_iff_of_subset h hC'
+
+include h in
+/-- **The faces of the amalgam form a plan**: the glued plan of the recursive step at the last
+point and the point `m`, from the plans of `Sa` and `Sb` moved to the two coatoms. -/
+theorem isPlan_amalgamFaces (hSa : Sa.IsWellFormed) (hSb : Sb.IsWellFormed)
+    (hf : univ.map (face m) ∈ Sa.toCellScheme.faces) :
+    Geometry.IsPlan univ (amalgamFaces Sa Sb) := by
+  refine Geometry.IsPlan.step (mem_univ _) (mem_univ _) (Fin.castSucc_lt_last _).ne'
+    (isPlan_map_left hSa) (isPlan_map_right hSb) ?_ fun C hC ↦ mem_map_left_iff_mem_map_right h hC
+  rw [← map_univ_map_face]
+  exact mem_map_of_mem _ hf
+
+include h in
+/-- A set of points of the first coatom is a face of the amalgam exactly when it is a face of `Sa`,
+moved: the glued plan restricts to the plan of `Sa` on the first coatom. -/
+theorem map_left_mem_amalgamFaces_iff (hSa : Sa.IsWellFormed) (hSb : Sb.IsWellFormed)
+    {C : Finset (Fin (m + 1))} : C.map (left m) ∈ amalgamFaces Sa Sb ↔ C ∈ Sa.toCellScheme.faces :=
+  (Geometry.IsPlan.mem_step_left (mem_univ _) (isPlan_map_left hSa) (isPlan_map_right hSb)
+    (fun _ ↦ mem_map_left_iff_mem_map_right h)
+    (univ_map_left (m := m) ▸ map_subset_map.mpr (subset_univ C))).trans
+    (mem_map' (mapEmbedding (left m)).toEmbedding)
+
+include h in
+/-- A set of points of the second coatom is a face of the amalgam exactly when it is a face of
+`Sb`, moved: the glued plan restricts to the plan of `Sb` on the second coatom. -/
+theorem map_right_mem_amalgamFaces_iff (hSa : Sa.IsWellFormed) {C : Finset (Fin (m + 1))} :
+    C.map (right m) ∈ amalgamFaces Sa Sb ↔ C ∈ Sb.toCellScheme.faces :=
+  (Geometry.IsPlan.mem_step_right (mem_univ _) (isPlan_map_left hSa)
+    (fun _ ↦ mem_map_left_iff_mem_map_right h)
+    (univ_map_right (m := m) ▸ map_subset_map.mpr (subset_univ C))).trans
+    (mem_map' (mapEmbedding (right m)).toEmbedding)
+
 /-- **The amalgam is well formed**: its faces form the glued plan of the recursive step at the
 last point and the point `m`, and every cell has a graded face as graded index. -/
 theorem isWellFormed_amalgamCellScheme (hSa : Sa.IsWellFormed) (hSb : Sb.IsWellFormed)
     (hf : univ.map (face m) ∈ Sa.toCellScheme.faces) : (amalgamCellScheme h).IsWellFormed where
   finite := inferInstance
-  isPlan := by
-    have hPa := hSa.isWellFormed.isPlan
-    rw [hSa.ground_eq] at hPa
-    have hPb := hSb.isWellFormed.isPlan
-    rw [hSb.ground_eq] at hPb
-    have hQ := hPa.map (left m)
-    have hR := hPb.map (right m)
-    rw [univ_map_left] at hQ
-    rw [univ_map_right] at hR
-    change Geometry.IsPlan (univ : Finset (Fin (m + 2)))
-      (insert univ (Sa.toCellScheme.faces.map (mapEmbedding (left m)).toEmbedding ∪
-        Sb.toCellScheme.faces.map (mapEmbedding (right m)).toEmbedding))
-    refine Geometry.IsPlan.step (mem_univ _) (mem_univ _) (Fin.castSucc_lt_last _).ne' hQ hR ?_
-      fun C hC ↦ ?_
-    · rw [← map_univ_map_face]
-      exact mem_map_of_mem _ hf
-    · rw [← map_univ_map_face, subset_map_iff] at hC
-      obtain ⟨C', hC', rfl⟩ := hC
-      have h1 : C'.map (left m) ∈ Sa.toCellScheme.faces.map (mapEmbedding (left m)).toEmbedding ↔
-          C' ∈ Sa.toCellScheme.faces :=
-        mem_map' (mapEmbedding (left m)).toEmbedding
-      have h2 : C'.map (left m) ∈ Sb.toCellScheme.faces.map (mapEmbedding (right m)).toEmbedding ↔
-          C' ∈ Sb.toCellScheme.faces := by
-        rw [map_left_eq_map_right hC']
-        exact mem_map' (mapEmbedding (right m)).toEmbedding
-      rw [h1, h2]
-      exact mem_faces_iff_of_subset h hC'
+  isPlan := isPlan_amalgamFaces h hSa hSb hf
   gradedIndex_mem x := by
     rcases x with i | ⟨j, hj⟩
     · refine ⟨mem_insert_of_mem (mem_union_left _ ?_), hSa.isWellFormed.grade_pos i, ?_⟩

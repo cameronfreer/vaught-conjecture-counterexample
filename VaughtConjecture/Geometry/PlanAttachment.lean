@@ -17,9 +17,10 @@ labels.
 
 * The glued family `insert A (Q ∪ R)` of the recursive step restricts literally to `Q` on the
   coatom `A \ {a}` and to `R` on the coatom `A \ {b}` (`IsPlan.restrict_step_left`,
-  `IsPlan.restrict_step_right`).  These are the plans of the two coatoms of the amalgam of
-  [Kni26, §4.3].
-* Every proper closed face lies in a closed coatom (`IsPlan.exists_coatom`).
+  `IsPlan.restrict_step_right`, from `IsPlan.mem_step_left` and `IsPlan.mem_step_right`).  These
+  are the plans of the two coatoms of the amalgam of [Kni26, §4.3].
+* Every proper closed face lies in a closed coatom (`IsPlan.exists_coatom`, which is
+  `IsConvexGeometry.exists_coatom` with the extreme point unfolded).
 * **Gluing over a coatom** (`IsPlan.attach_coatom`): a plan `P` on `A` and a plan `Q` on
   `insert x (A \ {a})` that agree below the closed coatom `A \ {a}` glue to a plan on
   `insert x A` restricting to `P` and to `Q`.
@@ -39,12 +40,17 @@ labels.
 Each attachment depends on the prescribed face: the construction does not make every one-point
 extension of every closed face closed in one common plan.
 
+## Placement
+
+`restrict_restrict` belongs in `VaughtConjecture.Geometry.ConvexGeometry`, beside
+`mem_restrict`, and `IsPlan.restrict_self` there too, as a statement about convex geometries
+(it uses only `subset_of_mem`).  They are stated here so that that file is unchanged.
+
 ## References
 
-The recursive plan is Definition 2.1.1 and its restriction to a closed face Definition 2.1.5 of
-R. W. Knight, *A counterexample to Vaught's Conjecture using generalised Stone spaces* (draft,
-20 February 2026) [Kni26]; the amalgam of §4.3 there is built on the glued plan of the recursive
-step.
+The recursive plan is [Kni26, Definition 2.1.1] and its restriction to a closed face
+[Kni26, Definition 2.1.5]; the amalgam of [Kni26, §4.3] is built on the glued plan of the
+recursive step.
 -/
 
 namespace VaughtConjecture.Geometry
@@ -77,13 +83,9 @@ theorem restrict_step_left (ha : a ∈ A) (hQ : IsPlan (A.erase a) Q) (hR : IsPl
     (hagree : ∀ C ⊆ (A.erase a).erase b, C ∈ Q ↔ C ∈ R) :
     Geometry.restrict (insert A (Q ∪ R)) (A.erase a) = Q := by
   ext C
-  simp only [mem_restrict, mem_insert, mem_union]
-  refine ⟨fun ⟨h, hC⟩ ↦ ?_, fun h ↦ ⟨Or.inr (Or.inl h), hQ.subset_of_mem h⟩⟩
-  rcases h with rfl | h | h
-  · exact absurd (hC ha) (notMem_erase a C)
-  · exact h
-  · refine (hagree C fun y hy ↦ mem_erase.mpr ⟨?_, hC hy⟩).mpr h
-    exact (mem_erase.mp (hR.subset_of_mem h hy)).1
+  rw [mem_restrict]
+  exact ⟨fun ⟨h, hC⟩ ↦ (mem_step_left ha hQ hR hagree hC).mp h, fun h ↦
+    ⟨(mem_step_left ha hQ hR hagree (hQ.subset_of_mem h)).mpr h, hQ.subset_of_mem h⟩⟩
 
 /-- The glued plan of the recursive step restricts literally to the plan `R` of the coatom
 `A \ {b}`. -/
@@ -91,15 +93,12 @@ theorem restrict_step_right (hb : b ∈ A) (hQ : IsPlan (A.erase a) Q) (hR : IsP
     (hagree : ∀ C ⊆ (A.erase a).erase b, C ∈ Q ↔ C ∈ R) :
     Geometry.restrict (insert A (Q ∪ R)) (A.erase b) = R := by
   ext C
-  simp only [mem_restrict, mem_insert, mem_union]
-  refine ⟨fun ⟨h, hC⟩ ↦ ?_, fun h ↦ ⟨Or.inr (Or.inr h), hR.subset_of_mem h⟩⟩
-  rcases h with rfl | h | h
-  · exact absurd (hC hb) (notMem_erase b C)
-  · refine (hagree C fun y hy ↦ mem_erase.mpr ⟨?_, hQ.subset_of_mem h hy⟩).mp h
-    exact (mem_erase.mp (hC hy)).1
-  · exact h
+  rw [mem_restrict]
+  exact ⟨fun ⟨h, hC⟩ ↦ (mem_step_right hb hQ hagree hC).mp h, fun h ↦
+    ⟨(mem_step_right hb hQ hagree (hR.subset_of_mem h)).mpr h, hR.subset_of_mem h⟩⟩
 
-/-- Every proper closed face lies in a closed coatom `A \ {a}`. -/
+/-- Every proper closed face lies in a closed coatom `A \ {a}`: `IsConvexGeometry.exists_coatom`,
+with membership in the extremes unfolded. -/
 theorem exists_coatom (hP : IsPlan A P) (hB : B ∈ P) (hne : B ≠ A) :
     ∃ a ∈ A, A.erase a ∈ P ∧ B ⊆ A.erase a := by
   obtain ⟨a, ha, hBa⟩ := hP.isConvexGeometry.exists_coatom hB hne

@@ -187,19 +187,15 @@ theorem cellMap_right_eq {j : Fin Sb.card} {k : Fin ((amalgam h).comap (right m)
     (mem_range_posRight_iff h) hjk).symm
 
 /-- **The restriction of the amalgam to the first coatom is `Sa`**, literally. -/
-theorem comap_left_amalgam (hSa : Sa.IsWellFormed) : (amalgam h).comap (left m) = Sa := by
+theorem comap_left_amalgam (hSa : Sa.IsWellFormed) (hSb : Sb.IsWellFormed) :
+    (amalgam h).comap (left m) = Sa := by
   have hcard : ((amalgam h).comap (left m)).card = Sa.card :=
     (amalgam h).card_visibleCells_eq_of_strictMono (left m) (strictMono_posLeft h)
       (mem_range_posLeft_iff h)
   refine Scheme.ext hcard ?_ ?_ (fun k i hki ↦ ?_) (fun k i hki ↦ ?_) (fun s s' t t' hs ht ↦ ?_)
   · rw [Scheme.comap_ground, amalgam_ground, preimage_univ, hSa.ground_eq]
   · ext C
-    rw [Scheme.mem_comap_faces, amalgam_faces]
-    constructor
-    · intro hC
-      obtain ⟨C', hC', he⟩ := exists_face_left h hC (map_subset_map.mpr (subset_univ _))
-      rwa [← map_injective (left m) he]
-    · exact fun hC ↦ mem_insert_of_mem (mem_union_left _ (mem_map_of_mem _ hC))
+    rw [Scheme.mem_comap_faces, amalgam_faces, map_left_mem_amalgamFaces_iff h hSa hSb]
   · rw [Scheme.comap_scope, cellMap_left_eq h hki.symm, amalgam_scope, amalgamEnum_posLeft,
       amalgamScope_inl, preimage_map]
   · rw [Scheme.comap_grade, cellMap_left_eq h hki.symm, amalgam_grade, amalgamEnum_posLeft]
@@ -215,19 +211,15 @@ theorem comap_left_amalgam (hSa : Sa.IsWellFormed) : (amalgam h).comap (left m) 
         (((isLowerEmbedding_left h).le_iff _ _).mpr t'.2)⟩) ht', amalgamRows_inl_inl]
 
 /-- **The restriction of the amalgam to the second coatom is `Sb`**, literally. -/
-theorem comap_right_amalgam (hSb : Sb.IsWellFormed) : (amalgam h).comap (right m) = Sb := by
+theorem comap_right_amalgam (hSa : Sa.IsWellFormed) (hSb : Sb.IsWellFormed) :
+    (amalgam h).comap (right m) = Sb := by
   have hcard : ((amalgam h).comap (right m)).card = Sb.card :=
     (amalgam h).card_visibleCells_eq_of_strictMono (right m) (strictMono_posRight h)
       (mem_range_posRight_iff h)
   refine Scheme.ext hcard ?_ ?_ (fun k j hkj ↦ ?_) (fun k j hkj ↦ ?_) (fun s s' t t' hs ht ↦ ?_)
   · rw [Scheme.comap_ground, amalgam_ground, preimage_univ, hSb.ground_eq]
   · ext C
-    rw [Scheme.mem_comap_faces, amalgam_faces]
-    constructor
-    · intro hC
-      obtain ⟨C', hC', he⟩ := exists_face_right h hC (map_subset_map.mpr (subset_univ _))
-      rwa [← map_injective (right m) he]
-    · exact fun hC ↦ mem_insert_of_mem (mem_union_right _ (mem_map_of_mem _ hC))
+    rw [Scheme.mem_comap_faces, amalgam_faces, map_right_mem_amalgamFaces_iff h hSa]
   · rw [Scheme.comap_scope, cellMap_right_eq h hkj.symm, amalgam_scope, amalgamEnum_posRight,
       amalgamScope_right, preimage_map]
   · rw [Scheme.comap_grade, cellMap_right_eq h hkj.symm, amalgam_grade, amalgamEnum_posRight,
@@ -365,7 +357,8 @@ theorem univ_map_right_mem_amalgamType :
 theorem restrictFace_left_amalgamType :
     StageType.restrictFace Fin.castSuccEmb (amalgamType hta htb) = some ta := by
   rw [StageType.restrictFace_of_mem _ _ (univ_map_left_mem_amalgamType hta htb)]
-  refine congrArg some (StageType.ext (comap_left_amalgam _ ta.isWellFormed) fun k i hki ↦ ?_)
+  refine congrArg some (StageType.ext (comap_left_amalgam _ ta.isWellFormed tb.isWellFormed)
+    fun k i hki ↦ ?_)
   rw [StageType.comap_label]
   change amalgamLabel hta htb (amalgamEnum _ ((amalgam _).cellMap (left m) k)) = _
   rw [cellMap_left_eq _ hki.symm, amalgamEnum_posLeft]
@@ -376,7 +369,8 @@ included. -/
 theorem restrictFace_right_amalgamType :
     StageType.restrictFace (extendByLast Fin.castSuccEmb) (amalgamType hta htb) = some tb := by
   rw [StageType.restrictFace_of_mem _ _ (univ_map_right_mem_amalgamType hta htb)]
-  refine congrArg some (StageType.ext (comap_right_amalgam _ tb.isWellFormed) fun k j hkj ↦ ?_)
+  refine congrArg some (StageType.ext (comap_right_amalgam _ ta.isWellFormed tb.isWellFormed)
+    fun k j hkj ↦ ?_)
   rw [StageType.comap_label]
   change amalgamLabel hta htb (amalgamEnum _ ((amalgam _).cellMap (right m) k)) = _
   rw [cellMap_right_eq _ hkj.symm, amalgamEnum_posRight]
