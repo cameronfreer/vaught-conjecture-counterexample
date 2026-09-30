@@ -25,6 +25,8 @@ Visibility replacement of an ordinal at threshold `k` with value `i` replaces it
   and it cannot push a label above a self-visible bound (`visibilityReplace_le_of_le`).
 * Replacing again at the full threshold forgets the first value
   (`visibilityReplace_self_visibilityReplace`).
+* On a natural number `n` it gives `i` if `n < k` and `n` otherwise (`visibilityReplace_natCast`,
+  with `visibilityReplace_zero`, `visibilityReplace_one`, `visibilityReplace_ofNat` for numerals).
 
 ## References
 
@@ -58,6 +60,29 @@ noncomputable def visibilityReplace (k i : ℕ) : Label.{u} → Label.{u} :=
 /-- Visibility replacement of an ordinal label is visibility replacement of the ordinal. -/
 @[simp] theorem visibilityReplace_coe (k i : ℕ) (o : Ordinal.{u}) :
     visibilityReplace k i (o : Label.{u}) = (Ordinal.visibilityReplace k i o : Label.{u}) := rfl
+
+/-- Visibility replacement of a natural number `n` gives `i` if `n < k`, and `n` otherwise. -/
+@[simp] theorem visibilityReplace_natCast (k i n : ℕ) :
+    visibilityReplace k i (n : Label.{u}) = if n < k then (i : Label.{u}) else n := by
+  rw [← WithBot.coe_natCast, ← WithTop.coe_natCast, visibilityReplace_coe,
+    Ordinal.visibilityReplace_natCast]
+  split_ifs <;> rfl
+
+/-- Visibility replacement of ordinal zero gives `i` if `0 < k`, and `0` otherwise. -/
+@[simp] theorem visibilityReplace_zero (k i : ℕ) :
+    visibilityReplace k i (0 : Label.{u}) = if 0 < k then (i : Label.{u}) else 0 := by
+  simpa using visibilityReplace_natCast.{u} k i 0
+
+/-- Visibility replacement of the ordinal `1` gives `i` if `1 < k`, and `1` otherwise. -/
+@[simp] theorem visibilityReplace_one (k i : ℕ) :
+    visibilityReplace k i (1 : Label.{u}) = if 1 < k then (i : Label.{u}) else 1 := by
+  simpa using visibilityReplace_natCast.{u} k i 1
+
+/-- Visibility replacement of a numeral `n` gives `i` if `n < k`, and `n` otherwise. -/
+@[simp] theorem visibilityReplace_ofNat (k i n : ℕ) [n.AtLeastTwo] :
+    visibilityReplace k i (ofNat(n) : Label.{u}) =
+      if ofNat(n) < k then (i : Label.{u}) else ofNat(n) :=
+  visibilityReplace_natCast k i n
 
 /-- Visibility replacement preserves and reflects the bottom label. -/
 @[simp] theorem visibilityReplace_eq_bot_iff : visibilityReplace k i x = ⊥ ↔ x = ⊥ := by
