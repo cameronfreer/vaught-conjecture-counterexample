@@ -17,7 +17,7 @@ The mathematical object is fixed by the construction itself, not by the shortene
 
 7. **Stable candidate.** Stable values are computed on actual transported cells in directed covers. Finite stable offsets decode to `α+n`; escape decodes to formal top, not `α+ω`. Prove structural lawfulness before modelhood. Any next-block model expansion normalizes to this candidate; cap receiving proves existence separately.
 
-8. **Terminal countability.** A countable cover of the terminal classes by subsingletons suffices. Do not require disjoint descriptors, a canonical least core, characteristic arity, or a global rank. The grade-zero case is handled by the empty rigid core. “Rigid core” is a top-support condition, not automorphism rigidity. “Hollow” is the original no-anchor predicate, with stable-label fixedness as a theorem for models.
+8. **Terminal countability.** A countable cover of the terminal classes at each countable stage by subsingletons suffices. Do not require the cover to be disjoint, a canonical least core, characteristic arity, or a global rank. The grade-zero case is handled by the empty rigid core. “Rigid core” is a top-support condition, not automorphism rigidity. “Hollow” is the original no-anchor predicate, with stable-label fixedness as a theorem for models.
 
 9. **Domains.** `D_ξ` means expansion existence up to isomorphism, normalized to the same carrier when needed. Limit continuity requires the actual limit construction. Successor-loss countability and nonemptiness have different proofs. A terminal witness lies in a loss only after controlling alternative expansions. No global departure assumption is allowed in the preferred proof of the main theorem.
 

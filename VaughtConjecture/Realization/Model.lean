@@ -12,7 +12,7 @@ import VaughtConjecture.Realization.Transport
 
 Roadmap, Layer 2 (realizations with the four unchanged extension families; isomorphism transport
 and reduction of models; directed actual covers); semantic contract, item 5 (the original
-nonempty, exact consistency, covering, general-family, bottom-pattern, uniform-block, and
+nonempty, exact consistency, covering, general-family, bottom-pattern, uniformity, and
 high-arity-dominance clauses; the families demand some suitable coface, not every prescribed
 one).
 

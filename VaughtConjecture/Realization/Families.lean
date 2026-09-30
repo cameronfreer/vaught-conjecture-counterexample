@@ -10,7 +10,7 @@ import VaughtConjecture.Stage.Legal
 # The four extension families
 
 Roadmap, Layer 2 (the four unchanged extension families); semantic contract, item 5 (the
-general-family, bottom-pattern, uniform-block, and high-arity-dominance clauses demand some
+general-family, bottom-pattern, uniformity, and high-arity-dominance clauses demand some
 suitable coface, not every prescribed one).
 
 The **cofaces** of a stage type `p` on `n` points (`StageType.cofaces p`) are the legal stage types
@@ -22,7 +22,8 @@ on `n + 1` points, each intersected with the cofaces of `p`:
 * **generalized saturation** (`saturationFamily S`): the types with scheme `S`;
 * **bottom pattern** (`bottomPatternFamily S ρ`): the types with scheme `S` which, on the cells of
   grade at most `n`, are bottom exactly where the labelling `ρ` of the cells of `S` is bottom;
-* **uniformity** (`uniformityFamily γ`): the types with a label in the block `[γ, γ + ω)`;
+* **uniformity** (`uniformityFamily γ`): the types with a label in `[γ, γ + ω)` (a block when `γ`
+  is zero or a limit);
 * **high-arity dominance** (`dominanceFamily γ`): the types with a label above `γ` at a cell of
   grade `n + 1` (the arity of a cell is its grade).
 
@@ -98,12 +99,12 @@ Vaught's Conjecture using generalised Stone spaces* (draft, 20 February 2026).
 
 universe u
 
-/-! ### Blocks below a limit -/
+/-! ### The interval `[γ, γ + ω)` below a limit -/
 
 namespace Ordinal
 
-/-- Below an ordinal `β` that is zero or a limit, the block `[γ, γ + ω)` of any `γ < β` lies below
-`β`. -/
+/-- Below an ordinal `β` that is zero or a limit, the interval `[γ, γ + ω)` of any `γ < β` lies
+below `β`. -/
 theorem add_omega0_le_of_isSuccPrelimit {β γ : Ordinal.{u}} (hβ : Order.IsSuccPrelimit β)
     (hγ : γ < β) : γ + ω ≤ β := by
   refine le_of_forall_lt fun o ho ↦ ?_
@@ -272,8 +273,8 @@ def bottomPatternFamily (S : Scheme.{u} (n + 1)) (ρ : Fin S.card → Label.{u})
     q.toCellScheme.grade i ≤ n → (q.label i = ⊥ ↔ ρ j = ⊥)}
 
 /-- **Uniformity** [Kni26, Definition 3.2.1, clause 4(b)]: the stage types on `n + 1` points with
-a label in the block `[γ, γ + ω)`.  The clause of a model uses it for every `γ` that is zero or a
-limit and below the stage. -/
+a label in `[γ, γ + ω)`.  The clause of a model uses it for every `γ` that is zero or a limit and
+below the stage, where the interval is a block. -/
 def uniformityFamily (γ : Ordinal.{u}) : Set (StageType.{u} α (n + 1)) :=
   {q | ∃ d, (γ : Label.{u}) ≤ q.label d ∧ q.label d < ((γ + Ordinal.omega0 : Ordinal.{u}) : Label)}
 
@@ -301,7 +302,7 @@ theorem mem_bottomPatternFamily : q ∈ bottomPatternFamily S ρ ↔ q.toScheme 
       (q.label i = ⊥ ↔ ρ j = ⊥) :=
   Iff.rfl
 
-/-- Membership in the uniformity family: a label in the block `[γ, γ + ω)`. -/
+/-- Membership in the uniformity family: a label in `[γ, γ + ω)`. -/
 theorem mem_uniformityFamily : q ∈ uniformityFamily γ ↔
     ∃ d, (γ : Label.{u}) ≤ q.label d ∧ q.label d < ((γ + Ordinal.omega0 : Ordinal.{u}) : Label) :=
   Iff.rfl
@@ -411,7 +412,7 @@ theorem reduce_mem_bottomPatternFamily (hq : q ∈ bottomPatternFamily S ρ) :
   ⟨hq.1, fun i j hij hg ↦ reduce_eq_bot_iff.trans (hq.2 i j hij hg)⟩
 
 /-- Stage reduction to a stage `β` that is zero or a limit keeps the uniformity family for
-`γ < β`: the block `[γ, γ + ω)` lies below `β`. -/
+`γ < β`: the interval `[γ, γ + ω)` lies below `β`. -/
 theorem reduce_mem_uniformityFamily (hγ : γ < β) (hq : q ∈ uniformityFamily γ) :
     q.reduce hβ ∈ uniformityFamily γ := by
   obtain ⟨d, hγd, hdγ⟩ := hq

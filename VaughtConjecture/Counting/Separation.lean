@@ -33,7 +33,7 @@ The `Filtration` versions combine these with InfinitaryLogic's `compl_countable_
 `Filtration.countable_truth_side` is the sentence split of `countable_split_of_uniform_domain`.
 
 Two private examples close the file: the tail filtration of the countable
-ordinals satisfies every hypothesis, and adjoining a persistent block of size `2 ^ ℵ₁` keeps every
+ordinals satisfies every hypothesis, and adjoining a persistent summand of size `2 ^ ℵ₁` keeps every
 filtration axiom but not the cardinality, so the countable-core hypothesis cannot be dropped.
 -/
 
@@ -186,7 +186,7 @@ private theorem mk_tail : #(Iio (ω₁ : Ordinal.{0})) = ℵ₁ :=
       have hq' : q ≠ s := by rintro rfl; exact notMem_tail_domain_add_one q hq
       simp only [hp', hq']⟩
 
-/-- Adjoining a persistent block `Y` to a filtration: the classes of `Y` lie in every domain
+/-- Adjoining a persistent summand `Y` to a filtration: the classes of `Y` lie in every domain
 below `ω₁`.  All filtration axioms survive, and the persistent core contains `Y`. -/
 private def adjoin {X : Type u} (F : Filtration X) (Y : Type u) : Filtration (X ⊕ Y) where
   domain ξ := {z | Sum.elim (· ∈ F.domain ξ) (fun _ ↦ ξ < ω₁) z}

@@ -22,7 +22,7 @@ an ordinal below the stage, possibly ordinal zero (`isPermittedCutoff_iff`).
 * Stage reduction to `α` does not change a capped observation at a cap `c ≤ α`
   (`min_reduce_of_le`), so stage reduction preserves and reflects capped agreement at every
   permitted cutoff (`min_reduce_eq_min_reduce_iff`).
-* **Capping is not stage reduction.**  A cap at a permitted cutoff identifies the formal top with
+* **Capping is not stage reduction.**  Capping at a permitted cutoff identifies the formal top with
   a proper label at the same stage, which stage reduction never does
   (`IsPermittedCutoff.exists_min_eq_min_reduce_ne`).  Agreement below a proper cutoff therefore
   never establishes agreement at the formal top.  Nor is a capped observation of lawful data
@@ -35,11 +35,11 @@ namespace VaughtConjecture.Label
 
 variable {α β δ : Ordinal.{u}} {x y c : Label.{u}}
 
-/-- A cutoff `c` is *permitted* at stage `α` if `⊥ < c < α`.  Ordinal zero is permitted at
-every positive stage. -/
+/-- A label `c` is a *permitted cutoff* at stage `α` if `⊥ < c < α` (roadmap, `README.md`,
+Layer 3).  Ordinal zero is a permitted cutoff at every positive stage. -/
 def IsPermittedCutoff (α : Ordinal.{u}) (c : Label.{u}) : Prop := ⊥ < c ∧ c < α
 
-/-- An ordinal cutoff is permitted at stage `α` exactly when it is below `α`. -/
+/-- An ordinal is a permitted cutoff at stage `α` exactly when it is below `α`. -/
 @[simp, grind =] theorem isPermittedCutoff_coe :
     IsPermittedCutoff α (δ : Label.{u}) ↔ δ < α := by
   simp [IsPermittedCutoff]
@@ -74,7 +74,7 @@ def IsPermittedCutoff (α : Ordinal.{u}) (c : Label.{u}) : Prop := ⊥ < c ∧ c
 theorem isPermittedCutoff_iff : IsPermittedCutoff α c ↔ ∃ δ < α, (δ : Label.{u}) = c := by
   induction c using recBotCoeTop <;> simp
 
-/-- A cutoff permitted at a stage is permitted at every higher stage. -/
+/-- A permitted cutoff at a stage is a permitted cutoff at every higher stage. -/
 theorem IsPermittedCutoff.mono (h : IsPermittedCutoff α c) (hαβ : α ≤ β) :
     IsPermittedCutoff β c :=
   ⟨h.1, h.2.trans_le (WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr hαβ))⟩
