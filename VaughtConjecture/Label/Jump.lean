@@ -32,9 +32,6 @@ nevertheless preserves the transformation relation under two guards.
   lowered to it above `K` (`IsWitness.sup`).
 * The guard on the targets cannot be dropped (`TransformsTo.not_forall_reduce_one`).
 
-The ordinal-level lemmas here extend `VaughtConjecture/Label/OrdinalVisibility.lean` and will
-move there.
-
 ## References
 
 The jump rule is the post-composition used in the case of the formal top of the proof of
@@ -47,139 +44,14 @@ universe u
 
 open Order
 
-namespace Ordinal
-
-variable {α o : Ordinal.{u}} {K i k : ℕ}
-
-/-! ### Band arithmetic above a multiple of `ω` -/
-
-/-- Visibility replacement commutes with adding, on the left, an ordinal that is zero or a
-limit. -/
-theorem visibilityReplace_add (hα : IsSuccPrelimit α) (k i : ℕ) (o : Ordinal.{u}) :
-    visibilityReplace k i (α + o) = α + visibilityReplace k i o := by
-  obtain ⟨b, rfl⟩ := isSuccPrelimit_iff_omega0_dvd.mp hα
-  rw [visibilityReplace, visibilityReplace, Ordinal.mul_add_div _ omega0_ne_zero,
-    Ordinal.mul_add_mod_self, mul_add, add_assoc]
-
-/-- An ordinal at most `α + K` lies below `α` or is `α + j` for a natural number `j ≤ K`. -/
-private theorem lt_or_exists_eq_add_of_le_add (h : o ≤ α + K) : o < α ∨ ∃ j ≤ K, o = α + j := by
-  rcases lt_or_ge o α with hlt | hle
-  · exact .inl hlt
-  have hK : o - α ≤ K := Ordinal.sub_le.mpr h
-  obtain ⟨j, hj⟩ := Ordinal.lt_omega0.mp (hK.trans_lt (natCast_lt_omega0 K))
-  rw [hj] at hK
-  exact .inr ⟨j, by exact_mod_cast hK, by rw [← hj, Ordinal.add_sub_cancel_of_le hle]⟩
-
-/-- At a stage `α` that is zero or a limit, visibility replacement with a value `i ≤ K` keeps an
-ordinal at most `α + K` at most `α + K`. -/
-theorem visibilityReplace_le_add (hα : IsSuccPrelimit α) (h : o ≤ α + K) (hi : i ≤ K) (k : ℕ) :
-    visibilityReplace k i o ≤ α + K := by
-  rcases lt_or_exists_eq_add_of_le_add h with ho | ⟨j, hj, rfl⟩
-  · exact ((visibilityReplace_lt_iff hα k i).mpr ho).le.trans le_self_add
-  · rw [visibilityReplace_add hα, visibilityReplace_of_lt_omega0 (natCast_lt_omega0 j)]
-    gcongr
-    split_ifs <;> exact_mod_cast ‹_ ≤ K›
-
-/-- A replaced finite part below the threshold can be restored by a second replacement. -/
-theorem exists_visibilityReplace_visibilityReplace (hi : i < k) (o : Ordinal.{u}) :
-    ∃ j < k, visibilityReplace k j (visibilityReplace k i o) = o := by
-  by_cases ho : o % ω < k
-  · obtain ⟨j, hj⟩ := Ordinal.lt_omega0.mp (Ordinal.mod_lt o omega0_ne_zero)
-    have hik : ((i : ℕ) : Ordinal.{u}) < k := by exact_mod_cast hi
-    refine ⟨j, by exact_mod_cast hj ▸ ho, ?_⟩
-    rw [visibilityReplace_of_lt ho, visibilityReplace_of_lt (by
-        rwa [Ordinal.mul_add_mod_self, natCast_mod_omega0]),
-      Ordinal.mul_add_div _ omega0_ne_zero, Ordinal.div_eq_zero_of_lt (natCast_lt_omega0 i),
-      add_zero, ← hj, Ordinal.div_add_mod]
-  · exact ⟨i, hi, by rw [visibilityReplace_of_le (not_lt.mp ho),
-      visibilityReplace_of_le (not_lt.mp ho)]⟩
-
-end Ordinal
-
 namespace VaughtConjecture.Label
 
 open Ordinal
 
-variable {D : Type*} {grade : D → ℕ} {p q : D → Label.{u}} {g g' : ℕ → Label.{u}}
-  {σ : Label.{u} → Label.{u}} {α o : Ordinal.{u}} {K k i : ℕ} {x : Label.{u}}
-
-/-- At a stage `α` that is zero or a limit, visibility replacement with a value `i ≤ K` keeps a
-label at most `α + K` at most `α + K`. -/
-theorem visibilityReplace_le_coe_add (hα : IsSuccPrelimit α)
-    (h : x ≤ ((α + K : Ordinal.{u}) : Label.{u})) (hi : i ≤ K) (k : ℕ) :
-    visibilityReplace k i x ≤ ((α + K : Ordinal.{u}) : Label.{u}) := by
-  induction x using recBotCoeTop with
-  | bot => exact bot_le
-  | coe o => exact WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr
-      (Ordinal.visibilityReplace_le_add hα (WithTop.coe_le_coe.mp (WithBot.coe_le_coe.mp h)) hi k))
-  | top => exact absurd h (not_le.mpr (WithBot.coe_lt_coe.mpr (WithTop.coe_lt_top _)))
-
-/-- A label is recovered from its visibility replacement below the threshold by a second
-visibility replacement below the threshold. -/
-theorem exists_visibilityReplace_visibilityReplace (hi : i < k) (x : Label.{u}) :
-    ∃ j < k, visibilityReplace k j (visibilityReplace k i x) = x := by
-  induction x using recBotCoeTop with
-  | bot => exact ⟨i, hi, rfl⟩
-  | coe o =>
-    obtain ⟨j, hj, h⟩ := Ordinal.exists_visibilityReplace_visibilityReplace hi o
-    exact ⟨j, hj, by simp only [visibilityReplace_coe, h]⟩
-  | top => exact ⟨i, hi, rfl⟩
-
-/-! ### Stage reduction at a successor stage -/
-
-/-- A label lies below the successor stage `o + 1` exactly when it is at most `o`. -/
-theorem lt_coe_add_one_iff : x < ((o + 1 : Ordinal.{u}) : Label.{u}) ↔ x ≤ o := by
-  induction x using recBotCoeTop with
-  | bot => exact iff_of_true (WithBot.bot_lt_coe _) bot_le
-  | coe a => rw [WithBot.coe_lt_coe, WithTop.coe_lt_coe, WithBot.coe_le_coe, WithTop.coe_le_coe,
-      Order.lt_add_one_iff]
-  | top =>
-    exact iff_of_false not_top_lt (not_le.mpr (WithBot.coe_lt_coe.mpr (WithTop.coe_lt_top o)))
-
-/-- Stage reduction to a successor stage `o + 1` keeps a label at most `o`. -/
-@[simp] theorem reduce_add_one_of_le (h : x ≤ o) : reduce (o + 1) x = x :=
-  reduce_of_lt (lt_coe_add_one_iff.mpr h)
-
-/-- Stage reduction to a successor stage `o + 1` sends a label above `o` to the formal top. -/
-@[simp] theorem reduce_add_one_of_lt (h : (o : Label.{u}) < x) : reduce (o + 1) x = ⊤ :=
-  reduce_of_le (not_lt.mp (mt lt_coe_add_one_iff.mp (not_le.mpr h)))
-
-/-- A label at most `o` that is below the stage reduction of `z` to `o + 1` is below `z`. -/
-theorem le_of_le_reduce_add_one {y z : Label.{u}} (hy : y ≤ o) (h : y ≤ reduce (o + 1) z) :
-    y ≤ z := by
-  rcases le_or_gt z o with hz | hz
-  · rwa [reduce_add_one_of_le hz] at h
-  · exact hy.trans hz.le
-
-/-! ### Finite bounds below a stage -/
-
-/-- Finitely many labels, together with a label `b` below a stage `α` that is zero or a limit,
-have a common upper bound below `α` that is self-visible at a given threshold `n`: every one of
-the labels that lies below `α` lies below it. -/
-theorem exists_isSelfVisible_bound {ι : Type*} [Finite ι] (hα : IsSuccPrelimit α) (n : ℕ)
-    {b : Label.{u}} (hb : b < α) (f : ι → Label.{u}) :
-    ∃ c, b ≤ c ∧ c < α ∧ IsSelfVisible n c ∧ ∀ t, f t < α → f t ≤ c := by
-  have := Fintype.ofFinite ι
-  set s := max b (Finset.univ.sup fun t ↦ if f t < α then f t else ⊥)
-  have hs : s < α := max_lt hb ((Finset.sup_lt_iff (WithBot.bot_lt_coe _)).mpr fun t _ ↦ by
-    split_ifs with h
-    exacts [h, WithBot.bot_lt_coe _])
-  have hsc : s ≤ visibilityReplace n n s := le_visibilityReplace (by omega) s
-  refine ⟨_, (le_max_left _ _).trans hsc, (visibilityReplace_lt_iff hα).mpr hs,
-    visibilityReplace_self_visibilityReplace le_rfl s, fun t ht ↦ ?_⟩
-  refine le_trans ?_ ((le_max_right _ _).trans hsc)
-  simpa [ht] using Finset.le_sup (f := fun t ↦ if f t < α then f t else ⊥) (Finset.mem_univ t)
+variable {D : Type*} {grade : D → ℕ} {p q : D → Label.{u}} {g : ℕ → Label.{u}}
+  {σ : Label.{u} → Label.{u}} {α : Ordinal.{u}} {K k i : ℕ} {x : Label.{u}}
 
 /-! ### The jump rule -/
-
-/-- The pointwise maximum of two suppressors of a shifter is a suppressor of it. -/
-theorem IsWitness.sup (hg : IsWitness g σ) (hg' : IsWitness g' σ) : IsWitness (g ⊔ g') σ where
-  antitone := hg.antitone.sup hg'.antitone
-  isSelfVisible n := (hg.isSelfVisible n).max (hg'.isSelfVisible n)
-  map_bot := hg.map_bot
-  monotone := hg.monotone
-  visibilityReplace_comm x k hx i hi := (le_sup_iff.mp hx).elim
-    (hg.visibilityReplace_comm x k · i hi) (hg'.visibilityReplace_comm x k · i hi)
 
 /-- **The band mate controls the shifter.**  Let `α` be zero or a limit, `k ≤ K`, and `i ≤ k`.
 If the suppressor at `k` is at least `α + K` and the shifter sends the visibility replacement of

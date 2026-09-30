@@ -52,17 +52,6 @@ open Ordinal Order
 variable {D : Type*} {grade : D → ℕ} {p q : D → Label.{u}}
   {σ : Label.{u} → Label.{u}} {α β ν : Ordinal.{u}} {K k i : ℕ} {x c : Label.{u}}
 
-/-- The finite part of `α + K` is `K` when `α` is zero or a limit. -/
-private theorem add_natCast_mod_omega0 (hα : IsSuccPrelimit α) (K : ℕ) : (α + K) % ω = K := by
-  obtain ⟨b, rfl⟩ := isSuccPrelimit_iff_omega0_dvd.mp hα
-  rw [Ordinal.mul_add_mod_self, natCast_mod_omega0]
-
-/-- At a stage `α` that is zero or a limit, the ordinal `α + K` is self-visible at every
-threshold `k ≤ K`. -/
-theorem isSelfVisible_coe_add (hα : IsSuccPrelimit α) (hk : k ≤ K) :
-    IsSelfVisible k ((α + K : Ordinal.{u}) : Label.{u}) :=
-  isSelfVisible_coe.mpr (by rw [add_natCast_mod_omega0 hα]; exact_mod_cast hk)
-
 /-! ### Translation -/
 
 /-- Translation of labels from `β` to `α`: an ordinal `ν` goes to `α + (ν - β)` (so every
