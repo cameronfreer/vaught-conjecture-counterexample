@@ -15,10 +15,9 @@ established once); semantic contract, items 4–5 (a tuple's partial type is exa
 absence of a face is mathematical information).
 
 **The partial realization of a chart.**  A stage type `P` on `k` points is a *finite master
-chart*.  On its own points it is a realization (`StageType.toRealization`): a tuple
-`t : Fin n ↪ Fin k` has the type `restrictFace t P`.  This realization is exactly consistent, by
-the guarded composition law of face maps, and covering, since every tuple is a face of the
-identity tuple (`StageType.isConsistent_toRealization`, `StageType.isCovering_toRealization`).
+chart*: a tuple `t : Fin n ↪ Fin k` of its points has the type `restrictFace t P` of the face it
+spans, if that face is closed, and these types are exactly consistent by the guarded composition
+law of face maps (`StageType.restrictFace_trans`).
 
 The countable carrier of the construction is `ℕ`, and a chart on `k` points is placed on the
 initial segment `{0, …, k - 1}`.  A tuple `t : Fin n ↪ ℕ` is **supported** by the chart
@@ -134,7 +133,6 @@ theorem isSupported_trans_valEmbedding (f : Fin n ↪ Fin k) :
     (isSupported_trans_valEmbedding f).face = f :=
   rfl
 
-
 /-- The tuples supported by some chart in a sequence whose number of points is unbounded: every
 tuple is supported from some index on. -/
 theorem exists_isSupported {c : ℕ → ℕ} (hc : ∀ j, ∃ i, j < c i) (t : Fin n ↪ ℕ) :
@@ -151,26 +149,6 @@ namespace StageType
 open Construction
 
 variable (P : StageType.{u} α k)
-
-/-- The **realization of a chart on its own points**: a tuple of points of the chart has the type
-of the face it spans, if that face is closed. -/
-noncomputable def toRealization : Realization.{u, 0} α (Fin k) where
-  eval t := restrictFace t P
-
-/-- The type of a tuple of points of the chart is the face of the chart it spans. -/
-@[simp] theorem toRealization_eval (t : Fin n ↪ Fin k) :
-    P.toRealization.eval t = restrictFace t P :=
-  rfl
-
-/-- The realization of a chart on its own points is exactly consistent: this is the guarded
-composition law of face maps. -/
-theorem isConsistent_toRealization : P.toRealization.IsConsistent :=
-  fun _ _ t _ f ht ↦ (restrictFace_trans P t f ht).symm
-
-/-- The realization of a chart on its own points is covering: every tuple is a face of the
-identity tuple, whose type is the chart. -/
-theorem isCovering_toRealization : P.toRealization.IsCovering :=
-  fun _ t ↦ ⟨k, Function.Embedding.refl _, t, Function.Embedding.trans_refl t, by simp⟩
 
 /-- The **partial realization of a chart** on the initial segment `{0, …, k - 1}` of `ℕ`: a
 supported tuple has the type of the face it spans, and an unsupported tuple has no type. -/
@@ -211,12 +189,6 @@ theorem isSupported_of_isSome (h : (P.chartRealization.eval t).isSome) : IsSuppo
     P.chartRealization.eval (Fin.valEmbedding : Fin k ↪ ℕ) = some P := by
   simpa using chartRealization_eval_trans_valEmbedding (P := P) (Function.Embedding.refl _)
 
-/-- On supported tuples, the partial realization of a chart is its realization on its own
-points. -/
-theorem chartRealization_eval_eq_toRealization (h : IsSupported k t) :
-    P.chartRealization.eval t = P.toRealization.eval h.face :=
-  chartRealization_eval_of_isSupported h
-
 /-- The partial realization of a chart is exactly consistent. -/
 theorem isConsistent_chartRealization : P.chartRealization.IsConsistent := by
   intro m n t p f ht
@@ -231,12 +203,6 @@ theorem hasLegalTypes_chartRealization (hP : P.IsLegal) : P.chartRealization.Has
   have hs : IsSupported k t := isSupported_of_isSome (by rw [ht]; rfl)
   rw [chartRealization_eval_of_isSupported hs] at ht
   exact hP.restrictFace _ ht
-
-/-- Every supported tuple is a face of a typed tuple, the points of the chart in order. -/
-theorem exists_eval_isSome_of_isSupported (h : IsSupported k t) :
-    ∃ (m : ℕ) (u : Fin m ↪ ℕ) (f : Fin n ↪ Fin m), f.trans u = t ∧
-      (P.chartRealization.eval u).isSome :=
-  ⟨k, Fin.valEmbedding, h.face, h.face_trans_valEmbedding, by simp⟩
 
 end StageType
 

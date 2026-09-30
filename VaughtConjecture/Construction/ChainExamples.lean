@@ -21,13 +21,13 @@ interval, so it spans no closed face (`chartRealization_bare_eval_pairZeroTwo`).
 (`chartRealization_bare_eval_pairZeroFive`).  The point `0` spans a closed face and is typed
 (`isSome_chartRealization_bare_eval_pointZero`).
 
-**Chains.**  The union of the constant chain at the seed (the one-point chart) is the partial
-realization of the seed (`chainUnion_const_seed`); it types the point `0`
-(`chainUnion_const_seed_eval_pointZero`).  A chain that never absorbs a new point need not be
-covering: in the union of the constant chain at the seed, the pair `(0, 1)` is unsupported and
-untyped (`chainUnion_const_seed_eval_pairZeroOne`), and the union is not covering
-(`not_isCovering_chainUnion_const_seed`).  Absorption requirements are what make the union of
-the construction covering.
+**Chains.**  The union of the constant chain at the one-point condition (the one-point chart) is
+the partial realization of that condition (`chainUnion_const_onePoint`); it types the point `0`
+(`chainUnion_const_onePoint_eval_pointZero`).  A chain that never absorbs a new point need not be
+covering: in the union of the constant chain at the one-point condition, the pair `(0, 1)` is
+unsupported and untyped (`chainUnion_const_onePoint_eval_pairZeroOne`), and the union is not
+covering (`not_isCovering_chainUnion_const_onePoint`).  Absorption requirements are what make
+the union of the construction covering.
 -/
 
 namespace VaughtConjecture.Construction
@@ -62,10 +62,8 @@ private def pointZero : Fin 1 ↪ ℕ :=
   Fin.valEmbedding
 
 /-- The pair `(0, 2)` is supported by a chart on three points. -/
-private theorem isSupported_pairZeroTwo : IsSupported 3 pairZeroTwo := fun i ↦ by
-  have := i.isLt
-  change 2 * (i : ℕ) < 3
-  omega
+private theorem isSupported_pairZeroTwo : IsSupported 3 pairZeroTwo := by
+  decide
 
 /-- **A supported invisible tuple**: the pair `(0, 2)` is supported by `bare` but spans no closed
 face, so it has no type. -/
@@ -91,28 +89,29 @@ private theorem isSome_chartRealization_bare_eval_pointZero :
     isSome_restrictFace_iff]
   decide
 
-/-- The union of the constant chain at the seed is the partial realization of the seed. -/
-private theorem chainUnion_const_seed :
-    chainUnion (fun _ ↦ Condition.seed.{0} 0) = (Condition.seed 0).realization :=
+/-- The union of the constant chain at the one-point condition is the partial realization of
+that condition. -/
+private theorem chainUnion_const_onePoint :
+    chainUnion (fun _ ↦ Condition.onePoint.{0} 0) = (Condition.onePoint 0).realization :=
   chainUnion_const _
 
-/-- The union of the constant chain at the seed types the point `0` by the one-point stage
-type. -/
-private theorem chainUnion_const_seed_eval_pointZero :
-    (chainUnion fun _ ↦ Condition.seed.{0} 0).eval pointZero = some (onePoint 0) := by
-  rw [chainUnion_const_seed]
-  exact (Condition.seed 0).realization_eval_valEmbedding
+/-- The union of the constant chain at the one-point condition types the point `0` by the
+one-point stage type. -/
+private theorem chainUnion_const_onePoint_eval_pointZero :
+    (chainUnion fun _ ↦ Condition.onePoint.{0} 0).eval pointZero = some (onePoint 0) := by
+  rw [chainUnion_const_onePoint]
+  exact (Condition.onePoint 0).realization_eval_valEmbedding
 
-/-- In the union of the constant chain at the seed, the pair `(0, 1)` is unsupported and has no
-type. -/
-private theorem chainUnion_const_seed_eval_pairZeroOne :
-    (chainUnion fun _ ↦ Condition.seed.{0} 0).eval pairZeroOne = none :=
+/-- In the union of the constant chain at the one-point condition, the pair `(0, 1)` is
+unsupported and has no type. -/
+private theorem chainUnion_const_onePoint_eval_pairZeroOne :
+    (chainUnion fun _ ↦ Condition.onePoint.{0} 0).eval pairZeroOne = none :=
   chainUnion_eval_of_forall_not_isSupported fun _ h ↦ absurd (h 1) (by decide)
 
 /-- **A chain that never absorbs a point is not covering**: the union of the constant chain at
-the seed does not cover the point `1`. -/
-private theorem not_isCovering_chainUnion_const_seed :
-    ¬ (chainUnion fun _ ↦ Condition.seed.{0} 0).IsCovering := by
+the one-point condition does not cover the point `1`. -/
+private theorem not_isCovering_chainUnion_const_onePoint :
+    ¬ (chainUnion fun _ ↦ Condition.onePoint.{0} 0).IsCovering := by
   rw [isCovering_chainUnion_iff monotone_const]
   intro h
   obtain ⟨_, hi⟩ := h 1

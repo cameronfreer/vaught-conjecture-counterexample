@@ -10,7 +10,7 @@ import VaughtConjecture.Geometry.IntervalPlan
 import VaughtConjecture.Language.Density
 
 /-!
-# Countable models from the finite extension statements
+# Countable saturated models from the finite extension statements
 
 Roadmap, Layer 2 (the countable chain construction, with the exact finite extension hypothesis
 explicit: countable cofinal requirements and the union theorem, established once) and Layer 3
@@ -22,10 +22,11 @@ This is [Kni26, Proposition 4.4.5], the existence of countable saturated models 
 countably many ordinals below it, **conditional on the finite extension statements**, which are
 hypotheses here and are not proved:
 
-* **(E) exact one-point extension** (`Construction.HasExactExtensions α`, the conclusion of row 6):
-  for a legal stage type `P` on `n` points, a closed face `f : Fin m ↪ Fin n` of `P` with
-  restriction `p`, and a coface `d` of `p` (a legal one-point extension of `p`), some coface `Q`
-  of `P` has face `d` along `pinnedFace f`, the face `f` followed by the new point;
+* **(E) exact one-point pinned extension** (`Construction.HasExactPinnedExtensions α`, the
+  conclusion of row 6): for a legal stage type `P` on `n` points, a closed face
+  `f : Fin m ↪ Fin n` of `P` with restriction `p`, and a coface `d` of `p` (a legal one-point
+  extension of `p`), some coface `Q` of `P` has face `d` along `pinnedFace f`, the face `f`
+  followed by the new point;
 * **(C) capped extension for the families** (`Construction.HasFamilyExtensions α`): every legal
   stage type has a coface in each uniformity family `uniformityFamily γ` for `γ` zero or a limit
   below the stage, and in each dominance family `dominanceFamily γ` for `γ` below the stage.
@@ -36,13 +37,14 @@ hypotheses here and are not proved:
   `StageType.nonempty_cofaces_inter_saturationFamily` and
   `StageType.nonempty_cofaces_inter_bottomPatternFamily`; they need no hypothesis.
 
-**Realizing every coface.**  A realization **realizes every coface**
+**Saturation: realizing every coface.**  A realization **realizes every coface**
 (`Realization.RealizesCofaces`) when over every occurrence it realizes every coface of the type of
-the occurrence.  Such a realization, legal, exactly consistent, and covering on a nonempty carrier,
-is a model given (C) (`Realization.isModel_of_realizesCofaces`): an instance of each family with a
-member among the cofaces of the type is realized through that member.  It has the finite-cut
-receiving property with no hypothesis (`Realization.hasFiniteCutReceiving_of_realizesCofaces`):
-a coface lies in each of its receiving families.
+the occurrence; for a model this is saturation, [Kni26, Definition 4.1.1].  Such a realization,
+legal, exactly consistent, and covering on a nonempty carrier, is a model given (C)
+(`Realization.isModel_of_realizesCofaces`): an instance of each family with a member among the
+cofaces of the type is realized through that member.  It has the finite-cut receiving property
+with no hypothesis (`Realization.hasFiniteCutReceiving_of_realizesCofaces`): a coface lies in
+each of its receiving families.
 
 **Requirements.**  A requirement (`Construction.Requirement α`) is either a point `j` of `ℕ`, met
 by a condition with more than `j` points (**absorption**), or a pair of a tuple `t` of `ℕ` and a
@@ -61,50 +63,88 @@ requirement is met above every condition, given (E) (`Condition.exists_le_meets`
   (`Condition.exists_le_realizesOver`).  If `t` is unsupported it is absorbed first, and if it
   is supported invisible, or `q` is not a coface of its type, the requirement is already met.
 
-**The chain.**  By the Rasiowa–Sikorski lemma (`Construction.exists_monotone_forall_exists_mem`)
-there is a chain of conditions, starting at the one-point chart (`Condition.seed`), that meets
-every requirement (`Construction.exists_chain_forall_meets`).  Its union
-(`Construction.chainUnion`) has legal types, is exactly consistent and covering, and realizes
-every coface (`Construction.realizesCofaces_chainUnion`).  Hence:
+**Generic and exact-family-specific parts.**  All of
+`VaughtConjecture.Construction.PartialRealization` is generic: conditions, extension as literal
+restriction, the persistence of realized families under extension
+(`Construction.Condition.realizesOver_of_le`, for any family), and the union of a chain with its
+stabilization, exact consistency, legality, and covering criterion
+(`Construction.chainUnion_eval_of_isSupported`, `Construction.isConsistent_chainUnion`,
+`Construction.hasLegalTypes_chainUnion`, `Construction.isCovering_chainUnion_iff`) do not depend
+on what the chain is asked to realize.  So is the pattern of `Condition.Meets.mono`: a
+requirement asks for a decision on a supported tuple, and such a decision is final.  What is
+specific to the exact family is the tuple service, from `Construction.Requirement` and
+`Condition.Meets` through `Construction.realizesCofaces_chainUnion`: it asks for each coface `q`
+of the type of a tuple to be realized over the tuple, that is, for the singleton family `{q}`,
+and (E) is exactly the extension statement that serves singletons.  A family of targets
+`U : StageType α n → Set (StageType α (n + 1))` would be served by the same requirements with
+`{q}` replaced by `U p`, by the same proofs, and with (E) replaced by the extension statement
+for `U`; this is not parametrized here, since the families of (C) are served through the
+singletons of their members.
 
-* `Construction.exists_realizesCofaces_of_hasExactExtensions`: given (E), a realization on `ℕ`
-  with legal types, exactly consistent, covering, and realizing every coface;
-* `Construction.exists_isModel_of_extensions`: given (E) and (C), a model on `ℕ`
-  ([Kni26, Proposition 4.4.5], conditionally);
+**The chain.**  By the Rasiowa–Sikorski lemma (`Construction.exists_monotone_forall_exists_mem`)
+there is a chain of conditions, starting at any given condition `c₀`, that meets every requirement
+(`Construction.exists_chain_forall_meets`).  Its union (`Construction.chainUnion`) has legal
+types, is exactly consistent and covering, and realizes every coface
+(`Construction.realizesCofaces_chainUnion`), and it restricts to the partial realization of `c₀`
+on the tuples `c₀` supports (`Construction.chainUnion_eval_of_isSupported` at the first index).
+Hence:
+
+* `Construction.Condition.exists_realizesCofaces_of_hasExactPinnedExtensions`: given (E), every
+  condition extends to a realization on `ℕ` with legal types, exactly consistent, covering, and
+  realizing every coface;
+* `Construction.Condition.exists_isModel_of_extensions`: given (E) and (C), every condition
+  extends to a saturated model on `ℕ`;
+* `Construction.exists_realizesCofaces_of_hasExactPinnedExtensions` and
+  `Construction.exists_isModel_of_extensions`: the same from the one-point condition
+  (`Construction.Condition.onePoint`); the latter is a countable saturated model,
+  [Kni26, Proposition 4.4.5], conditionally;
 * `Construction.exists_realize_fourFamilySentence_of_extensions`: given (E) and (C) at stage `ω`,
   a countable structure satisfying the four-family sentence;
-* `Construction.exists_realize_densitySentence_of_hasExactExtensions`: given (E) alone at stage
-  `ω`, a countable structure satisfying the density sentence.
+* `Construction.exists_realize_densitySentence_of_hasExactPinnedExtensions`: given (E) alone at
+  stage `ω`, a countable structure satisfying the density sentence.
 
 No hypothesis on the stage beyond the countability of the ordinals below it is used: the stage
 enters only through (E) and (C).
 
 **Correspondence with the Layer 3 statement.**  (E) is stated here in the terms of the roadmap.
-It is literally the conclusion of the exact pinned extension of Layer 3,
-`StageType.exists_pinned_extension`, derived there from the coatom extension property
-`StageType.HasCoatomExtensions`: `Q ∈ P.cofaces` unfolds to `Q.IsLegal` and
-`restrictFace Fin.castSuccEmb Q = some P`, `d ∈ p.cofaces` to `d.IsLegal` and
-`restrictFace Fin.castSuccEmb d = some p`, and `pinnedFace f` is the embedding `extendByLast f`
-there.  Nothing about the stage `α` is used in that derivation either.
+It is literally the conclusion of the exact pinned extension of Layer 3, row 6, derived there
+from the coatom extension property ([Kni26, Corollary 4.3.22]): `Q ∈ P.cofaces` unfolds to
+`Q.IsLegal` and `restrictFace Fin.castSuccEmb Q = some P`, `d ∈ p.cofaces` to `d.IsLegal` and
+`restrictFace Fin.castSuccEmb d = some p`, and `pinnedFace f` is the embedding that Layer 3 calls
+the face `f` followed by the new point.  Nothing about the stage `α` is used in that derivation
+either.
 
 ## Placement
 
 `StageType.onePoint` and `StageType.isLegal_onePoint` belong in
 `VaughtConjecture.Stage.LegalExamples`, where they would replace the private `point` (the same
 stage type at stage `0` in universe `0`), and the instance `StageType.instSubsingletonZero` in
-`VaughtConjecture.Stage.Basic`.  `Construction.pinnedFace` with its lemmas is the embedding that
-Layer 3 calls the face followed by the new point; when both are present, one should be defined
-through the other.  `Realization.RealizesCofaces` and its two consequences belong in
+`VaughtConjecture.Stage.Basic`.  `Realization.RealizesCofaces` and its two consequences belong in
 `VaughtConjecture.Realization.Model` and `VaughtConjecture.Language.Density`.  They are stated here
 so that those files are unchanged.
+
+**Overlaps with the coatom-extension branch.**  The Layer 3 development on the coatom-extension
+branch states some of the same facts; whichever of the two lands second deletes its copies and
+uses the other's:
+
+* the zero-point lemmas there (StageType.card_eq_zero, StageType.faces_eq_of_zero,
+  StageType.eq_of_zero, StageType.isSome_restrictFace_of_zero) and the private zero-point helpers
+  with the instance `StageType.instSubsingletonZero` here;
+* the one-point scheme there (Scheme.onePoint, Scheme.isLegal_onePoint, and its bottom labelling
+  Scheme.IsLegal.toStageType) and `StageType.onePoint` with `StageType.isLegal_onePoint` here;
+* the one-point extension there (StageType.exists_extension, [Kni26, Proposition 4.3.23]) and
+  `Construction.nonempty_cofaces_of_hasExactPinnedExtensions` here;
+* the face followed by the new point there (extendByLast, with its lemmas) and
+  `Construction.pinnedFace` with its lemmas here, equal by `rfl`.
 
 ## References
 
 The construction is that of [Kni26, Proposition 4.4.5] (countable saturated models), with the
 nonemptiness of the family instances of [Kni26, Lemma 4.4.1] and the one-point extensions of
-[Kni26, Corollary 4.3.22 and Proposition 4.3.23] taken as hypotheses; models are
-[Kni26, Definition 3.2.1], for R. W. Knight, *A counterexample to Vaught's Conjecture using
-generalised Stone spaces* (draft, 20 February 2026).
+[Kni26, Corollary 4.3.22 and Proposition 4.3.23] taken as hypotheses; saturation is
+[Kni26, Definition 4.1.1], the uniqueness of the stage type on no points is [Kni26, Lemma 4.2.1],
+and models are [Kni26, Definition 3.2.1], for R. W. Knight, *A counterexample to Vaught's
+Conjecture using generalised Stone spaces* (draft, 20 February 2026).
 -/
 
 universe u v
@@ -137,7 +177,8 @@ private theorem faces_eq_of_zero (t : StageType.{u} α 0) : t.toCellScheme.faces
   rintro rfl
   exact t.isWellFormed.isWellFormed.isPlan.empty_mem
 
-/-- **There is only one stage type on no points** at each stage. -/
+/-- **There is only one stage type on no points** at each stage, [Kni26, Lemma 4.2.1] (stated
+there for countable limit stages). -/
 instance instSubsingletonZero : Subsingleton (StageType.{u} α 0) where
   allEq t t' := by
     have hc := t.card_eq_zero_of_zero
@@ -193,7 +234,9 @@ end StageType
 namespace Construction
 
 /-- The face `f : Fin m ↪ Fin n` followed by the new point: the embedding of `Fin (m + 1)` into
-`Fin (n + 1)` that is `f` on the old points and sends the last point to the last point. -/
+`Fin (n + 1)` that is `f` on the old points and sends the last point to the last point.  This is
+the embedding that Layer 3 calls the face followed by the new point (extendByLast on the
+coatom-extension branch, with the same definition, so equal by `rfl` once both are present). -/
 def pinnedFace (f : Fin m ↪ Fin n) : Fin (m + 1) ↪ Fin (n + 1) :=
   Fin.Embedding.snoc (f.trans Fin.castSuccEmb) (a := Fin.last n) fun ⟨i, hi⟩ ↦
     (Fin.castSucc_lt_last (f i)).ne hi
@@ -207,22 +250,22 @@ def pinnedFace (f : Fin m ↪ Fin n) : Fin (m + 1) ↪ Fin (n + 1) :=
 @[simp] theorem pinnedFace_last (f : Fin m ↪ Fin n) : pinnedFace f (Fin.last m) = Fin.last n :=
   Fin.Embedding.snoc_last
 
-/-- `pinnedFace f` restricts to `f` on the old points. -/
+/-- `pinnedFace f` restricts to `f` on the old points: this is `Fin.Embedding.init_snoc`. -/
 theorem castSuccEmb_trans_pinnedFace (f : Fin m ↪ Fin n) :
     Fin.castSuccEmb.trans (pinnedFace f) = f.trans Fin.castSuccEmb :=
-  Function.Embedding.ext fun i ↦ pinnedFace_castSucc f i
+  Fin.Embedding.init_snoc _ _
 
 variable (α) in
-/-- **(E) The exact one-point extension** at stage `α`, the conclusion of row 6 of the table of
-extension statements of Layer 3: for a legal stage type `P` on `n` points, a closed face `f` of `P`
-with restriction `p`, and a legal one-point coface `d` of `p`, some legal one-point extension `Q`
-of `P` (a coface: its face along `Fin.castSuccEmb` is literally `P`) has face `d` along
-`pinnedFace f`.
+/-- **(E) The exact one-point pinned extension** at stage `α`, the conclusion of row 6 of the
+table of extension statements of Layer 3: for a legal stage type `P` on `n` points, a closed face
+`f` of `P` with restriction `p`, and a legal one-point coface `d` of `p`, some legal one-point
+extension `Q` of `P` (a coface: its face along `Fin.castSuccEmb` is literally `P`) has face `d`
+along `pinnedFace f`.
 
 This is a hypothesis, not a theorem.  It is literally the conclusion of the exact pinned
-extension of Layer 3 (`StageType.exists_pinned_extension`), derived there from the coatom
-extension property ([Kni26, Corollary 4.3.22]). -/
-def HasExactExtensions : Prop :=
+extension of Layer 3, row 6, derived there from the coatom extension property
+([Kni26, Corollary 4.3.22]). -/
+def HasExactPinnedExtensions : Prop :=
   ∀ ⦃n m : ℕ⦄ ⦃P : StageType.{u} α n⦄ ⦃f : Fin m ↪ Fin n⦄ ⦃p : StageType.{u} α m⦄,
     P.IsLegal → restrictFace f P = some p →
       ∀ d ∈ p.cofaces, ∃ Q ∈ P.cofaces, restrictFace (pinnedFace f) Q = some d
@@ -248,7 +291,7 @@ structure HasFamilyExtensions : Prop where
 
 /-- **One-point extensions**, from (E): every legal stage type has a coface.  This is (E) at the
 empty face, with the one-point stage type as the coface. -/
-theorem nonempty_cofaces_of_hasExactExtensions (hE : HasExactExtensions.{u} α)
+theorem nonempty_cofaces_of_hasExactPinnedExtensions (hE : HasExactPinnedExtensions.{u} α)
     {P : StageType.{u} α n} (hP : P.IsLegal) : P.cofaces.Nonempty := by
   obtain ⟨p, hp⟩ := Option.isSome_iff_exists.mp
     (P.isSome_restrictFace_of_isEmpty (Function.Embedding.ofIsEmpty : Fin 0 ↪ Fin n))
@@ -264,7 +307,8 @@ namespace Realization
 variable (R : Realization.{u, v} α M)
 
 /-- A realization **realizes every coface** when over every occurrence it realizes every coface of
-the type of the occurrence. -/
+the type of the occurrence.  For a model this is **saturation**, [Kni26, Definition 4.1.1]: if
+`x` has type `p` and `q` is a one-point extension of `p`, some `y` has `x⁀y` of type `q`. -/
 def RealizesCofaces : Prop :=
   ∀ (x : R.Occurrence), ∀ q ∈ x.type.cofaces, R.RealizesOver x.tuple {q}
 
@@ -335,12 +379,12 @@ theorem Meets.mono (hcd : c ≤ d) : ∀ {r : Requirement.{u} α}, c.Meets r →
   | .inr ⟨_, _, _⟩, ⟨hs, h⟩ => ⟨hs.mono (card_le hcd), fun p hp hq ↦
       realizesOver_of_le hcd (h p ((realization_eval_of_le hcd hs).symm.trans hp) hq)⟩
 
-variable (hE : HasExactExtensions.{u} α)
+variable (hE : HasExactPinnedExtensions.{u} α)
 include hE
 
 /-- **Absorbing one point**, by one application of (E) at the empty face. -/
 theorem exists_le_card_succ (c : Condition.{u} α) : ∃ d, c ≤ d ∧ d.card = c.card + 1 :=
-  let ⟨Q, hQ⟩ := nonempty_cofaces_of_hasExactExtensions hE c.isLegal
+  let ⟨Q, hQ⟩ := nonempty_cofaces_of_hasExactPinnedExtensions hE c.isLegal
   ⟨c.snoc Q hQ, le_snoc Q hQ, rfl⟩
 
 /-- **Absorbing finitely many points**: every condition has an extension with more than `j`
@@ -388,18 +432,23 @@ end Condition
 
 /-! ### The chain and its union -/
 
+namespace Condition
+
 variable (α) in
-/-- The **seed** of the chain: the one-point chart. -/
-def Condition.seed : Condition.{u} α :=
-  ⟨1, onePoint α, isLegal_onePoint α⟩
+/-- **The one-point condition**: the one-point chart. -/
+def onePoint : Condition.{u} α :=
+  ⟨1, StageType.onePoint α, StageType.isLegal_onePoint α⟩
+
+end Condition
 
 /-- **The chain**, given (E) at a stage with countably many ordinals below it: a monotone sequence
-of conditions, starting at the seed, that meets every requirement. -/
-theorem exists_chain_forall_meets (hα : (Set.Iio α).Countable) (hE : HasExactExtensions.{u} α) :
-    ∃ c : ℕ → Condition.{u} α, c 0 = Condition.seed α ∧ Monotone c ∧
+of conditions, starting at a given condition `c₀`, that meets every requirement. -/
+theorem exists_chain_forall_meets (hα : (Set.Iio α).Countable)
+    (hE : HasExactPinnedExtensions.{u} α) (c₀ : Condition.{u} α) :
+    ∃ c : ℕ → Condition.{u} α, c 0 = c₀ ∧ Monotone c ∧
       ∀ r : Requirement.{u} α, ∃ i, (c i).Meets r := by
   have := Requirement.countable hα
-  exact exists_monotone_forall_exists_mem (Condition.seed α) (fun r ↦ {c | c.Meets r})
+  exact exists_monotone_forall_exists_mem c₀ (fun r ↦ {c | c.Meets r})
     fun r c _ ↦ let ⟨d, hcd, hd⟩ := Condition.exists_le_meets hE c r; ⟨d, hd, hcd⟩
 
 /-- **The union theorem**: the union of a monotone sequence of conditions meeting every requirement
@@ -417,48 +466,74 @@ theorem realizesCofaces_chainUnion {c : ℕ → Condition.{u} α} (hc : Monotone
   exact ⟨u, hu, q', hq', (chainUnion_eval_of_isSupported hc
     (Condition.isSupported_of_isSome (by rw [he]; rfl))).trans he⟩
 
+/-- **Every condition extends to a realization of every coface**, given (E) at a stage with
+countably many ordinals below it: a realization on `ℕ` with legal types that is exactly consistent
+and covering, realizes every coface, and gives every tuple supported by `c₀` its type in `c₀`. -/
+theorem Condition.exists_realizesCofaces_of_hasExactPinnedExtensions (c₀ : Condition.{u} α)
+    (hα : (Set.Iio α).Countable) (hE : HasExactPinnedExtensions.{u} α) :
+    ∃ R : Realization.{u, 0} α ℕ,
+      R.HasLegalTypes ∧ R.IsConsistent ∧ R.IsCovering ∧ R.RealizesCofaces ∧
+        ∀ ⦃n : ℕ⦄ ⦃t : Fin n ↪ ℕ⦄, IsSupported c₀.card t → R.eval t = c₀.realization.eval t := by
+  obtain ⟨c, rfl, hc, h⟩ := exists_chain_forall_meets hα hE c₀
+  obtain ⟨hl, hR, hcov, hs⟩ := realizesCofaces_chainUnion hc h
+  exact ⟨_, hl, hR, hcov, hs, fun _ _ ht ↦ chainUnion_eval_of_isSupported hc ht⟩
+
+/-- **Every condition extends to a countable saturated model**, conditional on the finite
+extension statements: given (E) and (C) at a stage with countably many ordinals below it, a model
+on `ℕ` that realizes every coface ([Kni26, Definition 4.1.1]) and gives every tuple supported by
+`c₀` its type in `c₀`. -/
+theorem Condition.exists_isModel_of_extensions (c₀ : Condition.{u} α)
+    (hα : (Set.Iio α).Countable) (hE : HasExactPinnedExtensions.{u} α)
+    (hC : HasFamilyExtensions.{u} α) :
+    ∃ R : Realization.{u, 0} α ℕ, R.IsModel ∧ R.RealizesCofaces ∧
+      ∀ ⦃n : ℕ⦄ ⦃t : Fin n ↪ ℕ⦄, IsSupported c₀.card t → R.eval t = c₀.realization.eval t :=
+  let ⟨R, hl, hR, hc, hs, h₀⟩ := c₀.exists_realizesCofaces_of_hasExactPinnedExtensions hα hE
+  ⟨R, R.isModel_of_realizesCofaces hl hR hc hs hC, hs, h₀⟩
+
 /-- **A countable realization of every coface**, given (E) at a stage with countably many
 ordinals below it: a realization on `ℕ` with legal types that is exactly consistent and covering
-and realizes every coface. -/
-theorem exists_realizesCofaces_of_hasExactExtensions (hα : (Set.Iio α).Countable)
-    (hE : HasExactExtensions.{u} α) :
+and realizes every coface.  This is the extension of the one-point condition. -/
+theorem exists_realizesCofaces_of_hasExactPinnedExtensions (hα : (Set.Iio α).Countable)
+    (hE : HasExactPinnedExtensions.{u} α) :
     ∃ R : Realization.{u, 0} α ℕ,
       R.HasLegalTypes ∧ R.IsConsistent ∧ R.IsCovering ∧ R.RealizesCofaces :=
-  let ⟨_, _, hc, h⟩ := exists_chain_forall_meets hα hE
-  ⟨_, realizesCofaces_chainUnion hc h⟩
+  let ⟨R, hl, hR, hc, hs, _⟩ :=
+    (Condition.onePoint α).exists_realizesCofaces_of_hasExactPinnedExtensions hα hE
+  ⟨R, hl, hR, hc, hs⟩
 
-/-- **Countable models** [Kni26, Proposition 4.4.5], **conditional on the finite extension
-statements**: given the exact one-point extension (E) and the capped extensions for the uniformity
-and dominance families (C), at a stage with countably many ordinals below it there is a model on
-`ℕ`. -/
-theorem exists_isModel_of_extensions (hα : (Set.Iio α).Countable) (hE : HasExactExtensions.{u} α)
-    (hC : HasFamilyExtensions.{u} α) : ∃ R : Realization.{u, 0} α ℕ, R.IsModel :=
-  let ⟨R, hl, hR, hc, hs⟩ := exists_realizesCofaces_of_hasExactExtensions hα hE
-  ⟨R, R.isModel_of_realizesCofaces hl hR hc hs hC⟩
-
-/-- There are countably many ordinals below `ω`. -/
-private theorem countable_Iio_omega0 : (Set.Iio (Ordinal.omega0 : Ordinal.{u})).Countable :=
-  Cardinal.countable_Iio_of_lt_omega_one Ordinal.omega0_lt_omega_one
+/-- **Countable saturated models** [Kni26, Proposition 4.4.5], **conditional on the finite
+extension statements**: given the exact one-point pinned extension (E) and the capped extensions
+for the uniformity and dominance families (C), at a stage with countably many ordinals below it
+there is a model on `ℕ` that realizes every coface, that is, a saturated model
+([Kni26, Definition 4.1.1]).  This is the extension of the one-point condition. -/
+theorem exists_isModel_of_extensions (hα : (Set.Iio α).Countable)
+    (hE : HasExactPinnedExtensions.{u} α) (hC : HasFamilyExtensions.{u} α) :
+    ∃ R : Realization.{u, 0} α ℕ, R.IsModel ∧ R.RealizesCofaces :=
+  let ⟨R, hR, hs, _⟩ := (Condition.onePoint α).exists_isModel_of_extensions hα hE hC
+  ⟨R, hR, hs⟩
 
 open FirstOrder Language baseLanguage in
 /-- **A countable model of the four-family sentence**, conditional on the finite extension
-statements (E) and (C) at the base stage `ω` ([Kni26, Proposition 4.4.5]). -/
+statements (E) and (C) at the base stage `ω`: the structure of the countable saturated model of
+`exists_isModel_of_extensions` ([Kni26, Proposition 4.4.5]). -/
 theorem exists_realize_fourFamilySentence_of_extensions
-    (hE : HasExactExtensions.{u} Ordinal.omega0) (hC : HasFamilyExtensions.{u} Ordinal.omega0) :
+    (hE : HasExactPinnedExtensions.{u} Ordinal.omega0)
+    (hC : HasFamilyExtensions.{u} Ordinal.omega0) :
     ∃ (M : Type) (_ : Countable M) (_ : baseLanguage.{u}.Structure M),
       fourFamilySentence.Realize M :=
-  let ⟨R, hR⟩ := exists_isModel_of_extensions countable_Iio_omega0 hE hC
+  let ⟨R, hR, _⟩ := exists_isModel_of_extensions (Set.to_countable _) hE hC
   ⟨ℕ, inferInstance, R.toStructure, hR.realize_fourFamilySentence⟩
 
 open FirstOrder Language baseLanguage in
-/-- **A countable model of the density sentence**, conditional on the exact one-point extension
-(E) alone at the base stage `ω`. -/
-theorem exists_realize_densitySentence_of_hasExactExtensions
-    (hE : HasExactExtensions.{u} Ordinal.omega0) :
+/-- **A countable model of the density sentence**, conditional on the exact one-point pinned
+extension (E) alone at the base stage `ω`: the structure of the realization of every coface of
+`exists_realizesCofaces_of_hasExactPinnedExtensions`. -/
+theorem exists_realize_densitySentence_of_hasExactPinnedExtensions
+    (hE : HasExactPinnedExtensions.{u} Ordinal.omega0) :
     ∃ (M : Type) (_ : Countable M) (_ : baseLanguage.{u}.Structure M),
       densitySentence.Realize M := by
   obtain ⟨R, hl, hR, hc, hs⟩ :=
-    exists_realizesCofaces_of_hasExactExtensions countable_Iio_omega0 hE
+    exists_realizesCofaces_of_hasExactPinnedExtensions (Set.to_countable _) hE
   exact ⟨ℕ, inferInstance, R.toStructure, (realize_toStructure_densitySentence_iff hl).mpr
     ⟨inferInstance, hR, hc, R.hasFiniteCutReceiving_of_realizesCofaces hs⟩⟩
 
