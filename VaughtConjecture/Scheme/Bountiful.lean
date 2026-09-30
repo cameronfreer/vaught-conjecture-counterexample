@@ -8,10 +8,9 @@ import VaughtConjecture.Scheme.Row
 /-!
 # Capped observation, cap balls, and bountiful rows
 
-Roadmap, Library conventions (observations `obs_c(q)`, not a lawful cap endomorphism; the
-permitted-cap test) and Layer 0 ("capped extension") and Layer 1 (all-permitted-cap
-bountifulness); semantic contract, item 3 (a cap is an observation satisfying its permitted-cap
-condition; capped vectors need not be lawful); the expositions, §2.
+Roadmap, Library conventions (observations `obs_c(q)`, not a lawful cap endomorphism) and Layer 1
+(bountifulness); semantic contract, item 3 (capped vectors need not be lawful); the expositions,
+§2.
 
 The capped observation of a labelling `q` at a cap `c` is the labelling `d ↦ min (q d) c`; no new
 operation is introduced, and the observation need not be lawful.  For semantic rows `R` of a
@@ -23,7 +22,7 @@ scheme `D`, a pair `X`, a cap `c`, and a labelling `q` of the cells below `X`, t
 For `X ≤ Y`, write `r` for the restriction `q ↦ q ∘ Set.inclusion _` of labellings from the cells
 below `Y` to those below `X`.  Restriction maps each cap ball into the cap ball of the restriction
 (`mapsTo_capBall`).  The rows are **bountiful** (`Rows.IsBountiful`) when, for all graded faces
-`X ≤ Y`, every cap `c` that is self-visible at the grade of `Y` (the permitted-cap condition), and
+`X ≤ Y`, every cap `c` that is self-visible at the grade of `Y` (`Label.IsSelfVisible Y.2 c`), and
 every `q` lawful below `Y`, the restriction is surjective from the cap ball of `q` onto the cap
 ball of `r q` (`Set.SurjOn`).  Equivalently:
 
@@ -32,17 +31,29 @@ ball of `r q` (`Set.SurjOn`).  Equivalently:
   to a labelling lawful below `Y` that restricts to `p` exactly and has the capped observation of
   `q` at every cell below `Y` (`isBountiful_iff_forall_exists`).
 
-Bountifulness is a statement about each permitted cap separately.  Cap balls shrink as the cap
-grows (`capBall_anti`); at the cap `⊤` the ball of a lawful labelling is a singleton
-(`capBall_top`), and at the cap `⊥` it is the set of all lawful labellings (`capBall_bot`), so
-bountiful rows extend every lawful labelling below `X` to one below `Y`
-(`IsBountiful.surjOn_isLawfulBelow`).  Bountifulness passes to the restriction to a face
-(`IsBountiful.restrict`).
+These equivalences of the `Set.SurjOn`, image-equation, and explicit-extension forms are the
+specialization to cap balls of semantic rows; the general capped-extension statement of the
+roadmap's Layer 0 is not formalized here.
+
+**The caps.**  The caps at which bountifulness is required are the labels self-visible at the
+target grade.  This is a different set from the stage-permitted cutoffs `Label.IsPermittedCutoff`:
+for example, the ordinal `0` is a permitted cutoff at every positive stage but is not self-visible
+at any grade `≥ 1`, while `⊥` and `⊤` are self-visible at every grade but are never permitted
+cutoffs.  How model-level cutoffs are matched with scheme-level caps is settled with the stage
+types (next tranche).
+
+Bountifulness is a statement about each cap separately.  Cap balls shrink as the cap grows
+(`capBall_anti`); at the cap `⊤` the ball of a lawful labelling is a singleton (`capBall_top`), and
+at the cap `⊥` it is the set of all lawful labellings (`capBall_bot`), so bountiful rows extend
+every lawful labelling below `X` to one below `Y` (`IsBountiful.surjOn_isLawfulBelow`).
+Bountifulness passes to the restriction to a face (`IsBountiful.restrict`), and the mute rows are
+bountiful (`isBountiful_mute`): every cap ball is the singleton of the bottom labelling.
 
 ## References
 
 Bountifulness is Definition 2.5.14 of R. W. Knight, *A counterexample to Vaught's Conjecture
-using generalised Stone spaces* (draft, 20 February 2026) [Kni26].
+using generalised Stone spaces* (draft, 20 February 2026) [Kni26] (numbering to be verified
+against the manuscript).
 -/
 
 universe u
@@ -98,10 +109,14 @@ theorem mapsTo_capBall (h : X ≤ Y) (c : Label.{u}) (q : D.below Y → Label.{u
       (R.capBall X c (q ∘ Set.inclusion (D.below_mono h))) :=
   fun _ ⟨hl, he⟩ ↦ ⟨hl.mono h, fun _ ↦ he _⟩
 
-/-- The rows are **bountiful** [Kni26, Definition 2.5.14]: for all graded faces `X ≤ Y`, every
-cap `c` self-visible at the grade of `Y`, and every `q` lawful below `Y`, restriction from the
-cells below `Y` to those below `X` maps the cap ball of `q` at `c` onto the cap ball of the
-restriction of `q`. -/
+/-- The rows are **bountiful** [Kni26, §2.5]: for all graded faces `X ≤ Y`, every cap `c`
+self-visible at the grade of `Y`, and every `q` lawful below `Y`, restriction from the cells below
+`Y` to those below `X` maps the cap ball of `q` at `c` onto the cap ball of the restriction of `q`.
+
+The caps at which bountifulness is required are the labels self-visible at the target grade.  This
+is a different set from the stage-permitted cutoffs `Label.IsPermittedCutoff` (e.g. the ordinal
+`0` is a permitted cutoff at every positive stage but is not self-visible at any grade `≥ 1`); how
+model-level cutoffs are matched with scheme-level caps is settled with the stage types. -/
 def IsBountiful : Prop :=
   ∀ ⦃X Y : Finset α × ℕ⦄, X ∈ D.gradedFaces → Y ∈ D.gradedFaces → ∀ (h : X ≤ Y) (c : Label.{u}),
     IsSelfVisible Y.2 c → ∀ q : D.below Y → Label.{u}, R.IsLawfulBelow Y q →
@@ -162,5 +177,12 @@ theorem IsBountiful.restrict [DecidableEq α] (hR : R.IsBountiful) (B : Finset �
     ⟨(isLawfulBelow_iff.mp hl).comap (IsLowerEmbedding.belowRestrictEquiv_symm D hYB),
       fun t ↦ he ((D.belowRestrictEquiv hYB).symm t)⟩,
     funext fun t ↦ congrFun hr ((D.belowRestrictEquiv hXB).symm t)⟩
+
+/-- Mute rows are bountiful. -/
+theorem isBountiful_mute : (mute D : D.Rows.{u}).IsBountiful := by
+  intro X Y _ _ h c _ q hq p ⟨hp, _⟩
+  rw [isLawfulBelow_mute_iff] at hq hp
+  subst hq hp
+  exact ⟨fun _ ↦ ⊥, self_mem_capBall _ (isLawfulBelow_bot Y) c, rfl⟩
 
 end VaughtConjecture.CellScheme.Rows

@@ -46,13 +46,18 @@ each row `R.row s` is lawful below the graded index of `s`; consistent rows are 
 (`IsConsistent.comap`).  Since the bottom labelling is always lawful, the mere existence of lawful
 sections carries no information; consistency is the statement about the rows themselves.
 
+The **mute** rows (`Rows.mute D`) are constantly bottom.  Every cell's row is bottom at the cell
+itself, so the only lawful section is the bottom labelling (`isLawful_mute_iff`), below every pair
+as well (`isLawfulBelow_mute_iff`); mute rows are consistent (`isConsistent_mute`) and pull back to
+mute rows (`comap_mute`).
+
 ## References
 
 Semantic rows are the semantics of Definition 2.5.3, lawful sections the labellings respecting
 them (Definition 2.5.4: locality is its first clause, availability its second), and consistency
 is Definition 2.5.12, of R. W. Knight, *A counterexample to Vaught's Conjecture using
-generalised Stone spaces* (draft, 20 February 2026) [Kni26] (numbering to be verified against
-the manuscript).
+generalised Stone spaces* (draft, 20 February 2026) [Kni26]; mute rows are the mute semantics of
+the last clause of Lemma 4.2.2 (numbering to be verified against the manuscript).
 -/
 
 universe u
@@ -257,6 +262,32 @@ theorem restrict [DecidableEq α] (hR : R.IsConsistent) (B : Finset α) :
   hR.comap (IsLowerEmbedding.restrict D B)
 
 end IsConsistent
+
+/-! ### Mute rows -/
+
+variable (D) in
+/-- The **mute** rows: every row is constantly bottom [Kni26, §4.2]. -/
+def mute : D.Rows.{u} := ⟨fun _ _ ↦ ⊥⟩
+
+/-- A value of a mute row. -/
+@[simp] theorem mute_row (s : ι) (t : D.below (D.gradedIndex s)) : (mute D).row s t = ⊥ := rfl
+
+/-- Mute rows pull back to mute rows. -/
+@[simp] theorem comap_mute (hφ : E.IsLowerEmbedding D φ) : (mute D).comap hφ = mute E := rfl
+
+/-- The lawful sections of mute rows: only the bottom labelling. -/
+theorem isLawful_mute_iff {p : ι → Label.{u}} : (mute D).IsLawful p ↔ p = fun _ ↦ ⊥ := by
+  refine ⟨fun h ↦ funext fun s ↦ h.eq_bot_of_row_self_eq_bot s rfl, ?_⟩
+  rintro rfl
+  exact isLawful_bot
+
+/-- Below every pair, the only labelling lawful for mute rows is the bottom labelling. -/
+theorem isLawfulBelow_mute_iff {X : Finset α × ℕ} {r : D.below X → Label.{u}} :
+    (mute D).IsLawfulBelow X r ↔ r = fun _ ↦ ⊥ := by
+  rw [isLawfulBelow_iff, comap_mute, isLawful_mute_iff]
+
+/-- Mute rows are consistent. -/
+theorem isConsistent_mute : (mute D : D.Rows.{u}).IsConsistent := fun _ ↦ isLawfulBelow_bot _
 
 end Rows
 
