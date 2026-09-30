@@ -75,20 +75,27 @@ geometries with exactly two extreme points on every nonsingleton closed set.  Pr
 cell multiplicities: distinct cells can share a graded index.  Preserve the actual ordered-cell
 semantics until an order-independence theorem is proved.
 
-Distinguish generic orderly rows from the bounded row coding of legal schemes.  Distinguish
+Distinguish generic orderly rows from the bounded row coding of legal schemes (orderly rows and
+legality are to be defined by the forthcoming layer-3 specification).  Distinguish
 bottom, ordinal zero, proper labels, and formal top.  Stage labels are below the stage or top;
 bottom is below zero.  A permitted cutoff satisfies `⊥ < δ < α`, which allows ordinal zero.  The
 transformation relation is **nontransitive**; prove only the guarded composition, cap, jump,
 band, and truncation rules actually used, and never declare a transitivity instance.
 
-Prove lawful restriction and the exact lifting calculus.  Bountifulness is per permitted cap;
-simultaneous preservation requires its additional hypotheses (see
-`preserves_all_compatible_observations` in `SuggestedInterfaces.lean`).  Preserve caps on
-**all** target coordinates, including auxiliaries and future catalogue fields.  A statement
+Prove lawful restriction and the exact lifting calculus.  Bountifulness is per permitted cap.
+The sketch lemma `preserves_all_compatible_observations` (`SuggestedInterfaces.lean`) passes
+from per-cap lifts to simultaneous preservation under the hypothesis that restriction is
+injective, i.e. uniqueness of extension; that hypothesis is not available in general (see
+`README.md`, Layer 0: do not assume injectivity).  The construction obtains simultaneous cap
+preservation differently: caps are nested under `min` (`min (min x c') c = min x c` for
+`c ≤ c'`), so an extension preserving the observation at the largest permitted cap preserves it
+at every smaller cap.  This is the intended argument, still to be proved.  Preserve caps on
+**all** target coordinates, including auxiliaries and future catalogue fields (catalogue fields
+are to be defined by the forthcoming layer-3 specification).  A statement
 that recovers only a few labels from the observation does not weaken the lifting requirement.
 
-First applications: the coatom extension construction and the two ownerwise decoding proofs.
-Avoid a general categorical formalism before these examples work.
+First applications: the coatom extension construction and the two ownerwise decoding proofs
+(both to be defined by the forthcoming layer-3 specification).  Avoid a general categorical formalism before these examples work.
 
 ### 2. Types, partial faces, realizations, and explicit syntax
 
@@ -124,11 +131,13 @@ the completion criterion; its model-to-density direction still uses ordinary rec
 Construct the concrete legal finite extensions first.  Preserve arbitrary compatible input
 sizes, designated freshness, literal roots, arbitrary padding, bottom patterns, and literal-top
 prescriptions.  Prove the inherited long-row locality separately from the shared short-owner
-decoding argument.
+decoding argument (long-row locality and short-owner decoding are to be defined by the
+forthcoming layer-3 specification).
 
 The realization of a diagram over the root yields **one actual occurrence**.  Root, private
 cap, donor, and gate equations all concern it.  `Correct` records capped observations; LOW adds
-the forcing that recovers donor tops.  Exact recovery of proper labels and the lower bound for
+the forcing that recovers donor tops.  (Gate equations, `Correct`, and LOW are to be defined by
+the forthcoming layer-3 specification.)  Exact recovery of proper labels and the lower bound for
 high labels are different conclusions.  Agreement below one proper cutoff cannot distinguish a
 sufficiently high proper label from top.
 
@@ -226,7 +235,9 @@ Each checkpoint needs both its abstract API and a concrete application:
    cases.
 3. Realizations, literal syntax correspondence, countable chain construction and top-free
    existence.
-4. Ordinary/LOW/growth/stable receiving, with same-occurrence and all-cap audits.
+4. The receiving property of each finite extension construction (ordinary finite-cut
+   receiving, the constrained residual comparison, hollow growth, and the capped stable
+   candidate), with all its equations on one actual occurrence and at every permitted cap.
 5. Structural continuation, three terminal comparisons, unique limit expansions.
 6. Domain hypotheses of the counting theorem, independent bounds, thinness and all-countable
    bridge.
@@ -234,7 +245,7 @@ Each checkpoint needs both its abstract API and a concrete application:
 At every checkpoint: full build, strict per-file checks, no `sorry`, standard axioms only,
 universe/empty/repeated-coordinate regressions, and review of semantic statements.  Audit proof
 dependencies **and** import closures separately.  Passing CI is not a substitute for checking
-the mathematical specification.
+the statements against the roadmap and the semantic contract.
 
 The library may grow Lean while shortening the informal proof.  Prefer applications of standard
 logic and descriptive set theory, and exact statements of the constructions, over a smaller

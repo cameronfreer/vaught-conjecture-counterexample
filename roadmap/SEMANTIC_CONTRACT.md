@@ -1,5 +1,6 @@
-# Semantic specification for any reformulation or independent formalization
+# Semantic contract
 
+The meanings that any reformulation or independent formalization must preserve.
 The mathematical object is fixed by the construction itself, not by the shortened prose.
 
 1. **Logic and spectrum.** The language is relational, with one relation for each base-stage finite type. The sentence of the main theorem is in `L_{ω₁,ω}` with actual library satisfaction. Preserve the distinction between models on `ℕ` and all countable carriers; use the proved absence of finite models to identify their spectra. Do not replace perfect-set thinness with a continuum inequality.
@@ -10,7 +11,7 @@ The mathematical object is fixed by the construction itself, not by the shortene
 
 4. **Actual evaluation.** A tuple's partial type is exact under face maps. Absence of a face is mathematical information. Inside a finite partial master, a supported invisible tuple and a tuple not yet supported are different states. The final closure reformulation does not erase this construction-time distinction.
 
-5. **Model families and the sentence.** Use the original nonempty, exact consistency, covering, general-family, bottom-pattern, uniform-band, and high-grade-dominance requirements; the four families remain the required extension properties. The four families demand some suitable coface; do not strengthen them to exact realization of every prescribed coface. The sentence of the main theorem is the density sentence (the structural clauses and the one-point capped-extension clause); its equivalence with the sentence expressing the four families is a required theorem, not an optional companion. Conversely, do not weaken the actual finite extension constructions to mere catalogue membership.
+5. **Model families and the sentence.** Use the original nonempty, exact consistency, covering, general-family, bottom-pattern, uniform-band, and high-grade-dominance requirements; the four families remain the required extension properties. The four families demand some suitable coface; do not strengthen them to exact realization of every prescribed coface. The sentence of the main theorem is the density sentence (the structural clauses and the one-point capped-extension clause); its equivalence with the sentence expressing the four families is a required theorem, not an optional companion. Conversely, do not weaken the actual finite extension constructions to mere catalogue membership (the catalogue is to be defined by the forthcoming layer-3 specification).
 
 6. **Receiving.** Construct actual finite rows, then an actual occurrence over the literal root, then recover the required donor labels from that occurrence. Keep proper-value equality, literal-top equality, and above-threshold recovery of top separate. Arbitrary lawful ambient inputs and every allowed cap are part of the finite statement.
 

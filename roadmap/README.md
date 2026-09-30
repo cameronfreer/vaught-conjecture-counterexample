@@ -29,7 +29,7 @@ The first three conditions do not by themselves yield the lower bound. Nonempty 
 
 ## Library conventions
 
-**Terminology.** Use mathematical terminology only. Prose, docstrings, and comments speak of languages, sentences, structures, diagrams, realizations, constructions, hypotheses, and theorems, not of roles in a workflow. The name of a declaration describes its mathematical content (what is constructed, or what is asserted), not its place in the development. Workflow vocabulary (pull requests, CI, review, checkpoints) appears only in the contributing notes of the top-level `README.md` and in the checkpoint section of `IMPLEMENTATION.md`. The construction's own vocabulary (chart, face, root, cell, row, label, cap, cutoff, observation, occurrence, realization, expansion, domain, loss, block, band, grade, anchor, hollow, rigid core, top-free, bountiful, lawful section, plan, scheme, hull, extreme point, stage, type, donor, receiving) is mathematical and is used only in its defined sense. In particular:
+**Terminology.** Use mathematical terminology only. Prose, docstrings, and comments speak of languages, sentences, structures, diagrams, realizations, constructions, hypotheses, and theorems, not of roles in a workflow. The name of a declaration describes its mathematical content (what is constructed, or what is asserted), not its place in the development. Workflow vocabulary (pull requests, CI, review) appears only in the contributing notes of the top-level `README.md` and in the checkpoint section of `IMPLEMENTATION.md`. Document-structure vocabulary (layer, summit, checkpoint, acceptance) may appear in the structural sentences of the roadmap documents, which describe how the roadmap is organized. The construction's own vocabulary (chart, face, root, cell, row, label, cap, cutoff, observation, occurrence, realization, expansion, domain, loss, block, band, grade, anchor, hollow, rigid core, top-free, bountiful, lawful section, plan, scheme, hull, extreme point, stage, type, donor, receiving) is mathematical and is used only in its defined sense; the same keep-list contains **summit**, used only as the milestone label at the end of a layer. Some terms are used before their definitions are written: LOW, `Correct`, gate (and gate equations), catalogue fields, ownerwise (short-owner) decoding, long-row locality, orderly rows, legal (scheme, stage type), and the coatom extension construction. They are to be defined by the forthcoming layer-3 specification (layer 3 of `IMPLEMENTATION.md`); they are not on the keep-list, and no definition of them is implied here. In particular:
 
 | Do not write | Write instead |
 | --- | --- |
@@ -37,7 +37,7 @@ The first three conditions do not by themselves yield the lower bound. Nonempty 
 | consumer, client | the theorem that uses it; application; instance |
 | supplier, supply (as a noun) | the finite extension construction |
 | receiver | the receiving diagram; the receiving property |
-| (service) contract | the hypotheses on the extension family; hypotheses and conclusions |
+| service contract | the hypotheses on the extension family; hypotheses and conclusions |
 | installation, installer | the realization of a diagram over the root |
 | readback | recovery of the label (or donor data) from the occurrence or observation |
 | receipt | the equation(s) recording … |
@@ -45,7 +45,7 @@ The first three conditions do not by themselves yield the lower bound. Nonempty 
 | scheduler | the countable chain construction |
 | adapter, framework | a specialization; a general theorem |
 | debt, obligation, deliverable | a statement still to be proved; a prerequisite |
-| endpoint | the main theorem |
+| endpoint (of the development) | the main theorem |
 | export (a result) | prove, state, deduce |
 | handoff, pipeline, front end, package, budget | the mathematical map, construction, statement, or bound meant |
 
@@ -73,7 +73,7 @@ Use observations \(\operatorname{obs}_c(q)\), not a presumed lawful cap endomorp
 
 Define the recursive finite visible-face plans and prove their equivalence with the required subclass of finite convex geometries: every nonsingleton closed set has exactly two extreme points. Develop intersections, restriction, hulls, extremes, and the two-generator property. A two-generator hull need not have size two.
 
-Define the actual graded cells, semantic rows, extended-ordinal labels, visibility replacement, lawful sections, and all-permitted-cap bountifulness. Retain the order, availability, and locality laws from the semantic specification. Prove restriction, transport, pullback, zero/bottom cases, and the bounded transformations actually used by the construction. Guarded composition must retain its guards; do not declare a transitivity instance for a transformation relation that fails unrestricted composition.
+Define the actual graded cells, semantic rows, extended-ordinal labels, visibility replacement, lawful sections, and all-permitted-cap bountifulness. Retain the order, availability, and locality laws from the semantic contract (`SEMANTIC_CONTRACT.md`). Prove restriction, transport, pullback, zero/bottom cases, and the bounded transformations actually used by the construction. Guarded composition must retain its guards; do not declare a transitivity instance for a transformation relation that fails unrestricted composition.
 
 Define countable stage types and exact partial face maps, preserving undefined faces. Establish stage-reduction coherence and all countability results needed for the language and requests.
 
@@ -155,6 +155,6 @@ Combine the two bounds, then apply the no-finite-model bridge. Prove the exact \
 
 ## Validation and dependencies
 
-Use the pinned Lean and infinitary-logic versions together. Do not mix the current forked Mathlib pin with a separately pinned TauCeti dependency; “TauCeti-style” describes the human-owned layered specification, not a requirement to import the TauCeti repository.
+Use the pinned Lean and infinitary-logic versions together. Do not mix the current forked Mathlib pin with a separately pinned TauCeti dependency; “TauCeti-style” describes the human-owned layered roadmap, not a requirement to import the TauCeti repository.
 
-At every summit, elaborate all modules, audit all declarations for placeholders and unexpected axioms, and check the literal statement against the semantic specification. Maintain separate checks for module imports and proof-term dependencies. A small theorem can import a large compatibility layer; a smaller file count does not prove a smaller mathematical dependency. Modules kept for historical compatibility should depend on the core, not conversely.
+At every summit, elaborate all modules, audit all declarations for placeholders and unexpected axioms, and check the literal statement against the semantic contract. Maintain separate checks for module imports and proof-term dependencies. A small theorem can import a large compatibility layer; a smaller file count does not prove a smaller mathematical dependency. Modules kept for historical compatibility should depend on the core, not conversely.
