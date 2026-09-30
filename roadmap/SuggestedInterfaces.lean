@@ -155,10 +155,11 @@ set_option linter.hashCommand false in
 
 -- Mathlib's Fraïssé interface, applied by the classical limit of the top-free witnesses
 -- (`README.md`, Layer 0).  The classical existence theorem, representative classes, the
--- factorization of tuples through the age, orbit isolation, countable prime structures (all in
--- ComputableModelTheory), the orbit-formula rank bounds and local-automorphism preservation, and
--- the rank comparison of the Scott process (InfinitaryLogic) are not yet pinned
--- (`IMPLEMENTATION.md`, "Dependency pins"); they are not at the current pins and are not checked.
+-- factorization of tuples through the age, orbit isolation, and countable prime structures (all
+-- in ComputableModelTheory) are not yet pinned.  The orbit-formula rank bounds, local-automorphism
+-- preservation, and the rank comparison of the Scott process (InfinitaryLogic) are available at
+-- the intended pin `cca6949`, not yet in the manifest (`IMPLEMENTATION.md`, "Dependency pins").
+-- None of them is at the current pins, and none is checked.
 set_option linter.hashCommand false in
 #check FirstOrder.Language.age
 set_option linter.hashCommand false in

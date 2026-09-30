@@ -188,13 +188,13 @@ A1–A3 taking them as hypotheses is progress on A, not its completion (as in th
 
 ### A separate library milestone: bounded back-and-forth separation
 
-An intended generic interface of InfinitaryLogic, not yet pinned (`IMPLEMENTATION.md`,
-"Upstream building blocks"): an analytic family of pairwise nonisomorphic pairs has a uniform
-countable back-and-forth separation level, and with cocountable back-and-forth concentration
-(given here by the expansion domains, on which classes agree at bounded rank) this yields
-thinness without sentence minimality and without López–Escobar.  The forced back-and-forth tree
-construction and its rank comparison are statements still to be proved, and the imports of a
-tree-boundedness theorem need inspection first.  The working thinness route, from countable truth
+An intended generic interface of InfinitaryLogic, a statement still to be proved upstream and not
+yet pinned (`IMPLEMENTATION.md`, "Upstream building blocks", with its three checkpoints and
+dependency direction): for a countable relational language, every analytic set of pairs of
+structures on `ℕ` containing no isomorphic pair is uniformly separated at some countable
+back-and-forth level.  With cocountable back-and-forth concentration (given here by the
+expansion domains, on which classes agree at bounded level) this yields thinness without
+sentence minimality and without López–Escobar.  The working thinness route, from countable truth
 sides, is kept; the Gδ/Polish results stay optional; an improvement is described as reduced
 dependencies, not as a smaller trusted kernel.  Milestone A does not depend on this interface.
 
@@ -219,13 +219,17 @@ witnesses satisfy the setting by steps 3–6 of their construction.
 5. **primeness** (B3.4).
 
 The development proves the finite-chart statements of this chain: exact top-free receiving,
-chart homogeneity, the local automorphism property, and the orbit formulas.  The generic
-arguments are theorems of the two libraries, not yet pinned (`README.md`, Layer 0;
-`IMPLEMENTATION.md`, "Applications of library theorems"): "a definable orbit isolates its type",
-atomicity, and "countable atomic implies prime" from ComputableModelTheory, the last with targets
-of arbitrary cardinality and carriers in arbitrary universes; the internal rank bound from orbit
-formulas and the preservation of infinitary formulas by maps agreeing locally with automorphisms
-from InfinitaryLogic.
+chart homogeneity, the local automorphism property, and the orbit formulas: the two interfaces
+of `IMPLEMENTATION.md`, "Applications of library theorems".  Everything after them is an
+application of a library theorem, never reproved here: "a definable orbit isolates its type",
+atomicity, and "countable atomic implies prime" from ComputableModelTheory (not yet pinned), the
+last with targets of arbitrary cardinality and carriers in arbitrary universes; the orbit-formula
+threshold, the internal rank bound, and the preservation of infinitary formulas by maps agreeing
+locally with automorphisms from InfinitaryLogic (`exists_finite_orbit_threshold`,
+`orbitRank_lt_omega0_of_orbitFormula`, `internalScottRank_le_omega0_of_orbitFormulas`,
+`BoundedFormulaω.realize_embedding_comp_of_localAutomorphisms`,
+`BoundedFormulaω.realize_comp_append_of_localAutomorphisms`), available at the intended pin
+`cca6949`, not yet recorded in the manifest.
 
 ### B1. Joint embedding and amalgamation of top-free charts (in the core)
 
@@ -247,18 +251,18 @@ of `M` agrees with an automorphism on each finite tuple `a`: some automorphism `
 `e ∘ a = f ∘ a`.  Consequently every self-embedding preserves every `L_{ω₁,ω}` formula:
 `M ⊨ φ(a) ↔ M ⊨ φ(f ∘ a)`.
 
-**Hypotheses.**  The setting above (countability is used by the back-and-forth construction).
-Generic form of the consequence: `realize_comp_iff_of_agrees_with_automorphism` (proved).  Once
-pinned, the consequence is quoted from InfinitaryLogic's preservation theorem for a function
-`f : M → M` agreeing on each finite tuple with an automorphism (any language, no relationality,
-countability, infinitude, or nonemptiness), and the sketch lemma is its instance; the development
-proves the local agreement hypothesis.
+**Hypotheses.**  The setting above (countability is used by the back-and-forth construction, which
+is construction-specific).  The development proves homogeneity and the local agreement property
+(the second interface); the consequence is an application of InfinitaryLogic's
+`BoundedFormulaω.realize_embedding_comp_of_localAutomorphisms` (and, with finitely many
+parameters, `BoundedFormulaω.realize_comp_append_of_localAutomorphisms`), available at the
+intended pin: any language, no relationality, countability, infinitude, or nonemptiness, and
+injectivity of the map a consequence of its hypothesis.  It is not reproved here.
 
 **Upstream ingredients.**  `PotentialIso.ofExtensionFamily` (`Karp/PotentialIso`) for the family
 "both tuples sit at the same positions of actual charts of the same type" (arbitrary tuples, so
 repeated coordinates are allowed), `PotentialIso.family_bfEquiv`, and
-`exists_automorphism_of_bfEquiv_all` (`Scott/OrbitRank`); `BoundedFormulaω.realize_equiv`
-(`Lomega1omega/Theory`).  For a top-free witness, homogeneity is also immediate from
+`exists_automorphism_of_bfEquiv_all` (`Scott/OrbitRank`).  For a top-free witness, homogeneity is also immediate from
 ultrahomogeneity (`IsFraisseLimit`), the two actual charts spanning finite substructures of the
 definitional expansion (`README.md`, Layer 2, facts 2–4).  Orbit formulas and the rank bounds
 stay in the relational stage chart language `L_λ`.  Chart homogeneity in `L_λ` follows from
@@ -316,26 +320,18 @@ base reduct.  The development proves the orbit formulas; the generic theorems ar
    InfinitaryLogic's `isolatingFormula` (`ModelTheory/TypeIsolation`) is a different notion: an
    `L_{ω₁,ω}` formula isolating a realized infinitary type among the types realized in one
    structure.
-3. **Scott bound.**  First-order formulas have finite quantifier rank; back-and-forth
-   equivalence at the rank of an orbit formula determines the tuple's orbit.  Quote
-   `internalScottRank_le_of_orbits_determined` (`Scott/OrbitRank`) to obtain
+3. **Scott bound** (an application).  From the orbit formulas of B3.1, InfinitaryLogic's
+   `exists_finite_orbit_threshold` and `orbitRank_lt_omega0_of_orbitFormula` give each tuple a
+   finite threshold, and `internalScottRank_le_omega0_of_orbitFormulas` gives
    `internalScottRank ≤ ω` in the library's convention, the supremum over all tuples of the orbit
    rank plus one, `⨆ a, orbitRank a + 1` (so finite but unbounded orbit ranks give exactly `ω`).
-   Sketch: `internalScottRank_le_omega0_of_finite_levels` (proved) and
-   `internalScottRank_le_omega0_of_orbitDefinedBy` (target, under `[L.IsRelational]` only).  Not
-   yet pinned, from InfinitaryLogic: `qrank_toLω_lt_omega0` (any first-order
-   language), the explicit finite threshold for an orbit formula, and the internal rank bound
-   from orbit formulas for every tuple, both under `[L.IsRelational]` and without countability
-   or nonemptiness of `M`; the conclusion is `≤ ω`, not `< ω`, and not an equality.  The stage
-   chart language is relational, so the bound applies to `M` in it (not in the definitional
-   expansion).  At the current pins the ingredients are `Formula.toLω`, `Formula.realize_toLω`
-   (`Lomega1omega/Operations`), `BFEquiv_implies_agreeQR` (`Karp/CarrierTheorem`), and, between
-   the ordinal universes (`internalScottRank` uses `Ordinal.{w}` for a carrier in `Type w`, the
-   quantifier rank uses `Ordinal.{0}`), `BFEquiv.ofOrdinalLift` and `BFEquiv.toOrdinalLift`
-   (`Scott/BackAndForth`).  The rank comparison of the Scott process (InfinitaryLogic, not yet
-   pinned) then gives, under `[L.IsRelational] [Infinite M]`, stabilization at `ω` of
-   the process of length `δ` when `ω + 1 < δ`, and rank at most `ω` when the process terminates;
-   the rank of the process is not identified with the internal rank.
+   These are available at the intended pin `cca6949`, under `[L.IsRelational]` and without
+   countability, nonemptiness, or infinitude of `M`; they are not reproved here.  The stage chart
+   language is relational, so they apply to `M` in it, not in the definitional expansion.  The
+   conclusion is `≤ ω`, not `< ω`, and not an equality.  The rank comparison of the Scott process
+   (InfinitaryLogic, at the same pin) then gives, under `[L.IsRelational] [Infinite M]`,
+   stabilization at `ω` of the process of length `δ` when `ω + 1 < δ`, and rank at most `ω` when
+   the process terminates; the rank of the process is not identified with the internal rank.
 4. **Primeness** (generic, a separate theorem).  A countable structure all of whose types are
    isolated embeds elementarily into every model of its complete theory: enumerate only the
    source, extend finite tuples preserving every first-order formula, and take the union.  The

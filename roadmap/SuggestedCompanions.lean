@@ -10,7 +10,6 @@ import InfinitaryLogic.Descriptive.CodeTransport
 import InfinitaryLogic.Descriptive.ObservableConstancy
 import InfinitaryLogic.ModelTheory.FragmentLowenheimSkolem
 import InfinitaryLogic.Scott.OrbitRank
-import InfinitaryLogic.Scott.QuantifierRank
 import InfinitaryLogic.Scott.RefinementCount
 
 /-!
@@ -180,17 +179,17 @@ namespace Orbits
 
 variable {L : Language.{u, v}} {M : Type w} [L.Structure M]
 
-/-- **Local automorphisms preserve infinitary formulas.**  A self-map of `M` that agrees with an
-automorphism on the tuple `a` preserves every `L_{ω₁,ω}` formula at `a`.  Applied to a
-self-embedding agreeing with an automorphism on each finite tuple, it gives preservation of all
-infinitary formulas.  No proper self-embedding is constructed here. -/
-theorem realize_comp_iff_of_agrees_with_automorphism (f : M → M) {n : ℕ} (a : Fin n → M)
-    (hf : ∃ e : M ≃[L] M, ⇑e ∘ a = f ∘ a) (φ : L.Formulaω (Fin n)) :
-    Formulaω.Realize φ (f ∘ a) ↔ Formulaω.Realize φ a := by
-  obtain ⟨e, he⟩ := hf
-  rw [← he, Formulaω.realize_def, Formulaω.realize_def,
-    BoundedFormulaω.realize_equiv e φ a Fin.elim0]
-  exact iff_of_eq (congrArg _ (Subsingleton.elim _ _))
+/- The generic consequences of the two interfaces of B are library theorems, not restated here:
+InfinitaryLogic's `BoundedFormulaω.realize_comp_of_localAutomorphisms`,
+`BoundedFormulaω.realize_embedding_comp_of_localAutomorphisms`, and
+`BoundedFormulaω.realize_comp_append_of_localAutomorphisms` (preservation of infinitary formulas
+by maps agreeing locally with automorphisms), and `exists_finite_orbit_threshold`,
+`orbitRank_lt_omega0_of_orbitFormula`, and `internalScottRank_le_omega0_of_orbitFormulas`
+(`[L.IsRelational]`; the bound `≤ ω` from orbit formulas).  They are available at the intended
+InfinitaryLogic pin `cca6949` (`IMPLEMENTATION.md`, "Dependency pins"), which is not yet in the
+manifest, so they are named here and not `#check`ed.  The construction-side statements are the
+orbit formula of a chart (`orbitDefinedBy_chartOrbitFormula`, below) and the local agreement
+property. -/
 
 /-- The first-order formula `φ` defines the automorphism orbit of `a`. -/
 def OrbitDefinedBy {n : ℕ} (a : Fin n → M) (φ : L.Formula (Fin n)) : Prop :=
@@ -294,29 +293,6 @@ theorem nonempty_elementaryEmbedding_of_typesIsolated [Countable M]
     Nonempty (M ↪ₑ[L] N) := by
   sorry
 
-omit [Nonempty M] in
-/-- **Internal Scott rank at most `ω`** from orbits determined at finite levels.  This is the
-library's convention, `⨆ a, orbitRank a + 1`; no equality of ranks is asserted. -/
-theorem internalScottRank_le_omega0_of_finite_levels
-    (h : ∀ (n : ℕ) (a : Fin n → M), ∃ k : ℕ,
-      ∀ b : Fin n → M, BFEquiv (L := L) (k : Ordinal.{w}) n a b → ∃ e : M ≃[L] M, ⇑e ∘ a = b) :
-    internalScottRank (L := L) M ≤ Ordinal.omega0 := by
-  refine internalScottRank_le_of_orbits_determined fun n a => ?_
-  obtain ⟨k, hk⟩ := h n a
-  exact ⟨k, Ordinal.natCast_lt_omega0 k, hk⟩
-
-omit [Nonempty M] in
-/-- **Internal Scott rank at most `ω`** from first-order orbit formulas (target, generic).  The
-orbit formula has finite quantifier rank, and back-and-forth equivalence at that level forces
-agreement on it (`BFEquiv_implies_agreeQR`, under relationality, with no countability of `M`);
-`BFEquiv.ofOrdinalLift` and `BFEquiv.toOrdinalLift` pass between the ordinal universes.  The
-bound is `≤ ω`, not `< ω`.  Not yet pinned: InfinitaryLogic's internal rank bound
-from orbit formulas, with `qrank_toLω_lt_omega0` for the finite rank. -/
-theorem internalScottRank_le_omega0_of_orbitDefinedBy [L.IsRelational]
-    (h : ∀ (n : ℕ) (a : Fin n → M), ∃ φ : L.Formula (Fin n), OrbitDefinedBy a φ) :
-    internalScottRank (L := L) M ≤ Ordinal.omega0 := by
-  sorry
-
 end Orbits
 
 /-! ## C. A geometric obstruction
@@ -413,31 +389,15 @@ set_option linter.hashCommand false in
 set_option linter.hashCommand false in
 #check FirstOrder.Language.sentences_constant_off_countable
 set_option linter.hashCommand false in
-#check FirstOrder.Language.BoundedFormulaω.realize_equiv
-set_option linter.hashCommand false in
 #check FirstOrder.Language.PotentialIso.ofExtensionFamily
 set_option linter.hashCommand false in
 #check FirstOrder.Language.PotentialIso.family_bfEquiv
 set_option linter.hashCommand false in
 #check FirstOrder.Language.exists_automorphism_of_bfEquiv_all
 set_option linter.hashCommand false in
-#check FirstOrder.Language.BoundedFormula.toLω
-set_option linter.hashCommand false in
-#check FirstOrder.Language.Formula.realize_toLω
-set_option linter.hashCommand false in
-#check FirstOrder.Language.BFEquiv_implies_agree_formulas_omega
-set_option linter.hashCommand false in
-#check FirstOrder.Language.BFEquiv_implies_agreeQR
-set_option linter.hashCommand false in
-#check FirstOrder.Language.BFEquiv.ofOrdinalLift
-set_option linter.hashCommand false in
-#check FirstOrder.Language.BFEquiv.toOrdinalLift
-set_option linter.hashCommand false in
 #check FirstOrder.Language.realize_scottFormula_iff_BFEquiv
 set_option linter.hashCommand false in
 #check FirstOrder.Language.PotentialIso.countable_toEquiv_graph
-set_option linter.hashCommand false in
-#check FirstOrder.Language.internalScottRank_le_of_orbits_determined
 set_option linter.hashCommand false in
 #check FirstOrder.Language.bfEquiv_orbitRank_iff_exists_automorphism
 set_option linter.hashCommand false in

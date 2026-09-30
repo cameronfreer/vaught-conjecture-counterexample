@@ -435,9 +435,9 @@ In the pinned InfinitaryLogic:
   therefore be quoted, if at all, only for the final equality once both bounds are known, with
   its eventual-departure hypothesis discharged on the complement of the core;
 - the Gδ/Polish model-code spaces;
-- `internalScottRank_le_of_orbits_determined` (`Scott/OrbitRank`), which the orbit-formula
-  rank bound of `README.md`, Layer 0, applies; used only by the companion full-chart orbit
-  theory (milestone B of `COMPANIONS.md`).
+- `internalScottRank_le_of_orbits_determined` (`Scott/OrbitRank`), on which the library's
+  orbit-formula rank bound (`README.md`, Layer 0) rests; this repository does not apply it
+  directly, but quotes the rank bound (companion milestone B of `COMPANIONS.md`).
 
 In the pinned Mathlib (`Mathlib/ModelTheory/Fraisse.lean`): `age`, `Hereditary`,
 `JointEmbedding`, `Amalgamation`, `IsFraisse`, `IsUltrahomogeneous`, `IsFraisseLimit`,
@@ -454,25 +454,44 @@ factorization of tuples through the age (`exists_factor_tuple_of_age_subset`,
 `exists_factor_embedding_of_age_subset`), and orbit isolation and countable prime structures
 (`IsolatesTuple`, `IsAtomic`, `isolatesTuple_of_orbit_formula`, `isAtomic_of_orbit_formulas`,
 `IsolatesTuple.realize_iff`, `IsolatesTuple.typesWith_eq_singleton`,
-`exists_elementaryEmbedding_of_countable_atomic`); from InfinitaryLogic, `qrank_toLω_lt_omega0`,
-the explicit finite threshold and the internal rank bound from orbit formulas, the preservation
-of infinitary formulas by maps agreeing locally with automorphisms, and the rank comparison of
-the Scott process (`selfStabilizesCompletely_iff_orbitRank_le`,
+`exists_elementaryEmbedding_of_countable_atomic`); from InfinitaryLogic, at the intended pin
+`cca6949`, the rank comparison of the Scott process (`selfStabilizesCompletely_iff_orbitRank_le`,
 `bfStabilizationOrdinal_self_eq_iSup_orbitRank`, `stabilizesAt_of_orbitRank_le`,
 `rank_le_of_orbitRank_le`, `lift_rank_le_internalScottRank`,
 `internalScottRank_le_lift_rank_add_one`).  Their statement shapes and hypotheses are in
 `README.md`, Layer 0; where the repinned versions name them differently, those names prevail.
 
-**An intended generic interface of InfinitaryLogic (not yet pinned; a separate library
-milestone).**  An analytic family of pairwise nonisomorphic pairs of countable structures (on
-model codes) has a uniform countable back-and-forth separation level: one countable `α` at which
-every pair of the family fails to be back-and-forth equivalent.  With cocountable back-and-forth
-concentration (for each countable `α`, all but countably many classes are pairwise
-back-and-forth equivalent at level `α`, as on the expansion domains), this gives thinness
-without sentence minimality and without López–Escobar.  The forced back-and-forth tree
-construction and its rank comparison are statements still to be proved; a tree-boundedness
-theorem is available, but its imports need inspection before it is used.  The interface is
-recorded as an intended one.  It does not replace the working thinness route
+An available dependency, subject to the pin (the InfinitaryLogic pull request #141, merged at
+`cca6949`; the intended pin `cca6949` is not yet recorded in the manifest, so these names are not
+`#check`ed):
+`BoundedFormula.qrank_toLω_lt_omega0` (`Lomega1omega/QuantifierRank`);
+`orbit_determined_of_orbitFormula`, `exists_finite_orbit_threshold`,
+`orbitRank_lt_omega0_of_orbitFormula`, and `internalScottRank_le_omega0_of_orbitFormulas`
+(`Scott/OrbitFormulaThreshold`, under `[L.IsRelational]`, any carrier `M : Type w`, no
+countability or nonemptiness); `BoundedFormulaω.realize_comp_of_localAutomorphisms`,
+`BoundedFormulaω.realize_embedding_comp_of_localAutomorphisms`, and
+`BoundedFormulaω.realize_comp_append_of_localAutomorphisms` (`Lomega1omega/LocalAutomorphism`,
+any language and carrier).
+
+**An intended generic interface of InfinitaryLogic (not yet pinned; a statement still to be
+proved upstream, a separate library milestone).**  Statement: for a countable relational
+language, every analytic set `A` of pairs of structures on `ℕ` containing no isomorphic pair is
+uniformly separated at some countable back-and-forth level: there is `α < ω₁` such that no pair
+`(M, N) ∈ A` is back-and-forth equivalent at level `α`.  Three checkpoints: (1) a coded forced
+back-and-forth tree whose assignment is Borel, whose infinite branches correspond to
+isomorphisms, and whose rank is bounded below through back-and-forth equivalence, with the rank
+convention stated precisely (no ordinal offset assumed); (2) uniform separation from the
+boundedness of analytic families of well-founded trees; (3) two applications: cocountable
+concentration in one back-and-forth class at every countable level excludes a perfect
+isomorphism antichain, and an invariant relatively Borel subset of a Borel class of structures is
+saturated under some countable back-and-forth level, so that under concentration one side is
+countable in isomorphism classes.  Dependency direction: basic topology, analytic coding, and
+well-founded ranks, then analytic tree boundedness, then uniform back-and-forth separation, then
+thinness and invariant-Borel concentration; López–Escobar, invariant separation, and the
+model-theoretic boundedness route are excluded from this path by import and proof-dependency
+guards.  Combined with the cocountable concentration of the expansion domains (classes in `D_η`
+agree at back-and-forth level `η`), it would give thinness without sentence minimality and
+without López–Escobar.  It does not replace the working thinness route
 (`Sentenceω.isThinOnNatModels_of_countable_sentence_splits`, from countable truth sides), the
 Gδ/Polish model-code results stay optional, and any improvement it brings is described as reduced
 dependencies of the thinness proof, not as a smaller trusted kernel.
@@ -488,9 +507,14 @@ The intended repins, made together in `lakefile.toml` and `lake-manifest.json` o
 versions exist:
 
 - **InfinitaryLogic**: from the current revision (`a58f81a`, the merge of its pull request #134)
-  to a version containing the rank comparison of the Scott process (its pull request #140, merged
-  as `a640bbb`) and the orbit-formula rank theorems and local-automorphism preservation of
-  `README.md`, Layer 0.
+  to the intended pin `cca6949`, the merge of its pull request #141 on top of `a640bbb` (the
+  merge of #140): it contains the rank comparison of the Scott process (#140) and the
+  orbit-formula threshold and rank bound and local-automorphism preservation of `README.md`,
+  Layer 0 (#141).  Toolchain and Mathlib are unchanged.  The intended pin is not yet recorded in
+  the manifest; the roadmap cites these names as available at that pin, and no sketch
+  `#check`s them until the manifest moves.  The imports are the narrow modules
+  `InfinitaryLogic.Scott.OrbitFormulaThreshold` and
+  `InfinitaryLogic.Lomega1omega.LocalAutomorphism`, never `InfinitaryLogic.All`.
 - **ComputableModelTheory**: added as a direct dependency, at a version containing its pull
   requests #37 (merged: toolchain `v4.35.0-rc3` and its own repin of InfinitaryLogic, whose
   own pin, `38c4bae`, predates #140), #38 (extension-rich families) and #39 (representative
@@ -508,13 +532,10 @@ versions exist:
 
 **Intended dependencies not yet stated upstream:** the classical existence theorem, the
 factorization of tuples through the age, and orbit isolation and countable prime structures
-(ComputableModelTheory, where #38 and #39 are open); the orbit-formula threshold and rank bound
-and local-automorphism preservation are in the open pull request #141 of InfinitaryLogic
-(`62233a8`; among its statements `BoundedFormula.qrank_toLω_lt_omega0`,
-`orbit_determined_of_orbitFormula`, `exists_finite_orbit_threshold`,
-`internalScottRank_le_omega0_of_orbitFormulas`, and `realize_comp_of_localAutomorphisms`), with
-the hypotheses of `README.md`, Layer 0, (ii)–(iv).  No statement of this roadmap relies on any
-of them as pinned until this subsection records a pin containing it.
+(ComputableModelTheory, where #38 and #39 are open).  No statement of this roadmap relies on any
+of them as pinned until this subsection records a pin containing it.  The statements of
+InfinitaryLogic's pull request #141 are not in this list: they are merged, at the intended pin
+`cca6949` above.
 
 Until then, the statements of the two libraries not at the current pins (marked *not yet
 pinned* elsewhere) are named in prose only
@@ -527,26 +548,56 @@ The development produces the following, and only these, as hypotheses of library
 - **the ages:** for each countable block `η`, the family of finite top-free charts at `λ_η` as
   finite `L^h_λ`-structures, with finite generation, a countable inhabited index, hereditary
   closure, joint embedding, and amalgamation with the literal commuting square (steps 1–2);
-- **orbit formulas from finite charts:** in a countable top-free model read in the full,
-  relational stage chart language, for each finite tuple `a` (the empty tuple and repeated
-  coordinates included), the formula `θ_a(x̄) := ∃ z̄, P_p(z̄) ∧ ⋀_i x_i = z_{ι(i)}` of an
-  actual chart `z̄` of type `p` containing `a` at the positions `ι`, with the proof that it
-  defines the automorphism orbit of `a`; this uses chart homogeneity, which for a top-free
-  witness is ultrahomogeneity together with layer 2 and for an arbitrary countable top-free
-  model with finite-cut receiving is a back-and-forth argument (`COMPANIONS.md`, B2).  Orbit
-  formulas and the rank bounds stay in the relational stage chart language `L_λ`.  Chart
-  homogeneity in `L_λ` follows from ultrahomogeneity of the `L^h_λ`-structure `M`: the points
-  of two actual occurrences of one type span substructures isomorphic to the finite structure
-  of that type (step 4, by the factorization of tuples), the isomorphism between them extends
-  to an automorphism of `M`, and every automorphism of an `L^h_λ`-structure is an automorphism
-  of its `L_λ`-reduct.  Only this direction is used.  The converse holds for a realization with
-  its definitional expansion (`HULL_ALGEBRA.md`, §5), and for `M` once the reconstruction
-  roundtrip (`SEMANTIC_CONTRACT.md`, item 11) identifies its operations with the definable hull
-  operations of the reconstructed realization; it is not used;
-- **the local automorphism property:** every self-embedding of a countable top-free model agrees
-  with an automorphism on each finite tuple (`COMPANIONS.md`, B2).
+- **orbit formulas (first interface):** for every finite tuple `a` of a countable top-free model
+  read in the relational stage chart language `L_λ` (the empty tuple and repeated coordinates
+  included), a first-order formula of `L_λ` defining exactly its automorphism orbit: the
+  containing-chart formula `θ_a(x̄) := ∃ z̄, P_p(z̄) ∧ ⋀_i x_i = z_{ι(i)}` of an actual chart `z̄`
+  of type `p` containing `a` at the positions `ι` (`orbitDefinedBy_chartOrbitFormula` in
+  `SuggestedCompanions.lean`), from chart homogeneity;
+- **local automorphisms (second interface):** for each relevant self-embedding and finite tuple,
+  an automorphism agreeing with the self-embedding on the tuple (`COMPANIONS.md`, B2).
 
-It then quotes:
+Everything after these two interfaces is an application:
+
+| This development proves | The library supplies (InfinitaryLogic, pull request #141) |
+| --- | --- |
+| The containing-chart formula defines the tuple's orbit | `exists_finite_orbit_threshold` |
+| (the same) | `orbitRank_lt_omega0_of_orbitFormula` |
+| Every tuple has such an orbit formula | `internalScottRank_le_omega0_of_orbitFormulas` |
+| Local agreement of a self-embedding | `realize_embedding_comp_of_localAutomorphisms` |
+| The same local agreement, with finite parameters | `realize_comp_append_of_localAutomorphisms` |
+
+These are an available dependency at the intended pin `cca6949` ("Dependency pins"), which is not
+yet recorded in the manifest.  Three qualifications:
+
+1. Countability belongs to the construction-specific homogeneity proof (the back-and-forth of
+   `COMPANIONS.md`, B2, or ultrahomogeneity of the countable limit), not to the generic rank
+   theorems: the library's orbit-formula theorems hold on arbitrary carriers, but that does not
+   generalize the production of orbit formulas here.
+2. The rank conclusion is `≤ ω`: different tuples may need orbit formulas of different finite
+   ranks.  There is neither a uniform finite bound nor an equality with the rank of a Scott
+   process or with the expansion height.
+3. Atomicity and primeness remain separate applications: the orbit formulas feed both the
+   first-order route (isolation, atomicity, primeness, from ComputableModelTheory) and the
+   infinitary rank route (InfinitaryLogic); the rank route is not derived from atomicity.
+
+Languages: the Fraïssé construction uses the functional hull expansion `L^h_λ`; the orbit-rank
+applications use the relational stage chart language `L_λ` (the threshold and rank theorems need
+`[L.IsRelational]`).  They are connected by the automorphism correspondence in the one direction
+used: every automorphism of the `L^h_λ`-structure is an automorphism of its `L_λ`-reduct.  Chart
+homogeneity in `L_λ` follows from ultrahomogeneity of the `L^h_λ`-structure `M`: the points of two
+actual occurrences of one type span substructures isomorphic to the finite structure of that
+type (step 4, by the factorization of tuples), and the isomorphism between them extends to an
+automorphism of `M`.  The converse direction holds for a realization with its definitional
+expansion (`HULL_ALGEBRA.md`, §5), and for `M` once the reconstruction roundtrip
+(`SEMANTIC_CONTRACT.md`, item 11) identifies its operations with the definable hull operations;
+it is not used.  The language of each conclusion is stated with it: orbit formulas, orbit
+ranks, and the internal Scott rank are in `L_λ`; preservation of infinitary formulas by
+self-embeddings is in the language of the embedding.  The imports are
+`InfinitaryLogic.Scott.OrbitFormulaThreshold` and `InfinitaryLogic.Lomega1omega.LocalAutomorphism`,
+not `InfinitaryLogic.All`; they bring no López–Escobar or descriptive-set-theoretic machinery.
+
+The development also quotes:
 
 - classical existence (not yet pinned) and `isFraisse_representativeClass`
   (ComputableModelTheory), for the limit (step 3);
@@ -557,21 +608,16 @@ It then quotes:
   `exists_elementaryEmbedding_of_countable_atomic` (ComputableModelTheory), for the atomicity of
   a top-free witness and its primeness among models of its complete first-order theory
   (`COMPANIONS.md`, B3);
-- the finite threshold and the internal rank bound from orbit formulas (InfinitaryLogic, under
-  `[L.IsRelational]`, so applied in `L_λ`, not `L^h_λ`), for `internalScottRank ≤ ω`
-  (`COMPANIONS.md`, B3);
-- the local-automorphism preservation theorem (InfinitaryLogic), for the preservation of every
-  `L_{ω₁,ω}` formula on finite tuples by self-embeddings (`COMPANIONS.md`, B2);
 - the rank comparison of the Scott process (InfinitaryLogic), for stabilization at `ω` of the
   process of an infinite top-free witness of length `δ` with `ω + 1 < δ`, and its rank at most
   `ω` when it terminates.
 
-Qualifications: these conclusions concern the full stage chart language and the witness's own
-first-order theory, not its base reduct and not every model of the infinitary sentence; the
-internal rank is in the library's all-levels convention (`≤ ω`, not `< ω`, and no equality);
-the rank of the process is not identified with the internal rank, and neither with the block
-index or the expansion height.  Only the ages are needed for the main theorem; the orbit
-formulas and the local automorphism property are used by companion milestone B.
+These conclusions concern the full stage chart language and the witness's own first-order
+theory, not its base reduct and not every model of the infinitary sentence.  The rank of the
+process is not identified with the internal rank, nor either with the block index or the
+expansion height.  Only the ages are needed for the main theorem; the two interfaces are used by
+companion milestone B.  The separate bounded back-and-forth interface ("Upstream building
+blocks") is still needed for the proposed simplification of thinness.
 
 ## Automation and API discipline
 
