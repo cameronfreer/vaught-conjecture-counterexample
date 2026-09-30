@@ -16,8 +16,8 @@ $L_{\omega_1,\omega}$, Scott analysis, model-code spaces, Morley counting).
   authoritative; `VaughtConjecture.lean` is an intentionally empty root).  Organized by mathematical topic.
 - `roadmap/` — the human-owned specification: [`roadmap/README.md`](roadmap/README.md) is the
   mathematical roadmap and [`roadmap/IMPLEMENTATION.md`](roadmap/IMPLEMENTATION.md) the
-  implementation order with its checkpoints, with the semantic contract, expositions, sketches,
-  and sources alongside.  New mathematics is added only when it advances a roadmap target.
+  implementation order with its checkpoints, with the semantic specification, expositions,
+  sketches, and sources alongside.  New mathematics is added only when it advances a roadmap target.
 - `scripts/`, `.github/` — build and audit infrastructure.
 
 ## Building and checking
@@ -43,6 +43,10 @@ lines: implementation, review against the [TauCeti review
 rubrics](https://github.com/TauCetiProject/TauCetiReview/tree/main/rubrics) (used as guidance),
 then external review before merging.  Each PR names the roadmap layer it advances, or
 `Roadmap: none` for infrastructure.  Mathlib style throughout; no compatibility shims.
+Prose, docstrings, and declaration names use mathematical terminology only: they speak of
+mathematical objects, hypotheses, constructions, and theorems, never of workflow roles such as
+producer, consumer, supplier, or certificate (see the table under "Library conventions" in
+[`roadmap/README.md`](roadmap/README.md#library-conventions)).
 
 ## License
 

@@ -1,6 +1,6 @@
 # A definable binary-operation presentation of the canonical hull
 
-**Status:** a proposed mathematical deduction from the current hull and coordinate-formula theorems. The argument below is explicit, but this deduction has not been formalized or elaborated here. It is optional and is not a new premise of the spectrum endpoint. Existing source ingredients are documented in A11–A12 of `SOURCE_AUDIT.md`.
+**Status:** a proposed mathematical deduction from the current hull and coordinate-formula theorems. The argument below is explicit, but this deduction has not been formalized or elaborated here. It is optional and is not a new premise of the main theorem on the spectrum.
 
 ## Statement
 
@@ -68,6 +68,6 @@ The set \(\operatorname{cl}(A)\) contains \(A\) and is closed under every operat
 
 Each output is uniquely first-order definable over its two arguments; equation (1) gives the inclusion in definable closure. The expansion is definitional on the class, so it does not change its isomorphism classes or countable spectrum. It does not make the original class first-order axiomatizable.
 
-The existing finite-hull preservation theorems also let higher-stage realizations be compared with their base reducts. Once their immediate global finite-character corollaries are exported, the same hull-generation assertion can be expressed using the base language on those higher-stage models.
+The existing finite-hull preservation theorems also let higher-stage realizations be compared with their base reducts. Once their immediate global finite-character corollaries are proved, the same hull-generation assertion can be expressed using the base language on those higher-stage models.
 
 What this does **not** prove: equality with full definable or algebraic closure; quantifier elimination; unrestricted Fraïssé amalgamation; a two-point closed root for receiving; a bound on the size of a pair hull; or a first-order Vaught counterexample. To prove \(\operatorname{dcl}(A)\subseteq\operatorname{cl}(A)\), one would need a separate argument excluding unique definitions of points outside the hull. No such argument is supplied here.

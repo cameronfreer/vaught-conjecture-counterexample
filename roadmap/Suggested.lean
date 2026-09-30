@@ -6,15 +6,15 @@ import InfinitaryLogic.Conditional.MorleyPerfect
 /-!
 # Selected interfaces for the roadmap
 
-`README.md` is authoritative and nonexhaustive implementation freedom remains.
-This file is a HUMAN-OWNED TARGET SKETCH, NOT A PRODUCTION PROOF.
-The bodies marked `sorry` are explicit future theorem targets. Definitions have
-actual bodies. The other proof scripts have not been elaborated in the preparation
-environment either. No new verified Lean result is claimed.
+`README.md` is authoritative; this file is nonexhaustive and leaves the formalization free.
+This file is a HUMAN-OWNED SKETCH OF THEOREM STATEMENTS, NOT PART OF THE LIBRARY.
+The bodies marked `sorry` are theorem statements still to be proved. Definitions have
+actual bodies. The file is outside the build and is not checked by CI.
+No new verified Lean result is claimed.
 
 Mathlib and the pinned infinitary-logic library are intended dependencies.
 The concrete finite construction is specified in README and SEMANTIC_CONTRACT;
-proving these generic statements alone does not implement it.
+proving these general statements alone does not construct it.
 -/
 
 set_option autoImplicit false
@@ -75,7 +75,7 @@ theorem countable_of_subsingleton_cover {I : Type u} {C : Type v} [Countable C]
   rw [hij]
   exact hc j
 
-/- The concrete terminal client must prove its cover and the three comparisons.
+/- The concrete count of terminal classes must prove its cover and the three comparisons.
 Its index is (Σ n, StageType α n) ⊕ ℕ ⊕ Unit, not characteristic arity.
 The descriptions may overlap. Grade zero must yield the empty rigid core.
 -/
@@ -148,7 +148,7 @@ theorem exists_injective_loss_choice {Q : Type u} (D : Ordinal.{0} → Set Q)
       ∀ ξ, f ξ ∈ D ξ.1 \ D (ξ.1 + 1) := by
   sorry
 
-/- Concrete obligations, not replaced by the abstract lemmas:
+/- Concrete statements to prove, not replaced by the abstract lemmas:
 
 * define D from literal model expansion existence on isomorphism classes;
 * prove coherent countable-limit expansion;
@@ -157,9 +157,9 @@ theorem exists_injective_loss_choice {Q : Type u} (D : Ordinal.{0} → Set Q)
 * construct a TOP-FREE terminal model at each countable block;
 * use expansion uniqueness to put its base class in that block's loss.
 
-The high-level thinness adapter must use actual satisfaction on model codes.
+The thinness theorem must use actual satisfaction on model codes.
 Never put an assumed Borel structure on Q. Use the existing IL class-presentation,
-sentence-separation, small-vocabulary, and witnessed-Morley interfaces.
+sentence-separation, small-vocabulary, and witnessed-Morley theorems.
 -/
 
 end Domains
@@ -167,7 +167,7 @@ end Domains
 /-! ## Optional: finite-character closure and its naturality
 
 These definitions/theorems can be reused for any finite hull. They add no new
-receiving obligation and are not needed in the preferred spectrum endpoint.
+receiving requirement and are not needed for the main theorem on the spectrum.
 -/
 
 namespace Hull
@@ -209,23 +209,26 @@ assuming a record field that they already generate cl does not establish this.
 
 end Hull
 
-/-! ## Exact infinitary target, using actual library objects
+/-! ## The main theorem, stated with actual library objects
 
-The concrete language and sentence must be supplied by the independent finite
-construction, with the unchanged semantic contract. This predicate is not an
-assumption allowed to discharge any producer. The final theorem has no arguments
+The concrete language and sentence must come from the independent finite
+construction, with the semantic specification unchanged. This predicate may not be
+assumed in place of any construction. The final theorem has no hypotheses
 asserting this predicate or the receiving/classification conclusions.
 -/
 
 open FirstOrder Language
 
-def InfinitarySummit {L : Language.{0, 1}} [L.IsRelational]
+/-- The models of `φ` coded on `ℕ` have exactly `ℵ₁` isomorphism classes, and there is no
+perfect set of pairwise nonisomorphic such models. -/
+def HasThinAlephOneSpectrum {L : Language.{0, 1}} [L.IsRelational]
     [Countable (Σ n, L.Relations n)] (φ : L.Sentenceω) : Prop :=
   Cardinal.mk (Quotient (isoSetoid φ)) = Cardinal.aleph 1 ∧
     ¬ φ.HasPerfectSetOfPairwiseNonisomorphicNatModels
 
-/- Required concrete completion:
-  theorem concreteSummit : InfinitarySummit concreteSentence := ...
+/- Required concrete theorem:
+  theorem concreteSentence_hasThinAlephOneSpectrum :
+    HasThinAlephOneSpectrum concreteSentence := ...
 plus the no-finite-model theorem, actual structure/realization correspondence,
 and the all-countable-carrier spectrum and perfect-set variants.
 

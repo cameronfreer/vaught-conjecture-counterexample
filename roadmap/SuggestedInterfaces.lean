@@ -12,9 +12,9 @@ import InfinitaryLogic.TwoGeneratorCardinality
 /-! # Selected interfaces for the implementation roadmap
 
 `IMPLEMENTATION.md` is the specification; this file is nonexhaustive.  It contains no admitted
-proofs or axioms.  The abstract records below are contracts, NOT constructions of the concrete
-finite objects: supplying an instance of a record is never a substitute for the construction
-its fields describe.  The file lives outside the build; check it with
+proofs or axioms.  The abstract structures below state hypotheses; they are NOT constructions of
+the concrete finite objects: an instance of such a structure is never a substitute for the
+construction its fields describe.  The file lives outside the build; check it with
 
   lake env lean -DautoImplicit=false -DwarningAsError=true -Dlinter.mathlibStandardSet=true \
     roadmap/SuggestedInterfaces.lean
@@ -51,7 +51,8 @@ def Covering (R : C.Realization M) : Prop :=
   ∀ {n} (t : Fin n ↪ M), ∃ (m : ℕ) (u : Fin m ↪ M) (f : Fin n ↪ Fin m),
     f.trans u = t ∧ (R.eval u).isSome
 
-/-- All receipts of one installation must be attached to this same occurrence. -/
+/-- The equations recording one realization of a diagram over a root must all concern this
+same occurrence. -/
 structure Occurrence (R : C.Realization M) where
   arity : ℕ
   tuple : Fin arity ↪ M
@@ -83,8 +84,9 @@ theorem preserves_all_compatible_observations
   obtain ⟨y, hy, ho⟩ := hlift b a c h
   exact (congrArg (observe c) (hinj (hx.trans hy.symm))).trans ho
 
-/-- The observation consumer AFTER countable-loss induction. Supplying this record is
-not proof of the countable-loss or receiving constructions in the README. -/
+/-- Hypotheses of the observation-filtration argument, applied AFTER countable-loss induction.
+An instance of this structure is not a proof of the countable-loss or receiving constructions
+in the README. -/
 structure ObservationFiltration (Q : Type 1) (O : Type u) (truth : O → Q → Prop) where
   domain : Ordinal.{0} → Set Q
   complement_countable : ∀ η, η < (Cardinal.aleph 1).ord → (domain η)ᶜ.Countable
@@ -135,12 +137,12 @@ set_option linter.hashCommand false in
 
 FiniteSemantics: construct the concrete ChartSystem and prove countability of charts,
   legal face restriction, stage reduction, lawful lifting with all retained caps.
-Receiving: exact literal root + one actual occurrence + requested capped/LOW receipts.
-Scheduling: finite master + root absorption + supported-invisible permanence + chain union.
+Receiving: exact literal root + one actual occurrence + requested capped/LOW equations on it.
+ChainConstruction: finite master + root absorption + supported-invisible permanence + union.
 StableLift: consistency-only uniqueness; consistency/covering lawfulness; cap modelhood.
 Comparison: finite-donor one-sided transfer; rooted BF; singleton terminal conditions.
 Domains: expansion uniqueness + limit existence; terminal losses countable and nonempty.
-Endpoint: generic countable-loss induction + this observation consumer + Scott/DST library.
+MainTheorem: countable-loss induction + the observation filtration above + Scott/DST library.
 
 Every data definition also needs extensionality, identity/composition, projection and
 transport APIs. Use directional simp rules for these; never a transitivity instance for
