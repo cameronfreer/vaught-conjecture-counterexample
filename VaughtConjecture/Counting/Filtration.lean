@@ -23,9 +23,9 @@ The **persistent core** `Filtration.core` is `⋂ ξ < ω₁, D ξ`.  Countable 
 (`Filtration.compl_countable`) are InfinitaryLogic's `InfinitaryLogic.compl_countable_of_loss`,
 not restated.  The counting theorems are in `VaughtConjecture.Counting.Separation`.
 
-Cf. the proof of [Mon, Lemma XII.8]: for a minimally unbounded sentence [Mon, Definition XII.4],
-the unique unbounded `≡_β`-classes of its models, `β < ω₁`, decrease and are continuous at
-limits.  No back-and-forth relation is used here.
+Cf. the proof of [Mon, Lemma XII.8]: for a scattered, minimally unbounded sentence
+[Mon, Definition XII.4], the unique unbounded `≡_β`-classes of its models, `β < ω₁`, decrease
+and are continuous at limits.  No back-and-forth relation is used here.
 
 ## Indexing
 
@@ -44,7 +44,7 @@ data: every such domain is empty (`(aleph 1).ord = ω₁` by `Cardinal.ord_aleph
 
 Minimally unbounded sentences are [Mon, Definition XII.4], and the decreasing unbounded
 `≡_β`-classes are in the proof of [Mon, Lemma XII.8], for A. Montalbán, *Computable Structure
-Theory: Beyond the Arithmetic* (draft, 22 April 2025).
+Theory: Beyond the arithmetic* (draft, 22 April 2025).
 -/
 
 namespace VaughtConjecture.Counting
