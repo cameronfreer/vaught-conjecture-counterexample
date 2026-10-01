@@ -176,7 +176,9 @@ place to carriers in different universes; `qrank_lt_omega_one` (`Lomega1omega/Qu
 (`Descriptive/CodeTransport`).  For thinness in scatteredness form (`README.md`, Layer 6):
 `exists_uniform_bfSeparation` (`Descriptive/BFSeparation`), `bfEquivSetoid`
 (`ModelTheory/MorleyCounting`), `Perfect.mk_eq_continuum` and
-`HasCantorAntichainOn.hasPerfectAntichainOn` (`Descriptive/PerfectAntichain`).  The statements of
+`HasCantorAntichainOn.hasPerfectAntichainOn` (`Descriptive/PerfectAntichain`), all available at the
+pin; from Mathlib, `Set.offDiag` and `Setoid.comapQuotientEquiv`.  Their compiled application is
+`isThinOn_of_countable_bfClasses`.  The statements of
 `VaughtConjecture.MainTheorem.Scatteredness`, all generic, belong upstream; their destinations are
 recorded in `IMPLEMENTATION.md`, "Placement record".
 
@@ -207,10 +209,13 @@ A generic theorem of InfinitaryLogic, at our pinned dependency (signatures check
 every analytic set of pairs of structures on `ℕ` containing no isomorphic pair is uniformly
 separated at some countable back-and-forth level (`exists_uniform_bfSeparation`,
 `Descriptive/BFSeparation`). With cocountable back-and-forth concentration (given here by the
-expansion domains, on which classes agree at bounded level) this yields thinness without sentence
-minimality and without López–Escobar. The working thinness route, from countable truth sides, is
-kept; the Gδ/Polish results stay optional; an improvement is described as reduced dependencies, not
-as a smaller trusted kernel. Milestone A does not depend on this interface.
+expansion domains, on which classes agree at bounded level) this is expected to yield thinness
+without sentence minimality and without López–Escobar; that composition for the expansion domains is
+not elaborated.  The compiled application is for full presentations with scattered tails
+(`densitySentence_isThinOnNatModels_of_scatteredTails`, through `isThinOn_of_countable_bfClasses`).
+The working thinness route, from countable truth sides, is kept; the Gδ/Polish results stay
+optional; an improvement is described as reduced dependencies, not as a smaller trusted kernel.
+Milestone A does not depend on this interface.
 
 **Scatteredness and minimality.** Cocountable concentration in one back-and-forth class at every
 level is minimality, and it is more than thinness needs. Countably many back-and-forth classes at
@@ -252,12 +257,14 @@ a relational language, so for it the core is named by one unary relation per cor
 The development proves the finite-chart statements of this chain: exact top-free receiving, chart
 homogeneity, the local automorphism property, and the orbit formulas: the two interfaces of
 `IMPLEMENTATION.md`, "Applications of library theorems".  Everything after them is an application of
-a library theorem, never reproved here: "a definable orbit isolates its type", atomicity, and
-"countable atomic implies prime" from ComputableModelTheory (at the pin), the last with targets of
-arbitrary cardinality and carriers in arbitrary universes; the orbit-formula threshold, the internal
-rank bound, and the preservation of infinitary formulas by maps agreeing locally with automorphisms
-from InfinitaryLogic (`exists_finite_orbit_threshold`, `orbitRank_lt_omega0_of_orbitFormula`,
-`internalScottRank_le_omega0_of_orbitFormulas`,
+a library theorem, never reproved here (those of InfinitaryLogic compiled on abstract hypotheses in
+`SuggestedCompanions.lean`, section B; those of ComputableModelTheory recorded there as targets;
+none yet instantiated to the top-free witnesses): "a definable orbit isolates its type", atomicity,
+and "countable atomic implies prime" from ComputableModelTheory (at the pin), the last with targets
+of arbitrary cardinality and carriers in arbitrary universes; the orbit-formula threshold, the
+internal rank bound, and the preservation of infinitary formulas by maps agreeing locally with
+automorphisms from InfinitaryLogic (`exists_finite_orbit_threshold`,
+`orbitRank_lt_omega0_of_orbitFormula`, `internalScottRank_le_omega0_of_orbitFormulas`,
 `BoundedFormulaω.realize_embedding_comp_of_localAutomorphisms`,
 `BoundedFormulaω.realize_comp_append_of_localAutomorphisms`), available at our pinned dependency
 `098fb36` (signatures checked).

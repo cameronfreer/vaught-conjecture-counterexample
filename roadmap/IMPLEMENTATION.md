@@ -495,7 +495,8 @@ their notions live; "this repository" means the layers of `README.md`.
    ages give extension pairs in both directions, hence an isomorphism: ComputableModelTheory's
    rooted uniqueness (`isExtensionPair_of_age_subset`,
    `exists_equiv_comp_eq_of_age_subset_of_countable`, available at the pin `0401c95`, signatures
-   checked; Mathlib-only imports), and
+   checked; Mathlib-only imports; its application to full structures is expected, not
+   elaborated), and
    eventually Mathlib's `ModelTheory/Fraisse`; the relational exact-age comparison for
    realizations, in this repository (layer 4).
 5. *A countable list of allowed full extension laws at each level, and a full presentation
@@ -725,11 +726,12 @@ listed there. Dependency direction: basic topology, analytic coding, and well-fo
 analytic tree boundedness, then uniform back-and-forth separation, then thinness and invariant-Borel
 concentration; López–Escobar, invariant separation, and the model-theoretic boundedness route are
 excluded from this path by import and proof-dependency guards. Combined with the cocountable
-concentration of the expansion domains (classes in `D_η` agree at back-and-forth level `η`), it
-would give thinness without sentence minimality and without López–Escobar. It does not replace the
-working thinness route (`Sentenceω.isThinOnNatModels_of_countable_sentence_splits`, from countable
-truth sides), the Gδ/Polish model-code results stay optional, and any improvement it brings is
-described as reduced dependencies of the thinness proof, not as a smaller trusted kernel.
+concentration of the expansion domains (classes in `D_η` agree at back-and-forth level `η`), it is
+expected to give thinness without sentence minimality and without López–Escobar (not elaborated; the
+compiled composition, `isThinOn_of_countable_bfClasses`, is applied to full presentations). It does
+not replace the working thinness route (`Sentenceω.isThinOnNatModels_of_countable_sentence_splits`,
+from countable truth sides), the Gδ/Polish model-code results stay optional, and any improvement it
+brings is described as reduced dependencies of the thinness proof, not as a smaller trusted kernel.
 
 `SuggestedInterfaces.lean` checks representative names, so a pin bump that removes one fails
 when the sketch is checked (the checks are run by CI).  Coding a `Type w` carrier on `ℕ` needs a
@@ -738,7 +740,11 @@ single universe covers it.
 
 ### Dependency pins
 
-The pins, recorded in `lakefile.toml` and `lake-manifest.json`, and the intended next move:
+The pins, recorded in `lakefile.toml` and `lake-manifest.json`, and the intended next move.
+"Available at the pin (signatures checked)" means that `SuggestedInterfaces.lean` `#check`s the
+name and its signature at the pin; it does not assert that the hypotheses hold in any setting of
+this roadmap.  An application is claimed only where a compiled theorem applying the statement is
+named (`README.md`, Layer 0):
 
 - **InfinitaryLogic**: the current pin is `098fb36`, the merge of its pull request #146 (the
   analytic-set closure lemmas in a neutral module), reached from `cca6949` (the merge of its pull
@@ -806,7 +812,10 @@ The development produces the following, and only these, as hypotheses of library
 - **local automorphisms (second interface):** for each relevant self-embedding and finite tuple,
   an automorphism agreeing with the self-embedding on the tuple (`COMPANIONS.md`, B2).
 
-Everything after these two interfaces is an application.  The table has five lines for four facts
+Everything after these two interfaces is an application: those of InfinitaryLogic are compiled on
+abstract hypotheses in `SuggestedCompanions.lean`, section B (one-line applications, proved); those
+of ComputableModelTheory are recorded there as `sorry` targets; none is yet instantiated to a
+construction of this repository.  The table has five lines for four facts
 proved here: the first fact is split over two lines, one for each library theorem it feeds.
 
 | This development proves | The library supplies (InfinitaryLogic, pull request #141) |
@@ -847,7 +856,8 @@ self-embeddings is in the language of the embedding.  The imports are
 `InfinitaryLogic.Scott.OrbitFormulaThreshold` and `InfinitaryLogic.Lomega1omega.LocalAutomorphism`,
 not `InfinitaryLogic.All`; they bring no López–Escobar or descriptive-set-theoretic machinery.
 
-The development also quotes:
+The development is also to quote (expected applications, not elaborated here; each library
+statement is available at the pin):
 
 - classical existence (available at the pin) and `isFraisse_representativeClass`
   (ComputableModelTheory), for the limit (step 3);

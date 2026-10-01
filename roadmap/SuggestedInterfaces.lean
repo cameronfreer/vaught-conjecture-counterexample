@@ -141,6 +141,9 @@ theorem countable_truth_side (θ : Sent) :
 end SentenceAgreementDomains
 
 -- Pinned upstream entry points: these #checks deliberately fail if the chosen APIs disappear.
+-- A #check establishes a name and its signature at the pin, not that its hypotheses hold in any
+-- setting of the roadmap; an application is claimed only where a compiled theorem applying it
+-- is named (`README.md`, Layer 0).
 set_option linter.hashCommand false in
 #check FirstOrder.Language.PotentialIso.ofExtensionFamily
 set_option linter.hashCommand false in
@@ -225,7 +228,8 @@ set_option linter.hashCommand false in
 
 -- InfinitaryLogic at our pinned dependency `098fb36` (signatures checked): uniform
 -- back-and-forth separation of analytic sets of nonisomorphic pairs of codes
--- (`Descriptive/BFSeparation`), used for thinness in scatteredness form (`README.md`, Layer 6).
+-- (`Descriptive/BFSeparation`); its compiled application is `isThinOn_of_countable_bfClasses`
+-- (`VaughtConjecture.MainTheorem.Scatteredness`; `README.md`, Layer 6).
 set_option linter.hashCommand false in
 #check FirstOrder.Language.exists_uniform_bfSeparation
 set_option linter.hashCommand false in
@@ -262,7 +266,7 @@ set_option linter.hashCommand false in
 -- entry module `ComputableModelTheory.Classical` (Mathlib-only imports): classical Fraïssé
 -- existence (`ModelTheory/FraisseExistence`), rooted universality and uniqueness
 -- (`ModelTheory/RootedExtension`), and isolation and primeness over named finite parameters
--- (`ModelTheory/NamedParameters`).
+-- (`ModelTheory/NamedParameters`).  No application of these is compiled in this repository.
 set_option linter.hashCommand false in
 #check FirstOrder.Language.exists_fraisseSequence
 set_option linter.hashCommand false in
