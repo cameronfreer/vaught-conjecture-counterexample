@@ -228,7 +228,9 @@ compiled use in this repository.  From InfinitaryLogic, available at the pin (si
 checked): `exists_uniform_bfSeparation` (`Descriptive/BFSeparation`), applied in
 `exists_forall_not_codeBFEquiv_of_isClosed` and through it in `isThinOn_of_countable_bfClasses`;
 `bfEquivSetoid` (`ModelTheory/MorleyCounting`), in `bfEquivSetoid_eq_comap` and
-`isThinOnNatModels_of_countable_bfClasses`; `Perfect.mk_eq_continuum`
+`isThinOnNatModels_of_countable_bfClasses`, and in `MainTheorem/Assembly` in
+`FullPresentations.HasScatteredTails`, `HasScatteredTails.countable_quotient`, and
+`HasScatteredTails.of_countable_quotient`; `Perfect.mk_eq_continuum`
 (`Descriptive/PerfectAntichain`), in `not_countable_of_perfect`; and
 `HasCantorAntichainOn.hasPerfectAntichainOn` (`Descriptive/PerfectAntichain`), used only by the
 example of `MainTheorem/Examples` showing that countably many back-and-forth classes are needed,
