@@ -8,6 +8,7 @@ import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.IntervalCases
 import VaughtConjecture.Geometry.IntervalPlan
 import VaughtConjecture.Realization.Model
+import VaughtConjecture.Realization.Partial
 
 /-!
 # No model at a successor stage, and a consistent covering realization that is not a model
@@ -24,14 +25,15 @@ occurrence, so no realization at stage `1` with an occurrence is a model; since 
 occurrence, there is no model at stage `1` (`not_isModel_of_stage_one`).  The source defines
 models only at limit stages [Kni26, Definition 3.2.1].
 
-**Consistency and covering are not modelhood.**  The *chart* of a stage type `q` on `k` points is
-the realization on `Fin k` whose evaluation is the face map of `q`.  It is exactly consistent and
-covering, by the composition and identity laws of face maps, and its types are legal when `q` is.
-The chart of the face `pointOfPair` of the legal two-point stage type `pair` along the initial
-segment lives on the nonempty carrier `Fin 1` and satisfies every law of a model except
-existential closure.  It is not a model (`not_isModel_chart_pointOfPair`): `pair` is a coface of
-`pointOfPair` with its own scheme, so the saturation instance of that scheme is nonempty, but no
-tuple on two points of `Fin 1` exists.
+**Consistency and covering are not modelhood.**  The face realization of a stage type `q` on `k`
+points (`StageType.faceRealization`) is the realization on `Fin k` whose evaluation is the face map
+of `q`.  It is exactly consistent and covering, by the composition and identity laws of face maps,
+and its types are legal when `q` is.  The face realization of the face `pointOfPair` of the legal
+two-point stage type `pair` along the initial segment lives on the nonempty carrier `Fin 1` and
+satisfies every law of a model except existential closure.  It is not a model
+(`not_isModel_faceRealization_pointOfPair`): `pair` is a coface of `pointOfPair` with its own
+scheme, so the saturation instance of that scheme is nonempty, but no tuple on two points of
+`Fin 1` exists.
 
 ## References
 
@@ -73,30 +75,6 @@ realize a label in `[0, ω)`. -/
 private theorem not_isModel_of_stage_one {M : Type} (R : Realization.{0, 0} 1 M) : ¬ R.IsModel :=
   fun h ↦ h.nonempty_occurrence.elim fun x ↦ not_realizesOver_uniformityFamily_zero R x.tuple
     (h.uniformity x 0 Ordinal.isSuccPrelimit_zero zero_lt_one)
-
-/-! ### Charts -/
-
-/-- The **chart** of a stage type on `k` points: the realization on `Fin k` evaluating a tuple by
-the face map of the type. -/
-private noncomputable def chart {α : Ordinal.{0}} {k : ℕ} (q : StageType.{0} α k) :
-    Realization.{0, 0} α (Fin k) where
-  eval t := restrictFace t q
-
-/-- A chart is exactly consistent: face maps compose. -/
-private theorem isConsistent_chart {α : Ordinal.{0}} {k : ℕ} (q : StageType.{0} α k) :
-    (chart q).IsConsistent :=
-  fun _ _ t _ f h ↦ (restrictFace_trans q t f h).symm
-
-/-- A chart is covering: every tuple is a face of the identity tuple. -/
-private theorem isCovering_chart {α : Ordinal.{0}} {k : ℕ} (q : StageType.{0} α k) :
-    (chart q).IsCovering :=
-  fun _ t ↦ ⟨k, Function.Embedding.refl _, t, by ext; simp, by simp [chart]⟩
-
-/-- The types of the chart of a legal stage type are legal. -/
-private theorem isLegal_chart {α : Ordinal.{0}} {k : ℕ} {q : StageType.{0} α k} (hq : q.IsLegal)
-    {n : ℕ} (t : Fin n ↪ Fin k) (p : StageType.{0} α n) (hp : (chart q).eval t = some p) :
-    p.IsLegal :=
-  hq.restrictFace t hp
 
 /-! ### A legal stage type on two points -/
 
@@ -143,23 +121,24 @@ private noncomputable def pointOfPair : StageType.{0} 0 1 :=
 private theorem pair_mem_cofaces : pair ∈ pointOfPair.cofaces :=
   ⟨isLegal_pair, restrictFace_of_mem _ _ castSucc_mem_faces_pair⟩
 
-/-- The occurrence of `pointOfPair` in its chart: the identity tuple. -/
-private noncomputable def pointOccurrence : (chart pointOfPair).Occurrence :=
+/-- The occurrence of `pointOfPair` in its face realization: the identity tuple. -/
+private noncomputable def pointOccurrence : pointOfPair.faceRealization.Occurrence :=
   ⟨1, Function.Embedding.refl _, pointOfPair, restrictFace_refl _⟩
 
-/-- The chart of `pointOfPair` satisfies every law of a model except existential closure. -/
-private theorem chart_pointOfPair_laws :
+/-- The face realization of `pointOfPair` satisfies every law of a model except existential
+closure. -/
+private theorem faceRealization_pointOfPair_laws :
     Nonempty (Fin 1) ∧ (∀ ⦃n : ℕ⦄ (t : Fin n ↪ Fin 1) (p : StageType.{0} 0 n),
-      (chart pointOfPair).eval t = some p → p.IsLegal) ∧
-      (chart pointOfPair).IsConsistent ∧ (chart pointOfPair).IsCovering :=
-  ⟨inferInstance, fun _ ↦ isLegal_chart (isLegal_pair.comap _ castSucc_mem_faces_pair),
-    isConsistent_chart _,
-    isCovering_chart _⟩
+      pointOfPair.faceRealization.eval t = some p → p.IsLegal) ∧
+      pointOfPair.faceRealization.IsConsistent ∧ pointOfPair.faceRealization.IsCovering :=
+  ⟨inferInstance, hasLegalTypes_faceRealization (isLegal_pair.comap _ castSucc_mem_faces_pair),
+    isConsistent_faceRealization, isCovering_faceRealization⟩
 
-/-- **Consistency and covering are not modelhood**: the chart of `pointOfPair` is not a model.
-Its saturation instance for the scheme of `pair` is nonempty, but a realizing tuple would embed
-two points into `Fin 1`. -/
-private theorem not_isModel_chart_pointOfPair : ¬ (chart pointOfPair).IsModel := fun h ↦ by
+/-- **Consistency and covering are not modelhood**: the face realization of `pointOfPair` is not a
+model.  Its saturation instance for the scheme of `pair` is nonempty, but a realizing tuple would
+embed two points into `Fin 1`. -/
+private theorem not_isModel_faceRealization_pointOfPair :
+    ¬ pointOfPair.faceRealization.IsModel := fun h ↦ by
   obtain ⟨u, -⟩ := h.saturation pointOccurrence pair.toScheme ⟨pair, pair_mem_cofaces, rfl⟩
   have h2 := Fintype.card_le_of_embedding u
   rw [Fintype.card_fin, Fintype.card_fin] at h2

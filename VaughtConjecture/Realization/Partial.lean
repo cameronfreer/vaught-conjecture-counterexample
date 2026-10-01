@@ -10,8 +10,14 @@ import VaughtConjecture.Language.Structure
 
 A stage type `P` on `k` points is a finite **chart**: a tuple `f : Fin n ↪ Fin k` of its points
 has the type `restrictFace f P` of the face it spans when that face is closed, and no type when it
-is not.  These types are exactly consistent, by the guarded composition law of face maps
-(`StageType.restrictFace_trans`).  This module reads a chart as a realization on `ℕ`.
+is not.  This module reads a chart as a realization, on its own points and on `ℕ`.
+
+**The face realization of a chart** (`StageType.faceRealization`) is the realization on `Fin k`
+whose evaluation is the face map of the chart.  It is exactly consistent, by the guarded
+composition law of face maps (`StageType.restrictFace_trans`), covering, since every tuple of
+points is a face of the identity tuple, and its types are legal when the chart is
+(`StageType.isConsistent_faceRealization`, `StageType.isCovering_faceRealization`,
+`StageType.hasLegalTypes_faceRealization`).
 
 **Supported tuples.**  A chart on `k` points is placed on the initial segment `{0, …, k - 1}` of
 `ℕ`.  A tuple `t : Fin n ↪ ℕ` is **supported** by the chart (`StageType.IsSupported k t`) when its
@@ -19,9 +25,9 @@ points lie in that segment; it then spans the face `IsSupported.face` of the cha
 supported tuple are supported (`IsSupported.trans`), and a supported tuple stays supported by
 every larger chart (`IsSupported.mono`).
 
-**The partial realization of a chart** (`StageType.chartRealization`) gives a supported tuple the
-type of the face it spans, and an unsupported tuple no type.  There are therefore two kinds of
-untyped tuples:
+**The partial realization of a chart** (`StageType.chartRealization`) is the face realization
+placed on `ℕ`: it gives a supported tuple the type of the face it spans, and an unsupported tuple
+no type.  There are therefore two kinds of untyped tuples:
 
 * a **supported invisible** tuple: its points are points of the chart, but they do not span a
   closed face (`StageType.chartRealization_eval_eq_none_iff`).  This is a property of the chart:
@@ -36,22 +42,22 @@ The partial realization of a chart is exactly consistent
 (`StageType.isConsistent_chartRealization`), its types are legal when the chart is
 (`StageType.hasLegalTypes_chartRealization`), it gives the points of the chart, in order, the type
 of the whole chart (`StageType.chartRealization_eval_valEmbedding`), and its typed tuples are
-supported (`StageType.isSupported_of_isSome`).
+supported (`StageType.isSupported_of_isSome_chartRealization_eval`).  It is not covering: a point
+outside `{0, …, k - 1}` lies in no typed tuple.
 
-**Role.**  The partial realization of a chart is the finite structure of the chart in the age of
-top-free charts: its relations are literally the visible faces of the chart with their types.  It
-is also the local input of the reconstruction of a realization from the classical limit of that
-age: the evaluation at a tuple of the limit is the evaluation, in the partial realization of one
-chart, of a tuple through which it factors.  Exact consistency of the reconstruction is therefore
-checked in one partial realization, and there a supported invisible tuple (an invisible face of
-the chart) is distinct from an unsupported tuple (one outside the chart).
+**Role.**  The face realization of a chart gives the relations of the finite structure of the
+chart on its points (roadmap, Layer 2): its visible faces with their types, an invisible face
+carrying no relation.  The partial realization is its placement on `ℕ`, and restricted to the
+points `{0, …, k - 1}` it gives the same relations.  It is the local input of the reconstruction
+of a realization from the classical limit of the age of top-free charts: the evaluation at a
+tuple of the limit is the evaluation at a tuple of the points of one chart through which it
+factors, a supported tuple.  Exact consistency of the reconstruction is therefore checked in one
+partial realization.
 
 ## Placement
 
-The use of these statements in the construction of the top-free witnesses (the finite charts, the
-reconstruction of partial evaluation, and its exact consistency), and the import boundary they
-serve, are described in `roadmap/README.md`, Layer 2 and "The top-free witnesses: the finite age
-and its classical limit".
+The use of these statements in the construction of the countable models from finite charts is
+described in `roadmap/README.md`, Layer 2.
 
 ## References
 
@@ -130,14 +136,44 @@ theorem isSupported_trans_valEmbedding (f : Fin n ↪ Fin k) :
     (isSupported_trans_valEmbedding f).face = f :=
   rfl
 
-/-! ### The partial realization of a chart -/
+/-! ### The face realization of a chart -/
 
 variable (P : StageType.{u} α k)
 
-/-- The **partial realization of a chart** on the initial segment `{0, …, k - 1}` of `ℕ`: a
-supported tuple has the type of the face it spans, and an unsupported tuple has no type. -/
+/-- The **face realization** of a chart: the realization on its points `Fin k` in which a tuple of
+points has the type of the face it spans, and no type when that face is not closed. -/
+noncomputable def faceRealization : Realization.{u, 0} α (Fin k) where
+  eval f := restrictFace f P
+
+variable {P}
+
+/-- A tuple of points of a chart has, in its face realization, the type of the face it spans. -/
+@[simp] theorem faceRealization_eval (f : Fin n ↪ Fin k) :
+    P.faceRealization.eval f = restrictFace f P :=
+  rfl
+
+/-- **The face realization of a chart is exactly consistent**: face maps compose. -/
+theorem isConsistent_faceRealization : P.faceRealization.IsConsistent :=
+  fun _ _ t _ f h ↦ (restrictFace_trans P t f h).symm
+
+/-- **The face realization of a chart is covering**: every tuple of points is a face of the
+identity tuple, which has the type of the whole chart. -/
+theorem isCovering_faceRealization : P.faceRealization.IsCovering :=
+  fun _ t ↦ ⟨k, Function.Embedding.refl _, t, by ext; simp, by simp⟩
+
+/-- The types of the face realization of a legal chart are legal. -/
+theorem hasLegalTypes_faceRealization (hP : P.IsLegal) : P.faceRealization.HasLegalTypes :=
+  fun _ t _ h ↦ hP.restrictFace t h
+
+/-! ### The partial realization of a chart -/
+
+variable (P)
+
+/-- The **partial realization of a chart** on the initial segment `{0, …, k - 1}` of `ℕ`: the face
+realization placed on `ℕ`.  A supported tuple has the type of the face it spans, and an
+unsupported tuple has no type. -/
 noncomputable def chartRealization : Realization.{u, 0} α ℕ where
-  eval t := if h : IsSupported k t then restrictFace h.face P else none
+  eval t := if h : IsSupported k t then P.faceRealization.eval h.face else none
 
 variable {P} {t : Fin n ↪ ℕ}
 
@@ -158,7 +194,8 @@ theorem chartRealization_eval_eq_none_iff (h : IsSupported k t) :
   rw [chartRealization_eval_of_isSupported h, restrictFace_eq_none_iff]
 
 /-- A typed tuple is supported. -/
-theorem isSupported_of_isSome (h : (P.chartRealization.eval t).isSome) : IsSupported k t := by
+theorem isSupported_of_isSome_chartRealization_eval (h : (P.chartRealization.eval t).isSome) :
+    IsSupported k t := by
   by_contra hn
   rw [chartRealization_eval_of_not_isSupported hn] at h
   exact Bool.false_ne_true h
@@ -186,7 +223,7 @@ theorem chartRealization_eval_of_restrictFace_eq_some (hk : k ≤ m) {Q : StageT
 /-- **The partial realization of a chart is exactly consistent.** -/
 theorem isConsistent_chartRealization : P.chartRealization.IsConsistent := by
   intro m n t p f ht
-  have hs : IsSupported k t := isSupported_of_isSome (by rw [ht]; rfl)
+  have hs : IsSupported k t := isSupported_of_isSome_chartRealization_eval (by rw [ht]; rfl)
   rw [chartRealization_eval_of_isSupported hs] at ht
   rw [chartRealization_eval_of_isSupported (hs.trans f), hs.face_trans]
   exact (restrictFace_trans P _ f ht).symm
@@ -194,7 +231,7 @@ theorem isConsistent_chartRealization : P.chartRealization.IsConsistent := by
 /-- The types of the partial realization of a legal chart are legal. -/
 theorem hasLegalTypes_chartRealization (hP : P.IsLegal) : P.chartRealization.HasLegalTypes := by
   intro n t p ht
-  have hs : IsSupported k t := isSupported_of_isSome (by rw [ht]; rfl)
+  have hs : IsSupported k t := isSupported_of_isSome_chartRealization_eval (by rw [ht]; rfl)
   rw [chartRealization_eval_of_isSupported hs] at ht
   exact hP.restrictFace _ ht
 
