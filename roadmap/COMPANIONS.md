@@ -25,9 +25,10 @@ two-point form, is a statement still to be proved here, with its argument given 
 joint embedding and amalgamation of top-free charts, is part of the core: it is step 2 of the
 construction of the top-free witnesses (`README.md`, section "The top-free witnesses: the finite age
 and its classical limit"), and its entry below is a pointer.  The deliberate `sorry` targets of the
-sketch, the ingredients marked "to be located or added upstream", and the theorems marked "available
-upstream" or "prospective" (statements of the two libraries that are not at the current pins;
-`IMPLEMENTATION.md`, "Dependency pins") are what is not yet formalized or available.  The status
+sketch, the ingredients marked "to be located or added upstream", and the theorems marked
+"prospective" (statements of ComputableModelTheory, and the bounded back-and-forth separation
+interface, neither available upstream nor pinned; `IMPLEMENTATION.md`, "Dependency pins") are what
+is not yet formalized or available.  The status
 covers these statements only, not their non-claims and not further definability claims (`README.md`,
 "Status of the optional results").
 
@@ -50,10 +51,10 @@ covers these statements only, not their non-claims and not further definability 
   for the lower bound (layer 6), and `w_η ∈ Q` its base class; by expansion uniqueness `w_η` lies
   in the loss at `η`.
 
-Upstream names below were checked in the pinned InfinitaryLogic and Mathlib, except those marked
-"available upstream" or "prospective", whose names are those specified for the pinned versions of
-InfinitaryLogic and ComputableModelTheory (`README.md`, Layer 0); the sketch `#check`s only names
-available at the current pins.
+Upstream names below were checked in the pinned InfinitaryLogic (`cca6949`, signatures checked)
+and Mathlib, except those marked "prospective", whose names are those specified here for
+ComputableModelTheory (`README.md`, Layer 0); the sketch `#check`s or applies only names available
+at the current pins.
 
 ## Milestone A — filtration and infinitary theory
 
@@ -235,9 +236,8 @@ rank bound, and the preservation of infinitary formulas by maps agreeing locally
 from InfinitaryLogic (`exists_finite_orbit_threshold`, `orbitRank_lt_omega0_of_orbitFormula`,
 `internalScottRank_le_omega0_of_orbitFormulas`,
 `BoundedFormulaω.realize_embedding_comp_of_localAutomorphisms`,
-`BoundedFormulaω.realize_comp_append_of_localAutomorphisms`), available upstream (merged in
-InfinitaryLogic at `cca6949`), not yet available at our pinned dependency: applied here once the
-manifest records that pin and the signatures are checked against it.
+`BoundedFormulaω.realize_comp_append_of_localAutomorphisms`), available at our pinned dependency
+`cca6949` (signatures checked).
 
 ### B1. Joint embedding and amalgamation of top-free charts (in the core)
 
@@ -268,11 +268,11 @@ u`, hence `e ∘ a = f ∘ a`.  Only the preservation of the chart relations by 
 automorphisms are those of the `L_λ`-structure.  Sketch: `AgreesLocally` and `agreesLocally_of_hom`
 (proved, for any map preserving the chart relations).  The consequence is an application of
 InfinitaryLogic's `BoundedFormulaω.realize_embedding_comp_of_localAutomorphisms` (and, with finitely
-many parameters, `BoundedFormulaω.realize_comp_append_of_localAutomorphisms`), available upstream
-(merged in InfinitaryLogic at `cca6949`), not yet available at our pinned dependency: applied here
-once the manifest records that pin and the signatures are checked against it.  Its hypotheses: any
-language, no relationality, countability, infinitude, or nonemptiness, and injectivity of the map a
-consequence of its hypothesis.  It is not reproved here.
+many parameters, `BoundedFormulaω.realize_comp_append_of_localAutomorphisms`), available at our
+pinned dependency `cca6949` (signatures checked).  Its hypotheses: any language, no relationality,
+countability, infinitude, or nonemptiness, and injectivity of the map a consequence of its
+hypothesis.  It is not reproved here.  Sketch: `realize_iff_realize_comp_of_agreesLocally` and
+`realize_comp_append_iff_of_agreesLocally` (proved, one-line applications).
 
 **Upstream ingredients.**  `PotentialIso.ofExtensionFamily` (`Karp/PotentialIso`) for the family
 "both tuples sit at the same positions of actual charts of the same type" (arbitrary tuples, so
@@ -338,16 +338,16 @@ base reduct.  The development proves the orbit formulas; the generic theorems ar
    `exists_finite_orbit_threshold` and `orbitRank_lt_omega0_of_orbitFormula` give each tuple a
    finite threshold, and `internalScottRank_le_omega0_of_orbitFormulas` gives `internalScottRank ≤
    ω` in the library's convention, the supremum over all tuples of the orbit rank plus one, `⨆ a,
-   orbitRank a + 1` (so finite but unbounded orbit ranks give exactly `ω`). These are available
-   upstream (merged in InfinitaryLogic at `cca6949`), not yet available at our pinned dependency:
-   applied here once the manifest records that pin and the signatures are checked against it.  They
-   hold under `[L.IsRelational]` and without countability, nonemptiness, or infinitude of `M`; they
-   are not reproved here.  The stage chart language is relational, so they apply to `M` in it, not
-   in the definitional expansion.  The conclusion is `≤ ω`, not `< ω`, and not an equality.  The
-   rank comparison of the Scott process (InfinitaryLogic, on the same terms) then gives, under
-   `[L.IsRelational] [Infinite M]`, stabilization at `ω` of the process of length `δ` when `ω + 1 <
-   δ`, and rank at most `ω` when the process terminates; the rank of the process is not identified
-   with the internal rank.
+   orbitRank a + 1` (so finite but unbounded orbit ranks give exactly `ω`). These are available at
+   our pinned dependency `cca6949` (signatures checked).  They hold under `[L.IsRelational]` and
+   without countability, nonemptiness, or infinitude of `M`; they are not reproved here.  Sketch:
+   `exists_finite_threshold_of_orbitDefinedBy`, `orbitRank_lt_omega0_of_orbitDefinedBy`, and
+   `internalScottRank_le_omega0_of_orbitDefinedBy` (proved, one-line applications).  The stage
+   chart language is relational, so they apply to `M` in it, not in the definitional expansion.  The
+   conclusion is `≤ ω`, not `< ω`, and not an equality.  The rank comparison of the Scott process
+   (InfinitaryLogic, on the same terms) then gives, under `[L.IsRelational] [Infinite M]`,
+   stabilization at `ω` of the process of length `δ` when `ω + 1 < δ`, and rank at most `ω` when the
+   process terminates; the rank of the process is not identified with the internal rank.
 4. **Primeness** (generic, a separate theorem).  A countable structure all of whose types are
    isolated embeds elementarily into every model of its complete theory: enumerate only the
    source, extend finite tuples preserving every first-order formula, and take the union.  The

@@ -47,7 +47,7 @@ below.  The companion milestones are summarized under "Companion boundaries".
 
 ## Environment
 
-Lean `v4.35.0-rc3`; InfinitaryLogic at the revision pinned in `lakefile.toml`; Mathlib
+Lean `v4.35.0-rc3`; InfinitaryLogic at the revision pinned in `lakefile.toml` (`cca6949`); Mathlib
 inherited from InfinitaryLogic's manifest.  Nothing else is imported at present.  After the
 repin under "Dependency pins" below, ComputableModelTheory is the one further dependency.
 Search the pinned libraries first and delete any local lemma that duplicates one already
@@ -456,18 +456,15 @@ theorem), the factorization of tuples through the age (`exists_factor_tuple_of_a
 `exists_factor_embedding_of_age_subset`), and orbit isolation and countable prime structures
 (`IsolatesTuple`, `IsAtomic`, `isolatesTuple_of_orbit_formula`, `isAtomic_of_orbit_formulas`,
 `IsolatesTuple.realize_iff`, `IsolatesTuple.typesWith_eq_singleton`,
-`exists_elementaryEmbedding_of_countable_atomic`); from InfinitaryLogic, available upstream (merged
-at `a640bbb`, contained in `cca6949`) and not yet available at our pinned dependency, applied here
-once the manifest records
-that pin and the signatures are checked against it: the rank comparison of the Scott process
-(`selfStabilizesCompletely_iff_orbitRank_le`, `bfStabilizationOrdinal_self_eq_iSup_orbitRank`,
-`stabilizesAt_of_orbitRank_le`, `rank_le_of_orbitRank_le`, `lift_rank_le_internalScottRank`,
-`internalScottRank_le_lift_rank_add_one`).  Their statement shapes and hypotheses are in
-`README.md`, Layer 0; where the repinned versions name them differently, those names prevail.
+`exists_elementaryEmbedding_of_countable_atomic`).  Their statement shapes and hypotheses are in
+`README.md`, Layer 0; where the pinned versions name them differently, those names prevail.
 
-Available upstream (merged in InfinitaryLogic at `cca6949`, its pull request #141), not yet
-available at our pinned dependency: applied here once the manifest records that pin and the
-signatures are checked against it.  No sketch assumes or `#check`s them before then:
+In the pinned InfinitaryLogic (`cca6949`, signatures checked): the rank comparison of the Scott
+process (its pull request #140, merged at `a640bbb`: `selfStabilizesCompletely_iff_orbitRank_le`,
+`bfStabilizationOrdinal_self_eq_iSup_orbitRank`, `stabilizesAt_of_orbitRank_le`,
+`rank_le_of_orbitRank_le`, `lift_rank_le_internalScottRank`,
+`internalScottRank_le_lift_rank_add_one`), and the statements of its pull request #141, which
+`SuggestedInterfaces.lean` `#check`s:
 `BoundedFormula.qrank_toLω_lt_omega0` (`Lomega1omega/QuantifierRank`);
 `orbit_determined_of_orbitFormula`, `exists_finite_orbit_threshold`,
 `orbitRank_lt_omega0_of_orbitFormula`, and `internalScottRank_le_omega0_of_orbitFormulas`
@@ -506,17 +503,15 @@ single universe covers it.
 
 ### Dependency pins
 
-The intended repins, made together in `lakefile.toml` and `lake-manifest.json` once the upstream
-versions exist:
+The pins, recorded in `lakefile.toml` and `lake-manifest.json`, and the intended addition:
 
-- **InfinitaryLogic**: from the current revision (`a58f81a`, the merge of its pull request #134) to
-  `cca6949`, the merge of its pull request #141 on top of `a640bbb` (the merge of
-  #140): it contains the rank comparison of the Scott process (#140) and the orbit-formula threshold
-  and rank bound and local-automorphism preservation of `README.md`, Layer 0 (#141).  Toolchain and
-  Mathlib are the same as at the current pin.  These statements are available upstream (merged in
-  InfinitaryLogic at `cca6949`), not yet available at our pinned dependency: applied here once the
-  manifest records that pin and the signatures are checked against it.  No sketch assumes or
-  `#check`s them before then.  The imports are the narrow modules
+- **InfinitaryLogic**: the current pin is `cca6949`, the merge of its pull request #141 on top of
+  `a640bbb` (the merge of #140), reached from `a58f81a` (the merge of its pull request #134) by
+  this repository's pull request #30.  It contains the rank comparison of the Scott process (#140)
+  and the orbit-formula threshold and rank bound and local-automorphism preservation of
+  `README.md`, Layer 0 (#141).  Toolchain and Mathlib are the same as at `a58f81a`.  These
+  statements are available at our pinned dependency `cca6949` (signatures checked).  The imports
+  are the narrow modules
   `InfinitaryLogic.Scott.OrbitFormulaThreshold` and
   `InfinitaryLogic.Lomega1omega.LocalAutomorphism`, never `InfinitaryLogic.All`.
 - **ComputableModelTheory**: added as a direct dependency, at a version containing its pull
@@ -538,13 +533,12 @@ versions exist:
 theorem, the factorization of tuples through the age, and orbit isolation and countable prime
 structures (ComputableModelTheory, where #38 and #39 are open).  No statement of this roadmap relies
 on any of them as pinned until this subsection records a pin containing it.  The statements of
-InfinitaryLogic's pull request #141 are not in this list: they are available upstream (merged in
-InfinitaryLogic at `cca6949`), not yet available at our pinned dependency: applied here once the
-manifest records that pin and the signatures are checked against it.
+InfinitaryLogic's pull requests #140 and #141 are not in this list: they are available at our
+pinned dependency `cca6949` (signatures checked).  The bounded back-and-forth separation interface
+of "Upstream building blocks" is also prospective.
 
-Until then, the statements of the two libraries not at the current pins (marked *available
-upstream* or *prospective* elsewhere) are named in prose only
-(`README.md`, Layer 0), never `#check`ed in the sketches.
+Until then, the prospective statements are named in prose only (`README.md`, Layer 0), never
+`#check`ed in the sketches.
 
 ### Applications of library theorems
 
@@ -573,9 +567,8 @@ proved here: the first fact is split over two rows, one for each library theorem
 | Local agreement | `BoundedFormulaω.realize_embedding_comp_of_localAutomorphisms` |
 | Local agreement, finite parameters | `BoundedFormulaω.realize_comp_append_of_localAutomorphisms` |
 
-These are available upstream (merged in InfinitaryLogic at `cca6949`), not yet available at our
-pinned dependency: applied here once the manifest records that pin and the signatures are checked
-against it ("Dependency pins").  Three qualifications:
+These are available at our pinned dependency `cca6949` (signatures checked; "Dependency pins").
+Three qualifications:
 
 1. Countability belongs to the construction-specific homogeneity proof (the back-and-forth of
    `COMPANIONS.md`, B2, or ultrahomogeneity of the countable limit), not to the generic rank

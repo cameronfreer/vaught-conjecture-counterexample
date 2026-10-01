@@ -11,6 +11,8 @@ import InfinitaryLogic.Descriptive.ObservableConstancy
 import InfinitaryLogic.ModelTheory.FragmentLowenheimSkolem
 import InfinitaryLogic.Scott.OrbitRank
 import InfinitaryLogic.Scott.RefinementCount
+import InfinitaryLogic.Scott.OrbitFormulaThreshold
+import InfinitaryLogic.Lomega1omega.LocalAutomorphism
 
 /-!
 # Selected statements for the companion milestones
@@ -27,12 +29,12 @@ file with
     roadmap/SuggestedCompanions.lean
 
 The three sections correspond to the three milestones: (A) the filtration and the theory `T∞`, (B)
-homogeneity of the top-free charts and the orbit theory, (C) the geometric obstruction. The generic
-theorems of B are quoted from the two libraries: from ComputableModelTheory, prospective (neither
-available upstream nor pinned); from InfinitaryLogic, available upstream and not yet available at
-our pinned dependency (`IMPLEMENTATION.md`, "Dependency pins"); the corresponding `sorry` targets
-below record their statement shapes at the current pins and are not `#check`ed against those
-libraries.
+homogeneity of the top-free charts and the orbit theory, (C) the geometric obstruction.  The generic
+theorems of B are quoted from the two libraries: from InfinitaryLogic, at our pinned dependency
+`cca6949` (signatures checked), as the proved applications at the end of section B; from
+ComputableModelTheory, prospective (neither available upstream nor pinned), whose `sorry` targets
+below record their statement shapes and are not `#check`ed (`IMPLEMENTATION.md`, "Dependency
+pins").
 -/
 
 set_option autoImplicit false
@@ -181,18 +183,12 @@ namespace Orbits
 
 variable {L : Language.{u, v}} {M : Type w} [L.Structure M]
 
-/- The generic consequences of the two interfaces of B are library theorems, not restated here:
-InfinitaryLogic's `BoundedFormulaω.realize_comp_of_localAutomorphisms`,
-`BoundedFormulaω.realize_embedding_comp_of_localAutomorphisms`, and
-`BoundedFormulaω.realize_comp_append_of_localAutomorphisms` (preservation of infinitary formulas by
-maps agreeing locally with automorphisms), and `exists_finite_orbit_threshold`,
-`orbitRank_lt_omega0_of_orbitFormula`, and `internalScottRank_le_omega0_of_orbitFormulas`
-(`[L.IsRelational]`; the bound `≤ ω` from orbit formulas).  They are available upstream (merged in
-InfinitaryLogic at `cca6949`), not yet available at our pinned dependency: applied here once the
-manifest records that pin and the signatures are checked against it (`IMPLEMENTATION.md`,
-"Dependency pins").  Until then no statement here assumes them, and they are named, not
-`#check`ed.  The construction-side statements are the orbit formula of a chart
-(`orbitDefinedBy_chartOrbitFormula`, below) and the local agreement property. -/
+/- The generic consequences of the two interfaces of B are library theorems of InfinitaryLogic,
+available at our pinned dependency `cca6949` (signatures checked), and are not reproved here: the
+applications at the end of this section quote them.  The construction-side statements are the
+orbit formula of a chart (`orbitDefinedBy_chartOrbitFormula`) and the local agreement property
+(`agreesLocally_of_hom`).  The narrow modules `Scott/OrbitFormulaThreshold` and
+`Lomega1omega/LocalAutomorphism` are imported, never `InfinitaryLogic.All`. -/
 
 /-- The first-order formula `φ` defines the automorphism orbit of `a`. -/
 def OrbitDefinedBy {n : ℕ} (a : Fin n → M) (φ : L.Formula (Fin n)) : Prop :=
@@ -263,8 +259,8 @@ def CoversTuples (eval : {n : ℕ} → (Fin n ↪ M) → Option (Chart n)) : Pro
 
 /-- The **local agreement property** of a self-map `f`: on each finite tuple it agrees with an
 automorphism.  For `f` a self-embedding this is the hypothesis of InfinitaryLogic's
-`BoundedFormulaω.realize_embedding_comp_of_localAutomorphisms` (available upstream at
-`cca6949`, not `#check`ed here). -/
+`BoundedFormulaω.realize_embedding_comp_of_localAutomorphisms` (at our pinned dependency
+`cca6949`). -/
 def AgreesLocally (f : M → M) : Prop :=
   ∀ (n : ℕ) (a : Fin n → M), ∃ e : M ≃[L] M, ⇑e ∘ a = f ∘ a
 
@@ -287,6 +283,49 @@ theorem agreesLocally_of_hom {eval : {n : ℕ} → (Fin n ↪ M) → Option (Cha
   rw [← hu, ← Function.comp_assoc, he, hv, Function.comp_assoc]
 
 end ChartOrbitFormula
+
+/-! ### The applications (InfinitaryLogic, at our pinned dependency `cca6949`)
+
+Each statement is a one-line application of a library theorem to the two interfaces; the
+hypotheses `OrbitDefinedBy a φ` and `AgreesLocally ⇑g` are, by definition, the library's `hφ` and
+`hg`. -/
+
+/-- **A finite threshold from an orbit formula** (B3.3), by `exists_finite_orbit_threshold`. -/
+theorem exists_finite_threshold_of_orbitDefinedBy [L.IsRelational] {n : ℕ} {a : Fin n → M}
+    {φ : L.Formula (Fin n)} (h : OrbitDefinedBy a φ) :
+    ∃ β : Ordinal.{w}, β < Ordinal.omega0 ∧
+      ∀ b : Fin n → M, BFEquiv (L := L) β n a b → ∃ e : M ≃[L] M, ⇑e ∘ a = b :=
+  exists_finite_orbit_threshold h
+
+/-- **Finite orbit rank from an orbit formula** (B3.3), by
+`orbitRank_lt_omega0_of_orbitFormula`. -/
+theorem orbitRank_lt_omega0_of_orbitDefinedBy [L.IsRelational] {n : ℕ} {a : Fin n → M}
+    {φ : L.Formula (Fin n)} (h : OrbitDefinedBy a φ) : orbitRank (L := L) a < Ordinal.omega0 :=
+  orbitRank_lt_omega0_of_orbitFormula h
+
+/-- **Internal Scott rank at most `ω`** from an orbit formula for every tuple (B3.3), by
+`internalScottRank_le_omega0_of_orbitFormulas`.  The bound is `≤ ω`, not `< ω`, and not an
+equality; the internal rank is in the library's convention `⨆ a, orbitRank a + 1`. -/
+theorem internalScottRank_le_omega0_of_orbitDefinedBy [L.IsRelational]
+    (h : ∀ (n : ℕ) (a : Fin n → M), ∃ φ : L.Formula (Fin n), OrbitDefinedBy a φ) :
+    internalScottRank (L := L) M ≤ Ordinal.omega0 :=
+  internalScottRank_le_omega0_of_orbitFormulas h
+
+/-- **Self-embeddings preserve infinitary formulas** (B2), in the orientation
+`M ⊨ φ(a) ↔ M ⊨ φ(g ∘ a)`, by `BoundedFormulaω.realize_embedding_comp_of_localAutomorphisms`.
+No relationality, countability, infinitude, or nonemptiness. -/
+theorem realize_iff_realize_comp_of_agreesLocally (g : M ↪[L] M) (hg : AgreesLocally (L := L) ⇑g)
+    {n : ℕ} (φ : L.BoundedFormulaω Empty n) (a : Fin n → M) :
+    φ.Realize Empty.elim a ↔ φ.Realize Empty.elim (⇑g ∘ a) :=
+  (BoundedFormulaω.realize_embedding_comp_of_localAutomorphisms g hg φ a).symm
+
+/-- **The same with finitely many parameters** (B2), by
+`BoundedFormulaω.realize_comp_append_of_localAutomorphisms`: one automorphism, chosen for the
+appended tuple, moves both. -/
+theorem realize_comp_append_iff_of_agreesLocally (g : M ↪[L] M) (hg : AgreesLocally (L := L) ⇑g)
+    {m n : ℕ} (φ : L.BoundedFormulaω (Fin m) n) (v : Fin m → M) (a : Fin n → M) :
+    φ.Realize (⇑g ∘ v) (⇑g ∘ a) ↔ φ.Realize v a :=
+  BoundedFormulaω.realize_comp_append_of_localAutomorphisms hg φ v a
 
 variable [Nonempty M]
 

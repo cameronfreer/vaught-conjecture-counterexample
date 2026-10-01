@@ -11,6 +11,8 @@ import InfinitaryLogic.FiniteSupportClosure
 import InfinitaryLogic.TwoGeneratorCardinality
 import InfinitaryLogic.OrdinalCountability
 import InfinitaryLogic.Scott.OrbitRank
+import InfinitaryLogic.Scott.OrbitFormulaThreshold
+import InfinitaryLogic.Lomega1omega.LocalAutomorphism
 import Mathlib.ModelTheory.Fraisse
 
 /-! # Selected interfaces for the implementation roadmap
@@ -153,15 +155,33 @@ set_option linter.hashCommand false in
 set_option linter.hashCommand false in
 #check FirstOrder.Language.internalScottRank_le_of_orbits_determined
 
+-- InfinitaryLogic at our pinned dependency `cca6949` (signatures checked): the orbit-formula
+-- threshold and rank bound and the preservation of infinitary formulas by maps agreeing locally
+-- with automorphisms, imported through the two narrow modules (never `InfinitaryLogic.All`).
+set_option linter.hashCommand false in
+#check FirstOrder.Language.BoundedFormula.qrank_toLω_lt_omega0
+set_option linter.hashCommand false in
+#check FirstOrder.Language.orbit_determined_of_orbitFormula
+set_option linter.hashCommand false in
+#check FirstOrder.Language.exists_finite_orbit_threshold
+set_option linter.hashCommand false in
+#check FirstOrder.Language.orbitRank_le_lift_qrank_of_orbitFormula
+set_option linter.hashCommand false in
+#check FirstOrder.Language.orbitRank_lt_omega0_of_orbitFormula
+set_option linter.hashCommand false in
+#check FirstOrder.Language.internalScottRank_le_omega0_of_orbitFormulas
+set_option linter.hashCommand false in
+#check FirstOrder.Language.BoundedFormulaω.realize_comp_of_localAutomorphisms
+set_option linter.hashCommand false in
+#check FirstOrder.Language.BoundedFormulaω.realize_embedding_comp_of_localAutomorphisms
+set_option linter.hashCommand false in
+#check FirstOrder.Language.BoundedFormulaω.realize_comp_append_of_localAutomorphisms
+
 -- Mathlib's Fraïssé interface, applied by the classical limit of the top-free witnesses
 -- (`README.md`, Layer 0).  The classical existence theorem, representative classes, the
 -- factorization of tuples through the age, orbit isolation, and countable prime structures (all
--- in ComputableModelTheory) are prospective: neither available upstream nor pinned.  The
--- orbit-formula rank bounds, local-automorphism preservation, and the rank comparison of the
--- Scott process (InfinitaryLogic) are available upstream (merged in InfinitaryLogic at
--- `cca6949`), not yet available at our pinned dependency: applied here once the manifest records
--- that pin and the signatures are checked against it (`IMPLEMENTATION.md`, "Dependency pins").
--- None of them is at the current pins, and none is checked.
+-- in ComputableModelTheory) are prospective: neither available upstream nor pinned, and not
+-- checked.
 set_option linter.hashCommand false in
 #check FirstOrder.Language.age
 set_option linter.hashCommand false in
