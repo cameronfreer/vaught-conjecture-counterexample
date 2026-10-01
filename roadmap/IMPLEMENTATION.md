@@ -784,8 +784,8 @@ forms) and its complexity bound in the signed hierarchy (its pull request #148, 
 `exists_isPiIn_scottSentence_of_sigmaIn_orbits`,
 `exists_isPiIn_two_scottSentence_of_sigmaIn_zero_orbits`, and the pointed forms).  Both leave the
 toolchain and Mathlib unchanged.  **The next move** is one repin bundling them: InfinitaryLogic to
-a revision containing #147 and #148 (such as `8a15ca5`), with ComputableModelTheory at its current
-head (`ce88133`, whose own InfinitaryLogic pin `df52c17` is an ancestor of `8a15ca5`).  Until it
+`8a15ca5` (containing #147 and #148), with ComputableModelTheory at its current head `37f6c42` (its
+pull request #51), whose own InfinitaryLogic pin is exactly `8a15ca5`.  Until it
 merges these are named in prose only, never `#check`ed in the sketches.
 
 **Prospective dependencies (neither available upstream nor pinned):** the InfinitaryLogic
