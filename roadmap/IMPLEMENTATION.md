@@ -825,3 +825,194 @@ listed above.
 **Completion criterion.**  This companion checkpoint is complete when milestones B and C of
 `COMPANIONS.md` meet their completion criteria.  It is not a core checkpoint, and the main
 theorem does not depend on it.
+
+## Placement record
+
+Where a declaration of the library should live, when it is stated elsewhere, is recorded here
+and not in the module that states it (`README.md`, "Library conventions", **Placement**): that
+module's `## Placement` section gives only its place in the roadmap.  The entries are grouped by
+the module that states the declarations; each names the destination.  The declarations of the
+Layer 2 modules under `Language/` and `Realization/` whose own notes name earlier files move to
+those files directly and are not recorded here.
+
+**Finite geometry and the coatom amalgam (Layer 3, (R6)).**
+
+- `Geometry/PlanAttachment`: `restrict_restrict` and `IsPlan.restrict_self`, a statement about
+  convex geometries (it uses only `subset_of_mem`), to `Geometry.ConvexGeometry`, beside
+  `mem_restrict`.
+- `Extension/Basic`: `Fin.Embedding.univ_map_snoc` to Mathlib, `Mathlib.Data.Fin.Tuple.Embedding`,
+  beside `Fin.Embedding.snoc`.
+- `Extension/Merge`: `Merge` is order theory on finite chains, not about schemes; it belongs in an
+  `Order/` folder of the library, and is a candidate for Mathlib.
+- `Extension/CoatomScheme`: `Geometry.IsPlan.map` to `Geometry.Plan`, beside `IsPlan.preimage`;
+  `Scheme.scope_eq_of_eq`, `Scheme.grade_eq_of_eq`, `Scheme.row_eq_of_eq`, and
+  `Scheme.mem_faces_iff_of_eq` to `Stage.Scheme`;
+  `CellScheme.IsLowerEmbedding.image_below_gradedIndex` to `Scheme.Cell`.
+- `Extension/CoatomAmalgam`: `StageType.label_eq_of_eq` to `Stage.Basic`, beside `StageType.ext`.
+- `Extension/Gluing`: `Rows.isLawfulBelow_iff_forall` and `Rows.IsLawfulBelow.glue` to
+  `Scheme.Row`, after the lawful sections; the lifting statements to `Scheme.Bountiful`, after
+  `CellScheme.Rows.CappedLift.trans`.
+- `Extension/PinnedExtension`: `StageType.card_eq_zero`, `StageType.faces_eq_of_zero`,
+  `StageType.eq_of_zero`, and `StageType.isSome_restrictFace_of_zero` to `Stage.Basic`;
+  `Scheme.IsLegal.toStageType` with `Scheme.IsLegal.isLegal_toStageType` to `Stage.Legal`;
+  `Scheme.onePoint` with `Scheme.isLegal_onePoint` to `Stage.LegalExamples`, where they replace
+  the private `point`.
+
+**Coding (checkpoint 2.2).**
+
+- `Extension/Coding`: the label statements (`Label.IsStronglyCoded`, `Label.codedAlphabet`, and
+  their lemmas) to `Label.Basic`; `CellScheme.Rows.IsCoded`, `CellScheme.Rows.IsStronglyCodedAt`,
+  `CellScheme.Rows.IsStronglyCoded`, and the lemmas on their preservation to `Scheme.Row`;
+  `Scheme.isCoded_iff`, `Scheme.isCoded_of_isLowerEmbedding`, and
+  `Scheme.isCoded_of_isLowerEmbedding_of_isStronglyCodedAt` to `Stage.Scheme`.
+
+**The transformation algebra (checkpoints 2.1 and 2.3).**
+
+- `Extension/WitnessAlgebra`: its statements to `Label.Transform`, after the guarded composition;
+  `IsShort` and the flattening of finite parts (`flatten`, `flattenOrd`, and their lemmas)
+  beside the self-visible labels of `Label.Visibility`; its block arithmetic beside the blocks
+  of `Label.OrdinalVisibility`.
+- `Extension/CodedSection`: the block coding (`bandEncode`, `bandDecode`, and their lemmas) to a
+  module `Label/Coding.lean` beside `Label.Transform`; `CellScheme.Rows.IsLawful.exists_bandEncode`
+  to `Scheme.Row`, after the lawful sections.  Its private block arithmetic
+  (`mod_le_mod_of_div_eq`, `mod_lt_mod_of_div_eq`, `omega0_mul_add_lt`, `omega0_mul_add_div`,
+  `omega0_mul_add_mod`, `visibilityReplace_omega0_mul_add`, `omega0_mul_natCast_add_lt`)
+  duplicates the public rules of `Extension/WitnessAlgebra`, which replace it.  The existential
+  coded copy (`CellScheme.Rows.IsLawful.exists_bandEncode`, `Label.IsWitness.bandEncode`) is a
+  consequence of the universal form, `Label.isWitness_bandEncode_stepSuppressor` with
+  `CellScheme.Rows.IsLawful.map_of_bot_reflecting`, and is to be replaced by it.
+- `Extension/Encoders`: the label statements to `Label/Coding.lean`, beside the block coding;
+  the lawfulness statements to `Scheme.Row`.  The encoders of 2.3 are built on the block coding
+  of `Extension/CodedSection` (there is no second coding) and use the block arithmetic of
+  `Extension/WitnessAlgebra`.
+- `Extension/SectionTheorem`: to `Scheme.Row`, after the lawful sections.
+- `Extension/OwnerwiseDecoding`: to `Scheme.Row`, beside the section theorem, once the strongly
+  coded decoder is placed.
+- `Extension/Apex`: `Scheme.appendFullCell` and its laws, `Scheme.mem_range_comp_cellMap_iff`,
+  `Scheme.cellMap_eq_of_strictMono_of_mem_range`, and `Scheme.comap_eq_of_strictMono` to
+  `Stage.Scheme`, beside `Scheme.cellMap_eq_of_strictMono`;
+  `StageType.restrictFace_eq_of_strictMono` to `Stage.Basic`, beside
+  `StageType.restrictFace_trans`; `Scheme.IsLegalBelowFullGrade` to `Stage.Legal`, beside
+  `Scheme.IsLegal`.  The choice in `apexCodes` can be replaced by the finite set
+  `univ.image w` of the labels, by the universal form of the coded copy.
+
+**The chain construction (not used by the main theorem).**
+
+- `Construction/ChainModel`: `StageType.onePoint` and `StageType.isLegal_onePoint` to
+  `Stage.LegalExamples` (replacing the private `point`, the same stage type at stage `0`); the
+  instance `StageType.instSubsingletonZero` to `Stage.Basic`; `Realization.RealizesCofaces` and
+  its two consequences to `Realization.Model` and `Language.Density`.
+- `Scheme/Lifting`: `Rows.CappedLift`, `cappedLift_iff_forall_exists`, `cappedLift_refl`,
+  `CappedLift.trans`, and `cappedLift_of_below_eq_empty` to `Scheme.Bountiful`, where
+  `Rows.IsBountiful` is then defined as capped lifting at every pair of graded faces
+  (`isBountiful_iff_cappedLift` becomes its unfolding, `isBountiful_iff_forall_exists` a
+  corollary, and `IsBountiful.cappedLift` its direct application);
+  `IsWellFormed.below_eq_empty` to `Scheme.Cell`; `CappedLift.of_equiv`, `CappedLift.comap`,
+  `CappedLift.of_comap`, and `cappedLift_comap_iff` to `Scheme.Transport`, where
+  `IsBountiful.comap_of_image_eq` follows from `CappedLift.comap`; and
+  `IsLowerEmbedding.belowEquiv_inclusion` beside `IsLowerEmbedding.belowEquiv`.
+- `Scheme/Transport`: `gradedIndex_comap_le_iff`, `mem_gradedFaces_comap`, and
+  `image_val_below_comap` to the `Comap` section of `Scheme.Cell`; `IsLowerEmbedding.symm`,
+  `IsLowerEmbedding.belowEquiv`, `IsLowerEmbedding.coe_belowEquiv`, and
+  `IsLowerEmbedding.isLowerEmbedding_belowEquiv` to the `IsLowerEmbedding` namespace of
+  `Scheme.Cell`; `Rows.comap_comap_symm`, `Rows.isLawful_comap_equiv_iff`, and
+  `Rows.isLawfulBelow_comap_iff` to `Scheme.Row`, beside the reindexing lemmas; and
+  `IsBountiful.comap_of_image_eq`, `IsBountiful.comap`, and `IsBountiful.reindex` to
+  `Scheme.Bountiful`.  After the move, `Scheme.mem_gradedFaces_comap`,
+  `Rows.comap_reindex_comap_symm`, `Rows.isLawful_comap_reindex_iff`, `IsBountiful.restrict`,
+  and `IsLowerEmbedding.reindex_symm` are one-line consequences, to be derived from them or
+  removed.
+- `Stage/Legal`: `StageType.castLE` with `castLE_toScheme`, `castLE_label`, `castLE_refl`,
+  `castLE_castLE`, `reduce_eq_castLE`, and `reduce_castLE` to the stage-reduction section of
+  `Stage.Basic`; `Scheme.cappedLift_comap_iff` to `Stage.Bountiful`, beside
+  `Scheme.isBountiful_comap`; `Scheme.image_cellMap_below` to `Stage.Scheme`, beside
+  `Scheme.map_comap_gradedIndex`.  Only `isLegal_castLE_iff` stays.
+- Duplicates between the chain construction and the coatom extension construction, to be kept
+  once: the zero-point lemmas (`StageType.card_eq_zero`, `StageType.faces_eq_of_zero`,
+  `StageType.eq_of_zero`, `StageType.isSome_restrictFace_of_zero`) and the zero-point instance
+  `StageType.instSubsingletonZero`; the one-point scheme (`Scheme.onePoint`,
+  `Scheme.isLegal_onePoint`, `Scheme.IsLegal.toStageType`) and `StageType.onePoint`; the
+  one-point extension `StageType.exists_extension` ([Kni26, Proposition 4.3.23]) and
+  `Construction.nonempty_cofaces_of_hasExactPinnedExtensions`; and the face followed by the new
+  point, `extendByLast` and `Construction.pinnedFace`, equal by `rfl`.
+
+**Languages and the main theorem (Layers 2 and 6).**
+
+- `Language/Sentence`: the formula helpers `BoundedFormulaω.distinct`,
+  `BoundedFormulaω.realize_distinct`, and `BoundedFormulaω.realize_alls` hold for an arbitrary
+  language and are candidates for InfinitaryLogic.
+- `MainTheorem/Spectrum`: the statements whose home is InfinitaryLogic (the cross-universe
+  transport of `realize_boundedFormulaω_equiv` and `realize_sentenceω_equiv`,
+  `qrank_lt_omega_one`, `classTruth` with its lemmas, and `exists_mem_modelsOf_equiv`) are
+  recorded, each with its destination module, in `COMPANIONS.md`, A3, **Upstream ingredients**.
+
+## Dependency tracking
+
+Which checkpoint uses which statement is recorded here, not in the docstrings: a docstring states
+the mathematical role of its statement, what it is used to prove.  The checkpoints are those of
+the completion of the coatom extension construction, 2.1–2.7 above.  Unless noted, the
+statements of a module are used at the checkpoints given with its heading.
+
+**Coding** (`Extension/Coding`).
+
+- `Label.codedAlphabet`, the finite alphabet of codes of bounded block and offset: 2.3, 2.6.
+- `Label.lt_omega0_sq_of_mem_codedAlphabet`, codes lie below `ω²`: 2.6.
+- `Label.finite_setOf_isStronglyCoded_lt`, finitely many strongly coded labels below a block: 2.3.
+- The coding of the completion, from the module's analysis: the amalgam (a), the inherited rows
+  (b), the apex (c), the other new rows, with values in the coded alphabet of their grade (d),
+  and the finiteness of the catalogue (e): 2.3–2.6.  The apex row is the coded copy of the
+  labels, not a bottom row.
+- The one lifting step above an input row, which uses the coding of the input (a new entry in a
+  block above every value of the row, below `ω²`): 2.4.
+
+**Encoders** (`Extension/Encoders`; 2.5, 2.6 unless noted).
+
+- `Label.isWitness_strongEncode`: boundary labels transform to their normal form, lawfully.
+- `Label.isWitness_strongDecode`: the decoder of the section theorem.
+- `Label.isStronglyCoded_strongEncode`: a new cell of grade `K` with rows from codes is strongly
+  coded.
+- `Label.strongEncode_mem_codedAlphabet`: the catalogue at grade `K` is finite.
+- `Label.injOn_strongEncode`, used through `Label.forall_min_strongEncode_eq_iff`, and
+  `Label.forall_min_strongEncode_eq_iff` itself.
+- `Label.isSelfVisible_strongEncode`: the caps are self-visible at `K`.
+- `Label.strongDecode_min_strongEncode`: a lift capped at the code of a cap decodes to the
+  decoded lift capped at the cap; 2.6.
+- `Label.min_strongDecode_eq_min_strongDecode` and `Label.min_strongDecode_eq_of_min_eq`: 2.6.
+- `CellScheme.Rows.IsLawful.strongEncode`; and the shortness of the new full-scope rows, from
+  their construction.
+
+**Normal form** (`Extension/NormalForm`; 2.5, 2.6).
+
+- `Label.transformsTo_strongEncode_comp` and `Label.strongEncode_comp_transformsTo`.
+- `Label.strongDecode_comp_strongEncode_comp`: the inherited owners in ownerwise decoding.
+- `CellScheme.Rows.IsLawful.exists_stronglyCoded`: the boundary labels of a seed replaced by a
+  strongly coded catalogue vector.
+- `CellScheme.Rows.IsLawfulBelow.exists_stronglyCoded`: the row of a new cell of a given scope
+  and grade.
+
+**The section theorem** (`Extension/SectionTheorem`).
+
+- `CellScheme.Rows.IsLawful.min_const`, through `CellScheme.Rows.IsLawfulBelow.min_const`: 2.5.
+- `CellScheme.Rows.IsLawful.map_of_isShort_or`, through ownerwise decoding: 2.5, 2.6.
+- `CellScheme.Rows.IsLawful.map_of_bot_reflecting`: 2.5, 2.6.
+- `CellScheme.Rows.IsLawfulBelow.min_const_of_isSelfVisible`: 2.5.
+
+**Ownerwise decoding** (`Extension/OwnerwiseDecoding`; 2.5, 2.6).
+
+All in the namespace `CellScheme.Rows.IsLawful`:
+
+- `strongDecode_locality_of_decode_eq_on_below`: the inherited owners, decoded along the exact
+  base table, with no bottom reflection.
+- `strongDecode_locality_of_isShort_row`: the new full-scope owners, whose rows are short.
+- `strongDecode_of_ownerwise`: the decoded source section of the completion.
+
+**The witness algebra** (`Extension/WitnessAlgebra`, in the namespace `Label`; 2.5, 2.6 unless
+noted).
+
+- `IsShort`; `isWitness_comp_flatten`; `IsWitness.exists_eq_comp_of_isShort`;
+  `IsWitness.le_apply_visibilityReplace`; `TransformsTo.exists_isWitness_capped`;
+  `TransformsTo.map_of_isShort`; `TransformsTo.map_of_bot_reflecting`;
+  `IsWitness.transformsTo_comp`.
+- `IsWitness.max`: the shifter of the locality of a new full-scope cell, the maximum of the capped
+  witness of an owner and a second witness; 2.6.
+- `IsWitness.finsetSup`: interpolation across mixed grades; 2.5.
