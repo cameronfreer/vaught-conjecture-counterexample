@@ -16,6 +16,14 @@ classical theorems are taken from the
 computable-model-theory library (ComputableModelTheory) (prospective: neither available upstream
 nor pinned; see [`roadmap/IMPLEMENTATION.md`](roadmap/IMPLEMENTATION.md), "Dependency pins").
 
+The roadmap is organized by shared foundations and the results they support
+([`roadmap/README.md`](roadmap/README.md), "Endpoints and shared foundations").  The first of
+these results is the main theorem, by way of a continuous decreasing filtration by expansion
+domains.  A second route to the main theorem counts full presentations (structures full for one
+of countably many prescribed ages at each countable level), compares their base reducts by
+bounded back-and-forth, and needs no separate termination theorem for expansion domains; both
+routes are retained.
+
 ## Layout
 
 - `VaughtConjecture/` — the library.  Every module under it is built and audited (the lakefile globs are

@@ -1,5 +1,6 @@
 import InfinitaryLogic.OrdinalCountability
 import InfinitaryLogic.Descriptive.StructureIsoSetoid
+import InfinitaryLogic.Scott.BackAndForth
 import Mathlib.ModelTheory.Fraisse
 
 /-!
@@ -322,6 +323,97 @@ separation on the persistent core; Morley's dichotomy is an alternative that is 
 -/
 
 end Domains
+
+/-! ## 6. Full presentations: approximate extension and approximate comparison
+
+Statement shapes for `README.md`, "Reduction to full presentations".  A presentation of a
+structure `M` is given here only through its closed tuples (enumerations of finite closed sets)
+and their level observations at the levels up to its own; fullness, exact comparison, and the
+count of full presentations are not stated here.  The level sets `S η n` are separate types with
+explicit projections `τ`; a single composition law on one ambient set is not used.  `BFEquiv` is
+the back-and-forth equivalence of InfinitaryLogic (available at the pin).  In the application the
+base language is relational, as `BFEquiv_implies_agreeQR` requires for the passage to sentences;
+the comparison itself does not use relationality.
+-/
+
+namespace FullPresentation
+
+open FirstOrder Language
+
+/-- **Level observations**: countable sets `S η n` of observed invariants of `n`-tuples at each
+level `η`, with projections `τ` from a higher level to a lower one that compose exactly. -/
+structure LevelObservations where
+  /-- The observed invariants of `n`-tuples at level `η`. -/
+  S : Ordinal.{0} → ℕ → Type
+  /-- Each level set is countable. -/
+  countable : ∀ η n, Countable (S η n)
+  /-- The projection from level `ξ` down to a level `η ≤ ξ`. -/
+  τ : ∀ {η ξ : Ordinal.{0}}, η ≤ ξ → ∀ {n : ℕ}, S ξ n → S η n
+  /-- The projection to the same level is the identity. -/
+  τ_refl : ∀ {η : Ordinal.{0}} {n : ℕ} (s : S η n), τ le_rfl s = s
+  /-- Projections compose. -/
+  τ_comp : ∀ {η ξ ζ : Ordinal.{0}} (h₁ : η ≤ ξ) (h₂ : ξ ≤ ζ) {n : ℕ} (s : S ζ n),
+    τ h₁ (τ h₂ s) = τ (h₁.trans h₂) s
+
+/-- An **observed presentation** of `M` at level `level`: its closed tuples, with a closed
+extension of every closed tuple containing any given point, and the level observations of closed
+tuples, coherent under the projections up to `level`.  Fullness is not part of this structure. -/
+structure ObservedPresentation (O : LevelObservations) (M : Type w) where
+  /-- The level of the presentation. -/
+  level : Ordinal.{0}
+  /-- The closed tuples: enumerations of finite closed sets. -/
+  IsClosed : ∀ {n : ℕ}, (Fin n → M) → Prop
+  /-- Every point lies in a closed extension of every closed tuple. -/
+  exists_closed_extension : ∀ {n : ℕ} (a : Fin n → M), IsClosed a → ∀ x : M,
+    ∃ (k : ℕ) (c : Fin k → M) (j : Fin (n + k)),
+      IsClosed (Fin.append a c) ∧ Fin.append a c j = x
+  /-- The observation of a tuple at a level (read only on closed tuples, up to `level`). -/
+  obs : ∀ (η : Ordinal.{0}) {n : ℕ}, (Fin n → M) → O.S η n
+  /-- The observations of a closed tuple are coherent under the projections. -/
+  obs_τ : ∀ {η ξ : Ordinal.{0}} (h : η ≤ ξ), ξ ≤ level → ∀ {n : ℕ} (a : Fin n → M),
+    IsClosed a → O.τ h (obs ξ a) = obs η a
+
+variable {L : Language.{u, v}}
+variable {O : LevelObservations} {M : Type w} {N : Type z} [L.Structure M] [L.Structure N]
+
+variable (L) in
+/-- **Atomic recovery at level `0`**, across the two structures: closed tuples with equal
+observations at level `0` have the same atomic type in the base language. -/
+def AtomicAtZero (H : ObservedPresentation O M) (H' : ObservedPresentation O N) : Prop :=
+  ∀ {n : ℕ} (a : Fin n → M) (b : Fin n → N), H.IsClosed a → H'.IsClosed b →
+    H.obs 0 a = H'.obs 0 b → SameAtomicType (L := L) a b
+
+/-- **The approximate extension property (AE) at level `η`**, from `H` to `H'`: for closed tuples
+`a` and `b` with equal observations at `η + 1`, every closed extension `a ++ c` in `H` is matched
+by a closed extension `b ++ d` in `H'` of the same length, with equal observations at `η`.  The
+target tuple `b` is kept literally; only the enlarged tuples are compared, one level down.  (AE)
+in both directions is this property for `(H, H')` and for `(H', H)`. -/
+def ApproxExtension (H : ObservedPresentation O M) (H' : ObservedPresentation O N)
+    (η : Ordinal.{0}) : Prop :=
+  ∀ {n : ℕ} (a : Fin n → M) (b : Fin n → N), H.IsClosed a → H'.IsClosed b →
+    H.obs (Order.succ η) a = H'.obs (Order.succ η) b →
+    ∀ {k : ℕ} (c : Fin k → M), H.IsClosed (Fin.append a c) →
+      ∃ d : Fin k → N, H'.IsClosed (Fin.append b d) ∧
+        H.obs η (Fin.append a c) = H'.obs η (Fin.append b d)
+
+/-- **Approximate comparison** (target).  If two presentations of levels at least `η` satisfy the
+atomic condition at `0` and (AE) in both directions at every level below their levels, then closed
+tuples with equal observations at `η` are back-and-forth equivalent at `η` in the base structures,
+and so is every corresponding selection `s` of their coordinates, repetitions allowed (`m = 0`
+compares the structures).  Intended proof: induction on `η`; at a successor, a closed extension
+containing the requested point, (AE), and the selection of coordinates; at a limit, the
+projections. -/
+theorem bfEquiv_comp_of_obs_eq (H : ObservedPresentation O M) (H' : ObservedPresentation O N)
+    (hzero : AtomicAtZero L H H')
+    (hae : ∀ ζ, Order.succ ζ ≤ H.level → Order.succ ζ ≤ H'.level →
+      ApproxExtension H H' ζ ∧ ApproxExtension H' H ζ)
+    {η : Ordinal.{0}} (hη : η ≤ H.level) (hη' : η ≤ H'.level)
+    {n : ℕ} (a : Fin n → M) (b : Fin n → N) (ha : H.IsClosed a) (hb : H'.IsClosed b)
+    (hobs : H.obs η a = H'.obs η b) {m : ℕ} (s : Fin m → Fin n) :
+    BFEquiv (L := L) η m (a ∘ s) (b ∘ s) := by
+  sorry
+
+end FullPresentation
 
 /-! ## Optional: finite-character closure and its naturality
 

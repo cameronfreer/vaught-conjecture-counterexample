@@ -206,6 +206,18 @@ sentence minimality and without López–Escobar.  The working thinness route, f
 sides, is kept; the Gδ/Polish results stay optional; an improvement is described as reduced
 dependencies, not as a smaller trusted kernel.  Milestone A does not depend on this interface.
 
+**Scatteredness and minimality.**  Cocountable concentration in one back-and-forth class at every
+level is minimality, and it is more than thinness needs.  Countably many back-and-forth classes
+at every countable level already exclude a perfect antichain (scatteredness), by the same uniform
+separation: a perfect antichain is separated at one level, at which only countably many classes
+occur.  One common class on a cocountable set at every level is a further assertion.  The
+full-presentation route (`README.md`, "Reduction to full presentations") gives the weaker
+hypothesis from countably many level observations, and the stronger one only under a common
+starting observation on every high presentation; its scatteredness composition is a prospective
+interface of InfinitaryLogic (`IMPLEMENTATION.md`, "The full-presentation route").  The working
+thinness route, from countable truth sides, uses the stronger form, which the expansion domains
+provide.
+
 ## Milestone B — top-free chart homogeneity and its consequences
 
 Setting: a stage `λ = λ_ξ`, the stage chart language at `λ` (relational), and a countable
@@ -503,6 +515,21 @@ These are statements still to be proved.  None is an input to the main theorem.
   persistent core.  Targets: the naturality of greatest refinements under isomorphism, and their
   relationship to the expansion domains (a class lies in `D_ξ` exactly when its height is at
   least `ξ`).  The count of the main theorem does not use them.
+* **Minimal unboundedness.**  `Φ` is minimally unbounded [Mon, Definition XII.4]: by the
+  countable truth sides, for every sentence `ψ` one of `Φ ∧ ψ` and `Φ ∧ ¬ψ` has countably many
+  countable models up to isomorphism, hence models of bounded Scott rank (countably many
+  countable ordinals are bounded below `ω₁`).  The countable-truth-side minimality of the main
+  theorem is the stronger statement.
+* **The logical filtration and club agreement.**  For a minimally unbounded sentence there is a
+  closed unbounded set `C ⊆ ω₁` such that, for `α ∈ C`, the models of Scott rank at least `α`
+  form exactly one `≡_α`-class [Mon, Lemma XII.8].  Target: the comparison, on such a club, of
+  the canonical logical filtration (the classes of Scott rank at least `η`) with the filtration of
+  the main theorem, the least-level filtration `D_η` of the full-presentation route (`README.md`,
+  "Reduction to full presentations") or the expansion domains; no equality is asserted in
+  advance.  A supporting statement, recorded as a prospective lemma of InfinitaryLogic
+  (`IMPLEMENTATION.md`, "The full-presentation route"): for increasing countable ordinals `α_i`
+  and countable structures `A_i` with `A_i ≡_{α_i+3} A_{i+1}`, there is a countable structure
+  `≡_{α_i}` to every `A_i` [Mon, Lemma XII.6].
 * **No invariant probability measure.**  No probability measure on the model-code space that is
   invariant under the permutations of `ℕ` is concentrated on the codes of models of `Φ`, derived
   from the finite equivariant pair hulls (the hull of two points, preserved by automorphisms and
