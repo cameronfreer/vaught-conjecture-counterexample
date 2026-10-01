@@ -10,21 +10,15 @@ import VaughtConjecture.Language.Satisfaction
 
 Roadmap, Layer 2 (the density sentence: the structural clauses and the one-point capped-extension
 clause, the preferred presentation of the sentence of the main theorem; its equivalence with the
-four-family sentence) and Layer 3 (receiving over a root at a permitted cutoff; the finite-cut
-receiving property; the statement of the cap-to-model theorem, as a hypothesis only); semantic
-contract, items 3 and 5.
+four-family sentence) and Layer 3 (the receiving clause over a root at a permitted cutoff; the
+statement of the cap-to-model theorem, as a hypothesis only); semantic contract, items 3 and 5.
 
-**Receiving.**  The **receiving family** of a stage type `d` at a cutoff `c`
-(`StageType.receivingFamily d c`) consists of the stage types on the scheme of `d` with the
-observation of `d` at `c`: `min (q.label i) c = min (d.label i) c` at every cell.  A realization
-`R` at stage `α` has the **finite-cut receiving property** (`Realization.HasFiniteCutReceiving`)
-when over every occurrence (a *root*, the empty root included), for every coface `d` of its type
-(a one-point *donor type*) and every permitted cutoff `c` (`⊥ < c < α`), some point extends the
-root to an occurrence with a type in the receiving family of `d` at `c`.  The quantifiers are in
-the order root, donor, cutoff, point: different cutoffs may be served by different points.
-Receiving at a cutoff does not separate a large proper label from the formal top.  The property is
-invariant under transport along bijections of carriers
-(`Realization.hasFiniteCutReceiving_map_iff`).
+**Receiving.**  The receiving family `StageType.receivingFamily d c` is defined in
+`VaughtConjecture.Realization.Families`, and the finite-cut receiving property
+`Realization.HasFiniteCutReceiving` in `VaughtConjecture.Realization.Model`.  In the property the
+quantifiers are in the order root (an occurrence, the empty root included), donor (a coface of its
+type), cutoff, point: different cutoffs may be served by different points.  Receiving at a cutoff
+does not separate a large proper label from the formal top.
 
 **The density sentence.**  The receiving clause (`receivingClause`) is an extension clause whose
 parameters over a relation symbol `p` are a coface `d` of the stage type of `p` and a permitted
@@ -47,22 +41,17 @@ appear as explicit hypotheses, stated for the realizations at stage `ω` on the 
 * **the cap-to-model theorem** (Layer 3): a realization with legal types on a nonempty carrier that
   is exactly consistent, covering, and has the finite-cut receiving property is a model.
 
-The theorems of the section `Fidelity` are wiring from these hypotheses, and are named by them:
+The theorems of the section `Fidelity` derive their conclusions from these hypotheses, and are
+named by them:
 from the four-family sentence to the density sentence given finite-cut receiving
 (`realize_densitySentence_of_realize_fourFamilySentence_of_hasFiniteCutReceiving`); from the
 density sentence to the four-family sentence given the cap-to-model theorem
 (`realize_fourFamilySentence_of_realize_densitySentence_of_capToModel`); the equivalence given
 both (`realize_densitySentence_iff_fourFamilySentence_of_hasFiniteCutReceiving_of_capToModel`);
 and no finite models of the density sentence given the cap-to-model theorem
-(`infinite_of_realize_densitySentence_of_capToModel`).  They do **not** discharge the fidelity
-theorem or the absence of finite models for the density sentence: the former needs both row 1 and
-the cap-to-model theorem, and the latter the cap-to-model theorem, all of Layer 3.
-
-## Placement
-
-`StageType.receivingFamily` with its lemmas, `Realization.HasFiniteCutReceiving` with its
-transport, and the instance `Label.countable_permittedCutoff` belong in earlier files; their
-destinations are in the placement list of `VaughtConjecture.Language.Basic`.
+(`infinite_of_realize_densitySentence_of_capToModel`).  They do **not** prove the fidelity theorem
+or the absence of finite models for the density sentence: the former needs both row 1 and the
+cap-to-model theorem, and the latter the cap-to-model theorem, all of Layer 3.
 
 ## References
 
@@ -79,77 +68,6 @@ namespace VaughtConjecture
 open FirstOrder Language Structure Ordinal Label StageType baseLanguage
 
 variable {α : Ordinal.{u}} {M : Type v} {N : Type w} {n : ℕ}
-
-/-! ### Receiving -/
-
-namespace StageType
-
-/-- The **receiving family** of a stage type `d` at a cutoff `c`: the stage types on the scheme of
-`d` with the observation of `d` at `c`. -/
-def receivingFamily (d : StageType.{u} α n) (c : Label.{u}) : Set (StageType.{u} α n) :=
-  {q | q.toScheme = d.toScheme ∧
-    ∀ (i : Fin q.card) (j : Fin d.card), (i : ℕ) = j → min (q.label i) c = min (d.label j) c}
-
-/-- Membership in the receiving family: the scheme and the observation at the cutoff. -/
-theorem mem_receivingFamily {d q : StageType.{u} α n} {c : Label.{u}} :
-    q ∈ receivingFamily d c ↔ q.toScheme = d.toScheme ∧
-      ∀ (i : Fin q.card) (j : Fin d.card), (i : ℕ) = j → min (q.label i) c = min (d.label j) c :=
-  Iff.rfl
-
-/-- A stage type is in each of its receiving families. -/
-theorem self_mem_receivingFamily (d : StageType.{u} α n) (c : Label.{u}) :
-    d ∈ receivingFamily d c :=
-  ⟨rfl, fun _ _ h ↦ by rw [Fin.ext h]⟩
-
-end StageType
-
-namespace Realization
-
-variable (R : Realization.{u, v} α M)
-
-/-- The **finite-cut receiving property**: over every occurrence, for every coface `d` of its type
-and every permitted cutoff `c`, some point extends the occurrence to one with a type on the scheme
-of `d` with the observation of `d` at `c`. -/
-def HasFiniteCutReceiving : Prop :=
-  ∀ (x : R.Occurrence), ∀ d ∈ x.type.cofaces, ∀ c : Label.{u}, IsPermittedCutoff α c →
-    R.RealizesOver x.tuple (receivingFamily d c)
-
-variable {R}
-
-/-- **Transport of receiving**: the finite-cut receiving property is preserved and reflected by
-transport along a bijection of carriers. -/
-theorem hasFiniteCutReceiving_map_iff (e : M ≃ N) :
-    (R.map e).HasFiniteCutReceiving ↔ R.HasFiniteCutReceiving := by
-  refine ⟨fun h x d hd c hc ↦ ?_, fun h y d hd c hc ↦
-    (realizesOver_map_iff e).mpr (h (y.comap e) d hd c hc)⟩
-  have key : (x.map e).tuple.trans e.symm.toEmbedding = x.tuple := by
-    ext
-    exact e.symm_apply_apply _
-  exact key ▸ (realizesOver_map_iff (R := R) e).mp (h (x.map e) d hd c hc)
-
-/-- Isomorphic realizations have the finite-cut receiving property together. -/
-theorem IsIso.hasFiniteCutReceiving_iff {S : Realization.{u, w} α N} (h : R.IsIso S) :
-    R.HasFiniteCutReceiving ↔ S.HasFiniteCutReceiving := by
-  obtain ⟨e, rfl⟩ := h
-  exact (hasFiniteCutReceiving_map_iff e).symm
-
-end Realization
-
-/-! ### Placement: a countability instance for `Label/Cap`
-
-This instance belongs in `VaughtConjecture.Label.Cap` (see the placement list of
-`VaughtConjecture.Language.Basic`). -/
-
-section Placement
-
-/-- The permitted cutoffs at stage `ω` are countably many: they are the natural numbers. -/
-instance Label.countable_permittedCutoff :
-    Countable {c : Label.{u} // IsPermittedCutoff (ω : Ordinal.{u}) c} :=
-  Set.Countable.to_subtype <|
-    ((Cardinal.countable_Iio_of_lt_omega_one omega0_lt_omega_one).image
-      fun δ : Ordinal.{u} ↦ (δ : Label.{u})).mono fun _ hc ↦ isPermittedCutoff_iff.mp hc
-
-end Placement
 
 namespace baseLanguage
 
@@ -219,16 +137,17 @@ theorem realize_toStructure_densitySentence_iff {R : Realization.{u, v} ω M}
 
 section Fidelity
 
-/-! The theorems of this section are wiring from their hypotheses, finite-cut receiving for the
-models (row 1 of Layer 3) and the cap-to-model theorem (Layer 3); they do not discharge the
-fidelity theorem (checkpoint 4) or the absence of finite models for the density sentence. -/
+/-! The theorems of this section derive their conclusions from their hypotheses, finite-cut
+receiving for the models (row 1 of Layer 3) and the cap-to-model theorem (Layer 3); they do not
+prove the fidelity theorem (checkpoint 4) or the absence of finite models for the density
+sentence. -/
 
 variable [baseLanguage.{u}.Structure M]
 
 /-- **From the four-family sentence to the density sentence, given finite-cut receiving**: if
 every model at stage `ω` on the carrier has the finite-cut receiving property, a structure
-satisfying the four-family sentence satisfies the density sentence.  This is wiring from the
-hypothesis, which is row 1 of Layer 3; it does not discharge the fidelity theorem. -/
+satisfying the four-family sentence satisfies the density sentence.  This is derived from the
+hypothesis, which is row 1 of Layer 3; it does not prove the fidelity theorem. -/
 theorem realize_densitySentence_of_realize_fourFamilySentence_of_hasFiniteCutReceiving
     (hreceiving : ∀ R : Realization.{u, v} ω M, R.IsModel → R.HasFiniteCutReceiving)
     (h : fourFamilySentence.Realize M) : densitySentence.Realize M := by
@@ -237,8 +156,8 @@ theorem realize_densitySentence_of_realize_fourFamilySentence_of_hasFiniteCutRec
     ⟨hT, hM.nonempty, hM.isConsistent, hM.isCovering, hreceiving _ hM⟩
 
 /-- **From the density sentence to the four-family sentence, given the cap-to-model theorem**
-for the realizations at stage `ω` on the carrier.  This is wiring from the hypothesis, which is
-the cap-to-model theorem of Layer 3; it does not discharge the fidelity theorem. -/
+for the realizations at stage `ω` on the carrier.  This is derived from the hypothesis, which is
+the cap-to-model theorem of Layer 3; it does not prove the fidelity theorem. -/
 theorem realize_fourFamilySentence_of_realize_densitySentence_of_capToModel
     (hcap : ∀ R : Realization.{u, v} ω M, Nonempty M → R.HasLegalTypes → R.IsConsistent →
       R.IsCovering → R.HasFiniteCutReceiving → R.IsModel)
@@ -249,8 +168,8 @@ theorem realize_fourFamilySentence_of_realize_densitySentence_of_capToModel
 
 /-- **The density sentence and the four-family sentence, given finite-cut receiving and the
 cap-to-model theorem**: under both hypotheses, for the models and the realizations at stage `ω` on
-the carrier, the two sentences hold in the same structures.  This is wiring from the hypotheses,
-row 1 and the cap-to-model theorem of Layer 3; it does not discharge the fidelity theorem
+the carrier, the two sentences hold in the same structures.  This is derived from the hypotheses,
+row 1 and the cap-to-model theorem of Layer 3; it does not prove the fidelity theorem
 (checkpoint 4). -/
 theorem realize_densitySentence_iff_fourFamilySentence_of_hasFiniteCutReceiving_of_capToModel
     (hreceiving : ∀ R : Realization.{u, v} ω M, R.IsModel → R.HasFiniteCutReceiving)
@@ -262,7 +181,7 @@ theorem realize_densitySentence_iff_fourFamilySentence_of_hasFiniteCutReceiving_
 
 /-- **No finite models of the density sentence, given the cap-to-model theorem** for the
 realizations at stage `ω` on the carrier: a structure satisfying the density sentence is infinite.
-This is wiring from the hypothesis, the cap-to-model theorem of Layer 3; it does not discharge the
+This is derived from the hypothesis, the cap-to-model theorem of Layer 3; it does not prove the
 absence of finite models for the density sentence. -/
 theorem infinite_of_realize_densitySentence_of_capToModel
     (hcap : ∀ R : Realization.{u, v} ω M, Nonempty M → R.HasLegalTypes → R.IsConsistent →

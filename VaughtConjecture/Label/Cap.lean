@@ -27,6 +27,9 @@ an ordinal below the stage, possibly ordinal zero (`isPermittedCutoff_iff`).
   (`IsPermittedCutoff.exists_min_eq_min_reduce_ne`).  Agreement below a proper cutoff therefore
   never establishes agreement at the formal top.  Nor is a capped observation of lawful data
   claimed to be lawful: nothing here concerns lawfulness.
+
+There are countably many permitted cutoffs at stage `ω`, namely the natural numbers
+(`countable_permittedCutoff`).
 -/
 
 universe u
@@ -128,5 +131,14 @@ theorem IsPermittedCutoff.exists_min_eq_min_reduce_ne (h : IsPermittedCutoff α 
       reduce α x ≠ reduce α y :=
   ⟨c, ⊤, .inl h.2, atStage_top, by simp, by
     rw [reduce_of_lt h.2, reduce_top]; exact h.2.ne_top⟩
+
+/-- The permitted cutoffs at stage `ω` are countably many: they are the natural numbers. -/
+instance countable_permittedCutoff :
+    Countable {c : Label.{u} // IsPermittedCutoff Ordinal.omega0.{u} c} :=
+  Set.Countable.to_subtype <|
+    (Set.countable_range fun k : ℕ ↦ ((k : Ordinal.{u}) : Label.{u})).mono fun _ hc ↦ by
+      obtain ⟨δ, hδ, rfl⟩ := isPermittedCutoff_iff.mp hc
+      obtain ⟨k, rfl⟩ := Ordinal.lt_omega0.mp hδ
+      exact ⟨k, rfl⟩
 
 end VaughtConjecture.Label

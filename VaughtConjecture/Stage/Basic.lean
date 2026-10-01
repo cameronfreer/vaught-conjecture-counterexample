@@ -34,6 +34,9 @@ scheme of `Scheme.comap` with the labels of the visible cells); otherwise it is 
   A composite through an invisible face whose range is that whole face stays undefined
   (`restrictFace_trans_eq_none`).
 
+The faces of a stage type form a plan on all of its points (`isPlan`), and the hull of a set in
+a restriction is the preimage of the hull of its image (`hull_comap`).
+
 Reindexing along a bijection `e : Fin m ≃ Fin n` is total (`StageType.reindex`); it is the face
 map along `e` (`restrictFace_equiv`) and commutes with all face maps (`restrictFace_reindex`,
 `map_reindex_restrictFace`).
@@ -57,6 +60,12 @@ Reduction to a stage at least the stage of the type changes no label (`reduce_la
 only relabels the stage: `t.reduce hβ = t.castLE hαβ` (`reduce_eq_castLE`), where `t.castLE hαβ`
 reads a stage type at stage `α` as one at the larger stage `β`, with the same scheme and labels;
 relabelling is invisible to reduction (`reduce_castLE`).
+
+**Stage types from lawful sections.**  At a stage `α` that is zero or a limit, a well-formed
+scheme with coded rows and a lawful section `ρ` give the stage type `ofIsLawful` with the
+reduction of `ρ` as labels; if `ρ` extends the labels of `p` along a closed face, its face there
+is `p` (`restrictFace_ofIsLawful`).  Stage reduction is `ofIsLawful` applied to the labels of a
+type (`reduce_eq_ofIsLawful`).
 
 ## References
 
@@ -102,9 +111,19 @@ positions. -/
   obtain rfl : p = p' := funext fun i ↦ hl i i rfl
   rfl
 
+/-- Equal stage types have equal labels at cells with equal positions. -/
+theorem label_congr {t t' : StageType.{u} α n} (h : t = t') {i : Fin t.card} {j : Fin t'.card}
+    (hij : (i : ℕ) = j) : t.label i = t'.label j := by
+  subst h
+  rw [Fin.ext hij]
+
 /-- The whole ground set is a face of a stage type. -/
 theorem univ_mem_faces (t : StageType.{u} α n) : (univ : Finset (Fin n)) ∈ t.toCellScheme.faces :=
   t.isWellFormed.univ_mem_faces
+
+/-- The faces of a stage type form a plan on all of its points. -/
+theorem isPlan (t : StageType.{u} α n) : Geometry.IsPlan univ t.toCellScheme.faces :=
+  t.isWellFormed.isPlan
 
 /-! ### Restriction to a closed face -/
 
@@ -156,6 +175,18 @@ theorem map_univ_mem_comap_faces_iff (hf : univ.map f ∈ t.toCellScheme.faces) 
   exact t.cellMap_eq_of_strictMono _
     ((t.cellMap f).strictMono.comp ((t.toScheme.comap f).cellMap g).strictMono)
     (t.mem_range_cellMap_comp_iff f g) h
+
+/-- **Hulls in a restriction.**  The hull of a set of points in the restriction of a stage type to
+a closed face is the preimage of the hull of its image (`Geometry.hull_preimage`). -/
+theorem hull_comap (hf : univ.map f ∈ t.toCellScheme.faces) (G : Finset (Fin m)) :
+    Geometry.hull univ (t.comap f hf).toCellScheme.faces G =
+      (Geometry.hull univ t.toCellScheme.faces (G.map f)).preimage f f.injective.injOn := by
+  have hfaces : (t.comap f hf).toCellScheme.faces =
+      t.toCellScheme.faces.preimage (Finset.map f) (map_injective f).injOn := by
+    ext C
+    simp
+  rw [hfaces, ← Geometry.hull_preimage t.isPlan.infClosed (by rwa [preimage_univ]) (by simp),
+    preimage_univ]
 
 /-! ### Exact partial face maps -/
 
@@ -366,6 +397,53 @@ theorem restrictFace_reduce (hβ : Order.IsSuccPrelimit β) :
 /-- Stage reduction commutes with reindexing. -/
 theorem reindex_reduce (hβ : Order.IsSuccPrelimit β) (e : Fin m ≃ Fin n) :
     (t.reduce hβ).reindex e = (t.reindex e).reduce hβ := rfl
+
+/-! ### Stage types from lawful sections -/
+
+/-- The stage type at a zero-or-limit stage `α` on a well-formed scheme with coded rows, with the
+stage reduction of a lawful section `ρ` as labels. -/
+noncomputable def ofIsLawful (hα : Order.IsSuccPrelimit α) (S : Scheme.{u} n)
+    (hw : S.IsWellFormed) (hc : S.IsCoded) (ρ : Fin S.card → Label.{u})
+    (hρ : S.rows.IsLawful ρ) : StageType.{u} α n where
+  toScheme := S
+  label := Label.reduce α ∘ ρ
+  isWellFormed := hw
+  isCoded := hc
+  isLawful := hρ.reduce hα
+  atStage _ := atStage_reduce α _
+
+section OfIsLawful
+
+variable (hα : Order.IsSuccPrelimit α) (S : Scheme.{u} n) (hw : S.IsWellFormed) (hc : S.IsCoded)
+  (ρ : Fin S.card → Label.{u}) (hρ : S.rows.IsLawful ρ)
+
+/-- The scheme of `ofIsLawful` is the given scheme. -/
+@[simp] theorem ofIsLawful_toScheme : (ofIsLawful hα S hw hc ρ hρ).toScheme = S := rfl
+
+/-- The labels of `ofIsLawful` are the reduced labels of the section. -/
+@[simp] theorem ofIsLawful_label (d : Fin S.card) :
+    (ofIsLawful hα S hw hc ρ hρ).label d = Label.reduce α (ρ d) := rfl
+
+variable {S hw hc ρ hρ}
+
+/-- A stage type built from a lawful section extending the labels of `p` along a closed face has
+the face `p` there. -/
+theorem restrictFace_ofIsLawful {f : Fin m ↪ Fin n} (hf : univ.map f ∈ S.toCellScheme.faces)
+    {p : StageType.{u} α m} (hp : S.comap f = p.toScheme)
+    (hext : ∀ (i : Fin (S.comap f).card) (j : Fin p.card), (i : ℕ) = j →
+      ρ (S.cellMap f i) = p.label j) :
+    restrictFace f (ofIsLawful hα S hw hc ρ hρ) = some p := by
+  rw [restrictFace_of_mem _ f hf]
+  refine congrArg some (ext hp fun i j hij ↦ ?_)
+  exact (congrArg (Label.reduce α) (hext i j hij)).trans (p.atStage j).reduce_eq
+
+end OfIsLawful
+
+/-- **Stage reduction through `ofIsLawful`**: the stage reduction of a type is `ofIsLawful`
+applied to its own labels. -/
+theorem reduce_eq_ofIsLawful (hβ : Order.IsSuccPrelimit β) (t : StageType.{u} α n) :
+    t.reduce hβ = ofIsLawful hβ t.toScheme t.isWellFormed t.isCoded t.label t.isLawful :=
+  rfl
 
 end StageType
 

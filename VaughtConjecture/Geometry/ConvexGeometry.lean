@@ -23,7 +23,9 @@ general.
   in a convex geometry this is the usual notion of extreme point: `x ∉ hull (B \ {x})`
   (`IsConvexGeometry.mem_extremes_iff`).  For a set that is not closed the two notions differ.
 * `restrict P B` is the family of closed sets contained in `B`; restriction to a closed face is
-  again a convex geometry (`IsConvexGeometry.restrict`), with the same hulls and extremes.
+  again a convex geometry (`IsConvexGeometry.restrict`), with the same hulls and extremes.  Adding a
+  point to the hull of a set and closing gives the hull of the set with the point added
+  (`hull_insert_hull`).
 * Anti-exchange is equivalent, for intersection-closed families, to one-point accessibility
   (`IsConvexGeometry.exists_insert_mem`, `IsConvexGeometry.of_accessible`).
 * Every closed set is the hull of its extreme points (`IsConvexGeometry.hull_extremes`).
@@ -140,6 +142,16 @@ theorem hull_restrict (hinter : InfClosed (P : Set (Finset α))) (hB : B ∈ P)
     exact (mem_inter.mp (h _ ⟨hinter hC hB, inter_subset_right⟩ (subset_inter hSC hSB))).1
   · rintro ⟨-, h⟩
     exact ⟨h B hB hSB, fun C hC hSC ↦ h C hC.1 hSC⟩
+
+/-- Adding a point to the hull of a set and closing gives the hull of the set with that point
+added.  No hypothesis on the family is needed: a member of `P` containing `S` contains the hull
+of `S`. -/
+theorem hull_insert_hull (hS : S ⊆ A) (j : α) :
+    hull A P (insert j (hull A P S)) = hull A P (insert j S) := by
+  ext x
+  simp only [mem_hull, insert_subset_iff]
+  refine and_congr_right fun _ ↦ forall₂_congr fun B hB ↦ imp_congr_left ?_
+  exact and_congr_right fun _ ↦ hull_subset_iff hB hS
 
 /-! ### Convex geometries -/
 
