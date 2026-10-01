@@ -29,7 +29,9 @@ Visibility replacement of an ordinal at threshold `k` with value `i` replaces it
 * At a stage `α` that is zero or a limit, `α + K` is self-visible at every `k ≤ K`
   (`isSelfVisible_coe_add`), and replacement with a value `i ≤ K` keeps a label at most `α + K`
   at most `α + K` (`visibilityReplace_le_coe_add`); finitely many labels below `α` have a common
-  bound below `α` that is self-visible at a given threshold (`exists_isSelfVisible_bound`).
+  bound below `α` that is self-visible at a given threshold (`exists_isSelfVisible_bound`), and
+  between an ordinal `o` and a stage `β > o` that is zero or a limit there is an ordinal
+  self-visible at any given threshold (`exists_lt_lt_isSelfVisible`).
 * On a natural number `n` it gives `i` if `n < k` and `n` otherwise (`visibilityReplace_natCast`,
   with `visibilityReplace_zero`, `visibilityReplace_one`, `visibilityReplace_ofNat` for numerals).
 
@@ -281,5 +283,25 @@ theorem exists_isSelfVisible_bound {ι : Type*} [Finite ι] (hα : Order.IsSuccP
     visibilityReplace_self_visibilityReplace le_rfl s, fun t ht ↦ ?_⟩
   refine le_trans ?_ ((le_max_right _ _).trans hsc)
   simpa [ht] using Finset.le_sup (f := fun t ↦ if f t < α then f t else ⊥) (Finset.mem_univ t)
+
+section
+
+variable {β : Ordinal.{u}}
+
+/-- **Self-visible caps.**  Between an ordinal `o` and a stage `β > o` that is zero or a limit
+there is an ordinal self-visible at any given threshold `k`: `o + (k + 1)`. -/
+theorem exists_lt_lt_isSelfVisible (hβ : Order.IsSuccPrelimit β) (ho : o < β) (k : ℕ) :
+    ∃ c : Ordinal.{u}, o < c ∧ c < β ∧ IsSelfVisible k (c : Label.{u}) := by
+  refine ⟨o + (k + 1 : ℕ), ?_, hβ.add_natCast_lt ho _, isSelfVisible_coe.mpr ?_⟩
+  · exact lt_add_of_pos_right o (by exact_mod_cast k.succ_pos)
+  obtain ⟨m, hm⟩ := Ordinal.lt_omega0.mp (Ordinal.mod_lt o Ordinal.omega0_ne_zero)
+  have hdecomp : o + (k + 1 : ℕ) = Ordinal.omega0 * (o / Ordinal.omega0) + (m + (k + 1) : ℕ) := by
+    conv_lhs => rw [← Ordinal.div_add_mod o Ordinal.omega0]
+    rw [hm, add_assoc]
+    norm_cast
+  rw [hdecomp, Ordinal.mul_add_mod_self, Ordinal.natCast_mod_omega0]
+  exact_mod_cast (by omega : k ≤ m + (k + 1))
+
+end
 
 end VaughtConjecture.Label

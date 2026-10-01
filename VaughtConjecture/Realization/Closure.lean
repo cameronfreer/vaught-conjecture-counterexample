@@ -99,11 +99,9 @@ theorem closure_antiExchange (hA : R.closure hR hc A = A) {b : M} (hab : a ≠ b
 
 /-- The support of a transported occurrence is the image of the support. -/
 @[simp] theorem Occurrence.support_map (e : M ≃ N) (x : R.Occurrence) :
-    (x.map e).support = x.support.map e.toEmbedding := by
-  rw [Occurrence.support, Occurrence.support, Finset.map_map]
-  -- the two sides differ only in `univ : Finset (Fin (x.map e).arity)` versus
-  -- `univ : Finset (Fin x.arity)`, equal by unfolding the `arity` field
-  rfl
+    (x.map e).support = x.support.map e.toEmbedding :=
+  -- `Fin (x.map e).arity` is definitionally `Fin x.arity`, by unfolding the `arity` field
+  (Finset.map_map _ _ _).symm
 
 /-- The hull inside a transported occurrence is the image of the hull. -/
 theorem Occurrence.hull_map (e : M ≃ N) (x : R.Occurrence) (F : Finset M) :
