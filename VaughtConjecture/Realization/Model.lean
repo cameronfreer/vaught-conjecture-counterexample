@@ -12,8 +12,8 @@ import VaughtConjecture.Realization.Transport
 
 Roadmap, Layer 2 (realizations with the four unchanged extension families; isomorphism transport
 and reduction of models; directed actual covers); semantic contract, item 5 (the original
-nonempty, exact consistency, covering, general-family, bottom-pattern, uniform-band, and
-high-grade-dominance requirements; the families demand some suitable coface, not every prescribed
+nonempty, exact consistency, covering, general-family, bottom-pattern, uniformity, and
+high-arity-dominance clauses; the families demand some suitable coface, not every prescribed
 one).
 
 A realization `R` **realizes a member of `U` over a tuple `t`** (`Realization.RealizesOver`) when
@@ -60,7 +60,7 @@ equivalence relation (`isoSetoid`) preserved by stage reduction (`IsIso.reduce`)
 of a model at a stage `α` that is zero or a limit to a limit stage `0 < β ≤ α` is a model
 (`IsModel.reduce`).  Each family reduces into itself (`StageType.reduce_mem_saturationFamily`, …),
 so the uniformity and dominance clauses reduce directly (`IsModel.reduce_uniformity`,
-`IsModel.reduce_dominance`): the band `[γ, γ + ω)` of `γ < β` lies below `β`.  For the guarded
+`IsModel.reduce_dominance`): the block `[γ, γ + ω)` of `γ < β` lies below `β`.  For the guarded
 clauses, each nonempty instance at `β` lifts to a nonempty instance at `α`: a coface at `β` of the
 reduced type lifts, by bountifulness of its scheme, to a coface at `α` with the same scheme and
 the same capped observation at a self-visible cap below `β` (`StageType.exists_isLawful_lift`).
@@ -306,7 +306,7 @@ theorem IsModel.reduce_bottomPattern (hα : Order.IsSuccPrelimit α) (hβ : Orde
 variable {β : Ordinal.{u}} (hβ : Order.IsSuccPrelimit β) (hβα : β ≤ α)
 include hβ hβα
 
-/-- **Uniformity reduces** to every stage `β ≤ α` that is zero or a limit: for `γ < β` the band
+/-- **Uniformity reduces** to every stage `β ≤ α` that is zero or a limit: for `γ < β` the block
 `[γ, γ + ω)` lies below `β`, so stage reduction keeps a realized member of the family. -/
 theorem IsModel.reduce_uniformity (y : (R.reduce hβ).Occurrence) (γ : Ordinal.{u})
     (hγ : Order.IsSuccPrelimit γ) (hγβ : γ < β) :
