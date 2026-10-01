@@ -442,7 +442,8 @@ amalgamation procedure; the classical Fraïssé construction uses choice and sup
 presentation). The partial-realization statements of the conditional chain development
 (`StageType.chartRealization`, `StageType.isConsistent_chartRealization`,
 `StageType.chartRealization_eval_eq_none_iff`, in `Realization/Partial.lean`, outside
-`Construction/`, in the library) are reused in steps 1, 4, and 5, so that the boundary above holds; the chain-union statements are not used by steps 1–7.
+`Construction/`, in the library) are to be reused in steps 1, 4, and 5, so that the boundary above
+holds; the chain-union statements are not used by steps 1–7.
 
 ## The full-presentation route
 
