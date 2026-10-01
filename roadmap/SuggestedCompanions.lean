@@ -16,10 +16,10 @@ import InfinitaryLogic.Scott.RefinementCount
 /-!
 # Selected statements for the companion milestones
 
-`COMPANIONS.md` is authoritative; this file is a nonexhaustive, human-owned sketch of targets
-that lie OUTSIDE the library build and outside the core theorem.  The bodies marked `sorry` are
-deliberate targets, still to be proved.  The other declarations are proved here, or are
-definitions of properties (never structures whose fields assert the desired conclusions).  No
+`COMPANIONS.md` is authoritative; this file is a nonexhaustive sketch of statements that lie
+OUTSIDE the library build and outside the core theorem.  The declarations whose bodies are `sorry`
+are deliberate targets: statements still to be proved.  The other declarations are proved here, or
+are definitions of properties (never structures whose fields assert the desired conclusions).  No
 statement here is a construction of the concrete charts, realizations, or models; the
 construction-specific instances of these statements are listed in `COMPANIONS.md`.  Check the
 file with
