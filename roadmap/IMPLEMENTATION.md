@@ -195,16 +195,22 @@ and repeated tuples included) is stated only if a use for it is identified.
 
 Density quantifies `∀ root, ∀ donor, ∀ cutoff, ∃ extension` on the fixed donor scheme.  An
 all-finite-extension presentation of receiving (donors with any finite number of new points),
-equivalent to the one-point presentation, is proved first at stage `ω` and at countable stages
-only under the countability and stage hypotheses it needs; it keeps the same quantifier order.
-The many-point form implies the one-point form at once.  The converse proceeds one point at a
-time along a chain of visible faces of the donor's plan at an auxiliary cap: the
-bounded-observation lifting of layer 1 is available at caps self-visible at the target grade, not
-at every permitted cutoff, so the chain is run at a permitted cutoff `c'` at or above the requested
-cutoff and self-visible at the donor's arity (one exists below a limit stage,
-`Label.exists_lt_lt_isSelfVisible`), each step taking a lawful coface of the actual type with the
-donor's observation at that auxiliary cap, and this stronger agreement is maintained through the
-chain; the requested observation at the cutoff is obtained at the end by capping down to it.
+equivalent to the one-point presentation, keeps the same quantifier order.  The many-point form
+implies the one-point form at once.  The converse proceeds one point at a time along a chain of
+visible faces of the donor's plan at an auxiliary cap.  The bounded-observation lifting of layer 1
+is available at caps self-visible at the target grade, not at every permitted cutoff, so for a
+requested cutoff `c` at stage `α` the chain is run at a permitted cutoff `c'` with `c ≤ c' < α`
+(so never the formal top), self-visible at the donor's arity `k`.  Such a `c'` is given by
+`Label.exists_lt_lt_isSelfVisible (hβ : Order.IsSuccPrelimit β) (ho : o < β) (k : ℕ) :
+∃ c, o < c ∧ c < β ∧ IsSelfVisible k (c : Label)` (`Realization/Families`, namespace `Label`),
+with witness `c' = c + (k + 1)`.  Its hypotheses hold here only because (i) the requested cutoff
+`c` is an ordinal below the stage (it is a permitted cutoff, `isPermittedCutoff_coe`), and (ii)
+the stage is zero or a limit (`Order.IsSuccPrelimit`).  Each step takes a lawful coface of the
+actual type with the donor's observation at `c'`; this stronger agreement at `c'` is preserved
+throughout the finite chain of extensions, after which one passes down to `c` by capping.
+Because of (ii), the presentation is stated first at stage `ω` and at the stages `λ_ξ` (all
+limits), under the countability hypotheses the argument needs, and not at an arbitrary successor
+stage.
 Different cutoffs may use different points.  Prove both satisfaction directions, the
 realization/structure round trips, isomorphism preservation and reflection, and no finite
 models.  The density sentence is the preferred presentation.  Its equivalence with the
