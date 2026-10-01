@@ -10,8 +10,9 @@ import InfinitaryLogic.Descriptive.CodeTransport
 import InfinitaryLogic.Descriptive.ObservableConstancy
 import InfinitaryLogic.ModelTheory.FragmentLowenheimSkolem
 import InfinitaryLogic.Scott.OrbitRank
-import InfinitaryLogic.Scott.QuantifierRank
 import InfinitaryLogic.Scott.RefinementCount
+import InfinitaryLogic.Scott.OrbitFormulaThreshold
+import InfinitaryLogic.Lomega1omega.LocalAutomorphism
 
 /-!
 # Selected statements for the companion milestones
@@ -27,8 +28,13 @@ file with
   lake env lean -DautoImplicit=false -Dlinter.mathlibStandardSet=true \
     roadmap/SuggestedCompanions.lean
 
-The three sections correspond to the three milestones: (A) the filtration and the theory `T∞`,
-(B) homogeneity of the top-free charts and the orbit theory, (C) the geometric obstruction.
+The three sections correspond to the three milestones: (A) the filtration and the theory `T∞`, (B)
+homogeneity of the top-free charts and the orbit theory, (C) the geometric obstruction.  The generic
+theorems of B are quoted from the two libraries: from InfinitaryLogic, at our pinned dependency
+`cca6949` (signatures checked), as the proved applications at the end of section B; from
+ComputableModelTheory, prospective (neither available upstream nor pinned), whose `sorry` targets
+below record their statement shapes and are not `#check`ed (`IMPLEMENTATION.md`, "Dependency
+pins").
 -/
 
 set_option autoImplicit false
@@ -168,70 +174,169 @@ end Filtration
 
 /-! ## B. Homogeneity of top-free charts and its consequences -/
 
-namespace Charts
-
-variable (Chart : ℕ → Type u)
-variable (restrict : {n m : ℕ} → (Fin n ↪ Fin m) → Chart m → Option (Chart n))
-
-/-- **Amalgamation of charts**, with the literal commuting root equation `f₁.trans g₁ =
-f₂.trans g₂`.  Two charts restricting to the same chart along `f₁` and `f₂` are both restrictions
-of one chart.  This is not strong amalgamation (the images of `g₁` and `g₂` may overlap outside
-the image of the root) and concerns the specified charts only, not arbitrary induced finite
-substructures.  The target is to prove it for the top-free finite closed charts. -/
-def ChartAmalgamation : Prop :=
-  ∀ {k m₁ m₂ : ℕ} (f₁ : Fin k ↪ Fin m₁) (f₂ : Fin k ↪ Fin m₂) (p₁ : Chart m₁) (p₂ : Chart m₂)
-    (r : Chart k), restrict f₁ p₁ = some r → restrict f₂ p₂ = some r →
-    ∃ (m : ℕ) (g₁ : Fin m₁ ↪ Fin m) (g₂ : Fin m₂ ↪ Fin m) (p : Chart m),
-      f₁.trans g₁ = f₂.trans g₂ ∧ restrict g₁ p = some p₁ ∧ restrict g₂ p = some p₂
-
-/-- **Joint embedding of charts**: any two charts are restrictions of one chart. -/
-def ChartJointEmbedding : Prop :=
-  ∀ {m₁ m₂ : ℕ} (p₁ : Chart m₁) (p₂ : Chart m₂),
-    ∃ (m : ℕ) (g₁ : Fin m₁ ↪ Fin m) (g₂ : Fin m₂ ↪ Fin m) (p : Chart m),
-      restrict g₁ p = some p₁ ∧ restrict g₂ p = some p₂
-
-variable {Chart restrict}
-
-/-- Amalgamation over the empty chart gives joint embedding, when every chart restricts to one
-empty chart.  The empty root is an instance of amalgamation, not a separate construction. -/
-theorem chartJointEmbedding_of_chartAmalgamation (hAP : ChartAmalgamation Chart restrict)
-    (e : Chart 0)
-    (hempty : ∀ {m : ℕ} (p : Chart m), restrict Function.Embedding.ofIsEmpty p = some e) :
-    ChartJointEmbedding Chart restrict := by
-  intro m₁ m₂ p₁ p₂
-  obtain ⟨m, g₁, g₂, p, -, h₁, h₂⟩ :=
-    hAP Function.Embedding.ofIsEmpty Function.Embedding.ofIsEmpty p₁ p₂ e (hempty p₁) (hempty p₂)
-  exact ⟨m, g₁, g₂, p, h₁, h₂⟩
-
-end Charts
+/- The chart amalgamation and joint embedding properties (B1) belong to the core, step 2 of the
+top-free witnesses: `ChartAmalgamation`, `ChartJointEmbedding`, and
+`chartJointEmbedding_of_chartAmalgamation` are in `Suggested.lean` (`Roadmap.ClassicalLimit`),
+with the reconstruction predicate. -/
 
 namespace Orbits
 
 variable {L : Language.{u, v}} {M : Type w} [L.Structure M]
 
-/-- **Local automorphisms preserve infinitary formulas.**  A self-map of `M` that agrees with an
-automorphism on the tuple `a` preserves every `L_{ω₁,ω}` formula at `a`.  Applied to a
-self-embedding agreeing with an automorphism on each finite tuple, it gives preservation of all
-infinitary formulas.  No proper self-embedding is constructed here. -/
-theorem realize_comp_iff_of_agrees_with_automorphism (f : M → M) {n : ℕ} (a : Fin n → M)
-    (hf : ∃ e : M ≃[L] M, ⇑e ∘ a = f ∘ a) (φ : L.Formulaω (Fin n)) :
-    Formulaω.Realize φ (f ∘ a) ↔ Formulaω.Realize φ a := by
-  obtain ⟨e, he⟩ := hf
-  rw [← he, Formulaω.realize_def, Formulaω.realize_def,
-    BoundedFormulaω.realize_equiv e φ a Fin.elim0]
-  exact iff_of_eq (congrArg _ (Subsingleton.elim _ _))
+/- The generic consequences of the two interfaces of B are library theorems of InfinitaryLogic,
+available at our pinned dependency `cca6949` (signatures checked), and are not reproved here: the
+applications at the end of this section quote them.  The construction-side statements are the
+orbit formula of a chart (`orbitDefinedBy_chartOrbitFormula`) and the local agreement property
+(`agreesLocally_of_hom`).  The narrow modules `Scott/OrbitFormulaThreshold` and
+`Lomega1omega/LocalAutomorphism` are imported, never `InfinitaryLogic.All`. -/
 
 /-- The first-order formula `φ` defines the automorphism orbit of `a`. -/
 def OrbitDefinedBy {n : ℕ} (a : Fin n → M) (φ : L.Formula (Fin n)) : Prop :=
   ∀ b : Fin n → M, φ.Realize b ↔ ∃ e : M ≃[L] M, ⇑e ∘ a = b
 
+section ChartOrbitFormula
+
+open Structure
+
+variable {Chart : ℕ → Type z} (rel : ∀ {n : ℕ}, Chart n → L.Relations n)
+
+/-- **Literal recovery of chart relations**, with injectivity of labelled tuples (as in
+`Suggested.lean`, section 3): the relation of the chart `p` holds at a tuple exactly when the
+tuple is injective and its evaluation is `p`. -/
+def RecoversRelations (eval : {n : ℕ} → (Fin n ↪ M) → Option (Chart n)) : Prop :=
+  ∀ {n : ℕ} (a : Fin n → M) (p : Chart n),
+    RelMap (rel p) a ↔ ∃ t : Fin n ↪ M, ⇑t = a ∧ eval t = some p
+
+/-- The **orbit formula of a chart**: `θ(x̄) := ∃ z̄, P_p(z̄) ∧ ⋀_i x_i = z_{b(i)}`, for a chart
+`p` on `m` points and the positions `b` of the tuple among its points (repetitions allowed).  It
+uses only a chart relation and equality, so it is a formula of the relational stage chart
+language. -/
+noncomputable def chartOrbitFormula {n m : ℕ} (p : Chart m) (b : Fin n → Fin m) :
+    L.Formula (Fin n) :=
+  BoundedFormula.exs
+    ((rel p).boundedFormula (fun j => Term.var (Sum.inr j)) ⊓
+      BoundedFormula.iInf fun i : Fin n =>
+        (Term.var (Sum.inl i)).bdEqual (Term.var (Sum.inr (b i))))
+
+/-- **Orbit formulas from finite charts** (B3.1).  Under literal recovery of the chart relations
+and chart homogeneity (two actual occurrences of the same chart are carried to each other by an
+automorphism), the orbit formula of an actual chart containing the tuple `a` defines its
+automorphism orbit.  The empty tuple and repeated coordinates are included.  For a top-free
+witness, chart homogeneity follows from ultrahomogeneity of the expansion by the hull
+operations, since every automorphism of the expansion is an automorphism of its relational
+reduct; only this direction is used (`README.md`, Layer 0). -/
+theorem orbitDefinedBy_chartOrbitFormula {eval : {n : ℕ} → (Fin n ↪ M) → Option (Chart n)}
+    (hrec : RecoversRelations rel eval)
+    (hhom : ∀ {m : ℕ} (u v : Fin m ↪ M) (p : Chart m), eval u = some p → eval v = some p →
+      ∃ e : M ≃[L] M, ⇑e ∘ ⇑u = ⇑v)
+    {n m : ℕ} (a : Fin n → M) (u : Fin m ↪ M) (b : Fin n → Fin m) (p : Chart m)
+    (hu : ⇑u ∘ b = a) (hp : eval u = some p) :
+    OrbitDefinedBy a (chartOrbitFormula rel p b) := by
+  have hpu : RelMap (rel p) ⇑u := (hrec u p).2 ⟨u, rfl, hp⟩
+  simp only [OrbitDefinedBy, chartOrbitFormula, BoundedFormula.realize_exs,
+    BoundedFormula.realize_inf, BoundedFormula.realize_rel, BoundedFormula.realize_iInf,
+    BoundedFormula.realize_bdEqual, Term.realize_var, Sum.elim_inl, Sum.elim_inr]
+  intro c
+  constructor
+  · rintro ⟨z, hz, hc⟩
+    obtain ⟨v, hv, hvp⟩ := (hrec _ p).1 hz
+    obtain ⟨e, he⟩ := hhom u v p hp hvp
+    refine ⟨e, funext fun i => ?_⟩
+    have := congrFun he (b i)
+    simp only [Function.comp_apply] at this ⊢
+    rw [← hu]; simp only [Function.comp_apply]; rw [this, hv]
+    exact (hc i).symm
+  · rintro ⟨e, rfl⟩
+    refine ⟨⇑e ∘ ⇑u, ?_, fun i => ?_⟩
+    · exact (e.map_rel (rel p) ⇑u).2 hpu
+    · rw [← hu]; rfl
+
+/-- **Covering** of arbitrary tuples (as in `Suggested.lean`, section 3): every tuple, the empty
+tuple and repeated coordinates included, factors literally through an actual occurrence. -/
+def CoversTuples (eval : {n : ℕ} → (Fin n ↪ M) → Option (Chart n)) : Prop :=
+  ∀ {n : ℕ} (a : Fin n → M), ∃ (m : ℕ) (u : Fin m ↪ M) (b : Fin n → Fin m) (p : Chart m),
+    ⇑u ∘ b = a ∧ eval u = some p
+
+/-- The **local agreement property** of a self-map `f`: on each finite tuple it agrees with an
+automorphism.  For `f` a self-embedding this is the hypothesis of InfinitaryLogic's
+`BoundedFormulaω.realize_embedding_comp_of_localAutomorphisms` (at our pinned dependency
+`cca6949`). -/
+def AgreesLocally (f : M → M) : Prop :=
+  ∀ (n : ℕ) (a : Fin n → M), ∃ e : M ≃[L] M, ⇑e ∘ a = f ∘ a
+
+/-- **Local agreement from recovery, covering, and homogeneity** (B2).  Cover `a` by an actual
+chart `u`; a map preserving the chart relations carries `u` to a tuple satisfying the same chart
+relation, which by literal recovery is an actual occurrence of the same chart; homogeneity gives
+an automorphism agreeing with the map on `u`, hence on `a`.  Only the preservation of the chart
+relations is used: any homomorphism, in particular any self-embedding. -/
+theorem agreesLocally_of_hom {eval : {n : ℕ} → (Fin n ↪ M) → Option (Chart n)}
+    (hrec : RecoversRelations rel eval) (hcov : CoversTuples eval)
+    (hhom : ∀ {m : ℕ} (u v : Fin m ↪ M) (p : Chart m), eval u = some p → eval v = some p →
+      ∃ e : M ≃[L] M, ⇑e ∘ ⇑u = ⇑v)
+    (g : M →[L] M) : AgreesLocally (L := L) ⇑g := by
+  intro n a
+  obtain ⟨m, u, b, p, hu, hp⟩ := hcov a
+  have hrel : RelMap (rel p) (⇑g ∘ ⇑u) := g.map_rel (rel p) ⇑u ((hrec u p).2 ⟨u, rfl, hp⟩)
+  obtain ⟨v, hv, hvp⟩ := (hrec _ p).1 hrel
+  obtain ⟨e, he⟩ := hhom u v p hp hvp
+  refine ⟨e, ?_⟩
+  rw [← hu, ← Function.comp_assoc, he, hv, Function.comp_assoc]
+
+end ChartOrbitFormula
+
+/-! ### The applications (InfinitaryLogic, at our pinned dependency `cca6949`)
+
+Each statement is a one-line application of a library theorem to the two interfaces; the
+hypotheses `OrbitDefinedBy a φ` and `AgreesLocally ⇑g` are, by definition, the library's `hφ` and
+`hg`. -/
+
+/-- **A finite threshold from an orbit formula** (B3.3), by `exists_finite_orbit_threshold`. -/
+theorem exists_finite_threshold_of_orbitDefinedBy [L.IsRelational] {n : ℕ} {a : Fin n → M}
+    {φ : L.Formula (Fin n)} (h : OrbitDefinedBy a φ) :
+    ∃ β : Ordinal.{w}, β < Ordinal.omega0 ∧
+      ∀ b : Fin n → M, BFEquiv (L := L) β n a b → ∃ e : M ≃[L] M, ⇑e ∘ a = b :=
+  exists_finite_orbit_threshold h
+
+/-- **Finite orbit rank from an orbit formula** (B3.3), by
+`orbitRank_lt_omega0_of_orbitFormula`. -/
+theorem orbitRank_lt_omega0_of_orbitDefinedBy [L.IsRelational] {n : ℕ} {a : Fin n → M}
+    {φ : L.Formula (Fin n)} (h : OrbitDefinedBy a φ) : orbitRank (L := L) a < Ordinal.omega0 :=
+  orbitRank_lt_omega0_of_orbitFormula h
+
+/-- **Internal Scott rank at most `ω`** from an orbit formula for every tuple (B3.3), by
+`internalScottRank_le_omega0_of_orbitFormulas`.  The bound is `≤ ω`, not `< ω`, and not an
+equality; the internal rank is in the library's convention `⨆ a, orbitRank a + 1`. -/
+theorem internalScottRank_le_omega0_of_orbitDefinedBy [L.IsRelational]
+    (h : ∀ (n : ℕ) (a : Fin n → M), ∃ φ : L.Formula (Fin n), OrbitDefinedBy a φ) :
+    internalScottRank (L := L) M ≤ Ordinal.omega0 :=
+  internalScottRank_le_omega0_of_orbitFormulas h
+
+/-- **Self-embeddings preserve infinitary formulas** (B2), in the orientation
+`M ⊨ φ(a) ↔ M ⊨ φ(g ∘ a)`, by `BoundedFormulaω.realize_embedding_comp_of_localAutomorphisms`.
+No relationality, countability, infinitude, or nonemptiness. -/
+theorem realize_iff_realize_comp_of_agreesLocally (g : M ↪[L] M) (hg : AgreesLocally (L := L) ⇑g)
+    {n : ℕ} (φ : L.BoundedFormulaω Empty n) (a : Fin n → M) :
+    φ.Realize Empty.elim a ↔ φ.Realize Empty.elim (⇑g ∘ a) :=
+  (BoundedFormulaω.realize_embedding_comp_of_localAutomorphisms g hg φ a).symm
+
+/-- **The same with finitely many parameters** (B2), by
+`BoundedFormulaω.realize_comp_append_of_localAutomorphisms`: one automorphism, chosen for the
+appended tuple, moves both. -/
+theorem realize_comp_append_iff_of_agreesLocally (g : M ↪[L] M) (hg : AgreesLocally (L := L) ⇑g)
+    {m n : ℕ} (φ : L.BoundedFormulaω (Fin m) n) (v : Fin m → M) (a : Fin n → M) :
+    φ.Realize (⇑g ∘ v) (⇑g ∘ a) ↔ φ.Realize v a :=
+  BoundedFormulaω.realize_comp_append_of_localAutomorphisms hg φ v a
+
 variable [Nonempty M]
 
 /-- **A definable orbit isolates the complete type** (target, generic).  If `φ` defines the
-automorphism orbit of `a`, then `φ` isolates the complete type of `a` over the complete theory
-of `M`: the only complete type containing `φ` is the type of `a`.  Uniqueness of realizations
-inside `M` alone is not the statement; the singleton is in the space of complete types, so the
-universal implications `∀ x̄, φ → ψ` transfer to every model of the theory. -/
+automorphism orbit of `a`, then `φ` isolates the complete type of `a` over the complete theory of
+`M`: the only complete type containing `φ` is the type of `a`.  Uniqueness of realizations inside
+`M` alone is not the statement; the singleton is in the space of complete types, so the universal
+implications `∀ x̄, φ → ψ` transfer to every model of the theory.  Prospective (neither available
+upstream nor pinned); to be quoted as the composite of ComputableModelTheory's
+`isolatesTuple_of_orbit_formula` (under `[Nonempty M]`) and `IsolatesTuple.typesWith_eq_singleton`.
+-/
 theorem typesWith_eq_singleton_of_orbitDefinedBy {n : ℕ} {a : Fin n → M}
     {φ : L.Formula (Fin n)} (hφ : OrbitDefinedBy a φ) :
     (L.completeTheory M).typesWith (Formula.equivSentence φ) =
@@ -251,171 +356,81 @@ theorem typesIsolated_of_orbitDefinedBy
   let ⟨φ, hφ⟩ := h n a
   ⟨φ, typesWith_eq_singleton_of_orbitDefinedBy hφ⟩
 
-/-- **Countable atomic implies prime** (target, generic).  A countable structure all of whose
-types are isolated embeds elementarily into every model of its complete theory, in an arbitrary
-universe and of arbitrary cardinality.  Intended proof: enumerate only `M`, extend finite partial
-maps preserving every first-order formula, and take the union. -/
+/-- **Countable atomic implies prime** (target, generic).  A countable structure all of whose types
+are isolated embeds elementarily into every model of its complete theory, in an arbitrary universe
+and of arbitrary cardinality.  Intended proof: enumerate only `M`, extend finite partial maps
+preserving every first-order formula, and take the union.  Prospective (neither available upstream
+nor pinned): ComputableModelTheory's `exists_elementaryEmbedding_of_countable_atomic`, with
+`TypesIsolated` identified with its `IsAtomic` over the complete theory. -/
 theorem nonempty_elementaryEmbedding_of_typesIsolated [Countable M]
     (hM : TypesIsolated L M) (N : Type w') [L.Structure N] [N ⊨ L.completeTheory M] :
     Nonempty (M ↪ₑ[L] N) := by
-  sorry
-
-omit [Nonempty M] in
-/-- **Internal Scott rank at most `ω`** from orbits determined at finite levels.  This is the
-library's convention, `⨆ a, orbitRank a + 1`; no equality of ranks is asserted. -/
-theorem internalScottRank_le_omega0_of_finite_levels
-    (h : ∀ (n : ℕ) (a : Fin n → M), ∃ k : ℕ,
-      ∀ b : Fin n → M, BFEquiv (L := L) (k : Ordinal.{w}) n a b → ∃ e : M ≃[L] M, ⇑e ∘ a = b) :
-    internalScottRank (L := L) M ≤ Ordinal.omega0 := by
-  refine internalScottRank_le_of_orbits_determined fun n a => ?_
-  obtain ⟨k, hk⟩ := h n a
-  exact ⟨k, Ordinal.natCast_lt_omega0 k, hk⟩
-
-omit [Nonempty M] in
-/-- **Internal Scott rank at most `ω`** from first-order orbit formulas (target, generic).  The
-orbit formula has finite quantifier rank, and back-and-forth equivalence at that level forces
-agreement on it.  `[Countable M]` is the hypothesis of that agreement,
-`BFEquiv_implies_agree_formulas_omega`; its levels are in `Ordinal.{0}`, and
-`BFEquiv.ofOrdinalLift` and `BFEquiv.toOrdinalLift` pass to `Ordinal.{w}`.  The finite rank of a
-first-order formula in `L_{ω₁,ω}` is to be added upstream. -/
-theorem internalScottRank_le_omega0_of_orbitDefinedBy [L.IsRelational] [Countable M]
-    (h : ∀ (n : ℕ) (a : Fin n → M), ∃ φ : L.Formula (Fin n), OrbitDefinedBy a φ) :
-    internalScottRank (L := L) M ≤ Ordinal.omega0 := by
   sorry
 
 end Orbits
 
 /-! ## C. A geometric obstruction
 
-The generic shape: a binary hull in which, of any three distinct points, one lies in the hull of
-the other two (two-generation), and a family of self-maps each fixing pointwise the hull of any
-two points it fixes (pointwise hull fixation).  For a realization, the hull is the canonical
-finite hull and the maps are its automorphisms; both hypotheses are to be proved from exact
-consistency and covering alone. -/
+The generic shape of the two-point bound: an extreme-point map `ext` on sets, commuting at the set
+`A` with a set `Aut` of self-maps (for a realization, `ext A` is the set of the two extreme points
+of the finite hull of `A`, and `Aut` its automorphisms, which preserve the two intrinsic extremes of
+a finite hull).  If a set `A ⊆ S` contains a point that is not extreme and a point that is, then not
+every permutation of `S` extends to a map in `Aut`.  Applied to three distinct points, whose hull
+has its two extremes among them, it bounds every set of absolute indiscernibles by two. The instance
+for a realization, from exact consistency and covering alone, is a statement still to be proved
+(`COMPANIONS.md`, C). -/
 
 namespace HullObstruction
 
-variable {M : Type u} (hull : M → M → Set M) (Aut : Set (M → M))
+variable {M : Type u} (ext : Set M → Set M) (Aut : Set (M → M))
 
-/-- The core step: with `p` in the hull of `q` and `r`, the transposition of `p` with a fourth
-point `s` fixing `q` and `r` cannot extend to a map in `Aut`. -/
-theorem false_of_swap {S : Set M}
-    (hfix : ∀ g ∈ Aut, ∀ x y, g x = x → g y = y → ∀ z ∈ hull x y, g z = z)
+/-- **The swap of a non-extreme and an extreme point.**  With `x` not extreme and `y` extreme in
+`A ⊆ S`, the transposition of `x` and `y` does not extend to a map in `Aut` commuting with
+`ext` at `A`: such a map sends `A` onto itself and `y` to `x`. -/
+theorem false_of_swap_extreme {S A : Set M} (hAS : A ⊆ S)
+    (hext : ∀ g ∈ Aut, g '' ext A = ext (g '' A))
     (hperm : ∀ σ : Equiv.Perm S, ∃ g ∈ Aut, ∀ s : S, g s = σ s)
-    {p q r s : M} (hp : p ∈ S) (hq : q ∈ S) (hr : r ∈ S) (hs : s ∈ S)
-    (hqp : q ≠ p) (hqs : q ≠ s) (hrp : r ≠ p) (hrs : r ≠ s) (hps : p ≠ s)
-    (hmem : p ∈ hull q r) : False := by
+    {x y : M} (hx : x ∈ A) (hy : y ∈ A) (hxe : x ∉ ext A) (hye : y ∈ ext A) : False := by
   classical
-  obtain ⟨g, hg, hgσ⟩ := hperm (Equiv.swap ⟨p, hp⟩ ⟨s, hs⟩)
-  have hgq : g q = q := by
-    have := hgσ ⟨q, hq⟩
-    rw [Equiv.swap_apply_of_ne_of_ne (by simpa [Subtype.ext_iff] using hqp)
-      (by simpa [Subtype.ext_iff] using hqs)] at this
-    exact this
-  have hgr : g r = r := by
-    have := hgσ ⟨r, hr⟩
-    rw [Equiv.swap_apply_of_ne_of_ne (by simpa [Subtype.ext_iff] using hrp)
-      (by simpa [Subtype.ext_iff] using hrs)] at this
-    exact this
-  have hgp : g p = s := by
-    have := hgσ ⟨p, hp⟩
-    rw [Equiv.swap_apply_left] at this
-    exact this
-  exact hps ((hfix g hg q r hgq hgr p hmem).symm.trans hgp)
-
-/-- **No four points have all their permutations extended.**  Under two-generation and pointwise
-hull fixation, no set containing four distinct points has every permutation extended by a map in
-`Aut`. -/
-theorem false_of_four_points {S : Set M}
-    (htwo : ∀ x y z : M, x ≠ y → y ≠ z → x ≠ z →
-      z ∈ hull x y ∨ x ∈ hull y z ∨ y ∈ hull x z)
-    (hfix : ∀ g ∈ Aut, ∀ x y, g x = x → g y = y → ∀ z ∈ hull x y, g z = z)
-    (hperm : ∀ σ : Equiv.Perm S, ∃ g ∈ Aut, ∀ s : S, g s = σ s)
-    {a b c d : M} (ha : a ∈ S) (hb : b ∈ S) (hc : c ∈ S) (hd : d ∈ S)
-    (hab : a ≠ b) (hac : a ≠ c) (had : a ≠ d) (hbc : b ≠ c) (hbd : b ≠ d) (hcd : c ≠ d) :
-    False := by
-  rcases htwo a b c hab hbc hac with h | h | h
-  · exact false_of_swap hull Aut hfix hperm hc ha hb hd hac had hbc hbd hcd h
-  · exact false_of_swap hull Aut hfix hperm ha hb hc hd hab.symm hbd hac.symm hcd had h
-  · exact false_of_swap hull Aut hfix hperm hb ha hc hd hab had hbc.symm hcd hbd h
-
-/-- **The obstruction.**  Under two-generation and pointwise hull fixation, no infinite set has
-all its permutations extended by maps in `Aut`. -/
-theorem not_forall_perm_extends_of_infinite {S : Set M} (hS : S.Infinite)
-    (htwo : ∀ x y z : M, x ≠ y → y ≠ z → x ≠ z →
-      z ∈ hull x y ∨ x ∈ hull y z ∨ y ∈ hull x z)
-    (hfix : ∀ g ∈ Aut, ∀ x y, g x = x → g y = y → ∀ z ∈ hull x y, g z = z) :
-    ¬ ∀ σ : Equiv.Perm S, ∃ g ∈ Aut, ∀ s : S, g s = σ s := by
-  intro hperm
-  let f := hS.natEmbedding
-  have hne : ∀ i j : ℕ, i ≠ j → (f i : M) ≠ f j := fun i j hij h =>
-    hij (f.injective (Subtype.ext h))
-  exact false_of_four_points hull Aut htwo hfix hperm (f 0).2 (f 1).2 (f 2).2 (f 3).2
-    (hne 0 1 (by decide)) (hne 0 2 (by decide)) (hne 0 3 (by decide))
-    (hne 1 2 (by decide)) (hne 1 3 (by decide)) (hne 2 3 (by decide))
-
-/-- **Two-generation for three points**, from the whole-hull two-generation hypothesis of the
-library's `TwoGeneratorCardinality` (the hull of every finite set is the hull of at most two of
-its points): of three distinct points, one lies in the closure of the other two. -/
-theorem mem_closure_pair_of_twoGeneration [DecidableEq M] (c : ClosureOperator (Finset M))
-    (hgen : ∀ S : Finset M, ∃ T ⊆ S, T.card ≤ 2 ∧ c T = c S) {x y z : M}
-    (hxy : x ≠ y) (hyz : y ≠ z) (hxz : x ≠ z) :
-    z ∈ c {x, y} ∨ x ∈ c {y, z} ∨ y ∈ c {x, z} := by
-  obtain ⟨T, hTS, hT2, hTc⟩ := hgen {x, y, z}
-  have hmem : ∀ w ∈ ({x, y, z} : Finset M), w ∈ c T := fun w hw => by
-    rw [hTc]; exact c.le_closure _ hw
-  have hcard : ({x, y, z} : Finset M).card = 3 := by
-    rw [Finset.card_insert_of_notMem (by simp [hxy, hxz]),
-      Finset.card_pair hyz]
-  by_cases hz : z ∈ T
-  · by_cases hx : x ∈ T
-    · by_cases hy : y ∈ T
-      · have : ({x, y, z} : Finset M) ⊆ T := by
-          intro w hw; simp only [Finset.mem_insert, Finset.mem_singleton] at hw
-          rcases hw with rfl | rfl | rfl <;> assumption
-        have := Finset.card_le_card this
-        omega
-      · right; right
-        have hT : T ⊆ {x, z} := by
-          intro w hw
-          have := hTS hw
-          simp only [Finset.mem_insert, Finset.mem_singleton] at this ⊢
-          rcases this with rfl | rfl | rfl
-          · exact Or.inl rfl
-          · exact absurd hw hy
-          · exact Or.inr rfl
-        exact c.monotone hT (hmem y (by simp))
-    · right; left
-      have hT : T ⊆ {y, z} := by
-        intro w hw
-        have := hTS hw
-        simp only [Finset.mem_insert, Finset.mem_singleton] at this ⊢
-        rcases this with rfl | rfl | rfl
-        · exact absurd hw hx
-        · exact Or.inl rfl
-        · exact Or.inr rfl
-      exact c.monotone hT (hmem x (by simp))
-  · left
-    have hT : T ⊆ {x, y} := by
-      intro w hw
-      have := hTS hw
-      simp only [Finset.mem_insert, Finset.mem_singleton] at this ⊢
-      rcases this with rfl | rfl | rfl
-      · exact Or.inl rfl
-      · exact Or.inr rfl
-      · exact absurd hw hz
-    exact c.monotone hT (hmem z (by simp))
-
-/-- The obstruction for a finite-hull closure operator with whole-hull two-generation. -/
-theorem not_forall_perm_extends_of_twoGeneration [DecidableEq M] (c : ClosureOperator (Finset M))
-    (hgen : ∀ S : Finset M, ∃ T ⊆ S, T.card ≤ 2 ∧ c T = c S)
-    (hfix : ∀ g ∈ Aut, ∀ x y, g x = x → g y = y → ∀ z ∈ c {x, y}, g z = z)
-    {S : Set M} (hS : S.Infinite) :
-    ¬ ∀ σ : Equiv.Perm S, ∃ g ∈ Aut, ∀ s : S, g s = σ s :=
-  not_forall_perm_extends_of_infinite (fun x y => (↑(c {x, y}) : Set M)) Aut hS
-    (fun _ _ _ hxy hyz hxz => by
-      simpa only [Finset.mem_coe] using mem_closure_pair_of_twoGeneration c hgen hxy hyz hxz)
-    (fun g hg x y hx hy z hz => hfix g hg x y hx hy z (Finset.mem_coe.mp hz))
+  obtain ⟨g, hg, hgσ⟩ := hperm (Equiv.swap ⟨x, hAS hx⟩ ⟨y, hAS hy⟩)
+  have hgA : ∀ a ∈ A, g a = Equiv.swap x y a := by
+    intro a ha
+    have := hgσ ⟨a, hAS ha⟩
+    rw [this]
+    by_cases hax : a = x
+    · subst hax; simp
+    · by_cases hay : a = y
+      · subst hay; simp
+      · rw [Equiv.swap_apply_of_ne_of_ne (by simpa [Subtype.ext_iff] using hax)
+          (by simpa [Subtype.ext_iff] using hay), Equiv.swap_apply_of_ne_of_ne hax hay]
+  have himg : g '' A = A := by
+    ext a
+    constructor
+    · rintro ⟨b, hb, rfl⟩
+      rw [hgA b hb]
+      by_cases hbx : b = x
+      · subst hbx; simpa using hy
+      · by_cases hby : b = y
+        · subst hby; simpa using hx
+        · rwa [Equiv.swap_apply_of_ne_of_ne hbx hby]
+    · intro ha
+      refine ⟨Equiv.swap x y a, ?_, ?_⟩
+      · by_cases hax : a = x
+        · subst hax; simpa using hy
+        · by_cases hay : a = y
+          · subst hay; simpa using hx
+          · rwa [Equiv.swap_apply_of_ne_of_ne hax hay]
+      · rw [hgA _ ?_, Equiv.swap_apply_self]
+        by_cases hax : a = x
+        · subst hax; simpa using hy
+        · by_cases hay : a = y
+          · subst hay; simpa using hx
+          · rwa [Equiv.swap_apply_of_ne_of_ne hax hay]
+  have hxmem : x ∈ ext A := by
+    rw [← himg, ← hext g hg]
+    refine ⟨y, hye, ?_⟩
+    rw [hgA y hy, Equiv.swap_apply_right]
+  exact hxe hxmem
 
 end HullObstruction
 
@@ -448,29 +463,15 @@ set_option linter.hashCommand false in
 set_option linter.hashCommand false in
 #check FirstOrder.Language.sentences_constant_off_countable
 set_option linter.hashCommand false in
-#check FirstOrder.Language.BoundedFormulaω.realize_equiv
-set_option linter.hashCommand false in
 #check FirstOrder.Language.PotentialIso.ofExtensionFamily
 set_option linter.hashCommand false in
 #check FirstOrder.Language.PotentialIso.family_bfEquiv
 set_option linter.hashCommand false in
 #check FirstOrder.Language.exists_automorphism_of_bfEquiv_all
 set_option linter.hashCommand false in
-#check FirstOrder.Language.BoundedFormula.toLω
-set_option linter.hashCommand false in
-#check FirstOrder.Language.Formula.realize_toLω
-set_option linter.hashCommand false in
-#check FirstOrder.Language.BFEquiv_implies_agree_formulas_omega
-set_option linter.hashCommand false in
-#check FirstOrder.Language.BFEquiv.ofOrdinalLift
-set_option linter.hashCommand false in
-#check FirstOrder.Language.BFEquiv.toOrdinalLift
-set_option linter.hashCommand false in
 #check FirstOrder.Language.realize_scottFormula_iff_BFEquiv
 set_option linter.hashCommand false in
 #check FirstOrder.Language.PotentialIso.countable_toEquiv_graph
-set_option linter.hashCommand false in
-#check FirstOrder.Language.internalScottRank_le_of_orbits_determined
 set_option linter.hashCommand false in
 #check FirstOrder.Language.bfEquiv_orbitRank_iff_exists_automorphism
 set_option linter.hashCommand false in
