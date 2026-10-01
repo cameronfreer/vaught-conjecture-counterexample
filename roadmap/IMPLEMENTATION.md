@@ -508,10 +508,11 @@ their notions live; "this repository" means the layers of `README.md`.
    `Counting/Separation`, and in back-and-forth form in InfinitaryLogic, `Scott`.
 7. *Small back-and-forth quotients and the analytic-pair boundedness argument;* minimality
    is a further assertion needing a common starting observation on high presentations.  Home:
-   InfinitaryLogic, `Descriptive/BFSeparation` (`exists_uniform_bfSeparation`, available at the
-   pin `098fb36`, signatures checked), with the composition in this repository, pull request #42
-   (open; "The scatteredness form" below).  The minimality form is already covered through
-   sentences by `Sentenceω.isThinOnNatModels_of_countable_sentence_splits`.
+   InfinitaryLogic, `Descriptive/BFSeparation` (`exists_uniform_bfSeparation`, available at our
+   pinned dependency `098fb36`, signatures checked); the composition is `MainTheorem/Scatteredness`
+   and the scattered-tails theorems of `MainTheorem/Assembly` (pull request #42; "The
+   scatteredness form" below).  The minimality form is already covered through sentences by
+   `Sentenceω.isThinOnNatModels_of_countable_sentence_splits`.
 8. *A translation from the templates of [AFK26] to the fixed-row and separate-labelling
    convention,* stating exactly which coordinates stage reduction changes (the labels, not the
    rows).  Home: this repository (`README.md`, layer 2, "The templates of [AFK26] and the stage
@@ -540,38 +541,52 @@ composition beside the expansion-domain composition, which is unchanged:
   (`ℵ₁ ≤ #DensityClass`), with the conditional theorems
   `densitySentence_isThinOnNatModels_of_presentations`,
   `densitySentence_hasThinAlephOneSpectrum_of_presentations`, and
-  `vaughtCounterexample_of_presentations`.
+  `vaughtCounterexample_of_presentations`;
+- with pull request #42 (the scatteredness form, below): `MainTheorem/Scatteredness`, and in
+  `MainTheorem/Assembly` the hypothesis `FullPresentations.HasScatteredTails` (with
+  `FullPresentations.HasScatteredTails.of_countable_quotient`) and the conditional theorems
+  `densitySentence_isThinOnNatModels_of_scatteredTails` and
+  `vaughtCounterexample_of_scatteredTails`.
 
 Recorded with it: the count uses only `FullPresentations` (`#X ≤ ℵ₁`), and bounded comparison is
 used only for thinness; the proof term of the main conditional theorem avoids `classTruth_separates`
 (Scott separation on the empty core is unused), while thinness still goes through sentence
 separation; `FullPresentations` contains the global claim that every class, a persistent one
 included, has a full presentation (statement 5 above, and `README.md`, "The persistent core"); and
-the weaker form, countably many `≡_η`-classes in each tail, is the composition of pull request #42
-(below).
+the weaker form, countably many back-and-forth classes in each tail, is
+`FullPresentations.HasScatteredTails`, composed by pull request #42 (below).  The reduced
+dependencies of that composition, checked on the proof terms: the scattered-tails thinness and
+spectrum theorems contain neither `sentence_separates_analytic_classes` nor any López–Escobar
+constant, while `densitySentence_isThinOnNatModels_of_presentations` contains both.
 
-**The scatteredness form: pull request #42 (open).**  The thinness composition in scatteredness
-form (countably many back-and-forth classes at each level `η < ω₁` exclude a perfect antichain,
-with no sentence definability of the class) is composed from `exists_uniform_bfSeparation`
-(InfinitaryLogic's pull requests #142–#144, at the pin `098fb36` since this repository's pull
-request #41) in pull request #42, "Layer 6: thinness from countably many back-and-forth classes at
-every level, by analytic separation": the pairs of distinct points of a hypothetical perfect
-antichain form an analytic set with no isomorphic pair, so one level `η` separates them, and only
-countably many classes occur at `η`.  Its statements:
+**The scatteredness form: pull request #42.**  The thinness composition in scatteredness form
+(countably many back-and-forth classes at each level `η < ω₁` exclude a perfect antichain, with no
+sentence definability of the class) is composed from `exists_uniform_bfSeparation`
+(InfinitaryLogic's pull requests #142–#144, at our pinned dependency `098fb36` since this
+repository's pull request #41) in pull request #42, "Layer 6: thinness from countably many
+back-and-forth classes at every level, by analytic separation": the pairs of distinct points of a
+hypothetical perfect antichain form an analytic set with no isomorphic pair, so one level `η`
+separates them, and only countably many classes occur at `η`.  Its statements:
 
-- `MainTheorem/Scatteredness` (generic, for a countable relational language):
-  `isThinOn_of_countable_bfClasses` (if for every `η < ω₁` the restriction of `CodeBFEquiv η` to
-  a set `K` of codes has countably many classes, then `K` contains no nonempty perfect set of
+- `MainTheorem/Scatteredness` (every statement generic; none mentions the density sentence; for a
+  countable relational language): `codeBFEquivSetoid` (the library's `CodeBFEquiv η` as a setoid
+  on all codes) and `bfEquivSetoid_eq_comap` (the library's `bfEquivSetoid φ η` is its
+  restriction to the codes of models of `φ`); `analyticSet_offDiag` and `offDiag_noniso` (the
+  pairs of distinct points of a closed pairwise nonisomorphic set of codes form an analytic set
+  with no isomorphic pair); `not_countable_of_perfect`;
+  `exists_forall_not_codeBFEquiv_of_isClosed` (one level separates a closed antichain);
+  `isThinOn_of_countable_bfClasses` (if for every `η < ω₁` the restriction of `CodeBFEquiv η` to a
+  set `K` of codes has countably many classes, then `K` contains no nonempty perfect set of
   pairwise nonisomorphic codes; the hypothesis counts classes, not codes) and
   `isThinOnNatModels_of_countable_bfClasses` (the same for the codes of models of a sentence `φ`,
-  with the library's `bfEquivSetoid φ η`, concluding `φ.IsThinOnNatModels`);
+  with `bfEquivSetoid φ η`, concluding `φ.IsThinOnNatModels`);
 - `MainTheorem/Assembly`: the hypothesis `FullPresentations.HasScatteredTails` (the codes of the
   models whose classes lie in the tail at `η` meet only countably many classes of
-  `bfEquivSetoid densitySentence η`), with `FullPresentations.HasScatteredTails.countable_quotient`
-  and the conditional theorems `densitySentence_isThinOnNatModels_of_scatteredTails` (neither
-  bounded comparison nor the lower bound is used) and
-  `densitySentence_hasThinAlephOneSpectrum_of_scatteredTails` (with `UncountablyManyClasses`, the
-  count as in `densitySentence_hasThinAlephOneSpectrum_of_presentations`).
+  `bfEquivSetoid densitySentence η`), with
+  `FullPresentations.HasScatteredTails.of_countable_quotient`, and the conditional theorems
+  `densitySentence_isThinOnNatModels_of_scatteredTails` (neither bounded comparison nor the lower
+  bound is used) and `vaughtCounterexample_of_scatteredTails` (the counterpart of
+  `vaughtCounterexample_of_presentations`).
 
 It weakens the thinness hypothesis of the second conditional composition from the minimality form
 `FullPresentations.HasBoundedComparison` to the hypothesis of the fundamental theorem; both
@@ -699,18 +714,18 @@ trees; (3) two applications: cocountable concentration in one back-and-forth cla
 countable level excludes a perfect isomorphism antichain, and an invariant relatively Borel subset
 of a Borel class of structures is saturated under some countable back-and-forth level, so that under
 concentration one side is countable in isomorphism classes. Checkpoints (1) and (2) are at the pin;
-the two applications of (3) are not upstream: the thinness application is this repository's pull
-request #42 (open; "The full-presentation route"), and the saturation application is the prospective
-interface of invariant Borel observations listed there. Dependency direction: basic topology,
-analytic coding, and well-founded ranks, then analytic tree boundedness, then uniform back-and-forth
-separation, then thinness and invariant-Borel concentration; López–Escobar, invariant separation,
-and the model-theoretic boundedness route are excluded from this path by import and proof-dependency
-guards. Combined with the cocountable concentration of the expansion domains (classes in `D_η` agree
-at back-and-forth level `η`), it would give thinness without sentence minimality and without
-López–Escobar. It does not replace the working thinness route
-(`Sentenceω.isThinOnNatModels_of_countable_sentence_splits`, from countable truth sides), the
-Gδ/Polish model-code results stay optional, and any improvement it brings is described as reduced
-dependencies of the thinness proof, not as a smaller trusted kernel.
+the two applications of (3) are not upstream: the thinness application is
+`isThinOn_of_countable_bfClasses` in this repository (pull request #42; "The full-presentation
+route"), and the saturation application is the prospective interface of invariant Borel observations
+listed there. Dependency direction: basic topology, analytic coding, and well-founded ranks, then
+analytic tree boundedness, then uniform back-and-forth separation, then thinness and invariant-Borel
+concentration; López–Escobar, invariant separation, and the model-theoretic boundedness route are
+excluded from this path by import and proof-dependency guards. Combined with the cocountable
+concentration of the expansion domains (classes in `D_η` agree at back-and-forth level `η`), it
+would give thinness without sentence minimality and without López–Escobar. It does not replace the
+working thinness route (`Sentenceω.isThinOnNatModels_of_countable_sentence_splits`, from countable
+truth sides), the Gδ/Polish model-code results stay optional, and any improvement it brings is
+described as reduced dependencies of the thinness proof, not as a smaller trusted kernel.
 
 `SuggestedInterfaces.lean` checks representative names, so a pin bump that removes one fails
 when the sketch is checked (the checks are run by CI).  Coding a `Type w` carrier on `ℕ` needs a
@@ -848,7 +863,8 @@ theory, not its base reduct and not every model of the infinitary sentence.  The
 process is not identified with the internal rank, nor either with the block index or the
 expansion height.  Only the ages are needed for the main theorem; the two interfaces are used by
 companion milestone B.  The separate bounded back-and-forth interface ("Upstream building
-blocks"), now at the pin, is applied by the scatteredness form of thinness (pull request #42).
+blocks"), now at the pin, is applied by the scatteredness form of thinness
+(`isThinOn_of_countable_bfClasses`).
 
 ## Automation and API discipline
 
@@ -1138,16 +1154,20 @@ until it lands, their notes stay in those modules.
   A3, **Upstream ingredients**: each with its upstream module, except the two `realize_*_equiv`
   lemmas, which become redundant once `BoundedFormulaω.realize_equiv` and `LomegaEquiv.of_equiv`
   are generalized across carrier universes.
-- `MainTheorem/Scatteredness` (pull request #42, open; the entries apply once it merges): the
-  generic statements, upstream candidates, are also recorded in `COMPANIONS.md`, A3, **Upstream
-  ingredients**: `codeBFEquivSetoid` and `structureIsoSetoid_le_codeBFEquivSetoid` to
-  InfinitaryLogic, `Descriptive/BFTree`, beside `CodeBFEquiv` (with `bfEquivSetoid_eq_comap`
-  beside `bfEquivSetoid`, `ModelTheory/MorleyCounting`); `offDiagonalPairs` with
-  `mem_offDiagonalPairs`, and its two lemmas `analyticSet_offDiagonalPairs` and
-  `offDiagonalPairs_noniso`, to `Descriptive/BFSeparation`, beside
-  `exists_uniform_bfSeparation`; `not_countable_of_perfect` to `Descriptive/PerfectAntichain`,
-  beside `Perfect.mk_eq_continuum`; `countable_image_mk_of_countable_quotient_comap`, a statement
-  about setoids, to Mathlib, beside `Setoid.comap`.
+- `MainTheorem/Scatteredness` (pull request #42): every statement is generic (none mentions the
+  density sentence).  To InfinitaryLogic: `codeBFEquivSetoid` (with its characterizing lemmas) to
+  `Descriptive/BFTree`, beside `CodeBFEquiv`; `bfEquivSetoid_eq_comap` to
+  `ModelTheory/MorleyCounting`, where `bfEquivSetoid` can be defined as that restriction (as
+  `isoSetoid` is, with `isoSetoid_eq_comap`); `offDiag_noniso`,
+  `exists_forall_not_codeBFEquiv_of_isClosed`, and `isThinOn_of_countable_bfClasses` to
+  `Descriptive/BFSeparation`, beside `exists_uniform_bfSeparation` (the thinness application of its
+  checkpoint (3); subject to that module's import guard), and
+  `isThinOnNatModels_of_countable_bfClasses` beside `bfEquivSetoid`.  To Mathlib: the analyticity
+  of the off-diagonal of a closed set in a Polish Borel space (`analyticSet_offDiag`, to
+  `MeasureTheory/Constructions/Polish`), the uncountability of a nonempty perfect set in a
+  completely metrizable space (`not_countable_of_perfect`, to `Topology/MetricSpace/Perfect`,
+  beside `Perfect.exists_nat_bool_injection`), and `Setoid.comapQuotientEquiv`, beside
+  `Setoid.comap`.
 
 ## Dependency tracking
 

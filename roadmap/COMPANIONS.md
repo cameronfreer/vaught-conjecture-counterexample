@@ -176,14 +176,9 @@ place to carriers in different universes; `qrank_lt_omega_one` (`Lomega1omega/Qu
 (`Descriptive/CodeTransport`).  For thinness in scatteredness form (`README.md`, Layer 6):
 `exists_uniform_bfSeparation` (`Descriptive/BFSeparation`), `bfEquivSetoid`
 (`ModelTheory/MorleyCounting`), `Perfect.mk_eq_continuum` and
-`HasCantorAntichainOn.hasPerfectAntichainOn` (`Descriptive/PerfectAntichain`).  Statements of
-`VaughtConjecture.MainTheorem.Scatteredness` (once it is in the library) with their natural
-upstream homes: `codeBFEquivSetoid` and `structureIsoSetoid_le_codeBFEquivSetoid`
-(`Descriptive/BFTree`, beside `CodeBFEquiv`), with `bfEquivSetoid_eq_comap` beside
-`bfEquivSetoid`; `offDiagonalPairs`, `mem_offDiagonalPairs`,
-`analyticSet_offDiagonalPairs`, and `offDiagonalPairs_noniso` (`Descriptive/BFSeparation`);
-`not_countable_of_perfect` (`Descriptive/PerfectAntichain`); and
-`countable_image_mk_of_countable_quotient_comap`, a statement about setoids (Mathlib).
+`HasCantorAntichainOn.hasPerfectAntichainOn` (`Descriptive/PerfectAntichain`).  The statements of
+`VaughtConjecture.MainTheorem.Scatteredness`, all generic, belong upstream; their destinations are
+recorded in `IMPLEMENTATION.md`, "Placement record".
 
 **Instantiation.**  The sentence `Φ`, its presentation `Q`, and its `T∞`: every model of `Φ` of
 any cardinality either is `L_{ω₁,ω}`-equivalent to a countable model of `Φ` through a Scott
@@ -207,7 +202,7 @@ A1–A3 taking them as hypotheses is progress on A, not its completion (as in th
 
 ### A separate library milestone: bounded back-and-forth separation
 
-A generic theorem of InfinitaryLogic, available at the pin (signatures checked;
+A generic theorem of InfinitaryLogic, at our pinned dependency (signatures checked;
 `IMPLEMENTATION.md`, "Upstream building blocks" and "Dependency pins"): for a relational language,
 every analytic set of pairs of structures on `ℕ` containing no isomorphic pair is uniformly
 separated at some countable back-and-forth level (`exists_uniform_bfSeparation`,
@@ -224,11 +219,11 @@ separation: a perfect antichain is separated at one level, at which only countab
 occur. One common class on a cocountable set at every level is a further assertion. The
 full-presentation route (`README.md`, "Reduction to full presentations") gives the weaker hypothesis
 from countably many level observations, and the stronger one only under a common starting
-observation on every high presentation; its scatteredness composition, from
-`exists_uniform_bfSeparation`, is `isThinOn_of_countable_bfClasses` with
-`densitySentence_isThinOnNatModels_of_scatteredTails`, stated in Lean and not yet in the library
-(`README.md`, Layer 6; `IMPLEMENTATION.md`, "The full-presentation route"). The working thinness
-route, from countable truth sides, uses the stronger form, which the expansion domains provide.
+observation on every high presentation; its scatteredness composition is
+`densitySentence_isThinOnNatModels_of_scatteredTails` (`MainTheorem/Assembly`), through
+`isThinOnNatModels_of_countable_bfClasses` (`MainTheorem/Scatteredness`; `README.md`, Layer 6;
+`IMPLEMENTATION.md`, "The full-presentation route"). The working thinness route, from countable
+truth sides, uses the stronger form, which the expansion domains provide.
 
 ## Milestone B — top-free chart homogeneity and its consequences
 
