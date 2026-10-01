@@ -545,7 +545,8 @@ composition beside the expansion-domain composition, which is unchanged:
 - with pull request #42 (the scatteredness form, below): `MainTheorem/Scatteredness`, and in
   `MainTheorem/Assembly` the hypothesis `FullPresentations.HasScatteredTails` (with
   `FullPresentations.HasScatteredTails.of_countable_quotient`) and the conditional theorems
-  `densitySentence_isThinOnNatModels_of_scatteredTails` and
+  `densitySentence_isThinOnNatModels_of_scatteredTails`,
+  `densitySentence_hasThinAlephOneSpectrum_of_scatteredTails`, and
   `vaughtCounterexample_of_scatteredTails`.
 
 Recorded with it: the count uses only `FullPresentations` (`#X ≤ ℵ₁`), and bounded comparison is
@@ -585,7 +586,10 @@ separates them, and only countably many classes occur at `η`.  Its statements:
   `bfEquivSetoid densitySentence η`), with
   `FullPresentations.HasScatteredTails.of_countable_quotient`, and the conditional theorems
   `densitySentence_isThinOnNatModels_of_scatteredTails` (neither bounded comparison nor the lower
-  bound is used) and `vaughtCounterexample_of_scatteredTails` (the counterpart of
+  bound is used), `densitySentence_hasThinAlephOneSpectrum_of_scatteredTails` (with
+  `UncountablyManyClasses`, the count as in
+  `densitySentence_hasThinAlephOneSpectrum_of_presentations`), and
+  `vaughtCounterexample_of_scatteredTails` (the counterpart of
   `vaughtCounterexample_of_presentations`).
 
 It weakens the thinness hypothesis of the second conditional composition from the minimality form
@@ -1155,7 +1159,7 @@ until it lands, their notes stay in those modules.
   lemmas, which become redundant once `BoundedFormulaω.realize_equiv` and `LomegaEquiv.of_equiv`
   are generalized across carrier universes.
 - `MainTheorem/Scatteredness` (pull request #42): every statement is generic (none mentions the
-  density sentence).  To InfinitaryLogic: `codeBFEquivSetoid` (with its characterizing lemmas) to
+  density sentence).  To InfinitaryLogic: `codeBFEquivSetoid` to
   `Descriptive/BFTree`, beside `CodeBFEquiv`; `bfEquivSetoid_eq_comap` to
   `ModelTheory/MorleyCounting`, where `bfEquivSetoid` can be defined as that restriction (as
   `isoSetoid` is, with `isoSetoid_eq_comap`); `offDiag_noniso`,
@@ -1164,10 +1168,9 @@ until it lands, their notes stay in those modules.
   checkpoint (3); subject to that module's import guard), and
   `isThinOnNatModels_of_countable_bfClasses` beside `bfEquivSetoid`.  To Mathlib: the analyticity
   of the off-diagonal of a closed set in a Polish Borel space (`analyticSet_offDiag`, to
-  `MeasureTheory/Constructions/Polish`), the uncountability of a nonempty perfect set in a
+  `MeasureTheory/Constructions/Polish`) and the uncountability of a nonempty perfect set in a
   completely metrizable space (`not_countable_of_perfect`, to `Topology/MetricSpace/Perfect`,
-  beside `Perfect.exists_nat_bool_injection`), and `Setoid.comapQuotientEquiv`, beside
-  `Setoid.comap`.
+  beside `Perfect.exists_nat_bool_injection`).
 
 ## Dependency tracking
 
