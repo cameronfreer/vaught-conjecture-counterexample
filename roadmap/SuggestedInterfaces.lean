@@ -238,10 +238,19 @@ set_option linter.hashCommand false in
 set_option linter.hashCommand false in
 #check FirstOrder.Language.exists_uniform_bfSeparation_of_analyticSets
 
+-- InfinitaryLogic at our pinned dependency `098fb36` (signatures checked): the forward Karp
+-- lemma, agreement on formulas of quantifier rank at most `α` from `BFEquiv α`, for a relational
+-- language.  Its application to the expansion domains (condition 3 of `README.md`) is a
+-- statement still to be proved; no application of it is compiled here.
+set_option linter.hashCommand false in
+#check FirstOrder.Language.BFEquiv_implies_agreeQR
+
 -- The ordinal-indexed hierarchy (`Lomega1omega/InHierarchy`), at our pinned dependency `098fb36`
 -- (signatures checked): the signed-traversal classes `IsSigmaIn`/`IsPiIn`, which are syntactic
 -- classes, and the normal forms `IsSigmaInNF`/`IsPiInNF`, which lie in them; the converse,
--- up to logical equivalence, is not formalized (`README.md`, Layer 4).
+-- up to logical equivalence, is not formalized (`README.md`, Layer 4).  A normal form at level
+-- `a` has quantifier rank at most `ω · a` (`IsSigmaInNF.qrank_le`, `IsPiInNF.qrank_le`); the
+-- signed classes carry no such bound.
 set_option linter.hashCommand false in
 #check FirstOrder.Language.BoundedFormulaω.inSigned
 set_option linter.hashCommand false in
@@ -260,6 +269,10 @@ set_option linter.hashCommand false in
 #check FirstOrder.Language.BoundedFormulaω.IsPiInNF
 set_option linter.hashCommand false in
 #check FirstOrder.Language.BoundedFormulaω.NormalFormIn.inSigned
+set_option linter.hashCommand false in
+#check FirstOrder.Language.BoundedFormulaω.IsSigmaInNF.qrank_le
+set_option linter.hashCommand false in
+#check FirstOrder.Language.BoundedFormulaω.IsPiInNF.qrank_le
 
 -- ComputableModelTheory at our pinned dependency `0401c95` (signatures checked), through the
 -- entry module `ComputableModelTheory.Classical` (Mathlib-only imports): classical Fraïssé

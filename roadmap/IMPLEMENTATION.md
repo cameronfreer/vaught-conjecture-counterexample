@@ -368,6 +368,19 @@ persistent core has at most one element) and `countable_truth_side`.  The `ℵ�
 persistent core is a subsingleton and the remaining classes lie in `ℵ₁ · ℵ₀` many exceptions,
 so `|Q| ≤ ℵ₁`) is a target still to be proved, not a lemma of the sketch.
 
+The comparison is to be proved in its back-and-forth form (`README.md`, "Condition 3 from
+back-and-forth", a theorem to prove): any two members of `D_η` are `BFEquiv η` on the empty tuple.
+The one-block transfer gives the forth and back clauses of the graded back-and-forth theorem
+(`README.md`, layer 0, prospective), applied with height `η`.  Its initial match is a separate
+statement, not a consequence of the extension laws: the empty set is closed in both expansions
+(existence), and the two empty charts have the same type at `λ_η` (compatibility, by
+`StageType.eq_of_zero`).  Sentence agreement at quantifier rank at most `η` is then the corollary
+`BFEquiv_implies_agreeQR` (available at the pin, signatures checked), not a separate induction on
+sentences.  On this route thinness also has the scatteredness form: `D_η` lies in one back-and-forth
+class at `η` and has countable complement, so the codes of models meet countably many classes of
+`bfEquivSetoid Φ η`, and `isThinOnNatModels_of_countable_bfClasses` applies, with no López–Escobar
+(expected, not elaborated).  The minimality form, from countable truth sides, is kept.
+
 ## The top-free witnesses: milestone order and acceptance
 
 `README.md`, section "The top-free witnesses: the finite age and its classical limit", is the
@@ -458,9 +471,9 @@ any construction is adapted to it:
 1. **the generic presentation-counting theorem:** the fundamental theorem of `README.md` from its
    hypotheses (the count at one level, scatteredness from countably many observed types, the
    least-level filtration under a common starting observation, and the lower-bound criterion);
-2. **projected extension to back-and-forth:** (AE) gives approximate comparison (a graded
-   back-and-forth system gives `BFEquiv`), and approximate comparison gives the sentence form of
-   bounded comparison through `BFEquiv_implies_agreeQR`;
+2. **projected extension to back-and-forth:** (AE) gives approximate comparison (the graded
+   back-and-forth theorem of `README.md`, layer 0, gives `BFEquiv`), and approximate comparison
+   gives the sentence form of bounded comparison through `BFEquiv_implies_agreeQR`;
 3. **a concrete full-presentation construction from the terminal classification:** the full
    presentations of the terminal models (pointed at the named core, residual, hollow) and of the
    top-free age, to see whether the new organization shortens the argument that faces the
@@ -478,18 +491,17 @@ their notions live; "this repository" means the layers of `README.md`.
    never a single exclusive partition by full labels.  Home: this repository (the generic shape
    `LevelObservations` of `Suggested.lean`, section 6; the instance is stage reduction,
    `StageType.reduce` with `StageType.reduce_reduce`).
-3. *(AE):* the target's actual root kept exactly, the extended diagrams compared only at the
-   lower level, the target's restrictions retained.  Home: the instance in this repository (the
-   projected finite-extension rule, one case for each ordered pair of kinds of allowed ages, or,
-   between presentations reducing to model expansions at `λ_{η+1}` (the downward closure of
-   layer 5), the finite-extension presentation of finite-cut receiving of the target (layer 3,
-   "Receiving for finite extensions", resting on (R1)), run at an auxiliary self-visible cap
-   strictly between `λ_η` and `λ_{η+1}`: iterated one-point receiving retains each actual root
-   literally, but the next donor coface need not restrict literally to the newly received root,
-   and the bounded-observation lifting at that cap repairs it at each step; `README.md`,
-   "Reduction to full presentations");
-   the passage to `BFEquiv` (a graded back-and-forth system) in InfinitaryLogic,
-   `Scott/BackAndForth`.
+3. *(AE):* the target's actual root kept exactly, the extended diagrams compared only at the lower
+   level, the target's restrictions retained.  Home: the instance in this repository (the projected
+   finite-extension rule, one case for each ordered pair of kinds of allowed ages, or, between
+   presentations reducing to model expansions at `λ_{η+1}` (the downward closure of layer 5), the
+   finite-extension presentation of finite-cut receiving of the target (layer 3, "Receiving for
+   finite extensions", resting on (R1)), run at an auxiliary self-visible cap strictly between `λ_η`
+   and `λ_{η+1}`: iterated one-point receiving retains each actual root literally, but the next
+   donor coface need not restrict literally to the newly received root, and the bounded-observation
+   lifting at that cap repairs it at each step; `README.md`, "Reduction to full presentations"); the
+   passage to `BFEquiv` by the graded back-and-forth theorem, to be proved in this repository (layer
+   0; prospective) and a candidate for InfinitaryLogic, `Scott/BackAndForth` ("Placement record").
 4. *Exact comparison* for prescribed pointed or unpointed full ages, reusing standard
    uniqueness rather than a separate comparison for each terminal case.  Home: fullness and equal
    ages give extension pairs in both directions, hence an isomorphism: ComputableModelTheory's
@@ -499,10 +511,14 @@ their notions live; "this repository" means the layers of `README.md`.
    elaborated), and
    eventually Mathlib's `ModelTheory/Fraisse`; the relational exact-age comparison for
    realizations, in this repository (layer 4).
-5. *A countable list of allowed full extension laws at each level, and a full presentation
-   of every base model* (not replaceable by countability of the label alphabet), including the
-   persistent class or the weakening to all but countably many classes.  Home: this repository
-   (layer 4, the terminal classification by exact ages, read in the other direction).
+5. *A countable list of allowed full extension laws at each level, and a full presentation of every
+   base model* (not replaceable by countability of the label alphabet), including the persistent
+   class or the weakening to all but countably many classes.  Home: this repository (layer 4, the
+   terminal classification by exact ages, read in the other direction).  The counting composition is
+   conditional on this coverage (the hypothesis `FullPresentations`). The known way to establish it
+   goes through global termination (every class leaves the expansion domains at a countable stage,
+   where its terminal expansion is full for its terminal exact age); the finite-stage arguments do
+   not cover the persistent class (`README.md`, "The persistent core").
 6. *Noncollapse of the base reducts* (occurrence of all auxiliary invariants is
    insufficient).  Home: this repository (the top-free witnesses with expansion uniqueness and
    same-carrier transport, layer 6); the generic isolating-level criterion in sentence form in
@@ -597,14 +613,24 @@ It weakens the thinness hypothesis of the second conditional composition from th
 `FullPresentations.HasBoundedComparison` to the hypothesis of the fundamental theorem; both
 conditional compositions are kept.
 
+**A prospective statement of this repository, layer 0: the graded back-and-forth theorem**
+(`README.md`, layer 0, where it is stated with all its hypotheses; to be proved here from
+`BFEquiv.zero`, `BFEquiv.succ`, and `BFEquiv.limit`, available at the pin; a candidate for
+InfinitaryLogic's `Scott/BackAndForth`, "Placement record").  Relations `R α n a b` between
+`n`-tuples of `M` and `N`, for `α` up to an explicit height `h`, with the zero clause (`R 0` gives
+`SameAtomicType`), descent (`R α` gives `R β` for `β ≤ α ≤ h`, covering the successor and limit
+steps), and forth and back from `R (α + 1)` into `R α` on one-point extensions, give
+`BFEquiv α n a b` for every `α ≤ h` and every pair with `R α n a b`, the initial match, which is a
+separate hypothesis and not a consequence of the other clauses.  Optionally a block form, adding
+finitely many points at a step.  Its two intended applications are approximate comparison of full
+presentations (item 3 above) and the back-and-forth form of condition 3 of the expansion-domain
+route (layer 5, section 5 above); it is one theorem with two intended applications, and both are to
+be compiled before it is called common.  `Suggested.lean`, section 6, proves approximate comparison
+directly by the same induction (`FullPresentation.bfEquiv_comp_of_obs_eq`), not through it.
+
 **Prospective interfaces of InfinitaryLogic** (neither available upstream nor pinned; the
 statements are specified here, generically, with no construction):
 
-- *graded back-and-forth systems* (`Scott/BackAndForth`): ordinal-indexed relations `R η` on
-  pairs of tuples with `R 0` contained in sameness of atomic type, `R (succ η)` contained in
-  `R η`, forth and back from `R (succ η)` into `R η` on one-point extensions, and `R λ` contained
-  in `R η` below a limit `λ`, give `BFEquiv η`; optionally a block form, adding finitely many
-  points at a step;
 - *ranks with countable fibres* (`OrdinalCountability`, beside `countable_iff_rank_bounded`): for
   `r : X → Ordinal` below `ω₁` with countable fibres, the tails `{x | η ≤ r x}` start at the whole
   type, decrease, are continuous at limits, have countable complements and the fibre at `η` as
@@ -728,10 +754,12 @@ concentration; López–Escobar, invariant separation, and the model-theoretic b
 excluded from this path by import and proof-dependency guards. Combined with the cocountable
 concentration of the expansion domains (classes in `D_η` agree at back-and-forth level `η`), it is
 expected to give thinness without sentence minimality and without López–Escobar (not elaborated; the
-compiled composition, `isThinOn_of_countable_bfClasses`, is applied to full presentations). It does
-not replace the working thinness route (`Sentenceω.isThinOnNatModels_of_countable_sentence_splits`,
-from countable truth sides), the Gδ/Polish model-code results stay optional, and any improvement it
-brings is described as reduced dependencies of the thinness proof, not as a smaller trusted kernel.
+compiled composition, `isThinOn_of_countable_bfClasses`, is applied to full presentations; for the
+expansion domains, the composition is the scatteredness form of `README.md`, Layer 6, from the
+back-and-forth form of condition 3). It does not replace the working thinness route
+(`Sentenceω.isThinOnNatModels_of_countable_sentence_splits`, from countable truth sides), the
+Gδ/Polish model-code results stay optional, and any improvement it brings is described as reduced
+dependencies of the thinness proof, not as a smaller trusted kernel.
 
 `SuggestedInterfaces.lean` checks representative names, so a pin bump that removes one fails
 when the sketch is checked (the checks are run by CI).  Coding a `Type w` carrier on `ℕ` needs a
@@ -789,9 +817,10 @@ pull request #51), whose own InfinitaryLogic pin is exactly `8a15ca5`.  Until it
 named in prose only, never `#check`ed in the sketches.
 
 **Prospective dependencies (neither available upstream nor pinned):** the InfinitaryLogic
-statements listed under "The full-presentation route": invariant Borel observations, graded
-back-and-forth systems, ranks with countable fibres, the isolating-level lower bound, and limits
-of chains of bounded equivalence (the analogue for `BlockBFEquiv` of the chain-limit lemma).  No
+statements listed under "The full-presentation route": invariant Borel observations, ranks with
+countable fibres, the isolating-level lower bound, and limits of chains of bounded equivalence
+(the analogue for `BlockBFEquiv` of the chain-limit lemma).  The graded back-and-forth theorem,
+listed there too, is not a dependency: it is to be proved in this repository.  No
 statement of this roadmap relies on any of them, or on the statements available upstream, as
 pinned until this subsection records a pin containing it; until then they are named in prose
 only (`README.md`, Layer 0), never `#check`ed in the sketches.
@@ -1180,6 +1209,14 @@ until it lands, their notes stay in those modules.
   `MeasureTheory/Constructions/Polish`) and the uncountability of a nonempty perfect set in a
   completely metrizable space (`not_countable_of_perfect`, to `Topology/MetricSpace/Perfect`, beside
   `Perfect.exists_nat_bool_injection`).
+
+**Statements not yet in any module.**
+
+- The graded back-and-forth theorem (`README.md`, layer 0; prospective): to be proved in a layer 0
+  module of this repository, with no construction imports; destination InfinitaryLogic,
+  `Scott/BackAndForth`, beside `BFEquiv.zero`, `BFEquiv.succ`, and `BFEquiv.limit`.  It is moved
+  only after both of its intended applications (approximate comparison of full presentations, and
+  the back-and-forth form of condition 3 of the expansion-domain route) are compiled through it.
 
 ## Dependency tracking
 
