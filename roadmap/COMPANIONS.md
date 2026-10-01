@@ -19,18 +19,19 @@ not yet proved for the construction is progress on a target, not its completion.
 of `README.md` ("Library conventions") apply, including the terminology table and the keep-list.
 The literature these milestones rely on is recorded in `LITERATURE.md`, §7.
 
-**Status.**  The targets A1, A2, A3, B2, and B3 are established results: their proofs are known, and
-are the arguments given with each below.  They remain formalization targets here.  C, in its
-two-point form, is a statement still to be proved here, with its argument given below.  B1, the
-joint embedding and amalgamation of top-free charts, is part of the core: it is step 2 of the
-construction of the top-free witnesses (`README.md`, section "The top-free witnesses: the finite age
-and its classical limit"), and its entry below is a pointer.  The deliberate `sorry` targets of the
-sketch, the ingredients marked "to be located or added upstream", and the theorems marked
-"prospective" (statements of ComputableModelTheory, and the bounded back-and-forth separation
-interface, neither available upstream nor pinned; `IMPLEMENTATION.md`, "Dependency pins") are what
-is not yet formalized or available.  The status
-covers these statements only, not their non-claims and not further definability claims (`README.md`,
-"Status of the optional results").
+**Status.** The targets A1, A2, A3, B2, and B3 are established results: their proofs are known, and
+are the arguments given with each below. They remain formalization targets here. C, in its two-point
+form, is a statement still to be proved here, with its argument given below. B1, the joint embedding
+and amalgamation of top-free charts, is part of the core: it is step 2 of the construction of the
+top-free witnesses (`README.md`, section "The top-free witnesses: the finite age and its classical
+limit"), and its entry below is a pointer. The deliberate `sorry` targets of the sketch, the
+ingredients marked "to be located or added upstream", and the theorems marked "prospective" (neither
+available upstream nor pinned; `IMPLEMENTATION.md`, "Dependency pins") are what is not yet
+formalized or available. The bounded back-and-forth separation interface, and
+ComputableModelTheory's rooted uniqueness and isolation and primeness over named parameters, are
+available upstream, not yet at our pinned dependency (`IMPLEMENTATION.md`, "Dependency pins"). The
+status covers these statements only, not their non-claims and not further definability claims
+(`README.md`, "Status of the optional results").
 
 ## Notation
 
@@ -51,10 +52,10 @@ covers these statements only, not their non-claims and not further definability 
   for the lower bound (layer 6), and `w_η ∈ Q` its base class; by expansion uniqueness `w_η` lies
   in the loss at `η`.
 
-Upstream names below were checked in the pinned InfinitaryLogic (`cca6949`, signatures checked)
-and Mathlib, except those marked "prospective", whose names are those specified here for
-ComputableModelTheory (`README.md`, Layer 0); the sketch `#check`s or applies only names available
-at the current pins.
+Upstream names below were checked in the pinned InfinitaryLogic (`cca6949`, signatures checked),
+the pinned ComputableModelTheory (`52e3dda`, names checked), and Mathlib, except those marked
+"available upstream" or "prospective" (`README.md`, Layer 0); the sketch `#check`s or applies only
+names available at the current pins.
 
 ## Milestone A — filtration and infinitary theory
 
@@ -196,15 +197,27 @@ A1–A3 taking them as hypotheses is progress on A, not its completion (as in th
 
 ### A separate library milestone: bounded back-and-forth separation
 
-An intended generic interface of InfinitaryLogic, prospective (neither available upstream nor
-pinned), a statement still to be proved upstream (`IMPLEMENTATION.md`, "Upstream building blocks",
-with its three checkpoints and dependency direction): for a countable relational language, every
-analytic set of pairs of structures on `ℕ` containing no isomorphic pair is uniformly separated at
-some countable back-and-forth level.  With cocountable back-and-forth concentration (given here by
-the expansion domains, on which classes agree at bounded level) this yields thinness without
-sentence minimality and without López–Escobar.  The working thinness route, from countable truth
-sides, is kept; the Gδ/Polish results stay optional; an improvement is described as reduced
-dependencies, not as a smaller trusted kernel.  Milestone A does not depend on this interface.
+A generic theorem of InfinitaryLogic, available upstream, not yet at our pinned dependency
+(`IMPLEMENTATION.md`, "Upstream building blocks" and "Dependency pins"): for a relational language,
+every analytic set of pairs of structures on `ℕ` containing no isomorphic pair is uniformly
+separated at some countable back-and-forth level (`exists_uniform_bfSeparation`,
+`Descriptive/BFSeparation`). With cocountable back-and-forth concentration (given here by the
+expansion domains, on which classes agree at bounded level) this yields thinness without sentence
+minimality and without López–Escobar. The working thinness route, from countable truth sides, is
+kept; the Gδ/Polish results stay optional; an improvement is described as reduced dependencies, not
+as a smaller trusted kernel. Milestone A does not depend on this interface.
+
+**Scatteredness and minimality.** Cocountable concentration in one back-and-forth class at every
+level is minimality, and it is more than thinness needs. Countably many back-and-forth classes at
+every countable level already exclude a perfect antichain (scatteredness), by the same uniform
+separation: a perfect antichain is separated at one level, at which only countably many classes
+occur. One common class on a cocountable set at every level is a further assertion. The
+full-presentation route (`README.md`, "Reduction to full presentations") gives the weaker hypothesis
+from countably many level observations, and the stronger one only under a common starting
+observation on every high presentation; its scatteredness composition is to be composed from
+`exists_uniform_bfSeparation` once it is available at our pinned dependency (`IMPLEMENTATION.md`,
+"The full-presentation route"). The working thinness route, from countable truth sides, uses the
+stronger form, which the expansion domains provide.
 
 ## Milestone B — top-free chart homogeneity and its consequences
 
@@ -234,7 +247,7 @@ The development proves the finite-chart statements of this chain: exact top-free
 homogeneity, the local automorphism property, and the orbit formulas: the two interfaces of
 `IMPLEMENTATION.md`, "Applications of library theorems".  Everything after them is an application of
 a library theorem, never reproved here: "a definable orbit isolates its type", atomicity, and
-"countable atomic implies prime" from ComputableModelTheory (prospective), the last with targets of
+"countable atomic implies prime" from ComputableModelTheory (at the pin), the last with targets of
 arbitrary cardinality and carriers in arbitrary universes; the orbit-formula threshold, the internal
 rank bound, and the preservation of infinitary formulas by maps agreeing locally with automorphisms
 from InfinitaryLogic (`exists_finite_orbit_threshold`, `orbitRank_lt_omega0_of_orbitFormula`,
@@ -329,8 +342,8 @@ base reduct.  The development proves the orbit formulas; the generic theorems ar
    `typesIsolated_of_orbitDefinedBy` (proved from the target
    `typesWith_eq_singleton_of_orbitDefinedBy`).  Ingredients: Mathlib's `Theory.CompleteType`,
    `Theory.typeOf`, `Theory.typesWith`, `Formula.equivSentence`, `completeTheory`
-   (`ModelTheory/Types`, `ModelTheory/Semantics`).  Prospective (neither available upstream nor
-   pinned), from ComputableModelTheory: `IsolatesTuple` and `IsAtomic`,
+   (`ModelTheory/Types`, `ModelTheory/Semantics`).  At the pin (`52e3dda`, names checked), from
+   ComputableModelTheory: `IsolatesTuple` and `IsAtomic`,
    `isolatesTuple_of_orbit_formula` (under `[Nonempty M]`; orbit formulas of `L` without constants
    naming the tuple), `isAtomic_of_orbit_formulas`, and `IsolatesTuple.typesWith_eq_singleton`
    (under `[Nonempty M] [M ⊨ T]`); the sketch target is the composite of
@@ -357,8 +370,8 @@ base reduct.  The development proves the orbit formulas; the generic theorems ar
    source, extend finite tuples preserving every first-order formula, and take the union.  The
    target is any model of the complete theory, in an arbitrary universe, with no receiving or
    countability assumption.  Sketch: `nonempty_elementaryEmbedding_of_typesIsolated` (target).
-   Ingredients: Mathlib's `ElementaryEmbedding` (`ModelTheory/ElementaryMaps`).  Prospective
-   (neither available upstream nor pinned), from ComputableModelTheory:
+   Ingredients: Mathlib's `ElementaryEmbedding` (`ModelTheory/ElementaryMaps`).  At the pin
+   (`52e3dda`, names checked), from ComputableModelTheory:
    `exists_elementaryEmbedding_of_countable_atomic`,
    under `[Countable M] [Nonempty M] [N ⊨ L.completeTheory M]`, with separate universes,
    function symbols allowed, and no countability of the language or of `N`; the sketch target is
@@ -417,7 +430,7 @@ continuation (layer 4), or of the expansion domains (layer 5).  The guard is on 
 not only on the direct imports.  The check reads Lean's own record of the import closure, not the
 source text, so every form of import (`public`, `meta`, `import all`, the root module
 `VaughtConjecture`, indented lines) is covered.  The generic theorems of B3.2 and B3.4 are quoted
-from ComputableModelTheory (prospective), whose modules import Mathlib only, so they need no guard
+from ComputableModelTheory (at the pin), whose modules import Mathlib only, so they need no guard
 here.  The addition to `scripts/check.sh` below is a proposal, not yet part of `scripts/`: the
 module names are to be fixed when these modules exist.  It consists of a driver body
 `scripts/ImportGuard.lean`, in the pattern of `scripts/AxiomAudit.lean`, run through `lake env
@@ -452,16 +465,23 @@ run_cmd do
 and, in `scripts/check.sh` after the build:
 
 ```sh
-echo "== import guards" # import_guard MODULE PREFIX...: fail if the import closure of the built
-MODULE contains a module # named PREFIX or PREFIX.<components>, for one of the PREFIXes.
-import_guard() { local root=$1; shift mkdir -p .lake/import-guard { echo "import $root"; echo
-"import Lean"; sed -n '/^open Lean in/,$p' scripts/ImportGuard.lean; } \ >
-".lake/import-guard/$root.lean" IMPORT_GUARD_MODULE=$root IMPORT_GUARD_FORBIDDEN="$*" lake env lean
-".lake/import-guard/$root.lean" } # Placeholders: <HullObstruction> is the module of milestone C;
-the prefixes name the modules of # model existence (the classical limit and the chain construction),
-layer 3, 4, and 5. import_guard VaughtConjecture.<HullObstruction> \
-VaughtConjecture.<ClassicalLimit> VaughtConjecture.<ChainConstruction> \
-VaughtConjecture.<Receiving> \ VaughtConjecture.<StructuralContinuation> VaughtConjecture.<Domains>
+echo "== import guards"
+# import_guard MODULE PREFIX...: fail if the import closure of the built MODULE contains a module
+# named PREFIX or PREFIX.<components>, for one of the PREFIXes.
+import_guard() {
+  local root=$1; shift
+  local driver=".lake/import-guard/$root.lean"
+  mkdir -p .lake/import-guard
+  { echo "import $root"; echo "import Lean"
+    sed -n '/^open Lean in/,$p' scripts/ImportGuard.lean; } > "$driver"
+  IMPORT_GUARD_MODULE=$root IMPORT_GUARD_FORBIDDEN="$*" lake env lean "$driver"
+}
+# Placeholders: <HullObstruction> is the module of milestone C; the prefixes name the modules of
+# model existence (the classical limit and the chain construction), layer 3, 4, and 5.
+import_guard VaughtConjecture.<HullObstruction> \
+  VaughtConjecture.<ClassicalLimit> VaughtConjecture.<ChainConstruction> \
+  VaughtConjecture.<Receiving> \
+  VaughtConjecture.<StructuralContinuation> VaughtConjecture.<Domains>
 ```
 
 A prefix matches whole name components: `VaughtConjecture.Receiving` excludes
@@ -503,6 +523,44 @@ These are statements still to be proved.  None is an input to the main theorem.
   persistent core.  Targets: the naturality of greatest refinements under isomorphism, and their
   relationship to the expansion domains (a class lies in `D_ξ` exactly when its height is at
   least `ξ`).  The count of the main theorem does not use them.
+* **Minimal unboundedness.**  `Φ` is minimally unbounded [Mon, Definition XII.4]: it is
+  unbounded, but for every sentence `ψ` one of `Φ ∧ ψ` and `Φ ∧ ¬ψ` is bounded.  The second
+  clause follows from the countable truth sides: one of `Φ ∧ ψ` and `Φ ∧ ¬ψ` has countably many
+  countable models up to isomorphism, hence models of bounded Scott rank (countably many
+  countable ordinals are bounded below `ω₁`).  Unboundedness is a separate statement: it follows
+  from the main theorem, since a scattered sentence whose models have bounded Scott ranks has
+  only countably many countable models [Mon, §XII.1]; it also needs `Φ` scattered, which follows
+  from the absence of a perfect antichain by Silver's theorem on the Borel relations `≡_α`
+  [Mon, §XII.1], a statement still to be proved here.  For a scattered sentence such as `Φ`,
+  the countable truth sides and the second clause are equivalent; they differ only for sentences
+  that are not scattered.  Here Scott rank is [Mon]'s parametrized Scott rank [Mon, Definition
+  II.16].  By [Mon, Theorem XII.7] every counterexample `Θ` has a sentence `φ` with `Θ ∧ φ` a
+  minimally unbounded counterexample; for `Φ` no strengthening is needed.
+* **The logical filtration and club agreement.**  For a minimally unbounded sentence (unbounded,
+  with the second clause above) there is a closed unbounded set `C ⊆ ω₁` such that, for
+  `α ∈ C`, the models of Scott rank at least `α` form exactly one `≡_α`-class [Mon, Lemma
+  XII.8].  This is stated in [Mon]'s convention: `≡_α` defined by moves of finite tuples [Mon,
+  Definition II.32] and the parametrized Scott rank; its proof uses the sentences `ψ_{A,α}`
+  defining the `≡_α`-class of a structure [Mon, Lemma XII.5].  Target: the comparison, on such a
+  club, of the canonical logical filtration (the classes of Scott rank at least `η`, in [Mon]'s
+  convention) with the filtration of the main theorem, the least-level filtration `D_η` of the
+  full-presentation route (`README.md`, "Reduction to full presentations") or the expansion
+  domains; no equality is asserted in advance.  The passage between [Mon]'s convention and the
+  one-point `BFEquiv` of the main theorem is a statement still to be proved (`README.md`,
+  "Standard definitions").  A supporting statement, recorded as a prospective lemma of
+  InfinitaryLogic (`IMPLEMENTATION.md`, "The full-presentation route"): an analogue for
+  `BlockBFEquiv` of [Mon, Lemma XII.6] (a chain of countable structures, each equivalent to the
+  next at an increasing sequence of levels with a fixed offset, has a countable limit structure
+  equivalent to each term at its level), by the same construction, with its offset to be
+  determined.  It supports the club agreement only through the passage between [Mon]'s
+  convention and InfinitaryLogic's, which is still to be proved.
+* **Full trees.**  The introductory example of full rooted well-founded trees of finite
+  sequences (`LITERATURE.md`, §9), with its rank convention explicit: equally ranked countable
+  full well-founded trees are isomorphic; and the finite-extension estimate, that finite
+  ancestor-closed subtrees matched with ranks agreeing after capping at `δ + m` admit, for an
+  extension by `m` vertices added parent before child, a match in a full target with agreement
+  after capping at `δ`.  The same-index equivalence of [AFK26, Proposition 8.6] is not a
+  statement: it is false (`LITERATURE.md`, §9).
 * **No invariant probability measure.**  No probability measure on the model-code space that is
   invariant under the permutations of `ℕ` is concentrated on the codes of models of `Φ`, derived
   from the finite equivariant pair hulls (the hull of two points, preserved by automorphisms and

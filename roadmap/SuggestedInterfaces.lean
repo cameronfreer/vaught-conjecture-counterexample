@@ -195,10 +195,10 @@ set_option linter.hashCommand false in
 #check InfinitaryLogic.ScottProcess.Semantic.internalScottRank_le_lift_rank_add_one
 
 -- Mathlib's Fraïssé interface, applied by the classical limit of the top-free witnesses
--- (`README.md`, Layer 0).  The classical existence theorem, representative classes, the
--- factorization of tuples through the age, orbit isolation, and countable prime structures (all
--- in ComputableModelTheory) are prospective: neither available upstream nor pinned, and not
--- checked.
+-- (`README.md`, Layer 0).  Representative classes, the factorization of tuples through the age,
+-- orbit isolation, and countable prime structures are in our pinned ComputableModelTheory
+-- (`52e3dda`) and are not checked here; the classical existence theorem is available upstream,
+-- not yet at our pinned dependency.
 set_option linter.hashCommand false in
 #check FirstOrder.Language.age
 set_option linter.hashCommand false in
@@ -231,7 +231,7 @@ HullOperations: definable total binary hull operations; generated-substructure c
   hull closure; finite charts are the finite substructures; embeddings preserved and reflected.
 ClassicalLimit: finite top-free charts as finite structures; hereditary closure, joint embedding,
   amalgamation with the literal square (before any infinite model); classical existence
-  (prospective); reconstruction meeting SEMANTIC_CONTRACT.md, item 11; consistency, covering,
+  (available upstream); reconstruction meeting SEMANTIC_CONTRACT.md, item 11; consistency, covering,
   top-freeness from the factorization of tuples; receiving from (R5) and ultrahomogeneity
   (per cutoff for donors with top); modelhood, infinitude, terminality.  Statement shapes:
   `Suggested.lean`, section 3.
