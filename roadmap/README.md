@@ -379,6 +379,6 @@ None of the optional consequences blocks the core reconstruction of the top-free
 
 ## Validation and dependencies
 
-Use the pinned Lean and infinitary-logic versions together and, after the repin, the pinned computable-model-theory version, all three built on one Mathlib commit and one toolchain (`IMPLEMENTATION.md`, "Dependency pins"). Do not mix the current forked Mathlib pin with a separately pinned TauCeti dependency; “TauCeti-style” describes the layered roadmap, not a requirement to import the TauCeti repository.
+Use the pinned Lean, infinitary-logic and computable-model-theory versions together, all three built on one Mathlib commit and one toolchain (`IMPLEMENTATION.md`, "Dependency pins"). Do not mix the current forked Mathlib pin with a separately pinned TauCeti dependency; “TauCeti-style” describes the layered roadmap, not a requirement to import the TauCeti repository.
 
 At every summit, elaborate all modules, audit all declarations for placeholders and unexpected axioms, and check the literal statement against the semantic contract. Maintain separate checks for module imports and proof-term dependencies. A small theorem can import a large compatibility layer; a smaller file count does not prove a smaller mathematical dependency. Modules kept for historical compatibility should depend on the core, not conversely.
