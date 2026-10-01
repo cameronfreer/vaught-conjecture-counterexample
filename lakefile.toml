@@ -21,13 +21,10 @@ name = "InfinitaryLogic"
 git = "https://github.com/cameronfreer/infinitary-logic"
 rev = "098fb36d54c2c3b319c07a94a1687851ac46521d"
 
-# Classical first-order model theory (Fraïssé limits, atomic and prime structures).  Pinned to the
-# merge commit of cameronfreer/computable-model-theory#41 (orbit isolation, atomicity, countable
-# atomic structures are prime), which includes #40 (finite tuples factor through age
-# representatives), #39 (representative classes, extension-rich direct limits), #38
-# (extension-rich families: the classical Fraïssé criterion) and the Lean 4.35.0-rc3 port (#37).
-# Its own manifest pins an older InfinitaryLogic ancestor of the revision above; this package's
-# manifest governs, so it is built against the revision above.  To bump: change `rev` and run
+# Classical first-order model theory (Fraïssé limits, atomic and prime structures).  Its own
+# manifest pins an older InfinitaryLogic ancestor of the revision above; this package's manifest
+# governs, so it is built against the revision above.  To bump: change `rev`, run
+# `lake update ComputableModelTheory`, and commit the manifest.
 # Pinned to cameronfreer/computable-model-theory at the merge of its #47, which includes #44 (classical
 # Fraïssé existence: a Fraïssé sequence, its limit, and `IsFraisse K → ∃ limit`), #42 (rooted
 # universality and uniqueness), #46 (isolation and primeness over named finite parameters), #45 (the
