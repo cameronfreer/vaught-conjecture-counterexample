@@ -29,19 +29,22 @@ is used or proved here.
 
 **The proof.**  Let `P ⊆ K` be nonempty, perfect, and pairwise nonisomorphic.
 
-* The **off-diagonal pairs** `offDiagonalPairs P`, the pairs of distinct points of `P`, form an
-  analytic set (`analyticSet_offDiagonalPairs`): `P ×ˢ P` is closed since `P` is, the diagonal is
-  closed in the Hausdorff space of pairs of codes, so their difference is Borel, hence analytic
-  in the Polish space of pairs of codes (the library's Polish and Borel structure on the space of
-  codes, for countably many relation symbols).
-* No off-diagonal pair is isomorphic (`offDiagonalPairs_noniso`), since `P` is pairwise
+* The **off-diagonal** `P.offDiag` (Mathlib's `Set.offDiag`), the pairs of distinct points of
+  `P`, is an analytic set (`analyticSet_offDiag`): it is `P ×ˢ P` minus the diagonal
+  (`Set.prod_sdiff_diagonal`), `P ×ˢ P` is closed since `P` is, the diagonal is closed in the
+  Hausdorff space of pairs of codes, so their difference is Borel, hence analytic in the Polish
+  space of pairs of codes (the library's Polish and Borel structure on the space of codes, for
+  countably many relation symbols).
+* No pair of the off-diagonal is isomorphic (`offDiag_noniso`), since `P` is pairwise
   nonisomorphic.
 * The library's **uniform back-and-forth separation** (`exists_uniform_bfSeparation`: an analytic
   set of nonisomorphic pairs is separated at one level, by boundedness of the analytic family of
   the forced back-and-forth trees) gives `η < ω₁` with `¬ CodeBFEquiv η x y` for all distinct
   `x y ∈ P` (`exists_forall_not_codeBFEquiv_of_isClosed`).  The level is the one of the library's
-  theorem, an `Ordinal.{0}` below `Ordinal.omega 1`, with no lift and no offset.
-* So the class map of `CodeBFEquiv η` is injective on `P` and `P` is countable, whereas a nonempty
+  theorem, an `Ordinal.{0}` below `Ordinal.omega 1`, with no `Ordinal.lift` and no offset.
+* So the class map of `CodeBFEquiv η` is injective on `P`, and the classes met by `K` are as many
+  as the classes of the restriction to `K` (Mathlib's second isomorphism theorem
+  `Setoid.comapQuotientEquiv`), so `P` is countable, whereas a nonempty
   perfect set of codes is uncountable (`not_countable_of_perfect`; the library's
   `Perfect.mk_eq_continuum`, in the Polish space of codes).
 
@@ -49,20 +52,18 @@ is used or proved here.
 `CodeBFEquiv η` on all codes, an equivalence relation by reflexivity, symmetry, and transitivity
 of `BFEquiv`; the library's `bfEquivSetoid φ η` is its restriction to the codes of models of `φ`
 (`bfEquivSetoid_eq_comap`, by definition), as `isoSetoid φ` is the restriction of
-`structureIsoSetoid L`.  Isomorphic codes are back-and-forth equivalent at every level
-(`structureIsoSetoid_le_codeBFEquivSetoid`).
+`structureIsoSetoid L`.
 
 ## Placement
 
-This file belongs to Layer 6 of `roadmap/README.md`; the statements here that belong upstream are
-listed in `roadmap/COMPANIONS.md`, A3, **Upstream ingredients**.
+This file belongs to Layer 6 of `roadmap/README.md`.
 
 ## References
 
 Scattered sentences are [Mon, §XII.1], for A. Montalbán, *Computable Structure Theory: Beyond
 the arithmetic* (draft, 22 April 2025).  The boundedness of analytic families of well-founded
-trees behind `exists_uniform_bfSeparation` is [Kec, Theorem 31.2], for A. S. Kechris,
-*Classical Descriptive Set Theory*, Graduate Texts in Mathematics 156, Springer, 1995.
+trees behind `exists_uniform_bfSeparation` is [MarDST, Corollary 5.16], for D. Marker,
+*Descriptive Set Theory* (lecture notes, Math 512).
 -/
 
 universe u v
@@ -88,53 +89,29 @@ def codeBFEquivSetoid (α : Ordinal.{0}) : Setoid (StructureSpace L) where
         ℕ e.toStructure (n := 0) (α := α) (a := Fin.elim0) (b := Fin.elim0) (c := Fin.elim0)
         h₁ h₂ }
 
-/-- The relation of `codeBFEquivSetoid L α` is `CodeBFEquiv α`. -/
-@[simp]
-theorem codeBFEquivSetoid_r {α : Ordinal.{0}} {c d : StructureSpace L} :
-    (codeBFEquivSetoid L α).r c d ↔ CodeBFEquiv α c d :=
-  Iff.rfl
-
-/-- **Isomorphic codes are back-and-forth equivalent at every level.** -/
-theorem structureIsoSetoid_le_codeBFEquivSetoid (α : Ordinal.{0}) :
-    structureIsoSetoid L ≤ codeBFEquivSetoid L α := by
-  rintro c d ⟨e⟩
-  have h := @equiv_implies_BFEquiv L ℕ ℕ c.toStructure d.toStructure e α 0 Fin.elim0
-  rwa [comp_fin_elim0 e] at h
-
 /-- The library's back-and-forth setoid on the codes of models of `φ` is the restriction of
 `codeBFEquivSetoid L α`. -/
 theorem bfEquivSetoid_eq_comap (φ : L.Sentenceω) (α : Ordinal.{0}) :
     bfEquivSetoid φ α = (codeBFEquivSetoid L α).comap (Subtype.val : ModelsOf φ → _) :=
   rfl
 
-/-! ### The off-diagonal pairs of a set of codes -/
-
-/-- The **off-diagonal pairs** of a set `P` of codes: the pairs of distinct points of `P`. -/
-def offDiagonalPairs (P : Set (StructureSpace L)) : Set (StructureSpace L × StructureSpace L) :=
-  (P ×ˢ P) \ Set.diagonal _
+/-! ### The off-diagonal of a set of codes -/
 
 omit [L.IsRelational] in
-/-- The off-diagonal pairs of `P` are the pairs of distinct points of `P`. -/
-@[simp]
-theorem mem_offDiagonalPairs {P : Set (StructureSpace L)}
-    {p : StructureSpace L × StructureSpace L} :
-    p ∈ offDiagonalPairs P ↔ p.1 ∈ P ∧ p.2 ∈ P ∧ p.1 ≠ p.2 := by
-  simp [offDiagonalPairs]
+/-- **The off-diagonal of a closed set of codes is analytic**: it is `P ×ˢ P` minus the
+diagonal, `P ×ˢ P` is closed, the diagonal is closed, so their difference is Borel, hence analytic
+in the Polish space of pairs of codes. -/
+theorem analyticSet_offDiag [Countable (Σ l, L.Relations l)] {P : Set (StructureSpace L)}
+    (hP : IsClosed P) : AnalyticSet P.offDiag := by
+  rw [← Set.prod_sdiff_diagonal]
+  exact ((hP.prod hP).measurableSet.diff isClosed_diagonal.measurableSet).analyticSet
 
-omit [L.IsRelational] in
-/-- **The off-diagonal pairs of a closed set of codes are analytic**: `P ×ˢ P` is closed, the
-diagonal is closed, so their difference is Borel, hence analytic in the Polish space of pairs of
-codes. -/
-theorem analyticSet_offDiagonalPairs [Countable (Σ l, L.Relations l)]
-    {P : Set (StructureSpace L)} (hP : IsClosed P) : AnalyticSet (offDiagonalPairs P) :=
-  ((hP.prod hP).measurableSet.diff isClosed_diagonal.measurableSet).analyticSet
-
-/-- **The off-diagonal pairs of a pairwise nonisomorphic set of codes are nonisomorphic.**  The
+/-- **The off-diagonal of a pairwise nonisomorphic set of codes has no isomorphic pair.**  The
 hypothesis is pairwise nonisomorphism in the form of the library's `HasPerfectAntichainOn`. -/
-theorem offDiagonalPairs_noniso {P : Set (StructureSpace L)}
+theorem offDiag_noniso {P : Set (StructureSpace L)}
     (hP : ∀ x ∈ P, ∀ y ∈ P, (structureIsoSetoid L).r x y → x = y) :
-    ∀ p ∈ offDiagonalPairs P, ¬ (structureIsoSetoid L).r p.1 p.2 :=
-  fun _ hp hr ↦ hp.2 (hP _ hp.1.1 _ hp.1.2 hr)
+    ∀ p ∈ P.offDiag, ¬ (structureIsoSetoid L).r p.1 p.2 :=
+  fun _ hp hr ↦ hp.2.2 (hP _ hp.1 _ hp.2.1 hr)
 
 /-! ### Thinness -/
 
@@ -153,24 +130,14 @@ theorem not_countable_of_perfect {P : Set (StructureSpace L)} (hperf : Perfect P
 /-- **One back-and-forth level separates a closed antichain**: for a closed set `P` of pairwise
 nonisomorphic codes, there is `η < ω₁` at which no two distinct points of `P` are
 back-and-forth equivalent (the library's `exists_uniform_bfSeparation`, applied to the
-off-diagonal pairs). -/
+off-diagonal). -/
 theorem exists_forall_not_codeBFEquiv_of_isClosed {P : Set (StructureSpace L)} (hP : IsClosed P)
     (hanti : ∀ x ∈ P, ∀ y ∈ P, (structureIsoSetoid L).r x y → x = y) :
     ∃ η : Ordinal.{0}, η < Ordinal.omega 1 ∧
       ∀ x ∈ P, ∀ y ∈ P, x ≠ y → ¬ CodeBFEquiv η x y := by
   obtain ⟨η, hη, hsep⟩ :=
-    exists_uniform_bfSeparation (analyticSet_offDiagonalPairs hP) (offDiagonalPairs_noniso hanti)
-  exact ⟨η, hη, fun x hx y hy hxy ↦ hsep (x, y) (mem_offDiagonalPairs.mpr ⟨hx, hy, hxy⟩)⟩
-
-/-- The classes of a setoid met by a set `K` are countable when the restriction of the setoid to
-`K` has countably many classes. -/
-theorem countable_image_mk_of_countable_quotient_comap {X : Type*} {s : Setoid X} {K : Set X}
-    (hK : Countable (Quotient (s.comap (Subtype.val : K → X)))) :
-    (Quotient.mk s '' K).Countable :=
-  (countable_range (Quotient.lift (fun c : K ↦ Quotient.mk s c.1)
-    fun _ _ h ↦ Quotient.sound h)).mono (by
-      rintro _ ⟨c, hc, rfl⟩
-      exact ⟨Quotient.mk _ ⟨c, hc⟩, rfl⟩)
+    exists_uniform_bfSeparation (analyticSet_offDiag hP) (offDiag_noniso hanti)
+  exact ⟨η, hη, fun x hx y hy hxy ↦ hsep (x, y) (Set.mem_offDiag.mpr ⟨hx, hy, hxy⟩)⟩
 
 /-- **Thinness from countably many back-and-forth classes at every level**: if for every
 `η < ω₁` the restriction of `CodeBFEquiv η` to a set `K` of codes has countably many classes,
@@ -181,9 +148,13 @@ theorem isThinOn_of_countable_bfClasses {K : Set (StructureSpace L)}
     IsThinOn (structureIsoSetoid L) K := by
   rintro ⟨P, hperf, hne, hPK, hanti⟩
   obtain ⟨η, hη, hsep⟩ := exists_forall_not_codeBFEquiv_of_isClosed hperf.closed hanti
+  -- the classes met by `K` are the classes of the restriction (second isomorphism theorem)
+  have hcount := (Setoid.comapQuotientEquiv (Subtype.val : K → _)
+    (codeBFEquivSetoid L η)).symm.countable_iff.mpr (hK η hη)
+  rw [countable_coe_iff, range_comp, Subtype.range_coe] at hcount
   refine not_countable_of_perfect hperf hne
     (MapsTo.countable_of_injOn (fun x hx ↦ mem_image_of_mem _ (hPK hx)) (fun x hx y hy hxy ↦ ?_)
-      (countable_image_mk_of_countable_quotient_comap (hK η hη)))
+      hcount)
   by_contra hne
   exact hsep x hx y hy hne (Quotient.exact hxy)
 
@@ -194,6 +165,6 @@ models. -/
 theorem isThinOnNatModels_of_countable_bfClasses {φ : L.Sentenceω}
     (h : ∀ η : Ordinal.{0}, η < Ordinal.omega 1 → Countable (Quotient (bfEquivSetoid φ η))) :
     φ.IsThinOnNatModels :=
-  isThinOn_of_countable_bfClasses h
+  isThinOn_of_countable_bfClasses fun η hη ↦ bfEquivSetoid_eq_comap φ η ▸ h η hη
 
 end VaughtConjecture.MainTheorem

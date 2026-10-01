@@ -124,6 +124,9 @@ proved here, are:
   `η`, agree on every sentence of quantifier rank at most `η`.  This is the sharp comparison of
   `ExpansionDomains.HasLogicalAgreement.of_qrank_le`, taken on the least-level tails in place of
   the expansion domains.
+* `FullPresentations.HasScatteredTails` (**scattered tails**, the scatteredness form): for each
+  `η < ω₁`, the codes of the models whose classes lie in the tail at `η` fall into countably many
+  classes of `bfEquivSetoid densitySentence η`.
 * `UncountablyManyClasses` (**noncollapse**): there are at least `ℵ₁` classes.  The existence of
   full presentations cannot give it: `FullPresentations` and `HasBoundedComparison` hold for a
   single class (`VaughtConjecture.MainTheorem.Examples`).
@@ -133,7 +136,9 @@ Bounded comparison is stated in its **minimality form**: on the least-level tail
 of the tail at `η` agree up to quantifier rank `η`.  Its proof by back-and-forth is to start from
 a common observation of presentations at high levels (such as the common empty chart).  With it,
 thinness follows from countable truth sides through `isThinOnNatModels_of_countable_truth_sides`.
-The weaker **scatteredness form**, `FullPresentations.HasScatteredTails`, says that the codes of
+The weaker **scatteredness form** (weaker in mathematics, through formulas of quantifier rank `η`
+defining back-and-forth classes; that implication is not proved here),
+`FullPresentations.HasScatteredTails`, says that the codes of
 the models whose classes lie in the tail at each `η < ω₁` fall into only countably many classes
 of back-and-forth equivalence at `η` (the library's `CodeBFEquiv η`, restricted to the codes of
 models of the density sentence: `bfEquivSetoid densitySentence η`); it counts classes of that
@@ -143,8 +148,8 @@ relation, not codes.  It also gives thinness, but not through countable truth si
 `isThinOnNatModels_of_countable_bfClasses` (`VaughtConjecture.MainTheorem.Scatteredness`) excludes
 a nonempty perfect set of pairwise nonisomorphic coded models by the library's uniform
 back-and-forth separation of analytic sets of nonisomorphic pairs (`exists_uniform_bfSeparation`,
-the boundedness of analytic families of well-founded trees).  No sentence and no bounded
-comparison is used in this composition.
+the boundedness of analytic families of well-founded trees).  Neither sentence separation (Scott
+or descriptive) nor López–Escobar nor bounded comparison is used in this composition.
 
 The **least presentation level** of a class, the least `α < ω₁` with the class in
 `presentedAt α`, is a rank into the countable ordinals with countable fibres, and its tails form
@@ -165,10 +170,11 @@ uses and does not use:
   (`FullPresentations.core_toFiltration`), so the count is `Filtration.mk_eq_aleph_one` with an
   empty core.  Descriptive separation (separation of invariant analytic sets by a sentence, the
   library's `sentence_separates_analytic_classes` behind
-  `SmallVocabulary.isThinOnNatModels_of_countable_sentence_splits`) is still used for thinness,
-  through `isThinOnNatModels_of_filtration`, the thinness half of
+  `SmallVocabulary.isThinOnNatModels_of_countable_sentence_splits`) is still used for thinness in
+  the minimality-form composition, through `isThinOnNatModels_of_filtration`, the thinness half of
   `hasThinAlephOneSpectrum_of_filtration`.  That composition applies to the same filtration; its
-  two halves are taken separately here so that the count does not pass through Scott separation;
+  two halves are taken separately here so that the count does not pass through Scott separation.
+  The scatteredness-form composition uses no sentence separation;
 * `ExpansionDomains.HasNonemptyLosses` is replaced by uncountability: the losses of the
   least-level filtration are nonempty only cofinally often, not at every successor, and
   cofinally many nonempty losses are equivalent to uncountability
@@ -185,6 +191,8 @@ The conditional theorems of this route:
 * `densitySentence_hasThinAlephOneSpectrum_of_scatteredTails`: with uncountability, the thin
   `ℵ₁` spectrum of the density sentence, the count as in
   `densitySentence_hasThinAlephOneSpectrum_of_presentations`, thinness from scattered tails;
+* `vaughtCounterexample_of_scatteredTails`: with the cap-to-model theorem, the counterpart of
+  `vaughtCounterexample_of_presentations` with scattered tails in place of bounded comparison;
 * `vaughtCounterexample_of_presentations`: with the cap-to-model theorem, the counterpart of
   `vaughtCounterexample_of_expansionDomains`.
 
@@ -418,11 +426,11 @@ theorem core_toFiltration (hX : ¬ Countable X) : (P.toFiltration hX).core = ∅
 of a language `L` on the classes: the classes in the tail at each `η < ω₁` agree on every sentence
 of quantifier rank at most `η`.  This is the minimality form of bounded comparison: the sharp
 comparison of `ExpansionDomains.HasLogicalAgreement.of_qrank_le`, taken on the least-level tails.
-The weaker scatteredness form is `FullPresentations.HasScatteredTails`, for the density sentence.
-For the density sentence, with the truth of
-sentences on its classes, it is a statement of the full-presentation route (the projections of full
-presentations at levels `≥ η` are back-and-forth equivalent at `η`; roadmap, "Reduction to full
-presentations"), not proved here. -/
+The weaker scatteredness form, for the density sentence, is `FullPresentations.HasScatteredTails`.
+For the density sentence, with the truth of sentences on its classes, bounded comparison is a
+statement of the full-presentation route (the projections of full presentations at levels `≥ η`
+are back-and-forth equivalent at `η`; roadmap, "Reduction to full presentations"), not proved
+here. -/
 structure HasBoundedComparison {L : Language.{x, y}} (truth : L.Sentenceω → X → Prop) :
     Prop where
   /-- The classes in the tail at `η` agree on the sentences of quantifier rank at most `η`. -/
@@ -607,11 +615,15 @@ theorem vaughtCounterexample_of_presentations (P : FullPresentations DensityClas
 
 /-! ### The full-presentation route in scatteredness form -/
 
-/-- **Scattered tails** (the scatteredness form of bounded comparison): for every `η < ω₁`, the
-codes of the models of the density sentence whose classes lie in the tail at `η` (the classes with
-no full presentation below level `η`) fall into only countably many classes of back-and-forth
-equivalence at `η` (the library's `bfEquivSetoid densitySentence η`, the restriction of
-`CodeBFEquiv η` to the codes of models).  It counts classes of that relation, not codes.  It is a
+/-- **Scattered tails** (the scatteredness form of bounded comparison, weaker in mathematics;
+that implication is not proved here): for every `η < ω₁`, the codes of the models of the density
+sentence whose classes lie in the tail at `η` (the classes with no full presentation below level
+`η`) fall into only countably many classes of back-and-forth equivalence at `η` (the library's
+`bfEquivSetoid densitySentence η`, the restriction of `CodeBFEquiv η` to the codes of models).  It
+counts classes of that relation, not codes.  Since the tail has countable complement, this is
+equivalent, for every `P`, to countably many classes of `bfEquivSetoid densitySentence η` among
+all the codes of models, for every `η < ω₁` (`HasScatteredTails.countable_quotient` and
+`HasScatteredTails.of_countable_quotient`).  It is a
 statement of the full-presentation route (roadmap, "Reduction to full presentations": countably
 many observed types at every level), not proved here. -/
 structure FullPresentations.HasScatteredTails (P : FullPresentations DensityClass) : Prop where
@@ -638,6 +650,14 @@ theorem FullPresentations.HasScatteredTails.countable_quotient
     · exact Or.inl ⟨c, hc, rfl⟩
     · exact Or.inr ⟨_, hc, rfl⟩
 
+/-- **Scattered tails from countably many back-and-forth classes at every level**: the converse of
+`FullPresentations.HasScatteredTails.countable_quotient`, for any full presentations. -/
+theorem FullPresentations.HasScatteredTails.of_countable_quotient
+    {P : FullPresentations DensityClass}
+    (h : ∀ η, η < ω₁ → Countable (Quotient (bfEquivSetoid densitySentence.{0} η))) :
+    P.HasScatteredTails :=
+  ⟨fun η hη ↦ have := h η hη; Set.to_countable _⟩
+
 /-- **Thinness, conditionally, by full presentations with scattered tails**: full presentations
 of the classes of the density sentence at countable levels with scattered tails give no perfect
 set of pairwise nonisomorphic coded models (`isThinOnNatModels_of_countable_bfClasses`, by the
@@ -661,5 +681,23 @@ theorem densitySentence_hasThinAlephOneSpectrum_of_scatteredTails
     HasThinAlephOneSpectrum densitySentence.{0} :=
   ⟨(P.toFiltration hu.not_countable).mk_eq_aleph_one (by simp),
     densitySentence_isThinOnNatModels_of_scatteredTails P hs⟩
+
+/-- **A thin uncountable infinitary class, conditionally, by full presentations with scattered
+tails**: under full presentations at countable levels, scattered tails, noncollapse, and the
+cap-to-model theorem, there are a countable relational language and a sentence of `L_{ω₁,ω}` whose
+models coded on `ℕ` have exactly `ℵ₁` isomorphism classes with no perfect set of pairwise
+nonisomorphic ones, and every countable model of which, on a carrier in the universe `w`, is
+isomorphic to a coded one.  The hypotheses are statements of the full-presentation route (roadmap,
+"Reduction to full presentations") and of Layer 3 of the roadmap, not proved here. -/
+theorem vaughtCounterexample_of_scatteredTails (P : FullPresentations DensityClass)
+    (hs : P.HasScatteredTails) (hu : UncountablyManyClasses) (hcap : CapToModel.{w}) :
+    ∃ (L : Language.{0, 1}) (_ : L.IsRelational) (_ : Countable (Σ n, L.Relations n))
+      (φ : L.Sentenceω), HasThinAlephOneSpectrum φ ∧
+        ∀ (M : Type w) [L.Structure M] [Countable M], φ.Realize M →
+          ∃ c : StructureSpace L, c ∈ ModelsOf φ ∧
+            Nonempty (@Language.Equiv L M ℕ _ c.toStructure) :=
+  ⟨baseLanguage.{0}, inferInstance, inferInstance, densitySentence,
+    densitySentence_hasThinAlephOneSpectrum_of_scatteredTails P hs hu,
+    fun _ _ _ h ↦ exists_mem_modelsOf_densitySentence_equiv_of_capToModel hcap h⟩
 
 end VaughtConjecture.MainTheorem

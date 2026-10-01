@@ -51,8 +51,9 @@ For the full-presentation route:
   nonempty perfect set of pairwise nonisomorphic codes (the library's
   `HasCantorAntichainOn.hasPerfectAntichainOn`).  By `isThinOn_of_countable_bfClasses`, the codes
   of this language fall into uncountably many classes of back-and-forth equivalence at some level
-  `η < ω₁`; the level (`1` suffices, since the empty tuples of any two such structures agree on
-  every atom) is not computed here.
+  `η < ω₁`.  The level is not computed here: `1` suffices (a point of `M S` and a point of `M T`
+  have the same atomic type only if `S = T`), while `0` does not (the empty tuples satisfy no
+  atomic formula).
 -/
 
 namespace VaughtConjecture.MainTheorem
@@ -393,16 +394,14 @@ private theorem eq_of_unaryCode {x y : ℕ → Bool}
     (unaryCode x).toStructure (unaryCode y).toStructure e 1 k fun _ ↦ 0).symm
 
 /-- **Countably many back-and-forth classes cannot be dropped**: the codes of the structures
-`M S` form a nonempty perfect set of pairwise nonisomorphic codes, so the codes of this language
-are not thin, and at some level `η < ω₁` they fall into uncountably many classes of
+`M S` form a nonempty perfect set of pairwise nonisomorphic codes, so the set of all codes of this
+language is not thin, and at some level `η < ω₁` they fall into uncountably many classes of
 back-and-forth equivalence (`isThinOn_of_countable_bfClasses`). -/
 example : ¬ IsThinOn (structureIsoSetoid unaryLanguage) univ ∧
     ∃ η : Ordinal.{0}, η < Ordinal.omega 1 ∧ ¬ Countable (Quotient
       ((codeBFEquivSetoid unaryLanguage η).comap
         (Subtype.val : ↥(univ : Set (StructureSpace unaryLanguage)) → _))) := by
   have hthin : ¬ IsThinOn (structureIsoSetoid unaryLanguage) univ := by
-    -- a complete metric compatible with the topology, for the Hausdorff property
-    let := TopologicalSpace.upgradeIsCompletelyMetrizable (StructureSpace unaryLanguage)
     exact not_not.mpr (HasCantorAntichainOn.hasPerfectAntichainOn ⟨unaryCode,
       continuous_unaryCode, fun _ ↦ mem_univ _, fun _ _ hxy h ↦ hxy (eq_of_unaryCode h)⟩)
   refine ⟨hthin, ?_⟩
