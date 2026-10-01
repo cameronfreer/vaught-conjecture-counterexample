@@ -528,26 +528,30 @@ These are statements still to be proved.  None is an input to the main theorem.
   countable models up to isomorphism, hence models of bounded Scott rank (countably many
   countable ordinals are bounded below `ω₁`).  Unboundedness is a separate statement: it follows
   from the main theorem, since a scattered sentence whose models have bounded Scott ranks has
-  only countably many countable models [Mon, §XII.1].  For a scattered sentence such as `Φ`,
+  only countably many countable models [Mon, §XII.1]; it also needs `Φ` scattered, which follows
+  from the absence of a perfect antichain by Silver's theorem on the Borel relations `≡_α`
+  [Mon, §XII.1], a statement still to be proved here.  For a scattered sentence such as `Φ`,
   the countable truth sides and the second clause are equivalent; they differ only for sentences
   that are not scattered.  Here Scott rank is [Mon]'s parametrized Scott rank [Mon, Definition
-  II.16].
+  II.16].  By [Mon, Theorem XII.7] every counterexample `Θ` has a sentence `φ` with `Θ ∧ φ` a
+  minimally unbounded counterexample; for `Φ` no strengthening is needed.
 * **The logical filtration and club agreement.**  For a minimally unbounded sentence (unbounded,
   with the second clause above) there is a closed unbounded set `C ⊆ ω₁` such that, for
   `α ∈ C`, the models of Scott rank at least `α` form exactly one `≡_α`-class [Mon, Lemma
-  XII.8], with [Mon]'s `≡_α`, defined by moves of finite tuples [Mon, Definition II.32], and its
-  parametrized Scott rank.  Target: the comparison, on such a club, of the canonical logical
-  filtration (the classes of Scott rank at least `η`) with the filtration of the main theorem, the
-  least-level filtration `D_η` of the full-presentation route (`README.md`, "Reduction to full
-  presentations") or the expansion domains; no equality is asserted in advance.  The comparison
-  is made on a club on which [Mon]'s conventions and the one-point `BFEquiv` of this roadmap
-  agree (`README.md`, "Standard definitions").  A supporting statement, recorded as a
-  prospective lemma of InfinitaryLogic (`IMPLEMENTATION.md`, "The full-presentation route"): for
-  increasing countable ordinals `α_i` and countable structures `A_i` with
-  `A_i ≡_{α_i+3} A_{i+1}`, there is a countable structure `≡_{α_i}` to every `A_i` [Mon, Lemma
-  XII.6], with `≡` the tuple-move relation of [Mon, Definition II.32] (InfinitaryLogic's
-  `BlockBFEquiv`); the offset `+3` belongs to that convention and is not transferred to the
-  one-point `BFEquiv`.
+  XII.8].  This is stated in [Mon]'s convention: `≡_α` defined by moves of finite tuples [Mon,
+  Definition II.32] and the parametrized Scott rank; its proof uses the sentences `ψ_{A,α}`
+  defining the `≡_α`-class of a structure [Mon, Lemma XII.5].  Target: the comparison, on such a
+  club, of the canonical logical filtration (the classes of Scott rank at least `η`, in [Mon]'s
+  convention) with the filtration of the main theorem, the least-level filtration `D_η` of the
+  full-presentation route (`README.md`, "Reduction to full presentations") or the expansion
+  domains; no equality is asserted in advance.  The passage between [Mon]'s convention and the
+  one-point `BFEquiv` of the main theorem is a statement still to be proved (`README.md`,
+  "Standard definitions").  A supporting statement, recorded as a prospective lemma of
+  InfinitaryLogic (`IMPLEMENTATION.md`, "The full-presentation route"): an analogue for
+  `BlockBFEquiv` of [Mon, Lemma XII.6] (a chain of countable structures, each equivalent to the
+  next at an increasing sequence of levels with a fixed offset, has a countable limit structure
+  equivalent to each term at its level), by the same construction, with its offset to be
+  determined.
 * **Full trees.**  The introductory example of full rooted well-founded trees of finite
   sequences (`LITERATURE.md`, §9), with its rank convention explicit: equally ranked countable
   full well-founded trees are isomorphic; and the finite-extension estimate, that finite

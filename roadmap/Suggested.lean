@@ -12,7 +12,8 @@ This file is a SKETCH OF THEOREM STATEMENTS, NOT PART OF THE LIBRARY.
 The bodies marked `sorry` are theorem statements still to be proved. Definitions have
 actual bodies. The file is outside the library build; check it with
 `lake env lean -DautoImplicit=false -Dlinter.mathlibStandardSet=true roadmap/Suggested.lean`.
-No new verified Lean result is claimed.
+Section 6's approximate comparison is proved here from the hypotheses stated in that section;
+no library result is claimed.
 
 Mathlib and the pinned infinitary-logic library are the current dependencies; section 3 also
 names statements of ComputableModelTheory, prospective: neither available upstream nor pinned
@@ -326,14 +327,14 @@ end Domains
 
 /-! ## 6. Full presentations: approximate extension and approximate comparison
 
-Statement shapes for `README.md`, "Reduction to full presentations".  A presentation of a
-structure `M` is given here only through its closed tuples (enumerations of finite closed sets)
-and their level observations at the levels up to its own; fullness, exact comparison, and the
-count of full presentations are not stated here.  The level sets `S η n` are separate types with
-explicit projections `τ`; a single composition law on one ambient set is not used.  `BFEquiv` is
-the back-and-forth equivalence of InfinitaryLogic (available at the pin).  In the application the
-base language is relational, as `BFEquiv_implies_agreeQR` requires for the passage to sentences;
-the comparison itself does not use relationality.
+Statement shapes for `README.md`, "Reduction to full presentations", with a complete proof of
+approximate comparison from them. A presentation of a structure `M` is given here only through its
+closed tuples (enumerations of finite closed diagrams) and their level observations at the levels up
+to its own; fullness, exact comparison, and the count of full presentations are not stated here. The
+level sets `S η n` are separate types with explicit projections `τ`; a single composition law on one
+ambient set is not used. `BFEquiv` is the back-and-forth equivalence of InfinitaryLogic (available
+at the pin). In the application the base language is relational, as `BFEquiv_implies_agreeQR`
+requires for the passage to sentences; the comparison itself does not use relationality.
 -/
 
 namespace FullPresentation

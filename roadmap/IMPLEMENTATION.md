@@ -441,8 +441,9 @@ data (an effective enumeration of the age and an effective amalgamation procedur
 Fraïssé construction uses choice and supplies no computable presentation).  The partial-realization
 statements of the conditional chain development (`StageType.chartRealization`,
 `StageType.isConsistent_chartRealization`, `StageType.chartRealization_eval_eq_none_iff`, in
-`Realization/Partial.lean`, outside `Construction/`) are reused in steps 1, 4, and 5, so that the
-boundary above holds; the chain-union statements are not used by steps 1–7.
+`Realization/Partial.lean`, outside `Construction/`, not yet in the library) are to be reused in
+steps 1, 4, and 5, so that the boundary above holds; the chain-union statements are not used by
+steps 1–7.
 
 ## The full-presentation route
 
@@ -480,9 +481,12 @@ their notions live; "this repository" means the layers of `README.md`.
 3. *(AE):* the target's actual root kept exactly, the extended diagrams compared only at the
    lower level, the target's restrictions retained.  Home: the instance in this repository (the
    projected finite-extension rule, one case for each ordered pair of kinds of allowed ages, or,
-   between presentations reducing to model expansions, finite-cut receiving (R1) of the target,
-   the one-block transfer; `README.md`, "Reduction to full presentations"); the passage to
-   `BFEquiv` (a graded back-and-forth system) in InfinitaryLogic,
+   between presentations reducing to model expansions at `λ_{η+1}` (the downward closure of
+   layer 5), the finite-extension presentation of finite-cut receiving of the target (layer 3,
+   "Receiving for finite extensions", resting on (R1)), run at an auxiliary self-visible cap
+   strictly between `λ_η` and `λ_{η+1}`, since iterated one-point receiving loses the literal
+   retention of the root after the first step; `README.md`, "Reduction to full presentations");
+   the passage to `BFEquiv` (a graded back-and-forth system) in InfinitaryLogic,
    `Scott/BackAndForth`.
 4. *Exact comparison* for prescribed pointed or unpointed full ages, reusing standard
    uniqueness rather than a separate comparison for each terminal case.  Home: fullness and equal
@@ -566,12 +570,13 @@ statements are specified here, generically, with no construction):
   `BFEquiv_stabilization_implies_equiv`, with the supremum of countably many countable ordinals);
   hence, if every level has two nonisomorphic `BFEquiv`-related members, the set has uncountably
   many isomorphism types;
-- *limits of chains of bounded equivalence* (`Scott/BlockBackAndForth`): for increasing countable
-  ordinals `α_i` and countable structures `A_i` with `BlockBFEquiv (α_i + 3)` between `A_i` and
-  `A_{i+1}` (empty tuples), a countable structure `BlockBFEquiv α_i`-equivalent to every `A_i`
-  [Mon, Lemma XII.6]; the relation is the tuple-move relation of [Mon, Definition II.32], and the
-  offset `+3` belongs to that convention, not to the one-point `BFEquiv`; for the club agreement
-  of `COMPANIONS.md`, "Further companion results".
+- *limits of chains of bounded equivalence* (`Scott/BlockBackAndForth`): an analogue for
+  `BlockBFEquiv` of [Mon, Lemma XII.6], by the same construction, with its offset to be
+  determined: for increasing countable ordinals `α_i` and countable structures `A_i` with
+  `A_i` and `A_{i+1}` `BlockBFEquiv`-equivalent at `α_i` plus that offset (empty tuples), a
+  countable structure `BlockBFEquiv α_i`-equivalent to every `A_i`; [Mon]'s offset `+3` is for
+  its own relation [Mon, Definition II.32] and is not transferred; for the club agreement of
+  `COMPANIONS.md`, "Further companion results".
 
 ## Upstream building blocks
 
