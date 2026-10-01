@@ -45,6 +45,15 @@ For the full-presentation route:
   countably many classes through an extension property alone (every permutation of `ℕ` is an
   automorphism of each `M S`, so each `M S` has the extension property for its own age, and
   distinct `S` give distinct ages); the age of the full structure has to be prescribed.
+* **Countably many back-and-forth classes are needed** for thinness in scatteredness form
+  (`isThinOn_of_countable_bfClasses`): the codes on `ℕ` of the structures `M S` depend
+  continuously on `S`, as a point of Cantor space, and are pairwise nonisomorphic, so they form a
+  nonempty perfect set of pairwise nonisomorphic codes (the library's
+  `HasCantorAntichainOn.hasPerfectAntichainOn`).  By `isThinOn_of_countable_bfClasses`, the codes
+  of this language fall into uncountably many classes of back-and-forth equivalence at some level
+  `η < ω₁`.  The level is not computed here: `1` suffices (a point of `M S` and a point of `M T`
+  have the same atomic type only if `S = T`), while `0` does not (the empty tuples satisfy no
+  atomic formula).
 -/
 
 namespace VaughtConjecture.MainTheorem
@@ -350,6 +359,54 @@ example {S T : Set ℕ} (e : @Language.Equiv unaryLanguage ℕ ℕ (unaryStructu
     (unaryStructure T)) : S = T :=
   Set.ext fun k ↦ (@Language.Equiv.map_rel unaryLanguage ℕ ℕ (unaryStructure S)
     (unaryStructure T) e 1 k fun _ ↦ 0).symm
+
+/-! ### Countably many back-and-forth classes are needed -/
+
+open Language
+
+private instance : unaryLanguage.IsRelational := fun _ ↦ inferInstanceAs (IsEmpty Empty)
+
+private instance : Countable (Σ n, unaryLanguage.Relations n) := by
+  refine @instCountableSigma _ _ _ fun n ↦ ?_
+  rcases n with _ | _ | n
+  exacts [inferInstanceAs (Countable Empty), inferInstanceAs (Countable ℕ),
+    inferInstanceAs (Countable Empty)]
+
+/-- The code on `ℕ` of the structure `M {k | x k = true}`. -/
+private def unaryCode (x : ℕ → Bool) : StructureSpace unaryLanguage := fun q ↦
+  match q with
+  | ⟨⟨1, k⟩, _⟩ => x k
+  | ⟨⟨0, r⟩, _⟩ => Empty.elim r
+  | ⟨⟨_ + 2, r⟩, _⟩ => Empty.elim r
+
+/-- The code of `M S` depends continuously on `S`. -/
+private theorem continuous_unaryCode : Continuous unaryCode := by
+  refine continuous_pi fun q ↦ ?_
+  rcases q with ⟨⟨_ | _ | n, r⟩, v⟩
+  exacts [r.elim, continuous_apply r, r.elim]
+
+/-- Isomorphic codes `unaryCode x` and `unaryCode y` have `x = y`. -/
+private theorem eq_of_unaryCode {x y : ℕ → Bool}
+    (h : (structureIsoSetoid unaryLanguage).r (unaryCode x) (unaryCode y)) : x = y := by
+  obtain ⟨e⟩ := h
+  funext k
+  exact Bool.eq_iff_iff.mpr (@Language.Equiv.map_rel unaryLanguage ℕ ℕ
+    (unaryCode x).toStructure (unaryCode y).toStructure e 1 k fun _ ↦ 0).symm
+
+/-- **Countably many back-and-forth classes cannot be dropped**: the codes of the structures
+`M S` form a nonempty perfect set of pairwise nonisomorphic codes, so the set of all codes of this
+language is not thin, and at some level `η < ω₁` they fall into uncountably many classes of
+back-and-forth equivalence (`isThinOn_of_countable_bfClasses`). -/
+example : ¬ IsThinOn (structureIsoSetoid unaryLanguage) univ ∧
+    ∃ η : Ordinal.{0}, η < Ordinal.omega 1 ∧ ¬ Countable (Quotient
+      ((codeBFEquivSetoid unaryLanguage η).comap
+        (Subtype.val : ↥(univ : Set (StructureSpace unaryLanguage)) → _))) := by
+  have hthin : ¬ IsThinOn (structureIsoSetoid unaryLanguage) univ := by
+    exact not_not.mpr (HasCantorAntichainOn.hasPerfectAntichainOn ⟨unaryCode,
+      continuous_unaryCode, fun _ ↦ mem_univ _, fun _ _ hxy h ↦ hxy (eq_of_unaryCode h)⟩)
+  refine ⟨hthin, ?_⟩
+  by_contra! h
+  exact hthin (isThinOn_of_countable_bfClasses h)
 
 /-! ### The density sentence -/
 
