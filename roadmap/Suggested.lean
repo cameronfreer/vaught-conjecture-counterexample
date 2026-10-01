@@ -359,7 +359,9 @@ structure LevelObservations where
 
 /-- An **observed presentation** of `M` at level `level`: its closed tuples, with a closed
 extension of every closed tuple containing any given point, and the level observations of closed
-tuples, coherent under the projections up to `level`.  Fullness is not part of this structure. -/
+tuples, coherent under the projections up to `level`.  Observations are defined only on closed
+tuples and only at the levels `η ≤ level`; no observation type is required to be inhabited
+outside that domain.  Fullness is not part of this structure. -/
 structure ObservedPresentation (O : LevelObservations) (M : Type w) where
   /-- The level of the presentation. -/
   level : Ordinal.{0}
@@ -369,11 +371,11 @@ structure ObservedPresentation (O : LevelObservations) (M : Type w) where
   exists_closed_extension : ∀ {n : ℕ} (a : Fin n → M), IsClosed a → ∀ x : M,
     ∃ (k : ℕ) (c : Fin k → M) (j : Fin (n + k)),
       IsClosed (Fin.append a c) ∧ Fin.append a c j = x
-  /-- The observation of a tuple at a level (read only on closed tuples, up to `level`). -/
-  obs : ∀ (η : Ordinal.{0}) {n : ℕ}, (Fin n → M) → O.S η n
+  /-- The observation of a closed tuple at a level `η ≤ level`. -/
+  obs : ∀ (η : Ordinal.{0}), η ≤ level → ∀ {n : ℕ} (a : Fin n → M), IsClosed a → O.S η n
   /-- The observations of a closed tuple are coherent under the projections. -/
-  obs_τ : ∀ {η ξ : Ordinal.{0}} (h : η ≤ ξ), ξ ≤ level → ∀ {n : ℕ} (a : Fin n → M),
-    IsClosed a → O.τ h (obs ξ a) = obs η a
+  obs_τ : ∀ {η ξ : Ordinal.{0}} (h : η ≤ ξ) (hξ : ξ ≤ level) {n : ℕ} (a : Fin n → M)
+    (ha : IsClosed a), O.τ h (obs ξ hξ a ha) = obs η (h.trans hξ) a ha
 
 variable {L : Language.{u, v}}
 variable {O : LevelObservations} {M : Type w} {N : Type z} [L.Structure M] [L.Structure N]
@@ -382,21 +384,25 @@ variable (L) in
 /-- **Atomic recovery at level `0`**, across the two structures: closed tuples with equal
 observations at level `0` have the same atomic type in the base language. -/
 def AtomicAtZero (H : ObservedPresentation O M) (H' : ObservedPresentation O N) : Prop :=
-  ∀ {n : ℕ} (a : Fin n → M) (b : Fin n → N), H.IsClosed a → H'.IsClosed b →
-    H.obs 0 a = H'.obs 0 b → SameAtomicType (L := L) a b
+  ∀ {n : ℕ} (a : Fin n → M) (b : Fin n → N) (ha : H.IsClosed a) (hb : H'.IsClosed b),
+    H.obs 0 zero_le a ha = H'.obs 0 zero_le b hb →
+      SameAtomicType (L := L) a b
 
 /-- **The approximate extension property (AE) at level `η`**, from `H` to `H'`: for closed tuples
 `a` and `b` with equal observations at `η + 1`, every closed extension `a ++ c` in `H` is matched
 by a closed extension `b ++ d` in `H'` of the same length, with equal observations at `η`.  The
-target tuple `b` is kept literally; only the enlarged tuples are compared, one level down.  (AE)
-in both directions is this property for `(H, H')` and for `(H', H)`. -/
+target tuple `b` is kept literally; only the enlarged tuples are compared, one level down.  It is
+asserted when both levels are at least `η + 1`.  (AE) in both directions is this property for
+`(H, H')` and for `(H', H)`. -/
 def ApproxExtension (H : ObservedPresentation O M) (H' : ObservedPresentation O N)
     (η : Ordinal.{0}) : Prop :=
-  ∀ {n : ℕ} (a : Fin n → M) (b : Fin n → N), H.IsClosed a → H'.IsClosed b →
-    H.obs (Order.succ η) a = H'.obs (Order.succ η) b →
-    ∀ {k : ℕ} (c : Fin k → M), H.IsClosed (Fin.append a c) →
-      ∃ d : Fin k → N, H'.IsClosed (Fin.append b d) ∧
-        H.obs η (Fin.append a c) = H'.obs η (Fin.append b d)
+  ∀ (hH : Order.succ η ≤ H.level) (hH' : Order.succ η ≤ H'.level) {n : ℕ} (a : Fin n → M)
+    (b : Fin n → N) (ha : H.IsClosed a) (hb : H'.IsClosed b),
+    H.obs (Order.succ η) hH a ha = H'.obs (Order.succ η) hH' b hb →
+    ∀ {k : ℕ} (c : Fin k → M) (hc : H.IsClosed (Fin.append a c)),
+      ∃ (d : Fin k → N) (hd : H'.IsClosed (Fin.append b d)),
+        H.obs η ((Order.le_succ η).trans hH) (Fin.append a c) hc =
+          H'.obs η ((Order.le_succ η).trans hH') (Fin.append b d) hd
 
 /-- **Approximate comparison.**  If two presentations of levels at least `η` satisfy the atomic
 condition at `0` and (AE) in both directions at every level below `η`, then closed tuples with
@@ -412,7 +418,7 @@ theorem bfEquiv_comp_of_obs_eq (H : ObservedPresentation O M) (H' : ObservedPres
     (hae : ∀ ζ, ζ < η → ApproxExtension H H' ζ ∧ ApproxExtension H' H ζ)
     (hη : η ≤ H.level) (hη' : η ≤ H'.level)
     {n : ℕ} (a : Fin n → M) (b : Fin n → N) (ha : H.IsClosed a) (hb : H'.IsClosed b)
-    (hobs : H.obs η a = H'.obs η b) {m : ℕ} (s : Fin m → Fin n) :
+    (hobs : H.obs η hη a ha = H'.obs η hη' b hb) {m : ℕ} (s : Fin m → Fin n) :
     BFEquiv (L := L) η m (a ∘ s) (b ∘ s) := by
   induction η using Ordinal.limitRecOn generalizing n a b m with
   | zero =>
@@ -422,17 +428,18 @@ theorem bfEquiv_comp_of_obs_eq (H : ObservedPresentation O M) (H' : ObservedPres
     rw [AtomicIdx.holds_comp_eq_holds_pushforward, AtomicIdx.holds_comp_eq_holds_pushforward]
     exact h0 _
   | add_one ζ ih =>
-    rw [← Order.succ_eq_add_one] at hη hη' hobs hae ⊢
+    rw [← Order.succ_eq_add_one] at hae ⊢
     have ih := ih (fun ζ' h => hae ζ' (h.trans (Order.lt_succ ζ)))
     have hζ : ζ ≤ H.level := (Order.le_succ ζ).trans hη
     have hζ' : ζ ≤ H'.level := (Order.le_succ ζ).trans hη'
-    have hobsζ : H.obs ζ a = H'.obs ζ b := by
-      rw [← H.obs_τ (Order.le_succ ζ) hη a ha, ← H'.obs_τ (Order.le_succ ζ) hη' b hb, hobs]
+    have hobsζ : H.obs ζ hζ a ha = H'.obs ζ hζ' b hb :=
+      (H.obs_τ (Order.le_succ ζ) hη a ha).symm.trans
+        ((congrArg (O.τ (Order.le_succ ζ)) hobs).trans (H'.obs_τ (Order.le_succ ζ) hη' b hb))
     obtain ⟨hforth, hback⟩ := hae ζ (Order.lt_succ ζ)
     rw [BFEquiv.succ]
     refine ⟨ih hζ hζ' a b ha hb hobsζ s, fun x => ?_, fun y => ?_⟩
     · obtain ⟨k, c, j, hc, hj⟩ := H.exists_closed_extension a ha x
-      obtain ⟨d, hd, hcd⟩ := hforth a b ha hb hobs c hc
+      obtain ⟨d, hd, hcd⟩ := hforth hη hη' a b ha hb hobs c hc
       refine ⟨Fin.append b d j, ?_⟩
       have := ih hζ hζ' (Fin.append a c) (Fin.append b d) hc hd hcd
         (Fin.snoc (Fin.castAdd k ∘ s) j)
@@ -441,7 +448,7 @@ theorem bfEquiv_comp_of_obs_eq (H : ObservedPresentation O M) (H' : ObservedPres
         show Fin.append _ _ ∘ Fin.castAdd k = _ from funext (Fin.append_left _ _), hj] at this
       exact this
     · obtain ⟨k, d, j, hd, hj⟩ := H'.exists_closed_extension b hb y
-      obtain ⟨c, hc, hcd⟩ := hback b a hb ha hobs.symm d hd
+      obtain ⟨c, hc, hcd⟩ := hback hη' hη b a hb ha hobs.symm d hd
       refine ⟨Fin.append a c j, ?_⟩
       have := ih hζ hζ' (Fin.append a c) (Fin.append b d) hc hd hcd.symm
         (Fin.snoc (Fin.castAdd k ∘ s) j)
@@ -452,8 +459,9 @@ theorem bfEquiv_comp_of_obs_eq (H : ObservedPresentation O M) (H' : ObservedPres
   | limit l hl ih =>
     rw [BFEquiv.limit l hl]
     intro β hβ
-    have hobsβ : H.obs β a = H'.obs β b := by
-      rw [← H.obs_τ hβ.le hη a ha, ← H'.obs_τ hβ.le hη' b hb, hobs]
+    have hobsβ : H.obs β (hβ.le.trans hη) a ha = H'.obs β (hβ.le.trans hη') b hb := by
+      exact (H.obs_τ hβ.le hη a ha).symm.trans
+        ((congrArg (O.τ hβ.le) hobs).trans (H'.obs_τ hβ.le hη' b hb))
     exact ih β hβ (fun ζ h => hae ζ (h.trans hβ)) (hβ.le.trans hη) (hβ.le.trans hη')
       a b ha hb hobsβ s
 

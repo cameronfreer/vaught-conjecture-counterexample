@@ -484,8 +484,10 @@ their notions live; "this repository" means the layers of `README.md`.
    between presentations reducing to model expansions at `λ_{η+1}` (the downward closure of
    layer 5), the finite-extension presentation of finite-cut receiving of the target (layer 3,
    "Receiving for finite extensions", resting on (R1)), run at an auxiliary self-visible cap
-   strictly between `λ_η` and `λ_{η+1}`, since iterated one-point receiving loses the literal
-   retention of the root after the first step; `README.md`, "Reduction to full presentations");
+   strictly between `λ_η` and `λ_{η+1}`: iterated one-point receiving retains each actual root
+   literally, but the next donor coface need not restrict literally to the newly received root,
+   and the bounded-observation lifting at that cap repairs it at each step; `README.md`,
+   "Reduction to full presentations");
    the passage to `BFEquiv` (a graded back-and-forth system) in InfinitaryLogic,
    `Scott/BackAndForth`.
 4. *Exact comparison* for prescribed pointed or unpointed full ages, reusing standard
