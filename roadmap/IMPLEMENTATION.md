@@ -378,8 +378,9 @@ statement, not a consequence of the extension laws: the empty set is closed in b
 `BFEquiv_implies_agreeQR` (available at the pin, signatures checked), not a separate induction on
 sentences.  On this route thinness also has the scatteredness form: `D_η` lies in one back-and-forth
 class at `η` and has countable complement, so the codes of models meet countably many classes of
-`bfEquivSetoid Φ η`, and `isThinOnNatModels_of_countable_bfClasses` applies, with no López–Escobar
-(expected, not elaborated).  The minimality form, from countable truth sides, is kept.
+`bfEquivSetoid Φ η`, and `isThinOnNatModels_of_countable_bfClasses` (compiled in this repository
+(theorem named), `MainTheorem/Scatteredness`) applies, with no López–Escobar; this application is
+expected, not elaborated.  The minimality form, from countable truth sides, is kept.
 
 ## The top-free witnesses: milestone order and acceptance
 
@@ -616,17 +617,20 @@ conditional compositions are kept.
 **A prospective statement of this repository, layer 0: the graded back-and-forth theorem**
 (`README.md`, layer 0, where it is stated with all its hypotheses; to be proved here from
 `BFEquiv.zero`, `BFEquiv.succ`, and `BFEquiv.limit`, available at the pin; a candidate for
-InfinitaryLogic's `Scott/BackAndForth`, "Placement record").  Relations `R α n a b` between
-`n`-tuples of `M` and `N`, for `α` up to an explicit height `h`, with the zero clause (`R 0` gives
-`SameAtomicType`), descent (`R α` gives `R β` for `β ≤ α ≤ h`, covering the successor and limit
-steps), and forth and back from `R (α + 1)` into `R α` on one-point extensions, give
-`BFEquiv α n a b` for every `α ≤ h` and every pair with `R α n a b`, the initial match, which is a
-separate hypothesis and not a consequence of the other clauses.  Optionally a block form, adding
-finitely many points at a step.  Its two intended applications are approximate comparison of full
-presentations (item 3 above) and the back-and-forth form of condition 3 of the expansion-domain
-route (layer 5, section 5 above); it is one theorem with two intended applications, and both are to
-be compiled before it is called common.  `Suggested.lean`, section 6, proves approximate comparison
-directly by the same induction (`FullPresentation.bfEquiv_comp_of_obs_eq`), not through it.
+InfinitaryLogic's `Scott/BackAndForth`, "Placement record").  For structures `M` and `N` in a
+relational language (`BFEquiv` is defined only for relational languages), relations `R α n a b`
+between `n`-tuples of `M` and `N`, for `α` up to an explicit height `h` (`h : Ordinal.{0}` in both
+applications), with the zero clause (`R 0` gives `SameAtomicType`), descent (`R α` gives `R β` for
+`β ≤ α ≤ h`, covering the successor and limit steps), and forth and back from `R (α + 1)` into `R α`
+on one-point extensions, give `BFEquiv α n a b` for every `α ≤ h` and every pair with `R α n a b`.
+The theorem produces no related pair: in each application, the initial match, a pair related at the
+height, is a separate hypothesis and not a consequence of the other clauses.  Optionally a block
+form, adding finitely many points at a step.  Its two intended applications are approximate
+comparison of full presentations (item 3 above) and the back-and-forth form of condition 3 of the
+expansion-domain route (layer 5, section 5 above); it is one theorem with two intended applications,
+and both are to be compiled before it is called common.  `Suggested.lean`, section 6, proves
+approximate comparison directly by the same induction (`FullPresentation.bfEquiv_comp_of_obs_eq`),
+not through it.
 
 **Prospective interfaces of InfinitaryLogic** (neither available upstream nor pinned; the
 statements are specified here, generically, with no construction):
@@ -1096,13 +1100,14 @@ theorem does not depend on it.
 
 ## Placement record
 
-Where a declaration of the library should live, when it is stated elsewhere, is recorded here
-and not in the module that states it (`README.md`, "Library conventions", **Placement**): that
-module's `## Placement` section gives only its place in the roadmap.  The entries are grouped by
-the module that states the declarations; each names the destination.  The declarations of the
-Layer 2 modules under `Language/` and `Realization/` whose own notes name earlier files move to
-those files directly, in the Layer 2 consolidation (pull request #34), and are not recorded here;
-until it lands, their notes stay in those modules.
+Where a declaration of the library should live, when it is stated elsewhere, is recorded here and
+not in the module that states it (`README.md`, "Library conventions", **Placement**): that module's
+`## Placement` section gives only its place in the roadmap.  The entries are grouped by the module
+that states the declarations; each names the destination.  Statements still to be proved, in no
+module yet, are grouped last ("Statements not yet in any module").  The declarations of the Layer 2
+modules under `Language/` and `Realization/` whose own notes name earlier files move to those files
+directly, in the Layer 2 consolidation (pull request #34), and are not recorded here; until it
+lands, their notes stay in those modules.
 
 **Finite geometry and the coatom amalgam (Layer 3, (R6)).**
 
