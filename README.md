@@ -54,8 +54,9 @@ then external review before merging.  Each PR names the layer of
 infrastructure.  Mathlib style throughout; no compatibility shims.
 Prose, docstrings, and declaration names use mathematical terminology only: they speak of
 mathematical objects, hypotheses, constructions, and theorems, never of workflow roles such as
-producer, consumer, supplier, or certificate (see the table under "Library conventions" in
-[`roadmap/README.md`](roadmap/README.md#library-conventions)).
+producer, consumer, supplier, or certificate.  "Library conventions" in
+[`roadmap/README.md`](roadmap/README.md#library-conventions) lists these conventions: the words to
+avoid, one word per notion, declaration names, `## Placement` sections, and the review rubrics.
 
 ## License
 
