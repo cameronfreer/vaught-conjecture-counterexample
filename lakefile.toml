@@ -11,13 +11,15 @@ platformIndependent = true
 # fork commit carrying the in-flight ModelTheory/Infinitary and Ordinal.lift PR stack), and the
 # toolchain must equal InfinitaryLogic's (checked by `scripts/check.sh`).  To bump: change
 # `rev`, run `lake update InfinitaryLogic`, copy its `lean-toolchain`, and commit the manifest.
-# Pinned to the merge commit of cameronfreer/infinitary-logic#141 (orbit-formula thresholds and
-# local-automorphism preservation), which includes #140 (Scott processes: rank comparison), #134
-# and the Lean 4.35.0-rc3 port (#130).
+# Pinned to the merge commit of cameronfreer/infinitary-logic#145 (the ordinal-indexed Σ^in/Π^in
+# hierarchy), which includes #144 (analytic isomorphism-free sets of pairs are uniformly separated
+# at a countable back-and-forth level, with #142 and #143), #141 (orbit-formula thresholds and
+# local-automorphism preservation), #140 (Scott processes: rank comparison), #134 and the Lean
+# 4.35.0-rc3 port (#130).
 [[require]]
 name = "InfinitaryLogic"
 git = "https://github.com/cameronfreer/infinitary-logic"
-rev = "cca69494dd16ffa5c9e2bfef8827b094321cedc2"
+rev = "c65ba61b4e58b9bf354cd20f5201d001f9925437"
 
 # Classical first-order model theory (Fraïssé limits, atomic and prime structures).  Pinned to the
 # merge commit of cameronfreer/computable-model-theory#41 (orbit isolation, atomicity, countable
