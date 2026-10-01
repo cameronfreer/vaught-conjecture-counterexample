@@ -22,8 +22,21 @@ contract, item 1.
 **The statement.**  `HasThinAlephOneSpectrum φ` is the statement of the roadmap sketch
 `Suggested.lean`, verbatim: the models of `φ` coded on `ℕ` have exactly `ℵ₁` isomorphism classes
 (`Quotient (isoSetoid φ)`, the infinitary-logic library's classes of coded models), and there is
-no perfect set of pairwise nonisomorphic such models.  Thinness is absence of a perfect
-isomorphism antichain, not a bound below the continuum.
+no perfect set of pairwise nonisomorphic such models.  Thinness (the library's
+`IsThinOnNatModels`) is absence of a perfect isomorphism antichain, not a bound below the
+continuum.
+
+**Standard terminology.**  Cf. the notions of [Mon, Chapter XII], stated for the sentence `φ`:
+`φ` is *scattered* if it has countably many `≡_α`-classes of models for every `α < ω₁`
+[Mon, §XII.1], equivalently if its class of models is `Σ^in_α`-small for every `α < ω₁`
+([Mon, §XII.1], after Definition XII.2); it is *unbounded* if it has models of arbitrarily high
+Scott rank below `ω₁` [Mon, Definition XII.1]; and it is a *counterexample to Vaught's
+Conjecture* if it is scattered and unbounded [Mon, §XII.1].  The `≡_α`-class of a structure `A`
+is defined by a sentence `ψ_{A,α}` [Mon, Lemma XII.5], as its isomorphism class is by a Scott
+sentence [Mon, Theorem II.9].  [Mon, §XII.1] relates these notions to the number of models
+through Silver's theorem and [Mon, Proposition II.26] (a structure of Scott rank `α` has a
+`Σ^in_{α+2}` Scott sentence).  None of these relations is used or proved here: the main theorem
+is stated by the number of classes and thinness, without `≡_α` or Scott ranks.
 
 **Truth on classes.**  For a countable relational language `L` and a sentence `φ`, the truth of
 a sentence `θ` on a class of coded models of `φ` (`classTruth φ θ`) is actual satisfaction of `θ`
@@ -33,14 +46,20 @@ map is a presentation of the classes in the sense of the library's descriptive t
 the truth of a sentence on the class of a code is its satisfaction by the code (`classTruth_mk`).
 
 * **Scott separation** (`classTruth_separates`): distinct classes are separated by a sentence,
-  since each class is isolated by a Scott sentence (`exists_classTruth_iff_eq`, the library's
-  `isolatedPresentation_of_surjective`).
+  since each class is isolated by a Scott sentence ([Mon, Theorem II.9];
+  `exists_classTruth_iff_eq`, the library's `isolatedPresentation_of_surjective`).
 * **Descriptive separation** (`isThinOnNatModels_of_countable_truth_sides`): if every sentence
   has a countable truth side or a countable false side on the classes, then `φ` is thin on its
   coded models, an instantiation of the library's
   `SmallVocabulary.isThinOnNatModels_of_countable_sentence_splits` (invariant analytic separation
   and López–Escobar, transported to an arbitrary countable relational language through the
-  small-vocabulary presentation).  It is used for thinness only.
+  small-vocabulary presentation).  It is used for thinness only.  Its hypothesis, that for every
+  sentence `θ` one of `φ ∧ θ` and `φ ∧ ¬θ` has only countably many classes of models, is the
+  **sentence minimality** of `φ`; it implies the second clause of *minimally unbounded*
+  [Mon, Definition XII.4] (for every `θ`, one of `φ ∧ θ` and `φ ∧ ¬θ` is bounded), since Scott
+  rank is an isomorphism invariant, the Scott rank of a countable structure is a countable
+  ordinal, and countably many countable ordinals are bounded below `ω₁` (finite models, if any,
+  have Scott rank `1`).
 
 **The counting composition.**  For a `Filtration` of the classes (`Counting.Filtration`) on
 whose domains every sentence is eventually uniform (`IsUniformOnFiltration`):
@@ -88,6 +107,13 @@ listed in `roadmap/COMPANIONS.md`, A3, **Upstream ingredients**.
 The cardinality statement of the main theorem, exactly `ℵ₁` countable models up to isomorphism,
 is [Kni26, Theorem 11.1.9], for R. W. Knight, *A counterexample to Vaught's Conjecture using
 generalised Stone spaces* (draft, 20 February 2026).
+
+Scattered sentences and counterexamples to Vaught's Conjecture are [Mon, §XII.1], unbounded
+sentences [Mon, Definition XII.1], `Σ^in_α`-small classes [Mon, Definition XII.2], minimally
+unbounded sentences [Mon, Definition XII.4], Scott sentences [Mon, Theorem II.9], the sentences
+defining the `≡_α`-class of a structure [Mon, Lemma XII.5], and the Scott sentences of a
+structure of given Scott rank [Mon, Proposition II.26], for A. Montalbán, *Computable Structure
+Theory: Beyond the arithmetic* (draft, 22 April 2025).
 -/
 
 universe u v w z
@@ -152,7 +178,9 @@ end CarrierUniverses
 /-- **Thin `ℵ₁` spectrum**: the models of `φ` coded on `ℕ` have exactly `ℵ₁` isomorphism
 classes, and there is no perfect set of pairwise nonisomorphic such models.  This is the
 statement of the roadmap, whose binders include the countability of the language: it is part of
-the intended statement (a countable relational language), though the body does not use it. -/
+the intended statement (a countable relational language), though the body does not use it.  Cf.
+the scattered, unbounded sentences of [Mon, §XII.1], the counterexamples to Vaught's Conjecture
+there, recalled in the module docstring. -/
 @[nolint unusedArguments]
 def HasThinAlephOneSpectrum {L : Language.{0, 1}} [L.IsRelational]
     [Countable (Σ n, L.Relations n)] (φ : L.Sentenceω) : Prop :=
@@ -184,7 +212,7 @@ variable [Countable (Σ n, L.Relations n)]
 
 /-- **Scott isolation of a class**: each class of coded models is defined by a sentence, the
 Scott sentence of a representative code (the library's `isolatedPresentation_of_surjective`, for
-the quotient map as a presentation). -/
+the quotient map as a presentation).  Scott sentences are [Mon, Theorem II.9]. -/
 theorem exists_classTruth_iff_eq (q : Quotient (isoSetoid φ)) :
     ∃ σ : L.Sentenceω, ∀ p, classTruth φ σ p ↔ p = q :=
   isolatedPresentation_of_surjective Subtype.val (Quotient.mk (isoSetoid φ))
@@ -198,7 +226,8 @@ theorem classTruth_separates {p q : Quotient (isoSetoid φ)} (h : p ≠ q) :
 
 /-- **Descriptive separation**: if every sentence holds on only countably many classes or fails
 on only countably many classes, then `φ` is thin on its coded models (an instantiation of the
-library's `SmallVocabulary.isThinOnNatModels_of_countable_sentence_splits`). -/
+library's `SmallVocabulary.isThinOnNatModels_of_countable_sentence_splits`).  The hypothesis is
+the sentence minimality of `φ` of the module docstring (cf. [Mon, Definition XII.4]). -/
 theorem isThinOnNatModels_of_countable_truth_sides
     (hsplit : ∀ θ : L.Sentenceω, {q | classTruth φ θ q}.Countable ∨
       {q | ¬ classTruth φ θ q}.Countable) :
