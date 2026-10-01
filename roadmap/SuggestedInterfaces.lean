@@ -15,6 +15,9 @@ import InfinitaryLogic.Scott.OrbitFormulaThreshold
 import InfinitaryLogic.Lomega1omega.LocalAutomorphism
 import InfinitaryLogic.ScottProcess.RankComparison
 import InfinitaryLogic.Scott.OrbitRankStabilization
+import InfinitaryLogic.Descriptive.BFSeparation
+import InfinitaryLogic.Lomega1omega.InHierarchy
+import ComputableModelTheory.Classical
 import Mathlib.ModelTheory.Fraisse
 
 /-! # Selected interfaces for the implementation roadmap
@@ -157,7 +160,7 @@ set_option linter.hashCommand false in
 set_option linter.hashCommand false in
 #check FirstOrder.Language.internalScottRank_le_of_orbits_determined
 
--- InfinitaryLogic at our pinned dependency `cca6949` (signatures checked): the orbit-formula
+-- InfinitaryLogic at our pinned dependency `098fb36` (signatures checked): the orbit-formula
 -- threshold and rank bound and the preservation of infinitary formulas by maps agreeing locally
 -- with automorphisms, imported through the two narrow modules (never `InfinitaryLogic.All`).
 set_option linter.hashCommand false in
@@ -179,8 +182,8 @@ set_option linter.hashCommand false in
 set_option linter.hashCommand false in
 #check FirstOrder.Language.BoundedFormulaω.realize_comp_append_of_localAutomorphisms
 
--- The rank comparison of the Scott process (InfinitaryLogic's pull request #140, contained in
--- `cca6949`), through its two modules.
+-- The rank comparison of the Scott process (InfinitaryLogic, merged at `a640bbb`, contained in
+-- `098fb36`), through its two modules.
 set_option linter.hashCommand false in
 #check FirstOrder.Language.selfStabilizesCompletely_iff_orbitRank_le
 set_option linter.hashCommand false in
@@ -197,8 +200,8 @@ set_option linter.hashCommand false in
 -- Mathlib's Fraïssé interface, applied by the classical limit of the top-free witnesses
 -- (`README.md`, Layer 0).  Representative classes, the factorization of tuples through the age,
 -- orbit isolation, and countable prime structures are in our pinned ComputableModelTheory
--- (`52e3dda`) and are not checked here; the classical existence theorem is available upstream,
--- not yet at our pinned dependency.
+-- (`0401c95`, names checked) and are not checked here; the classical existence theorem is
+-- checked below.
 set_option linter.hashCommand false in
 #check FirstOrder.Language.age
 set_option linter.hashCommand false in
@@ -220,6 +223,65 @@ set_option linter.hashCommand false in
 set_option linter.hashCommand false in
 #check FirstOrder.Language.age.fg_substructure
 
+-- InfinitaryLogic at our pinned dependency `098fb36` (signatures checked): uniform
+-- back-and-forth separation of analytic sets of nonisomorphic pairs of codes
+-- (`Descriptive/BFSeparation`), used for thinness in scatteredness form (`README.md`, Layer 6).
+set_option linter.hashCommand false in
+#check FirstOrder.Language.exists_uniform_bfSeparation
+set_option linter.hashCommand false in
+#check FirstOrder.Language.CodeBFEquiv.monotone
+set_option linter.hashCommand false in
+#check FirstOrder.Language.exists_uniform_bfSeparation_forall_ge
+set_option linter.hashCommand false in
+#check FirstOrder.Language.exists_uniform_bfSeparation_of_analyticSets
+
+-- The ordinal-indexed hierarchy (`Lomega1omega/InHierarchy`), at our pinned dependency `098fb36`
+-- (signatures checked): the signed-traversal classes `IsSigmaIn`/`IsPiIn`, which are syntactic
+-- classes, and the normal forms `IsSigmaInNF`/`IsPiInNF`, which lie in them; the converse,
+-- up to logical equivalence, is not formalized (`README.md`, Layer 4).
+set_option linter.hashCommand false in
+#check FirstOrder.Language.BoundedFormulaω.inSigned
+set_option linter.hashCommand false in
+#check FirstOrder.Language.BoundedFormulaω.IsSigmaIn
+set_option linter.hashCommand false in
+#check FirstOrder.Language.BoundedFormulaω.IsPiIn
+set_option linter.hashCommand false in
+#check FirstOrder.Language.BoundedFormulaω.IsSigmaIn.isPiIn_add_one
+set_option linter.hashCommand false in
+#check FirstOrder.Language.BoundedFormulaω.isPiIn_einf
+set_option linter.hashCommand false in
+#check FirstOrder.Language.BoundedFormulaω.isSigmaIn_esup
+set_option linter.hashCommand false in
+#check FirstOrder.Language.BoundedFormulaω.IsSigmaInNF
+set_option linter.hashCommand false in
+#check FirstOrder.Language.BoundedFormulaω.IsPiInNF
+set_option linter.hashCommand false in
+#check FirstOrder.Language.BoundedFormulaω.NormalFormIn.inSigned
+
+-- ComputableModelTheory at our pinned dependency `0401c95` (signatures checked), through the
+-- entry module `ComputableModelTheory.Classical` (Mathlib-only imports): classical Fraïssé
+-- existence (`ModelTheory/FraisseExistence`), rooted universality and uniqueness
+-- (`ModelTheory/RootedExtension`), and isolation and primeness over named finite parameters
+-- (`ModelTheory/NamedParameters`).
+set_option linter.hashCommand false in
+#check FirstOrder.Language.exists_fraisseSequence
+set_option linter.hashCommand false in
+#check FirstOrder.Language.exists_isFraisseLimit_representativeClass
+set_option linter.hashCommand false in
+#check FirstOrder.Language.exists_isFraisseLimit_of_isFraisse
+set_option linter.hashCommand false in
+#check FirstOrder.Language.ExtendsRepresentatives
+set_option linter.hashCommand false in
+#check FirstOrder.Language.isExtensionPair_of_age_subset
+set_option linter.hashCommand false in
+#check FirstOrder.Language.exists_embedding_comp_eq_of_age_subset_of_countable
+set_option linter.hashCommand false in
+#check FirstOrder.Language.exists_equiv_comp_eq_of_age_subset_of_countable
+set_option linter.hashCommand false in
+#check FirstOrder.Language.isAtomic_named_of_orbit_formulas
+set_option linter.hashCommand false in
+#check FirstOrder.Language.exists_elementaryEmbedding_named
+
 /- Proposed substantive targets (not declared as axioms or claimed proved here):
 
 FiniteSemantics: construct the concrete ChartSystem and prove countability of charts,
@@ -231,8 +293,8 @@ HullOperations: definable total binary hull operations; generated-substructure c
   hull closure; finite charts are the finite substructures; embeddings preserved and reflected.
 ClassicalLimit: finite top-free charts as finite structures; hereditary closure, joint embedding,
   amalgamation with the literal square (before any infinite model); classical existence
-  (available upstream); reconstruction meeting SEMANTIC_CONTRACT.md, item 11; consistency, covering,
-  top-freeness from the factorization of tuples; receiving from (R5) and ultrahomogeneity
+  (available at the pin); reconstruction meeting SEMANTIC_CONTRACT.md, item 11; consistency,
+  covering, top-freeness from the factorization of tuples; receiving from (R5) and ultrahomogeneity
   (per cutoff for donors with top); modelhood, infinitude, terminality.  Statement shapes:
   `Suggested.lean`, section 3.
 ChainConstruction (not used by the main theorem): finite master + root absorption +

@@ -29,8 +29,8 @@ ingredients marked "to be located or added upstream", and the theorems marked "p
 available upstream nor pinned; `IMPLEMENTATION.md`, "Dependency pins") are what is not yet
 formalized or available. The bounded back-and-forth separation interface, and
 ComputableModelTheory's rooted uniqueness and isolation and primeness over named parameters, are
-available upstream, not yet at our pinned dependency (`IMPLEMENTATION.md`, "Dependency pins"). The
-status covers these statements only, not their non-claims and not further definability claims
+available at the pin (signatures checked; `IMPLEMENTATION.md`, "Dependency pins"). The status
+covers these statements only, not their non-claims and not further definability claims
 (`README.md`, "Status of the optional results").
 
 ## Notation
@@ -52,8 +52,8 @@ status covers these statements only, not their non-claims and not further defina
   for the lower bound (layer 6), and `w_η ∈ Q` its base class; by expansion uniqueness `w_η` lies
   in the loss at `η`.
 
-Upstream names below were checked in the pinned InfinitaryLogic (`cca6949`, signatures checked),
-the pinned ComputableModelTheory (`52e3dda`, names checked), and Mathlib, except those marked
+Upstream names below were checked in the pinned InfinitaryLogic (`098fb36`, signatures checked),
+the pinned ComputableModelTheory (`0401c95`, names checked), and Mathlib, except those marked
 "available upstream" or "prospective" (`README.md`, Layer 0); the sketch `#check`s or applies only
 names available at the current pins.
 
@@ -173,7 +173,17 @@ their natural upstream homes: `realize_boundedFormulaω_equiv` and `realize_sent
 redundant once `BoundedFormulaω.realize_equiv` and `LomegaEquiv.of_equiv` are generalized in
 place to carriers in different universes; `qrank_lt_omega_one` (`Lomega1omega/QuantifierRank`);
 `classTruth` with its lemmas (`Descriptive/StructureIsoSetoid`) and `exists_mem_modelsOf_equiv`
-(`Descriptive/CodeTransport`).
+(`Descriptive/CodeTransport`).  For thinness in scatteredness form (`README.md`, Layer 6):
+`exists_uniform_bfSeparation` (`Descriptive/BFSeparation`), `bfEquivSetoid`
+(`ModelTheory/MorleyCounting`), `Perfect.mk_eq_continuum` and
+`HasCantorAntichainOn.hasPerfectAntichainOn` (`Descriptive/PerfectAntichain`).  Statements of
+`VaughtConjecture.MainTheorem.Scatteredness` (once it is in the library) with their natural
+upstream homes: `codeBFEquivSetoid` and `structureIsoSetoid_le_codeBFEquivSetoid`
+(`Descriptive/BFTree`, beside `CodeBFEquiv`), with `bfEquivSetoid_eq_comap` beside
+`bfEquivSetoid`; `offDiagonalPairs`, `mem_offDiagonalPairs`,
+`analyticSet_offDiagonalPairs`, and `offDiagonalPairs_noniso` (`Descriptive/BFSeparation`);
+`not_countable_of_perfect` (`Descriptive/PerfectAntichain`); and
+`countable_image_mk_of_countable_quotient_comap`, a statement about setoids (Mathlib).
 
 **Instantiation.**  The sentence `Φ`, its presentation `Q`, and its `T∞`: every model of `Φ` of
 any cardinality either is `L_{ω₁,ω}`-equivalent to a countable model of `Φ` through a Scott
@@ -197,8 +207,8 @@ A1–A3 taking them as hypotheses is progress on A, not its completion (as in th
 
 ### A separate library milestone: bounded back-and-forth separation
 
-A generic theorem of InfinitaryLogic, available upstream, not yet at our pinned dependency
-(`IMPLEMENTATION.md`, "Upstream building blocks" and "Dependency pins"): for a relational language,
+A generic theorem of InfinitaryLogic, available at the pin (signatures checked;
+`IMPLEMENTATION.md`, "Upstream building blocks" and "Dependency pins"): for a relational language,
 every analytic set of pairs of structures on `ℕ` containing no isomorphic pair is uniformly
 separated at some countable back-and-forth level (`exists_uniform_bfSeparation`,
 `Descriptive/BFSeparation`). With cocountable back-and-forth concentration (given here by the
@@ -214,10 +224,11 @@ separation: a perfect antichain is separated at one level, at which only countab
 occur. One common class on a cocountable set at every level is a further assertion. The
 full-presentation route (`README.md`, "Reduction to full presentations") gives the weaker hypothesis
 from countably many level observations, and the stronger one only under a common starting
-observation on every high presentation; its scatteredness composition is to be composed from
-`exists_uniform_bfSeparation` once it is available at our pinned dependency (`IMPLEMENTATION.md`,
-"The full-presentation route"). The working thinness route, from countable truth sides, uses the
-stronger form, which the expansion domains provide.
+observation on every high presentation; its scatteredness composition, from
+`exists_uniform_bfSeparation`, is `isThinOn_of_countable_bfClasses` with
+`densitySentence_isThinOnNatModels_of_scatteredTails`, stated in Lean and not yet in the library
+(`README.md`, Layer 6; `IMPLEMENTATION.md`, "The full-presentation route"). The working thinness
+route, from countable truth sides, uses the stronger form, which the expansion domains provide.
 
 ## Milestone B — top-free chart homogeneity and its consequences
 
@@ -254,7 +265,7 @@ from InfinitaryLogic (`exists_finite_orbit_threshold`, `orbitRank_lt_omega0_of_o
 `internalScottRank_le_omega0_of_orbitFormulas`,
 `BoundedFormulaω.realize_embedding_comp_of_localAutomorphisms`,
 `BoundedFormulaω.realize_comp_append_of_localAutomorphisms`), available at our pinned dependency
-`cca6949` (signatures checked).
+`098fb36` (signatures checked).
 
 ### B1. Joint embedding and amalgamation of top-free charts (in the core)
 
@@ -286,7 +297,7 @@ automorphisms are those of the `L_λ`-structure.  Sketch: `AgreesLocally` and `a
 (proved, for any map preserving the chart relations).  The consequence is an application of
 InfinitaryLogic's `BoundedFormulaω.realize_embedding_comp_of_localAutomorphisms` (and, with finitely
 many parameters, `BoundedFormulaω.realize_comp_append_of_localAutomorphisms`), available at our
-pinned dependency `cca6949` (signatures checked).  Its hypotheses: any language, no relationality,
+pinned dependency `098fb36` (signatures checked).  Its hypotheses: any language, no relationality,
 countability, infinitude, or nonemptiness, and injectivity of the map a consequence of its
 hypothesis.  It is not reproved here.  Sketch: `realize_iff_realize_comp_of_agreesLocally` and
 `realize_comp_append_iff_of_agreesLocally` (proved, one-line applications).
@@ -342,7 +353,7 @@ base reduct.  The development proves the orbit formulas; the generic theorems ar
    `typesIsolated_of_orbitDefinedBy` (proved from the target
    `typesWith_eq_singleton_of_orbitDefinedBy`).  Ingredients: Mathlib's `Theory.CompleteType`,
    `Theory.typeOf`, `Theory.typesWith`, `Formula.equivSentence`, `completeTheory`
-   (`ModelTheory/Types`, `ModelTheory/Semantics`).  At the pin (`52e3dda`, names checked), from
+   (`ModelTheory/Types`, `ModelTheory/Semantics`).  At the pin (`0401c95`, names checked), from
    ComputableModelTheory: `IsolatesTuple` and `IsAtomic`,
    `isolatesTuple_of_orbit_formula` (under `[Nonempty M]`; orbit formulas of `L` without constants
    naming the tuple), `isAtomic_of_orbit_formulas`, and `IsolatesTuple.typesWith_eq_singleton`
@@ -356,7 +367,7 @@ base reduct.  The development proves the orbit formulas; the generic theorems ar
    finite threshold, and `internalScottRank_le_omega0_of_orbitFormulas` gives `internalScottRank ≤
    ω` in the library's convention, the supremum over all tuples of the orbit rank plus one, `⨆ a,
    orbitRank a + 1` (so finite but unbounded orbit ranks give exactly `ω`). These are available at
-   our pinned dependency `cca6949` (signatures checked).  They hold under `[L.IsRelational]` and
+   our pinned dependency `098fb36` (signatures checked).  They hold under `[L.IsRelational]` and
    without countability, nonemptiness, or infinitude of `M`; they are not reproved here.  Sketch:
    `exists_finite_threshold_of_orbitDefinedBy`, `orbitRank_lt_omega0_of_orbitDefinedBy`, and
    `internalScottRank_le_omega0_of_orbitDefinedBy` (proved, one-line applications).  The stage
@@ -371,7 +382,7 @@ base reduct.  The development proves the orbit formulas; the generic theorems ar
    target is any model of the complete theory, in an arbitrary universe, with no receiving or
    countability assumption.  Sketch: `nonempty_elementaryEmbedding_of_typesIsolated` (target).
    Ingredients: Mathlib's `ElementaryEmbedding` (`ModelTheory/ElementaryMaps`).  At the pin
-   (`52e3dda`, names checked), from ComputableModelTheory:
+   (`0401c95`, names checked), from ComputableModelTheory:
    `exists_elementaryEmbedding_of_countable_atomic`,
    under `[Countable M] [Nonempty M] [N ⊨ L.completeTheory M]`, with separate universes,
    function symbols allowed, and no countability of the language or of `N`; the sketch target is
