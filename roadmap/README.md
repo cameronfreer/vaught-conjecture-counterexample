@@ -302,6 +302,6 @@ Combine the two bounds, then apply the no-finite-model bridge. Prove the exact \
 
 ## Validation and dependencies
 
-Use the pinned Lean and infinitary-logic versions together. Do not mix the current forked Mathlib pin with a separately pinned TauCeti dependency; “TauCeti-style” describes the human-owned layered roadmap, not a requirement to import the TauCeti repository.
+Use the pinned Lean, infinitary-logic and computable-model-theory versions together. Do not mix the current forked Mathlib pin with a separately pinned TauCeti dependency; “TauCeti-style” describes the human-owned layered roadmap, not a requirement to import the TauCeti repository.
 
 At every summit, elaborate all modules, audit all declarations for placeholders and unexpected axioms, and check the literal statement against the semantic contract. Maintain separate checks for module imports and proof-term dependencies. A small theorem can import a large compatibility layer; a smaller file count does not prove a smaller mathematical dependency. Modules kept for historical compatibility should depend on the core, not conversely.

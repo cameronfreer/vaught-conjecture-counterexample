@@ -6,9 +6,11 @@ A Lean 4 formalization of a countable relational language and an $L_{\omega_1,\o
 with exactly $\aleph_1$ countable models up to isomorphism and no perfect set of pairwise
 non-isomorphic countable models, together with the general theory it rests on.
 
-It builds on [Mathlib](https://github.com/leanprover-community/mathlib4) and
+It builds on [Mathlib](https://github.com/leanprover-community/mathlib4),
 [InfinitaryLogic](https://github.com/cameronfreer/infinitary-logic) (syntax and semantics of
-$L_{\omega_1,\omega}$, Scott analysis, model-code spaces, Morley counting).
+$L_{\omega_1,\omega}$, Scott analysis, model-code spaces, Morley counting), and
+[ComputableModelTheory](https://github.com/cameronfreer/computable-model-theory) (classical
+Fraïssé limits, atomic and prime structures).
 
 ## Layout
 
@@ -31,10 +33,10 @@ CI runs the same: build against the pinned dependencies, then check that there i
 no axiom beyond `propext`, `Classical.choice`, and `Quot.sound`, Mathlib's linter set with
 warnings as errors, and copyright headers.
 
-The only pins are `lean-toolchain` and the InfinitaryLogic revision in `lakefile.toml`; Mathlib
-is inherited from InfinitaryLogic's manifest, and the toolchain must equal InfinitaryLogic's.  To
-bump: change `rev`, run `lake update InfinitaryLogic`, copy InfinitaryLogic's `lean-toolchain`,
-commit the manifest.
+The only pins are `lean-toolchain` and the InfinitaryLogic and ComputableModelTheory revisions in
+`lakefile.toml`; Mathlib is inherited from InfinitaryLogic's manifest, and the toolchain must equal
+InfinitaryLogic's.  To bump: change `rev`, run `lake update InfinitaryLogic` (or `lake update
+ComputableModelTheory`), copy InfinitaryLogic's `lean-toolchain`, commit the manifest.
 
 ## Contributing
 
