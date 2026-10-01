@@ -11,15 +11,15 @@ platformIndependent = true
 # fork commit carrying the in-flight ModelTheory/Infinitary and Ordinal.lift PR stack), and the
 # toolchain must equal InfinitaryLogic's (checked by `scripts/check.sh`).  To bump: change
 # `rev`, run `lake update InfinitaryLogic`, copy its `lean-toolchain`, and commit the manifest.
-# Pinned to the merge commit of cameronfreer/infinitary-logic#145 (the ordinal-indexed Σ^in/Π^in
-# hierarchy), which includes #144 (analytic isomorphism-free sets of pairs are uniformly separated
-# at a countable back-and-forth level, with #142 and #143), #141 (orbit-formula thresholds and
-# local-automorphism preservation), #140 (Scott processes: rank comparison), #134 and the Lean
-# 4.35.0-rc3 port (#130).
+# Pinned to the merge commit of cameronfreer/infinitary-logic#146 (analytic-set closure lemmas in a
+# neutral module), which includes #145 (the ordinal-indexed Σ^in/Π^in hierarchy), #144 (analytic
+# isomorphism-free sets of pairs are uniformly separated at a countable back-and-forth level, with
+# #142 and #143), #141 (orbit-formula thresholds and local-automorphism preservation), #140, #134 and
+# the Lean 4.35.0-rc3 port (#130).
 [[require]]
 name = "InfinitaryLogic"
 git = "https://github.com/cameronfreer/infinitary-logic"
-rev = "c65ba61b4e58b9bf354cd20f5201d001f9925437"
+rev = "098fb36d54c2c3b319c07a94a1687851ac46521d"
 
 # Classical first-order model theory (Fraïssé limits, atomic and prime structures).  Pinned to the
 # merge commit of cameronfreer/computable-model-theory#41 (orbit isolation, atomicity, countable
@@ -28,11 +28,15 @@ rev = "c65ba61b4e58b9bf354cd20f5201d001f9925437"
 # (extension-rich families: the classical Fraïssé criterion) and the Lean 4.35.0-rc3 port (#37).
 # Its own manifest pins an older InfinitaryLogic ancestor of the revision above; this package's
 # manifest governs, so it is built against the revision above.  To bump: change `rev` and run
-# `lake update ComputableModelTheory` (never a bare `lake update`).
+# Pinned to cameronfreer/computable-model-theory at the merge of its #47, which includes #44 (classical
+# Fraïssé existence: a Fraïssé sequence, its limit, and `IsFraisse K → ∃ limit`), #42 (rooted
+# universality and uniqueness), #46 (isolation and primeness over named finite parameters), #45 (the
+# classical entry module `ComputableModelTheory.Classical`), #41, #40, #39, #38, #37 and #43 (its own
+# InfinitaryLogic pin, an ancestor of ours; this manifest's pin governs).
 [[require]]
 name = "ComputableModelTheory"
 git = "https://github.com/cameronfreer/computable-model-theory"
-rev = "52e3dda019d2288f9fbbf2b32f17fbc32c7b03e2"
+rev = "0401c9515cb601c441f03e42741e4885f89b9320"
 
 # Authoritative: every module under `VaughtConjecture/` is built whether or not the root re-exports it,
 # so an orphan file cannot escape the build or the audits.  The root `VaughtConjecture.lean` is
