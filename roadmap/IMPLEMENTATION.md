@@ -186,10 +186,16 @@ finite expanded substructures and actual charts (a chart is read as its partial 
 the operations computed in it).  Preservation is proved from the chart witnessing each operation,
 not from definability alone.  The closed-image proofs import no cardinality material.  Nothing
 else of `HULL_ALGEBRA.md` is core: cardinal bounds, uncountable maximality, the descriptive
-consequences, the inclusions in `dcl` and `acl`, and the equality (1) for infinite sets stay
-downstream.
+consequences, and the equality (1) for infinite sets stay downstream.  Separately, layer 2 proves
+that geometric hull closure is contained in definable closure in the full stage chart language,
+by the unique-coordinate formulas, with no equality with `dcl` or `acl` asserted.  A description
+of finite tuples by hull, hull chart type, and coordinate map (canonical up to reindexing; empty
+and repeated tuples included) is stated only if a use for it is identified.
 
-Density quantifies `∀ root, ∀ donor, ∀ cutoff, ∃ extension` on the fixed donor scheme.
+Density quantifies `∀ root, ∀ donor, ∀ cutoff, ∃ extension` on the fixed donor scheme.  An
+all-finite-extension presentation of receiving (donors with any finite number of new points),
+equivalent to the one-point presentation, is proved first at stage `ω` and at countable stages
+only under the countability and stage hypotheses it needs; it keeps the same quantifier order.
 Different cutoffs may use different points.  Prove both satisfaction directions, the
 realization/structure round trips, isomorphism preservation and reflection, and no finite
 models.  The density sentence is the preferred presentation.  Its equivalence with the
@@ -305,7 +311,13 @@ occurrence, and the evaluation of the stable labelling by the recovery statement
 4 are built here, after the structural candidate.  Keep positive-root requirements and the
 empty-root base case explicit.
 
-Use selected-chart rooted back-and-forth, not a second fair-chain comparison.  The chosen root
+Use selected-chart rooted back-and-forth, not a second fair-chain comparison.  The coreless
+comparisons are instances of one exact-age comparison theorem (same exact age, exact receiving);
+the rigid-core case is treated in the language naming the core, where the orbit formulas,
+atomicity, primeness, and local-automorphism results of companion milestone B are stated.
+Explicit exact-age Scott sentences, `Π^in_2` after naming the core and `Σ^in_3` after
+existentially quantifying the constants away, are a syntactic-complexity target, distinct from
+the internal Scott-rank bound `≤ ω`.  The chosen root
 must belong to the extendible family; atomic agreement alone does not suffice.  Count terminal
 classes by an overlapping countable family of singleton conditions: specified rigid-core type,
 coreless eventual top grade, and hollow growth.  Do not construct a complete profile invariant.

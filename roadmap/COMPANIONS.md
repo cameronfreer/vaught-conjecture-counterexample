@@ -213,7 +213,9 @@ nonempty top-free realization at `λ` satisfying exact consistency, covering, an
 receiving, read as a structure `M` in that language.  Core results used: the finite semantic
 kernel (layer 1), realizations, the chart language, and the hull operations (layer 2), finite-cut
 receiving, and the top-free witnesses (`README.md`, the section after layer 3).  The top-free
-witnesses satisfy the setting by steps 3–6 of their construction.
+witnesses satisfy the setting by steps 3–6 of their construction.  For the rigid-core comparison
+of layer 4 (`README.md`, Layer 4, "Terminal classification by exact ages"), the statements of this
+milestone are stated and proved in the language naming the supplied finite core by constants.
 
 **Dependency chain** (deliberately short):
 
@@ -487,6 +489,22 @@ groups.
 imports; the preservation of the two extreme points of a finite hull by automorphisms is proved
 for realizations from exact consistency and covering; the instance for an arbitrary realization
 is stated and proved; and the import guard is in place and passes.
+
+## Further companion results
+
+These are statements still to be proved.  None is an input to the main theorem.
+
+* **Greatest refinements.**  The greatest refinement of a model (its largest expansion, and its
+  height), the naturality of greatest refinements under isomorphism, and their relationship to
+  the expansion domains (a class lies in `D_ξ` exactly when its greatest refinement reaches the
+  block `ξ`).  The count of the main theorem does not use them.
+* **No invariant probability measure.**  No probability measure on the model-code space that is
+  invariant under the permutations of `ℕ` is concentrated on the codes of models of `Φ`, derived
+  from the finite equivariant pair hulls (the hull of two points, preserved by automorphisms and
+  permutations of codes) and whole-hull two-generation.
+* **Full-tree examples** (optional).  Examples, proved in Lean, of full trees of charts showing
+  that receiving alone does not classify terminal models: the terminal comparisons of layer 4 need
+  the specialized decoding of rows 2 and 3, not receiving at a cutoff alone.
 
 ## Downstream: the direct cardinal ceiling
 
