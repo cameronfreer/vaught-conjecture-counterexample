@@ -204,7 +204,7 @@ between the requested cutoff and the stage, `c < c' < α` (a permitted cutoff, s
 top), self-visible at the donor's arity `k`.  Such a `c'` is given by
 `Label.exists_lt_lt_isSelfVisible (hβ : Order.IsSuccPrelimit β) (ho : o < β) (k : ℕ) :
 ∃ c, o < c ∧ c < β ∧ IsSelfVisible k (c : Label)` (`Realization/Families`, namespace `Label`),
-with witness `c' = c + (k + 1)`.  Its hypotheses hold here only because (i) the requested cutoff
+applied with `o := c`, with witness `c' = c + (k + 1)`.  Its hypotheses hold here only because (i) the requested cutoff
 `c` is an ordinal below the stage (it is a permitted cutoff, `isPermittedCutoff_coe`), and (ii)
 the stage is zero or a limit (`Order.IsSuccPrelimit`).  Each step takes a lawful coface of the
 actual type with the donor's observation at `c'`; this stronger agreement at `c'` is preserved
