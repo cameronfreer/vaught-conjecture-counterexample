@@ -326,7 +326,9 @@ end Domains
 /-! ## Optional: finite-character closure and its naturality
 
 These definitions/theorems can be reused for any finite hull. They add no new
-receiving requirement and are not needed for the main theorem on the spectrum.
+receiving requirement and are not needed for the main theorem on the spectrum: the global
+closure of infinite sets is optional, while the hull operations and their finite-set closure
+equality below are core (README.md, Layer 2).
 -/
 
 namespace Hull
@@ -352,7 +354,10 @@ theorem image_finitaryExtension [DecidableEq M] [DecidableEq N]
     e '' finitaryExtension h A = finitaryExtension k (e '' A) := by
   sorry
 
-/- Concrete optional hull-operation target (see HULL_ALGEBRA.md):
+/- Concrete hull-operation target (see HULL_ALGEBRA.md).  The definable total hull operations and
+the equality of hull closure with generated-substructure closure for finite sets are core
+(README.md, Layer 2, facts 1–5); only the equality for infinite sets, the cardinality material,
+and the descriptive consequences are optional.
 
 For each ACTUAL finite base type q and indices i₀,i₁ containing its extremes,
 use the existing finite formula

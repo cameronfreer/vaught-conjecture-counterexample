@@ -196,10 +196,13 @@ Density quantifies `∀ root, ∀ donor, ∀ cutoff, ∃ extension` on the fixed
 all-finite-extension presentation of receiving (donors with any finite number of new points),
 equivalent to the one-point presentation, is proved first at stage `ω` and at countable stages
 only under the countability and stage hypotheses it needs; it keeps the same quantifier order.
-The many-point form implies the one-point form at once; the converse proceeds one point at a
-time along a chain of visible faces of the donor's plan and needs, at each step, a lawful coface
-of the actual type with the donor's observation at the cutoff, from the bounded-observation
-lifting of layer 1.
+The many-point form implies the one-point form at once.  The converse proceeds one point at a
+time along a chain of visible faces of the donor's plan at an auxiliary cap: the
+bounded-observation lifting of layer 1 is available at caps self-visible at the target grade, not
+at every permitted cutoff, so the chain is run at a cap self-visible at the donor's arity and
+above the requested cutoff, each step taking a lawful coface of the actual type with the donor's
+observation at that auxiliary cap, and this stronger agreement is maintained through the chain;
+the requested observation at the cutoff is obtained at the end by capping down to it.
 Different cutoffs may use different points.  Prove both satisfaction directions, the
 realization/structure round trips, isomorphism preservation and reflection, and no finite
 models.  The density sentence is the preferred presentation.  Its equivalence with the
