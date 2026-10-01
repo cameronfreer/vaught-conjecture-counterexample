@@ -56,8 +56,9 @@ partial realization.
 
 ## Placement
 
-The use of these statements in the construction of the countable models from finite charts is
-described in `roadmap/README.md`, Layer 2.
+The use of these statements in the construction of the top-free witnesses (the finite charts, the
+reconstruction of partial evaluation, and its exact consistency) is described in
+`roadmap/README.md`, Layer 2 and "The top-free witnesses: the finite age and its classical limit".
 
 ## References
 
