@@ -52,6 +52,10 @@ whose domains every sentence is eventually uniform (`IsUniformOnFiltration`):
   exceptions (`Filtration.mk_eq_aleph_one_of_separation`);
 * together, `hasThinAlephOneSpectrum_of_filtration` for a language in `Language.{0, 1}`.
 
+Uniformity follows from the sharp comparison, agreement of the classes in the domain at `η` on
+the sentences of quantifier rank at most `η` (`IsUniformOnFiltration.of_qrank_le`), since every
+sentence has countable quantifier rank.
+
 **The base language.**  For the density sentence (`baseLanguage.densitySentence`):
 
 * a code satisfies the density sentence exactly when it is a type assignment whose realization
@@ -221,6 +225,18 @@ of each sentence is constant on some domain below `ω₁`. -/
 def IsUniformOnFiltration (F : Filtration (Quotient (isoSetoid φ))) : Prop :=
   ∀ θ : L.Sentenceω, ∃ ξ, ξ < ω₁ ∧
     ∀ p ∈ F.domain ξ, ∀ q ∈ F.domain ξ, (classTruth φ θ p ↔ classTruth φ θ q)
+
+omit [Countable (Σ n, L.Relations n)] in
+/-- **Uniformity from the sharp comparison**: if the classes in each domain `F.domain η` below
+`ω₁` agree on every sentence of quantifier rank at most `η`, then every sentence is uniform on
+some domain below `ω₁` (its quantifier rank is countable).  This is the counterpart for a
+`Filtration` of `ExpansionDomains.HasLogicalAgreement.of_qrank_le`. -/
+theorem IsUniformOnFiltration.of_qrank_le {F : Filtration (Quotient (isoSetoid φ))}
+    (h : ∀ η, η < ω₁ → ∀ p ∈ F.domain η, ∀ q ∈ F.domain η, ∀ θ : L.Sentenceω,
+      θ.qrank ≤ η → (classTruth φ θ p ↔ classTruth φ θ q)) :
+    IsUniformOnFiltration φ F :=
+  fun θ ↦ ⟨θ.qrank, qrank_lt_omega_one θ, fun p hp q hq ↦
+    h _ (qrank_lt_omega_one θ) p hp q hq θ le_rfl⟩
 
 /-- **Thinness from a filtration**: if every sentence is uniform on some domain of a filtration of
 the classes, then `φ` is thin on its coded models. -/

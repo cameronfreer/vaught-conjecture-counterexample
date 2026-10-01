@@ -91,6 +91,77 @@ departure of every class is assumed.
 The hypothesis structures on the domains are stated for an arbitrary type of classes, so that
 their composition can be checked on examples (`VaughtConjecture.MainTheorem.Examples`).
 
+## The full-presentation route
+
+A second conditional composition reaches the same conclusion from different hypotheses, in
+addition to the composition through expansion domains above, which it leaves unchanged.  A
+countable structure is **full** for a class of finite closed configurations (a prescribed age)
+when its finite closed configurations are exactly that class and every embedding of one
+configuration of the class into a larger one extends along the structure; a **full
+presentation** of a class at level `α < ω₁` is a countable structure full for one of the
+prescribed ages at level `α` whose base projection lies in the class.  The hypotheses, none of
+them proved here, are:
+
+* `Presented` (**full presentations at countable levels**): sets `presentedAt α` of classes,
+  for the levels `α < ω₁`, each countable, together containing every class.  For the density
+  sentence, `presentedAt α` is to be the set of classes with a full presentation at level `α`;
+  its countability is to come from the isomorphism of two countable structures full for the same
+  prescribed age, together with the countability of the prescribed ages at each level, which is
+  folded into the countability of `presentedAt α` here.  That **every** class has a full
+  presentation, including any class admitting model expansions to every countable stage, is part
+  of this hypothesis.
+* `Presented.HasBoundedComparison` (**bounded comparison**, in sentence form): the classes in
+  the tail `Presented.tail η`, those with no full presentation below level `η`, agree on every
+  sentence of quantifier rank at most `η`.
+* `UncountablyManyClasses` (**noncollapse**): there are at least `ℵ₁` classes.  The existence of
+  full presentations cannot give it: `Presented` and `HasBoundedComparison` hold for a single
+  class (`VaughtConjecture.MainTheorem.Examples`).
+* `CapToModel`, as above, for the reduction of every countable model to a code.
+
+Bounded comparison is the **minimality** form of the comparison: all classes of the tail at `η`
+agree up to quantifier rank `η`, which needs a common starting observation on presentations at
+high levels (such as a common empty chart), and with it thinness follows from countable truth
+sides through `isThinOnNatModels_of_countable_truth_sides`.  The weaker form, that the tail at
+each `η` meets only countably many classes of back-and-forth equivalence at `η`, suffices for
+the absence of a perfect antichain, but thinness from it needs the boundedness of analytic
+back-and-forth trees (a prospective interface of the infinitary-logic library); that composition
+is a statement still to be made once the interface is available.
+
+The **least level** of a class, the least `α < ω₁` with the class in `presentedAt α`, is a rank
+into the countable ordinals with countable fibres, and its tails form the filtration
+`Presented.toFiltration` (`Counting.Filtration.ofCountableCover`, through
+`Counting.Filtration.ofRank`) on an uncountable type of classes.  What the count of this route
+uses and does not use:
+
+* the bound `#X ≤ ℵ₁` uses only `Presented`: the classes are covered by `ℵ₁` countable sets
+  (`Presented.mk_le_aleph_one`); the lower bound is `UncountablyManyClasses`, and bounded
+  comparison is used only for thinness;
+* the count uses neither expansion uniqueness nor same-carrier transport.  Departure is not
+  removed from the assumptions: the least level is a total rank below `ω₁`, so every class leaves
+  the tail just above its least level, which is part of `Presented`.  What this route does not
+  need is a separate termination theorem for expansion domains;
+* Scott separation on the persistent core (the step of `Filtration.mk_eq_aleph_one_of_separation`
+  that bounds the core by one class) is not used: the core of the least-level filtration is empty
+  (`Presented.core_toFiltration`), so the count is `Filtration.mk_eq_aleph_one` with an empty
+  core.  Sentence separation is still used for thinness: `isThinOnNatModels_of_filtration` (the
+  thinness half of `hasThinAlephOneSpectrum_of_filtration`) rests on the library's
+  `SmallVocabulary.isThinOnNatModels_of_countable_sentence_splits`.  The composition
+  `hasThinAlephOneSpectrum_of_filtration` applies to the same filtration; its two halves are
+  taken separately here so that the count does not pass through Scott separation;
+* `ExpansionDomains.HasNonemptyLosses` is replaced by uncountability: the losses of the
+  least-level filtration are nonempty only cofinally often, not at every successor, and
+  cofinally many nonempty losses are equivalent to uncountability
+  (`Counting.forall_exists_le_rank_iff`).
+
+The conditional theorems of this route:
+
+* `densitySentence_isThinOnNatModels_of_presentations`: full presentations and bounded
+  comparison give thinness (no lower bound is used);
+* `densitySentence_hasThinAlephOneSpectrum_of_presentations`: with uncountability, the thin
+  `ℵ₁` spectrum of the density sentence;
+* `vaughtCounterexample_of_presentations`: with the cap-to-model theorem, the counterpart of
+  `vaughtCounterexample_of_expansionDomains`.
+
 ## References
 
 The cardinality statement of the main theorem, exactly `ℵ₁` countable models up to isomorphism,
@@ -241,6 +312,85 @@ theorem mk_eq_aleph_one (hc : D.HasCountableLosses) (hn : D.HasNonemptyLosses) {
 
 end ExpansionDomains
 
+/-! ### Full presentations and bounded comparison -/
+
+/-- **Full presentations at countable levels** on a type `X` of classes: sets `presentedAt α` of
+classes for the levels `α < ω₁`, each countable, together containing every class.  For the
+density sentence, `presentedAt α` is to be the set of classes with a full presentation at level
+`α` (a countable structure full for one of the countably many prescribed ages at level `α`, whose
+base projection lies in the class); that every class has one, and that only countably many
+classes have one at each level, are statements of the full-presentation route, not proved
+here. -/
+structure Presented (X : Type u) where
+  /-- The classes with a full presentation at level `α`. -/
+  presentedAt : Ordinal.{0} → Set X
+  /-- Only countably many classes have a full presentation at a given level below `ω₁`. -/
+  countable_presentedAt : ∀ α, α < ω₁ → (presentedAt α).Countable
+  /-- Every class has a full presentation at some level below `ω₁`. -/
+  exists_mem_presentedAt : ∀ x, ∃ α, α < ω₁ ∧ x ∈ presentedAt α
+
+namespace Presented
+
+variable {X : Type u} (P : Presented X)
+
+/-- The **tail** at `η`: the classes with no full presentation at a level below `η`. -/
+def tail (η : Ordinal.{0}) : Set X :=
+  (⋃ α < η, P.presentedAt α)ᶜ
+
+/-- The tail at a countable stage has countable complement: the classes presented at the
+countably many levels below it. -/
+theorem countable_compl_tail {η : Ordinal.{0}} (hη : η < ω₁) : (P.tail η)ᶜ.Countable := by
+  rw [tail, compl_compl]
+  exact (InfinitaryLogic.setCountable_Iio_of_lt_omega1 η hη).biUnion fun α hα ↦
+    P.countable_presentedAt α (lt_trans hα hη)
+
+include P in
+/-- **At most `ℵ₁` classes**: the classes are covered by the `ℵ₁` countable sets `presentedAt α`
+(`Counting.mk_le_aleph_one_of_countable_cover`). -/
+theorem mk_le_aleph_one : #X ≤ ℵ₁ :=
+  mk_le_aleph_one_of_countable_cover P.countable_presentedAt P.exists_mem_presentedAt
+
+/-- The **least-level filtration** of an uncountable type of classes with full presentations: the
+domain at `η` is the tail at `η` (`domain_toFiltration`). -/
+noncomputable def toFiltration (hX : ¬ Countable X) : Filtration X :=
+  .ofCountableCover P.presentedAt P.countable_presentedAt P.exists_mem_presentedAt hX
+
+/-- The domain of the least-level filtration at `η` is the tail at `η`. -/
+theorem domain_toFiltration (hX : ¬ Countable X) (η : Ordinal.{0}) :
+    (P.toFiltration hX).domain η = P.tail η :=
+  Filtration.domain_ofCountableCover η
+
+/-- **The persistent core of the least-level filtration is empty**: every class leaves the tail
+just above its least level. -/
+@[simp]
+theorem core_toFiltration (hX : ¬ Countable X) : (P.toFiltration hX).core = ∅ :=
+  iInter_setOf_le_rank_eq_empty _ fun x ↦ (leastLevel_lt_and_mem P.exists_mem_presentedAt x).1
+
+/-- **Bounded comparison** (in sentence form), for a truth predicate `truth θ` of the sentences `θ`
+of a language `L` on the classes: the classes in the tail at each `η < ω₁` agree on every sentence
+of quantifier rank at most `η`.  This is the minimality form of the comparison.  For the density
+sentence, with the truth of sentences on its classes, it is a statement of the full-presentation
+route (the projections of full presentations at levels `≥ η` are back-and-forth equivalent at
+`η`), not proved here. -/
+structure HasBoundedComparison {L : Language.{x, y}} (truth : L.Sentenceω → X → Prop) :
+    Prop where
+  /-- The classes in the tail at `η` agree on the sentences of quantifier rank at most `η`. -/
+  agree : ∀ η, η < ω₁ → ∀ p ∈ P.tail η, ∀ q ∈ P.tail η, ∀ θ : L.Sentenceω,
+    θ.qrank ≤ η → (truth θ p ↔ truth θ q)
+
+variable {P}
+
+/-- **Countable truth sides from bounded comparison**: each sentence is constant on the tail at
+its quantifier rank, whose complement is countable, so it holds at only countably many classes or
+fails at only countably many classes.  No lower bound is used. -/
+theorem HasBoundedComparison.countable_truth_side {L : Language.{x, y}}
+    {truth : L.Sentenceω → X → Prop} (hb : P.HasBoundedComparison truth) (θ : L.Sentenceω) :
+    {x | truth θ x}.Countable ∨ {x | ¬ truth θ x}.Countable :=
+  countable_split_of_uniform_domain (truth θ) (P.countable_compl_tail (qrank_lt_omega_one θ))
+    fun p hp q hq ↦ hb.agree _ (qrank_lt_omega_one θ) p hp q hq θ le_rfl
+
+end Presented
+
 /-! ### The density sentence -/
 
 /-- The **classes of the density sentence**: its models coded on `ℕ`, up to isomorphism. -/
@@ -329,6 +479,75 @@ theorem vaughtCounterexample_of_expansionDomains (D : ExpansionDomains DensityCl
             Nonempty (@Language.Equiv L M ℕ _ c.toStructure) :=
   ⟨baseLanguage.{0}, inferInstance, inferInstance, densitySentence,
     densitySentence_hasThinAlephOneSpectrum_of_expansionDomains D ha hc hn,
+    fun _ _ _ h ↦ exists_mem_modelsOf_densitySentence_equiv_of_capToModel hcap h⟩
+
+/-! ### The full-presentation route -/
+
+/-- **Noncollapse**: the density sentence has at least `ℵ₁` classes of models coded on `ℕ`.  For
+the full-presentation route this is a separate statement (full presentations alone do not give
+it), not proved here. -/
+structure UncountablyManyClasses : Prop where
+  /-- There are at least `ℵ₁` classes. -/
+  aleph_one_le_mk : ℵ₁ ≤ #DensityClass
+
+/-- Uncountably many classes: the type of classes is not countable. -/
+theorem UncountablyManyClasses.not_countable (hu : UncountablyManyClasses) :
+    ¬ Countable DensityClass := by
+  rw [← mk_le_aleph0_iff, not_le]
+  exact aleph0_lt_aleph_one.trans_le hu.aleph_one_le_mk
+
+/-- Noncollapse gives a model on `ℕ`. -/
+theorem UncountablyManyClasses.hasModelOnNat (hu : UncountablyManyClasses) : HasModelOnNat :=
+  hasModelOnNat_iff.mpr (mk_ne_zero_iff.1 ((aleph_pos 1).trans_le hu.aleph_one_le_mk).ne')
+
+/-- **Uniformity on the least-level filtration**: bounded comparison for the classes of the
+density sentence makes every sentence uniform on the least-level filtration
+(`IsUniformOnFiltration.of_qrank_le`). -/
+theorem Presented.HasBoundedComparison.isUniformOnFiltration {P : Presented DensityClass}
+    (hb : P.HasBoundedComparison densityTruth) (hX : ¬ Countable DensityClass) :
+    IsUniformOnFiltration densitySentence (P.toFiltration hX) :=
+  .of_qrank_le fun η hη p hp q hq ↦ by
+    rw [P.domain_toFiltration] at hp hq
+    exact hb.agree η hη p hp q hq
+
+/-- **Thinness, conditionally, by full presentations**: full presentations of the classes of the
+density sentence at countable levels with bounded comparison give no perfect set of pairwise
+nonisomorphic coded models.  The lower bound is not used.  The hypotheses are statements of the
+full-presentation route, not proved here. -/
+theorem densitySentence_isThinOnNatModels_of_presentations (P : Presented DensityClass)
+    (hb : P.HasBoundedComparison densityTruth) : densitySentence.{0}.IsThinOnNatModels :=
+  isThinOnNatModels_of_countable_truth_sides hb.countable_truth_side
+
+/-- **The main theorem, conditionally, by full presentations**: full presentations of the classes
+of the density sentence at countable levels, bounded comparison, and noncollapse give exactly
+`ℵ₁` classes of models coded on `ℕ` and no perfect set of pairwise nonisomorphic ones.  The count
+is `Filtration.mk_eq_aleph_one` on the least-level filtration, whose persistent core is empty;
+thinness is `isThinOnNatModels_of_filtration` with the uniformity of
+`IsUniformOnFiltration.of_qrank_le`.  The hypotheses are statements of the full-presentation
+route, not proved here. -/
+theorem densitySentence_hasThinAlephOneSpectrum_of_presentations (P : Presented DensityClass)
+    (hb : P.HasBoundedComparison densityTruth) (hu : UncountablyManyClasses) :
+    HasThinAlephOneSpectrum densitySentence.{0} :=
+  ⟨(P.toFiltration hu.not_countable).mk_eq_aleph_one (by simp),
+    isThinOnNatModels_of_filtration _ (hb.isUniformOnFiltration hu.not_countable)⟩
+
+/-- **A thin uncountable infinitary class, conditionally, by full presentations**: under full
+presentations at countable levels, bounded comparison, noncollapse, and the cap-to-model theorem,
+there are a countable relational language and a sentence of `L_{ω₁,ω}` whose models coded on `ℕ`
+have exactly `ℵ₁` isomorphism classes with no perfect set of pairwise nonisomorphic ones, and
+every countable model of which, on a carrier in the universe `w`, is isomorphic to a coded one.
+The hypotheses are statements of the full-presentation route and of Layer 3 of the roadmap, not
+proved here. -/
+theorem vaughtCounterexample_of_presentations (P : Presented DensityClass)
+    (hb : P.HasBoundedComparison densityTruth) (hu : UncountablyManyClasses)
+    (hcap : CapToModel.{w}) :
+    ∃ (L : Language.{0, 1}) (_ : L.IsRelational) (_ : Countable (Σ n, L.Relations n))
+      (φ : L.Sentenceω), HasThinAlephOneSpectrum φ ∧
+        ∀ (M : Type w) [L.Structure M] [Countable M], φ.Realize M →
+          ∃ c : StructureSpace L, c ∈ ModelsOf φ ∧
+            Nonempty (@Language.Equiv L M ℕ _ c.toStructure) :=
+  ⟨baseLanguage.{0}, inferInstance, inferInstance, densitySentence,
+    densitySentence_hasThinAlephOneSpectrum_of_presentations P hb hu,
     fun _ _ _ h ↦ exists_mem_modelsOf_densitySentence_equiv_of_capToModel hcap h⟩
 
 end VaughtConjecture.MainTheorem
