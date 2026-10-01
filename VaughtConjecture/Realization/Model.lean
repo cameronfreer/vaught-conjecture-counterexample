@@ -50,8 +50,10 @@ conditions of the source: for generalized saturation they are exactly its nonemp
 (`StageType.nonempty_cofaces_inter_saturationFamily_iff`), and a nonempty bottom-pattern family
 is that of the labels of any of its members, a lawful section extending the labels of `p`
 (`StageType.nonempty_cofaces_inter_bottomPatternFamily_iff`).  So there the guarded clauses are
-equivalent to those of the source.  That a model is infinite will use the dominance clause at
-`γ = 0` at a positive stage.
+equivalent to those of the source.  A realization **has legal types** (`HasLegalTypes`) when
+every type it assigns is legal; a model does (`IsModel.hasLegalTypes`), and at a
+positive stage it has occurrences of every arity, by the dominance clause at `γ = 0`, so it is
+infinite (`IsModel.exists_arity_eq`, `IsModel.infinite`).
 
 **Transport and reduction.**  Modelhood is preserved and reflected by transport along a bijection
 of carriers (`isModel_map_iff`), hence invariant under isomorphism (`IsIso.isModel_iff`), where an
@@ -69,18 +71,11 @@ and a positive ordinal below `β` for the bottom pattern (`IsModel.reduce_bottom
 therefore needs `β ≠ 0`).  The stage `α` must be zero or a limit so that the lifted labels can be
 reduced to stage `α` lawfully; stages of models in the source are limits.
 
-**Directed covers.**  Occurrences are preordered by inclusion of supports; under exact consistency
-`x ≤ y` says that `x` is a face of `y` with the restricted type
-(`Occurrence.le_iff_exists_restrictFace`).  Under covering the occurrences containing any finite
-set are nonempty (`IsCovering.nonempty_setOf_subset_support`) and directed
-(`IsCovering.directedOn_setOf_subset_support`); in particular the occurrences form a directed
-preorder (`IsCovering.isDirected`).
-
-## Placement
-
-`Realization.Occurrence.comap` and its `simp` lemmas belong in
-`VaughtConjecture.Realization.Transport`, beside `Realization.Occurrence.map`.  They are stated
-here so that that file is unchanged.
+**Finite-cut receiving.**  A realization has the finite-cut receiving property
+(`HasFiniteCutReceiving`) when over every occurrence, for every coface `d` of its type and every
+permitted cutoff `c`, some point extends the occurrence to one with a type in the receiving family
+of `d` at `c` (`StageType.receivingFamily`); the property is invariant under transport and
+isomorphism (`hasFiniteCutReceiving_map_iff`, `IsIso.hasFiniteCutReceiving_iff`).
 
 ## References
 
@@ -160,6 +155,10 @@ end RealizesOver
 
 /-! ### Models -/
 
+/-- A realization **has legal types** when every type it assigns is legal. -/
+def HasLegalTypes {α : Ordinal.{u}} (R : Realization.{u, v} α M) : Prop :=
+  ∀ ⦃n : ℕ⦄ (t : Fin n ↪ M) (p : StageType.{u} α n), R.eval t = some p → p.IsLegal
+
 variable (R : Realization.{u, v} α M)
 
 /-- A **model** at stage `α` [Kni26, Definition 3.2.1]: a realization on a nonempty carrier with
@@ -203,6 +202,43 @@ variable {R}
 theorem IsModel.nonempty_occurrence (hR : R.IsModel) : Nonempty R.Occurrence :=
   hR.isCovering.nonempty_occurrence
 
+/-- A model has legal types. -/
+theorem IsModel.hasLegalTypes {α : Ordinal.{u}} {R : Realization.{u, v} α M} (hR : R.IsModel) :
+    R.HasLegalTypes :=
+  hR.isLegal
+
+/-- A model at a positive stage has an occurrence of every arity: the empty face of any
+occurrence is closed, so the empty tuple is typed, and the dominance clause at `γ = 0` extends
+every occurrence by a new point. -/
+theorem IsModel.exists_arity_eq {α : Ordinal.{u}} {R : Realization.{u, v} α M}
+    (hR : R.IsModel) (hα : 0 < α) (k : ℕ) : ∃ x : R.Occurrence, x.arity = k := by
+  induction k with
+  | zero =>
+    obtain ⟨x⟩ := hR.nonempty_occurrence
+    have hs := (isSome_eval_face_iff hR.isConsistent x
+      (Function.Embedding.ofIsEmpty (α := Fin 0))).mpr (by simpa using x.type.isPlan.empty_mem)
+    obtain ⟨p, hp⟩ := Option.isSome_iff_exists.mp hs
+    exact ⟨⟨0, _, p, hp⟩, rfl⟩
+  | succ k ih =>
+    obtain ⟨x, rfl⟩ := ih
+    obtain ⟨u, -, q, -, hq⟩ := hR.dominance x 0 hα
+    exact ⟨⟨_, u, q, hq⟩, rfl⟩
+
+/-- A model at a positive stage has occurrences of arbitrarily large arity. -/
+theorem IsModel.exists_le_arity {α : Ordinal.{u}} {R : Realization.{u, v} α M}
+    (hR : R.IsModel) (hα : 0 < α) (k : ℕ) : ∃ x : R.Occurrence, k ≤ x.arity :=
+  (hR.exists_arity_eq hα k).imp fun _ h ↦ h.ge
+
+/-- **A model at a positive stage is infinite.** -/
+theorem IsModel.infinite {α : Ordinal.{u}} {R : Realization.{u, v} α M}
+    (hR : R.IsModel) (hα : 0 < α) : Infinite M := by
+  refine not_finite_iff_infinite.mp fun _ ↦ ?_
+  have := Fintype.ofFinite M
+  obtain ⟨x, hx⟩ := hR.exists_le_arity hα (Fintype.card M + 1)
+  have h := Fintype.card_le_of_embedding x.tuple
+  rw [Fintype.card_fin] at h
+  omega
+
 /-- **The saturation clause of the source**: at a stage that is zero or a limit, a model realizes,
 over every occurrence of type `p`, a coface of `p` on every legal scheme `S` whose face along the
 initial segment is the scheme of `p`. -/
@@ -230,22 +266,6 @@ theorem IsModel.bottomPattern_of_isLawful (hR : R.IsModel) (hα : Order.IsSuccPr
     ).inter_cofaces hR.isConsistent hR.isLegal
 
 /-! ### Transport along a bijection of carriers -/
-
-/-- The occurrence of `R` underlying an occurrence of the transport: the preimage tuple with the
-same type. -/
-def Occurrence.comap (e : M ≃ N) (y : (R.map e).Occurrence) : R.Occurrence where
-  arity := y.arity
-  tuple := y.tuple.trans e.symm.toEmbedding
-  type := y.type
-  eval_tuple := y.eval_tuple
-
-/-- The tuple of the underlying occurrence is the preimage tuple. -/
-@[simp] theorem Occurrence.comap_tuple (e : M ≃ N) (y : (R.map e).Occurrence) :
-    (y.comap e).tuple = y.tuple.trans e.symm.toEmbedding := rfl
-
-/-- The type of the underlying occurrence is unchanged. -/
-@[simp] theorem Occurrence.comap_type (e : M ≃ N) (y : (R.map e).Occurrence) :
-    (y.comap e).type = y.type := rfl
 
 /-- **Transport of models** along a bijection of carriers. -/
 theorem IsModel.map (hR : R.IsModel) (e : M ≃ N) : (R.map e).IsModel where
@@ -413,49 +433,38 @@ theorem IsIso.isModel_iff (h : R.IsIso S) : R.IsModel ↔ S.IsModel := by
 
 end Iso
 
-/-! ### Directed covers -/
+/-! ### Finite-cut receiving -/
 
-section Directed
+section Receiving
 
-/-- Occurrences are preordered by inclusion of supports. -/
-instance : Preorder R.Occurrence :=
-  Preorder.lift Occurrence.support
+variable (R)
 
-/-- One occurrence lies below another when its support is contained in the other's. -/
-theorem Occurrence.le_def {y z : R.Occurrence} : y ≤ z ↔ y.support ⊆ z.support :=
-  Iff.rfl
+/-- The **finite-cut receiving property**: over every occurrence, for every coface `d` of its type
+and every permitted cutoff `c`, some point extends the occurrence to one with a type on the scheme
+of `d` with the observation of `d` at `c`. -/
+def HasFiniteCutReceiving : Prop :=
+  ∀ (x : R.Occurrence), ∀ d ∈ x.type.cofaces, ∀ c : Label.{u}, IsPermittedCutoff α c →
+    R.RealizesOver x.tuple (receivingFamily d c)
 
-/-- **The face preorder**: under exact consistency, `y ≤ z` exactly when `y` is a face of `z`
-with the restricted type. -/
-theorem Occurrence.le_iff_exists_restrictFace (hR : R.IsConsistent) {y z : R.Occurrence} :
-    y ≤ z ↔ ∃ f : Fin y.arity ↪ Fin z.arity, f.trans z.tuple = y.tuple ∧
-      StageType.restrictFace f z.type = some y.type := by
-  refine ⟨fun h ↦ ?_, fun ⟨f, hf, _⟩ ↦ ?_⟩
-  · obtain ⟨f, hf⟩ := z.exists_trans_eq h
-    exact ⟨f, hf, restrictFace_eq_of_eval hR z.eval_tuple f (hf ▸ y.eval_tuple)⟩
-  · rw [le_def, Occurrence.support, Occurrence.support, ← hf, ← Finset.map_map]
-    exact map_subset_map.mpr (subset_univ _)
+variable {R}
 
-/-- Under covering, some occurrence contains any given finite set. -/
-theorem IsCovering.nonempty_setOf_subset_support (hc : R.IsCovering) (F : Finset M) :
-    {y : R.Occurrence | F ⊆ y.support}.Nonempty :=
-  hc.exists_subset_support F
+/-- **Transport of receiving**: the finite-cut receiving property is preserved and reflected by
+transport along a bijection of carriers. -/
+theorem hasFiniteCutReceiving_map_iff (e : M ≃ N) :
+    (R.map e).HasFiniteCutReceiving ↔ R.HasFiniteCutReceiving := by
+  refine ⟨fun h x d hd c hc ↦ ?_, fun h y d hd c hc ↦
+    (realizesOver_map_iff e).mpr (h (y.comap e) d hd c hc)⟩
+  have key : (x.map e).tuple.trans e.symm.toEmbedding = x.tuple := by
+    ext
+    exact e.symm_apply_apply _
+  exact key ▸ (realizesOver_map_iff (R := R) e).mp (h (x.map e) d hd c hc)
 
-/-- Under covering, the occurrences containing a finite set are directed. -/
-theorem IsCovering.directedOn_setOf_subset_support (hc : R.IsCovering) (F : Finset M) :
-    DirectedOn (· ≤ ·) {y : R.Occurrence | F ⊆ y.support} := by
-  classical
-  intro y hy z _
-  obtain ⟨w, hw⟩ := hc.exists_subset_support (y.support ∪ z.support)
-  exact ⟨w, hy.trans (subset_union_left.trans hw), subset_union_left.trans hw,
-    subset_union_right.trans hw⟩
+/-- Isomorphic realizations have the finite-cut receiving property together. -/
+theorem IsIso.hasFiniteCutReceiving_iff {S : Realization.{u, w} α N} (h : R.IsIso S) :
+    R.HasFiniteCutReceiving ↔ S.HasFiniteCutReceiving := by
+  obtain ⟨e, rfl⟩ := h
+  exact (hasFiniteCutReceiving_map_iff e).symm
 
-/-- **Directed covers**: under covering the occurrences form a directed preorder. -/
-theorem IsCovering.isDirected (hc : R.IsCovering) : IsDirected R.Occurrence (· ≤ ·) := by
-  have h := hc.directedOn_setOf_subset_support ∅
-  simp only [Finset.empty_subset, Set.ofPred_true] at h
-  exact directedOn_univ_iff.mp h
-
-end Directed
+end Receiving
 
 end VaughtConjecture.Realization
