@@ -199,8 +199,9 @@ equivalent to the one-point presentation, keeps the same quantifier order.  The 
 implies the one-point form at once.  The converse proceeds one point at a time along a chain of
 visible faces of the donor's plan at an auxiliary cap.  The bounded-observation lifting of layer 1
 is available at caps self-visible at the target grade, not at every permitted cutoff, so for a
-requested cutoff `c` at stage `α` the chain is run at a permitted cutoff `c'` with `c ≤ c' < α`
-(so never the formal top), self-visible at the donor's arity `k`.  Such a `c'` is given by
+requested cutoff `c` at stage `α` the chain is run at an auxiliary ordinal `c'` chosen strictly
+between the requested cutoff and the stage, `c < c' < α` (a permitted cutoff, so never the formal
+top), self-visible at the donor's arity `k`.  Such a `c'` is given by
 `Label.exists_lt_lt_isSelfVisible (hβ : Order.IsSuccPrelimit β) (ho : o < β) (k : ℕ) :
 ∃ c, o < c ∧ c < β ∧ IsSelfVisible k (c : Label)` (`Realization/Families`, namespace `Label`),
 with witness `c' = c + (k + 1)`.  Its hypotheses hold here only because (i) the requested cutoff
@@ -208,9 +209,10 @@ with witness `c' = c + (k + 1)`.  Its hypotheses hold here only because (i) the 
 the stage is zero or a limit (`Order.IsSuccPrelimit`).  Each step takes a lawful coface of the
 actual type with the donor's observation at `c'`; this stronger agreement at `c'` is preserved
 throughout the finite chain of extensions, after which one passes down to `c` by capping.
-Because of (ii), the presentation is stated first at stage `ω` and at the stages `λ_ξ` (all
-limits), under the countability hypotheses the argument needs, and not at an arbitrary successor
-stage.
+The stage hypothesis (ii) stays in the statement.  At stage zero there are no permitted
+cutoffs, so that case is vacuous; it is not a source of a witness.  No generalization to
+successor stages follows from this argument.  The presentation is stated first at stage `ω` and
+at the stages `λ_ξ` (all limits), under the countability hypotheses the argument needs.
 Different cutoffs may use different points.  Prove both satisfaction directions, the
 realization/structure round trips, isomorphism preservation and reflection, and no finite
 models.  The density sentence is the preferred presentation.  Its equivalence with the
