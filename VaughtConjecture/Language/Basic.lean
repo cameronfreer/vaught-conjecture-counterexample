@@ -17,7 +17,10 @@ The **base language** (`baseLanguage`) is the relational language with one `n`-a
 symbol `P_p` for each legal stage type `p` at stage `ω` on `n` points, and no function symbols.
 Its `n`-ary relation symbols are the legal stage types themselves (`baseLanguage.Relations n` is
 the subtype `{p : StageType ω n // p.IsLegal}`); `baseLanguage.type p` is the stage type of the
-symbol `p`, and `baseLanguage.symbol` makes a symbol of a legal stage type.
+symbol `p`, and `baseLanguage.symbol` makes a symbol of a legal stage type.  Two structures of the
+base language are equal when the same relations hold of the same tuples
+(`baseLanguage.structure_ext`, the case of `Structure.ext_of_isRelational`, which holds for every
+relational language).
 
 The language is countable: there are countably many stage types at stage `ω` on `n` points
 (`StageType.countable_of_lt_omega_one`, as `ω < ω₁`), hence countably many relation symbols of
@@ -32,27 +35,6 @@ which the roadmap's `HasThinAlephOneSpectrum`,
 `Sentenceω.isThinOnNatModels_of_countable_sentence_splits` would need a language in
 `Language.{0, 0}`.
 
-## Placement
-
-The following declarations of this layer belong in earlier files, and are tracked here:
-
-* the instance `countable_Iio_omega0_coe` (countably many ordinals below `ω`, in this file) in
-  `VaughtConjecture.Stage.Countable`;
-* the instance `Label.countable_permittedCutoff` (countably many permitted cutoffs at stage `ω`, in
-  `VaughtConjecture.Language.Density`) in `VaughtConjecture.Label.Cap`;
-* `Realization.HasLegalTypes` (in `VaughtConjecture.Language.Structure`) in
-  `VaughtConjecture.Realization.Basic`;
-* `Realization.IsModel.hasLegalTypes` (in `VaughtConjecture.Language.Structure`), and
-  `Realization.IsModel.exists_arity_eq`, `exists_le_arity` and `IsModel.infinite` (in
-  `VaughtConjecture.Language.Satisfaction`) in `VaughtConjecture.Realization.Model`;
-* `StageType.bottomPatternFamily_congr` (in `VaughtConjecture.Language.Sentence`), and
-  `StageType.receivingFamily` with its lemmas (in `VaughtConjecture.Language.Density`) in
-  `VaughtConjecture.Realization.Families`;
-* `Realization.HasFiniteCutReceiving` with its transport (in `VaughtConjecture.Language.Density`)
-  in the receiving module of Layer 3.
-
-They are stated here so that those files are unchanged.
-
 ## References
 
 This is the language `L` of [Kni26, Definition 3.3.1], whose countability is
@@ -61,6 +43,15 @@ using generalised Stone spaces* (draft, 20 February 2026).
 -/
 
 universe u
+
+/-- **Extensionality** for structures of a relational language: with no function symbols, two
+structures on the same carrier are equal when the same relations hold of the same tuples. -/
+theorem FirstOrder.Language.Structure.ext_of_isRelational {L : FirstOrder.Language}
+    [L.IsRelational] {M : Type*} {s t : L.Structure M}
+    (h : ∀ ⦃n : ℕ⦄ (r : L.Relations n) (xs : Fin n → M),
+      @Structure.RelMap L M s n r xs ↔ @Structure.RelMap L M t n r xs) : s = t :=
+  Structure.ext (funext fun _ ↦ funext fun f ↦ isEmptyElim f)
+    (funext fun _ ↦ funext fun r ↦ funext fun xs ↦ propext (h r xs))
 
 namespace VaughtConjecture
 
@@ -109,6 +100,13 @@ theorem type_injective : Function.Injective (type : baseLanguage.{u}.Relations n
 instance isRelational : IsRelational baseLanguage.{u} :=
   fun _ ↦ inferInstanceAs (IsEmpty Empty)
 
+/-- **Extensionality** for structures of the base language: with no function symbols, two
+structures are equal when the same relations hold of the same tuples. -/
+theorem structure_ext {M : Type*} {s t : baseLanguage.{u}.Structure M}
+    (h : ∀ ⦃n : ℕ⦄ (p : baseLanguage.{u}.Relations n) (xs : Fin n → M),
+      @Structure.RelMap _ M s n p xs ↔ @Structure.RelMap _ M t n p xs) : s = t :=
+  Structure.ext_of_isRelational h
+
 /-- **Countably many relation symbols of each arity** [Kni26, Proposition 3.1.4]: there are
 countably many legal stage types at stage `ω` on `n` points. -/
 instance countable_relations (n : ℕ) : Countable (baseLanguage.{u}.Relations n) :=
@@ -121,17 +119,5 @@ instance countable_sigma_relations : Countable (Σ n, baseLanguage.{u}.Relations
   inferInstance
 
 end baseLanguage
-
-/-! ### Placement: a countability instance for `Stage/Countable`
-
-This instance belongs in `VaughtConjecture.Stage.Countable` (see the placement list above). -/
-
-section Placement
-
-/-- The ordinals below `ω` form a countable type. -/
-instance countable_Iio_omega0_coe : Countable (Set.Iio (ω : Ordinal.{u})) :=
-  (Cardinal.countable_Iio_of_lt_omega_one omega0_lt_omega_one).to_subtype
-
-end Placement
 
 end VaughtConjecture

@@ -66,11 +66,10 @@ correspondence with models of stage `ω` is `VaughtConjecture.Language.Satisfact
 
 ## Placement
 
-`StageType.bottomPatternFamily_congr` belongs in `VaughtConjecture.Realization.Families`, beside
-`StageType.mem_bottomPatternFamily`; it is on the placement list of
-`VaughtConjecture.Language.Basic`.  The formula helpers `BoundedFormulaω.distinct`,
-`BoundedFormulaω.realize_distinct`, and `BoundedFormulaω.realize_alls` hold for an arbitrary
-language and are candidates for upstreaming.
+The formula helpers `BoundedFormulaω.distinct`, `BoundedFormulaω.realize_distinct`, and
+`BoundedFormulaω.realize_alls`, and `Structure.ext_of_isRelational` (in
+`VaughtConjecture.Language.Basic`), hold for an arbitrary language (a relational one for the last)
+and are candidates for upstreaming.
 
 ## References
 
@@ -113,19 +112,6 @@ end FirstOrder.Language.BoundedFormulaω
 namespace VaughtConjecture
 
 open FirstOrder Language Structure Ordinal Label
-
-namespace StageType
-
-variable {α : Ordinal.{u}} {n : ℕ}
-
-/-- The bottom-pattern family of a labelling depends only on which of its values are bottom. -/
-theorem bottomPatternFamily_congr {S : Scheme.{u} (n + 1)} {ρ ρ' : Fin S.card → Label.{u}}
-    (h : ∀ j, ρ j = ⊥ ↔ ρ' j = ⊥) :
-    (bottomPatternFamily S ρ : Set (StageType.{u} α (n + 1))) = bottomPatternFamily S ρ' := by
-  ext q
-  simp only [mem_bottomPatternFamily, h]
-
-end StageType
 
 namespace baseLanguage
 
