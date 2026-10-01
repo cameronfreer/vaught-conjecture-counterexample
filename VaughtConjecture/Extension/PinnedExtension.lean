@@ -197,7 +197,7 @@ theorem exists_pinned_extension_of_surjective {P : StageType.{u} α n} {f : Fin 
   set F := Equiv.ofBijective f hbij
   set E := Equiv.ofBijective (extendByLast f) hbij'
   refine ⟨d.reindex E.symm, hd.reindex _, ?_, ?_⟩
-  · -- Old points: `P` is `p` read back along the inverse of the face.
+  · -- Old points: `P` is `p` transported along the inverse of the face.
     have he : Fin.castSuccEmb.trans E.symm.toEmbedding = F.symm.toEmbedding.trans Fin.castSuccEmb :=
       Function.Embedding.ext fun i ↦ by
         simp only [Function.Embedding.trans_apply, Equiv.coe_toEmbedding, Fin.coe_castSuccEmb]
@@ -360,7 +360,7 @@ theorem exists_amalgam (hext : HasCoatomExtensions.{u} α) {P : StageType.{u} α
   | _ l ih =>
     subst hk
     by_cases hsurj : Function.Surjective g
-    · -- `R` is its face `p`, read back along the inverse of `g`.
+    · -- `R` is its face `p`, transported along the inverse of `g`.
       set G := Equiv.ofBijective g ⟨g.injective, hsurj⟩
       have hRp : p.reindex G.symm = R := by
         have h := map_reindex_restrictFace R g G.symm
