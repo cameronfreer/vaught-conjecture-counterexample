@@ -14,7 +14,7 @@ to that document's layers and checkpoints.
 concrete objects of the construction (charts, realizations, the density sentence `Φ`, the
 expansion domains), each under exactly its stated hypotheses, together with the generic theorems
 they specialize.  A structure whose fields assert the desired conclusions, with projection lemmas
-reading them back, does not complete any target.  A generic theorem proved with its hypotheses
+restating them, does not complete any target.  A generic theorem proved with its hypotheses
 not yet proved for the construction is progress on a target, not its completion.  The rules
 of `README.md` ("Library conventions") apply, including the terminology table and the keep-list.
 The literature these milestones rely on is recorded in `LITERATURE.md`, §7.
