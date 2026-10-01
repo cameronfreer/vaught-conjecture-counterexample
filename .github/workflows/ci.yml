@@ -53,10 +53,10 @@ jobs:
           lean --version
           lake --version
 
-      # Dependency outputs (`.lake/packages`: Mathlib fork, InfinitaryLogic, and the small
-      # libraries), keyed on the two pins only.  Any branch restores the newest cache for
-      # its pins; it is saved by whichever run first builds a new pin, so a repin PR warms
-      # itself and `main` inherits the result.
+      # Dependency outputs (`.lake/packages`: Mathlib fork, InfinitaryLogic,
+      # ComputableModelTheory, and the small libraries), keyed on the two pins only.  Any
+      # branch restores the newest cache for its pins; it is saved by whichever run first
+      # builds a new pin, so a repin PR warms itself and `main` inherits the result.
       - name: Restore dependency cache
         id: deps-cache
         uses: actions/cache/restore@v6
@@ -77,15 +77,19 @@ jobs:
             build-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-
 
       # Only on a cold dependency cache: fetch the public Mathlib cache for the modules the
-      # fork shares with upstream, then compile InfinitaryLogic and the uncached Mathlib
-      # modules it needs, so that the saved dependency cache is complete.  (The main build
-      # only compiles what the library imports, which would leave later runs rebuilding
-      # whatever this commit happened not to import.)
+      # fork shares with upstream, then compile InfinitaryLogic, the classical model-theory
+      # modules of ComputableModelTheory, and the uncached Mathlib modules they need, so that
+      # the saved dependency cache is complete.  (The main build only compiles what the library
+      # imports, which would leave later runs rebuilding whatever this commit happened not to
+      # import.)
       - name: Fetch Mathlib cache and build dependencies (cold dependency cache only)
         if: steps.deps-cache.outputs.cache-hit != 'true'
         run: |
           lake exe cache get
           lake build InfinitaryLogic
+          lake build ComputableModelTheory.ModelTheory.RepresentativeAge \
+            ComputableModelTheory.ModelTheory.ExtensionRichDirectLimit \
+            ComputableModelTheory.ModelTheory.CountablePrime
 
       - name: Build
         run: lake build
