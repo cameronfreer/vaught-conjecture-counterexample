@@ -13,6 +13,8 @@ import InfinitaryLogic.OrdinalCountability
 import InfinitaryLogic.Scott.OrbitRank
 import InfinitaryLogic.Scott.OrbitFormulaThreshold
 import InfinitaryLogic.Lomega1omega.LocalAutomorphism
+import InfinitaryLogic.ScottProcess.RankComparison
+import InfinitaryLogic.Scott.OrbitRankStabilization
 import Mathlib.ModelTheory.Fraisse
 
 /-! # Selected interfaces for the implementation roadmap
@@ -176,6 +178,21 @@ set_option linter.hashCommand false in
 #check FirstOrder.Language.BoundedFormulaω.realize_embedding_comp_of_localAutomorphisms
 set_option linter.hashCommand false in
 #check FirstOrder.Language.BoundedFormulaω.realize_comp_append_of_localAutomorphisms
+
+-- The rank comparison of the Scott process (InfinitaryLogic's pull request #140, contained in
+-- `cca6949`), through its two modules.
+set_option linter.hashCommand false in
+#check FirstOrder.Language.selfStabilizesCompletely_iff_orbitRank_le
+set_option linter.hashCommand false in
+#check FirstOrder.Language.bfStabilizationOrdinal_self_eq_iSup_orbitRank
+set_option linter.hashCommand false in
+#check InfinitaryLogic.ScottProcess.Semantic.stabilizesAt_of_orbitRank_le
+set_option linter.hashCommand false in
+#check InfinitaryLogic.ScottProcess.Semantic.rank_le_of_orbitRank_le
+set_option linter.hashCommand false in
+#check InfinitaryLogic.ScottProcess.Semantic.lift_rank_le_internalScottRank
+set_option linter.hashCommand false in
+#check InfinitaryLogic.ScottProcess.Semantic.internalScottRank_le_lift_rank_add_one
 
 -- Mathlib's Fraïssé interface, applied by the classical limit of the top-free witnesses
 -- (`README.md`, Layer 0).  The classical existence theorem, representative classes, the

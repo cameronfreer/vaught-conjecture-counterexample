@@ -214,8 +214,10 @@ receiving, read as a structure `M` in that language.  Core results used: the fin
 kernel (layer 1), realizations, the chart language, and the hull operations (layer 2), finite-cut
 receiving, and the top-free witnesses (`README.md`, the section after layer 3).  The top-free
 witnesses satisfy the setting by steps 3–6 of their construction.  For the rigid-core comparison
-of layer 4 (`README.md`, Layer 4, "Terminal classification by exact ages"), the statements of this
-milestone are stated and proved in the language naming the supplied finite core by constants.
+of layer 4 (`README.md`, Layer 4, "Terminal classification by exact ages"), the analogues of B2 and
+B3.1–B3.2, B3.4 are stated in the language naming the supplied finite core by constants, from the
+exact receiving over roots containing the core (not from top-freeness); the rank bound B3.3 needs
+a relational language, so for it the core is named by one unary relation per core point.
 
 **Dependency chain** (deliberately short):
 
@@ -494,16 +496,23 @@ is stated and proved; and the import guard is in place and passes.
 
 These are statements still to be proved.  None is an input to the main theorem.
 
-* **Greatest refinements.**  The greatest refinement of a model (its largest expansion, and its
-  height), the naturality of greatest refinements under isomorphism, and their relationship to
-  the expansion domains (a class lies in `D_ξ` exactly when its greatest refinement reaches the
-  block `ξ`).  The count of the main theorem does not use them.
+* **Greatest refinements.**  The **greatest refinement** of a model is its expansion to the
+  largest stage `λ_ξ` to which it expands (the set of such `ξ` is an initial segment closed under
+  limits by limit continuity, so it has a largest element unless it is all of `ω₁`; the expansion
+  is unique by expansion uniqueness); its **height** is that `ξ`, or `ω₁` for a class in the
+  persistent core.  Targets: the naturality of greatest refinements under isomorphism, and their
+  relationship to the expansion domains (a class lies in `D_ξ` exactly when its height is at
+  least `ξ`).  The count of the main theorem does not use them.
 * **No invariant probability measure.**  No probability measure on the model-code space that is
   invariant under the permutations of `ℕ` is concentrated on the codes of models of `Φ`, derived
   from the finite equivariant pair hulls (the hull of two points, preserved by automorphisms and
-  permutations of codes) and whole-hull two-generation.
-* **Full-tree examples** (optional).  Examples, proved in Lean, of full trees of charts showing
-  that receiving alone does not classify terminal models: the terminal comparisons of layer 4 need
+  permutations of codes) and whole-hull two-generation, by the argument of the
+  trivial-definable-closure criterion for invariant measures concentrated on classes of countable
+  structures [AFP16]: an invariant measure would give an exchangeable random finite hull of two
+  points strictly larger than the two points.
+* **Examples** (optional).  Examples, proved in Lean, of realizations in which every one-point
+  coface is received at every cutoff, showing that receiving alone does not classify terminal
+  models: the terminal comparisons of layer 4 need
   the specialized decoding of rows 2 and 3, not receiving at a cutoff alone.
 
 ## Downstream: the direct cardinal ceiling

@@ -196,6 +196,10 @@ Density quantifies `∀ root, ∀ donor, ∀ cutoff, ∃ extension` on the fixed
 all-finite-extension presentation of receiving (donors with any finite number of new points),
 equivalent to the one-point presentation, is proved first at stage `ω` and at countable stages
 only under the countability and stage hypotheses it needs; it keeps the same quantifier order.
+The many-point form implies the one-point form at once; the converse proceeds one point at a
+time along a chain of visible faces of the donor's plan and needs, at each step, a lawful coface
+of the actual type with the donor's observation at the cutoff, from the bounded-observation
+lifting of layer 1.
 Different cutoffs may use different points.  Prove both satisfaction directions, the
 realization/structure round trips, isomorphism preservation and reflection, and no finite
 models.  The density sentence is the preferred presentation.  Its equivalence with the
@@ -313,11 +317,13 @@ empty-root base case explicit.
 
 Use selected-chart rooted back-and-forth, not a second fair-chain comparison.  The coreless
 comparisons are instances of one exact-age comparison theorem (same exact age, exact receiving);
-the rigid-core case is treated in the language naming the core, where the orbit formulas,
-atomicity, primeness, and local-automorphism results of companion milestone B are stated.
-Explicit exact-age Scott sentences, `Π^in_2` after naming the core and `Σ^in_3` after
-existentially quantifying the constants away, are a syntactic-complexity target, distinct from
-the internal Scott-rank bound `≤ ω`.  The chosen root
+the rigid-core case is treated in the language naming the core by constants, where the analogues
+of B2 and B3.1–B3.2, B3.4 of companion milestone B are stated, from the exact receiving over roots
+containing the core (not from top-freeness); the rank bound B3.3 needs a relational language, so
+for it the core is named by one unary relation per core point.  Explicit exact-age Scott
+sentences, `Π^in_2` after naming the core and `Σ^in_3` after existentially quantifying the
+constants away, are a syntactic-complexity target, distinct from the internal Scott-rank bound
+`≤ ω`: not derived from it, and no implication between them is asserted.  The chosen root
 must belong to the extendible family; atomic agreement alone does not suffice.  Count terminal
 classes by an overlapping countable family of singleton conditions: specified rigid-core type,
 coreless eventual top grade, and hollow growth.  Do not construct a complete profile invariant.
@@ -475,8 +481,8 @@ In the pinned InfinitaryLogic (`cca6949`, signatures checked): the rank comparis
 process (its pull request #140, merged at `a640bbb`: `selfStabilizesCompletely_iff_orbitRank_le`,
 `bfStabilizationOrdinal_self_eq_iSup_orbitRank`, `stabilizesAt_of_orbitRank_le`,
 `rank_le_of_orbitRank_le`, `lift_rank_le_internalScottRank`,
-`internalScottRank_le_lift_rank_add_one`), and the statements of its pull request #141, which
-`SuggestedInterfaces.lean` `#check`s:
+`internalScottRank_le_lift_rank_add_one`), and the statements of its pull request #141;
+`SuggestedInterfaces.lean` `#check`s both lists:
 `BoundedFormula.qrank_toLω_lt_omega0` (`Lomega1omega/QuantifierRank`);
 `orbit_determined_of_orbitFormula`, `exists_finite_orbit_threshold`,
 `orbitRank_lt_omega0_of_orbitFormula`, and `internalScottRank_le_omega0_of_orbitFormulas`
