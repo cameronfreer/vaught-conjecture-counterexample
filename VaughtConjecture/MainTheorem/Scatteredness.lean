@@ -44,9 +44,9 @@ is used or proved here.
   theorem, an `Ordinal.{0}` below `Ordinal.omega 1`, with no `Ordinal.lift` and no offset.
 * So the class map of `CodeBFEquiv η` is injective on `P`, and the classes met by `K` are as many
   as the classes of the restriction to `K` (Mathlib's second isomorphism theorem
-  `Setoid.comapQuotientEquiv`), so `P` is countable, whereas a nonempty
-  perfect set of codes is uncountable (`not_countable_of_perfect`; the library's
-  `Perfect.mk_eq_continuum`, in the Polish space of codes).
+  `Setoid.comapQuotientEquiv`); hence `P` is countable.  But a nonempty perfect set of codes is
+  uncountable (`not_countable_of_perfect`; the library's `Perfect.mk_eq_continuum`, in the Polish
+  space of codes).
 
 **Back-and-forth equivalence as a setoid.**  `codeBFEquivSetoid L η` is the library's
 `CodeBFEquiv η` on all codes, an equivalence relation by reflexivity, symmetry, and transitivity

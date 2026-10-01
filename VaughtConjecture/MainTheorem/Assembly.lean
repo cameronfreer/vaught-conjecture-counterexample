@@ -136,17 +136,17 @@ Bounded comparison is stated in its **minimality form**: on the least-level tail
 of the tail at `η` agree up to quantifier rank `η`.  Its proof by back-and-forth is to start from
 a common observation of presentations at high levels (such as the common empty chart).  With it,
 thinness follows from countable truth sides through `isThinOnNatModels_of_countable_truth_sides`.
-The weaker **scatteredness form** (weaker in mathematics, through formulas of quantifier rank `η`
-defining back-and-forth classes; that implication is not proved here),
-`FullPresentations.HasScatteredTails`, says that the codes of
-the models whose classes lie in the tail at each `η < ω₁` fall into only countably many classes
-of back-and-forth equivalence at `η` (the library's `CodeBFEquiv η`, restricted to the codes of
-models of the density sentence: `bfEquivSetoid densitySentence η`); it counts classes of that
-relation, not codes.  It also gives thinness, but not through countable truth sides: the tail at
-`η` has countable complement, so all the codes of models fall into countably many classes at
-`η` (`FullPresentations.HasScatteredTails.countable_quotient`), and
-`isThinOnNatModels_of_countable_bfClasses` (`VaughtConjecture.MainTheorem.Scatteredness`) excludes
-a nonempty perfect set of pairwise nonisomorphic coded models by the library's uniform
+The weaker **scatteredness form**, `FullPresentations.HasScatteredTails` (weaker in mathematics,
+through formulas of quantifier rank `η` defining back-and-forth classes; that implication is not
+proved here), says that the codes of the models whose classes lie in the tail at each `η < ω₁`
+fall into only countably many classes of back-and-forth equivalence at `η` (the library's
+`CodeBFEquiv η`, restricted to the codes of models of the density sentence:
+`bfEquivSetoid densitySentence η`); it counts classes of that relation, not codes.  It also gives
+thinness, but not through countable truth sides: the tail at `η` has countable complement, so all
+the codes of models fall into countably many classes at `η`
+(`FullPresentations.HasScatteredTails.countable_quotient`), and
+`isThinOnNatModels_of_countable_bfClasses` (`VaughtConjecture.MainTheorem.Scatteredness`)
+excludes a nonempty perfect set of pairwise nonisomorphic coded models by the library's uniform
 back-and-forth separation of analytic sets of nonisomorphic pairs (`exists_uniform_bfSeparation`,
 the boundedness of analytic families of well-founded trees).  Neither sentence separation (Scott
 or descriptive) nor López–Escobar nor bounded comparison is used in this composition.
@@ -191,10 +191,10 @@ The conditional theorems of this route:
 * `densitySentence_hasThinAlephOneSpectrum_of_scatteredTails`: with uncountability, the thin
   `ℵ₁` spectrum of the density sentence, the count as in
   `densitySentence_hasThinAlephOneSpectrum_of_presentations`, thinness from scattered tails;
-* `vaughtCounterexample_of_scatteredTails`: with the cap-to-model theorem, the counterpart of
-  `vaughtCounterexample_of_presentations` with scattered tails in place of bounded comparison;
 * `vaughtCounterexample_of_presentations`: with the cap-to-model theorem, the counterpart of
-  `vaughtCounterexample_of_expansionDomains`.
+  `vaughtCounterexample_of_expansionDomains`;
+* `vaughtCounterexample_of_scatteredTails`: with the cap-to-model theorem, the counterpart of
+  `vaughtCounterexample_of_presentations` with scattered tails in place of bounded comparison.
 
 ## References
 
@@ -623,9 +623,9 @@ sentence whose classes lie in the tail at `η` (the classes with no full present
 counts classes of that relation, not codes.  Since the tail has countable complement, this is
 equivalent, for every `P`, to countably many classes of `bfEquivSetoid densitySentence η` among
 all the codes of models, for every `η < ω₁` (`HasScatteredTails.countable_quotient` and
-`HasScatteredTails.of_countable_quotient`).  It is a
-statement of the full-presentation route (roadmap, "Reduction to full presentations": countably
-many observed types at every level), not proved here. -/
+`HasScatteredTails.of_countable_quotient`).  It is a statement of the full-presentation route
+(roadmap, "Reduction to full presentations": countably many observed types at every level), not
+proved here. -/
 structure FullPresentations.HasScatteredTails (P : FullPresentations DensityClass) : Prop where
   /-- The codes of the models in the tail at `η` meet countably many classes at `η`. -/
   countable_bfClasses : ∀ η, η < ω₁ →
