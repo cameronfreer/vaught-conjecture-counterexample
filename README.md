@@ -9,8 +9,10 @@ non-isomorphic countable models, together with the general theory it rests on.
 It builds on [Mathlib](https://github.com/leanprover-community/mathlib4) and
 [InfinitaryLogic](https://github.com/cameronfreer/infinitary-logic) (syntax and semantics of
 $L_{\omega_1,\omega}$, Scott analysis, model-code spaces, Morley counting).  The intended
-construction obtains its countable models by constructing a finite age of labelled charts and
-reconstructing its classical Fraïssé limit, with the classical theorems taken from the
+construction obtains its top-free witnesses (the terminal models at each countable stage, which
+give the lower bound) by constructing a finite age of labelled charts and reconstructing its
+classical Fraïssé limit; the other countable models are classified, not constructed. The
+classical theorems are taken from the
 computable-model-theory library (ComputableModelTheory) (prospective: neither available upstream
 nor pinned; see [`roadmap/IMPLEMENTATION.md`](roadmap/IMPLEMENTATION.md), "Dependency pins").
 
