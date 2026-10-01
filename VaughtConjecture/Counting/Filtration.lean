@@ -23,6 +23,10 @@ The **persistent core** `Filtration.core` is `⋂ ξ < ω₁, D ξ`.  Countable 
 (`Filtration.compl_countable`) are InfinitaryLogic's `InfinitaryLogic.compl_countable_of_loss`,
 not restated.  The counting theorems are in `VaughtConjecture.Counting.Separation`.
 
+Cf. the proof of [Mon, Lemma XII.8]: for a scattered, minimally unbounded sentence
+[Mon, Definition XII.4], the unique unbounded `≡_β`-classes of its models, `β < ω₁`, decrease
+and are continuous at limits.  No back-and-forth relation is used here.
+
 ## The filtration by a rank
 
 A **rank** on `X` is a map `r : X → Ordinal.{0}` into the countable ordinals (`r x < ω₁`) whose
@@ -62,6 +66,13 @@ data: every such domain is empty (`(aleph 1).ord = ω₁` by `Cardinal.ord_aleph
 `domain` to `Set.Iio ω₁` is therefore injective and gives the sketch's `domain` and
 `complement_countable` fields; its `homogeneous` and `separates` fields are the hypotheses of
 `Filtration.mk_eq_aleph_one_of_separation`.
+
+## References
+
+Scattered sentences are those of [Mon, §XII.1] (countably many `≡_α`-classes for every
+`α < ω₁`); minimally unbounded sentences are [Mon, Definition XII.4], and the decreasing unbounded
+`≡_β`-classes are in the proof of [Mon, Lemma XII.8], for A. Montalbán, *Computable Structure
+Theory: Beyond the arithmetic* (draft, 22 April 2025).
 -/
 
 namespace VaughtConjecture.Counting
