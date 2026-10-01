@@ -32,6 +32,12 @@ The `Filtration` versions combine these with InfinitaryLogic's `compl_countable_
 `Filtration.mk_eq_aleph_one_of_separation` is the counting theorem, and
 `Filtration.countable_truth_side` is the sentence split of `countable_split_of_uniform_domain`.
 
+For the filtration by a rank (`Filtration.ofRank`) the persistent core is empty, so the count
+needs no Scott separation on the core: `mk_eq_aleph_one_of_rank` gives `#X = ℵ₁` for an
+uncountable type with a rank into the countable ordinals with countable fibres, and
+`mk_le_aleph_one_of_rank` and `mk_le_aleph_one_of_countable_cover` give `#X ≤ ℵ₁` with no
+uncountability hypothesis.
+
 Two private examples close the file: the tail filtration of the countable
 ordinals satisfies every hypothesis, and adjoining a persistent summand of size `2 ^ ℵ₁` keeps every
 filtration axiom but not the cardinality, so the countable-core hypothesis cannot be dropped.
@@ -143,6 +149,35 @@ theorem countable_truth_side (P : X → Prop) {ξ : Ordinal.{0}} (hξ : ξ < ω�
   countable_split_of_uniform_domain P (F.compl_countable hξ) huniform
 
 end Filtration
+
+/-! ### Counting by a rank -/
+
+section Rank
+
+variable {X : Type u} {r : X → Ordinal.{0}}
+
+/-- **Exactly `ℵ₁` classes from a rank on an uncountable type**: the filtration by a rank into the
+countable ordinals with countable fibres has an empty persistent core (`Filtration.core_ofRank`),
+so `Filtration.mk_eq_aleph_one` applies with no hypothesis of Scott separation on the core. -/
+theorem mk_eq_aleph_one_of_rank (hr : ∀ x, r x < ω₁) (hfib : ∀ α, {x | r x = α}.Countable)
+    (hX : ¬ Countable X) : #X = ℵ₁ :=
+  (Filtration.ofRank r hr hfib hX).mk_eq_aleph_one (by simp)
+
+/-- **At most `ℵ₁` classes from a rank** into the countable ordinals with countable fibres. -/
+theorem mk_le_aleph_one_of_rank (hr : ∀ x, r x < ω₁) (hfib : ∀ α, {x | r x = α}.Countable) :
+    #X ≤ ℵ₁ := by
+  by_cases hX : Countable X
+  · exact (mk_le_aleph0_iff.2 hX).trans (aleph0_le_aleph 1)
+  · exact (mk_eq_aleph_one_of_rank hr hfib hX).le
+
+/-- **At most `ℵ₁` classes from a countable cover**: a type covered by countable sets `Q α` with
+`α < ω₁` has at most `ℵ₁` elements (through the least level, `leastLevel`). -/
+theorem mk_le_aleph_one_of_countable_cover {Q : Ordinal.{0} → Set X}
+    (hQ : ∀ α, α < ω₁ → (Q α).Countable) (hcover : ∀ x, ∃ α, α < ω₁ ∧ x ∈ Q α) : #X ≤ ℵ₁ :=
+  mk_le_aleph_one_of_rank (fun x ↦ (leastLevel_lt_and_mem hcover x).1)
+    (countable_setOf_leastLevel_eq hQ hcover)
+
+end Rank
 
 /-! ### Examples -/
 
