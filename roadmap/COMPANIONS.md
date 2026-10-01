@@ -249,7 +249,7 @@ This target is step 2 of the construction of the top-free witnesses: `README.md`
 top-free witnesses: the finite age and its classical limit", and `IMPLEMENTATION.md`, "The
 top-free witnesses: milestone order and acceptance", which carry its statement (with the literal
 commuting square), its proof from the plain form of the coatom extension property and capping,
-its regressions, and its non-claims (not strong amalgamation; nothing about charts carrying top
+its special cases, and its non-claims (not strong amalgamation; nothing about charts carrying top
 labels).  After the definitional expansion by the hull operations (`README.md`, Layer 2), it is
 the amalgamation property of Mathlib's `FirstOrder.Language.Amalgamation` for the age of
 top-free charts.  The sketch properties `ChartAmalgamation` and `ChartJointEmbedding` and the
@@ -513,7 +513,7 @@ These are statements still to be proved.  None is an input to the main theorem.
 * **Examples** (optional).  Examples, proved in Lean, of realizations in which every one-point
   coface is received at every cutoff, showing that receiving alone does not classify terminal
   models: the terminal comparisons of layer 4 need
-  the specialized decoding of rows 2 and 3, not receiving at a cutoff alone.
+  the specialized decoding of (R2) and (R3), not receiving at a cutoff alone.
 
 ## Downstream: the direct cardinal ceiling
 
