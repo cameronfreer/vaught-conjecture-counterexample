@@ -200,11 +200,10 @@ set_option linter.hashCommand false in
 set_option linter.hashCommand false in
 #check InfinitaryLogic.ScottProcess.Semantic.internalScottRank_le_lift_rank_add_one
 
--- Mathlib's Fraïssé interface, applied by the classical limit of the top-free witnesses
--- (`README.md`, Layer 0).  Representative classes, the factorization of tuples through the age,
--- orbit isolation, and countable prime structures are in our pinned ComputableModelTheory
--- (`0401c95`, names checked) and are not checked here; the classical existence theorem is
--- checked below.
+-- Mathlib's Fraïssé interface, to be applied by the classical limit of the top-free witnesses
+-- (expected, not elaborated; `README.md`, Layer 0).  Representative classes, the factorization
+-- of tuples through the age, orbit isolation, countable prime structures, and the classical
+-- existence theorem of our pinned ComputableModelTheory (`0401c95`) are checked below.
 set_option linter.hashCommand false in
 #check FirstOrder.Language.age
 set_option linter.hashCommand false in
@@ -266,7 +265,11 @@ set_option linter.hashCommand false in
 -- entry module `ComputableModelTheory.Classical` (Mathlib-only imports): classical Fraïssé
 -- existence (`ModelTheory/FraisseExistence`), rooted universality and uniqueness
 -- (`ModelTheory/RootedExtension`), and isolation and primeness over named finite parameters
--- (`ModelTheory/NamedParameters`).  No application of these is compiled in this repository.
+-- (`ModelTheory/NamedParameters`); representative classes, extension-rich families and direct
+-- limits, the factorization of tuples through the age (`ModelTheory/RepresentativeAge`,
+-- `ExtensionRichFamily`, `ExtensionRichDirectLimit`), orbit isolation and countable prime
+-- structures (`ModelTheory/OrbitIsolation`, `CountablePrime`).  No application of these is
+-- compiled in this repository.
 set_option linter.hashCommand false in
 #check FirstOrder.Language.exists_fraisseSequence
 set_option linter.hashCommand false in
@@ -285,6 +288,46 @@ set_option linter.hashCommand false in
 #check FirstOrder.Language.isAtomic_named_of_orbit_formulas
 set_option linter.hashCommand false in
 #check FirstOrder.Language.exists_elementaryEmbedding_named
+set_option linter.hashCommand false in
+#check FirstOrder.Language.representativeClass
+set_option linter.hashCommand false in
+#check FirstOrder.Language.isFraisse_representativeClass
+set_option linter.hashCommand false in
+#check FirstOrder.Language.representativeClass_countable_quotient
+set_option linter.hashCommand false in
+#check FirstOrder.Language.exists_factor_tuple_of_age_subset
+set_option linter.hashCommand false in
+#check FirstOrder.Language.exists_factor_embedding_of_age_subset
+set_option linter.hashCommand false in
+#check FirstOrder.Language.FGCofinal
+set_option linter.hashCommand false in
+#check FirstOrder.Language.ExtensionRich
+set_option linter.hashCommand false in
+#check FirstOrder.Language.isFraisseLimit_of_extensionRich
+set_option linter.hashCommand false in
+#check FirstOrder.Language.SequenceExtension
+set_option linter.hashCommand false in
+#check FirstOrder.Language.amalgamationRich_of_sequenceExtension
+set_option linter.hashCommand false in
+#check FirstOrder.Language.age_directLimit_eq
+set_option linter.hashCommand false in
+#check FirstOrder.Language.countable_directLimit
+set_option linter.hashCommand false in
+#check FirstOrder.Language.isFraisseLimit_directLimit
+set_option linter.hashCommand false in
+#check FirstOrder.Language.IsolatesTuple
+set_option linter.hashCommand false in
+#check FirstOrder.Language.IsAtomic
+set_option linter.hashCommand false in
+#check FirstOrder.Language.isolatesTuple_of_orbit_formula
+set_option linter.hashCommand false in
+#check FirstOrder.Language.isAtomic_of_orbit_formulas
+set_option linter.hashCommand false in
+#check FirstOrder.Language.IsolatesTuple.realize_iff
+set_option linter.hashCommand false in
+#check FirstOrder.Language.IsolatesTuple.typesWith_eq_singleton
+set_option linter.hashCommand false in
+#check FirstOrder.Language.exists_elementaryEmbedding_of_countable_atomic
 
 /- Proposed substantive targets (not declared as axioms or claimed proved here):
 

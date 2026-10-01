@@ -53,7 +53,7 @@ covers these statements only, not their non-claims and not further definability 
   in the loss at `η`.
 
 Upstream names below were checked in the pinned InfinitaryLogic (`098fb36`, signatures checked),
-the pinned ComputableModelTheory (`0401c95`, names checked), and Mathlib, except those marked
+the pinned ComputableModelTheory (`0401c95`, signatures checked), and Mathlib, except those marked
 "available upstream" or "prospective" (`README.md`, Layer 0); the sketch `#check`s or applies only
 names available at the current pins.
 
@@ -173,14 +173,7 @@ their natural upstream homes: `realize_boundedFormulaω_equiv` and `realize_sent
 redundant once `BoundedFormulaω.realize_equiv` and `LomegaEquiv.of_equiv` are generalized in
 place to carriers in different universes; `qrank_lt_omega_one` (`Lomega1omega/QuantifierRank`);
 `classTruth` with its lemmas (`Descriptive/StructureIsoSetoid`) and `exists_mem_modelsOf_equiv`
-(`Descriptive/CodeTransport`).  For thinness in scatteredness form (`README.md`, Layer 6):
-`exists_uniform_bfSeparation` (`Descriptive/BFSeparation`), `bfEquivSetoid`
-(`ModelTheory/MorleyCounting`), `Perfect.mk_eq_continuum` and
-`HasCantorAntichainOn.hasPerfectAntichainOn` (`Descriptive/PerfectAntichain`), all available at the
-pin; from Mathlib, `Set.offDiag` and `Setoid.comapQuotientEquiv`.  Their compiled application is
-`isThinOn_of_countable_bfClasses`.  The statements of
-`VaughtConjecture.MainTheorem.Scatteredness`, all generic, belong upstream; their destinations are
-recorded in `IMPLEMENTATION.md`, "Placement record".
+(`Descriptive/CodeTransport`).
 
 **Instantiation.**  The sentence `Φ`, its presentation `Q`, and its `T∞`: every model of `Φ` of
 any cardinality either is `L_{ω₁,ω}`-equivalent to a countable model of `Φ` through a Scott
@@ -229,6 +222,20 @@ observation on every high presentation; its scatteredness composition is
 `isThinOnNatModels_of_countable_bfClasses` (`MainTheorem/Scatteredness`; `README.md`, Layer 6;
 `IMPLEMENTATION.md`, "The full-presentation route"). The working thinness route, from countable
 truth sides, uses the stronger form, which the expansion domains provide.
+
+**Upstream ingredients of the scatteredness composition** (`README.md`, Layer 6), each with its
+compiled use in this repository.  From InfinitaryLogic, available at the pin (signatures
+checked): `exists_uniform_bfSeparation` (`Descriptive/BFSeparation`), applied in
+`exists_forall_not_codeBFEquiv_of_isClosed` and through it in `isThinOn_of_countable_bfClasses`;
+`bfEquivSetoid` (`ModelTheory/MorleyCounting`), in `bfEquivSetoid_eq_comap` and
+`isThinOnNatModels_of_countable_bfClasses`; `Perfect.mk_eq_continuum`
+(`Descriptive/PerfectAntichain`), in `not_countable_of_perfect`; and
+`HasCantorAntichainOn.hasPerfectAntichainOn` (`Descriptive/PerfectAntichain`), used only by the
+example of `MainTheorem/Examples` showing that countably many back-and-forth classes are needed,
+not by the composition.  From Mathlib: `Set.offDiag`, in `analyticSet_offDiag` and
+`offDiag_noniso`; and `Setoid.comapQuotientEquiv`, in `isThinOn_of_countable_bfClasses`.  The
+statements of `VaughtConjecture.MainTheorem.Scatteredness`, all generic, belong upstream; their
+destinations are recorded in `IMPLEMENTATION.md`, "Placement record".
 
 ## Milestone B — top-free chart homogeneity and its consequences
 
@@ -355,7 +362,7 @@ base reduct.  The development proves the orbit formulas; the generic theorems ar
    `typesIsolated_of_orbitDefinedBy` (proved from the target
    `typesWith_eq_singleton_of_orbitDefinedBy`).  Ingredients: Mathlib's `Theory.CompleteType`,
    `Theory.typeOf`, `Theory.typesWith`, `Formula.equivSentence`, `completeTheory`
-   (`ModelTheory/Types`, `ModelTheory/Semantics`).  At the pin (`0401c95`, names checked), from
+   (`ModelTheory/Types`, `ModelTheory/Semantics`).  At the pin (`0401c95`, signatures checked), from
    ComputableModelTheory: `IsolatesTuple` and `IsAtomic`,
    `isolatesTuple_of_orbit_formula` (under `[Nonempty M]`; orbit formulas of `L` without constants
    naming the tuple), `isAtomic_of_orbit_formulas`, and `IsolatesTuple.typesWith_eq_singleton`
@@ -384,7 +391,7 @@ base reduct.  The development proves the orbit formulas; the generic theorems ar
    target is any model of the complete theory, in an arbitrary universe, with no receiving or
    countability assumption.  Sketch: `nonempty_elementaryEmbedding_of_typesIsolated` (target).
    Ingredients: Mathlib's `ElementaryEmbedding` (`ModelTheory/ElementaryMaps`).  At the pin
-   (`0401c95`, names checked), from ComputableModelTheory:
+   (`0401c95`, signatures checked), from ComputableModelTheory:
    `exists_elementaryEmbedding_of_countable_atomic`,
    under `[Countable M] [Nonempty M] [N ⊨ L.completeTheory M]`, with separate universes,
    function symbols allowed, and no countability of the language or of `N`; the sketch target is

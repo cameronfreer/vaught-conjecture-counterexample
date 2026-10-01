@@ -666,7 +666,7 @@ In the pinned Mathlib (`Mathlib/ModelTheory/Fraisse.lean`): `age`, `Hereditary`,
 `age.fg_substructure`, with the hypotheses recorded in `README.md`, Layer 0.  Mathlib has no
 existence theorem for Fraïssé limits.
 
-In the pinned ComputableModelTheory (`0401c95`, names checked): the classical Fraïssé theorems
+In the pinned ComputableModelTheory (`0401c95`, signatures checked): the classical Fraïssé theorems
 (`representativeClass`, `isFraisse_representativeClass`, `representativeClass_countable_quotient`,
 `FGCofinal`, `ExtensionRich`, `isFraisseLimit_of_extensionRich`, `SequenceExtension`,
 `amalgamationRich_of_sequenceExtension`, `age_directLimit_eq`, `countable_directLimit`,
@@ -763,7 +763,7 @@ named (`README.md`, Layer 0):
   build warnings), reached from `52e3dda` (this repository's pull request #35) by this
   repository's pull request #41.  Besides representative classes, extension-rich families and
   direct limits, the factorization of tuples through the age, orbit isolation, and countable prime
-  structures (names checked), it contains rooted universality and uniqueness (#42), classical
+  structures (signatures checked), it contains rooted universality and uniqueness (#42), classical
   Fraïssé existence (#44), the entry module `ComputableModelTheory.Classical` (#45), and isolation
   and primeness over named finite parameters (#46), available at our pinned dependency `0401c95`
   (signatures checked; `SuggestedInterfaces.lean` `#check`s them through the entry module).  Its
@@ -775,9 +775,9 @@ named (`README.md`, Layer 0):
   must be built against the InfinitaryLogic revision pinned here, and the toolchain check of
   `scripts/check.sh` extends to ComputableModelTheory.
 
-**Available upstream, not yet available at our pinned dependency:** of InfinitaryLogic,
-Montalbán's explicit Scott sentence from a family of orbit formulas (its pull request #147, merged
-upstream at `df52c17`, `Scott/MontalbanSentence`: `montalbanSentence`, `montalbanSentence_self`,
+**Available upstream, not yet available at our pinned dependency:** of InfinitaryLogic, Montalbán's
+explicit Scott sentence from a family of orbit formulas (its pull request #147, merged upstream at
+`df52c17`, `Scott/MontalbanSentence`: `montalbanSentence`, `montalbanSentence_self`,
 `nonempty_equiv_of_realize_montalbanSentence`, `montalbanSentence_characterizes`, and the pointed
 forms) and its complexity bound in the signed hierarchy (its pull request #148, merged upstream at
 `8a15ca5`, `Scott/MontalbanComplexity`: `isPiIn_montalbanSentence`,
@@ -785,8 +785,8 @@ forms) and its complexity bound in the signed hierarchy (its pull request #148, 
 `exists_isPiIn_two_scottSentence_of_sigmaIn_zero_orbits`, and the pointed forms).  Both leave the
 toolchain and Mathlib unchanged.  **The next move** is one repin bundling them: InfinitaryLogic to
 `8a15ca5` (containing #147 and #148), with ComputableModelTheory at its current head `37f6c42` (its
-pull request #51), whose own InfinitaryLogic pin is exactly `8a15ca5`.  Until it
-merges these are named in prose only, never `#check`ed in the sketches.
+pull request #51), whose own InfinitaryLogic pin is exactly `8a15ca5`.  Until it merges these are
+named in prose only, never `#check`ed in the sketches.
 
 **Prospective dependencies (neither available upstream nor pinned):** the InfinitaryLogic
 statements listed under "The full-presentation route": invariant Borel observations, graded
@@ -1169,18 +1169,17 @@ until it lands, their notes stay in those modules.
   lemmas, which become redundant once `BoundedFormulaω.realize_equiv` and `LomegaEquiv.of_equiv`
   are generalized across carrier universes.
 - `MainTheorem/Scatteredness` (pull request #42): every statement is generic (none mentions the
-  density sentence).  To InfinitaryLogic: `codeBFEquivSetoid` to
-  `Descriptive/BFTree`, beside `CodeBFEquiv`; `bfEquivSetoid_eq_comap` to
-  `ModelTheory/MorleyCounting`, where `bfEquivSetoid` can be defined as that restriction (as
-  `isoSetoid` is, with `isoSetoid_eq_comap`); `offDiag_noniso`,
+  density sentence).  To InfinitaryLogic: `codeBFEquivSetoid` to `Descriptive/BFTree`, beside
+  `CodeBFEquiv`; `bfEquivSetoid_eq_comap` to `ModelTheory/MorleyCounting`, where `bfEquivSetoid` can
+  be defined as that restriction (as `isoSetoid` is, with `isoSetoid_eq_comap`); `offDiag_noniso`,
   `exists_forall_not_codeBFEquiv_of_isClosed`, and `isThinOn_of_countable_bfClasses` to
   `Descriptive/BFSeparation`, beside `exists_uniform_bfSeparation` (the thinness application of its
   checkpoint (3); subject to that module's import guard), and
-  `isThinOnNatModels_of_countable_bfClasses` beside `bfEquivSetoid`.  To Mathlib: the analyticity
-  of the off-diagonal of a closed set in a Polish Borel space (`analyticSet_offDiag`, to
+  `isThinOnNatModels_of_countable_bfClasses` beside `bfEquivSetoid`.  To Mathlib: the analyticity of
+  the off-diagonal of a closed set in a Polish Borel space (`analyticSet_offDiag`, to
   `MeasureTheory/Constructions/Polish`) and the uncountability of a nonempty perfect set in a
-  completely metrizable space (`not_countable_of_perfect`, to `Topology/MetricSpace/Perfect`,
-  beside `Perfect.exists_nat_bool_injection`).
+  completely metrizable space (`not_countable_of_perfect`, to `Topology/MetricSpace/Perfect`, beside
+  `Perfect.exists_nat_bool_injection`).
 
 ## Dependency tracking
 

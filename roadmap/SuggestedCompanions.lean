@@ -32,9 +32,9 @@ The three sections correspond to the three milestones: (A) the filtration and th
 homogeneity of the top-free charts and the orbit theory, (C) the geometric obstruction.  The generic
 theorems of B are quoted from the two libraries: from InfinitaryLogic, at our pinned dependency
 `098fb36` (signatures checked), as the proved applications at the end of section B; from
-ComputableModelTheory, at our pinned dependency `0401c95` (names checked), whose `sorry` targets
-below record their statement shapes and are not `#check`ed here (`IMPLEMENTATION.md`,
-"Dependency pins").
+ComputableModelTheory, at our pinned dependency `0401c95` (signatures checked, `#check`ed in
+`SuggestedInterfaces.lean`), whose `sorry` targets below record their statement shapes
+(`IMPLEMENTATION.md`, "Dependency pins").
 -/
 
 set_option autoImplicit false
