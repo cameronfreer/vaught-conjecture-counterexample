@@ -232,7 +232,7 @@ HullOperations: definable total binary hull operations; generated-substructure c
 ClassicalLimit: finite top-free charts as finite structures; hereditary closure, joint embedding,
   amalgamation with the literal square (before any infinite model); classical existence
   (prospective); reconstruction meeting SEMANTIC_CONTRACT.md, item 11; consistency, covering,
-  top-freeness from the factorization of tuples; receiving from row 5 and ultrahomogeneity
+  top-freeness from the factorization of tuples; receiving from (R5) and ultrahomogeneity
   (per cutoff for donors with top); modelhood, infinitude, terminality.  Statement shapes:
   `Suggested.lean`, section 3.
 ChainConstruction (not used by the main theorem): finite master + root absorption +
