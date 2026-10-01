@@ -575,8 +575,9 @@ statements are specified here, generically, with no construction):
   determined: for increasing countable ordinals `α_i` and countable structures `A_i` with
   `A_i` and `A_{i+1}` `BlockBFEquiv`-equivalent at `α_i` plus that offset (empty tuples), a
   countable structure `BlockBFEquiv α_i`-equivalent to every `A_i`; [Mon]'s offset `+3` is for
-  its own relation [Mon, Definition II.32] and is not transferred; for the club agreement of
-  `COMPANIONS.md`, "Further companion results".
+  its own relation [Mon, Definition II.32] and is not transferred; it supports the club agreement
+  of `COMPANIONS.md`, "Further companion results", only through the passage between [Mon]'s
+  convention and InfinitaryLogic's, which is still to be proved.
 
 ## Upstream building blocks
 

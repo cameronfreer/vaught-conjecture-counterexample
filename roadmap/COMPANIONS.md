@@ -551,7 +551,8 @@ These are statements still to be proved.  None is an input to the main theorem.
   `BlockBFEquiv` of [Mon, Lemma XII.6] (a chain of countable structures, each equivalent to the
   next at an increasing sequence of levels with a fixed offset, has a countable limit structure
   equivalent to each term at its level), by the same construction, with its offset to be
-  determined.
+  determined.  It supports the club agreement only through the passage between [Mon]'s
+  convention and InfinitaryLogic's, which is still to be proved.
 * **Full trees.**  The introductory example of full rooted well-founded trees of finite
   sequences (`LITERATURE.md`, §9), with its rank convention explicit: equally ranked countable
   full well-founded trees are isomorphic; and the finite-extension estimate, that finite

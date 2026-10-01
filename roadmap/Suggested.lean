@@ -329,7 +329,7 @@ end Domains
 
 Statement shapes for `README.md`, "Reduction to full presentations", with a complete proof of
 approximate comparison from them. A presentation of a structure `M` is given here only through its
-closed tuples (enumerations of finite closed diagrams) and their level observations at the levels up
+closed tuples (enumerations of finite closed sets) and their level observations at the levels up
 to its own; fullness, exact comparison, and the count of full presentations are not stated here. The
 level sets `S η n` are separate types with explicit projections `τ`; a single composition law on one
 ambient set is not used. `BFEquiv` is the back-and-forth equivalence of InfinitaryLogic (available
