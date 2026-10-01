@@ -15,7 +15,7 @@ concrete objects of the construction (charts, realizations, the density sentence
 expansion domains), each under exactly its stated hypotheses, together with the generic theorems
 they specialize.  A structure whose fields assert the desired conclusions, with projection lemmas
 reading them back, does not complete any target.  A generic theorem proved with its hypotheses
-left undischarged for the construction is progress on a target, not its completion.  The rules
+not yet proved for the construction is progress on a target, not its completion.  The rules
 of `README.md` ("Library conventions") apply, including the terminology table and the keep-list.
 The literature these milestones rely on is recorded in `LITERATURE.md`, §7.
 
@@ -87,9 +87,10 @@ of the classes outside `D_η`, and `ℓ_η` the disjunction of the Scott sentenc
 the loss.  For (3): `w_η` satisfies `ℓ_η` and `w_{η+1}` does not, both lie in `D_η`, and they
 agree on every sentence of rank at most `η`; hence `η < qrank ℓ_η`.
 
-**Regressions.**  `η = 0`, where `D_0 = Q` is defined by a sentence of rank `0` (the bound in (3)
-concerns losses and `D_{η+1}`, not `D_η`); a nonzero countable limit `η`, where `D_η = ⋂_{ξ<η} D_ξ`
-and the agreement used is the one at the limit itself; a loss consisting of a single class.
+**Special cases.**  `η = 0`, where `D_0 = Q` is defined by a sentence of rank `0` (the bound in
+(3) concerns losses and `D_{η+1}`, not `D_η`); a nonzero countable limit `η`, where
+`D_η = ⋂_{ξ<η} D_ξ` and the agreement used is the one at the limit itself; a loss consisting of a
+single class.
 
 **Non-claims.**  No effective or uniform choice of `δ_η` or `ℓ_η`: they depend on enumerations of
 countable sets of classes.  No upper bound on their quantifier rank.  No claim that `δ_η` is a
@@ -113,7 +114,7 @@ statement holds for any choice of witnesses in the domains.
 **Instantiation.**  `w_η` the base class of the top-free witness at block `η`; the threshold for
 `ψ` is `qrank ψ`, a countable ordinal.
 
-**Regressions.**  `ψ` of rank `0`; `η = qrank ψ` exactly (the threshold is attained, not only
+**Special cases.**  `ψ` of rank `0`; `η = qrank ψ` exactly (the threshold is attained, not only
 exceeded); `η` a limit; the exclusion of `ψ, ¬ψ ∈ T∞` together, which uses the uncountability of
 `Q`.
 
@@ -176,10 +177,10 @@ place to carriers in different universes; `qrank_lt_omega_one` (`Lomega1omega/Qu
 any cardinality either is `L_{ω₁,ω}`-equivalent to a countable model of `Φ` through a Scott
 sentence, or has theory `T∞`.
 
-**Regressions.**  `N` countable (case (S) with its own Scott sentence; so no countable model of `Φ`
-satisfies `T∞`); `N` on `ℕ` and on another countable carrier; `N` in a universe different from
-the codes'; the finite case, excluded by hypothesis (a finite structure is not coded on `ℕ`, and
-for a sentence with finite models the dichotomy can fail).
+**Special cases.**  `N` countable (case (S) with its own Scott sentence; so no countable model of
+`Φ` satisfies `T∞`); `N` on `ℕ` and on another countable carrier; `N` in a universe different from
+the codes'; the finite case, excluded by hypothesis (a finite structure is not coded on `ℕ`, and for
+a sentence with finite models the dichotomy can fail).
 
 **Non-claims.**  Case (S) gives infinitary agreement, not an isomorphism between differently
 sized models.  No uncountable model of `Φ` is asserted to exist, in either case.  No model of all
@@ -287,9 +288,9 @@ it is not used.
 **Instantiation.**  The top-free witness at block `ξ`, as a structure in the stage chart
 language at `λ_ξ`.
 
-**Regressions.**  The empty tuple (the identity automorphism); tuples with repeated coordinates;
-`f` the identity; a two-point tuple whose hull is large; charts of different sizes containing the
-same tuple.
+**Special cases.**  The empty tuple (the identity automorphism); tuples with repeated
+coordinates; `f` the identity; a two-point tuple whose hull is large; charts of different sizes
+containing the same tuple.
 
 **Non-claims.**  No proper (non-surjective) self-embedding is constructed or asserted to exist.
 Nothing about realizations with top labels, about embeddings between different realizations, or
@@ -358,7 +359,7 @@ base reduct.  The development proves the orbit formulas; the generic theorems ar
 its orbits are defined by the existential formulas `θ_a`; it is atomic; its internal Scott rank is
 at most `ω`; it is a prime model of its complete first-order theory in that language.
 
-**Regressions.**  The empty tuple (its orbit formula is `∃ z̄, P_p(z̄)` for the chosen chart);
+**Special cases.**  The empty tuple (its orbit formula is `∃ z̄, P_p(z̄)` for the chosen chart);
 repeated coordinates (`ι` not injective); a tuple lying in charts of different sizes (the orbit
 formula does not depend on the chart chosen, up to equivalence in `M`); universe independence
 (source in `Type w`, target in `Type w'` for primeness; `Ordinal.{w}` for the internal Scott
@@ -466,7 +467,7 @@ the stage language at `ω`, their expansions at every stage, the top-free realiz
 structural stable candidate before its modelhood is proved.  In particular no model of `Φ` has
 three points all of whose permutations are induced by automorphisms.
 
-**Regressions.**  A set of exactly three points (the threshold of the argument); sets of at most
+**Special cases.**  A set of exactly three points (the threshold of the argument); sets of at most
 two points, about which nothing is claimed; three points whose hull has more than three points;
 uncountable carriers; realizations that are not models.
 

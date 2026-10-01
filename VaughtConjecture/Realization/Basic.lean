@@ -13,7 +13,7 @@ Roadmap, Library conventions (raw data separate from their laws; an occurrence o
 tuple and evaluated type) and Layer 2 (realizations with exact partial evaluation, consistency,
 and covering); semantic contract, items 4–5 (a tuple's partial type is exact under face maps;
 absence of a face is mathematical information; the original exact consistency and covering
-requirements); the expositions, §1.
+clauses); the expositions, §1.
 
 A **realization** `R : Realization α M` at stage `α` on a carrier `M` assigns to every injective
 finite tuple `t : Fin n ↪ M` an optional stage type `R.eval t : Option (StageType α n)`.  It is
