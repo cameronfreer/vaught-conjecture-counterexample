@@ -32,9 +32,9 @@ The three sections correspond to the three milestones: (A) the filtration and th
 homogeneity of the top-free charts and the orbit theory, (C) the geometric obstruction.  The generic
 theorems of B are quoted from the two libraries: from InfinitaryLogic, at our pinned dependency
 `cca6949` (signatures checked), as the proved applications at the end of section B; from
-ComputableModelTheory, prospective (neither available upstream nor pinned), whose `sorry` targets
-below record their statement shapes and are not `#check`ed (`IMPLEMENTATION.md`, "Dependency
-pins").
+ComputableModelTheory, at our pinned dependency `52e3dda` (names checked), whose `sorry` targets
+below record their statement shapes and are not `#check`ed here (`IMPLEMENTATION.md`,
+"Dependency pins").
 -/
 
 set_option autoImplicit false
@@ -333,8 +333,8 @@ variable [Nonempty M]
 automorphism orbit of `a`, then `φ` isolates the complete type of `a` over the complete theory of
 `M`: the only complete type containing `φ` is the type of `a`.  Uniqueness of realizations inside
 `M` alone is not the statement; the singleton is in the space of complete types, so the universal
-implications `∀ x̄, φ → ψ` transfer to every model of the theory.  Prospective (neither available
-upstream nor pinned); to be quoted as the composite of ComputableModelTheory's
+implications `∀ x̄, φ → ψ` transfer to every model of the theory.  At the pin; to be quoted as
+the composite of ComputableModelTheory's
 `isolatesTuple_of_orbit_formula` (under `[Nonempty M]`) and `IsolatesTuple.typesWith_eq_singleton`.
 -/
 theorem typesWith_eq_singleton_of_orbitDefinedBy {n : ℕ} {a : Fin n → M}
@@ -359,8 +359,8 @@ theorem typesIsolated_of_orbitDefinedBy
 /-- **Countable atomic implies prime** (target, generic).  A countable structure all of whose types
 are isolated embeds elementarily into every model of its complete theory, in an arbitrary universe
 and of arbitrary cardinality.  Intended proof: enumerate only `M`, extend finite partial maps
-preserving every first-order formula, and take the union.  Prospective (neither available upstream
-nor pinned): ComputableModelTheory's `exists_elementaryEmbedding_of_countable_atomic`, with
+preserving every first-order formula, and take the union.  At the pin: ComputableModelTheory's
+`exists_elementaryEmbedding_of_countable_atomic`, with
 `TypesIsolated` identified with its `IsAtomic` over the complete theory. -/
 theorem nonempty_elementaryEmbedding_of_typesIsolated [Countable M]
     (hM : TypesIsolated L M) (N : Type w') [L.Structure N] [N ⊨ L.completeTheory M] :

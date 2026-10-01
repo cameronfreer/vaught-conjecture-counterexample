@@ -15,7 +15,8 @@ and prime structures).  The intended construction obtains its top-free witnesses
 models at each countable stage, which give the lower bound) by constructing a finite age of
 labelled charts and reconstructing its classical Fraïssé limit; the other countable models are
 classified, not constructed.  The classical theorems are taken from the two libraries at the
-pinned versions, except the classical existence theorem, which is prospective (see
+pinned versions, except the classical existence theorem, which is available upstream in
+ComputableModelTheory but not yet at our pinned dependency (see
 [`roadmap/IMPLEMENTATION.md`](roadmap/IMPLEMENTATION.md), "Dependency pins").
 
 The roadmap is organized by shared foundations and the results they support

@@ -48,9 +48,9 @@ below.  The companion milestones are summarized under "Companion boundaries".
 
 ## Environment
 
-Lean `v4.35.0-rc3`; InfinitaryLogic at the revision pinned in `lakefile.toml` (`cca6949`); Mathlib
-inherited from InfinitaryLogic's manifest.  Nothing else is imported at present.  After the
-repin under "Dependency pins" below, ComputableModelTheory is the one further dependency.
+Lean `v4.35.0-rc3`; InfinitaryLogic and ComputableModelTheory at the revisions pinned in
+`lakefile.toml` (`cca6949` and `52e3dda`); Mathlib inherited from InfinitaryLogic's manifest.
+Nothing else is imported.
 Search the pinned libraries first and delete any local lemma that duplicates one already
 upstream.
 
@@ -313,7 +313,7 @@ First applications: the amalgamation of top-free charts (step 2, from the plain 
 coatom extension property and capping) and receiving in the classical limit (step 6, (R6)
 and (R5)).  The modules of the finite extension constructions import neither the classical limit
 nor the chain construction.  Direct limits of structures and the classical existence theorem
-(prospective) belong to the two libraries: they replace no finite extension
+(available upstream) belong to the two libraries: they replace no finite extension
 construction and no decoding or recovery statement.
 
 ### 4. Stable continuation and terminal comparison
@@ -396,7 +396,7 @@ age and not recognized afterwards in a model constructed otherwise.
    its points and has more than two points.  Strong amalgamation is not claimed or needed.  No
    infinite model is imported.
 3. **Classical existence.**  Acceptance: `isFraisse_representativeClass` applied to the family,
-   then the classical existence theorem (prospective), giving a countable
+   then the classical existence theorem (available upstream), giving a countable
    `L^h_λ`-structure with
    `IsFraisseLimit`; the countability hypotheses (`[Countable (Σ l, L.Functions l)]`, countably
    many isomorphism types) are proved for `L^h_λ` and the age, not assumed.
@@ -425,25 +425,25 @@ age and not recognized afterwards in a model constructed otherwise.
    The placement of the base class in the loss at `η`, by expansion uniqueness and same-carrier
    transport, belongs to layer 5 (checkpoint 5).
 
-**Dependency boundaries.**  The age argument (steps 1–7) imports Mathlib, InfinitaryLogic,
-ComputableModelTheory (prospective), layers 0–2, and the finite kernel (layer 1, the coatom
-extension construction with (R5) and (R6), and the cap-to-model theorem).  Steps 1–7 import no
-`Construction/` module; the classical part, steps 3–5, imports no module of (R1)–(R4), of structural
-continuation, or of the expansion domains; steps 6 and 7 add only (R5), the cap-to-model theorem,
-and the reduction of models.  The upstream theorems import no module of this repository.  The chain
-construction (`Construction/`, the chain unions of partial realizations, and the conditional chain
-construction of models) is needed neither for top-free existence nor for saturated existence: the
-saturated model of [Kni26, Proposition 4.4.5] is the classical limit of the uncapped age of all
-legal stage types (hereditary, amalgamating by the plain form of the coatom extension property,
-countably many isomorphism types).  No checkpoint of the main theorem depends on the chain
-construction.  It is retained for an effective presentation only, conditional on effective input
-data (an effective enumeration of the age and an effective amalgamation procedure; the classical
-Fraïssé construction uses choice and supplies no computable presentation).  The partial-realization
-statements of the conditional chain development (`StageType.chartRealization`,
-`StageType.isConsistent_chartRealization`, `StageType.chartRealization_eval_eq_none_iff`, in
-`Realization/Partial.lean`, outside `Construction/`, not yet in the library) are to be reused in
-steps 1, 4, and 5, so that the boundary above holds; the chain-union statements are not used by
-steps 1–7.
+**Dependency boundaries.** The age argument (steps 1–7) imports Mathlib, InfinitaryLogic,
+ComputableModelTheory (its entry module `ComputableModelTheory.Classical`), layers 0–2, and the
+finite kernel (layer 1, the coatom extension construction with (R5) and (R6), and the cap-to-model
+theorem). Steps 1–7 import no `Construction/` module; the classical part, steps 3–5, imports no
+module of (R1)–(R4), of structural continuation, or of the expansion domains; steps 6 and 7 add only
+(R5), the cap-to-model theorem, and the reduction of models. The upstream theorems import no module
+of this repository. The chain construction (`Construction/`, the chain unions of partial
+realizations, and the conditional chain construction of models) is needed neither for top-free
+existence nor for saturated existence: the saturated model of [Kni26, Proposition 4.4.5] is the
+classical limit of the uncapped age of all legal stage types (hereditary, amalgamating by the plain
+form of the coatom extension property, countably many isomorphism types). No checkpoint of the main
+theorem depends on the chain construction. It is retained for an effective presentation only,
+conditional on effective input data (an effective enumeration of the age and an effective
+amalgamation procedure; the classical Fraïssé construction uses choice and supplies no computable
+presentation). The partial-realization statements of the conditional chain development
+(`StageType.chartRealization`, `StageType.isConsistent_chartRealization`,
+`StageType.chartRealization_eval_eq_none_iff`, in `Realization/Partial.lean`, outside
+`Construction/`, not yet in the library) are to be reused in steps 1, 4, and 5, so that the boundary
+above holds; the chain-union statements are not used by steps 1–7.
 
 ## The full-presentation route
 
@@ -490,8 +490,10 @@ their notions live; "this repository" means the layers of `README.md`.
    `Scott/BackAndForth`.
 4. *Exact comparison* for prescribed pointed or unpointed full ages, reusing standard
    uniqueness rather than a separate comparison for each terminal case.  Home: fullness and equal
-   ages give extension pairs in both directions, hence an isomorphism: ComputableModelTheory
-   (beside `ExtensionRich` and `isFraisseLimit_of_extensionRich`; Mathlib-only imports), and
+   ages give extension pairs in both directions, hence an isomorphism: ComputableModelTheory's
+   rooted uniqueness (`isExtensionPair_of_age_subset`,
+   `exists_equiv_comp_eq_of_age_subset_of_countable`, available upstream at `0401c95`, not yet
+   available at our pinned dependency; Mathlib-only imports), and
    eventually Mathlib's `ModelTheory/Fraisse`; the relational exact-age comparison for
    realizations, in this repository (layer 4).
 5. *A countable list of allowed full extension laws at each level, and a full presentation
@@ -625,17 +627,26 @@ In the pinned Mathlib (`Mathlib/ModelTheory/Fraisse.lean`): `age`, `Hereditary`,
 `age.fg_substructure`, with the hypotheses recorded in `README.md`, Layer 0.  Mathlib has no
 existence theorem for Fraïssé limits.
 
-Not at the current pins, and therefore not checked by the sketches: from ComputableModelTheory
-(prospective: neither available upstream nor pinned), the classical Fraïssé theorems
-(`representativeClass`, `isFraisse_representativeClass`, `FGCofinal`, `ExtensionRich`,
-`isFraisseLimit_of_extensionRich`, `SequenceExtension`, `amalgamationRich_of_sequenceExtension`,
-`age_directLimit_eq`, `countable_directLimit`, `isFraisseLimit_directLimit`, and the existence
-theorem), the factorization of tuples through the age (`exists_factor_tuple_of_age_subset`,
-`exists_factor_embedding_of_age_subset`), and orbit isolation and countable prime structures
-(`IsolatesTuple`, `IsAtomic`, `isolatesTuple_of_orbit_formula`, `isAtomic_of_orbit_formulas`,
-`IsolatesTuple.realize_iff`, `IsolatesTuple.typesWith_eq_singleton`,
-`exists_elementaryEmbedding_of_countable_atomic`).  Their statement shapes and hypotheses are in
-`README.md`, Layer 0; where the pinned versions name them differently, those names prevail.
+In the pinned ComputableModelTheory (`52e3dda`, names checked): the classical Fraïssé theorems
+(`representativeClass`, `isFraisse_representativeClass`, `representativeClass_countable_quotient`,
+`FGCofinal`, `ExtensionRich`, `isFraisseLimit_of_extensionRich`, `SequenceExtension`,
+`amalgamationRich_of_sequenceExtension`, `age_directLimit_eq`, `countable_directLimit`,
+`isFraisseLimit_directLimit`), the factorization of tuples through the age
+(`exists_factor_tuple_of_age_subset`, `exists_factor_embedding_of_age_subset`), and orbit isolation
+and countable prime structures (`IsolatesTuple`, `IsAtomic`, `isolatesTuple_of_orbit_formula`,
+`isAtomic_of_orbit_formulas`, `IsolatesTuple.realize_iff`, `IsolatesTuple.typesWith_eq_singleton`,
+`exists_elementaryEmbedding_of_countable_atomic`).  Available upstream (ComputableModelTheory
+`0401c95`), not yet available at our pinned dependency, and therefore not checked by the sketches:
+classical Fraïssé existence (`exists_fraisseSequence`, `exists_isFraisseLimit_representativeClass`,
+`exists_isFraisseLimit_of_isFraisse`; `ModelTheory/FraisseExistence`), rooted universality and
+uniqueness (`ExtendsRepresentatives`, `isExtensionPair_of_age_subset`,
+`exists_embedding_comp_eq_of_age_subset_of_countable`,
+`exists_equiv_comp_eq_of_age_subset_of_countable`; `ModelTheory/RootedExtension`), isolation and
+primeness over named finite parameters (`isAtomic_named_of_orbit_formulas`,
+`exists_elementaryEmbedding_named`; `ModelTheory/NamedParameters`), and the entry module
+`ComputableModelTheory.Classical`, the narrow import of all of these.  Their statement shapes and
+hypotheses are in `README.md`, Layer 0; where the pinned versions name them differently, those
+names prevail.
 
 In the pinned InfinitaryLogic (`cca6949`, signatures checked): the rank comparison of the Scott
 process (its pull request #140, merged at `a640bbb`: `selfStabilizesCompletely_iff_orbitRank_le`,
@@ -700,40 +711,48 @@ The pins, recorded in `lakefile.toml` and `lake-manifest.json`, and the intended
   are the narrow modules
   `InfinitaryLogic.Scott.OrbitFormulaThreshold` and
   `InfinitaryLogic.Lomega1omega.LocalAutomorphism`, never `InfinitaryLogic.All`.
-- **ComputableModelTheory**: added as a direct dependency, at a version containing its pull
-  requests #37 (merged: toolchain `v4.35.0-rc3` and its own repin of InfinitaryLogic, whose
-  own pin, `38c4bae`, predates #140), #38 (extension-rich families) and #39 (representative
-  classes and extension-rich direct limits), both open, the classical existence theorem, and
-  the modules on orbit isolation and countable prime structures and on the factorization of
-  tuples through the age.  **The classical existence theorem is prospective: neither available
-  upstream nor pinned.**  The theorem itself is classical,
-  but its statement and proof in ComputableModelTheory do not yet exist; no statement of this
-  roadmap relies on it as pinned until this subsection records a pin containing it.
+- **ComputableModelTheory**: the current pin is `52e3dda` (this repository's pull request #35),
+  with representative classes, extension-rich families and direct limits, the factorization of
+  tuples through the age, orbit isolation, and countable prime structures, available at our
+  pinned dependency (names checked).  Its `main` is now `0401c95`, which adds, merged: rooted
+  universality and uniqueness (#42), its repin of InfinitaryLogic to `e4c674f` (#43), classical
+  Fraïssé existence (#44), the entry module `ComputableModelTheory.Classical` (#45), isolation
+  and primeness over named finite parameters (#46), and zero build warnings (#47).  **The
+  classical existence theorem is available upstream (ComputableModelTheory `0401c95`), not yet
+  available at our pinned dependency**: `exists_isFraisseLimit_representativeClass` and
+  `exists_isFraisseLimit_of_isFraisse`, with the statements quoted in `README.md`, Layer 0; no
+  statement of this roadmap relies on it as pinned until this subsection records a pin
+  containing it.
 - **Mathlib and the toolchain** agree across the three: one Lean toolchain (`v4.35.0-rc3` at
   present) and one Mathlib commit (at present the fork commit `346a4bd`, inherited from
   InfinitaryLogic).  The manifest holds one revision of each dependency, so ComputableModelTheory
   must be built against the InfinitaryLogic revision pinned here, and the toolchain check of
   `scripts/check.sh` extends to ComputableModelTheory.
 
-**Available upstream (InfinitaryLogic `c65ba61`), not yet available at our pinned dependency:** the
-bounded back-and-forth separation interface (InfinitaryLogic's pull requests #142, #143, and #144)
-and the ordinal-indexed `Σ^in_α`/`Π^in_α` hierarchy (#145, `Lomega1omega/InHierarchy`).  The
-intended move is this repository's pull request #41 (open), the repin of InfinitaryLogic to
-`c65ba61`; until it merges these are named in prose only, never `#check`ed in the sketches.
+**Available upstream, not yet available at our pinned dependency:** of InfinitaryLogic (at
+`c65ba61`, and at its current `main` `098fb36`, which also contains #146, the analytic-set closure
+lemmas in a neutral module), the bounded back-and-forth separation interface (InfinitaryLogic's
+pull requests #142, #143, and #144) and the ordinal-indexed `Σ^in_α`/`Π^in_α` hierarchy (#145,
+`Lomega1omega/InHierarchy`); of ComputableModelTheory (at `0401c95`), classical Fraïssé existence,
+rooted universality and uniqueness, isolation and primeness over named finite parameters, and the
+entry module `ComputableModelTheory.Classical`.  The intended move is this repository's pull
+request #41 (open), the repin of both: InfinitaryLogic to a revision containing #142–#146 (such as
+`098fb36`) and ComputableModelTheory to `0401c95`, whose own InfinitaryLogic pin `e4c674f` is an
+ancestor of `098fb36`.  Until it merges these are named in prose only, never `#check`ed in the
+sketches.
 
-**Prospective dependencies (neither available upstream nor pinned):** the classical existence
-theorem, the factorization of tuples through the age, and orbit isolation and countable prime
-structures (ComputableModelTheory, where #38 and #39 are open).  No statement of this roadmap relies
-on any of them as pinned until this subsection records a pin containing it.  The statements of
-InfinitaryLogic's pull requests #140 and #141 are not in this list: they are available at our
-pinned dependency `cca6949` (signatures checked).  Prospective too are the InfinitaryLogic
+**Prospective dependencies (neither available upstream nor pinned):** the InfinitaryLogic
 statements listed under "The full-presentation route" (graded back-and-forth systems, ranks with
 countable fibres, invariant Borel observations, the isolating-level lower bound, and limits of
 chains of bounded equivalence) and Montalbán's explicit Scott sentence from a family of orbit
-formulas (InfinitaryLogic's open pull request #147).
+formulas (InfinitaryLogic's open pull request #147).  No statement of this roadmap relies on any of
+them as pinned until this subsection records a pin containing it.  The statements of
+InfinitaryLogic's pull requests #140 and #141 are available at our pinned dependency `cca6949`
+(signatures checked), and those of ComputableModelTheory at `52e3dda` listed above at our pinned
+dependency (names checked).
 
-Until then, the prospective statements are named in prose only (`README.md`, Layer 0), never
-`#check`ed in the sketches.
+Until then, the statements available upstream and the prospective ones are named in prose only
+(`README.md`, Layer 0), never `#check`ed in the sketches.
 
 ### Applications of library theorems
 
@@ -773,7 +792,7 @@ Three qualifications:
    ranks.  There is neither a uniform finite bound nor an equality with the rank of a Scott
    process or with the expansion height.
 3. Atomicity and primeness remain separate applications: the orbit formulas feed both the
-   first-order route (isolation, atomicity, primeness, from ComputableModelTheory, prospective) and
+   first-order route (isolation, atomicity, primeness, from ComputableModelTheory, at the pin) and
    the infinitary rank route (InfinitaryLogic); the rank route is not derived from atomicity.
 
 Languages: the Fraïssé construction uses the functional hull expansion `L^h_λ`; the orbit-rank
@@ -794,7 +813,7 @@ not `InfinitaryLogic.All`; they bring no López–Escobar or descriptive-set-the
 
 The development also quotes:
 
-- classical existence (prospective) and `isFraisse_representativeClass`
+- classical existence (available upstream) and `isFraisse_representativeClass`
   (ComputableModelTheory), for the limit (step 3);
 - the factorization of tuples through the age (ComputableModelTheory), for the reconstruction
   (steps 4–5);
@@ -848,7 +867,7 @@ Each checkpoint needs both its abstract API and a concrete application:
 3. Realizations, literal syntax correspondence, the hull operations with their five facts;
    then steps 1–6 of the top-free witnesses, in order: finite top-free charts, hereditary
    closure and amalgamation and joint embedding (through the plain form of the coatom extension
-   property, the first use of (R6)), classical existence (prospective),
+   property, the first use of (R6)), classical existence (available upstream),
    reconstruction, consistency and
    covering and top-freeness, and receiving (the first use of (R5)).
 4. Items 3.2 and 3.3 for (R1)–(R3): for each of them, the extension of the realization by one actual
@@ -970,7 +989,7 @@ of finite top-free charts are step 2 of the top-free witnesses and
 belong to the core.  These do not assert strong AP, a proper self-embedding, uncountable
 categoricity, Scott-rank equality, or existence of a model of all of `T∞`.  The main theorem is
 proved without them; if any is added, give it a separate definite completion criterion.  Direct
-limits of structures and the classical existence theorem (prospective) belong
+limits of structures and the classical existence theorem (available upstream) belong
 to the two libraries, not to
 the finite constructions of layer 3.
 [`COMPANIONS.md`](COMPANIONS.md) gives these topics and the full-chart orbit theory below such

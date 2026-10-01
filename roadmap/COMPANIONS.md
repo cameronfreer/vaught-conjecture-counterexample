@@ -25,12 +25,13 @@ form, is a statement still to be proved here, with its argument given below. B1,
 and amalgamation of top-free charts, is part of the core: it is step 2 of the construction of the
 top-free witnesses (`README.md`, section "The top-free witnesses: the finite age and its classical
 limit"), and its entry below is a pointer. The deliberate `sorry` targets of the sketch, the
-ingredients marked "to be located or added upstream", and the theorems marked "prospective"
-(statements of ComputableModelTheory, neither available upstream nor pinned; `IMPLEMENTATION.md`,
-"Dependency pins") are what is not yet formalized or available. The bounded back-and-forth
-separation interface is available upstream, not yet at our pinned dependency (`IMPLEMENTATION.md`,
-"Dependency pins"). The status covers these statements only, not their non-claims and not further
-definability claims (`README.md`, "Status of the optional results").
+ingredients marked "to be located or added upstream", and the theorems marked "prospective" (neither
+available upstream nor pinned; `IMPLEMENTATION.md`, "Dependency pins") are what is not yet
+formalized or available. The bounded back-and-forth separation interface, and
+ComputableModelTheory's rooted uniqueness and isolation and primeness over named parameters, are
+available upstream, not yet at our pinned dependency (`IMPLEMENTATION.md`, "Dependency pins"). The
+status covers these statements only, not their non-claims and not further definability claims
+(`README.md`, "Status of the optional results").
 
 ## Notation
 
@@ -51,10 +52,10 @@ definability claims (`README.md`, "Status of the optional results").
   for the lower bound (layer 6), and `w_η ∈ Q` its base class; by expansion uniqueness `w_η` lies
   in the loss at `η`.
 
-Upstream names below were checked in the pinned InfinitaryLogic (`cca6949`, signatures checked)
-and Mathlib, except those marked "prospective", whose names are those specified here for
-ComputableModelTheory (`README.md`, Layer 0); the sketch `#check`s or applies only names available
-at the current pins.
+Upstream names below were checked in the pinned InfinitaryLogic (`cca6949`, signatures checked),
+the pinned ComputableModelTheory (`52e3dda`, names checked), and Mathlib, except those marked
+"available upstream" or "prospective" (`README.md`, Layer 0); the sketch `#check`s or applies only
+names available at the current pins.
 
 ## Milestone A — filtration and infinitary theory
 
@@ -246,7 +247,7 @@ The development proves the finite-chart statements of this chain: exact top-free
 homogeneity, the local automorphism property, and the orbit formulas: the two interfaces of
 `IMPLEMENTATION.md`, "Applications of library theorems".  Everything after them is an application of
 a library theorem, never reproved here: "a definable orbit isolates its type", atomicity, and
-"countable atomic implies prime" from ComputableModelTheory (prospective), the last with targets of
+"countable atomic implies prime" from ComputableModelTheory (at the pin), the last with targets of
 arbitrary cardinality and carriers in arbitrary universes; the orbit-formula threshold, the internal
 rank bound, and the preservation of infinitary formulas by maps agreeing locally with automorphisms
 from InfinitaryLogic (`exists_finite_orbit_threshold`, `orbitRank_lt_omega0_of_orbitFormula`,
@@ -341,8 +342,8 @@ base reduct.  The development proves the orbit formulas; the generic theorems ar
    `typesIsolated_of_orbitDefinedBy` (proved from the target
    `typesWith_eq_singleton_of_orbitDefinedBy`).  Ingredients: Mathlib's `Theory.CompleteType`,
    `Theory.typeOf`, `Theory.typesWith`, `Formula.equivSentence`, `completeTheory`
-   (`ModelTheory/Types`, `ModelTheory/Semantics`).  Prospective (neither available upstream nor
-   pinned), from ComputableModelTheory: `IsolatesTuple` and `IsAtomic`,
+   (`ModelTheory/Types`, `ModelTheory/Semantics`).  At the pin (`52e3dda`, names checked), from
+   ComputableModelTheory: `IsolatesTuple` and `IsAtomic`,
    `isolatesTuple_of_orbit_formula` (under `[Nonempty M]`; orbit formulas of `L` without constants
    naming the tuple), `isAtomic_of_orbit_formulas`, and `IsolatesTuple.typesWith_eq_singleton`
    (under `[Nonempty M] [M ⊨ T]`); the sketch target is the composite of
@@ -369,8 +370,8 @@ base reduct.  The development proves the orbit formulas; the generic theorems ar
    source, extend finite tuples preserving every first-order formula, and take the union.  The
    target is any model of the complete theory, in an arbitrary universe, with no receiving or
    countability assumption.  Sketch: `nonempty_elementaryEmbedding_of_typesIsolated` (target).
-   Ingredients: Mathlib's `ElementaryEmbedding` (`ModelTheory/ElementaryMaps`).  Prospective
-   (neither available upstream nor pinned), from ComputableModelTheory:
+   Ingredients: Mathlib's `ElementaryEmbedding` (`ModelTheory/ElementaryMaps`).  At the pin
+   (`52e3dda`, names checked), from ComputableModelTheory:
    `exists_elementaryEmbedding_of_countable_atomic`,
    under `[Countable M] [Nonempty M] [N ⊨ L.completeTheory M]`, with separate universes,
    function symbols allowed, and no countability of the language or of `N`; the sketch target is
@@ -429,7 +430,7 @@ continuation (layer 4), or of the expansion domains (layer 5).  The guard is on 
 not only on the direct imports.  The check reads Lean's own record of the import closure, not the
 source text, so every form of import (`public`, `meta`, `import all`, the root module
 `VaughtConjecture`, indented lines) is covered.  The generic theorems of B3.2 and B3.4 are quoted
-from ComputableModelTheory (prospective), whose modules import Mathlib only, so they need no guard
+from ComputableModelTheory (at the pin), whose modules import Mathlib only, so they need no guard
 here.  The addition to `scripts/check.sh` below is a proposal, not yet part of `scripts/`: the
 module names are to be fixed when these modules exist.  It consists of a driver body
 `scripts/ImportGuard.lean`, in the pattern of `scripts/AxiomAudit.lean`, run through `lake env

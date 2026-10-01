@@ -15,9 +15,9 @@ actual bodies. The file is outside the library build; check it with
 Section 6's approximate comparison is proved here from the hypotheses stated in that section;
 no library result is claimed.
 
-Mathlib and the pinned infinitary-logic library are the current dependencies; section 3 also
-names statements of ComputableModelTheory, prospective: neither available upstream nor pinned
-(`IMPLEMENTATION.md`, "Dependency pins").
+Mathlib and the pinned infinitary-logic and computable-model-theory libraries are the current
+dependencies; section 3 also names the classical existence theorem of ComputableModelTheory,
+available upstream, not yet at our pinned dependency (`IMPLEMENTATION.md`, "Dependency pins").
 The concrete finite construction is specified in README and SEMANTIC_CONTRACT;
 proving these general statements alone does not construct it.
 -/
@@ -120,12 +120,13 @@ system of `SuggestedInterfaces.lean`, and a map `rel` sending a chart to a relat
 language `L` (the stage chart language, or its definitional expansion by the hull operations).
 The concrete charts, the hull operations, and the amalgamation proof are not constructed here.
 
-The classical theorems applied in steps 3–6 are prospective (neither available upstream nor pinned)
-(`IMPLEMENTATION.md`, "Dependency pins") and are not named in Lean here: from
-ComputableModelTheory, `representativeClass`, `isFraisse_representativeClass`, the existence
-theorem, and `exists_factor_tuple_of_age_subset`.  The orbit formula of a chart and the
-orbit theory are companion material (`SuggestedCompanions.lean`, section B).  Mathlib's
-`IsUltrahomogeneous.extend_embedding` is available now.
+The classical theorems applied in steps 3–6 are not named in Lean here: from ComputableModelTheory,
+`representativeClass`, `isFraisse_representativeClass`, and `exists_factor_tuple_of_age_subset`
+(at our pinned dependency), and the existence theorem `exists_isFraisseLimit_representativeClass`
+(available upstream, not yet at our pinned dependency; `IMPLEMENTATION.md`, "Dependency pins").
+The orbit formula of a chart and the orbit theory are companion material
+(`SuggestedCompanions.lean`, section B).  Mathlib's `IsUltrahomogeneous.extend_embedding` is
+available now.
 -/
 
 namespace ClassicalLimit
@@ -227,7 +228,7 @@ as a structure `S p` on `Fin m` whose chart relations are literally its faces (`
 finitely generated substructure of `M` be isomorphic to some `S p` (the age of `M` is contained in
 the representative class of the charts).  Then the evaluation read from the relations reconstructs
 the realization.  Intended proof: factor each tuple through a representative
-(ComputableModelTheory's `exists_factor_tuple_of_age_subset`, prospective) and read the relations
+(ComputableModelTheory's `exists_factor_tuple_of_age_subset`, at the pin) and read the relations
 there; `hid` and `hcomp` are the identity and composition laws of exact partial restriction. -/
 theorem reconstructs_evalOfRel
     (hid : ∀ {n : ℕ} (p : Chart n), restrict (Function.Embedding.refl _) p = some p)
