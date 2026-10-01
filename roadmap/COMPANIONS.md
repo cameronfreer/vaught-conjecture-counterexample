@@ -14,7 +14,7 @@ to that document's layers and checkpoints.
 concrete objects of the construction (charts, realizations, the density sentence `Φ`, the
 expansion domains), each under exactly its stated hypotheses, together with the generic theorems
 they specialize.  A structure whose fields assert the desired conclusions, with projection lemmas
-reading them back, does not complete any target.  A generic theorem proved with its hypotheses
+restating them, does not complete any target.  A generic theorem proved with its hypotheses
 not yet proved for the construction is progress on a target, not its completion.  The rules
 of `README.md` ("Library conventions") apply, including the terminology table and the keep-list.
 The literature these milestones rely on is recorded in `LITERATURE.md`, §7.
@@ -249,7 +249,7 @@ This target is step 2 of the construction of the top-free witnesses: `README.md`
 top-free witnesses: the finite age and its classical limit", and `IMPLEMENTATION.md`, "The
 top-free witnesses: milestone order and acceptance", which carry its statement (with the literal
 commuting square), its proof from the plain form of the coatom extension property and capping,
-its regressions, and its non-claims (not strong amalgamation; nothing about charts carrying top
+its special cases, and its non-claims (not strong amalgamation; nothing about charts carrying top
 labels).  After the definitional expansion by the hull operations (`README.md`, Layer 2), it is
 the amalgamation property of Mathlib's `FirstOrder.Language.Amalgamation` for the age of
 top-free charts.  The sketch properties `ChartAmalgamation` and `ChartJointEmbedding` and the
@@ -513,7 +513,7 @@ These are statements still to be proved.  None is an input to the main theorem.
 * **Examples** (optional).  Examples, proved in Lean, of realizations in which every one-point
   coface is received at every cutoff, showing that receiving alone does not classify terminal
   models: the terminal comparisons of layer 4 need
-  the specialized decoding of rows 2 and 3, not receiving at a cutoff alone.
+  the specialized decoding of (R2) and (R3), not receiving at a cutoff alone.
 
 ## Downstream: the direct cardinal ceiling
 

@@ -24,7 +24,7 @@ document.
 | Top-free witnesses: the finite age, its classical limit | 3 (steps 1–7) | 3 (1–6); 4, 5 (7) |
 | Layer 4, Summit 4: continuation, terminal comparisons | 4 | 5 |
 | Layer 5, Summit 5: expansion domains and logical agreement | 5 | 5 (unique limit expansions), 6 |
-| Layer 6, Summit 6: the two independent bounds | 5 and the spine | 6 |
+| Layer 6, Summit 6: the upper and lower bounds | 5 and the spine | 6 |
 | (none; companions) | milestones A–C (`COMPANIONS.md`) | not core checkpoints |
 
 The general results of Layer 0 are used in layers 1 (lifting), 2 (finite hulls), 3 (the
@@ -32,14 +32,14 @@ classical limit: Fraïssé existence, ultrahomogeneous extension, factorization 
 the age), 4 (directed limits, back-and-forth, subsingleton covers), and 5 (countable losses),
 each at the checkpoint of its first application.  Layer 2 of `README.md` reaches
 checkpoint 3 and, with the fidelity theorem, checkpoint 4.  Layer 3 of `README.md` is spread over
-four checkpoints: 2 (item 3.1, the construction of every row of its table with its section
-theorem), 3 (the first uses of rows 5 and 6: the amalgamation of top-free charts and receiving
+four checkpoints: 2 (item 3.1, the construction of every statement of its table with its section
+theorem), 3 (the first uses of (R5) and (R6): the amalgamation of top-free charts and receiving
 in the classical limit),
-4 (items 3.2 and 3.3 for rows 1–3, the recovery statement of rows 3 and 4 for every
-restriction-compatible labelling, the first use of row 1, and the cap-to-model theorem), and 5
-(items 3.2 and 3.3 for row 4 after the structural candidate, and the first uses of rows 2–4).
-Checkpoint 2 is subdivided: the completion of the coatom extension construction (row 6) is
-checkpoints 2.1–2.7 (below), the seven checkpoints of `README.md`, Layer 3, 3.1, under "Row 6".
+4 (items 3.2 and 3.3 for (R1)–(R3), the recovery statement of (R3) and (R4) for every
+restriction-compatible labelling, the first use of (R1), and the cap-to-model theorem), and 5
+(items 3.2 and 3.3 for (R4) after the structural candidate, and the first uses of (R2)–(R4)).
+Checkpoint 2 is subdivided: the completion of the coatom extension construction (R6) is
+checkpoints 2.1–2.7 (below), the seven checkpoints of `README.md`, Layer 3, 3.1, under "(R6)".
 The construction of the top-free witnesses, the finite age and its classical limit, is the
 section of that name in `README.md`, after Layer 3; its seven steps, with their acceptance
 criteria and checkpoints, are under "The top-free witnesses: milestone order and acceptance"
@@ -59,7 +59,8 @@ Construct an explicitly countable relational language and an `L_{ω₁,ω}` sent
 models have exactly `ℵ₁` isomorphism classes and no perfect isomorphism antichain.  The sentence is
 the density sentence of layer 2 (the structural clauses and the one-point capped-extension clause).
 State both the natural-number-code and the all-countable-carrier formulations, with the
-no-finite-model bridge explicit.  This is not a first-order Vaught result and is not a comparison
+reduction to `ℕ` explicit (no finite models, so every countable model is isomorphic to a coded
+model on `ℕ`).  This is not a first-order Vaught result and is not a comparison
 with the continuum.
 
 The core is complete only after every finite construction, realization over a root, recovery
@@ -151,8 +152,8 @@ Layer 3 of `README.md`).  A statement that recovers only a few labels from the o
 weaken the lifting requirement.
 
 First applications: the coatom extension construction and the two required applications of the
-shared decoding lemma, to the growth construction of rows 3 and 4 and to the LOW construction of
-row 2 (Layer 3 of `README.md`, item 3.1).  Avoid a general categorical formalism before these
+shared decoding lemma, to the growth construction of (R3) and (R4) and to the LOW construction of
+(R2) (Layer 3 of `README.md`, item 3.1).  Avoid a general categorical formalism before these
 examples work.
 
 ### 2. Types, partial faces, realizations, and explicit syntax
@@ -194,23 +195,32 @@ and repeated tuples included) is stated only if a use for it is identified.
 
 Density quantifies `∀ root, ∀ donor, ∀ cutoff, ∃ extension` on the fixed donor scheme.  An
 all-finite-extension presentation of receiving (donors with any finite number of new points),
-equivalent to the one-point presentation, is proved first at stage `ω` and at countable stages
-only under the countability and stage hypotheses it needs; it keeps the same quantifier order.
-The many-point form implies the one-point form at once.  The converse proceeds one point at a
-time along a chain of visible faces of the donor's plan at an auxiliary cap: the
-bounded-observation lifting of layer 1 is available at caps self-visible at the target grade, not
-at every permitted cutoff, so the chain is run at a cap self-visible at the donor's arity and
-above the requested cutoff, each step taking a lawful coface of the actual type with the donor's
-observation at that auxiliary cap, and this stronger agreement is maintained through the chain;
-the requested observation at the cutoff is obtained at the end by capping down to it.
+equivalent to the one-point presentation, keeps the same quantifier order.  The many-point form
+implies the one-point form at once.  The converse proceeds one point at a time along a chain of
+visible faces of the donor's plan at an auxiliary cap.  The bounded-observation lifting of layer 1
+is available at caps self-visible at the target grade, not at every permitted cutoff, so for a
+requested cutoff `c` at stage `α` the chain is run at an auxiliary ordinal `c'` chosen strictly
+between the requested cutoff and the stage, `c < c' < α` (a permitted cutoff, so never the formal
+top), self-visible at the donor's arity `k`.  Such a `c'` is given by
+`Label.exists_lt_lt_isSelfVisible (hβ : Order.IsSuccPrelimit β) (ho : o < β) (k : ℕ) :
+∃ c, o < c ∧ c < β ∧ IsSelfVisible k (c : Label)` (`Realization/Families`, namespace `Label`),
+applied with `o := c`, with witness `c' = c + (k + 1)`.  Its hypotheses hold here only because (i) the requested cutoff
+`c` is an ordinal below the stage (it is a permitted cutoff, `isPermittedCutoff_coe`), and (ii)
+the stage is zero or a limit (`Order.IsSuccPrelimit`).  Each step takes a lawful coface of the
+actual type with the donor's observation at `c'`; this stronger agreement at `c'` is preserved
+throughout the finite chain of extensions, after which one passes down to `c` by capping.
+The stage hypothesis (ii) stays in the statement.  At stage zero there are no permitted
+cutoffs, so that case is vacuous; it is not a source of a witness.  No generalization to
+successor stages follows from this argument.  The presentation is stated first at stage `ω` and
+at the stages `λ_ξ` (all limits), under the countability hypotheses the argument needs.
 Different cutoffs may use different points.  Prove both satisfaction directions, the
 realization/structure round trips, isomorphism preservation and reflection, and no finite
 models.  The density sentence is the preferred presentation.  Its equivalence with the
 four-family sentence (the structural clauses together with the four extension families of
 `SEMANTIC_CONTRACT.md`, item 5, and [Kni26, Definition 3.2.1], clause 4) is a required fidelity
 theorem and part of the completion criterion.  Its direction from the four-family sentence to the
-density sentence still uses the finite-cut receiving statement (row 1 of the table of
-Layer 3 of `README.md`), which therefore remains a prerequisite of completion.  Its direction
+density sentence still uses the finite-cut receiving statement (R1) of the table of
+Layer 3 of `README.md`, which therefore remains a prerequisite of completion.  Its direction
 from the density sentence to the four-family sentence uses the cap-to-model theorem (item 3.4 of
 that layer), which needs only the coatom extension construction; the cap-to-model theorem is
 therefore proved at checkpoint 4 with the fidelity theorem, before stable modelhood uses it again
@@ -229,7 +239,7 @@ LOW, and the cap-to-model theorem) and consists of four items, built in this ord
 
 1. **Statements of the finite extension constructions, and the section theorem.**  For each: input
    data, compatibility conditions, the constructed finite object (a legal scheme with its
-   embeddings and, where the row uses one, a display, as data), and its literal equations,
+   embeddings and, where the statement uses one, a display, as data), and its literal equations,
    among them that the private type and the donor type are the literal ordered face-map
    restrictions of the constructed scheme.  Every root size and padding length; designated
    freshness; literal retention of the root and of every row, occurrence, and label of the
@@ -242,27 +252,29 @@ LOW, and the cap-to-model theorem) and consists of four items, built in this ord
    whose suppressor is top up to that grade and bottom above, so that clause 5 still constrains
    it above the grade), the mapped section is lawful provided each owner has short rows or
    satisfies mapped locality.  Long-row locality of an inherited owner is the transport of the
-   original rows' lawfulness along the exact base table, using the decoder's bottom reflection.
-   The growth construction (rows 3 and 4) and the LOW construction (row 2) are both required
+   original rows' lawfulness along the exact base table; it uses no bottom reflection of the
+   decoder.
+   The growth construction of (R3) and (R4) and the LOW construction of (R2) are both required
    applications.  The two-witness splice is also proved here: for a top-labelled cell `Σ` of
    grade `J ≤ K` below a top-witness cell `Θ`, a witness from `E(Σ)` to the labels below `Σ`
    and a witness from `E(Σ)` to the row of `Θ` capped at its entry at `Σ` combine into a
    witness from `E(Σ)` to the labels where they are below `α` and, where they are top, to the
    band map of the capped row with a base (zero or a limit) that the capped row does not fall
    below there.  It replaces the transitivity step in the proof of
-   [Kni26, Lemma 5.3.5] for the rows other than the top-witness row.  Row 6 is reduced to the
+   [Kni26, Lemma 5.3.5] for the rows other than the top-witness row.  (R6) is reduced to the
    coatom extension property at a stage, whose proof, in its apex form, is the completion of the
    amalgam of [Kni26, Definition 4.3.1] by cells of full scope (checkpoints 2.1–2.7 below).
 2. **One occurrence, then labelled evaluation.**  The realization extends by **one actual
-   occurrence** of the constructed scheme over the private context, by a row-specific model
-   clause: the bottom-pattern clause with the display and the gate (row 1); row 1 itself, with
-   the LOW display as donor (row 2); generalized saturation, with no display (rows 3 and 4).
+   occurrence** of the constructed scheme over the private context, by a model clause that
+   depends on the statement: for (R1), the bottom-pattern clause with the display and the gate;
+   for (R2), (R1) itself, with the LOW display as donor; for (R3) and (R4), generalized
+   saturation, with no display.
    Root, private context, donor values, and gate equation all concern that occurrence.  For
-   rows 3 and 4 the recovery statement is proved for every restriction-compatible labelling
+   (R3) and (R4) the recovery statement is proved for every restriction-compatible labelling
    whose private face lies in the prescribed bottom class, then applied to the actual labels
-   (row 3) or to the stable labelling (row 4).  That statement uses no stable labelling; the
-   acquisition of row 4's calibrated data, its occurrence, and its evaluation need the
-   structural candidate and come at checkpoint 5.  Rows 3 and 4 share the constructed scheme
+   (R3) or to the stable labelling (R4).  That statement uses no stable labelling; the
+   acquisition of the calibrated data of (R4), its occurrence, and its evaluation need the
+   structural candidate and come at checkpoint 5.  (R3) and (R4) share the constructed scheme
    and the recovery statement; their acquired data, the labelling evaluated, and their
    existence hypotheses stay separate.
 3. **`Correct`, LOW, and the recovery statements.**  `Correct` consists of three clauses capped
@@ -283,9 +295,9 @@ LOW, and the cap-to-model theorem) and consists of four items, built in this ord
    hollow-growth receiving, by the hollow comparison; capped receiving for the stable candidate,
    by stable modelhood; the top-free pinned extension, by receiving in the classical limit
    (step 6 below); the exact pinned extension, through the plain form of the coatom extension
-   property, by the amalgamation of top-free charts (step 2 below).  Each row records its
-   exact hypotheses, its conclusion, and its import boundary.  Rows 1–4 conclude on one
-   occurrence over the literal root and have recovery theorems; rows 5 and 6 are extension
+   property, by the amalgamation of top-free charts (step 2 below).  Each statement records its
+   exact hypotheses, its conclusion, and its import boundary.  (R1)–(R4) conclude on one
+   occurrence over the literal root and have recovery theorems; (R5) and (R6) are extension
    statements about charts, without an occurrence or a recovery theorem.  The positive-length
    root restrictions and the empty-root base cases are explicit, and the cap-to-model theorem is
    stated with the table.
@@ -297,8 +309,8 @@ chart from the chart; do not store synchronized copies.  A supported invisible f
 unsupported tuple.
 
 First applications: the amalgamation of top-free charts (step 2, from the plain form of the
-coatom extension property and capping) and receiving in the classical limit (step 6, rows 6
-and 5).  The modules of the finite extension constructions import neither the classical limit
+coatom extension property and capping) and receiving in the classical limit (step 6, (R6)
+and (R5)).  The modules of the finite extension constructions import neither the classical limit
 nor the chain construction.  Direct limits of structures and the classical existence theorem
 (prospective) belong to the two libraries: they replace no finite extension
 construction and no decoding or recovery statement.
@@ -312,11 +324,11 @@ receiving/modelhood as different theorem layers.
 
 Construct the stable realization and literal reduct before proving modelhood.  Normalize any
 genuine expansion pointwise to the structural candidate; handle undefined tuples using the
-literal reduct.  Derive modelhood separately by cap receiving (row 4 of the table of Layer 3
-of `README.md`) and the cap-to-model theorem of checkpoint 4.  Row 4's calibrated data, its
-occurrence, and the evaluation of the stable labelling by the recovery statement of checkpoint
-4 are built here, after the structural candidate.  Keep positive-root requirements and the
-empty-root base case explicit.
+literal reduct.  Derive modelhood separately by cap receiving (statement (R4) of the table of
+Layer 3 of `README.md`) and the cap-to-model theorem of checkpoint 4.  The calibrated data of
+(R4), its occurrence, and the evaluation of the stable labelling by the recovery statement of
+checkpoint 4 are built here, after the structural candidate.  Keep positive-root requirements
+and the empty-root base case explicit.
 
 Use selected-chart rooted back-and-forth, not a second fair-chain comparison.  The coreless
 comparisons are instances of one exact-age comparison theorem (same exact age, exact receiving);
@@ -330,8 +342,9 @@ constants away, are a syntactic-complexity target, distinct from the internal Sc
 must belong to the extendible family; atomic agreement alone does not suffice.  Count terminal
 classes by an overlapping countable family of singleton conditions: specified rigid-core type,
 coreless eventual top grade, and hollow growth.  Do not construct a complete profile invariant.
-Discharge grade zero via the empty rigid core.  Preserve the original anchor definition;
-stable-label fixedness is a characterization under stated hypotheses.
+Eventual top grade zero is the rigid-core case: the empty tuple is then a rigid core.  Preserve
+the original anchor definition; stable-label fixedness is a characterization under stated
+hypotheses.
 
 ### 5. Unique expansions, domains, and the main theorem
 
@@ -344,7 +357,7 @@ reduct.  Eventual stopping is not an input: conditions 1–4 give it for every c
 persistent core, which has at most one class, and no statement here assumes it for every model.
 
 Prove the one-sided finite-donor transfer first, using only target consistency and finite-cut
-receiving (row 1).  Symmetrize for back-and-forth: one block buys one level, with no extra `ω`
+receiving (R1).  Symmetrize for back-and-forth: one block buys one level, with no extra `ω`
 factor.  Handle repeated coordinates and empty tuples.  Apply the sentence-agreement argument once,
 keeping the cardinality conclusion separate from the descriptive thinness conclusion.  In
 `SuggestedInterfaces.lean`, `SentenceAgreementDomains` is a structure (countable-stage domains
@@ -367,8 +380,8 @@ age and not recognized afterwards in a model constructed otherwise.
 1. **Finite top-free charts.**  Acceptance: the family is constructed as data (a finite
    `L^h_λ`-structure for each top-free legal stage type at `λ`, its relations literally the
    visible faces with their types and no relation at a supported invisible face); the index is
-   countable and contains the empty chart; each member is finitely generated.  Regressions: the
-   empty chart, a one-point chart, a chart with an invisible pair, distinct cells sharing a
+   countable and contains the empty chart; each member is finitely generated.  Special cases:
+   the empty chart, a one-point chart, a chart with an invisible pair, distinct cells sharing a
    graded index.
 2. **Hereditary closure, amalgamation, joint embedding.**  Acceptance: the finitely generated
    substructures of a member are exactly its closed faces with their literal restrictions;
@@ -377,7 +390,7 @@ age and not recognized afterwards in a model constructed otherwise.
    amalgam and above all labels of both charts, with the literal commuting square
    `f₁.trans g₁ = f₂.trans g₂` and literal restrictions to both charts; joint embedding as the
    case of the empty chart; the hypotheses of `isFraisse_representativeClass` in exactly its
-   form (literal square).  Regressions: the empty common chart, a common chart equal to one of
+   form (literal square).  Special cases: the empty common chart, a common chart equal to one of
    the two, equal charts with equal face embeddings, a common chart that is the hull of two of
    its points and has more than two points.  Strong amalgamation is not claimed or needed.  No
    infinite model is imported.
@@ -395,11 +408,11 @@ age and not recognized afterwards in a model constructed otherwise.
    `none` at invisible faces; covering for arbitrary tuples `Fin n → M`, the empty tuple and
    repeated coordinates included; every evaluated type in the age.
 6. **Receiving.**  Acceptance: for every root, one-point donor type, and permitted cutoff, an
-   occurrence over the literal root from row 5 and `IsUltrahomogeneous.extend_embedding`, with
+   occurrence over the literal root from (R5) and `IsUltrahomogeneous.extend_embedding`, with
    all its equations on that one occurrence; exact receiving for top-free donors (cutoff above
    every label of the donor); for donors containing top, one extension for each cutoff, with no
-   claim of one extension for all cutoffs or of recovery of a top.  Regressions: the empty
-   root, a donor with top labels at two different cutoffs, a donor with bottom labels.
+   claim of one extension for all cutoffs or of recovery of a top.  Special cases: the
+   empty root, a donor with top labels at two different cutoffs, a donor with bottom labels.
 7. **Modelhood, infinitude, terminality.**  Acceptance: modelhood by the cap-to-model theorem
    (checkpoint 4); infinitude, with freshness of the received point over the whole finite
    chart: for a finite set `F`, the root is an actual occurrence `t` containing `F` (covering)
@@ -413,9 +426,9 @@ age and not recognized afterwards in a model constructed otherwise.
 
 **Dependency boundaries.**  The age argument (steps 1–7) imports Mathlib, InfinitaryLogic,
 ComputableModelTheory (prospective), layers 0–2, and the finite kernel (layer 1, the coatom
-extension construction with rows 5 and 6, and the cap-to-model theorem).  Steps 1–7 import no
-`Construction/` module; the classical part, steps 3–5, imports no module of rows 1–4, of structural
-continuation, or of the expansion domains; steps 6 and 7 add only row 5, the cap-to-model theorem,
+extension construction with (R5) and (R6), and the cap-to-model theorem).  Steps 1–7 import no
+`Construction/` module; the classical part, steps 3–5, imports no module of (R1)–(R4), of structural
+continuation, or of the expansion domains; steps 6 and 7 add only (R5), the cap-to-model theorem,
 and the reduction of models.  The upstream theorems import no module of this repository.  The chain
 construction (`Construction/`, the chain unions of partial realizations, and the conditional chain
 construction of models) is needed neither for top-free existence nor for saturated existence: the
@@ -456,7 +469,7 @@ In the pinned InfinitaryLogic:
   both.  On the complement of the persistent core, departure holds, but nonemptiness requires
   every domain to contain a class outside the core, which is the lower-bound input.  It may
   therefore be quoted, if at all, only for the final equality once both bounds are known, with
-  its eventual-departure hypothesis discharged on the complement of the core;
+  its eventual-departure hypothesis proved on the complement of the core;
 - the Gδ/Polish model-code spaces;
 - `internalScottRank_le_of_orbits_determined` (`Scott/OrbitRank`), on which the library's
   orbit-formula rank bound (`README.md`, Layer 0) rests; this repository does not apply it
@@ -577,8 +590,8 @@ The development produces the following, and only these, as hypotheses of library
 - **local automorphisms (second interface):** for each relevant self-embedding and finite tuple,
   an automorphism agreeing with the self-embedding on the tuple (`COMPANIONS.md`, B2).
 
-Everything after these two interfaces is an application.  The table has five rows for four facts
-proved here: the first fact is split over two rows, one for each library theorem it feeds.
+Everything after these two interfaces is an application.  The table has five lines for four facts
+proved here: the first fact is split over two lines, one for each library theorem it feeds.
 
 | This development proves | The library supplies (InfinitaryLogic, pull request #141) |
 | --- | --- |
@@ -648,7 +661,7 @@ blocks") is still needed for the proposed simplification of thinness.
 - Separate natural-index arithmetic (`omega`) from ordinal/band inequalities; expose exact
   band-comparison lemmas before asking automation to solve goals.
 - Use `funext`, `Function.Embedding.ext`, `Subtype.ext`, and proof irrelevance to finish
-  transport bookkeeping.  Give explicit structure instances where a structure is coded, rather
+  the transport equations.  Give explicit structure instances where a structure is coded, rather
   than letting inference pick an unintended structure.
 - Reuse finite `decide`/`fin_cases` checks of examples of rows and schemes.  A finite
   enumeration checks examples; it is not a proof of the general characterization.
@@ -662,41 +675,41 @@ blocks") is still needed for the proposed simplification of thinness.
 
 Each checkpoint needs both its abstract API and a concrete application:
 
-1. Finite geometry, scalar label algebra, transport regressions.
-2. Item 3.1 of Layer 3 of `README.md`: the legal finite extension construction of every row of
-   its table, as data with its literal equations, bountifulness at every self-visible cap with
+1. Finite geometry, scalar label algebra, and transport, with their special cases.
+2. Item 3.1 of Layer 3 of `README.md`: the legal finite extension construction of every statement
+   of its table, as data with its literal equations, bountifulness at every self-visible cap with
    cap preservation on every target coordinate, and the section theorem by the shared decoding
    lemma, with its applications to the growth and LOW constructions; small, empty, top/bottom
-   and invisible cases.  Status of row 6: the amalgam of two coatom stage types, its literal
-   restrictions, and its consistent and bountiful rows are established, and row 6 follows from
+   and invisible cases.  Status of (R6): the amalgam of two coatom stage types, its literal
+   restrictions, and its consistent and bountiful rows are established, and (R6) follows from
    the coatom extension property, with nothing used about the stage; the proof of that property
    in its apex form, the completion of the amalgam, is checkpoints 2.1–2.7.
 3. Realizations, literal syntax correspondence, the hull operations with their five facts;
    then steps 1–6 of the top-free witnesses, in order: finite top-free charts, hereditary
    closure and amalgamation and joint embedding (through the plain form of the coatom extension
-   property, the first use of row 6), classical existence (prospective),
+   property, the first use of (R6)), classical existence (prospective),
    reconstruction, consistency and
-   covering and top-freeness, and receiving (the first use of row 5).
-4. Items 3.2 and 3.3 for rows 1–3: for each row, the extension of the realization by one actual
+   covering and top-freeness, and receiving (the first use of (R5)).
+4. Items 3.2 and 3.3 for (R1)–(R3): for each of them, the extension of the realization by one actual
    occurrence over the literal root and the recovery theorem (by `Correct` and labelled
    evaluation, by LOW, or through the gate), with all its equations on that occurrence and at
-   every permitted cutoff; the recovery statement of rows 3 and 4 for every
+   every permitted cutoff; the recovery statement of (R3) and (R4) for every
    restriction-compatible labelling whose private face lies in the prescribed bottom class; the
-   first use of row 1, the one-sided donor transfer; the cap-to-model theorem, with the
+   first use of (R1), the one-sided donor transfer; the cap-to-model theorem, with the
    modelhood and infinitude of the top-free witnesses (step 7); and the fidelity theorem of
    layer 2, the equivalence of the density sentence with the four-family sentence, whose two
-   directions use row 1 and the cap-to-model theorem.
-5. Structural continuation (the structural stable candidate); then items 3.2 and 3.3 for row 4
+   directions use (R1) and the cap-to-model theorem.
+5. Structural continuation (the structural stable candidate); then items 3.2 and 3.3 for (R4)
    (the acquisition of its calibrated data, its occurrence, and the evaluation of the stable
    labelling by the recovery statement of checkpoint 4); three terminal comparisons (the first
-   uses of rows 2 and 3), stable modelhood (the first use of row 4, with the cap-to-model
+   uses of (R2) and (R3)), stable modelhood (the first use of (R4), with the cap-to-model
    theorem), unique limit expansions, and the terminality of the top-free witnesses with the
    placement of their base classes in the losses (step 7).
-6. Domain hypotheses of the counting theorem, independent bounds, thinness and all-countable
-   bridge.
+6. Domain hypotheses of the counting theorem, the upper and lower bounds, thinness, and the
+   reduction to `ℕ` (all countable carriers).
 
 At every checkpoint: full build, strict per-file checks, no `sorry`, standard axioms only,
-universe/empty/repeated-coordinate regressions, and review of semantic statements.  Audit proof
+universe/empty/repeated-coordinate special cases, and review of semantic statements.  Audit proof
 dependencies **and** import closures separately.  Passing CI is not a substitute for checking
 the statements against the roadmap and the semantic contract.
 
@@ -707,8 +720,8 @@ or lemmas with no application.
 
 ### Checkpoints 2.1–2.7: the completion of the coatom extension construction
 
-Row 6 is reduced to the coatom extension property at a stage (`README.md`, Layer 3, 3.1, under
-"Row 6"): any two legal stage types on the two coatoms of `m + 2` points that agree literally on
+(R6) is reduced to the coatom extension property at a stage (`README.md`, Layer 3, 3.1, under
+"(R6)"): any two legal stage types on the two coatoms of `m + 2` points that agree literally on
 their common face (a closed face of both) are the literal faces, labels included, of one legal
 stage type on `m + 2` points.  Its apex form asks in addition for a cell of full scope and full
 grade carrying the maximum label [Kni26, Corollary 4.3.22], and the plain form follows from it.
@@ -755,7 +768,7 @@ ones split):
   established first, then the general step; lawfulness, consistency, the prefix equations, and
   unrestricted lifting (the last two defined with 2.6) are distinct statements.
 - **2.7. The theorem.**  At a stage that is zero or a limit the apex form holds; hence the plain
-  form and row 6.  The improvement from limit stages to zero-or-limit stages is a separate lemma,
+  form and (R6).  The improvement from limit stages to zero-or-limit stages is a separate lemma,
   with the zero stage handled explicitly.  That truncation to the stage fails at successor stages
   does not prove that the property fails there; that would need its own counterexample.  Whether
   it holds at successor stages is open and not needed.
@@ -806,7 +819,7 @@ and its consequences; C: a geometric obstruction).
 ### Full-chart orbit theory: a companion checkpoint
 
 The targets of this checkpoint are milestones B and C of [`COMPANIONS.md`](COMPANIONS.md),
-which states each with its hypotheses, upstream ingredients, instantiation, regressions, and
+which states each with its hypotheses, upstream ingredients, instantiation, special cases, and
 non-claims, and gives the companion sketch [`SuggestedCompanions.lean`](SuggestedCompanions.lean).
 In summary: in the full stage chart language (not the base reduct), a countable nonempty top-free
 realization with exact consistency, covering, and finite-cut receiving has automorphism orbits
@@ -824,3 +837,178 @@ listed above.
 **Completion criterion.**  This companion checkpoint is complete when milestones B and C of
 `COMPANIONS.md` meet their completion criteria.  It is not a core checkpoint, and the main
 theorem does not depend on it.
+
+## Placement record
+
+Where a declaration of the library should live, when it is stated elsewhere, is recorded here
+and not in the module that states it (`README.md`, "Library conventions", **Placement**): that
+module's `## Placement` section gives only its place in the roadmap.  The entries are grouped by
+the module that states the declarations; each names the destination.  The declarations of the
+Layer 2 modules under `Language/` and `Realization/` whose own notes name earlier files move to
+those files directly, in the Layer 2 consolidation (pull request #34), and are not recorded here;
+until it lands, their notes stay in those modules.
+
+**Finite geometry and the coatom amalgam (Layer 3, (R6)).**
+
+- `Geometry/PlanAttachment`: `restrict_restrict` and `IsPlan.restrict_self`, a statement about
+  convex geometries (it uses only `subset_of_mem`), to `Geometry.ConvexGeometry`, beside
+  `mem_restrict`.
+- `Extension/Basic`: `Fin.Embedding.univ_map_snoc` to Mathlib, `Mathlib.Data.Fin.Tuple.Embedding`,
+  beside `Fin.Embedding.snoc`.
+- `Extension/Merge`: `Merge` is order theory on finite chains, not about schemes; it belongs in an
+  `Order/` folder of the library, and is a candidate for Mathlib.
+- `Extension/CoatomScheme`: `Geometry.IsPlan.map` to `Geometry.Plan`, beside `IsPlan.preimage`;
+  `Scheme.scope_eq_of_eq`, `Scheme.grade_eq_of_eq`, `Scheme.row_eq_of_eq`, and
+  `Scheme.mem_faces_iff_of_eq` to `Stage.Scheme`;
+  `CellScheme.IsLowerEmbedding.image_below_gradedIndex` to `Scheme.Cell`.
+- `Extension/CoatomAmalgam`: `StageType.label_eq_of_eq` to `Stage.Basic`, beside `StageType.ext`.
+- `Extension/Gluing`: `Rows.isLawfulBelow_iff_forall` and `Rows.IsLawfulBelow.glue` to
+  `Scheme.Row`, after the lawful sections; the lifting statements to `Scheme.Bountiful`, after
+  `CellScheme.Rows.CappedLift.trans`.
+- `Extension/PinnedExtension`: `StageType.card_eq_zero`, `StageType.faces_eq_of_zero`,
+  `StageType.eq_of_zero`, and `StageType.isSome_restrictFace_of_zero` to `Stage.Basic`;
+  `Scheme.IsLegal.toStageType` with `Scheme.IsLegal.isLegal_toStageType` to `Stage.Legal`;
+  `Scheme.onePoint` with `Scheme.isLegal_onePoint` to `Stage.LegalExamples`, where they replace
+  the private `point`.
+
+**Coding (checkpoint 2.2).**
+
+- `Extension/Coding`: the label statements (`Label.IsStronglyCoded`, `Label.codedAlphabet`, and
+  their lemmas) to `Label.Basic`; `CellScheme.Rows.IsCoded`, `CellScheme.Rows.IsStronglyCodedAt`,
+  `CellScheme.Rows.IsStronglyCoded`, and the lemmas on their preservation to `Scheme.Row`;
+  `Scheme.isCoded_iff`, `Scheme.isCoded_of_isLowerEmbedding`, and
+  `Scheme.isCoded_of_isLowerEmbedding_of_isStronglyCodedAt` to `Stage.Scheme`.
+
+**The transformation algebra (checkpoints 2.1 and 2.3).**
+
+- `Extension/WitnessAlgebra`: its statements to `Label.Transform`, after the guarded composition;
+  `IsShort` and the flattening of finite parts (`flatten`, `flattenOrd`, and their lemmas)
+  beside the self-visible labels of `Label.Visibility`; its block arithmetic beside the blocks
+  of `Label.OrdinalVisibility`.
+- `Extension/CodedSection`: the block coding (`bandEncode`, `bandDecode`, and their lemmas) to a
+  module `Label/Coding.lean` beside `Label.Transform`; `CellScheme.Rows.IsLawful.exists_bandEncode`
+  to `Scheme.Row`, after the lawful sections.  Its private block arithmetic
+  (`mod_le_mod_of_div_eq`, `mod_lt_mod_of_div_eq`, `omega0_mul_add_lt`, `omega0_mul_add_div`,
+  `omega0_mul_add_mod`, `visibilityReplace_omega0_mul_add`, `omega0_mul_natCast_add_lt`)
+  duplicates the public rules of `Extension/WitnessAlgebra`, which replace it.  The existential
+  coded copy (`CellScheme.Rows.IsLawful.exists_bandEncode`, `Label.IsWitness.bandEncode`) is a
+  consequence of the universal form, `Label.isWitness_bandEncode_stepSuppressor` with
+  `CellScheme.Rows.IsLawful.map_of_bot_reflecting`, and is to be replaced by it.
+- `Extension/Encoders`: the label statements to `Label/Coding.lean`, beside the block coding;
+  the lawfulness statements to `Scheme.Row`.  The encoders of 2.3 are built on the block coding
+  of `Extension/CodedSection` (there is no second coding) and use the block arithmetic of
+  `Extension/WitnessAlgebra`.
+- `Extension/SectionTheorem`: to `Scheme.Row`, after the lawful sections.
+- `Extension/OwnerwiseDecoding`: to `Scheme.Row`, beside the section theorem, once the strongly
+  coded decoder is placed.
+- `Extension/Apex`: `Scheme.appendFullCell` and its laws, `Scheme.mem_range_comp_cellMap_iff`,
+  `Scheme.cellMap_eq_of_strictMono_of_mem_range`, and `Scheme.comap_eq_of_strictMono` to
+  `Stage.Scheme`, beside `Scheme.cellMap_eq_of_strictMono`;
+  `StageType.restrictFace_eq_of_strictMono` to `Stage.Basic`, beside
+  `StageType.restrictFace_trans`; `Scheme.IsLegalBelowFullGrade` to `Stage.Legal`, beside
+  `Scheme.IsLegal`.  The choice in `apexCodes` can be replaced by the finite set
+  `univ.image w` of the labels, by the universal form of the coded copy.
+
+**The chain construction (not used by the main theorem).**
+
+- `Construction/ChainModel`: `StageType.onePoint` and `StageType.isLegal_onePoint` to
+  `Stage.LegalExamples` (replacing the private `point`, the same stage type at stage `0`); the
+  instance `StageType.instSubsingletonZero` to `Stage.Basic`; `Realization.RealizesCofaces` and
+  its two consequences to `Realization.Model` and `Language.Density`.
+- The other placement notes of the chain construction (in `Scheme/Lifting`, `Scheme/Transport`,
+  and `Stage/Legal`) are not recorded: the library already holds those declarations at their
+  destinations, or no longer has them.  `IsBountiful.comap_of_image_eq`,
+  `IsBountiful.comap`, and `IsBountiful.reindex` stay in `Scheme/Transport`, which has no
+  placement note.
+- Duplicates between the chain construction and the coatom extension construction, to be kept
+  once: the zero-point lemmas (`StageType.card_eq_zero`, `StageType.faces_eq_of_zero`,
+  `StageType.eq_of_zero`, `StageType.isSome_restrictFace_of_zero`) and the zero-point instance
+  `StageType.instSubsingletonZero`; the one-point scheme (`Scheme.onePoint`,
+  `Scheme.isLegal_onePoint`, `Scheme.IsLegal.toStageType`) and `StageType.onePoint`; the
+  one-point extension `StageType.exists_extension` ([Kni26, Proposition 4.3.23]) and
+  `Construction.nonempty_cofaces_of_hasExactPinnedExtensions`; and the face followed by the new
+  point, `extendByLast` and `Construction.pinnedFace`, equal by `rfl`.
+
+**Languages and the main theorem (Layers 2 and 6).**
+
+- `Language/Sentence`: the formula helpers `BoundedFormulaω.distinct`,
+  `BoundedFormulaω.realize_distinct`, and `BoundedFormulaω.realize_alls` hold for an arbitrary
+  language, and `Structure.ext_of_isRelational` (added to `Language/Basic` by #34) for a
+  relational one; they are candidates for upstreaming.
+- `MainTheorem/Spectrum`: the statements that belong upstream (the cross-universe transport
+  `realize_boundedFormulaω_equiv` and `realize_sentenceω_equiv`, `qrank_lt_omega_one`,
+  `classTruth` with its lemmas, and `exists_mem_modelsOf_equiv`) are recorded in `COMPANIONS.md`,
+  A3, **Upstream ingredients**: each with its upstream module, except the two `realize_*_equiv`
+  lemmas, which become redundant once `BoundedFormulaω.realize_equiv` and `LomegaEquiv.of_equiv`
+  are generalized across carrier universes.
+
+## Dependency tracking
+
+Which checkpoint uses which statement is recorded here, not in the docstrings: a docstring states
+the mathematical role of its statement, what it is used to prove.  The checkpoints are those of
+the completion of the coatom extension construction, 2.1–2.7 above.  Unless noted, the
+statements of a module are used at the checkpoints given with its heading.
+
+**Coding** (`Extension/Coding`).
+
+- `Label.codedAlphabet`, the finite alphabet of codes of bounded block and offset: 2.3, 2.6.
+- `Label.lt_omega0_sq_of_mem_codedAlphabet`, codes lie below `ω²`: 2.6.
+- `Label.finite_setOf_isStronglyCoded_lt`, finitely many strongly coded labels below a block: 2.3.
+- The coding of the completion, from the module's analysis: the amalgam (a), the inherited rows
+  (b), the apex, whose row is the coded copy of the labels (its coding is treated with the apex,
+  not by the bottom-row lemma (c)), the other new rows, with values in the coded alphabet of their
+  grade (d), and the finiteness of the catalogue (e): 2.3–2.6.
+- The one lifting step above an input row, which uses the coding of the input (a new entry in a
+  block above every value of the row, below `ω²`): 2.4.
+
+**Encoders** (`Extension/Encoders`; 2.5, 2.6 unless noted).
+
+- `Label.isWitness_strongEncode`: boundary labels transform to their normal form, lawfully.
+- `Label.isWitness_strongDecode`: the decoder of the section theorem.
+- `Label.isStronglyCoded_strongEncode`: a new cell of grade `K` with rows from codes is strongly
+  coded.
+- `Label.strongEncode_mem_codedAlphabet`: the catalogue at grade `K` is finite.
+- `Label.injOn_strongEncode`, used through `Label.forall_min_strongEncode_eq_iff`, and
+  `Label.forall_min_strongEncode_eq_iff` itself.
+- `Label.isSelfVisible_strongEncode`: the caps are self-visible at `K`.
+- `Label.strongDecode_min_strongEncode`: a lift capped at the code of a cap decodes to the
+  decoded lift capped at the cap; 2.6.
+- `Label.min_strongDecode_eq_min_strongDecode` and `Label.min_strongDecode_eq_of_min_eq`: 2.6.
+- `CellScheme.Rows.IsLawful.strongEncode`; and the shortness of the new full-scope rows, from
+  their construction.
+
+**Normal form** (`Extension/NormalForm`; 2.5, 2.6).
+
+- `Label.transformsTo_strongEncode_comp` and `Label.strongEncode_comp_transformsTo`.
+- `Label.strongDecode_comp_strongEncode_comp`: the inherited owners in ownerwise decoding.
+- `CellScheme.Rows.IsLawful.exists_stronglyCoded`: the boundary labels of a seed replaced by a
+  strongly coded catalogue vector.
+- `CellScheme.Rows.IsLawfulBelow.exists_stronglyCoded`: the row of a new cell of a given scope
+  and grade.
+
+**The section theorem** (`Extension/SectionTheorem`).
+
+- `CellScheme.Rows.IsLawful.min_const`, through `CellScheme.Rows.IsLawfulBelow.min_const`: 2.5.
+- `CellScheme.Rows.IsLawful.map_of_isShort_or`, through ownerwise decoding: 2.5, 2.6.
+- `CellScheme.Rows.IsLawful.map_of_bot_reflecting`: 2.5, 2.6.
+- `CellScheme.Rows.IsLawfulBelow.min_const_of_isSelfVisible`: 2.5.
+
+**Ownerwise decoding** (`Extension/OwnerwiseDecoding`; 2.5, 2.6).
+
+All in the namespace `CellScheme.Rows.IsLawful`:
+
+- `strongDecode_locality_of_decode_eq_on_below`: the inherited owners, decoded along the exact
+  base table, with no bottom reflection.
+- `strongDecode_locality_of_isShort_row`: the new full-scope owners, whose rows are short.
+- `strongDecode_of_ownerwise`: the decoded source section of the completion.
+
+**The witness algebra** (`Extension/WitnessAlgebra`, in the namespace `Label`; 2.5, 2.6 unless
+noted).
+
+- `IsShort`; `isWitness_comp_flatten`; `IsWitness.exists_eq_comp_of_isShort`;
+  `IsWitness.le_apply_visibilityReplace`; `TransformsTo.exists_isWitness_capped`;
+  `TransformsTo.map_of_isShort`; `TransformsTo.map_of_bot_reflecting`;
+  `IsWitness.transformsTo_comp`.
+- `IsWitness.max`: the shifter of the locality of a new full-scope cell, the maximum of the capped
+  witness of an owner and a second witness; 2.6.
+- `IsWitness.finsetSup`: interpolation across mixed grades; 2.5.
