@@ -17,7 +17,9 @@ with no topology, measurability, or rank function.
   has a countable truth side or a countable false side.  With the countable complements given by
   InfinitaryLogic's `InfinitaryLogic.compl_countable_of_loss` and the uniformity by logical
   agreement on a domain, this yields countable sentence splits for InfinitaryLogic's
-  `Descriptive/CountableSplits` and `Descriptive/SentenceSplits` interfaces.
+  `Descriptive/CountableSplits` and `Descriptive/SentenceSplits` interfaces.  A countable truth
+  side or false side for every sentence is the sentence minimality of
+  `MainTheorem.isThinOnNatModels_of_countable_truth_sides` (cf. [Mon, Definition XII.4]).
 * `exists_injective_mem_sdiff_succ`: the successor losses `D ξ \ D (succ ξ)` of an antitone family
   are pairwise disjoint, so a choice of one point from each nonempty loss is injective.  This is
   the lower-bound choice; it uses neither countability of losses nor logical comparison.  For
@@ -28,6 +30,11 @@ Countable complements from countable successor losses is InfinitaryLogic's
 `mk_eq_aleph_one_of_domains` assumes that every point leaves some domain below `ω₁`, a global
 eventual-departure hypothesis that the main theorem does not assume; it is not the route to the
 cardinality bound here.)
+
+## References
+
+Minimally unbounded sentences are [Mon, Definition XII.4], for A. Montalbán, *Computable
+Structure Theory: Beyond the Arithmetic* (draft, 22 April 2025).
 -/
 
 namespace VaughtConjecture.Counting

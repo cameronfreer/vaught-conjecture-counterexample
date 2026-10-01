@@ -32,9 +32,22 @@ The `Filtration` versions combine these with InfinitaryLogic's `compl_countable_
 `Filtration.mk_eq_aleph_one_of_separation` is the counting theorem, and
 `Filtration.countable_truth_side` is the sentence split of `countable_split_of_uniform_domain`.
 
+*Scott separation* is the hypothesis that the observations separate distinct classes; for the
+classes of countable models of a sentence, observed by the sentences of `L_{ω₁,ω}`, it holds
+because each class is defined by a Scott sentence ([Mon, Theorem II.9];
+`MainTheorem.classTruth_separates`).  A countable truth side or false side for every sentence is
+the sentence minimality of `MainTheorem.isThinOnNatModels_of_countable_truth_sides` (cf.
+[Mon, Definition XII.4]).
+
 Two private examples close the file: the tail filtration of the countable
 ordinals satisfies every hypothesis, and adjoining a persistent summand of size `2 ^ ℵ₁` keeps every
 filtration axiom but not the cardinality, so the countable-core hypothesis cannot be dropped.
+
+## References
+
+Scott sentences are [Mon, Theorem II.9] and minimally unbounded sentences
+[Mon, Definition XII.4], for A. Montalbán, *Computable Structure Theory: Beyond the Arithmetic*
+(draft, 22 April 2025).
 -/
 
 namespace VaughtConjecture.Counting

@@ -86,7 +86,10 @@ departure of every class is assumed.
   language and a sentence of `L_{ω₁,ω}` whose models coded on `ℕ` have exactly `ℵ₁` isomorphism
   classes with no perfect set of pairwise nonisomorphic ones, and every countable model of which,
   on a carrier in any universe, is isomorphic to a coded one.  A spectrum statement counting the
-  isomorphism classes of the models on all countable carriers at once is not made here.
+  isomorphism classes of the models on all countable carriers at once is not made here.  The
+  conclusion states a counterexample to Vaught's Conjecture by the number of classes and
+  thinness; cf. the scattered, unbounded sentences of [Mon, §XII.1], recalled at
+  `HasThinAlephOneSpectrum`.
 
 The hypothesis structures on the domains are stated for an arbitrary type of classes, so that
 their composition can be checked on examples (`VaughtConjecture.MainTheorem.Examples`).
@@ -97,6 +100,10 @@ The cardinality statement of the main theorem, exactly `ℵ₁` countable models
 is [Kni26, Theorem 11.1.9], and the failure of Vaught's Conjecture in `L_{ω₁,ω}` is
 [Kni26, Theorem 11.1.10], immediate from it, for R. W. Knight, *A counterexample to Vaught's
 Conjecture using generalised Stone spaces* (draft, 20 February 2026).
+
+A counterexample to Vaught's Conjecture is, in [Mon, §XII.1], a scattered sentence of
+`L_{ω₁,ω}` that is unbounded in the sense of [Mon, Definition XII.1], for A. Montalbán,
+*Computable Structure Theory: Beyond the Arithmetic* (draft, 22 April 2025).
 -/
 
 universe u v w x y
@@ -318,7 +325,8 @@ theorem and the cap-to-model theorem, there are a countable relational language 
 of `L_{ω₁,ω}` whose models coded on `ℕ` have exactly `ℵ₁` isomorphism classes with no perfect
 set of pairwise nonisomorphic ones, and every countable model of which, on a carrier in the
 universe `w`, is isomorphic to a coded one.  The hypotheses are statements of Layers 3–6 of the
-roadmap, not proved here. -/
+roadmap, not proved here.  The conclusion states a counterexample to Vaught's Conjecture by the
+number of classes and thinness (cf. [Mon, §XII.1]). -/
 theorem vaughtCounterexample_of_expansionDomains (D : ExpansionDomains DensityClass)
     (ha : D.HasLogicalAgreement densityTruth) (hc : D.HasCountableLosses)
     (hn : D.HasNonemptyLosses) (hcap : CapToModel.{w}) :

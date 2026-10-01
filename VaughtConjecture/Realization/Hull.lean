@@ -334,7 +334,7 @@ theorem finiteHull_eq_self_iff (hR : R.IsConsistent) (hc : R.IsCovering) :
   rintro ⟨x, rfl⟩
   rw [finiteHull_eq hR hc x Subset.rfl, x.hull_support]
 
-/-- **Minimality**: the canonical hull of `F` lies in every support containing `F`. -/
+/-- **Leastness**: the canonical hull of `F` lies in every support containing `F`. -/
 theorem finiteHull_subset_of_isSupport (hR : R.IsConsistent) (hc : R.IsCovering)
     (hS : R.IsSupport S) (hFS : F ⊆ S) : R.finiteHull F ⊆ S :=
   (finiteHull_mono hR hc hFS).trans ((finiteHull_eq_self_iff hR hc).mpr hS).le
