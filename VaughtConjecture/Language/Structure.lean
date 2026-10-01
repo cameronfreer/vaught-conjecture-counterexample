@@ -44,12 +44,6 @@ realizations with legal types an isomorphism of structures is an isomorphism of 
 isomorphic type assignments have isomorphic realizations and conversely
 (`baseLanguage.isIso_toRealization_iff`, from the round trips).
 
-## Placement
-
-`Realization.HasLegalTypes` and `Realization.IsModel.hasLegalTypes` belong in earlier files (the
-legality field of `Realization.IsModel` can then be stated through the former); their destinations
-are in the placement list of `VaughtConjecture.Language.Basic`.
-
 ## References
 
 The structure of a realization is [Kni26, Definition 3.3.4], and the correspondence between
@@ -77,15 +71,6 @@ namespace Realization
 
 variable (R : Realization.{u, v} ω M)
 
-/-- A realization **has legal types** when every type it assigns is legal. -/
-def HasLegalTypes {α : Ordinal.{u}} (R : Realization.{u, v} α M) : Prop :=
-  ∀ ⦃n : ℕ⦄ (t : Fin n ↪ M) (p : StageType.{u} α n), R.eval t = some p → p.IsLegal
-
-/-- A model has legal types. -/
-theorem IsModel.hasLegalTypes {α : Ordinal.{u}} {R : Realization.{u, v} α M} (hR : R.IsModel) :
-    R.HasLegalTypes :=
-  hR.isLegal
-
 /-- The **structure of a realization** at stage `ω` [Kni26, Definition 3.3.4]: the relation `P_p`
 holds of a tuple exactly when the tuple is injective and has the stage type of `p`. -/
 @[instance_reducible] def toStructure : baseLanguage.{u}.Structure M where
@@ -107,11 +92,9 @@ theorem relMap_toStructure_embedding (p : baseLanguage.{u}.Relations n) (t : Fin
 /-- **Transport of structures**: the structure of the transport of a realization along a bijection
 of carriers is the structure induced by the bijection. -/
 theorem toStructure_map (e : M ≃ N) :
-    (R.map e).toStructure = @Equiv.inducedStructure baseLanguage.{u} M N R.toStructure e := by
-  refine Structure.ext (funext fun _ ↦ funext fun f ↦ isEmptyElim f) ?_
-  funext k p xs
-  refine propext ⟨fun ⟨h, hp⟩ ↦ ⟨e.symm.injective.comp h, hp⟩, fun ⟨h, hp⟩ ↦ ⟨?_, hp⟩⟩
-  exact (Function.Injective.of_comp_iff e.symm.injective xs).mp h
+    (R.map e).toStructure = @Equiv.inducedStructure baseLanguage.{u} M N R.toStructure e :=
+  structure_ext fun _ _ xs ↦ ⟨fun ⟨h, hp⟩ ↦ ⟨e.symm.injective.comp h, hp⟩,
+    fun ⟨h, hp⟩ ↦ ⟨(Function.Injective.of_comp_iff e.symm.injective xs).mp h, hp⟩⟩
 
 variable {R} {S : Realization.{u, w} ω N}
 
@@ -195,6 +178,15 @@ theorem isSome_toRealization_eval_iff (t : Fin n ↪ M) :
   simp only [toRealization]
   split_ifs with h <;> simp [h]
 
+/-- A tuple has the stage type of a relation in the realization of a structure when the relation
+holds of it and no other relation does. -/
+theorem toRealization_eval_eq_some_of_unique {t : Fin n ↪ M} {p : baseLanguage.{u}.Relations n}
+    (hp : RelMap p ⇑t) (hu : ∀ q : baseLanguage.{u}.Relations n, RelMap q ⇑t → q = p) :
+    (toRealization M).eval t = some (type p) := by
+  have hex : ∃ p, RelMap p ⇑t := ⟨p, hp⟩
+  simp only [toRealization, hex, ↓reduceDIte]
+  exact congrArg (some ∘ type) (hu _ hex.choose_spec)
+
 /-- A tuple is untyped in the realization of a structure exactly when no relation holds of it. -/
 theorem toRealization_eval_eq_none_iff (t : Fin n ↪ M) :
     (toRealization M).eval t = none ↔ ∀ p : baseLanguage.{u}.Relations n, ¬ RelMap p ⇑t := by
@@ -229,9 +221,7 @@ theorem toRealization_eval_eq_some_iff (t : Fin n ↪ M) (p : baseLanguage.{u}.R
   refine ⟨fun hp ↦ ?_, fun hp ↦ ?_⟩
   · obtain ⟨p', hp', h'⟩ := exists_relMap_of_toRealization_eval hp
     rwa [type_injective hp'] at h'
-  · have hex : ∃ p, RelMap p ⇑t := ⟨p, hp⟩
-    simp only [toRealization, hex, ↓reduceDIte]
-    exact congrArg (some ∘ type) (h.unique _ _ _ hex.choose_spec hp)
+  · exact toRealization_eval_eq_some_of_unique hp fun q hq ↦ h.unique _ _ _ hq hp
 
 /-- In a type assignment, a relation holds of a tuple exactly when the tuple is injective and has
 the stage type of the relation in the realization. -/
@@ -245,10 +235,8 @@ end IsTypeAssignment
 /-- **Round trip on structures**: the structure of the realization of a type assignment is the
 type assignment. -/
 theorem toStructure_toRealization (h : IsTypeAssignment M) :
-    (toRealization M).toStructure = ‹baseLanguage.{u}.Structure M› := by
-  refine Structure.ext (funext fun _ ↦ funext fun f ↦ isEmptyElim f) ?_
-  funext k p xs
-  exact propext (h.relMap_iff p xs).symm
+    (toRealization M).toStructure = ‹baseLanguage.{u}.Structure M› :=
+  structure_ext fun _ p xs ↦ (h.relMap_iff p xs).symm
 
 end ToRealization
 
@@ -294,9 +282,8 @@ theorem toRealization_map (h : IsTypeAssignment M) (e : M ≃[baseLanguage.{u}] 
     (relMap_trans_symm_toEmbedding e p t).symm
   refine Option.ext fun q ↦ ⟨fun hq ↦ ?_, fun hq ↦ ?_⟩
   · obtain ⟨p, rfl, hp⟩ := exists_relMap_of_toRealization_eval hq
-    have hex : ∃ p, RelMap p ⇑t := ⟨p, (hrel p).mpr hp⟩
-    simp only [toRealization, hex, ↓reduceDIte]
-    exact congrArg (some ∘ type) (h.unique _ _ _ ((hrel _).mp hex.choose_spec) hp)
+    exact toRealization_eval_eq_some_of_unique ((hrel p).mpr hp) fun q hq ↦
+      h.unique _ _ _ ((hrel q).mp hq) hp
   · obtain ⟨p, rfl, hp⟩ := exists_relMap_of_toRealization_eval hq
     exact (h.toRealization_eval_eq_some_iff t' p).mpr ((hrel p).mp hp)
 

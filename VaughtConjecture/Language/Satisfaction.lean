@@ -3,7 +3,6 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
-import Mathlib.SetTheory.Cardinal.NatCard
 import VaughtConjecture.Language.Sentence
 
 /-!
@@ -40,12 +39,6 @@ up to isomorphism.
 occurrences of every arity (`Realization.IsModel.exists_arity_eq`).  Hence every structure
 satisfying the four-family sentence is infinite (`infinite_of_realize_fourFamilySentence`).
 
-## Placement
-
-`Realization.IsModel.exists_le_arity` and `Realization.IsModel.infinite` belong in
-`VaughtConjecture.Realization.Model`, beside `Realization.IsModel.nonempty_occurrence`; they are on
-the placement list of `VaughtConjecture.Language.Basic`.
-
 ## References
 
 The correspondence between the countable models of the sentence `T` and the countable models of
@@ -60,48 +53,6 @@ namespace VaughtConjecture
 open FirstOrder Language Structure Ordinal StageType baseLanguage
 
 variable {M : Type v} {N : Type w} {n : ℕ}
-
-/-! ### Models are infinite -/
-
-namespace Realization
-
-variable {α : Ordinal.{u}} {R : Realization.{u, v} α M}
-
-/-- A model at a positive stage has an occurrence of every arity: the empty face of any
-occurrence is closed, so the empty tuple is typed, and the dominance clause at `γ = 0` extends
-every occurrence by a new point. -/
-theorem IsModel.exists_arity_eq (hR : R.IsModel) (hα : 0 < α) (k : ℕ) :
-    ∃ x : R.Occurrence, x.arity = k := by
-  induction k with
-  | zero =>
-    obtain ⟨x⟩ := hR.nonempty_occurrence
-    have h := Realization.eval_face hR.isConsistent x (Function.Embedding.ofIsEmpty (α := Fin 0))
-    have hs : (R.eval (Function.Embedding.ofIsEmpty (α := Fin 0))).isSome := by
-      rw [show (Function.Embedding.ofIsEmpty (α := Fin 0)).trans x.tuple
-        = Function.Embedding.ofIsEmpty from by ext i; exact i.elim0] at h
-      rw [h, StageType.isSome_restrictFace_iff]
-      simpa using x.type.isWellFormed.isWellFormed.isPlan.empty_mem
-    obtain ⟨p, hp⟩ := Option.isSome_iff_exists.mp hs
-    exact ⟨⟨0, _, p, hp⟩, rfl⟩
-  | succ k ih =>
-    obtain ⟨x, rfl⟩ := ih
-    obtain ⟨u, -, q, -, hq⟩ := hR.dominance x 0 hα
-    exact ⟨⟨_, u, q, hq⟩, rfl⟩
-
-/-- A model at a positive stage has occurrences of arbitrarily large arity. -/
-theorem IsModel.exists_le_arity (hR : R.IsModel) (hα : 0 < α) (k : ℕ) :
-    ∃ x : R.Occurrence, k ≤ x.arity :=
-  (hR.exists_arity_eq hα k).imp fun _ h ↦ h.ge
-
-/-- **A model at a positive stage is infinite.** -/
-theorem IsModel.infinite (hR : R.IsModel) (hα : 0 < α) : Infinite M := by
-  refine not_finite_iff_infinite.mp fun _ ↦ ?_
-  obtain ⟨x, hx⟩ := hR.exists_le_arity hα (Nat.card M + 1)
-  have h := Finite.card_le_of_embedding x.tuple
-  rw [Nat.card_eq_fintype_card, Fintype.card_fin] at h
-  omega
-
-end Realization
 
 namespace baseLanguage
 

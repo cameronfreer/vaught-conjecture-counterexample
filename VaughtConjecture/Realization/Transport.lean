@@ -17,6 +17,8 @@ contract, item 5.
   (`Realization.map_eval_trans`).  `R.map e` is the unique realization agreeing with `R` along
   `e` (`eq_map_of_eval_trans`).  Transport is functorial (`map_refl`, `map_map`), and it preserves
   and reflects exact consistency and covering (`isConsistent_map_iff`, `isCovering_map_iff`).
+  Occurrences are carried along (`Occurrence.map`), and an occurrence of `R.map e` comes from the
+  occurrence of `R` on the preimage tuple with the same type (`Occurrence.comap`).
 * **Stage reduction.**  At a stage `β` that is zero or a limit, `R.reduce hβ` reduces every
   actual type to stage `β` (`StageType.reduce`) and leaves untyped tuples untyped.  Since stage
   reduction does not change the scheme and commutes with face maps, including definedness
@@ -124,6 +126,22 @@ def Occurrence.map (x : R.Occurrence) : (R.map e).Occurrence where
 
 /-- The type of a transported occurrence is unchanged. -/
 @[simp] theorem Occurrence.map_type (x : R.Occurrence) : (x.map e).type = x.type := rfl
+
+/-- The occurrence of `R` underlying an occurrence of the transport: the preimage tuple with the
+same type. -/
+def Occurrence.comap (e : M ≃ N) (y : (R.map e).Occurrence) : R.Occurrence where
+  arity := y.arity
+  tuple := y.tuple.trans e.symm.toEmbedding
+  type := y.type
+  eval_tuple := y.eval_tuple
+
+/-- The tuple of the underlying occurrence is the preimage tuple. -/
+@[simp] theorem Occurrence.comap_tuple (e : M ≃ N) (y : (R.map e).Occurrence) :
+    (y.comap e).tuple = y.tuple.trans e.symm.toEmbedding := rfl
+
+/-- The type of the underlying occurrence is unchanged. -/
+@[simp] theorem Occurrence.comap_type (e : M ≃ N) (y : (R.map e).Occurrence) :
+    (y.comap e).type = y.type := rfl
 
 end Map
 

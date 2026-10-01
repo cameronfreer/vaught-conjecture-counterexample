@@ -23,6 +23,8 @@ threshold `k` with value `i`, the finite part of `o` is replaced by `i` when it 
   at or above it (`Ordinal.lt_iff_mul_lt_of_dvd`); for `b = ω` this says that at a stage that is
   zero or a limit a band lies either below the stage or at or above it
   (`Ordinal.lt_iff_omega0_mul_div_lt_of_isSuccPrelimit`).
+* Below an ordinal `β` that is zero or a limit, `γ + ω ≤ β` for every `γ < β`
+  (`Ordinal.add_omega0_le_of_isSuccPrelimit`).
 * Visibility replacement stays in the band of its argument
   (`Ordinal.omega0_mul_div_le_visibilityReplace`, `Ordinal.visibilityReplace_lt`), so at a stage
   that is zero or a limit it keeps an ordinal below the stage exactly when it was below
@@ -46,9 +48,10 @@ The extension to labels, fixing the bottom label and the formal top, is
 
 Visibility replacement is specific to this development; it is declared in the root `Ordinal`
 namespace only so that dot notation applies to ordinals.  Only public names containing
-`visibilityReplace`, together with the general statement `Ordinal.lt_iff_mul_lt_of_dvd` and its
-`ω` case, and private helpers, are declared there; a clash with a later Mathlib declaration
-would be reported by the build.
+`visibilityReplace`, together with the general statements `Ordinal.lt_iff_mul_lt_of_dvd` (with
+its `ω` case) and `Ordinal.add_omega0_le_of_isSuccPrelimit`, which are candidates for Mathlib, and
+private helpers, are declared there; a clash with a later Mathlib declaration would be reported by
+the build.
 
 ## References
 
@@ -82,6 +85,15 @@ theorem lt_iff_omega0_mul_div_lt_of_isSuccPrelimit (hα : Order.IsSuccPrelimit �
     (y : Ordinal.{u}) : y < α ↔ ω * (y / ω) < α :=
   lt_iff_mul_lt_of_dvd (isSuccPrelimit_iff_omega0_dvd.mp hα) (mul_div_le y ω)
     (lt_mul_div_add y omega0_ne_zero)
+
+/-- Below an ordinal `β` that is zero or a limit, the interval `[γ, γ + ω)` of any `γ < β` lies
+below `β`. -/
+theorem add_omega0_le_of_isSuccPrelimit {β γ : Ordinal.{u}} (hβ : Order.IsSuccPrelimit β)
+    (hγ : γ < β) : γ + ω ≤ β := by
+  refine le_of_forall_lt fun o ho ↦ ?_
+  obtain ⟨d, hd, hod⟩ := (lt_add_iff_of_isSuccLimit isSuccLimit_omega0).mp ho
+  obtain ⟨k, rfl⟩ := lt_omega0.mp hd
+  exact hod.trans (hβ.add_natCast_lt hγ k)
 
 /-! ### Visibility replacement -/
 
