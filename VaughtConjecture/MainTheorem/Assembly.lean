@@ -104,8 +104,9 @@ is [Kni26, Theorem 11.1.9], and the failure of Vaught's Conjecture in `L_{ω₁,
 [Kni26, Theorem 11.1.10], immediate from it, for R. W. Knight, *A counterexample to Vaught's
 Conjecture using generalised Stone spaces* (draft, 20 February 2026).
 
-Vaught's Conjecture in the form "countably many models or a perfect set of nonisomorphic
-presentations" is stated in the introduction to [Mon, Chapter XII], and a counterexample to
+Vaught's Conjecture in the form that a sentence of `L_{ω₁,ω}` has countably many models up to
+isomorphism or a perfect set of nonisomorphic presentations on `ℕ` is stated in the
+introduction to [Mon, Chapter XII], and a counterexample to
 Vaught's Conjecture is, in [Mon, §XII.1], a scattered sentence of `L_{ω₁,ω}` that is unbounded
 in the sense of [Mon, Definition XII.1], for A. Montalbán, *Computable Structure Theory: Beyond
 the arithmetic* (draft, 22 April 2025).

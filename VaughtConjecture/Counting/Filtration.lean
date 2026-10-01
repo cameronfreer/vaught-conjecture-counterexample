@@ -42,7 +42,8 @@ data: every such domain is empty (`(aleph 1).ord = ω₁` by `Cardinal.ord_aleph
 
 ## References
 
-Minimally unbounded sentences are [Mon, Definition XII.4], and the decreasing unbounded
+Scattered sentences are those of [Mon, §XII.1] (countably many `≡_α`-classes for every
+`α < ω₁`); minimally unbounded sentences are [Mon, Definition XII.4], and the decreasing unbounded
 `≡_β`-classes are in the proof of [Mon, Lemma XII.8], for A. Montalbán, *Computable Structure
 Theory: Beyond the arithmetic* (draft, 22 April 2025).
 -/
