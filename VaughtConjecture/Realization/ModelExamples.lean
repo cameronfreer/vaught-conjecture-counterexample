@@ -7,7 +7,6 @@ import Mathlib.Data.Fin.VecNotation
 import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.IntervalCases
 import VaughtConjecture.Geometry.IntervalPlan
-import VaughtConjecture.Realization.Model
 import VaughtConjecture.Realization.Partial
 
 /-!
