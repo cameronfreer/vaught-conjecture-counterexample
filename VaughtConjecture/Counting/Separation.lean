@@ -159,13 +159,13 @@ variable {X : Type u} {r : X → Ordinal.{0}}
 /-- **Exactly `ℵ₁` classes from a rank on an uncountable type**: the filtration by a rank into the
 countable ordinals with countable fibres has an empty persistent core (`Filtration.core_ofRank`),
 so `Filtration.mk_eq_aleph_one` applies with no hypothesis of Scott separation on the core. -/
-theorem mk_eq_aleph_one_of_rank (hr : ∀ x, r x < ω₁) (hfib : ∀ α, {x | r x = α}.Countable)
-    (hX : ¬ Countable X) : #X = ℵ₁ :=
+theorem mk_eq_aleph_one_of_rank (hr : ∀ x, r x < ω₁)
+    (hfib : ∀ α, α < ω₁ → {x | r x = α}.Countable) (hX : ¬ Countable X) : #X = ℵ₁ :=
   (Filtration.ofRank r hr hfib hX).mk_eq_aleph_one (by simp)
 
 /-- **At most `ℵ₁` classes from a rank** into the countable ordinals with countable fibres. -/
-theorem mk_le_aleph_one_of_rank (hr : ∀ x, r x < ω₁) (hfib : ∀ α, {x | r x = α}.Countable) :
-    #X ≤ ℵ₁ := by
+theorem mk_le_aleph_one_of_rank (hr : ∀ x, r x < ω₁)
+    (hfib : ∀ α, α < ω₁ → {x | r x = α}.Countable) : #X ≤ ℵ₁ := by
   by_cases hX : Countable X
   · exact (mk_le_aleph0_iff.2 hX).trans (aleph0_le_aleph 1)
   · exact (mk_eq_aleph_one_of_rank hr hfib hX).le

@@ -26,8 +26,9 @@ not restated.  The counting theorems are in `VaughtConjecture.Counting.Separatio
 ## The filtration by a rank
 
 A **rank** on `X` is a map `r : X → Ordinal.{0}` into the countable ordinals (`r x < ω₁`) whose
-fibres `{x | r x = α}` are countable.  Its **tails** `{x | η ≤ r x}` form a filtration
-(`Filtration.ofRank`) exactly when `X` is uncountable:
+fibres `{x | r x = α}` over the countable ordinals `α < ω₁` are countable (the form of
+InfinitaryLogic's `InfinitaryLogic.countable_iff_rank_bounded`).  Its **tails** `{x | η ≤ r x}`
+form a filtration (`Filtration.ofRank`) exactly when `X` is uncountable:
 
 * the tail at `0` is everything, the tails decrease, and they are continuous at limits because
   the condition `η ≤ r x` is closed under suprema of `η`; the loss at `η` is the fibre over `η`
@@ -127,18 +128,20 @@ variable {X : Type u} (r : X → Ordinal.{0})
 
 /-- **Small ranks are countable**: for a rank with countable fibres, the classes of rank below a
 countable ordinal form a countable set. -/
-theorem countable_setOf_rank_lt (hfib : ∀ α, {x | r x = α}.Countable) {η : Ordinal.{0}}
-    (hη : η < ω₁) : {x | r x < η}.Countable :=
-  ((InfinitaryLogic.setCountable_Iio_of_lt_omega1 η hη).biUnion fun α _ ↦ hfib α).mono
+theorem countable_setOf_rank_lt (hfib : ∀ α, α < ω₁ → {x | r x = α}.Countable)
+    {η : Ordinal.{0}} (hη : η < ω₁) : {x | r x < η}.Countable :=
+  ((InfinitaryLogic.setCountable_Iio_of_lt_omega1 η hη).biUnion fun α hα ↦
+    hfib α (lt_trans hα hη)).mono
     fun x hx ↦ mem_iUnion₂.2 ⟨r x, hx, rfl⟩
 
 /-- **Cofinal ranks exactly for uncountable classes**: for a rank into the countable ordinals
 with countable fibres, the ranks are unbounded below `ω₁` exactly when `X` is uncountable
 (InfinitaryLogic's `countable_iff_rank_bounded`). -/
-theorem forall_exists_le_rank_iff (hr : ∀ x, r x < ω₁) (hfib : ∀ α, {x | r x = α}.Countable) :
+theorem forall_exists_le_rank_iff (hr : ∀ x, r x < ω₁)
+    (hfib : ∀ α, α < ω₁ → {x | r x = α}.Countable) :
     (∀ β, β < ω₁ → ∃ x, β ≤ r x) ↔ ¬ Countable X := by
   rw [← countable_univ_iff,
-    InfinitaryLogic.countable_iff_rank_bounded r hr fun α _ ↦ (hfib α).to_subtype]
+    InfinitaryLogic.countable_iff_rank_bounded r hr fun α hα ↦ (hfib α hα).to_subtype]
   simp only [mem_univ, forall_const, not_exists, not_and, not_forall, not_lt]
 
 /-- No class lies in every tail of a rank into the countable ordinals: each leaves the tail just
@@ -154,15 +157,15 @@ namespace Filtration
 fibres on an uncountable type, the tails `{x | η ≤ r x}`.  The loss at `η` is the fibre over `η`,
 continuity at limits holds because the tails are defined by a lower bound on the rank, and
 uncountability gives the cofinal nonempty losses (`forall_exists_le_rank_iff`). -/
-def ofRank (hr : ∀ x, r x < ω₁) (hfib : ∀ α, {x | r x = α}.Countable) (hX : ¬ Countable X) :
-    Filtration X where
+def ofRank (hr : ∀ x, r x < ω₁) (hfib : ∀ α, α < ω₁ → {x | r x = α}.Countable)
+    (hX : ¬ Countable X) : Filtration X where
   domain η := {x | η ≤ r x}
   zero := eq_univ_of_forall fun x ↦ (zero_le : (0 : Ordinal) ≤ r x)
   antitone _ _ h _ hx := h.trans hx
   limit l hl _ x hx := by
     by_contra h
     exact (Order.lt_succ (r x)).not_ge (mem_iInter₂.1 hx _ (hl.succ_lt (not_le.1 h)))
-  loss_countable ξ _ := (hfib ξ).mono fun x hx ↦
+  loss_countable ξ hξ := (hfib ξ hξ).mono fun x hx ↦
     (Order.lt_add_one_iff.1 (not_le.1 hx.2)).antisymm hx.1
   cofinal_losses β hβ :=
     have ⟨x, hx⟩ := (forall_exists_le_rank_iff r hr hfib).2 hX β hβ
@@ -170,7 +173,8 @@ def ofRank (hr : ∀ x, r x < ω₁) (hfib : ∀ α, {x | r x = α}.Countable) (
   domain_eq_empty_of_omega_one_le _ h :=
     eq_empty_of_forall_notMem fun x hx ↦ (h.trans hx).not_gt (hr x)
 
-variable {r} {hr : ∀ x, r x < ω₁} {hfib : ∀ α, {x | r x = α}.Countable} {hX : ¬ Countable X}
+variable {r} {hr : ∀ x, r x < ω₁} {hfib : ∀ α, α < ω₁ → {x | r x = α}.Countable}
+  {hX : ¬ Countable X}
 
 /-- The domain of the filtration by a rank at `η` is the tail `{x | η ≤ r x}`. -/
 theorem domain_ofRank (η : Ordinal.{0}) : (ofRank r hr hfib hX).domain η = {x | η ≤ r x} :=
@@ -227,14 +231,12 @@ theorem le_leastLevel_iff (hcover : ∀ x, ∃ α, α < ω₁ ∧ x ∈ Q α) {�
   · exact (leastLevel_le hα hxα).not_gt (hαη.trans_le hη)
   · exact (hx.1.trans_le hα).not_ge (hη.trans' hαη.le)
 
-/-- For a cover by countable sets `Q α` with `α < ω₁`, the fibres of the least level are
-countable: the fibre over `α` lies in `Q α`, and is empty for `α ≥ ω₁`. -/
+/-- For a cover by countable sets `Q α` with `α < ω₁`, the fibres of the least level over the
+countable ordinals are countable: the fibre over `α` lies in `Q α`. -/
 theorem countable_setOf_leastLevel_eq (hQ : ∀ α, α < ω₁ → (Q α).Countable)
-    (hcover : ∀ x, ∃ α, α < ω₁ ∧ x ∈ Q α) (α : Ordinal.{0}) :
-    {x | leastLevel Q x = α}.Countable := by
-  by_cases hα : α < ω₁
-  · exact (hQ α hα).mono fun x hx ↦ hx ▸ (leastLevel_lt_and_mem hcover x).2
-  · exact countable_empty.mono fun x hx ↦ hα (hx ▸ (leastLevel_lt_and_mem hcover x).1)
+    (hcover : ∀ x, ∃ α, α < ω₁ ∧ x ∈ Q α) (α : Ordinal.{0}) (hα : α < ω₁) :
+    {x | leastLevel Q x = α}.Countable :=
+  (hQ α hα).mono fun x hx ↦ hx ▸ (leastLevel_lt_and_mem hcover x).2
 
 namespace Filtration
 
