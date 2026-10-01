@@ -67,7 +67,9 @@ correspondence with models of stage `ω` is `VaughtConjecture.Language.Satisfact
 ## Placement
 
 The formula helpers `BoundedFormulaω.distinct`, `BoundedFormulaω.realize_distinct`, and
-`BoundedFormulaω.realize_alls` hold for an arbitrary language and are candidates for upstreaming.
+`BoundedFormulaω.realize_alls`, and `Structure.ext_of_isRelational` (in
+`VaughtConjecture.Language.Basic`), hold for an arbitrary language (a relational one for the last)
+and are candidates for upstreaming.
 
 ## References
 

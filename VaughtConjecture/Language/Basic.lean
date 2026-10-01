@@ -45,8 +45,7 @@ using generalised Stone spaces* (draft, 20 February 2026).
 universe u
 
 /-- **Extensionality** for structures of a relational language: with no function symbols, two
-structures on the same carrier are equal when the same relations hold of the same tuples.  It
-holds for an arbitrary relational language and is a candidate for upstreaming. -/
+structures on the same carrier are equal when the same relations hold of the same tuples. -/
 theorem FirstOrder.Language.Structure.ext_of_isRelational {L : FirstOrder.Language}
     [L.IsRelational] {M : Type*} {s t : L.Structure M}
     (h : ∀ ⦃n : ℕ⦄ (r : L.Relations n) (xs : Fin n → M),
