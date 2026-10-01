@@ -661,14 +661,17 @@ there is `α < ω₁` such that no pair `(M, N) ∈ A` is back-and-forth equival
 p.1 p.2) : ∃ α < ω₁, ∀ p ∈ A, ¬ CodeBFEquiv α p.1 p.2` (`Descriptive/BFSeparation`), with
 `CodeBFEquiv.monotone`, `exists_uniform_bfSeparation_forall_ge`, and
 `exists_uniform_bfSeparation_of_analyticSets`; levels in `Ordinal.{0}`, no offset; independent of
-López–Escobar. Its three checkpoints were: (1) a coded forced back-and-forth tree whose assignment
+López–Escobar. Its three checkpoints: (1) a coded forced back-and-forth tree whose assignment
 is Borel, whose infinite branches correspond to isomorphisms, and whose rank is bounded below
 through back-and-forth equivalence, with the rank convention stated precisely (no ordinal offset
 assumed); (2) uniform separation from the boundedness of analytic families of well-founded trees;
 (3) two applications: cocountable concentration in one back-and-forth class at every countable level
 excludes a perfect isomorphism antichain, and an invariant relatively Borel subset of a Borel class
 of structures is saturated under some countable back-and-forth level, so that under concentration
-one side is countable in isomorphism classes. Dependency direction: basic topology, analytic coding,
+one side is countable in isomorphism classes. Checkpoints (1) and (2) are at `c65ba61`; the two
+applications of (3) are not: the thinness application is this repository's follow-up to #38 ("The
+full-presentation route"), and the saturation application is the prospective interface of
+invariant Borel observations listed there. Dependency direction: basic topology, analytic coding,
 and well-founded ranks, then analytic tree boundedness, then uniform back-and-forth separation, then
 thinness and invariant-Borel concentration; López–Escobar, invariant separation, and the
 model-theoretic boundedness route are excluded from this path by import and proof-dependency guards.

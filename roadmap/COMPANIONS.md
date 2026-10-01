@@ -28,8 +28,8 @@ limit"), and its entry below is a pointer. The deliberate `sorry` targets of the
 ingredients marked "to be located or added upstream", and the theorems marked "prospective"
 (statements of ComputableModelTheory, neither available upstream nor pinned; `IMPLEMENTATION.md`,
 "Dependency pins") are what is not yet formalized or available. The bounded back-and-forth
-separation interface is available upstream (InfinitaryLogic `c65ba61`), not yet available at our
-pinned dependency. The status covers these statements only, not their non-claims and not further
+separation interface is available upstream, not yet at our pinned dependency (`IMPLEMENTATION.md`,
+"Dependency pins"). The status covers these statements only, not their non-claims and not further
 definability claims (`README.md`, "Status of the optional results").
 
 ## Notation
@@ -196,28 +196,27 @@ A1–A3 taking them as hypotheses is progress on A, not its completion (as in th
 
 ### A separate library milestone: bounded back-and-forth separation
 
-A generic theorem of InfinitaryLogic, available upstream (InfinitaryLogic `c65ba61`), not yet
-available at our pinned dependency (`IMPLEMENTATION.md`, "Upstream building blocks"): for a
-relational language, every analytic set of pairs of structures on `ℕ` containing no isomorphic pair
-is uniformly separated at some countable back-and-forth level (`exists_uniform_bfSeparation`,
+A generic theorem of InfinitaryLogic, available upstream, not yet at our pinned dependency
+(`IMPLEMENTATION.md`, "Upstream building blocks" and "Dependency pins"): for a relational language,
+every analytic set of pairs of structures on `ℕ` containing no isomorphic pair is uniformly
+separated at some countable back-and-forth level (`exists_uniform_bfSeparation`,
 `Descriptive/BFSeparation`). With cocountable back-and-forth concentration (given here by the
 expansion domains, on which classes agree at bounded level) this yields thinness without sentence
 minimality and without López–Escobar. The working thinness route, from countable truth sides, is
 kept; the Gδ/Polish results stay optional; an improvement is described as reduced dependencies, not
 as a smaller trusted kernel. Milestone A does not depend on this interface.
 
-**Scatteredness and minimality.**  Cocountable concentration in one back-and-forth class at every
-level is minimality, and it is more than thinness needs.  Countably many back-and-forth classes
-at every countable level already exclude a perfect antichain (scatteredness), by the same uniform
+**Scatteredness and minimality.** Cocountable concentration in one back-and-forth class at every
+level is minimality, and it is more than thinness needs. Countably many back-and-forth classes at
+every countable level already exclude a perfect antichain (scatteredness), by the same uniform
 separation: a perfect antichain is separated at one level, at which only countably many classes
-occur.  One common class on a cocountable set at every level is a further assertion.  The
-full-presentation route (`README.md`, "Reduction to full presentations") gives the weaker
-hypothesis from countably many level observations, and the stronger one only under a common
-starting observation on every high presentation; its scatteredness composition is to be composed
-from `exists_uniform_bfSeparation` once the repin of pull request #41 merges (`IMPLEMENTATION.md`,
-"The full-presentation route").  The working
-thinness route, from countable truth sides, uses the stronger form, which the expansion domains
-provide.
+occur. One common class on a cocountable set at every level is a further assertion. The
+full-presentation route (`README.md`, "Reduction to full presentations") gives the weaker hypothesis
+from countably many level observations, and the stronger one only under a common starting
+observation on every high presentation; its scatteredness composition is to be composed from
+`exists_uniform_bfSeparation` once it is available at our pinned dependency (`IMPLEMENTATION.md`,
+"The full-presentation route"). The working thinness route, from countable truth sides, uses the
+stronger form, which the expansion domains provide.
 
 ## Milestone B — top-free chart homogeneity and its consequences
 
