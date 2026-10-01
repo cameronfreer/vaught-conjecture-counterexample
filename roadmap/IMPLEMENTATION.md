@@ -196,15 +196,24 @@ and repeated tuples included) is stated only if a use for it is identified.
 
 Density quantifies `∀ root, ∀ donor, ∀ cutoff, ∃ extension` on the fixed donor scheme.  An
 all-finite-extension presentation of receiving (donors with any finite number of new points),
-equivalent to the one-point presentation, is proved first at stage `ω` and at countable stages
-only under the countability and stage hypotheses it needs; it keeps the same quantifier order.
-The many-point form implies the one-point form at once.  The converse proceeds one point at a
-time along a chain of visible faces of the donor's plan at an auxiliary cap: the
-bounded-observation lifting of layer 1 is available at caps self-visible at the target grade, not
-at every permitted cutoff, so the chain is run at a cap self-visible at the donor's arity and
-above the requested cutoff, each step taking a lawful coface of the actual type with the donor's
-observation at that auxiliary cap, and this stronger agreement is maintained through the chain;
-the requested observation at the cutoff is obtained at the end by capping down to it.
+equivalent to the one-point presentation, keeps the same quantifier order.  The many-point form
+implies the one-point form at once.  The converse proceeds one point at a time along a chain of
+visible faces of the donor's plan at an auxiliary cap.  The bounded-observation lifting of layer 1
+is available at caps self-visible at the target grade, not at every permitted cutoff, so for a
+requested cutoff `c` at stage `α` the chain is run at an auxiliary ordinal `c'` chosen strictly
+between the requested cutoff and the stage, `c < c' < α` (a permitted cutoff, so never the formal
+top), self-visible at the donor's arity `k`.  Such a `c'` is given by
+`Label.exists_lt_lt_isSelfVisible (hβ : Order.IsSuccPrelimit β) (ho : o < β) (k : ℕ) :
+∃ c, o < c ∧ c < β ∧ IsSelfVisible k (c : Label)` (`Realization/Families`, namespace `Label`),
+applied with `o := c`, with witness `c' = c + (k + 1)`.  Its hypotheses hold here only because (i) the requested cutoff
+`c` is an ordinal below the stage (it is a permitted cutoff, `isPermittedCutoff_coe`), and (ii)
+the stage is zero or a limit (`Order.IsSuccPrelimit`).  Each step takes a lawful coface of the
+actual type with the donor's observation at `c'`; this stronger agreement at `c'` is preserved
+throughout the finite chain of extensions, after which one passes down to `c` by capping.
+The stage hypothesis (ii) stays in the statement.  At stage zero there are no permitted
+cutoffs, so that case is vacuous; it is not a source of a witness.  No generalization to
+successor stages follows from this argument.  The presentation is stated first at stage `ω` and
+at the stages `λ_ξ` (all limits), under the countability hypotheses the argument needs.
 Different cutoffs may use different points.  Prove both satisfaction directions, the
 realization/structure round trips, isomorphism preservation and reflection, and no finite
 models.  The density sentence is the preferred presentation.  Its equivalence with the
@@ -705,8 +714,8 @@ The development produces the following, and only these, as hypotheses of library
 - **local automorphisms (second interface):** for each relevant self-embedding and finite tuple,
   an automorphism agreeing with the self-embedding on the tuple (`COMPANIONS.md`, B2).
 
-Everything after these two interfaces is an application.  The table has five rows for four facts
-proved here: the first fact is split over two rows, one for each library theorem it feeds.
+Everything after these two interfaces is an application.  The table has five lines for four facts
+proved here: the first fact is split over two lines, one for each library theorem it feeds.
 
 | This development proves | The library supplies (InfinitaryLogic, pull request #141) |
 | --- | --- |
@@ -960,7 +969,8 @@ and not in the module that states it (`README.md`, "Library conventions", **Plac
 module's `## Placement` section gives only its place in the roadmap.  The entries are grouped by
 the module that states the declarations; each names the destination.  The declarations of the
 Layer 2 modules under `Language/` and `Realization/` whose own notes name earlier files move to
-those files directly and are not recorded here.
+those files directly, in the Layer 2 consolidation (pull request #34), and are not recorded here;
+until it lands, their notes stay in those modules.
 
 **Finite geometry and the coatom amalgam (Layer 3, (R6)).**
 
@@ -1029,31 +1039,11 @@ those files directly and are not recorded here.
   `Stage.LegalExamples` (replacing the private `point`, the same stage type at stage `0`); the
   instance `StageType.instSubsingletonZero` to `Stage.Basic`; `Realization.RealizesCofaces` and
   its two consequences to `Realization.Model` and `Language.Density`.
-- `Scheme/Lifting`: `Rows.CappedLift`, `cappedLift_iff_forall_exists`, `cappedLift_refl`,
-  `CappedLift.trans`, and `cappedLift_of_below_eq_empty` to `Scheme.Bountiful`, where
-  `Rows.IsBountiful` is then defined as capped lifting at every pair of graded faces
-  (`isBountiful_iff_cappedLift` becomes its unfolding, `isBountiful_iff_forall_exists` a
-  corollary, and `IsBountiful.cappedLift` its direct application);
-  `IsWellFormed.below_eq_empty` to `Scheme.Cell`; `CappedLift.of_equiv`, `CappedLift.comap`,
-  `CappedLift.of_comap`, and `cappedLift_comap_iff` to `Scheme.Transport`, where
-  `IsBountiful.comap_of_image_eq` follows from `CappedLift.comap`; and
-  `IsLowerEmbedding.belowEquiv_inclusion` beside `IsLowerEmbedding.belowEquiv`.
-- `Scheme/Transport`: `gradedIndex_comap_le_iff`, `mem_gradedFaces_comap`, and
-  `image_val_below_comap` to the `Comap` section of `Scheme.Cell`; `IsLowerEmbedding.symm`,
-  `IsLowerEmbedding.belowEquiv`, `IsLowerEmbedding.coe_belowEquiv`, and
-  `IsLowerEmbedding.isLowerEmbedding_belowEquiv` to the `IsLowerEmbedding` namespace of
-  `Scheme.Cell`; `Rows.comap_comap_symm`, `Rows.isLawful_comap_equiv_iff`, and
-  `Rows.isLawfulBelow_comap_iff` to `Scheme.Row`, beside the reindexing lemmas; and
-  `IsBountiful.comap_of_image_eq`, `IsBountiful.comap`, and `IsBountiful.reindex` to
-  `Scheme.Bountiful`.  After the move, `Scheme.mem_gradedFaces_comap`,
-  `Rows.comap_reindex_comap_symm`, `Rows.isLawful_comap_reindex_iff`, `IsBountiful.restrict`,
-  and `IsLowerEmbedding.reindex_symm` are one-line consequences, to be derived from them or
-  removed.
-- `Stage/Legal`: `StageType.castLE` with `castLE_toScheme`, `castLE_label`, `castLE_refl`,
-  `castLE_castLE`, `reduce_eq_castLE`, and `reduce_castLE` to the stage-reduction section of
-  `Stage.Basic`; `Scheme.cappedLift_comap_iff` to `Stage.Bountiful`, beside
-  `Scheme.isBountiful_comap`; `Scheme.image_cellMap_below` to `Stage.Scheme`, beside
-  `Scheme.map_comap_gradedIndex`.  Only `isLegal_castLE_iff` stays.
+- The other placement notes of the chain construction (in `Scheme/Lifting`, `Scheme/Transport`,
+  and `Stage/Legal`) are not recorded: the library already holds those declarations at their
+  destinations, or no longer has them.  `IsBountiful.comap_of_image_eq`,
+  `IsBountiful.comap`, and `IsBountiful.reindex` stay in `Scheme/Transport`, which has no
+  placement note.
 - Duplicates between the chain construction and the coatom extension construction, to be kept
   once: the zero-point lemmas (`StageType.card_eq_zero`, `StageType.faces_eq_of_zero`,
   `StageType.eq_of_zero`, `StageType.isSome_restrictFace_of_zero`) and the zero-point instance
@@ -1067,11 +1057,14 @@ those files directly and are not recorded here.
 
 - `Language/Sentence`: the formula helpers `BoundedFormulaω.distinct`,
   `BoundedFormulaω.realize_distinct`, and `BoundedFormulaω.realize_alls` hold for an arbitrary
-  language and are candidates for InfinitaryLogic.
-- `MainTheorem/Spectrum`: the statements whose home is InfinitaryLogic (the cross-universe
-  transport of `realize_boundedFormulaω_equiv` and `realize_sentenceω_equiv`,
-  `qrank_lt_omega_one`, `classTruth` with its lemmas, and `exists_mem_modelsOf_equiv`) are
-  recorded, each with its destination module, in `COMPANIONS.md`, A3, **Upstream ingredients**.
+  language, and `Structure.ext_of_isRelational` (added to `Language/Basic` by #34) for a
+  relational one; they are candidates for upstreaming.
+- `MainTheorem/Spectrum`: the statements that belong upstream (the cross-universe transport
+  `realize_boundedFormulaω_equiv` and `realize_sentenceω_equiv`, `qrank_lt_omega_one`,
+  `classTruth` with its lemmas, and `exists_mem_modelsOf_equiv`) are recorded in `COMPANIONS.md`,
+  A3, **Upstream ingredients**: each with its upstream module, except the two `realize_*_equiv`
+  lemmas, which become redundant once `BoundedFormulaω.realize_equiv` and `LomegaEquiv.of_equiv`
+  are generalized across carrier universes.
 
 ## Dependency tracking
 
@@ -1086,9 +1079,9 @@ statements of a module are used at the checkpoints given with its heading.
 - `Label.lt_omega0_sq_of_mem_codedAlphabet`, codes lie below `ω²`: 2.6.
 - `Label.finite_setOf_isStronglyCoded_lt`, finitely many strongly coded labels below a block: 2.3.
 - The coding of the completion, from the module's analysis: the amalgam (a), the inherited rows
-  (b), the apex (c), the other new rows, with values in the coded alphabet of their grade (d),
-  and the finiteness of the catalogue (e): 2.3–2.6.  The apex row is the coded copy of the
-  labels, not a bottom row.
+  (b), the apex, whose row is the coded copy of the labels (its coding is treated with the apex,
+  not by the bottom-row lemma (c)), the other new rows, with values in the coded alphabet of their
+  grade (d), and the finiteness of the catalogue (e): 2.3–2.6.
 - The one lifting step above an input row, which uses the coding of the input (a new entry in a
   block above every value of the row, below `ω²`): 2.4.
 

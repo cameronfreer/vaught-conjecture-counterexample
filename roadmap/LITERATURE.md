@@ -34,7 +34,7 @@ Scott analysis [Sco65] organizes finite-tuple information through ordinal stages
 
 The standard correspondence identifies invariant Borel classes of countable structures with infinitary definability. In the present application, a hypothetical perfect antichain gives two disjoint invariant analytic saturations. An invariant Borel separator becomes a sentence contradicting sentence minimality.
 
-**Application here:** use the usual model-code space and permutation action. The quotient is only a set of classes. No measurable classifying map or Borel structure on that quotient is required. This is a concrete application of the existing bridge, not a new descriptive rank theory.
+**Application here:** use the usual model-code space and permutation action. The quotient is only a set of classes. No measurable classifying map or Borel structure on that quotient is required. This is a concrete application of the existing correspondence, not a new descriptive rank theory.
 
 ## 5. Counting by Scott separation, and Morley counting as an alternative not used
 
