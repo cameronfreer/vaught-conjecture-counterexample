@@ -26,7 +26,8 @@ countable set as soon as there are countably many ordinals below `α`
 * `StageType.countable`: for `α` with `(Set.Iio α).Countable` (equivalently `α < ω₁`,
   `StageType.countable_of_lt_omega_one`), there are countably many stage types on `n` points;
 * `StageType.countable_sigma`: the same holds for the stage types of all finite arities together,
-  the relation symbols of the language at stage `α`.
+  the relation symbols of the language at stage `α`;
+* the ordinals below `ω` form a countable type (`countable_Iio_omega0_coe`).
 
 No bound on the rows other than the coding is used.  The countability of cell schemes is in
 `VaughtConjecture.Scheme.Cell`, and that of the labels in `VaughtConjecture.Label.Basic`.
@@ -78,5 +79,9 @@ theorem countable_sigma (hα : (Set.Iio α).Countable) : Countable (Σ n, StageT
   inferInstance
 
 end StageType
+
+/-- The ordinals below `ω` form a countable type. -/
+instance countable_Iio_omega0_coe : Countable (Set.Iio (ω : Ordinal.{u})) :=
+  (Cardinal.countable_Iio_of_lt_omega_one omega0_lt_omega_one).to_subtype
 
 end VaughtConjecture
