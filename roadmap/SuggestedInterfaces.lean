@@ -11,6 +11,11 @@ import InfinitaryLogic.FiniteSupportClosure
 import InfinitaryLogic.TwoGeneratorCardinality
 import InfinitaryLogic.OrdinalCountability
 import InfinitaryLogic.Scott.OrbitRank
+import InfinitaryLogic.Scott.OrbitFormulaThreshold
+import InfinitaryLogic.Lomega1omega.LocalAutomorphism
+import InfinitaryLogic.ScottProcess.RankComparison
+import InfinitaryLogic.Scott.OrbitRankStabilization
+import Mathlib.ModelTheory.Fraisse
 
 /-! # Selected interfaces for the implementation roadmap
 
@@ -152,6 +157,69 @@ set_option linter.hashCommand false in
 set_option linter.hashCommand false in
 #check FirstOrder.Language.internalScottRank_le_of_orbits_determined
 
+-- InfinitaryLogic at our pinned dependency `cca6949` (signatures checked): the orbit-formula
+-- threshold and rank bound and the preservation of infinitary formulas by maps agreeing locally
+-- with automorphisms, imported through the two narrow modules (never `InfinitaryLogic.All`).
+set_option linter.hashCommand false in
+#check FirstOrder.Language.BoundedFormula.qrank_toLω_lt_omega0
+set_option linter.hashCommand false in
+#check FirstOrder.Language.orbit_determined_of_orbitFormula
+set_option linter.hashCommand false in
+#check FirstOrder.Language.exists_finite_orbit_threshold
+set_option linter.hashCommand false in
+#check FirstOrder.Language.orbitRank_le_lift_qrank_of_orbitFormula
+set_option linter.hashCommand false in
+#check FirstOrder.Language.orbitRank_lt_omega0_of_orbitFormula
+set_option linter.hashCommand false in
+#check FirstOrder.Language.internalScottRank_le_omega0_of_orbitFormulas
+set_option linter.hashCommand false in
+#check FirstOrder.Language.BoundedFormulaω.realize_comp_of_localAutomorphisms
+set_option linter.hashCommand false in
+#check FirstOrder.Language.BoundedFormulaω.realize_embedding_comp_of_localAutomorphisms
+set_option linter.hashCommand false in
+#check FirstOrder.Language.BoundedFormulaω.realize_comp_append_of_localAutomorphisms
+
+-- The rank comparison of the Scott process (InfinitaryLogic's pull request #140, contained in
+-- `cca6949`), through its two modules.
+set_option linter.hashCommand false in
+#check FirstOrder.Language.selfStabilizesCompletely_iff_orbitRank_le
+set_option linter.hashCommand false in
+#check FirstOrder.Language.bfStabilizationOrdinal_self_eq_iSup_orbitRank
+set_option linter.hashCommand false in
+#check InfinitaryLogic.ScottProcess.Semantic.stabilizesAt_of_orbitRank_le
+set_option linter.hashCommand false in
+#check InfinitaryLogic.ScottProcess.Semantic.rank_le_of_orbitRank_le
+set_option linter.hashCommand false in
+#check InfinitaryLogic.ScottProcess.Semantic.lift_rank_le_internalScottRank
+set_option linter.hashCommand false in
+#check InfinitaryLogic.ScottProcess.Semantic.internalScottRank_le_lift_rank_add_one
+
+-- Mathlib's Fraïssé interface, applied by the classical limit of the top-free witnesses
+-- (`README.md`, Layer 0).  The classical existence theorem, representative classes, the
+-- factorization of tuples through the age, orbit isolation, and countable prime structures (all
+-- in ComputableModelTheory) are prospective: neither available upstream nor pinned, and not
+-- checked.
+set_option linter.hashCommand false in
+#check FirstOrder.Language.age
+set_option linter.hashCommand false in
+#check FirstOrder.Language.Hereditary
+set_option linter.hashCommand false in
+#check FirstOrder.Language.JointEmbedding
+set_option linter.hashCommand false in
+#check FirstOrder.Language.Amalgamation
+set_option linter.hashCommand false in
+#check FirstOrder.Language.IsFraisse
+set_option linter.hashCommand false in
+#check FirstOrder.Language.IsUltrahomogeneous
+set_option linter.hashCommand false in
+#check FirstOrder.Language.IsFraisseLimit
+set_option linter.hashCommand false in
+#check FirstOrder.Language.IsUltrahomogeneous.extend_embedding
+set_option linter.hashCommand false in
+#check FirstOrder.Language.IsFraisseLimit.nonempty_equiv
+set_option linter.hashCommand false in
+#check FirstOrder.Language.age.fg_substructure
+
 /- Proposed substantive targets (not declared as axioms or claimed proved here):
 
 FiniteSemantics: construct the concrete ChartSystem and prove countability of charts,
@@ -159,7 +227,18 @@ FiniteSemantics: construct the concrete ChartSystem and prove countability of ch
   target grade (bountifulness, one cap at a time; not the permitted cutoffs of receiving).
 Receiving: exact literal root + one actual occurrence + requested capped/LOW equations on it
   (LOW and `Correct`: defined in Layer 3 of README.md, item 3.3).
-ChainConstruction: finite master + root absorption + supported-invisible permanence + union.
+HullOperations: definable total binary hull operations; generated-substructure closure equals
+  hull closure; finite charts are the finite substructures; embeddings preserved and reflected.
+ClassicalLimit: finite top-free charts as finite structures; hereditary closure, joint embedding,
+  amalgamation with the literal square (before any infinite model); classical existence
+  (prospective); reconstruction meeting SEMANTIC_CONTRACT.md, item 11; consistency, covering,
+  top-freeness from the factorization of tuples; receiving from row 5 and ultrahomogeneity
+  (per cutoff for donors with top); modelhood, infinitude, terminality.  Statement shapes:
+  `Suggested.lean`, section 3.
+ChainConstruction (not used by the main theorem): finite master + root absorption +
+  supported-invisible permanence + union; retained for an effective presentation, conditional on
+  effective input data.  The saturated model of [Kni26, Proposition 4.4.5] is the classical
+  limit of the uncapped age of all legal stage types.
 StableLift: consistency-only uniqueness; consistency/covering lawfulness; cap modelhood.
 Comparison: finite-donor one-sided transfer; rooted BF; singleton terminal conditions.
 Domains: expansion uniqueness + limit existence; terminal losses countable and nonempty.
