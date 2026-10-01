@@ -464,16 +464,23 @@ run_cmd do
 and, in `scripts/check.sh` after the build:
 
 ```sh
-echo "== import guards" # import_guard MODULE PREFIX...: fail if the import closure of the built
-MODULE contains a module # named PREFIX or PREFIX.<components>, for one of the PREFIXes.
-import_guard() { local root=$1; shift mkdir -p .lake/import-guard { echo "import $root"; echo
-"import Lean"; sed -n '/^open Lean in/,$p' scripts/ImportGuard.lean; } \ >
-".lake/import-guard/$root.lean" IMPORT_GUARD_MODULE=$root IMPORT_GUARD_FORBIDDEN="$*" lake env lean
-".lake/import-guard/$root.lean" } # Placeholders: <HullObstruction> is the module of milestone C;
-the prefixes name the modules of # model existence (the classical limit and the chain construction),
-layer 3, 4, and 5. import_guard VaughtConjecture.<HullObstruction> \
-VaughtConjecture.<ClassicalLimit> VaughtConjecture.<ChainConstruction> \
-VaughtConjecture.<Receiving> \ VaughtConjecture.<StructuralContinuation> VaughtConjecture.<Domains>
+echo "== import guards"
+# import_guard MODULE PREFIX...: fail if the import closure of the built MODULE contains a module
+# named PREFIX or PREFIX.<components>, for one of the PREFIXes.
+import_guard() {
+  local root=$1; shift
+  local driver=".lake/import-guard/$root.lean"
+  mkdir -p .lake/import-guard
+  { echo "import $root"; echo "import Lean"
+    sed -n '/^open Lean in/,$p' scripts/ImportGuard.lean; } > "$driver"
+  IMPORT_GUARD_MODULE=$root IMPORT_GUARD_FORBIDDEN="$*" lake env lean "$driver"
+}
+# Placeholders: <HullObstruction> is the module of milestone C; the prefixes name the modules of
+# model existence (the classical limit and the chain construction), layer 3, 4, and 5.
+import_guard VaughtConjecture.<HullObstruction> \
+  VaughtConjecture.<ClassicalLimit> VaughtConjecture.<ChainConstruction> \
+  VaughtConjecture.<Receiving> \
+  VaughtConjecture.<StructuralContinuation> VaughtConjecture.<Domains>
 ```
 
 A prefix matches whole name components: `VaughtConjecture.Receiving` excludes
@@ -515,21 +522,39 @@ These are statements still to be proved.  None is an input to the main theorem.
   persistent core.  Targets: the naturality of greatest refinements under isomorphism, and their
   relationship to the expansion domains (a class lies in `D_ξ` exactly when its height is at
   least `ξ`).  The count of the main theorem does not use them.
-* **Minimal unboundedness.**  `Φ` is minimally unbounded [Mon, Definition XII.4]: by the
-  countable truth sides, for every sentence `ψ` one of `Φ ∧ ψ` and `Φ ∧ ¬ψ` has countably many
+* **Minimal unboundedness.**  `Φ` is minimally unbounded [Mon, Definition XII.4]: it is
+  unbounded, but for every sentence `ψ` one of `Φ ∧ ψ` and `Φ ∧ ¬ψ` is bounded.  The second
+  clause follows from the countable truth sides: one of `Φ ∧ ψ` and `Φ ∧ ¬ψ` has countably many
   countable models up to isomorphism, hence models of bounded Scott rank (countably many
-  countable ordinals are bounded below `ω₁`).  The countable-truth-side minimality of the main
-  theorem is the stronger statement.
-* **The logical filtration and club agreement.**  For a minimally unbounded sentence there is a
-  closed unbounded set `C ⊆ ω₁` such that, for `α ∈ C`, the models of Scott rank at least `α`
-  form exactly one `≡_α`-class [Mon, Lemma XII.8].  Target: the comparison, on such a club, of
-  the canonical logical filtration (the classes of Scott rank at least `η`) with the filtration of
-  the main theorem, the least-level filtration `D_η` of the full-presentation route (`README.md`,
-  "Reduction to full presentations") or the expansion domains; no equality is asserted in
-  advance.  A supporting statement, recorded as a prospective lemma of InfinitaryLogic
-  (`IMPLEMENTATION.md`, "The full-presentation route"): for increasing countable ordinals `α_i`
-  and countable structures `A_i` with `A_i ≡_{α_i+3} A_{i+1}`, there is a countable structure
-  `≡_{α_i}` to every `A_i` [Mon, Lemma XII.6].
+  countable ordinals are bounded below `ω₁`).  Unboundedness is a separate statement: it follows
+  from the main theorem, since a scattered sentence whose models have bounded Scott ranks has
+  only countably many countable models [Mon, §XII.1].  For a scattered sentence such as `Φ`,
+  the countable truth sides and the second clause are equivalent; they differ only for sentences
+  that are not scattered.  Here Scott rank is [Mon]'s parametrized Scott rank [Mon, Definition
+  II.16].
+* **The logical filtration and club agreement.**  For a minimally unbounded sentence (unbounded,
+  with the second clause above) there is a closed unbounded set `C ⊆ ω₁` such that, for
+  `α ∈ C`, the models of Scott rank at least `α` form exactly one `≡_α`-class [Mon, Lemma
+  XII.8], with [Mon]'s `≡_α`, defined by moves of finite tuples [Mon, Definition II.32], and its
+  parametrized Scott rank.  Target: the comparison, on such a club, of the canonical logical
+  filtration (the classes of Scott rank at least `η`) with the filtration of the main theorem, the
+  least-level filtration `D_η` of the full-presentation route (`README.md`, "Reduction to full
+  presentations") or the expansion domains; no equality is asserted in advance.  The comparison
+  is made on a club on which [Mon]'s conventions and the one-point `BFEquiv` of this roadmap
+  agree (`README.md`, "Standard definitions").  A supporting statement, recorded as a
+  prospective lemma of InfinitaryLogic (`IMPLEMENTATION.md`, "The full-presentation route"): for
+  increasing countable ordinals `α_i` and countable structures `A_i` with
+  `A_i ≡_{α_i+3} A_{i+1}`, there is a countable structure `≡_{α_i}` to every `A_i` [Mon, Lemma
+  XII.6], with `≡` the tuple-move relation of [Mon, Definition II.32] (InfinitaryLogic's
+  `BlockBFEquiv`); the offset `+3` belongs to that convention and is not transferred to the
+  one-point `BFEquiv`.
+* **Full trees.**  The introductory example of full rooted well-founded trees of finite
+  sequences (`LITERATURE.md`, §9), with its rank convention explicit: equally ranked countable
+  full well-founded trees are isomorphic; and the finite-extension estimate, that finite
+  ancestor-closed subtrees matched with ranks agreeing after capping at `δ + m` admit, for an
+  extension by `m` vertices added parent before child, a match in a full target with agreement
+  after capping at `δ`.  The same-index equivalence of [AFK26, Proposition 8.6] is not a
+  statement: it is false (`LITERATURE.md`, §9).
 * **No invariant probability measure.**  No probability measure on the model-code space that is
   invariant under the permutations of `ℕ` is concentrated on the codes of models of `Φ`, derived
   from the finite equivariant pair hulls (the hull of two points, preserved by automorphisms and

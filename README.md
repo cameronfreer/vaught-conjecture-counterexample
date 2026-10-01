@@ -21,8 +21,9 @@ The roadmap is organized by shared foundations and the results they support
 these results is the main theorem, by way of a continuous decreasing filtration by expansion
 domains.  A second route to the main theorem counts full presentations (structures full for one
 of countably many prescribed ages at each countable level), compares their base reducts by
-bounded back-and-forth, and needs no separate termination theorem for expansion domains; both
-routes are retained.
+bounded back-and-forth, and whose count needs no separate termination theorem for expansion
+domains (its existence statement is at first proved with the termination arguments); both routes
+are retained.
 
 ## Layout
 

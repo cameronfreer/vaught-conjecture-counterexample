@@ -396,22 +396,64 @@ def ApproxExtension (H : ObservedPresentation O M) (H' : ObservedPresentation O 
       ∃ d : Fin k → N, H'.IsClosed (Fin.append b d) ∧
         H.obs η (Fin.append a c) = H'.obs η (Fin.append b d)
 
-/-- **Approximate comparison** (target).  If two presentations of levels at least `η` satisfy the
-atomic condition at `0` and (AE) in both directions at every level below their levels, then closed
-tuples with equal observations at `η` are back-and-forth equivalent at `η` in the base structures,
-and so is every corresponding selection `s` of their coordinates, repetitions allowed (`m = 0`
-compares the structures).  Intended proof: induction on `η`; at a successor, a closed extension
-containing the requested point, (AE), and the selection of coordinates; at a limit, the
-projections. -/
+/-- **Approximate comparison.**  If two presentations of levels at least `η` satisfy the atomic
+condition at `0` and (AE) in both directions at every level below `η`, then closed tuples with
+equal observations at `η` are back-and-forth equivalent at `η` in the base structures, and so is
+every corresponding selection `s` of their coordinates, repetitions allowed (`m = 0` compares the
+structures).  The proof is by induction on `η`: at a successor, a closed extension containing the
+requested point, (AE), and the selection of coordinates; at a limit, the projections.  The
+library's `SameAtomicType` covers relations and equalities on variables, not terms: for a
+language with function symbols the conclusion is weaker than the usual `≡_η`; the base language
+of the application is relational. -/
 theorem bfEquiv_comp_of_obs_eq (H : ObservedPresentation O M) (H' : ObservedPresentation O N)
-    (hzero : AtomicAtZero L H H')
-    (hae : ∀ ζ, Order.succ ζ ≤ H.level → Order.succ ζ ≤ H'.level →
-      ApproxExtension H H' ζ ∧ ApproxExtension H' H ζ)
-    {η : Ordinal.{0}} (hη : η ≤ H.level) (hη' : η ≤ H'.level)
+    (hzero : AtomicAtZero L H H') {η : Ordinal.{0}}
+    (hae : ∀ ζ, ζ < η → ApproxExtension H H' ζ ∧ ApproxExtension H' H ζ)
+    (hη : η ≤ H.level) (hη' : η ≤ H'.level)
     {n : ℕ} (a : Fin n → M) (b : Fin n → N) (ha : H.IsClosed a) (hb : H'.IsClosed b)
     (hobs : H.obs η a = H'.obs η b) {m : ℕ} (s : Fin m → Fin n) :
     BFEquiv (L := L) η m (a ∘ s) (b ∘ s) := by
-  sorry
+  induction η using Ordinal.limitRecOn generalizing n a b m with
+  | zero =>
+    rw [BFEquiv.zero]
+    have h0 := hzero a b ha hb hobs
+    intro idx
+    rw [AtomicIdx.holds_comp_eq_holds_pushforward, AtomicIdx.holds_comp_eq_holds_pushforward]
+    exact h0 _
+  | add_one ζ ih =>
+    rw [← Order.succ_eq_add_one] at hη hη' hobs hae ⊢
+    have ih := ih (fun ζ' h => hae ζ' (h.trans (Order.lt_succ ζ)))
+    have hζ : ζ ≤ H.level := (Order.le_succ ζ).trans hη
+    have hζ' : ζ ≤ H'.level := (Order.le_succ ζ).trans hη'
+    have hobsζ : H.obs ζ a = H'.obs ζ b := by
+      rw [← H.obs_τ (Order.le_succ ζ) hη a ha, ← H'.obs_τ (Order.le_succ ζ) hη' b hb, hobs]
+    obtain ⟨hforth, hback⟩ := hae ζ (Order.lt_succ ζ)
+    rw [BFEquiv.succ]
+    refine ⟨ih hζ hζ' a b ha hb hobsζ s, fun x => ?_, fun y => ?_⟩
+    · obtain ⟨k, c, j, hc, hj⟩ := H.exists_closed_extension a ha x
+      obtain ⟨d, hd, hcd⟩ := hforth a b ha hb hobs c hc
+      refine ⟨Fin.append b d j, ?_⟩
+      have := ih hζ hζ' (Fin.append a c) (Fin.append b d) hc hd hcd
+        (Fin.snoc (Fin.castAdd k ∘ s) j)
+      rw [Fin.comp_snoc, Fin.comp_snoc, ← Function.comp_assoc, ← Function.comp_assoc,
+        show Fin.append _ _ ∘ Fin.castAdd k = _ from funext (Fin.append_left _ _),
+        show Fin.append _ _ ∘ Fin.castAdd k = _ from funext (Fin.append_left _ _), hj] at this
+      exact this
+    · obtain ⟨k, d, j, hd, hj⟩ := H'.exists_closed_extension b hb y
+      obtain ⟨c, hc, hcd⟩ := hback b a hb ha hobs.symm d hd
+      refine ⟨Fin.append a c j, ?_⟩
+      have := ih hζ hζ' (Fin.append a c) (Fin.append b d) hc hd hcd.symm
+        (Fin.snoc (Fin.castAdd k ∘ s) j)
+      rw [Fin.comp_snoc, Fin.comp_snoc, ← Function.comp_assoc, ← Function.comp_assoc,
+        show Fin.append _ _ ∘ Fin.castAdd k = _ from funext (Fin.append_left _ _),
+        show Fin.append _ _ ∘ Fin.castAdd k = _ from funext (Fin.append_left _ _), hj] at this
+      exact this
+  | limit l hl ih =>
+    rw [BFEquiv.limit l hl]
+    intro β hβ
+    have hobsβ : H.obs β a = H'.obs β b := by
+      rw [← H.obs_τ hβ.le hη a ha, ← H'.obs_τ hβ.le hη' b hb, hobs]
+    exact ih β hβ (fun ζ h => hae ζ (h.trans hβ)) (hβ.le.trans hη) (hβ.le.trans hη')
+      a b ha hb hobsβ s
 
 end FullPresentation
 

@@ -468,60 +468,64 @@ any construction is adapted to it:
 **The nine formal statements, with their homes.**  The generic pieces go to the library where
 their notions live; "this repository" means the layers of `README.md`.
 
-- [ ] 1. *Structured geometry:* cofinal, intersection-closed finite supports, their hulls, and a
-  uniform interpretation of each finite invariant across models.  Home: this repository (the
-  hulls with layer 0, "Finite closure", beside InfinitaryLogic's `FiniteSupportClosure`; the
-  uniform base diagram of a stage type with layer 2).
-- [ ] 2. *Observation syntax:* countable level sets, commuting projections, and their
-  interpretation on finite closed tuples, with separate levels or level-indexed predicates,
-  never a single exclusive partition by full labels.  Home: this repository (the generic shape
-  `LevelObservations` of `Suggested.lean`, section 6; the instance is stage reduction,
-  `StageType.reduce` with `StageType.reduce_reduce`).
-- [ ] 3. *(AE):* the target's actual root kept exactly, the extended diagrams compared only at the
-  lower level, the target's restrictions retained.  Home: the instance (the projected
-  finite-extension rule, one case for each ordered pair of kinds of allowed ages) in this
-  repository; the passage to `BFEquiv` (a graded back-and-forth system) in InfinitaryLogic,
-  `Scott/BackAndForth`.
-- [ ] 4. *Exact comparison* for prescribed pointed or unpointed full ages, reusing standard
-  uniqueness rather than a separate comparison for each terminal case.  Home: fullness and equal
-  ages give extension pairs in both directions, hence an isomorphism: ComputableModelTheory
-  (beside `ExtensionRich` and `isFraisseLimit_of_extensionRich`; Mathlib-only imports), and
-  eventually Mathlib's `ModelTheory/Fraisse`; the relational exact-age comparison for
-  realizations, in this repository (layer 4).
-- [ ] 5. *A countable list of allowed full extension laws at each level, and a full presentation
-  of every base model* (not replaceable by countability of the label alphabet), including the
-  persistent class or the weakening to all but countably many classes.  Home: this repository
-  (layer 4, the terminal classification by exact ages, read in the other direction).
-- [ ] 6. *Noncollapse of the base reducts* (occurrence of all auxiliary invariants is
-  insufficient).  Home: this repository (the top-free witnesses with expansion uniqueness and
-  same-carrier transport, layer 6); the generic isolating-level criterion in sentence form in
-  `Counting/Separation`, and in back-and-forth form in InfinitaryLogic, `Scott`.
-- [ ] 7. *Small back-and-forth quotients and the analytic-pair boundedness argument;* minimality
-  is a further assertion needing a common starting observation on high presentations.  Home:
-  InfinitaryLogic, `Descriptive` (after its pull requests #142 and #143, with one composition
-  lemma).  The minimality form is already covered through sentences by
-  `Sentenceω.isThinOnNatModels_of_countable_sentence_splits`.
-- [ ] 8. *A translation from the templates of [AFK26] to the fixed-row and separate-labelling
-  convention,* stating exactly which coordinates stage reduction changes (the labels, not the
-  rows).  Home: this repository (`README.md`, layer 2, "The templates of [AFK26] and the stage
-  types here").
-- [ ] 9. *A corrected comparison for the introductory example of full trees,* with its rank
-  convention explicit; the same-index equivalence of the draft cannot be a formal statement as
-  written (`LITERATURE.md`, §9).  Home: this repository, among the optional examples
-  (`COMPANIONS.md`, "Further companion results").
+1. *Structured geometry:* cofinal, intersection-closed finite supports, their hulls, and a
+   uniform interpretation of each finite invariant across models.  Home: this repository (the
+   hulls with layer 0, "Finite closure", beside InfinitaryLogic's `FiniteSupportClosure`; the
+   uniform base diagram of a stage type with layer 2).
+2. *Observation syntax:* countable level sets, commuting projections, and their
+   interpretation on finite closed tuples, with separate levels or level-indexed predicates,
+   never a single exclusive partition by full labels.  Home: this repository (the generic shape
+   `LevelObservations` of `Suggested.lean`, section 6; the instance is stage reduction,
+   `StageType.reduce` with `StageType.reduce_reduce`).
+3. *(AE):* the target's actual root kept exactly, the extended diagrams compared only at the
+   lower level, the target's restrictions retained.  Home: the instance in this repository (the
+   projected finite-extension rule, one case for each ordered pair of kinds of allowed ages, or,
+   between presentations reducing to model expansions, finite-cut receiving (R1) of the target,
+   the one-block transfer; `README.md`, "Reduction to full presentations"); the passage to
+   `BFEquiv` (a graded back-and-forth system) in InfinitaryLogic,
+   `Scott/BackAndForth`.
+4. *Exact comparison* for prescribed pointed or unpointed full ages, reusing standard
+   uniqueness rather than a separate comparison for each terminal case.  Home: fullness and equal
+   ages give extension pairs in both directions, hence an isomorphism: ComputableModelTheory
+   (beside `ExtensionRich` and `isFraisseLimit_of_extensionRich`; Mathlib-only imports), and
+   eventually Mathlib's `ModelTheory/Fraisse`; the relational exact-age comparison for
+   realizations, in this repository (layer 4).
+5. *A countable list of allowed full extension laws at each level, and a full presentation
+   of every base model* (not replaceable by countability of the label alphabet), including the
+   persistent class or the weakening to all but countably many classes.  Home: this repository
+   (layer 4, the terminal classification by exact ages, read in the other direction).
+6. *Noncollapse of the base reducts* (occurrence of all auxiliary invariants is
+   insufficient).  Home: this repository (the top-free witnesses with expansion uniqueness and
+   same-carrier transport, layer 6); the generic isolating-level criterion in sentence form in
+   `Counting/Separation`, and in back-and-forth form in InfinitaryLogic, `Scott`.
+7. *Small back-and-forth quotients and the analytic-pair boundedness argument;* minimality
+   is a further assertion needing a common starting observation on high presentations.  Home:
+   InfinitaryLogic, `Descriptive` (after its pull requests #142 and #143, with one composition
+   lemma).  The minimality form is already covered through sentences by
+   `Sentenceω.isThinOnNatModels_of_countable_sentence_splits`.
+8. *A translation from the templates of [AFK26] to the fixed-row and separate-labelling
+   convention,* stating exactly which coordinates stage reduction changes (the labels, not the
+   rows).  Home: this repository (`README.md`, layer 2, "The templates of [AFK26] and the stage
+   types here").
+9. *A corrected comparison for the introductory example of full trees,* with its rank
+   convention explicit; the same-index equivalence of the draft cannot be a formal statement as
+   written (`LITERATURE.md`, §9).  Home: this repository, among the optional examples
+   (`COMPANIONS.md`, "Further companion results", "Full trees").
 
 **Lean statements of the route.**  Pull request #38 ("Layers 5–6: the full-presentation route to
 the main theorem, as a conditional composition", open) states the route as a conditional
 composition beside the expansion-domain composition, which is unchanged:
 
 - `Counting/Filtration`: `Filtration.ofRank` (the tails `{x | η ≤ r x}` of a rank below `ω₁`
-  with countable fibres, on an uncountable type), `leastLevel`, and `Filtration.ofCountableCover`
-  (domain `η` equal to `(⋃ α < η, Q α)ᶜ`); `Counting/Separation`:
+  whose fibres at the levels below `ω₁` are countable,
+  `hfib : ∀ α, α < ω₁ → {x | r x = α}.Countable`, on an uncountable type), `leastLevel`, and
+  `Filtration.ofCountableCover` (domain `η` equal to `(⋃ α < η, Q α)ᶜ`); `Counting/Separation`:
   `mk_le_aleph_one_of_countable_cover`;
 - `MainTheorem/Spectrum`: `IsUniformOnFiltration.of_qrank_le`, the counterpart for a
   `Filtration` of `ExpansionDomains.HasLogicalAgreement.of_qrank_le`;
-- `MainTheorem/Assembly`: the hypotheses `Presented X` (fields `presentedAt`,
-  `countable_presentedAt`, `exists_mem_presentedAt`), `Presented.HasBoundedComparison truth`
+- `MainTheorem/Assembly`: the hypotheses `FullPresentations X` (fields `presentedAt`,
+  `countable_presentedAt`, `exists_mem_presentedAt`, and `presentedAt_eq_empty_of_omega_one_le`,
+  no presentations at the levels at or above `ω₁`), `FullPresentations.HasBoundedComparison truth`
   (bounded comparison in its minimality form: the classes of the tail at `η` agree on every
   sentence of quantifier rank at most `η`), and `UncountablyManyClasses`
   (`ℵ₁ ≤ #DensityClass`), with the conditional theorems
@@ -529,21 +533,22 @@ composition beside the expansion-domain composition, which is unchanged:
   `densitySentence_hasThinAlephOneSpectrum_of_presentations`, and
   `vaughtCounterexample_of_presentations`.
 
-Recorded with it: the count uses only `Presented` (`#X ≤ ℵ₁`), and bounded comparison is used
-only for thinness; the proof term of the main conditional theorem avoids `classTruth_separates`
+Recorded with it: the count uses only `FullPresentations` (`#X ≤ ℵ₁`), and bounded comparison is
+used only for thinness; the proof term of the main conditional theorem avoids `classTruth_separates`
 (Scott separation on the empty core is unused), while thinness still goes through sentence
-separation; `Presented` contains the global claim that every class, a persistent one included,
-has a full presentation (statement 5 above, and `README.md`, "The persistent core"); and the
-weaker form, countably many `≡_η`-classes in each tail, is a composition still to be made, after
+separation; `FullPresentations` contains the global claim that every class, a persistent one
+included, has a full presentation (statement 5 above, and `README.md`, "The persistent core"); and
+the weaker form, countably many `≡_η`-classes in each tail, is a composition still to be made, after
 the scatteredness composition below.
 
 **Prospective interfaces of InfinitaryLogic** (neither available upstream nor pinned; the
 statements are specified here, generically, with no construction):
 
 - *graded back-and-forth systems* (`Scott/BackAndForth`): ordinal-indexed relations `R η` on
-  pairs of tuples with `R 0` contained in sameness of atomic type, forth and back from `R (succ η)`
-  into `R η` on one-point extensions, and `R λ` contained in `R η` below a limit `λ`, give
-  `BFEquiv η`; optionally a block form, adding finitely many points at a step;
+  pairs of tuples with `R 0` contained in sameness of atomic type, `R (succ η)` contained in
+  `R η`, forth and back from `R (succ η)` into `R η` on one-point extensions, and `R λ` contained
+  in `R η` below a limit `λ`, give `BFEquiv η`; optionally a block form, adding finitely many
+  points at a step;
 - *ranks with countable fibres* (`OrdinalCountability`, beside `countable_iff_rank_bounded`): for
   `r : X → Ordinal` below `ω₁` with countable fibres, the tails `{x | η ≤ r x}` start at the whole
   type, decrease, are continuous at limits, have countable complements and the fibre at `η` as
@@ -559,11 +564,14 @@ statements are specified here, generically, with no construction):
   structures has a level `γ < ω₁` at which empty-tuple `BFEquiv γ` implies isomorphism (from
   `stabilizationOrdinal_lt_omega1'`, `stabilizationOrdinal_spec`, and
   `BFEquiv_stabilization_implies_equiv`, with the supremum of countably many countable ordinals);
-  hence, if every level has two nonisomorphic `BFEquiv`-related members, the set is uncountable;
-- *limits of chains of bounded equivalence* (`Scott`): for increasing countable ordinals `α_i` and
-  countable structures `A_i` with `A_i ≡_{α_i+3} A_{i+1}`, a countable structure `≡_{α_i}` to
-  every `A_i` [Mon, Lemma XII.6], for the club agreement of `COMPANIONS.md`, "Further companion
-  results".
+  hence, if every level has two nonisomorphic `BFEquiv`-related members, the set has uncountably
+  many isomorphism types;
+- *limits of chains of bounded equivalence* (`Scott/BlockBackAndForth`): for increasing countable
+  ordinals `α_i` and countable structures `A_i` with `BlockBFEquiv (α_i + 3)` between `A_i` and
+  `A_{i+1}` (empty tuples), a countable structure `BlockBFEquiv α_i`-equivalent to every `A_i`
+  [Mon, Lemma XII.6]; the relation is the tuple-move relation of [Mon, Definition II.32], and the
+  offset `+3` belongs to that convention, not to the one-point `BFEquiv`; for the club agreement
+  of `COMPANIONS.md`, "Further companion results".
 
 ## Upstream building blocks
 
