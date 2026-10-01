@@ -256,17 +256,22 @@ lemma `chartJointEmbedding_of_chartAmalgamation` are in `Suggested.lean`.
 **Statement.**  (Homogeneity) if `t` and `t'` are actual charts of the same type in `M`, some
 automorphism `e` of `M` satisfies `e ∘ t = t'`.  (Local automorphisms) every self-embedding `f`
 of `M` agrees with an automorphism on each finite tuple `a`: some automorphism `e` has
-`e ∘ a = f ∘ a`.  Consequently every self-embedding preserves every `L_{ω₁,ω}` formula:
-`M ⊨ φ(a) ↔ M ⊨ φ(f ∘ a)`.
+`e ∘ a = f ∘ a`.  Consequently every self-embedding preserves every `L_{ω₁,ω}` formula in finitely
+many free variables: `M ⊨ φ(a) ↔ M ⊨ φ(f ∘ a)` for every finite tuple `a`.
 
 **Hypotheses.**  The setting above (countability is used by the back-and-forth construction, which
 is construction-specific).  The development proves homogeneity and the local agreement property (the
-second interface); the consequence is an application of InfinitaryLogic's
-`BoundedFormulaω.realize_embedding_comp_of_localAutomorphisms` (and, with finitely many parameters,
-`BoundedFormulaω.realize_comp_append_of_localAutomorphisms`), available upstream (merged in
-InfinitaryLogic at `cca6949`), not yet available at our pinned dependency: applied here once the
-manifest records that pin and the signatures are checked against it.  Its hypotheses: any language,
-no relationality, countability, infinitude, or nonemptiness, and injectivity of the map a
+second interface).  Local agreement follows from literal recovery, covering, and homogeneity: cover
+`a` by an actual chart `u` of type `p` with `u ∘ ι = a`; `f ∘ u` satisfies `P_p`, so by literal
+recovery it is an actual chart of type `p`; homogeneity gives an automorphism `e` with `e ∘ u = f ∘
+u`, hence `e ∘ a = f ∘ a`.  Only the preservation of the chart relations by `f` is used, and the
+automorphisms are those of the `L_λ`-structure.  Sketch: `AgreesLocally` and `agreesLocally_of_hom`
+(proved, for any map preserving the chart relations).  The consequence is an application of
+InfinitaryLogic's `BoundedFormulaω.realize_embedding_comp_of_localAutomorphisms` (and, with finitely
+many parameters, `BoundedFormulaω.realize_comp_append_of_localAutomorphisms`), available upstream
+(merged in InfinitaryLogic at `cca6949`), not yet available at our pinned dependency: applied here
+once the manifest records that pin and the signatures are checked against it.  Its hypotheses: any
+language, no relationality, countability, infinitude, or nonemptiness, and injectivity of the map a
 consequence of its hypothesis.  It is not reproved here.
 
 **Upstream ingredients.**  `PotentialIso.ofExtensionFamily` (`Karp/PotentialIso`) for the family

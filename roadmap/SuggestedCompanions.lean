@@ -255,6 +255,37 @@ theorem orbitDefinedBy_chartOrbitFormula {eval : {n : ℕ} → (Fin n ↪ M) →
     · exact (e.map_rel (rel p) ⇑u).2 hpu
     · rw [← hu]; rfl
 
+/-- **Covering** of arbitrary tuples (as in `Suggested.lean`, section 3): every tuple, the empty
+tuple and repeated coordinates included, factors literally through an actual occurrence. -/
+def CoversTuples (eval : {n : ℕ} → (Fin n ↪ M) → Option (Chart n)) : Prop :=
+  ∀ {n : ℕ} (a : Fin n → M), ∃ (m : ℕ) (u : Fin m ↪ M) (b : Fin n → Fin m) (p : Chart m),
+    ⇑u ∘ b = a ∧ eval u = some p
+
+/-- The **local agreement property** of a self-map `f`: on each finite tuple it agrees with an
+automorphism.  For `f` a self-embedding this is the hypothesis of InfinitaryLogic's
+`BoundedFormulaω.realize_embedding_comp_of_localAutomorphisms` (available upstream at
+`cca6949`, not `#check`ed here). -/
+def AgreesLocally (f : M → M) : Prop :=
+  ∀ (n : ℕ) (a : Fin n → M), ∃ e : M ≃[L] M, ⇑e ∘ a = f ∘ a
+
+/-- **Local agreement from recovery, covering, and homogeneity** (B2).  Cover `a` by an actual
+chart `u`; a map preserving the chart relations carries `u` to a tuple satisfying the same chart
+relation, which by literal recovery is an actual occurrence of the same chart; homogeneity gives
+an automorphism agreeing with the map on `u`, hence on `a`.  Only the preservation of the chart
+relations is used: any homomorphism, in particular any self-embedding. -/
+theorem agreesLocally_of_hom {eval : {n : ℕ} → (Fin n ↪ M) → Option (Chart n)}
+    (hrec : RecoversRelations rel eval) (hcov : CoversTuples eval)
+    (hhom : ∀ {m : ℕ} (u v : Fin m ↪ M) (p : Chart m), eval u = some p → eval v = some p →
+      ∃ e : M ≃[L] M, ⇑e ∘ ⇑u = ⇑v)
+    (g : M →[L] M) : AgreesLocally (L := L) ⇑g := by
+  intro n a
+  obtain ⟨m, u, b, p, hu, hp⟩ := hcov a
+  have hrel : RelMap (rel p) (⇑g ∘ ⇑u) := g.map_rel (rel p) ⇑u ((hrec u p).2 ⟨u, rfl, hp⟩)
+  obtain ⟨v, hv, hvp⟩ := (hrec _ p).1 hrel
+  obtain ⟨e, he⟩ := hhom u v p hp hvp
+  refine ⟨e, ?_⟩
+  rw [← hu, ← Function.comp_assoc, he, hv, Function.comp_assoc]
+
 end ChartOrbitFormula
 
 variable [Nonempty M]

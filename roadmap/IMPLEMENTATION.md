@@ -394,17 +394,17 @@ age and not recognized afterwards in a model constructed otherwise.
 ComputableModelTheory (prospective), layers 0–2, and the finite kernel (layer 1, the coatom
 extension construction with rows 5 and 6, and the cap-to-model theorem).  Steps 1–7 import no
 `Construction/` module; the classical part, steps 3–5, imports no module of rows 1–4, of structural
-continuation, or of the expansion domains; steps 6 and 7 add only row 5, the cap-to-model theorem, and the reduction of
-models.  The upstream theorems import no module of this repository.  The chain construction
-(`Construction/`, the chain unions of partial realizations, and the conditional chain construction
-of models) is needed neither for top-free existence nor for saturated existence: the saturated model
-of [Kni26, Proposition 4.4.5] is the classical limit of the uncapped age of all legal stage types
-(hereditary, amalgamating by the plain form of the coatom extension property, countably many
-isomorphism types).  No checkpoint of the main theorem depends on the chain construction.  It is
-retained for an effective presentation only, conditional on effective input data (an effective
-enumeration of the age and an effective amalgamation procedure; the classical Fraïssé construction
-uses choice and supplies no computable presentation).  The partial-realization statements of the
-conditional chain development (`StageType.chartRealization`,
+continuation, or of the expansion domains; steps 6 and 7 add only row 5, the cap-to-model theorem,
+and the reduction of models.  The upstream theorems import no module of this repository.  The chain
+construction (`Construction/`, the chain unions of partial realizations, and the conditional chain
+construction of models) is needed neither for top-free existence nor for saturated existence: the
+saturated model of [Kni26, Proposition 4.4.5] is the classical limit of the uncapped age of all
+legal stage types (hereditary, amalgamating by the plain form of the coatom extension property,
+countably many isomorphism types).  No checkpoint of the main theorem depends on the chain
+construction.  It is retained for an effective presentation only, conditional on effective input
+data (an effective enumeration of the age and an effective amalgamation procedure; the classical
+Fraïssé construction uses choice and supplies no computable presentation).  The partial-realization
+statements of the conditional chain development (`StageType.chartRealization`,
 `StageType.isConsistent_chartRealization`, `StageType.chartRealization_eval_eq_none_iff`, in
 `Construction/PartialRealization.lean`, not yet in the library) are to be reused in steps 1, 4, and
 5 from a module outside `Construction/`, so that the boundary above holds; the chain-union
@@ -562,15 +562,16 @@ The development produces the following, and only these, as hypotheses of library
 - **local automorphisms (second interface):** for each relevant self-embedding and finite tuple,
   an automorphism agreeing with the self-embedding on the tuple (`COMPANIONS.md`, B2).
 
-Everything after these two interfaces is an application:
+Everything after these two interfaces is an application.  The table has five rows for four facts
+proved here: the first fact is split over two rows, one for each library theorem it feeds.
 
 | This development proves | The library supplies (InfinitaryLogic, pull request #141) |
 | --- | --- |
 | The containing-chart formula defines the tuple's orbit | `exists_finite_orbit_threshold` |
 | (the same) | `orbitRank_lt_omega0_of_orbitFormula` |
 | Every tuple has such an orbit formula | `internalScottRank_le_omega0_of_orbitFormulas` |
-| Local agreement of a self-embedding | `realize_embedding_comp_of_localAutomorphisms` |
-| The same local agreement, with finite parameters | `realize_comp_append_of_localAutomorphisms` |
+| Local agreement | `BoundedFormulaω.realize_embedding_comp_of_localAutomorphisms` |
+| Local agreement, finite parameters | `BoundedFormulaω.realize_comp_append_of_localAutomorphisms` |
 
 These are available upstream (merged in InfinitaryLogic at `cca6949`), not yet available at our
 pinned dependency: applied here once the manifest records that pin and the signatures are checked
