@@ -504,9 +504,10 @@ their notions live; "this repository" means the layers of `README.md`.
    `Counting/Separation`, and in back-and-forth form in InfinitaryLogic, `Scott`.
 7. *Small back-and-forth quotients and the analytic-pair boundedness argument;* minimality
    is a further assertion needing a common starting observation on high presentations.  Home:
-   InfinitaryLogic, `Descriptive` (after its pull requests #142 and #143, with one composition
-   lemma).  The minimality form is already covered through sentences by
-   `Sentenceω.isThinOnNatModels_of_countable_sentence_splits`.
+   InfinitaryLogic, `Descriptive/BFSeparation` (`exists_uniform_bfSeparation`, available upstream at
+   `c65ba61`, not yet available at our pinned dependency), with the composition in this repository
+   after the repin of pull request #41 (the follow-up to #38 below).  The minimality form is
+   already covered through sentences by `Sentenceω.isThinOnNatModels_of_countable_sentence_splits`.
 8. *A translation from the templates of [AFK26] to the fixed-row and separate-labelling
    convention,* stating exactly which coordinates stage reduction changes (the labels, not the
    rows).  Home: this repository (`README.md`, layer 2, "The templates of [AFK26] and the stage
@@ -542,8 +543,18 @@ used only for thinness; the proof term of the main conditional theorem avoids `c
 (Scott separation on the empty core is unused), while thinness still goes through sentence
 separation; `FullPresentations` contains the global claim that every class, a persistent one
 included, has a full presentation (statement 5 above, and `README.md`, "The persistent core"); and
-the weaker form, countably many `≡_η`-classes in each tail, is a composition still to be made, after
-the scatteredness composition below.
+the weaker form, countably many `≡_η`-classes in each tail, is a composition still to be made
+(the follow-up below).
+
+**The follow-up to #38: the scatteredness form.**  The thinness composition in scatteredness form
+(countably many `≡_η`-classes at each level `η < ω₁` exclude a perfect antichain, with no sentence
+definability of the class) is now a Lean statement to be composed from
+`exists_uniform_bfSeparation` (InfinitaryLogic's pull requests #142–#144) once this repository's
+pull request #41, the repin to `c65ba61`, merges: the pairs of distinct points of a hypothetical
+perfect antichain form an analytic set with no isomorphic pair, so one level `η` separates them,
+and only countably many classes occur at `η`.  It replaces the minimality form
+`FullPresentations.HasBoundedComparison` in the second conditional composition by the weaker
+hypothesis of the fundamental theorem.
 
 **Prospective interfaces of InfinitaryLogic** (neither available upstream nor pinned; the
 statements are specified here, generically, with no construction):
@@ -558,12 +569,10 @@ statements are specified here, generically, with no construction):
   type, decrease, are continuous at limits, have countable complements and the fibre at `η` as
   loss, have empty intersection, give `#X ≤ ℵ₁`, and have cofinally many nonempty losses exactly
   when `X` is uncountable; with the form for a countable cover by sets indexed by levels;
-- *the scatteredness composition* (`Descriptive`, after InfinitaryLogic's open pull requests #142,
-  analytic families of well-founded trees have bounded height, and #143, the coded forced
-  back-and-forth tree): if at every `η < ω₁` only countably many `η`-classes occur, there is no
-  perfect antichain, with no sentence definability of the class assumed; one cocountable class at
-  every level (minimality) is a corollary.  It generalizes application (1) of the bounded
-  back-and-forth separation interface under "Upstream building blocks";
+- *invariant Borel observations* (`Descriptive`): an isomorphism-invariant Borel map on codes of
+  models on `ℕ`, into a countably separated space, is constant on the `BFEquiv α`-classes for
+  some `α < ω₁`; measurability is on codes only, never on the class quotient, and no sentence is
+  recovered;
 - *the isolating-level lower bound* (`Scott/RefinementCount`): a countable set of countable
   structures has a level `γ < ω₁` at which empty-tuple `BFEquiv γ` implies isomorphism (from
   `stabilizationOrdinal_lt_omega1'`, `stabilizationOrdinal_spec`, and
@@ -643,27 +652,32 @@ countability or nonemptiness); `BoundedFormulaω.realize_comp_of_localAutomorphi
 `BoundedFormulaω.realize_comp_append_of_localAutomorphisms` (`Lomega1omega/LocalAutomorphism`,
 any language and carrier).
 
-**An intended generic interface of InfinitaryLogic (prospective: neither available upstream nor
-pinned; a statement still to be proved upstream, a separate library milestone).**  Statement: for a
-countable relational language, every analytic set `A` of pairs of structures on `ℕ` containing no
-isomorphic pair is uniformly separated at some countable back-and-forth level: there is `α < ω₁`
-such that no pair `(M, N) ∈ A` is back-and-forth equivalent at level `α`.  Three checkpoints: (1) a
-coded forced back-and-forth tree whose assignment is Borel, whose infinite branches correspond to
-isomorphisms, and whose rank is bounded below through back-and-forth equivalence, with the rank
-convention stated precisely (no ordinal offset assumed); (2) uniform separation from the boundedness
-of analytic families of well-founded trees; (3) two applications: cocountable concentration in one
-back-and-forth class at every countable level excludes a perfect isomorphism antichain, and an
-invariant relatively Borel subset of a Borel class of structures is saturated under some countable
-back-and-forth level, so that under concentration one side is countable in isomorphism
-classes.  Dependency direction: basic topology, analytic coding, and well-founded ranks, then
-analytic tree boundedness, then uniform back-and-forth separation, then thinness and invariant-Borel
-concentration; López–Escobar, invariant separation, and the model-theoretic boundedness route are
-excluded from this path by import and proof-dependency guards.  Combined with the cocountable
-concentration of the expansion domains (classes in `D_η` agree at back-and-forth level `η`), it
-would give thinness without sentence minimality and without López–Escobar.  It does not replace the
-working thinness route (`Sentenceω.isThinOnNatModels_of_countable_sentence_splits`, from countable
-truth sides), the Gδ/Polish model-code results stay optional, and any improvement it brings is
-described as reduced dependencies of the thinness proof, not as a smaller trusted kernel.
+**A generic interface of InfinitaryLogic (available upstream (InfinitaryLogic `c65ba61`), not yet
+available at our pinned dependency; its pull requests #142, #143, and #144).** Statement: for a
+relational language (no countability of its symbols), every analytic set `A` of pairs of structures
+on `ℕ` containing no isomorphic pair is uniformly separated at some countable back-and-forth level:
+there is `α < ω₁` such that no pair `(M, N) ∈ A` is back-and-forth equivalent at level `α`; in Lean,
+`exists_uniform_bfSeparation (hA : AnalyticSet A) (hA_noniso : ∀ p ∈ A, ¬ (structureIsoSetoid L).r
+p.1 p.2) : ∃ α < ω₁, ∀ p ∈ A, ¬ CodeBFEquiv α p.1 p.2` (`Descriptive/BFSeparation`), with
+`CodeBFEquiv.monotone`, `exists_uniform_bfSeparation_forall_ge`, and
+`exists_uniform_bfSeparation_of_analyticSets`; levels in `Ordinal.{0}`, no offset; independent of
+López–Escobar. Its three checkpoints were: (1) a coded forced back-and-forth tree whose assignment
+is Borel, whose infinite branches correspond to isomorphisms, and whose rank is bounded below
+through back-and-forth equivalence, with the rank convention stated precisely (no ordinal offset
+assumed); (2) uniform separation from the boundedness of analytic families of well-founded trees;
+(3) two applications: cocountable concentration in one back-and-forth class at every countable level
+excludes a perfect isomorphism antichain, and an invariant relatively Borel subset of a Borel class
+of structures is saturated under some countable back-and-forth level, so that under concentration
+one side is countable in isomorphism classes. Dependency direction: basic topology, analytic coding,
+and well-founded ranks, then analytic tree boundedness, then uniform back-and-forth separation, then
+thinness and invariant-Borel concentration; López–Escobar, invariant separation, and the
+model-theoretic boundedness route are excluded from this path by import and proof-dependency guards.
+Combined with the cocountable concentration of the expansion domains (classes in `D_η` agree at
+back-and-forth level `η`), it would give thinness without sentence minimality and without
+López–Escobar. It does not replace the working thinness route
+(`Sentenceω.isThinOnNatModels_of_countable_sentence_splits`, from countable truth sides), the
+Gδ/Polish model-code results stay optional, and any improvement it brings is described as reduced
+dependencies of the thinness proof, not as a smaller trusted kernel.
 
 `SuggestedInterfaces.lean` checks representative names, so a pin bump that removes one fails
 when the sketch is checked (the checks are run by CI).  Coding a `Type w` carrier on `ℕ` needs a
@@ -698,16 +712,22 @@ The pins, recorded in `lakefile.toml` and `lake-manifest.json`, and the intended
   must be built against the InfinitaryLogic revision pinned here, and the toolchain check of
   `scripts/check.sh` extends to ComputableModelTheory.
 
+**Available upstream (InfinitaryLogic `c65ba61`), not yet available at our pinned dependency:** the
+bounded back-and-forth separation interface (InfinitaryLogic's pull requests #142, #143, and #144)
+and the ordinal-indexed `Σ^in_α`/`Π^in_α` hierarchy (#145, `Lomega1omega/InHierarchy`).  The
+intended move is this repository's pull request #41 (open), the repin of InfinitaryLogic to
+`c65ba61`; until it merges these are named in prose only, never `#check`ed in the sketches.
+
 **Prospective dependencies (neither available upstream nor pinned):** the classical existence
 theorem, the factorization of tuples through the age, and orbit isolation and countable prime
 structures (ComputableModelTheory, where #38 and #39 are open).  No statement of this roadmap relies
 on any of them as pinned until this subsection records a pin containing it.  The statements of
 InfinitaryLogic's pull requests #140 and #141 are not in this list: they are available at our
-pinned dependency `cca6949` (signatures checked).  The bounded back-and-forth separation interface
-of "Upstream building blocks" is also prospective, and so are the five InfinitaryLogic interfaces
-listed under "The full-presentation route" (graded back-and-forth systems, ranks with countable
-fibres, the scatteredness composition, the isolating-level lower bound, and limits of chains of
-bounded equivalence).
+pinned dependency `cca6949` (signatures checked).  Prospective too are the InfinitaryLogic
+statements listed under "The full-presentation route" (graded back-and-forth systems, ranks with
+countable fibres, invariant Borel observations, the isolating-level lower bound, and limits of
+chains of bounded equivalence) and Montalbán's explicit Scott sentence from a family of orbit
+formulas (InfinitaryLogic's open pull request #147).
 
 Until then, the prospective statements are named in prose only (`README.md`, Layer 0), never
 `#check`ed in the sketches.

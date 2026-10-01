@@ -19,18 +19,18 @@ not yet proved for the construction is progress on a target, not its completion.
 of `README.md` ("Library conventions") apply, including the terminology table and the keep-list.
 The literature these milestones rely on is recorded in `LITERATURE.md`, §7.
 
-**Status.**  The targets A1, A2, A3, B2, and B3 are established results: their proofs are known, and
-are the arguments given with each below.  They remain formalization targets here.  C, in its
-two-point form, is a statement still to be proved here, with its argument given below.  B1, the
-joint embedding and amalgamation of top-free charts, is part of the core: it is step 2 of the
-construction of the top-free witnesses (`README.md`, section "The top-free witnesses: the finite age
-and its classical limit"), and its entry below is a pointer.  The deliberate `sorry` targets of the
-sketch, the ingredients marked "to be located or added upstream", and the theorems marked
-"prospective" (statements of ComputableModelTheory, and the bounded back-and-forth separation
-interface, neither available upstream nor pinned; `IMPLEMENTATION.md`, "Dependency pins") are what
-is not yet formalized or available.  The status
-covers these statements only, not their non-claims and not further definability claims (`README.md`,
-"Status of the optional results").
+**Status.** The targets A1, A2, A3, B2, and B3 are established results: their proofs are known, and
+are the arguments given with each below. They remain formalization targets here. C, in its two-point
+form, is a statement still to be proved here, with its argument given below. B1, the joint embedding
+and amalgamation of top-free charts, is part of the core: it is step 2 of the construction of the
+top-free witnesses (`README.md`, section "The top-free witnesses: the finite age and its classical
+limit"), and its entry below is a pointer. The deliberate `sorry` targets of the sketch, the
+ingredients marked "to be located or added upstream", and the theorems marked "prospective"
+(statements of ComputableModelTheory, neither available upstream nor pinned; `IMPLEMENTATION.md`,
+"Dependency pins") are what is not yet formalized or available. The bounded back-and-forth
+separation interface is available upstream (InfinitaryLogic `c65ba61`), not yet available at our
+pinned dependency. The status covers these statements only, not their non-claims and not further
+definability claims (`README.md`, "Status of the optional results").
 
 ## Notation
 
@@ -196,15 +196,15 @@ A1–A3 taking them as hypotheses is progress on A, not its completion (as in th
 
 ### A separate library milestone: bounded back-and-forth separation
 
-An intended generic interface of InfinitaryLogic, prospective (neither available upstream nor
-pinned), a statement still to be proved upstream (`IMPLEMENTATION.md`, "Upstream building blocks",
-with its three checkpoints and dependency direction): for a countable relational language, every
-analytic set of pairs of structures on `ℕ` containing no isomorphic pair is uniformly separated at
-some countable back-and-forth level.  With cocountable back-and-forth concentration (given here by
-the expansion domains, on which classes agree at bounded level) this yields thinness without
-sentence minimality and without López–Escobar.  The working thinness route, from countable truth
-sides, is kept; the Gδ/Polish results stay optional; an improvement is described as reduced
-dependencies, not as a smaller trusted kernel.  Milestone A does not depend on this interface.
+A generic theorem of InfinitaryLogic, available upstream (InfinitaryLogic `c65ba61`), not yet
+available at our pinned dependency (`IMPLEMENTATION.md`, "Upstream building blocks"): for a
+relational language, every analytic set of pairs of structures on `ℕ` containing no isomorphic pair
+is uniformly separated at some countable back-and-forth level (`exists_uniform_bfSeparation`,
+`Descriptive/BFSeparation`). With cocountable back-and-forth concentration (given here by the
+expansion domains, on which classes agree at bounded level) this yields thinness without sentence
+minimality and without López–Escobar. The working thinness route, from countable truth sides, is
+kept; the Gδ/Polish results stay optional; an improvement is described as reduced dependencies, not
+as a smaller trusted kernel. Milestone A does not depend on this interface.
 
 **Scatteredness and minimality.**  Cocountable concentration in one back-and-forth class at every
 level is minimality, and it is more than thinness needs.  Countably many back-and-forth classes
@@ -213,8 +213,9 @@ separation: a perfect antichain is separated at one level, at which only countab
 occur.  One common class on a cocountable set at every level is a further assertion.  The
 full-presentation route (`README.md`, "Reduction to full presentations") gives the weaker
 hypothesis from countably many level observations, and the stronger one only under a common
-starting observation on every high presentation; its scatteredness composition is a prospective
-interface of InfinitaryLogic (`IMPLEMENTATION.md`, "The full-presentation route").  The working
+starting observation on every high presentation; its scatteredness composition is to be composed
+from `exists_uniform_bfSeparation` once the repin of pull request #41 merges (`IMPLEMENTATION.md`,
+"The full-presentation route").  The working
 thinness route, from countable truth sides, uses the stronger form, which the expansion domains
 provide.
 
