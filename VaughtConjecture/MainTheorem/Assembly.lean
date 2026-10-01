@@ -11,8 +11,7 @@ import VaughtConjecture.MainTheorem.Spectrum
 Roadmap, the reduction of the main theorem to expansion domains, Layer 5 (expansion domains and
 logical agreement) and Layer 6 (the upper and lower bounds); `IMPLEMENTATION.md`, checkpoints 5
 and 6; semantic contract, items 1, 8 and 9.  The second route: roadmap, "Reduction to full
-presentations", and `IMPLEMENTATION.md`, "The full-presentation route" (pull request #39 until
-it merges).
+presentations", and `IMPLEMENTATION.md`, "The full-presentation route".
 
 This file states, as named hypotheses, the statements of Layers 3–6 of the roadmap that the main
 theorem needs, and proves that they suffice.  **None of these hypotheses is proved here, and
@@ -96,14 +95,14 @@ their composition can be checked on examples (`VaughtConjecture.MainTheorem.Exam
 ## The full-presentation route
 
 A second conditional composition reaches the same conclusion from different hypotheses (roadmap,
-"Reduction to full presentations"; pull request #39 until it merges), in addition to the
-composition through expansion domains above, which it leaves unchanged.  A countable structure
-is **full** for a class of finite closed configurations (a prescribed age) when its finite
-closed configurations are exactly that class, every finite subset lies in one of them, and every
-embedding into the structure of a configuration of the class extends along every embedding of
-that configuration into a larger configuration of the class; a **full presentation** of a class
-at level `α < ω₁` is a countable structure full for one of the prescribed ages at level `α`
-whose base projection lies in the class.  The hypotheses, none of them proved here, are:
+"Reduction to full presentations"), in addition to the composition through expansion domains
+above, which it leaves unchanged.  A countable structure is **full** for a class of finite closed
+diagrams (a prescribed age) when its finite closed diagrams are exactly that class, every finite
+subset lies in one of them, and every embedding into the structure of a diagram of the class
+extends along every embedding of that diagram into a larger diagram of the class; a **full
+presentation** of a class at level `α < ω₁` is a countable structure full for one of the
+prescribed ages at level `α` whose base reduct lies in the class.  The hypotheses, none of them
+proved here, are:
 
 * `FullPresentations` (**full presentations at countable levels**): sets `presentedAt α` of
   classes, for the levels `α < ω₁`, each countable, together containing every class, and empty
@@ -133,9 +132,9 @@ nonisomorphic coded models), but not through countable truth sides: it needs the
 analytic back-and-forth trees, a prospective interface of the infinitary-logic library.  That
 composition is a statement still to be made.
 
-The **least level** of a class, the least `α < ω₁` with the class in `presentedAt α`, is a rank
-into the countable ordinals with countable fibres, and its tails form the filtration
-`FullPresentations.toFiltration` (`Counting.Filtration.ofCountableCover`, through
+The **least presentation level** of a class, the least `α < ω₁` with the class in
+`presentedAt α`, is a rank into the countable ordinals with countable fibres, and its tails form
+the filtration `FullPresentations.toFiltration` (`Counting.Filtration.ofCountableCover`, through
 `Counting.Filtration.ofRank`) on an uncountable type of classes.  What the count of this route
 uses and does not use:
 
@@ -143,9 +142,10 @@ uses and does not use:
   sets (`FullPresentations.mk_le_aleph_one`); the lower bound is `UncountablyManyClasses`, and
   bounded comparison is used only for thinness;
 * the count uses neither expansion uniqueness nor same-carrier transport.  Departure is not
-  removed from the assumptions: the least level is a total rank below `ω₁`, so every class leaves
-  the tail just above its least level, which is part of `FullPresentations`.  What this route
-  does not need is a separate termination theorem for expansion domains;
+  removed from the assumptions: the least presentation level is a total rank below `ω₁`, so
+  every class leaves the tail just above its least presentation level, which is part of
+  `FullPresentations`.  What this route does not need is a separate termination theorem for
+  expansion domains;
 * Scott separation on the persistent core (the step of `Filtration.mk_eq_aleph_one_of_separation`
   that bounds the core by one class) is not used: the core of the least-level filtration is empty
   (`FullPresentations.core_toFiltration`), so the count is `Filtration.mk_eq_aleph_one` with an
@@ -326,10 +326,9 @@ classes for the levels `α < ω₁`, each countable, together containing every c
 levels `α ≥ ω₁` are empty, so full presentations are determined by their levels below `ω₁`
 (`FullPresentations.ext`).  For the density sentence, `presentedAt α` is to be the set of classes
 with a full presentation at level `α` (a countable structure full for one of the countably many
-prescribed ages at level `α`, whose base projection lies in the class); that every class has one,
-and that only countably many classes have one at each level, are statements of the full-presentation
-route (roadmap, "Reduction to full presentations"; pull request #39 until it merges), not proved
-here. -/
+prescribed ages at level `α`, whose base reduct lies in the class); that every class has one, and
+that only countably many classes have one at each level, are statements of the full-presentation
+route (roadmap, "Reduction to full presentations"), not proved here. -/
 structure FullPresentations (X : Type u) where
   /-- The classes with a full presentation at level `α`. -/
   presentedAt : Ordinal.{0} → Set X
@@ -383,8 +382,8 @@ theorem domain_toFiltration (hX : ¬ Countable X) (η : Ordinal.{0}) :
     (P.toFiltration hX).domain η = P.tail η :=
   Filtration.domain_ofCountableCover η
 
-/-- **The persistent core of the least-level filtration is empty**: every class leaves the tail
-just above its least level. -/
+/-- **The persistent core of the least-level filtration is empty**: every class leaves the tail just
+above its least presentation level. -/
 @[simp]
 theorem core_toFiltration (hX : ¬ Countable X) : (P.toFiltration hX).core = ∅ :=
   iInter_setOf_le_rank_eq_empty _ fun x ↦ (leastLevel_lt_and_mem P.exists_mem_presentedAt x).1
@@ -395,8 +394,8 @@ of quantifier rank at most `η`.  This is the minimality form of bounded compari
 comparison of `ExpansionDomains.HasLogicalAgreement.of_qrank_le`, taken on the least-level tails.
 The weaker scatteredness form is not stated here.  For the density sentence, with the truth of
 sentences on its classes, it is a statement of the full-presentation route (the projections of full
-presentations at levels `≥ η` are back-and-forth equivalent at `η`) (roadmap, "Reduction to full
-presentations"; pull request #39 until it merges), not proved here. -/
+presentations at levels `≥ η` are back-and-forth equivalent at `η`; roadmap, "Reduction to full
+presentations"), not proved here. -/
 structure HasBoundedComparison {L : Language.{x, y}} (truth : L.Sentenceω → X → Prop) :
     Prop where
   /-- The classes in the tail at `η` agree on the sentences of quantifier rank at most `η`. -/
@@ -509,8 +508,8 @@ theorem vaughtCounterexample_of_expansionDomains (D : ExpansionDomains DensityCl
 /-! ### The full-presentation route -/
 
 /-- **Noncollapse**: the density sentence has at least `ℵ₁` classes of models coded on `ℕ`.  For the
-full-presentation route (roadmap, "Reduction to full presentations"; pull request #39 until it
-merges) this is a separate statement (full presentations alone do not give it), not proved here. -/
+full-presentation route (roadmap, "Reduction to full presentations") this is a separate statement
+(full presentations alone do not give it), not proved here. -/
 structure UncountablyManyClasses : Prop where
   /-- There are at least `ℵ₁` classes. -/
   aleph_one_le_mk : ℵ₁ ≤ #DensityClass
@@ -539,8 +538,7 @@ theorem FullPresentations.HasBoundedComparison.isUniformOnFiltration
 /-- **Thinness, conditionally, by full presentations**: full presentations of the classes of the
 density sentence at countable levels with bounded comparison give no perfect set of pairwise
 nonisomorphic coded models.  The lower bound is not used.  The hypotheses are statements of the
-full-presentation route (roadmap, "Reduction to full presentations"; pull request #39 until it
-merges), not proved here. -/
+full-presentation route (roadmap, "Reduction to full presentations"), not proved here. -/
 theorem densitySentence_isThinOnNatModels_of_presentations (P : FullPresentations DensityClass)
     (hb : P.HasBoundedComparison densityTruth) : densitySentence.{0}.IsThinOnNatModels :=
   isThinOnNatModels_of_countable_truth_sides hb.countable_truth_side
@@ -551,7 +549,7 @@ classes of models coded on `ℕ` and no perfect set of pairwise nonisomorphic on
 `Filtration.mk_eq_aleph_one` on the least-level filtration, whose persistent core is empty; thinness
 is `isThinOnNatModels_of_filtration` with the uniformity of `IsUniformOnFiltration.of_qrank_le`.
 The hypotheses are statements of the full-presentation route (roadmap, "Reduction to full
-presentations"; pull request #39 until it merges), not proved here. -/
+presentations"), not proved here. -/
 theorem densitySentence_hasThinAlephOneSpectrum_of_presentations
     (P : FullPresentations DensityClass) (hb : P.HasBoundedComparison densityTruth)
     (hu : UncountablyManyClasses) :
@@ -565,7 +563,7 @@ there are a countable relational language and a sentence of `L_{ω₁,ω}` whose
 have exactly `ℵ₁` isomorphism classes with no perfect set of pairwise nonisomorphic ones, and every
 countable model of which, on a carrier in the universe `w`, is isomorphic to a coded one.  The
 hypotheses are statements of the full-presentation route (roadmap, "Reduction to full
-presentations"; pull request #39 until it merges) and of Layer 3 of the roadmap, not proved here. -/
+presentations") and of Layer 3 of the roadmap, not proved here. -/
 theorem vaughtCounterexample_of_presentations (P : FullPresentations DensityClass)
     (hb : P.HasBoundedComparison densityTruth) (hu : UncountablyManyClasses)
     (hcap : CapToModel.{w}) :
