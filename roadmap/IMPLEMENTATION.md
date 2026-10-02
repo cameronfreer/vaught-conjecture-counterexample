@@ -66,11 +66,11 @@ with the continuum.
 
 The core is complete only after every finite construction, realization over a root, recovery of
 donor labels, syntax correspondence, the equivalence of the density sentence with the four-family
-sentence (layer 2), the top-free witness at every countable block (the finite-age reconstruction of
-a classical limit meeting its acceptance criterion), and statement of the main theorem below is
-proved.  Completion is not limited to the signatures in the sketches.  Each definition needs its
-usable basic API: projections, extensionality, identity/composition, restriction, transport, and
-representative examples.
+sentence (layer 2), the top-free witness at every countable block (obtained by finite-age
+reconstruction from a classical limit, meeting its acceptance criterion), and statement of the main
+theorem below is proved.  Completion is not limited to the signatures in the sketches.  Each
+definition needs its usable basic API: projections, extensionality, identity/composition,
+restriction, transport, and representative examples.
 
 Under-specified extensions are not part of this roadmap.  Separate companion roadmaps may cover the
 definability consequences of the hull operations and hull cardinality (`HULL_ALGEBRA.md`, §4; the
@@ -687,6 +687,11 @@ statements are specified here, generically, with no construction):
   Definition II.32] and is not transferred; it supports the rank-filtration comparison of
   `COMPANIONS.md`, "Further companion results", only through the passage between [Mon]'s convention
   and InfinitaryLogic's, which is still to be proved.
+- *the graded-matching theorem* (`Scott/BackAndForth`): a generic form of the graded back-and-forth
+  theorem of this repository (layer 0; "A prospective statement of this repository, layer 0" above),
+  with its hypotheses (atomic agreement, descent, forth and back, an explicit initial match) and
+  conclusion `BFEquiv`; quoted by layer 0 once it is merged upstream and its signature is checked at
+  the accepted pin, and until then the local theorem is the target.
 
 ## Upstream building blocks
 
