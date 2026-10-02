@@ -18,6 +18,8 @@ import InfinitaryLogic.Scott.OrbitRankStabilization
 import InfinitaryLogic.Descriptive.BFSeparation
 import InfinitaryLogic.Lomega1omega.InHierarchy
 import InfinitaryLogic.Scott.MontalbanComplexity
+import InfinitaryLogic.Scott.ForgetParameters
+import InfinitaryLogic.Scott.GradedMatching
 import ComputableModelTheory.Classical
 import Mathlib.ModelTheory.Fraisse
 
@@ -316,6 +318,54 @@ set_option linter.hashCommand false in
 #check FirstOrder.Language.exists_isPiIn_pointed_of_sigmaIn_orbits
 set_option linter.hashCommand false in
 #check FirstOrder.Language.exists_isPiIn_two_scottSentence_of_sigmaIn_zero_orbits
+
+-- Graded matching (InfinitaryLogic, `Scott/GradedMatching`), available at the pin `def5cc0`
+-- (signatures to be checked by CI on this branch).  A family `R α n a b` of relations between
+-- tuples, graded by ordinals up to `height`, atomic at level `0`, lowering, and with forth and
+-- back one level down, relates at a level `α ≤ height` only `BFEquiv α` pairs; any language, no
+-- relationality.  It serves the graded back-and-forth theorem of `README.md`, Layer 0, whose
+-- initial match is the related pair at level `α`; no application is compiled here.
+set_option linter.hashCommand false in
+#check FirstOrder.Language.bfEquiv_of_gradedMatching
+set_option linter.hashCommand false in
+#check FirstOrder.Language.bfEquiv_of_gradedSystem
+
+-- Rank tails and the least level of a cover (InfinitaryLogic, `OrdinalCountability`), available
+-- at the pin `def5cc0` (signatures to be checked by CI on this branch).  For `r : X → Ordinal`
+-- below `ω₁` with countable fibres, the tails `rankTail r η = {x | η ≤ r x}` have nonempty losses
+-- cofinally below `ω₁` iff `X` is uncountable, and an uncountable `X` has `#X = ℵ₁`; a cover by
+-- countable sets `Q α`, `α < ω₁`, gives `leastLevel Q` countable fibres, with tails the
+-- complements of the initial unions.  They serve the prospective "ranks with countable fibres"
+-- (`IMPLEMENTATION.md`, "The full-presentation route"); no application is compiled here.
+set_option linter.hashCommand false in
+#check InfinitaryLogic.rankTail
+set_option linter.hashCommand false in
+#check InfinitaryLogic.leastLevel
+set_option linter.hashCommand false in
+#check InfinitaryLogic.countable_fibers_leastLevel
+set_option linter.hashCommand false in
+#check InfinitaryLogic.rankTail_leastLevel
+set_option linter.hashCommand false in
+#check InfinitaryLogic.mk_eq_aleph_one_of_countable_fibers
+set_option linter.hashCommand false in
+#check InfinitaryLogic.rankTail_cofinal_losses_iff
+
+-- Forgetting finitely many parameters (InfinitaryLogic, `Scott/ForgetParameters`), available at
+-- the pin `def5cc0` (signatures to be checked by CI on this branch).  The existential closure
+-- `existsTuple k φ` of a formula characterizing `(M, c)` is a Scott sentence of `M` among
+-- countable structures, and keeps the class `Σ^in_α` for `1 ≤ α`; for a countable `M` in a
+-- countable relational language, `Σ^in_α` orbits over a parameter tuple (`1 ≤ α`) give a
+-- `Σ^in_{α+2}` Scott sentence, and `Σ^in_1` orbits over parameters a `Σ^in_3` one.  It serves the
+-- `Σ^in_3` Scott sentence obtained by existentially quantifying a named rigid core (`README.md`,
+-- Layer 4; `COMPANIONS.md`, B4); no application is compiled here.
+set_option linter.hashCommand false in
+#check FirstOrder.Language.existsTuple_isScott
+set_option linter.hashCommand false in
+#check FirstOrder.Language.isSigmaIn_existsTuple_iff
+set_option linter.hashCommand false in
+#check FirstOrder.Language.exists_isSigmaIn_scottSentence_of_sigmaIn_orbits_over
+set_option linter.hashCommand false in
+#check FirstOrder.Language.exists_isSigmaIn_three_scottSentence_of_sigmaIn_one_orbits_over
 
 -- ComputableModelTheory at our pinned dependency `37f6c42` (signatures checked), through the
 -- entry module `ComputableModelTheory.Classical` (Mathlib-only imports): classical Fraïssé
