@@ -24,8 +24,8 @@ projections `τ` that compose exactly; an `ObservedPresentation` of `M` gives it
 given point, and the observations of closed tuples at the levels up to its own.
 `ApproxExtension H H' η` is the approximate extension property (AE) at `η`, and
 `AtomicAtZero L H H'` the atomic agreement of equal observations at level `0`.  The relation is
-`FullPresentation.ObsMatch`: `ObsMatch hη hη' α m a' b'` holds when `α ≤ η` and there are closed
-tuples `a`, `b` of one length `n` with equal observations at `α` and a selection
+`FullPresentation.ObsMatch`: `ObsMatch H H' hη hη' α m a' b'` holds when `α ≤ η` and there are
+closed tuples `a`, `b` of one length `n` with equal observations at `α` and a selection
 `s : Fin m → Fin n` of coordinates, repetitions allowed, with `a ∘ s = a'` and `b ∘ s = b'`.
 The initial match is the given pair of closed tuples with equal observations at `η`, with the
 given selection.  `FullPresentation.bfEquiv_comp_of_obs_eq` is the resulting comparison.
@@ -70,8 +70,7 @@ universe of quantifier ranks of `L_{ω₁ω}` formulas.
 
 ## Placement
 
-This file belongs to Layer 0 of `roadmap/README.md`, "The upstream graded-matching theorem and its
-two applications".
+This file belongs to Layer 0 of `roadmap/README.md`.
 -/
 
 namespace VaughtConjecture.Comparison
@@ -146,11 +145,11 @@ def ApproxExtension (H : ObservedPresentation O M) (H' : ObservedPresentation O 
         H.obs η ((Order.le_succ η).trans hH) (Fin.append a c) hc =
           H'.obs η ((Order.le_succ η).trans hH') (Fin.append b d) hd
 
-/-- **The match of approximate comparison** at height `η`: `ObsMatch hη hη' α m a' b'` holds when
-`α ≤ η` and `a'` and `b'` are corresponding selections `a ∘ s` and `b ∘ s`, repetitions allowed,
-of closed tuples `a` of `H` and `b` of `H'` with equal observations at `α`.  The height guard and
-the selection are part of the relation because observations are defined only up to the levels of
-the presentations. -/
+/-- **The match of approximate comparison** at height `η`: `ObsMatch H H' hη hη' α m a' b'`
+holds when `α ≤ η` and `a'` and `b'` are corresponding selections `a ∘ s` and `b ∘ s`,
+repetitions allowed, of closed tuples `a` of `H` and `b` of `H'` with equal observations at `α`.
+The height guard and the selection are part of the relation because observations are defined
+only up to the levels of the presentations. -/
 def ObsMatch (H : ObservedPresentation O M) (H' : ObservedPresentation O N) {η : Ordinal.{0}}
     (hη : η ≤ H.level) (hη' : η ≤ H'.level) (α : Ordinal.{0}) (m : ℕ) (a' : Fin m → M)
     (b' : Fin m → N) : Prop :=
@@ -176,6 +175,7 @@ theorem ObsMatch.forth {H : ObservedPresentation O M} {H' : ObservedPresentation
     ∃ y : N, ObsMatch H H' hη hη' α (m + 1) (Fin.snoc a' x) (Fin.snoc b' y) := by
   obtain ⟨_, n, a, b, ha, hb, hobs, s, rfl, rfl⟩ := hR
   obtain ⟨k, c, j, hc, rfl⟩ := H.exists_closed_extension a ha x
+  -- `Order.succ α` is definitionally `α + 1`, so `hα` and `hobs` serve (AE) at `α` as they are.
   obtain ⟨d, hd, hcd⟩ := hae (hα.trans hη) (hα.trans hη') a b ha hb hobs c hc
   refine ⟨Fin.append b d j, (Order.le_succ α).trans hα, n + k, _, _, hc, hd, hcd,
     Fin.snoc (Fin.castAdd k ∘ s) j, ?_, ?_⟩ <;>
@@ -191,6 +191,7 @@ theorem ObsMatch.back {H : ObservedPresentation O M} {H' : ObservedPresentation 
     ∃ x : M, ObsMatch H H' hη hη' α (m + 1) (Fin.snoc a' x) (Fin.snoc b' y) := by
   obtain ⟨_, n, a, b, ha, hb, hobs, s, rfl, rfl⟩ := hR
   obtain ⟨k, d, j, hd, rfl⟩ := H'.exists_closed_extension b hb y
+  -- `Order.succ α` is definitionally `α + 1`, so `hα` and `hobs` serve (AE) at `α` as they are.
   obtain ⟨c, hc, hcd⟩ := hae (hα.trans hη') (hα.trans hη) b a hb ha hobs.symm d hd
   refine ⟨Fin.append a c j, (Order.le_succ α).trans hα, n + k, _, _, hc, hd, hcd.symm,
     Fin.snoc (Fin.castAdd k ∘ s) j, ?_, ?_⟩ <;>
@@ -219,8 +220,9 @@ theorem bfEquiv_comp_of_obs_eq (H : ObservedPresentation O M) (H' : ObservedPres
       hs ▸ hs' ▸ (hzero _ _ ha hb hobs).relabel s)
     (fun hβα _ ⟨hα, _, _, _, ha, hb, hobs, s, hs, hs'⟩ ↦
       ⟨hβα.trans hα, _, _, _, ha, hb, obs_eq_of_le H H' hβα _ _ hobs, s, hs, hs'⟩)
-    (fun hα hR x ↦ (hR.forth (hae _ (Order.add_one_le_iff.mp hα)).1 hα x))
-    (fun hα hR y ↦ (hR.back (hae _ (Order.add_one_le_iff.mp hα)).2 hα y))
+    -- (AE) is stated with `Order.succ α`, definitionally `α + 1`; `α + 1 ≤ η` gives `α < η`.
+    (fun hα hR x ↦ hR.forth (hae _ (Order.add_one_le_iff.mp hα)).1 hα x)
+    (fun hα hR y ↦ hR.back (hae _ (Order.add_one_le_iff.mp hα)).2 hα y)
     le_rfl ⟨le_rfl, n, a, b, ha, hb, hobs, s, rfl, rfl⟩
 
 end FullPresentation
@@ -412,8 +414,21 @@ example {O : FullPresentation.LevelObservations} (H : FullPresentation.ObservedP
   FullPresentation.bfEquiv_comp_of_obs_eq H H' hzero (fun _ h ↦ absurd h (by simp))
     zero_le zero_le a b ha hb hobs id
 
-/-- Height `0` in the form of condition 3: no forth or back step is ever requested. -/
-example (α : Ordinal.{0}) : ¬ α + 1 ≤ 0 := by simp
+/-- Height `0` in the form of condition 3: data at `η = 0` whose forth and back laws hold
+vacuously (`α + 1 ≤ 0` never holds), so only atomic agreement, lowering, and the initial match
+are used, and `bfEquiv_of_expansionMatch` gives `BFEquiv 0 0 ![] ![]`. -/
+example : BFEquiv (L := L) (M := M) (N := M) (0 : Ordinal.{0}) 0 ![] ![] :=
+  ExpansionMatchData.bfEquiv_of_expansionMatch (L := L)
+    { ExpansionM := fun _ ↦ PUnit.{1}
+      ExpansionN := fun _ ↦ PUnit.{1}
+      Chart := fun _ k ↦ Fin k → M
+      coversM := fun _ t c ↦ t = c
+      coversN := fun _ t d ↦ t = d
+      atomic := by rintro _ _ _ _ _ _ rfl rfl; exact SameAtomicType.refl _
+      lower := by rintro _ _ _ _ _ _ _ _ _ _ rfl rfl; exact ⟨⟨⟩, ⟨⟩, _, rfl, rfl⟩
+      forth := fun h ↦ absurd h (by simp)
+      back := fun h ↦ absurd h (by simp) }
+    ⟨⟨⟨⟩, _, rfl⟩, ⟨⟩, _, rfl⟩ (fun hc hd ↦ hc.trans hd.symm)
 
 /-- A selector with repeated coordinates: the two-fold repetition of the first coordinate of a
 pair of closed tuples with equal observations. -/
