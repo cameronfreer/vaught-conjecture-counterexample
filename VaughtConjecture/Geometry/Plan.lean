@@ -33,7 +33,9 @@ developed here:
   generating pair of a hull is recovered as its extremes (`IsPlan.extremes_hull`);
 * plans pull back along an embedding whose range contains the ground set: the faces of the
   pullback are the sets whose image is a face (`IsPlan.preimage`), and the hull of a set there is
-  the preimage of the hull of its image (`hull_preimage`).
+  the preimage of the hull of its image (`hull_preimage`);
+* **rigidity**: a self-embedding of the points that carries closed sets to closed sets and fixes
+  every point of a set fixes every point of its hull (`IsPlan.apply_eq_of_mem_hull`).
 
 The pair of extremes of a closed set need not itself be closed, and its hull need not be small;
 see `VaughtConjecture.Geometry.Examples`.
@@ -377,6 +379,12 @@ end VaughtConjecture.Geometry
 theorem Finset.map_preimage_eq_of_subset_range {α β : Type*} {f : β ↪ α} {s : Finset α}
     (hs : (s : Set α) ⊆ Set.range f) : (s.preimage f f.injective.injOn).map f = s :=
   Finset.coe_injective (by simpa using Set.image_preimage_eq_of_subset hs)
+
+/-- An embedding whose values lie in the range of another embedding factors through it. -/
+theorem Function.Embedding.exists_trans_eq {α β γ : Type*} {e : β ↪ γ} {g : α ↪ γ}
+    (h : ∀ a, g a ∈ Set.range e) : ∃ w : α ↪ β, w.trans e = g := by
+  choose w hw using h
+  exact ⟨⟨w, fun i j hij ↦ g.injective (by rw [← hw, ← hw, hij])⟩, Function.Embedding.ext hw⟩
 
 namespace VaughtConjecture.Geometry.IsPlan
 

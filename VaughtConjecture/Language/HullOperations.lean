@@ -15,14 +15,22 @@ chart embeddings, and 5, for finite charts); `HULL_ALGEBRA.md`, §§1–3 and 5;
 item 10 (uniqueness of the charts that witness a hull operation, and preservation by embeddings
 proved from those charts).
 
+These are the facts about finite charts that the classical limit of the top-free witnesses uses
+(roadmap, "The top-free witnesses: the finite age and its classical limit"): in the hull language
+the finite charts are closed under substructures, up to isomorphism (the hereditary property of
+their age), and chart embeddings are exactly the embeddings of the corresponding finite
+structures.
+
 **Languages.**  The **stage chart language** `stageChartLanguage α` has one `n`-ary relation
 symbol for each legal stage type at stage `α` on `n` points and no function symbols; at `α = ω` it
 is the base language (`stageChartLanguage_omega`, by `rfl`).  A **hull index** (`HullIndex α`) is
 a legal stage type with an ordered pair of distinct coordinates generating all of its points
-(equivalently, the pair consists of its two extreme points, `HullIndex.extremes_eq`) and a target
-coordinate.  The **hull language** `hullLanguage α`, the definitional expansion `L^h_α` of the
-roadmap, is the sum (`FirstOrder.Language.sum`) of the stage chart language and the language
-`hullSymbols α` with one binary function symbol for each hull index.  Its symbols are countable
+(equivalently, the pair contains the extreme points of the type,
+`StageType.hull_eq_univ_iff_extremes_subset`, and is then exactly the pair of its two extreme
+points, `HullIndex.extremes_eq`) and a target coordinate.  The **hull language**
+`hullLanguage α`, the definitional expansion `L^h_α` of the roadmap, is the sum
+(`FirstOrder.Language.sum`) of the stage chart language and the language `hullSymbols α` with one
+binary function symbol for each hull index.  Its symbols are countable
 when there are countably many ordinals below `α` (`hullLanguage.countable_functions`,
 `hullLanguage.countable_relations`, and instances at `ω`).  The stage chart language is
 `Language.{0, u + 1}` and the hull symbols are `Language.{u + 1, 0}`: hull indices, like stage
@@ -30,9 +38,10 @@ types, live in `Type (u + 1)`; the hull language is `Language.{u + 1, u + 1}`.
 
 **Realizations.**  A realization `R` is a structure of the stage chart language
 (`Realization.toChartStructure`: the relation of `p` holds of an injective tuple of type `p`) and
-of the hull language (`Realization.toHullStructure`).  The **hull operation** `R.hullOp ι a b`
-(`HULL_ALGEBRA.md`, §1) is the target point of a chosen tuple of type `ι.type` with `a` and `b` at
-the generators, if there is one, and otherwise the **default value** `a`
+of the hull language (`Realization.toHullStructure`).  A **chart witness** of a hull index `ι` at
+points `a` and `b` is a tuple of type `ι.type` with `a` and `b` at the generators.  The **hull
+operation** `R.hullOp ι a b` (`HULL_ALGEBRA.md`, §1) is the target point of a chosen chart witness
+at `a` and `b`, if there is one, and otherwise the **default value** `a`
 (`Realization.hullOp_of_not_exists`); in particular `R.hullOp ι a a = a`
 (`Realization.hullOp_self`).
 
@@ -48,18 +57,24 @@ a face of type `ι.type` at the generators it is the point of that face at the t
 
 **Charts.**  The **chart** `P.Chart` of a stage type `P` on `k` points is a copy of `Fin k`
 (identified with it by `P.toChart`), with the structure of the face realization of `P` in the
-hull language: the relation of a legal type `p` holds of a tuple exactly when the tuple is
+hull language, whose reduct to the stage chart language is the structure of the face realization
+in that language: the relation of a legal type `p` holds of a tuple exactly when the tuple is
 injective and spans a closed face of type `p`, a face that is not closed carrying no relation
 (`StageType.relMap_chart`), and the function symbols are the hull operations
 (`StageType.funMap_chart`).  For finite charts:
 
+* a nonsingleton closed set is the hull of its two extreme points: this part of roadmap, Layer 2,
+  item 1 is the plan geometry of Layer 1 (`Geometry.IsConvexGeometry.hull_extremes`,
+  `Geometry.IsPlan.extremes_hull`) and the canonical finite hulls of `Realization.finiteHull`;
+  here it is read on hull indices (`StageType.hull_eq_univ_iff_extremes_subset`,
+  `HullIndex.extremes_eq`);
 * every hull operation takes its value in the hull of its two arguments
   (`StageType.hullOp_mem_hull`, `HULL_ALGEBRA.md`, §2), and every point of the hull of two
   distinct points of a legal chart is the value of a hull operation at them
-  (`StageType.exists_hullOp_eq`, §3);
+  (`StageType.exists_hullOp_eq_of_mem_hull`, §3);
 * a **chart embedding**, a face map along which the restriction is literal, commutes with every
-  hull operation, the default value included (`StageType.hullOp_comp`), carries closed faces to
-  closed faces and hulls to hulls (`StageType.map_mem_faces_iff_of_restrictFace`,
+  hull operation, the default value included (`StageType.hullOp_map_of_restrictFace`), carries
+  closed faces to closed faces and hulls to hulls (`StageType.map_mem_faces_iff_of_restrictFace`,
   `StageType.hull_map_of_restrictFace`), and is an embedding of charts
   (`StageType.chartEmbedding`); conversely every embedding of the chart of a legal type is a chart
   embedding (`StageType.restrictFace_toEmbedding`, `StageType.exists_eq_chartEmbedding`);
@@ -70,7 +85,10 @@ injective and spans a closed face of type `p`, a face that is not closed carryin
   (`StageType.exists_equiv_comap`).
 
 The first-order definability of the hull operations (roadmap, Layer 2, item 2) and their
-preservation by embeddings of infinite realizations are not part of this file.
+preservation by embeddings of infinite realizations are not part of this file.  On a realization
+that is not the face realization of a chart, `Realization.hullOp` is defined by a choice; that the
+choice does not matter (the two-charts theorem for exactly consistent covering realizations) is
+not part of this file either.
 
 ## Placement
 
@@ -116,8 +134,9 @@ end stageChartLanguage
 
 /-- A **hull index** at stage `α` (`HULL_ALGEBRA.md`, §1): a legal stage type `type` on `arity`
 points, an ordered pair of distinct coordinates `left`, `right` that generate all of its points
-(the hull of `{left, right}` is everything, equivalently the pair contains the extreme points,
-`HullIndex.extremes_eq`), and a target coordinate. -/
+(the hull of `{left, right}` is everything; equivalently the pair contains the extreme points,
+`StageType.hull_eq_univ_iff_extremes_subset`, and is then exactly the pair of the two extreme
+points, `HullIndex.extremes_eq`), and a target coordinate. -/
 structure HullIndex (α : Ordinal.{u}) : Type (u + 1) where
   /-- The number of points. -/
   arity : ℕ
@@ -141,11 +160,8 @@ points of the whole ground set. -/
 theorem StageType.hull_eq_univ_iff_extremes_subset {α : Ordinal.{u}} {n : ℕ}
     (t : StageType.{u} α n) {S : Finset (Fin n)} :
     Geometry.hull univ t.toCellScheme.faces S = univ ↔
-      Geometry.extremes t.toCellScheme.faces univ ⊆ S := by
-  refine ⟨fun h ↦ h ▸ Geometry.extremes_hull_subset (subset_univ S), fun h ↦ ?_⟩
-  refine eq_univ_of_forall fun x ↦ Geometry.hull_mono h ?_
-  rw [t.isPlan.isConvexGeometry.hull_extremes t.univ_mem_faces]
-  exact mem_univ x
+      Geometry.extremes t.toCellScheme.faces univ ⊆ S :=
+  t.isPlan.isConvexGeometry.hull_eq_ground_iff_extremes_subset (subset_univ S)
 
 namespace HullIndex
 
@@ -263,9 +279,10 @@ theorem relMap_toChartStructure (p : StageType.{u} α n) (hp : p.IsLegal) (t : F
   ⟨fun ⟨_, h⟩ ↦ h, fun h ↦ ⟨t.injective, h⟩⟩
 
 open Classical in
-/-- The **hull operation** of a hull index `ι` in a realization (`HULL_ALGEBRA.md`, §1): if some
-tuple of type `ι.type` has the points `a` and `b` at the generators, the point of a chosen such
-tuple at the target; otherwise the **default value** `a`.  On the face realization of a chart the
+/-- The **hull operation** of a hull index `ι` in a realization (`HULL_ALGEBRA.md`, §1).  A
+**chart witness** of `ι` at `a` and `b` is a tuple of type `ι.type` with the points `a` and `b` at
+the generators.  The hull operation at `a` and `b` is the target point of a chosen chart witness, if
+there is one, and otherwise the **default value** `a`.  On the face realization of a chart the
 choice does not matter (`StageType.hullOp_eq_of_restrictFace`). -/
 noncomputable def hullOp (ι : HullIndex.{u} α) (a b : M) : M :=
   if h : ∃ g : Fin ι.arity ↪ M, R.eval g = some ι.type ∧ g ι.left = a ∧ g ι.right = b then
@@ -274,17 +291,16 @@ noncomputable def hullOp (ι : HullIndex.{u} α) (a b : M) : M :=
 
 variable {R}
 
-/-- Where a tuple of type `ι.type` has the points `a` and `b` at the generators, the hull
-operation is the target point of such a tuple. -/
-theorem exists_hullOp_eq {ι : HullIndex.{u} α} {a b : M}
+/-- Where there is a chart witness at `a` and `b`, the hull operation is the target point of one. -/
+theorem hullOp_spec {ι : HullIndex.{u} α} {a b : M}
     (h : ∃ g : Fin ι.arity ↪ M, R.eval g = some ι.type ∧ g ι.left = a ∧ g ι.right = b) :
     ∃ g : Fin ι.arity ↪ M, R.eval g = some ι.type ∧ g ι.left = a ∧ g ι.right = b ∧
       R.hullOp ι a b = g ι.target := by
   refine ⟨h.choose, h.choose_spec.1, h.choose_spec.2.1, h.choose_spec.2.2, ?_⟩
   simp only [hullOp, h, ↓reduceDIte]
 
-/-- **The default value**: where no tuple of type `ι.type` has the points `a` and `b` at the
-generators, the hull operation is its first argument. -/
+/-- **The default value**: where there is no chart witness at `a` and `b`, the hull operation is its
+first argument. -/
 theorem hullOp_of_not_exists {ι : HullIndex.{u} α} {a b : M}
     (h : ¬ ∃ g : Fin ι.arity ↪ M, R.eval g = some ι.type ∧ g ι.left = a ∧ g ι.right = b) :
     R.hullOp ι a b = a := by
@@ -361,14 +377,13 @@ theorem eq_of_restrictFace_eq_some {P : StageType.{u} α k} {q : StageType.{u} �
   have hr : univ.map g = univ.map g' := by
     rw [map_univ_eq_hull_of_restrictFace hg hgen, map_univ_eq_hull_of_restrictFace hg' hgen, h₀,
       h₁]
-  -- The permutation `σ` with `g' ∘ σ = g`.
-  have hmem (j : Fin m) : ∃ j', g' j' = g j := by
+  -- The permutation `σe` with `g' ∘ σe = g`.
+  obtain ⟨σe, hσe⟩ := Function.Embedding.exists_trans_eq (e := g') (g := g) fun j ↦ by
     have hj := mem_map_of_mem g (mem_univ j)
     rw [hr, mem_map] at hj
     obtain ⟨j', -, h⟩ := hj
     exact ⟨j', h⟩
-  choose σ hσ using hmem
-  let σe : Fin m ↪ Fin m := ⟨σ, fun j j' h ↦ g.injective (by rw [← hσ, ← hσ, h])⟩
+  have hσ (j : Fin m) : g' (σe j) = g j := congrArg (· j) hσe
   obtain ⟨hf, rfl⟩ := (restrictFace_eq_some_iff P g).mp hg
   obtain ⟨hf', hq⟩ := (restrictFace_eq_some_iff P g').mp hg'
   -- `σ` preserves the faces of `q`.
@@ -377,8 +392,7 @@ theorem eq_of_restrictFace_eq_some {P : StageType.{u} α k} {q : StageType.{u} �
     intro C hC
     rw [← hq]
     have hmap : (C.map σe).map g' = C.map g := by
-      rw [map_map]
-      exact congrArg (C.map ·) (Function.Embedding.ext hσ)
+      rw [map_map, hσe]
     simp only [comap_toScheme, Scheme.mem_comap_faces] at hC ⊢
     rwa [hmap]
   have hfix : ∀ i ∈ ({i₀, i₁} : Finset (Fin m)), σe i = i := by
@@ -395,7 +409,8 @@ theorem eq_of_restrictFace_eq_some {P : StageType.{u} α k} {q : StageType.{u} �
 /-- The **chart** of a stage type `P` on `k` points: its points `Fin k`, read as a finite structure
 of the hull language (roadmap, Layer 2, item 5).  The relation of a legal type `p` holds of a tuple
 exactly when the tuple is injective and spans a closed face of `P` of type `p`, and the hull
-operations are those of the face realization of `P`. -/
+operations are those of the face realization of `P`.  It is a type synonym of `Fin k`, so that
+this structure, which depends on `P`, is not an instance on `Fin k`. -/
 @[nolint unusedArguments]
 def Chart (_P : StageType.{u} α k) : Type :=
   Fin k
@@ -404,9 +419,6 @@ variable (P : StageType.{u} α k)
 
 instance : Fintype P.Chart :=
   inferInstanceAs (Fintype (Fin k))
-
-instance : Finite P.Chart :=
-  inferInstanceAs (Finite (Fin k))
 
 instance : DecidableEq P.Chart :=
   inferInstanceAs (DecidableEq (Fin k))
@@ -417,6 +429,14 @@ def toChart : Fin k ≃ P.Chart :=
 
 noncomputable instance : (hullLanguage.{u} α).Structure P.Chart :=
   P.faceRealization.toHullStructure
+
+/-- The relational reduct of the chart: its structure in the stage chart language. -/
+noncomputable instance : (stageChartLanguage.{u} α).Structure P.Chart :=
+  P.faceRealization.toChartStructure
+
+/-- The structure of the chart in the hull language expands its relational reduct. -/
+instance : (LHom.sumInl : stageChartLanguage.{u} α →ᴸ hullLanguage.{u} α).IsExpansionOn P.Chart :=
+  ⟨fun f _ ↦ (f : Empty).elim, fun _ _ ↦ rfl⟩
 
 /-- The relations of the chart are the closed faces with their types. -/
 theorem relMap_chart (p : StageType.{u} α n) (hp : p.IsLegal) (t : Fin n ↪ Fin k) :
@@ -439,7 +459,7 @@ theorem it does not depend on the choice in `Realization.hullOp`. -/
 theorem hullOp_eq_of_restrictFace {ι : HullIndex.{u} α} {g : Fin ι.arity ↪ Fin k}
     (hg : restrictFace g P = some ι.type) :
     P.faceRealization.hullOp ι (g ι.left) (g ι.right) = g ι.target := by
-  obtain ⟨g', hg', h₀, h₁, he⟩ := Realization.exists_hullOp_eq (R := P.faceRealization)
+  obtain ⟨g', hg', h₀, h₁, he⟩ := Realization.hullOp_spec (R := P.faceRealization)
     ⟨g, hg, rfl, rfl⟩
   rw [he, eq_of_restrictFace_eq_some ι.hull_eq_univ hg' hg h₀ h₁]
 
@@ -449,16 +469,21 @@ theorem hullOp_mem_hull (P : StageType.{u} α k) (ι : HullIndex.{u} α) (a b : 
     P.faceRealization.hullOp ι a b ∈ Geometry.hull univ P.toCellScheme.faces {a, b} := by
   by_cases h : ∃ g : Fin ι.arity ↪ Fin k,
       P.faceRealization.eval g = some ι.type ∧ g ι.left = a ∧ g ι.right = b
-  · obtain ⟨g, hg, rfl, rfl, he⟩ := Realization.exists_hullOp_eq h
+  · obtain ⟨g, hg, rfl, rfl, he⟩ := Realization.hullOp_spec h
     rw [he, ← map_univ_eq_hull_of_restrictFace hg ι.hull_eq_univ]
     exact mem_map_of_mem g (mem_univ _)
   · rw [Realization.hullOp_of_not_exists h]
     exact Geometry.subset_hull (subset_univ _) (mem_insert_self a _)
 
 /-- **Every point of a two-point hull is the value of a hull operation** (`HULL_ALGEBRA.md`, §3):
-for distinct points `a`, `b` of a legal chart, every point of the hull of `{a, b}` is the value at
-`a` and `b` of the hull operation of the type of the hull, with its generators at `a` and `b`. -/
-theorem exists_hullOp_eq (hP : P.IsLegal) {a b x : Fin k} (hab : a ≠ b)
+for distinct points `a`, `b` of a chart, every point of the hull of `{a, b}` is the value at `a`
+and `b` of the hull operation of the type of the hull, with its generators at `a` and `b`.
+
+Legality is assumed only along the hull of `{a, b}` (`hleg`), where it is needed for that type to
+index a hull operation; it holds for every pair when the chart is legal (`IsLegal.comap`). -/
+theorem exists_hullOp_eq_of_mem_hull {a b x : Fin k} (hab : a ≠ b)
+    (hleg : ∀ {m : ℕ} (g : Fin m ↪ Fin k) (hg : univ.map g ∈ P.toCellScheme.faces),
+      univ.map g = Geometry.hull univ P.toCellScheme.faces {a, b} → (P.comap g hg).IsLegal)
     (hx : x ∈ Geometry.hull univ P.toCellScheme.faces {a, b}) :
     ∃ ι : HullIndex.{u} α, P.faceRealization.hullOp ι a b = x := by
   let g : Fin #(Geometry.hull univ P.toCellScheme.faces {a, b}) ↪ Fin k :=
@@ -481,30 +506,24 @@ theorem exists_hullOp_eq (hP : P.IsLegal) {a b x : Fin k} (hab : a ≠ b)
     rw [hull_comap]
     refine eq_univ_of_forall fun i ↦ mem_preimage.mpr ?_
     simpa [hi₀, hi₁, hgH] using mem_map_of_mem g (mem_univ i)
-  let ι : HullIndex.{u} α := ⟨_, P.comap g hH, hP.comap g hH, i₀, i₁, j,
+  let ι : HullIndex.{u} α := ⟨_, P.comap g hH, hleg g hH hgH, i₀, i₁, j,
     fun h ↦ hab (hi₀.symm.trans ((congrArg g h).trans hi₁)), hgen⟩
   have h := hullOp_eq_of_restrictFace (ι := ι) (restrictFace_of_mem P g hH)
   rw [hi₀, hi₁, hj] at h
   exact ⟨ι, h⟩
 
-/-- A tuple whose points lie in the range of an embedding factors through it. -/
-private theorem exists_trans_eq {e : Fin k ↪ Fin k'} {g : Fin m ↪ Fin k'}
-    (h : ∀ j, g j ∈ univ.map e) : ∃ w : Fin m ↪ Fin k, w.trans e = g := by
-  choose w _ hw using fun j ↦ mem_map.mp (h j)
-  exact ⟨⟨w, fun i j hij ↦ g.injective (by rw [← hw, ← hw, hij])⟩, Function.Embedding.ext hw⟩
-
 /-- **Hull operations are preserved by chart embeddings, including the default value**
 (roadmap, Layer 2, item 3 for chart embeddings; `HULL_ALGEBRA.md`, §5).  Let `e` be a face map
-along which the restriction of `Q` is `P`.  A witness in `P` is carried to a witness in `Q`; and a
-witness in `Q` at `e a`, `e b` has as points the hull of `{e a, e b}`, which lies in the closed
-range of `e`, so it reflects to a witness in `P`.  Hence the default value is taken in both or in
-neither. -/
-theorem hullOp_comp {P : StageType.{u} α k} {Q : StageType.{u} α k'} {e : Fin k ↪ Fin k'}
-    (he : restrictFace e Q = some P) (ι : HullIndex.{u} α) (a b : Fin k) :
+along which the restriction of `Q` is `P`.  A chart witness in `P` is carried to a chart witness in
+`Q`; and a chart witness in `Q` at `e a`, `e b` has as points the hull of `{e a, e b}`, which lies
+in the closed range of `e`, so it reflects to a chart witness in `P`.  Hence the default value is
+taken in both or in neither. -/
+theorem hullOp_map_of_restrictFace {P : StageType.{u} α k} {Q : StageType.{u} α k'}
+    {e : Fin k ↪ Fin k'} (he : restrictFace e Q = some P) (ι : HullIndex.{u} α) (a b : Fin k) :
     Q.faceRealization.hullOp ι (e a) (e b) = e (P.faceRealization.hullOp ι a b) := by
   by_cases h : ∃ w : Fin ι.arity ↪ Fin k,
       P.faceRealization.eval w = some ι.type ∧ w ι.left = a ∧ w ι.right = b
-  · obtain ⟨w, hw, rfl, rfl, hval⟩ := Realization.exists_hullOp_eq h
+  · obtain ⟨w, hw, rfl, rfl, hval⟩ := Realization.hullOp_spec h
     have hwQ : restrictFace (w.trans e) Q = some ι.type := by
       rw [← restrictFace_trans Q e w he]
       exact hw
@@ -516,7 +535,8 @@ theorem hullOp_comp {P : StageType.{u} α k} {Q : StageType.{u} α k'} {e : Fin 
     have hsub : univ.map g ⊆ univ.map e := by
       rw [map_univ_eq_hull_of_restrictFace hg ι.hull_eq_univ, hl, hr]
       exact Geometry.hull_subset hge (by simp [insert_subset_iff])
-    obtain ⟨w, rfl⟩ := exists_trans_eq fun j ↦ hsub (mem_map_of_mem g (mem_univ j))
+    obtain ⟨w, rfl⟩ := Function.Embedding.exists_trans_eq (e := e) fun j ↦ by
+      simpa using hsub (mem_map_of_mem g (mem_univ j))
     refine h ⟨w, ?_, e.injective hl, e.injective hr⟩
     rw [faceRealization_eval, restrictFace_trans Q e w he]
     exact hg
@@ -525,17 +545,19 @@ theorem hullOp_comp {P : StageType.{u} α k} {Q : StageType.{u} α k'} {e : Fin 
 
 /-- The **chart embedding** of a face map `e` along which the restriction of `Q` is `P`: the map
 `e` as an embedding of structures of the hull language.  It preserves and reflects the relations
-by the guarded composition law of face maps, and the hull operations by `hullOp_comp`. -/
+by the guarded composition law of face maps, and the hull operations by
+`hullOp_map_of_restrictFace`. -/
 noncomputable def chartEmbedding {P : StageType.{u} α k} {Q : StageType.{u} α k'}
     {e : Fin k ↪ Fin k'} (he : restrictFace e Q = some P) :
     P.Chart ↪[hullLanguage.{u} α] Q.Chart where
   toEmbedding := P.toChart.symm.toEmbedding.trans (e.trans Q.toChart.toEmbedding)
   map_fun' {n} f xs := by
     induction f using hullLanguage.functions_induction with
-    | op ι => exact (hullOp_comp he ι (xs 0) (xs 1)).symm
+    | op ι => exact (hullOp_map_of_restrictFace he ι (xs 0) (xs 1)).symm
   map_rel' {n} r xs := by
     rcases r with ⟨p, hp⟩ | r
-    · change (∃ h, restrictFace ⟨e ∘ xs, h⟩ Q = some p) ↔ ∃ h, restrictFace ⟨xs, h⟩ P = some p
+    · -- the relations of the two charts are their closed faces (`relMap_toHullStructure`)
+      change (∃ h, restrictFace ⟨e ∘ xs, h⟩ Q = some p) ↔ ∃ h, restrictFace ⟨xs, h⟩ P = some p
       refine ⟨fun ⟨h, hq⟩ ↦ ⟨h.of_comp, ?_⟩, fun ⟨h, hq⟩ ↦ ⟨e.injective.comp h, ?_⟩⟩
       · rw [restrictFace_trans Q e _ he]
         exact hq
@@ -548,6 +570,14 @@ noncomputable def chartEmbedding {P : StageType.{u} α k} {Q : StageType.{u} α 
     {e : Fin k ↪ Fin k'} (he : restrictFace e Q = some P) (x : Fin k) :
     chartEmbedding he (P.toChart x) = Q.toChart (e x) :=
   rfl
+
+/-- Chart embeddings compose along composed face maps. -/
+theorem chartEmbedding_comp {k'' : ℕ} {P : StageType.{u} α k} {Q : StageType.{u} α k'}
+    {R : StageType.{u} α k''} {e : Fin k ↪ Fin k'} {e' : Fin k' ↪ Fin k''}
+    (he : restrictFace e Q = some P) (he' : restrictFace e' R = some Q) :
+    (chartEmbedding he').comp (chartEmbedding he) =
+      chartEmbedding (e := e.trans e') (by rw [← restrictFace_trans R e' e he']; exact he) :=
+  Embedding.ext fun _ ↦ rfl
 
 /-- **Closed images of chart embeddings** (roadmap, Layer 2, item 4 for chart embeddings): along a
 face map `e` along which the restriction of `Q` is `P`, a set of points of `P` is a closed face of
@@ -575,7 +605,8 @@ theorem hull_map_of_restrictFace {P : StageType.{u} α k} {Q : StageType.{u} α 
 /-- **Chart embeddings are exactly the embeddings** (roadmap, Layer 2, item 5): every embedding
 of the chart of a legal type `P` into the chart of `Q`, read on the points of `P` and `Q`, is a
 face map along which the restriction of `Q` is `P`, since the relation of `P` holds of the points
-of `P` in order. -/
+of `P` in order.  Legality of `P` is used for the relation symbol of `P` itself; whether a weaker
+hypothesis suffices is not settled here. -/
 theorem restrictFace_toEmbedding {P : StageType.{u} α k} {Q : StageType.{u} α k'}
     (hP : P.IsLegal) (φ : P.Chart ↪[hullLanguage.{u} α] Q.Chart) :
     restrictFace
@@ -598,7 +629,12 @@ theorem exists_eq_chartEmbedding {P : StageType.{u} α k} {Q : StageType.{u} α 
 a substructure of the chart of a legal type form a closed face.  The hull of a set is the hull of
 at most two of its points (`Geometry.IsPlan.exists_subset_card_le_two_hull_eq`), and every point
 of the hull of two distinct points is the value of a hull operation at them
-(`exists_hullOp_eq`). -/
+(`exists_hullOp_eq_of_mem_hull`).
+
+Legality is essential: for a stage type that is not legal on at least three points, the two
+extreme points of the whole type form a substructure that is not closed, since a chart witness at
+them would be a reindexing of the whole type, which is not legal, so every hull operation takes its
+default value there (`VaughtConjecture.Language.HullOperationsExamples`). -/
 theorem mem_faces_of_substructure (hP : P.IsLegal) (S : (hullLanguage.{u} α).Substructure P.Chart)
     {C : Finset (Fin k)} (hC : ∀ x, P.toChart x ∈ S ↔ x ∈ C) : C ∈ P.toCellScheme.faces := by
   refine P.isPlan.isConvexGeometry.hull_eq_self_iff.mp
@@ -607,7 +643,7 @@ theorem mem_faces_of_substructure (hP : P.IsLegal) (S : (hullLanguage.{u} α).Su
   rw [← hTH] at hx
   rcases Nat.lt_or_ge 1 #T with h1 | h1
   · obtain ⟨a, b, hab, rfl⟩ := card_eq_two.mp (le_antisymm hT2 h1)
-    obtain ⟨ι, rfl⟩ := exists_hullOp_eq hP hab hx
+    obtain ⟨ι, rfl⟩ := exists_hullOp_eq_of_mem_hull hab (fun g hg _ ↦ hP.comap g hg) hx
     have ha : P.toChart a ∈ S := (hC a).mpr (hTC (mem_insert_self a _))
     have hb : P.toChart b ∈ S := (hC b).mpr (hTC (by simp))
     have h := S.fun_mem (hullLanguage.op ι) ![P.toChart a, P.toChart b]
@@ -644,21 +680,29 @@ def faceSubstructure {C : Finset (Fin k)} (hC : C ∈ P.toCellScheme.faces) :
     (hC : C ∈ P.toCellScheme.faces) (x : Fin k) : P.toChart x ∈ P.faceSubstructure hC ↔ x ∈ C :=
   P.toChart.injective.mem_set_image
 
+/-- The substructure generated by a set lies in its hull, which is a substructure.  No legality is
+needed: the hull is closed under the hull operations by the plan geometry (`hullOp_mem_hull`). -/
+theorem mem_hull_of_toChart_mem_closure {s : Finset (Fin k)} {x : Fin k}
+    (hx : P.toChart x ∈ Substructure.closure (hullLanguage.{u} α) (P.toChart '' s)) :
+    x ∈ Geometry.hull univ P.toCellScheme.faces s := by
+  have hle : Substructure.closure (hullLanguage.{u} α) (P.toChart '' s) ≤
+      P.faceSubstructure P.isPlan.isConvexGeometry.hull_mem :=
+    Substructure.closure_le.mpr <| Set.image_mono fun y hy ↦
+      Geometry.subset_hull (subset_univ s) hy
+  exact (toChart_mem_faceSubstructure _ x).mp (hle hx)
+
 /-- **The substructure generated by a set is its hull** (roadmap, Layer 2, item 5): in the chart
 of a legal type, a point lies in the substructure generated by a set exactly when it lies in the
-hull of the set. -/
+hull of the set.  Legality is used only for the inclusion of the hull in the generated substructure
+(`mem_faces_of_substructure`), where it is essential; the other inclusion is
+`mem_hull_of_toChart_mem_closure`. -/
 theorem toChart_mem_closure_iff (hP : P.IsLegal) (s : Finset (Fin k)) (x : Fin k) :
     P.toChart x ∈ Substructure.closure (hullLanguage.{u} α) (P.toChart '' s) ↔
       x ∈ Geometry.hull univ P.toCellScheme.faces s := by
   classical
   set S := Substructure.closure (hullLanguage.{u} α) (P.toChart '' s)
-  constructor
-  · intro hx
-    have hle : S ≤ P.faceSubstructure P.isPlan.isConvexGeometry.hull_mem :=
-      Substructure.closure_le.mpr <| Set.image_mono fun y hy ↦
-        Geometry.subset_hull (subset_univ s) hy
-    exact (toChart_mem_faceSubstructure _ x).mp (hle hx)
-  · intro hx
+  refine ⟨mem_hull_of_toChart_mem_closure, fun hx ↦ ?_⟩
+  · -- the points of the generated substructure form a closed face containing `s`
     have hC : univ.filter (fun y ↦ P.toChart y ∈ S) ∈ P.toCellScheme.faces :=
       mem_faces_of_substructure hP S fun y ↦ by simp
     have hsub : s ⊆ univ.filter (fun y ↦ P.toChart y ∈ S) := fun y hy ↦
@@ -668,7 +712,8 @@ theorem toChart_mem_closure_iff (hP : P.IsLegal) (s : Finset (Fin k)) (x : Fin k
 /-- **Every substructure of a legal chart is the chart of a literal restriction** (roadmap,
 Layer 2, item 5): its points are the points of a closed face `g` of the stage type, and with the
 induced structure it is isomorphic to the chart of the restriction `P.comap g hg`, by the chart
-embedding of `g`. -/
+embedding of `g`.  Legality is essential, through `mem_faces_of_substructure`: the points of the
+substructure must form a closed face. -/
 theorem exists_equiv_comap (hP : P.IsLegal) (S : (hullLanguage.{u} α).Substructure P.Chart) :
     ∃ (m : ℕ) (g : Fin m ↪ Fin k) (hg : univ.map g ∈ P.toCellScheme.faces),
       (∀ x, P.toChart x ∈ S ↔ x ∈ univ.map g) ∧
