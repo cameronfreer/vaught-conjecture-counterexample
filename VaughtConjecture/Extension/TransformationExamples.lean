@@ -17,9 +17,9 @@ encoders); semantic contract, item 3.
   `1` whose row takes the value `3` (the cell of `pointRow 3` in
   `VaughtConjecture.Extension.CodingExamples`), the section with label `3` is lawful and not
   strongly coded at grade `1`, since `3 > 1 + 1`; it has a lawful normal form strongly coded at
-  grade `1` that transforms to it and back, and a witness bounded by grade `1` (a witness whose
-  suppressor is the formal top at grades `≤ 1` and bottom above, whatever its values) decodes it
-  (`exists_stronglyCoded_pointSection`).
+  grade `1` that transforms to it and back, and a witness bounded by grade `1` (a value map that is
+  a witness with the suppressor that is the formal top at grades `≤ 1` and bottom above, whatever
+  its values) decodes it (`exists_stronglyCoded_pointSection`).
 * **Strongly coded, not short.**  At grade `1` the code of the label `3` relative to `{3}` has
   finite part `2`: it is strongly coded at `1` but not short at `1`
   (`isStronglyCoded_and_not_isShort_strongEncode`).  So the normal forms are not short at their

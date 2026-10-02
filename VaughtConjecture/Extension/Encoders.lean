@@ -36,9 +36,9 @@ one block, and each point above `K` gets a block of its own, at finite part `K +
 to `ω * b + max j K` otherwise, so that `unspread K ∘ spread K = id` (`Label.unspread_spread`).
 Both are monotone, send only bottom to bottom, and commute with visibility replacement at every
 threshold `k ≤ K`; they are witnesses bounded by grade `K` (`Label.isWitness_spread`,
-`Label.isWitness_unspread`).  A *witness bounded by grade `K`* is a witness whose suppressor is the
-formal top at the grades `≤ K` and bottom above (`stepSuppressor K`); the bound is on the grades,
-not on the values of the witness.
+`Label.isWitness_unspread`).  A value map is a *witness bounded by grade `K`* when it is a witness
+with the suppressor `stepSuppressor K` (the formal top at the grades `≤ K` and bottom above); the
+bound is on the grades, not on the values of the map.
 
 **The encoder and decoder.**  For a finite set `V` of labels,
 `Label.strongEncode V K = blockEncode (V.image (spread K)) K ∘ spread K` and
