@@ -23,29 +23,37 @@ Descent contains both the successor step, from `R (α + 1)` to `R α`, and the l
 `R λ` to every `R β` with `β < λ`.  The graded back-and-forth theorem,
 `GradedBFSystem.bfEquiv`, states that `R α n a b` implies InfinitaryLogic's `BFEquiv α n a b` for
 every `α ≤ h`.  The proof is an induction on `α` through `BFEquiv.zero`, `BFEquiv.succ`, and
-`BFEquiv.limit`.
+`BFEquiv.limit`.  It is the graded form of InfinitaryLogic's `PotentialIso.family_bfEquiv`
+(`InfinitaryLogic.Karp.PotentialIso`), the case of a potential isomorphism (one family at every
+level, no height bound), whose induction it follows.
 
 **The height bound.**  The clauses are required only up to the height `h`, and the conclusion is
 drawn only for `α ≤ h`, because the relations of the intended applications are defined only up to
 a level: the observations of a presentation up to its level, the reductions of types at `λ_η` up
-to `η`.
+to `η`.  The relation `R` is given at every ordinal; the clauses leave its values above the height
+unconstrained and the theorem never uses them, so an application whose relations are defined only
+up to the height includes `α ≤ h` in `R`, together with the selection of coordinates when the
+related tuples are selections from larger ones.
 
 **The initial match.**  The theorem produces no related pair.  In each application the *initial
 match*, a pair related at the height, is a separate hypothesis, never a consequence of the
 clauses: the empty system `GradedBFSystem.empty` satisfies all of them and relates nothing.  The
 diagonal system `GradedBFSystem.diagonal` on one structure relates every tuple to itself; through
-the theorem it recovers InfinitaryLogic's reflexivity `BFEquiv.refl` below the height.
+the theorem it recovers InfinitaryLogic's reflexivity `BFEquiv.refl` at every level up to the
+height (with `h := α`, in full).
 
-**Intended applications.**  The theorem is the common form of two intended applications:
-approximate comparison of full presentations (`roadmap/README.md`, "Reduction to full
-presentations"; initial match a given pair of closed tuples with equal observations), and the
-back-and-forth form of condition 3 of the reduction to expansion domains (`roadmap/README.md`,
-"Condition 3 from back-and-forth"; initial match the common empty chart).  Neither is compiled
-through it yet.
+**Intended applications.**  The theorem has two intended applications: approximate comparison
+of full presentations (`roadmap/README.md`, "Reduction to full presentations"; initial match a
+given pair of closed tuples with equal observations), and the back-and-forth form of condition 3
+of the reduction to expansion domains (`roadmap/README.md`, "Condition 3 from back-and-forth";
+initial match the common empty chart).  Neither is compiled through it yet, and the theorem is not
+called common to them until both are.
 
 **Language and universes.**  No relational hypothesis is assumed: at the pinned InfinitaryLogic,
-`BFEquiv` and the lemmas `BFEquiv.zero`, `BFEquiv.succ`, and `BFEquiv.limit` used here hold for
-every language.  Both applications are in a relational language, as the passage from `BFEquiv` to
+`BFEquiv`, `SameAtomicType`, and the lemmas `BFEquiv.zero`, `BFEquiv.succ`, and `BFEquiv.limit`
+carry none.  For a language with function symbols, `SameAtomicType` compares equalities and
+relations between coordinates, not terms, and `BFEquiv` is weaker than the usual back-and-forth
+equivalence.  Both applications are in a relational language, as the passage from `BFEquiv` to
 agreement on sentences of bounded quantifier rank (`BFEquiv_implies_agreeQR`) requires.  The
 ordinal index lives in an arbitrary universe; both applications take `h : Ordinal.{0}`, the
 universe of quantifier ranks of `L_{ω₁ω}` formulas.
@@ -88,16 +96,16 @@ variable {L : Language} {M N : Type*} [L.Structure M] [L.Structure N] {h : Ordin
 
 /-- **The graded back-and-forth theorem.**  In a graded back-and-forth system of height `h`, a
 pair related at a level `α ≤ h` is back-and-forth equivalent at `α`.  The theorem produces no
-related pair: the initial match, a pair related at the height, is the hypothesis `hR` supplied by
-each application. -/
+related pair: the related pair `hR` is a hypothesis, and in the applications it is the initial
+match, at `α = h`. -/
 theorem bfEquiv (S : GradedBFSystem L M N h) {α : Ordinal.{u}} (hα : α ≤ h) {n : ℕ}
     {a : Fin n → M} {b : Fin n → N} (hR : S.R α n a b) : BFEquiv (L := L) α n a b := by
   induction α using Ordinal.limitRecOn generalizing n a b with
   | zero => exact (BFEquiv.zero a b).mpr (S.zero hR)
   | add_one β ih =>
-    have hβ : β ≤ h := (Order.le_succ β).trans hα
+    have hβ : β ≤ h := le_self_add.trans hα
     rw [← Order.succ_eq_add_one, BFEquiv.succ]
-    refine ⟨ih hβ (S.descent (Order.le_succ β) hα hR), fun x ↦ ?_, fun y ↦ ?_⟩
+    refine ⟨ih hβ (S.descent le_self_add hα hR), fun x ↦ ?_, fun y ↦ ?_⟩
     · obtain ⟨y, hy⟩ := S.forth hα hR x
       exact ⟨y, ih hβ hy⟩
     · obtain ⟨x, hx⟩ := S.back hα hR y
@@ -130,12 +138,12 @@ def diagonal : GradedBFSystem L M M h where
   forth := by rintro _ _ a _ _ rfl x; exact ⟨x, rfl⟩
   back := by rintro _ _ a _ _ rfl y; exact ⟨y, rfl⟩
 
-/-- Through the diagonal system, the theorem recovers InfinitaryLogic's `BFEquiv.refl` below the
-height. -/
+/-- Through the diagonal system, the theorem recovers InfinitaryLogic's `BFEquiv.refl` at every
+level up to the height. -/
 example {α : Ordinal.{u}} (hα : α ≤ h) {n : ℕ} (a : Fin n → M) : BFEquiv (L := L) α n a a :=
   (diagonal L M h).bfEquiv hα rfl
 
-/-- The instance of the applications: the ordinal index in `Ordinal.{0}`. -/
+/-- The universe of both applications: the ordinal index in `Ordinal.{0}`. -/
 example (h : Ordinal.{0}) (S : GradedBFSystem L M N h) {n : ℕ} {a : Fin n → M} {b : Fin n → N}
     (hR : S.R h n a b) : BFEquiv (L := L) h n a b :=
   S.bfEquiv le_rfl hR
