@@ -17,6 +17,7 @@ import InfinitaryLogic.ScottProcess.RankComparison
 import InfinitaryLogic.Scott.OrbitRankStabilization
 import InfinitaryLogic.Descriptive.BFSeparation
 import InfinitaryLogic.Lomega1omega.InHierarchy
+import InfinitaryLogic.Scott.MontalbanComplexity
 import ComputableModelTheory.Classical
 import Mathlib.ModelTheory.Fraisse
 
@@ -163,7 +164,7 @@ set_option linter.hashCommand false in
 set_option linter.hashCommand false in
 #check FirstOrder.Language.internalScottRank_le_of_orbits_determined
 
--- InfinitaryLogic at our pinned dependency `098fb36` (signatures checked): the orbit-formula
+-- InfinitaryLogic at our pinned dependency `8a15ca5` (signatures checked): the orbit-formula
 -- threshold and rank bound and the preservation of infinitary formulas by maps agreeing locally
 -- with automorphisms, imported through the two narrow modules (never `InfinitaryLogic.All`).
 set_option linter.hashCommand false in
@@ -186,7 +187,7 @@ set_option linter.hashCommand false in
 #check FirstOrder.Language.BoundedFormulaω.realize_comp_append_of_localAutomorphisms
 
 -- The rank comparison of the Scott process (InfinitaryLogic, merged at `a640bbb`, contained in
--- `098fb36`), through its two modules.
+-- `8a15ca5`), through its two modules.
 set_option linter.hashCommand false in
 #check FirstOrder.Language.selfStabilizesCompletely_iff_orbitRank_le
 set_option linter.hashCommand false in
@@ -203,7 +204,7 @@ set_option linter.hashCommand false in
 -- Mathlib's Fraïssé interface, to be applied by the classical limit of the top-free witnesses
 -- (expected, not elaborated; `README.md`, Layer 0).  Representative classes, the factorization
 -- of tuples through the age, orbit isolation, countable prime structures, and the classical
--- existence theorem of our pinned ComputableModelTheory (`0401c95`) are checked below.
+-- existence theorem of our pinned ComputableModelTheory (`37f6c42`) are checked below.
 set_option linter.hashCommand false in
 #check FirstOrder.Language.age
 set_option linter.hashCommand false in
@@ -225,7 +226,7 @@ set_option linter.hashCommand false in
 set_option linter.hashCommand false in
 #check FirstOrder.Language.age.fg_substructure
 
--- InfinitaryLogic at our pinned dependency `098fb36` (signatures checked): uniform
+-- InfinitaryLogic at our pinned dependency `8a15ca5` (signatures checked): uniform
 -- back-and-forth separation of analytic sets of nonisomorphic pairs of codes
 -- (`Descriptive/BFSeparation`); its compiled application is `isThinOn_of_countable_bfClasses`
 -- (`VaughtConjecture.MainTheorem.Scatteredness`; `README.md`, Layer 6).
@@ -238,14 +239,14 @@ set_option linter.hashCommand false in
 set_option linter.hashCommand false in
 #check FirstOrder.Language.exists_uniform_bfSeparation_of_analyticSets
 
--- InfinitaryLogic at our pinned dependency `098fb36` (signatures checked): the forward Karp
+-- InfinitaryLogic at our pinned dependency `8a15ca5` (signatures checked): the forward Karp
 -- lemma, agreement on formulas of quantifier rank at most `α` from `BFEquiv α`, for a relational
 -- language.  Its application to the expansion domains (condition 3 of `README.md`) is a
 -- statement still to be proved; no application of it is compiled here.
 set_option linter.hashCommand false in
 #check FirstOrder.Language.BFEquiv_implies_agreeQR
 
--- The ordinal-indexed hierarchy (`Lomega1omega/InHierarchy`), at our pinned dependency `098fb36`
+-- The ordinal-indexed hierarchy (`Lomega1omega/InHierarchy`), at our pinned dependency `8a15ca5`
 -- (signatures checked): the signed-traversal classes `IsSigmaIn`/`IsPiIn`, which are syntactic
 -- classes, and the normal forms `IsSigmaInNF`/`IsPiInNF`, which lie in them; the converse,
 -- up to logical equivalence, is not formalized (`README.md`, Layer 4).  A normal form at level
@@ -274,7 +275,49 @@ set_option linter.hashCommand false in
 set_option linter.hashCommand false in
 #check FirstOrder.Language.BoundedFormulaω.IsPiInNF.qrank_le
 
--- ComputableModelTheory at our pinned dependency `0401c95` (signatures checked), through the
+-- Montalbán's explicit Scott sentence from a family of orbit formulas and its complexity
+-- (InfinitaryLogic, `Scott/MontalbanSentence` and `Scott/MontalbanComplexity`), at our pinned
+-- dependency `8a15ca5` (signatures checked).  For a countable `M` in
+-- a language with countably many relation symbols, a family `Φ n a : L.Formulaω (Fin n)` over
+-- all tuples; `D_a` is `atomicDiagram a`, a countable conjunction of atoms and negated atoms
+-- (`Π^in_1`).  If `1 ≤ α` and every `Φ n a` is `IsSigmaIn α`, the sentence is `IsPiIn (α + 1)`
+-- (no orbit property, no relationality); the Scott-sentence corollaries add `[L.IsRelational]`;
+-- orbit formulas in `IsSigmaIn 0` give a Scott sentence in `IsPiIn 2`.  It supplies *a* Scott
+-- sentence, not the exact-age sentences of `README.md`, Layer 4; no application is compiled here.
+set_option linter.hashCommand false in
+#check FirstOrder.Language.atomicDiagram
+set_option linter.hashCommand false in
+#check FirstOrder.Language.IsOrbitFormulaFamily
+set_option linter.hashCommand false in
+#check FirstOrder.Language.montalbanSentence
+set_option linter.hashCommand false in
+#check FirstOrder.Language.realize_montalbanSentence
+set_option linter.hashCommand false in
+#check FirstOrder.Language.montalbanSentence_self
+set_option linter.hashCommand false in
+#check FirstOrder.Language.nonempty_equiv_of_realize_montalbanSentence
+set_option linter.hashCommand false in
+#check FirstOrder.Language.montalbanSentence_characterizes
+set_option linter.hashCommand false in
+#check FirstOrder.Language.IsOrbitFormulaFamilyPointed
+set_option linter.hashCommand false in
+#check FirstOrder.Language.montalbanSentencePointed
+set_option linter.hashCommand false in
+#check FirstOrder.Language.montalbanSentencePointed_characterizes
+set_option linter.hashCommand false in
+#check FirstOrder.Language.isPiIn_atomicDiagram
+set_option linter.hashCommand false in
+#check FirstOrder.Language.isPiIn_montalbanSentence
+set_option linter.hashCommand false in
+#check FirstOrder.Language.isPiIn_montalbanSentencePointed
+set_option linter.hashCommand false in
+#check FirstOrder.Language.exists_isPiIn_scottSentence_of_sigmaIn_orbits
+set_option linter.hashCommand false in
+#check FirstOrder.Language.exists_isPiIn_pointed_of_sigmaIn_orbits
+set_option linter.hashCommand false in
+#check FirstOrder.Language.exists_isPiIn_two_scottSentence_of_sigmaIn_zero_orbits
+
+-- ComputableModelTheory at our pinned dependency `37f6c42` (signatures checked), through the
 -- entry module `ComputableModelTheory.Classical` (Mathlib-only imports): classical Fraïssé
 -- existence (`ModelTheory/FraisseExistence`), rooted universality and uniqueness
 -- (`ModelTheory/RootedExtension`), and isolation and primeness over named finite parameters
