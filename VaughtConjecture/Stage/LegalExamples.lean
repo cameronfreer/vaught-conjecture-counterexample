@@ -17,14 +17,15 @@ stage type, but it is not legal: the graded face `({0}, 1)` is the graded index 
 scheme is not complete (`not_isLegal_bare`).  A `StageType` alone is the unrestricted structure.
 
 **Legal.**  `point` is the stage type on one point with a single cell of scope `{0}` and grade
-`1`, the faces `∅` and `{0}`, mute rows, and the bottom label: the one-point scheme with the mute
-semantics of the last clause of [Kni26, Lemma 4.2.2].  Mute rows are consistent and bountiful,
-and the only graded face is `({0}, 1)`, so it is legal (`isLegal_point`).
+`1`, the faces `∅` and `{0}`, the bottom rows (`CellScheme.Rows.bot`, constantly bottom), and the
+bottom label: the one-point scheme with the constantly bottom semantics of the last clause of
+[Kni26, Lemma 4.2.2].  The bottom rows are consistent and bountiful, and the only graded face is
+`({0}, 1)`, so it is legal (`isLegal_point`).
 
 ## References
 
-Legality follows [Kni26, Definitions 2.6.1 and 3.1.1]; the mute semantics is the last clause of
-[Kni26, Lemma 4.2.2].
+Legality follows [Kni26, Definitions 2.6.1 and 3.1.1]; the constantly bottom semantics is the last
+clause of [Kni26, Lemma 4.2.2].
 -/
 
 namespace VaughtConjecture.StageType
@@ -48,21 +49,21 @@ private theorem not_isLegal_bare : ¬ bare.IsLegal := fun h ↦ by
   exact d.elim0
 
 /-- The one-point stage type: a single cell of scope `{0}` and grade `1`, the faces `∅` and
-`{0}`, mute rows, and the bottom label. -/
+`{0}`, the bottom rows, and the bottom label. -/
 private def point : StageType.{0} 0 1 where
   card := 1
   toCellScheme := ⟨univ, Geometry.intervalPlan univ, fun _ ↦ univ, fun _ ↦ 1⟩
-  rows := CellScheme.Rows.mute _
+  rows := CellScheme.Rows.bot _
   label _ := ⊥
   isWellFormed := ⟨rfl, ⟨inferInstance, Geometry.isPlan_intervalPlan _, fun _ ↦ by
     simp [CellScheme.gradedIndex]⟩⟩
   isCoded _ _ := WithBot.bot_lt_coe _
-  isLawful := CellScheme.Rows.isLawful_bot
+  isLawful := CellScheme.Rows.isLawful_const_bot
   atStage _ := Label.atStage_bot
 
-/-- The one-point stage type with mute rows is legal. -/
+/-- The one-point stage type with the bottom rows is legal. -/
 private theorem isLegal_point : point.IsLegal :=
-  isLegal_iff.mpr ⟨CellScheme.Rows.isConsistent_mute, CellScheme.Rows.isBountiful_mute,
+  isLegal_iff.mpr ⟨CellScheme.Rows.isConsistent_bot, CellScheme.Rows.isBountiful_bot,
     fun ⟨C, j⟩ ⟨_, hpos, hle⟩ ↦ ⟨(0 : Fin 1), by
       have hC : #C ≤ 1 := card_le_univ C
       have hC' : C = univ := (card_eq_iff_eq_univ C).mp (by simp only at hpos hle ⊢; simp; omega)

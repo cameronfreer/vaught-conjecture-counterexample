@@ -240,7 +240,7 @@ lawful below the new cell. -/
 private theorem isConsistent_apexRow_three : (apexRow (3 : Label.{u})).rows.IsConsistent :=
   Rows.isConsistent_of_isLowerEmbedding (isLowerEmbedding_castSucc 3) (comap_apexRow 3)
     (isConsistent_const 3 fun _ ↦ by simp [pairRow]) fun s hs ↦ by
-      convert Rows.isLawfulBelow_bot (R := (apexRow (3 : Label.{u})).rows) _ using 1
+      convert Rows.isLawfulBelow_const_bot (R := (apexRow (3 : Label.{u})).rows) _ using 1
       funext t
       exact row_eq_bot_of_notMem_range 3 hs t
 

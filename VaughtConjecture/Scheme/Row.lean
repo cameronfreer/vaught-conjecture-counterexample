@@ -43,7 +43,7 @@ restrict to every lower set (`IsLawful.isLawfulBelow`) and from a lower set to a
 `Label.TransformsTo.reduce`; at a successor stage it need not be
 (`VaughtConjecture.Stage.Examples`).
 
-The constant bottom labelling is lawful for all rows (`isLawful_bot`), and a cell whose row is
+The constant bottom labelling is lawful for all rows (`isLawful_const_bot`), and a cell whose row is
 bottom at the cell itself has bottom label in every lawful section
 (`IsLawful.eq_bot_of_row_self_eq_bot`).  The rows are **consistent** (`Rows.IsConsistent`) when
 each row `R.row s` is lawful below the graded index of `s`; consistent rows are orderly
@@ -51,17 +51,18 @@ each row `R.row s` is lawful below the graded index of `s`; consistent rows are 
 (`IsConsistent.comap`).  Since the bottom labelling is always lawful, the mere existence of lawful
 sections carries no information; consistency is the statement about the rows themselves.
 
-The **mute** rows (`Rows.mute D`) are constantly bottom.  Every cell's row is bottom at the cell
-itself, so the only lawful section is the bottom labelling (`isLawful_mute_iff`), below every pair
-as well (`isLawfulBelow_mute_iff`); mute rows are consistent (`isConsistent_mute`) and pull back to
-mute rows (`comap_mute`).
+The **bottom** rows (`Rows.bot D`) are constantly bottom.  Every cell's row is bottom at the cell
+itself, so the only lawful section is the bottom labelling (`isLawful_bot_iff`), below every pair
+as well (`isLawfulBelow_bot_iff`); the bottom rows are consistent (`isConsistent_bot`) and pull back
+to the bottom rows (`comap_bot`).
 
 ## References
 
 Semantic rows are the semantics of [Kni26, Definition 2.5.3], lawful sections the labellings
 respecting them ([Kni26, Definition 2.5.4]: locality is its first clause, availability its
-second), and consistency is [Kni26, Definition 2.5.12]; mute rows are the mute semantics of the
-last clause of [Kni26, Lemma 4.2.2], and stage reduction is [Kni26, Definition 3.1.2].
+second), and consistency is [Kni26, Definition 2.5.12]; the bottom rows are the constantly bottom
+semantics of the last clause of [Kni26, Lemma 4.2.2], and stage reduction is
+[Kni26, Definition 3.1.2].
 -/
 
 universe u
@@ -155,14 +156,14 @@ theorem isLawfulBelow_iff {X : Finset α × ℕ} {r : D.below X → Label.{u}} :
   Iff.rfl
 
 /-- The constant bottom labelling is a lawful section of all rows. -/
-theorem isLawful_bot : R.IsLawful fun _ ↦ ⊥ where
+theorem isLawful_const_bot : R.IsLawful fun _ ↦ ⊥ where
   orderly _ := isSelfVisible_bot _
   locality s := by simpa only [min_self] using TransformsTo.bot _ (R.row s)
   availability _ t _ _ := ⟨t, rfl, le_rfl⟩
 
 /-- The constant bottom labelling is lawful below every pair. -/
-theorem isLawfulBelow_bot (X : Finset α × ℕ) : R.IsLawfulBelow X fun _ ↦ ⊥ :=
-  isLawfulBelow_iff.mpr isLawful_bot
+theorem isLawfulBelow_const_bot (X : Finset α × ℕ) : R.IsLawfulBelow X fun _ ↦ ⊥ :=
+  isLawfulBelow_iff.mpr isLawful_const_bot
 
 /-- Every labelling of a scheme without cells is lawful. -/
 theorem isLawful_of_isEmpty [IsEmpty ι] (p : ι → Label.{u}) : R.IsLawful p where
@@ -288,31 +289,31 @@ theorem restrict [DecidableEq α] (hR : R.IsConsistent) (B : Finset α) :
 
 end IsConsistent
 
-/-! ### Mute rows -/
+/-! ### The bottom rows -/
 
 variable (D) in
-/-- The **mute** rows: every row is constantly bottom [Kni26, §4.2]. -/
-def mute : D.Rows.{u} := ⟨fun _ _ ↦ ⊥⟩
+/-- The **bottom** rows: every row is constantly bottom [Kni26, §4.2]. -/
+def bot : D.Rows.{u} := ⟨fun _ _ ↦ ⊥⟩
 
-/-- A value of a mute row. -/
-@[simp] theorem mute_row (s : ι) (t : D.below (D.gradedIndex s)) : (mute D).row s t = ⊥ := rfl
+/-- A value of a bottom row. -/
+@[simp] theorem bot_row (s : ι) (t : D.below (D.gradedIndex s)) : (bot D).row s t = ⊥ := rfl
 
-/-- Mute rows pull back to mute rows. -/
-@[simp] theorem comap_mute (hφ : E.IsLowerEmbedding D φ) : (mute D).comap hφ = mute E := rfl
+/-- The bottom rows pull back to the bottom rows. -/
+@[simp] theorem comap_bot (hφ : E.IsLowerEmbedding D φ) : (bot D).comap hφ = bot E := rfl
 
-/-- The lawful sections of mute rows: only the bottom labelling. -/
-@[simp] theorem isLawful_mute_iff {p : ι → Label.{u}} : (mute D).IsLawful p ↔ p = fun _ ↦ ⊥ := by
+/-- The lawful sections of the bottom rows: only the bottom labelling. -/
+@[simp] theorem isLawful_bot_iff {p : ι → Label.{u}} : (bot D).IsLawful p ↔ p = fun _ ↦ ⊥ := by
   refine ⟨fun h ↦ funext fun s ↦ h.eq_bot_of_row_self_eq_bot s rfl, ?_⟩
   rintro rfl
-  exact isLawful_bot
+  exact isLawful_const_bot
 
-/-- Below every pair, the only labelling lawful for mute rows is the bottom labelling. -/
-@[simp] theorem isLawfulBelow_mute_iff {X : Finset α × ℕ} {r : D.below X → Label.{u}} :
-    (mute D).IsLawfulBelow X r ↔ r = fun _ ↦ ⊥ := by
-  rw [isLawfulBelow_iff, comap_mute, isLawful_mute_iff]
+/-- Below every pair, the only labelling lawful for the bottom rows is the bottom labelling. -/
+@[simp] theorem isLawfulBelow_bot_iff {X : Finset α × ℕ} {r : D.below X → Label.{u}} :
+    (bot D).IsLawfulBelow X r ↔ r = fun _ ↦ ⊥ := by
+  rw [isLawfulBelow_iff, comap_bot, isLawful_bot_iff]
 
-/-- Mute rows are consistent. -/
-theorem isConsistent_mute : (mute D : D.Rows.{u}).IsConsistent := fun _ ↦ isLawfulBelow_bot _
+/-- The bottom rows are consistent. -/
+theorem isConsistent_bot : (bot D : D.Rows.{u}).IsConsistent := fun _ ↦ isLawfulBelow_const_bot _
 
 end Rows
 

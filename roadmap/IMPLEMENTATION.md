@@ -49,7 +49,7 @@ below.  The companion milestones are summarized under "Companion boundaries".
 ## Environment
 
 Lean `v4.35.0-rc3`; InfinitaryLogic and ComputableModelTheory at the revisions pinned in
-`lakefile.toml` (`8a15ca5` and `37f6c42`); Mathlib inherited from InfinitaryLogic's manifest.
+`lakefile.toml` (`def5cc0` and `0e9935b`); Mathlib inherited from InfinitaryLogic's manifest.
 Nothing else is imported.
 Search the pinned libraries first and delete any local lemma that duplicates one already
 upstream.
@@ -203,14 +203,14 @@ between the requested cutoff and the stage, `c < c' < α` (a permitted cutoff, s
 top), self-visible at the donor's arity `k`.  Such a `c'` is given by
 `Label.exists_lt_lt_isSelfVisible (hβ : Order.IsSuccPrelimit β) (ho : o < β) (k : ℕ) :
 ∃ c, o < c ∧ c < β ∧ IsSelfVisible k (c : Label)` (`Realization/Families`, namespace `Label`),
-applied with `o := c`, with witness `c' = c + (k + 1)`.  Its hypotheses hold here only because (i) the requested cutoff
-`c` is an ordinal below the stage (it is a permitted cutoff, `isPermittedCutoff_coe`), and (ii)
-the stage is zero or a limit (`Order.IsSuccPrelimit`).  Each step takes a lawful coface of the
-actual type with the donor's observation at `c'`; this stronger agreement at `c'` is preserved
-throughout the finite chain of extensions, after which one passes down to `c` by capping.
-The stage hypothesis (ii) stays in the statement.  At stage zero there are no permitted
-cutoffs, so that case is vacuous; it is not a source of a witness.  No generalization to
-successor stages follows from this argument.  The presentation is stated first at stage `ω` and
+applied with `o := c`, with witness `c' = c + (k + 1)`.  Its hypotheses hold here only because (i)
+the requested cutoff `c` is an ordinal below the stage (it is a permitted cutoff,
+`isPermittedCutoff_coe`), and (ii) the stage is zero or a limit (`Order.IsSuccPrelimit`).  Each step
+takes a lawful coface of the actual type with the donor's observation at `c'`; this stronger
+agreement at `c'` is preserved throughout the finite chain of extensions, after which one passes
+down to `c` by capping.  The stage hypothesis (ii) stays in the statement.  At stage zero there are
+no permitted cutoffs, so that case is vacuous; it is not a source of a witness.  No generalization
+to successor stages follows from this argument.  The presentation is stated first at stage `ω` and
 at the stages `λ_ξ` (all limits), under the countability hypotheses the argument needs.
 Different cutoffs may use different points.  Prove both satisfaction directions, the
 realization/structure round trips, isomorphism preservation and reflection, and no finite
@@ -449,7 +449,8 @@ age and not recognized afterwards in a model constructed otherwise.
    only the coface, a stage type on one more point, not a point of the realization); the
    receiving criterion, all equations on one injective occurrence extending `t` literally, puts
    the new point outside the whole chart `t`, hence outside `F`; terminality from top-freeness
-   and the new band required at the next block, using only the reduction of models (layer 2).
+   and the labels in the new block `[λ, λ + ω)` required at the next block, using only the
+   reduction of models (layer 2).
    The placement of the base class in the loss at `η`, by expansion uniqueness and same-carrier
    transport, belongs to layer 5 (checkpoint 5).
 
@@ -812,14 +813,16 @@ name and its signature at the pin; it does not assert that the hypotheses hold i
 this roadmap.  An application is claimed only where a compiled theorem applying the statement is
 named (`README.md`, Layer 0):
 
-- **InfinitaryLogic**: the current pin is `8a15ca5`, the merge of its pull request #148, reached
-  from `098fb36` (the merge of its pull request #146) by this repository's pull request #45.
-  Besides the statements of `098fb36` (the rank comparison of the Scott process, #140; the
-  orbit-formula threshold and rank bound and local-automorphism preservation of `README.md`, Layer
-  0, #141; analytic tree boundedness, #142; the coded forced back-and-forth tree, #143; uniform
-  back-and-forth separation, `Descriptive/BFSeparation`, #144; and the ordinal-indexed
-  `Σ^in_α`/`Π^in_α` hierarchy, `Lomega1omega/InHierarchy`, #145), it contains Montalbán's explicit
-  Scott sentence from a family of orbit formulas (#147, `Scott/MontalbanSentence`:
+- **InfinitaryLogic**: the current pin is `def5cc0`, the merge of its pull request #152, reached
+  from `8a15ca5` (the merge of its pull request #148) by this repository's pull request #49;
+  `8a15ca5` was reached from `098fb36` (the merge of its pull request #146) by this repository's
+  pull request #45.  The statements of `8a15ca5` are available at our pinned dependency
+  `def5cc0` (signatures checked; `SuggestedInterfaces.lean` `#check`s them): the rank comparison
+  of the Scott process, #140; the orbit-formula threshold and rank bound and local-automorphism
+  preservation of `README.md`, Layer 0, #141; analytic tree boundedness, #142; the coded forced
+  back-and-forth tree, #143; uniform back-and-forth separation, `Descriptive/BFSeparation`, #144;
+  the ordinal-indexed `Σ^in_α`/`Π^in_α` hierarchy, `Lomega1omega/InHierarchy`, #145; Montalbán's
+  explicit Scott sentence from a family of orbit formulas (#147, `Scott/MontalbanSentence`:
   `montalbanSentence`, `IsOrbitFormulaFamily`, `realize_montalbanSentence`,
   `montalbanSentence_self`, `nonempty_equiv_of_realize_montalbanSentence`,
   `montalbanSentence_characterizes`, and the pointed forms `montalbanSentencePointed`,
@@ -827,25 +830,53 @@ named (`README.md`, Layer 0):
   in the signed hierarchy (#148, `Scott/MontalbanComplexity`: `isPiIn_atomicDiagram`,
   `isPiIn_montalbanSentence`, `isPiIn_montalbanSentencePointed`,
   `exists_isPiIn_scottSentence_of_sigmaIn_orbits`, `exists_isPiIn_pointed_of_sigmaIn_orbits`, and
-  `exists_isPiIn_two_scottSentence_of_sigmaIn_zero_orbits`).  Toolchain and Mathlib are the same as
-  at `098fb36`.  These statements are available at our pinned dependency `8a15ca5` (signatures
-  checked; `SuggestedInterfaces.lean` `#check`s them).  The imports are the narrow modules
+  `exists_isPiIn_two_scottSentence_of_sigmaIn_zero_orbits`).  Between `8a15ca5` and `def5cc0`
+  there are three merges, available at the pin (signatures checked; `SuggestedInterfaces.lean`
+  `#check`s them; no application compiled in this repository):
+  - forgetting finitely many parameters (#149, `Scott/ForgetParameters`): `existsTuple_isScott`,
+    the existential closure over the parameters of a formula characterizing `(M, c)` is a Scott
+    sentence of `M` among countable structures; `isSigmaIn_existsTuple_iff`, the closure keeps
+    the class `Σ^in_α` for `1 ≤ α`; `exists_isSigmaIn_scottSentence_of_sigmaIn_orbits_over`,
+    `Σ^in_α` orbits over a parameter tuple (`1 ≤ α`) give a `Σ^in_{α+2}` Scott sentence; and
+    `exists_isSigmaIn_three_scottSentence_of_sigmaIn_one_orbits_over`, `Σ^in_1` orbits over
+    parameters give a `Σ^in_3` Scott sentence (for the `Σ^in_3` Scott sentence obtained by
+    existentially quantifying a named rigid core, `README.md`, Layer 4, and `COMPANIONS.md`, B4);
+  - rank tails and the least level of a cover (#150, `OrdinalCountability`): `rankTail`,
+    `rankTail_cofinal_losses_iff`, `mk_eq_aleph_one_of_countable_fibers`, `leastLevel`,
+    `countable_fibers_leastLevel`, and `rankTail_leastLevel`, beside the earlier
+    `countable_iff_rank_bounded` (the prospective "ranks with countable fibres" of "The
+    full-presentation route");
+  - graded matching (#152, `Scott/GradedMatching`, `bfEquiv_of_gradedSystem` and
+    `bfEquiv_of_gradedMatching`): a family of relations graded up to a height bound, with atomic
+    agreement at level `0`, lowering, and forth and back one level down, relates at a level
+    `α ≤ height` only `BFEquiv α` pairs (a generic form of the graded back-and-forth theorem of
+    `README.md`, Layer 0, whose initial match is a pair related at the height, `α = height`).
+
+  Toolchain and Mathlib are the same as at `8a15ca5`.  The imports are the narrow modules
   (`InfinitaryLogic.Scott.OrbitFormulaThreshold`, `InfinitaryLogic.Lomega1omega.LocalAutomorphism`,
   `InfinitaryLogic.Descriptive.BFSeparation`, `InfinitaryLogic.Lomega1omega.InHierarchy`,
-  `InfinitaryLogic.Scott.MontalbanComplexity`, and the others the sketch names), never
-  `InfinitaryLogic.All`.
-- **ComputableModelTheory**: the current pin is `37f6c42`, the merge of its pull request #51 (its
-  own InfinitaryLogic repin to `8a15ca5`), reached from `0401c95` (the merge of its pull request
-  #47) by this repository's pull request #45.  Besides representative classes, extension-rich
-  families and direct limits, the factorization of tuples through the age, orbit isolation, and
-  countable prime structures, rooted universality and uniqueness (#42), classical Fraïssé existence
-  (#44), the entry module `ComputableModelTheory.Classical` (#45), and isolation and primeness over
-  named finite parameters (#46), available at our pinned dependency `37f6c42` (signatures checked;
-  `SuggestedInterfaces.lean` `#check`s them through the entry module), it contains the seeded
-  effective back-and-forth and computable automorphisms extending an isomorphism between finitely
-  generated substructures of a computably homogeneous structure
-  (`ModelTheory/Computable/AutomorphismExtension`), outside the entry module and not used here.  Its
-  own InfinitaryLogic pin is exactly `8a15ca5`, the revision pinned here.
+  `InfinitaryLogic.Scott.MontalbanComplexity`, `InfinitaryLogic.Scott.ForgetParameters`,
+  `InfinitaryLogic.Scott.GradedMatching`, `InfinitaryLogic.OrdinalCountability`, and the others
+  the sketch names), never `InfinitaryLogic.All`.
+- **ComputableModelTheory**: the current pin is `0e9935b`, the merge of its pull request #53,
+  reached from `37f6c42` (the merge of its pull request #51) by this repository's pull request
+  #49; `37f6c42` was reached from `0401c95` (the merge of its pull request #47) by this
+  repository's pull request #45.  Representative classes, extension-rich families and direct
+  limits, the factorization of tuples through the age, orbit isolation, and countable prime
+  structures, rooted universality and uniqueness (#42), classical Fraïssé existence (#44), the
+  entry module `ComputableModelTheory.Classical` (#45), and isolation and primeness over named
+  finite parameters (#46) are available at our pinned dependency `0e9935b` (signatures checked;
+  `SuggestedInterfaces.lean` `#check`s them through the entry module).  It also contains the
+  seeded effective back-and-forth and computable automorphisms extending an isomorphism between
+  finitely generated substructures of a computably homogeneous structure
+  (`ModelTheory/Computable/AutomorphismExtension`), and finite elimination (#52, #53,
+  `Computability/FiniteElimination`: over a fixed prefix, if refutation persists, a sequence of
+  selections that never selects a refuted candidate, replaces a selection only once it is refuted,
+  and from some stage on selects only candidates of index at most a given bound makes only finitely
+  many selections), all outside the entry module and not used here.  None of the modules behind
+  the entry module changed between `37f6c42` and `0e9935b`.  Its own InfinitaryLogic pin is
+  `8a15ca5`, an ancestor of the revision pinned here; this repository's manifest governs (see the
+  next item).
 - **Mathlib and the toolchain** agree across the three: one Lean toolchain (`v4.35.0-rc3` at
   present) and one Mathlib commit (at present the fork commit `346a4bd`, inherited from
   InfinitaryLogic).  The manifest holds one revision of each dependency, so ComputableModelTheory
@@ -857,10 +888,11 @@ merged upstream after the pins above is listed here, named in prose only and nev
 the sketches, until a repin containing it is recorded in this subsection.
 
 **Prospective dependencies (neither available upstream nor pinned):** the InfinitaryLogic
-statements listed under "The full-presentation route": invariant Borel observations, ranks with
-countable fibres, the isolating-level lower bound, and limits of chains of bounded equivalence
-(the analogue for `BlockBFEquiv` of the chain-limit lemma).  The graded back-and-forth theorem,
-listed there too, is not a dependency: it is to be proved in this repository.  No
+statements listed under "The full-presentation route": invariant Borel observations, the
+isolating-level lower bound, and limits of chains of bounded equivalence (the analogue for
+`BlockBFEquiv` of the chain-limit lemma).  The local graded back-and-forth theorem remains the
+target until the upstream `bfEquiv_of_gradedMatching` (at the pin, signatures checked) has been
+checked against both intended applications; no application is compiled here.  No
 statement of this roadmap relies on any of them, or on the statements available upstream, as
 pinned until this subsection records a pin containing it; until then they are named in prose
 only (`README.md`, Layer 0), never `#check`ed in the sketches.
@@ -954,8 +986,9 @@ blocks"), now at the pin, is applied by the scatteredness form of thinness
 - Make constructor projections, identity reindexings, and canonical cell transport
   directional `[simp]` lemmas.  Use `ext` on data, and narrow `simp only` for dependent face
   equations.  Do not unfold whole schemes/models globally.
-- Separate natural-index arithmetic (`omega`) from ordinal/band inequalities; expose exact
-  band-comparison lemmas before asking automation to solve goals.
+- Separate natural-index arithmetic (`omega`) from ordinal inequalities (blocks `[μ, μ + ω)` and
+  bands `[α, α + K]`); expose exact block- and band-comparison lemmas before asking automation to
+  solve goals.
 - Use `funext`, `Function.Embedding.ext`, `Subtype.ext`, and proof irrelevance to finish
   the transport equations.  Give explicit structure instances where a structure is coded, rather
   than letting inference pick an unintended structure.
@@ -1184,14 +1217,14 @@ lands, their notes stay in those modules.
   `IsShort` and the flattening of finite parts (`flatten`, `flattenOrd`, and their lemmas)
   beside the self-visible labels of `Label.Visibility`; its block arithmetic beside the blocks
   of `Label.OrdinalVisibility`.
-- `Extension/CodedSection`: the block coding (`bandEncode`, `bandDecode`, and their lemmas) to a
-  module `Label/Coding.lean` beside `Label.Transform`; `CellScheme.Rows.IsLawful.exists_bandEncode`
+- `Extension/CodedSection`: the block coding (`blockEncode`, `blockDecode`, and their lemmas) to a
+  module `Label/Coding.lean` beside `Label.Transform`; `CellScheme.Rows.IsLawful.exists_blockEncode`
   to `Scheme.Row`, after the lawful sections.  Its private block arithmetic
   (`mod_le_mod_of_div_eq`, `mod_lt_mod_of_div_eq`, `omega0_mul_add_lt`, `omega0_mul_add_div`,
   `omega0_mul_add_mod`, `visibilityReplace_omega0_mul_add`, `omega0_mul_natCast_add_lt`)
   duplicates the public rules of `Extension/WitnessAlgebra`, which replace it.  The existential
-  coded copy (`CellScheme.Rows.IsLawful.exists_bandEncode`, `Label.IsWitness.bandEncode`) is a
-  consequence of the universal form, `Label.isWitness_bandEncode_stepSuppressor` with
+  coded copy (`CellScheme.Rows.IsLawful.exists_blockEncode`, `Label.IsWitness.blockEncode`) is a
+  consequence of the universal form, `Label.isWitness_blockEncode_stepSuppressor` with
   `CellScheme.Rows.IsLawful.map_of_bot_reflecting`, and is to be replaced by it.
 - `Extension/Encoders`: the label statements to `Label/Coding.lean`, beside the block coding;
   the lawfulness statements to `Scheme.Row`.  The encoders of 2.3 are built on the block coding
