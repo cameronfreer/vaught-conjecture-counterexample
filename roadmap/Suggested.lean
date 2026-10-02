@@ -113,8 +113,8 @@ end DirectedLimits
 
 /-! ## 3. The top-free witnesses: the finite age and its classical limit
 
-Statement shapes for the hypotheses and the reconstruction of `README.md`, section "The
-top-free witnesses: the finite age and its classical limit".  Charts are abstract here: a type
+Statement shapes for the hypotheses and the finite-age reconstruction of `README.md`, section
+"The top-free witnesses: the finite age and its classical limit".  Charts are abstract here: a type
 `Chart n` of charts on `n` points with exact partial restriction `restrict`, as in the chart
 system of `SuggestedInterfaces.lean`, and a map `rel` sending a chart to a relation symbol of a
 language `L` (the stage chart language, or its definitional expansion by the hull operations).
@@ -191,12 +191,12 @@ def CoversTuples (eval : {n : ℕ} → (Fin n ↪ M) → Option (Chart n)) : Pro
     ⇑u ∘ b = a ∧ eval u = some p
 
 variable (restrict) in
-/-- **The reconstruction predicate** (`SEMANTIC_CONTRACT.md`, item 11, without receiving):
-literal recovery of the chart relations with injectivity of labelled tuples, exact partial
-restriction, and covering.  It concerns the relations only: the identification of the function
-symbols with the definable hull operations is the reconstruction roundtrip of
-`SEMANTIC_CONTRACT.md`, item 11 (a statement still to be proved), which uses local chart
-coverage and no homogeneity. -/
+/-- **The finite-age reconstruction predicate** (`SEMANTIC_CONTRACT.md`, item 11, without
+receiving): literal recovery of the chart relations with injectivity of labelled tuples, exact
+partial restriction, and covering.  It concerns the relations only: the identification of the
+function symbols with the definable hull operations is the reconstruction roundtrip of
+`SEMANTIC_CONTRACT.md`, item 11 (a statement still to be proved), which uses local chart coverage
+and no homogeneity. -/
 def Reconstructs (eval : {n : ℕ} → (Fin n ↪ M) → Option (Chart n)) : Prop :=
   RecoversRelations rel eval ∧ ExactRestriction restrict eval ∧ CoversTuples eval
 

@@ -95,7 +95,7 @@ These are the classical sources of the construction of the top-free witnesses (`
 
 ## What should not be promoted to a literature identification
 
-The top-free witnesses are ordinary Fraïssé limits of the age of top-free charts in the definitional expansion (§8), but the example as a whole is not a Fraïssé limit: models with top labels are not limits of that age, and their classification (stable continuation, the LOW decoding, the terminal comparisons, the countability of terminal classes) is not reduced to Fraïssé theory. Cap-ball lifting resembles many familiar lifting properties, but no sheaf-descent, flasqueness, model-completion, or saturation theorem has been identified and proved equivalent. Anti-exchange hulls are not matroid pregeometries. The numerical limit can be explained with monotone nets and `ℕ∞`; this does not require compactness of an arbitrary space of legal diagrams. There is no need to introduce speculative categorical vocabulary in the main paper.
+The top-free witnesses are reconstructed from ordinary Fraïssé limits of the age of top-free charts in the definitional expansion (§8, finite-age reconstruction), but the example as a whole is not a Fraïssé limit: models with top labels are not limits of that age, and their classification (stable continuation, the LOW decoding, the terminal comparisons, the countability of terminal classes) is not reduced to Fraïssé theory. Cap-ball lifting resembles many familiar lifting properties, but no sheaf-descent, flasqueness, model-completion, or saturation theorem has been identified and proved equivalent. Anti-exchange hulls are not matroid pregeometries. The numerical limit can be explained with monotone nets and `ℕ∞`; this does not require compactness of an arbitrary space of legal diagrams. There is no need to introduce speculative categorical vocabulary in the main paper.
 
 ## Proposed paper organization
 
@@ -105,7 +105,7 @@ Open with the exact infinitary statement, the stronger sentence-minimality inter
 
 1. A general theorem about continuous decreasing expansion domains, countable losses, and logical agreement; state the standard descriptive consequences here.
 2. Finite convex geometry, graded semantic rows, and the precise cap-lifting lemma.
-3. The actual language/sentence, the hull operations, and the top-free witnesses as reconstructed Fraïssé limits of the age of top-free charts.
+3. The actual language/sentence, the hull operations, and the top-free witnesses by finite-age reconstruction from Fraïssé limits of the age of top-free charts.
 4. Ordinary and constrained receiving: the finite construction, realization over the root, and recovery of donor labels.
 5. Structural stable refinement, the three terminal comparisons, and countable terminal fibres.
 6. Domain continuity, sharp one-block comparison, and the terminal-loss witnesses, constructed separately.
