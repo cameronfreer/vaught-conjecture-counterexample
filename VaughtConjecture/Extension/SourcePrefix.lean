@@ -20,7 +20,10 @@ grade, at every pair below that grade.  A **source prefix** at a pair `Z`
 into a cell scheme `D` over the same points that keeps scopes and whose image contains every cell
 of `D` below `Z`.  Below every pair `X ≤ Z` the cells of `D` are then exactly the images of the
 cells of `E` (`IsSourcePrefix.image_below`), identified by `IsSourcePrefix.belowEquiv`, and the rows
-of `D` pulled back along `φ` are the rows of `E` there.
+of `D` pulled back along `φ` are the rows of `E` there.  The source of a source prefix is the
+scheme in which sections are read; it is not the source section of the section theorem (roadmap,
+Layer 3, 3.1), which is a section of the constructed scheme, nor a coded source section of the
+owner alignment.
 
 * **Carrying lawful sections**: below `X ≤ Z` a labelling is lawful for `D` exactly when its
   transport is lawful for the pulled-back rows (`IsSourcePrefix.isLawfulBelow_iff`), so a
@@ -267,9 +270,9 @@ theorem cappedLift_iff (hXY : X ≤ Y) (hY : Y.1 ≠ univ) :
 
 /-- **A completion lifts off the full face**: between graded faces `X ≤ Y` with `Y` not on the
 ground set, the rows of a completion below the full grade lift capped, since those of the amalgam
-are bountiful.  So bountifulness of a completion is a statement about the lifts to pairs on the
-full face; it is used in the recursion on the grade to reduce the bountifulness of each scheme
-reached to those lifts. -/
+are bountiful.  With `CellScheme.Rows.isBountiful_of_coatoms`, bountifulness of a completion
+reduces to the lifts from each coatom to the full face at every grade; it is used in the recursion
+on the grade to reduce the bountifulness of each scheme reached to those lifts. -/
 theorem cappedLift_of_ne_univ (hX : X ∈ F.scheme.toCellScheme.gradedFaces)
     (hY : Y ∈ F.scheme.toCellScheme.gradedFaces) (hXY : X ≤ Y) (hYne : Y.1 ≠ univ) :
     F.scheme.rows.CappedLift hXY :=

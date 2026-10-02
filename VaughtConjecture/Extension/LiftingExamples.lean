@@ -21,11 +21,15 @@ the bottom section).
   prefixes have no cells either.
 * **One coordinate.**  On the one-point scheme `Scheme.onePoint` (one cell of grade `1`, the bottom
   rows), the one-grade lift at the grade `1` holds with no owner-capped lift: every owner label is
-  bottom, at most every cap, and the lift at the cap `⊥` is the bottom labelling.
+  bottom, at most every cap.
 * **Repeated coordinates.**  On two cells of scope `{0}` and grade `1` (one graded index, two
   cells), with rows `(1, 1)` and `(1, 2)`, the section `(1, 2)` is lawful; the grade cut at `1`
   keeps both cells, and the owner of the prescription below their common graded index has the
   larger label `2`.
+* **A lower prescribed label above the cap.**  On one point with a cell `x` of grade `1` labelled
+  with the formal top and a cell `y` of grade `2` labelled `2`, restoration at the cap `2` (above
+  the grade `1`) returns a lawful labelling that reads the formal top at `x`, although the lift it
+  restores is capped at `2`.
 * **The bottom section.**  The grade cut of the bottom rows is the bottom rows, whose only lawful
   section is the bottom one, and the splice of two bottom labellings is bottom.
 -/
@@ -72,10 +76,8 @@ owner-capped lift, since the only lawful labelling of the bottom rows is bottom.
 example : Scheme.onePoint.{u}.rows.CappedLift (X := ((univ : Finset (Fin 1)), 1)) (Y := (univ, 1))
     ⟨subset_rfl, le_rfl⟩ := by
   refine Rows.cappedLift_of_ownerCappedLift (j := 0) subset_rfl ⟨⟨0, Nat.one_pos⟩, rfl⟩
-    (Scheme.isLegal_onePoint.isWellFormed.isWellFormed.cappedLift _ (.inl rfl) _)
-    (fun p hp ↦ ⟨fun _ ↦ ⊥, Rows.isLawfulBelow_const_bot _, fun e ↦
-      (congrFun (Rows.isLawfulBelow_bot_iff.mp hp) e).symm⟩) ?_
-  intro c _ _ p _ hp _ _ o _ _ hco
+    (Scheme.isLegal_onePoint.isWellFormed.isWellFormed.cappedLift _ (.inl rfl) _) ?_
+  intro c _ p _ hp _ _ o _ _ hco
   have hp' : p = fun _ ↦ ⊥ := Rows.isLawfulBelow_bot_iff.mp hp
   rw [hp'] at hco
   exact absurd hco (not_lt_bot)
@@ -130,6 +132,53 @@ and its lifts there are those of the scheme. -/
 example {X : Finset (Fin 1) × ℕ} (h : X ≤ (univ, 1)) :
     (twinRows.{u}.gradeCut 1).CappedLift h ↔ twinRows.{u}.CappedLift h :=
   Rows.cappedLift_gradeCut_iff h le_rfl
+
+/-! ### A lower prescribed label above the cap -/
+
+/-- One point, with a cell `false` of grade `1` and a cell `true` of grade `2`, both of full
+scope. -/
+private def stepScheme : CellScheme Bool (Fin 1) :=
+  ⟨univ, Geometry.intervalPlan univ, fun _ ↦ univ, fun b ↦ if b then 2 else 1⟩
+
+/-- The rows of `stepScheme`: `(⊤)` at `false` and `(2, 2)` at `true`. -/
+private def stepRows : stepScheme.Rows.{u} := ⟨fun s _ ↦ if s then 2 else ⊤⟩
+
+/-- The section `(⊤, 2)` of `stepScheme`. -/
+private def stepSection : Bool → Label.{u} := fun b ↦ if b then 2 else ⊤
+
+/-- Two cells of `stepScheme` of the same grade are equal. -/
+private theorem eq_of_grade_eq {s t : Bool} (h : stepScheme.grade s = stepScheme.grade t) :
+    s = t := by
+  cases s <;> cases t <;> simp_all [stepScheme]
+
+/-- **The section `(⊤, 2)` is lawful**: both localities are the identity transformation. -/
+private theorem isLawful_stepSection : stepRows.{u}.IsLawful stepSection where
+  orderly d := by cases d <;> simp [stepSection, stepScheme]
+  locality s := by
+    convert TransformsTo.refl _ (stepRows.row s) using 1
+    funext d
+    obtain ⟨b, hb⟩ := d
+    cases s <;> cases b
+    · simp [stepSection, stepRows]
+    · exact absurd hb.2 (by simp [stepScheme])
+    · simp [stepSection, stepRows]
+    · simp [stepSection, stepRows]
+  availability s t _ hg := ⟨t, rfl, (eq_of_grade_eq hg) ▸ le_rfl⟩
+
+/-- **A lower prescribed label above the cap**: restoring, at the cap `2`, the lift of the
+prescription `(⊤, 2)` capped at `2` reads the formal top at the cell of grade `1`. -/
+example : ∃ r : stepScheme.below (univ, 2) → Label.{u}, stepRows.IsLawfulBelow (univ, 2) r ∧
+    r ⟨false, subset_rfl, by simp [stepScheme]⟩ = ⊤ := by
+  have hp := isLawful_stepSection.{u}.isLawfulBelow (univ, 2)
+  obtain ⟨r, hr, hrp, -, -⟩ := Rows.exists_restoration (X := (univ, 2)) (Y := (univ, 2)) le_rfl
+    (j := 1) (by simp) (Rows.cappedLift_refl ((univ : Finset (Fin 1)), 1)) hp
+    (hp.min_const_of_isSelfVisible (c := 2) (by simp)) (by simp) (fun _ ↦ rfl)
+    fun e he ↦ by
+      obtain ⟨b, hb⟩ := e
+      cases b
+      · exact absurd he (by simp [stepScheme])
+      · exact le_rfl
+  exact ⟨r, hr, hrp ⟨false, subset_rfl, by simp [stepScheme]⟩⟩
 
 /-! ### The bottom section -/
 

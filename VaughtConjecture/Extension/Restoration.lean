@@ -34,35 +34,42 @@ most `M`, and `v` agrees with `q` capped at `M` below `(B, j)`, the splice is la
 below `(B, J)` (`CellScheme.min_splice_eq`).  Availability stays on one side of the splice, since
 its witnesses have the grade of the requesting cell; no visibility of `M` is used.
 
+**Owners.**  An owner is a cell together with its row (roadmap, Layer 3, 3.1).  Below a graded
+face `X` at which some cell sits, on finitely many cells, a lawful prescription has an **owner of
+the prescription** (`CellScheme.Rows.IsLawfulBelow.exists_owner`): an owner of graded index `X`
+whose label is at least that of every prescribed cell of the grade of `X`, by availability.  Its
+label is self-visible at that grade
+(`CellScheme.Rows.IsLawfulBelow.isSelfVisible_of_gradedIndex_eq`), and its locality reads the
+prescription capped at its label.  An **owner-capped lift** is a lawful
+labelling below `Y` that reads the prescription capped at the owner label below `X` and keeps the
+ambient observation at the cap at every cell below `Y`; the rows **have owner-capped lifts** at a
+cap `c` (`CellScheme.Rows.HasOwnerCappedLifts`) when one exists for every prescription, ambient,
+and owner whose label exceeds `c`.  At the cap `⊥` the ambient condition is empty, and an
+owner-capped lift is a lawful extension of the prescription capped at the owner label.
+
 **Restoration** (`CellScheme.Rows.exists_restoration`).  Let `X ≤ Y`, `j ≤ X.2`, and suppose
-the rows lift capped from `(X.1, j)` to `(Y.1, j)` (the **lift at the lower grade**, which the
-recursion on the grade supplies from the scheme reached after the grade `j`).  Let `p` be lawful
-below `X`, `w` lawful below `Y` with `w = min p M` on the cells below `X` (an owner-capped lift,
-below), `M` self-visible at the grade of `Y`, and `p` at most `M` at the cells of grade above `j`.
-Then some `r` lawful below `Y` restores `p` literally on the cells below `X`, agrees with `w`
-capped at `M` at every cell below `Y`, and is at most `M` above the grade `j`: cap `w` at `M`, lift
-its lower part with the prescription below `(X.1, j)` by the lift at the lower grade, and splice.
-The lower prescribed labels may exceed `M`, be pairwise distinct, be the formal top, and need not
-be self-visible at the grade of `Y`.
+the rows lift capped from `(X.1, j)` to `(Y.1, j)` (the **lift at the lower grade**; in the
+recursion on the grade, it is the lift of the scheme reached after the grade `j`,
+`CellScheme.Rows.cappedLift_gradeCut_iff`).  Let `p` be lawful below `X`, `w` lawful below `Y` with
+`w = min p M` on the cells below `X` (an owner-capped lift when `M` is the owner label), `M`
+self-visible at the grade of `Y`, and `p` at most `M` at the cells of grade above `j`.  Then some
+`r` lawful below `Y` restores `p` literally on the cells below `X`, agrees with `w` capped at `M`
+at every cell below `Y`, and is at most `M` above the grade `j`: cap `w` at `M`, lift its lower
+part with the prescription below `(X.1, j)` by the lift at the lower grade, and splice.  The lower
+prescribed labels may exceed `M`, be pairwise distinct, be the formal top, and need not be
+self-visible at the grade of `Y` (`VaughtConjecture.Extension.LiftingExamples` restores the formal
+top below a cap `2`).
 
 **The lift below the cap** (`CellScheme.Rows.exists_lift_of_le_cap`): when the prescription is at
 most the cap `c` above the grade `j`, the lift at the lower grade alone gives the capped lift from
 `X` to `Y` (restoration with `w = min q c`).
 
-**Owners, and the one-grade lift.**  An owner is a cell together with its row (roadmap, Layer 3,
-3.1).  Below a graded face `X` at which some cell sits, on finitely many cells, a lawful
-prescription has an **owner of the prescription** (`CellScheme.Rows.IsLawfulBelow.exists_owner`):
-an owner of graded index `X` whose label is at least that of every prescribed cell of the grade of
-`X`, by availability.  Its label is self-visible at that grade
-(`CellScheme.Rows.IsLawfulBelow.isSelfVisible_of_gradedIndex_eq`), and its locality reads the
-prescription capped at its label.  An **owner-capped lift** is a lawful labelling below `Y` that
-reads the prescription capped at the owner label below `X` and keeps the ambient observation at
-the cap at every cell below `Y`.  The **one-grade lift**
-(`CellScheme.Rows.cappedLift_of_ownerCappedLift`): from the lift at the lower grade `j`, the lift
-at the cap `⊥` (a lawful extension), and an owner-capped lift for every prescription whose owner
-label exceeds a cap other than `⊥`, the rows lift capped from `(C, j + 1)` to `(B, j + 1)`.  At or
-below the cap the lift is the lift below the cap.  The owner-capped lift itself depends on the
-rows of the new cells; it is the subject of the owner alignment of the completion.
+**The one-grade lift** (`CellScheme.Rows.cappedLift_of_ownerCappedLift`): from the lift at the
+lower grade `j` and owner-capped lifts at every cap self-visible at `j + 1`, the rows lift capped
+from `(C, j + 1)` to `(B, j + 1)`.  When the owner label is at most the cap, the lift is the lift
+below the cap and no owner-capped lift is used; otherwise the owner-capped lift is restored at the
+owner label.  The owner-capped lifts themselves depend on the rows of the new cells; they are the
+subject of the owner alignment of the completion.
 
 ## Placement
 
@@ -216,6 +223,7 @@ theorem exists_restoration (hXY : X ≤ Y) (hj : j ≤ X.2)
       min ((p ∘ Set.inclusion (D.below_mono hXl)) d) M =
         min ((v ∘ Set.inclusion (D.below_mono hYl)) (Set.inclusion (D.below_mono hl) d)) M := by
     have h := hread ⟨d.1, le_trans d.2 hXl⟩
+    -- Unfold the compositions with the inclusions of lower sets.
     change min (p ⟨d.1, _⟩) M = min (min (w ⟨d.1, _⟩) M) M
     rw [h, min_assoc, min_self, min_assoc, min_self]
   obtain ⟨s, ⟨hs, hsM⟩, hsp⟩ := hlift M (hM.mono hjY) (v ∘ Set.inclusion (D.below_mono hYl))
@@ -231,18 +239,21 @@ theorem exists_restoration (hXY : X ≤ Y) (hj : j ≤ X.2)
     (fun d hd _ ↦ by rw [extendBot_of_mem v hd]; exact min_le_right _ _) hag
   refine ⟨fun d ↦ D.splice j (Rows.extendBot Y v) (Rows.extendBot (Y.1, j) s) d, hsplice,
     fun e ↦ ?_, fun d ↦ ?_, fun d hd ↦ ?_⟩
-  · change D.splice j (Rows.extendBot Y v) (Rows.extendBot (Y.1, j) s) e.1 = p e
+  · -- The labelling at the inclusion of `e` is the splice at the cell `e`.
+    change D.splice j (Rows.extendBot Y v) (Rows.extendBot (Y.1, j) s) e.1 = p e
     by_cases he : D.grade e.1 ≤ j
     · have heX : e.1 ∈ D.below (X.1, j) := ⟨e.2.1, he⟩
       rw [splice_of_le he, extendBot_of_mem s (le_trans heX hl)]
       exact congrFun hsp ⟨e.1, heX⟩
     · rw [splice_of_lt (not_le.mp he), extendBot_of_mem v (D.below_mono hXY e.2)]
+      -- Unfold `v` at the inclusion of `e`.
       change min (w (Set.inclusion (D.below_mono hXY) e)) M = p e
       rw [hread e, min_assoc, min_self, min_eq_left (hhigh e (not_le.mp he))]
   · have h := min_splice_eq (D := D) (B := Y.1) (j := j) (M := M) hag d.2.1
     rw [extendBot_of_mem v d.2] at h
     exact h.trans (min_assoc _ _ _ |>.trans (by rw [min_self]))
-  · change D.splice j (Rows.extendBot Y v) (Rows.extendBot (Y.1, j) s) d.1 ≤ M
+  · -- The labelling at `d` is the splice at the cell `d`.
+    change D.splice j (Rows.extendBot Y v) (Rows.extendBot (Y.1, j) s) d.1 ≤ M
     rw [splice_of_lt hd, extendBot_of_mem v d.2]
     exact min_le_right _ _
 
@@ -294,48 +305,41 @@ theorem IsLawfulBelow.isSelfVisible_of_gradedIndex_eq {p : D.below X → Label.{
     IsSelfVisible X.2 (p o) :=
   (congrArg Prod.snd ho) ▸ (isLawfulBelow_iff.mp hp).orderly o
 
+/-- The rows **have owner-capped lifts** from `(C, j + 1)` to `(B, j + 1)` at the cap `c`: for
+every prescription `p` lawful below `(C, j + 1)`, every ambient `q` lawful below `(B, j + 1)` with
+the same observation at `c` below `(C, j + 1)`, and every owner `o` of `p` (of graded index
+`(C, j + 1)`, with label at least that of every prescribed cell of the grade `j + 1`) whose label
+exceeds `c`, some labelling lawful below `(B, j + 1)` reads `p` capped at the label of `o` below
+`(C, j + 1)` and has the observation of `q` at `c` at every cell below `(B, j + 1)`.  At the cap
+`⊥` the condition on the ambient is empty.  It is the hypothesis of the one-grade lift that the
+owner alignment of the completion proves. -/
+def HasOwnerCappedLifts (R : D.Rows.{u}) {C : Finset α} (hCB : C ⊆ B) (j : ℕ) (c : Label.{u}) :
+    Prop :=
+  ∀ (p : D.below (C, j + 1) → Label.{u}) (q : D.below (B, j + 1) → Label.{u}),
+    R.IsLawfulBelow (C, j + 1) p → R.IsLawfulBelow (B, j + 1) q →
+    (∀ e, min (q (Set.inclusion (D.below_mono
+      (show ((C, j + 1) : Finset α × ℕ) ≤ (B, j + 1) from ⟨hCB, le_rfl⟩)) e)) c = min (p e) c) →
+    ∀ o : D.below (C, j + 1), D.gradedIndex o = (C, j + 1) →
+    (∀ e : D.below (C, j + 1), D.grade e = j + 1 → p e ≤ p o) → c < p o →
+    ∃ w : D.below (B, j + 1) → Label.{u}, R.IsLawfulBelow (B, j + 1) w ∧
+      (∀ e, w (Set.inclusion (D.below_mono
+        (show ((C, j + 1) : Finset α × ℕ) ≤ (B, j + 1) from ⟨hCB, le_rfl⟩)) e) =
+          min (p e) (p o)) ∧
+      ∀ d, min (w d) c = min (q d) c
+
 /-- **The one-grade lift.**  Let `C ⊆ B`, with finitely many cells below `(C, j + 1)`, some cell of
 graded index `(C, j + 1)`, and a capped lift of the rows from `(C, j)` to `(B, j)` (the lift at
-the lower grade).  Suppose that
-
-* every prescription `p` lawful below `(C, j + 1)` extends to a labelling lawful below `(B, j + 1)`
-  that reads it literally (the lift at the cap `⊥`), and
-* for every cap `c ≠ ⊥` self-visible at `j + 1`, every prescription `p` lawful below `(C, j + 1)`,
-  every ambient `q` lawful below `(B, j + 1)` with the same observation at `c`, and every owner `o`
-  of `p` whose label exceeds `c`, there is an owner-capped lift: a labelling lawful below
-  `(B, j + 1)` reading `p` capped at the label of `o` below `(C, j + 1)` and with the observation
-  of `q` at `c` at every cell below `(B, j + 1)`.
-
-Then the rows lift capped from `(C, j + 1)` to `(B, j + 1)`.  An owner label at most the cap needs
-no owner-capped lift (the lift below the cap); otherwise the owner-capped lift is restored at the
-owner label.  It is the step of the recursion on the grade that proves the lifts to the pairs of
-the grade being built, the three cases being the cap `⊥`, an owner label at most the cap, and an
-owner label above a cap other than `⊥`. -/
+the lower grade).  If the rows have owner-capped lifts from `(C, j + 1)` to `(B, j + 1)` at every
+cap self-visible at `j + 1`, they lift capped from `(C, j + 1)` to `(B, j + 1)`.  An owner label at
+most the cap needs no owner-capped lift (the lift below the cap); otherwise the owner-capped lift is
+restored at the owner label.  It is the step of the recursion on the grade that proves the lifts
+to the pairs of the grade being built. -/
 theorem cappedLift_of_ownerCappedLift {C : Finset α} [Finite (D.below (C, j + 1))]
     (hCB : C ⊆ B) (hX : ∃ c, D.gradedIndex c = (C, j + 1))
     (hlift : R.CappedLift (X := (C, j)) (Y := (B, j)) ⟨hCB, le_rfl⟩)
-    (hext : ∀ p : D.below (C, j + 1) → Label.{u}, R.IsLawfulBelow (C, j + 1) p →
-      ∃ r : D.below (B, j + 1) → Label.{u}, R.IsLawfulBelow (B, j + 1) r ∧
-        ∀ e, r (Set.inclusion (D.below_mono
-          (show ((C, j + 1) : Finset α × ℕ) ≤ (B, j + 1) from ⟨hCB, le_rfl⟩)) e) = p e)
-    (hown : ∀ c : Label.{u}, IsSelfVisible (j + 1) c → c ≠ ⊥ →
-      ∀ (p : D.below (C, j + 1) → Label.{u}) (q : D.below (B, j + 1) → Label.{u}),
-      R.IsLawfulBelow (C, j + 1) p → R.IsLawfulBelow (B, j + 1) q →
-      (∀ e, min (q (Set.inclusion (D.below_mono
-        (show ((C, j + 1) : Finset α × ℕ) ≤ (B, j + 1) from ⟨hCB, le_rfl⟩)) e)) c = min (p e) c) →
-      ∀ o : D.below (C, j + 1), D.gradedIndex o = (C, j + 1) →
-      (∀ e : D.below (C, j + 1), D.grade e = j + 1 → p e ≤ p o) → c < p o →
-      ∃ w : D.below (B, j + 1) → Label.{u}, R.IsLawfulBelow (B, j + 1) w ∧
-        (∀ e, w (Set.inclusion (D.below_mono
-          (show ((C, j + 1) : Finset α × ℕ) ≤ (B, j + 1) from ⟨hCB, le_rfl⟩)) e) =
-            min (p e) (p o)) ∧
-        ∀ d, min (w d) c = min (q d) c) :
+    (hown : ∀ c : Label.{u}, IsSelfVisible (j + 1) c → R.HasOwnerCappedLifts hCB j c) :
     R.CappedLift (X := (C, j + 1)) (Y := (B, j + 1)) ⟨hCB, le_rfl⟩ := by
   refine (cappedLift_iff_forall_exists _).mpr fun c hc p q hp hq hag ↦ ?_
-  by_cases hcb : c = ⊥
-  · -- The cap `⊥`: any lawful extension.
-    obtain ⟨r, hr, hrp⟩ := hext p hp
-    exact ⟨r, hr, fun d ↦ by simp only [hcb, min_bot_right], hrp⟩
   obtain ⟨o, ho, hop⟩ := hp.exists_owner hX
   -- A prescribed cell of grade above `j` below `(C, j + 1)` has the grade `j + 1`.
   have hgrade (e : D.below (C, j + 1)) (he : j < D.grade e) : D.grade e = j + 1 :=
@@ -347,7 +351,7 @@ theorem cappedLift_of_ownerCappedLift {C : Finset α} [Finite (D.below (C, j + 1
       fun e he ↦ (hop e (hgrade e he)).trans hoc
     exact ⟨r, hr, hrc, hrp⟩
   · -- The owner-capped lift, restored at the owner label.
-    obtain ⟨w, hw, hwp, hwc⟩ := hown c hc hcb p q hp hq hag o ho hop hoc
+    obtain ⟨w, hw, hwp, hwc⟩ := hown c hc p q hp hq hag o ho hop hoc
     obtain ⟨r, hr, hrp, hrM, -⟩ := exists_restoration (X := (C, j + 1)) (Y := (B, j + 1))
       ⟨hCB, le_rfl⟩ (Nat.le_succ j) hlift hp hw (hp.isSelfVisible_of_gradedIndex_eq ho) hwp
       fun e he ↦ hop e (hgrade e he)

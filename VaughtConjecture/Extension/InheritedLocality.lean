@@ -3,7 +3,6 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
-import VaughtConjecture.Extension.OwnerwiseDecoding
 import VaughtConjecture.Extension.SourcePrefix
 
 /-!
@@ -35,11 +34,21 @@ only below `ω ^ 2`.
 * **The section theorem along a lower embedding**
   (`CellScheme.Rows.IsLawful.map_of_isLowerEmbedding`): for a lawful section `q` of `D` on cells
   of grade at most `K` and a witness `ν` bounded by grade `K`, the decoded section `ν ∘ q` is lawful
-  when every new cell has a short row and `ν ∘ q ∘ φ` is a lawful section `S` of the inherited
-  rows.  The strongly coded decoder is the instance
+  when every new cell has a short row or satisfies its mapped locality, and `ν ∘ q ∘ φ` is a lawful
+  section `S` of the inherited rows.  The strongly coded decoder is the instance
   `CellScheme.Rows.IsLawful.strongDecode_of_isLowerEmbedding`, and a completion below the full
   grade of a seed, with the amalgam as the inherited scheme and the cells of full scope as the new
-  cells, the instance `CompletionBelowFullGrade.isLawful_map`.
+  cells, the instance `CompletionBelowFullGrade.isLawful_map`.  The new rows of grade at least `2`
+  are short by their support (roadmap, 3.1); a new owner of grade `1` may instead satisfy its mapped
+  locality.
+
+**Relation to ownerwise decoding.**  The lemmas of `VaughtConjecture.Extension.OwnerwiseDecoding`
+are the case of the identity embedding:
+`CellScheme.Rows.IsLawful.strongDecode_locality_of_decode_eq_on_below` is
+`CellScheme.Rows.locality_of_eq_on_below` with `φ = id`, and
+`CellScheme.Rows.IsLawful.strongDecode_of_ownerwise` asks for a lawful section of the constructed
+scheme itself, where the statements here ask for a lawful section `S` of the input scheme only, read
+along `φ`.
 
 ## Placement
 
@@ -111,7 +120,8 @@ lower embedding `φ`, and let `S` be a lawful section of `Q`.  If a labelling `w
 `D` agrees with `S` at the images of the cells below `s`, its locality holds at the inherited cell
 `φ s`, whatever the row of `φ s`: neither shortness of the row nor bottom reflection of a decoder
 is used.  It is the branch of the mapped locality of an inherited owner in the section theorem of
-the completion of the coatom amalgam, at its small arities and in its recursion on the grade. -/
+the completion of the coatom amalgam, at its small arities and in its recursion on the grade.  With
+`φ = id` it is `CellScheme.Rows.IsLawful.strongDecode_locality_of_decode_eq_on_below`. -/
 theorem locality_of_eq_on_below (hφ : E.IsLowerEmbedding D φ) (hRQ : R.comap hφ = Q)
     {S : κ → Label.{u}} (hS : Q.IsLawful S) (s : κ) {w : ι → Label.{u}}
     (hw : ∀ t : E.below (E.gradedIndex s), w (φ t) = S t) :
@@ -125,29 +135,37 @@ theorem locality_of_eq_on_below (hφ : E.IsLowerEmbedding D φ) (hRQ : R.comap h
 /-- **The section theorem along a lower embedding.**  Let `q` be a lawful section of `D`, on cells
 of grade at most `K`, `ν` a witness bounded by grade `K`, and `φ` a lower embedding along which the
 rows pull back to `Q`.  If every new cell (outside the range of `φ`) has a row short at its grade
-and the decoded labels `ν ∘ q` at the inherited cells form a lawful section `S` of `Q` (the exact
-base table), then `ν ∘ q` is lawful.  It is the section theorem of the completion of the coatom
-amalgam, at its small arities and in its recursion on the grade: new owners take the shortness
-branch, inherited owners the branch of the mapped locality, by
-`CellScheme.Rows.locality_of_eq_on_below`. -/
+or satisfies its mapped locality, and the decoded labels `ν ∘ q` at the inherited cells form a
+lawful section `S` of `Q` (the exact base table), then `ν ∘ q` is lawful.  It is the section
+theorem of the completion of the coatom amalgam, at its small arities and in its recursion on the
+grade: new owners take either branch of `CellScheme.Rows.IsLawful.map_of_isShort_or`, inherited
+owners the branch of the mapped locality, by `CellScheme.Rows.locality_of_eq_on_below`.  The new
+rows of grade at least `2` are short by their support (roadmap, 3.1); a new owner of grade `1` may
+instead satisfy its mapped locality. -/
 theorem IsLawful.map_of_isLowerEmbedding {q : ι → Label.{u}} (hq : R.IsLawful q) {K : ℕ}
     (hK : ∀ d, D.grade d ≤ K) {ν : Label.{u} → Label.{u}} (hν : IsWitness (stepSuppressor K) ν)
     (hφ : E.IsLowerEmbedding D φ) (hRQ : R.comap hφ = Q) {S : κ → Label.{u}} (hS : Q.IsLawful S)
-    (hnew : ∀ c ∉ Set.range φ, ∀ t, IsShort (D.grade c) (R.row c t))
+    (hnew : ∀ c ∉ Set.range φ, (∀ t, IsShort (D.grade c) (R.row c t)) ∨
+      TransformsTo (fun d : D.below (D.gradedIndex c) ↦ D.grade d) (R.row c)
+        (fun d ↦ min (ν (q d)) (ν (q c))))
     (hbase : ∀ t, ν (q (φ t)) = S t) : R.IsLawful (ν ∘ q) :=
   hq.map_of_isShort_or hK hν fun s ↦ by
     by_cases hs : s ∈ Set.range φ
     · obtain ⟨s, rfl⟩ := hs
       exact .inr (locality_of_eq_on_below hφ hRQ hS s (w := ν ∘ q) fun t ↦ hbase t)
-    · exact .inl (hnew s hs)
+    · exact hnew s hs
 
 /-- **Ownerwise decoding along a lower embedding**: the section theorem along a lower embedding for
 the strongly coded decoder `strongDecode V K`, which does not reflect bottom.  It proves the
-lawfulness of the decoded source section in the completion of the coatom amalgam. -/
+lawfulness of the decoded source section in the completion of the coatom amalgam.  Unlike
+`CellScheme.Rows.IsLawful.strongDecode_of_ownerwise`, it needs `S` lawful only for the rows of the
+input scheme. -/
 theorem IsLawful.strongDecode_of_isLowerEmbedding {q : ι → Label.{u}} (hq : R.IsLawful q)
     {K : ℕ} (hK : ∀ d, D.grade d ≤ K) {V : Finset Label.{u}} (hφ : E.IsLowerEmbedding D φ)
     (hRQ : R.comap hφ = Q) {S : κ → Label.{u}} (hS : Q.IsLawful S)
-    (hnew : ∀ c ∉ Set.range φ, ∀ t, IsShort (D.grade c) (R.row c t))
+    (hnew : ∀ c ∉ Set.range φ, (∀ t, IsShort (D.grade c) (R.row c t)) ∨
+      TransformsTo (fun d : D.below (D.gradedIndex c) ↦ D.grade d) (R.row c)
+        (fun d ↦ min (strongDecode V K (q d)) (strongDecode V K (q c))))
     (hbase : ∀ t, strongDecode V K (q (φ t)) = S t) : R.IsLawful (strongDecode V K ∘ q) :=
   hq.map_of_isLowerEmbedding hK isWitness_strongDecode hφ hRQ hS hnew hbase
 
@@ -159,15 +177,20 @@ variable {α : Ordinal.{u}} {m : ℕ} {I : Seed.{u} α m} (F : CompletionBelowFu
 
 /-- **The section theorem of a completion below the full grade.**  For a lawful section `q` of the
 completed scheme, on cells of grade at most `K`, and a witness `ν` bounded by grade `K`: if every
-cell of full scope has a row short at its grade and `ν ∘ q` reads, on the old cells, a lawful
-section `S` of the amalgam (the exact base table), then `ν ∘ q` is lawful.  The old cells keep the
-rows of the amalgam, which may be long; their locality is the locality of `S`. -/
+cell of full scope has a row short at its grade or satisfies its mapped locality, and `ν ∘ q`
+reads, on the old cells, a lawful section `S` of the amalgam (the exact base table), then `ν ∘ q`
+is lawful.  The old cells keep the rows of the amalgam, which may be long; their locality is the
+locality of `S`.  The new rows of grade at least `2` are short by their support (roadmap, 3.1); a
+cell of full scope and grade `1` may instead satisfy its mapped locality. -/
 theorem isLawful_map {q : Fin F.scheme.card → Label.{u}} (hq : F.scheme.rows.IsLawful q) {K : ℕ}
     (hK : ∀ d, F.scheme.toCellScheme.grade d ≤ K) {ν : Label.{u} → Label.{u}}
     (hν : IsWitness (stepSuppressor K) ν) {S : Fin I.amalgam.card → Label.{u}}
     (hS : I.amalgam.rows.IsLawful S)
     (hnew : ∀ c, F.scheme.toCellScheme.scope c = univ →
-      ∀ t, IsShort (F.scheme.toCellScheme.grade c) (F.scheme.rows.row c t))
+      (∀ t, IsShort (F.scheme.toCellScheme.grade c) (F.scheme.rows.row c t)) ∨
+      TransformsTo (fun d : F.scheme.toCellScheme.below (F.scheme.toCellScheme.gradedIndex c) ↦
+          F.scheme.toCellScheme.grade d) (F.scheme.rows.row c)
+        (fun d ↦ min (ν (q d)) (ν (q c))))
     (hbase : ∀ d, ν (q (F.embed d)) = S d) : F.scheme.rows.IsLawful (ν ∘ q) :=
   hq.map_of_isLowerEmbedding hK hν F.isLowerEmbedding F.comap_rows hS
     (fun c hc ↦ hnew c (by_contra fun h ↦ hc (F.mem_range_embed c h))) hbase

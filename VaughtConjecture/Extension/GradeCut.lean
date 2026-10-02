@@ -231,7 +231,9 @@ the grade cut at `g` has a lawful normal form strongly coded at `g`, with values
 alphabet with block bound `2 · #cells + 1` and offset bound `g + 1`, from which a witness bounded
 by grade `g` recovers it (`CellScheme.Rows.IsLawful.exists_stronglyCoded`, with the grade bound
 `gradeCut_grade_le`).  It is used in the one-grade step to give a new cell of grade `g` a strongly
-coded row. -/
+coded row.  `CellScheme.Rows.IsLawfulBelow.exists_stronglyCoded` gives the same normal form below a
+pair; this form is for a whole lawful section of the grade cut, the input of the section theorem on
+the scheme reached after the grade `g`, whose cells need not all lie below one pair. -/
 theorem IsLawful.exists_stronglyCoded_gradeCut [Finite {d // D.grade d ≤ g}]
     {w : {d // D.grade d ≤ g} → Label.{u}} (hw : (R.gradeCut g).IsLawful w) :
     ∃ w' : {d // D.grade d ≤ g} → Label.{u}, (R.gradeCut g).IsLawful w' ∧
