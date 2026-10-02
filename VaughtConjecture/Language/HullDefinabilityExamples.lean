@@ -29,7 +29,11 @@ special cases: empty carriers, repeated inputs, and the default values).
   the hull of `{0, 3}`, which is everything.  No relation of the stage chart language holds of a
   nonempty tuple of its points, so the transposition of `1` and `2` is an automorphism of its
   chart fixing `0` and `3`; hence the point `1` of the hull of `{0, 3}` is not definable over
-  `{0, 3}`.
+  `{0, 3}`.  The plan of `bare` is rigid (the transposition does not preserve the intervals), so
+  the failure is one of definability, not of rigidity: the stage chart language sees only the
+  faces that carry a legal type.
+* **The default value at two distinct points.**  No hull index has a chart witness in `bare`, so at
+  the distinct points `0` and `3` the graph formula holds exactly at the first argument.
 * **The default value under a chart embedding.**  Where no chart witness exists in a face, the graph
   formula at the image of the pair holds exactly at the image of the first argument.
 -/
@@ -145,7 +149,8 @@ private def swapBare : bare.Chart ≃[stageChartLanguage.{0} 0] bare.Chart where
     obtain ⟨p, hp⟩ := r
     rcases Nat.eq_zero_or_pos n with rfl | hn
     · exact iff_of_eq (congrArg (RelMap _) (funext fun i ↦ i.elim0))
-    · change (∃ h, restrictFace ⟨_, h⟩ bare = some p) ↔ ∃ h, restrictFace ⟨xs, h⟩ bare = some p
+    · -- the relations of the chart of `bare` are its closed faces (`relMap_toChartStructure`)
+      change (∃ h, restrictFace ⟨_, h⟩ bare = some p) ↔ ∃ h, restrictFace ⟨xs, h⟩ bare = some p
       refine ⟨fun ⟨_, h⟩ ↦ ?_, fun ⟨_, h⟩ ↦ ?_⟩ <;>
         exact (not_isLegal_of_restrictFace_bare _ h hp ⟨0, hn⟩).elim
 
@@ -154,13 +159,22 @@ contains `1`. -/
 private theorem mem_hull_bare :
     (1 : Fin 4) ∈ Geometry.hull univ bare.toCellScheme.faces {0, 3} := by
   refine Geometry.mem_hull.mpr ⟨mem_univ _, fun B hB hS ↦ ?_⟩
+  -- the faces of `bare` are the intervals
   change B ∈ Geometry.intervalPlan univ at hB
   exact (Geometry.mem_intervalPlan.mp hB).2 0 (hS (by simp)) 3 (hS (by simp)) 1 (mem_univ _)
     (by decide) (by decide)
 
+/-- **The default value at two distinct points**: no hull index has a chart witness in `bare`, so
+at `0` and `3` the graph formula holds exactly at `0`. -/
+private example (ι : HullIndex.{0} 0) (z : Fin 4) :
+    ι.graphFormula.Realize ![bare.toChart 0, bare.toChart 3, bare.toChart z] ↔ z = 0 := by
+  rw [realize_graphFormula, Realization.hullOp_of_not_exists
+    fun ⟨g, hg, _⟩ ↦ not_isLegal_of_restrictFace_bare g hg ι.isLegal ι.left, eq_comm]
+
 /-- **Legality cannot be dropped** from `definable₁_singleton_of_mem_hull_pair`: in the chart of
 `bare`, which is not legal along the hull of `{0, 3}`, the point `1` of that hull is not definable
-over `{0, 3}`, since the automorphism `swapBare` fixes `0` and `3` and moves `1` to `2`. -/
+over `{0, 3}`, since the automorphism `swapBare` fixes `0` and `3` and moves `1` to `2`.  The plan
+of `bare` is rigid, so this is a failure of definability, not of rigidity. -/
 private example : (1 : Fin 4) ∈ Geometry.hull univ bare.toCellScheme.faces {0, 3} ∧
     ¬ ({bare.toChart 0, bare.toChart 3} : Set bare.Chart).Definable₁ (stageChartLanguage.{0} 0)
       {bare.toChart 1} := by

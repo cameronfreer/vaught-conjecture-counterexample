@@ -12,7 +12,7 @@ import VaughtConjecture.Language.HullOperations
 
 Roadmap, Layer 2 ("Hull operations: finite charts as finite substructures", item 2, for finite
 charts; and "Hull closure inside definable closure", for finite charts); `HULL_ALGEBRA.md`, §§1, 2
-and 4.
+and 4; semantic contract, item 10.
 
 **The formulas.**  Let `ι` be a hull index of arity `m`, with stage type `q`, generators `i₀`,
 `i₁`, and target `j`.  In the stage chart language, with free variables `x₀`, `x₁`, `x₂` (indexed
@@ -41,8 +41,9 @@ quantifier-free formula (`HullIndex.isExistential_chartWitnessFormula`); so it i
 every embedding of structures of the stage chart language
 (`HullIndex.realize_chartWitnessFormula_of_embedding`).  The graph formula is a Boolean
 combination of two such existential formulas, so its quantifier rank is `m`, the arity of `ι`.
-Mathlib defines quantifier rank only for its infinitary formulas, not for `BoundedFormula`; the
-rank is therefore recorded here and not as a lemma.
+Quantifier rank is defined only for infinitary formulas (`BoundedFormulaInf.qrank`, in the
+pinned Mathlib); stating it through `BoundedFormula.toInf` would bring the infinitary language into
+this first-order module, so the rank is recorded here in prose.
 
 **On charts.**  Let `P` be a stage type on `k` points, read through its chart (the structure of its
 face realization).
@@ -58,14 +59,15 @@ face realization).
 * The graph formula defines the graph of the hull operation, the default value included
   (`StageType.realize_graphFormula`).  So the function symbol of `ι` in the hull language is a
   parameter-free definable function of the stage chart language (`StageType.definableFun_funMap_op`,
-  in the sense of Mathlib's `Set.DefinableFun`): on charts, the hull language is a definitional
-  expansion of the stage chart language.
+  in the sense of Mathlib's `Set.DefinableFun`), by the same formula on every chart: on charts, the
+  hull language is a definitional expansion of the stage chart language.
 * **Hull closure inside definable closure.**  Every point of the hull of two distinct points `a`
   and `b` is the target of a chart witness at them (`StageType.exists_chartWitness_of_mem_hull`),
   hence the unique solution over `a` and `b` of a chart witness formula
   (`StageType.exists_realize_chartWitnessFormula_iff_eq`).  So it is definable over `{a, b}` in
-  the sense of Mathlib's `Set.Definable₁` (`StageType.definable₁_singleton_of_mem_hull_pair`), and
-  every point of the hull of a finite set `s` is definable over `s`
+  the sense of Mathlib's `Set.Definable₁` (`StageType.definable₁_singleton_of_mem_hull_pair`).
+  Every point of the hull of a finite set `s` is definable over two points of `s`
+  (`StageType.exists_definable₁_singleton_pair_of_mem_hull`), hence over `s`
   (`StageType.definable₁_singleton_of_mem_hull`): the inclusion `cl ⊆ dcl` of
   `HULL_ALGEBRA.md`, (2), for finite charts.
 * **Invariance.**  Along a chart embedding (a face map along which the restriction is literal)
@@ -76,24 +78,27 @@ face realization).
 
 **Legality.**  The meaning of the formulas, the uniqueness of solutions, the graph, the definable
 function, and the invariance hold for every stage type: the two-charts theorem does not use
-legality.  Legality of the restriction to the hull of the generating pair (of the finite set `s`)
-is assumed in the statements of hull closure inside definable closure.  In
+legality.  Legality of the restriction to the hull of the generating pair (of the finite set `s`) is
+assumed in the statements of hull closure inside definable closure.  In
 `StageType.exists_chartWitness_of_mem_hull` and
-`StageType.exists_realize_chartWitnessFormula_iff_eq` it is necessary: a chart witness at `a`
-and `b` enumerates the hull of `{a, b}` (`StageType.map_univ_eq_hull_of_restrictFace`) and has
-the legal type of its hull index, so the restriction to the hull is a reindexing of a legal
-type.  In the two definability statements it cannot be dropped: on the stage type on four points
-with no cells whose faces are the intervals of `Fin 4`, no relation holds of a nonempty tuple, so
-the transposition of `1` and `2` is an automorphism of the chart in the stage chart language
-fixing `0` and `3`, and the point `1` of the hull of `{0, 3}` is not definable over `{0, 3}`
-(`VaughtConjecture.Language.HullDefinabilityExamples`).
+`StageType.exists_realize_chartWitnessFormula_iff_eq` it is necessary: a chart witness at `a` and
+`b` gives a hull operation with value `b` at `a` and `b` (`StageType.hullOp_eq_of_restrictFace`),
+hence legality along that hull (`StageType.isLegal_comap_of_hullOp_eq_right`,
+`StageType.isLegal_comap_of_chartWitness`).  In the definability statements it cannot be dropped: on
+the stage type on four points with no cells whose faces are the intervals of `Fin 4`, no relation
+holds of a nonempty tuple, so the transposition of `1` and `2` is an automorphism of the chart in
+the stage chart language fixing `0` and `3`, and the point `1` of the hull of `{0, 3}` is not
+definable over `{0, 3}` (`VaughtConjecture.Language.HullDefinabilityExamples`).  The plan of that
+stage type is rigid (the transposition does not preserve the intervals), so the failure is one of
+definability, not of rigidity: the stage chart language sees only the faces that carry a legal type.
 
 **Not proved here.**  Definability on realizations other than the face realizations of charts: the
-formulas and their meaning are stated for every structure and every realization, but the
-uniqueness of solutions, the graph of `Realization.hullOp`, and the definability statements need
-the two-charts theorem for exactly consistent covering realizations, which is not yet proved; so
-roadmap, Layer 2, item 2 is proved here for finite charts only.  Nothing here concerns the
-infinitary language.
+formulas and their meaning are stated for every structure and every realization, and the value of
+`Realization.hullOp` satisfies the graph formula in every realization
+(`Realization.realize_graphFormula_hullOp`); that it is the only solution, and the definability
+statements, need the two-charts theorem for exactly consistent covering realizations, which is not
+yet proved.  So roadmap, Layer 2, item 2 is proved here for finite charts only.  Nothing here
+concerns the infinitary language.
 
 ## Placement
 
@@ -186,12 +191,20 @@ theorem realize_graphFormula (a b z : M) :
         ¬ ι.existsChartWitnessFormula.Realize ![a, b, z] ∧ z = a := by
   simp [graphFormula]
 
-/-- A finite conjunction of quantifier-free formulas is quantifier-free. -/
+/-- A conjunction of quantifier-free formulas along a list is quantifier-free. -/
 private theorem isQF_foldr_inf {L : Language} {β γ : Type*} {n : ℕ}
     (f : β → L.BoundedFormula γ n) (h : ∀ b, (f b).IsQF) :
     ∀ l : List β, ((l.map f).foldr (· ⊓ ·) ⊤).IsQF
   | [] => BoundedFormula.IsQF.top
   | b :: l => (h b).inf (isQF_foldr_inf f h l)
+
+/-- A finite conjunction (`BoundedFormula.iInf`) of quantifier-free formulas is quantifier-free.
+Mathlib has no such lemma; `BoundedFormula.iInf` is a conjunction along the list of the elements
+of a chosen enumeration, unfolded here. -/
+private theorem isQF_iInf {L : Language} {β γ : Type*} [Finite β] {n : ℕ}
+    {f : β → L.BoundedFormula γ n} (h : ∀ b, (f b).IsQF) : (BoundedFormula.iInf f).IsQF := by
+  unfold BoundedFormula.iInf
+  exact isQF_foldr_inf f h _
 
 /-- Existential quantification of all bound variables of an existential formula gives an
 existential formula. -/
@@ -204,7 +217,7 @@ private theorem isExistential_exs {L : Language} {γ : Type*} :
 theorem isQF_witnessMatrix : ι.witnessMatrix.IsQF := by
   refine (((BoundedFormula.IsAtomic.rel _ _).isQF.inf ?_).inf
     (BoundedFormula.IsAtomic.equal _ _).isQF).inf (BoundedFormula.IsAtomic.equal _ _).isQF
-  exact isQF_foldr_inf _ (fun _ ↦ (BoundedFormula.IsAtomic.equal _ _).isQF.not) _
+  exact isQF_iInf fun _ ↦ (BoundedFormula.IsAtomic.equal _ _).isQF.not
 
 /-- The chart witness formula is **existential**: a block of `ι.arity` existential quantifiers in
 front of a quantifier-free formula. -/
@@ -237,6 +250,31 @@ theorem realize_chartWitnessFormula (a b z : M) :
   let := R.toChartStructure
   rw [HullIndex.realize_chartWitnessFormula]
   simp only [relMap_toChartStructure]
+
+/-- In a realization, the formula `∃ z matrix` holds at `(a, b, _)` exactly when there is a chart
+witness of `ι` at `a` and `b`. -/
+theorem realize_existsChartWitnessFormula (a b z : M) :
+    letI := R.toChartStructure
+    ι.existsChartWitnessFormula.Realize ![a, b, z] ↔
+      ∃ g : Fin ι.arity ↪ M, R.eval g = some ι.type ∧ g ι.left = a ∧ g ι.right = b := by
+  let := R.toChartStructure
+  rw [HullIndex.realize_existsChartWitnessFormula]
+  simp only [relMap_toChartStructure]
+
+/-- **The value of a hull operation satisfies the graph formula in every realization**, the
+default value included.  That it is the only solution needs the two-charts theorem for the
+realization, which is proved here only for the face realizations of charts
+(`StageType.realize_graphFormula`). -/
+theorem realize_graphFormula_hullOp (a b : M) :
+    letI := R.toChartStructure
+    ι.graphFormula.Realize ![a, b, R.hullOp ι a b] := by
+  let := R.toChartStructure
+  rw [HullIndex.realize_graphFormula, realize_chartWitnessFormula,
+    realize_existsChartWitnessFormula]
+  by_cases h : ∃ g : Fin ι.arity ↪ M, R.eval g = some ι.type ∧ g ι.left = a ∧ g ι.right = b
+  · obtain ⟨g, hg, hl, hr, he⟩ := hullOp_spec h
+    exact Or.inl ⟨g, hg, hl, hr, he.symm⟩
+  · exact Or.inr ⟨h, hullOp_of_not_exists h⟩
 
 end Realization
 
@@ -342,28 +380,48 @@ theorem definableFun_funMap_op :
     (∅ : Set P.Chart).DefinableFun (stageChartLanguage.{u} α)
       (funMap (L := hullLanguage.{u} α) (hullLanguage.op ι)) := by
   rw [Set.empty_definableFun_iff]
-  refine ⟨ι.graphFormula.relabel ![some 0, some 1, none], ?_⟩
-  ext v
-  have hv : v ∘ ![some 0, some 1, none] =
-      ![P.toChart (P.toChart.symm (v (some 0))), P.toChart (P.toChart.symm (v (some 1))),
-        P.toChart (P.toChart.symm (v none))] := by
+  refine ⟨ι.graphFormula.relabel ![some 0, some 1, none], Set.ext fun v ↦ ?_⟩
+  obtain ⟨a, ha⟩ := P.toChart.surjective (v (some 0))
+  obtain ⟨b, hb⟩ := P.toChart.surjective (v (some 1))
+  obtain ⟨z, hz⟩ := P.toChart.surjective (v none)
+  have hv : v ∘ ![some 0, some 1, none] = ![P.toChart a, P.toChart b, P.toChart z] := by
     funext i
     match i with
-    | 0 | 1 | 2 => rfl
-  change funMap (hullLanguage.op ι) (v ∘ some) = v none ↔
-    (ι.graphFormula.relabel ![some 0, some 1, none]).Realize v
-  rw [Formula.realize_relabel, hv, realize_graphFormula]
-  rfl
+    | 0 => exact ha.symm
+    | 1 => exact hb.symm
+    | 2 => exact hz.symm
+  have hs : v ∘ some = ![P.toChart a, P.toChart b] := by
+    funext i
+    match i with
+    | 0 => exact ha.symm
+    | 1 => exact hb.symm
+  simp only [Function.tupleGraph, Set.mem_ofPred_eq, Formula.realize_relabel, hv,
+    realize_graphFormula, hs, funMap_chart, ← hz, P.toChart.injective.eq_iff]
 
 variable {P ι}
+
+/-- **Legality along a two-point hull from a chart witness**: if a face of `P` of the type of a
+hull index has the distinct points `a` and `b` at the generators, then the restriction of `P` to
+the hull of `{a, b}` is legal.  At the hull index with target the second generator, the hull
+operation takes the value `b` at `a` and `b` (`hullOp_eq_of_restrictFace`), and
+`isLegal_comap_of_hullOp_eq_right` applies.  This is the converse of
+`exists_chartWitness_of_mem_hull`. -/
+theorem isLegal_comap_of_chartWitness {a b : Fin k} (hab : a ≠ b) {ι : HullIndex.{u} α}
+    {w : Fin ι.arity ↪ Fin k} (hw : restrictFace w P = some ι.type) (hl : w ι.left = a)
+    (hr : w ι.right = b) {m : ℕ} (g : Fin m ↪ Fin k) (hg : univ.map g ∈ P.toCellScheme.faces)
+    (hgH : univ.map g = Geometry.hull univ P.toCellScheme.faces {a, b}) :
+    (P.comap g hg).IsLegal := by
+  subst hl hr
+  exact isLegal_comap_of_hullOp_eq_right hab (ι := { ι with target := ι.right })
+    (hullOp_eq_of_restrictFace (ι := { ι with target := ι.right }) hw) g hg hgH
 
 /-- **Every point of a two-point hull is the target of a chart witness** (`HULL_ALGEBRA.md`, §3):
 for distinct points `a`, `b` of a chart, every point of the hull of `{a, b}` is the point at the
 target of a face, of the type of a hull index, with `a` and `b` at the generators.
 
-Legality along the hull of `{a, b}` (`hleg`) is necessary: the face enumerates that hull
-(`map_univ_eq_hull_of_restrictFace`) and has the legal type of the hull index, so the restriction
-to the hull is a reindexing of a legal type. -/
+Legality along the hull of `{a, b}` (`hleg`) is necessary: the conclusion gives a chart witness at
+`a` and `b`, hence legality along that hull (`isLegal_comap_of_chartWitness`, from
+`isLegal_comap_of_hullOp_eq_right`). -/
 theorem exists_chartWitness_of_mem_hull {a b z : Fin k} (hab : a ≠ b)
     (hleg : ∀ {m : ℕ} (g : Fin m ↪ Fin k) (hg : univ.map g ∈ P.toCellScheme.faces),
       univ.map g = Geometry.hull univ P.toCellScheme.faces {a, b} → (P.comap g hg).IsLegal)
@@ -386,8 +444,9 @@ theorem exists_chartWitness_of_mem_hull {a b z : Fin k} (hab : a ≠ b)
 /-- **The unique-coordinate formula of a hull point** (roadmap, Layer 2, "Hull closure inside
 definable closure"; `HULL_ALGEBRA.md`, §§1 and 4): every point `z` of the hull of two distinct
 points `a`, `b` of a chart is the unique solution over `a` and `b` of the chart witness formula of
-a hull index.  Legality along the hull of `{a, b}` is necessary, as for
-`exists_chartWitness_of_mem_hull`. -/
+a hull index.  Legality along the hull of `{a, b}` is necessary: at `z = b` the conclusion gives a
+chart witness at `a` and `b` (`realize_chartWitnessFormula`), hence legality along that hull
+(`isLegal_comap_of_chartWitness`). -/
 theorem exists_realize_chartWitnessFormula_iff_eq {a b z : Fin k} (hab : a ≠ b)
     (hleg : ∀ {m : ℕ} (g : Fin m ↪ Fin k) (hg : univ.map g ∈ P.toCellScheme.faces),
       univ.map g = Geometry.hull univ P.toCellScheme.faces {a, b} → (P.comap g hg).IsLegal)
@@ -423,29 +482,31 @@ theorem definable₁_singleton_of_mem_hull_pair {a b z : Fin k}
   rw [Set.Definable₁, Set.definable_iff_exists_formula_sum]
   refine ⟨ι.chartWitnessFormula.relabel
     ![Sum.inl ⟨P.toChart a, Set.mem_insert _ _⟩, Sum.inl ⟨P.toChart b, by simp [A]⟩,
-      Sum.inr 0], ?_⟩
-  ext v
+      Sum.inr 0], Set.ext fun v ↦ ?_⟩
+  obtain ⟨w, hw⟩ := P.toChart.surjective (v 0)
   have hv : Sum.elim ((↑) : A → P.Chart) v ∘
       ![Sum.inl ⟨P.toChart a, Set.mem_insert _ _⟩, Sum.inl ⟨P.toChart b, by simp [A]⟩,
-        Sum.inr 0] = ![P.toChart a, P.toChart b, P.toChart (P.toChart.symm (v 0))] := by
+        Sum.inr 0] = ![P.toChart a, P.toChart b, P.toChart w] := by
     funext i
     match i with
-    | 0 | 1 | 2 => rfl
-  change v 0 = P.toChart z ↔ _
-  rw [Set.mem_ofPred_eq, Formula.realize_relabel, hv, hι]
-  exact ⟨fun h ↦ congrArg P.toChart.symm h, fun h ↦ (P.toChart.symm_apply_eq.mp h)⟩
+    | 0 | 1 => rfl
+    | 2 => exact hw.symm
+  simp only [Set.mem_ofPred_eq, Set.mem_singleton_iff, Formula.realize_relabel, hv, hι, ← hw,
+    P.toChart.injective.eq_iff]
 
-/-- **Hull closure inside definable closure** (roadmap, Layer 2, "Hull closure inside definable
-closure", for finite charts; `HULL_ALGEBRA.md`, (2)): every point of the hull of a finite set `s`
-of points of a chart is definable over `s` in the stage chart language.  The hull of `s` is the
-hull of at most two of its points (`Geometry.IsPlan.exists_subset_card_le_two_hull_eq`), and
+/-- **Hull closure inside definable closure, over two points** (roadmap, Layer 2, "Hull closure
+inside definable closure", for finite charts: "defined over two of its points"): every point of
+the hull of a finite set `s` of points of a chart is definable over two points of `s`, possibly
+equal, in the stage chart language.  The hull of `s` is the hull of at most two of its points
+(`Geometry.IsPlan.exists_subset_card_le_two_hull_eq`), and
 `definable₁_singleton_of_mem_hull_pair` applies to them.  Legality along the hull of `s` is
 assumed; it cannot be dropped, as for `definable₁_singleton_of_mem_hull_pair`. -/
-theorem definable₁_singleton_of_mem_hull {s : Finset (Fin k)} {z : Fin k}
+theorem exists_definable₁_singleton_pair_of_mem_hull {s : Finset (Fin k)} {z : Fin k}
     (hleg : ∀ {m : ℕ} (g : Fin m ↪ Fin k) (hg : univ.map g ∈ P.toCellScheme.faces),
       univ.map g = Geometry.hull univ P.toCellScheme.faces s → (P.comap g hg).IsLegal)
     (hz : z ∈ Geometry.hull univ P.toCellScheme.faces s) :
-    (P.toChart '' s : Set P.Chart).Definable₁ (stageChartLanguage.{u} α) {P.toChart z} := by
+    ∃ a ∈ s, ∃ b ∈ s, ({P.toChart a, P.toChart b} : Set P.Chart).Definable₁
+      (stageChartLanguage.{u} α) {P.toChart z} := by
   obtain ⟨T, hTs, hT2, hTH⟩ := P.isPlan.exists_subset_card_le_two_hull_eq (subset_univ s)
   -- the hull of `s` is the hull of two of its points, possibly equal
   obtain ⟨a, b, ha, hb, rfl⟩ : ∃ a b, a ∈ s ∧ b ∈ s ∧ T = {a, b} := by
@@ -459,16 +520,31 @@ theorem definable₁_singleton_of_mem_hull {s : Finset (Fin k)} {z : Fin k}
         rw [insert_eq_of_mem (mem_singleton_self a)]
         exact eq_singleton_iff_unique_mem.mpr ⟨haT, fun x hx ↦ card_le_one.mp h1 x hx a haT⟩
   rw [← hTH] at hleg hz
-  refine (definable₁_singleton_of_mem_hull_pair hleg hz).mono ?_
-  exact Set.insert_subset_iff.mpr ⟨⟨a, mem_coe.mpr ha, rfl⟩,
-    Set.singleton_subset_iff.mpr ⟨b, mem_coe.mpr hb, rfl⟩⟩
+  exact ⟨a, ha, b, hb, definable₁_singleton_of_mem_hull_pair hleg hz⟩
+
+/-- **Hull closure inside definable closure** (roadmap, Layer 2, "Hull closure inside definable
+closure", for finite charts; `HULL_ALGEBRA.md`, (2)): every point of the hull of a finite set `s`
+of points of a chart is definable over `s` in the stage chart language, since it is definable
+over two of its points (`exists_definable₁_singleton_pair_of_mem_hull`).  Legality along the hull
+of `s` is assumed; it cannot be dropped, as for `definable₁_singleton_of_mem_hull_pair`. -/
+theorem definable₁_singleton_of_mem_hull {s : Finset (Fin k)} {z : Fin k}
+    (hleg : ∀ {m : ℕ} (g : Fin m ↪ Fin k) (hg : univ.map g ∈ P.toCellScheme.faces),
+      univ.map g = Geometry.hull univ P.toCellScheme.faces s → (P.comap g hg).IsLegal)
+    (hz : z ∈ Geometry.hull univ P.toCellScheme.faces s) :
+    (P.toChart '' s : Set P.Chart).Definable₁ (stageChartLanguage.{u} α) {P.toChart z} := by
+  obtain ⟨a, ha, b, hb, h⟩ := exists_definable₁_singleton_pair_of_mem_hull hleg hz
+  exact h.mono (Set.insert_subset_iff.mpr ⟨⟨a, mem_coe.mpr ha, rfl⟩,
+    Set.singleton_subset_iff.mpr ⟨b, mem_coe.mpr hb, rfl⟩⟩)
 
 variable {Q : StageType.{u} α k'} {e : Fin k ↪ Fin k'}
 
 /-- **Chart witnesses along a chart embedding**: along a face map `e` along which the restriction
 of `Q` is `P`, there is a chart witness of `ι` at `e a` and `e b` in `Q` exactly when there is one
-at `a` and `b` in `P`.  A witness in `P` is carried to `Q`; a witness in `Q` has as points the hull
-of `{e a, e b}`, which lies in the closed range of `e`, so it reflects to `P`. -/
+at `a` and `b` in `P`.  A witness in `P` is carried to `Q`.  Conversely, at the hull index `ι'`
+with the same chart witnesses and target the second generator, a witness in `Q` makes the hull
+operation take the value `e b` at `e a` and `e b`; if there were no witness in `P`, the hull
+operation would take the default value there, and its image `e a` by
+`hullOp_map_of_restrictFace`; so `e a = e b`, which no injective witness allows. -/
 theorem exists_chartWitness_map_iff (he : restrictFace e Q = some P) (a b : Fin k) :
     (∃ g : Fin ι.arity ↪ Fin k', restrictFace g Q = some ι.type ∧ g ι.left = e a ∧
       g ι.right = e b) ↔
@@ -476,15 +552,13 @@ theorem exists_chartWitness_map_iff (he : restrictFace e Q = some P) (a b : Fin 
         g ι.right = b := by
   constructor
   · rintro ⟨g, hg, hl, hr⟩
-    have hge : univ.map e ∈ Q.toCellScheme.faces := ((restrictFace_eq_some_iff Q e).mp he).1
-    have hsub : univ.map g ⊆ univ.map e := by
-      rw [map_univ_eq_hull_of_restrictFace hg ι.hull_eq_univ, hl, hr]
-      exact Geometry.hull_subset hge (by simp [insert_subset_iff])
-    obtain ⟨w, rfl⟩ := Function.Embedding.exists_trans_eq (e := e) fun j ↦ by
-      simpa using hsub (mem_map_of_mem g (mem_univ j))
-    refine ⟨w, ?_, e.injective hl, e.injective hr⟩
-    rw [restrictFace_trans Q e w he]
-    exact hg
+    by_contra h
+    let ι' : HullIndex.{u} α := { ι with target := ι.right }
+    have hQ : Q.faceRealization.hullOp ι' (e a) (e b) = e b := by
+      rw [← hl, ← hr]
+      exact hullOp_eq_of_restrictFace (ι := ι') hg
+    rw [hullOp_map_of_restrictFace he, Realization.hullOp_of_not_exists (ι := ι') h] at hQ
+    exact ι.left_ne_right (g.injective (hl.trans (hQ.trans hr.symm)))
   · rintro ⟨w, hw, rfl, rfl⟩
     refine ⟨w.trans e, ?_, rfl, rfl⟩
     rw [← restrictFace_trans Q e w he]
