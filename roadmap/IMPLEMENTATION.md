@@ -49,7 +49,7 @@ below.  The companion milestones are summarized under "Companion boundaries".
 ## Environment
 
 Lean `v4.35.0-rc3`; InfinitaryLogic and ComputableModelTheory at the revisions pinned in
-`lakefile.toml` (`8a15ca5` and `37f6c42`); Mathlib inherited from InfinitaryLogic's manifest.
+`lakefile.toml` (`def5cc0` and `0e9935b`); Mathlib inherited from InfinitaryLogic's manifest.
 Nothing else is imported.
 Search the pinned libraries first and delete any local lemma that duplicates one already
 upstream.
@@ -813,14 +813,16 @@ name and its signature at the pin; it does not assert that the hypotheses hold i
 this roadmap.  An application is claimed only where a compiled theorem applying the statement is
 named (`README.md`, Layer 0):
 
-- **InfinitaryLogic**: the current pin is `8a15ca5`, the merge of its pull request #148, reached
-  from `098fb36` (the merge of its pull request #146) by this repository's pull request #45.
-  Besides the statements of `098fb36` (the rank comparison of the Scott process, #140; the
-  orbit-formula threshold and rank bound and local-automorphism preservation of `README.md`, Layer
-  0, #141; analytic tree boundedness, #142; the coded forced back-and-forth tree, #143; uniform
-  back-and-forth separation, `Descriptive/BFSeparation`, #144; and the ordinal-indexed
-  `Σ^in_α`/`Π^in_α` hierarchy, `Lomega1omega/InHierarchy`, #145), it contains Montalbán's explicit
-  Scott sentence from a family of orbit formulas (#147, `Scott/MontalbanSentence`:
+- **InfinitaryLogic**: the current pin is `def5cc0`, the merge of its pull request #152, reached
+  from `8a15ca5` (the merge of its pull request #148) by this repository's pull request #49;
+  `8a15ca5` was reached from `098fb36` (the merge of its pull request #146) by this repository's
+  pull request #45.  The statements of `8a15ca5` are available at our pinned dependency
+  `def5cc0` (signatures checked; `SuggestedInterfaces.lean` `#check`s them): the rank comparison
+  of the Scott process, #140; the orbit-formula threshold and rank bound and local-automorphism
+  preservation of `README.md`, Layer 0, #141; analytic tree boundedness, #142; the coded forced
+  back-and-forth tree, #143; uniform back-and-forth separation, `Descriptive/BFSeparation`, #144;
+  the ordinal-indexed `Σ^in_α`/`Π^in_α` hierarchy, `Lomega1omega/InHierarchy`, #145; Montalbán's
+  explicit Scott sentence from a family of orbit formulas (#147, `Scott/MontalbanSentence`:
   `montalbanSentence`, `IsOrbitFormulaFamily`, `realize_montalbanSentence`,
   `montalbanSentence_self`, `nonempty_equiv_of_realize_montalbanSentence`,
   `montalbanSentence_characterizes`, and the pointed forms `montalbanSentencePointed`,
@@ -828,25 +830,53 @@ named (`README.md`, Layer 0):
   in the signed hierarchy (#148, `Scott/MontalbanComplexity`: `isPiIn_atomicDiagram`,
   `isPiIn_montalbanSentence`, `isPiIn_montalbanSentencePointed`,
   `exists_isPiIn_scottSentence_of_sigmaIn_orbits`, `exists_isPiIn_pointed_of_sigmaIn_orbits`, and
-  `exists_isPiIn_two_scottSentence_of_sigmaIn_zero_orbits`).  Toolchain and Mathlib are the same as
-  at `098fb36`.  These statements are available at our pinned dependency `8a15ca5` (signatures
-  checked; `SuggestedInterfaces.lean` `#check`s them).  The imports are the narrow modules
+  `exists_isPiIn_two_scottSentence_of_sigmaIn_zero_orbits`).  Between `8a15ca5` and `def5cc0`
+  there are three merges, available at the pin (signatures checked; `SuggestedInterfaces.lean`
+  `#check`s them; no application compiled in this repository):
+  - forgetting finitely many parameters (#149, `Scott/ForgetParameters`): `existsTuple_isScott`,
+    the existential closure over the parameters of a formula characterizing `(M, c)` is a Scott
+    sentence of `M` among countable structures; `isSigmaIn_existsTuple_iff`, the closure keeps
+    the class `Σ^in_α` for `1 ≤ α`; `exists_isSigmaIn_scottSentence_of_sigmaIn_orbits_over`,
+    `Σ^in_α` orbits over a parameter tuple (`1 ≤ α`) give a `Σ^in_{α+2}` Scott sentence; and
+    `exists_isSigmaIn_three_scottSentence_of_sigmaIn_one_orbits_over`, `Σ^in_1` orbits over
+    parameters give a `Σ^in_3` Scott sentence (for the `Σ^in_3` Scott sentence obtained by
+    existentially quantifying a named rigid core, `README.md`, Layer 4, and `COMPANIONS.md`, B4);
+  - rank tails and the least level of a cover (#150, `OrdinalCountability`): `rankTail`,
+    `rankTail_cofinal_losses_iff`, `mk_eq_aleph_one_of_countable_fibers`, `leastLevel`,
+    `countable_fibers_leastLevel`, and `rankTail_leastLevel`, beside the earlier
+    `countable_iff_rank_bounded` (the prospective "ranks with countable fibres" of "The
+    full-presentation route");
+  - graded matching (#152, `Scott/GradedMatching`, `bfEquiv_of_gradedSystem` and
+    `bfEquiv_of_gradedMatching`): a family of relations graded up to a height bound, with atomic
+    agreement at level `0`, lowering, and forth and back one level down, relates at a level
+    `α ≤ height` only `BFEquiv α` pairs (a generic form of the graded back-and-forth theorem of
+    `README.md`, Layer 0, whose initial match is a pair related at the height, `α = height`).
+
+  Toolchain and Mathlib are the same as at `8a15ca5`.  The imports are the narrow modules
   (`InfinitaryLogic.Scott.OrbitFormulaThreshold`, `InfinitaryLogic.Lomega1omega.LocalAutomorphism`,
   `InfinitaryLogic.Descriptive.BFSeparation`, `InfinitaryLogic.Lomega1omega.InHierarchy`,
-  `InfinitaryLogic.Scott.MontalbanComplexity`, and the others the sketch names), never
-  `InfinitaryLogic.All`.
-- **ComputableModelTheory**: the current pin is `37f6c42`, the merge of its pull request #51 (its
-  own InfinitaryLogic repin to `8a15ca5`), reached from `0401c95` (the merge of its pull request
-  #47) by this repository's pull request #45.  Besides representative classes, extension-rich
-  families and direct limits, the factorization of tuples through the age, orbit isolation, and
-  countable prime structures, rooted universality and uniqueness (#42), classical Fraïssé existence
-  (#44), the entry module `ComputableModelTheory.Classical` (#45), and isolation and primeness over
-  named finite parameters (#46), available at our pinned dependency `37f6c42` (signatures checked;
-  `SuggestedInterfaces.lean` `#check`s them through the entry module), it contains the seeded
-  effective back-and-forth and computable automorphisms extending an isomorphism between finitely
-  generated substructures of a computably homogeneous structure
-  (`ModelTheory/Computable/AutomorphismExtension`), outside the entry module and not used here.  Its
-  own InfinitaryLogic pin is exactly `8a15ca5`, the revision pinned here.
+  `InfinitaryLogic.Scott.MontalbanComplexity`, `InfinitaryLogic.Scott.ForgetParameters`,
+  `InfinitaryLogic.Scott.GradedMatching`, `InfinitaryLogic.OrdinalCountability`, and the others
+  the sketch names), never `InfinitaryLogic.All`.
+- **ComputableModelTheory**: the current pin is `0e9935b`, the merge of its pull request #53,
+  reached from `37f6c42` (the merge of its pull request #51) by this repository's pull request
+  #49; `37f6c42` was reached from `0401c95` (the merge of its pull request #47) by this
+  repository's pull request #45.  Representative classes, extension-rich families and direct
+  limits, the factorization of tuples through the age, orbit isolation, and countable prime
+  structures, rooted universality and uniqueness (#42), classical Fraïssé existence (#44), the
+  entry module `ComputableModelTheory.Classical` (#45), and isolation and primeness over named
+  finite parameters (#46) are available at our pinned dependency `0e9935b` (signatures checked;
+  `SuggestedInterfaces.lean` `#check`s them through the entry module).  It also contains the
+  seeded effective back-and-forth and computable automorphisms extending an isomorphism between
+  finitely generated substructures of a computably homogeneous structure
+  (`ModelTheory/Computable/AutomorphismExtension`), and finite elimination (#52, #53,
+  `Computability/FiniteElimination`: over a fixed prefix, if refutation persists, a sequence of
+  selections that never selects a refuted candidate, replaces a selection only once it is refuted,
+  and from some stage on selects only candidates of index at most a given bound makes only finitely
+  many selections), all outside the entry module and not used here.  None of the modules behind
+  the entry module changed between `37f6c42` and `0e9935b`.  Its own InfinitaryLogic pin is
+  `8a15ca5`, an ancestor of the revision pinned here; this repository's manifest governs (see the
+  next item).
 - **Mathlib and the toolchain** agree across the three: one Lean toolchain (`v4.35.0-rc3` at
   present) and one Mathlib commit (at present the fork commit `346a4bd`, inherited from
   InfinitaryLogic).  The manifest holds one revision of each dependency, so ComputableModelTheory
@@ -858,10 +888,11 @@ merged upstream after the pins above is listed here, named in prose only and nev
 the sketches, until a repin containing it is recorded in this subsection.
 
 **Prospective dependencies (neither available upstream nor pinned):** the InfinitaryLogic
-statements listed under "The full-presentation route": invariant Borel observations, ranks with
-countable fibres, the isolating-level lower bound, and limits of chains of bounded equivalence
-(the analogue for `BlockBFEquiv` of the chain-limit lemma).  The graded back-and-forth theorem,
-listed there too, is not a dependency: it is to be proved in this repository.  No
+statements listed under "The full-presentation route": invariant Borel observations, the
+isolating-level lower bound, and limits of chains of bounded equivalence (the analogue for
+`BlockBFEquiv` of the chain-limit lemma).  The local graded back-and-forth theorem remains the
+target until the upstream `bfEquiv_of_gradedMatching` (at the pin, signatures checked) has been
+checked against both intended applications; no application is compiled here.  No
 statement of this roadmap relies on any of them, or on the statements available upstream, as
 pinned until this subsection records a pin containing it; until then they are named in prose
 only (`README.md`, Layer 0), never `#check`ed in the sketches.
