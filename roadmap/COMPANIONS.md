@@ -2,9 +2,9 @@
 
 This document organizes three companion milestones.  They are **optional relative to the core
 theorem**: the main theorem of [`README.md`](README.md) and [`IMPLEMENTATION.md`](IMPLEMENTATION.md)
-is proved without them, and no core layer or checkpoint depends on them.  Each milestone is
-independently completable: none uses a theorem of another milestone, and each lists the core
-results it takes as hypotheses.  [`SuggestedCompanions.lean`](SuggestedCompanions.lean) records
+is proved without them, and no core layer or checkpoint depends on them.  Each milestone can be
+completed on its own: none uses a theorem of another milestone, and each lists the core results it
+takes as hypotheses.  [`SuggestedCompanions.lean`](SuggestedCompanions.lean) records
 selected statements in their generic form, some proved and some left as deliberate `sorry`
 targets; [`SEMANTIC_CONTRACT.md`](SEMANTIC_CONTRACT.md) applies unchanged.  Layer numbers here
 are those of `README.md` (layers 0–6); the table at the head of `IMPLEMENTATION.md` relates them
@@ -53,8 +53,8 @@ definability claims (`README.md`, "Status of the optional results").
   for the lower bound (layer 6), and `w_η ∈ Q` its base class; by expansion uniqueness `w_η` lies
   in the loss at `η`.
 
-Upstream names below were checked in the pinned InfinitaryLogic (`8a15ca5`, signatures checked), the
-pinned ComputableModelTheory (`37f6c42`, signatures checked), and Mathlib, except those marked
+Upstream names below were checked in the pinned InfinitaryLogic (`def5cc0`, signatures checked), the
+pinned ComputableModelTheory (`0e9935b`, signatures checked), and Mathlib, except those marked
 "available upstream" or "prospective" (`README.md`, Layer 0); the sketch `#check`s or applies only
 names available at the current pins.
 
@@ -278,7 +278,7 @@ automorphisms from InfinitaryLogic (`exists_finite_orbit_threshold`,
 `orbitRank_lt_omega0_of_orbitFormula`, `internalScottRank_le_omega0_of_orbitFormulas`,
 `BoundedFormulaω.realize_embedding_comp_of_localAutomorphisms`,
 `BoundedFormulaω.realize_comp_append_of_localAutomorphisms`), available at our pinned dependency
-`8a15ca5` (signatures checked).
+`def5cc0` (signatures checked).
 
 ### B1. Joint embedding and amalgamation of top-free charts (in the core)
 
@@ -310,7 +310,7 @@ automorphisms are those of the `L_λ`-structure.  Sketch: `AgreesLocally` and `a
 (proved, for any map preserving the chart relations).  The consequence is an application of
 InfinitaryLogic's `BoundedFormulaω.realize_embedding_comp_of_localAutomorphisms` (and, with finitely
 many parameters, `BoundedFormulaω.realize_comp_append_of_localAutomorphisms`), available at our
-pinned dependency `8a15ca5` (signatures checked).  Its hypotheses: any language, no relationality,
+pinned dependency `def5cc0` (signatures checked).  Its hypotheses: any language, no relationality,
 countability, infinitude, or nonemptiness, and injectivity of the map a consequence of its
 hypothesis.  It is not reproved here.  Sketch: `realize_iff_realize_comp_of_agreesLocally` and
 `realize_comp_append_iff_of_agreesLocally` (proved, one-line applications).
@@ -366,7 +366,7 @@ base reduct.  The development proves the orbit formulas; the generic theorems ar
    `typesIsolated_of_orbitDefinedBy` (proved from the target
    `typesWith_eq_singleton_of_orbitDefinedBy`).  Ingredients: Mathlib's `Theory.CompleteType`,
    `Theory.typeOf`, `Theory.typesWith`, `Formula.equivSentence`, `completeTheory`
-   (`ModelTheory/Types`, `ModelTheory/Semantics`).  At the pin (`37f6c42`, signatures checked), from
+   (`ModelTheory/Types`, `ModelTheory/Semantics`).  At the pin (`0e9935b`, signatures checked), from
    ComputableModelTheory: `IsolatesTuple` and `IsAtomic`,
    `isolatesTuple_of_orbit_formula` (under `[Nonempty M]`; orbit formulas of `L` without constants
    naming the tuple), `isAtomic_of_orbit_formulas`, and `IsolatesTuple.typesWith_eq_singleton`
@@ -380,7 +380,7 @@ base reduct.  The development proves the orbit formulas; the generic theorems ar
    finite threshold, and `internalScottRank_le_omega0_of_orbitFormulas` gives `internalScottRank ≤
    ω` in the library's convention, the supremum over all tuples of the orbit rank plus one, `⨆ a,
    orbitRank a + 1` (so finite but unbounded orbit ranks give exactly `ω`). These are available at
-   our pinned dependency `8a15ca5` (signatures checked).  They hold under `[L.IsRelational]` and
+   our pinned dependency `def5cc0` (signatures checked).  They hold under `[L.IsRelational]` and
    without countability, nonemptiness, or infinitude of `M`; they are not reproved here.  Sketch:
    `exists_finite_threshold_of_orbitDefinedBy`, `orbitRank_lt_omega0_of_orbitDefinedBy`, and
    `internalScottRank_le_omega0_of_orbitDefinedBy` (proved, one-line applications).  The stage
@@ -395,7 +395,7 @@ base reduct.  The development proves the orbit formulas; the generic theorems ar
    target is any model of the complete theory, in an arbitrary universe, with no receiving or
    countability assumption.  Sketch: `nonempty_elementaryEmbedding_of_typesIsolated` (target).
    Ingredients: Mathlib's `ElementaryEmbedding` (`ModelTheory/ElementaryMaps`).  At the pin
-   (`37f6c42`, signatures checked), from ComputableModelTheory:
+   (`0e9935b`, signatures checked), from ComputableModelTheory:
    `exists_elementaryEmbedding_of_countable_atomic`,
    under `[Countable M] [Nonempty M] [N ⊨ L.completeTheory M]`, with separate universes,
    function symbols allowed, and no countability of the language or of `N`; the sketch target is
@@ -426,7 +426,7 @@ is part of the core and is not a condition of this milestone.
 ### B4. Scott sentences of the top-free witness from its orbit formulas (existence only)
 
 Two statements are kept apart.  The **generic existence** of *a* Scott sentence from orbit formulas
-is Montalbán's theorem (InfinitaryLogic, available at the pin `8a15ca5`, signatures checked;
+is Montalbán's theorem (InfinitaryLogic, available at the pin `def5cc0`, signatures checked;
 `README.md`, Layer 0): for a countable structure in a relational language with countably many
 relation symbols, and a family of orbit formulas indexed by all tuples, the sentence
 `montalbanSentence` characterizes the structure among countable structures in its carrier universe
@@ -584,18 +584,49 @@ These are statements still to be proved.  None is an input to the main theorem.
   persistent core.  Targets: the naturality of greatest refinements under isomorphism, and their
   relationship to the expansion domains (a class lies in `D_ξ` exactly when its height is at
   least `ξ`).  The count of the main theorem does not use them.
-* **Terminal refinement** (downstream of the counting theorem; every item a conditional target, to
-  be proved).  Hypotheses, all explicit: `D_0 = Q` and continuity at nonzero countable limits; the
-  conclusions of the expansion-domain count, namely the countable complements `Q \ D_η`, the
-  agreement of the classes of `D_η` on every sentence of quantifier rank at most `η`, and the
-  uncountability of `Q` (from the nonempty losses of the lower bound); Scott isolation, a Scott
+* **Terminal refinement** (every item a conditional target, to be proved; none is an input to the
+  counting theorem).  Hypotheses, all explicit: conditions 1–4 of the expansion-domain reduction
+  (`README.md`), which are hypotheses of the count, not its conclusions; Scott isolation, a Scott
   sentence `σ_q` for each class `q`, of countable quantifier rank and true in `q` only
   (`scottSentence_characterizes`); and, for 3 only, expansion uniqueness and the countable family of
-  terminal conditions of layer 4.  Under these hypotheses, the targets, in order:
-  1. **eventual departure by Scott isolation** (to be proved): every class leaves the expansion
-     domains, so the persistent core is empty.  Argument: if `q` lay in every `D_η`, then for `η` at
-     least the quantifier rank of `σ_q` every class of `D_η` would satisfy `σ_q`, so `D_η = {q}`,
-     and `Q` would be the union of the countable set `Q \ D_η` and one class;
+  terminal conditions of layer 4.  No conclusion of the count (the countable complements `Q \ D_η`,
+  the bound `|Q| ≤ ℵ₁`, the uncountability of `Q`) is used.  Under these hypotheses, the targets, in
+  order:
+  1. **Eventual departure** (a theorem to be proved).  *Assume that the expansion domains `D_η`
+     satisfy conditions 1–4, in particular the agreement on `D_β`: any two classes in `D_β` satisfy
+     the same sentences of quantifier rank at most `β`; that every class `q` has a Scott sentence
+     `σ_q` of countable quantifier rank (true in `q` and in no other class); and that the successor
+     losses are cofinally nonempty: for every `γ < ω₁` there is `β ≥ γ` with `D_β \ D_{β+1} ≠ ∅`.
+     Then no class lies in every `D_η`.*  Proof: if `q` lay in every `D_η`, choose `β` at least the
+     quantifier rank of `σ_q` with some `p ∈ D_β \ D_{β+1}`; both `p` and `q` lie in `D_β`, so
+     agreement on `D_β` makes `p` satisfy `σ_q`, hence `p = q`; but `q ∈ D_{β+1}` and `p ∉ D_{β+1}`.
+     Of conditions 1–4 the proof uses only the agreement of condition 3 and the cofinally nonempty
+     losses, which condition 4 gives (it makes every successor loss nonempty); the same argument
+     applies to any family of domains with that agreement and cofinally nonempty successor losses,
+     for instance the least-level filtration of the full-presentation route (`README.md`, "Reduction
+     to full presentations"), by the lemma below.  **Corollary** (conditional on the same
+     hypotheses): under condition 4 the persistent core `⋂_{η<ω₁} D_η` is empty.  **Control:**
+     isolation of each class by one sentence is needed, and pairwise separation (for `p ≠ q`, some
+     sentence true in one and false in the other) is not enough, because the rank of a sentence
+     separating `q` from `p` depends on `p` while the class lost at `β` varies with `β`, so no level
+     need lie above the rank of the sentence separating `q` from the class lost there.
+
+     **Cofinally nonempty successor losses** (a separate lemma, to be proved).  *Let `D_η ⊆ Q`, for
+     `η < ω₁`, satisfy `D_0 = Q`, `D_ζ ⊆ D_ξ` for `ξ ≤ ζ`, continuity `D_δ = ⋂_{ξ<δ} D_ξ` at nonzero
+     countable limits `δ`, countable complements `Q \ D_η` for every `η < ω₁` (from countable
+     successor losses, by `compl_countable_of_loss`), and a countable persistent core
+     `⋂_{η<ω₁} D_η`.  If `Q` is uncountable, the successor losses are cofinally nonempty.*  Proof:
+     if every loss at or above `γ` were empty, then `D_η = D_γ` for every `η ≥ γ` (successors by
+     the empty losses, limits by continuity), so the persistent core would be `D_γ`, and
+     `Q = (Q \ D_γ) ∪ D_γ` would be countable.  The hypothesis on the core is needed: the constant
+     family `D_η = Q` on an uncountable `Q` has no losses.  The core is empty for the tails
+     `{q : η ≤ r(q)}` of a rank `r` below `ω₁` (`biInter_rankTail_eq_empty`), in particular for the
+     least-level filtration, and for the tails of a rank with countable fibres the equivalence with
+     uncountability is InfinitaryLogic's `rankTail_cofinal_losses_iff` (at the pin, signatures
+     checked).  Conversely, cofinally nonempty successor losses of decreasing domains are pairwise
+     disjoint and make `Q` uncountable with no further hypothesis (`aleph_one_le_mk_of_cofinal`,
+     compiled in this repository (theorem named)).  On the expansion-domain route the lemma is not
+     needed: condition 4 gives every successor loss nonempty;
   2. **the last admitted stage** (a definition conditional on 1): for a class `q` that leaves the
      expansion domains, the least `ξ` with `q ∉ D_ξ` is a successor `ζ + 1` (`D_0 = Q`, and limit
      continuity excludes a limit), and `λ_ζ` is then called the last admitted stage of `q`; `q` lies
@@ -608,14 +639,15 @@ These are statements still to be proved.  None is an input to the main theorem.
   None of these is proved, and no class is asserted to have a last admitted stage or a terminal
   expansion before 1 is proved.  If 1–3 are proved, the greatest refinement above (itself a target)
   is the terminal expansion, and no class has height `ω₁`.  Terminal refinement is not a
-  prerequisite of the counting theorem: its eventual departure is to be proved from the countable
-  complements `Q \ D_η`, the agreement on `D_η`, and the uncountability of `Q`, conclusions of the
-  count, so it cannot feed a proof of that same count without circularity.  The full-presentation
-  route (`README.md`, "The persistent core") may take eventual departure from terminal refinement
-  only by stating its dependence on the expansion-domain route (the fullness of the terminal
-  expansion for its terminal exact age, the first special statement there, is not part of terminal
-  refinement); a full-presentation proof that does not depend on that route must cover every class,
-  the persistent class included, by its own argument.
+  prerequisite of the counting theorem, and its eventual departure is not downstream of the count:
+  it uses hypotheses of the count (the agreement of condition 3 and the nonempty losses of condition
+  4, with Scott isolation), not its conclusions.  The full-presentation route (`README.md`, "The
+  persistent core") may therefore take eventual departure from here without circularity; it then
+  depends on conditions 3 and 4 of the expansion-domain route, not on its count, and states that
+  dependence.  Departure proves neither terminal fullness (the fullness of the terminal expansion
+  for its terminal exact age, the first special statement there, which is not part of terminal
+  refinement) nor full-presentation coverage; a full-presentation proof that does not depend on
+  conditions 3 and 4 must cover every class, a persistent class included, by its own argument.
 * **Minimal unboundedness.**  `Φ` is minimally unbounded [Mon, Definition XII.4]: it is
   unbounded, but for every sentence `ψ` one of `Φ ∧ ψ` and `Φ ∧ ¬ψ` is bounded.  The second
   clause follows from the countable truth sides: one of `Φ ∧ ψ` and `Φ ∧ ¬ψ` has countably many
@@ -660,9 +692,10 @@ These are statements still to be proved.  None is an input to the main theorem.
   with `D_η` (the expansion domains, or the least-level filtration of the full-presentation route,
   `README.md`, "Reduction to full presentations") and with `A_η`, the form of the comparison (an
   equality, or an inclusion in one direction) to be determined with the theorem.  Nothing is
-  asserted about the relation between `R_η` and `A_η` or `D_η`, at any level, in either direction:
-  neither club agreement nor any result stated here gives it, and the results stated here do not
-  identify expansion heights with Scott ranks.  The passage between [Mon]'s convention and the
+  asserted about the relation between `R_η`, in [Mon]'s convention, and `A_η` or `D_η`, at any
+  level, in either direction: neither club agreement nor any result stated here gives it (the
+  one-sided comparison below is in InfinitaryLogic's conventions), and the results stated here do
+  not identify expansion heights with Scott ranks.  The passage between [Mon]'s convention and the
   one-point `BFEquiv` of the main theorem is a statement still to be proved (`README.md`, "Standard
   definitions").  A supporting statement, recorded as a prospective lemma of InfinitaryLogic
   (`IMPLEMENTATION.md`, "The full-presentation route"): an analogue for `BlockBFEquiv` of [Mon,
@@ -671,6 +704,54 @@ These are statements still to be proved.  None is an input to the main theorem.
   its level), by the same construction, with its offset to be determined.  It supports the
   rank-filtration comparison only through the passage between [Mon]'s convention and
   InfinitaryLogic's, which is still to be proved.
+
+  **A one-sided rank comparison** (prospective: a statement to be proved, in InfinitaryLogic's
+  conventions, not [Mon]'s).  The notions, as defined at the pin `def5cc0` (signatures checked), for
+  any language `L` and a countable structure `M` (the theorems used below add `[L.IsRelational]` and
+  `[Countable (Σ l, L.Relations l)]`, which the base language satisfies): the **stabilization
+  ordinal** (`Scott/Sentence`), the least level at which empty-tuple back-and-forth equivalence with
+  `M` characterizes `M` up to isomorphism among the countable structures in its carrier universe,
+
+  ```lean
+  def StabilizesAt (M : Type w) [L.Structure M] (α : Ordinal) : Prop :=
+    ∀ (N : Type w) [L.Structure N] [Countable N], BFEquiv0 (L := L) M N α ↔ Nonempty (M ≃[L] N)
+
+  noncomputable def stabilizationOrdinal (M : Type w) [L.Structure M] [Countable M] :
+      Ordinal.{0} :=
+    sInf {α : Ordinal.{0} | StabilizesAt (L := L) M α}
+  ```
+
+  and the **Scott height** (`Scott/Height/Defs`), the least level from which back-and-forth
+  equivalence of tuples of every length with tuples of `M` no longer refines,
+
+  ```lean
+  noncomputable def scottHeight (M : Type w) [L.Structure M] [Countable M] : Ordinal.{0} :=
+    sInf {α : Ordinal.{0} | ∀ {n : ℕ} (a : Fin n → M)
+      (N : Type w) [L.Structure N] [Countable N] (b : Fin n → N),
+      BFEquiv (L := L) α n a b → BFEquiv (L := L) (Order.succ α) n a b}
+  ```
+
+  Statement, for a countable level `η`, with its hypotheses explicit.  (a) Any two classes of `D_η`
+  are empty-tuple `BFEquiv η`, by condition 3 in its back-and-forth form (`README.md`).  Any two
+  classes of `A_η` are empty-tuple `BFEquiv η` under the hypotheses of A2 (countable complements
+  `Q \ D_η`, agreement on `D_η` at rank `η`, `Q` uncountable), which make `T∞` complete: the Scott
+  formula at `η` of a model in one class has quantifier rank at most `η` (`scottFormula_qrank_le`)
+  and holds in a model exactly when that model is `BFEquiv η` to it on the empty tuple
+  (`realize_scottFormula_iff_BFEquiv`); its negation, also of rank at most `η`, fails in that class,
+  which lies in `A_η`, so by completeness the formula itself lies in `T∞` and holds throughout
+  `A_η`.  (b) If `q ∈ A_η` and `A_η` contains a second class (or `q ∈ D_η` and `D_η` does), then
+  every countable model `M` in `q` has `η < stabilizationOrdinal M ≤ scottHeight M`: a model of the
+  second class is `BFEquiv η` to `M` and not isomorphic to it, so `StabilizesAt M α` fails for every
+  `α ≤ η` (back-and-forth equivalence is monotone in the level); and at `scottHeight M` the analysis
+  stabilizes for tuples of every length (`scottHeight_stabilizesCompletely`), so empty-tuple
+  equivalence there characterizes isomorphism (`BFEquiv_stabilization_implies_equiv`).  Hence
+  `A_η ⊆ {q : η < stabilizationOrdinal(q)}` whenever `A_η` has two classes, and likewise for `D_η`.
+  This is an inclusion, a one-sided bound, not an agreement: no reverse inclusion and no equality of
+  levels is asserted.  It does not transfer to the internal Scott rank, and there is no
+  identification of the stabilization ordinal or the Scott height with `internalScottRank`: the
+  countably infinite set in the language with no relations has internal Scott rank `1` and is
+  recognized at no finite level (finite sets with at least `n` elements are `BFEquiv n` to it), so
+  its stabilization ordinal is `ω`.
 * **Full trees.**  The introductory example of full rooted well-founded trees of finite
   sequences (`LITERATURE.md`, §9), with its rank convention explicit: equally ranked countable
   full well-founded trees are isomorphic; and the finite-extension estimate, that finite
