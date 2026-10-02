@@ -267,6 +267,14 @@ theorem mem_extremes_iff (hB : B ∈ P) : x ∈ extremes P B ↔ x ∈ B ∧ x �
     exact hn hy
   exact he ▸ hP.hull_mem
 
+/-- A subset of the ground set generates the ground set exactly when it contains the extreme
+points of the ground set. -/
+theorem hull_eq_ground_iff_extremes_subset (hS : S ⊆ A) :
+    hull A P S = A ↔ extremes P A ⊆ S := by
+  refine ⟨fun h ↦ h ▸ extremes_hull_subset hS, fun h ↦ hull_subset_ground.antisymm ?_⟩
+  calc A = hull A P (extremes P A) := (hP.hull_extremes hP.ground_mem).symm
+    _ ⊆ hull A P S := hull_mono h
+
 end IsConvexGeometry
 
 /-- Being a convex geometry is decidable: the axioms are bounded quantifications over the finite
