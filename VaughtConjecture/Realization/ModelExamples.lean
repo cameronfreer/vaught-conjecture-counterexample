@@ -82,17 +82,17 @@ cells `({0}, 1)`, `({1}, 1)`, `({0, 1}, 1)`, and `({0, 1}, 2)`. -/
 private def pairCells : CellScheme (Fin 4) (Fin 2) :=
   ⟨univ, Geometry.intervalPlan univ, ![{0}, {1}, univ, univ], ![1, 1, 1, 2]⟩
 
-/-- The stage type at stage `0` on two points with the cells `pairCells`, mute rows, and the
+/-- The stage type at stage `0` on two points with the cells `pairCells`, the bottom rows, and the
 bottom label. -/
 private def pair : StageType.{0} 0 2 where
   card := 4
   toCellScheme := pairCells
-  rows := CellScheme.Rows.mute _
+  rows := CellScheme.Rows.bot _
   label _ := ⊥
   isWellFormed := ⟨rfl, ⟨inferInstance, Geometry.isPlan_intervalPlan _, fun d ↦ by
     fin_cases d <;> simp [pairCells, CellScheme.gradedIndex, Geometry.mem_intervalPlan]⟩⟩
   isCoded _ _ := WithBot.bot_lt_coe _
-  isLawful := CellScheme.Rows.isLawful_bot
+  isLawful := CellScheme.Rows.isLawful_const_bot
   atStage _ := atStage_bot
 
 /-- Every graded face of `pairCells` is the graded index of a cell. -/
@@ -102,9 +102,9 @@ private theorem isComplete_pairCells : pairCells.IsComplete := by
   simp only at hpos hle
   interval_cases j <;> revert C <;> decide
 
-/-- `pair` is legal: mute rows are consistent and bountiful, and `pairCells` is complete. -/
+/-- `pair` is legal: the bottom rows are consistent and bountiful, and `pairCells` is complete. -/
 private theorem isLegal_pair : pair.IsLegal :=
-  isLegal_iff.mpr ⟨CellScheme.Rows.isConsistent_mute, CellScheme.Rows.isBountiful_mute,
+  isLegal_iff.mpr ⟨CellScheme.Rows.isConsistent_bot, CellScheme.Rows.isBountiful_bot,
     isComplete_pairCells⟩
 
 /-- The initial segment `{0}` is a closed face of `pair`. -/

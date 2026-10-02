@@ -16,8 +16,8 @@ labels `≤ α + K` and sends every other label to the formal top.  It is stage 
 successor stage `α + K + 1` (`reduce_add_one_of_le`, `reduce_add_one_of_lt`), and no separate
 operation is introduced.  Unlike stage reduction to a stage that is zero or a limit
 (`TransformsTo.reduce`), it does not commute with visibility replacement: replacing a finite part
-below the threshold can move a label of the band of `α` across `α + K`.  Post-composition with it
-nevertheless preserves the transformation relation under two guards.
+below the threshold can move a label of the block `[α, α + ω)` across `α + K`.  Post-composition
+with it nevertheless preserves the transformation relation under two guards.
 
 * `IsWitness.le_coe_add_of_visibilityReplace`: at a threshold `k ≤ K` where the suppressor is at
   least `α + K`, a shifter that sends the visibility replacement of `x` to at most `α + K` sends
@@ -50,9 +50,10 @@ variable {D : Type*} {grade : D → ℕ} {p q : D → Label.{u}} {g : ℕ → La
 
 /-! ### The jump rule -/
 
-/-- **The band mate controls the shifter.**  Let `α` be zero or a limit, `k ≤ K`, and `i ≤ k`.
-If the suppressor at `k` is at least `α + K` and the shifter sends the visibility replacement of
-`x` at threshold `k` with value `i` to at most `α + K`, then it sends `x` to at most `α + K`. -/
+/-- **A visibility replacement controls the shifter.**  Let `α` be zero or a limit, `k ≤ K`, and
+`i ≤ k`.  If the suppressor at `k` is at least `α + K` and the shifter sends the visibility
+replacement of `x` at threshold `k` with value `i` to at most `α + K`, then it sends `x` to at most
+`α + K`. -/
 theorem IsWitness.le_coe_add_of_visibilityReplace (hw : IsWitness g σ) (hα : IsSuccPrelimit α)
     (hk : k ≤ K) (hi : i ≤ k) (hg : ((α + K : Ordinal.{u}) : Label.{u}) ≤ g k)
     (h : σ (visibilityReplace k i x) ≤ ((α + K : Ordinal.{u}) : Label.{u})) :
