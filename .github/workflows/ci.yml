@@ -56,7 +56,7 @@ jobs:
         uses: actions/cache/restore@v6
         with:
           path: .lake/packages
-          key: deps-v4-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
+          key: deps-v5-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
           lookup-only: true
 
       - name: Measure free disk space
