@@ -23,6 +23,10 @@ sentence.
 * **Finite models are excluded by hypothesis.**  For the same sentence, the one-point model on
   `PUnit` (in any universe) is countable, and its class is not the class of any code: the reduction
   to `ℕ` is not onto when the sentence has finite models.
+* **Two routes to the absence of finite models.**  The reduction to `ℕ` for the density sentence
+  holds under the coatom extension property at stage `ω`, without the cap-to-model theorem, and
+  the perfect-set dichotomy on all coded tiers fails under the cap-to-model theorem and the thin
+  `ℵ₁` spectrum on `ℕ`.
 * **Universes.**  The classes of countable models of the density sentence on the carriers of the
   universe `w` form a type in the universe `w + 1`; the coded classes `DensityClass` are in the
   universe `1`.  The statements on all countable carriers for `w = 0` and `w = 1` follow from the
@@ -34,6 +38,7 @@ universe w
 namespace VaughtConjecture.MainTheorem
 
 open FirstOrder Language Structure Cardinal
+open scoped Ordinal
 
 /-! ### The carrier `ℕ` -/
 
@@ -74,9 +79,12 @@ private def natInTypeOne : CountableModel.{1} trueSentence :=
     str := Language.emptyStructure
     realize := fun h ↦ h }
 
+private theorem natInTypeOne_carrier : natInTypeOne.carrier = ULift.{1} ℕ :=
+  rfl
+
 /-- A countably infinite model in `Type 1` has the class of a code. -/
 example : ⟦natInTypeOne⟧ ∈ Set.range (classOfCode.{1} trueSentence) :=
-  have : Infinite natInTypeOne.carrier := inferInstanceAs (Infinite (ULift.{1} ℕ))
+  have : Infinite natInTypeOne.carrier := by rw [natInTypeOne_carrier]; infer_instance
   mk_mem_range_classOfCode natInTypeOne
 
 /-- The one-point model of the true sentence, on a carrier in the universe `w`. -/
@@ -85,6 +93,9 @@ private def point : CountableModel.{w} trueSentence :=
     str := Language.emptyStructure
     realize := fun h ↦ h }
 
+private theorem point_carrier : point.{w}.carrier = PUnit.{w + 1} :=
+  rfl
+
 /-- The class of the one-point model is not the class of any code: without the absence of finite
 models, the reduction to `ℕ` is not onto. -/
 example : ⟦point.{w}⟧ ∉ Set.range (classOfCode.{w} trueSentence) := by
@@ -92,9 +103,7 @@ example : ⟦point.{w}⟧ ∉ Set.range (classOfCode.{w} trueSentence) := by
   induction q using Quotient.inductionOn with
   | h c =>
     obtain ⟨e⟩ := CountableModelClass.mk_eq_mk_iff.mp hq
-    have : Infinite (CountableModel.ofCode.{w} c).carrier :=
-      inferInstanceAs (Infinite (ULift.{w} ℕ))
-    have : Finite point.{w}.carrier := inferInstanceAs (Finite PUnit.{w + 1})
+    have : Finite point.{w}.carrier := by rw [point_carrier]; infer_instance
     have := Finite.of_injective _ e.injective
     exact not_finite (CountableModel.ofCode.{w} c).carrier
 
@@ -121,6 +130,18 @@ cap-to-model theorem for the carriers of `Type 1`. -/
 example (hcap : CapToModel.{1}) (hs : HasThinAlephOneSpectrum densitySentence.{0}) :
     HasThinAlephOneSpectrumOnCountableCarriers.{1} densitySentence.{0} :=
   (hasThinAlephOneSpectrumOnCountableCarriers_iff fun _ _ _ h ↦ hcap.infinite h).mpr hs
+
+/-- The reduction to `ℕ` for the density sentence under the coatom extension property at stage
+`ω`, without the cap-to-model theorem. -/
+noncomputable example (hext : StageType.HasCoatomExtensions.{0} ω) :
+    DensityClass ≃ CountableModelClass.{1} densitySentence.{0} :=
+  codedClassEquiv fun _ _ _ h ↦ infinite_of_realize_densitySentence_of_hasCoatomExtensions hext h
+
+/-- The perfect-set dichotomy on all coded tiers fails, under the cap-to-model theorem for the
+carriers of `Type 1`, given the thin `ℵ₁` spectrum on `ℕ`. -/
+example (hcap : CapToModel.{1}) (hs : HasThinAlephOneSpectrum densitySentence.{0}) :
+    ¬ densitySentence.{0}.PerfectSetDichotomyAllCountable :=
+  densitySentence_not_perfectSetDichotomyAllCountable hcap hs
 
 end Density
 

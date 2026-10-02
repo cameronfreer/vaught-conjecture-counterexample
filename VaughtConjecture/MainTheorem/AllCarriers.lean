@@ -3,6 +3,8 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
+import InfinitaryLogic.Descriptive.PerfectSetDichotomy
+import VaughtConjecture.Extension.PinnedExtension
 import VaughtConjecture.MainTheorem.Assembly
 
 /-!
@@ -41,18 +43,34 @@ library's classes) to the classes on the carriers of `w`.
   isomorphic to a coded model, then `φ` has no finite models there
   (`infinite_of_exists_mem_modelsOf_equiv`): the two forms of the hypothesis are interchangeable.
 
-For the density sentence the absence of finite models is not proved in this repository: it is
-derived from the cap-to-model theorem of Layer 3 (`CapToModel.infinite`), a hypothesis of
-`VaughtConjecture.MainTheorem.Assembly`.  It is not added here as a separate hypothesis.
+The infinitary-logic library's `AllCodedIsoClasses φ` and `codeModel` (`Descriptive/FiniteCarrier`)
+represent the countable models on carriers in `Type`, with a tier for each finite carrier.  Here
+the carriers are in any universe `w` and finite models are excluded by hypothesis, so the classes
+correspond to the tier on `ℕ` alone; those declarations are not used.
+
+For the density sentence the absence of finite models is not proved in this repository.  Here it
+is derived from the cap-to-model theorem of Layer 3 (`CapToModel.infinite`), already a hypothesis
+of `VaughtConjecture.MainTheorem.Assembly`, and is not added as a separate hypothesis.  A direct
+proof from the receiving clause needs a coface of every legal stage type at stage `ω`: that is the
+one-point extension `StageType.exists_extension`, which holds under the coatom extension property
+`StageType.HasCoatomExtensions ω` of Layer 3.  This second derivation is
+`infinite_of_realize_densitySentence_of_hasCoatomExtensions`: the receiving clause at the cutoff
+`0` extends every occurrence by a point, so there are occurrences of every arity.  It does not use
+the cap-to-model theorem; once the coatom extension property is proved, the reduction to `ℕ` for
+the density sentence no longer depends on the cap-to-model theorem.
 
 **The statement on all countable carriers.**  `HasThinAlephOneSpectrumOnCountableCarriers.{w} φ`
 has the form of `HasThinAlephOneSpectrum φ`: the countable models of `φ` on the carriers of `w`
 have exactly `ℵ₁` isomorphism classes, and there is no perfect set of pairwise nonisomorphic models
-coded on `ℕ`.  Its second clause is the thinness of `HasThinAlephOneSpectrum` itself, unchanged:
-the library's `IsThinOnNatModels` concerns perfect sets in the Polish space of codes on `ℕ`, and the
-countable models on the carriers of a universe carry no topology, so the thinness statement has no
-counterpart on all countable carriers.  Under the absence of finite models the two statements are
-equivalent (`hasThinAlephOneSpectrumOnCountableCarriers_iff`).
+coded on `ℕ`.  Its second clause is the thinness of `HasThinAlephOneSpectrum`, unchanged.  The
+library's coded form of perfect sets on all countable carriers
+(`Sentenceω.PerfectSetDichotomyAllCountable`, over `AllCodedIsoClasses`: codes on `ℕ` and on each
+`Fin n`) adds only the finite tiers.  These are empty when `φ` has no finite models
+(`modelsOfOn_fin_eq_empty`), so under the absence of finite models the perfect-set failure on `ℕ`
+is the perfect-set failure on all countable carriers
+(`HasThinAlephOneSpectrum.not_perfectSetDichotomyAllCountable`; for the density sentence,
+`densitySentence_not_perfectSetDichotomyAllCountable`).  Under the absence of finite models the two
+spectrum statements are equivalent (`hasThinAlephOneSpectrumOnCountableCarriers_iff`).
 
 ## The conditional theorems
 
@@ -63,13 +81,18 @@ The theorems on all countable carriers are derived from the theorems on `ℕ` of
   `…_of_presentations`, and `…_of_scatteredTails`: the thin `ℵ₁` spectrum of the density sentence
   on the carriers of `w`, from the hypotheses of the corresponding theorem on `ℕ` and the
   cap-to-model theorem for the carriers of `w`;
+* `densitySentence_not_perfectSetDichotomyAllCountable`: the failure of the library's perfect-set
+  dichotomy on all coded tiers, from the thin `ℵ₁` spectrum on `ℕ` and the cap-to-model theorem;
 * `vaughtCounterexample_allCarriers_of_expansionDomains`, `…_of_presentations`, and
   `…_of_scatteredTails`: the conclusion of the corresponding theorem on `ℕ` together with the thin
-  `ℵ₁` spectrum on the carriers of `w`, derived from that conclusion alone (it contains the
-  reduction to `ℕ` of every countable model, which excludes finite models).
+  `ℵ₁` spectrum on the carriers of `w` and the failure of the library's perfect-set dichotomy on
+  all coded tiers, derived from that conclusion alone (it contains the reduction to `ℕ` of every
+  countable model, which excludes finite models).
 
 The reduction to `ℕ` uses neither sentence separation nor López–Escobar: the theorems here add to
-the theorems on `ℕ` only transport along bijections of carriers.
+the theorems on `ℕ` only transport along bijections of carriers and, for the perfect-set
+dichotomy on all coded tiers, the library's comparison of the classes on `ℕ` with the classes on
+all coded tiers.
 
 ## Placement
 
@@ -81,6 +104,7 @@ universe w u v
 namespace VaughtConjecture.MainTheorem
 
 open FirstOrder Language Structure Cardinal
+open scoped Ordinal
 
 /-! ### Countable models on the carriers of a universe -/
 
@@ -140,6 +164,16 @@ noncomputable def CountableModel.ofCodeEquiv (c : ModelsOf φ) :
   letI := c.1.toStructure
   letI : L.Structure (ULift.{w} ℕ) := Equiv.ulift.symm.inducedStructure
   (Equiv.ulift.symm.inducedStructureEquiv).symm
+
+/-- The carrier of the countable model of a code is `ULift.{w} ℕ`. -/
+@[simp] theorem CountableModel.ofCode_carrier (c : ModelsOf φ) :
+    (CountableModel.ofCode.{w} c).carrier = ULift.{w} ℕ :=
+  rfl
+
+/-- The countable model of a code is infinite. -/
+instance CountableModel.infinite_ofCode (c : ModelsOf φ) :
+    Infinite (CountableModel.ofCode.{w} c).carrier :=
+  inferInstanceAs (Infinite (ULift.{w} ℕ))
 
 /-- **Countably infinite models reduce to codes**: a countable model of `φ` on an infinite carrier
 in the universe `w` is isomorphic to the countable model of a code. -/
@@ -214,6 +248,22 @@ theorem lift_mk_codedClass_eq
     lift.{max u v (w + 1)} #(Quotient (isoSetoid φ)) = lift.{v} #(CountableModelClass.{w} φ) :=
   lift_mk_eq'.mpr ⟨codedClassEquiv hinf⟩
 
+/-- **The finite tiers are empty**: if `φ` has no finite models on the carriers of `w`, no code on
+`Fin n` satisfies `φ` (the library's `ModelsOfOn` on `Fin n`). -/
+theorem modelsOfOn_fin_eq_empty
+    (hinf : ∀ (M : Type w) [L.Structure M] [Countable M], φ.Realize M → Infinite M) (n : ℕ) :
+    ModelsOfOn (α := Fin n) φ = ∅ := by
+  refine Set.eq_empty_of_forall_notMem fun c hc ↦ ?_
+  let := c.toStructure
+  have h : φ.Realize (Fin n) := by
+    change @BoundedFormulaω.Realize L (Fin n) c.toStructure Empty 0 φ Empty.elim Fin.elim0 at hc
+    exact (iff_of_eq (congrArg (@BoundedFormulaω.Realize L (Fin n) c.toStructure Empty 0 φ
+      Empty.elim) (Subsingleton.elim _ _))).mp hc
+  let : L.Structure (ULift.{w} (Fin n)) := Equiv.ulift.symm.inducedStructure
+  have := hinf (ULift.{w} (Fin n))
+    ((realize_sentenceω_equiv (Equiv.ulift.symm.inducedStructureEquiv) φ).mp h)
+  exact not_finite (ULift.{w} (Fin n))
+
 end Reduction
 
 /-! ### The statement on all countable carriers -/
@@ -223,9 +273,10 @@ section Statement
 /-- **Thin `ℵ₁` spectrum on all countable carriers** (in the universe `w`): the countable models
 of `φ` on the carriers of `w` have exactly `ℵ₁` isomorphism classes, and there is no perfect set
 of pairwise nonisomorphic models coded on `ℕ`.  The second clause is the thinness of
-`HasThinAlephOneSpectrum`, which concerns the Polish space of codes on `ℕ` and has no counterpart
-on all countable carriers.  As for `HasThinAlephOneSpectrum`, the binders include the
-countability of the language, part of the intended statement though the body does not use it. -/
+`HasThinAlephOneSpectrum`; with no finite models it is also the library's perfect-set failure on
+all coded tiers (`Sentenceω.PerfectSetDichotomyAllCountable`).  As for `HasThinAlephOneSpectrum`,
+the binders include the countability of the language, part of the intended statement though the
+body does not use it. -/
 @[nolint unusedArguments]
 def HasThinAlephOneSpectrumOnCountableCarriers {L : Language.{0, 1}} [L.IsRelational]
     [Countable (Σ n, L.Relations n)] (φ : L.Sentenceω) : Prop :=
@@ -258,6 +309,17 @@ theorem HasThinAlephOneSpectrum.onCountableCarriers (hs : HasThinAlephOneSpectru
   (hasThinAlephOneSpectrumOnCountableCarriers_iff
     fun _ _ _ h ↦ infinite_of_exists_mem_modelsOf_equiv hred h).mpr hs
 
+/-- **The perfect-set dichotomy fails on all coded tiers**: the thin `ℵ₁` spectrum on `ℕ` and the
+absence of finite models on the carriers of `w` refute the library's perfect-set dichotomy for
+the countable models on all coded tiers (`Sentenceω.PerfectSetDichotomyAllCountable`), by
+`Sentenceω.not_perfectSetDichotomyAllCountable_of_thin` with empty finite tiers. -/
+theorem HasThinAlephOneSpectrum.not_perfectSetDichotomyAllCountable
+    (hs : HasThinAlephOneSpectrum φ)
+    (hinf : ∀ (M : Type w) [L.Structure M] [Countable M], φ.Realize M → Infinite M) :
+    ¬ φ.PerfectSetDichotomyAllCountable :=
+  Sentenceω.not_perfectSetDichotomyAllCountable_of_thin hs.2
+    (by rw [hs.1]; exact aleph0_lt_aleph_one) (modelsOfOn_fin_eq_empty.{w} hinf)
+
 end Statement
 
 /-! ### The density sentence on all countable carriers -/
@@ -265,6 +327,47 @@ end Statement
 section Density
 
 open baseLanguage
+
+/-- **No finite models of the density sentence, given the coatom extension property** at stage
+`ω` (Layer 3): a structure satisfying the density sentence is infinite.  The empty face of an
+occurrence gives an occurrence on no points; over an occurrence, the one-point extension
+`StageType.exists_extension` of its legal type is a coface, and the receiving clause at the cutoff
+`0` realizes a point extending the occurrence.  So there are occurrences of every arity.  The
+cap-to-model theorem is not used. -/
+theorem infinite_of_realize_densitySentence_of_hasCoatomExtensions
+    (hext : StageType.HasCoatomExtensions.{u} ω) {M : Type w} [baseLanguage.{u}.Structure M]
+    (h : densitySentence.Realize M) : Infinite M := by
+  obtain ⟨-, -, hcons, hcov, hrec⟩ := (realize_densitySentence_iff M).mp h
+  have hk : ∀ k : ℕ, ∃ x : (toRealization M).Occurrence, x.arity = k := by
+    intro k
+    induction k with
+    | zero =>
+      obtain ⟨x⟩ := hcov.nonempty_occurrence
+      have hs := (Realization.isSome_eval_face_iff hcons x
+        (Function.Embedding.ofIsEmpty (α := Fin 0))).mpr (by simpa using x.type.isPlan.empty_mem)
+      obtain ⟨p, hp⟩ := Option.isSome_iff_exists.mp hs
+      exact ⟨⟨0, _, p, hp⟩, rfl⟩
+    | succ k ih =>
+      obtain ⟨x, rfl⟩ := ih
+      obtain ⟨Q, hQ, hQx⟩ :=
+        StageType.exists_extension hext (hasLegalTypes_toRealization x.tuple x.type x.eval_tuple)
+      obtain ⟨u, -, q, -, hq⟩ :=
+        hrec x Q ⟨hQ, hQx⟩ 0 (Label.isPermittedCutoff_zero.mpr Ordinal.omega0_pos)
+      exact ⟨⟨_, u, q, hq⟩, rfl⟩
+  refine not_finite_iff_infinite.mp fun _ ↦ ?_
+  have := Fintype.ofFinite M
+  obtain ⟨x, hx⟩ := hk (Fintype.card M + 1)
+  have h := Fintype.card_le_of_embedding x.tuple
+  rw [Fintype.card_fin, hx] at h
+  omega
+
+/-- **The perfect-set dichotomy fails for the density sentence on all coded tiers**, given the thin
+`ℵ₁` spectrum on `ℕ` and the cap-to-model theorem for the carriers of `w` (for the absence of finite
+models).  Both are hypotheses, not proved here. -/
+theorem densitySentence_not_perfectSetDichotomyAllCountable (hcap : CapToModel.{w})
+    (hs : HasThinAlephOneSpectrum densitySentence.{0}) :
+    ¬ densitySentence.{0}.PerfectSetDichotomyAllCountable :=
+  hs.not_perfectSetDichotomyAllCountable.{w} fun _ _ _ h ↦ hcap.infinite h
 
 /-- **The reduction to `ℕ` for the density sentence, given the cap-to-model theorem**: the
 classes of models of the density sentence coded on `ℕ` correspond to the classes of its countable
@@ -313,8 +416,9 @@ theorem densitySentence_hasThinAlephOneSpectrumOnCountableCarriers_of_scatteredT
 hypotheses of `vaughtCounterexample_of_expansionDomains`, there are a countable relational
 language and a sentence of `L_{ω₁,ω}` whose models coded on `ℕ` have exactly `ℵ₁` isomorphism
 classes with no perfect set of pairwise nonisomorphic ones, whose countable models on the carriers
-of the universe `w` also have exactly `ℵ₁` isomorphism classes, and every countable model of
-which, on a carrier in `w`, is isomorphic to a coded one.  The statement on all countable carriers
+of the universe `w` also have exactly `ℵ₁` isomorphism classes, for which the library's
+perfect-set dichotomy on all coded tiers fails, and every countable model of which, on a carrier
+in `w`, is isomorphic to a coded one.  The statement on all countable carriers
 is derived from the conclusion of `vaughtCounterexample_of_expansionDomains` by the reduction to
 `ℕ`.  The hypotheses are statements of Layers 3–6 of the roadmap, not proved here. -/
 theorem vaughtCounterexample_allCarriers_of_expansionDomains (D : ExpansionDomains DensityClass)
@@ -322,47 +426,54 @@ theorem vaughtCounterexample_allCarriers_of_expansionDomains (D : ExpansionDomai
     (hn : D.HasNonemptyLosses) (hcap : CapToModel.{w}) :
     ∃ (L : Language.{0, 1}) (_ : L.IsRelational) (_ : Countable (Σ n, L.Relations n))
       (φ : L.Sentenceω), HasThinAlephOneSpectrum φ ∧
-        HasThinAlephOneSpectrumOnCountableCarriers.{w} φ ∧
+        HasThinAlephOneSpectrumOnCountableCarriers.{w} φ ∧ ¬ φ.PerfectSetDichotomyAllCountable ∧
         ∀ (M : Type w) [L.Structure M] [Countable M], φ.Realize M →
           ∃ c : StructureSpace L, c ∈ ModelsOf φ ∧
             Nonempty (@Language.Equiv L M ℕ _ c.toStructure) := by
   obtain ⟨L, _, _, φ, hs, hred⟩ := vaughtCounterexample_of_expansionDomains D ha hc hn hcap
-  exact ⟨L, inferInstance, inferInstance, φ, hs, hs.onCountableCarriers hred, hred⟩
+  exact ⟨L, inferInstance, inferInstance, φ, hs, hs.onCountableCarriers hred,
+    hs.not_perfectSetDichotomyAllCountable fun _ _ _ h ↦
+      infinite_of_exists_mem_modelsOf_equiv hred h, hred⟩
 
 /-- **A thin uncountable infinitary class on all countable carriers, conditionally, by full
 presentations**: the conclusion of `vaughtCounterexample_of_presentations`, under its hypotheses,
 together with exactly `ℵ₁` isomorphism classes of countable models on the carriers of the
-universe `w`, derived from it by the reduction to `ℕ`.  The hypotheses are statements of the
-full-presentation route (roadmap, "Reduction to full presentations") and of Layer 3 of the
-roadmap, not proved here. -/
+universe `w` and the failure of the perfect-set dichotomy on all coded tiers, derived from it by
+the reduction to `ℕ`.  The hypotheses are statements of the full-presentation route (roadmap,
+"Reduction to full presentations") and of Layer 3 of the roadmap, not proved here. -/
 theorem vaughtCounterexample_allCarriers_of_presentations (P : FullPresentations DensityClass)
     (hb : P.HasBoundedComparison densityTruth) (hu : UncountablyManyClasses)
     (hcap : CapToModel.{w}) :
     ∃ (L : Language.{0, 1}) (_ : L.IsRelational) (_ : Countable (Σ n, L.Relations n))
       (φ : L.Sentenceω), HasThinAlephOneSpectrum φ ∧
-        HasThinAlephOneSpectrumOnCountableCarriers.{w} φ ∧
+        HasThinAlephOneSpectrumOnCountableCarriers.{w} φ ∧ ¬ φ.PerfectSetDichotomyAllCountable ∧
         ∀ (M : Type w) [L.Structure M] [Countable M], φ.Realize M →
           ∃ c : StructureSpace L, c ∈ ModelsOf φ ∧
             Nonempty (@Language.Equiv L M ℕ _ c.toStructure) := by
   obtain ⟨L, _, _, φ, hs, hred⟩ := vaughtCounterexample_of_presentations P hb hu hcap
-  exact ⟨L, inferInstance, inferInstance, φ, hs, hs.onCountableCarriers hred, hred⟩
+  exact ⟨L, inferInstance, inferInstance, φ, hs, hs.onCountableCarriers hred,
+    hs.not_perfectSetDichotomyAllCountable fun _ _ _ h ↦
+      infinite_of_exists_mem_modelsOf_equiv hred h, hred⟩
 
 /-- **A thin uncountable infinitary class on all countable carriers, conditionally, by full
 presentations with scattered tails**: the conclusion of `vaughtCounterexample_of_scatteredTails`,
 under its hypotheses, together with exactly `ℵ₁` isomorphism classes of countable models on the
-carriers of the universe `w`, derived from it by the reduction to `ℕ`.  The hypotheses are
-statements of the full-presentation route (roadmap, "Reduction to full presentations") and of
-Layer 3 of the roadmap, not proved here. -/
+carriers of the universe `w` and the failure of the perfect-set dichotomy on all coded tiers,
+derived from it by the reduction to `ℕ`.  The hypotheses are statements of the full-presentation
+route (roadmap, "Reduction to full presentations") and of Layer 3 of the roadmap, not proved
+here. -/
 theorem vaughtCounterexample_allCarriers_of_scatteredTails (P : FullPresentations DensityClass)
     (hs : P.HasScatteredTails) (hu : UncountablyManyClasses) (hcap : CapToModel.{w}) :
     ∃ (L : Language.{0, 1}) (_ : L.IsRelational) (_ : Countable (Σ n, L.Relations n))
       (φ : L.Sentenceω), HasThinAlephOneSpectrum φ ∧
-        HasThinAlephOneSpectrumOnCountableCarriers.{w} φ ∧
+        HasThinAlephOneSpectrumOnCountableCarriers.{w} φ ∧ ¬ φ.PerfectSetDichotomyAllCountable ∧
         ∀ (M : Type w) [L.Structure M] [Countable M], φ.Realize M →
           ∃ c : StructureSpace L, c ∈ ModelsOf φ ∧
             Nonempty (@Language.Equiv L M ℕ _ c.toStructure) := by
   obtain ⟨L, _, _, φ, hs, hred⟩ := vaughtCounterexample_of_scatteredTails P hs hu hcap
-  exact ⟨L, inferInstance, inferInstance, φ, hs, hs.onCountableCarriers hred, hred⟩
+  exact ⟨L, inferInstance, inferInstance, φ, hs, hs.onCountableCarriers hred,
+    hs.not_perfectSetDichotomyAllCountable fun _ _ _ h ↦
+      infinite_of_exists_mem_modelsOf_equiv hred h, hred⟩
 
 end Density
 
