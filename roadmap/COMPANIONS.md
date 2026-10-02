@@ -665,7 +665,8 @@ These are statements still to be proved.  None is an input to the main theorem.
   with it.  Here `η` is a countable block index and the stage is `λ_η`; a **supplied expanded
   model** is a countable base model together with its expansion to `λ_η`, of a coreless exact age
   (top-free, residual, or hollow; `README.md`, Layer 4), and a **supplied `k`-coordinate core
-  model** is the same with a rigid core of `k` points, named by `k` coordinates.
+  model** is a countable base model together with its expansion to `λ_η`, of an exact age pointed
+  at a rigid core of `k` points, named by `k` coordinates.
 
   | Statement (the formula to construct) | Bound (quantifier rank ≤) |
   | --- | ---: |
