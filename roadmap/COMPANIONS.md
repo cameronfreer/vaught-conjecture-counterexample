@@ -21,17 +21,18 @@ The literature these milestones rely on is recorded in `LITERATURE.md`, §7.
 
 **Status.** The targets A1, A2, A3, B2, and B3 are established results: their proofs are known, and
 are the arguments given with each below. They remain formalization targets here. C, in its two-point
-form, is a statement still to be proved here, with its argument given below. B1, the joint embedding
-and amalgamation of top-free charts, is part of the core: it is step 2 of the construction of the
-top-free witnesses (`README.md`, section "The top-free witnesses: the finite age and its classical
-limit"), and its entry below is a pointer. The deliberate `sorry` targets of the sketch, the
-ingredients marked "to be located or added upstream", and the theorems marked "prospective" (neither
-available upstream nor pinned; `IMPLEMENTATION.md`, "Dependency pins") are what is not yet
-formalized or available. The bounded back-and-forth separation interface, and
-ComputableModelTheory's rooted uniqueness and isolation and primeness over named parameters, are
-available at the pin (signatures checked; `IMPLEMENTATION.md`, "Dependency pins"). The status
-covers these statements only, not their non-claims and not further definability claims
-(`README.md`, "Status of the optional results").
+form, is a statement still to be proved here, with its argument given below. B4 is a statement still
+to be proved; it quotes a theorem available upstream, not yet at our pinned dependency, and assumes
+orbit formulas of the first signed level. B1, the joint embedding and amalgamation of top-free
+charts, is part of the core: it is step 2 of the construction of the top-free witnesses
+(`README.md`, section "The top-free witnesses: the finite age and its classical limit"), and its
+entry below is a pointer. The deliberate `sorry` targets of the sketch, the ingredients marked "to
+be located or added upstream", and the theorems marked "prospective" (neither available upstream nor
+pinned; `IMPLEMENTATION.md`, "Dependency pins") are what is not yet formalized or available. The
+bounded back-and-forth separation interface, and ComputableModelTheory's rooted uniqueness and
+isolation and primeness over named parameters, are available at the pin (signatures checked;
+`IMPLEMENTATION.md`, "Dependency pins"). The status covers these statements only, not their
+non-claims and not further definability claims (`README.md`, "Status of the optional results").
 
 ## Notation
 
@@ -203,12 +204,13 @@ every analytic set of pairs of structures on `ℕ` containing no isomorphic pair
 separated at some countable back-and-forth level (`exists_uniform_bfSeparation`,
 `Descriptive/BFSeparation`). With cocountable back-and-forth concentration (given here by the
 expansion domains, on which classes agree at bounded level) this is expected to yield thinness
-without sentence minimality and without López–Escobar; that composition for the expansion domains is
-not elaborated.  The compiled application is for full presentations with scattered tails
-(`densitySentence_isThinOnNatModels_of_scatteredTails`, through `isThinOn_of_countable_bfClasses`).
-The working thinness route, from countable truth sides, is kept; the Gδ/Polish results stay
-optional; an improvement is described as reduced dependencies, not as a smaller trusted kernel.
-Milestone A does not depend on this interface.
+without sentence minimality and without López–Escobar; that composition for the expansion domains,
+from the back-and-forth form of condition 3 (`README.md`, the reduction to expansion domains and
+Layer 6), is not elaborated.  The compiled application is for full presentations with scattered
+tails (`densitySentence_isThinOnNatModels_of_scatteredTails`, through
+`isThinOn_of_countable_bfClasses`). The working thinness route, from countable truth sides, is kept;
+the Gδ/Polish results stay optional; an improvement is described as reduced dependencies, not as a
+smaller trusted kernel. Milestone A does not depend on this interface.
 
 **Scatteredness and minimality.** Cocountable concentration in one back-and-forth class at every
 level is minimality, and it is more than thinness needs. Countably many back-and-forth classes at
@@ -421,6 +423,38 @@ its stated hypotheses, with the generic isolation, atomicity, primeness, rank, a
 theorems quoted from the two libraries (whose modules import no module of this repository).  B1
 is part of the core and is not a condition of this milestone.
 
+### B4. Scott sentences of the top-free witness from its orbit formulas (existence only)
+
+Two statements are kept apart.  The **generic existence** of *a* Scott sentence from orbit formulas
+is Montalbán's theorem (InfinitaryLogic, available upstream, not yet at our pinned dependency;
+`README.md`, Layer 0): for a countable structure in a relational language with countably many
+relation symbols, and a family of orbit formulas indexed by all tuples, the sentence
+`montalbanSentence` characterizes the structure among countable structures in its carrier universe
+(`montalbanSentence_characterizes`); if `1 ≤ α` and every orbit formula is in `IsSigmaIn α`, the
+sentence is in `IsPiIn (α + 1)` (`isPiIn_montalbanSentence`), and level zero is a separate result
+(orbit formulas in `IsSigmaIn 0` give a sentence in `IsPiIn 2`).  The displayed sentence includes,
+for each tuple, its atomic agreement `D_a`, a countable conjunction of atoms and negated atoms.  The
+**particular exact-age sentences** of `README.md`, Layer 4, and their literal complexity are
+construction-specific statements still to be proved; this item says nothing about them.
+
+**Statement** (a statement still to be proved; the general theorem is quoted only once
+`IMPLEMENTATION.md`, "Dependency pins", records a pin containing it).  Let `M` be the top-free
+witness at a block `ξ`, read in the relational stage chart language at `λ_ξ`, and suppose that
+language has countably many relation symbols.  Assume B3.1: each orbit formula `θ_a` defines the
+automorphism orbit of `a`. Suppose these formulas, read as infinitary formulas, are in `IsSigmaIn 1`
+(to be proved, by the signed traversal of the existential formula
+`∃ z̄, P_p(z̄) ∧ ⋀_i x_i = z_{ι(i)}`, whose conjunction is finite).  Then the general theorem at
+`α = 1` gives a sentence in `IsPiIn 2` that characterizes `M` among the countable structures of that
+language in its carrier universe: a `Π^in_2` Scott sentence of `M`.  For a rigid-core terminal model
+(`README.md`, Layer 4), given orbit formulas over the named core in `IsSigmaIn 1` (the analogue of
+B3.1 in the language naming the core, to be proved), the pointed form gives a `Π^in_2` formula whose
+free variables are the core, and existentially quantifying the core gives a `Σ^in_3` Scott sentence.
+
+**Non-claims.**  B4 is not a condition of the completion criterion (B).  Existence only: these
+sentences need not be the exact-age sentences, and no normal form or quantifier-rank bound follows
+from membership in a signed class.  Full stage chart language only: nothing about the base reduct
+or about the models of `Φ`, whose Scott ranks are unbounded (`README.md`, "Standard definitions").
+
 ## Milestone C — a geometric obstruction
 
 **Statement.**  Let a realization on a carrier `M` of any cardinality satisfy exact consistency
@@ -590,6 +624,20 @@ These are statements still to be proved.  None is an input to the main theorem.
   trivial-definable-closure criterion for invariant measures concentrated on classes of countable
   structures [AFP16]: an invariant measure would give an exchangeable random finite hull of two
   points strictly larger than the two points.
+* **Gδ code sets in the stage chart language** (prospective; a separate target, not a
+  consequence of an upstream theorem).  Fix the stage chart language `L_λ` and the coding space
+  `StructureSpace L_λ` of InfinitaryLogic (codes on `ℕ`: for each relation symbol and tuple of
+  natural numbers, whether the relation holds), with its product topology (the product of the
+  discrete space `Bool`), or the same coding on another countable carrier, the empty carrier
+  included.  Targets: the set of codes satisfying the exact-age sentence of each exact age
+  (`README.md`, Layer 4, in its finitary form) is Gδ, and so is the set of codes satisfying the
+  pointed rigid-core formula at a fixed parameter tuple; both directly from their clauses (an
+  atomic chart reading is clopen, a request at a fixed root is open, and the structural and
+  request clauses are countable intersections), with neither López–Escobar nor Scott
+  classification.  The set for the unpointed core, the union over parameter tuples, is a
+  countable union of Gδ sets; it is not claimed to be Gδ.  Identifying these sets with
+  isomorphism classes needs a supplied realization.  These are statements about codes in the
+  stage chart language, not about the models of `Φ`.
 * **Examples** (optional).  Examples, proved in Lean, of realizations in which every one-point
   coface is received at every cutoff, showing that receiving alone does not classify terminal
   models: the terminal comparisons of layer 4 need
