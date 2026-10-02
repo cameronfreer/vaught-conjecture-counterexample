@@ -404,8 +404,8 @@ variable {P ι}
 hull index has the distinct points `a` and `b` at the generators, then the restriction of `P` to
 the hull of `{a, b}` is legal.  At the hull index with target the second generator, the hull
 operation takes the value `b` at `a` and `b` (`hullOp_eq_of_restrictFace`), and
-`isLegal_comap_of_hullOp_eq_right` applies.  This is the converse of
-`exists_chartWitness_of_mem_hull`. -/
+`isLegal_comap_of_hullOp_eq_right` applies.  So the legality hypothesis of
+`exists_chartWitness_of_mem_hull` is necessary. -/
 theorem isLegal_comap_of_chartWitness {a b : Fin k} (hab : a ≠ b) {ι : HullIndex.{u} α}
     {w : Fin ι.arity ↪ Fin k} (hw : restrictFace w P = some ι.type) (hl : w ι.left = a)
     (hr : w ι.right = b) {m : ℕ} (g : Fin m ↪ Fin k) (hg : univ.map g ∈ P.toCellScheme.faces)
