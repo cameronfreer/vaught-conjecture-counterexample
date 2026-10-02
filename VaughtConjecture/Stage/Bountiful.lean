@@ -55,16 +55,16 @@ theorem cappedLift_comap_iff (S : Scheme.{u} n) (f : Fin m ↪ Fin n) {X Y : Fin
   CellScheme.Rows.cappedLift_comap_iff (S.isLowerEmbedding_comap f) (S.image_cellMap_below f X)
     (S.image_cellMap_below f Y) rfl
 
-/-- Regression: the restriction of a scheme with mute rows has bountiful rows, through
+/-- Special case: the restriction of a scheme with the bottom rows has bountiful rows, through
 `isBountiful_comap` rather than by recomputing the restricted rows. -/
-private theorem isBountiful_comap_of_rows_eq_mute {S : Scheme.{u} n}
-    (hS : S.rows = CellScheme.Rows.mute S.toCellScheme) : (S.comap f).rows.IsBountiful :=
-  isBountiful_comap f (hS ▸ CellScheme.Rows.isBountiful_mute)
+private theorem isBountiful_comap_of_rows_eq_bot {S : Scheme.{u} n}
+    (hS : S.rows = CellScheme.Rows.bot S.toCellScheme) : (S.comap f).rows.IsBountiful :=
+  isBountiful_comap f (hS ▸ CellScheme.Rows.isBountiful_bot)
 
-/-- Regression: the restriction of a scheme with mute rows has mute rows. -/
-private theorem comap_rows_of_rows_eq_mute {S : Scheme.{u} n}
-    (hS : S.rows = CellScheme.Rows.mute S.toCellScheme) :
-    (S.comap f).rows = CellScheme.Rows.mute (S.comap f).toCellScheme := by
+/-- Special case: the restriction of a scheme with the bottom rows has the bottom rows. -/
+private theorem comap_rows_of_rows_eq_bot {S : Scheme.{u} n}
+    (hS : S.rows = CellScheme.Rows.bot S.toCellScheme) :
+    (S.comap f).rows = CellScheme.Rows.bot (S.comap f).toCellScheme := by
   ext s t
   simp [hS]
 

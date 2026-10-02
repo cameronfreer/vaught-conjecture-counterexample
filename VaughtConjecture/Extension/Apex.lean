@@ -42,7 +42,7 @@ is the hypothesis for adding the apex and the legality field of a completion bel
 scheme is legal below the full grade.  Append one cell of full scope and full grade `n`, labelled
 with the formal top.  The hypothesis `0 < n` makes `(univ, n)` a graded face (grades are positive),
 so that the new cell has a graded face as its graded index.  Its row is the coded copy of the
-labels of `t`, their image under a block coding (`CellScheme.Rows.IsLawful.exists_bandEncode`),
+labels of `t`, their image under a block coding (`CellScheme.Rows.IsLawful.exists_blockEncode`),
 with the code of the formal top at the new cell: it is coded and lawful, and the block decoding
 transforms it back to the labels.  The result is legal (`StageType.isLegal_addApex`):
 
@@ -516,35 +516,35 @@ variable {α : Ordinal.{u}} {n m : ℕ} {t : StageType.{u} α n}
 /-- The codes of the apex row: a finite set of labels containing every label of `t`, for which the
 coded copy of the labels of `t` is lawful. -/
 noncomputable def apexCodes (ht : t.IsLegalBelowFullGrade) : Finset Label.{u} :=
-  (t.isLawful.exists_bandEncode (K := n) fun d ↦ (ht.grade_lt d).le).choose
+  (t.isLawful.exists_blockEncode (K := n) fun d ↦ (ht.grade_lt d).le).choose
 
 variable (ht : t.IsLegalBelowFullGrade)
 
 /-- Every label of `t` is among the codes of the apex row. -/
 theorem label_mem_apexCodes (d : Fin t.card) : t.label d ∈ apexCodes ht :=
-  (t.isLawful.exists_bandEncode (K := n) fun d ↦ (ht.grade_lt d).le).choose_spec.1 d
+  (t.isLawful.exists_blockEncode (K := n) fun d ↦ (ht.grade_lt d).le).choose_spec.1 d
 
 /-- The coded copy of the labels of `t` is lawful. -/
-theorem isLawful_bandEncode_apexCodes :
-    t.rows.IsLawful (bandEncode (apexCodes ht) n ∘ t.label) :=
-  (t.isLawful.exists_bandEncode (K := n) fun d ↦ (ht.grade_lt d).le).choose_spec.2
+theorem isLawful_blockEncode_apexCodes :
+    t.rows.IsLawful (blockEncode (apexCodes ht) n ∘ t.label) :=
+  (t.isLawful.exists_blockEncode (K := n) fun d ↦ (ht.grade_lt d).le).choose_spec.2
 
 /-- The **row of the apex**: the coded copy of the labels of `t`, and the code of the formal top at
 the apex itself. -/
 noncomputable def apexRow : Fin (t.card + 1) → Label.{u} :=
-  Fin.snoc (α := fun _ ↦ Label.{u}) (bandEncode (apexCodes ht) n ∘ t.label)
-    (bandEncode (apexCodes ht) n ⊤)
+  Fin.snoc (α := fun _ ↦ Label.{u}) (blockEncode (apexCodes ht) n ∘ t.label)
+    (blockEncode (apexCodes ht) n ⊤)
 
 /-- The labels after adding the apex: the labels of `t`, and the formal top at the apex. -/
 def apexLabel : Fin (t.card + 1) → Label.{u} := Fin.snoc (α := fun _ ↦ Label.{u}) t.label ⊤
 
 /-- The apex row at an old cell. -/
 @[simp] theorem apexRow_castSucc (d : Fin t.card) :
-    apexRow ht d.castSucc = bandEncode (apexCodes ht) n (t.label d) :=
+    apexRow ht d.castSucc = blockEncode (apexCodes ht) n (t.label d) :=
   Fin.snoc_castSucc (α := fun _ ↦ Label.{u}) ..
 
 /-- The apex row at the apex. -/
-@[simp] theorem apexRow_last : apexRow ht (Fin.last _) = bandEncode (apexCodes ht) n ⊤ :=
+@[simp] theorem apexRow_last : apexRow ht (Fin.last _) = blockEncode (apexCodes ht) n ⊤ :=
   Fin.snoc_last (α := fun _ ↦ Label.{u}) ..
 
 /-- The label of an old cell after adding the apex. -/
@@ -560,18 +560,18 @@ formal top lies above every code. -/
 theorem isLawful_apexRow :
     (t.toScheme.appendFullCell n (apexRow ht) ht.not_le).rows.IsLawful (apexRow ht) := by
   refine Scheme.isLawful_appendFullCell ?_ ?_ ?_ fun d hd ↦ absurd hd (ht.grade_lt d).ne
-  · convert isLawful_bandEncode_apexCodes ht using 1
+  · convert isLawful_blockEncode_apexCodes ht using 1
     funext d
     exact apexRow_castSucc ht d
   · rw [apexRow_last]
-    exact isSelfVisible_bandEncode_top le_rfl
+    exact isSelfVisible_blockEncode_top le_rfl
   · convert TransformsTo.refl _ (apexRow ht) using 1
     funext d
     refine min_eq_left ?_
     rw [apexRow_last]
     induction d using Fin.lastCases with
     | last => rw [apexRow_last]
-    | cast d => rw [apexRow_castSucc]; exact bandEncode_le_bandEncode_top _
+    | cast d => rw [apexRow_castSucc]; exact blockEncode_le_blockEncode_top _
 
 /-- **The labels after adding the apex are lawful**: the decoding transforms the apex row back to
 the labels, with the formal top at the apex. -/
@@ -583,13 +583,13 @@ theorem isLawful_apexLabel :
     exact apexLabel_castSucc d
   · rw [apexLabel_last]
     exact isSelfVisible_top n
-  · refine ⟨fun _ ↦ ⊤, bandDecode (apexCodes ht), isWitness_bandDecode, fun d ↦ ?_⟩
+  · refine ⟨fun _ ↦ ⊤, blockDecode (apexCodes ht), isWitness_blockDecode, fun d ↦ ?_⟩
     beta_reduce
     rw [apexLabel_last, min_top_right, min_top_right]
     induction d using Fin.lastCases with
-    | last => rw [apexLabel_last, apexRow_last, bandDecode_bandEncode_top]
+    | last => rw [apexLabel_last, apexRow_last, blockDecode_blockEncode_top]
     | cast d =>
-      rw [apexLabel_castSucc, apexRow_castSucc, bandDecode_bandEncode (label_mem_apexCodes ht d)]
+      rw [apexLabel_castSucc, apexRow_castSucc, blockDecode_blockEncode (label_mem_apexCodes ht d)]
 
 variable (hn : 0 < n)
 
@@ -603,8 +603,8 @@ noncomputable def addApex : StageType.{u} α n where
   isWellFormed := Scheme.isWellFormed_appendFullCell t.isWellFormed hn le_rfl
   isCoded := Scheme.isCoded_appendFullCell t.isCoded fun d ↦ by
     induction d using Fin.lastCases with
-    | last => rw [apexRow_last]; exact bandEncode_lt _
-    | cast d => rw [apexRow_castSucc]; exact bandEncode_lt _
+    | last => rw [apexRow_last]; exact blockEncode_lt _
+    | cast d => rw [apexRow_castSucc]; exact blockEncode_lt _
   isLawful := isLawful_apexLabel ht
   atStage d := by
     induction d using Fin.lastCases with

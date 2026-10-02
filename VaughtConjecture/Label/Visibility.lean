@@ -19,7 +19,7 @@ Visibility replacement of an ordinal at threshold `k` with value `i` replaces it
 `k` fixes it; for an ordinal this says that its finite part is at least `k`
 (`isSelfVisible_coe`), and for a natural number `n` that `k ≤ n` (`isSelfVisible_natCast`).
 
-* Visibility replacement stays in the band of its argument, so it commutes with stage reduction
+* Visibility replacement stays in the block of its argument, so it commutes with stage reduction
   at every stage `α` that is zero or a limit (`reduce_visibilityReplace`).
 * For `i ≤ k` it is monotone (`monotone_visibilityReplace`), hence commutes with `min` and `max`,
   and it cannot push a label above a self-visible bound (`visibilityReplace_le_of_le`).
