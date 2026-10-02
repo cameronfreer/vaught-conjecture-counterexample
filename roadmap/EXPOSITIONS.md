@@ -104,7 +104,7 @@ A transfinite induction now gives
 \[
 Q\setminus D_\eta\text{ is countable for every }\eta<\omega_1.
 \]
-At a successor, add the countable new loss to the earlier complement. At a countable limit, take the countable union of the earlier complements. This elementary set-theoretic lemma is independent of the construction and belongs in the general library.
+At a successor, add the countable new loss to the earlier complement. At a countable limit, take the countable union of the earlier complements. This elementary set-theoretic lemma does not use the construction and belongs in the general library.
 
 What do the surviving domains buy logically? Finite receiving transfers an entire finite cover in one block. Applied to a chart containing a tuple and a proposed witness, it gives the successor step of the usual back-and-forth induction. Restrictions handle atomic information, and countable conjunctions and disjunctions handle the limit steps. With the quantifier-rank convention used here, any two models whose classes lie in \(D_\eta\) agree on all sentences of rank at most \(\eta\). One block suffices for a whole finite cover; an extra factor of \(\omega\) in the block index would be wasted.
 
