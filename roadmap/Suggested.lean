@@ -2,6 +2,7 @@ import InfinitaryLogic.OrdinalCountability
 import InfinitaryLogic.Descriptive.StructureIsoSetoid
 import InfinitaryLogic.Scott.BackAndForth
 import Mathlib.ModelTheory.Fraisse
+import VaughtConjecture.Comparison.GradedMatchingApplications
 
 /-!
 # Selected interfaces for the roadmap
@@ -12,8 +13,9 @@ This file is a SKETCH OF THEOREM STATEMENTS, NOT PART OF THE LIBRARY.
 The bodies marked `sorry` are theorem statements still to be proved. Definitions have
 actual bodies. The file is outside the library build; check it with
 `lake env lean -DautoImplicit=false -Dlinter.mathlibStandardSet=true roadmap/Suggested.lean`.
-Section 6's approximate comparison is proved here from the hypotheses stated in that section;
-no library result is claimed.
+Section 6's approximate comparison is quoted from the library
+(`VaughtConjecture.Comparison.GradedMatchingApplications`, on abstract hypotheses), which proves
+it through InfinitaryLogic's `bfEquiv_of_gradedMatching`.
 
 Mathlib and the pinned infinitary-logic and computable-model-theory libraries are the current
 dependencies; section 3 also names the classical existence theorem of ComputableModelTheory,
@@ -328,89 +330,32 @@ end Domains
 
 /-! ## 6. Full presentations: approximate extension and approximate comparison
 
-Statement shapes for `README.md`, "Reduction to full presentations", with a complete proof of
-approximate comparison from them. A presentation of a structure `M` is given here only through its
-closed tuples (enumerations of finite closed sets) and their level observations at the levels up
-to its own; fullness, exact comparison, and the count of full presentations are not stated here. The
-level sets `S η n` are separate types with explicit projections `τ`; a single composition law on one
-ambient set is not used. `BFEquiv` is the back-and-forth equivalence of InfinitaryLogic (available
-at the pin). In the application the base language is relational, as `BFEquiv_implies_agreeQR`
-requires for the passage to sentences; the comparison itself does not use relationality.
+Statement shapes for `README.md`, "Reduction to full presentations".  The shapes are the
+library's, in `VaughtConjecture.Comparison.GradedMatchingApplications`: `LevelObservations`
+(separate level sets `S η n` with explicit projections `τ`; a single composition law on one
+ambient set is not used), `ObservedPresentation` (closed tuples and their level observations at
+the levels up to the presentation's own; fullness, exact comparison, and the count of full
+presentations are not stated), `AtomicAtZero`, and `ApproxExtension` ((AE) at one level).
+`BFEquiv` is the back-and-forth equivalence of InfinitaryLogic (available at the pin).  In the
+application the base language is relational, as `BFEquiv_implies_agreeQR` requires for the
+passage to sentences; the comparison itself does not use relationality.
 -/
 
 namespace FullPresentation
 
-open FirstOrder Language
-
-/-- **Level observations**: countable sets `S η n` of observed invariants of `n`-tuples at each
-level `η`, with projections `τ` from a higher level to a lower one that compose exactly. -/
-structure LevelObservations where
-  /-- The observed invariants of `n`-tuples at level `η`. -/
-  S : Ordinal.{0} → ℕ → Type
-  /-- Each level set is countable. -/
-  countable : ∀ η n, Countable (S η n)
-  /-- The projection from level `ξ` down to a level `η ≤ ξ`. -/
-  τ : ∀ {η ξ : Ordinal.{0}}, η ≤ ξ → ∀ {n : ℕ}, S ξ n → S η n
-  /-- The projection to the same level is the identity. -/
-  τ_refl : ∀ {η : Ordinal.{0}} {n : ℕ} (s : S η n), τ le_rfl s = s
-  /-- Projections compose. -/
-  τ_comp : ∀ {η ξ ζ : Ordinal.{0}} (h₁ : η ≤ ξ) (h₂ : ξ ≤ ζ) {n : ℕ} (s : S ζ n),
-    τ h₁ (τ h₂ s) = τ (h₁.trans h₂) s
-
-/-- An **observed presentation** of `M` at level `level`: its closed tuples, with a closed
-extension of every closed tuple containing any given point, and the level observations of closed
-tuples, coherent under the projections up to `level`.  Observations are defined only on closed
-tuples and only at the levels `η ≤ level`; no observation type is required to be inhabited
-outside that domain.  Fullness is not part of this structure. -/
-structure ObservedPresentation (O : LevelObservations) (M : Type w) where
-  /-- The level of the presentation. -/
-  level : Ordinal.{0}
-  /-- The closed tuples: enumerations of finite closed sets. -/
-  IsClosed : ∀ {n : ℕ}, (Fin n → M) → Prop
-  /-- Every point lies in a closed extension of every closed tuple. -/
-  exists_closed_extension : ∀ {n : ℕ} (a : Fin n → M), IsClosed a → ∀ x : M,
-    ∃ (k : ℕ) (c : Fin k → M) (j : Fin (n + k)),
-      IsClosed (Fin.append a c) ∧ Fin.append a c j = x
-  /-- The observation of a closed tuple at a level `η ≤ level`. -/
-  obs : ∀ (η : Ordinal.{0}), η ≤ level → ∀ {n : ℕ} (a : Fin n → M), IsClosed a → O.S η n
-  /-- The observations of a closed tuple are coherent under the projections. -/
-  obs_τ : ∀ {η ξ : Ordinal.{0}} (h : η ≤ ξ) (hξ : ξ ≤ level) {n : ℕ} (a : Fin n → M)
-    (ha : IsClosed a), O.τ h (obs ξ hξ a ha) = obs η (h.trans hξ) a ha
+open FirstOrder Language VaughtConjecture.Comparison.FullPresentation
 
 variable {L : Language.{u, v}}
 variable {O : LevelObservations} {M : Type w} {N : Type z} [L.Structure M] [L.Structure N]
-
-variable (L) in
-/-- **Atomic recovery at level `0`**, across the two structures: closed tuples with equal
-observations at level `0` have the same atomic type in the base language. -/
-def AtomicAtZero (H : ObservedPresentation O M) (H' : ObservedPresentation O N) : Prop :=
-  ∀ {n : ℕ} (a : Fin n → M) (b : Fin n → N) (ha : H.IsClosed a) (hb : H'.IsClosed b),
-    H.obs 0 zero_le a ha = H'.obs 0 zero_le b hb →
-      SameAtomicType (L := L) a b
-
-/-- **The approximate extension property (AE) at level `η`**, from `H` to `H'`: for closed tuples
-`a` and `b` with equal observations at `η + 1`, every closed extension `a ++ c` in `H` is matched
-by a closed extension `b ++ d` in `H'` of the same length, with equal observations at `η`.  The
-target tuple `b` is kept literally; only the enlarged tuples are compared, one level down.  It is
-asserted when both levels are at least `η + 1`.  (AE) in both directions is this property for
-`(H, H')` and for `(H', H)`. -/
-def ApproxExtension (H : ObservedPresentation O M) (H' : ObservedPresentation O N)
-    (η : Ordinal.{0}) : Prop :=
-  ∀ (hH : Order.succ η ≤ H.level) (hH' : Order.succ η ≤ H'.level) {n : ℕ} (a : Fin n → M)
-    (b : Fin n → N) (ha : H.IsClosed a) (hb : H'.IsClosed b),
-    H.obs (Order.succ η) hH a ha = H'.obs (Order.succ η) hH' b hb →
-    ∀ {k : ℕ} (c : Fin k → M) (hc : H.IsClosed (Fin.append a c)),
-      ∃ (d : Fin k → N) (hd : H'.IsClosed (Fin.append b d)),
-        H.obs η ((Order.le_succ η).trans hH) (Fin.append a c) hc =
-          H'.obs η ((Order.le_succ η).trans hH') (Fin.append b d) hd
 
 /-- **Approximate comparison.**  If two presentations of levels at least `η` satisfy the atomic
 condition at `0` and (AE) in both directions at every level below `η`, then closed tuples with
 equal observations at `η` are back-and-forth equivalent at `η` in the base structures, and so is
 every corresponding selection `s` of their coordinates, repetitions allowed (`m = 0` compares the
-structures).  The proof is by induction on `η`: at a successor, a closed extension containing the
-requested point, (AE), and the selection of coordinates; at a limit, the projections.  The
-library's `SameAtomicType` covers relations and equalities on variables, not terms: for a
+structures).  Quoted from the library, which applies InfinitaryLogic's `bfEquiv_of_gradedMatching`
+with height `η`, the height guard and the selection of coordinates inside the relation, and the
+given pair as the initial match; there is no ordinal induction of its own.  InfinitaryLogic's
+`SameAtomicType` covers relations and equalities on variables, not terms: for a
 language with function symbols the conclusion is weaker than the usual `≡_η`; the base language
 of the application is relational. -/
 theorem bfEquiv_comp_of_obs_eq (H : ObservedPresentation O M) (H' : ObservedPresentation O N)
@@ -419,51 +364,9 @@ theorem bfEquiv_comp_of_obs_eq (H : ObservedPresentation O M) (H' : ObservedPres
     (hη : η ≤ H.level) (hη' : η ≤ H'.level)
     {n : ℕ} (a : Fin n → M) (b : Fin n → N) (ha : H.IsClosed a) (hb : H'.IsClosed b)
     (hobs : H.obs η hη a ha = H'.obs η hη' b hb) {m : ℕ} (s : Fin m → Fin n) :
-    BFEquiv (L := L) η m (a ∘ s) (b ∘ s) := by
-  induction η using Ordinal.limitRecOn generalizing n a b m with
-  | zero =>
-    rw [BFEquiv.zero]
-    have h0 := hzero a b ha hb hobs
-    intro idx
-    rw [AtomicIdx.holds_comp_eq_holds_pushforward, AtomicIdx.holds_comp_eq_holds_pushforward]
-    exact h0 _
-  | add_one ζ ih =>
-    rw [← Order.succ_eq_add_one] at hae ⊢
-    have ih := ih (fun ζ' h => hae ζ' (h.trans (Order.lt_succ ζ)))
-    have hζ : ζ ≤ H.level := (Order.le_succ ζ).trans hη
-    have hζ' : ζ ≤ H'.level := (Order.le_succ ζ).trans hη'
-    have hobsζ : H.obs ζ hζ a ha = H'.obs ζ hζ' b hb :=
-      (H.obs_τ (Order.le_succ ζ) hη a ha).symm.trans
-        ((congrArg (O.τ (Order.le_succ ζ)) hobs).trans (H'.obs_τ (Order.le_succ ζ) hη' b hb))
-    obtain ⟨hforth, hback⟩ := hae ζ (Order.lt_succ ζ)
-    rw [BFEquiv.succ]
-    refine ⟨ih hζ hζ' a b ha hb hobsζ s, fun x => ?_, fun y => ?_⟩
-    · obtain ⟨k, c, j, hc, hj⟩ := H.exists_closed_extension a ha x
-      obtain ⟨d, hd, hcd⟩ := hforth hη hη' a b ha hb hobs c hc
-      refine ⟨Fin.append b d j, ?_⟩
-      have := ih hζ hζ' (Fin.append a c) (Fin.append b d) hc hd hcd
-        (Fin.snoc (Fin.castAdd k ∘ s) j)
-      rw [Fin.comp_snoc, Fin.comp_snoc, ← Function.comp_assoc, ← Function.comp_assoc,
-        show Fin.append _ _ ∘ Fin.castAdd k = _ from funext (Fin.append_left _ _),
-        show Fin.append _ _ ∘ Fin.castAdd k = _ from funext (Fin.append_left _ _), hj] at this
-      exact this
-    · obtain ⟨k, d, j, hd, hj⟩ := H'.exists_closed_extension b hb y
-      obtain ⟨c, hc, hcd⟩ := hback hη' hη b a hb ha hobs.symm d hd
-      refine ⟨Fin.append a c j, ?_⟩
-      have := ih hζ hζ' (Fin.append a c) (Fin.append b d) hc hd hcd.symm
-        (Fin.snoc (Fin.castAdd k ∘ s) j)
-      rw [Fin.comp_snoc, Fin.comp_snoc, ← Function.comp_assoc, ← Function.comp_assoc,
-        show Fin.append _ _ ∘ Fin.castAdd k = _ from funext (Fin.append_left _ _),
-        show Fin.append _ _ ∘ Fin.castAdd k = _ from funext (Fin.append_left _ _), hj] at this
-      exact this
-  | limit l hl ih =>
-    rw [BFEquiv.limit l hl]
-    intro β hβ
-    have hobsβ : H.obs β (hβ.le.trans hη) a ha = H'.obs β (hβ.le.trans hη') b hb := by
-      exact (H.obs_τ hβ.le hη a ha).symm.trans
-        ((congrArg (O.τ hβ.le) hobs).trans (H'.obs_τ hβ.le hη' b hb))
-    exact ih β hβ (fun ζ h => hae ζ (h.trans hβ)) (hβ.le.trans hη) (hβ.le.trans hη')
-      a b ha hb hobsβ s
+    BFEquiv (L := L) η m (a ∘ s) (b ∘ s) :=
+  VaughtConjecture.Comparison.FullPresentation.bfEquiv_comp_of_obs_eq H H' hzero hae hη hη' a b
+    ha hb hobs s
 
 end FullPresentation
 
