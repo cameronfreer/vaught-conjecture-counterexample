@@ -33,7 +33,9 @@ developed here:
   generating pair of a hull is recovered as its extremes (`IsPlan.extremes_hull`);
 * plans pull back along an embedding whose range contains the ground set: the faces of the
   pullback are the sets whose image is a face (`IsPlan.preimage`), and the hull of a set there is
-  the preimage of the hull of its image (`hull_preimage`).
+  the preimage of the hull of its image (`hull_preimage`);
+* **rigidity**: a self-embedding of the points that carries closed sets to closed sets and fixes
+  every point of a set fixes every point of its hull (`IsPlan.apply_eq_of_mem_hull`).
 
 The pair of extremes of a closed set need not itself be closed, and its hull need not be small;
 see `VaughtConjecture.Geometry.Examples`.
@@ -468,3 +470,90 @@ theorem hull_preimage (hinter : InfClosed (P : Set (Finset α))) {f : β ↪ α}
   exact (mem_inter.mp (mem_preimage.mp (h _ hD hGD))).1
 
 end VaughtConjecture.Geometry
+
+/-! ### Rigidity of plans -/
+
+namespace VaughtConjecture.Geometry.IsPlan
+
+open Finset
+
+variable {α : Type*} [DecidableEq α] {A B S : Finset α} {P : Finset (Finset α)} {σ : α ↪ α}
+
+/-- A face-preserving self-embedding fixing the extremes of a closed set maps it onto itself:
+the image is closed and contains the extremes, hence the hull of the extremes, which is the set
+(`IsConvexGeometry.hull_extremes`). -/
+private theorem map_eq_self_of_extremes (hP : IsPlan A P) (hσ : ∀ C ∈ P, C.map σ ∈ P)
+    (hB : B ∈ P) (hfix : ∀ y ∈ extremes P B, σ y = y) : B.map σ = B := by
+  have hsub : extremes P B ⊆ B.map σ := fun y hy ↦
+    mem_map.mpr ⟨y, extremes_subset hy, hfix y hy⟩
+  have h := hull_subset (A := A) (hσ B hB) hsub
+  rw [hP.isConvexGeometry.hull_extremes hB] at h
+  exact (eq_of_subset_of_card_le h (card_map σ).le).symm
+
+/-- A face-preserving self-embedding fixing the extremes of a closed set fixes every point of it.
+By strong induction on the set: removing one extreme `a` leaves a closed set, whose extremes are
+the other extreme `b` of the set and at most one further point; the embedding permutes them and
+fixes `b`, so it fixes them all. -/
+theorem apply_eq_of_extremes (hP : IsPlan A P) (hσ : ∀ C ∈ P, C.map σ ∈ P) (hB : B ∈ P)
+    (hfix : ∀ y ∈ extremes P B, σ y = y) {x : α} (hx : x ∈ B) : σ x = x := by
+  induction hn : #B using Nat.strong_induction_on generalizing B x with
+  | _ n ih =>
+    subst hn
+    have hBσ := map_eq_self_of_extremes hP hσ hB hfix
+    rcases le_or_gt #B 1 with h1 | h1
+    · obtain ⟨a, rfl⟩ := card_eq_one.mp (le_antisymm h1 (card_pos.mpr ⟨x, hx⟩))
+      rw [mem_singleton.mp hx]
+      simpa using hBσ
+    obtain ⟨a, b, hab, hext⟩ := card_eq_two.mp (hP.card_extremes hB h1)
+    obtain ⟨haB, haP⟩ := mem_extremes.mp (by simp [hext] : a ∈ extremes P B)
+    obtain ⟨hbB, hbP⟩ := mem_extremes.mp (by simp [hext] : b ∈ extremes P B)
+    have hσa : σ a = a := hfix a (by simp [hext])
+    have hσb : σ b = b := hfix b (by simp [hext])
+    -- The coatom `B \ {a}` is closed, mapped onto itself, and has `b` as an extreme.
+    have hB'σ : (B.erase a).map σ = B.erase a := by rw [map_erase, hBσ, hσa]
+    have hb' : b ∈ extremes P (B.erase a) := by
+      refine mem_extremes.mpr ⟨mem_erase.mpr ⟨hab.symm, hbB⟩, ?_⟩
+      have he : B.erase a ∩ B.erase b = (B.erase a).erase b := by
+        rw [inter_erase, inter_eq_left.mpr (erase_subset _ _)]
+      exact he ▸ hP.infClosed haP hbP
+    -- Every extreme of the coatom is fixed: its image is an extreme other than `b`.
+    have hfix' : ∀ y ∈ extremes P (B.erase a), σ y = y := by
+      intro y hy
+      by_cases hyb : y = b
+      · rw [hyb, hσb]
+      obtain ⟨hyB, hyP⟩ := mem_extremes.mp hy
+      have hσy : σ y ∈ extremes P (B.erase a) := by
+        refine mem_extremes.mpr ⟨hB'σ ▸ mem_map_of_mem σ hyB, ?_⟩
+        rw [← hB'σ, ← map_erase]
+        exact hσ _ hyP
+      by_contra hne
+      have hσyb : σ y ≠ b := fun h ↦ hyb (σ.injective (h.trans hσb.symm))
+      have hsub : ({b, y, σ y} : Finset α) ⊆ extremes P (B.erase a) := by
+        intro z hz
+        simp only [mem_insert, mem_singleton] at hz
+        rcases hz with rfl | rfl | rfl <;> assumption
+      have hcard := (card_le_card hsub).trans (hP.card_extremes_le_two haP)
+      rw [card_insert_of_notMem (by simp [Ne.symm hyb, Ne.symm hσyb]),
+        card_pair (Ne.symm hne)] at hcard
+      omega
+    rcases eq_or_ne x a with rfl | hxa
+    · exact hσa
+    exact ih _ (card_erase_lt_of_mem haB) haP hfix' (mem_erase.mpr ⟨hxa, hx⟩) rfl
+
+/-- **Rigidity of plans.**  A self-embedding of the points that carries closed sets to closed
+sets and fixes every point of `S` fixes every point of the hull of `S`: the extremes of the hull
+lie in `S` (`extremes_hull_subset`). -/
+theorem apply_eq_of_mem_hull (hP : IsPlan A P) (hσ : ∀ C ∈ P, C.map σ ∈ P) (hS : S ⊆ A)
+    (hfix : ∀ y ∈ S, σ y = y) {x : α} (hx : x ∈ hull A P S) : σ x = x :=
+  hP.apply_eq_of_extremes hσ hP.isConvexGeometry.hull_mem
+    (fun y hy ↦ hfix y (extremes_hull_subset hS hy)) hx
+
+end VaughtConjecture.Geometry.IsPlan
+
+/-! ### General facts about embeddings -/
+
+/-- An embedding whose values lie in the range of another embedding factors through it. -/
+theorem Function.Embedding.exists_trans_eq {α β γ : Type*} {e : β ↪ γ} {g : α ↪ γ}
+    (h : ∀ a, g a ∈ Set.range e) : ∃ w : α ↪ β, w.trans e = g := by
+  choose w hw using h
+  exact ⟨⟨w, fun i j hij ↦ g.injective (by rw [← hw, ← hw, hij])⟩, Function.Embedding.ext hw⟩
