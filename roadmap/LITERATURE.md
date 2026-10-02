@@ -42,7 +42,7 @@ The standard correspondence identifies invariant Borel classes of countable stru
 
 **Application here:** the upper bound `ℵ₁` is a counting argument in the setting of minimal counterexamples of [HM77] (see [Lar14], Remark 10.9, and its discussion of minimal counterexamples); [HM77] is cited for that setting, not as the source of this exact argument. The expansion domains have countable complements, and Scott separation (distinct classes are separated by a sentence) together with agreement on the domains leaves at most one class in every domain, so the classes are covered by one point and `ℵ₁` many countable sets. Thinness is proved separately, from the countable truth sides, by the pinned infinitary-logic library's thinness theorem for countable sentence splits (`Sentenceω.isThinOnNatModels_of_countable_sentence_splits`). Morley's theorem, in the witnessed form that gives a perfect antichain in the large alternative, would also yield the upper bound from thinness; that route is not used. The lower bound is supplied by the new construction, not by a counting theorem. State the perfect-set failure separately from any cardinal form requiring a failure of CH.
 
-The original Morley paper's metadata was located, but its full text was not accessible during this bibliography check. Do not treat this bibliography check as an independent reconstruction of its proof.
+The original Morley paper's metadata was located, but its full text was not accessible during this bibliography check. Do not treat this bibliography check as a reconstruction of its proof from the original.
 
 ## 6. Knight's earlier generalized type-space program
 

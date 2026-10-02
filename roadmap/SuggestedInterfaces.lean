@@ -20,6 +20,7 @@ import InfinitaryLogic.Lomega1omega.InHierarchy
 import InfinitaryLogic.Scott.MontalbanComplexity
 import InfinitaryLogic.Scott.ForgetParameters
 import InfinitaryLogic.Scott.GradedMatching
+import InfinitaryLogic.Scott.Height.Defs
 import ComputableModelTheory.Classical
 import Mathlib.ModelTheory.Fraisse
 
@@ -166,7 +167,7 @@ set_option linter.hashCommand false in
 set_option linter.hashCommand false in
 #check FirstOrder.Language.internalScottRank_le_of_orbits_determined
 
--- InfinitaryLogic at our pinned dependency `8a15ca5` (signatures checked): the orbit-formula
+-- InfinitaryLogic at our pinned dependency `def5cc0` (signatures checked): the orbit-formula
 -- threshold and rank bound and the preservation of infinitary formulas by maps agreeing locally
 -- with automorphisms, imported through the two narrow modules (never `InfinitaryLogic.All`).
 set_option linter.hashCommand false in
@@ -189,7 +190,7 @@ set_option linter.hashCommand false in
 #check FirstOrder.Language.BoundedFormulaω.realize_comp_append_of_localAutomorphisms
 
 -- The rank comparison of the Scott process (InfinitaryLogic, merged at `a640bbb`, contained in
--- `8a15ca5`), through its two modules.
+-- `def5cc0`), through its two modules.
 set_option linter.hashCommand false in
 #check FirstOrder.Language.selfStabilizesCompletely_iff_orbitRank_le
 set_option linter.hashCommand false in
@@ -206,7 +207,7 @@ set_option linter.hashCommand false in
 -- Mathlib's Fraïssé interface, to be applied by the classical limit of the top-free witnesses
 -- (expected, not elaborated; `README.md`, Layer 0).  Representative classes, the factorization
 -- of tuples through the age, orbit isolation, countable prime structures, and the classical
--- existence theorem of our pinned ComputableModelTheory (`37f6c42`) are checked below.
+-- existence theorem of our pinned ComputableModelTheory (`0e9935b`) are checked below.
 set_option linter.hashCommand false in
 #check FirstOrder.Language.age
 set_option linter.hashCommand false in
@@ -228,7 +229,7 @@ set_option linter.hashCommand false in
 set_option linter.hashCommand false in
 #check FirstOrder.Language.age.fg_substructure
 
--- InfinitaryLogic at our pinned dependency `8a15ca5` (signatures checked): uniform
+-- InfinitaryLogic at our pinned dependency `def5cc0` (signatures checked): uniform
 -- back-and-forth separation of analytic sets of nonisomorphic pairs of codes
 -- (`Descriptive/BFSeparation`); its compiled application is `isThinOn_of_countable_bfClasses`
 -- (`VaughtConjecture.MainTheorem.Scatteredness`; `README.md`, Layer 6).
@@ -241,14 +242,14 @@ set_option linter.hashCommand false in
 set_option linter.hashCommand false in
 #check FirstOrder.Language.exists_uniform_bfSeparation_of_analyticSets
 
--- InfinitaryLogic at our pinned dependency `8a15ca5` (signatures checked): the forward Karp
+-- InfinitaryLogic at our pinned dependency `def5cc0` (signatures checked): the forward Karp
 -- lemma, agreement on formulas of quantifier rank at most `α` from `BFEquiv α`, for a relational
 -- language.  Its application to the expansion domains (condition 3 of `README.md`) is a
 -- statement still to be proved; no application of it is compiled here.
 set_option linter.hashCommand false in
 #check FirstOrder.Language.BFEquiv_implies_agreeQR
 
--- The ordinal-indexed hierarchy (`Lomega1omega/InHierarchy`), at our pinned dependency `8a15ca5`
+-- The ordinal-indexed hierarchy (`Lomega1omega/InHierarchy`), at our pinned dependency `def5cc0`
 -- (signatures checked): the signed-traversal classes `IsSigmaIn`/`IsPiIn`, which are syntactic
 -- classes, and the normal forms `IsSigmaInNF`/`IsPiInNF`, which lie in them; the converse,
 -- up to logical equivalence, is not formalized (`README.md`, Layer 4).  A normal form at level
@@ -279,7 +280,7 @@ set_option linter.hashCommand false in
 
 -- Montalbán's explicit Scott sentence from a family of orbit formulas and its complexity
 -- (InfinitaryLogic, `Scott/MontalbanSentence` and `Scott/MontalbanComplexity`), at our pinned
--- dependency `8a15ca5` (signatures checked).  For a countable `M` in
+-- dependency `def5cc0` (signatures checked).  For a countable `M` in
 -- a language with countably many relation symbols, a family `Φ n a : L.Formulaω (Fin n)` over
 -- all tuples; `D_a` is `atomicDiagram a`, a countable conjunction of atoms and negated atoms
 -- (`Π^in_1`).  If `1 ≤ α` and every `Φ n a` is `IsSigmaIn α`, the sentence is `IsPiIn (α + 1)`
@@ -320,11 +321,13 @@ set_option linter.hashCommand false in
 #check FirstOrder.Language.exists_isPiIn_two_scottSentence_of_sigmaIn_zero_orbits
 
 -- Graded matching (InfinitaryLogic, `Scott/GradedMatching`), available at the pin `def5cc0`
--- (signatures checked).  A family `R α n a b` of relations between tuples, graded by ordinals up
--- to `height`, atomic at level `0`, lowering, and with forth and back one level down, relates at
--- a level `α ≤ height` only `BFEquiv α` pairs; any language, no relationality.  It is a generic
--- form of the graded back-and-forth theorem of `README.md`, Layer 0, whose initial match is a pair
--- related at the height (`α = height`); no application is compiled here.
+-- (signatures checked).  A family `R α n a b` of relations between tuples, defined at every
+-- ordinal, atomic at level `0`, lowering for `β ≤ α ≤ height`, and with forth and back one level
+-- down for `α + 1 ≤ height`, relates at a level `α ≤ height` only `BFEquiv α` pairs; any language,
+-- no relationality.  It is a generic form of the graded back-and-forth theorem of `README.md`,
+-- Layer 0, whose initial match is a pair related at the height (`α = height`); each of its two
+-- applications puts the height guard and the selection of coordinates inside `R` (`README.md`,
+-- Layer 0).  Neither application is compiled through it here.
 set_option linter.hashCommand false in
 #check FirstOrder.Language.bfEquiv_of_gradedMatching
 set_option linter.hashCommand false in
@@ -333,12 +336,14 @@ set_option linter.hashCommand false in
 -- Rank tails and the least level of a cover (InfinitaryLogic, `OrdinalCountability`), available
 -- at the pin `def5cc0` (signatures checked).  For `r : X → Ordinal` below `ω₁` with countable
 -- fibres, a set is countable iff its ranks are bounded below `ω₁` (`countable_iff_rank_bounded`),
--- the tails `rankTail r η = {x | η ≤ r x}` have nonempty losses cofinally below `ω₁` iff `X` is
--- uncountable, and an uncountable `X` has `#X = ℵ₁`.  Under the covering hypothesis
+-- the tails `rankTail r η = {x | η ≤ r x}` have empty intersection below `ω₁`, have nonempty
+-- losses cofinally below `ω₁` iff `X` is uncountable, and give `#X ≤ ℵ₁`, with `#X = ℵ₁` for an
+-- uncountable `X`.  Domains with countable complements below `ω₁` that every point leaves give
+-- `#X ≤ ℵ₁` (`mk_le_aleph_one_of_domains`).  Under the covering hypothesis
 -- `hcover : ⋃ α < ω₁, Q α = univ`, the tails of `leastLevel Q` are the complements of the initial
--- unions of `Q`, and countable sets `Q α` give `leastLevel Q` countable fibres.  They serve the
--- prospective "ranks with countable fibres" (`IMPLEMENTATION.md`, "The full-presentation route");
--- no application is compiled here.
+-- unions of `Q`, and countable sets `Q α` give `leastLevel Q` countable fibres.  The statements of
+-- `Counting/Filtration` are candidates for one-line quotation of these (`IMPLEMENTATION.md`,
+-- "Placement record"); no application is compiled here.
 set_option linter.hashCommand false in
 #check InfinitaryLogic.countable_iff_rank_bounded
 set_option linter.hashCommand false in
@@ -353,6 +358,38 @@ set_option linter.hashCommand false in
 #check InfinitaryLogic.mk_eq_aleph_one_of_countable_fibers
 set_option linter.hashCommand false in
 #check InfinitaryLogic.rankTail_cofinal_losses_iff
+set_option linter.hashCommand false in
+#check InfinitaryLogic.biInter_rankTail_eq_empty
+set_option linter.hashCommand false in
+#check InfinitaryLogic.mk_le_aleph_one_of_countable_fibers
+set_option linter.hashCommand false in
+#check InfinitaryLogic.mk_le_aleph_one_of_domains
+
+-- The stabilization ordinal (`Scott/Sentence`) and the Scott height (`Scott/Height/Defs`) of a
+-- countable structure, at the pin `def5cc0` (signatures checked), with the Scott formula's rank
+-- bound and characterization: the notions of the prospective one-sided rank comparison
+-- (`COMPANIONS.md`, "Further companion results").  `stabilizationOrdinal M` is the least level at
+-- which empty-tuple back-and-forth equivalence with `M` characterizes `M` among the countable
+-- structures in its carrier universe (`StabilizesAt`); `scottHeight M` the least level from which
+-- back-and-forth equivalence of tuples of every length no longer refines.  Neither is
+-- `internalScottRank`: an infinite pure set has internal Scott rank `1`
+-- (`internalScottRank_pureSet`).  No application is compiled here.
+set_option linter.hashCommand false in
+#check FirstOrder.Language.StabilizesAt
+set_option linter.hashCommand false in
+#check FirstOrder.Language.stabilizationOrdinal
+set_option linter.hashCommand false in
+#check FirstOrder.Language.scottHeight
+set_option linter.hashCommand false in
+#check FirstOrder.Language.scottHeight_stabilizesCompletely
+set_option linter.hashCommand false in
+#check FirstOrder.Language.BFEquiv_stabilization_implies_equiv
+set_option linter.hashCommand false in
+#check FirstOrder.Language.scottFormula_qrank_le
+set_option linter.hashCommand false in
+#check FirstOrder.Language.realize_scottFormula_iff_BFEquiv
+set_option linter.hashCommand false in
+#check FirstOrder.Language.internalScottRank_pureSet
 
 -- Forgetting finitely many parameters (InfinitaryLogic, `Scott/ForgetParameters`), available at
 -- the pin `def5cc0` (signatures checked).  The existential closure `existsTuple k φ` of a formula
@@ -371,7 +408,7 @@ set_option linter.hashCommand false in
 set_option linter.hashCommand false in
 #check FirstOrder.Language.exists_isSigmaIn_three_scottSentence_of_sigmaIn_one_orbits_over
 
--- ComputableModelTheory at our pinned dependency `37f6c42` (signatures checked), through the
+-- ComputableModelTheory at our pinned dependency `0e9935b` (signatures checked), through the
 -- entry module `ComputableModelTheory.Classical` (Mathlib-only imports): classical Fraïssé
 -- existence (`ModelTheory/FraisseExistence`), rooted universality and uniqueness
 -- (`ModelTheory/RootedExtension`), and isolation and primeness over named finite parameters
