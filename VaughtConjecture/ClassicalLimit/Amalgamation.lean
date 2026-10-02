@@ -7,12 +7,13 @@ import VaughtConjecture.ClassicalLimit.Age
 import VaughtConjecture.Extension.SectionTheorem
 
 /-!
-# Amalgamation and joint embedding of the finite age of top-free charts
+# Amalgamation and joint embedding of top-free charts, under the coatom extension property
 
 Roadmap, the section "The top-free witnesses: the finite age and its classical limit", step 2
-(amalgamation and joint embedding proved directly for finite charts), with the application of the
-classical existence theorem of step 3; Layer 3, 3.1, (R6) (the plain form of the coatom extension
-property gives the amalgamation of legal stage types over a common face, which capped is step 2).
+(amalgamation and joint embedding proved directly for finite charts), here conditional on the coatom
+extension property, which is not proved, with the application of the classical existence theorem of
+step 3; Layer 3, 3.1, (R6) (the plain form of the coatom extension property gives the amalgamation
+of legal stage types over a common face, which capped is step 2).
 
 **Capping a stage type.**  Let `t` be a stage type at stage `α` on `n` points and `c < α` an
 ordinal self-visible at `n`.  The **capped stage type** `t.cap c` has the scheme of `t` and the
@@ -26,30 +27,37 @@ top-free stage types, self-visible at any arity (`StageType.exists_cap`, from
 `Label.exists_lt_lt_isSelfVisible`): a top-free label at a nonzero stage is bounded by an ordinal
 below the stage (`StageType.IsTopFree.exists_label_le`).
 
-**Amalgamation of top-free stage types** (`StageType.exists_isTopFree_amalgam`).  Two legal
-top-free stage types with the same face `p` along `f` and `g` are the faces, along `i` and `j` with
-`f.trans i = g.trans j`, of one legal top-free stage type: the amalgam of `StageType.exists_amalgam`
-capped at a cap self-visible at its arity and above the labels of the two stage types.  The labels
-of the amalgam that are not labels of the two stage types are arbitrary, possibly `⊤`; capping is
-what makes it top-free, so nothing about the labels of `exists_amalgam`'s output is used.
+**Amalgamation of top-free stage types, under the coatom extension property**
+(`StageType.exists_isTopFree_amalgam`).  If the coatom extension property holds at a limit stage,
+two legal top-free stage types with the same face `p` along `f` and `g` are the faces, along `i` and
+`j` with `f.trans i = g.trans j`, of one legal top-free stage type: the amalgam of
+`StageType.exists_amalgam` capped at a cap self-visible at its arity and above the labels of the two
+stage types.  The labels of the amalgam that are not labels of the two stage types are arbitrary,
+possibly `⊤`; capping is what makes it top-free, so nothing about the labels of `exists_amalgam`'s
+output is used.
 
-**Amalgamation and joint embedding of top-free charts.**  Every embedding of a top-free chart into
-another is the chart embedding of a face map along which the restriction is literally the smaller
-stage type (`StageType.exists_eq_chartEmbedding`, both charts being legal), so the amalgamation of
-top-free stage types gives the amalgamation of top-free charts with a literally commuting square
-(`exists_amalgam_topFreeChart`, `StageType.chartEmbedding_comp`), the hypothesis `hap` of
-`isFraisse_representativeClass`.  Joint embedding is amalgamation over the empty chart, which is
-the face of every top-free chart on no points (`TopFreeIndex.restrictFace_empty`, from
-`StageType.isSome_restrictFace_of_zero` and `StageType.eq_of_zero`), and gives the hypothesis
-`hjep` (`exists_jointEmbedding_topFreeChart`).  Strong amalgamation (disjointness of the two images
-outside the common chart) is not claimed.  The age of top-free charts has the amalgamation and joint
-embedding properties (`amalgamation_topFreeAge`, `jointEmbedding_topFreeAge`) and, when there are
-countably many ordinals below the stage, is a Fraïssé class (`isFraisse_topFreeAge`; at `ω`,
-`isFraisse_topFreeAge_omega`).
+**Amalgamation and joint embedding of top-free charts, under the coatom extension property.**  Every
+embedding of a top-free chart into another is the chart embedding of a face map along which the
+restriction is literally the smaller stage type (`StageType.exists_eq_chartEmbedding`, both charts
+being legal), so the amalgamation of top-free stage types gives the amalgamation of top-free charts
+with a literally commuting square (`exists_amalgam_topFreeChart`, `StageType.chartEmbedding_comp`),
+the hypothesis `hap` of `isFraisse_representativeClass`.  Joint embedding is amalgamation over the
+empty chart, which is the face of every top-free chart on no points
+(`TopFreeIndex.restrictFace_empty`, from `StageType.isSome_restrictFace_of_zero` and
+`StageType.eq_of_zero`), and gives the hypothesis `hjep` (`exists_jointEmbedding_topFreeChart`).
+Strong amalgamation (disjointness of the two images outside the common chart) is not claimed.  Under
+the coatom extension property at a limit stage, the age of top-free charts has the amalgamation and
+joint embedding properties (`amalgamation_topFreeAge`, `jointEmbedding_topFreeAge`) and, when there
+are countably many ordinals below the stage, is a Fraïssé class (`isFraisse_topFreeAge`; at `ω`,
+`isFraisse_topFreeAge_omega`).  None of these is proved outright: the coatom extension property is
+not proved (Hypotheses, below).
 
-**Classical existence** (step 3).  `exists_topFreeLimit` is the classical existence theorem
-`exists_isFraisseLimit_representativeClass` applied to the hypotheses of steps 1 and 2; it is not
-developed further here.
+**Classical existence** (step 3), under the coatom extension property.
+`exists_isFraisseLimit_topFreeAge` is the classical existence theorem
+`exists_isFraisseLimit_representativeClass` applied to the hypotheses of steps 1 and 2, with the
+countability of the function symbols of the hull language derived from the countability of the
+ordinals below the stage (`hullLanguage.countable_functions`); at `ω` it is
+`exists_isFraisseLimit_topFreeAge_omega`.  It is not developed further here.
 
 **Hypotheses.**  Each statement of amalgamation, joint embedding, the Fraïssé class, and the limit
 takes three hypotheses on the stage `α`, explicitly:
@@ -61,10 +69,13 @@ takes three hypotheses on the stage `α`, explicitly:
 * `hα : Order.IsSuccPrelimit α`, so that above every ordinal below `α` there is an ordinal below `α`
   self-visible at a given arity, the cap.
 * `h0 : 0 < α`, so that the bound of the labels of a top-free stage type, and the cap, are ordinals
-  below `α`.
+  below `α`.  It is a restriction of the ordinal-valued cap, not of amalgamation: at stage `0` every
+  top-free label is `⊥`, and capping at `⊥` is lawful.  A cap valued in labels (a label `c ≠ ⊤` at
+  the stage, self-visible at the arity) would remove it; that weakening is not made here.
 
-Together `hα` and `h0` say that `α` is a **limit stage**, a limit ordinal.  The capping statements
-and the hereditary property assume none of them.
+Together `hα` and `h0` say that `α` is a **limit stage**, a limit ordinal.  Capping (`StageType.cap`
+to `StageType.restrictFace_cap`) and the hereditary property assume none of them; the existence of
+the cap (`StageType.exists_cap`) assumes `hα` and `h0`.
 
 ## Placement
 
@@ -114,7 +125,7 @@ variable {t : StageType.{u} α n} {c : Ordinal.{u}} {hc : IsSelfVisible n (c : L
 @[simp] theorem cap_toScheme : (t.cap c hc hcα).toScheme = t.toScheme := rfl
 
 /-- The labels of a capped stage type are the labels capped at the cap. -/
-@[simp] theorem cap_label (d : Fin (t.cap c hc hcα).card) :
+@[simp] theorem cap_label (d : Fin t.card) :
     (t.cap c hc hcα).label d = min (t.label d) c := rfl
 
 /-- A capped stage type is legal exactly when the stage type is: legality concerns the scheme. -/
@@ -233,8 +244,11 @@ theorem exists_amalgam_topFreeChart (hext : StageType.HasCoatomExtensions.{u} α
   obtain ⟨N, Q, a, b, hQ, hQt, hQa, hQb, hab⟩ := StageType.exists_isTopFree_amalgam hext hα h0
     j.2.2.1 j.2.2.2 k.2.2.1 k.2.2.2 he he'
   refine ⟨⟨N, Q, hQ, hQt⟩, StageType.chartEmbedding hQa, StageType.chartEmbedding hQb, ?_⟩
-  rw [StageType.chartEmbedding_comp, StageType.chartEmbedding_comp]
-  exact Embedding.ext fun x ↦ congrArg Q.toChart (DFunLike.congr_fun hab (i.2.1.toChart.symm x))
+  refine Embedding.ext fun x ↦ ?_
+  obtain ⟨y, rfl⟩ := i.2.1.toChart.surjective x
+  have hy := DFunLike.congr_fun hab y
+  simp only [Function.Embedding.trans_apply] at hy
+  simp only [Embedding.comp_apply, StageType.chartEmbedding_toChart, hy]
 
 /-- **Joint embedding of top-free charts**, from the coatom extension property at a limit stage: any
 two top-free charts embed into one top-free chart.  This is the hypothesis `hjep` of
@@ -252,14 +266,20 @@ theorem exists_jointEmbedding_topFreeChart (hext : StageType.HasCoatomExtensions
     (StageType.chartEmbedding (j.restrictFace_empty Function.Embedding.ofIsEmpty))
   exact ⟨l, ⟨a⟩, ⟨b⟩⟩
 
-/-- **The age of top-free charts has the amalgamation property**, from the coatom extension
-property at a limit stage. -/
+/-- **The age of top-free charts has the amalgamation property**, conditional on the coatom
+extension property at a limit stage.
+
+The coatom extension property `StageType.HasCoatomExtensions α` is not proved here: it is the open
+part of statement (R6) of roadmap, Layer 3, 3.1, checkpoints 2.1–2.7. -/
 theorem amalgamation_topFreeAge (hext : StageType.HasCoatomExtensions.{u} α)
     (hα : Order.IsSuccPrelimit α) (h0 : 0 < α) : Amalgamation (topFreeAge.{u} α) :=
   representativeClass_amalgamation _ (exists_amalgam_topFreeChart hext hα h0)
 
-/-- **The age of top-free charts has the joint embedding property**, from the coatom extension
-property at a limit stage. -/
+/-- **The age of top-free charts has the joint embedding property**, conditional on the coatom
+extension property at a limit stage.
+
+The coatom extension property `StageType.HasCoatomExtensions α` is not proved here: it is the open
+part of statement (R6) of roadmap, Layer 3, 3.1, checkpoints 2.1–2.7. -/
 theorem jointEmbedding_topFreeAge (hext : StageType.HasCoatomExtensions.{u} α)
     (hα : Order.IsSuccPrelimit α) (h0 : 0 < α) : JointEmbedding (topFreeAge.{u} α) :=
   representativeClass_jointEmbedding _ (exists_jointEmbedding_topFreeChart hext hα h0)
@@ -280,8 +300,11 @@ theorem isFraisse_topFreeAge (hext : StageType.HasCoatomExtensions.{u} α)
   isFraisse_representativeClass _ fg_topFreeChart exists_equiv_topFreeChart
     (exists_jointEmbedding_topFreeChart hext hα h0) (exists_amalgam_topFreeChart hext hα h0)
 
-/-- **The age of top-free charts at `ω` is a Fraïssé class**, from the coatom extension property at
-`ω`, which is not proved here (roadmap, Layer 3, 3.1, (R6), checkpoints 2.1–2.7). -/
+/-- **The age of top-free charts at `ω` is a Fraïssé class**, conditional on the coatom extension
+property at `ω`.
+
+The coatom extension property `StageType.HasCoatomExtensions ω` is not proved here: it is the open
+part of statement (R6) of roadmap, Layer 3, 3.1, checkpoints 2.1–2.7. -/
 theorem isFraisse_topFreeAge_omega (hext : StageType.HasCoatomExtensions.{u} ω) :
     IsFraisse (topFreeAge.{u} ω) :=
   isFraisse_topFreeAge hext Ordinal.isSuccLimit_omega0.isSuccPrelimit Ordinal.omega0_pos
@@ -290,21 +313,33 @@ theorem isFraisse_topFreeAge_omega (hext : StageType.HasCoatomExtensions.{u} ω)
 /-! ### Classical existence -/
 
 /-- **A Fraïssé limit of the age of top-free charts** (step 3): the classical existence theorem
-`exists_isFraisseLimit_representativeClass` applied to the hypotheses of steps 1 and 2, under the
-coatom extension property at a limit stage `α`, with countably many ordinals below `α`.  The
-countability of the function symbols of the hull language (`hullLanguage.countable_functions`) is an
-instance argument because it is needed to state `IsFraisseLimit`; at `ω` it is the instance
-`hullLanguage.countable_functions_omega`.
+`exists_isFraisseLimit_representativeClass` applied to the hypotheses of steps 1 and 2, conditional
+on the coatom extension property at a limit stage `α` with countably many ordinals below `α`.  The
+countability of the function symbols of the hull language, needed to state `IsFraisseLimit`, is
+derived from that of the ordinals below `α` (`hullLanguage.countable_functions`), not assumed.
 
 The coatom extension property `StageType.HasCoatomExtensions α` is not proved here: it is the open
 part of statement (R6) of roadmap, Layer 3, 3.1, checkpoints 2.1–2.7. -/
-theorem exists_topFreeLimit [Countable (Σ n, (hullLanguage.{u} α).Functions n)]
-    (hext : StageType.HasCoatomExtensions.{u} α) (hα : Order.IsSuccPrelimit α) (h0 : 0 < α)
-    (hcount : (Set.Iio α).Countable) :
+theorem exists_isFraisseLimit_topFreeAge (hext : StageType.HasCoatomExtensions.{u} α)
+    (hα : Order.IsSuccPrelimit α) (h0 : 0 < α) (hcount : (Set.Iio α).Countable) :
+    letI := hullLanguage.countable_functions hcount
     ∃ (M : Bundled.{0} (hullLanguage.{u} α).Structure) (_ : Countable M),
       IsFraisseLimit (topFreeAge.{u} α) M :=
+  letI := hullLanguage.countable_functions hcount
   haveI := countable_topFreeIndex hcount
   exists_isFraisseLimit_representativeClass _ fg_topFreeChart exists_equiv_topFreeChart
     (exists_jointEmbedding_topFreeChart hext hα h0) (exists_amalgam_topFreeChart hext hα h0)
+
+/-- **A Fraïssé limit of the age of top-free charts at `ω`**, conditional on the coatom extension
+property at `ω`; the countability of the function symbols is the instance
+`hullLanguage.countable_functions_omega`.
+
+The coatom extension property `StageType.HasCoatomExtensions ω` is not proved here: it is the open
+part of statement (R6) of roadmap, Layer 3, 3.1, checkpoints 2.1–2.7. -/
+theorem exists_isFraisseLimit_topFreeAge_omega (hext : StageType.HasCoatomExtensions.{u} ω) :
+    ∃ (M : Bundled.{0} (hullLanguage.{u} ω).Structure) (_ : Countable M),
+      IsFraisseLimit (topFreeAge.{u} ω) M :=
+  exists_isFraisseLimit_topFreeAge hext Ordinal.isSuccLimit_omega0.isSuccPrelimit
+    Ordinal.omega0_pos (Set.countable_coe_iff.mp countable_Iio_omega0_coe)
 
 end VaughtConjecture
