@@ -50,11 +50,12 @@ witness that reflects bottom everywhere (`CellScheme.Rows.IsLawful.map_of_bot_re
   their forms below a pair).
 
 The hypothesis `γ ≠ ⊥` is the only condition on the cap: `γ` need not be self-visible, and only the
-grades of the cells below the pair, at most `K`, enter.  In the owner alignment of the completion
-a labelling `r` lawful below the target pair of a lift, with values among codes, is decoded by a
-witness `ν`; the decoded labelling `ν ∘ r` agrees at the positive cap of the lift with the ambient
-labelling, which is lawful, so `ν ∘ r` is lawful; the cap `⊥` is treated separately, by the
-boundary completion of the prescription capped at the owner label.
+grades of the cells below the pair, at most `K`, enter.  The intended application is to the owner
+alignment of the completion, which is not constructed here: there, a labelling `r` lawful below
+the target pair of a lift, with values among codes, is to be decoded by a witness `ν`, and the
+decoded labelling `ν ∘ r`, agreeing at the positive cap of the lift with the lawful ambient
+labelling, will be lawful by the transport here.  The cap `⊥` is to be treated separately, by the
+boundary completion of the prescription capped at the owner label, also not constructed here.
 
 ## Placement
 
@@ -403,8 +404,8 @@ variable {r q : ι → Label.{u}}
 /-- **Transport of lawfulness through a witness with a lawful companion.**  Let `r` and `q` be
 lawful, the grades at most `K`, and `ν` a witness bounded by grade `K` that sends `r d` to bottom
 exactly when `q d` is bottom.  Then `ν ∘ r` is lawful.  It proves the positive-cap transport
-(`IsLawful.map_of_min_eq`), by which a labelling of codes decodes to a lawful lift in the owner
-alignment of the completion. -/
+(`IsLawful.map_of_min_eq`), by which a labelling of codes is to decode to a lawful lift in the
+owner alignment of the completion, which is not constructed here. -/
 theorem map_of_bot_iff (hr : R.IsLawful r) (hq : R.IsLawful q) (hK : ∀ d, D.grade d ≤ K)
     (hν : IsWitness (stepSuppressor K) ν) (hbot : ∀ d, ν (r d) = ⊥ ↔ q d = ⊥) :
     R.IsLawful (ν ∘ r) where
@@ -429,9 +430,9 @@ theorem map_of_min_eq (hr : R.IsLawful r) (hq : R.IsLawful q) (hK : ∀ d, D.gra
 /-- **Transport of lawfulness without global bottom reflection.**  If `ν` sends no non-bottom
 value of the lawful section `r` to bottom, then `ν ∘ r` is lawful: `r` is its own lawful companion
 (`IsLawful.map_of_bot_iff`).  It generalizes `IsLawful.map_of_bot_reflecting`, which asks bottom
-reflection at every label; in the completion it decodes a labelling of codes whose non-bottom codes
-the decoder reads as non-bottom, such as the flattened codes of
-`VaughtConjecture.Extension.FlattenedSource`. -/
+reflection at every label; in the completion, which is not constructed here, it is to decode a
+labelling of codes whose non-bottom codes the decoder reads as non-bottom, such as the flattened
+codes of `VaughtConjecture.Extension.FlattenedSource`. -/
 theorem map_of_apply_eq_bot (hr : R.IsLawful r) (hK : ∀ d, D.grade d ≤ K)
     (hν : IsWitness (stepSuppressor K) ν) (hbot : ∀ d, ν (r d) = ⊥ → r d = ⊥) :
     R.IsLawful (ν ∘ r) :=
@@ -462,9 +463,10 @@ theorem map_of_bot_iff (hr : R.IsLawfulBelow X r) (hq : R.IsLawfulBelow X q)
 /-- **Positive-cap transport of lawfulness**, below a pair `X` (`IsLawful.map_of_min_eq`).  Let
 `r` and `q` be lawful below `X`, the grades of the cells below `X` at most `K`, `ν` a witness
 bounded by grade `K`, and `γ ≠ ⊥` with `min (ν (r d)) γ = min (q d) γ`.  Then `ν ∘ r` is lawful
-below `X`.  In the owner alignment of the completion, `r` is a labelling of codes lawful below the
-target pair of a lift, `ν` its decoder, and `q` the ambient labelling at the positive cap of the
-lift, so the decoded labelling is lawful. -/
+below `X`.  In the intended application, the owner alignment of the completion (not constructed
+here), `r` is to be a labelling of codes lawful below the target pair of a lift, `ν` its decoder,
+and `q` the ambient labelling at the positive cap of the lift, so that the decoded labelling is
+lawful. -/
 theorem map_of_min_eq (hr : R.IsLawfulBelow X r) (hq : R.IsLawfulBelow X q)
     (hK : ∀ d : D.below X, D.grade d ≤ K) (hν : IsWitness (stepSuppressor K) ν) (hγ : γ ≠ ⊥)
     (hag : ∀ d, min (ν (r d)) γ = min (q d) γ) : R.IsLawfulBelow X (ν ∘ r) :=
