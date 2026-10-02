@@ -29,7 +29,13 @@ default values).
   hull; this is why the hull language, and not the relational stage chart language, has the
   closed faces as its substructures.
 * **Legality cannot be dropped.**  For a stage type on at least three points that is not legal,
-  the two extreme points of the whole type form a substructure that is not a closed face.
+  the two extreme points of the whole type form a substructure that is not a closed face.  `bare`
+  is the stage type on three points with no cells whose faces form the interval plan on `Fin 3`,
+  a copy of the private stage type of the same name in `VaughtConjecture.Stage.LegalExamples`,
+  which has no public counterpart; it is not legal.  On its chart no relation holds of a nonempty
+  tuple and every hull operation takes its default value, so the transposition of the points `0`
+  and `1` is an embedding of its chart into itself that is not a face map: legality of one of the
+  two charts cannot be dropped from `restrictFace_toEmbedding`.
 * **The default value under a chart embedding.**  Where a hull operation takes its default value
   in a face, it takes it at the image in the larger chart.
 * **The base stage.**  At `ω` the stage chart language is the base language, and the relational
@@ -143,7 +149,8 @@ private example (P : StageType.{u} α k) (hP : P.IsLegal) {a b : Fin k}
 whole type form a substructure of its chart that is not a closed face: a chart witness at them
 would be a reindexing of the whole type, which is not legal, so every hull operation takes its
 default value there.  So the legality hypothesis of `mem_faces_of_substructure` is essential. -/
-private example (P : StageType.{u} α k) (hP : ¬ P.IsLegal) (hk : 3 ≤ k) :
+private theorem exists_substructure_not_mem_faces (P : StageType.{u} α k) (hP : ¬ P.IsLegal)
+    (hk : 3 ≤ k) :
     ∃ (S : (hullLanguage.{u} α).Substructure P.Chart) (C : Finset (Fin k)),
       (∀ x, P.toChart x ∈ S ↔ x ∈ C) ∧ C ∉ P.toCellScheme.faces := by
   obtain ⟨a, b, hab, hext⟩ := card_eq_two.mp (P.isPlan.card_extremes P.univ_mem_faces
@@ -194,6 +201,74 @@ private example (P : StageType.{u} α k) (hP : ¬ P.IsLegal) (hk : 3 ≤ k) :
     have := congrArg Finset.card h
     rw [card_univ, Fintype.card_fin, card_pair hab] at this
     omega
+
+/-- A stage type on three points with no cells, whose faces are the intervals of `Fin 3`. -/
+private def bare : StageType.{0} 0 3 where
+  card := 0
+  toCellScheme := ⟨univ, Geometry.intervalPlan univ, Fin.elim0, Fin.elim0⟩
+  rows := ⟨fun s ↦ s.elim0⟩
+  label := Fin.elim0
+  isWellFormed := ⟨rfl, ⟨inferInstance, Geometry.isPlan_intervalPlan _, fun d ↦ d.elim0⟩⟩
+  isCoded s := s.elim0
+  isLawful := CellScheme.Rows.isLawful_of_isEmpty _
+  atStage d := d.elim0
+
+/-- `bare` is not legal: the graded face `({0}, 1)` is the graded index of no cell. -/
+private theorem not_isLegal_bare : ¬ bare.IsLegal := fun h ↦ by
+  obtain ⟨d, -⟩ := h.isComplete ({0}, 1) ⟨by decide, by decide, by decide⟩
+  exact d.elim0
+
+/-- The two extreme points of `bare` form a substructure of its chart that is not a closed face. -/
+private example : ∃ (S : (hullLanguage.{0} 0).Substructure bare.Chart) (C : Finset (Fin 3)),
+    (∀ x, bare.toChart x ∈ S ↔ x ∈ C) ∧ C ∉ bare.toCellScheme.faces :=
+  exists_substructure_not_mem_faces bare not_isLegal_bare le_rfl
+
+/-- No nonempty face of `bare` has a legal type: a legal type on a point has a cell, and the
+restriction of `bare` has no cells. -/
+private theorem not_isLegal_of_restrictFace_bare {m : ℕ} (g : Fin m ↪ Fin 3)
+    {q : StageType.{0} 0 m} (hq : restrictFace g bare = some q) (hl : q.IsLegal) (x : Fin m) :
+    False := by
+  obtain ⟨hf, rfl⟩ := (restrictFace_eq_some_iff bare g).mp hq
+  obtain ⟨d, -⟩ := hl.isComplete ({x}, 1)
+    ⟨(bare.comap g hf).isPlan.singleton_mem (mem_univ x), Nat.one_pos, by simp⟩
+  exact (bare.cellMap g d).elim0
+
+/-- On the chart of `bare` every hull operation takes its default value. -/
+private theorem hullOp_bare (ι : HullIndex.{0} 0) (a b : Fin 3) :
+    bare.faceRealization.hullOp ι a b = a :=
+  Realization.hullOp_of_not_exists fun ⟨g, hg, _, _⟩ ↦
+    not_isLegal_of_restrictFace_bare g hg ι.isLegal ι.left
+
+/-- The transposition of the points `0` and `1`, an embedding of the chart of `bare` into itself:
+every hull operation takes its default value, and no relation holds of a nonempty tuple. -/
+private def swapBare : bare.Chart ↪[hullLanguage.{0} 0] bare.Chart where
+  toEmbedding := (Equiv.swap (0 : Fin 3) 1).toEmbedding
+  map_fun' {n} f xs := by
+    induction f using hullLanguage.functions_induction with
+    | op ι =>
+      change Equiv.swap (0 : Fin 3) 1 (bare.faceRealization.hullOp ι (xs 0) (xs 1)) =
+        bare.faceRealization.hullOp ι (Equiv.swap (0 : Fin 3) 1 (xs 0))
+          (Equiv.swap (0 : Fin 3) 1 (xs 1))
+      exact (congrArg _ (hullOp_bare ι _ _)).trans (hullOp_bare ι _ _).symm
+  map_rel' {n} r xs := by
+    rcases r with ⟨p, hp⟩ | r
+    · rcases Nat.eq_zero_or_pos n with rfl | hn
+      · exact iff_of_eq (congrArg (RelMap _) (funext fun i ↦ i.elim0))
+      · -- no relation holds of a nonempty tuple
+        change (∃ h, restrictFace ⟨_, h⟩ bare = some p) ↔ ∃ h, restrictFace ⟨xs, h⟩ bare = some p
+        refine ⟨fun ⟨_, h⟩ ↦ ?_, fun ⟨_, h⟩ ↦ ?_⟩ <;>
+          exact (not_isLegal_of_restrictFace_bare _ h hp ⟨0, hn⟩).elim
+    · exact (r : Empty).elim
+
+/-- The transposition of `0` and `1` is an embedding of the chart of `bare` that is not a face map:
+it carries the face `{1, 2}` to `{0, 2}`, which is not an interval. -/
+private example : restrictFace
+    (bare.toChart.toEmbedding.trans (swapBare.toEmbedding.trans bare.toChart.symm.toEmbedding))
+      bare ≠ some bare := by
+  intro h
+  have hface := (map_mem_faces_iff_of_restrictFace h (C := {1, 2})).mpr (by decide)
+  revert hface
+  decide
 
 /-! ### The default value under a chart embedding -/
 

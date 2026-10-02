@@ -380,12 +380,6 @@ theorem Finset.map_preimage_eq_of_subset_range {α β : Type*} {f : β ↪ α} {
     (hs : (s : Set α) ⊆ Set.range f) : (s.preimage f f.injective.injOn).map f = s :=
   Finset.coe_injective (by simpa using Set.image_preimage_eq_of_subset hs)
 
-/-- An embedding whose values lie in the range of another embedding factors through it. -/
-theorem Function.Embedding.exists_trans_eq {α β γ : Type*} {e : β ↪ γ} {g : α ↪ γ}
-    (h : ∀ a, g a ∈ Set.range e) : ∃ w : α ↪ β, w.trans e = g := by
-  choose w hw using h
-  exact ⟨⟨w, fun i j hij ↦ g.injective (by rw [← hw, ← hw, hij])⟩, Function.Embedding.ext hw⟩
-
 namespace VaughtConjecture.Geometry.IsPlan
 
 open Finset
@@ -555,3 +549,11 @@ theorem apply_eq_of_mem_hull (hP : IsPlan A P) (hσ : ∀ C ∈ P, C.map σ ∈ 
     (fun y hy ↦ hfix y (extremes_hull_subset hS hy)) hx
 
 end VaughtConjecture.Geometry.IsPlan
+
+/-! ### General facts about embeddings -/
+
+/-- An embedding whose values lie in the range of another embedding factors through it. -/
+theorem Function.Embedding.exists_trans_eq {α β γ : Type*} {e : β ↪ γ} {g : α ↪ γ}
+    (h : ∀ a, g a ∈ Set.range e) : ∃ w : α ↪ β, w.trans e = g := by
+  choose w hw using h
+  exact ⟨⟨w, fun i j hij ↦ g.injective (by rw [← hw, ← hw, hij])⟩, Function.Embedding.ext hw⟩
