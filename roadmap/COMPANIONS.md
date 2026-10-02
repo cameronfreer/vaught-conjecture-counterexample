@@ -579,6 +579,35 @@ These are statements still to be proved.  None is an input to the main theorem.
   persistent core.  Targets: the naturality of greatest refinements under isomorphism, and their
   relationship to the expansion domains (a class lies in `D_ξ` exactly when its height is at
   least `ξ`).  The count of the main theorem does not use them.
+* **Terminal refinement** (downstream of the counting theorem; every item a conditional target, to
+  be proved).  Hypotheses, all explicit: the conclusions of the expansion-domain count, namely the
+  countable complements `Q \ D_η`, the agreement of the classes of `D_η` on every sentence of
+  quantifier rank at most `η`, and the uncountability of `Q` (from the nonempty losses of the lower
+  bound); and Scott isolation, a Scott sentence `σ_q` for each class `q`, of countable quantifier
+  rank and true in `q` only (`scottSentence_characterizes`).  Under these hypotheses, the targets,
+  in order:
+  1. **eventual departure by Scott isolation** (to be proved): every class leaves the expansion
+     domains, so the persistent core is empty.  Argument: if `q` lay in every `D_η`, then for `η` at
+     least the quantifier rank of `σ_q` every class of `D_η` would satisfy `σ_q`, so `D_η = {q}`,
+     and `Q` would be the union of the countable set `Q \ D_η` and one class;
+  2. **the last admitted stage** (a definition conditional on 1): for a class `q` that leaves the
+     expansion domains, the least `ξ` with `q ∉ D_ξ` is a successor `ζ + 1` (`D_0 = Q`, and limit
+     continuity excludes a limit), and `λ_ζ` is then called the last admitted stage of `q`; `q` lies
+     in the loss `D_ζ \ D_{ζ+1}`;
+  3. **the terminal expansion** (to be proved, given 2): the expansion of a model in `q` to its last
+     admitted stage is unique by expansion uniqueness and terminal, and is covered by the countable
+     family of terminal conditions of layer 4 (rigid-core type, positive eventual top grade, hollow
+     growth).
+
+  None of these is proved, and no class is asserted to have a last admitted stage or a terminal
+  expansion before 1 is proved.  If 1–3 are proved, the greatest refinement above (itself a target)
+  is the terminal expansion, and no class has height `ω₁`.  Terminal refinement is not a
+  prerequisite of the counting theorem: its eventual departure is to be proved from the
+  uncountability of `Q` and the agreement on `D_η`, conclusions of the count, so it cannot feed a
+  proof of that same count without circularity.  The full-presentation route (`README.md`, "The
+  persistent core") may take its coverage of every class from terminal refinement only by stating
+  its dependence on the expansion-domain route; a full-presentation proof that does not depend on
+  that route must cover every class, the persistent class included, by its own argument.
 * **Minimal unboundedness.**  `Φ` is minimally unbounded [Mon, Definition XII.4]: it is
   unbounded, but for every sentence `ψ` one of `Φ ∧ ψ` and `Φ ∧ ¬ψ` is bounded.  The second
   clause follows from the countable truth sides: one of `Φ ∧ ψ` and `Φ ∧ ¬ψ` has countably many
@@ -592,24 +621,48 @@ These are statements still to be proved.  None is an input to the main theorem.
   that are not scattered.  Here Scott rank is [Mon]'s parametrized Scott rank [Mon, Definition
   II.16].  By [Mon, Theorem XII.7] every counterexample `Θ` has a sentence `φ` with `Θ ∧ φ` a
   minimally unbounded counterexample; for `Φ` no strengthening is needed.
-* **The logical filtration and club agreement.**  For a minimally unbounded sentence (unbounded,
-  with the second clause above) there is a closed unbounded set `C ⊆ ω₁` such that, for
-  `α ∈ C`, the models of Scott rank at least `α` form exactly one `≡_α`-class [Mon, Lemma
-  XII.8].  This is stated in [Mon]'s convention: `≡_α` defined by moves of finite tuples [Mon,
-  Definition II.32] and the parametrized Scott rank; its proof uses the sentences `ψ_{A,α}`
-  defining the `≡_α`-class of a structure [Mon, Lemma XII.5].  Target: the comparison, on such a
-  club, of the canonical logical filtration (the classes of Scott rank at least `η`, in [Mon]'s
-  convention) with the filtration of the main theorem, the least-level filtration `D_η` of the
-  full-presentation route (`README.md`, "Reduction to full presentations") or the expansion
-  domains; no equality is asserted in advance.  The passage between [Mon]'s convention and the
-  one-point `BFEquiv` of the main theorem is a statement still to be proved (`README.md`,
-  "Standard definitions").  A supporting statement, recorded as a prospective lemma of
-  InfinitaryLogic (`IMPLEMENTATION.md`, "The full-presentation route"): an analogue for
-  `BlockBFEquiv` of [Mon, Lemma XII.6] (a chain of countable structures, each equivalent to the
-  next at an increasing sequence of levels with a fixed offset, has a countable limit structure
-  equivalent to each term at its level), by the same construction, with its offset to be
-  determined.  It supports the club agreement only through the passage between [Mon]'s
-  convention and InfinitaryLogic's, which is still to be proved.
+* **The agreement filtration and club agreement.**  The **agreement filtration** is canonical,
+  defined from `Φ` through `T∞` alone: at a countable level `η`, `A_η` is the set of classes `q ∈ Q`
+  in which every sentence of `T∞` of quantifier rank at most `η` is true.  The club agreement for
+  expansion domains concerns this filtration, not Scott rank.  **Club agreement** (a statement to be
+  proved here; argument sketched).  Hypotheses: `D_η` is a filtration of `Q` with `D_0 = Q`,
+  continuity at nonzero countable limits, countable complements, and agreement of its classes on
+  every sentence of quantifier rank at most `η` (the expansion domains, or the least-level
+  filtration of the full-presentation route, `README.md`, "Reduction to full presentations"), and
+  `Q` is uncountable.  Conclusion: `D_η ⊆ A_η` for every `η`, and `D_η = A_η` for every `η` in some
+  closed unbounded set `C ⊆ ω₁`.  For the inclusion: a sentence of `T∞` of rank at most `η` is
+  constant on the uncountable set `D_η` and fails on only countably many classes, so it holds on
+  `D_η`.  For the club: `¬σ_q ∈ T∞` for the Scott sentence `σ_q` of each class; let `f(ξ)` be the
+  supremum of the quantifier ranks of `σ_q` over the countably many `q ∉ D_ξ`, and let `C` be the
+  nonzero limits `η` with `f(ξ) < η` for every `ξ < η`; for `η ∈ C` and `q ∉ D_η`, continuity gives
+  `ξ < η` with `q ∉ D_ξ`, so `¬σ_q` has rank below `η` and fails in `q`, and `q ∉ A_η`.  The
+  argument uses no Scott rank, and club agreement relates the agreement filtration to `D_η` only: it
+  identifies neither with a filtration by Scott rank.
+* **The rank filtration and its comparison** (prospective: a separate target, needing its own
+  theorem).  The **rank filtration** is defined by lower bounds on Scott rank: at level `η`, `R_η`
+  is the set of classes of Scott rank at least `η`, in a stated convention.  For a minimally
+  unbounded sentence (unbounded, with the second clause above) there is a closed unbounded set
+  `C ⊆ ω₁` such that, for `α ∈ C`, the models of Scott rank at least `α` form exactly one
+  `≡_α`-class [Mon, Lemma XII.8].  This is stated in [Mon]'s convention: `≡_α` defined by moves of
+  finite tuples [Mon, Definition II.32] and the parametrized Scott rank; its proof uses the
+  sentences `ψ_{A,α}` defining the `≡_α`-class of a structure [Mon, Lemma XII.5].  **The
+  rank-filtration comparison** (prospective; its hypotheses are part of its statement and are to be
+  fixed with it): for `Φ`, with the conclusions of the main theorem and the passage between
+  conventions below as hypotheses, a closed unbounded set of levels `η` on which `R_η` is compared
+  with `D_η` (the expansion domains, or the least-level filtration of the full-presentation route,
+  `README.md`, "Reduction to full presentations") and with `A_η`, the form of the comparison (an
+  equality, or an inclusion in one direction) to be determined with the theorem.  Nothing is
+  asserted about the relation between `R_η` and `A_η` or `D_η`, at any level, in either direction:
+  neither club agreement nor any result stated here gives it, and the results stated here do not
+  identify expansion heights with Scott ranks.  The passage between [Mon]'s convention and the
+  one-point `BFEquiv` of the main theorem is a statement still to be proved (`README.md`, "Standard
+  definitions").  A supporting statement, recorded as a prospective lemma of InfinitaryLogic
+  (`IMPLEMENTATION.md`, "The full-presentation route"): an analogue for `BlockBFEquiv` of [Mon,
+  Lemma XII.6] (a chain of countable structures, each equivalent to the next at an increasing
+  sequence of levels with a fixed offset, has a countable limit structure equivalent to each term at
+  its level), by the same construction, with its offset to be determined.  It supports the
+  rank-filtration comparison only through the passage between [Mon]'s convention and
+  InfinitaryLogic's, which is still to be proved.
 * **Full trees.**  The introductory example of full rooted well-founded trees of finite
   sequences (`LITERATURE.md`, §9), with its rank convention explicit: equally ranked countable
   full well-founded trees are isomorphic; and the finite-extension estimate, that finite
@@ -650,4 +703,4 @@ bound is the direct argument of `HULL_ALGEBRA.md`, §6: once infinite hulls pres
 and every proper closed set is countable, closing a subset of cardinality `ℵ₁` of a
 hypothetically larger carrier gives an uncountable proper closed set; no free-set theorem is
 used.  It is a statement still to be proved here, and neither it nor any other optional
-consequence blocks the core reconstruction.
+consequence blocks finite-age reconstruction, which is part of the core.
