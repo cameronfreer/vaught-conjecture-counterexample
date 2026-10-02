@@ -15,7 +15,7 @@ table of 3.4, with its base cases); semantic contract, item 4 (absence of a face
 information).
 
 **The amalgam of two one-point types.**  `point` is the legal stage type on one point carried by
-the one-point scheme `Scheme.onePoint` (a single cell of grade `1`, mute rows) with the bottom
+the one-point scheme `Scheme.onePoint` (a single cell of grade `1`, the bottom rows) with the bottom
 label.  The amalgam of `point` with itself over the empty face is a stage type on two points whose
 faces along the two coatoms are literally `point`, whose rows are consistent and bountiful, and
 which is not complete, hence not legal: it has no cell of full scope.

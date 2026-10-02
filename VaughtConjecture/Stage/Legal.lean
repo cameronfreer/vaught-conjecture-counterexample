@@ -19,7 +19,7 @@ complete.  The types of [Kni26, Definition 3.1.1] are built over a domain with i
 ([Kni26, Definition 2.6.1]), whose semantics is coded, consistent, bountiful, and complete; this
 is **legality**.  Definition 2.6.1 also asks that `⟨B,j⟩`, `P↾B`, `D⟨B,j⟩`, and `E⟨B,j⟩` be
 recoverable from a cell; here that holds by representation (the rows are a field of the scheme),
-and `Scheme.IsCoded` is only the range normalisation of [Kni26, Lemma 2.5.13].
+and `Scheme.IsCoded` is only the range normalization of [Kni26, Lemma 2.5.13].
 
 * `Scheme.IsLegal S`: the scheme is well formed, its rows are coded (`Scheme.IsCoded`),
   consistent (`CellScheme.Rows.IsConsistent`), and bountiful (`CellScheme.Rows.IsBountiful`), and
@@ -84,7 +84,7 @@ variable {n m : ℕ} (S : Scheme.{u} n) (f : Fin m ↪ Fin n)
 and bountiful, and it is complete; that is, it is a domain with a semantics as required for the
 types of [Kni26, Definition 3.1.1].  The recoverability of `⟨B,j⟩`, `P↾B`, `D⟨B,j⟩`, and
 `E⟨B,j⟩` from a cell in [Kni26, Definition 2.6.1] holds by representation (the rows are a field of
-the scheme); `IsCoded` is only the range normalisation of [Kni26, Lemma 2.5.13]. -/
+the scheme); `IsCoded` is only the range normalization of [Kni26, Lemma 2.5.13]. -/
 structure IsLegal : Prop where
   /-- The scheme is well formed. -/
   isWellFormed : S.IsWellFormed

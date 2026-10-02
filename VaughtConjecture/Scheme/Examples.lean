@@ -12,8 +12,8 @@ Roadmap, Layer 1 (zero/bottom cases); semantic contract, item 3.
 
 `twoCells` is a concrete well-formed scheme on the one-point ground set `{0}` with two cells of the
 same graded index `({0}, 1)`, illustrating physical multiplicities (`twoCells_gradedIndex`,
-`twoCells_isWellFormed`); with the mute rows it is consistent and bountiful
-(`Rows.isConsistent_mute`, `Rows.isBountiful_mute`).
+`twoCells_isWellFormed`); with the bottom rows it is consistent and bountiful
+(`Rows.isConsistent_bot`, `Rows.isBountiful_bot`).
 -/
 
 namespace VaughtConjecture.CellScheme

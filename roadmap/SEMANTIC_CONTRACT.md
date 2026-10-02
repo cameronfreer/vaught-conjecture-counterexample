@@ -1,6 +1,6 @@
 # Semantic contract
 
-The meanings that any reformulation or independent formalization must preserve.
+The meanings that any reformulation or other formalization of the construction must preserve.
 The mathematical object is fixed by the construction itself, not by the shortened prose.
 
 1. **Logic and spectrum.** The language is relational, with one relation for each base-stage finite type. The sentence of the main theorem is in `L_{ω₁,ω}` with actual library satisfaction. Preserve the distinction between models on `ℕ` and all countable carriers; use the proved absence of finite models to identify their spectra. Do not replace perfect-set thinness with a continuum inequality.

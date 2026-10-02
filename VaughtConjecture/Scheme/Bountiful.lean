@@ -52,8 +52,8 @@ types (next tranche).
 Bountifulness is a statement about each cap separately.  Cap balls shrink as the cap grows
 (`capBall_anti`); at the cap `⊤` the ball of a lawful labelling is a singleton (`capBall_top`), and
 at the cap `⊥` it is the set of all lawful labellings (`capBall_bot`), so bountiful rows extend
-every lawful labelling below `X` to one below `Y` (`IsBountiful.surjOn_isLawfulBelow`).  The mute
-rows are bountiful (`isBountiful_mute`): every cap ball is the singleton of the bottom labelling.
+every lawful labelling below `X` to one below `Y` (`IsBountiful.surjOn_isLawfulBelow`).  The bottom
+rows are bountiful (`isBountiful_bot`): every cap ball is the singleton of the bottom labelling.
 Capped lifts and bountifulness transport along lower embeddings, in particular to restrictions,
 pullbacks, and reindexings (`VaughtConjecture.Scheme.Transport`).
 
@@ -231,10 +231,10 @@ theorem IsBountiful.surjOn_isLawfulBelow (hR : R.IsBountiful) (hX : X ∈ D.grad
   have := hR hX hY h ⊥ (isSelfVisible_bot _) (fun _ ↦ ⊥) (isLawfulBelow_bot Y)
   rwa [capBall_bot, capBall_bot] at this
 
-/-- Mute rows are bountiful. -/
-theorem isBountiful_mute : (mute D : D.Rows.{u}).IsBountiful := by
+/-- The bottom rows are bountiful. -/
+theorem isBountiful_bot : (bot D : D.Rows.{u}).IsBountiful := by
   intro X Y _ _ h c _ q hq p ⟨hp, _⟩
-  rw [isLawfulBelow_mute_iff] at hq hp
+  rw [isLawfulBelow_bot_iff] at hq hp
   subst hq hp
   exact ⟨fun _ ↦ ⊥, self_mem_capBall _ (isLawfulBelow_bot Y) c, rfl⟩
 

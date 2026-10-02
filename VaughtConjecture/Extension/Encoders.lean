@@ -14,7 +14,7 @@ Roadmap, Layer 3, 3.1, row 6, checkpoint 2.3 (coded encoders and decoders; the n
 identities kept apart from lawfulness and from cap preservation) and 3.1 (catalogues and
 decoders); semantic contract, item 3.
 
-The block coding `bandEncode V K` of `VaughtConjecture.Extension.CodedSection` relabels the blocks
+The block coding `blockEncode V K` of `VaughtConjecture.Extension.CodedSection` relabels the blocks
 of the labels of a finite set `V` and keeps their finite parts, so its codes lie below `ω ^ 2`
 (the range normalization of [Kni26, Lemma 2.5.13]) but need not be strongly coded at `K`
 (`Label.IsStronglyCoded K`: bottom or `ω · i + j` with `j ≤ K + 1`, a bound on the finite part in
@@ -41,16 +41,16 @@ formal top at the grades `≤ K` and bottom above (`stepSuppressor K`); the boun
 not on the values of the witness.
 
 **The encoder and decoder.**  For a finite set `V` of labels,
-`Label.strongEncode V K = bandEncode (V.image (spread K)) K ∘ spread K` and
-`Label.strongDecode V K = unspread K ∘ bandDecode (V.image (spread K))`.  The *normal form* of a
+`Label.strongEncode V K = blockEncode (V.image (spread K)) K ∘ spread K` and
+`Label.strongDecode V K = unspread K ∘ blockDecode (V.image (spread K))`.  The *normal form* of a
 labelling `w` with values in `V` is `strongEncode V K ∘ w`
 (`VaughtConjecture.Extension.NormalForm`).
 
 * *Witness laws.*  Both are witnesses bounded by grade `K` (`Label.isWitness_strongEncode`,
   `Label.isWitness_strongDecode`); the encoder sends only bottom to bottom
   (`Label.strongEncode_eq_bot_iff`).  So are the block coding and decoding themselves
-  (`Label.isWitness_bandEncode_stepSuppressor`, and `Label.isWitness_bandDecode_stepSuppressor`,
-  `Label.isWitness_bandDecode` with its suppressor replaced by bottom above `K`).
+  (`Label.isWitness_blockEncode_stepSuppressor`, and `Label.isWitness_blockDecode_stepSuppressor`,
+  `Label.isWitness_blockDecode` with its suppressor replaced by bottom above `K`).
 * *Coding.*  Every code is strongly coded at `K` (`Label.isStronglyCoded_strongEncode`) and lies
   in the coded alphabet with block bound `2 * #V + 1` and offset bound `K + 1`
   (`Label.strongEncode_mem_codedAlphabet`); the formal top has a proper code.
@@ -75,13 +75,13 @@ labelling `w` with values in `V` is `strongEncode V K ∘ w`
   `VaughtConjecture.Extension.OwnerwiseDecoding`).
 
 **Coded copies relative to every finite set of labels.**  The block coding is itself a
-bottom-reflecting witness bounded by grade `K` (`Label.isWitness_bandEncode_stepSuppressor`), so
-`CellScheme.Rows.IsLawful.map_of_bot_reflecting` makes the coded copy `bandEncode V K ∘ w` lawful
+bottom-reflecting witness bounded by grade `K` (`Label.isWitness_blockEncode_stepSuppressor`), so
+`CellScheme.Rows.IsLawful.map_of_bot_reflecting` makes the coded copy `blockEncode V K ∘ w` lawful
 for every finite set `V` of labels and every lawful section `w` on cells of grade at most `K`, with
 no finiteness of the cells, as `CellScheme.Rows.IsLawful.strongEncode` does for the strongly coded
-encoder.  This contains the existential `CellScheme.Rows.IsLawful.exists_bandEncode` of
+encoder.  This contains the existential `CellScheme.Rows.IsLawful.exists_blockEncode` of
 `VaughtConjecture.Extension.CodedSection` (on finitely many cells, take `V := univ.image w`), with
-no witness transfer (`Label.IsWitness.bandEncode`).
+no witness transfer (`Label.IsWitness.blockEncode`).
 
 ## Placement
 
@@ -129,15 +129,15 @@ noncomputable def unspread (K : ℕ) : Label.{u} → Label.{u} :=
 variable {K k i : ℕ}
 
 /-- The block index of a spread ordinal, as a natural number. -/
-private def spreadBand (K n : ℕ) : ℕ := if n ≤ K then 0 else n
+private def spreadBlock (K n : ℕ) : ℕ := if n ≤ K then 0 else n
 
 /-- The finite part of a spread ordinal. -/
 private def spreadFin (K n : ℕ) : ℕ := if n ≤ K then n else K + 1
 
 /-- Spreading of `ω * b + n`. -/
 private theorem spreadOrd_omega0_mul_add (b : Ordinal.{u}) (n : ℕ) :
-    spreadOrd K (ω * b + n) = ω * (ω * b + spreadBand K n) + spreadFin K n := by
-  rw [spreadOrd, omega0_mul_add_natCast_div, omega0_mul_add_natCast_mod, spreadBand, spreadFin]
+    spreadOrd K (ω * b + n) = ω * (ω * b + spreadBlock K n) + spreadFin K n := by
+  rw [spreadOrd, omega0_mul_add_natCast_div, omega0_mul_add_natCast_mod, spreadBlock, spreadFin]
   by_cases h : n ≤ K
   · simp [h]
   · simp [h, show ¬ (n : Ordinal.{u}) ≤ K by exact_mod_cast h]
@@ -166,7 +166,7 @@ private theorem unspreadOrd_spreadOrd (o : Ordinal.{u}) : unspreadOrd K (spreadO
   obtain ⟨b, n, rfl⟩ := exists_eq_omega0_mul_add_natCast o
   rw [spreadOrd_omega0_mul_add, unspreadOrd_omega0_mul_add]
   congr 2
-  simp only [unspreadFin, spreadBand, spreadFin]
+  simp only [unspreadFin, spreadBlock, spreadFin]
   split_ifs <;> omega
 
 /-- Spreading of ordinals is monotone. -/
@@ -178,12 +178,12 @@ private theorem spreadOrd_mono {o o' : Ordinal.{u}} (h : o ≤ o') :
   rcases omega0_mul_add_natCast_le_iff.mp h with hb | ⟨rfl, hn⟩
   · exact (omega0_mul_add_natCast_lt (omega0_mul_add_natCast_lt hb _ _) _ _).le
   · refine omega0_mul_add_natCast_le_iff.mpr ?_
-    simp only [spreadBand, spreadFin, add_right_inj, Nat.cast_inj]
-    rcases (show spreadBand K n ≤ spreadBand K n' by simp only [spreadBand]; split_ifs <;> omega)
+    simp only [spreadBlock, spreadFin, add_right_inj, Nat.cast_inj]
+    rcases (show spreadBlock K n ≤ spreadBlock K n' by simp only [spreadBlock]; split_ifs <;> omega)
       |>.lt_or_eq with hlt | heq
     · exact .inl (add_lt_add_right (by exact_mod_cast hlt) _)
-    · refine .inr ⟨by simpa [spreadBand] using heq, ?_⟩
-      simp only [spreadBand] at heq
+    · refine .inr ⟨by simpa [spreadBlock] using heq, ?_⟩
+      simp only [spreadBlock] at heq
       split_ifs at heq ⊢ <;> omega
 
 /-- Unspreading of ordinals is monotone. -/
@@ -213,13 +213,13 @@ private theorem spreadOrd_visibilityReplace (hk : k ≤ K) (hi : i ≤ k) (o : O
     spreadOrd K (Ordinal.visibilityReplace k i o) =
       Ordinal.visibilityReplace k i (spreadOrd K o) := by
   obtain ⟨b, n, rfl⟩ := exists_eq_omega0_mul_add_natCast o
-  have hband : spreadBand K (if n < k then i else n) = spreadBand K n := by
-    simp only [spreadBand]; split_ifs <;> omega
+  have hblock : spreadBlock K (if n < k then i else n) = spreadBlock K n := by
+    simp only [spreadBlock]; split_ifs <;> omega
   have hfin : spreadFin K (if n < k then i else n) =
       if spreadFin K n < k then i else spreadFin K n := by
     simp only [spreadFin]; split_ifs <;> omega
   rw [visibilityReplace_omega0_mul_add_natCast, spreadOrd_omega0_mul_add, spreadOrd_omega0_mul_add,
-    visibilityReplace_omega0_mul_add_natCast, hband, hfin]
+    visibilityReplace_omega0_mul_add_natCast, hblock, hfin]
 
 /-- Unspreading commutes with visibility replacement at every threshold `k ≤ K`, on ordinals. -/
 private theorem unspreadOrd_visibilityReplace (hk : k ≤ K) (hi : i ≤ k) (z : Ordinal.{u}) :
@@ -319,69 +319,69 @@ theorem isShort_spread (K : ℕ) (x : Label.{u}) : IsShort (K + 1) (spread K x) 
 variable {V : Finset Label.{u}}
 
 /-- **The block coding is a witness bounded by grade `K`**: it commutes with visibility replacement
-at the thresholds `≤ K` and sends only bottom to bottom.  So `bandEncode V K ∘ w` is lawful for
+at the thresholds `≤ K` and sends only bottom to bottom.  So `blockEncode V K ∘ w` is lawful for
 every `V` and every lawful `w` on cells of grade at most `K`
 (`CellScheme.Rows.IsLawful.map_of_bot_reflecting`). -/
-theorem isWitness_bandEncode_stepSuppressor (V : Finset Label.{u}) (K : ℕ) :
-    IsWitness (stepSuppressor.{u} K) (bandEncode V K) :=
-  isWitness_of_bot_reflecting rfl monotone_bandEncode (fun _ ↦ bandEncode_eq_bot_iff.mp)
-    fun x _ hk i _ ↦ bandEncode_visibilityReplace hk i x
+theorem isWitness_blockEncode_stepSuppressor (V : Finset Label.{u}) (K : ℕ) :
+    IsWitness (stepSuppressor.{u} K) (blockEncode V K) :=
+  isWitness_of_bot_reflecting rfl monotone_blockEncode (fun _ ↦ blockEncode_eq_bot_iff.mp)
+    fun x _ hk i _ ↦ blockEncode_visibilityReplace hk i x
 
 /-- **The block decoding is a witness bounded by grade `K`**, for every `K`: the block decoding
-with the constant suppressor `⊤` (`Label.isWitness_bandDecode`), its suppressor replaced by bottom
+with the constant suppressor `⊤` (`Label.isWitness_blockDecode`), its suppressor replaced by bottom
 above `K`. -/
-theorem isWitness_bandDecode_stepSuppressor (V : Finset Label.{u}) (K : ℕ) :
-    IsWitness (stepSuppressor.{u} K) (bandDecode V) :=
-  isWitness_bandDecode.truncate K
+theorem isWitness_blockDecode_stepSuppressor (V : Finset Label.{u}) (K : ℕ) :
+    IsWitness (stepSuppressor.{u} K) (blockDecode V) :=
+  isWitness_blockDecode.truncate K
 
 /-- The number of code blocks is at most twice the number of labels. -/
-private theorem card_codeBands_le (V : Finset Label.{u}) : #(codeBands V) ≤ 2 * #V := by
+private theorem card_codeBlocks_le (V : Finset Label.{u}) : #(codeBlocks V) ≤ 2 * #V := by
   classical
-  have hv : #(valueBands V) ≤ #V := by
+  have hv : #(valueBlocks V) ≤ #V := by
     refine card_image_le.trans ?_
     rw [card_preimage]
     exact card_filter_le _ _
-  calc #(codeBands V) ≤ #(valueBands V) + #((valueBands V).image Order.succ) := card_union_le _ _
-    _ ≤ #(valueBands V) + #(valueBands V) := add_le_add_right card_image_le _
+  calc #(codeBlocks V) ≤ #(valueBlocks V) + #((valueBlocks V).image Order.succ) := card_union_le _ _
+    _ ≤ #(valueBlocks V) + #(valueBlocks V) := add_le_add_right card_image_le _
     _ ≤ 2 * #V := by omega
 
 /-- The block code of a label short at `j ≥ K` lies in the coded alphabet with block bound the
 number of code blocks plus one and offset bound `j`. -/
-private theorem bandEncode_mem_codedAlphabet {j : ℕ} (hK : K ≤ j) {x : Label.{u}}
+private theorem blockEncode_mem_codedAlphabet {j : ℕ} (hK : K ≤ j) {x : Label.{u}}
     (hx : IsShort j x) :
-    bandEncode V K x ∈ codedAlphabet (#(codeBands V) + 1) j := by
+    blockEncode V K x ∈ codedAlphabet (#(codeBlocks V) + 1) j := by
   induction x using recBotCoeTop with
   | bot => exact mem_codedAlphabet.mpr (.inl rfl)
   | top => exact mem_codedAlphabet.mpr (.inr ⟨_, le_rfl, K, hK, rfl⟩)
   | coe o =>
-    have hfin : (if o / ω ∈ valueBands V then o % ω else (K : Ordinal.{u})) ≤ j := by
+    have hfin : (if o / ω ∈ valueBlocks V then o % ω else (K : Ordinal.{u})) ≤ j := by
       split_ifs
       · exact isShort_coe.mp hx
       · exact_mod_cast hK
     obtain ⟨n, hn⟩ := lt_omega0.mp (hfin.trans_lt (natCast_lt_omega0 j))
     refine mem_codedAlphabet.mpr (.inr ⟨codeRank V (o / ω), (codeRank_le _).trans (by omega), n,
       by exact_mod_cast hn ▸ hfin, ?_⟩)
-    rw [bandEncode_coe, bandEncodeOrd, hn]
+    rw [blockEncode_coe, blockEncodeOrd, hn]
 
 /-! ### The strongly coded encoder and its decoder -/
 
 /-- The **strongly coded encoder** relative to a finite set `V` of labels at grade `K`: spreading
 at `K` followed by the block coding of the spread labels of `V`. -/
 noncomputable def strongEncode (V : Finset Label.{u}) (K : ℕ) : Label.{u} → Label.{u} :=
-  bandEncode (V.image (spread K)) K ∘ spread K
+  blockEncode (V.image (spread K)) K ∘ spread K
 
 /-- The **strongly coded decoder** relative to `V` at grade `K`: the block decoding of the spread
 labels of `V` followed by unspreading at `K`. -/
 noncomputable def strongDecode (V : Finset Label.{u}) (K : ℕ) : Label.{u} → Label.{u} :=
-  unspread K ∘ bandDecode (V.image (spread K))
+  unspread K ∘ blockDecode (V.image (spread K))
 
 /-- The encoder, applied. -/
 theorem strongEncode_apply (x : Label.{u}) :
-    strongEncode V K x = bandEncode (V.image (spread K)) K (spread K x) := rfl
+    strongEncode V K x = blockEncode (V.image (spread K)) K (spread K x) := rfl
 
 /-- The decoder, applied. -/
 theorem strongDecode_apply (x : Label.{u}) :
-    strongDecode V K x = unspread K (bandDecode (V.image (spread K)) x) := rfl
+    strongDecode V K x = unspread K (blockDecode (V.image (spread K)) x) := rfl
 
 /-- The encoder sends a label to bottom exactly when it is bottom. -/
 @[simp] theorem strongEncode_eq_bot_iff {x : Label.{u}} : strongEncode V K x = ⊥ ↔ x = ⊥ := by
@@ -389,25 +389,25 @@ theorem strongDecode_apply (x : Label.{u}) :
 
 /-- The encoder is monotone. -/
 theorem monotone_strongEncode : Monotone (strongEncode V K) :=
-  monotone_bandEncode.comp (monotone_spread K)
+  monotone_blockEncode.comp (monotone_spread K)
 
 /-- The decoder is monotone. -/
 theorem monotone_strongDecode : Monotone (strongDecode V K) :=
-  (monotone_unspread K).comp (isWitness_bandDecode_stepSuppressor _ K).monotone
+  (monotone_unspread K).comp (isWitness_blockDecode_stepSuppressor _ K).monotone
 
 /-- **The encoder is a witness bounded by grade `K`.**  So a labelling of cells of grade at most `K`
 transforms to its normal form (`Label.transformsTo_strongEncode_comp`), which is lawful when the
 labelling is (`CellScheme.Rows.IsLawful.strongEncode`). -/
 theorem isWitness_strongEncode : IsWitness (stepSuppressor.{u} K) (strongEncode V K) :=
-  (isWitness_spread K).comp_of_bot_reflecting (isWitness_bandEncode_stepSuppressor _ K)
-    fun _ ↦ bandEncode_eq_bot_iff.mp
+  (isWitness_spread K).comp_of_bot_reflecting (isWitness_blockEncode_stepSuppressor _ K)
+    fun _ ↦ blockEncode_eq_bot_iff.mp
 
 /-- **The decoder is a witness bounded by grade `K`.**  So the normal form of a labelling transforms
 back to it (`Label.strongEncode_comp_transformsTo`), and the decoded section of a lawful section is
 lawful under the hypotheses of ownerwise decoding
 (`CellScheme.Rows.IsLawful.strongDecode_of_ownerwise`). -/
 theorem isWitness_strongDecode : IsWitness (stepSuppressor.{u} K) (strongDecode V K) :=
-  (isWitness_bandDecode_stepSuppressor _ K).comp_of_bot_reflecting (isWitness_unspread K)
+  (isWitness_blockDecode_stepSuppressor _ K).comp_of_bot_reflecting (isWitness_unspread K)
     fun _ ↦ unspread_eq_bot_iff.mp
 
 /-- **Every code is strongly coded at `K`**: its finite part is at most `K + 1`.  It need not be
@@ -416,7 +416,7 @@ whose row takes its values among the codes is strongly coded (`CellScheme.Rows.I
 and appending it preserves coding
 (`CellScheme.Rows.isCoded_of_isLowerEmbedding_of_isStronglyCodedAt`). -/
 theorem isStronglyCoded_strongEncode (x : Label.{u}) : IsStronglyCoded K (strongEncode V K x) := by
-  have h := bandEncode_mem_codedAlphabet (V := V.image (spread K)) (Nat.le_succ K)
+  have h := blockEncode_mem_codedAlphabet (V := V.image (spread K)) (Nat.le_succ K)
     (isShort_spread K x)
   rcases mem_codedAlphabet.mp h with h | ⟨a, -, b, hb, h⟩
   · exact .inl h
@@ -427,12 +427,12 @@ theorem isStronglyCoded_strongEncode (x : Label.{u}) : IsStronglyCoded K (strong
 (`Label.finite_setOf_isStronglyCoded_lt`). -/
 theorem strongEncode_mem_codedAlphabet (x : Label.{u}) :
     strongEncode V K x ∈ codedAlphabet (2 * #V + 1) (K + 1) := by
-  have hcard : #(codeBands (V.image (spread K))) + 1 ≤ 2 * #V + 1 :=
-    Nat.succ_le_succ ((card_codeBands_le _).trans (Nat.mul_le_mul_left 2 card_image_le))
+  have hcard : #(codeBlocks (V.image (spread K))) + 1 ≤ 2 * #V + 1 :=
+    Nat.succ_le_succ ((card_codeBlocks_le _).trans (Nat.mul_le_mul_left 2 card_image_le))
   rcases (isStronglyCoded_strongEncode (V := V) x) with h | ⟨a, b, hb, h⟩
   · exact mem_codedAlphabet.mpr (.inl h)
   · refine mem_codedAlphabet.mpr (.inr ⟨a, ?_, b, hb, h⟩)
-    have hmem := bandEncode_mem_codedAlphabet (V := V.image (spread K)) (Nat.le_succ K)
+    have hmem := blockEncode_mem_codedAlphabet (V := V.image (spread K)) (Nat.le_succ K)
       (isShort_spread K x)
     rw [← strongEncode_apply, h] at hmem
     rcases mem_codedAlphabet.mp hmem with h' | ⟨a', ha', b', -, h'⟩
@@ -450,7 +450,7 @@ theorem strongEncode_mem_codedAlphabet (x : Label.{u}) :
 /-- **The decoder recovers every label of `V`.** -/
 theorem strongDecode_strongEncode {z : Label.{u}} (hz : z ∈ V) :
     strongDecode V K (strongEncode V K z) = z := by
-  rw [strongDecode_apply, strongEncode_apply, bandDecode_bandEncode (mem_image_of_mem _ hz),
+  rw [strongDecode_apply, strongEncode_apply, blockDecode_blockEncode (mem_image_of_mem _ hz),
     unspread_spread]
 
 /-- The encoder is injective on `V`: the decoder is a left inverse on `V`.  It gives the reflection

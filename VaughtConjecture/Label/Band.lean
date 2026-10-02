@@ -13,9 +13,9 @@ Roadmap, Layer 1 (the bounded transformations used by the construction: the band
 composition retains its guards); semantic contract, item 3.
 
 Fix ordinals `α` and `β` and a natural number `K`.  The *translation* `translate α β` sends an
-ordinal `ν` to `α + (ν - β)` and fixes bottom and the formal top; it carries the band of `β` onto
-the band of `α`, and every ordinal below `β` to `α`.  The *band map* `bandMap α β K` is the
-translation capped at `α + K`:
+ordinal `ν` to `α + (ν - β)` and fixes bottom and the formal top; it carries the band
+`[β, β + K]` onto the band `[α, α + K]`, and every ordinal below `β` to `α`.  The *band map*
+`bandMap α β K` is the translation capped at `α + K`:
 
 * bottom goes to bottom, and the formal top to `α + K` (`bandMap_bot`, `bandMap_top`);
 * an ordinal `ν ≤ β` goes to `α` (`bandMap_coe_of_le`);
@@ -26,7 +26,8 @@ The band map is monotone, lies between `α` and `α + K` off bottom, and, when `
 or limits, commutes on the labels `≥ β` with visibility replacement at every threshold `k ≤ K`
 (`bandMap_visibilityReplace`).
 
-**The band rule** (`IsWitness.transformsTo_bandMap`).  Let `σ` be a shifter normalized at `K`,
+**The band rule** (`IsWitness.transformsTo_bandMap`).  Let `σ` be the shifter of a witness
+bounded by grade `K` (`VaughtConjecture.Label.Transform`: its suppressor is `stepSuppressor K`),
 `α` a limit, and `β` zero or a limit, on a finite family of cells of grades `≤ K`.  If the
 source labelling `p` is sent by `σ` below `α` or to the formal top, and to the formal top only
 from labels `≥ β`, then `p` transforms to the labelling that keeps the values of `σ ∘ p` below
@@ -37,10 +38,11 @@ sent to `α` or above, and sends the remaining labels to `c`.
 
 ## References
 
-The band rule is the post-composition of the top-witness row in the proof of
-[Kni26, Lemma 5.3.5], and the band map is the map it composes with; the remaining rows of that
-proof need a splice of two witnesses, not stated here.  The transformation relation is
-[Kni26, Definition 2.3.9].
+The band rule is the post-composition, in the proof of [Kni26, Lemma 5.3.5], for the row of the
+*top-witness cell* (the cell of full scope and grade `K` labelled by the formal top), and the band
+map is the map it composes with; the rows of the other cells labelled by the formal top need a
+splice of two witnesses with the same source (roadmap, Layer 3, 3.1), not stated here.  The
+transformation relation is [Kni26, Definition 2.3.9].
 -/
 
 universe u
@@ -100,7 +102,7 @@ theorem translate_visibilityReplace (hα : IsSuccPrelimit α) (hβ : IsSuccPreli
 
 /-! ### The band map -/
 
-/-- The band map from `β` to `α` truncated at `K`: the translation from `β` to `α` capped at
+/-- The band map from `β` to `α` at `K`: the translation from `β` to `α` capped at
 `α + K`.  It sends bottom to bottom, an ordinal `ν ≤ β` to `α`, `β + j` to `α + min j K`, and
 every label at least `β + K`, including the formal top, to `α + K`. -/
 noncomputable def bandMap (α β : Ordinal.{u}) (K : ℕ) (x : Label.{u}) : Label.{u} :=
@@ -158,11 +160,11 @@ theorem bandMap_visibilityReplace (hα : IsSuccPrelimit α) (hβ : IsSuccPrelimi
 
 /-! ### The band rule -/
 
-/-- **The band shifter.**  Let `σ` be a shifter normalized at `K`, let `α` and `β` be zero or
-limits, and let `c` be a permitted cutoff at stage `α` that is self-visible at `K`.  The shifter
-that caps the values of `σ` below `α` at `c`, applies the band map from `β` to `α` truncated at
+/-- **The band shifter.**  Let `σ` be the shifter of a witness bounded by grade `K`, let `α` and
+`β` be zero or limits, and let `c` be a permitted cutoff at stage `α` that is self-visible at `K`.
+The shifter that caps the values of `σ` below `α` at `c`, applies the band map from `β` to `α` at
 `K` to the labels `≥ β` that `σ` sends to `α` or above, and sends the remaining labels to `c`, is
-normalized at `K`. -/
+the shifter of a witness bounded by grade `K`. -/
 theorem IsWitness.band (hσ : IsWitness (stepSuppressor K) σ) (hα : IsSuccPrelimit α)
     (hβ : IsSuccPrelimit β) (hc : IsPermittedCutoff α c) (hcK : IsSelfVisible K c) :
     IsWitness (stepSuppressor K) fun x ↦
@@ -212,14 +214,14 @@ theorem IsWitness.band (hσ : IsWitness (stepSuppressor K) σ) (hα : IsSuccPrel
       rw [hx, visibilityReplace_bot]
       simp only [τ, hvr, ite_eq_left (WithBot.bot_lt_coe _), min_eq_left bot_le]
 
-/-- **The band rule.**  Let `σ` be a shifter normalized at `K`, let `α` be a limit and `β` zero
-or a limit, and let the family of cells be finite with all grades `≤ K`.  Suppose that `σ` sends
-each source label `p d` below `α` or to the formal top, and to the formal top only when
-`β ≤ p d`.  Then `p` transforms to any labelling `q` that agrees with `σ ∘ p` where it is below
-`α` and is the band map of the source label where `σ ∘ p` is the formal top.  This is the
-post-composition of the top-witness row in the proof of [Kni26, Lemma 5.3.5]; the other rows of
-that proof need a two-witness splice (the band map applied to a row `r` with `p ⇒ r`, at grades
-`≤ J ≤ K`), which is left to Layer 3. -/
+/-- **The band rule.**  Let `σ` be the shifter of a witness bounded by grade `K`, let `α` be a
+limit and `β` zero or a limit, and let the family of cells be finite with all grades `≤ K`.
+Suppose that `σ` sends each source label `p d` below `α` or to the formal top, and to the formal
+top only when `β ≤ p d`.  Then `p` transforms to any labelling `q` that agrees with `σ ∘ p` where
+it is below `α` and is the band map of the source label where `σ ∘ p` is the formal top.  This is
+the post-composition for the row of the top-witness cell in the proof of [Kni26, Lemma 5.3.5]; the
+rows of the other cells labelled by the formal top need a splice of two witnesses (the band map
+applied to a row `r` with `p ⇒ r`, at grades `≤ J ≤ K`), a statement of Layer 3. -/
 theorem IsWitness.transformsTo_bandMap [Finite D] (hσ : IsWitness (stepSuppressor K) σ)
     (hα : IsSuccLimit α) (hβ : IsSuccPrelimit β) (hgr : ∀ d, grade d ≤ K)
     (hbound : ∀ d, σ (p d) < α ∨ σ (p d) = ⊤) (hlow : ∀ d, σ (p d) < α → q d = σ (p d))

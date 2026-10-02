@@ -69,8 +69,8 @@ laws they need are the rules above (`isWitness_comp_flatten`,
 `IsWitness.exists_eq_comp_of_isShort`, `TransformsTo.exists_isWitness_capped`,
 `IsWitness.transformsTo_comp`), the replacement of the suppressor by bottom above a grade
 (`IsWitness.truncate`) of the library, and the witness laws of the encoders
-(`Label.isWitness_spread`, `Label.isWitness_unspread`, `Label.isWitness_bandEncode_stepSuppressor`,
-`Label.isWitness_bandDecode_stepSuppressor`, `Label.isWitness_strongEncode`,
+(`Label.isWitness_spread`, `Label.isWitness_unspread`, `Label.isWitness_blockEncode_stepSuppressor`,
+`Label.isWitness_blockDecode_stepSuppressor`, `Label.isWitness_strongEncode`,
 `Label.isWitness_strongDecode`, in `VaughtConjecture.Extension.Encoders`).
 
 ## Placement
@@ -438,7 +438,7 @@ theorem TransformsTo.map_of_bot_reflecting {E p : D → Label.{u}} {c : D}
 the maximum implies the guards of both.  It gives the shifter of the locality of a new cell of
 full scope in the completion of a seed: the maximum of the capped witness of an owner
 (`TransformsTo.exists_isWitness_capped`) and a second witness bounded by the same grade, with
-values in a new band. -/
+values in a new block. -/
 theorem IsWitness.max (hσ : IsWitness g σ) (hτ : IsWitness g τ) :
     IsWitness g fun x ↦ max (σ x) (τ x) where
   antitone := hσ.antitone

@@ -108,7 +108,7 @@ Open with the exact infinitary statement, the stronger sentence-minimality inter
 3. The actual language/sentence, the hull operations, and the top-free witnesses as reconstructed Fraïssé limits of the age of top-free charts.
 4. Ordinary and constrained receiving: the finite construction, realization over the root, and recovery of donor labels.
 5. Structural stable refinement, the three terminal comparisons, and countable terminal fibres.
-6. Domain continuity, sharp one-block comparison, and independent terminal-loss witnesses.
+6. Domain continuity, sharp one-block comparison, and the terminal-loss witnesses, constructed separately.
 
 Put characteristic theory, global stopping, detailed compatibility interfaces, and optional closure/definability consequences in appendices or companion work. Provide a theorem-to-Lean-declaration table and pinned build/audit information, distinguishing kernel checks from the human check that the definitions express the intended mathematics. This ordering lets the reader see exactly what the finite lemma has to accomplish before reading its technical proof.
 

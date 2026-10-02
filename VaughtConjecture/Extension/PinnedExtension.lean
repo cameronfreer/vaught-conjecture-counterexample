@@ -53,7 +53,7 @@ This file reduces the exact pinned extension to the coatom extension constructio
   closed face of `P`.
 * Every legal scheme carries a legal stage type at every stage, its bottom labelling
   (`Scheme.IsLegal.toStageType`, [Kni26, Proposition 4.3.24] for the domains that are legal
-  schemes); in particular the one-point scheme with mute rows (`Scheme.onePoint`) is legal
+  schemes); in particular the one-point scheme with the bottom rows (`Scheme.onePoint`) is legal
   (`Scheme.isLegal_onePoint`) and gives a legal one-point stage type at every stage.
 * The amalgamation corollaries: under the same hypothesis every legal stage type has a legal
   one-point extension (`StageType.exists_extension`, [Kni26, Proposition 4.3.23]), and two legal
@@ -73,7 +73,7 @@ stated here so that those files are unchanged.
 The coatom extension is [Kni26, Corollary 4.3.22], built on the amalgam of
 [Kni26, Definition 4.3.1] and its completion of [Kni26, Definition 4.3.14]; the one-point
 extension and the existence of types on every domain are [Kni26, Propositions 4.3.23 and 4.3.24];
-the one-point scheme with mute rows is the last clause of [Kni26, Lemma 4.2.2].
+the one-point scheme with the bottom rows is the last clause of [Kni26, Lemma 4.2.2].
 -/
 
 universe u
@@ -104,20 +104,20 @@ theorem IsLegal.isLegal_toStageType (hS : S.IsLegal) (α : Ordinal.{u}) :
   hS
 
 /-- The **one-point scheme**: a single cell of scope `{0}` and grade `1`, the faces `∅` and `{0}`
-(the interval plan on `Fin 1`), and mute rows. -/
+(the interval plan on `Fin 1`), and the bottom rows. -/
 def onePoint : Scheme.{u} 1 where
   card := 1
   toCellScheme := ⟨univ, Geometry.intervalPlan univ, fun _ ↦ univ, fun _ ↦ 1⟩
-  rows := CellScheme.Rows.mute _
+  rows := CellScheme.Rows.bot _
 
-/-- **The one-point scheme is legal**: mute rows are consistent and bountiful, and the only graded
-face is `({0}, 1)`, the graded index of its cell. -/
+/-- **The one-point scheme is legal**: the bottom rows are consistent and bountiful, and the only
+graded face is `({0}, 1)`, the graded index of its cell. -/
 theorem isLegal_onePoint : onePoint.{u}.IsLegal where
   isWellFormed := ⟨rfl, ⟨inferInstance, Geometry.isPlan_intervalPlan _, fun _ ↦ by
     simp [onePoint, CellScheme.gradedIndex]⟩⟩
   isCoded _ _ := WithBot.bot_lt_coe _
-  isConsistent := CellScheme.Rows.isConsistent_mute
-  isBountiful := CellScheme.Rows.isBountiful_mute
+  isConsistent := CellScheme.Rows.isConsistent_bot
+  isBountiful := CellScheme.Rows.isBountiful_bot
   isComplete := fun ⟨C, j⟩ ⟨_, hpos, hle⟩ ↦ ⟨(0 : Fin 1), by
     have hC : #C ≤ 1 := card_le_univ C
     have hC' : C = univ := (card_eq_iff_eq_univ C).mp (by simp only at hpos hle ⊢; simp; omega)

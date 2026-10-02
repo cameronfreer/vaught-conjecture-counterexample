@@ -33,9 +33,9 @@ encoders); semantic contract, item 3.
   and the block decoding for `{0}` are witnesses bounded by grade `0`, and the block decoding sends
   the value `0` of the first to bottom although `0` is not bottom, so the hypothesis of
   `Label.IsWitness.comp_of_bot_reflecting` fails; their composite is not a witness bounded by grade
-  `0` (`not_isWitness_bandDecode_comp_reduce`), while `Label.IsWitness.exists_eq_comp_of_isShort`
+  `0` (`not_isWitness_blockDecode_comp_reduce`), while `Label.IsWitness.exists_eq_comp_of_isShort`
   gives a witness bounded by grade `0` equal to the composite at every label short at `0`
-  (`exists_eq_bandDecode_comp_reduce`).
+  (`exists_eq_blockDecode_comp_reduce`).
 * **A lawful section whose decoding is not lawful.**  On two cells `a`, `b` of grade `1` and one
   scope, with rows `(1, 1)` for `a` and `(1, 2)` for `b`, the section `(1, ω * 5 + 1)` is lawful
   (`isLawful_pairSection`).  The decoder does not reflect bottom: relative to the empty set of
@@ -112,13 +112,13 @@ private theorem isStronglyCoded_and_not_isShort_strongEncode :
     rw [spreadOrd, h1, h2, ite_eq_right (by rw [h3]; exact_mod_cast (by decide : ¬ 3 ≤ 1))]
     simp
   have he : (3 : Label.{u}) = ((3 : Ordinal.{u}) : Label.{u}) := rfl
-  rw [strongEncode_apply, image_singleton, he, spread_coe, hs, bandEncode_coe] at h
+  rw [strongEncode_apply, image_singleton, he, spread_coe, hs, blockEncode_coe] at h
   -- The block `3` of `ω * 3 + 2` is a value block, so the block coding keeps the finite part `2`.
   have hv : (ω * 3 + (2 : ℕ) : Ordinal.{u}) / ω ∈
-      valueBands ({((ω * 3 + (2 : ℕ) : Ordinal.{u}) : Label.{u})} : Finset Label.{u}) :=
-    div_mem_valueBands (by simp)
+      valueBlocks ({((ω * 3 + (2 : ℕ) : Ordinal.{u}) : Label.{u})} : Finset Label.{u}) :=
+    div_mem_valueBlocks (by simp)
   have := isShort_coe.mp h
-  rw [bandEncodeOrd, ite_eq_left hv, omega0_mul_add_natCast_mod, omega0_mul_add_natCast_mod]
+  rw [blockEncodeOrd, ite_eq_left hv, omega0_mul_add_natCast_mod, omega0_mul_add_natCast_mod]
     at this
   exact absurd this (by exact_mod_cast (by decide : ¬ 2 ≤ 1))
 
@@ -184,43 +184,43 @@ private theorem isWitness_reduce_one : IsWitness (stepSuppressor.{u} 0) (Label.r
       rw [hx, visibilityReplace_bot, reduce_bot, visibilityReplace_bot]
 
 /-- The block decoding for `{0}` is a witness bounded by grade `0`. -/
-private theorem isWitness_bandDecode_zero :
-    IsWitness (stepSuppressor.{u} 0) (bandDecode {(0 : Label.{u})}) :=
-  isWitness_bandDecode_stepSuppressor _ 0
+private theorem isWitness_blockDecode_zero :
+    IsWitness (stepSuppressor.{u} 0) (blockDecode {(0 : Label.{u})}) :=
+  isWitness_blockDecode_stepSuppressor _ 0
 
 /-- Stage reduction to stage `1` keeps ordinal zero. -/
 private theorem reduce_one_zero : Label.reduce 1 (0 : Label.{u}) = 0 :=
   reduce_of_lt (by exact_mod_cast (zero_lt_one : (0 : Ordinal.{u}) < 1))
 
 /-- The block decoding for `{0}` sends ordinal zero to bottom. -/
-private theorem bandDecode_zero : bandDecode {(0 : Label.{u})} (0 : Label.{u}) = ⊥ :=
-  bandDecodeOrd_of_eq_zero (by simp)
+private theorem blockDecode_zero : blockDecode {(0 : Label.{u})} (0 : Label.{u}) = ⊥ :=
+  blockDecodeOrd_of_eq_zero (by simp)
 
 /-- **The hypothesis of guarded composition fails**: the block decoding for `{0}` sends the value
 `0` of stage reduction to stage `1` to bottom, and `0` is not bottom. -/
 private theorem not_bot_reflecting :
-    bandDecode {(0 : Label.{u})} (Label.reduce 1 0) = ⊥ ∧ Label.reduce 1 (0 : Label.{u}) ≠ ⊥ := by
-  rw [reduce_one_zero, bandDecode_zero]
+    blockDecode {(0 : Label.{u})} (Label.reduce 1 0) = ⊥ ∧ Label.reduce 1 (0 : Label.{u}) ≠ ⊥ := by
+  rw [reduce_one_zero, blockDecode_zero]
   exact ⟨rfl, by simp⟩
 
 /-- **Without bottom reflection the composite is not a witness**: at threshold `1` the guard holds
 at `0`, whose image is bottom, but the replacement `1` of `0` goes to the formal top. -/
-private theorem not_isWitness_bandDecode_comp_reduce :
-    ¬ IsWitness (stepSuppressor.{u} 0) (bandDecode {(0 : Label.{u})} ∘ Label.reduce 1) := by
+private theorem not_isWitness_blockDecode_comp_reduce :
+    ¬ IsWitness (stepSuppressor.{u} 0) (blockDecode {(0 : Label.{u})} ∘ Label.reduce 1) := by
   intro h
-  have h0 : (bandDecode {(0 : Label.{u})} ∘ Label.reduce 1) 0 = ⊥ := not_bot_reflecting.1
+  have h0 : (blockDecode {(0 : Label.{u})} ∘ Label.reduce 1) 0 = ⊥ := not_bot_reflecting.1
   have h1 := h.visibilityReplace_comm 0 1 (h0 ▸ bot_le) 1 le_rfl
   rw [h0, visibilityReplace_bot, visibilityReplace_zero, ite_eq_left one_pos, Function.comp_apply,
-    reduce_of_le (by simp), bandDecode_top] at h1
+    reduce_of_le (by simp), blockDecode_top] at h1
   exact top_ne_bot h1
 
 /-- **The composition on short labels needs no bottom reflection**: some witness bounded by grade
 `0` agrees with the block decoding for `{0}` after stage reduction to stage `1` at every label short
 at `0`. -/
-private theorem exists_eq_bandDecode_comp_reduce :
+private theorem exists_eq_blockDecode_comp_reduce :
     ∃ ρ, IsWitness (stepSuppressor.{u} 0) ρ ∧
-      ∀ x, IsShort 0 x → ρ x = bandDecode {(0 : Label.{u})} (Label.reduce 1 x) :=
-  isWitness_reduce_one.exists_eq_comp_of_isShort isWitness_bandDecode_zero le_rfl
+      ∀ x, IsShort 0 x → ρ x = blockDecode {(0 : Label.{u})} (Label.reduce 1 x) :=
+  isWitness_reduce_one.exists_eq_comp_of_isShort isWitness_blockDecode_zero le_rfl
 
 
 /-! ### A lawful section whose decoding is not lawful -/
@@ -327,13 +327,13 @@ so every code below `ω` is decoded as bottom), and it sends `ω * 5 + 1` to the
 private theorem strongDecode_empty_one :
     strongDecode (∅ : Finset Label.{u}) 1 1 = ⊥ ∧ (1 : Label.{u}) ≠ ⊥ ∧
       strongDecode (∅ : Finset Label.{u}) 1 omega0FiveOne = ⊤ := by
-  have hcb : codeBands ((∅ : Finset Label.{u}).image (spread 1)) = ∅ := by
-    simp [codeBands, valueBands]
+  have hcb : codeBlocks ((∅ : Finset Label.{u}).image (spread 1)) = ∅ := by
+    simp [codeBlocks, valueBlocks]
   refine ⟨?_, by simp, ?_⟩
   · rw [strongDecode_apply, show (1 : Label.{u}) = ((1 : Ordinal.{u}) : Label.{u}) from rfl,
-      bandDecode_coe, bandDecodeOrd_of_eq_zero (Ordinal.div_eq_zero_of_lt Ordinal.one_lt_omega0),
+      blockDecode_coe, blockDecodeOrd_of_eq_zero (Ordinal.div_eq_zero_of_lt Ordinal.one_lt_omega0),
       unspread_bot]
-  · rw [strongDecode_apply, bandDecode_coe, bandDecodeOrd_of_lt, unspread_top]
+  · rw [strongDecode_apply, blockDecode_coe, blockDecodeOrd_of_lt, unspread_top]
     rw [hcb, omega0_mul_add_natCast_div, card_empty]
     exact Nat.cast_lt.mpr (by decide)
 

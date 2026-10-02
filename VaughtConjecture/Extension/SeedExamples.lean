@@ -12,12 +12,12 @@ Roadmap, Layer 3 (the coatom extension construction, from a seed through its com
 full grade and the addition of the apex), checkpoint 2.1.
 
 `point` is the legal stage type on one point carried by the one-point scheme `Scheme.onePoint` (a
-single cell of grade `1`, mute rows) with the bottom label; it is a copy of the private `point`
-of `VaughtConjecture.Extension.Examples`.  The amalgam of `point` with itself over the empty face
-has two cells, of scopes `{0}` and `{1}` and grade `1`, and mute rows; it is a seed
-(`Seed.ofCoatoms`).  Appending one cell of full scope `{0, 1}` and grade `1`, with mute row and
-bottom label, gives a completion below the full grade by hand: its rows are mute, hence consistent
-and bountiful, and its only graded faces of grade `1` are `({0}, 1)`, `({1}, 1)`, and
+single cell of grade `1`, the bottom rows) with the bottom label; it is a copy of the private
+`point` of `VaughtConjecture.Extension.Examples`.  The amalgam of `point` with itself over the empty
+face has two cells, of scopes `{0}` and `{1}` and grade `1`, and the bottom rows; it is a seed
+(`Seed.ofCoatoms`).  Appending one cell of full scope `{0, 1}` and grade `1`, with bottom row and
+bottom label, gives a completion below the full grade by hand: its rows are the bottom rows, hence
+consistent and bountiful, and its only graded faces of grade `1` are `({0}, 1)`, `({1}, 1)`, and
 `({0, 1}, 1)`.  At the stage `0`, which is zero, its completion (truncation to the stage, then
 adding the apex) is a legal stage type on two points whose faces along the two coatoms are literally
 `point`, with an apex of graded index `({0, 1}, 2)` labelled with the formal top.
@@ -45,7 +45,8 @@ private noncomputable def seed : Seed.{0} 0 0 :=
   Seed.ofCoatoms isLegal_point isLegal_point restrictFace_point.choose_spec
     restrictFace_point.choose_spec
 
-/-- The rows of the amalgamated cell scheme of `point` with itself are mute, row by row. -/
+/-- The rows of the amalgamated cell scheme of `point` with itself are constantly bottom, row by
+row. -/
 private theorem amalgamRows_row_eq_bot :
     ∀ (x : Coatom.AmalgamCell (Coatom.comap_eq_of_restrictFace restrictFace_point.choose_spec
       restrictFace_point.choose_spec)) y,
@@ -53,8 +54,8 @@ private theorem amalgamRows_row_eq_bot :
         restrictFace_point.choose_spec)).row x y = ⊥ := by
   rintro (i | ⟨j, hj⟩) y <;> rfl
 
-/-- The rows of the amalgam of `point` with itself are mute. -/
-private theorem rows_seed : seed.amalgam.rows = CellScheme.Rows.mute _ := by
+/-- The rows of the amalgam of `point` with itself are the bottom rows. -/
+private theorem rows_seed : seed.amalgam.rows = CellScheme.Rows.bot _ := by
   ext s t
   exact amalgamRows_row_eq_bot _ _
 
@@ -62,14 +63,14 @@ private theorem rows_seed : seed.amalgam.rows = CellScheme.Rows.mute _ := by
 private theorem label_seed : seed.amalgam.label = fun _ ↦ ⊥ := by
   have h := seed.amalgam.isLawful
   rw [rows_seed] at h
-  exact CellScheme.Rows.isLawful_mute_iff.mp h
+  exact CellScheme.Rows.isLawful_bot_iff.mp h
 
-/-- The amalgam with one cell of full scope and grade `1`, with mute row. -/
+/-- The amalgam with one cell of full scope and grade `1`, with bottom row. -/
 private noncomputable abbrev completedScheme : Scheme.{0} 2 :=
   seed.amalgam.toScheme.appendFullCell 1 (fun _ ↦ ⊥) (seed.not_univ_le 1)
 
-/-- The rows of the completed scheme are mute. -/
-private theorem rows_completedScheme : completedScheme.rows = CellScheme.Rows.mute _ := by
+/-- The rows of the completed scheme are the bottom rows. -/
+private theorem rows_completedScheme : completedScheme.rows = CellScheme.Rows.bot _ := by
   ext s t
   induction s using Fin.lastCases with
   | last => exact Scheme.appendFullCell_row_last t
@@ -85,10 +86,10 @@ private theorem isLegalBelowFullGrade_completedScheme : completedScheme.IsLegalB
   isCoded := Scheme.isCoded_appendFullCell seed.amalgam.isCoded fun _ ↦ WithBot.bot_lt_coe _
   isConsistent := by
     rw [rows_completedScheme]
-    exact CellScheme.Rows.isConsistent_mute
+    exact CellScheme.Rows.isConsistent_bot
   isBountiful := by
     rw [rows_completedScheme]
-    exact CellScheme.Rows.isBountiful_mute
+    exact CellScheme.Rows.isBountiful_bot
   grade_lt d := by
     induction d using Fin.lastCases with
     | last => exact (Scheme.appendFullCellScheme_grade_last _ _).trans_lt one_lt_two

@@ -26,6 +26,10 @@ The labelling `p` *transforms to* `q` (`TransformsTo grade p q`) if some witness
 `q d = min (σ (p d)) (g (grade d))` for every cell `d`.  The raw data `(g, σ)` and their laws
 are kept apart: `IsWitness` is a proposition about given functions.
 
+The *step suppressor* `stepSuppressor K` is the formal top at the grades `≤ K` and bottom above.
+A *witness bounded by grade `K`* is a witness whose suppressor is `stepSuppressor K`; the bound is
+on the grades of the suppressor, not on the values of the shifter.
+
 ## Rules proved here
 
 * reflexivity (`TransformsTo.refl`), pullback along a map of cell families
@@ -37,9 +41,9 @@ are kept apart: `IsWitness` is a proposition about given functions.
   (`IsWitness.truncate`), capping the suppressor by a self-visible label (`IsWitness.cap`), and
   the cap rule for the target (`TransformsTo.min_const`, a related target-capping variant of
   [Kni26, Lemma 2.3.12]);
-* guarded composition (`IsWitness.comp_of_bot_reflecting`): a shifter normalized at grade `m`
-  may be followed by a shifter normalized at grade `m` that reflects bottom on the values of the
-  first;
+* guarded composition (`IsWitness.comp_of_bot_reflecting`): the shifter of a witness bounded by
+  grade `m` may be followed by the shifter of a second witness bounded by grade `m` that reflects
+  bottom on the values of the first;
 * stage reduction at a stage that is zero or a limit, of the target and of the witness
   (`TransformsTo.reduce_self`, `IsWitness.reduce`, and the reduction rule
   `TransformsTo.reduce`, [Kni26, Lemma 3.1.3]).
@@ -87,14 +91,14 @@ structure IsWitness (g : ℕ → Label.{u}) (σ : Label.{u} → Label.{u}) : Pro
 def TransformsTo (grade : D → ℕ) (p q : D → Label.{u}) : Prop :=
   ∃ g σ, IsWitness g σ ∧ ∀ d, q d = min (σ (p d)) (g (grade d))
 
-/-- The suppressor normalized at grade `K`: the formal top at grades `≤ K` and bottom above. -/
+/-- The step suppressor at grade `K`: the formal top at grades `≤ K` and bottom above. -/
 def stepSuppressor (K : ℕ) (n : ℕ) : Label.{u} := if n ≤ K then ⊤ else ⊥
 
-/-- The normalized suppressor is the formal top at grades `≤ K`. -/
+/-- The step suppressor is the formal top at grades `≤ K`. -/
 @[simp] theorem stepSuppressor_of_le {K n : ℕ} (h : n ≤ K) :
     stepSuppressor.{u} K n = ⊤ := ite_eq_left h
 
-/-- The normalized suppressor is bottom at grades `> K`. -/
+/-- The step suppressor is bottom at grades `> K`. -/
 @[simp] theorem stepSuppressor_of_lt {K n : ℕ} (h : K < n) :
     stepSuppressor.{u} K n = ⊥ := ite_eq_right h.not_ge
 
@@ -183,7 +187,7 @@ theorem IsWitness.truncate (hw : IsWitness g σ) (K : ℕ) :
     IsWitness (fun n ↦ if n ≤ K then g n else ⊥) σ := by
   simpa only [min_top_right] using hw.cap (isSelfVisible_top K)
 
-/-- The identity shifter with the suppressor normalized at `K` is a witness. -/
+/-- The identity shifter with the step suppressor at `K` is a witness bounded by grade `K`. -/
 theorem IsWitness.id_step (K : ℕ) : IsWitness (stepSuppressor.{u} K) id :=
   IsWitness.id_top.truncate K
 
@@ -206,20 +210,21 @@ theorem IsWitness.sup (hg : IsWitness g σ) (hg' : IsWitness g' σ) : IsWitness 
 
 /-! ### Guarded composition -/
 
-/-- The normalized suppressor is monotone in the grade at which it is normalized. -/
+/-- The step suppressor is monotone in its grade. -/
 theorem monotone_stepSuppressor : Monotone (stepSuppressor.{u} : ℕ → ℕ → Label.{u}) :=
   fun _ _ hmK n ↦ by unfold stepSuppressor; split_ifs <;> simp_all; omega
 
-/-- A shifter normalized at grade `K` is a shifter normalized at every grade `m ≤ K`. -/
+/-- The shifter of a witness bounded by grade `K` is the shifter of a witness bounded by every
+grade `m ≤ K`. -/
 theorem IsWitness.of_le_stepSuppressor {m K : ℕ} (hν : IsWitness (stepSuppressor K) ν)
     (hmK : m ≤ K) : IsWitness (stepSuppressor.{u} m) ν :=
   hν.of_le (monotone_stepSuppressor hmK) (IsWitness.id_step m).antitone
     (IsWitness.id_step m).isSelfVisible
 
-/-- **Guarded composition.**  A shifter `τ` normalized at grade `m` followed by a shifter `ν`
-normalized at grade `m` is a shifter normalized at `m`, provided `ν` sends a value of `τ` to
-bottom only when that value is bottom.  A second shifter normalized at a grade `K ≥ m` is
-normalized at `m` by `IsWitness.of_le_stepSuppressor`. -/
+/-- **Guarded composition.**  If `τ` and `ν` are shifters of witnesses bounded by grade `m`, then
+`ν ∘ τ` is the shifter of a witness bounded by grade `m`, provided `ν` sends a value of `τ` to
+bottom only when that value is bottom.  The shifter of a witness bounded by a grade `K ≥ m` is
+the shifter of a witness bounded by `m` (`IsWitness.of_le_stepSuppressor`). -/
 theorem IsWitness.comp_of_bot_reflecting {m : ℕ} (hτ : IsWitness (stepSuppressor m) τ)
     (hν : IsWitness (stepSuppressor m) ν) (hbot : ∀ x, ν (τ x) = ⊥ → τ x = ⊥) :
     IsWitness (stepSuppressor.{u} m) (ν ∘ τ) where

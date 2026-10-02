@@ -12,7 +12,7 @@ Roadmap, Layer 1 (visibility replacement); the ordinal-level part of
 `VaughtConjecture.Label.visibilityReplace`.
 
 Every ordinal `o` is uniquely `ω * (o / ω) + o % ω` with `o % ω < ω` (`Ordinal.div_add_mod`); the
-summand `o % ω` is its *finite part*, and the ordinals sharing `o / ω` form the *band*
+summand `o % ω` is its *finite part*, and the ordinals sharing `o / ω` form the *block*
 `[ω * (o / ω), ω * (o / ω) + ω)` of `o` (the upper end is `Ordinal.lt_mul_div_add`).
 
 `Ordinal.visibilityReplace k i o` is the thresholded replacement of the finite part: at
@@ -21,11 +21,11 @@ threshold `k` with value `i`, the finite part of `o` is replaced by `i` when it 
 
 * For a multiple `α` of `b`, the ordinals in `[b * a, b * a + b)` lie either all below `α` or all
   at or above it (`Ordinal.lt_iff_mul_lt_of_dvd`); for `b = ω` this says that at a stage that is
-  zero or a limit a band lies either below the stage or at or above it
+  zero or a limit a block lies either below the stage or at or above it
   (`Ordinal.lt_iff_omega0_mul_div_lt_of_isSuccPrelimit`).
 * Below an ordinal `β` that is zero or a limit, `γ + ω ≤ β` for every `γ < β`
   (`Ordinal.add_omega0_le_of_isSuccPrelimit`).
-* Visibility replacement stays in the band of its argument
+* Visibility replacement stays in the block of its argument
   (`Ordinal.omega0_mul_div_le_visibilityReplace`, `Ordinal.visibilityReplace_lt`), so at a stage
   that is zero or a limit it keeps an ordinal below the stage exactly when it was below
   (`Ordinal.visibilityReplace_lt_iff`).
@@ -64,7 +64,7 @@ namespace Ordinal
 
 variable {α o : Ordinal.{u}} {K k i : ℕ}
 
-/-! ### Bands -/
+/-! ### Blocks -/
 
 /-- For a multiple `α` of `b`, the ordinals in `[b * a, b * a + b)` lie either all below `α` or all
 at or above it. -/
@@ -120,12 +120,12 @@ private theorem visibilityReplace_finitePart_lt_omega0 (k i : ℕ) (o : Ordinal.
   · exact natCast_lt_omega0 i
   · exact Ordinal.mod_lt _ omega0_ne_zero
 
-/-- Visibility replacement does not leave the band: lower end. -/
+/-- Visibility replacement does not leave the block: lower end. -/
 theorem omega0_mul_div_le_visibilityReplace (k i : ℕ) (o : Ordinal.{u}) :
     ω * (o / ω) ≤ visibilityReplace k i o :=
   le_self_add
 
-/-- Visibility replacement does not leave the band: upper end. -/
+/-- Visibility replacement does not leave the block: upper end. -/
 theorem visibilityReplace_lt (k i : ℕ) (o : Ordinal.{u}) :
     visibilityReplace k i o < ω * (o / ω) + ω :=
   add_lt_add_right (visibilityReplace_finitePart_lt_omega0 k i o) _

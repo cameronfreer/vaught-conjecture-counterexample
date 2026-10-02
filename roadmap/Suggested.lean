@@ -296,7 +296,7 @@ theorem countable_split_of_uniform_domain {Q : Type u} (D : Set Q)
   · left
     exact Set.Countable.mono (fun q hq hqd => hex ⟨q, hqd, hq⟩) hsmall
 
-/-- The lower bound is independent of small losses and logical comparison.
+/-- The lower bound does not use small losses or logical comparison.
 Proved in the library, for any linear successor order and any set of indices with nonempty
 successor losses, as `VaughtConjecture.Counting.exists_injective_mem_sdiff_succ`; the statement
 is kept here, with its `sorry`, as part of the target list. -/
@@ -519,8 +519,8 @@ end Hull
 
 /-! ## The main theorem, stated with actual library objects
 
-The concrete language and sentence must come from the independent finite
-construction, with the semantic contract (SEMANTIC_CONTRACT.md) unchanged. This predicate may not be
+The concrete language and sentence must come from the finite construction
+itself, with the semantic contract (SEMANTIC_CONTRACT.md) unchanged. This predicate may not be
 assumed in place of any construction. The final theorem has no hypotheses
 asserting this predicate or the receiving/classification conclusions.
 -/

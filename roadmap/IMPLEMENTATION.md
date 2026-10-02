@@ -205,14 +205,14 @@ between the requested cutoff and the stage, `c < c' < α` (a permitted cutoff, s
 top), self-visible at the donor's arity `k`.  Such a `c'` is given by
 `Label.exists_lt_lt_isSelfVisible (hβ : Order.IsSuccPrelimit β) (ho : o < β) (k : ℕ) :
 ∃ c, o < c ∧ c < β ∧ IsSelfVisible k (c : Label)` (`Realization/Families`, namespace `Label`),
-applied with `o := c`, with witness `c' = c + (k + 1)`.  Its hypotheses hold here only because (i) the requested cutoff
-`c` is an ordinal below the stage (it is a permitted cutoff, `isPermittedCutoff_coe`), and (ii)
-the stage is zero or a limit (`Order.IsSuccPrelimit`).  Each step takes a lawful coface of the
-actual type with the donor's observation at `c'`; this stronger agreement at `c'` is preserved
-throughout the finite chain of extensions, after which one passes down to `c` by capping.
-The stage hypothesis (ii) stays in the statement.  At stage zero there are no permitted
-cutoffs, so that case is vacuous; it is not a source of a witness.  No generalization to
-successor stages follows from this argument.  The presentation is stated first at stage `ω` and
+applied with `o := c`, with witness `c' = c + (k + 1)`.  Its hypotheses hold here only because (i)
+the requested cutoff `c` is an ordinal below the stage (it is a permitted cutoff,
+`isPermittedCutoff_coe`), and (ii) the stage is zero or a limit (`Order.IsSuccPrelimit`).  Each step
+takes a lawful coface of the actual type with the donor's observation at `c'`; this stronger
+agreement at `c'` is preserved throughout the finite chain of extensions, after which one passes
+down to `c` by capping.  The stage hypothesis (ii) stays in the statement.  At stage zero there are
+no permitted cutoffs, so that case is vacuous; it is not a source of a witness.  No generalization
+to successor stages follows from this argument.  The presentation is stated first at stage `ω` and
 at the stages `λ_ξ` (all limits), under the countability hypotheses the argument needs.
 Different cutoffs may use different points.  Prove both satisfaction directions, the
 realization/structure round trips, isomorphism preservation and reflection, and no finite
@@ -435,7 +435,8 @@ age and not recognized afterwards in a model constructed otherwise.
    only the coface, a stage type on one more point, not a point of the realization); the
    receiving criterion, all equations on one injective occurrence extending `t` literally, puts
    the new point outside the whole chart `t`, hence outside `F`; terminality from top-freeness
-   and the new band required at the next block, using only the reduction of models (layer 2).
+   and the labels in the new block `[λ, λ + ω)` required at the next block, using only the
+   reduction of models (layer 2).
    The placement of the base class in the loss at `η`, by expansion uniqueness and same-carrier
    transport, belongs to layer 5 (checkpoint 5).
 
@@ -1146,14 +1147,14 @@ lands, their notes stay in those modules.
   `IsShort` and the flattening of finite parts (`flatten`, `flattenOrd`, and their lemmas)
   beside the self-visible labels of `Label.Visibility`; its block arithmetic beside the blocks
   of `Label.OrdinalVisibility`.
-- `Extension/CodedSection`: the block coding (`bandEncode`, `bandDecode`, and their lemmas) to a
-  module `Label/Coding.lean` beside `Label.Transform`; `CellScheme.Rows.IsLawful.exists_bandEncode`
+- `Extension/CodedSection`: the block coding (`blockEncode`, `blockDecode`, and their lemmas) to a
+  module `Label/Coding.lean` beside `Label.Transform`; `CellScheme.Rows.IsLawful.exists_blockEncode`
   to `Scheme.Row`, after the lawful sections.  Its private block arithmetic
   (`mod_le_mod_of_div_eq`, `mod_lt_mod_of_div_eq`, `omega0_mul_add_lt`, `omega0_mul_add_div`,
   `omega0_mul_add_mod`, `visibilityReplace_omega0_mul_add`, `omega0_mul_natCast_add_lt`)
   duplicates the public rules of `Extension/WitnessAlgebra`, which replace it.  The existential
-  coded copy (`CellScheme.Rows.IsLawful.exists_bandEncode`, `Label.IsWitness.bandEncode`) is a
-  consequence of the universal form, `Label.isWitness_bandEncode_stepSuppressor` with
+  coded copy (`CellScheme.Rows.IsLawful.exists_blockEncode`, `Label.IsWitness.blockEncode`) is a
+  consequence of the universal form, `Label.isWitness_blockEncode_stepSuppressor` with
   `CellScheme.Rows.IsLawful.map_of_bot_reflecting`, and is to be replaced by it.
 - `Extension/Encoders`: the label statements to `Label/Coding.lean`, beside the block coding;
   the lawfulness statements to `Scheme.Row`.  The encoders of 2.3 are built on the block coding

@@ -110,7 +110,7 @@ What do the surviving domains buy logically? Finite receiving transfers an entir
 
 For an arbitrary infinitary sentence \(\psi\), choose a countable \(\eta\) at least its quantifier rank. The truth of \(\psi\) is constant on \(D_\eta\). One of its truth and falsehood sets on \(Q\) is therefore contained in the countable complement of \(D_\eta\). This is sentence minimality. Notice how little the conclusion needs: continuous decreasing domains with countable losses, and increasing logical agreement on those domains. It does not need a complete classification of all models, a measurable ordinal invariant, equality between expansion height and Scott rank, or eventual departure of every class.
 
-### 5. The descriptive-set-theoretic conclusion and independent lower bound
+### 5. The descriptive-set-theoretic conclusion and the lower bound, proved separately
 
 Return to actual structures with carrier \(\mathbb N\). In a countable relational language these form the usual Polish coding space, and satisfaction of an infinitary sentence is Borel. Isomorphism is the orbit relation of the permutation group of \(\mathbb N\). The quotient \(Q\) is useful as a set of classes, but no standard Borel structure on that quotient is assumed. The argument uses Borel and analytic sets of model codes instead.
 
