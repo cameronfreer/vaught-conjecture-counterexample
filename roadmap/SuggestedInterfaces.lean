@@ -320,7 +320,7 @@ set_option linter.hashCommand false in
 #check FirstOrder.Language.exists_isPiIn_two_scottSentence_of_sigmaIn_zero_orbits
 
 -- Graded matching (InfinitaryLogic, `Scott/GradedMatching`), available at the pin `def5cc0`
--- (signatures to be checked by CI on this branch).  A family `R α n a b` of relations between
+-- (signatures checked).  A family `R α n a b` of relations between
 -- tuples, graded by ordinals up to `height`, atomic at level `0`, lowering, and with forth and
 -- back one level down, relates at a level `α ≤ height` only `BFEquiv α` pairs; any language, no
 -- relationality.  It serves the graded back-and-forth theorem of `README.md`, Layer 0, whose
@@ -331,7 +331,7 @@ set_option linter.hashCommand false in
 #check FirstOrder.Language.bfEquiv_of_gradedSystem
 
 -- Rank tails and the least level of a cover (InfinitaryLogic, `OrdinalCountability`), available
--- at the pin `def5cc0` (signatures to be checked by CI on this branch).  For `r : X → Ordinal`
+-- at the pin `def5cc0` (signatures checked).  For `r : X → Ordinal`
 -- below `ω₁` with countable fibres, the tails `rankTail r η = {x | η ≤ r x}` have nonempty losses
 -- cofinally below `ω₁` iff `X` is uncountable, and an uncountable `X` has `#X = ℵ₁`; a cover by
 -- countable sets `Q α`, `α < ω₁`, gives `leastLevel Q` countable fibres, with tails the
@@ -351,7 +351,7 @@ set_option linter.hashCommand false in
 #check InfinitaryLogic.rankTail_cofinal_losses_iff
 
 -- Forgetting finitely many parameters (InfinitaryLogic, `Scott/ForgetParameters`), available at
--- the pin `def5cc0` (signatures to be checked by CI on this branch).  The existential closure
+-- the pin `def5cc0` (signatures checked).  The existential closure
 -- `existsTuple k φ` of a formula characterizing `(M, c)` is a Scott sentence of `M` among
 -- countable structures, and keeps the class `Σ^in_α` for `1 ≤ α`; for a countable `M` in a
 -- countable relational language, `Σ^in_α` orbits over a parameter tuple (`1 ≤ α`) give a

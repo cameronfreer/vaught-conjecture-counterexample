@@ -830,8 +830,8 @@ named (`README.md`, Layer 0):
   `isPiIn_montalbanSentence`, `isPiIn_montalbanSentencePointed`,
   `exists_isPiIn_scottSentence_of_sigmaIn_orbits`, `exists_isPiIn_pointed_of_sigmaIn_orbits`, and
   `exists_isPiIn_two_scottSentence_of_sigmaIn_zero_orbits`).  Between `8a15ca5` and `def5cc0`
-  there are three merges, available at the pin (signatures to be checked by CI on this branch;
-  `SuggestedInterfaces.lean` `#check`s them):
+  there are three merges, available at the pin (signatures checked; `SuggestedInterfaces.lean`
+  `#check`s them; no application compiled in this repository):
   - forgetting finitely many parameters (#149, `Scott/ForgetParameters`): `existsTuple_isScott`,
     the existential closure over the parameters of a formula characterizing `(M, c)` is a Scott
     sentence of `M` among countable structures; `isSigmaIn_existsTuple_iff`, the closure keeps
