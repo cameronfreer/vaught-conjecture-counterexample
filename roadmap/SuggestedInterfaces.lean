@@ -327,7 +327,10 @@ set_option linter.hashCommand false in
 -- no relationality.  It is a generic form of the graded back-and-forth theorem of `README.md`,
 -- Layer 0, whose initial match is a pair related at the height (`α = height`); each of its two
 -- applications puts the height guard and the selection of coordinates inside `R` (`README.md`,
--- Layer 0).  Neither application is compiled through it here.
+-- Layer 0).  Both applications are compiled through it in the library, on abstract hypotheses
+-- (`VaughtConjecture.Comparison.GradedMatchingApplications`: approximate comparison,
+-- `FullPresentation.bfEquiv_comp_of_obs_eq`, and condition 3 in back-and-forth form,
+-- `ExpansionMatchData.bfEquiv_of_expansionMatch`); no application is compiled in this sketch.
 set_option linter.hashCommand false in
 #check FirstOrder.Language.bfEquiv_of_gradedMatching
 set_option linter.hashCommand false in
