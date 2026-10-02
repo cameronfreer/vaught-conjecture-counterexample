@@ -64,22 +64,20 @@ reduction to `ℕ` explicit (no finite models, so every countable model is isomo
 model on `ℕ`).  This is not a first-order Vaught result and is not a comparison
 with the continuum.
 
-The core is complete only after every finite construction, realization over a root, recovery
-of donor labels, syntax correspondence, the equivalence of the density sentence with the
-four-family sentence (layer 2), the top-free witness at every countable block (the
-reconstruction of a classical limit meeting its acceptance criterion), and statement of the main
-theorem below is proved.
-Completion is not limited to the signatures in the sketches.  Each definition needs its usable
-basic API: projections, extensionality, identity/composition, restriction, transport, and
-representative examples.
+The core is complete only after every finite construction, realization over a root, recovery of
+donor labels, syntax correspondence, the equivalence of the density sentence with the four-family
+sentence (layer 2), the top-free witness at every countable block (obtained by finite-age
+reconstruction from a classical limit, meeting its acceptance criterion), and statement of the main
+theorem below is proved.  Completion is not limited to the signatures in the sketches.  Each
+definition needs its usable basic API: projections, extensionality, identity/composition,
+restriction, transport, and representative examples.
 
-Under-specified extensions are not part of this roadmap.  Separate companion roadmaps may
-cover the definability consequences of the hull operations and hull cardinality
-(`HULL_ALGEBRA.md`, §4; the operations themselves are core, layer 2), model-code topology,
-`T∞` (the set of sentences true in all but countably many classes) and its logical filtration,
-effective syntax, and uncountable models; `COMPANIONS.md` organizes the filtration and `T∞`,
-chart homogeneity, and a geometric obstruction as three optional milestones.  They are not
-prerequisites of this core.
+Under-specified extensions are not part of this roadmap.  Separate companion roadmaps may cover the
+definability consequences of the hull operations and hull cardinality (`HULL_ALGEBRA.md`, §4; the
+operations themselves are core, layer 2), model-code topology, `T∞` (the set of sentences true in
+all but countably many classes) and its agreement filtration, effective syntax, and uncountable
+models; `COMPANIONS.md` organizes the filtration and `T∞`, chart homogeneity, and a geometric
+obstruction as three optional milestones.  They are not prerequisites of this core.
 
 ## The mathematical spine
 
@@ -278,18 +276,23 @@ LOW, and the cap-to-model theorem) and consists of four items, built in this ord
    structural candidate and come at checkpoint 5.  (R3) and (R4) share the constructed scheme
    and the recovery statement; their acquired data, the labelling evaluated, and their
    existence hypotheses stay separate.
-3. **`Correct`, LOW, and the recovery statements.**  `Correct` consists of three clauses capped
-   at the value of the private cap, which can be top: bottom, reference with its offset
-   replacement, and a marker lower bound; it has no gate.  LOW is gate-free: its forcing puts
-   every donor-top field above the cutoff and the private gap value once the cutoff exceeds the
-   non-top donor maximum, and its recovery returns the donor exactly, tops included, from
-   agreement with the display below a cutoff above the rounded non-top donor maximum.  Agreement
-   below a cutoff, exact recovery of the labels that are not top (bottom and proper, from LOW
-   or from the bottom and reference clauses of `Correct`), literal-top recovery (from LOW, or
-   from `Correct` when the private cap is top), and above-threshold inequalities are different
-   conclusions.  Agreement below one permitted cutoff cannot distinguish a proper label above
-   the cutoff from top.  Each recovery lemma lists the observations it reads and does not
-   require recovery of the whole type of the constructed occurrence.
+3. **`Correct`, LOW, and the recovery statements.**  `Correct` consists of three clauses capped at
+   the value of the private cap, which can be top: bottom, reference with its offset replacement,
+   and a marker lower bound; it has no gate.  LOW is gate-free: its forcing puts every donor-top
+   field above the cutoff and the private gap value once the cutoff exceeds the non-top donor
+   maximum, and its recovery returns the donor exactly, tops included, from agreement with the
+   display below a cutoff above the rounded non-top donor maximum.  Agreement below a cutoff, exact
+   recovery of the labels that are not top (bottom and proper, from LOW or from the bottom and
+   reference clauses of `Correct`), literal-top recovery (from LOW, or from `Correct` when the
+   private cap is top), and above-threshold inequalities are different conclusions.  Agreement below
+   one permitted cutoff cannot distinguish a proper label above the cutoff from top.  Each recovery
+   lemma lists the observations it reads and does not require recovery of the whole type of the
+   constructed occurrence.  Cutoff observations, stage reductions, and exact extension within a
+   specified age are kept apart (the density boundary, `README.md`, Layer 3, 3.3): cutoff-by-cutoff
+   receiving gives exact projected receiving only after projected-donor lifting over the particular
+   actual root being extended is proved, a statement to be proved in each application (for every
+   actual root and every projected donor over it, the lift depending on both), and coherence of the
+   projections is not accepted as a proof of it.
 4. **Extension statements and first uses** (the table of `README.md`, Layer 3): finite-cut
    receiving, first used by the one-sided donor transfer (and by the four-family-to-density
    direction of layer 2); exact residual receiving, by the residual comparison; exact
@@ -350,12 +353,23 @@ hypotheses.
 ### 5. Unique expansions, domains, and the main theorem
 
 Prove unique partial expansions and countable-limit existence.  Coherence of a family of lower
-expansions is derived from uniqueness, not a hidden hypothesis.  Map successor losses to
-terminal classes.  Take the top-free witnesses (the section on them) at each countable block;
-expansion uniqueness, with same-carrier transport, is what places their **base classes** in the
-corresponding successor differences: together they exclude another, higher expansion of the base
-reduct.  Eventual stopping is not an input: conditions 1–4 give it for every class outside the
-persistent core, which has at most one class, and no statement here assumes it for every model.
+expansions is derived from uniqueness, not a hidden hypothesis.  Map successor losses to terminal
+classes.  Take the top-free witnesses (the section on them) at each countable block; expansion
+uniqueness, with same-carrier transport, is what places their **base classes** in the corresponding
+successor differences: together they exclude another, higher expansion of the base reduct.  Eventual
+stopping is not an input: conditions 1–4 give it for every class outside the persistent core, which
+has at most one class, and no statement here assumes it for every model.
+
+Sections 4 and 5 together are **higher-stage reconstruction** (`README.md`, head of Layer 4, which
+lists its five outputs, each a statement still to be proved): the structural candidate, its
+normalization, and the separate modelhood criterion (section 4); the partial-expansion API, namely
+reduction, uniqueness, coherence, and transport under isomorphism; and limit existence, with
+coherence derived from uniqueness (this section).  Outputs 1–3 and 5, and the uniqueness, coherence,
+and transport under isomorphism of output 4, belong to checkpoint 5; the reduction of models in
+output 4 is layer 2 (checkpoint 3).  A proof that the candidate is uniquely determined is never
+accepted as a proof that it exists as a model.  Higher-stage reconstruction is distinct from
+finite-age reconstruction, the construction of the top-free witnesses below, whose acceptance
+criterion is `SEMANTIC_CONTRACT.md`, item 11.
 
 Prove the one-sided finite-donor transfer first, using only target consistency and finite-cut
 receiving (R1).  Symmetrize for back-and-forth: one block buys one level, with no extra `ω`
@@ -447,13 +461,13 @@ module of (R1)–(R4), of structural continuation, or of the expansion domains; 
 (R5), the cap-to-model theorem, and the reduction of models. The upstream theorems import no module
 of this repository. The chain construction (`Construction/`, the chain unions of partial
 realizations, and the conditional chain construction of models) is needed neither for top-free
-existence nor for saturated existence: the saturated model of [Kni26, Proposition 4.4.5] is the
-classical limit of the uncapped age of all legal stage types (hereditary, amalgamating by the plain
-form of the coatom extension property, countably many isomorphism types). No checkpoint of the main
-theorem depends on the chain construction. It is retained for an effective presentation only,
-conditional on effective input data (an effective enumeration of the age and an effective
-amalgamation procedure; the classical Fraïssé construction uses choice and supplies no computable
-presentation). The partial-realization statements of the conditional chain development
+existence nor for saturated existence: the saturated model of [Kni26, Proposition 4.4.5] is
+reconstructed from the classical limit of the uncapped age of all legal stage types (hereditary,
+amalgamating by the plain form of the coatom extension property, countably many isomorphism types).
+No checkpoint of the main theorem depends on the chain construction. It is retained for an effective
+presentation only, conditional on effective input data (an effective enumeration of the age and an
+effective amalgamation procedure; the classical Fraïssé construction uses choice and supplies no
+computable presentation). The partial-realization statements of the conditional chain development
 (`StageType.chartRealization`, `StageType.isConsistent_chartRealization`,
 `StageType.chartRealization_eval_eq_none_iff`, in `Realization/Partial.lean`, outside
 `Construction/`, in the library) are to be reused in steps 1, 4, and 5, so that the boundary above
@@ -519,7 +533,14 @@ their notions live; "this repository" means the layers of `README.md`.
    conditional on this coverage (the hypothesis `FullPresentations`). The known way to establish it
    goes through global termination (every class leaves the expansion domains at a countable stage,
    where its terminal expansion is full for its terminal exact age); the finite-stage arguments do
-   not cover the persistent class (`README.md`, "The persistent core").
+   not cover the persistent class (`README.md`, "The persistent core").  Eventual departure, the
+   first half of global termination, is a conditional target of terminal refinement
+   (`COMPANIONS.md`, "Further companion results"), to be proved only after the expansion-domain
+   count and from its conclusions; the second half, that the terminal expansion is full for its
+   terminal exact age, is the first special statement and is not part of terminal refinement.  A
+   proof of this route that takes departure from terminal refinement states its dependence on the
+   expansion-domain route, and a proof of this route that does not depend on it covers every class,
+   the persistent class included, by its own argument.
 6. *Noncollapse of the base reducts* (occurrence of all auxiliary invariants is
    insufficient).  Home: this repository (the top-free witnesses with expansion uniqueness and
    same-carrier transport, layer 6); the generic isolating-level criterion in sentence form in
@@ -633,6 +654,13 @@ and both are to be compiled before it is called common.  `Suggested.lean`, secti
 approximate comparison directly by the same induction (`FullPresentation.bfEquiv_comp_of_obs_eq`),
 not through it.
 
+**When a generic graded back-and-forth theorem is merged upstream.**  InfinitaryLogic's
+graded-matching theorem, a generic form of the theorem above, is prospective.  Once it is merged
+upstream and its signature is checked at the accepted pin ("Dependency pins"), layer 0 quotes it,
+and the construction layers supply only its hypotheses: atomic agreement, descent, forth and back,
+and an explicit initial match, without repeating the ordinal induction.  Until then the local
+theorem above remains the target.  Nothing is needed from ComputableModelTheory for it.
+
 **Prospective interfaces of InfinitaryLogic** (neither available upstream nor pinned; the
 statements are specified here, generically, with no construction):
 
@@ -652,13 +680,18 @@ statements are specified here, generically, with no construction):
   hence, if every level has two nonisomorphic `BFEquiv`-related members, the set has uncountably
   many isomorphism types;
 - *limits of chains of bounded equivalence* (`Scott/BlockBackAndForth`): an analogue for
-  `BlockBFEquiv` of [Mon, Lemma XII.6], by the same construction, with its offset to be
-  determined: for increasing countable ordinals `α_i` and countable structures `A_i` with
-  `A_i` and `A_{i+1}` `BlockBFEquiv`-equivalent at `α_i` plus that offset (empty tuples), a
-  countable structure `BlockBFEquiv α_i`-equivalent to every `A_i`; [Mon]'s offset `+3` is for
-  its own relation [Mon, Definition II.32] and is not transferred; it supports the club agreement
-  of `COMPANIONS.md`, "Further companion results", only through the passage between [Mon]'s
-  convention and InfinitaryLogic's, which is still to be proved.
+  `BlockBFEquiv` of [Mon, Lemma XII.6], by the same construction, with its offset to be determined:
+  for increasing countable ordinals `α_i` and countable structures `A_i` with `A_i` and `A_{i+1}`
+  `BlockBFEquiv`-equivalent at `α_i` plus that offset (empty tuples), a countable structure
+  `BlockBFEquiv α_i`-equivalent to every `A_i`; [Mon]'s offset `+3` is for its own relation [Mon,
+  Definition II.32] and is not transferred; it supports the rank-filtration comparison of
+  `COMPANIONS.md`, "Further companion results", only through the passage between [Mon]'s convention
+  and InfinitaryLogic's, which is still to be proved.
+- *the graded-matching theorem* (`Scott/BackAndForth`): a generic form of the graded back-and-forth
+  theorem of this repository (layer 0; "A prospective statement of this repository, layer 0" above),
+  with its hypotheses (atomic agreement, descent, forth and back, an explicit initial match) and
+  conclusion `BFEquiv`; quoted by layer 0 once it is merged upstream and its signature is checked at
+  the accepted pin, and until then the local theorem is the target.
 
 ## Upstream building blocks
 
@@ -897,8 +930,8 @@ statement is available at the pin):
 
 - classical existence (available at the pin) and `isFraisse_representativeClass`
   (ComputableModelTheory), for the limit (step 3);
-- the factorization of tuples through the age (ComputableModelTheory), for the reconstruction
-  (steps 4–5);
+- the factorization of tuples through the age (ComputableModelTheory), for steps 4–5 of finite-age
+  reconstruction;
 - `IsUltrahomogeneous.extend_embedding` (Mathlib), for receiving (step 6);
 - `isolatesTuple_of_orbit_formula`, `isAtomic_of_orbit_formulas`, and
   `exists_elementaryEmbedding_of_countable_atomic` (ComputableModelTheory), for the atomicity of
@@ -947,12 +980,11 @@ Each checkpoint needs both its abstract API and a concrete application:
    restrictions, and its consistent and bountiful rows are established, and (R6) follows from
    the coatom extension property, with nothing used about the stage; the proof of that property
    in its apex form, the completion of the amalgam, is checkpoints 2.1–2.7.
-3. Realizations, literal syntax correspondence, the hull operations with their five facts;
-   then steps 1–6 of the top-free witnesses, in order: finite top-free charts, hereditary
-   closure and amalgamation and joint embedding (through the plain form of the coatom extension
-   property, the first use of (R6)), classical existence (available at the pin),
-   reconstruction, consistency and
-   covering and top-freeness, and receiving (the first use of (R5)).
+3. Realizations, literal syntax correspondence, the hull operations with their five facts; then
+   steps 1–6 of the top-free witnesses, in order: finite top-free charts, hereditary closure and
+   amalgamation and joint embedding (through the plain form of the coatom extension property, the
+   first use of (R6)), classical existence (available at the pin), reconstruction of partial
+   evaluation, consistency and covering and top-freeness, and receiving (the first use of (R5)).
 4. Items 3.2 and 3.3 for (R1)–(R3): for each of them, the extension of the realization by one actual
    occurrence over the literal root and the recovery theorem (by `Correct` and labelled
    evaluation, by LOW, or through the gate), with all its equations on that occurrence and at
@@ -1067,14 +1099,17 @@ other coatom, and tops out in a single apex cell.
 
 Companion topics: definable domain/logical cuts with strict loss-rank lower bounds; canonical
 top-free classes converging sentencewise; local automorphisms of self-embeddings; and the
-arbitrary-carrier Scott/`T∞` theory dichotomy.  The joint embedding and amalgamation properties
-of finite top-free charts are step 2 of the top-free witnesses and
-belong to the core.  These do not assert strong AP, a proper self-embedding, uncountable
-categoricity, Scott-rank equality, or existence of a model of all of `T∞`.  The main theorem is
-proved without them; if any is added, give it a separate definite completion criterion.  Direct
-limits of structures and the classical existence theorem (available at the pin) belong
-to the two libraries, not to
-the finite constructions of layer 3.
+arbitrary-carrier Scott/`T∞` theory dichotomy.  The joint embedding and amalgamation properties of
+finite top-free charts are step 2 of the top-free witnesses and belong to the core.  These do not
+assert strong AP, a proper self-embedding, uncountable categoricity, Scott-rank equality, or
+existence of a model of all of `T∞`.  Terminal refinement (eventual departure by Scott isolation,
+the last admitted stage, and the terminal expansion; conditional targets) is downstream of the count
+and never an input to it, and the agreement filtration (defined by `T∞`) and the rank filtration
+(defined by Scott rank) are defined differently; no relation between them is asserted, and any
+comparison is a separate prospective theorem (`COMPANIONS.md`, "Further companion results").  The
+main theorem is proved without them; if any is added, give it a separate definite completion
+criterion.  Direct limits of structures and the classical existence theorem (available at the pin)
+belong to the two libraries, not to the finite constructions of layer 3.
 [`COMPANIONS.md`](COMPANIONS.md) gives these topics and the full-chart orbit theory below such
 criteria, as three milestones (A: filtration and infinitary theory; B: top-free chart homogeneity
 and its consequences; C: a geometric obstruction).

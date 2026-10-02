@@ -177,7 +177,7 @@ end Filtration
 /- The chart amalgamation and joint embedding properties (B1) belong to the core, step 2 of the
 top-free witnesses: `ChartAmalgamation`, `ChartJointEmbedding`, and
 `chartJointEmbedding_of_chartAmalgamation` are in `Suggested.lean` (`Roadmap.ClassicalLimit`),
-with the reconstruction predicate. -/
+with the finite-age reconstruction predicate. -/
 
 namespace Orbits
 
