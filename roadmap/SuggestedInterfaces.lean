@@ -320,23 +320,27 @@ set_option linter.hashCommand false in
 #check FirstOrder.Language.exists_isPiIn_two_scottSentence_of_sigmaIn_zero_orbits
 
 -- Graded matching (InfinitaryLogic, `Scott/GradedMatching`), available at the pin `def5cc0`
--- (signatures checked).  A family `R α n a b` of relations between
--- tuples, graded by ordinals up to `height`, atomic at level `0`, lowering, and with forth and
--- back one level down, relates at a level `α ≤ height` only `BFEquiv α` pairs; any language, no
--- relationality.  It serves the graded back-and-forth theorem of `README.md`, Layer 0, whose
--- initial match is the related pair at level `α`; no application is compiled here.
+-- (signatures checked).  A family `R α n a b` of relations between tuples, graded by ordinals up
+-- to `height`, atomic at level `0`, lowering, and with forth and back one level down, relates at
+-- a level `α ≤ height` only `BFEquiv α` pairs; any language, no relationality.  It is a generic
+-- form of the graded back-and-forth theorem of `README.md`, Layer 0, whose initial match is a pair
+-- related at the height (`α = height`); no application is compiled here.
 set_option linter.hashCommand false in
 #check FirstOrder.Language.bfEquiv_of_gradedMatching
 set_option linter.hashCommand false in
 #check FirstOrder.Language.bfEquiv_of_gradedSystem
 
 -- Rank tails and the least level of a cover (InfinitaryLogic, `OrdinalCountability`), available
--- at the pin `def5cc0` (signatures checked).  For `r : X → Ordinal`
--- below `ω₁` with countable fibres, the tails `rankTail r η = {x | η ≤ r x}` have nonempty losses
--- cofinally below `ω₁` iff `X` is uncountable, and an uncountable `X` has `#X = ℵ₁`; a cover by
--- countable sets `Q α`, `α < ω₁`, gives `leastLevel Q` countable fibres, with tails the
--- complements of the initial unions.  They serve the prospective "ranks with countable fibres"
--- (`IMPLEMENTATION.md`, "The full-presentation route"); no application is compiled here.
+-- at the pin `def5cc0` (signatures checked).  For `r : X → Ordinal` below `ω₁` with countable
+-- fibres, a set is countable iff its ranks are bounded below `ω₁` (`countable_iff_rank_bounded`),
+-- the tails `rankTail r η = {x | η ≤ r x}` have nonempty losses cofinally below `ω₁` iff `X` is
+-- uncountable, and an uncountable `X` has `#X = ℵ₁`.  Under the covering hypothesis
+-- `hcover : ⋃ α < ω₁, Q α = univ`, the tails of `leastLevel Q` are the complements of the initial
+-- unions of `Q`, and countable sets `Q α` give `leastLevel Q` countable fibres.  They serve the
+-- prospective "ranks with countable fibres" (`IMPLEMENTATION.md`, "The full-presentation route");
+-- no application is compiled here.
+set_option linter.hashCommand false in
+#check InfinitaryLogic.countable_iff_rank_bounded
 set_option linter.hashCommand false in
 #check InfinitaryLogic.rankTail
 set_option linter.hashCommand false in
@@ -351,13 +355,13 @@ set_option linter.hashCommand false in
 #check InfinitaryLogic.rankTail_cofinal_losses_iff
 
 -- Forgetting finitely many parameters (InfinitaryLogic, `Scott/ForgetParameters`), available at
--- the pin `def5cc0` (signatures checked).  The existential closure
--- `existsTuple k φ` of a formula characterizing `(M, c)` is a Scott sentence of `M` among
--- countable structures, and keeps the class `Σ^in_α` for `1 ≤ α`; for a countable `M` in a
--- countable relational language, `Σ^in_α` orbits over a parameter tuple (`1 ≤ α`) give a
--- `Σ^in_{α+2}` Scott sentence, and `Σ^in_1` orbits over parameters a `Σ^in_3` one.  It serves the
--- `Σ^in_3` Scott sentence obtained by existentially quantifying a named rigid core (`README.md`,
--- Layer 4; `COMPANIONS.md`, B4); no application is compiled here.
+-- the pin `def5cc0` (signatures checked).  The existential closure `existsTuple k φ` of a formula
+-- characterizing `(M, c)` is a Scott sentence of `M` among countable structures, and keeps the
+-- class `Σ^in_α` for `1 ≤ α`; for a countable `M` in a countable relational language, `Σ^in_α`
+-- orbits over a parameter tuple (`1 ≤ α`) give a `Σ^in_{α+2}` Scott sentence, and `Σ^in_1` orbits
+-- over parameters a `Σ^in_3` one.  It serves the `Σ^in_3` Scott sentence obtained by
+-- existentially quantifying a named rigid core (`README.md`, Layer 4; `COMPANIONS.md`, B4); no
+-- application is compiled here.
 set_option linter.hashCommand false in
 #check FirstOrder.Language.existsTuple_isScott
 set_option linter.hashCommand false in

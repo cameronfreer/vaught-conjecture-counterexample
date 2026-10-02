@@ -848,8 +848,8 @@ named (`README.md`, Layer 0):
   - graded matching (#152, `Scott/GradedMatching`, `bfEquiv_of_gradedSystem` and
     `bfEquiv_of_gradedMatching`): a family of relations graded up to a height bound, with atomic
     agreement at level `0`, lowering, and forth and back one level down, relates at a level
-    `α ≤ height` only `BFEquiv α` pairs (the graded back-and-forth theorem of `README.md`, Layer 0,
-    whose initial match is the pair related at level `α`).
+    `α ≤ height` only `BFEquiv α` pairs (a generic form of the graded back-and-forth theorem of
+    `README.md`, Layer 0, whose initial match is a pair related at the height, `α = height`).
 
   Toolchain and Mathlib are the same as at `8a15ca5`.  The imports are the narrow modules
   (`InfinitaryLogic.Scott.OrbitFormulaThreshold`, `InfinitaryLogic.Lomega1omega.LocalAutomorphism`,
@@ -869,12 +869,13 @@ named (`README.md`, Layer 0):
   seeded effective back-and-forth and computable automorphisms extending an isomorphism between
   finitely generated substructures of a computably homogeneous structure
   (`ModelTheory/Computable/AutomorphismExtension`), and finite elimination (#52, #53,
-  `Computability/FiniteElimination`: over a fixed prefix, a sequence of selections that never
-  selects a refuted candidate, replaces a selection only once it is refuted, and from some stage on
-  stays below a given bound makes only finitely many selections), all outside the entry module and
-  not used here.  None of the modules behind the entry module changed between `37f6c42` and
-  `0e9935b`.  Its own InfinitaryLogic pin is `8a15ca5`, an ancestor of the revision pinned here;
-  this repository's manifest governs (see the next item).
+  `Computability/FiniteElimination`: over a fixed prefix, if refutation persists, a sequence of
+  selections that never selects a refuted candidate, replaces a selection only once it is refuted,
+  and from some stage on selects only candidates of index at most a given bound makes only finitely
+  many selections), all outside the entry module and not used here.  None of the modules behind
+  the entry module changed between `37f6c42` and `0e9935b`.  Its own InfinitaryLogic pin is
+  `8a15ca5`, an ancestor of the revision pinned here; this repository's manifest governs (see the
+  next item).
 - **Mathlib and the toolchain** agree across the three: one Lean toolchain (`v4.35.0-rc3` at
   present) and one Mathlib commit (at present the fork commit `346a4bd`, inherited from
   InfinitaryLogic).  The manifest holds one revision of each dependency, so ComputableModelTheory
@@ -886,10 +887,11 @@ merged upstream after the pins above is listed here, named in prose only and nev
 the sketches, until a repin containing it is recorded in this subsection.
 
 **Prospective dependencies (neither available upstream nor pinned):** the InfinitaryLogic
-statements listed under "The full-presentation route": invariant Borel observations, ranks with
-countable fibres, the isolating-level lower bound, and limits of chains of bounded equivalence
-(the analogue for `BlockBFEquiv` of the chain-limit lemma).  The graded back-and-forth theorem,
-listed there too, is not a dependency: it is to be proved in this repository.  No
+statements listed under "The full-presentation route": invariant Borel observations, the
+isolating-level lower bound, and limits of chains of bounded equivalence (the analogue for
+`BlockBFEquiv` of the chain-limit lemma).  The local graded back-and-forth theorem remains the
+target until the upstream `bfEquiv_of_gradedMatching` (at the pin, signatures checked) has been
+checked against both intended applications; no application is compiled here.  No
 statement of this roadmap relies on any of them, or on the statements available upstream, as
 pinned until this subsection records a pin containing it; until then they are named in prose
 only (`README.md`, Layer 0), never `#check`ed in the sketches.
