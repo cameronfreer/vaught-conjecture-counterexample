@@ -126,10 +126,9 @@ theorem hull_mono (hFG : F ⊆ G) : x.hull F ⊆ x.hull G :=
 
 /-- A tuple whose points lie in the support of an occurrence is a face of its tuple. -/
 theorem exists_trans_eq {t : Fin n ↪ M} (ht : univ.map t ⊆ x.support) :
-    ∃ f : Fin n ↪ Fin x.arity, f.trans x.tuple = t := by
-  have h (i : Fin n) : ∃ j, x.tuple j = t i := (x.mem_support).mp (ht (mem_map_of_mem t (by simp)))
-  choose f hf using h
-  exact ⟨⟨f, fun i j hij ↦ t.injective (by rw [← hf, ← hf, hij])⟩, Function.Embedding.ext hf⟩
+    ∃ f : Fin n ↪ Fin x.arity, f.trans x.tuple = t :=
+  Function.Embedding.exists_trans_eq fun i ↦
+    (x.mem_support).mp (ht (mem_map_of_mem t (by simp)))
 
 /-- The image of a closed face of an occurrence is the support of an occurrence, a face. -/
 theorem exists_support_eq_map (hR : R.IsConsistent) {C : Finset (Fin x.arity)}
