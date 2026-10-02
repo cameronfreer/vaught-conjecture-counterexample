@@ -166,7 +166,9 @@ private theorem isLawful_stepSection : stepRows.{u}.IsLawful stepSection where
   availability s t _ hg := ⟨t, rfl, (eq_of_grade_eq hg) ▸ le_rfl⟩
 
 /-- **A lower prescribed label above the cap**: restoring, at the cap `2`, the lift of the
-prescription `(⊤, 2)` capped at `2` reads the formal top at the cell of grade `1`. -/
+prescription `(⊤, 2)` capped at `2` reads the formal top at the cell of grade `1`.  Here `X = Y`,
+and the scheme is not well formed (a cell of grade `2` on one point); both are admissible, since
+restoration assumes neither `X < Y` nor well-formedness. -/
 example : ∃ r : stepScheme.below (univ, 2) → Label.{u}, stepRows.IsLawfulBelow (univ, 2) r ∧
     r ⟨false, subset_rfl, by simp [stepScheme]⟩ = ⊤ := by
   have hp := isLawful_stepSection.{u}.isLawfulBelow (univ, 2)
