@@ -612,7 +612,7 @@ These are statements still to be proved.  None is an input to the main theorem.
      because the rank of a sentence separating `q` from `p` depends on `p` while the class lost at
      `β` varies with `β`, so no level need lie above the rank of the sentence separating `q` from
      the class lost there.  For instance, on `Q = ω₁ ∪ {q}` with `D_β = {q} ∪ [β, ω₁)` and, for each
-     `α < ω₁`, an observation of rank `α + 1` true at `α` only, the agreement and the cofinally
+     `α < ω₁`, a sentence of rank `α + 1` true at `α` only, the agreement and the cofinally
      nonempty losses hold and distinct points are separated, yet `q` lies in every `D_β`.
 
      **Cofinally nonempty successor losses** (a separate lemma, to be proved).  *Let `D_η ⊆ Q`, for
