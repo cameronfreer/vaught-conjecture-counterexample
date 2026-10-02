@@ -22,17 +22,17 @@ The literature these milestones rely on is recorded in `LITERATURE.md`, §7.
 **Status.** The targets A1, A2, A3, B2, and B3 are established results: their proofs are known, and
 are the arguments given with each below. They remain formalization targets here. C, in its two-point
 form, is a statement still to be proved here, with its argument given below. B4 is a statement still
-to be proved; it quotes a theorem available upstream, not yet at our pinned dependency, and assumes
-orbit formulas of the first signed level. B1, the joint embedding and amalgamation of top-free
-charts, is part of the core: it is step 2 of the construction of the top-free witnesses
-(`README.md`, section "The top-free witnesses: the finite age and its classical limit"), and its
-entry below is a pointer. The deliberate `sorry` targets of the sketch, the ingredients marked "to
-be located or added upstream", and the theorems marked "prospective" (neither available upstream nor
-pinned; `IMPLEMENTATION.md`, "Dependency pins") are what is not yet formalized or available. The
-bounded back-and-forth separation interface, and ComputableModelTheory's rooted uniqueness and
-isolation and primeness over named parameters, are available at the pin (signatures checked;
-`IMPLEMENTATION.md`, "Dependency pins"). The status covers these statements only, not their
-non-claims and not further definability claims (`README.md`, "Status of the optional results").
+to be proved; it quotes a theorem available at the pin (signatures checked), and assumes orbit
+formulas of the first signed level. B1, the joint embedding and amalgamation of top-free charts, is
+part of the core: it is step 2 of the construction of the top-free witnesses (`README.md`, section
+"The top-free witnesses: the finite age and its classical limit"), and its entry below is a pointer.
+The deliberate `sorry` targets of the sketch, the ingredients marked "to be located or added
+upstream", and the theorems marked "prospective" (neither available upstream nor pinned;
+`IMPLEMENTATION.md`, "Dependency pins") are what is not yet formalized or available. The bounded
+back-and-forth separation interface, and ComputableModelTheory's rooted uniqueness and isolation and
+primeness over named parameters, are available at the pin (signatures checked; `IMPLEMENTATION.md`,
+"Dependency pins"). The status covers these statements only, not their non-claims and not further
+definability claims (`README.md`, "Status of the optional results").
 
 ## Notation
 
@@ -53,8 +53,8 @@ non-claims and not further definability claims (`README.md`, "Status of the opti
   for the lower bound (layer 6), and `w_η ∈ Q` its base class; by expansion uniqueness `w_η` lies
   in the loss at `η`.
 
-Upstream names below were checked in the pinned InfinitaryLogic (`098fb36`, signatures checked),
-the pinned ComputableModelTheory (`0401c95`, signatures checked), and Mathlib, except those marked
+Upstream names below were checked in the pinned InfinitaryLogic (`8a15ca5`, signatures checked), the
+pinned ComputableModelTheory (`37f6c42`, signatures checked), and Mathlib, except those marked
 "available upstream" or "prospective" (`README.md`, Layer 0); the sketch `#check`s or applies only
 names available at the current pins.
 
@@ -278,7 +278,7 @@ automorphisms from InfinitaryLogic (`exists_finite_orbit_threshold`,
 `orbitRank_lt_omega0_of_orbitFormula`, `internalScottRank_le_omega0_of_orbitFormulas`,
 `BoundedFormulaω.realize_embedding_comp_of_localAutomorphisms`,
 `BoundedFormulaω.realize_comp_append_of_localAutomorphisms`), available at our pinned dependency
-`098fb36` (signatures checked).
+`8a15ca5` (signatures checked).
 
 ### B1. Joint embedding and amalgamation of top-free charts (in the core)
 
@@ -310,7 +310,7 @@ automorphisms are those of the `L_λ`-structure.  Sketch: `AgreesLocally` and `a
 (proved, for any map preserving the chart relations).  The consequence is an application of
 InfinitaryLogic's `BoundedFormulaω.realize_embedding_comp_of_localAutomorphisms` (and, with finitely
 many parameters, `BoundedFormulaω.realize_comp_append_of_localAutomorphisms`), available at our
-pinned dependency `098fb36` (signatures checked).  Its hypotheses: any language, no relationality,
+pinned dependency `8a15ca5` (signatures checked).  Its hypotheses: any language, no relationality,
 countability, infinitude, or nonemptiness, and injectivity of the map a consequence of its
 hypothesis.  It is not reproved here.  Sketch: `realize_iff_realize_comp_of_agreesLocally` and
 `realize_comp_append_iff_of_agreesLocally` (proved, one-line applications).
@@ -366,7 +366,7 @@ base reduct.  The development proves the orbit formulas; the generic theorems ar
    `typesIsolated_of_orbitDefinedBy` (proved from the target
    `typesWith_eq_singleton_of_orbitDefinedBy`).  Ingredients: Mathlib's `Theory.CompleteType`,
    `Theory.typeOf`, `Theory.typesWith`, `Formula.equivSentence`, `completeTheory`
-   (`ModelTheory/Types`, `ModelTheory/Semantics`).  At the pin (`0401c95`, signatures checked), from
+   (`ModelTheory/Types`, `ModelTheory/Semantics`).  At the pin (`37f6c42`, signatures checked), from
    ComputableModelTheory: `IsolatesTuple` and `IsAtomic`,
    `isolatesTuple_of_orbit_formula` (under `[Nonempty M]`; orbit formulas of `L` without constants
    naming the tuple), `isAtomic_of_orbit_formulas`, and `IsolatesTuple.typesWith_eq_singleton`
@@ -380,7 +380,7 @@ base reduct.  The development proves the orbit formulas; the generic theorems ar
    finite threshold, and `internalScottRank_le_omega0_of_orbitFormulas` gives `internalScottRank ≤
    ω` in the library's convention, the supremum over all tuples of the orbit rank plus one, `⨆ a,
    orbitRank a + 1` (so finite but unbounded orbit ranks give exactly `ω`). These are available at
-   our pinned dependency `098fb36` (signatures checked).  They hold under `[L.IsRelational]` and
+   our pinned dependency `8a15ca5` (signatures checked).  They hold under `[L.IsRelational]` and
    without countability, nonemptiness, or infinitude of `M`; they are not reproved here.  Sketch:
    `exists_finite_threshold_of_orbitDefinedBy`, `orbitRank_lt_omega0_of_orbitDefinedBy`, and
    `internalScottRank_le_omega0_of_orbitDefinedBy` (proved, one-line applications).  The stage
@@ -395,7 +395,7 @@ base reduct.  The development proves the orbit formulas; the generic theorems ar
    target is any model of the complete theory, in an arbitrary universe, with no receiving or
    countability assumption.  Sketch: `nonempty_elementaryEmbedding_of_typesIsolated` (target).
    Ingredients: Mathlib's `ElementaryEmbedding` (`ModelTheory/ElementaryMaps`).  At the pin
-   (`0401c95`, signatures checked), from ComputableModelTheory:
+   (`37f6c42`, signatures checked), from ComputableModelTheory:
    `exists_elementaryEmbedding_of_countable_atomic`,
    under `[Countable M] [Nonempty M] [N ⊨ L.completeTheory M]`, with separate universes,
    function symbols allowed, and no countability of the language or of `N`; the sketch target is
@@ -426,29 +426,34 @@ is part of the core and is not a condition of this milestone.
 ### B4. Scott sentences of the top-free witness from its orbit formulas (existence only)
 
 Two statements are kept apart.  The **generic existence** of *a* Scott sentence from orbit formulas
-is Montalbán's theorem (InfinitaryLogic, available upstream, not yet at our pinned dependency;
+is Montalbán's theorem (InfinitaryLogic, available at the pin `8a15ca5`, signatures checked;
 `README.md`, Layer 0): for a countable structure in a relational language with countably many
 relation symbols, and a family of orbit formulas indexed by all tuples, the sentence
 `montalbanSentence` characterizes the structure among countable structures in its carrier universe
-(`montalbanSentence_characterizes`); if `1 ≤ α` and every orbit formula is in `IsSigmaIn α`, the
-sentence is in `IsPiIn (α + 1)` (`isPiIn_montalbanSentence`), and level zero is a separate result
-(orbit formulas in `IsSigmaIn 0` give a sentence in `IsPiIn 2`).  The displayed sentence includes,
-for each tuple, its atomic agreement `D_a`, a countable conjunction of atoms and negated atoms.  The
-**particular exact-age sentences** of `README.md`, Layer 4, and their literal complexity are
-construction-specific statements still to be proved; this item says nothing about them.
+(`montalbanSentence_characterizes`); if `1 ≤ α` and every formula of the family is in `IsSigmaIn α`,
+the sentence is in `IsPiIn (α + 1)` (`isPiIn_montalbanSentence`, with no orbit property), so orbit
+formulas in `IsSigmaIn α` give a Scott sentence in `IsPiIn (α + 1)`
+(`exists_isPiIn_scottSentence_of_sigmaIn_orbits`; pointed:
+`exists_isPiIn_pointed_of_sigmaIn_orbits`), and level zero is a separate result (orbit formulas in
+`IsSigmaIn 0` give a Scott sentence in `IsPiIn 2`,
+`exists_isPiIn_two_scottSentence_of_sigmaIn_zero_orbits`).  The displayed sentence includes, for
+each tuple, its atomic diagram `D_a` (`atomicDiagram`), a countable conjunction of atoms and negated
+atoms.  The **particular exact-age sentences** of `README.md`, Layer 4, and their literal complexity
+are construction-specific statements still to be proved; this item says nothing about them.
 
-**Statement** (a statement still to be proved; the general theorem is quoted only once
-`IMPLEMENTATION.md`, "Dependency pins", records a pin containing it).  Let `M` be the top-free
-witness at a block `ξ`, read in the relational stage chart language at `λ_ξ`, and suppose that
-language has countably many relation symbols.  Assume B3.1: each orbit formula `θ_a` defines the
-automorphism orbit of `a`. Suppose these formulas, read as infinitary formulas, are in `IsSigmaIn 1`
-(to be proved, by the signed traversal of the existential formula
-`∃ z̄, P_p(z̄) ∧ ⋀_i x_i = z_{ι(i)}`, whose conjunction is finite).  Then the general theorem at
-`α = 1` gives a sentence in `IsPiIn 2` that characterizes `M` among the countable structures of that
-language in its carrier universe: a `Π^in_2` Scott sentence of `M`.  For a rigid-core terminal model
-(`README.md`, Layer 4), given orbit formulas over the named core in `IsSigmaIn 1` (the analogue of
-B3.1 in the language naming the core, to be proved), the pointed form gives a `Π^in_2` formula whose
-free variables are the core, and existentially quantifying the core gives a `Σ^in_3` Scott sentence.
+**Statement** (a statement still to be proved; the general theorem is available at the pin,
+signatures checked; `IMPLEMENTATION.md`, "Dependency pins").  Let `M` be the top-free witness at a
+block `ξ`, read in the relational stage chart language at `λ_ξ`, and suppose that language has
+countably many relation symbols.  Assume B3.1: each orbit formula `θ_a` defines the automorphism
+orbit of `a`.  Suppose these formulas, read as infinitary formulas, are in `IsSigmaIn 1` (to be
+proved, by the signed traversal of the existential formula `∃ z̄, P_p(z̄) ∧ ⋀_i x_i = z_{ι(i)}`,
+whose conjunction is finite).  Then the general theorem at `α = 1`
+(`exists_isPiIn_scottSentence_of_sigmaIn_orbits`) gives a sentence in `IsPiIn (1 + 1)`, that is
+`IsPiIn 2`, that characterizes `M` among the countable structures of that language in its carrier
+universe: a `Π^in_2` Scott sentence of `M`.  For a rigid-core terminal model (`README.md`, Layer 4),
+given orbit formulas over the named core in `IsSigmaIn 1` (the analogue of B3.1 in the language
+naming the core, to be proved), the pointed form gives a `Π^in_2` formula whose free variables are
+the core, and existentially quantifying the core gives a `Σ^in_3` Scott sentence.
 
 **Non-claims.**  B4 is not a condition of the completion criterion (B).  Existence only: these
 sentences need not be the exact-age sentences, and no normal form or quantifier-rank bound follows
