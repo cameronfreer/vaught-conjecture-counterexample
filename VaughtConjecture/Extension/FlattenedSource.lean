@@ -5,7 +5,6 @@ Authors: Cameron Freer
 -/
 import VaughtConjecture.Extension.CapTransport
 import VaughtConjecture.Extension.Encoders
-import VaughtConjecture.Extension.Restoration
 
 /-!
 # The flattened source
@@ -14,7 +13,7 @@ Roadmap, Layer 3, 3.1, (R6), checkpoint 2.4 (owner alignment: the source section
 short at the grade of the owner); semantic contract, item 3.
 
 The owner alignment of the completion aligns a lawful prescription `p` below the graded index of
-an owner `o` of grade `m` with a lawful coded **source section** `s` below `o`, which must be
+an owner `o` of grade `m` with a lawful **coded source section** `s` below `o`, which must be
 **short at `m`** (`Label.IsShort m`: every finite part at most `m`) and never the formal top.  The
 normal forms are not short: the codes of the strongly coded encoder `strongEncode V m` are
 **strongly coded at `m`** (finite parts at most `m + 1`, `Label.IsStronglyCoded m`), and a label
@@ -51,26 +50,23 @@ The decoder must be the decoder of the encoder: an arbitrary strongly coded norm
 arbitrary decoder bounded by `m` (as in `CellScheme.Rows.IsLawful.exists_stronglyCoded`) may be
 merged by flattening (the identity decoder of the label `2` at grade `1`, in the same file).
 
-**What the decoder reads through flattening.**  Through the decoder, the flattened source of a
-labelling `w` below a target pair `(B, j + 1)` reads what `w` reads, cell by cell:
-(i) it reads the prescription literally on the prescribed face, `min p (p o)` below `(C, j + 1)`
-(`CellScheme.Rows.strongDecode_flattenedSource_inclusion`), hence `p` after restoration
-(`CellScheme.Rows.exists_restoration`); and (ii) it keeps the ambient observation at the cap `c` at
-every cell below `(B, j + 1)`, the auxiliary cells included
-(`CellScheme.Rows.min_strongDecode_flattenedSource`).  Both are instances of the literal reading;
-together with lawfulness, shortness, and the capped decoder bounded by `m`
-(`Label.exists_isWitness_flattenedSource`, the witness `τ` with `τ ≤ γ` and
-`τ ∘ s = min w γ` of the alignment), they are collected for an owner-capped lift in
-`CellScheme.Rows.IsLawfulBelow.flattenedSource_ownerCappedLift`.
+**The flattening step preserves the prescribed face and every cap.**  Through the encoder's own
+decoder, the flattened source of a labelling `w` reads what `w` reads, cell by cell: the
+prescription `min p (p o)` below `(C, j + 1)` literally
+(`CellScheme.Rows.strongDecode_flattenedSource_inclusion`), and the observation at every cap `c`
+at every cell (`CellScheme.Rows.min_strongDecode_flattenedSource`).  These are statements about
+the flattening step and the decoder `strongDecode V m`, not about the decoder `ρ` of the owner
+alignment.  For `ρ`, the reading capped at a cap `γ` transfers from the agreement of `ρ` with the
+capped decoder on the labels short at `m`, at every cell that carries a flattened code
+(`Label.min_apply_flattenedSource_of_agree`); the reading above `γ`, up to the owner label, is the
+content of the alignment itself.
 
-**The cap `⊥`** (`CellScheme.Rows.hasOwnerCappedLifts_bot_of_codedLift`).  At the cap `⊥` the
-ambient condition of an owner-capped lift is empty and positive-cap transport does not apply.  A
-coded lift of the flattened source of `min p (p o)`, lawful below `(B, j + 1)`, whose non-bottom
-codes the decoder does not send to bottom, decodes to an owner-capped lift at `⊥`: the coded lift
-is its own lawful companion for the transport of lawfulness
-(`CellScheme.Rows.IsLawfulBelow.map_of_apply_eq_bot`).  The coded lifts are the boundary
-completion of the prescription capped at the owner label and its extension through the new cells,
-which depend on the rows of the completion.
+**The source of the alignment** (`CellScheme.Rows.IsLawfulBelow.flattenedSource_prescription`).
+For a prescription `p` lawful below a pair `X` with values in `V`, its flattened source at the
+grade of `X` is lawful below `X`, short at that grade, strongly coded there, never the formal top,
+read literally by `strongDecode V X.2`, and decoded to `min p γ` by a witness `τ` bounded by that
+grade with values at most `γ`, for every cap `γ` self-visible at that grade
+(`Label.exists_isWitness_flattenedSource`).
 
 ## Placement
 
@@ -179,10 +175,10 @@ theorem strongDecode_flatten (hKm : K ≤ m) (z : Label.{u}) :
     strongDecode V K (flatten m z) = strongDecode V K z := by
   rw [strongDecode_apply, strongDecode_apply, blockDecode_flatten, unspread_flatten hKm]
 
-/-- **Non-merging.**  For a coding grade `K ≤ m`, flattening at `m` identifies only labels that
-the decoder `strongDecode V K` already identifies.  So flattening never merges two labels that the
-decoder must tell apart below any cap: in the owner alignment, below the alignment cap `δ` on the
-prescribed face or below the cap `c` of the lift on the auxiliary cells. -/
+/-- **Non-merging for the encoder's own decoder.**  For a coding grade `K ≤ m`, flattening at
+`m` identifies only labels that `strongDecode V K` identifies.  It is specific to this decoder:
+another witness bounded by the grade may separate labels that flattening merges (the identity
+decoder in `VaughtConjecture.Extension.FlatteningExamples`). -/
 theorem strongDecode_eq_of_flatten_eq (hKm : K ≤ m) (h : flatten m x = flatten m y) :
     strongDecode V K x = strongDecode V K y := by
   rw [← strongDecode_flatten hKm x, h, strongDecode_flatten hKm y]
@@ -207,12 +203,13 @@ theorem injOn_flatten_strongEncode (hKm : K ≤ m) :
   rw [← strongDecode_flatten_strongEncode hKm hx, ← strongDecode_flatten_strongEncode hKm hy]
   exact congrArg _ h
 
-/-- The decoder reads a flattened code of a label of `V` as bottom only if the code is bottom:
-the decoded label is the label itself. -/
-theorem eq_bot_of_strongDecode_flatten_strongEncode_eq_bot {x : Label.{u}} (hx : x ∈ V)
-    (h : strongDecode V m (flatten m (strongEncode V m x)) = ⊥) :
-    flatten m (strongEncode V m x) = ⊥ := by
-  rw [strongDecode_flatten_strongEncode le_rfl hx] at h
+/-- The decoder reads a flattened code of a label of `V` as bottom only if the code is bottom,
+for `K ≤ m`: the decoded label is the label itself.  So the decoder sends no non-bottom value of a
+labelling of flattened codes to bottom (`CellScheme.Rows.IsLawful.map_of_apply_eq_bot`). -/
+theorem eq_bot_of_strongDecode_flatten_strongEncode_eq_bot (hKm : K ≤ m) {x : Label.{u}}
+    (hx : x ∈ V) (h : strongDecode V K (flatten m (strongEncode V K x)) = ⊥) :
+    flatten m (strongEncode V K x) = ⊥ := by
+  rw [strongDecode_flatten_strongEncode hKm hx] at h
   rw [h, strongEncode_eq_bot_iff.mpr rfl, flatten_bot]
 
 /-- **Capping a witness bounded by grade `m`** at a label `γ` self-visible at `m` gives a witness
@@ -269,6 +266,23 @@ theorem strongDecode_flattenedSource {d : ι} (hd : w d ∈ V) :
     strongDecode V m (flattenedSource V m w d) = w d :=
   strongDecode_flatten_strongEncode le_rfl hd
 
+/-- **The flattened source is bottom exactly where the labelling is**: encoding and flattening
+send only bottom to bottom.  So an owner label above a positive cap has a code above bottom. -/
+@[simp] theorem flattenedSource_eq_bot_iff {d : ι} : flattenedSource V m w d = ⊥ ↔ w d = ⊥ := by
+  rw [flattenedSource_apply, flatten_eq_bot_iff, strongEncode_eq_bot_iff]
+
+/-- **Agreement with the decoder on short labels reads the flattened source.**  If a value map
+`ρ` agrees with the decoder `strongDecode V m` capped at `γ` at every label short at `m`, then
+`ρ` reads `w` capped at `γ` at every cell whose label lies in `V`.  The hypothesis is the last
+conclusion of the owner-local alignment with the capped decoder
+`τ := fun z ↦ min (strongDecode V m z) γ` of `exists_isWitness_flattenedSource`, since
+`min (τ z) γ = min (strongDecode V m z) γ`; so the decoder `ρ` of the alignment keeps the
+observation at the cap `γ` at every cell that carries a flattened code. -/
+theorem min_apply_flattenedSource_of_agree {ρ : Label.{u} → Label.{u}}
+    (hagree : ∀ z, IsShort m z → min (ρ z) γ = min (strongDecode V m z) γ) {d : ι}
+    (hd : w d ∈ V) : min (ρ (flattenedSource V m w d)) γ = min (w d) γ := by
+  rw [hagree _ (isShort_flattenedSource d), strongDecode_flattenedSource hd]
+
 /-- **The capped decoder of the flattened source.**  For a cap `γ` self-visible at `m`, some
 witness `τ` bounded by grade `m`, with values at most `γ`, decodes the flattened source of `w`
 to `w` capped at `γ` at every cell whose label lies in `V`.  These are the source hypotheses of
@@ -305,101 +319,51 @@ theorem IsLawfulBelow.flattenedSource {X : Finset α × ℕ} {w : D.below X → 
 
 variable {C B : Finset α} {j : ℕ}
 
-/-- **The flattened source reads the prescription literally on the prescribed face.**  If a
-labelling `w` below `(B, j + 1)` with values in `V` reads `min p (p o)` below `(C, j + 1)`, the
-decoder reads `min p (p o)` from its flattened source there; restoration (`exists_restoration`)
-then gives `p` itself. -/
+/-- **The flattening step keeps the prescribed face literally.**  If a labelling `w` below
+`(B, j + 1)` reads `min p (p o)` below `(C, j + 1)`, with values there in `V`, the decoder
+`strongDecode V (j + 1)` reads `min p (p o)` from its flattened source there; restoration
+(`exists_restoration`) then gives `p` itself.  It is a statement about the flattening step and
+the encoder's own decoder, not about the decoder of the owner alignment. -/
 theorem strongDecode_flattenedSource_inclusion (hCB : C ⊆ B) {p : D.below (C, j + 1) → Label.{u}}
-    {o : D.below (C, j + 1)} {w : D.below (B, j + 1) → Label.{u}} (hV : ∀ d, w d ∈ V)
+    {o : D.below (C, j + 1)} {w : D.below (B, j + 1) → Label.{u}}
+    (hV : ∀ e, w (Set.inclusion (D.below_mono
+      (show ((C, j + 1) : Finset α × ℕ) ≤ (B, j + 1) from ⟨hCB, le_rfl⟩)) e) ∈ V)
     (hread : ∀ e, w (Set.inclusion (D.below_mono
       (show ((C, j + 1) : Finset α × ℕ) ≤ (B, j + 1) from ⟨hCB, le_rfl⟩)) e) = min (p e) (p o))
     (e : D.below (C, j + 1)) :
     strongDecode V (j + 1) (Label.flattenedSource V (j + 1) w (Set.inclusion (D.below_mono
       (show ((C, j + 1) : Finset α × ℕ) ≤ (B, j + 1) from ⟨hCB, le_rfl⟩)) e)) =
       min (p e) (p o) := by
-  rw [strongDecode_flattenedSource (hV _), hread]
+  rw [strongDecode_flattenedSource (hV e), hread]
 
-/-- **The flattened source keeps the ambient observation at the cap `c`** at every cell below
-the target pair, the auxiliary cells (the new cells of full scope and the cells of the other
-coatom) included. -/
+/-- **The flattening step keeps the observation at every cap `c`** at every cell below the target
+pair, the auxiliary cells (the new cells of full scope and the cells of the other coatom)
+included, when read by the encoder's own decoder `strongDecode V m`. -/
 theorem min_strongDecode_flattenedSource {Y : Finset α × ℕ} {w q : D.below Y → Label.{u}}
     {c : Label.{u}} (hV : ∀ d, w d ∈ V) (hamb : ∀ d, min (w d) c = min (q d) c)
     (d : D.below Y) : min (strongDecode V m (Label.flattenedSource V m w d)) c = min (q d) c := by
   rw [strongDecode_flattenedSource (hV d), hamb]
 
-/-- **The flattened source of an owner-capped lift.**  Let `w` be an owner-capped lift from
-`(C, j + 1)` to `(B, j + 1)` at the cap `c` (lawful below `(B, j + 1)`, reading `min p (p o)`
-below `(C, j + 1)`, keeping the ambient `q` at `c` at every cell), with values in `V`.  Its
-flattened source `s` at the grade `j + 1` of the owner is lawful below `(B, j + 1)`, short at
-`j + 1`, strongly coded at `j + 1`, never the formal top, and its decoding by
-`strongDecode V (j + 1)` is again that owner-capped lift: it reads `min p (p o)` on the
-prescribed face and keeps the ambient observation at `c` at every cell.  In the owner alignment
-the coded lift is aligned on such a short source and decoded back. -/
-theorem IsLawfulBelow.flattenedSource_ownerCappedLift (hCB : C ⊆ B)
-    {p : D.below (C, j + 1) → Label.{u}} {o : D.below (C, j + 1)}
-    {q w : D.below (B, j + 1) → Label.{u}} {c : Label.{u}} (hw : R.IsLawfulBelow (B, j + 1) w)
-    (hread : ∀ e, w (Set.inclusion (D.below_mono
-      (show ((C, j + 1) : Finset α × ℕ) ≤ (B, j + 1) from ⟨hCB, le_rfl⟩)) e) = min (p e) (p o))
-    (hamb : ∀ d, min (w d) c = min (q d) c) (hV : ∀ d, w d ∈ V) :
-    R.IsLawfulBelow (B, j + 1) (Label.flattenedSource V (j + 1) w) ∧
-      (∀ d, IsShort (j + 1) (Label.flattenedSource V (j + 1) w d)) ∧
-      (∀ d, Label.IsStronglyCoded (j + 1) (Label.flattenedSource V (j + 1) w d)) ∧
-      (∀ d, Label.flattenedSource V (j + 1) w d ≠ ⊤) ∧
-      R.IsLawfulBelow (B, j + 1) (strongDecode V (j + 1) ∘ Label.flattenedSource V (j + 1) w) ∧
-      (∀ e, strongDecode V (j + 1) (Label.flattenedSource V (j + 1) w (Set.inclusion
-        (D.below_mono (show ((C, j + 1) : Finset α × ℕ) ≤ (B, j + 1) from ⟨hCB, le_rfl⟩)) e)) =
-          min (p e) (p o)) ∧
-      ∀ d, min (strongDecode V (j + 1) (Label.flattenedSource V (j + 1) w d)) c = min (q d) c := by
-  have hdec : strongDecode V (j + 1) ∘ Label.flattenedSource V (j + 1) w = w :=
-    funext fun d ↦ strongDecode_flattenedSource (hV d)
-  exact ⟨hw.flattenedSource le_rfl, isShort_flattenedSource, isStronglyCoded_flattenedSource,
-    flattenedSource_ne_top, by rw [hdec]; exact hw,
-    strongDecode_flattenedSource_inclusion hCB hV hread,
-    min_strongDecode_flattenedSource hV hamb⟩
-
-/-! ### The cap `⊥` -/
-
-/-- **Decoding a coded lift at the cap `⊥`.**  The decoder `ν` sends a labelling `r` lawful below
-a pair `X`, of grades at most `K`, to a lawful labelling when it sends no non-bottom value of `r`
-to bottom: `r` is its own lawful companion in `IsLawfulBelow.map_of_bot_iff`.  No global bottom
-reflection of `ν` is needed. -/
-theorem IsLawfulBelow.map_of_apply_eq_bot {X : Finset α × ℕ} {K : ℕ}
-    {ν : Label.{u} → Label.{u}} {r : D.below X → Label.{u}} (hr : R.IsLawfulBelow X r)
-    (hK : ∀ d : D.below X, D.grade d ≤ K) (hν : IsWitness (stepSuppressor K) ν)
-    (hbot : ∀ d, ν (r d) = ⊥ → r d = ⊥) : R.IsLawfulBelow X (ν ∘ r) :=
-  hr.map_of_bot_iff hr hK hν fun d ↦ ⟨hbot d, fun h ↦ by rw [h, hν.map_bot]⟩
-
-/-- **Owner-capped lifts at the cap `⊥` from coded lifts of the flattened source.**  Suppose that
-for every lawful prescription `p` below `(C, j + 1)` and every owner `o` of `p` with `⊥ < p o`,
-there are a finite set `V` of labels containing the values of `min p (p o)` and a labelling `r`
-lawful below `(B, j + 1)` (a **coded lift**) that is the flattened source of `min p (p o)` at the
-grade `j + 1` on the cells below `(C, j + 1)` and whose non-bottom values the decoder
-`strongDecode V (j + 1)` does not send to bottom (for instance, values among the flattened codes of
-the labels of `V`, `Label.eq_bot_of_strongDecode_flatten_strongEncode_eq_bot`).  Then the rows have
-owner-capped lifts from `(C, j + 1)` to `(B, j + 1)` at the cap `⊥`: the decoded coded lift is
-lawful (`IsLawfulBelow.map_of_apply_eq_bot`), reads `min p (p o)` on the prescribed face
-(`strongDecode_flattenedSource`), and the ambient condition at `⊥` is empty.  With
-`exists_restoration` at the owner label this is the case of the cap `⊥` of the one-grade lift
-(`cappedLift_of_ownerCappedLift`); the coded lifts themselves are the boundary completion of the
-prescription capped at the owner label followed by the extension through the new cells of the
-completion, which depend on its rows. -/
-theorem hasOwnerCappedLifts_bot_of_codedLift (hCB : C ⊆ B)
-    (hcoded : ∀ p : D.below (C, j + 1) → Label.{u}, R.IsLawfulBelow (C, j + 1) p →
-      ∀ o : D.below (C, j + 1), D.gradedIndex o = (C, j + 1) →
-      (∀ e : D.below (C, j + 1), D.grade e = j + 1 → p e ≤ p o) → ⊥ < p o →
-      ∃ (V : Finset Label.{u}) (r : D.below (B, j + 1) → Label.{u}),
-        (∀ e, min (p e) (p o) ∈ V) ∧ R.IsLawfulBelow (B, j + 1) r ∧
-        (∀ e, r (Set.inclusion (D.below_mono
-          (show ((C, j + 1) : Finset α × ℕ) ≤ (B, j + 1) from ⟨hCB, le_rfl⟩)) e) =
-            Label.flattenedSource V (j + 1) (fun e ↦ min (p e) (p o)) e) ∧
-        ∀ d, strongDecode V (j + 1) (r d) = ⊥ → r d = ⊥) :
-    R.HasOwnerCappedLifts hCB j ⊥ := by
-  intro p q hp _ _ o ho hmax hpo
-  obtain ⟨V, r, hV, hr, hface, hbot⟩ := hcoded p hp o ho hmax hpo
-  refine ⟨strongDecode V (j + 1) ∘ r,
-    hr.map_of_apply_eq_bot (fun d ↦ d.2.2) isWitness_strongDecode hbot, fun e ↦ ?_,
-    fun d ↦ by simp only [min_bot_right]⟩
-  rw [Function.comp_apply, hface,
-    strongDecode_flattenedSource (w := fun e ↦ min (p e) (p o)) (hV e)]
+/-- **The flattened source of a prescription.**  Let `p` be lawful below a pair `X` (in the owner
+alignment, the prescription below the graded index `(C, j + 1)` of an owner), with values in `V`.
+Its flattened source `s` at the grade of `X` is a coded source section for the owner-local
+alignment: lawful below `X`, short at the grade of `X`, strongly coded there, never the formal
+top, bottom exactly where `p` is, read literally by `strongDecode V X.2`, and, at every cap `γ`
+self-visible at the grade of `X`, decoded to `min p γ` by a witness `τ` bounded by that grade with
+values at most `γ`. -/
+theorem IsLawfulBelow.flattenedSource_prescription {X : Finset α × ℕ}
+    {p : D.below X → Label.{u}} (hp : R.IsLawfulBelow X p) (hV : ∀ e, p e ∈ V) :
+    R.IsLawfulBelow X (Label.flattenedSource V X.2 p) ∧
+      (∀ e, IsShort X.2 (Label.flattenedSource V X.2 p e)) ∧
+      (∀ e, Label.IsStronglyCoded X.2 (Label.flattenedSource V X.2 p e)) ∧
+      (∀ e, Label.flattenedSource V X.2 p e ≠ ⊤) ∧
+      (∀ e, Label.flattenedSource V X.2 p e = ⊥ ↔ p e = ⊥) ∧
+      strongDecode V X.2 ∘ Label.flattenedSource V X.2 p = p ∧
+      ∀ γ, IsSelfVisible X.2 γ → ∃ τ, IsWitness (stepSuppressor.{u} X.2) τ ∧ (∀ x, τ x ≤ γ) ∧
+        ∀ e, τ (Label.flattenedSource V X.2 p e) = min (p e) γ :=
+  ⟨hp.flattenedSource le_rfl, isShort_flattenedSource, isStronglyCoded_flattenedSource,
+    flattenedSource_ne_top, fun _ ↦ flattenedSource_eq_bot_iff,
+    funext fun e ↦ strongDecode_flattenedSource (hV e), fun _ hγ ↦
+      (exists_isWitness_flattenedSource hγ).imp fun _ ⟨hτ, hle, h⟩ ↦ ⟨hτ, hle, fun e ↦ h e (hV e)⟩⟩
 
 end VaughtConjecture.CellScheme.Rows
