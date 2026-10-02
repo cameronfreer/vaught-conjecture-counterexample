@@ -755,14 +755,18 @@ These are statements still to be proved.  None is an input to the main theorem.
      structures in its carrier universe, in the form of `scottSentence_characterizes` (for a
      relational language with countably many relation symbols; both at the pin, signatures checked).
   3. **Base-reduct orbit-rank bounds**: bounds on the orbit ranks of tuples in the **base** reduct,
-     not in the stage chart language of Layer 4 and of B3.  Before any bound is stated, the pointed
-     formulas (one for each tuple, with the tuple's coordinates free), their parameters, and the
-     rank convention (`orbitRank` and `internalScottRank`, the supremum `⨆ a, orbitRank a + 1`, as
-     in the library, at the pin, signatures checked) are to be specified.  An unpointed
-     Scott-sentence bound is not automatically a bound for every tuple's orbit: a bound on the rank
-     of a Scott sentence of the base model is not, without a further argument, a bound on the orbit
-     rank of each tuple.  Nothing transfers from the bound `≤ ω` of B3.3, which concerns the full
-     stage chart language.
+     not in the stage chart language of Layer 4 and of B3.  Before any bound is stated, the
+     **parameter-free** orbit formulas (one for each tuple, with exactly the tuple's coordinates
+     free and no parameters), the **pointed** formulas over the named core, if there is one (with
+     the core as parameters, as in the library's `IsOrbitFormulaFamilyPointed`), and the rank
+     convention (`orbitRank` and `internalScottRank`, the supremum `⨆ a, orbitRank a + 1`, as in the
+     library, at the pin, signatures checked) are to be specified.  An unpointed Scott-sentence
+     bound is not automatically a bound for every tuple's orbit: a bound on the rank of a Scott
+     sentence of the base model is not, without a further argument, a bound on the orbit rank of
+     each tuple.  The numerical bound `≤ ω` of B3.3 alone does not transfer: translating the
+     stage-language orbit formulas into the base language and lifting base-reduct automorphisms
+     along the same bijection must both be proved (uniqueness of the expansion supplies the
+     transport argument for the lifting).
 
   **Completion criterion.**  Each row is a bounded checkpoint, complete when its formula is
   constructed for the concrete objects of the construction (the chart predicates at `λ_η`, the
