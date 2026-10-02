@@ -87,20 +87,23 @@ establishes:
 
 1. `D0 = Q`, decreasingness, and continuity at countable nonzero limits.
 2. Countable successor losses, by fixed-stage terminal comparison.
-3. Cofinally nonempty losses, witnessed independently by top-free terminal models.
+3. Cofinally nonempty losses, witnessed by a separate construction of top-free terminal models.
 4. Agreement in `Dη` on sentences of quantifier rank at most `η`.
 5. Scott separation of distinct classes and faithful satisfaction on model codes.
 
 Countable-loss induction gives countable complements.  Scott separation makes the persistent core
 `⋂_η Dη` subsingleton.  Its complement is covered by `ℵ₁` many countable exceptions, so `|Q| ≤ ℵ₁`;
-disjoint cofinal losses give the reverse inequality.  This counting argument (countable complements
-and Scott separation give at most `ℵ₁` classes) belongs to the setting of minimal counterexamples of
-Harnik–Makkai [HM77]; see Larson [Lar14], Remark 10.9, and its discussion of minimal
-counterexamples.  Separately, homogeneous domains give one countable truth side for each sentence,
-and the library's thinness theorem `Sentenceω.isThinOnNatModels_of_countable_sentence_splits`
-(`Descriptive/SentenceSplits`) rules out a perfect antichain.  Neither Morley's dichotomy nor
-eventual stopping belongs in this proof.  There is no measurable structure or measurable choice of
-representatives on `Q`.
+disjoint cofinal losses give the reverse inequality.  With a Scott sentence for each class, the
+agreement in `Dη` and the cofinally nonempty losses (hypotheses of this count, not its conclusions)
+also make the persistent core empty, by eventual departure (`COMPANIONS.md`, "Further companion
+results", terminal refinement); the count uses only the subsingleton form, and departure is not an
+input to it.  This counting argument (countable complements and Scott separation give at most `ℵ₁`
+classes) belongs to the setting of minimal counterexamples of Harnik–Makkai [HM77]; see Larson
+[Lar14], Remark 10.9, and its discussion of minimal counterexamples.  Separately, homogeneous
+domains give one countable truth side for each sentence, and the library's thinness theorem
+`Sentenceω.isThinOnNatModels_of_countable_sentence_splits` (`Descriptive/SentenceSplits`) rules out
+a perfect antichain.  Neither Morley's dichotomy nor eventual stopping belongs in this proof.  There
+is no measurable structure or measurable choice of representatives on `Q`.
 
 The general counting argument above needs cofinal nonemptiness, not nonemptiness of every
 successor loss.  The concrete top-free construction proves the stronger statement.  Do not
@@ -202,7 +205,7 @@ requested cutoff `c` at stage `α` the chain is run at an auxiliary ordinal `c'`
 between the requested cutoff and the stage, `c < c' < α` (a permitted cutoff, so never the formal
 top), self-visible at the donor's arity `k`.  Such a `c'` is given by
 `Label.exists_lt_lt_isSelfVisible (hβ : Order.IsSuccPrelimit β) (ho : o < β) (k : ℕ) :
-∃ c, o < c ∧ c < β ∧ IsSelfVisible k (c : Label)` (`Realization/Families`, namespace `Label`),
+∃ c : Ordinal, o < c ∧ c < β ∧ IsSelfVisible k (c : Label)` (`Label/Visibility`, namespace `Label`),
 applied with `o := c`, with witness `c' = c + (k + 1)`.  Its hypotheses hold here only because (i)
 the requested cutoff `c` is an ordinal below the stage (it is a permitted cutoff,
 `isPermittedCutoff_coe`), and (ii) the stage is zero or a limit (`Order.IsSuccPrelimit`).  Each step
@@ -385,16 +388,18 @@ so `|Q| ≤ ℵ₁`) is a target still to be proved, not a lemma of the sketch.
 The comparison is to be proved in its back-and-forth form (`README.md`, "Condition 3 from
 back-and-forth", a theorem to prove): any two members of `D_η` are `BFEquiv η` on the empty tuple.
 The one-block transfer gives the forth and back clauses of the graded back-and-forth theorem
-(`README.md`, layer 0, prospective), applied with height `η`.  Its initial match is a separate
-statement, not a consequence of the extension laws: the empty set is closed in both expansions
-(existence), and the two empty charts have the same type at `λ_η` (compatibility, by
-`StageType.eq_of_zero`).  Sentence agreement at quantifier rank at most `η` is then the corollary
-`BFEquiv_implies_agreeQR` (available at the pin, signatures checked), not a separate induction on
-sentences.  On this route thinness also has the scatteredness form: `D_η` lies in one back-and-forth
-class at `η` and has countable complement, so the codes of models meet countably many classes of
-`bfEquivSetoid Φ η`, and `isThinOnNatModels_of_countable_bfClasses` (compiled in this repository
-(theorem named), `MainTheorem/Scatteredness`) applies, with no López–Escobar; this application is
-expected, not elaborated.  The minimality form, from countable truth sides, is kept.
+(`README.md`, layer 0, prospective), or of its generic form `bfEquiv_of_gradedMatching` (at the pin,
+signatures checked; with the match (ii) of `README.md`, layer 0, the height guard and the selector
+inside the relation), applied with height `η`.  Its initial match is a separate statement, not a
+consequence of the extension laws: the empty set is closed in both expansions (existence), and the
+two empty charts have the same type at `λ_η` (compatibility, by `StageType.eq_of_zero`).  Sentence
+agreement at quantifier rank at most `η` is then the corollary `BFEquiv_implies_agreeQR` (available
+at the pin, signatures checked), not a separate induction on sentences.  On this route thinness also
+has the scatteredness form: `D_η` lies in one back-and-forth class at `η` and has countable
+complement, so the codes of models meet countably many classes of `bfEquivSetoid Φ η`, and
+`isThinOnNatModels_of_countable_bfClasses` (compiled in this repository (theorem named),
+`MainTheorem/Scatteredness`) applies, with no López–Escobar; this application is expected, not
+elaborated.  The minimality form, from countable truth sides, is kept.
 
 ## The top-free witnesses: milestone order and acceptance
 
@@ -516,13 +521,15 @@ their notions live; "this repository" means the layers of `README.md`.
    and `λ_{η+1}`: iterated one-point receiving retains each actual root literally, but the next
    donor coface need not restrict literally to the newly received root, and the bounded-observation
    lifting at that cap repairs it at each step; `README.md`, "Reduction to full presentations"); the
-   passage to `BFEquiv` by the graded back-and-forth theorem, to be proved in this repository (layer
-   0; prospective) and a candidate for InfinitaryLogic, `Scott/BackAndForth` ("Placement record").
+   passage to `BFEquiv` by the graded back-and-forth theorem (layer 0; prospective, the stated
+   target here), or by its generic form `bfEquiv_of_gradedMatching` (at the pin, signatures
+   checked), with the height guard and the selection of coordinates inside the relation (the match
+   (i) of `README.md`, layer 0); neither is compiled for this application yet.
 4. *Exact comparison* for prescribed pointed or unpointed full ages, reusing standard
    uniqueness rather than a separate comparison for each terminal case.  Home: fullness and equal
    ages give extension pairs in both directions, hence an isomorphism: ComputableModelTheory's
    rooted uniqueness (`isExtensionPair_of_age_subset`,
-   `exists_equiv_comp_eq_of_age_subset_of_countable`, available at the pin `37f6c42`, signatures
+   `exists_equiv_comp_eq_of_age_subset_of_countable`, available at the pin `0e9935b`, signatures
    checked; Mathlib-only imports; its application to full structures is expected, not
    elaborated), and
    eventually Mathlib's `ModelTheory/Fraisse`; the relational exact-age comparison for
@@ -536,12 +543,15 @@ their notions live; "this repository" means the layers of `README.md`.
    where its terminal expansion is full for its terminal exact age); the finite-stage arguments do
    not cover the persistent class (`README.md`, "The persistent core").  Eventual departure, the
    first half of global termination, is a conditional target of terminal refinement
-   (`COMPANIONS.md`, "Further companion results"), to be proved only after the expansion-domain
-   count and from its conclusions; the second half, that the terminal expansion is full for its
-   terminal exact age, is the first special statement and is not part of terminal refinement.  A
-   proof of this route that takes departure from terminal refinement states its dependence on the
-   expansion-domain route, and a proof of this route that does not depend on it covers every class,
-   the persistent class included, by its own argument.
+   (`COMPANIONS.md`, "Further companion results"), to be proved from hypotheses of the
+   expansion-domain count (the agreement of condition 3 and the nonempty losses of condition 4, with
+   a Scott sentence for each class), not from its conclusions; under them the persistent core is
+   empty.  The second half, that the terminal expansion is full for its terminal exact age, is the
+   first special statement and is not part of terminal refinement.  A proof of this route may take
+   departure from terminal refinement without circularity, stating its dependence on conditions 3
+   and 4 of the expansion-domain route (not on its count); departure proves neither terminal
+   fullness nor the coverage itself.  A proof of this route that does not depend on conditions 3 and
+   4 covers every class, the persistent class included, by its own argument.
 6. *Noncollapse of the base reducts* (occurrence of all auxiliary invariants is
    insufficient).  Home: this repository (the top-free witnesses with expansion uniqueness and
    same-carrier transport, layer 6); the generic isolating-level criterion in sentence form in
@@ -549,7 +559,7 @@ their notions live; "this repository" means the layers of `README.md`.
 7. *Small back-and-forth quotients and the analytic-pair boundedness argument;* minimality
    is a further assertion needing a common starting observation on high presentations.  Home:
    InfinitaryLogic, `Descriptive/BFSeparation` (`exists_uniform_bfSeparation`, available at our
-   pinned dependency `8a15ca5`, signatures checked); the composition is `MainTheorem/Scatteredness`
+   pinned dependency `def5cc0`, signatures checked); the composition is `MainTheorem/Scatteredness`
    and the scattered-tails theorems of `MainTheorem/Assembly` (pull request #42; "The
    scatteredness form" below).  The minimality form is already covered through sentences by
    `Sentenceω.isThinOnNatModels_of_countable_sentence_splits`.
@@ -584,6 +594,7 @@ composition beside the expansion-domain composition, which is unchanged:
   `vaughtCounterexample_of_presentations`;
 - with pull request #42 (the scatteredness form, below): `MainTheorem/Scatteredness`, and in
   `MainTheorem/Assembly` the hypothesis `FullPresentations.HasScatteredTails` (with
+  `FullPresentations.HasScatteredTails.countable_quotient` and its converse
   `FullPresentations.HasScatteredTails.of_countable_quotient`) and the conditional theorems
   `densitySentence_isThinOnNatModels_of_scatteredTails`,
   `densitySentence_hasThinAlephOneSpectrum_of_scatteredTails`, and
@@ -623,7 +634,8 @@ separates them, and only countably many classes occur at `η`.  Its statements:
   with `bfEquivSetoid φ η`, concluding `φ.IsThinOnNatModels`);
 - `MainTheorem/Assembly`: the hypothesis `FullPresentations.HasScatteredTails` (the codes of the
   models whose classes lie in the tail at `η` meet only countably many classes of
-  `bfEquivSetoid densitySentence η`), with
+  `bfEquivSetoid densitySentence η`), with `FullPresentations.HasScatteredTails.countable_quotient`
+  (countably many classes at `η` among all the codes of models) and its converse
   `FullPresentations.HasScatteredTails.of_countable_quotient`, and the conditional theorems
   `densitySentence_isThinOnNatModels_of_scatteredTails` (neither bounded comparison nor the lower
   bound is used), `densitySentence_hasThinAlephOneSpectrum_of_scatteredTails` (with
@@ -638,38 +650,43 @@ conditional compositions are kept.
 
 **A prospective statement of this repository, layer 0: the graded back-and-forth theorem**
 (`README.md`, layer 0, where it is stated with all its hypotheses; to be proved here from
-`BFEquiv.zero`, `BFEquiv.succ`, and `BFEquiv.limit`, available at the pin; a candidate for
-InfinitaryLogic's `Scott/BackAndForth`, "Placement record").  For structures `M` and `N` in a
-relational language (a relational language is required by the forward Karp agreement theorem
-`BFEquiv_implies_agreeQR`, the application; `BFEquiv` itself needs none), relations `R α n a b`
-between `n`-tuples of `M` and `N`, for `α` up to an explicit height `h` (`h : Ordinal.{0}` in both
-applications), with the zero clause (`R 0` gives `SameAtomicType`), descent (`R α` gives `R β` for
-`β ≤ α ≤ h`, covering the successor and limit steps), and forth and back from `R (α + 1)` into `R α`
-on one-point extensions, give `BFEquiv α n a b` for every `α ≤ h` and every pair with `R α n a b`.
-The theorem produces no related pair: in each application, the initial match, a pair related at the
-height, is a separate hypothesis and not a consequence of the other clauses.  Optionally a block
-form, adding finitely many points at a step.  Its two intended applications are approximate
-comparison of full presentations (item 3 above) and the back-and-forth form of condition 3 of the
-expansion-domain route (layer 5, section 5 above); it is one theorem with two intended applications,
-and both are to be compiled before it is called common.  `Suggested.lean`, section 6, proves
-approximate comparison directly by the same induction (`FullPresentation.bfEquiv_comp_of_obs_eq`),
-not through it.
+`BFEquiv.zero`, `BFEquiv.succ`, and `BFEquiv.limit`, available at the pin; the stated target until
+both of its applications compile through InfinitaryLogic's generic form, the next paragraph, and
+then retired, "Placement record").  For structures `M` and `N` in a relational language (a
+relational language is required by the forward Karp agreement theorem `BFEquiv_implies_agreeQR`, the
+application; `BFEquiv` itself needs none), relations `R α n a b` between `n`-tuples of `M` and `N`,
+for `α` up to an explicit height `h` (`h : Ordinal.{0}` in both applications), with the zero clause
+(`R 0` gives `SameAtomicType`), descent (`R α` gives `R β` for `β ≤ α ≤ h`, covering the successor
+and limit steps), and forth and back from `R (α + 1)` into `R α` on one-point extensions, give
+`BFEquiv α n a b` for every `α ≤ h` and every pair with `R α n a b`.  The theorem produces no
+related pair: in each application, the initial match, a pair related at the height, is a separate
+hypothesis and not a consequence of the other clauses.  Optionally a block form, adding finitely
+many points at a step.  Its two intended applications are approximate comparison of full
+presentations (item 3 above) and the back-and-forth form of condition 3 of the expansion-domain
+route (layer 5, section 5 above); it is one theorem with two intended applications, and both are to
+be compiled before it is called common.  `Suggested.lean`, section 6, proves approximate comparison
+directly by the same induction (`FullPresentation.bfEquiv_comp_of_obs_eq`), not through it.
 
-**When a generic graded back-and-forth theorem is merged upstream.**  InfinitaryLogic's
-graded-matching theorem, a generic form of the theorem above, is prospective.  Once it is merged
-upstream and its signature is checked at the accepted pin ("Dependency pins"), layer 0 quotes it,
-and the construction layers supply only its hypotheses: atomic agreement, descent, forth and back,
-and an explicit initial match, without repeating the ordinal induction.  Until then the local
-theorem above remains the target.  Nothing is needed from ComputableModelTheory for it.
+**The upstream graded-matching theorem.**  InfinitaryLogic's `bfEquiv_of_gradedMatching`
+(`Scott/GradedMatching`; at the pin, signatures checked), a generic form of the theorem above, takes
+a relation defined at every ordinal, in any language, and guards its laws by the height (lowering
+for `β ≤ α ≤ height`, forth and back for `α + 1 ≤ height`); from `α ≤ height` and a pair related at
+level `α` (the initial match) it concludes `BFEquiv`.  Each of the two applications therefore puts
+the height guard `α ≤ η` and the selection of coordinates inside the relation, with height `η`: for
+approximate comparison, a proof of `α ≤ η`, equal observations at `α` of two closed tuples, and a
+selection of their coordinates; for condition 3, model expansions of the two fixed base models to
+`λ_α`, a common chart, two covers, and a selector `Fin n → Fin k`, with the common empty chart as
+initial match and no uniqueness of expansions used (`README.md`, layer 0, the matches (i) and (ii)).
+For condition 3 the initial match is two separate lemmas, existence of the empty chart in both
+expansions and compatibility of the two empty charts.  Neither application is compiled through the
+upstream theorem yet.  The local theorem above remains the stated target until both are; it is then
+retired, and the construction layers supply only atomic agreement, lowering, forth and back, and an
+explicit initial match, without an ordinal induction of their own.  Nothing is needed from
+ComputableModelTheory for it.
 
 **Prospective interfaces of InfinitaryLogic** (neither available upstream nor pinned; the
 statements are specified here, generically, with no construction):
 
-- *ranks with countable fibres* (`OrdinalCountability`, beside `countable_iff_rank_bounded`): for
-  `r : X → Ordinal` below `ω₁` with countable fibres, the tails `{x | η ≤ r x}` start at the whole
-  type, decrease, are continuous at limits, have countable complements and the fibre at `η` as
-  loss, have empty intersection, give `#X ≤ ℵ₁`, and have cofinally many nonempty losses exactly
-  when `X` is uncountable; with the form for a countable cover by sets indexed by levels;
 - *invariant Borel observations* (`Descriptive`): an isomorphism-invariant Borel map on codes of
   models on `ℕ`, into a countably separated space, is constant on the `BFEquiv α`-classes for
   some `α < ω₁`; measurability is on codes only, never on the class quotient, and no sentence is
@@ -688,11 +705,6 @@ statements are specified here, generically, with no construction):
   Definition II.32] and is not transferred; it supports the rank-filtration comparison of
   `COMPANIONS.md`, "Further companion results", only through the passage between [Mon]'s convention
   and InfinitaryLogic's, which is still to be proved.
-- *the graded-matching theorem* (`Scott/BackAndForth`): a generic form of the graded back-and-forth
-  theorem of this repository (layer 0; "A prospective statement of this repository, layer 0" above),
-  with its hypotheses (atomic agreement, descent, forth and back, an explicit initial match) and
-  conclusion `BFEquiv`; quoted by layer 0 once it is merged upstream and its signature is checked at
-  the accepted pin, and until then the local theorem is the target.
 
 ## Upstream building blocks
 
@@ -712,14 +724,16 @@ In the pinned InfinitaryLogic:
 - the generic finite-support closure (`FiniteSupportClosure`) with its two-generator
   cardinality theorem (`TwoGeneratorCardinality`);
 - `compl_countable_of_loss` (`OrdinalCountability`), which gives the countable domain
-  complements.  The same module's `mk_eq_aleph_one_of_domains` is not used for the upper
-  bound: `|Q| ≤ ℵ₁` is the direct cover of the spine (the persistent core is a subsingleton
-  and each complement `Q \ Dη` is countable).  That theorem assumes global eventual departure
-  (every point leaves some domain) and nonempty domains, and yields the equality only from
-  both.  On the complement of the persistent core, departure holds, but nonemptiness requires
-  every domain to contain a class outside the core, which is the lower-bound input.  It may
-  therefore be quoted, if at all, only for the final equality once both bounds are known, with
-  its eventual-departure hypothesis proved on the complement of the core;
+  complements.  The same module's `mk_le_aleph_one_of_domains` (at the pin, signatures checked)
+  is exactly the upper bound `#X ≤ ℵ₁` for domains whose complements below `ω₁` are countable and
+  which every point leaves, with neither monotonicity nor nonempty domains;
+  `mk_eq_aleph_one_of_domains` adds both for the equality.  The spine does not use them for
+  `|Q| ≤ ℵ₁`, which is its direct cover (the persistent core is a subsingleton and each complement
+  `Q \ Dη` is countable).  Once eventual departure is proved (`COMPANIONS.md`, terminal refinement,
+  from the agreement in `Dη` and the nonempty losses with a Scott sentence for each class), every
+  class leaves some domain and `mk_le_aleph_one_of_domains` applies to the expansion domains
+  directly; this would be a second proof of the upper bound through departure, not taken by the
+  spine (departure is not an input to the count), and is not compiled;
 - the Gδ/Polish model-code spaces;
 - `internalScottRank_le_of_orbits_determined` (`Scott/OrbitRank`), on which the library's
   orbit-formula rank bound (`README.md`, Layer 0) rests; this repository does not apply it
@@ -731,7 +745,7 @@ In the pinned Mathlib (`Mathlib/ModelTheory/Fraisse.lean`): `age`, `Hereditary`,
 `age.fg_substructure`, with the hypotheses recorded in `README.md`, Layer 0.  Mathlib has no
 existence theorem for Fraïssé limits.
 
-In the pinned ComputableModelTheory (`37f6c42`, signatures checked): the classical Fraïssé theorems
+In the pinned ComputableModelTheory (`0e9935b`, signatures checked): the classical Fraïssé theorems
 (`representativeClass`, `isFraisse_representativeClass`, `representativeClass_countable_quotient`,
 `FGCofinal`, `ExtensionRich`, `isFraisseLimit_of_extensionRich`, `SequenceExtension`,
 `amalgamationRich_of_sequenceExtension`, `age_directLimit_eq`, `countable_directLimit`,
@@ -739,7 +753,7 @@ In the pinned ComputableModelTheory (`37f6c42`, signatures checked): the classic
 (`exists_factor_tuple_of_age_subset`, `exists_factor_embedding_of_age_subset`), and orbit isolation
 and countable prime structures (`IsolatesTuple`, `IsAtomic`, `isolatesTuple_of_orbit_formula`,
 `isAtomic_of_orbit_formulas`, `IsolatesTuple.realize_iff`, `IsolatesTuple.typesWith_eq_singleton`,
-`exists_elementaryEmbedding_of_countable_atomic`).  Also at the pin `37f6c42`, signatures checked
+`exists_elementaryEmbedding_of_countable_atomic`).  Also at the pin `0e9935b`, signatures checked
 and `#check`ed in `SuggestedInterfaces.lean`: classical Fraïssé existence
 (`exists_fraisseSequence`, `exists_isFraisseLimit_representativeClass`,
 `exists_isFraisseLimit_of_isFraisse`; `ModelTheory/FraisseExistence`), rooted universality and
@@ -752,7 +766,7 @@ primeness over named finite parameters (`isAtomic_named_of_orbit_formulas`,
 Their statement shapes and hypotheses are in `README.md`, Layer 0; where the pinned versions name
 them differently, those names prevail.
 
-In the pinned InfinitaryLogic (`8a15ca5`, signatures checked): the rank comparison of the Scott
+In the pinned InfinitaryLogic (`def5cc0`, signatures checked): the rank comparison of the Scott
 process (its pull request #140, merged at `a640bbb`: `selfStabilizesCompletely_iff_orbitRank_le`,
 `bfStabilizationOrdinal_self_eq_iSup_orbitRank`, `stabilizesAt_of_orbitRank_le`,
 `rank_le_of_orbitRank_le`, `lift_rank_le_internalScottRank`,
@@ -767,7 +781,7 @@ countability or nonemptiness); `BoundedFormulaω.realize_comp_of_localAutomorphi
 `BoundedFormulaω.realize_comp_append_of_localAutomorphisms` (`Lomega1omega/LocalAutomorphism`,
 any language and carrier).
 
-**A generic interface of InfinitaryLogic (available at the pin `8a15ca5`, signatures checked and
+**A generic interface of InfinitaryLogic (available at the pin `def5cc0`, signatures checked and
 `#check`ed in `SuggestedInterfaces.lean`; its pull requests #142, #143, and #144).** Statement: for
 a relational language (no countability of its symbols), every analytic set `A` of pairs of
 structures on `ℕ` containing no isomorphic pair is uniformly separated at some countable
@@ -842,10 +856,13 @@ named (`README.md`, Layer 0):
     parameters give a `Σ^in_3` Scott sentence (for the `Σ^in_3` Scott sentence obtained by
     existentially quantifying a named rigid core, `README.md`, Layer 4, and `COMPANIONS.md`, B4);
   - rank tails and the least level of a cover (#150, `OrdinalCountability`): `rankTail`,
-    `rankTail_cofinal_losses_iff`, `mk_eq_aleph_one_of_countable_fibers`, `leastLevel`,
-    `countable_fibers_leastLevel`, and `rankTail_leastLevel`, beside the earlier
-    `countable_iff_rank_bounded` (the prospective "ranks with countable fibres" of "The
-    full-presentation route");
+    `rankTail_cofinal_losses_iff`, `biInter_rankTail_eq_empty`,
+    `mk_le_aleph_one_of_countable_fibers`, `mk_eq_aleph_one_of_countable_fibers`, `leastLevel`,
+    `countable_fibers_leastLevel`, and `rankTail_leastLevel`, with `mk_le_aleph_one_of_domains`
+    split out of the earlier theorems, beside the earlier `countable_iff_rank_bounded` (the
+    interface "ranks with countable fibres", listed as prospective before this repin); the
+    statements of `Counting/Filtration` and `Counting/Separation` are candidates for one-line
+    quotation of these, subject to the audit recorded in "Placement record";
   - graded matching (#152, `Scott/GradedMatching`, `bfEquiv_of_gradedSystem` and
     `bfEquiv_of_gradedMatching`): a family of relations graded up to a height bound, with atomic
     agreement at level `0`, lowering, and forth and back one level down, relates at a level
@@ -887,15 +904,16 @@ named (`README.md`, Layer 0):
 merged upstream after the pins above is listed here, named in prose only and never `#check`ed in
 the sketches, until a repin containing it is recorded in this subsection.
 
-**Prospective dependencies (neither available upstream nor pinned):** the InfinitaryLogic
-statements listed under "The full-presentation route": invariant Borel observations, the
-isolating-level lower bound, and limits of chains of bounded equivalence (the analogue for
-`BlockBFEquiv` of the chain-limit lemma).  The local graded back-and-forth theorem remains the
-target until the upstream `bfEquiv_of_gradedMatching` (at the pin, signatures checked) has been
-checked against both intended applications; no application is compiled here.  No
-statement of this roadmap relies on any of them, or on the statements available upstream, as
-pinned until this subsection records a pin containing it; until then they are named in prose
-only (`README.md`, Layer 0), never `#check`ed in the sketches.
+**Prospective dependencies (neither available upstream nor pinned):** the InfinitaryLogic statements
+listed under "The full-presentation route": invariant Borel observations, the isolating-level lower
+bound, and limits of chains of bounded equivalence (the analogue for `BlockBFEquiv` of the
+chain-limit lemma).  The local graded back-and-forth theorem remains the stated target until both of
+its intended applications compile through the upstream `bfEquiv_of_gradedMatching` (at the pin,
+signatures checked), and is then retired; neither application is compiled through it here
+(`README.md`, Layer 0, for where the height guard and the selection of coordinates go).  No
+statement of this roadmap relies on any of them, or on the statements available upstream, as pinned
+until this subsection records a pin containing it; until then they are named in prose only
+(`README.md`, Layer 0), never `#check`ed in the sketches.
 
 ### Applications of library theorems
 
@@ -927,7 +945,7 @@ proved here: the first fact is split over two lines, one for each library theore
 | Local agreement | `BoundedFormulaω.realize_embedding_comp_of_localAutomorphisms` |
 | Local agreement, finite parameters | `BoundedFormulaω.realize_comp_append_of_localAutomorphisms` |
 
-These are available at our pinned dependency `8a15ca5` (signatures checked; "Dependency pins").
+These are available at our pinned dependency `def5cc0` (signatures checked; "Dependency pins").
 Three qualifications:
 
 1. Countability belongs to the construction-specific homogeneity proof (the back-and-forth of
@@ -1136,16 +1154,17 @@ arbitrary-carrier Scott/`T∞` theory dichotomy.  The joint embedding and amalga
 finite top-free charts are step 2 of the top-free witnesses and belong to the core.  These do not
 assert strong AP, a proper self-embedding, uncountable categoricity, Scott-rank equality, or
 existence of a model of all of `T∞`.  Terminal refinement (eventual departure by Scott isolation,
-the last admitted stage, and the terminal expansion; conditional targets) is downstream of the count
-and never an input to it, and the agreement filtration (defined by `T∞`) and the rank filtration
-(defined by Scott rank) are defined differently; no relation between them is asserted, and any
-comparison is a separate prospective theorem (`COMPANIONS.md`, "Further companion results").  The
-main theorem is proved without them; if any is added, give it a separate definite completion
-criterion.  Direct limits of structures and the classical existence theorem (available at the pin)
-belong to the two libraries, not to the finite constructions of layer 3.
-[`COMPANIONS.md`](COMPANIONS.md) gives these topics and the full-chart orbit theory below such
-criteria, as three milestones (A: filtration and infinitary theory; B: top-free chart homogeneity
-and its consequences; C: a geometric obstruction).
+the last admitted stage, and the terminal expansion; conditional targets) is never an input to the
+count, and its eventual departure is to be proved from hypotheses of the count (the agreement of
+condition 3 and the nonempty losses of condition 4, with Scott sentences), not from its conclusions;
+the agreement filtration (defined by `T∞`) and the rank filtration (defined by Scott rank) are
+defined differently; no relation between them is asserted, and any comparison is a separate
+prospective theorem (`COMPANIONS.md`, "Further companion results").  The main theorem is proved
+without them; if any is added, give it a separate definite completion criterion.  Direct limits of
+structures and the classical existence theorem (available at the pin) belong to the two libraries,
+not to the finite constructions of layer 3.  [`COMPANIONS.md`](COMPANIONS.md) gives these topics and
+the full-chart orbit theory below such criteria, as three milestones (A: filtration and infinitary
+theory; B: top-free chart homogeneity and its consequences; C: a geometric obstruction).
 
 ### Full-chart orbit theory: a companion checkpoint
 
@@ -1285,14 +1304,44 @@ lands, their notes stay in those modules.
   `MeasureTheory/Constructions/Polish`) and the uncountability of a nonempty perfect set in a
   completely metrizable space (`not_countable_of_perfect`, to `Topology/MetricSpace/Perfect`, beside
   `Perfect.exists_nat_bool_injection`).
+- `MainTheorem/Assembly`: in the proof of `FullPresentations.HasScatteredTails.countable_quotient`,
+  the local map from the classes of the density sentence to
+  `Quotient (bfEquivSetoid densitySentence η)` re-derives InfinitaryLogic's
+  `bfProj densitySentence η` (`ModelTheory/MorleyCounting`), and the image of codes in
+  `FullPresentations.HasScatteredTails` is in effect the range `bfProjRange` of the tail, stated as
+  an image of codes; the proof is to use `bfProj` and `bfProj_mk` in place of the local derivation,
+  in a later change of proofs only (no statement changes, and no Lean change here).
+
+**Counting (Layers 5–6).**
+
+- `Counting/Filtration` and `Counting/Separation`: InfinitaryLogic's `OrdinalCountability`, at the
+  pin `def5cc0`, has `rankTail`, `leastLevel`, `countable_fibers_leastLevel`, `rankTail_leastLevel`,
+  `mk_eq_aleph_one_of_countable_fibers`, `rankTail_cofinal_losses_iff`, and
+  `biInter_rankTail_eq_empty`, with `mk_le_aleph_one_of_countable_fibers` (signatures checked).  The
+  generic statements of `Counting/Filtration` (`leastLevel` with `countable_setOf_leastLevel_eq` and
+  `le_leastLevel_iff`, `countable_setOf_rank_lt`, `forall_exists_le_rank_iff`,
+  `iInter_setOf_le_rank_eq_empty`, and the constructions `Filtration.ofRank` and
+  `Filtration.ofCountableCover`) and of `Counting/Separation` (`mk_le_aleph_one_of_countable_cover`,
+  `mk_le_aleph_one_of_rank`, which states `mk_le_aleph_one_of_countable_fibers`,
+  `mk_eq_aleph_one_of_rank`) are candidates for one-line quotation of these, keeping their
+  statements, subject to an audit of three points: the bound `α < ω₁` inside our `leastLevel`
+  (`sInf {α | α < ω₁ ∧ x ∈ Q α}`, against InfinitaryLogic's `sInf {α | x ∈ Q α}`, which agree under
+  the covering hypothesis); the empty persistent core (`Filtration.core_ofRank` against
+  `biInter_rankTail_eq_empty`); and cofinally nonempty losses (the field `cofinal_losses` of
+  `Filtration`, and `rankTail_cofinal_losses_iff`) against nonempty losses at every level.  That the
+  correspondence is one-to-one is an audit claim until the quotations compile.  No deletion is
+  proposed.
 
 **Statements not yet in any module.**
 
-- The graded back-and-forth theorem (`README.md`, layer 0; prospective): to be proved in a layer 0
-  module of this repository, with no construction imports; destination InfinitaryLogic,
-  `Scott/BackAndForth`, beside `BFEquiv.zero`, `BFEquiv.succ`, and `BFEquiv.limit`.  It is moved
-  only after both of its intended applications (approximate comparison of full presentations, and
-  the back-and-forth form of condition 3 of the expansion-domain route) are compiled through it.
+- The graded back-and-forth theorem (`README.md`, layer 0; prospective): the stated target, in a
+  layer 0 module of this repository with no construction imports (a proof, in a module
+  `Comparison/GradedBackAndForth`, is on an unmerged branch).  Its generic form is InfinitaryLogic's
+  `bfEquiv_of_gradedMatching` (`Scott/GradedMatching`, at the pin, signatures checked), so the
+  local theorem has no upstream destination: once both of its intended applications (approximate
+  comparison of full presentations, and the back-and-forth form of condition 3 of the
+  expansion-domain route) compile through the upstream theorem, the local theorem is retired, not
+  moved.
 
 ## Dependency tracking
 
