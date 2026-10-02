@@ -6,21 +6,24 @@ Authors: Cameron Freer
 import ComputableModelTheory.Classical
 import VaughtConjecture.Extension.PinnedExtension
 import VaughtConjecture.Language.HullOperations
+import VaughtConjecture.Stage.TopFree
 
 /-!
 # The finite age of top-free charts and its hereditary property
 
 Roadmap, the section "The top-free witnesses: the finite age and its classical limit", step 1
-(finite top-free charts) and the hereditary half of step 2; semantic contract, item 12 (the age of
-top-free charts is closed under reindexing and restriction to closed faces).
+(finite top-free charts) and the hereditary half of step 2; semantic contract, item 12 (the legal
+top-free stage types are closed under reindexing and restriction to closed faces).
 
-A stage type is **top-free** (`StageType.IsTopFree`) when no cell carries the label `⊤`.  Top-free
-stage types are closed under restriction to closed faces and reindexing
-(`StageType.IsTopFree.comap`, `StageType.IsTopFree.restrictFace`, `StageType.IsTopFree.reindex`);
-every stage type on no points is top-free (`StageType.isTopFree_of_zero`), and so is the bottom
-labelling of a legal scheme (`Scheme.IsLegal.isTopFree_toStageType`).  With the closure of
-legality under the same operations (`StageType.IsLegal.comap`, `StageType.IsLegal.reindex`), the
-legal top-free stage types at a stage form an age in the sense of semantic contract, item 12.
+A stage type is **top-free** (`StageType.IsTopFree`, `VaughtConjecture.Stage.TopFree`) when no
+cell carries the label `⊤`.  Top-free stage types are closed under restriction to closed faces and
+reindexing (`StageType.IsTopFree.comap`, `StageType.IsTopFree.restrictFace`,
+`StageType.IsTopFree.reindex`); every stage type on no points is top-free
+(`StageType.isTopFree_of_zero`), and so is the bottom labelling of a legal scheme
+(`Scheme.IsLegal.isTopFree_toStageType`).  With the closure of legality under the same operations
+(`StageType.IsLegal.comap`, `StageType.IsLegal.reindex`), the legal top-free stage types at a
+stage are closed under reindexing and restriction to closed faces, as semantic contract, item 12,
+requires of a specified age.
 
 **The family and the age.**  A **top-free index** at stage `α` (`TopFreeIndex α`) is a legal
 top-free stage type at `α` on some finite number of points.  Its **top-free chart**
@@ -31,8 +34,8 @@ this family: the structures isomorphic to a top-free chart.
 
 **Step 1.**  The index is inhabited, by the chart on no points (`TopFreeIndex.empty`), with no
 hypothesis on `α`; it is countable when there are countably many ordinals below `α`
-(`countable_topFreeIndex`, an instance at `ω`); every top-free chart is finite, hence countable,
-and finitely generated (`fg_topFreeChart`).
+(`countable_topFreeIndex`, an instance at `ω`); every top-free chart is finite, hence countable
+(`finite_topFreeChart`), and finitely generated (`fg_topFreeChart`).
 
 **The hereditary property** (half of step 2).  Every substructure of a top-free chart is
 isomorphic to a top-free chart (`exists_equiv_topFreeChart`): it is the chart of the literal
@@ -51,16 +54,15 @@ property.
   the empty chart.  These will need the hypotheses `StageType.HasCoatomExtensions α`, `0 < α`, and
   `Order.IsSuccPrelimit α`.
 * **Classical existence** (step 3): `exists_isFraisseLimit_representativeClass`, with the
-  countability of the index (`countable_topFreeIndex`) and of the function symbols
-  (`hullLanguage.countable_functions`) supplied by `haveI`.
+  countability of the index (`countable_topFreeIndex`) supplied by `haveI`; the countability of
+  the function symbols (`hullLanguage.countable_functions`) is already needed to state
+  `IsFraisseLimit`, so at a general stage it enters the statement (at `ω` it is the instance
+  `hullLanguage.countable_functions_omega`).
 * **Finite-age reconstruction** (steps 4–7).
 
-**Dependencies.**  This is the first module of the library that imports ComputableModelTheory, and
-it does so only through its classical entry module `ComputableModelTheory.Classical`, for
-`FirstOrder.Language.representativeClass` and its properties.
-`VaughtConjecture.Extension.PinnedExtension` is imported only for the stage types on no points
-(`StageType.card_eq_zero`) and the one-point scheme with its bottom labelling (`Scheme.onePoint`,
-`Scheme.IsLegal.toStageType`); no module of `VaughtConjecture.Construction` is imported.
+**Dependencies.**  ComputableModelTheory is imported only through its classical entry module
+`ComputableModelTheory.Classical`, for `FirstOrder.Language.representativeClass` and its
+properties; no module of `VaughtConjecture.Construction` is imported.
 
 ## Placement
 
@@ -76,38 +78,6 @@ open scoped Ordinal
 
 /-! ### Top-free stage types -/
 
-namespace StageType
-
-variable {α : Ordinal.{u}} {n m : ℕ}
-
-/-- A stage type is **top-free** when no cell carries the label `⊤`. -/
-def IsTopFree (t : StageType.{u} α n) : Prop :=
-  ∀ d, t.label d ≠ ⊤
-
-variable {t : StageType.{u} α n}
-
-/-- The restriction of a top-free stage type to a closed face is top-free: its labels are labels
-of the stage type. -/
-theorem IsTopFree.comap (ht : t.IsTopFree) {f : Fin m ↪ Fin n}
-    (hf : univ.map f ∈ t.toCellScheme.faces) : (t.comap f hf).IsTopFree :=
-  fun _ ↦ ht _
-
-/-- A face of a top-free stage type is top-free. -/
-theorem IsTopFree.restrictFace (ht : t.IsTopFree) {f : Fin m ↪ Fin n} {u : StageType.{u} α m}
-    (hu : restrictFace f t = some u) : u.IsTopFree := by
-  obtain ⟨hf, rfl⟩ := (restrictFace_eq_some_iff t f).mp hu
-  exact ht.comap hf
-
-/-- A reindexing of a top-free stage type is top-free. -/
-theorem IsTopFree.reindex (ht : t.IsTopFree) (e : Fin m ≃ Fin n) : (t.reindex e).IsTopFree :=
-  ht.comap _
-
-/-- A stage type on no points is top-free: it has no cells (`card_eq_zero`). -/
-theorem isTopFree_of_zero (t : StageType.{u} α 0) : t.IsTopFree := fun d ↦
-  (Fin.cast t.card_eq_zero d).elim0
-
-end StageType
-
 /-- The bottom labelling of a legal scheme is top-free. -/
 theorem Scheme.IsLegal.isTopFree_toStageType {n : ℕ} {S : Scheme.{u} n} (hS : S.IsLegal)
     (α : Ordinal.{u}) : (hS.toStageType α).IsTopFree :=
@@ -117,12 +87,12 @@ theorem Scheme.IsLegal.isTopFree_toStageType {n : ℕ} {S : Scheme.{u} n} (hS : 
 
 /-- A **top-free index** at stage `α`: a legal top-free stage type at stage `α` on some finite
 number of points. -/
-def TopFreeIndex (α : Ordinal.{u}) : Type (u + 1) :=
+abbrev TopFreeIndex (α : Ordinal.{u}) : Type (u + 1) :=
   Σ k : ℕ, {P : StageType.{u} α k // P.IsLegal ∧ P.IsTopFree}
 
 /-- The **top-free chart** of a top-free index: the chart of its stage type, a finite structure of
 the hull language whose relations are its closed faces with their types, bundled in `Type`. -/
-noncomputable def topFreeChart (α : Ordinal.{u}) (i : TopFreeIndex.{u} α) :
+noncomputable abbrev topFreeChart (α : Ordinal.{u}) (i : TopFreeIndex.{u} α) :
     Bundled.{0} (hullLanguage.{u} α).Structure :=
   ⟨i.2.1.Chart, inferInstance⟩
 
@@ -153,7 +123,7 @@ noncomputable def empty : TopFreeIndex.{u} α :=
     StageType.isTopFree_of_zero _⟩
 
 /-- There is a top-free index at every stage: the empty chart. -/
-noncomputable instance : Nonempty (TopFreeIndex.{u} α) :=
+instance : Nonempty (TopFreeIndex.{u} α) :=
   ⟨empty α⟩
 
 end TopFreeIndex
@@ -164,14 +134,14 @@ variable {α : Ordinal.{u}}
 there are countably many top-free indices at stage `α`. -/
 theorem countable_topFreeIndex (hα : (Set.Iio α).Countable) : Countable (TopFreeIndex.{u} α) := by
   have := StageType.countable hα
-  exact inferInstanceAs (Countable (Σ k : ℕ, {P : StageType.{u} α k // P.IsLegal ∧ P.IsTopFree}))
+  infer_instance
 
 /-- There are countably many top-free indices at stage `ω`. -/
 instance countable_topFreeIndex_omega : Countable (TopFreeIndex.{u} ω) :=
   countable_topFreeIndex (Set.countable_coe_iff.mp countable_Iio_omega0_coe)
 
 /-- A top-free chart is finite. -/
-instance (i : TopFreeIndex.{u} α) : Finite (topFreeChart α i) :=
+instance finite_topFreeChart (i : TopFreeIndex.{u} α) : Finite (topFreeChart α i) :=
   inferInstanceAs (Finite (Fin i.1))
 
 /-- A top-free chart is finitely generated. -/
