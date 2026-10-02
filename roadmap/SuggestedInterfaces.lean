@@ -324,7 +324,10 @@ set_option linter.hashCommand false in
 -- to `height`, atomic at level `0`, lowering, and with forth and back one level down, relates at
 -- a level `α ≤ height` only `BFEquiv α` pairs; any language, no relationality.  It is a generic
 -- form of the graded back-and-forth theorem of `README.md`, Layer 0, whose initial match is a pair
--- related at the height (`α = height`); no application is compiled here.
+-- related at the height (`α = height`).  Both applications are compiled through it in the library,
+-- on abstract hypotheses (`VaughtConjecture.Comparison.GradedMatchingApplications`: approximate
+-- comparison, `FullPresentation.bfEquiv_comp_of_obs_eq`, and condition 3 in back-and-forth form,
+-- `ExpansionMatchData.bfEquiv_of_expansionMatch`); no application is compiled here.
 set_option linter.hashCommand false in
 #check FirstOrder.Language.bfEquiv_of_gradedMatching
 set_option linter.hashCommand false in
