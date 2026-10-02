@@ -48,7 +48,9 @@ jobs:
       # Dependency outputs (`.lake/packages`: Mathlib fork, InfinitaryLogic,
       # ComputableModelTheory, and the small libraries), keyed on the two pins only.  Any
       # branch restores the newest cache for its pins; it is saved by whichever run first
-      # builds a new pin, so a repin PR warms itself and `main` inherits the result.
+      # builds a new pin.  A pull request's cache lives under `refs/pull/<n>/merge` and is
+      # never visible to `main`, which saves its own after the merge; `main`'s caches are
+      # visible to every pull request.
       # This step only looks the entry up (nothing is downloaded), so that the disk cleanup
       # below can be decided before anything is written to disk; the restore follows it.
       - name: Look up dependency cache
@@ -59,25 +61,38 @@ jobs:
           key: deps-v5-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
           lookup-only: true
 
+      # Emits `enough=true` only if the measured available bytes are an integer of at least
+      # 12 GiB (12884901888 bytes); a failed or unparseable measurement gives `enough=false`,
+      # so the cleanup runs.  The comparison is first checked at and around the boundary.
       - name: Measure free disk space
         id: disk
         run: |
-          df -h /
-          echo "avail-gb=$(df --output=avail -B1G / | tail -1 | tr -d ' ')" >> "$GITHUB_OUTPUT"
+          df -h / || true
+          enough() { [[ "$1" =~ ^[0-9]+$ ]] && (( 10#$1 >= 12884901888 )); }
+          for t in 12884901887:false 12884901888:true 12884901889:true x:false :false; do
+            if enough "${t%%:*}"; then got=true; else got=false; fi
+            if [[ "$got" != "${t##*:}" ]]; then
+              echo "disk guard self-test failed for '${t%%:*}'"; exit 1
+            fi
+          done
+          avail=$(df --output=avail -B1 / 2>/dev/null | tail -n 1 | tr -d ' ') || avail=
+          if enough "$avail"; then result=true; else result=false; fi
+          echo "available bytes: ${avail:-unknown}; at least 12 GiB: $result"
+          echo "enough=$result" >> "$GITHUB_OUTPUT"
 
       # The cold path (dependency cache missed) restores nothing and then fetches the Mathlib
       # cache of the pin and builds the dependencies, which needs the room, so the cleanup
       # always runs there, as before (the toolchain install above it is unaffected).
-      # The warm path needs room for the restored dependency cache: a 2.1 GB archive that is
-      # extracted to about 7.7 GB (both on disk during extraction, so a peak of about 10 GB),
-      # plus under 0.1 GB of root build outputs; the sketch checks and audits write nothing
-      # large.  The cleanup is therefore also run whenever less than 12 GB is free, and is
-      # skipped only on a hit with at least 12 GB free (it takes up to 1.5 minutes).  The
+      # The warm path needs room for the restored dependency cache: a 1.9 GiB archive that is
+      # extracted to about 7.7 GiB (both on disk during extraction, so a peak of about
+      # 9.7 GiB), plus under 0.1 GiB of root build outputs; the sketch checks and audits write
+      # nothing large.  The cleanup is therefore also run unless at least 12 GiB is free, and
+      # is skipped only on a hit with at least 12 GiB free (it takes up to 1.5 minutes).  The
       # cleanup drops the large preinstalled toolchains we never use.
       - name: Free disk space
         if: >-
           steps.deps-lookup.outputs.cache-hit != 'true' ||
-          fromJSON(steps.disk.outputs.avail-gb) < 12
+          steps.disk.outputs.enough != 'true'
         run: |
           sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc \
             /usr/local/.ghcup /opt/hostedtoolcache/CodeQL
