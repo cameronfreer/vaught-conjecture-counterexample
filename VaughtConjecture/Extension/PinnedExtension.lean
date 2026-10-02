@@ -94,7 +94,7 @@ def IsLegal.toStageType (hS : S.IsLegal) (α : Ordinal.{u}) : StageType.{u} α n
   label _ := ⊥
   isWellFormed := hS.isWellFormed
   isCoded := hS.isCoded
-  isLawful := CellScheme.Rows.isLawful_bot
+  isLawful := CellScheme.Rows.isLawful_const_bot
   atStage _ := Label.atStage_bot
 
 /-- **Every legal scheme carries a legal stage type** [Kni26, Proposition 4.3.24]: its bottom

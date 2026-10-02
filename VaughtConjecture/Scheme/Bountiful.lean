@@ -228,7 +228,7 @@ theorem IsBountiful.surjOn_isLawfulBelow (hR : R.IsBountiful) (hX : X ∈ D.grad
     (hY : Y ∈ D.gradedFaces) (h : X ≤ Y) :
     Set.SurjOn (fun q' ↦ q' ∘ Set.inclusion (D.below_mono h)) {q | R.IsLawfulBelow Y q}
       {p | R.IsLawfulBelow X p} := by
-  have := hR hX hY h ⊥ (isSelfVisible_bot _) (fun _ ↦ ⊥) (isLawfulBelow_bot Y)
+  have := hR hX hY h ⊥ (isSelfVisible_bot _) (fun _ ↦ ⊥) (isLawfulBelow_const_bot Y)
   rwa [capBall_bot, capBall_bot] at this
 
 /-- The bottom rows are bountiful. -/
@@ -236,7 +236,7 @@ theorem isBountiful_bot : (bot D : D.Rows.{u}).IsBountiful := by
   intro X Y _ _ h c _ q hq p ⟨hp, _⟩
   rw [isLawfulBelow_bot_iff] at hq hp
   subst hq hp
-  exact ⟨fun _ ↦ ⊥, self_mem_capBall _ (isLawfulBelow_bot Y) c, rfl⟩
+  exact ⟨fun _ ↦ ⊥, self_mem_capBall _ (isLawfulBelow_const_bot Y) c, rfl⟩
 
 end Rows
 

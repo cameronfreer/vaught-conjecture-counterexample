@@ -119,7 +119,7 @@ private noncomputable def completionBelow : CompletionBelowFullGrade seed where
   label _ := ⊥
   isLawful := by
     rw [rows_completedScheme]
-    exact CellScheme.Rows.isLawful_bot
+    exact CellScheme.Rows.isLawful_const_bot
   label_embed d := (congrFun label_seed d).symm
 
 /-- The completion of the seed at the stage `0`: a legal stage type on two points whose faces along

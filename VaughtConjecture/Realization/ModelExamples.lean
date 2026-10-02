@@ -92,7 +92,7 @@ private def pair : StageType.{0} 0 2 where
   isWellFormed := ⟨rfl, ⟨inferInstance, Geometry.isPlan_intervalPlan _, fun d ↦ by
     fin_cases d <;> simp [pairCells, CellScheme.gradedIndex, Geometry.mem_intervalPlan]⟩⟩
   isCoded _ _ := WithBot.bot_lt_coe _
-  isLawful := CellScheme.Rows.isLawful_bot
+  isLawful := CellScheme.Rows.isLawful_const_bot
   atStage _ := atStage_bot
 
 /-- Every graded face of `pairCells` is the graded index of a cell. -/

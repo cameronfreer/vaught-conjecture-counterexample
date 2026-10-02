@@ -264,7 +264,7 @@ theorem exists_isLawful_extend_label (hS : S.IsLegal) (hf : univ.map f ∈ S.toC
   obtain ⟨P, ℓ, _, _, hℓ, _⟩ := p
   subst hp
   obtain ⟨ρ, hρ, -, hext⟩ := hS.exists_isLawful_extend hf (isSelfVisible_bot n) hℓ
-    CellScheme.Rows.isLawful_bot fun _ ↦ by simp
+    CellScheme.Rows.isLawful_const_bot fun _ ↦ by simp
   exact ⟨ρ, hρ, fun i j hij ↦ by rw [hext, Fin.ext hij]⟩
 
 end Extend

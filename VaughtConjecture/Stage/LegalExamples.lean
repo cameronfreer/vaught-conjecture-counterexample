@@ -58,7 +58,7 @@ private def point : StageType.{0} 0 1 where
   isWellFormed := ⟨rfl, ⟨inferInstance, Geometry.isPlan_intervalPlan _, fun _ ↦ by
     simp [CellScheme.gradedIndex]⟩⟩
   isCoded _ _ := WithBot.bot_lt_coe _
-  isLawful := CellScheme.Rows.isLawful_bot
+  isLawful := CellScheme.Rows.isLawful_const_bot
   atStage _ := Label.atStage_bot
 
 /-- The one-point stage type with the bottom rows is legal. -/

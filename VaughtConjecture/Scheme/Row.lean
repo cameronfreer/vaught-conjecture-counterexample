@@ -43,7 +43,7 @@ restrict to every lower set (`IsLawful.isLawfulBelow`) and from a lower set to a
 `Label.TransformsTo.reduce`; at a successor stage it need not be
 (`VaughtConjecture.Stage.Examples`).
 
-The constant bottom labelling is lawful for all rows (`isLawful_bot`), and a cell whose row is
+The constant bottom labelling is lawful for all rows (`isLawful_const_bot`), and a cell whose row is
 bottom at the cell itself has bottom label in every lawful section
 (`IsLawful.eq_bot_of_row_self_eq_bot`).  The rows are **consistent** (`Rows.IsConsistent`) when
 each row `R.row s` is lawful below the graded index of `s`; consistent rows are orderly
@@ -156,14 +156,14 @@ theorem isLawfulBelow_iff {X : Finset α × ℕ} {r : D.below X → Label.{u}} :
   Iff.rfl
 
 /-- The constant bottom labelling is a lawful section of all rows. -/
-theorem isLawful_bot : R.IsLawful fun _ ↦ ⊥ where
+theorem isLawful_const_bot : R.IsLawful fun _ ↦ ⊥ where
   orderly _ := isSelfVisible_bot _
   locality s := by simpa only [min_self] using TransformsTo.bot _ (R.row s)
   availability _ t _ _ := ⟨t, rfl, le_rfl⟩
 
 /-- The constant bottom labelling is lawful below every pair. -/
-theorem isLawfulBelow_bot (X : Finset α × ℕ) : R.IsLawfulBelow X fun _ ↦ ⊥ :=
-  isLawfulBelow_iff.mpr isLawful_bot
+theorem isLawfulBelow_const_bot (X : Finset α × ℕ) : R.IsLawfulBelow X fun _ ↦ ⊥ :=
+  isLawfulBelow_iff.mpr isLawful_const_bot
 
 /-- Every labelling of a scheme without cells is lawful. -/
 theorem isLawful_of_isEmpty [IsEmpty ι] (p : ι → Label.{u}) : R.IsLawful p where
@@ -305,7 +305,7 @@ def bot : D.Rows.{u} := ⟨fun _ _ ↦ ⊥⟩
 @[simp] theorem isLawful_bot_iff {p : ι → Label.{u}} : (bot D).IsLawful p ↔ p = fun _ ↦ ⊥ := by
   refine ⟨fun h ↦ funext fun s ↦ h.eq_bot_of_row_self_eq_bot s rfl, ?_⟩
   rintro rfl
-  exact isLawful_bot
+  exact isLawful_const_bot
 
 /-- Below every pair, the only labelling lawful for the bottom rows is the bottom labelling. -/
 @[simp] theorem isLawfulBelow_bot_iff {X : Finset α × ℕ} {r : D.below X → Label.{u}} :
@@ -313,7 +313,7 @@ def bot : D.Rows.{u} := ⟨fun _ _ ↦ ⊥⟩
   rw [isLawfulBelow_iff, comap_bot, isLawful_bot_iff]
 
 /-- The bottom rows are consistent. -/
-theorem isConsistent_bot : (bot D : D.Rows.{u}).IsConsistent := fun _ ↦ isLawfulBelow_bot _
+theorem isConsistent_bot : (bot D : D.Rows.{u}).IsConsistent := fun _ ↦ isLawfulBelow_const_bot _
 
 end Rows
 

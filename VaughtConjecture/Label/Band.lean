@@ -26,15 +26,15 @@ The band map is monotone, lies between `α` and `α + K` off bottom, and, when `
 or limits, commutes on the labels `≥ β` with visibility replacement at every threshold `k ≤ K`
 (`bandMap_visibilityReplace`).
 
-**The band rule** (`IsWitness.transformsTo_bandMap`).  Let `σ` be the shifter of a witness
-bounded by grade `K` (`VaughtConjecture.Label.Transform`: its suppressor is `stepSuppressor K`),
-`α` a limit, and `β` zero or a limit, on a finite family of cells of grades `≤ K`.  If the
-source labelling `p` is sent by `σ` below `α` or to the formal top, and to the formal top only
-from labels `≥ β`, then `p` transforms to the labelling that keeps the values of `σ ∘ p` below
-`α` and replaces each formal top by the band map of its source label.  The shifter
-(`IsWitness.band`) keeps the values of `σ` below `α` capped at a permitted cutoff `c`, self-visible
-at `K`, that bounds the finitely many values used; it applies the band map to the labels `≥ β`
-sent to `α` or above, and sends the remaining labels to `c`.
+**The band rule** (`IsWitness.transformsTo_bandMap`).  Let `σ` be a witness bounded by grade `K`
+(`VaughtConjecture.Label.Transform`: `(stepSuppressor K, σ)` is a witness), `α` a limit, and `β`
+zero or a limit, on a finite family of cells of grades `≤ K`.  If the source labelling `p` is sent
+by `σ` below `α` or to the formal top, and to the formal top only from labels `≥ β`, then `p`
+transforms to the labelling that keeps the values of `σ ∘ p` below `α` and replaces each formal top
+by the band map of its source label.  The shifter (`IsWitness.band`) keeps the values of `σ` below
+`α` capped at a permitted cutoff `c`, self-visible at `K`, that bounds the finitely many values
+used; it applies the band map to the labels `≥ β` sent to `α` or above, and sends the remaining
+labels to `c`.
 
 ## References
 
@@ -160,11 +160,11 @@ theorem bandMap_visibilityReplace (hα : IsSuccPrelimit α) (hβ : IsSuccPrelimi
 
 /-! ### The band rule -/
 
-/-- **The band shifter.**  Let `σ` be the shifter of a witness bounded by grade `K`, let `α` and
-`β` be zero or limits, and let `c` be a permitted cutoff at stage `α` that is self-visible at `K`.
+/-- **The band shifter.**  Let `σ` be a witness bounded by grade `K`, let `α` and `β` be zero or
+limits, and let `c` be a permitted cutoff at stage `α` that is self-visible at `K`.
 The shifter that caps the values of `σ` below `α` at `c`, applies the band map from `β` to `α` at
 `K` to the labels `≥ β` that `σ` sends to `α` or above, and sends the remaining labels to `c`, is
-the shifter of a witness bounded by grade `K`. -/
+a witness bounded by grade `K`. -/
 theorem IsWitness.band (hσ : IsWitness (stepSuppressor K) σ) (hα : IsSuccPrelimit α)
     (hβ : IsSuccPrelimit β) (hc : IsPermittedCutoff α c) (hcK : IsSelfVisible K c) :
     IsWitness (stepSuppressor K) fun x ↦
@@ -214,8 +214,8 @@ theorem IsWitness.band (hσ : IsWitness (stepSuppressor K) σ) (hα : IsSuccPrel
       rw [hx, visibilityReplace_bot]
       simp only [τ, hvr, ite_eq_left (WithBot.bot_lt_coe _), min_eq_left bot_le]
 
-/-- **The band rule.**  Let `σ` be the shifter of a witness bounded by grade `K`, let `α` be a
-limit and `β` zero or a limit, and let the family of cells be finite with all grades `≤ K`.
+/-- **The band rule.**  Let `σ` be a witness bounded by grade `K`, let `α` be a limit and `β`
+zero or a limit, and let the family of cells be finite with all grades `≤ K`.
 Suppose that `σ` sends each source label `p d` below `α` or to the formal top, and to the formal
 top only when `β ≤ p d`.  Then `p` transforms to any labelling `q` that agrees with `σ ∘ p` where
 it is below `α` and is the band map of the source label where `σ ∘ p` is the formal top.  This is

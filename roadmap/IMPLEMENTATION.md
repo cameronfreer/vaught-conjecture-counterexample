@@ -922,8 +922,9 @@ blocks"), now at the pin, is applied by the scatteredness form of thinness
 - Make constructor projections, identity reindexings, and canonical cell transport
   directional `[simp]` lemmas.  Use `ext` on data, and narrow `simp only` for dependent face
   equations.  Do not unfold whole schemes/models globally.
-- Separate natural-index arithmetic (`omega`) from ordinal/band inequalities; expose exact
-  band-comparison lemmas before asking automation to solve goals.
+- Separate natural-index arithmetic (`omega`) from ordinal inequalities (blocks `[μ, μ + ω)` and
+  bands `[α, α + K]`); expose exact block- and band-comparison lemmas before asking automation to
+  solve goals.
 - Use `funext`, `Function.Embedding.ext`, `Subtype.ext`, and proof irrelevance to finish
   the transport equations.  Give explicit structure instances where a structure is coded, rather
   than letting inference pick an unintended structure.
