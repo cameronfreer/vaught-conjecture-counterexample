@@ -580,12 +580,13 @@ These are statements still to be proved.  None is an input to the main theorem.
   relationship to the expansion domains (a class lies in `D_ξ` exactly when its height is at
   least `ξ`).  The count of the main theorem does not use them.
 * **Terminal refinement** (downstream of the counting theorem; every item a conditional target, to
-  be proved).  Hypotheses, all explicit: the conclusions of the expansion-domain count, namely the
-  countable complements `Q \ D_η`, the agreement of the classes of `D_η` on every sentence of
-  quantifier rank at most `η`, and the uncountability of `Q` (from the nonempty losses of the lower
-  bound); and Scott isolation, a Scott sentence `σ_q` for each class `q`, of countable quantifier
-  rank and true in `q` only (`scottSentence_characterizes`).  Under these hypotheses, the targets,
-  in order:
+  be proved).  Hypotheses, all explicit: `D_0 = Q` and continuity at nonzero countable limits; the
+  conclusions of the expansion-domain count, namely the countable complements `Q \ D_η`, the
+  agreement of the classes of `D_η` on every sentence of quantifier rank at most `η`, and the
+  uncountability of `Q` (from the nonempty losses of the lower bound); Scott isolation, a Scott
+  sentence `σ_q` for each class `q`, of countable quantifier rank and true in `q` only
+  (`scottSentence_characterizes`); and, for 3 only, expansion uniqueness and the countable family of
+  terminal conditions of layer 4.  Under these hypotheses, the targets, in order:
   1. **eventual departure by Scott isolation** (to be proved): every class leaves the expansion
      domains, so the persistent core is empty.  Argument: if `q` lay in every `D_η`, then for `η` at
      least the quantifier rank of `σ_q` every class of `D_η` would satisfy `σ_q`, so `D_η = {q}`,
@@ -602,12 +603,14 @@ These are statements still to be proved.  None is an input to the main theorem.
   None of these is proved, and no class is asserted to have a last admitted stage or a terminal
   expansion before 1 is proved.  If 1–3 are proved, the greatest refinement above (itself a target)
   is the terminal expansion, and no class has height `ω₁`.  Terminal refinement is not a
-  prerequisite of the counting theorem: its eventual departure is to be proved from the
-  uncountability of `Q` and the agreement on `D_η`, conclusions of the count, so it cannot feed a
-  proof of that same count without circularity.  The full-presentation route (`README.md`, "The
-  persistent core") may take its coverage of every class from terminal refinement only by stating
-  its dependence on the expansion-domain route; a full-presentation proof that does not depend on
-  that route must cover every class, the persistent class included, by its own argument.
+  prerequisite of the counting theorem: its eventual departure is to be proved from the countable
+  complements `Q \ D_η`, the agreement on `D_η`, and the uncountability of `Q`, conclusions of the
+  count, so it cannot feed a proof of that same count without circularity.  The full-presentation
+  route (`README.md`, "The persistent core") may take eventual departure from terminal refinement
+  only by stating its dependence on the expansion-domain route (the fullness of the terminal
+  expansion for its terminal exact age, the first special statement there, is not part of terminal
+  refinement); a full-presentation proof that does not depend on that route must cover every class,
+  the persistent class included, by its own argument.
 * **Minimal unboundedness.**  `Φ` is minimally unbounded [Mon, Definition XII.4]: it is
   unbounded, but for every sentence `ψ` one of `Φ ∧ ψ` and `Φ ∧ ¬ψ` is bounded.  The second
   clause follows from the countable truth sides: one of `Φ ∧ ψ` and `Φ ∧ ¬ψ` has countably many

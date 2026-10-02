@@ -290,8 +290,9 @@ LOW, and the cap-to-model theorem) and consists of four items, built in this ord
    constructed occurrence.  Cutoff observations, stage reductions, and exact extension within a
    specified age are kept apart (the density boundary, `README.md`, Layer 3, 3.3): cutoff-by-cutoff
    receiving gives exact projected receiving only after projected-donor lifting over the particular
-   actual root being extended is proved, a statement to be proved in each application and never a
-   consequence of coherent projections.
+   actual root being extended is proved, a statement to be proved in each application (for every
+   actual root and every projected donor over it, the lift depending on both), and coherence of the
+   projections is not accepted as a proof of it.
 4. **Extension statements and first uses** (the table of `README.md`, Layer 3): finite-cut
    receiving, first used by the one-sided donor transfer (and by the four-family-to-density
    direction of layer 2); exact residual receiving, by the residual comparison; exact
@@ -363,11 +364,12 @@ Sections 4 and 5 together are **higher-stage reconstruction** (`README.md`, head
 lists its five outputs, each a statement still to be proved): the structural candidate, its
 normalization, and the separate modelhood criterion (section 4); the partial-expansion API, namely
 reduction, uniqueness, coherence, and transport under isomorphism; and limit existence, with
-coherence derived from uniqueness (this section).  Outputs 1–3 and 5, and the uniqueness of output
-4, belong to checkpoint 5; the reduction of models in output 4 is layer 2.  A proof that the
-candidate is uniquely determined is never accepted as a proof that it exists as a model.
-Higher-stage reconstruction is distinct from finite-age reconstruction, the construction of the
-top-free witnesses below, whose acceptance criterion is `SEMANTIC_CONTRACT.md`, item 11.
+coherence derived from uniqueness (this section).  Outputs 1–3 and 5, and the uniqueness, coherence,
+and transport under isomorphism of output 4, belong to checkpoint 5; the reduction of models in
+output 4 is layer 2 (checkpoint 3).  A proof that the candidate is uniquely determined is never
+accepted as a proof that it exists as a model.  Higher-stage reconstruction is distinct from
+finite-age reconstruction, the construction of the top-free witnesses below, whose acceptance
+criterion is `SEMANTIC_CONTRACT.md`, item 11.
 
 Prove the one-sided finite-donor transfer first, using only target consistency and finite-cut
 receiving (R1).  Symmetrize for back-and-forth: one block buys one level, with no extra `ω`
@@ -531,12 +533,14 @@ their notions live; "this repository" means the layers of `README.md`.
    conditional on this coverage (the hypothesis `FullPresentations`). The known way to establish it
    goes through global termination (every class leaves the expansion domains at a countable stage,
    where its terminal expansion is full for its terminal exact age); the finite-stage arguments do
-   not cover the persistent class (`README.md`, "The persistent core").  Global termination is a
-   conditional target of terminal refinement (`COMPANIONS.md`, "Further companion results"), to be
-   proved only after the expansion-domain count and from its conclusions; a proof of this route that
-   takes its coverage from terminal refinement states its dependence on the expansion-domain route,
-   and a proof of this route that does not depend on it covers every class, the persistent class
-   included, by its own argument.
+   not cover the persistent class (`README.md`, "The persistent core").  Eventual departure, the
+   first half of global termination, is a conditional target of terminal refinement
+   (`COMPANIONS.md`, "Further companion results"), to be proved only after the expansion-domain
+   count and from its conclusions; the second half, that the terminal expansion is full for its
+   terminal exact age, is the first special statement and is not part of terminal refinement.  A
+   proof of this route that takes departure from terminal refinement states its dependence on the
+   expansion-domain route, and a proof of this route that does not depend on it covers every class,
+   the persistent class included, by its own argument.
 6. *Noncollapse of the base reducts* (occurrence of all auxiliary invariants is
    insufficient).  Home: this repository (the top-free witnesses with expansion uniqueness and
    same-carrier transport, layer 6); the generic isolating-level criterion in sentence form in
@@ -649,12 +653,12 @@ and both are to be compiled before it is called common.  `Suggested.lean`, secti
 approximate comparison directly by the same induction (`FullPresentation.bfEquiv_comp_of_obs_eq`),
 not through it.
 
-**When a generic graded back-and-forth theorem lands upstream.**  InfinitaryLogic's
+**When a generic graded back-and-forth theorem is merged upstream.**  InfinitaryLogic's
 graded-matching theorem, a generic form of the theorem above, is prospective.  Once it is merged
 upstream and its signature is checked at the accepted pin ("Dependency pins"), layer 0 quotes it,
-and the construction layers supply only its hypotheses: atomic agreement, lowering (descent), forth
-and back, and an explicit initial match, without repeating the ordinal induction.  Until then the
-local theorem above remains the target.  Nothing is needed from ComputableModelTheory for it.
+and the construction layers supply only its hypotheses: atomic agreement, descent, forth and back,
+and an explicit initial match, without repeating the ordinal induction.  Until then the local
+theorem above remains the target.  Nothing is needed from ComputableModelTheory for it.
 
 **Prospective interfaces of InfinitaryLogic** (neither available upstream nor pinned; the
 statements are specified here, generically, with no construction):
@@ -918,8 +922,8 @@ statement is available at the pin):
 
 - classical existence (available at the pin) and `isFraisse_representativeClass`
   (ComputableModelTheory), for the limit (step 3);
-- the factorization of tuples through the age (ComputableModelTheory), for finite-age reconstruction
-  (steps 4–5);
+- the factorization of tuples through the age (ComputableModelTheory), for steps 4–5 of finite-age
+  reconstruction;
 - `IsUltrahomogeneous.extend_embedding` (Mathlib), for receiving (step 6);
 - `isolatesTuple_of_orbit_formula`, `isAtomic_of_orbit_formulas`, and
   `exists_elementaryEmbedding_of_countable_atomic` (ComputableModelTheory), for the atomicity of
@@ -971,8 +975,8 @@ Each checkpoint needs both its abstract API and a concrete application:
 3. Realizations, literal syntax correspondence, the hull operations with their five facts; then
    steps 1–6 of the top-free witnesses, in order: finite top-free charts, hereditary closure and
    amalgamation and joint embedding (through the plain form of the coatom extension property, the
-   first use of (R6)), classical existence (available at the pin), finite-age reconstruction,
-   consistency and covering and top-freeness, and receiving (the first use of (R5)).
+   first use of (R6)), classical existence (available at the pin), reconstruction of partial
+   evaluation, consistency and covering and top-freeness, and receiving (the first use of (R5)).
 4. Items 3.2 and 3.3 for (R1)–(R3): for each of them, the extension of the realization by one actual
    occurrence over the literal root and the recovery theorem (by `Correct` and labelled
    evaluation, by LOW, or through the gate), with all its equations on that occurrence and at
@@ -1092,11 +1096,12 @@ finite top-free charts are step 2 of the top-free witnesses and belong to the co
 assert strong AP, a proper self-embedding, uncountable categoricity, Scott-rank equality, or
 existence of a model of all of `T∞`.  Terminal refinement (eventual departure by Scott isolation,
 the last admitted stage, and the terminal expansion; conditional targets) is downstream of the count
-and never an input to it, and the agreement filtration and the rank filtration are different
-filtrations, related only by a separate prospective theorem (`COMPANIONS.md`, "Further companion
-results").  The main theorem is proved without them; if any is added, give it a separate definite
-completion criterion.  Direct limits of structures and the classical existence theorem (available at
-the pin) belong to the two libraries, not to the finite constructions of layer 3.
+and never an input to it, and the agreement filtration (defined by `T∞`) and the rank filtration
+(defined by Scott rank) are defined differently; no relation between them is asserted, and any
+comparison is a separate prospective theorem (`COMPANIONS.md`, "Further companion results").  The
+main theorem is proved without them; if any is added, give it a separate definite completion
+criterion.  Direct limits of structures and the classical existence theorem (available at the pin)
+belong to the two libraries, not to the finite constructions of layer 3.
 [`COMPANIONS.md`](COMPANIONS.md) gives these topics and the full-chart orbit theory below such
 criteria, as three milestones (A: filtration and infinitary theory; B: top-free chart homogeneity
 and its consequences; C: a geometric obstruction).
