@@ -17,7 +17,7 @@ no library result is claimed.
 
 Mathlib and the pinned infinitary-logic and computable-model-theory libraries are the current
 dependencies; section 3 also names the classical existence theorem of ComputableModelTheory,
-available upstream, not yet at our pinned dependency (`IMPLEMENTATION.md`, "Dependency pins").
+available at our pinned dependency (`IMPLEMENTATION.md`, "Dependency pins").
 The concrete finite construction is specified in README and SEMANTIC_CONTRACT;
 proving these general statements alone does not construct it.
 -/
@@ -121,9 +121,9 @@ language `L` (the stage chart language, or its definitional expansion by the hul
 The concrete charts, the hull operations, and the amalgamation proof are not constructed here.
 
 The classical theorems applied in steps 3–6 are not named in Lean here: from ComputableModelTheory,
-`representativeClass`, `isFraisse_representativeClass`, and `exists_factor_tuple_of_age_subset`
-(at our pinned dependency), and the existence theorem `exists_isFraisseLimit_representativeClass`
-(available upstream, not yet at our pinned dependency; `IMPLEMENTATION.md`, "Dependency pins").
+`representativeClass`, `isFraisse_representativeClass`, `exists_factor_tuple_of_age_subset`, and
+the existence theorem `exists_isFraisseLimit_representativeClass`, all at our pinned dependency
+(the last `#check`ed in `SuggestedInterfaces.lean`; `IMPLEMENTATION.md`, "Dependency pins").
 The orbit formula of a chart and the orbit theory are companion material
 (`SuggestedCompanions.lean`, section B).  Mathlib's `IsUltrahomogeneous.extend_embedding` is
 available now.

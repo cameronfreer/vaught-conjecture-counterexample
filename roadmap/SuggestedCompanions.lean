@@ -31,10 +31,10 @@ file with
 The three sections correspond to the three milestones: (A) the filtration and the theory `T∞`, (B)
 homogeneity of the top-free charts and the orbit theory, (C) the geometric obstruction.  The generic
 theorems of B are quoted from the two libraries: from InfinitaryLogic, at our pinned dependency
-`cca6949` (signatures checked), as the proved applications at the end of section B; from
-ComputableModelTheory, at our pinned dependency `52e3dda` (names checked), whose `sorry` targets
-below record their statement shapes and are not `#check`ed here (`IMPLEMENTATION.md`,
-"Dependency pins").
+`098fb36` (signatures checked), as the proved applications at the end of section B; from
+ComputableModelTheory, at our pinned dependency `0401c95` (signatures checked, `#check`ed in
+`SuggestedInterfaces.lean`), whose `sorry` targets below record their statement shapes
+(`IMPLEMENTATION.md`, "Dependency pins").
 -/
 
 set_option autoImplicit false
@@ -184,7 +184,7 @@ namespace Orbits
 variable {L : Language.{u, v}} {M : Type w} [L.Structure M]
 
 /- The generic consequences of the two interfaces of B are library theorems of InfinitaryLogic,
-available at our pinned dependency `cca6949` (signatures checked), and are not reproved here: the
+available at our pinned dependency `098fb36` (signatures checked), and are not reproved here: the
 applications at the end of this section quote them.  The construction-side statements are the
 orbit formula of a chart (`orbitDefinedBy_chartOrbitFormula`) and the local agreement property
 (`agreesLocally_of_hom`).  The narrow modules `Scott/OrbitFormulaThreshold` and
@@ -260,7 +260,7 @@ def CoversTuples (eval : {n : ℕ} → (Fin n ↪ M) → Option (Chart n)) : Pro
 /-- The **local agreement property** of a self-map `f`: on each finite tuple it agrees with an
 automorphism.  For `f` a self-embedding this is the hypothesis of InfinitaryLogic's
 `BoundedFormulaω.realize_embedding_comp_of_localAutomorphisms` (at our pinned dependency
-`cca6949`). -/
+`098fb36`). -/
 def AgreesLocally (f : M → M) : Prop :=
   ∀ (n : ℕ) (a : Fin n → M), ∃ e : M ≃[L] M, ⇑e ∘ a = f ∘ a
 
@@ -284,7 +284,7 @@ theorem agreesLocally_of_hom {eval : {n : ℕ} → (Fin n ↪ M) → Option (Cha
 
 end ChartOrbitFormula
 
-/-! ### The applications (InfinitaryLogic, at our pinned dependency `cca6949`)
+/-! ### The applications (InfinitaryLogic, at our pinned dependency `098fb36`)
 
 Each statement is a one-line application of a library theorem to the two interfaces; the
 hypotheses `OrbitDefinedBy a φ` and `AgreesLocally ⇑g` are, by definition, the library's `hφ` and
