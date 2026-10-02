@@ -30,14 +30,6 @@ jobs:
         with:
           persist-credentials: false
 
-      # The runner's ~14 GB free disk cannot hold a restored `.lake` plus a freshly fetched
-      # Mathlib cache of a new pin.  Drop the large preinstalled toolchains we never use.
-      - name: Free disk space
-        run: |
-          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc \
-            /usr/local/.ghcup /opt/hostedtoolcache/CodeQL
-          df -h /
-
       - name: Install elan (pinned + checksum) and the toolchain
         run: |
           curl -sSL -H "Accept: application/octet-stream" \
@@ -57,16 +49,57 @@ jobs:
       # ComputableModelTheory, and the small libraries), keyed on the two pins only.  Any
       # branch restores the newest cache for its pins; it is saved by whichever run first
       # builds a new pin, so a repin PR warms itself and `main` inherits the result.
+      # This step only looks the entry up (nothing is downloaded), so that the disk cleanup
+      # below can be decided before anything is written to disk; the restore follows it.
+      - name: Look up dependency cache
+        id: deps-lookup
+        uses: actions/cache/restore@v6
+        with:
+          path: .lake/packages
+          key: deps-v4-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
+          lookup-only: true
+
+      - name: Measure free disk space
+        id: disk
+        run: |
+          df -h /
+          echo "avail-gb=$(df --output=avail -B1G / | tail -1 | tr -d ' ')" >> "$GITHUB_OUTPUT"
+
+      # The cold path (dependency cache missed) restores nothing and then fetches the Mathlib
+      # cache of the pin and builds the dependencies, which needs the room, so the cleanup
+      # always runs there, as before (the toolchain install above it is unaffected).
+      # The warm path needs room for the restored dependency cache: a 2.1 GB archive that is
+      # extracted to about 7.7 GB (both on disk during extraction, so a peak of about 10 GB),
+      # plus under 0.1 GB of root build outputs; the sketch checks and audits write nothing
+      # large.  The cleanup is therefore also run whenever less than 12 GB is free, and is
+      # skipped only on a hit with at least 12 GB free (it takes up to 1.5 minutes).  The
+      # cleanup drops the large preinstalled toolchains we never use.
+      - name: Free disk space
+        if: >-
+          steps.deps-lookup.outputs.cache-hit != 'true' ||
+          fromJSON(steps.disk.outputs.avail-gb) < 12
+        run: |
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc \
+            /usr/local/.ghcup /opt/hostedtoolcache/CodeQL
+          df -h /
+
+      # Same key as the look-up.  If the look-up found the entry but the restore does not
+      # (evicted in between), fail rather than take the cold path without the cleanup above;
+      # a re-run then takes the cold path with the cleanup.
       - name: Restore dependency cache
         id: deps-cache
         uses: actions/cache/restore@v6
         with:
           path: .lake/packages
-          key: deps-v4-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
+          key: ${{ steps.deps-lookup.outputs.cache-primary-key }}
+          fail-on-cache-miss: ${{ steps.deps-lookup.outputs.cache-hit == 'true' }}
 
       # The project's own outputs (`.lake/build`), keyed on the pins plus the exact commit,
-      # with a prefix fallback to the most recent compatible build.  `lake build` decides
-      # freshness from traces, so a stale restore only costs the changed modules.
+      # with a prefix fallback to the most recent build for the same pins (the prefix includes
+      # the hash of `lean-toolchain` and `lake-manifest.json`, so a build made against other
+      # pins is never restored).  `lake build` re-checks every module's trace against its
+      # inputs, so a stale restore only costs rebuilding the changed modules and never skips
+      # a check.
       - name: Restore root build cache
         id: root-cache
         uses: actions/cache/restore@v6
@@ -109,8 +142,17 @@ jobs:
           path: .lake/packages
           key: ${{ steps.deps-cache.outputs.cache-primary-key }}
 
+      # Saved on every run whose exact key missed, pull requests included, so that successive
+      # commits on one pull request rebuild only the changed modules.  GitHub scopes a cache to
+      # the ref that saved it: a pull request's entries (ref `refs/pull/<n>/merge`) are
+      # visible to later runs of that pull request only, never to `main` or to other pull
+      # requests, while `main`'s entries are visible to every pull request.  The repository
+      # limit is 10 GB, evicting least-recently-used entries.  An entry here is about 7.5 MB
+      # compressed against 2.1 GB for a dependency cache, so even with four dependency caches
+      # present (8.4 GB) about 200 build entries fit; their pressure on the dependency caches
+      # is negligible.
       - name: Save root build cache
-        if: github.ref == 'refs/heads/main' && steps.root-cache.outputs.cache-hit != 'true'
+        if: steps.root-cache.outputs.cache-hit != 'true'
         uses: actions/cache/save@v6
         with:
           path: .lake/build
