@@ -600,16 +600,20 @@ These are statements still to be proved.  None is an input to the main theorem.
      Then no class lies in every `D_η`.*  Proof: if `q` lay in every `D_η`, choose `β` at least the
      quantifier rank of `σ_q` with some `p ∈ D_β \ D_{β+1}`; both `p` and `q` lie in `D_β`, so
      agreement on `D_β` makes `p` satisfy `σ_q`, hence `p = q`; but `q ∈ D_{β+1}` and `p ∉ D_{β+1}`.
-     Of conditions 1–4 the proof uses only the agreement of condition 3 and the cofinally nonempty
-     losses, which condition 4 gives (it makes every successor loss nonempty); the same argument
-     applies to any family of domains with that agreement and cofinally nonempty successor losses,
-     for instance the least-level filtration of the full-presentation route (`README.md`, "Reduction
-     to full presentations"), by the lemma below.  **Corollary** (conditional on the same
-     hypotheses): under condition 4 the persistent core `⋂_{η<ω₁} D_η` is empty.  **Control:**
-     isolation of each class by one sentence is needed, and pairwise separation (for `p ≠ q`, some
-     sentence true in one and false in the other) is not enough, because the rank of a sentence
-     separating `q` from `p` depends on `p` while the class lost at `β` varies with `β`, so no level
-     need lie above the rank of the sentence separating `q` from the class lost there.
+     Of these hypotheses the proof uses only the agreement on every `D_β`, the Scott sentences, and
+     the cofinally nonempty losses; the last are redundant under conditions 1–4, since condition 4
+     makes every successor loss nonempty, and are listed because the same argument applies to any
+     family of domains with that agreement and cofinally nonempty successor losses (on the
+     least-level filtration of the full-presentation route departure is immediate, the tails of a
+     total rank having empty intersection, `biInter_rankTail_eq_empty`).  **Corollary** (conditional
+     on the same hypotheses): under condition 4 the persistent core `⋂_{η<ω₁} D_η` is empty.
+     **Control:** the argument uses isolation of each class by one sentence; pairwise separation
+     (for `p ≠ q`, some sentence true in one and false in the other) does not suffice for it,
+     because the rank of a sentence separating `q` from `p` depends on `p` while the class lost at
+     `β` varies with `β`, so no level need lie above the rank of the sentence separating `q` from
+     the class lost there.  For instance, on `Q = ω₁ ∪ {q}` with `D_β = {q} ∪ [β, ω₁)` and, for each
+     `α < ω₁`, an observation of rank `α + 1` true at `α` only, the agreement and the cofinally
+     nonempty losses hold and distinct points are separated, yet `q` lies in every `D_β`.
 
      **Cofinally nonempty successor losses** (a separate lemma, to be proved).  *Let `D_η ⊆ Q`, for
      `η < ω₁`, satisfy `D_0 = Q`, `D_ζ ⊆ D_ξ` for `ξ ≤ ζ`, continuity `D_δ = ⋂_{ξ<δ} D_ξ` at nonzero
@@ -707,10 +711,11 @@ These are statements still to be proved.  None is an input to the main theorem.
 
   **A one-sided rank comparison** (prospective: a statement to be proved, in InfinitaryLogic's
   conventions, not [Mon]'s).  The notions, as defined at the pin `def5cc0` (signatures checked), for
-  any language `L` and a countable structure `M` (the theorems used below add `[L.IsRelational]` and
-  `[Countable (Σ l, L.Relations l)]`, which the base language satisfies): the **stabilization
-  ordinal** (`Scott/Sentence`), the least level at which empty-tuple back-and-forth equivalence with
-  `M` characterizes `M` up to isomorphism among the countable structures in its carrier universe,
+  any language `L` and a countable structure `M` (the theorems used below add their own instances,
+  given with each; the base language is relational with countably many relation symbols): the
+  **stabilization ordinal** (`Scott/Sentence`), the least level at which empty-tuple back-and-forth
+  equivalence with `M` characterizes `M` up to isomorphism among the countable structures in its
+  carrier universe,
 
   ```lean
   def StabilizesAt (M : Type w) [L.Structure M] (α : Ordinal) : Prop :=
@@ -731,27 +736,33 @@ These are statements still to be proved.  None is an input to the main theorem.
       BFEquiv (L := L) α n a b → BFEquiv (L := L) (Order.succ α) n a b}
   ```
 
-  Statement, for a countable level `η`, with its hypotheses explicit.  (a) Any two classes of `D_η`
-  are empty-tuple `BFEquiv η`, by condition 3 in its back-and-forth form (`README.md`).  Any two
-  classes of `A_η` are empty-tuple `BFEquiv η` under the hypotheses of A2 (countable complements
-  `Q \ D_η`, agreement on `D_η` at rank `η`, `Q` uncountable), which make `T∞` complete: the Scott
-  formula at `η` of a model in one class has quantifier rank at most `η` (`scottFormula_qrank_le`)
-  and holds in a model exactly when that model is `BFEquiv η` to it on the empty tuple
-  (`realize_scottFormula_iff_BFEquiv`); its negation, also of rank at most `η`, fails in that class,
-  which lies in `A_η`, so by completeness the formula itself lies in `T∞` and holds throughout
-  `A_η`.  (b) If `q ∈ A_η` and `A_η` contains a second class (or `q ∈ D_η` and `D_η` does), then
-  every countable model `M` in `q` has `η < stabilizationOrdinal M ≤ scottHeight M`: a model of the
-  second class is `BFEquiv η` to `M` and not isomorphic to it, so `StabilizesAt M α` fails for every
-  `α ≤ η` (back-and-forth equivalence is monotone in the level); and at `scottHeight M` the analysis
-  stabilizes for tuples of every length (`scottHeight_stabilizesCompletely`), so empty-tuple
-  equivalence there characterizes isomorphism (`BFEquiv_stabilization_implies_equiv`).  Hence
-  `A_η ⊆ {q : η < stabilizationOrdinal(q)}` whenever `A_η` has two classes, and likewise for `D_η`.
-  This is an inclusion, a one-sided bound, not an agreement: no reverse inclusion and no equality of
-  levels is asserted.  It does not transfer to the internal Scott rank, and there is no
-  identification of the stabilization ordinal or the Scott height with `internalScottRank`: the
-  countably infinite set in the language with no relations has internal Scott rank `1` and is
-  recognized at no finite level (finite sets with at least `n` elements are `BFEquiv n` to it), so
-  its stabilization ordinal is `ω`.
+  Statement, for a level `η < ω₁`, with its hypotheses explicit.  (a) Any two classes of `D_η` are
+  empty-tuple `BFEquiv η`, by condition 3 in its back-and-forth form (`README.md`).  Any two classes
+  of `A_η` are empty-tuple `BFEquiv η` under the hypotheses of A2 (countable complements `Q \ D_η`,
+  agreement on `D_η` at rank `η`, `Q` uncountable), which make `T∞` complete: the Scott formula at
+  `η` of a countable model of one class has quantifier rank at most `η` (`scottFormula_qrank_le`,
+  under `[Countable (Σ l, L.Relations l)]`, `[Countable M]`, and `η < ω₁`; no relationality) and
+  holds in a model exactly when that model is `BFEquiv η` to it on the empty tuple
+  (`realize_scottFormula_iff_BFEquiv`, under the same hypotheses); its negation, also of rank at
+  most `η`, fails in that class, which lies in `A_η`, so by completeness the formula itself lies in
+  `T∞` and holds throughout `A_η`.  (b) If `A_η` contains two classes (or `D_η` does), then every
+  countable model `M` of every class of `A_η` (respectively `D_η`) has
+  `η < stabilizationOrdinal M ≤ scottHeight M`.  First, at `scottHeight M` the analysis stabilizes
+  for tuples of every length (`scottHeight_stabilizesCompletely`, under `[L.IsRelational]` and
+  `[Countable (Σ l, L.Relations l)]`), so empty-tuple equivalence there characterizes isomorphism
+  among countable structures in the carrier universe of `M` (`BFEquiv_stabilization_implies_equiv`,
+  under `[L.IsRelational]`); hence `StabilizesAt M (scottHeight M)`, the set whose infimum is
+  `stabilizationOrdinal M` is nonempty, and `stabilizationOrdinal M ≤ scottHeight M`.  Second, a
+  model of another class is `BFEquiv η` to `M` and not isomorphic to it, so `StabilizesAt M α` fails
+  for every `α ≤ η` (back-and-forth equivalence is monotone in the level); as the set is nonempty,
+  its infimum lies in it, and `η < stabilizationOrdinal M`.  Invariance of the stabilization ordinal
+  under isomorphism is not used.  This is an inclusion, a one-sided bound, not an agreement: no
+  reverse inclusion and no equality of levels is asserted.  It does not transfer to the internal
+  Scott rank, and there is no identification of the stabilization ordinal or the Scott height with
+  `internalScottRank`: the countably infinite set in the language with no relations has internal
+  Scott rank `1` (`internalScottRank_pureSet`, `Scott/OrbitRank`, at the pin, signatures checked)
+  and is recognized at no finite level (finite sets with at least `n` elements are `BFEquiv n` to
+  it), so its stabilization ordinal is `ω`, a claim not formalized upstream.
 * **Full trees.**  The introductory example of full rooted well-founded trees of finite
   sequences (`LITERATURE.md`, §9), with its rank convention explicit: equally ranked countable
   full well-founded trees are isomorphic; and the finite-extension estimate, that finite

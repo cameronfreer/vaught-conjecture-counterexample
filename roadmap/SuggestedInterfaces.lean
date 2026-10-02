@@ -372,7 +372,8 @@ set_option linter.hashCommand false in
 -- which empty-tuple back-and-forth equivalence with `M` characterizes `M` among the countable
 -- structures in its carrier universe (`StabilizesAt`); `scottHeight M` the least level from which
 -- back-and-forth equivalence of tuples of every length no longer refines.  Neither is
--- `internalScottRank`; no application is compiled here.
+-- `internalScottRank`: an infinite pure set has internal Scott rank `1`
+-- (`internalScottRank_pureSet`).  No application is compiled here.
 set_option linter.hashCommand false in
 #check FirstOrder.Language.StabilizesAt
 set_option linter.hashCommand false in
@@ -387,6 +388,8 @@ set_option linter.hashCommand false in
 #check FirstOrder.Language.scottFormula_qrank_le
 set_option linter.hashCommand false in
 #check FirstOrder.Language.realize_scottFormula_iff_BFEquiv
+set_option linter.hashCommand false in
+#check FirstOrder.Language.internalScottRank_pureSet
 
 -- Forgetting finitely many parameters (InfinitaryLogic, `Scott/ForgetParameters`), available at
 -- the pin `def5cc0` (signatures checked).  The existential closure `existsTuple k φ` of a formula

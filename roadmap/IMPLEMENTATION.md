@@ -550,8 +550,8 @@ their notions live; "this repository" means the layers of `README.md`.
    first special statement and is not part of terminal refinement.  A proof of this route may take
    departure from terminal refinement without circularity, stating its dependence on conditions 3
    and 4 of the expansion-domain route (not on its count); departure proves neither terminal
-   fullness nor the coverage itself.  A proof of this route that does not depend on those conditions
-   covers every class, the persistent class included, by its own argument.
+   fullness nor the coverage itself.  A proof of this route that does not depend on conditions 3 and
+   4 covers every class, the persistent class included, by its own argument.
 6. *Noncollapse of the base reducts* (occurrence of all auxiliary invariants is
    insufficient).  Home: this repository (the top-free witnesses with expansion uniqueness and
    same-carrier transport, layer 6); the generic isolating-level criterion in sentence form in
@@ -658,14 +658,14 @@ application; `BFEquiv` itself needs none), relations `R α n a b` between `n`-tu
 for `α` up to an explicit height `h` (`h : Ordinal.{0}` in both applications), with the zero clause
 (`R 0` gives `SameAtomicType`), descent (`R α` gives `R β` for `β ≤ α ≤ h`, covering the successor
 and limit steps), and forth and back from `R (α + 1)` into `R α` on one-point extensions, give
-`BFEquiv α n a b` for every `α ≤ h` and every pair with `R α n a b`. The theorem produces no related
-pair: in each application, the initial match, a pair related at the height, is a separate hypothesis
-and not a consequence of the other clauses.  Optionally a block form, adding finitely many points at
-a step.  Its two intended applications are approximate comparison of full presentations (item 3
-above) and the back-and-forth form of condition 3 of the expansion-domain route (layer 5, section 5
-above); it is one theorem with two intended applications, and both are to be compiled before it is
-called common.  `Suggested.lean`, section 6, proves approximate comparison directly by the same
-induction (`FullPresentation.bfEquiv_comp_of_obs_eq`), not through it.
+`BFEquiv α n a b` for every `α ≤ h` and every pair with `R α n a b`.  The theorem produces no
+related pair: in each application, the initial match, a pair related at the height, is a separate
+hypothesis and not a consequence of the other clauses.  Optionally a block form, adding finitely
+many points at a step.  Its two intended applications are approximate comparison of full
+presentations (item 3 above) and the back-and-forth form of condition 3 of the expansion-domain
+route (layer 5, section 5 above); it is one theorem with two intended applications, and both are to
+be compiled before it is called common.  `Suggested.lean`, section 6, proves approximate comparison
+directly by the same induction (`FullPresentation.bfEquiv_comp_of_obs_eq`), not through it.
 
 **The upstream graded-matching theorem.**  InfinitaryLogic's `bfEquiv_of_gradedMatching`
 (`Scott/GradedMatching`; at the pin, signatures checked), a generic form of the theorem above, takes
@@ -732,7 +732,8 @@ In the pinned InfinitaryLogic:
   `Q \ Dη` is countable).  Once eventual departure is proved (`COMPANIONS.md`, terminal refinement,
   from the agreement in `Dη` and the nonempty losses with a Scott sentence for each class), every
   class leaves some domain and `mk_le_aleph_one_of_domains` applies to the expansion domains
-  directly; this is a candidate application, not compiled;
+  directly; this would be a second proof of the upper bound through departure, not taken by the
+  spine (departure is not an input to the count), and is not compiled;
 - the Gδ/Polish model-code spaces;
 - `internalScottRank_le_of_orbits_determined` (`Scott/OrbitRank`), on which the library's
   orbit-formula rank bound (`README.md`, Layer 0) rests; this repository does not apply it
@@ -1154,16 +1155,16 @@ finite top-free charts are step 2 of the top-free witnesses and belong to the co
 assert strong AP, a proper self-embedding, uncountable categoricity, Scott-rank equality, or
 existence of a model of all of `T∞`.  Terminal refinement (eventual departure by Scott isolation,
 the last admitted stage, and the terminal expansion; conditional targets) is never an input to the
-count, and its eventual departure is proved from hypotheses of the count (the agreement of condition
-3 and the nonempty losses of condition 4, with Scott sentences), not from its conclusions; the
-agreement filtration (defined by `T∞`) and the rank filtration (defined by Scott rank) are defined
-differently; no relation between them is asserted, and any comparison is a separate prospective
-theorem (`COMPANIONS.md`, "Further companion results").  The main theorem is proved without them; if
-any is added, give it a separate definite completion criterion.  Direct limits of structures and the
-classical existence theorem (available at the pin) belong to the two libraries, not to the finite
-constructions of layer 3. [`COMPANIONS.md`](COMPANIONS.md) gives these topics and the full-chart
-orbit theory below such criteria, as three milestones (A: filtration and infinitary theory; B:
-top-free chart homogeneity and its consequences; C: a geometric obstruction).
+count, and its eventual departure is to be proved from hypotheses of the count (the agreement of
+condition 3 and the nonempty losses of condition 4, with Scott sentences), not from its conclusions;
+the agreement filtration (defined by `T∞`) and the rank filtration (defined by Scott rank) are
+defined differently; no relation between them is asserted, and any comparison is a separate
+prospective theorem (`COMPANIONS.md`, "Further companion results").  The main theorem is proved
+without them; if any is added, give it a separate definite completion criterion.  Direct limits of
+structures and the classical existence theorem (available at the pin) belong to the two libraries,
+not to the finite constructions of layer 3.  [`COMPANIONS.md`](COMPANIONS.md) gives these topics and
+the full-chart orbit theory below such criteria, as three milestones (A: filtration and infinitary
+theory; B: top-free chart homogeneity and its consequences; C: a geometric obstruction).
 
 ### Full-chart orbit theory: a companion checkpoint
 
@@ -1316,18 +1317,20 @@ lands, their notes stay in those modules.
 - `Counting/Filtration` and `Counting/Separation`: InfinitaryLogic's `OrdinalCountability`, at the
   pin `def5cc0`, has `rankTail`, `leastLevel`, `countable_fibers_leastLevel`, `rankTail_leastLevel`,
   `mk_eq_aleph_one_of_countable_fibers`, `rankTail_cofinal_losses_iff`, and
-  `biInter_rankTail_eq_empty` (signatures checked).  The generic statements of `Counting/Filtration`
-  (`leastLevel` with `countable_setOf_leastLevel_eq` and `le_leastLevel_iff`,
-  `countable_setOf_rank_lt`, `forall_exists_le_rank_iff`, `iInter_setOf_le_rank_eq_empty`, and the
-  constructions `Filtration.ofRank` and `Filtration.ofCountableCover`) and of `Counting/Separation`
-  (`mk_le_aleph_one_of_countable_cover`, `mk_le_aleph_one_of_rank`, `mk_eq_aleph_one_of_rank`) are
-  candidates for one-line quotation of these, keeping their statements, subject to an audit of
-  three points: the bound `α < ω₁` inside our `leastLevel` (`sInf {α | α < ω₁ ∧ x ∈ Q α}`, against
-  InfinitaryLogic's `sInf {α | x ∈ Q α}`, which agree under the covering hypothesis); the empty
-  persistent core (`Filtration.core_ofRank` against `biInter_rankTail_eq_empty`); and cofinally
-  nonempty losses (the field `cofinal_losses` of `Filtration`, and `rankTail_cofinal_losses_iff`)
-  against nonempty losses at every level.  That the correspondence is one-to-one is an audit claim
-  until the quotations compile.  No deletion is proposed.
+  `biInter_rankTail_eq_empty`, with `mk_le_aleph_one_of_countable_fibers` (signatures checked).  The
+  generic statements of `Counting/Filtration` (`leastLevel` with `countable_setOf_leastLevel_eq` and
+  `le_leastLevel_iff`, `countable_setOf_rank_lt`, `forall_exists_le_rank_iff`,
+  `iInter_setOf_le_rank_eq_empty`, and the constructions `Filtration.ofRank` and
+  `Filtration.ofCountableCover`) and of `Counting/Separation` (`mk_le_aleph_one_of_countable_cover`,
+  `mk_le_aleph_one_of_rank`, which states `mk_le_aleph_one_of_countable_fibers`,
+  `mk_eq_aleph_one_of_rank`) are candidates for one-line quotation of these, keeping their
+  statements, subject to an audit of three points: the bound `α < ω₁` inside our `leastLevel`
+  (`sInf {α | α < ω₁ ∧ x ∈ Q α}`, against InfinitaryLogic's `sInf {α | x ∈ Q α}`, which agree under
+  the covering hypothesis); the empty persistent core (`Filtration.core_ofRank` against
+  `biInter_rankTail_eq_empty`); and cofinally nonempty losses (the field `cofinal_losses` of
+  `Filtration`, and `rankTail_cofinal_losses_iff`) against nonempty losses at every level.  That the
+  correspondence is one-to-one is an audit claim until the quotations compile.  No deletion is
+  proposed.
 
 **Statements not yet in any module.**
 
