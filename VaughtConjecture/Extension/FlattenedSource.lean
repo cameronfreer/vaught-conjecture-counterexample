@@ -58,8 +58,9 @@ at every cell (`CellScheme.Rows.min_strongDecode_flattenedSource`).  These are s
 the flattening step and the decoder `strongDecode V m`, not about the decoder `ρ` of the owner
 alignment.  For `ρ`, the reading capped at a cap `γ` transfers from the agreement of `ρ` with the
 capped decoder on the labels short at `m`, at every cell that carries a flattened code
-(`Label.min_apply_flattenedSource_of_agree`); the reading above `γ`, up to the owner label, is the
-content of the alignment itself.
+(`Label.min_apply_flattenedSource_of_agree`).  The transfer holds at the alignment cap `γ`; it is
+the ambient condition of the lift only when `γ` is the cap `c` of the lift.  The reading above
+`γ`, up to the owner label, is the content of the alignment itself.
 
 **The source of the alignment** (`CellScheme.Rows.IsLawfulBelow.flattenedSource_prescription`).
 For a prescription `p` lawful below a pair `X` with values in `V`, its flattened source at the
@@ -277,7 +278,8 @@ send only bottom to bottom.  So an owner label above a positive cap has a code a
 conclusion of the owner-local alignment with the capped decoder
 `τ := fun z ↦ min (strongDecode V m z) γ` of `exists_isWitness_flattenedSource`, since
 `min (τ z) γ = min (strongDecode V m z) γ`; so the decoder `ρ` of the alignment keeps the
-observation at the cap `γ` at every cell that carries a flattened code. -/
+observation at the alignment cap `γ` at every cell that carries a flattened code.  This is the
+ambient condition of the lift only when `γ` is the cap `c` of the lift. -/
 theorem min_apply_flattenedSource_of_agree {ρ : Label.{u} → Label.{u}}
     (hagree : ∀ z, IsShort m z → min (ρ z) γ = min (strongDecode V m z) γ) {d : ι}
     (hd : w d ∈ V) : min (ρ (flattenedSource V m w d)) γ = min (w d) γ := by
@@ -322,8 +324,8 @@ variable {C B : Finset α} {j : ℕ}
 /-- **The flattening step keeps the prescribed face literally.**  If a labelling `w` below
 `(B, j + 1)` reads `min p (p o)` below `(C, j + 1)`, with values there in `V`, the decoder
 `strongDecode V (j + 1)` reads `min p (p o)` from its flattened source there; restoration
-(`exists_restoration`) then gives `p` itself.  It is a statement about the flattening step and
-the encoder's own decoder, not about the decoder of the owner alignment. -/
+(`VaughtConjecture.Extension.Restoration`) then gives `p` itself.  It is a statement about the
+flattening step and the encoder's own decoder, not about the decoder of the owner alignment. -/
 theorem strongDecode_flattenedSource_inclusion (hCB : C ⊆ B) {p : D.below (C, j + 1) → Label.{u}}
     {o : D.below (C, j + 1)} {w : D.below (B, j + 1) → Label.{u}}
     (hV : ∀ e, w (Set.inclusion (D.below_mono
