@@ -780,35 +780,34 @@ this roadmap.  An application is claimed only where a compiled theorem applying 
 named (`README.md`, Layer 0):
 
 - **InfinitaryLogic**: the current pin is `8a15ca5`, the merge of its pull request #148, reached
-  from `098fb36` (the merge of its pull request #146).  Besides the statements of `098fb36` (the
-  rank comparison of the Scott process, #140; the orbit-formula threshold and rank bound and
-  local-automorphism preservation of `README.md`, Layer 0, #141; analytic tree boundedness, #142;
-  the coded forced back-and-forth tree, #143; uniform back-and-forth separation,
-  `Descriptive/BFSeparation`, #144; and the ordinal-indexed `Σ^in_α`/`Π^in_α` hierarchy,
-  `Lomega1omega/InHierarchy`, #145), it contains Montalbán's explicit Scott sentence from a family
-  of orbit formulas (#147, `Scott/MontalbanSentence`: `montalbanSentence`, `IsOrbitFormulaFamily`,
-  `realize_montalbanSentence`, `montalbanSentence_self`,
-  `nonempty_equiv_of_realize_montalbanSentence`, `montalbanSentence_characterizes`, and the pointed
-  forms `montalbanSentencePointed`, `IsOrbitFormulaFamilyPointed`,
-  `montalbanSentencePointed_characterizes`) and its complexity bound in the signed hierarchy (#148,
-  `Scott/MontalbanComplexity`: `isPiIn_atomicDiagram`, `isPiIn_montalbanSentence`,
-  `isPiIn_montalbanSentencePointed`, `exists_isPiIn_scottSentence_of_sigmaIn_orbits`,
-  `exists_isPiIn_pointed_of_sigmaIn_orbits`, and
+  from `098fb36` (the merge of its pull request #146) by this repository's pull request #45.
+  Besides the statements of `098fb36` (the rank comparison of the Scott process, #140; the
+  orbit-formula threshold and rank bound and local-automorphism preservation of `README.md`, Layer
+  0, #141; analytic tree boundedness, #142; the coded forced back-and-forth tree, #143; uniform
+  back-and-forth separation, `Descriptive/BFSeparation`, #144; and the ordinal-indexed
+  `Σ^in_α`/`Π^in_α` hierarchy, `Lomega1omega/InHierarchy`, #145), it contains Montalbán's explicit
+  Scott sentence from a family of orbit formulas (#147, `Scott/MontalbanSentence`:
+  `montalbanSentence`, `IsOrbitFormulaFamily`, `realize_montalbanSentence`,
+  `montalbanSentence_self`, `nonempty_equiv_of_realize_montalbanSentence`,
+  `montalbanSentence_characterizes`, and the pointed forms `montalbanSentencePointed`,
+  `IsOrbitFormulaFamilyPointed`, `montalbanSentencePointed_characterizes`) and its complexity bound
+  in the signed hierarchy (#148, `Scott/MontalbanComplexity`: `isPiIn_atomicDiagram`,
+  `isPiIn_montalbanSentence`, `isPiIn_montalbanSentencePointed`,
+  `exists_isPiIn_scottSentence_of_sigmaIn_orbits`, `exists_isPiIn_pointed_of_sigmaIn_orbits`, and
   `exists_isPiIn_two_scottSentence_of_sigmaIn_zero_orbits`).  Toolchain and Mathlib are the same as
   at `098fb36`.  These statements are available at our pinned dependency `8a15ca5` (signatures
-  checked, and for #147 and #148 signatures to be checked by CI on this branch;
-  `SuggestedInterfaces.lean` `#check`s them).  The imports are the narrow modules
+  checked; `SuggestedInterfaces.lean` `#check`s them).  The imports are the narrow modules
   (`InfinitaryLogic.Scott.OrbitFormulaThreshold`, `InfinitaryLogic.Lomega1omega.LocalAutomorphism`,
   `InfinitaryLogic.Descriptive.BFSeparation`, `InfinitaryLogic.Lomega1omega.InHierarchy`,
   `InfinitaryLogic.Scott.MontalbanComplexity`, and the others the sketch names), never
   `InfinitaryLogic.All`.
 - **ComputableModelTheory**: the current pin is `37f6c42`, the merge of its pull request #51 (its
   own InfinitaryLogic repin to `8a15ca5`), reached from `0401c95` (the merge of its pull request
-  #47).  Besides representative classes, extension-rich families and direct limits, the
-  factorization of tuples through the age, orbit isolation, and countable prime structures, rooted
-  universality and uniqueness (#42), classical Fraïssé existence (#44), the entry module
-  `ComputableModelTheory.Classical` (#45), and isolation and primeness over named finite parameters
-  (#46), available at our pinned dependency `37f6c42` (signatures checked;
+  #47) by this repository's pull request #45.  Besides representative classes, extension-rich
+  families and direct limits, the factorization of tuples through the age, orbit isolation, and
+  countable prime structures, rooted universality and uniqueness (#42), classical Fraïssé existence
+  (#44), the entry module `ComputableModelTheory.Classical` (#45), and isolation and primeness over
+  named finite parameters (#46), available at our pinned dependency `37f6c42` (signatures checked;
   `SuggestedInterfaces.lean` `#check`s them through the entry module), it contains the seeded
   effective back-and-forth and computable automorphisms extending an isomorphism between finitely
   generated substructures of a computably homogeneous structure

@@ -277,7 +277,7 @@ set_option linter.hashCommand false in
 
 -- Montalbán's explicit Scott sentence from a family of orbit formulas and its complexity
 -- (InfinitaryLogic, `Scott/MontalbanSentence` and `Scott/MontalbanComplexity`), at our pinned
--- dependency `8a15ca5` (signatures to be checked by CI on this branch).  For a countable `M` in
+-- dependency `8a15ca5` (signatures checked).  For a countable `M` in
 -- a language with countably many relation symbols, a family `Φ n a : L.Formulaω (Fin n)` over
 -- all tuples; `D_a` is `atomicDiagram a`, a countable conjunction of atoms and negated atoms
 -- (`Π^in_1`).  If `1 ≤ α` and every `Φ n a` is `IsSigmaIn α`, the sentence is `IsPiIn (α + 1)`
