@@ -47,18 +47,24 @@ property.
 
 **What this file does not contain.**
 
-* **Joint embedding and amalgamation** (the other half of step 2): two top-free charts with chart
-  embeddings of a common chart are amalgamated by `StageType.exists_amalgam`, and the amalgam is
-  capped at a proper cap self-visible at its arity and above every label of the two charts
-  (`CellScheme.Rows.IsLawful.min_const_of_isSelfVisible`); joint embedding is amalgamation over
-  the empty chart.  These will need the hypotheses `StageType.HasCoatomExtensions α`, `0 < α`, and
-  `Order.IsSuccPrelimit α`.
-* **Classical existence** (step 3): `exists_isFraisseLimit_representativeClass`, with the
-  countability of the index (`countable_topFreeIndex`) supplied by `haveI`; the countability of
-  the function symbols (`hullLanguage.countable_functions`) is already needed to state
-  `IsFraisseLimit`, so at a general stage it enters the statement (at `ω` it is the instance
-  `hullLanguage.countable_functions_omega`).
-* **Finite-age reconstruction** (steps 4–7).
+* **Joint embedding and amalgamation** (the other half of step 2) are in
+  `VaughtConjecture.ClassicalLimit.Amalgamation` (`exists_amalgam_topFreeChart`,
+  `exists_jointEmbedding_topFreeChart`), under the hypotheses `StageType.HasCoatomExtensions α`,
+  `Order.IsSuccPrelimit α`, and `0 < α`: the amalgam of `StageType.exists_amalgam` is capped at a
+  cap self-visible at its arity and above every label of the two charts, and joint embedding is
+  amalgamation over the empty chart.  The coatom extension property is still to be proved, so these
+  are conditional.
+* **Classical existence** (step 3) is in the same module (`isFraisse_topFreeAge`,
+  `exists_isFraisseLimit_topFreeAge`), under the same three hypotheses and the countability of
+  the ordinals below `α`, from which the countability of the function symbols needed to state
+  `IsFraisseLimit` is derived (`hullLanguage.countable_functions`).
+* **Reconstruction of partial evaluation** (step 4) and step 5 are in
+  `VaughtConjecture.ClassicalLimit.Reconstruction`: exact consistency, covering, and
+  top-freeness for a structure whose age is contained in the age of top-free charts, and a
+  nonempty carrier when the age of top-free charts is contained in its age.  The existence of the
+  limit is a hypothesis there.
+* **Receiving, modelhood, infinitude, and terminality** (steps 6 and 7) are still to be
+  proved.
 
 **Dependencies.**  ComputableModelTheory is imported only through its classical entry module
 `ComputableModelTheory.Classical`, for `FirstOrder.Language.representativeClass` and its
