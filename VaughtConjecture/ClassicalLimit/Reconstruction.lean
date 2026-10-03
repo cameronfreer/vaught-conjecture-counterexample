@@ -115,9 +115,10 @@ used here.
 * **Modelhood** (step 7), `Realization.IsModel`: for a structure whose age is the age of top-free
   charts, its clauses of a nonempty carrier, legal types, exact consistency, and covering are
   proved here (`reconstruct_of_age_eq`); its four extension clauses (generalized saturation, the
-  bottom pattern, uniformity, and high-arity dominance) are not.  They are to come from receiving
-  and the cap-to-model theorem (roadmap, Layer 3, 3.4, not proved; stated at stage `ω` with
-  `u = 0` as `MainTheorem.CapToModel`), which uses the coatom extension construction.
+  bottom pattern, uniformity, and high-arity dominance) are in
+  `VaughtConjecture.ClassicalLimit.Modelhood` (`isModel_reconstruct`), at a nonzero limit stage,
+  from receiving and the cap-to-model theorem (`Realization.isModel_of_hasFiniteCutReceiving`),
+  given the nonemptiness of the uniformity and dominance instances.
 * **Infinitude and terminality** (step 7): infinitude from receiving over a whole actual
   occurrence, with a one-point coface of its type (`StageType.exists_extension`, under the coatom
   extension property); terminality from the top-freeness proved here, modelhood, and the
