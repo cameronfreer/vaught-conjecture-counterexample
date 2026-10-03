@@ -61,10 +61,8 @@ This file reduces the exact pinned extension to the coatom extension constructio
 
 ## Placement
 
-`StageType.card_eq_zero`, `StageType.faces_eq_of_zero`, `StageType.eq_of_zero`, and
-`StageType.isSome_restrictFace_of_zero` belong in `VaughtConjecture.Stage.Basic`;
-`Scheme.IsLegal.toStageType` with `Scheme.IsLegal.isLegal_toStageType` in
-`VaughtConjecture.Stage.Legal`; and `Scheme.onePoint` with `Scheme.isLegal_onePoint` in
+`Scheme.IsLegal.toStageType` with `Scheme.IsLegal.isLegal_toStageType` belong in
+`VaughtConjecture.Stage.Legal`, and `Scheme.onePoint` with `Scheme.isLegal_onePoint` in
 `VaughtConjecture.Stage.LegalExamples`, where they would replace the private `point`.  They are
 stated here so that those files are unchanged.
 
@@ -291,42 +289,6 @@ theorem univ_map_mem_faces_of_isSome_restrictFace_extendByLast {Q : StageType.{u
       inter_eq_right.mpr (map_subset_map.mpr (subset_univ _))]
   rw [mem_coe, hmeet] at hi
   exact (Scheme.mem_comap_faces _ _).mpr hi
-
-/-! ### Stage types on no points -/
-
-/-- A stage type on no points has no cells: a cell would have a positive grade at most the size of
-its scope, which is empty. -/
-theorem card_eq_zero (t : StageType.{u} α 0) : t.card = 0 := by
-  by_contra h
-  have d : Fin t.card := ⟨0, Nat.pos_of_ne_zero h⟩
-  have hle := t.isWellFormed.isWellFormed.grade_le_card d
-  have hpos := t.isWellFormed.isWellFormed.grade_pos d
-  have hs : t.toCellScheme.scope d = ∅ := eq_empty_of_isEmpty _
-  rw [hs, card_empty] at hle
-  omega
-
-/-- The faces of a stage type on no points: only the empty face. -/
-theorem faces_eq_of_zero (t : StageType.{u} α 0) : t.toCellScheme.faces = {∅} := by
-  ext C
-  simp only [mem_singleton]
-  refine ⟨fun _ ↦ eq_empty_of_isEmpty C, ?_⟩
-  rintro rfl
-  exact t.isWellFormed.isWellFormed.isPlan.empty_mem
-
-/-- **There is only one stage type on no points** at each stage. -/
-theorem eq_of_zero (t t' : StageType.{u} α 0) : t = t' := by
-  have hc := t.card_eq_zero
-  have hc' := t'.card_eq_zero
-  refine ext (Scheme.ext (hc.trans hc'.symm) (by rw [t.isWellFormed.ground_eq,
-    t'.isWellFormed.ground_eq]) (by rw [t.faces_eq_of_zero, t'.faces_eq_of_zero])
-    (fun i ↦ (hc ▸ i).elim0) (fun i ↦ (hc ▸ i).elim0) (fun s ↦ (hc ▸ s).elim0))
-    fun i ↦ (hc ▸ i).elim0
-
-/-- The empty face of a stage type is defined. -/
-theorem isSome_restrictFace_of_zero (t : StageType.{u} α n) (e : Fin 0 ↪ Fin n) :
-    (restrictFace e t).isSome := by
-  rw [isSome_restrictFace_iff, univ_eq_empty, map_empty]
-  exact t.isWellFormed.isWellFormed.isPlan.empty_mem
 
 /-! ### Amalgamation -/
 

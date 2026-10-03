@@ -3,6 +3,7 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
+import VaughtConjecture.Expansion.Agreement
 import VaughtConjecture.MainTheorem.Scatteredness
 import VaughtConjecture.MainTheorem.Spectrum
 
@@ -48,7 +49,11 @@ set of classes admitting a model expansion to the stage `ω + ω · ξ`:
   is to prove reduction item 3 itself, the sharp comparison that the classes in `D η` agree on
   every sentence of quantifier rank at most `η`, by the one-sided finite-donor transfer (the first
   use of row 1 of the table of Layer 3); `ExpansionDomains.HasLogicalAgreement.of_qrank_le`
-  derives the hypothesis from it.
+  derives the hypothesis from it.  `ExpansionDomains.hasLogicalAgreement_of_modelExpansions`
+  derives it, conditional on finite-extension receiving, which is still to be proved (Layer 3,
+  receiving for finite extensions; (R1)), when every class in `D η` has a coded representative
+  with a model expansion to the block stage `λ_η = ω + ω · η`
+  (`VaughtConjecture.Expansion.Agreement`).
 * `ExpansionDomains.HasNonemptyLosses` (reduction item 4; **the lower bound**): each successor
   loss below `ω₁` is nonempty.  Layer 6 is to construct a top-free terminal model at every
   countable block (the top-free chain construction, with the top-free pinned extension, row 5 of
@@ -73,6 +78,8 @@ departure of every class is assumed.
 
 ## The conditional theorems
 
+* `ExpansionDomains.hasLogicalAgreement_of_modelExpansions`: finite-extension receiving and model
+  expansions of representatives give logical agreement;
 * `densitySentence_isThinOnNatModels_of_expansionDomains`: expansion domains with countable
   losses and logical agreement give thinness (no lower bound is used);
 * `ExpansionDomains.aleph_one_le_mk`: nonempty losses give at least `ℵ₁` classes (neither
@@ -503,6 +510,25 @@ theorem exists_mem_modelsOf_densitySentence_equiv_of_capToModel (hcap : CapToMod
       Nonempty (@Language.Equiv baseLanguage.{0} M ℕ _ c.toStructure) :=
   have := hcap.infinite h
   exists_mem_modelsOf_equiv h
+
+/-- **Logical agreement from model expansions**: if every class in each domain `D η` below `ω₁`
+has a coded representative whose structure has a model expansion to the block stage `λ_η`, the
+classes in `D η` agree on every sentence of quantifier rank at most `η`
+(`Expansion.mem_modelsOf_iff_of_modelExpansions`), so the domains have logical agreement.  The
+representative is existential, so no invariance of model expansions under isomorphism is used.
+
+This is conditional on finite-extension receiving, which is still to be proved (Layer 3,
+receiving for finite extensions; (R1)): `hrec` is that statement. -/
+theorem ExpansionDomains.hasLogicalAgreement_of_modelExpansions
+    (hrec : Expansion.FiniteExtensionReceiving.{0}) {D : ExpansionDomains DensityClass}
+    (hD : ∀ η, η < ω₁ → ∀ q ∈ D.domain η, ∃ c : ModelsOf densitySentence.{0},
+      Quotient.mk _ c = q ∧ Nonempty (@ModelExpansion ℕ c.1.toStructure (blockStage η))) :
+    D.HasLogicalAgreement densityTruth :=
+  HasLogicalAgreement.of_qrank_le fun η hη p hp q hq θ hθ ↦ by
+    obtain ⟨c₁, rfl, h₁⟩ := hD η hη p hp
+    obtain ⟨c₂, rfl, h₂⟩ := hD η hη q hq
+    rw [densityTruth, classTruth_mk, classTruth_mk]
+    exact Expansion.mem_modelsOf_iff_of_modelExpansions hrec hη c₁.1 c₂.1 h₁ h₂ θ hθ
 
 /-- **Thinness, conditionally**: expansion domains of the classes of the density sentence with
 countable losses (terminal countability) and logical agreement give no perfect set of pairwise
