@@ -765,26 +765,37 @@ These are statements still to be proved.  None is an input to the main theorem.
      unpointed Scott-sentence bound is not automatically a bound for every tuple's orbit: a bound on
      the rank of a Scott sentence of the base model is not, without a further argument, a bound on
      the orbit rank of each tuple.
-     - **The data**, fixed with the statement in the core case: the chosen actual core chart (an
-       actual occurrence of the expansion containing the rigid core), its stage type `p` at `λ_η`,
-       and its arity `k`.  When the rigid core is not itself an actual chart, `k` is the arity of
-       the covering chart, not the number of points of the rigid core.
+     - **The data**, fixed with the statement in the core case: the chosen actual core chart, its
+       stage type `p` at `λ_η`, and its arity `k`.  The target is restricted to a rigid core that is
+       itself an actual chart, so that `k` is both the number of core points (as in the definition
+       of a supplied `k`-coordinate core model) and the arity of the core chart.  When the rigid
+       core is not an actual chart, a covering chart of arity `j ≥ k` and a proof that the chart
+       predicate of its type on the extra coordinates still isolates the orbit would be needed; that
+       case is left open and not pursued here.
      - **What must be proved for anything to transfer.**  The numerical bound `≤ ω` of B3.3 alone
        does not transfer.  Two statements are to be proved, both parts of this target.  The
        **translation** of the stage-language orbit formulas into the base language, by substituting
        the definitions of the first row: a formula of quantifier rank `ρ` becomes a formula of rank
        at most `ω·η + ρ`, the cost `ω·η` added on the left, defining the same set on the same
        carrier.  The **lifting** of every automorphism of the base reduct to an automorphism of the
-       expansion, by the same bijection of the carrier: uniqueness of the expansion supplies the
-       transport argument (the automorphism carries the expansion to an expansion of the same base
-       model on the same carrier, which is then the expansion itself).  With both, the translation
-       of an orbit formula of a tuple in the expansion is an orbit formula of that tuple in the base
-       reduct.  A third statement turns formulas into ranks: a parameter-free infinitary orbit
-       formula of quantifier rank `r` bounds `orbitRank a` by `r` (to be proved; the first-order
-       case is `orbitRank_le_lift_qrank_of_orbitFormula`, at the pin, signatures checked).
+       expansion, by the same bijection of the carrier, given the uniqueness of the expansion on a
+       fixed carrier (uniqueness of expansion and same-carrier transport, `README.md`, Layer 6,
+       statements of the main development; here a hypothesis): the automorphism carries the
+       expansion to a model expansion of the same base model on the same carrier, which by that
+       uniqueness is the expansion itself.  In the core case, an automorphism of the base reduct
+       fixing the core lifts to one fixing the core.  With both, the translation of an orbit formula
+       of a tuple in the expansion is an orbit formula of that tuple in the base reduct.  A third
+       statement turns formulas into ranks, a prospective lemma of InfinitaryLogic (Layer 0): under
+       `[L.IsRelational]`, a parameter-free infinitary orbit formula `φ` of the base language for a
+       tuple `a` (realized exactly by the images of `a` under the automorphisms of the base reduct)
+       bounds `orbitRank a` by the lift of `qrank φ` to the universe of the carrier (to be proved,
+       by the same argument through `BFEquiv_implies_agreeQR`, which is stated for infinitary
+       formulas; the first-order case is `orbitRank_le_lift_qrank_of_orbitFormula`, at the pin,
+       signatures checked, under `[L.IsRelational]`).
      - **Coreless bound:** `internalScottRank ≤ ω·(η+1)`, requiring in addition **pointwise finite
-       stage-formula ranks**: each tuple's stage-language orbit formula has finite quantifier rank
-       `m` (no uniform bound is assumed), so that its translation has rank at most
+       stage-formula ranks**: each tuple has a stage-language orbit formula (B3.1 for the top-free
+       witness; a hypothesis, to be proved, for the residual and hollow ages) of finite quantifier
+       rank `m` (no uniform bound is assumed), so that its translation has rank at most
        `ω·η + m < ω·(η+1)`, the term `orbitRank a + 1` stays below `ω·(η+1)`, and the `+1` of the
        convention is absorbed into the limit.  A non-strict bound `≤ ω·(η+1)` on the orbit ranks
        alone does not do that: it gives only `ω·(η+1)+1`.
@@ -792,41 +803,49 @@ These are statements still to be proved.  None is an input to the main theorem.
        **core-orbit isolating formula**: a stage-language formula of quantifier rank at most `ω`,
        with `k` free variables, whose realizations in the expansion itself are exactly the images of
        the core chart under the automorphisms of the expansion.  The candidate is "the chart
-       predicate of `p` holds of the core coordinates (label `p`), and the core is rigid in every
-       actual chart containing it"; its rank bound and its isolation of the orbit are to be proved.
-       The pointed orbit formulas of the tuples over the named core are assumed to have finite rank,
-       as in the coreless case.  The fallback uses the pointed core formula of Layer 4 in place of
-       the isolating formula (with the rank `ω·2` of its normalized form, and the proof that its
-       realizations in the expansion are the images of the core): it gives `≤ ω·(η+2)+k+1`.
+       predicate of `p` holds of the core coordinates, and the core is rigid in every actual chart
+       containing it"; its rank bound and its isolation of the orbit are to be proved.  The pointed
+       orbit formulas of the tuples over the named core (the analogue of B3.1 over the named core,
+       `README.md`, Layer 4, and B4, to be proved) are assumed to have finite rank, as in the
+       coreless case.  The fallback uses the pointed core formula of Layer 4 in place of the
+       isolating formula, in its optional normalized form `IsPiInNF 2` if that is constructed (rank
+       at most `ω·2` by `IsPiInNF.qrank_le`; the transfer is then of the normalized formula),
+       together with the proof, still to be done, that its realizations in the expansion are the
+       images of the core: it gives `≤ ω·(η+2)+k+1`.
      - **Parameter removal must retain the core premise.**  The parameter-free orbit formula of a
        tuple is the existential closure, over the `k` core coordinates, of the conjunction of the
        core premise (the isolating formula, respectively the pointed core formula) with the tuple's
        pointed orbit formula.  The premise cannot be dropped: a pointed orbit formula is specified
        only at the core itself and says nothing about other values of the quantified coordinates.
        Eliminating the `k` core coordinates costs `+k` on the right, by the same syntactic
-       calculation as the fourth row (calculation 1: one quantifier adds one), through a partial
-       existential block over the core coordinates that keeps the tuple's coordinates free:
-       InfinitaryLogic's `BoundedFormulaω.existsBlock`, over the last `k` bound variables (at the
-       pin, signatures checked), whose rank equation `qrank (existsBlock φ) = qrank φ + k` is
-       prospective, to be proved.  As `ω·η + (ρ + k) = (ω·η + ρ) + k`, translating before or after
-       the closure gives the same rank: `ω·η + ω + k = ω·(η+1)+k` with the isolating formula and
-       `ω·η + ω·2 + k = ω·(η+2)+k` with the pointed core formula; the final `+1` is that of the
-       convention.  The extra cost of the fallback is the core premise, not the quantifiers: the
-       block costs `k` in both.
+       calculation as the fourth row (calculation 1: one quantifier adds one,
+       `BoundedFormulaω.qrank_ex`, as `qrank_existsLastVar` for `existsTuple`; at the pin,
+       signatures checked), through a partial existential block over the core coordinates that keeps
+       the tuple's coordinates free: InfinitaryLogic's `BoundedFormulaω.existsBlock`, over the last
+       `k` bound variables (at the pin, signatures checked), whose rank equation
+       `qrank (existsBlock φ) = qrank φ + k` is prospective, to be proved.  The library's pointed
+       families put the core coordinates first, so they are first relabelled as the bound variables
+       of the block (`BoundedFormulaω.relabel`, which preserves the rank,
+       `BoundedFormulaω.qrank_relabel`; at the pin, signatures checked).  As
+       `ω·η + (ρ + k) = (ω·η + ρ) + k`, translating before or after the closure gives the same rank:
+       `ω·η + ω + k = ω·(η+1)+k` with the isolating formula and `ω·η + ω·2 + k = ω·(η+2)+k` with the
+       pointed core formula; the final `+1` is that of the convention.  The extra cost of the
+       fallback is the core premise, not the quantifiers: the block costs `k` in both.
 
      Neither bound is identified with a recognition level (targets 1 and 2), with the Scott height
      or the stabilization ordinal, or with atomicity (B3.2); no first-order atomicity of the base
-     reduct is asserted.  No bound on the internal Scott rank yields recognition: the countably
-     infinite set in the language with no relations has internal Scott rank `1`
+     reduct is asserted.  A bound on the internal Scott rank is not itself a recognition level: the
+     countably infinite set in the language with no relations has internal Scott rank `1`
      (`internalScottRank_pureSet`, at the pin, signatures checked) and is recognized at no finite
-     level (the one-sided rank comparison below).  For recognition of a supplied model (target 2),
-     the valid chain runs through its Scott sentence `σ`, not through orbit ranks: when `D_η`
-     contains a second class, `η < stabilizationOrdinal ≤ qrank σ`, the first inequality by the
-     one-sided rank comparison below, the second by `BFEquiv_implies_agreeQR` and the
-     characterization by `σ`, as in target 2 (to be proved).  Strict and non-strict bounds are kept
-     apart as in B3.3 (`≤ ω`, not `< ω`): strict bounds `orbitRank a < β` for every tuple give
-     `internalScottRank ≤ β`, non-strict bounds `orbitRank a ≤ β` give only `≤ β + 1`, and no bound
-     is asserted to be attained.
+     level (the one-sided rank comparison below; a claim not formalized upstream), and the classical
+     comparison `stabilizationOrdinal ≤ internalScottRank + ω` is not formalized upstream.  For
+     recognition of a supplied model (target 2), the valid chain runs through its Scott sentence
+     `σ`, not through orbit ranks: when `D_η` contains a second class,
+     `η < stabilizationOrdinal ≤ qrank σ`, the first inequality by the one-sided rank comparison
+     below, the second by `BFEquiv_implies_agreeQR` and the characterization by `σ`, as in target 2
+     (to be proved).  Strict and non-strict bounds are kept apart as in B3.3 (`≤ ω`, not `< ω`):
+     strict bounds `orbitRank a < β` for every tuple give `internalScottRank ≤ β`, non-strict bounds
+     `orbitRank a ≤ β` give only `≤ β + 1`, and no bound is asserted to be attained.
 
   **Completion criterion.**  Each row is a bounded checkpoint, complete when its formula is
   constructed for the concrete objects of the construction (the chart predicates at `λ_η`, the
