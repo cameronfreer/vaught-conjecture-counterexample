@@ -1159,12 +1159,16 @@ count, and its eventual departure is to be proved from hypotheses of the count (
 condition 3 and the nonempty losses of condition 4, with Scott sentences), not from its conclusions;
 the agreement filtration (defined by `T∞`) and the rank filtration (defined by Scott rank) are
 defined differently; no relation between them is asserted, and any comparison is a separate
-prospective theorem (`COMPANIONS.md`, "Further companion results").  The main theorem is proved
-without them; if any is added, give it a separate definite completion criterion.  Direct limits of
-structures and the classical existence theorem (available at the pin) belong to the two libraries,
-not to the finite constructions of layer 3.  [`COMPANIONS.md`](COMPANIONS.md) gives these topics and
-the full-chart orbit theory below such criteria, as three milestones (A: filtration and infinitary
-theory; B: top-free chart homogeneity and its consequences; C: a geometric obstruction).
+prospective theorem (`COMPANIONS.md`, "Further companion results").  Quantitative reconstruction
+(base-language definitions and Scott sentences with bounds on their quantifier rank) and its
+recognition and base-reduct orbit-rank targets are prospective companion statements, used by neither
+route, with their own completion criterion (`COMPANIONS.md`, "Further companion results").  The main
+theorem is proved without them; if any is added, give it a separate definite completion criterion.
+Direct limits of structures and the classical existence theorem (available at the pin) belong to the
+two libraries, not to the finite constructions of layer 3.  [`COMPANIONS.md`](COMPANIONS.md) gives
+these topics and the full-chart orbit theory below such criteria, as three milestones (A: filtration
+and infinitary theory; B: top-free chart homogeneity and its consequences; C: a geometric
+obstruction).
 
 ### Full-chart orbit theory: a companion checkpoint
 
