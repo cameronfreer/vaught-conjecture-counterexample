@@ -33,9 +33,9 @@ every `ζ ≤ ξ`; likewise for realizations (`Realization.IsCoherentFamily`) an
 expansions (the hypothesis `hcoh` of `ModelExpansion.nonempty_of_coherent`).  A coherent family
 of stage types is eventually constant up to the reading of the stage
 (`StageType.IsCoherentFamily.eq_castLE`): each cell either has the formal top as its label at
-every index, or has a label below `λ_ξ` at some index `ξ` (its proper index,
-`StageType.properIndex`) and the same label from there on; there are finitely many cells, so
-from the largest proper index (the stabilization index, `StageType.stableIndex`, below `δ`) on,
+every index, or has a label below `λ_ξ` at some index `ξ` (its below-top index,
+`StageType.belowTopIndex`) and the same label from there on; there are finitely many cells, so
+from the largest below-top index (the stabilization index, `StageType.stableIndex`, below `δ`) on,
 the types are the type at the stabilization index read at the larger stage (`StageType.castLE`).
 The **glued type** (`StageType.glue`) is that type read at `λ_δ`; it reduces to every member of
 the family (`StageType.IsCoherentFamily.glue_reduce`).  No label is constructed pointwise, so
@@ -44,7 +44,9 @@ lawfulness and well-formedness come with the type at the stabilization index.
 **The glued realization.**  The glued realization of a family of realizations
 (`Realization.glue`) types a tuple by the glued type of its types when it is typed at every
 earlier block stage, and leaves it untyped otherwise; for a coherent family its stage reductions
-are the members of the family (`Realization.IsCoherentFamily.glue_reduce`).
+are the members of the family (`Realization.IsCoherentFamily.glue_reduce`).  This gluing along a
+limit of stages is unrelated to the gluing of lawful labellings of one cell scheme in
+`VaughtConjecture.Extension.Gluing` (`Rows.IsLawfulBelow.glue`).
 
 **Modelhood.**  A realization at `λ_δ` is a model exactly when its reductions to the earlier
 block stages are (`Realization.isModel_iff_forall_reduce`).  The backward direction
@@ -165,39 +167,39 @@ section Coherent
 variable (hδ : Order.IsSuccLimit δ) (t : ∀ ξ < δ, StageType.{u} (blockStage ξ) n)
 
 open Classical in
-/-- The **proper index** of the cell at position `k` in a family of stage types below `δ`: an
+/-- The **below-top index** of the cell at position `k` in a family of stage types below `δ`: an
 index at which the label of that cell is not the formal top, if there is one, and `0`
 otherwise. -/
-noncomputable def properIndex (k : ℕ) : Ordinal.{u} :=
+noncomputable def belowTopIndex (k : ℕ) : Ordinal.{u} :=
   if h : ∃ ξ, ∃ hξ : ξ < δ, ∃ i : Fin (t ξ hξ).card, (i : ℕ) = k ∧ (t ξ hξ).label i ≠ ⊤ then
     h.choose else 0
 
 include hδ in
-/-- A proper index is below `δ`. -/
-theorem properIndex_lt (k : ℕ) : properIndex t k < δ := by
-  unfold properIndex
+/-- A below-top index is below `δ`. -/
+theorem belowTopIndex_lt (k : ℕ) : belowTopIndex t k < δ := by
+  unfold belowTopIndex
   split_ifs with h
   · exact h.choose_spec.1
   · exact hδ.pos
 
 /-- If the cell at position `k` has a label other than the formal top at some index, it has one at
-its proper index. -/
-theorem properIndex_spec {k : ℕ}
+its below-top index. -/
+theorem belowTopIndex_spec {k : ℕ}
     (h : ∃ ξ, ∃ hξ : ξ < δ, ∃ i : Fin (t ξ hξ).card, (i : ℕ) = k ∧ (t ξ hξ).label i ≠ ⊤) :
-    ∃ hξ : properIndex t k < δ, ∃ i : Fin (t _ hξ).card, (i : ℕ) = k ∧ (t _ hξ).label i ≠ ⊤ := by
-  have e : properIndex t k = h.choose := by simp only [properIndex, h, ↓reduceDIte]
+    ∃ hξ : belowTopIndex t k < δ, ∃ i : Fin (t _ hξ).card, (i : ℕ) = k ∧ (t _ hξ).label i ≠ ⊤ := by
+  have e : belowTopIndex t k = h.choose := by simp only [belowTopIndex, h, ↓reduceDIte]
   rw [e]
   exact h.choose_spec
 
-/-- The **stabilization index** of a family of stage types below a limit `δ`: the largest proper
-index of a cell of the type at `0`. -/
+/-- The **stabilization index** of a family of stage types below a limit `δ`: the largest
+below-top index of a cell of the type at `0`. -/
 noncomputable def stableIndex : Ordinal.{u} :=
-  (Finset.range (t 0 hδ.pos).card).sup (properIndex t)
+  (Finset.range (t 0 hδ.pos).card).sup (belowTopIndex t)
 
 /-- The stabilization index is below `δ`. -/
 theorem stableIndex_lt : stableIndex hδ t < δ :=
   (Finset.sup_lt_iff (by simpa [Ordinal.bot_eq_zero] using hδ.pos)).mpr fun k _ ↦
-    properIndex_lt hδ t k
+    belowTopIndex_lt hδ t k
 
 /-- A family of stage types below `δ` is a **coherent family** when the type at `ξ` reduces to
 the type at every `ζ ≤ ξ`. -/
@@ -223,6 +225,8 @@ theorem IsCoherentFamily.eq_castLE (hc : IsCoherentFamily t) {ξ : Ordinal.{u}} 
   -- `j` a cell of `t ξ`, `i` the cell of `t ξ₀` at the same position
   have hred : Label.reduce (blockStage ξ₀) ((t ξ hξ).label j) = (t ξ₀ h₀).label i :=
     label_congr (hc ξ₀ h₀ ξ hξ h) hji
+  -- `castLE` keeps the labels (`castLE_label`, by `rfl`); `rw [castLE_label]` does not apply,
+  -- since `i` indexes the cells of the relabelled type
   change (t ξ hξ).label j = (t ξ₀ h₀).label i
   by_cases htop : (t ξ hξ).label j = ⊤
   · rw [← hred, htop, reduce_top]
@@ -231,9 +235,9 @@ theorem IsCoherentFamily.eq_castLE (hc : IsCoherentFamily t) {ξ : Ordinal.{u}} 
     have hlt : ¬ (t ξ hξ).label j < (blockStage ξ₀ : Label.{u}) := fun hlt ↦ hns (.inl hlt)
     have htop₀ : (t ξ₀ h₀).label i = ⊤ := by
       rw [← hred]; exact reduce_of_le (not_lt.mp hlt)
-    obtain ⟨hk, i', hi', hne⟩ := properIndex_spec t ⟨ξ, hξ, j, rfl, htop⟩
-    have hle : properIndex t j ≤ ξ₀ :=
-      Finset.le_sup (f := properIndex t) (Finset.mem_range.mpr (hc.card_eq (hδ := hδ) hξ ▸ j.2))
+    obtain ⟨hk, i', hi', hne⟩ := belowTopIndex_spec t ⟨ξ, hξ, j, rfl, htop⟩
+    have hle : belowTopIndex t j ≤ ξ₀ :=
+      Finset.le_sup (f := belowTopIndex t) (Finset.mem_range.mpr (hc.card_eq (hδ := hδ) hξ ▸ j.2))
     have h' := label_congr (hc _ hk ξ₀ h₀ hle) (i := i) (j := i') (by rw [hi', ← hji])
     exact hne (h'.symm.trans (show Label.reduce _ ((t ξ₀ h₀).label i) = ⊤ by
       rw [htop₀, reduce_top]))
@@ -272,6 +276,7 @@ interval `[γ, γ + ω)` lies below `β`, where reduction changes no label. -/
 theorem mem_uniformityFamily_of_reduce (hβ : Order.IsSuccPrelimit β) (hγ : γ < β)
     (h : q.reduce hβ ∈ uniformityFamily γ) : q ∈ uniformityFamily γ := by
   obtain ⟨d, hγd, hdγ⟩ := h
+  -- the labels of `q.reduce hβ` are, by definition, the reductions of the labels of `q`
   change (γ : Label.{u}) ≤ Label.reduce β (q.label d) at hγd
   change Label.reduce β (q.label d) < ((γ + ω : Ordinal.{u}) : Label.{u}) at hdγ
   have hlt : Label.reduce β (q.label d) < β :=
@@ -285,6 +290,7 @@ that reduction raises to the formal top is at least `β`, hence above `γ`. -/
 theorem mem_dominanceFamily_of_reduce (hβ : Order.IsSuccPrelimit β) (hγ : γ < β)
     (h : q.reduce hβ ∈ dominanceFamily γ) : q ∈ dominanceFamily γ := by
   obtain ⟨d, hg, hd⟩ := h
+  -- the labels of `q.reduce hβ` are, by definition, the reductions of the labels of `q`
   change (γ : Label.{u}) < Label.reduce β (q.label d) at hd
   refine ⟨d, hg, ?_⟩
   by_cases hlt : q.label d < β

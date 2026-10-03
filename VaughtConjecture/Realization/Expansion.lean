@@ -314,6 +314,8 @@ theorem ModelExpansion.val_eq_toRealization (e : ModelExpansion M (ω : Ordinal.
   obtain ⟨R, hR⟩ := e
   have h := hR.toStructure_reduce
   rw [Realization.reduce_self] at h
+  -- the realization of `⟨R, hR⟩` is `R`; unfold the subtype projection before rewriting the
+  -- base structure, which also occurs in the type of `hR`
   change R = toRealization M
   rw [← h]
   exact (toRealization_toStructure hR.isModel.hasLegalTypes).symm

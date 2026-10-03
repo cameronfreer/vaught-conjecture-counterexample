@@ -43,7 +43,7 @@ realizations with legal types an isomorphism of structures is an isomorphism of 
 (`relMap_trans_symm_toEmbedding`, stated for an arbitrary language).  On the structure side,
 isomorphic type assignments have isomorphic realizations and conversely
 (`baseLanguage.isIso_toRealization_iff`, from the round trips).  The structure induced on the
-target of an isomorphism of structures of a relational language is the target structure
+target of an isomorphism of structures is the target structure
 (`FirstOrder.Language.Equiv.inducedStructure_eq`).
 
 ## References
@@ -58,12 +58,19 @@ universe u v w
 
 open FirstOrder in
 /-- **The structure induced along an isomorphism is the target structure**: for an isomorphism
-`e : M ≃[L] N` of structures of a relational language, the structure induced on `N` by the
-underlying bijection of `e` is the given structure of `N`. -/
-theorem FirstOrder.Language.Equiv.inducedStructure_eq {L : FirstOrder.Language} [L.IsRelational]
+`e : M ≃[L] N` of structures, the structure induced on `N` by the underlying bijection of `e` is
+the given structure of `N`. -/
+theorem FirstOrder.Language.Equiv.inducedStructure_eq {L : FirstOrder.Language}
     {M : Type v} {N : Type w} [L.Structure M] [t : L.Structure N] (e : M ≃[L] N) :
-    @_root_.Equiv.inducedStructure L M N _ (e : M ≃ N) = t :=
-  Structure.ext_of_isRelational fun _ r xs ↦ e.symm.map_rel r xs
+    @_root_.Equiv.inducedStructure L M N _ (e : M ≃ N) = t := by
+  refine Structure.ext (funext fun _ ↦ funext fun f ↦ funext fun xs ↦ ?_)
+    (funext fun _ ↦ funext fun r ↦ funext fun xs ↦ propext (e.symm.map_rel r xs))
+  -- the induced function is `e ∘ f ∘ e.symm`
+  change e (Structure.funMap f (e.symm ∘ xs)) = _
+  rw [e.map_fun]
+  congr 1
+  ext
+  simp
 
 namespace VaughtConjecture
 
