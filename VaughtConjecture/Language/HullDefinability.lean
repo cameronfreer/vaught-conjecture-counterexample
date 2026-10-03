@@ -96,9 +96,12 @@ definability, not of rigidity: the stage chart language sees only the faces that
 realization, and the value of `Realization.hullOp` satisfies the graph formula in every realization
 (`Realization.realize_graphFormula_hullOp`).  That it is the only solution on an exactly
 consistent covering realization is the two-charts theorem for realizations, in the form
-`Realization.hullOp_eq_iff` of `VaughtConjecture.Realization.TwoCharts`, where the definability
-statements on such realizations are proved (`Realization.realize_graphFormula_iff`,
-`Realization.definableFun_hullOp`).  Here roadmap, Layer 2, item 2 is proved for finite charts.
+`Realization.hullOp_eq_iff` of `VaughtConjecture.Realization.TwoCharts`.  There the graph formula
+is shown to define the hull operation on every exactly consistent covering realization
+(`Realization.realize_graphFormula_iff`), and each hull operation to be a parameter-free definable
+function of the stage chart language on such a realization (`Realization.definableFun_hullOp`).
+The containment of hull closure in definable closure is proved here for finite charts only, not
+on realizations.  Here roadmap, Layer 2, item 2 is proved for finite charts.
 Nothing here concerns the infinitary language.
 
 ## Placement

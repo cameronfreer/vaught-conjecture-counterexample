@@ -86,7 +86,11 @@ embedding of the structures in the hull language (`Realization.Embedding.toHullE
 roadmap, Layer 2, item 3 is proved here for embeddings of realizations, hence for the embeddings
 of §5, and for an arbitrary embedding of the structures in the stage chart language only when the
 types of the source are legal (through `Realization.Embedding.ofChartEmbedding`); the general case
-of the latter is not proved here.  Isomorphisms of realizations are embeddings
+of the latter is not proved here.  The argument does not extend to it: the default case uses an
+occurrence of the source containing `a` and `b` and its image in the target, but when the type of
+that occurrence is not legal the stage chart language has no relation symbol for it, so an
+embedding of the structures in that language need not carry the occurrence to an occurrence of
+the target.  Isomorphisms of realizations are embeddings
 (`Realization.Iso.toEmbedding`), so hull operations are invariant under isomorphism
 (`Realization.Iso.hullOp_map`).
 
@@ -544,7 +548,8 @@ def ofEvalTrans (e : M ↪ N) (h : ∀ ⦃n : ℕ⦄ (t : Fin n ↪ M), S.eval (
 
 /-- **Embeddings of realizations are the embeddings of `HULL_ALGEBRA.md`, §5** when `R` and `S`
 are exactly consistent and `R` is covering: every embedding of realizations preserves the
-evaluation of every tuple (`eval_trans`) and is the embedding of its map. -/
+evaluation of every tuple (`eval_trans`) and is the embedding of its map.  The proof is `rfl`; the
+content is `eval_trans`, which supplies the hypothesis of `ofEvalTrans`. -/
 theorem eq_ofEvalTrans (hR : R.IsConsistent) (hc : R.IsCovering) (hS : S.IsConsistent)
     (φ : R.Embedding S) : φ = ofEvalTrans φ.toEmbedding (fun _ t ↦ φ.eval_trans hR hc hS t) :=
   rfl
