@@ -64,8 +64,11 @@ property.
   nonempty carrier when the age of top-free charts is contained in its age.  The existence of the
   limit is a hypothesis there.
 * **Receiving** (step 6) is in `VaughtConjecture.ClassicalLimit.Receiving`, for a structure
-  whose age is the age of top-free charts and which is ultrahomogeneous.  **Modelhood,
-  infinitude, and terminality** (step 7) are still to be proved.
+  whose age is the age of top-free charts and which is ultrahomogeneous, at a stage that is zero
+  or a limit; so is the base-reduct part of step 7, the density sentence for the reduction of the
+  reconstructed realization to `ω` at a limit stage `α ≥ ω`
+  (`realize_densitySentence_reconstruct_reduce`).  **Modelhood, infinitude, and terminality**
+  (step 7) are still to be proved.
 
 **Dependencies.**  ComputableModelTheory is imported only through its classical entry module
 `ComputableModelTheory.Classical`, for `FirstOrder.Language.representativeClass` and its

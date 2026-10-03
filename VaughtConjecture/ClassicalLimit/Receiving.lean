@@ -57,11 +57,11 @@ one occurrence `ψ` gives; its new point is off the whole root.
 donor is attached is the whole chart, and the one-point pinned extension of that chart by `d` is
 `d` itself: the case of (R6) of the table of Layer 3, 3.4, where the face is onto, which needs no
 coatom extension (`StageType.exists_pinned_extension_of_surjective`; here `d` is used directly, as
-a coface of `p`).  Capped, it is (R5) in that case.  So step 6 uses only ultrahomogeneity and
-capping: neither the coatom extension property `StageType.HasCoatomExtensions` nor modelhood
-(`Realization.IsModel`) is a hypothesis of any statement here.  Only the *existence* of a Fraïssé
-limit of the age of top-free charts (`exists_isFraisseLimit_topFreeAge`) needs the coatom extension
-property, which is not proved.
+a coface of `p`).  Capped, it is (R5) in that case.  So step 6 uses only the equality of ages,
+ultrahomogeneity, and capping: neither the coatom extension property
+`StageType.HasCoatomExtensions` nor modelhood (`Realization.IsModel`) is a hypothesis of any
+statement here.  Only the *existence* of a Fraïssé limit of the age of top-free charts
+(`exists_isFraisseLimit_topFreeAge`) needs the coatom extension property, which is not proved.
 
 **Finite-extension receiving** (`hasFiniteExtensionReceiving_reconstruct`): the reconstructed
 realization is exactly consistent (`isConsistent_reconstruct`), so finite-cut receiving gives
@@ -69,8 +69,8 @@ receiving of donors on several new points
 (`Realization.HasFiniteCutReceiving.hasFiniteExtensionReceiving`).
 
 **The base reduct** (`realize_densitySentence_reconstruct_reduce`, the base-reduct part of
-step 7).  For a stage `α ≥ ω` that is zero or a limit, the reduction of the reconstructed
-realization to `ω` (`Realization.reduce`) has legal types (`hasLegalTypes_reconstruct_reduce`, by
+step 7).  For a limit stage `α ≥ ω`, the reduction of the reconstructed realization to `ω`
+(`Realization.reduce`) has legal types (`hasLegalTypes_reconstruct_reduce`, by
 `StageType.IsLegal.reduce`), is exactly consistent and covering (`isConsistent_reconstruct_reduce`,
 `isCovering_reconstruct_reduce`), and has the finite-cut receiving property
 (`hasFiniteCutReceiving_reconstruct_reduce`): receiving at `α` descends along stage reduction
@@ -132,6 +132,7 @@ theorem exists_reconstruct_eval_eq_of_isTopFree {n m : ℕ} {t : Fin n ↪ M}
   refine ⟨D.toChart.toEmbedding.trans ψ.toEmbedding, Function.Embedding.ext fun j ↦ ?_,
     reconstruct_eval_chart hD ψ⟩
   rw [← hφ j, hψ]
+  -- the chart embedding along `g` sends the point `j` of `p` to the point `g j` of `D`
   rfl
 
 /-- **Receiving for the reconstructed realization of a classical limit** (roadmap, the top-free
@@ -142,9 +143,10 @@ its arity, above the cutoff and the labels of the root's type, and the capped do
 top-free coface of the root's type, is received exactly
 (`exists_reconstruct_eval_eq_of_isTopFree`).
 
-Only ultrahomogeneity and capping are used: neither the coatom extension property
-`StageType.HasCoatomExtensions` nor modelhood is a hypothesis.  The existence of such a structure
-(`exists_isFraisseLimit_topFreeAge`) needs the coatom extension property, which is not proved. -/
+Only the equality of ages, ultrahomogeneity, and capping are used: neither the coatom extension
+property `StageType.HasCoatomExtensions` nor modelhood is a hypothesis.  The existence of such a
+structure (`exists_isFraisseLimit_topFreeAge`) needs the coatom extension property, which is not
+proved. -/
 theorem hasFiniteCutReceiving_reconstruct (hα : Order.IsSuccPrelimit α) :
     (reconstruct α M).HasFiniteCutReceiving := by
   intro x d hd c hc
@@ -162,6 +164,7 @@ theorem hasFiniteCutReceiving_reconstruct (hα : Order.IsSuccPrelimit α) :
     (StageType.isLegal_cap.mpr hd.1) StageType.isTopFree_cap hQ
   refine ⟨v, hv, d.cap c' hc' hc'α, ⟨rfl, fun i j hij ↦ ?_⟩, hve⟩
   obtain rfl : i = j := Fin.ext hij
+  -- the labels of the capped coface are `min (d.label i) c'` (`StageType.cap_label`)
   change min (min (d.label i) (c' : Label.{u})) _ = _
   rw [min_assoc, min_eq_right (hle (le_max_right _ _))]
 
@@ -231,9 +234,9 @@ end Reduce
 
 /-- **The base reduct satisfies the density sentence** (roadmap, the top-free witnesses, step 7,
 for the base reduct): for a structure whose age is the age of top-free charts and which is
-ultrahomogeneous, at a stage `α ≥ ω` that is zero or a limit, the base-language structure of the
-reduction of the reconstructed realization to `ω` satisfies the density sentence.  Its clauses are
-a nonempty carrier (`nonempty_of_topFreeAge_subset`), exact consistency and covering
+ultrahomogeneous, at a limit stage `α ≥ ω`, the base-language structure of the reduction of the
+reconstructed realization to `ω` satisfies the density sentence.  Its clauses are a nonempty
+carrier (`nonempty_of_topFreeAge_subset`), exact consistency and covering
 (`isConsistent_reconstruct_reduce`, `isCovering_reconstruct_reduce`), and finite-cut receiving
 (`hasFiniteCutReceiving_reconstruct_reduce`), for a realization with legal types
 (`hasLegalTypes_reconstruct_reduce`), by `baseLanguage.realize_toStructure_densitySentence_iff`.

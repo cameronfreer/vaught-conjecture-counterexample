@@ -91,9 +91,8 @@ permitted cutoff at a time, not exact projected receiving (semantic contract, it
 received type need not reduce to `d` itself.
 
 **Status.**  The reduction of finite-extension receiving to finite-cut receiving, and the descent
-of finite-cut receiving along stage reduction, are proved here.
-Finite-cut receiving of models in general, (R1) of the table of Layer 3, is still to be proved;
-through
+of finite-cut receiving along stage reduction, are proved here.  Finite-cut receiving of models in
+general, (R1) of the table of Layer 3, is still to be proved; through
 `Expansion.FiniteCutReceiving` it is the remaining hypothesis of the transfer of
 `VaughtConjecture.Expansion.Agreement`.
 
@@ -237,6 +236,7 @@ theorem HasFiniteCutReceiving.reduce {β : Ordinal.{u}} (h : R.HasFiniteCutRecei
   have key : min (q.label i) c' = min (d.label j) c' := by
     rw [hq.2 i j hij, ofIsLawful_label, min_reduce_of_le (hc'le.trans (by exact_mod_cast hβα)),
       hρc j]
+  -- the labels of `q.reduce hβ` are `Label.reduce β (q.label i)` (`StageType.reduce_label`)
   change min (Label.reduce β (q.label i)) _ = _
   rw [min_reduce_of_le (hδc.trans hc'le)]
   simpa only [min_assoc, min_eq_right hδc] using congrArg (min · (δ : Label.{u})) key

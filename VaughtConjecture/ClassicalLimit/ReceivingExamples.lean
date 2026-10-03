@@ -16,8 +16,8 @@ charts; none assumes the coatom extension property or modelhood.
 * **The empty root**: the empty tuple is typed, every legal stage type on one point is a coface of
   its type, and it is received over the empty tuple at every permitted cutoff.
 * **A donor with a top label**: no reconstructed type has a top label, so the donor itself is
-  never the received type; for every received occurrence there is a higher permitted cutoff that
-  it does not serve, so receiving at two cutoffs can need two different occurrences.
+  never the received type; every occurrence received at a permitted cutoff fails to serve some
+  higher permitted cutoff, at which a different occurrence is received.
 * **A donor with bottom labels**: at every permitted cutoff, the received type is bottom exactly
   where the donor is.
 * **A top-free donor** is received exactly.
@@ -91,28 +91,33 @@ private theorem exists_not_mem_receivingFamily_of_label_eq_top (hα : Order.IsSu
   rw [hi, min_eq_right le_top, min_eq_left hlt.le] at h
   exact hlt.ne h
 
-/-- **Two cutoffs, two occurrences**: at a limit stage, for a donor with a top label and a permitted
-cutoff `δ`, there is a higher permitted cutoff `δ'` such that the occurrences received at `δ` and
-at `δ'` are different, although both extend the root literally. -/
+/-- **Two cutoffs, two occurrences**: at a limit stage, for a donor with a top label, every
+occurrence `v` received at a permitted cutoff `δ` fails to serve some higher permitted cutoff
+`δ'`, at which another occurrence `v'`, different from `v`, is received; both extend the root
+literally.  So the occurrence depends on the cutoff. -/
 example (hα : Order.IsSuccPrelimit α) (x : (reconstruct α M).Occurrence) {d : StageType.{u} α _}
     (hd : d ∈ x.type.cofaces) {i : Fin d.card} (hi : d.label i = ⊤) {δ : Ordinal.{u}}
-    (hδ : δ < α) :
-    ∃ δ' : Ordinal.{u}, δ < δ' ∧ δ' < α ∧ ∃ v v' : Fin (x.arity + 1) ↪ M, v ≠ v' ∧
-      Fin.castSuccEmb.trans v = x.tuple ∧ Fin.castSuccEmb.trans v' = x.tuple ∧
-      (∃ q ∈ receivingFamily d (δ : Label.{u}), (reconstruct α M).eval v = some q) ∧
-      ∃ q' ∈ receivingFamily d (δ' : Label.{u}), (reconstruct α M).eval v' = some q' := by
-  have hrec := hasFiniteCutReceiving_reconstruct hage hu hα
-  obtain ⟨v, hv, q, hq, hvq⟩ := hrec x d hd δ (isPermittedCutoff_coe.mpr hδ)
+    (hδ : δ < α) (v : Fin (x.arity + 1) ↪ M) (hv : Fin.castSuccEmb.trans v = x.tuple)
+    (hvδ : ∃ q ∈ receivingFamily d (δ : Label.{u}), (reconstruct α M).eval v = some q) :
+    ∃ δ' : Ordinal.{u}, δ < δ' ∧ δ' < α ∧
+      (∀ q, (reconstruct α M).eval v = some q → q ∉ receivingFamily d (δ' : Label.{u})) ∧
+      ∃ v' : Fin (x.arity + 1) ↪ M, v' ≠ v ∧ Fin.castSuccEmb.trans v' = x.tuple ∧
+        ∃ q' ∈ receivingFamily d (δ' : Label.{u}), (reconstruct α M).eval v' = some q' := by
+  obtain ⟨q, hq, hvq⟩ := hvδ
   obtain ⟨c, hcα, hqc⟩ := exists_not_mem_receivingFamily_of_label_eq_top hage hα
     (pos_of_gt hδ) hvq hi
+  -- `v` does not serve `max δ c`, since it does not serve the lower cutoff `c`
   have hq' : q ∉ receivingFamily d ((max δ c : Ordinal.{u}) : Label.{u}) := fun h ↦
     hqc (mem_receivingFamily_of_le h (by exact_mod_cast le_max_right δ c))
-  obtain ⟨v', hv', q', hq'', hvq'⟩ :=
-    hrec x d hd _ (isPermittedCutoff_coe.mpr (max_lt hδ hcα))
-  refine ⟨max δ c, lt_of_le_of_ne (le_max_left δ c) fun h ↦ hq' (h ▸ hq), max_lt hδ hcα, v, v',
-    ?_, hv, hv', ⟨q, hq, hvq⟩, q', hq'', hvq'⟩
+  have hnot (q₁ : StageType.{u} α _) (h₁ : (reconstruct α M).eval v = some q₁) :
+      q₁ ∉ receivingFamily d ((max δ c : Ordinal.{u}) : Label.{u}) :=
+    Option.some_injective _ (hvq.symm.trans h₁) ▸ hq'
+  obtain ⟨v', hv', q', hq'', hvq'⟩ := hasFiniteCutReceiving_reconstruct hage hu hα x d hd _
+    (isPermittedCutoff_coe.mpr (max_lt hδ hcα))
+  refine ⟨max δ c, lt_of_le_of_ne (le_max_left δ c) fun h ↦ hq' (h ▸ hq), max_lt hδ hcα, hnot,
+    v', ?_, hv', q', hq'', hvq'⟩
   rintro rfl
-  exact hq' (Option.some_injective _ (hvq.symm.trans hvq') ▸ hq'')
+  exact hnot q' hvq' hq''
 
 /-! ### A donor with bottom labels -/
 

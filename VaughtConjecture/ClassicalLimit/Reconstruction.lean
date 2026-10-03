@@ -115,17 +115,19 @@ used here.
   occurrence, with a one-point coface of its type (`StageType.exists_extension`, under the coatom
   extension property); terminality from the top-freeness proved here, modelhood, and the
   reduction of models.
-* **The density sentence** (the sentence of the main theorem, not one of the seven steps) for the
-  base-language structure (`Realization.toStructure`) of the reduction of the reconstructed
-  realization to `ω` (`Realization.reduce`) is in `VaughtConjecture.ClassicalLimit.Receiving`
-  (`realize_densitySentence_reconstruct_reduce`), for a structure whose age is the age of top-free
-  charts and which is ultrahomogeneous, at a stage `α ≥ ω` that is zero or a limit: the clauses
-  proved here, reduced to `ω`, and finite-cut receiving of the reduction, by receiving at `α` and
-  its descent along stage reduction (`Realization.HasFiniteCutReceiving.reduce`), cutoff by
-  cutoff, which is not exact projected receiving (semantic contract, item 12).
-* **Exact extension within the age** (semantic contract, item 12) beyond the extension of
-  embeddings given by ultrahomogeneity, and any statement about stage reductions or cutoff
-  observations of `M`.
+* **The density sentence** (the sentence of the main theorem; for the base reduct, the
+  base-reduct part of step 7) for the base-language structure (`Realization.toStructure`) of the
+  reduction of the reconstructed realization to `ω` (`Realization.reduce`) is in
+  `VaughtConjecture.ClassicalLimit.Receiving` (`realize_densitySentence_reconstruct_reduce`), for
+  a structure whose age is the age of top-free charts and which is ultrahomogeneous, at a limit
+  stage `α ≥ ω`: the clauses proved here, reduced to `ω`, and finite-cut receiving of the
+  reduction, by receiving at `α` and its descent along stage reduction
+  (`Realization.HasFiniteCutReceiving.reduce`), cutoff by cutoff, which is not exact projected
+  receiving (semantic contract, item 12).
+* **Exact extension within the age** (semantic contract, item 12): exact extension of top-free
+  donors, by ultrahomogeneity, is in `VaughtConjecture.ClassicalLimit.Receiving`
+  (`exists_reconstruct_eval_eq_of_isTopFree`), with the statements there about the reduction of
+  the reconstructed realization to a lower stage and its cutoff observations.
 
 **Universes.**  The limit is a structure in `Type` of a language in `Type (u + 1)`; the output of
 reconstruction is the realization `reconstruct α M`, on the same carrier in `Type`.  With `u = 0`,
