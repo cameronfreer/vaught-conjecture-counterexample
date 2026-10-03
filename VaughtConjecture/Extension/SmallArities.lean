@@ -119,7 +119,7 @@ theorem exists_gradedIndex_eq_univ :
       (Rows.isLawful_const_bot (R := I.amalgam.rows)))
   exact ⟨Fin.natAdd _ i, Scheme.appendFullCellsScheme_gradedIndex_natAdd _ _ _ i⟩
 
-/-- A pair whose face is not the ground set lies below no new cell. -/
+/-- A pair whose face is not the ground set lies above no new cell. -/
 private theorem not_univ_le_of_ne {Y : Finset (Fin 2) × ℕ} (hY : Y.1 ≠ univ) :
     ¬ ((univ : Finset (Fin 2)), 1) ≤ Y :=
   fun h ↦ hY (univ_subset_iff.mp h.1)

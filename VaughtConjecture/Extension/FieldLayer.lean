@@ -693,13 +693,6 @@ open Label
 variable {ι α : Type*} [Fintype ι] {D : CellScheme ι α} {R : D.Rows.{u}} {k : ℕ}
   {w : ι → Label.{u}}
 
-omit [Fintype ι] in
-/-- A labelling lawful below a pair that lies above every cell is lawful. -/
-theorem isLawful_of_isLawfulBelow {X : Finset α × ℕ} (hall : ∀ d, d ∈ D.below X)
-    (hw : R.IsLawfulBelow X (fun d ↦ w d)) : R.IsLawful w := by
-  obtain ⟨ho, hl, ha⟩ := isLawfulBelow_iff_forall.mp hw
-  exact ⟨fun d ↦ ho d (hall d), fun s ↦ hl s (hall s), fun s t hst hg ↦ ha s t (hall t) hst hg⟩
-
 /-- **The canonical code of a lawful section is lawful** on cells of grade at most `k`: the
 canonical map is a witness bounded by grade `k` that sends only bottom to bottom. -/
 theorem IsLawful.canonicalCode (hw : R.IsLawful w) (hk : ∀ d, D.grade d ≤ k) :
@@ -769,7 +762,7 @@ theorem lt_card_of_mem_below {X : Finset (Fin n) × ℕ} (hX : ¬ ((univ : Finse
   rw [hd', CellScheme.mem_below, appendFullCellsScheme_gradedIndex_natAdd] at hd
   exact hX hd
 
-/-- An old cell lies below no new cell, when no cell of `S` lies above `(univ, k)`. -/
+/-- No new cell lies below an old cell, when no cell of `S` lies above `(univ, k)`. -/
 theorem not_le_gradedIndex_of_lt
     (h : ∀ d, ¬ ((univ : Finset (Fin n)), k) ≤ S.toCellScheme.gradedIndex d)
     {s : Fin (S.card + M)} (hs : (s : ℕ) < S.card) :
@@ -1180,11 +1173,10 @@ theorem isLawful_castAdd_of_boundary (hk : ∀ d, S.toCellScheme.grade d = k)
     (hwU : (S.fieldLayer k hS).rows.IsLawfulBelow U (fun d ↦ w d))
     (hwV : (S.fieldLayer k hS).rows.IsLawfulBelow V (fun d ↦ w d)) :
     S.rows.IsLawful fun d ↦ w (Fin.castAdd _ d) :=
-  CellScheme.Rows.isLawful_of_isLawfulBelow (X := (univ, k))
-    (fun d ↦ ⟨subset_univ _, (hk d).le⟩)
-    (CellScheme.Rows.IsLawfulBelow.glue (w := fun e ↦ w (Fin.castAdd _ e))
+  (CellScheme.Rows.IsLawfulBelow.glue (Y := (univ, k)) (w := fun e ↦ w (Fin.castAdd _ e))
       ((isLawfulBelow_appendFullCells_iff hU).mp hwU)
-      ((isLawfulBelow_appendFullCells_iff hV).mp hwV) fun d _ ↦ hcover d)
+      ((isLawfulBelow_appendFullCells_iff hV).mp hwV) fun d _ ↦ hcover d).isLawful
+    fun d ↦ ⟨subset_univ _, (hk d).le⟩
 
 /-- **Extension from the boundary at the cap `⊥`**: every labelling lawful below `U` and `V` (the
 boundary, here every old cell) extends, unchanged there, to a labelling lawful below `(univ, k)`. -/
