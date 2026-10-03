@@ -480,8 +480,8 @@ theorem hullOp_mem_hull (P : StageType.{u} α k) (ι : HullIndex.{u} α) (a b : 
 
 /-- **Legality along a two-point hull from a hull operation**: if `b` is the value at `a` and `b`
 of a hull operation, with `a ≠ b`, then the restriction of the chart to the hull of `{a, b}` is
-legal: the value is not the default, so it comes from a chart witness, whose points are that hull
-and whose type is the legal type of the hull index. -/
+legal: the value `b` differs from the default value `a`, so it is a witnessed value, the target of
+a chart witness, whose points are that hull and whose type is the legal type of the hull index. -/
 theorem isLegal_comap_of_hullOp_eq_right {a b : Fin k} (hab : a ≠ b) {ι : HullIndex.{u} α}
     (hι : P.faceRealization.hullOp ι a b = b) {m : ℕ} (g : Fin m ↪ Fin k)
     (hg : univ.map g ∈ P.toCellScheme.faces)

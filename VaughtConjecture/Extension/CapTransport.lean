@@ -50,12 +50,14 @@ witness that reflects bottom everywhere (`CellScheme.Rows.IsLawful.map_of_bot_re
   their forms below a pair).
 
 The hypothesis `γ ≠ ⊥` is the only condition on the cap: `γ` need not be self-visible, and only the
-grades of the cells below the pair, at most `K`, enter.  The intended application is to the owner
-alignment of the completion, which is not constructed here: there, a labelling `r` lawful below
-the target pair of a lift, with values among codes, is to be decoded by a witness `ν`, and the
-decoded labelling `ν ∘ r`, agreeing at the positive cap of the lift with the lawful ambient
-labelling, will be lawful by the transport here.  The cap `⊥` is to be treated separately, by the
-boundary completion of the prescription capped at the owner label, also not constructed here.
+grades of the cells below the pair, at most `K`, enter.  The application is to the owner
+alignment of the completion (`VaughtConjecture.Extension.OwnerCappedLift`): there, a labelling `r`
+lawful below the target pair of a lift, extending the aligned encoding, is decoded by the alignment
+decoder `ν`, and the decoded labelling `ν ∘ r`, agreeing at the positive cap of the lift with the
+lawful ambient labelling, is lawful by the transport here
+(`CellScheme.Rows.hasOwnerCappedLifts_of_source`).  The cap `⊥` is treated separately, by the
+boundary lift of the prescription capped at the owner label
+(`CellScheme.Rows.hasOwnerCappedLifts_bot_of_boundary`).
 
 ## Placement
 
@@ -463,10 +465,10 @@ theorem map_of_bot_iff (hr : R.IsLawfulBelow X r) (hq : R.IsLawfulBelow X q)
 /-- **Positive-cap transport of lawfulness**, below a pair `X` (`IsLawful.map_of_min_eq`).  Let
 `r` and `q` be lawful below `X`, the grades of the cells below `X` at most `K`, `ν` a witness
 bounded by grade `K`, and `γ ≠ ⊥` with `min (ν (r d)) γ = min (q d) γ`.  Then `ν ∘ r` is lawful
-below `X`.  In the intended application, the owner alignment of the completion (not constructed
-here), `r` is to be a labelling of codes lawful below the target pair of a lift, `ν` its decoder,
-and `q` the ambient labelling at the positive cap of the lift, so that the decoded labelling is
-lawful. -/
+below `X`.  In the owner alignment of the completion
+(`CellScheme.Rows.hasOwnerCappedLifts_of_source`), `r` is a labelling lawful below the target pair
+of a lift, `ν` the alignment decoder, and `q` the ambient labelling at the positive cap of the
+lift, so that the decoded labelling is lawful. -/
 theorem map_of_min_eq (hr : R.IsLawfulBelow X r) (hq : R.IsLawfulBelow X q)
     (hK : ∀ d : D.below X, D.grade d ≤ K) (hν : IsWitness (stepSuppressor K) ν) (hγ : γ ≠ ⊥)
     (hag : ∀ d, min (ν (r d)) γ = min (q d) γ) : R.IsLawfulBelow X (ν ∘ r) :=

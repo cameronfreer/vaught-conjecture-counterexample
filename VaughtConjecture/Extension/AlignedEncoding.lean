@@ -20,7 +20,10 @@ owner-local alignment, `Label.exists_ownerAlignment`.)  Let `μ` be zero or a li
 and `V` a finite set of labels containing every value of `p` above `δ`.
 
 * **Tail codes** (`Label.tailEncode μ V m`): a label `y` is coded by `μ + strongEncode V m y`, the
-  translation by `μ` of its strongly coded code; the formal top has a proper code.  The **tail
+  translation by `μ` of its code `strongEncode V m y`, which is strongly coded at `m`
+  (`Label.isStronglyCoded_strongEncode`); the formal top has a proper code.  The tail code itself
+  need not be strongly coded: a strongly coded label lies below `ω ^ 2`, and `μ` may be `ω ^ 2` or
+  larger.  The **tail
   decoder** (`Label.tailDecode μ V m`) is bottom below `μ` and reads `x ≥ μ` as
   `strongDecode V m (x - μ)`; it is a witness bounded by grade `m`
   (`Label.isWitness_tailDecode`) and recovers every label of `V` other than bottom from its tail
@@ -138,7 +141,8 @@ theorem unshift_translate (hz : z ≠ ⊥) : unshift μ (translate μ 0 z) = z :
   | coe o => rw [translate_coe, translate_coe, Ordinal.sub_zero, Ordinal.add_sub_cancel, zero_add]
   | top => rfl
 
-/-- The **tail code** of a label: the translation by `μ` of its strongly coded code. -/
+/-- The **tail code** of a label: the translation by `μ` of its code `strongEncode V m y`, which
+is strongly coded at `m`; the translation need not be. -/
 noncomputable def tailEncode (μ : Ordinal.{u}) (V : Finset Label.{u}) (m : ℕ) (y : Label.{u}) :
     Label.{u} :=
   translate μ 0 (strongEncode V m y)

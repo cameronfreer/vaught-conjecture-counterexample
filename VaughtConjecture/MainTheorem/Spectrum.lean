@@ -82,7 +82,7 @@ sentence has countable quantifier rank.
   (`mem_modelsOf_densitySentence_iff`); isomorphism of two coded models is isomorphism of their
   realizations (`structureIsoSetoid_r_iff_isIso`), so the classes are the classes of the coded
   realizations (`mk_eq_mk_iff_isIso`);
-* the **ℕ-carrier reduction** (`exists_mem_modelsOf_equiv`): every countably infinite model of a
+* the **reduction to `ℕ`** (`exists_mem_modelsOf_equiv`): every countably infinite model of a
   sentence, on a carrier in any universe, is isomorphic to a coded model on `ℕ`.  The absence of
   finite models of the density sentence rests on the cap-to-model theorem of Layer 3
   (`infinite_of_realize_densitySentence_of_capToModel`), so the reduction of every countable model
@@ -91,7 +91,7 @@ sentence has countable quantifier rank.
 
 **Infinitary satisfaction across carrier universes.**  Isomorphic structures on carriers in
 different universes satisfy the same infinitary formulas (`realize_boundedFormulaω_equiv`,
-`realize_sentenceω_equiv`), which the ℕ-carrier reduction uses; every infinitary formula has
+`realize_sentenceω_equiv`), which the reduction to `ℕ` uses; every infinitary formula has
 countable quantifier rank (`qrank_lt_omega_one`), which gives logical agreement from agreement up
 to each quantifier rank.
 
@@ -291,13 +291,13 @@ theorem hasThinAlephOneSpectrum_of_filtration {L : Language.{0, 1}} [L.IsRelatio
 
 end Composition
 
-/-! ### The ℕ-carrier reduction -/
+/-! ### The reduction to `ℕ` -/
 
 section Carrier
 
 variable {L : Language.{u, v}} [L.IsRelational]
 
-/-- **The ℕ-carrier reduction**: a countably infinite model of `φ`, on a carrier in any universe,
+/-- **The reduction to `ℕ`**: a countably infinite model of `φ`, on a carrier in any universe,
 is isomorphic to the structure of a coded model of `φ` on `ℕ`. -/
 theorem exists_mem_modelsOf_equiv {φ : L.Sentenceω} {M : Type w} [L.Structure M] [Countable M]
     [Infinite M] (h : φ.Realize M) :

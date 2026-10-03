@@ -18,9 +18,11 @@ Roadmap, Layer 3, 3.1, (R6), checkpoint 2.4 (the alignment of owners); semantic 
   that is bottom below `ω * 6` and `γ` from there on.  The hypotheses of the owner-local
   alignment hold (`exists_alignment_strip`).  Both cells are saturated, and the source of `d` lies
   in the strip `[ω * 6, ω * 6 + 2]` below its end: every source cap `h` self-visible at `2` and at
-  most `s d` lies below `ω * 6`.  So no alignment has the reading cap `δ = γ`: every alignment
-  has `γ < δ` (`cap_lt_readingCap`), so `ρ h = δ > γ ≥ τ h` and the alignment decoder is not
-  `τ`.  This is the owner label above the cap at a grade with a saturated strip.
+  most `s d` lies below `ω * 6`.  With the reading cap `δ = γ` the alignment would force
+  `h ≤ s d`, and the alignment decoder would send `h` to bottom, although `ρ h = δ` is not bottom.
+  So no alignment has the reading cap `δ = γ`: every alignment has `γ < δ` (`cap_lt_readingCap`),
+  so `ρ h = δ > γ ≥ τ h` and the alignment decoder is not `τ`.  This is the owner label above the
+  cap at a grade with a saturated strip.
 * **The one-face case** `C = B`, on a scheme whose cells all have the full scope of one point and
   grade `1` with rows constantly `1` (short at `1`, never the formal top): with `U = V = O = Y`,
   every cell lies on the boundary (`CellScheme.Rows.extendsFromBoundary_self`), and the rows have
@@ -213,9 +215,11 @@ theorem exists_alignment_strip :
 
 /-- **The reading cap must exceed the cap.**  On the strip example, every source cap, reading
 cap, and alignment decoder with the conclusions of the owner-local alignment have the reading cap
-strictly above the cap: the source cap lies below `ω * 6`, where the ambient witness is bottom, so
-the alignment decoder sends it to bottom unless it is retuned (it is not `τ` and reads the strip
-above the cap, `VaughtConjecture.Extension.OwnerAlignment`). -/
+strictly above the cap.  Suppose the reading cap were the cap.  Then the alignment at `d` would
+bound the source cap by `ω * 6 + 1`, so the source cap, being self-visible at `2`, would lie below
+`ω * 6`, where the ambient witness is bottom; by the cap observation the alignment decoder would
+send it to bottom, contradicting `ρ h = δ`.  So the alignment decoder is retuned (it is not `τ`
+and reads the strip above the cap, `VaughtConjecture.Extension.OwnerAlignment`). -/
 theorem cap_lt_readingCap {h δ : Label.{u}} {ρ : Label.{u} → Label.{u}} (hhbot : ⊥ < h)
     (hhvis : IsSelfVisible 2 h) (hρ : IsWitness (stepSuppressor.{u} 2) ρ) (hγδ : stripCap ≤ δ)
     (hρh : ρ h = δ)
