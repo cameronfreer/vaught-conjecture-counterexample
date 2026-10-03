@@ -675,20 +675,20 @@ These are statements still to be proved.  None is an input to the main theorem.
   the least `ξ ≤ η` such that its reduction to `λ_ξ` changes no label; it is not a Scott rank), from
   finite data ("Quantitative reconstruction", below, "Fixing ranks of finite charts" and "Charts of
   every fixing rank"; no termination used); (ii) for each such chart, a model in which it occurs as
-  an actual chart, a model **seeded** by the chart (expected to need, like the top-free witnesses,
-  the coatom extension property `StageType.HasCoatomExtensions` and the cap-to-model theorem; no
-  termination used); (iii) hence fixing ranks of realized charts cofinal in `ω₁` (no termination
-  used); (iv) noncollapse: uncountably many classes, by the many-to-many form of the bounded-levels
-  criterion (`README.md`, "Reduction to full presentations", "Bounded levels"), from a bound, for
-  each class, on the fixing ranks of the charts realized in all presentations of that class.  The
-  bound of (iv) is the only place where termination can enter.  Taken from eventual departure (1
-  above), it uses conditions 3 and 4 with a Scott sentence for each class, and not global
-  termination.  Read off a full presentation of every class, it uses full-presentation coverage,
-  hence global termination (`README.md`, "The persistent core"), which is then a stated hypothesis.
-  Nonempty domains alone do not replace (iv) ("Nonempty domains with an empty persistent core",
-  above).  The termination-free expansion-domain route, whose lower bound is condition 4, remains
-  the default (the first endpoint, `README.md`, "Endpoints and shared foundations"), and the count
-  does not use this chain.
+  an actual chart (expected to need, like the top-free witnesses, the coatom extension property
+  `StageType.HasCoatomExtensions` and the cap-to-model theorem; no termination used); (iii) hence
+  fixing ranks of realized charts cofinal in `ω₁` (no termination used); (iv) noncollapse:
+  uncountably many classes, by the bounded-levels criterion in its form for relations between
+  classes and countable ordinals (`README.md`, "Reduction to full presentations", "Bounded levels"),
+  from a bound, for each class, on the fixing ranks of the charts realized in all presentations of
+  that class.  The bound of (iv) is the only place where termination can enter.  Taken from eventual
+  departure (1 above), it uses conditions 3 and 4 with a Scott sentence for each class, and not
+  global termination.  Read off a full presentation of every class, it uses full-presentation
+  coverage, hence global termination (`README.md`, "The persistent core"), which is then a stated
+  hypothesis.  Nonempty domains alone do not replace (iv) ("Nonempty domains with an empty
+  persistent core", above).  The termination-free expansion-domain route, whose lower bound is
+  condition 4, remains the default (the first endpoint, `README.md`, "Endpoints and shared
+  foundations"), and the count does not use this chain.
 * **Quantitative reconstruction** (prospective: a companion pathway of bounded checkpoints, not a
   prerequisite of the main theorem by either route; it is used by neither route).  It asks for
   explicit base-language syntax for the expansions recovered by higher-stage reconstruction
@@ -1015,9 +1015,9 @@ These are statements still to be proved.  None is an input to the main theorem.
   preceding item).  On one fixed legal scheme on one point (a domain of arity one, in the sense of
   [Kni26, Definition 2.6.1]), for every countable `ξ` there is a lawful labelling of fixing rank
   exactly `ξ + 1`: a legal stage type at `λ_η` for every `η > ξ`, with every proper label below
-  `λ_{ξ+1}` and one at least `λ_ξ`.  It concerns finite data only and is proved before any model is
-  constructed.  It supplies explicit witnesses of high fixing rank for the lower bound, with no use
-  of any property of models (the strict decrease of the domains, or termination).  Special cases
+  `λ_{ξ+1}` and one at least `λ_ξ`.  It concerns finite data only and is to be proved before any
+  model is built.  It supplies explicit witnesses of high fixing rank for the lower bound, with no
+  use of any property of models (the strict decrease of the domains, or termination).  Special cases
   to be compiled with it: `ξ = 0`, `ξ = ω`, and `ξ` a limit.  Like the fixing rank itself, it says
   nothing about Scott ranks.
 

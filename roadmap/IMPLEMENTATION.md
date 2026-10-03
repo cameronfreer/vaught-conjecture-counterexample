@@ -888,10 +888,12 @@ when the sketch is checked (the checks are run by CI).  Coding a `Type w` carrie
 transfer of infinitary isomorphism across universes; do not assume that a statement within a
 single universe covers it.
 
-**Library boundary.**  The development quotes the interfaces of InfinitaryLogic that it adopts
-(graded matching, `BFScattered`, the rank tails and least levels of `OrdinalCountability`, at
-present through the quotations of `Counting/`, and a least-level or coherent-retraction interface
-once one is available at a pin); it needs no new layer of ComputableModelTheory.
+**Library boundary.**  The development quotes the interfaces of InfinitaryLogic that it adopts:
+graded matching (`bfEquiv_of_gradedMatching`, applied in `Comparison/GradedMatchingApplications`),
+the rank tails and least levels of `OrdinalCountability` (quoted in `Counting/`), and
+`BFScattered` (available at the pin, signatures checked in `roadmap/SuggestedInterfaces.lean`); a
+coherent-retraction interface once one is available at a pin.  It needs no new layer of
+ComputableModelTheory.
 
 ### Dependency pins
 
@@ -1192,9 +1194,10 @@ Each checkpoint needs both its abstract API and a concrete application:
    they identify embeddings and substructures for a legal chart (for item 4, one of the two charts
    legal), legality being essential for item 5 (`README.md`, Layer 2, "Status for finite charts";
    `Language/HullOperations`, `Language/HullDefinability`); for exactly consistent covering
-   realizations the two-charts theorem (`Realization.eq_of_eval_eq_some`), items 1–2, and item 3
-   for embeddings of realizations, and for embeddings of stage-chart-language structures whose
-   source has legal types, are compiled (`README.md`, Layer 2, "Status for realizations";
+   realizations the two-charts theorem (`Realization.eq_of_eval_eq_some`), item 1 for pairs, under
+   legality along the hull of the pair (`Realization.exists_hullOp_eq_of_mem_finiteHull`), item 2,
+   and item 3 for embeddings of realizations, and for embeddings of stage-chart-language structures
+   whose source has legal types, are compiled (`README.md`, Layer 2, "Status for realizations";
    `Realization/TwoCharts`), and items 4–5 remain to be proved for realizations; steps 1–3 of the
    top-free witnesses are compiled, the amalgamation and joint embedding of step 2 and step 3
    conditional on `StageType.HasCoatomExtensions`, and steps 4 and 5 under top-free chart coverage,
@@ -1361,9 +1364,10 @@ ones split):
   unrestricted lifting (the last two defined with 2.6) are distinct statements.  The one grade step
   is `CellScheme.Rows.cappedLift_of_boundary` (2.4) once the new rows of full scope satisfy its
   hypotheses (4) and (5): their consistency, their shortness at grade at least `2` (from their
-  support), never the formal top (used only at the owner cell), their coding, and the extension from
-  the boundary, along the row of each serving cell at every positive cap self-visible at the grade,
-  and at the cap `⊥`.  Bountifulness then follows with `CellScheme.Rows.isBountiful_of_coatoms`,
+  support), never the formal top (used only at the owner cell), and the extension from the
+  boundary, along the row of each serving cell at every positive cap self-visible at the grade, and
+  at the cap `⊥`; and, for the legality of the scheme reached, their coding.  Bountifulness then
+  follows with `CellScheme.Rows.isBountiful_of_coatoms`,
   `CompletionBelowFullGrade.cappedLift_of_ne_univ`, and `CellScheme.Rows.cappedLift_of_fst_eq`.
   If 2.6 needs it, the extension from the boundary may be weakened to the boundary labellings that
   the proof supplies: never the formal top and, when the serving row is coded, below `ω²`.

@@ -33,8 +33,8 @@ a labelling `f` of codes below `X`, agreeing with `S` capped at the source cap `
 strongly coded codes and need not be strongly coded themselves
 (`VaughtConjecture.Extension.AlignedEncoding`).  The lift at the ambient `S` extends `f` to a
 labelling `r` lawful below `Y` agreeing with `S` capped at `h`; and `ρ ∘ r` is the owner-capped
-lift.  It is lawful by positive-cap transport with
-the ambient as lawful companion (`CellScheme.Rows.IsLawfulBelow.map_of_min_eq`): at every cell
+lift.  It is lawful by positive-cap transport with the ambient as lawful companion
+(`CellScheme.Rows.IsLawfulBelow.map_of_min_eq`): at every cell
 below `Y`, the new cells and the cells of the other coatom included, `r` agrees with the short
 label `S d` capped at `h`, so `ρ` reads it as `τ (S d) = min (q d) c` capped at `c`; below `X`, `ρ`
 reads `f` literally as `min p (p o)`.

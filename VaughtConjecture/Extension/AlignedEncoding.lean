@@ -23,11 +23,10 @@ and `V` a finite set of labels containing every value of `p` above `δ`.
   translation by `μ` of its code `strongEncode V m y`, which is strongly coded at `m`
   (`Label.isStronglyCoded_strongEncode`); the formal top has a proper code.  The tail code itself
   need not be strongly coded: a strongly coded label lies below `ω ^ 2`, and `μ` may be `ω ^ 2` or
-  larger.  The **tail
-  decoder** (`Label.tailDecode μ V m`) is bottom below `μ` and reads `x ≥ μ` as
-  `strongDecode V m (x - μ)`; it is a witness bounded by grade `m`
-  (`Label.isWitness_tailDecode`) and recovers every label of `V` other than bottom from its tail
-  code (`Label.tailDecode_tailEncode`).
+  larger.  The **tail decoder** (`Label.tailDecode μ V m`) is bottom below `μ` and reads `x ≥ μ`
+  as `strongDecode V m (x - μ)`; it is a witness bounded by grade `m` (`Label.isWitness_tailDecode`)
+  and recovers every label of `V` other than bottom from its tail code
+  (`Label.tailDecode_tailEncode`).
 * **The aligned encoding** (`Label.alignedEncode μ V m h δ s p`): at a cell `d`,
   `max (min (s d) h) (highCode (p d))`, where `highCode` is bottom at the labels `≤ δ` and the tail
   code above `δ` (`Label.highCode`).  The cells with `p d ≤ δ` keep their source capped at `h`;
@@ -51,14 +50,14 @@ and `V` a finite set of labels containing every value of `p` above `δ`.
     at `γ`.  This is the cap observation at every cell whose code agrees with a short source value
     capped at `h`, whether or not that cell carries a flattened code.
 
-**The package below an owner** (`CellScheme.Rows.IsLawfulBelow.exists_alignedEncoding`).  From the
+**The cells below an owner** (`CellScheme.Rows.IsLawfulBelow.exists_alignedEncoding`).  From the
 data of the owner-local alignment it produces a source cap `h`, a decoder `ρ` bounded by the
 grade, and a lawful labelling `f` of codes below the owner, never the formal top, agreeing with `s`
 capped at `h`, read by `ρ` literally as `p` capped at the owner label, and such that `ρ` reads every
 label that agrees capped at `h` with a short label `z` as `τ z` capped at `γ`.  These are the two
 readings the flattening step of `VaughtConjecture.Extension.FlattenedSource` left to the alignment
 decoder: the literal reading of the prescribed face above the cap `γ`, and the cap
-observation at the cells that need not carry flattened codes.  In the one-grade step the package is
+observation at the cells that need not carry flattened codes.  In the one-grade step these data are
 decoded to an owner-capped lift (`VaughtConjecture.Extension.OwnerCappedLift`).
 
 ## Placement

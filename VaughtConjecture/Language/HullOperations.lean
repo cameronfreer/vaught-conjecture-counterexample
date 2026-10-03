@@ -284,7 +284,8 @@ open Classical in
 /-- The **hull operation** of a hull index `ι` in a realization (`HULL_ALGEBRA.md`, §1).  A
 **chart witness** of `ι` at `a` and `b` is a tuple of type `ι.type` with the points `a` and `b` at
 the generators.  The hull operation at `a` and `b` is the target point of a chosen chart witness, if
-there is one, and otherwise the **default value** `a`.  On the face realization of a chart the
+there is one, a **witnessed value**, and otherwise the **default value** `a` (a witnessed value
+may coincide with `a`).  On the face realization of a chart the
 choice does not matter (`StageType.hullOp_eq_of_restrictFace`), nor on any exactly consistent
 covering realization (`Realization.hullOp_eq_of_eval`). -/
 noncomputable def hullOp (ι : HullIndex.{u} α) (a b : M) : M :=

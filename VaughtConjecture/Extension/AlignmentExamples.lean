@@ -216,10 +216,12 @@ theorem exists_alignment_strip :
 /-- **The reading cap must exceed the cap.**  On the strip example, every source cap, reading
 cap, and alignment decoder with the conclusions of the owner-local alignment have the reading cap
 strictly above the cap.  Suppose the reading cap were the cap.  Then the alignment at `d` would
-bound the source cap by `ω * 6 + 1`, so the source cap, being self-visible at `2`, would lie below
-`ω * 6`, where the ambient witness is bottom; by the cap observation the alignment decoder would
-send it to bottom, contradicting `ρ h = δ`.  So the alignment decoder is retuned (it is not `τ`
-and reads the strip above the cap, `VaughtConjecture.Extension.OwnerAlignment`). -/
+bound the source cap by `ω * 6 + 1`, so the source cap, being self-visible at `2`, would be
+`ω * b + n` with `b < 6` and `n ≥ 2`, below `ω * 6`, where the ambient witness is bottom.  By the
+cap observation at the short label `ω * b + 2`, of which the source cap is a visibility
+replacement, the alignment decoder would send the source cap to bottom, contradicting `ρ h = δ`.
+So the alignment decoder is retuned (it is not `τ` and reads the strip above the cap,
+`VaughtConjecture.Extension.OwnerAlignment`). -/
 theorem cap_lt_readingCap {h δ : Label.{u}} {ρ : Label.{u} → Label.{u}} (hhbot : ⊥ < h)
     (hhvis : IsSelfVisible 2 h) (hρ : IsWitness (stepSuppressor.{u} 2) ρ) (hγδ : stripCap ≤ δ)
     (hρh : ρ h = δ)
