@@ -54,7 +54,7 @@ grade, and a lawful labelling `f` of codes below the owner, never the formal top
 capped at `h`, read by `ρ` literally as `p` capped at the owner label, and such that `ρ` reads every
 label that agrees capped at `h` with a short label `z` as `τ z` capped at `γ`.  These are the two
 readings the flattening step of `VaughtConjecture.Extension.FlattenedSource` left to the alignment
-decoder: the literal reading of the prescribed face above the alignment cap, and the cap
+decoder: the literal reading of the prescribed face above the cap `γ`, and the cap
 observation at the cells that need not carry flattened codes.  In the one-grade step the package is
 decoded to an owner-capped lift (`VaughtConjecture.Extension.OwnerCappedLift`).
 

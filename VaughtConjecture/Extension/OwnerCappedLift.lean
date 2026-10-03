@@ -72,12 +72,18 @@ recursion on the grade supplies, the rows have owner-capped lifts at every cap s
 * the boundary lifts, from `(C, j + 1)` to the coatom `U` containing it and from the common face `O`
   to the other coatom `V` (lifts of the amalgam);
 * a cell of graded index `(B, j + 1)`, and, at every cell `u` of graded index `(B, j + 1)`, a row
-  lawful below `(B, j + 1)`, short at `j + 1` and never the formal top (the new rows of full scope
-  and grade at least `2` are short by their support), along which the rows extend from the
-  boundary at every positive cap;
+  lawful below `(B, j + 1)`, short at `j + 1` and never the formal top, along which the rows
+  extend from the boundary at every positive cap.  That the new rows of full scope and grade at
+  least `2` are short by their support is to be proved with their construction (checkpoints 2.5
+  and 2.6); at `j = 0` the new rows of grade `1` need not be short, their locality being the
+  mapped locality of `VaughtConjecture.Extension.InheritedLocality`, so at `j = 0` this
+  hypothesis is to be checked on the actual rows, or the lift proved directly.  Never the formal
+  top is used only at the owner cell, where it bounds the source cap and leaves room for the tail
+  codes;
 * the extension from the boundary at the cap `⊥`.
 
-No bountifulness and no consistency of the other rows is assumed, and no lift from `(C, j + 1)` to
+Bountifulness enters only through the boundary lifts, which are instances of the bountifulness of
+the amalgam; no consistency of the other rows is assumed, and no lift from `(C, j + 1)` to
 `(B, j + 1)` at an ambient other than the rows of the serving cells.  The prescription may
 contain the formal top and its lower labels may exceed the cap; the lift at every cap keeps the
 ambient observation at every cell below `Y`.
@@ -109,8 +115,8 @@ one-grade step, the row of the cell that serves a lift is the source of the ambi
 def rowBelow (R : D.Rows.{u}) (u : ι) (hu : D.gradedIndex u = Y) : D.below Y → Label.{u} :=
   fun d ↦ R.row u ⟨d.1, show d.1 ∈ D.below (D.gradedIndex u) from le_trans d.2 hu.ge⟩
 
-/-- The row of a cell, read below its graded index, is lawful there exactly when the rows are
-consistent at the cell. -/
+/-- The row of a cell, read below its graded index, is lawful there when the rows are consistent at
+the cell. -/
 theorem isLawfulBelow_rowBelow {u : ι} (hu : D.gradedIndex u = Y)
     (h : R.IsLawfulBelow (D.gradedIndex u) (R.row u)) : R.IsLawfulBelow Y (R.rowBelow u hu) := by
   subst hu
@@ -212,7 +218,8 @@ self-visible at `j + 1` with `⊥ < c`.  Suppose that the row of every cell `u` 
 and never the formal top, and that the rows lift capped at the ambient given by that row from
 `(C, j + 1)` to `(B, j + 1)`.  Then the rows have owner-capped lifts from `(C, j + 1)` to
 `(B, j + 1)` at `c`.  The cell serving an ambient `q` is a cell of graded index `(B, j + 1)` where
-`q` is at least `c`, chosen by availability. -/
+`q` is at least `c`, chosen by availability.  Of the hypothesis that the rows are never the formal
+top, only the value at the owner cell is used. -/
 theorem hasOwnerCappedLifts_of_rows [Finite (D.below (C, j + 1))] (hCB : C ⊆ B)
     {c : Label.{u}} (hcbot : ⊥ < c) (hc : IsSelfVisible (j + 1) c)
     (hY : ∃ t, D.gradedIndex t = (B, j + 1))

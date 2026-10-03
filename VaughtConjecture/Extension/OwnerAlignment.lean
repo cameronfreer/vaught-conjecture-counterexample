@@ -52,6 +52,10 @@ repaired above `m` by flattening of finite parts (`Label.isWitness_comp_flatten`
 cap is `δ = β (ω * b' + m)`.  It reads every saturated source in the strip of `h` through `β`,
 because the strip of `b'` is the only strip that `α` carries onto the strip of `b`, and it reads
 every source at least `h` as at least `δ`, because `α` reflects the order at the end of the strip.
+In this second case the alignment decoder is **retuned**: it is no longer `τ`, but agrees with `τ`
+capped at `γ` on the labels short at `m` and reads the strip of `h` through `β` above `γ`, and its
+reading cap `δ` may exceed `γ` (`VaughtConjecture.Extension.AlignmentExamples` shows that it must,
+in an example).
 
 **The one-grade step.**  In the one-grade step of the recursion on the grade, `γ` is the cap of
 the lift (when it is not `⊥`), `p` the prescription, and `s` the restriction to the cells below
@@ -291,7 +295,8 @@ private theorem isWitness_blockShift (b b' : Ordinal.{u}) (m : ℕ) :
 
 /-! ### Retuning a saturated strip -/
 
-/-- **Retuning a saturated strip.**  Let `α`, `β`, `τ` be witnesses bounded by grade `m`, let
+/-- **Retuning a saturated strip** (the construction of the retuned decoder of the second case of
+the alignment, see the module docstring).  Let `α`, `β`, `τ` be witnesses bounded by grade `m`, let
 `α x = ω * b + i` with `i < m`, let `τ ≤ γ` with `γ` self-visible at `m`, `τ (ω * b + i) = γ`, and
 `γ ≤ β x ≤ M`.  Some witness `ρ` bounded by grade `m` and some `δ` with `γ ≤ δ ≤ M`, self-visible
 at `m`, have: `ρ (ω * b + m) = δ`; `ρ (α z) = β z` whenever `α z` lies in the strip of `b` below
@@ -345,7 +350,7 @@ private theorem exists_retuning {M : Label.{u}} (hα : IsWitness (stepSuppressor
 /-! ### The owner-local alignment -/
 
 /-- The source cap lies below the visibility replacement at `m` of every saturated source. -/
-private theorem exists_sourceCut {I : Type*} [Finite I] {s : I → Label.{u}} {o : I}
+private theorem exists_sourceCap {I : Type*} [Finite I] {s : I → Label.{u}} {o : I}
     (ho : τ (s o) = γ) :
     ∃ e₀, τ (s e₀) = γ ∧
       ∀ e, τ (s e) = γ → visibilityReplace m m (s e₀) ≤ visibilityReplace m m (s e) := by
@@ -388,7 +393,7 @@ theorem exists_ownerAlignment {I : Type*} [Finite I] {grade : I → ℕ} {E s p 
   set m := grade o with hm_def
   have hosat : τ (s o) = γ := by rw [hface o, min_eq_right hγo.le]
   -- The source cap: the least replacement at `m` of a saturated source.
-  obtain ⟨e₀, he₀, hmin⟩ := exists_sourceCut (m := m) hosat
+  obtain ⟨e₀, he₀, hmin⟩ := exists_sourceCap (m := m) hosat
   set h := visibilityReplace m m (s e₀) with hh_def
   have hhvis : IsSelfVisible m h := isSelfVisible_visibilityReplace_self m _
   have hhτ : τ h = γ :=
@@ -398,8 +403,8 @@ theorem exists_ownerAlignment {I : Type*} [Finite I] {grade : I → ℕ} {E s p 
     exact hγbot.ne hhτ
   have hho : h ≤ s o := (hmin o hosat).trans_eq hso
   have hhtop : h ≠ ⊤ := ne_top_of_le_ne_top htop hho
-  -- A saturated source below the cut lies in the strip that ends at the cut.
-  have hstripCut (e : I) (he : τ (s e) = γ) (hlt : s e < h) :
+  -- A saturated source below the source cap lies in the strip that ends at the source cap.
+  have hstripCap (e : I) (he : τ (s e) = γ) (hlt : s e < h) :
       visibilityReplace m m (s e) = h :=
     le_antisymm ((monotone_visibilityReplace le_rfl hlt.le).trans_eq hhvis) (hmin e he)
   by_cases halign : ∀ e, γ < min (p e) (p o) → h ≤ s e
@@ -411,10 +416,10 @@ theorem exists_ownerAlignment {I : Type*} [Finite I] {grade : I → ℕ} {E s p 
   obtain ⟨d, hpd, hsd⟩ := halign
   have hdsat : τ (s d) = γ := by
     rw [hface d, min_eq_right (hpd.trans_le (min_le_left _ _)).le]
-  -- The cut is the end `ω * b + m` of the strip of `s d`, which has finite part `i < m`.
+  -- The source cap is the end `ω * b + m` of the strip of `s d`, which has finite part `i < m`.
   have hstrip_of (e : I) (he : τ (s e) = γ) (hlt : s e < h) :
       ∃ b n, n < m ∧ s e = pt b n ∧ h = pt b m := by
-    have hv := hstripCut e he hlt
+    have hv := hstripCap e he hlt
     induction hse : s e using recBotCoeTop with
     | bot => rw [hse, visibilityReplace_bot] at hv; exact absurd hv.symm hhbot.ne'
     | top => rw [hse] at hlt; exact absurd hlt (not_lt.mpr le_top)
@@ -437,7 +442,7 @@ theorem exists_ownerAlignment {I : Type*} [Finite I] {grade : I → ℕ} {E s p 
     exists_retuning (x := E d) hα hβ hτ hi ((hαlow d hsd).trans hsdi) hγ hτγ (hsdi ▸ hdsat)
       (by rw [hβread d]; exact hpd.le) hβle
   have hρh : ρ h = δ := hhb ▸ hρend
-  -- Below the cut, `ρ` reads the prescription capped at the owner label.
+  -- Below the source cap, `ρ` reads the prescription capped at the owner label.
   have hsub (e : I) (he : s e < h) : min (p e) (p o) = ρ (s e) := by
     by_cases hlo : τ (s e) < γ
     · have hpe : p e = τ (s e) := by

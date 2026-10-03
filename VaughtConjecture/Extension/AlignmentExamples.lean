@@ -30,8 +30,9 @@ Roadmap, Layer 3, 3.1, (R6), checkpoint 2.4 (the alignment of owners); semantic 
   - *Repeated coordinates*: two cells of one graded index, both serving cells.
   - *The owner label above a positive cap*: the prescription `ω + 1` and the cap `1`.
   - *The cap `⊥`, with literal top*: the prescription `⊤` is read literally.
-* **The owner label at most the cap.**  At the cap `⊤` no owner label exceeds the cap, so all
-  rows have owner-capped lifts there: the one-grade lift uses the lift below the cap instead.
+* **The owner label at most the cap** needs no owner-capped lift: the one-grade lift
+  (`CellScheme.Rows.cappedLift_of_ownerCappedLift`) takes the lift below the cap
+  (`CellScheme.Rows.exists_lift_of_le_cap`) there, and no example is given here.
 * **Grade `0`.**  The owner-local alignment applies to a single cell of grade `0`, where every
   label is self-visible and no source lies in a strip below its end.
 * **A label at `K + 1`.**  The tail code of `3` relative to `{3}` at grade `1` has finite part
@@ -188,7 +189,8 @@ private theorem stripAmbient_source (e : Bool) :
     cases e <;> exact (pt_lt_pt (by omega)).le
   rw [stripAmbient, ite_eq_right hs, min_eq_right hp]
 
-/-- **The hypotheses of the owner-local alignment hold on the strip example.** -/
+/-- **The owner-local alignment on the strip example**: its hypotheses hold there, so some source
+cap, reading cap, and alignment decoder have its conclusions. -/
 theorem exists_alignment_strip :
     ∃ h δ ρ, ⊥ < h ∧ h ≠ ⊤ ∧ IsSelfVisible 2 h ∧ h ≤ stripSource.{u} true ∧
       IsWitness (stepSuppressor.{u} 2) ρ ∧ stripCap ≤ δ ∧ δ ≤ stripPrescription true ∧
@@ -212,7 +214,8 @@ theorem exists_alignment_strip :
 /-- **The reading cap must exceed the cap.**  On the strip example, every source cap, reading
 cap, and alignment decoder with the conclusions of the owner-local alignment have the reading cap
 strictly above the cap: the source cap lies below `ω * 6`, where the ambient witness is bottom, so
-the alignment decoder sends it to bottom unless it is retuned above the cap. -/
+the alignment decoder sends it to bottom unless it is retuned (it is not `τ` and reads the strip
+above the cap, `VaughtConjecture.Extension.OwnerAlignment`). -/
 theorem cap_lt_readingCap {h δ : Label.{u}} {ρ : Label.{u} → Label.{u}} (hhbot : ⊥ < h)
     (hhvis : IsSelfVisible 2 h) (hρ : IsWitness (stepSuppressor.{u} 2) ρ) (hγδ : stripCap ≤ δ)
     (hρh : ρ h = δ)
@@ -391,14 +394,6 @@ example : ∃ w : (oneFace (Fin 1)).below ((univ : Finset (Fin 1)), 0 + 1) → L
     rwa [min_self] at this
   · rw [hwc d]
     exact min_eq_right h1.le
-
-/-! ### The owner label at most the cap -/
-
-/-- *The owner label at most the cap*: at the cap `⊤` no owner label exceeds the cap, and every
-rows have owner-capped lifts there. -/
-example {ι α : Type*} {D : CellScheme ι α} (R : D.Rows.{u}) {B C : Finset α} (hCB : C ⊆ B)
-    (j : ℕ) : R.HasOwnerCappedLifts hCB j ⊤ :=
-  fun _ _ _ _ _ _ _ _ h ↦ absurd h not_top_lt
 
 /-! ### Grade `0` -/
 
