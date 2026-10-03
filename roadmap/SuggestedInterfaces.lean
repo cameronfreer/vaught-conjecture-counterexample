@@ -556,7 +556,7 @@ set_option linter.hashCommand false in
 #check FirstOrder.Language.stabilizationOrdinal_le_of_formula_rank
 
 -- Further names of the pin `cf80917` cited in `IMPLEMENTATION.md`, "Dependency pins"
--- (signatures to be checked by CI; no application compiled in this repository).  Isomorphisms
+-- (signatures checked; no application compiled in this repository).  Isomorphisms
 -- transport atomic types and back-and-forth equivalence of tuples (`SameAtomicType.map_equiv` in
 -- `Scott/AtomicDiagram`, `BFEquiv.map_equiv` in `Scott/BFEquivRelabel`, same statements as before
 -- their move).  The off-diagonal of an analytic set in a Hausdorff space is analytic, and a set of

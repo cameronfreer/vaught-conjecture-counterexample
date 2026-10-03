@@ -872,13 +872,13 @@ named (`README.md`, Layer 0):
     `α ≤ height` only `BFEquiv α` pairs (a generic form of the graded back-and-forth theorem of
     `README.md`, Layer 0, whose initial match is a pair related at the height, `α = height`).
 
-  Between `def5cc0` and `cf80917` there are five merges, available at the pin (signatures checked,
-  except the five names marked below; `SuggestedInterfaces.lean` `#check`s the statements named
-  here, except the companions noted; no application compiled in this repository except that of the
-  moved `Perfect.mk_eq_continuum` in `MainTheorem/Scatteredness`):
+  Between `def5cc0` and `cf80917` there are five merges, available at the pin (signatures checked;
+  `SuggestedInterfaces.lean` `#check`s the statements named here, except the companions noted; no
+  application compiled in this repository except that of the moved `Perfect.mk_eq_continuum` in
+  `MainTheorem/Scatteredness`):
   - placement of the isomorphism-transport lemmas (#151): `SameAtomicType.map_equiv` now in
     `Scott/AtomicDiagram` and `BFEquiv.map_equiv` in `Scott/BFEquivRelabel`, below the Karp
-    modules (signatures to be checked by CI); names and statements unchanged;
+    modules (signatures checked); names and statements unchanged;
   - placement of the perfect-set cardinality (#154): `Perfect.mk_eq_continuum` (a nonempty perfect
     subset of a complete, second-countable metric space has the cardinality of the continuum)
     moved from `Descriptive/PerfectAntichain` to the topology-only module `Topology/Perfect`, same
@@ -889,11 +889,11 @@ named (`README.md`, Layer 0):
     `Descriptive/BFScattered` and `Descriptive/BFScatteredSentence`): `BFScattered K` (for every
     `η < ω₁` the restriction of `CodeBFEquiv η` to `K` has countably many classes), with no
     definability of `K`; `not_hasCantorAntichainOn_of_bfScattered`
-    (signatures to be checked by CI), for every relational language; `isThinOn_of_bfScattered`,
+    (signatures checked), for every relational language; `isThinOn_of_bfScattered`,
     for countably many relation symbols; and `Sentenceω.isThinOnNatModels_of_bfScattered`, through
     `bfEquivSetoid_eq_comap`; with `codeBFEquivSetoid`, and with the analyticity of the
     off-diagonal of an analytic set in a Hausdorff space, `MeasureTheory.AnalyticSet.offDiag`
-    (signatures to be checked by CI).  It is the generic form of the scatteredness form of
+    (signatures checked).  It is the generic form of the scatteredness form of
     thinness, `isThinOn_of_countable_bfClasses` and
     `isThinOnNatModels_of_countable_bfClasses` (`MainTheorem/Scatteredness`, Layer 6), which
     separate only closed antichains and declare their own `codeBFEquivSetoid` and
@@ -910,7 +910,7 @@ named (`README.md`, Layer 0):
     bounds (`COMPANIONS.md`, "Further companion results"); and a sentence, or a formula on `Fin 0`
     read as a sentence, of rank at most `β` that characterizes a countable `M` among the countable
     structures in its carrier universe gives `StabilizesAt M β` and `stabilizationOrdinal M ≤ β`:
-    `stabilizesAt_of_sentence_rank` (signatures to be checked by CI),
+    `stabilizesAt_of_sentence_rank` (signatures checked),
     `stabilizesAt_of_formula_rank` and `stabilizationOrdinal_le_of_formula_rank` (the other
     companions in `Scott/SentenceRecognition` are not `#check`ed), for the prospective recognition
     of a supplied model (the same item); whole-model recognition through the empty tuple only.
