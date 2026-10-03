@@ -37,9 +37,10 @@ labels of the block are read off covers one block lower.  Block determination is
 from Layer 4, outputs 1–2 (the stable candidate and normalization; `roadmap/README.md`, Layer 4),
 provided the stable value of a cell is the supremum over covers of an offset determined by the
 cover's type at `λ_η`, the coordinate embedding and the transported cell; that shape — the
-existential finite-data form of the threshold — is part of what remains to be proved.  If stable
-values were eventual values along directed covers that can decrease, no `U` would satisfy block
-determination.  Here block determination is a hypothesis.
+existential finite-data form of the threshold — is part of what remains to be proved.  An
+eventual-value construction that allows decreases does not by itself establish this existential
+finite-cover characterization; that characterization would then require a separate proof.  Here
+block determination is a hypothesis.
 
 **The formulas** (`blockFormula U η hη t`, a formula of the base language with free variables
 `Fin k`, for a type `t` at `λ_η` on `k` points) are defined by recursion on `η`
@@ -173,8 +174,9 @@ to `λ_η`.  It is expected to follow from Layer 4, outputs 1–2 (the stable ca
 normalization), at the block `η`, provided the stable value of a cell is the supremum over covers of
 an offset determined by the cover's type at `λ_η`, the coordinate embedding and the transported
 cell; that shape — the existential finite-data form of the threshold — is part of what remains to
-be proved.  If stable values were eventual values along directed covers that can decrease, no `U`
-would satisfy block determination. -/
+be proved.  An eventual-value construction that allows decreases does not by itself establish this
+existential finite-cover characterization; that characterization would then require a separate
+proof. -/
 def CoverThresholds.Determines {η : Ordinal.{0}} (U : CoverThresholds η) : Prop :=
   ∀ ⦃M : Type w⦄ [baseLanguage.{0}.Structure M] (R : ModelExpansion M (blockStage (η + 1)))
     ⦃k : ℕ⦄ (t : StageType.{0} (blockStage (η + 1)) k) (c : Fin k → M), R.1.Covers t c →
