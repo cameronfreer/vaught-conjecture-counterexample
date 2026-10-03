@@ -48,8 +48,11 @@ finite-cut receiving it uses is the one the density sentence provides, not (R1).
 
 The other statements here are unconditional.  Continuity at limits is not part of the definition
 and is not assumed: that the domain at a nonzero countable limit contains the intersection of the
-earlier ones needs an actual model expansion at the limit, built from expansions below it whose
-coherence is to be derived from uniqueness of expansions (semantic contract, item 9).
+earlier ones needs an actual model expansion at the limit.  A coherent family of model expansions
+below a limit glues to one (`ModelExpansion.nonempty_of_coherent`, in
+`VaughtConjecture.Realization.Limit`, which proves every clause of a model for the glued
+expansion); the coherence of the expansions below the limit is to be derived from uniqueness of
+expansions (semantic contract, item 9), not assumed.
 
 ## Placement
 
