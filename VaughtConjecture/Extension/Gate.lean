@@ -1,0 +1,427 @@
+/-
+Copyright (c) 2026 Cameron Freer. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Cameron Freer
+-/
+import VaughtConjecture.Scheme.Row
+
+/-!
+# Gate recovery
+
+Roadmap, Layer 3, 3.3 (the recovery statements, item 1: agreement below a cutoff in the ordinary
+construction (R1)); the vocabulary of Layer 3 (private context, private cap, display, gate,
+reference cells).
+
+**Setting.**  Fix a cell scheme `D` with semantic rows `R`, and in it:
+
+* a set `P` of **private cells** (in (R1), the cells visible through the embedding of the private
+  context) and a set `Q` of **donor cells** (the cells visible through the embedding of the donor,
+  the root followed by the new point); the cells in both are the cells of the root;
+* a labelling `w`, the **display**: in (R1) a lawful labelling that is literally the private labels
+  on `P` and the donor labels on `Q`; here only its values on `P` and `Q` are read, not its
+  lawfulness and not its value at the gate;
+* the **private cap** `C ∈ P`, a cell with `w C ≠ ⊥`;
+* the **gate** `G`, a cell of the grade `N` of `C` whose scope contains that of `C`, above every
+  donor cell.  The cells other than `G` with the graded index of `G` are its **twins**.
+
+The row of the gate **reads** a donor cell `e` outside `P` in one of four ways (`GateReads`):
+
+* `bot`: `w e = ⊥`, and the row of `G` is bottom at `e`;
+* `botAnchor`: `w e = ⊥`, and the row of `G` at `e` is at most its value at a private cell
+  labelled `⊥`;
+* `ref`: `w e = vr_N(w z, i)` for a private cell `z`, the **anchor** of `e`, and some `i ≤ N`, and
+  the row of `G` at `e` is `vr_N` of its value at `z`, with the same `i`; the reference cells of the
+  roadmap are the anchors;
+* `top`: `w C ≤ w e`, and the row of `G` at `e` is at least its value at a private cell labelled
+  at least `w C`.
+
+`IsGate` collects these data.  It says nothing about the twins.
+
+**Gate recovery** (`IsGate.recover`).  Let `q` be a lawful labelling that is literally `w` on the
+private cells and is bottom at every twin of the gate.  Then `w C ≤ q G`, and `q` agrees with the
+display on every donor cell below the label `w C` of the private cap:
+`min (q e) (w C) = min (w e) (w C)`.  Exactly, a donor label below `w C` is recovered
+(`IsGate.eq_of_lt_cap`), and a donor label at least `w C`, the formal top in particular, comes back
+only as a value at least `w C` (`IsGate.cap_le_of_cap_le`); when `w C = ⊤` every donor label is
+recovered (`IsGate.eq_of_cap_eq_top`).
+
+* **The lower bound on the gate comes from availability.**  Availability
+  ([Kni26, Definition 2.5.4, clause 2]) for the pair `C`, `G` gives a cell `u` with the graded index
+  of `G` and `q C ≤ q u`.  When every twin is bottom and `q C = w C` is not, `u` is the gate: this
+  is the **gate inequality** `w C ≤ q G` (`IsLawful.cap_le_gate`), and in particular the gate is
+  not bottom (`IsGate.gate_ne_bot`).  Locality at the gate gives no lower bound: lowering the
+  gate's value to any `x ≤ q G` self-visible at `N` keeps the locality at the gate
+  (`IsLawful.locality_lower_gate`, by the cap rule `Label.TransformsTo.min_const`).
+* **One witness.**  The locality at the gate gives one witness `(g, σ)` with `q G ≤ g N`, so
+  `min (q d) (q G) = min (σ (R.row G d)) (q G)` for every cell `d` below the gate
+  (`IsLawful.exists_gateWitness`).  The readings are decoded with this witness alone.  At an anchor
+  `z` with `w z < q G`, the equation `q z = w z` determines `σ` at the row's value, which then lies
+  below `q G ≤ g N`, so the fifth law of a witness at the threshold `N` carries the replacement
+  `vr_N(·, i)` from `z` to `e`; at an anchor with `w z ≥ q G`, the same law, applied to a second
+  replacement that undoes the first (`Label.exists_visibilityReplace_visibilityReplace`), keeps `σ`
+  at least `q G` (`Label.IsWitness.min_apply_visibilityReplace`,
+  `Label.IsWitness.le_apply_visibilityReplace_of_le`).  No composition of witnesses is used: the
+  transitivity of [Kni26, Lemma 2.3.14] is not correct as stated
+  (`Label.TransformsTo.not_transitive`).  No threshold other than the grade `N` of the gate is
+  used, so the suppressor may be bottom above `N`: every cell below the gate has grade at most `N`.
+  Neither the offset bound of [Kni26, Lemma 2.5.13], which is not correct as stated, nor any
+  coding, legality, or completion is used.
+* **Why agreement stops at `w C`.**  An anchor labelled `μ + k` with `k < N` (`μ` zero or a limit)
+  and at most `w C` gives `μ + N = vr_N(μ + k, N) ≤ w C`, since `w C` is self-visible at `N`
+  (`Label.visibilityReplace_le_of_le`).  So `w C` is at least the **actual cut**, the largest
+  `μ + N` over the blocks of such anchors, and agreement holds below the actual cut.  Above `w C`
+  nothing bounds the gate or the donor tops: a lawful labelling may realize a donor top as `w C`
+  itself (`VaughtConjecture.Extension.GateExamples`).
+
+**Findings.**
+
+* *The recovery hypothesis is the bottom pattern of the whole graded index of the gate*: the gate
+  is not bottom and its twins are bottom.  A literal private face and a non-bottom gate do not
+  suffice when the gate has twins: a twin labelled `⊤` serves availability against the cap, so
+  the cap no longer bounds the gate from below (the negative controls NC1 and NC2 of
+  `VaughtConjecture.Extension.GateExamples`).  When the gate has no twins, the literal private face
+  alone gives recovery (`IsGate.recover_of_unique`), and the gate is not bottom by the gate
+  inequality.  When the gate's row is bottom at every twin, a non-bottom gate makes the twins
+  bottom (`IsLawful.eq_bot_of_row_eq_bot`, `IsGate.recover_of_row_twin`).  The bottom-pattern
+  clause of a model ([Kni26, Definition 3.2.1], clause 4(a)ii) realizes exactly this pattern once
+  the display has it, since the grade `N` of the gate is at most the arity of the private context.
+* *An anchor may be self-visible at `N`, may lie above the private cap, and `i = N` is allowed.*
+  A self-visible anchor reads its own label.  If the anchor's label is at least `q G`, so is the
+  donor label, and the reading still bounds `q e` below by `q G`.
+* *The legality of a scheme carrying a gate is not addressed here.*  Such a scheme lives on the
+  private points and the new point, and its plan contains the root with the new point and the
+  whole set; accessibility of plans and completeness then put cells on a chain of faces between
+  them, and the restriction to the last coatom of that chain is an exact pinned extension of a face
+  of the private context over the root.  So the construction of a legal gated scheme contains
+  completion problems of the kind of (R6), and general (R1) remains conditional on that
+  construction, which is still to be proved.
+
+## Placement
+
+This file belongs to Layer 3 of `roadmap/README.md`.
+
+## References
+
+Witnesses and the transformation relation are [Kni26, Definition 2.3.9], visibility replacement is
+[Kni26, Definition 2.2.3], and lawful sections, with locality and availability, are
+[Kni26, Definition 2.5.4].
+-/
+
+universe u
+
+namespace VaughtConjecture.Label
+
+variable {N i : ℕ} {a b c v x : Label.{u}} {g : ℕ → Label.{u}} {σ : Label.{u} → Label.{u}}
+
+/-! ### Scalar lemmas -/
+
+/-- A minimum that lies strictly below its second argument is its first argument. -/
+theorem eq_of_min_eq_of_lt (h : min a b = v) (hv : v < b) : a = v := by
+  rcases le_total a b with hab | hab
+  · rwa [min_eq_left hab] at h
+  · rw [min_eq_right hab] at h
+    exact absurd h hv.ne'
+
+/-- A label that is not self-visible at `N` lies strictly below every label self-visible at `N`
+above it. -/
+theorem lt_of_not_isSelfVisible_of_le (hx : ¬ IsSelfVisible N x) (hc : IsSelfVisible N c)
+    (h : x ≤ c) : x < c :=
+  h.lt_of_ne fun hxc ↦ hx (hxc ▸ hc)
+
+/-- Visibility replacement with a value `i < N` of a label that is not self-visible at `N` is not
+self-visible at `N`. -/
+theorem not_isSelfVisible_visibilityReplace (hx : ¬ IsSelfVisible N x) (hi : i < N) :
+    ¬ IsSelfVisible N (visibilityReplace N i x) := by
+  induction x using recBotCoeTop with
+  | bot => exact absurd (isSelfVisible_bot N) hx
+  | coe o =>
+    rw [isSelfVisible_coe, not_le] at hx
+    rw [visibilityReplace_coe, isSelfVisible_coe, Ordinal.visibilityReplace_mod, ite_eq_left hx,
+      Nat.cast_le, not_le]
+    exact hi
+  | top => exact absurd (isSelfVisible_top N) hx
+
+/-- Visibility replacement with a value `i < N` keeps a label that is not self-visible at `N`
+strictly below every label self-visible at `N` above it. -/
+theorem visibilityReplace_lt_of_not_isSelfVisible (hx : ¬ IsSelfVisible N x)
+    (hc : IsSelfVisible N c) (h : x ≤ c) (hi : i < N) : visibilityReplace N i x < c :=
+  lt_of_not_isSelfVisible_of_le (not_isSelfVisible_visibilityReplace hx hi) hc
+    (visibilityReplace_le_of_le hi.le hc h)
+
+/-- Visibility replacement with a value `i < N` keeps a label strictly below a label self-visible
+at `N` strictly below it. -/
+theorem visibilityReplace_lt_of_lt (hc : IsSelfVisible N c) (h : x < c) (hi : i < N) :
+    visibilityReplace N i x < c := by
+  by_cases hx : IsSelfVisible N x
+  · rwa [hx.visibilityReplace_eq]
+  · exact visibilityReplace_lt_of_not_isSelfVisible hx hc h.le hi
+
+/-- Visibility replacement with a value `i ≤ N` keeps a label at least a label self-visible at
+`N` below it. -/
+theorem le_visibilityReplace_of_le (hc : IsSelfVisible N c) (h : c ≤ x) (hi : i ≤ N) :
+    c ≤ visibilityReplace N i x := by
+  by_contra hlt
+  rw [not_le] at hlt
+  rcases hi.lt_or_eq with hi | rfl
+  · obtain ⟨j, hj, hx⟩ := exists_visibilityReplace_visibilityReplace hi x
+    exact (visibilityReplace_lt_of_lt hc hlt hj).not_ge (hx.symm ▸ h)
+  · exact (h.trans (le_visibilityReplace (by omega) x)).not_gt hlt
+
+/-! ### One witness below a self-visible cap -/
+
+/-- Past a cap `c` self-visible at `N` and at most `g N`, a shifter stays past it at every
+replacement `vr_N(·, i)` with `i ≤ N`. -/
+theorem IsWitness.le_apply_visibilityReplace_of_le (hw : IsWitness g σ) (hc : IsSelfVisible N c)
+    (hcg : c ≤ g N) (hx : c ≤ σ x) (hi : i ≤ N) : c ≤ σ (visibilityReplace N i x) := by
+  by_contra hlt
+  rw [not_le] at hlt
+  rcases hi.lt_or_eq with hi | rfl
+  · -- The label is recovered by a second replacement, with which the shifter commutes.
+    obtain ⟨j, hj, hx'⟩ := exists_visibilityReplace_visibilityReplace hi x
+    have h := hw.visibilityReplace_comm _ N (hlt.le.trans hcg) j hj.le
+    rw [hx'] at h
+    exact (h ▸ visibilityReplace_lt_of_lt hc hlt hj).not_ge hx
+  · exact (hx.trans (hw.monotone (le_visibilityReplace (by omega) x))).not_gt hlt
+
+/-- **Capped commutation with visibility replacement.**  If a shifter agrees with the label `a`
+at the source `x` up to a cap `c` self-visible at `N` and at most `g N`, then it agrees with
+`vr_N(a, i)` at `vr_N(x, i)` up to `c`, for every `i ≤ N`. -/
+theorem IsWitness.min_apply_visibilityReplace (hw : IsWitness g σ) (hc : IsSelfVisible N c)
+    (hcg : c ≤ g N) (hx : min (σ x) c = min a c) (hi : i ≤ N) :
+    min (σ (visibilityReplace N i x)) c = min (visibilityReplace N i a) c := by
+  rcases lt_or_ge a c with hac | hca
+  · -- Below the cap the shifter is determined, and the guard of the fifth law holds.
+    have hσ : σ x = a := eq_of_min_eq_of_lt (hx.trans (min_eq_left hac.le)) hac
+    rw [hw.visibilityReplace_comm x N (hσ ▸ hac.le.trans hcg) i hi, hσ]
+  · have hσ : c ≤ σ x := min_eq_right_iff.mp (hx.trans (min_eq_right hca))
+    rw [min_eq_right (hw.le_apply_visibilityReplace_of_le hc hcg hσ hi),
+      min_eq_right (le_visibilityReplace_of_le hc hca hi)]
+
+end VaughtConjecture.Label
+
+namespace VaughtConjecture.CellScheme.Rows
+
+open Label
+
+variable {ι α : Type*} {D : CellScheme ι α} {R : D.Rows.{u}} {G C : ι} {P Q : Set ι}
+  {w q : ι → Label.{u}}
+
+/-! ### Gates -/
+
+/-- How the row of the gate `G` reads a cell `e` below it, relative to the display `w`, the
+private cap `C`, and the private cells `P`. -/
+inductive GateReads (R : D.Rows.{u}) (G C : ι) (P : Set ι) (w : ι → Label.{u})
+    (e : D.below (D.gradedIndex G)) : Prop
+  /-- A bottom label, read as bottom. -/
+  | bot (hwe : w e = ⊥) (hrow : R.row G e = ⊥)
+  /-- A bottom label, read at most as a private cell labelled bottom. -/
+  | botAnchor (z : D.below (D.gradedIndex G)) (hz : z.1 ∈ P) (hwz : w z = ⊥) (hwe : w e = ⊥)
+      (hrow : R.row G e ≤ R.row G z)
+  /-- A label `vr_N(w z, i)` of the anchor `z`, read as `vr_N` of the reading of `z`. -/
+  | ref (z : D.below (D.gradedIndex G)) (hz : z.1 ∈ P) (i : ℕ) (hi : i ≤ D.grade G)
+      (hwe : w e = visibilityReplace (D.grade G) i (w z))
+      (hrow : R.row G e = visibilityReplace (D.grade G) i (R.row G z))
+  /-- A label at least that of the private cap, read at least as a private cell labelled at
+  least that of the private cap. -/
+  | top (z : D.below (D.gradedIndex G)) (hz : z.1 ∈ P) (hzC : w C ≤ w z) (heC : w C ≤ w e)
+      (hrow : R.row G z ≤ R.row G e)
+
+/-- **Gate data**: the private cap `C` is a private cell, not bottom in the display `w`, of the
+grade of the gate `G` with scope inside that of `G`; every donor cell lies below the gate, and the
+row of the gate reads every donor cell outside the private cells.  Nothing is said about the
+twins of the gate. -/
+structure IsGate (R : D.Rows.{u}) (G C : ι) (P Q : Set ι) (w : ι → Label.{u}) : Prop where
+  /-- The private cap is a private cell. -/
+  cap_mem : C ∈ P
+  /-- The scope of the private cap lies in that of the gate. -/
+  scope_cap_subset : D.scope C ⊆ D.scope G
+  /-- The private cap has the grade of the gate. -/
+  grade_cap : D.grade C = D.grade G
+  /-- The private cap is not bottom in the display. -/
+  cap_ne_bot : w C ≠ ⊥
+  /-- Every donor cell lies below the gate. -/
+  le_gate : ∀ e ∈ Q, D.gradedIndex e ≤ D.gradedIndex G
+  /-- The row of the gate reads every donor cell outside the private cells. -/
+  reads : ∀ e (he : e ∈ Q), e ∉ P → GateReads R G C P w ⟨e, le_gate e he⟩
+
+namespace IsLawful
+
+/-- **One witness at the gate.**  The locality at a cell `G` has a witness `(g, σ)` with
+`q G ≤ g N`, `N` the grade of `G`; below `G` it decodes the row of `G` up to `q G`. -/
+theorem exists_gateWitness (hq : R.IsLawful q) (G : ι) :
+    ∃ g σ, IsWitness g σ ∧ q G ≤ g (D.grade G) ∧
+      ∀ d : D.below (D.gradedIndex G), min (q d) (q G) = min (σ (R.row G d)) (q G) := by
+  obtain ⟨g, σ, hw, heq⟩ := hq.locality G
+  have heq : ∀ d : D.below (D.gradedIndex G),
+      min (q d) (q G) = min (σ (R.row G d)) (g (D.grade d)) := heq
+  have hG : q G ≤ g (D.grade G) := by
+    have h := heq ⟨G, D.mem_below_gradedIndex G⟩
+    rw [min_self] at h
+    exact h ▸ min_le_right _ _
+  refine ⟨g, σ, hw, hG, fun d ↦ ?_⟩
+  have hgd : q G ≤ g (D.grade d) := hG.trans (hw.antitone ((D.mem_below).mp d.2).2)
+  calc min (q d) (q G) = min (min (q d) (q G)) (q G) := by rw [min_assoc, min_self]
+    _ = min (min (σ (R.row G d)) (g (D.grade d))) (q G) := by rw [heq d]
+    _ = min (σ (R.row G d)) (q G) := by rw [min_assoc, min_eq_right hgd]
+
+/-- **The gate inequality.**  If the scope of `C` lies in that of `G`, their grades agree, and
+every other cell with the graded index of `G` is bottom, then `q C ≤ q G`, by availability. -/
+theorem cap_le_gate (hq : R.IsLawful q) (hCG : D.scope C ⊆ D.scope G)
+    (hgr : D.grade C = D.grade G)
+    (htwin : ∀ t, D.gradedIndex t = D.gradedIndex G → t ≠ G → q t = ⊥) : q C ≤ q G := by
+  obtain ⟨u, hu, hle⟩ := hq.availability C G hCG hgr
+  rcases eq_or_ne u G with rfl | huG
+  · exact hle
+  · exact (hle.trans_eq (htwin u hu huG)).trans bot_le
+
+/-- **Locality at the gate gives no lower bound on the gate.**  Lowering the value of a lawful
+labelling at `G` to any `x ≤ q G` self-visible at the grade of `G` keeps the locality at `G`, by the
+cap rule.  So a lower bound on the gate comes from availability, and through it from the bottom
+pattern of the cells with the graded index of `G`. -/
+theorem locality_lower_gate [DecidableEq ι] (hq : R.IsLawful q) (G : ι) {x : Label.{u}}
+    (hx : IsSelfVisible (D.grade G) x) (hxG : x ≤ q G) :
+    TransformsTo (fun d : D.below (D.gradedIndex G) ↦ D.grade d) (R.row G)
+      fun d ↦ min (Function.update q G x d) (Function.update q G x G) := by
+  have h := (hq.locality G).min_const (fun d ↦ ((D.mem_below).mp d.2).2) hx
+  convert h using 2 with d
+  rw [Function.update_self]
+  by_cases hd : d.1 = G
+  · rw [hd, Function.update_self, min_self, min_self, min_eq_right hxG]
+  · rw [Function.update_of_ne hd, min_assoc, min_eq_right hxG]
+
+/-- A cell read as bottom by the row of a cell `G` that is not bottom is bottom. -/
+theorem eq_bot_of_row_eq_bot (hq : R.IsLawful q) (hG : q G ≠ ⊥)
+    {t : D.below (D.gradedIndex G)} (hrow : R.row G t = ⊥) : q t = ⊥ :=
+  (min_eq_bot.mp ((hq.locality G).eq_bot hrow)).resolve_right hG
+
+/-- From agreement up to the gate, the two outcomes of a reading. -/
+private theorem eq_or_le_of_min_eq {e : ι} (hCG : w C ≤ q G)
+    (h : min (q e) (q G) = min (w e) (q G)) :
+    (q e = w e ∧ w e < w C) ∨ (w C ≤ q e ∧ w C ≤ w e) := by
+  rcases lt_or_ge (w e) (w C) with hlt | hle
+  · exact .inl ⟨eq_of_min_eq_of_lt (h.trans (min_eq_left (hlt.le.trans hCG)))
+      (hlt.trans_le hCG), hlt⟩
+  · exact .inr ⟨(le_min hle hCG).trans (h.symm ▸ min_le_left _ _), hle⟩
+
+/-- **The outcome of a reading.**  Let `q` be lawful, literally `w` on the private cells, with
+`w C ≤ q G` and `w C ≠ ⊥`.  A donor cell read by the gate's row either has its display label,
+which lies below `w C`, or has a value at least `w C`, as does its display label. -/
+theorem eq_or_le_of_gateReads (hq : R.IsLawful q) (hlit : ∀ x ∈ P, q x = w x) (hC : w C ≠ ⊥)
+    (hCG : w C ≤ q G) {e : D.below (D.gradedIndex G)} (h : GateReads R G C P w e) :
+    (q e = w e ∧ w e < w C) ∨ (w C ≤ q e ∧ w C ≤ w e) := by
+  obtain ⟨g, σ, hw, hgN, heq⟩ := hq.exists_gateWitness G
+  have hG : q G ≠ ⊥ := fun h ↦ hC (le_bot_iff.mp (h ▸ hCG))
+  have hbot : w e = ⊥ → min (q e) (q G) = ⊥ → q e = w e ∧ w e < w C := fun hwe hm ↦
+    ⟨(min_eq_bot.mp hm).resolve_right hG |>.trans hwe.symm, hwe ▸ bot_lt_iff_ne_bot.mpr hC⟩
+  cases h with
+  | bot hwe hrow =>
+    exact .inl (hbot hwe (by rw [heq e, hrow, hw.map_bot, min_eq_left bot_le]))
+  | botAnchor z hz hwz hwe hrow =>
+    have hσz : σ (R.row G z) = ⊥ := by
+      have hz' := heq z
+      rw [hlit z hz, hwz, min_eq_left bot_le] at hz'
+      exact (min_eq_bot.mp hz'.symm).resolve_right hG
+    have hσe : σ (R.row G e) = ⊥ := le_bot_iff.mp (hσz ▸ hw.monotone hrow)
+    exact .inl (hbot hwe (by rw [heq e, hσe, min_eq_left bot_le]))
+  | ref z hz i hi hwe hrow =>
+    have hz' : min (σ (R.row G z)) (q G) = min (w z) (q G) := by rw [← heq z, hlit z hz]
+    have h' := hw.min_apply_visibilityReplace (hq.orderly G) hgN hz' hi
+    rw [← hrow, ← hwe, ← heq e] at h'
+    exact eq_or_le_of_min_eq hCG h'
+  | top z hz hzC heC hrow =>
+    refine .inr ⟨?_, heC⟩
+    calc w C ≤ min (w z) (q G) := le_min hzC hCG
+      _ = min (σ (R.row G z)) (q G) := by rw [← hlit z hz, heq z]
+      _ ≤ min (σ (R.row G e)) (q G) := min_le_min_right _ (hw.monotone hrow)
+      _ = min (q e) (q G) := (heq e).symm
+      _ ≤ q e := min_le_left _ _
+
+/-- A donor cell read by the gate's row with display label below `w C` has its display label. -/
+theorem eq_of_gateReads_of_lt (hq : R.IsLawful q) (hlit : ∀ x ∈ P, q x = w x) (hC : w C ≠ ⊥)
+    (hCG : w C ≤ q G) {e : D.below (D.gradedIndex G)} (h : GateReads R G C P w e)
+    (hlt : w e < w C) : q e = w e :=
+  (hq.eq_or_le_of_gateReads hlit hC hCG h).elim And.left fun h ↦ absurd h.2 hlt.not_ge
+
+/-- A donor cell read by the gate's row with display label at least `w C` has a value at least
+`w C`. -/
+theorem cap_le_of_gateReads_of_le (hq : R.IsLawful q) (hlit : ∀ x ∈ P, q x = w x)
+    (hC : w C ≠ ⊥) (hCG : w C ≤ q G) {e : D.below (D.gradedIndex G)}
+    (h : GateReads R G C P w e) (hle : w C ≤ w e) : w C ≤ q e :=
+  (hq.eq_or_le_of_gateReads hlit hC hCG h).elim (fun h ↦ absurd hle h.2.not_ge) And.left
+
+/-- A donor cell read by the gate's row agrees with its display label below `w C`. -/
+theorem min_eq_of_gateReads (hq : R.IsLawful q) (hlit : ∀ x ∈ P, q x = w x) (hC : w C ≠ ⊥)
+    (hCG : w C ≤ q G) {e : D.below (D.gradedIndex G)} (h : GateReads R G C P w e) :
+    min (q e) (w C) = min (w e) (w C) := by
+  rcases hq.eq_or_le_of_gateReads hlit hC hCG h with ⟨h, -⟩ | ⟨h₁, h₂⟩
+  · rw [h]
+  · rw [min_eq_right h₁, min_eq_right h₂]
+
+end IsLawful
+
+namespace IsGate
+
+variable (hgate : R.IsGate G C P Q w) (hq : R.IsLawful q) (hlit : ∀ x ∈ P, q x = w x)
+  (htwin : ∀ t, D.gradedIndex t = D.gradedIndex G → t ≠ G → q t = ⊥)
+include hgate hq hlit htwin
+
+/-- The gate inequality for gate data: `w C ≤ q G`. -/
+theorem cap_le_gate : w C ≤ q G :=
+  hlit C hgate.cap_mem ▸ hq.cap_le_gate hgate.scope_cap_subset hgate.grade_cap htwin
+
+/-- The gate is not bottom. -/
+theorem gate_ne_bot : q G ≠ ⊥ :=
+  fun h ↦ hgate.cap_ne_bot (le_bot_iff.mp (h ▸ hgate.cap_le_gate hq hlit htwin))
+
+/-- The outcome at every donor cell: its display label, which lies below `w C`, or a value at
+least `w C`, as is its display label. -/
+theorem eq_or_le (e : ι) (he : e ∈ Q) :
+    (q e = w e ∧ w e < w C) ∨ (w C ≤ q e ∧ w C ≤ w e) := by
+  by_cases heP : e ∈ P
+  · rw [hlit e heP]
+    exact (lt_or_ge (w e) (w C)).imp (⟨rfl, ·⟩) fun h ↦ ⟨h, h⟩
+  · exact hq.eq_or_le_of_gateReads hlit hgate.cap_ne_bot (hgate.cap_le_gate hq hlit htwin)
+      (hgate.reads e he heP)
+
+/-- **Gate recovery.**  A lawful labelling `q` that is literally the display `w` on the private
+cells and is bottom at every twin of the gate has `w C ≤ q G`, and agrees with the display on
+every donor cell below the label `w C` of the private cap. -/
+theorem recover : w C ≤ q G ∧ ∀ e ∈ Q, min (q e) (w C) = min (w e) (w C) := by
+  refine ⟨hgate.cap_le_gate hq hlit htwin, fun e he ↦ ?_⟩
+  rcases hgate.eq_or_le hq hlit htwin e he with ⟨h, -⟩ | ⟨h₁, h₂⟩
+  · rw [h]
+  · rw [min_eq_right h₁, min_eq_right h₂]
+
+/-- **Exact recovery below the private cap**: a donor cell with display label below `w C` has its
+display label. -/
+theorem eq_of_lt_cap {e : ι} (he : e ∈ Q) (hlt : w e < w C) : q e = w e :=
+  (hgate.eq_or_le hq hlit htwin e he).elim And.left fun h ↦ absurd h.2 hlt.not_ge
+
+/-- **Donor labels above the private cap** come back only as values at least `w C`. -/
+theorem cap_le_of_cap_le {e : ι} (he : e ∈ Q) (hle : w C ≤ w e) : w C ≤ q e :=
+  (hgate.eq_or_le hq hlit htwin e he).elim (fun h ↦ absurd hle h.2.not_ge) And.left
+
+/-- **A private cap labelled `⊤`** recovers every donor label exactly, the formal top included. -/
+theorem eq_of_cap_eq_top (hC : w C = ⊤) {e : ι} (he : e ∈ Q) : q e = w e := by
+  rcases hgate.eq_or_le hq hlit htwin e he with ⟨h, -⟩ | ⟨h₁, h₂⟩
+  · exact h
+  · rw [hC, top_le_iff] at h₁ h₂
+    rw [h₁, h₂]
+
+end IsGate
+
+/-- **Gate recovery for a gate without twins** (U): the literal private face alone suffices. -/
+theorem IsGate.recover_of_unique (hgate : R.IsGate G C P Q w) (hq : R.IsLawful q)
+    (hlit : ∀ x ∈ P, q x = w x) (huniq : ∀ t, D.gradedIndex t = D.gradedIndex G → t = G) :
+    w C ≤ q G ∧ ∀ e ∈ Q, min (q e) (w C) = min (w e) (w C) :=
+  hgate.recover hq hlit fun t ht htG ↦ absurd (huniq t ht) htG
+
+/-- **Gate recovery for a gate whose row is bottom at its twins** (T): a literal private face and a
+gate that is not bottom suffice. -/
+theorem IsGate.recover_of_row_twin (hgate : R.IsGate G C P Q w) (hq : R.IsLawful q)
+    (hlit : ∀ x ∈ P, q x = w x)
+    (hrow : ∀ t (ht : D.gradedIndex t = D.gradedIndex G), t ≠ G → R.row G ⟨t, ht.le⟩ = ⊥)
+    (hG : q G ≠ ⊥) : w C ≤ q G ∧ ∀ e ∈ Q, min (q e) (w C) = min (w e) (w C) :=
+  hgate.recover hq hlit fun t ht htG ↦ hq.eq_bot_of_row_eq_bot hG (hrow t ht htG)
+
+end VaughtConjecture.CellScheme.Rows
