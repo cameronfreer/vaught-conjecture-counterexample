@@ -65,14 +65,14 @@ namespace TransformationExamples
 /-! ### A strongly coded normal form -/
 
 /-- The cell scheme with one cell of scope `{0}` and grade `1`. -/
-private def pointScheme : CellScheme (Fin 1) (Fin 1) :=
+def pointScheme : CellScheme (Fin 1) (Fin 1) :=
   ⟨univ, Geometry.intervalPlan univ, fun _ ↦ univ, fun _ ↦ 1⟩
 
 /-- The rows of `pointScheme` with value `3`, the rows of `pointRow 3`. -/
-private def pointRows : pointScheme.Rows.{u} := ⟨fun _ _ ↦ 3⟩
+def pointRows : pointScheme.Rows.{u} := ⟨fun _ _ ↦ 3⟩
 
 /-- The section of `pointScheme` with label `3` is lawful for the rows with value `3`. -/
-private theorem isLawful_pointSection : pointRows.{u}.IsLawful fun _ ↦ (3 : Label.{u}) where
+theorem isLawful_pointSection : pointRows.{u}.IsLawful fun _ ↦ (3 : Label.{u}) where
   orderly _ := by simp [pointScheme]
   locality _ := by
     simp only [min_self]
@@ -99,7 +99,7 @@ private theorem exists_stronglyCoded_pointSection :
 /-- **A code that is strongly coded but not short.**  At grade `1`, the code of the label `3`
 relative to `{3}` is `ω * r + 2` for some `r`: its finite part `2 = 1 + 1` makes it strongly coded
 at `1` and not short at `1`. -/
-private theorem isStronglyCoded_and_not_isShort_strongEncode :
+theorem isStronglyCoded_and_not_isShort_strongEncode :
     IsStronglyCoded 1 (strongEncode ({3} : Finset Label.{u}) 1 3) ∧
       ¬ IsShort 1 (strongEncode ({3} : Finset Label.{u}) 1 3) := by
   refine ⟨isStronglyCoded_strongEncode _, fun h ↦ ?_⟩
@@ -227,18 +227,18 @@ private theorem exists_eq_blockDecode_comp_reduce :
 
 /-- The cell scheme with two cells of scope `{0}` and grade `1`: `false` (the cell `a`) and
 `true` (the cell `b`). -/
-private def pairScheme : CellScheme Bool (Fin 1) :=
+def pairScheme : CellScheme Bool (Fin 1) :=
   ⟨univ, Geometry.intervalPlan univ, fun _ ↦ univ, fun _ ↦ 1⟩
 
 /-- The rows of `pairScheme`: the row of `a` is `(1, 1)` and the row of `b` is `(1, 2)`. -/
-private def pairRows : pairScheme.Rows.{u} := ⟨fun s t ↦ if s && t.1 then 2 else 1⟩
+def pairRows : pairScheme.Rows.{u} := ⟨fun s t ↦ if s && t.1 then 2 else 1⟩
 
 /-- The label `ω * 5 + 1`. -/
-private noncomputable abbrev omega0FiveOne : Label.{u} :=
+noncomputable abbrev omega0FiveOne : Label.{u} :=
   ((ω * (5 : ℕ) + (1 : ℕ) : Ordinal.{u}) : Label.{u})
 
 /-- The section `(1, ω * 5 + 1)` of `pairScheme`. -/
-private noncomputable def pairSection : Bool → Label.{u} := fun b ↦ if b then omega0FiveOne else 1
+noncomputable def pairSection : Bool → Label.{u} := fun b ↦ if b then omega0FiveOne else 1
 
 /-- `1 ≤ ω * 5 + 1`. -/
 private theorem one_le_omega0FiveOne : (1 : Label.{u}) ≤ omega0FiveOne :=
@@ -300,7 +300,7 @@ private theorem not_two_le_one : ¬ (2 : Label.{u}) ≤ 1 :=
 /-- **The section `(1, ω * 5 + 1)` is lawful** for the rows `(1, 1)` of `a` and `(1, 2)` of `b`.
 The locality of `b` is witnessed by `pairShifter`, which sends `1` to `1` and `2` to `ω * 5 + 1`;
 that of `a` is the identity. -/
-private theorem isLawful_pairSection : pairRows.{u}.IsLawful pairSection where
+theorem isLawful_pairSection : pairRows.{u}.IsLawful pairSection where
   orderly d := by
     cases d
     · simp [pairSection, pairScheme]
@@ -344,7 +344,7 @@ transform, at grade `1`, to `(⊥, ⊤)`, since a shifter sending `1` to bottom 
 visibility replacement `2` to bottom as well.  So the unconditional decoding claim fails for the
 strongly coded decoder.  The hypotheses of ownerwise decoding fail at `b`, as they must: its row
 is not short at grade `1`, and the decoded labels are not those of a lawful section. -/
-private theorem not_isLawful_strongDecode_pairSection :
+theorem not_isLawful_strongDecode_pairSection :
     pairRows.{u}.IsLawful pairSection ∧
       strongDecode ∅ 1 ∘ pairSection.{u} = (fun b ↦ if b then ⊤ else ⊥) ∧
       ¬ pairRows.{u}.IsLawful (strongDecode ∅ 1 ∘ pairSection) ∧
