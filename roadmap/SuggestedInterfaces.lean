@@ -415,17 +415,31 @@ set_option linter.hashCommand false in
 -- the prospective quantitative-reconstruction pathway (`COMPANIONS.md`, "Further companion
 -- results").  The rank of a formula (`BoundedFormulaω.qrank`); the existential closure
 -- `existsTuple`, one quantifier of which adds one to the rank (`qrank_existsLastVar`; the bound
--- for the closure of `k` coordinates is a statement still to be proved); the characterization of
--- a countable structure by its Scott sentence among the countable structures in its carrier
--- universe (`scottSentence_characterizes`); and the orbit rank and internal Scott rank of the
--- library.  The rank bounds of the pathway, its recognition statements, and its base-reduct
--- orbit-rank bounds are prospective; no application is compiled here.
+-- for the closure of `k` coordinates is a statement still to be proved); one existential
+-- quantifier of `L_{ω₁ω}` adds one (`BoundedFormulaω.qrank_ex`); the finite existential block over
+-- the last `k` bound variables (`BoundedFormulaω.existsBlock`), by which the prospective
+-- base-reduct orbit formulas are to eliminate the core coordinates while keeping the tuple's
+-- coordinates free (its rank equation `qrank (existsBlock φ) = qrank φ + k` is a statement still
+-- to be proved), after relabelling them as bound variables (`BoundedFormulaω.relabel`, which
+-- preserves the rank, `BoundedFormulaω.qrank_relabel`); the characterization of a countable
+-- structure by its Scott sentence among the countable structures in its carrier universe
+-- (`scottSentence_characterizes`); and the orbit rank and internal Scott rank of the library.  The
+-- rank bounds of the pathway, its recognition statements, and its base-reduct orbit-rank bounds
+-- are prospective; no application is compiled here.
 set_option linter.hashCommand false in
 #check FirstOrder.Language.BoundedFormulaω.qrank
 set_option linter.hashCommand false in
 #check FirstOrder.Language.existsTuple
 set_option linter.hashCommand false in
 #check FirstOrder.Language.qrank_existsLastVar
+set_option linter.hashCommand false in
+#check FirstOrder.Language.BoundedFormulaω.existsBlock
+set_option linter.hashCommand false in
+#check FirstOrder.Language.BoundedFormulaω.qrank_ex
+set_option linter.hashCommand false in
+#check FirstOrder.Language.BoundedFormulaω.relabel
+set_option linter.hashCommand false in
+#check FirstOrder.Language.BoundedFormulaω.qrank_relabel
 set_option linter.hashCommand false in
 #check FirstOrder.Language.scottSentence_characterizes
 set_option linter.hashCommand false in

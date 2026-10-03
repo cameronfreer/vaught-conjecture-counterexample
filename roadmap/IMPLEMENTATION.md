@@ -943,9 +943,17 @@ named (`README.md`, Layer 0):
   must be built against the InfinitaryLogic revision pinned here, and the toolchain check of
   `scripts/check.sh` extends to ComputableModelTheory.
 
-**Available upstream, not yet available at our pinned dependency:** none at present.  A statement
-merged upstream after the pins above is listed here, named in prose only and never `#check`ed in
-the sketches, until a repin containing it is recorded in this subsection.
+**Available upstream, not yet available at our pinned dependency:** of InfinitaryLogic at `cf80917`,
+the bound of an orbit rank by the quantifier rank of an infinitary orbit formula
+(`orbitRank_le_lift_qrank_of_infinitaryOrbitFormula`) with its corollary
+`internalScottRank_le_of_infinitaryOrbitFormulas` (strict bounds `qrank φ < α` giving
+`internalScottRank M ≤ Ordinal.lift α`), and the bounds of the stabilization ordinal by the rank of
+a characterizing sentence or formula with no free variables (`stabilizesAt_of_sentence_rank`,
+`stabilizationOrdinal_le_of_sentence_rank`, `stabilizesAt_of_formula_rank`,
+`stabilizationOrdinal_le_of_formula_rank`; a relational language, with no countability of the
+language), used by `COMPANIONS.md`, "Quantitative reconstruction", targets 2 and 3.  A statement
+merged upstream after the pins above is listed here, named in prose only and never `#check`ed in the
+sketches, until a repin containing it is recorded in this subsection.
 
 **Prospective dependencies (neither available upstream nor pinned):** the InfinitaryLogic statements
 listed under "The full-presentation route": invariant Borel observations, the isolating-level lower
