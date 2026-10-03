@@ -436,14 +436,13 @@ age and not recognized afterwards in a model constructed otherwise.
    its points and has more than two points.  Strong amalgamation is not claimed or needed.  No
    infinite model is imported.  Status: compiled in this repository (theorem named).  Hereditary
    closure, with no hypothesis: `exists_equiv_topFreeChart` (exactly the hypothesis `hsub` of
-   `isFraisse_representativeClass`) and `hereditary_topFreeAge` (`ClassicalLimit/Age`).
-   Amalgamation and joint embedding, conditional on the coatom extension property
-   `StageType.HasCoatomExtensions` at the stage (not proved here) and on a stage that is a nonzero
-   limit: `exists_amalgam_topFreeChart`, `exists_jointEmbedding_topFreeChart`, and
-   `isFraisse_topFreeAge` (`ClassicalLimit/Amalgamation`), through the capped amalgam
-   `StageType.exists_isTopFree_amalgam`; the special cases are in
-   `ClassicalLimit/AmalgamationExamples`, stated for an arbitrary top-free chart where no legal
-   type on three or more points is constructed.
+   `isFraisse_representativeClass`) and `hereditary_topFreeAge` (`ClassicalLimit/Age`). Amalgamation
+   and joint embedding, conditional on the coatom extension property `StageType.HasCoatomExtensions`
+   at the stage (still to be proved) and on a stage that is a nonzero limit:
+   `exists_amalgam_topFreeChart`, `exists_jointEmbedding_topFreeChart`, and `isFraisse_topFreeAge`
+   (`ClassicalLimit/Amalgamation`), through the capped amalgam `StageType.exists_isTopFree_amalgam`;
+   the special cases are in `ClassicalLimit/AmalgamationExamples`, stated for an arbitrary top-free
+   chart where no legal type on three or more points is constructed.
 3. **Classical existence.**  Acceptance: `isFraisse_representativeClass` applied to the family,
    then the classical existence theorem (available at the pin), giving a countable
    `L^h_λ`-structure with
@@ -643,7 +642,7 @@ composition beside the expansion-domain composition, which is unchanged:
   `…_of_presentations`, and `…_of_scatteredTails`, and the three theorems
   `vaughtCounterexample_allCarriers_of_expansionDomains`, `…_of_presentations`, and
   `…_of_scatteredTails`, each with the hypotheses of its counterpart on `ℕ` and the cap-to-model
-  theorem `CapToModel` (not proved here), from which the absence of finite models is derived.
+  theorem `CapToModel` (still to be proved), from which the absence of finite models is derived.
 
 Recorded with it: the count uses only `FullPresentations` (`#X ≤ ℵ₁`), and bounded comparison is
 used only for thinness; the proof term of the main conditional theorem avoids `classTruth_separates`
@@ -703,7 +702,7 @@ hypothesis in each application.  It is the special case of InfinitaryLogic's gen
 paragraph) with initial match at the height.  Its two intended applications, approximate comparison
 of full presentations (item 3 above) and the back-and-forth form of condition 3 of the
 expansion-domain route (layer 5, section 5 above), both compile through the generic form, so it is
-retired as a target of this repository, not proved here and not moved ("Placement record").
+retired as a target of this repository, still to be proved and not moved ("Placement record").
 
 **The upstream graded-matching theorem.**  InfinitaryLogic's `bfEquiv_of_gradedMatching`
 (`Scott/GradedMatching`; at the pin, signatures checked), a generic form of the theorem above, takes
@@ -907,8 +906,8 @@ named (`README.md`, Layer 0):
     split out of the earlier theorems, beside the earlier `countable_iff_rank_bounded` (the
     interface "ranks with countable fibres", listed as prospective before the repin to
     `def5cc0`); the
-    statements of `Counting/Filtration` and `Counting/Separation` are candidates for one-line
-    quotation of these, subject to the audit recorded in "Placement record";
+    statements of `Counting/Filtration` and `Counting/Separation` are proved as quotations of
+    these, with their statements kept ("Placement record");
   - graded matching (#152, `Scott/GradedMatching`, `bfEquiv_of_gradedSystem` and
     `bfEquiv_of_gradedMatching`): a family of relations graded up to a height bound, with atomic
     agreement at level `0`, lowering, and forth and back one level down, relates at a level
@@ -1025,10 +1024,10 @@ them), except `stabilizationOrdinal_le_of_sentence_rank` (signatures not yet che
 **Prospective dependencies (neither available upstream nor pinned):** the InfinitaryLogic statements
 listed under "The full-presentation route": invariant Borel observations, the isolating-level lower
 bound, and limits of chains of bounded equivalence (the analogue for `BlockBFEquiv` of the
-chain-limit lemma).  The local graded back-and-forth theorem remains the stated target until both of
-its intended applications compile through the upstream `bfEquiv_of_gradedMatching` (at the pin,
-signatures checked), and is then retired; neither application is compiled through it here
-(`README.md`, Layer 0, for where the height guard and the selection of coordinates go).  No
+chain-limit lemma).  The local graded back-and-forth theorem is retired: both of its intended
+applications compile through the upstream `bfEquiv_of_gradedMatching` (at the pin, signatures
+checked), on abstract hypotheses (`README.md`, Layer 0, for where the height guard and the
+selection of coordinates go).  No
 statement of this roadmap relies on any of them, or on the statements available upstream, as pinned
 until this subsection records a pin containing it; until then they are named in prose only
 (`README.md`, Layer 0), never `#check`ed in the sketches.
@@ -1042,7 +1041,7 @@ The development produces the following, and only these, as hypotheses of library
   closure, joint embedding, and amalgamation with the literal commuting square (steps 1–2).  These
   are compiled in this repository (theorem named), in `ClassicalLimit/Age` and
   `ClassicalLimit/Amalgamation`, with joint embedding and amalgamation conditional on the coatom
-  extension property `StageType.HasCoatomExtensions` (not proved here);
+  extension property `StageType.HasCoatomExtensions` (still to be proved);
   `isFraisse_representativeClass` and the classical existence theorem are applied there
   (`isFraisse_topFreeAge`, `exists_isFraisseLimit_topFreeAge`, step 3), under the same condition;
 - **orbit formulas (first interface):** for every finite tuple `a` of a countable top-free model
@@ -1157,12 +1156,14 @@ Each checkpoint needs both its abstract API and a concrete application:
    amalgamation and joint embedding (through the plain form of the coatom extension property, the
    first use of (R6)), classical existence (available at the pin), reconstruction of partial
    evaluation, consistency and covering and top-freeness, and receiving (the first use of (R5)).
-   Status: the hull operations with their five facts are compiled for finite charts (`README.md`,
-   Layer 2, "Status for finite charts"; `Language/HullOperations`, `Language/HullDefinability`), and
-   remain to be proved for realizations other than the face realizations of charts, which need the
-   two-charts theorem for exactly consistent covering realizations; steps 1–3 of the top-free
-   witnesses are compiled, the amalgamation and joint embedding of step 2 and step 3 conditional on
-   `StageType.HasCoatomExtensions` ("The top-free witnesses: milestone order and acceptance").
+   Status: the hull operations with their five facts are compiled for finite charts, items 4–5 where
+   they identify embeddings and substructures for legal charts only, legality being essential for
+   item 5 (`README.md`, Layer 2, "Status for finite charts"; `Language/HullOperations`,
+   `Language/HullDefinability`), and remain to be proved for realizations other than the face
+   realizations of charts, which need the two-charts theorem for exactly consistent covering
+   realizations; steps 1–3 of the top-free witnesses are compiled, the amalgamation and joint
+   embedding of step 2 and step 3 conditional on `StageType.HasCoatomExtensions` ("The top-free
+   witnesses: milestone order and acceptance").
 4. Items 3.2 and 3.3 for (R1)–(R3): for each of them, the extension of the realization by one actual
    occurrence over the literal root and the recovery theorem (by `Correct` and labelled
    evaluation, by LOW, or through the gate), with all its equations on that occurrence and at
@@ -1184,10 +1185,10 @@ Each checkpoint needs both its abstract API and a concrete application:
    (`MainTheorem/AllCarriers`), with the domain hypotheses of the expansion-domain route, or
    `FullPresentations` with its comparison and lower-bound hypotheses, as hypotheses, and, for the
    statements about countable models on arbitrary carriers, the cap-to-model theorem `CapToModel`
-   (not proved here).  The absence of finite models used by the reduction to `ℕ` comes from
+   (still to be proved).  The absence of finite models used by the reduction to `ℕ` comes from
    `CapToModel`, or from the coatom extension property at `ω`
    (`infinite_of_realize_densitySentence_of_hasCoatomExtensions`, with hypothesis
-   `StageType.HasCoatomExtensions` at `ω`, not proved here); once that property is proved, the
+   `StageType.HasCoatomExtensions` at `ω`, still to be proved); once that property is proved, the
    reduction to `ℕ` for the density sentence no longer needs `CapToModel`.
 
 **Six non-implications, as examples.**  Each is a statement that fails in general, to be shown by
@@ -1493,10 +1494,11 @@ lands, their notes stay in those modules.
   `MeasureTheory/Constructions/Polish`) and the uncountability of a nonempty perfect set in a
   completely metrizable space (`not_countable_of_perfect`, to `Topology/MetricSpace/Perfect`, beside
   `Perfect.exists_nat_bool_injection`).  InfinitaryLogic's `Descriptive/BFScattered` (`BFScattered`,
-  `isThinOn_of_bfScattered`, `Sentenceω.isThinOnNatModels_of_bfScattered`; available upstream, not
-  yet at our pinned dependency) is the generic form of `isThinOn_of_countable_bfClasses` and
+  `not_hasCantorAntichainOn_of_bfScattered`, `isThinOn_of_bfScattered`,
+  `Sentenceω.isThinOnNatModels_of_bfScattered`; available at the pin `cf80917`, signatures checked)
+  is the generic form of `isThinOn_of_countable_bfClasses` and
   `isThinOnNatModels_of_countable_bfClasses`, and a candidate for absorbing them by one-line
-  quotation once a pin contains it.
+  quotation.
 - `MainTheorem/Assembly`: in the proof of `FullPresentations.HasScatteredTails.countable_quotient`,
   the local map from the classes of the density sentence to
   `Quotient (bfEquivSetoid densitySentence η)` re-derives InfinitaryLogic's
@@ -1580,8 +1582,10 @@ witnesses).**
     `README.md`, "What the count of this route no longer uses", which is then to cite
     `rankTail_cofinal_losses_iff` alone.
 
-  `leastLevel_le` is kept; its hypothesis `α < ω₁` can be dropped, since InfinitaryLogic's
-  `leastLevel_le_of_mem` needs neither it nor a cover.
+  `leastLevel_le` is kept; its hypothesis `α < ω₁` can be dropped: for `α < ω₁` it is
+  InfinitaryLogic's `leastLevel_le_of_mem` (which needs no cover) for the family restricted to
+  levels below `ω₁`, and for `α ≥ ω₁` the conclusion holds because `leastLevel Q x < ω₁` with no
+  hypothesis (an example of `Counting/Filtration`).
 
 **Statements not yet in any module.**
 

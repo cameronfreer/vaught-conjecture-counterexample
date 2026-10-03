@@ -293,7 +293,7 @@ top-free charts.  The sketch properties `ChartAmalgamation` and `ChartJointEmbed
 lemma `chartJointEmbedding_of_chartAmalgamation` are in `Suggested.lean`.
 
 Its statements are compiled in this repository (theorem named), conditional on the coatom extension
-property `StageType.HasCoatomExtensions` at the stage (not proved here) and on a stage that is a
+property `StageType.HasCoatomExtensions` at the stage (still to be proved) and on a stage that is a
 nonzero limit: `exists_amalgam_topFreeChart`, `exists_jointEmbedding_topFreeChart`,
 `amalgamation_topFreeAge`, and `jointEmbedding_topFreeAge` (`ClassicalLimit/Amalgamation`).
 
@@ -774,9 +774,12 @@ These are statements still to be proved.  None is an input to the main theorem.
      covering has rank at most `ω + n` for roots of length `n`, before the conjunction over arities,
      and at most `ω·2` after it; nonemptiness has rank `1`.  So `qrank Φ ≤ ω·2`, and the conjunct is
      absorbed: `max{ω·2, ρ'} ≤ ω·(η+2)` for a relative transfer of rank `ρ' ≤ ω·(η+2)`, since
-     `2 ≤ η + 2`.  The correspondence of Layer 2 (`realize_toStructure_densitySentence_iff`,
-     compiled in this repository (theorem named)) is the decoding: a base-language structure
-     satisfying `Φ`, read as a realization on the same carrier, is a model.
+     `2 ≤ η + 2`.  The correspondence of Layer 2 is the decoding: for a realization `R` on the same
+     carrier with legal types (`R.HasLegalTypes`), its structure satisfies `Φ` exactly when its
+     carrier is nonempty and `R` is exactly consistent, covering, and has the finite-cut receiving
+     property (`realize_toStructure_densitySentence_iff`, compiled in this repository (theorem
+     named)); that `R` is then a model is the cap-to-model theorem (`README.md`, Layer 3, 3.4),
+     still to be proved.
 
   **Qualifications.**  The absolute Scott contracts (the last two rows) carry the countability and
   fixed-carrier-universe qualifications of InfinitaryLogic's Scott theorems: they characterize the
@@ -982,8 +985,9 @@ These are statements still to be proved.  None is an input to the main theorem.
   one.  For an actual model at a countable block `η`, the supremum of the fixing ranks of its
   realized finite charts is `η`, and across all presentations of a countable base model the least
   bound of these fixing ranks is its height (greatest refinements, above).  Neither is identified
-  with a Scott rank, and no maximum is asserted at a limit: at a limit `η` no single chart need have
-  fixing rank `η`.
+  with a Scott rank.  At a limit `η` the supremum is not attained, a statement to be proved with the
+  others: a finite chart has finitely many proper labels, all below `λ_η`, so its fixing rank is
+  below `η`.
 
   **Completion criterion.**  Each row is a bounded checkpoint, complete when its formula is
   constructed for the concrete objects of the construction (the chart predicates at `λ_η`, the
