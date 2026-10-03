@@ -92,13 +92,17 @@ definable over `{0, 3}` (`VaughtConjecture.Language.HullDefinabilityExamples`). 
 stage type is rigid (the transposition does not preserve the intervals), so the failure is one of
 definability, not of rigidity: the stage chart language sees only the faces that carry a legal type.
 
-**Not proved here.**  Definability on realizations other than the face realizations of charts: the
-formulas and their meaning are stated for every structure and every realization, and the value of
-`Realization.hullOp` satisfies the graph formula in every realization
-(`Realization.realize_graphFormula_hullOp`); that it is the only solution, and the definability
-statements, need the two-charts theorem for exactly consistent covering realizations, which is not
-yet proved.  So roadmap, Layer 2, item 2 is proved here for finite charts only.  Nothing here
-concerns the infinitary language.
+**Realizations.**  The formulas and their meaning are stated for every structure and every
+realization, and the value of `Realization.hullOp` satisfies the graph formula in every realization
+(`Realization.realize_graphFormula_hullOp`).  That it is the only solution on an exactly
+consistent covering realization is the two-charts theorem for realizations, in the form
+`Realization.hullOp_eq_iff` of `VaughtConjecture.Realization.TwoCharts`.  There the graph formula
+is shown to define the hull operation on every exactly consistent covering realization
+(`Realization.realize_graphFormula_iff`), and each hull operation to be a parameter-free definable
+function of the stage chart language on such a realization (`Realization.definableFun_hullOp`).
+The containment of hull closure in definable closure is proved here for finite charts only, not
+on realizations.  Here roadmap, Layer 2, item 2 is proved for finite charts.
+Nothing here concerns the infinitary language.
 
 ## Placement
 
@@ -263,8 +267,9 @@ theorem realize_existsChartWitnessFormula (a b z : M) :
 
 /-- **The value of a hull operation satisfies the graph formula in every realization**, the
 default value included.  That it is the only solution needs the two-charts theorem for the
-realization, which is proved here only for the face realizations of charts
-(`StageType.realize_graphFormula`). -/
+realization: for the face realizations of charts it is `StageType.realize_graphFormula`, and for
+every exactly consistent covering realization it is `Realization.hullOp_eq_iff`, read as
+`Realization.realize_graphFormula_iff` (`VaughtConjecture.Realization.TwoCharts`). -/
 theorem realize_graphFormula_hullOp (a b : M) :
     letI := R.toChartStructure
     ι.graphFormula.Realize ![a, b, R.hullOp ι a b] := by
