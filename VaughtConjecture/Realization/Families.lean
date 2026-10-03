@@ -47,8 +47,16 @@ The corresponding nonemptiness of the uniformity and dominance instances at limi
 
 **Receiving.**  The receiving family of a stage type `d` at a cutoff `c` (`receivingFamily d c`)
 consists of the stage types on the scheme of `d` with the observation of `d` at `c`; it contains
-`d` (`self_mem_receivingFamily`).  The bottom-pattern family of a labelling depends on the
-labelling only through which of its values are bottom (`bottomPatternFamily_congr`).
+`d` (`self_mem_receivingFamily`), and membership is transitive (`mem_receivingFamily_trans`),
+passes to lower cutoffs (`mem_receivingFamily_of_le`), and reindexes
+(`reindex_mem_receivingFamily`).  **Repair**: if the face of a legal `D` along `f` is `p'`, and
+`p` agrees with `p'` at a cap `c ≤ α` self-visible at the arity of `D`, then at a zero-or-limit
+stage `α` some legal `d` has face `p` along `f` literally and agrees with `D` at `c`
+(`exists_restrictFace_eq_mem_receivingFamily`): bountifulness of the scheme of `D` extends the
+labels of `p` to a lawful section with the observation of `D` at `c`
+(`exists_isLawful_extend_of_mem_receivingFamily`).  The bottom-pattern family of a labelling
+depends on the labelling only through which of its values are bottom
+(`bottomPatternFamily_congr`).
 
 **Transport.**  Along a bijection `e` of the `n + 1` points that maps the initial segment to itself
 by `σ`, cofaces of `p` reindex to cofaces of `p.reindex σ` (`reindex_mem_cofaces`), and the
@@ -202,6 +210,78 @@ theorem mem_receivingFamily {d q : StageType.{u} α n} {c : Label.{u}} :
 theorem self_mem_receivingFamily (d : StageType.{u} α n) (c : Label.{u}) :
     d ∈ receivingFamily d c :=
   ⟨rfl, fun _ _ h ↦ by rw [Fin.ext h]⟩
+
+/-- Agreement at a cap gives agreement at every lower cap. -/
+theorem mem_receivingFamily_of_le {D q : StageType.{u} α n} {c c' : Label.{u}}
+    (hq : q ∈ receivingFamily D c') (h : c ≤ c') : q ∈ receivingFamily D c :=
+  ⟨hq.1, fun i j hij ↦ by
+    simpa only [min_assoc, min_eq_right h] using congrArg (min · c) (hq.2 i j hij)⟩
+
+/-- Receiving families at one cutoff compose: agreement at `c` is transitive. -/
+theorem mem_receivingFamily_trans {D d q : StageType.{u} α n} {c : Label.{u}}
+    (hq : q ∈ receivingFamily d c) (hd : d ∈ receivingFamily D c) : q ∈ receivingFamily D c := by
+  refine ⟨hq.1.trans hd.1, fun i j hij ↦ ?_⟩
+  have hk : (i : ℕ) < d.card := i.2.trans_eq (congrArg Scheme.card hq.1)
+  exact (hq.2 i ⟨i, hk⟩ rfl).trans (hd.2 ⟨i, hk⟩ j hij)
+
+/-- Receiving families reindex: along a bijection `e` of points, a member of the receiving family
+of `D` reindexes to a member of the receiving family of `D.reindex e`. -/
+theorem reindex_mem_receivingFamily {D q : StageType.{u} α n} {c : Label.{u}} (e : Fin m ≃ Fin n)
+    (hq : q ∈ receivingFamily D c) : q.reindex e ∈ receivingFamily (D.reindex e) c := by
+  obtain ⟨hS, hl⟩ := hq
+  obtain ⟨S, ℓ, _, _, _, _⟩ := q
+  obtain ⟨S', ℓ', _, _, _, _⟩ := D
+  obtain rfl : S = S' := hS
+  refine ⟨rfl, fun i j hij ↦ ?_⟩
+  obtain rfl := Fin.ext hij
+  exact hl _ _ rfl
+
+/-! ### Repairing a donor to a received face
+
+A **received face** is a stage type `p` that agrees at a cap with the face `p'` of a donor `D`
+along `f`, as the type of a tuple received for that face does; the repair replaces `D` by a legal
+`d` whose face along `f` is `p` literally. -/
+
+section Repair
+
+/-- **Repairing a donor to a received face.**  If the face of a legal `D` along `f` is `p'`, and
+`p` agrees with `p'` at a cap `c` self-visible at `n`, the labels of `p` extend along `f` to a
+lawful section of the scheme of `D` with the observation of `D` at `c`.  This is bountifulness of
+the scheme of `D` (`Scheme.IsLegal.exists_isLawful_extend`); when `p = p'` it is
+`exists_isLawful_lift` at the stage of `D`. -/
+theorem exists_isLawful_extend_of_mem_receivingFamily {f : Fin m ↪ Fin n}
+    {D : StageType.{u} α n} {p' p : StageType.{u} α m} (hD : D.IsLegal)
+    (hface : restrictFace f D = some p') {c : Label.{u}} (hc : IsSelfVisible n c)
+    (hp : p ∈ receivingFamily p' c) :
+    ∃ ρ : Fin D.card → Label.{u}, D.rows.IsLawful ρ ∧ (∀ d, min (ρ d) c = min (D.label d) c) ∧
+      ∀ (i : Fin (D.toScheme.comap f).card) (j : Fin p.card), (i : ℕ) = j →
+        ρ (D.cellMap f i) = p.label j := by
+  obtain ⟨hf, rfl⟩ := (restrictFace_eq_some_iff _ _).mp hface
+  obtain ⟨hpS, hpl⟩ := hp
+  obtain ⟨P, ℓ, hw, hcod, hℓ, hat⟩ := p
+  obtain rfl : P = D.toScheme.comap f := hpS
+  obtain ⟨ρ, hρ, hρc, hext⟩ := Scheme.IsLegal.exists_isLawful_extend hD hf hc hℓ D.isLawful
+    fun i ↦ (hpl i i rfl).symm
+  exact ⟨ρ, hρ, hρc, fun i j hij ↦ by rw [hext, Fin.ext hij]⟩
+
+/-- **The repaired donor**: at a zero-or-limit stage, a legal `D` whose face along `f` agrees
+with `p` at a cap `c ≤ α` self-visible at `n` is replaced by a legal `d` whose face along `f` is
+`p` literally and which agrees with `D` at `c`.  The labels of `d` are the stage reduction of the
+section of `exists_isLawful_extend_of_mem_receivingFamily`; reduction may raise a label at or
+above `α` to the formal top, which does not change the observation at `c`. -/
+theorem exists_restrictFace_eq_mem_receivingFamily (hα : Order.IsSuccPrelimit α)
+    {f : Fin m ↪ Fin n} {D : StageType.{u} α n} {p' p : StageType.{u} α m} (hD : D.IsLegal)
+    (hface : restrictFace f D = some p') {c : Label.{u}} (hc : IsSelfVisible n c) (hcα : c ≤ α)
+    (hp : p ∈ receivingFamily p' c) :
+    ∃ d : StageType.{u} α n, d.IsLegal ∧ restrictFace f d = some p ∧ d ∈ receivingFamily D c := by
+  obtain ⟨ρ, hρ, hρc, hext⟩ := exists_isLawful_extend_of_mem_receivingFamily hD hface hc hp
+  obtain ⟨hf, rfl⟩ := (restrictFace_eq_some_iff _ _).mp hface
+  refine ⟨ofIsLawful hα D.toScheme D.isWellFormed D.isCoded ρ hρ, hD,
+    restrictFace_ofIsLawful hα hf hp.1.symm hext, rfl, fun i j hij ↦ ?_⟩
+  obtain rfl := Fin.ext hij
+  exact (min_reduce_of_le hcα (ρ i)).trans (hρc i)
+
+end Repair
 
 /-! ### Reindexing -/
 

@@ -569,13 +569,15 @@ their notions live; "this repository" means the layers of `README.md`.
    finite-extension rule, one case for each ordered pair of kinds of allowed ages, or, between
    presentations reducing to model expansions at `λ_{η+1}` (the downward closure of layer 5), the
    finite-extension presentation of finite-cut receiving of the target (layer 3, "Receiving for
-   finite extensions", resting on (R1)), run at an auxiliary self-visible cap strictly between `λ_η`
-   and `λ_{η+1}`: iterated one-point receiving retains each actual root literally, but the next
-   donor coface need not restrict literally to the newly received root, and the bounded-observation
-   lifting at that cap repairs it at each step; `README.md`, "Reduction to full presentations"); the
-   passage to `BFEquiv` by InfinitaryLogic's `bfEquiv_of_gradedMatching` (at the pin, signatures
-   checked), with the height guard and the selection of coordinates inside the relation (the match
-   (i) of `README.md`, layer 0), compiled on abstract hypotheses as
+   finite extensions", compiled as `HasFiniteCutReceiving.hasFiniteExtensionReceiving` in
+   `Realization/Receiving`, resting on (R1), which is still to be proved and is to be supplied in
+   the form `Expansion.FiniteCutReceiving`), run at an auxiliary self-visible cap strictly between
+   `λ_η` and `λ_{η+1}`: iterated one-point receiving retains each actual root literally, but the
+   next donor coface need not restrict literally to the newly received root, and the
+   bounded-observation lifting at that cap repairs it at each step; `README.md`, "Reduction to full
+   presentations"); the passage to `BFEquiv` by InfinitaryLogic's `bfEquiv_of_gradedMatching` (at
+   the pin, signatures checked), with the height guard and the selection of coordinates inside the
+   relation (the match (i) of `README.md`, layer 0), compiled on abstract hypotheses as
    `FullPresentation.bfEquiv_comp_of_obs_eq` (`Comparison/GradedMatchingApplications`), compiled in
    this repository (theorem named); its instantiation to the presentations of the construction is
    not elaborated.
@@ -1669,6 +1671,18 @@ witnesses).**
 - `MainTheorem/AllCarriers`: `infinite_of_realize_densitySentence_of_hasCoatomExtensions` concerns
   only the density sentence and the coatom extension property; it is a candidate for
   `Language/Density`, beside the density sentence, if the imports allow it.
+
+**Receiving for finite extensions (Layer 3).**
+
+- `Realization/Receiving`: Layer 3, item "Receiving for finite extensions", in place under
+  `Realization/`: it imports only the realizations of Layer 2, Layer 1, and `Extension/Basic`, the
+  boundary of (R1).  The stage-type lemmas it uses (`StageType.mem_receivingFamily_of_le`,
+  `StageType.mem_receivingFamily_trans`, `StageType.reindex_mem_receivingFamily`, and the repair
+  `StageType.exists_restrictFace_eq_mem_receivingFamily`) are in `Realization/Families`, beside
+  `StageType.receivingFamily`.
+- `Realization/ReceivingExamples`: in place.  The examples of the global forms
+  (`Expansion.FiniteCutReceiving`) are in `Expansion/AgreementExamples`, since this module imports
+  no module of Layer 5.
 
 **Counting (Layers 5–6).**
 
