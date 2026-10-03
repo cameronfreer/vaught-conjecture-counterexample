@@ -411,6 +411,28 @@ set_option linter.hashCommand false in
 set_option linter.hashCommand false in
 #check FirstOrder.Language.exists_isSigmaIn_three_scottSentence_of_sigmaIn_one_orbits_over
 
+-- Quantifier rank and recognition, at the pin `def5cc0` (signatures checked): the names cited by
+-- the prospective quantitative-reconstruction pathway (`COMPANIONS.md`, "Further companion
+-- results").  The rank of a formula (`BoundedFormulaω.qrank`); the existential closure
+-- `existsTuple`, one quantifier of which adds one to the rank (`qrank_existsLastVar`; the bound
+-- for the closure of `k` coordinates is a statement still to be proved); the characterization of
+-- a countable structure by its Scott sentence among the countable structures in its carrier
+-- universe (`scottSentence_characterizes`); and the orbit rank and internal Scott rank of the
+-- library.  The rank bounds of the pathway, its recognition statements, and its base-reduct
+-- orbit-rank bounds are prospective; no application is compiled here.
+set_option linter.hashCommand false in
+#check FirstOrder.Language.BoundedFormulaω.qrank
+set_option linter.hashCommand false in
+#check FirstOrder.Language.existsTuple
+set_option linter.hashCommand false in
+#check FirstOrder.Language.qrank_existsLastVar
+set_option linter.hashCommand false in
+#check FirstOrder.Language.scottSentence_characterizes
+set_option linter.hashCommand false in
+#check FirstOrder.Language.orbitRank
+set_option linter.hashCommand false in
+#check FirstOrder.Language.internalScottRank
+
 -- ComputableModelTheory at our pinned dependency `0e9935b` (signatures checked), through the
 -- entry module `ComputableModelTheory.Classical` (Mathlib-only imports): classical Fraïssé
 -- existence (`ModelTheory/FraisseExistence`), rooted universality and uniqueness
