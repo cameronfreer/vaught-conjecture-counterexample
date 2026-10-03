@@ -3,8 +3,7 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
-import InfinitaryLogic.Descriptive.BFSeparation
-import InfinitaryLogic.ModelTheory.MorleyCounting
+import InfinitaryLogic.Descriptive.BFScatteredSentence
 
 /-!
 # Thinness from countably many back-and-forth classes at every level
@@ -27,32 +26,43 @@ is the library's thinness `φ.IsThinOnNatModels`, the form of
 `VaughtConjecture.MainTheorem.Spectrum`; no comparison of `CodeBFEquiv η` with [Mon]'s `≡_α`
 is used or proved here.
 
-**The proof.**  Let `P ⊆ K` be nonempty, perfect, and pairwise nonisomorphic.
+**Quotations.**  Both theorems are quotations of InfinitaryLogic (at the pin): the hypothesis of
+`isThinOn_of_countable_bfClasses` is, by definition, InfinitaryLogic's
+`FirstOrder.Language.BFScattered K`, and the two theorems are its
+`FirstOrder.Language.isThinOn_of_bfScattered` (`Descriptive/BFScattered`) and
+`FirstOrder.Language.Sentenceω.isThinOnNatModels_of_bfScattered`
+(`Descriptive/BFScatteredSentence`).  Their statements here are unchanged.  Neither is more
+general than InfinitaryLogic's (the hypotheses and conclusions are the same), so neither is kept
+for generality.  InfinitaryLogic's proof: the range of a Cantor antichain in `K` is analytic, so
+the library's **uniform back-and-forth separation** (`exists_uniform_bfSeparation`: an analytic
+set of nonisomorphic pairs is separated at one level, by boundedness of the analytic family of the
+forced back-and-forth trees), applied to the off-diagonal of the range, gives one level `η < ω₁`
+at which its distinct points are not back-and-forth equivalent; the class map at `η` then injects
+Cantor space into the countable quotient of `K`; and a perfect antichain in the (completely
+metrizable) space of codes yields a Cantor antichain.  The level is the one of the library's
+theorem, an `Ordinal.{0}` below `Ordinal.omega 1`, with no `Ordinal.lift` and no offset.
 
-* The **off-diagonal** `P.offDiag` (Mathlib's `Set.offDiag`), the pairs of distinct points of
-  `P`, is an analytic set (`analyticSet_offDiag`): it is `P ×ˢ P` minus the diagonal
-  (`Set.prod_sdiff_diagonal`), `P ×ˢ P` is closed since `P` is, the diagonal is closed in the
-  Hausdorff space of pairs of codes, so their difference is Borel, hence analytic in the Polish
-  space of pairs of codes (the library's Polish and Borel structure on the space of codes, for
-  countably many relation symbols).
-* No pair of the off-diagonal is isomorphic (`offDiag_noniso`), since `P` is pairwise
-  nonisomorphic.
-* The library's **uniform back-and-forth separation** (`exists_uniform_bfSeparation`: an analytic
-  set of nonisomorphic pairs is separated at one level, by boundedness of the analytic family of
-  the forced back-and-forth trees) gives `η < ω₁` with `¬ CodeBFEquiv η x y` for all distinct
-  `x y ∈ P` (`exists_forall_not_codeBFEquiv_of_isClosed`).  The level is the one of the library's
-  theorem, an `Ordinal.{0}` below `Ordinal.omega 1`, with no `Ordinal.lift` and no offset.
-* So the class map of `CodeBFEquiv η` is injective on `P`, and the classes met by `K` are as many
-  as the classes of the restriction to `K` (Mathlib's second isomorphism theorem
-  `Setoid.comapQuotientEquiv`); hence `P` is countable.  But a nonempty perfect set of codes is
-  uncountable (`not_countable_of_perfect`; the library's `Perfect.mk_eq_continuum`, in the Polish
-  space of codes).
+**The lemmas on closed antichains.**  The steps of the same argument for a nonempty perfect
+pairwise nonisomorphic `P ⊆ K` are kept with their statements:
+
+* the **off-diagonal** `P.offDiag` (Mathlib's `Set.offDiag`), the pairs of distinct points of `P`,
+  is analytic when `P` is closed (`analyticSet_offDiag`), and has no isomorphic pair
+  (`offDiag_noniso`, a quotation of InfinitaryLogic's
+  `FirstOrder.Language.not_structureIso_of_mem_offDiag`);
+* one level `η < ω₁` separates the distinct points of a closed antichain
+  (`exists_forall_not_codeBFEquiv_of_isClosed`, a quotation of InfinitaryLogic's
+  `FirstOrder.Language.exists_forall_not_codeBFEquiv_of_analyticSet`, which separates every
+  analytic antichain);
+* a nonempty perfect set of codes is uncountable (`not_countable_of_perfect`; the library's
+  `Perfect.mk_eq_continuum`, in the Polish space of codes), which has no counterpart among
+  InfinitaryLogic's public statements.
 
 **Back-and-forth equivalence as a setoid.**  `codeBFEquivSetoid L η` is the library's
 `CodeBFEquiv η` on all codes, an equivalence relation by reflexivity, symmetry, and transitivity
-of `BFEquiv`; the library's `bfEquivSetoid φ η` is its restriction to the codes of models of `φ`
-(`bfEquivSetoid_eq_comap`, by definition), as `isoSetoid φ` is the restriction of
-`structureIsoSetoid L`.
+of `BFEquiv`; it is InfinitaryLogic's `FirstOrder.Language.codeBFEquivSetoid L η` by definition.
+The library's `bfEquivSetoid φ η` is its restriction to the codes of models of `φ`
+(`bfEquivSetoid_eq_comap`, true by definition and a quotation of InfinitaryLogic's statement), as
+`isoSetoid φ` is the restriction of `structureIsoSetoid L`.
 
 ## Placement
 
@@ -78,40 +88,36 @@ variable {L : Language.{u, v}} [L.IsRelational]
 
 variable (L) in
 /-- **Back-and-forth equivalence at level `α`** on all codes on `ℕ`: the library's
-`CodeBFEquiv α`, an equivalence relation. -/
-def codeBFEquivSetoid (α : Ordinal.{0}) : Setoid (StructureSpace L) where
-  r := CodeBFEquiv α
-  iseqv :=
-    { refl := fun c ↦ @BFEquiv.refl L ℕ c.toStructure 0 α Fin.elim0
-      symm := fun {c d} h ↦ @BFEquiv.symm L ℕ c.toStructure ℕ d.toStructure 0 α
-        Fin.elim0 Fin.elim0 h
-      trans := fun {c d e} h₁ h₂ ↦ @BFEquiv.trans L ℕ c.toStructure ℕ d.toStructure
-        ℕ e.toStructure (n := 0) (α := α) (a := Fin.elim0) (b := Fin.elim0) (c := Fin.elim0)
-        h₁ h₂ }
+`CodeBFEquiv α`, an equivalence relation.  By definition the library's
+`FirstOrder.Language.codeBFEquivSetoid L α`. -/
+def codeBFEquivSetoid (α : Ordinal.{0}) : Setoid (StructureSpace L) :=
+  FirstOrder.Language.codeBFEquivSetoid L α
 
 /-- The library's back-and-forth setoid on the codes of models of `φ` is the restriction of
-`codeBFEquivSetoid L α`. -/
+`codeBFEquivSetoid L α`.  A quotation of InfinitaryLogic's
+`FirstOrder.Language.bfEquivSetoid_eq_comap` (at the pin). -/
 theorem bfEquivSetoid_eq_comap (φ : L.Sentenceω) (α : Ordinal.{0}) :
     bfEquivSetoid φ α = (codeBFEquivSetoid L α).comap (Subtype.val : ModelsOf φ → _) :=
-  rfl
+  FirstOrder.Language.bfEquivSetoid_eq_comap φ α
 
 /-! ### The off-diagonal of a set of codes -/
 
 omit [L.IsRelational] in
-/-- **The off-diagonal of a closed set of codes is analytic**: it is `P ×ˢ P` minus the
-diagonal, `P ×ˢ P` is closed, the diagonal is closed, so their difference is Borel, hence analytic
-in the Polish space of pairs of codes. -/
+/-- **The off-diagonal of a closed set of codes is analytic**: a closed set is Borel, hence
+analytic in the Polish space of codes, and the off-diagonal of an analytic set in a Hausdorff space
+is analytic (InfinitaryLogic's `MeasureTheory.AnalyticSet.offDiag`, at the pin). -/
 theorem analyticSet_offDiag [Countable (Σ l, L.Relations l)] {P : Set (StructureSpace L)}
-    (hP : IsClosed P) : AnalyticSet P.offDiag := by
-  rw [← Set.prod_sdiff_diagonal]
-  exact ((hP.prod hP).measurableSet.diff isClosed_diagonal.measurableSet).analyticSet
+    (hP : IsClosed P) : AnalyticSet P.offDiag :=
+  hP.measurableSet.analyticSet.offDiag
 
 /-- **The off-diagonal of a pairwise nonisomorphic set of codes has no isomorphic pair.**  The
-hypothesis is pairwise nonisomorphism in the form of the library's `HasPerfectAntichainOn`. -/
+hypothesis is pairwise nonisomorphism in the form of the library's `HasPerfectAntichainOn`.  A
+quotation of InfinitaryLogic's `FirstOrder.Language.not_structureIso_of_mem_offDiag` (at the
+pin). -/
 theorem offDiag_noniso {P : Set (StructureSpace L)}
     (hP : ∀ x ∈ P, ∀ y ∈ P, (structureIsoSetoid L).r x y → x = y) :
     ∀ p ∈ P.offDiag, ¬ (structureIsoSetoid L).r p.1 p.2 :=
-  fun _ hp hr ↦ hp.2.2 (hP _ hp.1 _ hp.2.1 hr)
+  not_structureIso_of_mem_offDiag hP
 
 /-! ### Thinness -/
 
@@ -119,7 +125,9 @@ variable [Countable (Σ l, L.Relations l)]
 
 omit [L.IsRelational] in
 /-- **A nonempty perfect set of codes is uncountable**: it has the cardinality of the continuum
-(the library's `Perfect.mk_eq_continuum`), in the Polish space of codes. -/
+(the library's `Perfect.mk_eq_continuum`), in the Polish space of codes.  Kept here: InfinitaryLogic
+states no such lemma for sets of codes (its thinness theorem goes through Cantor antichains, and
+its uncountability of Cantor space is private). -/
 theorem not_countable_of_perfect {P : Set (StructureSpace L)} (hperf : Perfect P)
     (hne : P.Nonempty) : ¬ P.Countable := by
   -- a complete metric compatible with the topology; `hperf` is unaffected
@@ -130,41 +138,34 @@ theorem not_countable_of_perfect {P : Set (StructureSpace L)} (hperf : Perfect P
 /-- **One back-and-forth level separates a closed antichain**: for a closed set `P` of pairwise
 nonisomorphic codes, there is `η < ω₁` at which no two distinct points of `P` are
 back-and-forth equivalent (the library's `exists_uniform_bfSeparation`, applied to the
-off-diagonal). -/
+off-diagonal).  A quotation of InfinitaryLogic's
+`FirstOrder.Language.exists_forall_not_codeBFEquiv_of_analyticSet` (at the pin), which separates
+every analytic antichain; a closed set of codes is analytic. -/
 theorem exists_forall_not_codeBFEquiv_of_isClosed {P : Set (StructureSpace L)} (hP : IsClosed P)
     (hanti : ∀ x ∈ P, ∀ y ∈ P, (structureIsoSetoid L).r x y → x = y) :
     ∃ η : Ordinal.{0}, η < Ordinal.omega 1 ∧
-      ∀ x ∈ P, ∀ y ∈ P, x ≠ y → ¬ CodeBFEquiv η x y := by
-  obtain ⟨η, hη, hsep⟩ :=
-    exists_uniform_bfSeparation (analyticSet_offDiag hP) (offDiag_noniso hanti)
-  exact ⟨η, hη, fun x hx y hy hxy ↦ hsep (x, y) (Set.mem_offDiag.mpr ⟨hx, hy, hxy⟩)⟩
+      ∀ x ∈ P, ∀ y ∈ P, x ≠ y → ¬ CodeBFEquiv η x y :=
+  exists_forall_not_codeBFEquiv_of_analyticSet hP.measurableSet.analyticSet hanti
 
 /-- **Thinness from countably many back-and-forth classes at every level**: if for every
 `η < ω₁` the restriction of `CodeBFEquiv η` to a set `K` of codes has countably many classes,
-then `K` contains no nonempty perfect set of pairwise nonisomorphic codes. -/
+then `K` contains no nonempty perfect set of pairwise nonisomorphic codes.  A quotation of
+InfinitaryLogic's `FirstOrder.Language.isThinOn_of_bfScattered` (at the pin): the hypothesis is
+`FirstOrder.Language.BFScattered K`, by definition. -/
 theorem isThinOn_of_countable_bfClasses {K : Set (StructureSpace L)}
     (hK : ∀ η : Ordinal.{0}, η < Ordinal.omega 1 →
       Countable (Quotient ((codeBFEquivSetoid L η).comap (Subtype.val : K → _)))) :
-    IsThinOn (structureIsoSetoid L) K := by
-  rintro ⟨P, hperf, hne, hPK, hanti⟩
-  obtain ⟨η, hη, hsep⟩ := exists_forall_not_codeBFEquiv_of_isClosed hperf.closed hanti
-  -- the classes met by `K` are the classes of the restriction (second isomorphism theorem)
-  have hcount := (Setoid.comapQuotientEquiv (Subtype.val : K → _)
-    (codeBFEquivSetoid L η)).symm.countable_iff.mpr (hK η hη)
-  rw [countable_coe_iff, range_comp, Subtype.range_coe] at hcount
-  refine not_countable_of_perfect hperf hne
-    (MapsTo.countable_of_injOn (fun x hx ↦ mem_image_of_mem _ (hPK hx)) (fun x hx y hy hxy ↦ ?_)
-      hcount)
-  by_contra hne
-  exact hsep x hx y hy hne (Quotient.exact hxy)
+    IsThinOn (structureIsoSetoid L) K :=
+  isThinOn_of_bfScattered hK
 
 /-- **Thinness of a sentence from countably many back-and-forth classes at every level**: if for
 every `η < ω₁` the codes of models of `φ` fall into countably many classes of back-and-forth
 equivalence at level `η` (the library's `bfEquivSetoid φ η`), then `φ` is thin on its coded
-models. -/
+models.  A quotation of InfinitaryLogic's
+`FirstOrder.Language.Sentenceω.isThinOnNatModels_of_bfScattered` (at the pin). -/
 theorem isThinOnNatModels_of_countable_bfClasses {φ : L.Sentenceω}
     (h : ∀ η : Ordinal.{0}, η < Ordinal.omega 1 → Countable (Quotient (bfEquivSetoid φ η))) :
     φ.IsThinOnNatModels :=
-  isThinOn_of_countable_bfClasses fun η hη ↦ bfEquivSetoid_eq_comap φ η ▸ h η hη
+  Sentenceω.isThinOnNatModels_of_bfScattered h
 
 end VaughtConjecture.MainTheorem
