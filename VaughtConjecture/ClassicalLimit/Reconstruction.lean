@@ -105,17 +105,13 @@ hypotheses on the stage `α` stated there; none of these enters this file.
 **What this file does not contain.**  Each item names the hypotheses it will need beyond those
 used here.
 
-* **Receiving** (step 6), `(reconstruct α M).HasFiniteCutReceiving`: over an actual occurrence of
-  type `p`, for a one-point coface `d` of `p` and a permitted cutoff, an occurrence extending it
-  literally, with a new point and a type agreeing with `d` below the cutoff.  The root is a whole
-  occurrence, so the pinned extension over it is trivial: `d` capped at an ordinal below `α`,
-  self-visible at its arity, at or above the cutoff and the labels of `p` (`StageType.cap`, as in
-  `StageType.exists_cap`, under `Order.IsSuccPrelimit α` and `0 < α`) is a legal top-free coface
-  of `p`.  It is realized over the occurrence by the ultrahomogeneity of `M`
+* **Receiving** (step 6), `(reconstruct α M).HasFiniteCutReceiving`, is in
+  `VaughtConjecture.ClassicalLimit.Receiving` (`hasFiniteCutReceiving_reconstruct`), for a
+  structure whose age is the age of top-free charts and which is ultrahomogeneous, at a stage that
+  is zero or a limit: the donor capped at an ordinal below the stage (`StageType.cap`) is a legal
+  top-free coface of the root's type, realized over the occurrence by ultrahomogeneity
   (`FirstOrder.Language.IsUltrahomogeneous.extend_embedding`, applied to the embedding of the
-  chart of `p` onto the occurrence given by `reconstruct_eval_eq_some_iff_exists_embedding`),
-  which needs the converse inclusion `topFreeAge α ⊆ (hullLanguage α).age M` to embed the chart
-  of the capped coface in `M`.
+  chart of the root's type given by `reconstruct_eval_eq_some_iff_exists_embedding`).
 * **Modelhood** (step 7), `Realization.IsModel`: for a structure whose age is the age of top-free
   charts, its clauses of a nonempty carrier, legal types, exact consistency, and covering are
   proved here (`reconstruct_of_age_eq`); its four extension clauses (generalized saturation, the
@@ -126,17 +122,19 @@ used here.
   occurrence, with a one-point coface of its type (`StageType.exists_extension`, under the coatom
   extension property); terminality from the top-freeness proved here, modelhood, and the
   reduction of models.
-* **The density sentence** (the sentence of the main theorem, not one of the seven steps), with
-  `u = 0`: for the base-language structure (`Realization.toStructure`) of the reduction of the
-  reconstructed realization to `ω` (`Realization.reduce`), by
-  `realize_toStructure_densitySentence_iff`.  Legal types of the reduction follow from those
-  proved here by `StageType.IsLegal.reduce`, and a nonempty carrier, exact consistency, and
-  covering by `Realization.IsConsistent.reduce` and `Realization.IsCovering.reduce`; finite-cut
-  receiving of the reduction needs receiving at `α` and its descent along stage reduction, cutoff
-  by cutoff, which is not exact projected receiving (semantic contract, item 12).
-* **Exact extension within the age** (semantic contract, item 12) beyond the extension of
-  embeddings given by ultrahomogeneity, and any statement about stage reductions of `M` other than
-  the algebraic equality above, or about cutoff observations of `M`.
+* **The density sentence** (the sentence of the main theorem; for the base reduct, the
+  base-reduct part of step 7) for the base-language structure (`Realization.toStructure`) of the
+  reduction of the reconstructed realization to `ω` (`Realization.reduce`) is in
+  `VaughtConjecture.ClassicalLimit.Receiving` (`realize_densitySentence_reconstruct_reduce`), for
+  a structure whose age is the age of top-free charts and which is ultrahomogeneous, at a limit
+  stage `α ≥ ω`: the clauses proved here, reduced to `ω`, and finite-cut receiving of the
+  reduction, by receiving at `α` and its descent along stage reduction
+  (`Realization.HasFiniteCutReceiving.reduce`), cutoff by cutoff, which is not exact projected
+  receiving (semantic contract, item 12).
+* **Exact extension within the age** (semantic contract, item 12): exact extension of top-free
+  donors, by ultrahomogeneity, is in `VaughtConjecture.ClassicalLimit.Receiving`
+  (`exists_reconstruct_eval_eq_of_isTopFree`), with the statements there about the reduction of
+  the reconstructed realization to a lower stage and its cutoff observations.
 
 **Universes.**  The limit is a structure in `Type` of a language in `Type (u + 1)`; the output of
 reconstruction is the realization `reconstruct α M`, on the same carrier in `Type`.  With `u = 0`,
