@@ -3,7 +3,7 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
-import VaughtConjecture.Language.HullOperations
+import VaughtConjecture.Language.HullDefinability
 
 /-!
 # The two-charts theorem and canonical hull operations on realizations
@@ -55,24 +55,38 @@ holds whenever some hull operation at `a`, `b` returns `b`
 of distinct points is the set of values of the hull operations at it
 (`Realization.mem_finiteHull_pair_iff`).
 
-Together with the graph formula of a hull operation, `Realization.hullOp_eq_iff` gives its
-first-order definability on every exactly consistent covering realization (roadmap, Layer 2,
-item 2); that consequence is not proved in this file.
+**Definability.**  With the graph formula `HullIndex.graphFormula` of
+`VaughtConjecture.Language.HullDefinability`, `Realization.hullOp_eq_iff` is the first-order
+definability of the hull operations on every exactly consistent covering realization (roadmap,
+Layer 2, item 2): the graph formula holds at `(a, b, y)` exactly when `y` is the value of the hull
+operation at `a` and `b` (`Realization.realize_graphFormula_iff`), so each hull operation is a
+parameter-free definable function of the stage chart language (`Realization.definableFun_hullOp`).
+No legality is needed.
 
 **Embeddings.**  An **embedding of realizations** `φ : R.Embedding S` (`Realization.Embedding`)
 is an injective map of carriers that carries every actual occurrence to an actual occurrence with
-the same type; nothing is required of untyped tuples.  When `R` and `S` are exactly consistent and
-`R` is covering, `φ` also carries untyped tuples to untyped tuples
-(`Realization.Embedding.eval_trans`), so it is an embedding of the structures in the stage chart
-language; conversely an embedding of those structures is an embedding of realizations when the
-types of `R` are legal (`Realization.Embedding.ofChartEmbedding`), since the language has symbols
-only for legal types.  Between exactly consistent covering realizations, an embedding commutes
-with every hull operation, the default value included (`Realization.Embedding.hullOp_map`,
-roadmap, Layer 2, item 3): the image of a chart witness is a chart witness, and a chart witness in
-`S` at `φ a`, `φ b` has as points the canonical hull of `{φ a, φ b}`, which lies in the image of
-an occurrence of `R` containing `a` and `b`, so it reflects to a chart witness in `R`.  Hence an
-embedding of realizations is an embedding of the structures in the hull language
-(`Realization.Embedding.toHullEmbedding`).  Isomorphisms of realizations are embeddings
+the same type; nothing is required of untyped tuples.  The embeddings of `HULL_ALGEBRA.md`, §5,
+injective maps preserving the evaluation of every tuple (carrying actual charts to actual charts
+of the same type, and no other tuple to an actual chart), are embeddings of realizations
+(`Realization.Embedding.ofEvalTrans`).  Conversely, when `R` and `S` are exactly consistent and
+`R` is covering, an embedding of realizations preserves the evaluation of every tuple
+(`Realization.Embedding.eval_trans`), so it is an embedding in the sense of §5
+(`Realization.Embedding.eq_ofEvalTrans`) and an embedding of the structures in the stage chart
+language (`Realization.Embedding.toChartEmbedding`).  An embedding of the structures in the stage
+chart language is an embedding of realizations when the types of `R` are legal
+(`Realization.Embedding.ofChartEmbedding`), since the language has relation symbols only for legal
+types.
+
+Between exactly consistent covering realizations, an embedding of realizations commutes with
+every hull operation, the default value included (`Realization.Embedding.hullOp_map`): the image
+of a chart witness is a chart witness, and a chart witness in `S` at `φ a`, `φ b` has as points
+the canonical hull of `{φ a, φ b}`, which lies in the image of an occurrence of `R` containing `a`
+and `b`, so it reflects to a chart witness in `R`.  Hence an embedding of realizations is an
+embedding of the structures in the hull language (`Realization.Embedding.toHullEmbedding`).  So
+roadmap, Layer 2, item 3 is proved here for embeddings of realizations, hence for the embeddings
+of §5, and for an arbitrary embedding of the structures in the stage chart language only when the
+types of the source are legal (through `Realization.Embedding.ofChartEmbedding`); the general case
+of the latter is not proved here.  Isomorphisms of realizations are embeddings
 (`Realization.Iso.toEmbedding`), so hull operations are invariant under isomorphism
 (`Realization.Iso.hullOp_map`).
 
@@ -264,6 +278,8 @@ theorem isLegal_of_hullOp_eq_right (hR : R.IsConsistent) (hc : R.IsCovering) {a 
     let x : R.Occurrence := ⟨ι.arity, g, ι.type, hg⟩
     obtain ⟨f, hf⟩ := x.exists_trans_eq hsub
     refine ι.isLegal.restrictFace f (restrictFace_eq_of_eval hR hg f ?_)
+    -- `x.tuple` is `g` by definition of `x`; the goal is restated with `x.tuple` so that
+    -- `hf : f.trans x.tuple = y.tuple` applies.
     change R.eval (f.trans x.tuple) = some y.type
     rw [hf]
     exact y.eval_tuple
@@ -306,6 +322,45 @@ theorem mem_finiteHull_pair_iff (hR : R.IsConsistent) (hc : R.IsCovering) (hl : 
     fun ⟨ι, h⟩ ↦ h ▸ hullOp_mem_finiteHull hR hc ι a b⟩
 
 end HullOp
+
+/-! ### Definability -/
+
+section Definability
+
+/-- **The graph of a hull operation is first-order definable** on every exactly consistent
+covering realization (roadmap, Layer 2, item 2; `HULL_ALGEBRA.md`, §1): the graph formula holds at
+`(a, b, y)` exactly when `y` is the value of the hull operation at `a` and `b`, the default value
+included.  It is `hullOp_eq_iff` read through the meaning of the formulas
+(`realize_chartWitnessFormula`, `realize_existsChartWitnessFormula`).  No legality is needed. -/
+theorem realize_graphFormula_iff (hR : R.IsConsistent) (hc : R.IsCovering) (ι : HullIndex.{u} α)
+    (a b y : M) :
+    letI := R.toChartStructure
+    ι.graphFormula.Realize ![a, b, y] ↔ R.hullOp ι a b = y := by
+  let := R.toChartStructure
+  rw [HullIndex.realize_graphFormula, realize_chartWitnessFormula,
+    realize_existsChartWitnessFormula, hullOp_eq_iff hR hc]
+
+/-- **The hull operations are parameter-free definable functions** of the stage chart language on
+every exactly consistent covering realization, in the sense of Mathlib's `Set.DefinableFun`:
+their graphs are defined by the graph formulas (`realize_graphFormula_iff`). -/
+theorem definableFun_hullOp (hR : R.IsConsistent) (hc : R.IsCovering) (ι : HullIndex.{u} α) :
+    letI := R.toChartStructure
+    (∅ : Set M).DefinableFun (stageChartLanguage.{u} α)
+      (fun v : Fin 2 → M ↦ R.hullOp ι (v 0) (v 1)) := by
+  let := R.toChartStructure
+  rw [Set.empty_definableFun_iff]
+  refine ⟨ι.graphFormula.relabel ![some 0, some 1, none], Set.ext fun v ↦ ?_⟩
+  have hv : v ∘ ![some 0, some 1, none] = ![v (some 0), v (some 1), v none] := by
+    funext i
+    match i with
+    | 0 => rfl
+    | 1 => rfl
+    | 2 => rfl
+  simp only [Function.tupleGraph, Set.mem_ofPred_eq, Language.Formula.realize_relabel, hv,
+    realize_graphFormula_iff hR hc]
+  rfl
+
+end Definability
 
 /-! ### Embeddings of realizations -/
 
@@ -366,6 +421,19 @@ theorem eval_trans (hR : R.IsConsistent) (hc : R.IsCovering) (hS : S.IsConsisten
   obtain ⟨p, hp⟩ := Option.isSome_iff_exists.mp hu
   rw [hR u p f hp, Function.Embedding.trans_assoc, hS _ p f (φ.eval_trans_of_eval u p hp)]
 
+/-- **Relations are preserved and reflected**: when `R` and `S` are exactly consistent and `R` is
+covering, an injective tuple of `R` has the type `p` exactly when its image has the type `p`; this
+is the relation of `p` in the structures of the stage chart language (`toChartStructure`). -/
+theorem exists_eval_comp_iff (hR : R.IsConsistent) (hc : R.IsCovering) (hS : S.IsConsistent)
+    (φ : R.Embedding S) (xs : Fin n → M) (p : StageType.{u} α n) :
+    (∃ h : Function.Injective (φ ∘ xs), S.eval ⟨φ ∘ xs, h⟩ = some p) ↔
+      ∃ h : Function.Injective xs, R.eval ⟨xs, h⟩ = some p := by
+  refine ⟨fun ⟨h, hq⟩ ↦ ⟨h.of_comp, ?_⟩, fun ⟨h, hq⟩ ↦ ⟨φ.injective.comp h, ?_⟩⟩
+  · rw [← φ.eval_trans hR hc hS]
+    exact hq
+  · rw [← hq, ← φ.eval_trans hR hc hS ⟨xs, h⟩]
+    rfl
+
 /-- **Hull operations commute with embeddings of realizations, including the default value**
 (roadmap, Layer 2, item 3; `HULL_ALGEBRA.md`, §5), between exactly consistent covering
 realizations.  The image of a chart witness at `a`, `b` is a chart witness at `φ a`, `φ b`, and
@@ -421,12 +489,10 @@ noncomputable def toHullEmbedding (hR : R.IsConsistent) (hcR : R.IsCovering)
       | op ι => exact (φ.hullOp_map hR hcR hS hcS ι (xs 0) (xs 1)).symm
     map_rel' := fun {n} r xs ↦ by
       rcases r with ⟨p, hp⟩ | r
-      · change (∃ h, S.eval ⟨φ ∘ xs, h⟩ = some p) ↔ ∃ h, R.eval ⟨xs, h⟩ = some p
-        refine ⟨fun ⟨h, hq⟩ ↦ ⟨h.of_comp, ?_⟩, fun ⟨h, hq⟩ ↦ ⟨φ.injective.comp h, ?_⟩⟩
-        · rw [← φ.eval_trans hR hcR hS]
-          exact hq
-        · rw [← hq, ← φ.eval_trans hR hcR hS ⟨xs, h⟩]
-          rfl
+      · -- the relation of `p` in the hull language is that of the stage chart language
+        -- (`relMap_toHullStructure`), restated to apply `exists_eval_comp_iff`
+        change (∃ h, S.eval ⟨φ ∘ xs, h⟩ = some p) ↔ ∃ h, R.eval ⟨xs, h⟩ = some p
+        exact φ.exists_eval_comp_iff hR hcR hS xs p
       · exact (r : Empty).elim }
 
 /-- The embedding of hull-language structures of an embedding of realizations has the map of the
@@ -436,6 +502,51 @@ theorem toHullEmbedding_toEmbedding (hR : R.IsConsistent) (hcR : R.IsCovering)
     letI := R.toHullStructure
     letI := S.toHullStructure
     (φ.toHullEmbedding hR hcR hS hcS).toEmbedding = φ.toEmbedding :=
+  rfl
+
+/-- An **embedding of realizations is an embedding of the structures in the stage chart
+language** when `R` and `S` are exactly consistent and `R` is covering: it preserves and reflects
+the relations (`exists_eval_comp_iff`). -/
+def toChartEmbedding (hR : R.IsConsistent) (hc : R.IsCovering) (hS : S.IsConsistent)
+    (φ : R.Embedding S) :
+    letI := R.toChartStructure
+    letI := S.toChartStructure
+    M ↪[stageChartLanguage.{u} α] N :=
+  letI := R.toChartStructure
+  letI := S.toChartStructure
+  { toEmbedding := φ.toEmbedding
+    map_fun' := fun f _ ↦ (f : Empty).elim
+    map_rel' := fun {n} r xs ↦ by
+      -- the relation of a legal type `r.1` is `∃ h, eval ⟨xs, h⟩ = some r.1` by definition
+      change (∃ h, S.eval ⟨φ ∘ xs, h⟩ = some r.1) ↔ ∃ h, R.eval ⟨xs, h⟩ = some r.1
+      exact φ.exists_eval_comp_iff hR hc hS xs r.1 }
+
+/-- The embedding of stage-chart-language structures of an embedding of realizations has the map
+of the embedding of realizations. -/
+theorem toChartEmbedding_toEmbedding (hR : R.IsConsistent) (hc : R.IsCovering)
+    (hS : S.IsConsistent) (φ : R.Embedding S) :
+    letI := R.toChartStructure
+    letI := S.toChartStructure
+    (φ.toChartEmbedding hR hc hS).toEmbedding = φ.toEmbedding :=
+  rfl
+
+/-- An **embedding in the sense of `HULL_ALGEBRA.md`, §5**, an injective map of carriers
+preserving the evaluation of every tuple, is an embedding of realizations. -/
+def ofEvalTrans (e : M ↪ N) (h : ∀ ⦃n : ℕ⦄ (t : Fin n ↪ M), S.eval (t.trans e) = R.eval t) :
+    R.Embedding S where
+  toEmbedding := e
+  eval_trans_of_eval _ t _ ht := (h t).trans ht
+
+/-- The map of the embedding of realizations of a map preserving evaluation is that map. -/
+@[simp] theorem coe_ofEvalTrans (e : M ↪ N)
+    (h : ∀ ⦃n : ℕ⦄ (t : Fin n ↪ M), S.eval (t.trans e) = R.eval t) : ⇑(ofEvalTrans e h) = e :=
+  rfl
+
+/-- **Embeddings of realizations are the embeddings of `HULL_ALGEBRA.md`, §5** when `R` and `S`
+are exactly consistent and `R` is covering: every embedding of realizations preserves the
+evaluation of every tuple (`eval_trans`) and is the embedding of its map. -/
+theorem eq_ofEvalTrans (hR : R.IsConsistent) (hc : R.IsCovering) (hS : S.IsConsistent)
+    (φ : R.Embedding S) : φ = ofEvalTrans φ.toEmbedding (fun _ t ↦ φ.eval_trans hR hc hS t) :=
   rfl
 
 /-- An **embedding of the structures in the stage chart language** is an embedding of
