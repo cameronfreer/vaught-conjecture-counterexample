@@ -1482,27 +1482,39 @@ witnesses).**
 
 **Counting (Layers 5–6).**
 
-- `Counting/Filtration` and `Counting/Separation`: InfinitaryLogic's `OrdinalCountability`, at the
-  pin `def5cc0`, has `rankTail`, `leastLevel`, `countable_fibers_leastLevel`, `rankTail_leastLevel`,
-  `mk_eq_aleph_one_of_countable_fibers`, `rankTail_cofinal_losses_iff`, and
-  `biInter_rankTail_eq_empty`, with `mk_le_aleph_one_of_countable_fibers` (signatures checked).  The
-  generic statements of `Counting/Filtration` (`leastLevel` with `countable_setOf_leastLevel_eq` and
-  `le_leastLevel_iff`, `countable_setOf_rank_lt`, `forall_exists_le_rank_iff`,
-  `iInter_setOf_le_rank_eq_empty`, and the constructions `Filtration.ofRank` and
-  `Filtration.ofCountableCover`) and of `Counting/Separation` (`mk_le_aleph_one_of_countable_cover`,
-  `mk_le_aleph_one_of_rank`, which states `mk_le_aleph_one_of_countable_fibers`,
-  `mk_eq_aleph_one_of_rank`) are candidates for one-line quotation of these, keeping their
-  statements, subject to a comparison of the statements at three points: the bound `α < ω₁` inside
-  our `leastLevel` (`sInf {α | α < ω₁ ∧ x ∈ Q α}`, against InfinitaryLogic's `sInf {α | x ∈ Q α}`,
-  which agree under the covering hypothesis); the empty persistent core (`Filtration.core_ofRank`
-  against `biInter_rankTail_eq_empty`); and cofinally nonempty losses (the field `cofinal_losses` of
-  `Filtration`, and `rankTail_cofinal_losses_iff`) against nonempty losses at every level.  This
-  comparison is a reading of the two lists of statements, not a theorem: each local statement is
-  matched with an InfinitaryLogic statement only when it is proved by one application of that
-  statement and the proof compiles.  `scripts/check.sh` does not compare declarations with
-  InfinitaryLogic; it checks that the toolchain agrees with InfinitaryLogic's, builds the library,
-  rejects `sorry`, `admit`, and the forbidden options, checks the copyright headers, and checks that
-  every declaration of the library uses only the standard axioms.  No deletion is proposed.
+- `Counting/Filtration` and `Counting/Separation`: their generic statements are proved as quotations
+  of InfinitaryLogic's `OrdinalCountability` (at the pin `def5cc0`), with their statements kept:
+  `Filtration.ofRank` is built from `rankTail` (its domain is `rankTail r` by definition), and
+  `countable_setOf_rank_lt`, `forall_exists_le_rank_iff`, `iInter_setOf_le_rank_eq_empty`, the
+  lemmas on `ofRank`, the least-level lemmas, `domain_ofCountableCover`, and the three counts
+  `mk_eq_aleph_one_of_rank`, `mk_le_aleph_one_of_rank`, and `mk_le_aleph_one_of_countable_cover`
+  each apply one InfinitaryLogic statement.  The conventions, recorded in the module docstring of
+  `Counting/Filtration`:
+  - the restriction `α < ω₁` inside `leastLevel` (`sInf {α | α < ω₁ ∧ x ∈ Q α}`, against
+    InfinitaryLogic's `sInf {α | x ∈ Q α}`), which keeps the least level below `ω₁` with no
+    hypothesis; the two agree under the cover (`leastLevel_eq_leastLevel_of_cover`), and the
+    restricted form is InfinitaryLogic's least level of the family restricted to levels below `ω₁`
+    (`leastLevel_eq_leastLevel_inter`, by definition);
+  - fibres as sets (`{x | r x = α}.Countable`), against subtypes in InfinitaryLogic;
+  - `Order.succ η`, in InfinitaryLogic, is definitionally `η + 1`.
+
+  `Filtration` itself (the hypothesis bundle of the count with a countable persistent core),
+  `Filtration.compl_countable`, the counts of `Counting/Separation` that allow a nonempty core, and
+  `Counting/Domains` stay local: InfinitaryLogic has no such bundle, and its `mk_*_of_domains` need
+  every point to leave.  To be deleted later (no statement changes here):
+
+  - `countable_setOf_rank_lt`, unused: InfinitaryLogic's `countable_of_forall_rank_lt` with the
+    conversion of fibres;
+  - `le_leastLevel_iff`, unused since `domain_ofCountableCover` quotes `rankTail_leastLevel`:
+    `rankTail_leastLevel` with the cover;
+  - `iInter_setOf_le_rank_eq_empty`, used once, by `FullPresentations.core_toFiltration` in
+    `MainTheorem/Assembly`, which can use `Filtration.core_ofRank` or `biInter_rankTail_eq_empty`;
+  - `forall_exists_le_rank_iff`, used only by an example of `Counting/Separation` and named in
+    `README.md`, "What the count of this route no longer uses", which is then to cite
+    `rankTail_cofinal_losses_iff` alone.
+
+  `leastLevel_le` is kept; its hypothesis `α < ω₁` can be dropped, since InfinitaryLogic's
+  `leastLevel_le_of_mem` needs neither it nor a cover.
 
 **Statements not yet in any module.**
 

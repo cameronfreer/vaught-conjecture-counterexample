@@ -345,8 +345,9 @@ set_option linter.hashCommand false in
 -- `#X ≤ ℵ₁` (`mk_le_aleph_one_of_domains`).  Under the covering hypothesis
 -- `hcover : ⋃ α < ω₁, Q α = univ`, the tails of `leastLevel Q` are the complements of the initial
 -- unions of `Q`, and countable sets `Q α` give `leastLevel Q` countable fibres.  The statements of
--- `Counting/Filtration` are candidates for one-line quotation of these (`IMPLEMENTATION.md`,
--- "Placement record"); no application is compiled here.
+-- `Counting/Filtration` and `Counting/Separation` are proved in the library as quotations of these,
+-- with their statements kept (`IMPLEMENTATION.md`, "Placement record"); no application is compiled
+-- in this sketch.
 set_option linter.hashCommand false in
 #check InfinitaryLogic.countable_iff_rank_bounded
 set_option linter.hashCommand false in

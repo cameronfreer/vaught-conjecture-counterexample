@@ -856,7 +856,8 @@ These are statements still to be proved.  None is an input to the main theorem.
        carrier.  The **lifting** of every automorphism of the base reduct to an automorphism of the
        expansion, by the same bijection of the carrier, given the uniqueness of the expansion on a
        fixed carrier (uniqueness of expansion and same-carrier transport, `README.md`, Layer 6,
-       statements of the main development; here a hypothesis): the automorphism carries the
+       statements of the main development; here a hypothesis, or, once the first row is proved in
+       the form stated after the table, directly by definability): the automorphism carries the
        expansion to a model expansion of the same base model on the same carrier, which by that
        uniqueness is the expansion itself.  In the core case, an automorphism of the base reduct
        fixing the core lifts to one fixing the core.  With both, the translation of an orbit formula
@@ -874,8 +875,9 @@ These are statements still to be proved.  None is an input to the main theorem.
        bounds recorded below.
      - **Coreless bound:** `internalScottRank M ≤ Ordinal.lift (ω·(η+1))`, the lift to the universe
        of the carrier `M`, requiring in addition **pointwise finite stage-formula ranks**: each
-       tuple has a stage-language orbit formula (B3.1 for the top-free witness; a hypothesis, to be
-       proved, for the residual and hollow ages) of finite quantifier rank `m` (no uniform bound is
+       tuple has a stage-language orbit formula (B3.1 for the top-free witness; for the residual and
+       hollow ages a derived result still to be proved, not a further hypothesis: "Pointwise finite
+       stage ranks" below) of finite quantifier rank `m` (no uniform bound is
        assumed), so that its translation has rank at most `ω·η + m < ω·(η+1)`, the term
        `orbitRank a + 1` stays below `ω·(η+1)`, and the `+1` of the convention is absorbed into the
        limit (the strict form of `internalScottRank_le_of_infinitaryOrbitFormulas`, with
@@ -887,7 +889,8 @@ These are statements still to be proved.  None is an input to the main theorem.
        realizations in the expansion itself are exactly the images of the core chart under the
        automorphisms of the expansion.  The candidate is "the chart predicate of `p` holds of the
        core coordinates, and the core is rigid in every actual chart containing it"; its rank bound
-       and its isolation of the orbit are to be proved.  The pointed orbit formulas of the tuples
+       and its isolation of the orbit are to be proved ("A candidate isolating formula for the orbit
+       of a core" below).  The pointed orbit formulas of the tuples
        over the named core (the analogue of B3.1 over the named core, `README.md`, Layer 4, and B4,
        to be proved) are assumed to have finite rank, as in the coreless case.  The fallback uses
        the pointed core formula of Layer 4 in place of the isolating formula, in its optional
@@ -931,25 +934,23 @@ These are statements still to be proved.  None is an input to the main theorem.
      contains a second class, `η < stabilizationOrdinal ≤ qrank σ`, the first inequality by the
      one-sided rank comparison below, the second by `stabilizationOrdinal_le_of_sentence_rank`
      (available upstream at InfinitaryLogic `cf80917`, not yet at our pinned dependency), as in
-     target 2; its application to the constructed `σ` is to be proved.  Strict and non-strict bounds
-     are kept apart as in B3.3 (`≤ ω`, not `< ω`): strict bounds `orbitRank a < β` for every tuple
-     give `internalScottRank ≤ β`, non-strict bounds `orbitRank a ≤ β` give only `≤ β + 1`, and no
-     bound is asserted to be attained.
+     target 2; its application to the constructed `σ` is to be proved.  For the base model `R` of a
+     terminal expansion at block `η` (the core case, with a labelled globally rigid core of arity
+     `k`; the residual case, with positive eventual top grade and no rigid core; hollow growth; or
+     top-free), the expansion satisfies its exact-age sentence (respectively its core sentence) in
+     normalized form, which follows from modelhood, rigidity, and finite-cut receiving and is not a
+     separate premise; so, when `D_η` contains a second class (cofinally nonempty losses supply
+     one), the chain gives the two-sided bound `η < stabilizationOrdinal R ≤ ω·(η+2)` (`ω·(η+2)+k`
+     in the core case), a statement to be proved: inequalities, not an equality, and nothing about
+     `internalScottRank` or `scottHeight` follows.  Strict and non-strict bounds are kept apart as
+     in B3.3 (`≤ ω`, not `< ω`): strict bounds `orbitRank a < β` for every tuple give
+     `internalScottRank ≤ β`, non-strict bounds `orbitRank a ≤ β` give only `≤ β + 1`, and no bound
+     is asserted to be attained.
 
-  **Terminal models, and the hypotheses of targets 2 and 3** (prospective: every statement in this
-  paragraph is to be proved, with the hypotheses stated).  *The two-sided bound for terminal
-  models.*  Let `R` be the base model of a terminal expansion at block `η`: the core case, with a
-  labelled globally rigid core of arity `k`; the residual case, with positive eventual top grade and
-  no rigid core; hollow growth; or top-free.  The expansion satisfies its exact-age sentence
-  (respectively its core sentence) in normalized form; this follows from modelhood, rigidity, and
-  finite-cut receiving, and is not a separate premise.  When `D_η` contains a second class
-  (cofinally nonempty losses supply one), `η < stabilizationOrdinal R ≤ ω·(η+2)` (`ω·(η+2)+k` in the
-  core case): the lower bound by the one-sided rank comparison below, the upper bound by recognition
-  at the rank of the absolute Scott sentence of the last two rows (target 2).  These are
-  inequalities, not an equality, and nothing about `internalScottRank` or `scottHeight` follows.
-
-  *Pointwise finite stage ranks for the residual and hollow ages* (a derived result, still to be
-  proved, not a hypothesis).  For a supplied expanded model of residual or hollow exact age on a
+  **Supplements to target 3** (prospective: every statement below is to be proved, with the
+  hypotheses stated).  *Pointwise finite stage ranks for the residual and hollow ages* (a derived
+  result, still to be proved, not a hypothesis; it supplies the premise of the coreless bound of
+  target 3 for these ages).  For a supplied expanded model of residual or hollow exact age on a
   countable carrier, every tuple is to have an orbit formula of finite quantifier rank in the stage
   chart language at `λ_η`, as B3.1 gives for the top-free witness.  The route is the comparison
   argument, not receiving alone: exact receiving within the age, (R2) for the residual age (positive
@@ -960,10 +961,12 @@ These are statements still to be proved.  None is an input to the main theorem.
   formula of a tuple then defines its orbit with finite rank, as in B2 and B3.1.  Receiving at a
   cutoff is not exact receiving ("Examples", below), and does not by itself give homogeneity.
 
-  *A candidate isolating formula for the orbit of a core.*  Global rigidity of a core is a property
-  of the pairs `(c, e)` of a stage type `c` on `m` points and a face embedding `e` of the core into
-  it, quantified over the actual charts containing the core.  "The core is rigid in every actual
-  chart containing it" is therefore, for the `k` core coordinates `x̄`, the formula
+  *A candidate isolating formula for the orbit of a core* (the core-orbit isolating formula on which
+  the core bound of target 3 is conditional; the fallback of that bound uses the pointed core
+  formula of Layer 4 in its place).  Global rigidity of a core is a property of the pairs `(c, e)`
+  of a stage type `c` on `m` points and a face embedding `e` of the core into it, quantified over
+  the actual charts containing the core.  "The core is rigid in every actual chart containing it" is
+  therefore, for the `k` core coordinates `x̄`, the formula
   `⋀_m ∀ z̄ ⋀_{(c,e) not rigid} ¬(P_c(z̄) ∧ z̄∘e = x̄)`, a countable conjunction (the stage is
   countable) of rank at most `sup_m m = ω`.  That its conjunction with the chart predicate of `p` at
   the core coordinates isolates the orbit of the core reduces to two statements to be proved: (i) in
