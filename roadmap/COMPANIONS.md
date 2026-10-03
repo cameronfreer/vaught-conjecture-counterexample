@@ -226,20 +226,30 @@ observation on every high presentation; its scatteredness composition is
 truth sides, uses the stronger form, which the expansion domains provide.
 
 **Upstream ingredients of the scatteredness composition** (`README.md`, Layer 6), each with its
-compiled use in this repository.  From InfinitaryLogic, available at the pin (signatures
-checked): `exists_uniform_bfSeparation` (`Descriptive/BFSeparation`), applied in
-`exists_forall_not_codeBFEquiv_of_isClosed` and through it in `isThinOn_of_countable_bfClasses`;
-`bfEquivSetoid` (`ModelTheory/MorleyCounting`), in `bfEquivSetoid_eq_comap` and
+compiled use in this repository.  From InfinitaryLogic, available at the pin (signatures checked):
+`isThinOn_of_bfScattered` (`Descriptive/BFScattered`) and
+`Sentenceω.isThinOnNatModels_of_bfScattered` (`Descriptive/BFScatteredSentence`), quoted as
+`isThinOn_of_countable_bfClasses` (whose hypothesis is `BFScattered K` by definition) and
+`isThinOnNatModels_of_countable_bfClasses`; `exists_uniform_bfSeparation`
+(`Descriptive/BFSeparation`), which enters through InfinitaryLogic's proof of
+`isThinOn_of_bfScattered` and through its `exists_forall_not_codeBFEquiv_of_analyticSet`, quoted as
+`exists_forall_not_codeBFEquiv_of_isClosed`; `bfEquivSetoid` (`ModelTheory/MorleyCounting`), in
+`bfEquivSetoid_eq_comap` (a quotation of its namesake) and
 `isThinOnNatModels_of_countable_bfClasses`, and in `MainTheorem/Assembly` in
 `FullPresentations.HasScatteredTails`, `HasScatteredTails.countable_quotient`, and
-`HasScatteredTails.of_countable_quotient`; `Perfect.mk_eq_continuum`
-(`Descriptive/PerfectAntichain`), in `not_countable_of_perfect`; and
+`HasScatteredTails.of_countable_quotient`; `codeBFEquivSetoid`, which the local `codeBFEquivSetoid`
+is by definition; `not_structureIso_of_mem_offDiag` and `MeasureTheory.AnalyticSet.offDiag`, in
+`offDiag_noniso` and `analyticSet_offDiag`; `Perfect.mk_eq_continuum` (`Topology/Perfect`), in
+`not_countable_of_perfect`, which stays local because that statement assumes a metric space and the
+space of codes gets one only after a choice of compatible complete metric; and
 `HasCantorAntichainOn.hasPerfectAntichainOn` (`Descriptive/PerfectAntichain`), used only by the
-example of `MainTheorem/Examples` showing that countably many back-and-forth classes are needed,
-not by the composition.  From Mathlib: `Set.offDiag`, in `analyticSet_offDiag` and
-`offDiag_noniso`; and `Setoid.comapQuotientEquiv`, in `isThinOn_of_countable_bfClasses`.  The
-statements of `VaughtConjecture.MainTheorem.Scatteredness`, all generic, belong upstream; their
-destinations are recorded in `IMPLEMENTATION.md`, "Placement record".
+example of `MainTheorem/Examples` showing that countably many back-and-forth classes are needed, not
+by the composition.  The four lemmas on closed antichains (`not_countable_of_perfect`,
+`analyticSet_offDiag`, `offDiag_noniso`, and `exists_forall_not_codeBFEquiv_of_isClosed`) are kept
+with their statements and are no longer used by the thinness theorems; Mathlib's `Set.offDiag`
+enters through them, and `Setoid.comapQuotientEquiv` is no longer used.  The statements of
+`VaughtConjecture.MainTheorem.Scatteredness`, all generic, belong upstream; their destinations are
+recorded in `IMPLEMENTATION.md`, "Placement record".
 
 ## Milestone B — top-free chart homogeneity and its consequences
 
@@ -689,22 +699,48 @@ These are statements still to be proved.  None is an input to the main theorem.
   persistent core", above).  The termination-free expansion-domain route, whose lower bound is
   condition 4, remains the default (the first endpoint, `README.md`, "Endpoints and shared
   foundations"), and the count does not use this chain.
-* **Quantitative reconstruction** (prospective: a companion pathway of bounded checkpoints, not a
-  prerequisite of the main theorem by either route; it is used by neither route).  It asks for
-  explicit base-language syntax for the expansions recovered by higher-stage reconstruction
-  (`README.md`, Layer 4, outputs 1–5), with bounds on its quantifier rank.  Each row of the table
-  below is a separate statement to be proved: **to construct the specified formula and prove that
-  its quantifier rank is at most the displayed ordinal**.  The rank is that of the particular
-  constructed syntax, in the library's convention (`BoundedFormulaω.qrank`, InfinitaryLogic, at the
-  pin, signatures checked); membership in a signed class (`IsSigmaIn`, `IsPiIn`) and membership in a
-  normal form (`IsSigmaInNF`, `IsPiInNF`) are separate claims, not asserted here.  A **contract** of
-  the pathway is one of these statements, or the transfer bound below, with its hypotheses fixed
-  with it.  Here `η` is a countable block index and the stage is `λ_η`; a **supplied expanded
-  model** is a countable base model together with its expansion to `λ_η`, of a coreless exact age
-  (top-free, residual, or hollow; `README.md`, Layer 4), and a **supplied `k`-coordinate core
-  model** is a countable base model together with its expansion to `λ_η`, of an exact age pointed
-  at a core that is an actual chart of the expansion (an actual occurrence of a stage type `p` at
-  `λ_η`, `k` its arity) and globally rigid, named by its `k` coordinates.
+
+  **A second alternative route to the lower bound: Scott-bounded counting** (prospective; a reading
+  of statements recorded elsewhere, each still to be proved).  The bound for each class in (iv)
+  above can be read off Scott sentences, with explicit levels.  A class `q` with a Scott sentence
+  `σ_q` of countable quantifier rank (as in 1 above) is recognized at the level of the quantifier
+  rank of `σ_q`: back-and-forth equivalence on the empty tuple at that level carries `σ_q` across
+  (`BFEquiv_implies_agreeQR`, for a relational language; recognition of a supplied model,
+  "Quantitative reconstruction", target 2, below).  So when presentations of different classes at a
+  level `α` at least the rank of `σ_q` agree at back-and-forth level `α` (condition 3 on `D_α`, or
+  approximate comparison of full presentations), the levels of the presentations of `q` are bounded
+  by the rank of `σ_q` as soon as another class has a presentation at every higher level, and the
+  bounded-levels criterion (`README.md`, "Reduction to full presentations", "Bounded levels") gives
+  uncountably many classes; this is eventual departure (1 above) with explicit levels, and the
+  lower-bound criterion of `README.md` is the same argument with Scott isolating levels.  Explicit
+  levels for the terminal expansions at block `η` are the syntax bounds of the table below
+  (`ω·(η+2)`, and `ω·(η+2)+k` in the core case), with the stabilization-ordinal bounds of target 2
+  and the orbit-rank bounds of target 3.  Uses of termination, marked: the Scott sentences and their
+  recognition levels use none; another class at every higher level is condition 4 (nonempty losses),
+  with no termination; the agreement on `D_α` is condition 3; reading the presentations of every
+  class as full presentations uses full-presentation coverage, hence global termination
+  (`README.md`, "The persistent core"), which is then a stated hypothesis.  The termination-free
+  expansion-domain route remains the default, and the count does not use this route.  Fixing ranks
+  of finite charts and Scott ranks of models are kept distinct: the bound here is on the levels of
+  presentations, obtained from the rank of a Scott sentence, and no fixing rank is identified with a
+  Scott rank.
+* **Quantitative reconstruction** (a companion pathway of bounded checkpoints, prospective except
+  for the first row, whose status is below; not a prerequisite of the main theorem by either route;
+  it is used by neither route).  It asks for explicit base-language syntax for the expansions
+  recovered by higher-stage reconstruction (`README.md`, Layer 4, outputs 1–5), with bounds on its
+  quantifier rank.  Each row of the table below is a separate statement to be proved: **to construct
+  the specified formula and prove that its quantifier rank is at most the displayed ordinal**.  The
+  rank is that of the particular constructed syntax, in the library's convention
+  (`BoundedFormulaω.qrank`, InfinitaryLogic, at the pin, signatures checked); membership in a signed
+  class (`IsSigmaIn`, `IsPiIn`) and membership in a normal form (`IsSigmaInNF`, `IsPiInNF`) are
+  separate claims, not asserted here.  A **contract** of the pathway is one of these statements, or
+  the transfer bound below, with its hypotheses fixed with it.  Here `η` is a countable block index
+  and the stage is `λ_η`; a **supplied expanded model** is a countable base model together with its
+  expansion to `λ_η`, of a coreless exact age (top-free, residual, or hollow; `README.md`, Layer 4),
+  and a **supplied `k`-coordinate core model** is a countable base model together with its expansion
+  to `λ_η`, of an exact age pointed at a core that is an actual chart of the expansion (an actual
+  occurrence of a stage type `p` at `λ_η`, `k` its arity) and globally rigid, named by its `k`
+  coordinates.
 
   | Statement (the formula to construct) | Bound (quantifier rank ≤) |
   | --- | ---: |
@@ -722,6 +758,31 @@ These are statements still to be proved.  None is an input to the main theorem.
   carrier.  It also implies the lifting of isomorphisms, not only of automorphisms, by the same
   bijection: a bijection that is an isomorphism of base models preserves every relation definable in
   the base language, hence every chart predicate of the respective expansions.
+
+  **Status of the first row:** compiled in this repository (theorem named), conditional on block
+  determination (`CoverThresholds.Determines`), with the rank bound unconditional; in
+  `Definability/BlockFormulas`.  For threshold data `U` (`CoverThresholds`), the formula
+  `blockFormula U η hη t` of a stage type `t` at `λ_η`, defined by recursion on `η`
+  (`Ordinal.limitRecOn`), has quantifier rank at most `ω·η` with no hypothesis
+  (`qrank_blockFormula_le`).  Block determination at `ξ` asks that, in every model expansion to
+  `λ_{ξ+1}`, at every cell reducing to the formal top at `λ_ξ`, the label is at least `λ_ξ + n`
+  exactly when the tuple extends to a cover, one block lower, of some triple of `U` for that cell
+  and `n`.  Under it at the blocks below `η`, in every model expansion to `λ_η` the formula holds
+  exactly of the tuples covering `t` (`realize_blockFormula_iff`); hence, under the same hypothesis,
+  uniqueness of the model expansion to `λ_η` on a fixed carrier (`ModelExpansion.eq_of_determines`),
+  lifting along isomorphisms of base structures by the same bijection
+  (`ModelExpansion.map_eq_of_determines`), the definition of the chart relations by these formulas
+  (`ModelExpansion.relMap_toChartStructure_iff`), and the pointed form at level `ω·η`
+  (`ModelExpansion.covers_iff_of_bfEquiv`, through `BFEquiv_implies_agreeQR`).  Block determination
+  is expected to follow from Layer 4, outputs 1–2 (the stable candidate and normalization;
+  `README.md`, Layer 4), provided the stable value of a cell is the supremum over covers of an
+  offset determined by the cover's type at `λ_η`, the coordinate embedding and the transported cell;
+  that shape, the existential finite-data form of the threshold, is part of what remains to be
+  proved.  An eventual-value construction that allows decreases does not by itself establish this
+  existential finite-cover characterization; that characterization would then require a separate
+  proof.  The construction of `U` and the proof of block determination are still to be proved.  No
+  model expansion is constructed in this repository at any stage, so the semantic statements may be
+  vacuous at present; the bounds are syntax bounds, not Scott ranks.
 
   The second row is the syntactic transcription of "admits an expansion to `λ_η`" that A1 does not
   claim: the sentence `δ_η` of A1 is assembled from Scott sentences of classes and carries no rank
@@ -746,11 +807,16 @@ These are statements still to be proved.  None is an input to the main theorem.
   evaluated correctly whatever intermediate expansion exists.  The guard is relative to base models:
   nothing is asserted at a structure that is not a model.
 
-  **Successor substitution** defines the chart predicates at `λ_{η+1}` by substituting the
-  definitions at `λ_η` into formulas recovering the labels of the next block (formulas of quantifier
-  rank at most `ω` in the chart predicates at `λ_η`, a bound that is part of the first row's
-  statement), and **cofinal-limit conjunction** defines them at a limit block by a conjunction along
-  a cofinal sequence of lower blocks.
+  **Successor substitution** defines the chart predicates at `λ_{η+1}` from the definitions at
+  `λ_η`: the definition of the reduced type, conjoined, at every cell that reduces to the formal top
+  and every `n`, with a formula recovering whether the label is at least `λ_η + n`, or its negation.
+  Read in the chart predicates at `λ_η`, each recovering formula is a disjunction of existential
+  closures over `m` coordinates, of rank at most `m`, so the recovering formulas have rank at most
+  `ω`; substituting definitions of rank at most `ω·η` gives rank at most `ω·η + m` for each, and at
+  most `ω·η + ω = ω·(η+1)` for the whole (in the compiled form, `BlockRecursion.succFormula` with
+  `BlockRecursion.qrank_succFormula_le`).  **Cofinal-limit conjunction** defines them at a limit
+  block by a conjunction along a cofinal sequence of lower blocks (in the compiled form, over all
+  lower blocks, `BlockRecursion.limitFormula`).
 
   **The central contract** (a theorem to be proved).  Let `σ` be a supplied expanded Scott sentence,
   a sentence of the stage chart language at `λ_η` of quantifier rank at most `ρ` (for the last row,
@@ -781,9 +847,11 @@ These are statements still to be proved.  None is an input to the main theorem.
      `existsTuple` and `existsTuple_isScott`) supplies the semantic mechanism only.  The rank
      statement to prove is that existentially closing the `k` named coordinates adds at most `k` to
      the bound.  One existential quantifier adds one to the rank (`qrank_existsLastVar`, at the pin,
-     signatures checked); the statement for the closure `existsTuple k` is to be proved.  Membership
-     in `Σ^in_3` gives no rank bound, and the normal form `IsSigmaInNF 3` gives only `ω·3`
-     (`IsSigmaInNF.qrank_le`).
+     signatures checked); for closing the last `m` free variables one at a time,
+     `qrank_existsLastVars` (`Definability/Syntax`, compiled in this repository (theorem named))
+     gives exactly `+m`; the statement for the closure `existsTuple k` is still to be derived from
+     it.  Membership in `Σ^in_3` gives no rank bound, and the normal form `IsSigmaInNF 3` gives only
+     `ω·3` (`IsSigmaInNF.qrank_le`).
   2. **The base-model conjunct.**  The relative transfer is to isolate the supplied model only among
      base models.  The passage from relative to absolute isolation must explicitly bound the
      base-model conjunct: the base-theory conjunct (the density sentence `Φ`) and the
@@ -1011,15 +1079,31 @@ These are statements still to be proved.  None is an input to the main theorem.
   others: a finite chart has finitely many proper labels, all below `λ_η`, and since `λ` is
   continuous at limits each lies below some `λ_ξ` with `ξ < η`, so its fixing rank is below `η`.
 
-  *Charts of every fixing rank* (a finite target, still to be proved, with the definitions of the
-  preceding item).  On one fixed legal scheme on one point (a domain of arity one, in the sense of
-  [Kni26, Definition 2.6.1]), for every countable `ξ` there is a lawful labelling of fixing rank
-  exactly `ξ + 1`: a legal stage type at `λ_η` for every `η > ξ`, with every proper label below
-  `λ_{ξ+1}` and one at least `λ_ξ`.  It concerns finite data only and is to be proved before any
-  model is built.  It supplies explicit witnesses of high fixing rank for the lower bound, with no
-  use of any property of models (the strict decrease of the domains, or termination).  Special cases
-  to be compiled with it: `ξ = 0`, `ξ = ω`, and `ξ` a limit.  Like the fixing rank itself, it says
-  nothing about Scott ranks.
+  *Fixing ranks are zero or successors* (still to be proved).  The fixing rank of a finite chart is
+  never a limit ordinal: bottom and top are fixed by every reduction, and a proper label is fixed by
+  the reduction to `λ_ξ` exactly when it lies below `λ_ξ`, so the fixing rank is the largest, over
+  the finitely many proper labels, of the least `ξ` with the label below `λ_ξ`; since `λ` is
+  continuous at limits, a label below `λ_δ` at a limit `δ` lies below some `λ_ξ` with `ξ < δ`, so
+  each such least `ξ` is zero or a successor.  This is why the supremum at a limit block is not
+  attained.
+
+  *Limit heights are unattained suprema* (still to be proved).  At a limit block `η`, the supremum
+  `η` of the fixing ranks of the realized finite charts of a model at `λ_η` is a supremum of fixing
+  ranks that are zero or successors, none equal to `η`; likewise a height (above) that is a limit is
+  the supremum of fixing ranks below it and is not attained.  Neither statement identifies a fixing
+  rank or a height with a Scott rank.
+
+  *Charts of every fixing rank* (a finite target, still to be proved, with the definitions of
+  "Fixing ranks of finite charts").  On one fixed legal scheme on one point (a domain of arity one,
+  in the sense of [Kni26, Definition 2.6.1]), for every countable `ξ` there is a lawful labelling of
+  fixing rank exactly `ξ + 1`: a legal stage type at `λ_η` for every `η > ξ`, with every proper
+  label below `λ_{ξ+1}` and one at least `λ_ξ`.  With the labellings of fixing rank `0` (every
+  proper label below `ω`), these are all the fixing ranks of finite charts, which are zero or
+  successors (above).  It concerns finite data only and is to be proved before any model is built.
+  It supplies explicit witnesses of high fixing rank for the lower bound, with no use of any
+  property of models (the strict decrease of the domains, or termination).  Special cases to be
+  compiled with it: `ξ = 0`, `ξ = ω`, and `ξ` a limit.  Like the fixing rank itself, it says nothing
+  about Scott ranks.
 
   **Completion criterion.**  Each row is a bounded checkpoint, complete when its formula is
   constructed for the concrete objects of the construction (the chart predicates at `λ_η`, the
