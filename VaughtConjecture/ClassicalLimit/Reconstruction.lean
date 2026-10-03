@@ -90,19 +90,26 @@ hypotheses on the stage `α` stated there; none of these enters this file.
 **What this file does not contain.**  Each item names the hypotheses it will need beyond those
 used here.
 
-* **Receiving** (step 6), `(reconstruct α M).HasFiniteCutReceiving`: over an actual root of type
-  `p`, for a one-point coface `d` of `p` and a permitted cutoff, an occurrence extending the root
-  literally, with a new point and a type agreeing with `d` below the cutoff, all on one occurrence.
-  It needs the top-free pinned extension, (R5) of roadmap, Layer 3, 3.4: the pinned extension
-  `StageType.exists_pinned_extension`, under `StageType.HasCoatomExtensions α`, capped at a cap
-  above the cutoff and the labels of `p` (`StageType.exists_cap`, under `Order.IsSuccPrelimit α`
-  and `0 < α`); and the ultrahomogeneity of `M`
-  (`FirstOrder.Language.IsUltrahomogeneous.extend_embedding`), applied to the embedding of the
-  chart of `p` onto the root (`reconstruct_eval_eq_some_iff_exists_embedding`).
-* **Modelhood** (step 7), `(reconstruct ω M).IsModel` with `u = 0`: from receiving and the
-  cap-to-model theorem (`MainTheorem.CapToModel`, roadmap, Layer 3, 3.4, not proved), whose other
-  hypotheses, a nonempty carrier, legal types, exact consistency, and covering, are proved here.
-  The density sentence then holds in the base-language structure of the reconstructed realization.
+* **Receiving** (step 6), `(reconstruct α M).HasFiniteCutReceiving`: over an actual occurrence of
+  type `p`, for a one-point coface `d` of `p` and a permitted cutoff, an occurrence extending it
+  literally, with a new point and a type agreeing with `d` below the cutoff.  The root is a whole
+  occurrence, so the pinned extension over it is trivial and the coatom extension property is not
+  needed: `d` capped at an ordinal below `α`, self-visible at its arity, at or above the cutoff and
+  the labels of `p` (`StageType.cap`, as in `StageType.exists_cap`, under `Order.IsSuccPrelimit α`
+  and `0 < α`) is a legal top-free coface of `p`, and it is realized over the occurrence by the
+  ultrahomogeneity of `M` (`FirstOrder.Language.IsUltrahomogeneous.extend_embedding`, applied to
+  the embedding of the chart of `p` onto the occurrence given by
+  `reconstruct_eval_eq_some_iff_exists_embedding`).  The coatom extension property enters the
+  top-free witness only through the existence of the limit and through infinitude.
+* **The density sentence** (step 7), with `u = 0`: for the base-language structure
+  (`Realization.toStructure`) of the reduction of the reconstructed realization to `ω`
+  (`Realization.reduce`), by `realize_toStructure_densitySentence_iff`.  Legal types, a nonempty
+  carrier, exact consistency, and covering of the reduction follow from those proved here
+  (`Realization.IsConsistent.reduce`, `Realization.IsCovering.reduce`); finite-cut receiving of the
+  reduction needs receiving at `α` and its descent along stage reduction, cutoff by cutoff, which
+  is not exact projected receiving (semantic contract, item 12).  Modelhood in the sense of
+  [Kni26, Definition 3.2.1] (`Realization.IsModel`) is a further statement, whose clauses beyond
+  receiving are not proved here.
 * **Infinitude and terminality** (step 7): infinitude from receiving over a whole actual
   occurrence, with a one-point coface of its type (`StageType.exists_extension`, under the coatom
   extension property); terminality from the top-freeness proved here, modelhood, and the
@@ -112,13 +119,17 @@ used here.
   observations of `M`.
 
 **Universes.**  The limit is a structure in `Type` of a language in `Type (u + 1)`; the output of
-reconstruction is the realization `reconstruct α M`, on the same carrier in `Type`.  At `α = ω`
-with `u = 0`, its structure in the base language (`Realization.toStructure`) is the structure, in
-`Type`, that the spectrum statements take; the structure of `M` in the hull language is not.
+reconstruction is the realization `reconstruct α M`, on the same carrier in `Type`.  With `u = 0`,
+the base-language structure in `Type` that the spectrum statements take is that of its reduction to
+`ω`; the structure of `M` in the hull language is not.
 
 ## Placement
 
 This file belongs to the section on the top-free witnesses of `roadmap/README.md`.
+
+## References
+
+Realizations, exact consistency, covering, and models are [Kni26, Definition 3.2.1].
 -/
 
 universe u v
