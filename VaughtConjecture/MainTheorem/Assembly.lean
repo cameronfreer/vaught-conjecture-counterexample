@@ -430,7 +430,8 @@ theorem domain_toFiltration (hX : ¬ Countable X) (η : Ordinal.{0}) :
 above its least presentation level. -/
 @[simp]
 theorem core_toFiltration (hX : ¬ Countable X) : (P.toFiltration hX).core = ∅ :=
-  iInter_setOf_le_rank_eq_empty _ fun x ↦ (leastLevel_lt_and_mem P.exists_mem_presentedAt x).1
+  InfinitaryLogic.biInter_rankTail_eq_empty _ fun x ↦
+    (leastLevel_lt_and_mem P.exists_mem_presentedAt x).1
 
 /-- **Bounded comparison** (in sentence form), for a truth predicate `truth θ` of the sentences `θ`
 of a language `L` on the classes: the classes in the tail at each `η < ω₁` agree on every sentence

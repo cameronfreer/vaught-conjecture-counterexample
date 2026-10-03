@@ -292,12 +292,17 @@ example (Q : Ordinal.{0} → Set Empty) : #Empty ≤ ℵ₁ :=
   mk_le_aleph_one_of_countable_cover (Q := Q) (fun _ _ ↦ Set.to_countable _) (·.elim)
 
 /-- **A countable type** has a rank with countable fibres (`n ↦ n` on `ℕ`) and at most `ℵ₁`
-elements, but no filtration by it: its ranks are bounded below `ω₁`. -/
+elements, but no filtration by it: its ranks are bounded below `ω₁` (InfinitaryLogic's
+`InfinitaryLogic.countable_iff_rank_bounded`). -/
 example : #ℕ ≤ ℵ₁ ∧ ¬ ∀ β, β < ω₁ → ∃ n : ℕ, β ≤ (n : Ordinal.{0}) :=
   have hr (n : ℕ) : (n : Ordinal.{0}) < ω₁ :=
     (Ordinal.natCast_lt_omega0 n).trans Ordinal.omega0_lt_omega_one
   ⟨mk_le_aleph_one_of_rank hr fun _ _ ↦ Set.to_countable _,
-    fun h ↦ (forall_exists_le_rank_iff _ hr fun _ _ ↦ Set.to_countable _).1 h inferInstance⟩
+    fun h ↦ by
+      obtain ⟨β, hβ, hlt⟩ := (InfinitaryLogic.countable_iff_rank_bounded _ hr
+        (fun _ _ ↦ inferInstance) univ).1 countable_univ
+      obtain ⟨n, hn⟩ := h β hβ
+      exact (hlt n (mem_univ n)).not_ge hn⟩
 
 end Examples
 
