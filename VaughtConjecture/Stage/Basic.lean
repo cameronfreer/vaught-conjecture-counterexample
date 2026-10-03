@@ -41,6 +41,10 @@ Reindexing along a bijection `e : Fin m ≃ Fin n` is total (`StageType.reindex`
 map along `e` (`restrictFace_equiv`) and commutes with all face maps (`restrictFace_reindex`,
 `map_reindex_restrictFace`).
 
+**Stage types on no points.**  A stage type on no points has no cells (`card_eq_zero`) and only
+the empty face (`faces_eq_of_zero`), so there is exactly one at each stage (`eq_of_zero`); the
+empty face of every stage type is closed (`isSome_restrictFace_of_zero`).
+
 **Stage reduction.**  At a stage `β` that is zero or a limit (`Order.IsSuccPrelimit β`), the
 reduction `t.reduce hβ : StageType β n` keeps the scheme and rows and applies `Label.reduce β`
 to the section.  The reduced section is lawful (`CellScheme.Rows.IsLawful.reduce`, in
@@ -263,6 +267,42 @@ theorem restrictFace_trans_eq_none (hf : restrictFace f t = none)
     rw [← map_map, map_univ_of_surjective hg]
   rw [restrictFace_eq_none_iff, h]
   exact (restrictFace_eq_none_iff t f).mp hf
+
+/-! ### Stage types on no points -/
+
+/-- A stage type on no points has no cells: a cell would have a positive grade at most the size of
+its scope, which is empty. -/
+theorem card_eq_zero (t : StageType.{u} α 0) : t.card = 0 := by
+  by_contra h
+  have d : Fin t.card := ⟨0, Nat.pos_of_ne_zero h⟩
+  have hle := t.isWellFormed.isWellFormed.grade_le_card d
+  have hpos := t.isWellFormed.isWellFormed.grade_pos d
+  have hs : t.toCellScheme.scope d = ∅ := eq_empty_of_isEmpty _
+  rw [hs, card_empty] at hle
+  omega
+
+/-- The faces of a stage type on no points: only the empty face. -/
+theorem faces_eq_of_zero (t : StageType.{u} α 0) : t.toCellScheme.faces = {∅} := by
+  ext C
+  simp only [mem_singleton]
+  refine ⟨fun _ ↦ eq_empty_of_isEmpty C, ?_⟩
+  rintro rfl
+  exact t.isWellFormed.isWellFormed.isPlan.empty_mem
+
+/-- **There is only one stage type on no points** at each stage. -/
+theorem eq_of_zero (t t' : StageType.{u} α 0) : t = t' := by
+  have hc := t.card_eq_zero
+  have hc' := t'.card_eq_zero
+  refine ext (Scheme.ext (hc.trans hc'.symm) (by rw [t.isWellFormed.ground_eq,
+    t'.isWellFormed.ground_eq]) (by rw [t.faces_eq_of_zero, t'.faces_eq_of_zero])
+    (fun i ↦ (hc ▸ i).elim0) (fun i ↦ (hc ▸ i).elim0) (fun s ↦ (hc ▸ s).elim0))
+    fun i ↦ (hc ▸ i).elim0
+
+/-- The empty face of a stage type is defined. -/
+theorem isSome_restrictFace_of_zero (t : StageType.{u} α n) (e : Fin 0 ↪ Fin n) :
+    (restrictFace e t).isSome := by
+  rw [isSome_restrictFace_iff, univ_eq_empty, map_empty]
+  exact t.isWellFormed.isWellFormed.isPlan.empty_mem
 
 /-! ### Reindexing along bijections -/
 
