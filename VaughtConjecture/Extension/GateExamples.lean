@@ -11,8 +11,9 @@ import VaughtConjecture.Extension.WitnessAlgebra
 /-!
 # Examples: gate recovery
 
-Roadmap, Layer 3, 3.3 (the recovery statements, item 1) and the vocabulary of Layer 3; regressions
-for `VaughtConjecture.Extension.Gate`.
+Roadmap, Layer 3, 3.3 (the recovery statements, item 1) and the vocabulary of Layer 3: instances
+of `VaughtConjecture.Extension.Gate`, and counterexamples showing that its hypotheses cannot be
+dropped.
 
 The schemes are abstract cell schemes with explicit rows and labels: no legality, coding, or
 well-formedness is claimed.  The labels are natural numbers, `ω + n` (`om n`), `⊥`, and `⊤`; the
@@ -23,45 +24,46 @@ private context) and the new point `y`; the private cells are the cells visible 
 points, and the donor cells the cells visible in the root and `y`.  Each lawfulness proof checks
 the order law, the locality at every cell with an explicit witness, and availability.
 
-**Positive cases.**
+**Gate recovery in examples.**
 
-* **P1** (`one_recover`): one private point and an empty root; the gate's row reads the donor
-  cells by `bot`, `botAnchor`, and `top`.  The bottom donor labels are recovered, and the donor
-  top comes back as a value at least the cap's label, the formal top itself when that label is
-  `⊤`.  This exercises the lemma alone: in (R1) the private context has at least two more points
-  than the root.
-* **P2, P4, P6** (`block_recover`): an empty root, so every donor cell is new; anchors labelled `1`
-  and `ω + 1` in two blocks at threshold `3`, and the cap labelled `⊤`.  The donor labels `2`,
-  `ω + 2`, and `⊤` are recovered exactly; the display is lawful (`isLawful_blockLabel`).
-* **P3** (`root_eq`): the root cell, labelled `ω + 1`, anchors the donor label `ω + 2`; no separate
-  reference cell is needed.
-* **P5** (`root_cutoff`): the cap labelled `ω + 3`, the actual cut of the anchor block `ω` at
-  threshold `3`; agreement below `ω + 3` gives agreement below the cutoff `ω + 1`.
-* **P7** (`root_gate_ne_bot`): without twins, no lawful labelling with the literal private face and
-  a cap not bottom has a bottom gate.
-* **An anchor above the cap** (`root_anchor_above_cap`): with the cap labelled `3` below the anchor
+* *One private point and an empty root* (`one_recover`): the gate's row reads the donor cells by
+  `bot`, `botAnchor`, and `top`.  The bottom donor labels are recovered, and the donor top comes
+  back as a value at least the cap's label, the formal top itself when that label is `⊤`; the
+  display with the cap labelled `⊤` is lawful (`isLawful_oneLabel`).  This exercises the lemma
+  alone: in (R1) the private context has at least two more points than the root.
+* *Two anchor blocks, an empty root, and a top* (`block_recover`): every donor cell is new; anchors
+  labelled `1` and `ω + 1` in two blocks at threshold `3`, and the cap labelled `⊤`.  The donor
+  labels `2`, `ω + 2`, and `⊤` are recovered exactly; the display is lawful
+  (`isLawful_blockLabel`).
+* *The root cell as anchor* (`root_eq`): the root cell, labelled `ω + 1`, anchors the donor label
+  `ω + 2`; no separate reference cell is needed.
+* *The cut above the cutoff* (`root_cutoff`): the cap labelled `ω + 3`, the actual cut of the anchor
+  block `ω` at threshold `3`; agreement below `ω + 3` gives agreement below the cutoff `ω + 1`.
+* *No bottom gate without twins* (`root_gate_ne_bot`): no lawful labelling with the literal private
+  face and a cap not bottom has a bottom gate.
+* *An anchor above the cap* (`root_anchor_above_cap`): with the cap labelled `3` below the anchor
   `ω + 1`, the donor label `ω + 2` still comes back as a value at least `3`; the reading `ref` does
   not bound the anchor by the cap.
 
 The display of the root example is lawful for every cap label self-visible at `3`
 (`isLawful_rootDisplay`).
 
-**Negative controls.**
+**Counterexamples.**
 
-* **NC1** (`twin_bottom_gate`) and **NC2** (`twin_small_gate`): the root example with a twin of
-  the gate.  The gate data hold and the display is lawful, but lawful labellings with the literal
-  private face and the twin labelled `⊤`, with the gate `⊥` (NC1) or `3` (NC2), label the donor
-  cell `⊤` instead of `ω + 2`, which differs below the actual cut `ω + 3`.  So a literal private
-  face and a non-bottom gate do not suffice when the gate has twins; the bottom pattern of the
-  whole graded index of the gate is the hypothesis of recovery.
-* **NC3** (`root_top_at_cap`): with the cap labelled `ω + 3`, a lawful labelling with the literal
-  private face realizes the donor top as `ω + 3`; there is no agreement above the cap.
-* **NC4** (`high_not_recovered`): a donor label `ω + 4` whose finite part is at least the
-  threshold `3` has no reading, and a lawful labelling realizes it as `ω + 3`; the threshold must
-  exceed the finite parts of the donor labels.
-* **NC5** (`lowCap_not_recovered`): a cap of grade `2`, below the gate's grade `3`, does not reach
-  the gate by availability; with every reading in place and no twin, a lawful labelling with the
-  literal private face and a bottom gate loses the donor label.
+* *The bottom pattern of the twins cannot be dropped* (`twin_bottom_gate`, `twin_small_gate`): the
+  root example with a twin of the gate.  The gate data hold and the display is lawful, but lawful
+  labellings with the literal private face and the twin labelled `⊤`, with the gate `⊥` or `3`,
+  label the donor cell `⊤` instead of `ω + 2`, which differs below the actual cut `ω + 3`.  So a
+  literal private face and a non-bottom gate do not imply agreement from lawfulness alone when
+  the gate has a twin.  The rows of this example are not claimed to be legal.
+* *No agreement above the cap* (`root_top_at_cap`): with the cap labelled `ω + 3`, a lawful
+  labelling with the literal private face realizes the donor top as `ω + 3`.
+* *The threshold cannot be lowered below a donor's finite part* (`high_not_recovered`): a donor
+  label `ω + 4`, whose finite part is at least the threshold `3`, has no reading, and a lawful
+  labelling realizes it as `ω + 3`.
+* *The grade of the cap cannot be dropped* (`lowCap_not_recovered`): a cap of grade `2`, below the
+  gate's grade `3`, does not reach the gate by availability; with every reading in place and no
+  twin, a lawful labelling with the literal private face and a bottom gate loses the donor label.
 
 ## Placement
 
@@ -184,6 +186,7 @@ private theorem locality_capped {s : ι} {c : Label.{0}} (hc : IsSelfVisible (D.
       fun d ↦ min (q d) (q s) := by
   refine ⟨_, id, IsWitness.id_top.cap hc, fun d ↦ ?_⟩
   have hd : D.grade d.1 ≤ D.grade s := ((D.mem_below).mp d.2).2
+  -- Unfold the capped suppressor and the identity shifter at the cell `d`.
   change min (q d) (q s) = min (R.row s d) (if D.grade d ≤ D.grade s then min ⊤ c else ⊥)
   rw [ite_eq_left hd, min_top_left]
   exact h d.1 d.2
@@ -197,7 +200,7 @@ private theorem locality_of {s : ι} {g : ℕ → Label.{0}} {σ : Label.{0} →
       fun d ↦ min (q d) (q s) :=
   ⟨g, σ, hw, fun d ↦ h d.1 d.2⟩
 
-/-! ### The root as anchor (P3, P5, P7, the anchor above the cap, NC3)
+/-! ### The root as anchor
 
 Points `a, b, c, y` (`0, 1, 2, 3`).  Cells: the root cell `ρ = ({a}, 1)`, the private cap
 `C = ({a, b, c}, 3)`, two donor cells `f, f' = ({y}, 1)`, and the gate `G = (univ, 3)`. -/
@@ -282,7 +285,7 @@ private theorem root_noTwin (q : Fin 5 → Label.{0}) :
 
 variable {q : Fin 5 → Label.{0}}
 
-/-- **P3, the root cell as anchor**, with the private cap labelled `⊤`: every lawful labelling
+/-- **The root cell as anchor**, with the private cap labelled `⊤`: every lawful labelling
 with the literal private face has the donor labels, `ω + 2` and `⊤`. -/
 theorem root_eq (hq : rootRows.IsLawful q) (hlit : ∀ x ∈ rootPrivate, q x = rootLabel ⊤ ⊤ x) :
     q 2 = om 2 ∧ q 3 = ⊤ :=
@@ -291,7 +294,7 @@ theorem root_eq (hq : rootRows.IsLawful q) (hlit : ∀ x ∈ rootPrivate, q x = 
     (isGate_root top_ne_bot).eq_of_cap_eq_top hq hlit (root_noTwin q) rfl
       (by simp [rootDonor])⟩
 
-/-- **P5, the cut above the cutoff.**  With the private cap labelled `ω + 3` (the actual cut of the
+/-- **The cut above the cutoff.**  With the private cap labelled `ω + 3` (the actual cut of the
 anchor block `ω` at threshold `3`), agreement below `ω + 3` gives agreement below the cutoff
 `ω + 1`. -/
 theorem root_cutoff (hq : rootRows.IsLawful q)
@@ -304,7 +307,7 @@ theorem root_cutoff (hq : rootRows.IsLawful q)
   calc min (q e) (om 1) = min (min (q e) (om 3)) (om 1) := by rw [min_assoc, min_eq_right h13]
     _ = min (rootLabel (om 3) ⊤ e) (om 1) := by rw [h, min_assoc, min_eq_right h13]
 
-/-- **P7, no bottom gate without twins**: with the private cap not bottom, every lawful labelling
+/-- **No bottom gate without twins**: with the private cap not bottom, every lawful labelling
 with the literal private face has a gate that is not bottom. -/
 theorem root_gate_ne_bot {s : Label.{0}} (hs : s ≠ ⊥) (hq : rootRows.IsLawful q)
     (hlit : ∀ x ∈ rootPrivate, q x = rootLabel s ⊤ x) : q 4 ≠ ⊥ :=
@@ -318,7 +321,7 @@ theorem root_anchor_above_cap (hq : rootRows.IsLawful q)
   (isGate_root (by simp)).cap_le_of_cap_le hq hlit (root_noTwin q) (by simp [rootDonor])
     (ofNat_le_om 3 2)
 
-/-- **NC3, tops stop at the private cap.**  With the private cap labelled `ω + 3`, the labelling
+/-- **Tops stop at the private cap.**  With the private cap labelled `ω + 3`, the labelling
 that realizes the donor top `f'` as `ω + 3` is lawful and has the literal private face, so the
 donor top is not recovered: there is no agreement above `ω + 3`. -/
 theorem root_top_at_cap :
@@ -328,7 +331,7 @@ theorem root_top_at_cap :
   ⟨isLawful_rootLabel (by simp) (by simp) (by simp) le_rfl,
     fun x hx ↦ by rcases hx with rfl | rfl <;> rfl, by simp [rootLabel]⟩
 
-/-! ### One private point (P1)
+/-! ### One private point
 
 Points `a, y` (`0, 1`); the root is empty.  Cells: the private cap `C = ({a}, 1)`, a private cell
 `z₀ = ({a}, 1)` labelled `⊥`, three donor cells `({y}, 1)` labelled `⊥`, `⊥`, `⊤`, and the gate
@@ -360,8 +363,38 @@ theorem isGate_one {s : Label.{0}} (hs : s ≠ ⊥) :
     · exact .botAnchor ⟨1, by simp [oneScheme, gradedIndex]⟩ (by simp) rfl rfl le_rfl
     · exact .top ⟨0, by simp [oneScheme, gradedIndex]⟩ (by simp) le_rfl le_top le_rfl
 
-/-- **P1**: every lawful labelling with the literal private face has the bottom donor labels, and a
-value at least the private cap at the donor top; the formal top itself when the cap is `⊤`. -/
+/-- Killing the finite block sends `0` to bottom. -/
+private theorem killFinite_zero : killFinite 0 = ⊥ :=
+  ite_eq_left (WithBot.coe_lt_coe.mpr (WithTop.coe_lt_coe.mpr Ordinal.omega0_pos))
+
+/-- The display with one private point and the cap labelled `⊤` is lawful. -/
+theorem isLawful_oneLabel : oneRows.IsLawful (oneLabel ⊤) where
+  orderly d := by fin_cases d <;> simp [oneLabel]
+  locality c := by
+    fin_cases c
+    · exact locality_of isWitness_killFinite fun d hd ↦ by
+        fin_cases d <;> simp [oneScheme, oneRows, oneLabel, gradedIndex, killFinite_top,
+          killFinite_zero] at hd ⊢
+    · exact locality_of IsWitness.bot_top fun d _ ↦ by simp [oneLabel]
+    · exact locality_of IsWitness.bot_top fun d _ ↦ by simp [oneLabel]
+    · exact locality_of IsWitness.bot_top fun d _ ↦ by simp [oneLabel]
+    · exact locality_of isWitness_killFinite fun d hd ↦ by
+        fin_cases d <;> simp [oneScheme, oneRows, oneLabel, gradedIndex, killFinite_top,
+          killFinite_zero, isWitness_killFinite.map_bot] at hd ⊢
+    · exact locality_of isWitness_killFinite fun d hd ↦ by
+        fin_cases d <;> simp [oneScheme, oneRows, oneLabel, gradedIndex, killFinite_top,
+          killFinite_zero, isWitness_killFinite.map_bot] at hd ⊢
+  availability a b hab hg := by
+    have key : ∀ a b : Fin 6, oneScheme.scope a ⊆ oneScheme.scope b →
+        oneScheme.grade a = oneScheme.grade b →
+        oneScheme.gradedIndex a = oneScheme.gradedIndex b ∨ b = 5 := by decide
+    rcases key a b hab hg with h | rfl
+    · exact ⟨a, h, le_rfl⟩
+    · exact ⟨5, rfl, le_top⟩
+
+/-- **Gate recovery with one private point**: every lawful labelling with the literal private face
+has the bottom donor labels, and a value at least the private cap at the donor top; the formal top
+itself when the cap is `⊤`. -/
 theorem one_recover {s : Label.{0}} (hs : s ≠ ⊥) {q : Fin 6 → Label.{0}}
     (hq : oneRows.IsLawful q) (hlit : ∀ x ∈ ({0, 1} : Set (Fin 6)), q x = oneLabel s x) :
     q 2 = ⊥ ∧ q 3 = ⊥ ∧ s ≤ q 4 ∧ (s = ⊤ → q 4 = ⊤) := by
@@ -377,7 +410,7 @@ theorem one_recover {s : Label.{0}} (hs : s ≠ ⊥) {q : Fin 6 → Label.{0}}
   subst hs'
   exact (isGate_one hs).eq_of_cap_eq_top hq hlit htwin rfl (by simp)
 
-/-! ### Two anchor blocks, an empty root, and a top (P2, P4, P6)
+/-! ### Two anchor blocks, an empty root, and a top
 
 Points `a, b, c, y` (`0, 1, 2, 3`); the root is empty, so every donor cell is new.  Cells:
 anchors `z₁ = ({a}, 1)` labelled `1` and `z₂ = ({b}, 1)` labelled `ω + 1`, the private cap
@@ -424,8 +457,9 @@ theorem isGate_block : blockRows.IsGate 6 2 {0, 1, 2} {3, 4, 5} blockLabel where
         (by simp [blockLabel, blockScheme]) (by simp [blockRows, blockLabel, blockScheme])
     · exact .top ⟨2, by simp [blockScheme, gradedIndex]⟩ (by simp) le_rfl le_rfl le_rfl
 
-/-- **P2, P4, P6**: with an empty root and the private cap labelled `⊤`, every lawful labelling
-with the literal private face has every donor label: `2` and `ω + 2` from their anchor blocks, and
+/-- **Two anchor blocks and a top**: with an empty root and the private cap labelled `⊤`, every
+lawful labelling with the literal private face has every donor label: `2` and `ω + 2` from their
+anchor blocks, and
 the formal top. -/
 theorem block_recover {q : Fin 7 → Label.{0}} (hq : blockRows.IsLawful q)
     (hlit : ∀ x ∈ ({0, 1, 2} : Set (Fin 7)), q x = blockLabel x) :
@@ -440,13 +474,13 @@ theorem block_recover {q : Fin 7 → Label.{0}} (hq : blockRows.IsLawful q)
     isGate_block.eq_of_cap_eq_top hq hlit htwin rfl (by simp),
     isGate_block.eq_of_cap_eq_top hq hlit htwin rfl (by simp)⟩
 
-/-! ### A gate with a twin (NC1, NC2)
+/-! ### A gate with a twin
 
 The root example with a twin: points `a, b, c, y`; cells `ρ = ({a}, 1)`, `C = ({a, b, c}, 3)`,
 `f = ({y}, 1)`, the gate `G` and its twin `G'`, both `(univ, 3)`.  The gate's row is
 `(ω + 1, ⊤, ω + 2, ⊤, 3)` and the twin's `(ω + 1, ⊤, ⊤, 3, ⊤)`; the display labels `ρ, C, f` by
 `ω + 1, ⊤, ω + 2`, the gate `⊤`, and the twin `⊥`.  The gate data hold, but a lawful labelling
-with the literal private face may label the twin `⊤` and the gate `⊥` (NC1) or `3` (NC2): the twin
+with the literal private face may label the twin `⊤` and the gate `⊥` or `3`: the twin
 then serves availability against the cap, and the donor label `ω + 2` is lost, even below the
 actual cut `ω + 3`. -/
 
@@ -509,7 +543,7 @@ theorem isGate_twin : twinRows.IsGate 3 1 twinPrivate twinDonor (twinLabel (om 2
     · exact .ref ⟨0, by simp [twinScheme, gradedIndex]⟩ (by simp [twinPrivate]) 2
         (by simp [twinScheme]) (by simp [twinLabel, twinScheme]) (by simp [twinRows, twinScheme])
 
-/-- The labelling of NC1 is lawful: the gate `⊥`, the twin `⊤`, and `f` labelled `⊤`. -/
+/-- The labelling with a bottom gate is lawful: the gate `⊥`, the twin `⊤`, and `f` labelled `⊤`. -/
 theorem isLawful_twinBottom : twinRows.IsLawful (twinLabel ⊤ ⊥ ⊤) where
   orderly d := by fin_cases d <;> simp [twinLabel, twinScheme]
   locality c := by
@@ -530,7 +564,7 @@ theorem isLawful_twinBottom : twinRows.IsLawful (twinLabel ⊤ ⊥ ⊤) where
     · exact ⟨4, rfl, le_rfl⟩
     · exact ⟨4, rfl, le_rfl⟩
 
-/-- The labelling of NC2 is lawful: the gate `3`, the twin `⊤`, and `f` labelled `⊤`. -/
+/-- The labelling with the gate labelled `3`, the twin `⊤`, and `f` labelled `⊤` is lawful. -/
 theorem isLawful_twinSmall : twinRows.IsLawful (twinLabel ⊤ 3 ⊤) where
   orderly d := by fin_cases d <;> simp [twinLabel, twinScheme]
   locality c := by
@@ -551,9 +585,9 @@ theorem isLawful_twinSmall : twinRows.IsLawful (twinLabel ⊤ 3 ⊤) where
     · exact ⟨4, rfl, le_rfl⟩
     · exact ⟨4, rfl, le_rfl⟩
 
-/-- **NC1, a bottom gate.**  The gate data hold for the lawful display, and the lawful labelling
-with the literal private face, the gate `⊥`, and the twin `⊤` disagrees with the display at the
-donor cell `f`, below the actual cut `ω + 3`. -/
+/-- **A bottom gate and a twin.**  The gate data hold for the lawful display, and the lawful
+labelling with the literal private face, the gate `⊥`, and the twin `⊤` disagrees with the display
+at the donor cell `f`, below the actual cut `ω + 3`. -/
 theorem twin_bottom_gate :
     twinRows.IsGate 3 1 twinPrivate twinDonor (twinLabel (om 2) ⊤ ⊥) ∧
       twinRows.IsLawful (twinLabel (om 2) ⊤ ⊥) ∧ twinRows.IsLawful (twinLabel ⊤ ⊥ ⊤) ∧
@@ -562,11 +596,11 @@ theorem twin_bottom_gate :
   ⟨isGate_twin, isLawful_twinDisplay, isLawful_twinBottom,
     fun x hx ↦ by rcases hx with rfl | rfl <;> rfl, rfl, by simp [twinLabel]⟩
 
-/-- **NC2, a gate that is not bottom.**  The gate data hold for the lawful display, and the lawful
+/-- **A non-bottom gate and a twin.**  The gate data hold for the lawful display, and the lawful
 labelling with the literal private face, the gate labelled `3`, not bottom, and the twin `⊤`
-disagrees with the display at the donor cell `f`, below the actual
-cut `ω + 3`: the literal private face and a non-bottom gate do not give recovery when the gate has
-a twin. -/
+disagrees with the display at the donor cell `f`, below the actual cut `ω + 3`: a literal private
+face and a non-bottom gate do not imply agreement from lawfulness alone when the gate has a
+twin. -/
 theorem twin_small_gate :
     twinRows.IsGate 3 1 twinPrivate twinDonor (twinLabel (om 2) ⊤ ⊥) ∧
       twinRows.IsLawful (twinLabel (om 2) ⊤ ⊥) ∧ twinRows.IsLawful (twinLabel ⊤ 3 ⊤) ∧
@@ -575,7 +609,7 @@ theorem twin_small_gate :
   ⟨isGate_twin, isLawful_twinDisplay, isLawful_twinSmall,
     fun x hx ↦ by rcases hx with rfl | rfl <;> rfl, by simp [twinLabel], by simp [twinLabel]⟩
 
-/-! ### A donor label above the threshold (NC4)
+/-! ### A donor label above the threshold
 
 Points `a, b, c, y`; cells `ρ = ({a}, 1)` labelled `ω + 1`, `C = ({a, b, c}, 3)` labelled `⊤`,
 `f = ({y}, 1)` labelled `ω + 4`, and the gate `G = (univ, 3)`, whose row is `(ω + 1, ⊤, ω + 4, ⊤)`.
@@ -637,7 +671,7 @@ theorem isLawful_highLabel {v : Label.{0}} (hv : v = om 4 ∨ v = om 3) :
     · exact ⟨a, h, le_rfl⟩
     · exact ⟨3, rfl, le_rfl⟩
 
-/-- **NC4, a donor label above the threshold.**  The display is lawful but has no gate data, the
+/-- **A donor label above the threshold.**  The display is lawful but has no gate data, the
 gate has no twin, and the lawful labelling with the literal private face that flattens finite parts
 at `3` realizes the donor label `ω + 4`, which lies below the private cap, as `ω + 3`. -/
 theorem high_not_recovered :
@@ -655,15 +689,17 @@ theorem high_not_recovered :
     obtain ⟨z, _⟩ := z
     have hi : i ≤ 3 := hi
     rcases hz with rfl | rfl
-    · change om 4 = visibilityReplace 3 i (om 1) at hwe
+    · -- The anchor is `ρ`, labelled `ω + 1`, and the threshold is the grade `3` of the gate.
+      change om 4 = visibilityReplace 3 i (om 1) at hwe
       have h13 : 1 < 3 := by omega
       rw [visibilityReplace_om, ite_eq_left h13, om_inj] at hwe
       omega
-    · change om 4 = visibilityReplace 3 i ⊤ at hwe
+    · -- The anchor is the cap, labelled `⊤`, which every replacement fixes.
+      change om 4 = visibilityReplace 3 i ⊤ at hwe
       exact om_ne_top 4 (hwe.trans (visibilityReplace_top 3 i))
   | top _ _ _ heC _ => exact (om_lt_top 4).not_ge heC
 
-/-! ### A private cap below the gate's grade (NC5)
+/-! ### A private cap below the gate's grade
 
 Points `a, b, c, y`; cells `ρ = ({a}, 1)` labelled `ω + 1`, `C = ({a, b, c}, 2)` labelled `⊤`,
 `f = ({y}, 1)` labelled `ω + 2`, and the gate `G = (univ, 3)` with row `(ω + 1, ⊤, ω + 2, ⊤)`.
@@ -709,7 +745,7 @@ theorem isLawful_lowCapLabel {v x : Label.{0}} (h : v = om 2 ∧ x = ⊤ ∨ v =
       · exact locality_of IsWitness.bot_top fun d _ ↦ by simp [lowCapLabel]
   availability a b hab hg := ⟨a, lowCap_availability a b hab hg, le_rfl⟩
 
-/-- **NC5, a private cap below the gate's grade.**  The gate's row reads the donor cell `f` from the
+/-- **The grade of the cap cannot be dropped.**  The gate's row reads the donor cell `f` from the
 anchor `ρ`, and the gate has no twin, but the cap's grade is not the gate's; the lawful labelling
 with a bottom gate, `f` labelled `⊤`, and the literal private face disagrees with the display at
 `f` below the actual cut `ω + 3`. -/

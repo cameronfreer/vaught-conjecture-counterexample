@@ -46,7 +46,7 @@ only as a value at least `w C` (`IsGate.cap_le_of_cap_le`); when `w C = ⊤` eve
 recovered (`IsGate.eq_of_cap_eq_top`).
 
 * **The lower bound on the gate comes from availability.**  Availability
-  ([Kni26, Definition 2.5.4, clause 2]) for the pair `C`, `G` gives a cell `u` with the graded index
+  ([Kni26, Definition 2.5.4]) for the pair `C`, `G` gives a cell `u` with the graded index
   of `G` and `q C ≤ q u`.  When every twin is bottom and `q C = w C` is not, `u` is the gate: this
   is the **gate inequality** `w C ≤ q G` (`IsLawful.cap_le_gate`), and in particular the gate is
   not bottom (`IsGate.gate_ne_bot`).  Locality at the gate gives no lower bound: lowering the
@@ -77,9 +77,10 @@ recovered (`IsGate.eq_of_cap_eq_top`).
 
 * *The recovery hypothesis is the bottom pattern of the whole graded index of the gate*: the gate
   is not bottom and its twins are bottom.  A literal private face and a non-bottom gate do not
-  suffice when the gate has twins: a twin labelled `⊤` serves availability against the cap, so
-  the cap no longer bounds the gate from below (the negative controls NC1 and NC2 of
-  `VaughtConjecture.Extension.GateExamples`).  When the gate has no twins, the literal private face
+  imply agreement from lawfulness alone when the gate has a twin: a twin labelled `⊤` serves
+  availability against the cap, so the cap no longer bounds the gate from below, and the bottom
+  pattern of the twins cannot be dropped (the counterexamples `GateExamples.twin_bottom_gate` and
+  `GateExamples.twin_small_gate`).  When the gate has no twins, the literal private face
   alone gives recovery (`IsGate.recover_of_unique`), and the gate is not bottom by the gate
   inequality.  When the gate's row is bottom at every twin, a non-bottom gate makes the twins
   bottom (`IsLawful.eq_bot_of_row_eq_bot`, `IsGate.recover_of_row_twin`).  The bottom-pattern
@@ -116,11 +117,8 @@ variable {N i : ℕ} {a b c v x : Label.{u}} {g : ℕ → Label.{u}} {σ : Label
 /-! ### Scalar lemmas -/
 
 /-- A minimum that lies strictly below its second argument is its first argument. -/
-theorem eq_of_min_eq_of_lt (h : min a b = v) (hv : v < b) : a = v := by
-  rcases le_total a b with hab | hab
-  · rwa [min_eq_left hab] at h
-  · rw [min_eq_right hab] at h
-    exact absurd h hv.ne'
+theorem left_eq_of_min_eq_of_lt (h : min a b = v) (hv : v < b) : a = v :=
+  ((min_eq_iff.mp h).resolve_right fun h' ↦ hv.ne' h'.1).1
 
 /-- A label that is not self-visible at `N` lies strictly below every label self-visible at `N`
 above it. -/
@@ -191,7 +189,7 @@ theorem IsWitness.min_apply_visibilityReplace (hw : IsWitness g σ) (hc : IsSelf
     min (σ (visibilityReplace N i x)) c = min (visibilityReplace N i a) c := by
   rcases lt_or_ge a c with hac | hca
   · -- Below the cap the shifter is determined, and the guard of the fifth law holds.
-    have hσ : σ x = a := eq_of_min_eq_of_lt (hx.trans (min_eq_left hac.le)) hac
+    have hσ : σ x = a := left_eq_of_min_eq_of_lt (hx.trans (min_eq_left hac.le)) hac
     rw [hw.visibilityReplace_comm x N (hσ ▸ hac.le.trans hcg) i hi, hσ]
   · have hσ : c ≤ σ x := min_eq_right_iff.mp (hx.trans (min_eq_right hca))
     rw [min_eq_right (hw.le_apply_visibilityReplace_of_le hc hcg hσ hi),
@@ -299,7 +297,7 @@ private theorem eq_or_le_of_min_eq {e : ι} (hCG : w C ≤ q G)
     (h : min (q e) (q G) = min (w e) (q G)) :
     (q e = w e ∧ w e < w C) ∨ (w C ≤ q e ∧ w C ≤ w e) := by
   rcases lt_or_ge (w e) (w C) with hlt | hle
-  · exact .inl ⟨eq_of_min_eq_of_lt (h.trans (min_eq_left (hlt.le.trans hCG)))
+  · exact .inl ⟨left_eq_of_min_eq_of_lt (h.trans (min_eq_left (hlt.le.trans hCG)))
       (hlt.trans_le hCG), hlt⟩
   · exact .inr ⟨(le_min hle hCG).trans (h.symm ▸ min_le_left _ _), hle⟩
 
