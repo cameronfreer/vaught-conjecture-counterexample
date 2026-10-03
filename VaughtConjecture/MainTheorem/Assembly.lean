@@ -50,9 +50,10 @@ set of classes admitting a model expansion to the stage `ω + ω · ξ`:
   every sentence of quantifier rank at most `η`, by the one-sided finite-donor transfer (the first
   use of row 1 of the table of Layer 3); `ExpansionDomains.HasLogicalAgreement.of_qrank_le`
   derives the hypothesis from it.  `ExpansionDomains.hasLogicalAgreement_of_modelExpansions`
-  derives it, conditional on finite-extension receiving, which is still to be proved (Layer 3,
-  receiving for finite extensions; (R1)), when every class in `D η` has a coded representative
-  with a model expansion to the block stage `λ_η = ω + ω · η`
+  derives it, conditional on finite-extension receiving of models, which follows from finite-cut
+  receiving of models ((R1) of the table of Layer 3, still to be proved;
+  `Expansion.FiniteCutReceiving.finiteExtensionReceiving`), when every class in `D η` has a coded
+  representative with a model expansion to the block stage `λ_η = ω + ω · η`
   (`VaughtConjecture.Expansion.Agreement`).
 * `ExpansionDomains.HasNonemptyLosses` (reduction item 4; **the lower bound**): each successor
   loss below `ω₁` is nonempty.  Layer 6 is to construct a top-free terminal model at every
@@ -517,8 +518,9 @@ classes in `D η` agree on every sentence of quantifier rank at most `η`
 (`Expansion.mem_modelsOf_iff_of_modelExpansions`), so the domains have logical agreement.  The
 representative is existential, so no invariance of model expansions under isomorphism is used.
 
-This is conditional on finite-extension receiving, which is still to be proved (Layer 3,
-receiving for finite extensions; (R1)): `hrec` is that statement. -/
+This is conditional on finite-extension receiving of models (`hrec`), which follows from
+finite-cut receiving of models (`Expansion.FiniteCutReceiving.finiteExtensionReceiving`); that is
+(R1) of the table of Layer 3, still to be proved. -/
 theorem ExpansionDomains.hasLogicalAgreement_of_modelExpansions
     (hrec : Expansion.FiniteExtensionReceiving.{0}) {D : ExpansionDomains DensityClass}
     (hD : ∀ η, η < ω₁ → ∀ q ∈ D.domain η, ∃ c : ModelsOf densitySentence.{0},

@@ -8,14 +8,16 @@ import VaughtConjecture.Expansion.Agreement
 /-!
 # Examples for condition 3 from model expansions
 
-Regressions for `VaughtConjecture.Realization.Expansion` and
+Special cases of `VaughtConjecture.Realization.Expansion` and
 `VaughtConjecture.Expansion.Agreement`:
 
 * the block stages: `λ_0 = ω`, `λ_1 = ω · 2`, and `λ_α` is a permitted cutoff at `λ_{α+1}`;
 * the height `η = 0` needs no finite-extension receiving: the forth and back laws are vacuous,
   and atomic agreement, lowering, existence and compatibility are unconditional;
 * forth and back with an already-covered point use no receiving;
-* finite-extension receiving gives finite-cut receiving;
+* finite-extension receiving gives finite-cut receiving, and finite-cut receiving of models gives
+  finite-extension receiving of models, so that back-and-forth equivalence follows from finite-cut
+  receiving;
 * a received type has the stage reduction of its donor at the cutoff, and at every lower block
   stage;
 * the code-level statement at `ℕ`, in the base language `baseLanguage.{0} : Language.{0, 1}` with
@@ -104,6 +106,22 @@ example {α : Ordinal.{0}} {k : ℕ} {e : ModelExpansion M (blockStage (α + 1))
 example {α : Ordinal.{0}} {R : Realization.{0, w} α M} (h : R.HasFiniteExtensionReceiving) :
     R.HasFiniteCutReceiving :=
   h.hasFiniteCutReceiving
+
+/-- Finite-cut receiving of models gives finite-extension receiving of models. -/
+example (h : FiniteCutReceiving.{0}) : FiniteExtensionReceiving.{0} :=
+  h.finiteExtensionReceiving
+
+/-- The two global forms are equivalent. -/
+example : FiniteExtensionReceiving.{0} ↔ FiniteCutReceiving.{0} :=
+  finiteExtensionReceiving_iff
+
+/-- The back-and-forth equivalence of two base structures with model expansions, from finite-cut
+receiving of models. -/
+example (h : FiniteCutReceiving.{w}) {η : Ordinal.{0}} (hη : η < ω₁)
+    (hM : Nonempty (ModelExpansion M (blockStage η)))
+    (hN : Nonempty (ModelExpansion N (blockStage η))) :
+    BFEquiv (L := baseLanguage.{0}) (M := M) (N := N) η 0 ![] ![] :=
+  bfEquiv_of_modelExpansions h.finiteExtensionReceiving hη hM hN
 
 /-- A type received for a donor at the cutoff `λ_α` has the stage reduction of the donor to
 `λ_α`. -/
