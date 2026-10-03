@@ -348,9 +348,10 @@ set_option linter.hashCommand false in
 -- uncountable `X`.  Domains with countable complements below `ω₁` that every point leaves give
 -- `#X ≤ ℵ₁` (`mk_le_aleph_one_of_domains`).  Under the covering hypothesis
 -- `hcover : ⋃ α < ω₁, Q α = univ`, the tails of `leastLevel Q` are the complements of the initial
--- unions of `Q`, and countable sets `Q α` give `leastLevel Q` countable fibres.  The statements of
--- `Counting/Filtration` are candidates for one-line quotation of these (`IMPLEMENTATION.md`,
--- "Placement record"); no application is compiled here.
+-- unions of `Q`, and countable sets `Q α` give `leastLevel Q` countable fibres.  The generic
+-- statements of `Counting/Filtration` and `Counting/Separation` are proved as quotations of these,
+-- with their statements kept (`IMPLEMENTATION.md`, "Placement record"); no application is compiled
+-- in this sketch.
 set_option linter.hashCommand false in
 #check InfinitaryLogic.countable_iff_rank_bounded
 set_option linter.hashCommand false in
@@ -458,8 +459,12 @@ set_option linter.hashCommand false in
 -- (`ModelTheory/NamedParameters`); representative classes, extension-rich families and direct
 -- limits, the factorization of tuples through the age (`ModelTheory/RepresentativeAge`,
 -- `ExtensionRichFamily`, `ExtensionRichDirectLimit`), orbit isolation and countable prime
--- structures (`ModelTheory/OrbitIsolation`, `CountablePrime`).  No application of these is
--- compiled in this repository.
+-- structures (`ModelTheory/OrbitIsolation`, `CountablePrime`).  Of these, the library applies
+-- `representativeClass_hereditary`, `representativeClass_countable_quotient`,
+-- `isFraisse_representativeClass`, and `exists_isFraisseLimit_representativeClass` to the age of
+-- top-free charts (`VaughtConjecture.ClassicalLimit.Age` and `.Amalgamation`; amalgamation and
+-- the limit conditional on the coatom extension property); no other application is compiled in
+-- this repository.
 set_option linter.hashCommand false in
 #check FirstOrder.Language.exists_fraisseSequence
 set_option linter.hashCommand false in
