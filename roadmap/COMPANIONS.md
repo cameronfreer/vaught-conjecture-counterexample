@@ -826,8 +826,9 @@ These are statements still to be proved.  None is an input to the main theorem.
      model among the countable structures in its carrier universe then bounds the stabilization
      ordinal of that model by its rank: `stabilizesAt_of_sentence_rank` and
      `stabilizationOrdinal_le_of_sentence_rank`, with the forms `stabilizesAt_of_formula_rank` and
-     `stabilizationOrdinal_le_of_formula_rank` for a formula with no free variables (available
-     upstream at InfinitaryLogic `cf80917`, not yet at our pinned dependency).  They need only a
+     `stabilizationOrdinal_le_of_formula_rank` for a formula with no free variables (at the pin
+     `cf80917`; signatures checked, except `stabilizationOrdinal_le_of_sentence_rank`, signatures
+     not yet checked by CI).  They need only a
      relational language, with no countability of the language, and hold at every level
      `β ≥ qrank σ` of the sentence `σ`, not only at countable levels.
   3. **Base-reduct orbit-rank bounds** (prospective: every bound below is to be proved): bounds on
@@ -862,14 +863,14 @@ These are statements still to be proved.  None is an input to the main theorem.
        uniqueness is the expansion itself.  In the core case, an automorphism of the base reduct
        fixing the core lifts to one fixing the core.  With both, the translation of an orbit formula
        of a tuple in the expansion is an orbit formula of that tuple in the base reduct.  A third
-       statement turns formulas into ranks, available upstream at InfinitaryLogic `cf80917`, not yet
-       at our pinned dependency: under `[L.IsRelational]`, a parameter-free infinitary orbit formula
+       statement turns formulas into ranks, at the pin `cf80917`, signatures checked: under
+       `[L.IsRelational]`, a parameter-free infinitary orbit formula
        `φ` of the base language for a tuple `a` (realized exactly by the images of `a` under the
        automorphisms of the base reduct) bounds `orbitRank a` by the lift of `qrank φ` to the
        universe of the carrier (`orbitRank_le_lift_qrank_of_infinitaryOrbitFormula`; the first-order
        case is `orbitRank_le_lift_qrank_of_orbitFormula`, at the pin, signatures checked, under
        `[L.IsRelational]`).  Its corollary `internalScottRank_le_of_infinitaryOrbitFormulas`
-       (available upstream at InfinitaryLogic `cf80917`, not yet at our pinned dependency) takes
+       (at the pin `cf80917`, signatures checked) takes
        **strict** bounds `qrank φ < α`, one orbit formula for every tuple, and gives
        `internalScottRank M ≤ Ordinal.lift α`: exactly the distinction between strict and non-strict
        bounds recorded below.
@@ -933,7 +934,7 @@ These are statements still to be proved.  None is an input to the main theorem.
      2), the valid chain runs through its Scott sentence `σ`, not through orbit ranks: when `D_η`
      contains a second class, `η < stabilizationOrdinal ≤ qrank σ`, the first inequality by the
      one-sided rank comparison below, the second by `stabilizationOrdinal_le_of_sentence_rank`
-     (available upstream at InfinitaryLogic `cf80917`, not yet at our pinned dependency), as in
+     (at the pin `cf80917`; signatures not yet checked by CI), as in
      target 2; its application to the constructed `σ` is to be proved.  For the base model `R` of a
      terminal expansion at block `η` (the core case, with a labelled globally rigid core of arity
      `k`; the residual case, with positive eventual top grade and no rigid core; hollow growth; or
