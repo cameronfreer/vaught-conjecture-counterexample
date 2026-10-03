@@ -12,8 +12,9 @@ import VaughtConjecture.ClassicalLimit.Reconstruction
 Roadmap, the section "The top-free witnesses: the finite age and its classical limit", steps 4 and
 5, with the special cases of semantic contract, item 11.  Every statement below about a structure
 `M` assumes top-free chart coverage, `(hullLanguage α).age M ⊆ topFreeAge α`, or the converse
-inclusion, or that `M` is a Fraïssé limit of the age of top-free charts; only the last example
-assumes the coatom extension property.
+inclusion, or that `M` is a Fraïssé limit of the age of top-free charts, except the first example
+on the empty carrier, which derives top-free chart coverage from a relation at the empty tuple;
+only the last example assumes the coatom extension property.
 
 * **Top-free charts have top-free chart coverage.**  The age of a top-free chart lies in the age
   of top-free charts (the hereditary property), so every statement under top-free chart coverage
@@ -86,7 +87,8 @@ private example {M : Type} [IsEmpty M] [(hullLanguage.{u} α).Structure M]
         cases n with
         | zero =>
           rcases r with ⟨p, hp⟩ | r
-          · change RelMap (hullLanguage.rel p hp) _ ↔ RelMap (hullLanguage.rel p hp) x
+          · -- the relation symbol of `M` is the same symbol at the image tuple in the chart
+            change RelMap (hullLanguage.rel p hp) _ ↔ RelMap (hullLanguage.rel p hp) x
             refine iff_of_true ?_ (by convert h0 p hp)
             obtain ⟨q, hq⟩ := Option.isSome_iff_exists.mp
               (i.2.1.isSome_restrictFace_of_zero (Function.Embedding.ofIsEmpty : Fin 0 ↪ Fin 0))
@@ -97,6 +99,20 @@ private example {M : Type} [IsEmpty M] [(hullLanguage.{u} α).Structure M]
           · exact (r : Empty).elim
         | succ n => exact isEmptyElim (x 0) }
   exact (f.age_subset_age).trans (hereditary_topFreeAge _ (topFreeChart_mem_topFreeAge i))
+
+/-- Conversely, under top-free chart coverage, the relation of every legal stage type on no points
+holds at the empty tuple, whether or not the carrier is empty. -/
+private example {M : Type} [(hullLanguage.{u} α).Structure M]
+    (hage : (hullLanguage.{u} α).age M ⊆ topFreeAge α) (p : StageType.{u} α 0)
+    (hp : p.IsLegal) : RelMap (hullLanguage.rel p hp) (M := M) ![] := by
+  obtain ⟨i, e, b, hb⟩ :=
+    exists_eq_trans_topFreeChart hage (Function.Embedding.ofIsEmpty : Fin 0 ↪ M)
+  obtain ⟨q, hq⟩ := Option.isSome_iff_exists.mp (i.2.1.isSome_restrictFace_of_zero b)
+  have h : (reconstruct α M).eval (Function.Embedding.ofIsEmpty : Fin 0 ↪ M) = some p := by
+    rw [← hb, reconstruct_eval_trans_chart i.2.2.1 e b, StageType.faceRealization_eval, hq,
+      StageType.eq_of_zero q p]
+  obtain ⟨_, hr⟩ := exists_relMap_of_reconstruct_eval_eq_some h
+  convert hr
 
 /-! ### The empty tuple -/
 
