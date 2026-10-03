@@ -82,7 +82,7 @@ private theorem isConsistent_const {ι α : Type*} {D : CellScheme ι α} (x : L
 
 /-- The scheme on one point with a single cell of scope `{0}` and grade `1` whose row takes the
 value `x`. -/
-private def pointRow (x : Label.{u}) : Scheme.{u} 1 where
+def pointRow (x : Label.{u}) : Scheme.{u} 1 where
   card := 1
   toCellScheme := ⟨univ, Geometry.intervalPlan univ, fun _ ↦ univ, fun _ ↦ 1⟩
   rows := ⟨fun _ _ ↦ x⟩
