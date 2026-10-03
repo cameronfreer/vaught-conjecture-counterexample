@@ -42,8 +42,9 @@ such a section).  The side conditions make both families nonempty, as in [Kni26,
 
 The corresponding nonemptiness of the uniformity and dominance instances at limit stages
 ([Kni26, Lemmas 4.4.2 and 4.4.3], by amalgamation through [Kni26, Corollary 4.3.22], with
-[Kni26, Lemma 4.2.2] for the seed) is not proved here; the three lemmas together give
-[Kni26, Lemma 4.4.1].
+[Kni26, Lemma 4.2.2] for the seed) is not proved here; it is in
+`VaughtConjecture.Extension.FamilyCofaces`, under the coatom extension property (uniformity) and
+its form with apex (dominance).  The three lemmas together give [Kni26, Lemma 4.4.1].
 
 **Receiving.**  The receiving family of a stage type `d` at a cutoff `c` (`receivingFamily d c`)
 consists of the stage types on the scheme of `d` with the observation of `d` at `c`; it contains

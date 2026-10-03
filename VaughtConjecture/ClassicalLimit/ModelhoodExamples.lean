@@ -14,6 +14,9 @@ Roadmap, the section on the top-free witnesses, step 7; regression examples for
 * At the block stages `ω` and `λ₁ = ω · 2`, the reconstructed realization of a structure whose age
   is the age of top-free charts and which is ultrahomogeneous is a model, given the nonemptiness
   of the uniformity and dominance instances over legal top-free stage types.
+* The `ω`-stage witness: under the coatom extension property with apex at `ω`, a Fraïssé limit of
+  the age of top-free charts exists and its reconstructed realization is a model; at `λ₁` the
+  same property at `λ₁` gives modelhood of the reconstructed realization.
 * That stage `0` is excluded is the example `not_isModel_of_hasFiniteCutReceiving_stage_zero` of
   `VaughtConjecture.Realization.ModelExamples`.
 -/
@@ -49,5 +52,20 @@ example {M : Type} [(hullLanguage.{0} (ω * 2)).Structure M]
       ∀ γ : Ordinal.{0}, γ < ω * 2 → (p.cofaces ∩ dominanceFamily γ).Nonempty) :
     (reconstruct (ω * 2) M).IsModel :=
   isModel_reconstruct hage hu isSuccLimit_omega0_mul_two hunif hdom
+
+/-- **The `ω`-stage witness is a model** under the coatom extension property with apex at `ω`. -/
+example (hext : HasApexCoatomExtensions.{0} ω) :
+    ∃ M : CategoryTheory.Bundled.{0} (hullLanguage.{0} ω).Structure,
+      (reconstruct ω M).IsModel := by
+  obtain ⟨M, _, hM⟩ := exists_isFraisseLimit_topFreeAge_omega hext.hasCoatomExtensions
+  exact ⟨M, isModel_reconstruct_of_hasApexCoatomExtensions hext hM.age hM.ultrahomogeneous
+    Ordinal.isSuccLimit_omega0⟩
+
+/-- At `λ₁ = ω · 2`, from the coatom extension property with apex at `λ₁`. -/
+example (hext : HasApexCoatomExtensions.{0} (ω * 2)) {M : Type}
+    [(hullLanguage.{0} (ω * 2)).Structure M]
+    (hage : (hullLanguage.{0} (ω * 2)).age M = topFreeAge (ω * 2))
+    (hu : (hullLanguage.{0} (ω * 2)).IsUltrahomogeneous M) : (reconstruct (ω * 2) M).IsModel :=
+  isModel_reconstruct_of_hasApexCoatomExtensions hext hage hu isSuccLimit_omega0_mul_two
 
 end VaughtConjecture
