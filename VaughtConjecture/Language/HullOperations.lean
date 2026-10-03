@@ -87,8 +87,10 @@ injective and spans a closed face of type `p`, a face that is not closed carryin
 The first-order definability of the hull operations (roadmap, Layer 2, item 2) and their
 preservation by embeddings of infinite realizations are not part of this file.  On a realization
 that is not the face realization of a chart, `Realization.hullOp` is defined by a choice; that the
-choice does not matter (the two-charts theorem for exactly consistent covering realizations) is
-not part of this file either.
+choice does not matter on exactly consistent covering realizations is the two-charts theorem for
+realizations (`Realization.eq_of_eval_eq_some`, `Realization.hullOp_eq_of_eval`), which is not
+part of this file either: it is proved in `VaughtConjecture.Realization.TwoCharts`, with the
+preservation of the hull operations by embeddings of realizations.
 
 ## Placement
 
@@ -283,7 +285,8 @@ open Classical in
 **chart witness** of `ι` at `a` and `b` is a tuple of type `ι.type` with the points `a` and `b` at
 the generators.  The hull operation at `a` and `b` is the target point of a chosen chart witness, if
 there is one, and otherwise the **default value** `a`.  On the face realization of a chart the
-choice does not matter (`StageType.hullOp_eq_of_restrictFace`). -/
+choice does not matter (`StageType.hullOp_eq_of_restrictFace`), nor on any exactly consistent
+covering realization (`Realization.hullOp_eq_of_eval`). -/
 noncomputable def hullOp (ι : HullIndex.{u} α) (a b : M) : M :=
   if h : ∃ g : Fin ι.arity ↪ M, R.eval g = some ι.type ∧ g ι.left = a ∧ g ι.right = b then
     h.choose ι.target
