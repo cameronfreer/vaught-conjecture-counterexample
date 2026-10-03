@@ -292,6 +292,11 @@ the amalgamation property of Mathlib's `FirstOrder.Language.Amalgamation` for th
 top-free charts.  The sketch properties `ChartAmalgamation` and `ChartJointEmbedding` and the
 lemma `chartJointEmbedding_of_chartAmalgamation` are in `Suggested.lean`.
 
+Its statements are compiled in this repository (theorem named), conditional on the coatom extension
+property `StageType.HasCoatomExtensions` at the stage (still to be proved) and on a stage that is a
+nonzero limit: `exists_amalgam_topFreeChart`, `exists_jointEmbedding_topFreeChart`,
+`amalgamation_topFreeAge`, and `jointEmbedding_topFreeAge` (`ClassicalLimit/Amalgamation`).
+
 ### B2. Chart homogeneity and local automorphisms
 
 **Statement.**  (Homogeneity) if `t` and `t'` are actual charts of the same type in `M`, some
@@ -630,7 +635,17 @@ These are statements still to be proved.  None is an input to the main theorem.
      checked).  Conversely, cofinally nonempty successor losses of decreasing domains are pairwise
      disjoint and make `Q` uncountable with no further hypothesis (`aleph_one_le_mk_of_cofinal`,
      compiled in this repository (theorem named)).  On the expansion-domain route the lemma is not
-     needed: condition 4 gives every successor loss nonempty;
+     needed: condition 4 gives every successor loss nonempty.
+
+     **Nonempty domains with an empty persistent core** (a separate lemma, to be proved).  *If the
+     `D_η` decrease, every `D_η` (`η < ω₁`) is nonempty, and no class lies in every `D_η`, then `Q`
+     is uncountable.*  Proof: each class `q` has an index `ξ_q < ω₁` with `q ∉ D_{ξ_q}` (any such
+     index will do; no least index is needed).  If `Q` were countable, then `γ = sup_q ξ_q < ω₁`,
+     and `D_γ ⊆ D_{ξ_q}` excludes every `q`, so `D_γ = ∅`.  The hypothesis on the core is needed:
+     the constant family `D_η = Q` on a countable nonempty `Q` has nonempty domains.  Under
+     conditions 1–4 the lemma is redundant: eventual departure (1) supplies the hypothesis on the
+     core, but condition 4 already gives the lower bound.  It records that nonempty domains replace
+     nonempty losses only at the price of departure;
   2. **the last admitted stage** (a definition conditional on 1): for a class `q` that leaves the
      expansion domains, the least `ξ` with `q ∉ D_ξ` is a successor `ζ + 1` (`D_0 = Q`, and limit
      continuity excludes a limit), and `λ_ζ` is then called the last admitted stage of `q`; `q` lies
@@ -666,7 +681,8 @@ These are statements still to be proved.  None is an input to the main theorem.
   model** is a countable base model together with its expansion to `λ_η`, of a coreless exact age
   (top-free, residual, or hollow; `README.md`, Layer 4), and a **supplied `k`-coordinate core
   model** is a countable base model together with its expansion to `λ_η`, of an exact age pointed
-  at a rigid core of `k` points, named by `k` coordinates.
+  at a core that is an actual chart of the expansion (an actual occurrence of a stage type `p` at
+  `λ_η`, `k` its arity) and globally rigid, named by its `k` coordinates.
 
   | Statement (the formula to construct) | Bound (quantifier rank ≤) |
   | --- | ---: |
@@ -675,15 +691,44 @@ These are statements still to be proved.  None is an input to the main theorem.
   | An absolute Scott sentence for a supplied expanded model (of an exact age, top-free in particular) | `ω·(η+2)` |
   | An absolute Scott sentence for a supplied `k`-coordinate core model | `ω·(η+2)+k` |
 
+  The first row's definitions are required to be correct on every tuple (the empty tuple and tuples
+  with repeated coordinates included), in **every** model expansion to `λ_η` of the given base model
+  on the same carrier with literal base reduct; this is part of its statement, to be proved.  The
+  proof uses normalization (`README.md`, Layer 4, output 2) at successors, and at limits the fact
+  that a stage type at a limit stage is determined by its reductions along a cofinal sequence of
+  lower stages.  In this form the first row implies the uniqueness of the expansion on a fixed
+  carrier.  It also implies the lifting of isomorphisms, not only of automorphisms, by the same
+  bijection: a bijection that is an isomorphism of base models preserves every relation definable in
+  the base language, hence every chart predicate of the respective expansions.
+
   The second row is the syntactic transcription of "admits an expansion to `λ_η`" that A1 does not
   claim: the sentence `δ_η` of A1 is assembled from Scott sentences of classes and carries no rank
   bound.  The **domain guard** is the theorem that the sentence of the second row holds in a base
-  model exactly when that model admits a model expansion to `λ_η`.  **Successor substitution**
-  defines the chart predicates at `λ_{η+1}` by substituting the definitions at `λ_η` into formulas
-  recovering the labels of the next block (formulas of quantifier rank at most `ω` in the chart
-  predicates at `λ_η`, a bound that is part of the first row's statement), and **cofinal-limit
-  conjunction** defines them at a limit block by a conjunction along a cofinal sequence of lower
-  blocks.
+  model exactly when that model admits a model expansion to `λ_η`.
+
+  Its proof, by recursion on `η`, has three ingredients, each a statement to be proved.  (a) At a
+  successor, the guard at `λ_{η+1}` conjoins the guard at `λ_η` with the translation, by the first
+  row at `λ_η`, of a sentence of the stage chart language at `λ_η` expressing **both**
+  non-hollowness and unbounded top-grade growth, of quantifier rank at most `ω·2` there, so that the
+  bound is `max{ω·(η+1), ω·η + ω·2} = ω·(η+2)`.  It needs the continuation criterion in **both**
+  directions: a model at `λ_η` has a model expansion to `λ_{η+1}` if and only if it is non-hollow
+  with unbounded top-grade growth.  Sufficiency is output 3 of `README.md`, Layer 4; necessity is a
+  further statement, required here though not by the main theorem (`README.md`, Layer 4, the
+  qualification after the count of terminal classes).  (b) At a nonzero limit `δ`, the guard is the
+  conjunction of the guards along a cofinal sequence of lower blocks (cofinal in the weak sense:
+  every `ξ < δ` lies below some term).  Downward closure, that a model expansion to a higher block
+  reduces to every lower block (output 4), turns expansions along the sequence into expansions at
+  every lower block, and output 5 then gives the expansion at the limit.  (c) The definitions of the
+  first row at `λ_η` are correct in **every** model expansion to `λ_η` of the given base model with
+  literal base reduct (the requirement stated after the table), so that the translated sentence is
+  evaluated correctly whatever intermediate expansion exists.  The guard is relative to base models:
+  nothing is asserted at a structure that is not a model.
+
+  **Successor substitution** defines the chart predicates at `λ_{η+1}` by substituting the
+  definitions at `λ_η` into formulas recovering the labels of the next block (formulas of quantifier
+  rank at most `ω` in the chart predicates at `λ_η`, a bound that is part of the first row's
+  statement), and **cofinal-limit conjunction** defines them at a limit block by a conjunction along
+  a cofinal sequence of lower blocks.
 
   **The central contract** (a theorem to be proved).  Let `σ` be a supplied expanded Scott sentence,
   a sentence of the stage chart language at `λ_η` of quantifier rank at most `ρ` (for the last row,
@@ -698,6 +743,14 @@ These are statements still to be proved.  None is an input to the main theorem.
   `IsPiInNF.qrank_le`, and the transfer is then of the normalized formula, not of the original
   syntax tree), together with the calculations below: the base-model conjunct for both rows, and the
   `+k` calculation for the last.
+
+  Its hypotheses, fixed with it: it suffices that `σ` characterize the supplied expansion among the
+  model expansions to `λ_η` of countable base models (carriers in one universe), and `σ` need not
+  characterize it among all structures of the stage chart language; the substitution is that of
+  definitions into a formula of a **relational** language, with free variables in a fixed type, and
+  it is correct on every tuple; at a limit block the lower definitions are already in the base
+  language (the first row at the lower blocks), so the cofinal conjunction is of formulas of one
+  language.
 
   1. **The `+k` row needs its own syntactic calculation.**  Forgetting parameters (InfinitaryLogic,
      `Scott/ForgetParameters`, at the pin, signatures checked:
@@ -716,6 +769,17 @@ These are statements still to be proved.  None is an input to the main theorem.
      when, read as a realization, it is a model) close that step.  The rank of the base-theory
      conjunct is part of the statement to be proved, not assumed below the displayed ordinal; the
      correspondence is the theorem that makes that conjunct suffice.
+     The expected bound, to be proved by direct calculation on the constructed syntax of `Φ`: each
+     structural clause other than covering, and the capped-extension clause, has rank at most `ω`;
+     covering has rank at most `ω + n` for roots of length `n`, before the conjunction over arities,
+     and at most `ω·2` after it; nonemptiness has rank `1`.  So `qrank Φ ≤ ω·2`, and the conjunct is
+     absorbed: `max{ω·2, ρ'} ≤ ω·(η+2)` for a relative transfer of rank `ρ' ≤ ω·(η+2)`, since
+     `2 ≤ η + 2`.  The correspondence of Layer 2 is the decoding: for a realization `R` on the same
+     carrier with legal types (`R.HasLegalTypes`), its structure satisfies `Φ` exactly when its
+     carrier is nonempty and `R` is exactly consistent, covering, and has the finite-cut receiving
+     property (`realize_toStructure_densitySentence_iff`, compiled in this repository (theorem
+     named)); that `R` is then a model is the cap-to-model theorem (`README.md`, Layer 3, 3.4),
+     still to be proved.
 
   **Qualifications.**  The absolute Scott contracts (the last two rows) carry the countability and
   fixed-carrier-universe qualifications of InfinitaryLogic's Scott theorems: they characterize the
@@ -736,6 +800,10 @@ These are statements still to be proved.  None is an input to the main theorem.
   - Global termination remains outside this pathway and outside the first endpoint (the main theorem
     by the expansion-domain route).
   - Every contract is to be proved here for this library's own definitions.
+  - Every sentence of the pathway is written at one countable block.  The disjunction of the domain
+    sentences or Scott sentences over all countable blocks, or over all stage types of all blocks,
+    is not a sentence of `L_{ω₁,ω}` (a disjunction over uncountably many formulas is not a formula),
+    and no statement of the pathway uses one.
 
   **Recognition and base-reduct orbit ranks** (three further companion targets, prospective and
   explicitly unfinished; the hypotheses of each are fixed with its statement).  They are kept apart:
@@ -746,7 +814,13 @@ These are statements still to be proved.  None is an input to the main theorem.
      second row), with the level to be determined.  A pointed statement is required for the chart
      predicates (the first row), since they have free variables: tuples back-and-forth equivalent at
      a level to be determined, in models of classes of `D_η`, satisfy the same chart predicates at
-     `λ_η`.
+     `λ_η`.  The levels, as statements to be proved: with the second row and the base-model conjunct
+     (calculation 2 above), the absolute domain sentence `Φ ∧ (second row)` has rank at most
+     `max{ω·2, ω·(η+1)}`, so a countable base-language structure whose empty tuple is `BFEquiv` at
+     that level to a model of a class of `D_η` is a model in a class of `D_η`, by
+     `BFEquiv_implies_agreeQR` (a relational base language); and, in pointed form, tuples `BFEquiv`
+     at level `ω·η` in two models that both admit expansions to `λ_η` satisfy the same chart
+     predicates at `λ_η` (the first row, correct in every such expansion).
   2. **Recognition of a supplied model**: sufficiently high back-and-forth equivalence to the
      supplied model forces isomorphism.  It is supported by its Scott sentence (the last two rows);
      the level is the sentence's rank in the library's convention.  Back-and-forth equivalence at
@@ -786,7 +860,8 @@ These are statements still to be proved.  None is an input to the main theorem.
        carrier.  The **lifting** of every automorphism of the base reduct to an automorphism of the
        expansion, by the same bijection of the carrier, given the uniqueness of the expansion on a
        fixed carrier (uniqueness of expansion and same-carrier transport, `README.md`, Layer 6,
-       statements of the main development; here a hypothesis): the automorphism carries the
+       statements of the main development; here a hypothesis, or, once the first row is proved in
+       the form stated after the table, directly by definability): the automorphism carries the
        expansion to a model expansion of the same base model on the same carrier, which by that
        uniqueness is the expansion itself.  In the core case, an automorphism of the base reduct
        fixing the core lifts to one fixing the core.  With both, the translation of an orbit formula
@@ -804,8 +879,9 @@ These are statements still to be proved.  None is an input to the main theorem.
        bounds recorded below.
      - **Coreless bound:** `internalScottRank M ≤ Ordinal.lift (ω·(η+1))`, the lift to the universe
        of the carrier `M`, requiring in addition **pointwise finite stage-formula ranks**: each
-       tuple has a stage-language orbit formula (B3.1 for the top-free witness; a hypothesis, to be
-       proved, for the residual and hollow ages) of finite quantifier rank `m` (no uniform bound is
+       tuple has a stage-language orbit formula (B3.1 for the top-free witness; for the residual and
+       hollow ages a derived result still to be proved, not a further hypothesis: "Pointwise finite
+       stage ranks" below) of finite quantifier rank `m` (no uniform bound is
        assumed), so that its translation has rank at most `ω·η + m < ω·(η+1)`, the term
        `orbitRank a + 1` stays below `ω·(η+1)`, and the `+1` of the convention is absorbed into the
        limit (the strict form of `internalScottRank_le_of_infinitaryOrbitFormulas`, with
@@ -817,7 +893,8 @@ These are statements still to be proved.  None is an input to the main theorem.
        realizations in the expansion itself are exactly the images of the core chart under the
        automorphisms of the expansion.  The candidate is "the chart predicate of `p` holds of the
        core coordinates, and the core is rigid in every actual chart containing it"; its rank bound
-       and its isolation of the orbit are to be proved.  The pointed orbit formulas of the tuples
+       and its isolation of the orbit are to be proved ("A candidate isolating formula for the orbit
+       of a core" below).  The pointed orbit formulas of the tuples
        over the named core (the analogue of B3.1 over the named core, `README.md`, Layer 4, and B4,
        to be proved) are assumed to have finite rank, as in the coreless case.  The fallback uses
        the pointed core formula of Layer 4 in place of the isolating formula, in its optional
@@ -861,10 +938,56 @@ These are statements still to be proved.  None is an input to the main theorem.
      contains a second class, `η < stabilizationOrdinal ≤ qrank σ`, the first inequality by the
      one-sided rank comparison below, the second by `stabilizationOrdinal_le_of_sentence_rank`
      (at the pin `cf80917`; signatures not yet checked by CI), as in
-     target 2; its application to the constructed `σ` is to be proved.  Strict and non-strict bounds
-     are kept apart as in B3.3 (`≤ ω`, not `< ω`): strict bounds `orbitRank a < β` for every tuple
-     give `internalScottRank ≤ β`, non-strict bounds `orbitRank a ≤ β` give only `≤ β + 1`, and no
-     bound is asserted to be attained.
+     target 2; its application to the constructed `σ` is to be proved.  For the base model `R` of a
+     terminal expansion at block `η` (the core case, with a labelled globally rigid core of arity
+     `k`; the residual case, with positive eventual top grade and no rigid core; hollow growth; or
+     top-free), the expansion satisfies its exact-age sentence (respectively its core sentence) in
+     normalized form, which follows from modelhood, rigidity, and finite-cut receiving and is not a
+     separate premise; so, when `D_η` contains a second class (cofinally nonempty losses supply
+     one), the chain gives the two-sided bound `η < stabilizationOrdinal R ≤ ω·(η+2)` (`ω·(η+2)+k`
+     in the core case), a statement to be proved: inequalities, not an equality, and nothing about
+     `internalScottRank` or `scottHeight` follows.  Strict and non-strict bounds are kept apart as
+     in B3.3 (`≤ ω`, not `< ω`): strict bounds `orbitRank a < β` for every tuple give
+     `internalScottRank ≤ β`, non-strict bounds `orbitRank a ≤ β` give only `≤ β + 1`, and no bound
+     is asserted to be attained.
+
+  **Supplements to target 3** (prospective: every statement below is to be proved, with the
+  hypotheses stated).  *Pointwise finite stage ranks for the residual and hollow ages* (a derived
+  result, still to be proved, not a hypothesis; it supplies the premise of the coreless bound of
+  target 3 for these ages).  For a supplied expanded model of residual or hollow exact age on a
+  countable carrier, every tuple is to have an orbit formula of finite quantifier rank in the stage
+  chart language at `λ_η`, as B3.1 gives for the top-free witness.  The route is the comparison
+  argument, not receiving alone: exact receiving within the age, (R2) for the residual age (positive
+  eventual top grade `K` and no rigid core, the empty core included) and (R3) for the hollow age
+  (hollow unbounded top-grade growth), each with its hypotheses, gives by back-and-forth over
+  literal roots the exact-age comparison of `README.md`, Layer 4, applied to the model and itself
+  from two actual occurrences of one type; this is chart homogeneity, and the containing-chart
+  formula of a tuple then defines its orbit with finite rank, as in B2 and B3.1.  Receiving at a
+  cutoff is not exact receiving ("Examples", below), and does not by itself give homogeneity.
+
+  *A candidate isolating formula for the orbit of a core* (the core-orbit isolating formula on which
+  the core bound of target 3 is conditional; the fallback of that bound uses the pointed core
+  formula of Layer 4 in its place).  Global rigidity of a core is a property of the pairs `(c, e)`
+  of a stage type `c` on `m` points and a face embedding `e` of the core into it, quantified over
+  the actual charts containing the core.  "The core is rigid in every actual chart containing it" is
+  therefore, for the `k` core coordinates `x̄`, the formula
+  `⋀_m ∀ z̄ ⋀_{(c,e) not rigid} ¬(P_c(z̄) ∧ z̄∘e = x̄)`, a countable conjunction (the stage is
+  countable) of rank at most `sup_m m = ω`.  That its conjunction with the chart predicate of `p` at
+  the core coordinates isolates the orbit of the core reduces to two statements to be proved: (i) in
+  a model, a labelled globally rigid core of type `p` satisfies the pointed core formula (pointed
+  receiving, from finite-cut receiving and rigidity); (ii) in a countable model, the realizations of
+  the pointed core formula are exactly the images of the core under automorphisms (pointed exact
+  comparison).
+
+  *Fixing ranks of finite charts* (a companion target, prospective, stated with the conventions of
+  target 3 for charts named by their coordinates).  The **fixing rank** of a stage type at `λ_η` is
+  the least `ξ ≤ η` such that its reduction to `λ_ξ` changes no label; it exists, since `ξ = η` is
+  one.  For an actual model at a countable block `η`, the supremum of the fixing ranks of its
+  realized finite charts is `η`, and across all presentations of a countable base model the least
+  bound of these fixing ranks is its height (greatest refinements, above).  Neither is identified
+  with a Scott rank.  At a limit `η` the supremum is not attained, a statement to be proved with the
+  others: a finite chart has finitely many proper labels, all below `λ_η`, and since `λ` is
+  continuous at limits each lies below some `λ_ξ` with `ξ < η`, so its fixing rank is below `η`.
 
   **Completion criterion.**  Each row is a bounded checkpoint, complete when its formula is
   constructed for the concrete objects of the construction (the chart predicates at `λ_η`, the
@@ -997,7 +1120,10 @@ These are statements still to be proved.  None is an input to the main theorem.
   ancestor-closed subtrees matched with ranks agreeing after capping at `δ + m` admit, for an
   extension by `m` vertices added parent before child, a match in a full target with agreement
   after capping at `δ`.  The same-index equivalence of [AFK26, Proposition 8.6] is not a
-  statement: it is false (`LITERATURE.md`, §9).
+  statement: it is false (`LITERATURE.md`, §9).  Two non-implications are to be compiled with
+  it as examples (`IMPLEMENTATION.md`, "Checkpoint order and acceptance"): a labelling by ordinals
+  that is at least as large at a parent as at each child need not be a rank, and branching at
+  nodes of high rank does not give the extension property at nodes of low rank.
 * **No invariant probability measure.**  No probability measure on the model-code space that is
   invariant under the permutations of `ℕ` is concentrated on the codes of models of `Φ`, derived
   from the finite equivariant pair hulls (the hull of two points, preserved by automorphisms and
