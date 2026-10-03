@@ -38,7 +38,11 @@ between block stages this is `ModelExpansion.reduceBlock`.  A model expansion tr
 isomorphism of base structures, possibly on carriers in different universes
 (`ModelExpansion.map`): the transported realization is a model, and its base reduct is the
 structure induced by the isomorphism, which is the target structure
-(`FirstOrder.Language.Equiv.inducedStructure_eq`).
+(`FirstOrder.Language.Equiv.inducedStructure_eq`).  At the base stage `ω` an expansion is the
+realization of its base structure (`ModelExpansion.val_eq_toRealization`), so there is at most one
+(`ModelExpansion.instSubsingletonOmega`), and a type assignment has one exactly when its
+realization is a model (`ModelExpansion.nonempty_omega_iff`); uniqueness at higher stages is not
+proved here.
 
 **Countable stages.**  A model on a countable carrier has a countable stage
 (`Realization.IsModel.lt_omega_one`): over one occurrence, the uniformity clause at each block
@@ -299,6 +303,32 @@ theorem ModelExpansion.exists_covers_zero (e : ModelExpansion M α) :
   congr 1
   ext i
   exact i.elim0
+
+/-! ### Model expansions at the base stage -/
+
+/-- **An expansion at the base stage is the realization of the base structure**: its reduction
+to `ω` is itself, so its structure is the base structure, and a realization with legal types is
+the realization of its structure (`baseLanguage.toRealization_toStructure`). -/
+theorem ModelExpansion.val_eq_toRealization (e : ModelExpansion M (ω : Ordinal.{u})) :
+    e.1 = toRealization M := by
+  obtain ⟨R, hR⟩ := e
+  have h := hR.toStructure_reduce
+  rw [Realization.reduce_self] at h
+  change R = toRealization M
+  rw [← h]
+  exact (toRealization_toStructure hR.isModel.hasLegalTypes).symm
+
+/-- **At most one model expansion at the base stage.** -/
+instance ModelExpansion.instSubsingletonOmega :
+    Subsingleton (ModelExpansion M (ω : Ordinal.{u})) :=
+  ⟨fun e e' ↦ Subtype.ext (e.val_eq_toRealization.trans e'.val_eq_toRealization.symm)⟩
+
+/-- **Model expansions at the base stage**: a type assignment has a model expansion to `ω`
+exactly when its realization is a model; the expansion is then that realization. -/
+theorem ModelExpansion.nonempty_omega_iff (hT : IsTypeAssignment M) :
+    Nonempty (ModelExpansion M (ω : Ordinal.{u})) ↔ (toRealization M).IsModel :=
+  ⟨fun ⟨e⟩ ↦ e.val_eq_toRealization ▸ e.2.isModel, fun h ↦
+    ⟨⟨toRealization M, h, by rw [Realization.reduce_self]; exact toStructure_toRealization hT⟩⟩⟩
 
 end ModelExpansion
 

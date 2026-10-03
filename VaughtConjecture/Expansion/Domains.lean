@@ -37,10 +37,19 @@ representative.
 (`Realization.IsModel.lt_omega_one`, by the uniformity clause), and `η ≤ λ_η`, so the domains at
 `η ≥ ω₁` are empty (`expansionDomain_eq_empty`), with no guard in the definition.
 
-These are unconditional.  Continuity at limits is not part of the definition and is not assumed:
-that the domain at a nonzero countable limit contains the intersection of the earlier ones needs
-an actual model expansion at the limit, built from expansions below it whose coherence is to be
-derived from uniqueness of expansions (semantic contract, item 9).
+**The domain at `0`.**  A model expansion to `λ_0 = ω` is the realization of its base structure
+(`ModelExpansion.val_eq_toRealization`), so a class is in the domain at `0` exactly when the
+realization of the structure of a code of it is a model (`mem_expansionDomain_zero_iff`,
+unconditional).  That the domain at `0` is every class (`expansionDomain_zero`) is therefore
+equivalent to the modelhood of these realizations, and it is proved **conditional on the
+cap-to-model theorem** at `ω` on `ℕ` (Layer 3, 3.4; checkpoint 4; still to be proved), stated as
+an explicit hypothesis in the unbundled form of `VaughtConjecture.Language.Density`.  The
+finite-cut receiving it uses is the one the density sentence provides, not (R1).
+
+The other statements here are unconditional.  Continuity at limits is not part of the definition
+and is not assumed: that the domain at a nonzero countable limit contains the intersection of the
+earlier ones needs an actual model expansion at the limit, built from expansions below it whose
+coherence is to be derived from uniqueness of expansions (semantic contract, item 9).
 
 ## Placement
 
@@ -84,6 +93,37 @@ theorem expansionDomain_eq_empty {η : Ordinal.{0}} (h : ω₁ ≤ η) : expansi
   Set.eq_empty_of_forall_notMem fun _ ⟨c, _, ⟨e⟩⟩ ↦
     (@ModelExpansion.isEmpty_of_omega_one_le ℕ c.1.toStructure _ _
       (h.trans (le_blockStage η))).false e
+
+/-! ### The domain at `0`, conditional on the cap-to-model theorem -/
+
+/-- **Membership in the domain at `0`**: a class is in the expansion domain at `0` exactly when
+the realization of the structure of a code of it is a model.  The structure of a code is a type
+assignment (`realize_densitySentence_iff`), and a model expansion to `λ_0 = ω` is the realization
+of its base structure (`ModelExpansion.nonempty_omega_iff`). -/
+theorem mem_expansionDomain_zero_iff (c : ModelsOf densitySentence.{0}) :
+    Quotient.mk _ c ∈ expansionDomain 0 ↔ (@toRealization ℕ c.1.toStructure).IsModel := by
+  let := c.1.toStructure
+  rw [mem_expansionDomain_iff, blockStage_zero]
+  exact ModelExpansion.nonempty_omega_iff ((realize_densitySentence_iff ℕ).mp c.2).1
+
+/-- **The domain at `0` is every class, conditional on the cap-to-model theorem** at `ω` on `ℕ`
+(`hcap`, in the unbundled form of `VaughtConjecture.Language.Density`; Layer 3, 3.4, and
+checkpoint 4 of the roadmap, still to be proved; the bundled `MainTheorem.CapToModel.{0}` supplies
+it as `fun R ↦ hcap.isModel R`).  The structure of every code satisfies the density sentence, so
+its realization has legal types, a nonempty carrier, exact consistency, covering, and the
+finite-cut receiving property (`realize_densitySentence_iff`); the receiving used is the one the
+density sentence itself provides, not (R1).  Nothing weaker than `hcap` on these realizations
+suffices: by `mem_expansionDomain_zero_iff`, the conclusion is equivalent to the modelhood of the
+realization of every code of a model of the density sentence. -/
+theorem expansionDomain_zero
+    (hcap : ∀ R : Realization.{0, 0} ω ℕ, Nonempty ℕ → R.HasLegalTypes → R.IsConsistent →
+      R.IsCovering → R.HasFiniteCutReceiving → R.IsModel) :
+    expansionDomain 0 = Set.univ :=
+  Set.eq_univ_of_forall fun q ↦ Quotient.inductionOn q fun c ↦ by
+    let := c.1.toStructure
+    obtain ⟨-, hne, hcons, hcov, hr⟩ := (realize_densitySentence_iff ℕ).mp c.2
+    exact (mem_expansionDomain_zero_iff c).mpr
+      (hcap _ hne hasLegalTypes_toRealization hcons hcov hr)
 
 end Expansion
 

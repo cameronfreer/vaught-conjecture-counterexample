@@ -11,6 +11,9 @@ import VaughtConjecture.MainTheorem.Assembly
 
 Special cases of `VaughtConjecture.Expansion.Domains`:
 
+* the domain at `0`: membership is modelhood of the realization of a code, unconditionally; the
+  domain is every class given the cap-to-model theorem; and there is at most one model expansion
+  at the base stage, unconditionally;
 * transport of model expansions along the identity, along an isomorphism and back, and between
   carriers in different universes; codes of one class have the same membership;
 * a successor step: the domain at `ξ + 1` is contained in the domain at `ξ`, and the loss
@@ -27,6 +30,27 @@ This file belongs to Layer 5 of `roadmap/README.md`.
 namespace VaughtConjecture.Expansion
 
 open Ordinal FirstOrder Language Structure baseLanguage MainTheorem
+
+/-! ### The domain at `0` -/
+
+/-- Membership in the domain at `0` is modelhood of the realization of a code, unconditionally. -/
+example (c : ModelsOf densitySentence.{0}) :
+    Quotient.mk _ c ∈ expansionDomain 0 ↔ (@toRealization ℕ c.1.toStructure).IsModel :=
+  mem_expansionDomain_zero_iff c
+
+/-- The domain at `0` is every class, given the cap-to-model theorem on `ℕ`. -/
+example (hcap : CapToModel.{0}) : expansionDomain 0 = Set.univ :=
+  expansionDomain_zero fun R ↦ hcap.isModel R
+
+/-- At most one model expansion at the base stage, unconditionally. -/
+example {M : Type} [baseLanguage.{0}.Structure M] : Subsingleton (ModelExpansion M ω) :=
+  inferInstance
+
+/-- At most one model expansion at the block stage `λ_0`. -/
+example {M : Type} [baseLanguage.{0}.Structure M] :
+    Subsingleton (ModelExpansion M (blockStage 0)) := by
+  rw [blockStage_zero]
+  infer_instance
 
 /-! ### Transport -/
 
