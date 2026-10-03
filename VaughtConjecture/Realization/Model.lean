@@ -75,7 +75,13 @@ reduced to stage `α` lawfully; stages of models in the source are limits.
 (`HasFiniteCutReceiving`) when over every occurrence, for every coface `d` of its type and every
 permitted cutoff `c`, some point extends the occurrence to one with a type in the receiving family
 of `d` at `c` (`StageType.receivingFamily`); the property is invariant under transport and
-isomorphism (`hasFiniteCutReceiving_map_iff`, `IsIso.hasFiniteCutReceiving_iff`).
+isomorphism (`hasFiniteCutReceiving_map_iff`, `IsIso.hasFiniteCutReceiving_iff`).  The
+**finite-extension receiving property** (`HasFiniteExtensionReceiving`) is its form for donors on
+several new points: over every occurrence of type `p`, for every legal stage type `D` restricting
+to `p` along an embedding `g` of coordinates and every permitted cutoff `c`, some tuple extends the
+occurrence along `g` literally and has a type in the receiving family of `D` at `c`.  It gives
+finite-cut receiving (`HasFiniteExtensionReceiving.hasFiniteCutReceiving`, the donors on one new
+point along the initial segment).
 
 ## References
 
@@ -464,6 +470,23 @@ theorem IsIso.hasFiniteCutReceiving_iff {S : Realization.{u, w} α N} (h : R.IsI
     R.HasFiniteCutReceiving ↔ S.HasFiniteCutReceiving := by
   obtain ⟨e, rfl⟩ := h
   exact (hasFiniteCutReceiving_map_iff e).symm
+
+variable (R) in
+/-- The **finite-extension receiving property**: for every actual root `t` of type `p`, every legal
+stage type `D` restricting to `p` along an embedding `g` of coordinates, and every permitted cutoff
+`c`, some injective tuple `u` extends `t` along `g` literally and has a type in the receiving
+family of `D` at `c`. -/
+def HasFiniteExtensionReceiving : Prop :=
+  ∀ ⦃n m : ℕ⦄ (t : Fin n ↪ M) (p : StageType.{u} α n), R.eval t = some p →
+    ∀ (D : StageType.{u} α m) (g : Fin n ↪ Fin m), D.IsLegal → restrictFace g D = some p →
+      ∀ c : Label.{u}, IsPermittedCutoff α c →
+        ∃ u : Fin m ↪ M, g.trans u = t ∧ ∃ q ∈ receivingFamily D c, R.eval u = some q
+
+/-- **Finite-extension receiving gives finite-cut receiving**: the case of a donor on one more
+point, along the initial segment. -/
+theorem HasFiniteExtensionReceiving.hasFiniteCutReceiving (h : R.HasFiniteExtensionReceiving) :
+    R.HasFiniteCutReceiving :=
+  fun x d hd c hc ↦ h x.tuple x.type x.eval_tuple d Fin.castSuccEmb hd.1 hd.2 c hc
 
 end Receiving
 

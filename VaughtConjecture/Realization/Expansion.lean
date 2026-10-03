@@ -26,12 +26,15 @@ at least `ω` (`omega0_le_blockStage`), block stages are strictly increasing
 structure of `baseLanguage`) is an **expansion** of `M` (`Realization.IsExpansionOf`) when it is a
 model whose stage reduction to `ω` has `M` as its structure: the literal equation of structures
 on the same carrier, `(R.reduce _).toStructure = ‹_›`.  `ModelExpansion M α` is the type of these
-expansions.  No uniqueness or coherence of expansions is assumed or used: any expansion is
-allowed, and two expansions of one base structure at one stage are different elements.  The stage
-reduction of an expansion at a stage that is zero or a limit to a limit stage `ω ≤ β ≤ α` is an
-expansion (`ModelExpansion.reduce`), by the reduction of models (`IsModel.reduce`) and the
-coherence of stage reduction (`Realization.reduce_reduce`); between block stages this is
-`ModelExpansion.reduceBlock`.
+expansions.  The definition is meant for stages `α ≥ ω`, where the reduction to `ω` is the base
+reduct; below `ω` the reduction to `ω` only reads a type at the larger stage `ω`
+(`StageType.reduce_eq_castLE`).  Neither uniqueness of the expansion at a stage nor coherence of
+the expansions at different stages (output 4 of higher-stage reconstruction) is assumed or used:
+any expansion is allowed, and two expansions of one base structure at one stage are different
+elements.  The stage reduction of an expansion at a stage that is zero or a limit to a limit stage
+`ω ≤ β ≤ α` is an expansion (`ModelExpansion.reduce`), by the reduction of models
+(`IsModel.reduce`) and the composition law of stage reduction (`Realization.reduce_reduce`);
+between block stages this is `ModelExpansion.reduceBlock`.
 
 **Covers.**  A tuple `c : Fin k → M` **covers** a stage type `t` in `R` (`Realization.Covers`)
 when it is injective and `R` evaluates it to `t`: `c` enumerates an actual occurrence of `t`.
@@ -125,7 +128,8 @@ section Expansion
 variable {α β : Ordinal.{u}} {M : Type v} {N : Type w}
 
 /-- A realization `R` at stage `α` on the carrier of a base structure `M` is an **expansion** of
-`M` when it is a model whose stage reduction to `ω` has `M` as its structure. -/
+`M` when it is a model whose stage reduction to `ω` has `M` as its structure.  It is meaningful
+only for `ω ≤ α`, where the reduction to `ω` is the base reduct. -/
 structure IsExpansionOf [baseLanguage.{u}.Structure M] (R : Realization.{u, v} α M) : Prop where
   /-- The realization is a model. -/
   isModel : R.IsModel

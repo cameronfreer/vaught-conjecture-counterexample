@@ -26,16 +26,17 @@ on `k` points are the stage types at `λ_α` on `k` points, and a tuple covers a
 expansion when it enumerates an actual occurrence of it (`Realization.Covers`).
 
 **Finite-extension receiving.**  A realization has **finite-extension receiving**
-(`Realization.HasFiniteExtensionReceiving`) when, for every actual root `t` of type `p`, every
-legal stage type `D` with a face `g` along which it restricts to `p`, and every permitted cutoff
-`c`, some injective tuple `u` extends the root along `g` literally (`g.trans u = t`) and has a
-type in the receiving family of `D` at `c`.  The donor `D` may add several points at once.  It
-implies the finite-cut receiving property (`HasFiniteExtensionReceiving.hasFiniteCutReceiving`,
-the case of one new point).  `FiniteExtensionReceiving` is the statement that every model at a
-countable limit stage has finite-extension receiving: it is Layer 3's receiving for finite
-extensions (from finite-cut receiving, along a chain of closed faces) composed with (R1)
-(finite-cut receiving of models).  **It is not proved here, and nothing here proves it**: it is a
-statement still to be proved, taken as an explicit hypothesis by every theorem that uses it.
+(`Realization.HasFiniteExtensionReceiving`, in `VaughtConjecture.Realization.Model`) when, for
+every actual root `t` of type `p`, every legal stage type `D` with an embedding `g` of coordinates
+along which it restricts to `p`, and every permitted cutoff `c`, some injective tuple `u` extends
+the root along `g` literally (`g.trans u = t`) and has a type in the receiving family of `D` at
+`c`.  The donor `D` may add several points at once.  It implies the finite-cut receiving property
+(`HasFiniteExtensionReceiving.hasFiniteCutReceiving`, the case of one new point).
+`FiniteExtensionReceiving` is the statement that every model at a countable limit stage has
+finite-extension receiving: it is Layer 3's receiving for finite extensions (from finite-cut
+receiving, along a chain of visible faces of the donor's plan) composed with (R1) (finite-cut
+receiving of models).  **It is not proved here, and nothing here proves it**: it is a statement
+still to be proved, taken as an explicit hypothesis by every theorem that uses it.
 
 **The laws.**
 
@@ -82,32 +83,6 @@ universe v w
 namespace VaughtConjecture
 
 open Ordinal FirstOrder Language Structure baseLanguage Comparison
-
-/-! ### Finite-extension receiving -/
-
-namespace Realization
-
-variable {α : Ordinal.{0}} {M : Type v} (R : Realization.{0, v} α M)
-
-/-- **Finite-extension receiving**: for every actual root `t` of type `p`, every legal stage type
-`D` restricting to `p` along a face `g`, and every permitted cutoff `c`, some injective tuple `u`
-extends `t` along `g` literally and has a type in the receiving family of `D` at `c`. -/
-def HasFiniteExtensionReceiving : Prop :=
-  ∀ ⦃n m : ℕ⦄ (t : Fin n ↪ M) (p : StageType.{0} α n), R.eval t = some p →
-    ∀ (D : StageType.{0} α m) (g : Fin n ↪ Fin m), D.IsLegal →
-      StageType.restrictFace g D = some p → ∀ c : Label.{0}, Label.IsPermittedCutoff α c →
-        ∃ u : Fin m ↪ M, g.trans u = t ∧
-          ∃ q ∈ StageType.receivingFamily D c, R.eval u = some q
-
-variable {R}
-
-/-- **Finite-extension receiving gives finite-cut receiving**: the case of a donor on one more
-point, along the initial segment. -/
-theorem HasFiniteExtensionReceiving.hasFiniteCutReceiving (h : R.HasFiniteExtensionReceiving) :
-    R.HasFiniteCutReceiving :=
-  fun x d hd c hc ↦ h x.tuple x.type x.eval_tuple d Fin.castSuccEmb hd.1 hd.2 c hc
-
-end Realization
 
 namespace Expansion
 
@@ -303,6 +278,8 @@ theorem mem_modelsOf_iff_of_modelExpansions (hrec : FiniteExtensionReceiving.{0}
     (h₂ : Nonempty (@ModelExpansion ℕ c₂.toStructure (blockStage η)))
     (θ : baseLanguage.{0}.Sentenceω) (hθ : θ.qrank ≤ η) :
     c₁ ∈ ModelsOf θ ↔ c₂ ∈ ModelsOf θ :=
+  -- membership in `ModelsOf θ` is, by definition, the realization of `θ` in the structure of the
+  -- code, with the empty valuations (InfinitaryLogic's `ModelsOf` and `Sentenceω.Realize`)
   @realize_iff_of_modelExpansions ℕ ℕ c₁.toStructure c₂.toStructure hrec η hη h₁ h₂ θ hθ
 
 end Expansion

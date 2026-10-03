@@ -16,7 +16,8 @@ Regressions for `VaughtConjecture.Realization.Expansion` and
   and atomic agreement, lowering, existence and compatibility are unconditional;
 * forth and back with an already-covered point use no receiving;
 * finite-extension receiving gives finite-cut receiving;
-* a received type has the stage reduction of its donor at the cutoff;
+* a received type has the stage reduction of its donor at the cutoff, and at every lower block
+  stage;
 * the code-level statement at `ℕ`, in the base language `baseLanguage.{0} : Language.{0, 1}` with
   levels in `Ordinal.{0}`, and the universes of the match data;
 * without an initial match nothing follows: on an empty carrier there is no model expansion, and
@@ -111,10 +112,14 @@ example {α : Ordinal.{0}} {n : ℕ} {D q : StageType.{0} (blockStage (α + 1)) 
     q.reduce (isSuccPrelimit_blockStage α) = D.reduce (isSuccPrelimit_blockStage α) :=
   StageType.reduce_eq_of_mem_receivingFamily _ hq
 
-/-- The donor itself is received at every cutoff, and the stage reductions agree trivially. -/
-example {α : Ordinal.{0}} {n : ℕ} (D : StageType.{0} (blockStage (α + 1)) n) :
-    D.reduce (isSuccPrelimit_blockStage α) = D.reduce (isSuccPrelimit_blockStage α) :=
-  StageType.reduce_eq_of_mem_receivingFamily _ (StageType.self_mem_receivingFamily D _)
+/-- The agreement of a received type with its donor after stage reduction to the cutoff `λ_α`
+descends to every lower block stage `λ_β`, by the composition law of stage reduction. -/
+example {α β : Ordinal.{0}} (hβα : β ≤ α) {n : ℕ} {D q : StageType.{0} (blockStage (α + 1)) n}
+    (hq : q ∈ StageType.receivingFamily D (blockStage α : Label.{0})) :
+    q.reduce (isSuccPrelimit_blockStage β) = D.reduce (isSuccPrelimit_blockStage β) := by
+  rw [← q.reduce_reduce (isSuccPrelimit_blockStage α) _ (blockStage_mono hβα),
+    ← D.reduce_reduce (isSuccPrelimit_blockStage α) _ (blockStage_mono hβα),
+    StageType.reduce_eq_of_mem_receivingFamily _ hq]
 
 /-! ### The code-level statement at `ℕ` -/
 
