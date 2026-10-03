@@ -305,9 +305,9 @@ theorem reconstruct_chart_eval {α : Ordinal.{u}} {k n : ℕ} {P : StageType.{u}
 /-- **Reconstruction commutes with stage reduction**: for a realization `R` with legal types at a
 stage `α` and a stage `β` that is zero or a limit, reconstructing at `β` the structure in the hull
 language of the stage reduction `R.reduce hβ` returns `R.reduce hβ`, on the same carrier and with
-the same untyped tuples (`none` faces included).  The types of the reduction are legal by
-`StageType.IsLegal.reduce`, so this is the roundtrip (a) (`reconstruct_toHullStructure`) at `β`;
-no relation between `β` and `α` is needed.
+the same untyped tuples (`none` faces included).  The types of the reduction are legal
+(`Realization.HasLegalTypes.reduce`, by `StageType.IsLegal.reduce`), so this is the roundtrip (a)
+(`reconstruct_toHullStructure`) at `β`; no relation between `β` and `α` is needed.
 
 This is the algebraic equality only.  Modelhood transfers separately, by
 `Realization.IsModel.reduce` (which needs in addition that `α` is zero or a limit and that `β` is a
@@ -315,9 +315,7 @@ limit with `β ≤ α`); countability enters only when the sentence at the lower
 theorem reconstruct_reduce_toHullStructure {α β : Ordinal.{u}} {M : Type v}
     (R : Realization.{u, v} α M) (hR : R.HasLegalTypes) (hβ : Order.IsSuccPrelimit β) :
     @reconstruct β M (R.reduce hβ).toHullStructure = R.reduce hβ :=
-  reconstruct_toHullStructure _ fun _ t p hp ↦ by
-    obtain ⟨q, hq, rfl⟩ := Option.map_eq_some_iff.mp hp
-    exact (hR t q hq).reduce hβ
+  reconstruct_toHullStructure _ (hR.reduce hβ)
 
 /-- **Reconstruction commutes with stage reduction, for a reconstructed realization**: for a
 structure `M` of the hull language at `α` and a stage `β` that is zero or a limit, reconstructing

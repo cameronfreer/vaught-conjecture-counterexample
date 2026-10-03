@@ -54,8 +54,11 @@ pairwise nonisomorphic `P ⊆ K` are kept with their statements:
   `FirstOrder.Language.exists_forall_not_codeBFEquiv_of_analyticSet`, which separates every
   analytic antichain);
 * a nonempty perfect set of codes is uncountable (`not_countable_of_perfect`; the library's
-  `Perfect.mk_eq_continuum`, in the Polish space of codes), which has no counterpart among
-  InfinitaryLogic's public statements.
+  `Perfect.mk_eq_continuum`, in the Polish space of codes).  InfinitaryLogic states this only in a
+  metric space (`Perfect.mk_eq_continuum` assumes `MetricSpace`), and the space of codes carries
+  a metric only after a choice of compatible complete metric
+  (`TopologicalSpace.upgradeIsCompletelyMetrizable`), so the statement for codes, with no metric
+  in it, is kept here.
 
 **Back-and-forth equivalence as a setoid.**  `codeBFEquivSetoid L η` is the library's
 `CodeBFEquiv η` on all codes, an equivalence relation by reflexivity, symmetry, and transitivity
@@ -125,9 +128,11 @@ variable [Countable (Σ l, L.Relations l)]
 
 omit [L.IsRelational] in
 /-- **A nonempty perfect set of codes is uncountable**: it has the cardinality of the continuum
-(the library's `Perfect.mk_eq_continuum`), in the Polish space of codes.  Kept here: InfinitaryLogic
-states no such lemma for sets of codes (its thinness theorem goes through Cantor antichains, and
-its uncountability of Cantor space is private). -/
+(the library's `Perfect.mk_eq_continuum`), in the Polish space of codes.  Kept here because
+InfinitaryLogic's `Perfect.mk_eq_continuum` assumes a metric space, and the space of codes gets
+one only after a choice of compatible complete metric
+(`TopologicalSpace.upgradeIsCompletelyMetrizable`), made inside the proof; the statement has no
+metric in it. -/
 theorem not_countable_of_perfect {P : Set (StructureSpace L)} (hperf : Perfect P)
     (hne : P.Nonempty) : ¬ P.Countable := by
   -- a complete metric compatible with the topology; `hperf` is unaffected

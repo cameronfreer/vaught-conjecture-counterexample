@@ -971,11 +971,12 @@ named (`README.md`, Layer 0):
     for countably many relation symbols; and `Sentenceω.isThinOnNatModels_of_bfScattered`, through
     `bfEquivSetoid_eq_comap`; with `codeBFEquivSetoid`, and with the analyticity of the
     off-diagonal of an analytic set in a Hausdorff space, `MeasureTheory.AnalyticSet.offDiag`
-    (signatures checked).  It is the generic form of the scatteredness form of
-    thinness, `isThinOn_of_countable_bfClasses` and
-    `isThinOnNatModels_of_countable_bfClasses` (`MainTheorem/Scatteredness`, Layer 6), which
-    separate only closed antichains and declare their own `codeBFEquivSetoid` and
-    `bfEquivSetoid_eq_comap`; these are candidates for one-line quotation, not absorbed here;
+    (signatures checked).  The scatteredness form of thinness in `MainTheorem/Scatteredness`
+    (Layer 6) is absorbed as quotations, with its statements kept:
+    `isThinOn_of_countable_bfClasses` quotes `isThinOn_of_bfScattered`,
+    `isThinOnNatModels_of_countable_bfClasses` quotes `Sentenceω.isThinOnNatModels_of_bfScattered`,
+    `bfEquivSetoid_eq_comap` quotes InfinitaryLogic's `bfEquivSetoid_eq_comap`, and
+    `codeBFEquivSetoid` is InfinitaryLogic's `codeBFEquivSetoid` by definition;
   - the rank conventions (#155): documentation only (`Scott/Height/Defs`: the cross-structure
     ranks in `Ordinal.{0}` and the internal orbit ranks in `Ordinal.{w}`, with the comparisons
     proved and those refuted on the empty carrier and the infinite pure set); no statement changed;
@@ -1557,22 +1558,18 @@ lands, their notes stay in those modules.
   lemmas, which become redundant once `BoundedFormulaω.realize_equiv` and `LomegaEquiv.of_equiv`
   are generalized across carrier universes.
 - `MainTheorem/Scatteredness` (pull request #42): every statement is generic (none mentions the
-  density sentence).  To InfinitaryLogic: `codeBFEquivSetoid` to `Descriptive/BFTree`, beside
-  `CodeBFEquiv`; `bfEquivSetoid_eq_comap` to `ModelTheory/MorleyCounting`, where `bfEquivSetoid` can
-  be defined as that restriction (as `isoSetoid` is, with `isoSetoid_eq_comap`); `offDiag_noniso`,
-  `exists_forall_not_codeBFEquiv_of_isClosed`, and `isThinOn_of_countable_bfClasses` to
-  `Descriptive/BFSeparation`, beside `exists_uniform_bfSeparation` (the thinness application of its
-  checkpoint (3); subject to that module's import guard), and
-  `isThinOnNatModels_of_countable_bfClasses` beside `bfEquivSetoid`.  To Mathlib: the analyticity of
-  the off-diagonal of a closed set in a Polish Borel space (`analyticSet_offDiag`, to
-  `MeasureTheory/Constructions/Polish`) and the uncountability of a nonempty perfect set in a
-  completely metrizable space (`not_countable_of_perfect`, to `Topology/MetricSpace/Perfect`, beside
-  `Perfect.exists_nat_bool_injection`).  InfinitaryLogic's `Descriptive/BFScattered` (`BFScattered`,
-  `not_hasCantorAntichainOn_of_bfScattered`, `isThinOn_of_bfScattered`) and
-  `Descriptive/BFScatteredSentence` (`Sentenceω.isThinOnNatModels_of_bfScattered`), available at the
-  pin `cf80917` (signatures checked), are the generic form of `isThinOn_of_countable_bfClasses` and
-  `isThinOnNatModels_of_countable_bfClasses`, and candidates for absorbing them by one-line
-  quotation.
+  density sentence), and its statements are quotations of InfinitaryLogic (at the pin `cf80917`):
+  `isThinOn_of_countable_bfClasses` of `isThinOn_of_bfScattered` (`Descriptive/BFScattered`),
+  `isThinOnNatModels_of_countable_bfClasses` of `Sentenceω.isThinOnNatModels_of_bfScattered`
+  (`Descriptive/BFScatteredSentence`), `bfEquivSetoid_eq_comap` of its namesake, `offDiag_noniso` of
+  `not_structureIso_of_mem_offDiag`, `exists_forall_not_codeBFEquiv_of_isClosed` of
+  `exists_forall_not_codeBFEquiv_of_analyticSet`, and `analyticSet_offDiag` through
+  `MeasureTheory.AnalyticSet.offDiag`; `codeBFEquivSetoid` is InfinitaryLogic's by definition.
+  `not_countable_of_perfect` stays local: InfinitaryLogic's `Perfect.mk_eq_continuum` assumes a
+  metric space, and the space of codes gets one only after a choice of compatible complete metric
+  (`TopologicalSpace.upgradeIsCompletelyMetrizable`); to Mathlib, as the uncountability of a
+  nonempty perfect set in a completely metrizable space (`Topology/MetricSpace/Perfect`, beside
+  `Perfect.exists_nat_bool_injection`).
 - `MainTheorem/Assembly`: in the proof of `FullPresentations.HasScatteredTails.countable_quotient`,
   the local map from the classes of the density sentence to
   `Quotient (bfEquivSetoid densitySentence η)` re-derives InfinitaryLogic's
