@@ -1,0 +1,558 @@
+/-
+Copyright (c) 2026 Cameron Freer. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Cameron Freer
+-/
+import VaughtConjecture.ClassicalLimit.Age
+
+/-!
+# Reconstruction of partial evaluation from a classical limit of the age of top-free charts
+
+Roadmap, the section "The top-free witnesses: the finite age and its classical limit", step 4
+(reconstruction of partial evaluation) and the parts of step 5 proved from the factorization of one
+tuple (exact consistency, covering, top-freeness, a nonempty carrier); semantic contract, item 11
+(literal recovery of chart relations, uniqueness and injectivity of labelled tuples, exact partial
+restriction, covering, and the literal roundtrip in both directions, for the operations
+`Realization.hullOp`).
+
+**The reconstructed realization.**  Let `M` be a structure of the hull language `hullLanguage α`.
+Its **reconstructed realization** `reconstruct α M` gives an injective tuple `t` of `M` a stage type
+`p` at which the chart relation of `p` holds at `t`, if there is one, and no type otherwise.  The
+relation symbols are the legal stage types, so the types read off are legal
+(`hasLegalTypes_reconstruct`).  The definition makes a choice; the choice does not matter when at
+most one chart relation holds at each tuple, which is the case below.
+
+**One chart through which a tuple factors.**  The basic computation needs no hypothesis on `M`:
+if `e` embeds the chart of a legal stage type `Q` in `M`, the reconstructed evaluation of the
+image under `e` of a tuple `b` of points of `Q` is the evaluation of `b` in the face realization of
+`Q` (`reconstruct_eval_trans_chart`): the type of the face `b` spans when it is closed, and no type
+when it is not.  An embedding preserves and reflects the chart relations, and in the chart of `Q`
+the relation of `p` holds at `b` exactly when the face map of `Q` along `b` returns `p`
+(`StageType.relMap_chart`).  On the chart of a legal stage type, reconstruction therefore returns
+its face realization (`reconstruct_chart`, `reconstruct_chart_eval`).
+
+**Local chart coverage.**  The hypothesis of everything else here is
+`hage : (hullLanguage α).age M ⊆ topFreeAge α`: every finitely generated substructure of `M` is
+isomorphic to a top-free chart.  It is half of `IsFraisseLimit (topFreeAge α) M`, whose other half
+(the converse inclusion) is used only for a nonempty carrier, and ultrahomogeneity is not used.
+Under `hage`, every finite tuple of `M`, injective or not, factors literally through an embedding
+of a top-free chart (`exists_eq_trans_topFreeChart`, `exists_comp_eq_topFreeChart`, from
+`FirstOrder.Language.exists_factor_embedding_of_age_subset` and
+`FirstOrder.Language.exists_factor_tuple_of_age_subset`), and each statement below is a statement
+about one tuple, read in the face realization of the chart through which it factors:
+
+* **literal recovery of chart relations** (`reconstruct_eval_eq_some_iff`,
+  `relMap_rel_iff_reconstruct_eval`): the relation of `p` holds at a tuple exactly when the tuple is
+  injective and its reconstructed evaluation is `p`;
+* **uniqueness and injectivity of labelled tuples** (`eq_of_relMap_rel`, `injective_of_relMap_rel`):
+  at most one chart relation holds at a tuple, and a tuple at which one holds is injective.  The
+  uniqueness used is that of the face map of one stage type along one tuple of its points, an
+  equation in `Option`; the two-charts theorem is not used for it;
+* **exact partial restriction** (`isConsistent_reconstruct`), by the guarded composition law of
+  face maps in the chart, with `none` at an invisible face;
+* **covering** (`isCovering_reconstruct`), and for arbitrary tuples, the empty tuple and repeated
+  coordinates included (`exists_comp_eq_reconstruct_eval`);
+* **top-free types** (`isTopFree_of_reconstruct_eval`): a reconstructed type is a face of a
+  top-free stage type;
+* **typed tuples are charts** (`reconstruct_eval_eq_some_iff_exists_embedding`): a tuple has the
+  type `p` exactly when `p` is legal and top-free and the tuple is the image of the points of `p`,
+  in order, under an embedding of the chart of `p`; and a tuple is typed exactly when the set of
+  its points is closed under the hull operations, so that it is the substructure it generates
+  (`isSome_reconstruct_eval_iff`).  A tuple whose points do not form a substructure, such as a
+  pair whose hull has more points, has no type.
+
+**The roundtrip.**  (a) Reconstructing the structure of a realization with legal types in the
+hull language (`Realization.toHullStructure`) returns the realization
+(`reconstruct_toHullStructure`).  (b) Under `hage`, the hull operations of `M` are the hull
+operations of its reconstructed realization (`funMap_op_eq_hullOp`), and the structure of `M` is
+the structure of its reconstructed realization in the hull language
+(`toHullStructure_reconstruct`), relations and functions both.  Where a chart witness exists the
+value is its target point, by the two-charts theorem in the chart through which the witness
+factors (`StageType.hullOp_eq_of_restrictFace`); the realization-level two-charts theorem for the
+reconstructed realization follows (`eq_of_reconstruct_eval_eq_some`), from the chart-level one in
+a chart through which both witnesses factor.  Where no chart witness exists in `M`, none exists in
+the chart through which the two arguments factor either, since the image of a witness there is a
+witness in `M`; so both operations take the default value, the first argument, as at repeated
+inputs.
+
+The operations identified here are `Realization.hullOp`, defined by a choice of chart witness;
+that they are the operations defined by a first-order formula of the stage chart language
+(roadmap, Layer 2, item 2) is not used and not proved here.
+
+**For a Fraïssé limit** (`reconstruct_of_isFraisseLimit`).  If `M` is a Fraïssé limit of the age
+of top-free charts, its carrier is nonempty (`nonempty_of_topFreeAge_subset`, the one-point chart
+being in its age), its reconstructed realization is exactly consistent and covering with legal
+top-free types, and the structure of `M` is that of the reconstructed realization.  The limit is a
+hypothesis, not constructed: its existence (`exists_isFraisseLimit_topFreeAge`) depends on the
+coatom extension property `StageType.HasCoatomExtensions α`, which is not proved, and on the
+hypotheses on the stage `α` stated there; none of these enters this file.
+
+**What this file does not contain.**  Each item names the hypotheses it will need beyond those
+used here.
+
+* **Receiving** (step 6), `(reconstruct α M).HasFiniteCutReceiving`: over an actual root of type
+  `p`, for a one-point coface `d` of `p` and a permitted cutoff, an occurrence extending the root
+  literally, with a new point and a type agreeing with `d` below the cutoff, all on one occurrence.
+  It needs the top-free pinned extension, (R5) of roadmap, Layer 3, 3.4: the pinned extension
+  `StageType.exists_pinned_extension`, under `StageType.HasCoatomExtensions α`, capped at a cap
+  above the cutoff and the labels of `p` (`StageType.exists_cap`, under `Order.IsSuccPrelimit α`
+  and `0 < α`); and the ultrahomogeneity of `M`
+  (`FirstOrder.Language.IsUltrahomogeneous.extend_embedding`), applied to the embedding of the
+  chart of `p` onto the root (`reconstruct_eval_eq_some_iff_exists_embedding`).
+* **Modelhood** (step 7), `(reconstruct ω M).IsModel` with `u = 0`: from receiving and the
+  cap-to-model theorem (`MainTheorem.CapToModel`, roadmap, Layer 3, 3.4, not proved), whose other
+  hypotheses, a nonempty carrier, legal types, exact consistency, and covering, are proved here.
+  The density sentence then holds in the base-language structure of the reconstructed realization.
+* **Infinitude and terminality** (step 7): infinitude from receiving over a whole actual
+  occurrence, with a one-point coface of its type (`StageType.exists_extension`, under the coatom
+  extension property); terminality from the top-freeness proved here, modelhood, and the
+  reduction of models.
+* **Exact extension within the age** (semantic contract, item 12) beyond the extension of
+  embeddings given by ultrahomogeneity, and any statement about stage reductions or cutoff
+  observations of `M`.
+
+**Universes.**  The limit is a structure in `Type` of a language in `Type (u + 1)`; the output of
+reconstruction is the realization `reconstruct α M`, on the same carrier in `Type`.  At `α = ω`
+with `u = 0`, its structure in the base language (`Realization.toStructure`) is the structure, in
+`Type`, that the spectrum statements take; the structure of `M` in the hull language is not.
+
+## Placement
+
+This file belongs to the section on the top-free witnesses of `roadmap/README.md`.
+-/
+
+universe u v
+
+namespace VaughtConjecture
+
+open FirstOrder Language Structure Finset
+open scoped Ordinal
+
+/-! ### The reconstructed realization -/
+
+section Reconstruct
+
+variable (α : Ordinal.{u}) (M : Type v) [(hullLanguage.{u} α).Structure M]
+
+open Classical in
+/-- The **reconstructed realization** of a structure of the hull language (roadmap, the top-free
+witnesses, step 4): an injective tuple has a stage type at which its chart relation holds, if there
+is one, and no type otherwise. -/
+noncomputable def reconstruct : Realization.{u, v} α M where
+  eval {n} t := if h : ∃ (p : StageType.{u} α n) (hp : p.IsLegal),
+      RelMap (hullLanguage.rel p hp) t then some h.choose else none
+
+variable {α M} {n k : ℕ}
+
+open Classical in
+/-- The reconstructed evaluation, unfolded. -/
+theorem reconstruct_eval (t : Fin n ↪ M) :
+    (reconstruct α M).eval t = if h : ∃ (p : StageType.{u} α n) (hp : p.IsLegal),
+      RelMap (hullLanguage.rel p hp) t then some h.choose else none :=
+  rfl
+
+/-- A reconstructed type is a stage type whose chart relation holds at the tuple. -/
+theorem exists_relMap_of_reconstruct_eval_eq_some {t : Fin n ↪ M} {p : StageType.{u} α n}
+    (h : (reconstruct α M).eval t = some p) :
+    ∃ hp : p.IsLegal, RelMap (hullLanguage.rel p hp) t := by
+  rw [reconstruct_eval] at h
+  split_ifs at h with hex
+  obtain rfl := Option.some_injective _ h
+  exact hex.choose_spec
+
+/-- **The reconstructed types are legal**: they index chart relations. -/
+theorem hasLegalTypes_reconstruct : (reconstruct α M).HasLegalTypes := fun _ _ _ h ↦
+  (exists_relMap_of_reconstruct_eval_eq_some h).1
+
+/-- A tuple has no reconstructed type exactly when no chart relation holds at it. -/
+theorem reconstruct_eval_eq_none_iff {t : Fin n ↪ M} :
+    (reconstruct α M).eval t = none ↔
+      ∀ (p : StageType.{u} α n) (hp : p.IsLegal), ¬ RelMap (hullLanguage.rel p hp) t := by
+  rw [reconstruct_eval]
+  split_ifs with hex
+  · simp only [false_iff, not_forall, not_not]
+    exact hex
+  · simp only [true_iff]
+    exact fun p hp h ↦ hex ⟨p, hp, h⟩
+
+/-- If the chart relation of `p` holds at a tuple and no other chart relation does, the
+reconstructed type of the tuple is `p`. -/
+theorem reconstruct_eval_eq_some_of_relMap {t : Fin n ↪ M} {p : StageType.{u} α n}
+    (hp : p.IsLegal) (h : RelMap (hullLanguage.rel p hp) t)
+    (huniq : ∀ (q : StageType.{u} α n) (hq : q.IsLegal), RelMap (hullLanguage.rel q hq) t → q = p) :
+    (reconstruct α M).eval t = some p := by
+  have hex : ∃ (p : StageType.{u} α n) (hp : p.IsLegal), RelMap (hullLanguage.rel p hp) t :=
+    ⟨p, hp, h⟩
+  rw [reconstruct_eval, dite_eq_left hex]
+  obtain ⟨hq, hr⟩ := hex.choose_spec
+  exact congrArg some (huniq _ hq hr)
+
+/-! ### Tuples through one chart -/
+
+variable {Q : StageType.{u} α k}
+
+/-- Along an embedding of the chart of `Q`, the chart relation of `p` holds at the image of a tuple
+`b` of points of `Q` exactly when the face map of `Q` along `b` returns `p`. -/
+theorem relMap_trans_chart_iff (e : Q.Chart ↪[hullLanguage.{u} α] M) (b : Fin n ↪ Fin k)
+    {p : StageType.{u} α n} (hp : p.IsLegal) :
+    RelMap (hullLanguage.rel p hp) (b.trans (Q.toChart.toEmbedding.trans e.toEmbedding)) ↔
+      StageType.restrictFace b Q = some p :=
+  (e.map_rel (hullLanguage.rel p hp) (Q.toChart ∘ b)).trans (StageType.relMap_chart Q p hp b)
+
+/-- **Reconstruction through one chart**: along an embedding of the chart of a legal stage type
+`Q`, the reconstructed evaluation of the image of a tuple `b` of points of `Q` is the evaluation of
+`b` in the face realization of `Q`, the type of the face `b` spans, and no type when that face is
+not closed.  No hypothesis on `M` is needed. -/
+theorem reconstruct_eval_trans_chart (hQ : Q.IsLegal) (e : Q.Chart ↪[hullLanguage.{u} α] M)
+    (b : Fin n ↪ Fin k) :
+    (reconstruct α M).eval (b.trans (Q.toChart.toEmbedding.trans e.toEmbedding)) =
+      Q.faceRealization.eval b := by
+  rw [StageType.faceRealization_eval]
+  cases hb : StageType.restrictFace b Q with
+  | none =>
+    refine reconstruct_eval_eq_none_iff.mpr fun p hp h ↦ ?_
+    rw [relMap_trans_chart_iff e b hp, hb] at h
+    exact Option.some_ne_none p h.symm
+  | some q =>
+    exact reconstruct_eval_eq_some_of_relMap (hQ.restrictFace b hb)
+      ((relMap_trans_chart_iff e b _).mpr hb)
+      fun p hp h ↦ Option.some_injective _ (((relMap_trans_chart_iff e b hp).mp h).symm.trans hb)
+
+/-- Along an embedding of the chart of a legal stage type `Q`, the points of `Q`, in order, have
+the type `Q`. -/
+theorem reconstruct_eval_chart (hQ : Q.IsLegal) (e : Q.Chart ↪[hullLanguage.{u} α] M) :
+    (reconstruct α M).eval (Q.toChart.toEmbedding.trans e.toEmbedding) = some Q := by
+  have h := reconstruct_eval_trans_chart hQ e (Function.Embedding.refl _)
+  rwa [Function.Embedding.refl_trans, StageType.faceRealization_eval,
+    StageType.restrictFace_refl] at h
+
+/-- The value of a hull operation of `M` at the images of two points of a chart under an embedding
+is the image of its value in the chart. -/
+theorem funMap_op_trans_chart (e : Q.Chart ↪[hullLanguage.{u} α] M) (ι : HullIndex.{u} α)
+    (x y : Fin k) :
+    funMap (hullLanguage.op ι) ![e (Q.toChart x), e (Q.toChart y)] =
+      e (Q.toChart (Q.faceRealization.hullOp ι x y)) := by
+  rw [← StageType.funMap_chart, Embedding.map_fun]
+  exact congrArg _ (funext (Fin.forall_fin_two.mpr ⟨rfl, rfl⟩))
+
+end Reconstruct
+
+/-! ### The roundtrip from a realization -/
+
+/-- **The roundtrip from a realization** (`HULL_ALGEBRA.md`, §5, (a)): reconstructing the structure
+of a realization with legal types in the hull language returns the realization. -/
+theorem reconstruct_toHullStructure {α : Ordinal.{u}} {M : Type v} (R : Realization.{u, v} α M)
+    (hR : R.HasLegalTypes) : @reconstruct α M R.toHullStructure = R := by
+  let _ : (hullLanguage.{u} α).Structure M := R.toHullStructure
+  refine Realization.ext fun {n} t ↦ ?_
+  cases ht : R.eval t with
+  | none =>
+    refine reconstruct_eval_eq_none_iff.mpr fun p hp hr ↦ ?_
+    obtain ⟨_, h⟩ := (R.relMap_toHullStructure p hp t).mp hr
+    exact Option.some_ne_none p (h.symm.trans ht)
+  | some p =>
+    refine reconstruct_eval_eq_some_of_relMap (hR t p ht)
+      ((R.relMap_toHullStructure p _ t).mpr ⟨t.injective, ht⟩) fun q hq hr ↦ ?_
+    obtain ⟨_, h⟩ := (R.relMap_toHullStructure q hq t).mp hr
+    exact Option.some_injective _ (h.symm.trans ht)
+
+/-- **Reconstruction on a chart**: on the chart of a legal stage type, the reconstructed
+realization is its face realization. -/
+theorem reconstruct_chart {α : Ordinal.{u}} {k : ℕ} {P : StageType.{u} α k} (hP : P.IsLegal) :
+    reconstruct α P.Chart = P.faceRealization :=
+  reconstruct_toHullStructure P.faceRealization (StageType.hasLegalTypes_faceRealization hP)
+
+/-- On the chart of a legal stage type, the reconstructed evaluation of a tuple of points is the
+face map of the stage type along it. -/
+theorem reconstruct_chart_eval {α : Ordinal.{u}} {k n : ℕ} {P : StageType.{u} α k}
+    (hP : P.IsLegal) (t : Fin n ↪ Fin k) :
+    (reconstruct α P.Chart).eval (t.trans P.toChart.toEmbedding) = StageType.restrictFace t P :=
+  reconstruct_eval_trans_chart hP (Embedding.refl (hullLanguage.{u} α) P.Chart) t
+
+/-! ### Local chart coverage -/
+
+/-- Two structures on the same carrier with the same functions and relations are equal. -/
+private theorem structure_eq {L : Language.{u, v}} {N : Type*} {S S' : L.Structure N}
+    (hf : ∀ {l} (f : L.Functions l) (xs : Fin l → N),
+      @funMap L N S l f xs = @funMap L N S' l f xs)
+    (hr : ∀ {l} (r : L.Relations l) (xs : Fin l → N),
+      @RelMap L N S l r xs ↔ @RelMap L N S' l r xs) :
+    S = S' := by
+  obtain ⟨F, R⟩ := S
+  obtain ⟨F', R'⟩ := S'
+  have h1 : @F = @F' := funext fun l ↦ funext fun f ↦ funext (hf f)
+  have h2 : @R = @R' :=
+    funext fun l ↦ funext fun r ↦ funext fun xs ↦ propext (hr r xs)
+  subst h1 h2
+  rfl
+
+section Age
+
+variable {α : Ordinal.{u}} {M : Type} [(hullLanguage.{u} α).Structure M] {n : ℕ}
+  (hage : (hullLanguage.{u} α).age M ⊆ topFreeAge α)
+include hage
+
+/-- **Factorization of an injective tuple** through a top-free chart: under local chart coverage,
+every injective tuple of `M` is the image of a tuple of points of a top-free chart under an
+embedding of the chart. -/
+theorem exists_eq_trans_topFreeChart (t : Fin n ↪ M) :
+    ∃ (i : TopFreeIndex.{u} α) (e : i.2.1.Chart ↪[hullLanguage.{u} α] M) (b : Fin n ↪ Fin i.1),
+      b.trans (i.2.1.toChart.toEmbedding.trans e.toEmbedding) = t := by
+  obtain ⟨i, e, b, hb⟩ := exists_factor_embedding_of_age_subset hage t
+  exact ⟨i, e, b, hb⟩
+
+/-- **Factorization of a tuple** through a top-free chart, repeated coordinates allowed: under
+local chart coverage, every tuple of `M` is the image of a tuple of points of a top-free chart
+under an embedding of the chart. -/
+theorem exists_comp_eq_topFreeChart (a : Fin n → M) :
+    ∃ (i : TopFreeIndex.{u} α) (e : i.2.1.Chart ↪[hullLanguage.{u} α] M) (b : Fin n → Fin i.1),
+      (i.2.1.toChart.toEmbedding.trans e.toEmbedding) ∘ b = a := by
+  obtain ⟨i, e, b, hb⟩ := exists_factor_tuple_of_age_subset hage a
+  exact ⟨i, e, b, hb⟩
+
+/-- **Literal recovery of chart relations** (semantic contract, item 11), for injective tuples:
+under local chart coverage, an injective tuple has the reconstructed type `p` exactly when the
+chart relation of `p` holds at it. -/
+theorem reconstruct_eval_eq_some_iff (t : Fin n ↪ M) (p : StageType.{u} α n) :
+    (reconstruct α M).eval t = some p ↔ ∃ hp : p.IsLegal, RelMap (hullLanguage.rel p hp) t := by
+  refine ⟨exists_relMap_of_reconstruct_eval_eq_some, fun ⟨hp, h⟩ ↦ ?_⟩
+  obtain ⟨i, e, b, rfl⟩ := exists_eq_trans_topFreeChart hage t
+  rw [reconstruct_eval_trans_chart i.2.2.1 e b, StageType.faceRealization_eval]
+  exact (relMap_trans_chart_iff e b hp).mp h
+
+/-- **Literal recovery of chart relations and injectivity of labelled tuples** (semantic contract,
+item 11): under local chart coverage, the chart relation of `p` holds at a tuple exactly when the
+tuple is injective and its reconstructed type is `p`. -/
+theorem relMap_rel_iff_reconstruct_eval (xs : Fin n → M) {p : StageType.{u} α n}
+    (hp : p.IsLegal) :
+    RelMap (hullLanguage.rel p hp) xs ↔
+      ∃ h : Function.Injective xs, (reconstruct α M).eval ⟨xs, h⟩ = some p := by
+  refine ⟨fun hr ↦ ?_, fun ⟨h, he⟩ ↦ (exists_relMap_of_reconstruct_eval_eq_some he).2⟩
+  have hinj : Function.Injective xs := by
+    obtain ⟨i, e, b, rfl⟩ := exists_comp_eq_topFreeChart hage xs
+    obtain ⟨hb, -⟩ := (e.map_rel (hullLanguage.rel p hp) (i.2.1.toChart ∘ b)).mp hr
+    exact e.injective.comp hb
+  exact ⟨hinj, (reconstruct_eval_eq_some_iff hage ⟨xs, hinj⟩ p).mpr ⟨hp, hr⟩⟩
+
+/-- **Injectivity of labelled tuples**: under local chart coverage, a tuple at which a chart
+relation holds is injective. -/
+theorem injective_of_relMap_rel {xs : Fin n → M} {p : StageType.{u} α n} {hp : p.IsLegal}
+    (h : RelMap (hullLanguage.rel p hp) xs) : Function.Injective xs :=
+  ((relMap_rel_iff_reconstruct_eval hage xs hp).mp h).1
+
+/-- **Uniqueness of labelled tuples**: under local chart coverage, at most one chart relation holds
+at a tuple. -/
+theorem eq_of_relMap_rel {xs : Fin n → M} {p q : StageType.{u} α n} {hp : p.IsLegal}
+    {hq : q.IsLegal} (h : RelMap (hullLanguage.rel p hp) xs)
+    (h' : RelMap (hullLanguage.rel q hq) xs) : p = q := by
+  obtain ⟨_, he⟩ := (relMap_rel_iff_reconstruct_eval hage xs hp).mp h
+  obtain ⟨_, he'⟩ := (relMap_rel_iff_reconstruct_eval hage xs hq).mp h'
+  exact Option.some_injective _ (he.symm.trans he')
+
+/-- **Exact partial restriction** (semantic contract, item 11): under local chart coverage, the
+reconstructed realization is exactly consistent.  A typed tuple and its faces factor through one
+top-free chart, where face maps compose; an invisible face has no type. -/
+theorem isConsistent_reconstruct : (reconstruct α M).IsConsistent := by
+  intro m n t p f ht
+  obtain ⟨i, e, b, rfl⟩ := exists_eq_trans_topFreeChart hage t
+  rw [reconstruct_eval_trans_chart i.2.2.1 e b, StageType.faceRealization_eval] at ht
+  rw [← Function.Embedding.trans_assoc, reconstruct_eval_trans_chart i.2.2.1 e (f.trans b),
+    StageType.faceRealization_eval]
+  exact (StageType.restrictFace_trans _ b f ht).symm
+
+/-- **Covering** (semantic contract, item 11): under local chart coverage, the reconstructed
+realization is covering.  An injective tuple is a face of the points of the top-free chart through
+which it factors, and those points have the type of the chart. -/
+theorem isCovering_reconstruct : (reconstruct α M).IsCovering := by
+  intro n t
+  obtain ⟨i, e, b, rfl⟩ := exists_eq_trans_topFreeChart hage t
+  refine ⟨i.1, i.2.1.toChart.toEmbedding.trans e.toEmbedding, b, rfl, ?_⟩
+  rw [reconstruct_eval_chart i.2.2.1 e]
+  rfl
+
+/-- **Covering for arbitrary tuples** (semantic contract, item 11): under local chart coverage,
+every tuple of `M`, the empty tuple and tuples with repeated coordinates included, lies in the
+points of a typed tuple. -/
+theorem exists_comp_eq_reconstruct_eval (a : Fin n → M) :
+    ∃ (m : ℕ) (u : Fin m ↪ M) (b : Fin n → Fin m), u ∘ b = a ∧
+      ((reconstruct α M).eval u).isSome := by
+  obtain ⟨i, e, b, rfl⟩ := exists_comp_eq_topFreeChart hage a
+  refine ⟨i.1, i.2.1.toChart.toEmbedding.trans e.toEmbedding, b, rfl, ?_⟩
+  rw [reconstruct_eval_chart i.2.2.1 e]
+  rfl
+
+/-- **Top-free types**: under local chart coverage, every reconstructed type is top-free, being a
+face of a top-free stage type. -/
+theorem isTopFree_of_reconstruct_eval {t : Fin n ↪ M} {p : StageType.{u} α n}
+    (h : (reconstruct α M).eval t = some p) : p.IsTopFree := by
+  obtain ⟨i, e, b, rfl⟩ := exists_eq_trans_topFreeChart hage t
+  rw [reconstruct_eval_trans_chart i.2.2.1 e b, StageType.faceRealization_eval] at h
+  exact i.2.2.2.restrictFace h
+
+/-- **Typed tuples are charts**: under local chart coverage, an injective tuple has the
+reconstructed type `p` exactly when `p` is legal and top-free and the tuple is the image of the
+points of `p`, in order, under an embedding of the chart of `p`.  The direction from an embedding
+to the type needs only that `p` is legal (`reconstruct_eval_chart`). -/
+theorem reconstruct_eval_eq_some_iff_exists_embedding (t : Fin n ↪ M) (p : StageType.{u} α n) :
+    (reconstruct α M).eval t = some p ↔ p.IsLegal ∧ p.IsTopFree ∧
+      ∃ φ : p.Chart ↪[hullLanguage.{u} α] M, ∀ j, φ (p.toChart j) = t j := by
+  refine ⟨fun h ↦ ⟨hasLegalTypes_reconstruct t p h, isTopFree_of_reconstruct_eval hage h, ?_⟩,
+    fun ⟨hp, _, φ, hφ⟩ ↦ ?_⟩
+  · obtain ⟨i, e, b, rfl⟩ := exists_eq_trans_topFreeChart hage t
+    rw [reconstruct_eval_trans_chart i.2.2.1 e b, StageType.faceRealization_eval] at h
+    exact ⟨e.comp (StageType.chartEmbedding h), fun _ ↦ rfl⟩
+  · have ht : p.toChart.toEmbedding.trans φ.toEmbedding = t := Function.Embedding.ext hφ
+    rw [← ht]
+    exact reconstruct_eval_chart hp φ
+
+/-- **Typed tuples are exactly the substructures**: under local chart coverage, an injective tuple
+has a reconstructed type exactly when the set of its points is closed under the hull operations,
+that is, is the substructure it generates.  A tuple whose points do not form a substructure, such
+as a pair whose hull has more points, has no type. -/
+theorem isSome_reconstruct_eval_iff (t : Fin n ↪ M) :
+    ((reconstruct α M).eval t).isSome ↔
+      (Substructure.closure (hullLanguage.{u} α) (Set.range t) : Set M) = Set.range t := by
+  refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩
+  · obtain ⟨p, hp⟩ := Option.isSome_iff_exists.mp h
+    obtain ⟨-, -, φ, hφ⟩ := (reconstruct_eval_eq_some_iff_exists_embedding hage t p).mp hp
+    refine Set.Subset.antisymm (fun x hx ↦ ?_) Substructure.subset_closure
+    have hle : Substructure.closure (hullLanguage.{u} α) (Set.range t) ≤ φ.toHom.range := by
+      refine Substructure.closure_le.mpr ?_
+      rintro _ ⟨j, rfl⟩
+      exact Hom.mem_range.mpr ⟨p.toChart j, hφ j⟩
+    obtain ⟨y, rfl⟩ := Hom.mem_range.mp (hle hx)
+    obtain ⟨j, rfl⟩ := p.toChart.surjective y
+    exact ⟨j, (hφ j).symm⟩
+  · obtain ⟨i, e, b, rfl⟩ := exists_eq_trans_topFreeChart hage t
+    rw [reconstruct_eval_trans_chart i.2.2.1 e b, StageType.faceRealization_eval,
+      StageType.isSome_restrictFace_iff]
+    -- the preimage of the generated substructure is a substructure of the chart, on `univ.map b`
+    refine StageType.mem_faces_of_substructure i.2.2.1
+      ((Substructure.closure (hullLanguage.{u} α)
+        (Set.range (b.trans (i.2.1.toChart.toEmbedding.trans e.toEmbedding)))).comap e.toHom)
+        fun x ↦ ?_
+    rw [Substructure.mem_comap, ← SetLike.mem_coe, h, mem_map]
+    constructor
+    · rintro ⟨j, hj⟩
+      exact ⟨j, mem_univ j, e.injective hj⟩
+    · rintro ⟨j, -, rfl⟩
+      exact ⟨j, rfl⟩
+
+/-- **The realization-level two-charts theorem** for the reconstructed realization: under local
+chart coverage, two tuples of the same type `q`, generated by the coordinates `i₀` and `i₁`, that
+agree at `i₀` and `i₁` are equal.  Both factor through one top-free chart, where this is the
+two-charts theorem for charts (`StageType.eq_of_restrictFace_eq_some`). -/
+theorem eq_of_reconstruct_eval_eq_some {m : ℕ} {q : StageType.{u} α m} {g g' : Fin m ↪ M}
+    {i₀ i₁ : Fin m} (hgen : Geometry.hull univ q.toCellScheme.faces {i₀, i₁} = univ)
+    (hg : (reconstruct α M).eval g = some q) (hg' : (reconstruct α M).eval g' = some q)
+    (h₀ : g i₀ = g' i₀) (h₁ : g i₁ = g' i₁) : g = g' := by
+  obtain ⟨i, e, c, hc⟩ := exists_comp_eq_topFreeChart hage (Fin.append g g')
+  set E := i.2.1.toChart.toEmbedding.trans e.toEmbedding
+  have hb (j : Fin m) : E (c (Fin.castAdd m j)) = g j := by
+    rw [← Function.comp_apply (f := E), hc, Fin.append_left]
+  have hb' (j : Fin m) : E (c (Fin.natAdd m j)) = g' j := by
+    rw [← Function.comp_apply (f := E), hc, Fin.append_right]
+  let b : Fin m ↪ Fin i.1 :=
+    ⟨c ∘ Fin.castAdd m, fun x y h ↦ g.injective (by rw [← hb, ← hb]; exact congrArg E h)⟩
+  let b' : Fin m ↪ Fin i.1 :=
+    ⟨c ∘ Fin.natAdd m, fun x y h ↦ g'.injective (by rw [← hb', ← hb']; exact congrArg E h)⟩
+  have hgb : b.trans E = g := Function.Embedding.ext hb
+  have hgb' : b'.trans E = g' := Function.Embedding.ext hb'
+  rw [← hgb, reconstruct_eval_trans_chart i.2.2.1 e b, StageType.faceRealization_eval] at hg
+  rw [← hgb', reconstruct_eval_trans_chart i.2.2.1 e b', StageType.faceRealization_eval] at hg'
+  have hbb : b = b' := StageType.eq_of_restrictFace_eq_some hgen hg hg'
+    (E.injective ((hb i₀).trans (h₀.trans (hb' i₀).symm)))
+    (E.injective ((hb i₁).trans (h₁.trans (hb' i₁).symm)))
+  rw [← hgb, ← hgb', hbb]
+
+/-- **The value at a chart witness**: under local chart coverage, at the generators of a tuple of
+type `ι.type`, the hull operation of `ι` in `M` is the point of the tuple at the target. -/
+theorem funMap_op_of_reconstruct_eval {ι : HullIndex.{u} α} {w : Fin ι.arity ↪ M}
+    (hw : (reconstruct α M).eval w = some ι.type) :
+    funMap (hullLanguage.op ι) ![w ι.left, w ι.right] = w ι.target := by
+  obtain ⟨i, e, b, rfl⟩ := exists_eq_trans_topFreeChart hage w
+  rw [reconstruct_eval_trans_chart i.2.2.1 e b, StageType.faceRealization_eval] at hw
+  have h := funMap_op_trans_chart e ι (b ι.left) (b ι.right)
+  rw [StageType.hullOp_eq_of_restrictFace hw] at h
+  exact h
+
+/-- **The roundtrip of the hull operations** (`HULL_ALGEBRA.md`, §5, (b), for the functions):
+under local chart coverage, the hull operations of `M` are the hull operations of its
+reconstructed realization, at a chart witness and at the default value alike. -/
+theorem funMap_op_eq_hullOp (ι : HullIndex.{u} α) (a b : M) :
+    funMap (hullLanguage.op ι) ![a, b] = (reconstruct α M).hullOp ι a b := by
+  by_cases hw : ∃ w : Fin ι.arity ↪ M,
+      (reconstruct α M).eval w = some ι.type ∧ w ι.left = a ∧ w ι.right = b
+  · obtain ⟨w, hw', rfl, rfl, hval⟩ := Realization.hullOp_spec hw
+    rw [hval]
+    exact funMap_op_of_reconstruct_eval hage hw'
+  · rw [Realization.hullOp_of_not_exists hw]
+    obtain ⟨i, e, c, hc⟩ := exists_comp_eq_topFreeChart hage ![a, b]
+    have ha : e (i.2.1.toChart (c 0)) = a := congrFun hc 0
+    have hb : e (i.2.1.toChart (c 1)) = b := congrFun hc 1
+    rw [← ha, ← hb, funMap_op_trans_chart, Realization.hullOp_of_not_exists]
+    -- a chart witness in the chart is carried to a chart witness in `M`
+    rintro ⟨w, hwq, hl, hr⟩
+    refine hw ⟨w.trans (i.2.1.toChart.toEmbedding.trans e.toEmbedding), ?_, ?_, ?_⟩
+    · rw [reconstruct_eval_trans_chart i.2.2.1 e w]
+      exact hwq
+    · simp only [Function.Embedding.trans_apply, hl]
+      exact ha
+    · simp only [Function.Embedding.trans_apply, hr]
+      exact hb
+
+/-- **The roundtrip of the structure** (`HULL_ALGEBRA.md`, §5, (b); semantic contract, item 11):
+under local chart coverage, the structure of `M` in the hull language is the structure of its
+reconstructed realization, relations and functions both. -/
+theorem toHullStructure_reconstruct :
+    (reconstruct α M).toHullStructure = ‹(hullLanguage.{u} α).Structure M› := by
+  refine structure_eq (fun {l} f ↦ ?_) fun {l} r xs ↦ ?_
+  · induction f using hullLanguage.functions_induction with
+    | op ι =>
+      intro xs
+      rw [Realization.funMap_toHullStructure]
+      have hxs : xs = ![xs 0, xs 1] := funext (Fin.forall_fin_two.mpr ⟨rfl, rfl⟩)
+      conv_rhs => rw [hxs]
+      rw [funMap_op_eq_hullOp hage]
+  · rcases r with ⟨p, hp⟩ | r
+    · exact (relMap_rel_iff_reconstruct_eval hage xs hp).symm
+    · exact (r : Empty).elim
+
+end Age
+
+/-! ### A Fraïssé limit of the age of top-free charts -/
+
+section Limit
+
+variable {α : Ordinal.{u}} {M : Type} [(hullLanguage.{u} α).Structure M]
+
+/-- **A nonempty carrier**: a structure of the hull language whose age contains the age of
+top-free charts is nonempty, since the one-point chart embeds in it. -/
+theorem nonempty_of_topFreeAge_subset (h : topFreeAge α ⊆ (hullLanguage.{u} α).age M) :
+    Nonempty M := by
+  obtain ⟨-, ⟨e⟩⟩ := h (topFreeChart_mem_topFreeAge (TopFreeIndex.point α))
+  exact ⟨e ((TopFreeIndex.point α).2.1.toChart ⟨0, Nat.one_pos⟩)⟩
+
+/-- **Reconstruction from a Fraïssé limit of the age of top-free charts** (roadmap, the top-free
+witnesses, steps 4 and 5; semantic contract, item 11, without receiving): the carrier is nonempty,
+the reconstructed realization is exactly consistent and covering with legal top-free types, and the
+structure of the limit in the hull language is the structure of its reconstructed realization.
+
+The limit is a hypothesis.  Only its age is used, not its ultrahomogeneity; its existence
+(`exists_isFraisseLimit_topFreeAge`) is conditional on the coatom extension property, which is not
+proved, and is not used here. -/
+theorem reconstruct_of_isFraisseLimit [Countable (Σ l, (hullLanguage.{u} α).Functions l)]
+    [Countable M] (hM : IsFraisseLimit (topFreeAge.{u} α) M) :
+    Nonempty M ∧ (reconstruct α M).IsConsistent ∧ (reconstruct α M).IsCovering ∧
+      (reconstruct α M).HasLegalTypes ∧
+      (∀ ⦃n : ℕ⦄ (t : Fin n ↪ M) (p : StageType.{u} α n),
+        (reconstruct α M).eval t = some p → p.IsTopFree) ∧
+      (reconstruct α M).toHullStructure = ‹(hullLanguage.{u} α).Structure M› :=
+  ⟨nonempty_of_topFreeAge_subset hM.age.symm.subset, isConsistent_reconstruct hM.age.subset,
+    isCovering_reconstruct hM.age.subset, hasLegalTypes_reconstruct,
+    fun _ _ _ ↦ isTopFree_of_reconstruct_eval hM.age.subset,
+    toHullStructure_reconstruct hM.age.subset⟩
+
+end Limit
+
+end VaughtConjecture
