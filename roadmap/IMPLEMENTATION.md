@@ -49,7 +49,7 @@ below.  The companion milestones are summarized under "Companion boundaries".
 ## Environment
 
 Lean `v4.35.0-rc3`; InfinitaryLogic and ComputableModelTheory at the revisions pinned in
-`lakefile.toml` (`def5cc0` and `0e9935b`); Mathlib inherited from InfinitaryLogic's manifest.
+`lakefile.toml` (`cf80917` and `3a8f630`); Mathlib inherited from InfinitaryLogic's manifest.
 Nothing else is imported.
 Search the pinned libraries first and delete any local lemma that duplicates one already
 upstream.
@@ -827,20 +827,22 @@ name and its signature at the pin; it does not assert that the hypotheses hold i
 this roadmap.  An application is claimed only where a compiled theorem applying the statement is
 named (`README.md`, Layer 0):
 
-- **InfinitaryLogic**: the current pin is `def5cc0`, the merge of its pull request #152, reached
-  from `8a15ca5` (the merge of its pull request #148) by this repository's pull request #49;
-  `8a15ca5` was reached from `098fb36` (the merge of its pull request #146) by this repository's
-  pull request #45.  The statements of `8a15ca5` are available at our pinned dependency
-  `def5cc0` (signatures checked; `SuggestedInterfaces.lean` `#check`s them): the rank comparison
-  of the Scott process, #140; the orbit-formula threshold and rank bound and local-automorphism
-  preservation of `README.md`, Layer 0, #141; analytic tree boundedness, #142; the coded forced
-  back-and-forth tree, #143; uniform back-and-forth separation, `Descriptive/BFSeparation`, #144;
-  the ordinal-indexed `Σ^in_α`/`Π^in_α` hierarchy, `Lomega1omega/InHierarchy`, #145; Montalbán's
-  explicit Scott sentence from a family of orbit formulas (#147, `Scott/MontalbanSentence`:
-  `montalbanSentence`, `IsOrbitFormulaFamily`, `realize_montalbanSentence`,
-  `montalbanSentence_self`, `nonempty_equiv_of_realize_montalbanSentence`,
-  `montalbanSentence_characterizes`, and the pointed forms `montalbanSentencePointed`,
-  `IsOrbitFormulaFamilyPointed`, `montalbanSentencePointed_characterizes`) and its complexity bound
+- **InfinitaryLogic**: the current pin is `cf80917`, the merge of its pull request #156, reached
+  from `def5cc0` (the merge of its pull request #152) by this repository's pull request #63;
+  `def5cc0` was reached from `8a15ca5` (the merge of its pull request #148) by this repository's
+  pull request #49, and `8a15ca5` from `098fb36` (the merge of its pull request #146) by this
+  repository's pull request #45.  The statements of `8a15ca5` are available at our pinned
+  dependency `cf80917` (signatures checked; `SuggestedInterfaces.lean` `#check`s them): the rank
+  comparison of the Scott process, #140; the orbit-formula threshold and rank bound and
+  local-automorphism preservation of `README.md`, Layer 0, #141; analytic tree boundedness, #142;
+  the coded forced back-and-forth tree, #143; uniform back-and-forth separation,
+  `Descriptive/BFSeparation`, #144; the ordinal-indexed `Σ^in_α`/`Π^in_α` hierarchy,
+  `Lomega1omega/InHierarchy`, #145; Montalbán's explicit Scott sentence from a family of orbit
+  formulas (#147, `Scott/MontalbanSentence`: `montalbanSentence`, `IsOrbitFormulaFamily`,
+  `realize_montalbanSentence`, `montalbanSentence_self`,
+  `nonempty_equiv_of_realize_montalbanSentence`, `montalbanSentence_characterizes`, and the pointed
+  forms `montalbanSentencePointed`, `IsOrbitFormulaFamilyPointed`,
+  `montalbanSentencePointed_characterizes`) and its complexity bound
   in the signed hierarchy (#148, `Scott/MontalbanComplexity`: `isPiIn_atomicDiagram`,
   `isPiIn_montalbanSentence`, `isPiIn_montalbanSentencePointed`,
   `exists_isPiIn_scottSentence_of_sigmaIn_orbits`, `exists_isPiIn_pointed_of_sigmaIn_orbits`, and
@@ -860,7 +862,8 @@ named (`README.md`, Layer 0):
     `mk_le_aleph_one_of_countable_fibers`, `mk_eq_aleph_one_of_countable_fibers`, `leastLevel`,
     `countable_fibers_leastLevel`, and `rankTail_leastLevel`, with `mk_le_aleph_one_of_domains`
     split out of the earlier theorems, beside the earlier `countable_iff_rank_bounded` (the
-    interface "ranks with countable fibres", listed as prospective before this repin); the
+    interface "ranks with countable fibres", listed as prospective before the repin to
+    `def5cc0`); the
     statements of `Counting/Filtration` and `Counting/Separation` are candidates for one-line
     quotation of these, subject to the audit recorded in "Placement record";
   - graded matching (#152, `Scott/GradedMatching`, `bfEquiv_of_gradedSystem` and
@@ -869,48 +872,112 @@ named (`README.md`, Layer 0):
     `α ≤ height` only `BFEquiv α` pairs (a generic form of the graded back-and-forth theorem of
     `README.md`, Layer 0, whose initial match is a pair related at the height, `α = height`).
 
-  Toolchain and Mathlib are the same as at `8a15ca5`.  The imports are the narrow modules
-  (`InfinitaryLogic.Scott.OrbitFormulaThreshold`, `InfinitaryLogic.Lomega1omega.LocalAutomorphism`,
-  `InfinitaryLogic.Descriptive.BFSeparation`, `InfinitaryLogic.Lomega1omega.InHierarchy`,
-  `InfinitaryLogic.Scott.MontalbanComplexity`, `InfinitaryLogic.Scott.ForgetParameters`,
-  `InfinitaryLogic.Scott.GradedMatching`, `InfinitaryLogic.OrdinalCountability`, and the others
-  the sketch names), never `InfinitaryLogic.All`.
-- **ComputableModelTheory**: the current pin is `0e9935b`, the merge of its pull request #53,
-  reached from `37f6c42` (the merge of its pull request #51) by this repository's pull request
-  #49; `37f6c42` was reached from `0401c95` (the merge of its pull request #47) by this
-  repository's pull request #45.  Representative classes, extension-rich families and direct
-  limits, the factorization of tuples through the age, orbit isolation, and countable prime
+  Between `def5cc0` and `cf80917` there are five merges, available at the pin (signatures checked;
+  `SuggestedInterfaces.lean` `#check`s the statements named here, except the companions noted; no
+  application compiled in this repository except that of the moved `Perfect.mk_eq_continuum` in
+  `MainTheorem/Scatteredness`):
+  - placement of the isomorphism-transport lemmas (#151): `SameAtomicType.map_equiv` now in
+    `Scott/AtomicDiagram` and `BFEquiv.map_equiv` in `Scott/BFEquivRelabel`, below the Karp
+    modules (signatures checked); names and statements unchanged;
+  - placement of the perfect-set cardinality (#154): `Perfect.mk_eq_continuum` (a nonempty perfect
+    subset of a complete, second-countable metric space has the cardinality of the continuum)
+    moved from `Descriptive/PerfectAntichain` to the topology-only module `Topology/Perfect`, same
+    name and statement, still imported by `Descriptive/PerfectAntichain`; and a note in
+    `Scott/BackAndForth` that the definition of `BFEquiv` needs no relational language
+    (relationality enters with the comparison to formula agreement, `BFEquiv_implies_agreeQR`);
+  - thinness from countably many back-and-forth classes at every level (#153,
+    `Descriptive/BFScattered` and `Descriptive/BFScatteredSentence`): `BFScattered K` (for every
+    `η < ω₁` the restriction of `CodeBFEquiv η` to `K` has countably many classes), with no
+    definability of `K`; `not_hasCantorAntichainOn_of_bfScattered`
+    (signatures checked), for every relational language; `isThinOn_of_bfScattered`,
+    for countably many relation symbols; and `Sentenceω.isThinOnNatModels_of_bfScattered`, through
+    `bfEquivSetoid_eq_comap`; with `codeBFEquivSetoid`, and with the analyticity of the
+    off-diagonal of an analytic set in a Hausdorff space, `MeasureTheory.AnalyticSet.offDiag`
+    (signatures checked).  It is the generic form of the scatteredness form of
+    thinness, `isThinOn_of_countable_bfClasses` and
+    `isThinOnNatModels_of_countable_bfClasses` (`MainTheorem/Scatteredness`, Layer 6), which
+    separate only closed antichains and declare their own `codeBFEquivSetoid` and
+    `bfEquivSetoid_eq_comap`; these are candidates for one-line quotation, not absorbed here;
+  - the rank conventions (#155): documentation only (`Scott/Height/Defs`: the cross-structure
+    ranks in `Ordinal.{0}` and the internal orbit ranks in `Ordinal.{w}`, with the comparisons
+    proved and those refuted on the empty carrier and the infinite pure set); no statement changed;
+  - orbit-rank bounds and recognition at the rank of a Scott sentence (#156,
+    `Scott/OrbitFormulaThreshold` and `Scott/SentenceRecognition`), for relational languages: an
+    infinitary orbit formula `φ : L.Formulaω (Fin n)` bounds the orbit rank by
+    `Ordinal.lift φ.qrank` (`orbitRank_le_lift_qrank_of_infinitaryOrbitFormula`), and orbit
+    formulas of rank `< α` for every tuple bound the internal Scott rank by `Ordinal.lift α`
+    (`internalScottRank_le_of_infinitaryOrbitFormulas`), for the prospective base-reduct orbit-rank
+    bounds (`COMPANIONS.md`, "Further companion results"); and a sentence, or a formula on `Fin 0`
+    read as a sentence, of rank at most `β` that characterizes a countable `M` among the countable
+    structures in its carrier universe gives `StabilizesAt M β` and `stabilizationOrdinal M ≤ β`:
+    `stabilizesAt_of_sentence_rank` (signatures checked),
+    `stabilizesAt_of_formula_rank` and `stabilizationOrdinal_le_of_formula_rank` (the other
+    companions in `Scott/SentenceRecognition` are not `#check`ed), for the prospective recognition
+    of a supplied model (the same item); whole-model recognition through the empty tuple only.
+
+  Toolchain and Mathlib are the same as at `8a15ca5` and `def5cc0`.  The imports are the narrow
+  modules (`InfinitaryLogic.Scott.OrbitFormulaThreshold`,
+  `InfinitaryLogic.Lomega1omega.LocalAutomorphism`, `InfinitaryLogic.Descriptive.BFSeparation`,
+  `InfinitaryLogic.Lomega1omega.InHierarchy`, `InfinitaryLogic.Scott.MontalbanComplexity`,
+  `InfinitaryLogic.Scott.ForgetParameters`, `InfinitaryLogic.Scott.GradedMatching`,
+  `InfinitaryLogic.OrdinalCountability`, `InfinitaryLogic.Descriptive.BFScattered`,
+  `InfinitaryLogic.Descriptive.BFScatteredSentence`, `InfinitaryLogic.Scott.SentenceRecognition`,
+  `InfinitaryLogic.Topology.Perfect`, and the others the sketch names), never
+  `InfinitaryLogic.All`.
+- **ComputableModelTheory**: the current pin is `3a8f630`, the merge of its pull request #57,
+  reached from `0e9935b` (the merge of its pull request #53) by this repository's pull request
+  #63; `0e9935b` was reached from `37f6c42` (the merge of its pull request #51) by this
+  repository's pull request #49, and `37f6c42` from `0401c95` (the merge of its pull request #47)
+  by this repository's pull request #45.  Representative classes, extension-rich families and
+  direct limits, the factorization of tuples through the age, orbit isolation, and countable prime
   structures, rooted universality and uniqueness (#42), classical Fraïssé existence (#44), the
   entry module `ComputableModelTheory.Classical` (#45), and isolation and primeness over named
-  finite parameters (#46) are available at our pinned dependency `0e9935b` (signatures checked;
+  finite parameters (#46) are available at our pinned dependency `3a8f630` (signatures checked;
   `SuggestedInterfaces.lean` `#check`s them through the entry module).  It also contains the
   seeded effective back-and-forth and computable automorphisms extending an isomorphism between
   finitely generated substructures of a computably homogeneous structure
-  (`ModelTheory/Computable/AutomorphismExtension`), and finite elimination (#52, #53,
+  (`ModelTheory/Computable/AutomorphismExtension`); finite elimination (#52, #53,
   `Computability/FiniteElimination`: over a fixed prefix, if refutation persists, a sequence of
   selections that never selects a refuted candidate, replaces a selection only once it is refuted,
   and from some stage on selects only candidates of index at most a given bound makes only finitely
-  many selections), all outside the entry module and not used here.  None of the modules behind
-  the entry module changed between `37f6c42` and `0e9935b`.  Its own InfinitaryLogic pin is
-  `8a15ca5`, an ancestor of the revision pinned here; this repository's manifest governs (see the
-  next item).
+  many selections); attachments and their transport along connecting data (#54,
+  `ModelTheory/Computable/Attachment`); and the audit of finite diagrams against rooted extension
+  (#57, `ModelTheory/ClosedDiagramAdapterAudit`, compiled checks with no library declaration), all
+  outside the entry module and not used here.  None of the modules behind the entry module changed
+  between `37f6c42` and `3a8f630`: between `0e9935b` and `3a8f630` only `ModelTheory/Computable`
+  and the audit module changed, and the entry module imports neither.  Its own InfinitaryLogic
+  pin is `9ab398a` (the merge of infinitary-logic's pull request #155, reached by its pull
+  requests #55 and #56), an ancestor of the revision pinned here; this repository's manifest
+  governs (see the next item).
 - **Mathlib and the toolchain** agree across the three: one Lean toolchain (`v4.35.0-rc3` at
   present) and one Mathlib commit (at present the fork commit `346a4bd`, inherited from
   InfinitaryLogic).  The manifest holds one revision of each dependency, so ComputableModelTheory
   must be built against the InfinitaryLogic revision pinned here, and the toolchain check of
   `scripts/check.sh` extends to ComputableModelTheory.
 
-**Available upstream, not yet available at our pinned dependency:** of InfinitaryLogic at `cf80917`,
-the bound of an orbit rank by the quantifier rank of an infinitary orbit formula
-(`orbitRank_le_lift_qrank_of_infinitaryOrbitFormula`) with its corollary
-`internalScottRank_le_of_infinitaryOrbitFormulas` (strict bounds `qrank φ < α` giving
-`internalScottRank M ≤ Ordinal.lift α`), and the bounds of the stabilization ordinal by the rank of
-a characterizing sentence or formula with no free variables (`stabilizesAt_of_sentence_rank`,
-`stabilizationOrdinal_le_of_sentence_rank`, `stabilizesAt_of_formula_rank`,
-`stabilizationOrdinal_le_of_formula_rank`; a relational language, with no countability of the
-language), used by `COMPANIONS.md`, "Quantitative reconstruction", targets 2 and 3.  A statement
-merged upstream after the pins above is listed here, named in prose only and never `#check`ed in the
-sketches, until a repin containing it is recorded in this subsection.
+**Available upstream, not yet available at our pinned dependency:** of InfinitaryLogic, at
+`5269617` (the merge of its pull request #157, after the pin `cf80917`; same toolchain and
+Mathlib), thinness from countable back-and-forth observations (`Descriptive/BFScattered`).  If for
+every `η < ω₁` a map `obs η` on a set `C` of codes has countable range and any two codes with the
+same observation are `CodeBFEquiv η`, then `C` is back-and-forth scattered
+(`bfScattered_of_countable_bfObservations`), carries no Cantor antichain for isomorphism, for every
+relational language (`not_hasCantorAntichainOn_of_countable_bfObservations`), and, for countably
+many relation symbols, is thin (`isThinOn_of_countable_bfObservations`).  The same merge moves
+`countable_quotient_of_countable_range` to `Descriptive/PerfectAntichain` (not used here).  Of
+ComputableModelTheory: none (its `main` is the pin `3a8f630`).  A statement merged upstream after
+the pins above is listed here, named in prose only and never `#check`ed in the sketches, until a
+repin containing it is recorded in this subsection.
+
+**Available at the pin `cf80917`, used by `COMPANIONS.md`, "Quantitative reconstruction", targets 2
+and 3** (listed as available upstream before this repin): the bound of an orbit rank by the
+quantifier rank of an infinitary orbit formula (`orbitRank_le_lift_qrank_of_infinitaryOrbitFormula`)
+with its corollary `internalScottRank_le_of_infinitaryOrbitFormulas` (strict bounds `qrank φ < α`
+giving `internalScottRank M ≤ Ordinal.lift α`), and the bounds of the stabilization ordinal by the
+rank of a characterizing sentence or formula with no free variables
+(`stabilizesAt_of_sentence_rank`, `stabilizationOrdinal_le_of_sentence_rank`,
+`stabilizesAt_of_formula_rank`, `stabilizationOrdinal_le_of_formula_rank`; a relational language,
+with no countability of the language).  Signatures checked (`SuggestedInterfaces.lean` `#check`s
+them), except `stabilizationOrdinal_le_of_sentence_rank` (signatures not yet checked by CI).
 
 **Prospective dependencies (neither available upstream nor pinned):** the InfinitaryLogic statements
 listed under "The full-presentation route": invariant Borel observations, the isolating-level lower
