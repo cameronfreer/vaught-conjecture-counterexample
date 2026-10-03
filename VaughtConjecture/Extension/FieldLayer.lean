@@ -36,13 +36,13 @@ the appended scheme.
 **The canonical field layer** (`Scheme.fieldLayer S k hS`).  The **canonical catalogue**
 (`Scheme.catalogue S k`) is the set of lawful labellings of the cells of `S` that are bottom at the
 cells of grade above `k` and fixed by the orbit code (`Label.orbitCode`); they take values in the
-code grid with block bound `2 N` for `N` cells, so it is finite.  The **truncation** at `k` of a
-labelling (`CellScheme.splice` with bottom above `k`) is lawful when the labelling is lawful below
-`(univ, k)` (`Scheme.isLawful_splice_bot`), and the orbit code of the truncation is an entry
-(`Scheme.orbitCode_truncate_mem_catalogue`).  The row of the new cell of an entry `a` is its
-**field row** (`Scheme.fieldRow`): `a` on the old cells, the agreement height of `a` and `b` in the
-grid with block bound `2 N + 2` at the cell of `b`, and the ceiling `ω * (2 N + 2) + k` of the grid
-at its own cell.
+code grid with block bound `2 N` for `N` cells, so it is finite.  The **splice at `k`** of a
+labelling `p` with bottom (`CellScheme.splice`: `p` at the cells of grade at most `k`, bottom
+above) is lawful when `p` is lawful below `(univ, k)` (`Scheme.isLawful_splice_bot`), and its orbit
+code is an entry (`Scheme.orbitCode_splice_bot_mem_catalogue`).  The row of the new cell of an
+entry `a` is its **field row** (`Scheme.fieldRow`): `a` on the old cells, the agreement height of
+`a` and `b` in the grid with block bound `2 N + 2` at the cell of `b`, and the ceiling
+`ω * (2 N + 2) + k` of the grid at its own cell.
 
 * The field row of every entry is a lawful section of the layer (`Scheme.isLawful_fieldRow`): on
   the old cells it is the entry; at a new cell its locality is the identity capped at the agreement
@@ -51,14 +51,14 @@ at its own cell.
   short at `k` and never the formal top.
 * **Extension at the cap `⊥`** (`Scheme.exists_isLawfulBelow_fieldLayer`,
   `Scheme.exists_isLawful_fieldLayer`): every labelling lawful below `(univ, k)` extends to one
-  lawful below `(univ, k)` in the layer, by the field row of the orbit code of its truncation, read
+  lawful below `(univ, k)` in the layer, by the field row of the orbit code of its splice, read
   by the orbit decoder at the least grid point, which reads the old cells literally because the
   natural strip is kept; a lawful section of `S` extends to a lawful section of the layer.
 * **Extension at a positive cap** (`Scheme.exists_extension_fieldLayer`): a labelling lawful below
   `(univ, k)` that agrees with an entry `a` capped at `h` (self-visible at `k`, `⊥ < h`) on the
   cells of grade at most `k` extends, unchanged there, to a labelling lawful below `(univ, k)` in
   the layer that agrees with the field row of `a` capped at `h` at every cell below `(univ, k)`.
-  The extension is the field row of the orbit code `b` of the truncation, read by its orbit decoder
+  The extension is the field row of the orbit code `b` of the splice, read by its orbit decoder
   at `h`: relative room gives the agreement of `b` with `a` capped at `h`, the agreement heights
   follow, and the field row of `a` is the lawful companion of the positive-cap transport
   (`CellScheme.Rows.IsLawfulBelow.map_of_min_eq`).  It holds when `h` is **short** at `k` (relative
@@ -382,8 +382,8 @@ theorem exists_catalogueEntry_eq {a : Fin S.card → Label.{u}} (ha : a ∈ S.ca
     ∃ i, S.catalogueEntry k i = a :=
   ⟨(S.catalogue k).equivFin ⟨a, ha⟩, by simp [catalogueEntry]⟩
 
-/-- **The truncation at `k` is lawful**: a labelling lawful below `(univ, k)`, made bottom at the
-cells of grade above `k`, is lawful. -/
+/-- **The splice at `k` with bottom is lawful**: a labelling lawful below `(univ, k)`, made bottom
+at the cells of grade above `k`, is lawful. -/
 theorem isLawful_splice_bot {p : Fin S.card → Label.{u}}
     (hp : S.rows.IsLawfulBelow (univ, k) fun d ↦ p d) :
     S.rows.IsLawful (S.toCellScheme.splice k (fun _ ↦ ⊥) p) := by
@@ -393,9 +393,9 @@ theorem isLawful_splice_bot {p : Fin S.card → Label.{u}}
     (CellScheme.Rows.isLawfulBelow_const_bot _) hp (fun _ _ _ ↦ le_rfl)
     fun _ _ ↦ by simp).isLawful fun d ↦ ⟨subset_univ _, hJ d⟩
 
-/-- **The orbit code of the truncation is a catalogue entry**, for a labelling lawful below
-`(univ, k)`. -/
-theorem orbitCode_truncate_mem_catalogue {p : Fin S.card → Label.{u}}
+/-- **The orbit code of the splice at `k` with bottom is a catalogue entry**, for a labelling
+lawful below `(univ, k)`. -/
+theorem orbitCode_splice_bot_mem_catalogue {p : Fin S.card → Label.{u}}
     (hp : S.rows.IsLawfulBelow (univ, k) fun d ↦ p d) :
     orbitCode k (S.toCellScheme.splice k (fun _ ↦ ⊥) p) ∈ S.catalogue k := by
   set t := S.toCellScheme.splice k (fun _ ↦ ⊥) p
@@ -584,7 +584,7 @@ theorem exists_natAdd_eq {u : Fin (S.fieldLayer k hS).card}
 
 /-- **Extension at the cap `⊥`, below `(univ, k)`**: every labelling lawful below `(univ, k)` in
 `S` extends, unchanged at the old cells of grade at most `k`, to a labelling lawful below
-`(univ, k)` in the field layer.  It is the field row of the orbit code `b` of its truncation, read
+`(univ, k)` in the field layer.  It is the field row of the orbit code `b` of its splice, read
 by the orbit decoder at the least grid point, which reads `b` literally (the natural strip is
 kept) and sends no other label to bottom. -/
 theorem exists_isLawfulBelow_fieldLayer {p : Fin S.card → Label.{u}}
@@ -593,7 +593,7 @@ theorem exists_isLawfulBelow_fieldLayer {p : Fin S.card → Label.{u}}
       (S.fieldLayer k hS).rows.IsLawfulBelow (univ, k) r ∧
         ∀ d (hd : S.toCellScheme.grade d ≤ k), r ⟨Fin.castAdd _ d, castAdd_mem_below hd⟩ = p d := by
   set t := S.toCellScheme.splice k (fun _ ↦ ⊥) p
-  have hb := orbitCode_truncate_mem_catalogue hp
+  have hb := orbitCode_splice_bot_mem_catalogue hp
   refine ⟨fun x ↦ orbitDecoder k t (gridPoint k 0) (S.fieldRow k (orbitCode k t) x),
     ((isLawful_fieldRow (hS := hS) hb).isLawfulBelow _).map_of_apply_eq_bot (fun x ↦ x.2.2)
       (isWitness_orbitDecoder (isSelfVisible_gridPoint k 0) (gridPoint_ne_bot k 0))
@@ -607,7 +607,7 @@ the field layer: `p` on the old cells, and on the new cells the extension below 
 theorem exists_isLawful_fieldLayer {p : Fin S.card → Label.{u}} (hp : S.rows.IsLawful p) :
     ∃ r, (S.fieldLayer k hS).rows.IsLawful r ∧ ∀ d, r (Fin.castAdd _ d) = p d := by
   obtain ⟨r₀, hr₀, hr₀p⟩ := exists_isLawfulBelow_fieldLayer (hS := hS) (hp.isLawfulBelow (univ, k))
-  obtain ⟨i₀, -⟩ := exists_catalogueEntry_eq (orbitCode_truncate_mem_catalogue (k := k)
+  obtain ⟨i₀, -⟩ := exists_catalogueEntry_eq (orbitCode_splice_bot_mem_catalogue (k := k)
     (hp.isLawfulBelow (univ, k)))
   set r : Fin (S.card + (S.catalogue k).card) → Label.{u} :=
     Fin.append p fun i ↦ r₀ ⟨Fin.natAdd _ i, natAdd_mem_below i⟩ with hr_def
@@ -646,7 +646,7 @@ theorem exists_isLawful_fieldLayer {p : Fin S.card → Label.{u}} (hp : S.rows.I
 capped at `h` at the cells of grade at most `k`.  Suppose that `h` is short at `k`, or that no
 cell of `S` has a grade below `k`.  Then some labelling lawful below `(univ, k)` in the field layer
 reads `p` at the old cells of grade at most `k` and agrees with the field row of `a` capped at `h`
-at every cell below `(univ, k)`.  It is the field row of the orbit code `b` of the truncation of
+at every cell below `(univ, k)`.  It is the field row of the orbit code `b` of the splice of
 `p`, read by the orbit decoder at `h`: relative room makes `b` agree with `a` capped at `h` (for a
 short cap by `Label.min_orbitCode_eq`; without lower grades the orbit code is the canonical code,
 `Label.min_canonicalCode_eq`), the agreement heights of `b` then agree with those of `a` capped at
@@ -667,9 +667,9 @@ theorem exists_extension_fieldLayer {p : Fin S.card → Label.{u}}
   have htgt (d : Fin S.card) (hd : ¬ S.toCellScheme.grade d ≤ k) : t d = ⊥ :=
     CellScheme.splice_of_lt (not_le.mp hd)
   set b := orbitCode k t
-  have hb : b ∈ S.catalogue k := orbitCode_truncate_mem_catalogue hp
+  have hb : b ∈ S.catalogue k := orbitCode_splice_bot_mem_catalogue hp
   obtain ⟨-, haup, haa⟩ := mem_catalogue.mp ha
-  -- The truncation agrees with `a` capped at `h` at every cell.
+  -- The splice agrees with `a` capped at `h` at every cell.
   have hagt (d : Fin S.card) : min (t d) h = min (a d) h := by
     by_cases hd : S.toCellScheme.grade d ≤ k
     · rw [htle d hd]

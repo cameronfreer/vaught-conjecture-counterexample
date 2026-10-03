@@ -173,6 +173,12 @@ private theorem moveToBlock_pt (y : Label.{u}) (b : Ordinal.{u}) (n : ℕ) :
     Label.{u}) = _
   rw [omega0_mul_add_natCast_mod]
 
+/-- The block shift of a point keeps its finite part, as ordinals. -/
+theorem moveToBlock_omega0_mul_add (b b' : Ordinal.{u}) (n n' : ℕ) :
+    moveToBlock ((ω * b + n : Ordinal.{u}) : Label.{u}) ((ω * b' + n' : Ordinal.{u}) : Label.{u}) =
+      ((ω * b + n' : Ordinal.{u}) : Label.{u}) := by
+  rw [moveToBlock_pt, blockIndex_pt]
+
 /-- The block shift fixes bottom. -/
 @[simp] theorem moveToBlock_bot (y : Label.{u}) : moveToBlock y ⊥ = ⊥ := rfl
 
