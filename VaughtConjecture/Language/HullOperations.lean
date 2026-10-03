@@ -284,7 +284,8 @@ open Classical in
 /-- The **hull operation** of a hull index `ι` in a realization (`HULL_ALGEBRA.md`, §1).  A
 **chart witness** of `ι` at `a` and `b` is a tuple of type `ι.type` with the points `a` and `b` at
 the generators.  The hull operation at `a` and `b` is the target point of a chosen chart witness, if
-there is one, and otherwise the **default value** `a`.  On the face realization of a chart the
+there is one, a **witnessed value**, and otherwise the **default value** `a` (a witnessed value
+may coincide with `a`).  On the face realization of a chart the
 choice does not matter (`StageType.hullOp_eq_of_restrictFace`), nor on any exactly consistent
 covering realization (`Realization.hullOp_eq_of_eval`). -/
 noncomputable def hullOp (ι : HullIndex.{u} α) (a b : M) : M :=
@@ -480,8 +481,8 @@ theorem hullOp_mem_hull (P : StageType.{u} α k) (ι : HullIndex.{u} α) (a b : 
 
 /-- **Legality along a two-point hull from a hull operation**: if `b` is the value at `a` and `b`
 of a hull operation, with `a ≠ b`, then the restriction of the chart to the hull of `{a, b}` is
-legal: the value is not the default, so it comes from a chart witness, whose points are that hull
-and whose type is the legal type of the hull index. -/
+legal: the value `b` differs from the default value `a`, so it is a witnessed value, the target of
+a chart witness, whose points are that hull and whose type is the legal type of the hull index. -/
 theorem isLegal_comap_of_hullOp_eq_right {a b : Fin k} (hab : a ≠ b) {ι : HullIndex.{u} α}
     (hι : P.faceRealization.hullOp ι a b = b) {m : ℕ} (g : Fin m ↪ Fin k)
     (hg : univ.map g ∈ P.toCellScheme.faces)

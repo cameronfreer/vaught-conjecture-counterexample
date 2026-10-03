@@ -231,7 +231,10 @@ finitely generated substructure of `M` be isomorphic to some `S p` (the age of `
 the representative class of the charts).  Then the evaluation read from the relations reconstructs
 the realization.  Intended proof: factor each tuple through a representative
 (ComputableModelTheory's `exists_factor_tuple_of_age_subset`, at the pin) and read the relations
-there; `hid` and `hcomp` are the identity and composition laws of exact partial restriction. -/
+there; `hid` and `hcomp` are the identity and composition laws of exact partial restriction.
+For the hull language and the age of top-free charts the concrete form is compiled in this
+repository (theorem named): `reconstruct_eval_eq_some_iff`, `isConsistent_reconstruct`, and
+`isCovering_reconstruct` (`ClassicalLimit/Reconstruction`). -/
 theorem reconstructs_evalOfRel
     (hid : ∀ {n : ℕ} (p : Chart n), restrict (Function.Embedding.refl _) p = some p)
     (hcomp : ∀ {k n m : ℕ} (f : Fin k ↪ Fin n) (g : Fin n ↪ Fin m) (p : Chart m) (q : Chart n),

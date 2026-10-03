@@ -101,8 +101,8 @@ private example [DecidableEq M] {R : Realization.{u, v} α M} (hR : R.IsConsiste
     mem_inter.mpr ⟨x.hull_subset_support _ (hullOp_mem_hull hR hc ι x hx),
       y.hull_subset_support _ (hullOp_mem_hull hR hc ι y hy)⟩⟩
 
-/-- A value that is not the default: at the points of an occurrence at the generators of its own
-legal two-generated type, the hull operation of that type returns the point at the target. -/
+/-- A witnessed value: at the points of an occurrence at the generators of its own legal
+two-generated type, the hull operation of that type returns the point at the target. -/
 private example {R : Realization.{u, v} α M} (hR : R.IsConsistent) (hc : R.IsCovering)
     (x : R.Occurrence) (hx : x.type.IsLegal) {i₀ i₁ j : Fin x.arity} (hne : i₀ ≠ i₁)
     (hgen : Geometry.hull univ x.type.toCellScheme.faces {i₀, i₁} = univ) :
