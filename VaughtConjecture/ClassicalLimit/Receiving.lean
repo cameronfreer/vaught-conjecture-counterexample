@@ -5,15 +5,17 @@ Authors: Cameron Freer
 -/
 import VaughtConjecture.ClassicalLimit.Amalgamation
 import VaughtConjecture.ClassicalLimit.Reconstruction
+import VaughtConjecture.Language.Density
 import VaughtConjecture.Realization.Receiving
 
 /-!
 # Receiving for the reconstructed realization of a classical limit
 
 Roadmap, the section "The top-free witnesses: the finite age and its classical limit", step 6
-(receiving); Layer 3, 3.4, the rows (R1) and (R5) of the table; semantic contract, item 11
-(receiving with all equations attached to one occurrence) and item 12 (cutoff observations and
-exact extension within a specified age are different notions).
+(receiving) and, for the base reduct, step 7 (the density sentence); Layer 3, 3.4, the rows (R1)
+and (R5) of the table; semantic contract, item 11 (receiving with all equations attached to one
+occurrence) and item 12 (cutoff observations and exact extension within a specified age are
+different notions).
 
 Throughout, `M` is a structure of the hull language `hullLanguage α` whose age is the age of
 top-free charts, `hage : (hullLanguage α).age M = topFreeAge α`, and which is ultrahomogeneous,
@@ -66,6 +68,17 @@ realization is exactly consistent (`isConsistent_reconstruct`), so finite-cut re
 receiving of donors on several new points
 (`Realization.HasFiniteCutReceiving.hasFiniteExtensionReceiving`).
 
+**The base reduct** (`realize_densitySentence_reconstruct_reduce`, the base-reduct part of
+step 7).  For a stage `α ≥ ω` that is zero or a limit, the reduction of the reconstructed
+realization to `ω` (`Realization.reduce`) has legal types (`hasLegalTypes_reconstruct_reduce`, by
+`StageType.IsLegal.reduce`), is exactly consistent and covering (`isConsistent_reconstruct_reduce`,
+`isCovering_reconstruct_reduce`), and has the finite-cut receiving property
+(`hasFiniteCutReceiving_reconstruct_reduce`): receiving at `α` descends along stage reduction
+(`Realization.HasFiniteCutReceiving.reduce`), one permitted cutoff at a time, which is not exact
+projected receiving (semantic contract, item 12).  With a nonempty carrier, these are the clauses
+of the density sentence for the base-language structure of the reduction
+(`baseLanguage.realize_toStructure_densitySentence_iff`), so that structure satisfies it.
+
 **What this file does not contain.**
 
 * *Finite-cut receiving of models in general*, (R1) of the table of Layer 3, 3.4: every model, not
@@ -79,12 +92,6 @@ receiving of donors on several new points
   receiving over a whole occurrence, with a one-point coface of its type
   (`StageType.exists_extension`, under the coatom extension property
   `StageType.HasCoatomExtensions`): the received point is off the whole occurrence.
-* *The density sentence* for the base-language structure of the reduction of the reconstructed
-  realization to `ω` is not stated here.  Its receiving clause, finite-cut receiving of the
-  reduction, follows from the receiving proved here and its descent along stage reduction
-  (`Realization.HasFiniteCutReceiving.reduce`), cutoff by cutoff, which is not exact projected
-  receiving (semantic contract, item 12); its structural clauses are those of
-  `reconstruct_of_age_eq`, reduced (`realize_toStructure_densitySentence_iff` lists them).
 
 ## Placement
 
@@ -181,5 +188,70 @@ theorem hasFiniteCutReceiving_reconstruct_of_isFraisseLimit
     (hα : Order.IsSuccPrelimit α) (hM : IsFraisseLimit (topFreeAge.{u} α) M) :
     (reconstruct α M).HasFiniteCutReceiving :=
   hasFiniteCutReceiving_reconstruct hM.age hM.ultrahomogeneous hα
+
+/-! ### The base reduct -/
+
+section Reduce
+
+variable {β : Ordinal.{u}} (hβ : Order.IsSuccPrelimit β)
+
+/-- **Legal types of a reduction**: the stage reduction of the reconstructed realization to a stage
+that is zero or a limit has legal types, the reductions of legal types.  No hypothesis on `M` is
+needed. -/
+theorem hasLegalTypes_reconstruct_reduce : ((reconstruct α M).reduce hβ).HasLegalTypes :=
+  fun _ t p hp ↦ by
+    obtain ⟨p', hp', rfl⟩ := Option.map_eq_some_iff.mp hp
+    exact (hasLegalTypes_reconstruct t p' hp').reduce hβ
+
+/-- **Exact consistency of a reduction**: under top-free chart coverage, the stage reduction of the
+reconstructed realization to a stage that is zero or a limit is exactly consistent. -/
+theorem isConsistent_reconstruct_reduce (hage : (hullLanguage.{u} α).age M ⊆ topFreeAge α) :
+    ((reconstruct α M).reduce hβ).IsConsistent :=
+  (isConsistent_reconstruct hage).reduce hβ
+
+/-- **Covering of a reduction**: under top-free chart coverage, the stage reduction of the
+reconstructed realization to a stage that is zero or a limit is covering. -/
+theorem isCovering_reconstruct_reduce (hage : (hullLanguage.{u} α).age M ⊆ topFreeAge α) :
+    ((reconstruct α M).reduce hβ).IsCovering :=
+  (isCovering_reconstruct hage).reduce hβ
+
+/-- **Receiving of a reduction**: for a structure whose age is the age of top-free charts and which
+is ultrahomogeneous, at a stage `α` that is zero or a limit, the stage reduction of the
+reconstructed realization to a stage `β ≤ α` that is zero or a limit has the finite-cut receiving
+property: receiving at `α` (`hasFiniteCutReceiving_reconstruct`) descends along stage reduction
+(`Realization.HasFiniteCutReceiving.reduce`), one permitted cutoff at a time.  This is not exact
+projected receiving (semantic contract, item 12). -/
+theorem hasFiniteCutReceiving_reconstruct_reduce
+    (hage : (hullLanguage.{u} α).age M = topFreeAge α)
+    (hu : (hullLanguage.{u} α).IsUltrahomogeneous M) (hα : Order.IsSuccPrelimit α) (hβα : β ≤ α) :
+    ((reconstruct α M).reduce hβ).HasFiniteCutReceiving :=
+  (hasFiniteCutReceiving_reconstruct hage hu hα).reduce hα hβ hβα
+
+end Reduce
+
+/-- **The base reduct satisfies the density sentence** (roadmap, the top-free witnesses, step 7,
+for the base reduct): for a structure whose age is the age of top-free charts and which is
+ultrahomogeneous, at a stage `α ≥ ω` that is zero or a limit, the base-language structure of the
+reduction of the reconstructed realization to `ω` satisfies the density sentence.  Its clauses are
+a nonempty carrier (`nonempty_of_topFreeAge_subset`), exact consistency and covering
+(`isConsistent_reconstruct_reduce`, `isCovering_reconstruct_reduce`), and finite-cut receiving
+(`hasFiniteCutReceiving_reconstruct_reduce`), for a realization with legal types
+(`hasLegalTypes_reconstruct_reduce`), by `baseLanguage.realize_toStructure_densitySentence_iff`.
+
+This is the base-reduct part of step 7.  Modelhood of the reconstructed realization at `α` (from
+the cap-to-model theorem, still to be proved at a general stage; `MainTheorem.CapToModel` states it
+only at stage `ω`, with `u = 0`), infinitude, and terminality are still to be proved.  The existence
+of a Fraïssé limit of the age of top-free charts (`exists_isFraisseLimit_topFreeAge`) needs the
+coatom extension property `StageType.HasCoatomExtensions`, which is not proved. -/
+theorem realize_densitySentence_reconstruct_reduce
+    (hage : (hullLanguage.{u} α).age M = topFreeAge α)
+    (hu : (hullLanguage.{u} α).IsUltrahomogeneous M) (hα : Order.IsSuccPrelimit α)
+    (hωα : ω ≤ α) :
+    @Sentenceω.Realize _ baseLanguage.densitySentence M
+      ((reconstruct α M).reduce Ordinal.isSuccLimit_omega0.isSuccPrelimit).toStructure :=
+  (baseLanguage.realize_toStructure_densitySentence_iff (hasLegalTypes_reconstruct_reduce _)).mpr
+    ⟨nonempty_of_topFreeAge_subset hage.symm.subset, isConsistent_reconstruct_reduce _ hage.subset,
+      isCovering_reconstruct_reduce _ hage.subset,
+      hasFiniteCutReceiving_reconstruct_reduce _ hage hu hα hωα⟩
 
 end VaughtConjecture

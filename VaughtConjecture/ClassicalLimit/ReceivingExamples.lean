@@ -22,9 +22,8 @@ charts; none assumes the coatom extension property or modelhood.
   where the donor is.
 * **A top-free donor** is received exactly.
 * **The base stage**: for a Fraïssé limit at a limit stage `α ≥ ω`, the reduction of the
-  reconstructed realization to `ω` has finite-cut receiving and finite-extension receiving.  This
-  is the receiving clause of the density sentence for that reduction; the density sentence itself
-  and modelhood are not claimed.
+  reconstructed realization to `ω` has finite-cut receiving and finite-extension receiving, and
+  its base-language structure satisfies the density sentence.  Modelhood is not claimed.
 
 ## Placement
 
@@ -146,8 +145,7 @@ end Receiving
 
 /-- **The base stage**: for a Fraïssé limit of the age of top-free charts at a limit stage `α ≥ ω`,
 the reduction of the reconstructed realization to `ω` has finite-cut receiving, by receiving at `α`
-and its descent along stage reduction, cutoff by cutoff.  This is the receiving clause of the
-density sentence for that reduction; modelhood is not claimed. -/
+and its descent along stage reduction, cutoff by cutoff.  Modelhood is not claimed. -/
 example [Countable (Σ l, (hullLanguage.{u} α).Functions l)] [Countable M]
     (hα : Order.IsSuccPrelimit α) (hωα : ω ≤ α) (hM : IsFraisseLimit (topFreeAge.{u} α) M) :
     ((reconstruct α M).reduce Ordinal.isSuccLimit_omega0.isSuccPrelimit).HasFiniteCutReceiving :=
@@ -162,5 +160,15 @@ example [Countable (Σ l, (hullLanguage.{u} α).Functions l)] [Countable M]
   ((hasFiniteCutReceiving_reconstruct_of_isFraisseLimit hα hM).reduce hα _ hωα
     ).hasFiniteExtensionReceiving ((isConsistent_reconstruct hM.age.subset).reduce _)
     Ordinal.isSuccLimit_omega0.isSuccPrelimit
+
+/-- **The base reduct of a Fraïssé limit satisfies the density sentence**: for a Fraïssé limit of
+the age of top-free charts at a limit stage `α ≥ ω`, the base-language structure of the reduction
+of the reconstructed realization to `ω` satisfies the density sentence.  The limit is a
+hypothesis; its existence needs the coatom extension property.  Modelhood is not claimed. -/
+example [Countable (Σ l, (hullLanguage.{u} α).Functions l)] [Countable M]
+    (hα : Order.IsSuccPrelimit α) (hωα : ω ≤ α) (hM : IsFraisseLimit (topFreeAge.{u} α) M) :
+    @Sentenceω.Realize _ baseLanguage.densitySentence M
+      ((reconstruct α M).reduce Ordinal.isSuccLimit_omega0.isSuccPrelimit).toStructure :=
+  realize_densitySentence_reconstruct_reduce hM.age hM.ultrahomogeneous hα hωα
 
 end VaughtConjecture

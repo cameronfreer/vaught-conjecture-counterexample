@@ -115,15 +115,14 @@ used here.
   occurrence, with a one-point coface of its type (`StageType.exists_extension`, under the coatom
   extension property); terminality from the top-freeness proved here, modelhood, and the
   reduction of models.
-* **The density sentence** (the sentence of the main theorem, not one of the seven steps), with
-  `u = 0`: for the base-language structure (`Realization.toStructure`) of the reduction of the
-  reconstructed realization to `ω` (`Realization.reduce`), by
-  `realize_toStructure_densitySentence_iff`.  Legal types of the reduction follow from those
-  proved here by `StageType.IsLegal.reduce`, and a nonempty carrier, exact consistency, and
-  covering by `Realization.IsConsistent.reduce` and `Realization.IsCovering.reduce`, and
-  finite-cut receiving of the reduction by receiving at `α` and its descent along stage reduction
-  (`Realization.HasFiniteCutReceiving.reduce`), cutoff by cutoff, which is not exact projected
-  receiving (semantic contract, item 12).
+* **The density sentence** (the sentence of the main theorem, not one of the seven steps) for the
+  base-language structure (`Realization.toStructure`) of the reduction of the reconstructed
+  realization to `ω` (`Realization.reduce`) is in `VaughtConjecture.ClassicalLimit.Receiving`
+  (`realize_densitySentence_reconstruct_reduce`), for a structure whose age is the age of top-free
+  charts and which is ultrahomogeneous, at a stage `α ≥ ω` that is zero or a limit: the clauses
+  proved here, reduced to `ω`, and finite-cut receiving of the reduction, by receiving at `α` and
+  its descent along stage reduction (`Realization.HasFiniteCutReceiving.reduce`), cutoff by
+  cutoff, which is not exact projected receiving (semantic contract, item 12).
 * **Exact extension within the age** (semantic contract, item 12) beyond the extension of
   embeddings given by ultrahomogeneity, and any statement about stage reductions or cutoff
   observations of `M`.
