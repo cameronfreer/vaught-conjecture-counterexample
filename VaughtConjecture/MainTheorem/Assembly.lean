@@ -87,8 +87,10 @@ departure of every class is assumed.
 * `vaughtCounterexample_of_expansionDomains`: under all these hypotheses, a countable relational
   language and a sentence of `L_{ω₁,ω}` whose models coded on `ℕ` have exactly `ℵ₁` isomorphism
   classes with no perfect set of pairwise nonisomorphic ones, and every countable model of which,
-  on a carrier in any universe, is isomorphic to a coded one.  A spectrum statement counting the
-  isomorphism classes of the models on all countable carriers at once is not made here.  The
+  on a carrier in any universe, is isomorphic to a coded one.  The spectrum statement counting the
+  isomorphism classes of the countable models on the carriers of a universe `w` is not made here:
+  it is `HasThinAlephOneSpectrumOnCountableCarriers` in `VaughtConjecture.MainTheorem.AllCarriers`
+  (`vaughtCounterexample_allCarriers_of_expansionDomains`), by the reduction to `ℕ`.  The
   conclusion states a counterexample to Vaught's Conjecture by the number of classes and
   thinness: it gives the negation, for this sentence, of Vaught's Conjecture in the form of the
   introduction to [Mon, Chapter XII] (the models of a sentence of `L_{ω₁,ω}` are countably many
@@ -178,7 +180,7 @@ uses and does not use:
 * `ExpansionDomains.HasNonemptyLosses` is replaced by uncountability: the losses of the
   least-level filtration are nonempty only cofinally often, not at every successor, and
   cofinally many nonempty losses are equivalent to uncountability
-  (`Counting.forall_exists_le_rank_iff`).
+  (InfinitaryLogic's `InfinitaryLogic.rankTail_cofinal_losses_iff`).
 
 The conditional theorems of this route:
 
