@@ -348,8 +348,8 @@ set_option linter.hashCommand false in
 -- uncountable `X`.  Domains with countable complements below `ω₁` that every point leaves give
 -- `#X ≤ ℵ₁` (`mk_le_aleph_one_of_domains`).  Under the covering hypothesis
 -- `hcover : ⋃ α < ω₁, Q α = univ`, the tails of `leastLevel Q` are the complements of the initial
--- unions of `Q`, and countable sets `Q α` give `leastLevel Q` countable fibres.  The statements of
--- `Counting/Filtration` and `Counting/Separation` are proved in the library as quotations of these,
+-- unions of `Q`, and countable sets `Q α` give `leastLevel Q` countable fibres.  The generic
+-- statements of `Counting/Filtration` and `Counting/Separation` are proved as quotations of these,
 -- with their statements kept (`IMPLEMENTATION.md`, "Placement record"); no application is compiled
 -- in this sketch.
 set_option linter.hashCommand false in
