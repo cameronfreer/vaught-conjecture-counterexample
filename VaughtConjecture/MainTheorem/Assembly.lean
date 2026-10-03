@@ -178,7 +178,7 @@ uses and does not use:
 * `ExpansionDomains.HasNonemptyLosses` is replaced by uncountability: the losses of the
   least-level filtration are nonempty only cofinally often, not at every successor, and
   cofinally many nonempty losses are equivalent to uncountability
-  (`Counting.forall_exists_le_rank_iff`).
+  (InfinitaryLogic's `InfinitaryLogic.rankTail_cofinal_losses_iff`).
 
 The conditional theorems of this route:
 

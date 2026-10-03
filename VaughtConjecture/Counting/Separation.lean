@@ -43,11 +43,16 @@ For the filtration by a rank (`Filtration.ofRank`) the persistent core is empty,
 needs no Scott separation on the core: `mk_eq_aleph_one_of_rank` gives `#X = ℵ₁` for an
 uncountable type with a rank into the countable ordinals with countable fibres, and
 `mk_le_aleph_one_of_rank` and `mk_le_aleph_one_of_countable_cover` give `#X ≤ ℵ₁` with no
-uncountability hypothesis.
+uncountability hypothesis.  These three are quotations of InfinitaryLogic's
+`InfinitaryLogic.mk_eq_aleph_one_of_countable_fibers` and
+`InfinitaryLogic.mk_le_aleph_one_of_countable_fibers` (at the pin), with the fibres as sets and,
+for a cover, the least level `InfinitaryLogic.leastLevel`; the counting theorems above, which
+allow a nonempty persistent core, have no counterpart there.
 
-Two private examples close the file: the tail filtration of the countable
+Examples close the file: the tail filtration of the countable
 ordinals satisfies every hypothesis, and adjoining a persistent summand of size `2 ^ ℵ₁` keeps every
-filtration axiom but not the cardinality, so the countable-core hypothesis cannot be dropped.
+filtration axiom but not the cardinality, so the countable-core hypothesis cannot be dropped; an
+empty type and a countable type are the degenerate cases of the counts by a rank and a cover.
 
 ## References
 
@@ -169,26 +174,32 @@ section Rank
 
 variable {X : Type u} {r : X → Ordinal.{0}}
 
-/-- **Exactly `ℵ₁` classes from a rank on an uncountable type**: the filtration by a rank into the
-countable ordinals with countable fibres has an empty persistent core (`Filtration.core_ofRank`),
-so `Filtration.mk_eq_aleph_one` applies with no hypothesis of Scott separation on the core. -/
+/-- **Exactly `ℵ₁` classes from a rank on an uncountable type**: a rank into the countable
+ordinals with countable fibres on an uncountable type.  The filtration by the rank has an empty
+persistent core (`Filtration.core_ofRank`), so no Scott separation on the core is needed.  A
+quotation of InfinitaryLogic's `InfinitaryLogic.mk_eq_aleph_one_of_countable_fibers` (at the
+pin). -/
 theorem mk_eq_aleph_one_of_rank (hr : ∀ x, r x < ω₁)
     (hfib : ∀ α, α < ω₁ → {x | r x = α}.Countable) (hX : ¬ Countable X) : #X = ℵ₁ :=
-  (Filtration.ofRank r hr hfib hX).mk_eq_aleph_one (by simp)
+  InfinitaryLogic.mk_eq_aleph_one_of_countable_fibers r hr (fun α hα ↦ (hfib α hα).to_subtype) hX
 
-/-- **At most `ℵ₁` classes from a rank** into the countable ordinals with countable fibres. -/
+/-- **At most `ℵ₁` classes from a rank** into the countable ordinals with countable fibres.  A
+quotation of InfinitaryLogic's `InfinitaryLogic.mk_le_aleph_one_of_countable_fibers` (at the
+pin). -/
 theorem mk_le_aleph_one_of_rank (hr : ∀ x, r x < ω₁)
-    (hfib : ∀ α, α < ω₁ → {x | r x = α}.Countable) : #X ≤ ℵ₁ := by
-  by_cases hX : Countable X
-  · exact (mk_le_aleph0_iff.2 hX).trans (aleph0_le_aleph 1)
-  · exact (mk_eq_aleph_one_of_rank hr hfib hX).le
+    (hfib : ∀ α, α < ω₁ → {x | r x = α}.Countable) : #X ≤ ℵ₁ :=
+  InfinitaryLogic.mk_le_aleph_one_of_countable_fibers r hr fun α hα ↦ (hfib α hα).to_subtype
 
 /-- **At most `ℵ₁` classes from a countable cover**: a type covered by countable sets `Q α` with
-`α < ω₁` has at most `ℵ₁` elements (through the least level, `leastLevel`). -/
+`α < ω₁` has at most `ℵ₁` elements.  A quotation of InfinitaryLogic's
+`InfinitaryLogic.mk_le_aleph_one_of_countable_fibers` (at the pin) for the least level
+`InfinitaryLogic.leastLevel Q`, whose countable fibres are
+`InfinitaryLogic.countable_fibers_leastLevel`. -/
 theorem mk_le_aleph_one_of_countable_cover {Q : Ordinal.{0} → Set X}
     (hQ : ∀ α, α < ω₁ → (Q α).Countable) (hcover : ∀ x, ∃ α, α < ω₁ ∧ x ∈ Q α) : #X ≤ ℵ₁ :=
-  mk_le_aleph_one_of_rank (fun x ↦ (leastLevel_lt_and_mem hcover x).1)
-    (countable_setOf_leastLevel_eq hQ hcover)
+  have hU := biUnion_lt_omega_one_eq_univ hcover
+  InfinitaryLogic.mk_le_aleph_one_of_countable_fibers _ (InfinitaryLogic.leastLevel_lt_omega1 Q hU)
+    (InfinitaryLogic.countable_fibers_leastLevel Q hU hQ)
 
 end Rank
 
@@ -274,6 +285,18 @@ example : ¬ (adjoin tail (Set (Iio (ω₁ : Ordinal.{0})))).core.Countable ∧
       _ = #(Set (Iio (ω₁ : Ordinal.{0}))) := by rw [mk_set, mk_tail]
       _ ≤ _ := mk_le_of_injective Sum.inr_injective
   exact ⟨fun h ↦ hlt.ne' ((adjoin tail _).mk_eq_aleph_one h), hlt⟩
+
+/-- **An empty type** is covered by every family, and has at most `ℵ₁` elements. -/
+example (Q : Ordinal.{0} → Set Empty) : #Empty ≤ ℵ₁ :=
+  mk_le_aleph_one_of_countable_cover (Q := Q) (fun _ _ ↦ Set.to_countable _) (·.elim)
+
+/-- **A countable type** has a rank with countable fibres (`n ↦ n` on `ℕ`) and at most `ℵ₁`
+elements, but no filtration by it: its ranks are bounded below `ω₁`. -/
+example : #ℕ ≤ ℵ₁ ∧ ¬ ∀ β, β < ω₁ → ∃ n : ℕ, β ≤ (n : Ordinal.{0}) :=
+  have hr (n : ℕ) : (n : Ordinal.{0}) < ω₁ :=
+    (Ordinal.natCast_lt_omega0 n).trans Ordinal.omega0_lt_omega_one
+  ⟨mk_le_aleph_one_of_rank hr fun _ _ ↦ Set.to_countable _,
+    fun h ↦ (forall_exists_le_rank_iff _ hr fun _ _ ↦ Set.to_countable _).1 h inferInstance⟩
 
 end Examples
 
