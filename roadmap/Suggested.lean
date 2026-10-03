@@ -443,7 +443,9 @@ clauses and the one-point capped-extension clause):
     HasThinAlephOneSpectrum concreteSentence := ...
 plus the no-finite-model theorem, actual structure/realization correspondence, the
 required equivalence of `concreteSentence` with the four-family sentence, and the
-all-countable-carrier spectrum and perfect-set variants.
+all-countable-carrier spectrum and perfect-set variants (stated in the library as
+`HasThinAlephOneSpectrumOnCountableCarriers` and `¬ PerfectSetDichotomyAllCountable`, with their
+conditional compositions in `VaughtConjecture.MainTheorem.AllCarriers`).
 
 No firstFailure, characteristic-arity, canonical-stop, global-departure, or
 Scott-rank-equality target is a premise of this theorem.

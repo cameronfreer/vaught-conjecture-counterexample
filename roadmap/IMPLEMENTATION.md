@@ -59,10 +59,13 @@ upstream.
 Construct an explicitly countable relational language and an `L_{ω₁,ω}` sentence whose countable
 models have exactly `ℵ₁` isomorphism classes and no perfect isomorphism antichain.  The sentence is
 the density sentence of layer 2 (the structural clauses and the one-point capped-extension clause).
-State both the natural-number-code and the all-countable-carrier formulations, with the
-reduction to `ℕ` explicit (no finite models, so every countable model is isomorphic to a coded
-model on `ℕ`).  This is not a first-order Vaught result and is not a comparison
-with the continuum.
+State both the natural-number-code and the all-countable-carrier formulations, with the reduction to
+`ℕ` explicit (no finite models, so every countable model is isomorphic to a coded model on `ℕ`).
+Both formulations are stated in the library, `HasThinAlephOneSpectrum` and
+`HasThinAlephOneSpectrumOnCountableCarriers` (with `codedClassEquiv` between the classes of codes
+and the classes on all countable carriers, `MainTheorem/AllCarriers`), and their compositions are
+compiled conditionally (checkpoint 6).  This is not a first-order Vaught result and is not a
+comparison with the continuum.
 
 The core is complete only after every finite construction, realization over a root, recovery of
 donor labels, syntax correspondence, the equivalence of the density sentence with the four-family
@@ -387,10 +390,12 @@ so `|Q| ≤ ℵ₁`) is a target still to be proved, not a lemma of the sketch.
 
 The comparison is to be proved in its back-and-forth form (`README.md`, "Condition 3 from
 back-and-forth", a theorem to prove): any two members of `D_η` are `BFEquiv η` on the empty tuple.
-The one-block transfer gives the forth and back clauses of the graded back-and-forth theorem
-(`README.md`, layer 0, prospective), or of its generic form `bfEquiv_of_gradedMatching` (at the pin,
-signatures checked; with the match (ii) of `README.md`, layer 0, the height guard and the selector
-inside the relation), applied with height `η`.  Its initial match is a separate statement, not a
+The one-block transfer gives the forth and back clauses of InfinitaryLogic's graded-matching
+theorem `bfEquiv_of_gradedMatching` (at the pin, signatures checked; with the match (ii) of
+`README.md`, layer 0, the height guard and the selector inside the relation), applied with height
+`η`; on abstract hypotheses for the expansions, charts, and covers, this passage is
+`ExpansionMatchData.bfEquiv_of_expansionMatch`, compiled in this repository (theorem named).  Its
+initial match is a separate statement, not a
 consequence of the extension laws: the empty set is closed in both expansions (existence), and the
 two empty charts have the same type at `λ_η` (compatibility, by `StageType.eq_of_zero`).  Sentence
 agreement at quantifier rank at most `η` is then the corollary `BFEquiv_implies_agreeQR` (available
@@ -416,7 +421,9 @@ age and not recognized afterwards in a model constructed otherwise.
    visible faces with their types and no relation at a supported invisible face); the index is
    countable and contains the empty chart; each member is finitely generated.  Special cases:
    the empty chart, a one-point chart, a chart with an invisible pair, distinct cells sharing a
-   graded index.
+   graded index.  Status: compiled in this repository (theorem named), `ClassicalLimit/Age`
+   (`topFreeAge`, `countable_topFreeIndex`, `fg_topFreeChart`, `nonempty_topFreeAge`), with the
+   special cases in `ClassicalLimit/AgeExamples`.
 2. **Hereditary closure, amalgamation, joint embedding.**  Acceptance: the finitely generated
    substructures of a member are exactly its closed faces with their literal restrictions;
    amalgamation of two top-free charts over a common face, by the plain form of the coatom
@@ -427,12 +434,23 @@ age and not recognized afterwards in a model constructed otherwise.
    form (literal square).  Special cases: the empty common chart, a common chart equal to one of
    the two, equal charts with equal face embeddings, a common chart that is the hull of two of
    its points and has more than two points.  Strong amalgamation is not claimed or needed.  No
-   infinite model is imported.
+   infinite model is imported.  Status: compiled in this repository (theorem named).  Hereditary
+   closure, with no hypothesis: `exists_equiv_topFreeChart` (exactly the hypothesis `hsub` of
+   `isFraisse_representativeClass`) and `hereditary_topFreeAge` (`ClassicalLimit/Age`).
+   Amalgamation and joint embedding, conditional on the coatom extension property
+   `StageType.HasCoatomExtensions` at the stage (not proved here) and on a stage that is a nonzero
+   limit: `exists_amalgam_topFreeChart`, `exists_jointEmbedding_topFreeChart`, and
+   `isFraisse_topFreeAge` (`ClassicalLimit/Amalgamation`), through the capped amalgam
+   `StageType.exists_isTopFree_amalgam`; the special cases are in
+   `ClassicalLimit/AmalgamationExamples`, stated for an arbitrary top-free chart where no legal
+   type on three or more points is constructed.
 3. **Classical existence.**  Acceptance: `isFraisse_representativeClass` applied to the family,
    then the classical existence theorem (available at the pin), giving a countable
    `L^h_λ`-structure with
    `IsFraisseLimit`; the countability hypotheses (`[Countable (Σ l, L.Functions l)]`, countably
-   many isomorphism types) are proved for `L^h_λ` and the age, not assumed.
+   many isomorphism types) are proved for `L^h_λ` and the age, not assumed.  Status: compiled in
+   this repository (theorem named), under the hypotheses of step 2 and the countability of the
+   stage: `exists_isFraisseLimit_topFreeAge` (`ClassicalLimit/Amalgamation`).
 4. **Reconstruction of partial evaluation.**  Acceptance: the evaluation of an injective tuple is
    defined from the chart relations of the limit, and the literal recovery and uniqueness
    clauses of the acceptance criterion (`SEMANTIC_CONTRACT.md`, item 11) are proved from the
@@ -477,7 +495,12 @@ computable presentation). The partial-realization statements of the conditional 
 (`StageType.chartRealization`, `StageType.isConsistent_chartRealization`,
 `StageType.chartRealization_eval_eq_none_iff`, in `Realization/Partial.lean`, outside
 `Construction/`, in the library) are to be reused in steps 1, 4, and 5, so that the boundary above
-holds; the chain-union statements are not used by steps 1–7.
+holds; the chain-union statements are not used by steps 1–7. As compiled, steps 1–3
+(`ClassicalLimit/Age`, `ClassicalLimit/Amalgamation`) import ComputableModelTheory only through
+its entry module `ComputableModelTheory.Classical`, no module of InfinitaryLogic and no
+`Construction/` module, and, of the finite extension constructions, only `Extension/Basic` and
+`Extension/PinnedExtension` (for the one-point scheme and the zero-point lemmas) and
+`Extension/SectionTheorem` with `Extension/WitnessAlgebra` (for the capping lemma).
 
 ## The full-presentation route
 
@@ -492,9 +515,11 @@ any construction is adapted to it:
 1. **the generic presentation-counting theorem:** the fundamental theorem of `README.md` from its
    hypotheses (the count at one level, scatteredness from countably many observed types, the
    least-level filtration under a common starting observation, and the lower-bound criterion);
-2. **projected extension to back-and-forth:** (AE) gives approximate comparison (the graded
-   back-and-forth theorem of `README.md`, layer 0, gives `BFEquiv`), and approximate comparison
-   gives the sentence form of bounded comparison through `BFEquiv_implies_agreeQR`;
+2. **projected extension to back-and-forth:** (AE) gives approximate comparison (InfinitaryLogic's
+   `bfEquiv_of_gradedMatching` gives `BFEquiv`; on abstract hypotheses this is
+   `FullPresentation.bfEquiv_comp_of_obs_eq`, compiled in this repository (theorem named)), and
+   approximate comparison gives the sentence form of bounded comparison through
+   `BFEquiv_implies_agreeQR`;
 3. **a concrete full-presentation construction from the terminal classification:** the full
    presentations of the terminal models (pointed at the named core, residual, hollow) and of the
    top-free age, to see whether the new organization shortens the argument that faces the
@@ -510,8 +535,9 @@ their notions live; "this repository" means the layers of `README.md`.
 2. *Observation syntax:* countable level sets, commuting projections, and their
    interpretation on finite closed tuples, with separate levels or level-indexed predicates,
    never a single exclusive partition by full labels.  Home: this repository (the generic shape
-   `LevelObservations` of `Suggested.lean`, section 6; the instance is stage reduction,
-   `StageType.reduce` with `StageType.reduce_reduce`).
+   `FullPresentation.LevelObservations`, with `FullPresentation.ObservedPresentation`, in the
+   library module `Comparison/GradedMatchingApplications`, which `Suggested.lean`, section 6,
+   quotes; the instance is stage reduction, `StageType.reduce` with `StageType.reduce_reduce`).
 3. *(AE):* the target's actual root kept exactly, the extended diagrams compared only at the lower
    level, the target's restrictions retained.  Home: the instance in this repository (the projected
    finite-extension rule, one case for each ordered pair of kinds of allowed ages, or, between
@@ -521,10 +547,12 @@ their notions live; "this repository" means the layers of `README.md`.
    and `λ_{η+1}`: iterated one-point receiving retains each actual root literally, but the next
    donor coface need not restrict literally to the newly received root, and the bounded-observation
    lifting at that cap repairs it at each step; `README.md`, "Reduction to full presentations"); the
-   passage to `BFEquiv` by the graded back-and-forth theorem (layer 0; prospective, the stated
-   target here), or by its generic form `bfEquiv_of_gradedMatching` (at the pin, signatures
+   passage to `BFEquiv` by InfinitaryLogic's `bfEquiv_of_gradedMatching` (at the pin, signatures
    checked), with the height guard and the selection of coordinates inside the relation (the match
-   (i) of `README.md`, layer 0); neither is compiled for this application yet.
+   (i) of `README.md`, layer 0), compiled on abstract hypotheses as
+   `FullPresentation.bfEquiv_comp_of_obs_eq` (`Comparison/GradedMatchingApplications`), compiled in
+   this repository (theorem named); its instantiation to the presentations of the construction is
+   not elaborated.
 4. *Exact comparison* for prescribed pointed or unpointed full ages, reusing standard
    uniqueness rather than a separate comparison for each terminal case.  Home: fullness and equal
    ages give extension pairs in both directions, hence an isomorphism: ComputableModelTheory's
@@ -598,7 +626,24 @@ composition beside the expansion-domain composition, which is unchanged:
   `FullPresentations.HasScatteredTails.of_countable_quotient`) and the conditional theorems
   `densitySentence_isThinOnNatModels_of_scatteredTails`,
   `densitySentence_hasThinAlephOneSpectrum_of_scatteredTails`, and
-  `vaughtCounterexample_of_scatteredTails`.
+  `vaughtCounterexample_of_scatteredTails`;
+- the two applications of graded matching (`Comparison/GradedMatchingApplications`, layer 0 of
+  `README.md`), on abstract hypotheses, through InfinitaryLogic's `bfEquiv_of_gradedMatching`: the
+  observation shapes `FullPresentation.LevelObservations`, `FullPresentation.ObservedPresentation`,
+  `FullPresentation.AtomicAtZero`, and `FullPresentation.ApproxExtension`, the relation
+  `FullPresentation.ObsMatch`, and approximate comparison,
+  `FullPresentation.bfEquiv_comp_of_obs_eq`; for condition 3 of the expansion-domain route,
+  `ExpansionMatchData`, `ExpansionMatchData.Match`, `ExpansionMatchData.bfEquiv_of_match`, and
+  `ExpansionMatchData.bfEquiv_of_expansionMatch`;
+- the all-countable-carrier formulation (`MainTheorem/AllCarriers`): `CountableModel`,
+  `CountableModelClass`, `codedClassEquiv`, `HasThinAlephOneSpectrumOnCountableCarriers` with
+  `hasThinAlephOneSpectrumOnCountableCarriers_iff`,
+  `densitySentence_not_perfectSetDichotomyAllCountable`, the three theorems
+  `densitySentence_hasThinAlephOneSpectrumOnCountableCarriers_of_expansionDomains`,
+  `…_of_presentations`, and `…_of_scatteredTails`, and the three theorems
+  `vaughtCounterexample_allCarriers_of_expansionDomains`, `…_of_presentations`, and
+  `…_of_scatteredTails`, each with the hypotheses of its counterpart on `ℕ` and the cap-to-model
+  theorem `CapToModel` (not proved here), from which the absence of finite models is derived.
 
 Recorded with it: the count uses only `FullPresentations` (`#X ≤ ℵ₁`), and bounded comparison is
 used only for thinness; the proof term of the main conditional theorem avoids `classTruth_separates`
@@ -648,24 +693,17 @@ It weakens the thinness hypothesis of the second conditional composition from th
 `FullPresentations.HasBoundedComparison` to the hypothesis of the fundamental theorem; both
 conditional compositions are kept.
 
-**A prospective statement of this repository, layer 0: the graded back-and-forth theorem**
-(`README.md`, layer 0, where it is stated with all its hypotheses; to be proved here from
-`BFEquiv.zero`, `BFEquiv.succ`, and `BFEquiv.limit`, available at the pin; the stated target until
-both of its applications compile through InfinitaryLogic's generic form, the next paragraph, and
-then retired, "Placement record").  For structures `M` and `N` in a relational language (a
-relational language is required by the forward Karp agreement theorem `BFEquiv_implies_agreeQR`, the
-application; `BFEquiv` itself needs none), relations `R α n a b` between `n`-tuples of `M` and `N`,
-for `α` up to an explicit height `h` (`h : Ordinal.{0}` in both applications), with the zero clause
-(`R 0` gives `SameAtomicType`), descent (`R α` gives `R β` for `β ≤ α ≤ h`, covering the successor
-and limit steps), and forth and back from `R (α + 1)` into `R α` on one-point extensions, give
-`BFEquiv α n a b` for every `α ≤ h` and every pair with `R α n a b`.  The theorem produces no
-related pair: in each application, the initial match, a pair related at the height, is a separate
-hypothesis and not a consequence of the other clauses.  Optionally a block form, adding finitely
-many points at a step.  Its two intended applications are approximate comparison of full
-presentations (item 3 above) and the back-and-forth form of condition 3 of the expansion-domain
-route (layer 5, section 5 above); it is one theorem with two intended applications, and both are to
-be compiled before it is called common.  `Suggested.lean`, section 6, proves approximate comparison
-directly by the same induction (`FullPresentation.bfEquiv_comp_of_obs_eq`), not through it.
+**The graded back-and-forth theorem, retired** (`README.md`, layer 0, where it is stated with all
+its hypotheses).  For structures `M` and `N` and relations `R α n a b` between `n`-tuples of `M` and
+`N`, for `α` up to an explicit height `h` (`h : Ordinal.{0}` in both applications), with the zero
+clause (`R 0` gives `SameAtomicType`), descent (`R α` gives `R β` for `β ≤ α ≤ h`), and forth and
+back from `R (α + 1)` into `R α` on one-point extensions, it gives `BFEquiv α n a b` for every `α ≤
+h` and every pair with `R α n a b`; the initial match, a pair related at the height, is a separate
+hypothesis in each application.  It is the special case of InfinitaryLogic's generic form (the next
+paragraph) with initial match at the height.  Its two intended applications, approximate comparison
+of full presentations (item 3 above) and the back-and-forth form of condition 3 of the
+expansion-domain route (layer 5, section 5 above), both compile through the generic form, so it is
+retired as a target of this repository, not proved here and not moved ("Placement record").
 
 **The upstream graded-matching theorem.**  InfinitaryLogic's `bfEquiv_of_gradedMatching`
 (`Scott/GradedMatching`; at the pin, signatures checked), a generic form of the theorem above, takes
@@ -678,10 +716,15 @@ selection of their coordinates; for condition 3, model expansions of the two fix
 `λ_α`, a common chart, two covers, and a selector `Fin n → Fin k`, with the common empty chart as
 initial match and no uniqueness of expansions used (`README.md`, layer 0, the matches (i) and (ii)).
 For condition 3 the initial match is two separate lemmas, existence of the empty chart in both
-expansions and compatibility of the two empty charts.  Neither application is compiled through the
-upstream theorem yet.  The local theorem above remains the stated target until both are; it is then
-retired, and the construction layers supply only atomic agreement, lowering, forth and back, and an
-explicit initial match, without an ordinal induction of their own.  Nothing is needed from
+expansions and compatibility of the two empty charts.  Both applications are compiled through the
+upstream theorem, on abstract hypotheses, in `Comparison/GradedMatchingApplications`:
+`FullPresentation.bfEquiv_comp_of_obs_eq` and `ExpansionMatchData.bfEquiv_of_expansionMatch`, each
+compiled in this repository (theorem named), the second with the two hypotheses
+`exists_empty_chart` and `compat`; in both, a match of closed sets is carried to the tuple relation
+by a selector, so that repeated coordinates and the empty tuple are covered (`README.md`, layer 0).
+Their instantiation to the construction is not elaborated.  The local theorem above is retired, and
+the construction layers supply only atomic agreement, lowering, forth and back, and an explicit
+initial match, without an ordinal induction of their own.  Nothing is needed from
 ComputableModelTheory for it.
 
 **Prospective interfaces of InfinitaryLogic** (neither available upstream nor pinned; the
@@ -921,7 +964,12 @@ The development produces the following, and only these, as hypotheses of library
 
 - **the ages:** for each countable block `η`, the family of finite top-free charts at `λ_η` as
   finite `L^h_λ`-structures, with finite generation, a countable inhabited index, hereditary
-  closure, joint embedding, and amalgamation with the literal commuting square (steps 1–2);
+  closure, joint embedding, and amalgamation with the literal commuting square (steps 1–2).  These
+  are compiled in this repository (theorem named), in `ClassicalLimit/Age` and
+  `ClassicalLimit/Amalgamation`, with joint embedding and amalgamation conditional on the coatom
+  extension property `StageType.HasCoatomExtensions` (not proved here);
+  `isFraisse_representativeClass` and the classical existence theorem are applied there
+  (`isFraisse_topFreeAge`, `exists_isFraisseLimit_topFreeAge`, step 3), under the same condition;
 - **orbit formulas (first interface):** for every finite tuple `a` of a countable top-free model
   read in the relational stage chart language `L_λ` (the empty tuple and repeated coordinates
   included), a first-order formula of `L_λ` defining exactly its automorphism orbit: the
@@ -978,8 +1026,6 @@ not `InfinitaryLogic.All`; they bring no López–Escobar or descriptive-set-the
 The development is also to quote (expected applications, not elaborated here; each library
 statement is available at the pin):
 
-- classical existence (available at the pin) and `isFraisse_representativeClass`
-  (ComputableModelTheory), for the limit (step 3);
 - the factorization of tuples through the age (ComputableModelTheory), for steps 4–5 of finite-age
   reconstruction;
 - `IsUltrahomogeneous.extend_embedding` (Mathlib), for receiving (step 6);
@@ -1036,6 +1082,12 @@ Each checkpoint needs both its abstract API and a concrete application:
    amalgamation and joint embedding (through the plain form of the coatom extension property, the
    first use of (R6)), classical existence (available at the pin), reconstruction of partial
    evaluation, consistency and covering and top-freeness, and receiving (the first use of (R5)).
+   Status: the hull operations with their five facts are compiled for finite charts (`README.md`,
+   Layer 2, "Status for finite charts"; `Language/HullOperations`, `Language/HullDefinability`), and
+   remain to be proved for realizations other than the face realizations of charts, which need the
+   two-charts theorem for exactly consistent covering realizations; steps 1–3 of the top-free
+   witnesses are compiled, the amalgamation and joint embedding of step 2 and step 3 conditional on
+   `StageType.HasCoatomExtensions` ("The top-free witnesses: milestone order and acceptance").
 4. Items 3.2 and 3.3 for (R1)–(R3): for each of them, the extension of the realization by one actual
    occurrence over the literal root and the recovery theorem (by `Correct` and labelled
    evaluation, by LOW, or through the gate), with all its equations on that occurrence and at
@@ -1052,7 +1104,43 @@ Each checkpoint needs both its abstract API and a concrete application:
    theorem), unique limit expansions, and the terminality of the top-free witnesses with the
    placement of their base classes in the losses (step 7).
 6. Domain hypotheses of the counting theorem, the upper and lower bounds, thinness, and the
-   reduction to `ℕ` (all countable carriers).
+   reduction to `ℕ` (all countable carriers).  Status: the conditional compositions of both routes
+   are compiled, on `ℕ` (`MainTheorem/Assembly`) and on all countable carriers
+   (`MainTheorem/AllCarriers`), with the domain hypotheses of the expansion-domain route, or
+   `FullPresentations` with its comparison and lower-bound hypotheses, as hypotheses, and, for the
+   statements about countable models on arbitrary carriers, the cap-to-model theorem `CapToModel`
+   (not proved here).  The absence of finite models used by the reduction to `ℕ` comes from
+   `CapToModel`, or from the coatom extension property at `ω`
+   (`infinite_of_realize_densitySentence_of_hasCoatomExtensions`, with hypothesis
+   `StageType.HasCoatomExtensions` at `ω`, not proved here); once that property is proved, the
+   reduction to `ℕ` for the density sentence no longer needs `CapToModel`.
+
+**Six non-implications, as examples.**  Each is a statement that fails in general, to be shown by
+an example in the examples module of its layer; only the second is compiled.
+
+1. Rank domination is not strict increase: on a rooted tree, a labelling by ordinals that is at
+   least as large at a parent as at each child need not be a rank (strictly larger at a parent than
+   at each child).  Where: `COMPANIONS.md`, "Further companion results", "Full trees".  Not
+   compiled.
+2. A finite cap does not distinguish the formal top from a sufficiently high proper label: at a
+   permitted cutoff `c` of a stage `α`, the labels `c` and `⊤` have the same observation at `c`,
+   while stage reduction to `α` keeps them apart.  Where: layer 1, and the flattening of finite
+   parts in 2.4–2.5.  Compiled in this repository (theorem named):
+   `Label.IsPermittedCutoff.exists_min_eq_min_reduce_ne` (`Label/Cap`).
+3. Receiving at every permitted cutoff below a limit `δ` does not give receiving at the cutoff `δ`:
+   different cutoffs may be served by different occurrences, and none need agree with the donor
+   below `δ`.  Where: layer 3 (`README.md`, Layer 3, 3.4), with the examples of receiving.  Not
+   compiled.
+4. Coherent projection does not lift an arbitrary projected donor over a prescribed root: lifting
+   depends on the root, not only on its projection.  Where: layer 3 (`README.md`, Layer 3, 3.3, the
+   density boundary, whose four-point example of abstract observation systems is informal).  Not
+   compiled.
+5. Branching at nodes of high rank does not give the extension property at nodes of low rank.
+   Where: `COMPANIONS.md`, "Full trees".  Not compiled.
+6. That every member of a class `K` has a full presentation, with all its labels, does not make `K`
+   the class of models of a sentence of `L_{ω₁,ω}` in the base language; the fundamental theorem
+   uses no definability of `K` (`README.md`, "Reduction to full presentations").  Where: the
+   full-presentation route, with the examples of `MainTheorem/Examples`.  Not compiled.
 
 At every checkpoint: full build, strict per-file checks, no `sorry`, standard axioms only,
 universe/empty/repeated-coordinate special cases, and review of semantic statements.  Audit proof
@@ -1105,8 +1193,30 @@ ones split):
 - **2.4. Lifting and alignment.**  Carrying sections across grade cuts (the restrictions to the
   cells of grade at most a given grade) and source prefixes (defined with 2.4), owner alignment,
   restoration of lower prescriptions (the prescribed labels at the grades below the one being
-  built); the cap preserved on every coordinate, and the locality of inherited long rows
-  explicit.
+  built); the cap preserved on every coordinate, and the locality of inherited long rows explicit.
+  Established, compiled in this repository (theorem named): 2.4a, grade cuts (`Extension/GradeCut`),
+  source prefixes (`Extension/SourcePrefix`), restoration with the one-grade lift decomposition
+  (`CellScheme.Rows.exists_restoration`, `CellScheme.Rows.cappedLift_of_ownerCappedLift`,
+  `Extension/Restoration`: an owner label at most the cap gives the lift below the cap, and an owner
+  label above the cap, the cap `⊥` included, an owner-capped lift restored at the owner label, which
+  is the shape of the recursion step of 2.6), and inherited long-row locality
+  (`CellScheme.Rows.IsLawful.map_of_isLowerEmbedding`, `Extension/InheritedLocality`); and 2.4b-i,
+  positive-cap transport of lawfulness, with the bottom pattern as the only obstruction and a cap
+  other than `⊥` necessary (`CellScheme.Rows.IsLawful.map_of_bot_iff`,
+  `CellScheme.Rows.IsLawfulBelow.map_of_min_eq`, `Extension/CapTransport`), and the flattened source
+  of the prescription, the source of the owner alignment
+  (`CellScheme.Rows.IsLawfulBelow.flattenedSource_prescription`, `Extension/FlattenedSource`).
+  Flattening keeps the prescribed face and the observation at every cap through the encoder's own
+  decoder at a coding grade `K ≤ m`, and only for that decoder; the cap observation transfers to any
+  decoder that agrees with it on the labels short at `m`
+  (`Label.min_apply_flattenedSource_of_agree`).  What remains (2.4b-ii): owner-local alignment and,
+  for the alignment decoder, the literal reading of the prescription on the prescribed face and the
+  cap observation at the auxiliary cells that do not carry flattened codes; the aligned encoding
+  with literal recovery; the decoding of a labelling of codes to the owner-capped lift; the lift at
+  the cap `⊥`; and the extension to the other coatom.  **Shortness.**  The alignment uses a source
+  short at the grade of the owner, while the normal forms of 2.3 are strongly coded but not short
+  (finite parts up to the grade plus one); the flattened source is the remedy, and 2.4b-ii is to use
+  the concrete encoder `strongEncode V m` with its own decoder, not the existential normal form.
 - **2.5. The two small arities.**  `m = 0` and `m = 1` as two separately stated constructions on
   their actual rows: arbitrary lawful prescriptions, literal top, the boundary retained, the cap
   preserved on every auxiliary cell.
@@ -1307,7 +1417,11 @@ lands, their notes stay in those modules.
   the off-diagonal of a closed set in a Polish Borel space (`analyticSet_offDiag`, to
   `MeasureTheory/Constructions/Polish`) and the uncountability of a nonempty perfect set in a
   completely metrizable space (`not_countable_of_perfect`, to `Topology/MetricSpace/Perfect`, beside
-  `Perfect.exists_nat_bool_injection`).
+  `Perfect.exists_nat_bool_injection`).  InfinitaryLogic's `Descriptive/BFScattered` (`BFScattered`,
+  `isThinOn_of_bfScattered`, `Sentenceω.isThinOnNatModels_of_bfScattered`; available upstream, not
+  yet at our pinned dependency) is the generic form of `isThinOn_of_countable_bfClasses` and
+  `isThinOnNatModels_of_countable_bfClasses`, and a candidate for absorbing them by one-line
+  quotation once a pin contains it.
 - `MainTheorem/Assembly`: in the proof of `FullPresentations.HasScatteredTails.countable_quotient`,
   the local map from the classes of the density sentence to
   `Quotient (bfEquivSetoid densitySentence η)` re-derives InfinitaryLogic's
@@ -1315,6 +1429,48 @@ lands, their notes stay in those modules.
   `FullPresentations.HasScatteredTails` is in effect the range `bfProjRange` of the tail, stated as
   an image of codes; the proof is to use `bfProj` and `bfProj_mk` in place of the local derivation,
   in a later change of proofs only (no statement changes, and no Lean change here).
+
+**Lifting and alignment (checkpoint 2.4; Layer 3, (R6)).**
+
+- `Extension/GradeCut`: the cell statements to `Scheme.Cell`; the statements on rows, lawfulness,
+  coding, and lifts to `Scheme.Row` and `Scheme.Transport`, the coding beside `Rows.IsCoded`.
+- `Extension/SourcePrefix`: `IsSourcePrefix` and the `IsLowerEmbedding.*_of_scope_eq` lemmas to
+  `Scheme.Cell`; the lawfulness and lift statements to `Scheme.Transport`.
+- `Extension/Restoration`: `Label.min_eq_min_of_le` to `Label.Cap`; `CellScheme.splice` and
+  `IsLawfulBelow.splice` to `Scheme.Row`, beside `IsLawfulBelow.glue`; restoration and the lifts to
+  `Scheme.Bountiful`.
+- `Extension/InheritedLocality`: `Label.transformsTo_comp_equiv_iff` to `Label.Transform`, beside
+  `TransformsTo.reindex`; the locality statements to `Scheme.Row`; the section theorem along a lower
+  embedding beside `IsLawful.map_of_isShort_or`.
+- `Extension/CapTransport`: the label rules and the witness interpolation to `Label.Transform`,
+  beside the guarded composition; the transport of lawfulness (`map_of_bot_iff`, `map_of_min_eq`,
+  and `map_of_apply_eq_bot`, which generalizes `map_of_bot_reflecting`) to `Scheme.Row`, beside
+  `IsLawful.map_of_isShort_or`.
+- `Extension/FlattenedSource`: the flattening and decoding identities to a module
+  `Label/Coding.lean`, beside the encoder; the lawfulness and prescription statements to
+  `Scheme.Row`.
+
+**Hull operations, the top-free age, and graded matching (Layers 0 and 2; the top-free
+witnesses).**
+
+- `Language/HullOperations`, `Language/HullDefinability`, and their examples modules: Layer 2, in
+  place.  The rigidity lemma for plans (`Geometry.IsPlan.apply_eq_of_mem_hull`) is in
+  `Geometry/Plan`, where it belongs.
+- `ClassicalLimit/Age` and `ClassicalLimit/AgeExamples`: steps 1–2 of the top-free witnesses, in
+  place.
+- `ClassicalLimit/Amalgamation`: `StageType.cap` with its laws (`cap_toScheme`, `cap_label`,
+  `isLegal_cap`, `isTopFree_cap`, `restrictFace_cap`), `StageType.IsTopFree.exists_label_le`,
+  `StageType.exists_cap`, and `StageType.exists_isTopFree_amalgam` to a module of `Extension/` (for
+  instance `Extension/Capping.lean`, importing `Extension/PinnedExtension`,
+  `Extension/SectionTheorem`, and `Stage/TopFree`), since (R5) needs them and cannot import
+  `ClassicalLimit/`; `StageType.grade_le` to `Stage/Basic`; `TopFreeIndex.restrictFace_empty` to
+  `ClassicalLimit/Age`, beside `TopFreeIndex.empty`.
+- `Comparison/GradedMatchingApplications`: Layer 0, in place.  The local graded back-and-forth
+  theorem (`README.md`, Layer 0) is retired, not moved: both of its applications compile through
+  InfinitaryLogic's `bfEquiv_of_gradedMatching`.
+- `MainTheorem/AllCarriers`: `infinite_of_realize_densitySentence_of_hasCoatomExtensions` concerns
+  only the density sentence and the coatom extension property; it is a candidate for
+  `Language/Density`, beside the density sentence, if the imports allow it.
 
 **Counting (Layers 5–6).**
 
@@ -1328,24 +1484,25 @@ lands, their notes stay in those modules.
   `Filtration.ofCountableCover`) and of `Counting/Separation` (`mk_le_aleph_one_of_countable_cover`,
   `mk_le_aleph_one_of_rank`, which states `mk_le_aleph_one_of_countable_fibers`,
   `mk_eq_aleph_one_of_rank`) are candidates for one-line quotation of these, keeping their
-  statements, subject to an audit of three points: the bound `α < ω₁` inside our `leastLevel`
-  (`sInf {α | α < ω₁ ∧ x ∈ Q α}`, against InfinitaryLogic's `sInf {α | x ∈ Q α}`, which agree under
-  the covering hypothesis); the empty persistent core (`Filtration.core_ofRank` against
-  `biInter_rankTail_eq_empty`); and cofinally nonempty losses (the field `cofinal_losses` of
-  `Filtration`, and `rankTail_cofinal_losses_iff`) against nonempty losses at every level.  That the
-  correspondence is one-to-one is an audit claim until the quotations compile.  No deletion is
-  proposed.
+  statements, subject to a comparison of the statements at three points: the bound `α < ω₁` inside
+  our `leastLevel` (`sInf {α | α < ω₁ ∧ x ∈ Q α}`, against InfinitaryLogic's `sInf {α | x ∈ Q α}`,
+  which agree under the covering hypothesis); the empty persistent core (`Filtration.core_ofRank`
+  against `biInter_rankTail_eq_empty`); and cofinally nonempty losses (the field `cofinal_losses` of
+  `Filtration`, and `rankTail_cofinal_losses_iff`) against nonempty losses at every level.  This
+  comparison is a reading of the two lists of statements, not a theorem: each local statement is
+  matched with an InfinitaryLogic statement only when it is proved by one application of that
+  statement and the proof compiles.  `scripts/check.sh` does not compare declarations with
+  InfinitaryLogic; it checks that the toolchain agrees with InfinitaryLogic's, builds the library,
+  rejects `sorry`, `admit`, and the forbidden options, checks the copyright headers, and checks that
+  every declaration of the library uses only the standard axioms.  No deletion is proposed.
 
 **Statements not yet in any module.**
 
-- The graded back-and-forth theorem (`README.md`, layer 0; prospective): the stated target, in a
-  layer 0 module of this repository with no construction imports (a proof, in a module
-  `Comparison/GradedBackAndForth`, is on an unmerged branch).  Its generic form is InfinitaryLogic's
-  `bfEquiv_of_gradedMatching` (`Scott/GradedMatching`, at the pin, signatures checked), so the
-  local theorem has no upstream destination: once both of its intended applications (approximate
-  comparison of full presentations, and the back-and-forth form of condition 3 of the
-  expansion-domain route) compile through the upstream theorem, the local theorem is retired, not
-  moved.
+- None at present.  The graded back-and-forth theorem (`README.md`, Layer 0), formerly listed here,
+  is retired, not moved: both of its intended applications, approximate comparison of full
+  presentations and the back-and-forth form of condition 3 of the expansion-domain route, compile
+  through InfinitaryLogic's `bfEquiv_of_gradedMatching` (`Comparison/GradedMatchingApplications`,
+  Layer 0).
 
 ## Dependency tracking
 
