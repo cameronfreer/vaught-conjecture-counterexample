@@ -3,7 +3,6 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
-import VaughtConjecture.Expansion.Agreement
 import VaughtConjecture.Geometry.IntervalPlan
 import VaughtConjecture.Language.Density
 import VaughtConjecture.Realization.Expansion
@@ -12,14 +11,13 @@ import VaughtConjecture.Realization.Receiving
 /-!
 # Examples for receiving for finite extensions
 
-Regressions for `VaughtConjecture.Realization.Receiving` and for the global statements of
-`VaughtConjecture.Expansion.Agreement`:
+Special cases of `VaughtConjecture.Realization.Receiving`:
 
 * **the one-point case**: finite-extension receiving gives back finite-cut receiving, and a donor
   on one new point along the initial segment is one step of the chain;
 * **two new points**: a type on two more points whose face is not the received type is not a
-  coface of it, so the next step needs the repaired donor, which exists; the cutoffs of the
-  transfer, `0` at stage `ω` and the block stages `λ_η = ω + ω · η`, are self-visible at no
+  coface of it, so the next step needs the repaired donor, which exists; the cutoff `0` at stage
+  `ω` and the cutoffs of the transfer, the block stages `λ_η = ω + ω · η`, are self-visible at no
   positive arity, so they cannot serve as repair caps, and the auxiliary cap at the first block
   stage is `ω + 3`;
 * **a non-closed intermediate face**: in the interval plan on three points the pair `{0, 2}` is not
@@ -27,16 +25,17 @@ Regressions for `VaughtConjecture.Realization.Receiving` and for the global stat
   occurrence is untyped, so the points must be added along closed faces;
 * **the empty root**: every legal donor is received over a typed empty tuple;
 * **stage `ω`**: every structure satisfying the density sentence has finite-extension receiving,
-  unconditionally;
-* **the global forms**: finite-cut receiving of models gives finite-extension receiving of models
-  and the back-and-forth equivalence of `VaughtConjecture.Expansion.Agreement`.
+  unconditionally.
+
+The global forms, for models at countable limit stages, are in
+`VaughtConjecture.Expansion.AgreementExamples`.
 
 ## Placement
 
 This file belongs to Layer 3 of `roadmap/README.md`.
 -/
 
-universe u v w
+universe u v
 
 namespace VaughtConjecture.Realization
 
@@ -101,8 +100,8 @@ example (η : Ordinal.{0}) {k : ℕ} (hk : 0 < k) :
 at `2`. -/
 example : Ordinal.omega0 < Ordinal.omega0 + 3 ∧ Ordinal.omega0 + 3 < blockStage (1 : Ordinal.{0}) ∧
     IsSelfVisible 2 (((Ordinal.omega0 + 3 : Ordinal.{0})) : Label.{0}) := by
-  refine ⟨lt_add_of_pos_right _ (by norm_num), ?_,
-    isSelfVisible_coe_add Ordinal.isSuccLimit_omega0.isSuccPrelimit (by norm_num)⟩
+  refine ⟨lt_add_of_pos_right _ (by simp), ?_,
+    isSelfVisible_coe_add (K := 3) Ordinal.isSuccLimit_omega0.isSuccPrelimit (by omega)⟩
   rw [blockStage, mul_one]
   exact (add_lt_add_iff_left _).mpr (Ordinal.natCast_lt_omega0 3)
 
@@ -154,28 +153,3 @@ example {M : Type v'} [baseLanguage.{u'}.Structure M] (h : densitySentence.Reali
   exact hr.hasFiniteExtensionReceiving hcons Ordinal.isSuccLimit_omega0.isSuccPrelimit
 
 end VaughtConjecture.baseLanguage
-
-/-! ### The global forms -/
-
-namespace VaughtConjecture.Expansion
-
-open Ordinal FirstOrder Language
-
-/-- Finite-cut receiving of models gives finite-extension receiving of models. -/
-example (h : FiniteCutReceiving.{0}) : FiniteExtensionReceiving.{0} :=
-  h.finiteExtensionReceiving
-
-/-- The two global forms are equivalent. -/
-example : FiniteExtensionReceiving.{0} ↔ FiniteCutReceiving.{0} :=
-  finiteExtensionReceiving_iff
-
-/-- The back-and-forth equivalence of two base structures with model expansions, from finite-cut
-receiving of models. -/
-example (h : FiniteCutReceiving.{w}) {M N : Type w} [baseLanguage.{0}.Structure M]
-    [baseLanguage.{0}.Structure N] {η : Ordinal.{0}} (hη : η < ω₁)
-    (hM : Nonempty (ModelExpansion M (blockStage η)))
-    (hN : Nonempty (ModelExpansion N (blockStage η))) :
-    BFEquiv (L := baseLanguage.{0}) (M := M) (N := N) η 0 ![] ![] :=
-  bfEquiv_of_modelExpansions h.finiteExtensionReceiving hη hM hN
-
-end VaughtConjecture.Expansion

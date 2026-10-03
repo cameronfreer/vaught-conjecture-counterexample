@@ -236,7 +236,11 @@ theorem reindex_mem_receivingFamily {D q : StageType.{u} α n} {c : Label.{u}} (
   obtain rfl := Fin.ext hij
   exact hl _ _ rfl
 
-/-! ### Repairing a donor to a received face -/
+/-! ### Repairing a donor to a received face
+
+A **received face** is a stage type `p` that agrees at a cap with the face `p'` of a donor `D`
+along `f`, as the type of a tuple received for that face does; the repair replaces `D` by a legal
+`d` whose face along `f` is `p` literally. -/
 
 section Repair
 
@@ -264,7 +268,7 @@ theorem exists_isLawful_extend_of_mem_receivingFamily {f : Fin m ↪ Fin n}
 with `p` at a cap `c ≤ α` self-visible at `n` is replaced by a legal `d` whose face along `f` is
 `p` literally and which agrees with `D` at `c`.  The labels of `d` are the stage reduction of the
 section of `exists_isLawful_extend_of_mem_receivingFamily`; reduction may raise a label at or
-above `α` to the formal top, which is invisible at `c`. -/
+above `α` to the formal top, which does not change the observation at `c`. -/
 theorem exists_restrictFace_eq_mem_receivingFamily (hα : Order.IsSuccPrelimit α)
     {f : Fin m ↪ Fin n} {D : StageType.{u} α n} {p' p : StageType.{u} α m} (hD : D.IsLegal)
     (hface : restrictFace f D = some p') {c : Label.{u}} (hc : IsSelfVisible n c) (hcα : c ≤ α)
