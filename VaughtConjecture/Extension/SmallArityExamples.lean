@@ -18,7 +18,8 @@ whose row is monotone in the cell, below `ω ^ 2`, and self-visible at `1`), so 
 the empty face is a seed at every stage.
 
 * **R1, the flat catalogue is not bountiful** (`not_isBountiful_flatRows`).  The flat layer over
-  the scheme of this seed (the same cells, faces and rows, built directly) indexes its new cells by
+  the scheme of this seed (the same cells, faces and rows, written out directly and identified
+  with the amalgam by inspection) indexes its new cells by
   every lawful labelling of the old cells with values in the flattened coded alphabet
   `(codedAlphabet B 2).image (flatten 1)`, short at `1`, never the formal top, and uses agreement
   heights on the grid as rows between new cells.  It is consistent (`isConsistent_flatRows`), but
@@ -32,8 +33,8 @@ the empty face is a seed at every stage.
 * **R2, the same lift on the canonical layer** (`cappedLift_fourCellSeed`,
   `exists_lift_fourCellSeed`): the canonical field layer over the seed is bountiful by the
   completion at arity zero, so at the cap `ω * 10 + 1` every lawful prescription below `({0}, 1)`
-  (among them `ω * (11 + j) + 1`) and every lawful ambient with the same observation there have a
-  lift keeping the observation at every cell.  The canonical catalogue has no constant at a high
+  and every lawful ambient with the same observation there have a lift keeping the observation at
+  every cell.  The canonical catalogue has no constant at a high
   block, so the ambient of R1 has no counterpart.
 * **R3, relative room** (`canonicalCode_roomCanonical` and the example after it): the canonical
   labelling `(ω + 1, ω * 3 + 1, …, ω * 3 + 1)` of six cells and a labelling agreeing with it capped
@@ -43,14 +44,22 @@ the empty face is a seed at every stage.
   `canonicalCode_stripLabelling`): the least code above the cut is the cut itself, and no witness
   bounded by grade `1` that fixes the start of the block of the cut reads it literally.
 
-**Regressions at arity zero.**  Long rows with bottom labels (`longRowSeed`, the coatoms
-`pointRow 3` and `pointRow (ω + 5)` of `VaughtConjecture.Extension.CodingExamples`, whose row
-values exceed the grade plus one); a label `⊤` kept on its old cell and carried by a new cell of
-graded index `(univ, 1)`; labels above the grade plus one (`3` and `ω * 5 + 3`) read back literally
-from their canonical code; several cells on one point (`fourCellSeed`); the caps `⊤`, `⊥`, and
-`ω * 10 + 1`; and the literal coatom faces of the completions
-(`CompletionBelowFullGrade.restrictFace_left_completion`,
-`CompletionBelowFullGrade.restrictFace_right_completion`).
+**Regressions at arity zero.**
+
+1. Long rows with bottom labels: `longRowSeed`, the coatoms `pointRow 3` and `pointRow (ω + 5)` of
+   `VaughtConjecture.Extension.CodingExamples`, whose row values exceed the grade plus one, has a
+   completion.
+2. A label `⊤`: in the completion of every seed on two points, an old cell labelled `⊤` keeps `⊤`
+   and some new cell of graded index `(univ, 1)` is labelled `⊤`.
+3. Labels above the grade plus one (`3` and `ω * 5 + 3`) are read literally from their canonical
+   code.
+4. Several cells on one point: `fourCellSeed`.  The section `(1, ω * 5 + 1)` of the two cells on
+   one point of `VaughtConjecture.Extension.TransformationExamples` is not run here.
+5. The caps `⊤` (the lift is exact), `⊥` (every lawful prescription extends), and `ω * 10 + 1`
+   (`exists_lift_fourCellSeed`).
+6. The literal coatom faces of the completions
+   (`CompletionBelowFullGrade.restrictFace_left_completion`,
+   `CompletionBelowFullGrade.restrictFace_right_completion`).
 
 ## References
 
@@ -198,7 +207,8 @@ private theorem oldScope_subset_zero_iff (i : Fin 5) : oldScope i ⊆ {0} ↔ i 
 private theorem oldScope_of_ne {i : Fin 5} (hi : i ≠ 4) : oldScope i = {0} := by
   simp [oldScope, hi]
 
-/-- The old scheme: the amalgam of the two coatoms of `fourCellSeed`, cell by cell. -/
+/-- The old scheme: the cells, faces and rows of the amalgam of the two coatoms of
+`fourCellSeed`, written out directly (the identification is by inspection, not compiled). -/
 def oldCells : CellScheme (Fin 5) (Fin 2) := ⟨univ, {∅, {0}, {1}, univ}, oldScope, fun _ ↦ 1⟩
 
 /-- The old rows: `ω * (j + 1) + 1` on the left coatom and `1` on the right. -/
@@ -277,14 +287,14 @@ noncomputable abbrev cut (n : ℕ) (a b : Fin 5 → Label.{0}) : Label.{0} :=
   agreementHeight (grid 1 (n + 4)) a b
 
 private theorem cut_le (n : ℕ) (a b : Fin 5 → Label.{0}) : cut n a b ≤ P (n + 4) :=
-  agreementHeight_le fun _ hx ↦ (properties_of_mem_grid hx).2.2.2.2
+  agreementHeight_le fun _ hx ↦ le_gridPoint_of_mem_grid hx
 
 private theorem cut_self (n : ℕ) (a : Fin 5 → Label.{0}) : cut n a a = P (n + 4) :=
   agreementHeight_self (gridPoint_mem_grid le_rfl)
-    (fun _ hx ↦ (properties_of_mem_grid hx).2.2.2.2) a
+    (fun _ hx ↦ le_gridPoint_of_mem_grid hx) a
 
 private theorem isSelfVisible_cut (n : ℕ) (a b : Fin 5 → Label.{0}) : IsSelfVisible 1 (cut n a b) :=
-  (properties_of_mem_grid (agreementHeight_spec (bot_mem_grid _ _) a b).1).1
+  isSelfVisible_of_mem_grid (agreementHeight_spec (bot_mem_grid _ _) a b).1
 
 /-- The agreement height of two constant labellings. -/
 private theorem cut_const_const {n t b : ℕ} (hbt : b < t) (hbn : b ≤ n + 4) :
@@ -703,11 +713,9 @@ theorem cappedLift_fourCellSeed (α : Ordinal.{u}) :
     ⟨(fourCellSeed α).isWellFormed_fieldLayerZero.univ_mem_faces, one_pos, by simp⟩ _
 
 /-- **R2, at the cap of R1.**  At the cap `ω * 10 + 1`, every prescription lawful below `({0}, 1)`
-(such as `ω * (11 + j) + 1` on the four left cells, lawful by translation as in R1) and every
-lawful ambient with
-the same observation at the cap below `({0}, 1)` have a lift that reads the prescription literally
-and keeps the observation of the ambient at the cap at every cell below `(univ, 1)`: the new cells
-of full scope and the cell of the other coatom included. -/
+and every lawful ambient with the same observation at the cap below `({0}, 1)` have a lift that
+reads the prescription literally and keeps the observation of the ambient at the cap at every cell
+below `(univ, 1)`: the new cells of full scope and the cell of the other coatom included. -/
 theorem exists_lift_fourCellSeed (α : Ordinal.{u})
     (p : (fourCellSeed α).fieldLayerZero.toCellScheme.below (({0} : Finset (Fin 2)), 1) →
       Label.{u})
@@ -728,18 +736,39 @@ theorem exists_lift_fourCellSeed (α : Ordinal.{u})
   (Rows.cappedLift_iff_forall_exists _).mp (cappedLift_fourCellSeed α) (P 10)
     (isSelfVisible_gridPoint 1 10) p q hp hq hpq
 
-/-- **The three cap regimes** (v1 regression 6): at the cap `⊤` the lift is exact, at the cap `⊥`
-every lawful prescription extends, and at the positive cap `ω * 10 + 1` the ambient observation is
-kept; all three are the one capped lift. -/
-example (α : Ordinal.{u}) (c : Label.{u}) (hc : c = ⊤ ∨ c = ⊥ ∨ c = P 10) :
-    IsSelfVisible 1 c ∧ (fourCellSeed α).fieldLayerZero.rows.CappedLift
-      (X := (({0} : Finset (Fin 2)), 1)) (Y := (univ, 1)) ⟨subset_univ _, le_rfl⟩ :=
-  ⟨by rcases hc with rfl | rfl | rfl
-      · exact isSelfVisible_top 1
-      · exact isSelfVisible_bot 1
-      · exact isSelfVisible_gridPoint 1 10, cappedLift_fourCellSeed α⟩
+/-- The inclusion of the cells below `({0}, 1)` among those below `(univ, 1)` in the canonical
+layer over `fourCellSeed`. -/
+private abbrev inclZero (α : Ordinal.{u}) :
+    (fourCellSeed α).fieldLayerZero.toCellScheme.below (({0} : Finset (Fin 2)), 1) →
+      (fourCellSeed α).fieldLayerZero.toCellScheme.below (univ, 1) :=
+  Set.inclusion (CellScheme.below_mono _ lift_le)
 
-/-- **Literal faces** (v1 regression 8): at every stage that is zero or a limit, the completion of
+/-- **Regression 5, the caps `⊤` and `⊥`** (the positive cap `ω * 10 + 1` is
+`exists_lift_fourCellSeed`): at the cap `⊤` the lift of a prescription equal to the restriction of
+the ambient is the ambient itself, and at the cap `⊥` every lawful prescription below `({0}, 1)`
+extends to a labelling lawful below `(univ, 1)`. -/
+example (α : Ordinal.{u}) :
+    (∀ (p : (fourCellSeed α).fieldLayerZero.toCellScheme.below (({0} : Finset (Fin 2)), 1) →
+        Label.{u}) (q : (fourCellSeed α).fieldLayerZero.toCellScheme.below (univ, 1) → Label.{u}),
+      (fourCellSeed α).fieldLayerZero.rows.IsLawfulBelow _ p →
+      (fourCellSeed α).fieldLayerZero.rows.IsLawfulBelow _ q → (∀ d, q (inclZero α d) = p d) →
+      ∃ q', (fourCellSeed α).fieldLayerZero.rows.IsLawfulBelow _ q' ∧ q' = q ∧
+        ∀ d, q' (inclZero α d) = p d) ∧
+    ∀ p : (fourCellSeed α).fieldLayerZero.toCellScheme.below (({0} : Finset (Fin 2)), 1) →
+        Label.{u}, (fourCellSeed α).fieldLayerZero.rows.IsLawfulBelow _ p →
+      ∃ q' : (fourCellSeed α).fieldLayerZero.toCellScheme.below (univ, 1) → Label.{u},
+        (fourCellSeed α).fieldLayerZero.rows.IsLawfulBelow _ q' ∧ ∀ d, q' (inclZero α d) = p d := by
+  have h := (Rows.cappedLift_iff_forall_exists _).mp (cappedLift_fourCellSeed α)
+  refine ⟨fun p q hp hq hpq ↦ ?_, fun p hp ↦ ?_⟩
+  · obtain ⟨q', hq', hcap, hres⟩ := h ⊤ (isSelfVisible_top 1) p q hp hq fun d ↦ by
+      rw [min_top_right, min_top_right]
+      exact hpq d
+    exact ⟨q', hq', funext fun d ↦ by simpa using hcap d, hres⟩
+  · obtain ⟨q', hq', -, hres⟩ := h ⊥ (isSelfVisible_bot 1) p (fun _ ↦ ⊥) hp
+      (Rows.isLawfulBelow_const_bot _) fun d ↦ by simp
+    exact ⟨q', hq', hres⟩
+
+/-- **Regression 6, literal faces**: at every stage that is zero or a limit, the completion of
 the seed with four cells on one point has the two coatom types as its faces, labels included. -/
 example (α : Ordinal.{u}) (hα : Order.IsSuccPrelimit α) :
     StageType.restrictFace (Coatom.left 0)
@@ -836,8 +865,8 @@ theorem canonicalCode_roomCanonical : canonicalCode 1 roomCanonical.{u} = roomCa
 /-- **R3, relative room.**  The canonical labelling `a = (ω + 1, ω * 3 + 1, …, ω * 3 + 1)` and the
 labelling `w = (ω + 1, ω * 4 + 1, …, ω * 8 + 1)` agree capped at `ω * 3 + 1`, and `w` takes five
 distinct values above it, while `a` takes one.  The canonical code of `w`,
-`(ω + 1, ω * 3 + 1, ω * 5 + 1, …, ω * 11 + 1)`, still agrees with `a` capped at `ω * 3 + 1`: the
-canonical points leave a free block above every cut. -/
+`(ω + 1, ω * 3 + 1, ω * 5 + 1, …, ω * 11 + 1)`, still agrees with `a` capped at `ω * 3 + 1`
+(`Label.min_canonicalCode_eq`). -/
 example (d : Fin 6) :
     min (roomLabelling.{u} d) (P 3) = min (roomCanonical d) (P 3) ∧
       min (canonicalCode 1 roomLabelling.{u} d) (P 3) = min (roomCanonical d) (P 3) := by
@@ -916,7 +945,7 @@ private theorem isLegal_pointRow_omega0_add_five :
     (CodingExamples.pointRow (gridPoint.{u} 5 1)).IsLegal :=
   isLegal_pointRow (gridPoint_lt_omega0_sq 5 1) ((isSelfVisible_gridPoint 5 1).mono (by omega))
 
-/-- **The seed with long rows** (v1 regression 1): the amalgam over the empty face of
+/-- **The seed with long rows** (regression 1): the amalgam over the empty face of
 `pointRow 3` and `pointRow (ω + 5)`, whose row values exceed the grade plus one, with bottom
 labels. -/
 noncomputable def longRowSeed (α : Ordinal.{u}) : Seed.{u} α 0 :=
@@ -928,7 +957,7 @@ noncomputable def longRowSeed (α : Ordinal.{u}) : Seed.{u} α 0 :=
     (isLegal_pointRow_omega0_add_five.isLegal_toStageType α) hpa.choose_spec
     (hpb.choose_spec.trans (congrArg some (StageType.eq_of_zero _ _)))
 
-/-- **Long rows, bottom labels** (v1 regressions 1 and 8): the seed with long rows has a
+/-- **Regressions 1 and 6, long rows with bottom labels**: the seed with long rows has a
 completion below the full grade, and at every stage that is zero or a limit its completion has the
 two coatom types as its faces, labels included. -/
 example (α : Ordinal.{u}) (hα : Order.IsSuccPrelimit α) :
@@ -943,7 +972,7 @@ example (α : Ordinal.{u}) (hα : Order.IsSuccPrelimit α) :
     CompletionBelowFullGrade.restrictFace_left_completion _ hα,
     CompletionBelowFullGrade.restrictFace_right_completion _ hα⟩
 
-/-- **A label `⊤`** (v1 regression 2): in the completion at arity zero of any seed, an old cell
+/-- **Regression 2, a label `⊤`**: in the completion at arity zero of any seed, an old cell
 labelled `⊤` keeps `⊤`, and some new cell of graded index `(univ, 1)` is labelled `⊤`. -/
 example {α : Ordinal.{u}} (I : Seed.{u} α 0) (d : Fin I.amalgam.card)
     (hd : I.amalgam.label d = ⊤) :
@@ -960,9 +989,9 @@ example {α : Ordinal.{u}} (I : Seed.{u} α 0) (d : Fin I.amalgam.card)
     ((I.fieldLayerZero_grade _).trans (I.fieldLayerZero_grade t).symm)
   exact ⟨u, hu.trans ht, top_le_iff.mp (htop ▸ hle)⟩
 
-/-- **Labels above the grade plus one** (v1 regression 4): the labelling `(3, ω * 5 + 3)` of two
+/-- **Regression 3, labels above the grade plus one**: the labelling `(3, ω * 5 + 3)` of two
 cells of grade `1` has the canonical code `(ω + 1, ω * 3 + 1)`, short at `1`, and the
-literal-reading decoder at the least grid point reads it back literally. -/
+literal-reading decoder at the least grid point reads it literally. -/
 example : canonicalCode 1 (fun i : Fin 2 ↦ if (i : ℕ) = 0 then gridPoint.{u} 3 0 else gridPoint 3 5)
       = (fun i : Fin 2 ↦ if (i : ℕ) = 0 then P 1 else P 3) ∧
     ∀ i : Fin 2, literalDecoder 1 (fun i : Fin 2 ↦ if (i : ℕ) = 0 then gridPoint.{u} 3 0

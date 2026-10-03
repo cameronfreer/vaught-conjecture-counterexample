@@ -187,10 +187,10 @@ theorem cappedLift_fieldLayerZero {x y : Fin 2} (hxy : x ≠ y)
   · exact Scheme.isConsistent_fieldLayer I.isConsistent u
   · intro d
     obtain ⟨i, rfl⟩ := Scheme.exists_natAdd_eq hu
-    exact (Scheme.isShort_row_fieldLayer i _).1
+    exact (Scheme.isShort_ne_top_row_fieldLayer i _).1
   · intro d
     obtain ⟨i, rfl⟩ := Scheme.exists_natAdd_eq hu
-    exact (Scheme.isShort_row_fieldLayer i _).2
+    exact (Scheme.isShort_ne_top_row_fieldLayer i _).2
 
 /-- **The lift from a coatom to the full face, coordinate by coordinate.**  At every cap `c`
 self-visible at `1`, a prescription lawful below the coatom `(univ.erase x, 1)` and an ambient

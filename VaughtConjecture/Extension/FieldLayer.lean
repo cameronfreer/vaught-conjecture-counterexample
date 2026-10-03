@@ -51,10 +51,10 @@ is not used as the canonical code.
 **The literal-reading decoder** (`Label.literalDecoder k w h`): a label `x` goes to the larger of
 `min x h` and the largest value of `w` at a cell whose canonical code lies between `h` and
 `vr k k x`.  For a cap `h` self-visible at `k` other than bottom it is a witness bounded by grade
-`k` (`Label.isWitness_literalDecoder`); it reads the canonical code of `w` back as `w`, the formal
-top included, whenever the code agrees with `w` capped at `h` (N4 (i),
+`k` (`Label.isWitness_literalDecoder`); it reads the canonical code of `w` literally as `w`, the
+formal top included, whenever the code agrees with `w` capped at `h` (N4, the literal reading,
 `Label.literalDecoder_canonicalCode`); and it keeps the cap at every label self-visible at `k`
-(N4 (ii)–(iii), `Label.min_literalDecoder_eq`).  It is not the identity below `h`: visibility
+(`Label.min_literalDecoder_eq`).  It is not the identity below `h`: visibility
 replacement at `k` sends the start `ω * c` of the block of a cap `h = ω * c + k` to `h`, so a
 decoder fixing `ω * c` reads `h` as `h`, while the least code at least `h` may be `h` itself and
 must be read as a value above `h` (`VaughtConjecture.Extension.SmallArityExamples`, R4).
@@ -227,7 +227,9 @@ noncomputable def canonicalMap (k : ℕ) (w : ι → Label.{u}) (x : Label.{u}) 
   if x = ⊥ then ⊥ else canonicalPoint k (valueRank w (visibilityReplace k k x))
 
 /-- The **canonical code** of a labelling `w` at grade `k`: the canonical map applied to its
-values.  The value of rank `r` goes to the canonical point of rank `r`, and bottom is kept. -/
+values.  For values self-visible at `k`, the value of rank `r` goes to the canonical point of rank
+`r`, and bottom is kept.  A value not self-visible at `k` is ranked by its replacement `vr k k x`:
+at grade `1` the labelling `(ω, ω + 1)` has `ω` of rank `1` but code of rank `2`. -/
 noncomputable def canonicalCode (k : ℕ) (w : ι → Label.{u}) : ι → Label.{u} :=
   canonicalMap k w ∘ w
 
@@ -334,11 +336,13 @@ theorem canonicalCode_canonicalCode (hv : ∀ d, IsSelfVisible k (w d)) :
   rw [valueRank, valueRank, himage, filter_image, card_image_of_injOn]
   · refine congrArg Finset.card (filter_congr fun z hz ↦ ?_)
     obtain ⟨e, -, rfl⟩ := mem_image.mp hz
+    -- The canonical map at a value of `w` is the canonical code at its cell.
     change canonicalCode k w e ≠ ⊥ ∧ canonicalCode k w e ≤ canonicalCode k w d ↔ _
     rw [Ne, canonicalCode_eq_bot_iff, canonicalCode_le_canonicalCode_iff hv]
   · intro y hy z hz hyz
     obtain ⟨e, -, rfl⟩ := mem_image.mp (mem_filter.mp hy).1
     obtain ⟨e', -, rfl⟩ := mem_image.mp (mem_filter.mp hz).1
+    -- The canonical map at values of `w` is the canonical code at their cells.
     change canonicalCode k w e = canonicalCode k w e' at hyz
     exact le_antisymm ((canonicalCode_le_canonicalCode_iff hv).mp hyz.le)
       ((canonicalCode_le_canonicalCode_iff hv).mp hyz.ge)
@@ -428,8 +432,10 @@ theorem isSelfVisible_sup (s : Finset ι) (hv : ∀ d, IsSelfVisible k (w d)) :
 
 /-- The **literal-reading decoder** of a labelling `w` at grade `k` and cap `h`: a label `x` goes
 to the larger of `min x h` and the largest value of `w` at a cell whose canonical code lies between
-`h` and `vr k k x`.  Below `h` it is the identity, at and above `h` it is at least `h`, and it reads
-the canonical code of `w` literally when the code agrees with `w` capped at `h`. -/
+`h` and `vr k k x`.  It is the identity on the labels `x` with `vr k k x < h`, but not on the
+strip `[ω * c, h)` below a cap `h = ω * c + k`, where `vr k k x = h`
+(`VaughtConjecture.Extension.SmallArityExamples`, R4); at and above `h` it is at least `h`; and it
+reads the canonical code of `w` literally when the code agrees with `w` capped at `h`. -/
 noncomputable def literalDecoder (k : ℕ) (w : ι → Label.{u}) (h x : Label.{u}) : Label.{u} :=
   max (min x h)
     (({d | h ≤ canonicalCode k w d ∧ canonicalCode k w d ≤ visibilityReplace k k x} :
@@ -468,8 +474,8 @@ theorem isWitness_literalDecoder (hv : ∀ d, IsSelfVisible k (w d)) (hh : IsSel
         rwa [min_eq_bot, or_iff_left hbot] at this
       rw [hx0, visibilityReplace_bot, literalDecoder_bot hbot, visibilityReplace_bot]
 
-/-- **N4 (i), literal reading**: when the canonical code of `w` agrees with `w` capped at `h`, the
-literal-reading decoder reads it back as `w`, the formal top included. -/
+/-- **N4, the literal reading**: when the canonical code of `w` agrees with `w` capped at `h`, the
+literal-reading decoder reads it literally as `w`, the formal top included. -/
 theorem literalDecoder_canonicalCode (hv : ∀ d, IsSelfVisible k (w d))
     (hag : ∀ d, min (canonicalCode k w d) h = min (w d) h) (d : ι) :
     literalDecoder k w h (canonicalCode k w d) = w d := by
@@ -488,8 +494,8 @@ theorem literalDecoder_canonicalCode (hv : ∀ d, IsSelfVisible k (w d))
     exact (canonicalCode_le_canonicalCode_iff hv).mp (mem_filter.mp he).2.2
   rw [literalDecoder, hsup, min_eq_right hd, max_eq_right hwd]
 
-/-- **N4 (ii)–(iii), the cap is kept**: at a label self-visible at `k` the literal-reading decoder
-agrees with the identity capped at `h`. -/
+/-- **The cap is kept**: at a label self-visible at `k` the literal-reading decoder agrees with the
+identity capped at `h`. -/
 theorem min_literalDecoder_eq (hx : IsSelfVisible k x) :
     min (literalDecoder k w h x) h = min x h := by
   rcases lt_or_ge x h with hxh | hxh
@@ -516,16 +522,31 @@ theorem bot_mem_grid (k B : ℕ) : (⊥ : Label.{u}) ∈ grid k B := mem_insert_
 theorem gridPoint_mem_grid {b B : ℕ} (hb : b ≤ B) : gridPoint.{u} k b ∈ grid k B :=
   mem_grid.mpr (.inr ⟨b, hb, rfl⟩)
 
-/-- The members of the grid at grade `k` are self-visible and short at `k`, never the formal top,
-below `ω ^ 2`, and at most the ceiling. -/
-theorem properties_of_mem_grid {B : ℕ} (hx : x ∈ grid k B) :
-    IsSelfVisible k x ∧ IsShort k x ∧ x ≠ ⊤ ∧ x < ((ω ^ 2 : Ordinal.{u}) : Label.{u}) ∧
-      x ≤ gridPoint k B := by
+/-- The members of the grid at grade `k` are self-visible at `k`. -/
+theorem isSelfVisible_of_mem_grid {B : ℕ} (hx : x ∈ grid k B) : IsSelfVisible k x := by
+  rcases mem_grid.mp hx with rfl | ⟨b, -, rfl⟩
+  exacts [isSelfVisible_bot k, isSelfVisible_gridPoint k b]
+
+/-- The members of the grid at grade `k` are short at `k`. -/
+theorem isShort_of_mem_grid {B : ℕ} (hx : x ∈ grid k B) : IsShort k x := by
+  rcases mem_grid.mp hx with rfl | ⟨b, -, rfl⟩
+  exacts [isShort_bot k, isShort_gridPoint k b]
+
+/-- The members of the grid are not the formal top. -/
+theorem ne_top_of_mem_grid {B : ℕ} (hx : x ∈ grid k B) : x ≠ ⊤ := by
+  rcases mem_grid.mp hx with rfl | ⟨b, -, rfl⟩
+  exacts [bot_ne_top, gridPoint_ne_top k b]
+
+/-- The members of the grid lie below `ω ^ 2`. -/
+theorem lt_omega0_sq_of_mem_grid {B : ℕ} (hx : x ∈ grid k B) :
+    x < ((ω ^ 2 : Ordinal.{u}) : Label.{u}) := by
+  rcases mem_grid.mp hx with rfl | ⟨b, -, rfl⟩
+  exacts [lt_omega0_sq_iff.mpr (.inl rfl), gridPoint_lt_omega0_sq k b]
+
+/-- The members of the grid with block bound `B` are at most its ceiling `ω * B + k`. -/
+theorem le_gridPoint_of_mem_grid {B : ℕ} (hx : x ∈ grid k B) : x ≤ gridPoint k B := by
   rcases mem_grid.mp hx with rfl | ⟨b, hb, rfl⟩
-  · exact ⟨isSelfVisible_bot k, isShort_bot k, bot_ne_top, lt_omega0_sq_iff.mpr (.inl rfl),
-      bot_le⟩
-  · exact ⟨isSelfVisible_gridPoint k b, isShort_gridPoint k b, gridPoint_ne_top k b,
-      gridPoint_lt_omega0_sq k b, gridPoint_le_gridPoint.mpr hb⟩
+  exacts [bot_le, gridPoint_le_gridPoint.mpr hb]
 
 /-- The canonical code lies in every grid whose block bound is at least `2 N - 1`, for `N` cells. -/
 theorem canonicalMap_mem_grid {B : ℕ} (hB : 2 * Fintype.card ι - 1 ≤ B) (x : Label.{u}) :
@@ -1062,9 +1083,9 @@ theorem isLawful_fieldRow {a : Fin S.card → Label.{u}} (ha : a ∈ S.catalogue
   · convert (mem_catalogue.mp ha).1 using 1
     exact funext fun d ↦ fieldRow_castAdd a d
   · rw [fieldRow_natAdd]
-    exact (properties_of_mem_grid (agreementHeight_spec (bot_mem_grid _ _) _ _).1).1
-  · have hc := (properties_of_mem_grid (agreementHeight_spec (bot_mem_grid k (2 * S.card + 2))
-      a (S.catalogueEntry k i)).1).1
+    exact isSelfVisible_of_mem_grid (agreementHeight_spec (bot_mem_grid _ _) _ _).1
+  · have hc := (isSelfVisible_of_mem_grid (agreementHeight_spec (bot_mem_grid k (2 * S.card + 2))
+      a (S.catalogueEntry k i)).1)
     convert (TransformsTo.refl (fun t : (S.appendFullCellsScheme k (S.catalogue k).card).below
       ((S.appendFullCellsScheme k (S.catalogue k).card).gradedIndex (Fin.natAdd S.card i)) ↦
         (S.appendFullCellsScheme k (S.catalogue k).card).grade t)
@@ -1077,8 +1098,8 @@ theorem isLawful_fieldRow {a : Fin S.card → Label.{u}} (ha : a ∈ S.catalogue
   · obtain ⟨i, hi⟩ := exists_catalogueEntry_eq ha
     refine ⟨i, ?_⟩
     rw [fieldRow_natAdd, hi, agreementHeight_self (gridPoint_mem_grid le_rfl)
-      fun x hx ↦ (properties_of_mem_grid hx).2.2.2.2]
-    exact (properties_of_mem_grid (fieldRow_mem_fieldGrid ha s)).2.2.2.2
+      fun x hx ↦ le_gridPoint_of_mem_grid hx]
+    exact le_gridPoint_of_mem_grid (fieldRow_mem_fieldGrid ha s)
 
 /-- **The field layer is consistent**: the old rows are those of `S`, and the new rows are field
 rows of catalogue entries. -/
@@ -1094,16 +1115,15 @@ theorem isWellFormed_fieldLayer (hwf : S.IsWellFormed) (hk0 : 0 < k) (hkn : k �
 /-- **The field layer is coded**: the new rows take values in the grid, below `ω ^ 2`. -/
 theorem isCoded_fieldLayer (hc : S.IsCoded) : (S.fieldLayer k hS).IsCoded :=
   isCoded_appendFullCells hc fun i x ↦
-    (properties_of_mem_grid (fieldRow_mem_fieldGrid (catalogueEntry_mem i) x)).2.2.2.1
+    (lt_omega0_sq_of_mem_grid (fieldRow_mem_fieldGrid (catalogueEntry_mem i) x))
 
 /-- **The new rows are short at `k` and never the formal top**: their values lie in the grid. -/
-theorem isShort_row_fieldLayer (i : Fin (S.catalogue k).card) (t) :
+theorem isShort_ne_top_row_fieldLayer (i : Fin (S.catalogue k).card) (t) :
     IsShort k ((S.fieldLayer k hS).rows.row (Fin.natAdd S.card i) t) ∧
       (S.fieldLayer k hS).rows.row (Fin.natAdd S.card i) t ≠ ⊤ := by
   rw [fieldLayer_row_natAdd]
-  obtain ⟨-, hs, ht, -⟩ :=
-    properties_of_mem_grid (fieldRow_mem_fieldGrid (catalogueEntry_mem i) t.1)
-  exact ⟨hs, ht⟩
+  exact ⟨isShort_of_mem_grid (fieldRow_mem_fieldGrid (catalogueEntry_mem i) t.1),
+    ne_top_of_mem_grid (fieldRow_mem_fieldGrid (catalogueEntry_mem i) t.1)⟩
 
 /-- The canonical code of a lawful section of `S` lies in the catalogue. -/
 theorem canonicalCode_mem_catalogue (hk : ∀ d, S.toCellScheme.grade d = k)
@@ -1176,6 +1196,7 @@ theorem extendsFromBoundary_bot_fieldLayer (hk : ∀ d, S.toCellScheme.grade d =
     (isLawful_castAdd_of_boundary hk hU hV hcover hwU hwV)
   refine ⟨fun d ↦ r d, hr.isLawfulBelow _, fun d hd ↦ ?_, fun _ ↦ by simp⟩
   obtain ⟨e, he⟩ := hd.elim (exists_castAdd_eq hU) (exists_castAdd_eq hV)
+  -- The extension at a boundary cell `d` is the value of `r` at the underlying cell.
   change r d.1 = w d.1
   rw [← he]
   exact hre e
@@ -1231,7 +1252,7 @@ theorem extendsFromBoundary_fieldLayer (hk : ∀ d, S.toCellScheme.grade d = k)
       exact min_agreementHeight_eq (bot_mem_grid _ _)
         (fun d ↦ ⟨mem_fieldGrid_of_mem_catalogue hb d, mem_fieldGrid_of_mem_catalogue ha d⟩) hba _
   have hvb (x : Fin (S.card + (S.catalogue k).card)) : IsSelfVisible k (S.fieldRow k b x) :=
-    (properties_of_mem_grid (fieldRow_mem_fieldGrid hb x)).1
+    (isSelfVisible_of_mem_grid (fieldRow_mem_fieldGrid hb x))
   have hcap (x : Fin (S.card + (S.catalogue k).card)) :
       min (literalDecoder k w₀ h (S.fieldRow k b x)) h = min (S.fieldRow k a x) h :=
     (min_literalDecoder_eq (hvb x)).trans (hrow x)
@@ -1242,6 +1263,7 @@ theorem extendsFromBoundary_fieldLayer (hk : ∀ d, S.toCellScheme.grade d = k)
   refine ⟨fun d ↦ literalDecoder k w₀ h (S.fieldRow k b d), hlaw.isLawfulBelow _,
     fun d hd ↦ ?_, fun d ↦ by rw [hrowBelow]; exact hcap d⟩
   obtain ⟨e, he⟩ := hd.elim (exists_castAdd_eq hU) (exists_castAdd_eq hV)
+  -- Unfold the extension at the boundary cell `d` to the decoder applied to the field row.
   change literalDecoder k w₀ h (S.fieldRow k b d.1) = w d.1
   rw [← he, fieldRow_castAdd]
   exact literalDecoder_canonicalCode hv₀ (fun d ↦ (hba d).trans (hag₀ d).symm) e
