@@ -1295,10 +1295,39 @@ ones split):
   the concrete encoder `strongEncode V m` with its own decoder, not the existential normal form.
 - **2.5. The two small arities.**  `m = 0` and `m = 1` as two separately stated constructions on
   their actual rows: arbitrary lawful prescriptions, literal top, the boundary retained, the cap
-  preserved on every auxiliary cell.
+  preserved on every auxiliary cell.  The full-scope cells of each grade are indexed by the
+  canonical (rank-normalized) lawful patterns of the cells below, not by all short coded patterns;
+  the rows between them are agreement heights on a grid.  Acceptance for 2.5a includes the
+  canonical catalogue and the key lemma, relative room.  Established, compiled in this repository
+  (theorem named): 2.5a.  The canonical code (`Label.canonicalCode`, `Extension/FieldLayer`), a
+  rank normalization written directly rather than the flattened source of 2.4 (whose ranks count
+  successor blocks and which is not idempotent): idempotence (`Label.canonicalCode_canonicalCode`),
+  prefix stability (`Label.canonicalCode_eq_of_min_eq`), relative room
+  (`Label.min_canonicalCode_eq`), and the literal-reading decoder (`Label.literalDecoder`, a witness
+  bounded by the grade that reads the code back literally and keeps the cap; not the identity on
+  the strip below the cap).  The canonical field layer (`Scheme.fieldLayer`): consistent, well
+  formed, coded, new rows short and never `⊤`, extension at the cap `⊥`
+  (`Scheme.exists_isLawful_fieldLayer`), and extension from the boundary at every positive cap
+  along every new row (`Scheme.extendsFromBoundary_fieldLayer`).  The hypotheses of the one-grade
+  lift `CellScheme.Rows.cappedLift_of_boundary` of 2.4b-ii therefore hold at every positive cap; no
+  variant restricted to the source caps of the owner alignment is needed.  The completion at
+  `m = 0` (`Seed.exists_completionBelowFullGrade_zero`,
+  `Seed.nonempty_completionBelowFullGrade_zero`, `Extension/SmallArities`), with bountifulness by
+  the coatoms, the lifts off the full face from the amalgam through a source prefix, and no stage
+  hypothesis.  The flat catalogue (all lawful short
+  coded patterns over a fixed alphabet) is refuted (`SmallArityExamples.not_isBountiful_flatRows`).
+  What remains (2.5b, `m = 1`), still to be proved, with a decision to make before it: during a
+  lift at grade `2`, the cap must be kept on the new cells of grade `1`, which are not on the
+  boundary and are read by the catalogue of grade `2`.  Either the catalogue of grade `1` reads the
+  labels of all cells below `(univ, 2)`, the old cells of grade `2` included, or
+  restoration through the lift at grade `1` (`CellScheme.Rows.exists_restoration`) is shown to keep
+  that cap.  `StageType.HasCoatomExtensions` needs every arity and remains a hypothesis until 2.7.
 - **2.6. Recursion on the grade.**  One grade step from the predecessor grade already
   established first, then the general step; lawfulness, consistency, the prefix equations, and
-  unrestricted lifting (the last two defined with 2.6) are distinct statements.
+  unrestricted lifting (the last two defined with 2.6) are distinct statements.  The grade step
+  uses the canonical catalogue at every grade; its normalization must handle values not
+  self-visible at the grade (the labels of cells of lower grade), and the cap on the layers of lower
+  grade during the lifts at a higher grade is the design point to settle with 2.5b.
 - **2.7. The theorem.**  At a stage that is zero or a limit the apex form holds; hence the plain
   form and (R6).  The improvement from limit stages to zero-or-limit stages is a separate lemma,
   with the zero stage handled explicitly.  That truncation to the stage fails at successor stages
@@ -1323,9 +1352,16 @@ section at a value below the cap that is not self-visible at the grade of a full
 forces equal row entries there, hence the same tie in every lawful section.  Bountifulness
 prescribes one face, and there such a tie is already a tie of the prescription, so this
 mechanism separates no two cells of the face (the instance of Lemma 4.3.19 separates cells of
-different coatoms).  No counterexample is known.  Neither that statement, nor the printed proof
-of Lemma 4.3.20, nor the joint lifting of [Kni26, Lemma 4.3.19] is relied on: conclusions 1–3
-of Lemma 4.3.19 cannot hold together under the natural readings of efficiency
+different coatoms).  For the variant whose full-scope cells are indexed by all lawful short coded
+patterns over a fixed finite alphabet, with agreement-height rows, bountifulness fails already at
+`m = 0` and for every alphabet bound: a pattern constant at the top block of the alphabet, as
+ambient, leaves no room above the cap for a prescription with four distinct values on one point,
+once two lower constant patterns are pinned by the cap (compiled in this repository (theorem
+named): `SmallArityExamples.not_isBountiful_flatRows`).  Whether this applies to Definition 4.3.14
+depends on the bindings of Definition 4.3.6; it does not apply when the patterns are
+rank-normalized, as in the canonical field layer of 2.5.  Neither the statement of
+Lemma 4.3.20, nor its printed proof, nor the joint lifting of [Kni26, Lemma 4.3.19] is relied on:
+conclusions 1–3 of Lemma 4.3.19 cannot hold together under the natural readings of efficiency
 ([Kni26, Definition 4.3.6], whose bindings the text leaves open), since an instance with cap 2
 and prescriptions 3 and 4 forces 3 = 4 (`README.md`, Layer 1 and Layer 3, 3.1).  The
 construction chosen builds grade by grade over the boundary, in one fixed order of its cells,
