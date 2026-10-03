@@ -33,10 +33,13 @@ law: **block determination** at `η` (`CoverThresholds.Determines`) is the state
 model expansion `R` to `λ_{η+1}`, at every tuple `c` covering a type `t`, and at every cell `d` of
 `t` that reduces to the formal top at `λ_η`, the label of `d` is at least `λ_η + n` exactly when `c`
 extends to a cover of some triple of `U (t↓λ_η) d n` in the reduction of `R` to `λ_η`.  So the new
-labels of the block are read off covers one block lower.  Block determination is to be supplied by
-Layer 4, outputs 1–2 (the structural candidate, built from the stable values of the provisional
-observations on actual rooted covers, and normalization; `roadmap/README.md`, Layer 4), still to be
-proved; it is a hypothesis here.
+labels of the block are read off covers one block lower.  Block determination is expected to follow
+from Layer 4, outputs 1–2 (the stable candidate and normalization; `roadmap/README.md`, Layer 4),
+provided the stable value of a cell is the supremum over covers of an offset determined by the
+cover's type at `λ_η`, the coordinate embedding and the transported cell; that shape — the
+existential finite-data form of the threshold — is part of what remains to be proved.  If stable
+values were eventual values along directed covers that can decrease, no `U` would satisfy block
+determination.  Here block determination is a hypothesis.
 
 **The formulas** (`blockFormula U η hη t`, a formula of the base language with free variables
 `Fin k`, for a type `t` at `λ_η` on `k` points) are defined by recursion on `η`
@@ -98,9 +101,8 @@ proved; it is a hypothesis here.
 * *No complexity classes.*  No membership in `IsSigmaIn` or `IsPiIn` and no normal form is asserted.
 * *Not rows 2–4.*  Nothing is claimed about the definability of the expansion domains, about Scott
   sentences, or about the relative transfer of the pathway.
-* *Possibly vacuous above `ω`.*  No model expansion to a block stage above `ω` is constructed yet,
-  so the correctness theorem at `η ≥ 1` may be vacuous at present; nonvacuity is not part of this
-  statement.
+* *Possibly vacuous.*  No model expansion is constructed in this repository at any stage, including
+  `ω`, so the semantic theorems may be vacuous today; nonvacuity is not part of these statements.
 
 ## Placement
 
@@ -157,6 +159,8 @@ theorem IsExpansionOf.relMap_iff [baseLanguage.{0}.Structure M] (hR : R.IsExpans
         some (type P) := by
   obtain ⟨-, hstr⟩ := hR
   subst hstr
+  -- After the substitution the instance is `(R.reduce _).toStructure`, whose `RelMap` unfolds by
+  -- definition to the right-hand side (`Realization.relMap_toStructure`, `reduce_eval`).
   rfl
 
 end Realization
@@ -165,8 +169,12 @@ end Realization
 on a carrier in the universe `w`, at every tuple `c` covering a type `t`, at every cell `d` of `t`
 reducing to the formal top at `λ_η`, and for every `n : ℕ`, the label of `d` is at least
 `λ_η + n` exactly when `c` extends to a cover of a triple of `U (t↓λ_η) d n` in the reduction of `R`
-to `λ_η`.  This is the content of Layer 4, outputs 1–2 (the structural candidate and
-normalization), at the block `η`, still to be proved. -/
+to `λ_η`.  It is expected to follow from Layer 4, outputs 1–2 (the stable candidate and
+normalization), at the block `η`, provided the stable value of a cell is the supremum over covers of
+an offset determined by the cover's type at `λ_η`, the coordinate embedding and the transported
+cell; that shape — the existential finite-data form of the threshold — is part of what remains to
+be proved.  If stable values were eventual values along directed covers that can decrease, no `U`
+would satisfy block determination. -/
 def CoverThresholds.Determines {η : Ordinal.{0}} (U : CoverThresholds η) : Prop :=
   ∀ ⦃M : Type w⦄ [baseLanguage.{0}.Structure M] (R : ModelExpansion M (blockStage (η + 1)))
     ⦃k : ℕ⦄ (t : StageType.{0} (blockStage (η + 1)) k) (c : Fin k → M), R.1.Covers t c →
@@ -177,7 +185,7 @@ def CoverThresholds.Determines {η : Ordinal.{0}} (U : CoverThresholds η) : Pro
 
 /-! ### The steps of the recursion -/
 
-namespace BlockFormula
+namespace BlockRecursion
 
 variable {k : ℕ}
 
@@ -232,9 +240,9 @@ noncomputable def limitFormula {η : Ordinal.{0}} (hη : η < ω₁)
   haveI : Encodable (Set.Iio η) := Encodable.ofCountable _
   einf fun ξ : Set.Iio η ↦ F ξ.1 ξ.2 k (t.reduce (isSuccPrelimit_blockStage ξ.1))
 
-end BlockFormula
+end BlockRecursion
 
-open BlockFormula
+open BlockRecursion
 
 /-! ### The formulas -/
 
@@ -280,14 +288,14 @@ theorem blockFormula_limit {η : Ordinal.{0}} (hl : IsSuccLimit η) (hη : η < 
 /-! ### The rank bound -/
 
 /-- The formula at `η = 0` has rank `0`. -/
-theorem BlockFormula.qrank_chartAtom (t : StageType.{0} (blockStage 0) k) :
+theorem BlockRecursion.qrank_chartAtom (t : StageType.{0} (blockStage 0) k) :
     (chartAtom t).qrank = 0 := by
   unfold chartAtom
   split_ifs <;> rfl
 
 /-- The successor step adds at most `ω` to the rank: if the formulas at `λ_η` have rank at most
 `ω · η`, the formula at `λ_{η+1}` has rank at most `ω · (η + 1)`. -/
-theorem BlockFormula.qrank_succFormula_le {η : Ordinal.{0}} (V : CoverThresholds η) (hη : η < ω₁)
+theorem BlockRecursion.qrank_succFormula_le {η : Ordinal.{0}} (V : CoverThresholds η) (hη : η < ω₁)
     {F : ∀ m, StageType.{0} (blockStage η) m → baseLanguage.{0}.Formulaω (Fin m)}
     (hF : ∀ m (q : StageType.{0} (blockStage η) m), (F m q).qrank ≤ ω * η)
     (t : StageType.{0} (blockStage (η + 1)) k) :
@@ -332,13 +340,15 @@ variable {M : Type w} [baseLanguage.{0}.Structure M]
 
 /-- The base case: the atomic formula of `t↓ω` holds of exactly the covers of `t`, in every model
 expansion to `λ_0`.  No hypothesis is needed. -/
-theorem BlockFormula.realize_chartAtom (R : ModelExpansion M (blockStage 0))
+theorem BlockRecursion.realize_chartAtom (R : ModelExpansion M (blockStage 0))
     (t : StageType.{0} (blockStage 0) k) (c : Fin k → M) :
     (chartAtom t).Realize c ↔ R.1.Covers t c := by
   have hω : IsSuccPrelimit (ω : Ordinal.{0}) := isSuccLimit_omega0.isSuccPrelimit
   unfold chartAtom
   split_ifs with hl
   · rw [Formulaω.realize_def, realize_rel]
+    -- `realize_rel` leaves the tuple as `fun i ↦ (Term.var (Sum.inl i)).realize _`, which is `c`
+    -- by definition.
     change RelMap (symbol _ hl) c ↔ _
     refine (R.2.relMap_iff _ _).trans ⟨fun ⟨hc, he⟩ ↦ ?_, fun ⟨hc, he⟩ ↦ ⟨hc, by rw [he]; rfl⟩⟩
     obtain ⟨s, hs, hsr⟩ := Option.map_eq_some_iff.mp he
@@ -350,7 +360,7 @@ theorem BlockFormula.realize_chartAtom (R : ModelExpansion M (blockStage 0))
 
 /-- The threshold formula holds of `c` exactly when `c` extends to a cover of one of its triples,
 provided the formulas at `λ_η` hold of exactly the covers in `S`. -/
-theorem BlockFormula.realize_thresholdFormula {η : Ordinal.{0}} (V : CoverThresholds η)
+theorem BlockRecursion.realize_thresholdFormula {η : Ordinal.{0}} (V : CoverThresholds η)
     (hη : η < ω₁) {F : ∀ m, StageType.{0} (blockStage η) m → baseLanguage.{0}.Formulaω (Fin m)}
     {S : Realization.{0, w} (blockStage η) M}
     (hF : ∀ m (q : StageType.{0} (blockStage η) m) (s : Fin m → M),
@@ -364,7 +374,7 @@ theorem BlockFormula.realize_thresholdFormula {η : Ordinal.{0}} (V : CoverThres
 block `η`, which Layer 4 outputs 1–2 are to supply — still to be proved: if the formulas at `λ_η`
 hold of exactly the covers in the reduction of `R` to `λ_η`, then the formula of `t` at `λ_{η+1}`
 holds of exactly the covers of `t` in `R`. -/
-theorem BlockFormula.realize_succFormula {η : Ordinal.{0}} {V : CoverThresholds η}
+theorem BlockRecursion.realize_succFormula {η : Ordinal.{0}} {V : CoverThresholds η}
     (hV : V.Determines.{w}) (hη : η < ω₁)
     {F : ∀ m, StageType.{0} (blockStage η) m → baseLanguage.{0}.Formulaω (Fin m)}
     (R : ModelExpansion M (blockStage (η + 1)))
@@ -394,7 +404,7 @@ theorem BlockFormula.realize_succFormula {η : Ordinal.{0}} {V : CoverThresholds
 /-- The limit step: if, for every `ξ < η`, the formulas at `λ_ξ` hold of exactly the covers in the
 reduction of `R` to `λ_ξ`, then the formula of `t` at the limit `λ_η` holds of exactly the covers
 of `t` in `R`.  No hypothesis on the thresholds is needed. -/
-theorem BlockFormula.realize_limitFormula {η : Ordinal.{0}} (hl : IsSuccLimit η) (hη : η < ω₁)
+theorem BlockRecursion.realize_limitFormula {η : Ordinal.{0}} (hl : IsSuccLimit η) (hη : η < ω₁)
     {F : ∀ ξ < η, ∀ m, StageType.{0} (blockStage ξ) m → baseLanguage.{0}.Formulaω (Fin m)}
     (R : ModelExpansion M (blockStage η))
     (hF : ∀ ξ (hξ : ξ < η) m (q : StageType.{0} (blockStage ξ) m) (s : Fin m → M),
@@ -477,6 +487,7 @@ theorem ModelExpansion.relMap_toChartStructure_iff (hU : ∀ ξ < η, (U ξ).Det
     (t : StageType.{0} (blockStage η) k) (ht : t.IsLegal) (c : Fin k → M) :
     @RelMap _ M R.1.toChartStructure k (stageChartLanguage.symbol t ht) c ↔
       (blockFormula U η hη t).Realize c :=
+  -- The relation of `t` in `R.1.toChartStructure` unfolds by definition to `R.1.Covers t c`.
   (realize_blockFormula_iff U hU hη R t c).symm
 
 /-- **Pointed agreement of covers from back-and-forth equivalence**, conditional on block

@@ -45,7 +45,7 @@ universe w
 
 namespace VaughtConjecture
 
-open Ordinal Order FirstOrder Language Structure baseLanguage BoundedFormulaω BlockFormula Finset
+open Ordinal Order FirstOrder Language Structure baseLanguage BoundedFormulaω BlockRecursion Finset
 
 /-! ### The syntax -/
 
@@ -213,7 +213,9 @@ private def pairCells : CellScheme (Fin 4) (Fin 2) :=
   ⟨univ, Geometry.intervalPlan univ, ![{0}, {1}, univ, univ], ![1, 1, 1, 2]⟩
 
 /-- A stage type at `λ_0` on two points: the cells `pairCells`, the bottom rows and the bottom
-label. -/
+label.  It is deliberately a copy of the private two-point type of
+`VaughtConjecture.Realization.ModelExamples` (there at stage `0`), read at `λ_0`, so that no
+examples module is imported and no declaration of another module changes. -/
 private def pair : StageType.{0} (blockStage 0) 2 where
   card := 4
   toCellScheme := pairCells
