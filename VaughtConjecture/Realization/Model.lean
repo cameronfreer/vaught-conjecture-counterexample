@@ -81,7 +81,9 @@ several new points: over every occurrence of type `p`, for every legal stage typ
 to `p` along an embedding `g` of coordinates and every permitted cutoff `c`, some tuple extends the
 occurrence along `g` literally and has a type in the receiving family of `D` at `c`.  It gives
 finite-cut receiving (`HasFiniteExtensionReceiving.hasFiniteCutReceiving`, the donors on one new
-point along the initial segment).
+point along the initial segment).  Conversely, for an exactly consistent realization at a stage
+that is zero or a limit, finite-cut receiving gives finite-extension receiving
+(`HasFiniteCutReceiving.hasFiniteExtensionReceiving`, in `VaughtConjecture.Realization.Receiving`).
 
 ## References
 

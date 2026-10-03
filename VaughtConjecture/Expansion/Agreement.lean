@@ -9,6 +9,7 @@ import InfinitaryLogic.Lomega1omega.OpenBoundsSemantics
 import InfinitaryLogic.Lomega1omega.QuantifierRank
 import VaughtConjecture.Comparison.GradedMatchingApplications
 import VaughtConjecture.Realization.Expansion
+import VaughtConjecture.Realization.Receiving
 
 /-!
 # Condition 3 from model expansions, conditional on finite-extension receiving
@@ -31,12 +32,19 @@ every actual root `t` of type `p`, every legal stage type `D` with an embedding 
 along which it restricts to `p`, and every permitted cutoff `c`, some injective tuple `u` extends
 the root along `g` literally (`g.trans u = t`) and has a type in the receiving family of `D` at
 `c`.  The donor `D` may add several points at once.  It implies the finite-cut receiving property
-(`HasFiniteExtensionReceiving.hasFiniteCutReceiving`, the case of one new point).
+(`HasFiniteExtensionReceiving.hasFiniteCutReceiving`, the case of one new point), and conversely,
+for an exactly consistent realization at a stage that is zero or a limit, finite-cut receiving
+gives finite-extension receiving (`Realization.HasFiniteCutReceiving.hasFiniteExtensionReceiving`,
+in `VaughtConjecture.Realization.Receiving`: the new points are added one at a time along the
+closed faces of the donor's plan, at an auxiliary self-visible cap).
 `FiniteExtensionReceiving` is the statement that every model at a countable limit stage has
-finite-extension receiving: it is Layer 3's receiving for finite extensions (from finite-cut
-receiving, along a chain of visible faces of the donor's plan) composed with (R1) (finite-cut
-receiving of models).  **It is not proved here, and nothing here proves it**: it is a statement
-still to be proved, taken as an explicit hypothesis by every theorem that uses it.
+finite-extension receiving, and `FiniteCutReceiving` the statement that every such model has
+finite-cut receiving, (R1) of the table of Layer 3.  The first follows from the second
+(`FiniteCutReceiving.finiteExtensionReceiving`), and they are equivalent
+(`finiteExtensionReceiving_iff`).  **(R1) is not proved here, and nothing here proves it**: the
+theorems below take `FiniteExtensionReceiving` as an explicit hypothesis, which
+`FiniteCutReceiving.finiteExtensionReceiving` supplies from (R1), and they remain conditional on
+(R1).
 
 **The laws.**
 
@@ -87,12 +95,34 @@ open Ordinal FirstOrder Language Structure baseLanguage Comparison
 namespace Expansion
 
 /-- **Finite-extension receiving for models** on the carriers in the universe `w`: every model at
-a countable limit stage has finite-extension receiving.  It is a statement still to be proved
-(Layer 3, receiving for finite extensions; (R1)), not proved here. -/
+a countable limit stage has finite-extension receiving.  It follows from finite-cut receiving of
+models (`FiniteCutReceiving.finiteExtensionReceiving`), which is (R1) of the table of Layer 3 and
+is not proved here. -/
 structure FiniteExtensionReceiving : Prop where
   /-- Every model at a countable limit stage has finite-extension receiving. -/
   receive : ∀ {α : Ordinal.{0}} {M : Type w}, Order.IsSuccLimit α → α < ω₁ →
     ∀ R : Realization.{0, w} α M, R.IsModel → R.HasFiniteExtensionReceiving
+
+/-- **Finite-cut receiving for models** on the carriers in the universe `w`: every model at a
+countable limit stage has the finite-cut receiving property.  This is (R1) of the table of
+Layer 3, not proved here. -/
+structure FiniteCutReceiving : Prop where
+  /-- Every model at a countable limit stage has finite-cut receiving. -/
+  receive : ∀ {α : Ordinal.{0}} {M : Type w}, Order.IsSuccLimit α → α < ω₁ →
+    ∀ R : Realization.{0, w} α M, R.IsModel → R.HasFiniteCutReceiving
+
+/-- **Finite-cut receiving of models gives finite-extension receiving of models**
+(`Realization.HasFiniteCutReceiving.hasFiniteExtensionReceiving`).  Only exact consistency of the
+models and the limit stage are used; the countability of the stage is not. -/
+theorem FiniteCutReceiving.finiteExtensionReceiving (h : FiniteCutReceiving.{w}) :
+    FiniteExtensionReceiving.{w} :=
+  ⟨fun hα hω R hR ↦ (h.receive hα hω R hR).hasFiniteExtensionReceiving hR.isConsistent
+    hα.isSuccPrelimit⟩
+
+/-- Finite-extension receiving of models is equivalent to finite-cut receiving of models. -/
+theorem finiteExtensionReceiving_iff : FiniteExtensionReceiving.{w} ↔ FiniteCutReceiving.{w} :=
+  ⟨fun h ↦ ⟨fun hα hω R hR ↦ (h.receive hα hω R hR).hasFiniteCutReceiving⟩,
+    FiniteCutReceiving.finiteExtensionReceiving⟩
 
 /-! ### The unconditional laws -/
 
@@ -146,8 +176,9 @@ at `λ_α`, extending `c` and `d` along a common map, with `x` among the coordin
 chart is the reduction to `λ_α` of the type `D` at `λ_{α+1}` of a typed tuple of `e` starting
 with `c` and `x`; `d'` is received for `D` over `d` at the permitted cutoff `λ_α`.
 
-This is conditional on finite-extension receiving, which is still to be proved (Layer 3,
-receiving for finite extensions; (R1)): here `hf` is that property of the expansion `f`. -/
+This is conditional on finite-extension receiving of the expansion `f` (`hf`), which follows from
+its finite-cut receiving (`Realization.HasFiniteCutReceiving.hasFiniteExtensionReceiving`);
+finite-cut receiving of models, (R1), is still to be proved. -/
 theorem exists_extend_covers {α : Ordinal.{0}} {k : ℕ}
     {e : ModelExpansion M (blockStage (α + 1))} {f : ModelExpansion N (blockStage (α + 1))}
     (hf : f.1.HasFiniteExtensionReceiving)
@@ -189,8 +220,9 @@ theorem exists_extend_covers {α : Ordinal.{0}} {k : ℕ}
 /-- **Back, conditional on finite-extension receiving in the expansion of `M`**:
 `exists_extend_covers` with the roles of `M` and `N` exchanged, for a point `y` of `N`.
 
-This is conditional on finite-extension receiving, which is still to be proved (Layer 3,
-receiving for finite extensions; (R1)): here `he` is that property of the expansion of `M`. -/
+This is conditional on finite-extension receiving of the expansion of `M` (`he`), which follows
+from its finite-cut receiving (`Realization.HasFiniteCutReceiving.hasFiniteExtensionReceiving`);
+finite-cut receiving of models, (R1), is still to be proved. -/
 theorem exists_extend_covers_back {α : Ordinal.{0}} {k : ℕ}
     {e : ModelExpansion M (blockStage (α + 1))} {f : ModelExpansion N (blockStage (α + 1))}
     (he : e.1.HasFiniteExtensionReceiving)
@@ -211,8 +243,9 @@ model expansions to `λ_α`, the stage types at `λ_α` as charts, and covers as
 Atomic agreement and lowering are unconditional; forth and back use finite-extension receiving at
 the countable block stages `λ_{α+1}` with `α + 1 ≤ η`.
 
-This is conditional on finite-extension receiving, which is still to be proved (Layer 3,
-receiving for finite extensions; (R1)): `hrec` is that statement. -/
+This is conditional on finite-extension receiving of models (`hrec`), which follows from
+finite-cut receiving of models (`FiniteCutReceiving.finiteExtensionReceiving`); that is (R1),
+still to be proved. -/
 def expansionMatchData (hrec : FiniteExtensionReceiving.{w}) (M N : Type w)
     [baseLanguage.{0}.Structure M] [baseLanguage.{0}.Structure N] {η : Ordinal.{0}}
     (hη : η < ω₁) : ExpansionMatchData baseLanguage.{0} M N η where
@@ -238,8 +271,9 @@ language.  The initial match is the common chart on no points: each expansion ha
 stage type on no points (`ModelExpansion.exists_covers_zero`), and there is only one such type
 (`StageType.eq_of_zero`).
 
-This is conditional on finite-extension receiving, which is still to be proved (Layer 3,
-receiving for finite extensions; (R1)): `hrec` is that statement. -/
+This is conditional on finite-extension receiving of models (`hrec`), which follows from
+finite-cut receiving of models (`FiniteCutReceiving.finiteExtensionReceiving`); that is (R1),
+still to be proved. -/
 theorem bfEquiv_of_modelExpansions (hrec : FiniteExtensionReceiving.{w}) {η : Ordinal.{0}}
     (hη : η < ω₁) (hM : Nonempty (ModelExpansion M (blockStage η)))
     (hN : Nonempty (ModelExpansion N (blockStage η))) :
@@ -256,8 +290,9 @@ read as a formula with no free variables (`BoundedFormulaω.openBounds`, of the 
 rank and the same truth), and InfinitaryLogic's `BFEquiv_implies_agreeQR` applies to the
 back-and-forth equivalence of `bfEquiv_of_modelExpansions`.
 
-This is conditional on finite-extension receiving, which is still to be proved (Layer 3,
-receiving for finite extensions; (R1)): `hrec` is that statement. -/
+This is conditional on finite-extension receiving of models (`hrec`), which follows from
+finite-cut receiving of models (`FiniteCutReceiving.finiteExtensionReceiving`); that is (R1),
+still to be proved. -/
 theorem realize_iff_of_modelExpansions (hrec : FiniteExtensionReceiving.{w}) {η : Ordinal.{0}}
     (hη : η < ω₁) (hM : Nonempty (ModelExpansion M (blockStage η)))
     (hN : Nonempty (ModelExpansion N (blockStage η))) (θ : baseLanguage.{0}.Sentenceω)
@@ -270,8 +305,9 @@ theorem realize_iff_of_modelExpansions (hrec : FiniteExtensionReceiving.{w}) {η
 `λ_η`, for `η < ω₁`, lie in the same sets `ModelsOf θ` for the sentences `θ` of quantifier rank
 at most `η`.  This is condition 3 of the reduction to expansion domains, for codes.
 
-This is conditional on finite-extension receiving, which is still to be proved (Layer 3,
-receiving for finite extensions; (R1)): `hrec` is that statement. -/
+This is conditional on finite-extension receiving of models (`hrec`), which follows from
+finite-cut receiving of models (`FiniteCutReceiving.finiteExtensionReceiving`); that is (R1),
+still to be proved. -/
 theorem mem_modelsOf_iff_of_modelExpansions (hrec : FiniteExtensionReceiving.{0})
     {η : Ordinal.{0}} (hη : η < ω₁) (c₁ c₂ : StructureSpace baseLanguage.{0})
     (h₁ : Nonempty (@ModelExpansion ℕ c₁.toStructure (blockStage η)))
