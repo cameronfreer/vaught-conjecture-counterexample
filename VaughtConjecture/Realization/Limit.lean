@@ -17,10 +17,10 @@ Throughout, `δ` is a limit ordinal and `λ_ξ = ω + ω · ξ` is the block sta
 
 **Block stages at a limit.**  Block stages form a normal function (`isNormal_blockStage`), so an
 ordinal is below `λ_δ` exactly when it is below some earlier `λ_ξ` (`lt_blockStage_iff`), and so
-is a label (`exists_lt_blockStage_of_lt`).
+is a label (`exists_lt_blockStage_of_lt_limit`).
 
 **Separation.**  A label occurring at `λ_δ` is determined by its reductions to the earlier block
-stages (`Label.eq_of_forall_reduce_blockStage_eq`): a label below `λ_δ` is below some `λ_ξ`,
+stages (`Label.eq_of_forall_reduce_blockStage_eq_limit`): a label below `λ_δ` is below some `λ_ξ`,
 where reduction keeps it, and the formal top reduces to the formal top.  Hence a stage type at
 `λ_δ` (`StageType.eq_of_forall_reduce_eq`), an optional stage type
 (`StageType.option_eq_of_forall_map_reduce_eq`), and a realization at `λ_δ`
@@ -98,7 +98,7 @@ theorem lt_blockStage_iff (hδ : Order.IsSuccLimit δ) {o : Ordinal.{u}} :
   isNormal_blockStage.lt_iff_exists_lt hδ
 
 /-- A label below the block stage of a limit index is below some earlier block stage. -/
-theorem exists_lt_blockStage_of_lt (hδ : Order.IsSuccLimit δ) {x : Label.{u}}
+theorem exists_lt_blockStage_of_lt_limit (hδ : Order.IsSuccLimit δ) {x : Label.{u}}
     (hx : x < (blockStage δ : Label.{u})) : ∃ ξ < δ, x < (blockStage ξ : Label.{u}) := by
   induction x using WithBot.recBotCoe with
   | bot => exact ⟨0, hδ.pos, WithBot.bot_lt_coe _⟩
@@ -113,12 +113,12 @@ namespace Label
 
 /-- **Labels at a limit block stage are separated by their reductions**: two labels occurring at
 `λ_δ`, for a limit `δ`, with the same reduction to every earlier block stage are equal. -/
-theorem eq_of_forall_reduce_blockStage_eq (hδ : Order.IsSuccLimit δ) {x y : Label.{u}}
+theorem eq_of_forall_reduce_blockStage_eq_limit (hδ : Order.IsSuccLimit δ) {x y : Label.{u}}
     (hx : AtStage (blockStage δ) x) (hy : AtStage (blockStage δ) y)
     (h : ∀ ξ < δ, reduce (blockStage ξ) x = reduce (blockStage ξ) y) : x = y := by
   have key {x y : Label.{u}} (hx : x < (blockStage δ : Label.{u}))
       (h : ∀ ξ < δ, reduce (blockStage ξ) x = reduce (blockStage ξ) y) : x = y := by
-    obtain ⟨ξ, hξ, hxξ⟩ := exists_lt_blockStage_of_lt hδ hx
+    obtain ⟨ξ, hξ, hxξ⟩ := exists_lt_blockStage_of_lt_limit hδ hx
     have hx' := reduce_of_lt hxξ
     have hy : y < (blockStage ξ : Label.{u}) := by
       rw [← reduce_lt_iff, ← h ξ hξ, hx']
@@ -142,7 +142,7 @@ theorem eq_of_forall_reduce_eq (hδ : Order.IsSuccLimit δ)
       t.reduce (isSuccPrelimit_blockStage ξ) = t'.reduce (isSuccPrelimit_blockStage ξ)) :
     t = t' :=
   ext (congrArg (·.toScheme) (h 0 hδ.pos)) fun i j hij ↦
-    Label.eq_of_forall_reduce_blockStage_eq hδ (t.atStage i) (t'.atStage j) fun ξ hξ ↦
+    Label.eq_of_forall_reduce_blockStage_eq_limit hδ (t.atStage i) (t'.atStage j) fun ξ hξ ↦
       label_congr (h ξ hξ) hij
 
 /-- **Separation of optional types at a limit block stage**: two optional stage types at `λ_δ`
@@ -469,8 +469,9 @@ This glues models and proves every clause of a model for the result
 (`roadmap/README.md`, Layer 4: coherent assignments are not models by themselves).  Coherence
 (`hcoh`) is a hypothesis here, stated for an arbitrary coherent family; it is not assumed in the
 expansion domains, and for the limit clause of condition 1 it is to be derived from uniqueness of
-expansions, whose successor step is the next-block uniqueness of models (to be stated as
-`NextBlockUniqueness`; a consequence of normalization, output 2 of higher-stage reconstruction,
+expansions, whose successor step is the next-block uniqueness of models, stated as
+`Expansion.NextBlockUniqueness` in the companion module, where `nonempty_of_forall_lt` derives
+coherence from it (a consequence of normalization, output 2 of higher-stage reconstruction,
 Layer 4, still to be proved).  Countability of `δ` is not used. -/
 theorem ModelExpansion.nonempty_of_coherent (hδ : Order.IsSuccLimit δ)
     (e : ∀ ξ < δ, ModelExpansion M (blockStage ξ))
