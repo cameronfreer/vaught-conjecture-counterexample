@@ -82,6 +82,13 @@ the chart through which the two arguments factor either, since the image of a wi
 witness in `M`; so both operations take the default value, the first argument, as at repeated
 inputs.
 
+**Stage reduction.**  For a realization `R` with legal types and a stage `β` that is zero or a
+limit, reconstructing at `β` the structure in the hull language of the stage reduction
+`R.reduce hβ` returns `R.reduce hβ` (`reconstruct_reduce_toHullStructure`), on the same carrier
+and with the same untyped tuples; for `R = reconstruct α M` no hypothesis on `M` is needed
+(`reconstruct_reduce_toHullStructure_reconstruct`).  This is the roundtrip (a) at `β`, the types
+of the reduction being legal by `StageType.IsLegal.reduce`.
+
 The operations identified here are `Realization.hullOp`, defined by a choice of chart witness;
 that they are the operations defined by a first-order formula of the stage chart language
 (roadmap, Layer 2, item 2) is not used and not proved here.
@@ -128,8 +135,8 @@ used here.
   receiving of the reduction needs receiving at `α` and its descent along stage reduction, cutoff
   by cutoff, which is not exact projected receiving (semantic contract, item 12).
 * **Exact extension within the age** (semantic contract, item 12) beyond the extension of
-  embeddings given by ultrahomogeneity, and any statement about stage reductions or cutoff
-  observations of `M`.
+  embeddings given by ultrahomogeneity, and any statement about stage reductions of `M` other than
+  the algebraic equality above, or about cutoff observations of `M`.
 
 **Universes.**  The limit is a structure in `Type` of a language in `Type (u + 1)`; the output of
 reconstruction is the realization `reconstruct α M`, on the same carrier in `Type`.  With `u = 0`,
@@ -292,6 +299,41 @@ theorem reconstruct_chart_eval {α : Ordinal.{u}} {k n : ℕ} {P : StageType.{u}
     (hP : P.IsLegal) (t : Fin n ↪ Fin k) :
     (reconstruct α P.Chart).eval (t.trans P.toChart.toEmbedding) = StageType.restrictFace t P :=
   reconstruct_eval_trans_chart hP (Embedding.refl (hullLanguage.{u} α) P.Chart) t
+
+/-! ### Stage reduction -/
+
+/-- **Reconstruction commutes with stage reduction**: for a realization `R` with legal types at a
+stage `α` and a stage `β` that is zero or a limit, reconstructing at `β` the structure in the hull
+language of the stage reduction `R.reduce hβ` returns `R.reduce hβ`, on the same carrier and with
+the same untyped tuples (`none` faces included).  The types of the reduction are legal
+(`Realization.HasLegalTypes.reduce`, by `StageType.IsLegal.reduce`), so this is the roundtrip (a)
+(`reconstruct_toHullStructure`) at `β`; no relation between `β` and `α` is needed.
+
+This is the algebraic equality only.  Modelhood transfers separately, by
+`Realization.IsModel.reduce` (which needs in addition that `α` is zero or a limit and that `β` is a
+limit with `β ≤ α`); countability enters only when the sentence at the lower stage is formed. -/
+theorem reconstruct_reduce_toHullStructure {α β : Ordinal.{u}} {M : Type v}
+    (R : Realization.{u, v} α M) (hR : R.HasLegalTypes) (hβ : Order.IsSuccPrelimit β) :
+    @reconstruct β M (R.reduce hβ).toHullStructure = R.reduce hβ :=
+  reconstruct_toHullStructure _ (hR.reduce hβ)
+
+/-- **Reconstruction commutes with stage reduction, for a reconstructed realization**: for a
+structure `M` of the hull language at `α` and a stage `β` that is zero or a limit, reconstructing
+at `β` the structure in the hull language of the stage reduction of `reconstruct α M` returns that
+stage reduction.  No hypothesis on `M` is needed, since reconstructed types are legal
+(`hasLegalTypes_reconstruct`). -/
+theorem reconstruct_reduce_toHullStructure_reconstruct {α β : Ordinal.{u}} {M : Type v}
+    [(hullLanguage.{u} α).Structure M] (hβ : Order.IsSuccPrelimit β) :
+    @reconstruct β M ((reconstruct α M).reduce hβ).toHullStructure = (reconstruct α M).reduce hβ :=
+  reconstruct_reduce_toHullStructure _ hasLegalTypes_reconstruct hβ
+
+/-- After stage reduction and reconstruction, a tuple untyped in `R` is still untyped, and a typed
+tuple carries the reduction of its type. -/
+example {α β : Ordinal.{u}} {M : Type v} {n : ℕ} (R : Realization.{u, v} α M)
+    (hR : R.HasLegalTypes) (hβ : Order.IsSuccPrelimit β) (t : Fin n ↪ M) :
+    (@reconstruct β M (R.reduce hβ).toHullStructure).eval t =
+      (R.eval t).map (StageType.reduce · hβ) := by
+  rw [reconstruct_reduce_toHullStructure R hR hβ, Realization.reduce_eval]
 
 /-! ### Top-free chart coverage -/
 

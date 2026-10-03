@@ -41,12 +41,13 @@ when `X` is uncountable:
 * every tail at a stage `≥ ω₁` is empty, and so is the persistent core
   (`Filtration.core_ofRank`): every class leaves the tail just above its rank;
 * nonempty losses occur cofinally below `ω₁` exactly when the ranks are unbounded below `ω₁`,
-  that is, exactly when `X` is uncountable (`forall_exists_le_rank_iff`, and InfinitaryLogic's
-  `InfinitaryLogic.rankTail_cofinal_losses_iff` in the form of the losses).  Uncountability is
-  the only hypothesis of `Filtration.ofRank` beyond the rank itself.
+  that is, exactly when `X` is uncountable (InfinitaryLogic's
+  `InfinitaryLogic.countable_iff_rank_bounded`, and `InfinitaryLogic.rankTail_cofinal_losses_iff`
+  in the form of the losses).  Uncountability is the only hypothesis of `Filtration.ofRank` beyond
+  the rank itself.
 
 The complement of the tail at a countable stage, the classes of smaller rank, is countable with
-no hypothesis on `X` (`countable_setOf_rank_lt`).
+no hypothesis on `X` (InfinitaryLogic's `InfinitaryLogic.countable_of_forall_rank_lt`).
 
 A **countable cover** `Q α` (`α < ω₁`) of `X` by countable sets gives a rank, the **least level**
 `leastLevel Q x`, the least `α < ω₁` with `x ∈ Q α`; its fibres lie in the sets `Q α`, and the
@@ -166,33 +167,6 @@ section Rank
 
 variable {X : Type u} (r : X → Ordinal.{0})
 
-/-- **Small ranks are countable**: for a rank with countable fibres, the classes of rank below a
-countable ordinal form a countable set.  A quotation of InfinitaryLogic's
-`InfinitaryLogic.countable_of_forall_rank_lt` (at the pin), with the fibres as sets. -/
-theorem countable_setOf_rank_lt (hfib : ∀ α, α < ω₁ → {x | r x = α}.Countable)
-    {η : Ordinal.{0}} (hη : η < ω₁) : {x | r x < η}.Countable :=
-  InfinitaryLogic.countable_of_forall_rank_lt r (fun α hα ↦ (hfib α hα).to_subtype) hη
-    fun _ h ↦ h
-
-/-- **Cofinal ranks exactly for uncountable classes**: for a rank into the countable ordinals
-with countable fibres, the ranks are unbounded below `ω₁` exactly when `X` is uncountable.  A
-quotation of InfinitaryLogic's `InfinitaryLogic.countable_iff_rank_bounded` (at the pin) on
-`univ`; the same equivalence with cofinally many nonempty losses of the tails in place of
-unbounded ranks is `InfinitaryLogic.rankTail_cofinal_losses_iff`. -/
-theorem forall_exists_le_rank_iff (hr : ∀ x, r x < ω₁)
-    (hfib : ∀ α, α < ω₁ → {x | r x = α}.Countable) :
-    (∀ β, β < ω₁ → ∃ x, β ≤ r x) ↔ ¬ Countable X := by
-  rw [← countable_univ_iff,
-    InfinitaryLogic.countable_iff_rank_bounded r hr fun α hα ↦ (hfib α hα).to_subtype]
-  simp only [mem_univ, forall_const, not_exists, not_and, not_forall, not_lt]
-
-/-- No class lies in every tail of a rank into the countable ordinals: each leaves the tail just
-above its rank.  A quotation of InfinitaryLogic's `InfinitaryLogic.biInter_rankTail_eq_empty`
-(at the pin). -/
-theorem iInter_setOf_le_rank_eq_empty (hr : ∀ x, r x < ω₁) :
-    (⋂ ξ < ω₁, {x | ξ ≤ r x}) = ∅ :=
-  InfinitaryLogic.biInter_rankTail_eq_empty r hr
-
 namespace Filtration
 
 /-- **The filtration by a rank**: for a rank `r` into the countable ordinals with countable
@@ -290,13 +264,19 @@ theorem leastLevel_lt_and_mem (hcover : ∀ x, ∃ α, α < ω₁ ∧ x ∈ Q α
     leastLevel Q x < ω₁ ∧ x ∈ Q (leastLevel Q x) :=
   InfinitaryLogic.leastLevel_mem_of_exists (Q := fun α ↦ {x | α < ω₁ ∧ x ∈ Q α}) (hcover x)
 
-/-- The least level of `x` is at most every countable level of a set `Q α` containing `x`.  A
-quotation of InfinitaryLogic's `InfinitaryLogic.leastLevel_le_of_mem` (at the pin) for the family
-restricted to levels below `ω₁`, through the definitional equality
-`leastLevel_eq_leastLevel_inter`. -/
-theorem leastLevel_le {α : Ordinal.{0}} {x : X} (hα : α < ω₁) (hx : x ∈ Q α) :
-    leastLevel Q x ≤ α :=
-  InfinitaryLogic.leastLevel_le_of_mem (Q := fun α ↦ {x | α < ω₁ ∧ x ∈ Q α}) ⟨hα, hx⟩
+/-- The least level of `x` is at most every level of a set `Q α` containing `x`.  For `α < ω₁`
+this is a quotation of InfinitaryLogic's `InfinitaryLogic.leastLevel_le_of_mem` (at the pin) for
+the family restricted to levels below `ω₁`, through the definitional equality
+`leastLevel_eq_leastLevel_inter`; for `ω₁ ≤ α` it holds because the least level is below `ω₁`
+with no hypothesis. -/
+theorem leastLevel_le {α : Ordinal.{0}} {x : X} (hx : x ∈ Q α) : leastLevel Q x ≤ α := by
+  rcases lt_or_ge α ω₁ with hα | hα
+  · exact InfinitaryLogic.leastLevel_le_of_mem (Q := fun α ↦ {x | α < ω₁ ∧ x ∈ Q α}) ⟨hα, hx⟩
+  · refine le_trans ?_ hα
+    rcases {α | α < ω₁ ∧ x ∈ Q α}.eq_empty_or_nonempty with h | h
+    · rw [leastLevel, h, Ordinal.sInf_empty]
+      exact zero_le
+    · exact (csInf_mem h).1.le
 
 /-- **The least level is InfinitaryLogic's under the cover.**  For a cover by the sets `Q α` with
 `α < ω₁`, `leastLevel Q` is InfinitaryLogic's `InfinitaryLogic.leastLevel Q`: each is at most the
@@ -305,19 +285,8 @@ theorem leastLevel_eq_leastLevel_of_cover (hcover : ∀ x, ∃ α, α < ω₁ �
     leastLevel Q = InfinitaryLogic.leastLevel Q :=
   have hU := biUnion_lt_omega_one_eq_univ hcover
   funext fun x ↦ le_antisymm
-    (leastLevel_le (InfinitaryLogic.leastLevel_lt_omega1 Q hU x)
-      (InfinitaryLogic.leastLevel_mem Q hU x))
+    (leastLevel_le (InfinitaryLogic.leastLevel_mem Q hU x))
     (InfinitaryLogic.leastLevel_le_of_mem (leastLevel_lt_and_mem hcover x).2)
-
-/-- For a cover by the sets `Q α` with `α < ω₁`, the least level of `x` is at least `η` exactly
-when `x` lies in no `Q α` with `α < η`.  A quotation of InfinitaryLogic's
-`InfinitaryLogic.rankTail_leastLevel` (at the pin), through
-`leastLevel_eq_leastLevel_of_cover`. -/
-theorem le_leastLevel_iff (hcover : ∀ x, ∃ α, α < ω₁ ∧ x ∈ Q α) {η : Ordinal.{0}} {x : X} :
-    η ≤ leastLevel Q x ↔ x ∉ ⋃ α < η, Q α := by
-  rw [leastLevel_eq_leastLevel_of_cover hcover]
-  exact Set.ext_iff.1 (InfinitaryLogic.rankTail_leastLevel Q
-    (biUnion_lt_omega_one_eq_univ hcover) η) x
 
 /-- For a cover by countable sets `Q α` with `α < ω₁`, the fibres of the least level over the
 countable ordinals are countable: the fibre over `α` lies in `Q α`.  A quotation of
@@ -406,7 +375,7 @@ example {X : Type u} {Q : Ordinal.{0} → Set X} (hQ : ∀ α, ω₁ ≤ α → 
 /-- **Overlapping levels**: when every `Q α` is everything, both least levels are `0`. -/
 example {X : Type u} (x : X) : leastLevel (fun _ ↦ (univ : Set X)) x = 0 ∧
     InfinitaryLogic.leastLevel (fun _ ↦ (univ : Set X)) x = 0 :=
-  ⟨nonpos_iff_eq_zero.1 (leastLevel_le (Ordinal.omega_pos 1) (mem_univ x)),
+  ⟨nonpos_iff_eq_zero.1 (leastLevel_le (mem_univ x)),
     nonpos_iff_eq_zero.1 (InfinitaryLogic.leastLevel_le_of_mem (mem_univ x))⟩
 
 /-- **An empty type** is covered by every family, and the two least levels agree. -/

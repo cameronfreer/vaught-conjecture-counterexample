@@ -971,11 +971,12 @@ named (`README.md`, Layer 0):
     for countably many relation symbols; and `Sentenceω.isThinOnNatModels_of_bfScattered`, through
     `bfEquivSetoid_eq_comap`; with `codeBFEquivSetoid`, and with the analyticity of the
     off-diagonal of an analytic set in a Hausdorff space, `MeasureTheory.AnalyticSet.offDiag`
-    (signatures checked).  It is the generic form of the scatteredness form of
-    thinness, `isThinOn_of_countable_bfClasses` and
-    `isThinOnNatModels_of_countable_bfClasses` (`MainTheorem/Scatteredness`, Layer 6), which
-    separate only closed antichains and declare their own `codeBFEquivSetoid` and
-    `bfEquivSetoid_eq_comap`; these are candidates for one-line quotation, not absorbed here;
+    (signatures checked).  The scatteredness form of thinness in `MainTheorem/Scatteredness`
+    (Layer 6) is absorbed as quotations, with its statements kept:
+    `isThinOn_of_countable_bfClasses` quotes `isThinOn_of_bfScattered`,
+    `isThinOnNatModels_of_countable_bfClasses` quotes `Sentenceω.isThinOnNatModels_of_bfScattered`,
+    `bfEquivSetoid_eq_comap` quotes InfinitaryLogic's `bfEquivSetoid_eq_comap`, and
+    `codeBFEquivSetoid` is InfinitaryLogic's `codeBFEquivSetoid` by definition;
   - the rank conventions (#155): documentation only (`Scott/Height/Defs`: the cross-structure
     ranks in `Ordinal.{0}` and the internal orbit ranks in `Ordinal.{w}`, with the comparisons
     proved and those refuted on the empty carrier and the infinite pure set); no statement changed;
@@ -1557,22 +1558,18 @@ lands, their notes stay in those modules.
   lemmas, which become redundant once `BoundedFormulaω.realize_equiv` and `LomegaEquiv.of_equiv`
   are generalized across carrier universes.
 - `MainTheorem/Scatteredness` (pull request #42): every statement is generic (none mentions the
-  density sentence).  To InfinitaryLogic: `codeBFEquivSetoid` to `Descriptive/BFTree`, beside
-  `CodeBFEquiv`; `bfEquivSetoid_eq_comap` to `ModelTheory/MorleyCounting`, where `bfEquivSetoid` can
-  be defined as that restriction (as `isoSetoid` is, with `isoSetoid_eq_comap`); `offDiag_noniso`,
-  `exists_forall_not_codeBFEquiv_of_isClosed`, and `isThinOn_of_countable_bfClasses` to
-  `Descriptive/BFSeparation`, beside `exists_uniform_bfSeparation` (the thinness application of its
-  checkpoint (3); subject to that module's import guard), and
-  `isThinOnNatModels_of_countable_bfClasses` beside `bfEquivSetoid`.  To Mathlib: the analyticity of
-  the off-diagonal of a closed set in a Polish Borel space (`analyticSet_offDiag`, to
-  `MeasureTheory/Constructions/Polish`) and the uncountability of a nonempty perfect set in a
-  completely metrizable space (`not_countable_of_perfect`, to `Topology/MetricSpace/Perfect`, beside
-  `Perfect.exists_nat_bool_injection`).  InfinitaryLogic's `Descriptive/BFScattered` (`BFScattered`,
-  `not_hasCantorAntichainOn_of_bfScattered`, `isThinOn_of_bfScattered`) and
-  `Descriptive/BFScatteredSentence` (`Sentenceω.isThinOnNatModels_of_bfScattered`), available at the
-  pin `cf80917` (signatures checked), are the generic form of `isThinOn_of_countable_bfClasses` and
-  `isThinOnNatModels_of_countable_bfClasses`, and candidates for absorbing them by one-line
-  quotation.
+  density sentence), and its statements are quotations of InfinitaryLogic (at the pin `cf80917`):
+  `isThinOn_of_countable_bfClasses` of `isThinOn_of_bfScattered` (`Descriptive/BFScattered`),
+  `isThinOnNatModels_of_countable_bfClasses` of `Sentenceω.isThinOnNatModels_of_bfScattered`
+  (`Descriptive/BFScatteredSentence`), `bfEquivSetoid_eq_comap` of its namesake, `offDiag_noniso` of
+  `not_structureIso_of_mem_offDiag`, `exists_forall_not_codeBFEquiv_of_isClosed` of
+  `exists_forall_not_codeBFEquiv_of_analyticSet`, and `analyticSet_offDiag` through
+  `MeasureTheory.AnalyticSet.offDiag`; `codeBFEquivSetoid` is InfinitaryLogic's by definition.
+  `not_countable_of_perfect` stays local: InfinitaryLogic's `Perfect.mk_eq_continuum` assumes a
+  metric space, and the space of codes gets one only after a choice of compatible complete metric
+  (`TopologicalSpace.upgradeIsCompletelyMetrizable`); to Mathlib, as the uncountability of a
+  nonempty perfect set in a completely metrizable space (`Topology/MetricSpace/Perfect`, beside
+  `Perfect.exists_nat_bool_injection`).
 - `MainTheorem/Assembly`: in the proof of `FullPresentations.HasScatteredTails.countable_quotient`,
   the local map from the classes of the density sentence to
   `Quotient (bfEquivSetoid densitySentence η)` re-derives InfinitaryLogic's
@@ -1652,8 +1649,7 @@ witnesses).**
 - `Counting/Filtration` and `Counting/Separation`: their generic statements are proved as quotations
   of InfinitaryLogic's `OrdinalCountability` (at the pin `cf80917`), with their statements kept:
   `Filtration.ofRank` is built from `rankTail` (its domain is `rankTail r` by definition), and
-  `countable_setOf_rank_lt`, `forall_exists_le_rank_iff`, `iInter_setOf_le_rank_eq_empty`, the
-  lemmas on `ofRank`, the least-level lemmas, `domain_ofCountableCover`, and the three counts
+  the lemmas on `ofRank`, the least-level lemmas, `domain_ofCountableCover`, and the three counts
   `mk_eq_aleph_one_of_rank`, `mk_le_aleph_one_of_rank`, and `mk_le_aleph_one_of_countable_cover`
   each apply one InfinitaryLogic statement.  The conventions, recorded in the module docstring of
   `Counting/Filtration`:
@@ -1668,22 +1664,16 @@ witnesses).**
   `Filtration` itself (the hypothesis bundle of the count with a countable persistent core),
   `Filtration.compl_countable`, the counts of `Counting/Separation` that allow a nonempty core, and
   `Counting/Domains` stay local: InfinitaryLogic has no such bundle, and its `mk_*_of_domains` need
-  every point to leave.  To be deleted later (no statement changes here):
-
-  - `countable_setOf_rank_lt`, unused: InfinitaryLogic's `countable_of_forall_rank_lt` with the
-    conversion of fibres;
-  - `le_leastLevel_iff`, unused since `domain_ofCountableCover` quotes `rankTail_leastLevel`:
-    `rankTail_leastLevel` with the cover;
-  - `iInter_setOf_le_rank_eq_empty`, used once, by `FullPresentations.core_toFiltration` in
-    `MainTheorem/Assembly`, which can use `Filtration.core_ofRank` or `biInter_rankTail_eq_empty`;
-  - `forall_exists_le_rank_iff`, used only by an example of `Counting/Separation` and named in
-    `README.md`, "What the count of this route no longer uses", which is then to cite
-    `rankTail_cofinal_losses_iff` alone.
-
-  `leastLevel_le` is kept; its hypothesis `α < ω₁` can be dropped: for `α < ω₁` it is
-  InfinitaryLogic's `leastLevel_le_of_mem` (which needs no cover) for the family restricted to
-  levels below `ω₁`, and for `α ≥ ω₁` the conclusion holds because `leastLevel Q x < ω₁` with no
-  hypothesis (an example of `Counting/Filtration`).
+  every point to leave.  Deleted, as unused or used only where InfinitaryLogic's statement serves
+  directly: `countable_setOf_rank_lt` (InfinitaryLogic's `countable_of_forall_rank_lt` with the
+  conversion of fibres), `le_leastLevel_iff` (`rankTail_leastLevel` with the cover),
+  `iInter_setOf_le_rank_eq_empty` (`FullPresentations.core_toFiltration` in `MainTheorem/Assembly`
+  now applies `biInter_rankTail_eq_empty`), and `forall_exists_le_rank_iff` (the example of
+  `Counting/Separation` now applies `countable_iff_rank_bounded`; `README.md`, "What the count of
+  this route no longer uses", is to cite `rankTail_cofinal_losses_iff` alone).  `leastLevel_le` is
+  kept, with no hypothesis `α < ω₁`: for `α < ω₁` it is InfinitaryLogic's `leastLevel_le_of_mem`
+  (which needs no cover) for the family restricted to levels below `ω₁`, and for `α ≥ ω₁` the
+  conclusion holds because `leastLevel Q x < ω₁` with no hypothesis.
 
 **Statements not yet in any module.**
 
