@@ -89,10 +89,8 @@ of the density sentence for the base-language structure of the reduction
   receiving and the cap-to-model theorem at a nonzero limit stage
   (`Realization.isModel_of_hasFiniteCutReceiving`), given the nonemptiness of the uniformity and
   dominance instances.
-* *Infinitude and terminality* (step 7) are still to be proved.  Infinitude is to come from
-  receiving over a whole occurrence, with a one-point coface of its type
-  (`StageType.exists_extension`, under the coatom extension property
-  `StageType.HasCoatomExtensions`): the received point is off the whole occurrence.
+* *Infinitude and terminality* (step 7) are in `VaughtConjecture.ClassicalLimit.Modelhood`
+  (`infinite_of_age_eq_of_hasCoatomExtensions`, `reduce_ne_reconstruct`).
 
 ## Placement
 
@@ -244,9 +242,9 @@ carrier (`nonempty_of_topFreeAge_subset`), exact consistency and covering
 
 This is the base-reduct part of step 7.  Modelhood of the reconstructed realization at `α`, given
 the nonemptiness of the uniformity and dominance instances, is `isModel_reconstruct`; infinitude
-and terminality are still to be proved.  The existence
-of a Fraïssé limit of the age of top-free charts (`exists_isFraisseLimit_topFreeAge`) needs the
-coatom extension property `StageType.HasCoatomExtensions`, which is not proved. -/
+and terminality are `infinite_of_age_eq_of_hasCoatomExtensions` and `reduce_ne_reconstruct`.  The
+existence of a Fraïssé limit of the age of top-free charts (`exists_isFraisseLimit_topFreeAge`)
+needs the coatom extension property `StageType.HasCoatomExtensions`, which is not proved. -/
 theorem realize_densitySentence_reconstruct_reduce
     (hage : (hullLanguage.{u} α).age M = topFreeAge α)
     (hu : (hullLanguage.{u} α).IsUltrahomogeneous M) (hα : Order.IsSuccPrelimit α)

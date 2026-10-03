@@ -16,7 +16,7 @@ Let `R` be a realization at a nonzero limit stage `α` on a nonempty carrier, wi
 exactly consistent and covering, and with the finite-cut receiving property.  Then `R` is a model
 (`Realization.isModel_of_hasFiniteCutReceiving`) as soon as, over every occurrence, the
 uniformity and dominance instances of the clause of a model have a member among the cofaces of its
-type: the hypotheses `hunif` and `hdom`, the instances of [Kni26, Lemmas 4.4.2 and 4.4.3] used.
+type: the hypotheses `hunif` and `hdom`, the instances of [Kni26, Lemmas 4.4.2 and 4.4.3].
 The conclusion is `Realization.IsModel` with its four families unchanged; no exactness is added to
 it.
 
@@ -38,11 +38,9 @@ which is why `hunif` and `hdom` are hypotheses.  The cutoffs `L + 1` and `γ + 1
 stage because it is a limit; at stage `0` there is no permitted cutoff, so the stage hypothesis
 cannot be dropped (`VaughtConjecture.Realization.ModelExamples`).
 
-**Reducing to `ω` does not suffice.**  The cap-to-model theorem at `ω`, applied to the reduction
-of `R` to `ω`, gives modelhood at `ω` only: every label at least `ω` becomes the formal top, so
-the uniformity clauses at `ω ≤ γ < α` and the dominance clauses at `γ ≥ ω` are not visible there.
-Lifting modelhood from the reductions to lower block stages would need those reductions to be
-models already, which for a realization not yet known to be a model is what is to be proved.
+The theorem is stated at the stage `α` itself: the cap-to-model theorem at `ω`, applied to the
+reduction of `R` to `ω`, gives modelhood at `ω` only, since every label at least `ω` becomes the
+formal top there (`VaughtConjecture.ClassicalLimit.Modelhood`).
 
 ## Placement
 
@@ -51,8 +49,7 @@ This file belongs to Layer 3, 3.4, of `roadmap/README.md`.
 ## References
 
 Models are [Kni26, Definition 3.2.1]; the nonemptiness of the uniformity and dominance instances is
-[Kni26, Lemmas 4.4.2 and 4.4.3], for R. W. Knight, *A counterexample to Vaught's Conjecture using
-generalised Stone spaces* (draft, 20 February 2026).
+[Kni26, Lemmas 4.4.2 and 4.4.3].
 -/
 
 universe u v

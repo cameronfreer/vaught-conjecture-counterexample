@@ -119,10 +119,11 @@ used here.
   `VaughtConjecture.ClassicalLimit.Modelhood` (`isModel_reconstruct`), at a nonzero limit stage,
   from receiving and the cap-to-model theorem (`Realization.isModel_of_hasFiniteCutReceiving`),
   given the nonemptiness of the uniformity and dominance instances.
-* **Infinitude and terminality** (step 7): infinitude from receiving over a whole actual
-  occurrence, with a one-point coface of its type (`StageType.exists_extension`, under the coatom
-  extension property); terminality from the top-freeness proved here, modelhood, and the
-  reduction of models.
+* **Infinitude and terminality** (step 7) are in `VaughtConjecture.ClassicalLimit.Modelhood`:
+  infinitude from receiving over a whole occurrence, with a one-point coface of its type
+  (`infinite_of_age_eq_of_hasCoatomExtensions`, under the coatom extension property), and
+  terminality from the top-freeness proved here and the uniformity clause of a model at a higher
+  stage (`reduce_ne_reconstruct`).
 * **The density sentence** (the sentence of the main theorem; for the base reduct, the
   base-reduct part of step 7) for the base-language structure (`Realization.toStructure`) of the
   reduction of the reconstructed realization to `ω` (`Realization.reduce`) is in
