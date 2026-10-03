@@ -54,7 +54,7 @@ is not used as the canonical code.
 `k` (`Label.isWitness_literalDecoder`); it reads the canonical code of `w` literally as `w`, the
 formal top included, whenever the code agrees with `w` capped at `h` (N4, the literal reading,
 `Label.literalDecoder_canonicalCode`); and it keeps the cap at every label self-visible at `k`
-(`Label.min_literalDecoder_eq`).  It is not the identity below `h`: visibility
+(`Label.min_literalDecoder_eq`).  It need not be the identity below `h`: visibility
 replacement at `k` sends the start `ω * c` of the block of a cap `h = ω * c + k` to `h`, so a
 decoder fixing `ω * c` reads `h` as `h`, while the least code at least `h` may be `h` itself and
 must be read as a value above `h` (`VaughtConjecture.Extension.SmallArityExamples`, R4).
@@ -432,10 +432,11 @@ theorem isSelfVisible_sup (s : Finset ι) (hv : ∀ d, IsSelfVisible k (w d)) :
 
 /-- The **literal-reading decoder** of a labelling `w` at grade `k` and cap `h`: a label `x` goes
 to the larger of `min x h` and the largest value of `w` at a cell whose canonical code lies between
-`h` and `vr k k x`.  It is the identity on the labels `x` with `vr k k x < h`, but not on the
-strip `[ω * c, h)` below a cap `h = ω * c + k`, where `vr k k x = h`
-(`VaughtConjecture.Extension.SmallArityExamples`, R4); at and above `h` it is at least `h`; and it
-reads the canonical code of `w` literally when the code agrees with `w` capped at `h`. -/
+`h` and `vr k k x`.  It is the identity on the labels `x` with `vr k k x < h`, but it need not be
+the identity on the labels `[ω * c, h)` of the strip of a cap `h = ω * c + k`, where
+`vr k k x = h` (`VaughtConjecture.Extension.SmallArityExamples`, R4); at and above `h` it is at
+least `h`; and it reads the canonical code of `w` literally when the code agrees with `w` capped
+at `h`. -/
 noncomputable def literalDecoder (k : ℕ) (w : ι → Label.{u}) (h x : Label.{u}) : Label.{u} :=
   max (min x h)
     (({d | h ≤ canonicalCode k w d ∧ canonicalCode k w d ≤ visibilityReplace k k x} :

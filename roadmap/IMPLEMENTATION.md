@@ -1365,18 +1365,19 @@ ones split):
   successor blocks and which is not idempotent): idempotence (`Label.canonicalCode_canonicalCode`),
   prefix stability (`Label.canonicalCode_eq_of_min_eq`), relative room
   (`Label.min_canonicalCode_eq`), and the literal-reading decoder (`Label.literalDecoder`, a witness
-  bounded by the grade that reads the code literally and keeps the cap; not the identity on the
-  strip `[ω * c, h]` of a cap `h = ω * c + k`, the strip of `README.md`, Layer 3, 3.1, (R6)).  The
-  canonical field layer (`Scheme.fieldLayer`): consistent, well
-  formed, coded, new rows short and never `⊤`, extension at the cap `⊥`
-  (`Scheme.exists_isLawful_fieldLayer`), and extension from the boundary at every positive cap
-  along every new row (`Scheme.extendsFromBoundary_fieldLayer`).  The hypotheses of the one-grade
-  lift `CellScheme.Rows.cappedLift_of_boundary` of 2.4b-ii therefore hold at every positive cap; no
-  variant restricted to the source caps of the owner alignment is needed.  In particular
-  hypotheses (4)–(6) of that lift are proved at grade `1` for the canonical field layer: its new
-  rows are short at `1` and never the formal top (`Scheme.isShort_ne_top_row_fieldLayer`),
-  consistent (`Scheme.isConsistent_fieldLayer`), and extend from the boundary at `⊥` and at every
-  positive self-visible cap; for 2.5b and 2.6 they remain to be proved.  The completion at
+  bounded by the grade that reads the code literally and keeps the cap; it need not be the identity
+  on the labels `[ω * c, h)` of the strip of a cap `h = ω * c + k`, the strip of `README.md`,
+  Layer 3, 3.1, (R6)).  The canonical field layer (`Scheme.fieldLayer`): consistent, well formed,
+  coded, new rows short at the grade and never `⊤` (`Scheme.isShort_ne_top_row_fieldLayer`), with
+  no hypothesis on the grades of the old cells; and, over a scheme whose cells all have grade `k`
+  and lie below one of the two pairs of the boundary, extension at the cap `⊥`
+  (`Scheme.exists_isLawful_fieldLayer`) and extension from the boundary at `⊥` and at every
+  positive self-visible cap along every new row (`Scheme.extendsFromBoundary_bot_fieldLayer`,
+  `Scheme.extendsFromBoundary_fieldLayer`).  So hypotheses (4)–(6) of the one-grade lift
+  `CellScheme.Rows.cappedLift_of_boundary` of 2.4b-ii hold for this layer over a scheme whose cells
+  all have grade `1` (`m = 0`), at every positive self-visible cap; no variant restricted to the
+  source caps of the owner alignment is needed.  For 2.5b and 2.6, where old cells of other grades
+  occur, they remain to be proved.  The completion at
   `m = 0` (`Seed.exists_completionBelowFullGrade_zero`,
   `Seed.nonempty_completionBelowFullGrade_zero`, `Extension/SmallArities`), with bountifulness by
   the coatoms, the lifts off the full face from the amalgam through a source prefix, and no stage
@@ -1429,10 +1430,11 @@ prescribes one face, and there such a tie is already a tie of the prescription, 
 mechanism separates no two cells of the face (the instance of Lemma 4.3.19 separates cells of
 different coatoms).  For the variant whose full-scope cells are indexed by all lawful short coded
 patterns over a fixed finite alphabet, with agreement-height rows, bountifulness fails already at
-`m = 0` and for every block bound: a pattern constant at the top block of the alphabet, as
-ambient, leaves no room above the cap for a prescription with four distinct values on one point,
-once two lower constant patterns are pinned by the cap (compiled in this repository (theorem
-named): `SmallArityExamples.not_isBountiful_flatRows`).  Whether this applies to Definition 4.3.14
+`m = 0` and for every block bound at least `3` (in particular `2 N + 1` for `N` cells): a pattern
+constant at the top block of the alphabet, as ambient, leaves no room above the cap for a
+prescription with four distinct values on one point, once two lower constant patterns are pinned
+by the cap (compiled in this repository (theorem named):
+`SmallArityExamples.not_isBountiful_flatRows`).  Whether this applies to Definition 4.3.14
 depends on the bindings of Definition 4.3.6; it does not apply when the patterns are
 rank-normalized, as in the canonical field layer of 2.5.  Neither the statement of
 Lemma 4.3.20, nor its printed proof, nor the joint lifting of [Kni26, Lemma 4.3.19] is relied on:

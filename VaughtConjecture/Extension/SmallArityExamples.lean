@@ -744,9 +744,10 @@ private abbrev inclZero (α : Ordinal.{u}) :
   Set.inclusion (CellScheme.below_mono _ lift_le)
 
 /-- **Regression 5, the caps `⊤` and `⊥`** (the positive cap `ω * 10 + 1` is
-`exists_lift_fourCellSeed`): at the cap `⊤` the lift of a prescription equal to the restriction of
-the ambient is the ambient itself, and at the cap `⊥` every lawful prescription below `({0}, 1)`
-extends to a labelling lawful below `(univ, 1)`. -/
+`exists_lift_fourCellSeed`).  At the cap `⊤` the lift of a prescription equal to the restriction of
+the ambient is the ambient itself; this half holds for every scheme by the definition of a capped
+lift.  At the cap `⊥` every lawful prescription below `({0}, 1)` extends to a labelling lawful below
+`(univ, 1)`; this half is the content of the lift on the canonical layer. -/
 example (α : Ordinal.{u}) :
     (∀ (p : (fourCellSeed α).fieldLayerZero.toCellScheme.below (({0} : Finset (Fin 2)), 1) →
         Label.{u}) (q : (fourCellSeed α).fieldLayerZero.toCellScheme.below (univ, 1) → Label.{u}),
@@ -908,9 +909,10 @@ theorem canonicalCode_stripLabelling (i : Fin 2) :
   · rw [show (i : ℕ) = 1 by omega]
 
 /-- **R4, the literal-reading decoder at a strip.**  At the cut `h = ω * 3 + 1`, the literal-reading
-decoder of `(ω + 1, ω * 7 + 1)` reads its canonical code `(ω + 1, ω * 3 + 1)` back literally, and
+decoder of `(ω + 1, ω * 7 + 1)` reads its canonical code `(ω + 1, ω * 3 + 1)` literally, and
 `ω * 3 + 1 = h` is read as `ω * 7 + 1`.  No witness bounded by grade `1` that is the identity on the
-strip `[ω * 3, h)` does this: it would send `h = vr 1 1 (ω * 3)` to `vr 1 1 (ω * 3) = h`. -/
+labels `[ω * 3, h)` of the strip of `h` does this: it would send `h = vr 1 1 (ω * 3)` to
+`vr 1 1 (ω * 3) = h`. -/
 example : (∀ i, literalDecoder 1 stripLabelling.{u} (P 3) (canonicalCode 1 stripLabelling i) =
       stripLabelling i) ∧
     ¬ ∃ κ : Label.{u} → Label.{u}, IsWitness (stepSuppressor 1) κ ∧
