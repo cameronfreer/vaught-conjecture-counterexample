@@ -702,7 +702,7 @@ hypothesis in each application.  It is the special case of InfinitaryLogic's gen
 paragraph) with initial match at the height.  Its two intended applications, approximate comparison
 of full presentations (item 3 above) and the back-and-forth form of condition 3 of the
 expansion-domain route (layer 5, section 5 above), both compile through the generic form, so it is
-retired as a target of this repository, still to be proved and not moved ("Placement record").
+retired as a target of this repository, not proved here and not moved ("Placement record").
 
 **The upstream graded-matching theorem.**  InfinitaryLogic's `bfEquiv_of_gradedMatching`
 (`Scott/GradedMatching`; at the pin, signatures checked), a generic form of the theorem above, takes
@@ -906,8 +906,8 @@ named (`README.md`, Layer 0):
     split out of the earlier theorems, beside the earlier `countable_iff_rank_bounded` (the
     interface "ranks with countable fibres", listed as prospective before the repin to
     `def5cc0`); the
-    statements of `Counting/Filtration` and `Counting/Separation` are proved as quotations of
-    these, with their statements kept ("Placement record");
+    generic statements of `Counting/Filtration` and `Counting/Separation` are proved as quotations
+    of these, with their statements kept ("Placement record");
   - graded matching (#152, `Scott/GradedMatching`, `bfEquiv_of_gradedSystem` and
     `bfEquiv_of_gradedMatching`): a family of relations graded up to a height bound, with atomic
     agreement at level `0`, lowering, and forth and back one level down, relates at a level
@@ -1157,13 +1157,13 @@ Each checkpoint needs both its abstract API and a concrete application:
    first use of (R6)), classical existence (available at the pin), reconstruction of partial
    evaluation, consistency and covering and top-freeness, and receiving (the first use of (R5)).
    Status: the hull operations with their five facts are compiled for finite charts, items 4–5 where
-   they identify embeddings and substructures for legal charts only, legality being essential for
-   item 5 (`README.md`, Layer 2, "Status for finite charts"; `Language/HullOperations`,
-   `Language/HullDefinability`), and remain to be proved for realizations other than the face
-   realizations of charts, which need the two-charts theorem for exactly consistent covering
-   realizations; steps 1–3 of the top-free witnesses are compiled, the amalgamation and joint
-   embedding of step 2 and step 3 conditional on `StageType.HasCoatomExtensions` ("The top-free
-   witnesses: milestone order and acceptance").
+   they identify embeddings and substructures for a legal chart (for item 4, one of the two charts
+   legal), legality being essential for item 5 (`README.md`, Layer 2, "Status for finite charts";
+   `Language/HullOperations`, `Language/HullDefinability`), and remain to be proved for realizations
+   other than the face realizations of charts, which need the two-charts theorem for exactly
+   consistent covering realizations; steps 1–3 of the top-free witnesses are compiled, the
+   amalgamation and joint embedding of step 2 and step 3 conditional on
+   `StageType.HasCoatomExtensions` ("The top-free witnesses: milestone order and acceptance").
 4. Items 3.2 and 3.3 for (R1)–(R3): for each of them, the extension of the realization by one actual
    occurrence over the literal root and the recovery theorem (by `Correct` and labelled
    evaluation, by LOW, or through the gate), with all its equations on that occurrence and at
@@ -1494,10 +1494,10 @@ lands, their notes stay in those modules.
   `MeasureTheory/Constructions/Polish`) and the uncountability of a nonempty perfect set in a
   completely metrizable space (`not_countable_of_perfect`, to `Topology/MetricSpace/Perfect`, beside
   `Perfect.exists_nat_bool_injection`).  InfinitaryLogic's `Descriptive/BFScattered` (`BFScattered`,
-  `not_hasCantorAntichainOn_of_bfScattered`, `isThinOn_of_bfScattered`,
-  `Sentenceω.isThinOnNatModels_of_bfScattered`; available at the pin `cf80917`, signatures checked)
-  is the generic form of `isThinOn_of_countable_bfClasses` and
-  `isThinOnNatModels_of_countable_bfClasses`, and a candidate for absorbing them by one-line
+  `not_hasCantorAntichainOn_of_bfScattered`, `isThinOn_of_bfScattered`) and
+  `Descriptive/BFScatteredSentence` (`Sentenceω.isThinOnNatModels_of_bfScattered`), available at the
+  pin `cf80917` (signatures checked), are the generic form of `isThinOn_of_countable_bfClasses` and
+  `isThinOnNatModels_of_countable_bfClasses`, and candidates for absorbing them by one-line
   quotation.
 - `MainTheorem/Assembly`: in the proof of `FullPresentations.HasScatteredTails.countable_quotient`,
   the local map from the classes of the density sentence to
@@ -1552,7 +1552,7 @@ witnesses).**
 **Counting (Layers 5–6).**
 
 - `Counting/Filtration` and `Counting/Separation`: their generic statements are proved as quotations
-  of InfinitaryLogic's `OrdinalCountability` (at the pin `def5cc0`), with their statements kept:
+  of InfinitaryLogic's `OrdinalCountability` (at the pin `cf80917`), with their statements kept:
   `Filtration.ofRank` is built from `rankTail` (its domain is `rankTail r` by definition), and
   `countable_setOf_rank_lt`, `forall_exists_le_rank_iff`, `iInter_setOf_le_rank_eq_empty`, the
   lemmas on `ofRank`, the least-level lemmas, `domain_ofCountableCover`, and the three counts

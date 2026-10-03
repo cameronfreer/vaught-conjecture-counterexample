@@ -986,8 +986,8 @@ These are statements still to be proved.  None is an input to the main theorem.
   realized finite charts is `η`, and across all presentations of a countable base model the least
   bound of these fixing ranks is its height (greatest refinements, above).  Neither is identified
   with a Scott rank.  At a limit `η` the supremum is not attained, a statement to be proved with the
-  others: a finite chart has finitely many proper labels, all below `λ_η`, so its fixing rank is
-  below `η`.
+  others: a finite chart has finitely many proper labels, all below `λ_η`, and since `λ` is
+  continuous at limits each lies below some `λ_ξ` with `ξ < η`, so its fixing rank is below `η`.
 
   **Completion criterion.**  Each row is a bounded checkpoint, complete when its formula is
   constructed for the concrete objects of the construction (the chart predicates at `λ_η`, the
