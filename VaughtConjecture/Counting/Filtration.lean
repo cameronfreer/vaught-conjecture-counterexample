@@ -386,8 +386,10 @@ example {X : Type u} (Q : Ordinal.{0} → Set X) (x : X) : leastLevel Q x < ω�
     exact Ordinal.omega_pos 1
   · exact (csInf_mem h).1
 
-/-- **Levels at or above `ω₁`.**  For a family whose levels are all at or above `ω₁`,
-`leastLevel` is `0` and InfinitaryLogic's least level is `ω₁`: there is no cover below `ω₁`. -/
+/-- **Levels at or above `ω₁`.**  For the family whose levels are exactly the ordinals at or above
+`ω₁`, `leastLevel` is `0` and InfinitaryLogic's least level is `ω₁`: there is no cover below `ω₁`.
+For a family whose levels start above `ω₁`, at `ω₁ + 1` say, InfinitaryLogic's least level is that
+first level, `ω₁ + 1`, while `leastLevel` is still `0`. -/
 example : leastLevel (fun α ↦ {_u : Unit | ω₁ ≤ α}) () = 0 ∧
     InfinitaryLogic.leastLevel (fun α ↦ {_u : Unit | ω₁ ≤ α}) () = ω₁ := by
   refine ⟨?_, csInf_Ici⟩
