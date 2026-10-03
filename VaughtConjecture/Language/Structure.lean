@@ -42,7 +42,9 @@ realizations with legal types an isomorphism of structures is an isomorphism of 
 (`Realization.isIso_iff_nonempty_equiv`); the converse pulls tuples back along the isomorphism
 (`relMap_trans_symm_toEmbedding`, stated for an arbitrary language).  On the structure side,
 isomorphic type assignments have isomorphic realizations and conversely
-(`baseLanguage.isIso_toRealization_iff`, from the round trips).
+(`baseLanguage.isIso_toRealization_iff`, from the round trips).  The structure induced on the
+target of an isomorphism of structures of a relational language is the target structure
+(`FirstOrder.Language.Equiv.inducedStructure_eq`).
 
 ## References
 
@@ -53,6 +55,15 @@ structures and realizations is the content of [Kni26, Proposition 3.3.5], for R.
 -/
 
 universe u v w
+
+open FirstOrder in
+/-- **The structure induced along an isomorphism is the target structure**: for an isomorphism
+`e : M ≃[L] N` of structures of a relational language, the structure induced on `N` by the
+underlying bijection of `e` is the given structure of `N`. -/
+theorem FirstOrder.Language.Equiv.inducedStructure_eq {L : FirstOrder.Language} [L.IsRelational]
+    {M : Type v} {N : Type w} [L.Structure M] [t : L.Structure N] (e : M ≃[L] N) :
+    @_root_.Equiv.inducedStructure L M N _ (e : M ≃ N) = t :=
+  Structure.ext_of_isRelational fun _ r xs ↦ e.symm.map_rel r xs
 
 namespace VaughtConjecture
 
