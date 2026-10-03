@@ -826,26 +826,31 @@ These are statements still to be proved.  None is an input to the main theorem.
        `qrank (existsBlock φ) = qrank φ + k` is prospective, to be proved.  The library's pointed
        families put the core coordinates first, so they are first relabelled as the bound variables
        of the block (`BoundedFormulaω.relabel`, which preserves the rank,
-       `BoundedFormulaω.qrank_relabel`; at the pin, signatures checked).  As
-       `ω·η + (ρ + k) = (ω·η + ρ) + k`, translating before or after the closure gives the same rank:
-       `ω·η + ω + k = ω·(η+1)+k` with the isolating formula and `ω·η + ω·2 + k = ω·(η+2)+k` with the
-       pointed core formula; the final `+1` is that of the convention.  The extra cost of the
-       fallback is the core premise, not the quantifiers: the block costs `k` in both.
+       `BoundedFormulaω.qrank_relabel`; at the pin, signatures checked); `relabel` yields the bound
+       index `k + 0` while `existsBlock` expects `0 + k`, so a cast along `k + 0 = 0 + k`, to be
+       shown rank-preserving, is part of the construction.  As `ω·η + (ρ + k) = (ω·η + ρ) + k`,
+       translating before or after the closure gives the same rank: `ω·η + ω + k = ω·(η+1)+k` with
+       the isolating formula and `ω·η + ω·2 + k = ω·(η+2)+k` with the pointed core formula; the
+       final `+1` is that of the convention.  The extra cost of the fallback is the core premise,
+       not the quantifiers: the block costs `k` in both.
 
      Neither bound is identified with a recognition level (targets 1 and 2), with the Scott height
      or the stabilization ordinal, or with atomicity (B3.2); no first-order atomicity of the base
      reduct is asserted.  A bound on the internal Scott rank is not itself a recognition level: the
      countably infinite set in the language with no relations has internal Scott rank `1`
      (`internalScottRank_pureSet`, at the pin, signatures checked) and is recognized at no finite
-     level (the one-sided rank comparison below; a claim not formalized upstream), and the classical
-     comparison `stabilizationOrdinal ≤ internalScottRank + ω` is not formalized upstream.  For
-     recognition of a supplied model (target 2), the valid chain runs through its Scott sentence
-     `σ`, not through orbit ranks: when `D_η` contains a second class,
-     `η < stabilizationOrdinal ≤ qrank σ`, the first inequality by the one-sided rank comparison
-     below, the second by `BFEquiv_implies_agreeQR` and the characterization by `σ`, as in target 2
-     (to be proved).  Strict and non-strict bounds are kept apart as in B3.3 (`≤ ω`, not `< ω`):
-     strict bounds `orbitRank a < β` for every tuple give `internalScottRank ≤ β`, non-strict bounds
-     `orbitRank a ≤ β` give only `≤ β + 1`, and no bound is asserted to be attained.
+     level (the one-sided rank comparison below), while classically, for a countable structure `M`
+     in a relational language with countably many relation symbols,
+     `Ordinal.lift (stabilizationOrdinal M) ≤ internalScottRank M + ω`, with the stabilization
+     ordinal lifted to the universe of the carrier; the recognition claim for the pure set and this
+     classical comparison are not formalized upstream.  For recognition of a supplied model (target
+     2), the valid chain runs through its Scott sentence `σ`, not through orbit ranks: when `D_η`
+     contains a second class, `η < stabilizationOrdinal ≤ qrank σ`, the first inequality by the
+     one-sided rank comparison below, the second by `BFEquiv_implies_agreeQR` and the
+     characterization by `σ`, as in target 2 (to be proved).  Strict and non-strict bounds are kept
+     apart as in B3.3 (`≤ ω`, not `< ω`): strict bounds `orbitRank a < β` for every tuple give
+     `internalScottRank ≤ β`, non-strict bounds `orbitRank a ≤ β` give only `≤ β + 1`, and no bound
+     is asserted to be attained.
 
   **Completion criterion.**  Each row is a bounded checkpoint, complete when its formula is
   constructed for the concrete objects of the construction (the chart predicates at `λ_η`, the
