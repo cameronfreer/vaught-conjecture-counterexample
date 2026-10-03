@@ -57,7 +57,7 @@ tail at `η` is the set of classes in no `Q α` with `α < η`
 
 ## InfinitaryLogic's rank tails and least levels
 
-The statements about ranks and least levels are quotations of InfinitaryLogic's
+The results about ranks and least levels are proved as quotations of InfinitaryLogic's
 `OrdinalCountability` (at the pin), with the statements kept in the form used here.
 
 * `Filtration.ofRank` has domain `InfinitaryLogic.rankTail r`, each field one lemma of
@@ -67,20 +67,21 @@ The statements about ranks and least levels are quotations of InfinitaryLogic's
 * `leastLevel Q` is by definition InfinitaryLogic's `InfinitaryLogic.leastLevel` of the family
   restricted to levels below `ω₁` (`leastLevel_eq_leastLevel_inter`), and under the cover it is
   InfinitaryLogic's least level of `Q` itself (`leastLevel_eq_leastLevel_of_cover`).
-  InfinitaryLogic's is `sInf {α | x ∈ Q α}` with the global cover `(⋃ α < ω₁, Q α) = univ`; ours
-  is `sInf {α | α < ω₁ ∧ x ∈ Q α}` with the pointwise cover `∀ x, ∃ α, α < ω₁ ∧ x ∈ Q α`
-  (`biUnion_lt_omega_one_eq_univ`).  They differ only at a point with a level at or above `ω₁` and
-  none below, where ours is `0`; ours is always below `ω₁`.  The examples at the end of this file
-  record the boundary, the degenerate cases, and the equality of `Filtration.ofCountableCover`
-  with the filtration by InfinitaryLogic's least level (by `Filtration.ext`, not by definition).
+  InfinitaryLogic's is `sInf {α | x ∈ Q α}` with the global cover `(⋃ α < ω₁, Q α) = univ`;
+  `leastLevel` is `sInf {α | α < ω₁ ∧ x ∈ Q α}` with the pointwise cover
+  `∀ x, ∃ α, α < ω₁ ∧ x ∈ Q α` (`biUnion_lt_omega_one_eq_univ`).  They differ only at a point with
+  a level at or above `ω₁` and none below, where `leastLevel` is `0`; `leastLevel` is always below
+  `ω₁`.  The examples at the end of this file record the levels at or above `ω₁`, the degenerate
+  cases, and the equality of `Filtration.ofCountableCover` with the filtration by
+  InfinitaryLogic's least level (by `Filtration.ext`, not by definition).
 
 Kept here, with no counterpart in InfinitaryLogic: the structure `Filtration` and
 `Filtration.ext`, `Filtration.core` and `Filtration.mem_core_iff`.  The structure is the
 hypothesis of the counting theorem with a countable persistent core
 (`Filtration.mk_eq_aleph_one_of_separation` of `VaughtConjecture.Counting.Separation`), which
 allows a nonempty core; InfinitaryLogic's `InfinitaryLogic.mk_eq_aleph_one_of_domains` requires
-every point to leave some domain.  The boundary `α < ω₁` inside `leastLevel` is kept so that the
-least level is below `ω₁` with no hypothesis.
+every point to leave some domain.  The restriction `α < ω₁` inside `leastLevel` is kept so that
+the least level is below `ω₁` with no hypothesis.
 
 ## Indexing
 
@@ -220,7 +221,8 @@ InfinitaryLogic's `InfinitaryLogic.rankTail r η` by definition. -/
 theorem domain_ofRank (η : Ordinal.{0}) : (ofRank r hr hfib hX).domain η = {x | η ≤ r x} :=
   rfl
 
-/-- A quotation of InfinitaryLogic's `InfinitaryLogic.mem_rankTail` (at the pin). -/
+/-- A class lies in the domain of the filtration by a rank at `η` exactly when its rank is at
+least `η`.  A quotation of InfinitaryLogic's `InfinitaryLogic.mem_rankTail` (at the pin). -/
 @[simp]
 theorem mem_domain_ofRank {η : Ordinal.{0}} {x : X} :
     x ∈ (ofRank r hr hfib hX).domain η ↔ η ≤ r x :=
@@ -253,22 +255,23 @@ This is by definition InfinitaryLogic's `InfinitaryLogic.leastLevel` of the fami
 levels below `ω₁`, `fun α ↦ {x | α < ω₁ ∧ x ∈ Q α}` (`leastLevel_eq_leastLevel_inter`).  The two
 conventions differ as follows.
 
-* InfinitaryLogic's least level is `sInf {α | x ∈ Q α}`, over all ordinals, and its lemmas assume
-  the global cover `(⋃ α < ω₁, Q α) = univ`.
-* Ours is `sInf {α | α < ω₁ ∧ x ∈ Q α}`, so it is below `ω₁` with no hypothesis (an example at
-  the end of this file), and its lemmas assume the pointwise cover
-  `∀ x, ∃ α, α < ω₁ ∧ x ∈ Q α`, equivalent to the global one (`biUnion_lt_omega_one_eq_univ`).
+* InfinitaryLogic's least level is `sInf {α | x ∈ Q α}`, over all ordinals.  Its lemmas assume
+  the global cover `(⋃ α < ω₁, Q α) = univ`, except `InfinitaryLogic.leastLevel_le_of_mem` and
+  `InfinitaryLogic.leastLevel_mem_of_exists`, which assume none.
+* `leastLevel` is `sInf {α | α < ω₁ ∧ x ∈ Q α}`, so it is below `ω₁` with no hypothesis (an
+  example at the end of this file), and the lemmas below assume the pointwise cover
+  `∀ x, ∃ α, α < ω₁ ∧ x ∈ Q α`, which gives the global one (`biUnion_lt_omega_one_eq_univ`).
 * They differ exactly at a point with a level at or above `ω₁` and none below: if
-  `Q α = univ` for `ω₁ ≤ α` and `Q α = ∅` below, ours is `0` and InfinitaryLogic's is `ω₁`.  Under
-  the cover they are equal (`leastLevel_eq_leastLevel_of_cover`), so every lemma below with a
-  covering hypothesis is a quotation of InfinitaryLogic's. -/
+  `Q α = univ` for `ω₁ ≤ α` and `Q α = ∅` below, `leastLevel` is `0` and InfinitaryLogic's is
+  `ω₁`.  Under the cover they are equal (`leastLevel_eq_leastLevel_of_cover`), so every lemma below
+  with a covering hypothesis is a quotation of InfinitaryLogic's. -/
 noncomputable def leastLevel (Q : Ordinal.{0} → Set X) (x : X) : Ordinal.{0} :=
   sInf {α | α < ω₁ ∧ x ∈ Q α}
 
 variable {Q : Ordinal.{0} → Set X}
 
-/-- Our least level is InfinitaryLogic's `InfinitaryLogic.leastLevel` of the family restricted
-to levels below `ω₁`, by definition. -/
+/-- The least level `leastLevel Q` is InfinitaryLogic's `InfinitaryLogic.leastLevel` of the
+family restricted to levels below `ω₁`, by definition. -/
 theorem leastLevel_eq_leastLevel_inter (Q : Ordinal.{0} → Set X) :
     leastLevel Q = InfinitaryLogic.leastLevel fun α ↦ {x | α < ω₁ ∧ x ∈ Q α} :=
   rfl
@@ -281,19 +284,21 @@ theorem biUnion_lt_omega_one_eq_univ (hcover : ∀ x, ∃ α, α < ω₁ ∧ x �
 
 /-- For a cover by the sets `Q α` with `α < ω₁`, the least level of `x` is a countable ordinal
 `α` with `x ∈ Q α`.  A quotation of InfinitaryLogic's `InfinitaryLogic.leastLevel_mem_of_exists`
-(at the pin) for the family restricted to levels below `ω₁`. -/
+(at the pin) for the family restricted to levels below `ω₁`, through the definitional equality
+`leastLevel_eq_leastLevel_inter`. -/
 theorem leastLevel_lt_and_mem (hcover : ∀ x, ∃ α, α < ω₁ ∧ x ∈ Q α) (x : X) :
     leastLevel Q x < ω₁ ∧ x ∈ Q (leastLevel Q x) :=
   InfinitaryLogic.leastLevel_mem_of_exists (Q := fun α ↦ {x | α < ω₁ ∧ x ∈ Q α}) (hcover x)
 
 /-- The least level of `x` is at most every countable level of a set `Q α` containing `x`.  A
 quotation of InfinitaryLogic's `InfinitaryLogic.leastLevel_le_of_mem` (at the pin) for the family
-restricted to levels below `ω₁`. -/
+restricted to levels below `ω₁`, through the definitional equality
+`leastLevel_eq_leastLevel_inter`. -/
 theorem leastLevel_le {α : Ordinal.{0}} {x : X} (hα : α < ω₁) (hx : x ∈ Q α) :
     leastLevel Q x ≤ α :=
   InfinitaryLogic.leastLevel_le_of_mem (Q := fun α ↦ {x | α < ω₁ ∧ x ∈ Q α}) ⟨hα, hx⟩
 
-/-- **Our least level is InfinitaryLogic's under the cover.**  For a cover by the sets `Q α` with
+/-- **The least level is InfinitaryLogic's under the cover.**  For a cover by the sets `Q α` with
 `α < ω₁`, `leastLevel Q` is InfinitaryLogic's `InfinitaryLogic.leastLevel Q`: each is at most the
 other, by `InfinitaryLogic.leastLevel_le_of_mem` and `leastLevel_le`. -/
 theorem leastLevel_eq_leastLevel_of_cover (hcover : ∀ x, ∃ α, α < ω₁ ∧ x ∈ Q α) :
@@ -351,7 +356,7 @@ end Filtration
 
 end Rank
 
-/-! ### Examples: the boundary at `ω₁` and the degenerate cases -/
+/-! ### Examples: levels at or above `ω₁` and the degenerate cases -/
 
 section Examples
 
@@ -374,15 +379,15 @@ example {X : Type u} (Q : Ordinal.{0} → Set X) (hQ : ∀ α, α < ω₁ → (Q
   Filtration.ext fun η _ ↦ (Filtration.domain_ofCountableCover η).trans
     (rankTail_leastLevel Q (biUnion_lt_omega_one_eq_univ hcover) η).symm
 
-/-- Our least level is below `ω₁` with no covering hypothesis. -/
+/-- The least level `leastLevel Q` is below `ω₁` with no covering hypothesis. -/
 example {X : Type u} (Q : Ordinal.{0} → Set X) (x : X) : leastLevel Q x < ω₁ := by
   rcases {α | α < ω₁ ∧ x ∈ Q α}.eq_empty_or_nonempty with h | h
   · rw [leastLevel, h, Ordinal.sInf_empty]
     exact Ordinal.omega_pos 1
   · exact (csInf_mem h).1
 
-/-- **The boundary at `ω₁`.**  For a family whose levels are all at or above `ω₁`, our least
-level is `0` and InfinitaryLogic's is `ω₁`: there is no cover below `ω₁`. -/
+/-- **Levels at or above `ω₁`.**  For a family whose levels are all at or above `ω₁`,
+`leastLevel` is `0` and InfinitaryLogic's least level is `ω₁`: there is no cover below `ω₁`. -/
 example : leastLevel (fun α ↦ {_u : Unit | ω₁ ≤ α}) () = 0 ∧
     InfinitaryLogic.leastLevel (fun α ↦ {_u : Unit | ω₁ ≤ α}) () = ω₁ := by
   refine ⟨?_, csInf_Ici⟩

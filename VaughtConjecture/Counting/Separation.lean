@@ -49,10 +49,10 @@ uncountability hypothesis.  These three are quotations of InfinitaryLogic's
 for a cover, the least level `InfinitaryLogic.leastLevel`; the counting theorems above, which
 allow a nonempty persistent core, have no counterpart there.
 
-Examples close the file: the tail filtration of the countable
-ordinals satisfies every hypothesis, and adjoining a persistent summand of size `2 ^ ℵ₁` keeps every
-filtration axiom but not the cardinality, so the countable-core hypothesis cannot be dropped; an
-empty type and a countable type are the degenerate cases of the counts by a rank and a cover.
+Examples close the file: the tail filtration of the countable ordinals satisfies every
+hypothesis, and adjoining a persistent summand of size `2 ^ ℵ₁` keeps every filtration axiom but
+not the cardinality, so the countable-core hypothesis cannot be dropped; an empty type and a
+countable type are the degenerate cases of the counts by a rank and a cover.
 
 ## References
 
@@ -175,10 +175,11 @@ section Rank
 variable {X : Type u} {r : X → Ordinal.{0}}
 
 /-- **Exactly `ℵ₁` classes from a rank on an uncountable type**: a rank into the countable
-ordinals with countable fibres on an uncountable type.  The filtration by the rank has an empty
-persistent core (`Filtration.core_ofRank`), so no Scott separation on the core is needed.  A
-quotation of InfinitaryLogic's `InfinitaryLogic.mk_eq_aleph_one_of_countable_fibers` (at the
-pin). -/
+ordinals with countable fibres on an uncountable type.  A quotation of InfinitaryLogic's
+`InfinitaryLogic.mk_eq_aleph_one_of_countable_fibers` (at the pin): the tails of the rank have
+countable complements below `ω₁` and every class leaves the tail just above its rank, which gives
+`#X ≤ ℵ₁`, and uncountability gives `ℵ₁ ≤ #X`.  Neither the filtration nor Scott separation is
+used. -/
 theorem mk_eq_aleph_one_of_rank (hr : ∀ x, r x < ω₁)
     (hfib : ∀ α, α < ω₁ → {x | r x = α}.Countable) (hX : ¬ Countable X) : #X = ℵ₁ :=
   InfinitaryLogic.mk_eq_aleph_one_of_countable_fibers r hr (fun α hα ↦ (hfib α hα).to_subtype) hX
