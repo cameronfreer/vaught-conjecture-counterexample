@@ -22,7 +22,9 @@ the last; its **private face** is taken along `Fin.castSuccEmb` and its **donor 
 cells whose scope contains its last point.
 
 * A **gated extension** of `P` over `f` with donor `d` (`StageType.GatedExtension P f d`) is a
-  legal stage type, the **display**, on `n + 1` points whose two faces are literally `P` and `d`,
+  legal stage type, the **display**, on `n + 1` points whose two faces are literally `P` and `d`
+  (the display of the roadmap is the labelling of the constructed scheme; here it is that scheme
+  with that labelling, as a stage type),
   together with two cells: the **gate**, of graded index `(univ, n)` (full scope, grade the private
   arity `n`), and the **cap**, of graded index `(univ.map Fin.castSuccEmb, n)` (the private cap,
   full scope on the private points).  The other cells of graded index `(univ, n)`, the **twins** of
@@ -34,7 +36,10 @@ cells whose scope contains its last point.
 * The donor is **anchored** in `P` below a cell `C` (`StageType.IsAnchored P C d`) when every
   new donor cell whose label is neither `⊥` nor at least `P.label C` is labelled
   `vr_n(P.label z, i)` (`Label.visibilityReplace n i`) for some cell `z` of `P` (its **anchor**)
-  and some `i ≤ n`.  An anchor may be self-visible at `n` or lie above `C`.  This is exactly
+  and some `i ≤ n`.  The anchor may be self-visible at `n`, and `i = n` is allowed.  When `C` has
+  grade `n`, as in `HasGatedPinnedExtensions`, its label is self-visible at `n`, so the anchor of
+  a donor label below `P.label C` is itself labelled below `P.label C`
+  (`Label.le_visibilityReplace_of_le`).  This is exactly
   what the readings of the gate force: a gated extension whose cap carries the label of `C` has an
   anchored donor (`GatedExtension.isAnchored`).
 * The **gated pinned extension property** at stage `α` (`StageType.HasGatedPinnedExtensions α`)
@@ -44,13 +49,14 @@ cells whose scope contains its last point.
 
 `HasGatedPinnedExtensions` is a **named hypothesis**, in the pattern of
 `StageType.HasCoatomExtensions`, not a theorem, and nothing here claims it.  The legality of a
-gated extension contains an exact pinned extension of a face of `P` over the root (the restriction
-to the last coatom of a chain of faces from the root with the new point to the whole set, by
-accessibility of plans and completeness) and a full-scope layer of grade `n` in which the gate and
-its twins are controlled.  The planned derivation, from `HasCoatomExtensions` for the coatom
-extensions of the chain before the last, as in `StageType.exists_pinned_extension`, together with
-a gated form of the last coatom extension, is prospective.  No gated extension is exhibited here:
-the abstract schemes of `VaughtConjecture.Extension.GateExamples` carry no legality.
+gated extension contains (an analysis, not compiled here) an exact pinned extension of a face of
+`P` over the root (the restriction to the last coatom of a chain of faces from the root with the
+new point to the whole set, by accessibility of plans and completeness) and a full-scope layer of
+grade `n` in which the gate and its twins are controlled.  The planned derivation, from
+`HasCoatomExtensions` for the coatom extensions of the chain before the last, as in
+`StageType.exists_pinned_extension`, together with a gated form of the last coatom extension, is
+prospective.  No gated extension is exhibited here: the abstract schemes of
+`VaughtConjecture.Extension.GateExamples` carry no legality.
 
 ## Placement
 
@@ -111,9 +117,9 @@ face `f` of `P` with restriction `p`, every legal one-point coface `d` of `p`, a
 is a gated extension of `P` over `f` with donor `d` whose cap carries the label of `C`.
 
 This is an existence statement, a hypothesis and not a theorem: it is still to be proved.  The
-legality of the display contains an exact pinned extension of a face of `P` over the root and a
-controlled full-scope layer of grade `n`; the planned derivation from `HasCoatomExtensions` and a
-gated last coatom extension is prospective. -/
+legality of the display contains (an analysis, not compiled here) an exact pinned extension of a
+face of `P` over the root and a controlled full-scope layer of grade `n`; the planned derivation
+from `HasCoatomExtensions` and a gated last coatom extension is prospective. -/
 def HasGatedPinnedExtensions : Prop :=
   ∀ {n m : ℕ} (P : StageType.{u} α n) (f : Fin m ↪ Fin n) (p : StageType.{u} α m)
     (d : StageType.{u} α (m + 1)) (C : Fin P.card),
@@ -159,6 +165,8 @@ theorem isAnchored_of_isGate {P : StageType.{u} α n} {f : Fin m ↪ Fin n}
   have heQ : e ∈ Q.toCellScheme.visible (Set.range (extendByLast f)) :=
     Scheme.mem_visibleCells.mp (Q.cellMap_mem _ j)
   have heP : e ∉ Q.toCellScheme.visible (Set.range Fin.castSuccEmb) := fun h ↦ by
+    -- The scope of a cell of the donor face is the preimage of the scope of its cell
+    -- (`Scheme.comap_scope`, by definition).
     have hj' : Fin.last m ∈ (Q.toCellScheme.scope e).preimage (extendByLast f)
         (extendByLast f).injective.injOn := hj
     have hlast : Fin.last n ∈ Q.toCellScheme.scope e := by
@@ -176,6 +184,7 @@ theorem isAnchored_of_isGate {P : StageType.{u} α n} {f : Fin m ↪ Fin n}
       exact hz
     obtain ⟨z', hz'⟩ := hz'
     refine ⟨z', i, hG ▸ hi, ?_⟩
+    -- The labels of the faces `d` and `P` are the labels of their cells (`comap_label`).
     change Q.label e = visibilityReplace n i (Q.label (Q.cellMap Fin.castSuccEmb z'))
     rw [hz']
     rw [hG] at hwe
