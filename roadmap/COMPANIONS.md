@@ -333,8 +333,9 @@ witnesses, by the factorization of tuples), the isomorphism between them extends
 of `M`, and every automorphism of an `L^h_λ`-structure is an automorphism of its `L_λ`-reduct.  Only
 this direction is used.  The converse holds for a realization with its definitional expansion
 (`HULL_ALGEBRA.md`, §5), and for `M` once the reconstruction roundtrip (`SEMANTIC_CONTRACT.md`, item
-11) identifies its operations with the definable hull operations of the reconstructed realization;
-it is not used.
+11) identifies its operations with the definable hull operations of the reconstructed realization
+(compiled for structures covered by top-free charts, `toHullStructure_reconstruct` with
+`Realization.realize_graphFormula_iff`); it is not used.
 
 **Instantiation.**  The top-free witness at block `ξ`, as a structure in the stage chart
 language at `λ_ξ`.
@@ -667,6 +668,27 @@ These are statements still to be proved.  None is an input to the main theorem.
   for its terminal exact age, the first special statement there, which is not part of terminal
   refinement) nor full-presentation coverage; a full-presentation proof that does not depend on
   conditions 3 and 4 must cover every class, a persistent class included, by its own argument.
+
+  **An alternative route to the lower bound** (prospective; a reading of statements recorded
+  elsewhere, each still to be proved, and not restated here).  The lower bound can also be read
+  along one chain: (i) charts of every fixing rank (the **fixing rank** of a stage type at `λ_η` is
+  the least `ξ ≤ η` such that its reduction to `λ_ξ` changes no label; it is not a Scott rank), from
+  finite data ("Quantitative reconstruction", below, "Fixing ranks of finite charts" and "Charts of
+  every fixing rank"; no termination used); (ii) for each such chart, a model in which it occurs as
+  an actual chart, a model **seeded** by the chart (expected to need, like the top-free witnesses,
+  the coatom extension property `StageType.HasCoatomExtensions` and the cap-to-model theorem; no
+  termination used); (iii) hence fixing ranks of realized charts cofinal in `ω₁` (no termination
+  used); (iv) noncollapse: uncountably many classes, by the many-to-many form of the bounded-levels
+  criterion (`README.md`, "Reduction to full presentations", "Bounded levels"), from a bound, for
+  each class, on the fixing ranks of the charts realized in all presentations of that class.  The
+  bound of (iv) is the only place where termination can enter.  Taken from eventual departure (1
+  above), it uses conditions 3 and 4 with a Scott sentence for each class, and not global
+  termination.  Read off a full presentation of every class, it uses full-presentation coverage,
+  hence global termination (`README.md`, "The persistent core"), which is then a stated hypothesis.
+  Nonempty domains alone do not replace (iv) ("Nonempty domains with an empty persistent core",
+  above).  The termination-free expansion-domain route, whose lower bound is condition 4, remains
+  the default (the first endpoint, `README.md`, "Endpoints and shared foundations"), and the count
+  does not use this chain.
 * **Quantitative reconstruction** (prospective: a companion pathway of bounded checkpoints, not a
   prerequisite of the main theorem by either route; it is used by neither route).  It asks for
   explicit base-language syntax for the expansions recovered by higher-stage reconstruction
@@ -988,6 +1010,16 @@ These are statements still to be proved.  None is an input to the main theorem.
   with a Scott rank.  At a limit `η` the supremum is not attained, a statement to be proved with the
   others: a finite chart has finitely many proper labels, all below `λ_η`, and since `λ` is
   continuous at limits each lies below some `λ_ξ` with `ξ < η`, so its fixing rank is below `η`.
+
+  *Charts of every fixing rank* (a finite target, still to be proved, with the definitions of the
+  preceding item).  On one fixed legal scheme on one point (a domain of arity one, in the sense of
+  [Kni26, Definition 2.6.1]), for every countable `ξ` there is a lawful labelling of fixing rank
+  exactly `ξ + 1`: a legal stage type at `λ_η` for every `η > ξ`, with every proper label below
+  `λ_{ξ+1}` and one at least `λ_ξ`.  It concerns finite data only and is proved before any model is
+  constructed.  It supplies explicit witnesses of high fixing rank for the lower bound, with no use
+  of any property of models (the strict decrease of the domains, or termination).  Special cases
+  to be compiled with it: `ξ = 0`, `ξ = ω`, and `ξ` a limit.  Like the fixing rank itself, it says
+  nothing about Scott ranks.
 
   **Completion criterion.**  Each row is a bounded checkpoint, complete when its formula is
   constructed for the concrete objects of the construction (the chart predicates at `λ_η`, the
