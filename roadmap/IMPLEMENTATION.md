@@ -862,7 +862,8 @@ named (`README.md`, Layer 0):
     `mk_le_aleph_one_of_countable_fibers`, `mk_eq_aleph_one_of_countable_fibers`, `leastLevel`,
     `countable_fibers_leastLevel`, and `rankTail_leastLevel`, with `mk_le_aleph_one_of_domains`
     split out of the earlier theorems, beside the earlier `countable_iff_rank_bounded` (the
-    interface "ranks with countable fibres", listed as prospective before this repin); the
+    interface "ranks with countable fibres", listed as prospective before the repin to
+    `def5cc0`); the
     statements of `Counting/Filtration` and `Counting/Separation` are candidates for one-line
     quotation of these, subject to the audit recorded in "Placement record";
   - graded matching (#152, `Scott/GradedMatching`, `bfEquiv_of_gradedSystem` and
@@ -871,12 +872,13 @@ named (`README.md`, Layer 0):
     `α ≤ height` only `BFEquiv α` pairs (a generic form of the graded back-and-forth theorem of
     `README.md`, Layer 0, whose initial match is a pair related at the height, `α = height`).
 
-  Between `def5cc0` and `cf80917` there are five merges, available at the pin (signatures checked;
-  `SuggestedInterfaces.lean` `#check`s the new statements; no application compiled in this
-  repository except that of the moved `Perfect.mk_eq_continuum` in `MainTheorem/Scatteredness`):
+  Between `def5cc0` and `cf80917` there are five merges, available at the pin (signatures checked,
+  except the five names marked below; `SuggestedInterfaces.lean` `#check`s the statements named
+  here, except the companions noted; no application compiled in this repository except that of the
+  moved `Perfect.mk_eq_continuum` in `MainTheorem/Scatteredness`):
   - placement of the isomorphism-transport lemmas (#151): `SameAtomicType.map_equiv` now in
     `Scott/AtomicDiagram` and `BFEquiv.map_equiv` in `Scott/BFEquivRelabel`, below the Karp
-    modules; names and statements unchanged;
+    modules (signatures to be checked by CI); names and statements unchanged;
   - placement of the perfect-set cardinality (#154): `Perfect.mk_eq_continuum` (a nonempty perfect
     subset of a complete, second-countable metric space has the cardinality of the continuum)
     moved from `Descriptive/PerfectAntichain` to the topology-only module `Topology/Perfect`, same
@@ -886,11 +888,13 @@ named (`README.md`, Layer 0):
   - thinness from countably many back-and-forth classes at every level (#153,
     `Descriptive/BFScattered` and `Descriptive/BFScatteredSentence`): `BFScattered K` (for every
     `η < ω₁` the restriction of `CodeBFEquiv η` to `K` has countably many classes), with no
-    definability of `K`; `not_hasCantorAntichainOn_of_bfScattered`, for every relational language;
-    `isThinOn_of_bfScattered`, for countably many relation symbols; and
-    `Sentenceω.isThinOnNatModels_of_bfScattered`, through `bfEquivSetoid_eq_comap`; with
-    `codeBFEquivSetoid` and `MeasureTheory.AnalyticSet.offDiag`.  It is the generic form of the
-    scatteredness form of thinness, `isThinOn_of_countable_bfClasses` and
+    definability of `K`; `not_hasCantorAntichainOn_of_bfScattered`
+    (signatures to be checked by CI), for every relational language; `isThinOn_of_bfScattered`,
+    for countably many relation symbols; and `Sentenceω.isThinOnNatModels_of_bfScattered`, through
+    `bfEquivSetoid_eq_comap`; with `codeBFEquivSetoid`, and with the analyticity of the
+    off-diagonal of an analytic set in a Hausdorff space, `MeasureTheory.AnalyticSet.offDiag`
+    (signatures to be checked by CI).  It is the generic form of the scatteredness form of
+    thinness, `isThinOn_of_countable_bfClasses` and
     `isThinOnNatModels_of_countable_bfClasses` (`MainTheorem/Scatteredness`, Layer 6), which
     separate only closed antichains and declare their own `codeBFEquivSetoid` and
     `bfEquivSetoid_eq_comap`; these are candidates for one-line quotation, not absorbed here;
@@ -905,11 +909,11 @@ named (`README.md`, Layer 0):
     (`internalScottRank_le_of_infinitaryOrbitFormulas`), for the prospective base-reduct orbit-rank
     bounds (`COMPANIONS.md`, "Further companion results"); and a sentence, or a formula on `Fin 0`
     read as a sentence, of rank at most `β` that characterizes a countable `M` among the countable
-    structures in its carrier universe gives `StabilizesAt M β` and `stabilizationOrdinal M ≤ β`
-    (`stabilizesAt_of_sentence_rank`, `stabilizesAt_of_formula_rank`,
-    `stabilizationOrdinal_le_of_formula_rank`, and their companions), for the prospective
-    recognition of a supplied model (the same item); whole-model recognition through the empty tuple
-    only.
+    structures in its carrier universe gives `StabilizesAt M β` and `stabilizationOrdinal M ≤ β`:
+    `stabilizesAt_of_sentence_rank` (signatures to be checked by CI),
+    `stabilizesAt_of_formula_rank` and `stabilizationOrdinal_le_of_formula_rank` (the other
+    companions in `Scott/SentenceRecognition` are not `#check`ed), for the prospective recognition
+    of a supplied model (the same item); whole-model recognition through the empty tuple only.
 
   Toolchain and Mathlib are the same as at `8a15ca5` and `def5cc0`.  The imports are the narrow
   modules (`InfinitaryLogic.Scott.OrbitFormulaThreshold`,
@@ -951,9 +955,18 @@ named (`README.md`, Layer 0):
   must be built against the InfinitaryLogic revision pinned here, and the toolchain check of
   `scripts/check.sh` extends to ComputableModelTheory.
 
-**Available upstream, not yet available at our pinned dependency:** none at present.  A statement
-merged upstream after the pins above is listed here, named in prose only and never `#check`ed in
-the sketches, until a repin containing it is recorded in this subsection.
+**Available upstream, not yet available at our pinned dependency:** of InfinitaryLogic, at
+`5269617` (the merge of its pull request #157, after the pin `cf80917`; same toolchain and
+Mathlib), thinness from countable back-and-forth observations (`Descriptive/BFScattered`).  If for
+every `η < ω₁` a map `obs η` on a set `C` of codes has countable range and any two codes with the
+same observation are `CodeBFEquiv η`, then `C` is back-and-forth scattered
+(`bfScattered_of_countable_bfObservations`), carries no Cantor antichain for isomorphism, for every
+relational language (`not_hasCantorAntichainOn_of_countable_bfObservations`), and, for countably
+many relation symbols, is thin (`isThinOn_of_countable_bfObservations`).  The same merge moves
+`countable_quotient_of_countable_range` to `Descriptive/PerfectAntichain` (not used here).  Of
+ComputableModelTheory: none (its `main` is the pin `3a8f630`).  A statement merged upstream after
+the pins above is listed here, named in prose only and never `#check`ed in the sketches, until a
+repin containing it is recorded in this subsection.
 
 **Prospective dependencies (neither available upstream nor pinned):** the InfinitaryLogic statements
 listed under "The full-presentation route": invariant Borel observations, the isolating-level lower

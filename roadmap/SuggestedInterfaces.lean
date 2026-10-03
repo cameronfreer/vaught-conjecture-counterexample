@@ -514,8 +514,7 @@ set_option linter.hashCommand false in
 -- into countably many classes of `bfEquivSetoid φ η` (the restriction, `bfEquivSetoid_eq_comap`)
 -- at every level.  It serves the scatteredness form of thinness (`README.md`, Layer 6): it is the
 -- generic form of `isThinOn_of_countable_bfClasses` and `isThinOnNatModels_of_countable_bfClasses`
--- (`MainTheorem/Scatteredness`), which are not yet stated through it; no application of it is
--- compiled here.
+-- (`MainTheorem/Scatteredness`), which are not yet stated through it.
 set_option linter.hashCommand false in
 #check FirstOrder.Language.BFScattered
 set_option linter.hashCommand false in
@@ -546,7 +545,7 @@ set_option linter.hashCommand false in
 -- that characterizes a countable `M` among the countable structures in its carrier universe gives
 -- `StabilizesAt M β` and `stabilizationOrdinal M ≤ β`: the shape of the prospective recognition of
 -- a supplied model, through the empty tuple only.  Both serve the quantitative-reconstruction
--- pathway (`COMPANIONS.md`, "Further companion results"); no application is compiled here.
+-- pathway (`COMPANIONS.md`, "Further companion results").
 set_option linter.hashCommand false in
 #check FirstOrder.Language.orbitRank_le_lift_qrank_of_infinitaryOrbitFormula
 set_option linter.hashCommand false in
@@ -555,6 +554,27 @@ set_option linter.hashCommand false in
 #check FirstOrder.Language.stabilizesAt_of_formula_rank
 set_option linter.hashCommand false in
 #check FirstOrder.Language.stabilizationOrdinal_le_of_formula_rank
+
+-- Further names of the pin `cf80917` cited in `IMPLEMENTATION.md`, "Dependency pins"
+-- (signatures to be checked by CI; no application compiled in this repository).  Isomorphisms
+-- transport atomic types and back-and-forth equivalence of tuples (`SameAtomicType.map_equiv` in
+-- `Scott/AtomicDiagram`, `BFEquiv.map_equiv` in `Scott/BFEquivRelabel`, same statements as before
+-- their move).  The off-diagonal of an analytic set in a Hausdorff space is analytic, and a set of
+-- codes with countably many `CodeBFEquiv η`-classes at every level `η < ω₁` carries no Cantor
+-- antichain for isomorphism, for every relational language: the two steps of the thinness above
+-- before a complete metric is chosen.  A sentence `σ` of rank at most `β` that characterizes a
+-- countable `M` among the countable structures in its carrier universe gives `StabilizesAt M β`:
+-- the sentence form of the recognition above.
+set_option linter.hashCommand false in
+#check FirstOrder.Language.SameAtomicType.map_equiv
+set_option linter.hashCommand false in
+#check FirstOrder.Language.BFEquiv.map_equiv
+set_option linter.hashCommand false in
+#check MeasureTheory.AnalyticSet.offDiag
+set_option linter.hashCommand false in
+#check FirstOrder.Language.not_hasCantorAntichainOn_of_bfScattered
+set_option linter.hashCommand false in
+#check FirstOrder.Language.stabilizesAt_of_sentence_rank
 
 /- Proposed substantive targets (not declared as axioms or claimed proved here):
 
