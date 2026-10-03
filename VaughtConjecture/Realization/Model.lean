@@ -215,6 +215,13 @@ theorem IsModel.hasLegalTypes {α : Ordinal.{u}} {R : Realization.{u, v} α M} (
     R.HasLegalTypes :=
   hR.isLegal
 
+/-- Legal types are preserved by stage reduction (`StageType.IsLegal.reduce`). -/
+theorem HasLegalTypes.reduce {α β : Ordinal.{u}} {R : Realization.{u, v} α M}
+    (hR : R.HasLegalTypes) (hβ : Order.IsSuccPrelimit β) : (R.reduce hβ).HasLegalTypes :=
+  fun _ t p hp ↦ by
+    obtain ⟨q, hq, rfl⟩ := Option.map_eq_some_iff.mp hp
+    exact (hR t q hq).reduce hβ
+
 /-- A model at a positive stage has an occurrence of every arity: the empty face of any
 occurrence is closed, so the empty tuple is typed, and the dominance clause at `γ = 0` extends
 every occurrence by a new point. -/
@@ -360,9 +367,7 @@ stage of the construction is `ω`. -/
 theorem IsModel.reduce (hR : R.IsModel) (hα : Order.IsSuccPrelimit α) (hβ : Order.IsSuccLimit β)
     (hβα : β ≤ α) : (R.reduce hβ.isSuccPrelimit).IsModel where
   nonempty := hR.nonempty
-  isLegal _ t p hp := by
-    obtain ⟨p', hp', rfl⟩ := Option.map_eq_some_iff.mp hp
-    exact (hR.isLegal t p' hp').reduce _
+  isLegal := hR.hasLegalTypes.reduce _
   isConsistent := hR.isConsistent.reduce _
   isCovering := hR.isCovering.reduce _
   saturation := hR.reduce_saturation hα _
