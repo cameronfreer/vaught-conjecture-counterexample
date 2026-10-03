@@ -55,7 +55,7 @@ namespace AlignmentExamples
 /-! ### The reading cap must exceed the cap -/
 
 /-- The point `ω * b + n`, for natural numbers `b` and `n`. -/
-private noncomputable abbrev pt (b n : ℕ) : Label.{u} :=
+noncomputable abbrev pt (b n : ℕ) : Label.{u} :=
   ((ω * (b : Ordinal.{u}) + (n : Ordinal.{u}) : Ordinal.{u}) : Label.{u})
 
 /-- Points of blocks compare lexicographically. -/
@@ -82,27 +82,27 @@ private theorem isSuccPrelimit_block (b : ℕ) : Order.IsSuccPrelimit (ω * (b :
   Ordinal.isSuccPrelimit_iff_omega0_dvd.mpr (dvd_mul_right _ _)
 
 /-- The start of the block `6`, as a label. -/
-private noncomputable abbrev six : Label.{u} := ((ω * (6 : ℕ) : Ordinal.{u}) : Label.{u})
+noncomputable abbrev six : Label.{u} := ((ω * (6 : ℕ) : Ordinal.{u}) : Label.{u})
 
 /-- Every point of the block `6` is at least its start. -/
 private theorem six_le_pt {n : ℕ} : six.{u} ≤ pt 6 n :=
   WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr le_self_add)
 
 /-- The grades: `d = false` has grade `1`, the owner `o = true` grade `2`. -/
-private def stripGrade : Bool → ℕ := fun e ↦ if e then 2 else 1
+def stripGrade : Bool → ℕ := fun e ↦ if e then 2 else 1
 
 /-- The source, also the row of the owner: `(ω * 6 + 1, ω * 6 + 2)`. -/
-private noncomputable def stripSource : Bool → Label.{u} := fun e ↦ if e then pt 6 2 else pt 6 1
+noncomputable def stripSource : Bool → Label.{u} := fun e ↦ if e then pt 6 2 else pt 6 1
 
 /-- The prescription: `(ω * 9 + 1, ω * 9 + 2)`. -/
-private noncomputable def stripPrescription : Bool → Label.{u} :=
+noncomputable def stripPrescription : Bool → Label.{u} :=
   fun e ↦ if e then pt 9 2 else pt 9 1
 
 /-- The cap `ω * 3 + 2`. -/
-private noncomputable abbrev stripCap : Label.{u} := pt 3 2
+noncomputable abbrev stripCap : Label.{u} := pt 3 2
 
 /-- The witness of the ambient: bottom below `ω * 6`, the cap from there on. -/
-private noncomputable def stripAmbient (x : Label.{u}) : Label.{u} :=
+noncomputable def stripAmbient (x : Label.{u}) : Label.{u} :=
   open Classical in if x < six then ⊥ else stripCap
 
 /-- The shifter of the prescription: bottom below `ω * 6`, translation from `ω * 6` to `ω * 9`
