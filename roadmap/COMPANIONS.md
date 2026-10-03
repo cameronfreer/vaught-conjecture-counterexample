@@ -652,6 +652,136 @@ These are statements still to be proved.  None is an input to the main theorem.
   for its terminal exact age, the first special statement there, which is not part of terminal
   refinement) nor full-presentation coverage; a full-presentation proof that does not depend on
   conditions 3 and 4 must cover every class, a persistent class included, by its own argument.
+* **Quantitative reconstruction** (prospective: a companion pathway of bounded checkpoints, not a
+  prerequisite of the main theorem by either route; it is used by neither route).  It asks for
+  explicit base-language syntax for the expansions recovered by higher-stage reconstruction
+  (`README.md`, Layer 4, outputs 1–5), with bounds on its quantifier rank.  Each row of the table
+  below is a separate statement to be proved: **to construct the specified formula and prove that
+  its quantifier rank is at most the displayed ordinal**.  The rank is that of the particular
+  constructed syntax, in the library's convention (`BoundedFormulaω.qrank`, InfinitaryLogic, at the
+  pin, signatures checked); membership in a signed class (`IsSigmaIn`, `IsPiIn`) and membership in a
+  normal form (`IsSigmaInNF`, `IsPiInNF`) are separate claims, not asserted here.  A **contract** of
+  the pathway is one of these statements, or the transfer bound below, with its hypotheses fixed
+  with it.  Here `η` is a countable block index and the stage is `λ_η`; a **supplied expanded
+  model** is a countable base model together with its expansion to `λ_η`, of a coreless exact age
+  (top-free, residual, or hollow; `README.md`, Layer 4), and a **supplied `k`-coordinate core
+  model** is a countable base model together with its expansion to `λ_η`, of an exact age pointed
+  at a rigid core of `k` points, named by `k` coordinates.
+
+  | Statement (the formula to construct) | Bound (quantifier rank ≤) |
+  | --- | ---: |
+  | Definitions of the chart predicates at `λ_η` in the base language (pointed: formulas whose free variables are the chart's points) | `ω·η` |
+  | A sentence defining the expansion to `λ_η`, relative to base models | `ω·(η+1)` |
+  | An absolute Scott sentence for a supplied expanded model (of an exact age, top-free in particular) | `ω·(η+2)` |
+  | An absolute Scott sentence for a supplied `k`-coordinate core model | `ω·(η+2)+k` |
+
+  The second row is the syntactic transcription of "admits an expansion to `λ_η`" that A1 does not
+  claim: the sentence `δ_η` of A1 is assembled from Scott sentences of classes and carries no rank
+  bound.  The **domain guard** is the theorem that the sentence of the second row holds in a base
+  model exactly when that model admits a model expansion to `λ_η`.  **Successor substitution**
+  defines the chart predicates at `λ_{η+1}` by substituting the definitions at `λ_η` into formulas
+  recovering the labels of the next block (formulas of quantifier rank at most `ω` in the chart
+  predicates at `λ_η`, a bound that is part of the first row's statement), and **cofinal-limit
+  conjunction** defines them at a limit block by a conjunction along a cofinal sequence of lower
+  blocks.
+
+  **The central contract** (a theorem to be proved).  Let `σ` be a supplied expanded Scott sentence,
+  a sentence of the stage chart language at `λ_η` of quantifier rank at most `ρ` (for the last row,
+  the formula whose free variables are the `k` core coordinates).  Its **relative transfer** is the
+  base-language sentence (for the last row, formula) obtained by substituting the definitions of the
+  first row for the chart predicates of `σ` and conjoining the sentence of the second row.  Then
+  **qrank(relative transfer) ≤ max{ω·(η+1), ω·η + ρ}**: by induction on `σ`, substituting
+  definitions of rank at most `ω·η` is to add at most `ω·η`, on the left.  The table follows by
+  supplying the syntax bounds for each row: for the last two rows, a bound `ρ` on the expanded Scott
+  sentence, computed for the constructed syntax (if the optional normal form `IsPiInNF 2` of the
+  exact-age sentences of Layer 4 is constructed, `ρ ≤ ω·2` for the normalized formula by
+  `IsPiInNF.qrank_le`, and the transfer is then of the normalized formula, not of the original
+  syntax tree), together with the calculations below: the base-model conjunct for both rows, and the
+  `+k` calculation for the last.
+
+  1. **The `+k` row needs its own syntactic calculation.**  Forgetting parameters (InfinitaryLogic,
+     `Scott/ForgetParameters`, at the pin, signatures checked:
+     `exists_isSigmaIn_three_scottSentence_of_sigmaIn_one_orbits_over`, the generic existence of a
+     `Σ^in_3` Scott sentence from `Σ^in_1` orbits over parameters, through the existential closure
+     `existsTuple` and `existsTuple_isScott`) supplies the semantic mechanism only.  The rank
+     statement to prove is that existentially closing the `k` named coordinates adds at most `k` to
+     the bound.  One existential quantifier adds one to the rank (`qrank_existsLastVar`, at the pin,
+     signatures checked); the statement for the closure `existsTuple k` is to be proved.  Membership
+     in `Σ^in_3` gives no rank bound, and the normal form `IsSigmaInNF 3` gives only `ω·3`
+     (`IsSigmaInNF.qrank_le`).
+  2. **The base-model conjunct.**  The relative transfer is to isolate the supplied model only among
+     base models.  The passage from relative to absolute isolation must explicitly bound the
+     base-model conjunct: the base-theory conjunct (the density sentence `Φ`) and the
+     structure/realization correspondence (Layer 2: a base-language structure satisfies `Φ` exactly
+     when, read as a realization, it is a model) close that step.  The rank of the base-theory
+     conjunct is part of the statement to be proved, not assumed below the displayed ordinal; the
+     correspondence is the theorem that makes that conjunct suffice.
+
+  **Qualifications.**  The absolute Scott contracts (the last two rows) carry the countability and
+  fixed-carrier-universe qualifications of InfinitaryLogic's Scott theorems: they characterize the
+  supplied model among the countable structures in its carrier universe, as
+  `scottSentence_characterizes` (for a relational language with countably many relation symbols) and
+  `existsTuple_isScott` do (at the pin, signatures checked), not among structures of every
+  cardinality or in every universe (the characterization across universes is among the ingredients
+  of A3 to be located or added upstream).
+
+  **Non-claims** (the boundaries of the pathway):
+  - Definitions do not provide expansion existence; the domain guard is a separate theorem.
+  - Uniqueness does not provide defining formulas; successor substitution and cofinal-limit
+    conjunction construct them.
+  - Relative isolation is not an absolute Scott sentence; the base-theory conjunct and the
+    structure/realization correspondence supply that final step.
+  - These are syntax bounds, not optimal ranks and not height equalities (no identification with
+    Scott heights, stabilization ordinals or internal Scott rank — cf. the rank-filtration item).
+  - Global termination remains outside this pathway and outside the first endpoint (the main theorem
+    by the expansion-domain route).
+  - Every contract is to be proved here for this library's own definitions.
+
+  **Recognition and base-reduct orbit ranks** (three further companion targets, prospective and
+  explicitly unfinished; the hypotheses of each are fixed with its statement).  They are kept apart:
+  1. **Domain recognition** (distinct from recognition of a model): membership in `D_η` is invariant
+     under sufficiently high back-and-forth equivalence, that is, a countable base model
+     back-and-forth equivalent on the empty tuple, at a level to be determined, to a model of a
+     class in `D_η` lies in a class of `D_η`.  It is supported by the domain-defining sentence (the
+     second row), with the level to be determined.  A pointed statement is required for the chart
+     predicates (the first row), since they have free variables: tuples back-and-forth equivalent at
+     a level to be determined, in models of classes of `D_η`, satisfy the same chart predicates at
+     `λ_η`.
+  2. **Recognition of a supplied model**: sufficiently high back-and-forth equivalence to the
+     supplied model forces isomorphism.  It is supported by its Scott sentence (the last two rows);
+     the level is the sentence's rank in the library's convention.  Back-and-forth equivalence at
+     that level on the empty tuple carries the sentence across (`BFEquiv_implies_agreeQR`, for a
+     relational language), and the sentence characterizes the supplied model among the countable
+     structures in its carrier universe, in the form of `scottSentence_characterizes` (for a
+     relational language with countably many relation symbols; both at the pin, signatures checked).
+  3. **Base-reduct orbit-rank bounds**: bounds on the orbit ranks of tuples in the **base** reduct,
+     not in the stage chart language of Layer 4 and of B3.  Before any bound is stated, the
+     **parameter-free** orbit formulas (one for each tuple, with exactly the tuple's coordinates
+     free and no parameters), the **pointed** formulas over the named core, if there is one (with
+     the core as parameters, as in the library's `IsOrbitFormulaFamilyPointed`), and the rank
+     convention (`orbitRank` and `internalScottRank`, the supremum `⨆ a, orbitRank a + 1`, as in the
+     library, at the pin, signatures checked) are to be specified.  An unpointed Scott-sentence
+     bound is not automatically a bound for every tuple's orbit: a bound on the rank of a Scott
+     sentence of the base model is not, without a further argument, a bound on the orbit rank of
+     each tuple.  The numerical bound `≤ ω` of B3.3 alone does not transfer: translating the
+     stage-language orbit formulas into the base language and lifting base-reduct automorphisms
+     along the same bijection must both be proved (uniqueness of the expansion supplies the
+     transport argument for the lifting).
+
+  **Completion criterion.**  Each row is a bounded checkpoint, complete when its formula is
+  constructed for the concrete objects of the construction (the chart predicates at `λ_η`, the
+  expansion domains, the supplied model) and its rank bound is proved, under exactly its stated
+  hypotheses; the second row also needs the domain guard; the last two rows need the central
+  contract and the base-model calculation (2), and the last row also the `+k` calculation (1).  The
+  three targets have their own statements and are complete only when those are proved; no row is a
+  condition of any other milestone.
+
+  Related items: higher-stage reconstruction (`README.md`, Layer 4, outputs 1–5), whose expansions
+  the first two rows define; Layer 4 and B4 (orbit formulas in the stage chart language; the generic
+  existence of a Scott sentence is kept apart from the literal complexity of the exact-age
+  sentences); terminal refinement (above), which uses Scott sentences of countable quantifier rank
+  and no explicit bound on that rank; and the rank-filtration item (below), whose comparison these
+  syntax bounds do not give.
 * **Minimal unboundedness.**  `Φ` is minimally unbounded [Mon, Definition XII.4]: it is
   unbounded, but for every sentence `ψ` one of `Φ ∧ ψ` and `Φ ∧ ¬ψ` is bounded.  The second
   clause follows from the countable truth sides: one of `Φ ∧ ψ` and `Φ ∧ ¬ψ` has countably many
