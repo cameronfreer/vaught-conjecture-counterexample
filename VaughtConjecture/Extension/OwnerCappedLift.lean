@@ -91,6 +91,18 @@ the amalgam; no consistency of the other rows is assumed, and no lift from `(C, 
 contain the formal top and its lower labels may exceed the cap; the lift at every cap keeps the
 ambient observation at every cell below `Y`.
 
+**Short caps** (`CellScheme.Rows.CappedLiftAtShort`).  The source cap of the owner-local alignment
+is the visibility replacement at `j + 1` of a value of the source, which is short at `j + 1`, so
+the source cap is short at `j + 1` as well (`Label.isShort_visibilityReplace_self`).  The lift at
+the ambient `S` is therefore used only at caps short and self-visible at `j + 1`, and so is the
+extension from the boundary.  The variants whose positive-cap hypotheses are asked only at such
+caps are `CellScheme.Rows.hasOwnerCappedLifts_of_source_short`,
+`CellScheme.Rows.hasOwnerCappedLifts_of_rows_short`,
+`CellScheme.Rows.cappedLiftAtShort_of_boundary`,
+`CellScheme.Rows.hasOwnerCappedLifts_of_boundary_short`, and
+`CellScheme.Rows.cappedLift_of_boundary_short`; the owner-capped lifts and the one-grade lift above
+are derived from them.
+
 ## Placement
 
 Checkpoint 2.4 of the completion of the coatom extension construction (`roadmap/README.md`,
@@ -176,24 +188,43 @@ theorem CappedLift.cappedLiftAt {hXY : X ≤ Y} (hl : R.CappedLift hXY) {S : D.b
     (cappedLift_iff_forall_exists hXY).mp hl h hh f S hf hS fun e ↦ (hfS e).symm
   exact ⟨r, hr, hrf, hrS⟩
 
+/-- The rows **lift capped at the ambient `S` at the short caps** from `X` to `Y ≥ X`: the
+condition of `CellScheme.Rows.CappedLiftAt`, asked only at the caps `h` short at the grade of `Y`.
+The source caps of the owner-local alignment are such caps (`Label.isShort_visibilityReplace_self`),
+so the one-grade step needs the lift at the ambient only there. -/
+def CappedLiftAtShort (R : D.Rows.{u}) (hXY : X ≤ Y) (S : D.below Y → Label.{u}) : Prop :=
+  ∀ h : Label.{u}, IsSelfVisible Y.2 h → IsShort Y.2 h → ⊥ < h → ∀ f : D.below X → Label.{u},
+    R.IsLawfulBelow X f → (∀ e, f e ≠ ⊤) →
+    (∀ e, min (f e) h = min (S (Set.inclusion (D.below_mono hXY) e)) h) →
+    ∃ r : D.below Y → Label.{u}, R.IsLawfulBelow Y r ∧
+      (∀ e, r (Set.inclusion (D.below_mono hXY) e) = f e) ∧ ∀ d, min (r d) h = min (S d) h
+
+/-- A lift capped at the ambient `S` at every positive cap is in particular one at the short
+caps. -/
+theorem CappedLiftAt.cappedLiftAtShort {hXY : X ≤ Y} {S : D.below Y → Label.{u}}
+    (hl : R.CappedLiftAt hXY S) : R.CappedLiftAtShort hXY S :=
+  fun h hh _ hhb ↦ hl h hh hhb
+
 /-! ### Owner-capped lifts at a positive cap -/
 
-/-- **Owner-capped lifts at a positive cap, from a source.**  Let `C ⊆ B`, with finitely many cells
-below `(C, j + 1)`, and let `c` be self-visible at `j + 1` with `⊥ < c`.  Suppose that every `q`
-lawful below `(B, j + 1)` that is at least `c` at some cell of grade `j + 1` below `(B, j + 1)` has
-a source `S`: lawful below `(B, j + 1)`, short at `j + 1`, never the formal top, decoded to `q`
-capped at `c` by a witness `τ` bounded by grade `j + 1` with values at most `c`, and with capped
-lifts at the ambient `S` from `(C, j + 1)` to `(B, j + 1)`.  Then the rows have owner-capped lifts
-from `(C, j + 1)` to `(B, j + 1)` at `c`.  It is the positive-cap case of the one-grade step
-(`CellScheme.Rows.hasOwnerCappedLifts_of_rows`). -/
-theorem hasOwnerCappedLifts_of_source [Finite (D.below (C, j + 1))] (hCB : C ⊆ B)
+/-- **Owner-capped lifts at a positive cap, from a source, at the short caps.**  Let `C ⊆ B`, with
+finitely many cells below `(C, j + 1)`, and let `c` be self-visible at `j + 1` with `⊥ < c`.
+Suppose that every `q` lawful below `(B, j + 1)` that is at least `c` at some cell of grade `j + 1`
+below `(B, j + 1)` has a source `S`: lawful below `(B, j + 1)`, short at `j + 1`, never the formal
+top, decoded to `q` capped at `c` by a witness `τ` bounded by grade `j + 1` with values at most `c`,
+and with capped lifts at the ambient `S` from `(C, j + 1)` to `(B, j + 1)` at the caps short at
+`j + 1` (`CellScheme.Rows.CappedLiftAtShort`).  Then the rows have owner-capped lifts from
+`(C, j + 1)` to `(B, j + 1)` at `c`.  The lift at the ambient is used only at the source cap of the
+owner-local alignment, which is short at `j + 1`. -/
+theorem hasOwnerCappedLifts_of_source_short [Finite (D.below (C, j + 1))] (hCB : C ⊆ B)
     {c : Label.{u}} (hcbot : ⊥ < c) (hc : IsSelfVisible (j + 1) c)
     (hsrc : ∀ q : D.below (B, j + 1) → Label.{u}, R.IsLawfulBelow (B, j + 1) q →
       (∃ d : D.below (B, j + 1), D.grade d = j + 1 ∧ c ≤ q d) →
       ∃ (S : D.below (B, j + 1) → Label.{u}) (τ : Label.{u} → Label.{u}),
         R.IsLawfulBelow (B, j + 1) S ∧ (∀ d, IsShort (j + 1) (S d)) ∧ (∀ d, S d ≠ ⊤) ∧
         IsWitness (stepSuppressor (j + 1)) τ ∧ (∀ x, τ x ≤ c) ∧ (∀ d, τ (S d) = min (q d) c) ∧
-        R.CappedLiftAt (show ((C, j + 1) : Finset α × ℕ) ≤ (B, j + 1) from ⟨hCB, le_rfl⟩) S) :
+        R.CappedLiftAtShort (show ((C, j + 1) : Finset α × ℕ) ≤ (B, j + 1) from ⟨hCB, le_rfl⟩)
+          S) :
     R.HasOwnerCappedLifts hCB j c := by
   intro p q hp hq hag o ho hop hco
   set incl := Set.inclusion (D.below_mono
@@ -205,34 +236,56 @@ theorem hasOwnerCappedLifts_of_source [Finite (D.below (C, j + 1))] (hCB : C ⊆
   obtain ⟨S, τ, hS, hSshort, hStop, hτ, hτc, hτS, hSlift⟩ :=
     hsrc q hq ⟨incl o, congrArg Prod.snd ho, hqo⟩
   have hs : R.IsLawfulBelow (C, j + 1) (S ∘ incl) := hS.mono (X := (C, j + 1)) ⟨hCB, le_rfl⟩
-  obtain ⟨h, ρ, f, hhbot, hhvis, -, hρ, hf, hftop, hfcap, hfread, hρcap⟩ :=
+  obtain ⟨h, ρ, f, hhbot, hhvis, hhshort, -, hρ, hf, hftop, hfcap, hfread, hρcap⟩ :=
     hs.exists_alignedEncoding hp ho (fun _ ↦ hSshort _) (hStop _) hτ hτc
       (fun e ↦ (hτS _).trans (hag e)) hc hcbot hco
-  obtain ⟨r, hr, hrf, hrS⟩ := hSlift h hhvis hhbot f hf hftop hfcap
+  obtain ⟨r, hr, hrf, hrS⟩ := hSlift h hhvis hhshort hhbot f hf hftop hfcap
   have hamb (d : D.below (B, j + 1)) : min (ρ (r d)) c = min (q d) c := by
     rw [hρcap (r d) (S d) (hSshort d) (hrS d), hτS d, min_assoc, min_self]
   refine ⟨ρ ∘ r, hr.map_of_min_eq hq (fun d ↦ d.2.2) hρ hcbot.ne' hamb, fun e ↦ ?_, hamb⟩
   rw [Function.comp_apply, hrf e, hfread e]
 
-/-- **Owner-capped lifts at a positive cap, from the serving cells.**  Let `C ⊆ B`, with finitely
-many cells below `(C, j + 1)` and some cell of graded index `(B, j + 1)`, and let `c` be
-self-visible at `j + 1` with `⊥ < c`.  Suppose that the row of every cell `u` of graded index
-`(B, j + 1)` is lawful below `(B, j + 1)` (the consistency of the rows at `u`), short at `j + 1`,
-and never the formal top, and that the rows lift capped at the ambient given by that row from
-`(C, j + 1)` to `(B, j + 1)`.  Then the rows have owner-capped lifts from `(C, j + 1)` to
-`(B, j + 1)` at `c`.  The cell serving an ambient `q` is a cell of graded index `(B, j + 1)` where
-`q` is at least `c`, chosen by availability.  Of the hypothesis that the rows are never the formal
-top, only the value at the owner cell is used. -/
-theorem hasOwnerCappedLifts_of_rows [Finite (D.below (C, j + 1))] (hCB : C ⊆ B)
+/-- **Owner-capped lifts at a positive cap, from a source.**  Let `C ⊆ B`, with finitely many cells
+below `(C, j + 1)`, and let `c` be self-visible at `j + 1` with `⊥ < c`.  Suppose that every `q`
+lawful below `(B, j + 1)` that is at least `c` at some cell of grade `j + 1` below `(B, j + 1)` has
+a source `S`: lawful below `(B, j + 1)`, short at `j + 1`, never the formal top, decoded to `q`
+capped at `c` by a witness `τ` bounded by grade `j + 1` with values at most `c`, and with capped
+lifts at the ambient `S` from `(C, j + 1)` to `(B, j + 1)`.  Then the rows have owner-capped lifts
+from `(C, j + 1)` to `(B, j + 1)` at `c`: the case of
+`CellScheme.Rows.hasOwnerCappedLifts_of_source_short` with the lift at the ambient at every positive
+cap.  It is the positive-cap case of the one-grade step
+(`CellScheme.Rows.hasOwnerCappedLifts_of_rows`). -/
+theorem hasOwnerCappedLifts_of_source [Finite (D.below (C, j + 1))] (hCB : C ⊆ B)
+    {c : Label.{u}} (hcbot : ⊥ < c) (hc : IsSelfVisible (j + 1) c)
+    (hsrc : ∀ q : D.below (B, j + 1) → Label.{u}, R.IsLawfulBelow (B, j + 1) q →
+      (∃ d : D.below (B, j + 1), D.grade d = j + 1 ∧ c ≤ q d) →
+      ∃ (S : D.below (B, j + 1) → Label.{u}) (τ : Label.{u} → Label.{u}),
+        R.IsLawfulBelow (B, j + 1) S ∧ (∀ d, IsShort (j + 1) (S d)) ∧ (∀ d, S d ≠ ⊤) ∧
+        IsWitness (stepSuppressor (j + 1)) τ ∧ (∀ x, τ x ≤ c) ∧ (∀ d, τ (S d) = min (q d) c) ∧
+        R.CappedLiftAt (show ((C, j + 1) : Finset α × ℕ) ≤ (B, j + 1) from ⟨hCB, le_rfl⟩) S) :
+    R.HasOwnerCappedLifts hCB j c :=
+  hasOwnerCappedLifts_of_source_short hCB hcbot hc fun q hq hd ↦ by
+    obtain ⟨S, τ, hS, hSshort, hStop, hτ, hτc, hτS, hSlift⟩ := hsrc q hq hd
+    exact ⟨S, τ, hS, hSshort, hStop, hτ, hτc, hτS, hSlift.cappedLiftAtShort⟩
+
+/-- **Owner-capped lifts at a positive cap, from the serving cells, at the short caps.**  Let
+`C ⊆ B`, with finitely many cells below `(C, j + 1)` and some cell of graded index `(B, j + 1)`,
+and let `c` be self-visible at `j + 1` with `⊥ < c`.  Suppose that the row of every cell `u` of
+graded index `(B, j + 1)` is lawful below `(B, j + 1)`, short at `j + 1`, and never the formal top,
+and that the rows lift capped at the ambient given by that row from `(C, j + 1)` to `(B, j + 1)` at
+the caps short at `j + 1` (`CellScheme.Rows.CappedLiftAtShort`).  Then the rows have owner-capped
+lifts from `(C, j + 1)` to `(B, j + 1)` at `c`.  The cell serving an ambient `q` is a cell of
+graded index `(B, j + 1)` where `q` is at least `c`, chosen by availability. -/
+theorem hasOwnerCappedLifts_of_rows_short [Finite (D.below (C, j + 1))] (hCB : C ⊆ B)
     {c : Label.{u}} (hcbot : ⊥ < c) (hc : IsSelfVisible (j + 1) c)
     (hY : ∃ t, D.gradedIndex t = (B, j + 1))
     (hrow : ∀ u (hu : D.gradedIndex u = (B, j + 1)),
       R.IsLawfulBelow (D.gradedIndex u) (R.row u) ∧ (∀ d, IsShort (j + 1) (R.rowBelow u hu d)) ∧
       (∀ d, R.rowBelow u hu d ≠ ⊤) ∧
-      R.CappedLiftAt (show ((C, j + 1) : Finset α × ℕ) ≤ (B, j + 1) from ⟨hCB, le_rfl⟩)
+      R.CappedLiftAtShort (show ((C, j + 1) : Finset α × ℕ) ≤ (B, j + 1) from ⟨hCB, le_rfl⟩)
         (R.rowBelow u hu)) :
     R.HasOwnerCappedLifts hCB j c := by
-  refine hasOwnerCappedLifts_of_source hCB hcbot hc fun q hq ⟨d, hd, hcd⟩ ↦ ?_
+  refine hasOwnerCappedLifts_of_source_short hCB hcbot hc fun q hq ⟨d, hd, hcd⟩ ↦ ?_
   obtain ⟨t, ht⟩ := hY
   -- The serving cell: a cell of graded index `(B, j + 1)` where `q` is at least `c`.
   obtain ⟨u, hu, hle⟩ := (isLawfulBelow_iff_forall.mp (isLawfulBelow_extendBot.mpr hq)).2.2 d.1 t
@@ -242,6 +295,29 @@ theorem hasOwnerCappedLifts_of_rows [Finite (D.below (C, j + 1))] (hCB : C ⊆ B
   obtain ⟨hcons, hshort, htop, hlift⟩ := hrow u hu'
   obtain ⟨τ, hτ, hτc, hτS⟩ := exists_isWitness_rowBelow hu' hq hc (hcd.trans hle)
   exact ⟨R.rowBelow u hu', τ, isLawfulBelow_rowBelow hu' hcons, hshort, htop, hτ, hτc, hτS, hlift⟩
+
+/-- **Owner-capped lifts at a positive cap, from the serving cells.**  Let `C ⊆ B`, with finitely
+many cells below `(C, j + 1)` and some cell of graded index `(B, j + 1)`, and let `c` be
+self-visible at `j + 1` with `⊥ < c`.  Suppose that the row of every cell `u` of graded index
+`(B, j + 1)` is lawful below `(B, j + 1)` (the consistency of the rows at `u`), short at `j + 1`,
+and never the formal top, and that the rows lift capped at the ambient given by that row from
+`(C, j + 1)` to `(B, j + 1)`.  Then the rows have owner-capped lifts from `(C, j + 1)` to
+`(B, j + 1)` at `c` (`CellScheme.Rows.hasOwnerCappedLifts_of_rows_short`).  The cell serving an
+ambient `q` is a cell of graded index `(B, j + 1)` where `q` is at least `c`, chosen by
+availability.  Of the hypothesis that the rows are never the formal top, only the value at the
+owner cell is used. -/
+theorem hasOwnerCappedLifts_of_rows [Finite (D.below (C, j + 1))] (hCB : C ⊆ B)
+    {c : Label.{u}} (hcbot : ⊥ < c) (hc : IsSelfVisible (j + 1) c)
+    (hY : ∃ t, D.gradedIndex t = (B, j + 1))
+    (hrow : ∀ u (hu : D.gradedIndex u = (B, j + 1)),
+      R.IsLawfulBelow (D.gradedIndex u) (R.row u) ∧ (∀ d, IsShort (j + 1) (R.rowBelow u hu d)) ∧
+      (∀ d, R.rowBelow u hu d ≠ ⊤) ∧
+      R.CappedLiftAt (show ((C, j + 1) : Finset α × ℕ) ≤ (B, j + 1) from ⟨hCB, le_rfl⟩)
+        (R.rowBelow u hu)) :
+    R.HasOwnerCappedLifts hCB j c :=
+  hasOwnerCappedLifts_of_rows_short hCB hcbot hc hY fun u hu ↦
+    let ⟨hcons, hshort, htop, hlift⟩ := hrow u hu
+    ⟨hcons, hshort, htop, hlift.cappedLiftAtShort⟩
 
 /-! ### The boundary -/
 
@@ -329,6 +405,20 @@ theorem cappedLiftAt_of_boundary (hIU : I ≤ U) (hOU : O ≤ U) (hOV : O ≤ V)
     R.CappedLiftAt (hIU.trans hUY) S := fun h hh hhb _ hf _ hfS ↦
   exists_lift_of_boundary hIU hOU hOV hUY hVY hinter hleft hright hh hS (hext h hh hhb) hf hfS
 
+/-- **Lifts at the ambient of a serving cell, across the boundary, at the short caps.**  Under the
+hypotheses of `CellScheme.Rows.exists_lift_of_boundary`, if the rows extend from the boundary
+along `S` at every positive cap short and self-visible at the grade of `Y`, they lift capped at the
+ambient `S` from `I` to `Y` at the caps short at the grade of `Y`
+(`CellScheme.Rows.CappedLiftAtShort`).  These are the caps at which the one-grade step uses the
+lift at the ambient: the source caps of the owner-local alignment. -/
+theorem cappedLiftAtShort_of_boundary (hIU : I ≤ U) (hOU : O ≤ U) (hOV : O ≤ V) (hUY : U ≤ Y)
+    (hVY : V ≤ Y) (hinter : ∀ d ∈ D.below U, d ∈ D.below V → d ∈ D.below O)
+    (hleft : R.CappedLift hIU) (hright : R.CappedLift hOV) {S : D.below Y → Label.{u}}
+    (hS : R.IsLawfulBelow Y S)
+    (hext : ∀ h, IsSelfVisible Y.2 h → IsShort Y.2 h → ⊥ < h → R.ExtendsFromBoundary U V Y h S) :
+    R.CappedLiftAtShort (hIU.trans hUY) S := fun h hh hhs hhb _ hf _ hfS ↦
+  exists_lift_of_boundary hIU hOU hOV hUY hVY hinter hleft hright hh hS (hext h hh hhs hhb) hf hfS
+
 /-! ### Owner-capped lifts at the cap `⊥` -/
 
 /-- **Owner-capped lifts at the cap `⊥`.**  Let `C ⊆ B`, and let `(C, j + 1) ≤ U`, `O ≤ U, V`,
@@ -353,6 +443,41 @@ theorem hasOwnerCappedLifts_bot_of_boundary (hCB : C ⊆ B)
 
 /-! ### The one-grade lift -/
 
+/-- **Owner-capped lifts at every cap, from the boundary and the serving cells, at the short
+caps.**  Let `C ⊆ B`, with finitely many cells below `(C, j + 1)`, and let `(C, j + 1) ≤ U`,
+`O ≤ U, V`, `U, V ≤ (B, j + 1)`, with the cells below both `U` and `V` lying below `O`.  Suppose:
+
+* the boundary lifts: the rows lift capped from `(C, j + 1)` to `U` and from `O` to `V`;
+* the rows extend from the boundary at the cap `⊥`;
+* some cell has graded index `(B, j + 1)`, and at every cell `u` of graded index `(B, j + 1)` the
+  row is lawful below `(B, j + 1)`, short at `j + 1`, never the formal top, and the rows extend
+  from the boundary along it at every positive cap short and self-visible at `j + 1`.
+
+Then the rows have owner-capped lifts from `(C, j + 1)` to `(B, j + 1)` at every cap `c`
+self-visible at `j + 1`: at `⊥` by `CellScheme.Rows.hasOwnerCappedLifts_bot_of_boundary`, and at
+a positive cap by the alignment, the aligned encoding, and the decoding of
+`CellScheme.Rows.hasOwnerCappedLifts_of_rows_short`.  The extension from the boundary is asked
+only at the caps short at `j + 1`, which are the source caps of the owner-local alignment. -/
+theorem hasOwnerCappedLifts_of_boundary_short [Finite (D.below (C, j + 1))] (hCB : C ⊆ B)
+    (hCU : ((C, j + 1) : Finset α × ℕ) ≤ U) (hOU : O ≤ U) (hOV : O ≤ V)
+    (hUY : U ≤ (B, j + 1)) (hVY : V ≤ (B, j + 1))
+    (hinter : ∀ d ∈ D.below U, d ∈ D.below V → d ∈ D.below O)
+    (hleft : R.CappedLift hCU) (hright : R.CappedLift hOV)
+    (hbot : R.ExtendsFromBoundary U V (B, j + 1) ⊥ fun _ ↦ ⊥)
+    (hY : ∃ t, D.gradedIndex t = (B, j + 1))
+    (hrow : ∀ u (hu : D.gradedIndex u = (B, j + 1)),
+      R.IsLawfulBelow (D.gradedIndex u) (R.row u) ∧ (∀ d, IsShort (j + 1) (R.rowBelow u hu d)) ∧
+      (∀ d, R.rowBelow u hu d ≠ ⊤) ∧
+      ∀ h, IsSelfVisible (j + 1) h → IsShort (j + 1) h → ⊥ < h →
+        R.ExtendsFromBoundary U V (B, j + 1) h (R.rowBelow u hu))
+    (c : Label.{u}) (hc : IsSelfVisible (j + 1) c) : R.HasOwnerCappedLifts hCB j c := by
+  rcases eq_bot_or_bot_lt c with rfl | hcbot
+  · exact hasOwnerCappedLifts_bot_of_boundary hCB hCU hOU hOV hUY hVY hinter hleft hright hbot
+  refine hasOwnerCappedLifts_of_rows_short hCB hcbot hc hY fun u hu ↦ ?_
+  obtain ⟨hcons, hshort, htop, hext⟩ := hrow u hu
+  exact ⟨hcons, hshort, htop, cappedLiftAtShort_of_boundary hCU hOU hOV hUY hVY hinter hleft
+    hright (isLawfulBelow_rowBelow hu hcons) hext⟩
+
 /-- **Owner-capped lifts at every cap, from the boundary and the serving cells.**  Let `C ⊆ B`,
 with finitely many cells below `(C, j + 1)`, and let `(C, j + 1) ≤ U`, `O ≤ U, V`,
 `U, V ≤ (B, j + 1)`, with the cells below both `U` and `V` lying below `O`.  Suppose:
@@ -364,9 +489,8 @@ with finitely many cells below `(C, j + 1)`, and let `(C, j + 1) ≤ U`, `O ≤ 
   from the boundary along it at every positive cap self-visible at `j + 1`.
 
 Then the rows have owner-capped lifts from `(C, j + 1)` to `(B, j + 1)` at every cap `c`
-self-visible at `j + 1`: at `⊥` by `CellScheme.Rows.hasOwnerCappedLifts_bot_of_boundary`, and at
-a positive cap by the alignment, the aligned encoding, and the decoding of
-`CellScheme.Rows.hasOwnerCappedLifts_of_rows`. -/
+self-visible at `j + 1`: the case of `CellScheme.Rows.hasOwnerCappedLifts_of_boundary_short` with
+the extension from the boundary at every positive cap. -/
 theorem hasOwnerCappedLifts_of_boundary [Finite (D.below (C, j + 1))] (hCB : C ⊆ B)
     (hCU : ((C, j + 1) : Finset α × ℕ) ≤ U) (hOU : O ≤ U) (hOV : O ≤ V)
     (hUY : U ≤ (B, j + 1)) (hVY : V ≤ (B, j + 1))
@@ -379,21 +503,46 @@ theorem hasOwnerCappedLifts_of_boundary [Finite (D.below (C, j + 1))] (hCB : C �
       (∀ d, R.rowBelow u hu d ≠ ⊤) ∧
       ∀ h, IsSelfVisible (j + 1) h → ⊥ < h → R.ExtendsFromBoundary U V (B, j + 1) h
         (R.rowBelow u hu))
-    (c : Label.{u}) (hc : IsSelfVisible (j + 1) c) : R.HasOwnerCappedLifts hCB j c := by
-  rcases eq_bot_or_bot_lt c with rfl | hcbot
-  · exact hasOwnerCappedLifts_bot_of_boundary hCB hCU hOU hOV hUY hVY hinter hleft hright hbot
-  refine hasOwnerCappedLifts_of_rows hCB hcbot hc hY fun u hu ↦ ?_
-  obtain ⟨hcons, hshort, htop, hext⟩ := hrow u hu
-  exact ⟨hcons, hshort, htop, cappedLiftAt_of_boundary hCU hOU hOV hUY hVY hinter hleft hright
-    (isLawfulBelow_rowBelow hu hcons) hext⟩
+    (c : Label.{u}) (hc : IsSelfVisible (j + 1) c) : R.HasOwnerCappedLifts hCB j c :=
+  hasOwnerCappedLifts_of_boundary_short hCB hCU hOU hOV hUY hVY hinter hleft hright hbot hY
+    (fun u hu ↦
+      let ⟨hcons, hshort, htop, hext⟩ := hrow u hu
+      ⟨hcons, hshort, htop, fun h hh _ hhb ↦ hext h hh hhb⟩) c hc
+
+/-- **The one-grade lift from the boundary and the serving cells, at the short caps.**  Under the
+hypotheses of `CellScheme.Rows.hasOwnerCappedLifts_of_boundary_short`, together with some cell of
+graded index `(C, j + 1)` and the lift at the lower grade (the capped lift from `(C, j)` to
+`(B, j)`), the rows lift capped from `(C, j + 1)` to `(B, j + 1)`
+(`CellScheme.Rows.cappedLift_of_ownerCappedLift`).  The extension from the boundary along the row
+of a serving cell is asked only at the positive caps short and self-visible at `j + 1`, which are
+the source caps of the owner-local alignment. -/
+theorem cappedLift_of_boundary_short [Finite (D.below (C, j + 1))] (hCB : C ⊆ B)
+    (hX : ∃ c, D.gradedIndex c = (C, j + 1))
+    (hlift : R.CappedLift (X := (C, j)) (Y := (B, j)) ⟨hCB, le_rfl⟩)
+    (hCU : ((C, j + 1) : Finset α × ℕ) ≤ U) (hOU : O ≤ U) (hOV : O ≤ V)
+    (hUY : U ≤ (B, j + 1)) (hVY : V ≤ (B, j + 1))
+    (hinter : ∀ d ∈ D.below U, d ∈ D.below V → d ∈ D.below O)
+    (hleft : R.CappedLift hCU) (hright : R.CappedLift hOV)
+    (hbot : R.ExtendsFromBoundary U V (B, j + 1) ⊥ fun _ ↦ ⊥)
+    (hY : ∃ t, D.gradedIndex t = (B, j + 1))
+    (hrow : ∀ u (hu : D.gradedIndex u = (B, j + 1)),
+      R.IsLawfulBelow (D.gradedIndex u) (R.row u) ∧ (∀ d, IsShort (j + 1) (R.rowBelow u hu d)) ∧
+      (∀ d, R.rowBelow u hu d ≠ ⊤) ∧
+      ∀ h, IsSelfVisible (j + 1) h → IsShort (j + 1) h → ⊥ < h →
+        R.ExtendsFromBoundary U V (B, j + 1) h (R.rowBelow u hu)) :
+    R.CappedLift (X := (C, j + 1)) (Y := (B, j + 1)) ⟨hCB, le_rfl⟩ :=
+  cappedLift_of_ownerCappedLift hCB hX hlift fun c hc ↦
+    hasOwnerCappedLifts_of_boundary_short hCB hCU hOU hOV hUY hVY hinter hleft hright hbot hY hrow
+      c hc
 
 /-- **The one-grade lift from the boundary and the serving cells.**  Under the hypotheses of
 `CellScheme.Rows.hasOwnerCappedLifts_of_boundary`, together with some cell of graded index
 `(C, j + 1)` and the lift at the lower grade (the capped lift from `(C, j)` to `(B, j)`), the rows
-lift capped from `(C, j + 1)` to `(B, j + 1)` (`CellScheme.Rows.cappedLift_of_ownerCappedLift`).
-In the recursion on the grade, `U` and `V` are the coatoms at grade `j + 1`, `O` their common face,
-the boundary lifts are lifts of the amalgam, and the remaining hypotheses are properties of the new
-rows of full scope. -/
+lift capped from `(C, j + 1)` to `(B, j + 1)` (`CellScheme.Rows.cappedLift_of_ownerCappedLift`):
+the case of `CellScheme.Rows.cappedLift_of_boundary_short` with the extension from the boundary at
+every positive cap.  In the recursion on the grade, `U` and `V` are the coatoms at grade `j + 1`,
+`O` their common face, the boundary lifts are lifts of the amalgam, and the remaining hypotheses
+are properties of the new rows of full scope. -/
 theorem cappedLift_of_boundary [Finite (D.below (C, j + 1))] (hCB : C ⊆ B)
     (hX : ∃ c, D.gradedIndex c = (C, j + 1))
     (hlift : R.CappedLift (X := (C, j)) (Y := (B, j)) ⟨hCB, le_rfl⟩)
@@ -409,7 +558,9 @@ theorem cappedLift_of_boundary [Finite (D.below (C, j + 1))] (hCB : C ⊆ B)
       ∀ h, IsSelfVisible (j + 1) h → ⊥ < h → R.ExtendsFromBoundary U V (B, j + 1) h
         (R.rowBelow u hu)) :
     R.CappedLift (X := (C, j + 1)) (Y := (B, j + 1)) ⟨hCB, le_rfl⟩ :=
-  cappedLift_of_ownerCappedLift hCB hX hlift fun c hc ↦
-    hasOwnerCappedLifts_of_boundary hCB hCU hOU hOV hUY hVY hinter hleft hright hbot hY hrow c hc
+  cappedLift_of_boundary_short hCB hX hlift hCU hOU hOV hUY hVY hinter hleft hright hbot hY
+    fun u hu ↦
+      let ⟨hcons, hshort, htop, hext⟩ := hrow u hu
+      ⟨hcons, hshort, htop, fun h hh _ hhb ↦ hext h hh hhb⟩
 
 end VaughtConjecture.CellScheme.Rows
