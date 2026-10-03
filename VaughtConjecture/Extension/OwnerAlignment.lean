@@ -64,8 +64,8 @@ capped at `γ`, gives `τ`.  The alignment is the input of the aligned encoding
 (`VaughtConjecture.Extension.AlignedEncoding`), which builds a lawful labelling of codes below the
 owner that agrees with `s` capped at `h` and decodes literally to `p` capped at `p o`.  The
 alignment also holds on the flattened source of the prescription
-(`CellScheme.Rows.IsLawfulBelow.exists_ownerAlignment_flattenedSource`), the source package of
-`VaughtConjecture.Extension.FlattenedSource`.
+(`CellScheme.Rows.IsLawfulBelow.exists_ownerAlignment_flattenedSource`), the source of
+`VaughtConjecture.Extension.FlattenedSource` with its witness.
 
 ## Placement
 
@@ -544,7 +544,7 @@ theorem IsLawfulBelow.exists_ownerAlignment [Finite (D.below X)] {s p : D.below 
 /-- **The owner-local alignment on the flattened source of the prescription.**  For `p` lawful
 below `X` with values in `V`, on finitely many cells, and an owner `o` of graded index `X` with
 `⊥ < γ < p o`, `γ` self-visible at the grade of `X`, the alignment holds with the source
-`flattenedSource V X.2 p` and the witness `τ` of its source package
+`flattenedSource V X.2 p` and the witness `τ` that comes with it
 (`CellScheme.Rows.IsLawfulBelow.flattenedSource_prescription`), which decodes it capped at `γ`. -/
 theorem IsLawfulBelow.exists_ownerAlignment_flattenedSource [Finite (D.below X)]
     {V : Finset Label.{u}} {p : D.below X → Label.{u}} (hp : R.IsLawfulBelow X p)

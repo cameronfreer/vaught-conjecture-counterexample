@@ -69,7 +69,8 @@ lower grade `j` and owner-capped lifts at every cap self-visible at `j + 1`, the
 from `(C, j + 1)` to `(B, j + 1)`.  When the owner label is at most the cap, the lift is the lift
 below the cap and no owner-capped lift is used; otherwise the owner-capped lift is restored at the
 owner label.  The owner-capped lifts themselves depend on the rows of the new cells; they are the
-subject of the owner alignment of the completion.
+subject of the owner alignment of the completion (`VaughtConjecture.Extension.OwnerCappedLift`),
+under hypotheses on those rows.
 
 ## Placement
 

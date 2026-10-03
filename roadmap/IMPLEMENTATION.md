@@ -453,17 +453,35 @@ age and not recognized afterwards in a model constructed otherwise.
 4. **Reconstruction of partial evaluation.**  Acceptance: the evaluation of an injective tuple is
    defined from the chart relations of the limit, and the literal recovery and uniqueness
    clauses of the acceptance criterion (`SEMANTIC_CONTRACT.md`, item 11) are proved from the
-   factorization of tuples through representatives.
+   factorization of tuples through representatives.  Status: met; compiled in this repository
+   (theorem named), in `ClassicalLimit/Reconstruction`, for a structure whose age is contained in
+   the age of top-free charts (top-free chart coverage), the limit being a hypothesis: `reconstruct`
+   (no hypothesis on the structure), `exists_eq_trans_topFreeChart`, `reconstruct_eval_trans_chart`,
+   `reconstruct_eval_eq_some_iff`, `relMap_rel_iff_reconstruct_eval`, `eq_of_relMap_rel`,
+   `injective_of_relMap_rel`, and `reconstruct_eval_eq_some_iff_exists_embedding`; the roundtrip of
+   `HULL_ALGEBRA.md`, §5, in direction (a) for every realization with legal types
+   (`reconstruct_toHullStructure`) and in direction (b) under top-free chart coverage
+   (`toHullStructure_reconstruct`), for the operations `Realization.hullOp`.  The special cases are
+   in `ClassicalLimit/ReconstructionExamples`.
 5. **Consistency, covering, top-freeness, nonempty carrier.**  Acceptance: each proved from the
    factorization of one finite tuple through one representative; exact partial restriction with
    `none` at invisible faces; covering for arbitrary tuples `Fin n → M`, the empty tuple and
-   repeated coordinates included; every evaluated type in the age.
+   repeated coordinates included; every evaluated type in the age.  Status: met; compiled in this
+   repository (theorem named), in `ClassicalLimit/Reconstruction`, under top-free chart coverage:
+   `isConsistent_reconstruct`, `isCovering_reconstruct`, `exists_comp_eq_reconstruct_eval` (tuples
+   `Fin n → M`), `isTopFree_of_reconstruct_eval`, and `mem_topFreeAge_of_reconstruct_eval` (every
+   evaluated type in the age); the nonempty carrier under the converse inclusion of ages
+   (`nonempty_of_topFreeAge_subset`); all of them, with legal types, for a structure whose age is
+   the age of top-free charts (`reconstruct_of_age_eq`) and for a Fraïssé limit of it
+   (`reconstruct_of_isFraisseLimit`).  Ultrahomogeneity is not used.
 6. **Receiving.**  Acceptance: for every root, one-point donor type, and permitted cutoff, an
    occurrence over the literal root from (R5) and `IsUltrahomogeneous.extend_embedding`, with
    all its equations on that one occurrence; exact receiving for top-free donors (cutoff above
    every label of the donor); for donors containing top, one extension for each cutoff, with no
    claim of one extension for all cutoffs or of recovery of a top.  Special cases: the
    empty root, a donor with top labels at two different cutoffs, a donor with bottom labels.
+   Status: still to be proved.  It needs (R5), hence `StageType.HasCoatomExtensions` at the stage,
+   the ultrahomogeneity of the limit, and the inclusion of the age of top-free charts in its age.
 7. **Modelhood, infinitude, terminality.**  Acceptance: modelhood by the cap-to-model theorem
    (checkpoint 4); infinitude, with freshness of the received point over the whole finite
    chart: for a finite set `F`, the root is an actual occurrence `t` containing `F` (covering)
@@ -474,7 +492,13 @@ age and not recognized afterwards in a model constructed otherwise.
    and the labels in the new block `[λ, λ + ω)` required at the next block, using only the
    reduction of models (layer 2).
    The placement of the base class in the loss at `η`, by expansion uniqueness and same-carrier
-   transport, belongs to layer 5 (checkpoint 5).
+   transport, belongs to layer 5 (checkpoint 5).  Status: still to be proved.  The clauses of
+   modelhood that do not concern extensions (a nonempty carrier, legal types, exact consistency,
+   covering) are compiled for a structure whose age is the age of top-free charts
+   (`reconstruct_of_age_eq`); the four extension clauses need receiving and the cap-to-model
+   theorem at `λ`, which uses the coatom extension construction (the proof of
+   `StageType.HasCoatomExtensions`) and is still to be proved (`MainTheorem.CapToModel` states it
+   only at stage `ω`, with `u = 0`).
 
 **Dependency boundaries.** The age argument (steps 1–7) imports Mathlib, InfinitaryLogic,
 ComputableModelTheory (its entry module `ComputableModelTheory.Classical`), layers 0–2, and the
@@ -493,9 +517,12 @@ effective amalgamation procedure; the classical Fraïssé construction uses choi
 computable presentation). The partial-realization statements of the conditional chain development
 (`StageType.chartRealization`, `StageType.isConsistent_chartRealization`,
 `StageType.chartRealization_eval_eq_none_iff`, in `Realization/Partial.lean`, outside
-`Construction/`, in the library) are to be reused in steps 1, 4, and 5, so that the boundary above
-holds; the chain-union statements are not used by steps 1–7. As compiled, steps 1–3
-(`ClassicalLimit/Age`, `ClassicalLimit/Amalgamation`) import ComputableModelTheory only through
+`Construction/`, in the library) are not used by steps 1–5 as compiled, which read a chart as the
+face realization of its stage type (`StageType.faceRealization`, `StageType.faceRealization_eval`,
+in the same module, and `StageType.relMap_chart`); the chain-union statements are not used by steps
+1–7. As compiled, steps 1–5 (`ClassicalLimit/Age`, `ClassicalLimit/Amalgamation`, and
+`ClassicalLimit/Reconstruction`, which imports only `ClassicalLimit/Age`) import
+ComputableModelTheory only through
 its entry module `ComputableModelTheory.Classical`, no module of InfinitaryLogic and no
 `Construction/` module, and, of the finite extension constructions, only `Extension/Basic` and
 `Extension/PinnedExtension` (for the one-point scheme and the zero-point lemmas) and
@@ -863,6 +890,13 @@ when the sketch is checked (the checks are run by CI).  Coding a `Type w` carrie
 transfer of infinitary isomorphism across universes; do not assume that a statement within a
 single universe covers it.
 
+**Library boundary.**  The development quotes the interfaces of InfinitaryLogic that it adopts:
+graded matching (`bfEquiv_of_gradedMatching`, applied in `Comparison/GradedMatchingApplications`),
+the rank tails and least levels of `OrdinalCountability` (quoted in `Counting/`), and
+`BFScattered` (available at the pin, signatures checked in `roadmap/SuggestedInterfaces.lean`); a
+coherent-retraction interface once one is available at a pin.  It needs no new layer of
+ComputableModelTheory.
+
 ### Dependency pins
 
 The pins, recorded in `lakefile.toml` and `lake-manifest.json`; they are current.
@@ -1161,11 +1195,16 @@ Each checkpoint needs both its abstract API and a concrete application:
    Status: the hull operations with their five facts are compiled for finite charts, items 4–5 where
    they identify embeddings and substructures for a legal chart (for item 4, one of the two charts
    legal), legality being essential for item 5 (`README.md`, Layer 2, "Status for finite charts";
-   `Language/HullOperations`, `Language/HullDefinability`), and remain to be proved for realizations
-   other than the face realizations of charts, which need the two-charts theorem for exactly
-   consistent covering realizations; steps 1–3 of the top-free witnesses are compiled, the
-   amalgamation and joint embedding of step 2 and step 3 conditional on
-   `StageType.HasCoatomExtensions` ("The top-free witnesses: milestone order and acceptance").
+   `Language/HullOperations`, `Language/HullDefinability`); for exactly consistent covering
+   realizations the two-charts theorem (`Realization.eq_of_eval_eq_some`), item 1 for pairs, under
+   legality along the hull of the pair (`Realization.exists_hullOp_eq_of_mem_finiteHull`), item 2,
+   and item 3 for embeddings of realizations, and for embeddings of stage-chart-language structures
+   whose source has legal types, are compiled (`README.md`, Layer 2, "Status for realizations";
+   `Realization/TwoCharts`), and items 4–5 remain to be proved for realizations; steps 1–3 of the
+   top-free witnesses are compiled, the amalgamation and joint embedding of step 2 and step 3
+   conditional on `StageType.HasCoatomExtensions`, and steps 4 and 5 under top-free chart coverage,
+   the limit being a hypothesis ("The top-free witnesses: milestone order and acceptance"); step 6
+   is still to be proved.
 4. Items 3.2 and 3.3 for (R1)–(R3): for each of them, the extension of the realization by one actual
    occurrence over the literal root and the recovery theorem (by `Correct` and labelled
    evaluation, by LOW, or through the gate), with all its equations on that occurrence and at
@@ -1287,20 +1326,53 @@ ones split):
   Flattening keeps the prescribed face and the observation at every cap through the encoder's own
   decoder at a coding grade `K ≤ m`, and only for that decoder; the cap observation transfers to any
   decoder that agrees with it on the labels short at `m`
-  (`Label.min_apply_flattenedSource_of_agree`).  What remains (2.4b-ii): owner-local alignment and,
-  for the alignment decoder, the literal reading of the prescription on the prescribed face and the
-  cap observation at the auxiliary cells that do not carry flattened codes; the aligned encoding
-  with literal recovery; the decoding of a labelling of codes to the owner-capped lift; the lift at
-  the cap `⊥`; and the extension to the other coatom.  **Shortness.**  The alignment uses a source
-  short at the grade of the owner, while the normal forms of 2.3 are strongly coded but not short
-  (finite parts up to the grade plus one); the flattened source is the remedy, and 2.4b-ii is to use
-  the concrete encoder `strongEncode V m` with its own decoder, not the existential normal form.
+  (`Label.min_apply_flattenedSource_of_agree`).  And 2.4b-ii, the alignment of owners: the
+  owner-local alignment, for every lawful source short at the grade of the owner
+  (`Label.exists_ownerAlignment`, `CellScheme.Rows.IsLawfulBelow.exists_ownerAlignment`) and on the
+  flattened source (`CellScheme.Rows.IsLawfulBelow.exists_ownerAlignment_flattenedSource`;
+  `Extension/OwnerAlignment`); the aligned encoding, with the literal reading of the prescription
+  capped at the owner label and the transfer of the cap observation to every cell below the target
+  pair, the new cells and the cells of the other coatom included
+  (`CellScheme.Rows.IsLawfulBelow.exists_alignedEncoding`, `Label.alignedDecode_alignedEncode`,
+  `Label.min_alignedDecode_eq`; `Extension/AlignedEncoding`); the decoding to owner-capped lifts
+  from a source with lifts at its ambient (`CellScheme.Rows.hasOwnerCappedLifts_of_source`), the
+  serving cell (`CellScheme.Rows.hasOwnerCappedLifts_of_rows`), the boundary lift across the other
+  coatom (`CellScheme.Rows.exists_lift_of_boundary`, `CellScheme.Rows.cappedLiftAt_of_boundary`),
+  the cap `⊥` with literal top (`CellScheme.Rows.hasOwnerCappedLifts_bot_of_boundary`), and the
+  one-grade lift (`CellScheme.Rows.hasOwnerCappedLifts_of_boundary`,
+  `CellScheme.Rows.cappedLift_of_boundary`; `Extension/OwnerCappedLift`).  2.4 is complete.  The
+  one-grade lift from `(C, j + 1)` to `(B, j + 1)` takes six hypotheses: (1) finiteness below
+  `(C, j + 1)`, and cells of graded index `(C, j + 1)` and `(B, j + 1)`; (2) the lift at the lower
+  grade, from `(C, j)` to `(B, j)`; (3) the boundary lifts, from `(C, j + 1)` to the coatom `U`
+  containing it and from the common face `O` to the other coatom `V`; (4) at every cell of graded
+  index `(B, j + 1)`, a row lawful below `(B, j + 1)`, short at `j + 1`, never the formal top, along
+  which the rows extend from the boundary at every positive cap self-visible at `j + 1`; (5) the
+  extension from the boundary at the cap `⊥`; (6) at `j = 0`, the shortness of (4) on the actual
+  rows of grade `1`.  (1)–(3) come from the scheme reached after grade `j` and from the amalgam;
+  (4)–(6) are placed under 2.5 and 2.6.  **Shortness.**  The alignment uses a source short at the
+  grade of the owner, while the normal forms of 2.3 are strongly coded but not short (finite parts
+  up to the grade plus one); in the one-grade step that source is the row of the serving cell, and
+  the tail codes of the aligned encoding are translations of strongly coded codes, which need not
+  be strongly coded themselves.
 - **2.5. The two small arities.**  `m = 0` and `m = 1` as two separately stated constructions on
   their actual rows: arbitrary lawful prescriptions, literal top, the boundary retained, the cap
-  preserved on every auxiliary cell.
+  preserved on every auxiliary cell.  At grade `1` (`j = 0` in the one-grade lift of 2.4) the new
+  rows of full scope need not be short (their locality is the mapped locality of
+  `Extension/InheritedLocality`), so hypothesis (4) of the one-grade lift is to be checked on the
+  actual rows of grade `1` (hypothesis (6)), or the lift from `(C, 1)` to `(B, 1)` proved
+  directly.
 - **2.6. Recursion on the grade.**  One grade step from the predecessor grade already
   established first, then the general step; lawfulness, consistency, the prefix equations, and
-  unrestricted lifting (the last two defined with 2.6) are distinct statements.
+  unrestricted lifting (the last two defined with 2.6) are distinct statements.  The one grade step
+  is `CellScheme.Rows.cappedLift_of_boundary` (2.4) once the new rows of full scope satisfy its
+  hypotheses (4) and (5): their consistency, their shortness at grade at least `2` (from their
+  support), never the formal top (used only at the owner cell), and the extension from the
+  boundary, along the row of each serving cell at every positive cap self-visible at the grade, and
+  at the cap `⊥`; and, for the legality of the scheme reached, their coding.  Bountifulness then
+  follows with `CellScheme.Rows.isBountiful_of_coatoms`,
+  `CompletionBelowFullGrade.cappedLift_of_ne_univ`, and `CellScheme.Rows.cappedLift_of_fst_eq`.
+  If 2.6 needs it, the extension from the boundary may be weakened to the boundary labellings that
+  the proof supplies: never the formal top and, when the serving row is coded, below `ω²`.
 - **2.7. The theorem.**  At a stage that is zero or a limit the apex form holds; hence the plain
   form and (R6).  The improvement from limit stages to zero-or-limit stages is a separate lemma,
   with the zero stage handled explicitly.  That truncation to the stage fails at successor stages
@@ -1528,6 +1600,15 @@ lands, their notes stay in those modules.
 - `Extension/FlattenedSource`: the flattening and decoding identities to a module
   `Label/Coding.lean`, beside the encoder; the lawfulness and prescription statements to
   `Scheme.Row`.
+- `Extension/OwnerAlignment`: the strip lemmas and `Label.exists_ownerAlignment` to
+  `Label.Transform`, beside the capped witness; the form below a pair
+  (`CellScheme.Rows.IsLawfulBelow.exists_ownerAlignment` and its flattened-source instance) to
+  `Scheme.Bountiful`.
+- `Extension/AlignedEncoding`: `Label.unshift`, the tail and high codes, `Label.alignedEncode`, and
+  `Label.alignedDecode` to a module `Label/Coding.lean`, beside the encoder;
+  `Label.IsWitness.comp_of_commute` and `Label.TransformsTo.of_read` to `Label.Transform`, beside
+  the guarded composition; the lawfulness of the aligned encoding to `Scheme.Row`.
+- `Extension/OwnerCappedLift`: to `Scheme.Bountiful`, beside `CellScheme.Rows.HasOwnerCappedLifts`.
 
 **Hull operations, the top-free age, and graded matching (Layers 0 and 2; the top-free
 witnesses).**
@@ -1535,8 +1616,11 @@ witnesses).**
 - `Language/HullOperations`, `Language/HullDefinability`, and their examples modules: Layer 2, in
   place.  The rigidity lemma for plans (`Geometry.IsPlan.apply_eq_of_mem_hull`) is in
   `Geometry/Plan`, where it belongs.
+- `Realization/TwoCharts` and `Realization/TwoChartsExamples`: Layer 2, in place.
 - `ClassicalLimit/Age` and `ClassicalLimit/AgeExamples`: steps 1–2 of the top-free witnesses, in
   place.
+- `ClassicalLimit/Reconstruction` and `ClassicalLimit/ReconstructionExamples`: steps 4–5 of the
+  top-free witnesses, in place.
 - `ClassicalLimit/Amalgamation`: `StageType.cap` with its laws (`cap_toScheme`, `cap_label`,
   `isLegal_cap`, `isTopFree_cap`, `restrictFace_cap`), `StageType.IsTopFree.exists_label_le`,
   `StageType.exists_cap`, and `StageType.exists_isTopFree_amalgam` to a module of `Extension/` (for
@@ -1679,3 +1763,10 @@ noted).
 - `IsWitness.max`: the shifter of the locality of a new full-scope cell, the maximum of the capped
   witness of an owner and a second witness; 2.6.
 - `IsWitness.finsetSup`: interpolation across mixed grades; 2.5.
+
+**The alignment of owners** (`Extension/OwnerAlignment`, `Extension/AlignedEncoding`,
+`Extension/OwnerCappedLift`; 2.6, and 2.5 for the lift at grade `1`).
+
+- `CellScheme.Rows.cappedLift_of_boundary`: the one grade step, under hypotheses (1)–(6) of 2.4.
+- `CellScheme.Rows.hasOwnerCappedLifts_of_boundary`: the owner-capped lifts of the decomposition
+  `CellScheme.Rows.cappedLift_of_ownerCappedLift`, at every cap self-visible at the grade.

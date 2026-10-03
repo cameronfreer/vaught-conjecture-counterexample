@@ -58,7 +58,7 @@ at every cell (`CellScheme.Rows.min_strongDecode_flattenedSource`).  These are s
 the flattening step and the decoder `strongDecode V m`, not about the decoder `ρ` of the owner
 alignment.  For `ρ`, the reading capped at a cap `γ` transfers from the agreement of `ρ` with the
 capped decoder on the labels short at `m`, at every cell that carries a flattened code
-(`Label.min_apply_flattenedSource_of_agree`).  The transfer holds at the alignment cap `γ`; it is
+(`Label.min_apply_flattenedSource_of_agree`).  The transfer holds at the cap `γ`; it is
 the ambient condition of the lift only when `γ` is the cap `c` of the lift.  The reading above
 `γ`, up to the owner label, is the content of the alignment itself.
 
@@ -278,7 +278,7 @@ send only bottom to bottom.  So an owner label above a positive cap has a code a
 conclusion of the owner-local alignment with the capped decoder
 `τ := fun z ↦ min (strongDecode V m z) γ` of `exists_isWitness_flattenedSource`, since
 `min (τ z) γ = min (strongDecode V m z) γ`; so the decoder `ρ` of the alignment keeps the
-observation at the alignment cap `γ` at every cell that carries a flattened code.  This is the
+observation at the cap `γ` at every cell that carries a flattened code.  This is the
 ambient condition of the lift only when `γ` is the cap `c` of the lift. -/
 theorem min_apply_flattenedSource_of_agree {ρ : Label.{u} → Label.{u}}
     (hagree : ∀ z, IsShort m z → min (ρ z) γ = min (strongDecode V m z) γ) {d : ι}

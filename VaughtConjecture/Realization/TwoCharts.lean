@@ -270,8 +270,9 @@ theorem hullOp_mem_finiteHull (hR : R.IsConsistent) (hc : R.IsCovering) (ι : Hu
 
 /-- **Legality along a two-point hull from a hull operation**: if `b` is the value at `a` and `b`
 of a hull operation, with `a ≠ b`, then the occurrence on the canonical hull of `{a, b}` has a
-legal type: the value is not the default, so it comes from a chart witness, whose points are that
-hull and whose type is the legal type of the hull index. -/
+legal type: the value `b` differs from the default value `a`, so it is a witnessed value, the
+target of a chart witness, whose points are that hull and whose type is the legal type of the hull
+index. -/
 theorem isLegal_of_hullOp_eq_right (hR : R.IsConsistent) (hc : R.IsCovering) {a b : M}
     (hab : a ≠ b) (hι : R.hullOp ι a b = b) (y : R.Occurrence)
     (hy : y.support = R.finiteHull {a, b}) : y.type.IsLegal := by

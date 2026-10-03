@@ -47,12 +47,17 @@ outside `{0, …, k - 1}` lies in no typed tuple.
 
 **Role.**  The face realization of a chart gives the relations of the finite structure of the
 chart on its points (roadmap, Layer 2): its visible faces with their types, an invisible face
-carrying no relation.  The partial realization is its placement on `ℕ`, and restricted to the
-points `{0, …, k - 1}` it gives the same relations.  It is the local input of the reconstruction
-of a realization from the classical limit of the age of top-free charts: the evaluation at a
-tuple of the limit is the evaluation at a tuple of the points of one chart through which it
-factors, a supported tuple.  Exact consistency of the reconstruction is therefore checked in one
-partial realization.
+carrying no relation.  It defines the structure of the chart in the hull language and in the
+stage chart language (`StageType.Chart`, `VaughtConjecture.Language.HullOperations`), so the
+top-free charts of `VaughtConjecture.ClassicalLimit.Age` carry its relations.  It is the local
+input of the reconstruction of partial evaluation from a classical limit of the age of top-free
+charts (`VaughtConjecture.ClassicalLimit.Reconstruction`): the evaluation at a tuple of the limit
+is the evaluation in the face realization of one chart at a tuple of its points through which the
+tuple factors (`reconstruct_eval_trans_chart`), so exact consistency of the reconstruction is
+checked in one face realization.  The partial realization is the placement of the face
+realization on `ℕ`; restricted to the points `{0, …, k - 1}` it gives the same relations, and it
+separates the supported invisible tuples from the unsupported ones.  The reconstruction does not
+use it.
 
 ## Placement
 
