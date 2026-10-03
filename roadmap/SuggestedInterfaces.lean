@@ -506,14 +506,14 @@ set_option linter.hashCommand false in
 #check FirstOrder.Language.exists_elementaryEmbedding_of_countable_atomic
 
 -- Thinness from countably many back-and-forth classes at every level (InfinitaryLogic,
--- `Descriptive/BFScattered` and `Descriptive/BFScatteredSentence`), available at the pin
--- `cf80917` (signatures to be checked by CI on this branch).  `BFScattered K`: for every `η < ω₁`
--- the restriction of `codeBFEquivSetoid L η` (the library's `CodeBFEquiv η` as an equivalence
--- relation) to `K` has countably many classes, with no definability of `K`; for countably many
--- relation symbols such a `K` is thin, and so is a sentence whose coded models fall into countably
--- many classes of `bfEquivSetoid φ η` (the restriction, `bfEquivSetoid_eq_comap`) at every level.
--- It serves the scatteredness form of thinness (`README.md`, Layer 6): it is the generic form of
--- `isThinOn_of_countable_bfClasses` and `isThinOnNatModels_of_countable_bfClasses`
+-- `Descriptive/BFScattered` and `Descriptive/BFScatteredSentence`), available at the pin `cf80917`
+-- (signatures checked; no application compiled in this repository).  `BFScattered K`: for every
+-- `η < ω₁` the restriction of `codeBFEquivSetoid L η` (the library's `CodeBFEquiv η` as an
+-- equivalence relation) to `K` has countably many classes, with no definability of `K`; for
+-- countably many relation symbols such a `K` is thin, and so is a sentence whose coded models fall
+-- into countably many classes of `bfEquivSetoid φ η` (the restriction, `bfEquivSetoid_eq_comap`)
+-- at every level.  It serves the scatteredness form of thinness (`README.md`, Layer 6): it is the
+-- generic form of `isThinOn_of_countable_bfClasses` and `isThinOnNatModels_of_countable_bfClasses`
 -- (`MainTheorem/Scatteredness`), which are not yet stated through it; no application of it is
 -- compiled here.
 set_option linter.hashCommand false in
@@ -528,25 +528,25 @@ set_option linter.hashCommand false in
 #check FirstOrder.Language.Sentenceω.isThinOnNatModels_of_bfScattered
 
 -- The cardinality of a nonempty perfect set (InfinitaryLogic, `Topology/Perfect`, a module with
--- Mathlib imports only), available at the pin `cf80917` (signatures to be checked by CI on this
--- branch): in a complete, second-countable metric space it is the continuum.  Same name and
--- statement as before its move from `Descriptive/PerfectAntichain`; it is applied in
--- `MainTheorem/Scatteredness` (`not_countable_of_perfect`, a nonempty perfect set of codes is
--- uncountable) for the scatteredness form of thinness (`README.md`, Layer 6).
+-- Mathlib imports only), available at the pin `cf80917` (signatures checked): in a complete,
+-- second-countable metric space it is the continuum.  Same name and statement as before its move
+-- from `Descriptive/PerfectAntichain`; it is applied in `MainTheorem/Scatteredness`
+-- (`not_countable_of_perfect`, a nonempty perfect set of codes is uncountable) for the
+-- scatteredness form of thinness (`README.md`, Layer 6).
 set_option linter.hashCommand false in
 #check Perfect.mk_eq_continuum
 
 -- Orbit-rank bounds and recognition at the rank of a Scott sentence (InfinitaryLogic,
 -- `Scott/OrbitFormulaThreshold` and `Scott/SentenceRecognition`), available at the pin `cf80917`
--- (signatures to be checked by CI on this branch), for relational languages.  An infinitary orbit
--- formula `φ : L.Formulaω (Fin n)` of a tuple bounds its orbit rank by `Ordinal.lift φ.qrank`, and
--- orbit formulas of rank `< α` for every tuple bound the internal Scott rank by `Ordinal.lift α`:
--- the shape of the prospective base-reduct orbit-rank bounds.  A formula on `Fin 0`, read as a
--- sentence (the form of the library's Scott sentences), of rank at most `β` that characterizes a
--- countable `M` among the countable structures in its carrier universe gives `StabilizesAt M β` and
--- `stabilizationOrdinal M ≤ β`: the shape of the prospective recognition of a supplied model,
--- through the empty tuple only.  Both serve the quantitative-reconstruction pathway
--- (`COMPANIONS.md`, "Further companion results"); no application is compiled here.
+-- (signatures checked; no application compiled in this repository), for relational languages.  An
+-- infinitary orbit formula `φ : L.Formulaω (Fin n)` of a tuple bounds its orbit rank by
+-- `Ordinal.lift φ.qrank`, and orbit formulas of rank `< α` for every tuple bound the internal Scott
+-- rank by `Ordinal.lift α`: the shape of the prospective base-reduct orbit-rank bounds.  A formula
+-- on `Fin 0`, read as a sentence (the form of the library's Scott sentences), of rank at most `β`
+-- that characterizes a countable `M` among the countable structures in its carrier universe gives
+-- `StabilizesAt M β` and `stabilizationOrdinal M ≤ β`: the shape of the prospective recognition of
+-- a supplied model, through the empty tuple only.  Both serve the quantitative-reconstruction
+-- pathway (`COMPANIONS.md`, "Further companion results"); no application is compiled here.
 set_option linter.hashCommand false in
 #check FirstOrder.Language.orbitRank_le_lift_qrank_of_infinitaryOrbitFormula
 set_option linter.hashCommand false in

@@ -871,9 +871,9 @@ named (`README.md`, Layer 0):
     `α ≤ height` only `BFEquiv α` pairs (a generic form of the graded back-and-forth theorem of
     `README.md`, Layer 0, whose initial match is a pair related at the height, `α = height`).
 
-  Between `def5cc0` and `cf80917` there are five merges, available at the pin (signatures to be
-  checked by CI on this branch; `SuggestedInterfaces.lean` `#check`s the new statements; no
-  application compiled in this repository):
+  Between `def5cc0` and `cf80917` there are five merges, available at the pin (signatures checked;
+  `SuggestedInterfaces.lean` `#check`s the new statements; no application compiled in this
+  repository except that of the moved `Perfect.mk_eq_continuum` in `MainTheorem/Scatteredness`):
   - placement of the isomorphism-transport lemmas (#151): `SameAtomicType.map_equiv` now in
     `Scott/AtomicDiagram` and `BFEquiv.map_equiv` in `Scott/BFEquivRelabel`, below the Karp
     modules; names and statements unchanged;
