@@ -24,6 +24,8 @@ Special cases of `VaughtConjecture.Realization.Receiving`:
   a closed face while `{0, 1}` is, and under exact consistency a tuple on a non-closed face of an
   occurrence is untyped, so the points must be added along closed faces;
 * **the empty root**: every legal donor is received over a typed empty tuple;
+* **descent along stage reduction**: receiving at a limit stage `α ≥ ω` descends to the reduction
+  to `ω`, cutoff by cutoff; the reduction to stage `0` has no permitted cutoff;
 * **stage `ω`**: every structure satisfying the density sentence has finite-extension receiving,
   unconditionally.
 
@@ -135,6 +137,28 @@ example (h : R.HasFiniteCutReceiving) (hR : R.IsConsistent) (hα : Order.IsSuccP
   obtain ⟨u, -, q, hq, hu⟩ := h.hasFiniteExtensionReceiving hR hα t p ht D g hD
     (hp'.trans (congrArg some (eq_of_zero p' p))) c hc
   exact ⟨u, q, hq, hu⟩
+
+/-! ### Descent along stage reduction -/
+
+/-- **Descent to `ω`**: the reduction to `ω` of a realization with finite-cut receiving at a limit
+stage `α ≥ ω` has finite-cut receiving, cutoff by cutoff. -/
+example (h : R.HasFiniteCutReceiving) (hα : Order.IsSuccPrelimit α) (hωα : Ordinal.omega0 ≤ α) :
+    (R.reduce Ordinal.isSuccLimit_omega0.isSuccPrelimit).HasFiniteCutReceiving :=
+  h.reduce hα _ hωα
+
+/-- **Descent to `ω`, several new points**: the reduction is exactly consistent as well, so it has
+finite-extension receiving. -/
+example (h : R.HasFiniteCutReceiving) (hR : R.IsConsistent) (hα : Order.IsSuccPrelimit α)
+    (hωα : Ordinal.omega0 ≤ α) :
+    (R.reduce Ordinal.isSuccLimit_omega0.isSuccPrelimit).HasFiniteExtensionReceiving :=
+  (h.reduce hα _ hωα).hasFiniteExtensionReceiving (hR.reduce _)
+    Ordinal.isSuccLimit_omega0.isSuccPrelimit
+
+/-- **Stage `0`**: there is no permitted cutoff at stage `0`, so the reduction of every realization
+to stage `0` has finite-cut receiving, vacuously. -/
+example : (R.reduce Ordinal.isSuccPrelimit_zero).HasFiniteCutReceiving := fun _ _ _ c hc ↦ by
+  obtain ⟨δ, hδ, -⟩ := isPermittedCutoff_iff.mp hc
+  exact (not_lt_zero hδ).elim
 
 end VaughtConjecture.Realization
 

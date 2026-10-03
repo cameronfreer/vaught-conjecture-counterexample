@@ -80,8 +80,20 @@ vacuous there.  Exact consistency (`IsConsistent`) is used once, in the final re
 is a permutation of the coordinates of the root, the requested tuple is a permutation of `t`,
 which without permutation invariance may be untyped.
 
-**Status.**  The reduction of finite-extension receiving to finite-cut receiving is proved here.
-Finite-cut receiving of models, (R1) of the table of Layer 3, is not proved; through
+**Descent along stage reduction** (`HasFiniteCutReceiving.reduce`).  The stage reduction of a
+realization with finite-cut receiving at a stage `α` that is zero or a limit, to a stage `β ≤ α`
+that is zero or a limit, has finite-cut receiving.  A coface `d` at `β` of a reduced type is lifted,
+by bountifulness of its scheme, to a coface at `α` agreeing with `d` at an auxiliary cap `c'`
+strictly between the cutoff and `β` and self-visible at the arity of `d`
+(`StageType.exists_isLawful_lift`); that coface is received at `c'`, a permitted cutoff at `α`, and
+the received occurrence, reduced to `β`, agrees with `d` below the cutoff.  This is receiving one
+permitted cutoff at a time, not exact projected receiving (semantic contract, item 12): the
+received type need not reduce to `d` itself.
+
+**Status.**  The reduction of finite-extension receiving to finite-cut receiving, and the descent
+of finite-cut receiving along stage reduction, are proved here.
+Finite-cut receiving of models in general, (R1) of the table of Layer 3, is still to be proved;
+through
 `Expansion.FiniteCutReceiving` it is the remaining hypothesis of the transfer of
 `VaughtConjecture.Expansion.Agreement`.
 
@@ -186,5 +198,47 @@ finite-cut receiving. -/
 theorem IsModel.hasFiniteExtensionReceiving_iff (hR : R.IsModel) (hα : Order.IsSuccPrelimit α) :
     R.HasFiniteExtensionReceiving ↔ R.HasFiniteCutReceiving :=
   Realization.hasFiniteExtensionReceiving_iff hR.isConsistent hα
+
+/-! ### Descent along stage reduction -/
+
+/-- **Receiving descends along stage reduction**, cutoff by cutoff: the stage reduction of a
+realization with the finite-cut receiving property at a stage `α` that is zero or a limit, to a
+stage `β ≤ α` that is zero or a limit, has the finite-cut receiving property.
+
+Over an occurrence of the reduction, the reduction of an occurrence `x` of `R`
+(`Occurrence.exists_reduce_eq`), a coface `d` at `β` of the reduced type and a permitted cutoff
+`δ < β`: an ordinal `c'` with `δ < c' < β`, self-visible at the arity of `d`, exists since `β` is
+zero or a limit (`Label.exists_lt_lt_isSelfVisible`); bountifulness of the scheme of `d` lifts it
+to a lawful section with the observation of `d` at `c'` extending the labels of the type of `x`
+(`StageType.exists_isLawful_lift`), whose reduction to `α` is a coface `d'` of the type of `x`
+(`StageType.ofIsLawful_mem_cofaces_of_lift`, where `α` zero or a limit is used).  Receiving `d'`
+in `R` at the permitted cutoff `c' < β ≤ α` and reducing to `β` gives an occurrence whose type
+agrees with `d` below `c'`, hence below `δ` (`Label.min_reduce_of_le`).
+
+This is receiving at each permitted cutoff below `β` separately, with an occurrence depending on
+the cutoff.  It is not exact projected receiving, which would receive `d` itself in the reduction
+and needs projected-donor lifting (semantic contract, item 12).  At `β = 0` there is no permitted
+cutoff, and the statement is vacuous. -/
+theorem HasFiniteCutReceiving.reduce {β : Ordinal.{u}} (h : R.HasFiniteCutReceiving)
+    (hα : Order.IsSuccPrelimit α) (hβ : Order.IsSuccPrelimit β) (hβα : β ≤ α) :
+    (R.reduce hβ).HasFiniteCutReceiving := by
+  intro y d hd c hc
+  obtain ⟨x, rfl⟩ := Occurrence.exists_reduce_eq hβ y
+  obtain ⟨δ, hδ, rfl⟩ := isPermittedCutoff_iff.mp hc
+  obtain ⟨c', hδc', hc'β, hc'⟩ := exists_lt_lt_isSelfVisible hβ hδ (x.arity + 1)
+  have hc'le : (c' : Label.{u}) ≤ β := by exact_mod_cast hc'β.le
+  have hδc : (δ : Label.{u}) ≤ c' := by exact_mod_cast hδc'.le
+  obtain ⟨ρ, hρ, hρc, hext⟩ := exists_isLawful_lift (p := x.type) hβ hd.1 hd.2 hc' hc'le
+  obtain ⟨u, hu, q, hq, hqe⟩ := h x _ (ofIsLawful_mem_cofaces_of_lift hα hβ hd hρ hext) c'
+    (isPermittedCutoff_coe.mpr (hc'β.trans_le hβα))
+  refine ⟨u, hu, q.reduce hβ, ⟨hq.1, fun i j hij ↦ ?_⟩,
+    congrArg (Option.map (StageType.reduce · hβ)) hqe⟩
+  -- agreement at `c'`, then at `δ ≤ c'`
+  have key : min (q.label i) c' = min (d.label j) c' := by
+    rw [hq.2 i j hij, ofIsLawful_label, min_reduce_of_le (hc'le.trans (by exact_mod_cast hβα)),
+      hρc j]
+  change min (Label.reduce β (q.label i)) _ = _
+  rw [min_reduce_of_le (hδc.trans hc'le)]
+  simpa only [min_assoc, min_eq_right hδc] using congrArg (min · (δ : Label.{u})) key
 
 end VaughtConjecture.Realization
