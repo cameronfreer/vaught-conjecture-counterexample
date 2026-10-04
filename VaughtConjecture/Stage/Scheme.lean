@@ -221,6 +221,15 @@ theorem image_cellMap_below (X : Finset (Fin m) × ℕ) :
   rw [h, Equiv.image_preimage]
   exact CellScheme.image_val_below_comap _ f X
 
+/-- **Lawfulness along the restriction to a face**: a labelling of the cells of `S`, read along the
+cell map of `f`, is lawful below `X` for the restriction exactly when it is lawful below the image
+of `X` for `S`. -/
+theorem isLawfulBelow_comap_cellMap_iff (X : Finset (Fin m) × ℕ) (x : Fin S.card → Label.{u}) :
+    (S.comap f).rows.IsLawfulBelow X (fun i ↦ x (S.cellMap f i)) ↔
+      S.rows.IsLawfulBelow (Prod.map (Finset.map f) id X) (fun d ↦ x d) :=
+  CellScheme.Rows.isLawfulBelow_comap_iff (R := S.rows) (S.isLowerEmbedding_comap f)
+    (S.image_cellMap_below f X) (r := fun d ↦ x d)
+
 /-- The graded faces of the restriction are those whose image is a graded face. -/
 theorem mem_gradedFaces_comap {X : Finset (Fin m) × ℕ} :
     X ∈ (S.comap f).toCellScheme.gradedFaces ↔

@@ -64,9 +64,9 @@ covering `q` in `S` restricts along `f` to `c`; the triple is then a **rooted co
 covers through the base-reduct equation (`Realization.IsExpansionOf.relMap_comp_iff`), so two
 covers of one stage type, in expansions of two base structures at any common stage, have the same
 atomic type in the base language (`Realization.Covers.sameAtomicType`): the atomic diagram of a
-cover is determined by its type.
-Every expansion has a cover of a stage type on no points
-(`ModelExpansion.exists_covers_zero`), since the empty face of every occurrence is closed.
+cover is determined by its type.  A model, at any stage, has a cover of a stage type on no points
+by the empty tuple (`Realization.IsModel.exists_covers_zero`), since the empty face of every
+occurrence is closed; in particular so does every expansion (`ModelExpansion.exists_covers_zero`).
 
 **Received types after reduction.**  A member `q` of the receiving family of `D` at the cutoff
 `β` has the same stage reduction to `β` as `D` (`StageType.reduce_eq_of_mem_receivingFamily`):
@@ -193,6 +193,19 @@ theorem Covers.reduce (h : R.Covers t c) (hβ : Order.IsSuccPrelimit β) :
 /-- An injective tuple covers a stage type exactly when it is evaluated to it. -/
 theorem covers_iff_eval (u : Fin k ↪ M) : R.Covers t u ↔ R.eval u = some t :=
   ⟨fun h ↦ h.eval_eq, covers_of_eval u⟩
+
+/-- **A model has a cover of a stage type on no points**, by the empty tuple: the empty face of
+any occurrence is closed. -/
+theorem IsModel.exists_covers_zero (hR : R.IsModel) :
+    ∃ t : StageType.{u} α 0, R.Covers t ![] := by
+  obtain ⟨x⟩ := hR.nonempty_occurrence
+  obtain ⟨t, ht⟩ := Option.isSome_iff_exists.mp
+    (x.type.isSome_restrictFace_of_zero Function.Embedding.ofIsEmpty)
+  refine ⟨t, fun i ↦ i.elim0, ?_⟩
+  rw [← ht, ← Realization.eval_face hR.isConsistent x]
+  congr 1
+  ext i
+  exact i.elim0
 
 /-- A tuple `c` **extends to a cover** of a triple `(m, q, f)` in `S` when some tuple `s` covering
 `q` in `S` restricts along `f` to `c`. -/
@@ -326,18 +339,11 @@ def ModelExpansion.map {N : Type w} [baseLanguage.{u}.Structure N]
     (f : ModelExpansion M α) (e : M ≃[baseLanguage.{u}] N) : (f.map e).map e.symm = f :=
   Subtype.ext (Realization.map_symm_map f.1 (e : M ≃ N))
 
-/-- **An expansion has a cover of a stage type on no points**: the empty face of any occurrence
-is closed. -/
+/-- **An expansion has a cover of a stage type on no points**, since it is a model
+(`Realization.IsModel.exists_covers_zero`). -/
 theorem ModelExpansion.exists_covers_zero (e : ModelExpansion M α) :
-    ∃ t : StageType.{u} α 0, e.1.Covers t ![] := by
-  obtain ⟨x⟩ := e.2.isModel.nonempty_occurrence
-  obtain ⟨t, ht⟩ := Option.isSome_iff_exists.mp
-    (x.type.isSome_restrictFace_of_zero Function.Embedding.ofIsEmpty)
-  refine ⟨t, fun i ↦ i.elim0, ?_⟩
-  rw [← ht, ← Realization.eval_face e.2.isModel.isConsistent x]
-  congr 1
-  ext i
-  exact i.elim0
+    ∃ t : StageType.{u} α 0, e.1.Covers t ![] :=
+  e.2.isModel.exists_covers_zero
 
 /-! ### Model expansions at the base stage -/
 
