@@ -32,7 +32,7 @@ stage types at `α`: no realization, and no legality (legality depends only on t
 * **The order law** (`forcesThreshold_of_le_grade`): if the label of `d` in `p` is the formal top
   and `n` is at most the grade of `d`, then `(q, f)` forces `n`.  A label at least `β` that is
   self-visible at the grade `g` of its cell is at least `β + g`, since `β` is a multiple of `ω`
-  (`Label.coe_add_le_of_isSelfVisible`).
+  (`Label.coe_add_le_of_isSelfVisible`, in `VaughtConjecture.Label.Visibility`).
 * **A tie** (`forcesThreshold_of_row_le`): if a cell `C` of `q` is labelled the formal top, the
   cell `e` of `q` transported from `d` lies below `C`, and the row of `C` is at least as large at
   `e` as at `C`, then `(q, f)` forces the grade of `C`.  Locality of `Q` at `C`
@@ -51,16 +51,19 @@ the value `⊤` of a supremum over many pairs is allowed.
 **Faces of the root and attained offsets.**
 
 * A *lift* of `q` is a stage type at `α` reducing to `q`.  A lift of `q` restricts along `f` to a
-  lift of `p` (`exists_restrictFace_reduce_eq`).
+  lift of `p` (`StageType.exists_restrictFace_reduce_eq`, in `VaughtConjecture.Stage.Basic`).
 * **Forcing at a face of the root** (`ForcesThreshold.trans_comap_iff`): if `q` restricts to `p`
   along `h` and `f` spans a closed face of `p`, forcing at `(q, f.trans h)` for the root
   `p.comap f hf` at a cell `i` is forcing at `(q, h)` for `p` at the transported cell
   `p.cellMap f i`.
-* **The provisional offset is attained** (`exists_lift_label_eq_ofOffset`): some stage type at
-  `β + ω` reducing to `q` carries, at the position of `d` on its face along `f`, exactly the label
-  `Label.ofOffset β` of the provisional offset.  A finite offset `o` is forced and `o + 1` is not,
-  so a lift witnessing the failure of `o + 1` has the label `β + o`; an infinite offset makes every
-  lift carry the formal top there.
+* **The provisional offset is attained** (`exists_lift_label_eq_ofOffset`): if `q` restricts to
+  `p` along `f` and `d` is labelled the formal top in `p`, some stage type at `β + ω` reducing to
+  `q` carries, at the position of `d` on its face along `f`, exactly the label `Label.ofOffset β`
+  of the provisional offset.  A finite offset `o` is forced and `o + 1` is not, so a lift
+  witnessing the failure of `o + 1` has the label `β + o`; an infinite offset makes every lift
+  carry the formal top there.  This reading by lifts applies only when `q` restricts to `p` along
+  `f`: otherwise `(q, f)` forces no threshold at `d`, its provisional offset is `0`, and nothing is
+  said about lifts.
 
 These are intended for comparing stable offsets along faces of a cover and for realizing the
 stable labels by lifts (roadmap, Layer 4, output 1, still to be proved).
@@ -92,22 +95,6 @@ theorem natCast_le_iSup_iff_of_ne_zero {ι : Sort*} {f : ι → ℕ∞} {n : ℕ
 namespace Label
 
 variable {β : Ordinal.{u}} {x : Label.{u}} {n : ℕ} {o : ℕ∞}
-
-/-- **The order law at a stage that is zero or a limit**: a label at least `β` and self-visible
-at `n` is at least `β + n`. -/
-theorem coe_add_le_of_isSelfVisible (hβ : Order.IsSuccPrelimit β) (hx : (β : Label.{u}) ≤ x)
-    (hv : IsSelfVisible n x) : ((β + n : Ordinal.{u}) : Label.{u}) ≤ x := by
-  induction x using recBotCoeTop with
-  | bot => exact absurd hx (not_le.mpr (WithBot.bot_lt_coe _))
-  | top => exact le_top
-  | coe v =>
-    have hβv : β ≤ v := WithTop.coe_le_coe.mp (WithBot.coe_le_coe.mp hx)
-    obtain ⟨b, rfl⟩ := isSuccPrelimit_iff_omega0_dvd.mp hβ
-    have hb : ω * b ≤ ω * (v / ω) :=
-      mul_le_mul_right ((mul_le_iff_le_div omega0_ne_zero).mp hβv) ω
-    refine WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr ?_)
-    rw [← div_add_mod v ω]
-    exact add_le_add hb (isSelfVisible_coe.mp hv)
 
 /-- The **label of an offset** `o : ℕ∞` above `β`: `β + o` for finite `o`, the formal top for
 `o = ⊤`. -/
@@ -289,15 +276,6 @@ theorem grade_le_provisionalOffset (hfp : restrictFace f q = some p) (hd : p.lab
   (forcesThreshold_of_le_grade hfp hd le_rfl).le_provisionalOffset
 
 /-! ### Faces of the root and lifts attaining the provisional offset -/
-
-/-- The face along `f` of a stage type at `α` lifting `q` is a lift of the face of `q`: if `q`
-restricts to `p` along `f` and `Q` reduces to `q`, then `Q` restricts along `f` to a stage type
-reducing to `p`. -/
-theorem exists_restrictFace_reduce_eq (hfp : restrictFace f q = some p) {Q : StageType.{u} α m}
-    (hQ : Q.reduce hβ = q) : ∃ P, restrictFace f Q = some P ∧ P.reduce hβ = p := by
-  have h := restrictFace_reduce Q f hβ
-  rw [hQ, hfp] at h
-  exact Option.map_eq_some_iff.mp h.symm
 
 /-- **Forcing at a face of the root is forcing at the transported cell**: if `q` restricts to `p`
 along `h` and `f` spans a closed face of `p`, then `(q, f.trans h)` forces `n` at the cell `i` of

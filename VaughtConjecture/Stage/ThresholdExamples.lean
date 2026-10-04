@@ -170,7 +170,9 @@ example : ForcesThreshold (blockStage (0 + 1)) (isSuccPrelimit_blockStage 0) tie
   · refine Label.reduce_of_le (WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr ?_))
     rw [blockStage_zero]
     exact le_self_add
-  · change (⟨0, Nat.two_pos⟩ : Fin 2) ∈ tieCells.below (tieCells.gradedIndex ⟨1, Nat.one_lt_two⟩)
+  · -- `tie.toCellScheme` is `tieCells` by definition: `tie` is the reduction of `tieUp`, and the
+    -- reduction keeps the cell scheme.
+    change (⟨0, Nat.two_pos⟩ : Fin 2) ∈ tieCells.below (tieCells.gradedIndex ⟨1, Nat.one_lt_two⟩)
     simp [tieCells, CellScheme.gradedIndex, Prod.le_def]
 
 /-! ### Faces of the root -/
@@ -191,7 +193,7 @@ example {q : StageType.{u} β m} {h : Fin k ↪ Fin m} {p : StageType.{u} β k}
 example : Label.collapse ω 3 ((ω + (5 : ℕ) : Ordinal.{u}) : Label.{u}) = ⊤ ∧
     Label.collapse ω 3 ((ω + (2 : ℕ) : Ordinal.{u}) : Label.{u}) =
       ((ω + (2 : ℕ) : Ordinal.{u}) : Label.{u}) := by
-  refine ⟨Label.collapse_of_le ?_, Label.collapse_of_not_le fun h ↦ ?_⟩ <;>
+  refine ⟨Label.reduce_of_le ?_, Label.reduce_of_lt (not_le.mp fun h ↦ ?_)⟩ <;>
     simp only [WithBot.coe_le_coe, WithTop.coe_le_coe, add_le_add_iff_left, Nat.cast_le] at *
   · omega
   · exact absurd (Nat.cast_le.mp h) (by omega)

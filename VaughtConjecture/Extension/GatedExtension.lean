@@ -110,6 +110,18 @@ def IsAnchored (P : StageType.{u} α n) (C : Fin P.card) (d : StageType.{u} α (
   ∀ j : Fin d.card, Fin.last m ∈ d.toCellScheme.scope j → d.label j ≠ ⊥ → d.label j < P.label C →
     ∃ z : Fin P.card, ∃ i ≤ n, d.label j = visibilityReplace n i (P.label z)
 
+/-- **Donors without proper new labels are anchored**: if every new cell of the donor `d` (a cell
+whose scope contains the new point) is labelled `⊥` or `⊤`, then `d` is anchored in every `P` below
+every cell `C`; no anchor is needed. -/
+theorem isAnchored_of_forall_label_eq_bot_or_top
+    (P : StageType.{u} α n) (C : Fin P.card) {d : StageType.{u} α (m + 1)}
+    (hd : ∀ j, Fin.last m ∈ d.toCellScheme.scope j → d.label j = ⊥ ∨ d.label j = ⊤) :
+    IsAnchored P C d := by
+  intro j hj hbot hlt
+  rcases hd j hj with h | h
+  · exact absurd h hbot
+  · exact absurd (h ▸ hlt) not_top_lt
+
 variable (α) in
 /-- The **gated pinned extension property** at stage `α`: for every legal `P` on `n` points, every
 face `f` of `P` with restriction `p`, every legal one-point coface `d` of `p`, and every cell `C` of

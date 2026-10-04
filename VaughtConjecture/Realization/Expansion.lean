@@ -53,16 +53,19 @@ expansion to a stage `α ≥ ω₁` (`ModelExpansion.isEmpty_of_omega_one_le`).
 
 **Covers.**  A tuple `c : Fin k → M` **covers** a stage type `t` in `R` (`Realization.Covers`)
 when it is injective and `R` evaluates it to `t`: `c` enumerates an actual occurrence of `t`.
-Covers survive stage reduction, by the same tuple (`Realization.Covers.reduce`), the covers in a
-transport along a bijection of carriers are the transports of covers (`Realization.covers_map_iff`),
-and an injective tuple covers exactly its evaluation (`Realization.covers_iff_eval`).  A tuple `c`
-**extends to a cover** of a triple `(m, q, f)` — a stage type `q` on `m` points and an embedding
+Covers survive stage reduction, by the same tuple (`Realization.Covers.reduce`), and an injective
+tuple covers exactly its evaluation (`Realization.covers_iff_eval`).  Covers in a transport along
+a bijection are the transports of covers (`Realization.covers_map_iff`).  A tuple `c` **extends to a
+cover** of a triple `(m, q, f)` — a stage type `q` on `m` points and an embedding
 `f : Fin k ↪ Fin m` of coordinates — in `S` (`Realization.ExtendsToCover`) when some tuple `s`
-covering `q` in `S` restricts along `f` to `c`.  The base relations of an expansion are read from
-its covers through the base-reduct equation (`Realization.IsExpansionOf.relMap_comp_iff`), so two
+covering `q` in `S` restricts along `f` to `c`; the triple is then a **rooted cover** of `c` in
+`S`.  A tuple with a repeated coordinate has no rooted cover
+(`Realization.ExtendsToCover.injective`).  The base relations of an expansion are read from its
+covers through the base-reduct equation (`Realization.IsExpansionOf.relMap_comp_iff`), so two
 covers of one stage type, in expansions of two base structures at any common stage, have the same
 atomic type in the base language (`Realization.Covers.sameAtomicType`): the atomic diagram of a
-cover is determined by its type.  Every expansion has a cover of a stage type on no points
+cover is determined by its type.
+Every expansion has a cover of a stage type on no points
 (`ModelExpansion.exists_covers_zero`), since the empty face of every occurrence is closed.
 
 **Received types after reduction.**  A member `q` of the receiving family of `D` at the cutoff
@@ -70,7 +73,11 @@ cover is determined by its type.  Every expansion has a cover of a stage type on
 the cutoff observation at `β` determines the stage reduction to `β`, since capping at `β` and
 reduction to `β` have the same equality kernel (`Label.min_eq_min_iff_reduce_eq`).  This is the
 only passage from a cutoff observation to a stage reduction used here; it concerns one received
-type at a time, and it is not exact projected receiving (semantic contract, item 12).
+type at a time, and it is not exact projected receiving (semantic contract, item 12).  Hence, with
+finite-extension receiving, if `c` covers `t` in `R` and `t` is the face along `g` of a legal
+stage type `D` at the stage of `R`, then `c` extends to a cover of the reduction of `D` to a
+permitted cutoff `β` that is zero or a limit, with `g`, in the reduction of `R` to `β`
+(`Realization.HasFiniteExtensionReceiving.extendsToCover_reduce`).
 
 ## Placement
 
@@ -183,12 +190,6 @@ theorem Covers.reduce (h : R.Covers t c) (hβ : Order.IsSuccPrelimit β) :
     (R.reduce hβ).Covers (t.reduce hβ) c :=
   ⟨h.1, by rw [reduce_eval, h.2, Option.map_some]⟩
 
-/-- Covers in a transport are the transports of covers. -/
-theorem covers_map_iff (e : M ≃ N) {n : ℕ} {t : StageType.{u} α n} {c : Fin n → N} :
-    (R.map e).Covers t c ↔ R.Covers t (e.symm ∘ c) := by
-  refine ⟨fun ⟨hc, h⟩ ↦ ⟨e.symm.injective.comp hc, h⟩, fun ⟨hc, h⟩ ↦ ⟨?_, h⟩⟩
-  exact (Function.Injective.of_comp (f := e.symm) hc)
-
 /-- An injective tuple covers a stage type exactly when it is evaluated to it. -/
 theorem covers_iff_eval (u : Fin k ↪ M) : R.Covers t u ↔ R.eval u = some t :=
   ⟨fun h ↦ h.eval_eq, covers_of_eval u⟩
@@ -198,6 +199,20 @@ theorem covers_iff_eval (u : Fin k ↪ M) : R.Covers t u ↔ R.eval u = some t :
 def ExtendsToCover (S : Realization.{u, v} α M) (c : Fin k → M)
     (x : Σ m : ℕ, StageType.{u} α m × (Fin k ↪ Fin m)) : Prop :=
   ∃ s : Fin x.1 → M, s ∘ x.2.2 = c ∧ S.Covers x.2.1 s
+
+/-- A tuple that extends to a cover is injective: a tuple with a repeated coordinate has no rooted
+cover. -/
+theorem ExtendsToCover.injective {S : Realization.{u, v} β M} {c : Fin k → M}
+    {x : Σ m : ℕ, StageType.{u} β m × (Fin k ↪ Fin m)} (h : S.ExtendsToCover c x) :
+    Function.Injective c := by
+  obtain ⟨s, rfl, hs⟩ := h
+  exact hs.injective.comp x.2.2.injective
+
+/-- Covers in a transport are the transports of covers. -/
+theorem covers_map_iff (e : M ≃ N) {n : ℕ} {t : StageType.{u} α n} {c : Fin n → N} :
+    (R.map e).Covers t c ↔ R.Covers t (e.symm ∘ c) := by
+  refine ⟨fun ⟨hc, h⟩ ↦ ⟨e.symm.injective.comp hc, h⟩, fun ⟨hc, h⟩ ↦ ⟨?_, h⟩⟩
+  exact (Function.Injective.of_comp (f := e.symm) hc)
 
 /-- **The faces of a cover**: under exact consistency, the face of a cover along an injective
 selection `s` of coordinates is evaluated to the face of its type along `s`. -/
@@ -439,5 +454,25 @@ theorem StageType.reduce_eq_of_mem_receivingFamily {α β : Ordinal.{u}} {n : �
     {D q : StageType.{u} α n} (hβ : Order.IsSuccPrelimit β)
     (hq : q ∈ StageType.receivingFamily D (β : Label.{u})) : q.reduce hβ = D.reduce hβ :=
   StageType.ext hq.1 fun i j hij ↦ Label.min_eq_min_iff_reduce_eq.mp (hq.2 i j hij)
+
+namespace Realization
+
+variable {α β : Ordinal.{u}} {M : Type v} {k : ℕ}
+
+/-- **Realizing a donor's reduction**: with finite-extension receiving, if `c` covers `t` in `R`
+and `t` is the face along `g` of a legal stage type `D` at the stage of `R`, then the reduction of
+`D` to a permitted cutoff `β` that is zero or a limit, with `g`, is a rooted cover of `c` in the
+reduction of `R` to `β`. -/
+theorem HasFiniteExtensionReceiving.extendsToCover_reduce {R : Realization.{u, v} α M}
+    (hrec : R.HasFiniteExtensionReceiving) (hβ : Order.IsSuccPrelimit β)
+    (hβα : Label.IsPermittedCutoff α (β : Label.{u})) {t : StageType.{u} α k} {c : Fin k → M}
+    (hc : R.Covers t c) {m : ℕ} {D : StageType.{u} α m} {g : Fin k ↪ Fin m} (hD : D.IsLegal)
+    (hg : StageType.restrictFace g D = some t) :
+    (R.reduce hβ).ExtendsToCover c ⟨m, D.reduce hβ, g⟩ := by
+  obtain ⟨u, hu, Q, hQ, huQ⟩ := hrec ⟨c, hc.injective⟩ t hc.eval_eq D g hD hg β hβα
+  refine ⟨u, funext fun i ↦ DFunLike.congr_fun hu i, covers_of_eval u ?_⟩
+  rw [reduce_eval, huQ, Option.map_some, StageType.reduce_eq_of_mem_receivingFamily hβ hQ]
+
+end Realization
 
 end VaughtConjecture
