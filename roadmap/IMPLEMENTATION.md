@@ -781,8 +781,9 @@ the construction layers supply only atomic agreement, lowering, forth and back, 
 initial match, without an ordinal induction of their own.  Nothing is needed from
 ComputableModelTheory for it.
 
-**Prospective interfaces of InfinitaryLogic** (neither available upstream nor pinned; the
-statements are specified here, generically, with no construction):
+**Prospective interfaces of InfinitaryLogic** (neither available upstream nor pinned, except the
+second, which is now available upstream in family form, below; the statements are specified here,
+generically, with no construction):
 
 - *invariant Borel observations* (`Descriptive`): an isomorphism-invariant Borel map on codes of
   models on `ℕ`, into a countably separated space, is constant on the `BFEquiv α`-classes for
@@ -876,6 +877,10 @@ declarations listed in the notes.
 | 34 | [AFK26] | five equivalent criteria for them (item 5; no numbered statement) | S |
 | 35 | [AFK26] | literal uniqueness of maximal presentations (item 5; no numbered statement) | S |
 | 36 | [AFK26] | the optimal all-presentation bound (item 5; no numbered statement) | S |
+| 37 | [AFK26] | density bounding the returned invariant (item 3; no numbered statement) | S |
+| 38 | [AFK26] | terminal refinement of a higher presentation (item 5; no numbered statement) | S |
+| 39 | [AFK26] | exactly one expansion over a domain (item 5; no numbered statement) | S |
+| 40 | [AFK26] | maximal presentations by Scott isolation (item 5; no numbered statement) | S |
 
 The items are those of `README.md`, "Manuscript correspondence (required)".  Notes to the rows:
 
@@ -979,8 +984,21 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     bounds (`README.md`, item 5).
 30. Prospective: no declaration of this repository states positive niceness or names a fixing
     rank.  Milestone 2; it is the row "invariance over all admissible presentations, with an
-    inhabited threshold" of the table of item 5, and its construction for the models here uses
-    the termination argument.
+    inhabited threshold" of the table of item 5.  For the models here it is derived from a
+    terminal presentation of each base, which supplies it immediately by terminal collision and
+    the injectivity of model reduction (the inequality step of row 35, then 5 ⇒ 1 of row 34),
+    with no further stabilization argument.  The terminal presentations come from either of two
+    distinct stopping proofs, both prospective: (i) the countable-slot argument (the termination
+    argument of [AFK26]), or (ii) the Scott route of row 40.  For (i), "countably many slots,
+    each used at most once" alone does not establish even the stopping half of global
+    termination.  A proof along it is to supply (a) which events use a slot, (b) why every
+    relevant continuation uses a fresh slot, and (c) why exhausting those events yields an actual
+    terminal presentation; countably many events may still continue through a countable limit,
+    whose supremum is not by itself an attainment or a terminality proof.  That its conclusion is
+    eventual departure, the stopping half of global termination (`README.md`, "The persistent
+    core"), and not terminal fullness, which is the first special statement, is prospective, to
+    be supplied by (a)–(c).  Neither may use positive niceness, and neither is a dependency of
+    the expansion-domain endpoint.
 31. Prospective: no declaration of this repository states it.  Its ingredients for labels are
     compiled in this repository (theorem named): `Label.reduce_eq_self_iff` (fixed by projection
     exactly at the labels of the stage), and `Label.reduce_reduce_of_le`, `Label.atStage_reduce`
@@ -1034,6 +1052,70 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     model reduction at `ρ` only), and on `COMPANIONS.md`, "Fixing ranks are zero or successors"
     and "Limit heights are unattained suprema", each still to be proved.  No declaration of this
     repository names a fixing rank (row 30).
+37. Prospective: no declaration of this repository states density at an observation (row 25) or
+    its witness-bounded form.  The fixation of the returned invariant rests on
+    `Realization.reduce_eval` and `Realization.isSome_reduce_eval` (`Realization/Transport`),
+    compiled in this repository (theorem named); the equivalence with the donor-bounded form is
+    stated on a realization fixed by projection at `β` and rests on the two-index theorem of
+    row 25: the two are equivalent formulations of density there.  Exact face preservation is
+    supplied separately by `Realization.IsConsistent` (`Realization/Basic`), clause 2 of
+    `Realization.IsModel`, and is part of neither predicate.  It keeps the root and the realizing
+    occurrence together and supplies no projected-donor lifting.
+38. Prospective.  Compiled in this repository (theorem named): `Realization.IsTerminalAt` with
+    `Realization.isTerminalAt_iff_forall_lt` (`Continuation/Terminal`),
+    `Realization.IsModel.reduce` (`Realization/Model`), and `Realization.IsModel.lt_omega_one`
+    with `le_blockStage` (`Realization/Expansion`), which give `β < ω₁` before the given model is
+    read as a model presentation.  The terminal model is on the same carrier as the given model,
+    not on an isomorphic copy.  A terminal presentation of the base comes from either stopping
+    proof of note 30 (the countable-slot argument, or the Scott route of row 40, whose maximal
+    presentation is terminal); literal-reduct uniqueness is row 35, conditional on the
+    injectivity of model reduction.  Through the Scott route no global termination theorem is
+    used; the stage index is not assumed countable.
+39. Prospective as a combined statement, which is not named, in two forms: carrier-general (a
+    base structure on any carrier, with `ξ < ω₁` an explicit hypothesis) and coded (codes on
+    `ℕ`, where `ξ < ω₁` follows from `Expansion.expansionDomain_eq_empty`).  Its ingredients are
+    compiled in this repository (theorem named; `ModelExpansion.map` is a definition):
+    `Expansion.mem_expansionDomain_iff` and
+    `Expansion.expansionDomain_eq_empty` (`Expansion/Domains`), `ModelExpansion.map` and
+    `ModelExpansion.val_eq_toRealization` (`Realization/Expansion`), and either
+    `ModelExpansion.subsingleton` (`Expansion/Uniqueness`), conditional on
+    `Expansion.NextBlockUniqueness`, still to be proved, or `ModelExpansion.eq_of_determines`
+    (`Definability/BlockFormulas`), conditional on block determination.  None of them, and not
+    `Expansion.NextBlockUniqueness` either, assumes a countable carrier;
+    `Realization.IsModel.lt_omega_one`, which does, is not used.  The domain guard
+    (`COMPANIONS.md`, "Quantitative reconstruction", second row) is prospective.  Recorded with
+    it (`Definability/BlockFormulas`): `blockFormula`, `qrank_blockFormula_le` (no hypothesis),
+    and, conditional on block determination, `realize_blockFormula_iff`,
+    `ModelExpansion.relMap_toChartStructure_iff`, and `ModelExpansion.map_eq_of_determines`.  No
+    new structure of hypotheses is introduced.
+40. Prospective.  The second stopping proof of note 30.  Scott isolation for one class, at the
+    pin: `stabilizationOrdinal_spec` with `stabilizationOrdinal_lt_omega1'` (signatures
+    checked), or `scottSentence_characterizes` with `scottFormula_qrank_le` and
+    `BFEquiv_implies_agreeQR` (signatures checked), the latter form also using
+    `stabilizationOrdinal_lt_omega1'` for the hypothesis of `scottFormula_qrank_le`;
+    `BFEquiv.monotone` lowers the level (available at the pin, signatures not yet checked by
+    CI).  `SuggestedInterfaces.lean` `#check`s `stabilizationOrdinal_spec` and
+    `stabilizationOrdinal_lt_omega1'`.  The isolating level of a countable family
+    (`exists_isolating_level`, `Scott/IsolatingLevel`, available at the pin `e460cb6`, signatures
+    checked; "Dependency pins") is not used.  Comparison: `Expansion.bfEquiv_of_modelExpansions`,
+    and its agreement form on
+    the sentences of quantifier rank at most `β`, `Expansion.mem_modelsOf_iff_of_modelExpansions`
+    for codes or `Expansion.realize_iff_of_modelExpansions` for any carriers, each conditional on
+    `Expansion.FiniteExtensionReceiving`.  Losses: `hasNonemptyLosses_of_hasApexCoatomExtensions`,
+    conditional on `CapToModel`, `StageType.HasApexCoatomExtensions`, and
+    `Expansion.NextBlockUniqueness`.  From the base to a code on `ℕ`: the conversion between the
+    two encodings (still to be proved), the density sentence for the base structure
+    (`realize_toStructure_densitySentence_iff`, with (R1)), `CapToModel.infinite` and
+    `exists_mem_modelsOf_densitySentence_equiv_of_capToModel` (`MainTheorem/Assembly`,
+    conditional on `CapToModel`), `ModelExpansion.map`, and `Expansion.mem_expansionDomain_iff`.
+    Attainment: `Realization.IsModel.reduce` and `ModelExpansion.nonempty_of_forall_lt`, the
+    latter conditional on `Expansion.NextBlockUniqueness`.  These are compiled in this repository
+    (theorem named; `ModelExpansion.map` is a definition), except the library statements and the
+    conversion; their hypotheses are still to be proved.  The strict bound on serving stages, the
+    attainment for a literal base, and positive niceness (5 ⇒ 1 of row 34) are prospective.  The
+    route proves stopping for each base that is a model as its conclusion and assumes no
+    termination; it is not a dependency of the expansion-domain endpoint and is not combined with
+    the conditional of row 31 in a cycle.
 
 **Completion criteria, item by item** (the items of `README.md`, "Manuscript correspondence
 (required)").  For every item, each row of the concordance that it concerns is P or C, with its
@@ -1155,6 +1237,54 @@ hypothesis of each statement of 2–4 that uses it, until it is proved as a theo
    injectivity of model reduction at `ρ` only, as an explicit hypothesis (the equality step, at
    `η`, is not used); strictness for models (row 32); and `COMPANIONS.md`, "Fixing ranks are zero
    or successors", for the limit case.
+
+**Completion criteria of witness-bounded density, terminal refinement, unique reconstruction,
+the Scott route, and the stopping proofs** (`README.md`, "Manuscript correspondence
+(required)", items 3 and 5, and "Acceptance criteria of the correspondence"; rows 30 and 37–40,
+each still to be proved).  Each target is complete on its own criterion, with its dependencies
+named, and none is complete because another is.
+
+1. *Equivalent density formulations:* the predicate bounding the returned invariant stated, and
+   its equivalence with the donor-bounded form of row 25, for `α ≤ β` on a realization fixed by
+   projection at `β`, compiled through `Realization.reduce_eval`; exact face preservation taken
+   from `Realization.IsConsistent`, not folded into either predicate; the root and the realizing
+   occurrence kept together; no lifting over a projected root derived from it.
+2. *Specified terminal refinement:* for every model at a block stage `λ_β` on a countable
+   carrier, a model on the same carrier (not an isomorphic copy), terminal at a countable
+   `ρ ≥ β`, whose stage reduction to `λ_β` is literally the given model, compiled with `β` not
+   assumed countable (`β < ω₁` derived first, from `Realization.IsModel.lt_omega_one` and
+   `le_blockStage`).  Its named dependencies: a terminal presentation of the base from either
+   stopping proof (5 below) and literal uniqueness (row 35), under the injectivity of model
+   reduction.
+3. *Unique reconstruction:* the `∃!` statement in its carrier-general form (no countability of
+   the carrier added; `ξ < ω₁` explicit) and its coded form (a code whose class lies in
+   `expansionDomain ξ`), compiled with `Expansion.NextBlockUniqueness` or block determination (or
+   a proof of either) as its only hypothesis of uniqueness, and documented with the block
+   formulas, their rank budget `ω·η`, the base-reduct equations, and transport along
+   isomorphisms; no new structure of hypotheses.
+4. *The Scott route:* each step of the chain compiled as its own theorem (Scott isolation for one
+   class, the strict bound on serving stages, the attained maximum, positive niceness), with its
+   named dependencies: conditions 3 and 4 of the expansion-domain reduction, Scott isolation at
+   the pin, the conversion between the two encodings with the transport of the base to a code on
+   `ℕ`, the injectivity of model reduction, and countable-limit existence.  The isolating level
+   of a countable family is not among them; if it is ever used, it is quoted only once
+   "Dependency pins" records a pin containing it, signatures checked.  No hypothesis or lemma
+   about termination enters; the conditional of row 31 and this route are not used in a cycle;
+   and the expansion-domain endpoint does not depend on it.
+5. *The stopping proofs and positive niceness:* each stopping proof that is used (the
+   countable-slot argument; the Scott route, 4 above) stated as its own theorem, concluding a
+   terminal presentation of each base that is a model, with its own dependencies, the two not
+   merged; a proof of the countable-slot argument provides (a) which events use a slot, (b) why
+   every relevant continuation uses a fresh slot, and (c) why exhausting those events yields an
+   actual terminal presentation, attained and terminal, not only the supremum of countably many
+   stages (`README.md`, item 5, "Two stopping proofs; positive niceness from a terminal
+   presentation", (i)); positive niceness compiled from an actual terminal presentation
+   (terminal collision and the injectivity of model reduction, then 5 ⇒ 1 of row 34), with no
+   further stabilization argument and with no stopping proof using it; neither stopping proof a
+   dependency of the expansion-domain endpoint.
+
+The five acceptance criteria of `README.md` ("Acceptance criteria of the correspondence") apply to
+every item: reconstruction, density, finite objects, rank budgets, and priorities.
 
 ## Upstream building blocks
 
@@ -1487,6 +1617,20 @@ the threshold (the admissible witness at the threshold is what yields the explic
 `⨆ c, (α_c + 1)`), and `exists_classwise_labelRank_bound`, one countable bound on `labelRank`
 (the least stage fixing a label, not a Scott rank), the form for fixing ranks matching milestone 3
 there.
+
+The isolating level for a countable family, available at the pin `e460cb6` (signatures
+checked), has the following scope.  Over a countable relational language, for
+`M : ι → Type w` with `[Countable ι]` and every `M i` countable, `exists_isolating_level` gives
+`∃ γ < ω₁, ∀ i j, BFEquiv0 (M i) (M j) γ → Nonempty (M i ≃[L] M j)`;
+`exists_isolating_level_iff` gives the same with `↔`; and `not_countable_of_forall_unisolated`
+is the contrapositive: if every level below `ω₁` has a nonisomorphic pair related by `BFEquiv0`,
+the index type is not countable.  The level is the supremum of the stabilization ordinals of
+the members; it is not claimed least, it is not a Scott rank, and it decides isomorphism
+between members of the family only.  The Scott route to maximal presentations (`README.md`,
+"Manuscript correspondence (required)", item 5; prospective; row 40) does not use this family
+theorem: it isolates one class at a time by `stabilizationOrdinal_spec` with
+`stabilizationOrdinal_lt_omega1'`, or by `scottSentence_characterizes` through
+`BFEquiv_implies_agreeQR` (all available at the pin, signatures checked).
 
 **Available upstream, not yet available at our pinned dependency:** of InfinitaryLogic, at
 `30c186f` (the merge of its pull request #163, after the pin `e460cb6`; same toolchain and

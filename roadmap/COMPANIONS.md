@@ -604,7 +604,12 @@ is compiled conditionally on block determination (below).  None is an input to t
   least `ξ`).  The count of the main theorem does not use them.  For the family of expansions of one
   model, conditional on positive niceness for that family, the bound of serving indices under
   strictness (`README.md`, "Manuscript correspondence (required)", item 5, "Uniform fixing bounds
-  from positive niceness"; prospective) bounds its height.  For one literal base with a terminal
+  from positive niceness"; prospective) bounds its height.  Positive niceness for that family
+  follows from a terminal presentation of the base (`README.md`, item 5, "Two stopping proofs;
+  positive niceness from a terminal presentation"; prospective), which either of two distinct
+  stopping proofs supplies: the countable-slot argument, or the Scott route to maximal
+  presentations (`README.md`, item 5), which uses conditions 3 and 4 with Scott isolation for
+  one class and assumes no termination.  For one literal base with a terminal
   model presentation at a countable index `ρ`, the counterpart of the height is `ρ`, the least
   upper bound of the fixing ranks across all model presentations of that base (`README.md`, item
   5, "Maximal presentations: equivalent criteria, uniqueness, the optimal bound"; prospective,
@@ -673,7 +678,12 @@ is compiled conditionally on block determination (below).  None is an input to t
   3. **the terminal expansion** (to be proved, given 2): the expansion of a model in `q` to its last
      admitted stage is unique by expansion uniqueness and terminal, and is covered by the countable
      family of terminal conditions of layer 4 (rigid-core type, positive eventual top grade, hollow
-     growth).
+     growth).  Its form for one specified presentation is the terminal refinement of `README.md`,
+     item 5, "Terminal refinement of a specified higher presentation" (prospective): a model at a
+     block stage on a countable carrier is literally the reduct of a terminal model on the same
+     carrier, whose base has a terminal presentation from either stopping proof there (the
+     countable-slot argument, or the Scott route to maximal presentations), under the
+     injectivity of model reduction and without that family.
 
   None of these is proved, and no class is asserted to have a last admitted stage or a terminal
   expansion before 1 is proved.  If 1–3 are proved, the greatest refinement above (itself a target)
@@ -703,16 +713,28 @@ is compiled conditionally on block determination (below).  None is an input to t
   that class.  The bound of (iv) is the only place where termination can enter.  Its conditional
   form is the uniform fixing stage of `README.md`, "Manuscript correspondence (required)", item 5,
   "Uniform fixing bounds from positive niceness" (prospective), which uses no termination; there
-  termination can enter only through the construction of positive niceness (milestone 2).  For
-  one literal base that is a model, a bound of this kind over all its model presentations is
-  equivalent to a maximal presentation of the base (criteria 3 and 5 of `README.md`, item 5,
+  termination can enter only through the construction of positive niceness (milestone 2): as
+  the stopping half of global termination (eventual departure for every class, not terminal
+  fullness) when milestone 2 is taken from the countable-slot argument, whose conclusion is that
+  half only prospectively: which events use its slots, why every relevant continuation uses a
+  fresh slot, and why exhausting those events yields an actual terminal presentation (the
+  supremum of countably many stages is not by itself one) are still to be supplied (`README.md`,
+  item 5, "Two stopping proofs; positive niceness from a terminal presentation", (i)); and only
+  as a conclusion, proved for each base from conditions 3 and 4, when it is taken from the Scott
+  route to maximal presentations (`README.md`, item 5; prospective), whose strict bound on
+  serving stages is eventual departure (1 above) read for one class, followed by greatest-stage
+  attainment (bounded-stage attainment, 4 ⇒ 5 of the five criteria there).  For one literal
+  base that is a model, a bound of this kind over all its model presentations is equivalent to
+  a maximal presentation of the base (criteria 3 and 5 of `README.md`, item 5,
   "Maximal presentations: equivalent criteria, uniqueness, the optimal bound"; prospective),
   conditional on the injectivity of model reduction at each countable index (raw form
   `ModelExpansion.subsingleton`, conditional on `Expansion.NextBlockUniqueness`, still to be
   proved), which 3 ⇒ 5 uses through bounded-stage attainment; so supplying the bound of (iv)
   characterizes termination for each base and does not avoid it.  Taken
   from eventual departure (1 above), the bound of (iv) uses conditions 3 and 4 with a Scott
-  sentence for each class, and not global termination.  Read off a full presentation of every
+  sentence for each class, and not global termination; this is step 4 of the Scott route to
+  maximal presentations (`README.md`, item 5), which its rule "No circularity" keeps apart from
+  the uniform fixing bounds.  Read off a full presentation of every
   class, it uses full-presentation coverage, hence global termination (`README.md`, "The
   persistent core"), which is then a stated hypothesis.  Nonempty domains alone do not replace
   (iv) ("Nonempty domains with an empty persistent core", above).  The termination-free
