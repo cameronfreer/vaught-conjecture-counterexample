@@ -984,9 +984,9 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
 32. Prospective, with the negative special case (the constant family of the all-undefined
     assignment; not compiled).  Strictness for models is to come from `COMPANIONS.md`, "Fixing
     ranks of finite charts" (the supremum at block `η` is `η`), still to be proved.  Milestone 4.
-    The row is required: the completion criterion of item 5 asks every row of the item to be P
-    or C, so matching the manuscript needs milestone 4 even where the main theorem uses no bound
-    of serving indices.
+    The row is required for item 5, whether or not the main theorem uses a bound of serving
+    indices: the completion criterion of item 5 asks every row of the item to be P or C, so
+    matching the manuscript needs milestone 4.
 
 **Completion criteria, item by item** (the items of `README.md`, "Manuscript correspondence
 (required)").  For every item, each row of the concordance that it concerns is P or C, with its
@@ -1044,10 +1044,11 @@ is complete because a later one is.
    assumptions; the empty family and a base assignment with no supported tuple as compiled
    examples; and its application to the data of 2, stage correctness retained, the bound chosen
    before the quantifiers over indices, presentations, arities, and coordinates.
-4. *Serving indices:* strictness for the models of the construction proved as a separate theorem,
-   the bound of serving indices derived from it, and the negative special case (the constant
-   family of the all-undefined assignment, fixed at `0` and serving at every index) compiled as an
-   example.
+4. *Serving indices* (required for item 5, row 32, whether or not the main theorem uses a bound
+   of serving indices): strictness for the models of the construction proved as a separate
+   theorem, the bound of serving indices derived from it, and the negative special case (the
+   constant family of the all-undefined assignment, fixed at `0` and serving at every index)
+   compiled as an example.
 5. *The separate statements:* the existence and coverage of maximal presentations, the terminal
    comparison, and noncollapse each proved by its own argument; no statement of 1–4 is cited for
    them, and no presentation at the supremum of the serving indices is inferred from 4.
