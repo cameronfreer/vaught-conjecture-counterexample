@@ -23,10 +23,18 @@ formal top, and `N : ℕ`.  The triple `(x, a, N)` is an **anchor at the top**
 (`Realization.ExtendsToCover`; these are the rooted covers compatible with `x`), the pair `(q, f)`
 does not force the threshold `N` at `a` (`StageType.ForcesThreshold` at `λ_{ξ+1}`).  The threshold
 is read at the transported position of `a`: on the face along `f` of a stage type at `λ_{ξ+1}`
-reducing to `q`, at the cell at the position of `a`.  Unfolded, over every compatible rooted cover
-`(q, f)` some stage type at `λ_{ξ+1}` reducing to `q` has, on its face along `f`, a label below
-`λ_ξ + N` there.  The bound `N` is chosen before the quantifier over covers, and the condition
-refers to all stage types reducing to the types of the covers.
+reducing to `q`, at the cell at the position of `a`.  Unfolded, every compatible rooted cover
+`(q, f)` satisfies one of two alternatives:
+
+* `q` does not restrict along `f` to the type of `x`; then `(q, f)` forces no threshold, and the
+  condition holds for it trivially (without exact consistency such covers can occur);
+* `q` restricts along `f` to the type of `x`, and some stage type at `λ_{ξ+1}` reducing to `q`
+  has, on its face along `f`, a label below `λ_ξ + N` at the position of `a`.
+
+So the reading by a stage type at `λ_{ξ+1}` with a label below `λ_ξ + N` applies only to the
+covers whose type restricts along `f` to the type of `x`.  The bound `N` is chosen before the
+quantifier over covers, and the condition refers to all stage types reducing to the types of the
+covers.
 
 * `N = 0` never gives an anchor (`Realization.not_isTopAnchor_zero`), and an anchor at `N` is one
   at every larger bound (`Realization.IsTopAnchor.mono`).
