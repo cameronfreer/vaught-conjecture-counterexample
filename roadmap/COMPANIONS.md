@@ -247,7 +247,8 @@ example of `MainTheorem/Examples` showing that countably many back-and-forth cla
 by the composition.  The four lemmas on closed antichains (`not_countable_of_perfect`,
 `analyticSet_offDiag`, `offDiag_noniso`, and `exists_forall_not_codeBFEquiv_of_isClosed`) are kept
 with their statements and are no longer used by the thinness theorems; Mathlib's `Set.offDiag`
-enters through them, and `Setoid.comapQuotientEquiv` is no longer used.  The statements of
+enters through `analyticSet_offDiag` and `offDiag_noniso`, and `Setoid.comapQuotientEquiv` is no
+longer used.  The statements of
 `VaughtConjecture.MainTheorem.Scatteredness`, all generic, belong upstream; their destinations are
 recorded in `IMPLEMENTATION.md`, "Placement record".
 
@@ -591,7 +592,8 @@ is stated and proved; and the import guard is in place and passes.
 
 ## Further companion results
 
-These are statements still to be proved.  None is an input to the main theorem.
+These are statements still to be proved, except the first row of quantitative reconstruction, which
+is compiled conditionally on block determination (below).  None is an input to the main theorem.
 
 * **Greatest refinements.**  The **greatest refinement** of a model is its expansion to the
   largest stage `λ_ξ` to which it expands (the set of such `ξ` is an initial segment closed under

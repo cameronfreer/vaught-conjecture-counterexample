@@ -238,9 +238,9 @@ donor type and donor occurrence, receiving over a root, permitted cutoff and sel
 private context with its private cap, marker, and reference cells, master chart, padding,
 freshness, bottom pattern, literal-top prescription, orderly and lawful labellings, legal scheme,
 fields, state vectors, catalogue, decoder, and future fields, owners, ownerwise decoding,
-long-row locality, the section theorem, display, gate and gate equation, the coatom extension
-construction, pinned and exact pinned extension, restriction-compatible labelling, `Correct`,
-LOW, and the cap-to-model theorem) and consists of four items, built in this order:
+long-row locality, the section theorem, display, gate, twins of the gate, and gate equation, the
+coatom extension construction, pinned and exact pinned extension, restriction-compatible labelling,
+`Correct`, LOW, and the cap-to-model theorem) and consists of four items, built in this order:
 
 1. **Statements of the finite extension constructions, and the section theorem.**  For each: input
    data, compatibility conditions, the constructed finite object (a legal scheme with its
@@ -546,9 +546,10 @@ its entry module `ComputableModelTheory.Classical`, no module of InfinitaryLogic
 `Extension/PinnedExtension` (for the one-point scheme and the zero-point lemmas) and
 `Extension/SectionTheorem` with `Extension/WitnessAlgebra` (for the capping lemma). As compiled,
 step 6 and the base-reduct part of step 7 (`ClassicalLimit/Receiving`) add to these only
-`Realization/Model`, `Realization/Receiving` (finite-extension receiving and its descent along stage
-reduction), and `Language/Density`, which brings InfinitaryLogic (layer 0); no `Construction/`,
-`MainTheorem/`, or `Expansion/` module, and no module of layers 4–5.
+`Realization/Receiving` (finite-extension receiving and its descent along stage reduction) and
+`Language/Density` with `Language/Structure`, `Language/Sentence`, and `Language/Satisfaction` (for
+the density sentence of the base reduct), which bring InfinitaryLogic's `Lomega1omega` modules
+(layer 0); no `Construction/`, `MainTheorem/`, or `Expansion/` module, and no module of layers 4–5.
 
 ## The full-presentation route
 
@@ -999,8 +1000,12 @@ named (`README.md`, Layer 0):
     (Layer 6) is absorbed as quotations, with its statements kept:
     `isThinOn_of_countable_bfClasses` quotes `isThinOn_of_bfScattered`,
     `isThinOnNatModels_of_countable_bfClasses` quotes `Sentenceω.isThinOnNatModels_of_bfScattered`,
-    `bfEquivSetoid_eq_comap` quotes InfinitaryLogic's `bfEquivSetoid_eq_comap`, and
-    `codeBFEquivSetoid` is InfinitaryLogic's `codeBFEquivSetoid` by definition;
+    `bfEquivSetoid_eq_comap` quotes InfinitaryLogic's `bfEquivSetoid_eq_comap`,
+    `exists_forall_not_codeBFEquiv_of_isClosed` quotes
+    `exists_forall_not_codeBFEquiv_of_analyticSet`, `offDiag_noniso` quotes
+    `not_structureIso_of_mem_offDiag`, `analyticSet_offDiag` applies
+    `MeasureTheory.AnalyticSet.offDiag`, and `codeBFEquivSetoid` is InfinitaryLogic's
+    `codeBFEquivSetoid` by definition;
   - the rank conventions (#155): documentation only (`Scott/Height/Defs`: the cross-structure
     ranks in `Ordinal.{0}` and the internal orbit ranks in `Ordinal.{w}`, with the comparisons
     proved and those refuted on the empty carrier and the infinite pure set); no statement changed;
@@ -1241,11 +1246,11 @@ Each checkpoint needs both its abstract API and a concrete application:
    modelhood and infinitude of the top-free witnesses (step 7); and the fidelity theorem of
    layer 2, the equivalence of the density sentence with the four-family sentence, whose two
    directions use (R1) and the cap-to-model theorem.
-   Status and route.  Receiving of the top-free witnesses (4a, step 6 of the top-free witnesses, for
-   an ultrahomogeneous structure whose age is the age of top-free charts, which exists under
-   `StageType.HasCoatomExtensions`) and the descent of finite-cut receiving along stage reduction
-   are compiled in this repository (theorem named): `hasFiniteCutReceiving_reconstruct` and
-   `realize_densitySentence_reconstruct_reduce` (`ClassicalLimit/Receiving`), and
+   Status and route of (R1).  Receiving of the top-free witnesses (4a, step 6 of the top-free
+   witnesses, for an ultrahomogeneous structure whose age is the age of top-free charts, which
+   exists under `StageType.HasCoatomExtensions`) and the descent of finite-cut receiving along stage
+   reduction are compiled in this repository (theorem named): `hasFiniteCutReceiving_reconstruct`
+   and `realize_densitySentence_reconstruct_reduce` (`ClassicalLimit/Receiving`), and
    `HasFiniteCutReceiving.reduce` (`Realization/Receiving`).  They do not give (R1) for all models
    (`README.md`, Layer 3, vocabulary, the receiving item), which condition 3, the fidelity direction
    at stage `ω`, and (R2) need.  General (R1) is split as (R6) is: 4b-i, the acquisition of the
@@ -1262,7 +1267,9 @@ Each checkpoint needs both its abstract API and a concrete application:
    complete (R1) (`README.md`, Summit 3).  Status: 4a and the descent are compiled; 4b-iii is in
    review and not yet on `main` (it uses no legality, no completion, and no (R6)); 4b-i, 4b-ii, the
    gated-extension property, and 4b-iv are still to be proved.  Projected-donor lifting is not part
-   of checkpoint 4 (`README.md`, Layer 3, 3.3, the density boundary).
+   of checkpoint 4 (`README.md`, Layer 3, 3.3, the density boundary).  This status concerns (R1)
+   only: (R2), (R3), the cap-to-model theorem at a general stage, and the fidelity theorem of this
+   checkpoint remain to be proved.
 5. Structural continuation (the structural stable candidate); then items 3.2 and 3.3 for (R4)
    (the acquisition of its calibrated data, its occurrence, and the evaluation of the stable
    labelling by the recovery statement of checkpoint 4); three terminal comparisons (the first
@@ -1434,10 +1441,10 @@ ones split):
   refuted (`SmallArityExamples.not_isBountiful_flatRows`).
   What remains (2.5b, `m = 1`) is still to be proved.  During a lift at grade `2`, the cap must be
   kept on the new cells of grade `1`, which are not on the boundary and are read by the catalogue of
-  grade `2`; how it is kept (by a catalogue of grade `1` that reads the labels of all cells below
-  `(univ, 2)`, the old cells of grade `2` included, through the lift at grade `1` with restoration,
-  `CellScheme.Rows.exists_restoration`, or otherwise) is to be settled by 2.5b.
-  `StageType.HasCoatomExtensions` needs every arity and remains a hypothesis until 2.7.
+  grade `2`; how it is kept is to be settled by 2.5b.  Alternatives include a catalogue of grade `1`
+  that reads the labels of all cells below `(univ, 2)`, the old cells of grade `2` included; and the
+  lift at grade `1`, through restoration (`CellScheme.Rows.exists_restoration`); others are not
+  excluded.  `StageType.HasCoatomExtensions` needs every arity and remains a hypothesis until 2.7.
 - **2.6. Recursion on the grade.**  One grade step from the predecessor grade already
   established first, then the general step; lawfulness, consistency, the prefix equations, and
   unrestricted lifting (the last two defined with 2.6) are distinct statements.  The one grade step

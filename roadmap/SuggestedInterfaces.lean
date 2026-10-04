@@ -233,7 +233,7 @@ set_option linter.hashCommand false in
 set_option linter.hashCommand false in
 #check FirstOrder.Language.age.fg_substructure
 
--- InfinitaryLogic at our pinned dependency `def5cc0` (signatures checked): uniform
+-- InfinitaryLogic at our pinned dependency `cf80917` (signatures checked): uniform
 -- back-and-forth separation of analytic sets of nonisomorphic pairs of codes
 -- (`Descriptive/BFSeparation`); it enters the compiled `isThinOn_of_countable_bfClasses`
 -- (`VaughtConjecture.MainTheorem.Scatteredness`; `README.md`, Layer 6) through InfinitaryLogic's
