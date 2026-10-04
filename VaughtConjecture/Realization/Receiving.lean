@@ -99,8 +99,9 @@ density sentence; no clause of a model is used.
 
 **Status.**  The reduction of finite-extension receiving to finite-cut receiving, and the descent
 of finite-cut receiving along stage reduction, are proved here.  Finite-cut receiving of models in
-general, (R1) of the table of Layer 3, is still to be proved; through
-`Expansion.FiniteCutReceiving` it is the remaining hypothesis of the transfer of
+general, (R1) of the table of Layer 3, is still to be proved; it holds conditional on the gated
+pinned extension property (`IsModel.hasFiniteCutReceiving_of_hasGatedPinnedExtensions`), and
+through `Expansion.FiniteCutReceiving` it is the remaining hypothesis of the transfer of
 `VaughtConjecture.Expansion.Agreement`.
 
 ## Placement
