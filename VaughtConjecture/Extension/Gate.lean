@@ -117,7 +117,7 @@ variable {N i : ℕ} {a b c v x : Label.{u}} {g : ℕ → Label.{u}} {σ : Label
 /-! ### Scalar lemmas -/
 
 /-- A minimum that lies strictly below its second argument is its first argument. -/
-theorem left_eq_of_min_eq_of_lt (h : min a b = v) (hv : v < b) : a = v :=
+private theorem left_eq_of_min_eq_of_lt (h : min a b = v) (hv : v < b) : a = v :=
   ((min_eq_iff.mp h).resolve_right fun h' ↦ hv.ne' h'.1).1
 
 /-- A label that is not self-visible at `N` lies strictly below every label self-visible at `N`
