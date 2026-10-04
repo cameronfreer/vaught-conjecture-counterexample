@@ -14,9 +14,10 @@ import VaughtConjecture.MainTheorem.ModelExpansionDomains
   hypotheses.
 * **Covers by subsingletons.**  A finite set covered by its singletons, and a cover whose members
   all coincide: the cover need not be disjoint.
-* **Cover-hollowness at a block stage.**  The hollow property gives it; no realization at the
-  successor stage `ω + 1` has it; and (R3) for it is exactly (R3) at the block stages for
-  cover-hollow models, so naming it does not strengthen (R3).
+* **Cover-hollowness at a block stage.**  The hollow property gives it; every successor-limit
+  stage, the only stages at which (R3) applies, is a block stage, at which it is cover-hollowness;
+  and (R3) for it is exactly (R3) at the block stages for cover-hollow models, so naming it does
+  not strengthen (R3).
 * **One class per property**, and the hypotheses of the spectrum theorem.
 -/
 
@@ -49,12 +50,12 @@ example (hrec : FiniteCutReceiving.{0}) (hcont : ContinuationCriterion.{0})
 
 /-- A finite set covered by its singletons. -/
 example : (Set.univ : Set (Fin 3)).Countable :=
-  countable_of_subsingleton_cover (fun i : Fin 3 ↦ {i}) (fun _ ↦ Set.subsingleton_singleton)
-    fun x _ ↦ Set.mem_iUnion.mpr ⟨x, rfl⟩
+  Counting.countable_of_subsingleton_cover (fun i : Fin 3 ↦ {i})
+    (fun _ ↦ Set.subsingleton_singleton) fun x _ ↦ Set.mem_iUnion.mpr ⟨x, rfl⟩
 
 /-- The members of the cover may coincide. -/
 example : ({0} : Set ℕ).Countable :=
-  countable_of_subsingleton_cover (fun _ : ℕ ↦ {0}) (fun _ ↦ Set.subsingleton_singleton)
+  Counting.countable_of_subsingleton_cover (fun _ : ℕ ↦ {0}) (fun _ ↦ Set.subsingleton_singleton)
     fun _ hx ↦ Set.mem_iUnion.mpr ⟨0, hx⟩
 
 /-! ### Cover-hollowness at a block stage -/
@@ -65,12 +66,13 @@ example {ξ : Ordinal.{0}} {M : Type} {R : Realization.{0, 0} (blockStage ξ) M}
     R.IsCoverHollowAtBlock ∧ R.topGradeSup = ⊤ :=
   ⟨isCoverHollowAtBlock_iff.mpr h.1, h.2⟩
 
-/-- No realization at the successor stage `ω + 1` is cover-hollow at a block stage. -/
-example {M : Type} (R : Realization.{0, 0} (ω + 1) M) : ¬ R.IsCoverHollowAtBlock := by
-  rintro ⟨ξ, h, -⟩
-  have := isSuccLimit_blockStage ξ
-  rw [← h, ← Order.succ_eq_add_one] at this
-  exact Order.not_isSuccLimit_succ _ this
+/-- Every successor-limit stage is a block stage `λ_ξ`, at which cover-hollowness at a block stage
+is cover-hollowness: the predicate differs from cover-hollowness only at stages that are not
+successor limits, where (R3) is vacuous. -/
+example {α : Ordinal.{0}} (hα : Order.IsSuccLimit α) : ∃ ξ, blockStage ξ = α ∧
+    ∀ {M : Type} (R : Realization.{0, 0} (blockStage ξ) M),
+      R.IsCoverHollowAtBlock ↔ R.IsCoverHollow :=
+  (exists_blockStage_eq_of_isSuccLimit hα).imp fun _ h ↦ ⟨h, fun _ ↦ isCoverHollowAtBlock_iff⟩
 
 /-- (R3) for cover-hollowness at a block stage is exactly (R3) at the block stages for
 cover-hollow models: the predicate does not strengthen (R3). -/

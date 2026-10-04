@@ -5,6 +5,7 @@ Authors: Cameron Freer
 -/
 import VaughtConjecture.Continuation.Classification
 import VaughtConjecture.Continuation.Comparison
+import VaughtConjecture.Counting.Domains
 import VaughtConjecture.Expansion.Agreement
 import VaughtConjecture.Expansion.Domains
 
@@ -27,11 +28,11 @@ reducing to it would be a model expansion of the same code (`IsExpansionOf.isTer
 the converse, that a terminal expansion places its class in the loss.
 
 **Cover-hollowness at a block stage.**  The hollow comparison takes (R3) of the table of Layer 3
-for a predicate on realizations at every stage (`Realization.HollowReceiving`), while
-cover-hollowness (`Realization.IsCoverHollow`) is defined at block stages only.  A realization at
-`α` is **cover-hollow at a block stage** (`Realization.IsCoverHollowAtBlock`) when `α = λ_ξ` for
-some `ξ` and it is cover-hollow there; at `λ_ξ` this is cover-hollowness
-(`Realization.isCoverHollowAtBlock_iff`), since the block stages are strictly increasing.
+(`Realization.HollowReceiving`) for cover-hollowness at a block stage
+(`Realization.IsCoverHollowAtBlock`, in `VaughtConjecture.Continuation.Hollow`).  At a block stage
+it is cover-hollowness (`Realization.isCoverHollowAtBlock_iff`), and every successor-limit stage,
+the only stages at which (R3) applies, is a block stage (`exists_blockStage_eq_of_isSuccLimit`).
+So (R3) for this predicate is (R3) for cover-hollowness at the block stages, not a strengthening.
 
 **At most one class per property** (`subsingleton_classes_of_property`).  Two model expansions to
 `λ_ξ`, on countable carriers, sharing a terminal property have isomorphic base structures
@@ -47,13 +48,14 @@ used here.
 countably many sets of classes with a given terminal property (`countable_terminalProperty`): each
 class in the loss has an expansion to `λ_ξ`, which is terminal, hence has some property under the
 continuation criterion (`Realization.exists_hasTerminalProperty`).  Each set is a subsingleton,
-so the loss is countable (`countable_of_subsingleton_cover`).  The properties need not be
+so the loss is countable (`Counting.countable_of_subsingleton_cover`).  The properties need not be
 disjoint, and no canonical property of a class is chosen.
 
 The hypotheses, **each still to be proved**, and where they are used:
 
 * (R1) of the table of Layer 3 (`FiniteCutReceiving`; it follows from the gated pinned extension
-  property `StageType.HasGatedPinnedExtensions`, also unproved): the rigid-core comparison;
+  property `StageType.HasGatedPinnedExtensions`, also unproved, by
+  `Expansion.finiteCutReceiving_of_hasGatedPinnedExtensions`): the rigid-core comparison;
 * output 3 of higher-stage reconstruction, Layer 4 (`ContinuationCriterion`, sufficiency only):
   the cover;
 * (R2) of the table of Layer 3 (`Realization.ResidualReceiving`): the residual comparison;
@@ -70,33 +72,11 @@ still to be proved.
 This file belongs to Layer 5 of `roadmap/README.md`.
 -/
 
-universe u w
+universe w
 
 namespace VaughtConjecture
 
 open Ordinal FirstOrder Language Structure baseLanguage
-
-/-- **A set covered by countably many subsingletons is countable**: `Set.countable_iUnion` with
-`Set.Subsingleton.countable` (Mathlib has no single declaration for it). -/
-theorem countable_of_subsingleton_cover {X I : Type*} [Countable I] {L : Set X} (S : I → Set X)
-    (hS : ∀ i, (S i).Subsingleton) (hcov : L ⊆ ⋃ i, S i) : L.Countable :=
-  (Set.countable_iUnion fun i ↦ (hS i).countable).mono hcov
-
-namespace Realization
-
-/-- A realization at `α` is **cover-hollow at a block stage** when `α` is a block stage `λ_ξ` and
-the realization is cover-hollow there. -/
-def IsCoverHollowAtBlock {α : Ordinal.{u}} {M : Type w} (R : Realization.{u, w} α M) : Prop :=
-  ∃ (ξ : Ordinal.{u}) (h : α = blockStage ξ), (h ▸ R).IsCoverHollow
-
-/-- At a block stage, cover-hollowness at a block stage is cover-hollowness. -/
-theorem isCoverHollowAtBlock_iff {ξ : Ordinal.{u}} {M : Type w}
-    {R : Realization.{u, w} (blockStage ξ) M} : R.IsCoverHollowAtBlock ↔ R.IsCoverHollow := by
-  refine ⟨fun ⟨ξ', h, hR⟩ ↦ ?_, fun h ↦ ⟨ξ, rfl, h⟩⟩
-  obtain rfl := blockStage_strictMono.injective h
-  exact hR
-
-end Realization
 
 /-- **Expansions of a class in a loss are terminal**: every model expansion to `λ_ξ` of a code
 whose class lies in the loss at `ξ` is terminal at `ξ`.  Unconditional. -/
@@ -151,8 +131,9 @@ theorem subsingleton_classes_of_property (hrec : FiniteCutReceiving.{0})
 
 /-- **The successor losses of the expansion domains are countable**, conditional on the following
 hypotheses, each still to be proved: (R1) of the table of Layer 3 (`hrec`; it follows from the
-gated pinned extension property), output 3 of higher-stage reconstruction (`hcont`, the
-continuation criterion; Layer 4), (R2) (`hres`) and (R3) (`hhol`) of the table of Layer 3.  The
+gated pinned extension property, `finiteCutReceiving_of_hasGatedPinnedExtensions`), output 3 of
+higher-stage reconstruction (`hcont`, the continuation criterion; Layer 4), (R2) (`hres`) and (R3)
+(`hhol`) of the table of Layer 3.  The
 loss at `ξ` is covered by the countably many subsingletons of classes with a given terminal
 property, since every expansion of a class in the loss is terminal. -/
 theorem expansionDomain_loss_countable (hrec : FiniteCutReceiving.{0})
@@ -161,8 +142,8 @@ theorem expansionDomain_loss_countable (hrec : FiniteCutReceiving.{0})
     ∀ ξ < ω₁, (expansionDomain ξ \ expansionDomain (ξ + 1)).Countable := by
   intro ξ hξ
   have := countable_terminalProperty hξ
-  refine countable_of_subsingleton_cover _ (subsingleton_classes_of_property hrec hres hhol hξ)
-    fun q hq ↦ ?_
+  refine Counting.countable_of_subsingleton_cover _
+    (subsingleton_classes_of_property hrec hres hhol hξ) fun q hq ↦ ?_
   obtain ⟨c, rfl⟩ := Quotient.mk_surjective q
   let := c.1.toStructure
   obtain ⟨e⟩ := (mem_expansionDomain_iff c).mp hq.1

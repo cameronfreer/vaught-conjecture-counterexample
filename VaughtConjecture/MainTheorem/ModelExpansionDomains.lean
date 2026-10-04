@@ -170,8 +170,9 @@ sentence has no perfect set of pairwise nonisomorphic models coded on `ℕ`, con
 following hypotheses, each still to be proved:
 * the cap-to-model theorem (`hcap`; Layer 3, 3.4; checkpoint 4): the first domain;
 * finite-cut receiving of models (`hrec`; (R1) of the table of Layer 3, which follows from the
-  gated pinned extension property `StageType.HasGatedPinnedExtensions`): next-block uniqueness,
-  logical agreement, and the rigid-core comparison;
+  gated pinned extension property `StageType.HasGatedPinnedExtensions` by
+  `Expansion.finiteCutReceiving_of_hasGatedPinnedExtensions`): next-block uniqueness, logical
+  agreement, and the rigid-core comparison;
 * forcing donors at every countable block index (`hF`; a finite construction of Layer 3, awaiting
   the completion below the full grade): next-block uniqueness, for the limit clause;
 * the continuation criterion (`hcont`; output 3 of higher-stage reconstruction, Layer 4): the
@@ -191,8 +192,8 @@ theorem densitySentence_isThinOnNatModels_of_terminalClassification (hcap : CapT
 /-- **The thin `ℵ₁` spectrum for the expansion domains from the terminal classification**: the
 density sentence has exactly `ℵ₁` classes of models coded on `ℕ` and no perfect set of pairwise
 nonisomorphic ones, conditional on the hypotheses of
-`densitySentence_isThinOnNatModels_of_terminalClassification`, each still to be proved, and on
-nonempty losses of the expansion domains (`hn`; condition 4 of the reduction, Layer 6).  The
+`densitySentence_isThinOnNatModels_of_terminalClassification`, and on nonempty losses of the
+expansion domains (`hn`; condition 4 of the reduction, Layer 6), each still to be proved.  The
 countability of the losses is derived (`Expansion.expansionDomain_loss_countable`). -/
 theorem densitySentence_hasThinAlephOneSpectrum_of_terminalClassification
     (hcap : CapToModel.{0}) (hrec : FiniteCutReceiving.{0}) (hF : ∀ ξ < ω₁, ForcingDonors.{0} ξ)
