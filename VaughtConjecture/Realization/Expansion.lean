@@ -53,18 +53,16 @@ expansion to a stage `α ≥ ω₁` (`ModelExpansion.isEmpty_of_omega_one_le`).
 
 **Covers.**  A tuple `c : Fin k → M` **covers** a stage type `t` in `R` (`Realization.Covers`)
 when it is injective and `R` evaluates it to `t`: `c` enumerates an actual occurrence of `t`.
-Covers survive stage reduction, by the same tuple (`Realization.Covers.reduce`), the covers in
-a transport along a bijection of carriers are the transports of covers
-(`Realization.covers_map_iff`), and an injective tuple covers exactly its evaluation
-(`Realization.covers_iff_eval`).  A tuple `c` **extends to a
-cover** of a triple `(m, q, f)` — a stage type `q` on `m` points and an embedding
+Covers survive stage reduction, by the same tuple (`Realization.Covers.reduce`), the covers in a
+transport along a bijection of carriers are the transports of covers (`Realization.covers_map_iff`),
+and an injective tuple covers exactly its evaluation (`Realization.covers_iff_eval`).  A tuple `c`
+**extends to a cover** of a triple `(m, q, f)` — a stage type `q` on `m` points and an embedding
 `f : Fin k ↪ Fin m` of coordinates — in `S` (`Realization.ExtendsToCover`) when some tuple `s`
-covering `q` in `S` restricts along `f` to `c`.  The base
-relations of an expansion are read from its covers through the base-reduct equation
-(`Realization.IsExpansionOf.relMap_comp_iff`), so two covers of one stage type, in expansions of
-two base structures at any common stage, have the same atomic type in the base language
-(`Realization.Covers.sameAtomicType`): the atomic diagram of a cover is determined by its type.
-Every expansion has a cover of a stage type on no points
+covering `q` in `S` restricts along `f` to `c`.  The base relations of an expansion are read from
+its covers through the base-reduct equation (`Realization.IsExpansionOf.relMap_comp_iff`), so two
+covers of one stage type, in expansions of two base structures at any common stage, have the same
+atomic type in the base language (`Realization.Covers.sameAtomicType`): the atomic diagram of a
+cover is determined by its type.  Every expansion has a cover of a stage type on no points
 (`ModelExpansion.exists_covers_zero`), since the empty face of every occurrence is closed.
 
 **Received types after reduction.**  A member `q` of the receiving family of `D` at the cutoff

@@ -15,8 +15,8 @@ import VaughtConjecture.Continuation.Classification
 * **The top-free witness.**  The realization reconstructed from an ultrahomogeneous structure
   whose age is the age of top-free charts, at a block stage and under the coatom extension
   property with apex (which makes it a model, `isModel_reconstruct_of_hasApexCoatomExtensions`),
-  has the rigid-core property `inl ⟨0, p⟩` on no points, does not have the hollow property, and is
-  terminal.
+  has the rigid-core property `inl ⟨0, p⟩` on no points and does not have the hollow property.  It
+  is terminal, which needs only that the age is contained in the age of top-free charts.
 * **Positivity.**  No model has the residual property with `K = 0`.
 * **Overlap.**  The properties are not exclusive: in a top-free model every cover is a globally
   rigid core, so the witness has the rigid-core property on no points and on one point.
@@ -75,7 +75,14 @@ example {ξ : Ordinal.{0}} {M : Type} {R : Realization.{0, 0} (blockStage ξ) M}
 section Witness
 
 variable {ξ : Ordinal.{0}} {M : Type} [(hullLanguage.{0} (blockStage ξ)).Structure M]
-  (hext : HasApexCoatomExtensions.{0} (blockStage ξ))
+
+/-- **The witness is terminal** at its block (`reduce_ne_reconstruct`).  This needs only that the
+age is contained in the age of top-free charts. -/
+example (hage : (hullLanguage.{0} (blockStage ξ)).age M ⊆ topFreeAge (blockStage ξ)) :
+    (reconstruct (blockStage ξ) M).IsTerminalAt ξ :=
+  fun _ hR' ↦ reduce_ne_reconstruct hage _ (blockStage_lt_blockStage_add_one ξ) hR'
+
+variable (hext : HasApexCoatomExtensions.{0} (blockStage ξ))
   (hage : (hullLanguage.{0} (blockStage ξ)).age M = topFreeAge (blockStage ξ))
   (hu : (hullLanguage.{0} (blockStage ξ)).IsUltrahomogeneous M)
 include hext hage hu
@@ -98,10 +105,6 @@ example : ¬ (reconstruct (blockStage ξ) M).HasTerminalProperty (.inr (.inr ())
     (reconstruct (blockStage ξ) M).IsCoverHollow :=
   have h := isModel_reconstruct_and_isTopFree hext hage hu
   ⟨not_hasTerminalProperty_hollow_of_isTopFree h.2, isCoverHollow_of_isTopFree h.2⟩
-
-/-- **The witness is terminal** at its block (`reduce_ne_reconstruct`). -/
-example : (reconstruct (blockStage ξ) M).IsTerminalAt ξ :=
-  fun _ hR' ↦ reduce_ne_reconstruct hage.le _ (blockStage_lt_blockStage_add_one ξ) hR'
 
 /-- **Overlap**: the witness also has the rigid-core property on one point, for the type of any
 occurrence on one point, since every cover of a top-free model is a globally rigid core. -/

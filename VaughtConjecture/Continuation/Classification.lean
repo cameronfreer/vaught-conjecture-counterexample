@@ -39,9 +39,10 @@ each number of points (`StageType.countable_of_lt_omega_one`).  No ordinal param
 * `inr (inr ())` when `R` is cover-hollow (`Realization.IsCoverHollow`) and its top-grade
   supremum is `⊤`.
 
-A realization may have several properties (a cover-hollow model with unbounded growth may also
-have a globally rigid core): there is no canonical property of a model, and no disjointness is
-claimed.
+A realization may have several properties: the definitions do not exclude a cover-hollow model
+with unbounded growth that also has a globally rigid core, and the top-free witness of
+`Continuation.ClassificationExamples` has the rigid-core property both on no points and on one
+point.  There is no canonical property of a model, and no disjointness is claimed.
 
 **The continuation criterion** (`ContinuationCriterion`) is output 3 of higher-stage
 reconstruction in its sufficiency direction, and is **still to be proved**; here it is a
