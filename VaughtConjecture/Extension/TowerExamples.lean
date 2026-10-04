@@ -23,15 +23,18 @@ Write `Q b f` for the label `ω * b + f`.
   from the lower grade.  At arity two the hypothesis of `Seed.towerInvariant_of_twoFaceLift` is
   exactly the two-face lift `2FL(1)`; under it the invariant holds at the grade `2`, and then at the
   grade `3` with no further hypothesis (`Seed.towerInvariant_top`).  At the arities `m ≤ 1` no
-  hypothesis is assumed (`towerInvariant_succ_of_le_one`).
+  hypothesis is assumed (`towerInvariant_succ_of_le_one`).  `2FL(1)` holds
+  (`Seed.twoFaceLift_one`); the unconditional forms are in
+  `VaughtConjecture.Extension.TwoFaceLiftExamples`.
 * **Example 5: literal faces of the tower** (`towerType`, `restrictFace_left_towerType`,
   `restrictFace_right_towerType`).  At a stage that is zero or a limit, the scheme reached after
   any grade `j ≤ m + 2`, with the glued labelling extended through the tower
   (`Seed.exists_isLawful_tower`) and reduced to the stage, is a stage type whose faces along the two
   coatoms are literally the two coatom types of the seed, labels included: the old cells keep
   their scopes, rows and labels, and every cell of proper scope is old.  Instances at arity two
-  and the grade `3` (`restrictFace_towerType_two`).  Its legality below the full grade is the
-  subject of checkpoint 2.6c.
+  and the grade `3` (`restrictFace_towerType_two`).  At the top grade `m + 1` its legality below
+  the full grade follows from the invariant (`Seed.isLegalBelowFullGrade_tower`, module
+  `VaughtConjecture.Extension.TwoFaceLift`).
 * **Example 6: orbit codes at grade three** (`orbitCode_gradeThreeLabelling`,
   `orbitDecoder_gradeThreeLabelling`).  On the labelling `(2, 3, ω * 5 + 2, ω * 5 + 3)` at the
   grade `3` the orbit code is `(2, 3, ω * 4 + 2, ω * 4 + 3)`: the natural strip, whose key is the

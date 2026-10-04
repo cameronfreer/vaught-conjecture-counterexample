@@ -96,13 +96,17 @@ need not be short at the grades of the layers it crosses.
   (`Seed.towerInvariant_of_twoFaceLift`), and at the arities `m ≤ 1` with no hypothesis
   (`Seed.towerInvariant_of_le_one`, which does not use `Seed.TwoFaceLift`).  `2FL(0)` holds, below
   `(univ, 0)` there being no cells (`Seed.twoFaceLift_zero`); `2FL(1)` is the first instance the
-  step assumes, and at the arity `2` the only one.
+  step assumes, and at the arity `2` the only one.  It holds at every arity (`Seed.twoFaceLift_one`,
+  module `VaughtConjecture.Extension.TwoFaceLift`).
 * `2FL(j)` is assumed here, not proved, at the grades `2 ≤ j + 1 ≤ m`: it is not a field of
   `Seed` and is not derived from the bountifulness of the amalgam.  Nothing beyond the conditional
-  theorems of this module is claimed.  Bountifulness and legality of the tower, the completion
-  below the full grade at every arity (checkpoint 2.6c), and `StageType.HasApexCoatomExtensions`
-  and `StageType.HasCoatomExtensions` at the stages that are zero or a limit (checkpoint 2.7) are
-  planned to rest on `2FL(j)`; they are prospective and not stated here.
+  theorems of this module is claimed here.  Bountifulness and legality of the tower and the
+  completion below the full grade are proved from the invariant at the top grade in the module
+  `VaughtConjecture.Extension.TwoFaceLift`: with no hypothesis at the arities `m ≤ 2`, and under
+  `2FL(j)` at the grades `2 ≤ j < m` at every arity.  `StageType.HasApexCoatomExtensions` and
+  `StageType.HasCoatomExtensions` at the stages that are zero or a limit follow under `2FL(j)` at
+  those grades for every seed (`StageType.hasApexCoatomExtensions_of_twoFaceLift`, same module);
+  unconditionally they are prospective and not stated here.
 
 **The union fill is refuted as a universal statement.**  With `V = (univ, j)` at every grade, as at
 the top grade, the step would fill the other coatom's cells of the grade `j + 1` over the union of
@@ -807,7 +811,8 @@ cells.  The invariant at `j + 1` follows from it together with the invariant at 
 restoration of the lower prescriptions, the owner alignment, and the extension through the layer at
 `j + 1` (`Seed.towerInvariant_succ`).  At the grade `j = 0`
 it holds (`Seed.twoFaceLift_zero`); it is assumed by the step at the grades `2 ≤ j + 1 ≤ m`
-(`Seed.towerInvariant_of_twoFaceLift`), and `2FL(1)` is open. -/
+(`Seed.towerInvariant_of_twoFaceLift`).  `2FL(1)` holds at every arity (`Seed.twoFaceLift_one`);
+`2FL(j)` for `j ≥ 2` is open. -/
 def TwoFaceLift (j : ℕ) : Prop :=
   ∀ a ∈ (I.tower j).catalogue (j + 1),
   ∀ h : Label.{u}, IsSelfVisible (j + 1) h → IsShort (j + 1) h → ⊥ < h →
