@@ -383,9 +383,10 @@ set_option linter.hashCommand false in
 -- bound and characterization: the notions of the prospective one-sided rank comparison
 -- (`COMPANIONS.md`, "Further companion results"); `stabilizationOrdinal_spec` and
 -- `stabilizationOrdinal_lt_omega1'` (`Scott/RefinementCount`) give the per-class isolation level of
--- the Scott route (`README.md`, manuscript correspondence, item 5).  `stabilizationOrdinal M` is the least level at
--- which empty-tuple back-and-forth equivalence with `M` characterizes `M` among the countable
--- structures in its carrier universe (`StabilizesAt`); `scottHeight M` the least level from which
+-- the Scott route (`README.md`, manuscript correspondence, item 5).  `stabilizationOrdinal M` is
+-- the least level at which empty-tuple back-and-forth equivalence with `M` characterizes `M` among
+-- the countable structures in its carrier universe (`StabilizesAt`); `scottHeight M` the least
+-- level from which
 -- back-and-forth equivalence of tuples of every length no longer refines.  Neither is
 -- `internalScottRank`: an infinite pure set has internal Scott rank `1`
 -- (`internalScottRank_pureSet`).  No application is compiled here.
