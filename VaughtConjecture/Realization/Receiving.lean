@@ -90,6 +90,13 @@ the received occurrence, reduced to `β`, agrees with `d` below the cutoff.  Thi
 permitted cutoff at a time, not exact projected receiving (semantic contract, item 12): the
 received type need not reduce to `d` itself.
 
+**Infinitude** (`infinite_of_hasFiniteCutReceiving`).  An exactly consistent, covering realization
+at a positive stage with the finite-cut receiving property is infinite once the type of every
+occurrence has a coface: the empty face of an occurrence is typed, and receiving a coface at the
+cutoff `0` extends each occurrence by a point off it (`RealizesOver.exists_notMem`), so there are
+occurrences of every arity.  This is the realization form of the infinitude of models of the
+density sentence; no clause of a model is used.
+
 **Status.**  The reduction of finite-extension receiving to finite-cut receiving, and the descent
 of finite-cut receiving along stage reduction, are proved here.  Finite-cut receiving of models in
 general, (R1) of the table of Layer 3, is still to be proved; through
@@ -197,6 +204,34 @@ finite-cut receiving. -/
 theorem IsModel.hasFiniteExtensionReceiving_iff (hR : R.IsModel) (hα : Order.IsSuccPrelimit α) :
     R.HasFiniteExtensionReceiving ↔ R.HasFiniteCutReceiving :=
   Realization.hasFiniteExtensionReceiving_iff hR.isConsistent hα
+
+/-! ### Infinitude -/
+
+/-- **Infinitude from receiving**: an exactly consistent, covering realization at a positive stage
+with the finite-cut receiving property, in which the type of every occurrence has a coface, is
+infinite.  Receiving a coface at the cutoff `0` extends every occurrence by a new point, so there
+are occurrences of every arity. -/
+theorem infinite_of_hasFiniteCutReceiving (h0 : 0 < α) (hc : R.IsConsistent)
+    (hcov : R.IsCovering) (hr : R.HasFiniteCutReceiving)
+    (hcof : ∀ x : R.Occurrence, x.type.cofaces.Nonempty) : Infinite M := by
+  have hk (k : ℕ) : ∃ x : R.Occurrence, x.arity = k := by
+    induction k with
+    | zero =>
+      obtain ⟨x⟩ := hcov.nonempty_occurrence
+      obtain ⟨p, hp⟩ := Option.isSome_iff_exists.mp ((isSome_eval_face_iff hc x
+        (Function.Embedding.ofIsEmpty (α := Fin 0))).mpr (by simpa using x.type.isPlan.empty_mem))
+      exact ⟨⟨0, _, p, hp⟩, rfl⟩
+    | succ k ih =>
+      obtain ⟨x, rfl⟩ := ih
+      obtain ⟨Q, hQ⟩ := hcof x
+      obtain ⟨u, -, q, -, hq⟩ := hr x Q hQ 0 (isPermittedCutoff_zero.mpr h0)
+      exact ⟨⟨_, u, q, hq⟩, rfl⟩
+  refine not_finite_iff_infinite.mp fun _ ↦ ?_
+  have := Fintype.ofFinite M
+  obtain ⟨x, hx⟩ := hk (Fintype.card M + 1)
+  have h := Fintype.card_le_of_embedding x.tuple
+  rw [Fintype.card_fin, hx] at h
+  omega
 
 /-! ### Descent along stage reduction -/
 
