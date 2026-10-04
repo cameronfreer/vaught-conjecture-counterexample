@@ -13,56 +13,64 @@ reference cells); semantic contract, item 5 (the uniformity and high-arity-domin
 
 Let `R` be a model at stage `α`, let `x` be an occurrence of `R` (the **root**) on `m` points, and
 let `d` be a stage type on `m + 1` points (the **donor**).  A **block** is an interval
-`[μ, μ + ω)` of ordinals with `μ` zero or a limit; every ordinal `o` lies in exactly one block,
-that of `μ = ω * (o / ω)`, as `μ + i` with `i = o % ω` its **offset**.  The **private context**
-of the ordinary construction is an occurrence `y` of `R`, on `n` points, containing the root as
-a literal face, `f.trans y.tuple = x.tuple` for an embedding `f` of coordinates, with
+`[μ, μ + ω)` of ordinals whose **block start** `μ` is zero or a limit; every ordinal `o` lies in
+exactly one block, that of `μ = ω * (o / ω)`, as `μ + i` with `i = o % ω` its finite part.  The
+**private context** of the ordinary construction is an occurrence `y` of `R`, on `n` points,
+containing the root as a literal face, `f.trans y.tuple = x.tuple` for an embedding `f` of
+coordinates, with
 
 * a **private cap**: a cell `C` of `y` of full scope and full grade, graded index `(univ, n)`,
   labelled above a requested floor `γ`;
-* for each proper label `μ + i` of the donor, an **anchor**: a cell `z` of `y` labelled `μ + k`
-  in the same block, with offset `k < n`, so that the anchor's label is not self-visible at the
-  threshold `n` and visibility replacement at `n` with value `i` turns it into the donor label
-  (`Label.visibilityReplace_coe_add_natCast`, `Label.not_isSelfVisible_coe_add_natCast`), and
-  with label strictly below that of the private cap (so also at most it, the weaker form of the
-  condition);
+* for each proper label `μ + i` of the donor, a **reference cell** `z` of `y` (the roadmap's word;
+  the anchoring condition of the gated extension calls it an **anchor** of the donor label, and
+  this sense is unrelated to the anchor of the definition of hollowness).  It is labelled `μ + k`
+  in the same block, with finite part `k < n`.  So its label is not self-visible at the threshold
+  `n`, and visibility replacement at `n` with value `i` turns it into the donor label
+  (`Label.visibilityReplace_coe_add_natCast`, `Label.not_isSelfVisible_coe_add_natCast`).  It is
+  labelled strictly below the private cap;
 * arity `n` above `m + 1` and above a requested bound `N₀`.
 
-`IsModel.exists_privateContext` acquires it from the uniformity and high-arity-dominance clauses
-alone ([Kni26, Definition 3.2.1], clauses 4(b) and 4(c)), with `γ < α` the only hypothesis on the
-stage: neither generalized saturation, nor a marker, nor a reference cell for the block of a
-cutoff is needed.  The construction is in three steps.
+This is stronger than the anchoring condition of the gated extension, which asks, for each
+non-bottom label of a new donor cell below the private cap, only for some cell `z` and some
+`i ≤ n` with the donor label equal to `vr_n(i, label z)`, with no condition on `z`
+(`VaughtConjecture.Realization.PrivateContextExamples`).
 
-* **Anchors by uniformity** (`IsModel.exists_extend_uniformity`).  For a list of blocks below the
-  stage, one uniformity step per block adds a point and a cell labelled in that block.  Labels
-  of a literal face are labels of the larger occurrence (`Occurrence.exists_label_eq_of_trans_eq`),
-  so the anchors survive every later extension.  The offsets of the anchors lie below a natural
-  number `K`, and their labels below an ordinal `B < α` with `γ ≤ B`.
+`IsModel.exists_privateContext` acquires the private context from the uniformity and
+high-arity-dominance clauses alone ([Kni26, Definition 3.2.1], clauses 4(b) and 4(c)), with
+`γ < α` the only hypothesis on the stage: neither generalized saturation, nor a marker, nor a
+reference cell for the block of a cutoff is used.  The construction is in three steps.
+
+* **Reference cells by uniformity** (`IsModel.exists_extend_uniformity`).  For a list of block
+  starts below the stage, one uniformity step per block adds a point and a cell labelled in that
+  block.  Labels of a literal face are labels of the larger occurrence
+  (`Occurrence.exists_label_eq_of_trans_eq`), so the reference cells survive every later
+  extension.  Their finite parts lie below a natural number `K`, and their labels are at most an
+  ordinal `B < α` with `γ ≤ B`.
 * **Padding by dominance** (`IsModel.exists_extend_dominance`).  Repeated dominance steps at the
-  floor `B` raise the arity past `m + 1`, `N₀`, `K`, and the offsets of the donor's labels, so the
-  anchors keep their offsets below the threshold.
+  floor `B` raise the arity past `m + 1`, `N₀`, `K`, and the finite parts of the donor's labels,
+  so the finite parts of the reference cells stay below the threshold.
 * **The cap from the last step.**  The last dominance step gives a cell of grade equal to the new
   arity labelled above `B`; a cell of full grade has full scope
   (`StageType.gradedIndex_eq_univ_of_grade_eq`).
 
 There is no reindexing: the root and the earlier occurrences are faces along existential
 embeddings `f` with the tuple equation, and the literal face is the face map
-(`Occurrence.restrictFace_eq_some_of_trans_eq`).  The blocks are those of the donor's proper
-labels; a bottom or top label contributes the block `0`, whose anchor is not used.  Uniformity at
-`0` needs `0 < α`, which follows from `γ < α`.
+(`Occurrence.restrictFace_eq_some_of_trans_eq`).  The block starts are those of the donor's
+proper labels; a bottom or top label contributes the block start `0`, whose reference cell is not
+used.  Uniformity at `0` needs `0 < α`, which follows from `γ < α`.
 
 This is the acquisition of the private context of the ordinary construction (R1) only.  The
 gated scheme, the recovery of the donor from the gate, and the assembly of (R1) are not here, and
-(R1) itself is still to be proved; its intended proof is conditional on a gated-extension
-property of the constructed scheme.  Nothing here concerns uniqueness or coherence of the
-context, or exact projected receiving.
+(R1) itself is still to be proved; its intended proof is conditional on a stage-level existence
+property (a named hypothesis), the gated extension.  Nothing here concerns uniqueness or
+coherence of the context, or exact projected receiving.
 
 ## References
 
 The private context is that of [Kni26, Lemma 8.1.1], clauses 3 and 4; the proof of that lemma
 cites high-arity dominance as clause 4(a) of [Kni26, Definition 3.2.1], where it is clause 4(c).
-Only the private cap and the anchors are produced here; the marker and the reference cell of the
-block of the cutoff, which `roadmap/README.md` also lists, are not.
+Only the private cap and the reference cells of the donor's blocks are produced here; the marker
+and the reference cell of the block of the cutoff, which `roadmap/README.md` also lists, are not.
 
 ## Placement
 
@@ -71,58 +79,10 @@ This file belongs to Layer 3 of `roadmap/README.md`.
 
 universe u v
 
-/-! ### Blocks of ordinals -/
-
-namespace Ordinal
-
-/-- An ordinal in `[μ, μ + ω)` is `μ + k` for a natural number `k`. -/
-theorem exists_eq_add_natCast_of_le_of_lt_add_omega0 {μ o : Ordinal.{u}} (h₁ : μ ≤ o)
-    (h₂ : o < μ + ω) : ∃ k : ℕ, o = μ + k := by
-  obtain ⟨k, hk⟩ := lt_omega0.mp (sub_lt_of_lt_add h₂ omega0_pos)
-  exact ⟨k, by rw [← hk, Ordinal.add_sub_cancel_of_le h₁]⟩
-
-end Ordinal
-
 namespace VaughtConjecture
 
 open Finset Label
 open scoped Ordinal
-
-namespace Label
-
-variable {μ : Ordinal.{u}} {n k : ℕ}
-
-/-- **Visibility replacement in a block**: at threshold `n`, an offset `k < n` in the block of `μ`
-is replaced by any value `i`. -/
-theorem visibilityReplace_coe_add_natCast (hμ : Order.IsSuccPrelimit μ) (hk : k < n) (i : ℕ) :
-    visibilityReplace n i ((μ + k : Ordinal.{u}) : Label.{u}) =
-      ((μ + i : Ordinal.{u}) : Label.{u}) := by
-  simp only [visibilityReplace_coe, Ordinal.visibilityReplace_add hμ,
-    Ordinal.visibilityReplace_natCast, hk, ↓reduceIte]
-
-/-- **Anchors are not self-visible**: an ordinal of the block of `μ` with offset `k < n` is not
-self-visible at the threshold `n`. -/
-theorem not_isSelfVisible_coe_add_natCast (hμ : Order.IsSuccPrelimit μ) (hk : k < n) :
-    ¬ IsSelfVisible n ((μ + k : Ordinal.{u}) : Label.{u}) := by
-  rw [isSelfVisible_coe, add_natCast_mod_omega0 hμ, not_le]
-  exact_mod_cast hk
-
-end Label
-
-/-! ### Full grade means full scope -/
-
-namespace StageType
-
-variable {α : Ordinal.{u}} {n : ℕ}
-
-/-- **Full grade means full scope**: a cell of grade `n` of a stage type on `n` points has graded
-index `(univ, n)`, since its grade is at most the size of its scope. -/
-theorem gradedIndex_eq_univ_of_grade_eq (t : StageType.{u} α n) {d : Fin t.card}
-    (h : t.toCellScheme.grade d = n) : t.toCellScheme.gradedIndex d = (univ, n) := by
-  refine Prod.ext (eq_univ_of_card _ (le_antisymm ((card_le_univ _).trans_eq rfl) ?_)) h
-  simpa [h] using t.isWellFormed.isWellFormed.grade_le_card d
-
-end StageType
 
 namespace Realization
 
@@ -150,15 +110,16 @@ theorem exists_label_eq_of_trans_eq (hf : f.trans y.tuple = x.tuple) (j : Fin x.
 
 end Occurrence
 
-/-! ### Anchors by uniformity -/
+/-! ### Reference cells by uniformity -/
 
 variable (hR : R.IsModel)
 include hR
 
-/-- **Anchors by uniformity**: for a list `L` of blocks below the stage, an occurrence `y`
-containing `x` as a literal face along `f` with, for every `μ ∈ L`, an anchor: a cell labelled
-`μ + k` with `k < K`.  The anchor labels are at most an ordinal `B < α` with `γ ≤ B`, for a given
-`γ < α`.  One uniformity step is taken per block. -/
+/-- **Reference cells by uniformity**: for a list `L` of block starts (ordinals that are zero or
+limits) below the stage, an occurrence `y` containing `x` as a literal face along `f` with, for
+every `μ ∈ L`, a reference cell: a cell labelled `μ + k` with finite part `k < K`.  These labels
+are at most an ordinal `B < α` with `γ ≤ B`, for a given `γ < α`.  One uniformity step is taken
+per block. -/
 theorem IsModel.exists_extend_uniformity (x : R.Occurrence) {γ : Ordinal.{u}} (hγ : γ < α)
     (L : List Ordinal.{u}) (hL : ∀ μ ∈ L, Order.IsSuccPrelimit μ ∧ μ < α) :
     ∃ (y : R.Occurrence) (f : Fin x.arity ↪ Fin y.arity) (K : ℕ) (B : Ordinal.{u}),
@@ -220,13 +181,13 @@ theorem IsModel.exists_extend_dominance (x : R.Occurrence) {γ : Ordinal.{u}} (h
 clauses alone: over an occurrence `x` and for a donor `d` on `x.arity + 1` points, an occurrence
 `y` containing `x` as a literal face along `f`, of arity above `x.arity + 1` and at least `N₀`,
 with a private cap `C` of graded index `(univ, y.arity)` labelled above `γ < α`, and for every
-proper donor label an anchor `z`: the donor label is the visibility replacement at the threshold
-`y.arity` of the label of `z` with a value `i < y.arity`, that label is not self-visible at the
-threshold, and it lies strictly below the label of the cap.
+proper donor label a reference cell `z`: the donor label is the visibility replacement at the
+threshold `y.arity` of the label of `z` with a value `i < y.arity`, that label is not self-visible
+at the threshold, and it lies strictly below the label of the cap.
 
-The anchors are taken by uniformity at the blocks of the donor's labels, the arity is raised past
-the offsets by dominance at a floor above the anchors and `γ`, and the cap comes from the last
-dominance step.  The only hypothesis on the stage is `γ < α`. -/
+The reference cells are taken by uniformity at the block starts of the donor's labels, the arity
+is raised past their finite parts by dominance at a floor above the reference cells and `γ`, and
+the cap comes from the last dominance step.  The only hypothesis on the stage is `γ < α`. -/
 theorem IsModel.exists_privateContext (x : R.Occurrence) (d : StageType.{u} α (x.arity + 1))
     {γ : Ordinal.{u}} (hγ : γ < α) (N₀ : ℕ) :
     ∃ (y : R.Occurrence) (f : Fin x.arity ↪ Fin y.arity) (C : Fin y.type.card),
@@ -236,7 +197,7 @@ theorem IsModel.exists_privateContext (x : R.Occurrence) (d : StageType.{u} α (
         ∀ (j : Fin d.card) (o : Ordinal.{u}), d.label j = o →
           ∃ z, ∃ i < y.arity, d.label j = visibilityReplace y.arity i (y.type.label z) ∧
             ¬ IsSelfVisible y.arity (y.type.label z) ∧ y.type.label z < y.type.label C := by
-  -- the block and a bound on the offset of each label of the donor
+  -- the block start and a bound on the finite part of each label of the donor
   have hblock (j : Fin d.card) : ∃ μ : Ordinal.{u}, (Order.IsSuccPrelimit μ ∧ μ < α) ∧
       ∃ D : ℕ, ∀ o : Ordinal.{u}, d.label j = o → ∃ i < D, o = μ + i := by
     rcases atStage_iff.mp (d.atStage j) with h | ⟨o, ho, h⟩ | h

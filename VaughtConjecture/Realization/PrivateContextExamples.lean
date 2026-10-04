@@ -12,19 +12,21 @@ Special cases of `VaughtConjecture.Realization.PrivateContext`:
 
 * **the empty root**: over an occurrence on no points the literal-face equation holds for every
   embedding, and the private context has arity at least `2`;
-* **donors without proper new labels**: when every label of a new cell of the donor (a cell whose
-  scope contains the new point) is bottom or the formal top, the anchoring condition (every
-  non-bottom new donor label below the private cap is the visibility replacement of an anchor's
-  label, not self-visible at the threshold and at most the cap) holds for every private type and
-  cap; and the strong anchoring of `IsModel.exists_privateContext` gives that condition in
-  general;
-* **the block of the cutoff**: with the cutoff `ω + 1`, the donor label `ω + 3`, and the anchor
-  `ω` at the threshold `n = 4`, the anchor of the donor's block serves for the cutoff too: its
-  replacement at the threshold, `ω + 4`, lies above the cutoff;
+* **the anchoring condition of the gated extension**: every non-bottom label of a new donor cell
+  (a cell whose scope contains the new point) below the private cap is `vr_n(i, label z)` for
+  some cell `z` of the private type and some `i ≤ n`, with no condition on `z`.  It holds for
+  every private type and cap when every new donor label is bottom or the formal top; and the
+  reference cells of `IsModel.exists_privateContext` give it in general;
+* **the stronger form**, with `z` not self-visible at the threshold, labelled at most the cap, and
+  `i < n`, also follows from the reference cells of `IsModel.exists_privateContext`;
+* **the block of the cutoff**: the cutoff `ω + 1` lies in the block of the donor label `ω + 3`.  At
+  the threshold `n = 4` the reference cell labelled `ω` gives the donor label, and the actual cut
+  of the block, `ω + 4`, lies above the cutoff, so no separate reference cell for the block of the
+  cutoff is used;
 * **the smallest case** `m = 0`, `n = 2`: `vr_2(1, ω) = ω + 1` and `vr_2(2, ω + 1) = ω + 2`;
-* **padding is needed**: an anchor whose offset is at least the threshold is self-visible and is
+* **padding is needed**: a cell whose finite part is at least the threshold is self-visible and is
   fixed, `vr_2(1, ω + 5) = ω + 5 ≠ ω + 1`;
-* **the offset `k = n` is not an anchor**: `vr_n(i, μ + n) = μ + n` for every value `i`;
+* **the finite part `k = n` gives no reference cell**: `vr_n(i, μ + n) = μ + n` for every value `i`;
 * **full grade means full scope** on a member of a dominance family.
 
 ## Placement
@@ -59,27 +61,45 @@ example (hR : R.IsModel) {γ : Ordinal.{u}} (hγ : γ < α) :
   obtain ⟨y, -, C, -, hy, -, hC, hγC, -⟩ := hR.exists_privateContext x d hγ 0
   exact ⟨x, y, C, hx, by omega, hC, hγC⟩
 
-/-! ### The anchoring condition -/
+/-! ### The anchoring condition of the gated extension -/
 
 section Anchoring
 
 variable {n m : ℕ} (P : StageType.{u} α n) (C : Fin P.card) (d : StageType.{u} α (m + 1))
 
-/-- **Donors without proper labels**: if every label of a new cell of the donor (a cell whose
-scope contains the new point) is bottom or the formal top, then every non-bottom new label below
-the private cap is the visibility replacement of an anchor's label: vacuously. -/
+/-- **Donors without proper new labels**: if every label of a new cell of the donor (a cell whose
+scope contains the new point) is bottom or the formal top, the anchoring condition of the gated
+extension holds for every private type `P` and cell `C`, vacuously. -/
 example (hd : ∀ j, Fin.last m ∈ d.toCellScheme.scope j → d.label j = ⊥ ∨ d.label j = ⊤) :
-    ∀ j, Fin.last m ∈ d.toCellScheme.scope j → d.label j ≠ ⊥ → d.label j < P.label C →
-      ∃ z, ¬ IsSelfVisible n (P.label z) ∧ P.label z ≤ P.label C ∧
-        ∃ i < n, d.label j = visibilityReplace n i (P.label z) := by
+    ∀ j : Fin d.card, Fin.last m ∈ d.toCellScheme.scope j → d.label j ≠ ⊥ →
+      d.label j < P.label C →
+        ∃ z : Fin P.card, ∃ i ≤ n, d.label j = visibilityReplace n i (P.label z) := by
   intro j hj hbot hlt
   rcases hd j hj with h | h
   · exact absurd h hbot
   · exact absurd (h ▸ hlt) not_top_lt
 
-/-- **Strong anchoring gives anchoring**: the anchors of `IsModel.exists_privateContext` (offset
-below the threshold, not self-visible, strictly below the cap) give, for every non-bottom donor
-label below the cap, an anchor at most the cap. -/
+/-- **The reference cells give the anchoring condition**: the conclusion of
+`IsModel.exists_privateContext` about proper donor labels (a cell `z` and `i < n`) gives the
+anchoring condition of the gated extension (`i ≤ n`, no condition on `z`); a non-bottom label
+below the cap is not the formal top, hence proper. -/
+example (h : ∀ (j : Fin d.card) (o : Ordinal.{u}), d.label j = o →
+      ∃ z, ∃ i < n, d.label j = visibilityReplace n i (P.label z) ∧
+        ¬ IsSelfVisible n (P.label z) ∧ P.label z < P.label C) :
+    ∀ j : Fin d.card, Fin.last m ∈ d.toCellScheme.scope j → d.label j ≠ ⊥ →
+      d.label j < P.label C →
+        ∃ z : Fin P.card, ∃ i ≤ n, d.label j = visibilityReplace n i (P.label z) := by
+  intro j _ hbot hlt
+  induction hj : d.label j using recBotCoeTop with
+  | bot => exact absurd hj hbot
+  | coe o =>
+    obtain ⟨z, i, hi, he, -, -⟩ := h j o hj
+    exact ⟨z, i, hi.le, hj ▸ he⟩
+  | top => exact absurd (hj ▸ hlt) not_top_lt
+
+/-- **The stronger form**: the same reference cells give, for every non-bottom new donor label
+below the cap, a cell `z` that is not self-visible at the threshold and is labelled at most the
+cap, with `i < n`. -/
 example (h : ∀ (j : Fin d.card) (o : Ordinal.{u}), d.label j = o →
       ∃ z, ∃ i < n, d.label j = visibilityReplace n i (P.label z) ∧
         ¬ IsSelfVisible n (P.label z) ∧ P.label z < P.label C) :
@@ -102,9 +122,11 @@ end Anchoring
 private theorem isSuccPrelimit_omega0 : Order.IsSuccPrelimit (ω : Ordinal.{u}) :=
   Ordinal.isSuccLimit_omega0.isSuccPrelimit
 
-/-- **The block of the cutoff**: at the threshold `4`, the anchor `ω` gives the donor label
-`ω + 3`, is not self-visible, and its replacement at the full threshold, the actual cut `ω + 4`
-of its block, lies above the cutoff `ω + 1`. -/
+/-- **The block of the cutoff**: the cutoff `ω + 1` lies in the block `[ω, ω + ω)` of the donor
+label `ω + 3`.  At the threshold `4` the reference cell labelled `ω` (finite part `0 < 4`) gives
+the donor label, `vr_4(3, ω) = ω + 3`, and is not self-visible; the actual cut of the block,
+`vr_4(4, ω) = ω + 4`, lies above the cutoff.  So the reference cell of the donor's block also
+serves the cutoff, and no separate reference cell for the block of the cutoff is used. -/
 example : visibilityReplace 4 3 ((ω : Ordinal.{u}) : Label.{u}) = ((ω + 3 : Ordinal.{u}) : Label) ∧
     ¬ IsSelfVisible 4 ((ω : Ordinal.{u}) : Label.{u}) ∧
     ((ω + 1 : Ordinal.{u}) : Label.{u}) < visibilityReplace 4 4 ((ω : Ordinal.{u}) : Label) := by
@@ -133,7 +155,7 @@ example : visibilityReplace 2 1 ((ω : Ordinal.{u}) : Label.{u}) = ((ω + 1 : Or
   exact ⟨h1, h2⟩
 
 /-- **Padding is needed**: at the threshold `2` the label `ω + 5` is self-visible, so it is fixed by
-visibility replacement and is not an anchor for the donor label `ω + 1`. -/
+visibility replacement and gives no reference cell for the donor label `ω + 1`. -/
 example : visibilityReplace 2 1 ((ω + 5 : Ordinal.{u}) : Label.{u}) =
       ((ω + 5 : Ordinal.{u}) : Label) ∧
     visibilityReplace 2 1 ((ω + 5 : Ordinal.{u}) : Label.{u}) ≠
@@ -147,8 +169,8 @@ example : visibilityReplace 2 1 ((ω + 5 : Ordinal.{u}) : Label.{u}) =
     WithTop.coe_injective (WithBot.coe_injective (h.symm.trans h'))
   simp at h51
 
-/-- **The offset `k = n` is not an anchor**: `μ + n` is self-visible at the threshold `n`, so every
-replacement at `n` fixes it. -/
+/-- **The finite part `k = n` gives no reference cell**: `μ + n` is self-visible at the threshold
+`n`, so every replacement at `n` fixes it. -/
 example {μ : Ordinal.{u}} (hμ : Order.IsSuccPrelimit μ) (n i : ℕ) :
     visibilityReplace n i ((μ + n : Ordinal.{u}) : Label.{u}) = ((μ + n : Ordinal.{u}) : Label) :=
   (isSelfVisible_coe_add hμ le_rfl).visibilityReplace_eq i
