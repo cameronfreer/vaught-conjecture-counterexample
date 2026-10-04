@@ -59,10 +59,10 @@ of `σ`.
   (`TransformsTo.collapse`), since the collapse commutes with visibility replacement at thresholds
   `k < N` (`collapse_visibilityReplace`), although `β + N` is a successor stage for `N ≠ 0`.
 
-Pointwise minima and collapse are intended for proving locality of the stable labelling at the
-next block stage (roadmap, Layer 4, output 1), where it is to be written as a pointwise minimum of
-finitely many lawful labellings, collapsed above a threshold; that application is still to be
-proved.
+Pointwise minima and collapse prove locality of the stable labelling at the next block stage
+(roadmap, Layer 4, output 1), written as a pointwise minimum of finitely many lawful labellings,
+collapsed above a threshold (`Realization.locality_stableSection`, in
+`VaughtConjecture.Continuation.Candidate`).
 
 ## Nontransitivity
 
