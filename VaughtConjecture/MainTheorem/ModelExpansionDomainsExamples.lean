@@ -16,6 +16,8 @@ Special cases of `VaughtConjecture.MainTheorem.ModelExpansionDomains`:
   `fun _ _ _ hq ↦ hq`;
 * the composition: `modelExpansionDomains hcap hu` with finite-cut receiving and countable and
   nonempty losses gives the thin `ℵ₁` spectrum of the density sentence.
+* next-block uniqueness derived from finite-cut receiving and forcing donors
+  (`NextBlockUniqueness.of_forcingDonors`) in place of `hu`.
 
 ## Placement
 
@@ -84,5 +86,24 @@ example (hrec : FiniteCutReceiving.{0})
 example (hn : ∀ ξ < ω₁, (expansionDomain ξ \ expansionDomain (ξ + 1)).Nonempty) :
     HasModelOnNat :=
   ExpansionDomains.HasNonemptyLosses.hasModelOnNat (D := modelExpansionDomains hcap hu) ⟨hn⟩
+
+/-! ### Next-block uniqueness from forcing donors -/
+
+/-- The composition with the expansion domains built from next-block uniqueness derived from
+finite-cut receiving and forcing donors, through the general composition. -/
+example (hrec : FiniteCutReceiving.{0}) (hF : ∀ ξ < ω₁, ForcingDonors.{0} ξ)
+    (hc : (modelExpansionDomains hcap (.of_forcingDonors hrec hF)).HasCountableLosses)
+    (hn : (modelExpansionDomains hcap (.of_forcingDonors hrec hF)).HasNonemptyLosses) :
+    HasThinAlephOneSpectrum densitySentence.{0} :=
+  densitySentence_hasThinAlephOneSpectrum_of_expansionDomains _
+    (modelExpansionDomains_hasLogicalAgreement hcap _ hrec) hc hn
+
+/-- The theorem with forcing donors is the theorem with next-block uniqueness, applied to
+`NextBlockUniqueness.of_forcingDonors`. -/
+example (hrec : FiniteCutReceiving.{0}) (hF : ∀ ξ < ω₁, ForcingDonors.{0} ξ)
+    (hc : ∀ ξ < ω₁, (expansionDomain ξ \ expansionDomain (ξ + 1)).Countable)
+    (hn : ∀ ξ < ω₁, (expansionDomain ξ \ expansionDomain (ξ + 1)).Nonempty) :
+    HasThinAlephOneSpectrum densitySentence.{0} :=
+  densitySentence_hasThinAlephOneSpectrum_of_forcingDonors hcap hrec hF hc hn
 
 end VaughtConjecture.MainTheorem

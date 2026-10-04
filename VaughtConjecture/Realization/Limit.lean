@@ -376,10 +376,11 @@ This glues models and proves every clause of a model for the result
 (`Realization.IsModel.of_forall_reduce`); it does not infer modelhood from the coherence of types
 (`roadmap/README.md`, Layer 4: coherent assignments are not models by themselves).  Coherence
 (`hcoh`) is the explicit premise here, stated for an arbitrary coherent family; it is not assumed
-in the expansion domains.  Deriving it, for the limit clause of condition 1, from uniqueness of
+in the expansion domains.  For the limit clause of condition 1 it is derived from uniqueness of
 expansions, whose successor step is a next-block uniqueness hypothesis on models (a consequence of
-normalization, output 2 of higher-stage reconstruction, Layer 4, still to be proved), is the
-planned downstream step; nothing here provides it.  Countability of `δ` is not used. -/
+normalization, output 2 of higher-stage reconstruction, Layer 4, still to be proved), in
+`VaughtConjecture.Expansion.Uniqueness` (`ModelExpansion.nonempty_of_forall_lt`); nothing here
+provides it.  Countability of `δ` is not used. -/
 theorem ModelExpansion.nonempty_of_coherent (hδ : Order.IsSuccLimit δ)
     (e : ∀ ξ < δ, ModelExpansion M (blockStage ξ))
     (hcoh : ∀ ζ (hζ : ζ < δ) ξ (hξ : ξ < δ) (h : ζ ≤ ξ), (e ξ hξ).reduceBlock h = e ζ hζ) :
