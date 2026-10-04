@@ -40,8 +40,10 @@ Write `Q b f` for the label `ω * b + f`.
   `2` is not self-visible at `3`, and its strip is moved, not merged.  The orbit decoder at the
   least grid point reads the code literally.
 
-The negative regression for the step, a legal seed on four points on which the union fill fails,
-is the module `VaughtConjecture.Extension.UnionFillCounterexample`.
+The stage type of Example 5 and its faces along the two coatoms at every arity are in the module
+`VaughtConjecture.Extension.Tower`; the instance at arity two is here.  The negative example for
+the step, a legal seed on four points on which the union fill fails, is the module
+`VaughtConjecture.Extension.UnionFillCounterexample`.
 
 ## Placement
 
@@ -129,55 +131,6 @@ theorem towerInvariant_succ_of_le_one {α : Ordinal.{u}} {m : ℕ} (hm : m ≤ 1
   I.towerInvariant_of_le_one hm (m + 1) le_rfl
 
 /-! ### Example 5: literal faces of the tower -/
-
-section LiteralFaces
-
-variable {α : Ordinal.{u}} {m : ℕ} (I : Seed.{u} α m) (hα : Order.IsSuccPrelimit α) {j : ℕ}
-  (hj : j ≤ m + 2)
-
-/-- The scheme reached after the grade `j`, with the glued labelling extended through the tower and
-reduced to the stage `α`, zero or a limit: a stage type on `m + 2` points. -/
-noncomputable def towerType : StageType.{u} α (m + 2) where
-  toScheme := I.tower j
-  label d := Label.reduce α ((I.exists_isLawful_tower j I.amalgam.isLawful).choose d)
-  isWellFormed := I.isWellFormed_tower j hj
-  isCoded := I.isCoded_tower j
-  isLawful := (I.exists_isLawful_tower j I.amalgam.isLawful).choose_spec.1.reduce hα
-  atStage _ := atStage_reduce α _
-
-/-- The stage type of the tower keeps the glued labels on the old cells. -/
-theorem towerType_label_embed (d : Fin I.amalgam.card) :
-    (towerType I hα hj).label (I.towerEmbed j d) = I.amalgam.label d :=
-  (congrArg (Label.reduce α) ((I.exists_isLawful_tower j I.amalgam.isLawful).choose_spec.2 d)).trans
-    (I.amalgam.atStage d).reduce_eq
-
-/-- **The faces of the tower along a proper face are those of the amalgam**, labels included. -/
-theorem restrictFace_towerType {k : ℕ} (f : Fin k ↪ Fin (m + 2)) (hf : univ.map f ≠ univ) :
-    StageType.restrictFace f (towerType I hα hj) = StageType.restrictFace f I.amalgam := by
-  refine StageType.restrictFace_eq_of_strictMono (t := towerType I hα hj) (s := I.amalgam) f
-    (φ := I.towerEmbed j) (I.towerEmbed j).strictMono (I.isLowerEmbedding_tower j)
-    (I.scope_towerEmbed j) (I.comap_rows_tower j)
-    ((I.isWellFormed_tower j hj).ground_eq.trans I.amalgam.isWellFormed.ground_eq.symm)
-    (I.faces_tower j) (towerType_label_embed I hα hj) fun z hz ↦
-      I.mem_range_towerEmbed j z fun he ↦ hf (eq_univ_of_forall fun x ↦ ?_)
-  obtain ⟨y, rfl⟩ : x ∈ Set.range f := hz (mem_coe.mpr (he.symm ▸ mem_univ x))
-  exact mem_map_of_mem _ (mem_univ y)
-
-/-- **The face of the tower along the first coatom is the first coatom type**, literally. -/
-theorem restrictFace_left_towerType :
-    StageType.restrictFace (Coatom.left m) (towerType I hα hj) = some I.left := by
-  refine (restrictFace_towerType I hα hj _ fun he ↦ ?_).trans I.restrictFace_left
-  exact Coatom.last_notMem_univ_map_left (he ▸ mem_univ (Fin.last (m + 1)))
-
-/-- **The face of the tower along the second coatom is the second coatom type**, literally. -/
-theorem restrictFace_right_towerType :
-    StageType.restrictFace (Coatom.right m) (towerType I hα hj) = some I.right := by
-  refine (restrictFace_towerType I hα hj _ fun he ↦ ?_).trans I.restrictFace_right
-  have h := mem_univ (Fin.castSucc (Fin.last m))
-  rw [← he, Coatom.univ_map_right] at h
-  exact notMem_erase _ _ h
-
-end LiteralFaces
 
 /-- **Literal faces at arity two**: the scheme reached after the grade `3` of a seed on four
 points, with the glued labelling reduced to a stage that is zero or a limit, has the two coatom
