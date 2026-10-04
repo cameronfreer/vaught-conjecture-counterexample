@@ -94,6 +94,10 @@ finite-cut receiving (`HasFiniteExtensionReceiving.hasFiniteCutReceiving`, the d
 point along the initial segment).  Conversely, for an exactly consistent realization at a stage
 that is zero or a limit, finite-cut receiving gives finite-extension receiving
 (`HasFiniteCutReceiving.hasFiniteExtensionReceiving`, in `VaughtConjecture.Realization.Receiving`).
+That every model has finite-cut receiving is (R1) of the table of Layer 3, still to be proved; it
+holds conditional on the gated pinned extension property
+(`IsModel.hasFiniteCutReceiving_of_hasGatedPinnedExtensions`, in
+`VaughtConjecture.Realization.FiniteCutReceiving`).
 
 ## References
 

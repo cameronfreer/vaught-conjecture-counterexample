@@ -32,7 +32,7 @@ stage types at `α`: no realization, and no legality (legality depends only on t
 * **The order law** (`forcesThreshold_of_le_grade`): if the label of `d` in `p` is the formal top
   and `n` is at most the grade of `d`, then `(q, f)` forces `n`.  A label at least `β` that is
   self-visible at the grade `g` of its cell is at least `β + g`, since `β` is a multiple of `ω`
-  (`Label.coe_add_le_of_isSelfVisible`).
+  (`Label.coe_add_le_of_isSelfVisible`, in `VaughtConjecture.Label.Visibility`).
 * **A tie** (`forcesThreshold_of_row_le`): if a cell `C` of `q` is labelled the formal top, the
   cell `e` of `q` transported from `d` lies below `C`, and the row of `C` is at least as large at
   `e` as at `C`, then `(q, f)` forces the grade of `C`.  Locality of `Q` at `C`
@@ -75,22 +75,6 @@ theorem natCast_le_iSup_iff_of_ne_zero {ι : Sort*} {f : ι → ℕ∞} {n : ℕ
 namespace Label
 
 variable {β : Ordinal.{u}} {x : Label.{u}} {n : ℕ} {o : ℕ∞}
-
-/-- **The order law at a stage that is zero or a limit**: a label at least `β` and self-visible
-at `n` is at least `β + n`. -/
-theorem coe_add_le_of_isSelfVisible (hβ : Order.IsSuccPrelimit β) (hx : (β : Label.{u}) ≤ x)
-    (hv : IsSelfVisible n x) : ((β + n : Ordinal.{u}) : Label.{u}) ≤ x := by
-  induction x using recBotCoeTop with
-  | bot => exact absurd hx (not_le.mpr (WithBot.bot_lt_coe _))
-  | top => exact le_top
-  | coe v =>
-    have hβv : β ≤ v := WithTop.coe_le_coe.mp (WithBot.coe_le_coe.mp hx)
-    obtain ⟨b, rfl⟩ := isSuccPrelimit_iff_omega0_dvd.mp hβ
-    have hb : ω * b ≤ ω * (v / ω) :=
-      mul_le_mul_right ((mul_le_iff_le_div omega0_ne_zero).mp hβv) ω
-    refine WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr ?_)
-    rw [← div_add_mod v ω]
-    exact add_le_add hb (isSelfVisible_coe.mp hv)
 
 /-- The **label of an offset** `o : ℕ∞` above `β`: `β + o` for finite `o`, the formal top for
 `o = ⊤`. -/

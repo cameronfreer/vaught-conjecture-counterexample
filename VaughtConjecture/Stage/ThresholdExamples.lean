@@ -161,7 +161,9 @@ example : ForcesThreshold (blockStage (0 + 1)) (isSuccPrelimit_blockStage 0) tie
   · refine Label.reduce_of_le (WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr ?_))
     rw [blockStage_zero]
     exact le_self_add
-  · change (⟨0, Nat.two_pos⟩ : Fin 2) ∈ tieCells.below (tieCells.gradedIndex ⟨1, Nat.one_lt_two⟩)
+  · -- `tie.toCellScheme` is `tieCells` by definition: `tie` is the reduction of `tieUp`, and the
+    -- reduction keeps the cell scheme.
+    change (⟨0, Nat.two_pos⟩ : Fin 2) ∈ tieCells.below (tieCells.gradedIndex ⟨1, Nat.one_lt_two⟩)
     simp [tieCells, CellScheme.gradedIndex, Prod.le_def]
 
 /-! ### Suprema in `ℕ∞` -/

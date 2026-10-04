@@ -35,11 +35,15 @@ scheme of `Scheme.comap` with the labels of the visible cells); otherwise it is 
   (`restrictFace_trans_eq_none`).
 
 The faces of a stage type form a plan on all of its points (`isPlan`), and the hull of a set in
-a restriction is the preimage of the hull of its image (`hull_comap`).
+a restriction is the preimage of the hull of its image (`hull_comap`).  The grades of the cells of
+a stage type on `n` points are at most `n` (`grade_le`).
 
 Reindexing along a bijection `e : Fin m ≃ Fin n` is total (`StageType.reindex`); it is the face
 map along `e` (`restrictFace_equiv`) and commutes with all face maps (`restrictFace_reindex`,
 `map_reindex_restrictFace`).
+
+A cell of full grade `n` of a stage type on `n` points has full scope: its graded index is
+`(univ, n)` (`gradedIndex_eq_univ_of_grade_eq`).
 
 **Stage types on no points.**  A stage type on no points has no cells (`card_eq_zero`) and only
 the empty face (`faces_eq_of_zero`), so there is exactly one at each stage (`eq_of_zero`); the
@@ -128,6 +132,11 @@ theorem univ_mem_faces (t : StageType.{u} α n) : (univ : Finset (Fin n)) ∈ t.
 /-- The faces of a stage type form a plan on all of its points. -/
 theorem isPlan (t : StageType.{u} α n) : Geometry.IsPlan univ t.toCellScheme.faces :=
   t.isWellFormed.isPlan
+
+/-- The grades of the cells of a stage type on `n` points are at most `n`. -/
+theorem grade_le (t : StageType.{u} α n) (d : Fin t.card) : t.toCellScheme.grade d ≤ n :=
+  (t.isWellFormed.isWellFormed.grade_le_card d).trans ((card_le_univ _).trans_eq
+    (Fintype.card_fin n))
 
 /-! ### Restriction to a closed face -/
 
@@ -267,6 +276,16 @@ theorem restrictFace_trans_eq_none (hf : restrictFace f t = none)
     rw [← map_map, map_univ_of_surjective hg]
   rw [restrictFace_eq_none_iff, h]
   exact (restrictFace_eq_none_iff t f).mp hf
+
+/-! ### Cells of full grade -/
+
+/-- **Full grade means full scope**: a cell of grade `n` of a stage type on `n` points has graded
+index `(univ, n)`, since its grade is at most the size of its scope. -/
+theorem gradedIndex_eq_univ_of_grade_eq (t : StageType.{u} α n) {d : Fin t.card}
+    (h : t.toCellScheme.grade d = n) : t.toCellScheme.gradedIndex d = (univ, n) := by
+  refine Prod.ext (eq_univ_of_card _ (le_antisymm (card_le_univ _) ?_)) h
+  rw [Fintype.card_fin]
+  exact h.ge.trans (t.isWellFormed.isWellFormed.grade_le_card d)
 
 /-! ### Stage types on no points -/
 
