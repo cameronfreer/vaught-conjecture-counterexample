@@ -332,34 +332,16 @@ open baseLanguage
 `ω` (Layer 3): a structure satisfying the density sentence is infinite.  The empty face of an
 occurrence gives an occurrence on no points; over an occurrence, the one-point extension
 `StageType.exists_extension` of its legal type is a coface, and the receiving clause at the cutoff
-`0` realizes a point extending the occurrence.  So there are occurrences of every arity.  The
-cap-to-model theorem is not used. -/
+`0` realizes a point extending the occurrence.  So there are occurrences of every arity
+(`Realization.infinite_of_hasFiniteCutReceiving`).  The cap-to-model theorem is not used. -/
 theorem infinite_of_realize_densitySentence_of_hasCoatomExtensions
     (hext : StageType.HasCoatomExtensions.{u} ω) {M : Type w} [baseLanguage.{u}.Structure M]
     (h : densitySentence.Realize M) : Infinite M := by
   obtain ⟨-, -, hcons, hcov, hrec⟩ := (realize_densitySentence_iff M).mp h
-  have hk : ∀ k : ℕ, ∃ x : (toRealization M).Occurrence, x.arity = k := by
-    intro k
-    induction k with
-    | zero =>
-      obtain ⟨x⟩ := hcov.nonempty_occurrence
-      have hs := (Realization.isSome_eval_face_iff hcons x
-        (Function.Embedding.ofIsEmpty (α := Fin 0))).mpr (by simpa using x.type.isPlan.empty_mem)
-      obtain ⟨p, hp⟩ := Option.isSome_iff_exists.mp hs
-      exact ⟨⟨0, _, p, hp⟩, rfl⟩
-    | succ k ih =>
-      obtain ⟨x, rfl⟩ := ih
-      obtain ⟨Q, hQ, hQx⟩ :=
-        StageType.exists_extension hext (hasLegalTypes_toRealization x.tuple x.type x.eval_tuple)
-      obtain ⟨u, -, q, -, hq⟩ :=
-        hrec x Q ⟨hQ, hQx⟩ 0 (Label.isPermittedCutoff_zero.mpr Ordinal.omega0_pos)
-      exact ⟨⟨_, u, q, hq⟩, rfl⟩
-  refine not_finite_iff_infinite.mp fun _ ↦ ?_
-  have := Fintype.ofFinite M
-  obtain ⟨x, hx⟩ := hk (Fintype.card M + 1)
-  have h := Fintype.card_le_of_embedding x.tuple
-  rw [Fintype.card_fin, hx] at h
-  omega
+  refine Realization.infinite_of_hasFiniteCutReceiving Ordinal.omega0_pos hcons hcov hrec fun x ↦ ?_
+  obtain ⟨Q, hQ, hQx⟩ :=
+    StageType.exists_extension hext (hasLegalTypes_toRealization x.tuple x.type x.eval_tuple)
+  exact ⟨Q, hQ, hQx⟩
 
 /-- **The perfect-set dichotomy fails for the density sentence on all coded tiers**, given the thin
 `ℵ₁` spectrum on `ℕ` and the cap-to-model theorem for the carriers of `w` (for the absence of finite

@@ -85,13 +85,12 @@ of the density sentence for the base-language structure of the reduction
   only the reconstructed realization of a classical limit, has the finite-cut receiving property.
   It is still to be proved; the statements here do not give it.
 * *Modelhood* (step 7): the four extension clauses of `Realization.IsModel` for the reconstructed
-  realization are still to be proved.  They are to come from receiving and the cap-to-model
-  theorem (roadmap, Layer 3, 3.4), still to be proved at a general stage; `MainTheorem.CapToModel`
-  states it only at stage `ω`, with `u = 0`.
-* *Infinitude and terminality* (step 7) are still to be proved.  Infinitude is to come from
-  receiving over a whole occurrence, with a one-point coface of its type
-  (`StageType.exists_extension`, under the coatom extension property
-  `StageType.HasCoatomExtensions`): the received point is off the whole occurrence.
+  realization are in `VaughtConjecture.ClassicalLimit.Modelhood` (`isModel_reconstruct`), from
+  receiving and the cap-to-model theorem at a nonzero limit stage
+  (`Realization.isModel_of_hasFiniteCutReceiving`), given the nonemptiness of the uniformity and
+  dominance instances.
+* *Infinitude and terminality* (step 7) are in `VaughtConjecture.ClassicalLimit.Modelhood`
+  (`infinite_of_age_eq_of_hasCoatomExtensions`, `reduce_ne_reconstruct`).
 
 ## Placement
 
@@ -241,11 +240,11 @@ carrier (`nonempty_of_topFreeAge_subset`), exact consistency and covering
 (`hasFiniteCutReceiving_reconstruct_reduce`), for a realization with legal types
 (`hasLegalTypes_reconstruct_reduce`), by `baseLanguage.realize_toStructure_densitySentence_iff`.
 
-This is the base-reduct part of step 7.  Modelhood of the reconstructed realization at `α` (from
-the cap-to-model theorem, still to be proved at a general stage; `MainTheorem.CapToModel` states it
-only at stage `ω`, with `u = 0`), infinitude, and terminality are still to be proved.  The existence
-of a Fraïssé limit of the age of top-free charts (`exists_isFraisseLimit_topFreeAge`) needs the
-coatom extension property `StageType.HasCoatomExtensions`, which is not proved. -/
+This is the base-reduct part of step 7.  Modelhood of the reconstructed realization at `α`, given
+the nonemptiness of the uniformity and dominance instances, is `isModel_reconstruct`; infinitude
+and terminality are `infinite_of_age_eq_of_hasCoatomExtensions` and `reduce_ne_reconstruct`.  The
+existence of a Fraïssé limit of the age of top-free charts (`exists_isFraisseLimit_topFreeAge`)
+needs the coatom extension property `StageType.HasCoatomExtensions`, which is not proved. -/
 theorem realize_densitySentence_reconstruct_reduce
     (hage : (hullLanguage.{u} α).age M = topFreeAge α)
     (hu : (hullLanguage.{u} α).IsUltrahomogeneous M) (hα : Order.IsSuccPrelimit α)
