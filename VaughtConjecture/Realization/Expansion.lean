@@ -54,7 +54,8 @@ expansion to a stage `α ≥ ω₁` (`ModelExpansion.isEmpty_of_omega_one_le`).
 **Covers.**  A tuple `c : Fin k → M` **covers** a stage type `t` in `R` (`Realization.Covers`)
 when it is injective and `R` evaluates it to `t`: `c` enumerates an actual occurrence of `t`.
 Covers survive stage reduction, by the same tuple (`Realization.Covers.reduce`), and an injective
-tuple covers exactly its evaluation (`Realization.covers_iff_eval`).  A tuple `c` **extends to a
+tuple covers exactly its evaluation (`Realization.covers_iff_eval`).  Covers in a transport along
+a bijection are the transports of covers (`Realization.covers_map_iff`).  A tuple `c` **extends to a
 cover** of a triple `(m, q, f)` — a stage type `q` on `m` points and an embedding
 `f : Fin k ↪ Fin m` of coordinates — in `S` (`Realization.ExtendsToCover`) when some tuple `s`
 covering `q` in `S` restricts along `f` to `c`.  The base
@@ -192,6 +193,12 @@ theorem covers_iff_eval (u : Fin k ↪ M) : R.Covers t u ↔ R.eval u = some t :
 def ExtendsToCover (S : Realization.{u, v} α M) (c : Fin k → M)
     (x : Σ m : ℕ, StageType.{u} α m × (Fin k ↪ Fin m)) : Prop :=
   ∃ s : Fin x.1 → M, s ∘ x.2.2 = c ∧ S.Covers x.2.1 s
+
+/-- Covers in a transport are the transports of covers. -/
+theorem covers_map_iff (e : M ≃ N) {n : ℕ} {t : StageType.{u} α n} {c : Fin n → N} :
+    (R.map e).Covers t c ↔ R.Covers t (e.symm ∘ c) := by
+  refine ⟨fun ⟨hc, h⟩ ↦ ⟨e.symm.injective.comp hc, h⟩, fun ⟨hc, h⟩ ↦ ⟨?_, h⟩⟩
+  exact (Function.Injective.of_comp (f := e.symm) hc)
 
 /-- **The faces of a cover**: under exact consistency, the face of a cover along an injective
 selection `s` of coordinates is evaluated to the face of its type along `s`. -/
