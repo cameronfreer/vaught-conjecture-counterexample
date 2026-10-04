@@ -22,7 +22,10 @@ Special cases of `VaughtConjecture.Continuation.Candidate`:
 * **twins**: without two cells labelled the formal top at one graded index, availability needs no
   hypothesis; a top-free type has none.  The failure of availability for a pointwise minimum of two
   lawful lifts with twins is the stage-type example of `VaughtConjecture.Stage.ThresholdExamples`;
-  no realization-level counterexample is claimed;
+  no realization-level counterexample is claimed.  Stable availability for twin types in models is
+  open: a model is stably lawful given twin ordering (`TwinOrdering`, unproved and possibly
+  false), and synchronizing cofaces are refuted in
+  `VaughtConjecture.Continuation.CandidateCounterexamples`;
 * **a model expansion**: at `ξ = 0`, the reduction of an exactly consistent
   realization at `ω + ω` with legal types and finite-extension receiving is stably lawful, given
   forcing donors at `0`.
@@ -108,13 +111,19 @@ example {t : StageType.{u} (blockStage ξ) k} (ht : t.IsTopFree) :
   fun d hd ↦ absurd hd (ht d)
 
 /-- **Stable lawfulness without twins**: an exactly consistent covering realization whose types
-have no two cells labelled the formal top at one graded index is stably lawful; no model and no
-synchronizing cofaces are used. -/
+have no two cells labelled the formal top at one graded index is stably lawful; no model is
+used. -/
 example {R : Realization.{u, v} (blockStage ξ) M} (hR : R.IsConsistent) (hc : R.IsCovering)
     (hinj : ∀ ⦃n : ℕ⦄ (u : Fin n ↪ M) (t : StageType.{u} (blockStage ξ) n), R.eval u = some t →
       Set.InjOn t.toCellScheme.gradedIndex {d | t.label d = ⊤}) :
     R.IsStablyLawful :=
   isStablyLawful_of_injOn_gradedIndex hR hc hinj
+
+/-- **A model under twin ordering**: a model at `λ_ξ` is stably lawful given twin ordering at
+`λ_ξ`, which is unproved and possibly false; generalized saturation is not used. -/
+example {R : Realization.{u, v} (blockStage ξ) M} (hR : R.IsModel)
+    (htw : TwinOrdering.{u} (blockStage ξ)) : R.IsStablyLawful :=
+  isStablyLawful_of_twinOrdering hR.isConsistent hR.isCovering hR.isLegal htw
 
 /-! ### A model expansion -/
 

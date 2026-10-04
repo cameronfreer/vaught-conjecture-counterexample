@@ -6,7 +6,6 @@ Authors: Cameron Freer
 import VaughtConjecture.Continuation.Hollow
 import VaughtConjecture.Label.Transform
 import VaughtConjecture.Realization.BlockStages
-import VaughtConjecture.Realization.Families
 import VaughtConjecture.Realization.Hull
 import VaughtConjecture.Realization.Model
 import VaughtConjecture.Stage.Threshold
@@ -69,28 +68,35 @@ because a stage type carries the lawfulness of its labels.
   labelled the formal top at one graded index: a forced disjunction is not a disjunction of
   forcings, and the pointwise minimum of two lawful lifts need not satisfy availability (the
   stage-type example of `VaughtConjecture.Stage.ThresholdExamples`; no realization-level
-  counterexample is claimed).  In a model the gap is closed by **synchronizing cofaces**
-  (`SynchronizingCofaces`, a finite statement still to be proved) and generalized saturation
-  (`Realization.availability_stableSection`).
+  counterexample is claimed).  **Stable availability for twin types in models is open.**  It
+  follows from **twin ordering** (`TwinOrdering`, a finite statement about stage types,
+  unproved and possibly false), by `Realization.availability_stableSection_of_twinOrdering`:
+  when the graded indices of the two cells coincide the first cell itself serves, and otherwise
+  twin ordering gives a cell labelled the formal top at the graded index of the second cell that
+  is at least the first cell in every lift of `t`.
 
-Hence **a model is stably lawful given synchronizing cofaces**
-(`Realization.isStablyLawful_of_synchronizingCofaces`).  Without them, a realization is stably
-lawful under exact consistency and covering when no type has twins
-(`Realization.isStablyLawful_of_injOn_gradedIndex`), and with no hypothesis at all when it is
-cover-hollow (`Realization.isStablyLawful_of_isCoverHollow`).  Unbounded top-grade growth and
-non-hollowness are not used for lawfulness; they concern receiving of the candidate, below.
+Hence a realization is stably lawful under exact consistency and covering when no type has twins
+(`Realization.isStablyLawful_of_injOn_gradedIndex`), under exact consistency, covering and legal
+types given twin ordering (`Realization.isStablyLawful_of_twinOrdering`), and with no hypothesis
+at all when it is cover-hollow (`Realization.isStablyLawful_of_isCoverHollow`).  Unbounded
+top-grade growth and non-hollowness are not used for lawfulness; they concern receiving of the
+candidate, below.
 
-**Synchronizing cofaces** (`SynchronizingCofaces β`): for a legal stage type `q` at `β` and cells
-`a`, `b` labelled the formal top with the scope of `a` in that of `b` and equal grades, some scheme
-`S` on one more point carries a legal coface of `q`, and every lawful section of the rows of `S`
-is at least as large at `b` as at `a`.  The intended construction adds one cell `C` of the grade
-of `a`, whose scope contains the scopes of `a` and `b` and the new point, alone at its graded
-index (availability gives `C ≥ a`), with the tie row `row_C(C) ≤ row_C(b)` (locality gives
-`b ≥ C`).  The statement is still to be proved: the legality of that scheme is to come from the
-completion below the full grade (roadmap, Layer 3, 3.1), and its use is the lawfulness of the
-structural candidate (roadmap, Layer 4, output 1).  The two cells are required to be labelled the
-formal top: the labels of the coface are a lawful section of `S` extending those of `q`, so without
-that requirement the statement would force `q.label a ≤ q.label b` for every legal `q`.
+**Synchronizing cofaces are refuted.**  One could try to transfer forcing from a cell `a` to a
+cell `b` at a graded index with twins through **synchronizing cofaces**: for a legal stage type
+`q` and cells `a`, `b` labelled the formal top with the scope of `a` in that of `b` and equal
+grades, a scheme `S` on one more point carrying a legal coface of `q` such that every lawful
+section of the rows of `S` is at least as large at `b` as at `a`, to be realized over an
+occurrence by generalized saturation.  That statement is false at every block stage
+(`Continuation.CandidateCounterexamples.not_synchronizingCofaces_blockStage`), and so are its
+form without the requirement that `a` and `b` be labelled the formal top and its form restricted
+to lifts of members of the coface family (same file).  The reason is bountifulness: the scheme of
+a legal coface extends every lawful section of the rows of `q`, so no coface orders two cells of
+`q` that some lift of `q` orders the other way.  In particular, adding one cell of the grade of
+`a`, alone at its graded index, with a tie from its row to `b`, does not give a legal scheme in
+the case where it would be needed, a lift of `q` larger at `a` than at `b`; the special case is
+two cells labelled the formal top at one graded index of `onePointScheme 2`, with the lift
+`(ω + 1, ω + 2)`, in that file.
 
 **The cases.**
 
@@ -112,9 +118,9 @@ that requirement the statement would force `q.label a ≤ q.label b` for every l
 **Relation to the roadmap.**  The roadmap builds the structural candidate "from consistency and
 covering" (Layer 4, output 1).  Here the order law, locality, exact partial evaluation, the
 reduction, legality, covering and exact consistency need no more; availability needs, in
-addition, synchronizing cofaces and generalized saturation in a model.  The splice of two
-witnesses (roadmap, Layer 3, the transformation lemma still to be proved there) is not used:
-locality comes from pointwise minima and collapse.
+addition, the absence of twins, or twin ordering at the legal types, which is open.  The splice
+of two witnesses (roadmap, Layer 3, the transformation lemma still to be proved there) is not
+used: locality comes from pointwise minima and collapse.
 
 **What is not claimed.**  The candidate is not claimed to be a model, and output 3 is not proved.
 Its modelhood is to follow from the cap-to-model theorem at `λ_{ξ+1}`
@@ -124,8 +130,11 @@ for a model with non-hollow unbounded top-grade growth; still to be proved); the
 through the coatom extension at `λ_{ξ+1}` over the empty face; and the plain and apex coatom
 extension properties at `λ_{ξ+1}` (`StageType.HasCoatomExtensions` and
 `StageType.HasApexCoatomExtensions` at `blockStage (ξ + 1)`) for the uniformity and dominance
-instances.  None of these is stated here.  No (R1), forcing donors, normalization or uniqueness
-of expansions is used except in the last case above.
+instances; and, as the argument `hlaw` of the definition, the stable lawfulness of `R`, which
+comes from `Realization.isStablyLawful_of_injOn_gradedIndex` when no type of `R` has twins and
+otherwise from `Realization.isStablyLawful_of_twinOrdering` under twin ordering at `λ_ξ`, which is
+open.  None of these is stated here.  No (R1), forcing donors, normalization or uniqueness of
+expansions is used except in the last case above.
 
 ## Placement
 
@@ -138,25 +147,28 @@ namespace VaughtConjecture
 
 open Finset Ordinal StageType
 
-/-! ### Synchronizing cofaces -/
+/-! ### Twin ordering -/
 
-/-- **Synchronizing cofaces** at the stage `β`: for every legal stage type `q` at `β` and cells
-`a`, `b` of `q` labelled the formal top, with the scope of `a` in that of `b` and equal grades,
-some scheme `S` on one more point carries a legal coface of `q`, and every lawful section of the
-rows of `S` is at least as large at the cell transported from `b` as at the cell transported from
-`a` (cells matched by position along the initial segment).  A finite statement about schemes, with
-no realization.  The intended `S` adds one cell of the grade of `a`, whose scope contains the
-scopes of `a` and `b` and the new point, alone at its graded index, with a tie from its row to `b`.
-It is still to be proved, from the completion below the full grade (roadmap, Layer 3, 3.1); it
-is used for availability of the stable section (roadmap, Layer 4, output 1). -/
-def SynchronizingCofaces (β : Ordinal.{u}) : Prop :=
-  ∀ ⦃m : ℕ⦄ (q : StageType.{u} β m), q.IsLegal → ∀ a b : Fin q.card,
-    q.toCellScheme.scope a ⊆ q.toCellScheme.scope b →
-      q.toCellScheme.grade a = q.toCellScheme.grade b → q.label a = ⊤ → q.label b = ⊤ →
-        ∃ S : Scheme.{u} (m + 1), (q.cofaces ∩ saturationFamily S).Nonempty ∧
-          ∀ ρ : Fin S.card → Label.{u}, S.rows.IsLawful ρ →
-            ∀ a' b' : Fin (S.comap Fin.castSuccEmb).card, (a' : ℕ) = a → (b' : ℕ) = b →
-              ρ (S.cellMap Fin.castSuccEmb a') ≤ ρ (S.cellMap Fin.castSuccEmb b')
+/-- **Twin ordering** at the stage `β`: for every legal stage type `q` at `β` and cells `s₀`, `t₀`
+of `q` labelled the formal top, with the scope of `s₀` strictly inside that of `t₀` and equal
+grades, some cell `w` labelled the formal top at the graded index of `t₀` is at least as large as
+`s₀` in every **lift** of `q` to `β + ω`, that is, every lawful section of the rows of `q` at the
+stage `β + ω` reducing at `β` to the labels of `q`.  A finite statement about stage types, with no
+realization.  When `t₀` is the only cell labelled the formal top at its graded index, it holds with
+`w = t₀` by availability of the lift; it has content only for **twins**, two or more cells
+labelled the formal top at one graded index.  It is **unproved and possibly false**: it fails as
+soon as some legal stage type has, for each cell labelled the formal top at the graded index of
+`t₀`, a lift placing that cell below `s₀` (the twin pattern of
+`VaughtConjecture.Stage.ThresholdExamples`, there on a scheme that is not legal).  It is the
+hypothesis of `Realization.availability_stableSection_of_twinOrdering`. -/
+def TwinOrdering (β : Ordinal.{u}) : Prop :=
+  ∀ ⦃m : ℕ⦄ (q : StageType.{u} β m), q.IsLegal → ∀ s₀ t₀ : Fin q.card,
+    q.toCellScheme.scope s₀ ⊂ q.toCellScheme.scope t₀ →
+      q.toCellScheme.grade s₀ = q.toCellScheme.grade t₀ → q.label s₀ = ⊤ → q.label t₀ = ⊤ →
+        ∃ w, q.toCellScheme.gradedIndex w = q.toCellScheme.gradedIndex t₀ ∧ q.label w = ⊤ ∧
+          ∀ ℓ : Fin q.card → Label.{u}, q.rows.IsLawful ℓ →
+            (∀ d, Label.AtStage (β + ω) (ℓ d)) → (∀ d, Label.reduce β (ℓ d) = q.label d) →
+              ℓ s₀ ≤ ℓ w
 
 /-! ### Auxiliary facts -/
 
@@ -180,13 +192,6 @@ private theorem coe_le_coe_add (β : Ordinal.{u}) (n : ℕ) :
 private theorem coe_add_lt_coe_add (β : Ordinal.{u}) {n N : ℕ} (h : n < N) :
     ((β + n : Ordinal.{u}) : Label.{u}) < ((β + N : Ordinal.{u}) : Label.{u}) :=
   WithBot.coe_lt_coe.mpr (WithTop.coe_lt_coe.mpr (add_lt_add_right (Nat.cast_lt.mpr h) β))
-
-/-- Positions of cells along a face map depend only on the scheme. -/
-private theorem val_cellMap_congr {n m : ℕ} {S S' : Scheme.{u} n} (h : S = S') (f : Fin m ↪ Fin n)
-    {i : Fin (S.comap f).card} {i' : Fin (S'.comap f).card} (hi : (i : ℕ) = i') :
-    (S.cellMap f i : ℕ) = S'.cellMap f i' := by
-  subst h
-  rw [Fin.ext hi]
 
 /-- A lift of a stage type `t` to a larger stage gives a lawful section of the rows of `t`, with
 the labels of the lift at the same positions, each reducing to the label of `t`. -/
@@ -615,11 +620,35 @@ theorem locality_stableSection (hR : R.IsConsistent) (hc : R.IsCovering)
 
 /-! ### Lawfulness: availability -/
 
+/-- **Comparison through lifts**: for cells `a`, `b` of `t` labelled the formal top, if every lift
+of `t` to `λ_ξ + ω` is at least as large at `b` as at `a`, then so is the stable section, since
+every rooted cover forcing a threshold at `a` forces it at `b`. -/
+private theorem stableSection_le_of_forall_lift (ht : R.eval u = some t) {a b : Fin t.card}
+    (ha : t.label a = ⊤) (hb : t.label b = ⊤)
+    (h : ∀ ℓ : Fin t.card → Label.{u}, t.rows.IsLawful ℓ →
+      (∀ d, Label.AtStage (blockStage ξ + ω) (ℓ d)) →
+        (∀ d, Label.reduce (blockStage ξ) (ℓ d) = t.label d) → ℓ a ≤ ℓ b) :
+    R.stableSection u t a ≤ R.stableSection u t b := by
+  rw [stableSection_of_eq_top ha, stableSection_of_eq_top hb]
+  refine ofOffset_le_ofOffset (ENat.forall_natCast_le_iff_le.mp fun n hn ↦ ?_)
+  obtain ⟨x, hx, hcov⟩ := (natCast_le_stableOffset_iff (covers_of_eval u ht) ha).mp hn
+  refine (natCast_le_stableOffset_iff (covers_of_eval u ht) hb).mpr
+    ⟨x, ⟨hx.1, fun Q P hQ hP i hi ↦ ?_⟩, hcov⟩
+  obtain ⟨P', hP', hPt⟩ := exists_restrictFace_reduce_eq hx.1 hQ
+  obtain rfl : P = P' := Option.some_injective _ (hP.symm.trans hP')
+  obtain ⟨ℓ, hℓ, hcard, hℓP, hℓt⟩ := exists_isLawful_of_reduce_eq hPt
+  have hat : ∀ d, Label.AtStage (blockStage ξ + ω) (ℓ d) := fun d ↦ by
+    rw [hℓP d (Fin.cast hcard d) rfl, ← blockStage_add_one]
+    exact P.atStage _
+  rw [← hℓP b i hi.symm]
+  exact (hx.2 Q P hQ hP (Fin.cast hcard a) rfl).trans
+    ((hℓP a _ rfl).symm.trans_le (h ℓ hℓ hat hℓt))
+
 /-- **Availability where the graded index carries at most one cell labelled the formal top**,
 unconditional: if the cells of `t` labelled the formal top have distinct graded indices, the
-stable section satisfies availability for every pair.  Every lift of a rooted cover then carries,
-at the unique cell labelled the formal top at the graded index of `t₀`, a label at least that of
-`s₀`, so every threshold forced at `s₀` is forced there. -/
+stable section satisfies availability for every pair.  Every lift of `t` then carries, at the
+unique cell labelled the formal top at the graded index of `t₀`, a label at least that of `s₀`, so
+every threshold forced at `s₀` is forced there. -/
 theorem availability_stableSection_of_injOn
     (hinj : Set.InjOn t.toCellScheme.gradedIndex {d | t.label d = ⊤}) (ht : R.eval u = some t)
     {s₀ t₀ : Fin t.card} (hst : t.toCellScheme.scope s₀ ⊆ t.toCellScheme.scope t₀)
@@ -632,111 +661,41 @@ theorem availability_stableSection_of_injOn
   swap
   · exact stableSection_le_of_ne_top hs₀ hle
   have hw' : t.label w = ⊤ := top_le_iff.mp (hs₀ ▸ hle)
-  rw [stableSection_of_eq_top hs₀, stableSection_of_eq_top hw']
-  refine ofOffset_le_ofOffset (ENat.forall_natCast_le_iff_le.mp fun n hn ↦ ?_)
-  obtain ⟨x, hx, hcov⟩ := (natCast_le_stableOffset_iff (covers_of_eval u ht) hs₀).mp hn
-  refine (natCast_le_stableOffset_iff (covers_of_eval u ht) hw').mpr
-    ⟨x, ⟨hx.1, fun Q P hQ hP i hi ↦ ?_⟩, hcov⟩
-  obtain ⟨P', hP', hPt⟩ := exists_restrictFace_reduce_eq hx.1 hQ
-  obtain rfl : P = P' := Option.some_injective _ (hP.symm.trans hP')
-  obtain ⟨ℓ, hℓ, hcard, hℓP, hℓt⟩ := exists_isLawful_of_reduce_eq hPt
-  have hs : ((blockStage ξ + n : Ordinal.{u}) : Label.{u}) ≤ ℓ s₀ :=
-    (hx.2 Q P hQ hP (Fin.cast hcard s₀) rfl).trans_eq (hℓP _ _ rfl).symm
+  refine stableSection_le_of_forall_lift ht hs₀ hw' fun ℓ hℓ _ hℓt ↦ ?_
   obtain ⟨w', hw'', hle'⟩ := hℓ.availability s₀ t₀ hst hg
   have htop : t.label w' = ⊤ := by
     rw [← hℓt w']
-    exact Label.reduce_of_le ((coe_le_coe_add _ n).trans (hs.trans hle'))
-  have hww : w' = w := hinj htop hw' (hw''.trans hw.symm)
-  rw [hww] at hle'
-  rw [← hℓP w i hi.symm]
-  exact hs.trans hle'
+    exact Label.reduce_of_le ((Label.reduce_eq_top_iff.mp ((hℓt s₀).trans hs₀)).trans hle')
+  rwa [hinj htop hw' (hw''.trans hw.symm)] at hle'
 
-/-- The stable offset at `a` is at most that at `b` for cells labelled the formal top with the
-scope of `a` in that of `b` and equal grades, in a model with synchronizing cofaces: a rooted
-cover forcing `n` at `a` is dominated by an occurrence `z`, generalized saturation realizes over
-`z` the scheme `S` of synchronizing cofaces, and the extended cover forces `n` at `b`. -/
-private theorem stableOffset_le_of_synchronizingCofaces (hR : R.IsModel)
-    (hsync : SynchronizingCofaces.{u} (blockStage ξ)) (ht : R.eval u = some t) {a b : Fin t.card}
-    (ha : t.label a = ⊤) (hb : t.label b = ⊤)
-    (hab : t.toCellScheme.scope a ⊆ t.toCellScheme.scope b)
-    (hg : t.toCellScheme.grade a = t.toCellScheme.grade b) :
-    R.stableOffset (blockStage (ξ + 1)) (isSuccPrelimit_blockStage ξ) u t a ≤
-      R.stableOffset (blockStage (ξ + 1)) (isSuccPrelimit_blockStage ξ) u t b := by
-  refine ENat.forall_natCast_le_iff_le.mp fun n hn ↦ ?_
-  obtain ⟨x, hx, hcov⟩ := (natCast_le_stableOffset_iff (covers_of_eval u ht) ha).mp hn
-  obtain ⟨z, e, he, hzt, hz⟩ := exists_occurrence_forcesThreshold hR.isConsistent hR.isCovering ht
-    (Function.Embedding.refl _) (ι := Unit) (fun _ ↦ a) (fun _ ↦ n)
-    fun _ ↦ ⟨x, hx, by simpa only [Function.Embedding.refl_trans] using hcov⟩
-  have hz' := hz ()
-  simp only [Function.Embedding.refl_trans] at hz'
-  refine (natCast_le_stableOffset_iff (covers_of_eval u ht) hb).mpr ?_
-  obtain ⟨hf, rfl⟩ := (restrictFace_eq_some_iff _ _).mp hzt
-  have hAB : z.type.toCellScheme.scope (z.type.cellMap e a) ⊆
-      z.type.toCellScheme.scope (z.type.cellMap e b) := by
-    rw [← Scheme.map_comap_scope z.type.toScheme e a, ← Scheme.map_comap_scope z.type.toScheme e b]
-    exact map_subset_map.mpr hab
-  have hgAB : z.type.toCellScheme.grade (z.type.cellMap e a) =
-      z.type.toCellScheme.grade (z.type.cellMap e b) := by
-    rw [← Scheme.comap_grade z.type.toScheme e a, ← Scheme.comap_grade z.type.toScheme e b]
-    exact hg
-  obtain ⟨S, ⟨D, hD⟩, hρ⟩ :=
-    hsync z.type (hR.isLegal _ _ z.eval_tuple) _ _ hAB hgAB ha hb
-  obtain ⟨y, hy, q, hq, hyq⟩ := hR.saturation z S ⟨D, hD⟩
-  have hqz : restrictFace Fin.castSuccEmb q = some z.type := by
-    rw [← hR.isConsistent y q _ hyq, hy]
-    exact z.eval_tuple
-  have hSz : S.comap Fin.castSuccEmb = z.type.toScheme := hq ▸ comap_toScheme_of_mem_cofaces
-    ⟨hR.isLegal _ _ hyq, hqz⟩
-  refine ⟨⟨z.arity + 1, q, e.trans Fin.castSuccEmb⟩,
-    ⟨by rw [← restrictFace_trans q _ e hqz]; exact restrictFace_of_mem _ _ hf,
-      fun Q P hQ hP i hi ↦ ?_⟩, y, ?_, covers_of_eval y hyq⟩
-  · obtain ⟨Z, hZ, hZz⟩ := exists_restrictFace_reduce_eq hqz hQ
-    have hPZ : restrictFace e Z = some P := (restrictFace_trans Q _ e hZ).trans hP
-    obtain ⟨hfZ, rfl⟩ := (restrictFace_eq_some_iff _ _).mp hZ
-    obtain ⟨hfP, rfl⟩ := (restrictFace_eq_some_iff _ _).mp hPZ
-    obtain ⟨SQ, ℓQ, hwQ, hcQ, hlQ, haQ⟩ := Q
-    obtain rfl : SQ = S := (congrArg StageType.toScheme hQ).trans hq
-    have hcard : (z.type.comap e hf).card = ((SQ.comap Fin.castSuccEmb).comap e).card := by
-      rw [hSz]
-      rfl
-    have h₁ := hz'.2 _ _ hZz hPZ (Fin.cast hcard a) rfl
-    exact h₁.trans (hρ ℓQ hlQ _ _ (val_cellMap_congr hSz e rfl) (val_cellMap_congr hSz e hi))
-  · funext j
-    have h₁ := DFunLike.congr_fun hy (e j)
-    have h₂ := DFunLike.congr_fun he j
-    simp only [Function.Embedding.trans_apply, Fin.coe_castSuccEmb] at h₁ h₂
-    simp only [Function.comp_apply, Function.Embedding.trans_apply, Fin.coe_castSuccEmb, h₁, h₂]
-
-/-- **Availability** of the stable section in a model, conditional on synchronizing cofaces at
-`λ_ξ` (still to be proved).  Hypotheses by use: `hR` (exact consistency and covering place the
-rooted covers in one occurrence; legality of its type; generalized saturation realizes the scheme
-of synchronizing cofaces over it) and `hsync` (that scheme). -/
-theorem availability_stableSection (hR : R.IsModel)
-    (hsync : SynchronizingCofaces.{u} (blockStage ξ)) (ht : R.eval u = some t)
-    {s₀ t₀ : Fin t.card} (hst : t.toCellScheme.scope s₀ ⊆ t.toCellScheme.scope t₀)
+/-- **Availability under twin ordering** at `λ_ξ`, for a legal type `t` (twin ordering is unproved
+and possibly false, `TwinOrdering`).  When the graded indices of `s₀` and `t₀` coincide, `s₀`
+itself is the cell required.  Otherwise the scope of `s₀` is strictly inside that of `t₀`, and twin
+ordering applied to `t` gives a cell labelled the formal top at the graded index of `t₀` that is
+at least as large as `s₀` in every lift of `t`, so every threshold forced at `s₀` is forced there.
+Neither exact consistency nor covering is used. -/
+theorem availability_stableSection_of_twinOrdering (htw : TwinOrdering.{u} (blockStage ξ))
+    (hl : t.IsLegal) (ht : R.eval u = some t) {s₀ t₀ : Fin t.card}
+    (hst : t.toCellScheme.scope s₀ ⊆ t.toCellScheme.scope t₀)
     (hg : t.toCellScheme.grade s₀ = t.toCellScheme.grade t₀) :
     ∃ w, t.toCellScheme.gradedIndex w = t.toCellScheme.gradedIndex t₀ ∧
       R.stableSection u t s₀ ≤ R.stableSection u t w := by
   obtain ⟨w, hw, hle⟩ := t.isLawful.availability s₀ t₀ hst hg
-  refine ⟨w, hw, ?_⟩
   by_cases hs₀ : t.label s₀ = ⊤
-  · have hw' : t.label w = ⊤ := top_le_iff.mp (hs₀ ▸ hle)
-    rw [stableSection_of_eq_top hs₀, stableSection_of_eq_top hw']
-    exact ofOffset_le_ofOffset (stableOffset_le_of_synchronizingCofaces hR hsync ht hs₀ hw'
-      (hst.trans_eq (congrArg Prod.fst hw).symm) (hg.trans (congrArg Prod.snd hw).symm))
-  · exact stableSection_le_of_ne_top hs₀ hle
+  swap
+  · exact ⟨w, hw, stableSection_le_of_ne_top hs₀ hle⟩
+  by_cases hi : t.toCellScheme.gradedIndex s₀ = t.toCellScheme.gradedIndex t₀
+  · exact ⟨s₀, hi, le_rfl⟩
+  have hw' : t.label w = ⊤ := top_le_iff.mp (hs₀ ▸ hle)
+  have hsw : t.toCellScheme.scope s₀ ⊂ t.toCellScheme.scope w :=
+    (hst.trans_eq (congrArg Prod.fst hw).symm).ssubset_of_ne fun h ↦
+      hi (Prod.ext (h.trans (congrArg Prod.fst hw)) hg)
+  obtain ⟨w', hw'', hw'top, hord⟩ :=
+    htw t hl s₀ w hsw (hg.trans (congrArg Prod.snd hw).symm) hs₀ hw'
+  exact ⟨w', hw''.trans hw, stableSection_le_of_forall_lift ht hs₀ hw'top
+    fun ℓ hℓ hat hℓt ↦ hord ℓ hℓ hat hℓt⟩
 
 /-! ### Stable lawfulness -/
-
-/-- **A model is stably lawful, given synchronizing cofaces** at `λ_ξ` (still to be proved).  The
-order law is unconditional, locality uses exact consistency and covering, and availability uses
-synchronizing cofaces and generalized saturation.  Unbounded top-grade growth and non-hollowness
-are not used. -/
-theorem isStablyLawful_of_synchronizingCofaces (hR : R.IsModel)
-    (hsync : SynchronizingCofaces.{u} (blockStage ξ)) : R.IsStablyLawful := fun _ _ _ ht ↦
-  { orderly := orderly_stableSection ht
-    locality := locality_stableSection hR.isConsistent hR.isCovering ht
-    availability := fun _ _ hst hg ↦ availability_stableSection hR hsync ht hst hg }
 
 /-- **Stable lawfulness without twins**: an exactly consistent covering realization in whose types
 no two cells labelled the formal top share a graded index is stably lawful. -/
@@ -747,6 +706,19 @@ theorem isStablyLawful_of_injOn_gradedIndex (hR : R.IsConsistent) (hc : R.IsCove
     { orderly := orderly_stableSection ht
       locality := locality_stableSection hR hc ht
       availability := fun _ _ hst hg ↦ availability_stableSection_of_injOn (hinj u t ht) ht hst hg }
+
+/-- **Stable lawfulness under twin ordering**: an exactly consistent covering realization with
+legal types is stably lawful given twin ordering at `λ_ξ` (unproved and possibly false,
+`TwinOrdering`).  The order law is unconditional, locality uses exact consistency and covering,
+and availability uses twin ordering at the types of `R`.  Generalized saturation, unbounded
+top-grade growth and non-hollowness are not used. -/
+theorem isStablyLawful_of_twinOrdering (hR : R.IsConsistent) (hc : R.IsCovering)
+    (hl : R.HasLegalTypes) (htw : TwinOrdering.{u} (blockStage ξ)) : R.IsStablyLawful :=
+  fun _ u t ht ↦
+    { orderly := orderly_stableSection ht
+      locality := locality_stableSection hR hc ht
+      availability := fun _ _ hst hg ↦
+        availability_stableSection_of_twinOrdering htw (hl u t ht) ht hst hg }
 
 /-! ### Cover-hollow realizations -/
 
