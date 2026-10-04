@@ -24,7 +24,7 @@ is vacuous, not on its values) with `τ ≤ γ` and `τ ∘ s = min p γ`.  The 
 (`Label.exists_ownerAlignment`, and below a pair
 `CellScheme.Rows.IsLawfulBelow.exists_ownerAlignment`) produces
 
-* a **source cap** `h`, with `⊥ < h ≤ s o`, `h ≠ ⊤`, and `h` self-visible at `m`;
+* a **source cap** `h`, with `⊥ < h ≤ s o`, `h ≠ ⊤`, and `h` self-visible and short at `m`;
 * a **reading cap** `δ`, with `γ ≤ δ ≤ p o` and `δ` self-visible at `m`;
 * a witness `ρ` bounded by grade `m`, the **alignment decoder**, with `ρ h = δ`,
 
@@ -37,8 +37,9 @@ relation between them is assumed beyond `τ ∘ s = min p γ`.
 **The source cap.**  A cell `e` is *saturated* when `τ (s e) = γ`; the owner is saturated, since
 `γ < p o`.  The source cap is the least value of `visibilityReplace m m (s e)` over the saturated
 cells: the end `ω * b + m` of the *strip* `[ω * b, ω * b + m]` of `s e` when the finite part of
-`s e` is below `m`, and `s e` itself otherwise.  A saturated cell whose source lies below `h` lies
-in the strip that ends at `h`.
+`s e` is below `m`, and `s e` itself otherwise.  It is short at `m`, since the source is
+(`Label.isShort_visibilityReplace_self`).  A saturated cell whose source lies below `h` lies in the
+strip that ends at `h`.
 
 **The two cases.**  If every cell `e` with `γ < min (p e) (p o)` has `h ≤ s e`, the alignment
 holds with `δ = γ` and `ρ = τ`.  Otherwise some such cell `d` has `s d < h`: its source is
@@ -148,6 +149,22 @@ private theorem pt_zero (b : Ordinal.{u}) : pt b 0 = ((ω * b : Ordinal.{u}) : L
 /-- The start `ω * b` of a block is zero or a limit. -/
 private theorem isSuccPrelimit_omega0_mul (b : Ordinal.{u}) : Order.IsSuccPrelimit (ω * b) :=
   isSuccPrelimit_iff_omega0_dvd.mpr (dvd_mul_right ω b)
+
+/-- **Visibility replacement at `m` by `m` keeps a label short at `m`**: it replaces a finite part
+below `m` by `m` and fixes the others.  The source cap of the owner-local alignment is such a
+replacement of a source short at `m`, and so is short at `m`. -/
+theorem isShort_visibilityReplace_self (h : IsShort m x) :
+    IsShort m (visibilityReplace m m x) := by
+  induction x using recBotCoeTop with
+  | bot => exact isShort_bot m
+  | top => exact isShort_top m
+  | coe o =>
+    obtain ⟨b, n, ho⟩ := exists_eq_pt o
+    rw [ho] at h ⊢
+    rw [pt_visibilityReplace, isShort_pt]
+    split_ifs
+    · exact le_rfl
+    · exact isShort_pt.mp h
 
 /-! ### Strips carried by a witness -/
 
@@ -367,7 +384,7 @@ Let `s` be short at `m` with `s o ≠ ⊤`, and let `τ` be a witness bounded by
 and `τ ∘ s = min p γ`, where `⊥ < γ < p o` and `γ` is self-visible at `m`.  Then some source cap
 `h`, reading cap `δ`, and alignment decoder `ρ` satisfy:
 
-* `⊥ < h ≤ s o`, `h ≠ ⊤`, `h` self-visible at `m`;
+* `⊥ < h ≤ s o`, `h ≠ ⊤`, `h` self-visible at `m` and short at `m`;
 * `ρ` is a witness bounded by grade `m`; `γ ≤ δ ≤ p o`, `δ` self-visible at `m`, and `ρ h = δ`;
 * `min (p e) δ = min (ρ (s e)) δ` at every cell;
 * the alignment: `h ≤ s e` at every cell with `δ < min (p e) (p o)`;
@@ -384,7 +401,7 @@ theorem exists_ownerAlignment {I : Type*} [Finite I] {grade : I → ℕ} {E s p 
     (hτ : IsWitness (stepSuppressor m) τ) (hτγ : ∀ x, τ x ≤ γ)
     (hface : ∀ e, τ (s e) = min (p e) γ) (hγ : IsSelfVisible m γ) (hγbot : ⊥ < γ)
     (hγo : γ < p o) :
-    ∃ h δ ρ, ⊥ < h ∧ h ≠ ⊤ ∧ IsSelfVisible m h ∧ h ≤ s o ∧
+    ∃ h δ ρ, ⊥ < h ∧ h ≠ ⊤ ∧ IsSelfVisible m h ∧ IsShort m h ∧ h ≤ s o ∧
       IsWitness (stepSuppressor.{u} m) ρ ∧ γ ≤ δ ∧ δ ≤ p o ∧
       IsSelfVisible m δ ∧ ρ h = δ ∧ (∀ e, min (p e) δ = min (ρ (s e)) δ) ∧
       (∀ e, δ < min (p e) (p o) → h ≤ s e) ∧
@@ -396,6 +413,7 @@ theorem exists_ownerAlignment {I : Type*} [Finite I] {grade : I → ℕ} {E s p 
   obtain ⟨e₀, he₀, hmin⟩ := exists_sourceCap (m := m) hosat
   set h := visibilityReplace m m (s e₀) with hh_def
   have hhvis : IsSelfVisible m h := isSelfVisible_visibilityReplace_self m _
+  have hhshort : IsShort m h := isShort_visibilityReplace_self (hshort e₀)
   have hhτ : τ h = γ :=
     le_antisymm (hτγ h) (he₀ ▸ hτ.monotone (le_visibilityReplace (by omega) (s e₀)))
   have hhbot : ⊥ < h := bot_lt_iff_ne_bot.mpr fun hb ↦ by
@@ -409,8 +427,8 @@ theorem exists_ownerAlignment {I : Type*} [Finite I] {grade : I → ℕ} {E s p 
     le_antisymm ((monotone_visibilityReplace le_rfl hlt.le).trans_eq hhvis) (hmin e he)
   by_cases halign : ∀ e, γ < min (p e) (p o) → h ≤ s e
   · -- The first case: `δ = γ` and `ρ = τ`.
-    refine ⟨h, γ, τ, hhbot, hhtop, hhvis, hho, hτ, le_rfl, hγo.le, hγ, hhτ, fun e ↦ ?_, halign,
-      fun _ _ ↦ rfl⟩
+    refine ⟨h, γ, τ, hhbot, hhtop, hhvis, hhshort, hho, hτ, le_rfl, hγo.le, hγ, hhτ, fun e ↦ ?_,
+      halign, fun _ _ ↦ rfl⟩
     rw [hface e, min_assoc, min_self]
   push Not at halign
   obtain ⟨d, hpd, hsd⟩ := halign
@@ -464,8 +482,8 @@ theorem exists_ownerAlignment {I : Type*} [Finite I] {grade : I → ℕ} {E s p 
       have h' := htransfer (E e) n hn ((hαlow e he).trans hsen)
       rw [hαlow e he, hβread e] at h'
       exact h'.symm
-  refine ⟨h, δ, ρ, hhbot, hhtop, hhvis, hho, hρ, hγδ, hδo, hδvis, hρh, fun e ↦ ?_, fun e he ↦ ?_,
-    hcap⟩
+  refine ⟨h, δ, ρ, hhbot, hhtop, hhvis, hhshort, hho, hρ, hγδ, hδo, hδvis, hρh, fun e ↦ ?_,
+    fun e he ↦ ?_, hcap⟩
   · by_cases he : s e < h
     · rw [← hsub e he, min_assoc, min_eq_right hδo]
     · have hle : pt b m ≤ α (E e) := by
@@ -502,7 +520,7 @@ theorem IsLawfulBelow.exists_ownerAlignment [Finite (D.below X)] {s p : D.below 
     (hτ : IsWitness (stepSuppressor X.2) τ) (hτγ : ∀ x, τ x ≤ γ)
     (hface : ∀ e, τ (s e) = min (p e) γ) (hγ : IsSelfVisible X.2 γ) (hγbot : ⊥ < γ)
     (hγo : γ < p o) :
-    ∃ h δ ρ, ⊥ < h ∧ h ≠ ⊤ ∧ IsSelfVisible X.2 h ∧ h ≤ s o ∧
+    ∃ h δ ρ, ⊥ < h ∧ h ≠ ⊤ ∧ IsSelfVisible X.2 h ∧ IsShort X.2 h ∧ h ≤ s o ∧
       IsWitness (stepSuppressor.{u} X.2) ρ ∧ γ ≤ δ ∧ δ ≤ p o ∧ IsSelfVisible X.2 δ ∧ ρ h = δ ∧
       (∀ e, min (p e) δ = min (ρ (s e)) δ) ∧ (∀ e, δ < min (p e) (p o) → h ≤ s e) ∧
       ∀ z, IsShort X.2 z → min (ρ z) γ = min (τ z) γ := by
@@ -524,16 +542,16 @@ theorem IsLawfulBelow.exists_ownerAlignment [Finite (D.below X)] {s p : D.below 
       IsSelfVisible X.2 (extendBot X w o.1) := by
     rw [hexte]
     exact hgrade ▸ (isLawfulBelow_iff.mp hw).orderly o
-  obtain ⟨h, δ, ρ, hhbot, hhtop, hhvis, hho, hρ, hγδ, hδo, hδvis, hρh, hread, halign, hcap⟩ :=
-    Label.exists_ownerAlignment (I := D.below (D.gradedIndex o.1))
+  obtain ⟨h, δ, ρ, hhbot, hhtop, hhvis, hhshort, hho, hρ, hγδ, hδo, hδvis, hρh, hread, halign,
+    hcap⟩ := Label.exists_ownerAlignment (I := D.below (D.gradedIndex o.1))
       (grade := fun d ↦ D.grade d) (E := R.row o.1) (s := fun d ↦ extendBot X s d)
       (p := fun d ↦ extendBot X p d) (o := ⟨o.1, D.mem_below_gradedIndex o.1⟩) (τ := τ) (γ := γ)
       (fun d ↦ hgrade ▸ d.2.2) hgrade (hvis s hs) (hloc s hs) (hvis p hp) (hloc p hp)
       (fun d ↦ by rw [hext]; exact hshort _) (by rwa [hexte]) hτ hτγ
       (fun d ↦ by rw [hext, hext]; exact hface _) hγ hγbot (by rwa [hexte])
   simp only [hexte] at hho hδo halign
-  refine ⟨h, δ, ρ, hhbot, hhtop, hhvis, hho, hρ, hγδ, hδo, hδvis, hρh, fun e ↦ ?_, fun e he ↦ ?_,
-    hcap⟩
+  refine ⟨h, δ, ρ, hhbot, hhtop, hhvis, hhshort, hho, hρ, hγδ, hδo, hδvis, hρh, fun e ↦ ?_,
+    fun e he ↦ ?_, hcap⟩
   · have h' := hread ⟨e.1, hmem e⟩
     simp only [hexte] at h'
     exact h'
@@ -552,7 +570,8 @@ theorem IsLawfulBelow.exists_ownerAlignment_flattenedSource [Finite (D.below X)]
     (hγbot : ⊥ < γ) (hγo : γ < p o) :
     ∃ τ, IsWitness (stepSuppressor.{u} X.2) τ ∧ (∀ x, τ x ≤ γ) ∧
       (∀ e, τ (Label.flattenedSource V X.2 p e) = min (p e) γ) ∧
-      ∃ h δ ρ, ⊥ < h ∧ h ≠ ⊤ ∧ IsSelfVisible X.2 h ∧ h ≤ Label.flattenedSource V X.2 p o ∧
+      ∃ h δ ρ, ⊥ < h ∧ h ≠ ⊤ ∧ IsSelfVisible X.2 h ∧ IsShort X.2 h ∧
+        h ≤ Label.flattenedSource V X.2 p o ∧
         IsWitness (stepSuppressor.{u} X.2) ρ ∧ γ ≤ δ ∧ δ ≤ p o ∧ IsSelfVisible X.2 δ ∧
         ρ h = δ ∧ (∀ e, min (p e) δ = min (ρ (Label.flattenedSource V X.2 p e)) δ) ∧
         (∀ e, δ < min (p e) (p o) → h ≤ Label.flattenedSource V X.2 p e) ∧
