@@ -1004,8 +1004,8 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     (`MainTheorem/Assembly`), the class–level incidence of row 27, which stores no presentation.
     The conversion between the raw base and the common invariant encodings: prospective.
 34. Prospective.  1 ⇒ 2 is the uniform fixing stage of row 31 for the family of model
-    presentations, through `StageProjection.exists_uniform_fixing_stage` (available upstream, not
-    yet at our pinned dependency; "Dependency pins"), and is the only step using a countable
+    presentations, through `StageProjection.exists_uniform_fixing_stage` (available at the pin
+    `e460cb6`, signatures checked; "Dependency pins"), and is the only step using a countable
     carrier; 2 ⇔ 4 uses strictness for models (row 32); 4 ⇒ 5 uses bounded-stage attainment, whose
     ingredients are compiled in this repository (theorem named) in the raw base encoding:
     `Realization.IsModel.reduce` (`Realization/Model`), `ModelExpansion.nonempty_of_coherent`
@@ -1086,8 +1086,8 @@ is complete because a later one is.
    every higher index, quantified over all admissible lifts, not over one chosen lift; its use of
    termination stated as a hypothesis or marked in its proof.
 3. *The uniform fixing stage:* the conditional theorem with exactly hypotheses 1–3 of the
-   sub-item, compiled through `StageProjection.exists_uniform_fixing_stage` once a pin contains it
-   (signatures checked), with no ordinal induction of its own and none of the excluded
+   sub-item, compiled through `StageProjection.exists_uniform_fixing_stage` (available at the pin
+   `e460cb6`, signatures checked), with no ordinal induction of its own and none of the excluded
    assumptions; the empty family and a base assignment with no supported tuple as compiled
    examples; and its application to the data of 2, stage correctness retained, the bound chosen
    before the quantifiers over indices, presentations, arities, and coordinates.
@@ -1442,9 +1442,10 @@ Eliminating orbit parameters (#158, `Scott/OrbitParameters`: `existsOrbitParams`
 `realize_existsOrbitParams_iff_orbit`, `qrank_existsOrbitParams`), which also adds
 `BoundedFormulaω.qrank_inf`, `qrank_sup`, and `BoundedFormulaω.qrank_mapFreeVars` to
 `Lomega1omega/QuantifierRank` (the first and third were declared in `Definability/Syntax` before
-this repin and are now InfinitaryLogic's), and the closure of the last `n` of `k + n` free
-variables `existsTupleFrom k n` with `realize_existsTupleFrom` to `Scott/MontalbanSentence`;
-quantifier-rank bounds for Montalbán's Scott sentences (#159, `Scott/MontalbanQuantifierRank`:
+the repin to `e460cb6` and are now InfinitaryLogic's), and the closure of the last `n` of
+`k + n` free variables `existsTupleFrom k n` with `realize_existsTupleFrom` to
+`Scott/MontalbanSentence`; quantifier-rank bounds for Montalbán's Scott sentences (#159,
+`Scott/MontalbanQuantifierRank`:
 `qrank_montalbanSentence_le`, rank at most `α + ω` from a family of rank at most `α`, and the rank
 of the tuple quantifier blocks, `qrank_existsTupleFrom` and `qrank_existsTuple`, each adding
 exactly `n`).  `existsTupleFrom k m` agrees with `existsLastVars m` of `Definability/Syntax`, by the
