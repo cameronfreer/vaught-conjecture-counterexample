@@ -20,10 +20,10 @@ and every lawful section of the rows of `S` is at least as large at `b` as at `a
 refuted:
 
 * **unrestricted** (`UnrestrictedSynchronizingCofaces`, no requirement on the labels of `a` and
-  `b`), false at `ω` (`not_unrestrictedSynchronizingCofaces`): the labels of a member of the coface
-  family are a lawful section of `S` extending those of `q`, so the statement forces
-  `q.label a ≤ q.label b`, and the legal stage type with labels `(⊥, 1)` at two cells of one graded
-  index of `SmallArityExamples.onePointScheme 2` refutes it;
+  `b`), false at `ω` in universe `0` (`not_unrestrictedSynchronizingCofaces`): the labels of a
+  member of the coface family are a lawful section of `S` extending those of `q`, so the statement
+  forces `q.label a ≤ q.label b`, and the legal stage type with labels `(⊥, 1)` at two cells of one
+  graded index of `SmallArityExamples.onePointScheme 2` refutes it;
 * **at cells labelled the formal top** (`SynchronizingCofaces`), false at every stage `β ≥ ω`,
   in particular at every block stage (`not_synchronizingCofaces_blockStage`): by bountifulness of
   the scheme of a legal coface (cap `⊥`), every lawful section of the rows of `q` extends to a
@@ -55,8 +55,9 @@ from `({0}, 1)` and from `({1}, 1)` to `(univ, 1)`.  For `β` zero or a limit, t
 `(β + 2, ⊥, β + 2, β + 1, ⊥)` and `(β + 2, ⊥, β + 1, β + 2, ⊥)` reduce to the same legal type at
 `β`, with `0` and both twins labelled the formal top.  On that type every lift sets `0` to the
 larger twin, and both orders of the twins occur, so no cell at the graded index of the twins is at
-least `0` in every lift.  Hence no hypothesis about all lifts of a single type gives availability
-at twins.  Whether stable availability holds for twin types in models is open.
+least `0` in every lift.  Hence no hypothesis that orders a twin above `s₀` in all lifts of a
+single type can hold; availability at twins has to use information about the realization.  Whether
+stable availability holds for twin types in models is open.
 
 ## Placement
 
@@ -72,7 +73,7 @@ open Finset Ordinal StageType CellScheme Label SmallArityExamples
 /-! ### Three forms of synchronizing cofaces -/
 
 /-- **Unrestricted synchronizing cofaces** at `β`, with no requirement on the labels of the two
-cells.  Refuted at `ω` (`not_unrestrictedSynchronizingCofaces`). -/
+cells.  Refuted at `ω` in universe `0` (`not_unrestrictedSynchronizingCofaces`). -/
 def UnrestrictedSynchronizingCofaces (β : Ordinal.{u}) : Prop :=
   ∀ ⦃m : ℕ⦄ (q : StageType.{u} β m), q.IsLegal → ∀ a b : Fin q.card,
     q.toCellScheme.scope a ⊆ q.toCellScheme.scope b →
@@ -174,7 +175,8 @@ private noncomputable def typeBotOne : StageType.{0} ω 1 where
     · left
       exact WithBot.coe_lt_coe.mpr (WithTop.coe_lt_coe.mpr (by simp [one_lt_omega0]))
 
-/-- **Unrestricted synchronizing cofaces are false at `ω`**: they would give `1 ≤ ⊥`. -/
+/-- **Unrestricted synchronizing cofaces are false at `ω`**, in universe `0` only (the refuting
+stage type has labels in `Label.{0}`): they would give `1 ≤ ⊥`. -/
 theorem not_unrestrictedSynchronizingCofaces : ¬ UnrestrictedSynchronizingCofaces.{0} ω :=
   fun h ↦ by
     have := label_le_of_unrestrictedSynchronizingCofaces h typeBotOne isLegal_botOne

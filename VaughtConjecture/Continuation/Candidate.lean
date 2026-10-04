@@ -87,10 +87,11 @@ refuted, only in `VaughtConjecture.Continuation.CandidateCounterexamples`.
   be realized over an occurrence by generalized saturation.  This is false at every block stage
   (`Continuation.CandidateCounterexamples.not_synchronizingCofaces_blockStage`); its form without
   the requirement that `a` and `b` be labelled the formal top and its form restricted to lifts of
-  members of the coface family are false at `ω` (same file).  The reason is bountifulness: the
-  scheme of a legal coface extends every lawful section of the rows of `q`, so no coface orders two
-  cells of `q` that some lift of `q` orders the other way.  The special case is two cells labelled
-  the formal top at one graded index of `onePointScheme 2`, with the lift `(ω + 1, ω + 2)`.
+  members of the coface family are false at `ω` (same file; the first is proved in universe `0`).
+  The reason is bountifulness: the scheme of a legal coface extends every lawful section of the
+  rows of `q`, so no coface orders two cells of `q` that some lift of `q` orders the other way.
+  The special case is two cells labelled the formal top at one graded index of `onePointScheme 2`,
+  with the lift `(ω + 1, ω + 2)`.
 * **Twin ordering** (`Continuation.CandidateCounterexamples.TwinOrdering`) would give availability
   directly: for a legal stage type `q` and cells `s₀`, `t₀` labelled the formal top with the scope
   of `s₀` strictly inside that of `t₀` and equal grades, one cell labelled the formal top at the
@@ -101,9 +102,9 @@ refuted, only in `VaughtConjecture.Continuation.CandidateCounterexamples`.
   `{1}` and grade `1`, two twins of full scope and grade `1`, and a cell of full scope and grade
   `2`.  On its type every lift sets `s₀` to the larger twin, and both orders of the twins occur.
 
-So no hypothesis about all lifts of a single type can repair availability at twins; an argument
-has to use information about the realization, such as which lifts of a type extend to lifts of
-the covers realized in `R`.
+So no hypothesis that orders a twin above `s₀` in all lifts of a single type can hold;
+availability at twins has to use information about the realization, such as which lifts of a
+type extend to lifts of the covers realized in `R`.
 
 **The cases.**
 
