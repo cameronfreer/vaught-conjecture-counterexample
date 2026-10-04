@@ -43,7 +43,8 @@ stage types at `α`: no realization, and no legality (legality depends only on t
 `ℕ∞` of the thresholds forced at `d`.  When `q` restricts to `p` along `f` and `d` reduces to the
 formal top, `n` is at most the provisional offset exactly when `(q, f)` forces `n`
 (`le_provisionalOffset_iff`); for `n ≠ 0` no hypothesis is needed
-(`natCast_le_provisionalOffset_iff`).  By the order law the provisional offset is at least the
+(`natCast_le_provisionalOffset_iff`).  Provisional offsets are monotone along extensions
+(`provisionalOffset_le_trans_face`).  By the order law the provisional offset is at least the
 grade of `d`.  A single pair `(q, f)` is not claimed here to force only finitely many thresholds;
 the value `⊤` of a supremum over many pairs is allowed.
 
@@ -240,6 +241,13 @@ noncomputable def provisionalOffset (α : Ordinal.{u}) (hβ : Order.IsSuccPrelim
 theorem ForcesThreshold.le_provisionalOffset (h : ForcesThreshold α hβ q f p d n) :
     (n : ℕ∞) ≤ provisionalOffset α hβ q f p d :=
   le_iSup₂ (f := fun n (_ : ForcesThreshold α hβ q f p d n) ↦ (n : ℕ∞)) n h
+
+/-- **Provisional offsets are monotone along extensions**: if `q` is the face of `q'` along `g`,
+the provisional offset at `(q, f)` is at most that at `(q', f.trans g)`. -/
+theorem provisionalOffset_le_trans_face {q' : StageType.{u} β m'} {g : Fin m ↪ Fin m'}
+    (hg : restrictFace g q' = some q) :
+    provisionalOffset α hβ q f p d ≤ provisionalOffset α hβ q' (f.trans g) p d :=
+  iSup₂_le fun _ h ↦ (h.trans_face hg).le_provisionalOffset
 
 /-- A positive `n` is at most the provisional offset exactly when it is forced. -/
 theorem natCast_le_provisionalOffset_iff (hn : n ≠ 0) :

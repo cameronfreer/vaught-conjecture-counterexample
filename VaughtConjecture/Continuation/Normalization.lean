@@ -48,7 +48,7 @@ family of rooted covers is not needed by any statement here and is not formalize
 
 * **Soundness** (`Realization.Covers.le_label_of_forcesThreshold`), unconditional: under exact
   consistency alone, a rooted cover forcing `n` at `d` gives `λ_η + n ≤ t.label d`.  It holds for
-  any stages `β ≤ α`, `β` zero or a limit.
+  any stage `α` and any stage `β` that is zero or a limit.
 * **Realizing a donor's reduction**
   (`Realization.HasFiniteExtensionReceiving.extendsToCover_reduce`): with finite-extension
   receiving, for a legal stage type `D` at the stage of `R` whose face along `g` is `t`, the
@@ -60,9 +60,9 @@ family of rooted covers is not needed by any statement here and is not formalize
   realization: whenever a legal `t` at `λ_{η+1}` has label at least `λ_η + n` at a cell `d`
   reducing to the formal top, some legal `D` at `λ_{η+1}` has `t` as its face along some `g`, and
   `(D↓λ_η, g)` forces `n` at `d`.  It is still to be proved: a finite construction of Layer 3 (new
-  points, a full-scope cell tied to `d` by its row, and completeness above it), blocked on the
-  completion below the full grade, not on (R1).  Its case `n ≤` the grade of `d` holds with
-  `D = t` by the order law (`StageType.forcesThreshold_of_le_grade`).
+  points, a full-scope cell tied to `d` by its row, and completeness above it); it awaits the
+  completion below the full grade and does not depend on (R1).  Its case `n ≤` the grade of `d`
+  holds with `D = t` by the order law (`StageType.forcesThreshold_of_le_grade`).
 * **The threshold lemma** (`Realization.le_label_iff_exists_forcesThreshold`): for `R` exactly
   consistent, with legal types and finite-extension receiving, and given forcing donors at `η`,
   `λ_η + n ≤ t.label d` exactly when some rooted cover of `c` in `R↓λ_η` forces `n` at `d`.  The
@@ -160,7 +160,8 @@ end Realization
 cell `d` of `t` reducing to the formal top at `λ_η` and every `n` with `λ_η + n ≤ t.label d`, some
 legal stage type `D` at `λ_{η+1}` has `t` as its face along some `g`, and `(D↓λ_η, g)` forces `n`
 at `d`.  A finite statement about stage types, with no realization.  It is still to be proved: a
-finite construction of Layer 3, blocked on the completion below the full grade, not on (R1). -/
+finite construction of Layer 3 that awaits the completion below the full grade and does not depend
+on (R1). -/
 def ForcingDonors (η : Ordinal.{u}) : Prop :=
   ∀ ⦃k : ℕ⦄ (t : StageType.{u} (blockStage (η + 1)) k), t.IsLegal → ∀ d : Fin t.card,
     (t.reduce (isSuccPrelimit_blockStage η)).label d = ⊤ → ∀ n : ℕ,

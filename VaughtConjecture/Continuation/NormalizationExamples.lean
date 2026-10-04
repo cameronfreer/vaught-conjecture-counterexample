@@ -39,7 +39,7 @@ variable {α β : Ordinal.{u}} {hβ : Order.IsSuccPrelimit β} {M : Type v} {k :
 /-! ### Repeated coordinates -/
 
 /-- A tuple with a repeated coordinate has no rooted cover. -/
-theorem not_extendsToCover_pair {S : Realization.{u, v} β M} (a : M)
+private theorem not_extendsToCover_pair {S : Realization.{u, v} β M} (a : M)
     (x : Σ m : ℕ, StageType.{u} β m × (Fin 2 ↪ Fin m)) : ¬ S.ExtendsToCover ![a, a] x :=
   fun h ↦ Fin.zero_ne_one (show (0 : Fin 2) = 1 from h.injective rfl)
 

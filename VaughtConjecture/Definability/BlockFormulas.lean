@@ -35,13 +35,16 @@ model expansion `R` to `λ_{η+1}`, at every tuple `c` covering a type `t`, and 
 extends to a cover of some triple of `U (t↓λ_η) d n` in the reduction of `R` to `λ_η`.  So the new
 labels of the block are read off covers one block lower.  Block determination is expected to follow
 from Layer 4, outputs 1–2 (the stable candidate and normalization; `roadmap/README.md`, Layer 4).
-The proviso on its shape is met: the stable value of a cell is the supremum over rooted covers of
-an offset determined by the cover's type at `λ_η`, the coordinate embedding and the transported
-cell (`StageType.provisionalOffset`), so the threshold has the existential finite-data form, and
-block determination holds for the forcing thresholds (`forcingThresholds_determines`, in
-`VaughtConjecture.Definability.BlockDetermination`) conditional on finite-extension receiving
-(from (R1)) and on forcing donors (`ForcingDonors`), both still to be proved.  Here block
-determination is a hypothesis.
+Call a triple `(m, q, f)` to which `c` extends a cover in the reduction a **rooted cover** of `c`.
+The proviso on the shape of the data is met: the stable value of a cell is the supremum over rooted
+covers of an offset determined by the cover's type at `λ_η`, the coordinate embedding and the
+transported cell (`StageType.provisionalOffset`), and the stable label is at least `λ_η + n` exactly
+when a single rooted cover forces `n` — unconditionally (`Realization.coe_add_le_stableLabel_iff`).
+The conditional part is normalization, that the label equals the stable label
+(`Realization.label_eq_stableLabel`): it uses finite-extension receiving (from (R1)) and forcing
+donors (`ForcingDonors`), both still to be proved, and with them block determination holds for the
+forcing thresholds (`forcingThresholds_determines`, in
+`VaughtConjecture.Definability.BlockDetermination`).  Here block determination is a hypothesis.
 
 **The formulas** (`blockFormula U η hη t`, a formula of the base language with free variables
 `Fin k`, for a type `t` at `λ_η` on `k` points) are defined by recursion on `η`
@@ -159,8 +162,8 @@ on a carrier in the universe `w`, at every tuple `c` covering a type `t`, at eve
 reducing to the formal top at `λ_η`, and for every `n : ℕ`, the label of `d` is at least
 `λ_η + n` exactly when `c` extends to a cover of a triple of `U (t↓λ_η) d n` in the reduction of `R`
 to `λ_η`.  It is expected to follow from Layer 4, outputs 1–2 (the stable candidate and
-normalization), at the block `η`: for the forcing thresholds it follows from finite-extension
-receiving (from (R1)) and forcing donors at `η`, both still to be proved
+normalization), at the block `η`: for the forcing thresholds it follows from normalization, which
+uses finite-extension receiving (from (R1)) and forcing donors at `η`, both still to be proved
 (`forcingThresholds_determines`). -/
 def CoverThresholds.Determines {η : Ordinal.{0}} (U : CoverThresholds η) : Prop :=
   ∀ ⦃M : Type w⦄ [baseLanguage.{0}.Structure M] (R : ModelExpansion M (blockStage (η + 1)))
