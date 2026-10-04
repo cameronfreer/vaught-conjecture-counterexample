@@ -866,6 +866,14 @@ declarations listed in the notes.
 | 26 | [AFK26] | comparison of models with a common invariant (item 4; no numbered statement) | S |
 | 27 | [AFK26] | maximal presentations, class–level incidence (item 5; no numbered statement) | S |
 | 28 | [AFK26] | full trees, Definition 8.4 and Proposition 8.6 (item 6) | C |
+| 29 | [AFK26] | closed tuples as supported tuples (item 2; no numbered statement) | S |
+| 30 | [AFK26] | positive niceness over all admissible lifts (item 5; no numbered statement) | S |
+| 31 | [AFK26] | a uniform fixing stage of a family (item 5; no numbered statement) | S |
+| 32 | [AFK26] | the bound of serving indices under strictness (item 5; no numbered statement) | S |
+| 33 | [AFK26] | maximal presentations of a literal base (item 5; no numbered statement) | S |
+| 34 | [AFK26] | five equivalent criteria for them (item 5; no numbered statement) | S |
+| 35 | [AFK26] | literal uniqueness of maximal presentations (item 5; no numbered statement) | S |
+| 36 | [AFK26] | the optimal all-presentation bound (item 5; no numbered statement) | S |
 
 The items are those of `README.md`, "Manuscript correspondence (required)".  Notes to the rows:
 
@@ -956,6 +964,74 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
 28. What is corrected is a statement: the same-index equivalence of Proposition 8.6 is false (an
     informal counterexample, `LITERATURE.md`, §9; not compiled); `COMPANIONS.md`, "Full trees":
     prospective.
+29. An injective tuple is typed exactly when its set of points is a support
+    (`Realization.isSome_eval_iff_isSupport`, `Realization/Hull`, under exact consistency); a
+    finite set is closed for the canonical closure exactly when it is a support
+    (`Realization.isClosed_coe_iff`, `Realization.isClosed_iff_of_finite`, `Realization/Closure`,
+    under exact consistency and covering); stage reduction keeps typed and untyped tuples
+    (`Realization.isSome_reduce_eval`, `Realization/Transport`) and the closure
+    (`Realization.closure_reduce`, `Realization/Closure`).  All compiled in this repository
+    (theorem named), each comparing declarations of this repository; the combined statement (an
+    injective tuple supported exactly when closed) is not named, and its comparison with the
+    closed tuples of [AFK26] is still to be proved, with item 2.  Milestone 1 of the uniform fixing
+    bounds (`README.md`, item 5).
+30. Prospective: no declaration of this repository states positive niceness or names a fixing
+    rank.  Milestone 2; it is the row "invariance over all admissible presentations, with an
+    inhabited threshold" of the table of item 5, and its construction for the models here uses
+    the termination argument.
+31. Prospective: no declaration of this repository states it.  Its ingredients for labels are
+    compiled in this repository (theorem named): `Label.reduce_eq_self_iff` (fixed by projection
+    exactly at the labels of the stage), and `Label.reduce_reduce_of_le`, `Label.atStage_reduce`
+    and `Label.AtStage.mono` for the law with `min` (`Label/Basic`).  The bound for one arity is
+    `StageProjection.exists_uniform_fixing_stage` (available upstream, not yet at our pinned
+    dependency; "Dependency pins").  Milestone 3; the conditional statement uses no termination.
+32. Prospective, with the negative special case (the constant family of the all-undefined
+    assignment; not compiled).  Strictness for models is to come from `COMPANIONS.md`, "Fixing
+    ranks of finite charts" (the supremum at block `η` is `η`), still to be proved.  Milestone 4.
+    The row is required for item 5, whether or not the main theorem uses a bound of serving
+    indices: the completion criterion of item 5 asks every row of the item to be P or C, so
+    matching the manuscript needs milestone 4.
+33. Prospective: no declaration of this repository states a model presentation of a literal base
+    or its maximality (`README.md`, item 5, "Maximal presentations: equivalent criteria,
+    uniqueness, the optimal bound").  Related declarations, none of them this notion:
+    `Realization.IsTerminalAt` with `Realization.isTerminalAt_iff_forall_lt`
+    (`Continuation/Terminal`), terminality at a block, which a maximal presentation has; in the raw
+    base encoding, `Realization.IsExpansionOf.isTerminalAt` (same module), compiled in this
+    repository (theorem named): with no model expansion at the next block, every expansion is
+    terminal; and `FullPresentations`, with `presentedAt`, on `DensityClass`
+    (`MainTheorem/Assembly`), the class–level incidence of row 27, which stores no presentation.
+    The conversion between the raw base and the common invariant encodings: prospective.
+34. Prospective.  1 ⇒ 2 is the uniform fixing stage of row 31 for the family of model
+    presentations, through `StageProjection.exists_uniform_fixing_stage` (available upstream, not
+    yet at our pinned dependency; "Dependency pins"), and is the only step using a countable
+    carrier; 2 ⇔ 4 uses strictness for models (row 32); 4 ⇒ 5 uses bounded-stage attainment, whose
+    ingredients are compiled in this repository (theorem named) in the raw base encoding:
+    `Realization.IsModel.reduce` (`Realization/Model`), `ModelExpansion.nonempty_of_coherent`
+    (`Realization/Limit`), and `ModelExpansion.nonempty_of_forall_lt` (`Expansion/Uniqueness`,
+    conditional on `Expansion.NextBlockUniqueness`, still to be proved).  So 4 ⇒ 5, and with it
+    the equivalence and that of 2–5 for arbitrary carriers, is conditional on the injectivity of
+    model reduction (row 35), an explicit hypothesis until proved; 5 ⇒ 1 uses maximality and the
+    strict threshold only.  4 ⇒ 5 is route (a) of milestone 5 of `README.md`, item 5, "Uniform
+    fixing bounds from positive niceness", with the dependencies named there.  The equivalence
+    characterizes termination for one base; it is not a separate proof of termination.
+35. Prospective, conditional on the injectivity of model reduction at each countable index (two
+    model presentations of the base at one index are equal), an explicit hypothesis until proved.
+    Both its steps use it: the inequality at `ρ` (terminal collision, which also uses
+    `Realization.IsModel.reduce` and `Realization.isTerminalAt_iff_forall_lt`), the equality at
+    `η`.  Its raw form at one block, in the raw base encoding, is `ModelExpansion.subsingleton`
+    (`Expansion/Uniqueness`), compiled in this repository (theorem named), conditional on
+    `Expansion.NextBlockUniqueness`, still to be proved, which is derived from (R1) and
+    `ForcingDonors` by `Expansion.NextBlockUniqueness.of_forcingDonors`
+    (`Expansion/UniquenessOfForcing`), compiled in this repository (theorem named); its limit
+    step is `Realization.eq_of_forall_reduce_eq` (`Realization/Limit`).  That theorem compares two
+    expansions at one block; it bounds no index and supplies no terminal presentation.  The
+    terminality of the reconstructed top-free realization, `reduce_ne_reconstruct`
+    (`ClassicalLimit/Modelhood`), compiled in this repository (theorem named), concerns the
+    realization, not its base reduct.
+36. Prospective.  It rests on row 32, on the inequality step of row 35 (so on the injectivity of
+    model reduction at `ρ` only), and on `COMPANIONS.md`, "Fixing ranks are zero or successors"
+    and "Limit heights are unattained suprema", each still to be proved.  No declaration of this
+    repository names a fixing rank (row 30).
 
 **Completion criteria, item by item** (the items of `README.md`, "Manuscript correspondence
 (required)").  For every item, each row of the concordance that it concerns is P or C, with its
@@ -992,6 +1068,91 @@ source named.
 6. *The tree discussion:* the three refutations compiled as examples (the same-index equivalence
    of [AFK26, Proposition 8.6], and non-implications 1 and 5 of "Checkpoint order and
    acceptance"); the positive classification of density for trees is not part of this criterion.
+
+**Completion criteria of the uniform fixing bounds, milestone by milestone** (`README.md`,
+"Manuscript correspondence (required)", item 5, "Uniform fixing bounds from positive niceness";
+rows 29–32, each still to be proved).  Each milestone is complete on its own criterion, and none
+is complete because a later one is.
+
+1. *Closedness is supportedness:* the combined statement, that in an exactly consistent covering
+   realization an injective tuple is supported exactly when its set of points is closed, compiled
+   (the empty tuple included), with the preservation of supported and unsupported tuples by
+   projection; row 29 becomes P or C with item 2.
+2. *Positive niceness:* for every actual closed tuple of every countable model of the
+   construction, a threshold at which an actual admissible presentation exists (the set of
+   thresholds inhabited) and one value taken at the tuple by every admissible presentation at
+   every higher index, quantified over all admissible lifts, not over one chosen lift; its use of
+   termination stated as a hypothesis or marked in its proof.
+3. *The uniform fixing stage:* the conditional theorem with exactly hypotheses 1–3 of the
+   sub-item, compiled through `StageProjection.exists_uniform_fixing_stage` once a pin contains it
+   (signatures checked), with no ordinal induction of its own and none of the excluded
+   assumptions; the empty family and a base assignment with no supported tuple as compiled
+   examples; and its application to the data of 2, stage correctness retained, the bound chosen
+   before the quantifiers over indices, presentations, arities, and coordinates.
+4. *Serving indices* (required for item 5, row 32, whether or not the main theorem uses a bound
+   of serving indices): strictness for the models of the construction proved as a separate
+   theorem, the bound of serving indices derived from it, and the negative special case (the
+   constant family of the all-undefined assignment, fixed at `0` and serving at every index)
+   compiled as an example.
+5. *The separate statements:* the existence and coverage of maximal presentations, the terminal
+   comparison, and noncollapse each proved by its own argument, with its dependencies stated.  The
+   bounds of 2–4 are not sufficient for any of them alone; they are cited only with the additional
+   hypotheses named in the milestone.  Existence by bounded-stage attainment (for the model
+   presentations of one base): 4 with a model base, downward model reduction
+   (`Realization.IsModel.reduce`), the injectivity of model reduction at each countable index
+   (`ModelExpansion.subsingleton`, conditional on `Expansion.NextBlockUniqueness`), and limit
+   coherence (`ModelExpansion.nonempty_of_forall_lt`, under the same hypothesis); coverage by
+   this route applies it to a model base of every base class.  Noncollapse by the alternative
+   route (`COMPANIONS.md`, "An alternative route to the lower bound"): the uniform fixing stage
+   of 3, as the bound for each class of step (iv), with steps (i)–(iii) there (fixing ranks of
+   realized charts cofinal in `ω₁`) and the bounded-levels criterion.  No presentation at the
+   supremum of the serving indices is inferred from 4 alone, and the default noncollapse
+   statement (nonempty losses) cites none of 1–4.
+
+**Completion criteria of maximal presentations, statement by statement** (`README.md`, "Manuscript
+correspondence (required)", item 5, "Maximal presentations: equivalent criteria, uniqueness, the
+optimal bound"; rows 33–36, each still to be proved).  Each statement is complete on its own
+criterion, and none is complete because another is.  Each states its dependencies by name.  The
+injectivity of model reduction at each countable index (raw form `ModelExpansion.subsingleton`,
+conditional on `Expansion.NextBlockUniqueness`) is a dependency that criterion 5 of the uniform
+fixing bounds (above) names for existence by bounded-stage attainment; it is an explicit
+hypothesis of each statement of 2–4 that uses it, until it is proved as a theorem first, and
+`Expansion.NextBlockUniqueness` is not counted as proved.
+
+1. *Maximal presentations:* the model presentations of a literal base invariant assignment at every
+   countable index, and their maximality, defined; a maximal presentation terminal
+   (`Realization.IsTerminalAt`) as a compiled theorem; and the conversion between the raw base and
+   the common invariant encodings compiled as its own statement before a theorem of one encoding
+   is quoted in the other; row 33 becomes P or C with row 27.
+2. *The five criteria:* each implication compiled, only 1 ⇒ 2 assuming a countable carrier, and
+   2–5 equivalent for arbitrary carriers when the base is a model; 2 ⇔ 3 ⇔ 4 and 5 ⇒ 4 without
+   the injectivity of model reduction, and 5 ⇒ 1 from maximality and the strict threshold only;
+   the pointwise equivalences of the three sorts of bound at every proposed ordinal, without
+   inhabitation.  4 ⇒ 5 is bounded-stage attainment (a greatest serving index, the supplied bound
+   not required to be serving), the existence route of criterion 5 of the uniform fixing bounds,
+   compiled with the dependencies named there, each a separate theorem: a model base, downward
+   model reduction (`Realization.IsModel.reduce`), the injectivity of model reduction at each
+   countable index (`ModelExpansion.subsingleton`, conditional on
+   `Expansion.NextBlockUniqueness`), and limit coherence (`ModelExpansion.nonempty_of_forall_lt`,
+   under the same hypothesis); so both equivalences carry the injectivity of model reduction as an
+   explicit hypothesis.  The negative special case (the everywhere-undefined assignment: criteria 1
+   and 4 vacuous, criterion 5 false) compiled as an example.  No proof of criterion 1 that uses
+   termination is cited as a proof of termination.
+3. *Literal uniqueness:* for a terminal model presentation at `ρ`, every model presentation at `η`
+   has `η ≤ ρ` and is literally its reduct, with no countability assumed; two terminal model
+   presentations of one base have the same index and are equal; and no extension of a partial
+   diagram, an approximate assignment, or a projected donor is derived from it.  Its named
+   dependencies: the injectivity of model reduction, the same as in 4 ⇒ 5 (an explicit hypothesis
+   of both steps: at `ρ` for the inequality, which is terminal collision, with downward model
+   reduction `Realization.IsModel.reduce` and `Realization.isTerminalAt_iff_forall_lt`; and at
+   `η` for the equality).
+4. *The optimal bound:* both equivalences at every ordinal `ξ`, stated with the given terminal
+   presentation; `ρ` as the least upper bound; for a nonzero limit `ρ`, that no finite invariant
+   has fixing rank `ρ`; and no identification of `ρ` with a Scott rank.  Its named dependencies:
+   the inequality step of literal uniqueness (3), that is, terminal collision, hence the
+   injectivity of model reduction at `ρ` only, as an explicit hypothesis (the equality step, at
+   `η`, is not used); strictness for models (row 32); and `COMPANIONS.md`, "Fixing ranks are zero
+   or successors", for the limit case.
 
 ## Upstream building blocks
 
@@ -1264,10 +1425,35 @@ same observation are `CodeBFEquiv η`, then `C` is back-and-forth scattered
 (`bfScattered_of_countable_bfObservations`), carries no Cantor antichain for isomorphism, for every
 relational language (`not_hasCantorAntichainOn_of_countable_bfObservations`), and, for countably
 many relation symbols, is thin (`isThinOn_of_countable_bfObservations`).  The same merge moves
-`countable_quotient_of_countable_range` to `Descriptive/PerfectAntichain` (not used here).  Of
-ComputableModelTheory: none (its `main` is the pin `3a8f630`).  A statement merged upstream after
-the pins above is listed here, named in prose only and never `#check`ed in the sketches, until a
-repin containing it is recorded in this subsection.
+`countable_quotient_of_countable_range` to `Descriptive/PerfectAntichain` (not used here).
+Also of InfinitaryLogic, at `6480603` (the merge of its pull request #161, after the pin
+`cf80917`; contained in its tag `v6.0.0`; same toolchain and Mathlib), uniform fixation for stage
+projections (`InfinitaryLogic/UniformFixation`), as stated there.  A `StageProjection I` on one
+label type `I` has `project : Ordinal.{0} → I → I` with the law
+`project α (project β i) = project (min α β) i` at every ordinal; for `ℓ : C → I`,
+`FixedAt α ℓ := ∀ c, S.project α (ℓ c) = ℓ c`; and, writing `ω₁` for `Ordinal.omega 1`,
+`EventuallyInvariant Adm c := ∃ α < ω₁, ∃ ℓ, Adm α ℓ ∧`
+`∀ β, α < β → β < ω₁ → ∀ ℓ', Adm β ℓ' → ℓ' c = ℓ c` (a strict threshold, with an admissible
+witness at the threshold itself).  The theorem `StageProjection.exists_uniform_fixing_stage`
+takes `[Countable C]`, `(Adm : Ordinal.{0} → (C → I) → Prop)`,
+`(hstage : ∀ α, α < ω₁ → ∀ ℓ, Adm α ℓ → S.FixedAt α ℓ)` and
+`(hev : ∀ c, EventuallyInvariant Adm c)`, and concludes
+`∃ A < ω₁, ∀ β, β < ω₁ → ∀ ℓ, Adm β ℓ → S.FixedAt A ℓ`.  No countability of `I` or of `Adm` is
+assumed, nor any admissible presentation at a high stage; `C` empty gives `A = 0`.  Its
+application (`README.md`, "Manuscript correspondence (required)", item 5, "Uniform fixing bounds
+from positive niceness"), one arity at a time, restricts the coordinates to the supported
+injective tuples of `R`, and takes `project γ := reduce (blockStage γ)`, label by label, at
+`Ordinal.{0}`; the law with `min` follows from `Label.reduce_reduce_of_le`,
+`Label.atStage_reduce`, `Label.AtStage.mono` and `Label.reduce_eq_self_iff` (with
+`blockStage_mono`).  The same module proves `exists_uniform_fixing_stage_of_eventually_const`,
+a countable uniform stage from eventual constancy alone, with no admissible member required at
+the threshold (the admissible witness at the threshold is what yields the explicit bound
+`⨆ c, (α_c + 1)`), and `exists_classwise_labelRank_bound`, one countable bound on `labelRank`
+(the least stage fixing a label, not a Scott rank), the form for fixing ranks matching milestone 3
+there.  A repin to `v6.0.0` or later makes these available at the pin (signatures checked); it is
+prepared as a separate change.  Of ComputableModelTheory: none (its `main` is the pin `3a8f630`).
+A statement merged upstream after the pins above is listed here, named in prose only and never
+`#check`ed in the sketches, until a repin containing it is recorded in this subsection.
 
 **Available at the pin `cf80917`, used by `COMPANIONS.md`, "Quantitative reconstruction", targets 2
 and 3** (listed as available upstream before this repin): the bound of an orbit rank by the
