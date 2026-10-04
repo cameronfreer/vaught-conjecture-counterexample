@@ -23,6 +23,15 @@ Special cases of `VaughtConjecture.Stage.Threshold`:
   both labelled the formal top, the reduction of the type at `ω + ω` with both labels and every
   row value `ω + 2`; the tie lemma forces the threshold `2` at `e`, above the grade `1` of `e`
   given by the order law;
+* forcing at a reindexed root is forcing at the transported cell
+  (`ForcesThreshold.trans_comap_iff` along a bijection, which need not be monotone);
+* the collapse above `ω + 3` sends `ω + 5` to the formal top and keeps `ω + 2`;
+* **twins**: a scheme on two points with three cells of grade `1`, `s₀ = ({0}, 1)` and two twins of
+  graded index `({0, 1}, 1)`, and two stage types at `ω + ω` on it, with the labels
+  `(ω + 2, ω + 2, ω + 1)` and `(ω + 2, ω + 1, ω + 2)`, reducing to the same stage type at `ω`; the
+  pointwise minimum of their labels satisfies the order law and locality
+  (`Label.TransformsTo.inf`) but not availability, so it is the label section of no stage type on
+  that scheme.  This shows why availability of a pointwise minimum of lifts is not unconditional;
 * the threshold characterization of a supremum needs `n ≠ 0`: over an empty index the supremum is
   `0`, which is at least `0` although no term is.
 
@@ -165,6 +174,176 @@ example : ForcesThreshold (blockStage (0 + 1)) (isSuccPrelimit_blockStage 0) tie
     -- reduction keeps the cell scheme.
     change (⟨0, Nat.two_pos⟩ : Fin 2) ∈ tieCells.below (tieCells.gradedIndex ⟨1, Nat.one_lt_two⟩)
     simp [tieCells, CellScheme.gradedIndex, Prod.le_def]
+
+/-! ### Faces of the root -/
+
+/-- **Forcing at a reindexed root**: if `q` restricts to `p` along `h`, then for a bijection `e` of
+the coordinates of `p`, forcing at `(q, e.trans h)` for the reindexed root at a cell `i` is forcing
+at `(q, h)` for `p` at the transported cell; `e` need not be monotone, and cells are matched by
+position. -/
+example {q : StageType.{u} β m} {h : Fin k ↪ Fin m} {p : StageType.{u} β k}
+    (hp : restrictFace h q = some p) (e : Fin k ≃ Fin k) (i : Fin (p.reindex e).card) (n : ℕ) :
+    ForcesThreshold α hβ q (e.toEmbedding.trans h) (p.reindex e) i n ↔
+      ForcesThreshold α hβ q h p (p.cellMap e.toEmbedding i) n :=
+  ForcesThreshold.trans_comap_iff hp _ i
+
+/-! ### Collapse above a threshold -/
+
+/-- The collapse above `ω + 3` sends `ω + 5` to the formal top and keeps `ω + 2`. -/
+example : Label.collapse ω 3 ((ω + (5 : ℕ) : Ordinal.{u}) : Label.{u}) = ⊤ ∧
+    Label.collapse ω 3 ((ω + (2 : ℕ) : Ordinal.{u}) : Label.{u}) =
+      ((ω + (2 : ℕ) : Ordinal.{u}) : Label.{u}) := by
+  refine ⟨Label.reduce_of_le ?_, Label.reduce_of_lt (not_le.mp fun h ↦ ?_)⟩ <;>
+    simp only [WithBot.coe_le_coe, WithTop.coe_le_coe, add_le_add_iff_left, Nat.cast_le] at *
+  · omega
+  · exact absurd (Nat.cast_le.mp h) (by omega)
+
+/-! ### Twins: the pointwise minimum of two lawful lifts -/
+
+/-- Three cells of grade `1` on two points: `s₀ = 0` of scope `{0}`, and the twins `1` and `2` of
+scope `{0, 1}`, which share their graded index. -/
+private def twinCells : CellScheme (Fin 3) (Fin 2) :=
+  ⟨univ, Geometry.intervalPlan univ, ![{0}, univ, univ], fun _ ↦ 1⟩
+
+/-- The label `ω + 1`. -/
+private abbrev omegaOne : Label.{0} := ((ω + (1 : ℕ) : Ordinal.{0}) : Label.{0})
+
+/-- `ω + 1 < ω + 2`. -/
+private theorem omegaOne_lt_omegaTwo : omegaOne < omegaTwo :=
+  WithBot.coe_lt_coe.mpr (WithTop.coe_lt_coe.mpr (add_lt_add_right (Nat.cast_lt.mpr one_lt_two) ω))
+
+/-- The first lift: `ω + 2` at `s₀` and at the first twin, `ω + 1` at the second. -/
+private def twinSection₁ : Fin 3 → Label.{0} := ![omegaTwo, omegaTwo, omegaOne]
+
+/-- The second lift: `ω + 2` at `s₀` and at the second twin, `ω + 1` at the first. -/
+private def twinSection₂ : Fin 3 → Label.{0} := ![omegaTwo, omegaOne, omegaTwo]
+
+/-- The rows: the constant `ω + 2` at `s₀`, and the labels of the lift that is high at the twin
+itself at each twin. -/
+private def twinRows : twinCells.Rows.{0} :=
+  ⟨fun s d ↦ if s = 1 then twinSection₁ d.1 else if s = 2 then twinSection₂ d.1 else omegaTwo⟩
+
+/-- Every label of the twins example is `ω + 1` or `ω + 2`. -/
+private theorem twin_values (d : Fin 3) :
+    (twinSection₁ d = omegaOne ∨ twinSection₁ d = omegaTwo) ∧
+      (twinSection₂ d = omegaOne ∨ twinSection₂ d = omegaTwo) := by
+  fin_cases d <;> simp [twinSection₁, twinSection₂]
+
+/-- Every label of the twins example is at most `ω + 2`. -/
+private theorem twin_le (d : Fin 3) : twinSection₁ d ≤ omegaTwo ∧ twinSection₂ d ≤ omegaTwo := by
+  fin_cases d <;> simp [twinSection₁, twinSection₂, omegaOne_lt_omegaTwo.le]
+
+/-- Below `s₀` there is only `s₀`. -/
+private theorem eq_zero_of_mem_below {d : Fin 3}
+    (hd : d ∈ twinCells.below (twinCells.gradedIndex 0)) : d = 0 := by
+  have hs : twinCells.scope d ⊆ {0} := hd.1
+  revert hs
+  fin_cases d <;> decide
+
+/-- Locality of the twins example from the cap rule: if `min (p d) (p s)` agrees with the row of
+`s`, capped at `p s`, below `s`, then locality holds at `s`. -/
+private theorem locality_twin {p : Fin 3 → Label.{0}} (s : Fin 3) (hs : Label.IsSelfVisible 1 (p s))
+    (h : ∀ d : twinCells.below (twinCells.gradedIndex s),
+      min (p d) (p s) = min (twinRows.row s d) (p s)) :
+    Label.TransformsTo (fun d : twinCells.below (twinCells.gradedIndex s) ↦ twinCells.grade d)
+      (twinRows.row s) (fun d ↦ min (p d) (p s)) := by
+  have := (Label.TransformsTo.refl (fun d : twinCells.below (twinCells.gradedIndex s) ↦
+    twinCells.grade d) (twinRows.row s)).min_const (K := 1) (fun _ ↦ le_rfl) hs
+  convert this using 1
+  exact funext h
+
+/-- `ω + 1` and `ω + 2` are self-visible at the grade `1`. -/
+private theorem isSelfVisible_twin {x : Label.{0}} (hx : x = omegaOne ∨ x = omegaTwo) :
+    Label.IsSelfVisible 1 x := by
+  rcases hx with rfl | rfl <;>
+    exact Label.isSelfVisible_coe_add isSuccLimit_omega0.isSuccPrelimit (by omega)
+
+/-- The first lift is lawful. -/
+private theorem isLawful_twinSection₁ : twinRows.IsLawful twinSection₁ where
+  orderly d := isSelfVisible_twin (twin_values d).1
+  locality s := locality_twin s (isSelfVisible_twin (twin_values s).1) fun ⟨d, hd⟩ ↦ by
+    fin_cases s
+    · obtain rfl := eq_zero_of_mem_below hd; rfl
+    · fin_cases d <;> simp [twinRows, twinSection₁, omegaOne_lt_omegaTwo.le]
+    · fin_cases d <;> simp [twinRows, twinSection₁, twinSection₂, omegaOne_lt_omegaTwo.le]
+  availability s t _ _ := ⟨if t = 0 then 0 else 1, by fin_cases t <;> rfl,
+    (twin_le s).1.trans_eq (by fin_cases t <;> rfl)⟩
+
+/-- The second lift is lawful. -/
+private theorem isLawful_twinSection₂ : twinRows.IsLawful twinSection₂ where
+  orderly d := isSelfVisible_twin (twin_values d).2
+  locality s := locality_twin s (isSelfVisible_twin (twin_values s).2) fun ⟨d, hd⟩ ↦ by
+    fin_cases s
+    · obtain rfl := eq_zero_of_mem_below hd; rfl
+    · fin_cases d <;> simp [twinRows, twinSection₁, twinSection₂, omegaOne_lt_omegaTwo.le]
+    · fin_cases d <;> simp [twinRows, twinSection₂, omegaOne_lt_omegaTwo.le]
+  availability s t _ _ := ⟨if t = 0 then 0 else 2, by fin_cases t <;> rfl,
+    (twin_le s).2.trans_eq (by fin_cases t <;> rfl)⟩
+
+/-- Every row value of the twins example is at most `ω + 2`. -/
+private theorem twinRows_le (s : Fin 3) (d : twinCells.below (twinCells.gradedIndex s)) :
+    twinRows.row s d ≤ omegaTwo := by
+  unfold twinRows
+  dsimp only
+  split_ifs
+  exacts [(twin_le _).1, (twin_le _).2, le_rfl]
+
+/-- The stage type at `λ_1 = ω + ω` on the scheme of the twins example with a lawful labelling
+bounded by `ω + 2`. -/
+private noncomputable def twinUp (p : Fin 3 → Label.{0}) (hp : twinRows.IsLawful p)
+    (hle : ∀ d, p d ≤ omegaTwo) : StageType.{0} (blockStage (0 + 1)) 2 where
+  card := 3
+  toCellScheme := twinCells
+  rows := twinRows
+  label := p
+  isWellFormed := ⟨rfl, ⟨inferInstance, Geometry.isPlan_intervalPlan _, by
+    intro d; fin_cases d <;> simp [twinCells, CellScheme.gradedIndex, Geometry.mem_intervalPlan]⟩⟩
+  isCoded s d := (twinRows_le s d).trans_lt
+    (WithBot.coe_lt_coe.mpr (WithTop.coe_lt_coe.mpr omegaTwo_lt_sq))
+  isLawful := hp
+  atStage d := Or.inl ((hle d).trans_lt (by
+    rw [blockStage_add_one, blockStage_zero]
+    exact WithBot.coe_lt_coe.mpr (WithTop.coe_lt_coe.mpr omegaTwo_lt)))
+
+/-- **Twins**: two stage types at `λ_1 = ω + ω` on one scheme, with the labels
+`(ω + 2, ω + 2, ω + 1)` and `(ω + 2, ω + 1, ω + 2)`, are lifts of one stage type at `λ_0 = ω`
+(their reductions are equal, every label reducing to the formal top).  The pointwise minimum
+`(ω + 2, ω + 1, ω + 1)` of their labels satisfies the order law and locality, the latter by
+`Label.TransformsTo.inf`, but not availability: `s₀` has the scope `{0} ⊆ {0, 1}` and the grade of
+the twins, and in the pointwise minimum both twins carry `ω + 1`, below its label `ω + 2`.  So no
+stage type on this scheme carries the pointwise minimum.  This is a statement about stage types
+only; no realization is involved.  It is why availability of a pointwise minimum of lifts is not
+unconditional. -/
+example :
+    (twinUp _ isLawful_twinSection₁ fun d ↦ (twin_le d).1).reduce (isSuccPrelimit_blockStage 0) =
+      (twinUp _ isLawful_twinSection₂ fun d ↦ (twin_le d).2).reduce (isSuccPrelimit_blockStage 0) ∧
+    (∀ d, Label.IsSelfVisible (twinCells.grade d) ((twinSection₁ ⊓ twinSection₂) d)) ∧
+    (∀ s, Label.TransformsTo (fun d : twinCells.below (twinCells.gradedIndex s) ↦ twinCells.grade d)
+      (twinRows.row s) (fun d ↦ min ((twinSection₁ ⊓ twinSection₂) d)
+        ((twinSection₁ ⊓ twinSection₂) s))) ∧
+    ¬ twinRows.IsLawful (twinSection₁ ⊓ twinSection₂) := by
+  have hω (x : Label.{0}) (hx : x = omegaOne ∨ x = omegaTwo) :
+      Label.reduce (blockStage 0) x = ⊤ := by
+    rw [blockStage_zero]
+    exact Label.reduce_of_le (by rcases hx with rfl | rfl <;>
+      exact WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr le_self_add))
+  refine ⟨StageType.ext rfl fun i j hij ↦ ?_,
+    fun d ↦ (isLawful_twinSection₁.orderly d).min (isLawful_twinSection₂.orderly d),
+    fun s ↦ ?_, fun h ↦ ?_⟩
+  · obtain rfl : (i : Fin 3) = j := Fin.ext hij
+    exact (hω _ (twin_values i).1).trans (hω _ (twin_values i).2).symm
+  · convert (isLawful_twinSection₁.locality s).inf (isLawful_twinSection₂.locality s) using 1
+    funext d
+    exact inf_inf_inf_comm _ _ _ _
+  · obtain ⟨u, hu, hle⟩ := h.availability 0 1 (by simp [twinCells]) rfl
+    have h0 : (twinSection₁ ⊓ twinSection₂) 0 = omegaTwo := inf_idem _
+    rw [h0] at hle
+    fin_cases u
+    · simp [twinCells, CellScheme.gradedIndex] at hu
+    · exact not_le.mpr omegaOne_lt_omegaTwo
+        (hle.trans_eq (inf_eq_right.mpr omegaOne_lt_omegaTwo.le))
+    · exact not_le.mpr omegaOne_lt_omegaTwo
+        (hle.trans_eq (inf_eq_left.mpr omegaOne_lt_omegaTwo.le))
 
 /-! ### Suprema in `ℕ∞` -/
 
