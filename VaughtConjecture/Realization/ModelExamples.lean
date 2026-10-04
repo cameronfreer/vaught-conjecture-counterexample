@@ -34,6 +34,12 @@ satisfies every law of a model except existential closure.  It is not a model
 scheme, so the saturation instance of that scheme is nonempty, but no tuple on two points of
 `Fin 1` exists.
 
+**Stage `0` in the cap-to-model theorem.**  At stage `0` there is no permitted cutoff, so every
+realization has the finite-cut receiving property, and no `γ` lies below the stage, so the
+uniformity and dominance instances ask nothing.  The face realization of `pointOfPair` therefore
+satisfies every hypothesis of `Realization.isModel_of_hasFiniteCutReceiving` except that the stage
+is a nonzero limit, and is not a model (`not_isModel_of_hasFiniteCutReceiving_stage_zero`).
+
 ## References
 
 Models are [Kni26, Definition 3.2.1], for R. W. Knight, *A counterexample to Vaught's Conjecture
@@ -142,5 +148,13 @@ private theorem not_isModel_faceRealization_pointOfPair :
   have h2 := Fintype.card_le_of_embedding u
   rw [Fintype.card_fin, Fintype.card_fin] at h2
   simp [pointOccurrence] at h2
+
+/-- **The stage hypothesis of the cap-to-model theorem cannot be dropped**: at stage `0` the face
+realization of `pointOfPair` has the finite-cut receiving property, vacuously, and is not a
+model. -/
+private theorem not_isModel_of_hasFiniteCutReceiving_stage_zero :
+    pointOfPair.faceRealization.HasFiniteCutReceiving ∧ ¬ pointOfPair.faceRealization.IsModel :=
+  ⟨fun _ _ _ _ hc ↦ (isPermittedCutoff_iff.mp hc).elim fun _ h ↦ absurd h.1 (by simp),
+    not_isModel_faceRealization_pointOfPair⟩
 
 end VaughtConjecture.Realization
