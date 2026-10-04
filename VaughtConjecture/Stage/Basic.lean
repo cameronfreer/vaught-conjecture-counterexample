@@ -35,7 +35,8 @@ scheme of `Scheme.comap` with the labels of the visible cells); otherwise it is 
   (`restrictFace_trans_eq_none`).
 
 The faces of a stage type form a plan on all of its points (`isPlan`), and the hull of a set in
-a restriction is the preimage of the hull of its image (`hull_comap`).
+a restriction is the preimage of the hull of its image (`hull_comap`).  The grades of the cells of
+a stage type on `n` points are at most `n` (`grade_le`).
 
 Reindexing along a bijection `e : Fin m ≃ Fin n` is total (`StageType.reindex`); it is the face
 map along `e` (`restrictFace_equiv`) and commutes with all face maps (`restrictFace_reindex`,
@@ -62,7 +63,9 @@ the section of a stage type at stage `3` on two points, with labels `1` and `2`,
 `2` to a section that is not lawful (`VaughtConjecture.Stage.Examples`).  Stage types are
 therefore reduced only to stages that are zero or limits, as in [Kni26, §3.1].  Reductions
 compose (`reduce_reduce`), reduction to the stage of the type is the identity (`reduce_self`), and
-reduction commutes with face maps (`restrictFace_reduce`) and reindexing (`reindex_reduce`).
+reduction commutes with face maps (`restrictFace_reduce`) and reindexing (`reindex_reduce`).  In
+particular, if `q` restricts along `f` to `p`, a stage type reducing to `q` restricts along `f` to
+a stage type reducing to `p` (`exists_restrictFace_reduce_eq`).
 Reduction to a stage at least the stage of the type changes no label (`reduce_label_of_le`) and
 only relabels the stage: `t.reduce hβ = t.castLE hαβ` (`reduce_eq_castLE`), where `t.castLE hαβ`
 reads a stage type at stage `α` as one at the larger stage `β`, with the same scheme and labels;
@@ -131,6 +134,11 @@ theorem univ_mem_faces (t : StageType.{u} α n) : (univ : Finset (Fin n)) ∈ t.
 /-- The faces of a stage type form a plan on all of its points. -/
 theorem isPlan (t : StageType.{u} α n) : Geometry.IsPlan univ t.toCellScheme.faces :=
   t.isWellFormed.isPlan
+
+/-- The grades of the cells of a stage type on `n` points are at most `n`. -/
+theorem grade_le (t : StageType.{u} α n) (d : Fin t.card) : t.toCellScheme.grade d ≤ n :=
+  (t.isWellFormed.isWellFormed.grade_le_card d).trans ((card_le_univ _).trans_eq
+    (Fintype.card_fin n))
 
 /-! ### Restriction to a closed face -/
 
@@ -446,6 +454,17 @@ theorem restrictFace_reduce (hβ : Order.IsSuccPrelimit β) :
       comap_reduce]
   · rw [restrictFace_of_notMem (t.reduce hβ) f hf, restrictFace_of_notMem t f hf,
       Option.map_none]
+
+/-- The face along `f` of a stage type at `α` reducing to `q` reduces to the face of `q`: if `q`
+restricts to `p` along `f` and `Q` reduces to `q`, then `Q` restricts along `f` to a stage type
+reducing to `p`. -/
+theorem exists_restrictFace_reduce_eq {α β : Ordinal.{u}} {k m : ℕ} {q : StageType.{u} β m}
+    {f : Fin k ↪ Fin m} {p : StageType.{u} β k} {hβ : Order.IsSuccPrelimit β}
+    (hfp : restrictFace f q = some p) {Q : StageType.{u} α m}
+    (hQ : Q.reduce hβ = q) : ∃ P, restrictFace f Q = some P ∧ P.reduce hβ = p := by
+  have h := restrictFace_reduce Q f hβ
+  rw [hQ, hfp] at h
+  exact Option.map_eq_some_iff.mp h.symm
 
 /-- Stage reduction commutes with reindexing. -/
 theorem reindex_reduce (hβ : Order.IsSuccPrelimit β) (e : Fin m ≃ Fin n) :

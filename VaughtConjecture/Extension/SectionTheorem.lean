@@ -16,12 +16,13 @@ semantic contract, item 3.
 Let `R` be semantic rows of a cell scheme `D` whose cells have grades at most `K`, and let `p` be
 a lawful section.  Three operations on `p` keep it lawful, with the rows unchanged.
 
-* **Capping** at a label `c` (`CellScheme.Rows.IsLawful.min_const`, [Kni26, Lemma 2.5.8]): the
-  capped section is lawful when `c` is self-visible at the grade of every cell whose label is at
-  least `c`.  Below a pair: `CellScheme.Rows.IsLawfulBelow.min_const`.  The special case of a cap
-  self-visible at a bound `K` of all grades is `CellScheme.Rows.IsLawful.min_const_of_isSelfVisible`
-  and, at the grade of a pair, `CellScheme.Rows.IsLawfulBelow.min_const_of_isSelfVisible`.
-  Capping at a cutoff that is not self-visible need not keep lawfulness.
+* **Capping** at a label `c` (`CellScheme.Rows.IsLawful.min_const`, [Kni26, Lemma 2.5.8], in
+  `VaughtConjecture.Scheme.Row`): the capped section is lawful when `c` is self-visible at the
+  grade of every cell whose label is at least `c`.  Below a pair:
+  `CellScheme.Rows.IsLawfulBelow.min_const`.  The special case of a cap self-visible at a bound
+  `K` of all grades is `CellScheme.Rows.IsLawful.min_const_of_isSelfVisible` and, at the grade of
+  a pair, `CellScheme.Rows.IsLawfulBelow.min_const_of_isSelfVisible`.  Capping at a cutoff that is
+  not self-visible need not keep lawfulness.
 * **The section theorem** (`CellScheme.Rows.IsLawful.map_of_isShort_or`, roadmap, 3.1): for a
   witness `ν` bounded by grade `K` (a witness whose suppressor is the formal top at the grades `≤ K`
   and bottom above; the bound is on the grades, not on the values of `ν`), `ν ∘ p` is lawful
@@ -44,8 +45,7 @@ the last two statements apply below a pair as they stand.
 
 ## Placement
 
-These statements belong in `VaughtConjecture.Scheme.Row`, after the lawful sections.  They are
-stated here so that that file is unchanged.
+This file belongs to Layer 3 of `roadmap/README.md`.
 
 ## References
 
@@ -68,37 +68,6 @@ private theorem grade_le_of_mem_below (s : ι) (d : D.below (D.gradedIndex s)) :
   d.2.2
 
 namespace IsLawful
-
-/-- **Capping a lawful section** [Kni26, Lemma 2.5.8].  If the cap `c` is self-visible at the
-grade of every cell whose label is at least `c`, the section capped at `c` is lawful.  At a cell
-whose label is below `c` the capped section agrees with `p`; at the others its label is `c`, and
-the locality of such an owner is capped at `c` (`Label.TransformsTo.min_const`).  It gives the
-same statement below a pair (`CellScheme.Rows.IsLawfulBelow.min_const`). -/
-theorem min_const (hp : R.IsLawful p) {c : Label.{u}}
-    (hc : ∀ d, c ≤ p d → IsSelfVisible (D.grade d) c) : R.IsLawful fun d ↦ min (p d) c where
-  orderly d := by
-    rcases le_total (p d) c with h | h
-    · rw [min_eq_left h]; exact hp.orderly d
-    · rw [min_eq_right h]; exact hc d h
-  locality s := by
-    rcases le_total c (p s) with h | h
-    · have := (hp.locality s).min_const (grade_le_of_mem_below s) (hc s h)
-      -- The target `d ↦ min (min (p d) c) (min (p s) c)` is `d ↦ min (min (p d) (p s)) c`.
-      convert this using 2 with d
-      rw [min_min_min_comm, min_self]
-    · -- Here `p s ≤ c`, so the capped target reduces to `d ↦ min (p d) (p s)`, that of `p`.
-      convert hp.locality s using 2 with d
-      rw [min_min_min_comm, min_self]
-      exact min_eq_left ((min_le_right _ _).trans h)
-  availability s t hst hg := by
-    obtain ⟨u, hu, hle⟩ := hp.availability s t hst hg
-    exact ⟨u, hu, min_le_min_right c hle⟩
-
-/-- **Capping a lawful section at a cap self-visible at a grade bound**, the special case of
-[Kni26, Lemma 2.5.8] in which the grades are at most `K` and `c` is self-visible at `K`. -/
-theorem min_const_of_isSelfVisible (hp : R.IsLawful p) (hK : ∀ d, D.grade d ≤ K) {c : Label.{u}}
-    (hc : IsSelfVisible K c) : R.IsLawful fun d ↦ min (p d) c :=
-  hp.min_const fun d _ ↦ hc.mono (hK d)
 
 /-- **The section theorem** (roadmap, Layer 3, 3.1).  Let `p` be lawful, the grades at most `K`,
 and `ν` a witness bounded by grade `K`.  If every owner `s` is short (every entry of its row is
@@ -137,22 +106,5 @@ theorem map_of_bot_reflecting (hp : R.IsLawful p) (hK : ∀ d, D.grade d ≤ K)
     (hp.locality s) hν hbot)
 
 end IsLawful
-
-/-- **Capping a labelling lawful below a pair** [Kni26, Lemma 2.5.8]: if the cap `c` is
-self-visible at the grade of every cell below `X` whose label is at least `c`, the capped
-labelling is lawful below `X`. -/
-theorem IsLawfulBelow.min_const {X : Finset α × ℕ} {r : D.below X → Label.{u}}
-    (hr : R.IsLawfulBelow X r) {c : Label.{u}}
-    (hc : ∀ d : D.below X, c ≤ r d → IsSelfVisible (D.grade d) c) :
-    R.IsLawfulBelow X fun d ↦ min (r d) c :=
-  isLawfulBelow_iff.mpr ((isLawfulBelow_iff.mp hr).min_const hc)
-
-/-- **Capping a labelling lawful below a pair at a cap self-visible at its grade**, the special
-case of [Kni26, Lemma 2.5.8] at the grade of `X`: a labelling lawful below `X` stays lawful when
-capped at a label self-visible at the grade of `X`, such as the cap of a lift to `X`. -/
-theorem IsLawfulBelow.min_const_of_isSelfVisible {X : Finset α × ℕ} {r : D.below X → Label.{u}}
-    (hr : R.IsLawfulBelow X r) {c : Label.{u}} (hc : IsSelfVisible X.2 c) :
-    R.IsLawfulBelow X fun d ↦ min (r d) c :=
-  hr.min_const fun d _ ↦ hc.mono d.2.2
 
 end VaughtConjecture.CellScheme.Rows
