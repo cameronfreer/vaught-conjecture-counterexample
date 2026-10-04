@@ -16,7 +16,7 @@ expositions, §1 (semantic rows constrain which labellings are lawful).
 The **semantic rows** of a cell scheme `D` (`CellScheme.Rows D`) are raw data: for every cell `s`
 a labelling `R.row s` of the cells below `s`, that is, of `D.below (D.gradedIndex s)`.  They are
 separate from the scheme itself; the bundle of a scheme with its rows (and its label section)
-belongs to the stage types of the next tranche.  A labelling
+belongs to the stage types (`VaughtConjecture.Stage.Basic`).  A labelling
 `p : ι → Label` of all cells is a **lawful section** of the rows (`Rows.IsLawful R p`) when it
 satisfies three laws:
 
@@ -41,7 +41,12 @@ restrict to every lower set (`IsLawful.isLawfulBelow`) and from a lower set to a
 (`IsLawfulBelow.mono`).  At a stage `β` that is zero or a limit, the stage reduction
 `Label.reduce β ∘ p` of a lawful section `p` is lawful (`IsLawful.reduce`), by the reduction rule
 `Label.TransformsTo.reduce`; at a successor stage it need not be
-(`VaughtConjecture.Stage.Examples`).
+(`VaughtConjecture.Stage.Examples`).  Capping a lawful section at a label `c` that is
+self-visible at the grade of every cell whose label is at least `c` keeps it lawful
+(`IsLawful.min_const`, [Kni26, Lemma 2.5.8]), in particular at a cap self-visible at a bound on all
+grades (`IsLawful.min_const_of_isSelfVisible`), and below a pair (`IsLawfulBelow.min_const`,
+`IsLawfulBelow.min_const_of_isSelfVisible`); capping at a cutoff that is not self-visible need
+not keep lawfulness.
 
 The constant bottom labelling is lawful for all rows (`isLawful_const_bot`), and a cell whose row is
 bottom at the cell itself has bottom label in every lawful section
@@ -224,6 +229,37 @@ theorem reduce {β : Ordinal.{u}} (h : R.IsLawful p) (hβ : Order.IsSuccPrelimit
     obtain ⟨u, hu, hle⟩ := h.availability s t hst hg
     exact ⟨u, hu, monotone_reduce β hle⟩
 
+/-- **Capping a lawful section** [Kni26, Lemma 2.5.8].  If the cap `c` is self-visible at the
+grade of every cell whose label is at least `c`, the section capped at `c` is lawful.  At a cell
+whose label is below `c` the capped section agrees with `p`; at the others its label is `c`, and
+the locality of such an owner is capped at `c` (`Label.TransformsTo.min_const`).  It gives the
+same statement below a pair (`CellScheme.Rows.IsLawfulBelow.min_const`). -/
+theorem min_const (hp : R.IsLawful p) {c : Label.{u}}
+    (hc : ∀ d, c ≤ p d → IsSelfVisible (D.grade d) c) : R.IsLawful fun d ↦ min (p d) c where
+  orderly d := by
+    rcases le_total (p d) c with h | h
+    · rw [min_eq_left h]; exact hp.orderly d
+    · rw [min_eq_right h]; exact hc d h
+  locality s := by
+    rcases le_total c (p s) with h | h
+    · have := (hp.locality s).min_const (fun d ↦ d.2.2) (hc s h)
+      -- The target `d ↦ min (min (p d) c) (min (p s) c)` is `d ↦ min (min (p d) (p s)) c`.
+      convert this using 2 with d
+      rw [min_min_min_comm, min_self]
+    · -- Here `p s ≤ c`, so the capped target reduces to `d ↦ min (p d) (p s)`, that of `p`.
+      convert hp.locality s using 2 with d
+      rw [min_min_min_comm, min_self]
+      exact min_eq_left ((min_le_right _ _).trans h)
+  availability s t hst hg := by
+    obtain ⟨u, hu, hle⟩ := hp.availability s t hst hg
+    exact ⟨u, hu, min_le_min_right c hle⟩
+
+/-- **Capping a lawful section at a cap self-visible at a grade bound**, the special case of
+[Kni26, Lemma 2.5.8] in which the grades are at most `K` and `c` is self-visible at `K`. -/
+theorem min_const_of_isSelfVisible {K : ℕ} (hp : R.IsLawful p) (hK : ∀ d, D.grade d ≤ K)
+    {c : Label.{u}} (hc : IsSelfVisible K c) : R.IsLawful fun d ↦ min (p d) c :=
+  hp.min_const fun d _ ↦ hc.mono (hK d)
+
 end IsLawful
 
 /-! ### Lawful sections along equivalences -/
@@ -270,6 +306,25 @@ theorem isLawful {r : D.below X → Label.{u}} (h : R.IsLawfulBelow X r)
     (IsLowerEmbedding.reindex_symm D (Equiv.subtypeUnivEquiv hX))
 
 end IsLawfulBelow
+
+/-! ### Capping -/
+
+/-- **Capping a labelling lawful below a pair** [Kni26, Lemma 2.5.8]: if the cap `c` is
+self-visible at the grade of every cell below `X` whose label is at least `c`, the capped
+labelling is lawful below `X`. -/
+theorem IsLawfulBelow.min_const {X : Finset α × ℕ} {r : D.below X → Label.{u}}
+    (hr : R.IsLawfulBelow X r) {c : Label.{u}}
+    (hc : ∀ d : D.below X, c ≤ r d → IsSelfVisible (D.grade d) c) :
+    R.IsLawfulBelow X fun d ↦ min (r d) c :=
+  isLawfulBelow_iff.mpr ((isLawfulBelow_iff.mp hr).min_const hc)
+
+/-- **Capping a labelling lawful below a pair at a cap self-visible at its grade**, the special
+case of [Kni26, Lemma 2.5.8] at the grade of `X`: a labelling lawful below `X` stays lawful when
+capped at a label self-visible at the grade of `X`, such as the cap of a lift to `X`. -/
+theorem IsLawfulBelow.min_const_of_isSelfVisible {X : Finset α × ℕ} {r : D.below X → Label.{u}}
+    (hr : R.IsLawfulBelow X r) {c : Label.{u}} (hc : IsSelfVisible X.2 c) :
+    R.IsLawfulBelow X fun d ↦ min (r d) c :=
+  hr.min_const fun d _ ↦ hc.mono d.2.2
 
 /-! ### Consistent rows -/
 
