@@ -7,11 +7,12 @@ import Mathlib.Data.Set.Countable
 import Mathlib.Order.SuccPred.Basic
 
 /-!
-# Domains with countable complements and disjoint successor losses
+# Domains with countable complements, disjoint successor losses, and subsingleton covers
 
-Roadmap, the reduction of the main theorem to expansion domains, and Layers 5–6; semantic
-contract item 9.  Two general facts about domains `D ⊆ Q` in a type `Q` of isomorphism classes,
-with no topology, measurability, or rank function.
+Roadmap, the reduction of the main theorem to expansion domains, and Layers 5–6; the general
+results of Layer 0 (subsingleton covers); semantic contract item 9.  Three general facts, with no
+topology, measurability, or rank function: two about domains `D ⊆ Q` in a type `Q` of isomorphism
+classes, and one about covers.
 
 * `countable_split_of_uniform_domain`: a predicate constant on a domain with countable complement
   has a countable truth side or a countable false side.  With the countable complements given by
@@ -24,6 +25,10 @@ with no topology, measurability, or rank function.
   are pairwise disjoint, so a choice of one point from each nonempty loss is injective.  This is
   the lower-bound choice; it uses neither countability of losses nor logical comparison.  For
   ordinals `Order.succ ξ` is definitionally `ξ + 1`, the form used by `compl_countable_of_loss`.
+* `countable_of_subsingleton_cover`: a set covered by countably many subsingletons is countable;
+  the subsingletons need not be disjoint.  This is the counting step of the countable successor
+  losses (`VaughtConjecture.Expansion.Losses`), where the subsingletons are the sets of classes
+  with a given terminal property.
 
 Countable complements from countable successor losses is InfinitaryLogic's
 `InfinitaryLogic.compl_countable_of_loss`, not restated here.  (InfinitaryLogic's
@@ -65,5 +70,11 @@ theorem exists_injective_mem_sdiff_succ {α Q : Type*} [LinearOrder α] [SuccOrd
   · exact (key ξ η h hξη).elim
   · exact Subtype.ext h
   · exact (key η ξ h hξη.symm).elim
+
+/-- **A set covered by countably many subsingletons is countable.**  The subsingletons need not be
+disjoint. -/
+theorem countable_of_subsingleton_cover {X I : Type*} [Countable I] {L : Set X} (S : I → Set X)
+    (hS : ∀ i, (S i).Subsingleton) (hcov : L ⊆ ⋃ i, S i) : L.Countable :=
+  (Set.countable_iUnion fun i ↦ (hS i).countable).mono hcov
 
 end VaughtConjecture.Counting

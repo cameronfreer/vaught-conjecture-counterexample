@@ -47,6 +47,16 @@ none.  A realization whose types are top-free is cover-hollow vacuously
 (`Realization.isCoverHollow_of_isTopFree`): cover-hollowness is not the assertion that there are no
 cells labelled the formal top.
 
+**Cover-hollowness at a block stage.**  Cover-hollowness is defined at block stages only, while
+(R3) of the table of Layer 3 (`Realization.HollowReceiving`, in
+`VaughtConjecture.Continuation.Comparison`) takes a predicate on realizations at every stage.  A
+realization at `α` is **cover-hollow at a block stage** (`Realization.IsCoverHollowAtBlock`) when
+`α = λ_ξ` for some `ξ` and it is cover-hollow there; at `λ_ξ` this is cover-hollowness
+(`Realization.isCoverHollowAtBlock_iff`), since the block stages are strictly increasing.  Every
+successor-limit stage, the only stages at which (R3) applies, is a block stage
+(`exists_blockStage_eq_of_isSuccLimit`), so (R3) for this predicate is (R3) for cover-hollowness at
+the block stages.
+
 **Stable-label fixedness** (`Realization.isCoverHollow_iff_forall_stableLabel_eq_top`): `R` is
 cover-hollow exactly when every cell of an occurrence labelled the formal top has the stable label
 `⊤`.  Both directions unfold the thresholds of the stable offset
@@ -62,11 +72,10 @@ definition of hollowness (roadmap, Layer 4; semantic contract, item 8), with sta
 as a theorem for models.  `IsCoverHollow` is a separate predicate, phrased through rooted covers
 and forcing; it is not that definition, and no equivalence with it is claimed here.  The
 equivalence of `IsCoverHollow` with the original hollowness is still to be proved.  The countable
-cover of terminal classes (condition 2, terminal countability) and the modelhood criterion
-(output 3) are to be stated with `IsCoverHollow`; both are prospective, and neither is stated
-here.  Classification and receiving for `IsCoverHollow` are to enter there as separate named
-hypotheses, the continuation criterion and (R3), to be stated elsewhere; neither follows from
-anything proved here.
+cover of terminal classes (condition 2, terminal countability; `VaughtConjecture.Expansion.Losses`)
+and the modelhood criterion (output 3, `ContinuationCriterion`) are stated with `IsCoverHollow`
+elsewhere.  Classification and receiving for `IsCoverHollow` enter there as separate named
+hypotheses, the continuation criterion and (R3); neither follows from anything proved here.
 
 The word *anchor* here is unrelated to the anchor of a donor cell in `Extension/Gate` (a private
 cell from which a gate reading reads the label of a donor cell).
@@ -76,7 +85,7 @@ cell from which a gate reading reads the label of a donor cell).
 This file belongs to Layer 4 of `roadmap/README.md`.
 -/
 
-universe u v
+universe u v w
 
 namespace VaughtConjecture
 
@@ -114,6 +123,18 @@ def IsCoverHollow : Prop :=
   ¬ R.HasTopAnchor
 
 end Definitions
+
+/-- A realization at `α` is **cover-hollow at a block stage** when `α` is a block stage `λ_ξ` and
+the realization is cover-hollow there. -/
+def IsCoverHollowAtBlock {α : Ordinal.{u}} {M : Type w} (R : Realization.{u, w} α M) : Prop :=
+  ∃ (ξ : Ordinal.{u}) (h : α = blockStage ξ), (h ▸ R).IsCoverHollow
+
+/-- At a block stage, cover-hollowness at a block stage is cover-hollowness. -/
+theorem isCoverHollowAtBlock_iff {ξ : Ordinal.{u}} {M : Type w}
+    {R : Realization.{u, w} (blockStage ξ) M} : R.IsCoverHollowAtBlock ↔ R.IsCoverHollow := by
+  refine ⟨fun ⟨ξ', h, hR⟩ ↦ ?_, fun h ↦ ⟨ξ, rfl, h⟩⟩
+  obtain rfl := blockStage_strictMono.injective h
+  exact hR
 
 variable {R : Realization.{u, v} (blockStage ξ) M} {x : R.Occurrence} {a : Fin x.type.card}
   {N N' : ℕ}

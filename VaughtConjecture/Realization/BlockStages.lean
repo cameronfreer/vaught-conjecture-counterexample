@@ -31,6 +31,10 @@ block stages, each a statement about one type, with no realization involved:
 * **Reduction to a larger stage is injective** (`StageType.reduce_injective_of_le`), since it only
   relabels the stage (`StageType.reduce_eq_castLE`).
 
+Conversely to `isSuccLimit_blockStage`, **every successor-limit ordinal is a block stage**
+(`exists_blockStage_eq_of_isSuccLimit`): a successor limit is `ω · β` with `β ≥ 1`, which is
+`λ_{β-1}`.  So the successor-limit ordinals are exactly the block stages.
+
 ## Placement
 
 This file belongs to Layer 2 of `roadmap/README.md`.
@@ -52,6 +56,16 @@ theorem exists_lt_blockStage_of_isSuccLimit {η v : Ordinal.{u}} (hη : IsSuccLi
     lt_mul_iff_of_isSuccLimit hη] at hv
   obtain ⟨ξ, hξ, hv⟩ := hv
   exact ⟨ξ, hξ, hv.trans_le (CanonicallyOrderedAdd.le_add_self _ _)⟩
+
+/-! ### Successor limits are block stages -/
+
+/-- **Every successor-limit ordinal is a block stage**: the converse of `isSuccLimit_blockStage`.
+-/
+theorem exists_blockStage_eq_of_isSuccLimit {α : Ordinal.{u}} (hα : IsSuccLimit α) :
+    ∃ ξ, blockStage ξ = α := by
+  obtain ⟨β, rfl⟩ := isSuccPrelimit_iff_omega0_dvd.mp hα.isSuccPrelimit
+  have hβ : 1 ≤ β := one_le_iff_ne_zero.mpr fun h ↦ hα.ne_bot (by simp [h])
+  exact ⟨β - 1, by rw [blockStage_eq_mul, Ordinal.add_sub_cancel_of_le hβ]⟩
 
 namespace Label
 
