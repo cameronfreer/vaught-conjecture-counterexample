@@ -28,8 +28,11 @@ semantics and their quantifier rank (`BoundedFormulaω.qrank`):
   that of `ψ` plus `m` (`qrank_extendFormula`).  The conjunction of equations is finite and has
   rank `0`.
 
-Every statement here holds for an arbitrary language and imports nothing from the construction;
-each is a candidate for upstreaming to InfinitaryLogic.
+Every statement here holds for an arbitrary language and imports nothing from the construction.
+The existential closure agrees with InfinitaryLogic's `existsTupleFrom k m`
+(`Scott/MontalbanSentence`), by the same recursion, and its semantics and rank are that library's
+`realize_existsTupleFrom` and `qrank_existsTupleFrom` (`Scott/MontalbanQuantifierRank`), read
+through that agreement; the agreement is compiled in `Definability/BlockFormulasExamples`.
 
 ## Placement
 
@@ -51,7 +54,7 @@ attribute [simp] BoundedFormulaω.qrank_mapFreeVars
 /-! ### Existential closure of the last free variables -/
 
 /-- **Existential closure of the last `m` free variables**: `∃ y_{m-1} … ∃ y_0`, by `m`
-applications of `existsLastVar`.  A candidate for upstreaming to InfinitaryLogic. -/
+applications of `existsLastVar`; it agrees with InfinitaryLogic's `existsTupleFrom k m`. -/
 def existsLastVars : ∀ m : ℕ, L.Formulaω (Fin (k + m)) → L.Formulaω (Fin k)
   | 0, φ => φ
   | m + 1, φ => existsLastVars m (existsLastVar φ)
@@ -65,7 +68,7 @@ theorem existsLastVars_succ (φ : L.Formulaω (Fin (k + (m + 1)))) :
   rfl
 
 /-- **Semantics of the existential closure**: `∃ ȳ φ(x̄, ȳ)` holds at `v` exactly when `φ` holds
-at `v` followed by some `ys`.  A candidate for upstreaming to InfinitaryLogic. -/
+at `v` followed by some `ys`; InfinitaryLogic's `realize_existsTupleFrom`. -/
 theorem realize_existsLastVars {N : Type w} [L.Structure N] :
     ∀ (m : ℕ) (φ : L.Formulaω (Fin (k + m))) (v : Fin k → N),
       (existsLastVars m φ).Realize v ↔ ∃ ys : Fin m → N, φ.Realize (Fin.append v ys)
@@ -80,8 +83,8 @@ theorem realize_existsLastVars {N : Type w} [L.Structure N] :
     refine ⟨fun ⟨ys, x, hφ⟩ ↦ ⟨Fin.snoc ys x, by rwa [Fin.append_snoc]⟩, fun ⟨zs, hφ⟩ ↦
       ⟨Fin.init zs, zs (Fin.last m), by rwa [← Fin.append_snoc, Fin.snoc_init_self]⟩⟩
 
-/-- **Rank of the existential closure**: closing `m` variables adds exactly `m`.  A candidate for
-upstreaming to InfinitaryLogic, beside `qrank_existsLastVar`. -/
+/-- **Rank of the existential closure**: closing `m` variables adds exactly `m`;
+InfinitaryLogic's `qrank_existsTupleFrom`. -/
 theorem qrank_existsLastVars :
     ∀ (m : ℕ) (φ : L.Formulaω (Fin (k + m))), (existsLastVars m φ).qrank = φ.qrank + m
   | 0, φ => by simp

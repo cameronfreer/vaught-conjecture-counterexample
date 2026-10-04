@@ -611,7 +611,7 @@ their notions live; "this repository" means the layers of `README.md`.
    uniqueness rather than a separate comparison for each terminal case.  Home: fullness and equal
    ages give extension pairs in both directions, hence an isomorphism: ComputableModelTheory's
    rooted uniqueness (`isExtensionPair_of_age_subset`,
-   `exists_equiv_comp_eq_of_age_subset_of_countable`, available at the pin `0e9935b`, signatures
+   `exists_equiv_comp_eq_of_age_subset_of_countable`, available at the pin `a1fe761`, signatures
    checked; Mathlib-only imports; its application to full structures is expected, not
    elaborated), and
    eventually Mathlib's `ModelTheory/Fraisse`; the relational exact-age comparison for
@@ -640,8 +640,8 @@ their notions live; "this repository" means the layers of `README.md`.
    `Counting/Separation`, and in back-and-forth form in InfinitaryLogic, `Scott`.
 7. *Small back-and-forth quotients and the analytic-pair boundedness argument;* minimality
    is a further assertion needing a common starting observation on high presentations.  Home:
-   InfinitaryLogic, `Descriptive/BFSeparation` (`exists_uniform_bfSeparation`, available at our
-   pinned dependency `def5cc0`, signatures checked); the composition is `MainTheorem/Scatteredness`
+   InfinitaryLogic, `Descriptive/BFSeparation` (`exists_uniform_bfSeparation`, available at the
+   pin `e460cb6`, signatures checked); the composition is `MainTheorem/Scatteredness`
    and the scattered-tails theorems of `MainTheorem/Assembly` (pull request #42; "The
    scatteredness form" below).  The minimality form is already covered through sentences by
    `Sentenceω.isThinOnNatModels_of_countable_sentence_splits`.
@@ -788,12 +788,6 @@ statements are specified here, generically, with no construction):
   models on `ℕ`, into a countably separated space, is constant on the `BFEquiv α`-classes for
   some `α < ω₁`; measurability is on codes only, never on the class quotient, and no sentence is
   recovered;
-- *the isolating-level lower bound* (`Scott/RefinementCount`): a countable set of countable
-  structures has a level `γ < ω₁` at which empty-tuple `BFEquiv γ` implies isomorphism (from
-  `stabilizationOrdinal_lt_omega1'`, `stabilizationOrdinal_spec`, and
-  `BFEquiv_stabilization_implies_equiv`, with the supremum of countably many countable ordinals);
-  hence, if every level has two nonisomorphic `BFEquiv`-related members, the set has uncountably
-  many isomorphism types;
 - *limits of chains of bounded equivalence* (`Scott/BlockBackAndForth`): an analogue for
   `BlockBFEquiv` of [Mon, Lemma XII.6], by the same construction, with its offset to be determined:
   for increasing countable ordinals `α_i` and countable structures `A_i` with `A_i` and `A_{i+1}`
@@ -802,6 +796,14 @@ statements are specified here, generically, with no construction):
   Definition II.32] and is not transferred; it supports the rank-filtration comparison of
   `COMPANIONS.md`, "Further companion results", only through the passage between [Mon]'s convention
   and InfinitaryLogic's, which is still to be proved.
+
+The isolating-level lower bound, formerly listed here, is available at the pin `e460cb6`
+(`Scott/IsolatingLevel`, signatures checked; "Dependency pins"): over a countable relational
+language a countable family of countable structures has a level `γ < ω₁` at which empty-tuple
+`BFEquiv0` implies isomorphism (`exists_isolating_level`, the supremum of the stabilization
+ordinals); hence, if every countable level has two nonisomorphic `BFEquiv0`-related members, the
+index is uncountable (`not_countable_of_forall_unisolated`).  No application of it is compiled in
+this repository.
 
 ## Manuscript concordance
 
@@ -979,8 +981,8 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     compiled in this repository (theorem named): `Label.reduce_eq_self_iff` (fixed by projection
     exactly at the labels of the stage), and `Label.reduce_reduce_of_le`, `Label.atStage_reduce`
     and `Label.AtStage.mono` for the law with `min` (`Label/Basic`).  The bound for one arity is
-    `StageProjection.exists_uniform_fixing_stage` (available upstream, not yet at our pinned
-    dependency; "Dependency pins").  Milestone 3; the conditional statement uses no termination.
+    `StageProjection.exists_uniform_fixing_stage` (available at the pin `e460cb6`, signatures
+    checked; "Dependency pins").  Milestone 3; the conditional statement uses no termination.
 32. Prospective, with the negative special case (the constant family of the all-undefined
     assignment; not compiled).  Strictness for models is to come from `COMPANIONS.md`, "Fixing
     ranks of finite charts" (the supremum at block `η` is `η`), still to be proved.  Milestone 4.
@@ -1103,7 +1105,7 @@ In the pinned Mathlib (`Mathlib/ModelTheory/Fraisse.lean`): `age`, `Hereditary`,
 `age.fg_substructure`, with the hypotheses recorded in `README.md`, Layer 0.  Mathlib has no
 existence theorem for Fraïssé limits.
 
-In the pinned ComputableModelTheory (`0e9935b`, signatures checked): the classical Fraïssé theorems
+In the pinned ComputableModelTheory (`a1fe761`, signatures checked): the classical Fraïssé theorems
 (`representativeClass`, `isFraisse_representativeClass`, `representativeClass_countable_quotient`,
 `FGCofinal`, `ExtensionRich`, `isFraisseLimit_of_extensionRich`, `SequenceExtension`,
 `amalgamationRich_of_sequenceExtension`, `age_directLimit_eq`, `countable_directLimit`,
@@ -1111,7 +1113,7 @@ In the pinned ComputableModelTheory (`0e9935b`, signatures checked): the classic
 (`exists_factor_tuple_of_age_subset`, `exists_factor_embedding_of_age_subset`), and orbit isolation
 and countable prime structures (`IsolatesTuple`, `IsAtomic`, `isolatesTuple_of_orbit_formula`,
 `isAtomic_of_orbit_formulas`, `IsolatesTuple.realize_iff`, `IsolatesTuple.typesWith_eq_singleton`,
-`exists_elementaryEmbedding_of_countable_atomic`).  Also at the pin `0e9935b`, signatures checked
+`exists_elementaryEmbedding_of_countable_atomic`).  Also at the pin `a1fe761`, signatures checked
 and `#check`ed in `SuggestedInterfaces.lean`: classical Fraïssé existence
 (`exists_fraisseSequence`, `exists_isFraisseLimit_representativeClass`,
 `exists_isFraisseLimit_of_isFraisse`; `ModelTheory/FraisseExistence`), rooted universality and
@@ -1124,7 +1126,7 @@ primeness over named finite parameters (`isAtomic_named_of_orbit_formulas`,
 Their statement shapes and hypotheses are in `README.md`, Layer 0; where the pinned versions name
 them differently, those names prevail.
 
-In the pinned InfinitaryLogic (`def5cc0`, signatures checked): the rank comparison of the Scott
+In the pinned InfinitaryLogic (`e460cb6`, signatures checked): the rank comparison of the Scott
 process (its pull request #140, merged at `a640bbb`: `selfStabilizesCompletely_iff_orbitRank_le`,
 `bfStabilizationOrdinal_self_eq_iSup_orbitRank`, `stabilizesAt_of_orbitRank_le`,
 `rank_le_of_orbitRank_le`, `lift_rank_le_internalScottRank`,
@@ -1139,7 +1141,7 @@ countability or nonemptiness); `BoundedFormulaω.realize_comp_of_localAutomorphi
 `BoundedFormulaω.realize_comp_append_of_localAutomorphisms` (`Lomega1omega/LocalAutomorphism`,
 any language and carrier).
 
-**A generic interface of InfinitaryLogic (available at the pin `def5cc0`, signatures checked and
+**A generic interface of InfinitaryLogic (available at the pin `e460cb6`, signatures checked and
 `#check`ed in `SuggestedInterfaces.lean`; its pull requests #142, #143, and #144).** Statement: for
 a relational language (no countability of its symbols), every analytic set `A` of pairs of
 structures on `ℕ` containing no isomorphic pair is uniformly separated at some countable
@@ -1284,10 +1286,11 @@ named (`README.md`, Layer 0):
     bounds (`COMPANIONS.md`, "Further companion results"); and a sentence, or a formula on `Fin 0`
     read as a sentence, of rank at most `β` that characterizes a countable `M` among the countable
     structures in its carrier universe gives `StabilizesAt M β` and `stabilizationOrdinal M ≤ β`:
-    `stabilizesAt_of_sentence_rank` (signatures checked),
-    `stabilizesAt_of_formula_rank` and `stabilizationOrdinal_le_of_formula_rank` (the other
-    companions in `Scott/SentenceRecognition` are not `#check`ed), for the prospective recognition
-    of a supplied model (the same item); whole-model recognition through the empty tuple only.
+    `stabilizesAt_of_sentence_rank` and `stabilizationOrdinal_le_of_sentence_rank` (signatures
+    checked), `stabilizesAt_of_formula_rank` and `stabilizationOrdinal_le_of_formula_rank` (the
+    other companions in `Scott/SentenceRecognition` are not `#check`ed), for the prospective
+    recognition of a supplied model (the same item); whole-model recognition through the empty
+    tuple only.
 
   Toolchain and Mathlib are the same as at `8a15ca5` and `def5cc0`.  The imports are the narrow
   modules (`InfinitaryLogic.Scott.OrbitFormulaThreshold`,
@@ -1296,6 +1299,8 @@ named (`README.md`, Layer 0):
   `InfinitaryLogic.Scott.ForgetParameters`, `InfinitaryLogic.Scott.GradedMatching`,
   `InfinitaryLogic.OrdinalCountability`, `InfinitaryLogic.Descriptive.BFScattered`,
   `InfinitaryLogic.Descriptive.BFScatteredSentence`, `InfinitaryLogic.Scott.SentenceRecognition`,
+  `InfinitaryLogic.Scott.OrbitParameters`, `InfinitaryLogic.Scott.InternalRankBounds`,
+  `InfinitaryLogic.Scott.IsolatingLevel`, `InfinitaryLogic.UniformFixation`,
   `InfinitaryLogic.Topology.Perfect`, and the others the sketch names), never
   `InfinitaryLogic.All`.
 - **ComputableModelTheory**: the current pin is `a1fe761`, the merge of its pull request #58,
@@ -1333,7 +1338,9 @@ named (`README.md`, Layer 0):
   `scripts/check.sh` extends to ComputableModelTheory.
 
 **Available at the pin `e460cb6`, after `cf80917`** (InfinitaryLogic's merges #157–#162; same
-toolchain and Mathlib; named in prose only, not yet `#check`ed in the sketches): thinness from
+toolchain and Mathlib; signatures checked: `SuggestedInterfaces.lean` `#check`s the statements
+named here; no application compiled in this repository, except the agreement of `existsLastVars`
+with `existsTupleFrom` below): thinness from
 countable back-and-forth observations (#157, `Descriptive/BFScattered`).  If for every `η < ω₁` a
 map `obs η` on a set `C` of codes has countable range and any two codes with the same observation
 are `CodeBFEquiv η`, then `C` is back-and-forth scattered
@@ -1345,10 +1352,20 @@ Eliminating orbit parameters (#158, `Scott/OrbitParameters`: `existsOrbitParams`
 `realize_existsOrbitParams_iff_orbit`, `qrank_existsOrbitParams`), which also adds
 `BoundedFormulaω.qrank_inf`, `qrank_sup`, and `BoundedFormulaω.qrank_mapFreeVars` to
 `Lomega1omega/QuantifierRank` (the first and third were declared in `Definability/Syntax` before
-this repin and are now InfinitaryLogic's); quantifier-rank bounds for Montalbán's Scott sentences
-(#159, `Scott/MontalbanQuantifierRank`); cross-rank comparisons and the derived `+ ω` bounds (#160,
-`Scott/InternalRankBounds`); uniform fixation (#161, `UniformFixation`: stage projections
-`StageProjection`, the label rank `StageProjection.labelRank`, and
+this repin and are now InfinitaryLogic's), and the closure of the last `n` of `k + n` free
+variables `existsTupleFrom k n` with `realize_existsTupleFrom` to `Scott/MontalbanSentence`;
+quantifier-rank bounds for Montalbán's Scott sentences (#159, `Scott/MontalbanQuantifierRank`:
+`qrank_montalbanSentence_le`, rank at most `α + ω` from a family of rank at most `α`, and the rank
+of the tuple quantifier blocks, `qrank_existsTupleFrom` and `qrank_existsTuple`, each adding
+exactly `n`).  `existsTupleFrom k m` agrees with `existsLastVars m` of `Definability/Syntax`, by the
+same recursion, and `realize_existsTupleFrom` and `qrank_existsTupleFrom` are
+`realize_existsLastVars` and `qrank_existsLastVars` read through that agreement; the agreement is
+compiled in `Definability/BlockFormulasExamples`, and `Definability/Syntax` keeps its own
+declarations ("Placement record").  Cross-rank comparisons and the derived `+ ω` bounds (#160,
+`Scott/InternalRankBounds`: `internalScottRank_add_omega0_eq`,
+`lift_stabilizationOrdinal_le_internalScottRank_add_omega0` and
+`lift_scottHeight_le_internalScottRank_add_omega0`); uniform fixation (#161, `UniformFixation`:
+stage projections `StageProjection`, the label rank `StageProjection.labelRank`, and
 `StageProjection.exists_uniform_fixing_stage`: over a countable coordinate type, stage correctness
 at countable stages and eventual invariance of every coordinate give one countable stage fixing
 every admissible presentation at every countable stage); and a countable isolating level (#162,
@@ -1387,27 +1404,27 @@ ComputableModelTheory: none (its `main` is the pin `a1fe761`).  A statement merg
 the pins above is listed here, named in prose only and never `#check`ed in the sketches, until a
 repin containing it is recorded in this subsection.
 
-**Available at the pin `cf80917`, used by `COMPANIONS.md`, "Quantitative reconstruction", targets 2
-and 3** (listed as available upstream before this repin): the bound of an orbit rank by the
-quantifier rank of an infinitary orbit formula (`orbitRank_le_lift_qrank_of_infinitaryOrbitFormula`)
-with its corollary `internalScottRank_le_of_infinitaryOrbitFormulas` (strict bounds `qrank φ < α`
-giving `internalScottRank M ≤ Ordinal.lift α`), and the bounds of the stabilization ordinal by the
+**Available at the pin `e460cb6` since `cf80917`, used by `COMPANIONS.md`, "Quantitative
+reconstruction", targets 2 and 3** (listed as available upstream before the repin to `cf80917`):
+the bound of an orbit rank by the quantifier rank of an infinitary orbit formula
+(`orbitRank_le_lift_qrank_of_infinitaryOrbitFormula`) with its corollary
+`internalScottRank_le_of_infinitaryOrbitFormulas` (strict bounds `qrank φ < α` giving
+`internalScottRank M ≤ Ordinal.lift α`), and the bounds of the stabilization ordinal by the
 rank of a characterizing sentence or formula with no free variables
 (`stabilizesAt_of_sentence_rank`, `stabilizationOrdinal_le_of_sentence_rank`,
 `stabilizesAt_of_formula_rank`, `stabilizationOrdinal_le_of_formula_rank`; a relational language,
 with no countability of the language).  Signatures checked (`SuggestedInterfaces.lean` `#check`s
-them), except `stabilizationOrdinal_le_of_sentence_rank` (signatures not yet checked by CI).
+them).
 
 **Prospective dependencies (neither available upstream nor pinned):** the InfinitaryLogic statements
-listed under "The full-presentation route": invariant Borel observations, the isolating-level lower
-bound, and limits of chains of bounded equivalence (the analogue for `BlockBFEquiv` of the
-chain-limit lemma).  The local graded back-and-forth theorem is retired: both of its intended
-applications compile through the upstream `bfEquiv_of_gradedMatching` (at the pin, signatures
-checked), on abstract hypotheses (`README.md`, Layer 0, for where the height guard and the
-selection of coordinates go).  No
-statement of this roadmap relies on any of them, or on the statements available upstream, as pinned
-until this subsection records a pin containing it; until then they are named in prose only
-(`README.md`, Layer 0), never `#check`ed in the sketches.
+listed under "The full-presentation route": invariant Borel observations and limits of chains of
+bounded equivalence (the analogue for `BlockBFEquiv` of the chain-limit lemma).  The local graded
+back-and-forth theorem is retired: both of its intended applications compile through the upstream
+`bfEquiv_of_gradedMatching` (at the pin, signatures checked), on abstract hypotheses (`README.md`,
+Layer 0, for where the height guard and the selection of coordinates go).  No statement of this
+roadmap relies on any of them, or on the statements available upstream, as pinned until this
+subsection records a pin containing it; until then they are named in prose only (`README.md`,
+Layer 0), never `#check`ed in the sketches.
 
 ### Applications of library theorems
 
@@ -1444,7 +1461,7 @@ proved here: the first fact is split over two lines, one for each library theore
 | Local agreement | `BoundedFormulaω.realize_embedding_comp_of_localAutomorphisms` |
 | Local agreement, finite parameters | `BoundedFormulaω.realize_comp_append_of_localAutomorphisms` |
 
-These are available at our pinned dependency `def5cc0` (signatures checked; "Dependency pins").
+These are available at the pin `e460cb6` (signatures checked; "Dependency pins").
 Three qualifications:
 
 1. Countability belongs to the construction-specific homogeneity proof (the back-and-forth of
@@ -2074,11 +2091,23 @@ witnesses).**
 **Quantitative reconstruction, row 1 (`COMPANIONS.md`, "Further companion results").**
 
 - `Definability/Syntax`: Layer 0.  It imports no module of this repository (only InfinitaryLogic's
-  `Lomega1omega/QuantifierRank` and `Scott/Formula`), and its statements are candidates for
-  InfinitaryLogic, beside `existsLastVar` and `BoundedFormulaω.qrank`: `existsLastVars` with
-  `existsLastVars_zero`, `existsLastVars_succ`, `realize_existsLastVars`, and
-  `qrank_existsLastVars`; and `extendFormula` with `extensionEquations`, `realize_extendFormula`,
-  `qrank_extendFormula`, `realize_extensionEquations`, and `qrank_extensionEquations`.  Its former
+  `Lomega1omega/QuantifierRank` and `Scott/Formula`).  Its existential closure `existsLastVars`,
+  with `realize_existsLastVars` and `qrank_existsLastVars`, duplicates InfinitaryLogic's
+  `existsTupleFrom`, `realize_existsTupleFrom` (`Scott/MontalbanSentence`) and
+  `qrank_existsTupleFrom` (`Scott/MontalbanQuantifierRank`) at the pin `e460cb6`: the same
+  recursion, any language, and the same rank `φ.qrank + m`, added on the right.  It is kept
+  deliberately: importing those modules would bring `Scott/Sentence`, `Scott/OrbitRank`,
+  `Scott/Stabilization` and `Karp/PotentialIso`, and, for the rank, `Scott/QuantifierRank` and
+  `Karp/CarrierTheorem`, into the import closure of this module, which needs only the two modules
+  above.  The agreement
+  (`existsLastVars m φ = existsTupleFrom k m φ`, with the semantics and the rank read through it)
+  is compiled in `Definability/BlockFormulasExamples`, which may import the wider modules.  The
+  duplication is to be resolved by a placement change: either InfinitaryLogic moves the tuple
+  blocks and their rank to a module with this module's narrow imports, and `existsLastVars` becomes
+  `existsTupleFrom` here, or this module adopts the wider imports.  `extendFormula` with
+  `extensionEquations`, `realize_extendFormula`, `qrank_extendFormula`,
+  `realize_extensionEquations`, and `qrank_extensionEquations` are candidates for InfinitaryLogic,
+  beside `existsTupleFrom` (the closure they use).  Its former
   `BoundedFormulaω.qrank_mapFreeVars` and `BoundedFormulaω.qrank_inf` are InfinitaryLogic's at the
   pin `e460cb6` (same names and statements); the module makes the first a `simp` lemma.
 - `Definability/BlockStages`: Layers 1–2 (labels and stage types at the block stages), in place; its

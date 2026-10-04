@@ -3,6 +3,7 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
+import InfinitaryLogic.Scott.MontalbanQuantifierRank
 import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.IntervalCases
 import VaughtConjecture.Definability.BlockFormulas
@@ -14,7 +15,9 @@ import VaughtConjecture.Geometry.IntervalPlan
 Special cases of `VaughtConjecture.Definability.Syntax`, `VaughtConjecture.Realization.BlockStages`
 and `VaughtConjecture.Definability.BlockFormulas`:
 
-* the syntax: closing no variable, and the extension formula along the identity;
+* the syntax: closing no variable; closing the last variables is InfinitaryLogic's
+  `existsTupleFrom`, whose semantics and rank lemmas give `realize_existsLastVars` and
+  `qrank_existsLastVars`; and the extension formula along the identity;
 * `η = 0`: the formula is the atomic formula of `t↓ω` or `⊥`, of rank `0`, correct with no
   hypothesis (block determination below `0` is vacuous); an illegal type is never covered;
 * `η = 1` (written `0 + 1`, the form of the successor equation): rank at most `ω`, correctness from
@@ -57,6 +60,23 @@ example {L : Language} {k : ℕ} (φ : L.Formulaω (Fin (k + 0))) : existsLastVa
 example {L : Language} {k : ℕ} (φ : L.Formulaω (Fin (k + 1))) :
     existsLastVars 1 φ = existsLastVar φ :=
   rfl
+
+/-- Closing the last `m` variables is InfinitaryLogic's `existsTupleFrom k m`, and its semantics
+and its rank are that library's `realize_existsTupleFrom` and `qrank_existsTupleFrom`. -/
+example {L : Language} {M : Type} [L.Structure M] {k m : ℕ} (φ : L.Formulaω (Fin (k + m)))
+    (v : Fin k → M) :
+    existsLastVars m φ = existsTupleFrom k m φ ∧
+      ((existsLastVars m φ).Realize v ↔ ∃ ys : Fin m → M, φ.Realize (Fin.append v ys)) ∧
+      (existsLastVars m φ).qrank = φ.qrank + m := by
+  have h : existsLastVars m φ = existsTupleFrom k m φ := by
+    induction m with
+    | zero => rfl
+    | succ m ih => exact ih (existsLastVar φ)
+  refine ⟨h, ?_, ?_⟩
+  · rw [h]
+    exact realize_existsTupleFrom k m φ v
+  · rw [h]
+    exact qrank_existsTupleFrom k m φ
 
 /-- The extension formula along the identity holds exactly where the formula does, and it adds
 the arity to the rank. -/
