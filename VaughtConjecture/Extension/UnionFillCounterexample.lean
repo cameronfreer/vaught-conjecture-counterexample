@@ -375,6 +375,7 @@ theorem cappedLift_all {X Y : Finset (Fin 3) × ℕ} (h : X ≤ Y) : rows.Capped
     isLawfulBelow_iff.mpr ⟨A', F', hSA, hSF, hFA, fun _ _ ↦ rfl⟩, fun d ↦ ?_, fun d ↦ ?_⟩
   · -- The capped agreement with the ambient.
     rw [hqd]
+    -- both labellings read at the underlying cell `d.1`
     change min (labelling A' F' d.1) c = min (labelling Aq Fq d.1) c
     rcases live_cases d.1 with hdl | ⟨hdl, hg⟩ | ⟨hdl, hg⟩
     · rw [labelling_dead hdl, labelling_dead hdl]
@@ -390,6 +391,7 @@ theorem cappedLift_all {X Y : Finset (Fin 3) × ℕ} (h : X ≤ Y) : rows.Capped
       · rw [min_assoc, min_self]
   · -- The restriction to the prescription.
     rw [hpd]
+    -- both labellings read at the underlying cell `d.1`
     change labelling A' F' d.1 = labelling Ap Fp d.1
     rcases live_cases d.1 with hdl | ⟨hdl, hg⟩ | ⟨hdl, hg⟩
     · rw [labelling_dead hdl, labelling_dead hdl]
@@ -731,6 +733,7 @@ theorem not_unionFill_seed :
       ((univ : Finset (Fin 3)), 2) a).mp
       (hlaw hv1 hv2 le_rfl (not_univ_three_le (by omega))
         (fun i ↦ a (Am.toScheme.cellMap (Coatom.right 2) i)) fun i _ ↦ by
+          -- `a` read at the image of the cell `i` under the cell map
           change pairLabelling rowValue rowValue
             (Am.toCellScheme.gradedIndex (Am.toScheme.cellMap (Coatom.right 2) i)) = _
           rw [hgi])
@@ -741,6 +744,7 @@ theorem not_unionFill_seed :
       (hlaw (A := ⊤) (F := ⊤) (isSelfVisible_top 1) (isSelfVisible_top 2) le_rfl
         (not_univ_three_le (by omega)) (fun i ↦ w (Am.toScheme.cellMap (Coatom.right 2) i))
         fun i hi ↦ by
+          -- `w` read at the image of the cell `i` under the cell map
           change pairLabelling rowValue ⊤
             (Am.toCellScheme.gradedIndex (Am.toScheme.cellMap (Coatom.right 2) i)) = _
           rw [hgi]
@@ -756,6 +760,7 @@ theorem not_unionFill_seed :
       (hlaw (A := rowValue) (F := ⊥) hv1 (isSelfVisible_bot 2) bot_le
         (not_univ_three_le (by omega)) (fun i ↦ w (Am.toScheme.cellMap (Coatom.right 2) i))
         fun i hi ↦ by
+          -- `w` read at the image of the cell `i` under the cell map
           change pairLabelling rowValue ⊤
             (Am.toCellScheme.gradedIndex (Am.toScheme.cellMap (Coatom.right 2) i)) = _
           rw [hgi]
@@ -765,6 +770,7 @@ theorem not_unionFill_seed :
       d ∈ Am.toCellScheme.below (univ.erase (Fin.castSucc (Fin.last 2)), 1) →
       min (w d) rowValue = min (a d) rowValue := by
     intro d _
+    -- `w` and `a` are `pairLabelling` read at the graded index of `d`
     change min (pairLabelling rowValue ⊤ _) rowValue = min (pairLabelling rowValue rowValue _) _
     unfold pairLabelling
     split_ifs <;> simp
@@ -780,28 +786,34 @@ theorem not_unionFill_seed :
   have hd2 : Am.toCellScheme.gradedIndex d2 = (({3} : Finset (Fin 4)), 1) := by
     rw [hgi, hi2]; exact Prod.ext hmap2 rfl
   have hd6Y : d6 ∈ Am.toCellScheme.below (univ.erase (Fin.castSucc (Fin.last 2)), 1 + 1) := by
+    -- membership below a pair is `≤` on graded indices
     change Am.toCellScheme.gradedIndex d6 ≤ _
     rw [hd6]
     exact ⟨by decide, le_rfl⟩
   have hd2Y : d2 ∈ Am.toCellScheme.below (univ.erase (Fin.castSucc (Fin.last 2)), 1 + 1) := by
+    -- membership below a pair is `≤` on graded indices
     change Am.toCellScheme.gradedIndex d2 ≤ _
     rw [hd2]
     exact ⟨by decide, by omega⟩
   have hd6E : d6 ∈ Am.toCellScheme.below (({0, 1} : Finset (Fin 4)), 1 + 1) := by
+    -- membership below a pair is `≤` on graded indices
     change Am.toCellScheme.gradedIndex d6 ≤ _
     rw [hd6]
   have hd2D : d2 ∈ Am.toCellScheme.below (univ.erase (Fin.castSucc (Fin.last 2)), 1) := by
+    -- membership below a pair is `≤` on graded indices
     change Am.toCellScheme.gradedIndex d2 ≤ _
     rw [hd2]
     exact ⟨by decide, le_rfl⟩
   have hx6 : x ⟨d6, hd6Y⟩ = ⊤ := by
     rw [hxw ⟨d6, hd6Y⟩ (Or.inl hd6E)]
+    -- the prescription `w` read at the cell `d6`
     change pairLabelling rowValue ⊤ (Am.toCellScheme.gradedIndex d6) = ⊤
     rw [hd6]
     unfold pairLabelling
     rw [ite_eq_left (by decide), ite_eq_right (by decide)]
   have hx2 : x ⟨d2, hd2Y⟩ = rowValue := by
     rw [hxw ⟨d2, hd2Y⟩ (Or.inr hd2D)]
+    -- the prescription `w` read at the cell `d2`
     change pairLabelling rowValue ⊤ (Am.toCellScheme.gradedIndex d2) = rowValue
     rw [hd2]
     unfold pairLabelling

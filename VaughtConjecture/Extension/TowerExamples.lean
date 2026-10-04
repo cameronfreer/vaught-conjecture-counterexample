@@ -247,6 +247,7 @@ theorem orbitCode_gradeThreeLabelling :
     orbitCode 3 gradeThreeLabelling.{u} = ![Q 0 2, Q 0 3, Q 4 2, Q 4 3] := by
   have hlt : visibilityReplace 3 3 (gradeThreeLabelling.{u} 1) <
       visibilityReplace 3 3 (gradeThreeLabelling.{u} 3) := by
+    -- the entries of `gradeThreeLabelling` at `1` and `3`
     change visibilityReplace 3 3 (Q.{u} 0 3) < visibilityReplace 3 3 (Q 5 3)
     rw [visibilityReplace_Q, visibilityReplace_Q]
     exact lt_of_le_of_ne (Q_le_Q_iff.mpr (.inl (by decide))) fun h ↦ by simp [Q_inj] at h
@@ -259,6 +260,7 @@ theorem orbitCode_gradeThreeLabelling :
       omega
   have hkey2 : keyRank 3 gradeThreeLabelling.{u} (gradeThreeLabelling 2) = 2 := by
     refine (keyRank_congr ?_).trans hkey3
+    -- the entries of `gradeThreeLabelling` at `2` and `3`
     change visibilityReplace 3 3 (Q.{u} 5 2) = visibilityReplace 3 3 (Q 5 3)
     rw [visibilityReplace_Q, visibilityReplace_Q]
     rfl
@@ -271,10 +273,12 @@ theorem orbitCode_gradeThreeLabelling :
     fin_cases i
     · exact absurd hb (by decide)
     · exact absurd hb (by decide)
-    · change visibilityReplace 3 3 (Q.{u} 5 2) ≠ Q 0 3
+    · -- the entry of `gradeThreeLabelling` at `2`; `gridPoint 3 0` is `Q 0 3`
+      change visibilityReplace 3 3 (Q.{u} 5 2) ≠ Q 0 3
       rw [hn 5 2 (by decide), Ne, Q_inj]
       decide
-    · change visibilityReplace 3 3 (Q.{u} 5 3) ≠ Q 0 3
+    · -- the entry of `gradeThreeLabelling` at `3`; `gridPoint 3 0` is `Q 0 3`
+      change visibilityReplace 3 3 (Q.{u} 5 3) ≠ Q 0 3
       rw [hn 5 3 le_rfl, Ne, Q_inj]
       decide
   have hcode (i : Fin 4) (hi : (i : ℕ) < 2) :

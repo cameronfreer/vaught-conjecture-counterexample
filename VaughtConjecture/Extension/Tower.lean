@@ -71,13 +71,13 @@ restoration of the lower prescriptions uses, is the invariant from `(C, j)` to `
   cells of the grade `j + 1` over `(C, j + 1)`, `(univ, j)` and `(D, j + 1)`, and extended through
   the new cells of the layer `j + 1` at the short cap
   (`Seed.extendsFromBoundary_tower_of_twoFaceLift`).
-* **At the top grade `m + 1`, unconditionally** (`Seed.towerInvariant_top`): at `⊥` the same
-  triple, and at the positive caps `U = (C, m + 1)`, `V = (univ, m)`, `O = (C, m)`, with the
-  invariant as the lift from `O` to `V` (`CellScheme.Rows.cappedLift_of_boundaries_short`).  The
-  common face, on `m` points, carries no cell of the grade `m + 1`, so the other coatom's cells of
-  the grade `m + 1` are reached by a lift within that coatom from the grade `m`
-  (`Seed.exists_lift_union_of_lt_grade`), and the extension from the boundary reads no new cell
-  across the two faces (`Seed.extendsFromBoundary_tower_top`).
+* **The step to the top grade `m + 1`, with no hypothesis beyond the invariant at `m`**
+  (`Seed.towerInvariant_top`): at `⊥` the same triple, and at the positive caps
+  `U = (C, m + 1)`, `V = (univ, m)`, `O = (C, m)`, with the invariant as the lift from `O` to `V`
+  (`CellScheme.Rows.cappedLift_of_boundaries_short`).  The common face, on `m` points, carries no
+  cell of the grade `m + 1`, so the other coatom's cells of the grade `m + 1` are reached by a lift
+  within that coatom from the grade `m` (`Seed.exists_lift_union_of_lt_grade`), and the extension
+  from the boundary reads no new cell across the two faces (`Seed.extendsFromBoundary_tower_top`).
 
 **The two-face lift** `2FL(j)` (`Seed.TwoFaceLift j`): along every catalogue entry `a` of the layer
 at the grade `j + 1`, at every cap `h` self-visible and short at `j + 1` with `⊥ < h`, a labelling
@@ -827,7 +827,8 @@ grade at most `j`, to a labelling lawful below `(univ, j)` in the scheme reached
 `j` that agrees with `a` capped at `h` at every cell below `(univ, j)`.
 
 It is the extension from the boundary that the step to the grade `j + 1` uses at the positive caps
-(`Seed.extendsFromBoundary_tower_of_twoFaceLift`), read on the scheme before the layer:
+(`Seed.extendsFromBoundary_tower_of_twoFaceLift`), read on the scheme before the layer, and
+equivalent to that consumed hypothesis (`Seed.twoFaceLift_iff_extendsFromBoundary`):
 
 * `a` ranges over the catalogue entries at the grade `j + 1`, not over all lawful labellings: the
   ambient at a positive cap is the row of a cell of the new layer, which reads its entry on the
@@ -840,8 +841,9 @@ It is the extension from the boundary that the step to the grade `j + 1` uses at
   capped at `h`: in the step it is the aligned encoding of the prescription on one coatom glued
   with its lift into the other coatom, a lift of the amalgam.  The one-grade lift
   (`CellScheme.Rows.cappedLift_of_boundary_short`) asks for the extension along every row of the
-  new layer, at every such cap, of every such labelling; the step itself meets only the serving
-  rows, the source caps and the glued aligned encodings of its owner alignments.
+  new layer, at every such cap, of every such labelling; the step itself meets only the rows of
+  the new cells to which its owner alignments align, the source caps and the glued aligned
+  encodings of those alignments.
 
 Lawfulness of `w` at the grade `j + 1`, not only at `j`, is part of the hypothesis: the old cells of
 the grade `j + 1` are not below `(univ, j)`, but they constrain `w` below it.
@@ -851,7 +853,7 @@ layer at the grade `j + 1` and asserts nothing about the new cells of that grade
 coatoms at once, rather than lifting from one coatom with the other free; it is required only at
 the caps short at `j + 1` and along catalogue entries, not at every self-visible cap and ambient;
 and its labelling agrees with `a` only capped at `h`, with nothing asserted above `h` on the new
-cells.  The invariant at `j + 1` follows from it only together with the invariant at `j`, the
+cells.  The invariant at `j + 1` follows from it together with the invariant at `j`, the
 restoration of the lower prescriptions, the owner alignment, and the extension through the layer at
 `j + 1` (`Seed.towerInvariant_succ`).  At the grade `j = 0`
 it holds (`Seed.twoFaceLift_zero`); it is assumed by the step at the grades `2 ≤ j + 1 ≤ m`
@@ -1172,6 +1174,96 @@ theorem extendsFromBoundary_tower_of_twoFaceLift {x y : Fin (m + 2)}
     (fun _ ha _ hwU hwV hag ↦ I.exists_isLawfulBelow_of_twoFaceLift hx hy hxy h2 ha hh hs hbot
       hwU hwV hag) hu
 
+/-- **`2FL(j)` is the extension from the boundary that the step consumes.**  The two-face lift
+`2FL(j)` holds if and only if, along the row of every new cell of graded index `(univ, j + 1)`, at
+every cap `h` self-visible and short at `j + 1` with `⊥ < h`, every labelling lawful below the two
+coatoms at the grade `j + 1` that agrees with the row capped at `h` on their cells extends,
+unchanged there, to one lawful below `(univ, j + 1)` that agrees with the row capped at `h`
+everywhere.  The right-hand side is the clause of the hypothesis on the rows that
+`Seed.towerInvariant_succ` passes to `CellScheme.Rows.cappedLift_of_boundary_short` at the
+positive caps.
+
+So `2FL(j)` is exactly that consumed hypothesis, read on the scheme reached after the grade `j`:
+it is broader than what the construction of the step meets only in the universal quantifiers over
+the boundary labelling, the row and the short cap, which the generic one-grade lift forces.  The
+forward direction is `Seed.extendsFromBoundary_tower_of_twoFaceLift`.  Conversely, a catalogue
+entry is the row of a new cell (`Scheme.fieldLayer_row_natAdd`); a labelling of the amalgam is
+carried to the scheme reached after the grade `j + 1` on the old cells, extended there, and the
+extension restricted to the cells below `(univ, j)` through the source prefix.  Nothing is
+asserted here about any implication between `2FL(j)` and the invariant at the grade `j + 1`. -/
+theorem twoFaceLift_iff_extendsFromBoundary {j : ℕ} :
+    I.TwoFaceLift j ↔
+      ∀ (u : Fin (I.tower (j + 1)).card)
+        (hu : (I.tower (j + 1)).toCellScheme.gradedIndex u = (univ, j + 1)) (h : Label.{u}),
+        IsSelfVisible (j + 1) h → IsShort (j + 1) h → ⊥ < h →
+        (I.tower (j + 1)).rows.ExtendsFromBoundary (univ.erase (Fin.last (m + 1)), j + 1)
+          (univ.erase (Fin.castSucc (Fin.last m)), j + 1) (univ, j + 1) h
+          ((I.tower (j + 1)).rows.rowBelow u hu) := by
+  classical
+  refine ⟨fun h2 u hu h hh hs hbot ↦ I.extendsFromBoundary_tower_of_twoFaceLift
+    (mem_insert_self _ _) (mem_insert_of_mem (mem_singleton_self _)) last_ne_castSucc h2 hu hh hs
+    hbot, fun hext ↦ ?_⟩
+  intro a ha h hh hs hbot w hwx hwy hag
+  obtain ⟨i, rfl⟩ := Scheme.exists_catalogueEntry_eq (S := I.tower j) (k := j + 1) ha
+  have hu : (I.tower (j + 1)).toCellScheme.gradedIndex (Fin.natAdd _ i) = (univ, j + 1) :=
+    Scheme.appendFullCellsScheme_gradedIndex_natAdd _ _ _ i
+  -- `w` carried to the scheme reached after the grade `j + 1` on the old cells, `⊥` elsewhere.
+  set W : Fin (I.tower (j + 1)).card → Label.{u} :=
+    Function.extend (I.towerEmbed (j + 1)) w (fun _ ↦ ⊥)
+  have hWe (d : Fin I.amalgam.card) : W (I.towerEmbed (j + 1) d) = w d :=
+    (I.towerEmbed (j + 1)).injective.extend_apply _ _ _
+  have hWx : (I.tower (j + 1)).rows.IsLawfulBelow (univ.erase (Fin.last (m + 1)), j + 1)
+      fun e ↦ W e := by
+    rw [I.isLawfulBelow_tower_iff (ne_univ_erase _)]; simpa only [hWe] using hwx
+  have hWy : (I.tower (j + 1)).rows.IsLawfulBelow
+      (univ.erase (Fin.castSucc (Fin.last m)), j + 1) fun e ↦ W e := by
+    rw [I.isLawfulBelow_tower_iff (ne_univ_erase _)]; simpa only [hWe] using hwy
+  -- The row of the new cell `Fin.natAdd _ i` reads the catalogue entry on the old cells.
+  have hrow (e : Fin (I.tower j).card)
+      (he : Fin.castAdd ((I.tower j).catalogue (j + 1)).card e ∈
+        (I.tower (j + 1)).toCellScheme.below (univ, j + 1)) :
+      (I.tower (j + 1)).rows.rowBelow (Fin.natAdd _ i) hu ⟨_, he⟩ =
+        (I.tower j).catalogueEntry (j + 1) i e :=
+    (Scheme.fieldLayer_row_natAdd (hS := I.not_univ_succ_le_tower j) i _).trans
+      (Scheme.fieldRow_castAdd _ _)
+  obtain ⟨r, hr, hrW, hrS⟩ := hext (Fin.natAdd _ i) hu h hh hs hbot W hWx hWy fun d hd ↦ by
+    obtain ⟨dd, hdd⟩ := d
+    have hsc : (I.tower (j + 1)).toCellScheme.scope dd ≠ univ := fun he ↦ hd.elim
+      (fun h' ↦ ne_univ_erase _ (univ_subset_iff.mp (he.ge.trans h'.1)))
+      fun h' ↦ ne_univ_erase _ (univ_subset_iff.mp (he.ge.trans h'.1))
+    obtain ⟨e, rfl⟩ := I.mem_range_towerEmbed (j + 1) dd hsc
+    have hge : I.amalgam.toCellScheme.grade e ≤ j + 1 :=
+      (I.grade_towerEmbed (j + 1) e).symm.trans_le hdd.2
+    rw [hWe, hag e hge]
+    exact (congrArg (min · h) (hrow (I.towerEmbed j e) hdd)).symm
+  have hmem (e : (I.tower j).toCellScheme.below (univ, j)) :
+      Fin.castAdd ((I.tower j).catalogue (j + 1)).card e.1 ∈
+        (I.tower (j + 1)).toCellScheme.below (univ, j + 1) :=
+    Scheme.castAdd_mem_below (hS := I.not_univ_succ_le_tower j) (e.2.2.trans (Nat.le_succ j))
+  refine ⟨fun e ↦ r ⟨_, hmem e⟩, ?_, fun d hd ↦ ?_, fun e ↦ ?_⟩
+  · -- Lawfulness below `(univ, j)`, carried back through the source prefix.
+    have P := I.isSourcePrefix_tower_succ (j := j) le_rfl
+    have hc : (I.tower (j + 1)).rows.comap P.isLowerEmbedding = (I.tower j).rows :=
+      I.comap_rows_tower_succ j
+    have hrj : (I.tower (j + 1)).rows.IsLawfulBelow (univ, j) fun t ↦
+        Rows.extendBot (univ, j + 1) r t :=
+      (Rows.isLawfulBelow_extendBot.mpr hr).mono (X := (univ, j)) ⟨subset_rfl, Nat.le_succ j⟩
+    have := (P.isLawfulBelow_iff le_rfl).mpr hrj
+    rw [hc] at this
+    convert this using 1
+    funext e
+    exact (Rows.extendBot_of_mem r (hmem e)).symm
+  · -- An old cell of grade at most `j` lies on one of the two coatoms.
+    have hb := (I.scope_subset_or (mem_insert_self _ _)
+      (mem_insert_of_mem (mem_singleton_self _)) last_ne_castSucc d).imp
+      (fun hsc ↦ (I.towerEmbed_mem_below_iff (j := j + 1)
+        (X := (univ.erase (Fin.last (m + 1)), j + 1))).mpr ⟨hsc, hd.trans (Nat.le_succ j)⟩)
+      fun hsc ↦ (I.towerEmbed_mem_below_iff (j := j + 1)
+        (X := (univ.erase (Fin.castSucc (Fin.last m)), j + 1))).mpr
+          ⟨hsc, hd.trans (Nat.le_succ j)⟩
+    exact (hrW ⟨_, hmem ⟨_, I.towerEmbed_mem_below hd⟩⟩ hb).trans (hWe d)
+  · exact (hrS _).trans (congrArg (min · h) (hrow e.1 (hmem e)))
+
 /-- **The step from the grade `j` to `j + 1`, under `2FL(j)`.**  For `j ≤ m`, if the invariant
 holds at the grade `j` and the two-face lift `2FL(j)` holds, the invariant holds at the grade
 `j + 1`.  The lifts at the grades `j' ≤ j` are carried to the next scheme through the source
@@ -1182,8 +1274,8 @@ triple: `U = (C, j + 1)`, `V = (D, j + 1)` for the other coatom `D`, and `O` the
 grade `min (j + 1) m`, the lift from `O` to `V` being a lift of the amalgam.  The extension from
 the boundary is the extension at `⊥` through the whole tower (`Seed.extendsFromBoundary_bot_tower`)
 at `⊥`, and `Seed.extendsFromBoundary_tower_of_twoFaceLift` at the short positive caps.  The
-recursion uses it at the grades `2 ≤ j + 1 ≤ m` (`Seed.towerInvariant_of_twoFaceLift`); the top
-grade has an unconditional step (`Seed.towerInvariant_top`). -/
+recursion uses it at the grades `2 ≤ j + 1 ≤ m` (`Seed.towerInvariant_of_twoFaceLift`); the step to
+the top grade needs no hypothesis beyond the invariant at `m` (`Seed.towerInvariant_top`). -/
 theorem towerInvariant_succ {j : ℕ} (hjm : j ≤ m) (hinv : I.TowerInvariant j)
     (h2 : I.TwoFaceLift j) : I.TowerInvariant (j + 1) := by
   intro x hx j' hj'
