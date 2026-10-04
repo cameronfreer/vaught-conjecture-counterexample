@@ -23,7 +23,11 @@ unchanged on the union, to one lawful below `(D, j + 1)` agreeing with `a` cappe
 module shows that it fails, as a statement about every seed, for a legal seed on four points at
 the grade `2` (`not_unionFill_seed`).  So the step from the grade `j` to `j + 1` of the tower
 (module `VaughtConjecture.Extension.Tower`) is built on the two-face lift `2FL(j)`, which chooses
-one labelling of the lower layers respecting both coatoms at once, not on the union fill.
+one labelling of the lower layers respecting both coatoms at once, not on the union fill.  That
+hypothesis fails for some seeds too, at `j = 2` (module
+`VaughtConjecture.Extension.TwoFaceLiftCounterexample`); where the old cells of the grade `j + 1`
+are dead (`⊥` in every labelling lawful below a coatom), the step fills the other coatom by `⊥` at
+its cells of the grade `j + 1` instead (module `VaughtConjecture.Extension.DeadCellStep`).
 
 **The legal type `T`** (`T`, `isLegal_T`).  The scheme `S` on three points has the interval plan
 (faces `∅, {0}, {1}, {2}, {0, 1}, {1, 2}, univ`) and exactly one cell at every graded face of
