@@ -25,6 +25,13 @@ top-free label at a nonzero stage is bounded by an ordinal below the stage
 (`StageType.IsTopFree.exists_label_le`).  Capping assumes nothing about the stage; the existence of
 the cap assumes that the stage is zero or a limit and nonzero, that is, a limit ordinal.
 
+**Bounds on the labels.**  At a nonzero stage, the labels of any stage type other than `⊤` are at
+most one ordinal below the stage (`StageType.exists_label_le`); the bound for top-free stage types
+is the case without top labels.  At a limit stage the successor of that ordinal is still below the
+stage, so some ordinal below the stage lies strictly above every label other than `⊤`
+(`StageType.exists_lt_forall_label_lt`): the cutoff at which a donor is received in the rigid-core
+comparison (`VaughtConjecture.Continuation.Comparison`).
+
 Capping makes the amalgam of two top-free stage types top-free
 (`VaughtConjecture.ClassicalLimit.Amalgamation`), gives the received coface in finite-cut
 receiving (`VaughtConjecture.ClassicalLimit.Receiving`), and shows that the empty core is rigid in
@@ -108,15 +115,35 @@ private theorem exists_le_of_atStage {x : Label.{u}} (hx : AtStage α x) (htop :
     | top => exact absurd rfl htop
     | coe o => exact ⟨o, atStage_coe.mp hx, le_rfl⟩
 
+/-- **The labels other than `⊤` are bounded below the stage**: at a nonzero stage `α`, every
+label of a stage type other than `⊤` is at most one ordinal below `α`. -/
+theorem exists_label_le (t : StageType.{u} α n) (h0 : 0 < α) :
+    ∃ o < α, ∀ d, t.label d ≠ ⊤ → t.label d ≤ (o : Label) := by
+  have key (d : Fin t.card) : ∃ o < α, t.label d ≠ ⊤ → t.label d ≤ (o : Label) := by
+    by_cases hd : t.label d = ⊤
+    · exact ⟨0, h0, fun h ↦ absurd hd h⟩
+    · obtain ⟨o, ho, hle⟩ := exists_le_of_atStage (t.atStage d) hd h0
+      exact ⟨o, ho, fun _ ↦ hle⟩
+  have : Nonempty (Set.Iio α) := ⟨⟨0, h0⟩⟩
+  choose g hg hgle using key
+  obtain ⟨⟨o, ho⟩, hmax⟩ := Finite.exists_le fun d ↦ (⟨g d, hg d⟩ : Set.Iio α)
+  exact ⟨o, ho, fun d hd ↦ (hgle d hd).trans (WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr
+    (Subtype.coe_le_coe.mpr (hmax d))))⟩
+
 /-- **The labels of a top-free stage type are bounded below the stage**: at a nonzero stage `α`,
 every label of a top-free stage type is at most one ordinal below `α`. -/
 theorem IsTopFree.exists_label_le (ht : t.IsTopFree) (h0 : 0 < α) :
-    ∃ o < α, ∀ d, t.label d ≤ (o : Label) := by
-  have : Nonempty (Set.Iio α) := ⟨⟨0, h0⟩⟩
-  choose g hg hgle using fun d ↦ exists_le_of_atStage (t.atStage d) (ht d) h0
-  obtain ⟨⟨o, ho⟩, hmax⟩ := Finite.exists_le fun d ↦ (⟨g d, hg d⟩ : Set.Iio α)
-  exact ⟨o, ho, fun d ↦ (hgle d).trans (WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr
-    (Subtype.coe_le_coe.mpr (hmax d))))⟩
+    ∃ o < α, ∀ d, t.label d ≤ (o : Label) :=
+  let ⟨o, ho, hle⟩ := t.exists_label_le h0
+  ⟨o, ho, fun d ↦ hle d (ht d)⟩
+
+/-- **A strict bound at a limit stage**: at a limit stage, some ordinal below the stage lies
+above every label of a stage type other than `⊤`. -/
+theorem exists_lt_forall_label_lt (hα : Order.IsSuccLimit α) (D : StageType.{u} α m) :
+    ∃ δ < α, ∀ j, D.label j ≠ ⊤ → D.label j < (δ : Label.{u}) := by
+  obtain ⟨o, ho, hle⟩ := D.exists_label_le hα.bot_lt
+  exact ⟨Order.succ o, hα.succ_lt ho, fun j hj ↦
+    (hle j hj).trans_lt (by exact_mod_cast Order.lt_succ o)⟩
 
 /-- **The cap.**  At a limit stage `α`, for two top-free stage types and every arity `K` there is
 an ordinal below `α`, self-visible at `K`, above every label of the two stage types. -/
