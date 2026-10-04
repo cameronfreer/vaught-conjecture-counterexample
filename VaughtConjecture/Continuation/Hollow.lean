@@ -4,9 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Continuation.Normalization
-import VaughtConjecture.Realization.Expansion
-import VaughtConjecture.Realization.Model
-import VaughtConjecture.Stage.TopFree
 
 /-!
 # Cover-hollowness and stable-label fixedness
@@ -59,7 +56,9 @@ and forcing; it is not that definition, and no equivalence with it is claimed he
 equivalence of `IsCoverHollow` with the original hollowness is still to be proved.  The countable
 cover of terminal classes (condition 2, terminal countability) and the modelhood criterion
 (output 3) are to be stated with `IsCoverHollow`; both are prospective, and neither is stated
-here.
+here.  Classification and receiving for `IsCoverHollow` are to enter there as separate named
+hypotheses, the continuation criterion and (R3), to be stated elsewhere; neither follows from
+anything proved here.
 
 The word *anchor* here is unrelated to the anchor of a donor cell in `Extension/Gate` (a private
 cell from which a gate reading reads the label of a donor cell).
@@ -86,7 +85,11 @@ variable (R : Realization.{u, v} (blockStage ξ) M)
 /-- An **anchor at the top**: the cell `a` of the type of the occurrence `x` is labelled the
 formal top, and no rooted cover compatible with `x` forces the threshold `N` at `a`.  A compatible
 rooted cover is a triple `y = (m, q, f)` such that the tuple of `x` extends along `f` to a cover of
-`q` in `R`; forcing is read at `λ_{ξ+1}`, at the position of `a` on the face along `f`. -/
+`q` in `R`; forcing is read at `λ_{ξ+1}`, at the position of `a` on the face along `f`.  A
+compatible rooted cover whose type `q` does not restrict along `f` to the type of `x` never
+forces, since the first condition of `StageType.ForcesThreshold` is `restrictFace f q = some _`;
+without exact consistency such covers can occur, and the condition above holds for them
+trivially. -/
 def IsTopAnchor (x : R.Occurrence) (a : Fin x.type.card) (N : ℕ) : Prop :=
   x.type.label a = ⊤ ∧ ∀ y : Σ m : ℕ, StageType.{u} (blockStage ξ) m × (Fin x.arity ↪ Fin m),
     R.ExtendsToCover x.tuple y →

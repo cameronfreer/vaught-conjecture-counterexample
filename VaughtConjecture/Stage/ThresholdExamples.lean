@@ -308,9 +308,10 @@ private noncomputable def twinUp (p : Fin 3 → Label.{0}) (hp : twinRows.IsLawf
 (their reductions are equal, every label reducing to the formal top).  The pointwise minimum
 `(ω + 2, ω + 1, ω + 1)` of their labels satisfies the order law and locality, the latter by
 `Label.TransformsTo.inf`, but not availability: `s₀` has the scope `{0} ⊆ {0, 1}` and the grade of
-the twins, and both twins lie below it.  So no stage type on this scheme carries the pointwise
-minimum.  This is a statement about stage types only; no realization is involved.  It is why
-availability of a pointwise minimum of lifts is not unconditional. -/
+the twins, and in the pointwise minimum both twins carry `ω + 1`, below its label `ω + 2`.  So no
+stage type on this scheme carries the pointwise minimum.  This is a statement about stage types
+only; no realization is involved.  It is why availability of a pointwise minimum of lifts is not
+unconditional. -/
 example :
     (twinUp _ isLawful_twinSection₁ fun d ↦ (twin_le d).1).reduce (isSuccPrelimit_blockStage 0) =
       (twinUp _ isLawful_twinSection₂ fun d ↦ (twin_le d).2).reduce (isSuccPrelimit_blockStage 0) ∧
