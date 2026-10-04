@@ -283,24 +283,6 @@ theorem IsRigidCoreIn.mono {e : Fin k ↪ Fin n} {e' : Fin m ↪ Fin n} (h : t.I
 theorem isRigidCoreIn_of_isTopFree (ht : t.IsTopFree) (e : Fin k ↪ Fin n) : t.IsRigidCoreIn e :=
   fun _ _ _ d hd ↦ absurd hd (ht d)
 
-/-- At a nonzero stage, the labels of a stage type other than `⊤` are at most one ordinal below
-the stage. -/
-private theorem exists_label_le (t : StageType.{u} α n) (h0 : 0 < α) :
-    ∃ o < α, ∀ d, t.label d ≠ ⊤ → t.label d ≤ (o : Label) := by
-  have key (d : Fin t.card) : ∃ o < α, t.label d ≠ ⊤ → t.label d ≤ (o : Label) := by
-    have hd := t.atStage d
-    induction h : t.label d using WithBot.recBotCoe with
-    | bot => exact ⟨0, h0, fun _ ↦ bot_le⟩
-    | coe y =>
-      induction y using WithTop.recTopCoe with
-      | top => exact ⟨0, h0, fun h' ↦ absurd rfl h'⟩
-      | coe o => exact ⟨o, atStage_coe.mp (h ▸ hd), fun _ ↦ le_rfl⟩
-  have : Nonempty (Set.Iio α) := ⟨⟨0, h0⟩⟩
-  choose g hg hgle using key
-  obtain ⟨⟨o, ho⟩, hmax⟩ := Finite.exists_le fun d ↦ (⟨g d, hg d⟩ : Set.Iio α)
-  exact ⟨o, ho, fun d hd ↦ (hgle d hd).trans (WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr
-    (Subtype.coe_le_coe.mpr (hmax d))))⟩
-
 /-- **The empty core is rigid exactly in the top-free types**: at a limit stage, the empty core is
 rigid in a legal stage type exactly when the type is top-free.  Otherwise, the type capped at an
 ordinal below the stage, self-visible at the arity and above every proper label (`cap`, lawful by

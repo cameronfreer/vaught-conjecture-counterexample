@@ -69,6 +69,30 @@ open Finset Label CellScheme
 
 namespace Seed
 
+section
+
+variable {α : Ordinal.{u}} {m : ℕ} (I : Seed.{u} α m)
+
+/-- The first coatom is a face of the amalgam. -/
+theorem erase_last_mem_faces :
+    univ.erase (Fin.last (m + 1)) ∈ I.amalgam.toCellScheme.faces := by
+  by_contra h
+  rw [← Coatom.univ_map_left] at h
+  have := StageType.restrictFace_of_notMem _ _ h
+  rw [I.restrictFace_left] at this
+  exact Option.some_ne_none _ this
+
+/-- The second coatom is a face of the amalgam. -/
+theorem erase_castSucc_mem_faces :
+    univ.erase (Fin.castSucc (Fin.last m)) ∈ I.amalgam.toCellScheme.faces := by
+  by_contra h
+  rw [← Coatom.univ_map_right] at h
+  have := StageType.restrictFace_of_notMem _ _ h
+  rw [I.restrictFace_right] at this
+  exact Option.some_ne_none _ this
+
+end
+
 variable {α : Ordinal.{u}} (I : Seed.{u} α 0)
 
 /-- Every cell of the amalgam of a seed on two points has grade `1`. -/
@@ -82,24 +106,6 @@ theorem grade_eq_one (d : Fin I.amalgam.card) : I.amalgam.toCellScheme.grade d =
 amalgam.  It is the completion below the full grade (`Seed.completionBelowFullGradeZero`). -/
 noncomputable abbrev fieldLayerZero : Scheme.{u} 2 :=
   I.amalgam.toScheme.fieldLayer 1 (I.not_univ_le 1)
-
-/-- The first coatom is a face of the amalgam. -/
-theorem erase_last_mem_faces :
-    univ.erase (Fin.last 1) ∈ I.amalgam.toCellScheme.faces := by
-  by_contra h
-  rw [← Coatom.univ_map_left] at h
-  have := StageType.restrictFace_of_notMem _ _ h
-  rw [I.restrictFace_left] at this
-  exact Option.some_ne_none _ this
-
-/-- The second coatom is a face of the amalgam. -/
-theorem erase_castSucc_mem_faces :
-    univ.erase (Fin.castSucc (Fin.last 0)) ∈ I.amalgam.toCellScheme.faces := by
-  by_contra h
-  rw [← Coatom.univ_map_right] at h
-  have := StageType.restrictFace_of_notMem _ _ h
-  rw [I.restrictFace_right] at this
-  exact Option.some_ne_none _ this
 
 /-- The field layer of a seed on two points is well formed. -/
 theorem isWellFormed_fieldLayerZero : I.fieldLayerZero.IsWellFormed :=

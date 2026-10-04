@@ -105,23 +105,6 @@ variable {α : Ordinal.{u}} {n m k₀ : ℕ}
 
 namespace StageType
 
-/-- At a limit stage, some ordinal below the stage lies above every label of a stage type other
-than `⊤`. -/
-theorem exists_lt_forall_label_lt (hα : Order.IsSuccLimit α) (D : StageType.{u} α m) :
-    ∃ δ < α, ∀ j, D.label j ≠ ⊤ → D.label j < (δ : Label.{u}) := by
-  have key (j : Fin D.card) : ∃ δ < α, D.label j ≠ ⊤ → D.label j < (δ : Label.{u}) := by
-    have hj := D.atStage j
-    induction h : D.label j using Label.recBotCoeTop with
-    | bot => exact ⟨0, hα.bot_lt, fun _ ↦ by simp⟩
-    | top => exact ⟨0, hα.bot_lt, fun h' ↦ absurd rfl h'⟩
-    | coe o =>
-      exact ⟨Order.succ o, hα.succ_lt (atStage_coe.mp (h ▸ hj)), fun _ ↦ by
-        exact_mod_cast Order.lt_succ o⟩
-  choose f hf hlt using key
-  refine ⟨univ.sup f, (Finset.sup_lt_iff hα.bot_lt).mpr fun j _ ↦ hf j, fun j hj ↦
-    (hlt j hj).trans_le ?_⟩
-  exact_mod_cast le_sup (f := f) (mem_univ j)
-
 /-- **Receiving at a rigid root is exact.**  Let `q` agree with a legal `D` below a cutoff `δ`
 above every label of `D` other than `⊤`, and let `q` and `D` have a common face along `g`.  If the
 root along `g` is a rigid core in `D`, then `q = D`: the top cells of `q` form an admissible top
