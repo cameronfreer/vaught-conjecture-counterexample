@@ -781,8 +781,9 @@ the construction layers supply only atomic agreement, lowering, forth and back, 
 initial match, without an ordinal induction of their own.  Nothing is needed from
 ComputableModelTheory for it.
 
-**Prospective interfaces of InfinitaryLogic** (neither available upstream nor pinned; the
-statements are specified here, generically, with no construction):
+**Prospective interfaces of InfinitaryLogic** (neither available upstream nor pinned, except the
+second, which is now available upstream in family form, below; the statements are specified here,
+generically, with no construction):
 
 - *invariant Borel observations* (`Descriptive`): an isomorphism-invariant Borel map on codes of
   models on `ℕ`, into a countably separated space, is constant on the `BFEquiv α`-classes for
@@ -793,7 +794,10 @@ statements are specified here, generically, with no construction):
   `stabilizationOrdinal_lt_omega1'`, `stabilizationOrdinal_spec`, and
   `BFEquiv_stabilization_implies_equiv`, with the supremum of countably many countable ordinals);
   hence, if every level has two nonisomorphic `BFEquiv`-related members, the set has uncountably
-  many isomorphism types;
+  many isomorphism types; available upstream, not yet at our pinned dependency, in the form of a
+  countable family of representatives, not a countable set of codes (`Scott/IsolatingLevel` at
+  `e460cb6`: `exists_isolating_level` and `not_countable_of_forall_unisolated`; "Dependency
+  pins");
 - *limits of chains of bounded equivalence* (`Scott/BlockBackAndForth`): an analogue for
   `BlockBFEquiv` of [Mon, Lemma XII.6], by the same construction, with its offset to be determined:
   for increasing countable ordinals `α_i` and countable structures `A_i` with `A_i` and `A_{i+1}`
@@ -874,6 +878,10 @@ declarations listed in the notes.
 | 34 | [AFK26] | five equivalent criteria for them (item 5; no numbered statement) | S |
 | 35 | [AFK26] | literal uniqueness of maximal presentations (item 5; no numbered statement) | S |
 | 36 | [AFK26] | the optimal all-presentation bound (item 5; no numbered statement) | S |
+| 37 | [AFK26] | density bounding the returned invariant (item 3; no numbered statement) | S |
+| 38 | [AFK26] | terminal refinement of a higher presentation (item 5; no numbered statement) | S |
+| 39 | [AFK26] | exactly one expansion over a domain (item 2; no numbered statement) | S |
+| 40 | [AFK26] | maximal presentations by Scott isolation (item 5; no numbered statement) | S |
 
 The items are those of `README.md`, "Manuscript correspondence (required)".  Notes to the rows:
 
@@ -977,8 +985,9 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     bounds (`README.md`, item 5).
 30. Prospective: no declaration of this repository states positive niceness or names a fixing
     rank.  Milestone 2; it is the row "invariance over all admissible presentations, with an
-    inhabited threshold" of the table of item 5, and its construction for the models here uses
-    the termination argument.
+    inhabited threshold" of the table of item 5, and its construction for the models here has
+    two routes: through the termination argument, or by the Scott route of row 40, whose stated
+    dependencies include no termination argument (prospective).
 31. Prospective: no declaration of this repository states it.  Its ingredients for labels are
     compiled in this repository (theorem named): `Label.reduce_eq_self_iff` (fixed by projection
     exactly at the labels of the stage), and `Label.reduce_reduce_of_le`, `Label.atStage_reduce`
@@ -1032,6 +1041,45 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     model reduction at `ρ` only), and on `COMPANIONS.md`, "Fixing ranks are zero or successors"
     and "Limit heights are unattained suprema", each still to be proved.  No declaration of this
     repository names a fixing rank (row 30).
+37. Prospective: no declaration of this repository states density at an observation (row 25) or
+    its witness-bounded form.  The fixation of the returned invariant rests on
+    `Realization.reduce_eval` and `Realization.isSome_reduce_eval` (`Realization/Transport`),
+    compiled in this repository (theorem named); the equivalence with the donor-bounded form is
+    stated on a realization fixed by projection at `β` and rests on the two-index theorem of
+    row 25.  It keeps the root and the realizing occurrence together and supplies no
+    projected-donor lifting.
+38. Prospective.  Compiled in this repository (theorem named): `Realization.IsTerminalAt` with
+    `Realization.isTerminalAt_iff_forall_lt` (`Continuation/Terminal`),
+    `Realization.IsModel.reduce` (`Realization/Model`), and `Realization.IsModel.lt_omega_one`
+    (`Realization/Expansion`).  Terminal existence for the base is criterion 5 of row 34, from
+    the Scott route (row 40) or another proof stating its dependencies; literal-reduct uniqueness
+    is row 35, conditional on the injectivity of model reduction.  No global termination theorem
+    is used, and the stage index is not assumed countable.
+39. Prospective as a combined statement, which is not named.  Its ingredients are compiled in this
+    repository (theorem named): `Expansion.mem_expansionDomain_iff` and
+    `Expansion.expansionDomain_eq_empty` (`Expansion/Domains`), `ModelExpansion.map` and
+    `ModelExpansion.val_eq_toRealization` (`Realization/Expansion`), and
+    `ModelExpansion.subsingleton` (`Expansion/Uniqueness`), conditional on
+    `Expansion.NextBlockUniqueness`, still to be proved.  Recorded with it
+    (`Definability/BlockFormulas`): `blockFormula`, `qrank_blockFormula_le` (no hypothesis), and,
+    conditional on block determination, `realize_blockFormula_iff`,
+    `ModelExpansion.relMap_toChartStructure_iff`, and `ModelExpansion.map_eq_of_determines`.  No
+    new structure of hypotheses is introduced.
+40. Prospective.  Scott isolation: `scottSentence_characterizes` (available at the pin,
+    signatures checked) and the isolating level `exists_isolating_level` (`Scott/IsolatingLevel`;
+    available upstream at `e460cb6`, not yet at our pinned dependency; "Dependency pins").
+    Comparison: `Expansion.bfEquiv_of_modelExpansions` and
+    `ExpansionDomains.hasLogicalAgreement_of_modelExpansions`, conditional on
+    `Expansion.FiniteExtensionReceiving`.  Losses: `hasNonemptyLosses_of_hasApexCoatomExtensions`,
+    conditional on `CapToModel`, `StageType.HasApexCoatomExtensions`, and
+    `Expansion.NextBlockUniqueness`.  Attainment: `Realization.IsModel.reduce` and
+    `ModelExpansion.nonempty_of_forall_lt`, the latter conditional on
+    `Expansion.NextBlockUniqueness`.  These are compiled in this repository (theorem named), except
+    the two library statements; their hypotheses are still to be proved.  The strict bound on
+    serving stages, the attainment for a literal base, and positive niceness (5 ⇒ 1 of row 34) are
+    prospective.  No termination argument is among the stated dependencies; the route is not a
+    dependency of the expansion-domain endpoint and is not combined with the conditional of row 31
+    in a cycle.
 
 **Completion criteria, item by item** (the items of `README.md`, "Manuscript correspondence
 (required)").  For every item, each row of the concordance that it concerns is P or C, with its
@@ -1153,6 +1201,35 @@ hypothesis of each statement of 2–4 that uses it, until it is proved as a theo
    injectivity of model reduction at `ρ` only, as an explicit hypothesis (the equality step, at
    `η`, is not used); strictness for models (row 32); and `COMPANIONS.md`, "Fixing ranks are zero
    or successors", for the limit case.
+
+**Completion criteria of the audit targets, target by target** (`README.md`, "Manuscript
+correspondence (required)", items 2, 3, and 5, and "Acceptance criteria of the correspondence";
+rows 37–40, each still to be proved).  Each target is complete on its own criterion, with its
+dependencies named, and none is complete because another is.
+
+1. *Witness-bounded density:* the predicate bounding the returned invariant stated, and its
+   equivalence with the donor-bounded form of row 25, for `α ≤ β` on a realization fixed by
+   projection at `β`, compiled through `Realization.reduce_eval`; the root and the realizing
+   occurrence kept together; no lifting over a projected root derived from it.
+2. *Terminal refinement:* for every model at a block stage `λ_β` on a countable carrier, a model
+   on the same carrier, terminal at a countable `ρ ≥ β`, whose stage reduction to `λ_β` is
+   literally the given model, compiled with `β` not assumed countable.  Its named dependencies:
+   criterion 5 of row 34 for the base (from row 40 or another proof of it) and literal uniqueness
+   (row 35), under the injectivity of model reduction; no global termination theorem.
+3. *The reconstruction interface:* the `∃!` statement for a code whose class lies in
+   `expansionDomain ξ`, compiled with `Expansion.NextBlockUniqueness` (or a proof of it) as its
+   only hypothesis of uniqueness, and documented with the block formulas, their rank budget `ω·η`,
+   the base-reduct equations, and transport along isomorphisms; no new structure of hypotheses.
+4. *The Scott route:* each step of the chain compiled as its own theorem (Scott isolation, the
+   strict bound on serving stages, the attained maximum, positive niceness), with its named
+   dependencies: conditions 3 and 4 of the expansion-domain reduction, Scott isolation, the
+   injectivity of model reduction, and countable-limit existence.  The isolating level is quoted
+   only once "Dependency pins" records a pin containing it, signatures checked.  No hypothesis or
+   lemma about termination enters; the conditional of row 31 and this route are not used in a
+   cycle; and the expansion-domain endpoint does not depend on it.
+
+The five acceptance criteria of `README.md` ("Acceptance criteria of the correspondence") hold for
+every item: reconstruction, density, finite objects, rank budgets, and priorities.
 
 ## Upstream building blocks
 
@@ -1451,7 +1528,20 @@ the threshold (the admissible witness at the threshold is what yields the explic
 `⨆ c, (α_c + 1)`), and `exists_classwise_labelRank_bound`, one countable bound on `labelRank`
 (the least stage fixing a label, not a Scott rank), the form for fixing ranks matching milestone 3
 there.  A repin to `v6.0.0` or later makes these available at the pin (signatures checked); it is
-prepared as a separate change.  Of ComputableModelTheory: none (its `main` is the pin `3a8f630`).
+prepared as a separate change.  Also of InfinitaryLogic, at `e460cb6` (after the pin `cf80917` and
+after its tag `v6.0.0`; same toolchain and Mathlib), an isolating level for a countable family of
+countable structures (`Scott/IsolatingLevel`), over a countable relational language: for
+`M : ι → Type w` with `[Countable ι]` and every `M i` countable, `exists_isolating_level` gives
+`∃ γ < ω₁, ∀ i j, BFEquiv0 (M i) (M j) γ → Nonempty (M i ≃[L] M j)`;
+`exists_isolating_level_iff` gives the same with `↔`; and `not_countable_of_forall_unisolated`
+is the contrapositive: if every level below `ω₁` has a nonisomorphic pair related by `BFEquiv0`,
+the index type is not countable.  The level is the supremum of the stabilization ordinals of the
+members; it is not claimed least, it is not a Scott rank, and it decides isomorphism between
+members of the family only.  It is an ingredient of Scott isolation in the Scott route to maximal
+presentations (`README.md`, "Manuscript correspondence (required)", item 5; prospective; row 40),
+where, for one class, the Scott sentence (`scottSentence_characterizes`, at the pin, signatures
+checked) gives the level.  A repin to `e460cb6` or later makes it available at the pin.  Of
+ComputableModelTheory: none (its `main` is the pin `3a8f630`).
 A statement merged upstream after the pins above is listed here, named in prose only and never
 `#check`ed in the sketches, until a repin containing it is recorded in this subsection.
 
@@ -1467,12 +1557,12 @@ with no countability of the language).  Signatures checked (`SuggestedInterfaces
 them), except `stabilizationOrdinal_le_of_sentence_rank` (signatures not yet checked by CI).
 
 **Prospective dependencies (neither available upstream nor pinned):** the InfinitaryLogic statements
-listed under "The full-presentation route": invariant Borel observations, the isolating-level lower
-bound, and limits of chains of bounded equivalence (the analogue for `BlockBFEquiv` of the
-chain-limit lemma).  The local graded back-and-forth theorem is retired: both of its intended
-applications compile through the upstream `bfEquiv_of_gradedMatching` (at the pin, signatures
-checked), on abstract hypotheses (`README.md`, Layer 0, for where the height guard and the
-selection of coordinates go).  No
+listed under "The full-presentation route": invariant Borel observations and limits of chains of
+bounded equivalence (the analogue for `BlockBFEquiv` of the chain-limit lemma); the isolating-level
+lower bound listed there is now available upstream (above).  The local graded back-and-forth
+theorem is retired: both of its intended applications compile through the upstream
+`bfEquiv_of_gradedMatching` (at the pin, signatures checked), on abstract hypotheses
+(`README.md`, Layer 0, for where the height guard and the selection of coordinates go).  No
 statement of this roadmap relies on any of them, or on the statements available upstream, as pinned
 until this subsection records a pin containing it; until then they are named in prose only
 (`README.md`, Layer 0), never `#check`ed in the sketches.

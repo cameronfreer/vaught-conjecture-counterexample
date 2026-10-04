@@ -604,7 +604,10 @@ is compiled conditionally on block determination (below).  None is an input to t
   least `ξ`).  The count of the main theorem does not use them.  For the family of expansions of one
   model, conditional on positive niceness for that family, the bound of serving indices under
   strictness (`README.md`, "Manuscript correspondence (required)", item 5, "Uniform fixing bounds
-  from positive niceness"; prospective) bounds its height.  For one literal base with a terminal
+  from positive niceness"; prospective) bounds its height.  Positive niceness for that family has
+  two prospective routes: the termination argument, and the Scott route to maximal presentations
+  (`README.md`, item 5, "The Scott route to maximal presentations"), which uses conditions 3 and 4
+  with Scott isolation and no termination argument.  For one literal base with a terminal
   model presentation at a countable index `ρ`, the counterpart of the height is `ρ`, the least
   upper bound of the fixing ranks across all model presentations of that base (`README.md`, item
   5, "Maximal presentations: equivalent criteria, uniqueness, the optimal bound"; prospective,
@@ -673,7 +676,11 @@ is compiled conditionally on block determination (below).  None is an input to t
   3. **the terminal expansion** (to be proved, given 2): the expansion of a model in `q` to its last
      admitted stage is unique by expansion uniqueness and terminal, and is covered by the countable
      family of terminal conditions of layer 4 (rigid-core type, positive eventual top grade, hollow
-     growth).
+     growth).  Its form for one specified presentation is the terminal refinement of `README.md`,
+     item 5, "Terminal refinement of a specified higher presentation" (prospective): a model at a
+     block stage on a countable carrier is literally the reduct of a terminal model, whose base
+     presentation comes from the Scott route to maximal presentations (or another proof of
+     criterion 5 there), under the injectivity of model reduction and without that family.
 
   None of these is proved, and no class is asserted to have a last admitted stage or a terminal
   expansion before 1 is proved.  If 1–3 are proved, the greatest refinement above (itself a target)
@@ -703,7 +710,10 @@ is compiled conditionally on block determination (below).  None is an input to t
   that class.  The bound of (iv) is the only place where termination can enter.  Its conditional
   form is the uniform fixing stage of `README.md`, "Manuscript correspondence (required)", item 5,
   "Uniform fixing bounds from positive niceness" (prospective), which uses no termination; there
-  termination can enter only through the construction of positive niceness (milestone 2).  For
+  termination can enter only through the construction of positive niceness (milestone 2), and not
+  at all when milestone 2 is taken from the Scott route to maximal presentations (`README.md`,
+  item 5; prospective), whose strict bound on serving stages is eventual departure (1 above) read
+  for one class, followed by bounded-stage attainment.  For
   one literal base that is a model, a bound of this kind over all its model presentations is
   equivalent to a maximal presentation of the base (criteria 3 and 5 of `README.md`, item 5,
   "Maximal presentations: equivalent criteria, uniqueness, the optimal bound"; prospective),
@@ -712,7 +722,9 @@ is compiled conditionally on block determination (below).  None is an input to t
   proved), which 3 ⇒ 5 uses through bounded-stage attainment; so supplying the bound of (iv)
   characterizes termination for each base and does not avoid it.  Taken
   from eventual departure (1 above), the bound of (iv) uses conditions 3 and 4 with a Scott
-  sentence for each class, and not global termination.  Read off a full presentation of every
+  sentence for each class, and not global termination; this is step 4 of the Scott route to
+  maximal presentations (`README.md`, item 5), which its rule "No circularity" keeps apart from
+  the uniform fixing bounds.  Read off a full presentation of every
   class, it uses full-presentation coverage, hence global termination (`README.md`, "The
   persistent core"), which is then a stated hypothesis.  Nonempty domains alone do not replace
   (iv) ("Nonempty domains with an empty persistent core", above).  The termination-free
