@@ -69,11 +69,12 @@ need not exist: `2FL(2)` fails for a legal seed on five points
 (`TwoFaceLiftCounterexample.not_twoFaceLift_two`), so `2FL(j)` at the grades `2 ≤ j < m` is false
 as a statement about every seed, at every stage
 (`TwoFaceLiftCounterexample.not_forall_twoFaceLift`).  This is a non-existence, not a limitation
-of an encoding: for that seed no labelling with the properties of `2FL(2)` exists.  The completion
-below the full grade of that seed exists nevertheless
-(`TwoFaceLiftCounterexample.nonempty_completionBelowFullGrade_seed4`), through the step from
-deadness of the old cells of the grade `3` (`Seed.towerInvariant_succ_of_dead`, module
-`VaughtConjecture.Extension.DeadCellStep`).
+of an encoding: for that seed, for some catalogue entry `a`, cap `h` and prescription `w`, no
+labelling with the properties of `2FL(2)` exists.  The completion below the full grade of that
+seed exists nevertheless (`TwoFaceLiftCounterexample.nonempty_completionBelowFullGrade_seed4`),
+through the step from deadness of the old cells of the grade `3`: they are *dead*, that is, `⊥` in
+every labelling of the amalgam lawful below a coatom (`Seed.DeadAt 2`;
+`Seed.towerInvariant_succ_of_dead`, module `VaughtConjecture.Extension.DeadCellStep`).
 
 **What stays open.**  The coatom extension properties `StageType.HasApexCoatomExtensions` and
 `StageType.HasCoatomExtensions` at the stages that are zero or a limit quantify over the seeds of
@@ -94,7 +95,8 @@ the conclusion of `2FL(j)`.  The step would use it through a variant of
 `CellScheme.Rows.cappedLift_of_boundary_short` in which the extension from the boundary is asked
 only for the boundary labellings whose part on `V` the step itself chooses.  Whether `2FL∃(j)`
 holds is undecided.  In the configuration of that failure it holds, with `w_D` equal to `a` on
-`D`.
+`D` (not compiled, and immediate: there `w_C` is `a` on `C`, so the glued labelling is `a`, and
+`r = a` has the properties of the conclusion).
 
 No hypothesis on the stage enters, no union fill (module
 `VaughtConjecture.Extension.UnionFillCounterexample`) and no completion is assumed, and neither
@@ -116,15 +118,6 @@ open Finset Label CellScheme
 variable {α : Ordinal.{u}} {m : ℕ} (I : Seed.{u} α m)
 
 /-! ### The two-face lift at the grade one -/
-
-/-- Every old cell lies on one of the two coatoms. -/
-private theorem scope_subset_or_coatoms (d : Fin I.amalgam.card) :
-    I.amalgam.toCellScheme.scope d ⊆ univ.erase (Fin.last (m + 1)) ∨
-      I.amalgam.toCellScheme.scope d ⊆ univ.erase (Fin.castSucc (Fin.last m)) :=
-  I.subset_or_subset _ (I.amalgam.isWellFormed.isWellFormed.scope_mem d) (I.scope_ne_univ d)
-
-private theorem erase_ne_univ (x : Fin (m + 2)) : univ.erase x ≠ univ :=
-  (erase_ssubset (mem_univ x)).ne
 
 /-- The rows of the new cells of the layer at the grade `1` are never `⊤`. -/
 private theorem rowBelow_ne_top_one {u : Fin (I.tower 1).card}
@@ -225,8 +218,8 @@ theorem twoFaceLift_one : I.TwoFaceLift 1 := by
         e ∈ (I.tower 1).toCellScheme.below (univ.erase (Fin.castSucc (Fin.last m)), 1)) :
       ∃ d, ∃ hd : I.amalgam.toCellScheme.grade d ≤ 1, I.towerEmbed 1 d = e := by
     have hsc : (I.tower 1).toCellScheme.scope e ≠ univ := fun hsu ↦ he.elim
-      (fun h' ↦ erase_ne_univ _ (univ_subset_iff.mp (hsu.ge.trans h'.1)))
-      fun h' ↦ erase_ne_univ _ (univ_subset_iff.mp (hsu.ge.trans h'.1))
+      (fun h' ↦ ne_univ_erase _ (univ_subset_iff.mp (hsu.ge.trans h'.1)))
+      fun h' ↦ ne_univ_erase _ (univ_subset_iff.mp (hsu.ge.trans h'.1))
     obtain ⟨d, rfl⟩ := I.mem_range_towerEmbed 1 e hsc
     refine ⟨d, ?_, rfl⟩
     have h2 : (I.tower 1).toCellScheme.grade (I.towerEmbed 1 d) ≤ 1 := he.elim (·.2) (·.2)
@@ -254,7 +247,7 @@ theorem twoFaceLift_one : I.TwoFaceLift 1 := by
     have hsX : (I.tower 1).rows.IsLawfulBelow (univ.erase x, 1) fun e ↦ S' e :=
       hS'law.mono (X := (univ.erase x, 1)) ⟨subset_univ _, le_rfl⟩
     have hpX : (I.tower 1).rows.IsLawfulBelow (univ.erase x, 1) fun e ↦ P e := by
-      rw [I.isLawfulBelow_tower_iff (erase_ne_univ x)]
+      rw [I.isLawfulBelow_tower_iff (ne_univ_erase x)]
       simp only [hP]
       exact hwX.mono (X := (univ.erase x, 1)) ⟨subset_rfl, by omega⟩
     exact Rows.IsLawfulBelow.alignedEncode (V := V) hsX hpX (fun d ↦ d.2.2) hhvis hhbot.ne' hγ1
@@ -263,11 +256,13 @@ theorem twoFaceLift_one : I.TwoFaceLift 1 := by
   have hfD := hfX (Fin.castSucc (Fin.last m)) hwy fun e he ↦ .inr he
   -- The extension through the layer at the grade one along the row of the serving cell.
   have hnot (z : Fin (m + 2)) : ¬ ((univ : Finset (Fin (m + 2))), 1) ≤ (univ.erase z, 1) :=
-    fun h ↦ erase_ne_univ z (univ_subset_iff.mp h.1)
+    fun h ↦ ne_univ_erase z (univ_subset_iff.mp h.1)
   have hcover (d : Fin I.amalgam.card) (hd : I.amalgam.toCellScheme.grade d ≤ 1) :
       I.amalgam.toCellScheme.gradedIndex d ≤ (univ.erase (Fin.last (m + 1)), 1) ∨
         I.amalgam.toCellScheme.gradedIndex d ≤ (univ.erase (Fin.castSucc (Fin.last m)), 1) :=
-    (I.scope_subset_or_coatoms d).imp (fun h ↦ ⟨h, hd⟩) fun h ↦ ⟨h, hd⟩
+    (I.scope_subset_or (mem_insert_self _ _)
+      (mem_insert_of_mem (mem_singleton_self _)) (Fin.castSucc_lt_last _).ne' d).imp
+      (fun h ↦ ⟨h, hd⟩) fun h ↦ ⟨h, hd⟩
   have hpos (d : Fin I.amalgam.card) : 1 ≤ I.amalgam.toCellScheme.grade d :=
     (I.amalgam.isWellFormed.isWellFormed.gradedIndex_mem d).2.1
   have hext : (I.tower 1).rows.ExtendsFromBoundary (univ.erase (Fin.last (m + 1)), 1)
@@ -287,7 +282,9 @@ theorem twoFaceLift_one : I.TwoFaceLift 1 := by
   have hb : I.towerEmbed 1 d ∈ (I.tower 1).toCellScheme.below (univ.erase (Fin.last (m + 1)), 1) ∨
       I.towerEmbed 1 d ∈ (I.tower 1).toCellScheme.below
         (univ.erase (Fin.castSucc (Fin.last m)), 1) :=
-    (I.scope_subset_or_coatoms d).imp (fun h ↦ I.towerEmbed_mem_below_iff.mpr ⟨h, hd⟩)
+    (I.scope_subset_or (mem_insert_self _ _)
+      (mem_insert_of_mem (mem_singleton_self _)) (Fin.castSucc_lt_last _).ne' d).imp
+      (fun h ↦ I.towerEmbed_mem_below_iff.mpr ⟨h, hd⟩)
       fun h ↦ I.towerEmbed_mem_below_iff.mpr ⟨h, hd⟩
   rw [Function.comp_apply, hr'f _ hb, hf_def, hρ_def]
   rw [alignedDecode_alignedEncode hτ.monotone hhμ hτh.ge ?_ ?_, hP]

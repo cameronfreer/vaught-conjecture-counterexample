@@ -16,7 +16,7 @@ tower `T j` (module `VaughtConjecture.Extension.Tower`).  The old cells of the g
 *dead* (`Seed.DeadAt j`) when every labelling of the amalgam lawful below a coatom at the grade
 `j + 1` is `⊥` at the cells of the grade `j + 1` below that coatom.
 
-**The step from deadness** (`Seed.towerInvariant_succ_of_dead`).  For `j + 1 ≤ m`, the invariant
+**The step from deadness** (`Seed.towerInvariant_succ_of_dead`).  For `j ≤ m`, the invariant
 at the grade `j` and deadness of the cells of the grade `j + 1` give the invariant at `j + 1`, with
 no two-face lift.  The one-grade lift from `(C, j + 1)` to `(univ, j + 1)` uses the two boundary
 triples of the step to the top grade (`Seed.towerInvariant_top`):

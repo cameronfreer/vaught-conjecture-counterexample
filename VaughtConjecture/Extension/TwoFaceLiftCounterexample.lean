@@ -14,7 +14,7 @@ import VaughtConjecture.Geometry.IntervalPlan
 
 Roadmap, Layer 3, 3.1, (R6), checkpoint 2.6 (the recursion on the grade; here the negative
 example for the two-face lift `2FL(j)` at `j ≥ 2`, and the completion for that seed by the step
-from deadness); semantic contract, items 2–4.
+from deadness, defined below); semantic contract, items 2–4.
 
 The two-face lift `2FL(j)` (`Seed.TwoFaceLift`, module `VaughtConjecture.Extension.Tower`) holds
 at `j = 1` for every seed (`Seed.twoFaceLift_one`).  This module shows that `2FL(2)` fails for a
@@ -863,8 +863,6 @@ theorem exists_orbitCode_mem_catalogue_two {m : ℕ} (I : Seed.{u} α m)
     (I.towerEmbed 1).injective.extend_apply _ _ _
   set g : Fin (I.tower 1).card → Label.{u} := fun e ↦
     if he : e ∈ (I.tower 1).toCellScheme.below (univ, 1) then r₁ ⟨e, he⟩ else W e
-  have hne (z : Fin (m + 2)) : (univ : Finset (Fin (m + 2))).erase z ≠ univ :=
-    (erase_ssubset (mem_univ z)).ne
   have hgold (d : Fin I.amalgam.card) (hd : I.amalgam.toCellScheme.grade d ≤ 2) :
       g (I.towerEmbed 1 d) = w d := by
     by_cases he : I.towerEmbed 1 d ∈ (I.tower 1).toCellScheme.below (univ, 1)
@@ -877,8 +875,8 @@ theorem exists_orbitCode_mem_catalogue_two {m : ℕ} (I : Seed.{u} α m)
         e ∈ (I.tower 1).toCellScheme.below (univ.erase (Fin.castSucc (Fin.last m)), 2)) :
       g e = W e := by
     have hsc : (I.tower 1).toCellScheme.scope e ≠ univ := fun hu ↦ he.elim
-      (fun h' ↦ hne _ (univ_subset_iff.mp (hu.ge.trans h'.1)))
-      fun h' ↦ hne _ (univ_subset_iff.mp (hu.ge.trans h'.1))
+      (fun h' ↦ Seed.ne_univ_erase _ (univ_subset_iff.mp (hu.ge.trans h'.1)))
+      fun h' ↦ Seed.ne_univ_erase _ (univ_subset_iff.mp (hu.ge.trans h'.1))
     obtain ⟨d, rfl⟩ := I.mem_range_towerEmbed 1 e hsc
     have hd : I.amalgam.toCellScheme.grade d ≤ 2 :=
       he.elim (fun h ↦ (I.towerEmbed_mem_below_iff.mp h).2)
@@ -898,7 +896,7 @@ theorem exists_orbitCode_mem_catalogue_two {m : ℕ} (I : Seed.{u} α m)
     refine Rows.IsLawfulBelow.glue₃ (U := (univ.erase (Fin.last (m + 1)), 2)) (V := (univ, 1))
       (W := (univ.erase (Fin.castSucc (Fin.last m)), 2)) ?_ ?_ ?_ ?_
     · have : (I.tower 1).rows.IsLawfulBelow (univ.erase (Fin.last (m + 1)), 2) fun e ↦ W e := by
-        rw [I.isLawfulBelow_tower_iff (hne _)]
+        rw [I.isLawfulBelow_tower_iff (Seed.ne_univ_erase _)]
         simpa only [hWe] using hwC
       convert this using 1
       exact funext fun e ↦ hgb e (.inl e.2)
@@ -906,7 +904,7 @@ theorem exists_orbitCode_mem_catalogue_two {m : ℕ} (I : Seed.{u} α m)
       exact funext fun e ↦ by simp only [g, dite_eq_left e.2]
     · have : (I.tower 1).rows.IsLawfulBelow (univ.erase (Fin.castSucc (Fin.last m)), 2)
           fun e ↦ W e := by
-        rw [I.isLawfulBelow_tower_iff (hne _)]
+        rw [I.isLawfulBelow_tower_iff (Seed.ne_univ_erase _)]
         simpa only [hWe] using hwD
       convert this using 1
       exact funext fun e ↦ hgb e (.inr e.2)
