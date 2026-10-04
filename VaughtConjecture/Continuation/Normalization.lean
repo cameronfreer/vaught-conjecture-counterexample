@@ -23,7 +23,8 @@ is the formal top (`StageType.label_mem_block`).
 **Rooted covers.**  A **rooted cover** of `c` in `S` is a triple `x = (m, q, f)` — a stage type
 `q` at `λ_η` on `m` points and an embedding `f : Fin k ↪ Fin m` — such that `c` extends to a cover
 of `x` in `S` (`Realization.ExtendsToCover`): some tuple `s` covering `q` in `S` has `s ∘ f = c`.
-A tuple with a repeated coordinate has no rooted cover (`Realization.ExtendsToCover.injective`).
+A tuple with a repeated coordinate has no rooted cover (`Realization.ExtendsToCover.injective`,
+in `VaughtConjecture.Realization.Expansion`).
 
 **Forcing and the provisional offset** (`VaughtConjecture.Stage.Threshold`).  A rooted cover
 `(m, q, f)` **forces** the threshold `n` at `d` when every stage type at `λ_{η+1}` reducing to `q`
@@ -50,7 +51,8 @@ family of rooted covers is not needed by any statement here and is not formalize
   consistency alone, a rooted cover forcing `n` at `d` gives `λ_η + n ≤ t.label d`.  It holds for
   any stage `α` and any stage `β` that is zero or a limit.
 * **Realizing a donor's reduction**
-  (`Realization.HasFiniteExtensionReceiving.extendsToCover_reduce`): with finite-extension
+  (`Realization.HasFiniteExtensionReceiving.extendsToCover_reduce`, in
+  `VaughtConjecture.Realization.Expansion`): with finite-extension
   receiving, for a legal stage type `D` at the stage of `R` whose face along `g` is `t`, the
   reduction of `D`, with `g`, is a rooted cover of `c`.  Only the cutoff `λ_η` is
   used, and only the reduction of the received type is read: a member of the receiving family at
@@ -110,15 +112,7 @@ namespace Realization
 
 variable {α β : Ordinal.{u}} {M : Type v} {k : ℕ}
 
-/-! ### Rooted covers and soundness -/
-
-/-- A tuple that extends to a cover is injective: a tuple with a repeated coordinate has no rooted
-cover. -/
-theorem ExtendsToCover.injective {S : Realization.{u, v} β M} {c : Fin k → M}
-    {x : Σ m : ℕ, StageType.{u} β m × (Fin k ↪ Fin m)} (h : S.ExtendsToCover c x) :
-    Function.Injective c := by
-  obtain ⟨s, rfl, hs⟩ := h
-  exact hs.injective.comp x.2.2.injective
+/-! ### Soundness -/
 
 /-- **Soundness** (unconditional): under exact consistency, if `c` covers `t` in `R` and a rooted
 cover of `c` in the reduction of `R` to `β` forces `n` at `d`, then the label of `d` in `t` is at
@@ -138,20 +132,6 @@ theorem Covers.le_label_of_forcesThreshold {R : Realization.{u, v} α M} (hR : R
     exact congrFun hsc i
   rw [hct, hc.eval_eq] at hface
   exact hx.2 Q t hQq hface.symm d rfl
-
-/-- **Realizing a donor's reduction**: with finite-extension receiving, if `c` covers `t` in `R`
-and `t` is the face along `g` of a legal stage type `D` at the stage of `R`, then the reduction of
-`D` to a permitted cutoff `β` that is zero or a limit, with `g`, is a rooted cover of `c` in the
-reduction of `R` to `β`. -/
-theorem HasFiniteExtensionReceiving.extendsToCover_reduce {R : Realization.{u, v} α M}
-    (hrec : R.HasFiniteExtensionReceiving) (hβ : Order.IsSuccPrelimit β)
-    (hβα : Label.IsPermittedCutoff α (β : Label.{u})) {t : StageType.{u} α k} {c : Fin k → M}
-    (hc : R.Covers t c) {m : ℕ} {D : StageType.{u} α m} {g : Fin k ↪ Fin m} (hD : D.IsLegal)
-    (hg : StageType.restrictFace g D = some t) :
-    (R.reduce hβ).ExtendsToCover c ⟨m, D.reduce hβ, g⟩ := by
-  obtain ⟨u, hu, Q, hQ, huQ⟩ := hrec ⟨c, hc.injective⟩ t hc.eval_eq D g hD hg β hβα
-  refine ⟨u, funext fun i ↦ DFunLike.congr_fun hu i, covers_of_eval u ?_⟩
-  rw [reduce_eval, huQ, Option.map_some, StageType.reduce_eq_of_mem_receivingFamily hβ hQ]
 
 end Realization
 
