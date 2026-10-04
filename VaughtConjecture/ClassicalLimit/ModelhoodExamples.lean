@@ -8,7 +8,7 @@ import VaughtConjecture.ClassicalLimit.Modelhood
 /-!
 # Examples: modelhood of the reconstructed realization
 
-Roadmap, the section on the top-free witnesses, step 7; regression examples for
+Roadmap, the section on the top-free witnesses, step 7; examples for
 `VaughtConjecture.ClassicalLimit.Modelhood`.
 
 * At `ω`, the reconstructed realization of a Fraïssé limit of the age of top-free charts is a
@@ -19,7 +19,7 @@ Roadmap, the section on the top-free witnesses, step 7; regression examples for
   infinite, and no model at a stage `β > ω` reduces to it; at `λ₁` the same property at `λ₁`
   gives modelhood, and no model at `ω · 3` reduces to the reconstructed realization.
 * Infinitude from the plain coatom extension property alone, through receiving.
-* The reconstructed realization with its labels kept, at any higher stage, violates the uniformity
+* The reconstructed realization with its labels kept, at a higher stage, fails the uniformity
   clause at `γ = α`: no label in `[α, α + ω)` is realized over any occurrence.
 * That stage `0` is excluded is the example `not_isModel_of_hasFiniteCutReceiving_stage_zero` of
   `VaughtConjecture.Realization.ModelExamples`.
@@ -80,9 +80,11 @@ example {M : Type} [(hullLanguage.{0} (ω * 2)).Structure M]
   reduce_ne_reconstruct hage _ ((mul_lt_mul_iff_right₀ Ordinal.omega0_pos).mpr
     (by exact_mod_cast (show (2 : ℕ) < 3 by omega))) hS
 
-/-- **The witness with its labels kept at a higher stage is not a model**: a realization at `β`
-whose reduction to `α` is the reconstructed realization realizes no label in `[α, α + ω)` over
-any occurrence, so it violates the uniformity clause at `γ = α`. -/
+/-- **The witness with its labels kept at a higher stage fails the uniformity clause at
+`γ = α`**: a realization at `β` whose reduction to `α` is the reconstructed realization realizes no
+label in `[α, α + ω)` over any occurrence.  This is a clause of a model at `β` only when `α < β`;
+for `β ≤ α` the statement holds but that clause is not asked, and it is vacuous when the
+realization has no occurrence. -/
 example {α β : Ordinal.{0}} {M : Type} [(hullLanguage.{0} α).Structure M]
     (hage : (hullLanguage.{0} α).age M ⊆ topFreeAge α) (hα : Order.IsSuccPrelimit α)
     {S : Realization.{0, 0} β M} (hS : S.reduce hα = reconstruct α M) (x : S.Occurrence) :

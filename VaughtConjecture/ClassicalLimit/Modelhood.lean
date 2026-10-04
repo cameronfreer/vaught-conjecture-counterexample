@@ -30,16 +30,20 @@ extension within the age is used for receiving, and is not part of the conclusio
 The proof is at the stage `α` itself.  Modelhood at `α` does not follow from the cap-to-model
 theorem at `ω` applied to the reduction to `ω`: the labels at least `ω` become the formal top
 there, and the uniformity and dominance clauses for `γ ≥ ω` are lost.  Nor does it follow from
-modelhood of the reductions to the lower block stages, which for this realization are known to be
-models only as reductions of a model at `α` (`Realization.IsModel.reduce`): that would be circular.
+modelhood of the reductions to the lower nonzero limit stages `β < α`, although each of them is a
+model by the same theorem at `β`: when `α = λ + ω` is the block stage after a stage `λ`, every
+lower nonzero limit stage is at most `λ`, so the clauses for `γ` in the last block `[λ, α)` are
+invisible to every lower reduction; when `α` is a limit of block stages, that route would need the
+nonemptiness hypotheses at every lower stage and a lemma lifting modelhood from all lower
+reductions, which is not available here.
 
 **From the coatom extension property with apex** (`isModel_reconstruct_of_hasApexCoatomExtensions`).
 The plain coatom extension property gives the uniformity instances
 (`StageType.nonempty_cofaces_inter_uniformityFamily`), and the form with apex the dominance
 instances (`StageType.nonempty_cofaces_inter_dominanceFamily`), at every legal type, top-free or
-not.  Under the coatom extension property with apex at `α`, a Fraïssé limit of the age of top-free
-charts exists (`exists_isFraisseLimit_topFreeAge`, for a countable limit stage `α`), and its
-reconstructed realization is a model.
+not.  A Fraïssé limit of the age of top-free charts exists already under the plain coatom extension
+property at a countable nonzero limit stage `α` (`exists_isFraisseLimit_topFreeAge`); under the
+form with apex its reconstructed realization is a model.
 
 **Infinitude.**  A model at a positive stage is infinite (`Realization.IsModel.infinite`).
 Without the nonemptiness hypotheses, the plain coatom extension property gives a coface of every
@@ -51,10 +55,11 @@ point (`infinite_of_age_eq_of_hasCoatomExtensions`, from
 zero or a limit is not the reduction of a model at any higher stage `β > α`: the uniformity clause
 of that model at `γ = α` realizes a label at least `α`, which becomes the formal top in the
 reduction (`Realization.IsModel.exists_not_isTopFree_reduce`), while every reconstructed type is
-top-free (`isTopFree_of_reconstruct_eval`).  This uses only top-freeness and that one clause of the
-higher model: neither modelhood of the reconstructed realization nor any uniqueness of model
-expansions.  It is a statement about the realization, not the statement that the base reduct has
-no model expansion to a higher stage, which needs uniqueness of expansions at `α`.
+top-free (`isTopFree_of_reconstruct_eval`).  This uses only top-freeness, and of the higher model
+its uniformity clause at `γ = α` over an occurrence given by covering: neither modelhood of the
+reconstructed realization nor any uniqueness of model expansions.  It is a statement about the
+realization, not the statement that the base reduct has no model expansion to a higher stage,
+which needs uniqueness of expansions at `α`.
 
 **Not here.**  Placement of the witness in the loss `D_η \ D_{η+1}` of the expansion domains is
 still to be proved.  Membership in `D_η` is to come from modelhood at the block stage `λ_η` and
@@ -129,8 +134,8 @@ theorem isModel_reconstruct_of_hasApexCoatomExtensions (hext : HasApexCoatomExte
     (fun _ _ hp _ _ hγα ↦ nonempty_cofaces_inter_dominanceFamily hext hα.isSuccPrelimit hp hγα)
 
 /-- **Infinitude of the carrier from receiving** (roadmap, the top-free witnesses, step 7): for a
-structure whose age is the age of top-free charts and which is ultrahomogeneous, at a positive
-stage that is zero or a limit with the coatom extension property, the carrier is infinite.  Every
+structure whose age is the age of top-free charts and which is ultrahomogeneous, at a nonzero
+limit stage with the coatom extension property, the carrier is infinite.  Every
 legal type has a coface (`StageType.exists_extension`), and receiving it over an occurrence gives
 a new point.  Modelhood is not used. -/
 theorem infinite_of_age_eq_of_hasCoatomExtensions (hext : HasCoatomExtensions.{u} α)
@@ -146,8 +151,9 @@ theorem infinite_of_age_eq_of_hasCoatomExtensions (hext : HasCoatomExtensions.{u
 /-- **Terminality of the reconstructed realization** (roadmap, the top-free witnesses, step 7): for
 a structure whose age is contained in the age of top-free charts, at a stage `α` that is zero or a
 limit, no model at a higher stage `β > α` reduces to the reconstructed realization.  Only
-top-freeness of the reconstructed types and the uniformity clause of the higher model at `γ = α`
-are used (`Realization.IsModel.exists_not_isTopFree_reduce`); no uniqueness of model expansions. -/
+top-freeness of the reconstructed types and, of the higher model, its uniformity clause at `γ = α`
+over an occurrence given by covering are used (`Realization.IsModel.exists_not_isTopFree_reduce`);
+no uniqueness of model expansions. -/
 theorem reduce_ne_reconstruct (hage : (hullLanguage.{u} α).age M ⊆ topFreeAge α)
     (hα : Order.IsSuccPrelimit α) {β : Ordinal.{u}} (hαβ : α < β)
     {S : Realization.{u, 0} β M} (hS : S.IsModel) : S.reduce hα ≠ reconstruct α M := by

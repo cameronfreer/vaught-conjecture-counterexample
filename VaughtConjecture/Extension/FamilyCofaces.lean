@@ -99,7 +99,8 @@ theorem exists_onePoint_label {c : Ordinal.{u}} (hc : IsSelfVisible 1 (c : Label
     t.isLawful.min_const_of_isSelfVisible hgr hc, fun _ ↦ .inl ((min_le_right _ _).trans_lt ?_)⟩,
     isLegal_addApex _ one_pos, Fin.last _, Scheme.appendFullCellScheme_grade_last _ _, ?_⟩
   · exact_mod_cast hcα
-  · change min (t.label (Fin.last _)) _ = _
+  · -- the label of the capped type at the apex is `min ⊤ c`
+    change min (t.label (Fin.last _)) _ = _
     rw [addApex_label_last, min_top_left]
 
 /-- A legal stage type on one point is a coface of the stage type on no points. -/
@@ -154,6 +155,7 @@ theorem exists_apex_of_reindex {t : StageType.{u} α k} (e : Fin k ≃ Fin k) {j
   obtain ⟨a, ha, hmax⟩ := h
   refine ⟨t.cellMap e.toEmbedding a, ?_, fun b ↦ ?_⟩
   · rw [← t.toScheme.map_comap_gradedIndex e.toEmbedding a]
+    -- the scheme of `t.reindex e` is the restriction of the scheme of `t` along `e`
     change Prod.map _ id ((t.reindex e).toCellScheme.gradedIndex a) = _
     rw [ha]
     simp

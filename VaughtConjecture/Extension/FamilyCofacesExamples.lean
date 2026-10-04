@@ -8,7 +8,7 @@ import VaughtConjecture.Extension.FamilyCofaces
 /-!
 # Examples: nonempty uniformity and dominance instances
 
-Regression examples for `VaughtConjecture.Extension.FamilyCofaces`.
+Examples for `VaughtConjecture.Extension.FamilyCofaces`.
 
 * The one-point stage type with label `1` at `ω` is legal.
 * Over the stage type on no points, unconditionally: uniformity at `γ = 0` at stage `ω` (label
