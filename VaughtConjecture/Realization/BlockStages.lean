@@ -9,9 +9,10 @@ import VaughtConjecture.Stage.Countable
 /-!
 # Stage types at block stages: determination by reductions and by thresholds
 
-Roadmap, Layers 1–2 (stage reduction between block stages); the quantitative reconstruction
-pathway of `roadmap/COMPANIONS.md`, row 1 (the finite facts used at the limit, successor and base
-steps).
+Roadmap, Layers 1–2 (stage reduction between block stages); Layer 4, outputs 1–2 (a stage type at
+`λ_{η+1}` is determined by its reduction to `λ_η` and its thresholds); the quantitative
+reconstruction pathway of `roadmap/COMPANIONS.md`, row 1 (the finite facts used at the limit,
+successor and base steps).
 
 The block stages are `λ_ξ = ω + ω · ξ` (`blockStage`).  Three finite facts about stage types at
 block stages, each a statement about one type, with no realization involved:
@@ -32,7 +33,7 @@ block stages, each a statement about one type, with no realization involved:
 
 ## Placement
 
-`roadmap/COMPANIONS.md`, Further companion results, Quantitative reconstruction, row 1.
+This file belongs to Layer 2 of `roadmap/README.md`.
 -/
 
 universe u

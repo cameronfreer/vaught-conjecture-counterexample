@@ -5,9 +5,9 @@ Authors: Cameron Freer
 -/
 import InfinitaryLogic.Karp.CarrierTheorem
 import InfinitaryLogic.Lomega1omega.Theory
-import VaughtConjecture.Definability.BlockStages
 import VaughtConjecture.Definability.Syntax
 import VaughtConjecture.Language.HullOperations
+import VaughtConjecture.Realization.BlockStages
 
 /-!
 # Base-language formulas for the chart predicates at the block stages
@@ -135,20 +135,7 @@ theorem CoverThresholds.apply_congr {η : Ordinal.{0}} (U : CoverThresholds η) 
 
 namespace Realization
 
-variable {α : Ordinal.{0}} {M : Type w} {k : ℕ}
-
-/-- A tuple `c` **extends to a cover** of a triple `(m, q, f)` in `S` when some tuple `s` covering
-`q` in `S` restricts along `f` to `c`. -/
-def ExtendsToCover (S : Realization.{0, w} α M) (c : Fin k → M)
-    (x : Σ m : ℕ, StageType.{0} α m × (Fin k ↪ Fin m)) : Prop :=
-  ∃ s : Fin x.1 → M, s ∘ x.2.2 = c ∧ S.Covers x.2.1 s
-
-variable {R : Realization.{0, w} α M}
-
-/-- An injective tuple covers a stage type exactly when it is evaluated to it. -/
-theorem covers_iff_eval {t : StageType.{0} α k} (u : Fin k ↪ M) :
-    R.Covers t u ↔ R.eval u = some t :=
-  ⟨fun h ↦ h.eval_eq, covers_of_eval u⟩
+variable {α : Ordinal.{0}} {M : Type w} {k : ℕ} {R : Realization.{0, w} α M}
 
 /-- **The base relations of an expansion**: in an expansion `R` of `M`, a relation holds of a tuple
 exactly when the tuple is injective and the reduction to `ω` of its type is the stage type of the
