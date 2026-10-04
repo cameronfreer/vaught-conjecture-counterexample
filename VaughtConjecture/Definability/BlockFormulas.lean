@@ -5,9 +5,9 @@ Authors: Cameron Freer
 -/
 import InfinitaryLogic.Karp.CarrierTheorem
 import InfinitaryLogic.Lomega1omega.Theory
-import VaughtConjecture.Realization.BlockStages
 import VaughtConjecture.Definability.Syntax
 import VaughtConjecture.Language.HullOperations
+import VaughtConjecture.Realization.BlockStages
 
 /-!
 # Base-language formulas for the chart predicates at the block stages
@@ -34,13 +34,17 @@ model expansion `R` to `λ_{η+1}`, at every tuple `c` covering a type `t`, and 
 `t` that reduces to the formal top at `λ_η`, the label of `d` is at least `λ_η + n` exactly when `c`
 extends to a cover of some triple of `U (t↓λ_η) d n` in the reduction of `R` to `λ_η`.  So the new
 labels of the block are read off covers one block lower.  Block determination is expected to follow
-from Layer 4, outputs 1–2 (the stable candidate and normalization; `roadmap/README.md`, Layer 4),
-provided the stable value of a cell is the supremum over covers of an offset determined by the
-cover's type at `λ_η`, the coordinate embedding and the transported cell; that shape — the
-existential finite-data form of the threshold — is part of what remains to be proved.  An
-eventual-value construction that allows decreases does not by itself establish this existential
-finite-cover characterization; that characterization would then require a separate proof.  Here
-block determination is a hypothesis.
+from Layer 4, outputs 1–2 (the stable candidate and normalization; `roadmap/README.md`, Layer 4).
+Call a triple `(m, q, f)` to which `c` extends a cover in the reduction a **rooted cover** of `c`.
+The proviso on the shape of the data is met: the stable value of a cell is the supremum over rooted
+covers of an offset determined by the cover's type at `λ_η`, the coordinate embedding and the
+transported cell (`StageType.provisionalOffset`), and the stable label is at least `λ_η + n` exactly
+when a single rooted cover forces `n` — unconditionally (`Realization.coe_add_le_stableLabel_iff`).
+The conditional part is normalization, that the label equals the stable label
+(`Realization.label_eq_stableLabel`): it uses finite-extension receiving (from (R1)) and forcing
+donors (`ForcingDonors`), both still to be proved, and with them block determination holds for the
+forcing thresholds (`forcingThresholds_determines`, in
+`VaughtConjecture.Definability.BlockDetermination`).  Here block determination is a hypothesis.
 
 **The formulas** (`blockFormula U η hη t`, a formula of the base language with free variables
 `Fin k`, for a type `t` at `λ_η` on `k` points) are defined by recursion on `η`
@@ -135,20 +139,7 @@ theorem CoverThresholds.apply_congr {η : Ordinal.{0}} (U : CoverThresholds η) 
 
 namespace Realization
 
-variable {α : Ordinal.{0}} {M : Type w} {k : ℕ}
-
-/-- A tuple `c` **extends to a cover** of a triple `(m, q, f)` in `S` when some tuple `s` covering
-`q` in `S` restricts along `f` to `c`. -/
-def ExtendsToCover (S : Realization.{0, w} α M) (c : Fin k → M)
-    (x : Σ m : ℕ, StageType.{0} α m × (Fin k ↪ Fin m)) : Prop :=
-  ∃ s : Fin x.1 → M, s ∘ x.2.2 = c ∧ S.Covers x.2.1 s
-
-variable {R : Realization.{0, w} α M}
-
-/-- An injective tuple covers a stage type exactly when it is evaluated to it. -/
-theorem covers_iff_eval {t : StageType.{0} α k} (u : Fin k ↪ M) :
-    R.Covers t u ↔ R.eval u = some t :=
-  ⟨fun h ↦ h.eval_eq, covers_of_eval u⟩
+variable {α : Ordinal.{0}} {M : Type w} {k : ℕ} {R : Realization.{0, w} α M}
 
 /-- **The base relations of an expansion**: in an expansion `R` of `M`, a relation holds of a tuple
 exactly when the tuple is injective and the reduction to `ω` of its type is the stage type of the
@@ -171,12 +162,9 @@ on a carrier in the universe `w`, at every tuple `c` covering a type `t`, at eve
 reducing to the formal top at `λ_η`, and for every `n : ℕ`, the label of `d` is at least
 `λ_η + n` exactly when `c` extends to a cover of a triple of `U (t↓λ_η) d n` in the reduction of `R`
 to `λ_η`.  It is expected to follow from Layer 4, outputs 1–2 (the stable candidate and
-normalization), at the block `η`, provided the stable value of a cell is the supremum over covers of
-an offset determined by the cover's type at `λ_η`, the coordinate embedding and the transported
-cell; that shape — the existential finite-data form of the threshold — is part of what remains to
-be proved.  An eventual-value construction that allows decreases does not by itself establish this
-existential finite-cover characterization; that characterization would then require a separate
-proof. -/
+normalization), at the block `η`: for the forcing thresholds it follows from normalization, which
+uses finite-extension receiving (from (R1)) and forcing donors at `η`, both still to be proved
+(`forcingThresholds_determines`). -/
 def CoverThresholds.Determines {η : Ordinal.{0}} (U : CoverThresholds η) : Prop :=
   ∀ ⦃M : Type w⦄ [baseLanguage.{0}.Structure M] (R : ModelExpansion M (blockStage (η + 1)))
     ⦃k : ℕ⦄ (t : StageType.{0} (blockStage (η + 1)) k) (c : Fin k → M), R.1.Covers t c →
