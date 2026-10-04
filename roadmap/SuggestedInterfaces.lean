@@ -381,7 +381,9 @@ set_option linter.hashCommand false in
 -- The stabilization ordinal (`Scott/Sentence`) and the Scott height (`Scott/Height/Defs`) of a
 -- countable structure, at the pin `e460cb6` (signatures checked), with the Scott formula's rank
 -- bound and characterization: the notions of the prospective one-sided rank comparison
--- (`COMPANIONS.md`, "Further companion results").  `stabilizationOrdinal M` is the least level at
+-- (`COMPANIONS.md`, "Further companion results"); `stabilizationOrdinal_spec` and
+-- `stabilizationOrdinal_lt_omega1'` (`Scott/RefinementCount`) give the per-class isolation level of
+-- the Scott route (`README.md`, manuscript correspondence, item 5).  `stabilizationOrdinal M` is the least level at
 -- which empty-tuple back-and-forth equivalence with `M` characterizes `M` among the countable
 -- structures in its carrier universe (`StabilizesAt`); `scottHeight M` the least level from which
 -- back-and-forth equivalence of tuples of every length no longer refines.  Neither is
@@ -391,6 +393,10 @@ set_option linter.hashCommand false in
 #check FirstOrder.Language.StabilizesAt
 set_option linter.hashCommand false in
 #check FirstOrder.Language.stabilizationOrdinal
+set_option linter.hashCommand false in
+#check FirstOrder.Language.stabilizationOrdinal_spec
+set_option linter.hashCommand false in
+#check FirstOrder.Language.stabilizationOrdinal_lt_omega1'
 set_option linter.hashCommand false in
 #check FirstOrder.Language.scottHeight
 set_option linter.hashCommand false in
