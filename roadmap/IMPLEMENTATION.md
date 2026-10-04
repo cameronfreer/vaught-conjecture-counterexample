@@ -931,9 +931,9 @@ this roadmap.  An application is claimed only where a compiled theorem applying 
 named (`README.md`, Layer 0):
 
 - **InfinitaryLogic**: the current pin is `e460cb6`, the merge of its pull request #162, reached
-  from `cf80917` (the merge of its pull request #156) by the repin pull request "Repin
-  InfinitaryLogic to e460cb6"; `cf80917` was reached from `def5cc0` (the merge of its pull
-  request #152) by this repository's pull request #63;
+  from `cf80917` (the merge of its pull request #156) by this repository's pull request #97;
+  `cf80917` was reached from `def5cc0` (the merge of its pull request #152) by this repository's
+  pull request #63;
   `def5cc0` was reached from `8a15ca5` (the merge of its pull request #148) by this repository's
   pull request #49, and `8a15ca5` from `098fb36` (the merge of its pull request #146) by this
   repository's pull request #45.  The statements of `8a15ca5` are available at our pinned
