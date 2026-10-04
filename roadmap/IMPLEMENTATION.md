@@ -990,9 +990,10 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     the injectivity of model reduction (the inequality step of row 35, then 5 ⇒ 1 of row 34),
     with no further stabilization argument.  The terminal presentations come from either of two
     distinct stopping proofs, both prospective: (i) the countable-slot argument (the termination
-    argument of [AFK26], whose conclusion is global termination), or (ii) the Scott route of
-    row 40.  Neither uses positive niceness, and neither is a dependency of the expansion-domain
-    endpoint.
+    argument of [AFK26]; its conclusion is eventual departure, the stopping half of global
+    termination, and not terminal fullness, which is the first special statement; `README.md`,
+    "The persistent core"), or (ii) the Scott route of row 40.  Neither may use positive niceness,
+    and neither is a dependency of the expansion-domain endpoint.
 31. Prospective: no declaration of this repository states it.  Its ingredients for labels are
     compiled in this repository (theorem named): `Label.reduce_eq_self_iff` (fixed by projection
     exactly at the labels of the stage), and `Label.reduce_reduce_of_le`, `Label.atStage_reduce`
@@ -1068,7 +1069,8 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
 39. Prospective as a combined statement, which is not named, in two forms: carrier-general (a
     base structure on any carrier, with `ξ < ω₁` an explicit hypothesis) and coded (codes on
     `ℕ`, where `ξ < ω₁` follows from `Expansion.expansionDomain_eq_empty`).  Its ingredients are
-    compiled in this repository (declaration named): `Expansion.mem_expansionDomain_iff` and
+    compiled in this repository (theorem named; `ModelExpansion.map` is a definition):
+    `Expansion.mem_expansionDomain_iff` and
     `Expansion.expansionDomain_eq_empty` (`Expansion/Domains`), `ModelExpansion.map` and
     `ModelExpansion.val_eq_toRealization` (`Realization/Expansion`), and either
     `ModelExpansion.subsingleton` (`Expansion/Uniqueness`), conditional on
@@ -1084,20 +1086,27 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
 40. Prospective.  The second stopping proof of note 30.  Scott isolation for one class, at the
     pin: `stabilizationOrdinal_spec` with `stabilizationOrdinal_lt_omega1'` (signatures not yet
     checked by CI), or `scottSentence_characterizes` with `scottFormula_qrank_le` and
-    `BFEquiv_implies_agreeQR` (signatures checked); `BFEquiv.monotone` lowers the level.  The
+    `BFEquiv_implies_agreeQR` (signatures checked), the latter form also using
+    `stabilizationOrdinal_lt_omega1'` for the hypothesis of `scottFormula_qrank_le`;
+    `BFEquiv.monotone` lowers the level (available at the pin, signatures not yet checked by
+    CI).  The pending repin change `#check`s `stabilizationOrdinal_spec` and
+    `stabilizationOrdinal_lt_omega1'`; they become "signatures checked" once it merges.  The
     isolating level of a countable family (`exists_isolating_level`, `Scott/IsolatingLevel`,
     available upstream at `e460cb6`; "Dependency pins") is not used, so the route does not wait
-    on a repin.  Comparison: `Expansion.bfEquiv_of_modelExpansions` and
-    `ExpansionDomains.hasLogicalAgreement_of_modelExpansions`, conditional on
+    on a repin.  Comparison: `Expansion.bfEquiv_of_modelExpansions`, and its agreement form on
+    the sentences of quantifier rank at most `β`, `Expansion.mem_modelsOf_iff_of_modelExpansions`
+    for codes or `Expansion.realize_iff_of_modelExpansions` for any carriers, each conditional on
     `Expansion.FiniteExtensionReceiving`.  Losses: `hasNonemptyLosses_of_hasApexCoatomExtensions`,
     conditional on `CapToModel`, `StageType.HasApexCoatomExtensions`, and
     `Expansion.NextBlockUniqueness`.  From the base to a code on `ℕ`: the conversion between the
-    two encodings (still to be proved), `CapToModel.infinite` and
+    two encodings (still to be proved), the density sentence for the base structure
+    (`realize_toStructure_densitySentence_iff`, with (R1)), `CapToModel.infinite` and
     `exists_mem_modelsOf_densitySentence_equiv_of_capToModel` (`MainTheorem/Assembly`,
     conditional on `CapToModel`), `ModelExpansion.map`, and `Expansion.mem_expansionDomain_iff`.
     Attainment: `Realization.IsModel.reduce` and `ModelExpansion.nonempty_of_forall_lt`, the
     latter conditional on `Expansion.NextBlockUniqueness`.  These are compiled in this repository
-    (declaration named), except the library statements and the conversion; their hypotheses are
+    (theorem named; `ModelExpansion.map` is a definition), except the library statements and the
+    conversion; their hypotheses are
     still to be proved.  The strict bound on serving stages, the attainment for a literal base,
     and positive niceness (5 ⇒ 1 of row 34) are prospective.  The route proves stopping for each
     base that is a model as its conclusion and assumes no termination; it is not a dependency of

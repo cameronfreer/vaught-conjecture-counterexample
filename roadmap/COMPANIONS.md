@@ -714,11 +714,12 @@ is compiled conditionally on block determination (below).  None is an input to t
   form is the uniform fixing stage of `README.md`, "Manuscript correspondence (required)", item 5,
   "Uniform fixing bounds from positive niceness" (prospective), which uses no termination; there
   termination can enter only through the construction of positive niceness (milestone 2): as
-  global termination when milestone 2 is taken from the countable-slot argument, and only as a
+  the stopping half of global termination (eventual departure for every class, not terminal
+  fullness) when milestone 2 is taken from the countable-slot argument, and only as a
   conclusion, proved for each base from conditions 3 and 4, when it is taken from the Scott route
   to maximal presentations (`README.md`, item 5; prospective), whose strict bound on serving
   stages is eventual departure (1 above) read for one class, followed by greatest-stage
-  attainment.  For
+  attainment (bounded-stage attainment, 4 ⇒ 5 of the five criteria there).  For
   one literal base that is a model, a bound of this kind over all its model presentations is
   equivalent to a maximal presentation of the base (criteria 3 and 5 of `README.md`, item 5,
   "Maximal presentations: equivalent criteria, uniqueness, the optimal bound"; prospective),
