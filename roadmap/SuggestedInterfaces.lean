@@ -233,10 +233,11 @@ set_option linter.hashCommand false in
 set_option linter.hashCommand false in
 #check FirstOrder.Language.age.fg_substructure
 
--- InfinitaryLogic at our pinned dependency `def5cc0` (signatures checked): uniform
+-- InfinitaryLogic at our pinned dependency `cf80917` (signatures checked): uniform
 -- back-and-forth separation of analytic sets of nonisomorphic pairs of codes
--- (`Descriptive/BFSeparation`); its compiled application is `isThinOn_of_countable_bfClasses`
--- (`VaughtConjecture.MainTheorem.Scatteredness`; `README.md`, Layer 6).
+-- (`Descriptive/BFSeparation`); it enters the compiled `isThinOn_of_countable_bfClasses`
+-- (`VaughtConjecture.MainTheorem.Scatteredness`; `README.md`, Layer 6) through InfinitaryLogic's
+-- `isThinOn_of_bfScattered`, which that theorem quotes.
 set_option linter.hashCommand false in
 #check FirstOrder.Language.exists_uniform_bfSeparation
 set_option linter.hashCommand false in
@@ -526,14 +527,17 @@ set_option linter.hashCommand false in
 
 -- Thinness from countably many back-and-forth classes at every level (InfinitaryLogic,
 -- `Descriptive/BFScattered` and `Descriptive/BFScatteredSentence`), available at the pin `cf80917`
--- (signatures checked; no application compiled in this repository).  `BFScattered K`: for every
--- `η < ω₁` the restriction of `codeBFEquivSetoid L η` (the library's `CodeBFEquiv η` as an
--- equivalence relation) to `K` has countably many classes, with no definability of `K`; for
--- countably many relation symbols such a `K` is thin, and so is a sentence whose coded models fall
--- into countably many classes of `bfEquivSetoid φ η` (the restriction, `bfEquivSetoid_eq_comap`)
--- at every level.  It serves the scatteredness form of thinness (`README.md`, Layer 6): it is the
--- generic form of `isThinOn_of_countable_bfClasses` and `isThinOnNatModels_of_countable_bfClasses`
--- (`MainTheorem/Scatteredness`), which are not yet stated through it.
+-- (signatures checked).  `BFScattered K`: for every `η < ω₁` the restriction of
+-- `codeBFEquivSetoid L η` (the library's `CodeBFEquiv η` as an equivalence relation) to `K` has
+-- countably many classes, with no definability of `K`; for countably many relation symbols such a
+-- `K` is thin, and so is a sentence whose coded models fall into countably many classes of
+-- `bfEquivSetoid φ η` (the restriction, `bfEquivSetoid_eq_comap`) at every level.  It serves the
+-- scatteredness form of thinness (`README.md`, Layer 6), and its compiled applications in this
+-- repository are quotations (`MainTheorem/Scatteredness`): `isThinOn_of_countable_bfClasses` of
+-- `isThinOn_of_bfScattered` (its hypothesis is `BFScattered K` by definition),
+-- `isThinOnNatModels_of_countable_bfClasses` of `Sentenceω.isThinOnNatModels_of_bfScattered`,
+-- `bfEquivSetoid_eq_comap` of its namesake, and the local `codeBFEquivSetoid` is this one by
+-- definition.
 set_option linter.hashCommand false in
 #check FirstOrder.Language.BFScattered
 set_option linter.hashCommand false in
@@ -549,8 +553,9 @@ set_option linter.hashCommand false in
 -- Mathlib imports only), available at the pin `cf80917` (signatures checked): in a complete,
 -- second-countable metric space it is the continuum.  Same name and statement as before its move
 -- from `Descriptive/PerfectAntichain`; it is applied in `MainTheorem/Scatteredness`
--- (`not_countable_of_perfect`, a nonempty perfect set of codes is uncountable) for the
--- scatteredness form of thinness (`README.md`, Layer 6).
+-- (`not_countable_of_perfect`, a nonempty perfect set of codes is uncountable), a lemma of the
+-- scatteredness form of thinness (`README.md`, Layer 6) kept with its statement and no longer used
+-- by the thinness theorems, which quote InfinitaryLogic.
 set_option linter.hashCommand false in
 #check Perfect.mk_eq_continuum
 

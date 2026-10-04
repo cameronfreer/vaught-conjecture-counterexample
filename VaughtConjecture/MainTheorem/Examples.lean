@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.MainTheorem.Assembly
+import VaughtConjecture.MainTheorem.CapToModel
 
 /-!
 # Examples of the conditional composition
@@ -54,6 +55,10 @@ For the full-presentation route:
   `η < ω₁`.  The level is not computed here: `1` suffices (a point of `M S` and a point of `M T`
   have the same atomic type only if `S = T`), while `0` does not (the empty tuples satisfy no
   atomic formula).
+
+For the hypothesis `CapToModel`: under the coatom extension property with apex at `ω`
+(`CapToModel.of_hasApexCoatomExtensions`), the models of the density sentence on the carriers of
+`Type 1` are infinite.
 -/
 
 namespace VaughtConjecture.MainTheorem
@@ -417,6 +422,12 @@ example (D : ExpansionDomains DensityClass)
       θ.qrank ≤ η → (densityTruth θ p ↔ densityTruth θ q)) :
     D.HasLogicalAgreement densityTruth :=
   .of_qrank_le h
+
+/-- The cap-to-model theorem at `ω`, for the carriers of `Type 1`, from the coatom extension
+property with apex at `ω`: the models of the density sentence there are infinite. -/
+example (hext : StageType.HasApexCoatomExtensions.{0} ω) {M : Type 1}
+    [baseLanguage.{0}.Structure M] (h : baseLanguage.densitySentence.Realize M) : Infinite M :=
+  (CapToModel.of_hasApexCoatomExtensions.{1} hext).infinite h
 
 end Examples
 
