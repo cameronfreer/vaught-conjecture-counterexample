@@ -828,7 +828,7 @@ grade at most `j`, to a labelling lawful below `(univ, j)` in the scheme reached
 
 It is the extension from the boundary that the step to the grade `j + 1` uses at the positive caps
 (`Seed.extendsFromBoundary_tower_of_twoFaceLift`), read on the scheme before the layer, and
-equivalent to that consumed hypothesis (`Seed.twoFaceLift_iff_extendsFromBoundary`):
+equivalent to that hypothesis of the step (`Seed.twoFaceLift_iff_extendsFromBoundary`):
 
 * `a` ranges over the catalogue entries at the grade `j + 1`, not over all lawful labellings: the
   ambient at a positive cap is the row of a cell of the new layer, which reads its entry on the
@@ -1174,7 +1174,7 @@ theorem extendsFromBoundary_tower_of_twoFaceLift {x y : Fin (m + 2)}
     (fun _ ha _ hwU hwV hag ↦ I.exists_isLawfulBelow_of_twoFaceLift hx hy hxy h2 ha hh hs hbot
       hwU hwV hag) hu
 
-/-- **`2FL(j)` is the extension from the boundary that the step consumes.**  The two-face lift
+/-- **`2FL(j)` is the extension from the boundary used by the step.**  The two-face lift
 `2FL(j)` holds if and only if, along the row of every new cell of graded index `(univ, j + 1)`, at
 every cap `h` self-visible and short at `j + 1` with `⊥ < h`, every labelling lawful below the two
 coatoms at the grade `j + 1` that agrees with the row capped at `h` on their cells extends,
@@ -1183,7 +1183,7 @@ everywhere.  The right-hand side is the clause of the hypothesis on the rows tha
 `Seed.towerInvariant_succ` passes to `CellScheme.Rows.cappedLift_of_boundary_short` at the
 positive caps.
 
-So `2FL(j)` is exactly that consumed hypothesis, read on the scheme reached after the grade `j`:
+So `2FL(j)` is exactly that hypothesis of the step, read on the scheme reached after the grade `j`:
 it is broader than what the construction of the step meets only in the universal quantifiers over
 the boundary labelling, the row and the short cap, which the generic one-grade lift forces.  The
 forward direction is `Seed.extendsFromBoundary_tower_of_twoFaceLift`.  Conversely, a catalogue
