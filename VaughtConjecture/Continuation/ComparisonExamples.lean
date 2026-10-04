@@ -12,9 +12,10 @@ import VaughtConjecture.Continuation.Comparison
 * **Cutoff receiving is not exact without rigidity.**  At a limit stage, capping a stage type `d`
   with a top cell at an ordinal above its other labels (`StageType.cap`) gives a member of the
   receiving family of `d` at a cutoff above those labels, with the same face on no points, that
-  differs from `d`: the hypotheses of `StageType.eq_of_mem_receivingFamily_of_isRigidCoreIn` other
-  than rigidity hold, and its conclusion fails.  So, for legal `d`, the empty core is not rigid in
-  `d`: rigidity is what makes receiving exact, and this recovers one direction of
+  differs from `d`.  For legal `d`, the hypotheses of
+  `StageType.eq_of_mem_receivingFamily_of_isRigidCoreIn` other than rigidity hold (a stage type is
+  lawful, not necessarily legal), and its conclusion fails.  So, for legal `d`, the empty core is
+  not rigid in `d`: rigidity is what makes receiving exact, and this recovers one direction of
   `StageType.isRigidCoreIn_empty_iff_isTopFree`.
 * **Transport.**  The rigid-core comparison of `R` with its transport `R.map e`: finite-extension
   receiving and globally rigid cores are carried along `e`.
