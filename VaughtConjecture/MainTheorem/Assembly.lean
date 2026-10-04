@@ -33,11 +33,13 @@ for a family `D ξ` of sets of classes indexed by the ordinals `ξ < ω₁`, whe
 set of classes admitting a model expansion to the stage `ω + ω · ξ`:
 
 * `ExpansionDomains` (reduction item 1; Layer 5): `D 0` is every class, the domains decrease, and
-  at a nonzero limit below `ω₁` the domain contains the intersection of the earlier ones.  Layer 5
-  is to prove this for the actual expansion domains, the limit clause by the coherent
-  countable-limit expansions (checkpoint 5, unique limit expansions).  As for a `Filtration`, the
-  domains at and above `ω₁` are empty, so expansion domains are determined by their stages below
-  `ω₁` (`ExpansionDomains.ext`).
+  at a nonzero limit below `ω₁` the domain contains the intersection of the earlier ones.  For the
+  actual expansion domains this is proved in `VaughtConjecture.MainTheorem.ModelExpansionDomains`
+  (`modelExpansionDomains`), conditional on the cap-to-model theorem (for `D 0`) and on next-block
+  uniqueness of models (for the limit clause, through unique limit expansions; Layer 4, output 2;
+  checkpoint 5), both still to be proved.  As for a `Filtration`, the domains at and above `ω₁`
+  are empty, so expansion domains are determined by their stages below `ω₁`
+  (`ExpansionDomains.ext`).
 * `ExpansionDomains.HasCountableLosses` (reduction item 2; **terminal countability**): each
   successor loss `D ξ \ D (ξ + 1)` below `ω₁` is countable.  Layer 5 is to map each loss into the
   terminal classes at a fixed stage, and Layer 4 to count those by the countable family of
@@ -66,8 +68,10 @@ set of classes admitting a model expansion to the stage `ω + ω · ξ`:
   from the lower bound (`ExpansionDomains.HasNonemptyLosses.hasModelOnNat`).
 * `CapToModel` (the **cap-to-model theorem** of Layer 3, item 3.4; checkpoint 4): a realization at
   stage `ω` with legal types on a nonempty carrier that is exactly consistent, covering, and has
-  the finite-cut receiving property is a model.  It is used only for the absence of finite models
-  of the density sentence, hence for the reduction of every countable model to a code.
+  the finite-cut receiving property is a model.  In the compositions here it is used only for the
+  absence of finite models of the density sentence, hence for the reduction of every countable
+  model to a code; for the actual expansion domains it also gives `D 0 = univ`
+  (`Expansion.expansionDomain_zero`, through `CapToModel.{0}`).
 
 Scott separation and descriptive separation are not hypotheses: they are proved in
 `VaughtConjecture.MainTheorem.Spectrum` (`classTruth_separates`,
