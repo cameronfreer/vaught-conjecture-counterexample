@@ -1050,8 +1050,19 @@ is complete because a later one is.
    constant family of the all-undefined assignment, fixed at `0` and serving at every index)
    compiled as an example.
 5. *The separate statements:* the existence and coverage of maximal presentations, the terminal
-   comparison, and noncollapse each proved by its own argument; no statement of 1–4 is cited for
-   them, and no presentation at the supremum of the serving indices is inferred from 4.
+   comparison, and noncollapse each proved by its own argument, with its dependencies stated.  The
+   bounds of 2–4 are not sufficient for any of them alone; they are cited only with the additional
+   hypotheses named in the milestone.  Existence by bounded-stage attainment (for the model
+   presentations of one base): 4 with a model base, downward model reduction
+   (`Realization.IsModel.reduce`), the injectivity of model reduction at each countable index
+   (`ModelExpansion.subsingleton`, conditional on `Expansion.NextBlockUniqueness`), and limit
+   coherence (`ModelExpansion.nonempty_of_forall_lt`, under the same hypothesis); coverage by
+   this route applies it to a model base of every base class.  Noncollapse by the alternative
+   route (`COMPANIONS.md`, "An alternative route to the lower bound"): the uniform fixing stage
+   of 3, as the bound for each class of step (iv), with steps (i)–(iii) there (fixing ranks of
+   realized charts cofinal in `ω₁`) and the bounded-levels criterion.  No presentation at the
+   supremum of the serving indices is inferred from 4 alone, and the default noncollapse
+   statement (nonempty losses) cites none of 1–4.
 
 ## Upstream building blocks
 

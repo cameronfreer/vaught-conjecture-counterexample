@@ -1108,7 +1108,8 @@ is compiled conditionally on block determination (below).  None is an input to t
   the supremum of fixing ranks below it and is not attained.  Neither statement identifies a fixing
   rank or a height with a Scott rank.  Accordingly a bound of serving indices (`README.md`,
   "Manuscript correspondence (required)", item 5, "Uniform fixing bounds from positive niceness",
-  milestone 5; prospective) supplies no presentation at its supremum.
+  milestone 5; prospective) supplies by itself no presentation at its supremum; attainment of a
+  greatest serving index needs the additional hypotheses named there.
 
   *Charts of every fixing rank* (a finite target, still to be proved, with the definitions of
   "Fixing ranks of finite charts").  On one fixed legal scheme on one point (a domain of arity one,
