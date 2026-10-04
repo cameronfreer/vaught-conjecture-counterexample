@@ -27,7 +27,7 @@ document.
 | Layer 6, Summit 6: the upper and lower bounds | 5 and the spine | 6 |
 | (none; companions) | milestones A–C (`COMPANIONS.md`) | not core checkpoints |
 | Reduction to full presentations | the full-presentation route (below) | its own order (below) |
-| Manuscript correspondence (required) | the manuscript concordance (below) | its own completion criteria (below) |
+| Manuscript correspondence (required) | the concordance (below) | its own criteria (below) |
 
 The general results of Layer 0 are used in layers 1 (lifting), 2 (finite hulls), 3 (the
 classical limit: Fraïssé existence, ultrahomogeneous extension, factorization of tuples through
@@ -72,9 +72,11 @@ The core is complete only after every finite construction, realization over a ro
 donor labels, syntax correspondence, the equivalence of the density sentence with the four-family
 sentence (layer 2), the top-free witness at every countable block (obtained by finite-age
 reconstruction from a classical limit, meeting its acceptance criterion), and statement of the main
-theorem below is proved.  Completion is not limited to the signatures in the sketches.  Each
-definition needs its usable basic API: projections, extensionality, identity/composition,
-restriction, transport, and representative examples.
+theorem below is proved.  Completion is not limited to the signatures in the sketches.  The
+manuscript correspondence ("Manuscript concordance" below) is required for the claim that the
+development matches [Kni26] and [AFK26], not for the main theorem, and has its own completion
+criteria.  Each definition needs its usable basic API: projections, extensionality,
+identity/composition, restriction, transport, and representative examples.
 
 Under-specified extensions are not part of this roadmap.  Separate companion roadmaps may cover the
 definability consequences of the hull operations and hull cardinality (`HULL_ALGEBRA.md`, §4; the
@@ -804,86 +806,195 @@ statements are specified here, generically, with no construction):
 ## Manuscript concordance
 
 The milestone of `README.md`, "Manuscript correspondence (required)", spans layers 2–5 here (layers
-2–6 of `README.md`).  Its declaration-level concordance is the table below: each notion of the
-manuscript ([Kni26] and [AFK26], cited only by numbered statements already cited in the roadmap)
-that the proof uses, the declaration of this repository that corresponds to it (or *prospective*),
-and one of three statuses:
+2–6 of `README.md`).  It concerns the correspondence with [Kni26] and [AFK26], kept distinct: each
+row of the concordance below names its source, and both are cited only by the numbered statements
+the roadmap already cites (those of [Kni26] are listed in `LITERATURE.md`, "Bibliographic access
+record"); a notion with no numbered statement is named by its source and described in words.  Each
+row gives a notion of the manuscript that the proof uses, the declarations of this repository that
+concern it (or *prospective*), and one of three statuses:
 
-- **proved correspondence**: a theorem of this repository is named that identifies the two
-  notions, or proves the manuscript's statement; a definition transcribed clause by clause is
-  marked *by definition*, with the definition named, and its acceptance is the check of its clauses
-  against the manuscript;
-- **corrected manuscript definition**: the manuscript's definition is replaced by a corrected one,
-  the correction recorded where named; a theorem relating the two is listed when one exists;
-- **still to be proved**: neither of the above yet; a conditional theorem is named with its
-  hypotheses, each still to be proved.
+- **proved correspondence** (P): a theorem of this repository is named that compares the
+  manuscript's notion with a declaration here clause by clause, or a definition-level
+  identification is named: a declaration with one clause for each clause of the manuscript's
+  definition, the comparison of the clauses recorded with the declaration, every departure from a
+  printed clause proved equivalent to it by a named theorem, and every notion its clauses use
+  itself in proved correspondence or corrected;
+- **corrected manuscript definition or statement** (C): the manuscript's definition or statement is
+  replaced by a corrected one, the correction recorded where named; a theorem relating the two is
+  listed when one exists;
+- **still to be proved** (S): every other row.  In particular, existing citation numbers alone do
+  not establish a correspondence (a docstring citing a numbered statement records what a
+  declaration is meant to state, not that it states it), and a compiled declaration with the same
+  role as the manuscript's notion is not evidence of fidelity to the manuscript without the
+  clause-by-clause comparison; a row whose only evidence is such a declaration, or a conditional
+  theorem whose hypotheses are still to be proved, has this status.
 
-The availability markers are those of `README.md`, Layer 0; an argument known only outside this
-repository is prospective here.  Rows are added as notions are reached; a row changes status only
-when the theorem it names is compiled in this repository.
+The availability markers are those of `README.md`, Layer 0; an argument with no theorem named in
+this repository is prospective here.  Rows are added as notions are reached.  A row becomes P only
+when the theorem or the definition-level identification that performs the comparison is named, and
+becomes C only when the correction is recorded.  No row is P at present: the rows whose declaration
+carries the manuscript's number but whose clauses have not been compared are S, with the compiled
+declarations listed in the notes.
 
-| Manuscript notion | This repository | Status |
-| --- | --- | --- |
-| Observation index `ξ` | the stage `blockStage ξ`, defined as `ω + ω * ξ`; `blockStage_eq_mul : blockStage ξ = ω * (1 + ξ)`, `blockStage_zero`, `blockStage_add_one` (`Realization/Expansion`) | still to be proved (that this is the manuscript's indexing; item 1); the identities are compiled in this repository (theorem named) |
-| Visibility replacement [Kni26, Definition 2.2.3] | `Label.visibilityReplace` (`Label/Visibility`) | proved correspondence, by definition |
-| Witnesses and transformation [Kni26, Definition 2.3.9] | `Label.IsWitness` (`Label/Transform`); guarded composition only (`README.md`, layer 1) | proved correspondence, by definition |
-| Lawful labellings [Kni26, Definition 2.5.4]; orderly labellings [Kni26, Definition 2.3.4] | `CellScheme.Rows.IsLawful` (`Scheme/Row`) | proved correspondence, by definition |
-| Lawful capping [Kni26, Lemma 2.5.8] | `CellScheme.Rows.IsLawful.min_const_of_isSelfVisible` (`Scheme/Row`) | proved correspondence (theorem named) |
-| Bountiful rows [Kni26, Definition 2.5.14] | `CellScheme.Rows.IsBountiful` (`Scheme/Bountiful`) | proved correspondence, by definition |
-| Domains (legal schemes) [Kni26, Definition 2.6.1] | `Scheme.IsLegal`, with the coding clause `Scheme.IsCoded` (`Stage/Legal`, `Stage/Scheme`) | corrected manuscript definition: coding imposed as a clause, not derived from the offset bound of [Kni26, Lemma 2.5.13]; recoverability by representation (`README.md`, layer 3, vocabulary) |
-| Stage types and face maps [Kni26, Definitions 3.1.1 and 3.1.5] | `StageType`, `StageType.restrictFace` (`Stage/Basic`), `none` at invisible faces | proved correspondence, by definition |
-| Templates [AFK26, Definitions 9.5 and 9.7] | `StageType` (a `Scheme` with fixed coded rows and a separate `label`); coherent local rows `r_d(e) = min(p(e), p(d))`: prospective | corrected manuscript definition (`README.md`, layer 2, "The templates of [AFK26] and the stage types here"); the identification of item 1: still to be proved |
-| The stage operation on templates (the draft's truncation) [AFK26, Definitions 9.5 and 9.7] | `StageType.reduce`, on labels only, coherent by `StageType.reduce_reduce` (`Stage/Basic`) | corrected manuscript definition |
-| Realizations and models [Kni26, Definition 3.2.1] | `Realization`, `Realization.IsModel` (`Realization/Model`) | proved correspondence, by definition |
-| The four extension families as a sentence [Kni26, Definition 3.2.1], clause 4 | `baseLanguage.fourFamilySentence`; `baseLanguage.realize_fourFamilySentence_iff` (`Language/Satisfaction`): the sentence holds exactly when the realization of the structure is a model at `ω` | proved correspondence (theorem named) |
-| The density sentence and the four-family sentence (the fidelity theorem) | `baseLanguage.realize_densitySentence_iff_fourFamilySentence_of_hasFiniteCutReceiving_of_capToModel` (`Language/Density`) | still to be proved: conditional on (R1) and the cap-to-model theorem |
-| The invariant diagram and the invariant system are compatible (item 2) | at `ω`: `baseLanguage.toStructure_toRealization`, `baseLanguage.toRealization_toStructure`, `baseLanguage.realize_structuralSentence_iff_toRealization`; top-free charts at any stage: `reconstruct_toHullStructure`, `toHullStructure_reconstruct`; a general fixed stage: prospective | at `ω`: proved correspondence (theorem named); general stage: still to be proved |
-| The amalgam of two coatom types [Kni26, Definition 4.3.1] and its rows [Kni26, Lemma 4.3.2] | `Coatom.amalgamType`, `Coatom.isBountiful_amalgamType` (`Extension/CoatomAmalgam`) | proved correspondence (theorem named) |
-| The completion of the amalgam [Kni26, Definition 4.3.14] | the completion of checkpoints 2.1–2.7 replaces it; the bountifulness of the printed completion is unproved, not refuted | corrected manuscript definition |
-| The coatom extension with apex [Kni26, Corollary 4.3.22] | `StageType.HasApexCoatomExtensions` (`Extension/PinnedExtension`), a hypothesis | still to be proved |
-| The exact pinned one-point extension [Kni26, Proposition 4.3.23] | `StageType.exists_extension` (`Extension/PinnedExtension`), conditional on `StageType.HasCoatomExtensions` | still to be proved (conditional) |
-| Nonempty uniformity and dominance instances [Kni26, Lemmas 4.4.2 and 4.4.3] | `StageType.nonempty_cofaces_inter_uniformityFamily`, `StageType.nonempty_cofaces_inter_dominanceFamily` (`Extension/FamilyCofaces`) | proved correspondence (theorem named), conditional on `StageType.HasCoatomExtensions` and `StageType.HasApexCoatomExtensions`, still to be proved |
-| The saturated model [Kni26, Definition 4.1.1 and Proposition 4.4.5] | the classical limit of the uncapped age (`README.md`, the section on the top-free witnesses): prospective | still to be proved |
-| The private context [Kni26, Lemma 8.1.1], clauses 3 and 4 | `Realization.IsModel.exists_privateContext` (`Realization/PrivateContext`) | proved correspondence (theorem named) |
-| `Correct` [Kni26, Definition 8.3.1] | prospective (`README.md`, layer 3, 3.3) | still to be proved |
-| Invariants and projections [AFK26, Definitions 3.2 and 3.4] | `FullPresentation.LevelObservations`, `FullPresentation.ObservedPresentation` (`Comparison/GradedMatchingApplications`): separate level sets, explicit projections | corrected manuscript definition (`LITERATURE.md`, §9) |
-| Back-and-forth systems [AFK26, Definition 4.1 and Theorem 4.2] | InfinitaryLogic's `BFEquiv` with a specified initial match; `FullPresentation.bfEquiv_comp_of_obs_eq` | corrected manuscript definition (`LITERATURE.md`, §9) |
-| Density at an observation, in two-index form (item 3) | prospective; ingredient `StageType.reduce_eq_of_mem_receivingFamily` (`Realization/Expansion`) | still to be proved |
-| Comparison of models with a common invariant (item 4) | `ExpansionMatchData.bfEquiv_of_expansionMatch`; `Expansion.bfEquiv_of_modelExpansions`, conditional on `Expansion.FiniteExtensionReceiving`; the structural form: prospective | still to be proved |
-| Maximal presentations and the system count (item 5) | `FullPresentations` (a hypothesis structure) and `vaughtCounterexample_of_presentations` (`MainTheorem/Assembly`) | still to be proved |
-| Full trees [AFK26, Definition 8.4 and Proposition 8.6] (item 6) | `COMPANIONS.md`, "Full trees": prospective | corrected manuscript definition (the same-index equivalence is false, `LITERATURE.md`, §9) |
+| Row | Source | Manuscript notion | Status |
+| --- | --- | --- | --- |
+| 1 | [AFK26] | the observation index `ξ` (no numbered statement) | S |
+| 2 | [Kni26] | visibility replacement, Definition 2.2.3 | S |
+| 3 | [Kni26] | witnesses and transformation, Definition 2.3.9 | S |
+| 4 | [Kni26] | lawful labellings, Definition 2.5.4; orderly labellings, Definition 2.3.4 | S |
+| 5 | [Kni26] | lawful capping, Lemma 2.5.8 | S |
+| 6 | [Kni26] | bountiful rows, Definition 2.5.14 | S |
+| 7 | [Kni26] | domains (legal schemes), Definition 2.6.1 | C |
+| 8 | [Kni26] | stage types and face maps, Definitions 3.1.1 and 3.1.5 | S |
+| 9 | [AFK26] | templates, Definitions 9.5 and 9.7 | C; item 1: S |
+| 10 | [AFK26] | the stage operation on templates (truncation), Definitions 9.5 and 9.7 | C |
+| 11 | [Kni26] | realizations and models, Definition 3.2.1 | S |
+| 12 | [Kni26] | the four extension families as a sentence, Definition 3.2.1, clause 4 | S |
+| 13 | [Kni26] | the fidelity theorem: density sentence and four-family sentence (clause 4) | S |
+| 14 | [AFK26] | invariant diagram and system compatible (item 2; no numbered statement) | S |
+| 15 | [Kni26] | the amalgam of two coatom types, Definition 4.3.1, and its rows, Lemma 4.3.2 | S |
+| 16 | [Kni26] | the completion of the amalgam, Definition 4.3.14 | C |
+| 17 | [Kni26] | the coatom extension with apex, Corollary 4.3.22 | S |
+| 18 | [Kni26] | the exact pinned one-point extension, Proposition 4.3.23 | S |
+| 19 | [Kni26] | nonempty uniformity and dominance instances, Lemmas 4.4.2 and 4.4.3 | S |
+| 20 | [Kni26] | the saturated model, Definition 4.1.1 and Proposition 4.4.5 | S |
+| 21 | [Kni26] | the private context, Lemma 8.1.1, clauses 3 and 4 | S |
+| 22 | [Kni26] | `Correct`, Definition 8.3.1 | S |
+| 23 | [AFK26] | invariants and projections, Definitions 3.2 and 3.4 | C |
+| 24 | [AFK26] | back-and-forth systems, Definition 4.1 and Theorem 4.2 | C |
+| 25 | [AFK26] | density at an observation, two-index form (item 3; no numbered statement) | S |
+| 26 | [AFK26] | comparison of models with a common invariant (item 4; no numbered statement) | S |
+| 27 | [AFK26] | maximal presentations: class–level incidence, the system count (item 5) | S |
+| 28 | [AFK26] | full trees, Definition 8.4 and Proposition 8.6 (item 6) | C |
+
+The items are those of `README.md`, "Manuscript correspondence (required)".  Notes to the rows:
+
+1. `blockStage ξ`, defined as `ω + ω * ξ`; `blockStage_eq_mul : blockStage ξ = ω * (1 + ξ)`,
+   `blockStage_zero`, `blockStage_add_one` (`Realization/Expansion`): the identities are compiled
+   in this repository (theorem named); that this is the indexing of [AFK26] is item 1, still to be
+   proved.
+2. `Label.visibilityReplace` (`Label/Visibility`), whose docstring cites the definition; the
+   clause-by-clause comparison is not recorded.  Was P (by definition).
+3. `Label.IsWitness` (`Label/Transform`), its five laws; guarded composition only (`README.md`,
+   layer 1).  The comparison of the laws with the clauses of the definition is not recorded.  Was
+   P (by definition).
+4. `CellScheme.Rows.IsLawful` (`Scheme/Row`), with the clauses order, locality, and availability;
+   their comparison with the two definitions is not recorded.  Was P (by definition).
+5. `CellScheme.Rows.IsLawful.min_const` (`Scheme/Row`), with the special case
+   `CellScheme.Rows.IsLawful.min_const_of_isSelfVisible` as a corollary: compiled in this
+   repository (theorem named).  It states the lemma for the lawful sections here; it is the lemma
+   of [Kni26] once rows 2 and 4 are P.  Was P (theorem named).
+6. `CellScheme.Rows.IsBountiful` (`Scheme/Bountiful`); the comparison of its clauses is not
+   recorded.  Was P (by definition).
+7. `Scheme.IsLegal`, with the coding clause `Scheme.IsCoded` (`Stage/Legal`, `Stage/Scheme`):
+   coding imposed as a clause, not derived from the offset bound of [Kni26, Lemma 2.5.13];
+   recoverability by representation (`README.md`, layer 3, vocabulary).
+8. `StageType`, `StageType.restrictFace` (`Stage/Basic`), `none` at invisible faces; the stage
+   types here have fixed coded rows (row 9), and the comparison with the two definitions is not
+   recorded.  Was P (by definition).
+9. `StageType` (a `Scheme` with fixed coded rows and a separate `label`); the correction is
+   recorded in `README.md`, layer 2, "The templates of [AFK26] and the stage types here".  The
+   coherent local rows `r_d(e) = min(p(e), p(d))` and the identification of item 1: prospective,
+   still to be proved.
+10. `StageType.reduce`, on labels only, coherent by `StageType.reduce_reduce` (`Stage/Basic`).
+11. `Realization`, `Realization.IsModel` (`Realization/Model`).  The docstring of
+    `Realization.IsModel` records its clauses as clauses 1, 2, 3, 4(a)i, 4(a)ii, 4(b), and 4(c) of
+    the definition, and its guarded clauses are compared with the printed ones at stages zero or
+    limits by named theorems (`Realization.IsModel.saturation_of_isLegal`,
+    `Realization.IsModel.bottomPattern_of_isLawful`,
+    `StageType.nonempty_cofaces_inter_saturationFamily_iff`,
+    `StageType.nonempty_cofaces_inter_bottomPatternFamily_iff`): this is the form of a
+    definition-level identification, but its clauses use legal stage types (rows 7 and 8) and the
+    four families, whose comparison with [Kni26] is still to be proved.  Was P (by definition).
+12. `baseLanguage.fourFamilySentence`; `baseLanguage.realize_fourFamilySentence_iff`
+    (`Language/Satisfaction`), compiled in this repository (theorem named): the sentence holds
+    exactly when the realization of the structure is a model at `ω`.  It compares two declarations
+    of this repository; the correspondence with clause 4 goes through row 11.  Was P (theorem
+    named).
+13. The fidelity theorem,
+`baseLanguage.realize_densitySentence_iff_fourFamilySentence_of_hasFiniteCutReceiving_of_capToModel`
+    (`Language/Density`), compiled in this repository (theorem named), conditional on (R1) and the
+    cap-to-model theorem, both still to be proved; the four-family side rests on row 12.
+14. At `ω`: `baseLanguage.toStructure_toRealization`, `baseLanguage.toRealization_toStructure`,
+    `baseLanguage.realize_structuralSentence_iff_toRealization`; for structures covered by top-free
+    charts, at any stage: `reconstruct_toHullStructure`, `toHullStructure_reconstruct`; all
+    compiled in this repository (theorem named), each comparing two declarations of this
+    repository.  That the base language and the realizations (with legal types, on a nonempty
+    carrier) are the diagram and the system of [AFK26], and the round trip at a general fixed
+    stage: still to be proved (prospective).  Was P at `ω`.
+15. `Coatom.amalgamType`, `Coatom.isBountiful_amalgamType` (`Extension/CoatomAmalgam`): the lemma
+    is compiled in this repository (theorem named) for the amalgam here; the comparison of the
+    amalgam with the clauses of Definition 4.3.1 is not recorded, and the lemma rests on row 6.
+    Was P (theorem named).
+16. The completion of checkpoints 2.1–2.7 replaces it; the bountifulness of the printed completion
+    is unproved, not refuted.
+17. `StageType.HasApexCoatomExtensions` (`Extension/PinnedExtension`), a hypothesis.
+18. `StageType.exists_extension` (`Extension/PinnedExtension`), conditional on
+    `StageType.HasCoatomExtensions`, still to be proved.
+19. `StageType.nonempty_cofaces_inter_uniformityFamily` and
+    `StageType.nonempty_cofaces_inter_dominanceFamily` (`Extension/FamilyCofaces`), conditional on
+    `StageType.HasCoatomExtensions` and `StageType.HasApexCoatomExtensions` respectively, both
+    still to be proved.  Was P (theorem named), conditionally.
+20. The classical limit of the uncapped age (`README.md`, the section on the top-free witnesses):
+    prospective.
+21. `Realization.IsModel.exists_privateContext` (`Realization/PrivateContext`), compiled in this
+    repository (theorem named) for the models here (row 11); the comparison of its conclusion with
+    clauses 3 and 4 of the lemma is not recorded.  Was P (theorem named).
+22. Prospective (`README.md`, layer 3, 3.3).
+23. `FullPresentation.LevelObservations`, `FullPresentation.ObservedPresentation`
+    (`Comparison/GradedMatchingApplications`): separate level sets, explicit projections; the
+    correction is recorded in `LITERATURE.md`, §9.
+24. InfinitaryLogic's `BFEquiv` with a specified initial match;
+    `FullPresentation.bfEquiv_comp_of_obs_eq`; the correction is recorded in `LITERATURE.md`, §9.
+25. Prospective; ingredient `StageType.reduce_eq_of_mem_receivingFamily` (`Realization/Expansion`).
+26. `ExpansionMatchData.bfEquiv_of_expansionMatch`; `Expansion.bfEquiv_of_modelExpansions`,
+    conditional on `Expansion.FiniteExtensionReceiving`, still to be proved; the structural form:
+    prospective.
+27. `FullPresentations` (`MainTheorem/Assembly`), a structure of hypotheses storing sets of classes
+    at levels with countability and coverage, not presentations or maximality; and
+    `vaughtCounterexample_of_presentations` (`MainTheorem/Assembly`), whose hypotheses include it.
+    The class–level incidence translation and the three properties it must preserve (incidence of
+    classes at levels, countability of levels, coverage) are those of item 5; until they are
+    proved, `FullPresentations` stays prospective as an instance of the system of [AFK26].
+28. What is corrected is a statement: the same-index equivalence of Proposition 8.6 is false (an
+    informal counterexample, `LITERATURE.md`, §9; not compiled); `COMPANIONS.md`, "Full trees":
+    prospective.
 
 **Completion criteria, item by item** (the items of `README.md`, "Manuscript correspondence
-(required)").
+(required)").  For every item, each row of the concordance that it concerns is P or C, with its
+source named.
 
 1. *Template correspondence:* the coherent local rows of a lawful labelling, the recovery of the
    labels from the diagonal, both round trips, and compatibility with `StageType.restrictFace`
    (undefined faces included) and with `StageType.reduce`, each a compiled theorem; and one of the
    two resolutions of the fidelity question, either the manuscript's adoption of the restricted
    class (recorded here and in `LITERATURE.md`) or a compiled theorem identifying the intended
-   legal templates with it.  The index translation is restated with the identity of `blockStage`.
+   legal templates of [AFK26] with it.  The index translation is restated with the identity of
+   `blockStage`.
 2. *The complete diagram round trip:* at every countable stage, the correspondence between the
    structures of the stage chart language satisfying the structural clauses and the exactly
-   consistent covering realizations, by literal inverse maps, with the acceptance list of the item
-   (every relation and its negation, `none` at invisible faces, repeated coordinates and empty
-   tuples, literal recovery both ways) compiled; no countability of the alphabet of all stages is
-   used.
-3. *The two-index density theorem:* the equivalence, for `α ≤ β` and a root fixed at `β`, by
-   downward projection of legal donors; the density for `α < β` from the construction; the
-   relation between density at block observations and `HasFiniteCutReceiving`, as a theorem or a
-   recorded non-implication; and the non-lifting special case of an actual model, as a compiled
-   example.
-4. *The structural comparison:* a theorem with hypotheses exact consistency, covering, finite-cut
-   receiving of the two realizations, and an explicit common chart, concluding `BFEquiv η` of the
-   selected tuples (empty and repeated included) and agreement on formulas of quantifier rank at
-   most `η`; and its application from modelhood, with (R1), recovering
+   consistent covering realizations with legal types on a nonempty carrier, by literal inverse
+   maps, with the acceptance list of the item (every relation and its negation, `none` at invisible
+   faces, repeated coordinates and empty tuples, literal recovery both ways) compiled; no
+   countability of the alphabet of all stages is used.
+3. *The two-index density theorem:* the equivalence, for observation indices `α ≤ β` and a root
+   fixed at `β`, by downward projection of legal donors; the density for `α < β` from the
+   construction; the relation between density at block observations and `HasFiniteCutReceiving`,
+   as a theorem or a recorded non-implication; and the non-lifting special case of an actual
+   model, as a compiled example.
+4. *The structural comparison:* a theorem with hypotheses legal types, exact consistency, covering,
+   finite-cut receiving of the two realizations, and an explicit common chart, concluding
+   `BFEquiv η` of the selected tuples (empty and repeated included) and agreement on formulas of
+   quantifier rank at most `η`; and its application from modelhood, with (R1), recovering
    `Expansion.bfEquiv_of_modelExpansions`.
 5. *The concrete instance:* each statement of the table of the item proved for the construction,
-   with no field assuming a difficult conclusion; and the two counting endpoints kept with their
-   termination dependence explicit, the second never quoted for the first without its hypotheses.
-6. *The tree discussion:* the two refutations compiled as examples (non-implications 1 and 5 of
-   "Checkpoint order and acceptance"); the positive classification of density for trees is not part
-   of this criterion.
+   with no field assuming a difficult conclusion; the class–level incidence translation of maximal
+   presentations, with its three properties, proved before `FullPresentations` is identified with
+   anything of [AFK26]; and the two counting endpoints kept with their termination dependence
+   explicit, the second never silently quoted for the first.
+6. *The tree discussion:* the three refutations compiled as examples (the same-index equivalence
+   of [AFK26, Proposition 8.6], and non-implications 1 and 5 of "Checkpoint order and
+   acceptance"); the positive classification of density for trees is not part of this criterion.
 
 ## Upstream building blocks
 
