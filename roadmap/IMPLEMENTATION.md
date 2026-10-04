@@ -238,9 +238,9 @@ donor type and donor occurrence, receiving over a root, permitted cutoff and sel
 private context with its private cap, marker, and reference cells, master chart, padding,
 freshness, bottom pattern, literal-top prescription, orderly and lawful labellings, legal scheme,
 fields, state vectors, catalogue, decoder, and future fields, owners, ownerwise decoding,
-long-row locality, the section theorem, display, gate and gate equation, the coatom extension
-construction, pinned and exact pinned extension, restriction-compatible labelling, `Correct`,
-LOW, and the cap-to-model theorem) and consists of four items, built in this order:
+long-row locality, the section theorem, display, gate, twins of the gate, and gate equation, the
+coatom extension construction, pinned and exact pinned extension, restriction-compatible labelling,
+`Correct`, LOW, and the cap-to-model theorem) and consists of four items, built in this order:
 
 1. **Statements of the finite extension constructions, and the section theorem.**  For each: input
    data, compatibility conditions, the constructed finite object (a legal scheme with its
@@ -270,10 +270,11 @@ LOW, and the cap-to-model theorem) and consists of four items, built in this ord
    coatom extension property at a stage, whose proof, in its apex form, is the completion of the
    amalgam of [Kni26, Definition 4.3.1] by cells of full scope (checkpoints 2.1–2.7 below).
 2. **One occurrence, then labelled evaluation.**  The realization extends by **one actual
-   occurrence** of the constructed scheme over the private context, by a model clause that
-   depends on the statement: for (R1), the bottom-pattern clause with the display and the gate;
-   for (R2), (R1) itself, with the LOW display as donor; for (R3) and (R4), generalized
-   saturation, with no display.
+   occurrence** of the constructed scheme over the private context, by a model clause that depends
+   on the statement: for (R1), the bottom-pattern clause with the display, read on the whole graded
+   index of the gate (the gate not bottom, its twins bottom; gate recovery reads this pattern,
+   `README.md`, Layer 3, 3.3, recovery item 1); for (R2), (R1) itself, with the LOW display as
+   donor; for (R3) and (R4), generalized saturation, with no display.
    Root, private context, donor values, and gate equation all concern that occurrence.  For
    (R3) and (R4) the recovery statement is proved for every restriction-compatible labelling
    whose private face lies in the prescribed bottom class, then applied to the actual labels
@@ -318,12 +319,12 @@ acceptance" below), not by a chain construction.  Derive the partial realization
 chart from the chart; do not store synchronized copies.  A supported invisible face is not an
 unsupported tuple.
 
-First applications: the amalgamation of top-free charts (step 2, from the plain form of the
-coatom extension property and capping) and receiving in the classical limit (step 6, (R6)
-and (R5)).  The modules of the finite extension constructions import neither the classical limit
-nor the chain construction.  Direct limits of structures and the classical existence theorem
-(available at the pin) belong to the two libraries: they replace no finite extension
-construction and no decoding or recovery statement.
+First applications: the amalgamation of top-free charts (step 2, from the plain form of the coatom
+extension property and capping) and receiving in the classical limit (step 6, (R5) over a whole
+chart, that is the capped coface, which needs no coatom extension).  The modules of the finite
+extension constructions import neither the classical limit nor the chain construction.  Direct
+limits of structures and the classical existence theorem (available at the pin) belong to the two
+libraries: they replace no finite extension construction and no decoding or recovery statement.
 
 ### 4. Stable continuation and terminal comparison
 
@@ -475,13 +476,23 @@ age and not recognized afterwards in a model constructed otherwise.
    the age of top-free charts (`reconstruct_of_age_eq`) and for a Fraïssé limit of it
    (`reconstruct_of_isFraisseLimit`).  Ultrahomogeneity is not used.
 6. **Receiving.**  Acceptance: for every root, one-point donor type, and permitted cutoff, an
-   occurrence over the literal root from (R5) and `IsUltrahomogeneous.extend_embedding`, with
-   all its equations on that one occurrence; exact receiving for top-free donors (cutoff above
-   every label of the donor); for donors containing top, one extension for each cutoff, with no
-   claim of one extension for all cutoffs or of recovery of a top.  Special cases: the
-   empty root, a donor with top labels at two different cutoffs, a donor with bottom labels.
-   Status: still to be proved.  It needs (R5), hence `StageType.HasCoatomExtensions` at the stage,
-   the ultrahomogeneity of the limit, and the inclusion of the age of top-free charts in its age.
+   occurrence over the literal root from (R5) and `IsUltrahomogeneous.extend_embedding`, with all
+   its equations on that one occurrence; exact receiving for top-free donors (cutoff above every
+   label of the donor); for donors containing top, one extension for each cutoff, with no claim of
+   one extension for all cutoffs or of recovery of a top.  Special cases: the empty root, a donor
+   with top labels at two different cutoffs, a donor with bottom labels.  Status: met; compiled in
+   this repository (theorem named), in `ClassicalLimit/Receiving`, for a structure whose age is the
+   age of top-free charts and which is ultrahomogeneous, at a stage that is zero or a limit:
+   `hasFiniteCutReceiving_reconstruct`, `hasFiniteCutReceiving_reconstruct_of_isFraisseLimit`,
+   `hasFiniteExtensionReceiving_reconstruct`, and exact extension of top-free donors within the age,
+   with no stage hypothesis (`exists_reconstruct_eval_eq_of_isTopFree`); the special cases, and
+   exact receiving of a top-free donor, are in `ClassicalLimit/ReceivingExamples`.  The root is a
+   whole actual occurrence, so (R5) is used only over a whole chart (the capped coface), and the
+   proof uses the age equality, ultrahomogeneity, and capping: neither
+   `StageType.HasCoatomExtensions` nor modelhood is a hypothesis, and only the existence of the
+   limit (step 3) needs `StageType.HasCoatomExtensions`.  Finite-cut receiving descends along stage
+   reduction, one permitted cutoff at a time (`HasFiniteCutReceiving.reduce`,
+   `Realization/Receiving`), which is not exact projected receiving.
 7. **Modelhood, infinitude, terminality.**  Acceptance: modelhood by the cap-to-model theorem
    (checkpoint 4); infinitude, with freshness of the received point over the whole finite
    chart: for a finite set `F`, the root is an actual occurrence `t` containing `F` (covering)
@@ -492,11 +503,18 @@ age and not recognized afterwards in a model constructed otherwise.
    and the labels in the new block `[λ, λ + ω)` required at the next block, using only the
    reduction of models (layer 2).
    The placement of the base class in the loss at `η`, by expansion uniqueness and same-carrier
-   transport, belongs to layer 5 (checkpoint 5).  Status: still to be proved.  The clauses of
-   modelhood that do not concern extensions (a nonempty carrier, legal types, exact consistency,
+   transport, belongs to layer 5 (checkpoint 5).  Status: the base-reduct part is compiled in this
+   repository (theorem named): for a structure whose age is the age of top-free charts and which is
+   ultrahomogeneous, at a limit stage `α ≥ ω`, the base-language structure of the reduction of the
+   reconstruction to `ω` satisfies the density sentence
+   (`realize_densitySentence_reconstruct_reduce`, `ClassicalLimit/Receiving`, through
+   `hasFiniteCutReceiving_reconstruct_reduce` and the descent `HasFiniteCutReceiving.reduce`), with
+   modelhood neither used nor claimed.  Modelhood at `λ`, infinitude, and terminality are still to
+   be proved, and the existence of the limit rests on `StageType.HasCoatomExtensions`.  The clauses
+   of modelhood that do not concern extensions (a nonempty carrier, legal types, exact consistency,
    covering) are compiled for a structure whose age is the age of top-free charts
-   (`reconstruct_of_age_eq`); the four extension clauses need receiving and the cap-to-model
-   theorem at `λ`, which uses the coatom extension construction (the proof of
+   (`reconstruct_of_age_eq`); the four extension clauses need receiving (step 6) and the
+   cap-to-model theorem at `λ`, which uses the coatom extension construction (the proof of
    `StageType.HasCoatomExtensions`) and is still to be proved (`MainTheorem.CapToModel` states it
    only at stage `ω`, with `u = 0`).
 
@@ -526,7 +544,12 @@ ComputableModelTheory only through
 its entry module `ComputableModelTheory.Classical`, no module of InfinitaryLogic and no
 `Construction/` module, and, of the finite extension constructions, only `Extension/Basic` and
 `Extension/PinnedExtension` (for the one-point scheme and the zero-point lemmas) and
-`Extension/SectionTheorem` with `Extension/WitnessAlgebra` (for the capping lemma).
+`Extension/SectionTheorem` with `Extension/WitnessAlgebra` (for the capping lemma). As compiled,
+step 6 and the base-reduct part of step 7 (`ClassicalLimit/Receiving`) add to these only
+`Realization/Receiving` (finite-extension receiving and its descent along stage reduction) and
+`Language/Density` with `Language/Structure`, `Language/Sentence`, and `Language/Satisfaction` (for
+the density sentence of the base reduct), which bring InfinitaryLogic's `Lomega1omega` modules
+(layer 0); no `Construction/`, `MainTheorem/`, or `Expansion/` module, and no module of layers 4–5.
 
 ## The full-presentation route
 
@@ -869,21 +892,22 @@ trees; (3) two applications: cocountable concentration in one back-and-forth cla
 countable level excludes a perfect isomorphism antichain, and an invariant relatively Borel subset
 of a Borel class of structures is saturated under some countable back-and-forth level, so that under
 concentration one side is countable in isomorphism classes. Checkpoints (1) and (2) are at the pin;
-the two applications of (3) are not upstream: the thinness application is
-`isThinOn_of_countable_bfClasses` in this repository (pull request #42; "The full-presentation
-route"), and the saturation application is the prospective interface of invariant Borel observations
-listed there. Dependency direction: basic topology, analytic coding, and well-founded ranks, then
-analytic tree boundedness, then uniform back-and-forth separation, then thinness and invariant-Borel
-concentration; López–Escobar, invariant separation, and the model-theoretic boundedness route are
-excluded from this path by import and proof-dependency guards. Combined with the cocountable
-concentration of the expansion domains (classes in `D_η` agree at back-and-forth level `η`), it is
-expected to give thinness without sentence minimality and without López–Escobar (not elaborated; the
-compiled composition, `isThinOn_of_countable_bfClasses`, is applied to full presentations; for the
-expansion domains, the composition is the scatteredness form of `README.md`, Layer 6, from the
-back-and-forth form of condition 3). It does not replace the working thinness route
-(`Sentenceω.isThinOnNatModels_of_countable_sentence_splits`, from countable truth sides), the
-Gδ/Polish model-code results stay optional, and any improvement it brings is described as reduced
-dependencies of the thinness proof, not as a smaller trusted kernel.
+the thinness application of (3) is now upstream, InfinitaryLogic's `isThinOn_of_bfScattered`
+(`Descriptive/BFScattered`, at the pin), quoted in this repository as
+`isThinOn_of_countable_bfClasses` (formerly a local composition; "The full-presentation
+route"), and the saturation application is the prospective interface of
+invariant Borel observations listed there. Dependency direction: basic topology, analytic coding,
+and well-founded ranks, then analytic tree boundedness, then uniform back-and-forth separation, then
+thinness and invariant-Borel concentration; López–Escobar, invariant separation, and the
+model-theoretic boundedness route are excluded from this path by import and proof-dependency guards.
+Combined with the cocountable concentration of the expansion domains (classes in `D_η` agree at
+back-and-forth level `η`), it is expected to give thinness without sentence minimality and without
+López–Escobar (not elaborated; the compiled composition, `isThinOn_of_countable_bfClasses`, is
+applied to full presentations; for the expansion domains, the composition is the scatteredness form
+of `README.md`, Layer 6, from the back-and-forth form of condition 3). It does not replace the
+working thinness route (`Sentenceω.isThinOnNatModels_of_countable_sentence_splits`, from countable
+truth sides), the Gδ/Polish model-code results stay optional, and any improvement it brings is
+described as reduced dependencies of the thinness proof, not as a smaller trusted kernel.
 
 `SuggestedInterfaces.lean` checks representative names, so a pin bump that removes one fails
 when the sketch is checked (the checks are run by CI).  Coding a `Type w` carrier on `ℕ` needs a
@@ -893,7 +917,8 @@ single universe covers it.
 **Library boundary.**  The development quotes the interfaces of InfinitaryLogic that it adopts:
 graded matching (`bfEquiv_of_gradedMatching`, applied in `Comparison/GradedMatchingApplications`),
 the rank tails and least levels of `OrdinalCountability` (quoted in `Counting/`), and
-`BFScattered` (available at the pin, signatures checked in `roadmap/SuggestedInterfaces.lean`); a
+`BFScattered` (available at the pin, signatures checked in `roadmap/SuggestedInterfaces.lean`;
+quoted in `MainTheorem/Scatteredness`); a
 coherent-retraction interface once one is available at a pin.  It needs no new layer of
 ComputableModelTheory.
 
@@ -953,7 +978,7 @@ named (`README.md`, Layer 0):
   Between `def5cc0` and `cf80917` there are five merges, available at the pin (signatures checked;
   `SuggestedInterfaces.lean` `#check`s the statements named here, except the companions noted; no
   application compiled in this repository except that of the moved `Perfect.mk_eq_continuum` in
-  `MainTheorem/Scatteredness`):
+  `MainTheorem/Scatteredness` and the quotations of the thinness statements noted below):
   - placement of the isomorphism-transport lemmas (#151): `SameAtomicType.map_equiv` now in
     `Scott/AtomicDiagram` and `BFEquiv.map_equiv` in `Scott/BFEquivRelabel`, below the Karp
     modules (signatures checked); names and statements unchanged;
@@ -975,8 +1000,12 @@ named (`README.md`, Layer 0):
     (Layer 6) is absorbed as quotations, with its statements kept:
     `isThinOn_of_countable_bfClasses` quotes `isThinOn_of_bfScattered`,
     `isThinOnNatModels_of_countable_bfClasses` quotes `Sentenceω.isThinOnNatModels_of_bfScattered`,
-    `bfEquivSetoid_eq_comap` quotes InfinitaryLogic's `bfEquivSetoid_eq_comap`, and
-    `codeBFEquivSetoid` is InfinitaryLogic's `codeBFEquivSetoid` by definition;
+    `bfEquivSetoid_eq_comap` quotes InfinitaryLogic's `bfEquivSetoid_eq_comap`,
+    `exists_forall_not_codeBFEquiv_of_isClosed` quotes
+    `exists_forall_not_codeBFEquiv_of_analyticSet`, `offDiag_noniso` quotes
+    `not_structureIso_of_mem_offDiag`, `analyticSet_offDiag` applies
+    `MeasureTheory.AnalyticSet.offDiag`, and `codeBFEquivSetoid` is InfinitaryLogic's
+    `codeBFEquivSetoid` by definition;
   - the rank conventions (#155): documentation only (`Scott/Height/Defs`: the cross-structure
     ranks in `Ordinal.{0}` and the internal orbit ranks in `Ordinal.{w}`, with the comparisons
     proved and those refuted on the empty carrier and the infinite pure set); no statement changed;
@@ -1205,7 +1234,9 @@ Each checkpoint needs both its abstract API and a concrete application:
    top-free witnesses are compiled, the amalgamation and joint embedding of step 2 and step 3
    conditional on `StageType.HasCoatomExtensions`, and steps 4 and 5 under top-free chart coverage,
    the limit being a hypothesis ("The top-free witnesses: milestone order and acceptance"); step 6
-   is still to be proved.
+   is compiled for an ultrahomogeneous structure whose age is the age of top-free charts, with no
+   hypothesis `StageType.HasCoatomExtensions`, which only the existence of such a structure (step 3)
+   needs.
 4. Items 3.2 and 3.3 for (R1)–(R3): for each of them, the extension of the realization by one actual
    occurrence over the literal root and the recovery theorem (by `Correct` and labelled
    evaluation, by LOW, or through the gate), with all its equations on that occurrence and at
@@ -1215,6 +1246,30 @@ Each checkpoint needs both its abstract API and a concrete application:
    modelhood and infinitude of the top-free witnesses (step 7); and the fidelity theorem of
    layer 2, the equivalence of the density sentence with the four-family sentence, whose two
    directions use (R1) and the cap-to-model theorem.
+   Status and route of (R1).  Receiving of the top-free witnesses (4a, step 6 of the top-free
+   witnesses, for an ultrahomogeneous structure whose age is the age of top-free charts, which
+   exists under `StageType.HasCoatomExtensions`) and the descent of finite-cut receiving along stage
+   reduction are compiled in this repository (theorem named): `hasFiniteCutReceiving_reconstruct`
+   and `realize_densitySentence_reconstruct_reduce` (`ClassicalLimit/Receiving`), and
+   `HasFiniteCutReceiving.reduce` (`Realization/Receiving`).  They do not give (R1) for all models
+   (`README.md`, Layer 3, vocabulary, the receiving item), which condition 3, the fidelity direction
+   at stage `ω`, and (R2) need.  General (R1) is split as (R6) is: 4b-i, the acquisition of the
+   private context from the clauses of a model (uniformity, high-arity dominance, generalized
+   saturation); 4b-ii, the ordinary construction as data (the gated scheme on the private points and
+   one new point, with its literal private and donor faces, its display, and its gate of graded
+   index `(univ, n)`); 4b-iii, gate recovery, a finite statement about rows (`README.md`, Layer 3,
+   3.3, recovery item 1); 4b-iv, the assembly of `Expansion.FiniteCutReceiving`.  The legality of
+   the gated scheme contains exact pinned extensions and a final layer of full scope controlled at
+   the grade of the gate, which the abstract coatom extension property does not supply; so the
+   construction of 4b-ii is first stated as a named gated-extension property, a hypothesis in the
+   pattern of `StageType.HasCoatomExtensions`, and 4b-iv is proved conditionally on it; the property
+   itself is then proved alongside or after checkpoints 2.6–2.7.  The conditional theorem does not
+   complete (R1) (`README.md`, Summit 3).  Status: 4a and the descent are compiled; 4b-iii is in
+   review and not yet on `main` (it uses no legality, no completion, and no (R6)); 4b-i, 4b-ii, the
+   gated-extension property, and 4b-iv are still to be proved.  Projected-donor lifting is not part
+   of checkpoint 4 (`README.md`, Layer 3, 3.3, the density boundary).  This status concerns (R1)
+   only: (R2), (R3), the cap-to-model theorem at a general stage, and the fidelity theorem of this
+   checkpoint remain to be proved.
 5. Structural continuation (the structural stable candidate); then items 3.2 and 3.3 for (R4)
    (the acquisition of its calibrated data, its occurrence, and the evaluation of the stable
    labelling by the recovery statement of checkpoint 4); three terminal comparisons (the first
@@ -1384,12 +1439,12 @@ ones split):
   the coatoms, the lifts off the full face from the amalgam through a source prefix, and no stage
   hypothesis.  The flat catalogue (all lawful short coded patterns over a fixed alphabet) is
   refuted (`SmallArityExamples.not_isBountiful_flatRows`).
-  What remains (2.5b, `m = 1`), still to be proved, with a decision to make before it: during a
-  lift at grade `2`, the cap must be kept on the new cells of grade `1`, which are not on the
-  boundary and are read by the catalogue of grade `2`.  Either the catalogue of grade `1` reads the
-  labels of all cells below `(univ, 2)`, the old cells of grade `2` included, or
-  restoration through the lift at grade `1` (`CellScheme.Rows.exists_restoration`) is shown to keep
-  that cap.  `StageType.HasCoatomExtensions` needs every arity and remains a hypothesis until 2.7.
+  What remains (2.5b, `m = 1`) is still to be proved.  During a lift at grade `2`, the cap must be
+  kept on the new cells of grade `1`, which are not on the boundary and are read by the catalogue of
+  grade `2`; how it is kept is to be settled by 2.5b.  Alternatives include a catalogue of grade `1`
+  that reads the labels of all cells below `(univ, 2)`, the old cells of grade `2` included; and the
+  lift at grade `1`, through restoration (`CellScheme.Rows.exists_restoration`); others are not
+  excluded.  `StageType.HasCoatomExtensions` needs every arity and remains a hypothesis until 2.7.
 - **2.6. Recursion on the grade.**  One grade step from the predecessor grade already
   established first, then the general step; lawfulness, consistency, the prefix equations, and
   unrestricted lifting (the last two defined with 2.6) are distinct statements.  The one grade step
@@ -1461,8 +1516,10 @@ the agreement filtration (defined by `T∞`) and the rank filtration (defined by
 defined differently; no relation between them is asserted, and any comparison is a separate
 prospective theorem (`COMPANIONS.md`, "Further companion results").  Quantitative reconstruction
 (base-language definitions and Scott sentences with bounds on their quantifier rank) and its
-recognition and base-reduct orbit-rank targets are prospective companion statements, used by neither
-route, with their own completion criterion (`COMPANIONS.md`, "Further companion results").  The main
+recognition and base-reduct orbit-rank targets are companion statements, used by neither route,
+with their own completion criterion (`COMPANIONS.md`, "Further companion results"); its first row
+is compiled conditionally on block determination (`Definability/BlockFormulas`), and the rest is
+prospective.  The main
 theorem is proved without them; if any is added, give it a separate definite completion criterion.
 Direct limits of structures and the classical existence theorem (available at the pin) belong to the
 two libraries, not to the finite constructions of layer 3.  [`COMPANIONS.md`](COMPANIONS.md) gives
@@ -1646,6 +1703,17 @@ lands, their notes stay in those modules.
   the guarded composition; the lawfulness of the aligned encoding to `Scheme.Row`.
 - `Extension/OwnerCappedLift`: to `Scheme.Bountiful`, beside `CellScheme.Rows.HasOwnerCappedLifts`.
 
+**The small arities (checkpoint 2.5; Layer 3, (R6)).**
+
+- `Extension/FieldLayer`: the label statements, in the namespace `Label` (the grid points and the
+  grid, the value rank, the canonical map and the canonical code, the literal-reading decoder, and
+  agreement heights), to a module `Label/Coding.lean`, beside the encoder, except
+  `Label.eq_of_min_eq_of_lt` and `Label.le_of_min_eq_of_le`, to `Label.Cap`;
+  `CellScheme.Rows.IsLawful.canonicalCode` to `Scheme.Row`, beside the section theorem;
+  `Scheme.appendFullCells` and its laws to `Stage.Scheme`, beside `Scheme.appendFullCell`; the
+  canonical catalogue, the field rows, and `Scheme.fieldLayer` in place.
+- `Extension/SmallArities` and `Extension/SmallArityExamples`: checkpoint 2.5, in place.
+
 **Hull operations, the top-free age, and graded matching (Layers 0 and 2; the top-free
 witnesses).**
 
@@ -1655,6 +1723,8 @@ witnesses).**
 - `Realization/TwoCharts` and `Realization/TwoChartsExamples`: Layer 2, in place.
 - `ClassicalLimit/Age` and `ClassicalLimit/AgeExamples`: steps 1–2 of the top-free witnesses, in
   place.
+- `ClassicalLimit/Receiving` and `ClassicalLimit/ReceivingExamples`: step 6 and the base-reduct part
+  of step 7 of the top-free witnesses, in place.
 - `ClassicalLimit/Reconstruction` and `ClassicalLimit/ReconstructionExamples`: steps 4–5 of the
   top-free witnesses, in place.
 - `ClassicalLimit/Amalgamation`: `StageType.cap` with its laws (`cap_toScheme`, `cap_label`,
@@ -1682,6 +1752,33 @@ witnesses).**
 - `Realization/ReceivingExamples`: in place.  The examples of the global forms
   (`Expansion.FiniteCutReceiving`) are in `Expansion/AgreementExamples`, since this module imports
   no module of Layer 5.
+- `Realization/Receiving`, continued: the descent of finite-cut receiving along stage reduction
+  (`HasFiniteCutReceiving.reduce`) is in place.  The induction of
+  `HasFiniteCutReceiving.exists_extend_of_mem_receivingFamily` repeats the base case (a face onto
+  the whole donor, reindexed) and the choice of the next closed point of `StageType.exists_amalgam`
+  (`Extension/PinnedExtension`); a lemma shared by the two, in a module both import (for instance
+  `Extension/Basic`, or `Stage/` for the closed-point choice), is a later change of proofs only,
+  with no statement change.
+
+**Quantitative reconstruction, row 1 (`COMPANIONS.md`, "Further companion results").**
+
+- `Definability/Syntax`: Layer 0.  It imports no module of this repository (only InfinitaryLogic's
+  `Lomega1omega/QuantifierRank` and `Scott/Formula`), and its statements are candidates for
+  InfinitaryLogic, beside `existsLastVar` and `BoundedFormulaω.qrank`: `existsLastVars` with
+  `existsLastVars_zero`, `existsLastVars_succ`, `realize_existsLastVars`, and
+  `qrank_existsLastVars`; `BoundedFormulaω.qrank_mapFreeVars` and `BoundedFormulaω.qrank_inf`; and
+  `extendFormula` with `extensionEquations`, `realize_extendFormula`, `qrank_extendFormula`,
+  `realize_extensionEquations`, and `qrank_extensionEquations`.
+- `Definability/BlockStages`: Layers 1–2 (labels and stage types at the block stages), in place; its
+  one-block lemmas (`StageType.eq_of_reduce_eq_of_threshold_iff` and the threshold lemmas) are
+  reusable by the normalization of Layer 4.
+- `Definability/BlockFormulas` and `Definability/BlockFormulasExamples`: quantitative
+  reconstruction, row 1, in place; `Realization.covers_iff_eval` and
+  `Realization.IsExpansionOf.relMap_iff` to `Realization/Expansion`.  The private legal two-point
+  stage type of the examples is a copy of the one in `Realization/ModelExamples`, so that no
+  examples module is imported.
+- The import guard of `Definability/*` (its forbidden prefixes are listed in `README.md`, "Import
+  guards") is to be added with the other guards of `scripts/check.sh`.
 
 **Counting (Layers 5–6).**
 
@@ -1709,10 +1806,11 @@ witnesses).**
   `iInter_setOf_le_rank_eq_empty` (`FullPresentations.core_toFiltration` in `MainTheorem/Assembly`
   now applies `biInter_rankTail_eq_empty`), and `forall_exists_le_rank_iff` (the example of
   `Counting/Separation` now applies `countable_iff_rank_bounded`; `README.md`, "What the count of
-  this route no longer uses", is to cite `rankTail_cofinal_losses_iff` alone).  `leastLevel_le` is
-  kept, with no hypothesis `α < ω₁`: for `α < ω₁` it is InfinitaryLogic's `leastLevel_le_of_mem`
-  (which needs no cover) for the family restricted to levels below `ω₁`, and for `α ≥ ω₁` the
-  conclusion holds because `leastLevel Q x < ω₁` with no hypothesis.
+  this route no longer uses", now cites `rankTail_cofinal_losses_iff` and
+  `countable_iff_rank_bounded`).  `leastLevel_le` is kept, with no hypothesis `α < ω₁`: for `α < ω₁`
+  it is InfinitaryLogic's `leastLevel_le_of_mem` (which needs no cover) for the family restricted to
+  levels below `ω₁`, and for `α ≥ ω₁` the conclusion holds because `leastLevel Q x < ω₁` with no
+  hypothesis.
 
 **Statements not yet in any module.**
 
