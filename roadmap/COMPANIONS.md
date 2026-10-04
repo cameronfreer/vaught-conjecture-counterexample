@@ -607,7 +607,8 @@ is compiled conditionally on block determination (below).  None is an input to t
   from positive niceness"; prospective) bounds its height.  For one literal base with a terminal
   model presentation at a countable index `ρ`, the counterpart of the height is `ρ`, the least
   upper bound of the fixing ranks across all model presentations of that base (`README.md`, item
-  5, "Maximal presentations: equivalent criteria, uniqueness, the optimal bound"; prospective).
+  5, "Maximal presentations: equivalent criteria, uniqueness, the optimal bound"; prospective,
+  under the injectivity of model reduction).
 * **Terminal refinement** (every item a conditional target, to be proved; none is an input to the
   counting theorem).  Hypotheses, all explicit: conditions 1–4 of the expansion-domain reduction
   (`README.md`), which are hypotheses of the count, not its conclusions; Scott isolation, a Scott
@@ -703,10 +704,13 @@ is compiled conditionally on block determination (below).  None is an input to t
   form is the uniform fixing stage of `README.md`, "Manuscript correspondence (required)", item 5,
   "Uniform fixing bounds from positive niceness" (prospective), which uses no termination; there
   termination can enter only through the construction of positive niceness (milestone 2).  For
-  one literal base, a bound of this kind over all its model presentations is equivalent to a
-  maximal presentation of the base (criteria 3 and 5 of `README.md`, item 5, "Maximal
-  presentations: equivalent criteria, uniqueness, the optimal bound"; prospective), so supplying
-  the bound of (iv) characterizes termination for each base and does not avoid it.  Taken
+  one literal base that is a model, a bound of this kind over all its model presentations is
+  equivalent to a maximal presentation of the base (criteria 3 and 5 of `README.md`, item 5,
+  "Maximal presentations: equivalent criteria, uniqueness, the optimal bound"; prospective),
+  conditional on the injectivity of model reduction at each countable index (raw form
+  `ModelExpansion.subsingleton`, conditional on `Expansion.NextBlockUniqueness`, still to be
+  proved), which 3 ⇒ 5 uses through bounded-stage attainment; so supplying the bound of (iv)
+  characterizes termination for each base and does not avoid it.  Taken
   from eventual departure (1 above), the bound of (iv) uses conditions 3 and 4 with a Scott
   sentence for each class, and not global termination.  Read off a full presentation of every
   class, it uses full-presentation coverage, hence global termination (`README.md`, "The
@@ -1102,7 +1106,7 @@ is compiled conditionally on block determination (below).  None is an input to t
   the supremum statement here.  For a literal base with a terminal model presentation at `ρ`,
   the least bound across all its model presentations is `ρ` (the optimal all-presentation bound
   of `README.md`, item 5, "Maximal presentations: equivalent criteria, uniqueness, the optimal
-  bound"; prospective).
+  bound"; prospective, under the injectivity of model reduction).
 
   *Fixing ranks are zero or successors* (still to be proved).  The fixing rank of a finite chart is
   never a limit ordinal: bottom and top are fixed by every reduction, and a proper label is fixed by
@@ -1118,10 +1122,12 @@ is compiled conditionally on block determination (below).  None is an input to t
   the supremum of fixing ranks below it and is not attained.  Neither statement identifies a fixing
   rank or a height with a Scott rank.  Accordingly a bound of serving indices (`README.md`,
   "Manuscript correspondence (required)", item 5, "Uniform fixing bounds from positive niceness",
-  milestone 5; prospective) supplies no presentation at its supremum.  Likewise the optimal
-  all-presentation bound of `README.md`, item 5, "Maximal presentations: equivalent criteria,
-  uniqueness, the optimal bound" (prospective) is a least upper bound: at a nonzero limit `ρ` the
-  model presentation at `ρ` exists, but no finite tuple has fixing rank `ρ`.
+  milestone 5; prospective) supplies no presentation at its supremum.  By contrast, for the model
+  presentations of a literal base with a terminal presentation at `ρ`, the presentation at `ρ`
+  exists; but at a nonzero limit `ρ` no finite tuple has fixing rank `ρ`, so `ρ` is a least upper
+  bound, not a maximum (the optimal all-presentation bound of `README.md`, item 5, "Maximal
+  presentations: equivalent criteria, uniqueness, the optimal bound"; prospective, under the
+  injectivity of model reduction).
 
   *Charts of every fixing rank* (a finite target, still to be proved, with the definitions of
   "Fixing ranks of finite charts").  On one fixed legal scheme on one point (a domain of arity one,
