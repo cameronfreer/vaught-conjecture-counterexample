@@ -68,35 +68,42 @@ because a stage type carries the lawfulness of its labels.
   labelled the formal top at one graded index: a forced disjunction is not a disjunction of
   forcings, and the pointwise minimum of two lawful lifts need not satisfy availability (the
   stage-type example of `VaughtConjecture.Stage.ThresholdExamples`; no realization-level
-  counterexample is claimed).  **Stable availability for twin types in models is open.**  It
-  follows from **twin ordering** (`TwinOrdering`, a finite statement about stage types,
-  unproved and possibly false), by `Realization.availability_stableSection_of_twinOrdering`:
-  when the graded indices of the two cells coincide the first cell itself serves, and otherwise
-  twin ordering gives a cell labelled the formal top at the graded index of the second cell that
-  is at least the first cell in every lift of `t`.
+  counterexample is claimed).  **Stable availability for twin types in models is open**, and no
+  conditional statement of it is made here.
 
 Hence a realization is stably lawful under exact consistency and covering when no type has twins
-(`Realization.isStablyLawful_of_injOn_gradedIndex`), under exact consistency, covering and legal
-types given twin ordering (`Realization.isStablyLawful_of_twinOrdering`), and with no hypothesis
-at all when it is cover-hollow (`Realization.isStablyLawful_of_isCoverHollow`).  Unbounded
-top-grade growth and non-hollowness are not used for lawfulness; they concern receiving of the
-candidate, below.
+(`Realization.isStablyLawful_of_injOn_gradedIndex`), and with no hypothesis at all when it is
+cover-hollow (`Realization.isStablyLawful_of_isCoverHollow`).  Unbounded top-grade growth and
+non-hollowness are not used for lawfulness; they concern receiving of the candidate, below.
 
-**Synchronizing cofaces are refuted.**  One could try to transfer forcing from a cell `a` to a
-cell `b` at a graded index with twins through **synchronizing cofaces**: for a legal stage type
-`q` and cells `a`, `b` labelled the formal top with the scope of `a` in that of `b` and equal
-grades, a scheme `S` on one more point carrying a legal coface of `q` such that every lawful
-section of the rows of `S` is at least as large at `b` as at `a`, to be realized over an
-occurrence by generalized saturation.  That statement is false at every block stage
-(`Continuation.CandidateCounterexamples.not_synchronizingCofaces_blockStage`), and so are its
-form without the requirement that `a` and `b` be labelled the formal top and its form restricted
-to lifts of members of the coface family (same file).  The reason is bountifulness: the scheme of
-a legal coface extends every lawful section of the rows of `q`, so no coface orders two cells of
-`q` that some lift of `q` orders the other way.  In particular, adding one cell of the grade of
-`a`, alone at its graded index, with a tie from its row to `b`, does not give a legal scheme in
-the case where it would be needed, a lift of `q` larger at `a` than at `b`; the special case is
-two cells labelled the formal top at one graded index of `onePointScheme 2`, with the lift
-`(ω + 1, ω + 2)`, in that file.
+**The hypotheses on single types examined here are refuted.**  Two finite statements about stage
+types were examined as routes to availability at twins.  Both are false; they are defined, and
+refuted, only in `VaughtConjecture.Continuation.CandidateCounterexamples`.
+
+* **Synchronizing cofaces** would transfer forcing from a cell `a` to a cell `b` at a graded index
+  with twins: for a legal stage type `q` and cells `a`, `b` labelled the formal top with the scope
+  of `a` in that of `b` and equal grades, a scheme `S` on one more point carrying a legal coface of
+  `q` such that every lawful section of the rows of `S` is at least as large at `b` as at `a`, to
+  be realized over an occurrence by generalized saturation.  This is false at every block stage
+  (`Continuation.CandidateCounterexamples.not_synchronizingCofaces_blockStage`); its form without
+  the requirement that `a` and `b` be labelled the formal top and its form restricted to lifts of
+  members of the coface family are false at `ω` (same file).  The reason is bountifulness: the
+  scheme of a legal coface extends every lawful section of the rows of `q`, so no coface orders two
+  cells of `q` that some lift of `q` orders the other way.  The special case is two cells labelled
+  the formal top at one graded index of `onePointScheme 2`, with the lift `(ω + 1, ω + 2)`.
+* **Twin ordering** (`Continuation.CandidateCounterexamples.TwinOrdering`) would give availability
+  directly: for a legal stage type `q` and cells `s₀`, `t₀` labelled the formal top with the scope
+  of `s₀` strictly inside that of `t₀` and equal grades, one cell labelled the formal top at the
+  graded index of `t₀` that is at least as large as `s₀` in every lift of `q`.  It is false at
+  every stage that is zero or a limit, in particular at every block stage
+  (`Continuation.CandidateCounterexamples.not_twinOrdering_blockStage`).  The special case is a
+  legal scheme on two points with five cells: `s₀` of scope `{0}` and grade `1`, a cell of scope
+  `{1}` and grade `1`, two twins of full scope and grade `1`, and a cell of full scope and grade
+  `2`.  On its type every lift sets `s₀` to the larger twin, and both orders of the twins occur.
+
+So no hypothesis about all lifts of a single type can repair availability at twins; an argument
+has to use information about the realization, such as which lifts of a type extend to lifts of
+the covers realized in `R`.
 
 **The cases.**
 
@@ -118,9 +125,9 @@ two cells labelled the formal top at one graded index of `onePointScheme 2`, wit
 **Relation to the roadmap.**  The roadmap builds the structural candidate "from consistency and
 covering" (Layer 4, output 1).  Here the order law, locality, exact partial evaluation, the
 reduction, legality, covering and exact consistency need no more; availability needs, in
-addition, the absence of twins, or twin ordering at the legal types, which is open.  The splice
-of two witnesses (roadmap, Layer 3, the transformation lemma still to be proved there) is not
-used: locality comes from pointwise minima and collapse.
+addition, the absence of twins; at twins it is open.  The splice of two witnesses (roadmap, Layer
+3, the transformation lemma still to be proved there) is not used: locality comes from pointwise
+minima and collapse.
 
 **What is not claimed.**  The candidate is not claimed to be a model, and output 3 is not proved.
 Its modelhood is to follow from the cap-to-model theorem at `λ_{ξ+1}`
@@ -131,10 +138,9 @@ through the coatom extension at `λ_{ξ+1}` over the empty face; and the plain a
 extension properties at `λ_{ξ+1}` (`StageType.HasCoatomExtensions` and
 `StageType.HasApexCoatomExtensions` at `blockStage (ξ + 1)`) for the uniformity and dominance
 instances; and, as the argument `hlaw` of the definition, the stable lawfulness of `R`, which
-comes from `Realization.isStablyLawful_of_injOn_gradedIndex` when no type of `R` has twins and
-otherwise from `Realization.isStablyLawful_of_twinOrdering` under twin ordering at `λ_ξ`, which is
-open.  None of these is stated here.  No (R1), forcing donors, normalization or uniqueness of
-expansions is used except in the last case above.
+comes from `Realization.isStablyLawful_of_injOn_gradedIndex` when no type of `R` has twins and is
+otherwise an open input.  None of these is stated here.  No (R1), forcing donors, normalization or
+uniqueness of expansions is used except in the last case above.
 
 ## Placement
 
@@ -146,29 +152,6 @@ universe u v
 namespace VaughtConjecture
 
 open Finset Ordinal StageType
-
-/-! ### Twin ordering -/
-
-/-- **Twin ordering** at the stage `β`: for every legal stage type `q` at `β` and cells `s₀`, `t₀`
-of `q` labelled the formal top, with the scope of `s₀` strictly inside that of `t₀` and equal
-grades, some cell `w` labelled the formal top at the graded index of `t₀` is at least as large as
-`s₀` in every **lift** of `q` to `β + ω`, that is, every lawful section of the rows of `q` at the
-stage `β + ω` reducing at `β` to the labels of `q`.  A finite statement about stage types, with no
-realization.  When `t₀` is the only cell labelled the formal top at its graded index, it holds with
-`w = t₀` by availability of the lift; it has content only for **twins**, two or more cells
-labelled the formal top at one graded index.  It is **unproved and possibly false**: it fails as
-soon as some legal stage type has, for each cell labelled the formal top at the graded index of
-`t₀`, a lift placing that cell below `s₀` (the twin pattern of
-`VaughtConjecture.Stage.ThresholdExamples`, there on a scheme that is not legal).  It is the
-hypothesis of `Realization.availability_stableSection_of_twinOrdering`. -/
-def TwinOrdering (β : Ordinal.{u}) : Prop :=
-  ∀ ⦃m : ℕ⦄ (q : StageType.{u} β m), q.IsLegal → ∀ s₀ t₀ : Fin q.card,
-    q.toCellScheme.scope s₀ ⊂ q.toCellScheme.scope t₀ →
-      q.toCellScheme.grade s₀ = q.toCellScheme.grade t₀ → q.label s₀ = ⊤ → q.label t₀ = ⊤ →
-        ∃ w, q.toCellScheme.gradedIndex w = q.toCellScheme.gradedIndex t₀ ∧ q.label w = ⊤ ∧
-          ∀ ℓ : Fin q.card → Label.{u}, q.rows.IsLawful ℓ →
-            (∀ d, Label.AtStage (β + ω) (ℓ d)) → (∀ d, Label.reduce β (ℓ d) = q.label d) →
-              ℓ s₀ ≤ ℓ w
 
 /-! ### Auxiliary facts -/
 
@@ -340,6 +323,7 @@ private theorem exists_isLawful_collapse_inf'_aux (hS : S.IsConsistent) (hc : S.
   by_cases he : t.label e = ⊤
   · have heD : e ∈ D := mem_filter.mpr ⟨mem_univ _, he⟩
     rw [ite_eq_left he, stableLabel]
+    -- the stable label is the label of the stable offset
     change Label.ofOffset β (o e) = _
     by_cases hoe : o e = ⊤
     · have hTe : T e = N := ite_eq_left hoe
@@ -547,6 +531,7 @@ theorem isConsistent_stableCandidate (hR : R.IsConsistent) (hc : R.IsCovering) :
     rw [stableCandidate_eval_of_eval hg, restrictFace_of_mem (R.stableType hlaw w t ht) g hf]
     refine congrArg some (StageType.ext rfl fun i j hij ↦ ?_)
     obtain rfl : i = j := Fin.ext hij
+    -- the labels of the two stable types are the stable sections
     change R.stableSection (g.trans w) (t.comap g hf) i = R.stableSection w t (t.cellMap g i)
     by_cases h : t.label (t.cellMap g i) = ⊤
     · rw [stableSection_of_eq_top (t := t.comap g hf) (d := i) h, stableSection_of_eq_top h]
@@ -668,33 +653,6 @@ theorem availability_stableSection_of_injOn
     exact Label.reduce_of_le ((Label.reduce_eq_top_iff.mp ((hℓt s₀).trans hs₀)).trans hle')
   rwa [hinj htop hw' (hw''.trans hw.symm)] at hle'
 
-/-- **Availability under twin ordering** at `λ_ξ`, for a legal type `t` (twin ordering is unproved
-and possibly false, `TwinOrdering`).  When the graded indices of `s₀` and `t₀` coincide, `s₀`
-itself is the cell required.  Otherwise the scope of `s₀` is strictly inside that of `t₀`, and twin
-ordering applied to `t` gives a cell labelled the formal top at the graded index of `t₀` that is
-at least as large as `s₀` in every lift of `t`, so every threshold forced at `s₀` is forced there.
-Neither exact consistency nor covering is used. -/
-theorem availability_stableSection_of_twinOrdering (htw : TwinOrdering.{u} (blockStage ξ))
-    (hl : t.IsLegal) (ht : R.eval u = some t) {s₀ t₀ : Fin t.card}
-    (hst : t.toCellScheme.scope s₀ ⊆ t.toCellScheme.scope t₀)
-    (hg : t.toCellScheme.grade s₀ = t.toCellScheme.grade t₀) :
-    ∃ w, t.toCellScheme.gradedIndex w = t.toCellScheme.gradedIndex t₀ ∧
-      R.stableSection u t s₀ ≤ R.stableSection u t w := by
-  obtain ⟨w, hw, hle⟩ := t.isLawful.availability s₀ t₀ hst hg
-  by_cases hs₀ : t.label s₀ = ⊤
-  swap
-  · exact ⟨w, hw, stableSection_le_of_ne_top hs₀ hle⟩
-  by_cases hi : t.toCellScheme.gradedIndex s₀ = t.toCellScheme.gradedIndex t₀
-  · exact ⟨s₀, hi, le_rfl⟩
-  have hw' : t.label w = ⊤ := top_le_iff.mp (hs₀ ▸ hle)
-  have hsw : t.toCellScheme.scope s₀ ⊂ t.toCellScheme.scope w :=
-    (hst.trans_eq (congrArg Prod.fst hw).symm).ssubset_of_ne fun h ↦
-      hi (Prod.ext (h.trans (congrArg Prod.fst hw)) hg)
-  obtain ⟨w', hw'', hw'top, hord⟩ :=
-    htw t hl s₀ w hsw (hg.trans (congrArg Prod.snd hw).symm) hs₀ hw'
-  exact ⟨w', hw''.trans hw, stableSection_le_of_forall_lift ht hs₀ hw'top
-    fun ℓ hℓ hat hℓt ↦ hord ℓ hℓ hat hℓt⟩
-
 /-! ### Stable lawfulness -/
 
 /-- **Stable lawfulness without twins**: an exactly consistent covering realization in whose types
@@ -706,19 +664,6 @@ theorem isStablyLawful_of_injOn_gradedIndex (hR : R.IsConsistent) (hc : R.IsCove
     { orderly := orderly_stableSection ht
       locality := locality_stableSection hR hc ht
       availability := fun _ _ hst hg ↦ availability_stableSection_of_injOn (hinj u t ht) ht hst hg }
-
-/-- **Stable lawfulness under twin ordering**: an exactly consistent covering realization with
-legal types is stably lawful given twin ordering at `λ_ξ` (unproved and possibly false,
-`TwinOrdering`).  The order law is unconditional, locality uses exact consistency and covering,
-and availability uses twin ordering at the types of `R`.  Generalized saturation, unbounded
-top-grade growth and non-hollowness are not used. -/
-theorem isStablyLawful_of_twinOrdering (hR : R.IsConsistent) (hc : R.IsCovering)
-    (hl : R.HasLegalTypes) (htw : TwinOrdering.{u} (blockStage ξ)) : R.IsStablyLawful :=
-  fun _ u t ht ↦
-    { orderly := orderly_stableSection ht
-      locality := locality_stableSection hR hc ht
-      availability := fun _ _ hst hg ↦
-        availability_stableSection_of_twinOrdering htw (hl u t ht) ht hst hg }
 
 /-! ### Cover-hollow realizations -/
 
@@ -778,6 +723,7 @@ theorem not_isModel_stableCandidate_of_stableLabel_le {K : ℕ}
     exact add_lt_add_right (natCast_lt_omega0 K) _)
   obtain ⟨t, ht, rfl⟩ := exists_eq_stableType_of_stableCandidate_eval hq
   refine h.not_ge ?_
+  -- the label of the stable type at `d` is the stable section there
   change R.stableSection w t d ≤ _
   by_cases hd : t.label d = ⊤
   · rw [stableSection_of_eq_top hd]

@@ -23,8 +23,8 @@ Special cases of `VaughtConjecture.Continuation.Candidate`:
   hypothesis; a top-free type has none.  The failure of availability for a pointwise minimum of two
   lawful lifts with twins is the stage-type example of `VaughtConjecture.Stage.ThresholdExamples`;
   no realization-level counterexample is claimed.  Stable availability for twin types in models is
-  open: a model is stably lawful given twin ordering (`TwinOrdering`, unproved and possibly
-  false), and synchronizing cofaces are refuted in
+  open, with no conditional statement here; synchronizing cofaces and twin ordering, the
+  hypotheses on single types examined for it, are refuted in
   `VaughtConjecture.Continuation.CandidateCounterexamples`;
 * **a model expansion**: at `ξ = 0`, the reduction of an exactly consistent
   realization at `ω + ω` with legal types and finite-extension receiving is stably lawful, given
@@ -118,12 +118,6 @@ example {R : Realization.{u, v} (blockStage ξ) M} (hR : R.IsConsistent) (hc : R
       Set.InjOn t.toCellScheme.gradedIndex {d | t.label d = ⊤}) :
     R.IsStablyLawful :=
   isStablyLawful_of_injOn_gradedIndex hR hc hinj
-
-/-- **A model under twin ordering**: a model at `λ_ξ` is stably lawful given twin ordering at
-`λ_ξ`, which is unproved and possibly false; generalized saturation is not used. -/
-example {R : Realization.{u, v} (blockStage ξ) M} (hR : R.IsModel)
-    (htw : TwinOrdering.{u} (blockStage ξ)) : R.IsStablyLawful :=
-  isStablyLawful_of_twinOrdering hR.isConsistent hR.isCovering hR.isLegal htw
 
 /-! ### A model expansion -/
 
