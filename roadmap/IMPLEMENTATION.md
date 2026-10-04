@@ -870,6 +870,10 @@ declarations listed in the notes.
 | 30 | [AFK26] | positive niceness over all admissible lifts (item 5; no numbered statement) | S |
 | 31 | [AFK26] | a uniform fixing stage of a family (item 5; no numbered statement) | S |
 | 32 | [AFK26] | the bound of serving indices under strictness (item 5; no numbered statement) | S |
+| 33 | [AFK26] | maximal presentations of a literal base (item 5; no numbered statement) | S |
+| 34 | [AFK26] | five equivalent criteria for them (item 5; no numbered statement) | S |
+| 35 | [AFK26] | literal uniqueness of maximal presentations (item 5; no numbered statement) | S |
+| 36 | [AFK26] | the optimal all-presentation bound (item 5; no numbered statement) | S |
 
 The items are those of `README.md`, "Manuscript correspondence (required)".  Notes to the rows:
 
@@ -987,6 +991,36 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     The row is required: the completion criterion of item 5 asks every row of the item to be P
     or C, so matching the manuscript needs milestone 4 even where the main theorem uses no bound
     of serving indices.
+33. Prospective: no declaration of this repository states a model presentation of a literal base
+    or its maximality (`README.md`, item 5, "Maximal presentations: equivalent criteria,
+    uniqueness, the optimal bound").  Related declarations, none of them this notion:
+    `Realization.IsTerminalAt` with `Realization.isTerminalAt_iff_forall_lt`
+    (`Continuation/Terminal`), terminality at a block, which a maximal presentation has; in the raw
+    base encoding, `Realization.IsExpansionOf.isTerminalAt` (same module), compiled in this
+    repository (theorem named): with no model expansion at the next block, every expansion is
+    terminal; and `FullPresentations`, with `presentedAt`, on `DensityClass`
+    (`MainTheorem/Assembly`), the class–level incidence of row 27, which stores no presentation.
+    The conversion between the raw base and the common invariant encodings: prospective.
+34. Prospective.  1 ⇒ 2 is the uniform fixing stage of row 31 for the family of model
+    presentations, through `StageProjection.exists_uniform_fixing_stage` (available upstream, not
+    yet at our pinned dependency; "Dependency pins"), and is the only step using a countable
+    carrier; 2 ⇔ 4 uses strictness for models (row 32); 4 ⇒ 5 uses bounded-stage attainment, whose
+    ingredients are compiled in this repository (theorem named) in the raw base encoding:
+    `Realization.IsModel.reduce` (`Realization/Model`), `ModelExpansion.nonempty_of_coherent`
+    (`Realization/Limit`), and `ModelExpansion.nonempty_of_forall_lt` (`Expansion/Uniqueness`,
+    conditional on `Expansion.NextBlockUniqueness`, still to be proved).  The equivalence
+    characterizes termination for one base; it is not a separate proof of termination.
+35. Prospective.  Its equality step is the injectivity of model reduction, whose form at one block,
+    in the raw base encoding, is `ModelExpansion.subsingleton` (`Expansion/Uniqueness`), compiled
+    in this repository (theorem named), conditional on `Expansion.NextBlockUniqueness`; its limit
+    step is `Realization.eq_of_forall_reduce_eq` (`Realization/Limit`).  That theorem compares two
+    expansions at one block; it bounds no index and supplies no terminal presentation.  The
+    terminality of the reconstructed top-free realization, `reduce_ne_reconstruct`
+    (`ClassicalLimit/Modelhood`), compiled in this repository (theorem named), concerns the
+    realization, not its base reduct.
+36. Prospective.  It rests on rows 32 and 35 and on `COMPANIONS.md`, "Fixing ranks are zero or
+    successors" and "Limit heights are unattained suprema", each still to be proved.  No
+    declaration of this repository names a fixing rank (row 30).
 
 **Completion criteria, item by item** (the items of `README.md`, "Manuscript correspondence
 (required)").  For every item, each row of the concordance that it concerns is P or C, with its
@@ -1051,6 +1085,33 @@ is complete because a later one is.
 5. *The separate statements:* the existence and coverage of maximal presentations, the terminal
    comparison, and noncollapse each proved by its own argument; no statement of 1–4 is cited for
    them, and no presentation at the supremum of the serving indices is inferred from 4.
+
+**Completion criteria of maximal presentations, statement by statement** (`README.md`, "Manuscript
+correspondence (required)", item 5, "Maximal presentations: equivalent criteria, uniqueness, the
+optimal bound"; rows 33–36, each still to be proved).  Each statement is complete on its own
+criterion, and none is complete because another is.
+
+1. *Maximal presentations:* the model presentations of a literal base invariant assignment at every
+   countable index, and their maximality, defined; a maximal presentation terminal
+   (`Realization.IsTerminalAt`) as a compiled theorem; and the conversion between the raw base and
+   the common invariant encodings compiled as its own statement before a theorem of one encoding
+   is quoted in the other; row 33 becomes P or C with row 27.
+2. *The five criteria:* each implication compiled, only 1 ⇒ 2 assuming a countable carrier, and
+   2–5 equivalent for arbitrary carriers when the base is a model; the pointwise equivalences of
+   the three sorts of bound at every proposed ordinal, without inhabitation; bounded-stage
+   attainment (a greatest serving index, the supplied bound not required to be serving) from
+   model reduction and countable-limit existence for model presentations, each a separate
+   theorem; and the negative special case (the everywhere-undefined assignment: criteria 1 and 4
+   vacuous, criterion 5 false) compiled as an example.  No proof of criterion 1 that uses
+   termination is cited as a proof of termination.
+3. *Literal uniqueness:* for a terminal model presentation at `ρ`, every model presentation at `η`
+   has `η ≤ ρ` and is literally its reduct, with no countability assumed; two terminal model
+   presentations of one base have the same index and equal evaluations; and no extension of a
+   partial diagram, an approximate assignment, or a projected donor is derived from it.
+4. *The optimal bound:* both equivalences at every ordinal `ξ`, stated with the given terminal
+   presentation; `ρ` as the least upper bound; for a nonzero limit `ρ`, that no finite invariant
+   has fixing rank `ρ` (with `COMPANIONS.md`, "Fixing ranks are zero or successors"); and no
+   identification of `ρ` with a Scott rank.
 
 ## Upstream building blocks
 
