@@ -3,7 +3,7 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
-import VaughtConjecture.Expansion.Uniqueness
+import VaughtConjecture.Expansion.UniquenessOfForcing
 import VaughtConjecture.MainTheorem.Assembly
 
 /-!
@@ -45,6 +45,15 @@ the roadmap has none of these hypotheses.  The counterexample form
 `vaughtCounterexample_of_expansionDomains` applied to `modelExpansionDomains hcap hu` additionally
 needs the cap-to-model theorem on the carriers of the universe `w` (`CapToModel.{w}`), which is the
 same hypothesis `hcap` when `w = 0`.
+
+**Next-block uniqueness replaced by forcing donors.**  Next-block uniqueness of models follows
+from finite-cut receiving of models and forcing donors at every countable block index
+(`Expansion.NextBlockUniqueness.of_forcingDonors`).  Substituting it gives thinness
+(`densitySentence_isThinOnNatModels_of_forcingDonors`) and the thin `ℵ₁` spectrum
+(`densitySentence_hasThinAlephOneSpectrum_of_forcingDonors`) conditional on the cap-to-model
+theorem, (R1), forcing donors (`ForcingDonors ξ`, `ξ < ω₁`; a finite statement about legal
+stage types, to be proved by a finite construction of Layer 3) and the conditions on the losses,
+with no hypothesis of uniqueness.
 
 ## Placement
 
@@ -113,5 +122,39 @@ theorem densitySentence_hasThinAlephOneSpectrum_of_modelExpansions (hcap : CapTo
     HasThinAlephOneSpectrum densitySentence.{0} :=
   densitySentence_hasThinAlephOneSpectrum_of_expansionDomains (modelExpansionDomains hcap hu)
     (modelExpansionDomains_hasLogicalAgreement hcap hu hrec) ⟨hc⟩ ⟨hn⟩
+
+/-- **Thinness for the expansion domains, conditionally on cap-to-model, (R1) and forcing
+donors**: the density sentence has no perfect set of pairwise nonisomorphic models coded on `ℕ`,
+conditional on the following hypotheses, each still to be proved: the cap-to-model theorem
+(`hcap`; Layer 3, 3.4; checkpoint 4), finite-cut receiving of models (`hrec`; (R1) of the table
+of Layer 3; used for next-block uniqueness and for logical agreement), forcing donors at every
+countable block index (`hF`; a finite construction of Layer 3, awaiting the completion below the
+full grade; used for next-block uniqueness), and countable losses of the expansion domains (`hc`;
+condition 2 of the reduction, Layers 4–5).  Next-block uniqueness is derived
+(`NextBlockUniqueness.of_forcingDonors`). -/
+theorem densitySentence_isThinOnNatModels_of_forcingDonors (hcap : CapToModel.{0})
+    (hrec : FiniteCutReceiving.{0}) (hF : ∀ ξ < ω₁, ForcingDonors.{0} ξ)
+    (hc : ∀ ξ < ω₁, (expansionDomain ξ \ expansionDomain (ξ + 1)).Countable) :
+    densitySentence.{0}.IsThinOnNatModels :=
+  densitySentence_isThinOnNatModels_of_modelExpansions hcap
+    (NextBlockUniqueness.of_forcingDonors hrec hF) hrec hc
+
+/-- **The thin `ℵ₁` spectrum for the expansion domains, conditionally on cap-to-model, (R1) and
+forcing donors**: the density sentence has exactly `ℵ₁` classes of models coded on `ℕ` and no
+perfect set of pairwise nonisomorphic ones, conditional on the following hypotheses, each still
+to be proved: the cap-to-model theorem (`hcap`; Layer 3, 3.4; checkpoint 4), finite-cut receiving
+of models (`hrec`; (R1) of the table of Layer 3; used for next-block uniqueness and for logical
+agreement), forcing donors at every countable block index (`hF`; a finite construction of
+Layer 3, awaiting the completion below the full grade; used for next-block uniqueness), countable
+losses of the expansion domains (`hc`; condition 2 of the reduction, Layers 4–5), and nonempty
+losses of the expansion domains (`hn`; condition 4 of the reduction, Layer 6).  Next-block
+uniqueness is derived (`NextBlockUniqueness.of_forcingDonors`). -/
+theorem densitySentence_hasThinAlephOneSpectrum_of_forcingDonors (hcap : CapToModel.{0})
+    (hrec : FiniteCutReceiving.{0}) (hF : ∀ ξ < ω₁, ForcingDonors.{0} ξ)
+    (hc : ∀ ξ < ω₁, (expansionDomain ξ \ expansionDomain (ξ + 1)).Countable)
+    (hn : ∀ ξ < ω₁, (expansionDomain ξ \ expansionDomain (ξ + 1)).Nonempty) :
+    HasThinAlephOneSpectrum densitySentence.{0} :=
+  densitySentence_hasThinAlephOneSpectrum_of_modelExpansions hcap
+    (NextBlockUniqueness.of_forcingDonors hrec hF) hrec hc hn
 
 end VaughtConjecture.MainTheorem

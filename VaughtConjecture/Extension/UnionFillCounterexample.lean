@@ -14,7 +14,7 @@ import VaughtConjecture.Geometry.IntervalPlan
 # A legal seed on which the union fill fails
 
 Roadmap, Layer 3, 3.1, (R6), checkpoint 2.6 (the recursion on the grade; here the negative
-regression for the step from the grade `j` to `j + 1`); semantic contract, items 2–4.
+example for the step from the grade `j` to `j + 1`); semantic contract, items 2–4.
 
 The **union fill** on the other coatom `D = univ.erase y` over a face `E` at the grade `j + 1`
 (`UnionFill`, stated verbatim below) asks that a labelling lawful below `(E, j + 1)` and below

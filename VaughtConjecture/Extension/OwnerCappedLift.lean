@@ -101,7 +101,8 @@ caps are `CellScheme.Rows.hasOwnerCappedLifts_of_source_short`,
 `CellScheme.Rows.cappedLiftAtShort_of_boundary`,
 `CellScheme.Rows.hasOwnerCappedLifts_of_boundary_short`, and
 `CellScheme.Rows.cappedLift_of_boundary_short`; the owner-capped lifts and the one-grade lift above
-are derived from them.
+are derived from them.  The one-grade lift with one boundary triple at the cap `⊥` and another at
+the positive caps is `CellScheme.Rows.cappedLift_of_boundaries_short`.
 
 ## Placement
 
@@ -120,8 +121,8 @@ namespace VaughtConjecture.CellScheme.Rows
 
 open Label
 
-variable {ι α : Type*} {D : CellScheme ι α} {R : D.Rows.{u}} {X Y I U V O : Finset α × ℕ}
-  {B C : Finset α} {j : ℕ}
+variable {ι α : Type*} {D : CellScheme ι α} {R : D.Rows.{u}}
+  {X Y I U V O U₀ V₀ O₀ : Finset α × ℕ} {B C : Finset α} {j : ℕ}
 
 /-! ### The row of a cell, read below its graded index -/
 
@@ -534,6 +535,52 @@ theorem cappedLift_of_boundary_short [Finite (D.below (C, j + 1))] (hCB : C ⊆ 
   cappedLift_of_ownerCappedLift hCB hX hlift fun c hc ↦
     hasOwnerCappedLifts_of_boundary_short hCB hCU hOU hOV hUY hVY hinter hleft hright hbot hY hrow
       c hc
+
+/-- **The one-grade lift with one boundary triple at the cap `⊥` and another at the positive
+caps.**  Let `C ⊆ B`, with finitely many cells below `(C, j + 1)`, some cell of graded index
+`(C, j + 1)`, and the lift at the lower grade, from `(C, j)` to `(B, j)`.  Suppose:
+
+* at the cap `⊥`: pairs `(C, j + 1) ≤ U₀`, `O₀ ≤ U₀, V₀`, `U₀, V₀ ≤ (B, j + 1)`, the cells below
+  both `U₀` and `V₀` lying below `O₀`, capped lifts from `(C, j + 1)` to `U₀` and from `O₀` to
+  `V₀`, and the extension from the boundary of `U₀` and `V₀` at `⊥`;
+* at the positive caps: pairs `U`, `V`, `O` with the same properties, some cell of graded index
+  `(B, j + 1)`, and at every such cell a row lawful below `(B, j + 1)`, short at `j + 1`, never the
+  formal top, along which the rows extend from the boundary of `U` and `V` at every positive cap
+  short and self-visible at `j + 1`.
+
+Then the rows lift capped from `(C, j + 1)` to `(B, j + 1)`
+(`CellScheme.Rows.cappedLift_of_ownerCappedLift`): at `⊥` by
+`CellScheme.Rows.hasOwnerCappedLifts_bot_of_boundary` with the first triple, at a positive cap by
+`CellScheme.Rows.hasOwnerCappedLifts_of_rows_short` and
+`CellScheme.Rows.cappedLiftAtShort_of_boundary` with the second.  With both triples equal it is
+`CellScheme.Rows.cappedLift_of_boundary_short`. -/
+theorem cappedLift_of_boundaries_short [Finite (D.below (C, j + 1))] (hCB : C ⊆ B)
+    (hX : ∃ c, D.gradedIndex c = (C, j + 1))
+    (hlift : R.CappedLift (X := (C, j)) (Y := (B, j)) ⟨hCB, le_rfl⟩)
+    (hCU₀ : ((C, j + 1) : Finset α × ℕ) ≤ U₀) (hOU₀ : O₀ ≤ U₀) (hOV₀ : O₀ ≤ V₀)
+    (hUY₀ : U₀ ≤ (B, j + 1)) (hVY₀ : V₀ ≤ (B, j + 1))
+    (hinter₀ : ∀ d ∈ D.below U₀, d ∈ D.below V₀ → d ∈ D.below O₀)
+    (hleft₀ : R.CappedLift hCU₀) (hright₀ : R.CappedLift hOV₀)
+    (hbot : R.ExtendsFromBoundary U₀ V₀ (B, j + 1) ⊥ fun _ ↦ ⊥)
+    (hCU : ((C, j + 1) : Finset α × ℕ) ≤ U) (hOU : O ≤ U) (hOV : O ≤ V)
+    (hUY : U ≤ (B, j + 1)) (hVY : V ≤ (B, j + 1))
+    (hinter : ∀ d ∈ D.below U, d ∈ D.below V → d ∈ D.below O)
+    (hleft : R.CappedLift hCU) (hright : R.CappedLift hOV)
+    (hY : ∃ t, D.gradedIndex t = (B, j + 1))
+    (hrow : ∀ u (hu : D.gradedIndex u = (B, j + 1)),
+      R.IsLawfulBelow (D.gradedIndex u) (R.row u) ∧ (∀ d, IsShort (j + 1) (R.rowBelow u hu d)) ∧
+      (∀ d, R.rowBelow u hu d ≠ ⊤) ∧
+      ∀ h, IsSelfVisible (j + 1) h → IsShort (j + 1) h → ⊥ < h →
+        R.ExtendsFromBoundary U V (B, j + 1) h (R.rowBelow u hu)) :
+    R.CappedLift (X := (C, j + 1)) (Y := (B, j + 1)) ⟨hCB, le_rfl⟩ := by
+  refine cappedLift_of_ownerCappedLift hCB hX hlift fun c hc ↦ ?_
+  rcases eq_bot_or_bot_lt c with rfl | hcbot
+  · exact hasOwnerCappedLifts_bot_of_boundary hCB hCU₀ hOU₀ hOV₀ hUY₀ hVY₀ hinter₀ hleft₀
+      hright₀ hbot
+  refine hasOwnerCappedLifts_of_rows_short hCB hcbot hc hY fun u hu ↦ ?_
+  obtain ⟨hcons, hshort, htop, hext⟩ := hrow u hu
+  exact ⟨hcons, hshort, htop, cappedLiftAtShort_of_boundary hCU hOU hOV hUY hVY hinter hleft
+    hright (isLawfulBelow_rowBelow hu hcons) hext⟩
 
 /-- **The one-grade lift from the boundary and the serving cells.**  Under the hypotheses of
 `CellScheme.Rows.hasOwnerCappedLifts_of_boundary`, together with some cell of graded index

@@ -45,6 +45,11 @@ cells*; the others, the *new cells*, have full scope.
   previous grade and the old cells of the grade are glued (`CellScheme.Rows.IsLawfulBelow.glue₃`)
   and extended through the new cells.  A lawful section of the amalgam extends to every `T j`,
   keeping every old label literally, the labels `⊤` included.
+* **Literal faces** (`TowerExamples.towerType`, `TowerExamples.restrictFace_left_towerType`,
+  `TowerExamples.restrictFace_right_towerType`).  At a stage that is zero or a limit, `T j` for
+  `j ≤ m + 2`, with the labels of the amalgam extended through the tower and reduced to the stage,
+  is a stage type whose faces along the two coatoms are the two coatom types of the seed, labels
+  included.
 
 **The lifting invariant** (`Seed.TowerInvariant j`): for both coatoms `C` and every `j' ≤ j`, the
 rows of `T j` lift capped from `(C, j')` to `(univ, j')`, at every cap self-visible at `j'` and for
@@ -85,7 +90,7 @@ of the amalgam lawful below both coatoms at the grade `j + 1` and agreeing with 
 extends through the new cells of the layers `1, …, j`, unchanged at the old cells of grade at most
 `j`, to one lawful below `(univ, j)` agreeing with `a` capped at `h`.  It chooses one labelling of
 the lower layers that respects both faces and the cap at once.  The cap `h` is short at `j + 1` but
-not at the grades of the layers it crosses.
+need not be short at the grades of the layers it crosses.
 
 * The invariant up to the grade `m + 1` holds under `2FL(j)` at the grades `2 ≤ j + 1 ≤ m`
   (`Seed.towerInvariant_of_twoFaceLift`), and at the arities `m ≤ 1` with no hypothesis
@@ -132,61 +137,6 @@ universe u
 namespace VaughtConjecture
 
 open Finset Label CellScheme
-
-/-! ### The one-grade lift with two boundary triples -/
-
-namespace CellScheme.Rows
-
-variable {ι α : Type*} {D : CellScheme ι α} {R : D.Rows.{u}} {U V O U₀ V₀ O₀ : Finset α × ℕ}
-  {B C : Finset α} {j : ℕ}
-
-/-- **The one-grade lift with one boundary triple at the cap `⊥` and another at the positive
-caps.**  Let `C ⊆ B`, with finitely many cells below `(C, j + 1)`, some cell of graded index
-`(C, j + 1)`, and the lift at the lower grade, from `(C, j)` to `(B, j)`.  Suppose:
-
-* at the cap `⊥`: pairs `(C, j + 1) ≤ U₀`, `O₀ ≤ U₀, V₀`, `U₀, V₀ ≤ (B, j + 1)`, the cells below
-  both `U₀` and `V₀` lying below `O₀`, capped lifts from `(C, j + 1)` to `U₀` and from `O₀` to
-  `V₀`, and the extension from the boundary of `U₀` and `V₀` at `⊥`;
-* at the positive caps: pairs `U`, `V`, `O` with the same properties, some cell of graded index
-  `(B, j + 1)`, and at every such cell a row lawful below `(B, j + 1)`, short at `j + 1`, never the
-  formal top, along which the rows extend from the boundary of `U` and `V` at every positive cap
-  short and self-visible at `j + 1`.
-
-Then the rows lift capped from `(C, j + 1)` to `(B, j + 1)`
-(`CellScheme.Rows.cappedLift_of_ownerCappedLift`): at `⊥` by
-`CellScheme.Rows.hasOwnerCappedLifts_bot_of_boundary` with the first triple, at a positive cap by
-`CellScheme.Rows.hasOwnerCappedLifts_of_rows_short` and
-`CellScheme.Rows.cappedLiftAtShort_of_boundary` with the second.  With both triples equal it is
-`CellScheme.Rows.cappedLift_of_boundary_short`. -/
-theorem cappedLift_of_boundaries_short [Finite (D.below (C, j + 1))] (hCB : C ⊆ B)
-    (hX : ∃ c, D.gradedIndex c = (C, j + 1))
-    (hlift : R.CappedLift (X := (C, j)) (Y := (B, j)) ⟨hCB, le_rfl⟩)
-    (hCU₀ : ((C, j + 1) : Finset α × ℕ) ≤ U₀) (hOU₀ : O₀ ≤ U₀) (hOV₀ : O₀ ≤ V₀)
-    (hUY₀ : U₀ ≤ (B, j + 1)) (hVY₀ : V₀ ≤ (B, j + 1))
-    (hinter₀ : ∀ d ∈ D.below U₀, d ∈ D.below V₀ → d ∈ D.below O₀)
-    (hleft₀ : R.CappedLift hCU₀) (hright₀ : R.CappedLift hOV₀)
-    (hbot : R.ExtendsFromBoundary U₀ V₀ (B, j + 1) ⊥ fun _ ↦ ⊥)
-    (hCU : ((C, j + 1) : Finset α × ℕ) ≤ U) (hOU : O ≤ U) (hOV : O ≤ V)
-    (hUY : U ≤ (B, j + 1)) (hVY : V ≤ (B, j + 1))
-    (hinter : ∀ d ∈ D.below U, d ∈ D.below V → d ∈ D.below O)
-    (hleft : R.CappedLift hCU) (hright : R.CappedLift hOV)
-    (hY : ∃ t, D.gradedIndex t = (B, j + 1))
-    (hrow : ∀ u (hu : D.gradedIndex u = (B, j + 1)),
-      R.IsLawfulBelow (D.gradedIndex u) (R.row u) ∧ (∀ d, IsShort (j + 1) (R.rowBelow u hu d)) ∧
-      (∀ d, R.rowBelow u hu d ≠ ⊤) ∧
-      ∀ h, IsSelfVisible (j + 1) h → IsShort (j + 1) h → ⊥ < h →
-        R.ExtendsFromBoundary U V (B, j + 1) h (R.rowBelow u hu)) :
-    R.CappedLift (X := (C, j + 1)) (Y := (B, j + 1)) ⟨hCB, le_rfl⟩ := by
-  refine cappedLift_of_ownerCappedLift hCB hX hlift fun c hc ↦ ?_
-  rcases eq_bot_or_bot_lt c with rfl | hcbot
-  · exact hasOwnerCappedLifts_bot_of_boundary hCB hCU₀ hOU₀ hOV₀ hUY₀ hVY₀ hinter₀ hleft₀
-      hright₀ hbot
-  refine hasOwnerCappedLifts_of_rows_short hCB hcbot hc hY fun u hu ↦ ?_
-  obtain ⟨hcons, hshort, htop, hext⟩ := hrow u hu
-  exact ⟨hcons, hshort, htop, cappedLiftAtShort_of_boundary hCU hOU hOV hUY hVY hinter hleft
-    hright (isLawfulBelow_rowBelow hu hcons) hext⟩
-
-end CellScheme.Rows
 
 namespace Seed
 
@@ -838,8 +788,8 @@ equivalent to that hypothesis of the step (`Seed.twoFaceLift_iff_extendsFromBoun
   scheme before (`Scheme.fieldRow_castAdd`);
 * `h` ranges over the caps self-visible and short at `j + 1` with `⊥ < h`, the source caps of the
   owner alignment; at the cap `⊥` no ambient enters, and the extension is
-  `Seed.exists_isLawfulBelow_tower`.  The cap is not short at the grades `1, …, j` of the layers
-  below `(univ, j)`;
+  `Seed.exists_isLawfulBelow_tower`.  The cap need not be short at the grades `1, …, j` of the
+  layers below `(univ, j)`;
 * `w` ranges over the labellings lawful below both coatoms at the grade `j + 1` that agree with `a`
   capped at `h`: in the step it is the aligned encoding of the prescription on one coatom glued
   with its lift into the other coatom, a lift of the amalgam.  The one-grade lift
@@ -1382,5 +1332,60 @@ theorem towerInvariant_of_le_one (hm : m ≤ 1) : ∀ j ≤ m + 1, I.TowerInvari
     exact I.towerInvariant_top hinv
 
 end Seed
+
+/-! ### Literal faces of the tower -/
+
+namespace TowerExamples
+
+section LiteralFaces
+
+variable {α : Ordinal.{u}} {m : ℕ} (I : Seed.{u} α m) (hα : Order.IsSuccPrelimit α) {j : ℕ}
+  (hj : j ≤ m + 2)
+
+/-- The scheme reached after the grade `j`, with the glued labelling extended through the tower and
+reduced to the stage `α`, zero or a limit: a stage type on `m + 2` points. -/
+noncomputable def towerType : StageType.{u} α (m + 2) where
+  toScheme := I.tower j
+  label d := Label.reduce α ((I.exists_isLawful_tower j I.amalgam.isLawful).choose d)
+  isWellFormed := I.isWellFormed_tower j hj
+  isCoded := I.isCoded_tower j
+  isLawful := (I.exists_isLawful_tower j I.amalgam.isLawful).choose_spec.1.reduce hα
+  atStage _ := atStage_reduce α _
+
+/-- The stage type of the tower keeps the glued labels on the old cells. -/
+theorem towerType_label_embed (d : Fin I.amalgam.card) :
+    (towerType I hα hj).label (I.towerEmbed j d) = I.amalgam.label d :=
+  (congrArg (Label.reduce α) ((I.exists_isLawful_tower j I.amalgam.isLawful).choose_spec.2 d)).trans
+    (I.amalgam.atStage d).reduce_eq
+
+/-- **The faces of the tower along a proper face are those of the amalgam**, labels included. -/
+theorem restrictFace_towerType {k : ℕ} (f : Fin k ↪ Fin (m + 2)) (hf : univ.map f ≠ univ) :
+    StageType.restrictFace f (towerType I hα hj) = StageType.restrictFace f I.amalgam := by
+  refine StageType.restrictFace_eq_of_strictMono (t := towerType I hα hj) (s := I.amalgam) f
+    (φ := I.towerEmbed j) (I.towerEmbed j).strictMono (I.isLowerEmbedding_tower j)
+    (I.scope_towerEmbed j) (I.comap_rows_tower j)
+    ((I.isWellFormed_tower j hj).ground_eq.trans I.amalgam.isWellFormed.ground_eq.symm)
+    (I.faces_tower j) (towerType_label_embed I hα hj) fun z hz ↦
+      I.mem_range_towerEmbed j z fun he ↦ hf (eq_univ_of_forall fun x ↦ ?_)
+  obtain ⟨y, rfl⟩ : x ∈ Set.range f := hz (mem_coe.mpr (he.symm ▸ mem_univ x))
+  exact mem_map_of_mem _ (mem_univ y)
+
+/-- **The face of the tower along the first coatom is the first coatom type**, literally. -/
+theorem restrictFace_left_towerType :
+    StageType.restrictFace (Coatom.left m) (towerType I hα hj) = some I.left := by
+  refine (restrictFace_towerType I hα hj _ fun he ↦ ?_).trans I.restrictFace_left
+  exact Coatom.last_notMem_univ_map_left (he ▸ mem_univ (Fin.last (m + 1)))
+
+/-- **The face of the tower along the second coatom is the second coatom type**, literally. -/
+theorem restrictFace_right_towerType :
+    StageType.restrictFace (Coatom.right m) (towerType I hα hj) = some I.right := by
+  refine (restrictFace_towerType I hα hj _ fun he ↦ ?_).trans I.restrictFace_right
+  have h := mem_univ (Fin.castSucc (Fin.last m))
+  rw [← he, Coatom.univ_map_right] at h
+  exact notMem_erase _ _ h
+
+end LiteralFaces
+
+end TowerExamples
 
 end VaughtConjecture
