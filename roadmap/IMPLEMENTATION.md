@@ -1016,8 +1016,9 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     characterizes termination for one base; it is not a separate proof of termination.
 35. Prospective, conditional on the injectivity of model reduction at each countable index (two
     model presentations of the base at one index are equal), an explicit hypothesis until proved.
-    Both its steps use it: the inequality at `ρ` (with terminal collision), the equality at `η`.
-    Its raw form at one block, in the raw base encoding, is `ModelExpansion.subsingleton`
+    Both its steps use it: the inequality at `ρ` (terminal collision, which also uses
+    `Realization.IsModel.reduce` and `Realization.isTerminalAt_iff_forall_lt`), the equality at
+    `η`.  Its raw form at one block, in the raw base encoding, is `ModelExpansion.subsingleton`
     (`Expansion/Uniqueness`), compiled in this repository (theorem named), conditional on
     `Expansion.NextBlockUniqueness`, still to be proved, which is derived from (R1) and
     `ForcingDonors` by `Expansion.NextBlockUniqueness.of_forcingDonors`
@@ -1027,10 +1028,10 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     terminality of the reconstructed top-free realization, `reduce_ne_reconstruct`
     (`ClassicalLimit/Modelhood`), compiled in this repository (theorem named), concerns the
     realization, not its base reduct.
-36. Prospective.  It rests on rows 32 and 35 (so on the injectivity of model reduction) and on
-    `COMPANIONS.md`, "Fixing ranks are zero or successors" and "Limit heights are unattained
-    suprema", each still to be proved.  No
-    declaration of this repository names a fixing rank (row 30).
+36. Prospective.  It rests on row 32, on the inequality step of row 35 (so on the injectivity of
+    model reduction at `ρ` only), and on `COMPANIONS.md`, "Fixing ranks are zero or successors"
+    and "Limit heights are unattained suprema", each still to be proved.  No declaration of this
+    repository names a fixing rank (row 30).
 
 **Completion criteria, item by item** (the items of `README.md`, "Manuscript correspondence
 (required)").  For every item, each row of the concordance that it concerns is P or C, with its
@@ -1142,14 +1143,16 @@ hypothesis of each statement of 2–4 that uses it, until it is proved as a theo
    presentations of one base have the same index and are equal; and no extension of a partial
    diagram, an approximate assignment, or a projected donor is derived from it.  Its named
    dependencies: the injectivity of model reduction, the same as in 4 ⇒ 5 (an explicit hypothesis
-   of both steps: at `ρ` for the inequality, with downward model reduction
-   `Realization.IsModel.reduce` and terminal collision, and at `η` for the equality).
+   of both steps: at `ρ` for the inequality, which is terminal collision, with downward model
+   reduction `Realization.IsModel.reduce` and `Realization.isTerminalAt_iff_forall_lt`; and at
+   `η` for the equality).
 4. *The optimal bound:* both equivalences at every ordinal `ξ`, stated with the given terminal
    presentation; `ρ` as the least upper bound; for a nonzero limit `ρ`, that no finite invariant
    has fixing rank `ρ`; and no identification of `ρ` with a Scott rank.  Its named dependencies:
-   literal uniqueness (3), hence the same injectivity of model reduction, both steps, as an
-   explicit hypothesis; strictness for models (row 32); and `COMPANIONS.md`, "Fixing ranks are
-   zero or successors", for the limit case.
+   the inequality step of literal uniqueness (3), that is, terminal collision, hence the
+   injectivity of model reduction at `ρ` only, as an explicit hypothesis (the equality step, at
+   `η`, is not used); strictness for models (row 32); and `COMPANIONS.md`, "Fixing ranks are zero
+   or successors", for the limit case.
 
 ## Upstream building blocks
 
