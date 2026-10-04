@@ -288,7 +288,7 @@ noncomputable def fourCellPairSeed (α : Ordinal.{u}) (hα : Order.IsSuccPrelimi
 
 /-- **A cell of full scope of a face type is a cell of the type**, on the face, with its grade and
 label (`Scheme.map_comap_gradedIndex`). -/
-theorem exists_label_of_restrictFace {α : Ordinal.{u}} {n m j : ℕ}
+private theorem exists_label_of_restrictFace {α : Ordinal.{u}} {n m j : ℕ}
     {t : StageType.{u} α n} {s : StageType.{u} α m} {f : Fin m ↪ Fin n}
     (hs : StageType.restrictFace f t = some s) {e : Fin s.card}
     (he : s.toCellScheme.gradedIndex e = (Finset.univ, j)) :
@@ -402,7 +402,8 @@ theorem exists_completion_longRowPairSeed (α : Ordinal.{u}) (hα : Order.IsSucc
 /-- **A label `⊤` at grade two is kept and carried by a new cell.**  In a completion of a seed on
 three points, an old cell of grade `2` labelled `⊤` keeps `⊤`, and some cell of graded index
 `(univ, 2)` is labelled `⊤` (availability). -/
-theorem top_of_completion {α : Ordinal.{u}} {I : Seed.{u} α 1} (F : CompletionBelowFullGrade I)
+private theorem top_of_completion {α : Ordinal.{u}} {I : Seed.{u} α 1}
+    (F : CompletionBelowFullGrade I)
     {d : Fin I.amalgam.card} (hd : I.amalgam.toCellScheme.grade d = 2)
     (hl : I.amalgam.label d = ⊤) :
     F.label (F.embed d) = ⊤ ∧
@@ -523,7 +524,8 @@ theorem exists_lift_capRegimes_fourCellPairSeed (α : Ordinal.{u}) (hα : Order.
     (y := Fin.castSucc (Fin.last 1)) (by decide) (by decide) (by decide) hcv p q hp hq hpq
 
 /-- At the cap `⊤` the lift of regression 6 is the ambient itself. -/
-theorem eq_of_min_top {X : Type*} {q q' : X → Label.{u}} (h : ∀ d, min (q' d) ⊤ = min (q d) ⊤) :
+private theorem eq_of_min_top {X : Type*} {q q' : X → Label.{u}}
+    (h : ∀ d, min (q' d) ⊤ = min (q d) ⊤) :
     q' = q :=
   funext fun d ↦ by simpa using h d
 
