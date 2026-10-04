@@ -47,7 +47,20 @@ of `σ`.
   first;
 * stage reduction at a stage that is zero or a limit, of the target and of the witness
   (`TransformsTo.reduce_self`, `IsWitness.reduce`, and the reduction rule
-  `TransformsTo.reduce`, [Kni26, Lemma 3.1.3]).
+  `TransformsTo.reduce`, [Kni26, Lemma 3.1.3]);
+* pointwise minima: the pointwise minimum of two witnesses is a witness (`IsWitness.inf`), so two
+  transformations from a common source give one to the pointwise minimum of their targets
+  (`TransformsTo.inf`).  The guard is handled by the fact that a shifter exceeding the suppressor
+  at `k` still exceeds it after visibility replacement at `k`
+  (`IsWitness.lt_apply_visibilityReplace`, the argument of `IsWitness.reduce`);
+* collapse above a threshold: `collapse β N` sends every label at least `β + N` to the formal top
+  and keeps the others; for `β` zero or a limit and all grades at most `K < N`, a transformation to
+  `q` gives one to the collapse of `q` (`TransformsTo.collapse`), since the collapse commutes with
+  visibility replacement at thresholds `k < N` (`collapse_visibilityReplace`).
+
+Pointwise minima and collapse are used to prove locality of the stable labelling at the next block
+stage (roadmap, Layer 4, output 1), where it is a pointwise minimum of finitely many lawful
+labellings, collapsed above a threshold; that application is still to be proved.
 
 ## Nontransitivity
 
@@ -288,6 +301,174 @@ theorem TransformsTo.reduce {α : Ordinal.{u}} (hα : Order.IsSuccPrelimit α)
     (h : TransformsTo grade p q) : TransformsTo grade p (reduce α ∘ q) := by
   obtain ⟨g, σ, hw, heq⟩ := h
   exact ⟨_, _, hw.reduce hα, fun d ↦ by simp [heq, (monotone_reduce α).map_min]⟩
+
+/-! ### Pointwise minima -/
+
+/-- **The guard fails along visibility replacement**: if the shifter exceeds the suppressor at `k`
+at `x`, it exceeds it at every visibility replacement of `x` at threshold `k` with a value
+`i ≤ k`.  Otherwise the guard would hold there, and replacing again with value `k` would bound the
+shifter at `x` by the suppressor at `k`. -/
+theorem IsWitness.lt_apply_visibilityReplace (hw : IsWitness g σ) {x : Label.{u}} {k i : ℕ}
+    (hx : g k < σ x) (hi : i ≤ k) : g k < σ (visibilityReplace k i x) := by
+  by_contra hy
+  have hy : σ (visibilityReplace k i x) ≤ g k := not_lt.mp hy
+  have h5 := hw.visibilityReplace_comm _ k hy k le_rfl
+  rw [visibilityReplace_self_visibilityReplace hi] at h5
+  have hle : σ x ≤ σ (visibilityReplace k k x) := hw.monotone (le_visibilityReplace (by omega) x)
+  exact hx.not_ge (hle.trans (h5.trans_le
+    (visibilityReplace_le_of_le le_rfl (hw.isSelfVisible k) hy)))
+
+/-- The guard law of `IsWitness.inf` when the first shifter is the smaller one at `x`. -/
+private theorem IsWitness.inf_comm_of_le {g₁ g₂ : ℕ → Label.{u}} {σ₁ σ₂ : Label.{u} → Label.{u}}
+    (h₁ : IsWitness g₁ σ₁) (h₂ : IsWitness g₂ σ₂) {x : Label.{u}} {k i : ℕ} (hle : σ₁ x ≤ σ₂ x)
+    (hx₁ : σ₁ x ≤ g₁ k) (hx₂ : σ₁ x ≤ g₂ k) (hi : i ≤ k) :
+    min (σ₁ (visibilityReplace k i x)) (σ₂ (visibilityReplace k i x)) =
+      visibilityReplace k i (min (σ₁ x) (σ₂ x)) := by
+  rw [visibilityReplace_min hi, h₁.visibilityReplace_comm x k hx₁ i hi]
+  by_cases h₂x : σ₂ x ≤ g₂ k
+  · rw [h₂.visibilityReplace_comm x k h₂x i hi]
+  · have hlt := h₂.lt_apply_visibilityReplace (not_le.mp h₂x) hi
+    have hb : visibilityReplace k i (σ₁ x) ≤ g₂ k :=
+      visibilityReplace_le_of_le hi (h₂.isSelfVisible k) hx₂
+    rw [min_eq_left (hb.trans hlt.le), min_eq_left (monotone_visibilityReplace hi hle)]
+
+/-- **Pointwise minima of witnesses**: the pointwise minimum of two suppressors, with the pointwise
+minimum of their shifters, is a witness. -/
+theorem IsWitness.inf {g₁ g₂ : ℕ → Label.{u}} {σ₁ σ₂ : Label.{u} → Label.{u}}
+    (h₁ : IsWitness g₁ σ₁) (h₂ : IsWitness g₂ σ₂) : IsWitness (g₁ ⊓ g₂) (σ₁ ⊓ σ₂) where
+  antitone := h₁.antitone.inf h₂.antitone
+  isSelfVisible n := (h₁.isSelfVisible n).min (h₂.isSelfVisible n)
+  map_bot := by simp [h₁.map_bot, h₂.map_bot]
+  monotone := h₁.monotone.inf h₂.monotone
+  visibilityReplace_comm x k hx i hi := by
+    simp only [Pi.inf_apply] at hx ⊢
+    rcases le_total (σ₁ x) (σ₂ x) with hle | hle
+    · rw [inf_eq_left.mpr hle] at hx
+      exact h₁.inf_comm_of_le h₂ hle (hx.trans inf_le_left) (hx.trans inf_le_right) hi
+    · rw [inf_eq_right.mpr hle] at hx
+      rw [inf_comm, inf_comm (σ₁ x)]
+      exact h₂.inf_comm_of_le h₁ hle (hx.trans inf_le_right) (hx.trans inf_le_left) hi
+
+/-- **Pointwise minima of transformations**: if `p` transforms to `q₁` and to `q₂`, it transforms
+to their pointwise minimum. -/
+theorem TransformsTo.inf {q₁ q₂ : D → Label.{u}} (h₁ : TransformsTo grade p q₁)
+    (h₂ : TransformsTo grade p q₂) : TransformsTo grade p (q₁ ⊓ q₂) := by
+  obtain ⟨g₁, σ₁, hw₁, he₁⟩ := h₁
+  obtain ⟨g₂, σ₂, hw₂, he₂⟩ := h₂
+  exact ⟨_, _, hw₁.inf hw₂, fun d ↦ by
+    simp only [Pi.inf_apply, he₁, he₂]
+    exact inf_inf_inf_comm _ _ _ _⟩
+
+/-! ### Collapse above a threshold -/
+
+section Collapse
+
+variable {β : Ordinal.{u}} {N : ℕ} {x y : Label.{u}}
+
+/-- The **collapse** above `β + N`: a label at least `β + N` is sent to the formal top, and every
+other label is kept. -/
+noncomputable def collapse (β : Ordinal.{u}) (N : ℕ) (x : Label.{u}) : Label.{u} :=
+  if ((β + N : Ordinal.{u}) : Label.{u}) ≤ x then ⊤ else x
+
+/-- A label at least `β + N` collapses to the formal top. -/
+theorem collapse_of_le (h : ((β + N : Ordinal.{u}) : Label.{u}) ≤ x) : collapse β N x = ⊤ :=
+  ite_eq_left h
+
+/-- A label not at least `β + N` is kept by the collapse. -/
+theorem collapse_of_not_le (h : ¬ ((β + N : Ordinal.{u}) : Label.{u}) ≤ x) :
+    collapse β N x = x :=
+  ite_eq_right h
+
+/-- The collapse raises labels. -/
+theorem le_collapse (x : Label.{u}) : x ≤ collapse β N x := by
+  unfold collapse
+  split_ifs
+  exacts [le_top, le_rfl]
+
+/-- The collapse is monotone. -/
+theorem monotone_collapse : Monotone (collapse.{u} β N) := fun x y hxy ↦ by
+  by_cases hy : ((β + N : Ordinal.{u}) : Label.{u}) ≤ y
+  · exact (collapse_of_le hy).symm ▸ le_top
+  · rw [collapse_of_not_le hy, collapse_of_not_le fun hx ↦ hy (hx.trans hxy)]
+    exact hxy
+
+/-- The collapse preserves and reflects bottom. -/
+@[simp] theorem collapse_eq_bot_iff : collapse β N x = ⊥ ↔ x = ⊥ := by
+  unfold collapse
+  split_ifs with h
+  · exact iff_of_false top_ne_bot fun hx ↦ (WithBot.bot_lt_coe _).not_ge (hx ▸ h)
+  · exact Iff.rfl
+
+/-- The collapse preserves self-visibility. -/
+theorem IsSelfVisible.collapse {k : ℕ} (h : IsSelfVisible k x) :
+    IsSelfVisible k (Label.collapse β N x) := by
+  unfold Label.collapse
+  split_ifs
+  exacts [isSelfVisible_top k, h]
+
+/-- Visibility replacement at a threshold `k < N` with a value `i ≤ k` does not move a label across
+`β + N`, for `β` zero or a limit. -/
+private theorem coe_add_le_visibilityReplace_iff (hβ : Order.IsSuccPrelimit β) {k i : ℕ}
+    (hi : i ≤ k) (hkN : k < N) :
+    ((β + N : Ordinal.{u}) : Label.{u}) ≤ visibilityReplace k i x ↔
+      ((β + N : Ordinal.{u}) : Label.{u}) ≤ x := by
+  obtain ⟨M, rfl⟩ : ∃ M, N = M + 1 := ⟨N - 1, by omega⟩
+  have hM : ((β + (M + 1 : ℕ) : Ordinal.{u}) : Label.{u}) = ((β + M + 1 : Ordinal.{u}) : Label.{u})
+    := by rw [Nat.cast_add_one, add_assoc]
+  rw [hM, ← not_lt, ← not_lt, lt_coe_add_one_iff, lt_coe_add_one_iff, not_iff_not]
+  refine ⟨fun h ↦ ?_, fun h ↦ visibilityReplace_le_coe_add hβ h (by omega) k⟩
+  calc x ≤ visibilityReplace k k x := le_visibilityReplace (by omega) x
+    _ = visibilityReplace k k (visibilityReplace k i x) :=
+      (visibilityReplace_self_visibilityReplace hi x).symm
+    _ ≤ _ := visibilityReplace_le_of_le le_rfl (isSelfVisible_coe_add hβ (by omega)) h
+
+/-- **The collapse commutes with visibility replacement** at a threshold `k < N` with a value
+`i ≤ k`, for `β` zero or a limit. -/
+theorem collapse_visibilityReplace (hβ : Order.IsSuccPrelimit β) {k i : ℕ} (hi : i ≤ k)
+    (hkN : k < N) (x : Label.{u}) :
+    collapse β N (visibilityReplace k i x) = visibilityReplace k i (collapse β N x) := by
+  by_cases hx : ((β + N : Ordinal.{u}) : Label.{u}) ≤ x
+  · rw [collapse_of_le hx, visibilityReplace_top,
+      collapse_of_le ((coe_add_le_visibilityReplace_iff hβ hi hkN).mpr hx)]
+  · rw [collapse_of_not_le hx,
+      collapse_of_not_le (mt (coe_add_le_visibilityReplace_iff hβ hi hkN).mp hx)]
+
+/-- **Collapse of a transformation**: if every grade is at most `K < N` and `β` is zero or a limit,
+a transformation to `q` gives a transformation to the collapse of `q` above `β + N`.  The witness
+is the collapse of the suppressor, truncated above `K`, with the collapse of the shifter. -/
+theorem TransformsTo.collapse (hβ : Order.IsSuccPrelimit β) {K : ℕ} (hK : ∀ d, grade d ≤ K)
+    (hKN : K < N) (h : TransformsTo grade p q) : TransformsTo grade p (collapse β N ∘ q) := by
+  obtain ⟨g, σ, hw, heq⟩ := h
+  refine ⟨fun n ↦ if n ≤ K then Label.collapse β N (g n) else ⊥, Label.collapse β N ∘ σ,
+    ⟨fun n m hnm ↦ ?_, fun n ↦ ?_, by simp [hw.map_bot], monotone_collapse.comp hw.monotone,
+      fun x k hx i hi ↦ ?_⟩, fun d ↦ ?_⟩
+  · split_ifs with hm hn
+    · exact monotone_collapse (hw.antitone hnm)
+    · exact absurd (hnm.trans hm) hn
+    · exact bot_le
+    · exact le_rfl
+  · split_ifs
+    exacts [(hw.isSelfVisible n).collapse, isSelfVisible_bot n]
+  · simp only [Function.comp_apply] at hx ⊢
+    split_ifs at hx with hk
+    · by_cases hxk : σ x ≤ g k
+      · rw [hw.visibilityReplace_comm x k hxk i hi,
+          collapse_visibilityReplace hβ hi (hk.trans_lt hKN)]
+      have hgk : ((β + N : Ordinal.{u}) : Label.{u}) ≤ g k := by
+        by_contra hg
+        rw [collapse_of_not_le hg] at hx
+        exact hxk ((le_collapse _).trans hx)
+      have hlt : g k < σ x := not_le.mp hxk
+      rw [collapse_of_le (hgk.trans (hw.lt_apply_visibilityReplace hlt hi).le),
+        collapse_of_le (hgk.trans hlt.le), visibilityReplace_top]
+    · have hσ : σ x = ⊥ := collapse_eq_bot_iff.mp (le_bot_iff.mp hx)
+      have hb : Label.collapse β N ⊥ = ⊥ := collapse_eq_bot_iff.mpr rfl
+      rw [hw.visibilityReplace_comm x k (hσ.trans_le bot_le) i hi, hσ, visibilityReplace_bot, hb,
+        visibilityReplace_bot]
+  · simp only [Function.comp_apply, hK d, ↓reduceIte, heq]
+    exact monotone_collapse.map_min
+
+end Collapse
 
 /-! ### Nontransitivity -/
 

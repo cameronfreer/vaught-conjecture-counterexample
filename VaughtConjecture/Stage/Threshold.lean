@@ -48,6 +48,23 @@ formal top, `n` is at most the provisional offset exactly when `(q, f)` forces `
 grade of `d`.  A single pair `(q, f)` is not claimed here to force only finitely many thresholds;
 the value `⊤` of a supremum over many pairs is allowed.
 
+**Faces of the root and attained offsets.**
+
+* A *lift* of `q` is a stage type at `α` reducing to `q`.  A lift of `q` restricts along `f` to a
+  lift of `p` (`exists_restrictFace_reduce_eq`).
+* **Forcing at a face of the root** (`ForcesThreshold.trans_comap_iff`): if `q` restricts to `p`
+  along `h` and `f` spans a closed face of `p`, forcing at `(q, f.trans h)` for the root
+  `p.comap f hf` at a cell `i` is forcing at `(q, h)` for `p` at the transported cell
+  `p.cellMap f i`.
+* **The provisional offset is attained** (`exists_lift_label_eq_ofOffset`): some stage type at
+  `β + ω` reducing to `q` carries, at the position of `d` on its face along `f`, exactly the label
+  `Label.ofOffset β` of the provisional offset.  A finite offset `o` is forced and `o + 1` is not,
+  so a lift witnessing the failure of `o + 1` has the label `β + o`; an infinite offset makes every
+  lift carry the formal top there.
+
+These are used to compare stable offsets along faces of a cover and to realize the stable labels
+by lifts (roadmap, Layer 4, output 1, still to be proved).
+
 **Offsets as labels.**  `Label.ofOffset β o` is `β + o` for a finite `o` and the formal top for
 `o = ⊤` (`Label.ofOffset_eq_top_iff`); its thresholds are those of `o`
 (`Label.coe_add_le_ofOffset_iff`), it lies in `[β, β + ω) ∪ {⊤}` (`Label.le_ofOffset`,
@@ -270,6 +287,90 @@ theorem le_provisionalOffset_iff (hfp : restrictFace f q = some p) (hd : p.label
 theorem grade_le_provisionalOffset (hfp : restrictFace f q = some p) (hd : p.label d = ⊤) :
     (p.toCellScheme.grade d : ℕ∞) ≤ provisionalOffset α hβ q f p d :=
   (forcesThreshold_of_le_grade hfp hd le_rfl).le_provisionalOffset
+
+/-! ### Faces of the root and lifts attaining the provisional offset -/
+
+/-- The face along `f` of a stage type at `α` lifting `q` is a lift of the face of `q`: if `q`
+restricts to `p` along `f` and `Q` reduces to `q`, then `Q` restricts along `f` to a stage type
+reducing to `p`. -/
+theorem exists_restrictFace_reduce_eq (hfp : restrictFace f q = some p) {Q : StageType.{u} α m}
+    (hQ : Q.reduce hβ = q) : ∃ P, restrictFace f Q = some P ∧ P.reduce hβ = p := by
+  have h := restrictFace_reduce Q f hβ
+  rw [hQ, hfp] at h
+  exact Option.map_eq_some_iff.mp h.symm
+
+/-- **Forcing at a face of the root is forcing at the transported cell**: if `q` restricts to `p`
+along `h` and `f` spans a closed face of `p`, then `(q, f.trans h)` forces `n` at the cell `i` of
+the face `p.comap f hf` exactly when `(q, h)` forces `n` at the cell `p.cellMap f i` of `p`.
+Cells are matched by position. -/
+theorem ForcesThreshold.trans_comap_iff {j : ℕ} {h : Fin k ↪ Fin m}
+    (hp : restrictFace h q = some p) {f : Fin j ↪ Fin k}
+    (hf : Finset.univ.map f ∈ p.toCellScheme.faces) (i : Fin (p.comap f hf).card) :
+    ForcesThreshold α hβ q (f.trans h) (p.comap f hf) i n ↔
+      ForcesThreshold α hβ q h p (p.cellMap f i) n := by
+  have hq : restrictFace (f.trans h) q = some (p.comap f hf) := by
+    rw [← restrictFace_trans q h f hp, restrictFace_of_mem p f hf]
+  refine ⟨fun ⟨_, H⟩ ↦ ⟨hp, fun Q P hQ hP i' hi' ↦ ?_⟩,
+    fun ⟨_, H⟩ ↦ ⟨hq, fun Q P' hQ hP' i' hi' ↦ ?_⟩⟩
+  · obtain ⟨P₀, hP₀, hPp⟩ := exists_restrictFace_reduce_eq hp hQ
+    rw [hP₀] at hP
+    cases hP
+    subst hPp
+    have hf' : Finset.univ.map f ∈ P.toCellScheme.faces := hf
+    have h' : ((β + n : Ordinal.{u}) : Label.{u}) ≤ P.label (P.cellMap f i) := H Q
+      (P.comap f hf') hQ (by rw [← restrictFace_trans Q h f hP₀, restrictFace_of_mem P f hf']) i rfl
+    exact h'.trans_eq (congrArg P.label (Fin.ext hi'.symm))
+  · obtain ⟨P, hP, hPp⟩ := exists_restrictFace_reduce_eq hp hQ
+    subst hPp
+    have hf' : Finset.univ.map f ∈ P.toCellScheme.faces := hf
+    rw [← restrictFace_trans Q h f hP, restrictFace_of_mem P f hf'] at hP'
+    obtain rfl := Option.some_injective _ hP'
+    rw [comap_label]
+    exact H Q P hQ hP _ (congrArg Fin.val (congrArg (P.cellMap f) (Fin.ext hi')))
+
+/-- **A lift attaining the provisional offset**: if `q` restricts to `p` along `f` and `d` is
+labelled the formal top in `p`, some stage type at `β + ω` reducing to `q` has, on its face along
+`f`, the label `β + o` at the position of `d`, where `o` is the provisional offset of `d` at
+`(q, f)` (the formal top when `o = ⊤`).  For a finite offset `o`, a lift witnessing that `o + 1` is
+not forced has this label, since `o` is forced; for `o = ⊤`, every lift has the label `⊤`. -/
+theorem exists_lift_label_eq_ofOffset (hfp : restrictFace f q = some p) (hd : p.label d = ⊤) :
+    ∃ Q : StageType.{u} (β + ω) m, Q.reduce hβ = q ∧ ∃ P, restrictFace f Q = some P ∧
+      ∀ i : Fin P.card, (i : ℕ) = d →
+        P.label i = Label.ofOffset β (provisionalOffset (β + ω) hβ q f p d) := by
+  induction h : provisionalOffset (β + ω) hβ q f p d using ENat.recTopCoe with
+  | top =>
+    have hQ : (q.castLE (le_self_add : β ≤ β + ω)).reduce hβ = q := by
+      rw [reduce_castLE, reduce_self]
+    obtain ⟨P, hP, -⟩ := exists_restrictFace_reduce_eq hfp hQ
+    refine ⟨_, hQ, P, hP, fun i hi ↦ ?_⟩
+    rw [Label.ofOffset_top]
+    by_contra hne
+    have hlt : P.label i < ((β + ω : Ordinal.{u}) : Label.{u}) := (P.atStage i).resolve_right hne
+    have hall : ∀ n : ℕ, ((β + n : Ordinal.{u}) : Label.{u}) ≤ P.label i := fun n ↦
+      ((le_provisionalOffset_iff hfp hd).mp (h ▸ le_top)).2 _ P hQ hP i hi
+    induction hx : P.label i using Label.recBotCoeTop with
+    | bot => exact (WithBot.bot_lt_coe _).not_ge (hx ▸ hall 0)
+    | top => exact hne hx
+    | coe v =>
+      rw [hx] at hlt hall
+      obtain ⟨c, hc, hvc⟩ := (Ordinal.lt_add_iff_of_isSuccLimit Ordinal.isSuccLimit_omega0).mp
+        (WithTop.coe_lt_coe.mp (WithBot.coe_lt_coe.mp hlt))
+      obtain ⟨n, rfl⟩ := Ordinal.lt_omega0.mp hc
+      exact hvc.not_ge (WithTop.coe_le_coe.mp (WithBot.coe_le_coe.mp (hall n)))
+  | coe o =>
+    have hn : ForcesThreshold (β + ω) hβ q f p d o := (le_provisionalOffset_iff hfp hd).mp h.ge
+    have hn1 : ¬ ForcesThreshold (β + ω) hβ q f p d (o + 1) := fun h1 ↦ by
+      have := h1.le_provisionalOffset
+      rw [h, Nat.cast_le] at this
+      omega
+    simp only [ForcesThreshold, hfp, true_and, not_forall] at hn1
+    obtain ⟨Q, P, hQ, hP, i, hi, hlt⟩ := hn1
+    refine ⟨Q, hQ, P, hP, fun i' hi' ↦ ?_⟩
+    obtain rfl : i' = i := Fin.ext (hi'.trans hi.symm)
+    rw [Label.ofOffset_natCast]
+    refine le_antisymm ?_ (hn.2 Q P hQ hP i' hi')
+    rw [Nat.cast_add_one, ← add_assoc] at hlt
+    exact Label.lt_coe_add_one_iff.mp (not_le.mp hlt)
 
 end StageType
 
