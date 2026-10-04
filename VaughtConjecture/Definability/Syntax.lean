@@ -19,8 +19,9 @@ semantics and their quantifier rank (`BoundedFormulaω.qrank`):
   `φ : L.Formulaω (Fin (k + m))`): `m` applications of `existsLastVar`.  It is realized at `v`
   exactly when `φ` is realized at `v` extended by some `ys : Fin m → N` (`realize_existsLastVars`),
   and it adds exactly `m` to the quantifier rank (`qrank_existsLastVars`).
-* **Renaming free variables** keeps the quantifier rank (`BoundedFormulaω.qrank_mapFreeVars`),
-  and a conjunction `φ ⊓ ψ` has the larger of the two ranks (`BoundedFormulaω.qrank_inf`).
+* **Renaming free variables** keeps the quantifier rank, and a conjunction `φ ⊓ ψ` has the larger
+  of the two ranks: InfinitaryLogic's `BoundedFormulaω.qrank_mapFreeVars` (made a `simp` lemma
+  here) and `BoundedFormulaω.qrank_inf`.
 * **The extension formula** (`extendFormula ψ f`, for `ψ : L.Formulaω (Fin m)` and
   `f : Fin k → Fin m`): `∃ z̄ (ψ(z̄) ∧ ⋀_{i < k} z_{f i} = x_i)`.  It holds of a tuple `c` exactly
   when `c` extends along `f` to a tuple realizing `ψ` (`realize_extendFormula`), and its rank is
@@ -43,32 +44,9 @@ open Structure BoundedFormulaω
 
 variable {L : Language.{u, v}} {k m : ℕ}
 
-/-! ### Conjunction and renaming free variables -/
+/-! ### Renaming free variables -/
 
-/-- **Rank of a conjunction**: the maximum of the ranks.  A candidate for upstreaming to
-InfinitaryLogic, beside `BoundedFormulaω.qrank_and`. -/
-@[simp]
-theorem BoundedFormulaω.qrank_inf {α : Type*} {n : ℕ} (φ ψ : L.BoundedFormulaω α n) :
-    (φ ⊓ ψ).qrank = max φ.qrank ψ.qrank :=
-  qrank_and φ ψ
-
-/-- **Renaming free variables keeps the quantifier rank.**  A candidate for upstreaming to
-InfinitaryLogic, beside `BoundedFormulaω.qrank_relabel`. -/
-@[simp]
-theorem BoundedFormulaω.qrank_mapFreeVars {α β : Type w} (f : α → β) {n : ℕ}
-    (φ : L.BoundedFormulaω α n) : (φ.mapFreeVars f).qrank = φ.qrank := by
-  induction φ with
-  | falsum => rfl
-  | equal => rfl
-  | rel => rfl
-  | imp φ ψ ihφ ihψ => simp only [mapFreeVars, qrank_imp, ihφ, ihψ]
-  | all φ ih => simp only [mapFreeVars, qrank_all, ih]
-  | iSup φs ih =>
-    simp only [mapFreeVars, qrank_iSup]
-    exact congrArg _ (funext ih)
-  | iInf φs ih =>
-    simp only [mapFreeVars, qrank_iInf]
-    exact congrArg _ (funext ih)
+attribute [simp] BoundedFormulaω.qrank_mapFreeVars
 
 /-! ### Existential closure of the last free variables -/
 

@@ -49,7 +49,7 @@ below.  The companion milestones are summarized under "Companion boundaries".
 ## Environment
 
 Lean `v4.35.0-rc3`; InfinitaryLogic and ComputableModelTheory at the revisions pinned in
-`lakefile.toml` (`cf80917` and `3a8f630`); Mathlib inherited from InfinitaryLogic's manifest.
+`lakefile.toml` (`e460cb6` and `3a8f630`); Mathlib inherited from InfinitaryLogic's manifest.
 Nothing else is imported.
 Search the pinned libraries first and delete any local lemma that duplicates one already
 upstream.
@@ -930,12 +930,14 @@ name and its signature at the pin; it does not assert that the hypotheses hold i
 this roadmap.  An application is claimed only where a compiled theorem applying the statement is
 named (`README.md`, Layer 0):
 
-- **InfinitaryLogic**: the current pin is `cf80917`, the merge of its pull request #156, reached
-  from `def5cc0` (the merge of its pull request #152) by this repository's pull request #63;
+- **InfinitaryLogic**: the current pin is `e460cb6`, the merge of its pull request #162, reached
+  from `cf80917` (the merge of its pull request #156) by the repin pull request "Repin
+  InfinitaryLogic to e460cb6"; `cf80917` was reached from `def5cc0` (the merge of its pull
+  request #152) by this repository's pull request #63;
   `def5cc0` was reached from `8a15ca5` (the merge of its pull request #148) by this repository's
   pull request #49, and `8a15ca5` from `098fb36` (the merge of its pull request #146) by this
   repository's pull request #45.  The statements of `8a15ca5` are available at our pinned
-  dependency `cf80917` (signatures checked; `SuggestedInterfaces.lean` `#check`s them): the rank
+  dependency `e460cb6` (signatures checked; `SuggestedInterfaces.lean` `#check`s them): the rank
   comparison of the Scott process, #140; the orbit-formula threshold and rank bound and
   local-automorphism preservation of `README.md`, Layer 0, #141; analytic tree boundedness, #142;
   the coded forced back-and-forth tree, #143; uniform back-and-forth separation,
@@ -1063,15 +1065,33 @@ named (`README.md`, Layer 0):
   must be built against the InfinitaryLogic revision pinned here, and the toolchain check of
   `scripts/check.sh` extends to ComputableModelTheory.
 
-**Available upstream, not yet available at our pinned dependency:** of InfinitaryLogic, at
-`5269617` (the merge of its pull request #157, after the pin `cf80917`; same toolchain and
-Mathlib), thinness from countable back-and-forth observations (`Descriptive/BFScattered`).  If for
-every `η < ω₁` a map `obs η` on a set `C` of codes has countable range and any two codes with the
-same observation are `CodeBFEquiv η`, then `C` is back-and-forth scattered
+**Available at the pin `e460cb6`, after `cf80917`** (InfinitaryLogic's merges #157–#162; same
+toolchain and Mathlib; named in prose only, not yet `#check`ed in the sketches): thinness from
+countable back-and-forth observations (#157, `Descriptive/BFScattered`).  If for every `η < ω₁` a
+map `obs η` on a set `C` of codes has countable range and any two codes with the same observation
+are `CodeBFEquiv η`, then `C` is back-and-forth scattered
 (`bfScattered_of_countable_bfObservations`), carries no Cantor antichain for isomorphism, for every
 relational language (`not_hasCantorAntichainOn_of_countable_bfObservations`), and, for countably
 many relation symbols, is thin (`isThinOn_of_countable_bfObservations`).  The same merge moves
-`countable_quotient_of_countable_range` to `Descriptive/PerfectAntichain` (not used here).  Of
+`countable_quotient_of_countable_range` to `Descriptive/PerfectAntichain` (not used here).
+Eliminating orbit parameters (#158, `Scott/OrbitParameters`: `existsOrbitParams`,
+`realize_existsOrbitParams_iff_orbit`, `qrank_existsOrbitParams`), which also adds
+`BoundedFormulaω.qrank_inf`, `qrank_sup`, and `BoundedFormulaω.qrank_mapFreeVars` to
+`Lomega1omega/QuantifierRank` (the first and third were declared in `Definability/Syntax` before
+this repin and are now InfinitaryLogic's); quantifier-rank bounds for Montalbán's Scott sentences
+(#159, `Scott/MontalbanQuantifierRank`); cross-rank comparisons and the derived `+ ω` bounds (#160,
+`Scott/InternalRankBounds`); uniform fixation (#161, `UniformFixation`: stage projections
+`StageProjection`, the label rank `StageProjection.labelRank`, and
+`StageProjection.exists_uniform_fixing_stage`: over a countable coordinate type, stage correctness
+at countable stages and eventual invariance of every coordinate give one countable stage fixing
+every admissible presentation at every countable stage); and a countable isolating level (#162,
+`Scott/IsolatingLevel`: `exists_isolating_level`, for a countable family of countable structures
+over a countable relational language some `γ < ω₁` at which `BFEquiv0` gives an isomorphism, with
+`exists_isolating_level_iff` and `not_countable_of_forall_unisolated`).
+
+**Available upstream, not yet available at our pinned dependency:** of InfinitaryLogic, at
+`30c186f` (the merge of its pull request #163, after the pin `e460cb6`; same toolchain and
+Mathlib), concentration at back-and-forth levels (`Descriptive/BFConcentration`).  Of
 ComputableModelTheory: none (its `main` is the pin `3a8f630`).  A statement merged upstream after
 the pins above is listed here, named in prose only and never `#check`ed in the sketches, until a
 repin containing it is recorded in this subsection.
@@ -1654,7 +1674,7 @@ lands, their notes stay in those modules.
   lemmas, which become redundant once `BoundedFormulaω.realize_equiv` and `LomegaEquiv.of_equiv`
   are generalized across carrier universes.
 - `MainTheorem/Scatteredness` (pull request #42): every statement is generic (none mentions the
-  density sentence), and its statements are quotations of InfinitaryLogic (at the pin `cf80917`):
+  density sentence), and its statements are quotations of InfinitaryLogic (at the pin `e460cb6`):
   `isThinOn_of_countable_bfClasses` of `isThinOn_of_bfScattered` (`Descriptive/BFScattered`),
   `isThinOnNatModels_of_countable_bfClasses` of `Sentenceω.isThinOnNatModels_of_bfScattered`
   (`Descriptive/BFScatteredSentence`), `bfEquivSetoid_eq_comap` of its namesake, `offDiag_noniso` of
@@ -1766,9 +1786,10 @@ witnesses).**
   `Lomega1omega/QuantifierRank` and `Scott/Formula`), and its statements are candidates for
   InfinitaryLogic, beside `existsLastVar` and `BoundedFormulaω.qrank`: `existsLastVars` with
   `existsLastVars_zero`, `existsLastVars_succ`, `realize_existsLastVars`, and
-  `qrank_existsLastVars`; `BoundedFormulaω.qrank_mapFreeVars` and `BoundedFormulaω.qrank_inf`; and
-  `extendFormula` with `extensionEquations`, `realize_extendFormula`, `qrank_extendFormula`,
-  `realize_extensionEquations`, and `qrank_extensionEquations`.
+  `qrank_existsLastVars`; and `extendFormula` with `extensionEquations`, `realize_extendFormula`,
+  `qrank_extendFormula`, `realize_extensionEquations`, and `qrank_extensionEquations`.  Its former
+  `BoundedFormulaω.qrank_mapFreeVars` and `BoundedFormulaω.qrank_inf` are InfinitaryLogic's at the
+  pin `e460cb6` (same names and statements); the module makes the first a `simp` lemma.
 - `Definability/BlockStages`: Layers 1–2 (labels and stage types at the block stages), in place; its
   one-block lemmas (`StageType.eq_of_reduce_eq_of_threshold_iff` and the threshold lemmas) are
   reusable by the normalization of Layer 4.
@@ -1783,7 +1804,7 @@ witnesses).**
 **Counting (Layers 5–6).**
 
 - `Counting/Filtration` and `Counting/Separation`: their generic statements are proved as quotations
-  of InfinitaryLogic's `OrdinalCountability` (at the pin `cf80917`), with their statements kept:
+  of InfinitaryLogic's `OrdinalCountability` (at the pin `e460cb6`), with their statements kept:
   `Filtration.ofRank` is built from `rankTail` (its domain is `rankTail r` by definition), and
   the lemmas on `ofRank`, the least-level lemmas, `domain_ofCountableCover`, and the three counts
   `mk_eq_aleph_one_of_rank`, `mk_le_aleph_one_of_rank`, and `mk_le_aleph_one_of_countable_cover`
