@@ -17,8 +17,8 @@ Special cases of `VaughtConjecture.Realization.FiniteCutReceiving`:
 * **donor tops** come back only as values at least the cutoff: a member of the receiving family
   at `c` of a donor labelled `⊤` at a cell is labelled at least `c` there, and nothing more is
   known;
-* **one cutoff at a time**: receiving at two cutoffs gives two received points, with nothing
-  relating them.
+* **one cutoff at a time**: receiving at two cutoffs gives two received points, with no
+  relation between them claimed.
 
 ## Placement
 

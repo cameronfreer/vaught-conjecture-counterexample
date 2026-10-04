@@ -99,7 +99,8 @@ namespace Expansion
 a countable limit stage has finite-extension receiving.  It follows from finite-cut receiving of
 models (`FiniteCutReceiving.finiteExtensionReceiving`), which is (R1) of the table of Layer 3,
 not proved here; it holds conditional on the gated pinned extension property
-(`finiteExtensionReceiving_of_hasGatedPinnedExtensions`). -/
+(`finiteExtensionReceiving_of_hasGatedPinnedExtensions`, in
+`VaughtConjecture.Expansion.GatedReceiving`). -/
 structure FiniteExtensionReceiving : Prop where
   /-- Every model at a countable limit stage has finite-extension receiving. -/
   receive : ∀ {α : Ordinal.{0}} {M : Type w}, Order.IsSuccLimit α → α < ω₁ →

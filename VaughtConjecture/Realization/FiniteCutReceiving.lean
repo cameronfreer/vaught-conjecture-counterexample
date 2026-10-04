@@ -51,15 +51,16 @@ is zero or a limit is assumed.
 **What is and is not claimed.**  The theorem is (R1) of the table of Layer 3 **conditional on**
 the named hypothesis `StageType.HasGatedPinnedExtensions α`, which is still to be proved: the
 legality of a display contains an exact pinned extension of a face of the private type over the
-root and a full-scope layer of grade `n` in which the gate and its twins are controlled.  This
-conditional theorem is not a proof of (R1).  If the hypothesis failed at every limit stage the
-theorem would be vacuous there; nothing here rules that out.  Receiving is at one cutoff at a
-time: different cutoffs may use different private contexts and different occurrences, and
-nothing is claimed about uniqueness or coherence of the received occurrences, nor about exact
-receiving or exact projected receiving (semantic contract, item 12).  The received type is known
-only through its literal private face, its bottom pattern at grades at most `n`, and its donor
-face, which agrees with `d` below the cap; in particular donor tops come back only as values at
-least the cutoff (`VaughtConjecture.Realization.FiniteCutReceivingExamples`).
+root and a full-scope layer of grade `n` in which the gate and its twins are controlled (an
+analysis, not compiled here).  This conditional theorem is not a proof of (R1).  At any stage at
+which the hypothesis fails the theorem is vacuous; nothing here rules out that it fails at every
+limit stage.  Receiving is at one cutoff at a time: different cutoffs may use different private
+contexts and different occurrences, and nothing is claimed about uniqueness or coherence of the
+received occurrences, nor about exact receiving or exact projected receiving (semantic contract,
+item 12).  The received type is known only through its scheme (that of the display), its literal
+private face, its bottom pattern at grades at most `n`, and its donor face, which agrees with `d`
+below the cap; in particular donor tops come back only as values at least the cutoff
+(`VaughtConjecture.Realization.FiniteCutReceivingExamples`).
 
 **The anchoring corollary** (`IsModel.exists_privateContext_isAnchored`) restates the private
 context of `IsModel.exists_privateContext` in the form of the anchoring hypothesis of the gated

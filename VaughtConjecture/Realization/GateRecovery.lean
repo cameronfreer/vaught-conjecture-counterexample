@@ -43,10 +43,11 @@ pinned extension property `StageType.HasGatedPinnedExtensions` that would supply
 hypothesis, still to be proved.  Finite-cut receiving (R1) is not claimed here.  Its assembly,
 conditional on `HasGatedPinnedExtensions`, is
 `Realization.IsModel.hasFiniteCutReceiving_of_hasGatedPinnedExtensions`
-(`VaughtConjecture.Realization.FiniteCutReceiving`): the private context is acquired by uniformity
-and high-arity dominance alone (`Realization.IsModel.exists_privateContext`), and the
-bottom-pattern clause of the model is applied with the display's labels, its instance witnessed
-nonempty by the display itself; then the agreement here gives receiving at the requested cutoff.
+(`VaughtConjecture.Realization.FiniteCutReceiving`): the private context is acquired by the
+uniformity and high-arity-dominance clauses, with exact consistency (no generalized saturation)
+(`Realization.IsModel.exists_privateContext`), and the bottom-pattern clause of the model is
+applied with the display's labels, its instance witnessed nonempty by the display itself; then
+the agreement here gives receiving at the requested cutoff.
 
 ## Placement
 
