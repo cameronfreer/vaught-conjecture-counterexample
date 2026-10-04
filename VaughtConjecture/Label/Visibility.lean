@@ -32,6 +32,10 @@ Visibility replacement of an ordinal at threshold `k` with value `i` replaces it
   bound below `α` that is self-visible at a given threshold (`exists_isSelfVisible_bound`), and
   between an ordinal `o` and a stage `β > o` that is zero or a limit there is an ordinal
   self-visible at any given threshold (`exists_lt_lt_isSelfVisible`).
+* In the block `[μ, μ + ω)` of an ordinal `μ` that is zero or a limit, an ordinal `μ + k` whose
+  finite part `k` is below the threshold `n` is not self-visible at `n`
+  (`not_isSelfVisible_coe_add_natCast`), and replacement at `n` with value `i` gives `μ + i`
+  (`visibilityReplace_coe_add_natCast`).
 * On a natural number `n` it gives `i` if `n < k` and `n` otherwise (`visibilityReplace_natCast`,
   with `visibilityReplace_zero`, `visibilityReplace_one`, `visibilityReplace_ofNat` for numerals).
 
@@ -222,6 +226,27 @@ threshold `k ≤ K`. -/
 theorem isSelfVisible_coe_add (hα : Order.IsSuccPrelimit α) (hk : k ≤ K) :
     IsSelfVisible k ((α + K : Ordinal.{u}) : Label.{u}) :=
   isSelfVisible_coe.mpr (by rw [add_natCast_mod_omega0 hα]; exact_mod_cast hk)
+
+section Block
+
+variable {μ : Ordinal.{u}} {n : ℕ}
+
+/-- **Visibility replacement in a block**: at threshold `n`, the finite part `k < n` of an ordinal
+`μ + k` in the block of `μ` is replaced by any value `i`. -/
+theorem visibilityReplace_coe_add_natCast (hμ : Order.IsSuccPrelimit μ) (hk : k < n) (i : ℕ) :
+    visibilityReplace n i ((μ + k : Ordinal.{u}) : Label.{u}) =
+      ((μ + i : Ordinal.{u}) : Label.{u}) := by
+  simp only [visibilityReplace_coe, Ordinal.visibilityReplace_add hμ,
+    Ordinal.visibilityReplace_natCast, hk, ↓reduceIte]
+
+/-- An ordinal `μ + k` of the block of `μ` whose finite part `k` is below `n` is not self-visible
+at `n`. -/
+theorem not_isSelfVisible_coe_add_natCast (hμ : Order.IsSuccPrelimit μ) (hk : k < n) :
+    ¬ IsSelfVisible n ((μ + k : Ordinal.{u}) : Label.{u}) := by
+  rw [isSelfVisible_coe, add_natCast_mod_omega0 hμ, not_le]
+  exact_mod_cast hk
+
+end Block
 
 /-- A self-visible label is fixed by visibility replacement at its threshold, with any value. -/
 theorem IsSelfVisible.visibilityReplace_eq (h : IsSelfVisible k x) (i : ℕ) :

@@ -116,6 +116,26 @@ theorem restrictFace_eq_of_eval (hR : R.IsConsistent) {t : Fin n ↪ M} {p : Sta
 
 namespace Occurrence
 
+section LiteralFace
+
+variable (hR : R.IsConsistent) {x y : R.Occurrence} {f : Fin x.arity ↪ Fin y.arity}
+include hR
+
+/-- **Literal faces**: if the tuple of `x` is the face of the tuple of `y` along `f`, the type of
+`y` restricts along `f` to the type of `x`. -/
+theorem restrictFace_eq_some_of_trans_eq (hf : f.trans y.tuple = x.tuple) :
+    StageType.restrictFace f y.type = some x.type := by
+  rw [← eval_face hR, hf, x.eval_tuple]
+
+/-- Every label of a literal face is a label of the larger occurrence. -/
+theorem exists_label_eq_of_trans_eq (hf : f.trans y.tuple = x.tuple) (j : Fin x.type.card) :
+    ∃ z : Fin y.type.card, y.type.label z = x.type.label j := by
+  obtain ⟨hmem, h⟩ :=
+    (StageType.restrictFace_eq_some_iff _ _).mp (restrictFace_eq_some_of_trans_eq hR hf)
+  exact ⟨_, StageType.label_congr h (i := Fin.cast (congrArg (·.card) h).symm j) rfl⟩
+
+end LiteralFace
+
 /-- The **face** of an occurrence along a closed face `f` of its type: the literal face tuple with
 the restricted type. -/
 noncomputable def face (hR : R.IsConsistent) (x : R.Occurrence) (f : Fin m ↪ Fin x.arity)
