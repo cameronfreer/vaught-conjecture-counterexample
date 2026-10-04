@@ -801,19 +801,7 @@ statements are specified here, generically, with no construction):
   `BlockBFEquiv α_i`-equivalent to every `A_i`; [Mon]'s offset `+3` is for its own relation [Mon,
   Definition II.32] and is not transferred; it supports the rank-filtration comparison of
   `COMPANIONS.md`, "Further companion results", only through the passage between [Mon]'s convention
-  and InfinitaryLogic's, which is still to be proved;
-- *uniform fixation for stage projections* (`StageProjection.exists_uniform_fixing_stage`, the
-  name as specified here; prospective (a uniform-fixation theorem of the infinitary-logic
-  dependency): no theorem of this name or role is at the pin `cf80917`): for an alphabet with
-  projections `π_γ` at the countable ordinals, composing as `π_γ ∘ π_δ = π_(min γ δ)`, a countable
-  type of coordinates, and an arbitrary family of maps from the coordinates to optional values,
-  indexed by the countable ordinals, each member at `β` fixed by `π_β`: if every coordinate either
-  has the value `none` in every member, or has a countable threshold `θ` at which some member takes
-  a value `p`, with every member at every index above `θ` taking the value `p` there, then one
-  countable `A` has every member at every index fixed by `π_A`.  No countability of the family or
-  of the alphabet is assumed, and the family may be empty.  Its application, one arity at a time,
-  is `README.md`, "Manuscript correspondence (required)", item 5, "Uniform fixing bounds from
-  positive niceness".
+  and InfinitaryLogic's, which is still to be proved.
 
 ## Manuscript concordance
 
@@ -972,29 +960,33 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
 28. What is corrected is a statement: the same-index equivalence of Proposition 8.6 is false (an
     informal counterexample, `LITERATURE.md`, §9; not compiled); `COMPANIONS.md`, "Full trees":
     prospective.
-29. A tuple is typed exactly when its set of points is a support
+29. An injective tuple is typed exactly when its set of points is a support
     (`Realization.isSome_eval_iff_isSupport`, `Realization/Hull`, under exact consistency); a
     finite set is closed for the canonical closure exactly when it is a support
     (`Realization.isClosed_coe_iff`, `Realization.isClosed_iff_of_finite`, `Realization/Closure`,
     under exact consistency and covering); stage reduction keeps typed and untyped tuples
     (`Realization.isSome_reduce_eval`, `Realization/Transport`) and the closure
-    (`Realization.closure_reduce`).  All compiled in this repository (theorem named), each
-    comparing declarations of this repository; the combined statement (supported exactly when
-    closed) is not named, and its comparison with the closed tuples of [AFK26] is still to be
-    proved, with item 2.  Milestone 1 of the uniform fixing bounds (`README.md`, item 5).
+    (`Realization.closure_reduce`, `Realization/Closure`).  All compiled in this repository
+    (theorem named), each comparing declarations of this repository; the combined statement (an
+    injective tuple supported exactly when closed) is not named, and its comparison with the
+    closed tuples of [AFK26] is still to be proved, with item 2.  Milestone 1 of the uniform fixing
+    bounds (`README.md`, item 5).
 30. Prospective: no declaration of this repository states positive niceness or names a fixing
     rank.  Milestone 2; it is the row "invariance over all admissible presentations, with an
     inhabited threshold" of the table of item 5, and its construction for the models here uses
     the termination argument.
 31. Prospective: no declaration of this repository states it.  Its ingredients for labels are
     compiled in this repository (theorem named): `Label.reduce_eq_self_iff` (fixed by projection
-    exactly at the labels of the stage) and `Label.reduce_reduce_of_le` (`Label/Basic`).  The
-    bound for one arity is `StageProjection.exists_uniform_fixing_stage`, prospective (a
-    uniform-fixation theorem of the infinitary-logic dependency; "Prospective interfaces of
-    InfinitaryLogic").  Milestone 3; the conditional statement uses no termination.
+    exactly at the labels of the stage), and `Label.reduce_reduce_of_le`, `Label.atStage_reduce`
+    and `Label.AtStage.mono` for the law with `min` (`Label/Basic`).  The bound for one arity is
+    `StageProjection.exists_uniform_fixing_stage` (available upstream, not yet at our pinned
+    dependency; "Dependency pins").  Milestone 3; the conditional statement uses no termination.
 32. Prospective, with the negative special case (the constant family of the all-undefined
     assignment; not compiled).  Strictness for models is to come from `COMPANIONS.md`, "Fixing
     ranks of finite charts" (the supremum at block `η` is `η`), still to be proved.  Milestone 4.
+    The row is required: the completion criterion of item 5 asks every row of the item to be P
+    or C, so matching the manuscript needs milestone 4 even where the main theorem uses no bound
+    of serving indices.
 
 **Completion criteria, item by item** (the items of `README.md`, "Manuscript correspondence
 (required)").  For every item, each row of the concordance that it concerns is P or C, with its
@@ -1038,9 +1030,9 @@ rows 29–32, each still to be proved).  Each milestone is complete on its own c
 is complete because a later one is.
 
 1. *Closedness is supportedness:* the combined statement, that in an exactly consistent covering
-   realization a tuple is supported exactly when its set of points is closed, compiled (the empty
-   tuple included), with the preservation of supported and unsupported tuples by projection; row
-   29 becomes P or C with item 2.
+   realization an injective tuple is supported exactly when its set of points is closed, compiled
+   (the empty tuple included), with the preservation of supported and unsupported tuples by
+   projection; row 29 becomes P or C with item 2.
 2. *Positive niceness:* for every actual closed tuple of every countable model of the
    construction, a threshold at which an actual admissible presentation exists (the set of
    thresholds inhabited) and one value taken at the tuple by every admissible presentation at
@@ -1331,10 +1323,35 @@ same observation are `CodeBFEquiv η`, then `C` is back-and-forth scattered
 (`bfScattered_of_countable_bfObservations`), carries no Cantor antichain for isomorphism, for every
 relational language (`not_hasCantorAntichainOn_of_countable_bfObservations`), and, for countably
 many relation symbols, is thin (`isThinOn_of_countable_bfObservations`).  The same merge moves
-`countable_quotient_of_countable_range` to `Descriptive/PerfectAntichain` (not used here).  Of
-ComputableModelTheory: none (its `main` is the pin `3a8f630`).  A statement merged upstream after
-the pins above is listed here, named in prose only and never `#check`ed in the sketches, until a
-repin containing it is recorded in this subsection.
+`countable_quotient_of_countable_range` to `Descriptive/PerfectAntichain` (not used here).
+Also of InfinitaryLogic, at `6480603` (the merge of its pull request #161, after the pin
+`cf80917`; contained in its tag `v6.0.0`; same toolchain and Mathlib), uniform fixation for stage
+projections (`InfinitaryLogic/UniformFixation`), as stated there.  A `StageProjection I` on one
+label type `I` has `project : Ordinal.{0} → I → I` with the law
+`project α (project β i) = project (min α β) i` at every ordinal; for `ℓ : C → I`,
+`FixedAt α ℓ := ∀ c, S.project α (ℓ c) = ℓ c`; and, writing `ω₁` for `Ordinal.omega 1`,
+`EventuallyInvariant Adm c := ∃ α < ω₁, ∃ ℓ, Adm α ℓ ∧`
+`∀ β, α < β → β < ω₁ → ∀ ℓ', Adm β ℓ' → ℓ' c = ℓ c` (a strict threshold, with an admissible
+witness at the threshold itself).  The theorem `StageProjection.exists_uniform_fixing_stage`
+takes `[Countable C]`, `(Adm : Ordinal.{0} → (C → I) → Prop)`,
+`(hstage : ∀ α, α < ω₁ → ∀ ℓ, Adm α ℓ → S.FixedAt α ℓ)` and
+`(hev : ∀ c, EventuallyInvariant Adm c)`, and concludes
+`∃ A < ω₁, ∀ β, β < ω₁ → ∀ ℓ, Adm β ℓ → S.FixedAt A ℓ`.  No countability of `I` or of `Adm` is
+assumed, nor any admissible presentation at a high stage; `C` empty gives `A = 0`.  Its
+application (`README.md`, "Manuscript correspondence (required)", item 5, "Uniform fixing bounds
+from positive niceness"), one arity at a time, restricts the coordinates to the supported
+injective tuples of `R`, and takes `project γ := reduce (blockStage γ)`, label by label, at
+`Ordinal.{0}`; the law with `min` follows from `Label.reduce_reduce_of_le`,
+`Label.atStage_reduce`, `Label.AtStage.mono` and `Label.reduce_eq_self_iff` (with
+`blockStage_mono`).  The same module proves `exists_uniform_fixing_stage_of_eventually_const`,
+a countable uniform stage from eventual constancy alone, with no admissible member required at
+the threshold (the admissible witness at the threshold is what yields the explicit bound
+`⨆ c, (α_c + 1)`), and `exists_classwise_labelRank_bound`, one countable bound on `labelRank`
+(the least stage fixing a label, not a Scott rank), the form for fixing ranks matching milestone 3
+there.  A repin to `v6.0.0` or later makes these available at the pin (signatures checked); it is
+prepared as a separate change.  Of ComputableModelTheory: none (its `main` is the pin `3a8f630`).
+A statement merged upstream after the pins above is listed here, named in prose only and never
+`#check`ed in the sketches, until a repin containing it is recorded in this subsection.
 
 **Available at the pin `cf80917`, used by `COMPANIONS.md`, "Quantitative reconstruction", targets 2
 and 3** (listed as available upstream before this repin): the bound of an orbit rank by the

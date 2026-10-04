@@ -699,15 +699,15 @@ is compiled conditionally on block determination (below).  None is an input to t
   that class.  The bound of (iv) is the only place where termination can enter.  Its conditional
   form is the uniform fixing stage of `README.md`, "Manuscript correspondence (required)", item 5,
   "Uniform fixing bounds from positive niceness" (prospective), which uses no termination; there
-  termination can enter only through the construction of positive niceness (milestone 2).
-  Taken from eventual
-  departure (1 above), it uses conditions 3 and 4 with a Scott sentence for each class, and not
-  global termination.  Read off a full presentation of every class, it uses full-presentation
-  coverage, hence global termination (`README.md`, "The persistent core"), which is then a stated
-  hypothesis.  Nonempty domains alone do not replace (iv) ("Nonempty domains with an empty
-  persistent core", above).  The termination-free expansion-domain route, whose lower bound is
-  condition 4, remains the default (the first endpoint, `README.md`, "Endpoints and shared
-  foundations"), and the count does not use this chain.
+  termination can enter only through the construction of positive niceness (milestone 2).  Taken
+  from eventual departure (1 above), the bound of (iv) uses conditions 3 and 4 with a Scott
+  sentence for each class, and not global termination.  Read off a full presentation of every
+  class, it uses full-presentation coverage, hence global termination (`README.md`, "The
+  persistent core"), which is then a stated hypothesis.  Nonempty domains alone do not replace
+  (iv) ("Nonempty domains with an empty persistent core", above).  The termination-free
+  expansion-domain route, whose lower bound is condition 4, remains the default (the first
+  endpoint, `README.md`, "Endpoints and shared foundations"), and the count does not use this
+  chain.
 
   **A second alternative route to the lower bound: Scott-bounded counting** (prospective; a reading
   of statements recorded elsewhere, each still to be proved).  The bound for each class in (iv)
@@ -1120,9 +1120,10 @@ is compiled conditionally on block determination (below).  None is an input to t
   It supplies explicit witnesses of high fixing rank for the lower bound, with no use of any
   property of models (the strict decrease of the domains, or termination).  Special cases to be
   compiled with it: `ξ = 0`, `ξ = ω`, and `ξ` a limit.  Like the fixing rank itself, it says nothing
-  about Scott ranks.  It supplies the unboundedness of fixing ranks, which the bound for each class
-  of `README.md`, "Manuscript correspondence (required)", item 5, "Uniform fixing bounds from
-  positive niceness" (prospective) does not supply, and conversely.
+  about Scott ranks.  It supplies the unboundedness of the fixing ranks of finite charts (of
+  realized charts only with step (ii) of "An alternative route to the lower bound", above), which
+  the bound for each class of `README.md`, "Manuscript correspondence (required)", item 5,
+  "Uniform fixing bounds from positive niceness" (prospective) does not supply, and conversely.
 
   **Completion criterion.**  Each row is a bounded checkpoint, complete when its formula is
   constructed for the concrete objects of the construction (the chart predicates at `λ_η`, the
