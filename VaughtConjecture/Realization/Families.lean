@@ -73,13 +73,16 @@ its scheme (`bottomPatternFamily_subset_saturationFamily`).
 **Reduction.**  Stage reduction to `β` sends cofaces to cofaces (`reduce_mem_cofaces`), preserves
 the saturation, bottom-pattern, and dominance families, and preserves the uniformity family for
 `γ < β` when `β` is zero or a limit (`reduce_mem_uniformityFamily`).  Stage reduction is itself the
-construction `ofIsLawful` applied to the labels of a type (`reduce_eq_ofIsLawful`).  In the other
-direction, a coface at `β` of the reduction of `p` lifts to a coface of `p` at a zero-or-limit
-stage `α ≥ β` with the same scheme and the same capped observation at any cap `c ≤ β` that is
-self-visible at the top grade (`exists_isLawful_lift`, `ofIsLawful_mem_cofaces_of_lift`):
-bountifulness of the coface's scheme lifts the labels of `p` against the labels of the coface, and
-the result is reduced to stage `α`.  This lifting is used in the reduction of the guarded
-generalized-saturation and bottom-pattern clauses of a model.
+construction `ofIsLawful` applied to the labels of a type (`reduce_eq_ofIsLawful`).  Read
+backwards, a type is in a bottom-pattern family exactly when its reduction is
+(`reduce_mem_bottomPatternFamily_iff`), and a type whose reduction to `β` is in the uniformity or
+dominance family of `γ < β` is in it (`mem_uniformityFamily_of_reduce`,
+`mem_dominanceFamily_of_reduce`).  In the other direction, a coface at `β` of the reduction of `p`
+lifts to a coface of `p` at a zero-or-limit stage `α ≥ β` with the same scheme and the same capped
+observation at any cap `c ≤ β` that is self-visible at the top grade (`exists_isLawful_lift`,
+`ofIsLawful_mem_cofaces_of_lift`): bountifulness of the coface's scheme lifts the labels of `p`
+against the labels of the coface, and the result is reduced to stage `α`.  This lifting is used in
+the reduction of the guarded generalized-saturation and bottom-pattern clauses of a model.
 
 ## References
 
@@ -371,6 +374,49 @@ theorem reduce_mem_dominanceFamily (hq : q ∈ dominanceFamily γ) :
   exact ⟨d, hg, hd.trans_le (le_reduce β _)⟩
 
 end Reduce
+
+/-! ### Stage reduction of the families, read backwards
+
+Conversely, membership of a stage reduction in a family gives membership of the type, for the
+bottom-pattern family at every stage and for the uniformity and dominance families of `γ < β`. -/
+
+section ReduceBackwards
+
+/-- A type is in a bottom-pattern family exactly when its stage reduction is: reduction keeps
+the scheme and the bottom labels. -/
+theorem reduce_mem_bottomPatternFamily_iff (hβ : Order.IsSuccPrelimit β)
+    {S : Scheme.{u} (n + 1)} {ρ : Fin S.card → Label.{u}} :
+    q.reduce hβ ∈ bottomPatternFamily S ρ ↔ q ∈ bottomPatternFamily S ρ :=
+  ⟨fun h ↦ ⟨h.1, fun i j hij hg ↦ reduce_eq_bot_iff.symm.trans (h.2 i j hij hg)⟩,
+    reduce_mem_bottomPatternFamily hβ⟩
+
+/-- A type whose stage reduction to `β` is in the uniformity family of `γ < β` is in it: the
+interval `[γ, γ + ω)` lies below `β`, where reduction changes no label. -/
+theorem mem_uniformityFamily_of_reduce (hβ : Order.IsSuccPrelimit β) (hγ : γ < β)
+    (h : q.reduce hβ ∈ uniformityFamily γ) : q ∈ uniformityFamily γ := by
+  obtain ⟨d, hγd, hdγ⟩ := h
+  -- the labels of `q.reduce hβ` are, by definition, the reductions of the labels of `q`
+  change (γ : Label.{u}) ≤ Label.reduce β (q.label d) at hγd
+  change Label.reduce β (q.label d) < ((γ + Ordinal.omega0 : Ordinal.{u}) : Label.{u}) at hdγ
+  have hlt : Label.reduce β (q.label d) < β :=
+    hdγ.trans_le (by exact_mod_cast Ordinal.add_omega0_le_of_isSuccPrelimit hβ hγ)
+  rw [reduce_lt_iff] at hlt
+  rw [reduce_of_lt hlt] at hγd hdγ
+  exact ⟨d, hγd, hdγ⟩
+
+/-- A type whose stage reduction to `β` is in the dominance family of `γ < β` is in it: a label
+that reduction raises to the formal top is at least `β`, hence above `γ`. -/
+theorem mem_dominanceFamily_of_reduce (hβ : Order.IsSuccPrelimit β) (hγ : γ < β)
+    (h : q.reduce hβ ∈ dominanceFamily γ) : q ∈ dominanceFamily γ := by
+  obtain ⟨d, hg, hd⟩ := h
+  -- the labels of `q.reduce hβ` are, by definition, the reductions of the labels of `q`
+  change (γ : Label.{u}) < Label.reduce β (q.label d) at hd
+  refine ⟨d, hg, ?_⟩
+  by_cases hlt : q.label d < β
+  · rwa [reduce_of_lt hlt] at hd
+  · exact (show (γ : Label.{u}) < β by exact_mod_cast hγ).trans_le (not_lt.mp hlt)
+
+end ReduceBackwards
 
 /-! ### The side conditions give nonempty families -/
 
