@@ -5,6 +5,7 @@ Authors: Cameron Freer
 -/
 import VaughtConjecture.ClassicalLimit.Age
 import VaughtConjecture.Extension.SectionTheorem
+import VaughtConjecture.Stage.Cap
 
 /-!
 # Amalgamation and joint embedding of top-free charts, under the coatom extension property
@@ -15,17 +16,12 @@ extension property, which is not proved, with the application of the classical e
 step 3; Layer 3, 3.1, (R6) (the plain form of the coatom extension property gives the amalgamation
 of legal stage types over a common face, which capped is step 2).
 
-**Capping a stage type.**  Let `t` be a stage type at stage `α` on `n` points and `c < α` an
-ordinal self-visible at `n`.  The **capped stage type** `t.cap c` has the scheme of `t` and the
-labels `min (t.label d) c`; its section is lawful by capping at a cap self-visible at a bound of the
-grades ([Kni26, Lemma 2.5.8], `CellScheme.Rows.IsLawful.min_const_of_isSelfVisible`), the grades
-of a cell being at most `n`.  It is legal exactly when `t` is (`StageType.isLegal_cap`), it is
-top-free since `c` is a proper label (`StageType.isTopFree_cap`), and along a closed face whose
-labels are at most `c` it restricts to the same stage type as `t`, labels included
-(`StageType.restrictFace_cap`).  At a limit stage, such a cap exists above the labels of any two
-top-free stage types, self-visible at any arity (`StageType.exists_cap`, from
-`Label.exists_lt_lt_isSelfVisible`): a top-free label at a nonzero stage is bounded by an ordinal
-below the stage (`StageType.IsTopFree.exists_label_le`).
+**Capping.**  The capped stage type `t.cap c` (`StageType.cap`, in `VaughtConjecture.Stage.Cap`)
+has the scheme of `t` and the labels `min (t.label d) c`; it is legal exactly when `t` is, it is
+top-free, and along a closed face whose labels are at most `c` it restricts to the same stage type
+as `t` (`StageType.isLegal_cap`, `StageType.isTopFree_cap`, `StageType.restrictFace_cap`).  At a
+limit stage such a cap exists above the labels of any two top-free stage types, self-visible at
+any arity (`StageType.exists_cap`).
 
 **Amalgamation of top-free stage types, under the coatom extension property**
 (`StageType.exists_isTopFree_amalgam`).  If the coatom extension property holds at a limit stage,
@@ -97,93 +93,6 @@ open scoped Ordinal
 namespace StageType
 
 variable {α : Ordinal.{u}} {n m k : ℕ}
-
-/-! ### Capping a stage type -/
-
-/-- The grades of the cells of a stage type on `n` points are at most `n`. -/
-theorem grade_le (t : StageType.{u} α n) (d : Fin t.card) : t.toCellScheme.grade d ≤ n :=
-  (t.isWellFormed.isWellFormed.grade_le_card d).trans ((card_le_univ _).trans_eq
-    (Fintype.card_fin n))
-
-/-- The **capped stage type** of a stage type `t` on `n` points at an ordinal `c` below the stage
-and self-visible at `n`: the scheme of `t` with the labels `min (t.label d) c`, a lawful section by
-[Kni26, Lemma 2.5.8]. -/
-noncomputable def cap (t : StageType.{u} α n) (c : Ordinal.{u}) (hc : IsSelfVisible n (c : Label))
-    (hcα : c < α) : StageType.{u} α n where
-  toScheme := t.toScheme
-  label d := min (t.label d) c
-  isWellFormed := t.isWellFormed
-  isCoded := t.isCoded
-  isLawful := t.isLawful.min_const_of_isSelfVisible t.grade_le hc
-  atStage _ := .inl ((min_le_right _ _).trans_lt (atStage_coe.mpr hcα |>.resolve_right
-    (WithBot.coe_injective.ne WithTop.coe_ne_top)))
-
-variable {t : StageType.{u} α n} {c : Ordinal.{u}} {hc : IsSelfVisible n (c : Label)}
-  {hcα : c < α}
-
-/-- The scheme of a capped stage type is the scheme of the stage type. -/
-@[simp] theorem cap_toScheme : (t.cap c hc hcα).toScheme = t.toScheme := rfl
-
-/-- The labels of a capped stage type are the labels capped at the cap. -/
-@[simp] theorem cap_label (d : Fin t.card) :
-    (t.cap c hc hcα).label d = min (t.label d) c := rfl
-
-/-- A capped stage type is legal exactly when the stage type is: legality concerns the scheme. -/
-@[simp] theorem isLegal_cap : (t.cap c hc hcα).IsLegal ↔ t.IsLegal :=
-  Iff.rfl
-
-/-- A capped stage type is top-free: its labels are at most the cap, a proper label. -/
-theorem isTopFree_cap : (t.cap c hc hcα).IsTopFree := fun d h ↦ by
-  have hle : (t.cap c hc hcα).label d ≤ c := min_le_right _ _
-  rw [h, top_le_iff] at hle
-  exact WithBot.coe_injective.ne WithTop.coe_ne_top hle
-
-/-- **Literal restriction of a capped stage type.**  Along a closed face whose labels are at most
-the cap, a capped stage type restricts to the same stage type as the stage type itself. -/
-theorem restrictFace_cap {f : Fin m ↪ Fin n} {p : StageType.{u} α m}
-    (hp : restrictFace f t = some p) (hpc : ∀ d, p.label d ≤ c) :
-    restrictFace f (t.cap c hc hcα) = some p := by
-  obtain ⟨hf, rfl⟩ := (restrictFace_eq_some_iff t f).mp hp
-  rw [restrictFace_of_mem (t.cap c hc hcα) f hf]
-  refine congrArg some (ext rfl fun i j hij ↦ ?_)
-  obtain rfl : i = j := Fin.ext hij
-  exact min_eq_left (hpc i)
-
-/-! ### The cap -/
-
-/-- A top-free label at a nonzero stage is at most an ordinal below the stage. -/
-private theorem exists_le_of_atStage {x : Label.{u}} (hx : AtStage α x) (htop : x ≠ ⊤)
-    (h0 : 0 < α) : ∃ o < α, x ≤ (o : Label) := by
-  induction x using WithBot.recBotCoe with
-  | bot => exact ⟨0, h0, bot_le⟩
-  | coe y =>
-    induction y using WithTop.recTopCoe with
-    | top => exact absurd rfl htop
-    | coe o => exact ⟨o, atStage_coe.mp hx, le_rfl⟩
-
-/-- **The labels of a top-free stage type are bounded below the stage**: at a nonzero stage `α`,
-every label of a top-free stage type is at most one ordinal below `α`. -/
-theorem IsTopFree.exists_label_le (ht : t.IsTopFree) (h0 : 0 < α) :
-    ∃ o < α, ∀ d, t.label d ≤ (o : Label) := by
-  have : Nonempty (Set.Iio α) := ⟨⟨0, h0⟩⟩
-  choose g hg hgle using fun d ↦ exists_le_of_atStage (t.atStage d) (ht d) h0
-  obtain ⟨⟨o, ho⟩, hmax⟩ := Finite.exists_le fun d ↦ (⟨g d, hg d⟩ : Set.Iio α)
-  exact ⟨o, ho, fun d ↦ (hgle d).trans (WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr
-    (Subtype.coe_le_coe.mpr (hmax d))))⟩
-
-/-- **The cap.**  At a limit stage `α`, for two top-free stage types and every arity `K` there is
-an ordinal below `α`, self-visible at `K`, above every label of the two stage types. -/
-theorem exists_cap (hα : Order.IsSuccPrelimit α) (h0 : 0 < α) {P : StageType.{u} α n}
-    {R : StageType.{u} α m} (hP : P.IsTopFree) (hR : R.IsTopFree) (K : ℕ) :
-    ∃ c : Ordinal.{u}, c < α ∧ IsSelfVisible K (c : Label) ∧ (∀ d, P.label d ≤ c) ∧
-      ∀ d, R.label d ≤ c := by
-  obtain ⟨o, ho, hPo⟩ := hP.exists_label_le h0
-  obtain ⟨o', ho', hRo⟩ := hR.exists_label_le h0
-  obtain ⟨c, hoc, hcα, hc⟩ := exists_lt_lt_isSelfVisible hα (max_lt ho ho') K
-  have hle (x : Ordinal.{u}) (hx : x ≤ max o o') : (x : Label) ≤ c :=
-    WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr (hx.trans hoc.le))
-  exact ⟨c, hcα, hc, fun d ↦ (hPo d).trans (hle o (le_max_left _ _)),
-    fun d ↦ (hRo d).trans (hle o' (le_max_right _ _))⟩
 
 /-! ### Amalgamation of top-free stage types -/
 

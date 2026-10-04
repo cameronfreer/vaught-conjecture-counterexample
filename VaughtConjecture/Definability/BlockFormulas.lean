@@ -361,9 +361,10 @@ theorem BlockRecursion.realize_thresholdFormula {η : Ordinal.{0}} (V : CoverThr
   exact ⟨fun ⟨x, hx, h⟩ ↦ ⟨x, hx, h⟩, fun ⟨x, hx, h⟩ ↦ ⟨x, hx, h⟩⟩
 
 /-- The successor step, conditional on block determination (`CoverThresholds.Determines`) at the
-block `η`, expected from Layer 4, outputs 1–2, under the proviso stated in the module docstring —
-still to be proved: if the formulas at `λ_η` hold of exactly the covers in the reduction of `R` to
-`λ_η`, then the formula of `t` at `λ_{η+1}` holds of exactly the covers of `t` in `R`. -/
+block `η`; for the forcing thresholds this follows from finite-extension receiving (from (R1)) and
+forcing donors (`ForcingDonors`), both still to be proved (`forcingThresholds_determines`): if the
+formulas at `λ_η` hold of exactly the covers in the reduction of `R` to `λ_η`, then the formula of
+`t` at `λ_{η+1}` holds of exactly the covers of `t` in `R`. -/
 theorem BlockRecursion.realize_succFormula {η : Ordinal.{0}} {V : CoverThresholds η}
     (hV : V.Determines.{w}) (hη : η < ω₁)
     {F : ∀ m, StageType.{0} (blockStage η) m → baseLanguage.{0}.Formulaω (Fin m)}
@@ -413,11 +414,11 @@ theorem BlockRecursion.realize_limitFormula {η : Ordinal.{0}} (hl : IsSuccLimit
   exact Option.some_injective _ ((hcov.reduce _).eval_eq.symm.trans (h ξ hξ).eval_eq)
 
 /-- **Correctness of the formulas**, conditional on block determination
-(`CoverThresholds.Determines`) at the blocks below `η`, expected from Layer 4, outputs 1–2, under
-the proviso stated in the module docstring — still to be proved.  In every model expansion `R` to
-`λ_η` of a base structure `M`, the formula of `t` holds of a tuple exactly when the tuple covers `t`
-in `R`: on every tuple, the empty tuple and tuples with repeated coordinates included.  The formula
-does not depend on `R`. -/
+(`CoverThresholds.Determines`) at the blocks below `η`; for the forcing thresholds this follows from
+finite-extension receiving (from (R1)) and forcing donors (`ForcingDonors`), both still to be proved
+(`forcingThresholds_determines`).  In every model expansion `R` to `λ_η` of a base structure `M`,
+the formula of `t` holds of a tuple exactly when the tuple covers `t` in `R`: on every tuple, the
+empty tuple and tuples with repeated coordinates included.  The formula does not depend on `R`. -/
 theorem realize_blockFormula_iff {η : Ordinal.{0}} (hU : ∀ ξ < η, (U ξ).Determines.{w})
     (hη : η < ω₁) (R : ModelExpansion M (blockStage η)) (t : StageType.{0} (blockStage η) k)
     (c : Fin k → M) : (blockFormula U η hη t).Realize c ↔ R.1.Covers t c := by
@@ -441,9 +442,10 @@ end Correctness
 variable {U} {η : Ordinal.{0}}
 
 /-- **Uniqueness of the model expansion on a fixed carrier**, conditional on block determination
-(`CoverThresholds.Determines`) at the blocks below `η`, expected from Layer 4, outputs 1–2, under
-the proviso stated in the module docstring — still to be proved.  Two model expansions of one base
-structure to `λ_η` have the same covers, those of the formulas `blockFormula`, hence are equal. -/
+(`CoverThresholds.Determines`) at the blocks below `η`; for the forcing thresholds this follows from
+finite-extension receiving (from (R1)) and forcing donors (`ForcingDonors`), both still to be proved
+(`forcingThresholds_determines`).  Two model expansions of one base structure to `λ_η` have the same
+covers, those of the formulas `blockFormula`, hence are equal. -/
 theorem ModelExpansion.eq_of_determines (hU : ∀ ξ < η, (U ξ).Determines.{w}) (hη : η < ω₁)
     {M : Type w} [baseLanguage.{0}.Structure M] (R S : ModelExpansion M (blockStage η)) :
     R = S := by
@@ -452,11 +454,12 @@ theorem ModelExpansion.eq_of_determines (hU : ∀ ξ < η, (U ξ).Determines.{w}
     ← realize_blockFormula_iff U hU hη R, realize_blockFormula_iff U hU hη S]
 
 /-- **Lifting along an isomorphism of base structures by the same bijection**, conditional on block
-determination (`CoverThresholds.Determines`) at the blocks below `η`, expected from Layer 4, outputs
-1–2, under the proviso stated in the module docstring — still to be proved.  If
-`e : M ≃[baseLanguage] N` is an isomorphism of base structures and `R` and `S` are model expansions
-of `M` and `N` to `λ_η`, then `e` carries `R` to `S`: an isomorphism preserves every relation
-defined by a formula of the base language. -/
+determination (`CoverThresholds.Determines`) at the blocks below `η`; for the forcing thresholds
+this follows from finite-extension receiving (from (R1)) and forcing donors (`ForcingDonors`), both
+still to be proved (`forcingThresholds_determines`).  If `e : M ≃[baseLanguage] N` is an
+isomorphism of base structures and `R` and `S` are model expansions of `M` and `N` to `λ_η`, then
+`e` carries `R` to `S`: an isomorphism preserves every relation defined by a formula of the base
+language. -/
 theorem ModelExpansion.map_eq_of_determines (hU : ∀ ξ < η, (U ξ).Determines.{w}) (hη : η < ω₁)
     {M N : Type w} [baseLanguage.{0}.Structure M] [baseLanguage.{0}.Structure N]
     (e : M ≃[baseLanguage.{0}] N) (R : ModelExpansion M (blockStage η))
@@ -470,10 +473,11 @@ theorem ModelExpansion.map_eq_of_determines (hU : ∀ ξ < η, (U ξ).Determines
   rw [h1, h2]
 
 /-- **The chart relations are defined in the base language**, conditional on block determination
-(`CoverThresholds.Determines`) at the blocks below `η`, expected from Layer 4, outputs 1–2, under
-the proviso stated in the module docstring — still to be proved.  In the structure of a model
-expansion `R` to `λ_η` in the stage chart language at `λ_η`, the relation of a legal stage type `t`
-holds of a tuple exactly when the formula of `t` does. -/
+(`CoverThresholds.Determines`) at the blocks below `η`; for the forcing thresholds this follows from
+finite-extension receiving (from (R1)) and forcing donors (`ForcingDonors`), both still to be proved
+(`forcingThresholds_determines`).  In the structure of a model expansion `R` to `λ_η` in the stage
+chart language at `λ_η`, the relation of a legal stage type `t` holds of a tuple exactly when the
+formula of `t` does. -/
 theorem ModelExpansion.relMap_toChartStructure_iff (hU : ∀ ξ < η, (U ξ).Determines.{w})
     (hη : η < ω₁) {M : Type w} [baseLanguage.{0}.Structure M] (R : ModelExpansion M (blockStage η))
     (t : StageType.{0} (blockStage η) k) (ht : t.IsLegal) (c : Fin k → M) :
@@ -483,11 +487,11 @@ theorem ModelExpansion.relMap_toChartStructure_iff (hU : ∀ ξ < η, (U ξ).Det
   (realize_blockFormula_iff U hU hη R t c).symm
 
 /-- **Pointed agreement of covers from back-and-forth equivalence**, conditional on block
-determination (`CoverThresholds.Determines`) at the blocks below `η`, expected from Layer 4, outputs
-1–2, under the proviso stated in the module docstring — still to be proved (here at the universes of
-both carriers).  Tuples `a` of `M` and `b` of `N` that are back-and-forth equivalent at level
-`ω · η` in the base language cover the same stage types at `λ_η` in any model expansions of `M` and
-`N` to `λ_η`. -/
+determination (`CoverThresholds.Determines`) at the blocks below `η` (here at the universes of both
+carriers); for the forcing thresholds this follows from finite-extension receiving (from (R1)) and
+forcing donors (`ForcingDonors`), both still to be proved (`forcingThresholds_determines`).  Tuples
+`a` of `M` and `b` of `N` that are back-and-forth equivalent at level `ω · η` in the base language
+cover the same stage types at `λ_η` in any model expansions of `M` and `N` to `λ_η`. -/
 theorem ModelExpansion.covers_iff_of_bfEquiv (hU : ∀ ξ < η, (U ξ).Determines.{w})
     (hU' : ∀ ξ < η, (U ξ).Determines.{w'}) (hη : η < ω₁) {M : Type w} {N : Type w'}
     [baseLanguage.{0}.Structure M] [baseLanguage.{0}.Structure N]

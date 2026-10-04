@@ -27,11 +27,16 @@ Visibility replacement of an ordinal at threshold `k` with value `i` replaces it
   (`visibilityReplace_self_visibilityReplace`); a replacement below the threshold is undone by a
   second one (`exists_visibilityReplace_visibilityReplace`).
 * At a stage `α` that is zero or a limit, `α + K` is self-visible at every `k ≤ K`
-  (`isSelfVisible_coe_add`), and replacement with a value `i ≤ K` keeps a label at most `α + K`
-  at most `α + K` (`visibilityReplace_le_coe_add`); finitely many labels below `α` have a common
-  bound below `α` that is self-visible at a given threshold (`exists_isSelfVisible_bound`), and
-  between an ordinal `o` and a stage `β > o` that is zero or a limit there is an ordinal
-  self-visible at any given threshold (`exists_lt_lt_isSelfVisible`).
+  (`isSelfVisible_coe_add`); a label at least `α` and self-visible at `n` is at least `α + n`
+  (`coe_add_le_of_isSelfVisible`), since `α` is a multiple of `ω`; replacement with a value
+  `i ≤ K` keeps a label at most `α + K` at most `α + K` (`visibilityReplace_le_coe_add`); finitely
+  many labels below `α` have a common bound below `α` that is self-visible at a given threshold
+  (`exists_isSelfVisible_bound`), and between an ordinal `o` and a stage `β > o` that is zero or
+  a limit there is an ordinal self-visible at any given threshold (`exists_lt_lt_isSelfVisible`).
+* In the block `[μ, μ + ω)` of an ordinal `μ` that is zero or a limit, an ordinal `μ + k` whose
+  finite part `k` is below the threshold `n` is not self-visible at `n`
+  (`not_isSelfVisible_coe_add_natCast`), and replacement at `n` with value `i` gives `μ + i`
+  (`visibilityReplace_coe_add_natCast`).
 * On a natural number `n` it gives `i` if `n < k` and `n` otherwise (`visibilityReplace_natCast`,
   with `visibilityReplace_zero`, `visibilityReplace_one`, `visibilityReplace_ofNat` for numerals).
 
@@ -222,6 +227,44 @@ threshold `k ≤ K`. -/
 theorem isSelfVisible_coe_add (hα : Order.IsSuccPrelimit α) (hk : k ≤ K) :
     IsSelfVisible k ((α + K : Ordinal.{u}) : Label.{u}) :=
   isSelfVisible_coe.mpr (by rw [add_natCast_mod_omega0 hα]; exact_mod_cast hk)
+
+/-- **The order law at a stage that is zero or a limit**: a label at least `β` and self-visible
+at `n` is at least `β + n`. -/
+theorem coe_add_le_of_isSelfVisible {β : Ordinal.{u}} {x : Label.{u}} {n : ℕ}
+    (hβ : Order.IsSuccPrelimit β) (hx : (β : Label.{u}) ≤ x)
+    (hv : IsSelfVisible n x) : ((β + n : Ordinal.{u}) : Label.{u}) ≤ x := by
+  induction x using recBotCoeTop with
+  | bot => exact absurd hx (not_le.mpr (WithBot.bot_lt_coe _))
+  | top => exact le_top
+  | coe v =>
+    have hβv : β ≤ v := WithTop.coe_le_coe.mp (WithBot.coe_le_coe.mp hx)
+    obtain ⟨b, rfl⟩ := isSuccPrelimit_iff_omega0_dvd.mp hβ
+    have hb : ω * b ≤ ω * (v / ω) :=
+      mul_le_mul_right ((mul_le_iff_le_div omega0_ne_zero).mp hβv) ω
+    refine WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr ?_)
+    rw [← div_add_mod v ω]
+    exact add_le_add hb (isSelfVisible_coe.mp hv)
+
+section Block
+
+variable {μ : Ordinal.{u}} {n : ℕ}
+
+/-- **Visibility replacement in a block**: at threshold `n`, the finite part `k < n` of an ordinal
+`μ + k` in the block of `μ` is replaced by any value `i`. -/
+theorem visibilityReplace_coe_add_natCast (hμ : Order.IsSuccPrelimit μ) (hk : k < n) (i : ℕ) :
+    visibilityReplace n i ((μ + k : Ordinal.{u}) : Label.{u}) =
+      ((μ + i : Ordinal.{u}) : Label.{u}) := by
+  simp only [visibilityReplace_coe, Ordinal.visibilityReplace_add hμ,
+    Ordinal.visibilityReplace_natCast, hk, ↓reduceIte]
+
+/-- An ordinal `μ + k` of the block of `μ` whose finite part `k` is below `n` is not self-visible
+at `n`. -/
+theorem not_isSelfVisible_coe_add_natCast (hμ : Order.IsSuccPrelimit μ) (hk : k < n) :
+    ¬ IsSelfVisible n ((μ + k : Ordinal.{u}) : Label.{u}) := by
+  rw [isSelfVisible_coe, add_natCast_mod_omega0 hμ, not_le]
+  exact_mod_cast hk
+
+end Block
 
 /-- A self-visible label is fixed by visibility replacement at its threshold, with any value. -/
 theorem IsSelfVisible.visibilityReplace_eq (h : IsSelfVisible k x) (i : ℕ) :
