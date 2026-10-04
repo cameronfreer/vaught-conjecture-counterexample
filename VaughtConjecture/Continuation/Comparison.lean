@@ -55,12 +55,12 @@ is a hypothesis of each comparison.  No other receiving statement for donors wit
 used: rigidity is what makes cutoff receiving exact.
 
 **The top-free comparison** is the instance on no points.  There is a single stage type on no
-points (`StageType.eq_of_zero`), every model expansion covers it by the empty tuple
-(`ModelExpansion.exists_covers_zero`), and at a limit stage the empty core is rigid in a legal type
-exactly when the type is top-free (`StageType.isRigidCoreIn_empty_iff_isTopFree`), so the pointed
-age on no points is the set of legal top-free types (`StageType.rigidCoreAge_zero`), and the empty
-tuple is a globally rigid core of a model exactly when its top-grade supremum is `0`.  So two
-expansions with finite-extension receiving and top-grade supremum `0` have isomorphic base
+points (`StageType.eq_of_zero`), every model covers it by the empty tuple
+(`Realization.IsModel.exists_covers_zero`), and at a limit stage the empty core is rigid in a legal
+type exactly when the type is top-free (`StageType.isRigidCoreIn_empty_iff_isTopFree`), so the
+pointed age on no points is the set of legal top-free types (`StageType.rigidCoreAge_zero`), and
+the empty tuple is a globally rigid core of a model exactly when its top-grade supremum is `0`.  So
+two expansions with finite-extension receiving and top-grade supremum `0` have isomorphic base
 structures (`Realization.nonempty_equiv_of_topGradeSup_eq_zero`).
 
 **The residual and hollow comparisons, under named hypotheses.**  (R2) and (R3) of the table of
@@ -313,8 +313,8 @@ omit [Countable M] [Countable N] in
 /-- Two expansions have covers of one stage type on no points by the empty tuples. -/
 private theorem exists_covers_zero₂ (he : R.IsExpansionOf) (he' : R'.IsExpansionOf) :
     ∃ p : StageType.{u} α 0, R.Covers p ![] ∧ R'.Covers p ![] := by
-  obtain ⟨p, hp⟩ := ModelExpansion.exists_covers_zero ⟨R, he⟩
-  obtain ⟨p', hp'⟩ := ModelExpansion.exists_covers_zero ⟨R', he'⟩
+  obtain ⟨p, hp⟩ := he.isModel.exists_covers_zero
+  obtain ⟨p', hp'⟩ := he'.isModel.exists_covers_zero
   exact ⟨p, hp, StageType.eq_of_zero p' p ▸ hp'⟩
 
 /-- **The top-free comparison**, the rigid-core comparison on no points: two expansions of

@@ -15,8 +15,9 @@ import VaughtConjecture.Continuation.Classification
 * **The top-free witness.**  The realization reconstructed from an ultrahomogeneous structure
   whose age is the age of top-free charts, at a block stage and under the coatom extension
   property with apex (which makes it a model, `isModel_reconstruct_of_hasApexCoatomExtensions`),
-  has the rigid-core property `inl ⟨0, p⟩` on no points and does not have the hollow property.  It
-  is terminal, which needs only that the age is contained in the age of top-free charts.
+  has the rigid-core property `inl ⟨0, p⟩` on no points.  It is terminal, and it does not have
+  the hollow property although it is cover-hollow; these two need only that the age is contained
+  in the age of top-free charts.
 * **Positivity.**  No model has the residual property with `K = 0`.
 * **Overlap.**  The properties are not exclusive: in a top-free model every cover is a globally
   rigid core, so the witness has the rigid-core property on no points and on one point.
@@ -82,6 +83,16 @@ example (hage : (hullLanguage.{0} (blockStage ξ)).age M ⊆ topFreeAge (blockSt
     (reconstruct (blockStage ξ) M).IsTerminalAt ξ :=
   fun _ hR' ↦ reduce_ne_reconstruct hage _ (blockStage_lt_blockStage_add_one ξ) hR'
 
+/-- **The witness does not have the hollow property**, although it is cover-hollow.  Both follow
+from top-freeness of its actual types, which needs only that the age is contained in the age of
+top-free charts (`isTopFree_of_reconstruct_eval`). -/
+example (hage : (hullLanguage.{0} (blockStage ξ)).age M ⊆ topFreeAge (blockStage ξ)) :
+    ¬ (reconstruct (blockStage ξ) M).HasTerminalProperty (.inr (.inr ())) ∧
+      (reconstruct (blockStage ξ) M).IsCoverHollow :=
+  have h : ∀ x : (reconstruct (blockStage ξ) M).Occurrence, x.type.IsTopFree :=
+    fun x ↦ isTopFree_of_reconstruct_eval hage x.eval_tuple
+  ⟨not_hasTerminalProperty_hollow_of_isTopFree h, isCoverHollow_of_isTopFree h⟩
+
 variable (hext : HasApexCoatomExtensions.{0} (blockStage ξ))
   (hage : (hullLanguage.{0} (blockStage ξ)).age M = topFreeAge (blockStage ξ))
   (hu : (hullLanguage.{0} (blockStage ξ)).IsUltrahomogeneous M)
@@ -99,12 +110,6 @@ example (p : StageType.{0} (blockStage ξ) 0) :
     (reconstruct (blockStage ξ) M).HasTerminalProperty (.inl ⟨0, p⟩) :=
   have h := isModel_reconstruct_and_isTopFree hext hage hu
   hasTerminalProperty_inl_zero_of_isTopFree h.1 h.2 p
-
-/-- **The witness does not have the hollow property**, although it is cover-hollow. -/
-example : ¬ (reconstruct (blockStage ξ) M).HasTerminalProperty (.inr (.inr ())) ∧
-    (reconstruct (blockStage ξ) M).IsCoverHollow :=
-  have h := isModel_reconstruct_and_isTopFree hext hage hu
-  ⟨not_hasTerminalProperty_hollow_of_isTopFree h.2, isCoverHollow_of_isTopFree h.2⟩
 
 /-- **Overlap**: the witness also has the rigid-core property on one point, for the type of any
 occurrence on one point, since every cover of a top-free model is a globally rigid core. -/

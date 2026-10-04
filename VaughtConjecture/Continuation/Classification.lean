@@ -67,8 +67,8 @@ and no attainment lemma is needed:
 
 The criterion is used once, contrapositively.  Positivity of `K` in the residual property is
 derived (`Realization.topGradeSup_ne_zero_of_residual`): for a model with top-grade supremum `0`,
-the empty tuple covers a stage type on no points and is a globally rigid core
-(`Realization.IsModel.isGloballyRigidCore_empty_iff`).
+the empty tuple covers a stage type on no points (`Realization.IsModel.exists_covers_zero`) and
+is a globally rigid core (`Realization.IsModel.isGloballyRigidCore_empty_iff`).
 
 **Top-free models.**  A model whose actual types are top-free has the property `inl ⟨0, p⟩`,
 for the stage type `p` on no points, unique by `StageType.eq_of_zero`
@@ -160,14 +160,6 @@ theorem exists_hasTerminalProperty (hcont : ContinuationCriterion.{w}) (hξ : ξ
   · obtain ⟨k, p, hp⟩ := hcore
     exact ⟨.inl ⟨k, p⟩, hp⟩
   · exact ⟨.inr (.inl K), hcore, hK.symm⟩
-
-/-- A model at `λ_ξ` covers a stage type on no points by the empty tuple. -/
-private theorem IsModel.exists_covers_zero (hR : R.IsModel) :
-    ∃ p : StageType.{0} (blockStage ξ) 0, R.Covers p ![] := by
-  obtain ⟨x, hx⟩ := hR.exists_arity_eq (isSuccLimit_blockStage ξ).bot_lt 0
-  obtain ⟨k, u, t, hu⟩ := x
-  subst hx
-  exact ⟨t, by simpa [Matrix.empty_eq] using covers_of_eval u hu⟩
 
 /-- **Positivity of the residual top grade**: in a model with the residual property `K`, `K ≠ 0`.
 For top-grade supremum `0`, the empty tuple covers a stage type on no points and is a globally
