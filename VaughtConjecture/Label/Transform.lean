@@ -58,9 +58,10 @@ of `σ`.
   `q` gives one to the collapse of `q` (`TransformsTo.collapse`), since the collapse commutes with
   visibility replacement at thresholds `k < N` (`collapse_visibilityReplace`).
 
-Pointwise minima and collapse are used to prove locality of the stable labelling at the next block
-stage (roadmap, Layer 4, output 1), where it is a pointwise minimum of finitely many lawful
-labellings, collapsed above a threshold; that application is still to be proved.
+Pointwise minima and collapse are intended for proving locality of the stable labelling at the
+next block stage (roadmap, Layer 4, output 1), where it is to be written as a pointwise minimum of
+finitely many lawful labellings, collapsed above a threshold; that application is still to be
+proved.
 
 ## Nontransitivity
 

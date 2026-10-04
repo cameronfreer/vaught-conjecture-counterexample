@@ -62,8 +62,8 @@ the value `⊤` of a supremum over many pairs is allowed.
   so a lift witnessing the failure of `o + 1` has the label `β + o`; an infinite offset makes every
   lift carry the formal top there.
 
-These are used to compare stable offsets along faces of a cover and to realize the stable labels
-by lifts (roadmap, Layer 4, output 1, still to be proved).
+These are intended for comparing stable offsets along faces of a cover and for realizing the
+stable labels by lifts (roadmap, Layer 4, output 1, still to be proved).
 
 **Offsets as labels.**  `Label.ofOffset β o` is `β + o` for a finite `o` and the formal top for
 `o = ⊤` (`Label.ofOffset_eq_top_iff`); its thresholds are those of `o`
