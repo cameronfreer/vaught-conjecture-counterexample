@@ -27,13 +27,18 @@ its strip then carries the values of `w` with their finite parts, the *orbit* of
 other key of `w` carries exactly one value, the key itself.  The **key rank** of `x`
 (`Label.keyRank`) is the number of keys of `w` at most the key of `x`.
 
+**The code block** (`Label.codeBlock`) of a label `x` other than bottom, with `r` the key rank of
+`x`, is the block in which the orbit code places it: `0` if the key of `x` is the orbit key `k`
+(the **natural strip** `[0, k]`); `2 r - 1` if the key of `x` is a key of `w` and not an orbit key;
+and `2 r` otherwise, that is, if the key of `x` is any other orbit key or not a key of `w` at all.
+
 **The orbit code** (`Label.orbitMap`, `Label.orbitCode`).  Bottom is fixed.  A label whose key is
-a key of `w` of rank `r` that is not an orbit key goes to the canonical point `ω * (2 r - 1) + k`;
-a label whose key is an orbit key of rank `r` keeps its finite part and moves to the block `2 r`
-(`Label.moveToBlock`, the **block shift** of its strip), except the **natural strip** `[0, k]`,
-which stays in the block `0`; a label whose key is not a key of `w` goes to `ω * 2 r + k`, with
-`r` the number of keys below it (the code block, `Label.codeBlock`).  So the orbits of `w` lie in
-even blocks above the canonical points of the same rank.
+an orbit key keeps its finite part and moves to its code block (`Label.moveToBlock`, the **block
+move** to the block of a label); every other label goes to the grid point `ω * b + k` of its code
+block `b`.  So a key of rank `r` that is not an orbit key is coded by the canonical point
+`ω * (2 r - 1) + k`, the orbit of an orbit key of rank `r` lies in the block `2 r` above it, the
+natural strip stays in the block `0`, and a label whose key is not a key of `w` goes to the top
+`ω * 2 r + k` of the block `2 r`.
 
 * **N0**: the orbit map is a witness bounded by grade `k` (`Label.isWitness_orbitMap`), sends only
   bottom to bottom, is never the formal top, is short at `k`, and takes values in the **code grid**
@@ -50,7 +55,7 @@ even blocks above the canonical points of the same rank.
   (`VaughtConjecture.Extension.SmallArityOneExamples`, R6).
 * **The orbit decoder** (`Label.orbitDecoder k w h`, N4): a label `x` goes to the larger of
   `min x h` and the **readings** of the cells `d` whose code has key at least `h`
-  (`Label.cellReading`): bottom below the key of the code of `d`, the block shift back to the
+  (`Label.cellReading`): bottom below the key of the code of `d`, the block move back to the
   block of `w d` on its strip when its key is an orbit key, and the key of `w d` otherwise.  For a
   cap `h` self-visible at `k` other than bottom it is a witness bounded by grade `k`
   (`Label.isWitness_orbitDecoder`); it reads the orbit code literally as `w`, the formal top
@@ -151,13 +156,13 @@ private theorem visibilityReplace_self_pt (b : Ordinal.{u}) (n : ℕ) :
   congr 1
   split_ifs with hn <;> omega
 
-/-! ### The block shift -/
+/-! ### The block move -/
 
 /-- The block index `o / ω` of an ordinal label `o` (zero at bottom and the formal top). -/
 noncomputable def blockIndex (y : Label.{u}) : Ordinal.{u} :=
   WithTop.untopD 0 (WithBot.unbotD 0 y) / ω
 
-/-- The **block shift** to the block of `y`: an ordinal label `o` goes to the point of the block of
+/-- The **block move** to the block of `y`: an ordinal label `o` goes to the point of the block of
 `y` with the finite part of `o`; bottom and the formal top are fixed. -/
 noncomputable def moveToBlock (y : Label.{u}) : Label.{u} → Label.{u} :=
   WithBot.map (WithTop.map fun o ↦ ω * blockIndex y + o % ω)
@@ -166,26 +171,27 @@ noncomputable def moveToBlock (y : Label.{u}) : Label.{u} → Label.{u} :=
 private theorem blockIndex_pt (b : Ordinal.{u}) (n : ℕ) : blockIndex (pt b n) = b :=
   omega0_mul_add_natCast_div b n
 
-/-- The block shift of a point keeps its finite part. -/
+/-- The block move of a point keeps its finite part. -/
 private theorem moveToBlock_pt (y : Label.{u}) (b : Ordinal.{u}) (n : ℕ) :
     moveToBlock y (pt b n) = pt (blockIndex y) n := by
+  -- The block move of an ordinal label is the ordinal formula.
   change (((ω * blockIndex y + (ω * b + n) % ω : Ordinal.{u}) : WithTop Ordinal.{u}) :
     Label.{u}) = _
   rw [omega0_mul_add_natCast_mod]
 
-/-- The block shift of a point keeps its finite part, as ordinals. -/
+/-- The block move of a point keeps its finite part, as ordinals. -/
 theorem moveToBlock_omega0_mul_add (b b' : Ordinal.{u}) (n n' : ℕ) :
     moveToBlock ((ω * b + n : Ordinal.{u}) : Label.{u}) ((ω * b' + n' : Ordinal.{u}) : Label.{u}) =
       ((ω * b + n' : Ordinal.{u}) : Label.{u}) := by
   rw [moveToBlock_pt, blockIndex_pt]
 
-/-- The block shift fixes bottom. -/
+/-- The block move fixes bottom. -/
 @[simp] theorem moveToBlock_bot (y : Label.{u}) : moveToBlock y ⊥ = ⊥ := rfl
 
-/-- The block shift fixes the formal top. -/
+/-- The block move fixes the formal top. -/
 @[simp] theorem moveToBlock_top (y : Label.{u}) : moveToBlock y ⊤ = ⊤ := rfl
 
-/-- **The block shift commutes with every visibility replacement.** -/
+/-- **The block move commutes with every visibility replacement.** -/
 theorem moveToBlock_visibilityReplace (y x : Label.{u}) (j i : ℕ) :
     moveToBlock y (visibilityReplace j i x) = visibilityReplace j i (moveToBlock y x) := by
   rcases eq_bot_or_eq_top_or_eq_pt x with rfl | rfl | ⟨b, n, rfl⟩
@@ -207,7 +213,7 @@ private theorem blockIndex_eq_of_visibilityReplace_eq {b b' : Ordinal.{u}} {n n'
   rw [visibilityReplace_self_pt, visibilityReplace_self_pt] at h
   exact (pt_inj h).1
 
-/-- A label is fixed by the block shift to the block of a label with the same key. -/
+/-- A label is fixed by the block move to the block of a label with the same key. -/
 theorem moveToBlock_eq_self (hxy : visibilityReplace k k y = visibilityReplace k k x) :
     moveToBlock y x = x := by
   rcases eq_bot_or_eq_top_or_eq_pt x with rfl | rfl | ⟨b, n, rfl⟩
@@ -220,7 +226,7 @@ theorem moveToBlock_eq_self (hxy : visibilityReplace k k y = visibilityReplace k
       exact absurd hxy (pt_ne_top _ _)
     · rw [moveToBlock_pt, blockIndex_pt, blockIndex_eq_of_visibilityReplace_eq hxy]
 
-/-- The block shift is monotone on a strip. -/
+/-- The block move is monotone on a strip. -/
 private theorem moveToBlock_le_moveToBlock (hxy : x ≤ y)
     (hk : visibilityReplace k k x = visibilityReplace k k y) :
     moveToBlock z x ≤ moveToBlock z y := by
@@ -324,7 +330,7 @@ noncomputable def codeBlock (k : ℕ) (w : ι → Label.{u}) (x : Label.{u}) : �
 
 open Classical in
 /-- The **orbit map** of a labelling `w` at grade `k`: bottom is fixed; a label whose key is an
-orbit key of `w` moves to its code block with its finite part (the block shift); every other label
+orbit key of `w` moves to its code block with its finite part (the block move); every other label
 goes to the grid point `ω * b + k` of its code block `b`. -/
 noncomputable def orbitMap (k : ℕ) (w : ι → Label.{u}) (x : Label.{u}) : Label.{u} :=
   if x = ⊥ then ⊥
@@ -556,7 +562,7 @@ theorem monotone_orbitMap (k : ℕ) (w : ι → Label.{u}) : Monotone (orbitMap 
       exact (pt_lt_pt_of_lt (by exact_mod_cast hb) _ _).le
     · rw [orbitMap_of_not_isOrbitKey hy0 hyo, ← hb]
       exact orbitMap_le_gridPoint x
-  · -- The same key: the same block, and the block shift is monotone on a strip.
+  · -- The same key: the same block, and the block move is monotone on a strip.
     by_cases hx : IsOrbitKey k w x
     · have hy : IsOrbitKey k w y := (isOrbitKey_congr heq).mp hx
       rw [orbitMap_of_isOrbitKey hx, orbitMap_of_isOrbitKey hy, codeBlock_congr heq]
@@ -710,6 +716,7 @@ theorem orbitCode_orbitCode : orbitCode k (orbitCode k w) = orbitCode k w := by
         omega
     · rw [codeBlock_of_not_isOrbitKey hdkey ho,
         codeBlock_of_not_isOrbitKey hkey (mt horb.mp ho), keyRank_orbitCode hd]
+  -- Unfold both orbit codes at `d` to the orbit maps of the values.
   change orbitMap k (orbitCode k w) (orbitCode k w d) = orbitMap k w (w d)
   by_cases ho : IsOrbitKey k w (w d)
   · rw [orbitMap_of_isOrbitKey (horb.mpr ho), hcb, orbitCode_apply, orbitMap_of_isOrbitKey ho,
@@ -1064,11 +1071,11 @@ theorem orbitMap_mem_codeGrid {B : ℕ} (hB : 2 * Fintype.card ι ≤ B) (x : La
   have := keyRank_le_card k w x
   exact mem_codeGrid.mpr (.inr ⟨_, by omega, n, hn, he⟩)
 
-/-- **Capped agreements pass to agreement heights at short caps.**  Two labellings with values in
-the code grid of bound `B` that agree capped at a cap `h` self-visible and short at `k` have
-agreement heights in the grid of bound `B` with every labelling that agree capped at `h`: either
-`h` is a member of the grid, at which they agree, or `h` lies above every value and they are
-equal. -/
+/-- **Capped agreements pass to agreement heights at short caps.**  Let two labellings with values
+in the code grid of bound `B` agree capped at a cap `h` self-visible and short at `k`.  Then, for
+every third labelling, their agreement heights with it in the grid of bound `B` agree capped at
+`h`: either `h` is a member of the grid, at which the two labellings agree, or `h` lies above every
+value and the two labellings are equal. -/
 theorem min_agreementHeight_eq_of_isShort {B : ℕ} {v v' : ι → Label.{u}}
     (hh : IsSelfVisible k h) (hs : IsShort k h)
     (hval : ∀ d, v d ∈ codeGrid k B ∧ v' d ∈ codeGrid k B)
@@ -1103,7 +1110,7 @@ theorem min_agreementHeight_eq_of_isShort {B : ℕ} {v v' : ι → Label.{u}}
 
 open Classical in
 /-- The **reading of the cell `d`** of a labelling `w` at grade `k`: bottom at the labels whose key
-lies below the key of the orbit code of `d`; on the strip of that key, the block shift back to the
+lies below the key of the orbit code of `d`; on the strip of that key, the block move back to the
 block of `w d` when the key of `w d` is an orbit key; and the key of `w d` otherwise. -/
 noncomputable def cellReading (k : ℕ) (w : ι → Label.{u}) (d : ι) (x : Label.{u}) : Label.{u} :=
   if visibilityReplace k k x < visibilityReplace k k (orbitCode k w d) then ⊥
@@ -1128,7 +1135,7 @@ private theorem eq_pt_of_visibilityReplace_eq {c : Ordinal.{u}}
     obtain ⟨rfl, hn⟩ := pt_inj hx
     exact ⟨n, by omega, rfl⟩
 
-/-- On the strip of the code of a cell whose value has an orbit key, the block shift back stays
+/-- On the strip of the code of a cell whose value has an orbit key, the block move back stays
 at most the key of the value. -/
 private theorem moveToBlock_le_visibilityReplace {d : ι} (hd : IsOrbitKey k w (w d))
     (hx : visibilityReplace k k x = visibilityReplace k k (orbitCode k w d)) :
@@ -1179,13 +1186,21 @@ theorem cellReading_visibilityReplace {j i : ℕ} (hi : i ≤ j) (hj : j ≤ k) 
   · exact moveToBlock_visibilityReplace _ _ _ _
   · exact (((isSelfVisible_visibilityReplace_self k _).mono hj).visibilityReplace_eq i).symm
 
-/-- The orbit decoder fixes bottom, at a cap other than bottom. -/
-theorem orbitDecoder_bot (hbot : h ≠ ⊥) : orbitDecoder k w h ⊥ = ⊥ := by
-  rw [orbitDecoder, min_eq_left bot_le, (Finset.sup_eq_bot_iff _ _).mpr fun d hd ↦ ?_,
-    max_self]
-  rw [cellReading, ite_eq_left (by
-    rw [visibilityReplace_bot]
-    exact bot_lt_iff_ne_bot.mpr (ne_bot_of_le_ne_bot hbot (mem_filter.mp hd).2))]
+/-- The reading of a cell fixes bottom. -/
+theorem cellReading_bot (d : ι) : cellReading k w d ⊥ = ⊥ := by
+  by_cases hd : w d = ⊥
+  · have ho : ¬ IsOrbitKey k w (w d) := fun h ↦ h.isKey.ne_bot hd
+    rw [cellReading, ite_eq_right (by simp [hd]), ite_eq_right fun h ↦ ho h.2, hd,
+      visibilityReplace_bot]
+  · rw [cellReading, ite_eq_left]
+    rw [visibilityReplace_bot, bot_lt_iff_ne_bot, Ne, visibilityReplace_eq_bot_iff,
+      orbitCode_eq_bot_iff]
+    exact hd
+
+/-- The orbit decoder fixes bottom. -/
+theorem orbitDecoder_bot : orbitDecoder k w h ⊥ = ⊥ := by
+  rw [orbitDecoder, min_eq_left bot_le,
+    (Finset.sup_eq_bot_iff _ _).mpr fun d _ ↦ cellReading_bot d, max_self]
 
 /-- The orbit decoder sends only bottom to bottom, at a cap other than bottom. -/
 theorem eq_bot_of_orbitDecoder_eq_bot (hbot : h ≠ ⊥) (hx : orbitDecoder k w h x = ⊥) :
@@ -1199,7 +1214,7 @@ theorem isWitness_orbitDecoder (hh : IsSelfVisible k h) (hbot : h ≠ ⊥) :
     IsWitness (stepSuppressor.{u} k) (orbitDecoder k w h) where
   antitone := (IsWitness.id_step k).antitone
   isSelfVisible := (IsWitness.id_step k).isSelfVisible
-  map_bot := orbitDecoder_bot hbot
+  map_bot := orbitDecoder_bot
   monotone x y hxy := max_le_max (min_le_min_right _ hxy)
     (Finset.sup_mono_fun fun d _ ↦ monotone_cellReading k w d hxy)
   visibilityReplace_comm x j hx i hi := by
@@ -1211,7 +1226,7 @@ theorem isWitness_orbitDecoder (hh : IsSelfVisible k h) (hbot : h ≠ ⊥) :
       congr 1
       exact Finset.sup_congr rfl fun d _ ↦ cellReading_visibilityReplace hi hj d x
     · rw [stepSuppressor_of_lt (not_le.mp hj), le_bot_iff] at hx
-      rw [eq_bot_of_orbitDecoder_eq_bot hbot hx, visibilityReplace_bot, orbitDecoder_bot hbot,
+      rw [eq_bot_of_orbitDecoder_eq_bot hbot hx, visibilityReplace_bot, orbitDecoder_bot,
         visibilityReplace_bot]
 
 /-- The reading of a cell at the orbit code of a cell whose value has the same key is that value.

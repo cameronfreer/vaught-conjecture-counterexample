@@ -18,11 +18,14 @@ of `S` at grade `k` appends to `S` one cell of scope `univ` and grade `k` for ea
 finite catalogue of labellings of the cells of `S`; the row of a new cell reads its catalogue entry
 on the old cells and, on the new cells, an agreement height of two catalogue entries.  This file
 builds the **canonical field layer** (`Scheme.fieldLayer`), whose catalogue consists of
-orbit-canonical labellings, and proves the laws and the extension properties that the one-grade
-lift (`CellScheme.Rows.cappedLift_of_boundary` and its short-cap form
-`CellScheme.Rows.cappedLift_of_boundary_short`) asks of the new rows.  The old cells may have any
-grade: those of grade above `k` (not below `(univ, k)`) are kept and not read by the new rows,
-and those of grade below `k` are read through the orbit code.  The scalar part is in
+orbit-canonical labellings, and proves its laws and the extensions through the new cells.  The old
+cells may have any grade: those of grade above `k` (not below `(univ, k)`) are kept and not read
+by the new rows, and those of grade below `k` are read through the orbit code.  When no old cell
+has a grade below `k`, the extensions from the boundary asked by the one-grade lift
+(`CellScheme.Rows.cappedLift_of_boundary`) are proved here; with old cells of lower grades, only
+the extension through the new cells is proved here, at caps short at `k`, and the extension from
+the boundary, for the short-cap form `CellScheme.Rows.cappedLift_of_boundary_short`, is assembled
+where the boundary is known.  The scalar part is in
 `VaughtConjecture.Extension.CanonicalCode` and `VaughtConjecture.Extension.OrbitCode`.
 
 **Appending cells of full scope** (`Scheme.appendFullCells S k M r h`, an `abbrev`, for the reason
@@ -598,6 +601,7 @@ theorem exists_isLawfulBelow_fieldLayer {p : Fin S.card → Label.{u}}
     ((isLawful_fieldRow (hS := hS) hb).isLawfulBelow _).map_of_apply_eq_bot (fun x ↦ x.2.2)
       (isWitness_orbitDecoder (isSelfVisible_gridPoint k 0) (gridPoint_ne_bot k 0))
       fun _ ↦ eq_bot_of_orbitDecoder_eq_bot (gridPoint_ne_bot k 0), fun d hd ↦ ?_⟩
+  -- The extension at the old cell `d` is the decoder applied to its code.
   change orbitDecoder k t (gridPoint k 0) (S.fieldRow k (orbitCode k t) (Fin.castAdd _ d)) = p d
   rw [fieldRow_castAdd, orbitDecoder_orbitCode (fun e ↦ min_orbitCode_gridPoint_zero e)]
   exact CellScheme.splice_of_le hd
@@ -732,6 +736,7 @@ theorem exists_extension_fieldLayer {p : Fin S.card → Label.{u}}
       ((isLawful_fieldRow (hS := hS) ha).isLawfulBelow _) (fun x ↦ x.2.2)
       (isWitness_orbitDecoder hh hbot.ne') hbot.ne' fun x ↦ hcapr x.1, fun d hd ↦ ?_,
     fun x ↦ hcapr x.1⟩
+  -- The extension at the old cell `d` is the decoder applied to its code.
   change orbitDecoder k t h (S.fieldRow k b (Fin.castAdd _ d)) = p d
   rw [fieldRow_castAdd, hread, htle d hd]
 

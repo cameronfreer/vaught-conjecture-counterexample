@@ -20,18 +20,18 @@ self-visible at `2`.  Write `Q b f` for the label `ω * b + f`.
   `orbitCode_orbitLabelling`, `not_exists_isWitness_read`): on the labelling
   `(1, 2, ω * 3 + 1, ω * 3 + 2)` at grade `2` the canonical code merges the first two values and
   the last two, while the orbit code is `(1, 2, ω * 4 + 1, ω * 4 + 2)`: the natural strip stays,
-  and the strip of the key `ω * 3 + 2` moves by a block shift to the block `4`; the orbit decoder
+  and the strip of the key `ω * 3 + 2` moves to the block `4` (the block move); the orbit decoder
   reads it literally.  No witness reads one label as `ω * 3 + 1` at grade `1` and as `ω * 3 + 2` at
   grade `2`, because its suppressor is antitone; so a code merging the two values cannot be read
   literally at a grade-`1` and a grade-`2` cell.
 * **R6, relative room fails at a cap that is not short** (`not_min_orbitCode_eq_of_not_isShort`):
   the labelling `(ω * 2 + 1)` is orbit-canonical, the cap `ω + 7` is self-visible at `2` but not
   short, and `(ω * 5 + 3)` agrees with `(ω * 2 + 1)` capped at `ω + 7`, yet its orbit code `ω + 2`
-  does not.  This is why the one-grade lift is used in its short-cap form
+  does not.  This is why the one-grade lift is to be used in its short-cap form
   (`CellScheme.Rows.cappedLift_of_boundary_short`) at grade `2`.
 * **R7, the natural strip** (`min_orbitCode_orbitLabelling_gridPoint_zero`): the value `1` keeps
   its code `1`, so the orbit code agrees with the labelling capped at the least grid point `2`; the
-  block shift of `1` to the block `2` would not.
+  block move of `1` to the block `2` would not.
 
 ## Placement
 
@@ -107,6 +107,7 @@ theorem orbitCode_orbitLabelling :
     orbitCode 2 orbitLabelling.{u} = ![Q 0 1, Q 0 2, Q 4 1, Q 4 2] := by
   have hlt : visibilityReplace 2 2 (orbitLabelling.{u} 1) <
       visibilityReplace 2 2 (orbitLabelling.{u} 3) := by
+    -- The values at the cells `1` and `3`.
     change visibilityReplace 2 2 (Q.{u} 0 2) < visibilityReplace 2 2 (Q 3 2)
     rw [visibilityReplace_Q, visibilityReplace_Q]
     exact lt_of_le_of_ne (Q_le_Q_iff.mpr (.inl (by decide))) fun h ↦ by simp [Q_inj] at h
@@ -119,6 +120,7 @@ theorem orbitCode_orbitLabelling :
       omega
   have hkey2 : keyRank 2 orbitLabelling.{u} (orbitLabelling 2) = 2 := by
     refine (keyRank_congr ?_).trans hkey3
+    -- The values at the cells `2` and `3`.
     change visibilityReplace 2 2 (Q.{u} 3 1) = visibilityReplace 2 2 (Q 3 2)
     rw [visibilityReplace_Q, visibilityReplace_Q]
     rfl
@@ -131,10 +133,12 @@ theorem orbitCode_orbitLabelling :
     fin_cases i
     · exact absurd hb (by decide)
     · exact absurd hb (by decide)
-    · change visibilityReplace 2 2 (Q.{u} 3 1) ≠ Q 0 2
+    · -- The value at the cell `2`.
+      change visibilityReplace 2 2 (Q.{u} 3 1) ≠ Q 0 2
       rw [hn 3 1 (by decide), Ne, Q_inj]
       decide
-    · change visibilityReplace 2 2 (Q.{u} 3 2) ≠ Q 0 2
+    · -- The value at the cell `3`.
+      change visibilityReplace 2 2 (Q.{u} 3 2) ≠ Q 0 2
       rw [hn 3 2 le_rfl, Ne, Q_inj]
       decide
   have hcode (i : Fin 4) (hi : (i : ℕ) < 2) :
@@ -221,7 +225,7 @@ theorem not_min_orbitCode_eq_of_not_isShort :
 /-! ### R7: the natural strip -/
 
 /-- **The natural strip is kept**: the value `1` of the labelling of R5 keeps its code `1`, so the
-orbit code agrees with the labelling capped at the least grid point `2`; the block shift of `1` to
+orbit code agrees with the labelling capped at the least grid point `2`; the block move of `1` to
 the block `2`, `ω * 2 + 1`, would be read as `2` there. -/
 theorem min_orbitCode_orbitLabelling_gridPoint_zero :
     min (orbitCode 2 orbitLabelling.{u} 0) (gridPoint 2 0) = Q 0 1 ∧
