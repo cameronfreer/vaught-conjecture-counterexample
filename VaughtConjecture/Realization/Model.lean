@@ -20,7 +20,10 @@ one).
 A realization `R` **realizes a member of `U` over a tuple `t`** (`Realization.RealizesOver`) when
 some typed tuple `u` on one more point, with `t` as its initial segment, has its type in `U`.  The
 new point is automatically off `t`, since `u` is injective, and under exact consistency the type
-of `u` is a coface of the type of `t` (`RealizesOver.inter_cofaces`).
+of `u` is a coface of the type of `t` (`RealizesOver.inter_cofaces`).  Realized members pass to a
+stage reduction when the family reduces into the reduced family (`RealizesOver.reduce`), and back
+when every type whose reduction is in the reduced family is in the family
+(`RealizesOver.of_reduce`).
 
 A **model** (`Realization.IsModel`) is a realization on a nonempty carrier whose types are legal,
 which is exactly consistent and covering, and which realizes, over every occurrence of type `p`, a
@@ -165,6 +168,16 @@ theorem RealizesOver.reduce {β : Ordinal.{u}} (hβ : Order.IsSuccPrelimit β)
     (hU : ∀ q ∈ U, q.reduce hβ ∈ U') : (R.reduce hβ).RealizesOver t U' := by
   obtain ⟨u, hu, q, hq, he⟩ := h
   exact ⟨u, hu, q.reduce hβ, hU q hq, by rw [reduce_eval, he, Option.map_some]⟩
+
+/-- Realizing a family in a stage reduction: if every type whose reduction is in `U'` is in `U`,
+a realization of `U'` over `t` in the stage reduction of `R` is a realization of `U` in `R`. -/
+theorem RealizesOver.of_reduce {α β : Ordinal.{u}} {R : Realization.{u, v} α M}
+    (hβ : Order.IsSuccPrelimit β) {t : Fin n ↪ M} {U : Set (StageType.{u} α (n + 1))}
+    {U' : Set (StageType.{u} β (n + 1))} (h : (R.reduce hβ).RealizesOver t U')
+    (hU : ∀ q, q.reduce hβ ∈ U' → q ∈ U) : R.RealizesOver t U := by
+  obtain ⟨u, hu, q', hq', he⟩ := h
+  obtain ⟨q, hq, rfl⟩ := Option.map_eq_some_iff.mp he
+  exact ⟨u, hu, q, hU q hq', hq⟩
 
 end RealizesOver
 
