@@ -14,14 +14,14 @@ import VaughtConjecture.Extension.SmallArityOneExamples
 Roadmap, Layer 3, 3.1, (R6), checkpoint 2.6 (the recursion on the grade; here the special cases of
 `2FL(1)` and of the completion at the arities `m ≤ 2`); semantic contract, items 2–4.
 
-Write `Q b f` for the label `ω * b + f`.
+Write `Q b f` for the label `ω * b + f` (`TowerExamples.Q`).
 
 * **The ambient as its own extension** (`exists_twoFaceLift_of_eq`,
   `exists_twoFaceLift_of_lt`, `exists_twoFaceLift_top`).  At every grade `j`, if the prescription
   agrees with the catalogue entry on the old cells of grade at most `j`, the entry itself,
   restricted below `(univ, j)`, is a two-face lift.  This is the case when the prescription stays
-  below the cap there (the first branch of the proof of `Seed.twoFaceLift_one`) and when the cap is
-  `⊤`.
+  below the cap there (it contains the first branch of the proof of `Seed.twoFaceLift_one`) and
+  when the cap is `⊤`.
 * **The seed of the union-fill counterexample** (`twoFaceLift_one_seed`,
   `nonempty_completionBelowFullGrade_seed`, `not_isLawfulBelow_pairLabelling_top`).  On the seed
   of `UnionFillCounterexample.T` with itself, on which the union fill fails, `2FL(1)` holds and
@@ -57,6 +57,7 @@ universe u
 namespace VaughtConjecture.TwoFaceLiftExamples
 
 open Finset Label CellScheme
+open TowerExamples (Q)
 
 /-! ### The ambient as its own extension -/
 
@@ -137,17 +138,18 @@ theorem not_isLawfulBelow_coatoms_pairLabelling_top :
 /-! ### Exactness above the cap on both faces -/
 
 /-- The graded indices of the live cells of grade `1` of the first coatom, in `Fin 4`. -/
-def leftPairs : Finset (Finset (Fin 4) × ℕ) := {({2}, 1), ({1, 2}, 1), ({0, 1, 2}, 1)}
+private def leftPairs : Finset (Finset (Fin 4) × ℕ) := {({2}, 1), ({1, 2}, 1), ({0, 1, 2}, 1)}
 
 /-- The graded indices of the live cells of grade `1` of the second coatom, in `Fin 4`. -/
-def rightPairs : Finset (Finset (Fin 4) × ℕ) := {({3}, 1), ({1, 3}, 1), ({0, 1, 3}, 1)}
+private def rightPairs : Finset (Finset (Fin 4) × ℕ) := {({3}, 1), ({1, 3}, 1), ({0, 1, 3}, 1)}
 
 /-- The graded indices of the live cells of grade `2`, in `Fin 4`. -/
-def gradeTwoPairs : Finset (Finset (Fin 4) × ℕ) := {({0, 1}, 2), ({0, 1, 2}, 2), ({0, 1, 3}, 2)}
+private def gradeTwoPairs : Finset (Finset (Fin 4) × ℕ) :=
+  {({0, 1}, 2), ({0, 1, 2}, 2), ({0, 1, 3}, 2)}
 
 /-- The kind of a graded index in `Fin 4`: `1` on the first coatom's live pairs of grade `1`, `2`
 on the second's, `3` on the live pairs of grade `2`, and `0` otherwise. -/
-def pairKind (X : Finset (Fin 4) × ℕ) : Fin 4 :=
+private def pairKind (X : Finset (Fin 4) × ℕ) : Fin 4 :=
   if X ∈ leftPairs then 1 else if X ∈ rightPairs then 2 else if X ∈ gradeTwoPairs then 3 else 0
 
 /-- **The two-face labelling** `twoFaceLabelling A_L A_R F`, read off graded indices: `A_L` on the
@@ -192,14 +194,6 @@ private theorem twoFaceLabelling_right (AL AR F : Label.{u}) (d : Fin 9) :
   generalize liveKind d = c
   fin_cases c <;> rfl
 
-/-- Lawfulness transported along the restriction to a face. -/
-private theorem isLawfulBelow_comap_cellMap_iff {n k : ℕ} (S' : Scheme.{u} n) (f : Fin k ↪ Fin n)
-    (X : Finset (Fin k) × ℕ) (x : Fin S'.card → Label.{u}) :
-    (S'.comap f).rows.IsLawfulBelow X (fun i ↦ x (S'.cellMap f i)) ↔
-      S'.rows.IsLawfulBelow (Prod.map (Finset.map f) id X) (fun d ↦ x d) :=
-  CellScheme.Rows.isLawfulBelow_comap_iff (R := S'.rows) (S'.isLowerEmbedding_comap f)
-    (S'.image_cellMap_below f X) (r := fun d ↦ x d)
-
 /-- A labelling of `T` that is a labelling `L` of graded indices, read along `f`, where `L` read
 along `f` is `labelling A F`, is lawful below every pair not above the apex. -/
 private theorem isLawfulBelow_T_of_eq {A F : Label.{u}} (hA : IsSelfVisible 1 A)
@@ -232,16 +226,16 @@ private theorem isLawfulBelow_coatom {A F : Label.{u}} (hA : IsSelfVisible 1 A)
       (Am.toScheme.comap f).rows.IsLawfulBelow ((univ : Finset (Fin 3)), 2) (fun i ↦ x i) := by
     rw [heq]
     exact fun x hx ↦ isLawfulBelow_T_of_eq hA hF hFA hL (fun h ↦ absurd h.2 (by decide)) x hx
-  exact (isLawfulBelow_comap_cellMap_iff Am.toScheme f ((univ : Finset (Fin 3)), 2)
+  exact (Scheme.isLawfulBelow_comap_cellMap_iff Am.toScheme f ((univ : Finset (Fin 3)), 2)
     fun d ↦ L (Am.toCellScheme.gradedIndex d)).mp
     (hlaw _ fun i ↦ congrArg L (Am.toScheme.map_comap_gradedIndex f i).symm)
 
 /-- **The seed of `T` with itself has `T` as both coatom types.** -/
-theorem left_seed_right_seed : (seed α).left = T α ∧ (seed α).right = T α := ⟨rfl, rfl⟩
+theorem seed_left_eq_and_right_eq : (seed α).left = T α ∧ (seed α).right = T α := ⟨rfl, rfl⟩
 
 /-- **The two-face labelling is lawful below both coatoms at the grade `2`**, on a seed on four
-points whose two coatom types are `T` (such as `seed α`, `left_seed_right_seed`), when `A_L` and
-`A_R` are self-visible at `1`, `F` at `2`, and `F ≤ A_L, A_R`. -/
+points whose two coatom types are `T` (such as `seed α`, `seed_left_eq_and_right_eq`), when `A_L`
+and `A_R` are self-visible at `1`, `F` at `2`, and `F ≤ A_L, A_R`. -/
 theorem isLawfulBelow_twoFaceLabelling {I : Seed.{u} α 2} (hIL : I.left = T α)
     (hIR : I.right = T α) {AL AR F : Label.{u}} (hAL : IsSelfVisible 1 AL)
     (hAR : IsSelfVisible 1 AR) (hF : IsSelfVisible 2 F) (hFL : F ≤ AL) (hFR : F ≤ AR) :
@@ -260,10 +254,6 @@ theorem isLawfulBelow_twoFaceLabelling {I : Seed.{u} α 2} (hIL : I.left = T α)
 section Labels
 
 open Ordinal
-
-/-- The label `ω * b + f`. -/
-noncomputable def Q (b f : ℕ) : Label.{u} :=
-  ((ω * (b : Ordinal.{u}) + (f : Ordinal.{u}) : Ordinal.{u}) : Label.{u})
 
 private theorem Q_le_Q_iff {b b' f f' : ℕ} : Q.{u} b f ≤ Q b' f' ↔ b < b' ∨ b = b' ∧ f ≤ f' := by
   rw [Q, Q, WithBot.coe_le_coe, WithTop.coe_le_coe, omega0_mul_add_natCast_le_iff, Nat.cast_lt,
@@ -310,6 +300,107 @@ theorem exists_twoFaceLift_exact {I : Seed.{u} α 2} (hIL : I.left = T α) (hIR 
   · rw [hrw d hd, hX]; rfl
   · rw [hrw d hd, hX]; rfl
 
+/-- **The hypotheses of `exists_twoFaceLift_exact` are met**: on a seed on four points whose two
+coatom types are `T`, some catalogue entry of the layer at the grade `2` agrees with the
+prescription `twoFaceLabelling (ω + 1) (ω * 2 + 1) 2` capped at `2` at the old cells of grade at
+most `2`.  The prescription, lawful below both coatoms, is extended through the layer at the
+grade `1` (`Seed.exists_isLawfulBelow_tower`), glued with its old cells of grade `2`, spliced with
+`⊥` above the grade `2`, and orbit-coded at `2`; capped at `2`, the orbit code keeps every value
+(`min_orbitCode_gridPoint_zero`). -/
+theorem exists_entry {I : Seed.{u} α 2} (hIL : I.left = T α) (hIR : I.right = T α) :
+    ∃ a ∈ (I.tower 1).catalogue (1 + 1), ∀ d, I.amalgam.toCellScheme.grade d ≤ 2 →
+      min (twoFaceLabelling (Q 1 1) (Q 2 1) (Q 0 2) (I.amalgam.toCellScheme.gradedIndex d))
+        (Q 0 2) = min (a (I.towerEmbed 1 d)) (Q 0 2) := by
+  classical
+  set w : Fin I.amalgam.card → Label.{u} := fun d ↦
+    twoFaceLabelling (Q 1 1) (Q 2 1) (Q 0 2) (I.amalgam.toCellScheme.gradedIndex d)
+  have hlt (b : ℕ) (hb : 0 < b) : Q.{u} 0 2 ≤ Q b 1 := Q_le_Q_iff.mpr (.inl hb)
+  obtain ⟨hwC, hwD⟩ := isLawfulBelow_twoFaceLabelling hIL hIR
+    (isSelfVisible_Q.mpr le_rfl) (isSelfVisible_Q.mpr le_rfl) (isSelfVisible_Q.mpr le_rfl)
+    (hlt 1 one_pos) (hlt 2 two_pos)
+  have hcov (d : Fin I.amalgam.card) :
+      I.amalgam.toCellScheme.scope d ⊆ univ.erase (Fin.last 3) ∨
+        I.amalgam.toCellScheme.scope d ⊆ univ.erase (Fin.castSucc (Fin.last 2)) :=
+    I.subset_or_subset _ (I.amalgam.isWellFormed.isWellFormed.scope_mem d) (I.scope_ne_univ d)
+  have hwC1 : I.amalgam.rows.IsLawfulBelow (univ.erase (Fin.last 3), 1) fun d ↦ w d :=
+    hwC.mono (X := (univ.erase (Fin.last 3), 1)) ⟨subset_rfl, by omega⟩
+  have hwD1 : I.amalgam.rows.IsLawfulBelow (univ.erase (Fin.castSucc (Fin.last 2)), 1)
+      fun d ↦ w d :=
+    hwD.mono (X := (univ.erase (Fin.castSucc (Fin.last 2)), 1)) ⟨subset_rfl, by omega⟩
+  obtain ⟨r₁, hr₁, hr₁w⟩ := I.exists_isLawfulBelow_tower (w := w) hcov 1 hwC1 hwD1
+  set W : Fin (I.tower 1).card → Label.{u} := Function.extend (I.towerEmbed 1) w (fun _ ↦ ⊥)
+  have hWe (d : Fin I.amalgam.card) : W (I.towerEmbed 1 d) = w d :=
+    (I.towerEmbed 1).injective.extend_apply _ _ _
+  set g : Fin (I.tower 1).card → Label.{u} := fun e ↦
+    if he : e ∈ (I.tower 1).toCellScheme.below (univ, 1) then r₁ ⟨e, he⟩ else W e
+  have hne (z : Fin 4) : (Finset.univ : Finset (Fin 4)).erase z ≠ Finset.univ :=
+    (erase_ssubset (mem_univ z)).ne
+  -- `g` is `w` on the old cells of grade at most `2`.
+  have hgold (d : Fin I.amalgam.card) (hd : I.amalgam.toCellScheme.grade d ≤ 2) :
+      g (I.towerEmbed 1 d) = w d := by
+    by_cases he : I.towerEmbed 1 d ∈ (I.tower 1).toCellScheme.below (univ, 1)
+    · simp only [g, dite_eq_left he]
+      exact hr₁w d (I.towerEmbed_mem_below_iff.mp he).2
+    · simp only [g, dite_eq_right he]
+      exact hWe d
+  have hgb (e : Fin (I.tower 1).card)
+      (he : e ∈ (I.tower 1).toCellScheme.below (univ.erase (Fin.last 3), 2) ∨
+        e ∈ (I.tower 1).toCellScheme.below (univ.erase (Fin.castSucc (Fin.last 2)), 2)) :
+      g e = W e := by
+    have hsc : (I.tower 1).toCellScheme.scope e ≠ univ := fun hu ↦ he.elim
+      (fun h' ↦ hne _ (univ_subset_iff.mp (hu.ge.trans h'.1)))
+      fun h' ↦ hne _ (univ_subset_iff.mp (hu.ge.trans h'.1))
+    obtain ⟨d, rfl⟩ := I.mem_range_towerEmbed 1 e hsc
+    have hd : I.amalgam.toCellScheme.grade d ≤ 2 :=
+      he.elim (fun h ↦ (I.towerEmbed_mem_below_iff.mp h).2)
+        fun h ↦ (I.towerEmbed_mem_below_iff.mp h).2
+    rw [hgold d hd, hWe]
+  -- An old cell below `(univ, 2)` lies below one of the coatoms at the grade `2`.
+  have hold (d : Fin I.amalgam.card)
+      (he : I.towerEmbed 1 d ∈ (I.tower 1).toCellScheme.below (univ, 2)) :
+      I.towerEmbed 1 d ∈ (I.tower 1).toCellScheme.below (univ.erase (Fin.last 3), 2) ∨
+        I.towerEmbed 1 d ∈ (I.tower 1).toCellScheme.below (univ, 1) ∨
+        I.towerEmbed 1 d ∈
+          (I.tower 1).toCellScheme.below (univ.erase (Fin.castSucc (Fin.last 2)), 2) := by
+    have hd : I.amalgam.toCellScheme.grade d ≤ 2 := (I.towerEmbed_mem_below_iff.mp he).2
+    rcases hcov d with h | h
+    · exact .inl (I.towerEmbed_mem_below_iff.mpr ⟨h, hd⟩)
+    · exact .inr (.inr (I.towerEmbed_mem_below_iff.mpr ⟨h, hd⟩))
+  have hglaw : (I.tower 1).rows.IsLawfulBelow (univ, 2) fun e ↦ g e := by
+    refine Rows.IsLawfulBelow.glue₃ (U := (univ.erase (Fin.last 3), 2)) (V := (univ, 1))
+      (W := (univ.erase (Fin.castSucc (Fin.last 2)), 2)) ?_ ?_ ?_ ?_
+    · have : (I.tower 1).rows.IsLawfulBelow (univ.erase (Fin.last 3), 2) fun e ↦ W e := by
+        rw [I.isLawfulBelow_tower_iff (hne _)]
+        simpa only [hWe] using hwC
+      convert this using 1
+      exact funext fun e ↦ hgb e (.inl e.2)
+    · convert hr₁ using 1
+      exact funext fun e ↦ by simp only [g, dite_eq_left e.2]
+    · have : (I.tower 1).rows.IsLawfulBelow (univ.erase (Fin.castSucc (Fin.last 2)), 2)
+          fun e ↦ W e := by
+        rw [I.isLawfulBelow_tower_iff (hne _)]
+        simpa only [hWe] using hwD
+      convert this using 1
+      exact funext fun e ↦ hgb e (.inr e.2)
+    · intro e he
+      rcases I.tower_grade_le_or 1 e with h1 | hsc
+      · by_cases hsu : (I.tower 1).toCellScheme.scope e = univ
+        · exact .inr (.inl ⟨hsu ▸ subset_rfl, h1⟩)
+        · obtain ⟨d, rfl⟩ := I.mem_range_towerEmbed 1 e hsu
+          exact hold d he
+      · obtain ⟨d, rfl⟩ := I.mem_range_towerEmbed 1 e hsc
+        exact hold d he
+  have hmem : orbitCode 2 ((I.tower 1).toCellScheme.splice 2 (fun _ ↦ ⊥) g) ∈
+      (I.tower 1).catalogue 2 :=
+    Scheme.orbitCode_splice_bot_mem_catalogue (S := I.tower 1) (k := 2) (p := g) hglaw
+  refine ⟨_, hmem, fun d hd ↦ ?_⟩
+  have h0 := min_orbitCode_gridPoint_zero (k := 2)
+    (w := (I.tower 1).toCellScheme.splice 2 (fun _ ↦ ⊥) g) (I.towerEmbed 1 d)
+  have hsp : (I.tower 1).toCellScheme.splice 2 (fun _ ↦ ⊥) g (I.towerEmbed 1 d) = w d := by
+    rw [CellScheme.splice_of_le (by rw [Seed.grade_towerEmbed]; exact hd), hgold d hd]
+  rw [hsp] at h0
+  exact h0.symm
+
 end UnionFillSeed
 
 /-! ### `fourCellTripleSeed` -/
@@ -318,18 +409,19 @@ section TripleSeed
 
 variable (α : Ordinal.{u}) (hα : Order.IsSuccPrelimit α)
 
-/-- **The seed on four points with four cells on its common point.**  Its two coatom types are both
-the completion of `SmallArityOneExamples.fourCellPairSeed`, a legal stage type on three points,
-whose face along `Fin.castSuccEmb` is the first coatom type of that seed. -/
+/-- **The seed on four points built from `SmallArityOneExamples.fourCellPairSeed`.**  Its two
+coatom types are both the completion of that seed, a legal stage type on three points, whose face
+along `Fin.castSuccEmb` is the first coatom type of that seed.  So the common face has two points,
+and its four cells sit at `({0}, 1)`. -/
 noncomputable def fourCellTripleSeed : Seed.{u} α 2 :=
   let F := (SmallArityOneExamples.fourCellPairSeed α hα).completionBelowFullGradeOne
   Seed.ofCoatoms (F.isLegal_completion hα) (F.isLegal_completion hα)
     (F.restrictFace_left_completion hα) (F.restrictFace_left_completion hα)
 
-/-- **`fourCellTripleSeed` has a completion below the full grade, with literal faces**: with no
-hypothesis (`Seed.nonempty_completionBelowFullGrade_of_le_two`), and its completion has the
-completion of `SmallArityOneExamples.fourCellPairSeed` as its faces along both coatoms, labels
-included. -/
+/-- **`fourCellTripleSeed` has a completion below the full grade, with literal faces**: the
+completion through the tower (`Seed.completionBelowFullGradeOfTowerInvariant`), with the invariant
+at the top grade given with no hypothesis (`Seed.towerInvariant_of_le_two`), has the completion of
+`SmallArityOneExamples.fourCellPairSeed` as its faces along both coatoms, labels included. -/
 theorem restrictFace_completion_fourCellTripleSeed :
     ∃ F : CompletionBelowFullGrade (fourCellTripleSeed α hα),
       StageType.restrictFace (Coatom.left 2) (F.completion hα) =
@@ -338,7 +430,8 @@ theorem restrictFace_completion_fourCellTripleSeed :
         StageType.restrictFace (Coatom.right 2) (F.completion hα) =
           some ((SmallArityOneExamples.fourCellPairSeed α hα).completionBelowFullGradeOne.completion
             hα) :=
-  let F := ((fourCellTripleSeed α hα).nonempty_completionBelowFullGrade_of_le_two le_rfl).some
+  let F := (fourCellTripleSeed α hα).completionBelowFullGradeOfTowerInvariant
+    ((fourCellTripleSeed α hα).towerInvariant_of_le_two le_rfl (2 + 1) le_rfl)
   ⟨F, F.restrictFace_left_completion hα, F.restrictFace_right_completion hα⟩
 
 end TripleSeed

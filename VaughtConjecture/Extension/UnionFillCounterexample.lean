@@ -640,14 +640,6 @@ private theorem comap_seed_right :
   obtain ⟨hf, he⟩ := (StageType.restrictFace_eq_some_iff _ _).mp (seed α).restrictFace_right
   exact congrArg StageType.toScheme he
 
-/-- Lawfulness transported along the restriction to a face. -/
-private theorem isLawfulBelow_comap_cellMap_iff {n m : ℕ} (S' : Scheme.{u} n) (f : Fin m ↪ Fin n)
-    (X : Finset (Fin m) × ℕ) (x : Fin S'.card → Label.{u}) :
-    (S'.comap f).rows.IsLawfulBelow X (fun i ↦ x (S'.cellMap f i)) ↔
-      S'.rows.IsLawfulBelow (Prod.map (Finset.map f) id X) (fun d ↦ x d) :=
-  CellScheme.Rows.isLawfulBelow_comap_iff (R := S'.rows) (S'.isLowerEmbedding_comap f)
-    (S'.image_cellMap_below f X) (r := fun d ↦ x d)
-
 private theorem map_right_commonFace :
     ({0, 1} : Finset (Fin 3)).map (Coatom.right 2) = ({0, 1} : Finset (Fin 4)) := by
   decide +kernel
@@ -733,7 +725,7 @@ theorem not_unionFill_seed :
     (Am.toCellScheme.gradedIndex d)
   have ha : Am.rows.IsLawfulBelow (univ.erase (Fin.castSucc (Fin.last 2)), 1 + 1)
       (fun d ↦ a d) := by
-    have := (isLawfulBelow_comap_cellMap_iff Am.toScheme (Coatom.right 2)
+    have := (Scheme.isLawfulBelow_comap_cellMap_iff Am.toScheme (Coatom.right 2)
       ((univ : Finset (Fin 3)), 2) a).mp
       (hlaw hv1 hv2 le_rfl (not_univ_three_le (by omega))
         (fun i ↦ a (Am.toScheme.cellMap (Coatom.right 2) i)) fun i _ ↦ by
@@ -743,7 +735,7 @@ theorem not_unionFill_seed :
           rw [hgi])
     rwa [hpair2] at this
   have hwE : Am.rows.IsLawfulBelow (({0, 1} : Finset (Fin 4)), 1 + 1) (fun d ↦ w d) := by
-    have := (isLawfulBelow_comap_cellMap_iff Am.toScheme (Coatom.right 2)
+    have := (Scheme.isLawfulBelow_comap_cellMap_iff Am.toScheme (Coatom.right 2)
       (({0, 1} : Finset (Fin 3)), 2) w).mp
       (hlaw (A := ⊤) (F := ⊤) (isSelfVisible_top 1) (isSelfVisible_top 2) le_rfl
         (not_univ_three_le (by omega)) (fun i ↦ w (Am.toScheme.cellMap (Coatom.right 2) i))
@@ -759,7 +751,7 @@ theorem not_unionFill_seed :
     rwa [hpairE] at this
   have hwD : Am.rows.IsLawfulBelow (univ.erase (Fin.castSucc (Fin.last 2)), 1)
       (fun d ↦ w d) := by
-    have := (isLawfulBelow_comap_cellMap_iff Am.toScheme (Coatom.right 2)
+    have := (Scheme.isLawfulBelow_comap_cellMap_iff Am.toScheme (Coatom.right 2)
       ((univ : Finset (Fin 3)), 1) w).mp
       (hlaw (A := rowValue) (F := ⊥) hv1 (isSelfVisible_bot 2) bot_le
         (not_univ_three_le (by omega)) (fun i ↦ w (Am.toScheme.cellMap (Coatom.right 2) i))
@@ -822,7 +814,7 @@ theorem not_unionFill_seed :
     rw [hd2]
     unfold pairLabelling
     rw [ite_eq_left (by decide), ite_eq_left rfl]
-  have hxx := (isLawfulBelow_comap_cellMap_iff Am.toScheme (Coatom.right 2)
+  have hxx := (Scheme.isLawfulBelow_comap_cellMap_iff Am.toScheme (Coatom.right 2)
     ((univ : Finset (Fin 3)), 2) (Rows.extendBot _ x)).mpr (by
       rw [hpair2]
       exact Rows.isLawfulBelow_extendBot.mpr hx)
@@ -875,7 +867,7 @@ theorem not_isLawfulBelow_pairLabelling_top :
   have hle : w (Am.toScheme.cellMap (Coatom.right 2) i6) ≤
       w (Am.toScheme.cellMap (Coatom.right 2) i2) :=
     hcoupling (fun i ↦ w (Am.toScheme.cellMap (Coatom.right 2) i))
-      ((isLawfulBelow_comap_cellMap_iff Am.toScheme (Coatom.right 2)
+      ((Scheme.isLawfulBelow_comap_cellMap_iff Am.toScheme (Coatom.right 2)
         ((univ : Finset (Fin 3)), 2) w).mpr hw') i6 i2 hi6 hi2
   -- `w` read at the images of the cells `i6` and `i2` under the cell map
   change pairLabelling rowValue ⊤

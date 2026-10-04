@@ -16,10 +16,10 @@ Let `I` be a seed on `m + 2` points, with coatoms `C = univ.erase (Fin.last (m +
 `VaughtConjecture.Extension.Tower`).
 
 **`2FL(1)` holds at every arity** (`Seed.twoFaceLift_one`).  Fix a catalogue entry `a` of the layer
-at the grade `2`, a cap `γ` with `⊥ < γ` self-visible at `2`, and a labelling `w` of the amalgam
-lawful below `(C, 2)` and `(D, 2)` that agrees with `a` capped at `γ` on the old cells of grade at
-most `2`.  Write `q` for `a` below `(univ, 1)`.  If `q < γ` everywhere, then `q` itself is the
-extension.  Otherwise:
+at the grade `2`, a cap `γ` with `⊥ < γ`, self-visible and short at `2` (shortness is not used),
+and a labelling `w` of the amalgam lawful below `(C, 2)` and `(D, 2)` that agrees with `a` capped
+at `γ` on the old cells of grade at most `2`.  Write `q` for `a` below `(univ, 1)`.  If `q < γ`
+everywhere, then `q` itself is the extension.  Otherwise:
 
 1. **The serving cell.**  By availability some new cell `u` of graded index `(univ, 1)` has
    `γ ≤ q u`; we call it a *serving cell*.  Its row `S` below `(univ, 1)` is lawful, never `⊤`, and
@@ -60,17 +60,18 @@ So every seed with `m ≤ 2` has one (`Seed.nonempty_completionBelowFullGrade_of
 every arity a seed has one under `2FL(j)` at the grades `2 ≤ j < m`
 (`Seed.nonempty_completionBelowFullGrade_of_twoFaceLift`).
 
-**What stays open: `2FL(j)` for `j ≥ 2`**, first needed at `m = 3`.  The rows of the layer at a
-grade `ℓ ≥ 2` read lower-grade values through their orbit codes, which are not self-visible at `ℓ`,
-and the alignment of step 2 can then fail in a *strip case*: two saturated cells, one on `C` and one
-on `D`, with equal entry of the serving row just below the source cap `h` (in the strip of finite
-parts below the grade) and with prescriptions that differ above `γ`.  Every encoding agreeing with
-the source capped at `h` has equal codes there, so no single decoder reads both prescriptions
-literally.  Whether `2FL(j)` holds there is open; no refutation is claimed.  Accordingly the
-coatom extension properties `StageType.HasApexCoatomExtensions` and
+**What stays open: `2FL(j)` for `j ≥ 2`**, first assumed by the recursion at `m = 3`.  The rows of
+the layer at a grade `ℓ ≥ 2` read lower-grade values through their orbit codes, which are not
+self-visible at `ℓ`, and the alignment of step 2 can then fail in a *strip case*: two saturated
+cells, one on `C` and one on `D`, with equal entry of the serving row just below the source cap
+`h₁` (in the strip of finite parts below the grade) and with prescriptions that differ above `γ`.
+Every encoding agreeing with the source capped at `h₁` has equal codes there, so no single decoder
+reads both prescriptions literally.  Whether `2FL(j)` holds there is open; no refutation is
+claimed.  Accordingly the coatom extension properties `StageType.HasApexCoatomExtensions` and
 `StageType.HasCoatomExtensions` at the stages that are zero or a limit, which quantify over every
-arity (`StageType.HasApexCoatomExtensions.of_completionBelowFullGrade`), remain prospective: they
-follow from the completion once `∀ I j, 2 ≤ j → j < m → I.TwoFaceLift j` is known.
+arity (`StageType.HasApexCoatomExtensions.of_completionBelowFullGrade`), are proved here only
+under the hypothesis `∀ I j, 2 ≤ j → j < m → I.TwoFaceLift j`
+(`StageType.hasApexCoatomExtensions_of_twoFaceLift`); unconditionally they remain prospective.
 
 No hypothesis on the stage enters, no union fill (module
 `VaughtConjecture.Extension.UnionFillCounterexample`) and no completion is assumed, and neither
@@ -370,9 +371,26 @@ theorem nonempty_completionBelowFullGrade_of_twoFaceLift
     (I.towerInvariant_of_twoFaceLift (I.forall_twoFaceLift_of_two_le h2) (m + 1) le_rfl)⟩
 
 /-- **Every seed with `m ≤ 2` has a completion below the full grade**, through the tower, with no
-hypothesis: the two-face lift is needed at no grade `2 ≤ j < m`. -/
+hypothesis: no grade `2 ≤ j < m` exists. -/
 theorem nonempty_completionBelowFullGrade_of_le_two (hm : m ≤ 2) :
     Nonempty (CompletionBelowFullGrade I) :=
   I.nonempty_completionBelowFullGrade_of_twoFaceLift fun j hj hjm ↦ absurd hjm (by omega)
 
 end VaughtConjecture.Seed
+
+namespace VaughtConjecture.StageType
+
+/-- **The coatom extension property with apex under the two-face lift at the grades `2 ≤ j < m`**:
+at a stage `α` that is zero or a limit, if every seed on `m + 2` points satisfies `2FL(j)` at the
+grades `2 ≤ j < m`, then every seed has a completion below the full grade
+(`Seed.nonempty_completionBelowFullGrade_of_twoFaceLift`), and so
+(`StageType.HasApexCoatomExtensions.of_completionBelowFullGrade`) any two legal coatom types with
+the same face are the faces of one legal stage type with an apex. -/
+theorem hasApexCoatomExtensions_of_twoFaceLift {α : Ordinal.{u}} (hα : Order.IsSuccPrelimit α)
+    (h2 : ∀ (m : ℕ) (I : Seed.{u} α m) (j : ℕ), 2 ≤ j → j < m → I.TwoFaceLift j) :
+    HasApexCoatomExtensions.{u} α :=
+  HasApexCoatomExtensions.of_completionBelowFullGrade hα fun m _ _ _ hla hlb hpa hpb ↦
+    (Seed.ofCoatoms hla hlb hpa hpb).nonempty_completionBelowFullGrade_of_twoFaceLift
+      (h2 m _)
+
+end VaughtConjecture.StageType
