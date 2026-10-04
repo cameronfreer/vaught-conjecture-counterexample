@@ -63,7 +63,9 @@ the section of a stage type at stage `3` on two points, with labels `1` and `2`,
 `2` to a section that is not lawful (`VaughtConjecture.Stage.Examples`).  Stage types are
 therefore reduced only to stages that are zero or limits, as in [Kni26, §3.1].  Reductions
 compose (`reduce_reduce`), reduction to the stage of the type is the identity (`reduce_self`), and
-reduction commutes with face maps (`restrictFace_reduce`) and reindexing (`reindex_reduce`).
+reduction commutes with face maps (`restrictFace_reduce`) and reindexing (`reindex_reduce`).  In
+particular, if `q` restricts along `f` to `p`, a stage type reducing to `q` restricts along `f` to
+a stage type reducing to `p` (`exists_restrictFace_reduce_eq`).
 Reduction to a stage at least the stage of the type changes no label (`reduce_label_of_le`) and
 only relabels the stage: `t.reduce hβ = t.castLE hαβ` (`reduce_eq_castLE`), where `t.castLE hαβ`
 reads a stage type at stage `α` as one at the larger stage `β`, with the same scheme and labels;
@@ -452,6 +454,17 @@ theorem restrictFace_reduce (hβ : Order.IsSuccPrelimit β) :
       comap_reduce]
   · rw [restrictFace_of_notMem (t.reduce hβ) f hf, restrictFace_of_notMem t f hf,
       Option.map_none]
+
+/-- The face along `f` of a stage type at `α` reducing to `q` reduces to the face of `q`: if `q`
+restricts to `p` along `f` and `Q` reduces to `q`, then `Q` restricts along `f` to a stage type
+reducing to `p`. -/
+theorem exists_restrictFace_reduce_eq {α β : Ordinal.{u}} {k m : ℕ} {q : StageType.{u} β m}
+    {f : Fin k ↪ Fin m} {p : StageType.{u} β k} {hβ : Order.IsSuccPrelimit β}
+    (hfp : restrictFace f q = some p) {Q : StageType.{u} α m}
+    (hQ : Q.reduce hβ = q) : ∃ P, restrictFace f Q = some P ∧ P.reduce hβ = p := by
+  have h := restrictFace_reduce Q f hβ
+  rw [hQ, hfp] at h
+  exact Option.map_eq_some_iff.mp h.symm
 
 /-- Stage reduction commutes with reindexing. -/
 theorem reindex_reduce (hβ : Order.IsSuccPrelimit β) (e : Fin m ≃ Fin n) :
