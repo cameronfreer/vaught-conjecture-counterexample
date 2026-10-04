@@ -60,8 +60,8 @@ family of rooted covers is not needed by any statement here and is not formalize
   realization: whenever a legal `t` at `λ_{η+1}` has label at least `λ_η + n` at a cell `d`
   reducing to the formal top, some legal `D` at `λ_{η+1}` has `t` as its face along some `g`, and
   `(D↓λ_η, g)` forces `n` at `d`.  It is still to be proved: a finite construction of Layer 3 (new
-  points, a full-scope cell tied to `d` by its row, and completeness above it); it awaits the
-  completion below the full grade and does not depend on (R1).  Its case `n ≤` the grade of `d`
+  points, a full-scope cell tied to `d` by its row, and completeness above it), to be built from
+  the completion below the full grade (Layer 3), without (R1).  Its case `n ≤` the grade of `d`
   holds with `D = t` by the order law (`StageType.forcesThreshold_of_le_grade`).
 * **The threshold lemma** (`Realization.le_label_iff_exists_forcesThreshold`): for `R` exactly
   consistent, with legal types and finite-extension receiving, and given forcing donors at `η`,
@@ -84,7 +84,8 @@ of Layer 3 (finite-cut receiving of models; still to be proved), and on forcing 
 **What is not assumed or claimed.**
 
 * No uniqueness or coherence of expansions is assumed: determination by the reduction is proved,
-  for any two realizations satisfying the hypotheses.
+  for any two realizations satisfying the hypotheses (conditional on forcing donors and receiving,
+  as above).
 * No global termination: the stable offset `⊤` (unbounded growth along the rooted covers) is
   allowed, and decodes to the formal top, not to `λ_η + ω`.
 * No exact projected receiving and no lifting of projected donors: donors live at `λ_{η+1}`, the
@@ -160,8 +161,8 @@ end Realization
 cell `d` of `t` reducing to the formal top at `λ_η` and every `n` with `λ_η + n ≤ t.label d`, some
 legal stage type `D` at `λ_{η+1}` has `t` as its face along some `g`, and `(D↓λ_η, g)` forces `n`
 at `d`.  A finite statement about stage types, with no realization.  It is still to be proved: a
-finite construction of Layer 3 that awaits the completion below the full grade and does not depend
-on (R1). -/
+finite construction of Layer 3, to be built from the completion below the full grade (Layer 3),
+without (R1). -/
 def ForcingDonors (η : Ordinal.{u}) : Prop :=
   ∀ ⦃k : ℕ⦄ (t : StageType.{u} (blockStage (η + 1)) k), t.IsLegal → ∀ d : Fin t.card,
     (t.reduce (isSuccPrelimit_blockStage η)).label d = ⊤ → ∀ n : ℕ,
