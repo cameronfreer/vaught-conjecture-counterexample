@@ -286,27 +286,20 @@ noncomputable def fourCellPairSeed (α : Ordinal.{u}) (hα : Order.IsSuccPrelimi
   Seed.ofCoatoms (F.isLegal_completion hα) (F.isLegal_completion hα)
     (F.restrictFace_left_completion hα) (F.restrictFace_left_completion hα)
 
-/-- A cell of full scope of a face type is a cell of the type, on the face, with its grade and
-label. -/
-private theorem exists_label_of_restrictFace {α : Ordinal.{u}} {n m j : ℕ}
+/-- **A cell of full scope of a face type is a cell of the type**, on the face, with its grade and
+label (`Scheme.map_comap_gradedIndex`). -/
+theorem exists_label_of_restrictFace {α : Ordinal.{u}} {n m j : ℕ}
     {t : StageType.{u} α n} {s : StageType.{u} α m} {f : Fin m ↪ Fin n}
     (hs : StageType.restrictFace f t = some s) {e : Fin s.card}
     (he : s.toCellScheme.gradedIndex e = (Finset.univ, j)) :
     ∃ d, t.toCellScheme.gradedIndex d = (Finset.univ.map f, j) ∧ t.label d = s.label e := by
   obtain ⟨hf, rfl⟩ := (StageType.restrictFace_eq_some_iff t f).mp hs
-  have hsc : (t.comap f hf).toCellScheme.scope e = Finset.univ := congrArg Prod.fst he
-  refine ⟨t.cellMap f e, Prod.ext ?_ (((t.isLowerEmbedding_comap f).grade_eq e).trans
-    (congrArg Prod.snd he)), rfl⟩
-  ext z
-  constructor
-  · intro hz
-    have hvis := Scheme.mem_visibleCells.mp (t.cellMap_mem f e)
-    obtain ⟨y, rfl⟩ := hvis hz
-    exact mem_map_of_mem f (mem_univ y)
-  · intro hz
-    obtain ⟨y, -, rfl⟩ := mem_map.mp hz
-    have hy : y ∈ (t.comap f hf).toCellScheme.scope e := by rw [hsc]; exact mem_univ y
-    exact (Finset.mem_preimage (hf := f.injective.injOn)).mp hy
+  refine ⟨t.cellMap f e, ?_, rfl⟩
+  rw [← t.toScheme.map_comap_gradedIndex f e]
+  -- The graded index of `e` in the restriction is `(univ, j)`.
+  change Prod.map (Finset.map f) id ((t.comap f hf).toCellScheme.gradedIndex e) = _
+  rw [he]
+  rfl
 
 /-- **Regression 7, the cap on the lower layer.**  On `fourCellPairSeed`, the lift from the coatom
 `({0, 1}, 2)` to `(univ, 2)` at the cap `ω * 4 + 2` keeps, at every cell of the lower layer (graded
@@ -382,6 +375,7 @@ theorem exists_apex_prescription_fourCellPairSeed (α : Ordinal.{u})
       ((Scheme.appendFullCellsScheme_gradedIndex_castAdd _ _ _ d₀).trans hd₀)
   refine ⟨fun d ↦ r d, fun d ↦ r d, hr.isLawfulBelow _, hr.isLawfulBelow _, fun _ ↦ rfl,
     ⟨_, hgi.le⟩, hgi, ?_⟩
+  -- The prescription at the apex is the extension at its old cell.
   change r (Fin.castAdd _ (Fin.castAdd _ d₀)) = ⊤
   rw [hre, hd₀l]
 

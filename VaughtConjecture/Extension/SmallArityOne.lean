@@ -23,8 +23,10 @@ two layers of cells of full scope (`VaughtConjecture.Extension.FieldLayer`):
   lower layer; its rows read every cell of the lower layer, the old cells of grade `1` through the
   orbit code.
 
-The lower layer is a source prefix of the layer at grade two below `(univ, 1)`, and the amalgam is
-one of both off the full face (`Scheme.isSourcePrefix_fieldLayer`).
+The name `fieldLayerOne` refers to the arity one (`Seed α 1`): it is the layer at grade two,
+built over the layer at grade one, `lowerFieldLayer`.  The lower layer is a source prefix of the
+layer at grade two below `(univ, 1)`, and off the full face the amalgam is a source prefix of both
+layers (`Scheme.isSourcePrefix_fieldLayer`).
 
 **The lifts at grade one** (`Seed.cappedLift_lowerFieldLayer`, `Seed.cappedLift_fieldLayerOne_one`):
 from a coatom `C` at grade `1` to `(univ, 1)`, by the one-grade lift
@@ -174,8 +176,8 @@ private theorem erase_mem_faces {x : Fin 3} (hx : x ≠ 0) :
 /-- Every cell of the amalgam lies on one of the two coatoms. -/
 private theorem scope_subset_or {x y : Fin 3} (hxy : x ≠ y) (hx : x ≠ 0) (hy : y ≠ 0)
     (d : Fin I.amalgam.card) :
-    I.amalgam.toCellScheme.scope d ⊆ univ.erase x ∨ I.amalgam.toCellScheme.scope d ⊆ univ.erase y :=
-  by
+    I.amalgam.toCellScheme.scope d ⊆ univ.erase x ∨
+      I.amalgam.toCellScheme.scope d ⊆ univ.erase y := by
   have h := I.subset_or_subset _ (I.amalgam.isWellFormed.isWellFormed.scope_mem d)
     (I.scope_ne_univ d)
   rcases coatom_cases hxy hx hy with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
@@ -268,6 +270,43 @@ theorem cappedLift_fieldLayerOne_one {x y : Fin 3} (hxy : x ≠ y) (hx : x ≠ 0
 
 /-! ### The extension from the boundary at grade two -/
 
+/-- **The lower layer is covered by three pairs**: every cell lies below `(univ.erase x, 2)`, below
+`(univ, 1)`, or below `(univ.erase y, 2)`. -/
+private theorem mem_below_or_mem_below {x y : Fin 3} (hxy : x ≠ y) (hx : x ≠ 0) (hy : y ≠ 0)
+    (e : Fin I.lowerFieldLayer.card) :
+    e ∈ I.lowerFieldLayer.toCellScheme.below (univ.erase x, 2) ∨
+      e ∈ I.lowerFieldLayer.toCellScheme.below (univ, 1) ∨
+        e ∈ I.lowerFieldLayer.toCellScheme.below (univ.erase y, 2) := by
+  induction e using Fin.addCases with
+  | right i =>
+    exact .inr (.inl (Scheme.appendFullCellsScheme_gradedIndex_natAdd _ _ _ i).le)
+  | left d =>
+    have hsc : I.lowerFieldLayer.toCellScheme.scope (Fin.castAdd _ d) =
+        I.amalgam.toCellScheme.scope d :=
+      Scheme.appendFullCellsScheme_scope_castAdd _ _ _ d
+    have hg := I.lowerFieldLayer_grade_le (Fin.castAdd _ d)
+    rcases I.scope_subset_or hxy hx hy d with hd | hd
+    · exact .inl ⟨(hsc ▸ hd : I.lowerFieldLayer.toCellScheme.scope (Fin.castAdd _ d) ⊆ _), hg⟩
+    · exact .inr (.inr ⟨(hsc ▸ hd :
+        I.lowerFieldLayer.toCellScheme.scope (Fin.castAdd _ d) ⊆ _), hg⟩)
+
+/-- **The overlap with the other coatom has grade one**: a cell below `(univ.erase y, 2)` that is
+below `(univ.erase x, 2)` or below `(univ, 1)` lies below `(univ.erase y, 1)`; on `{0}` every cell
+has grade at most `1`. -/
+private theorem mem_below_erase_one {x y : Fin 3} (hxy : x ≠ y) (hx : x ≠ 0) (hy : y ≠ 0)
+    (e : Fin I.lowerFieldLayer.card)
+    (he : e ∈ I.lowerFieldLayer.toCellScheme.below (univ.erase y, 2))
+    (hb : e ∈ I.lowerFieldLayer.toCellScheme.below (univ.erase x, 2) ∨
+      e ∈ I.lowerFieldLayer.toCellScheme.below (univ, 1)) :
+    e ∈ I.lowerFieldLayer.toCellScheme.below (univ.erase y, 1) := by
+  refine ⟨he.1, ?_⟩
+  rcases hb with hb | hb
+  · have hsub : I.lowerFieldLayer.toCellScheme.scope e ⊆ {0} :=
+      (subset_inter hb.1 he.1).trans (erase_inter_erase hxy hx hy).le
+    exact (I.isWellFormed_lowerFieldLayer.isWellFormed.grade_le_card e).trans
+      ((card_le_card hsub).trans (by simp))
+  · exact hb.2
+
 /-- **The boundary labelling, completed on the lower layer.**  Let `w` be a labelling of the layer
 at grade two lawful below `(univ.erase x, 2)` and `(univ, 1)`, and `a` a lawful section of the
 lower layer that agrees with `w` capped at `h` on the boundary.  Then some labelling of the lower
@@ -315,35 +354,8 @@ theorem exists_isLawfulBelow_lowerFieldLayer {x y : Fin 3} (hxy : x ≠ y) (hx :
   obtain ⟨v, hv, hvcap, hvw⟩ := (Rows.cappedLift_iff_forall_exists hDD).mp
     (Rows.cappedLift_of_fst_eq hDD rfl) h hh (fun e ↦ w (Fin.castAdd _ e.1)) (fun e ↦ a e)
     hw₁D (ha.isLawfulBelow _) fun e ↦ (hag e (.inr ⟨subset_univ _, e.2.2⟩)).symm
-  -- Every cell of the lower layer lies below one of the three pairs.
-  have hcover (e : Fin I.lowerFieldLayer.card) :
-      e ∈ I.lowerFieldLayer.toCellScheme.below (univ.erase x, 2) ∨
-        e ∈ I.lowerFieldLayer.toCellScheme.below (univ, 1) ∨
-          e ∈ I.lowerFieldLayer.toCellScheme.below (univ.erase y, 2) := by
-    induction e using Fin.addCases with
-    | right i =>
-      exact .inr (.inl (Scheme.appendFullCellsScheme_gradedIndex_natAdd _ _ _ i).le)
-    | left d =>
-      have hsc : I.lowerFieldLayer.toCellScheme.scope (Fin.castAdd _ d) =
-          I.amalgam.toCellScheme.scope d :=
-        Scheme.appendFullCellsScheme_scope_castAdd _ _ _ d
-      have hg := I.lowerFieldLayer_grade_le (Fin.castAdd _ d)
-      rcases I.scope_subset_or hxy hx hy d with hd | hd
-      · exact .inl ⟨(hsc ▸ hd : I.lowerFieldLayer.toCellScheme.scope (Fin.castAdd _ d) ⊆ _), hg⟩
-      · exact .inr (.inr ⟨(hsc ▸ hd :
-          I.lowerFieldLayer.toCellScheme.scope (Fin.castAdd _ d) ⊆ _), hg⟩)
-  -- A cell below `(univ.erase y, 2)` and on the boundary lies below `(univ.erase y, 1)`.
-  have hlow (e : Fin I.lowerFieldLayer.card)
-      (he : e ∈ I.lowerFieldLayer.toCellScheme.below (univ.erase y, 2))
-      (hb : e ∈ I.lowerFieldLayer.toCellScheme.below (univ.erase x, 2) ∨
-        e ∈ I.lowerFieldLayer.toCellScheme.below (univ, 1)) :
-      e ∈ I.lowerFieldLayer.toCellScheme.below (univ.erase y, 1) := by
-    refine ⟨he.1, ?_⟩
-    rcases hb with hb | hb
-    · have hsub : I.lowerFieldLayer.toCellScheme.scope e ⊆ {0} :=
-        (subset_inter hb.1 he.1).trans (erase_inter_erase hxy hx hy).le
-      exact (hwf.grade_le_card e).trans ((card_le_card hsub).trans (by simp))
-    · exact hb.2
+  have hcover := I.mem_below_or_mem_below hxy hx hy
+  have hlow := I.mem_below_erase_one hxy hx hy
   -- The glued labelling: `w` on the boundary, the lift within the other coatom elsewhere.
   obtain ⟨g, hgb, hgo⟩ : ∃ g : Fin I.lowerFieldLayer.card → Label.{u},
       (∀ e, e ∈ I.lowerFieldLayer.toCellScheme.below (univ.erase x, 2) ∨
