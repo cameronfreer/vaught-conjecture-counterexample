@@ -9,24 +9,24 @@ import VaughtConjecture.Extension.SmallArities
 # The tower of field layers, and the step from the grade `j` to `j + 1`
 
 Roadmap, Layer 3, 3.1, (R6), checkpoint 2.6 (the recursion on the grade; here its first part: the
-tower, the lifting invariant, and the step from the grade `j` to `j + 1` under the union fill);
-semantic contract, items 2–4.
+tower, the lifting invariant, and the step from the grade `j` to `j + 1`, under the two-face lift
+at the grades `2 ≤ j + 1 ≤ m`); semantic contract, items 2–4.
 
 Let `I` be a seed on `m + 2` points.  Its two coatoms are `univ.erase x` for the two points
 `x ∈ {Fin.last (m + 1), Fin.castSucc (Fin.last m)}`; they meet in the **common face**, on `m`
-points, a face of the amalgam (`Seed.common_mem_faces`).
+points, a face of the amalgam (`Seed.commonFace_mem_faces`).
 
 **The tower** (`Seed.tower`).  The canonical field layer of a scheme `S` at a grade `k`
 (`Scheme.fieldLayer`, `VaughtConjecture.Extension.FieldLayer`) appends to `S` one cell of full
 scope and grade `k` for each lawful labelling of `S` that is bottom above the grade `k` and fixed by
-the orbit code at `k`; the row of each new cell reads its labelling on the cells of `S` and
-agreement heights on the new cells.  The *tower of field layers* is the sequence of schemes `T j`:
-`T 0` is the amalgam, and `T (j + 1)` is the canonical field layer of `T j` at the grade `j + 1`
-(`Seed.tower_succ`, by `rfl`), its *layer* at the grade `j + 1`.  It is defined by recursion
-together with the property that every cell of `T j` has grade at most `j` or scope other than the
-ground set (`Seed.tower_grade_le_or`), which makes the next layer defined.  The cells of the
-amalgam, carried along `Fin.castAdd` through each layer (`Seed.towerEmbed`), are the *old cells*;
-the others, the *new cells*, have full scope.
+the orbit code at `k`, its *catalogue entry*; the row of each new cell reads its entry on the cells
+of `S` and agreement heights on the new cells.  The *tower of field layers* is the sequence of
+schemes `T j`: `T 0` is the amalgam, and `T (j + 1)` is the canonical field layer of `T j` at the
+grade `j + 1` (`Seed.tower_succ`, by `rfl`), its *layer* at the grade `j + 1`.  It is defined by
+recursion together with the property that every cell of `T j` has grade at most `j` or scope other
+than the ground set (`Seed.tower_grade_le_or`), which makes the next layer defined.  The cells of
+the amalgam, carried along `Fin.castAdd` through each layer (`Seed.towerEmbed`), are the *old
+cells*; the others, the *new cells*, have full scope.
 
 * **Prefix equations.**  The old cells form a lower embedding keeping scopes and grades, every cell
   of proper scope is old, the rows pull back to those of the amalgam, and the faces are those of the
@@ -53,49 +53,65 @@ every lawful ambient.  It holds at the grade `0` (no cells) and at the grade `1`
 common face, whose lift into the other coatom is a lift of the amalgam
 (`Seed.cappedLift_commonFace_tower`); no lower layer is read.
 
-**The step** (`Seed.towerInvariant_succ`).  For the one-grade lift from `(C, j + 1)` to
-`(B, j + 1)`, a *boundary triple* is a triple of pairs `U, V ≤ (B, j + 1)` and `O ≤ U, V` with
-`(C, j + 1) ≤ U`, such that every cell below both `U` and `V` lies below `O`, together with capped
-lifts from `(C, j + 1)` to `U` and from `O` to `V`; its *boundary* is the set of cells below `U` or
-`V`.  The step uses one boundary triple at the cap `⊥` and another at the positive caps
-(`CellScheme.Rows.cappedLift_of_boundaries_short`), with the invariant from `(C, j)` to `(univ, j)`
-as the lift at the lower grade, used by the restoration of the lower prescriptions.
+**The step** (`Seed.towerInvariant_succ`, `Seed.towerInvariant_top`).  For the one-grade lift from
+`(C, j + 1)` to `(B, j + 1)`, a *boundary triple* is a triple of pairs `U, V ≤ (B, j + 1)` and
+`O ≤ U, V` with `(C, j + 1) ≤ U`, such that every cell below both `U` and `V` lies below `O`,
+together with capped lifts from `(C, j + 1)` to `U` and from `O` to `V`; its *boundary* is the set
+of cells below `U` or `V`.  In both cases below, the lift at the lower grade, which the
+restoration of the lower prescriptions uses, is the invariant from `(C, j)` to `(univ, j)`.
 
-* At `⊥`: `U = (C, j + 1)`, `V = (D, j + 1)` for the other coatom `D`, and `O` the common face at
-  the grade `min (j + 1) m`; the lift from `O` to `V` is a lift of the amalgam, and the extension
-  from the boundary is the extension at `⊥` through the whole tower
-  (`Seed.extendsFromBoundary_bot_tower`).
-* At the positive caps: `U = (C, j + 1)`, `V = (univ, j)`, `O = (C, j)`; the lift from `O` to `V`
-  is the invariant, at the source caps of the owner alignment, which are short at `j + 1` but not
-  at `j`, along the rows of the new cells.  The extension from the boundary along the row of a new
-  cell, at a cap short at `j + 1` (`Seed.extendsFromBoundary_tower`), restricts to `T j`, fills the
-  other coatom's cells of the grade `j + 1` by the union fill, glues over `(C, j + 1)`, `(univ, j)`
-  and `(D, j + 1)`, and extends through the new cells (`Scheme.exists_extension_fieldLayer` at a
-  short cap).  The new cells of `T j` keep the cap of the boundary labelling, which they get from
-  the invariant; the fill on `D` reads only old cells.
+* **At the grades `j + 1 ≤ m`, under the two-face lift** (`Seed.towerInvariant_succ`), one
+  boundary triple serves at `⊥` and at the positive caps
+  (`CellScheme.Rows.cappedLift_of_boundary_short`): `U = (C, j + 1)`, `V = (D, j + 1)` for the
+  other coatom `D`, and `O` the common face at the grade `min (j + 1) m`; the lift from `O` to `V`
+  is a lift of the amalgam.  At `⊥` the extension from the boundary is the extension at `⊥` through
+  the whole tower (`Seed.extendsFromBoundary_bot_tower`).  At a positive cap `h` short at `j + 1`,
+  along the row of a new cell with catalogue entry `a`, the boundary labelling is extended through
+  the new cells of the layers `1, …, j` by the two-face lift `2FL(j)` below, glued with the old
+  cells of the grade `j + 1` over `(C, j + 1)`, `(univ, j)` and `(D, j + 1)`, and extended through
+  the new cells of the layer `j + 1` at the short cap
+  (`Seed.extendsFromBoundary_tower_of_twoFaceLift`).
+* **At the top grade `m + 1`, unconditionally** (`Seed.towerInvariant_top`): at `⊥` the same
+  triple, and at the positive caps `U = (C, m + 1)`, `V = (univ, m)`, `O = (C, m)`, with the
+  invariant as the lift from `O` to `V` (`CellScheme.Rows.cappedLift_of_boundaries_short`).  The
+  common face, on `m` points, carries no cell of the grade `m + 1`, so the other coatom's cells of
+  the grade `m + 1` are reached by a lift within that coatom from the grade `m`
+  (`Seed.exists_lift_union_of_lt_grade`), and the extension from the boundary reads no new cell
+  across the two faces (`Seed.extendsFromBoundary_tower_top`).
 
-**The union fill** (`Seed.UnionFill`): on the other coatom `D`, a labelling lawful below the common
-face at the grade `j + 1` and below `(D, j)`, agreeing with a lawful `a` capped at `h` on their
-union, extends, unchanged on the union, to one lawful below `(D, j + 1)` agreeing with `a` capped
-at `h`.  It is a lift from the union of two pairs that do not cover `(D, j + 1)`: neither the
-bountifulness of the amalgam nor a lift within a face gives it in general, and it is a hypothesis
-of the step here, never derived from the bountifulness of the amalgam.
+**The two-face lift** `2FL(j)` (`Seed.TwoFaceLift j`): along every catalogue entry `a` of the layer
+at the grade `j + 1`, at every cap `h` self-visible and short at `j + 1` with `⊥ < h`, a labelling
+of the amalgam lawful below both coatoms at the grade `j + 1` and agreeing with `a` capped at `h`
+extends through the new cells of the layers `1, …, j`, unchanged at the old cells of grade at most
+`j`, to one lawful below `(univ, j)` agreeing with `a` capped at `h`.  It chooses one labelling of
+the lower layers that respects both faces and the cap at once.  The cap `h` is short at `j + 1` but
+not at the grades of the layers it crosses.
 
-* When the common face carries no cell of the grade `j + 1`, that is from the grade `m + 1` on, it
-  is a lift within the face (`Seed.unionFill_of_lt_grade`, `Seed.unionFill_of_le`).  So the
-  invariant up to the grade `m + 1` needs the union fill only at the grades `2 ≤ j + 1 ≤ m`
-  (`Seed.towerInvariant_of_unionFill`), and at the arities `m ≤ 1` it needs none
-  (`Seed.towerInvariant_of_le_one`): the completion at those arities
-  (`Seed.nonempty_completionBelowFullGrade_of_le_one`) does not depend on it.
-* **At the grades `2 ≤ j + 1 ≤ m` the union fill is still to be proved.**  Its case where the
-  prescription on the common face at the grade `j + 1` is at most the cap, by a splice, and the
-  more general case of a witness at a larger cap, are checkpoint 2.6b; from the union fill,
-  bountifulness, legality below the full grade, and the completion below the full grade at every
-  arity (checkpoint 2.6c), and the coatom extension property at every stage that is zero or a limit
-  (checkpoint 2.7), follow.
+* The invariant up to the grade `m + 1` holds under `2FL(j)` at the grades `2 ≤ j + 1 ≤ m`
+  (`Seed.towerInvariant_of_twoFaceLift`), and at the arities `m ≤ 1` with no hypothesis
+  (`Seed.towerInvariant_of_le_one`, which does not use `Seed.TwoFaceLift`).  `2FL(0)` holds, below
+  `(univ, 0)` there being no cells (`Seed.twoFaceLift_zero`); `2FL(1)` is the first instance the
+  step assumes, and at the arity `2` the only one.
+* `2FL(j)` is assumed here, not proved, at the grades `2 ≤ j + 1 ≤ m`: it is not a field of
+  `Seed` and is not derived from the bountifulness of the amalgam.  Nothing beyond the conditional
+  theorems of this module is claimed.  Bountifulness and legality of the tower, the completion
+  below the full grade at every arity (checkpoint 2.6c), and `StageType.HasApexCoatomExtensions`
+  and `StageType.HasCoatomExtensions` at the stages that are zero or a limit (checkpoint 2.7) are
+  planned to rest on `2FL(j)`; they are prospective and not stated here.
+
+**The union fill is refuted as a universal statement.**  With `V = (univ, j)` at every grade, as at
+the top grade, the step would fill the other coatom's cells of the grade `j + 1` over the union of
+the common face at the grade `j + 1` and `(D, j)`.  That *union fill* fails for a legal
+seed on four points at the grade `2` (module `VaughtConjecture.Extension.UnionFillCounterexample`):
+a row of the other coatom can couple a cell of the common face at the grade `j + 1` to a cell of
+lower grade off it.  This refutes the union fill as a universal statement about seeds, not the
+completion below the full grade, and it does not make every conditional instance vacuous: the
+union fill holds, for instance, whenever the common face carries no cell of the grade, which is the
+case of the top grade above.
 
 No hypothesis on the stage enters, and no completion is assumed: the lifts off the full face come
-from the bountifulness of the amalgam through the source prefix.
+from the bountifulness of the amalgam through the source prefix.  The completion at the arities
+`m ≤ 1` is built without the tower (module `VaughtConjecture.Extension.SmallArityOne`).
 
 ## Placement
 
@@ -266,6 +282,8 @@ theorem mem_range_towerEmbed : (j : ℕ) → (z : Fin (I.tower j).card) →
     (I.tower j).toCellScheme.scope z ≠ univ → z ∈ Set.range (I.towerEmbed j)
   | 0, z, _ => ⟨z, rfl⟩
   | j + 1, z, hz => by
+    -- `I.tower (j + 1)` is the field layer of `I.tower j` (`Seed.tower_succ`, by `rfl`); `rw` does
+    -- not apply under the dependent card, so the type is restated by `change`.
     change Fin ((I.tower j).fieldLayer (j + 1) (I.not_univ_succ_le_tower j)).card at z
     induction z using Fin.addCases with
     | left z =>
@@ -300,6 +318,7 @@ theorem comap_rows_tower : (j : ℕ) →
     (I.tower j).rows.comap (I.isLowerEmbedding_tower j) = I.amalgam.rows
   | 0 => rfl
   | j + 1 => by
+    -- `I.tower (j + 1)` is the field layer of `I.tower j` (`Seed.tower_succ`, by `rfl`).
     change (((I.tower j).fieldLayer (j + 1) (I.not_univ_succ_le_tower j)).rows.comap
       (Scheme.isLowerEmbedding_fieldLayer _ _ _)).comap (I.isLowerEmbedding_tower j) = _
     rw [Scheme.comap_rows_fieldLayer, comap_rows_tower j]
@@ -417,15 +436,15 @@ theorem towerEmbed_mem_below_iff {j : ℕ} {X : Finset (Fin (m + 2)) × ℕ}
   rw [CellScheme.mem_below, CellScheme.mem_below, gradedIndex_towerEmbed]
 
 /-- **Extension at the cap `⊥` through the tower.**  Let `univ.erase x` and `univ.erase y` be two
-faces containing the scopes of all cells of the amalgam.  A labelling of the amalgam lawful below
-`(univ.erase x, j)` and `(univ.erase y, j)` extends, unchanged at the old cells of grade at most
-`j`, to a labelling lawful below `(univ, j)` in the scheme reached after the grade `j`.  At each
-layer `ℓ ≤ j`, the extension below `(univ, ℓ - 1)` and the old cells of grade `ℓ` are glued over
-`(univ, ℓ - 1)`, `(univ.erase x, ℓ)` and `(univ.erase y, ℓ)`
+faces such that the scope of every cell of the amalgam lies in one of them.  A labelling of the
+amalgam lawful below `(univ.erase x, j)` and `(univ.erase y, j)` extends, unchanged at the old
+cells of grade at most `j`, to a labelling lawful below `(univ, j)` in the scheme reached after the
+grade `j`.  At each layer `ℓ ≤ j`, the extension below `(univ, ℓ - 1)` and the old cells of grade
+`ℓ` are glued over `(univ, ℓ - 1)`, `(univ.erase x, ℓ)` and `(univ.erase y, ℓ)`
 (`CellScheme.Rows.IsLawfulBelow.glue₃`), and the result is extended through the new cells
 (`Scheme.exists_isLawfulBelow_fieldLayer`: the orbit code read by the orbit decoder at the least
 grid point, the natural strip kept).  No ambient enters, so no lift across the other coatom is
-needed. -/
+used. -/
 theorem exists_isLawfulBelow_tower {x y : Fin (m + 2)}
     (hcov : ∀ d, I.amalgam.toCellScheme.scope d ⊆ univ.erase x ∨
       I.amalgam.toCellScheme.scope d ⊆ univ.erase y) (j : ℕ) {w : Fin I.amalgam.card → Label.{u}}
@@ -512,7 +531,7 @@ private theorem exists_other {x : Fin (m + 2)}
 /-- **The common face of the two coatoms is a face of the amalgam**: it is the face of the first
 coatom type along `Fin.castSuccEmb`, and that type is the face of the amalgam along
 `Fin.castSuccEmb`. -/
-theorem common_mem_faces : (univ.erase (Fin.last (m + 1))).erase (Fin.castSucc (Fin.last m)) ∈
+theorem commonFace_mem_faces : (univ.erase (Fin.last (m + 1))).erase (Fin.castSucc (Fin.last m)) ∈
     I.amalgam.toCellScheme.faces := by
   have h := (StageType.restrictFace_trans _ _ _ I.restrictFace_left).symm.trans
     I.restrictFace_face_left
@@ -591,10 +610,11 @@ theorem cappedLift_commonFace_tower {x y : Fin (m + 2)}
   refine (I.cappedLift_tower_iff _ (ne_univ_erase y)).mpr (I.isBountiful ⟨?_, ?_, ?_⟩
     ⟨I.erase_mem_faces hy, ?_, ?_⟩ _)
   · rw [erase_inter_erase hx hy hxy]
-    exact I.common_mem_faces
+    exact I.commonFace_mem_faces
   · exact Nat.pos_of_ne_zero h0
   · exact (min_le_right _ _).trans (card_erase_inter_erase hx hy hxy).ge
-  · change 0 < j
+  · -- The grade of the coatom pair.
+    change 0 < j
     omega
   · simp only [card_erase]
     exact hj
@@ -619,13 +639,60 @@ theorem extendsFromBoundary_bot_tower {x y : Fin (m + 2)}
   obtain ⟨e, rfl⟩ := I.mem_range_towerEmbed j d hsc
   exact hrw e ((I.grade_towerEmbed j e).symm.trans_le hdj.2)
 
+/-- **The cells below both coatoms lie below the common face**: at every grade `i`, in every scheme
+of the tower up to the grade `m + 2`, a cell below `(univ.erase x, i)` and `(univ.erase y, i)` lies
+below the common face at the grade `min i m`, its grade being at most the size of its scope. -/
+private theorem mem_below_commonFace_tower {x y : Fin (m + 2)}
+    (hx : x ∈ ({Fin.last (m + 1), Fin.castSucc (Fin.last m)} : Finset (Fin (m + 2))))
+    (hy : y ∈ ({Fin.last (m + 1), Fin.castSucc (Fin.last m)} : Finset (Fin (m + 2))))
+    (hxy : x ≠ y) {k i : ℕ} (hk : k ≤ m + 2) (d : Fin (I.tower k).card)
+    (hdx : d ∈ (I.tower k).toCellScheme.below (univ.erase x, i))
+    (hdy : d ∈ (I.tower k).toCellScheme.below (univ.erase y, i)) :
+    d ∈ (I.tower k).toCellScheme.below (univ.erase x ∩ univ.erase y, min i m) := by
+  have hsub := subset_inter hdx.1 hdy.1
+  exact ⟨hsub, le_min hdx.2 (((I.isWellFormed_tower k hk).isWellFormed.grade_le_card d).trans
+    ((card_le_card hsub).trans (card_erase_inter_erase hx hy hxy).le))⟩
+
+/-- **The rows of the new cells are short and never `⊤`**: the row of a cell of graded index
+`(univ, j + 1)` in the scheme reached after the grade `j + 1` is the field row of its catalogue
+entry, short at `j + 1` (`Scheme.isShort_ne_top_row_fieldLayer`). -/
+private theorem isShort_ne_top_rowBelow_tower {j : ℕ} {u : Fin (I.tower (j + 1)).card}
+    (hu : (I.tower (j + 1)).toCellScheme.gradedIndex u = (univ, j + 1))
+    (d : (I.tower (j + 1)).toCellScheme.below (univ, j + 1)) :
+    IsShort (j + 1) ((I.tower (j + 1)).rows.rowBelow u hu d) ∧
+      (I.tower (j + 1)).rows.rowBelow u hu d ≠ ⊤ := by
+  obtain ⟨i, rfl⟩ := Scheme.exists_natAdd_eq (S := I.tower j) (k := j + 1)
+    (hS := I.not_univ_succ_le_tower j) hu
+  exact Scheme.isShort_ne_top_row_fieldLayer (hS := I.not_univ_succ_le_tower j) i _
+
+/-- **The cover of `(univ, j + 1)`**: in the scheme reached after the grade `j`, every cell below
+`(univ, j + 1)` lies below one of the coatoms at the grade `j + 1` or below `(univ, j)`: the new
+cells have grade at most `j`, and every old cell lies on a coatom. -/
+private theorem mem_below_cover_tower {x y : Fin (m + 2)}
+    (hx : x ∈ ({Fin.last (m + 1), Fin.castSucc (Fin.last m)} : Finset (Fin (m + 2))))
+    (hy : y ∈ ({Fin.last (m + 1), Fin.castSucc (Fin.last m)} : Finset (Fin (m + 2))))
+    (hxy : x ≠ y) {j : ℕ} (e : Fin (I.tower j).card)
+    (he : e ∈ (I.tower j).toCellScheme.below (univ, j + 1)) :
+    e ∈ (I.tower j).toCellScheme.below (univ.erase x, j + 1) ∨
+      e ∈ (I.tower j).toCellScheme.below (univ, j) ∨
+        e ∈ (I.tower j).toCellScheme.below (univ.erase y, j + 1) := by
+  by_cases hej : (I.tower j).toCellScheme.grade e ≤ j
+  · exact .inr (.inl ⟨subset_univ _, hej⟩)
+  · obtain ⟨d, rfl⟩ := I.mem_range_towerEmbed j e ((I.tower_grade_le_or j e).resolve_left hej)
+    have hd : I.amalgam.toCellScheme.grade d ≤ j + 1 :=
+      (I.grade_towerEmbed j d).symm.trans_le he.2
+    rcases I.scope_subset_or hx hy hxy d with h | h
+    · exact .inl (I.towerEmbed_mem_below_iff.mpr ⟨h, hd⟩)
+    · exact .inr (.inr (I.towerEmbed_mem_below_iff.mpr ⟨h, hd⟩))
+
 /-! ### The invariant -/
 
 /-- The **lifting invariant** of the tower at the grade `j`: for both coatoms `univ.erase x` and
 every grade `j' ≤ j`, the scheme reached after the grade `j` lifts capped from
 `(univ.erase x, j')` to `(univ, j')`, at every cap self-visible at `j'` and for every lawful
-ambient.  The lift is unrestricted: the step to the grade `j + 1` uses it at caps that are short at
-`j + 1` but not at `j`, along ambients that are not rows of cells. -/
+ambient.  The lift is unrestricted: the restoration of the lower prescriptions uses it at the
+owner labels, and the step to the top grade `m + 1` uses it at caps that are short at `m + 1` but
+not at `m`, along ambients that are not rows of cells. -/
 def TowerInvariant (j : ℕ) : Prop :=
   ∀ x ∈ ({Fin.last (m + 1), Fin.castSucc (Fin.last m)} : Finset (Fin (m + 2))), ∀ j' ≤ j,
     (I.tower j).rows.CappedLift (X := (univ.erase x, j')) (Y := (univ, j'))
@@ -659,34 +726,27 @@ theorem cappedLift_tower_one {x y : Fin (m + 2)}
     (I.scope_subset_or hx hy hxy d).imp (fun h ↦ ⟨h, hd⟩) fun h ↦ ⟨h, hd⟩
   have hpos (d : Fin I.amalgam.card) : 1 ≤ I.amalgam.toCellScheme.grade d :=
     (I.amalgam.isWellFormed.isWellFormed.gradedIndex_mem d).2.1
+  -- `I.tower 1` is the field layer of `I.tower 0` (`Seed.tower_succ`, by `rfl`).
   change ((I.tower 0).fieldLayer 1 (I.not_univ_succ_le_tower 0)).rows.CappedLift _
   refine Rows.cappedLift_of_boundary (C := univ.erase x) (B := univ) (j := 0)
     (U := (univ.erase x, 1)) (V := (univ.erase y, 1))
     (O := (univ.erase x ∩ univ.erase y, min 1 m)) (erase_subset _ _) ?_
     (hwf.cappedLift _ (Or.inl rfl) _) le_rfl ⟨inter_subset_left, min_le_left _ _⟩
     ⟨inter_subset_right, min_le_left _ _⟩ ⟨erase_subset _ _, le_rfl⟩ ⟨erase_subset _ _, le_rfl⟩
-    ?_ (Rows.cappedLift_refl _) (I.cappedLift_commonFace_tower hx hy hxy (j := 1) (by omega))
+    (fun d hdU hdV ↦ I.mem_below_commonFace_tower hx hy hxy (k := 1) (by omega) d hdU hdV)
+    (Rows.cappedLift_refl _) (I.cappedLift_commonFace_tower hx hy hxy (j := 1) (by omega))
     (Scheme.extendsFromBoundary_bot_fieldLayer (hnot x) (hnot y) hcover)
     (I.exists_gradedIndex_eq_univ_tower 0) fun u hu ↦
-      ⟨Scheme.isConsistent_fieldLayer I.isConsistent u, ?_, ?_, fun h hh hbot ↦
+      ⟨Scheme.isConsistent_fieldLayer I.isConsistent u,
+        fun d ↦ (I.isShort_ne_top_rowBelow_tower (j := 0) hu d).1,
+        fun d ↦ (I.isShort_ne_top_rowBelow_tower (j := 0) hu d).2, fun h hh hbot ↦
         Scheme.extendsFromBoundary_fieldLayer (fun d hd ↦ le_antisymm hd (hpos d)) (hnot x)
           (hnot y) hcover hu hh hbot⟩
-  · exact I.exists_gradedIndex_eq_tower 1
-      ⟨I.erase_mem_faces hx, one_pos, by rw [card_erase]; omega⟩ (ne_univ_erase x)
-  · intro d hdU hdV
-    have hsub := subset_inter hdU.1 hdV.1
-    exact ⟨hsub, le_min hdU.2 ((hwf.grade_le_card d).trans
-      ((card_le_card hsub).trans (card_erase_inter_erase hx hy hxy).le))⟩
-  · intro d
-    obtain ⟨i, rfl⟩ := Scheme.exists_natAdd_eq hu
-    exact (Scheme.isShort_ne_top_row_fieldLayer i _).1
-  · intro d
-    obtain ⟨i, rfl⟩ := Scheme.exists_natAdd_eq hu
-    exact (Scheme.isShort_ne_top_row_fieldLayer i _).2
+  exact I.exists_gradedIndex_eq_tower 1
+    ⟨I.erase_mem_faces hx, one_pos, by rw [card_erase]; omega⟩ (ne_univ_erase x)
 
 /-- **The invariant at the grade `1`**, at every arity: the amalgam boundary
-(`Seed.cappedLift_tower_one`).  No union fill arises at the grade `1`: there are no lower
-layers. -/
+(`Seed.cappedLift_tower_one`).  No lower layer is crossed at the grade `1`. -/
 theorem towerInvariant_one : I.TowerInvariant 1 := by
   intro x hx j' hj'
   obtain ⟨y, hy, hxy⟩ := exists_other hx
@@ -694,93 +754,231 @@ theorem towerInvariant_one : I.TowerInvariant 1 := by
   · exact (I.isWellFormed_tower 1 (by omega)).isWellFormed.cappedLift _ (Or.inl rfl) _
   · exact I.cappedLift_tower_one hx hy hxy
 
-/-! ### The union fill -/
+/-! ### The lift from the union within the face -/
 
-/-- The **union fill** of the amalgam on the coatom `D = univ.erase y`, over a face `E ⊆ D`, at
-the grade `j + 1`: at every cap `h` self-visible and short at `j + 1` with `⊥ < h`, along every `a`
-lawful below `(D, j + 1)`, every labelling `w` lawful below `(E, j + 1)` and below `(D, j)` that
-agrees with `a` capped at `h` on the union of the two extends, unchanged on the union, to one lawful
-below `(D, j + 1)` that agrees with `a` capped at `h` everywhere.
-
-In the step from the grade `j` to `j + 1` (`Seed.extendsFromBoundary_tower`), `E` is the common face
-of the two coatoms: the other coatom's cells of grade `j + 1` are filled over the union of its
-lower grades and the common face at the grade `j + 1`.  This is a lift into one coatom from the
-union of two pairs that do not cover it, a simultaneous lift of two faces of different grades; it
-is not derived here from the bountifulness of the amalgam.  It holds when the common face has no
-cell of grade `j + 1` (`Seed.unionFill_of_lt_grade`, a lift within the face).  At the grades
-`2 ≤ j + 1 ≤ m` it is still to be proved. -/
-def UnionFill (y : Fin (m + 2)) (E : Finset (Fin (m + 2))) (j : ℕ) : Prop :=
-  ∀ h : Label.{u}, IsSelfVisible (j + 1) h → IsShort (j + 1) h → ⊥ < h →
-  ∀ a : Fin I.amalgam.card → Label.{u},
-    I.amalgam.rows.IsLawfulBelow (univ.erase y, j + 1) (fun d ↦ a d) →
-  ∀ w : Fin I.amalgam.card → Label.{u},
-    I.amalgam.rows.IsLawfulBelow (E, j + 1) (fun d ↦ w d) →
-    I.amalgam.rows.IsLawfulBelow (univ.erase y, j) (fun d ↦ w d) →
-    (∀ d, d ∈ I.amalgam.toCellScheme.below (E, j + 1) ∨
-      d ∈ I.amalgam.toCellScheme.below (univ.erase y, j) → min (w d) h = min (a d) h) →
+/-- **The lift from the union within the face.**  Let `E` have fewer than `j + 1` points.  Every
+cell below `(E, j + 1)` then has grade at most `j`, so on the face `univ.erase y` the union of the
+cells below `(E, j + 1)` and below `(univ.erase y, j)` lies below `(univ.erase y, j)`.  A labelling
+lawful below `(univ.erase y, j)` that agrees there with `a`, lawful below `(univ.erase y, j + 1)`,
+capped at a cap `h` self-visible at `j + 1`, extends, unchanged on that union, to one lawful below
+`(univ.erase y, j + 1)` agreeing with `a` capped at `h`: the lift within the face from the grade
+`j` to `j + 1` (`CellScheme.Rows.cappedLift_of_fst_eq`).  This is the case of the union fill that
+holds for every seed (compare `VaughtConjecture.Extension.UnionFillCounterexample`, where the
+common face carries a cell of the grade). -/
+theorem exists_lift_union_of_lt_grade {y : Fin (m + 2)} {E : Finset (Fin (m + 2))} {j : ℕ}
+    (hj : #E < j + 1) {h : Label.{u}} (hh : IsSelfVisible (j + 1) h)
+    {a : Fin I.amalgam.card → Label.{u}}
+    (ha : I.amalgam.rows.IsLawfulBelow (univ.erase y, j + 1) (fun d ↦ a d))
+    {w : Fin I.amalgam.card → Label.{u}}
+    (hw : I.amalgam.rows.IsLawfulBelow (univ.erase y, j) (fun d ↦ w d))
+    (hag : ∀ d ∈ I.amalgam.toCellScheme.below (univ.erase y, j), min (w d) h = min (a d) h) :
     ∃ v : I.amalgam.toCellScheme.below (univ.erase y, j + 1) → Label.{u},
       I.amalgam.rows.IsLawfulBelow (univ.erase y, j + 1) v ∧
       (∀ d : I.amalgam.toCellScheme.below (univ.erase y, j + 1),
         (d : Fin I.amalgam.card) ∈ I.amalgam.toCellScheme.below (E, j + 1) ∨
           (d : Fin I.amalgam.card) ∈ I.amalgam.toCellScheme.below (univ.erase y, j) →
             v d = w d) ∧
-      ∀ d, min (v d) h = min (a d) h
-
-/-- **The union fill within the face.**  If `E ⊆ univ.erase y` has fewer than `j + 1` points, every
-cell below `(E, j + 1)` has grade at most `j`, so the union is below `(univ.erase y, j)`, and the
-union fill is the lift within the face `univ.erase y` from the grade `j` to `j + 1`
-(`CellScheme.Rows.cappedLift_of_fst_eq`), at every cap self-visible at `j + 1`. -/
-theorem unionFill_of_lt_grade {y : Fin (m + 2)} {E : Finset (Fin (m + 2))} {j : ℕ}
-    (hE : E ⊆ univ.erase y) (hj : #E < j + 1) : I.UnionFill y E j := by
-  intro h hh _ _ a ha w _ hwD hag
-  have hsub (d : Fin I.amalgam.card) (hd : d ∈ I.amalgam.toCellScheme.below (E, j + 1)) :
-      d ∈ I.amalgam.toCellScheme.below (univ.erase y, j) :=
-    ⟨hd.1.trans hE, by
-      have h1 := I.amalgam.isWellFormed.isWellFormed.grade_le_card d
-      have h2 : #(I.amalgam.toCellScheme.scope d) ≤ #E := card_le_card hd.1
-      change I.amalgam.toCellScheme.grade d ≤ j
-      omega⟩
+      ∀ d, min (v d) h = min (a d) h := by
   have hDD : ((univ.erase y, j) : Finset (Fin (m + 2)) × ℕ) ≤ (univ.erase y, j + 1) :=
     ⟨subset_rfl, Nat.le_succ j⟩
   obtain ⟨v, hv, hva, hvw⟩ := (Rows.cappedLift_iff_forall_exists hDD).mp
-    (Rows.cappedLift_of_fst_eq hDD rfl) h hh (fun d ↦ w d) (fun d ↦ a d) hwD ha
-    fun d ↦ (hag d.1 (.inr d.2)).symm
+    (Rows.cappedLift_of_fst_eq hDD rfl) h hh (fun d ↦ w d) (fun d ↦ a d) hw ha
+    fun d ↦ (hag d.1 d.2).symm
   refine ⟨v, hv, fun d hd ↦ ?_, hva⟩
-  have hdD : (d : Fin I.amalgam.card) ∈ I.amalgam.toCellScheme.below (univ.erase y, j) :=
-    hd.elim (hsub d) id
+  have hdD : (d : Fin I.amalgam.card) ∈ I.amalgam.toCellScheme.below (univ.erase y, j) := by
+    refine hd.elim (fun hE ↦ ⟨d.2.1, ?_⟩) id
+    have h1 := I.amalgam.isWellFormed.isWellFormed.grade_le_card d
+    have h2 : #(I.amalgam.toCellScheme.scope d) ≤ #E := card_le_card hE.1
+    -- The second component of the graded index is the grade.
+    change I.amalgam.toCellScheme.grade d ≤ j
+    omega
   exact hvw ⟨d, hdD⟩
 
-/-- **The union fill at the grades above the common face**: from the grade `m + 1` on, the common
-face of the two coatoms, on `m` points, carries no cell of the grade, and the union fill is a lift
-within the other coatom. -/
-theorem unionFill_of_le {x y : Fin (m + 2)}
+/-- **The lift from the union within the face, from the grade `m` on**: the common face of the two
+coatoms, on `m` points, carries no cell of a grade `j + 1 > m`, and the lift from the union of the
+common face at the grade `j + 1` and the other coatom at the grade `j` is a lift within the other
+coatom (`Seed.exists_lift_union_of_lt_grade`). -/
+theorem exists_lift_union_of_le {x y : Fin (m + 2)}
     (hx : x ∈ ({Fin.last (m + 1), Fin.castSucc (Fin.last m)} : Finset (Fin (m + 2))))
     (hy : y ∈ ({Fin.last (m + 1), Fin.castSucc (Fin.last m)} : Finset (Fin (m + 2))))
-    (hxy : x ≠ y) {j : ℕ} (hj : m ≤ j) : I.UnionFill y (univ.erase x ∩ univ.erase y) j :=
-  I.unionFill_of_lt_grade inter_subset_right (by rw [card_erase_inter_erase hx hy hxy]; omega)
+    (hxy : x ≠ y) {j : ℕ} (hj : m ≤ j) {h : Label.{u}} (hh : IsSelfVisible (j + 1) h)
+    {a : Fin I.amalgam.card → Label.{u}}
+    (ha : I.amalgam.rows.IsLawfulBelow (univ.erase y, j + 1) (fun d ↦ a d))
+    {w : Fin I.amalgam.card → Label.{u}}
+    (hw : I.amalgam.rows.IsLawfulBelow (univ.erase y, j) (fun d ↦ w d))
+    (hag : ∀ d ∈ I.amalgam.toCellScheme.below (univ.erase y, j), min (w d) h = min (a d) h) :
+    ∃ v : I.amalgam.toCellScheme.below (univ.erase y, j + 1) → Label.{u},
+      I.amalgam.rows.IsLawfulBelow (univ.erase y, j + 1) v ∧
+      (∀ d : I.amalgam.toCellScheme.below (univ.erase y, j + 1),
+        (d : Fin I.amalgam.card) ∈
+            I.amalgam.toCellScheme.below (univ.erase x ∩ univ.erase y, j + 1) ∨
+          (d : Fin I.amalgam.card) ∈ I.amalgam.toCellScheme.below (univ.erase y, j) →
+            v d = w d) ∧
+      ∀ d, min (v d) h = min (a d) h :=
+  I.exists_lift_union_of_lt_grade (by rw [card_erase_inter_erase hx hy hxy]; omega) hh ha hw hag
+
+/-! ### The two-face lift -/
+
+/-- **The two-face lift `2FL(j)`** of the tower at the grade `j`: for every catalogue entry `a` of
+the layer at the grade `j + 1` and every cap `h` self-visible and short at `j + 1` with `⊥ < h`,
+every labelling `w` of the amalgam lawful below both coatoms at the grade `j + 1` that agrees with
+`a` capped at `h` at the old cells of grade at most `j + 1` extends, unchanged at the old cells of
+grade at most `j`, to a labelling lawful below `(univ, j)` in the scheme reached after the grade
+`j` that agrees with `a` capped at `h` at every cell below `(univ, j)`.
+
+It is the extension from the boundary that the step to the grade `j + 1` uses at the positive caps
+(`Seed.extendsFromBoundary_tower_of_twoFaceLift`), read on the scheme before the layer:
+
+* `a` ranges over the catalogue entries at the grade `j + 1`, not over all lawful labellings: the
+  ambient at a positive cap is the row of a cell of the new layer, which reads its entry on the
+  scheme before (`Scheme.fieldRow_castAdd`);
+* `h` ranges over the caps self-visible and short at `j + 1` with `⊥ < h`, the source caps of the
+  owner alignment; at the cap `⊥` no ambient enters, and the extension is
+  `Seed.exists_isLawfulBelow_tower`.  The cap is not short at the grades `1, …, j` of the layers
+  below `(univ, j)`;
+* `w` ranges over the labellings lawful below both coatoms at the grade `j + 1` that agree with `a`
+  capped at `h`: in the step it is the aligned encoding of the prescription on one coatom glued
+  with its lift into the other coatom, a lift of the amalgam.  The one-grade lift
+  (`CellScheme.Rows.cappedLift_of_boundary_short`) asks for the extension along every row of the
+  new layer, at every such cap, of every such labelling; the step itself meets only the serving
+  rows, the source caps and the glued aligned encodings of its owner alignments.
+
+Lawfulness of `w` at the grade `j + 1`, not only at `j`, is part of the hypothesis: the old cells of
+the grade `j + 1` are not below `(univ, j)`, but they constrain `w` below it.
+
+It is not the invariant at the grade `j + 1` in another form.  It concerns the scheme before the
+layer at the grade `j + 1` and asserts nothing about the new cells of that grade; it prescribes both
+coatoms at once, rather than lifting from one coatom with the other free; it is required only at
+the caps short at `j + 1` and along catalogue entries, not at every self-visible cap and ambient;
+and its labelling agrees with `a` only capped at `h`, with nothing asserted above `h` on the new
+cells.  The invariant at `j + 1` follows from it only together with the invariant at `j`, the
+restoration of the lower prescriptions, the owner alignment, and the extension through the layer at
+`j + 1` (`Seed.towerInvariant_succ`).  At the grade `j = 0`
+it holds (`Seed.twoFaceLift_zero`); it is assumed by the step at the grades `2 ≤ j + 1 ≤ m`
+(`Seed.towerInvariant_of_twoFaceLift`), and `2FL(1)` is open. -/
+def TwoFaceLift (j : ℕ) : Prop :=
+  ∀ a ∈ (I.tower j).catalogue (j + 1),
+  ∀ h : Label.{u}, IsSelfVisible (j + 1) h → IsShort (j + 1) h → ⊥ < h →
+  ∀ w : Fin I.amalgam.card → Label.{u},
+    I.amalgam.rows.IsLawfulBelow (univ.erase (Fin.last (m + 1)), j + 1) (fun d ↦ w d) →
+    I.amalgam.rows.IsLawfulBelow (univ.erase (Fin.castSucc (Fin.last m)), j + 1)
+      (fun d ↦ w d) →
+    (∀ d, I.amalgam.toCellScheme.grade d ≤ j + 1 →
+      min (w d) h = min (a (I.towerEmbed j d)) h) →
+    ∃ r : (I.tower j).toCellScheme.below (univ, j) → Label.{u},
+      (I.tower j).rows.IsLawfulBelow (univ, j) r ∧
+      (∀ d (hd : I.amalgam.toCellScheme.grade d ≤ j),
+        r ⟨I.towerEmbed j d, I.towerEmbed_mem_below hd⟩ = w d) ∧
+      ∀ e, min (r e) h = min (a e) h
+
+/-- **`2FL(0)` holds**: below `(univ, 0)` there are no cells. -/
+theorem twoFaceLift_zero : I.TwoFaceLift 0 := by
+  intro a _ h _ _ _ w _ _ _
+  have hno (e : Fin (I.tower 0).card) : e ∉ (I.tower 0).toCellScheme.below (univ, 0) := by
+    intro he
+    have h1 := (I.isWellFormed_tower 0 (by omega)).isWellFormed.grade_pos e
+    have h2 : (I.tower 0).toCellScheme.grade e ≤ 0 := he.2
+    omega
+  refine ⟨fun _ ↦ ⊥, Rows.isLawfulBelow_const_bot _, fun d hd ↦ ?_, fun e ↦ absurd e.2 (hno _)⟩
+  have := I.amalgam.isWellFormed.isWellFormed.grade_pos d
+  omega
 
 /-! ### The step from the grade `j` to `j + 1` -/
 
-/-- **The boundary labelling, completed on the scheme reached after the grade `j`, by the union
-fill.**  Let `C = univ.erase x` and `D = univ.erase y` be the two coatoms, `w` a labelling of the
-scheme reached after the grade `j` lawful below `(C, j + 1)` and `(univ, j)`, and `a` a lawful
-section of it agreeing with `w` capped at `h` (self-visible and short at `j + 1`, `⊥ < h`) on the
-cells below `(C, j + 1)` or `(univ, j)`.  Under the union fill on `D`, some labelling lawful below
-`(univ, j + 1)` is `w` on those cells and agrees with `a` capped at `h` at every cell below
-`(univ, j + 1)`.  Below `(D, j + 1)` there are only old cells; the boundary labelling is filled
-there over the union of the common face at the grade `j + 1` and `(D, j)`, read on the amalgam, and
+/-- **Extension from the boundary through the new layer.**  Let `U` and `V` be pairs of grade at
+most `j + 1` not above `(univ, j + 1)`, and `h` self-visible and short at `j + 1` with `⊥ < h`.
+Suppose that in the scheme reached after the grade `j`, along every catalogue entry `a` at the grade
+`j + 1`, every labelling lawful below `U` and `V` that agrees with `a` capped at `h` on their cells
+is, on those cells, some labelling lawful below `(univ, j + 1)` that agrees with `a` capped at `h`
+below `(univ, j + 1)`.  Then the rows of the scheme reached after the grade `j + 1` extend from the
+boundary of `U` and `V` at `h` along the row of every new cell of the grade `j + 1`: restrict to
+the scheme before, complete there, and extend through the new cells
+(`Scheme.exists_extension_fieldLayer`, at a short cap, where the orbit code has relative room). -/
+private theorem extendsFromBoundary_tower_of_forall {j : ℕ} {U V : Finset (Fin (m + 2)) × ℕ}
+    (hU : ¬ ((univ : Finset (Fin (m + 2))), j + 1) ≤ U)
+    (hV : ¬ ((univ : Finset (Fin (m + 2))), j + 1) ≤ V) (hUj : U.2 ≤ j + 1) (hVj : V.2 ≤ j + 1)
+    {h : Label.{u}} (hh : IsSelfVisible (j + 1) h) (hs : IsShort (j + 1) h) (hbot : ⊥ < h)
+    (hfill : ∀ a ∈ (I.tower j).catalogue (j + 1), ∀ w : Fin (I.tower j).card → Label.{u},
+      (I.tower j).rows.IsLawfulBelow U (fun e ↦ w e) →
+      (I.tower j).rows.IsLawfulBelow V (fun e ↦ w e) →
+      (∀ e, e ∈ (I.tower j).toCellScheme.below U ∨ e ∈ (I.tower j).toCellScheme.below V →
+        min (w e) h = min (a e) h) →
+      ∃ g : Fin (I.tower j).card → Label.{u},
+        (I.tower j).rows.IsLawfulBelow (univ, j + 1) (fun e ↦ g e) ∧
+        (∀ e, e ∈ (I.tower j).toCellScheme.below U ∨ e ∈ (I.tower j).toCellScheme.below V →
+          g e = w e) ∧
+        ∀ e ∈ (I.tower j).toCellScheme.below (univ, j + 1), min (g e) h = min (a e) h)
+    {u : Fin (I.tower (j + 1)).card}
+    (hu : (I.tower (j + 1)).toCellScheme.gradedIndex u = (univ, j + 1)) :
+    (I.tower (j + 1)).rows.ExtendsFromBoundary U V (univ, j + 1) h
+      ((I.tower (j + 1)).rows.rowBelow u hu) := by
+  intro w hwU hwV hwS
+  obtain ⟨i, rfl⟩ := Scheme.exists_natAdd_eq (S := I.tower j) (k := j + 1)
+    (hS := I.not_univ_succ_le_tower j) hu
+  set a := (I.tower j).catalogueEntry (j + 1) i
+  have ha := Scheme.catalogueEntry_mem (S := I.tower j) (k := j + 1) i
+  have hrowBelow (d : (I.tower (j + 1)).toCellScheme.below (univ, j + 1)) :
+      (I.tower (j + 1)).rows.rowBelow (Fin.natAdd _ i) hu d = (I.tower j).fieldRow (j + 1) a d.1 :=
+    Scheme.fieldLayer_row_natAdd (hS := I.not_univ_succ_le_tower j) i _
+  have hw₁U : (I.tower j).rows.IsLawfulBelow U fun e ↦ w (Fin.castAdd _ e) :=
+    (Scheme.isLawfulBelow_appendFullCells_iff (S := I.tower j) (k := j + 1)
+      (r := fun i ↦ (I.tower j).fieldRow (j + 1) ((I.tower j).catalogueEntry (j + 1) i))
+      (h := I.not_univ_succ_le_tower j) (v := w) hU).mp hwU
+  have hw₁V : (I.tower j).rows.IsLawfulBelow V fun e ↦ w (Fin.castAdd _ e) :=
+    (Scheme.isLawfulBelow_appendFullCells_iff (S := I.tower j) (k := j + 1)
+      (r := fun i ↦ (I.tower j).fieldRow (j + 1) ((I.tower j).catalogueEntry (j + 1) i))
+      (h := I.not_univ_succ_le_tower j) (v := w) hV).mp hwV
+  have hgi (e : Fin (I.tower j).card) :
+      ((I.tower j).fieldLayer (j + 1) (I.not_univ_succ_le_tower j)).toCellScheme.gradedIndex
+        (Fin.castAdd _ e) = (I.tower j).toCellScheme.gradedIndex e :=
+    Scheme.appendFullCellsScheme_gradedIndex_castAdd _ _ _ e
+  -- An old cell lies below a pair in the field layer exactly when it does in the scheme before.
+  have hmem {X : Finset (Fin (m + 2)) × ℕ} (e : Fin (I.tower j).card) :
+      Fin.castAdd ((I.tower j).catalogue (j + 1)).card e ∈
+          (I.tower (j + 1)).toCellScheme.below X ↔ e ∈ (I.tower j).toCellScheme.below X := by
+    -- `I.tower (j + 1)` is the field layer of `I.tower j` (`Seed.tower_succ`, by `rfl`).
+    change ((I.tower j).fieldLayer (j + 1)
+      (I.not_univ_succ_le_tower j)).toCellScheme.gradedIndex (Fin.castAdd _ e) ≤ X ↔ _
+    rw [hgi]
+    rfl
+  have hag (e : Fin (I.tower j).card)
+      (he : e ∈ (I.tower j).toCellScheme.below U ∨ e ∈ (I.tower j).toCellScheme.below V) :
+      min (w (Fin.castAdd _ e)) h = min (a e) h := by
+    have hle : (I.tower j).toCellScheme.grade e ≤ j + 1 :=
+      he.elim (fun h' ↦ h'.2.trans hUj) fun h' ↦ h'.2.trans hVj
+    have := hwS ⟨_, Scheme.castAdd_mem_below (hS := I.not_univ_succ_le_tower j) hle⟩
+      (he.imp (hmem e).mpr (hmem e).mpr)
+    rwa [hrowBelow, Scheme.fieldRow_castAdd] at this
+  obtain ⟨g, hg, hgw, hga⟩ := hfill a ha (fun e ↦ w (Fin.castAdd _ e)) hw₁U hw₁V hag
+  obtain ⟨r, hr, hrg, hrS⟩ := Scheme.exists_extension_fieldLayer (S := I.tower j) (k := j + 1)
+    (hS := I.not_univ_succ_le_tower j) (p := g) hg ha hh hbot (.inl hs)
+    fun d hd ↦ hga d ⟨subset_univ _, hd⟩
+  refine ⟨r, hr, fun d hd ↦ ?_, fun d ↦ by rw [hrowBelow]; exact hrS d⟩
+  obtain ⟨e, he, rfl⟩ := Scheme.exists_castAdd_eq_of_boundary (S := I.tower j) (k := j + 1)
+    (hS := I.not_univ_succ_le_tower j) hU hV hd
+  rw [hrg e he]
+  exact hgw e (hd.imp (hmem e).mp (hmem e).mp)
+
+/-- **The boundary labelling at the top grade, completed on the scheme reached after the grade
+`j`.**  Let `m ≤ j`, `C = univ.erase x` and `D = univ.erase y` the two coatoms, `w` a labelling of
+the scheme reached after the grade `j` lawful below `(C, j + 1)` and `(univ, j)`, and `a` a lawful
+section of it agreeing with `w` capped at `h` (self-visible at `j + 1`) on the cells below
+`(C, j + 1)` or `(univ, j)`.  Some labelling lawful below `(univ, j + 1)` is `w` on those cells and
+agrees with `a` capped at `h` at every cell below `(univ, j + 1)`.  Below `(D, j + 1)` there are
+only old cells; there the boundary labelling is lifted within `D` from the grade `j`, read on the
+amalgam (`Seed.exists_lift_union_of_le`: the common face carries no cell of the grade `j + 1`), and
 the three pieces are glued (`CellScheme.Rows.IsLawfulBelow.glue₃`): every new cell has grade at most
-`j`, and an old cell of grade `j + 1` lies on `C` or on `D`.  The new cells keep the cap of `w`;
-the fill on `D` does not reach them. -/
-theorem exists_isLawfulBelow_unionFill {x y : Fin (m + 2)}
+`j`, and an old cell of grade `j + 1` lies on `C` or on `D`.  The new cells keep the cap of `w`; the
+lift within `D` does not reach them. -/
+theorem exists_isLawfulBelow_top {x y : Fin (m + 2)}
     (hx : x ∈ ({Fin.last (m + 1), Fin.castSucc (Fin.last m)} : Finset (Fin (m + 2))))
     (hy : y ∈ ({Fin.last (m + 1), Fin.castSucc (Fin.last m)} : Finset (Fin (m + 2))))
-    (hxy : x ≠ y) {j : ℕ} (hU : I.UnionFill y (univ.erase x ∩ univ.erase y) j)
+    (hxy : x ≠ y) {j : ℕ} (hj : m ≤ j)
     {w : Fin (I.tower j).card → Label.{u}}
     (hwU : (I.tower j).rows.IsLawfulBelow (univ.erase x, j + 1) fun d ↦ w d)
     (hwV : (I.tower j).rows.IsLawfulBelow (univ, j) fun d ↦ w d)
     {a : Fin (I.tower j).card → Label.{u}} (ha : (I.tower j).rows.IsLawful a) {h : Label.{u}}
-    (hh : IsSelfVisible (j + 1) h) (hs : IsShort (j + 1) h) (hbot : ⊥ < h)
+    (hh : IsSelfVisible (j + 1) h)
     (hag : ∀ e, e ∈ (I.tower j).toCellScheme.below (univ.erase x, j + 1) ∨
       e ∈ (I.tower j).toCellScheme.below (univ, j) → min (w e) h = min (a e) h) :
     ∃ g : Fin (I.tower j).card → Label.{u},
@@ -790,20 +988,15 @@ theorem exists_isLawfulBelow_unionFill {x y : Fin (m + 2)}
       ∀ e ∈ (I.tower j).toCellScheme.below (univ, j + 1), min (g e) h = min (a e) h := by
   classical
   have hDne := ne_univ_erase y
-  have hEne : univ.erase x ∩ univ.erase y ≠ univ := fun he ↦
-    hDne (univ_subset_iff.mp (he.ge.trans inter_subset_right))
-  -- The union fill, read on the amalgam.
-  obtain ⟨v, hv, hvw, hva⟩ := hU h hh hs hbot (fun d ↦ a (I.towerEmbed j d))
+  -- The lift within the other coatom, read on the amalgam.
+  obtain ⟨v, hv, hvw, hva⟩ := I.exists_lift_union_of_le hx hy hxy hj hh
+    (a := fun d ↦ a (I.towerEmbed j d))
     ((I.isLawfulBelow_tower_iff (g := a) hDne).mp (ha.isLawfulBelow _))
-    (fun d ↦ w (I.towerEmbed j d))
-    ((I.isLawfulBelow_tower_iff (g := w) hEne).mp
-      (hwU.mono (X := (univ.erase x ∩ univ.erase y, j + 1)) ⟨inter_subset_left, le_rfl⟩))
+    (w := fun d ↦ w (I.towerEmbed j d))
     ((I.isLawfulBelow_tower_iff (g := w) hDne).mp
       (hwV.mono (X := (univ.erase y, j)) ⟨subset_univ _, le_rfl⟩))
-    fun d hd ↦ hag _ (hd.imp
-      (fun h ↦ I.towerEmbed_mem_below_iff.mpr ⟨h.1.trans inter_subset_left, h.2⟩)
-      fun h ↦ I.towerEmbed_mem_below_iff.mpr ⟨h.1.trans (subset_univ _), h.2⟩)
-  -- The fill, carried to the scheme reached after the grade `j`.
+    fun d hd ↦ hag _ (.inr (I.towerEmbed_mem_below_iff.mpr ⟨hd.1.trans (subset_univ _), hd.2⟩))
+  -- The lift, carried to the scheme reached after the grade `j`.
   have P := I.isSourcePrefix_tower (j := j) (Y := (univ.erase y, j + 1)) hDne
   have hc : (I.tower j).rows.comap P.isLowerEmbedding = I.amalgam.rows := I.comap_rows_tower j
   obtain ⟨v', hv', hv'v⟩ := P.exists_isLawfulBelow le_rfl (s := v) (by rw [hc]; exact hv)
@@ -817,7 +1010,7 @@ theorem exists_isLawfulBelow_unionFill {x y : Fin (m + 2)}
     obtain ⟨t, rfl⟩ := I.mem_range_towerEmbed j e fun hsc ↦
       hDne (univ_subset_iff.mp (hsc.ge.trans he.1))
     exact ⟨⟨t, I.towerEmbed_mem_below_iff.mp he⟩, rfl⟩
-  -- The glued labelling: `w` on the boundary, the fill elsewhere below `(D, j + 1)`.
+  -- The glued labelling: `w` on the boundary, the lift elsewhere below `(D, j + 1)`.
   obtain ⟨g, hgb, hgo⟩ : ∃ g : Fin (I.tower j).card → Label.{u},
       (∀ e, e ∈ (I.tower j).toCellScheme.below (univ.erase x, j + 1) ∨
         e ∈ (I.tower j).toCellScheme.below (univ, j) → g e = w e) ∧
@@ -841,29 +1034,16 @@ theorem exists_isLawfulBelow_unionFill {x y : Fin (m + 2)}
       · exact .inl ⟨subset_inter (I.towerEmbed_mem_below_iff.mp hb).1 t.2.1, t.2.2⟩
       · exact .inr ⟨t.2.1, (I.towerEmbed_mem_below_iff.mp hb).2⟩
     · exact hgo e he hb
-  -- Every cell below `(univ, j + 1)` lies below one of the three pairs.
-  have hcover (e : Fin (I.tower j).card)
-      (he : e ∈ (I.tower j).toCellScheme.below (univ, j + 1)) :
-      e ∈ (I.tower j).toCellScheme.below (univ.erase x, j + 1) ∨
-        e ∈ (I.tower j).toCellScheme.below (univ, j) ∨
-          e ∈ (I.tower j).toCellScheme.below (univ.erase y, j + 1) := by
-    by_cases hej : (I.tower j).toCellScheme.grade e ≤ j
-    · exact .inr (.inl ⟨subset_univ _, hej⟩)
-    · obtain ⟨d, rfl⟩ := I.mem_range_towerEmbed j e ((I.tower_grade_le_or j e).resolve_left hej)
-      have hd : I.amalgam.toCellScheme.grade d ≤ j + 1 :=
-        (I.grade_towerEmbed j d).symm.trans_le he.2
-      rcases I.scope_subset_or hx hy hxy d with h | h
-      · exact .inl (I.towerEmbed_mem_below_iff.mpr ⟨h, hd⟩)
-      · exact .inr (.inr (I.towerEmbed_mem_below_iff.mpr ⟨h, hd⟩))
   refine ⟨g, Rows.IsLawfulBelow.glue₃ (U := (univ.erase x, j + 1)) (V := (univ, j))
-    (W := (univ.erase y, j + 1)) ?_ ?_ ?_ hcover, hgb, fun e he ↦ ?_⟩
+    (W := (univ.erase y, j + 1)) ?_ ?_ ?_ (I.mem_below_cover_tower hx hy hxy), hgb,
+    fun e he ↦ ?_⟩
   · convert hwU using 1
     exact funext fun e ↦ hgb e (.inl e.2)
   · convert hwV using 1
     exact funext fun e ↦ hgb e (.inr e.2)
   · convert hv' using 1
     exact funext fun e ↦ hgD e e.2
-  · rcases hcover e he with hb | hb | hb
+  · rcases I.mem_below_cover_tower hx hy hxy e he with hb | hb | hb
     · rw [hgb e (.inl hb)]
       exact hag e (.inl hb)
     · rw [hgb e (.inr hb)]
@@ -873,164 +1053,237 @@ theorem exists_isLawfulBelow_unionFill {x y : Fin (m + 2)}
       rw [hv't t]
       exact hva t
 
-/-- **Extension from the boundary at the grade `j + 1`, at a short positive cap, under the union
-fill.**  Along the row of a new cell `u` of graded index `(univ, j + 1)`, at a cap `h` self-visible
-and short at `j + 1` with `⊥ < h`, every labelling lawful below `(univ.erase x, j + 1)` and below
+/-- **Extension from the boundary at the top grade, at a short positive cap.**  For `m ≤ j`,
+along the row of a new cell `u` of graded index `(univ, j + 1)`, at a cap `h` self-visible and
+short at `j + 1` with `⊥ < h`, every labelling lawful below `(univ.erase x, j + 1)` and below
 `(univ, j)` that agrees with the row of `u` capped at `h` on the boundary extends, unchanged there,
 to a labelling lawful below `(univ, j + 1)` that agrees with the row of `u` capped at `h`
 everywhere: the boundary labelling is completed below `(univ, j + 1)` in the scheme reached after
-the grade `j` along the catalogue entry of `u` (`Seed.exists_isLawfulBelow_unionFill`), then
-extended through the new cells (`Scheme.exists_extension_fieldLayer`, at a short cap, where the
-orbit code has relative room). -/
-theorem extendsFromBoundary_tower {x y : Fin (m + 2)}
+the grade `j` along the catalogue entry of `u` (`Seed.exists_isLawfulBelow_top`), then extended
+through the new cells. -/
+theorem extendsFromBoundary_tower_top {x y : Fin (m + 2)}
     (hx : x ∈ ({Fin.last (m + 1), Fin.castSucc (Fin.last m)} : Finset (Fin (m + 2))))
     (hy : y ∈ ({Fin.last (m + 1), Fin.castSucc (Fin.last m)} : Finset (Fin (m + 2))))
-    (hxy : x ≠ y) {j : ℕ} (hU : I.UnionFill y (univ.erase x ∩ univ.erase y) j)
-    {u : Fin (I.tower (j + 1)).card}
+    (hxy : x ≠ y) {j : ℕ} (hj : m ≤ j) {u : Fin (I.tower (j + 1)).card}
     (hu : (I.tower (j + 1)).toCellScheme.gradedIndex u = (univ, j + 1)) {h : Label.{u}}
     (hh : IsSelfVisible (j + 1) h) (hs : IsShort (j + 1) h) (hbot : ⊥ < h) :
     (I.tower (j + 1)).rows.ExtendsFromBoundary (univ.erase x, j + 1) (univ, j) (univ, j + 1) h
-      ((I.tower (j + 1)).rows.rowBelow u hu) := by
-  intro w hwU hwV hwS
-  obtain ⟨i, rfl⟩ := Scheme.exists_natAdd_eq (S := I.tower j) (k := j + 1)
-    (hS := I.not_univ_succ_le_tower j) hu
-  set a := (I.tower j).catalogueEntry (j + 1) i
-  have ha := Scheme.catalogueEntry_mem (S := I.tower j) (k := j + 1) i
-  have hrowBelow (d : (I.tower (j + 1)).toCellScheme.below (univ, j + 1)) :
-      (I.tower (j + 1)).rows.rowBelow (Fin.natAdd _ i) hu d = (I.tower j).fieldRow (j + 1) a d.1 :=
-    Scheme.fieldLayer_row_natAdd (hS := I.not_univ_succ_le_tower j) i _
-  have hnotU : ¬ ((univ : Finset (Fin (m + 2))), j + 1) ≤ (univ.erase x, j + 1) :=
-    fun h ↦ ne_univ_erase x (univ_subset_iff.mp h.1)
-  have hnotV : ¬ ((univ : Finset (Fin (m + 2))), j + 1) ≤ (univ, j) :=
-    fun h ↦ absurd h.2 (by simp only; omega)
-  have hw₁U : (I.tower j).rows.IsLawfulBelow (univ.erase x, j + 1)
-      fun e ↦ w (Fin.castAdd _ e) :=
-    (Scheme.isLawfulBelow_appendFullCells_iff (S := I.tower j) (k := j + 1)
-      (r := fun i ↦ (I.tower j).fieldRow (j + 1) ((I.tower j).catalogueEntry (j + 1) i))
-      (h := I.not_univ_succ_le_tower j) (v := w) hnotU).mp hwU
-  have hw₁V : (I.tower j).rows.IsLawfulBelow (univ, j) fun e ↦ w (Fin.castAdd _ e) :=
-    (Scheme.isLawfulBelow_appendFullCells_iff (S := I.tower j) (k := j + 1)
-      (r := fun i ↦ (I.tower j).fieldRow (j + 1) ((I.tower j).catalogueEntry (j + 1) i))
-      (h := I.not_univ_succ_le_tower j) (v := w) hnotV).mp hwV
-  have hgi (e : Fin (I.tower j).card) :
-      ((I.tower j).fieldLayer (j + 1) (I.not_univ_succ_le_tower j)).toCellScheme.gradedIndex
-        (Fin.castAdd _ e) = (I.tower j).toCellScheme.gradedIndex e :=
-    Scheme.appendFullCellsScheme_gradedIndex_castAdd _ _ _ e
-  have hag (e : Fin (I.tower j).card)
+      ((I.tower (j + 1)).rows.rowBelow u hu) :=
+  I.extendsFromBoundary_tower_of_forall (fun h ↦ ne_univ_erase x (univ_subset_iff.mp h.1))
+    (fun h ↦ absurd h.2 (by simp only; omega)) le_rfl (Nat.le_succ j) hh hs hbot
+    (fun _ ha _ hwU hwV hag ↦ I.exists_isLawfulBelow_top hx hy hxy hj hwU hwV
+      (Scheme.mem_catalogue.mp ha).1 hh hag) hu
+
+/-- **The boundary labelling, completed on the scheme reached after the grade `j`, by the two-face
+lift.**  Let `C = univ.erase x` and `D = univ.erase y` be the two coatoms, `a` a catalogue entry at
+the grade `j + 1`, `h` self-visible and short at `j + 1` with `⊥ < h`, and `w` a labelling of the
+scheme reached after the grade `j` lawful below `(C, j + 1)` and `(D, j + 1)` that agrees with `a`
+capped at `h` on their cells.  Under `2FL(j)` some labelling lawful below `(univ, j + 1)` is `w` on
+those cells and agrees with `a` capped at `h` at every cell below `(univ, j + 1)`: the two-face lift
+below `(univ, j)`, glued with `w` over `(C, j + 1)`, `(univ, j)` and `(D, j + 1)`
+(`CellScheme.Rows.IsLawfulBelow.glue₃`).  The old cells below `(univ, j)` lie on `C` or on `D`,
+where the two-face lift is `w`. -/
+theorem exists_isLawfulBelow_of_twoFaceLift {x y : Fin (m + 2)}
+    (hx : x ∈ ({Fin.last (m + 1), Fin.castSucc (Fin.last m)} : Finset (Fin (m + 2))))
+    (hy : y ∈ ({Fin.last (m + 1), Fin.castSucc (Fin.last m)} : Finset (Fin (m + 2))))
+    (hxy : x ≠ y) {j : ℕ} (h2 : I.TwoFaceLift j) {a : Fin (I.tower j).card → Label.{u}}
+    (ha : a ∈ (I.tower j).catalogue (j + 1)) {h : Label.{u}} (hh : IsSelfVisible (j + 1) h)
+    (hs : IsShort (j + 1) h) (hbot : ⊥ < h) {w : Fin (I.tower j).card → Label.{u}}
+    (hwx : (I.tower j).rows.IsLawfulBelow (univ.erase x, j + 1) fun e ↦ w e)
+    (hwy : (I.tower j).rows.IsLawfulBelow (univ.erase y, j + 1) fun e ↦ w e)
+    (hag : ∀ e, e ∈ (I.tower j).toCellScheme.below (univ.erase x, j + 1) ∨
+      e ∈ (I.tower j).toCellScheme.below (univ.erase y, j + 1) → min (w e) h = min (a e) h) :
+    ∃ g : Fin (I.tower j).card → Label.{u},
+      (I.tower j).rows.IsLawfulBelow (univ, j + 1) (fun e ↦ g e) ∧
+      (∀ e, e ∈ (I.tower j).toCellScheme.below (univ.erase x, j + 1) ∨
+        e ∈ (I.tower j).toCellScheme.below (univ.erase y, j + 1) → g e = w e) ∧
+      ∀ e ∈ (I.tower j).toCellScheme.below (univ, j + 1), min (g e) h = min (a e) h := by
+  classical
+  have hwx₀ := (I.isLawfulBelow_tower_iff (g := w) (ne_univ_erase x)).mp hwx
+  have hwy₀ := (I.isLawfulBelow_tower_iff (g := w) (ne_univ_erase y)).mp hwy
+  have hag₀ (d : Fin I.amalgam.card) (hd : I.amalgam.toCellScheme.grade d ≤ j + 1) :
+      min (w (I.towerEmbed j d)) h = min (a (I.towerEmbed j d)) h :=
+    hag _ ((I.scope_subset_or hx hy hxy d).imp
+      (fun hsc ↦ I.towerEmbed_mem_below_iff.mpr ⟨hsc, hd⟩)
+      fun hsc ↦ I.towerEmbed_mem_below_iff.mpr ⟨hsc, hd⟩)
+  -- The two-face lift, with the coatoms in the order of the seed.
+  obtain ⟨r, hr, hrw, hra⟩ : ∃ r : (I.tower j).toCellScheme.below (univ, j) → Label.{u},
+      (I.tower j).rows.IsLawfulBelow (univ, j) r ∧
+      (∀ d (hd : I.amalgam.toCellScheme.grade d ≤ j),
+        r ⟨I.towerEmbed j d, I.towerEmbed_mem_below hd⟩ = w (I.towerEmbed j d)) ∧
+      ∀ e, min (r e) h = min (a e) h := by
+    rcases pair_cases hx hy hxy with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+    · exact h2 a ha h hh hs hbot (fun d ↦ w (I.towerEmbed j d)) hwx₀ hwy₀ hag₀
+    · exact h2 a ha h hh hs hbot (fun d ↦ w (I.towerEmbed j d)) hwy₀ hwx₀ hag₀
+  -- The glued labelling: the two-face lift below `(univ, j)`, `w` elsewhere.
+  obtain ⟨g, hgr, hgw⟩ : ∃ g : Fin (I.tower j).card → Label.{u},
+      (∀ e (he : e ∈ (I.tower j).toCellScheme.below (univ, j)), g e = r ⟨e, he⟩) ∧
+      ∀ e, e ∉ (I.tower j).toCellScheme.below (univ, j) → g e = w e :=
+    ⟨fun e ↦ if he : e ∈ (I.tower j).toCellScheme.below (univ, j) then r ⟨e, he⟩ else w e,
+      fun e he ↦ dite_eq_left he, fun e he ↦ dite_eq_right he⟩
+  have hgb (e : Fin (I.tower j).card)
       (he : e ∈ (I.tower j).toCellScheme.below (univ.erase x, j + 1) ∨
-        e ∈ (I.tower j).toCellScheme.below (univ, j)) :
-      min (w (Fin.castAdd _ e)) h = min (a e) h := by
-    have hle : (I.tower j).toCellScheme.grade e ≤ j + 1 :=
-      he.elim (·.2) fun h ↦ h.2.trans (Nat.le_succ j)
-    have := hwS ⟨_, Scheme.castAdd_mem_below (hS := I.not_univ_succ_le_tower j) hle⟩ (by
-      rcases he with he | he
-      · left
-        change ((I.tower j).fieldLayer (j + 1)
-          (I.not_univ_succ_le_tower j)).toCellScheme.gradedIndex (Fin.castAdd _ e) ≤ _
-        rw [hgi]
-        exact he
-      · right
-        change ((I.tower j).fieldLayer (j + 1)
-          (I.not_univ_succ_le_tower j)).toCellScheme.gradedIndex (Fin.castAdd _ e) ≤ _
-        rw [hgi]
-        exact he)
-    rwa [hrowBelow, Scheme.fieldRow_castAdd] at this
-  obtain ⟨g, hg, hgw, hga⟩ := I.exists_isLawfulBelow_unionFill hx hy hxy hU hw₁U hw₁V
-    (Scheme.mem_catalogue.mp ha).1 hh hs hbot hag
-  obtain ⟨r, hr, hrg, hrS⟩ := Scheme.exists_extension_fieldLayer (S := I.tower j) (k := j + 1)
-    (hS := I.not_univ_succ_le_tower j) (p := g) hg ha hh hbot (.inl hs)
-    fun d hd ↦ hga d ⟨subset_univ _, hd⟩
-  refine ⟨r, hr, fun d hd ↦ ?_, fun d ↦ by rw [hrowBelow]; exact hrS d⟩
-  obtain ⟨e, he, rfl⟩ := Scheme.exists_castAdd_eq_of_boundary (S := I.tower j) (k := j + 1)
-    (hS := I.not_univ_succ_le_tower j) hnotU hnotV hd
-  rw [hrg e he]
-  refine hgw e (hd.imp (fun h ↦ ?_) fun h ↦ ?_)
-  · change (I.tower j).toCellScheme.gradedIndex e ≤ _
-    rw [← hgi]
-    exact h
-  · change (I.tower j).toCellScheme.gradedIndex e ≤ _
-    rw [← hgi]
-    exact h
+        e ∈ (I.tower j).toCellScheme.below (univ.erase y, j + 1)) : g e = w e := by
+    by_cases hej : e ∈ (I.tower j).toCellScheme.below (univ, j)
+    · rw [hgr e hej]
+      have hsc : (I.tower j).toCellScheme.scope e ≠ univ := fun hu ↦ he.elim
+        (fun h' ↦ ne_univ_erase x (univ_subset_iff.mp (hu.ge.trans h'.1)))
+        fun h' ↦ ne_univ_erase y (univ_subset_iff.mp (hu.ge.trans h'.1))
+      obtain ⟨d, rfl⟩ := I.mem_range_towerEmbed j e hsc
+      exact hrw d ((I.grade_towerEmbed j d).symm.trans_le hej.2)
+    · exact hgw e hej
+  refine ⟨g, Rows.IsLawfulBelow.glue₃ (U := (univ.erase x, j + 1)) (V := (univ, j))
+    (W := (univ.erase y, j + 1)) ?_ ?_ ?_ (I.mem_below_cover_tower hx hy hxy), hgb,
+    fun e he ↦ ?_⟩
+  · convert hwx using 1
+    exact funext fun e ↦ hgb e (.inl e.2)
+  · convert hr using 1
+    exact funext fun e ↦ hgr e e.2
+  · convert hwy using 1
+    exact funext fun e ↦ hgb e (.inr e.2)
+  · rcases I.mem_below_cover_tower hx hy hxy e he with hb | hb | hb
+    · rw [hgb e (.inl hb)]
+      exact hag e (.inl hb)
+    · rw [hgr e hb]
+      exact hra _
+    · rw [hgb e (.inr hb)]
+      exact hag e (.inr hb)
 
-/-- **The step from the grade `j` to `j + 1`, under the union fill.**  For `j ≤ m`, if the
-invariant holds at the grade `j` and the union fill holds on each coatom over the common face at
-the grade `j + 1`, the invariant holds at the grade `j + 1`.  The lifts at the grades `j' ≤ j` are
-carried to the next scheme through the source prefix.  The lift from a coatom `C = univ.erase x` to
-`(univ, j + 1)` is `CellScheme.Rows.cappedLift_of_boundaries_short`, with the invariant from
-`(C, j)` to `(univ, j)` as the lift at the lower grade (used by the restoration of the lower
-prescriptions) and two boundary triples:
+/-- **Extension from the boundary of the two coatoms, at a short positive cap, under `2FL(j)`.**
+Along the row of a new cell `u` of graded index `(univ, j + 1)`, at a cap `h` self-visible and
+short at `j + 1` with `⊥ < h`, every labelling lawful below `(univ.erase x, j + 1)` and below
+`(univ.erase y, j + 1)` that agrees with the row of `u` capped at `h` on the boundary extends,
+unchanged there, to a labelling lawful below `(univ, j + 1)` that agrees with the row of `u` capped
+at `h` everywhere: restricted to the scheme reached after the grade `j` and to the amalgam, the
+boundary labelling is extended through the new cells of the layers `1, …, j` by `2FL(j)` along the
+catalogue entry of `u`, glued with its old cells of the grade `j + 1`
+(`Seed.exists_isLawfulBelow_of_twoFaceLift`), and extended through the new cells of the layer
+`j + 1` at the short cap (`Scheme.exists_extension_fieldLayer`). -/
+theorem extendsFromBoundary_tower_of_twoFaceLift {x y : Fin (m + 2)}
+    (hx : x ∈ ({Fin.last (m + 1), Fin.castSucc (Fin.last m)} : Finset (Fin (m + 2))))
+    (hy : y ∈ ({Fin.last (m + 1), Fin.castSucc (Fin.last m)} : Finset (Fin (m + 2))))
+    (hxy : x ≠ y) {j : ℕ} (h2 : I.TwoFaceLift j) {u : Fin (I.tower (j + 1)).card}
+    (hu : (I.tower (j + 1)).toCellScheme.gradedIndex u = (univ, j + 1)) {h : Label.{u}}
+    (hh : IsSelfVisible (j + 1) h) (hs : IsShort (j + 1) h) (hbot : ⊥ < h) :
+    (I.tower (j + 1)).rows.ExtendsFromBoundary (univ.erase x, j + 1) (univ.erase y, j + 1)
+      (univ, j + 1) h ((I.tower (j + 1)).rows.rowBelow u hu) :=
+  I.extendsFromBoundary_tower_of_forall (fun h ↦ ne_univ_erase x (univ_subset_iff.mp h.1))
+    (fun h ↦ ne_univ_erase y (univ_subset_iff.mp h.1)) le_rfl le_rfl hh hs hbot
+    (fun _ ha _ hwU hwV hag ↦ I.exists_isLawfulBelow_of_twoFaceLift hx hy hxy h2 ha hh hs hbot
+      hwU hwV hag) hu
 
-* at the cap `⊥`: `U = (C, j + 1)`, `V = (D, j + 1)` for the other coatom `D`, and `O` the common
-  face at the grade `min (j + 1) m`; the lift from `O` to `V` is a lift of the amalgam, and the
-  extension from the boundary is the extension at `⊥` through the whole tower
-  (`Seed.extendsFromBoundary_bot_tower`), with no union fill;
-* at the positive caps: `U = (C, j + 1)`, `V = (univ, j)`, `O = (C, j)`; the lift from `O` to `V` is
-  the invariant, used at every self-visible cap and along every lawful ambient, and the extension
-  from the boundary along the row of each new cell of grade `j + 1`, at the short caps, is
-  `Seed.extendsFromBoundary_tower`, under the union fill. -/
+/-- **The step from the grade `j` to `j + 1`, under `2FL(j)`.**  For `j ≤ m`, if the invariant
+holds at the grade `j` and the two-face lift `2FL(j)` holds, the invariant holds at the grade
+`j + 1`.  The lifts at the grades `j' ≤ j` are carried to the next scheme through the source
+prefix.  The lift from a coatom `C = univ.erase x` to `(univ, j + 1)` is
+`CellScheme.Rows.cappedLift_of_boundary_short`, with the invariant from `(C, j)` to `(univ, j)` as
+the lift at the lower grade (used by the restoration of the lower prescriptions) and one boundary
+triple: `U = (C, j + 1)`, `V = (D, j + 1)` for the other coatom `D`, and `O` the common face at the
+grade `min (j + 1) m`, the lift from `O` to `V` being a lift of the amalgam.  The extension from
+the boundary is the extension at `⊥` through the whole tower (`Seed.extendsFromBoundary_bot_tower`)
+at `⊥`, and `Seed.extendsFromBoundary_tower_of_twoFaceLift` at the short positive caps.  The
+recursion uses it at the grades `2 ≤ j + 1 ≤ m` (`Seed.towerInvariant_of_twoFaceLift`); the top
+grade has an unconditional step (`Seed.towerInvariant_top`). -/
 theorem towerInvariant_succ {j : ℕ} (hjm : j ≤ m) (hinv : I.TowerInvariant j)
-    (hU : ∀ x ∈ ({Fin.last (m + 1), Fin.castSucc (Fin.last m)} : Finset (Fin (m + 2))),
-      ∀ y ∈ ({Fin.last (m + 1), Fin.castSucc (Fin.last m)} : Finset (Fin (m + 2))), x ≠ y →
-        I.UnionFill y (univ.erase x ∩ univ.erase y) j) :
-    I.TowerInvariant (j + 1) := by
+    (h2 : I.TwoFaceLift j) : I.TowerInvariant (j + 1) := by
   intro x hx j' hj'
   rcases Nat.lt_or_eq_of_le hj' with hlt | rfl
   · exact I.cappedLift_tower_succ (Nat.lt_succ_iff.mp hlt)
       (hinv x hx j' (Nat.lt_succ_iff.mp hlt))
   obtain ⟨y, hy, hxy⟩ := exists_other hx
-  have hlift := I.cappedLift_tower_succ le_rfl (hinv x hx j le_rfl)
-  have hwf := (I.isWellFormed_tower (j + 1) (by omega)).isWellFormed
+  -- `I.tower (j + 1)` is the field layer of `I.tower j` (`Seed.tower_succ`, by `rfl`); the generic
+  -- one-grade lift is stated for the field layer.
   change ((I.tower j).fieldLayer (j + 1) (I.not_univ_succ_le_tower j)).rows.CappedLift
     (X := (univ.erase x, j + 1)) (Y := (univ, j + 1)) ⟨erase_subset _ _, le_rfl⟩
-  refine Rows.cappedLift_of_boundaries_short (C := univ.erase x) (B := univ) (j := j)
-    (U₀ := (univ.erase x, j + 1)) (V₀ := (univ.erase y, j + 1))
-    (O₀ := (univ.erase x ∩ univ.erase y, min (j + 1) m))
-    (U := (univ.erase x, j + 1)) (V := (univ, j)) (O := (univ.erase x, j))
+  refine Rows.cappedLift_of_boundary_short (C := univ.erase x) (B := univ) (j := j)
+    (U := (univ.erase x, j + 1)) (V := (univ.erase y, j + 1))
+    (O := (univ.erase x ∩ univ.erase y, min (j + 1) m)) (erase_subset _ _) ?_
+    (I.cappedLift_tower_succ le_rfl (hinv x hx j le_rfl)) le_rfl
+    ⟨inter_subset_left, min_le_left _ _⟩ ⟨inter_subset_right, min_le_left _ _⟩
+    ⟨erase_subset _ _, le_rfl⟩ ⟨erase_subset _ _, le_rfl⟩
+    (fun d hdU hdV ↦ I.mem_below_commonFace_tower hx hy hxy (k := j + 1) (by omega) d hdU hdV)
+    (Rows.cappedLift_refl _) (I.cappedLift_commonFace_tower hx hy hxy (by omega))
+    (I.extendsFromBoundary_bot_tower (I.scope_subset_or hx hy hxy) (j + 1))
+    (I.exists_gradedIndex_eq_univ_tower j) fun u hu ↦
+      ⟨I.isConsistent_tower (j + 1) u, fun d ↦ (I.isShort_ne_top_rowBelow_tower hu d).1,
+        fun d ↦ (I.isShort_ne_top_rowBelow_tower hu d).2, fun h hh hs hbot ↦
+        I.extendsFromBoundary_tower_of_twoFaceLift hx hy hxy h2 hu hh hs hbot⟩
+  exact I.exists_gradedIndex_eq_tower (j + 1)
+    ⟨I.erase_mem_faces hx, Nat.succ_pos j, by rw [card_erase]; omega⟩ (ne_univ_erase x)
+
+/-- **The step to the top grade `m + 1`**, with no hypothesis beyond the invariant at the grade
+`m`.  The lifts at the grades `j' ≤ m` are carried through the source prefix.  The lift from a
+coatom `C = univ.erase x` to `(univ, m + 1)` is `CellScheme.Rows.cappedLift_of_boundaries_short`,
+with the invariant from `(C, m)` to `(univ, m)` as the lift at the lower grade and two boundary
+triples:
+
+* at the cap `⊥`: `U = (C, m + 1)`, `V = (D, m + 1)` for the other coatom `D`, and `O` the common
+  face at the grade `m`; the lift from `O` to `V` is a lift of the amalgam, and the extension from
+  the boundary is the extension at `⊥` through the whole tower
+  (`Seed.extendsFromBoundary_bot_tower`);
+* at the positive caps: `U = (C, m + 1)`, `V = (univ, m)`, `O = (C, m)`; the lift from `O` to `V`
+  is the invariant, used at every self-visible cap and along every lawful ambient, and the
+  extension from the boundary along the row of each new cell of grade `m + 1`, at the short caps,
+  is `Seed.extendsFromBoundary_tower_top`, which lifts within the other coatom. -/
+theorem towerInvariant_top (hinv : I.TowerInvariant m) : I.TowerInvariant (m + 1) := by
+  intro x hx j' hj'
+  rcases Nat.lt_or_eq_of_le hj' with hlt | rfl
+  · exact I.cappedLift_tower_succ (Nat.lt_succ_iff.mp hlt)
+      (hinv x hx j' (Nat.lt_succ_iff.mp hlt))
+  obtain ⟨y, hy, hxy⟩ := exists_other hx
+  have hlift := I.cappedLift_tower_succ le_rfl (hinv x hx m le_rfl)
+  -- `I.tower (m + 1)` is the field layer of `I.tower m` (`Seed.tower_succ`, by `rfl`); the generic
+  -- one-grade lift is stated for the field layer.
+  change ((I.tower m).fieldLayer (m + 1) (I.not_univ_succ_le_tower m)).rows.CappedLift
+    (X := (univ.erase x, m + 1)) (Y := (univ, m + 1)) ⟨erase_subset _ _, le_rfl⟩
+  refine Rows.cappedLift_of_boundaries_short (C := univ.erase x) (B := univ) (j := m)
+    (U₀ := (univ.erase x, m + 1)) (V₀ := (univ.erase y, m + 1))
+    (O₀ := (univ.erase x ∩ univ.erase y, min (m + 1) m))
+    (U := (univ.erase x, m + 1)) (V := (univ, m)) (O := (univ.erase x, m))
     (erase_subset _ _) ?_ hlift le_rfl ⟨inter_subset_left, min_le_left _ _⟩
     ⟨inter_subset_right, min_le_left _ _⟩ ⟨erase_subset _ _, le_rfl⟩ ⟨erase_subset _ _, le_rfl⟩
-    ?_ (Rows.cappedLift_refl _) (I.cappedLift_commonFace_tower hx hy hxy (by omega))
-    (I.extendsFromBoundary_bot_tower (I.scope_subset_or hx hy hxy) (j + 1))
-    le_rfl ⟨subset_rfl, Nat.le_succ j⟩ ⟨subset_univ _, le_rfl⟩ ⟨erase_subset _ _, le_rfl⟩
-    ⟨subset_rfl, Nat.le_succ j⟩ (fun d hdU hdV ↦ ⟨hdU.1, hdV.2⟩) (Rows.cappedLift_refl _) hlift
-    (I.exists_gradedIndex_eq_univ_tower j) fun u hu ↦
-      ⟨I.isConsistent_tower (j + 1) u, ?_, ?_, fun h hh hs hbot ↦
-        I.extendsFromBoundary_tower hx hy hxy (hU x hx y hy hxy) hu hh hs hbot⟩
-  · exact I.exists_gradedIndex_eq_tower (j + 1)
-      ⟨I.erase_mem_faces hx, Nat.succ_pos j, by rw [card_erase]; omega⟩ (ne_univ_erase x)
-  · intro d hdU hdV
-    have hsub := subset_inter hdU.1 hdV.1
-    exact ⟨hsub, le_min hdU.2 ((hwf.grade_le_card d).trans
-      ((card_le_card hsub).trans (card_erase_inter_erase hx hy hxy).le))⟩
-  · intro d
-    obtain ⟨i, rfl⟩ := Scheme.exists_natAdd_eq (S := I.tower j) (k := j + 1)
-      (hS := I.not_univ_succ_le_tower j) hu
-    exact (Scheme.isShort_ne_top_row_fieldLayer i _).1
-  · intro d
-    obtain ⟨i, rfl⟩ := Scheme.exists_natAdd_eq (S := I.tower j) (k := j + 1)
-      (hS := I.not_univ_succ_le_tower j) hu
-    exact (Scheme.isShort_ne_top_row_fieldLayer i _).2
+    (fun d hdU hdV ↦ I.mem_below_commonFace_tower hx hy hxy (k := m + 1) (by omega) d hdU hdV)
+    (Rows.cappedLift_refl _) (I.cappedLift_commonFace_tower hx hy hxy le_rfl)
+    (I.extendsFromBoundary_bot_tower (I.scope_subset_or hx hy hxy) (m + 1))
+    le_rfl ⟨subset_rfl, Nat.le_succ m⟩ ⟨subset_univ _, le_rfl⟩ ⟨erase_subset _ _, le_rfl⟩
+    ⟨subset_rfl, Nat.le_succ m⟩ (fun d hdU hdV ↦ ⟨hdU.1, hdV.2⟩) (Rows.cappedLift_refl _) hlift
+    (I.exists_gradedIndex_eq_univ_tower m) fun u hu ↦
+      ⟨I.isConsistent_tower (m + 1) u, fun d ↦ (I.isShort_ne_top_rowBelow_tower hu d).1,
+        fun d ↦ (I.isShort_ne_top_rowBelow_tower hu d).2, fun h hh hs hbot ↦
+        I.extendsFromBoundary_tower_top hx hy hxy le_rfl hu hh hs hbot⟩
+  exact I.exists_gradedIndex_eq_tower (m + 1)
+    ⟨I.erase_mem_faces hx, Nat.succ_pos m, by rw [card_erase]⟩ (ne_univ_erase x)
 
-/-- **The invariant up to the grade `m + 1`, under the union fill at the grades `2` to `m`.**  The
-base is the grade `1` (`Seed.towerInvariant_one`); the steps are `Seed.towerInvariant_succ`; at the
-step to the grade `m + 1` the union fill holds within the face (`Seed.unionFill_of_le`).  So the
-union fill is needed only at the grades `j + 1` with `2 ≤ j + 1 ≤ m`. -/
-theorem towerInvariant_of_unionFill
-    (hU : ∀ j, 1 ≤ j → j < m →
-      ∀ x ∈ ({Fin.last (m + 1), Fin.castSucc (Fin.last m)} : Finset (Fin (m + 2))),
-      ∀ y ∈ ({Fin.last (m + 1), Fin.castSucc (Fin.last m)} : Finset (Fin (m + 2))), x ≠ y →
-        I.UnionFill y (univ.erase x ∩ univ.erase y) j) :
+/-- **The invariant up to the grade `m + 1`, under `2FL(j)` at the grades `2 ≤ j + 1 ≤ m`.**  The
+base is the grade `1` (`Seed.towerInvariant_one`); the steps below the top are
+`Seed.towerInvariant_succ`, and the step to the grade `m + 1` is `Seed.towerInvariant_top`.  So
+`2FL(j)` is assumed only at the grades `j + 1` with `2 ≤ j + 1 ≤ m`; at the arity `2` that is
+`2FL(1)` alone. -/
+theorem towerInvariant_of_twoFaceLift (h2 : ∀ j, 1 ≤ j → j < m → I.TwoFaceLift j) :
     ∀ j ≤ m + 1, I.TowerInvariant j
   | 0, _ => I.towerInvariant_zero
   | 1, _ => I.towerInvariant_one
-  | j + 2, hj => I.towerInvariant_succ (by omega)
-      (towerInvariant_of_unionFill hU (j + 1) (by omega))
-      fun x hx y hy hxy ↦ if hjm : j + 1 < m then hU (j + 1) (by omega) hjm x hx y hy hxy
-        else I.unionFill_of_le hx hy hxy (by omega)
+  | j + 2, hj =>
+    if hjm : j + 1 < m then
+      I.towerInvariant_succ hjm.le (towerInvariant_of_twoFaceLift h2 (j + 1) (by omega))
+        (h2 (j + 1) (by omega) hjm)
+    else by
+      have hinv := towerInvariant_of_twoFaceLift h2 (j + 1) (by omega)
+      rw [show j + 1 = m by omega] at hinv
+      rw [show j + 2 = m + 1 by omega]
+      exact I.towerInvariant_top hinv
 
-/-- **The invariant up to the grade `m + 1` at the arities `m ≤ 1`**, with no union fill: there are
-no grades `j + 1` with `2 ≤ j + 1 ≤ m`. -/
-theorem towerInvariant_of_le_one (hm : m ≤ 1) : ∀ j ≤ m + 1, I.TowerInvariant j :=
-  I.towerInvariant_of_unionFill fun _ hj hjm ↦ absurd hjm (by omega)
+/-- **The invariant up to the grade `m + 1` at the arities `m ≤ 1`**, with no hypothesis: the
+grades `0` and `1` are the base, and the grade `2` at `m = 1` is the top grade
+(`Seed.towerInvariant_top`).  It does not use the two-face lift. -/
+theorem towerInvariant_of_le_one (hm : m ≤ 1) : ∀ j ≤ m + 1, I.TowerInvariant j
+  | 0, _ => I.towerInvariant_zero
+  | 1, _ => I.towerInvariant_one
+  | j + 2, hj => by
+    have hinv := I.towerInvariant_one
+    rw [show 1 = m by omega] at hinv
+    rw [show j + 2 = m + 1 by omega]
+    exact I.towerInvariant_top hinv
 
 end Seed
 

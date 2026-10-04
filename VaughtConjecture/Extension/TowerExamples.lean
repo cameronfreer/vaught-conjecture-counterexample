@@ -15,16 +15,15 @@ Roadmap, Layer 3, 3.1, (R6), checkpoint 2.6 (the recursion on the grade; here th
 
 Write `Q b f` for the label `ω * b + f`.
 
-* **Example 1: at arity two the union fill is needed at the grade `2`**
-  (`exists_cell_commonFace_two`, `towerInvariant_two_of_unionFill`,
-  `towerInvariant_three_of_unionFill`).  For every seed on four points the common face `{0, 1}` of
-  the two coatoms carries a cell of grade `2`, which lies below no pair of grade `1`: so at the
-  step to the grade `2` the union of the common face at the grade `2` and the other coatom at the
-  grade `1` is not a pair of the other coatom, and the union fill there is not a lift within a
-  face.  Under that one union fill, the invariant holds at the grade `2`, and then at the grade `3`
-  with no further hypothesis, the union fill at the grade `3` being within the face
-  (`Seed.unionFill_of_le`).  At the arities `m ≤ 1` no union fill is needed
-  (`towerInvariant_of_le_one'`).
+* **Example 1: at arity two the step to the grade `2` assumes `2FL(1)`**
+  (`exists_cell_commonFace_two`, `forall_twoFaceLift_two_iff`, `towerInvariant_two_of_twoFaceLift`,
+  `towerInvariant_three_of_twoFaceLift`).  For every seed on four points the common face `{0, 1}`
+  of the two coatoms carries a cell of grade `2`, which lies below no pair of grade `1`: so the
+  step to the grade `2` is not the top grade, where the other coatom is reached by a lift within it
+  from the lower grade.  At arity two the hypothesis of `Seed.towerInvariant_of_twoFaceLift` is
+  exactly the two-face lift `2FL(1)`; under it the invariant holds at the grade `2`, and then at the
+  grade `3` with no further hypothesis (`Seed.towerInvariant_top`).  At the arities `m ≤ 1` no
+  hypothesis is assumed (`towerInvariant_succ_of_le_one`).
 * **Example 5: literal faces of the tower** (`towerType`, `restrictFace_left_towerType`,
   `restrictFace_right_towerType`).  At a stage that is zero or a limit, the scheme reached after
   any grade `j ≤ m + 2`, with the glued labelling extended through the tower
@@ -41,6 +40,9 @@ Write `Q b f` for the label `ω * b + f`.
   `2` is not self-visible at `3`, and its strip is moved, not merged.  The orbit decoder at the
   least grid point reads the code literally.
 
+The negative regression for the step, a legal seed on four points on which the union fill fails,
+is the module `VaughtConjecture.Extension.UnionFillCounterexample`.
+
 ## Placement
 
 Checkpoint 2.6 of the completion of the coatom extension construction (`roadmap/README.md`,
@@ -53,7 +55,7 @@ namespace VaughtConjecture.TowerExamples
 
 open Finset Label
 
-/-! ### Example 1: the union fill at arity two -/
+/-! ### Example 1: the step to the grade `2` at arity two -/
 
 section ArityTwo
 
@@ -66,14 +68,14 @@ theorem commonFace_eq :
   decide
 
 /-- **The common face carries a cell of grade two**, by completeness of the amalgam below the full
-face; it lies below no pair of grade `1`.  So at the step to the grade `2` the union of the common
-face at the grade `2` and the other coatom at the grade `1` is not below a pair of the other
-coatom of grade `1`: the union fill at the grade `2` is not a lift within a face. -/
+face; it lies below no pair of grade `1`.  So the step to the grade `2` is not the top grade: the
+other coatom's cells of the grade `2` include a cell of the common face, which a lift within that
+coatom from the grade `1` does not prescribe. -/
 theorem exists_cell_commonFace_two :
     ∃ d, I.amalgam.toCellScheme.gradedIndex d = ({0, 1}, 2) ∧
       ∀ B : Finset (Fin 4), d ∉ I.amalgam.toCellScheme.below (B, 1) := by
   have hE : ({0, 1} : Finset (Fin 4)) ∈ I.amalgam.toCellScheme.faces := by
-    convert I.common_mem_faces using 1
+    convert I.commonFace_mem_faces using 1
     decide
   obtain ⟨d, hd⟩ := I.exists_gradedIndex_eq ({0, 1}, 2) ⟨hE, two_pos, by decide⟩ (by decide)
   refine ⟨d, hd, fun B hB ↦ ?_⟩
@@ -81,34 +83,28 @@ theorem exists_cell_commonFace_two :
   have h1 : I.amalgam.toCellScheme.grade d ≤ 1 := hB.2
   omega
 
-/-- **The step to the grade `2` at arity two, under the union fill there**: from the invariant at
-the grade `1` (the amalgam boundary) by `Seed.towerInvariant_succ`. -/
-theorem towerInvariant_two_of_unionFill
-    (hU : ∀ x ∈ ({Fin.last 3, Fin.castSucc (Fin.last 2)} : Finset (Fin 4)),
-      ∀ y ∈ ({Fin.last 3, Fin.castSucc (Fin.last 2)} : Finset (Fin 4)), x ≠ y →
-        I.UnionFill y (univ.erase x ∩ univ.erase y) 1) :
-    I.TowerInvariant 2 :=
-  I.towerInvariant_succ (by omega) I.towerInvariant_one hU
+/-- **At arity two the two-face lift is assumed at the grade `1` only**: the hypothesis of
+`Seed.towerInvariant_of_twoFaceLift` is `2FL(1)`. -/
+theorem forall_twoFaceLift_two_iff :
+    (∀ j, 1 ≤ j → j < 2 → I.TwoFaceLift j) ↔ I.TwoFaceLift 1 :=
+  ⟨fun h ↦ h 1 le_rfl one_lt_two, fun h j hj hj2 ↦ by obtain rfl : j = 1 := (by omega); exact h⟩
 
-/-- **The invariant up to the grade `3` at arity two, under the union fill at the grade `2`
-only**: the union fill at the grade `3` is within the face (`Seed.unionFill_of_le`). -/
-theorem towerInvariant_three_of_unionFill
-    (hU : ∀ x ∈ ({Fin.last 3, Fin.castSucc (Fin.last 2)} : Finset (Fin 4)),
-      ∀ y ∈ ({Fin.last 3, Fin.castSucc (Fin.last 2)} : Finset (Fin 4)), x ≠ y →
-        I.UnionFill y (univ.erase x ∩ univ.erase y) 1) :
-    I.TowerInvariant 3 :=
-  I.towerInvariant_of_unionFill (fun j hj hjm ↦ by obtain rfl : j = 1 := (by omega); exact hU) 3
-    le_rfl
+/-- **The step to the grade `2` at arity two, under `2FL(1)`**: from the invariant at the grade `1`
+(the amalgam boundary) by `Seed.towerInvariant_succ`. -/
+theorem towerInvariant_two_of_twoFaceLift (h2 : I.TwoFaceLift 1) : I.TowerInvariant 2 :=
+  I.towerInvariant_succ (by omega) I.towerInvariant_one h2
 
-/-- **The lift at the grade `3` at arity two, coordinate by coordinate, under the union fill at the
-grade `2`**: at every cap `c` self-visible at `3`, a prescription lawful below the coatom
-`({0, 1, 2}, 3)` and an ambient lawful below `(univ, 3)` with the same observation at `c` below the
-coatom have a lift that reads the prescription literally and keeps the observation of the ambient
-at every cell below `(univ, 3)`, those of the layers at the grades `1` and `2` included. -/
-theorem exists_lift_three_of_unionFill
-    (hU : ∀ x ∈ ({Fin.last 3, Fin.castSucc (Fin.last 2)} : Finset (Fin 4)),
-      ∀ y ∈ ({Fin.last 3, Fin.castSucc (Fin.last 2)} : Finset (Fin 4)), x ≠ y →
-        I.UnionFill y (univ.erase x ∩ univ.erase y) 1)
+/-- **The invariant up to the grade `3` at arity two, under `2FL(1)` only**: the step to the grade
+`3` is the top grade (`Seed.towerInvariant_top`). -/
+theorem towerInvariant_three_of_twoFaceLift (h2 : I.TwoFaceLift 1) : I.TowerInvariant 3 :=
+  I.towerInvariant_top (towerInvariant_two_of_twoFaceLift I h2)
+
+/-- **The lift at the grade `3` at arity two, coordinate by coordinate, under `2FL(1)`**: at every
+cap `c` self-visible at `3`, a prescription lawful below the coatom `({0, 1, 2}, 3)` and an ambient
+lawful below `(univ, 3)` with the same observation at `c` below the coatom have a lift that reads
+the prescription literally and keeps the observation of the ambient at every cell below
+`(univ, 3)`, those of the layers at the grades `1` and `2` included. -/
+theorem exists_lift_three_of_twoFaceLift (h2 : I.TwoFaceLift 1)
     {c : Label.{u}} (hc : IsSelfVisible 3 c)
     (p : (I.tower 3).toCellScheme.below (univ.erase (Fin.last 3), 3) → Label.{u})
     (q : (I.tower 3).toCellScheme.below (univ, 3) → Label.{u})
@@ -122,13 +118,13 @@ theorem exists_lift_three_of_unionFill
           (show ((univ.erase (Fin.last 3), 3) : Finset (Fin 4) × ℕ) ≤ (univ, 3) from
             ⟨erase_subset _ _, le_rfl⟩)) d) = p d :=
   (CellScheme.Rows.cappedLift_iff_forall_exists _).mp
-    (towerInvariant_three_of_unionFill I hU _ (mem_insert_self _ _) 3 le_rfl) c hc p q hp hq hpq
+    (towerInvariant_three_of_twoFaceLift I h2 _ (mem_insert_self _ _) 3 le_rfl) c hc p q hp hq hpq
 
 end ArityTwo
 
-/-- **No union fill at the arities `m ≤ 1`**: the invariant holds up to the grade `m + 1`
+/-- **No hypothesis at the arities `m ≤ 1`**: the invariant holds up to the grade `m + 1`
 (`Seed.towerInvariant_of_le_one`). -/
-theorem towerInvariant_of_le_one' {α : Ordinal.{u}} {m : ℕ} (hm : m ≤ 1) (I : Seed.{u} α m) :
+theorem towerInvariant_succ_of_le_one {α : Ordinal.{u}} {m : ℕ} (hm : m ≤ 1) (I : Seed.{u} α m) :
     I.TowerInvariant (m + 1) :=
   I.towerInvariant_of_le_one hm (m + 1) le_rfl
 
