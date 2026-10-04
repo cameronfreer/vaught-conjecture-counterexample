@@ -40,7 +40,7 @@ self-visible at `2`.  Write `Q b f` for the label `ω * b + f`.
   four cells on one point; each coatom carries an apex of grade `2` labelled `⊤`.  The lift from the
   coatom `({0, 1}, 2)` to `(univ, 2)` at the cap `ω * 4 + 2` keeps the observation of the ambient at
   every cell of the lower layer, for every lawful prescription and ambient, among them a
-  prescription whose owner is the apex labelled `⊤`, above every label of grade `1`.  It holds
+  prescription whose owner is the apex with the maximal label `⊤` (ties are allowed).  It holds
   because the grade-two step uses the lift at grade one as the boundary lift into `(univ, 1)`, with
   `O = (C, 1)`; the catalogue at grade one does not read the cells of grade two.
 
@@ -291,7 +291,7 @@ private theorem exists_label_of_restrictFace {α : Ordinal.{u}} {n m j : ℕ}
 `({0, 1}, 2)` to `(univ, 2)` at the cap `ω * 4 + 2` keeps, at every cell of the lower layer (graded
 index `(univ, 1)`), the observation of the ambient at the cap, for every lawful prescription and
 ambient with the same observation below the coatom; the prescription may have the apex of the
-coatom, labelled `⊤`, as its owner, above every label of grade `1`
+coatom, with the maximal label `⊤`, as its owner (ties are allowed)
 (`exists_apex_prescription_fourCellPairSeed`).  It is the lift
 `Seed.exists_lift_fieldLayerOne_two`, whose grade-two step uses `V = (univ, 1)` and `O = (C, 1)`
 and whose catalogue at grade one does not read the cells of grade two. -/
