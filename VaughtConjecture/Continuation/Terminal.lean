@@ -67,8 +67,9 @@ A tuple `c` is a **globally rigid core** of `R` (`Realization.IsGloballyRigidCor
 along `e` is rigid in `t` for every cover `x` of a stage type `t` in `R` and every `e` with
 `x ∘ e = c`.  Every tuple containing the points of an injective globally rigid core is one
 (`IsGloballyRigidCore.mono`), so
-a realization has a globally rigid core among the finite sets exactly when it has one among the
-covers.  For a model at a limit stage, the top-grade supremum is `0` exactly when every actual type
+a covering realization (every injective tuple is a face of a cover) has a globally rigid core
+among the injectively enumerated finite sets exactly when it has one among the covers.  For a
+model at a limit stage, the top-grade supremum is `0` exactly when every actual type
 is top-free (`topGradeSup_eq_zero_iff`), exactly when the empty tuple is a globally rigid core
 (`IsModel.isGloballyRigidCore_empty_iff`).
 
@@ -329,6 +330,7 @@ theorem isRigidCoreIn_empty_iff_isTopFree (hα : Order.IsSuccLimit α) (ht : t.I
     refine ⟨fun hne ↦ min_eq_left ((ho i hne).trans hoc'.le), ?_, fun hi _ ↦ ?_⟩
     · simp only [Set.mem_empty_iff_false, iff_false]
       exact fun h' ↦ hctop (min_eq_top.mp h').2
+    -- the label of the capped type `t'` at `i` is `min (t.label i) c`, by its definition
     · change (min (t.label i) c).IsProper
       rw [hi, min_eq_right le_top]
       exact isProper_coe c
@@ -358,8 +360,9 @@ def IsGloballyRigidCore (c : Fin k → M) : Prop :=
     x ∘ e = c → t.IsRigidCoreIn e
 
 /-- **A larger core is globally rigid**: every tuple containing the points of an injective
-globally rigid core is a globally rigid core.  So a realization has a globally rigid core among
-its finite sets exactly when it has one among its covers. -/
+globally rigid core is a globally rigid core.  So a covering realization (every injective tuple
+is a face of a cover) has a globally rigid core among its injectively enumerated finite sets
+exactly when it has one among its covers. -/
 theorem IsGloballyRigidCore.mono {c : Fin k → M} {c' : Fin m → M}
     (h : R.IsGloballyRigidCore c) (hc : Function.Injective c) (hcc : Set.range c ⊆ Set.range c') :
     R.IsGloballyRigidCore c' := by

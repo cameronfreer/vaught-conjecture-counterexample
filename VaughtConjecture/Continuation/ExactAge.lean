@@ -16,7 +16,11 @@ import VaughtConjecture.Realization.Model
 Roadmap, Layer 4 (terminal classification by exact ages: two countable exactly consistent
 covering realizations with the same exact age and exact receiving are isomorphic, by
 back-and-forth over literal roots, one point at a time along a chain of closed sets); semantic
-contract, items 4, 8 and 12.
+contract, items 4, 8 and 12.  This file proves the form for expansions of base structures: the
+isomorphism is one of the base structures, which is what the count of the successor losses needs;
+an isomorphism of the realizations themselves is not proved here.  The chain of closed sets
+enters through the passage from one-point to multi-point exact receiving, not in the
+back-and-forth itself.
 
 **Exact receiving within an age.**  Let `A m` be a set of stage types on `m` points, for every
 `m`.  A realization `R` has **exact receiving within `A`** (`Realization.ExactReceivingWithin`)
@@ -25,8 +29,9 @@ an embedding `g` of coordinates, some cover `u` of `D` itself extends `c` along 
 (`u ∘ g = c`).  The received type is the donor, with no cutoff: this is the exact form of
 receiving, not finite-extension receiving at a permitted cutoff
 (`Realization.HasFiniteExtensionReceiving`), whose received type only agrees with the donor below
-the cutoff.  The donors may add several points at once.  When `A` is closed under the face maps,
-the one-point form (donors on one more point, along the initial segment) gives the multi-point
+the cutoff.  The donors may add several points at once.  When `R` is exactly consistent
+(`Realization.IsConsistent`) and `A` is closed under the face maps, the one-point form (donors
+on one more point, along the initial segment) gives the multi-point
 form (`ExactReceivingWithin.of_one_point`): the image of `g` is a closed face of `D`, and the
 closed faces form a convex geometry, so a chain of closed sets, each one point larger than the
 last (`Geometry.IsConvexGeometry.exists_insert_mem`), leads from the image of `g` to all points
@@ -51,7 +56,9 @@ have the same atomic type in the base language (`Realization.Covers.sameAtomicTy
 pointed age (**age inclusion**) and `R'` has exact receiving within it at its core, a new point
 `m` of `M` is matched (`CoverMatch.exists_snoc`): cover `x` followed by `m` by a typed tuple `u`
 with this initial segment (`Realization.IsCovering.exists_castAdd`, as in the forth step of
-condition 3); its type `D` is in the age and restricts to the common type along the coordinates
+condition 3 of the reduction of the main theorem to expansion domains, the comparison of two
+models in one expansion domain, `Expansion.exists_extend_covers`); its type `D` is in the age
+and restricts to the common type along the coordinates
 of `x` (`Realization.Covers.eval_comp`), and exact receiving gives a cover of `D` in `R'`
 extending `y`.  Symmetrically for a new point of `N`.  So the matched tuples form a
 back-and-forth system, and InfinitaryLogic's countable back-and-forth construction

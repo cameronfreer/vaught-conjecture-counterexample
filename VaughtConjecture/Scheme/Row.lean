@@ -16,7 +16,7 @@ expositions, §1 (semantic rows constrain which labellings are lawful).
 The **semantic rows** of a cell scheme `D` (`CellScheme.Rows D`) are raw data: for every cell `s`
 a labelling `R.row s` of the cells below `s`, that is, of `D.below (D.gradedIndex s)`.  They are
 separate from the scheme itself; the bundle of a scheme with its rows (and its label section)
-belongs to the stage types of the next tranche.  A labelling
+belongs to the stage types (`VaughtConjecture.Stage.Basic`).  A labelling
 `p : ι → Label` of all cells is a **lawful section** of the rows (`Rows.IsLawful R p`) when it
 satisfies three laws:
 
