@@ -990,10 +990,16 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     the injectivity of model reduction (the inequality step of row 35, then 5 ⇒ 1 of row 34),
     with no further stabilization argument.  The terminal presentations come from either of two
     distinct stopping proofs, both prospective: (i) the countable-slot argument (the termination
-    argument of [AFK26]; its conclusion is eventual departure, the stopping half of global
-    termination, and not terminal fullness, which is the first special statement; `README.md`,
-    "The persistent core"), or (ii) the Scott route of row 40.  Neither may use positive niceness,
-    and neither is a dependency of the expansion-domain endpoint.
+    argument of [AFK26]), or (ii) the Scott route of row 40.  For (i), "countably many slots,
+    each used at most once" alone does not establish even the stopping half of global
+    termination.  A proof along it is to supply (a) which events use a slot, (b) why every
+    relevant continuation uses a fresh slot, and (c) why exhausting those events yields an actual
+    terminal presentation; countably many events may still continue through a countable limit,
+    whose supremum is not by itself an attainment or a terminality proof.  That its conclusion is
+    eventual departure, the stopping half of global termination (`README.md`, "The persistent
+    core"), and not terminal fullness, which is the first special statement, is prospective, to
+    be supplied by (a)–(c).  Neither may use positive niceness, and neither is a dependency of
+    the expansion-domain endpoint.
 31. Prospective: no declaration of this repository states it.  Its ingredients for labels are
     compiled in this repository (theorem named): `Label.reduce_eq_self_iff` (fixed by projection
     exactly at the labels of the stage), and `Label.reduce_reduce_of_le`, `Label.atStage_reduce`
@@ -1106,11 +1112,11 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     Attainment: `Realization.IsModel.reduce` and `ModelExpansion.nonempty_of_forall_lt`, the
     latter conditional on `Expansion.NextBlockUniqueness`.  These are compiled in this repository
     (theorem named; `ModelExpansion.map` is a definition), except the library statements and the
-    conversion; their hypotheses are
-    still to be proved.  The strict bound on serving stages, the attainment for a literal base,
-    and positive niceness (5 ⇒ 1 of row 34) are prospective.  The route proves stopping for each
-    base that is a model as its conclusion and assumes no termination; it is not a dependency of
-    the expansion-domain endpoint and is not combined with the conditional of row 31 in a cycle.
+    conversion; their hypotheses are still to be proved.  The strict bound on serving stages, the
+    attainment for a literal base, and positive niceness (5 ⇒ 1 of row 34) are prospective.  The
+    route proves stopping for each base that is a model as its conclusion and assumes no
+    termination; it is not a dependency of the expansion-domain endpoint and is not combined with
+    the conditional of row 31 in a cycle.
 
 **Completion criteria, item by item** (the items of `README.md`, "Manuscript correspondence
 (required)").  For every item, each row of the concordance that it concerns is P or C, with its
@@ -1269,10 +1275,14 @@ named, and none is complete because another is.
 5. *The stopping proofs and positive niceness:* each stopping proof that is used (the
    countable-slot argument; the Scott route, 4 above) stated as its own theorem, concluding a
    terminal presentation of each base that is a model, with its own dependencies, the two not
-   merged; positive niceness compiled from an actual terminal presentation (terminal collision
-   and the injectivity of model reduction, then 5 ⇒ 1 of row 34), with no further stabilization
-   argument and with no stopping proof using it; neither stopping proof a dependency of the
-   expansion-domain endpoint.
+   merged; a proof of the countable-slot argument provides (a) which events use a slot, (b) why
+   every relevant continuation uses a fresh slot, and (c) why exhausting those events yields an
+   actual terminal presentation, attained and terminal, not only the supremum of countably many
+   stages (`README.md`, item 5, "Two stopping proofs; positive niceness from a terminal
+   presentation", (i)); positive niceness compiled from an actual terminal presentation
+   (terminal collision and the injectivity of model reduction, then 5 ⇒ 1 of row 34), with no
+   further stabilization argument and with no stopping proof using it; neither stopping proof a
+   dependency of the expansion-domain endpoint.
 
 The five acceptance criteria of `README.md` ("Acceptance criteria of the correspondence") apply to
 every item: reconstruction, density, finite objects, rank budgets, and priorities.

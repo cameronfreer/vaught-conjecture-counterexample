@@ -715,13 +715,17 @@ is compiled conditionally on block determination (below).  None is an input to t
   "Uniform fixing bounds from positive niceness" (prospective), which uses no termination; there
   termination can enter only through the construction of positive niceness (milestone 2): as
   the stopping half of global termination (eventual departure for every class, not terminal
-  fullness) when milestone 2 is taken from the countable-slot argument, and only as a
-  conclusion, proved for each base from conditions 3 and 4, when it is taken from the Scott route
-  to maximal presentations (`README.md`, item 5; prospective), whose strict bound on serving
-  stages is eventual departure (1 above) read for one class, followed by greatest-stage
-  attainment (bounded-stage attainment, 4 ⇒ 5 of the five criteria there).  For
-  one literal base that is a model, a bound of this kind over all its model presentations is
-  equivalent to a maximal presentation of the base (criteria 3 and 5 of `README.md`, item 5,
+  fullness) when milestone 2 is taken from the countable-slot argument, whose conclusion is that
+  half only prospectively: which events use its slots, why every relevant continuation uses a
+  fresh slot, and why exhausting those events yields an actual terminal presentation (the
+  supremum of countably many stages is not by itself one) are still to be supplied (`README.md`,
+  item 5, "Two stopping proofs; positive niceness from a terminal presentation", (i)); and only
+  as a conclusion, proved for each base from conditions 3 and 4, when it is taken from the Scott
+  route to maximal presentations (`README.md`, item 5; prospective), whose strict bound on
+  serving stages is eventual departure (1 above) read for one class, followed by greatest-stage
+  attainment (bounded-stage attainment, 4 ⇒ 5 of the five criteria there).  For one literal
+  base that is a model, a bound of this kind over all its model presentations is equivalent to
+  a maximal presentation of the base (criteria 3 and 5 of `README.md`, item 5,
   "Maximal presentations: equivalent criteria, uniqueness, the optimal bound"; prospective),
   conditional on the injectivity of model reduction at each countable index (raw form
   `ModelExpansion.subsingleton`, conditional on `Expansion.NextBlockUniqueness`, still to be
