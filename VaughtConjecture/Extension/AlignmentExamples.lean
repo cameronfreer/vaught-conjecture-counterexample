@@ -194,7 +194,7 @@ private theorem stripAmbient_source (e : Bool) :
 /-- **The owner-local alignment on the strip example**: its hypotheses hold there, so some source
 cap, reading cap, and alignment decoder have its conclusions. -/
 theorem exists_alignment_strip :
-    ∃ h δ ρ, ⊥ < h ∧ h ≠ ⊤ ∧ IsSelfVisible 2 h ∧ h ≤ stripSource.{u} true ∧
+    ∃ h δ ρ, ⊥ < h ∧ h ≠ ⊤ ∧ IsSelfVisible 2 h ∧ IsShort 2 h ∧ h ≤ stripSource.{u} true ∧
       IsWitness (stepSuppressor.{u} 2) ρ ∧ stripCap ≤ δ ∧ δ ≤ stripPrescription true ∧
       IsSelfVisible 2 δ ∧ ρ h = δ ∧
       (∀ e, min (stripPrescription e) δ = min (ρ (stripSource e)) δ) ∧
@@ -405,7 +405,7 @@ example : ∃ w : (oneFace (Fin 1)).below ((univ : Finset (Fin 1)), 0 + 1) → L
 
 /-- *Grade `0`*: on a single cell of grade `0`, with row `⊤`, source `ω`, prescription `⊤`, cap
 `1`, and the witness `x ↦ min x 1`, the owner-local alignment applies. -/
-example : ∃ h δ ρ, ⊥ < h ∧ h ≠ ⊤ ∧ IsSelfVisible 0 h ∧ h ≤ pt.{u} 1 0 ∧
+example : ∃ h δ ρ, ⊥ < h ∧ h ≠ ⊤ ∧ IsSelfVisible 0 h ∧ IsShort 0 h ∧ h ≤ pt.{u} 1 0 ∧
     IsWitness (stepSuppressor.{u} 0) ρ ∧ 1 ≤ δ ∧ δ ≤ ⊤ ∧ IsSelfVisible 0 δ ∧ ρ h = δ ∧
     (∀ _ : Unit, min ⊤ δ = min (ρ (pt 1 0)) δ) ∧
     (∀ _ : Unit, δ < min (⊤ : Label.{u}) ⊤ → h ≤ pt 1 0) ∧
