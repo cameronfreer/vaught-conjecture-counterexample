@@ -6,6 +6,7 @@ Authors: Cameron Freer
 import VaughtConjecture.Realization.Families
 import VaughtConjecture.Realization.Hull
 import VaughtConjecture.Realization.Transport
+import VaughtConjecture.Stage.TopFree
 
 /-!
 # Models
@@ -70,6 +71,12 @@ The caps are `⊥` for saturation (`IsModel.reduce_saturation`, any `β` that is
 and a positive ordinal below `β` for the bottom pattern (`IsModel.reduce_bottomPattern`, which
 therefore needs `β ≠ 0`).  The stage `α` must be zero or a limit so that the lifted labels can be
 reduced to stage `α` lawfully; stages of models in the source are limits.
+
+**Reductions of a model below its stage are not top-free.**  The reduction of a model at `α` to a
+stage `β < α` that is zero or a limit has a type with a top label
+(`IsModel.exists_not_isTopFree_reduce`): covering gives an occurrence, over which the uniformity
+clause at `γ = β` realizes a label in `[β, β + ω)`, which reduction to `β` sends to the formal top.
+Only covering and that clause are used.
 
 **Finite-cut receiving.**  A realization has the finite-cut receiving property
 (`HasFiniteCutReceiving`) when over every occurrence, for every coface `d` of its type and every
@@ -374,6 +381,19 @@ theorem IsModel.reduce (hR : R.IsModel) (hα : Order.IsSuccPrelimit α) (hβ : O
   bottomPattern := hR.reduce_bottomPattern hα hβ
   uniformity := hR.reduce_uniformity _ hβα
   dominance := hR.reduce_dominance _ hβα
+
+/-- **Reduction of a model below its stage has a top label**: for a model `S` at `α` and a stage
+`β < α` that is zero or a limit, some type of the reduction of `S` to `β` is not top-free.  Over an
+occurrence given by covering, the uniformity clause of `S` at `γ = β` realizes a label at least
+`β`, which reduction to `β` sends to the formal top (`Label.reduce_of_le`).  No other clause of a
+model is used. -/
+theorem IsModel.exists_not_isTopFree_reduce {S : Realization.{u, v} α M} (hS : S.IsModel)
+    (hβ : Order.IsSuccPrelimit β) (hβα : β < α) :
+    ∃ (n : ℕ) (t : Fin n ↪ M) (p : StageType.{u} β n),
+      (S.reduce hβ).eval t = some p ∧ ¬ p.IsTopFree := by
+  obtain ⟨x⟩ := hS.nonempty_occurrence
+  obtain ⟨u, -, q, ⟨d, hd, -⟩, hq⟩ := hS.uniformity x β hβ hβα
+  exact ⟨_, u, q.reduce hβ, by rw [reduce_eval, hq, Option.map_some], fun h ↦ h d (reduce_of_le hd)⟩
 
 /-! ### Isomorphisms -/
 
