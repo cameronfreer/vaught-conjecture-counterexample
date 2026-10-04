@@ -11,7 +11,7 @@ import VaughtConjecture.Geometry.IntervalPlan
 /-!
 # Examples for the base-language formulas of the chart predicates
 
-Special cases of `VaughtConjecture.Definability.Syntax`, `VaughtConjecture.Definability.BlockStages`
+Special cases of `VaughtConjecture.Definability.Syntax`, `VaughtConjecture.Realization.BlockStages`
 and `VaughtConjecture.Definability.BlockFormulas`:
 
 * the syntax: closing no variable, and the extension formula along the identity;

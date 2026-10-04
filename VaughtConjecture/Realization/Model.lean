@@ -6,6 +6,7 @@ Authors: Cameron Freer
 import VaughtConjecture.Realization.Families
 import VaughtConjecture.Realization.Hull
 import VaughtConjecture.Realization.Transport
+import VaughtConjecture.Stage.TopFree
 
 /-!
 # Models
@@ -19,7 +20,10 @@ one).
 A realization `R` **realizes a member of `U` over a tuple `t`** (`Realization.RealizesOver`) when
 some typed tuple `u` on one more point, with `t` as its initial segment, has its type in `U`.  The
 new point is automatically off `t`, since `u` is injective, and under exact consistency the type
-of `u` is a coface of the type of `t` (`RealizesOver.inter_cofaces`).
+of `u` is a coface of the type of `t` (`RealizesOver.inter_cofaces`).  Realized members pass to a
+stage reduction when the family reduces into the reduced family (`RealizesOver.reduce`), and back
+when every type whose reduction is in the reduced family is in the family
+(`RealizesOver.of_reduce`).
 
 A **model** (`Realization.IsModel`) is a realization on a nonempty carrier whose types are legal,
 which is exactly consistent and covering, and which realizes, over every occurrence of type `p`, a
@@ -70,6 +74,12 @@ The caps are `⊥` for saturation (`IsModel.reduce_saturation`, any `β` that is
 and a positive ordinal below `β` for the bottom pattern (`IsModel.reduce_bottomPattern`, which
 therefore needs `β ≠ 0`).  The stage `α` must be zero or a limit so that the lifted labels can be
 reduced to stage `α` lawfully; stages of models in the source are limits.
+
+**Reductions of a model below its stage are not top-free.**  The reduction of a model at `α` to a
+stage `β < α` that is zero or a limit has a type with a top label
+(`IsModel.exists_not_isTopFree_reduce`): covering gives an occurrence, over which the uniformity
+clause at `γ = β` realizes a label in `[β, β + ω)`, which reduction to `β` sends to the formal top.
+Only covering and that clause are used.
 
 **Finite-cut receiving.**  A realization has the finite-cut receiving property
 (`HasFiniteCutReceiving`) when over every occurrence, for every coface `d` of its type and every
@@ -158,6 +168,16 @@ theorem RealizesOver.reduce {β : Ordinal.{u}} (hβ : Order.IsSuccPrelimit β)
     (hU : ∀ q ∈ U, q.reduce hβ ∈ U') : (R.reduce hβ).RealizesOver t U' := by
   obtain ⟨u, hu, q, hq, he⟩ := h
   exact ⟨u, hu, q.reduce hβ, hU q hq, by rw [reduce_eval, he, Option.map_some]⟩
+
+/-- Realizing a family in a stage reduction: if every type whose reduction is in `U'` is in `U`,
+a realization of `U'` over `t` in the stage reduction of `R` is a realization of `U` in `R`. -/
+theorem RealizesOver.of_reduce {α β : Ordinal.{u}} {R : Realization.{u, v} α M}
+    (hβ : Order.IsSuccPrelimit β) {t : Fin n ↪ M} {U : Set (StageType.{u} α (n + 1))}
+    {U' : Set (StageType.{u} β (n + 1))} (h : (R.reduce hβ).RealizesOver t U')
+    (hU : ∀ q, q.reduce hβ ∈ U' → q ∈ U) : R.RealizesOver t U := by
+  obtain ⟨u, hu, q', hq', he⟩ := h
+  obtain ⟨q, hq, rfl⟩ := Option.map_eq_some_iff.mp he
+  exact ⟨u, hu, q, hU q hq', hq⟩
 
 end RealizesOver
 
@@ -374,6 +394,19 @@ theorem IsModel.reduce (hR : R.IsModel) (hα : Order.IsSuccPrelimit α) (hβ : O
   bottomPattern := hR.reduce_bottomPattern hα hβ
   uniformity := hR.reduce_uniformity _ hβα
   dominance := hR.reduce_dominance _ hβα
+
+/-- **Reduction of a model below its stage has a top label**: for a model `S` at `α` and a stage
+`β < α` that is zero or a limit, some type of the reduction of `S` to `β` is not top-free.  Over an
+occurrence given by covering, the uniformity clause of `S` at `γ = β` realizes a label at least
+`β`, which reduction to `β` sends to the formal top (`Label.reduce_of_le`).  No other clause of a
+model is used. -/
+theorem IsModel.exists_not_isTopFree_reduce {S : Realization.{u, v} α M} (hS : S.IsModel)
+    (hβ : Order.IsSuccPrelimit β) (hβα : β < α) :
+    ∃ (n : ℕ) (t : Fin n ↪ M) (p : StageType.{u} β n),
+      (S.reduce hβ).eval t = some p ∧ ¬ p.IsTopFree := by
+  obtain ⟨x⟩ := hS.nonempty_occurrence
+  obtain ⟨u, -, q, ⟨d, hd, -⟩, hq⟩ := hS.uniformity x β hβ hβα
+  exact ⟨_, u, q.reduce hβ, by rw [reduce_eval, hq, Option.map_some], fun h ↦ h d (reduce_of_le hd)⟩
 
 /-! ### Isomorphisms -/
 

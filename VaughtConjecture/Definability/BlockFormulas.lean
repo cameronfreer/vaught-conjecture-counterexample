@@ -5,7 +5,7 @@ Authors: Cameron Freer
 -/
 import InfinitaryLogic.Karp.CarrierTheorem
 import InfinitaryLogic.Lomega1omega.Theory
-import VaughtConjecture.Definability.BlockStages
+import VaughtConjecture.Realization.BlockStages
 import VaughtConjecture.Definability.Syntax
 import VaughtConjecture.Language.HullOperations
 
