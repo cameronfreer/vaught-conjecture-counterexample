@@ -11,7 +11,7 @@ import VaughtConjecture.Realization.Hull
 import VaughtConjecture.Realization.Model
 import VaughtConjecture.Scheme.Row
 import VaughtConjecture.Stage.Legal
-import VaughtConjecture.Stage.TopFree
+import VaughtConjecture.Stage.Cap
 
 /-!
 # Terminal models, top grade, admissible top supports, and rigid cores
@@ -58,10 +58,10 @@ admissible top support containing the top cells supported on the core (the cells
 Rigidity concerns admissible top supports, not automorphisms.  A larger core is rigid when a
 smaller one is (`IsRigidCoreIn.mono`), a top-free type has every core rigid
 (`isRigidCoreIn_of_isTopFree`), and at a limit stage the empty core is rigid in a legal type
-exactly when the type is top-free (`isRigidCoreIn_empty_iff_isTopFree`): otherwise capping every
-label at a cap self-visible at the arity, below the stage and above every proper label, is lawful
-(`CellScheme.Rows.IsLawful.min_const_of_isSelfVisible`, [Kni26, Lemma 2.5.8]), keeps the other
-labels and lowers every top label to the cap, so the empty set is an admissible top support.
+exactly when the type is top-free (`isRigidCoreIn_empty_iff_isTopFree`): otherwise the type
+capped at a cap self-visible at the arity, below the stage and above every proper label
+(`StageType.cap`, lawful by [Kni26, Lemma 2.5.8]), keeps the other labels and lowers every top
+label to the cap, so the empty set is an admissible top support.
 
 A tuple `c` is a **globally rigid core** of `R` (`Realization.IsGloballyRigidCore`) when the core
 along `e` is rigid in `t` for every cover `x` of a stage type `t` in `R` and every `e` with
@@ -302,37 +302,22 @@ private theorem exists_label_le (t : StageType.{u} α n) (h0 : 0 < α) :
     (Subtype.coe_le_coe.mpr (hmax d))))⟩
 
 /-- **The empty core is rigid exactly in the top-free types**: at a limit stage, the empty core is
-rigid in a legal stage type exactly when the type is top-free.  Otherwise, capping every label at
-an ordinal below the stage, self-visible at the arity and above every proper label, is lawful
-([Kni26, Lemma 2.5.8]) and lowers every top label to a proper one, keeping the others: the empty
-set is an admissible top support. -/
+rigid in a legal stage type exactly when the type is top-free.  Otherwise, the type capped at an
+ordinal below the stage, self-visible at the arity and above every proper label (`cap`, lawful by
+[Kni26, Lemma 2.5.8]), lowers every top label to a proper one, keeping the others: the empty set is
+an admissible top support. -/
 theorem isRigidCoreIn_empty_iff_isTopFree (hα : Order.IsSuccLimit α) (ht : t.IsLegal)
     (e : Fin 0 ↪ Fin n) : t.IsRigidCoreIn e ↔ t.IsTopFree := by
   refine ⟨fun h d₀ hd₀ ↦ ?_, fun h ↦ isRigidCoreIn_of_isTopFree h e⟩
   obtain ⟨o, hoα, ho⟩ := t.exists_label_le hα.bot_lt
   obtain ⟨c, hoc, hcα, hc⟩ := exists_lt_lt_isSelfVisible hα.isSuccPrelimit hoα n
-  have hcα' : (c : Label.{u}) < α := by exact_mod_cast hcα
   have hoc' : (o : Label.{u}) < c := by exact_mod_cast hoc
-  have hctop : (c : Label.{u}) ≠ ⊤ := WithBot.coe_injective.ne WithTop.coe_ne_top
-  -- the type capped at `c`
-  let t' : StageType.{u} α n :=
-    { toScheme := t.toScheme
-      label := fun d ↦ min (t.label d) c
-      isWellFormed := t.isWellFormed
-      isCoded := t.isCoded
-      isLawful := t.isLawful.min_const_of_isSelfVisible (fun d ↦
-        (t.isWellFormed.isWellFormed.grade_le_card d).trans ((card_le_univ _).trans_eq
-          (Fintype.card_fin n))) hc
-      atStage := fun _ ↦ .inl ((min_le_right _ _).trans_lt hcα') }
   have hadm : t.IsAdmissibleTopSupport ∅ := by
-    refine ⟨t', ht, rfl, fun i j hij ↦ ?_⟩
+    refine ⟨t.cap c hc hcα, ht, rfl, fun i j hij ↦ ?_⟩
     obtain rfl : i = j := Fin.ext hij
     refine ⟨fun hne ↦ min_eq_left ((ho i hne).trans hoc'.le), ?_, fun hi _ ↦ ?_⟩
-    · simp only [Set.mem_empty_iff_false, iff_false]
-      exact fun h' ↦ hctop (min_eq_top.mp h').2
-    -- the label of the capped type `t'` at `i` is `min (t.label i) c`, by its definition
-    · change (min (t.label i) c).IsProper
-      rw [hi, min_eq_right le_top]
+    · exact iff_of_false (isTopFree_cap i) (Set.notMem_empty i)
+    · rw [cap_label (t := t) i, hi, min_eq_right le_top]
       exact isProper_coe c
   refine h ∅ hadm (fun d hd _ ↦ ?_) d₀ hd₀
   -- no cell is supported on the empty core: its scope would be empty
