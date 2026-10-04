@@ -5,13 +5,14 @@ Authors: Cameron Freer
 -/
 import Mathlib.Data.Fin.VecNotation
 import Mathlib.Tactic.FinCases
-import VaughtConjecture.Extension.OrbitCode
+import VaughtConjecture.Extension.SmallArityExamples
+import VaughtConjecture.Extension.SmallArityOne
 
 /-!
-# Examples: orbit codes at grade two
+# Examples: orbit codes at grade two, and the cap on the lower layer at arity one
 
-Roadmap, Layer 3, 3.1, (R6), checkpoint 2.5 (the two small arities; here the scalar regressions of
-the arity one); semantic contract, item 3.
+Roadmap, Layer 3, 3.1, (R6), checkpoint 2.5 (the two small arities; here the regressions of the
+arity one); semantic contract, item 3.
 
 At arity one the field layer at grade `2` has old cells of grade `1`, whose values need not be
 self-visible at `2`.  Write `Q b f` for the label `ω * b + f`.
@@ -27,11 +28,21 @@ self-visible at `2`.  Write `Q b f` for the label `ω * b + f`.
 * **R6, relative room fails at a cap that is not short** (`not_min_orbitCode_eq_of_not_isShort`):
   the labelling `(ω * 2 + 1)` is orbit-canonical, the cap `ω + 7` is self-visible at `2` but not
   short, and `(ω * 5 + 3)` agrees with `(ω * 2 + 1)` capped at `ω + 7`, yet its orbit code `ω + 2`
-  does not.  This is why the one-grade lift is to be used in its short-cap form
-  (`CellScheme.Rows.cappedLift_of_boundary_short`) at grade `2`.
+  does not.  This is why the one-grade lift is used in its short-cap form
+  (`CellScheme.Rows.cappedLift_of_boundary_short`) at grade `2`
+  (`Seed.cappedLift_fieldLayerOne_two`).
 * **R7, the natural strip** (`min_orbitCode_orbitLabelling_gridPoint_zero`): the value `1` keeps
   its code `1`, so the orbit code agrees with the labelling capped at the least grid point `2`; the
   block move of `1` to the block `2` would not.
+* **Regression 7, the cap on the lower layer** (`exists_lift_fourCellPairSeed`,
+  `exists_apex_prescription_fourCellPairSeed`).  The seed `fourCellPairSeed` has two coatom types
+  that are both the completion of `SmallArityExamples.fourCellSeed`, over the common face of its
+  four cells on one point; each coatom carries an apex of grade `2` labelled `⊤`.  The lift from the
+  coatom `({0, 1}, 2)` to `(univ, 2)` at the cap `ω * 4 + 2` keeps the observation of the ambient at
+  every cell of the lower layer, for every lawful prescription and ambient, among them a
+  prescription whose owner is the apex labelled `⊤`, above every label of grade `1`.  It holds
+  because the grade-two step uses the lift at grade one as the boundary lift into `(univ, 1)`, with
+  `O = (C, 1)`; the catalogue at grade one does not read the cells of grade two.
 
 ## Placement
 
@@ -240,5 +251,111 @@ theorem min_orbitCode_orbitLabelling_gridPoint_zero :
     intro h
     have := Q_le_Q_iff.mp h.le
     omega
+
+/-! ### Regression 7: the cap on the lower layer during a lift at grade two -/
+
+/-- **The seed on three points with four cells on its common point.**  Its two coatom types are
+both the completion of `SmallArityExamples.fourCellSeed` (legal at a stage `α` that is zero or a
+limit), whose face along `Fin.castSuccEmb` is the left coatom of that seed: the four cells of
+graded index `({0}, 1)`.  Each coatom type carries a cell of full scope and grade `2`, its apex,
+labelled `⊤`. -/
+noncomputable def fourCellPairSeed (α : Ordinal.{u}) (hα : Order.IsSuccPrelimit α) :
+    Seed.{u} α 1 :=
+  let F := (SmallArityExamples.fourCellSeed α).completionBelowFullGradeZero
+  Seed.ofCoatoms (F.isLegal_completion hα) (F.isLegal_completion hα)
+    (F.restrictFace_left_completion hα) (F.restrictFace_left_completion hα)
+
+/-- A cell of full scope of a face type is a cell of the type, on the face, with its grade and
+label. -/
+private theorem exists_label_of_restrictFace {α : Ordinal.{u}} {n m j : ℕ}
+    {t : StageType.{u} α n} {s : StageType.{u} α m} {f : Fin m ↪ Fin n}
+    (hs : StageType.restrictFace f t = some s) {e : Fin s.card}
+    (he : s.toCellScheme.gradedIndex e = (Finset.univ, j)) :
+    ∃ d, t.toCellScheme.gradedIndex d = (Finset.univ.map f, j) ∧ t.label d = s.label e := by
+  obtain ⟨hf, rfl⟩ := (StageType.restrictFace_eq_some_iff t f).mp hs
+  have hsc : (t.comap f hf).toCellScheme.scope e = Finset.univ := congrArg Prod.fst he
+  refine ⟨t.cellMap f e, Prod.ext ?_ (((t.isLowerEmbedding_comap f).grade_eq e).trans
+    (congrArg Prod.snd he)), rfl⟩
+  ext z
+  constructor
+  · intro hz
+    have hvis := Scheme.mem_visibleCells.mp (t.cellMap_mem f e)
+    obtain ⟨y, rfl⟩ := hvis hz
+    exact mem_map_of_mem f (mem_univ y)
+  · intro hz
+    obtain ⟨y, -, rfl⟩ := mem_map.mp hz
+    have hy : y ∈ (t.comap f hf).toCellScheme.scope e := by rw [hsc]; exact mem_univ y
+    exact (Finset.mem_preimage (hf := f.injective.injOn)).mp hy
+
+/-- **Regression 7, the cap on the lower layer.**  On `fourCellPairSeed`, the lift from the coatom
+`({0, 1}, 2)` to `(univ, 2)` at the cap `ω * 4 + 2` keeps, at every cell of the lower layer (graded
+index `(univ, 1)`), the observation of the ambient at the cap, for every lawful prescription and
+ambient with the same observation below the coatom; the prescription may have the apex of the
+coatom, labelled `⊤`, as its owner, above every label of grade `1`
+(`exists_apex_prescription_fourCellPairSeed`).  It is the lift
+`Seed.exists_lift_fieldLayerOne_two`, whose grade-two step uses `V = (univ, 1)` and `O = (C, 1)`
+and whose catalogue at grade one does not read the cells of grade two. -/
+theorem exists_lift_fourCellPairSeed (α : Ordinal.{u}) (hα : Order.IsSuccPrelimit α)
+    (p : (fourCellPairSeed α hα).fieldLayerOne.toCellScheme.below
+      (Finset.univ.erase (Fin.last 2), 2) → Label.{u})
+    (q : (fourCellPairSeed α hα).fieldLayerOne.toCellScheme.below (Finset.univ, 2) → Label.{u})
+    (hp : (fourCellPairSeed α hα).fieldLayerOne.rows.IsLawfulBelow _ p)
+    (hq : (fourCellPairSeed α hα).fieldLayerOne.rows.IsLawfulBelow _ q)
+    (hpq : ∀ d, min (q (Set.inclusion (CellScheme.below_mono _
+      (show ((Finset.univ.erase (Fin.last 2), 2) : Finset (Fin 3) × ℕ) ≤ (Finset.univ, 2) from
+        ⟨erase_subset _ _, le_rfl⟩)) d)) (Q 4 2) = min (p d) (Q 4 2)) :
+    ∃ q' : (fourCellPairSeed α hα).fieldLayerOne.toCellScheme.below (Finset.univ, 2) → Label.{u},
+      (fourCellPairSeed α hα).fieldLayerOne.rows.IsLawfulBelow _ q' ∧
+      (∀ d, q' (Set.inclusion (CellScheme.below_mono _
+        (show ((Finset.univ.erase (Fin.last 2), 2) : Finset (Fin 3) × ℕ) ≤ (Finset.univ, 2) from
+          ⟨erase_subset _ _, le_rfl⟩)) d) = p d) ∧
+      ∀ (z : Fin (fourCellPairSeed α hα).fieldLayerOne.card)
+        (hz : (fourCellPairSeed α hα).fieldLayerOne.toCellScheme.gradedIndex z = (Finset.univ, 1)),
+        min (q' ⟨z, hz.trans_le ⟨subset_rfl, one_le_two⟩⟩) (Q 4 2) =
+          min (q ⟨z, hz.trans_le ⟨subset_rfl, one_le_two⟩⟩) (Q 4 2) := by
+  obtain ⟨q', hq', hcap, hlit⟩ := (fourCellPairSeed α hα).exists_lift_fieldLayerOne_two
+    (x := Fin.last 2) (y := Fin.castSucc (Fin.last 1)) (by decide) (by decide) (by decide)
+    (isSelfVisible_Q.mpr le_rfl) p q hp hq hpq
+  exact ⟨q', hq', hlit, fun z _ ↦ hcap _⟩
+
+/-- **Regression 7 is not vacuous**: on `fourCellPairSeed`, some lawful prescription below the
+coatom `({0, 1}, 2)` and some lawful ambient below `(univ, 2)` with the same observation at
+`ω * 4 + 2` have, as owner, the apex of the coatom, of graded index `({0, 1}, 2)`, labelled `⊤`:
+the glued labelling of the amalgam, extended through both layers
+(`Scheme.exists_isLawful_fieldLayer`). -/
+theorem exists_apex_prescription_fourCellPairSeed (α : Ordinal.{u})
+    (hα : Order.IsSuccPrelimit α) :
+    ∃ (p : (fourCellPairSeed α hα).fieldLayerOne.toCellScheme.below
+        (Finset.univ.erase (Fin.last 2), 2) → Label.{u})
+      (q : (fourCellPairSeed α hα).fieldLayerOne.toCellScheme.below (Finset.univ, 2) → Label.{u}),
+      (fourCellPairSeed α hα).fieldLayerOne.rows.IsLawfulBelow _ p ∧
+      (fourCellPairSeed α hα).fieldLayerOne.rows.IsLawfulBelow _ q ∧
+      (∀ d, min (q (Set.inclusion (CellScheme.below_mono _
+        (show ((Finset.univ.erase (Fin.last 2), 2) : Finset (Fin 3) × ℕ) ≤ (Finset.univ, 2) from
+          ⟨erase_subset _ _, le_rfl⟩)) d)) (Q 4 2) = min (p d) (Q 4 2)) ∧
+      ∃ o, (fourCellPairSeed α hα).fieldLayerOne.toCellScheme.gradedIndex o.1 =
+        (Finset.univ.erase (Fin.last 2), 2) ∧ p o = ⊤ := by
+  set I := fourCellPairSeed α hα
+  obtain ⟨r₁, hr₁, hr₁e⟩ := Scheme.exists_isLawful_fieldLayer (S := I.amalgam.toScheme) (k := 1)
+    (hS := I.not_univ_le 1) I.amalgam.isLawful
+  obtain ⟨r₂, hr₂, hr₂e⟩ := Scheme.exists_isLawful_fieldLayer (S := I.lowerFieldLayer) (k := 2)
+    (hS := I.not_univ_two_le_lowerFieldLayer) hr₁
+  -- The apex of the first coatom type is a cell of the amalgam labelled `⊤`.
+  set F := (SmallArityExamples.fourCellSeed α).completionBelowFullGradeZero
+  have hlabel : (F.completion hα).label (Fin.last _) = ⊤ := StageType.addApex_label_last _ _
+  obtain ⟨a₀, ha₀, ha₀max⟩ := F.exists_apex_completion hα
+  have ha₀l : (F.completion hα).label a₀ = ⊤ := top_le_iff.mp (hlabel ▸ ha₀max _)
+  have hleft : StageType.restrictFace (Coatom.left 1) I.amalgam = some (F.completion hα) :=
+    I.restrictFace_left
+  obtain ⟨d₀, hd₀, hd₀l⟩ := exists_label_of_restrictFace (e := a₀) hleft ha₀
+  rw [Coatom.univ_map_left] at hd₀
+  have hgi : I.fieldLayerOne.toCellScheme.gradedIndex (Fin.castAdd _ (Fin.castAdd _ d₀)) =
+      (Finset.univ.erase (Fin.last 2), 2) :=
+    (Scheme.appendFullCellsScheme_gradedIndex_castAdd _ _ _ _).trans
+      ((Scheme.appendFullCellsScheme_gradedIndex_castAdd _ _ _ d₀).trans hd₀)
+  refine ⟨fun d ↦ r₂ d, fun d ↦ r₂ d, hr₂.isLawfulBelow _, hr₂.isLawfulBelow _, fun _ ↦ rfl,
+    ⟨_, hgi.le⟩, hgi, ?_⟩
+  change r₂ (Fin.castAdd _ (Fin.castAdd _ d₀)) = ⊤
+  rw [hr₂e, hr₁e, hd₀l, ha₀l]
 
 end VaughtConjecture.SmallArityOneExamples
