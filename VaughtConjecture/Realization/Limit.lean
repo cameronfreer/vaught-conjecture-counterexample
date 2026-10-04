@@ -3,7 +3,7 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
-import VaughtConjecture.Realization.Expansion
+import VaughtConjecture.Realization.BlockStages
 
 /-!
 # Gluing coherent model expansions at a limit block stage
@@ -17,12 +17,13 @@ Throughout, `δ` is a limit ordinal and `λ_ξ = ω + ω · ξ` is the block sta
 
 **Block stages at a limit.**  Block stages form a normal function (`isNormal_blockStage`), so an
 ordinal is below `λ_δ` exactly when it is below some earlier `λ_ξ` (`lt_blockStage_iff`), and so
-is a label (`exists_lt_blockStage_of_lt_limit`).
+is a label (`Label.exists_lt_blockStage_of_lt`, in `VaughtConjecture.Realization.BlockStages`).
 
 **Separation.**  A label occurring at `λ_δ` is determined by its reductions to the earlier block
-stages (`Label.eq_of_forall_reduce_blockStage_eq_limit`): a label below `λ_δ` is below some `λ_ξ`,
+stages (`Label.eq_of_forall_reduce_blockStage_eq`): a label below `λ_δ` is below some `λ_ξ`,
 where reduction keeps it, and the formal top reduces to the formal top.  Hence a stage type at
-`λ_δ` (`StageType.eq_of_forall_reduce_eq`), an optional stage type
+`λ_δ` (`StageType.eq_of_forall_reduce_eq_of_isSuccLimit`, both in
+`VaughtConjecture.Realization.BlockStages`), an optional stage type
 (`StageType.option_eq_of_forall_map_reduce_eq`), and a realization at `λ_δ`
 (`Realization.eq_of_forall_reduce_eq`) are determined by their stage reductions to the earlier
 block stages.
@@ -97,53 +98,7 @@ theorem lt_blockStage_iff (hδ : Order.IsSuccLimit δ) {o : Ordinal.{u}} :
     o < blockStage δ ↔ ∃ ξ < δ, o < blockStage ξ :=
   isNormal_blockStage.lt_iff_exists_lt hδ
 
-/-- A label below the block stage of a limit index is below some earlier block stage. -/
-theorem exists_lt_blockStage_of_lt_limit (hδ : Order.IsSuccLimit δ) {x : Label.{u}}
-    (hx : x < (blockStage δ : Label.{u})) : ∃ ξ < δ, x < (blockStage ξ : Label.{u}) := by
-  induction x using WithBot.recBotCoe with
-  | bot => exact ⟨0, hδ.pos, WithBot.bot_lt_coe _⟩
-  | coe x =>
-    induction x using WithTop.recTopCoe with
-    | top => exact absurd hx (not_lt.mpr (by exact_mod_cast le_top))
-    | coe o =>
-      obtain ⟨ξ, hξ, ho⟩ := (lt_blockStage_iff hδ).mp (by exact_mod_cast hx)
-      exact ⟨ξ, hξ, by exact_mod_cast ho⟩
-
-namespace Label
-
-/-- **Labels at a limit block stage are separated by their reductions**: two labels occurring at
-`λ_δ`, for a limit `δ`, with the same reduction to every earlier block stage are equal. -/
-theorem eq_of_forall_reduce_blockStage_eq_limit (hδ : Order.IsSuccLimit δ) {x y : Label.{u}}
-    (hx : AtStage (blockStage δ) x) (hy : AtStage (blockStage δ) y)
-    (h : ∀ ξ < δ, reduce (blockStage ξ) x = reduce (blockStage ξ) y) : x = y := by
-  have key {x y : Label.{u}} (hx : x < (blockStage δ : Label.{u}))
-      (h : ∀ ξ < δ, reduce (blockStage ξ) x = reduce (blockStage ξ) y) : x = y := by
-    obtain ⟨ξ, hξ, hxξ⟩ := exists_lt_blockStage_of_lt_limit hδ hx
-    have hx' := reduce_of_lt hxξ
-    have hy : y < (blockStage ξ : Label.{u}) := by
-      rw [← reduce_lt_iff, ← h ξ hξ, hx']
-      exact hxξ
-    rw [← hx', h ξ hξ, reduce_of_lt hy]
-  rcases hx with hx | rfl
-  · exact key hx h
-  rcases hy with hy | rfl
-  · exact (key hy fun ξ hξ ↦ (h ξ hξ).symm).symm
-  · rfl
-
-end Label
-
 namespace StageType
-
-/-- **Separation at a limit block stage**: two stage types at `λ_δ`, for a limit `δ`, with the
-same reduction to every earlier block stage are equal. -/
-theorem eq_of_forall_reduce_eq (hδ : Order.IsSuccLimit δ)
-    {t t' : StageType.{u} (blockStage δ) n}
-    (h : ∀ ξ < δ,
-      t.reduce (isSuccPrelimit_blockStage ξ) = t'.reduce (isSuccPrelimit_blockStage ξ)) :
-    t = t' :=
-  ext (congrArg (·.toScheme) (h 0 hδ.pos)) fun i j hij ↦
-    Label.eq_of_forall_reduce_blockStage_eq_limit hδ (t.atStage i) (t'.atStage j) fun ξ hξ ↦
-      label_congr (h ξ hξ) hij
 
 /-- **Separation of optional types at a limit block stage**: two optional stage types at `λ_δ`
 with the same reduction to every earlier block stage are equal. -/
@@ -158,7 +113,8 @@ theorem option_eq_of_forall_map_reduce_eq (hδ : Order.IsSuccLimit δ)
   | some p => cases b with
     | none => simpa using h 0 hδ.pos
     | some q =>
-      exact congrArg some (eq_of_forall_reduce_eq hδ fun ξ hξ ↦ by simpa using h ξ hξ)
+      exact congrArg some (eq_of_forall_reduce_eq_of_isSuccLimit hδ fun ξ hξ ↦ by
+        simpa using h ξ hξ)
 
 /-! ### Coherent families of stage types -/
 
@@ -259,44 +215,6 @@ theorem IsCoherentFamily.glue_reduce (hc : IsCoherentFamily t) {ξ : Ordinal.{u}
 
 end Coherent
 
-/-! ### Stage reduction of the families, read backwards -/
-
-variable {α β γ : Ordinal.{u}} {q : StageType.{u} α (n + 1)}
-
-/-- A type is in a bottom-pattern family exactly when its stage reduction is: reduction keeps
-the scheme and the bottom labels. -/
-theorem reduce_mem_bottomPatternFamily_iff (hβ : Order.IsSuccPrelimit β)
-    {S : Scheme.{u} (n + 1)} {ρ : Fin S.card → Label.{u}} :
-    q.reduce hβ ∈ bottomPatternFamily S ρ ↔ q ∈ bottomPatternFamily S ρ :=
-  ⟨fun h ↦ ⟨h.1, fun i j hij hg ↦ reduce_eq_bot_iff.symm.trans (h.2 i j hij hg)⟩,
-    reduce_mem_bottomPatternFamily hβ⟩
-
-/-- A type whose stage reduction to `β` is in the uniformity family of `γ < β` is in it: the
-interval `[γ, γ + ω)` lies below `β`, where reduction changes no label. -/
-theorem mem_uniformityFamily_of_reduce (hβ : Order.IsSuccPrelimit β) (hγ : γ < β)
-    (h : q.reduce hβ ∈ uniformityFamily γ) : q ∈ uniformityFamily γ := by
-  obtain ⟨d, hγd, hdγ⟩ := h
-  -- the labels of `q.reduce hβ` are, by definition, the reductions of the labels of `q`
-  change (γ : Label.{u}) ≤ Label.reduce β (q.label d) at hγd
-  change Label.reduce β (q.label d) < ((γ + ω : Ordinal.{u}) : Label.{u}) at hdγ
-  have hlt : Label.reduce β (q.label d) < β :=
-    hdγ.trans_le (by exact_mod_cast Ordinal.add_omega0_le_of_isSuccPrelimit hβ hγ)
-  rw [reduce_lt_iff] at hlt
-  rw [reduce_of_lt hlt] at hγd hdγ
-  exact ⟨d, hγd, hdγ⟩
-
-/-- A type whose stage reduction to `β` is in the dominance family of `γ < β` is in it: a label
-that reduction raises to the formal top is at least `β`, hence above `γ`. -/
-theorem mem_dominanceFamily_of_reduce (hβ : Order.IsSuccPrelimit β) (hγ : γ < β)
-    (h : q.reduce hβ ∈ dominanceFamily γ) : q ∈ dominanceFamily γ := by
-  obtain ⟨d, hg, hd⟩ := h
-  -- the labels of `q.reduce hβ` are, by definition, the reductions of the labels of `q`
-  change (γ : Label.{u}) < Label.reduce β (q.label d) at hd
-  refine ⟨d, hg, ?_⟩
-  by_cases hlt : q.label d < β
-  · rwa [reduce_of_lt hlt] at hd
-  · exact (show (γ : Label.{u}) < β by exact_mod_cast hγ).trans_le (not_lt.mp hlt)
-
 end StageType
 
 namespace Realization
@@ -316,16 +234,6 @@ theorem eq_of_forall_reduce_eq (hδ : Order.IsSuccLimit δ)
     simpa using congrArg (fun R ↦ R.eval t) (h ξ hξ)
 
 /-! ### Modelhood at a limit block stage -/
-
-/-- Realizing a family in a stage reduction: if every type whose reduction is in `U'` is in `U`,
-a realization of `U'` over `t` in the stage reduction of `R` is a realization of `U` in `R`. -/
-theorem RealizesOver.of_reduce {α β : Ordinal.{u}} {R : Realization.{u, v} α M}
-    (hβ : Order.IsSuccPrelimit β) {t : Fin n ↪ M} {U : Set (StageType.{u} α (n + 1))}
-    {U' : Set (StageType.{u} β (n + 1))} (h : (R.reduce hβ).RealizesOver t U')
-    (hU : ∀ q, q.reduce hβ ∈ U' → q ∈ U) : R.RealizesOver t U := by
-  obtain ⟨u, hu, q', hq', he⟩ := h
-  obtain ⟨q, hq, rfl⟩ := Option.map_eq_some_iff.mp he
-  exact ⟨u, hu, q, hU q hq', hq⟩
 
 /-- **A realization at a limit block stage is a model when its reductions are**: if the stage
 reduction of `R` to every earlier block stage is a model, `R` is a model.  Every clause is
@@ -467,12 +375,11 @@ reducing to every `e ξ`.
 This glues models and proves every clause of a model for the result
 (`Realization.IsModel.of_forall_reduce`); it does not infer modelhood from the coherence of types
 (`roadmap/README.md`, Layer 4: coherent assignments are not models by themselves).  Coherence
-(`hcoh`) is a hypothesis here, stated for an arbitrary coherent family; it is not assumed in the
-expansion domains, and for the limit clause of condition 1 it is to be derived from uniqueness of
-expansions, whose successor step is the next-block uniqueness of models, stated as
-`Expansion.NextBlockUniqueness` in the companion module, where `nonempty_of_forall_lt` derives
-coherence from it (a consequence of normalization, output 2 of higher-stage reconstruction,
-Layer 4, still to be proved).  Countability of `δ` is not used. -/
+(`hcoh`) is the explicit premise here, stated for an arbitrary coherent family; it is not assumed
+in the expansion domains.  Deriving it, for the limit clause of condition 1, from uniqueness of
+expansions, whose successor step is a next-block uniqueness hypothesis on models (a consequence of
+normalization, output 2 of higher-stage reconstruction, Layer 4, still to be proved), is the
+planned downstream step; nothing here provides it.  Countability of `δ` is not used. -/
 theorem ModelExpansion.nonempty_of_coherent (hδ : Order.IsSuccLimit δ)
     (e : ∀ ξ < δ, ModelExpansion M (blockStage ξ))
     (hcoh : ∀ ζ (hζ : ζ < δ) ξ (hξ : ξ < δ) (h : ζ ≤ ξ), (e ξ hξ).reduceBlock h = e ζ hζ) :

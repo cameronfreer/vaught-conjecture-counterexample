@@ -38,7 +38,7 @@ example {k : ℕ} (t t' : StageType.{0} (blockStage ω) k)
     (h : ∀ n < ω,
       t.reduce (isSuccPrelimit_blockStage n) = t'.reduce (isSuccPrelimit_blockStage n)) :
     t = t' :=
-  StageType.eq_of_forall_reduce_eq isSuccLimit_omega0 h
+  StageType.eq_of_forall_reduce_eq_of_isSuccLimit isSuccLimit_omega0 h
 
 /-- Two realizations at `λ_ω` with the same reductions to every `λ_n` are equal. -/
 example {M : Type} (R R' : Realization.{0, 0} (blockStage ω) M)
