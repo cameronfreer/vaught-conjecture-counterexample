@@ -3,7 +3,6 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
-import VaughtConjecture.Expansion.Uniqueness
 import VaughtConjecture.Expansion.UniquenessOfForcing
 import VaughtConjecture.MainTheorem.Assembly
 
@@ -52,8 +51,9 @@ from finite-cut receiving of models and forcing donors at every countable block 
 (`Expansion.NextBlockUniqueness.of_forcingDonors`).  Substituting it gives thinness
 (`densitySentence_isThinOnNatModels_of_forcingDonors`) and the thin `ℵ₁` spectrum
 (`densitySentence_hasThinAlephOneSpectrum_of_forcingDonors`) conditional on the cap-to-model
-theorem, (R1), forcing donors (`ForcingDonors ξ`, `ξ < ω₁`; a finite construction of Layer 3,
-still to be proved) and the conditions on the losses, with no hypothesis of uniqueness.
+theorem, (R1), forcing donors (`ForcingDonors ξ`, `ξ < ω₁`; a finite statement about legal
+stage types, to be proved by a finite construction of Layer 3) and the conditions on the losses,
+with no hypothesis of uniqueness.
 
 ## Placement
 
@@ -128,9 +128,10 @@ donors**: the density sentence has no perfect set of pairwise nonisomorphic mode
 conditional on the following hypotheses, each still to be proved: the cap-to-model theorem
 (`hcap`; Layer 3, 3.4; checkpoint 4), finite-cut receiving of models (`hrec`; (R1) of the table
 of Layer 3; used for next-block uniqueness and for logical agreement), forcing donors at every
-countable block index (`hF`; used for next-block uniqueness), and countable losses of the
-expansion domains (`hc`; condition 2 of the reduction, Layers 4–5).  Next-block uniqueness is
-derived (`NextBlockUniqueness.of_forcingDonors`). -/
+countable block index (`hF`; a finite construction of Layer 3, awaiting the completion below the
+full grade; used for next-block uniqueness), and countable losses of the expansion domains (`hc`;
+condition 2 of the reduction, Layers 4–5).  Next-block uniqueness is derived
+(`NextBlockUniqueness.of_forcingDonors`). -/
 theorem densitySentence_isThinOnNatModels_of_forcingDonors (hcap : CapToModel.{0})
     (hrec : FiniteCutReceiving.{0}) (hF : ∀ ξ < ω₁, ForcingDonors.{0} ξ)
     (hc : ∀ ξ < ω₁, (expansionDomain ξ \ expansionDomain (ξ + 1)).Countable) :
@@ -143,10 +144,11 @@ forcing donors**: the density sentence has exactly `ℵ₁` classes of models co
 perfect set of pairwise nonisomorphic ones, conditional on the following hypotheses, each still
 to be proved: the cap-to-model theorem (`hcap`; Layer 3, 3.4; checkpoint 4), finite-cut receiving
 of models (`hrec`; (R1) of the table of Layer 3; used for next-block uniqueness and for logical
-agreement), forcing donors at every countable block index (`hF`; used for next-block
-uniqueness), countable losses of the expansion domains (`hc`; condition 2 of the reduction,
-Layers 4–5), and nonempty losses of the expansion domains (`hn`; condition 4 of the reduction,
-Layer 6).  Next-block uniqueness is derived (`NextBlockUniqueness.of_forcingDonors`). -/
+agreement), forcing donors at every countable block index (`hF`; a finite construction of
+Layer 3, awaiting the completion below the full grade; used for next-block uniqueness), countable
+losses of the expansion domains (`hc`; condition 2 of the reduction, Layers 4–5), and nonempty
+losses of the expansion domains (`hn`; condition 4 of the reduction, Layer 6).  Next-block
+uniqueness is derived (`NextBlockUniqueness.of_forcingDonors`). -/
 theorem densitySentence_hasThinAlephOneSpectrum_of_forcingDonors (hcap : CapToModel.{0})
     (hrec : FiniteCutReceiving.{0}) (hF : ∀ ξ < ω₁, ForcingDonors.{0} ξ)
     (hc : ∀ ξ < ω₁, (expansionDomain ξ \ expansionDomain (ξ + 1)).Countable)

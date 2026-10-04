@@ -35,7 +35,8 @@ donors at `ξ`.
 **Not assumed and not claimed.**  No uniqueness or coherence of expansions is assumed: both are
 derived (`ModelExpansion.subsingleton`, `ModelExpansion.reduceBlock_eq`).  Neither (R1) nor
 forcing donors is proved here, so next-block uniqueness remains conditional on both.  Block
-determination of the companion (`CoverThresholds.Determines`) is not used.
+determination (`CoverThresholds.Determines`, of the quantitative reconstruction pathway) is not
+used.
 
 ## Placement
 

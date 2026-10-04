@@ -15,9 +15,10 @@ Special cases of `VaughtConjecture.MainTheorem.ModelExpansionDomains`:
 * logical agreement from finite-cut receiving, with the representative hypothesis
   `fun _ _ _ hq ↦ hq`;
 * the composition: `modelExpansionDomains hcap hu` with finite-cut receiving and countable and
-  nonempty losses gives the thin `ℵ₁` spectrum of the density sentence.
+  nonempty losses gives the thin `ℵ₁` spectrum of the density sentence;
 * next-block uniqueness derived from finite-cut receiving and forcing donors
-  (`NextBlockUniqueness.of_forcingDonors`) in place of `hu`.
+  (`NextBlockUniqueness.of_forcingDonors`) in place of `hu`; the theorems with forcing donors are
+  the theorems with next-block uniqueness applied to it, by `rfl`.
 
 ## Placement
 
@@ -98,12 +99,23 @@ example (hrec : FiniteCutReceiving.{0}) (hF : ∀ ξ < ω₁, ForcingDonors.{0} 
   densitySentence_hasThinAlephOneSpectrum_of_expansionDomains _
     (modelExpansionDomains_hasLogicalAgreement hcap _ hrec) hc hn
 
-/-- The theorem with forcing donors is the theorem with next-block uniqueness, applied to
-`NextBlockUniqueness.of_forcingDonors`. -/
+/-- The spectrum theorem with forcing donors is the spectrum theorem with next-block uniqueness,
+applied to `NextBlockUniqueness.of_forcingDonors`. -/
 example (hrec : FiniteCutReceiving.{0}) (hF : ∀ ξ < ω₁, ForcingDonors.{0} ξ)
     (hc : ∀ ξ < ω₁, (expansionDomain ξ \ expansionDomain (ξ + 1)).Countable)
     (hn : ∀ ξ < ω₁, (expansionDomain ξ \ expansionDomain (ξ + 1)).Nonempty) :
-    HasThinAlephOneSpectrum densitySentence.{0} :=
-  densitySentence_hasThinAlephOneSpectrum_of_forcingDonors hcap hrec hF hc hn
+    densitySentence_hasThinAlephOneSpectrum_of_forcingDonors hcap hrec hF hc hn =
+      densitySentence_hasThinAlephOneSpectrum_of_modelExpansions hcap
+        (.of_forcingDonors hrec hF) hrec hc hn :=
+  rfl
+
+/-- The thinness theorem with forcing donors is the thinness theorem with next-block uniqueness,
+applied to `NextBlockUniqueness.of_forcingDonors`. -/
+example (hrec : FiniteCutReceiving.{0}) (hF : ∀ ξ < ω₁, ForcingDonors.{0} ξ)
+    (hc : ∀ ξ < ω₁, (expansionDomain ξ \ expansionDomain (ξ + 1)).Countable) :
+    densitySentence_isThinOnNatModels_of_forcingDonors hcap hrec hF hc =
+      densitySentence_isThinOnNatModels_of_modelExpansions hcap
+        (.of_forcingDonors hrec hF) hrec hc :=
+  rfl
 
 end VaughtConjecture.MainTheorem
