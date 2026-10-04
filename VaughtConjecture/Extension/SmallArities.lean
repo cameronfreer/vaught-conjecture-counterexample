@@ -167,11 +167,11 @@ theorem cappedLift_fieldLayerZero {x y : Fin 2} (hxy : x ≠ y)
     (hwf.cappedLift _ (Or.inl rfl) _) le_rfl ⟨empty_subset _, le_rfl⟩ ⟨empty_subset _, le_rfl⟩
     ⟨erase_subset _ _, le_rfl⟩ ⟨erase_subset _ _, le_rfl⟩ ?_ (Rows.cappedLift_refl _)
     (hwf.cappedLift _ (Or.inr rfl) _)
-    (Scheme.extendsFromBoundary_bot_fieldLayer I.grade_eq_one (not_univ_le_of_ne (hne x))
-      (not_univ_le_of_ne (hne y)) hcover')
+    (Scheme.extendsFromBoundary_bot_fieldLayer (not_univ_le_of_ne (hne x))
+      (not_univ_le_of_ne (hne y)) fun d _ ↦ hcover' d)
     I.exists_gradedIndex_eq_univ fun u hu ↦ ⟨?_, ?_, ?_, fun h hh hbot ↦
-      Scheme.extendsFromBoundary_fieldLayer I.grade_eq_one (not_univ_le_of_ne (hne x))
-        (not_univ_le_of_ne (hne y)) hcover' hu hh hbot⟩
+      Scheme.extendsFromBoundary_fieldLayer (fun d _ ↦ I.grade_eq_one d)
+        (not_univ_le_of_ne (hne x)) (not_univ_le_of_ne (hne y)) (fun d _ ↦ hcover' d) hu hh hbot⟩
   · -- A cell of graded index `(univ.erase x, 1)`.
     have hXf : (univ.erase x, 1) ∈ I.amalgam.toCellScheme.gradedFaces :=
       ⟨hx, one_pos, by rw [card_erase_of_mem (mem_univ x)]; simp⟩
@@ -279,11 +279,11 @@ noncomputable def completionBelowFullGradeZero : CompletionBelowFullGrade I wher
       exact absurd (Scheme.appendFullCellsScheme_scope_natAdd _ _ _ _) hz
   faces_eq := rfl
   isLegalBelowFullGrade := I.isLegalBelowFullGrade_fieldLayerZero
-  label := (Scheme.exists_isLawful_fieldLayer (hS := I.not_univ_le 1) I.grade_eq_one
+  label := (Scheme.exists_isLawful_fieldLayer (hS := I.not_univ_le 1)
     I.amalgam.isLawful).choose
-  isLawful := (Scheme.exists_isLawful_fieldLayer (hS := I.not_univ_le 1) I.grade_eq_one
+  isLawful := (Scheme.exists_isLawful_fieldLayer (hS := I.not_univ_le 1)
     I.amalgam.isLawful).choose_spec.1
-  label_embed := (Scheme.exists_isLawful_fieldLayer (hS := I.not_univ_le 1) I.grade_eq_one
+  label_embed := (Scheme.exists_isLawful_fieldLayer (hS := I.not_univ_le 1)
     I.amalgam.isLawful).choose_spec.2
 
 /-- **The completion at arity zero.**  Every seed on two points (two coatom types on one point
@@ -294,7 +294,7 @@ theorem exists_completionBelowFullGrade_zero :
       I.amalgam.rows.IsLawful p → ∃ r, F.scheme.rows.IsLawful r ∧ ∀ d, r (F.embed d) = p d :=
   ⟨I.completionBelowFullGradeZero, fun _ hp ↦ by
     obtain ⟨r, hr, hre⟩ :=
-      Scheme.exists_isLawful_fieldLayer (hS := I.not_univ_le 1) I.grade_eq_one hp
+      Scheme.exists_isLawful_fieldLayer (hS := I.not_univ_le 1) hp
     exact ⟨r, hr, hre⟩⟩
 
 /-- **A seed on two points has a completion below the full grade.** -/

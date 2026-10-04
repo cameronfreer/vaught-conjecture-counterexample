@@ -510,8 +510,8 @@ theorem IsLawfulBelow.alignedEncode {X : Finset α × ℕ} {s p : D.below X → 
 `X` below `X`, on finitely many cells, let `s` and `p` be lawful below `X`, `s` short at the grade
 of `X` with `s o ≠ ⊤`, and let `τ` be a witness bounded by the grade of `X` with `τ ≤ γ` and
 `τ ∘ s = min p γ`, where `⊥ < γ < p o` and `γ` is self-visible at the grade of `X`.  Then there are
-a source cap `h` (`⊥ < h ≤ s o`, self-visible at the grade of `X`), a witness `ρ` bounded by the
-grade of `X`, and a labelling `f` of codes lawful below `X`, such that
+a source cap `h` (`⊥ < h ≤ s o`, self-visible and short at the grade of `X`), a witness `ρ`
+bounded by the grade of `X`, and a labelling `f` of codes lawful below `X`, such that
 
 * `f` is never the formal top and agrees with `s` capped at `h`;
 * **(i)** `ρ` reads `f` literally as the prescription capped at the owner label:
@@ -531,21 +531,21 @@ theorem IsLawfulBelow.exists_alignedEncoding {X : Finset α × ℕ} [Finite (D.b
     (htop : s o ≠ ⊤) (hτ : IsWitness (stepSuppressor X.2) τ) (hτγ : ∀ x, τ x ≤ γ)
     (hface : ∀ e, τ (s e) = min (p e) γ) (hγ : IsSelfVisible X.2 γ) (hγbot : ⊥ < γ)
     (hγo : γ < p o) :
-    ∃ h ρ f, ⊥ < h ∧ IsSelfVisible X.2 h ∧ h ≤ s o ∧ IsWitness (stepSuppressor.{u} X.2) ρ ∧
-      R.IsLawfulBelow X f ∧ (∀ e, f e ≠ ⊤) ∧ (∀ e, min (f e) h = min (s e) h) ∧
-      (∀ e, ρ (f e) = min (p e) (p o)) ∧
+    ∃ h ρ f, ⊥ < h ∧ IsSelfVisible X.2 h ∧ IsShort X.2 h ∧ h ≤ s o ∧
+      IsWitness (stepSuppressor.{u} X.2) ρ ∧ R.IsLawfulBelow X f ∧ (∀ e, f e ≠ ⊤) ∧
+      (∀ e, min (f e) h = min (s e) h) ∧ (∀ e, ρ (f e) = min (p e) (p o)) ∧
       ∀ x z, IsShort X.2 z → min x h = min z h → min (ρ x) γ = min (τ z) γ := by
   classical
   have := Fintype.ofFinite (D.below X)
-  obtain ⟨h, δ, ρ, hhbot, hhtop, hhvis, hho, hρ, hγδ, hδo, hδvis, hρh, hread, halign, hcap⟩ :=
-    hs.exists_ownerAlignment hp ho hshort htop hτ hτγ hface hγ hγbot hγo
+  obtain ⟨h, δ, ρ, hhbot, hhtop, hhvis, hhshort, hho, hρ, hγδ, hδo, hδvis, hρh, hread, halign,
+    hcap⟩ := hs.exists_ownerAlignment hp ho hshort htop hτ hτγ hface hγ hγbot hγo
   obtain ⟨μ, hμ, hhμ⟩ := exists_isSuccPrelimit_lt hhtop
   set p₀ : D.below X → Label.{u} := fun e ↦ min (p e) (p o) with hp₀_def
   have hp₀ : R.IsLawfulBelow X p₀ :=
     hp.min_const_of_isSelfVisible (hp.isSelfVisible_of_gradedIndex_eq ho)
   set V : Finset Label.{u} := Finset.univ.image p₀
-  refine ⟨h, alignedDecode μ V X.2 ρ δ, Label.alignedEncode μ V X.2 h δ s p₀, hhbot, hhvis, hho,
-    isWitness_alignedDecode hμ hρ hδvis,
+  refine ⟨h, alignedDecode μ V X.2 ρ δ, Label.alignedEncode μ V X.2 h δ s p₀, hhbot, hhvis,
+    hhshort, hho, isWitness_alignedDecode hμ hρ hδvis,
     hs.alignedEncode hp₀ (fun d ↦ d.2.2) hhvis hhbot.ne' hδvis hμ hhμ halign,
     fun e ↦ alignedEncode_ne_top hhtop, fun e ↦ min_alignedEncode hhμ (halign e), fun e ↦ ?_,
     fun x z hz hxz ↦ (min_alignedDecode_eq hρ.monotone hγδ hρh.ge hhμ hxz).trans (hcap z hz)⟩
