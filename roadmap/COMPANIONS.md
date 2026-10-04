@@ -53,8 +53,8 @@ definability claims (`README.md`, "Status of the optional results").
   for the lower bound (layer 6), and `w_η ∈ Q` its base class; by expansion uniqueness `w_η` lies
   in the loss at `η`.
 
-Upstream names below were checked in the pinned InfinitaryLogic (`def5cc0`, signatures checked), the
-pinned ComputableModelTheory (`0e9935b`, signatures checked), and Mathlib, except those marked
+Upstream names below were checked in the pinned InfinitaryLogic (`e460cb6`, signatures checked), the
+pinned ComputableModelTheory (`a1fe761`, signatures checked), and Mathlib, except those marked
 "available upstream" or "prospective" (`README.md`, Layer 0); the sketch `#check`s or applies only
 names available at the current pins.
 
@@ -288,8 +288,8 @@ internal rank bound, and the preservation of infinitary formulas by maps agreein
 automorphisms from InfinitaryLogic (`exists_finite_orbit_threshold`,
 `orbitRank_lt_omega0_of_orbitFormula`, `internalScottRank_le_omega0_of_orbitFormulas`,
 `BoundedFormulaω.realize_embedding_comp_of_localAutomorphisms`,
-`BoundedFormulaω.realize_comp_append_of_localAutomorphisms`), available at our pinned dependency
-`def5cc0` (signatures checked).
+`BoundedFormulaω.realize_comp_append_of_localAutomorphisms`), available at the pin `e460cb6`
+(signatures checked).
 
 ### B1. Joint embedding and amalgamation of top-free charts (in the core)
 
@@ -325,8 +325,8 @@ u`, hence `e ∘ a = f ∘ a`.  Only the preservation of the chart relations by 
 automorphisms are those of the `L_λ`-structure.  Sketch: `AgreesLocally` and `agreesLocally_of_hom`
 (proved, for any map preserving the chart relations).  The consequence is an application of
 InfinitaryLogic's `BoundedFormulaω.realize_embedding_comp_of_localAutomorphisms` (and, with finitely
-many parameters, `BoundedFormulaω.realize_comp_append_of_localAutomorphisms`), available at our
-pinned dependency `def5cc0` (signatures checked).  Its hypotheses: any language, no relationality,
+many parameters, `BoundedFormulaω.realize_comp_append_of_localAutomorphisms`), available at the
+pin `e460cb6` (signatures checked).  Its hypotheses: any language, no relationality,
 countability, infinitude, or nonemptiness, and injectivity of the map a consequence of its
 hypothesis.  It is not reproved here.  Sketch: `realize_iff_realize_comp_of_agreesLocally` and
 `realize_comp_append_iff_of_agreesLocally` (proved, one-line applications).
@@ -383,7 +383,7 @@ base reduct.  The development proves the orbit formulas; the generic theorems ar
    `typesIsolated_of_orbitDefinedBy` (proved from the target
    `typesWith_eq_singleton_of_orbitDefinedBy`).  Ingredients: Mathlib's `Theory.CompleteType`,
    `Theory.typeOf`, `Theory.typesWith`, `Formula.equivSentence`, `completeTheory`
-   (`ModelTheory/Types`, `ModelTheory/Semantics`).  At the pin (`0e9935b`, signatures checked), from
+   (`ModelTheory/Types`, `ModelTheory/Semantics`).  At the pin (`a1fe761`, signatures checked), from
    ComputableModelTheory: `IsolatesTuple` and `IsAtomic`,
    `isolatesTuple_of_orbit_formula` (under `[Nonempty M]`; orbit formulas of `L` without constants
    naming the tuple), `isAtomic_of_orbit_formulas`, and `IsolatesTuple.typesWith_eq_singleton`
@@ -397,7 +397,7 @@ base reduct.  The development proves the orbit formulas; the generic theorems ar
    finite threshold, and `internalScottRank_le_omega0_of_orbitFormulas` gives `internalScottRank ≤
    ω` in the library's convention, the supremum over all tuples of the orbit rank plus one, `⨆ a,
    orbitRank a + 1` (so finite but unbounded orbit ranks give exactly `ω`). These are available at
-   our pinned dependency `def5cc0` (signatures checked).  They hold under `[L.IsRelational]` and
+   the pin `e460cb6` (signatures checked).  They hold under `[L.IsRelational]` and
    without countability, nonemptiness, or infinitude of `M`; they are not reproved here.  Sketch:
    `exists_finite_threshold_of_orbitDefinedBy`, `orbitRank_lt_omega0_of_orbitDefinedBy`, and
    `internalScottRank_le_omega0_of_orbitDefinedBy` (proved, one-line applications).  The stage
@@ -412,7 +412,7 @@ base reduct.  The development proves the orbit formulas; the generic theorems ar
    target is any model of the complete theory, in an arbitrary universe, with no receiving or
    countability assumption.  Sketch: `nonempty_elementaryEmbedding_of_typesIsolated` (target).
    Ingredients: Mathlib's `ElementaryEmbedding` (`ModelTheory/ElementaryMaps`).  At the pin
-   (`0e9935b`, signatures checked), from ComputableModelTheory:
+   (`a1fe761`, signatures checked), from ComputableModelTheory:
    `exists_elementaryEmbedding_of_countable_atomic`,
    under `[Countable M] [Nonempty M] [N ⊨ L.completeTheory M]`, with separate universes,
    function symbols allowed, and no countability of the language or of `N`; the sketch target is
@@ -443,7 +443,7 @@ is part of the core and is not a condition of this milestone.
 ### B4. Scott sentences of the top-free witness from its orbit formulas (existence only)
 
 Two statements are kept apart.  The **generic existence** of *a* Scott sentence from orbit formulas
-is Montalbán's theorem (InfinitaryLogic, available at the pin `def5cc0`, signatures checked;
+is Montalbán's theorem (InfinitaryLogic, available at the pin `e460cb6`, signatures checked;
 `README.md`, Layer 0): for a countable structure in a relational language with countably many
 relation symbols, and a family of orbit formulas indexed by all tuples, the sentence
 `montalbanSentence` characterizes the structure among countable structures in its carrier universe
@@ -889,12 +889,15 @@ is compiled conditionally on block determination (below).  None is an input to t
      `exists_isSigmaIn_three_scottSentence_of_sigmaIn_one_orbits_over`, the generic existence of a
      `Σ^in_3` Scott sentence from `Σ^in_1` orbits over parameters, through the existential closure
      `existsTuple` and `existsTuple_isScott`) supplies the semantic mechanism only.  The rank
-     statement to prove is that existentially closing the `k` named coordinates adds at most `k` to
+     statement needed is that existentially closing the `k` named coordinates adds at most `k` to
      the bound.  One existential quantifier adds one to the rank (`qrank_existsLastVar`, at the pin,
      signatures checked); for closing the last `m` free variables one at a time,
      `qrank_existsLastVars` (`Definability/Syntax`, compiled in this repository (theorem named))
-     gives exactly `+m`; the statement for the closure `existsTuple k` is still to be derived from
-     it.  Membership in `Σ^in_3` gives no rank bound, and the normal form `IsSigmaInNF 3` gives only
+     gives exactly `+m`, as InfinitaryLogic's `qrank_existsTupleFrom` does for the same closure
+     `existsTupleFrom` (at the pin, signatures checked; the agreement is compiled in
+     `Definability/BlockFormulasExamples`); for the closure `existsTuple k` of all `k` free
+     variables, `qrank_existsTuple` (at the pin, signatures checked) gives exactly `+k`.
+     Membership in `Σ^in_3` gives no rank bound, and the normal form `IsSigmaInNF 3` gives only
      `ω·3` (`IsSigmaInNF.qrank_le`).
   2. **The base-model conjunct.**  The relative transfer is to isolate the supplied model only among
      base models.  The passage from relative to absolute isolation must explicitly bound the
@@ -964,8 +967,7 @@ is compiled conditionally on block determination (below).  None is an input to t
      ordinal of that model by its rank: `stabilizesAt_of_sentence_rank` and
      `stabilizationOrdinal_le_of_sentence_rank`, with the forms `stabilizesAt_of_formula_rank` and
      `stabilizationOrdinal_le_of_formula_rank` for a formula with no free variables (at the pin
-     `cf80917`; signatures checked, except `stabilizationOrdinal_le_of_sentence_rank`, signatures
-     not yet checked by CI).  They need only a
+     `e460cb6`; signatures checked).  They need only a
      relational language, with no countability of the language, and hold at every level
      `β ≥ qrank σ` of the sentence `σ`, not only at countable levels.
   3. **Base-reduct orbit-rank bounds** (prospective: every bound below is to be proved): bounds on
@@ -1000,14 +1002,14 @@ is compiled conditionally on block determination (below).  None is an input to t
        uniqueness is the expansion itself.  In the core case, an automorphism of the base reduct
        fixing the core lifts to one fixing the core.  With both, the translation of an orbit formula
        of a tuple in the expansion is an orbit formula of that tuple in the base reduct.  A third
-       statement turns formulas into ranks, at the pin `cf80917`, signatures checked: under
+       statement turns formulas into ranks, at the pin `e460cb6`, signatures checked: under
        `[L.IsRelational]`, a parameter-free infinitary orbit formula
        `φ` of the base language for a tuple `a` (realized exactly by the images of `a` under the
        automorphisms of the base reduct) bounds `orbitRank a` by the lift of `qrank φ` to the
        universe of the carrier (`orbitRank_le_lift_qrank_of_infinitaryOrbitFormula`; the first-order
        case is `orbitRank_le_lift_qrank_of_orbitFormula`, at the pin, signatures checked, under
        `[L.IsRelational]`).  Its corollary `internalScottRank_le_of_infinitaryOrbitFormulas`
-       (at the pin `cf80917`, signatures checked) takes
+       (at the pin `e460cb6`, signatures checked) takes
        **strict** bounds `qrank φ < α`, one orbit formula for every tuple, and gives
        `internalScottRank M ≤ Ordinal.lift α`: exactly the distinction between strict and non-strict
        bounds recorded below.
@@ -1071,7 +1073,7 @@ is compiled conditionally on block determination (below).  None is an input to t
      2), the valid chain runs through its Scott sentence `σ`, not through orbit ranks: when `D_η`
      contains a second class, `η < stabilizationOrdinal ≤ qrank σ`, the first inequality by the
      one-sided rank comparison below, the second by `stabilizationOrdinal_le_of_sentence_rank`
-     (at the pin `cf80917`; signatures not yet checked by CI), as in
+     (at the pin `e460cb6`; signatures checked), as in
      target 2; its application to the constructed `σ` is to be proved.  For the base model `R` of a
      terminal expansion at block `η` (the core case, with a labelled globally rigid core of arity
      `k`; the residual case, with positive eventual top grade and no rigid core; hollow growth; or
@@ -1239,7 +1241,7 @@ is compiled conditionally on block determination (below).  None is an input to t
   InfinitaryLogic's, which is still to be proved.
 
   **A one-sided rank comparison** (prospective: a statement to be proved, in InfinitaryLogic's
-  conventions, not [Mon]'s).  The notions, as defined at the pin `def5cc0` (signatures checked), for
+  conventions, not [Mon]'s).  The notions, as defined at the pin `e460cb6` (signatures checked), for
   any language `L` and a countable structure `M` (the theorems used below add their own instances,
   given with each; the base language is relational with countably many relation symbols): the
   **stabilization ordinal** (`Scott/Sentence`), the least level at which empty-tuple back-and-forth
