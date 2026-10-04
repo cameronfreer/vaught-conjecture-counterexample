@@ -22,8 +22,8 @@ Special cases of `VaughtConjecture.Continuation.Hollow`:
 * **position matching**: along a permutation `e` of the root, the stable offset at the reindexed
   root and the tuple `c ∘ e` is the stable offset at the transported cell, with no hypothesis on the
   realization: along a permutation the rooted covers correspond.  The comparison along an
-  arbitrary face of the root (output 1 of Layer 4) uses exact consistency and covering and is still
-  to be proved.
+  arbitrary face of a typed tuple (output 1 of Layer 4) uses exact consistency and covering
+  (`Realization.stableOffset_comap`, in `VaughtConjecture.Continuation.Candidate`).
 
 ## Placement
 

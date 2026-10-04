@@ -65,8 +65,9 @@ the value `⊤` of a supremum over many pairs is allowed.
   `f`: otherwise `(q, f)` forces no threshold at `d`, its provisional offset is `0`, and nothing is
   said about lifts.
 
-These are intended for comparing stable offsets along faces of a cover and for realizing the
-stable labels by lifts (roadmap, Layer 4, output 1, still to be proved).
+These are used for comparing stable offsets along faces of a cover and for realizing the stable
+labels by lifts (roadmap, Layer 4, output 1; `Realization.stableOffset_comap` and
+`Realization.locality_stableSection`, in `VaughtConjecture.Continuation.Candidate`).
 
 **Offsets as labels.**  `Label.ofOffset β o` is `β + o` for a finite `o` and the formal top for
 `o = ⊤` (`Label.ofOffset_eq_top_iff`); its thresholds are those of `o`
