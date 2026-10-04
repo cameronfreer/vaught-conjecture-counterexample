@@ -57,21 +57,46 @@ bountifulness of the amalgam, from each coatom to the full face by the invariant
 the full grade (`Seed.isLegalBelowFullGrade_tower`), and with the labelling extended through the
 tower it is a completion below the full grade (`Seed.completionBelowFullGradeOfTowerInvariant`).
 So every seed with `m ≤ 2` has one (`Seed.nonempty_completionBelowFullGrade_of_le_two`), and at
-every arity a seed has one under `2FL(j)` at the grades `2 ≤ j < m`
-(`Seed.nonempty_completionBelowFullGrade_of_twoFaceLift`).
+every arity a seed has one when it satisfies `2FL(j)` at the grades `2 ≤ j < m`
+(`Seed.nonempty_completionBelowFullGrade_of_twoFaceLift`, a hypothesis on the seed).
 
-**What stays open: `2FL(j)` for `j ≥ 2`**, first assumed by the recursion at `m = 3`.  The rows of
-the layer at a grade `ℓ ≥ 2` read lower-grade values through their orbit codes, which are not
-self-visible at `ℓ`, and the alignment of step 2 can then fail in a *strip case*: two saturated
-cells, one on `C` and one on `D`, with equal entry of the serving row just below the source cap
-`h₁` (in the strip of finite parts below the grade) and with prescriptions that differ above `γ`.
-Every encoding agreeing with the source capped at `h₁` has equal codes there, so no single decoder
-reads both prescriptions literally.  Whether `2FL(j)` holds there is open; no refutation is
-claimed.  Accordingly the coatom extension properties `StageType.HasApexCoatomExtensions` and
-`StageType.HasCoatomExtensions` at the stages that are zero or a limit, which quantify over every
-arity (`StageType.HasApexCoatomExtensions.of_completionBelowFullGrade`), are proved here only
-under the hypothesis `∀ I j, 2 ≤ j → j < m → I.TwoFaceLift j`
-(`StageType.hasApexCoatomExtensions_of_twoFaceLift`); unconditionally they remain prospective.
+**`2FL(j)` for `j ≥ 2` is not a property of every seed.**  The rows of the layer at a grade
+`ℓ ≥ 2` read lower-grade values through their orbit codes, which are not self-visible at `ℓ`, and
+the alignment of step 2 can then meet a *strip case*: two saturated cells, one on `C` and one on
+`D`, with equal entry of the serving row just below the source cap `h₁` (in the strip of finite
+parts below the grade) and with prescriptions that differ above `γ`.  In that case the extension
+need not exist: `2FL(2)` fails for a legal seed on five points
+(`TwoFaceLiftCounterexample.not_twoFaceLift_two`), so `2FL(j)` at the grades `2 ≤ j < m` is false
+as a statement about every seed, at every stage
+(`TwoFaceLiftCounterexample.not_forall_twoFaceLift`).  This is a non-existence, not a limitation
+of an encoding: for that seed, for some catalogue entry `a`, cap `h` and prescription `w`, no
+labelling with the properties of `2FL(2)` exists.  The completion below the full grade of that
+seed exists nevertheless (`TwoFaceLiftCounterexample.nonempty_completionBelowFullGrade_seed4`),
+through the step from deadness of the old cells of the grade `3`: they are *dead*, that is, `⊥` in
+every labelling of the amalgam lawful below a coatom (`Seed.DeadAt 2`;
+`Seed.towerInvariant_succ_of_dead`, module `VaughtConjecture.Extension.DeadCellStep`).
+
+**What stays open.**  The coatom extension properties `StageType.HasApexCoatomExtensions` and
+`StageType.HasCoatomExtensions` at the stages that are zero or a limit quantify over the seeds of
+every arity (`StageType.HasApexCoatomExtensions.of_completionBelowFullGrade`); they are prospective,
+and they are not refuted.  Neither boundary triple of the library for the step to a grade
+`j + 1 ≤ m` serves every seed: the triple through `(D, j + 1)` uses `2FL(j)`, which fails for a
+legal seed at `j = 2`; the triple through `(univ, j)` uses a union fill of the other coatom over the
+common face, which fails for a legal seed at the grade `2` (module
+`VaughtConjecture.Extension.UnionFillCounterexample`).  Each serves some seeds: the first at `j = 1`
+(`Seed.twoFaceLift_one`), the second when the old cells of the grade `j + 1` are dead
+(`Seed.towerInvariant_succ_of_dead`) and at the top grade (`Seed.towerInvariant_top`).  The open
+point is an *existential two-face lift* `2FL∃(j)`: for every catalogue entry `a` at the grade
+`j + 1`, every cap `h` self-visible and short at `j + 1` with `⊥ < h`, and every labelling `w_C`
+lawful below `(C, j + 1)` that agrees with `a` capped at `h`, the step chooses a labelling `w_D`
+lawful below `(D, j + 1)`, equal to `w_C` at the cells of the common face of grade at most `j + 1`
+and agreeing with `a` capped at `h`, such that the labelling glued from `w_C` and `w_D` satisfies
+the conclusion of `2FL(j)`.  The step would use it through a variant of
+`CellScheme.Rows.cappedLift_of_boundary_short` in which the extension from the boundary is asked
+only for the boundary labellings whose part on `V` the step itself chooses.  Whether `2FL∃(j)`
+holds is undecided.  In the configuration of that failure it holds, with `w_D` equal to `a` on
+`D` (not compiled, and immediate: there `w_C` is `a` on `C`, so the glued labelling is `a`, and
+`r = a` has the properties of the conclusion).
 
 No hypothesis on the stage enters, no union fill (module
 `VaughtConjecture.Extension.UnionFillCounterexample`) and no completion is assumed, and neither
@@ -93,15 +118,6 @@ open Finset Label CellScheme
 variable {α : Ordinal.{u}} {m : ℕ} (I : Seed.{u} α m)
 
 /-! ### The two-face lift at the grade one -/
-
-/-- Every old cell lies on one of the two coatoms. -/
-private theorem scope_subset_or_coatoms (d : Fin I.amalgam.card) :
-    I.amalgam.toCellScheme.scope d ⊆ univ.erase (Fin.last (m + 1)) ∨
-      I.amalgam.toCellScheme.scope d ⊆ univ.erase (Fin.castSucc (Fin.last m)) :=
-  I.subset_or_subset _ (I.amalgam.isWellFormed.isWellFormed.scope_mem d) (I.scope_ne_univ d)
-
-private theorem erase_ne_univ (x : Fin (m + 2)) : univ.erase x ≠ univ :=
-  (erase_ssubset (mem_univ x)).ne
 
 /-- The rows of the new cells of the layer at the grade `1` are never `⊤`. -/
 private theorem rowBelow_ne_top_one {u : Fin (I.tower 1).card}
@@ -202,8 +218,8 @@ theorem twoFaceLift_one : I.TwoFaceLift 1 := by
         e ∈ (I.tower 1).toCellScheme.below (univ.erase (Fin.castSucc (Fin.last m)), 1)) :
       ∃ d, ∃ hd : I.amalgam.toCellScheme.grade d ≤ 1, I.towerEmbed 1 d = e := by
     have hsc : (I.tower 1).toCellScheme.scope e ≠ univ := fun hsu ↦ he.elim
-      (fun h' ↦ erase_ne_univ _ (univ_subset_iff.mp (hsu.ge.trans h'.1)))
-      fun h' ↦ erase_ne_univ _ (univ_subset_iff.mp (hsu.ge.trans h'.1))
+      (fun h' ↦ ne_univ_erase _ (univ_subset_iff.mp (hsu.ge.trans h'.1)))
+      fun h' ↦ ne_univ_erase _ (univ_subset_iff.mp (hsu.ge.trans h'.1))
     obtain ⟨d, rfl⟩ := I.mem_range_towerEmbed 1 e hsc
     refine ⟨d, ?_, rfl⟩
     have h2 : (I.tower 1).toCellScheme.grade (I.towerEmbed 1 d) ≤ 1 := he.elim (·.2) (·.2)
@@ -231,7 +247,7 @@ theorem twoFaceLift_one : I.TwoFaceLift 1 := by
     have hsX : (I.tower 1).rows.IsLawfulBelow (univ.erase x, 1) fun e ↦ S' e :=
       hS'law.mono (X := (univ.erase x, 1)) ⟨subset_univ _, le_rfl⟩
     have hpX : (I.tower 1).rows.IsLawfulBelow (univ.erase x, 1) fun e ↦ P e := by
-      rw [I.isLawfulBelow_tower_iff (erase_ne_univ x)]
+      rw [I.isLawfulBelow_tower_iff (ne_univ_erase x)]
       simp only [hP]
       exact hwX.mono (X := (univ.erase x, 1)) ⟨subset_rfl, by omega⟩
     exact Rows.IsLawfulBelow.alignedEncode (V := V) hsX hpX (fun d ↦ d.2.2) hhvis hhbot.ne' hγ1
@@ -240,11 +256,13 @@ theorem twoFaceLift_one : I.TwoFaceLift 1 := by
   have hfD := hfX (Fin.castSucc (Fin.last m)) hwy fun e he ↦ .inr he
   -- The extension through the layer at the grade one along the row of the serving cell.
   have hnot (z : Fin (m + 2)) : ¬ ((univ : Finset (Fin (m + 2))), 1) ≤ (univ.erase z, 1) :=
-    fun h ↦ erase_ne_univ z (univ_subset_iff.mp h.1)
+    fun h ↦ ne_univ_erase z (univ_subset_iff.mp h.1)
   have hcover (d : Fin I.amalgam.card) (hd : I.amalgam.toCellScheme.grade d ≤ 1) :
       I.amalgam.toCellScheme.gradedIndex d ≤ (univ.erase (Fin.last (m + 1)), 1) ∨
         I.amalgam.toCellScheme.gradedIndex d ≤ (univ.erase (Fin.castSucc (Fin.last m)), 1) :=
-    (I.scope_subset_or_coatoms d).imp (fun h ↦ ⟨h, hd⟩) fun h ↦ ⟨h, hd⟩
+    (I.scope_subset_or (mem_insert_self _ _)
+      (mem_insert_of_mem (mem_singleton_self _)) (Fin.castSucc_lt_last _).ne' d).imp
+      (fun h ↦ ⟨h, hd⟩) fun h ↦ ⟨h, hd⟩
   have hpos (d : Fin I.amalgam.card) : 1 ≤ I.amalgam.toCellScheme.grade d :=
     (I.amalgam.isWellFormed.isWellFormed.gradedIndex_mem d).2.1
   have hext : (I.tower 1).rows.ExtendsFromBoundary (univ.erase (Fin.last (m + 1)), 1)
@@ -264,7 +282,9 @@ theorem twoFaceLift_one : I.TwoFaceLift 1 := by
   have hb : I.towerEmbed 1 d ∈ (I.tower 1).toCellScheme.below (univ.erase (Fin.last (m + 1)), 1) ∨
       I.towerEmbed 1 d ∈ (I.tower 1).toCellScheme.below
         (univ.erase (Fin.castSucc (Fin.last m)), 1) :=
-    (I.scope_subset_or_coatoms d).imp (fun h ↦ I.towerEmbed_mem_below_iff.mpr ⟨h, hd⟩)
+    (I.scope_subset_or (mem_insert_self _ _)
+      (mem_insert_of_mem (mem_singleton_self _)) (Fin.castSucc_lt_last _).ne' d).imp
+      (fun h ↦ I.towerEmbed_mem_below_iff.mpr ⟨h, hd⟩)
       fun h ↦ I.towerEmbed_mem_below_iff.mpr ⟨h, hd⟩
   rw [Function.comp_apply, hr'f _ hb, hf_def, hρ_def]
   rw [alignedDecode_alignedEncode hτ.monotone hhμ hτh.ge ?_ ?_, hP]
@@ -363,8 +383,12 @@ noncomputable def completionBelowFullGradeOfTowerInvariant (hinv : I.TowerInvari
   isLawful := (I.exists_isLawful_tower (m + 1) I.amalgam.isLawful).choose_spec.1
   label_embed := (I.exists_isLawful_tower (m + 1) I.amalgam.isLawful).choose_spec.2
 
-/-- **The completion below the full grade under `2FL(j)` at the grades `2 ≤ j < m`**, at every
-arity: `2FL(1)` holds (`Seed.twoFaceLift_one`), so the invariant holds up to the top grade. -/
+/-- **The completion below the full grade of a seed satisfying `2FL(j)` at the grades
+`2 ≤ j < m`**, at every arity: `2FL(1)` holds (`Seed.twoFaceLift_one`), so the invariant holds up
+to the top grade.  The hypothesis is on the seed `I`: it holds for every seed with `m ≤ 2`, and its
+universal form over all seeds is refuted (`TwoFaceLiftCounterexample.not_forall_twoFaceLift`).  A
+seed may instead have dead old cells at some of those grades
+(`Seed.nonempty_completionBelowFullGrade_of_twoFaceLift_or_deadAt`). -/
 theorem nonempty_completionBelowFullGrade_of_twoFaceLift
     (h2 : ∀ j, 2 ≤ j → j < m → I.TwoFaceLift j) : Nonempty (CompletionBelowFullGrade I) :=
   ⟨I.completionBelowFullGradeOfTowerInvariant
@@ -377,20 +401,3 @@ theorem nonempty_completionBelowFullGrade_of_le_two (hm : m ≤ 2) :
   I.nonempty_completionBelowFullGrade_of_twoFaceLift fun j hj hjm ↦ absurd hjm (by omega)
 
 end VaughtConjecture.Seed
-
-namespace VaughtConjecture.StageType
-
-/-- **The coatom extension property with apex under the two-face lift at the grades `2 ≤ j < m`**:
-at a stage `α` that is zero or a limit, if every seed on `m + 2` points satisfies `2FL(j)` at the
-grades `2 ≤ j < m`, then every seed has a completion below the full grade
-(`Seed.nonempty_completionBelowFullGrade_of_twoFaceLift`), and so
-(`StageType.HasApexCoatomExtensions.of_completionBelowFullGrade`) any two legal coatom types with
-the same face are the faces of one legal stage type with an apex. -/
-theorem hasApexCoatomExtensions_of_twoFaceLift {α : Ordinal.{u}} (hα : Order.IsSuccPrelimit α)
-    (h2 : ∀ (m : ℕ) (I : Seed.{u} α m) (j : ℕ), 2 ≤ j → j < m → I.TwoFaceLift j) :
-    HasApexCoatomExtensions.{u} α :=
-  HasApexCoatomExtensions.of_completionBelowFullGrade hα fun m _ _ _ hla hlb hpa hpb ↦
-    (Seed.ofCoatoms hla hlb hpa hpb).nonempty_completionBelowFullGrade_of_twoFaceLift
-      (h2 m _)
-
-end VaughtConjecture.StageType

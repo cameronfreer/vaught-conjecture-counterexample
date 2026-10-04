@@ -98,15 +98,21 @@ need not be short at the grades of the layers it crosses.
   `(univ, 0)` there being no cells (`Seed.twoFaceLift_zero`); `2FL(1)` is the first instance the
   step assumes, and at the arity `2` the only one.  It holds at every arity (`Seed.twoFaceLift_one`,
   module `VaughtConjecture.Extension.TwoFaceLift`).
-* `2FL(j)` is assumed here, not proved, at the grades `2 ≤ j + 1 ≤ m`: it is not a field of
-  `Seed` and is not derived from the bountifulness of the amalgam.  Nothing beyond the conditional
-  theorems of this module is claimed here.  Bountifulness and legality of the tower and the
+* `2FL(j)` is a hypothesis on the seed here, at the grades `2 ≤ j + 1 ≤ m`: it is not a field of
+  `Seed` and is not derived from the bountifulness of the amalgam.  For `j ≥ 2` it is not a
+  property of every seed: `2FL(2)` fails for a legal seed on five points
+  (`TwoFaceLiftCounterexample.not_twoFaceLift_two`, module
+  `VaughtConjecture.Extension.TwoFaceLiftCounterexample`), a non-existence of the extension, not a
+  limitation of an encoding.  For that seed the old cells of the grade `3` are *dead* (`⊥` in
+  every labelling lawful below a coatom, `Seed.DeadAt 2`), and the step from deadness
+  (`Seed.towerInvariant_succ_of_dead`, module
+  `VaughtConjecture.Extension.DeadCellStep`), which uses the boundary triples of the step to the
+  top grade, gives the invariant without `2FL(2)`.  Bountifulness and legality of the tower and the
   completion below the full grade are proved from the invariant at the top grade in the module
-  `VaughtConjecture.Extension.TwoFaceLift`: with no hypothesis at the arities `m ≤ 2`, and under
-  `2FL(j)` at the grades `2 ≤ j < m` at every arity.  `StageType.HasApexCoatomExtensions` and
-  `StageType.HasCoatomExtensions` at the stages that are zero or a limit follow under `2FL(j)` at
-  those grades for every seed (`StageType.hasApexCoatomExtensions_of_twoFaceLift`, same module);
-  unconditionally they are prospective and not stated here.
+  `VaughtConjecture.Extension.TwoFaceLift`: with no hypothesis at the arities `m ≤ 2`, and for a
+  seed satisfying `2FL(j)` at the grades `2 ≤ j < m` at every arity.
+  `StageType.HasApexCoatomExtensions` and `StageType.HasCoatomExtensions` at the stages that are
+  zero or a limit are prospective and not stated here; they are not refuted.
 
 **The union fill is refuted as a universal statement.**  With `V = (univ, j)` at every grade, as at
 the top grade, the step would fill the other coatom's cells of the grade `j + 1` over the union of
@@ -380,7 +386,7 @@ theorem exists_isLawful_tower : (j : ℕ) → {p : Fin I.amalgam.card → Label.
     exact ⟨r', hr', fun d ↦ (hr'p _).trans (hrp d)⟩
 
 /-- A face omitting a point is not the ground set. -/
-private theorem ne_univ_erase (x : Fin (m + 2)) : univ.erase x ≠ univ :=
+theorem ne_univ_erase (x : Fin (m + 2)) : univ.erase x ≠ univ :=
   (erase_ssubset (mem_univ x)).ne
 
 /-- An old cell lies below a pair exactly when the cell of the amalgam does. -/
@@ -474,7 +480,7 @@ private theorem pair_cases {x y : Fin (m + 2)}
   · exact absurd rfl hxy
 
 /-- Each point omitted by a coatom has another one. -/
-private theorem exists_other {x : Fin (m + 2)}
+theorem exists_other {x : Fin (m + 2)}
     (hx : x ∈ ({Fin.last (m + 1), Fin.castSucc (Fin.last m)} : Finset (Fin (m + 2)))) :
     ∃ y ∈ ({Fin.last (m + 1), Fin.castSucc (Fin.last m)} : Finset (Fin (m + 2))), x ≠ y := by
   simp only [mem_insert, mem_singleton] at hx
@@ -516,7 +522,7 @@ private theorem erase_inter_erase {x y : Fin (m + 2)}
     simp only [mem_inter, mem_erase, mem_univ, and_true]
 
 /-- A coatom is a face of the amalgam. -/
-private theorem erase_mem_faces {x : Fin (m + 2)}
+theorem erase_mem_faces {x : Fin (m + 2)}
     (hx : x ∈ ({Fin.last (m + 1), Fin.castSucc (Fin.last m)} : Finset (Fin (m + 2)))) :
     univ.erase x ∈ I.amalgam.toCellScheme.faces := by
   simp only [mem_insert, mem_singleton] at hx
@@ -524,7 +530,7 @@ private theorem erase_mem_faces {x : Fin (m + 2)}
   exacts [I.erase_last_mem_faces, I.erase_castSucc_mem_faces]
 
 /-- A coatom has `m + 1` points. -/
-private theorem card_erase (x : Fin (m + 2)) : #(univ.erase x) = m + 1 := by
+theorem card_erase (x : Fin (m + 2)) : #(univ.erase x) = m + 1 := by
   rw [card_erase_of_mem (mem_univ x), card_univ, Fintype.card_fin]
   rfl
 
@@ -538,7 +544,7 @@ private theorem card_erase_inter_erase {x y : Fin (m + 2)}
   rfl
 
 /-- Every cell of the amalgam lies on one of the two coatoms. -/
-private theorem scope_subset_or {x y : Fin (m + 2)}
+theorem scope_subset_or {x y : Fin (m + 2)}
     (hx : x ∈ ({Fin.last (m + 1), Fin.castSucc (Fin.last m)} : Finset (Fin (m + 2))))
     (hy : y ∈ ({Fin.last (m + 1), Fin.castSucc (Fin.last m)} : Finset (Fin (m + 2))))
     (hxy : x ≠ y) (d : Fin I.amalgam.card) :
@@ -596,7 +602,7 @@ theorem extendsFromBoundary_bot_tower {x y : Fin (m + 2)}
 /-- **The cells below both coatoms lie below the common face**: at every grade `i`, in every scheme
 of the tower up to the grade `m + 2`, a cell below `(univ.erase x, i)` and `(univ.erase y, i)` lies
 below the common face at the grade `min i m`, its grade being at most the size of its scope. -/
-private theorem mem_below_commonFace_tower {x y : Fin (m + 2)}
+theorem mem_below_commonFace_tower {x y : Fin (m + 2)}
     (hx : x ∈ ({Fin.last (m + 1), Fin.castSucc (Fin.last m)} : Finset (Fin (m + 2))))
     (hy : y ∈ ({Fin.last (m + 1), Fin.castSucc (Fin.last m)} : Finset (Fin (m + 2))))
     (hxy : x ≠ y) {k i : ℕ} (hk : k ≤ m + 2) (d : Fin (I.tower k).card)
@@ -610,7 +616,7 @@ private theorem mem_below_commonFace_tower {x y : Fin (m + 2)}
 /-- **The rows of the new cells are short and never `⊤`**: the row of a cell of graded index
 `(univ, j + 1)` in the scheme reached after the grade `j + 1` is the field row of its catalogue
 entry, short at `j + 1` (`Scheme.isShort_ne_top_row_fieldLayer`). -/
-private theorem isShort_ne_top_rowBelow_tower {j : ℕ} {u : Fin (I.tower (j + 1)).card}
+theorem isShort_ne_top_rowBelow_tower {j : ℕ} {u : Fin (I.tower (j + 1)).card}
     (hu : (I.tower (j + 1)).toCellScheme.gradedIndex u = (univ, j + 1))
     (d : (I.tower (j + 1)).toCellScheme.below (univ, j + 1)) :
     IsShort (j + 1) ((I.tower (j + 1)).rows.rowBelow u hu d) ∧
@@ -622,7 +628,7 @@ private theorem isShort_ne_top_rowBelow_tower {j : ℕ} {u : Fin (I.tower (j + 1
 /-- **The cover of `(univ, j + 1)`**: in the scheme reached after the grade `j`, every cell below
 `(univ, j + 1)` lies below one of the coatoms at the grade `j + 1` or below `(univ, j)`: the new
 cells have grade at most `j`, and every old cell lies on a coatom. -/
-private theorem mem_below_cover_tower {x y : Fin (m + 2)}
+theorem mem_below_cover_tower {x y : Fin (m + 2)}
     (hx : x ∈ ({Fin.last (m + 1), Fin.castSucc (Fin.last m)} : Finset (Fin (m + 2))))
     (hy : y ∈ ({Fin.last (m + 1), Fin.castSucc (Fin.last m)} : Finset (Fin (m + 2))))
     (hxy : x ≠ y) {j : ℕ} (e : Fin (I.tower j).card)
@@ -812,7 +818,8 @@ restoration of the lower prescriptions, the owner alignment, and the extension t
 `j + 1` (`Seed.towerInvariant_succ`).  At the grade `j = 0`
 it holds (`Seed.twoFaceLift_zero`); it is assumed by the step at the grades `2 ≤ j + 1 ≤ m`
 (`Seed.towerInvariant_of_twoFaceLift`).  `2FL(1)` holds at every arity (`Seed.twoFaceLift_one`);
-`2FL(j)` for `j ≥ 2` is open. -/
+`2FL(2)` fails for a legal seed on five points (`TwoFaceLiftCounterexample.not_twoFaceLift_two`),
+so for `j ≥ 2` it is a hypothesis on the seed, not a property of every seed. -/
 def TwoFaceLift (j : ℕ) : Prop :=
   ∀ a ∈ (I.tower j).catalogue (j + 1),
   ∀ h : Label.{u}, IsSelfVisible (j + 1) h → IsShort (j + 1) h → ⊥ < h →
@@ -851,7 +858,7 @@ below `(univ, j + 1)`.  Then the rows of the scheme reached after the grade `j +
 boundary of `U` and `V` at `h` along the row of every new cell of the grade `j + 1`: restrict to
 the scheme before, complete there, and extend through the new cells
 (`Scheme.exists_extension_fieldLayer`, at a short cap, where the orbit code has relative room). -/
-private theorem extendsFromBoundary_tower_of_forall {j : ℕ} {U V : Finset (Fin (m + 2)) × ℕ}
+theorem extendsFromBoundary_tower_of_forall {j : ℕ} {U V : Finset (Fin (m + 2)) × ℕ}
     (hU : ¬ ((univ : Finset (Fin (m + 2))), j + 1) ≤ U)
     (hV : ¬ ((univ : Finset (Fin (m + 2))), j + 1) ≤ V) (hUj : U.2 ≤ j + 1) (hVj : V.2 ≤ j + 1)
     {h : Label.{u}} (hh : IsSelfVisible (j + 1) h) (hs : IsShort (j + 1) h) (hbot : ⊥ < h)
@@ -1305,7 +1312,9 @@ theorem towerInvariant_top (hinv : I.TowerInvariant m) : I.TowerInvariant (m + 1
 base is the grade `1` (`Seed.towerInvariant_one`); the steps below the top are
 `Seed.towerInvariant_succ`, and the step to the grade `m + 1` is `Seed.towerInvariant_top`.  So
 `2FL(j)` is assumed only at the grades `j + 1` with `2 ≤ j + 1 ≤ m`; at the arity `2` that is
-`2FL(1)` alone. -/
+`2FL(1)` alone.  The hypothesis is on the seed `I`; at the arity `3` it fails for some legal seeds
+(`TwoFaceLiftCounterexample.not_twoFaceLift_two`), for which
+`Seed.towerInvariant_of_twoFaceLift_or_deadAt` can serve instead. -/
 theorem towerInvariant_of_twoFaceLift (h2 : ∀ j, 1 ≤ j → j < m → I.TwoFaceLift j) :
     ∀ j ≤ m + 1, I.TowerInvariant j
   | 0, _ => I.towerInvariant_zero

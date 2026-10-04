@@ -9,6 +9,7 @@ import VaughtConjecture.Extension.Apex
 import VaughtConjecture.Extension.Seed
 import VaughtConjecture.Extension.CanonicalCode
 import VaughtConjecture.Geometry.IntervalPlan
+import VaughtConjecture.Label.StepWitness
 
 /-!
 # A legal seed on which the union fill fails
@@ -23,7 +24,11 @@ unchanged on the union, to one lawful below `(D, j + 1)` agreeing with `a` cappe
 module shows that it fails, as a statement about every seed, for a legal seed on four points at
 the grade `2` (`not_unionFill_seed`).  So the step from the grade `j` to `j + 1` of the tower
 (module `VaughtConjecture.Extension.Tower`) is built on the two-face lift `2FL(j)`, which chooses
-one labelling of the lower layers respecting both coatoms at once, not on the union fill.
+one labelling of the lower layers respecting both coatoms at once, not on the union fill.  That
+hypothesis fails for some seeds too, at `j = 2` (module
+`VaughtConjecture.Extension.TwoFaceLiftCounterexample`); where the old cells of the grade `j + 1`
+are dead (`⊥` in every labelling lawful below a coatom), the step fills the other coatom by `⊥` at
+its cells of the grade `j + 1` instead (module `VaughtConjecture.Extension.DeadCellStep`).
 
 **The legal type `T`** (`T`, `isLegal_T`).  The scheme `S` on three points has the interval plan
 (faces `∅, {0}, {1}, {2}, {0, 1}, {1, 2}, univ`) and exactly one cell at every graded face of
@@ -46,8 +51,9 @@ when it agrees there with `labelling A F` (the cells that are not live `⊥`, th
 grade `1` labelled `A`, those of grade `2` labelled `F`) for some `A` self-visible at `1` and `F`
 self-visible at `2` with `F ≤ A`.  Necessity is availability and locality at the unique cells;
 sufficiency is the witness at each live cell whose shifter sends `⊥` to `⊥` and every other label
-to `⊤`.  Every pair then lifts capped to every larger one (`cappedLift_all`), so `S` is legal
-below the full grade and `T` is legal.
+to `⊤` (`Label.topShifter`, module `VaughtConjecture.Label.StepWitness`).  Every pair then lifts
+capped to every larger one (`cappedLift_all`), so `S` is legal below the full grade and `T` is
+legal.
 
 **The failure** (`not_unionFill_seed`).  The seed of `T` with itself along its face `{0, 1}` has
 coatoms `{0, 1, 2}` and `{0, 1, 3}` and common face `{0, 1}`.  Take `y` the point `2`, so that
@@ -131,44 +137,6 @@ private theorem grade_eq_one_or_two (d : Fin 9) : cellGrade d = 1 ∨ cellGrade 
 
 /-! ### The labellings `labelling A F` are lawful -/
 
-/-- The shifter sending `⊥` to `⊥` and every other label to `⊤`. -/
-noncomputable def shifter (x : Label.{u}) : Label.{u} := if x = ⊥ then ⊥ else ⊤
-
-private theorem isWitness_shifter {g : ℕ → Label.{u}} (hg : Antitone g)
-    (hgv : ∀ n, IsSelfVisible n (g n)) : IsWitness g shifter where
-  antitone := hg
-  isSelfVisible := hgv
-  map_bot := by simp [shifter]
-  monotone := by
-    intro x y hxy
-    unfold shifter
-    by_cases hx : x = ⊥
-    · simp [hx]
-    · have hy : y ≠ ⊥ := fun hy ↦ hx (le_bot_iff.mp (hy ▸ hxy))
-      simp [hx, hy]
-  visibilityReplace_comm x k _ i _ := by
-    unfold shifter
-    by_cases hx : x = ⊥
-    · simp [hx]
-    · simp [hx]
-
-/-- The suppressor equal to `a` up to the grade `K` and `⊥` above. -/
-noncomputable def stepSuppressor (K : ℕ) (a : Label.{u}) (n : ℕ) : Label.{u} :=
-  if n ≤ K then a else ⊥
-
-private theorem antitone_stepSuppressor (K : ℕ) (a : Label.{u}) :
-    Antitone (stepSuppressor K a) := by
-  intro n m hnm
-  unfold stepSuppressor
-  split_ifs with hm hn <;> first | exact le_rfl | exact bot_le | omega
-
-private theorem isSelfVisible_stepSuppressor {K : ℕ} {a : Label.{u}} (ha : IsSelfVisible K a)
-    (n : ℕ) : IsSelfVisible n (stepSuppressor K a n) := by
-  unfold stepSuppressor
-  split_ifs with hn
-  · exact ha.mono hn
-  · exact isSelfVisible_bot n
-
 private theorem isSelfVisible_labelling {A F : Label.{u}} (hA : IsSelfVisible 1 A)
     (hF : IsSelfVisible 2 F) (d : Fin 9) : IsSelfVisible (cellGrade d) (labelling A F d) := by
   unfold labelling
@@ -182,23 +150,23 @@ theorem isLawful_labelling {A F : Label.{u}} (hA : IsSelfVisible 1 A) (hF : IsSe
   orderly d := isSelfVisible_labelling hA hF d
   locality s := by
     by_cases hs : live s = true
-    · refine ⟨stepSuppressor (cellGrade s) (labelling A F s), shifter,
-        isWitness_shifter (antitone_stepSuppressor _ _)
-          (isSelfVisible_stepSuppressor (isSelfVisible_labelling hA hF s)), fun d ↦ ?_⟩
+    · refine ⟨constStepSuppressor (cellGrade s) (labelling A F s), topShifter,
+        isWitness_topShifter (antitone_constStepSuppressor _ _)
+          (isSelfVisible_constStepSuppressor (isSelfVisible_labelling hA hF s)), fun d ↦ ?_⟩
       have hds : cells.gradedIndex d.1 ≤ cells.gradedIndex s := d.2
       have hgd : cellGrade d.1 ≤ cellGrade s := hds.2
       -- The row of `s` at `d`, unfolded.
       change min (labelling A F d.1) (labelling A F s) =
-        min (shifter (if live s = true ∧ live d.1 = true then rowValue else ⊥))
-          (stepSuppressor _ _ (cellGrade d.1))
+        min (topShifter (if live s = true ∧ live d.1 = true then rowValue else ⊥))
+          (constStepSuppressor _ _ (cellGrade d.1))
       by_cases hd : live d.1 = true
-      · rw [ite_eq_left ⟨hs, hd⟩, shifter, ite_eq_right (gridPoint_ne_bot 2 0), stepSuppressor,
-          ite_eq_left hgd, min_top_left, min_eq_right]
+      · rw [ite_eq_left ⟨hs, hd⟩, topShifter, ite_eq_right (gridPoint_ne_bot 2 0),
+          constStepSuppressor, ite_eq_left hgd, min_top_left, min_eq_right]
         rcases live_le_live s d.1 hs hd hds with h | ⟨h1, h2⟩
         · simp [labelling, hs, hd, h]
         · simp [labelling, hs, hd, h1, h2, hFA]
       · have : labelling A F d.1 = ⊥ := by simp [labelling, hd]
-        rw [this, ite_eq_right (fun h ↦ hd h.2), shifter, ite_eq_left rfl]
+        rw [this, ite_eq_right (fun h ↦ hd h.2), topShifter, ite_eq_left rfl]
         simp
     · have : labelling A F s = ⊥ := by simp [labelling, hs]
       simp only [this, min_bot_right]
