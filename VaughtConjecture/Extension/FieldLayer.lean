@@ -25,9 +25,10 @@ has a grade below `k`, the extensions from the boundary asked by the one-grade l
 (`CellScheme.Rows.cappedLift_of_boundary`) are proved here; with old cells of lower grades, only
 the extension through the new cells is proved here, at caps short at `k`, and the extension from
 the boundary, for the short-cap form `CellScheme.Rows.cappedLift_of_boundary_short`, is assembled
-where the boundary is known (at arity one, `Seed.extendsFromBoundary_fieldLayerOne`).  Off the full
-grade, `S` is a source prefix of its field layer (`Scheme.isSourcePrefix_fieldLayer`).  The scalar
-part is in `VaughtConjecture.Extension.CanonicalCode` and `VaughtConjecture.Extension.OrbitCode`.
+where the boundary is known (at arity one, in `VaughtConjecture.Extension.SmallArityOne`).  Off
+the full grade, `S` is a source prefix of its field layer (`Scheme.isSourcePrefix_fieldLayer`).
+The scalar part is in `VaughtConjecture.Extension.CanonicalCode` and
+`VaughtConjecture.Extension.OrbitCode`.
 
 **Appending cells of full scope** (`Scheme.appendFullCells S k M r h`, an `abbrev`, for the reason
 recorded at `Scheme.appendFullCell`): the cells of `S` along `Fin.castAdd`, then `M` cells of scope

@@ -6,10 +6,10 @@ Authors: Cameron Freer
 import VaughtConjecture.Extension.SmallArities
 
 /-!
-# The lifts from a coatom to the full face at arity one
+# The completion at arity one
 
-Roadmap, Layer 3, 3.1, (R6), checkpoint 2.5 (the two small arities; here the lifts of `m = 1` from
-each coatom to the full face); semantic contract, items 2–4.
+Roadmap, Layer 3, 3.1, (R6), checkpoint 2.5 (the two small arities; here `m = 1`); semantic
+contract, items 2–4.
 
 A seed on three points (`Seed α 1`) is the amalgam of two coatom types on `{0, 1}` and `{0, 2}`
 over the common face `{0}`.  Its cells have grades `1` and `2` (`Seed.grade_le_two`), and the
@@ -23,8 +23,10 @@ two layers of cells of full scope (`VaughtConjecture.Extension.FieldLayer`):
   lower layer; its rows read every cell of the lower layer, the old cells of grade `1` through the
   orbit code.
 
-The lower layer is a source prefix of the layer at grade two below `(univ, 1)`, and the amalgam is
-one of both off the full face (`Scheme.isSourcePrefix_fieldLayer`).
+The name `fieldLayerOne` refers to the arity one (`Seed α 1`): it is the layer at grade two,
+built over the layer at grade one, `lowerFieldLayer`.  The lower layer is a source prefix of the
+layer at grade two below `(univ, 1)`, and off the full face the amalgam is a source prefix of both
+layers (`Scheme.isSourcePrefix_fieldLayer`).
 
 **The lifts at grade one** (`Seed.cappedLift_lowerFieldLayer`, `Seed.cappedLift_fieldLayerOne_one`):
 from a coatom `C` at grade `1` to `(univ, 1)`, by the one-grade lift
@@ -47,6 +49,26 @@ of grade `1`), and extends through the new cells of grade two (`Scheme.exists_ex
 at a cap short at `2`, `Scheme.exists_isLawfulBelow_fieldLayer` at `⊥`).  So the cap on the cells
 of the lower layer during a lift at grade two is kept by the lift at grade one, used as the
 boundary lift into `(univ, 1)`; the catalogue at grade one does not read the cells of grade two.
+
+**Bountifulness** (`Seed.isBountiful_fieldLayerOne`) is checked coatom by coatom
+(`CellScheme.Rows.isBountiful_of_coatoms`): off the full face the lifts are those of the amalgam,
+through the source prefix and the bountifulness of the amalgam
+(`Seed.cappedLift_fieldLayerOne_of_ne_univ`), never through a completion; from each coatom to the
+full face they are the lifts at grade `0` (no cells), `1` and `2`.
+
+**The completion** (`Seed.completionBelowFullGradeOne`): the layer at grade two, with the old
+cells along `Fin.castAdd` twice, legal below the full grade
+(`Seed.isLegalBelowFullGrade_fieldLayerOne`: completeness at `(univ, 1)` and `(univ, 2)` by the
+cells of the orbit code of the bottom labelling), and the glued labelling extended through both
+layers (`Seed.exists_isLawful_fieldLayerOne`).  Every lawful labelling of the amalgam extends
+(`Seed.exists_completionBelowFullGrade_one`), and with the arity zero every seed on at most three
+points has a completion below the full grade (`Seed.nonempty_completionBelowFullGrade_of_le_one`).
+No hypothesis on the stage enters.  So checkpoint 2.5 is proved at both small arities; the
+recursion on the grade for `m ≥ 2` (checkpoint 2.6) is still to be proved.  There the step from
+grade `j` to `j + 1` cannot use `V = (univ, j)` and a lift within the other coatom's face as here:
+the other coatom `D` meets the first in cells of grade `j + 1`, so its cells of grade `j + 1` need
+a lift from the union of `(C ∩ D, j + 1)` and `(D, j)`.  At `m = 1` the common face `{0}` carries
+no cell of grade `2`, which is what makes the lift within the face exact.
 
 ## Placement
 
@@ -154,8 +176,8 @@ private theorem erase_mem_faces {x : Fin 3} (hx : x ≠ 0) :
 /-- Every cell of the amalgam lies on one of the two coatoms. -/
 private theorem scope_subset_or {x y : Fin 3} (hxy : x ≠ y) (hx : x ≠ 0) (hy : y ≠ 0)
     (d : Fin I.amalgam.card) :
-    I.amalgam.toCellScheme.scope d ⊆ univ.erase x ∨ I.amalgam.toCellScheme.scope d ⊆ univ.erase y :=
-  by
+    I.amalgam.toCellScheme.scope d ⊆ univ.erase x ∨
+      I.amalgam.toCellScheme.scope d ⊆ univ.erase y := by
   have h := I.subset_or_subset _ (I.amalgam.isWellFormed.isWellFormed.scope_mem d)
     (I.scope_ne_univ d)
   rcases coatom_cases hxy hx hy with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
@@ -248,6 +270,43 @@ theorem cappedLift_fieldLayerOne_one {x y : Fin 3} (hxy : x ≠ y) (hx : x ≠ 0
 
 /-! ### The extension from the boundary at grade two -/
 
+/-- **The lower layer is covered by three pairs**: every cell lies below `(univ.erase x, 2)`, below
+`(univ, 1)`, or below `(univ.erase y, 2)`. -/
+private theorem mem_below_or_mem_below {x y : Fin 3} (hxy : x ≠ y) (hx : x ≠ 0) (hy : y ≠ 0)
+    (e : Fin I.lowerFieldLayer.card) :
+    e ∈ I.lowerFieldLayer.toCellScheme.below (univ.erase x, 2) ∨
+      e ∈ I.lowerFieldLayer.toCellScheme.below (univ, 1) ∨
+        e ∈ I.lowerFieldLayer.toCellScheme.below (univ.erase y, 2) := by
+  induction e using Fin.addCases with
+  | right i =>
+    exact .inr (.inl (Scheme.appendFullCellsScheme_gradedIndex_natAdd _ _ _ i).le)
+  | left d =>
+    have hsc : I.lowerFieldLayer.toCellScheme.scope (Fin.castAdd _ d) =
+        I.amalgam.toCellScheme.scope d :=
+      Scheme.appendFullCellsScheme_scope_castAdd _ _ _ d
+    have hg := I.lowerFieldLayer_grade_le (Fin.castAdd _ d)
+    rcases I.scope_subset_or hxy hx hy d with hd | hd
+    · exact .inl ⟨(hsc ▸ hd : I.lowerFieldLayer.toCellScheme.scope (Fin.castAdd _ d) ⊆ _), hg⟩
+    · exact .inr (.inr ⟨(hsc ▸ hd :
+        I.lowerFieldLayer.toCellScheme.scope (Fin.castAdd _ d) ⊆ _), hg⟩)
+
+/-- **The overlap with the other coatom has grade one**: a cell below `(univ.erase y, 2)` that is
+below `(univ.erase x, 2)` or below `(univ, 1)` lies below `(univ.erase y, 1)`; on `{0}` every cell
+has grade at most `1`. -/
+private theorem mem_below_erase_one {x y : Fin 3} (hxy : x ≠ y) (hx : x ≠ 0) (hy : y ≠ 0)
+    (e : Fin I.lowerFieldLayer.card)
+    (he : e ∈ I.lowerFieldLayer.toCellScheme.below (univ.erase y, 2))
+    (hb : e ∈ I.lowerFieldLayer.toCellScheme.below (univ.erase x, 2) ∨
+      e ∈ I.lowerFieldLayer.toCellScheme.below (univ, 1)) :
+    e ∈ I.lowerFieldLayer.toCellScheme.below (univ.erase y, 1) := by
+  refine ⟨he.1, ?_⟩
+  rcases hb with hb | hb
+  · have hsub : I.lowerFieldLayer.toCellScheme.scope e ⊆ {0} :=
+      (subset_inter hb.1 he.1).trans (erase_inter_erase hxy hx hy).le
+    exact (I.isWellFormed_lowerFieldLayer.isWellFormed.grade_le_card e).trans
+      ((card_le_card hsub).trans (by simp))
+  · exact hb.2
+
 /-- **The boundary labelling, completed on the lower layer.**  Let `w` be a labelling of the layer
 at grade two lawful below `(univ.erase x, 2)` and `(univ, 1)`, and `a` a lawful section of the
 lower layer that agrees with `w` capped at `h` on the boundary.  Then some labelling of the lower
@@ -295,35 +354,8 @@ theorem exists_isLawfulBelow_lowerFieldLayer {x y : Fin 3} (hxy : x ≠ y) (hx :
   obtain ⟨v, hv, hvcap, hvw⟩ := (Rows.cappedLift_iff_forall_exists hDD).mp
     (Rows.cappedLift_of_fst_eq hDD rfl) h hh (fun e ↦ w (Fin.castAdd _ e.1)) (fun e ↦ a e)
     hw₁D (ha.isLawfulBelow _) fun e ↦ (hag e (.inr ⟨subset_univ _, e.2.2⟩)).symm
-  -- Every cell of the lower layer lies below one of the three pairs.
-  have hcover (e : Fin I.lowerFieldLayer.card) :
-      e ∈ I.lowerFieldLayer.toCellScheme.below (univ.erase x, 2) ∨
-        e ∈ I.lowerFieldLayer.toCellScheme.below (univ, 1) ∨
-          e ∈ I.lowerFieldLayer.toCellScheme.below (univ.erase y, 2) := by
-    induction e using Fin.addCases with
-    | right i =>
-      exact .inr (.inl (Scheme.appendFullCellsScheme_gradedIndex_natAdd _ _ _ i).le)
-    | left d =>
-      have hsc : I.lowerFieldLayer.toCellScheme.scope (Fin.castAdd _ d) =
-          I.amalgam.toCellScheme.scope d :=
-        Scheme.appendFullCellsScheme_scope_castAdd _ _ _ d
-      have hg := I.lowerFieldLayer_grade_le (Fin.castAdd _ d)
-      rcases I.scope_subset_or hxy hx hy d with hd | hd
-      · exact .inl ⟨(hsc ▸ hd : I.lowerFieldLayer.toCellScheme.scope (Fin.castAdd _ d) ⊆ _), hg⟩
-      · exact .inr (.inr ⟨(hsc ▸ hd :
-          I.lowerFieldLayer.toCellScheme.scope (Fin.castAdd _ d) ⊆ _), hg⟩)
-  -- A cell below `(univ.erase y, 2)` and on the boundary lies below `(univ.erase y, 1)`.
-  have hlow (e : Fin I.lowerFieldLayer.card)
-      (he : e ∈ I.lowerFieldLayer.toCellScheme.below (univ.erase y, 2))
-      (hb : e ∈ I.lowerFieldLayer.toCellScheme.below (univ.erase x, 2) ∨
-        e ∈ I.lowerFieldLayer.toCellScheme.below (univ, 1)) :
-      e ∈ I.lowerFieldLayer.toCellScheme.below (univ.erase y, 1) := by
-    refine ⟨he.1, ?_⟩
-    rcases hb with hb | hb
-    · have hsub : I.lowerFieldLayer.toCellScheme.scope e ⊆ {0} :=
-        (subset_inter hb.1 he.1).trans (erase_inter_erase hxy hx hy).le
-      exact (hwf.grade_le_card e).trans ((card_le_card hsub).trans (by simp))
-    · exact hb.2
+  have hcover := I.mem_below_or_mem_below hxy hx hy
+  have hlow := I.mem_below_erase_one hxy hx hy
   -- The glued labelling: `w` on the boundary, the lift within the other coatom elsewhere.
   obtain ⟨g, hgb, hgo⟩ : ∃ g : Fin I.lowerFieldLayer.card → Label.{u},
       (∀ e, e ∈ I.lowerFieldLayer.toCellScheme.below (univ.erase x, 2) ∨
@@ -503,6 +535,151 @@ theorem exists_lift_fieldLayerOne_two {x y : Fin 3} (hxy : x ≠ y) (hx : x ≠ 
   (Rows.cappedLift_iff_forall_exists _).mp (I.cappedLift_fieldLayerOne_two hxy hx hy) c hc p q
     hp hq hpq
 
+
+/-! ### Bountifulness and the completion -/
+
+/-- **Lifts off the full face**: between graded faces `X ≤ Y` with `Y` not on the ground set, the
+layer at grade two lifts capped, since the amalgam is bountiful and a source prefix there. -/
+theorem cappedLift_fieldLayerOne_of_ne_univ {X Y : Finset (Fin 3) × ℕ}
+    (hX : X ∈ I.fieldLayerOne.toCellScheme.gradedFaces)
+    (hY : Y ∈ I.fieldLayerOne.toCellScheme.gradedFaces) (hXY : X ≤ Y) (hYne : Y.1 ≠ univ) :
+    I.fieldLayerOne.rows.CappedLift hXY := by
+  have h := I.isSourcePrefix_fieldLayerOne hYne
+  refine h.cappedLift_of_isBountiful ?_ hX hY hXY le_rfl
+  have hc : I.fieldLayerOne.rows.comap h.isLowerEmbedding = I.amalgam.rows := by
+    change (I.fieldLayerOne.rows.comap (Scheme.isLowerEmbedding_fieldLayer _ _ _)).comap
+      (Scheme.isLowerEmbedding_fieldLayer _ _ _) = _
+    rw [Scheme.comap_rows_fieldLayer, Scheme.comap_rows_fieldLayer]
+  rw [hc]
+  exact I.isBountiful
+
+/-- **The layer at grade two is bountiful**, by the coatoms
+(`CellScheme.Rows.isBountiful_of_coatoms`): off the full face the lifts are those of the amalgam,
+through the source prefix; from each coatom to the full face they are the lifts at grade `0` (no
+cells), at grade `1` (`Seed.cappedLift_fieldLayerOne_one`) and at grade `2`
+(`Seed.cappedLift_fieldLayerOne_two`). -/
+theorem isBountiful_fieldLayerOne : I.fieldLayerOne.rows.IsBountiful := by
+  have hwf := I.isWellFormed_fieldLayerOne.isWellFormed
+  have hle (z : Fin 3) (j : ℕ) (hj : j ≤ #(univ.erase z)) : j = 0 ∨ j = 1 ∨ j = 2 := by
+    rw [card_erase] at hj
+    omega
+  have h21 : (Fin.last 2 : Fin 3) ≠ Fin.castSucc (Fin.last 1) := by decide
+  have h20 : (Fin.last 2 : Fin 3) ≠ 0 := by decide
+  have h10 : (Fin.castSucc (Fin.last 1) : Fin 3) ≠ 0 := by decide
+  refine Rows.isBountiful_of_coatoms (A := univ) (a := Fin.last 2)
+    (b := Fin.castSucc (Fin.last 1)) (mem_univ _) (mem_univ _) I.subset_or_subset
+    I.erase_last_mem_faces I.erase_castSucc_mem_faces
+    (fun X Y hX hY hXY hYne ↦ I.cappedLift_fieldLayerOne_of_ne_univ hX hY hXY hYne)
+    (fun j hj ↦ ?_) fun j hj ↦ ?_
+  · rcases hle _ j hj with rfl | rfl | rfl
+    · exact hwf.cappedLift _ (Or.inl rfl) _
+    · exact I.cappedLift_fieldLayerOne_one h21 h20 h10
+    · exact I.cappedLift_fieldLayerOne_two h21 h20 h10
+  · rcases hle _ j hj with rfl | rfl | rfl
+    · exact hwf.cappedLift _ (Or.inl rfl) _
+    · exact I.cappedLift_fieldLayerOne_one h21.symm h10 h20
+    · exact I.cappedLift_fieldLayerOne_two h21.symm h10 h20
+
+/-- Every cell of the layer at grade two has grade at most `2`. -/
+theorem fieldLayerOne_grade_le (d : Fin I.fieldLayerOne.card) :
+    I.fieldLayerOne.toCellScheme.grade d ≤ 2 := by
+  induction d using Fin.addCases with
+  | left d =>
+    exact (Scheme.appendFullCellsScheme_grade_castAdd _ _ _ d).trans_le
+      (I.lowerFieldLayer_grade_le d)
+  | right i => exact (Scheme.appendFullCellsScheme_grade_natAdd _ _ _ i).le
+
+/-- **The layer at grade two is legal below the full grade**: well formed, coded, consistent,
+bountiful, of grades below `3`, and complete below the full grade (the old cells off the full
+face, the cells of the orbit code of the bottom labelling at `(univ, 1)` and `(univ, 2)`). -/
+theorem isLegalBelowFullGrade_fieldLayerOne : I.fieldLayerOne.IsLegalBelowFullGrade where
+  isWellFormed := I.isWellFormed_fieldLayerOne
+  isCoded := Scheme.isCoded_fieldLayer (Scheme.isCoded_fieldLayer I.amalgam.isCoded)
+  isConsistent := Scheme.isConsistent_fieldLayer I.isConsistent_lowerFieldLayer
+  isBountiful := I.isBountiful_fieldLayerOne
+  grade_lt d := (I.fieldLayerOne_grade_le d).trans_lt (by omega)
+  exists_gradedIndex_eq X hX hX2 := by
+    obtain ⟨C, j⟩ := X
+    have hj0 : 0 < j := hX.2.1
+    by_cases hC : C = univ
+    · subst hC
+      rcases (show j = 1 ∨ j = 2 by simp only at hX2; omega) with rfl | rfl
+      · obtain ⟨i, -⟩ := Scheme.exists_catalogueEntry_eq (Scheme.orbitCode_splice_bot_mem_catalogue
+          (S := I.amalgam.toScheme) (k := 1) (p := fun _ ↦ ⊥) (Rows.isLawfulBelow_const_bot _))
+        exact ⟨Fin.castAdd _ (Fin.natAdd _ i),
+          (Scheme.appendFullCellsScheme_gradedIndex_castAdd _ _ _ _).trans
+            (Scheme.appendFullCellsScheme_gradedIndex_natAdd _ _ _ i)⟩
+      · obtain ⟨i, -⟩ := Scheme.exists_catalogueEntry_eq (Scheme.orbitCode_splice_bot_mem_catalogue
+          (S := I.lowerFieldLayer) (k := 2) (p := fun _ ↦ ⊥) (Rows.isLawfulBelow_const_bot _))
+        exact ⟨Fin.natAdd _ i, Scheme.appendFullCellsScheme_gradedIndex_natAdd _ _ _ i⟩
+    · obtain ⟨d, hd⟩ := I.exists_gradedIndex_eq _ hX hC
+      exact ⟨Fin.castAdd _ (Fin.castAdd _ d),
+        (Scheme.appendFullCellsScheme_gradedIndex_castAdd _ _ _ _).trans
+          ((Scheme.appendFullCellsScheme_gradedIndex_castAdd _ _ _ d).trans hd)⟩
+
+/-- **Extension through both layers**: every lawful labelling of the amalgam extends, unchanged at
+the old cells, to a lawful labelling of the layer at grade two (`Scheme.exists_isLawful_fieldLayer`
+twice). -/
+theorem exists_isLawful_fieldLayerOne {p : Fin I.amalgam.card → Label.{u}}
+    (hp : I.amalgam.rows.IsLawful p) :
+    ∃ r, I.fieldLayerOne.rows.IsLawful r ∧ ∀ d, r (Fin.castAdd _ (Fin.castAdd _ d)) = p d := by
+  obtain ⟨r₁, hr₁, hr₁p⟩ := Scheme.exists_isLawful_fieldLayer (S := I.amalgam.toScheme) (k := 1)
+    (hS := I.not_univ_le 1) hp
+  obtain ⟨r₂, hr₂, hr₂p⟩ := Scheme.exists_isLawful_fieldLayer (S := I.lowerFieldLayer) (k := 2)
+    (hS := I.not_univ_two_le_lowerFieldLayer) hr₁
+  exact ⟨r₂, hr₂, fun d ↦ (hr₂p _).trans (hr₁p d)⟩
+
+/-- **The completion below the full grade of a seed on three points**: the layer at grade two over
+the lower layer, with the old cells along `Fin.castAdd` twice, and the extension of the glued
+labelling through both layers. -/
+noncomputable def completionBelowFullGradeOne : CompletionBelowFullGrade I where
+  scheme := I.fieldLayerOne
+  embed := (Fin.castAddOrderEmb _).trans (Fin.castAddOrderEmb _)
+  isLowerEmbedding :=
+    (Scheme.isLowerEmbedding_fieldLayer _ _ _).comp (Scheme.isLowerEmbedding_fieldLayer _ _ _)
+  scope_embed d := (Scheme.appendFullCellsScheme_scope_castAdd _ _ _ _).trans
+    (Scheme.appendFullCellsScheme_scope_castAdd _ _ _ d)
+  comap_rows := by
+    change (I.fieldLayerOne.rows.comap (Scheme.isLowerEmbedding_fieldLayer _ _ _)).comap
+      (Scheme.isLowerEmbedding_fieldLayer _ _ _) = _
+    rw [Scheme.comap_rows_fieldLayer, Scheme.comap_rows_fieldLayer]
+  mem_range_embed z hz := by
+    induction z using Fin.addCases with
+    | right i => exact absurd (Scheme.appendFullCellsScheme_scope_natAdd _ _ _ i) hz
+    | left z =>
+      induction z using Fin.addCases with
+      | right i =>
+        exact absurd ((Scheme.appendFullCellsScheme_scope_castAdd _ _ _ _).trans
+          (Scheme.appendFullCellsScheme_scope_natAdd _ _ _ i)) hz
+      | left d => exact ⟨d, rfl⟩
+  faces_eq := rfl
+  isLegalBelowFullGrade := I.isLegalBelowFullGrade_fieldLayerOne
+  label := (I.exists_isLawful_fieldLayerOne I.amalgam.isLawful).choose
+  isLawful := (I.exists_isLawful_fieldLayerOne I.amalgam.isLawful).choose_spec.1
+  label_embed := (I.exists_isLawful_fieldLayerOne I.amalgam.isLawful).choose_spec.2
+
+/-- **The completion at arity one.**  Every seed on three points (two coatom types on two points
+over a common face on one point) has a completion below the full grade, whose completed scheme
+extends every lawful labelling of the amalgam, not only the glued one.  No hypothesis on the stage
+is used. -/
+theorem exists_completionBelowFullGrade_one :
+    ∃ F : CompletionBelowFullGrade I, ∀ p : Fin I.amalgam.card → Label.{u},
+      I.amalgam.rows.IsLawful p → ∃ r, F.scheme.rows.IsLawful r ∧ ∀ d, r (F.embed d) = p d :=
+  ⟨I.completionBelowFullGradeOne, fun _ hp ↦ I.exists_isLawful_fieldLayerOne hp⟩
+
+/-- **A seed on three points has a completion below the full grade.** -/
+theorem nonempty_completionBelowFullGrade_one : Nonempty (CompletionBelowFullGrade I) :=
+  ⟨I.completionBelowFullGradeOne⟩
+
 end Seed
+
+/-- **The completion at the small arities**: every seed on at most three points (`m ≤ 1`) has a
+completion below the full grade (`Seed.nonempty_completionBelowFullGrade_zero`,
+`Seed.nonempty_completionBelowFullGrade_one`). -/
+theorem Seed.nonempty_completionBelowFullGrade_of_le_one {α : Ordinal.{u}} {m : ℕ} (hm : m ≤ 1)
+    (I : Seed.{u} α m) : Nonempty (CompletionBelowFullGrade I) :=
+  match m, hm, I with
+  | 0, _, I => I.nonempty_completionBelowFullGrade_zero
+  | 1, _, I => I.nonempty_completionBelowFullGrade_one
 
 end VaughtConjecture

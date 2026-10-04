@@ -40,19 +40,14 @@ stage type, and no legality of `q` or of the display is used.
 **What is unconditional and what is not.**  Every statement here is a theorem about a given gated
 extension.  No gated extension is exhibited: its legality needs the construction, and the gated
 pinned extension property `StageType.HasGatedPinnedExtensions` that would supply one is a
-hypothesis, still to be proved.  Finite-cut receiving (R1) is not claimed.  Its assembly still
-needs:
-
-* the acquisition of the private context in a model: an occurrence of arity `n ≥ m + 2`
-  containing the root as a literal face, with a cell of graded index `(univ, n)` whose label is not
-  `⊥` and lies above the requested cutoff, and a donor anchored below it
-  (`StageType.IsAnchored`), through uniformity, high-arity dominance, and generalized saturation
-  as in [Kni26, Lemma 8.1.1];
-* the gated extension, from `HasGatedPinnedExtensions`;
-* the realization of its bottom pattern over the private tuple by the bottom-pattern clause of the
-  model (`Realization.IsModel.bottomPattern_of_isLawful` with `ρ` the display's labels), which
-  gives a coface `q` of the private type in the bottom-pattern family of the display, and then the
-  agreement here, at the requested cutoff.
+hypothesis, still to be proved.  Finite-cut receiving (R1) is not claimed here.  Its assembly,
+conditional on `HasGatedPinnedExtensions`, is
+`Realization.IsModel.hasFiniteCutReceiving_of_hasGatedPinnedExtensions`
+(`VaughtConjecture.Realization.FiniteCutReceiving`): the private context is acquired by the
+uniformity and high-arity-dominance clauses, with exact consistency (no generalized saturation)
+(`Realization.IsModel.exists_privateContext`), and the bottom-pattern clause of the model is
+applied with the display's labels, its instance witnessed nonempty by the display itself; then
+the agreement here gives receiving at the requested cutoff.
 
 ## Placement
 
