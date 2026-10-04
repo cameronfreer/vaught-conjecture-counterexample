@@ -3,6 +3,7 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
+import VaughtConjecture.Definability.BlockFormulas
 import VaughtConjecture.Expansion.Uniqueness
 
 /-!
@@ -13,10 +14,13 @@ Special cases of `VaughtConjecture.Expansion.Uniqueness`:
 * the three cases of the induction: the base case `Subsingleton (ModelExpansion M ω)` recovered
   from `ModelExpansion.subsingleton` at `ξ = 0`; the successor case from next-block uniqueness;
   the limit step with no hypothesis beyond uniqueness below the limit;
-* coherence of any two families of model expansions below a limit, derived from uniqueness;
+* coherence derived from uniqueness: every family of model expansions below a countable limit is
+  coherent;
 * limit existence at `λ_ω`;
 * the limit clause of the expansion domains is an inclusion; with the downward closure it is an
-  equality.
+  equality;
+* next-block uniqueness from block determination at every countable block, a stronger hypothesis
+  (`ModelExpansion.eq_of_determines`).
 
 ## Placement
 
@@ -98,5 +102,22 @@ example (hu : NextBlockUniqueness.{0}) {l : Ordinal.{0}} (hl : Order.IsSuccLimit
 example (hu : NextBlockUniqueness.{0}) :
     (⋂ ξ < ω, expansionDomain ξ) ⊆ expansionDomain ω :=
   biInter_expansionDomain_subset hu isSuccLimit_omega0 omega0_lt_omega_one
+
+/-! ### Next-block uniqueness from block determination -/
+
+/-- Block determination at every countable block (`CoverThresholds.Determines`, still to be
+proved) gives next-block uniqueness: two models at `λ_{ξ+1}` with equal reductions to `λ_ξ` are
+model expansions of one base structure, the structure of their common reduction to `ω`, and model
+expansions are unique under block determination (`ModelExpansion.eq_of_determines`). -/
+example (U : ∀ ξ : Ordinal.{0}, CoverThresholds ξ) (hU : ∀ ξ < ω₁, (U ξ).Determines.{0}) :
+    NextBlockUniqueness.{0} := by
+  refine ⟨fun {ξ M} hξ R R' hR hR' h ↦ ?_⟩
+  let := (R.reduce isSuccLimit_omega0.isSuccPrelimit).toStructure
+  have hω : ξ + 1 < ω₁ := (Cardinal.isSuccLimit_omega 1).add_one_lt hξ
+  have hb : ω ≤ blockStage ξ := omega0_le_blockStage ξ
+  refine congrArg Subtype.val (ModelExpansion.eq_of_determines (U := U) (η := ξ + 1)
+    (fun ζ hζ ↦ hU ζ (hζ.trans hω)) hω ⟨R, hR, rfl⟩ ⟨R', hR', ?_⟩)
+  rw [← Realization.reduce_reduce _ (isSuccPrelimit_blockStage ξ) _ hb, ← h,
+    Realization.reduce_reduce _ _ _ hb]
 
 end VaughtConjecture.Expansion

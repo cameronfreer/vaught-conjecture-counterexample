@@ -68,8 +68,10 @@ set of classes admitting a model expansion to the stage `ω + ω · ξ`:
   from the lower bound (`ExpansionDomains.HasNonemptyLosses.hasModelOnNat`).
 * `CapToModel` (the **cap-to-model theorem** of Layer 3, item 3.4; checkpoint 4): a realization at
   stage `ω` with legal types on a nonempty carrier that is exactly consistent, covering, and has
-  the finite-cut receiving property is a model.  It is used only for the absence of finite models
-  of the density sentence, hence for the reduction of every countable model to a code.
+  the finite-cut receiving property is a model.  In the compositions here it is used only for the
+  absence of finite models of the density sentence, hence for the reduction of every countable
+  model to a code; for the actual expansion domains it also gives `D 0 = univ`
+  (`Expansion.expansionDomain_zero`, through `CapToModel.{0}`).
 
 Scott separation and descriptive separation are not hypotheses: they are proved in
 `VaughtConjecture.MainTheorem.Spectrum` (`classTruth_separates`,
