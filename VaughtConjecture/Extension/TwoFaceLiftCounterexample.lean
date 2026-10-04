@@ -8,6 +8,7 @@ import Mathlib.Tactic.FinCases
 import VaughtConjecture.Extension.DeadCellStep
 import VaughtConjecture.Extension.TowerExamples
 import VaughtConjecture.Geometry.IntervalPlan
+import VaughtConjecture.Label.StepWitness
 
 /-!
 # A legal seed on which the two-face lift at the grade two fails
@@ -153,44 +154,6 @@ private theorem live_grade (d : Fin 19) (hd : live d = true) :
 
 /-! ### The shifters -/
 
-/-- The shifter sending `⊥` to `⊥` and every other label to `⊤`. -/
-noncomputable def shifter (x : Label.{u}) : Label.{u} := if x = ⊥ then ⊥ else ⊤
-
-private theorem isWitness_shifter {g : ℕ → Label.{u}} (hg : Antitone g)
-    (hgv : ∀ n, IsSelfVisible n (g n)) : IsWitness g shifter where
-  antitone := hg
-  isSelfVisible := hgv
-  map_bot := by simp [shifter]
-  monotone := by
-    intro x y hxy
-    unfold shifter
-    by_cases hx : x = ⊥
-    · simp [hx]
-    · have hy : y ≠ ⊥ := fun hy ↦ hx (le_bot_iff.mp (hy ▸ hxy))
-      simp [hx, hy]
-  visibilityReplace_comm x k _ i _ := by
-    unfold shifter
-    by_cases hx : x = ⊥
-    · simp [hx]
-    · simp [hx]
-
-/-- The suppressor equal to `a` up to the grade `K` and `⊥` above. -/
-noncomputable def stepSuppressor (K : ℕ) (a : Label.{u}) (n : ℕ) : Label.{u} :=
-  if n ≤ K then a else ⊥
-
-private theorem antitone_stepSuppressor (K : ℕ) (a : Label.{u}) :
-    Antitone (stepSuppressor K a) := by
-  intro n m hnm
-  unfold stepSuppressor
-  split_ifs with hm hn <;> first | exact le_rfl | exact bot_le | omega
-
-private theorem isSelfVisible_stepSuppressor {K : ℕ} {a : Label.{u}} (ha : IsSelfVisible K a)
-    (n : ℕ) : IsSelfVisible n (stepSuppressor K a n) := by
-  unfold stepSuppressor
-  split_ifs with hn
-  · exact ha.mono hn
-  · exact isSelfVisible_bot n
-
 /-- The **strip shifter** of `A`: `⊥ ↦ ⊥`; the natural numbers `0`, `1` and `≥ 2` go to the
 replacements `visibilityReplace 2 i A` for `i = 0, 1, 2` (the *strip* of `A`: its values with
 finite part below `2` replaced); every label `≥ ω` goes to `⊤`. -/
@@ -333,9 +296,9 @@ private theorem monotone_stripShifter (A : Label.{u}) : Monotone (stripShifter A
 
 /-- **The strip shifter is a witness** for the suppressor `F` up to the grade `2`. -/
 theorem isWitness_stripShifter {A F : Label.{u}} (hF : IsSelfVisible 2 F) :
-    IsWitness (stepSuppressor 2 F) (stripShifter A) where
-  antitone := antitone_stepSuppressor 2 F
-  isSelfVisible := isSelfVisible_stepSuppressor hF
+    IsWitness (constStepSuppressor 2 F) (stripShifter A) where
+  antitone := antitone_constStepSuppressor 2 F
+  isSelfVisible := isSelfVisible_constStepSuppressor hF
   map_bot := stripShifter_bot A
   monotone := monotone_stripShifter A
   visibilityReplace_comm x k hx i hi := by
@@ -352,7 +315,7 @@ theorem isWitness_stripShifter {A F : Label.{u}} (hF : IsSelfVisible 2 F) :
         congr 1
         split_ifs <;> omega
       · -- Above the grade `2` the guard forces `A = ⊥`.
-        rw [stripShifter_natCast, stepSuppressor, ite_eq_right hk, le_bot_iff,
+        rw [stripShifter_natCast, constStepSuppressor, ite_eq_right hk, le_bot_iff,
           visibilityReplace_eq_bot_iff] at hx
         rw [hx]; simp
     · rw [stripShifter_of_not_lt hx0 hxω, visibilityReplace_top,
@@ -391,39 +354,43 @@ theorem isLawful_labelling {A F : Label.{u}} (hA : IsSelfVisible 1 A) (hF : IsSe
   locality s := by
     by_cases hs : live s = true
     · rcases live_grade s hs with hs1 | hs2
-      · -- A live cell of grade `1`: the shifter, the suppressor `A` up to the grade `1`.
-        refine ⟨stepSuppressor 1 A, shifter,
-          isWitness_shifter (antitone_stepSuppressor _ _) (isSelfVisible_stepSuppressor hA),
+      · -- A live cell of grade `1`: the top shifter, the suppressor `A` up to the grade `1`.
+        refine ⟨constStepSuppressor 1 A, topShifter,
+          isWitness_topShifter (antitone_constStepSuppressor _ _)
+            (isSelfVisible_constStepSuppressor hA),
           fun d ↦ ?_⟩
         have hds : cells.gradedIndex d.1 ≤ cells.gradedIndex s := d.2
         change min (labelling A F d.1) (labelling A F s) =
-          min (shifter (if live s = true ∧ live d.1 = true then
-            (if cellGrade d.1 = 1 then v1 else v2) else ⊥)) (stepSuppressor 1 A (cellGrade d.1))
+          min (topShifter (if live s = true ∧ live d.1 = true then
+            (if cellGrade d.1 = 1 then v1 else v2) else ⊥))
+            (constStepSuppressor 1 A (cellGrade d.1))
         by_cases hd : live d.1 = true
         · have hd1 : cellGrade d.1 = 1 := by
             rcases live_le_live s d.1 hs hd hds with h | ⟨_, h⟩ <;> omega
-          rw [ite_eq_left ⟨hs, hd⟩, ite_eq_left hd1, shifter, ite_eq_right (gridPoint_ne_bot 1 0),
-            stepSuppressor, ite_eq_left hd1.le, min_top_left]
+          rw [ite_eq_left ⟨hs, hd⟩, ite_eq_left hd1, topShifter,
+            ite_eq_right (gridPoint_ne_bot 1 0), constStepSuppressor, ite_eq_left hd1.le,
+            min_top_left]
           simp [labelling, hs, hd, hd1, hs1]
         · have : labelling A F d.1 = ⊥ := by simp [labelling, hd]
-          rw [this, ite_eq_right (fun h ↦ hd h.2), shifter, ite_eq_left rfl]
+          rw [this, ite_eq_right (fun h ↦ hd h.2), topShifter, ite_eq_left rfl]
           simp
       · -- The live cell of grade `2`: the strip shifter, the suppressor `F` up to the grade `2`.
-        refine ⟨stepSuppressor 2 F, stripShifter A, isWitness_stripShifter hF, fun d ↦ ?_⟩
+        refine ⟨constStepSuppressor 2 F, stripShifter A, isWitness_stripShifter hF, fun d ↦ ?_⟩
         have hds : cells.gradedIndex d.1 ≤ cells.gradedIndex s := d.2
         change min (labelling A F d.1) (labelling A F s) =
           min (stripShifter A (if live s = true ∧ live d.1 = true then
-            (if cellGrade d.1 = 1 then v1 else v2) else ⊥)) (stepSuppressor 2 F (cellGrade d.1))
+            (if cellGrade d.1 = 1 then v1 else v2) else ⊥))
+            (constStepSuppressor 2 F (cellGrade d.1))
         have hlabs : labelling A F s = F := by simp [labelling, hs, hs2]
         rw [hlabs]
         by_cases hd : live d.1 = true
         · rw [ite_eq_left ⟨hs, hd⟩]
           rcases live_le_live s d.1 hs hd hds with h | ⟨h1, _⟩
           · have hd2 : cellGrade d.1 = 2 := h.trans hs2
-            rw [ite_eq_right (by omega), stripShifter_v2, stepSuppressor, ite_eq_left hd2.le,
+            rw [ite_eq_right (by omega), stripShifter_v2, constStepSuppressor, ite_eq_left hd2.le,
               min_top_left]
             simp [labelling, hd, hd2]
-          · rw [ite_eq_left h1, stripShifter_v1 hA, stepSuppressor, ite_eq_left (by omega)]
+          · rw [ite_eq_left h1, stripShifter_v1 hA, constStepSuppressor, ite_eq_left (by omega)]
             simp [labelling, hd, h1]
         · have : labelling A F d.1 = ⊥ := by simp [labelling, hd]
           rw [this, ite_eq_right (fun h ↦ hd h.2), stripShifter_bot]
@@ -840,7 +807,7 @@ private theorem Q_ne_bot (b f : ℕ) : Q.{u} b f ≠ ⊥ := WithBot.coe_ne_bot
 layer at the grade `2`**: extended through the layer at the grade `1`, glued with its old cells of
 grade `2`, spliced with `⊥` above the grade `2`; the orbit code of the splice `t` is a catalogue
 entry, and `t` is the labelling at the old cells of grade at most `2`. -/
-theorem exists_orbitCode_mem_catalogue_two {m : ℕ} (I : Seed.{u} α m)
+private theorem exists_orbitCode_mem_catalogue_two {m : ℕ} (I : Seed.{u} α m)
     {w : Fin I.amalgam.card → Label.{u}}
     (hwC : I.amalgam.rows.IsLawfulBelow (univ.erase (Fin.last (m + 1)), 2) fun d ↦ w d)
     (hwD : I.amalgam.rows.IsLawfulBelow (univ.erase (Fin.castSucc (Fin.last m)), 2)
