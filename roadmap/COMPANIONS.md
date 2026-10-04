@@ -1122,7 +1122,8 @@ is compiled conditionally on block determination (below).  None is an input to t
   the supremum of fixing ranks below it and is not attained.  Neither statement identifies a fixing
   rank or a height with a Scott rank.  Accordingly a bound of serving indices (`README.md`,
   "Manuscript correspondence (required)", item 5, "Uniform fixing bounds from positive niceness",
-  milestone 5; prospective) supplies no presentation at its supremum.  By contrast, for the model
+  milestone 5; prospective) supplies by itself no presentation at its supremum; attainment of a
+  greatest serving index needs the additional hypotheses named there.  By contrast, for the model
   presentations of a literal base with a terminal presentation at `ρ`, the presentation at `ρ`
   exists; but at a nonzero limit `ρ` no finite tuple has fixing rank `ρ`, so `ρ` is a least upper
   bound, not a maximum (the optimal all-presentation bound of `README.md`, item 5, "Maximal
