@@ -25,8 +25,9 @@ has a grade below `k`, the extensions from the boundary asked by the one-grade l
 (`CellScheme.Rows.cappedLift_of_boundary`) are proved here; with old cells of lower grades, only
 the extension through the new cells is proved here, at caps short at `k`, and the extension from
 the boundary, for the short-cap form `CellScheme.Rows.cappedLift_of_boundary_short`, is assembled
-where the boundary is known.  The scalar part is in
-`VaughtConjecture.Extension.CanonicalCode` and `VaughtConjecture.Extension.OrbitCode`.
+where the boundary is known (at arity one, `Seed.extendsFromBoundary_fieldLayerOne`).  Off the full
+grade, `S` is a source prefix of its field layer (`Scheme.isSourcePrefix_fieldLayer`).  The scalar
+part is in `VaughtConjecture.Extension.CanonicalCode` and `VaughtConjecture.Extension.OrbitCode`.
 
 **Appending cells of full scope** (`Scheme.appendFullCells S k M r h`, an `abbrev`, for the reason
 recorded at `Scheme.appendFullCell`): the cells of `S` along `Fin.castAdd`, then `M` cells of scope
@@ -568,6 +569,15 @@ theorem natAdd_mem_below (i : Fin (S.catalogue k).card) :
     Fin.natAdd S.card i ∈ (S.fieldLayer k hS).toCellScheme.below (univ, k) :=
   (appendFullCellsScheme_gradedIndex_natAdd S k _ i).le
 
+variable (S k hS) in
+/-- **`S` is a source prefix of its field layer** at every pair that is not above `(univ, k)`: the
+cells below such a pair are old. -/
+theorem isSourcePrefix_fieldLayer {Y : Finset (Fin n) × ℕ}
+    (hY : ¬ ((univ : Finset (Fin n)), k) ≤ Y) :
+    S.toCellScheme.IsSourcePrefix (S.fieldLayer k hS).toCellScheme (Fin.castAdd _) Y :=
+  ⟨isLowerEmbedding_fieldLayer S k hS, appendFullCellsScheme_scope_castAdd S k _,
+    fun d hd ↦ ⟨⟨d, lt_card_of_mem_below hY hd⟩, rfl⟩⟩
+
 /-- A cell of the field layer below a pair that is not above `(univ, k)` is old. -/
 theorem exists_castAdd_eq {X : Finset (Fin n) × ℕ} (hX : ¬ ((univ : Finset (Fin n)), k) ≤ X)
     {d : Fin (S.fieldLayer k hS).card} (hd : d ∈ (S.fieldLayer k hS).toCellScheme.below X) :
@@ -760,7 +770,7 @@ theorem isLawfulBelow_castAdd_of_boundary
     ((isLawfulBelow_appendFullCells_iff hV).mp hwV) fun d hd ↦ hcover d hd.2
 
 /-- A boundary cell below `(univ, k)` is an old cell of grade at most `k`. -/
-private theorem exists_castAdd_eq_of_boundary (hU : ¬ ((univ : Finset (Fin n)), k) ≤ U)
+theorem exists_castAdd_eq_of_boundary (hU : ¬ ((univ : Finset (Fin n)), k) ≤ U)
     (hV : ¬ ((univ : Finset (Fin n)), k) ≤ V)
     {d : (S.fieldLayer k hS).toCellScheme.below (univ, k)}
     (hd : (d : Fin (S.fieldLayer k hS).card) ∈ (S.fieldLayer k hS).toCellScheme.below U ∨

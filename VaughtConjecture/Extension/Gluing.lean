@@ -20,7 +20,8 @@ consistency, bountifulness, or completeness of `R` is assumed unless it is a hyp
   all cells is lawful below `X` exactly when the order, locality, and availability laws hold at the
   cells below `X`, with the rows of `D` itself.  In particular lawfulness is local, and labellings
   lawful below `U` and below `V` glue to one lawful below any `Y` whose cells are covered by those
-  below `U` and `V` (`Rows.IsLawfulBelow.glue`).
+  below `U` and `V` (`Rows.IsLawfulBelow.glue`), and likewise along three pairs
+  (`Rows.IsLawfulBelow.glue₃`).
 * **Lifting within a face** (`Rows.cappedLift_of_fst_eq`): for pairs `X ≤ Y` on the same face,
   any rows lift capped from `X` to `Y`: keep the prescription below `X` and cap the ambient labels
   above it.  This is the case `B = C = A` of the proof of [Kni26, Lemma 4.3.2].
@@ -40,7 +41,7 @@ consistency, bountifulness, or completeness of `R` is assumed unless it is a hyp
 
 ## Placement
 
-`Rows.isLawfulBelow_iff_forall` and `Rows.IsLawfulBelow.glue` belong in
+`Rows.isLawfulBelow_iff_forall`, `Rows.IsLawfulBelow.glue` and `Rows.IsLawfulBelow.glue₃` belong in
 `VaughtConjecture.Scheme.Row`, after the lawful sections, and the lifting statements in
 `VaughtConjecture.Scheme.Bountiful`, after `CellScheme.Rows.CappedLift.trans`.  They are stated
 here so that those files are unchanged.
@@ -113,6 +114,21 @@ theorem IsLawfulBelow.glue {U V Y : Finset α × ℕ} {w : ι → Label.{u}}
   · exact (hY d hd).elim (hoU d) (hoV d)
   · exact (hY s hs).elim (hlU s) (hlV s)
   · exact (hY t ht).elim (haU s t) (haV s t)
+
+/-- **Gluing along three pairs.**  If a labelling of all cells is lawful below `U`, `V` and `W`, it
+is lawful below every pair `Y` whose cells lie below one of them. -/
+theorem IsLawfulBelow.glue₃ {U V W Y : Finset α × ℕ} {w : ι → Label.{u}}
+    (hU : R.IsLawfulBelow U (fun d ↦ w d)) (hV : R.IsLawfulBelow V (fun d ↦ w d))
+    (hW : R.IsLawfulBelow W (fun d ↦ w d))
+    (hY : ∀ d ∈ D.below Y, d ∈ D.below U ∨ d ∈ D.below V ∨ d ∈ D.below W) :
+    R.IsLawfulBelow Y (fun d ↦ w d) := by
+  obtain ⟨hoU, hlU, haU⟩ := isLawfulBelow_iff_forall.mp hU
+  obtain ⟨hoV, hlV, haV⟩ := isLawfulBelow_iff_forall.mp hV
+  obtain ⟨hoW, hlW, haW⟩ := isLawfulBelow_iff_forall.mp hW
+  refine isLawfulBelow_iff_forall.mpr ⟨fun d hd ↦ ?_, fun s hs ↦ ?_, fun s t ht ↦ ?_⟩
+  · exact (hY d hd).elim (hoU d) fun h ↦ h.elim (hoV d) (hoW d)
+  · exact (hY s hs).elim (hlU s) fun h ↦ h.elim (hlV s) (hlW s)
+  · exact (hY t ht).elim (haU s t) fun h ↦ h.elim (haV s t) (haW s t)
 
 /-! ### Extension by bottom -/
 
