@@ -3,6 +3,7 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
+import VaughtConjecture.Expansion.Losses
 import VaughtConjecture.Expansion.UniquenessOfForcing
 import VaughtConjecture.MainTheorem.Assembly
 
@@ -54,6 +55,13 @@ from finite-cut receiving of models and forcing donors at every countable block 
 theorem, (R1), forcing donors (`ForcingDonors ξ`, `ξ < ω₁`; a finite statement about legal
 stage types, to be proved by a finite construction of Layer 3) and the conditions on the losses,
 with no hypothesis of uniqueness.
+
+**Countable losses from the terminal classification.**  The countability of the successor losses
+follows from (R1), the continuation criterion (output 3 of higher-stage reconstruction), and (R2)
+and (R3) of the table of Layer 3 (`Expansion.expansionDomain_loss_countable`).  Substituting it
+gives thinness (`densitySentence_isThinOnNatModels_of_terminalClassification`) and the thin `ℵ₁`
+spectrum (`densitySentence_hasThinAlephOneSpectrum_of_terminalClassification`) with no hypothesis
+on the countability of the losses.
 
 ## Placement
 
@@ -156,5 +164,44 @@ theorem densitySentence_hasThinAlephOneSpectrum_of_forcingDonors (hcap : CapToMo
     HasThinAlephOneSpectrum densitySentence.{0} :=
   densitySentence_hasThinAlephOneSpectrum_of_modelExpansions hcap
     (NextBlockUniqueness.of_forcingDonors hrec hF) hrec hc hn
+
+/-- **Thinness for the expansion domains from the terminal classification**: the density
+sentence has no perfect set of pairwise nonisomorphic models coded on `ℕ`, conditional on the
+following hypotheses, each still to be proved:
+* the cap-to-model theorem (`hcap`; Layer 3, 3.4; checkpoint 4): the first domain;
+* finite-cut receiving of models (`hrec`; (R1) of the table of Layer 3, which follows from the
+  gated pinned extension property `StageType.HasGatedPinnedExtensions` by
+  `Expansion.finiteCutReceiving_of_hasGatedPinnedExtensions`): next-block uniqueness, logical
+  agreement, and the rigid-core comparison;
+* forcing donors at every countable block index (`hF`; a finite construction of Layer 3, awaiting
+  the completion below the full grade): next-block uniqueness, for the limit clause;
+* the continuation criterion (`hcont`; output 3 of higher-stage reconstruction, Layer 4): the
+  cover of the terminal models;
+* exact residual receiving (`hres`; (R2) of the table of Layer 3): the residual comparison;
+* exact hollow-growth receiving for cover-hollowness at a block stage (`hhol`; (R3) of the table
+  of Layer 3): the hollow comparison.
+The countability of the losses is derived (`Expansion.expansionDomain_loss_countable`). -/
+theorem densitySentence_isThinOnNatModels_of_terminalClassification (hcap : CapToModel.{0})
+    (hrec : FiniteCutReceiving.{0}) (hF : ∀ ξ < ω₁, ForcingDonors.{0} ξ)
+    (hcont : ContinuationCriterion.{0}) (hres : Realization.ResidualReceiving.{0, 0})
+    (hhol : Realization.HollowReceiving.{0, 0} Realization.IsCoverHollowAtBlock) :
+    densitySentence.{0}.IsThinOnNatModels :=
+  densitySentence_isThinOnNatModels_of_forcingDonors hcap hrec hF
+    (expansionDomain_loss_countable hrec hcont hres hhol)
+
+/-- **The thin `ℵ₁` spectrum for the expansion domains from the terminal classification**: the
+density sentence has exactly `ℵ₁` classes of models coded on `ℕ` and no perfect set of pairwise
+nonisomorphic ones, conditional on the hypotheses of
+`densitySentence_isThinOnNatModels_of_terminalClassification`, and on nonempty losses of the
+expansion domains (`hn`; condition 4 of the reduction, Layer 6), each still to be proved.  The
+countability of the losses is derived (`Expansion.expansionDomain_loss_countable`). -/
+theorem densitySentence_hasThinAlephOneSpectrum_of_terminalClassification
+    (hcap : CapToModel.{0}) (hrec : FiniteCutReceiving.{0}) (hF : ∀ ξ < ω₁, ForcingDonors.{0} ξ)
+    (hcont : ContinuationCriterion.{0}) (hres : Realization.ResidualReceiving.{0, 0})
+    (hhol : Realization.HollowReceiving.{0, 0} Realization.IsCoverHollowAtBlock)
+    (hn : ∀ ξ < ω₁, (expansionDomain ξ \ expansionDomain (ξ + 1)).Nonempty) :
+    HasThinAlephOneSpectrum densitySentence.{0} :=
+  densitySentence_hasThinAlephOneSpectrum_of_forcingDonors hcap hrec hF
+    (expansionDomain_loss_countable hrec hcont hres hhol) hn
 
 end VaughtConjecture.MainTheorem
