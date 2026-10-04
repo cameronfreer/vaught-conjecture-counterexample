@@ -820,8 +820,8 @@ concern it (or *prospective*), and one of three statuses:
   printed clause proved equivalent to it by a named theorem, and every notion its clauses use
   itself in proved correspondence or corrected;
 - **corrected manuscript definition or statement** (C): the manuscript's definition or statement is
-  replaced by a corrected one, the correction recorded where named; a theorem relating the two is
-  listed when one exists;
+  replaced by a corrected one, the correction recorded where named; a theorem about the corrected
+  notion is noted when one exists;
 - **still to be proved** (S): every other row.  In particular, existing citation numbers alone do
   not establish a correspondence (a docstring citing a numbered statement records what a
   declaration is meant to state, not that it states it), and a compiled declaration with the same
@@ -850,7 +850,7 @@ declarations listed in the notes.
 | 10 | [AFK26] | the stage operation on templates (truncation), Definitions 9.5 and 9.7 | C |
 | 11 | [Kni26] | realizations and models, Definition 3.2.1 | S |
 | 12 | [Kni26] | the four extension families as a sentence, Definition 3.2.1, clause 4 | S |
-| 13 | [Kni26] | the fidelity theorem: density sentence and four-family sentence (clause 4) | S |
+| 13 | [Kni26] | the density sentence against clause 4 (the fidelity theorem of this roadmap) | S |
 | 14 | [AFK26] | invariant diagram and system compatible (item 2; no numbered statement) | S |
 | 15 | [Kni26] | the amalgam of two coatom types, Definition 4.3.1, and its rows, Lemma 4.3.2 | S |
 | 16 | [Kni26] | the completion of the amalgam, Definition 4.3.14 | C |
@@ -864,7 +864,7 @@ declarations listed in the notes.
 | 24 | [AFK26] | back-and-forth systems, Definition 4.1 and Theorem 4.2 | C |
 | 25 | [AFK26] | density at an observation, two-index form (item 3; no numbered statement) | S |
 | 26 | [AFK26] | comparison of models with a common invariant (item 4; no numbered statement) | S |
-| 27 | [AFK26] | maximal presentations: class–level incidence, the system count (item 5) | S |
+| 27 | [AFK26] | maximal presentations, class–level incidence (item 5; no numbered statement) | S |
 | 28 | [AFK26] | full trees, Definition 8.4 and Proposition 8.6 (item 6) | C |
 
 The items are those of `README.md`, "Manuscript correspondence (required)".  Notes to the rows:
@@ -874,43 +874,41 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
    in this repository (theorem named); that this is the indexing of [AFK26] is item 1, still to be
    proved.
 2. `Label.visibilityReplace` (`Label/Visibility`), whose docstring cites the definition; the
-   clause-by-clause comparison is not recorded.  Was P (by definition).
+   clause-by-clause comparison is not recorded.
 3. `Label.IsWitness` (`Label/Transform`), its five laws; guarded composition only (`README.md`,
-   layer 1).  The comparison of the laws with the clauses of the definition is not recorded.  Was
-   P (by definition).
+   layer 1).  The comparison of the laws with the clauses of the definition is not recorded.
 4. `CellScheme.Rows.IsLawful` (`Scheme/Row`), with the clauses order, locality, and availability;
-   their comparison with the two definitions is not recorded.  Was P (by definition).
+   their comparison with the two definitions is not recorded.
 5. `CellScheme.Rows.IsLawful.min_const` (`Scheme/Row`), with the special case
    `CellScheme.Rows.IsLawful.min_const_of_isSelfVisible` as a corollary: compiled in this
    repository (theorem named).  It states the lemma for the lawful sections here; it is the lemma
-   of [Kni26] once rows 2 and 4 are P.  Was P (theorem named).
+   of [Kni26] once rows 2 and 4 are P.
 6. `CellScheme.Rows.IsBountiful` (`Scheme/Bountiful`); the comparison of its clauses is not
-   recorded.  Was P (by definition).
+   recorded.
 7. `Scheme.IsLegal`, with the coding clause `Scheme.IsCoded` (`Stage/Legal`, `Stage/Scheme`):
    coding imposed as a clause, not derived from the offset bound of [Kni26, Lemma 2.5.13];
    recoverability by representation (`README.md`, layer 3, vocabulary).
 8. `StageType`, `StageType.restrictFace` (`Stage/Basic`), `none` at invisible faces; the stage
    types here have fixed coded rows (row 9), and the comparison with the two definitions is not
-   recorded.  Was P (by definition).
+   recorded.
 9. `StageType` (a `Scheme` with fixed coded rows and a separate `label`); the correction is
    recorded in `README.md`, layer 2, "The templates of [AFK26] and the stage types here".  The
    coherent local rows `r_d(e) = min(p(e), p(d))` and the identification of item 1: prospective,
    still to be proved.
 10. `StageType.reduce`, on labels only, coherent by `StageType.reduce_reduce` (`Stage/Basic`).
-11. `Realization`, `Realization.IsModel` (`Realization/Model`).  The docstring of
-    `Realization.IsModel` records its clauses as clauses 1, 2, 3, 4(a)i, 4(a)ii, 4(b), and 4(c) of
+11. `Realization`, `Realization.IsModel` (`Realization/Model`).  The docstrings of the fields of
+    `Realization.IsModel` record its clauses as clauses 1, 2, 3, 4(a)i, 4(a)ii, 4(b), and 4(c) of
     the definition, and its guarded clauses are compared with the printed ones at stages zero or
     limits by named theorems (`Realization.IsModel.saturation_of_isLegal`,
     `Realization.IsModel.bottomPattern_of_isLawful`,
     `StageType.nonempty_cofaces_inter_saturationFamily_iff`,
     `StageType.nonempty_cofaces_inter_bottomPatternFamily_iff`): this is the form of a
     definition-level identification, but its clauses use legal stage types (rows 7 and 8) and the
-    four families, whose comparison with [Kni26] is still to be proved.  Was P (by definition).
+    four families, whose comparison with [Kni26] is still to be proved.
 12. `baseLanguage.fourFamilySentence`; `baseLanguage.realize_fourFamilySentence_iff`
     (`Language/Satisfaction`), compiled in this repository (theorem named): the sentence holds
     exactly when the realization of the structure is a model at `ω`.  It compares two declarations
-    of this repository; the correspondence with clause 4 goes through row 11.  Was P (theorem
-    named).
+    of this repository; the correspondence with clause 4 goes through row 11.
 13. The fidelity theorem,
 `baseLanguage.realize_densitySentence_iff_fourFamilySentence_of_hasFiniteCutReceiving_of_capToModel`
     (`Language/Density`), compiled in this repository (theorem named), conditional on (R1) and the
@@ -921,11 +919,10 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     compiled in this repository (theorem named), each comparing two declarations of this
     repository.  That the base language and the realizations (with legal types, on a nonempty
     carrier) are the diagram and the system of [AFK26], and the round trip at a general fixed
-    stage: still to be proved (prospective).  Was P at `ω`.
+    stage: still to be proved (prospective).
 15. `Coatom.amalgamType`, `Coatom.isBountiful_amalgamType` (`Extension/CoatomAmalgam`): the lemma
     is compiled in this repository (theorem named) for the amalgam here; the comparison of the
     amalgam with the clauses of Definition 4.3.1 is not recorded, and the lemma rests on row 6.
-    Was P (theorem named).
 16. The completion of checkpoints 2.1–2.7 replaces it; the bountifulness of the printed completion
     is unproved, not refuted.
 17. `StageType.HasApexCoatomExtensions` (`Extension/PinnedExtension`), a hypothesis.
@@ -934,12 +931,12 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
 19. `StageType.nonempty_cofaces_inter_uniformityFamily` and
     `StageType.nonempty_cofaces_inter_dominanceFamily` (`Extension/FamilyCofaces`), conditional on
     `StageType.HasCoatomExtensions` and `StageType.HasApexCoatomExtensions` respectively, both
-    still to be proved.  Was P (theorem named), conditionally.
+    still to be proved.
 20. The classical limit of the uncapped age (`README.md`, the section on the top-free witnesses):
     prospective.
 21. `Realization.IsModel.exists_privateContext` (`Realization/PrivateContext`), compiled in this
     repository (theorem named) for the models here (row 11); the comparison of its conclusion with
-    clauses 3 and 4 of the lemma is not recorded.  Was P (theorem named).
+    clauses 3 and 4 of the lemma is not recorded.
 22. Prospective (`README.md`, layer 3, 3.3).
 23. `FullPresentation.LevelObservations`, `FullPresentation.ObservedPresentation`
     (`Comparison/GradedMatchingApplications`): separate level sets, explicit projections; the
