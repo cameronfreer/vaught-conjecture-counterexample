@@ -801,7 +801,19 @@ statements are specified here, generically, with no construction):
   `BlockBFEquiv α_i`-equivalent to every `A_i`; [Mon]'s offset `+3` is for its own relation [Mon,
   Definition II.32] and is not transferred; it supports the rank-filtration comparison of
   `COMPANIONS.md`, "Further companion results", only through the passage between [Mon]'s convention
-  and InfinitaryLogic's, which is still to be proved.
+  and InfinitaryLogic's, which is still to be proved;
+- *uniform fixation for stage projections* (`StageProjection.exists_uniform_fixing_stage`, the
+  name as specified here; prospective (a uniform-fixation theorem of the infinitary-logic
+  dependency): no theorem of this name or role is at the pin `cf80917`): for an alphabet with
+  projections `π_γ` at the countable ordinals, composing as `π_γ ∘ π_δ = π_(min γ δ)`, a countable
+  type of coordinates, and an arbitrary family of maps from the coordinates to optional values,
+  indexed by the countable ordinals, each member at `β` fixed by `π_β`: if every coordinate either
+  has the value `none` in every member, or has a countable threshold `θ` at which some member takes
+  a value `p`, with every member at every index above `θ` taking the value `p` there, then one
+  countable `A` has every member at every index fixed by `π_A`.  No countability of the family or
+  of the alphabet is assumed, and the family may be empty.  Its application, one arity at a time,
+  is `README.md`, "Manuscript correspondence (required)", item 5, "Uniform fixing bounds from
+  positive niceness".
 
 ## Manuscript concordance
 
@@ -866,6 +878,10 @@ declarations listed in the notes.
 | 26 | [AFK26] | comparison of models with a common invariant (item 4; no numbered statement) | S |
 | 27 | [AFK26] | maximal presentations: class–level incidence, the system count (item 5) | S |
 | 28 | [AFK26] | full trees, Definition 8.4 and Proposition 8.6 (item 6) | C |
+| 29 | [AFK26] | closed tuples as supported tuples (item 2; no numbered statement) | S |
+| 30 | [AFK26] | positive niceness over all admissible lifts (item 5; no numbered statement) | S |
+| 31 | [AFK26] | a uniform fixing stage of a family (item 5; no numbered statement) | S |
+| 32 | [AFK26] | the bound of serving indices under strictness (item 5; no numbered statement) | S |
 
 The items are those of `README.md`, "Manuscript correspondence (required)".  Notes to the rows:
 
@@ -959,6 +975,29 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
 28. What is corrected is a statement: the same-index equivalence of Proposition 8.6 is false (an
     informal counterexample, `LITERATURE.md`, §9; not compiled); `COMPANIONS.md`, "Full trees":
     prospective.
+29. A tuple is typed exactly when its set of points is a support
+    (`Realization.isSome_eval_iff_isSupport`, `Realization/Hull`, under exact consistency); a
+    finite set is closed for the canonical closure exactly when it is a support
+    (`Realization.isClosed_coe_iff`, `Realization.isClosed_iff_of_finite`, `Realization/Closure`,
+    under exact consistency and covering); stage reduction keeps typed and untyped tuples
+    (`Realization.isSome_reduce_eval`, `Realization/Transport`) and the closure
+    (`Realization.closure_reduce`).  All compiled in this repository (theorem named), each
+    comparing declarations of this repository; the combined statement (supported exactly when
+    closed) is not named, and its comparison with the closed tuples of [AFK26] is still to be
+    proved, with item 2.  Milestone 1 of the uniform fixing bounds (`README.md`, item 5).
+30. Prospective: no declaration of this repository states positive niceness or names a fixing
+    rank.  Milestone 2; it is the row "invariance over all admissible presentations, with an
+    inhabited threshold" of the table of item 5, and its construction for the models here uses
+    the termination argument.
+31. Prospective: no declaration of this repository states it.  Its ingredients for labels are
+    compiled in this repository (theorem named): `Label.reduce_eq_self_iff` (fixed by projection
+    exactly at the labels of the stage) and `Label.reduce_reduce_of_le` (`Label/Basic`).  The
+    bound for one arity is `StageProjection.exists_uniform_fixing_stage`, prospective (a
+    uniform-fixation theorem of the infinitary-logic dependency; "Prospective interfaces of
+    InfinitaryLogic").  Milestone 3; the conditional statement uses no termination.
+32. Prospective, with the negative special case (the constant family of the all-undefined
+    assignment; not compiled).  Strictness for models is to come from `COMPANIONS.md`, "Fixing
+    ranks of finite charts" (the supremum at block `η` is `η`), still to be proved.  Milestone 4.
 
 **Completion criteria, item by item** (the items of `README.md`, "Manuscript correspondence
 (required)").  For every item, each row of the concordance that it concerns is P or C, with its
@@ -995,6 +1034,34 @@ source named.
 6. *The tree discussion:* the three refutations compiled as examples (the same-index equivalence
    of [AFK26, Proposition 8.6], and non-implications 1 and 5 of "Checkpoint order and
    acceptance"); the positive classification of density for trees is not part of this criterion.
+
+**Completion criteria of the uniform fixing bounds, milestone by milestone** (`README.md`,
+"Manuscript correspondence (required)", item 5, "Uniform fixing bounds from positive niceness";
+rows 29–32, each still to be proved).  Each milestone is complete on its own criterion, and none
+is complete because a later one is.
+
+1. *Closedness is supportedness:* the combined statement, that in an exactly consistent covering
+   realization a tuple is supported exactly when its set of points is closed, compiled (the empty
+   tuple included), with the preservation of supported and unsupported tuples by projection; row
+   29 becomes P or C with item 2.
+2. *Positive niceness:* for every actual closed tuple of every countable model of the
+   construction, a threshold at which an actual admissible presentation exists (the set of
+   thresholds inhabited) and one value taken at the tuple by every admissible presentation at
+   every higher index, quantified over all admissible lifts, not over one chosen lift; its use of
+   termination stated as a hypothesis or marked in its proof.
+3. *The uniform fixing stage:* the conditional theorem with exactly hypotheses 1–3 of the
+   sub-item, compiled through `StageProjection.exists_uniform_fixing_stage` once a pin contains it
+   (signatures checked), with no ordinal induction of its own and none of the excluded
+   assumptions; the empty family and a base assignment with no supported tuple as compiled
+   examples; and its application to the data of 2, stage correctness retained, the bound chosen
+   before the quantifiers over indices, presentations, arities, and coordinates.
+4. *Serving indices:* strictness for the models of the construction proved as a separate theorem,
+   the bound of serving indices derived from it, and the negative special case (the constant
+   family of the all-undefined assignment, fixed at `0` and serving at every index) compiled as an
+   example.
+5. *The separate statements:* the existence and coverage of maximal presentations, the terminal
+   comparison, and noncollapse each proved by its own argument; no statement of 1–4 is cited for
+   them, and no presentation at the supremum of the serving indices is inferred from 4.
 
 ## Upstream building blocks
 

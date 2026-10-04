@@ -601,7 +601,10 @@ is compiled conditionally on block determination (below).  None is an input to t
   is unique by expansion uniqueness); its **height** is that `ξ`, or `ω₁` for a class in the
   persistent core.  Targets: the naturality of greatest refinements under isomorphism, and their
   relationship to the expansion domains (a class lies in `D_ξ` exactly when its height is at
-  least `ξ`).  The count of the main theorem does not use them.
+  least `ξ`).  The count of the main theorem does not use them.  For the family of expansions of one
+  model, conditional on positive niceness for that family, the bound of serving indices under
+  strictness (`README.md`, "Manuscript correspondence (required)", item 5, "Uniform fixing bounds
+  from positive niceness"; prospective) bounds its height.
 * **Terminal refinement** (every item a conditional target, to be proved; none is an input to the
   counting theorem).  Hypotheses, all explicit: conditions 1–4 of the expansion-domain reduction
   (`README.md`), which are hypotheses of the count, not its conclusions; Scott isolation, a Scott
@@ -693,7 +696,11 @@ is compiled conditionally on block determination (below).  None is an input to t
   uncountably many classes, by the bounded-levels criterion in its form for relations between
   classes and countable ordinals (`README.md`, "Reduction to full presentations", "Bounded levels"),
   from a bound, for each class, on the fixing ranks of the charts realized in all presentations of
-  that class.  The bound of (iv) is the only place where termination can enter.  Taken from eventual
+  that class.  The bound of (iv) is the only place where termination can enter.  Its conditional
+  form is the uniform fixing stage of `README.md`, "Manuscript correspondence (required)", item 5,
+  "Uniform fixing bounds from positive niceness" (prospective), which uses no termination; there
+  termination can enter only through the construction of positive niceness (milestone 2).
+  Taken from eventual
   departure (1 above), it uses conditions 3 and 4 with a Scott sentence for each class, and not
   global termination.  Read off a full presentation of every class, it uses full-presentation
   coverage, hence global termination (`README.md`, "The persistent core"), which is then a stated
@@ -725,7 +732,9 @@ is compiled conditionally on block determination (below).  None is an input to t
   expansion-domain route remains the default, and the count does not use this route.  Fixing ranks
   of finite charts and Scott ranks of models are kept distinct: the bound here is on the levels of
   presentations, obtained from the rank of a Scott sentence, and no fixing rank is identified with a
-  Scott rank.
+  Scott rank.  The uniform fixing bounds of `README.md`, "Manuscript correspondence (required)",
+  item 5, "Uniform fixing bounds from positive niceness" (prospective) bound fixing ranks from
+  positive niceness, not from Scott sentences; neither bound is read as the other.
 * **Quantitative reconstruction** (a companion pathway of bounded checkpoints, prospective except
   for the first row, whose status is below; not a prerequisite of the main theorem by either route;
   it is used by neither route).  It asks for explicit base-language syntax for the expansions
@@ -1080,6 +1089,10 @@ is compiled conditionally on block determination (below).  None is an input to t
   with a Scott rank.  At a limit `η` the supremum is not attained, a statement to be proved with the
   others: a finite chart has finitely many proper labels, all below `λ_η`, and since `λ` is
   continuous at limits each lies below some `λ_ξ` with `ξ < η`, so its fixing rank is below `η`.
+  The uniform fixing stage of `README.md`, "Manuscript correspondence (required)", item 5, "Uniform
+  fixing bounds from positive niceness" (prospective) bounds these fixing ranks uniformly over the
+  presentations, arities, and tuples of a family, and strictness for models there is to come from
+  the supremum statement here.
 
   *Fixing ranks are zero or successors* (still to be proved).  The fixing rank of a finite chart is
   never a limit ordinal: bottom and top are fixed by every reduction, and a proper label is fixed by
@@ -1093,7 +1106,9 @@ is compiled conditionally on block determination (below).  None is an input to t
   `η` of the fixing ranks of the realized finite charts of a model at `λ_η` is a supremum of fixing
   ranks that are zero or successors, none equal to `η`; likewise a height (above) that is a limit is
   the supremum of fixing ranks below it and is not attained.  Neither statement identifies a fixing
-  rank or a height with a Scott rank.
+  rank or a height with a Scott rank.  Accordingly a bound of serving indices (`README.md`,
+  "Manuscript correspondence (required)", item 5, "Uniform fixing bounds from positive niceness",
+  milestone 5; prospective) supplies no presentation at its supremum.
 
   *Charts of every fixing rank* (a finite target, still to be proved, with the definitions of
   "Fixing ranks of finite charts").  On one fixed legal scheme on one point (a domain of arity one,
@@ -1105,7 +1120,9 @@ is compiled conditionally on block determination (below).  None is an input to t
   It supplies explicit witnesses of high fixing rank for the lower bound, with no use of any
   property of models (the strict decrease of the domains, or termination).  Special cases to be
   compiled with it: `ξ = 0`, `ξ = ω`, and `ξ` a limit.  Like the fixing rank itself, it says nothing
-  about Scott ranks.
+  about Scott ranks.  It supplies the unboundedness of fixing ranks, which the bound for each class
+  of `README.md`, "Manuscript correspondence (required)", item 5, "Uniform fixing bounds from
+  positive niceness" (prospective) does not supply, and conversely.
 
   **Completion criterion.**  Each row is a bounded checkpoint, complete when its formula is
   constructed for the concrete objects of the construction (the chart predicates at `λ_η`, the
