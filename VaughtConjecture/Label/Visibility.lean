@@ -26,9 +26,10 @@ Visibility replacement of an ordinal at threshold `k` with value `i` replaces it
 * Replacing again at the full threshold forgets the first value
   (`visibilityReplace_self_visibilityReplace`); a replacement below the threshold is undone by a
   second one (`exists_visibilityReplace_visibilityReplace`).
-* At a stage `α` that is zero or a limit, `α + K` is self-visible at every `k ≤ K`
-  (`isSelfVisible_coe_add`), and replacement with a value `i ≤ K` keeps a label at most `α + K`
-  at most `α + K` (`visibilityReplace_le_coe_add`); finitely many labels below `α` have a common
+* At a stage `α` that is zero or a limit, `α + K` has finite part `K`
+  (`add_natCast_mod_omega0`), so it is self-visible at every `k ≤ K` (`isSelfVisible_coe_add`),
+  and replacement with a value `i ≤ K` keeps a label at most `α + K` at most `α + K`
+  (`visibilityReplace_le_coe_add`); finitely many labels below `α` have a common
   bound below `α` that is self-visible at a given threshold (`exists_isSelfVisible_bound`), and
   between an ordinal `o` and a stage `β > o` that is zero or a limit there is an ordinal
   self-visible at any given threshold (`exists_lt_lt_isSelfVisible`).
@@ -212,7 +213,7 @@ def IsSelfVisible (k : ℕ) (x : Label.{u}) : Prop := visibilityReplace k k x = 
   isSelfVisible_natCast n
 
 /-- The finite part of `α + K` is `K` when `α` is zero or a limit. -/
-private theorem add_natCast_mod_omega0 (hα : Order.IsSuccPrelimit α) (K : ℕ) :
+theorem add_natCast_mod_omega0 (hα : Order.IsSuccPrelimit α) (K : ℕ) :
     (α + K) % ω = K := by
   obtain ⟨b, rfl⟩ := isSuccPrelimit_iff_omega0_dvd.mp hα
   rw [Ordinal.mul_add_mod_self, natCast_mod_omega0]
