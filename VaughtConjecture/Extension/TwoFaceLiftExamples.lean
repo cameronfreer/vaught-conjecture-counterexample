@@ -412,7 +412,7 @@ variable (α : Ordinal.{u}) (hα : Order.IsSuccPrelimit α)
 /-- **The seed on four points built from `SmallArityOneExamples.fourCellPairSeed`.**  Its two
 coatom types are both the completion of that seed, a legal stage type on three points, whose face
 along `Fin.castSuccEmb` is the first coatom type of that seed.  So the common face has two points,
-and its four cells sit at `({0}, 1)`. -/
+and the four original cells of `SmallArityExamples.fourCellSeed` sit in it at `({0}, 1)`. -/
 noncomputable def fourCellTripleSeed : Seed.{u} α 2 :=
   let F := (SmallArityOneExamples.fourCellPairSeed α hα).completionBelowFullGradeOne
   Seed.ofCoatoms (F.isLegal_completion hα) (F.isLegal_completion hα)
