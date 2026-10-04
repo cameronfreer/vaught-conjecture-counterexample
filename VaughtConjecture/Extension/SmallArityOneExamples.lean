@@ -9,7 +9,7 @@ import VaughtConjecture.Extension.SmallArityExamples
 import VaughtConjecture.Extension.SmallArityOne
 
 /-!
-# Examples: orbit codes at grade two, and the cap on the lower layer at arity one
+# Examples: orbit codes at grade two, and the completion at arity one
 
 Roadmap, Layer 3, 3.1, (R6), checkpoint 2.5 (the two small arities; here the regressions of the
 arity one); semantic contract, item 3.
@@ -43,6 +43,27 @@ self-visible at `2`.  Write `Q b f` for the label `ω * b + f`.
   prescription whose owner is the apex labelled `⊤`, above every label of grade `1`.  It holds
   because the grade-two step uses the lift at grade one as the boundary lift into `(univ, 1)`, with
   `O = (C, 1)`; the catalogue at grade one does not read the cells of grade two.
+
+**Regressions at arity one** (numbered as at arity zero, with 7 above).
+
+1. Long rows: `longRowPairSeed`, both of whose coatom types are the completion of
+   `SmallArityExamples.longRowSeed`, has a completion keeping its rows and labels
+   (`exists_completion_longRowPairSeed`).
+2. A label `⊤`: in every completion of a seed on three points an old cell of grade `2` labelled `⊤`
+   keeps `⊤` and some cell of graded index `(univ, 2)` is labelled `⊤` (`top_of_completion`); on
+   `fourCellPairSeed` the apex of the first coatom type is such a cell
+   (`exists_apex_fourCellPairSeed`, `top_completion_fourCellPairSeed`).
+3. The empty face against a one-point face: `SmallArityExamples.fourCellSeed` and
+   `fourCellPairSeed` both have completions, and the two coatom types of `fourCellPairSeed` have
+   the same face along `Fin.castSuccEmb` (`completions_fourCellSeed_fourCellPairSeed`).
+4. Labels above the grade plus one, `3` and `ω * 5 + 3` at grade `2`: their orbit codes are short
+   and read literally (`orbitDecoder_aboveGradeLabelling`).
+5. Several cells on one point: on `fourCellPairSeed`, the lift from `({0}, 1)` to `(univ, 1)` at
+   the cap `ω * 10 + 1` (`exists_lift_point_fourCellPairSeed`).
+6. The three cap regimes at grade two, `⊤`, `⊥` and `ω * 4 + 2`
+   (`exists_lift_capRegimes_fourCellPairSeed`; at `⊤` the lift is the ambient, `eq_of_min_top`).
+8. Literal faces: the completions of `fourCellPairSeed` and `longRowPairSeed` restrict to their
+   coatom types (`restrictFace_completion_pairSeeds`).
 
 ## Placement
 
@@ -318,11 +339,28 @@ theorem exists_lift_fourCellPairSeed (α : Ordinal.{u}) (hα : Order.IsSuccPreli
     (isSelfVisible_Q.mpr le_rfl) p q hp hq hpq
   exact ⟨q', hq', hlit, fun z _ ↦ hcap _⟩
 
+/-- **The apex of the first coatom type of `fourCellPairSeed` is a cell of the amalgam**, of graded
+index `({0, 1}, 2)` and labelled `⊤`: the apex of the completion of `fourCellSeed`, seen through the
+face map along `Fin.castSuccEmb`. -/
+theorem exists_apex_fourCellPairSeed (α : Ordinal.{u}) (hα : Order.IsSuccPrelimit α) :
+    ∃ d, (fourCellPairSeed α hα).amalgam.toCellScheme.gradedIndex d =
+      (Finset.univ.erase (Fin.last 2), 2) ∧ (fourCellPairSeed α hα).amalgam.label d = ⊤ := by
+  set F := (SmallArityExamples.fourCellSeed α).completionBelowFullGradeZero
+  have hlabel : (F.completion hα).label (Fin.last _) = ⊤ := StageType.addApex_label_last _ _
+  obtain ⟨a₀, ha₀, ha₀max⟩ := F.exists_apex_completion hα
+  have ha₀l : (F.completion hα).label a₀ = ⊤ := top_le_iff.mp (hlabel ▸ ha₀max _)
+  have hleft : StageType.restrictFace (Coatom.left 1) (fourCellPairSeed α hα).amalgam =
+      some (F.completion hα) :=
+    (fourCellPairSeed α hα).restrictFace_left
+  obtain ⟨d₀, hd₀, hd₀l⟩ := exists_label_of_restrictFace (e := a₀) hleft ha₀
+  rw [Coatom.univ_map_left] at hd₀
+  exact ⟨d₀, hd₀, hd₀l.trans ha₀l⟩
+
 /-- **Regression 7 is not vacuous**: on `fourCellPairSeed`, some lawful prescription below the
 coatom `({0, 1}, 2)` and some lawful ambient below `(univ, 2)` with the same observation at
 `ω * 4 + 2` have, as owner, the apex of the coatom, of graded index `({0, 1}, 2)`, labelled `⊤`:
 the glued labelling of the amalgam, extended through both layers
-(`Scheme.exists_isLawful_fieldLayer`). -/
+(`Seed.exists_isLawful_fieldLayerOne`). -/
 theorem exists_apex_prescription_fourCellPairSeed (α : Ordinal.{u})
     (hα : Order.IsSuccPrelimit α) :
     ∃ (p : (fourCellPairSeed α hα).fieldLayerOne.toCellScheme.below
@@ -336,26 +374,183 @@ theorem exists_apex_prescription_fourCellPairSeed (α : Ordinal.{u})
       ∃ o, (fourCellPairSeed α hα).fieldLayerOne.toCellScheme.gradedIndex o.1 =
         (Finset.univ.erase (Fin.last 2), 2) ∧ p o = ⊤ := by
   set I := fourCellPairSeed α hα
-  obtain ⟨r₁, hr₁, hr₁e⟩ := Scheme.exists_isLawful_fieldLayer (S := I.amalgam.toScheme) (k := 1)
-    (hS := I.not_univ_le 1) I.amalgam.isLawful
-  obtain ⟨r₂, hr₂, hr₂e⟩ := Scheme.exists_isLawful_fieldLayer (S := I.lowerFieldLayer) (k := 2)
-    (hS := I.not_univ_two_le_lowerFieldLayer) hr₁
-  -- The apex of the first coatom type is a cell of the amalgam labelled `⊤`.
-  set F := (SmallArityExamples.fourCellSeed α).completionBelowFullGradeZero
-  have hlabel : (F.completion hα).label (Fin.last _) = ⊤ := StageType.addApex_label_last _ _
-  obtain ⟨a₀, ha₀, ha₀max⟩ := F.exists_apex_completion hα
-  have ha₀l : (F.completion hα).label a₀ = ⊤ := top_le_iff.mp (hlabel ▸ ha₀max _)
-  have hleft : StageType.restrictFace (Coatom.left 1) I.amalgam = some (F.completion hα) :=
-    I.restrictFace_left
-  obtain ⟨d₀, hd₀, hd₀l⟩ := exists_label_of_restrictFace (e := a₀) hleft ha₀
-  rw [Coatom.univ_map_left] at hd₀
+  obtain ⟨r, hr, hre⟩ := I.exists_isLawful_fieldLayerOne I.amalgam.isLawful
+  obtain ⟨d₀, hd₀, hd₀l⟩ := exists_apex_fourCellPairSeed α hα
   have hgi : I.fieldLayerOne.toCellScheme.gradedIndex (Fin.castAdd _ (Fin.castAdd _ d₀)) =
       (Finset.univ.erase (Fin.last 2), 2) :=
     (Scheme.appendFullCellsScheme_gradedIndex_castAdd _ _ _ _).trans
       ((Scheme.appendFullCellsScheme_gradedIndex_castAdd _ _ _ d₀).trans hd₀)
-  refine ⟨fun d ↦ r₂ d, fun d ↦ r₂ d, hr₂.isLawfulBelow _, hr₂.isLawfulBelow _, fun _ ↦ rfl,
+  refine ⟨fun d ↦ r d, fun d ↦ r d, hr.isLawfulBelow _, hr.isLawfulBelow _, fun _ ↦ rfl,
     ⟨_, hgi.le⟩, hgi, ?_⟩
-  change r₂ (Fin.castAdd _ (Fin.castAdd _ d₀)) = ⊤
-  rw [hr₂e, hr₁e, hd₀l, ha₀l]
+  change r (Fin.castAdd _ (Fin.castAdd _ d₀)) = ⊤
+  rw [hre, hd₀l]
+
+/-! ### Regressions 1–6 and 8 at arity one -/
+
+/-- The seed on three points whose two coatom types are both the completion of
+`SmallArityExamples.longRowSeed`, whose rows exceed the grade plus one and whose labels are
+bottom. -/
+noncomputable def longRowPairSeed (α : Ordinal.{u}) (hα : Order.IsSuccPrelimit α) :
+    Seed.{u} α 1 :=
+  let F := (SmallArityExamples.longRowSeed α).completionBelowFullGradeZero
+  Seed.ofCoatoms (F.isLegal_completion hα) (F.isLegal_completion hα)
+    (F.restrictFace_left_completion hα) (F.restrictFace_left_completion hα)
+
+/-- **Regression 1, long rows.**  `longRowPairSeed` has a completion below the full grade, which
+keeps the rows and the labels of the amalgam on its old cells. -/
+theorem exists_completion_longRowPairSeed (α : Ordinal.{u}) (hα : Order.IsSuccPrelimit α) :
+    ∃ F : CompletionBelowFullGrade (longRowPairSeed α hα),
+      F.scheme.rows.comap F.isLowerEmbedding = (longRowPairSeed α hα).amalgam.rows ∧
+        ∀ d, F.label (F.embed d) = (longRowPairSeed α hα).amalgam.label d :=
+  ⟨_, (longRowPairSeed α hα).completionBelowFullGradeOne.comap_rows,
+    (longRowPairSeed α hα).completionBelowFullGradeOne.label_embed⟩
+
+/-- **A label `⊤` at grade two is kept and carried by a new cell.**  In a completion of a seed on
+three points, an old cell of grade `2` labelled `⊤` keeps `⊤`, and some cell of graded index
+`(univ, 2)` is labelled `⊤` (availability). -/
+theorem top_of_completion {α : Ordinal.{u}} {I : Seed.{u} α 1} (F : CompletionBelowFullGrade I)
+    {d : Fin I.amalgam.card} (hd : I.amalgam.toCellScheme.grade d = 2)
+    (hl : I.amalgam.label d = ⊤) :
+    F.label (F.embed d) = ⊤ ∧
+      ∃ z, F.scheme.toCellScheme.gradedIndex z = (Finset.univ, 2) ∧ F.label z = ⊤ := by
+  refine ⟨(F.label_embed d).trans hl, ?_⟩
+  have hwf := F.isLegalBelowFullGrade.isWellFormed
+  obtain ⟨t, ht⟩ := F.isLegalBelowFullGrade.exists_gradedIndex_eq (Finset.univ, 2)
+    ⟨hwf.univ_mem_faces, two_pos, by simp⟩ (by omega)
+  have hgs : F.scheme.toCellScheme.grade (F.embed d) = F.scheme.toCellScheme.grade t :=
+    ((F.isLowerEmbedding.grade_eq d).trans hd).trans (congrArg Prod.snd ht).symm
+  obtain ⟨z, hz, hle⟩ := F.isLawful.availability (F.embed d) t
+    (by rw [show F.scheme.toCellScheme.scope t = Finset.univ from congrArg Prod.fst ht];
+        exact subset_univ _) hgs
+  refine ⟨z, hz.trans ht, top_le_iff.mp ?_⟩
+  rw [← (F.label_embed d).trans hl]
+  exact hle
+
+/-- **Regression 2, a `⊤` label, on a concrete seed.**  In the completion of `fourCellPairSeed`,
+the apex of the first coatom type, an old cell of graded index `({0, 1}, 2)` labelled `⊤`, keeps
+`⊤`, and some new cell of graded index `(univ, 2)` is labelled `⊤`. -/
+theorem top_completion_fourCellPairSeed (α : Ordinal.{u}) (hα : Order.IsSuccPrelimit α) :
+    ∃ d, (fourCellPairSeed α hα).amalgam.toCellScheme.gradedIndex d =
+        (Finset.univ.erase (Fin.last 2), 2) ∧
+      (fourCellPairSeed α hα).completionBelowFullGradeOne.label
+        ((fourCellPairSeed α hα).completionBelowFullGradeOne.embed d) = ⊤ ∧
+      ∃ z, (fourCellPairSeed α hα).completionBelowFullGradeOne.scheme.toCellScheme.gradedIndex z =
+        (Finset.univ, 2) ∧ (fourCellPairSeed α hα).completionBelowFullGradeOne.label z = ⊤ := by
+  obtain ⟨d, hd, hl⟩ := exists_apex_fourCellPairSeed α hα
+  exact ⟨d, hd, top_of_completion _ (congrArg Prod.snd hd) hl⟩
+
+/-- **Regression 3, the empty face against a one-point face.**  The seed on two points
+`fourCellSeed` (common face empty) and the seed on three points `fourCellPairSeed` (common face
+`{0}`, carrying the four cells on one point) both have completions below the full grade, and the
+two coatom types of `fourCellPairSeed` have the same face along `Fin.castSuccEmb`, literally. -/
+theorem completions_fourCellSeed_fourCellPairSeed (α : Ordinal.{u})
+    (hα : Order.IsSuccPrelimit α) :
+    Nonempty (CompletionBelowFullGrade (SmallArityExamples.fourCellSeed α)) ∧
+      Nonempty (CompletionBelowFullGrade (fourCellPairSeed α hα)) ∧
+      StageType.restrictFace (Coatom.face 1) (fourCellPairSeed α hα).left =
+        StageType.restrictFace (Coatom.face 1) (fourCellPairSeed α hα).right :=
+  ⟨Seed.nonempty_completionBelowFullGrade_of_le_one (Nat.zero_le 1) _,
+    Seed.nonempty_completionBelowFullGrade_of_le_one le_rfl _,
+    (fourCellPairSeed α hα).restrictFace_face_left.trans
+      (fourCellPairSeed α hα).restrictFace_face_right.symm⟩
+
+/-- The labelling of regression 4 at grade `2`: `3` on a cell of grade `1` and `ω * 5 + 3` on a
+cell of grade `2`. -/
+noncomputable def aboveGradeLabelling : Fin 2 → Label.{u} := ![Q 0 3, Q 5 3]
+
+/-- **Regression 4, labels above the grade plus one.**  At grade `2`, the labels `3` and
+`ω * 5 + 3` are not short, their orbit codes are, and the orbit decoder at the least grid point
+reads the codes literally. -/
+theorem orbitDecoder_aboveGradeLabelling :
+    ¬ IsShort 2 (aboveGradeLabelling.{u} 0) ∧ ¬ IsShort 2 (aboveGradeLabelling.{u} 1) ∧
+      (∀ i, IsShort 2 (orbitCode 2 aboveGradeLabelling.{u} i)) ∧
+      ∀ i, orbitDecoder 2 aboveGradeLabelling.{u} (gridPoint 2 0)
+        (orbitCode 2 aboveGradeLabelling i) = aboveGradeLabelling i := by
+  have hns (b : ℕ) : ¬ IsShort 2 (Q.{u} b 3) := fun h ↦ by
+    have := isShort_coe.mp h
+    rw [omega0_mul_add_natCast_mod] at this
+    exact absurd (by exact_mod_cast this : 3 ≤ 2) (by decide)
+  exact ⟨hns 0, hns 5, fun _ ↦ isShort_orbitCode _,
+    orbitDecoder_orbitCode fun _ ↦ min_orbitCode_gridPoint_zero _⟩
+
+/-- **Regression 5, several cells on one point.**  On `fourCellPairSeed`, whose common point
+carries four cells of grade `1`, the completion lifts capped from `({0}, 1)` to `(univ, 1)`
+(`Seed.isBountiful_fieldLayerOne`); at the cap `ω * 10 + 1` a prescription and an ambient with
+the same observation below `({0}, 1)` have a lift keeping the observation at every cell. -/
+theorem exists_lift_point_fourCellPairSeed (α : Ordinal.{u}) (hα : Order.IsSuccPrelimit α)
+    (p : (fourCellPairSeed α hα).fieldLayerOne.toCellScheme.below ({0}, 1) → Label.{u})
+    (q : (fourCellPairSeed α hα).fieldLayerOne.toCellScheme.below (Finset.univ, 1) → Label.{u})
+    (hp : (fourCellPairSeed α hα).fieldLayerOne.rows.IsLawfulBelow _ p)
+    (hq : (fourCellPairSeed α hα).fieldLayerOne.rows.IsLawfulBelow _ q)
+    (hpq : ∀ d, min (q (Set.inclusion (CellScheme.below_mono _
+      (show ((({0} : Finset (Fin 3)), 1) : Finset (Fin 3) × ℕ) ≤ (Finset.univ, 1) from
+        ⟨subset_univ _, le_rfl⟩)) d)) (gridPoint 1 10) = min (p d) (gridPoint 1 10)) :
+    ∃ q' : (fourCellPairSeed α hα).fieldLayerOne.toCellScheme.below (Finset.univ, 1) → Label.{u},
+      (fourCellPairSeed α hα).fieldLayerOne.rows.IsLawfulBelow _ q' ∧
+        (∀ d, min (q' d) (gridPoint 1 10) = min (q d) (gridPoint 1 10)) ∧
+        ∀ d, q' (Set.inclusion (CellScheme.below_mono _
+          (show ((({0} : Finset (Fin 3)), 1) : Finset (Fin 3) × ℕ) ≤ (Finset.univ, 1) from
+            ⟨subset_univ _, le_rfl⟩)) d) = p d := by
+  have h0 : ({0} : Finset (Fin 3)) ∈ (fourCellPairSeed α hα).fieldLayerOne.toCellScheme.faces :=
+    (fourCellPairSeed α hα).face_mem_faces
+  have hu : (Finset.univ : Finset (Fin 3)) ∈
+      (fourCellPairSeed α hα).fieldLayerOne.toCellScheme.faces :=
+    (fourCellPairSeed α hα).amalgam.univ_mem_faces
+  have hle : ((({0} : Finset (Fin 3)), 1) : Finset (Fin 3) × ℕ) ≤ (Finset.univ, 1) :=
+    ⟨subset_univ _, le_rfl⟩
+  exact (CellScheme.Rows.cappedLift_iff_forall_exists hle).mp
+    ((fourCellPairSeed α hα).isBountiful_fieldLayerOne (X := ({0}, 1)) (Y := (Finset.univ, 1))
+      ⟨h0, one_pos, by simp⟩ ⟨hu, one_pos, by simp⟩ hle) _ (isSelfVisible_gridPoint 1 10) p q hp
+      hq hpq
+
+/-- **Regression 6, the three cap regimes at grade two.**  On `fourCellPairSeed`, the lift from the
+coatom `({0, 1}, 2)` to `(univ, 2)` exists at the caps `⊤` (where it is the ambient itself), `⊥`
+(where only the prescription matters) and `ω * 4 + 2`. -/
+theorem exists_lift_capRegimes_fourCellPairSeed (α : Ordinal.{u}) (hα : Order.IsSuccPrelimit α)
+    {c : Label.{u}} (hc : c = ⊤ ∨ c = ⊥ ∨ c = Q 4 2)
+    (p : (fourCellPairSeed α hα).fieldLayerOne.toCellScheme.below
+      (Finset.univ.erase (Fin.last 2), 2) → Label.{u})
+    (q : (fourCellPairSeed α hα).fieldLayerOne.toCellScheme.below (Finset.univ, 2) → Label.{u})
+    (hp : (fourCellPairSeed α hα).fieldLayerOne.rows.IsLawfulBelow _ p)
+    (hq : (fourCellPairSeed α hα).fieldLayerOne.rows.IsLawfulBelow _ q)
+    (hpq : ∀ d, min (q (Set.inclusion (CellScheme.below_mono _
+      (show ((Finset.univ.erase (Fin.last 2), 2) : Finset (Fin 3) × ℕ) ≤ (Finset.univ, 2) from
+        ⟨erase_subset _ _, le_rfl⟩)) d)) c = min (p d) c) :
+    ∃ q' : (fourCellPairSeed α hα).fieldLayerOne.toCellScheme.below (Finset.univ, 2) → Label.{u},
+      (fourCellPairSeed α hα).fieldLayerOne.rows.IsLawfulBelow _ q' ∧
+        (∀ d, min (q' d) c = min (q d) c) ∧
+        ∀ d, q' (Set.inclusion (CellScheme.below_mono _
+          (show ((Finset.univ.erase (Fin.last 2), 2) : Finset (Fin 3) × ℕ) ≤ (Finset.univ, 2) from
+            ⟨erase_subset _ _, le_rfl⟩)) d) = p d := by
+  have hcv : IsSelfVisible 2 c := by
+    rcases hc with rfl | rfl | rfl
+    exacts [isSelfVisible_top 2, isSelfVisible_bot 2, isSelfVisible_Q.mpr le_rfl]
+  exact (fourCellPairSeed α hα).exists_lift_fieldLayerOne_two (x := Fin.last 2)
+    (y := Fin.castSucc (Fin.last 1)) (by decide) (by decide) (by decide) hcv p q hp hq hpq
+
+/-- At the cap `⊤` the lift of regression 6 is the ambient itself. -/
+theorem eq_of_min_top {X : Type*} {q q' : X → Label.{u}} (h : ∀ d, min (q' d) ⊤ = min (q d) ⊤) :
+    q' = q :=
+  funext fun d ↦ by simpa using h d
+
+/-- **Regression 8, literal faces.**  The completions of `fourCellPairSeed` and `longRowPairSeed`
+have their two coatom types as faces, literally, labels included. -/
+theorem restrictFace_completion_pairSeeds (α : Ordinal.{u}) (hα : Order.IsSuccPrelimit α) :
+    (StageType.restrictFace (Coatom.left 1)
+        ((fourCellPairSeed α hα).completionBelowFullGradeOne.completion hα) =
+          some (fourCellPairSeed α hα).left ∧
+      StageType.restrictFace (Coatom.right 1)
+        ((fourCellPairSeed α hα).completionBelowFullGradeOne.completion hα) =
+          some (fourCellPairSeed α hα).right) ∧
+    (StageType.restrictFace (Coatom.left 1)
+        ((longRowPairSeed α hα).completionBelowFullGradeOne.completion hα) =
+          some (longRowPairSeed α hα).left ∧
+      StageType.restrictFace (Coatom.right 1)
+        ((longRowPairSeed α hα).completionBelowFullGradeOne.completion hα) =
+          some (longRowPairSeed α hα).right) :=
+  ⟨⟨CompletionBelowFullGrade.restrictFace_left_completion _ hα,
+    CompletionBelowFullGrade.restrictFace_right_completion _ hα⟩,
+    ⟨CompletionBelowFullGrade.restrictFace_left_completion _ hα,
+      CompletionBelowFullGrade.restrictFace_right_completion _ hα⟩⟩
 
 end VaughtConjecture.SmallArityOneExamples
