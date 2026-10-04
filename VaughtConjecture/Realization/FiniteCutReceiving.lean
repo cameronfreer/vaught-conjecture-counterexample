@@ -80,18 +80,6 @@ namespace VaughtConjecture
 
 open Finset Label
 
-/-- **Donors without proper new labels are anchored**: if every new cell of the donor `d` (a cell
-whose scope contains the new point) is labelled `⊥` or `⊤`, then `d` is anchored in every `P` below
-every cell `C`; no anchor is needed. -/
-theorem StageType.isAnchored_of_forall_label_eq_bot_or_top {α : Ordinal.{u}} {n m : ℕ}
-    (P : StageType.{u} α n) (C : Fin P.card) {d : StageType.{u} α (m + 1)}
-    (hd : ∀ j, Fin.last m ∈ d.toCellScheme.scope j → d.label j = ⊥ ∨ d.label j = ⊤) :
-    StageType.IsAnchored P C d := by
-  intro j hj hbot hlt
-  rcases hd j hj with h | h
-  · exact absurd h hbot
-  · exact absurd (h ▸ hlt) not_top_lt
-
 namespace Realization
 
 variable {α : Ordinal.{u}} {M : Type v} {R : Realization.{u, v} α M}
