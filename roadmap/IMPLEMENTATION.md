@@ -49,7 +49,7 @@ below.  The companion milestones are summarized under "Companion boundaries".
 ## Environment
 
 Lean `v4.35.0-rc3`; InfinitaryLogic and ComputableModelTheory at the revisions pinned in
-`lakefile.toml` (`e460cb6` and `3a8f630`); Mathlib inherited from InfinitaryLogic's manifest.
+`lakefile.toml` (`e460cb6` and `a1fe761`); Mathlib inherited from InfinitaryLogic's manifest.
 Nothing else is imported.
 Search the pinned libraries first and delete any local lemma that duplicates one already
 upstream.
@@ -1034,18 +1034,19 @@ named (`README.md`, Layer 0):
   `InfinitaryLogic.Descriptive.BFScatteredSentence`, `InfinitaryLogic.Scott.SentenceRecognition`,
   `InfinitaryLogic.Topology.Perfect`, and the others the sketch names), never
   `InfinitaryLogic.All`.
-- **ComputableModelTheory**: the current pin is `3a8f630`, the merge of its pull request #57,
-  reached from `0e9935b` (the merge of its pull request #53) by this repository's pull request
-  #63; `0e9935b` was reached from `37f6c42` (the merge of its pull request #51) by this
-  repository's pull request #49, and `37f6c42` from `0401c95` (the merge of its pull request #47)
-  by this repository's pull request #45.  Representative classes, extension-rich families and
-  direct limits, the factorization of tuples through the age, orbit isolation, and countable prime
-  structures, rooted universality and uniqueness (#42), classical Fraïssé existence (#44), the
-  entry module `ComputableModelTheory.Classical` (#45), and isolation and primeness over named
-  finite parameters (#46) are available at our pinned dependency `3a8f630` (signatures checked;
-  `SuggestedInterfaces.lean` `#check`s them through the entry module).  It also contains the
-  seeded effective back-and-forth and computable automorphisms extending an isomorphism between
-  finitely generated substructures of a computably homogeneous structure
+- **ComputableModelTheory**: the current pin is `a1fe761`, the merge of its pull request #58,
+  reached from `3a8f630` (the merge of its pull request #57) by this repository's pull request
+  #97; `3a8f630` was reached from `0e9935b` (the merge of its pull request #53) by this
+  repository's pull request #63; `0e9935b` was reached from `37f6c42` (the merge of its pull
+  request #51) by this repository's pull request #49, and `37f6c42` from `0401c95` (the merge of
+  its pull request #47) by this repository's pull request #45.  Representative classes,
+  extension-rich families and direct limits, the factorization of tuples through the age, orbit
+  isolation, and countable prime structures, rooted universality and uniqueness (#42), classical
+  Fraïssé existence (#44), the entry module `ComputableModelTheory.Classical` (#45), and isolation
+  and primeness over named finite parameters (#46) are available at our pinned dependency `a1fe761`
+  (signatures checked; `SuggestedInterfaces.lean` `#check`s them through the entry module).  It also
+  contains the seeded effective back-and-forth and computable automorphisms extending an isomorphism
+  between finitely generated substructures of a computably homogeneous structure
   (`ModelTheory/Computable/AutomorphismExtension`); finite elimination (#52, #53,
   `Computability/FiniteElimination`: over a fixed prefix, if refutation persists, a sequence of
   selections that never selects a refuted candidate, replaces a selection only once it is refuted,
@@ -1055,10 +1056,12 @@ named (`README.md`, Layer 0):
   (#57, `ModelTheory/ClosedDiagramAdapterAudit`, compiled checks with no library declaration), all
   outside the entry module and not used here.  None of the modules behind the entry module changed
   between `37f6c42` and `3a8f630`: between `0e9935b` and `3a8f630` only `ModelTheory/Computable`
-  and the audit module changed, and the entry module imports neither.  Its own InfinitaryLogic
-  pin is `9ab398a` (the merge of infinitary-logic's pull request #155, reached by its pull
-  requests #55 and #56), an ancestor of the revision pinned here; this repository's manifest
-  governs (see the next item).
+  and the audit module changed, and the entry module imports neither; between `3a8f630` and
+  `a1fe761` (its pull request #58) no declaration changed: only its InfinitaryLogic pin and the
+  docstrings of `ModelTheory/Computable/InfinitaryBridge` and its audit, outside the entry
+  module's imports.  Its own InfinitaryLogic pin is `6480603` (infinitary-logic's release v6.0.0,
+  the merge of its pull request #161), an ancestor of the revision `e460cb6` pinned here; this
+  repository's manifest governs (see the next item).
 - **Mathlib and the toolchain** agree across the three: one Lean toolchain (`v4.35.0-rc3` at
   present) and one Mathlib commit (at present the fork commit `346a4bd`, inherited from
   InfinitaryLogic).  The manifest holds one revision of each dependency, so ComputableModelTheory
@@ -1092,7 +1095,7 @@ over a countable relational language some `γ < ω₁` at which `BFEquiv0` gives
 **Available upstream, not yet available at our pinned dependency:** of InfinitaryLogic, at
 `30c186f` (the merge of its pull request #163, after the pin `e460cb6`; same toolchain and
 Mathlib), concentration at back-and-forth levels (`Descriptive/BFConcentration`).  Of
-ComputableModelTheory: none (its `main` is the pin `3a8f630`).  A statement merged upstream after
+ComputableModelTheory: none (its `main` is the pin `a1fe761`).  A statement merged upstream after
 the pins above is listed here, named in prose only and never `#check`ed in the sketches, until a
 repin containing it is recorded in this subsection.
 

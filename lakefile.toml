@@ -38,21 +38,22 @@ rev = "e460cb6f0bac62bbc23415f8f7957d2b00cd1172"
 # manifest pins an InfinitaryLogic revision that is an ancestor of the revision above; this
 # manifest's pin governs.  To bump: change `rev`, run `lake update ComputableModelTheory`, and
 # commit the manifest.
-# Pinned to cameronfreer/computable-model-theory at the merge of its #57 (the audit of finite
-# diagrams against rooted extension), which includes #56 and #55 (its InfinitaryLogic repins to
-# infinitary-logic `9ab398a` and `def5cc0`), #54 (attachments and their transport along connecting
-# data), #53 (the audit of finite elimination), #52 (finite elimination: the fixed-prefix selection
-# lemma), #51 (its InfinitaryLogic repin to the merge of infinitary-logic#148), #50 and #48 (its
-# earlier InfinitaryLogic repins), the seeded effective back-and-forth (computable automorphisms
-# extending an isomorphism between finitely generated substructures of a computably homogeneous
-# structure), #47, #46 (isolation and primeness over named finite parameters), #45 (the classical
-# entry module `ComputableModelTheory.Classical`), #44 (classical Fraïssé existence: a Fraïssé
-# sequence, its limit, and `IsFraisse K → ∃ limit`), #42 (rooted universality and uniqueness), #41,
-# #40, #39, #38 and #37.
+# Pinned to cameronfreer/computable-model-theory at the merge of its #58 (its InfinitaryLogic repin
+# to the infinitary-logic release v6.0.0, `6480603`; no declaration changed), which includes #57
+# (the audit of finite diagrams against rooted extension), #56 and #55 (its InfinitaryLogic repins
+# to infinitary-logic `9ab398a` and `def5cc0`), #54 (attachments and their transport along
+# connecting data), #53 (the audit of finite elimination), #52 (finite elimination: the fixed-prefix
+# selection lemma), #51 (its InfinitaryLogic repin to the merge of infinitary-logic#148), #50 and
+# #48 (its earlier InfinitaryLogic repins), the seeded effective back-and-forth (computable
+# automorphisms extending an isomorphism between finitely generated substructures of a computably
+# homogeneous structure), #47, #46 (isolation and primeness over named finite parameters), #45 (the
+# classical entry module `ComputableModelTheory.Classical`), #44 (classical Fraïssé existence: a
+# Fraïssé sequence, its limit, and `IsFraisse K → ∃ limit`), #42 (rooted universality and
+# uniqueness), #41, #40, #39, #38 and #37.
 [[require]]
 name = "ComputableModelTheory"
 git = "https://github.com/cameronfreer/computable-model-theory"
-rev = "3a8f63056ca8b8900d9a3bb6379d78d328124764"
+rev = "a1fe76155a98f03933f7de0811e03b2473dd2e21"
 
 # Authoritative: every module under `VaughtConjecture/` is built whether or not the root re-exports it,
 # so an orphan file cannot escape the build or the audits.  The root `VaughtConjecture.lean` is
