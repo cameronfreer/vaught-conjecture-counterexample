@@ -7,10 +7,14 @@ import VaughtConjecture.Continuation.ExactAge
 import VaughtConjecture.Continuation.Terminal
 
 /-!
-# Comparison of terminal models sharing a property
+# Comparison of expansions sharing a property
 
 Roadmap, Layer 4 (the rigid-core, residual, and hollow comparisons, as instances of the exact-age
 comparison of `VaughtConjecture.Continuation.ExactAge`); semantic contract, item 8.
+
+Terminality is not a hypothesis here: each comparison holds for any two expansions sharing its
+property.  Terminality enters only in showing that every terminal model has one of these
+properties (the countable cover of the terminal classes, Layer 4).
 
 **Rigid cores from finite-extension receiving.**  Let `R` be exactly consistent at a limit stage
 with finite-extension receiving (`Realization.HasFiniteExtensionReceiving`).  Over a cover `c` of a
@@ -72,19 +76,17 @@ Layer 3 are stated here as hypotheses, at the strength of the table and at limit
 Hollowness is not defined in this library yet: the predicate `H` is a parameter, to be fixed as
 the hollowness predicate of the continuation criterion (output 3 of higher-stage reconstruction),
 so that one predicate is used in both.  Both statements are still to be proved; by the table,
-both rest on the coatom extension construction ((R6)), that is, on the coatom extension property
-`StageType.HasCoatomExtensions`, which is not proved.  The families
+both use, among other inputs, the coatom extension construction ((R6)), that is, the coatom
+extension property `StageType.HasCoatomExtensions`, which is not proved.  The families
 `{D | D legal, topGrade D ≤ K}` and `{D | D legal}` are closed under the face maps
 (`StageType.isLegal_and_topGrade_le_of_restrictFace`), so the one-point form gives exact receiving
 within them (`Realization.ExactReceivingWithin.of_one_point`); every actual type of a model lies in
 them (top grade at most the top-grade supremum, `Occurrence.topGrade_le_topGradeSup`), and the
 initial match is the pair of empty covers.  Hence the residual comparison
-(`Realization.nonempty_equiv_of_residual`: two coreless expansions with the same top-grade
-supremum `K`, under `ResidualReceiving`) and the hollow comparison
+(`Realization.nonempty_equiv_of_residual`: two expansions with no cover that is a globally rigid
+core and with the same top-grade supremum `K`, under `ResidualReceiving`) and the hollow comparison
 (`Realization.nonempty_equiv_of_hollow`: two expansions satisfying `H` with unbounded growth, under
 `HollowReceiving H`).
-
-No property is assigned canonically to a model, and several may hold of one model at once.
 
 ## Placement
 
@@ -152,9 +154,11 @@ theorem eq_of_mem_receivingFamily_of_isRigidCoreIn {D q : StageType.{u} α m} (h
     exact label_congr (hq.trans hD.symm) (i := k) (j := k) rfl
   -- the top cells of `q` form an admissible top support of `D`
   have hadm : IsAdmissibleTopSupport ⟨S, ℓ', hw', hc', hlaw', hat'⟩ {j | ℓ j = ⊤} := by
+    -- legality concerns only the scheme, so `hD` is also the legality of `q`
     refine ⟨⟨S, ℓ, hw, hc, hlaw, hat⟩, hD, rfl, fun i j hij ↦ ?_⟩
     obtain rfl : i = j := Fin.ext hij
     refine ⟨hnt i, Iff.rfl, fun htop hi ↦ ?_⟩
+    -- unfold the labels of the structure literals
     change ℓ i ≠ ⊤ at hi
     change (ℓ i).IsProper
     have h := hl i
@@ -256,8 +260,9 @@ theorem IsGloballyRigidCore.mem_rigidCoreAge {p : StageType.{u} α k₀} {x₀ :
   exact congrFun hsι i
 
 /-- In a model, the actual types are legal with top grade at most the top-grade supremum. -/
-theorem IsModel.topGrade_le {K : ℕ} (hR : R.IsModel) (hK : R.topGradeSup = K) {s : Fin m ↪ M}
-    {D : StageType.{u} α m} (hs : R.eval s = some D) : D.IsLegal ∧ D.topGrade ≤ K :=
+theorem IsModel.isLegal_and_topGrade_le {K : ℕ} (hR : R.IsModel) (hK : R.topGradeSup = K)
+    {s : Fin m ↪ M} {D : StageType.{u} α m} (hs : R.eval s = some D) :
+    D.IsLegal ∧ D.topGrade ≤ K :=
   ⟨hR.isLegal s D hs, by exact_mod_cast hK ▸ (⟨m, s, D, hs⟩ : R.Occurrence).topGrade_le_topGradeSup⟩
 
 end Receiving
@@ -379,7 +384,8 @@ theorem nonempty_equiv_of_residual (hres : ResidualReceiving.{u, w}) (hα : Orde
     Nonempty (M ≃[baseLanguage.{u}] N) :=
   nonempty_equiv_of_one_point (A := fun _ ↦ {D | D.IsLegal ∧ D.topGrade ≤ K})
     (fun _ _ _ _ _ hD hf ↦ StageType.isLegal_and_topGrade_le_of_restrictFace hD hf) he he'
-    (fun _ _ _ hs ↦ he.isModel.topGrade_le hK hs) (fun _ _ _ hs ↦ he'.isModel.topGrade_le hK' hs)
+    (fun _ _ _ hs ↦ he.isModel.isLegal_and_topGrade_le hK hs)
+    (fun _ _ _ hs ↦ he'.isModel.isLegal_and_topGrade_le hK' hs)
     (fun _ t c hc D hD hDt ↦ hres.exists_covers hα he.isModel hcore hK t c hc D ⟨hD.1, hDt⟩ hD.2)
     (fun _ t c hc D hD hDt ↦ hres.exists_covers hα he'.isModel hcore' hK' t c hc D ⟨hD.1, hDt⟩
       hD.2)

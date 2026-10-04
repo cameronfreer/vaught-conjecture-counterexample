@@ -7,14 +7,15 @@ import VaughtConjecture.ClassicalLimit.Receiving
 import VaughtConjecture.Continuation.Comparison
 
 /-!
-# Examples: comparison of terminal models sharing a property
+# Examples: comparison of expansions sharing a property
 
-* **Cutoff receiving is not exact without rigidity.**  At a limit stage, capping a legal stage type
-  `d` with a top cell at an ordinal above its other labels (`StageType.cap`) gives a member of the
+* **Cutoff receiving is not exact without rigidity.**  At a limit stage, capping a stage type `d`
+  with a top cell at an ordinal above its other labels (`StageType.cap`) gives a member of the
   receiving family of `d` at a cutoff above those labels, with the same face on no points, that
-  differs from `d`.  So the empty core is not rigid in `d`
-  (`StageType.eq_of_mem_receivingFamily_of_isRigidCoreIn`): rigidity is what makes receiving
-  exact, and this recovers one direction of `StageType.isRigidCoreIn_empty_iff_isTopFree`.
+  differs from `d`: the hypotheses of `StageType.eq_of_mem_receivingFamily_of_isRigidCoreIn` other
+  than rigidity hold, and its conclusion fails.  So, for legal `d`, the empty core is not rigid in
+  `d`: rigidity is what makes receiving exact, and this recovers one direction of
+  `StageType.isRigidCoreIn_empty_iff_isTopFree`.
 * **Transport.**  The rigid-core comparison of `R` with its transport `R.map e`: finite-extension
   receiving and globally rigid cores are carried along `e`.
 * **The top-free instance against the reconstruction.**  For the realization reconstructed from an
@@ -38,23 +39,33 @@ variable {α : Ordinal.{u}} {n k₀ : ℕ}
 
 /-! ### Cutoff receiving is not exact without rigidity -/
 
-/-- A capped legal stage type with a top cell lies in the receiving family of the type at a cutoff
-above its other labels, has the same face on no points, and differs from it: so the empty core is
-not rigid. -/
-example (hα : Order.IsSuccLimit α) {d : StageType.{u} α n} (hd : d.IsLegal) (h : ¬ d.IsTopFree)
-    (ι : Fin 0 ↪ Fin n) : ¬ d.IsRigidCoreIn ι := by
-  intro hr
+/-- **The counterexample to exactness without rigidity.**  At a limit stage, for a stage type `d`
+with a top cell, some cutoff `δ` below the stage above every label of `d` other than `⊤` has a
+member of the receiving family of `d` at `δ` with the same face on no points as `d` that differs
+from `d`: the cap of `d` at a self-visible ordinal above `δ`. -/
+example (hα : Order.IsSuccLimit α) {d : StageType.{u} α n} (h : ¬ d.IsTopFree)
+    (ι : Fin 0 ↪ Fin n) :
+    ∃ δ < α, (∀ j, d.label j ≠ ⊤ → d.label j < (δ : Label.{u})) ∧
+      ∃ q ∈ receivingFamily d δ, restrictFace ι q = restrictFace ι d ∧ q ≠ d := by
   obtain ⟨δ, hδα, hδ⟩ := d.exists_lt_forall_label_lt hα
   obtain ⟨c, hδc, hcα, hc⟩ := Label.exists_lt_lt_isSelfVisible hα.isSuccPrelimit hδα n
-  have hmem : d.cap c hc hcα ∈ receivingFamily d δ := by
-    refine ⟨rfl, fun i j hij ↦ ?_⟩
-    obtain rfl : i = j := Fin.ext hij
+  refine ⟨δ, hδα, hδ, d.cap c hc hcα, ⟨rfl, fun i j hij ↦ ?_⟩, ?_, fun he ↦ h (he ▸ isTopFree_cap)⟩
+  · obtain rfl : i = j := Fin.ext hij
     exact (min_assoc _ _ _).trans (congrArg (min (d.label i))
       (min_eq_right (by exact_mod_cast hδc.le)))
+  · obtain ⟨p, hp⟩ := Option.isSome_iff_exists.mp (d.isSome_restrictFace_of_zero ι)
+    obtain ⟨p', hp'⟩ :=
+      Option.isSome_iff_exists.mp ((d.cap c hc hcα).isSome_restrictFace_of_zero ι)
+    rw [hp, hp', eq_of_zero p' p]
+
+/-- Such a member of the receiving family of a legal `d` shows that the empty core is not rigid
+in `d`. -/
+example {d q : StageType.{u} α n} (hd : d.IsLegal) {δ : Ordinal.{u}}
+    (hδ : ∀ j, d.label j ≠ ⊤ → d.label j < (δ : Label.{u})) (hq : q ∈ receivingFamily d δ)
+    (ι : Fin 0 ↪ Fin n) (hqd : restrictFace ι q = restrictFace ι d) (hne : q ≠ d) :
+    ¬ d.IsRigidCoreIn ι := fun hr ↦ by
   obtain ⟨p, hp⟩ := Option.isSome_iff_exists.mp (d.isSome_restrictFace_of_zero ι)
-  obtain ⟨p', hp'⟩ := Option.isSome_iff_exists.mp ((d.cap c hc hcα).isSome_restrictFace_of_zero ι)
-  rw [eq_of_zero p' p] at hp'
-  exact h (eq_of_mem_receivingFamily_of_isRigidCoreIn hd hδ hmem hp' hp hr ▸ isTopFree_cap)
+  exact hne (eq_of_mem_receivingFamily_of_isRigidCoreIn hd hδ hq (hqd.trans hp) hp hr)
 
 /-! ### Transport -/
 
@@ -81,8 +92,9 @@ section Reconstruction
 variable {M : Type} [(hullLanguage.{u} α).Structure M]
   (hage : (hullLanguage.{u} α).age M = topFreeAge α)
   (hu : (hullLanguage.{u} α).IsUltrahomogeneous M) (hα : Order.IsSuccLimit α)
-include hage hu hα
+include hage hu
 
+include hα in
 /-- Exact receiving of the legal top-free types in the reconstruction, from finite-extension
 receiving and the rigidity of every core in a top-free type. -/
 example : (reconstruct α M).ExactReceivingWithin fun _ ↦ {D | D.IsLegal ∧ D.IsTopFree} :=
