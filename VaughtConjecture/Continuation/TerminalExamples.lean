@@ -74,8 +74,7 @@ include ht hn
 /-- **Top grade of a type with an apex**: the apex has grade `n`, the largest possible. -/
 example : (t.addApex ht hn).topGrade = n := by
   refine le_antisymm (topGrade_le_iff.mpr fun d _ ↦ ?_) ?_
-  · exact ((t.addApex ht hn).isWellFormed.isWellFormed.grade_le_card d).trans
-      ((Finset.card_le_univ _).trans_eq (Fintype.card_fin n))
+  · exact (t.addApex ht hn).grade_le d
   · obtain ⟨d, hd, htop⟩ := exists_apex_addApex ht hn
     have hdtop : (t.addApex ht hn).label d = ⊤ :=
       top_le_iff.mp ((addApex_label_last ht hn).symm.le.trans (htop _))

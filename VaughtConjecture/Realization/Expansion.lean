@@ -53,11 +53,13 @@ expansion to a stage `α ≥ ω₁` (`ModelExpansion.isEmpty_of_omega_one_le`).
 
 **Covers.**  A tuple `c : Fin k → M` **covers** a stage type `t` in `R` (`Realization.Covers`)
 when it is injective and `R` evaluates it to `t`: `c` enumerates an actual occurrence of `t`.
-Covers survive stage reduction, by the same tuple (`Realization.Covers.reduce`).  The base
-relations of an expansion are read from its covers through the base-reduct equation
-(`Realization.IsExpansionOf.relMap_comp_iff`), so two covers of one stage type, in expansions of
-two base structures at any common stage, have the same atomic type in the base language
-(`Realization.Covers.sameAtomicType`): the atomic diagram of a cover is determined by its type.
+Covers survive stage reduction, by the same tuple (`Realization.Covers.reduce`), and the covers in
+a transport along a bijection of carriers are the transports of covers
+(`Realization.covers_map_iff`).  The base relations of an expansion are read from its covers
+through the base-reduct equation (`Realization.IsExpansionOf.relMap_comp_iff`), so two covers of one
+stage type, in expansions of two base structures at any common stage, have the same atomic type in
+the base language (`Realization.Covers.sameAtomicType`): the atomic diagram of a cover is
+determined by its type.
 Every expansion has a cover of a stage type on no points
 (`ModelExpansion.exists_covers_zero`), since the empty face of every occurrence is closed.
 
@@ -178,6 +180,12 @@ theorem Covers.eval_eq (h : R.Covers t c) : R.eval ⟨c, h.injective⟩ = some t
 theorem Covers.reduce (h : R.Covers t c) (hβ : Order.IsSuccPrelimit β) :
     (R.reduce hβ).Covers (t.reduce hβ) c :=
   ⟨h.1, by rw [reduce_eval, h.2, Option.map_some]⟩
+
+/-- Covers in a transport are the transports of covers. -/
+theorem covers_map_iff (e : M ≃ N) {n : ℕ} {t : StageType.{u} α n} {c : Fin n → N} :
+    (R.map e).Covers t c ↔ R.Covers t (e.symm ∘ c) := by
+  refine ⟨fun ⟨hc, h⟩ ↦ ⟨e.symm.injective.comp hc, h⟩, fun ⟨hc, h⟩ ↦ ⟨?_, h⟩⟩
+  exact (Function.Injective.of_comp (f := e.symm) hc)
 
 /-- **The faces of a cover**: under exact consistency, the face of a cover along an injective
 selection `s` of coordinates is evaluated to the face of its type along `s`. -/

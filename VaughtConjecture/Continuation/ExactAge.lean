@@ -219,12 +219,6 @@ theorem ExactReceivingWithin.of_one_point (hR : R.IsConsistent)
 
 /-! ### Transport -/
 
-/-- Covers in a transport are the transports of covers. -/
-theorem covers_map_iff (e : M ≃ N) {n : ℕ} {t : StageType.{u} α n} {c : Fin n → N} :
-    (R.map e).Covers t c ↔ R.Covers t (e.symm ∘ c) := by
-  refine ⟨fun ⟨hc, h⟩ ↦ ⟨e.symm.injective.comp hc, h⟩, fun ⟨hc, h⟩ ↦ ⟨?_, h⟩⟩
-  exact (Function.Injective.of_comp (f := e.symm) hc)
-
 /-- **Transport of exact receiving** along a bijection of carriers. -/
 theorem ExactReceivingWithin.map (h : R.ExactReceivingWithin A) (e : M ≃ N) :
     (R.map e).ExactReceivingWithin A := by

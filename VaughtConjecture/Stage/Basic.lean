@@ -35,7 +35,8 @@ scheme of `Scheme.comap` with the labels of the visible cells); otherwise it is 
   (`restrictFace_trans_eq_none`).
 
 The faces of a stage type form a plan on all of its points (`isPlan`), and the hull of a set in
-a restriction is the preimage of the hull of its image (`hull_comap`).
+a restriction is the preimage of the hull of its image (`hull_comap`).  The grades of the cells of
+a stage type on `n` points are at most `n` (`grade_le`).
 
 Reindexing along a bijection `e : Fin m ≃ Fin n` is total (`StageType.reindex`); it is the face
 map along `e` (`restrictFace_equiv`) and commutes with all face maps (`restrictFace_reindex`,
@@ -128,6 +129,11 @@ theorem univ_mem_faces (t : StageType.{u} α n) : (univ : Finset (Fin n)) ∈ t.
 /-- The faces of a stage type form a plan on all of its points. -/
 theorem isPlan (t : StageType.{u} α n) : Geometry.IsPlan univ t.toCellScheme.faces :=
   t.isWellFormed.isPlan
+
+/-- The grades of the cells of a stage type on `n` points are at most `n`. -/
+theorem grade_le (t : StageType.{u} α n) (d : Fin t.card) : t.toCellScheme.grade d ≤ n :=
+  (t.isWellFormed.isWellFormed.grade_le_card d).trans ((card_le_univ _).trans_eq
+    (Fintype.card_fin n))
 
 /-! ### Restriction to a closed face -/
 
