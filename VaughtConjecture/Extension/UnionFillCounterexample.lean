@@ -61,6 +61,10 @@ not make every conditional instance vacuous: the union fill still holds on parti
 grades, for instance whenever the common face carries no cell of the grade (the lift within the
 face of the tower's top grade).
 
+The labelling `labelling 2 ⊤` of the failure is not lawful below the coatom `({0, 1, 3}, 2)`
+(`not_isLawfulBelow_pairLabelling_top`): it is not a prescription of the two-face lift `2FL(1)`,
+which holds for this seed (`Seed.twoFaceLift_one`).
+
 ## Placement
 
 Checkpoint 2.6 of the completion of the coatom extension construction (`roadmap/README.md`,
@@ -636,14 +640,6 @@ private theorem comap_seed_right :
   obtain ⟨hf, he⟩ := (StageType.restrictFace_eq_some_iff _ _).mp (seed α).restrictFace_right
   exact congrArg StageType.toScheme he
 
-/-- Lawfulness transported along the restriction to a face. -/
-private theorem isLawfulBelow_comap_cellMap_iff {n m : ℕ} (S' : Scheme.{u} n) (f : Fin m ↪ Fin n)
-    (X : Finset (Fin m) × ℕ) (x : Fin S'.card → Label.{u}) :
-    (S'.comap f).rows.IsLawfulBelow X (fun i ↦ x (S'.cellMap f i)) ↔
-      S'.rows.IsLawfulBelow (Prod.map (Finset.map f) id X) (fun d ↦ x d) :=
-  CellScheme.Rows.isLawfulBelow_comap_iff (R := S'.rows) (S'.isLowerEmbedding_comap f)
-    (S'.image_cellMap_below f X) (r := fun d ↦ x d)
-
 private theorem map_right_commonFace :
     ({0, 1} : Finset (Fin 3)).map (Coatom.right 2) = ({0, 1} : Finset (Fin 4)) := by
   decide +kernel
@@ -729,7 +725,7 @@ theorem not_unionFill_seed :
     (Am.toCellScheme.gradedIndex d)
   have ha : Am.rows.IsLawfulBelow (univ.erase (Fin.castSucc (Fin.last 2)), 1 + 1)
       (fun d ↦ a d) := by
-    have := (isLawfulBelow_comap_cellMap_iff Am.toScheme (Coatom.right 2)
+    have := (Scheme.isLawfulBelow_comap_cellMap_iff Am.toScheme (Coatom.right 2)
       ((univ : Finset (Fin 3)), 2) a).mp
       (hlaw hv1 hv2 le_rfl (not_univ_three_le (by omega))
         (fun i ↦ a (Am.toScheme.cellMap (Coatom.right 2) i)) fun i _ ↦ by
@@ -739,7 +735,7 @@ theorem not_unionFill_seed :
           rw [hgi])
     rwa [hpair2] at this
   have hwE : Am.rows.IsLawfulBelow (({0, 1} : Finset (Fin 4)), 1 + 1) (fun d ↦ w d) := by
-    have := (isLawfulBelow_comap_cellMap_iff Am.toScheme (Coatom.right 2)
+    have := (Scheme.isLawfulBelow_comap_cellMap_iff Am.toScheme (Coatom.right 2)
       (({0, 1} : Finset (Fin 3)), 2) w).mp
       (hlaw (A := ⊤) (F := ⊤) (isSelfVisible_top 1) (isSelfVisible_top 2) le_rfl
         (not_univ_three_le (by omega)) (fun i ↦ w (Am.toScheme.cellMap (Coatom.right 2) i))
@@ -755,7 +751,7 @@ theorem not_unionFill_seed :
     rwa [hpairE] at this
   have hwD : Am.rows.IsLawfulBelow (univ.erase (Fin.castSucc (Fin.last 2)), 1)
       (fun d ↦ w d) := by
-    have := (isLawfulBelow_comap_cellMap_iff Am.toScheme (Coatom.right 2)
+    have := (Scheme.isLawfulBelow_comap_cellMap_iff Am.toScheme (Coatom.right 2)
       ((univ : Finset (Fin 3)), 1) w).mp
       (hlaw (A := rowValue) (F := ⊥) hv1 (isSelfVisible_bot 2) bot_le
         (not_univ_three_le (by omega)) (fun i ↦ w (Am.toScheme.cellMap (Coatom.right 2) i))
@@ -818,7 +814,7 @@ theorem not_unionFill_seed :
     rw [hd2]
     unfold pairLabelling
     rw [ite_eq_left (by decide), ite_eq_left rfl]
-  have hxx := (isLawfulBelow_comap_cellMap_iff Am.toScheme (Coatom.right 2)
+  have hxx := (Scheme.isLawfulBelow_comap_cellMap_iff Am.toScheme (Coatom.right 2)
     ((univ : Finset (Fin 3)), 2) (Rows.extendBot _ x)).mpr (by
       rw [hpair2]
       exact Rows.isLawfulBelow_extendBot.mpr hx)
@@ -827,6 +823,63 @@ theorem not_unionFill_seed :
       hi6 hi2
   rw [Rows.extendBot_of_mem x hd6Y, Rows.extendBot_of_mem x hd2Y, hx6, hx2] at hle
   exact hvtop hle
+
+/-- **The labelling of the failure is not lawful below the coatom `({0, 1, 3}, 2)`**: read along
+the second coatom it is `labelling 2 ⊤`, and the coupling row of the cell at `({0, 1, 3}, 2)` asks
+`⊤ ≤ 2`.  So it is not a prescription of the two-face lift `2FL(1)`, which asks lawfulness below
+both coatoms at the grade `2`; the constraint `F ≤ A` that defeats the union fill is part of that
+hypothesis. -/
+theorem not_isLawfulBelow_pairLabelling_top :
+    ¬ (seed α).amalgam.rows.IsLawfulBelow (univ.erase (Fin.castSucc (Fin.last 2)), 2)
+      (fun d ↦ pairLabelling rowValue ⊤ ((seed α).amalgam.toCellScheme.gradedIndex d)) := by
+  classical
+  intro hw
+  set Am := (seed α).amalgam
+  have heq : Am.toScheme.comap (Coatom.right 2) = (T α).toScheme := comap_seed_right
+  have hgi (i : Fin (Am.toScheme.comap (Coatom.right 2)).card) :
+      Am.toCellScheme.gradedIndex (Am.toScheme.cellMap (Coatom.right 2) i) =
+        Prod.map (Finset.map (Coatom.right 2)) id
+          ((Am.toScheme.comap (Coatom.right 2)).toCellScheme.gradedIndex i) :=
+    (Am.toScheme.map_comap_gradedIndex (Coatom.right 2) i).symm
+  have hcoupling : ∀ x : Fin (Am.toScheme.comap (Coatom.right 2)).card → Label.{u},
+      (Am.toScheme.comap (Coatom.right 2)).rows.IsLawfulBelow ((univ : Finset (Fin 3)), 2)
+        (fun i ↦ x i) →
+      ∀ i j, (Am.toScheme.comap (Coatom.right 2)).toCellScheme.gradedIndex i =
+          (({0, 1} : Finset (Fin 3)), 2) →
+        (Am.toScheme.comap (Coatom.right 2)).toCellScheme.gradedIndex j =
+          (({2} : Finset (Fin 3)), 1) → x i ≤ x j := by
+    rw [heq]; exact le_of_isLawfulBelow_two
+  obtain ⟨i6, hi6⟩ : ∃ i : Fin (Am.toScheme.comap (Coatom.right 2)).card,
+      (Am.toScheme.comap (Coatom.right 2)).toCellScheme.gradedIndex i =
+        (({0, 1} : Finset (Fin 3)), 2) := by
+    rw [heq]; exact ⟨Fin.castSucc (6 : Fin 9), gradedIndex_T_castSucc 6⟩
+  obtain ⟨i2, hi2⟩ : ∃ i : Fin (Am.toScheme.comap (Coatom.right 2)).card,
+      (Am.toScheme.comap (Coatom.right 2)).toCellScheme.gradedIndex i =
+        (({2} : Finset (Fin 3)), 1) := by
+    rw [heq]; exact ⟨Fin.castSucc (2 : Fin 9), gradedIndex_T_castSucc 2⟩
+  have hpair2 : Prod.map (Finset.map (Coatom.right 2)) id ((univ : Finset (Fin 3)), 2) =
+      (univ.erase (Fin.castSucc (Fin.last 2)), 2) := Prod.ext Coatom.univ_map_right rfl
+  let w : Fin Am.card → Label.{u} := fun d ↦ pairLabelling rowValue ⊤
+    (Am.toCellScheme.gradedIndex d)
+  have hw' : Am.rows.IsLawfulBelow
+      (Prod.map (Finset.map (Coatom.right 2)) id ((univ : Finset (Fin 3)), 2)) (fun d ↦ w d) := by
+    rw [hpair2]; exact hw
+  have hle : w (Am.toScheme.cellMap (Coatom.right 2) i6) ≤
+      w (Am.toScheme.cellMap (Coatom.right 2) i2) :=
+    hcoupling (fun i ↦ w (Am.toScheme.cellMap (Coatom.right 2) i))
+      ((Scheme.isLawfulBelow_comap_cellMap_iff Am.toScheme (Coatom.right 2)
+        ((univ : Finset (Fin 3)), 2) w).mpr hw') i6 i2 hi6 hi2
+  -- `w` read at the images of the cells `i6` and `i2` under the cell map
+  change pairLabelling rowValue ⊤
+      (Am.toCellScheme.gradedIndex (Am.toScheme.cellMap (Coatom.right 2) i6)) ≤
+    pairLabelling rowValue ⊤
+      (Am.toCellScheme.gradedIndex (Am.toScheme.cellMap (Coatom.right 2) i2)) at hle
+  have hmap2 : ({2} : Finset (Fin 3)).map (Coatom.right 2) = ({3} : Finset (Fin 4)) := by
+    decide +kernel
+  rw [hgi, hgi, hi6, hi2, Prod.map_apply, Prod.map_apply, map_right_commonFace, hmap2] at hle
+  unfold pairLabelling at hle
+  rw [ite_eq_left (by decide), ite_eq_right (by decide), ite_eq_left (by decide)] at hle
+  exact gridPoint_ne_top 2 0 (top_le_iff.mp (hle.trans_eq (ite_eq_left rfl)))
 
 end SeedLevel
 
