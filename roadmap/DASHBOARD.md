@@ -85,7 +85,11 @@ Notes on the rows, each with its marker:
   (`Expansion.expansionDomain_loss_countable`), nonempty losses
   (`hasNonemptyLosses_of_hasApexCoatomExtensions`, also on the coatom extension property with
   apex at every countable block stage; item 7 below), and the thin `ℵ₁` spectrum
-  (`densitySentence_hasThinAlephOneSpectrum_of_terminalClassification`).
+  (`densitySentence_hasThinAlephOneSpectrum_of_terminalClassification`).  Positive niceness of the
+  base reduct of every model at a block stage on a countable carrier, one threshold for all closed
+  tuples (`isNice_of_hasMaximalRefinement`, `MainTheorem/Niceness`; manuscript correspondence,
+  row 30, S), compiled conditional on `HasMaximalRefinement` (the specified terminal refinement,
+  row 38) and next-block uniqueness, both still to be proved; the main theorem does not use it.
 
 ## The named hypotheses of the main theorem
 

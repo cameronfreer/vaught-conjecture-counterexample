@@ -1077,23 +1077,34 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     injective tuple supported exactly when closed) is not named, and its comparison with the
     closed tuples of [AFK26] is still to be proved, with item 2.  Milestone 1 of the uniform fixing
     bounds (`README.md`, item 5).
-30. Prospective: no declaration of this repository states positive niceness or names a fixing
-    rank.  Milestone 2; it is the row "invariance over all admissible presentations, with an
-    inhabited threshold" of the table of item 5.  For the models here it is derived from a
-    terminal presentation of each base, which supplies it immediately by terminal collision and
-    the injectivity of model reduction (the inequality step of row 35, then 5 ⇒ 1 of row 34),
-    with no further stabilization argument.  The terminal presentations come from either of two
-    distinct stopping proofs, both prospective: (i) the countable-slot argument (the termination
-    argument of [AFK26]), or (ii) the Scott route of row 40.  For (i), "countably many slots,
-    each used at most once" alone does not establish even the stopping half of global
-    termination.  A proof along it is to supply (a) which events use a slot, (b) why every
-    relevant continuation uses a fresh slot, and (c) why exhausting those events yields an actual
-    terminal presentation; countably many events may still continue through a countable limit,
-    whose supremum is not by itself an attainment or a terminality proof.  That its conclusion is
-    eventual departure, the stopping half of global termination (`README.md`, "The persistent
-    core"), and not terminal fullness, which is the first special statement, is prospective, to
-    be supplied by (a)–(c).  Neither may use positive niceness, and neither is a dependency of
-    the expansion-domain endpoint.
+30. Niceness of a tuple and of a base structure ([AFK26, Definition 2.19], in the numbering of the
+    current draft): `IsNiceTupleAt` (one field for each of its two clauses), `IsNiceTuple` and
+    `IsNice` (`MainTheorem/Niceness`), read in the raw base encoding: the lifts at `α` are the model
+    expansions at `λ_α`, the closed tuples the supported tuples of the realization of the base at
+    `ω` (row 29), and the invariant at a higher stage is compared by `StageType.castLE`.  Positive
+    niceness for the base reduct of every model at a block stage on a countable carrier, with one
+    threshold `ρ` for all closed tuples and the invariant of each in a lift at `ρ` as the actual
+    witness: `exists_isNiceTupleAt_of_hasMaximalRefinement`, `isNice_of_hasMaximalRefinement`, and
+    `Realization.IsModel.isNice_toStructure_reduce` (condition (c) of [AFK26, Definition 2.22]),
+    compiled conditional on `HasMaximalRefinement` (row 38) and `Expansion.NextBlockUniqueness`,
+    both still to be proved.  Status S: the hypotheses are still to be proved, and the
+    identifications of the lifts and of the closed tuples with those of [AFK26] are still to be
+    proved (the first row of the table of item 5; row 29).  No declaration of this repository names
+    a fixing rank.  Milestone 2; it is the row "invariance over all admissible presentations, with
+    an inhabited threshold" of the table of item 5.  For the models here it is derived from a
+    terminal presentation of each base, which supplies it immediately by terminal collision and the
+    injectivity of model reduction (the inequality step of row 35, then 5 ⇒ 1 of row 34), with no
+    further stabilization argument.  The terminal presentations come from either of two distinct
+    stopping proofs, both prospective: (i) the countable-slot argument (the termination argument of
+    [AFK26]), or (ii) the Scott route of row 40.  For (i), "countably many slots, each used at most
+    once" alone does not establish even the stopping half of global termination.  A proof along it
+    is to supply (a) which events use a slot, (b) why every relevant continuation uses a fresh slot,
+    and (c) why exhausting those events yields an actual terminal presentation; countably many
+    events may still continue through a countable limit, whose supremum is not by itself an
+    attainment or a terminality proof.  That its conclusion is eventual departure, the stopping half
+    of global termination (`README.md`, "The persistent core"), and not terminal fullness, which is
+    the first special statement, is prospective, to be supplied by (a)–(c).  Neither may use
+    positive niceness, and neither is a dependency of the expansion-domain endpoint.
 31. Prospective: no declaration of this repository states it.  Its ingredients for labels are
     compiled in this repository (theorem named): `Label.reduce_eq_self_iff` (fixed by projection
     exactly at the labels of the stage), and `Label.reduce_reduce_of_le`, `Label.atStage_reduce`
@@ -1106,9 +1117,13 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     The row is required for item 5, whether or not the main theorem uses a bound of serving
     indices: the completion criterion of item 5 asks every row of the item to be P or C, so
     matching the manuscript needs milestone 4.
-33. Prospective: no declaration of this repository states a model presentation of a literal base
-    or its maximality (`README.md`, item 5, "Maximal presentations: equivalent criteria,
-    uniqueness, the optimal bound").  Related declarations, none of them this notion:
+33. In the raw base encoding, a maximal presentation of a base structure `M` is a model expansion
+    of `M` at `λ_ρ`, `ρ < ω₁`, such that `ρ` bounds the serving indices of `M`
+    (`BoundsServingIndices`, `MainTheorem/Niceness`: every countable index at which `M` has a
+    model expansion is at most `ρ`).  In the common invariant encoding no declaration of this
+    repository states a model presentation of a literal base or its maximality (`README.md`, item
+    5, "Maximal presentations: equivalent criteria, uniqueness, the optimal bound").  Related
+    declarations, none of them this notion:
     `Realization.IsTerminalAt` with `Realization.isTerminalAt_iff_forall_lt`
     (`Continuation/Terminal`), terminality at a block, which a maximal presentation has; in the raw
     base encoding, `Realization.IsExpansionOf.isTerminalAt` (same module), compiled in this
@@ -1116,17 +1131,19 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     terminal; and `FullPresentations`, with `presentedAt`, on `DensityClass`
     (`MainTheorem/Assembly`), the class–level incidence of row 27, which stores no presentation.
     The conversion between the raw base and the common invariant encodings: prospective.
-34. Prospective.  1 ⇒ 2 is the uniform fixing stage of row 31 for the family of model
-    presentations, through `StageProjection.exists_uniform_fixing_stage` (available at the pin
-    `e460cb6`, signatures checked; "Dependency pins"), and is the only step using a countable
-    carrier; 2 ⇔ 4 uses strictness for models (row 32); 4 ⇒ 5 uses bounded-stage attainment, whose
-    ingredients are compiled in this repository (theorem named) in the raw base encoding:
+34. Prospective.  1 ⇒ 2 is the uniform fixing stage of row 31 for the family of model presentations,
+    through `StageProjection.exists_uniform_fixing_stage` (available at the pin `e460cb6`,
+    signatures checked; "Dependency pins"), and is the only step using a countable carrier; 2 ⇔ 4
+    uses strictness for models (row 32); 4 ⇒ 5 uses bounded-stage attainment, whose ingredients are
+    compiled in this repository (theorem named) in the raw base encoding:
     `Realization.IsModel.reduce` (`Realization/Model`), `ModelExpansion.nonempty_of_coherent`
     (`Realization/Limit`), and `ModelExpansion.nonempty_of_forall_lt` (`Expansion/Uniqueness`,
-    conditional on `Expansion.NextBlockUniqueness`, still to be proved).  So 4 ⇒ 5, and with it
-    the equivalence and that of 2–5 for arbitrary carriers, is conditional on the injectivity of
-    model reduction (row 35), an explicit hypothesis until proved; 5 ⇒ 1 uses maximality and the
-    strict threshold only.  4 ⇒ 5 is route (a) of milestone 5 of `README.md`, item 5, "Uniform
+    conditional on `Expansion.NextBlockUniqueness`, still to be proved).  So 4 ⇒ 5, and with it the
+    equivalence and that of 2–5 for arbitrary carriers, is conditional on the injectivity of model
+    reduction (row 35), an explicit hypothesis until proved; 5 ⇒ 1 uses maximality and the strict
+    threshold only, and is compiled in this repository (theorem named) in the raw base encoding,
+    with no hypothesis: `isNiceTupleAt_of_boundsServingIndices` and `isNice_of_boundsServingIndices`
+    (`MainTheorem/Niceness`).  4 ⇒ 5 is route (a) of milestone 5 of `README.md`, item 5, "Uniform
     fixing bounds from positive niceness", with the dependencies named there.  The equivalence
     characterizes termination for one base; it is not a separate proof of termination.
 35. Prospective, conditional on the injectivity of model reduction at each countable index (two
@@ -1142,7 +1159,11 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     expansions at one block; it bounds no index and supplies no terminal presentation.  The
     terminality of the reconstructed top-free realization, `reduce_ne_reconstruct`
     (`ClassicalLimit/Modelhood`), compiled in this repository (theorem named), concerns the
-    realization, not its base reduct.
+    realization, not its base reduct.  The inequality step (terminal collision) is compiled in
+    the raw base encoding, conditional on `Expansion.NextBlockUniqueness`, still to be proved:
+    `ModelExpansion.boundsServingIndices_of_isTerminalAt` (`MainTheorem/Niceness`), a model
+    expansion terminal at a countable `ρ` bounds the serving indices; the equality step is
+    prospective.
 36. Prospective.  It rests on row 32, on the inequality step of row 35 (so on the injectivity of
     model reduction at `ρ` only), and on `COMPANIONS.md`, "Fixing ranks are zero or successors"
     and "Limit heights are unattained suprema", each still to be proved.  No declaration of this
@@ -1165,7 +1186,9 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     proof of note 30 (the countable-slot argument, or the Scott route of row 40, whose maximal
     presentation is terminal); literal-reduct uniqueness is row 35, conditional on the
     injectivity of model reduction.  Through the Scott route no global termination theorem is
-    used; the stage index is not assumed countable.
+    used; the stage index is not assumed countable.  The statement is the named hypothesis
+    `HasMaximalRefinement` (`MainTheorem/Niceness`), still to be proved, on which the positive
+    niceness of row 30 is compiled conditionally.
 39. Prospective as a combined statement, which is not named, in two forms: carrier-general (a
     base structure on any carrier, with `ξ < ω₁` an explicit hypothesis) and coded (codes on
     `ℕ`, where `ξ < ω₁` follows from `Expansion.expansionDomain_eq_empty`).  Its ingredients are
