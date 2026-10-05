@@ -150,11 +150,6 @@ theorem ofOffset_mono : Monotone (ofOffset β) := by
     exact WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr
       (add_le_add_right (Nat.cast_le.mpr (ENat.natCast_le_natCast.mp h)) _))
 
-/-- `β ≤ β + n` as labels. -/
-theorem coe_le_coe_add (β : Ordinal.{u}) (n : ℕ) :
-    (β : Label.{u}) ≤ ((β + n : Ordinal.{u}) : Label.{u}) :=
-  WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr le_self_add)
-
 /-- The label of an offset is the formal top exactly when the offset is infinite. -/
 @[simp] theorem ofOffset_eq_top_iff : ofOffset β o = ⊤ ↔ o = ⊤ := by
   induction o using ENat.recTopCoe with

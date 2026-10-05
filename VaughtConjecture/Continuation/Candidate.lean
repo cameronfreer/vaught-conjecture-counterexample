@@ -801,7 +801,7 @@ theorem availability_stableSection_iff {u : Fin k ↪ M} {t : StageType.{u} (blo
       by_contra hwt
       rw [stableSection_of_ne_top hwt] at hle
       exact (h₁.trans hle).not_gt (((t.atStage w).resolve_right hwt).trans_le
-        (WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr le_self_add)))
+        (Label.coe_le_coe_add _ _))
     refine ⟨w, hw, hwt, ?_⟩
     have h₂ := h₁.trans hle
     rw [stableSection_of_eq_top hwt] at h₂

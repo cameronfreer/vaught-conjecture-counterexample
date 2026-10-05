@@ -78,8 +78,7 @@ theorem IsWitness.reduce_add_one (hw : IsWitness g σ) (hα : IsSuccPrelimit α)
   map_bot := by simp [hw.map_bot, reduce_bot]
   monotone := (monotone_reduce _).comp hw.monotone
   visibilityReplace_comm x k hx i hi := by
-    have hατ : (α : Label.{u}) ≤ ((α + K : Ordinal.{u}) : Label.{u}) :=
-      WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr le_self_add)
+    have hατ : (α : Label.{u}) ≤ ((α + K : Ordinal.{u}) : Label.{u}) := coe_le_coe_add α K
     simp only [Function.comp_apply] at hx ⊢
     rcases le_or_gt k K with hk | hk
     · rcases le_or_gt (σ x) ((α + K : Ordinal.{u}) : Label.{u}) with hσ | hσ
