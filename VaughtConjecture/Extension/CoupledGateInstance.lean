@@ -40,11 +40,13 @@ and `v` at the donor cell and its copies is lawful and lies in the cap ball of t
 **The compiled statement and the requirement.**  The private-face half of this lowering holds for
 every legal private type (`StageType.IsLegal.capLowering`, at an arbitrary lawful ambient
 `StageType.IsLegal.capLowering_of_isLawful`, in `VaughtConjecture.Extension.CapLowering`).  That
-half is only part of what the display needs, in the only range `v ≥ c` where it can hold; there
-the bound `≤ v` is trivial, since the lowered value is at most `c`.  Proving it does not establish
-that the construction's open requirement is satisfied.  The requirement at a forcing lift is a
-legal display: `CappedLift` from a coatom `(F ∪ {y}, n)`, `y` the new point, to `(univ, n)`, for
-every self-visible cap and every lawful ambient labelling.  Its four parts are:
+half is only part of what the display needs.  It is stated in the range `v ≥ c`, which is the only
+one where it can hold when the ambient value at `C` is at least `c`; there the bound `≤ v` is
+trivial, since the lowered value is at most `c`.  Proving it does not establish that the
+construction's open requirement is satisfied.  The hypothesis asks for a legal display; at a
+forcing lift this is `CappedLift` from a coatom `(F ∪ {y}, n)`, `y` the new point, to `(univ, n)`,
+for every self-visible cap and every lawful ambient labelling.  Four parts are named in
+`CapLowering`, three at that lift and the rows:
 1. the private half at an arbitrary ambient (compiled);
 2. whether the readings of the donor cells or of the anchors can force the gate below some
    `v < c` while the ambient cap is at least `c` (open);
@@ -53,12 +55,21 @@ every self-visible cap and every lawful ambient labelling.  Its four parts are:
 4. the existence of rows satisfying `CellScheme.Rows.IsGate` and `CellScheme.Rows.TwinsReadGate`
    for every anchored legal donor (open).
 
-At this instance all four hold.  Part 2 cannot happen: the gate reads the donor cell through
-`top`, at `3` as it reads the cap, and a prescription at the donor class that differs from the
-ambient `⊤` is at least `c` by the cap ball.  Parts 3 and 4 are the legality of `Q α` (cases 4 and
-5 below, at every lawful ambient) and the coupled gated extensions below, checked by hand.  The
-open point in general is the bountifulness of the display at lifts from coatoms containing the new
-point, jointly over all its cells and at every lawful ambient labelling.
+At this instance all four hold.  Part 2 cannot happen, since every lift of `Q α` exists
+(`isLegal_Q`).  Directly: the gate reads the donor cell through `top`, at `3` as it reads the cap.
+At a lawful ambient `lab a b x` whose cap value is at least `c`, the donor class is at least `c`
+too (`le_five_of_isLawful`), and so is every prescription there in the cap ball at `c`.  Parts 3
+and 4 are the legality of `Q α` (cases 4 and 5 below, at every lawful ambient) and the coupled
+gated extensions below, checked by hand.
+
+In general, the new content of the open point sits at the lifts from coatoms containing the new
+point (parts 2 and 3), jointly with the gate, the twins and the donor cells, at every lawful
+ambient labelling.  The hypothesis needs more at every input: the rows (part 4), consistency and
+completeness of the display, and bountifulness at its other pairs of graded faces.  Those pairs
+include the lift from the private coatom to `(univ, n)`, where the readings of the gate must be
+realized on the donor face for an arbitrary lawful private labelling (case 3 below), and the lifts
+to `(univ, n + 1)` (the cell `11` below).  At this instance all of it is compiled (`isLegal_Q`,
+`exists_coupledGatedExtension_donor`).
 
 **The display `Q α`** (`Q`, `isLegal_Q`).  On three points with the interval plan, twelve cells.
 A cell is **dead** when its kind is `0`, **live** otherwise; the cells of kind `3` are the
