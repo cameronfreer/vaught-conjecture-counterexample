@@ -6,6 +6,7 @@ Authors: Cameron Freer
 import VaughtConjecture.Extension.OwnerCappedLift
 import VaughtConjecture.Extension.TransformationExamples
 import VaughtConjecture.Geometry.IntervalPlan
+import VaughtConjecture.Label.StepWitness
 
 /-!
 # Examples: owner-local alignment, aligned encoding, and owner-capped lifts
@@ -316,33 +317,12 @@ example (c : Label.{u}) (hc : IsSelfVisible 1 c) :
     (oneRows.{u} Bool).HasOwnerCappedLifts (subset_refl (univ : Finset (Fin 1))) 0 c :=
   hasOwnerCappedLifts_oneFace c hc
 
-/-- The shifter sending every label other than bottom to the formal top. -/
-private noncomputable def toTop (x : Label.{u}) : Label.{u} :=
-  open Classical in if x = ⊥ then ⊥ else ⊤
-
-/-- The shifter sending every label other than bottom to the formal top is a witness. -/
-private theorem isWitness_toTop : IsWitness (fun _ ↦ (⊤ : Label.{u})) toTop where
-  antitone := antitone_const
-  isSelfVisible _ := isSelfVisible_top _
-  map_bot := ite_eq_left rfl
-  monotone x y hxy := by
-    unfold toTop
-    by_cases hx : x = ⊥
-    · rw [ite_eq_left hx]; exact bot_le
-    have hy : ¬ y = ⊥ := fun hy ↦ hx (le_bot_iff.mp (hy ▸ hxy))
-    rw [ite_eq_right hx, ite_eq_right hy]
-  visibilityReplace_comm x k _ i _ := by
-    unfold toTop
-    by_cases hx : x = ⊥
-    · rw [ite_eq_left hx, ite_eq_left (by rw [hx, visibilityReplace_bot]), visibilityReplace_bot]
-    · rw [ite_eq_right hx, ite_eq_right (mt visibilityReplace_eq_bot_iff.mp hx),
-        visibilityReplace_top]
-
 /-- The literal top is lawful below `(univ, 1)` for the rows constantly `1`. -/
 private theorem isLawfulBelow_top :
     (oneRows.{u} (Fin 1)).IsLawfulBelow ((univ : Finset (Fin 1)), 0 + 1) fun _ ↦ ⊤ :=
-  Rows.isLawfulBelow_iff.mpr ⟨fun _ ↦ isSelfVisible_top _, fun _ ↦ ⟨_, toTop, isWitness_toTop,
-    fun _ ↦ by simp [toTop, oneRows]⟩, fun _ t _ _ ↦ ⟨t, rfl, le_rfl⟩⟩
+  Rows.isLawfulBelow_iff.mpr ⟨fun _ ↦ isSelfVisible_top _, fun _ ↦ ⟨_, topShifter,
+    isWitness_topShifter antitone_const fun _ ↦ isSelfVisible_top _,
+    fun _ ↦ by simp [topShifter, oneRows]⟩, fun _ t _ _ ↦ ⟨t, rfl, le_rfl⟩⟩
 
 /-- The cell of `oneFace (Fin 1)`, below `(univ, 1)`. -/
 private def oneCell : (oneFace (Fin 1)).below ((univ : Finset (Fin 1)), 0 + 1) :=

@@ -463,16 +463,19 @@ theorem exists_isLawfulBelow_tower {x y : Fin (m + 2)}
     exact ⟨r, hr, fun d hd ↦ (hrg (I.towerEmbed j d) ((I.grade_towerEmbed j d).trans_le hd)).trans
       (hgw d)⟩
 
-/-- **A labelling lawful below both coatoms at the grade `2` is read by a catalogue entry of the
-layer at the grade `2`**: extended through the layer at the grade `1`, glued with its old cells of
-grade `2`, spliced with `⊥` above the grade `2`; the orbit code of the splice `t` is a catalogue
-entry, and `t` is the labelling at the old cells of grade at most `2`. -/
+/-- **A labelling lawful below both coatoms at the grade `2` agrees with a labelling of `T 1`
+whose orbit code is a catalogue entry**: if `w` is lawful below `(univ.erase x, 2)` for both
+points `x` omitted by the coatoms, then some labelling `t` of the cells of `T 1` has its orbit code
+at `2` in the catalogue of the layer at the grade `2`, and `t` equals `w` at the old cells of grade
+at most `2`. -/
 theorem exists_orbitCode_mem_catalogue_two {w : Fin I.amalgam.card → Label.{u}}
     (hwC : I.amalgam.rows.IsLawfulBelow (univ.erase (Fin.last (m + 1)), 2) fun d ↦ w d)
     (hwD : I.amalgam.rows.IsLawfulBelow (univ.erase (Fin.castSucc (Fin.last m)), 2)
       fun d ↦ w d) :
     ∃ t : Fin (I.tower 1).card → Label.{u}, orbitCode 2 t ∈ (I.tower 1).catalogue 2 ∧
       ∀ d, I.amalgam.toCellScheme.grade d ≤ 2 → t (I.towerEmbed 1 d) = w d := by
+  -- `t` is the extension of `w` through `T 1` (`Seed.exists_isLawfulBelow_tower`), glued with the
+  -- old cells of grade `2` and spliced with `⊥` above the grade `2`.
   classical
   have hcov (d : Fin I.amalgam.card) :
       I.amalgam.toCellScheme.scope d ⊆ univ.erase (Fin.last (m + 1)) ∨
