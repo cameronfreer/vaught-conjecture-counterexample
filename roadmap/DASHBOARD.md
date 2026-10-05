@@ -152,3 +152,11 @@ counted as compiled.
    the coatom extension over the empty face, the coatom extension properties at `λ_{ξ+1}`, and the
    lawfulness of the candidate (`Realization.IsStablyLawful`), from the twin-free case or, at
    twins, item 2.
+6. **The attained least lift and structural successor leastness** (prospective).  One lift of a
+   stage type at a limit stage `β` to `β + ω`, least at every cell (each minimum is attained
+   separately: `StageType.exists_lift_label_eq_ofOffset`), with the ratchet and the threshold
+   characterization derived from it under that stage hypothesis; and the stable section at most
+   every coherent next-block assignment (`README.md`, Layer 3, 3.1, "The attained least lift";
+   Layer 4, "Status", output 2 refined).  Least, not unique: literal weakening is the greatest
+   lift, and a pointwise minimum of lifts need not be lawful.  Neither makes the candidate a model
+   (output 3, item 5 above).
