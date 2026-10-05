@@ -86,6 +86,8 @@ Notes on the rows, each with its marker:
   (`hasNonemptyLosses_of_hasApexCoatomExtensions`, also on the coatom extension property with
   apex at every countable block stage; item 7 below), and the thin `ℵ₁` spectrum
   (`densitySentence_hasThinAlephOneSpectrum_of_terminalClassification`).
+- *Acceptance lemma 1 (same-level maximal realization).*  Compiled conditionally on
+  `StageType.HasApexCoatomExtensions` at `λ_β` and `ForcingDonors β` (`exists_sameLevelMaximal`).
 
 ## The named hypotheses of the main theorem
 
