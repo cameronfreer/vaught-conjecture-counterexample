@@ -70,8 +70,9 @@ This is the acquisition of the private context of the ordinary construction (R1)
 gated scheme and the recovery of the donor from the gate are not here.  Finite-cut receiving for
 all models, (R1) itself, is open: the universal gated extension hypothesis
 `StageType.HasGatedPinnedExtensions` fails at every stage
-(`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`), and a route through a corrected
-gate predicate is prospective.  Nothing here concerns uniqueness or coherence of the context, or
+(`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`), and the route through the coupled
+gate (`IsModel.hasFiniteCutReceiving_of_hasCoupledGatedPinnedExtensions`) is conditional on a named
+hypothesis that is open.  Nothing here concerns uniqueness or coherence of the context, or
 exact projected receiving.
 
 ## References
