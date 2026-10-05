@@ -863,11 +863,11 @@ The availability markers are those of `README.md`, Layer 0; an argument with no 
 this repository is prospective here.  Rows are added as notions are reached.  A row becomes P only
 when the theorem or the definition-level identification that performs the comparison is named, and
 becomes C only when the correction is recorded.  Rows 2–5 are P, by the definition-level
-identifications of `VaughtConjecture/Correspondence` named in their notes.  Row 6 is S: `IsBountiful`
-is the printed definition required at every stage that is zero or a limit (note 6), and at `ω₁`
-only the implication from `IsBountiful` is proved.  The other rows whose declaration carries the
-manuscript's number but whose clauses have not been compared are S, with the compiled declarations
-listed in the notes.
+identifications of `VaughtConjecture/Correspondence` named in their notes.  Row 6 is S:
+`IsBountiful` is the printed definition required at every stage that is zero or a limit (note 6),
+and at `ω₁` only the implication from `IsBountiful` is proved.  The other rows whose declaration
+carries the manuscript's number but whose clauses have not been compared are S, with the compiled
+declarations listed in the notes.
 
 | Row | Source | Manuscript notion | Status |
 | --- | --- | --- | --- |
@@ -938,9 +938,9 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
    and the finiteness of the printed `D` (harmless: `Label.printedTransformsTo_iff` holds for every
    type of cells).  The relation is identified, not the witness predicate: `Label.PrintedWitness`
    and `Label.IsWitness` are not equivalent for the same pair, and witnesses correspond up to stage
-   reduction by the same two theorems.  Guarded composition only (`README.md`, layer 1) concerns [Kni26, Lemma 2.3.14], a statement
-   about the relation and not its definition: the relation is not transitive
-   (`Label.TransformsTo.not_transitive`).
+   reduction by the same two theorems.  Guarded composition only (`README.md`, layer 1) concerns
+   [Kni26, Lemma 2.3.14], a statement about the relation and not its definition: the relation is
+   not transitive (`Label.TransformsTo.not_transitive`).
 4. `CellScheme.Rows.IsLawful` (`Scheme/Row`).  The definition-level identification
    `CellScheme.Rows.printedRespects_iff` (`Correspondence/Lawful`), compiled in this repository
    (theorem named): for cells with graded index in the graded plan, at a stage that is zero or a
@@ -979,10 +979,12 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
    (`CellScheme.Rows.IsBountiful.printedBountiful_omega_one`).  No theorem gives the converse at a
    single stage, in particular at `ω₁`.  What is missing is the upward transfer of the printed
    definition from `ω₁` to larger limit stages, prospective: a collapse of labels preserving
-   lawfulness, in the style of [Kni26, Lemmas 2.3.3 and 2.5.13] (the offset bound of Lemma 2.5.13
-   is not relied on).  Restricting the universe does not remove the gap: `Label.{0}` already
-   contains uncountable ordinals (`Ordinal.omega.{0} 1`), and `IsBountiful` quantifies over all
-   labels.  The other departures are harmless, by named theorems: `≺` in clause 1 read strictly
+   lawfulness, in the style of [Kni26, Lemmas 2.3.3 and 2.5.13].  The downward transfer, from a
+   larger limit stage to a smaller one such as `ω₁`, follows by the argument of
+   `CellScheme.Rows.IsBountiful.printedBountiful` but is not a named theorem either.  Restricting
+   the universe does not remove the gap: `Label.{0}` already contains uncountable ordinals
+   (`Ordinal.omega.{0} 1`), and `IsBountiful` quantifies over all labels.  The other departures
+   are harmless, by named theorems: `≺` in clause 1 read strictly
    (`CellScheme.Rows.printedBountiful_iff_forall_lt`, from the reflexive case
    `CellScheme.Rows.PrintedLiftHypotheses.exists_printedLiftConclusion_of_eq`); the partial caps
    (`CellScheme.Rows.PrintedLiftHypotheses.printedCapDefined`,

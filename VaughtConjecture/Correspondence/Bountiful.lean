@@ -66,6 +66,9 @@ still to be proved (departure 4).
    implication from `IsBountiful` is proved.  What is missing is the transfer of the printed
    definition from `ω₁` up to larger stages that are limits, which would need a collapse of labels
    preserving lawfulness in the style of [Kni26, Lemmas 2.3.3 and 2.5.13]; it is prospective.
+   The downward transfer, from a larger stage that is a limit to a smaller one such as `ω₁`,
+   follows by the argument of `CellScheme.Rows.IsBountiful.printedBountiful` but is not a named
+   theorem either.
    Restricting the universe does not remove the gap: `Label.{0}` already contains uncountable
    ordinals, such as `Ordinal.omega.{0} 1`, and `IsBountiful` quantifies over all of `Label.{u}`.
 
