@@ -544,13 +544,13 @@ types, exactly consistent and covering, that receives over every occurrence of p
 the finite-cut receiving property, provided its stage has the amalgam over the empty face.  Over
 the empty root, the one-point donor is amalgamated with the type of an occurrence of positive
 arity given by covering, received over that occurrence, and restricted to the new point. -/
-theorem hasFiniteCutReceiving_of_pos (hne : Nonempty M) (hl : R.HasLegalTypes)
-    (hc : R.IsConsistent) (hcov : R.IsCovering)
+theorem hasFiniteCutReceiving_of_pos {C : Realization.{u, v} α M} (hne : Nonempty M)
+    (hl : C.HasLegalTypes) (hc : C.IsConsistent) (hcov : C.IsCovering)
     (hamal : ∀ ⦃n : ℕ⦄ (P : StageType.{u} α n) (d : StageType.{u} α 1), P.IsLegal → d.IsLegal →
       ∃ Q ∈ P.cofaces, restrictFace (Fin.natAddEmb n) Q = some d)
-    (hpos : ∀ x : R.Occurrence, 0 < x.arity → ∀ D ∈ x.type.cofaces, ∀ c : Label.{u},
-      IsPermittedCutoff α c → R.RealizesOver x.tuple (receivingFamily D c)) :
-    R.HasFiniteCutReceiving := by
+    (hpos : ∀ x : C.Occurrence, 0 < x.arity → ∀ D ∈ x.type.cofaces, ∀ c : Label.{u},
+      IsPermittedCutoff α c → C.RealizesOver x.tuple (receivingFamily D c)) :
+    C.HasFiniteCutReceiving := by
   rintro ⟨_ | n, t, p, ht⟩ D hD c hc'
   · obtain ⟨a⟩ := hne
     obtain ⟨m, u, f, -, hu⟩ :=
