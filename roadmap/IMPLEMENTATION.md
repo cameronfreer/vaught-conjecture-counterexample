@@ -885,7 +885,7 @@ declarations listed in the notes.
 | 12 | [Kni26] | the four extension families as a sentence, Definition 3.2.1, clause 4 | S |
 | 13 | [Kni26] | the density sentence against clause 4 (the fidelity theorem of this roadmap) | S |
 | 14 | [AFK26] | invariant diagram and system compatible (item 2; no numbered statement) | S |
-| 15 | [Kni26] | the amalgam of two coatom types, Definition 4.3.1, and its rows, Lemma 4.3.2 | S |
+| 15 | [Kni26] | the amalgam of coatom types, Definition 4.3.1; its rows, Lemma 4.3.2 | P; C, P, S |
 | 16 | [Kni26] | the completion of the amalgam, Definition 4.3.14 | C |
 | 17 | [Kni26] | the coatom extension with apex, Corollary 4.3.22 | S |
 | 18 | [Kni26] | the exact pinned one-point extension, Proposition 4.3.23 | S |
@@ -1027,9 +1027,50 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     repository.  That the base language and the realizations (with legal types, on a nonempty
     carrier) are the diagram and the system of [AFK26], and the round trip at a general fixed
     stage: still to be proved (prospective).
-15. `Coatom.amalgamType`, `Coatom.isBountiful_amalgamType` (`Extension/CoatomAmalgam`): the lemma
-    is compiled in this repository (theorem named) for the amalgam here; the comparison of the
-    amalgam with the clauses of Definition 4.3.1 is not recorded, and the lemma rests on row 6.
+15. `Coatom.amalgam`, `Coatom.amalgamType` (`Extension/CoatomAmalgam`), from
+    `Coatom.amalgamCellScheme` and `Coatom.amalgamRows` (`Extension/CoatomScheme`).  The status
+    is given for Definition 4.3.1 (P) and for the three conclusions of Lemma 4.3.2 (C, P, S, in
+    order), separately.
+    - *Definition 4.3.1*, P.  The definition-level identification `Coatom.printedAmalgam_iff`
+      (`Correspondence/Amalgam`), compiled in this repository (theorem named): a cell scheme with
+      rows satisfies the clauses `D = D^a ∪ D^b` and `E = E^a ∪ E^b` (the fields of
+      `Coatom.PrintedAmalgam`) exactly when it is `Coatom.amalgamCellScheme h` with
+      `Coatom.amalgamRows h`, reindexed along a bijection of cells sending the cells of `D^a` and
+      `D^b` to the given ones.  For the amalgam here: `Coatom.printedAmalgam_amalgam` and
+      `Coatom.printedAmalgam_amalgamType`, compiled in this repository (theorem named).  The
+      setting of [Kni26, §4.3]: `A = Fin (m + 2)`; the plan `Q ∪ R ∪ {A}` of Definition 2.1.1,
+      clause 3(c), is `Coatom.amalgamFaces`; the equality of the restrictions of `D^a` and `D^b`
+      to `⟨A \ {a, b}, n - 2⟩` is the hypothesis `h`, literal equality of the restricted schemes,
+      the cells being enumerated in the order of their codes (the representation of domains,
+      row 7); the cells of the common face are identified by `Coatom.overlap h`.  Departures, both
+      harmless by `Coatom.printedAmalgam_iff`: the merged enumeration of the cells of
+      `Coatom.amalgam` (it holds for every bijection of cells), and the laws of `D^a` and `D^b`
+      (it holds without them).  The clauses use the domains (row 7, C) and the semantics as rows
+      (row 4, P).  The labels of `Coatom.amalgamType` are those of the two types
+      (`Coatom.amalgamType_label_posLeft`, `Coatom.amalgamType_label_posRight`); Definition 4.3.1
+      does not mention them.
+    - *Lemma 4.3.2, "`D` is a domain"*, C: not correct as stated.  A domain has a complete
+      semantics (Definitions 2.6.1 and 2.5.15; `CellScheme.IsComplete` is Definition 2.5.15
+      verbatim), and the graded face `⟨A, 1⟩` of the plan carries no cell:
+      `Coatom.not_isComplete_amalgamType` and `Coatom.not_isLegal_amalgamType`, compiled in this
+      repository (theorem named).  The corrected statement, compiled in this repository (theorem
+      named): every other graded face carries a cell (`Coatom.exists_gradedIndex_eq_amalgamType`),
+      and the scheme is well formed and coded (`Coatom.isWellFormed_amalgam`,
+      `Coatom.isCoded_amalgam`).  The introduction of [Kni26, §4.3] calls the union "merely not
+      complete".
+    - *Lemma 4.3.2, "`E` is a consistent semantics"*, P: `Coatom.printedRespects_row_amalgam`,
+      compiled in this repository (theorem named).  At every stage that is zero or a limit and
+      carries the values of the rows, if every row of `D^a` and of `D^b` respects the semantics
+      below it as printed (Definition 2.5.12, through row 4), so does every row of the amalgam;
+      respecting includes the orderliness that a semantics requires (Definition 2.5.3).
+    - *Lemma 4.3.2, "`E` is bountiful"*, S: it rests on row 6.  Compiled in this repository
+      (theorem named): `Coatom.isBountiful_amalgamType`, in the sense of `IsBountiful`;
+      `Coatom.printedBountiful_omega_one_amalgamType`, the printed definition at `ω₁` for the
+      amalgam of legal stage types (whose rows are bountiful in the sense of `IsBountiful`); and
+      `Coatom.forall_printedBountiful_amalgam`, the printed definition at every stage that is zero
+      or a limit, from the same for `D^a` and `D^b`.  From the printed definition at `ω₁` alone
+      for `D^a` and `D^b`, nothing is proved: that needs the converse of
+      `CellScheme.Rows.IsBountiful.printedBountiful` at a single stage, which row 6 lacks.
 16. The completion of checkpoints 2.1–2.7 replaces it; the bountifulness of the printed completion
     is unproved, not refuted.
 17. `StageType.HasApexCoatomExtensions` (`Extension/PinnedExtension`), a hypothesis.
@@ -1041,9 +1082,29 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     still to be proved.
 20. The classical limit of the uncapped age (`README.md`, the section on the top-free witnesses):
     prospective.
-21. `Realization.IsModel.exists_privateContext` (`Realization/PrivateContext`), compiled in this
-    repository (theorem named) for the models here (row 11); the comparison of its conclusion with
-    clauses 3 and 4 of the lemma is not recorded.
+21. `Realization.IsModel.exists_privateContext` (`Realization/PrivateContext`); status S.  Only
+    clauses 3 and 4 of Lemma 8.1.1 are compared; clauses 1 and 2 (the hollow case) are not.
+    Clauses 3 and 4 are the fields of `Realization.PrintedPrivateContext`
+    (`Correspondence/PrivateContext`), with the cells `Ω_μ` of clause 3 as data, since clause 4(d)
+    refers to them.  Compiled in this repository (theorem named):
+    `Realization.IsModel.exists_printedPrivateContext`, derived from the conclusion of
+    `exists_privateContext`.  For a model at a positive stage (the printed stage is a limit),
+    every occurrence `x`, every donor on `x.arity + 1` points, and every `K`, it gives an
+    extension meeting clause 3 and, with `N` the arity of the extension, the bounds (a)–(d) of
+    clause 4 ((b) for the given `K`) and a cell `Ω` of full scope and arity `N` labelled above
+    every label of the donor below `∞`.  Not met: the alternative of clause 4 for infinite
+    characteristic arity, `p'(Ω) = ∞`; the characteristic arity (Definition 5.4.1) has no
+    counterpart here.  Departures: `x` is a literal face of the extension along an embedding, not
+    an initial segment (not proved equivalent here); clause 3 is also met at `μ = 0`, a
+    strengthening; the hypotheses of Proposition 7.3.3 (hollowness or finite characteristic
+    arity, a core, the donor extending the type of `x`) are not assumed (harmless:
+    `Realization.IsModel.exists_printedPrivateContext` holds without them).  The row stays S
+    because the comparison is for the models here, whose correspondence is row 11 (S), and
+    because of the missing alternative of clause 4.  The printed proof of clause 4 cites
+    high-arity dominance as clause 4(a) of Definition 3.2.1, where it is clause 4(c)
+    (`LITERATURE.md`): a correction of the citation that does not affect the statement; the
+    proofs here use uniformity, clause 4(b), and high-arity dominance, clause 4(c)
+    (`Realization.IsModel.uniformity`, `Realization.IsModel.dominance`).
 22. Prospective (`README.md`, layer 3, 3.3).
 23. `FullPresentation.LevelObservations`, `FullPresentation.ObservedPresentation`
     (`Comparison/GradedMatchingApplications`): separate level sets, explicit projections; the
