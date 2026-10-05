@@ -408,12 +408,13 @@ rows).
 2. *The limit-stage monotonicity* (prospective in its derived form; the monotonicity of thresholds
    along extensions of rooted covers).  Hypotheses: those of 1.  Per-cover form (Layers 1–3,
    `Stage/`): along extensions of rooted covers the least lifts increase on the face of the root.
-   Supremum form (Layer 4, `Continuation/Normalization`): the stable label is the supremum of the
-   offsets of the least lifts.  Compiled in this repository (theorem named), with provisional
-   offsets in place of least lifts: `StageType.ForcesThreshold.trans_face` and
-   `StageType.provisionalOffset_le_trans_face`, which are themselves the forms for an arbitrary
-   second stage (only `β` zero or a limit is assumed) and are kept as separate statements; the
-   supremum through the definitions `Realization.stableOffset` and `Realization.stableLabel`.
+   Supremum form (Layer 4, `Continuation/Normalization`): the stable offset is the supremum of the
+   offsets of the least lifts, and the stable label its decoding (`Label.ofOffset`).  Compiled in
+   this repository (theorem named), with provisional offsets in place of least lifts:
+   `StageType.ForcesThreshold.trans_face` and `StageType.provisionalOffset_le_trans_face`, which are
+   themselves the forms for an arbitrary second stage (only `β` zero or a limit is assumed) and are
+   kept as separate statements; the supremum through the definitions `Realization.stableOffset` and
+   `Realization.stableLabel`.
 3. *The threshold characterization* (prospective in its derived form).  Hypotheses: those of 1, a
    rooted cover `(q, f)` of a root `p`, and a cell `d` labelled `⊤` in `p`.  Per-cover form (Layers
    1–3): `(q, f)` forces `n` at `d` exactly when every lift is at least `β + n` there (the
@@ -433,25 +434,26 @@ rows).
    receiving and `ForcingDonors`, the equality of such a realization with the candidate
    (`Realization.label_eq_stableLabel`).  Attainment (the candidate is lawful) from exact
    consistency, covering, and legal types, with no receiving and no further clause of modelhood
-   (`Realization.isStablyLawful_of_hasLegalTypes`, `Realization.IsModel.isStablyLawful`): under
-   review, not yet merged.
+   (`Realization.isStablyLawful_of_hasLegalTypes`, `Realization.IsModel.isStablyLawful`): compiled
+   in this repository (theorem named).
 5. *Finite nonuniqueness* (prospective; a caution).  Hypotheses: `β` zero or a limit and `q` at `β`.
    Conclusions: literal weakening, `q.castLE`, is the greatest lift (its ingredients
    `StageType.reduce_castLE` and `StageType.reduce_self` are compiled in this repository (theorem
    named)); the lifts of `q` form a singleton exactly when `q.IsTopFree` (the lift capped at
-   `β + K`, `StageType.capLift`: under review, not yet merged); so the least lift, where it exists,
-   and the greatest agree exactly when `q` is top-free.  These belong to Layers 1–3 (`Stage/`).  A
-   pointwise minimum of lifts need not be lawful (the type of
+   `β + K`, `StageType.capLift`, defined in this repository, a lift by `StageType.capLift_reduce`,
+   compiled in this repository (theorem named)); so the least lift, where it exists, and the
+   greatest agree exactly when `q` is top-free.  These belong to Layers 1–3 (`Stage/`).  A pointwise
+   minimum of lifts need not be lawful (the type of
    `Continuation.CandidateCounterexamples.not_twinOrdering_blockStage`; informal, not compiled as a
    separate statement; [Kni26, Lemma 2.5.11] is not relied on, `README.md`, Layer 1); this negative
    special case is to be compiled in `Continuation/CandidateCounterexamples` (Layer 4), whose scheme
    comes from `Extension/SmallArityExamples`.  "Least lift" is never replaced by "unique lift".
 6. *The separation of leastness from modelhood.*  Statements 1–5, 8, and 9 do not make the candidate
    a model: receiving, (R1)–(R4), stays its own statement; (R4) (`StableCappedReceiving`) and the
-   coface instances at `λ_{ξ+1}` (`StageType.HasNonemptyCofaceInstances`) remain the content of
-   output 3, compiled from them as `ContinuationCriterion.of_stableCappedReceiving`; all three are
-   under review, not yet merged, and the two hypotheses are still to be proved.  Exact lifting over
-   a separately prescribed higher root (`Seed.TwoFaceLift`, a definition compiled in this
+   coface instances at `λ_{ξ+1}` (`StageType.HasNonemptyCofaceInstances`), both defined in this
+   repository and still to be proved, remain the content of output 3, compiled from them as
+   `ContinuationCriterion.of_stableCappedReceiving` (compiled in this repository (theorem named)).
+   Exact lifting over a separately prescribed higher root (`Seed.TwoFaceLift`, defined in this
    repository, and `StageType.HasApexCoatomExtensions`) still needs its own proof; leastness alone
    does not give it.  `ContinuationCriterion` (`Continuation/Classification`) stays a hypothesis of
    the count, still to be proved.
@@ -472,19 +474,27 @@ rows).
    reduct to `λ_ξ` is `R`.  Conclusions: literal weakening (`StageType.castLE` on each type, `⊤`
    kept) is a structural successor and the greatest, from consistency alone; the stable candidate
    (`Realization.stableCandidate`, defined in this repository), where it is lawful, is the least;
-   each is one coherent realization, extremal at all coordinates at once, and every structural
-   successor lies between them.  Not claimed: the lawfulness of a labelling between them, or closure
-   under pointwise minima.  The rows stay fixed: stage projection changes the labels only, and any
-   other representation of the rows is used only through a transport checked to preserve lawfulness,
-   cells, faces, and reduction.
+   each is attained by one coherent realization, least (greatest) at every coordinate at once, and
+   every structural successor lies between them.  Not claimed: the lawfulness of a labelling between
+   them, or closure under pointwise minima.  The rows stay fixed: stage projection changes the
+   labels only, and any other representation of the rows is used only through a transport checked
+   to preserve lawfulness, cells, faces, and reduction.
 9. *Cover-hollowness as the equality of the two* (prospective; Layer 4).  Hypotheses: `R` a model at
    `λ_ξ`.  Conclusions: the least and the greatest structural successor of `R` are equal exactly
-   when `R.IsCoverHollow` (through `Realization.isCoverHollow_iff_forall_stableLabel_eq_top`,
-   compiled in this repository (theorem named)); then the structural successors form a subsingleton,
-   and each is the stable candidate.  Not a continuation theorem: a structural successor need not be
-   a model, and the uniqueness supplies no expansion; for a model that is not cover-hollow the two
-   differ, with no conflict with the uniqueness of model expansions.  Stated for models only, with
-   cover-hollowness, not hollowness in the sense of `SEMANTIC_CONTRACT.md`, item 8.
+   when `R.IsCoverHollow`.  For cover-hollow `R` the candidate is lawful
+   (`Realization.isStablyLawful_of_isCoverHollow`) and is literal weakening
+   (`Realization.stableCandidate_eval_of_isCoverHollow`), both compiled in this repository (theorem
+   named).  Conversely, a model is stably lawful (`Realization.IsModel.isStablyLawful`, compiled in
+   this repository (theorem named)), so its candidate is defined, and it is literal weakening only
+   if every stable label is `⊤`, which is cover-hollowness
+   (`Realization.isCoverHollow_iff_forall_stableLabel_eq_top`, compiled in this repository (theorem
+   named)).  The equality of the candidate with literal weakening holds for every stably lawful `R`;
+   models are taken because there the candidate is a structural successor.  Then the structural
+   successors form a subsingleton, and each is the stable candidate.  Not a continuation theorem: a
+   structural successor need not be a model, and the uniqueness supplies no expansion; for a model
+   that is not cover-hollow the two differ, with no conflict with the uniqueness of model
+   expansions.  Stated for models only, with cover-hollowness, not hollowness in the sense of
+   `SEMANTIC_CONTRACT.md`, item 8.
 10. *Complementary global routes* (`README.md`, the section on the top-free witnesses,
     "Complementary global routes").  Separate statements with their own hypotheses, none derived
     from statements 1–9: classical Fraïssé existence for terminal examples at one level (the
@@ -510,14 +520,17 @@ own criterion, with its stage hypothesis stated, and none is complete because an
 4. *The separation of leastness from modelhood* (statement 6): a separate continuation proof for
    modelhood, output 3 compiled from (R4) and the coface instances at the next block, with the
    lawfulness, leastness, and uniqueness of the candidate not used in place of either.
-5. *The structural successors* (statements 8 and 9): literal root and reduct equations for lifting,
-   the reduct of each structural successor equal to `R` as an equation of realizations, literal
-   weakening included (`StageType.reduce_castLE` on each type), and the face of its value at a
-   rooted cover along the root equal to its value at the root, literally; the equivalence of 9 for
-   models only.
+5. *The structural successors* (statements 8 and 9): statement 8's conclusions compiled (literal
+   weakening a structural successor and the greatest; the candidate, where lawful, the least; every
+   structural successor between them); literal root and reduct equations for lifting, the reduct of
+   each structural successor equal to `R` as an equation of realizations, literal weakening included
+   (`StageType.reduce_castLE` with `StageType.reduce_self` on each type), and the face of its value
+   at a rooted cover along the root equal to its value at the root, literally; the equivalence of 9
+   compiled for models only.
 6. *Complementary global routes* (statement 10): for classical reconstruction, a round trip on the
    given carrier (the literal round trip of the acceptance criterion of finite-age reconstruction,
-   `README.md`, on the carrier of the limit itself); each route on its own hypotheses.
+   `README.md`, on the carrier of the limit itself); each route compiled as its own theorem, its
+   hypotheses listed, none taking a statement 1–9 as input.
 
 ### 5. Unique expansions, domains, and the main theorem
 
