@@ -42,7 +42,9 @@ of `σ`.
   maximum of two suppressors (`IsWitness.sup`), truncation of the suppressor above a grade
   (`IsWitness.truncate`), capping the suppressor by a self-visible label (`IsWitness.cap`), and
   the cap rule for the target (`TransformsTo.min_const`, a related target-capping variant of
-  [Kni26, Lemma 2.3.12]);
+  [Kni26, Lemma 2.3.12]), and its form at a tied cell (`TransformsTo.cap_tied`): if the source
+  ties a cell `C` below a cell `e` of grade at most that of `C`, lowering the target at `C` to a
+  cap keeps locality at `C` and keeps `C` below `e`;
 * guarded composition (`IsWitness.comp_of_bot_reflecting`): a witness bounded by grade `m` may be
   followed by a second witness bounded by grade `m` that reflects bottom on the values of the
   first;
@@ -221,6 +223,28 @@ theorem TransformsTo.min_const (h : TransformsTo grade p q) {K : ℕ} (hK : ∀ 
     {c : Label.{u}} (hc : IsSelfVisible K c) : TransformsTo grade p (fun d ↦ min (q d) c) := by
   obtain ⟨g, σ, hw, heq⟩ := h
   exact ⟨_, σ, hw.cap hc, fun d ↦ by simp only [ite_eq_left (hK d), heq, min_assoc]⟩
+
+/-- **Lowering a tied cell to a cap.**  Let `p` transform to `q` capped at `q C` (locality at the
+cell `C`), let `r` agree with `q` below a cap `c` self-visible at a bound `K` of the grades, and
+let `p` tie `C` below `e`: `p C ≤ p e`, with the grade of `e` at most that of `C`.  Then `p`
+transforms to `r` capped at `min (q C) c`, and `min (q C) c ≤ r e`: the value `min (q C) c` at `C`
+satisfies locality at `C` for `r` and keeps `C` below `e`. -/
+theorem TransformsTo.cap_tied {C e : D} {K : ℕ} (hK : ∀ z, grade z ≤ K) {c : Label.{u}}
+    (hc : IsSelfVisible K c) (hq : TransformsTo grade p fun z ↦ min (q z) (q C))
+    {r : D → Label.{u}} (hr : ∀ z, min (r z) c = min (q z) c) (htie : p C ≤ p e)
+    (he : grade e ≤ grade C) :
+    TransformsTo grade p (fun z ↦ min (r z) (min (q C) c)) ∧ min (q C) c ≤ r e := by
+  refine ⟨?_, ?_⟩
+  · convert hq.min_const hK hc using 1
+    funext z
+    rw [min_comm (q C) c, ← min_assoc, hr z, min_assoc, min_comm c (q C), ← min_assoc]
+  · have hCe : q C ≤ q e := by
+      have h := hq.le_of_le htie he
+      simp only [min_self] at h
+      exact h.trans (min_le_left _ _)
+    calc min (q C) c ≤ min (q e) c := min_le_min_right c hCe
+      _ = min (r e) c := (hr e).symm
+      _ ≤ r e := min_le_left _ _
 
 /-- The pointwise maximum of two suppressors of a shifter is a suppressor of it. -/
 theorem IsWitness.sup (hg : IsWitness g σ) (hg' : IsWitness g' σ) : IsWitness (g ⊔ g') σ where

@@ -3,6 +3,7 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
+import Mathlib.Data.Set.Finite.Lattice
 import Mathlib.SetTheory.Ordinal.Arithmetic
 
 /-!
@@ -20,7 +21,9 @@ Four kinds of label are distinguished.  The bottom label lies strictly below ord
 label is an ordinal (`IsProper`); the formal top is not an ordinal and lies above all of them.
 
 * `AtStage α x`: the label `x` occurs at stage `α`, that is, `x` is `⊥`, an ordinal `< α`, or `⊤`
-  (expositions, §1: labels at stage `α` lie in `{-∞} ∪ α ∪ {∞}`).
+  (expositions, §1: labels at stage `α` lie in `{-∞} ∪ α ∪ {∞}`).  The labels at a stage are
+  closed under `min` (`AtStage.min`), and finitely many labels lie at a common stage that is zero
+  or a limit (`exists_isSuccPrelimit_forall_atStage`).
 * `reduce α x`: stage reduction of a single label to stage `α`.  Labels `< α` are kept and every
   other label becomes the formal top; this is the label-level content of the reduction of a
   stage type to a lower stage.  Its image is exactly the labels at stage `α`
@@ -29,6 +32,10 @@ label is an ordinal (`IsProper`); the formal top is not an ordinal and lies abov
 
 Stage reduction is not capped observation (`VaughtConjecture.Label.Cap`): reduction keeps the
 formal top, while a cap at a proper cutoff forgets it.
+
+The cast of a natural number `n` to a label is the label of the ordinal `n` (`natCast_label`);
+these casts are injective and order-preserving, lie below `ω` and above `⊥`, and are the only
+labels other than `⊥` below `ω` (`exists_natCast_of_lt_omega`).
 
 If there are countably many ordinals below `α`, there are countably many labels at stage `α`
 (`countable_setOf_atStage`); in particular the labels below `ω ^ 2` form a countable set
@@ -139,6 +146,26 @@ theorem atStage_zero_iff : AtStage 0 x ↔ x = ⊥ ∨ x = ⊤ := by
 theorem AtStage.mono (h : AtStage α x) (hαβ : α ≤ β) : AtStage β x :=
   h.imp_left (·.trans_le (by simpa using hαβ))
 
+/-- The minimum of two labels at a stage is at that stage. -/
+theorem AtStage.min {x y : Label.{u}} (hx : AtStage α x) (hy : AtStage α y) :
+    AtStage α (min x y) := by
+  rcases min_choice x y with h | h <;> rwa [h]
+
+/-- Finitely many labels lie at a common stage that is zero or a limit. -/
+theorem exists_isSuccPrelimit_forall_atStage {S : Set Label.{u}} (hS : S.Finite) :
+    ∃ θ : Ordinal.{u}, Order.IsSuccPrelimit θ ∧ ∀ x ∈ S, AtStage θ x := by
+  let f : Label.{u} → Ordinal.{u} := fun x ↦ WithTop.untopD 0 (WithBot.unbotD ⊤ x)
+  obtain ⟨s, hs⟩ := (hS.image f).bddAbove
+  refine ⟨Ordinal.omega0 * (s + 1),
+    Ordinal.isSuccPrelimit_iff_omega0_dvd.mpr (dvd_mul_right _ _), fun x hx ↦ ?_⟩
+  induction x using recBotCoeTop with
+  | bot => exact atStage_bot
+  | top => exact atStage_top
+  | coe o =>
+    have ho : o ≤ s := by simpa [f] using hs ⟨_, hx, rfl⟩
+    exact atStage_coe.mpr ((Order.lt_add_one_iff.mpr ho).trans_le
+      (Ordinal.le_mul_right _ Ordinal.omega0_pos))
+
 /-! ### Stage reduction -/
 
 open Classical in
@@ -242,6 +269,43 @@ theorem le_of_le_reduce_add_one {y z : Label.{u}} (hy : y ≤ o) (h : y ≤ redu
   rcases le_or_gt z o with hz | hz
   · rwa [reduce_add_one_of_le hz] at h
   · exact hy.trans hz.le
+
+/-! ### Natural numbers -/
+
+section NatCast
+
+open Ordinal
+
+/-- The cast of a natural number to a label is the label of its cast to an ordinal. -/
+theorem natCast_label (n : ℕ) : (n : Label.{u}) = ((n : Ordinal.{u}) : Label.{u}) := by
+  rw [← WithBot.coe_natCast, ← WithTop.coe_natCast]
+
+theorem natCast_label_inj {n m : ℕ} : (n : Label.{u}) = m ↔ n = m := by
+  rw [natCast_label, natCast_label, WithBot.coe_inj, WithTop.coe_inj, Nat.cast_inj]
+
+theorem natCast_label_le {n m : ℕ} : (n : Label.{u}) ≤ m ↔ n ≤ m := by
+  rw [natCast_label, natCast_label, WithBot.coe_le_coe, WithTop.coe_le_coe, Nat.cast_le]
+
+theorem natCast_label_lt_omega (n : ℕ) :
+    (n : Label.{u}) < ((ω : Ordinal.{u}) : Label.{u}) := by
+  rw [natCast_label, WithBot.coe_lt_coe, WithTop.coe_lt_coe]
+  exact natCast_lt_omega0 n
+
+theorem natCast_label_ne_bot (n : ℕ) : (n : Label.{u}) ≠ ⊥ := by
+  rw [natCast_label]; exact WithBot.coe_ne_bot
+
+/-- A label other than `⊥` below `ω` is a natural number. -/
+theorem exists_natCast_of_lt_omega {x : Label.{u}} (hx : x ≠ ⊥)
+    (hxω : x < ((ω : Ordinal.{u}) : Label.{u})) : ∃ n : ℕ, x = n := by
+  induction x using recBotCoeTop with
+  | bot => exact absurd rfl hx
+  | top => exact absurd hxω (not_lt.mpr le_top)
+  | coe o =>
+    rw [WithBot.coe_lt_coe, WithTop.coe_lt_coe] at hxω
+    obtain ⟨n, rfl⟩ := lt_omega0.mp hxω
+    exact ⟨n, (natCast_label n).symm⟩
+
+end NatCast
 
 /-! ### Countability -/
 

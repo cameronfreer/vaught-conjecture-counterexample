@@ -47,7 +47,9 @@ A cell of full grade `n` of a stage type on `n` points has full scope: its grade
 
 **Stage types on no points.**  A stage type on no points has no cells (`card_eq_zero`) and only
 the empty face (`faces_eq_of_zero`), so there is exactly one at each stage (`eq_of_zero`); the
-empty face of every stage type is closed (`isSome_restrictFace_of_zero`).
+empty face of every stage type is closed (`isSome_restrictFace_of_zero`).  Likewise, the first
+point of a stage type on two points spans a closed face, singletons being closed in a plan
+(`exists_restrictFace_castSuccEmb_of_two`).
 
 **Stage reduction.**  At a stage `β` that is zero or a limit (`Order.IsSuccPrelimit β`), the
 reduction `t.reduce hβ : StageType β n` keeps the scheme and rows and applies `Label.reduce β`
@@ -324,6 +326,13 @@ theorem isSome_restrictFace_of_zero (t : StageType.{u} α n) (e : Fin 0 ↪ Fin 
     (restrictFace e t).isSome := by
   rw [isSome_restrictFace_iff, univ_eq_empty, map_empty]
   exact t.isWellFormed.isWellFormed.isPlan.empty_mem
+
+/-- The first point of a two-point type spans a closed face: singletons are closed in a plan. -/
+theorem exists_restrictFace_castSuccEmb_of_two (t : StageType.{u} α 2) :
+    ∃ p, restrictFace (Fin.castSuccEmb : Fin 1 ↪ Fin 2) t = some p := by
+  refine Option.isSome_iff_exists.mp ((isSome_restrictFace_iff _ _).mpr ?_)
+  rw [show univ.map (Fin.castSuccEmb : Fin 1 ↪ Fin 2) = {0} by decide]
+  exact t.isPlan.singleton_mem (mem_univ 0)
 
 /-! ### Reindexing along bijections -/
 
