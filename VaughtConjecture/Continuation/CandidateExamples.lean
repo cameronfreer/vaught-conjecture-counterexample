@@ -21,12 +21,14 @@ Special cases of `VaughtConjecture.Continuation.Candidate`:
   cover-hollow, hence stably lawful, and its candidate is not a model, by uniformity at `γ = λ_ξ`;
 * **twins**: without two cells labelled the formal top at one graded index, availability needs no
   hypothesis; a top-free type has none.  The failure of availability for a pointwise minimum of two
-  lawful lifts with twins is the stage-type example of `VaughtConjecture.Stage.ThresholdExamples`;
-  no realization-level counterexample is claimed.  Stable availability for twin types in models is
-  open, with no conditional statement here apart from the case of an existing next-block
-  expansion (`Realization.isStablyLawful_of_reduce_eq`); synchronizing cofaces and twin ordering,
-  the hypotheses on single types examined for it, are refuted in
-  `VaughtConjecture.Continuation.CandidateCounterexamples`;
+  lawful lifts with twins is the stage-type example of `VaughtConjecture.Stage.ThresholdExamples`
+  (on an incomplete scheme); no realization-level counterexample is claimed.  Stable availability
+  at twins holds for every realization with legal types
+  (`Realization.availability_stableSection_of_hasLegalTypes`, in
+  `VaughtConjecture.Continuation.Candidate`), so every model is stably lawful
+  (`Realization.IsModel.isStablyLawful`); synchronizing cofaces and twin ordering, statements about
+  every lift of a single type, are refuted in
+  `VaughtConjecture.Continuation.CandidateCounterexamples` (negative special cases);
 * **a model expansion**: at `ξ = 0`, the reduction of an exactly consistent
   realization at `ω + ω` with legal types and finite-extension receiving is stably lawful, given
   forcing donors at `0`.

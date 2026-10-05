@@ -338,17 +338,19 @@ receiving/modelhood as different theorem layers.
 Consistency and covering give the order law and locality of the stable labelling
 (`Realization.orderly_stableSection`, `Realization.locality_stableSection`) and availability when
 no type has twins, two cells labelled `⊤` at one graded index
-(`Realization.isStablyLawful_of_injOn_gradedIndex`); these are
-compiled in this repository (theorem named). Stable availability at twins in models is open; apart
-from the case of an existing next-block expansion (`Realization.isStablyLawful_of_reduce_eq`, which
-presupposes what output 3 is to construct), no conditional statement of it is made. Two hypotheses
-on single stage types examined for it are refuted (negative special cases): synchronizing cofaces,
-in three forms (`Continuation.CandidateCounterexamples.not_unrestrictedSynchronizingCofaces`,
+(`Realization.isStablyLawful_of_injOn_gradedIndex`); with legal types, availability holds also at
+twins (`Realization.availability_stableSection_of_hasLegalTypes`, through
+`StageType.exists_forcesThreshold_twin_face`), so every model is stably lawful
+(`Realization.isStablyLawful_of_hasLegalTypes`, `Realization.IsModel.isStablyLawful`); these are
+compiled in this repository (theorem named). Two hypotheses on single stage types that would
+give availability at twins through every lift are refuted (negative special cases): synchronizing
+cofaces, in three forms
+(`Continuation.CandidateCounterexamples.not_unrestrictedSynchronizingCofaces`,
 `Continuation.CandidateCounterexamples.not_synchronizingCofaces_blockStage`,
 `Continuation.CandidateCounterexamples.not_synchronizingCofacesOnLifts`), and twin ordering
 (`Continuation.CandidateCounterexamples.not_twinOrdering_blockStage`). On the type that refutes twin
 ordering every lift gives the cell of smaller scope the label of the larger twin, and both orders of
-the twins occur.
+the twins occur; the transfer that holds happens inside the forcing cover, from a forced level.
 
 Construct the stable realization and literal reduct before proving modelhood.  Normalize any
 genuine expansion pointwise to the structural candidate; handle undefined tuples using the
@@ -374,8 +376,9 @@ Eventual top grade zero is the rigid-core case: the empty tuple is then a rigid 
 (`TerminalProperty`, `Realization.HasTerminalProperty`).  Preserve the original no-anchor predicate
 (the meaning of "hollow", `SEMANTIC_CONTRACT.md`, item 8); stable-label fixedness is a
 characterization under stated hypotheses.  The compiled statements of output 3, the terminal count,
-and (R3) are presently formulated with cover-hollowness (`Realization.IsCoverHollow`), and (R4),
-which has no statement in the library yet, is to be stated with it; cover-hollowness is a
+and (R3) are presently formulated with cover-hollowness (`Realization.IsCoverHollow`), and (R4)
+is declared (`StableCappedReceiving`, assuming that the model is not cover-hollow) and is not
+proved; cover-hollowness is a
 separate named predicate whose stable-label fixedness holds for every realization at a block stage,
 with no hypothesis (`Realization.isCoverHollow_iff_forall_stableLabel_eq_top`); the equivalence of
 cover-hollowness with the original no-anchor predicate is still to be proved.
@@ -1927,18 +1930,31 @@ Each checkpoint needs both its abstract API and a concrete application:
    the block of the cutoff (the private cap is labelled above the cutoff); 4b-iii, gate recovery,
    for rows (`CellScheme.Rows.IsGate.recover`, `Extension/Gate`) and for a gated extension
    (`StageType.GatedExtension.recover`, `Realization/GateRecovery`), with no legality, no
-   completion, and no (R6); and 4b-iv, conditional on the gated-extension property, stated as
-   `StageType.HasGatedPinnedExtensions` (`Extension/GatedExtension`), with the bottom-pattern
-   clause used in its guarded form, witnessed by the display, and no hypothesis on the stage
-   (`Realization.IsModel.hasFiniteCutReceiving_of_hasGatedPinnedExtensions`,
-   `Expansion.finiteCutReceiving_of_hasGatedPinnedExtensions`), are
-   compiled in this repository (theorem named). 4b-ii, the construction as data, and with it the
-   gated-extension property, is still to be proved; at a stage where the property fails the
-   conditional theorem is vacuous, and nothing rules that out. The conditional theorem receives one
-   permitted cutoff at a time and is not exact projected receiving. Projected-donor lifting is not
-   part of checkpoint 4 (`README.md`, Layer 3, 3.3, the density boundary). This status concerns (R1)
-   only: (R2), (R3), and the fidelity theorem of this checkpoint remain to be proved; the
-   cap-to-model theorem at a limit stage is compiled
+   completion, and no (R6), and with the twin–gate coupling in place of the bottom pattern of the
+   twins (`CellScheme.Rows.IsGate.recover_of_twinsReadGate`,
+   `StageType.CoupledGatedExtension.exists_restrictFace_mem_receivingFamily`); and 4b-iv,
+   conditional on the gated-extension property, stated as
+   `StageType.HasCoupledGatedPinnedExtensions` (`Extension/GatedExtension`), with generalized
+   saturation over the private context, witnessed by the display, and no hypothesis on the stage
+   (`Realization.IsModel.hasFiniteCutReceiving_of_hasCoupledGatedPinnedExtensions`,
+   `Realization/CoupledFiniteCutReceiving`,
+   `Expansion.finiteCutReceiving_of_hasCoupledGatedPinnedExtensions`), are compiled in this
+   repository (theorem named). The first form of the property, `StageType.HasGatedPinnedExtensions`,
+   whose displays label the twins of the gate `⊥`, is refuted at every stage
+   (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`, compiled in this repository
+   (theorem named)); the coupled form replaces that clause by the condition on rows
+   `CellScheme.Rows.TwinsReadGate` and holds at the refuting input
+   (`CoupledGateExamples.exists_coupledGatedExtension_comap_g₁`, compiled in this repository
+   (theorem named)). 4b-ii, the construction as data, and with it
+   `StageType.HasCoupledGatedPinnedExtensions`, is open. Its open point is cap lowering (CL),
+   stated in its docstring, the uniform form of what the construction needs, a strengthening not
+   shown necessary: a failure of (CL) refutes the coupled design only at a pair that a forcing
+   prescription from an anchored legal donor actually realizes. At a stage where the hypothesis
+   fails the conditional theorem is vacuous, and nothing rules that out. The conditional theorem
+   receives one permitted cutoff at a time and is not exact projected receiving. Projected-donor
+   lifting is not part of checkpoint 4 (`README.md`, Layer 3, 3.3, the density boundary). This
+   status concerns (R1) only: (R2), (R3), and the fidelity theorem of this checkpoint remain to be
+   proved; the cap-to-model theorem at a limit stage is compiled
    (`Realization.isModel_of_hasFiniteCutReceiving`, `Realization/CapToModel`) conditional on the
    nonemptiness of the instances of uniformity and dominance, which the coatom extension property
    with apex gives (`CapToModel.of_hasApexCoatomExtensions`, at `ω`).
@@ -1962,16 +1978,17 @@ Each checkpoint needs both its abstract API and a concrete application:
    donors is still to be proved, by a finite construction from the completion below the full grade
    (checkpoints 2.6–2.7), without (R1). The structural candidate (output 1) is compiled
    (`Realization.stableCandidate`, `Continuation/Candidate`), with exact consistency, covering, the
-   order law, and locality from exact consistency and covering, and availability when no type has
-   twins (two cells labelled `⊤` at one graded index;
-   `Realization.isStablyLawful_of_injOn_gradedIndex`); stable availability at twins is open, with no
-   conditional statement apart from the case of an existing next-block expansion
-   (`Realization.isStablyLawful_of_reduce_eq`), and two hypotheses on single types are refuted
-   (section 4 above). Output 3 (stated as the hypothesis `ContinuationCriterion`) and (R4) are still
-   to be proved. Step 7 is compiled conditionally (`README.md`, the section on the top-free
-   witnesses): the loss at `η` under uniqueness at `λ_η` (`nonempty_loss_of_topFreeWitness`), and
-   per block under `StageType.HasApexCoatomExtensions` at `λ_η` and uniqueness of the model
-   expansions at `λ_η` (`nonempty_loss_of_hasApexCoatomExtensions`, `MainTheorem/LowerBound`).
+   order law, and locality from exact consistency and covering, and availability from legal types,
+   also at twins (two cells labelled `⊤` at one graded index), so that every model is stably lawful
+   (`Realization.IsModel.isStablyLawful`); two hypotheses on single types are refuted (section 4
+   above). Output 3 (stated as the hypothesis `ContinuationCriterion`) is compiled conditionally on
+   (R4) and the coface instances at the next block
+   (`ContinuationCriterion.of_stableCappedReceiving`); (R4) and the coatom extension property with
+   apex at `λ_{ξ+1}` are still to be proved. Step 7 is
+   compiled conditionally (`README.md`, the section on the top-free witnesses): the loss at `η`
+   under uniqueness at `λ_η` (`nonempty_loss_of_topFreeWitness`), and per block under
+   `StageType.HasApexCoatomExtensions` at `λ_η` and uniqueness of the model expansions at `λ_η`
+   (`nonempty_loss_of_hasApexCoatomExtensions`, `MainTheorem/LowerBound`).
 
    **Condition 2: checkpoints A–E.**  Condition 2 of the reduction (countable successor losses)
    is complete conditionally on output 3 (`ContinuationCriterion`), (R1), (R2), and (R3).  Each
@@ -2649,12 +2666,16 @@ witnesses).**
   whose row is a coded copy of the labels, completed above it), is destined for `Extension/`, built
   from the completion below the full grade, without (R1).
 - The bound of the provisional offset by the top grade, the optional bound (d) of the
-  normalization (prospective): the capping lemma is now in `Scheme/Row`, and the bound waits for
-  `StageType.topGrade` (`Continuation/Terminal`) to move to `Stage/`.
+  normalization (prospective), stated with `StageType.provisionalOffset`.  Its forcing form is
+  compiled: if every grade of `q` is at most `K` and `β + K < α`, then `(q, f)` does not force
+  `K + 1` at a cell labelled the formal top (`StageType.not_forcesThreshold_of_grade_le`,
+  `Stage/Threshold`).  The bound itself waits for `StageType.topGrade` (`Continuation/Terminal`) to
+  move to `Stage/`.
 - The existential two-face lift `2FL∃(j)` and the choosing variant of
   `CellScheme.Rows.cappedLift_of_boundary_short` (checkpoint 2.7), in prose only.
 - The ordinary construction of (R1) as data (4b-ii), the proof of
-  `StageType.HasGatedPinnedExtensions`; (R2), (R3), (R4); and output 3, the proof of
+  `StageType.HasCoupledGatedPinnedExtensions` (open; its first form
+  `StageType.HasGatedPinnedExtensions` is refuted); (R2), (R3), (R4); and output 3, the proof of
   `ContinuationCriterion`.
 - The graded back-and-forth theorem (`README.md`, Layer 0), formerly listed here,
   is retired, not moved: both of its intended applications, approximate comparison of full

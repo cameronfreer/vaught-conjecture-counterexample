@@ -94,10 +94,18 @@ finite-cut receiving (`HasFiniteExtensionReceiving.hasFiniteCutReceiving`, the d
 point along the initial segment).  Conversely, for an exactly consistent realization at a stage
 that is zero or a limit, finite-cut receiving gives finite-extension receiving
 (`HasFiniteCutReceiving.hasFiniteExtensionReceiving`, in `VaughtConjecture.Realization.Receiving`).
+**The empty root**: on a nonempty carrier, with legal types, exact consistency and covering,
+receiving over every occurrence of positive arity gives finite-cut receiving, provided legal stage
+types amalgamate with legal stage types on one point over the empty face
+(`hasFiniteCutReceiving_of_pos`): over the empty root, the one-point donor is amalgamated with the
+type of an occurrence of positive arity given by covering, received over that occurrence, and
+restricted to the new point (`StageType.exists_restrictFace_mem_receivingFamily`).
 That every model has finite-cut receiving is (R1) of the table of Layer 3, open in general; the
 universal gated extension hypothesis `StageType.HasGatedPinnedExtensions`, which would give it,
-fails at every stage (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`).  It is proved
-for the top-free witnesses (`hasFiniteCutReceiving_reconstruct`, in
+fails at every stage (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`).  (R1) holds
+conditional on the coupled gated pinned extension property, a named hypothesis that is open
+(`IsModel.hasFiniteCutReceiving_of_hasCoupledGatedPinnedExtensions`).  Finite-cut receiving is
+proved for the top-free witnesses (`hasFiniteCutReceiving_reconstruct`, in
 `VaughtConjecture.ClassicalLimit.Receiving`).
 
 ## References
@@ -532,6 +540,30 @@ point, along the initial segment. -/
 theorem HasFiniteExtensionReceiving.hasFiniteCutReceiving (h : R.HasFiniteExtensionReceiving) :
     R.HasFiniteCutReceiving :=
   fun x d hd c hc ↦ h x.tuple x.type x.eval_tuple d Fin.castSuccEmb hd.1 hd.2 c hc
+
+/-- **Finite-cut receiving from positive roots**: a realization on a nonempty carrier with legal
+types, exactly consistent and covering, that receives over every occurrence of positive arity has
+the finite-cut receiving property, provided its stage has the amalgam over the empty face.  Over
+the empty root, the one-point donor is amalgamated with the type of an occurrence of positive
+arity given by covering, received over that occurrence, and restricted to the new point. -/
+theorem hasFiniteCutReceiving_of_pos {C : Realization.{u, v} α M} (hne : Nonempty M)
+    (hl : C.HasLegalTypes) (hc : C.IsConsistent) (hcov : C.IsCovering)
+    (hamal : ∀ ⦃n : ℕ⦄ (P : StageType.{u} α n) (d : StageType.{u} α 1), P.IsLegal → d.IsLegal →
+      ∃ Q ∈ P.cofaces, restrictFace (Fin.natAddEmb n) Q = some d)
+    (hpos : ∀ x : C.Occurrence, 0 < x.arity → ∀ D ∈ x.type.cofaces, ∀ c : Label.{u},
+      IsPermittedCutoff α c → C.RealizesOver x.tuple (receivingFamily D c)) :
+    C.HasFiniteCutReceiving := by
+  rintro ⟨_ | n, t, p, ht⟩ D hD c hc'
+  · obtain ⟨a⟩ := hne
+    obtain ⟨m, u, f, -, hu⟩ :=
+      hcov (⟨fun _ ↦ a, fun i j _ ↦ Subsingleton.elim i j⟩ : Fin 1 ↪ M)
+    obtain ⟨P, hP⟩ := Option.isSome_iff_exists.mp hu
+    obtain ⟨Q, hQ, hQD⟩ := hamal P D (hl u P hP) hD.1
+    obtain ⟨w, -, q, hq, hwq⟩ := hpos ⟨m, u, P, hP⟩ (f 0).pos Q hQ c hc'
+    obtain ⟨q', hq', hq'D⟩ := exists_restrictFace_mem_receivingFamily hq hQD
+    exact ⟨(Fin.natAddEmb m).trans w, Function.Embedding.ext fun i ↦ i.elim0, q', hq'D,
+      (hc w q _ hwq).trans hq'⟩
+  · exact hpos ⟨n + 1, t, p, ht⟩ n.succ_pos D hD c hc'
 
 end Receiving
 
