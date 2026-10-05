@@ -6,6 +6,7 @@ Authors: Cameron Freer
 import VaughtConjecture.Expansion.Losses
 import VaughtConjecture.Expansion.UniquenessOfForcing
 import VaughtConjecture.MainTheorem.Assembly
+import VaughtConjecture.MainTheorem.CapToModel
 
 /-!
 # The expansion domains of the density sentence, and the main theorem for them, conditionally
@@ -62,6 +63,18 @@ and (R3) of the table of Layer 3 (`Expansion.expansionDomain_loss_countable`).  
 gives thinness (`densitySentence_isThinOnNatModels_of_terminalClassification`) and the thin `ℵ₁`
 spectrum (`densitySentence_hasThinAlephOneSpectrum_of_terminalClassification`) with no hypothesis
 on the countability of the losses.
+
+**The continuation criterion from stable capped receiving.**  The continuation criterion follows
+from (R4) of the table of Layer 3 (`StableCappedReceiving`), the coatom extension property with
+apex at every block stage `λ_{ξ+1}` with `ξ < ω₁`, and stable lawfulness of the models in the
+domain of the criterion (`ModelStableLawfulness`)
+(`ContinuationCriterion.of_hasApexCoatomExtensions`).  The last hypothesis is open; given the
+first two, (R1) and forcing donors, it is equivalent to the continuation criterion
+(`continuationCriterion_iff_modelStableLawfulness`), so it is the content of the criterion and not
+a side condition.  Substituting this derivation gives thinness
+(`densitySentence_isThinOnNatModels_of_stableCappedReceiving`) and the thin `ℵ₁` spectrum
+(`densitySentence_hasThinAlephOneSpectrum_of_stableCappedReceiving`) with these three hypotheses
+in place of the continuation criterion; none of them is proved.
 
 ## Placement
 
@@ -203,5 +216,45 @@ theorem densitySentence_hasThinAlephOneSpectrum_of_terminalClassification
     HasThinAlephOneSpectrum densitySentence.{0} :=
   densitySentence_hasThinAlephOneSpectrum_of_forcingDonors hcap hrec hF
     (expansionDomain_loss_countable hrec hcont hres hhol) hn
+
+/-- **Thinness for the expansion domains from stable capped receiving**: the density sentence has
+no perfect set of pairwise nonisomorphic models coded on `ℕ`, conditional on the hypotheses of
+`densitySentence_isThinOnNatModels_of_terminalClassification` with the continuation criterion
+replaced by the following, each still to be proved:
+* (R4) of the table of Layer 3 (`hR4`, stable capped receiving): finite-cut receiving of the
+  stable candidate over positive roots;
+* the coatom extension property with apex at every `λ_{ξ+1}` with `ξ < ω₁` (`hext`): the empty
+  root and the uniformity and dominance instances of the cap-to-model theorem at `λ_{ξ+1}`;
+* stable lawfulness of the models in the domain of the criterion (`hlaw`,
+  `ModelStableLawfulness`): the definition of the stable candidate; open, and, given `hrec`, `hF`,
+  `hR4` and `hext`, equivalent to the continuation criterion.
+The continuation criterion is derived (`ContinuationCriterion.of_hasApexCoatomExtensions`). -/
+theorem densitySentence_isThinOnNatModels_of_stableCappedReceiving (hcap : CapToModel.{0})
+    (hrec : FiniteCutReceiving.{0}) (hF : ∀ ξ < ω₁, ForcingDonors.{0} ξ)
+    (hR4 : StableCappedReceiving.{0})
+    (hext : ∀ ξ < ω₁, StageType.HasApexCoatomExtensions.{0} (blockStage (ξ + 1)))
+    (hlaw : ModelStableLawfulness.{0}) (hres : Realization.ResidualReceiving.{0, 0})
+    (hhol : Realization.HollowReceiving.{0, 0} Realization.IsCoverHollowAtBlock) :
+    densitySentence.{0}.IsThinOnNatModels :=
+  densitySentence_isThinOnNatModels_of_terminalClassification hcap hrec hF
+    (.of_hasApexCoatomExtensions hR4 hext hlaw) hres hhol
+
+/-- **The thin `ℵ₁` spectrum for the expansion domains from stable capped receiving**: the density
+sentence has exactly `ℵ₁` classes of models coded on `ℕ` and no perfect set of pairwise
+nonisomorphic ones, conditional on the hypotheses of
+`densitySentence_isThinOnNatModels_of_stableCappedReceiving` and on nonempty losses of the
+expansion domains (`hn`; condition 4 of the reduction, Layer 6), each still to be proved.  The
+continuation criterion (`ContinuationCriterion.of_hasApexCoatomExtensions`) and the countability
+of the losses (`Expansion.expansionDomain_loss_countable`) are derived. -/
+theorem densitySentence_hasThinAlephOneSpectrum_of_stableCappedReceiving
+    (hcap : CapToModel.{0}) (hrec : FiniteCutReceiving.{0}) (hF : ∀ ξ < ω₁, ForcingDonors.{0} ξ)
+    (hR4 : StableCappedReceiving.{0})
+    (hext : ∀ ξ < ω₁, StageType.HasApexCoatomExtensions.{0} (blockStage (ξ + 1)))
+    (hlaw : ModelStableLawfulness.{0}) (hres : Realization.ResidualReceiving.{0, 0})
+    (hhol : Realization.HollowReceiving.{0, 0} Realization.IsCoverHollowAtBlock)
+    (hn : ∀ ξ < ω₁, (expansionDomain ξ \ expansionDomain (ξ + 1)).Nonempty) :
+    HasThinAlephOneSpectrum densitySentence.{0} :=
+  densitySentence_hasThinAlephOneSpectrum_of_terminalClassification hcap hrec hF
+    (.of_hasApexCoatomExtensions hR4 hext hlaw) hres hhol hn
 
 end VaughtConjecture.MainTheorem
