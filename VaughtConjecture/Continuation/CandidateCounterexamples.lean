@@ -56,8 +56,16 @@ from `({0}, 1)` and from `({1}, 1)` to `(univ, 1)`.  For `β` zero or a limit, t
 `β`, with `0` and both twins labelled the formal top.  On that type every lift sets `0` to the
 larger twin, and both orders of the twins occur, so no cell at the graded index of the twins is at
 least `0` in every lift.  Hence no hypothesis that orders a twin above `s₀` in all lifts of a
-single type can hold; availability at twins has to use information about the realization.  Whether
-stable availability holds for twin types in models is open.
+single type can hold.
+
+**The lesson.**  Availability of the stable section at twins is nevertheless proved, for every
+realization with legal types (`Realization.availability_stableSection_of_hasLegalTypes`, in
+`VaughtConjecture.Continuation.Candidate`).  The transfer happens inside the forcing cover: a legal
+rooted cover that forces a level at `s₀` forces it, over the same cover, at a cell labelled the
+formal top at the graded index of `t₀` (`StageType.exists_forcesThreshold_twin_face`).  The
+statements refuted here compare the cells in every lift and ignore the forced level.  On the
+five-cell type the forced level at `0` is its grade `1`, which both twins also have by the order
+law, while the lifts order the twins both ways above that level.
 
 ## Placement
 

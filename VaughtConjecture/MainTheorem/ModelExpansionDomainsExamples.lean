@@ -3,7 +3,6 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
-import VaughtConjecture.MainTheorem.CapToModel
 import VaughtConjecture.MainTheorem.ModelExpansionDomains
 
 /-!
@@ -19,11 +18,7 @@ Special cases of `VaughtConjecture.MainTheorem.ModelExpansionDomains`:
   nonempty losses gives the thin `ℵ₁` spectrum of the density sentence;
 * next-block uniqueness derived from finite-cut receiving and forcing donors
   (`NextBlockUniqueness.of_forcingDonors`) in place of `hu`; the theorems with forcing donors are
-  the theorems with next-block uniqueness applied to it, by `rfl`;
-* the continuation criterion and stable lawfulness: under (R1), forcing donors, (R4) and the
-  coatom extension property with apex at every next block, the continuation criterion (the
-  hypothesis `hcont` of the theorems from the terminal classification) is equivalent to stable
-  lawfulness of the models in its domain (`continuationCriterion_iff_modelStableLawfulness`).
+  the theorems with next-block uniqueness applied to it, by `rfl`.
 
 ## Placement
 
@@ -122,23 +117,5 @@ example (hrec : FiniteCutReceiving.{0}) (hF : ∀ ξ < ω₁, ForcingDonors.{0} 
       densitySentence_isThinOnNatModels_of_modelExpansions hcap
         (.of_forcingDonors hrec hF) hrec hc :=
   rfl
-
-/-! ### The continuation criterion and stable lawfulness -/
-
-/-- Under (R1) and forcing donors, as in the theorems from the terminal classification, and under
-(R4) and the coatom extension property with apex at every next block, the continuation criterion
-is equivalent to stable lawfulness of the models in its domain.  The criterion gives stable
-lawfulness by forcing donors and (R1); stable lawfulness gives the criterion by (R4) and the apex
-property.  So stable lawfulness in place of the hypothesis `hcont` of those theorems would restate
-it, not prove it. -/
-example (hrec : FiniteCutReceiving.{0}) (hF : ∀ ξ < ω₁, ForcingDonors.{0} ξ)
-    (hR4 : StableCappedReceiving.{0})
-    (hext : ∀ ξ < ω₁, StageType.HasApexCoatomExtensions.{0} (blockStage (ξ + 1))) :
-    ContinuationCriterion.{0} ↔ ModelStableLawfulness.{0} :=
-  continuationCriterion_iff_modelStableLawfulness hR4
-    (fun ξ hξ ↦ .of_hasApexCoatomExtensions (hext ξ hξ)
-      (isSuccLimit_blockStage (ξ + 1)).isSuccPrelimit) hF
-    (fun _ _ R' hξ hR' ↦ hrec.finiteExtensionReceiving.receive (isSuccLimit_blockStage _)
-      (blockStage_lt_omega_one ((Cardinal.isSuccLimit_omega 1).add_one_lt hξ)) R' hR')
 
 end VaughtConjecture.MainTheorem

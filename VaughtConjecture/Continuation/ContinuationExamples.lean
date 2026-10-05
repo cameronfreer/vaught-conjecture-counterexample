@@ -12,12 +12,11 @@ Special cases of `VaughtConjecture.Continuation.Continuation`, each conditional 
 
 * **The first block** `ξ = 0`: the candidate lives at `λ_1 = ω + ω`, and output 3 there is the
   assembly under (R4) and the coface instances at `ω + ω`.
-* **Stable lawfulness without twins**: if no type of a model at a countable block has twins (two
-  cells labelled the formal top at one graded index), the hypothesis `ModelStableLawfulness`
-  holds.
-* **Stable lawfulness and the criterion**: a model that is not stably lawful is not cover-hollow,
-  and, given forcing donors and (R1), it is terminal; under (R1), forcing donors, (R4) and the
-  coface instances, the criterion is equivalent to `ModelStableLawfulness`.
+* **Stable lawfulness of models**: every model at a block stage is stably lawful, with no
+  hypothesis; at a cell labelled the formal top, every threshold forced over a realized rooted
+  cover is forced at a twin (two cells labelled the formal top at one graded index) over a
+  realized rooted cover.  The trivial case of availability for a pair of cells of one graded index
+  needs no hypothesis on the realization.
 * **Cover-hollow models**: the candidate is not a model, so under the coface instances it lacks
   finite-cut receiving; so (R4) extended to cover-hollow models would, with the coface instances,
   exclude cover-hollow models with unbounded growth.
@@ -25,7 +24,7 @@ Special cases of `VaughtConjecture.Continuation.Continuation`, each conditional 
   excludes such a bound.
 * **Top-free models**: cover-hollow vacuously, with top-grade supremum `0`, stably lawful, and with
   a candidate that is not a model; they satisfy neither hypothesis of the criterion.
-* **The cover of the terminal models** under the conditional criterion.
+* **The cover of the terminal models** under (R4) and the coface instances.
 -/
 
 namespace VaughtConjecture.Continuation.ContinuationExamples
@@ -43,46 +42,33 @@ example : blockStage (0 + 1 : Ordinal.{0}) = ω + ω := by
 /-- Output 3 at the first block, under (R4) and the coface instances at `λ_1`. -/
 example (hR4 : StableCappedReceiving.{0})
     (hinst : StageType.HasNonemptyCofaceInstances.{0} (blockStage (0 + 1)))
-    {R : Realization.{0, 0} (blockStage 0) M} (hR : R.IsModel) (hlaw : R.IsStablyLawful)
-    (hnh : ¬ R.IsCoverHollow) (hgrow : R.topGradeSup = ⊤) :
-    (R.stableCandidate hlaw).IsModel ∧
-      (R.stableCandidate hlaw).reduce (isSuccPrelimit_blockStage 0) = R :=
-  ⟨isModel_stableCandidate (omega0_pos.trans omega0_lt_omega_one) hR hlaw hnh hgrow hR4 hinst,
+    {R : Realization.{0, 0} (blockStage 0) M} (hR : R.IsModel) (hnh : ¬ R.IsCoverHollow)
+    (hgrow : R.topGradeSup = ⊤) :
+    (R.stableCandidate hR.isStablyLawful).IsModel ∧
+      (R.stableCandidate hR.isStablyLawful).reduce (isSuccPrelimit_blockStage 0) = R :=
+  ⟨isModel_stableCandidate (omega0_pos.trans omega0_lt_omega_one) hR hnh hgrow hR4 hinst,
     stableCandidate_reduce⟩
 
-/-! ### Stable lawfulness without twins -/
+/-! ### Stable lawfulness of models -/
 
-/-- If no type of a model at a countable block has twins, every such model is stably lawful. -/
-example (htw : ∀ ⦃ξ : Ordinal.{0}⦄ ⦃M : Type⦄ (R : Realization.{0, 0} (blockStage ξ) M),
-    ξ < ω₁ → R.IsModel → ∀ ⦃n : ℕ⦄ (u : Fin n ↪ M) (t : StageType.{0} (blockStage ξ) n),
-      R.eval u = some t → Set.InjOn t.toCellScheme.gradedIndex {d | t.label d = ⊤}) :
-    ModelStableLawfulness.{0} :=
-  ⟨fun _ _ R hξ hR _ _ ↦
-    isStablyLawful_of_injOn_gradedIndex hR.isConsistent hR.isCovering (htw R hξ hR)⟩
+/-- Every model at a block stage is stably lawful, and its stable candidate reduces to it. -/
+example (hR : R.IsModel) :
+    (R.stableCandidate hR.isStablyLawful).reduce (isSuccPrelimit_blockStage ξ) = R :=
+  stableCandidate_reduce
 
-/-- The continuation criterion under (R4), the coface instances, and the absence of twins. -/
-example (hR4 : StableCappedReceiving.{0})
-    (hinst : ∀ ξ < ω₁, StageType.HasNonemptyCofaceInstances.{0} (blockStage (ξ + 1)))
-    (htw : ∀ ⦃ξ : Ordinal.{0}⦄ ⦃M : Type⦄ (R : Realization.{0, 0} (blockStage ξ) M),
-      ξ < ω₁ → R.IsModel → ∀ ⦃n : ℕ⦄ (u : Fin n ↪ M) (t : StageType.{0} (blockStage ξ) n),
-        R.eval u = some t → Set.InjOn t.toCellScheme.gradedIndex {d | t.label d = ⊤}) :
-    ContinuationCriterion.{0} :=
-  .of_stableCappedReceiving hR4 hinst
-    ⟨fun _ _ R hξ hR _ _ ↦
-      isStablyLawful_of_injOn_gradedIndex hR.isConsistent hR.isCovering (htw R hξ hR)⟩
-
-/-! ### Stable lawfulness and the criterion -/
-
-/-- A model that is not stably lawful is neither cover-hollow nor, given forcing donors and (R1) at
-`λ_{ξ+1}`, the reduction of a model at `λ_{ξ+1}`. -/
-example (hF : ForcingDonors.{0} ξ)
-    (hrec : ∀ R' : Realization.{0, 0} (blockStage (ξ + 1)) M, R'.IsModel →
-      R'.HasFiniteExtensionReceiving)
-    (h : ¬ R.IsStablyLawful) :
-    ¬ R.IsCoverHollow ∧ ∀ R' : Realization.{0, 0} (blockStage (ξ + 1)) M, R'.IsModel →
-      R'.reduce (isSuccPrelimit_blockStage ξ) ≠ R :=
-  ⟨not_isCoverHollow_of_not_isStablyLawful h,
-    fun R' hR' hred ↦ isTerminalAt_of_not_isStablyLawful hF hrec h R' hR' hred⟩
+/-- **Forcing transfers to a twin**: in a model, at a cell `s₀` labelled the formal top and a cell
+`t₀` with the scope of `s₀` in that of `t₀` and equal grades, every threshold forced at `s₀` over a
+realized rooted cover is forced at a cell labelled the formal top at the graded index of `t₀`; only
+the legality of the types is used. -/
+example (hR : R.IsModel) {k : ℕ} {u : Fin k ↪ M} {t : StageType.{0} (blockStage ξ) k}
+    (ht : R.eval u = some t) {s₀ t₀ : Fin t.card}
+    (hst : t.toCellScheme.scope s₀ ⊆ t.toCellScheme.scope t₀)
+    (hg : t.toCellScheme.grade s₀ = t.toCellScheme.grade t₀) (hs₀ : t.label s₀ = ⊤) (n : ℕ)
+    (hn : R.ForcesOverCover u t s₀ n) :
+    ∃ w, t.toCellScheme.gradedIndex w = t.toCellScheme.gradedIndex t₀ ∧ t.label w = ⊤ ∧
+      R.ForcesOverCover u t w n :=
+  (availability_stableSection_iff ht hs₀).mp
+    (availability_stableSection_of_hasLegalTypes hR.hasLegalTypes ht hst hg) n hn
 
 /-- Availability at a pair of cells of one graded index holds trivially, so the criterion of
 `availability_stableSection_iff` holds there: each forced threshold is forced at a cell labelled
@@ -157,13 +143,13 @@ example (h : ∀ x : R.Occurrence, x.type.IsTopFree) :
 
 /-! ### The cover of the terminal models -/
 
-/-- Under (R4), the coface instances and stable lawfulness, every terminal model at the first
-block has a terminal property. -/
+/-- Under (R4) and the coface instances, every terminal model at the first block has a terminal
+property. -/
 example (hR4 : StableCappedReceiving.{0})
     (hinst : ∀ ξ < ω₁, StageType.HasNonemptyCofaceInstances.{0} (blockStage (ξ + 1)))
-    (hlaw : ModelStableLawfulness.{0}) {R : Realization.{0, 0} (blockStage 0) M} (hR : R.IsModel)
-    (ht : R.IsTerminalAt 0) : ∃ P, R.HasTerminalProperty P :=
-  exists_hasTerminalProperty (.of_stableCappedReceiving hR4 hinst hlaw)
+    {R : Realization.{0, 0} (blockStage 0) M} (hR : R.IsModel) (ht : R.IsTerminalAt 0) :
+    ∃ P, R.HasTerminalProperty P :=
+  exists_hasTerminalProperty (.of_stableCappedReceiving hR4 hinst)
     (omega0_pos.trans omega0_lt_omega_one) hR ht
 
 end VaughtConjecture.Continuation.ContinuationExamples
