@@ -5,6 +5,7 @@ Authors: Cameron Freer
 -/
 import VaughtConjecture.Correspondence.Bountiful
 import VaughtConjecture.Geometry.IntervalPlan
+import VaughtConjecture.Label.OmegaOne
 import VaughtConjecture.Stage.Legal
 
 /-!
@@ -13,8 +14,10 @@ import VaughtConjecture.Stage.Legal
 Roadmap, "Manuscript concordance", row 7.  The printed definition of a domain with its semantics
 [Kni26, Definition 2.6.1] is compiled clause by clause (`CellScheme.Rows.PrintedDomain`) and
 compared with the legality of a scheme (`Scheme.IsLegal`).  The comparison shows that legality is
-a corrected form of the printed definition: it adds the coding clause `Scheme.IsCoded`, which the
-printed clauses do not imply, and it requires bountifulness at every stage.
+a corrected form of the printed definition: it adds the coding clause `Scheme.IsCoded`, a bound on
+the range of the rows, which the printed clauses compared here (the fields of `PrintedDomain`) do
+not imply, and it requires bountifulness at every stage.  The status of the row is C, with
+bountifulness at `ω₁` still to be proved (row 6, S).
 
 ## The setting
 
@@ -42,7 +45,7 @@ In the third column, `IsWellFormed`, `IsComplete`, and `Rows` are in the namespa
 | `P` is a plan on `A` (the setting) | `isPlan` | `IsWellFormed.isPlan` |
 | `D` is a finite set | `finite` | `IsWellFormed.finite` |
 | `D = ⋃ {D_{B,j} : ⟨B,j⟩ ∈ P̂}` (2.5.3) | `gradedIndex_mem` | `IsWellFormed.gradedIndex_mem` |
-| `E(Σ)` has values in `{-∞} ∪ θ ∪ {∞}` (2.5.2, 2.5.3) | `row_atStage` | (the stage) |
+| `E(Σ)` has values in `{-∞} ∪ θ ∪ {∞}` (after 2.5.2; 2.5.4) | `row_atStage` | (the stage) |
 | `E(Σ)` is orderly (2.5.3) | `orderly` | `Rows.IsConsistent.isOrderly` |
 | `E` is consistent (2.5.12, presupposed in 2.5.14) | `consistent` | `Rows.IsConsistent` |
 | `E` is bountiful (2.5.14) | `bountiful` | `Rows.IsBountiful` (row 6) |
@@ -59,12 +62,13 @@ stage that is zero or a limit and carries the values of its rows
 (`Scheme.isLegal_iff_forall_printedDomain`).
 
 **Departures.**  The row is a corrected definition (C), for the reasons 1 and 2; the comparison
-at a single stage is also incomplete, by 3.
-1. *The coding clause* (no field).  The printed elements of `D` are sets chosen so that `⟨B,j⟩`,
-   `P↾B`, `D↾⟨B,j⟩`, and `E↾⟨B,j⟩` can be read off each `Ξ ∈ D_{B,j}` by a standard coding.  Here
-   a cell is a position in a scheme whose graded index, faces, cells below, and rows are fields of
-   the scheme, so these are recovered by projection; the clause, a condition on the objects
-   chosen as cells, has no counterpart and is not compared.
+at a single stage is also incomplete, by 3, so its status is C with bountifulness at `ω₁` still to
+be proved (row 6, S).
+1. *The recoverability clause* (no field).  The printed elements of `D` are sets chosen so that
+   `⟨B,j⟩`, `P↾B`, `D↾⟨B,j⟩`, and `E↾⟨B,j⟩` can be read off each `Ξ ∈ D_{B,j}` by a standard
+   coding.  Here a cell is a position in a scheme whose graded index, faces, cells below, and rows
+   are fields of the scheme, so these are recovered by projection; the clause, a condition on the
+   objects chosen as cells, has no counterpart and is not compared.
 2. *The range of the rows* (the correction).  `Scheme.IsLegal` requires the rows to be coded, with
    every value bottom or below `ω ^ 2` (`Scheme.IsCoded`).  The printed definition bounds no value.
    The coding described after [Kni26, Definition 2.6.2] stores each `E(Σ)` in `{-∞} ∪ ω ^ 2` by the
@@ -72,12 +76,17 @@ at a single stage is also incomplete, by 3.
    when only the functions respecting `E` matter; that clause is not compiled, the printed text does
    not state the effect of the replacement on consistency, bountifulness, and completeness, and the
    offset bound of the same lemma is not correct as stated (the roadmap, Layer 1) and is not used.
-   The printed clauses do not imply the coding: the scheme on one point with a single cell whose row
-   is the formal top is a domain as printed at every stage that is zero or a limit and is not coded
-   (`Scheme.exists_printedDomain_not_isCoded`).
+   The printed clauses compared here, the fields of `PrintedDomain`, which omit the recoverability
+   clause 1, do not imply the range bound `Scheme.IsCoded`: the scheme on one point with a single
+   cell whose row is the formal top satisfies them at every stage that is zero or a limit and is
+   not coded (`Scheme.exists_printedDomain_not_isCoded`).
 3. *Bountifulness at a single stage* (row 6, S).  `Scheme.IsLegal` requires `IsBountiful`, the
    printed definition at every stage that is zero or a limit and carries the values of the rows;
-   at `ω₁` only the implication from `IsBountiful` is proved.
+   at `ω₁` only the implication from `IsBountiful` is proved.  This is neither a recorded
+   correction nor proved equivalent, so the declarations whose clauses use domains (rows 8 and 11)
+   identify the printed definitions over legal schemes only: a coded scheme that is a domain as
+   printed at `ω₁` but not at some other stage that is zero or a limit would not be legal, and
+   whether one exists is row 6.
 4. *The points.*  The printed `A` is a finite set; a scheme on `n` points has the points `Fin n`,
    and legality asks its ground set to be all of them (`Scheme.IsWellFormed.ground_eq`), as for
    the type spaces `S^α n` of [Kni26, Definition 3.2.1].
@@ -124,7 +133,7 @@ variable (R) [DecidableEq α]
 finite set, the union over the graded plan of a plan, and the rows are a complete semantics for
 them: a semantics [Kni26, Definition 2.5.3] that is consistent [Kni26, Definition 2.5.12],
 bountiful [Kni26, Definition 2.5.14], and has a cell at every graded face
-[Kni26, Definition 2.5.15].  The coding clause of [Kni26, Definition 2.6.1] has no field
+[Kni26, Definition 2.5.15].  The recoverability clause of [Kni26, Definition 2.6.1] has no field
 (departure 1 of the module documentation). -/
 structure PrintedDomain (θ : Ordinal.{u}) : Prop where
   /-- The setting of [Kni26, Definition 2.6.1]: `P` is a plan on `A`. -/
@@ -134,8 +143,9 @@ structure PrintedDomain (θ : Ordinal.{u}) : Prop where
   /-- [Kni26, Definition 2.5.3], a semantics for `D`: `D` is the union of the `D_{B,j}` for
   `⟨B, j⟩ ∈ P̂`. -/
   gradedIndex_mem : ∀ d, D.gradedIndex d ∈ D.gradedFaces
-  /-- [Kni26, Definitions 2.5.2 and 2.5.3], a semantics for `D`: each `E(Σ)` takes values in
-  `{-∞} ∪ θ ∪ {∞}`. -/
+  /-- [Kni26, Definition 2.5.3], a semantics for `D`: each `E(Σ)` takes values in
+  `{-∞} ∪ θ ∪ {∞}`, the range stated in the text after [Kni26, Definition 2.5.2] and in
+  [Kni26, Definition 2.5.4] (`p : D → {-∞} ∪ ω₁ ∪ {∞}`). -/
   row_atStage : ∀ s t, AtStage θ (R.row s t)
   /-- [Kni26, Definition 2.5.3], a semantics for `D`: each `E(Σ)` is orderly with respect to the
   arity. -/
@@ -175,11 +185,6 @@ theorem IsCoded.atStage (hS : S.IsCoded) (hθ : Ordinal.omega0 ^ 2 ≤ θ) (s : 
     (t : S.toCellScheme.below (S.toCellScheme.gradedIndex s)) : AtStage θ (S.rows.row s t) :=
   .inl ((hS s t).trans_le (WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr hθ)))
 
-/-- `ω ^ 2 < ω₁`. -/
-theorem omega0_sq_lt_omega_one : (Ordinal.omega0 ^ 2 : Ordinal.{u}) < Ordinal.omega.{u} 1 := by
-  rw [Cardinal.lt_omega_iff_card_lt, pow_two]
-  simp
-
 /-- Coded rows take values at stage `ω₁`. -/
 theorem IsCoded.atStage_omega_one (hS : S.IsCoded) (s : Fin S.card)
     (t : S.toCellScheme.below (S.toCellScheme.gradedIndex s)) :
@@ -218,7 +223,7 @@ theorem isLegal_iff_forall_printedDomain :
   exact (CellScheme.Rows.isBountiful_iff_forall_printedBountiful hD.gradedIndex_mem).mpr
     fun θ hθ hR ↦ (h θ hθ hR).bountiful
 
-/-! ### The coding clause is not implied -/
+/-! ### The range bound is not implied by the compared clauses -/
 
 /-- The scheme on one point with a single cell of scope `{0}` and grade `1`, the faces `∅` and
 `{0}`, and the row of the cell the formal top. -/
@@ -245,6 +250,7 @@ private theorem eq_of_mem_gradedFaces_topPoint {X : Finset (Fin 1) × ℕ}
 private theorem isConsistent_topPoint : topPoint.rows.IsConsistent := fun _ ↦
   { orderly := fun _ ↦ isSelfVisible_top _
     locality := fun _ ↦ by
+      -- By the definition of `topPoint`, the row of the cell and its label are the formal top.
       change TransformsTo _ (fun _ ↦ (⊤ : Label.{0})) (fun _ ↦ min ⊤ ⊤)
       simpa only [min_self] using TransformsTo.refl _ _
     availability := fun _ t _ _ ↦ ⟨t, rfl, le_rfl⟩ }
@@ -258,9 +264,10 @@ private theorem isBountiful_topPoint : topPoint.rows.IsBountiful := by
 private theorem isComplete_topPoint : topPoint.toCellScheme.IsComplete := fun _ hX ↦
   ⟨⟨0, zero_lt_one⟩, (eq_of_mem_gradedFaces_topPoint hX).symm ▸ rfl⟩
 
-/-- **The coding clause is not implied by the printed clauses** [Kni26, Definition 2.6.1]: some
-scheme on one point, with ground set its point, is a domain as printed at every stage that is zero
-or a limit and is not coded.  It is the scheme with a single cell whose row is the formal top. -/
+/-- **The compared clauses do not imply the range bound** [Kni26, Definition 2.6.1]: some scheme on
+one point, with ground set its point, satisfies the fields of `PrintedDomain` (the printed clauses
+other than recoverability) at every stage that is zero or a limit and is not coded
+(`Scheme.IsCoded`).  It is the scheme with a single cell whose row is the formal top. -/
 theorem exists_printedDomain_not_isCoded :
     ∃ S : Scheme.{0} 1, S.toCellScheme.ground = univ ∧
       (∀ θ : Ordinal.{0}, Order.IsSuccPrelimit θ → S.rows.PrintedDomain θ) ∧ ¬ S.IsCoded := by

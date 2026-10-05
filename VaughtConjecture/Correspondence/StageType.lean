@@ -61,7 +61,10 @@ canonical isomorphisms (`StageType.restrictFace_equiv`, `StageType.reindex_reind
 
 **Departures.**
 1. *The domain* is the domain as corrected in row 7 (`Scheme.IsLegal`, status C there): with
-   coded rows and bountifulness at every stage.
+   coded rows and bountifulness at every stage.  Bountifulness at the single stage `ω₁` is still to
+   be proved (row 6, S), so the identifications are over legal schemes, and the status of the row
+   is P with its domains still to be proved (row 6): a scheme that is a domain as printed at `ω₁`
+   but not legal would carry printed types that are not stage types.
 2. *The points.*  The printed `S^α A` is on a finite set `A`; here the points are `Fin n`, as for
    the spaces `S^α n` of [Kni26, Definition 3.2.1], and the plan is on all of them.
 3. *The stage.*  The printed `α ≤ ω₁` is a limit; `StageType α n` is defined at every ordinal
@@ -71,11 +74,12 @@ canonical isomorphisms (`StageType.restrictFace_equiv`, `StageType.reindex_reind
    `Scheme.printedType_omega_one_iff`.
 5. *The scheme of a type is data.*  A printed type `p` determines its domain `dom p`, and the
    semantics through the coding; here a stage type carries its scheme as a field, as for the
-   coding clause of row 7.
-6. *The numbering of the cells of a face.*  The printed `Df` keeps the code of each cell.  Here
-   the code of a cell is its position, and the face map numbers the cells of `u` in the
-   increasing order of the corresponding cells of `t` (`StrictMono φ`); with this numbering the
-   printed face map is `restrictFace`.  This is the coding of row 7, not a further clause.
+   recoverability clause of row 7.
+6. *The numbering of the cells of a face.*  The printed `Df` keeps the code of each cell.  The
+   cells of a scheme are the positions `Fin card`, which play the role of the codes: each domain
+   is enumerated in increasing order of its codes.  Under this convention, `Df` keeps codes
+   exactly when `φ` is strictly monotone (`StrictMono φ`), and with it the printed face map is
+   `restrictFace`.  This is the coding of row 7, not a further clause.
 
 The inclusion case of the face maps, `(S^α ι_{B,A})(p) = p↾D⟨B,|B|⟩`, is the second clause of
 [Kni26, Definition 3.1.2]; its first clause, stage reduction, is row 10.
@@ -226,7 +230,8 @@ theorem restrictFace_eq_some_iff_exists_printedFaceMap (t : StageType.{u} α n)
       fun _ ↦ rfl⟩⟩
     · rw [mem_below_map_univ_iff, ← Scheme.mem_visibleCells, ← mem_coe, ← Scheme.range_cellMap]
       exact Iff.rfl
-    · change t.rows.row (t.cellMap f s)
+    · -- The rows of the face along `f` are, by definition, those of `t` at the cells `cellMap f`.
+      change t.rows.row (t.cellMap f s)
         ⟨t.cellMap f r.1, ((t.isLowerEmbedding_comap f).le_iff _ _).mpr r.2⟩ = _
       exact t.rows.row_congr rfl hr.symm
   · rintro ⟨φ, hφ, h⟩

@@ -42,7 +42,10 @@ a subset of `(S^α ι_{n,n+1})⁻¹(p)`, for `y` and `q ∈ U` with `M(x⌢y) = 
 as a subset of `(S^α ι_{n,n+1})⁻¹(p)`: `U` is the set of the `q` in `(S^α ι_{n,n+1})⁻¹(p)`
 satisfying the condition of the kind (for clause (a)ii, the `q ∈ S^α (n + 1)` there).  The
 inclusion `U ⊆ (S^α ι_{n,n+1})⁻¹(p)` is thus part of the definition of `U`, not a further
-hypothesis on the set of all `q` satisfying the condition.  Every other guard is kept: in (a)i
+hypothesis on the set of all `q` satisfying the condition.  This is the reading of the manuscript
+itself: [Kni26, Lemma 4.4.1] states that every such `U` is nonempty, and
+[Kni26, Lemmas 4.4.2 and 4.4.3] prove it in the form "some `q` with `q_a = p` satisfies the
+condition of the kind".  Every other guard is kept: in (a)i
 and (a)ii, `D` is a domain on a plan on `n + 1` with `D⟨n,n⟩ = dom p`; in (a)ii, `q'` respects
 the semantics of `D` and `q'↾dom p = p`; in (b), `γ` is not a successor and `0 ≤ γ < α`; in (c),
 `γ < α`.  The quantifiers are in the printed order: `x` and `p`, then the parameters of `U` with
@@ -80,7 +83,10 @@ two directions are `Realization.PrintedModel.isModel` and `Realization.IsModel.p
    (`StageType.nonempty_cofaces_inter_bottomPatternFamily_iff`).
 6. *The stage.*  `IsModel` is defined at every stage; the identification is at the stages
    `α ≤ ω₁` that are zero or limits.
-7. *Domains and types* are those of rows 7 (C, the corrected domains) and 8.
+7. *Domains and types* are those of rows 7 (C, the corrected domains) and 8.  The domains have
+   a part still to be proved, bountifulness at `ω₁` (row 6, S): the identification is over legal
+   schemes, both for `S^α n` in clause 1 and for the domains `D` of clause 4(a), so the status of
+   the row is P with its domains still to be proved (row 6).
 
 ## Placement
 
