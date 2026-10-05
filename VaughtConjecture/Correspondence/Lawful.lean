@@ -27,13 +27,21 @@ every cell lies in some `D_{B,j}` with `⟨B, j⟩ ∈ P̂` is the hypothesis
 `D↾⟨B, j⟩` of [Kni26, Definition 2.5.2] is `D.below (B, j)`
 (`CellScheme.mem_below_iff_exists_mem_gradedFaces`), and a semantics `E` [Kni26, Definition 2.5.3]
 is a family of rows `R : D.Rows`, the row `R.row s` being `E(Σ)` for the cell `s = Σ`.  The
-printed semantics also requires each `E(Σ)` to be orderly (`CellScheme.Rows.IsOrderly`); neither
-clause of Definition 2.5.4 uses it, and it is not assumed.  Whether `D.faces` is a plan in the
-sense of [Kni26, Definition 2.1.1] is not used by any clause compared here.
+printed semantics also requires each `E(Σ)` to be orderly (`CellScheme.Rows.IsOrderly`), and the
+printed `D` is finite; neither is assumed (departures 6 and 7 below).
+
+No clause of Definition 2.5.4 uses the plan property of `P`: the identifications below take no
+`Geometry.IsPlan` hypothesis and hold for every family of faces, in particular for plans.  The
+domains of [Kni26, Definition 2.6.1] (row 7) are not used by Definition 2.5.4 at all.  So neither
+the correspondence of `Geometry.IsPlan` with [Kni26, Definition 2.1.1] (no concordance row) nor
+row 7 is a prerequisite.  The notions the clauses do use are identified here: `P̂` by
+`CellScheme.mem_gradedFaces`, `D↾⟨B, j⟩` by `CellScheme.mem_below_iff_exists_mem_gradedFaces`,
+the arity by `CellScheme.grade`, and `⇒` by row 3.
 
 As in row 3, the printed labels are those at stage `ω₁`; the definitions are stated at a stage
 `θ`, and the identifications hold at every stage that is zero or a limit for labellings and rows
-with values at that stage.
+with values at that stage; at `ω₁` the identification of Definition 2.5.4 is
+`CellScheme.Rows.printedRespects_omega_one_iff`.
 
 ## Orderly labellings, [Kni26, Definition 2.3.4]
 
@@ -73,6 +81,10 @@ lawful section.
    availability law over pairs of cells `s`, `t` with `scope s ⊆ scope t` and equal grades.  They
    agree when every cell has its graded index in `P̂`.
 5. *The range of the labels*: as in row 3.
+6. *Orderliness of the semantics*: the printed semantics requires each `E(Σ)` to be orderly.
+   Harmless: `CellScheme.Rows.printedRespects_iff` holds without it.
+7. *Finiteness of the domain*: the printed `D` is finite.  Harmless:
+   `CellScheme.Rows.printedRespects_iff` holds for every type of cells.
 
 ## Capping, [Kni26, Lemma 2.5.8]
 
@@ -80,7 +92,8 @@ lawful section.
 semantics and `γ = γ ⌊+⌋_k k` for every `k` that is the arity of some `Σ` with `p(Σ) ≥ γ`, then
 `p ∧ γ` is defined and respects the semantics.  It is `CellScheme.Rows.IsLawful.min_const`
 transported along `printedRespects_iff`.  The printed `γ` is an ordinal; here it is any label at
-the stage.
+the stage.  Restricting `γ` to the stage is the printed typing: an ordinal `γ ≥ ω₁` would make
+`p ∧ γ` leave `{-∞} ∪ ω₁ ∪ {∞}` whenever some `p(Σ) = ∞`, and would otherwise give `p ∧ γ = p`.
 
 ## Placement
 
@@ -123,6 +136,12 @@ theorem printedCapDefined_iff :
     (h.visibility (a d) ⟨d, le_rfl, hd⟩).symm⟩, fun ⟨hp, hγ⟩ ↦ ⟨printedOrderly_iff.mpr hp, ?_⟩⟩
   rintro k ⟨d, hk, hd⟩
   exact ((hγ d hd).mono hk).symm
+
+/-- The cap of an orderly labelling at a label self-visible at a bound `K` on the arities is
+defined [Kni26, Definition 2.3.7]. -/
+theorem printedCapDefined_of_isSelfVisible (hp : PrintedOrderly a p) {K : ℕ}
+    (hK : ∀ d, a d ≤ K) (hγ : IsSelfVisible K γ) : PrintedCapDefined a p γ :=
+  printedCapDefined_iff.mpr ⟨printedOrderly_iff.mp hp, fun d _ ↦ hγ.mono (hK d)⟩
 
 end Label
 
@@ -189,6 +208,16 @@ theorem printedRespects_iff (hθ : Order.IsSuccPrelimit θ)
     have ht₂ : D.grade t = i := congrArg Prod.snd ht
     obtain ⟨u, hu, hpu⟩ := h.availability s t (by rw [hs₁, ht₁]; exact hCB) (hs₂.trans ht₂.symm)
     exact ⟨u, hu.trans ht, hpu⟩
+
+/-- **Lawful sections are the orderly labellings respecting the semantics**
+[Kni26, Definitions 2.3.4 and 2.5.4], on the printed labels `{-∞} ∪ ω₁ ∪ {∞}`: for a scheme whose
+cells have their graded indices in the graded plan, and for rows and a labelling with values at
+stage `ω₁`, `p` respects the rows as printed exactly when it is a lawful section. -/
+theorem printedRespects_omega_one_iff (hD : ∀ d, D.gradedIndex d ∈ D.gradedFaces)
+    (hR : ∀ s t, AtStage (Ordinal.omega 1) (R.row s t))
+    (hp : ∀ d, AtStage (Ordinal.omega 1) (p d)) :
+    R.PrintedRespects (Ordinal.omega 1) p ↔ R.IsLawful p :=
+  R.printedRespects_iff (Cardinal.isSuccLimit_omega 1).isSuccPrelimit hD hR hp
 
 /-- **Capping a labelling respecting a semantics** [Kni26, Lemma 2.5.8], in the printed form: if
 `p` respects the rows and `γ = γ ⌊+⌋_k k` for every `k` that is the arity of a cell `d` with

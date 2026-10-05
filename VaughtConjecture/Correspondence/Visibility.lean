@@ -46,13 +46,14 @@ exactly when it is `Label.visibilityReplace K m`.
    by `Label.visibilityReplace_coe_add` (the printed clause for `Label.visibilityReplace`), and
    every label is bottom, top, or of the printed form (`Label.printedVisibilityReplace_iff`).
 2. *Domain of the value.*  The printed operation is defined for `m ≤ K` only;
-   `Label.visibilityReplace K m` is defined for every `m`, and the identification holds for every
-   `m`, so on the printed domain the two coincide.  The laws used in this development carry the
-   hypothesis `i ≤ k` where they need it (for instance `monotone_visibilityReplace`).
+   `Label.visibilityReplace K m` is defined for every `m`.  Harmless:
+   `Label.printedVisibilityReplace_iff` holds for every `m`, in particular for `m ≤ K`.  The laws
+   used in this development carry the hypothesis `i ≤ k` where they need it (for instance
+   `monotone_visibilityReplace`).
 
 The clauses of Definition 2.2.3 use no notion beyond ordinal addition and the two symbols `-∞`,
-`∞`.  [Kni26, Definition 2.2.2] (the operation `α ⌊+⌋ m` without a threshold) is motivation only;
-Definition 2.2.3 restates the decomposition and does not refer to it.
+`∞`.  [Kni26, Definition 2.2.2] defines the operation `α ⌊+⌋ m` without a threshold;
+Definition 2.2.3 restates the decomposition and does not use it, so it is not compared here.
 
 ## Placement
 
@@ -98,30 +99,11 @@ structure PrintedVisibilityReplace (K m : ℕ) (f : Label.{u} → Label.{u}) : P
   /-- Third clause of [Kni26, Definition 2.2.3]: `∞ ⌊+⌋_K m = ∞`. -/
   top : f ⊤ = ⊤
 
-/-- **The printed normal form for visibility replacement**: for `μ` zero or a limit and `j`
-finite, replacement at threshold `K` with value `m` sends `μ + j` to `μ + m` if `j < K`, and
-fixes it otherwise. -/
-theorem visibilityReplace_coe_add {μ : Ordinal.{u}} (hμ : Order.IsSuccPrelimit μ) (K m j : ℕ) :
-    visibilityReplace K m ((μ + j : Ordinal.{u}) : Label.{u}) =
-      if j < K then ((μ + m : Ordinal.{u}) : Label.{u})
-      else ((μ + j : Ordinal.{u}) : Label.{u}) := by
-  split_ifs with hj
-  · exact visibilityReplace_coe_add_natCast hμ hj m
-  · exact (isSelfVisible_coe_add hμ (not_lt.mp hj)).visibilityReplace_eq m
-
 /-- `Label.visibilityReplace K m` satisfies the clauses of [Kni26, Definition 2.2.3]. -/
 theorem printedVisibilityReplace_visibilityReplace (K m : ℕ) :
     PrintedVisibilityReplace K m (visibilityReplace.{u} K m) :=
   ⟨fun _ hμ j ↦ visibilityReplace_coe_add hμ K m j, visibilityReplace_bot K m,
     visibilityReplace_top K m⟩
-
-/-- Every ordinal is `μ + j` with `μ` zero or a limit and `j` finite: `μ = ω * (o / ω)` and
-`j = o % ω`. -/
-theorem exists_eq_add_natCast_isSuccPrelimit (o : Ordinal.{u}) :
-    ∃ μ : Ordinal.{u}, Order.IsSuccPrelimit μ ∧ ∃ j : ℕ, o = μ + j := by
-  obtain ⟨j, hj⟩ := lt_omega0.mp (mod_lt o omega0_ne_zero)
-  exact ⟨ω * (o / ω), isSuccPrelimit_iff_omega0_dvd.mpr (dvd_mul_right _ _), j, by
-    rw [← hj, div_add_mod]⟩
 
 /-- **Visibility replacement is the printed operation** [Kni26, Definition 2.2.3]: a map of
 labels satisfies the printed clauses at threshold `K` with value `m` exactly when it is

@@ -41,26 +41,33 @@ plan, the rows are bountiful exactly when they are bountiful as printed at every
 zero or a limit and carries their values
 (`CellScheme.Rows.isBountiful_iff_forall_printedBountiful`).  Bountiful rows are bountiful as
 printed at each such stage (`CellScheme.Rows.IsBountiful.printedBountiful`), in particular at `ω₁`
-(`CellScheme.Rows.IsBountiful.printedBountiful_omega_one`).
+(`CellScheme.Rows.IsBountiful.printedBountiful_omega_one`).  No theorem here identifies
+`IsBountiful` with the printed definition at a single stage, in particular at `ω₁`: the row is
+still to be proved (departure 4).
 
 **Departures.**
 1. *The order of clause 1.*  The relation `⪯` of [Kni26, Definition 2.5.1] is the product order
    on pairs.  Clause 1 prints `≺`; read strictly, it omits the case `⟨C,i⟩ = ⟨B,j⟩`, in which the
    conclusion holds for every semantics
    (`CellScheme.Rows.PrintedLiftHypotheses.exists_printedLiftConclusion_of_eq`), so both readings
-   give the same definition.
+   give the same definition (`CellScheme.Rows.printedBountiful_iff_forall_lt`).
 2. *The caps* `q ∧ γ`, `p ∧ γ`, `q' ∧ γ` are the partial operation of
    [Kni26, Definition 2.3.7]; under clause 7 they are defined
    (`CellScheme.Rows.PrintedLiftHypotheses.printedCapDefined`,
    `CellScheme.Rows.PrintedLiftConclusion.printedCapDefined`), and they are then the minima.
 3. *Consistency.*  The printed definition presupposes that `E` is consistent
-   [Kni26, Definition 2.5.12]; no clause uses it, and `IsBountiful` is defined for all rows.
+   [Kni26, Definition 2.5.12] (`CellScheme.Rows.IsConsistent`); `IsBountiful` is defined for all
+   rows.  Harmless: `CellScheme.Rows.isBountiful_iff_forall_printedBountiful` and
+   `CellScheme.Rows.IsBountiful.printedBountiful` hold without it.
 4. *The range of the labels* (not proved harmless at a single stage).  `IsBountiful` quantifies
    over labellings and caps among all labels, the printed definition over those at stage `θ`.  The
    two agree when the printed definition is required at every stage that is zero or a limit (the
-   identification above); at the single stage `ω₁` of [Kni26] only the implication from
-   `IsBountiful` is proved.  The converse at `ω₁` would need a collapse of uncountable labels
-   preserving lawfulness; it is not proved here.
+   identification above); at a single stage, in particular at the stage `ω₁` of [Kni26], only the
+   implication from `IsBountiful` is proved.  What is missing is the transfer of the printed
+   definition from `ω₁` up to larger stages that are limits, which would need a collapse of labels
+   preserving lawfulness in the style of [Kni26, Lemmas 2.3.3 and 2.5.13]; it is prospective.
+   Restricting the universe does not remove the gap: `Label.{0}` already contains uncountable
+   ordinals, such as `Ordinal.omega.{0} 1`, and `IsBountiful` quantifies over all of `Label.{u}`.
 
 ## Placement
 
@@ -72,33 +79,6 @@ universe u
 namespace VaughtConjecture
 
 open Label
-
-namespace Label
-
-variable {D : Type*} {a : D → ℕ} {p : D → Label.{u}} {γ : Label.{u}}
-
-/-- The cap of an orderly labelling at a label self-visible at a bound `K` on the arities is
-defined [Kni26, Definition 2.3.7]. -/
-theorem printedCapDefined_of_isSelfVisible (hp : PrintedOrderly a p) {K : ℕ}
-    (hK : ∀ d, a d ≤ K) (hγ : IsSelfVisible K γ) : PrintedCapDefined a p γ :=
-  printedCapDefined_iff.mpr ⟨printedOrderly_iff.mp hp, fun d _ ↦ hγ.mono (hK d)⟩
-
-/-- Finitely many labels lie at a common stage that is zero or a limit. -/
-theorem exists_isSuccPrelimit_forall_atStage {S : Set Label.{u}} (hS : S.Finite) :
-    ∃ θ : Ordinal.{u}, Order.IsSuccPrelimit θ ∧ ∀ x ∈ S, AtStage θ x := by
-  let f : Label.{u} → Ordinal.{u} := fun x ↦ WithTop.untopD 0 (WithBot.unbotD ⊤ x)
-  obtain ⟨s, hs⟩ := (hS.image f).bddAbove
-  refine ⟨Ordinal.omega0 * (s + 1),
-    Ordinal.isSuccPrelimit_iff_omega0_dvd.mpr (dvd_mul_right _ _), fun x hx ↦ ?_⟩
-  induction x using recBotCoeTop with
-  | bot => exact atStage_bot
-  | top => exact atStage_top
-  | coe o =>
-    have ho : o ≤ s := by simpa [f] using hs ⟨_, hx, rfl⟩
-    exact atStage_coe.mpr ((Order.lt_add_one_iff.mpr ho).trans_le
-      (Ordinal.le_mul_right _ Ordinal.omega0_pos))
-
-end Label
 
 namespace CellScheme
 
@@ -190,6 +170,19 @@ theorem PrintedLiftHypotheses.exists_printedLiftConclusion_of_eq
     ∃ q', R.PrintedLiftConclusion θ h.le p q γ q' := by
   subst hXY
   exact ⟨p, h.left_atStage, h.left_respects, fun d ↦ (h.cap_eq d).symm, fun _ ↦ rfl⟩
+
+/-- **The strict reading of clause 1 of [Kni26, Definition 2.5.14]**: the rows are bountiful as
+printed at stage `θ` exactly when the conclusion holds for every instance of clauses 1–8 with
+`⟨C, i⟩ ≺ ⟨B, j⟩` strict. -/
+theorem printedBountiful_iff_forall_lt :
+    R.PrintedBountiful θ ↔
+      ∀ (X Y : Finset α × ℕ) (p : D.below X → Label.{u}) (q : D.below Y → Label.{u})
+        (γ : Label.{u}) (h : R.PrintedLiftHypotheses θ X Y p q γ), X < Y →
+        ∃ q', R.PrintedLiftConclusion θ h.le p q γ q' := by
+  refine ⟨fun hb X Y p q γ h _ ↦ hb X Y p q γ h, fun hb X Y p q γ h ↦ ?_⟩
+  rcases h.le.lt_or_eq with hlt | heq
+  · exact hb X Y p q γ h hlt
+  · exact h.exists_printedLiftConclusion_of_eq heq
 
 /-- Lawfulness below a pair is the printed respect of the rows restricted below it, for rows and
 labellings with values at a stage that is zero or a limit. -/

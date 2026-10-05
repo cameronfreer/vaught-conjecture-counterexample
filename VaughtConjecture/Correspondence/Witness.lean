@@ -34,7 +34,10 @@ at the labels at stage `α` matter, and the typing of `g` and `σ` is recorded b
 
 The identification is `Label.printedTransformsTo_iff`: at a stage `α` that is zero or a limit, for
 labellings `p` and `q` with values at stage `α`, `p ⇒ q` as printed exactly when
-`TransformsTo a p q`; at `ω₁` this is `Label.printedTransformsTo_omega_one_iff`.
+`TransformsTo a p q`; at `ω₁` this is `Label.printedTransformsTo_omega_one_iff`.  The
+identification is at the level of the relation: `PrintedWitness α g σ` and `IsWitness g σ` are not
+equivalent for the same pair, and witnesses correspond up to stage reduction
+(`Label.PrintedWitness.isWitness_comp_reduce`, `Label.IsWitness.printedWitness_reduce`).
 
 **Departures**, each proved harmless:
 1. *Strict and non-strict antitonicity* (clause 1): Mathlib's `antitone_iff_forall_lt`.
@@ -47,8 +50,9 @@ labellings `p` and `q` with values at stage `α`, `p ⇒ q` as printed exactly w
    (`Label.PrintedWitness.isWitness_comp_reduce`), and a witness gives a printed witness by stage
    reduction of both maps (`Label.IsWitness.printedWitness_reduce`); both use that stage reduction
    to a stage that is zero or a limit commutes with visibility replacement.
-4. *Finiteness of the domain*: the printed `D` is finite; no clause uses it, and the relation is
-   stated here for any type of cells.
+4. *Finiteness of the domain*: the printed `D` is finite; the relation is stated here for any
+   type of cells.  Harmless: `Label.printedTransformsTo_iff` holds for every type `D`, finite or
+   not.
 
 The clauses use visibility replacement (row 2, Definition 2.2.3) and the order of the labels
 (Definition 2.2.1, `Label.printed_order_add`).  The relation is not transitive
@@ -95,11 +99,6 @@ structure PrintedWitness (α : Ordinal.{u}) (g : ℕ → Label.{u}) (σ : Label.
 arities `a`: some printed witness `(g, σ)` has `q d = min (σ (p d)) (g (a d))` for every `d`. -/
 def PrintedTransformsTo (α : Ordinal.{u}) (a : D → ℕ) (p q : D → Label.{u}) : Prop :=
   ∃ g σ, PrintedWitness α g σ ∧ ∀ d, q d = min (σ (p d)) (g (a d))
-
-/-- The minimum of two labels at a stage is at that stage. -/
-theorem AtStage.min {x y : Label.{u}} (hx : AtStage α x) (hy : AtStage α y) :
-    AtStage α (min x y) := by
-  rcases min_choice x y with h | h <;> rwa [h]
 
 /-- **A printed witness is a witness after stage reduction of the argument**: at a stage `α` that
 is zero or a limit, the clauses of [Kni26, Definition 2.3.9] for `(g, σ)` give the laws of
