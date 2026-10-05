@@ -114,7 +114,8 @@ need not be short at the grades of the layers it crosses.
   `VaughtConjecture.Extension.TwoFaceLift`: with no hypothesis at the arities `m ≤ 2`, and for a
   seed satisfying `2FL(j)` at the grades `2 ≤ j < m` at every arity.
   `StageType.HasApexCoatomExtensions` and `StageType.HasCoatomExtensions` at the stages that are
-  zero or a limit are prospective and not stated here; they are not refuted.
+  zero or a limit are still to be proved (their statement at those stages is not made here); they
+  are not refuted.
 
 **The union fill is refuted as a universal statement.**  With `V = (univ, j)` at every grade, as at
 the top grade, the step would fill the other coatom's cells of the grade `j + 1` over the union of

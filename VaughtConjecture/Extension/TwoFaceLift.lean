@@ -78,8 +78,8 @@ every labelling of the amalgam lawful below a coatom (`Seed.DeadAt 2`;
 
 **What stays open.**  The coatom extension properties `StageType.HasApexCoatomExtensions` and
 `StageType.HasCoatomExtensions` at the stages that are zero or a limit quantify over the seeds of
-every arity (`StageType.HasApexCoatomExtensions.of_completionBelowFullGrade`); they are prospective,
-and they are not refuted.  Neither boundary triple of the library for the step to a grade
+every arity (`StageType.HasApexCoatomExtensions.of_completionBelowFullGrade`); they are still to be
+proved, and they are not refuted.  Neither boundary triple of the library for the step to a grade
 `j + 1 ≤ m` serves every seed: the triple through `(D, j + 1)` uses `2FL(j)`, which fails for a
 legal seed at `j = 2`; the triple through `(univ, j)` uses a union fill of the other coatom over the
 common face, which fails for a legal seed at the grade `2` (module
