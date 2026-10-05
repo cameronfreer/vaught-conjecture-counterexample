@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import Mathlib.Data.ENat.Lattice
-import VaughtConjecture.Stage.Basic
+import VaughtConjecture.Stage.Legal
 
 /-!
 # Forcing thresholds and the provisional offset
@@ -79,6 +79,28 @@ labels by lifts (roadmap, Layer 4, output 1; `Realization.stableOffset_comap` an
 `Label.atStage_ofOffset`), and it is never `β + ω` (`Label.ofOffset_ne_coe_add_omega0`): an
 infinite offset is the formal top, not `β + ω`.
 
+**Forced thresholds at twins.**  For `β + ω ≤ α` and `K` at least the grade of every cell of `q`
+labelled the formal top, the labelling `min (q.label d) (β + K)` is a lift of `q` to `α`
+(`StageType.capLift`, `StageType.capLift_reduce`); it is lawful because `β + K` is self-visible
+at the grade of each such cell ([Kni26, Lemma 2.5.8]).  For a legal `q` and cells `s₀`, `t₀` of
+`q` with `s₀` labelled the formal top, the scope of `s₀` in that of `t₀` and equal grades, every
+threshold `N` forced at `s₀` by `q` itself is forced at some cell labelled the formal top at the
+graded index of `t₀` (`StageType.exists_forcesThreshold_twin`):
+
+* for `N` at most the grade of `s₀`, at the cell given by availability of `q`, by the order law;
+* otherwise the capped lift gives `N ≤ K` for the largest grade `K` of a cell labelled the formal
+  top; completeness and availability of `q` give a cell `D` of full scope and grade `K` labelled
+  the formal top; availability of the row of `D`, lawful below `D` by consistency of the rows,
+  gives a cell `w` at the graded index of `t₀` at which the row of `D` is at least its value at
+  `s₀`; and locality of every lift `Q` at `D` gives `min (Q s₀) (Q D) ≤ Q w`, while
+  `Q D ≥ β + K ≥ β + N` by the order law.
+
+The same holds for a rooted cover `(q, f)` with root `p`, the cells taken in `p`
+(`StageType.exists_forcesThreshold_twin_face`): the cell found in `q` lies in the face spanned by
+`f`.  This is the availability of the stable section at twins
+(`Realization.availability_stableSection_of_hasLegalTypes`, in
+`VaughtConjecture.Continuation.Candidate`).
+
 ## Placement
 
 This file belongs to Layer 1 of `roadmap/README.md`.
@@ -113,6 +135,17 @@ noncomputable def ofOffset (β : Ordinal.{u}) (o : ℕ∞) : Label.{u} :=
 @[simp] theorem ofOffset_natCast (n : ℕ) :
     ofOffset β n = ((β + n : Ordinal.{u}) : Label.{u}) := by
   simp [ofOffset]
+
+/-- The label of an offset is monotone in the offset. -/
+theorem ofOffset_mono : Monotone (ofOffset β) := by
+  intro o o' h
+  induction o' using ENat.recTopCoe with
+  | top => exact ofOffset_top ▸ le_top
+  | coe m' =>
+    obtain ⟨m, rfl⟩ := ENat.ne_top_iff_exists.mp (ne_top_of_le_ne_top (ENat.natCast_ne_top m') h)
+    rw [ofOffset_natCast, ofOffset_natCast]
+    exact WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr
+      (add_le_add_right (Nat.cast_le.mpr (ENat.natCast_le_natCast.mp h)) _))
 
 /-- The label of an offset is the formal top exactly when the offset is infinite. -/
 @[simp] theorem ofOffset_eq_top_iff : ofOffset β o = ⊤ ↔ o = ⊤ := by
@@ -399,6 +432,181 @@ theorem exists_lift_label_eq_ofOffset (hfp : restrictFace f q = some p) (hd : p.
     refine le_antisymm ?_ (hn.2 Q P hQ hP i' hi')
     rw [Nat.cast_add_one, ← add_assoc] at hlt
     exact Label.lt_coe_add_one_iff.mp (not_le.mp hlt)
+
+/-! ### Forced thresholds at twins -/
+
+section Twins
+
+open Finset
+
+/-- `β ≤ β + K` as labels. -/
+private theorem coe_le_coe_add (β : Ordinal.{u}) (K : ℕ) :
+    (β : Label.{u}) ≤ ((β + K : Ordinal.{u}) : Label.{u}) :=
+  WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr le_self_add)
+
+/-- `β + K < α` as labels for `β + ω ≤ α`. -/
+private theorem coe_add_lt_of_le (hα : β + ω ≤ α) (K : ℕ) :
+    ((β + K : Ordinal.{u}) : Label.{u}) < (α : Label.{u}) :=
+  WithBot.coe_lt_coe.mpr (WithTop.coe_lt_coe.mpr
+    ((add_lt_add_right (natCast_lt_omega0 K) β).trans_le hα))
+
+/-- `β + N ≤ β + K` as labels exactly when `N ≤ K`. -/
+private theorem coe_add_le_coe_add_iff {N K : ℕ} :
+    ((β + N : Ordinal.{u}) : Label.{u}) ≤ ((β + K : Ordinal.{u}) : Label.{u}) ↔ N ≤ K := by
+  rw [WithBot.coe_le_coe, WithTop.coe_le_coe, add_le_add_iff_left, Nat.cast_le]
+
+variable (hβ) in
+/-- **The capped lift**: the lift of `q` to a stage `α ≥ β + ω` with the label `β + K` at every
+cell labelled the formal top, for `K` at least the grade of each such cell.  Its labels are lawful
+because `β + K` is self-visible at the grade of each such cell ([Kni26, Lemma 2.5.8]). -/
+noncomputable def capLift (hα : β + ω ≤ α) (q : StageType.{u} β m) (K : ℕ)
+    (hK : ∀ d, q.label d = ⊤ → q.toCellScheme.grade d ≤ K) : StageType.{u} α m where
+  toScheme := q.toScheme
+  label d := min (q.label d) ((β + K : Ordinal.{u}) : Label.{u})
+  isWellFormed := q.isWellFormed
+  isCoded := q.isCoded
+  isLawful := q.isLawful.min_const fun d hd ↦ by
+    rcases q.atStage d with h | h
+    · exact absurd h ((coe_le_coe_add β K).trans hd).not_gt
+    · exact Label.isSelfVisible_coe_add hβ (hK d h)
+  atStage _ := .inl ((min_le_right _ _).trans_lt (coe_add_lt_of_le hα K))
+
+variable (hβ) in
+/-- The label of the capped lift at a cell is the minimum of the label of `q` and `β + K`. -/
+@[simp] theorem capLift_label (hα : β + ω ≤ α) (q : StageType.{u} β m) (K : ℕ)
+    (hK : ∀ d, q.label d = ⊤ → q.toCellScheme.grade d ≤ K) (d : Fin q.card) :
+    (capLift hβ hα q K hK).label d = min (q.label d) ((β + K : Ordinal.{u}) : Label.{u}) :=
+  rfl
+
+variable (hβ) in
+/-- The capped lift reduces to `q`. -/
+theorem capLift_reduce (hα : β + ω ≤ α) (q : StageType.{u} β m) (K : ℕ)
+    (hK : ∀ d, q.label d = ⊤ → q.toCellScheme.grade d ≤ K) :
+    (capLift hβ hα q K hK).reduce hβ = q :=
+  StageType.ext rfl fun i j hij ↦ by
+    obtain rfl : i = j := Fin.ext hij
+    -- `i` is indexed by the reduction, so both lemmas are given their arguments explicitly
+    rw [reduce_label (t := capLift hβ hα q K hK) hβ i, capLift_label hβ hα q K hK i]
+    rcases q.atStage i with h | h
+    · rw [min_eq_left (h.le.trans (coe_le_coe_add β K)), Label.reduce_of_lt h]
+    · rw [h, min_eq_right le_top]
+      exact Label.reduce_of_le (coe_le_coe_add β K)
+
+/-- **Forced twins**: if `q` is legal and every lift of `q` to `α ≥ β + ω` is at least `β + N` at a
+cell `s₀` labelled the formal top, then for every cell `t₀` with the scope of `s₀` in that of `t₀`
+and equal grades, some cell labelled the formal top at the graded index of `t₀` is at least `β + N`
+in every lift.  For `N` above the grade of `s₀`: the capped lift gives `N ≤ K` for the largest
+grade `K` of a cell labelled the formal top; completeness and availability give a cell `D` of full
+scope and grade `K` labelled the formal top; availability of the row of `D`, which is lawful below
+`D`, names the cell `w`; and locality of every lift at `D` gives `min (Q s₀) (Q D) ≤ Q w`. -/
+theorem exists_forcesThreshold_twin (hα : β + ω ≤ α) (hq : q.IsLegal) {s₀ t₀ : Fin q.card}
+    (hst : q.toCellScheme.scope s₀ ⊆ q.toCellScheme.scope t₀)
+    (hg : q.toCellScheme.grade s₀ = q.toCellScheme.grade t₀) (hs : q.label s₀ = ⊤) {N : ℕ}
+    (hN : ForcesThreshold α hβ q (Function.Embedding.refl _) q s₀ N) :
+    ∃ w, q.toCellScheme.gradedIndex w = q.toCellScheme.gradedIndex t₀ ∧ q.label w = ⊤ ∧
+      ForcesThreshold α hβ q (Function.Embedding.refl _) q w N := by
+  classical
+  obtain ⟨w₀, hw₀, hle₀⟩ := q.isLawful.availability s₀ t₀ hst hg
+  have hw₀t : q.label w₀ = ⊤ := top_le_iff.mp (hs ▸ hle₀)
+  by_cases hNg : N ≤ q.toCellScheme.grade s₀
+  · refine ⟨w₀, hw₀, hw₀t, forcesThreshold_of_le_grade (restrictFace_refl q) hw₀t ?_⟩
+    have : q.toCellScheme.grade w₀ = q.toCellScheme.grade t₀ := congrArg Prod.snd hw₀
+    omega
+  push Not at hNg
+  -- the largest grade `K` of a cell labelled the formal top
+  set T := univ.filter fun d : Fin q.card ↦ q.label d = ⊤ with hTdef
+  have hT : T.Nonempty := ⟨s₀, mem_filter.mpr ⟨mem_univ _, hs⟩⟩
+  set K := T.sup fun d ↦ q.toCellScheme.grade d with hKdef
+  have hK : ∀ d, q.label d = ⊤ → q.toCellScheme.grade d ≤ K := fun d hd ↦
+    le_sup (f := fun d ↦ q.toCellScheme.grade d) (mem_filter.mpr ⟨mem_univ _, hd⟩)
+  -- `N ≤ K`: the capped lift has `β + K` at `s₀`
+  have hQ₀ := capLift_reduce hβ hα q K hK
+  have hNK : N ≤ K := by
+    have h := hN.2 _ _ hQ₀ (restrictFace_refl _) s₀ rfl
+    rw [capLift_label, hs, min_eq_right le_top] at h
+    exact coe_add_le_coe_add_iff.mp h
+  -- a full-scope cell `D` of grade `K` labelled the formal top
+  obtain ⟨E, hE, hEK⟩ := exists_mem_eq_sup T hT fun d ↦ q.toCellScheme.grade d
+  have hEK' : K = q.toCellScheme.grade E := hEK
+  have hEt : q.label E = ⊤ := (mem_filter.mp hE).2
+  obtain ⟨D', hD'⟩ := hq.isComplete ((univ : Finset (Fin m)), K)
+    ⟨q.univ_mem_faces, by omega, by
+      change K ≤ #(Finset.univ : Finset (Fin m))
+      rw [Finset.card_univ, Fintype.card_fin, hEK']; exact q.grade_le E⟩
+  have hD's : q.toCellScheme.scope D' = Finset.univ := congrArg Prod.fst hD'
+  have hD'g : q.toCellScheme.grade D' = K := congrArg Prod.snd hD'
+  obtain ⟨D, hD, hED⟩ := q.isLawful.availability E D' (hD's ▸ subset_univ _) (by
+    rw [hD'g, hEK'])
+  have hDt : q.label D = ⊤ := top_le_iff.mp (hEt ▸ hED)
+  have hDi : q.toCellScheme.gradedIndex D = ((univ : Finset (Fin m)), K) := hD.trans hD'
+  have hDg : q.toCellScheme.grade D = K := congrArg Prod.snd hDi
+  have hbelow : ∀ d, q.toCellScheme.grade d ≤ K →
+      d ∈ q.toCellScheme.below (q.toCellScheme.gradedIndex D) := fun d hd ↦ by
+    rw [CellScheme.mem_below, hDi]
+    exact Prod.mk_le_mk.mpr ⟨subset_univ _, hd⟩
+  have hs₀D := hbelow s₀ (by omega)
+  have ht₀D := hbelow t₀ (by omega)
+  -- the availability witness in the row of `D`
+  obtain ⟨u, hu, hrow⟩ := (CellScheme.Rows.isLawfulBelow_iff.mp (hq.isConsistent D)).availability
+    ⟨s₀, hs₀D⟩ ⟨t₀, ht₀D⟩ hst hg
+  have hu' : q.toCellScheme.gradedIndex u.1 = q.toCellScheme.gradedIndex t₀ := hu
+  have hug : q.toCellScheme.grade u.1 = q.toCellScheme.grade s₀ :=
+    (congrArg Prod.snd hu').trans hg.symm
+  have hforce : ForcesThreshold α hβ q (Function.Embedding.refl _) q u.1 N := by
+    refine ⟨restrictFace_refl q, fun Q P hQ hP i hi ↦ ?_⟩
+    obtain rfl : P = Q := Option.some_injective _ (hP.symm.trans (restrictFace_refl Q))
+    subst hQ
+    obtain rfl : i = u.1 := Fin.ext hi
+    have h₁ := hN.2 P P rfl (restrictFace_refl P) s₀ rfl
+    have h₂ := (forcesThreshold_of_le_grade (n := N) (restrictFace_refl _) hDt (by omega)).2
+      P P rfl (restrictFace_refl P) D rfl
+    have h₃ := (P.isLawful.locality D).le_of_le (d := ⟨s₀, hs₀D⟩) (d' := u) hrow hug.le
+    exact (le_min h₁ h₂).trans (h₃.trans (min_le_left _ _))
+  refine ⟨u.1, hu', ?_, hforce⟩
+  have h := hforce.2 _ _ hQ₀ (restrictFace_refl _) u.1 rfl
+  rw [capLift_label] at h
+  rcases q.atStage u.1 with hlt | htop
+  · exact absurd ((coe_le_coe_add β N).trans (h.trans (min_le_left _ _))) (not_le.mpr hlt)
+  · exact htop
+
+/-- **Forced twins over a face**: if a legal `q` restricts to `p` along `f` and `(q, f)` forces `N`
+at a cell `s₀` of `p` labelled the formal top, then `(q, f)` forces `N` at some cell labelled the
+formal top at the graded index of every `t₀` with the scope of `s₀` in that of `t₀` and equal
+grades.  The cell given by `exists_forcesThreshold_twin` in `q` lies in the face spanned by `f`. -/
+theorem exists_forcesThreshold_twin_face (hα : β + ω ≤ α) (hq : q.IsLegal)
+    (hp : restrictFace f q = some p) {s₀ t₀ : Fin p.card}
+    (hst : p.toCellScheme.scope s₀ ⊆ p.toCellScheme.scope t₀)
+    (hg : p.toCellScheme.grade s₀ = p.toCellScheme.grade t₀) (hs : p.label s₀ = ⊤) {N : ℕ}
+    (hN : ForcesThreshold α hβ q f p s₀ N) :
+    ∃ w, p.toCellScheme.gradedIndex w = p.toCellScheme.gradedIndex t₀ ∧ p.label w = ⊤ ∧
+      ForcesThreshold α hβ q f p w N := by
+  obtain ⟨hf, rfl⟩ := (restrictFace_eq_some_iff q f).mp hp
+  have key (i : Fin (q.comap f hf).card) (n : ℕ) :
+      ForcesThreshold α hβ q f (q.comap f hf) i n ↔
+        ForcesThreshold α hβ q (Function.Embedding.refl _) q (q.cellMap f i) n := by
+    have h := ForcesThreshold.trans_comap_iff (α := α) (hβ := hβ) (n := n)
+      (restrictFace_refl q) hf i
+    rwa [Function.Embedding.trans_refl] at h
+  have hst' : q.toCellScheme.scope (q.cellMap f s₀) ⊆ q.toCellScheme.scope (q.cellMap f t₀) := by
+    rw [← q.toScheme.map_comap_scope f s₀, ← q.toScheme.map_comap_scope f t₀]
+    exact map_subset_map.mpr hst
+  obtain ⟨w', hw', hw't, hw'f⟩ := exists_forcesThreshold_twin hα hq hst' hg hs ((key s₀ N).mp hN)
+  have hvis : w' ∈ Set.range (q.cellMap f) := by
+    rw [Scheme.range_cellMap, mem_coe, Scheme.mem_visibleCells, show q.toCellScheme.scope w' =
+      q.toCellScheme.scope (q.cellMap f t₀) from congrArg Prod.fst hw']
+    exact Scheme.mem_visibleCells.mp (q.toScheme.cellMap_mem f t₀)
+  obtain ⟨w, rfl⟩ := hvis
+  refine ⟨w, ?_, hw't, (key w N).mpr hw'f⟩
+  -- the graded index of `comap f hf` is that of the underlying scheme `q.toScheme.comap f`
+  change (q.toScheme.comap f).toCellScheme.gradedIndex w =
+    (q.toScheme.comap f).toCellScheme.gradedIndex t₀
+  have h := hw'
+  rw [← q.toScheme.map_comap_gradedIndex f w, ← q.toScheme.map_comap_gradedIndex f t₀] at h
+  have h₁ := congrArg Prod.fst h
+  have h₂ := congrArg Prod.snd h
+  exact Prod.ext (map_injective f h₁) h₂
+
+end Twins
 
 end StageType
 
