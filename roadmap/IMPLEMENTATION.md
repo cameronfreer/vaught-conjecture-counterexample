@@ -865,17 +865,20 @@ concern it (or *prospective*), and one of three statuses:
 The availability markers are those of `README.md`, Layer 0; an argument with no theorem named in
 this repository is prospective here.  Rows are added as notions are reached.  A row becomes P only
 when the theorem or the definition-level identification that performs the comparison is named, and
-becomes C only when the correction is recorded.  No row is P at present: the rows whose declaration
+becomes C only when the correction is recorded.  Rows 2–5 are P, by the definition-level
+identifications of `VaughtConjecture/Correspondence` named in their notes.  Row 6 is S:
+`IsBountiful` is the printed definition required at every stage that is zero or a limit (note 6),
+and at `ω₁` only the implication from `IsBountiful` is proved.  The other rows whose declaration
 carries the manuscript's number but whose clauses have not been compared are S, with the compiled
 declarations listed in the notes.
 
 | Row | Source | Manuscript notion | Status |
 | --- | --- | --- | --- |
 | 1 | [AFK26] | the observation index `ξ` (no numbered statement) | S |
-| 2 | [Kni26] | visibility replacement, Definition 2.2.3 | S |
-| 3 | [Kni26] | witnesses and transformation, Definition 2.3.9 | S |
-| 4 | [Kni26] | lawful labellings, Definition 2.5.4; orderly labellings, Definition 2.3.4 | S |
-| 5 | [Kni26] | lawful capping, Lemma 2.5.8 | S |
+| 2 | [Kni26] | visibility replacement, Definition 2.2.3 | P |
+| 3 | [Kni26] | witnesses and transformation, Definition 2.3.9 | P |
+| 4 | [Kni26] | lawful labellings, Definition 2.5.4; orderly labellings, Definition 2.3.4 | P |
+| 5 | [Kni26] | lawful capping, Lemma 2.5.8 | P |
 | 6 | [Kni26] | bountiful rows, Definition 2.5.14 | S |
 | 7 | [Kni26] | domains (legal schemes), Definition 2.6.1 | C |
 | 8 | [Kni26] | stage types and face maps, Definitions 3.1.1 and 3.1.5 | S |
@@ -918,18 +921,80 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
    `blockStage_zero`, `blockStage_add_one` (`Realization/Expansion`): the identities are compiled
    in this repository (theorem named); that this is the indexing of [AFK26] is item 1, still to be
    proved.
-2. `Label.visibilityReplace` (`Label/Visibility`), whose docstring cites the definition; the
-   clause-by-clause comparison is not recorded.
-3. `Label.IsWitness` (`Label/Transform`), its five laws; guarded composition only (`README.md`,
-   layer 1).  The comparison of the laws with the clauses of the definition is not recorded.
-4. `CellScheme.Rows.IsLawful` (`Scheme/Row`), with the clauses order, locality, and availability;
-   their comparison with the two definitions is not recorded.
+2. `Label.visibilityReplace` (`Label/Visibility`).  The definition-level identification
+   `Label.printedVisibilityReplace_iff` (`Correspondence/Visibility`), compiled in this repository
+   (theorem named): a map of labels satisfies the three clauses of the definition
+   (`Label.PrintedVisibilityReplace`) exactly when it is `Label.visibilityReplace K m`.
+   Departures: the normal form `ω * (o / ω) + o % ω` in place of the printed `μ + j`
+   (`Label.visibilityReplace_coe_add`, `Label.exists_eq_add_natCast_isSuccPrelimit`, both in
+   `Label/Visibility`), and the value `m` not restricted to `m ≤ K` (harmless:
+   `Label.printedVisibilityReplace_iff` holds for every `m`).  The labels of Definition 2.2.1, the
+   only notion the clauses use: `Label.printed_order_add`.  Definition 2.2.2, the operation without
+   a threshold, is a numbered definition that Definition 2.2.3 restates and does not use.
+3. `Label.IsWitness`, `Label.TransformsTo` (`Label/Transform`).  The definition-level
+   identification `Label.printedTransformsTo_iff`, at every stage that is zero or a limit, and
+   `Label.printedTransformsTo_omega_one_iff`, on the printed labels `{-∞} ∪ ω₁ ∪ {∞}`
+   (`Correspondence/Witness`), compiled in this repository (theorem named); the clauses are the
+   fields of `Label.PrintedWitness`.  Departures: non-strict antitonicity in clause 1 (Mathlib's
+   `antitone_iff_forall_lt`), the orientation of the equation of clause 2, and the range of the
+   labels (`Label.PrintedWitness.isWitness_comp_reduce`, `Label.IsWitness.printedWitness_reduce`),
+   and the finiteness of the printed `D` (harmless: `Label.printedTransformsTo_iff` holds for every
+   type of cells).  The relation is identified, not the witness predicate: `Label.PrintedWitness`
+   and `Label.IsWitness` are not equivalent for the same pair, and witnesses correspond up to stage
+   reduction by the same two theorems.  Guarded composition only (`README.md`, layer 1) concerns
+   [Kni26, Lemma 2.3.14], a statement about the relation and not its definition: the relation is
+   not transitive (`Label.TransformsTo.not_transitive`).
+4. `CellScheme.Rows.IsLawful` (`Scheme/Row`).  The definition-level identification
+   `CellScheme.Rows.printedRespects_iff` (`Correspondence/Lawful`), compiled in this repository
+   (theorem named): for cells with graded index in the graded plan, at a stage that is zero or a
+   limit, the orderly labellings respecting the semantics (`CellScheme.Rows.PrintedRespects`) are
+   the lawful sections; the order law is Definition 2.3.4 (`Label.printedOrderly_iff`), locality
+   clause 1, availability clause 2.  On the printed labels `{-∞} ∪ ω₁ ∪ {∞}` it is
+   `CellScheme.Rows.printedRespects_omega_one_iff`, compiled in this repository (theorem named).
+   Departures: the orientation of the orderly equation (`Label.printedOrderly_iff`); the cap of
+   clause 1 is the partial operation of Definition 2.3.7, defined for every orderly labelling
+   (`CellScheme.Rows.printedCapDefined_below`); the relation of clause 1 is that of row 3; the
+   quantifiers range over the graded plan; the range of the labels, as in row 3; the orderliness
+   of each `E(Σ)` that the printed semantics requires and the finiteness of the printed `D`
+   (harmless: `CellScheme.Rows.printedRespects_iff` holds without either).  The identifications
+   take no `Geometry.IsPlan` hypothesis and hold for every family of faces, in particular for
+   plans; Definition 2.6.1 (row 7) is not used by Definition 2.5.4.  The notions the clauses use
+   are identified in `Correspondence/Lawful` and row 3: `P̂` by `CellScheme.mem_gradedFaces`,
+   `D↾⟨B, j⟩` by `CellScheme.mem_below_iff_exists_mem_gradedFaces`, the arity by
+   `CellScheme.grade`, and `⇒` by row 3.  So neither the correspondence of `Geometry.IsPlan` with
+   Definition 2.1.1 (no row) nor row 7 is a prerequisite of this row.
 5. `CellScheme.Rows.IsLawful.min_const` (`Scheme/Row`), with the special case
    `CellScheme.Rows.IsLawful.min_const_of_isSelfVisible` as a corollary: compiled in this
-   repository (theorem named).  It states the lemma for the lawful sections here; it is the lemma
-   of [Kni26] once rows 2 and 4 are P.
-6. `CellScheme.Rows.IsBountiful` (`Scheme/Bountiful`); the comparison of its clauses is not
-   recorded.
+   repository (theorem named).  The printed statement is
+   `CellScheme.Rows.PrintedRespects.min_const` (`Correspondence/Lawful`), compiled in this
+   repository (theorem named), `IsLawful.min_const` transported along the identification of
+   row 4; the printed `γ` is an ordinal, here any label at the stage.  Restricting `γ` to the stage
+   is the printed typing: an ordinal `γ ≥ ω₁` would make `p ∧ γ` leave `{-∞} ∪ ω₁ ∪ {∞}` whenever
+   some `p(Σ) = ∞`, and would otherwise give `p ∧ γ = p`.
+6. `CellScheme.Rows.IsBountiful` (`Scheme/Bountiful`); status S.  The clauses are the fields of
+   `CellScheme.Rows.PrintedLiftHypotheses` and `CellScheme.Rows.PrintedLiftConclusion`
+   (`Correspondence/Bountiful`).  Compiled in this repository (theorem named), for finitely many
+   cells with graded index in the graded plan: `IsBountiful` is equivalent to the printed
+   definition at every stage that is zero or a limit and carries the values of the rows
+   (`CellScheme.Rows.isBountiful_iff_forall_printedBountiful`).  Compiled in this repository
+   (theorem named): `IsBountiful` implies the printed definition at each such stage
+   (`CellScheme.Rows.IsBountiful.printedBountiful`), in particular at `ω₁`
+   (`CellScheme.Rows.IsBountiful.printedBountiful_omega_one`).  No theorem gives the converse at a
+   single stage, in particular at `ω₁`.  What is missing is the upward transfer of the printed
+   definition from `ω₁` to larger limit stages, prospective: a collapse of labels preserving
+   lawfulness, in the style of [Kni26, Lemmas 2.3.3 and 2.5.13].  The downward transfer, from a
+   larger limit stage to a smaller one such as `ω₁`, follows by the argument of
+   `CellScheme.Rows.IsBountiful.printedBountiful` but is not a named theorem either.  Restricting
+   the universe does not remove the gap: `Label.{0}` already contains uncountable ordinals
+   (`Ordinal.omega.{0} 1`), and `IsBountiful` quantifies over all labels.  The other departures
+   are harmless, by named theorems: `≺` in clause 1 read strictly
+   (`CellScheme.Rows.printedBountiful_iff_forall_lt`, from the reflexive case
+   `CellScheme.Rows.PrintedLiftHypotheses.exists_printedLiftConclusion_of_eq`); the partial caps
+   (`CellScheme.Rows.PrintedLiftHypotheses.printedCapDefined`,
+   `CellScheme.Rows.PrintedLiftConclusion.printedCapDefined`); and the consistency of `E`
+   ([Kni26, Definition 2.5.12], `CellScheme.Rows.IsConsistent` in `Scheme/Row`) that the definition
+   presupposes (`CellScheme.Rows.isBountiful_iff_forall_printedBountiful` and
+   `CellScheme.Rows.IsBountiful.printedBountiful` hold without it).
 7. `Scheme.IsLegal`, with the coding clause `Scheme.IsCoded` (`Stage/Legal`, `Stage/Scheme`):
    coding imposed as a clause, not derived from the offset bound of [Kni26, Lemma 2.5.13];
    recoverability by representation (`README.md`, layer 3, vocabulary).
