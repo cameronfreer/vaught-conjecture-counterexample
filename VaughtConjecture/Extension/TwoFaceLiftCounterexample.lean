@@ -169,84 +169,6 @@ noncomputable def stripShifter (A x : Label.{u}) : Label.{u} :=
 
 /-! ### Facts about labels -/
 
-theorem natCast_label (n : ℕ) : (n : Label.{u}) = ((n : Ordinal.{u}) : Label.{u}) := by
-  rw [← WithBot.coe_natCast, ← WithTop.coe_natCast]
-
-theorem natCast_label_inj {n m : ℕ} : (n : Label.{u}) = m ↔ n = m := by
-  rw [natCast_label, natCast_label, WithBot.coe_inj, WithTop.coe_inj, Nat.cast_inj]
-
-theorem natCast_label_le {n m : ℕ} : (n : Label.{u}) ≤ m ↔ n ≤ m := by
-  rw [natCast_label, natCast_label, WithBot.coe_le_coe, WithTop.coe_le_coe, Nat.cast_le]
-
-theorem natCast_label_lt_omega (n : ℕ) :
-    (n : Label.{u}) < ((ω : Ordinal.{u}) : Label.{u}) := by
-  rw [natCast_label, WithBot.coe_lt_coe, WithTop.coe_lt_coe]
-  exact natCast_lt_omega0 n
-
-theorem natCast_label_ne_bot (n : ℕ) : (n : Label.{u}) ≠ ⊥ := by
-  rw [natCast_label]; exact WithBot.coe_ne_bot
-
-/-- A label other than `⊥` below `ω` is a natural number. -/
-theorem exists_natCast_of_lt_omega {x : Label.{u}} (hx : x ≠ ⊥)
-    (hxω : x < ((ω : Ordinal.{u}) : Label.{u})) : ∃ n : ℕ, x = n := by
-  induction x using recBotCoeTop with
-  | bot => exact absurd rfl hx
-  | top => exact absurd hxω (not_lt.mpr le_top)
-  | coe o =>
-    rw [WithBot.coe_lt_coe, WithTop.coe_lt_coe] at hxω
-    obtain ⟨n, rfl⟩ := lt_omega0.mp hxω
-    exact ⟨n, (natCast_label n).symm⟩
-
-/-- Visibility replacement keeps a label at or above `ω` at or above `ω`. -/
-theorem not_lt_omega_visibilityReplace {x : Label.{u}} (hx : x ≠ ⊥)
-    (hxω : ¬ x < ((ω : Ordinal.{u}) : Label.{u})) (k i : ℕ) :
-    ¬ visibilityReplace k i x < ((ω : Ordinal.{u}) : Label.{u}) := by
-  induction x using recBotCoeTop with
-  | bot => exact absurd rfl hx
-  | top => rw [visibilityReplace_top]; exact not_lt.mpr le_top
-  | coe o =>
-    rw [WithBot.coe_lt_coe, WithTop.coe_lt_coe, not_lt] at hxω
-    rw [visibilityReplace_coe, WithBot.coe_lt_coe, WithTop.coe_lt_coe, not_lt]
-    obtain ⟨b, n, rfl⟩ := exists_eq_omega0_mul_add_natCast o
-    rw [Ordinal.visibilityReplace_omega0_mul_add_natCast]
-    have hb : b ≠ 0 := by
-      rintro rfl
-      simp only [mul_zero, zero_add] at hxω
-      exact absurd hxω (not_le.mpr (natCast_lt_omega0 n))
-    calc ω = ω * 1 := (mul_one _).symm
-      _ ≤ ω * b := by gcongr; exact Order.one_le_iff_ne_zero.mpr hb
-      _ ≤ _ := le_self_add
-
-/-- **Two replacements at thresholds at most `2`.** -/
-private theorem visibilityReplace_visibilityReplace_two {k : ℕ} (hk : k ≤ 2) (i j : ℕ)
-    (A : Label.{u}) :
-    visibilityReplace k i (visibilityReplace 2 j A) =
-      visibilityReplace 2 (if j < k then i else j) A := by
-  induction A using recBotCoeTop with
-  | bot => simp
-  | top => simp
-  | coe o =>
-    obtain ⟨b, n, rfl⟩ := exists_eq_omega0_mul_add_natCast o
-    have key : (if (if n < 2 then j else n) < k then i else (if n < 2 then j else n)) =
-        (if n < 2 then (if j < k then i else j) else n) := by split_ifs <;> omega
-    rw [visibilityReplace_coe, visibilityReplace_coe, visibilityReplace_coe,
-      Ordinal.visibilityReplace_omega0_mul_add_natCast,
-      Ordinal.visibilityReplace_omega0_mul_add_natCast,
-      Ordinal.visibilityReplace_omega0_mul_add_natCast, key]
-
-/-- Replacement at a larger value gives a larger label. -/
-theorem visibilityReplace_le_visibilityReplace {k i j : ℕ} (hij : i ≤ j)
-    (A : Label.{u}) : visibilityReplace k i A ≤ visibilityReplace k j A := by
-  induction A using recBotCoeTop with
-  | bot => simp
-  | top => simp
-  | coe o =>
-    obtain ⟨b, n, rfl⟩ := exists_eq_omega0_mul_add_natCast o
-    simp only [visibilityReplace_coe, Ordinal.visibilityReplace_omega0_mul_add_natCast,
-      WithBot.coe_le_coe, WithTop.coe_le_coe]
-    gcongr
-    split_ifs <;> omega
-
 /-- A label self-visible at `1` is fixed by replacement at threshold `2` with value `1`. -/
 private theorem visibilityReplace_two_one {A : Label.{u}} (hA : IsSelfVisible 1 A) :
     visibilityReplace 2 1 A = A := by
@@ -315,7 +237,7 @@ theorem isWitness_stripShifter {A F : Label.{u}} (hF : IsSelfVisible 2 F) :
           ((if n < k then i else n : ℕ) : Label.{u}) := by split_ifs <;> rfl
       rw [hcast, stripShifter_natCast, stripShifter_natCast]
       by_cases hk : k ≤ 2
-      · rw [visibilityReplace_visibilityReplace_two hk]
+      · rw [visibilityReplace_visibilityReplace_of_le hk]
         congr 1
         split_ifs <;> omega
       · -- Above the grade `2` the guard forces `A = ⊥`.
