@@ -446,8 +446,9 @@ rows).
    minimum of lifts need not be lawful (the type of
    `Continuation.CandidateCounterexamples.not_twinOrdering_blockStage`; informal, not compiled as a
    separate statement; [Kni26, Lemma 2.5.11] is not relied on, `README.md`, Layer 1); this negative
-   special case is to be compiled in `Continuation/CandidateCounterexamples` (Layer 4), whose scheme
-   comes from `Extension/SmallArityExamples`.  "Least lift" is never replaced by "unique lift".
+   special case is to be compiled in `Continuation/CandidateCounterexamples` (Layer 4), on the
+   five-cell scheme defined privately there (`fiveCells`, `fiveCellRows`, `fiveCellScheme`).
+   "Least lift" is never replaced by "unique lift".
 6. *The separation of leastness from modelhood.*  Statements 1–5, 8, and 9 do not make the candidate
    a model: receiving, (R1)–(R4), stays its own statement; (R4) (`StableCappedReceiving`) and the
    coface instances at `λ_{ξ+1}` (`StageType.HasNonemptyCofaceInstances`), both defined in this
