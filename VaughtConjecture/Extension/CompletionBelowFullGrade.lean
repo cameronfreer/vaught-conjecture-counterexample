@@ -34,7 +34,9 @@ at the end: the reduced labelling is lawful (`CellScheme.Rows.IsLawful.reduce`),
 cells it is still the glued labelling, since the glued labels already lie at the stage
 (`Label.AtStage.reduce_eq`).  This gives a stage type on `m + 2` points whose faces along
 embeddings onto proper subsets are those of the amalgam
-(`CompletionBelowFullGrade.restrictFace_withLabel`).
+(`CompletionBelowFullGrade.restrictFace_withLabel`); along the first coatom (which is not the
+whole ground set, `Coatom.univ_map_left_ne`) it is the first coatom type
+(`CompletionBelowFullGrade.restrictFace_left_truncate`).
 
 **The completion** (`CompletionBelowFullGrade.completion`) is the truncation with the apex added
 (`StageType.addApex`): it is legal, has a cell of full scope and full grade `m + 2` carrying the
@@ -142,8 +144,8 @@ theorem restrictFace_withLabel (hq : F.scheme.rows.IsLawful q) (hqα : ∀ d, At
   exact mem_map_of_mem _ (mem_univ y)
 
 /-- The first coatom is not the whole ground set. -/
-private theorem univ_map_left_ne : univ.map (Coatom.left m) ≠ univ := fun he ↦
-  Coatom.last_notMem_univ_map_left (he ▸ mem_univ (Fin.last (m + 1)))
+theorem _root_.VaughtConjecture.Coatom.univ_map_left_ne : univ.map (Coatom.left m) ≠ univ :=
+  fun he ↦ Coatom.last_notMem_univ_map_left (he ▸ mem_univ (Fin.last (m + 1)))
 
 /-- The second coatom is not the whole ground set. -/
 private theorem univ_map_right_ne : univ.map (Coatom.right m) ≠ univ := fun he ↦ by
@@ -163,8 +165,8 @@ theorem exists_coatomExtension_of_label (hq : F.scheme.rows.IsLawful q)
       ∃ d, t.toCellScheme.gradedIndex d = (univ, m + 2) ∧ ∀ e, t.label e ≤ t.label d :=
   ⟨(F.withLabel hq hqα).addApex F.isLegalBelowFullGrade (Nat.succ_pos _),
     StageType.isLegal_addApex _ _,
-    (StageType.restrictFace_addApex _ _ _ univ_map_left_ne).trans
-      ((F.restrictFace_withLabel hq hqα hqe _ univ_map_left_ne).trans I.restrictFace_left),
+    (StageType.restrictFace_addApex _ _ _ Coatom.univ_map_left_ne).trans
+      ((F.restrictFace_withLabel hq hqα hqe _ Coatom.univ_map_left_ne).trans I.restrictFace_left),
     (StageType.restrictFace_addApex _ _ _ univ_map_right_ne).trans
       ((F.restrictFace_withLabel hq hqα hqe _ univ_map_right_ne).trans I.restrictFace_right),
     StageType.exists_apex_addApex _ _⟩
@@ -192,6 +194,13 @@ theorem truncate_label_embed (d : Fin I.amalgam.card) :
     (F.truncate hα).label (F.embed d) = I.amalgam.label d :=
   (congrArg (Label.reduce α) (F.label_embed d)).trans (I.amalgam.atStage d).reduce_eq
 
+/-- **The face of the truncation along `Fin.castSuccEmb` is the first coatom type**, literally,
+labels included. -/
+theorem restrictFace_left_truncate :
+    StageType.restrictFace (Coatom.left m) (F.truncate hα) = some I.left :=
+  (F.restrictFace_withLabel _ _ (F.truncate_label_embed hα) _ Coatom.univ_map_left_ne).trans
+    I.restrictFace_left
+
 /-- The **completion** of a seed at a stage that is zero or a limit: the truncation with the apex
 added: one cell of full scope and full grade `m + 2` labelled with the formal top. -/
 noncomputable def completion : StageType.{u} α (m + 2) :=
@@ -212,8 +221,8 @@ theorem exists_apex_completion :
 labels included: the truncation keeps the glued labels. -/
 theorem restrictFace_left_completion :
     StageType.restrictFace (Coatom.left m) (F.completion hα) = some I.left :=
-  (StageType.restrictFace_addApex _ _ _ univ_map_left_ne).trans
-    ((F.restrictFace_withLabel _ _ (F.truncate_label_embed hα) _ univ_map_left_ne).trans
+  (StageType.restrictFace_addApex _ _ _ Coatom.univ_map_left_ne).trans
+    ((F.restrictFace_withLabel _ _ (F.truncate_label_embed hα) _ Coatom.univ_map_left_ne).trans
       I.restrictFace_left)
 
 /-- **The face of the completion along `extendByLast Fin.castSuccEmb` is the second coatom

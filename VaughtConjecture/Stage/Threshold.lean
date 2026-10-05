@@ -38,6 +38,10 @@ stage types at `α`: no realization, and no legality (legality depends only on t
   `e` as at `C`, then `(q, f)` forces the grade of `C`.  Locality of `Q` at `C`
   (`Label.TransformsTo.le_of_le`) gives that the label of `e` is at least that of `C`, which is at
   least `β` plus the grade of `C` by the order law.
+* **No forcing above the top grade** (`not_forcesThreshold_of_grade_le`): if every grade of `q` is
+  at most `K` and `β + K < α`, then `(q, f)` does not force `K + 1` at a cell labelled the formal
+  top, since the labels of `q` capped at `β + K` form a lift of `q`.  A pair forcing `n` thus has a
+  cell of grade at least `n`, by whatever mechanism it forces.
 
 **The provisional offset** of `d` at `(q, f)` (`StageType.provisionalOffset`) is the supremum in
 `ℕ∞` of the thresholds forced at `d`.  When `q` restricts to `p` along `f` and `d` reduces to the
@@ -233,6 +237,48 @@ theorem forcesThreshold_of_row_le (hfp : restrictFace f q = some p) {C e : Fin q
   have hie : Q.cellMap f i = e := he i hi
   rw [comap_label, hie]
   exact hCβ.trans hCe
+
+/-- **No forcing above the top grade.**  If every cell of `q` has grade at most `K` and `β + K`
+lies below `α`, then `(q, f)` does not force `K + 1` at a cell `d` of `p` labelled the formal top:
+capping the labels of `q` at `β + K` (self-visible at `K`) gives a stage type at `α` reducing to
+`q` whose label at the position of `d` is `β + K`.  So a pair forcing `n` at such a cell has a
+cell of grade at least `n`, hence at least `n` points, whatever the mechanism of the forcing. -/
+theorem not_forcesThreshold_of_grade_le {K : ℕ} (hα : β + K < α)
+    (hK : ∀ c, q.toCellScheme.grade c ≤ K) (hfp : restrictFace f q = some p)
+    (hd : p.label d = ⊤) : ¬ ForcesThreshold α hβ q f p d (K + 1) := by
+  set c : Label.{u} := ((β + K : Ordinal.{u}) : Label.{u})
+  let Q : StageType.{u} α m :=
+    { toScheme := q.toScheme
+      label := fun i ↦ min (q.label i) c
+      isWellFormed := q.isWellFormed
+      isCoded := q.isCoded
+      isLawful := q.isLawful.min_const_of_isSelfVisible hK (Label.isSelfVisible_coe_add hβ le_rfl)
+      atStage := fun _ ↦ .inl ((min_le_right _ _).trans_lt
+        (WithBot.coe_lt_coe.mpr (WithTop.coe_lt_coe.mpr hα))) }
+  have hβc : ((β : Ordinal.{u}) : Label.{u}) ≤ c :=
+    WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr le_self_add)
+  have hQ : Q.reduce hβ = q := by
+    refine ext rfl fun i j hij ↦ ?_
+    obtain rfl : i = j := Fin.ext hij
+    change Label.reduce β (min (q.label i) c) = q.label i
+    rcases q.atStage i with hlt | htop
+    · rw [min_eq_left (hlt.le.trans hβc), Label.reduce_of_lt hlt]
+    · rw [htop, min_top_left, Label.reduce_eq_top_iff.mpr hβc]
+  obtain ⟨hf, hcomap⟩ := (restrictFace_eq_some_iff q f).mp hfp
+  intro h
+  have hf' : Finset.univ.map f ∈ Q.toCellScheme.faces := hf
+  have hcard : (q.comap f hf).card = p.card :=
+    congrArg (fun s : StageType.{u} β k ↦ s.card) hcomap
+  set i₀ : Fin (Q.comap f hf').card := ⟨d, lt_of_lt_of_eq d.2 hcard.symm⟩
+  have hle := h.2 Q (Q.comap f hf') hQ (restrictFace_of_mem Q f hf') i₀ rfl
+  have hqd : q.label (q.cellMap f i₀) = ⊤ := by
+    rw [show q.label (q.cellMap f i₀) = (q.comap f hf).label i₀ from (comap_label q f hf i₀).symm]
+    exact (label_congr hcomap rfl).trans hd
+  have hP : (Q.comap f hf').label i₀ = c := by
+    change min (q.label (q.cellMap f i₀)) c = c
+    rw [hqd, min_top_left]
+  rw [hP, Nat.cast_add_one, ← add_assoc] at hle
+  exact (lt_add_one (β + K)).not_ge (WithTop.coe_le_coe.mp (WithBot.coe_le_coe.mp hle))
 
 /-! ### The provisional offset -/
 
