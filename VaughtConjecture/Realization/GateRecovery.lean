@@ -41,15 +41,18 @@ stage type, and no legality of `q` or of the display is used.
 extension, and stands.  Gated extensions exist for some inputs
 (`StageType.GatedExtension.instance_two_zero`), but the universal gated extension hypothesis
 `StageType.HasGatedPinnedExtensions`, which would supply one for every private context, fails at
-every stage (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`): a private type with
-two cells of full scope and full grade that lawful labellings order either way has no gated
-extension.  Finite-cut receiving
-for all models, (R1), is not claimed here; it is open in general.  The private context is
-acquired by the uniformity and high-arity-dominance clauses, with exact consistency (no
-generalized saturation) (`Realization.IsModel.exists_privateContext`), and the bottom-pattern
-clause of a model, applied with the labels of a display, realizes the bottom pattern read here;
-a route to (R1) through these pieces needs a gate predicate that legal displays over every
-private context satisfy (prospective).
+every stage (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`): the private type
+`GatedExtensionCounterexample.P α`, whose two cells of full scope and full grade are ordered
+oppositely by two lawful labellings in the cap ball of its labelling at `2`, has no gated
+extension (`GatedExtensionCounterexample.isEmpty_gatedExtension`).  Finite-cut receiving for all
+models, (R1), is not claimed here; it is open in general.  The private context is acquired by the
+uniformity and high-arity-dominance clauses, with exact consistency (no generalized saturation)
+(`Realization.IsModel.exists_privateContext`).  The bottom-pattern clause of a model
+(`Realization.IsModel.bottomPattern`), applied over an occurrence of the private type to the
+scheme and labels of a display, realizes a member of the bottom-pattern family read here; its
+guard is met, since the display is a legal coface of the private type in that family.  A route
+to (R1) through these pieces needs a gate predicate that legal displays over every private
+context satisfy (prospective).
 
 ## Placement
 

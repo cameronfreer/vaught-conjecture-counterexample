@@ -64,22 +64,22 @@ any donor (`isEmpty_gatedExtension`).
 
 **What this does not refute.**  This refutes the universal gated extension hypothesis
 `StageType.HasGatedPinnedExtensions`, not finite-cut receiving.  The structure
-`StageType.GatedExtension` is inhabited: over the empty root, with the private type the face
-`{0, 1}` of the legal type on three points of `VaughtConjecture.Extension.UnionFillCounterexample`
-(labelled `labelling ⊤ F`) and the donor its face `{2}`, the display is that type itself, with
-gate the cell at `(univ, 2)`, which has no twins, and cap the cell at `({0, 1}, 2)`
-(`StageType.GatedExtension.instance_two_zero`); every hypothesis of the gated pinned extension
-property holds for this input.  Gate recovery (`VaughtConjecture.Realization.GateRecovery`), a
-statement about a given gated extension, and the private context
-(`VaughtConjecture.Realization.PrivateContext`) stand.  Finite-cut receiving for all models, (R1)
-of the table of Layer 3, is open in general; its form for the top-free witnesses
+`StageType.GatedExtension` is inhabited: over the empty root, the display is `D₀.addApex`, the
+scheme `S` on three points of `VaughtConjecture.Extension.UnionFillCounterexample`, labelled
+`labelling ⊤ F`, with the apex added; the private type is its face `{0, 1}` and the donor its face
+`{2}`, the gate is the cell at `(univ, 2)`, which has no twins, and the cap is the cell at
+`({0, 1}, 2)` (`StageType.GatedExtension.instance_two_zero`); every hypothesis of the gated pinned
+extension property holds for this input.  Gate recovery
+(`VaughtConjecture.Realization.GateRecovery`), a statement about a given gated extension, and the
+private context (`VaughtConjecture.Realization.PrivateContext`) stand.  Finite-cut receiving for all
+models, (R1) of the table of Layer 3, is open in general; its form for the top-free witnesses
 (`hasFiniteCutReceiving_reconstruct`) and the forms derived from finite-cut receiving are
-unaffected.  A gate predicate that avoids this obstruction would replace the labels `⊥` of the
-twins in the display by a condition on rows, for instance that every twin reads the gate as it
-reads the cap, which bounds the cap by the gate in every lawful labelling by availability and
-locality alone; that such a display can be made legal is not known (prospective).  The private
-context of [Kni26, Lemma 8.1.1] also carries a marker, not used by the gated extension; its role
-there is to be compared with this obstruction (prospective).
+unaffected.  A gate predicate that avoids this obstruction would replace the labels `⊥` of the twins
+in the display by a condition on rows, for instance that every twin reads the gate as it reads the
+cap, which bounds the cap by the gate in every lawful labelling by availability and locality alone;
+that such a display can be made legal is not known (prospective).  The private context of
+[Kni26, Lemma 8.1.1] also carries a marker, not used by the gated extension; its role there is to
+be compared with this obstruction (prospective).
 
 ## Placement
 
@@ -399,9 +399,11 @@ theorem isConsistent_rows : rows.{u}.IsConsistent := by
         else if s = 4 then labelling ((2 : ℕ) : Label.{u}) ((3 : ℕ) : Label.{u})
         else fun _ ↦ ⊥) t.1 := by
     intro s; funext t
+    -- The entries of the rows are the row values (`rows`, by definition).
     change rowValue s t.1 = _
     unfold rowValue labelling
     split_ifs <;> rfl
+  -- Consistency at `s`: the row of `s` is lawful below its graded index (`IsConsistent`).
   change rows.IsLawfulBelow _ (fun t ↦ rows.row s t)
   rw [hrow s]
   split_ifs
@@ -418,6 +420,7 @@ private theorem eq_bot_of_grade_one {X : Finset (Fin 2) × ℕ} (hX : X.2 = 1)
   have hd3 : d ≠ 3 ∧ d ≠ 4 := by
     constructor <;> rintro rfl <;> simp [cellGrade] at hgd
   have := (hl d hd).eq_bot (d := ⟨d, cells.mem_below_gradedIndex d⟩) (by
+    -- The diagonal entry of the row of `d` is `rowValue d d` (`rows`, by definition).
     change rowValue d d = ⊥
     unfold rowValue
     rw [ite_eq_right_iff.mpr (fun h ↦ absurd h hd3.1),
@@ -553,6 +556,7 @@ theorem exists_twin_label_ne_bot {α : Ordinal.{u}} (Q : StageType.{u} α 3) (hQ
   have hgi : ∀ i, Q'.toCellScheme.gradedIndex i = (univ, 2) →
       Q.toCellScheme.gradedIndex (φ i) = X := fun i hi ↦ by
     rw [← Q.toScheme.map_comap_gradedIndex Fin.castSuccEmb i]
+    -- `Q'` is the face of `Q` along `Fin.castSuccEmb`, by definition.
     change Prod.map (Finset.map Fin.castSuccEmb) id (Q'.toCellScheme.gradedIndex i) = X
     rw [hi]; rfl
   have hmem : ∀ i, Q'.toCellScheme.gradedIndex i = (univ, 2) →
@@ -625,8 +629,10 @@ theorem not_hasGatedPinnedExtensions (α : Ordinal.{u}) :
   let f : Fin 0 ↪ Fin 2 := ⟨Fin.elim0, fun a ↦ a.elim0⟩
   let g₁ : Fin 1 ↪ Fin 2 := ⟨fun _ ↦ 0, fun a b _ ↦ Subsingleton.elim a b⟩
   have hf : univ.map f ∈ (P α).toCellScheme.faces := by
+    -- The faces of `P α` are the interval plan of `univ` (`cells`, by definition).
     change _ ∈ Geometry.intervalPlan univ; decide +kernel
   have hg₁ : univ.map g₁ ∈ (P α).toCellScheme.faces := by
+    -- The faces of `P α` are the interval plan of `univ` (`cells`, by definition).
     change _ ∈ Geometry.intervalPlan univ; decide +kernel
   have hd : ((P α).comap g₁ hg₁).IsLegal := (isLegal_P α).comap g₁ hg₁
   have hdp : StageType.restrictFace Fin.castSuccEmb ((P α).comap g₁ hg₁) =
@@ -636,12 +642,14 @@ theorem not_hasGatedPinnedExtensions (α : Ordinal.{u}) :
     rw [this]; exact StageType.restrictFace_of_mem _ _ hf
   have hanc : (P α).IsAnchored (3 : Fin 5) ((P α).comap g₁ hg₁) := by
     refine StageType.isAnchored_of_forall_label_eq_bot_or_top _ _ fun j _ ↦ .inl ?_
+    -- The labels of the face are those of its cells in `P α` (`comap_label`).
     change (P α).label ((P α).cellMap g₁ j) = ⊥
     have hj := (P α).cellMap_mem g₁ j
     rw [Scheme.mem_visibleCells] at hj
     refine labelling_eq_bot_of_scope _ fun y hy ↦ ?_
     obtain ⟨i, hi⟩ := hj (mem_coe.mpr hy)
     rw [← hi]; exact mem_singleton_self _
+  -- The label of the cap `3` in `P α` is `labelling ⊤ ⊤ 3` (`P`, by definition).
   obtain ⟨E, -⟩ := hg (P α) f ((P α).comap f hf) ((P α).comap g₁ hg₁) (3 : Fin 5) (isLegal_P α)
     (StageType.restrictFace_of_mem _ _ hf) hd hdp rfl
     (by change labelling ⊤ ⊤ 3 ≠ ⊥; simp [labelling]) (by omega) hanc
@@ -659,7 +667,7 @@ variable {α : Ordinal.{u}} {F : Label.{u}}
 
 /-- The type on three points of `UnionFillCounterexample` below the full grade, labelled
 `labelling ⊤ F`. -/
-noncomputable def D₀ (α : Ordinal.{u}) (F : Label.{u}) (hF : IsSelfVisible 2 F)
+private noncomputable def D₀ (α : Ordinal.{u}) (F : Label.{u}) (hF : IsSelfVisible 2 F)
     (hFα : AtStage α F) : StageType.{u} α 3 where
   toScheme := S
   label := labelling ⊤ F
@@ -676,11 +684,11 @@ noncomputable def D₀ (α : Ordinal.{u}) (F : Label.{u}) (hF : IsSelfVisible 2 
 variable (hF : IsSelfVisible 2 F) (hFα : AtStage α F)
 
 /-- The display: `D₀` with the apex added. -/
-noncomputable def Q : StageType.{u} α 3 :=
+private noncomputable def Q : StageType.{u} α 3 :=
   (D₀ α F hF hFα).addApex isLegalBelowFullGrade_S (by omega)
 
 /-- The display is legal. -/
-theorem isLegal_Q : (Q hF hFα).IsLegal := StageType.isLegal_addApex _ _
+private theorem isLegal_Q : (Q hF hFα).IsLegal := StageType.isLegal_addApex _ _
 
 /-- The cells of the display below the apex, those of `D₀`. -/
 private noncomputable def oldCell (d : Fin 9) : Fin (Q hF hFα).card := Fin.castSucc d
@@ -711,6 +719,7 @@ private theorem label_oldCell (d : Fin 9) :
 
 private theorem cases_Q (i : Fin (Q hF hFα).card) :
     i = apexCell hF hFα ∨ ∃ d : Fin 9, i = oldCell hF hFα d := by
+  -- The cells of the display are those of `D₀` and the apex (`addApex`, by definition).
   change Fin ((D₀ α F hF hFα).toScheme.card + 1) at i
   induction i using Fin.lastCases with
   | last => exact .inl rfl
@@ -724,6 +733,7 @@ private theorem row_oldCell (s : Fin 9) (t : (Q hF hFα).toCellScheme.below
       if live s = true ∧ live d = true then rowValue else ⊥ := by
   obtain ⟨t, ht'⟩ := t
   subst ht
+  -- The rows of `addApex` at an old cell, unfolded (`Scheme.appendFullCell`, by definition).
   change (if hs : Fin.castSucc s = Fin.last _ then _ else _) = _
   exact (dite_eq_right_of_eq_false (eq_false (Fin.castSucc_ne_last s))).trans rfl
 
@@ -743,18 +753,19 @@ private theorem mem_faces_extendByLast :
   rw [univ_map_extendByLast_f, faces_Q]; decide +kernel
 
 /-- The private type: the face `{0, 1}` of the display. -/
-noncomputable def P : StageType.{u} α 2 :=
+private noncomputable def P : StageType.{u} α 2 :=
   (Q hF hFα).comap Fin.castSuccEmb (mem_faces_castSuccEmb hF hFα)
 
 /-- The donor: the face `{2}` of the display. -/
-noncomputable def d : StageType.{u} α 1 :=
+private noncomputable def d : StageType.{u} α 1 :=
   (Q hF hFα).comap (extendByLast emptyRoot) (mem_faces_extendByLast hF hFα)
 
 private theorem mem_faces_emptyRoot : univ.map emptyRoot ∈ (P hF hFα).toCellScheme.faces := by
   rw [P, map_univ_mem_comap_faces_iff, faces_Q]; decide +kernel
 
 /-- The type of the root, on no points. -/
-noncomputable def p : StageType.{u} α 0 := (P hF hFα).comap emptyRoot (mem_faces_emptyRoot hF hFα)
+private noncomputable def p : StageType.{u} α 0 :=
+  (P hF hFα).comap emptyRoot (mem_faces_emptyRoot hF hFα)
 
 private theorem restrictFace_P : restrictFace Fin.castSuccEmb (Q hF hFα) = some (P hF hFα) :=
   restrictFace_of_mem _ _ _
@@ -776,6 +787,7 @@ private theorem mem_visible_castSuccEmb (d : Fin 9) :
     oldCell hF hFα d ∈
         (Q hF hFα).toCellScheme.visible (Set.range (Fin.castSuccEmb : Fin 2 ↪ Fin 3)) ↔
       cellScope d ⊆ {0, 1} := by
+  -- Visibility is containment of the scope (`CellScheme.visible`, by definition).
   change ((Q hF hFα).toCellScheme.scope (oldCell hF hFα d) : Set (Fin 3)) ⊆ _ ↔ _
   rw [scope_oldCell]
   have : Set.range (Fin.castSuccEmb : Fin 2 ↪ Fin 3) =
@@ -789,6 +801,7 @@ private theorem eq_of_mem_visible_extendByLast (e : Fin (Q hF hFα).card)
     e = oldCell hF hFα 2 := by
   have hr : Set.range (extendByLast emptyRoot) = (({2} : Finset (Fin 3)) : Set (Fin 3)) := by
     rw [← univ_map_extendByLast_f]; simp
+  -- Visibility is containment of the scope (`CellScheme.visible`, by definition).
   change ((Q hF hFα).toCellScheme.scope e : Set (Fin 3)) ⊆ _ at he
   rw [hr, coe_subset] at he
   rcases cases_Q hF hFα e with rfl | ⟨d, rfl⟩
@@ -800,7 +813,7 @@ private theorem eq_of_mem_visible_extendByLast (e : Fin (Q hF hFα).card)
 
 /-- The gated extension of the private type over the empty root with the donor `{2}`: the gate is
 the cell at `(univ, 2)`, which has no twins, and the cap is the cell at `({0, 1}, 2)`. -/
-noncomputable def E (hF0 : F ≠ ⊥) : GatedExtension (P hF hFα) emptyRoot (d hF hFα) where
+private noncomputable def E (hF0 : F ≠ ⊥) : GatedExtension (P hF hFα) emptyRoot (d hF hFα) where
   display := Q hF hFα
   isLegal := isLegal_Q hF hFα
   restrictFace_castSuccEmb := restrictFace_P hF hFα
@@ -830,6 +843,7 @@ noncomputable def E (hF0 : F ≠ ⊥) : GatedExtension (P hF hFα) emptyRoot (d 
       reads := fun e he hnot ↦ by
         obtain rfl := eq_of_mem_visible_extendByLast hF hFα e he
         refine .top ⟨oldCell hF hFα 6, by
+            -- Membership below the gate compares graded indices (`CellScheme.below`).
             change (Q hF hFα).toCellScheme.gradedIndex (oldCell hF hFα 6) ≤
               (Q hF hFα).toCellScheme.gradedIndex (oldCell hF hFα 8)
             rw [gradedIndex_oldCell, gradedIndex_oldCell]
@@ -860,9 +874,10 @@ for every label `F ≠ ⊥` self-visible at `2` and at the stage `α`, there are
 of `P` of graded index `(univ, 2)` not labelled `⊥`, below which `d` is anchored, so that every
 hypothesis of the gated pinned extension property holds for them, and a gated extension of `P`
 over the empty root with donor `d` whose cap carries the label of `C` and whose gate has no
-twins.  Here `P` has a unique cell of graded index `(univ, 2)`; with two such cells ordered
-oppositely by lawful labellings in one cap ball, no gated extension exists
-(`GatedExtensionCounterexample.exists_twin_label_ne_bot`). -/
+twins.  Here `P` has a unique cell of graded index `(univ, 2)`.  The private type
+`GatedExtensionCounterexample.P α`, whose two such cells are ordered oppositely by two lawful
+labellings in the cap ball of its labelling at `2`, has no gated extension
+(`GatedExtensionCounterexample.isEmpty_gatedExtension`). -/
 theorem GatedExtension.instance_two_zero {α : Ordinal.{u}} {F : Label.{u}}
     (hF : IsSelfVisible 2 F) (hFα : AtStage α F) (hF0 : F ≠ ⊥) :
     ∃ (P : StageType.{u} α 2) (p : StageType.{u} α 0) (d : StageType.{u} α 1) (C : Fin P.card),
@@ -876,6 +891,7 @@ theorem GatedExtension.instance_two_zero {α : Ordinal.{u}} {F : Label.{u}}
     exact (mem_visible_castSuccEmb hF hFα 6).mpr (by decide)
   obtain ⟨C, hC⟩ := h6
   have hlab : (P hF hFα).label C = F := by
+    -- The labels of the face `P` are those of its cells in the display (`comap_label`).
     change (Q hF hFα).label ((Q hF hFα).cellMap Fin.castSuccEmb C) = F
     rw [hC, label_oldCell]; simp [UnionFillCounterexample.labelling,
       UnionFillCounterexample.live, UnionFillCounterexample.cellGrade]
@@ -885,23 +901,27 @@ theorem GatedExtension.instance_two_zero {α : Ordinal.{u}} {F : Label.{u}}
     ?_, by rw [hlab]; exact hF0, ?_, E hF hFα hF0, ?_, eq_gate_of_gradedIndex hF hFα hF0⟩
   · -- The cap has full scope and grade `2` in the private type.
     have hsc : (P hF hFα).toCellScheme.scope C = univ := by
+      -- The scope of a cell of `P` is the preimage of its scope in the display (`comap_scope`).
       change ((Q hF hFα).toCellScheme.scope ((Q hF hFα).cellMap Fin.castSuccEmb C)).preimage
         Fin.castSuccEmb (Fin.castSuccEmb.injective.injOn) = _
       rw [hC, scope_oldCell]
       ext x; fin_cases x <;> simp [UnionFillCounterexample.cellScope]
     have hgr : (P hF hFα).toCellScheme.grade C = 2 := by
+      -- A cell of `P` has its grade in the display (`comap_grade`).
       change (Q hF hFα).toCellScheme.grade ((Q hF hFα).cellMap Fin.castSuccEmb C) = 2
       rw [hC]; rfl
     exact Prod.ext hsc hgr
   · -- Every donor label is `⊤`.
     refine isAnchored_of_forall_label_eq_bot_or_top _ _ fun j _ ↦ .inr ?_
+    -- The labels of the donor are those of its cells in the display (`comap_label`).
     change (Q hF hFα).label ((Q hF hFα).cellMap (extendByLast emptyRoot) j) = ⊤
     have hj := (Q hF hFα).cellMap_mem (extendByLast emptyRoot) j
     rw [Scheme.mem_visibleCells] at hj
     rw [eq_of_mem_visible_extendByLast hF hFα _ hj, label_oldCell]
     simp [UnionFillCounterexample.labelling, UnionFillCounterexample.live,
       UnionFillCounterexample.cellGrade]
-  · change (Q hF hFα).label (oldCell hF hFα 6) = (P hF hFα).label C
+  · -- The cap of `E` is the old cell `6` of the display `Q` (`E`, by definition).
+    change (Q hF hFα).label (oldCell hF hFα 6) = (P hF hFα).label C
     rw [hlab, label_oldCell]
     simp [UnionFillCounterexample.labelling, UnionFillCounterexample.live,
       UnionFillCounterexample.cellGrade]

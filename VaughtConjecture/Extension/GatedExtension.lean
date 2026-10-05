@@ -50,17 +50,19 @@ cells whose scope contains its last point.
 `HasGatedPinnedExtensions` is a universal hypothesis, in the pattern of
 `StageType.HasCoatomExtensions`, and it is **false at every stage**
 (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`, in
-`VaughtConjecture.Extension.GatedExtensionCounterexample`).  A legal private type on two points
-with two cells of full scope and full grade, ordered oppositely by two lawful labellings in one
-cap ball, has no legal one-point extension whose twins are labelled `⊥`, whatever the face and the
-donor: the capped lifts that bountifulness asks for keep the twins at `⊥`, so availability makes
-the gate dominate both cells, and the one witness of the gate cannot read both orders.  The
-definition is kept to state that refutation.  The structure `GatedExtension` is inhabited, for a
-private type with a unique cell of full scope and full grade
-(`StageType.GatedExtension.instance_two_zero`), and the statements about a given gated extension,
-here and in `VaughtConjecture.Realization.GateRecovery`, stand.  A corrected gate predicate, for
-instance one in which every twin reads the gate as it reads the cap instead of being labelled
-`⊥`, is prospective.
+`VaughtConjecture.Extension.GatedExtensionCounterexample`).  The legal private type
+`GatedExtensionCounterexample.P α` on two points, with two cells of full scope and full grade
+ordered oppositely by two lawful labellings in the cap ball of its labelling at `2`, has no gated
+extension, whatever the face and the donor (`GatedExtensionCounterexample.isEmpty_gatedExtension`):
+in every legal one-point extension of it, every cell of graded index `(univ, 2)` has a twin not
+labelled `⊥` (`GatedExtensionCounterexample.exists_twin_label_ne_bot`).  The capped lifts that
+bountifulness asks for keep the twins at `⊥`, so availability makes the gate dominate both cells,
+and the one witness of the gate cannot read both orders.  The definition is kept to state that
+refutation.  The structure `GatedExtension` is inhabited, for a private type with a unique cell of
+full scope and full grade (`StageType.GatedExtension.instance_two_zero`), and the statements about
+a given gated extension, here and in `VaughtConjecture.Realization.GateRecovery`, stand.  A
+corrected gate predicate, for instance one in which every twin reads the gate as it reads the cap
+instead of being labelled `⊥`, is prospective.
 
 ## Placement
 
@@ -135,8 +137,9 @@ is a gated extension of `P` over `f` with donor `d` whose cap carries the label 
 This universal hypothesis is false at every stage
 (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`): it fails at `n = 2` over the empty
 root with a donor whose new cell is labelled `⊥`, for a private type with two cells of full scope
-and full grade ordered oppositely by two lawful labellings in one cap ball; the labels `⊥` of the
-twins of the gate are incompatible with the bountifulness of the display. -/
+and full grade ordered oppositely by two lawful labellings in the cap ball of its labelling at `2`
+(`GatedExtensionCounterexample.P α`); the labels `⊥` of the twins of the gate are incompatible
+with the bountifulness of the display. -/
 def HasGatedPinnedExtensions : Prop :=
   ∀ {n m : ℕ} (P : StageType.{u} α n) (f : Fin m ↪ Fin n) (p : StageType.{u} α m)
     (d : StageType.{u} α (m + 1)) (C : Fin P.card),
