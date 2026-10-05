@@ -153,10 +153,20 @@ counted as compiled.
    lawfulness of the candidate (`Realization.IsStablyLawful`), from the twin-free case or, at
    twins, item 2.
 6. **The attained least lift and structural successor leastness** (prospective).  One lift of a
-   stage type at a limit stage `β` to `β + ω`, least at every cell (each minimum is attained
-   separately: `StageType.exists_lift_label_eq_ofOffset`), with the ratchet and the threshold
-   characterization derived from it under that stage hypothesis; and the stable section at most
-   every coherent next-block assignment (`README.md`, Layer 3, 3.1, "The attained least lift";
-   Layer 4, "Status", output 2 refined).  Least, not unique: literal weakening is the greatest
-   lift, and a pointwise minimum of lifts need not be lawful.  Neither makes the candidate a model
-   (output 3, item 5 above).
+   legal stage type at a limit stage `β` to `β + ω`, least at every cell (each minimum is attained
+   separately: `StageType.exists_lift_label_eq_ofOffset`); the threshold forced by a cover is read
+   off that one lift, and the threshold characterization and the limit-stage monotonicity are
+   derived from it under that stage hypothesis; the least lift itself rests on the finite row
+   algebra and the lawful provisional lift only, not on that monotonicity.  The stable section at
+   most every coherent next-block assignment
+   (`README.md`, Layer 3, 3.1, "The attained least lift"; Layer 4, "Status", output 2 refined).
+   The structural successors of a consistent realization `R` (the consistent realizations at the
+   next block with reduct `R`) lie between the stable candidate, the least (covering used), and
+   literal weakening, the greatest; for a model the two are equal exactly when it is cover-hollow
+   (`Realization.IsCoverHollow`).  Least, not unique: literal weakening is the greatest lift, a
+   pointwise minimum of lifts need not be lawful, and the twin-ordering hypothesis stays refuted.
+   None of these makes the candidate a model (output 3, item 5 above), and none gives exact
+   lifting over a separately prescribed higher root.  Separate global routes: classical Fraïssé
+   existence, Scott isolation with countable-limit existence, terminal presentations, and global
+   termination (`README.md`, the section on the top-free witnesses, "Complementary global
+   routes"; `IMPLEMENTATION.md`, §4, statements 1–10 with their completion criteria).

@@ -380,59 +380,141 @@ separate named predicate whose stable-label fixedness holds for every realizatio
 with no hypothesis (`Realization.isCoverHollow_iff_forall_stableLabel_eq_top`); the equivalence of
 cover-hollowness with the original no-anchor predicate is still to be proved.
 
-**The finite lifting statements, organized around the attained least lift** (`README.md`,
-Layer 3, 3.1, "The attained least lift" and "Least, not unique"; Layer 4, "Status", outputs 2
-and 3; "Endpoints and shared foundations", "The finite lifting boundary").  Each statement with
-its hypotheses and marker.  Here `β` is the lower stage, `q` a stage type at `β`, and a lift of
-`q` a stage type at `β + ω` whose reduction to `β` is `q` (same scheme and rows).
+**The finite lifting statements, organized around the attained least lift** (`README.md`, Layer 3,
+3.1, "The attained least lift" and "Least, not unique"; Layer 4, "Status", outputs 2 and 3 and the
+structural successors; "Endpoints and shared foundations", "The finite lifting boundary").  These
+are roadmap targets related to items 1, 4, and 5 of `README.md`, "Manuscript correspondence
+(required)", not rows of the concordance: no statement of [Kni26] or [AFK26] is identified with
+them.  Each statement with its hypotheses and marker.  Here `β` is the lower stage, `q` a stage type
+at `β`, and a lift of `q` a stage type at `β + ω` whose reduction to `β` is `q` (same scheme and
+rows).
 
 1. *The attained least lift* (prospective).  Hypotheses: `β` a limit stage, the stage hypothesis
-   under which the statement is formulated, and a stage type `q` at `β`; any further hypothesis
-   its proof needs (legality of `q`, for instance) is recorded with it.  Conclusion: a lift `q₀`
-   of `q` with `q₀.label d ≤ Q.label d` for every lift `Q` of `q` and every cell `d`.  Compiled in
-   this repository (theorem named), cell by cell: each minimum is attained by some lift
-   (`StageType.exists_lift_label_eq_ofOffset`, for `β` zero or a limit).
-2. *The ratchet* (prospective in its derived form).  Hypotheses: those of 1.  Conclusion: along
-   extensions of rooted covers the least lifts increase on the face of the root, and the stable
-   label is the supremum of their offsets.  Compiled in this repository (theorem named), with
-   provisional offsets in place of least lifts: `StageType.provisionalOffset_le_trans_face`, and
-   the definitions `Realization.stableOffset` and `Realization.stableLabel`.  The unrestricted
-   forms, for an arbitrary second stage, `StageType.ForcesThreshold.trans_face` and
-   `StageType.provisionalOffset_le_trans_face`, are kept beside the derived form.
+   under which the statement is formulated, and a **legal** stage type `q` at `β`
+   (`StageType.IsLegal`), an explicit hypothesis: the availability law is existential, so the
+   cell-wise minima of the lifts of an arbitrary stage type need not be attained by one lawful
+   labelling.  Any further hypothesis its proof needs is recorded with it.  Conclusion: a lift `q₀`
+   of `q` with `q₀.label d ≤ Q.label d` for every lift `Q` of `q` and every cell `d`, one lawful
+   labelling attaining every minimum at once.  The threshold forced by a rooted cover is identified
+   by testing against this one lift, not by combining lifts chosen separately at the cells.
+   Compiled in this repository (theorem named), cell by cell: each minimum is attained by some lift
+   (`StageType.exists_lift_label_eq_ofOffset`, for `β` zero or a limit).  The statement validates no
+   ordering of twins fixed in advance: the twin-ordering hypothesis is refuted
+   (`Continuation.CandidateCounterexamples.not_twinOrdering_blockStage`, compiled in this repository
+   (theorem named)).
+2. *The limit-stage monotonicity* (prospective in its derived form; the monotonicity of thresholds
+   along extensions of rooted covers).  Hypotheses: those of 1.  Per-cover form (Layers 1–3,
+   `Stage/`): along extensions of rooted covers the least lifts increase on the face of the root.
+   Supremum form (Layer 4, `Continuation/Normalization`): the stable label is the supremum of the
+   offsets of the least lifts.  Compiled in this repository (theorem named), with provisional
+   offsets in place of least lifts: `StageType.ForcesThreshold.trans_face` and
+   `StageType.provisionalOffset_le_trans_face`, which are themselves the forms for an arbitrary
+   second stage (only `β` zero or a limit is assumed) and are kept as separate statements; the
+   supremum through the definitions `Realization.stableOffset` and `Realization.stableLabel`.
 3. *The threshold characterization* (prospective in its derived form).  Hypotheses: those of 1, a
-   rooted cover `(q, f)` of a root `p`, and a cell `d` labelled `⊤` in `p`.  Conclusion: `(q, f)`
-   forces `n` at `d` exactly when every lift is at least `β + n` there (the definition), exactly
-   when the least lift is.  Compiled in this repository (theorem named), with forcing in place of
-   the least lift: `StageType.ForcesThreshold`, `Realization.natCast_le_stableOffset_iff`.
-4. *Structural successor leastness* (the "least" property prospective).  Hypotheses: `R` an
-   exactly consistent covering realization at `λ_ξ`; a coherent competitor (a
+   rooted cover `(q, f)` of a root `p`, and a cell `d` labelled `⊤` in `p`.  Per-cover form (Layers
+   1–3): `(q, f)` forces `n` at `d` exactly when every lift is at least `β + n` there (the
+   definition), exactly when the least lift is.  Supremum form (Layer 4): `n` is at most the stable
+   offset exactly when the least lift of some rooted cover is at least `β + n` at `d`.  Compiled in
+   this repository (theorem named), with forcing in place of the least lift:
+   `StageType.ForcesThreshold` (`Stage/Threshold`) and `Realization.natCast_le_stableOffset_iff`
+   (`Continuation/Normalization`).
+4. *Structural successor leastness* (the "least" property prospective).  Hypotheses: `R` an exactly
+   consistent covering realization at `λ_ξ`; a coherent next-block assignment (a
    restriction-compatible labelling of `R` whose values are lifts to `λ_{ξ+1}`).  Conclusion: the
-   stable section is at most the competitor at every cell.  Compiled in this repository (theorem
-   named): the candidate with its literal reduct, legal types, covering, and exact consistency
-   (`Realization.stableCandidate`, `Continuation/Candidate`); soundness
-   (`Realization.Covers.le_label_of_forcesThreshold`), the domination for a competitor that is an
-   exactly consistent realization reducing to `R`.  Attainment (the candidate is lawful) from
-   exact consistency, covering, and legal types, with no receiving and no further clause of
-   modelhood (`Realization.isStablyLawful_of_hasLegalTypes`, `Realization.IsModel.isStablyLawful`):
-   under review, not yet merged.
-5. *Finite nonuniqueness* (prospective; a guard).  Hypotheses: `β` a nonzero limit stage and `q`
-   at `β`.  Conclusions: literal weakening, `q.castLE`, is the greatest lift (its ingredients
+   stable section is at most the assignment at every cell.  Compiled in this repository (theorem
+   named; `Realization.stableCandidate` is defined in this repository): the candidate with its
+   literal reduct, legal types, covering, and exact consistency (`Continuation/Candidate`);
+   soundness (`Realization.Covers.le_label_of_forcesThreshold`), the domination for an assignment
+   that is an exactly consistent realization reducing to `R`; and, conditional on finite-extension
+   receiving and `ForcingDonors`, the equality of such a realization with the candidate
+   (`Realization.label_eq_stableLabel`).  Attainment (the candidate is lawful) from exact
+   consistency, covering, and legal types, with no receiving and no further clause of modelhood
+   (`Realization.isStablyLawful_of_hasLegalTypes`, `Realization.IsModel.isStablyLawful`): under
+   review, not yet merged.
+5. *Finite nonuniqueness* (prospective; a caution).  Hypotheses: `β` zero or a limit and `q` at `β`.
+   Conclusions: literal weakening, `q.castLE`, is the greatest lift (its ingredients
    `StageType.reduce_castLE` and `StageType.reduce_self` are compiled in this repository (theorem
    named)); the lifts of `q` form a singleton exactly when `q.IsTopFree` (the lift capped at
-   `β + K`, `StageType.capLift`: under review, not yet merged).  A pointwise minimum of lifts need
-   not be lawful (the type of `Continuation.CandidateCounterexamples.not_twinOrdering_blockStage`;
-   informal, not compiled as a separate statement).  "Least lift" is never replaced by "unique
-   lift".
-6. *The continuation guard.*  Statements 1–4 do not make the candidate a model: (R4)
-   (`StableCappedReceiving`) and the coface instances at `λ_{ξ+1}`
-   (`StageType.HasNonemptyCofaceInstances`) remain the content of output 3, compiled from them as
-   `ContinuationCriterion.of_stableCappedReceiving`; all three are under review, not yet merged,
-   and the two hypotheses are still to be proved.
-7. *The dependency boundary.*  Statements 1–3 and 5, the recovery of labels at one stage, and the
-   composition of capped lifts (`CellScheme.Rows.CappedLift.trans`) belong to layers 1–3, whose
-   modules import no module of `Continuation/` or `Expansion/`; statement 4 and the guard 6
-   belong to layer 4 and import them.  The stage hypothesis of 1 is a hypothesis of every
-   statement derived from it.
+   `β + K`, `StageType.capLift`: under review, not yet merged); so the least lift, where it exists,
+   and the greatest agree exactly when `q` is top-free.  These belong to Layers 1–3 (`Stage/`).  A
+   pointwise minimum of lifts need not be lawful (the type of
+   `Continuation.CandidateCounterexamples.not_twinOrdering_blockStage`; informal, not compiled as a
+   separate statement; [Kni26, Lemma 2.5.11] is not relied on, `README.md`, Layer 1); this negative
+   special case is to be compiled in `Continuation/CandidateCounterexamples` (Layer 4), whose scheme
+   comes from `Extension/SmallArityExamples`.  "Least lift" is never replaced by "unique lift".
+6. *The separation of leastness from modelhood.*  Statements 1–5, 8, and 9 do not make the candidate
+   a model: receiving, (R1)–(R4), stays its own statement; (R4) (`StableCappedReceiving`) and the
+   coface instances at `λ_{ξ+1}` (`StageType.HasNonemptyCofaceInstances`) remain the content of
+   output 3, compiled from them as `ContinuationCriterion.of_stableCappedReceiving`; all three are
+   under review, not yet merged, and the two hypotheses are still to be proved.  Exact lifting over
+   a separately prescribed higher root (`Seed.TwoFaceLift`, a definition compiled in this
+   repository, and `StageType.HasApexCoatomExtensions`) still needs its own proof; leastness alone
+   does not give it.  `ContinuationCriterion` (`Continuation/Classification`) stays a hypothesis of
+   the count, still to be proved.
+7. *The dependency order.*  (i) The finite row algebra and the arithmetic of visibility; (ii) the
+   lawful provisional lift and the finite recovery of labels in a band; (iii) the attained finite
+   leastness (statement 1) and the gap between the least and the greatest lift (statement 5); (iv)
+   the consequences at limit stages and the observations on rooted covers: the per-cover forms of 2
+   and 3; (v) the stable candidate and its leastness: the supremum forms of 2 and 3, and statements
+   4 and 8; (vi) continuation and terminal classification, separately: statements 6 and 9 and output
+   3.  Statement 1 depends on (i) and (ii) only, not on the limit-stage monotonicity.  Steps
+   (i)–(iv), with the composition of capped lifts (`CellScheme.Rows.CappedLift.trans`), belong to
+   Layers 1–3, whose modules import no module of `Continuation/` or `Expansion/`; steps (v) and (vi)
+   and the negative special case of statement 5 belong to Layer 4 and import them.  The stage
+   hypothesis of 1 is a hypothesis of every statement derived from it.
+8. *The least and the greatest structural successor* (prospective; Layer 4).  Hypotheses: `R` a
+   consistent realization at `λ_ξ`, and, for the least, covering as well; no countability and no
+   nonempty carrier.  A structural successor of `R` is a consistent realization at `λ_{ξ+1}` whose
+   reduct to `λ_ξ` is `R`.  Conclusions: literal weakening (`StageType.castLE` on each type, `⊤`
+   kept) is a structural successor and the greatest, from consistency alone; the stable candidate
+   (`Realization.stableCandidate`, defined in this repository), where it is lawful, is the least;
+   each is one coherent realization, extremal at all coordinates at once, and every structural
+   successor lies between them.  Not claimed: the lawfulness of a labelling between them, or closure
+   under pointwise minima.  The rows stay fixed: stage projection changes the labels only, and any
+   other representation of the rows is used only through a transport checked to preserve lawfulness,
+   cells, faces, and reduction.
+9. *Cover-hollowness as the equality of the two* (prospective; Layer 4).  Hypotheses: `R` a model at
+   `λ_ξ`.  Conclusions: the least and the greatest structural successor of `R` are equal exactly
+   when `R.IsCoverHollow` (through `Realization.isCoverHollow_iff_forall_stableLabel_eq_top`,
+   compiled in this repository (theorem named)); then the structural successors form a subsingleton,
+   and each is the stable candidate.  Not a continuation theorem: a structural successor need not be
+   a model, and the uniqueness supplies no expansion; for a model that is not cover-hollow the two
+   differ, with no conflict with the uniqueness of model expansions.  Stated for models only, with
+   cover-hollowness, not hollowness in the sense of `SEMANTIC_CONTRACT.md`, item 8.
+10. *Complementary global routes* (`README.md`, the section on the top-free witnesses,
+    "Complementary global routes").  Separate statements with their own hypotheses, none derived
+    from statements 1–9: classical Fraïssé existence for terminal examples at one level (the
+    top-free witnesses); Scott isolation with countable-limit existence for maximal presentations of
+    a prescribed base (concordance rows 40 and 31–36); terminal presentations for countability;
+    global termination as a companion route (`COMPANIONS.md`).
+
+**Completion criteria of the finite lifting statements.**  Each statement above is complete on its
+own criterion, with its stage hypothesis stated, and none is complete because another is.
+
+1. *The attained least lift* (statement 1): the statement compiled for legal stage types at a limit
+   stage, with the lifts at the next block stage on the unchanged scheme and rows, and the literal
+   reduct equation (the reduction of `q₀` to `β` is `q`); the per-cover forms of 2 and 3 derived
+   from it in Layers 1–3 and the supremum forms in Layer 4, each with that stage hypothesis; the
+   forms for an arbitrary second stage kept; no pointwise minimum of chosen lifts used.
+2. *Structural successor leastness* (statement 4): the "least" property compiled for coherent
+   next-block assignments; attainment from exact consistency, covering, and legal types, with no
+   receiving and no further clause of modelhood; the case of an assignment that is a realization
+   reducing to `R` derived from soundness.
+3. *Least, not unique* (statement 5): literal weakening the greatest lift; the singleton criterion
+   for `β` zero or a limit; the pointwise minimum on the twin-ordering type compiled as a negative
+   special case in `Continuation/`.
+4. *The separation of leastness from modelhood* (statement 6): a separate continuation proof for
+   modelhood, output 3 compiled from (R4) and the coface instances at the next block, with the
+   lawfulness, leastness, and uniqueness of the candidate not used in place of either.
+5. *The structural successors* (statements 8 and 9): literal root and reduct equations for lifting,
+   the reduct of each structural successor equal to `R` as an equation of realizations, literal
+   weakening included (`StageType.reduce_castLE` on each type), and the face of its value at a
+   rooted cover along the root equal to its value at the root, literally; the equivalence of 9 for
+   models only.
+6. *Complementary global routes* (statement 10): for classical reconstruction, a round trip on the
+   given carrier (the literal round trip of the acceptance criterion of finite-age reconstruction,
+   `README.md`, on the carrier of the limit itself); each route on its own hypotheses.
 
 ### 5. Unique expansions, domains, and the main theorem
 
@@ -962,10 +1044,6 @@ declarations listed in the notes.
 | 38 | [AFK26] | terminal refinement of a higher presentation (item 5; no numbered statement) | S |
 | 39 | [AFK26] | exactly one expansion over a domain (item 5; no numbered statement) | S |
 | 40 | [AFK26] | maximal presentations by Scott isolation (item 5; no numbered statement) | S |
-| 41 | [Kni26] | the least lift of a stage type to the next block (no numbered statement) | S |
-| 42 | [Kni26] | the stable candidate as the least assignment (no numbered statement) | S |
-| 43 | [Kni26] | finite lifts are least, not unique (no numbered statement) | S |
-| 44 | [Kni26] | the stable candidate as a model, apart from leastness (no numbered statement) | S |
 
 The items are those of `README.md`, "Manuscript correspondence (required)".  Notes to the rows:
 
@@ -1201,28 +1279,6 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     route proves stopping for each base that is a model as its conclusion and assumes no
     termination; it is not a dependency of the expansion-domain endpoint and is not combined with
     the conditional of row 31 in a cycle.
-41. Prospective: no declaration states the attained least lift (`README.md`, Layer 3, 3.1, "The
-    attained least lift"; section 4 above, statement 1), at a limit stage.  Compiled in this
-    repository (theorem named), cell by cell: `StageType.exists_lift_label_eq_ofOffset`, with
-    `StageType.ForcesThreshold` and `StageType.provisionalOffset` (`Stage/Threshold`).  Related to
-    item 1 (the lifts are on the unchanged scheme and rows), not one of its rows.
-42. Prospective as the "least" property (section 4 above, statement 4).  Compiled in this
-    repository (theorem named): `Realization.stableCandidate` (`Continuation/Candidate`) and
-    soundness, `Realization.Covers.le_label_of_forcesThreshold`; conditional on finite-extension
-    receiving and `ForcingDonors`, `Realization.label_eq_stableLabel`
-    (`Continuation/Normalization`).  The lawfulness of the candidate for every model,
-    `Realization.IsModel.isStablyLawful`: under review, not yet merged.  Related to item 4, not
-    one of its rows.
-43. Prospective (section 4 above, statement 5): literal weakening (`StageType.castLE`) the
-    greatest lift, and the singleton criterion by `StageType.IsTopFree`.  The pointwise minimum
-    on the type of `Continuation.CandidateCounterexamples.not_twinOrdering_blockStage` is not
-    lawful (informal; not compiled as a separate statement); [Kni26, Lemma 2.5.11] is not relied
-    on (`README.md`, layer 1).  Related to items 1 and 5, not one of their rows.
-44. `ContinuationCriterion` (`Continuation/Classification`), a hypothesis of the count, still to
-    be proved; its composition from (R4) and the coface instances at the next block,
-    `ContinuationCriterion.of_stableCappedReceiving`: under review, not yet merged.  The guard of
-    section 4 above, statement 6: lawfulness and leastness of the candidate are not modelhood.
-    Related to item 5, not one of its rows.
 
 **Completion criteria, item by item** (the items of `README.md`, "Manuscript correspondence
 (required)").  For every item, each row of the concordance that it concerns is P or C, with its
@@ -1389,26 +1445,6 @@ named, and none is complete because another is.
    (terminal collision and the injectivity of model reduction, then 5 ⇒ 1 of row 34), with no
    further stabilization argument and with no stopping proof using it; neither stopping proof a
    dependency of the expansion-domain endpoint.
-
-**Completion criteria of the finite lifting statements** (`README.md`, Layer 3, 3.1, "The
-attained least lift" and "Least, not unique"; Layer 4, "Status", outputs 2 and 3; rows 41–44,
-each still to be proved).  Each row becomes P or C, with its source named, only after its
-statement is compiled as follows; each is complete on its own criterion, with its stage
-hypothesis stated, and none is complete because another is.
-
-1. *The attained least lift* (row 41): the statement compiled at a limit stage, with the lifts at
-   the next block stage on the unchanged scheme and rows; the ratchet and the threshold
-   characterization derived from it, each with that stage hypothesis; the unrestricted forms of
-   the ratchet kept; no pointwise minimum of chosen lifts used.
-2. *Structural successor leastness* (row 42): the "least" property compiled for coherent
-   competitors; attainment from exact consistency, covering, and legal types, with no receiving
-   and no further clause of modelhood; the case of a competitor that is a realization reducing to
-   `R` derived from soundness.
-3. *Least, not unique* (row 43): literal weakening the greatest lift; the singleton criterion
-   above a nonzero limit stage; the pointwise minimum on the twin-ordering type compiled as a
-   negative special case.
-4. *The continuation guard* (row 44): output 3 compiled from (R4) and the coface instances at the
-   next block, with the lawfulness and leastness of the candidate not used in place of either.
 
 The five acceptance criteria of `README.md` ("Acceptance criteria of the correspondence") apply to
 every item: reconstruction, density, finite objects, rank budgets, and priorities.
