@@ -107,10 +107,11 @@ holds; for the seed of the failure of `2FL(2)` above it holds by deadness
 
 What stays open is whether `2FL∃(j)` holds for every seed at the grades `2 ≤ j < m`; the next case
 to decide is a seed whose two coatom types differ but share a face, with a row coupling the cell
-of the common face to cells of lower grade on one side only, together with the strip case.  For a
-two-face lift `2FL(2)` holding for every seed, the identified obstruction, the strip case, survives
-the redesigns examined (of the encoding, of the alignment, and of an owner seeing both faces); the
-existential form chooses `w_D` instead.  The coatom extension properties
+of the common face to cells of lower grade on one side only, together with the strip case.  A
+redesign of the layers under which a two-face lift at the grade `2` would hold for every seed is
+not pursued: the identified obstruction, the strip case, survives the redesigns examined (of the
+encoding, of the alignment, and of an owner seeing both faces); the existential form chooses `w_D`
+instead.  The coatom extension properties
 `StageType.HasApexCoatomExtensions` and `StageType.HasCoatomExtensions` at the stages that are zero
 or a limit quantify over the seeds of every arity
 (`StageType.HasApexCoatomExtensions.of_completionBelowFullGrade`); they remain to be proved, and
