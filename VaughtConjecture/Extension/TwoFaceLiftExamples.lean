@@ -57,7 +57,7 @@ universe u
 namespace VaughtConjecture.TwoFaceLiftExamples
 
 open Finset Label CellScheme
-open TowerExamples (Q)
+open TowerExamples (Q Q_le_Q_iff isSelfVisible_Q)
 
 /-! ### The ambient as its own extension -/
 
@@ -251,19 +251,6 @@ theorem isLawfulBelow_twoFaceLabelling {I : Seed.{u} α 2} (hIL : I.left = T α)
     exact isLawfulBelow_coatom hAR hF hFR (hIR ▸ I.restrictFace_right)
       (twoFaceLabelling_right AL AR F)
 
-section Labels
-
-open Ordinal
-
-private theorem Q_le_Q_iff {b b' f f' : ℕ} : Q.{u} b f ≤ Q b' f' ↔ b < b' ∨ b = b' ∧ f ≤ f' := by
-  rw [Q, Q, WithBot.coe_le_coe, WithTop.coe_le_coe, omega0_mul_add_natCast_le_iff, Nat.cast_lt,
-    Nat.cast_inj]
-
-private theorem isSelfVisible_Q {k b f : ℕ} : IsSelfVisible k (Q.{u} b f) ↔ k ≤ f := by
-  rw [Q, isSelfVisible_coe, omega0_mul_add_natCast_mod, Nat.cast_le]
-
-end Labels
-
 /-- **Exactness above the cap on both faces.**  On a seed on four points whose two coatom types are
 `T` (such as `seed α`, on which the union fill fails), take the prescription
 `twoFaceLabelling (ω + 1) (ω * 2 + 1) 2`, lawful below both coatoms at the grade `2`, the cap `2`,
@@ -303,102 +290,24 @@ theorem exists_twoFaceLift_exact {I : Seed.{u} α 2} (hIL : I.left = T α) (hIR 
 /-- **The hypotheses of `exists_twoFaceLift_exact` are met**: on a seed on four points whose two
 coatom types are `T`, some catalogue entry of the layer at the grade `2` agrees with the
 prescription `twoFaceLabelling (ω + 1) (ω * 2 + 1) 2` capped at `2` at the old cells of grade at
-most `2`.  The prescription, lawful below both coatoms, is extended through the layer at the
-grade `1` (`Seed.exists_isLawfulBelow_tower`), glued with its old cells of grade `2`, spliced with
-`⊥` above the grade `2`, and orbit-coded at `2`; capped at `2`, the orbit code keeps every value
-(`min_orbitCode_gridPoint_zero`). -/
+most `2`.  The prescription, lawful below both coatoms, is read by a catalogue entry
+(`Seed.exists_orbitCode_mem_catalogue_two`: extended through the layer at the grade `1`, glued with
+its old cells of grade `2`, spliced with `⊥` above the grade `2`, and orbit-coded at `2`); capped
+at `2`, the orbit code keeps every value (`min_orbitCode_gridPoint_zero`). -/
 theorem exists_entry {I : Seed.{u} α 2} (hIL : I.left = T α) (hIR : I.right = T α) :
     ∃ a ∈ (I.tower 1).catalogue (1 + 1), ∀ d, I.amalgam.toCellScheme.grade d ≤ 2 →
       min (twoFaceLabelling (Q 1 1) (Q 2 1) (Q 0 2) (I.amalgam.toCellScheme.gradedIndex d))
         (Q 0 2) = min (a (I.towerEmbed 1 d)) (Q 0 2) := by
-  classical
   set w : Fin I.amalgam.card → Label.{u} := fun d ↦
     twoFaceLabelling (Q 1 1) (Q 2 1) (Q 0 2) (I.amalgam.toCellScheme.gradedIndex d)
   have hlt (b : ℕ) (hb : 0 < b) : Q.{u} 0 2 ≤ Q b 1 := Q_le_Q_iff.mpr (.inl hb)
   obtain ⟨hwC, hwD⟩ := isLawfulBelow_twoFaceLabelling hIL hIR
     (isSelfVisible_Q.mpr le_rfl) (isSelfVisible_Q.mpr le_rfl) (isSelfVisible_Q.mpr le_rfl)
     (hlt 1 one_pos) (hlt 2 two_pos)
-  have hcov (d : Fin I.amalgam.card) :
-      I.amalgam.toCellScheme.scope d ⊆ univ.erase (Fin.last 3) ∨
-        I.amalgam.toCellScheme.scope d ⊆ univ.erase (Fin.castSucc (Fin.last 2)) :=
-    I.subset_or_subset _ (I.amalgam.isWellFormed.isWellFormed.scope_mem d) (I.scope_ne_univ d)
-  have hwC1 : I.amalgam.rows.IsLawfulBelow (univ.erase (Fin.last 3), 1) fun d ↦ w d :=
-    hwC.mono (X := (univ.erase (Fin.last 3), 1)) ⟨subset_rfl, by omega⟩
-  have hwD1 : I.amalgam.rows.IsLawfulBelow (univ.erase (Fin.castSucc (Fin.last 2)), 1)
-      fun d ↦ w d :=
-    hwD.mono (X := (univ.erase (Fin.castSucc (Fin.last 2)), 1)) ⟨subset_rfl, by omega⟩
-  obtain ⟨r₁, hr₁, hr₁w⟩ := I.exists_isLawfulBelow_tower (w := w) hcov 1 hwC1 hwD1
-  set W : Fin (I.tower 1).card → Label.{u} := Function.extend (I.towerEmbed 1) w (fun _ ↦ ⊥)
-  have hWe (d : Fin I.amalgam.card) : W (I.towerEmbed 1 d) = w d :=
-    (I.towerEmbed 1).injective.extend_apply _ _ _
-  set g : Fin (I.tower 1).card → Label.{u} := fun e ↦
-    if he : e ∈ (I.tower 1).toCellScheme.below (univ, 1) then r₁ ⟨e, he⟩ else W e
-  have hne (z : Fin 4) : (Finset.univ : Finset (Fin 4)).erase z ≠ Finset.univ :=
-    (erase_ssubset (mem_univ z)).ne
-  -- `g` is `w` on the old cells of grade at most `2`.
-  have hgold (d : Fin I.amalgam.card) (hd : I.amalgam.toCellScheme.grade d ≤ 2) :
-      g (I.towerEmbed 1 d) = w d := by
-    by_cases he : I.towerEmbed 1 d ∈ (I.tower 1).toCellScheme.below (univ, 1)
-    · simp only [g, dite_eq_left he]
-      exact hr₁w d (I.towerEmbed_mem_below_iff.mp he).2
-    · simp only [g, dite_eq_right he]
-      exact hWe d
-  have hgb (e : Fin (I.tower 1).card)
-      (he : e ∈ (I.tower 1).toCellScheme.below (univ.erase (Fin.last 3), 2) ∨
-        e ∈ (I.tower 1).toCellScheme.below (univ.erase (Fin.castSucc (Fin.last 2)), 2)) :
-      g e = W e := by
-    have hsc : (I.tower 1).toCellScheme.scope e ≠ univ := fun hu ↦ he.elim
-      (fun h' ↦ hne _ (univ_subset_iff.mp (hu.ge.trans h'.1)))
-      fun h' ↦ hne _ (univ_subset_iff.mp (hu.ge.trans h'.1))
-    obtain ⟨d, rfl⟩ := I.mem_range_towerEmbed 1 e hsc
-    have hd : I.amalgam.toCellScheme.grade d ≤ 2 :=
-      he.elim (fun h ↦ (I.towerEmbed_mem_below_iff.mp h).2)
-        fun h ↦ (I.towerEmbed_mem_below_iff.mp h).2
-    rw [hgold d hd, hWe]
-  -- An old cell below `(univ, 2)` lies below one of the coatoms at the grade `2`.
-  have hold (d : Fin I.amalgam.card)
-      (he : I.towerEmbed 1 d ∈ (I.tower 1).toCellScheme.below (univ, 2)) :
-      I.towerEmbed 1 d ∈ (I.tower 1).toCellScheme.below (univ.erase (Fin.last 3), 2) ∨
-        I.towerEmbed 1 d ∈ (I.tower 1).toCellScheme.below (univ, 1) ∨
-        I.towerEmbed 1 d ∈
-          (I.tower 1).toCellScheme.below (univ.erase (Fin.castSucc (Fin.last 2)), 2) := by
-    have hd : I.amalgam.toCellScheme.grade d ≤ 2 := (I.towerEmbed_mem_below_iff.mp he).2
-    rcases hcov d with h | h
-    · exact .inl (I.towerEmbed_mem_below_iff.mpr ⟨h, hd⟩)
-    · exact .inr (.inr (I.towerEmbed_mem_below_iff.mpr ⟨h, hd⟩))
-  have hglaw : (I.tower 1).rows.IsLawfulBelow (univ, 2) fun e ↦ g e := by
-    refine Rows.IsLawfulBelow.glue₃ (U := (univ.erase (Fin.last 3), 2)) (V := (univ, 1))
-      (W := (univ.erase (Fin.castSucc (Fin.last 2)), 2)) ?_ ?_ ?_ ?_
-    · have : (I.tower 1).rows.IsLawfulBelow (univ.erase (Fin.last 3), 2) fun e ↦ W e := by
-        rw [I.isLawfulBelow_tower_iff (hne _)]
-        simpa only [hWe] using hwC
-      convert this using 1
-      exact funext fun e ↦ hgb e (.inl e.2)
-    · convert hr₁ using 1
-      exact funext fun e ↦ by simp only [g, dite_eq_left e.2]
-    · have : (I.tower 1).rows.IsLawfulBelow (univ.erase (Fin.castSucc (Fin.last 2)), 2)
-          fun e ↦ W e := by
-        rw [I.isLawfulBelow_tower_iff (hne _)]
-        simpa only [hWe] using hwD
-      convert this using 1
-      exact funext fun e ↦ hgb e (.inr e.2)
-    · intro e he
-      rcases I.tower_grade_le_or 1 e with h1 | hsc
-      · by_cases hsu : (I.tower 1).toCellScheme.scope e = univ
-        · exact .inr (.inl ⟨hsu ▸ subset_rfl, h1⟩)
-        · obtain ⟨d, rfl⟩ := I.mem_range_towerEmbed 1 e hsu
-          exact hold d he
-      · obtain ⟨d, rfl⟩ := I.mem_range_towerEmbed 1 e hsc
-        exact hold d he
-  have hmem : orbitCode 2 ((I.tower 1).toCellScheme.splice 2 (fun _ ↦ ⊥) g) ∈
-      (I.tower 1).catalogue 2 :=
-    Scheme.orbitCode_splice_bot_mem_catalogue (S := I.tower 1) (k := 2) (p := g) hglaw
+  obtain ⟨t, hmem, ht⟩ := I.exists_orbitCode_mem_catalogue_two (w := w) hwC hwD
   refine ⟨_, hmem, fun d hd ↦ ?_⟩
-  have h0 := min_orbitCode_gridPoint_zero (k := 2)
-    (w := (I.tower 1).toCellScheme.splice 2 (fun _ ↦ ⊥) g) (I.towerEmbed 1 d)
-  have hsp : (I.tower 1).toCellScheme.splice 2 (fun _ ↦ ⊥) g (I.towerEmbed 1 d) = w d := by
-    rw [CellScheme.splice_of_le (by rw [Seed.grade_towerEmbed]; exact hd), hgold d hd]
-  rw [hsp] at h0
+  have h0 := min_orbitCode_gridPoint_zero (k := 2) (w := t) (I.towerEmbed 1 d)
+  rw [ht d hd] at h0
   exact h0.symm
 
 end UnionFillSeed
