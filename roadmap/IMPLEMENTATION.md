@@ -866,8 +866,11 @@ becomes C only when the correction is recorded.  Rows 2–5 and 43 are P, by the
 identifications of `VaughtConjecture/Correspondence` named in their notes.  Row 6 is S:
 `IsBountiful` is the printed definition required at every stage that is zero or a limit (note 6),
 and at `ω₁` only the implication from `IsBountiful` is proved.  Rows 41–47 concern the legal
-templates of the current draft of [AFK26] and cite its current numbering (its §4, "The
-Counterexample"), not the earlier numbering of rows 9 and 10.  The other rows whose declaration
+templates of the current draft of [AFK26] and cite its numbering (its §4, "The Counterexample");
+rows 9 and 10 cite the numbering of their own notes.  Rows 43–47 read the row system of a template
+as the fixed semantic rows of a scheme, not as the coherent local rows of row 9 (note 43); row 43
+identifies lawful labellings, and does not make the legal schemes here the legal templates of
+[AFK26] (note 45).  The other rows whose declaration
 carries the manuscript's number but whose clauses have not been compared are S, with the compiled
 declarations listed in the notes.
 
@@ -1247,63 +1250,100 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     `CellScheme.Rows.printedLawfulLocal_iff`, at every stage that is zero or a limit, and
     `CellScheme.Rows.printedLawfulLocal_omega_one_iff`, on the printed labels
     (`Correspondence/Current/LocalLabelling`), compiled in this repository (theorem named); the
-    clauses are the fields of `CellScheme.Rows.PrintedLawfulLocal`.  Departures: the cell `e'` of
-    Availability ranges over `D` but is read in `D↓U` (`CellScheme.mem_below_of_gradedIndex_eq`);
-    `D↓d` is computed in `D` (transported along a bijection in the proof of the identification);
-    the range of the labels, as in row 3.  The notions the clauses use: self-visibility (row 41, C),
-    the relation `⇒` (row 42, C), and the frame, row system, graded faces, and cells below a graded
-    face of [AFK26, Definitions 4.2 and 4.4–4.6], which are the cell scheme with its rows (the
-    templates of row 9, C), `CellScheme.below`, and the printed graded faces
+    clauses are the fields of `CellScheme.Rows.PrintedLawfulLocal`.  *The reading* (rows 43–47):
+    the row system `Σ` of a template is the fixed semantic rows `R : D.Rows` of a cell scheme.
+    This is not the representation of item 1 and row 9, in which a labelling `p` is represented
+    by its coherent local rows `min(p(e), p(d))`; the two readings make different objects legal
+    (under the coherent-rows reading clause 4 of Definition 4.27 would forbid `⊤` and labels
+    `≥ ω ^ 2` in `p`, note 45), and which one [AFK26] intends is part of the fidelity question of
+    item 1.  The identification holds for every row system, so the status P does not depend on
+    the reading.  Departures: the cell `e'` of Availability ranges over `D` but is read in `D↓U`
+    (`CellScheme.mem_below_of_gradedIndex_eq`); `D↓d` is computed in `D` (transported along a
+    bijection in the proof of the identification); the range of the labels, as in row 3.  The
+    notions the clauses use: self-visibility (row 41, C), the relation `⇒` (row 42, C), and the
+    frame, row system, graded faces, and cells below a graded face of [AFK26, Definitions 4.2 and
+    4.4–4.6], transcribed literally (the frame is the gradings of a `CellScheme`, the row system
+    is `D.Rows`), with `CellScheme.below` and the printed graded faces
     `CellScheme.printedGradedFaces` (grade `0` allowed; `CellScheme.mem_printedGradedFaces_iff`;
     lawfulness is defined below every pair).  The definition of [Kni26] (row 4) is the same
     lawfulness (`CellScheme.Rows.printedLawfulLocal_iff_printedRespects`, compiled in this
     repository (theorem named)).
-44. `CellScheme.Rows.IsBountiful` (`Scheme/Bountiful`); status S.  The clauses are the fields of
-    `CellScheme.Rows.PrintedBallHypotheses`, with the ball `CellScheme.Rows.printedBall` and the
-    definition `CellScheme.Rows.PrintedBountifulRows` (`Correspondence/Current/Bountiful`).
-    Compiled in this repository (theorem named), for finitely many cells with graded index in the
-    graded plan: `IsBountiful` is the printed definition at every stage that is zero or a limit
-    and carries the values of the rows, together with the extension of every labelling lawful
-    below a graded face to one lawful below every larger graded face (the cap `-∞`)
-    (`CellScheme.Rows.isBountiful_iff_forall_printedBountifulRows`); `IsBountiful` implies the
-    printed definition at each such stage (`CellScheme.Rows.IsBountiful.printedBountifulRows`), in
-    particular at `ω₁` (`CellScheme.Rows.IsBountiful.printedBountifulRows_omega_one`).  Not proved:
-    the converse at a single stage (as in row 6), and the cap `-∞`, which the printed definition
-    omits (`γ ∈ ω₁`) and [Kni26, Definition 2.5.14] includes (clause 4).  Harmless by named
-    theorems: the printed graded faces of grade `0`
-    (`CellScheme.Rows.printedBountifulRows_iff_gradedFaces`) and the cap `∞` (in the proof of the
+44. `CellScheme.Rows.IsBountiful` (`Scheme/Bountiful`); status S.  The rows are read as in
+    note 43.  The clauses are the fields of `CellScheme.Rows.PrintedBallHypotheses`, with the ball
+    `CellScheme.Rows.printedBall` and the definition `CellScheme.Rows.PrintedBountifulRows`
+    (`Correspondence/Current/Bountiful`).  Compiled in this repository (theorem named), for
+    finitely many cells with graded index in the graded plan: `IsBountiful` is the printed
+    definition at every stage that is zero or a limit and carries the values of the rows,
+    together with the extension of every labelling lawful below a graded face to one lawful below
+    every larger graded face (the cap `-∞`)
+    (`CellScheme.Rows.isBountiful_iff_forall_printedBountifulRows_and_capBot`); `IsBountiful`
+    implies the printed definition at each such stage
+    (`CellScheme.Rows.IsBountiful.printedBountifulRows`), in particular at `ω₁`
+    (`CellScheme.Rows.IsBountiful.printedBountifulRows_omega_one`).  Not proved: the converse at a
+    single stage (as in row 6), and the cap `-∞`, which the printed definition omits (`γ ∈ ω₁`)
+    and [Kni26, Definition 2.5.14] includes (clause 4).  Harmless by named theorems, when every
+    cell has a graded face of positive grade (the hypothesis `hD`; clause 1 of Definition 4.27
+    instead asks for cells of grade `0`, note 45): the printed graded faces of grade `0`
+    (`CellScheme.Rows.printedBountifulRows_iff_gradedFaces`); and the cap `∞` (in the proof of the
     characterization).  The two printed definitions are related by
-    `CellScheme.Rows.forall_printedBountiful_iff_forall_printedBountifulRows`, compiled in this
-    repository (theorem named).
+    `CellScheme.Rows.forall_printedBountiful_iff_forall_printedBountifulRows_and_capBot`, compiled
+    in this repository (theorem named).
 45. `Scheme.IsLegal` with `Scheme.IsCoded` (`Stage/Legal`, `Stage/Scheme`; row 7); the printed
     definition `CellScheme.Rows.PrintedLegal`, the corrected one `CellScheme.Rows.CorrectedLegal`
-    (`Correspondence/Current/LegalTemplate`).  Clause 1 (C): a printed graded face may have grade
-    `0`, and clause 1 then fails for every frame whose cells have positive grade
-    (`CellScheme.Rows.not_printedLegal`, compiled in this repository (theorem named)); it is
-    corrected to the graded faces of positive grade of [Kni26, Definition 2.1.8], that is to
-    `CellScheme.IsComplete`.  Clause 2 is consistency (row 43), clause 3 is row 44 (S).  Clause 4
-    (`CellScheme.Rows.HasPrintedRange`) is strictly stronger than `Scheme.IsCoded`
-    (`CellScheme.Rows.HasPrintedRange.row_lt`; a legal scheme violating it,
-    `Scheme.exists_isLegal_not_hasPrintedRange`), so the legal schemes form a larger class.
-    Compiled in this repository (theorem named): `Scheme.IsLegal.correctedLegal` (a legal scheme
-    with clause 4 satisfies the corrected definition at every stage `θ ≥ ω ^ 2` that is zero or a
-    limit), `Scheme.IsLegal.correctedLegal_omega_one`, and the equivalence
-    `Scheme.isLegal_and_hasPrintedRange_iff` (with the corrected definition at every such stage and
-    the cap `-∞` of row 44).  Still to be proved: legality from the corrected definition at the
-    single stage `ω₁`, and whether every legal scheme is equivalent to one satisfying clause 4.
+    (`Correspondence/Current/LegalTemplate`), with the rows read as in note 43.  Clause 1 (C): a
+    printed graded face may have grade `0`, and clause 1 then fails for every frame whose cells have
+    positive grade (`CellScheme.Rows.not_printedLegal`, compiled in this repository (theorem
+    named)).  Within [AFK26] clause 1 is consistent, since its frames may have cells of grade `0`;
+    the correction is one of the graded faces of [AFK26, Definition 4.2], taken of positive grade as
+    in [Kni26, Definition 2.1.8], which the frames here follow, and clause 1 becomes
+    `CellScheme.IsComplete`.  No theorem relates a printed legal template with cells of grade `0` to
+    a corrected one.  A frame predicate for the template correspondence of row 9 that follows
+    Definition 4.2 literally admits the same graded faces of grade `0` as
+    `CellScheme.printedGradedFaces`; the two are to be related when both are compiled.  Clause 2 is
+    consistency (row 43), clause 3 is row 44 (S).  Agreement on lawful labellings (row 43) is not
+    correspondence of legal schemes: clause 4 (`CellScheme.Rows.HasPrintedRange`, `i ≤ g(d)`) is an
+    offset bound, which legality here deliberately omits (`README.md`, Layer 3, "legal scheme" and
+    checkpoint 2.2).  It is strictly stronger than `Scheme.IsCoded`
+    (`CellScheme.Rows.HasPrintedRange.row_lt`), and one tighter than the offset bound `j ≤ k + 1` of
+    [Kni26, Lemma 2.5.13]: `CodingExamples.pointRow 2` is legal, satisfies that bound
+    (`Scheme.isStronglyCoded_pointRow_two`), and violates clause 4
+    (`Scheme.not_hasPrintedRange_pointRow_two`, `Scheme.exists_isLegal_not_hasPrintedRange`), all
+    compiled in this repository (theorem named).  So the legal schemes form a strictly larger class
+    than the legal templates of [AFK26] under this reading, and resolution (2) of the fidelity
+    question of item 1 can hold only up to this bound.  Compiled in this repository (theorem named):
+    `Scheme.IsLegal.correctedLegal` (a legal scheme with clause 4 satisfies the corrected definition
+    at every stage `θ ≥ ω ^ 2` that is zero or a limit), `Scheme.IsLegal.correctedLegal_omega_one`,
+    and the equivalence `Scheme.isLegal_and_hasPrintedRange_iff` (with the corrected definition at
+    every such stage and the cap `-∞` of row 44).  Departures that are not fields: the plan
+    conditions of [AFK26, Definition 4.1] (supplied by `Scheme.IsWellFormed` in the equivalence),
+    and the finiteness of the cells (`Fin card`; `[Finite ι]` in row 44).  Still to be proved:
+    legality from the corrected definition at the single stage `ω₁`, and whether every legal scheme
+    is equivalent to one satisfying clause 4.
 46. Statement only.  Compiled in this repository (theorem named), in `Stage/Legal`: the legal stage
     types are closed under the face maps (`StageType.IsLegal.restrictFace`), reindexing
     (`StageType.IsLegal.reindex`), and stage reduction (`StageType.isLegal_reduce_iff`), and there
     are countably many on `n` points at a countable stage (`StageType.countable_setOf_isLegal`);
     the base language has one relation symbol for each legal stage type at `ω` (`baseLanguage`,
-    `Language/Basic`).  That they form a template system of [AFK26] representing every legal
-    template up to relabelling isomorphism is still to be proved; it rests on rows 9 and 45.
+    `Language/Basic`).  Under the reading of note 43, the first clause of Lemma 4.28 (all
+    templates in `L` are legal templates) fails for the legal stage types here as they stand: at
+    every stage there is a legal stage type on a scheme violating clause 4
+    (`StageType.exists_isLegal_not_hasPrintedRange`, compiled in this repository (theorem named),
+    on `CodingExamples.pointRow 2`; note 45).  So a literal identification of `L` with the legal
+    stage types is ruled out, not pending.  Either of two results would resolve this, and neither
+    is chosen here: (a) a proof that the class restricted by clause 4 suffices for the main
+    theorem (it is not known to be preserved by the coatom amalgam and the completion, and
+    legality may not be strengthened, `README.md`, Layer 3, checkpoint 2.2); or (b) a correction
+    of clause 4 of Definition 4.27, recorded as C.  That the legal stage types form a template
+    system of [AFK26] representing every legal template up to relabelling isomorphism is still to
+    be proved after that; it rests on rows 9 and 45.
 47. Statement only.  The corresponding statement here is the main theorem in its conditional
     composition `vaughtCounterexample_of_expansionDomains` (`MainTheorem/Assembly`), compiled in
-    this repository (theorem named), whose hypotheses are still to be proved.  That the sentence
-    `σ[L]` is the density sentence `densitySentence` is still to be proved (rows 12 and 13); the
-    first assertion of Theorem 4.29, about the system `K[L]`, has no counterpart here
-    (prospective).
+    this repository (theorem named), whose hypotheses are still to be proved.  The relation
+    symbols of `σ[L]` are indexed by the legal templates of [AFK26], a strictly smaller class
+    than the legal stage types indexing `baseLanguage` (note 46), so `σ[L]` cannot be literally
+    `densitySentence` as things stand; their identification needs one of the two resolutions of
+    note 46, and then rows 12 and 13.  The first assertion of Theorem 4.29, about
+    the system `K[L]`, has no counterpart here (prospective).
 
 **Completion criteria, item by item** (the items of `README.md`, "Manuscript correspondence
 (required)").  For every item, each row of the concordance that it concerns is P or C, with its

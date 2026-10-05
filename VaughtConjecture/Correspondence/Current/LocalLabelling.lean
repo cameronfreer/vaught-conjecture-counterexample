@@ -26,6 +26,18 @@ the product order on pairs.  The printed graded faces `(B, j)` have `B ∈ P` an
 (`CellScheme.gradedFaces`), and the two differ by the faces of grade `0`
 (`CellScheme.mem_printedGradedFaces_iff`).  Lawfulness at `U` is stated here for every pair `U`.
 
+**The reading of the row system.**  Rows 43–47 read the row system `Σ = (ℓ_d)_{d ∈ D}` of a
+template as the *fixed semantic rows* `R` of a cell scheme, against which a labelling is lawful;
+this is [AFK26, Definitions 4.4–4.6] transcribed literally.  It is not the representation of
+README item 1 and concordance row 9, in which a labelling `p` of a fixed scheme is represented by
+its *coherent local rows* `r_d(e) = min(p(e), p(d))`.  The two readings make different objects
+legal: under the coherent-rows reading the range clause (clause 4) of [AFK26, Definition 4.27]
+would bound the labels of `p` (no `⊤`, no label `≥ ω ^ 2`, finite part at most the grade on the
+diagonal), while under the reading here it bounds the rows of the scheme only.  Which reading
+[AFK26] intends is part of the fidelity question of item 1.  The identification of this module
+holds for every row system `R`: it concerns lawful labellings against given rows, and by itself
+says nothing about which schemes are legal (row 45).
+
 As in rows 3 and 4, the printed labels are those at stage `ω₁`; the definition is stated at a
 stage `θ`, and the identification holds at every stage that is zero or a limit for rows and
 labellings with values at that stage; at `ω₁` it is

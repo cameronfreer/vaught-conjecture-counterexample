@@ -25,9 +25,9 @@ Here `ω · α` is Mathlib's ordinal product `ω * α`, the sum of `α` copies o
 | 2. `ω · α + n ↦ i` if `n < k`, `n` otherwise | `ordinal` | `ordinal`: `ω · α + i`, `ω · α + n` |
 
 **Correction** (status C).  As printed, clause 2 sends the ordinal `ω · α + n` to the natural
-number `i` or `n`, forgetting its block `ω · α`.  Read literally, the image of every ordinal is
-a natural number (`Label.PrintedVisibilityMap.apply_coe_lt_omega0`), no ordinal `≥ ω` is
-self-visible at any threshold (`Label.PrintedVisibilityMap.apply_ne_self`), and the map is not
+number `i` or `n`, forgetting its block `[ω · α, ω · α + ω)`.  Read literally, the image of every
+ordinal is a natural number (`Label.PrintedVisibilityMap.apply_coe_lt_omega0`), no ordinal `≥ ω`
+is self-visible at any threshold (`Label.PrintedVisibilityMap.apply_ne_self`), and the map is not
 visibility replacement (`Label.PrintedVisibilityMap.ne_visibilityReplace`).  Every label `ω · n + i`
 of the range clause of [AFK26, Definition 4.27] with `n ≥ 1` would then fail the orderliness clause
 of [AFK26, Definition 4.26].  The corrected clause keeps the block: `ω · α + n` is sent to
@@ -106,7 +106,8 @@ structure PrintedVisibilityMap (θ : Ordinal.{u}) (k i : ℕ) (f : Label.{u} →
     f ((ω * α + n : Ordinal.{u}) : Label.{u}) = if n < k then (i : Label.{u}) else (n : Label.{u})
 
 /-- **The corrected clauses of [AFK26, Definition 4.24]**, for a map `f` of labels at threshold
-`k` with value `i`, on the labels at stage `θ`: clause 2 keeps the block `ω · α`. -/
+`k` with value `i`, on the labels at stage `θ`: clause 2 keeps the block
+`[ω · α, ω · α + ω)`. -/
 structure CorrectedVisibilityMap (θ : Ordinal.{u}) (k i : ℕ) (f : Label.{u} → Label.{u}) :
     Prop where
   /-- Clause 1 of [AFK26, Definition 4.24]: `visible<k>[i](-∞) = -∞`. -/

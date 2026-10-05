@@ -16,7 +16,9 @@ at `g(U)`, and graded face `V ≤ U`, `{r↾D↓V : r ∈ B_γ(q)} = B_γ(q↾D�
 with `CellScheme.Rows.IsBountiful`, in its form `CellScheme.Rows.isBountiful_iff_image_eq`
 (restriction maps the cap ball `R.capBall U c q` onto the cap ball of the restriction).
 
-The setting is that of `VaughtConjecture.Correspondence.Current.LocalLabelling` (row 43).  As in
+The setting is that of `VaughtConjecture.Correspondence.Current.LocalLabelling` (row 43): the row
+system `Σ` of the template is read as the fixed semantic rows `R` of a cell scheme, not as the
+coherent local rows of a labelling (the representation of README item 1; see that module).  As in
 row 6, the printed labels are those at stage `ω₁`; the definition is stated at a stage `θ`
 (`CellScheme.Rows.printedBall`, `CellScheme.Rows.PrintedBountifulRows`), the hypotheses being the
 fields of one structure:
@@ -35,26 +37,29 @@ fields of one structure:
 **Identification, and what is not identified** (status S).  For a scheme with finitely many cells,
 all with graded index in the graded plan, the rows are bountiful exactly when they are bountiful
 as printed at every stage that is zero or a limit and carries their values, **and** every labelling
-lawful below a graded face `X` extends to one lawful below every graded face `Y ≥ X`
-(`CellScheme.Rows.isBountiful_iff_forall_printedBountifulRows`).  Bountiful rows are bountiful as
-printed at each such stage (`CellScheme.Rows.IsBountiful.printedBountifulRows`), in particular at
-`ω₁` (`CellScheme.Rows.IsBountiful.printedBountifulRows_omega_one`).  No theorem here gives the
+lawful below a graded face `X` extends to one lawful below every graded face `Y ≥ X`, the cap `-∞`
+(`CellScheme.Rows.isBountiful_iff_forall_printedBountifulRows_and_capBot`; the suffix `capBot`
+names this second conjunct).  Bountiful rows are bountiful as printed at each such stage
+(`CellScheme.Rows.IsBountiful.printedBountifulRows`), in particular at `ω₁`
+(`CellScheme.Rows.IsBountiful.printedBountifulRows_omega_one`).  No theorem here gives the
 converse at a single stage, or without the extension of lawful labellings (departures 3 and 4).
 
 **Departures.**
-1. *Graded faces of grade `0`* ([AFK26, Definition 4.2] allows `j = 0`): harmless.  No cell lies
-   below a pair of grade `0` when all cells have positive grade, and the printed equation then
-   holds for every lawful `q`; the definition is the same with `U` and `V` among the graded faces
-   of positive grade (`CellScheme.Rows.printedBountifulRows_iff_gradedFaces`).
+1. *Graded faces of grade `0`* ([AFK26, Definition 4.2] allows `j = 0`): harmless when every
+   cell has a graded face of positive grade (the hypothesis `hD`), as in the frames here.  No cell
+   then lies below a pair of grade `0`, and the printed equation holds for every lawful `q`; the
+   definition is the same with `U` and `V` among the graded faces of positive grade
+   (`CellScheme.Rows.printedBountifulRows_iff_gradedFaces`).  Clause 1 of
+   [AFK26, Definition 4.27] asks for cells of grade `0`, which `hD` excludes (row 45).
 2. *The cap `∞`*: the printed `γ` is an ordinal, `IsBountiful` also takes the cap `⊤`.  Harmless:
    at the cap `⊤` the cap balls are singletons and the equation always holds (in the proof of
-   `CellScheme.Rows.isBountiful_iff_forall_printedBountifulRows`).
+   `CellScheme.Rows.isBountiful_iff_forall_printedBountifulRows_and_capBot`).
 3. *The cap `-∞`* (not proved harmless).  `IsBountiful` also takes the cap `⊥`, at which the cap
    ball is the set of all lawful labellings: every labelling lawful below `X` extends to one
    lawful below `Y`.  The printed definition does not state it, and no theorem here derives it
    from the printed definition; it is the second conjunct of
-   `CellScheme.Rows.isBountiful_iff_forall_printedBountifulRows`.  [Kni26, Definition 2.5.14]
-   includes it (clause 4, `γ ∈ {-∞} ∪ θ ∪ {∞}`).
+   `CellScheme.Rows.isBountiful_iff_forall_printedBountifulRows_and_capBot`.
+   [Kni26, Definition 2.5.14] includes it (clause 4, `γ ∈ {-∞} ∪ θ ∪ {∞}`).
 4. *The range of the labels* (not proved harmless at a single stage): as in row 6, the printed
    definition at the single stage `ω₁` is implied by `IsBountiful`, and the converse would need the
    transfer of the printed definition from `ω₁` up to larger limit stages.
@@ -64,7 +69,7 @@ row 6) is an extension form over pairs `⟨C, i⟩ ⪯ ⟨B, j⟩` with caps in 
 definition of [AFK26] is an image form with ordinal caps.  Required at every stage that is zero or
 a limit and carries the rows, the definition of [Kni26] is that of [AFK26] together with the
 extension of lawful labellings (the cap `-∞`)
-(`CellScheme.Rows.forall_printedBountiful_iff_forall_printedBountifulRows`).
+(`CellScheme.Rows.forall_printedBountiful_iff_forall_printedBountifulRows_and_capBot`).
 
 ## Placement
 
@@ -229,7 +234,7 @@ labellings** [AFK26, Definition 4.26]: for a scheme with finitely many cells, al
 in the graded plan, the rows are bountiful exactly when they are bountiful as printed at every
 stage that is zero or a limit and carries their values, and every labelling lawful below a graded
 face `X` extends to one lawful below every graded face `Y ≥ X` (the cap `-∞`). -/
-theorem isBountiful_iff_forall_printedBountifulRows [Finite ι]
+theorem isBountiful_iff_forall_printedBountifulRows_and_capBot [Finite ι]
     (hD : ∀ d, D.gradedIndex d ∈ D.gradedFaces) :
     R.IsBountiful ↔
       (∀ θ : Ordinal.{u}, Order.IsSuccPrelimit θ → (∀ s t, AtStage θ (R.row s t)) →
@@ -246,8 +251,9 @@ theorem isBountiful_iff_forall_printedBountifulRows [Finite ι]
 with graded index in the graded plan, the rows are bountiful in the sense of
 [Kni26, Definition 2.5.14] at every stage that is zero or a limit and carries their values exactly
 when they are bountiful in the sense of [AFK26, Definition 4.26] at every such stage and every
-labelling lawful below a graded face extends to one lawful below every larger graded face. -/
-theorem forall_printedBountiful_iff_forall_printedBountifulRows [Finite ι]
+labelling lawful below a graded face extends to one lawful below every larger graded face (the cap
+`-∞`). -/
+theorem forall_printedBountiful_iff_forall_printedBountifulRows_and_capBot [Finite ι]
     (hD : ∀ d, D.gradedIndex d ∈ D.gradedFaces) :
     (∀ θ : Ordinal.{u}, Order.IsSuccPrelimit θ → (∀ s t, AtStage θ (R.row s t)) →
         R.PrintedBountiful θ) ↔
@@ -257,7 +263,7 @@ theorem forall_printedBountiful_iff_forall_printedBountifulRows [Finite ι]
         Set.SurjOn (fun q' ↦ q' ∘ Set.inclusion (D.below_mono hXY)) {q | R.IsLawfulBelow Y q}
           {p | R.IsLawfulBelow X p} :=
   (isBountiful_iff_forall_printedBountiful hD).symm.trans
-    (isBountiful_iff_forall_printedBountifulRows hD)
+    (isBountiful_iff_forall_printedBountifulRows_and_capBot hD)
 
 end CellScheme.Rows
 
