@@ -78,8 +78,8 @@ every labelling of the amalgam lawful below a coatom (`Seed.DeadAt 2`;
 
 **What stays open.**  The coatom extension properties `StageType.HasApexCoatomExtensions` and
 `StageType.HasCoatomExtensions` at the stages that are zero or a limit quantify over the seeds of
-every arity (`StageType.HasApexCoatomExtensions.of_completionBelowFullGrade`); they are prospective,
-and they are not refuted.  Neither boundary triple of the library for the step to a grade
+every arity (`StageType.HasApexCoatomExtensions.of_completionBelowFullGrade`); they are still to be
+proved, and they are not refuted.  Neither boundary triple of the library for the step to a grade
 `j + 1 ≤ m` serves every seed: the triple through `(D, j + 1)` uses `2FL(j)`, which fails for a
 legal seed at `j = 2`; the triple through `(univ, j)` uses a union fill of the other coatom over the
 common face, which fails for a legal seed at the grade `2` (module
@@ -261,7 +261,7 @@ theorem twoFaceLift_one : I.TwoFaceLift 1 := by
       I.amalgam.toCellScheme.gradedIndex d ≤ (univ.erase (Fin.last (m + 1)), 1) ∨
         I.amalgam.toCellScheme.gradedIndex d ≤ (univ.erase (Fin.castSucc (Fin.last m)), 1) :=
     (I.scope_subset_or (mem_insert_self _ _)
-      (mem_insert_of_mem (mem_singleton_self _)) (Fin.castSucc_lt_last _).ne' d).imp
+      (mem_insert_of_mem (mem_singleton_self _)) last_ne_castSucc d).imp
       (fun h ↦ ⟨h, hd⟩) fun h ↦ ⟨h, hd⟩
   have hpos (d : Fin I.amalgam.card) : 1 ≤ I.amalgam.toCellScheme.grade d :=
     (I.amalgam.isWellFormed.isWellFormed.gradedIndex_mem d).2.1
@@ -283,7 +283,7 @@ theorem twoFaceLift_one : I.TwoFaceLift 1 := by
       I.towerEmbed 1 d ∈ (I.tower 1).toCellScheme.below
         (univ.erase (Fin.castSucc (Fin.last m)), 1) :=
     (I.scope_subset_or (mem_insert_self _ _)
-      (mem_insert_of_mem (mem_singleton_self _)) (Fin.castSucc_lt_last _).ne' d).imp
+      (mem_insert_of_mem (mem_singleton_self _)) last_ne_castSucc d).imp
       (fun h ↦ I.towerEmbed_mem_below_iff.mpr ⟨h, hd⟩)
       fun h ↦ I.towerEmbed_mem_below_iff.mpr ⟨h, hd⟩
   rw [Function.comp_apply, hr'f _ hb, hf_def, hρ_def]

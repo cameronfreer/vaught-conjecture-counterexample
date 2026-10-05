@@ -818,15 +818,23 @@ is compiled conditionally on block determination (below).  None is an input to t
   (`ModelExpansion.map_eq_of_determines`), the definition of the chart relations by these formulas
   (`ModelExpansion.relMap_toChartStructure_iff`), and the pointed form at level `ω·η`
   (`ModelExpansion.covers_iff_of_bfEquiv`, through `BFEquiv_implies_agreeQR`).  Block determination
-  is expected to follow from Layer 4, outputs 1–2 (the stable candidate and normalization;
-  `README.md`, Layer 4), provided the stable value of a cell is the supremum over covers of an
-  offset determined by the cover's type at `λ_η`, the coordinate embedding and the transported cell;
-  that shape, the existential finite-data form of the threshold, is part of what remains to be
-  proved.  An eventual-value construction that allows decreases does not by itself establish this
-  existential finite-cover characterization; that characterization would then require a separate
-  proof.  The construction of `U` and the proof of block determination are still to be proved.  No
-  model expansion is constructed in this repository at any stage, so the semantic statements may be
-  vacuous at present; the bounds are syntax bounds, not Scott ranks.
+  is to follow from Layer 4, outputs 1–2 (the stable candidate and normalization; `README.md`,
+  Layer 4), provided the stable value of a cell is the supremum over covers of an offset determined
+  by the cover's type at `λ_η`, the coordinate embedding and the transported cell. That proviso is
+  met: the stable value is the supremum over rooted covers of the provisional offset
+  (`Realization.stableOffset`, `StageType.provisionalOffset`), a function of the cover's type, the
+  embedding and the cell, monotone along extensions (`StageType.provisionalOffset_le_trans_face`);
+  an eventual-value construction allowing decreases does not arise. The threshold data `U` are
+  constructed, the forcing thresholds (`forcingThresholds`, `Definability/BlockDetermination`), and
+  block determination for them is compiled in this repository (theorem named) conditional on
+  finite-extension receiving of the model expansions to `λ_{η+1}` (from (R1)) and on forcing donors
+  at `η` (`ForcingDonors`), both still to be proved (`forcingThresholds_determines`; with these
+  hypotheses at every block below `η`, `realize_blockFormula_forcingThresholds_iff`). Its form with
+  finite-extension receiving of all models,
+  `Expansion.FiniteExtensionReceiving.forcingThresholds_determines`
+  (`Expansion/BlockDetermination`), is a corollary in Layer 5 outside the row-1 import guard.
+  No model expansion is constructed in this repository at any stage, so the semantic statements
+  may be vacuous at present; the bounds are syntax bounds, not Scott ranks.
 
   The second row is the syntactic transcription of "admits an expansion to `λ_η`" that A1 does not
   claim: the sentence `δ_η` of A1 is assembled from Scott sentences of classes and carries no rank

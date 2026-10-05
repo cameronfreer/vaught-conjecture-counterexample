@@ -155,7 +155,8 @@ open Ordinal
 noncomputable def Q (b f : ℕ) : Label.{u} :=
   ((ω * (b : Ordinal.{u}) + (f : Ordinal.{u}) : Ordinal.{u}) : Label.{u})
 
-private theorem Q_le_Q_iff {b b' f f' : ℕ} : Q.{u} b f ≤ Q b' f' ↔ b < b' ∨ b = b' ∧ f ≤ f' := by
+/-- The labels `ω * b + f` compare lexicographically. -/
+theorem Q_le_Q_iff {b b' f f' : ℕ} : Q.{u} b f ≤ Q b' f' ↔ b < b' ∨ b = b' ∧ f ≤ f' := by
   rw [Q, Q, WithBot.coe_le_coe, WithTop.coe_le_coe, omega0_mul_add_natCast_le_iff, Nat.cast_lt,
     Nat.cast_inj]
 
@@ -169,8 +170,12 @@ private theorem visibilityReplace_Q (b f : ℕ) :
     visibilityReplace 3 3 (Q.{u} b f) = Q b (if f < 3 then 3 else f) := by
   rw [Q, Q, visibilityReplace_coe, Ordinal.visibilityReplace_omega0_mul_add_natCast]
 
-private theorem isSelfVisible_Q {b f : ℕ} : IsSelfVisible 3 (Q.{u} b f) ↔ 3 ≤ f := by
+/-- The label `ω * b + f` is self-visible at `k` exactly when `k ≤ f`. -/
+theorem isSelfVisible_Q {k b f : ℕ} : IsSelfVisible k (Q.{u} b f) ↔ k ≤ f := by
   rw [Q, isSelfVisible_coe, omega0_mul_add_natCast_mod, Nat.cast_le]
+
+/-- The label `ω * b + f` is not `⊥`. -/
+theorem Q_ne_bot (b f : ℕ) : Q.{u} b f ≠ ⊥ := WithBot.coe_ne_bot
 
 private theorem gridPoint_eq_Q (b : ℕ) : gridPoint.{u} 3 b = Q b 3 := rfl
 
