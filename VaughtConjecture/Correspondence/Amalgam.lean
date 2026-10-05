@@ -14,17 +14,19 @@ Roadmap, "Manuscript concordance", row 15.
 ## The setting of [Kni26, §4.3]
 
 A finite set `A` of size `n ≥ 2`, a plan `P` on `A`, distinct `a, b ∈ A` with `A \ {a}` and
-`A \ {b}` in `P`, and complete domains `D^a` on `A \ {a}` and `D^b` on `A \ {b}` whose
-restrictions to `⟨A \ {a, b}, n - 2⟩` coincide; `E^a`, `E^b` are their semantics.  Here
-`A = Fin (m + 2)`, `a` is the last point and `b = m`; `D^a` and `D^b` are schemes `Sa` and `Sb` on
-`m + 1` points placed along `Coatom.left m` and `Coatom.right m`, and the coincidence of the
-restrictions is the hypothesis `h : Sa.comap (face m) = Sb.comap (face m)`.  The cells of a scheme
-are positions `Fin card`, which play the role of the codes of the elements of a domain
-([Kni26, §2.6]; row 7): enumerating each domain in the order of its codes, the printed equality of
-the two restrictions, as sets of coded elements, is the literal equality `h` of the restricted
-schemes, cell order included.  The identification of a cell of the common face of `Sa` with the
-same cell of `Sb` is `Coatom.overlap h`.  Neither completeness nor any other law of `Sa` and `Sb`
-is assumed by the identification below, which therefore holds in particular under them.
+`A \ {b}` in `P`, and complete domains `D^a` on `A \ {a}` and `D^b` on `A \ {b}` with
+`D^a_{⟨A \ {b}, n - 2⟩} = D^b_{⟨A \ {a}, n - 2⟩}`, equivalently (the cells of `D^a` have scope in
+`A \ {a}`, those of `D^b` in `A \ {b}`) whose restrictions to `⟨A \ {a, b}, n - 2⟩` coincide;
+`E^a`, `E^b` are their semantics.  Here `A = Fin (m + 2)`, `a` is the last point and `b = m`;
+`D^a` and `D^b` are schemes `Sa` and `Sb` on `m + 1` points placed along `Coatom.left m` and
+`Coatom.right m`, and the coincidence of the restrictions is the hypothesis
+`h : Sa.comap (face m) = Sb.comap (face m)`.  The cells of a scheme are positions `Fin card`, which
+play the role of the codes of the elements of a domain ([Kni26, §2.6]; row 7): enumerating each
+domain in the order of its codes, the printed equality of the two restrictions, as sets of coded
+elements, is the literal equality `h` of the restricted schemes, cell order included.  The
+identification of a cell of the common face of `Sa` with the same cell of `Sb` is
+`Coatom.overlap h`.  Neither completeness nor any other law of `Sa` and `Sb` is assumed by the
+identification below, which therefore holds in particular under them.
 
 ## Definition 4.3.1: the amalgam
 
@@ -67,10 +69,10 @@ The printed lemma has three conclusions; they are compared separately.
    ([Kni26, Definitions 2.6.1 and 2.5.15]), and the amalgam has no cell of full scope, so the
    graded face `⟨A, 1⟩` of the printed plan carries no cell (`Coatom.not_isComplete_amalgamType`,
    with `CellScheme.IsComplete` the printed completeness verbatim); the amalgam is not legal
-   (`Coatom.not_isLegal_amalgamType`).  The section's own introduction calls the union "merely not
-   complete".  What holds: every other graded face carries a cell
-   (`Coatom.exists_gradedIndex_eq_amalgamType`), the scheme is well formed and coded
-   (`Coatom.isWellFormed_amalgam`, `Coatom.isCoded_amalgam`).
+   (`Coatom.not_isLegal_amalgamType`).  The last paragraph of [Kni26, §4.2] says as much: the
+   union is "consistent and bountiful; it is merely not complete".  What holds: every other graded
+   face carries a cell (`Coatom.exists_gradedIndex_eq_amalgamType`), the scheme is well formed and
+   coded (`Coatom.isWellFormed_amalgam`, `Coatom.isCoded_amalgam`).
 2. *`E` is a consistent semantics.*  Consistency [Kni26, Definition 2.5.12] asks that every row
    `E(Σ)` respect the semantics below `Σ` in the sense of row 4 (`PrintedRespects`), which
    includes the orderliness of `E(Σ)` that a semantics requires [Kni26, Definition 2.5.3].  In
@@ -133,7 +135,10 @@ structure PrintedAmalgam (D : CellScheme ι (Fin (m + 2))) (R : D.Rows.{u})
   `D_{B,j}`. -/
   grade_right (j : Fin Sb.card) : D.grade (eb j) = Sb.toCellScheme.grade j
   /-- Clause `D = D^a ∪ D^b` of [Kni26, Definition 4.3.1]: a cell of `D^a` and a cell of `D^b` are
-  the same element of the union exactly when they are the same cell of the common restriction. -/
+  the same element of the union exactly when they are the same cell of the common restriction.
+  The "if" direction is the equality of the two restrictions in the setting of [Kni26, §4.3]; the
+  "only if" direction is [Kni26, Proposition 2.6.3, clause 6]: a cell of `D^a` whose scope is not
+  contained in `A \ {b}` is not a cell of `D^b`, and symmetrically. -/
   eq_iff (i : Fin Sa.card) (j : Fin Sb.card) :
     ea i = eb j ↔ ∃ t, Sa.cellMap (face m) t = i ∧ overlap h t = j
   /-- Clause `D = D^a ∪ D^b` of [Kni26, Definition 4.3.1]: `D ⊆ D^a ∪ D^b`. -/
@@ -325,6 +330,7 @@ variable {α : Ordinal.{u}} {ta tb : StageType.{u} α (m + 1)} {p : StageType.{u
 /-- **The labels of the amalgam on the cells of `ta`** are those of `ta`. -/
 theorem amalgamType_label_posLeft (i : Fin ta.card) :
     (amalgamType hta htb).label (posLeft _ i) = ta.label i := by
+  -- the label of the amalgam at a position is `amalgamLabel` at the cell enumerated there
   change amalgamLabel hta htb (amalgamEnum _ (posLeft _ i)) = _
   rw [amalgamEnum_posLeft]
   rfl
@@ -332,6 +338,7 @@ theorem amalgamType_label_posLeft (i : Fin ta.card) :
 /-- **The labels of the amalgam on the cells of `tb`** are those of `tb`. -/
 theorem amalgamType_label_posRight (j : Fin tb.card) :
     (amalgamType hta htb).label (posRight _ j) = tb.label j := by
+  -- the label of the amalgam at a position is `amalgamLabel` at the cell enumerated there
   change amalgamLabel hta htb (amalgamEnum _ (posRight _ j)) = _
   rw [amalgamEnum_posRight]
   exact amalgamLabel_rightFun hta htb j

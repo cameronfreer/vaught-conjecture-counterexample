@@ -53,15 +53,19 @@ It is derived from the conclusion of `Realization.IsModel.exists_privateContext`
    characteristic arity, `p'(Ω)` above every label of `p♦` below `∞`, is (`lt_label`).
 2. *The tuple `x⌢x'`.*  The printed `x` is an initial segment of `x⌢x'`; here it is a literal
    face of `y` along an embedding `f` of coordinates.  Not proved equivalent here.
-3. *Clause 3 at `μ = 0`*: the comparison also gives a cell in `[0, ω)` when some label of `d` lies
-   there (`Realization.IsModel.exists_privateContext` treats every block start), a strengthening.
-4. *The hypotheses of [Kni26, Proposition 7.3.3]* (hollowness or finite characteristic arity, a
+3. *The hypotheses of [Kni26, Proposition 7.3.3]* (hollowness or finite characteristic arity, a
    core `x`, the extension `p♦` of `p` and its two further conditions) are not assumed: harmless,
    since `Realization.IsModel.exists_printedPrivateContext` holds without them.
 
-**Status.**  The comparison is for the models of this repository, whose correspondence with
-[Kni26, Definition 3.2.1] is row 11, still to be proved, and it misses the alternative of
-departure 1; row 21 is therefore still to be proved.
+**Clause 3 and the block `[0, ω)`.**  The printed clause 3 and the field `block` concern limits
+`μ` only, so the comparison says nothing at `μ = 0`.  The conclusion of
+`Realization.IsModel.exists_privateContext`, which treats every block start, also gives a cell
+with label in `[0, ω)` when some label of `d` lies there; this is not part of the comparison.
+
+**Status.**  Row 21 is still to be proved, for three reasons: clauses 1 and 2 of the lemma are not
+compared; the alternative `p'(Ω) = ∞` of clause 4 (departure 1) is not produced, and the
+characteristic arity has no counterpart here; and the literal face of departure 2 is not proved
+equivalent to the printed initial segment.
 
 **The cited clause of the definition of a model.**  The printed proof of clause 4 cites
 high-arity dominance as clause 4(a) of [Kni26, Definition 3.2.1], where it is clause 4(c); this is
