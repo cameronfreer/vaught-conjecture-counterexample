@@ -39,12 +39,18 @@ Notes on the rows, each with its marker:
 - *Layer 3, the completion.*  Compiled: 2.1–2.5; the tower and its invariant
   (`Seed.towerInvariant_succ`, `Seed.towerInvariant_top`); `2FL(1)` (`Seed.twoFaceLift_one`); the
   completion below the full grade at `m ≤ 2`; per seed, under `2FL(j)` or `Seed.DeadAt j` at each
-  grade `2 ≤ j < m` (`Seed.nonempty_completionBelowFullGrade_of_twoFaceLift_or_deadAt`).  Refuted:
-  the union fill (`UnionFillCounterexample.not_unionFill_seed`) and `2FL(2)`
+  grade `2 ≤ j < m` (`Seed.nonempty_completionBelowFullGrade_of_twoFaceLift_or_deadAt`); the
+  existential two-face lift `2FL∃(j)` (`Seed.TwoFaceLiftExists`), the step of the tower stated
+  exactly (`Seed.towerInvariant_succ_iff_twoFaceLiftExists`, `Seed.towerInvariant_top_iff`).
+  Refuted: the union fill (`UnionFillCounterexample.not_unionFill_seed`); `2FL(2)`
   (`TwoFaceLiftCounterexample.not_twoFaceLift_two`, hence
-  `TwoFaceLiftCounterexample.not_forall_twoFaceLift`).  Still to be proved, not refuted:
-  `StageType.HasCoatomExtensions`, `StageType.HasApexCoatomExtensions`.  Prospective: the
-  existential two-face lift `2FL∃(j)` and the choosing one-grade lift.
+  `TwoFaceLiftCounterexample.not_forall_twoFaceLift`); the coverage of every seed by the case split
+  `2FL(j) ∨ Seed.DeadAt j` (`CaseSplitCounterexample.not_forall_twoFaceLift_or_deadAt`); and
+  `2FL∃(2)` for the legal seed `TwoFaceLiftExistsCounterexample.seedL`
+  (`TwoFaceLiftExistsCounterexample.not_twoFaceLiftExists_two_seedL`, hence
+  `TwoFaceLiftExistsCounterexample.not_forall_twoFaceLiftExists`).  Still to be proved, not
+  refuted: `StageType.HasCoatomExtensions`, `StageType.HasApexCoatomExtensions`.  Prospective: a
+  completion of `seedL` outside the tower.
 - *Layer 3, receiving.*  Compiled: finite-extension receiving from finite-cut receiving, for an
   exactly consistent realization at a stage that is zero or a limit
   (`Realization.HasFiniteCutReceiving.hasFiniteExtensionReceiving`); gate recovery
@@ -132,19 +138,26 @@ list.
 ## The research front
 
 Each item is open or still to be proved; none is assumed by a theorem of the library except as a
-named hypothesis.  A result marked *under review, not yet merged* is not on `main` and is not
-counted as compiled.
+named hypothesis.
 
-1. **Layer 3 at `m ≥ 3`** (open).  The existential two-face lift `2FL∃(j)`, with a choosing
-   variant of `CellScheme.Rows.cappedLift_of_boundary_short` (both prospective, stated in prose in
-   `README.md`, Layer 3, 3.1, (R6), 2.7); whether every seed has `2FL(j)` or `Seed.DeadAt j` at each
-   grade (undecided on `main`).  The two prospective statements would give
-   `StageType.HasApexCoatomExtensions` (an implication not yet stated in the library), hence the
-   coatom extension hypotheses of the cap-to-model theorem, the top-free witnesses, and output 3.
-   Under review, not yet merged: the per-grade disjunction `2FL(j) ∨ Seed.DeadAt j` does not cover
-   every seed at `m = 3`, while `2FL∃(j)` is equivalent to the step of the tower and holds on the
-   seed at `m = 3` where the disjunction fails (a seed other than `seed4`), so 2.7 is to be
-   conditioned on `2FL∃`.
+1. **Layer 3 at `m ≥ 3`** (open): the completion below the full grade for every seed at `m ≥ 3`.
+   The existential two-face lift `2FL∃(j)` is the step of the tower, stated exactly
+   (`Seed.towerInvariant_succ_iff_twoFaceLiftExists`, `Seed.towerInvariant_top_iff`, compiled in
+   this repository (theorem named)), and it fails at `j = 2` for the legal seed
+   `TwoFaceLiftExistsCounterexample.seedL`
+   (`TwoFaceLiftExistsCounterexample.not_twoFaceLiftExists_two_seedL`, refuted), so `2FL∃(j)` for
+   every seed is false at every stage
+   (`TwoFaceLiftExistsCounterexample.not_forall_twoFaceLiftExists`) and the tower does not complete
+   every seed.  The per-grade case split `2FL(j) ∨ Seed.DeadAt j` does not cover every seed
+   (`CaseSplitCounterexample.not_forall_twoFaceLift_or_deadAt`, refuted), while the seed where it
+   fails has a completion (`CaseSplitCounterexample.nonempty_completionBelowFullGrade_seed5`).  No
+   theorem is conditioned on the universal form of `2FL∃(j)`.  For `seedL` the identified
+   obstruction survives the redesigns examined (argued, not formalized); a completion of `seedL`
+   outside the tower is prospective.  A completion below the full grade for every seed of two legal
+   coatom types gives `StageType.HasApexCoatomExtensions` at the stages that are zero or a limit
+   (`StageType.HasApexCoatomExtensions.of_completionBelowFullGrade`, compiled in this repository
+   (theorem named)), hence the coatom extension hypotheses of the cap-to-model theorem, the top-free
+   witnesses, and output 3.
 2. **Stable availability at twins** (compiled): from legal types
    (`Realization.availability_stableSection_of_hasLegalTypes`), so every model is stably lawful
    (`Realization.IsModel.isStablyLawful`).  Refuted hypotheses on single types, negative special

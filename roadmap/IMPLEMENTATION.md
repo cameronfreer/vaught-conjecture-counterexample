@@ -2410,9 +2410,9 @@ ones split):
   (`Seed.towerInvariant_succ_of_dead`, `Extension/DeadCellStep`), and per seed the completion holds
   when each grade `2 ≤ j < m` has `2FL(j)` or `Seed.DeadAt j`
   (`Seed.towerInvariant_of_twoFaceLift_or_deadAt`,
-  `Seed.nonempty_completionBelowFullGrade_of_twoFaceLift_or_deadAt`). Open: the existential
-  two-face lift `2FL∃(j)` and a choosing variant of `CellScheme.Rows.cappedLift_of_boundary_short`
-  (2.7; both prospective, in prose only).
+  `Seed.nonempty_completionBelowFullGrade_of_twoFaceLift_or_deadAt`). That this case split covers
+  every seed is refuted, and the exact hypothesis of the step, the existential two-face lift
+  `2FL∃(j)`, is compiled and fails for a legal seed (both under 2.7).
 - **2.7. The theorem.**  At a stage that is zero or a limit the apex form holds; hence the plain
   form and (R6).  The improvement from limit stages to zero-or-limit stages is a separate lemma,
   with the zero stage handled explicitly.  That truncation to the stage fails at successor stages
@@ -2423,21 +2423,51 @@ ones split):
   form (`StageType.HasApexCoatomExtensions.of_completionBelowFullGrade`,
   compiled in this repository (theorem named)), quantifying over the seeds of every arity. 2.7 is
   not conditioned on the universal two-face lift, which is false at every stage (2.6), and no
-  theorem is stated under it. Per seed, `2FL(j)` or `Seed.DeadAt j` at each grade
-  `2 ≤ j < m` suffices (2.6); whether every seed satisfies it is undecided. A *boundary triple*
+  theorem is stated under it. A *boundary triple*
   (`Extension/Tower`) for the one-grade lift from `(C, j + 1)` to `(B, j + 1)` is a triple of pairs
   `U, V ≤ (B, j + 1)` and `O ≤ U, V` with `(C, j + 1) ≤ U`, every cell below both `U` and `V`
   lying below `O`, together with capped lifts from `(C, j + 1)` to `U` and from `O` to `V`; it is
   the input of `CellScheme.Rows.cappedLift_of_boundary_short`. Neither boundary triple
   of the library for the step to `j + 1 ≤ m` serves every seed: the triple through `(D, j + 1)`
   uses `2FL(j)`, refuted at `j = 2`, and the triple through `(univ, j)` uses the union fill,
-  refuted at the grade `2`. The open lemma is `2FL∃(j)` (`README.md`, Layer 3, 3.1, (R6), 2.7): for
-  every catalogue entry `a` at `j + 1`, every cap `h` self-visible and short at `j + 1` with
-  `⊥ < h`, and every `w_C` lawful below `(C, j + 1)` agreeing with `a` capped at `h`, the step
-  chooses `w_D` lawful below `(D, j + 1)`, equal to `w_C` on the cells of the common face of grade
-  at most `j + 1` and agreeing with `a` capped at `h`, for which the glued labelling has the
-  conclusion of `2FL(j)`; with it, the choosing variant of the one-grade lift. Whether `2FL∃(j)`
-  holds is undecided.
+  refuted at the grade `2`.
+  Compiled in this repository (theorem named): the existential two-face lift `2FL∃(j)`
+  (`Seed.TwoFaceLiftExists`, `Extension/TwoFaceLiftExists`): for every catalogue entry `a` at
+  `j + 1`, every cap `h` self-visible and short at `j + 1` with `⊥ < h`, and every `w_C` lawful
+  below `(C, j + 1)` agreeing with `a` capped at `h`, some `w_D` lawful below `(D, j + 1)`, equal
+  to `w_C` on the cells of the common face of grade at most `j + 1` and agreeing with `a` capped at
+  `h`, is such that the glued labelling has the conclusion of `2FL(j)`. It is the step of the
+  tower, stated exactly: for `j ≤ m` and under the invariant at `j`, the invariant at `j + 1`
+  holds exactly when `2FL∃(j)` does (`Seed.towerInvariant_succ_iff_twoFaceLiftExists`), and the
+  invariant at the top grade holds exactly when `2FL∃(j)` holds at the grades `2 ≤ j < m`
+  (`Seed.towerInvariant_top_iff`). Sufficiency uses `CellScheme.Rows.cappedLift_of_boundaries_short`
+  with the degenerate triple `U = V = O = (C, j + 1)` at the positive caps, so no separate choosing
+  variant of the one-grade lift is needed. `2FL(j)` implies `2FL∃(j)`
+  (`Seed.twoFaceLiftExists_of_twoFaceLift`), and so does `Seed.DeadAt j` under the invariant at `j`
+  (`Seed.twoFaceLiftExists_of_deadAt`); a seed with `2FL∃(j)` at the grades `2 ≤ j < m` has a
+  completion below the full grade (`Seed.nonempty_completionBelowFullGrade_of_twoFaceLiftExists`).
+  Refuted, each for a legal seed on five points (negative special cases): the coverage of every
+  seed by the case split `2FL(j) ∨ Seed.DeadAt j`
+  (`CaseSplitCounterexample.not_forall_twoFaceLift_or_deadAt`, at `CaseSplitCounterexample.seed5`,
+  where `2FL∃(2)` holds: `CaseSplitCounterexample.twoFaceLiftExists_and_not_twoFaceLift_or_deadAt`),
+  and `2FL∃(2)` itself, for the seed `TwoFaceLiftExistsCounterexample.seedL` of the coatom types
+  `TwoFaceLiftExistsCounterexample.TL` and `CaseSplitCounterexample.T5`
+  (`TwoFaceLiftExistsCounterexample.not_twoFaceLiftExists_two_seedL`). So `2FL∃(j)` at the grades
+  `2 ≤ j < m` for every seed is false at every stage
+  (`TwoFaceLiftExistsCounterexample.not_forall_twoFaceLiftExists`), and the tower does not complete
+  every seed (`TwoFaceLiftExistsCounterexample.not_towerInvariant_top_seedL`). No theorem is stated
+  under the universal form of `2FL∃(j)` (the corollary with that hypothesis is retired), and 2.7 is
+  not conditioned on it. The per-seed completions remain: at `m ≤ 2`, under the case split or under
+  `2FL∃(j)` (2.6 and above), and for the two seeds above
+  (`TwoFaceLiftCounterexample.nonempty_completionBelowFullGrade_seed4`,
+  `CaseSplitCounterexample.nonempty_completionBelowFullGrade_seed5`). For `seedL`, the identified
+  obstruction (every new cell of the tower at `(univ, 2)` where the catalogue entry of the failure
+  reaches its cap reads the cells `({3}, 1)` and `({4}, 1)` at one value) survives the redesigns
+  examined (argued, not formalized; the module docstring of
+  `Extension/TwoFaceLiftExistsCounterexample`).
+  Open: the completion below the full grade at `m ≥ 3` for every seed, in particular for `seedL`,
+  where the tower fails. A completion of `seedL` outside the tower is prospective, still to be
+  merged.
 
 The completion constructs lawful finite extensions and nothing more.  It imports only Layers
 0–1, the stage types, the amalgam, and the section theorem of `README.md`, Layer 3, 3.1 (with
@@ -2847,8 +2877,8 @@ witnesses).**
   `K + 1` at a cell labelled the formal top (`StageType.not_forcesThreshold_of_grade_le`,
   `Stage/Threshold`).  The bound itself waits for `StageType.topGrade` (`Continuation/Terminal`) to
   move to `Stage/`.
-- The existential two-face lift `2FL∃(j)` and the choosing variant of
-  `CellScheme.Rows.cappedLift_of_boundary_short` (checkpoint 2.7), in prose only.
+- A completion below the full grade of `TwoFaceLiftExistsCounterexample.seedL`, outside the tower
+  (checkpoint 2.7), prospective.
 - The ordinary construction of (R1) as data (4b-ii), the proof of
   `StageType.HasCoupledGatedPinnedExtensions` (open; its first form
   `StageType.HasGatedPinnedExtensions` is refuted); (R2), (R3), (R4); and output 3, the proof of
