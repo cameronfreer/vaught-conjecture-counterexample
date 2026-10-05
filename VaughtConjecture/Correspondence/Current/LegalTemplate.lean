@@ -49,7 +49,7 @@ frame is corrected in the same way (field `gradedIndex_mem`).  No theorem here r
 legal template with cells of grade `0` to a corrected one.
 
 **Clauses 2–4** (status S).  Agreement on lawful labellings (row 43, clause 2) is not a
-correspondence of legal schemes: clause 4 makes the class of [AFK26] smaller.
+correspondence of legal schemes: clause 4 excludes some legal schemes.
 * Clause 2 is consistency of the rows (`CellScheme.Rows.IsConsistent`), by the identification of
   row 43 (`CellScheme.Rows.printedLawfulLocal_iff`).
 * Clause 3 is the printed definition of row 44, which is bountifulness only at every stage and with
@@ -62,9 +62,12 @@ correspondence of legal schemes: clause 4 makes the class of [AFK26] smaller.
   `j ≤ k + 1` of [Kni26, Lemma 2.5.13]: `CodingExamples.pointRow 2`, whose row has the value `2`
   at a cell of grade `1`, is legal, satisfies that bound (`Scheme.isStronglyCoded_pointRow_two`),
   and violates clause 4 (`Scheme.not_hasPrintedRange_pointRow_two`,
-  `Scheme.exists_isLegal_not_hasPrintedRange`).  So the legal schemes of this development form a
-  larger class than the legal templates of [AFK26]; whether every legal scheme is equivalent to one
-  satisfying clause 4 is not proved here.
+  `Scheme.exists_isLegal_not_hasPrintedRange`).  So the two classes differ: with clause 1
+  corrected and clause 3 required at every stage together with the cap `-∞`, the legal templates
+  of [AFK26] are exactly the legal schemes satisfying clause 4
+  (`Scheme.isLegal_and_hasPrintedRange_iff`), a strictly smaller class; that a legal template as
+  printed (clause 3 at `ω₁` only) is a legal scheme is not proved (row 44).  Whether every legal
+  scheme is equivalent to one satisfying clause 4 is not proved here.
 
 **Departures that are not fields.**
 * The plan conditions of [AFK26, Definition 4.1] are not fields of `CellScheme.Rows.PrintedLegal`
@@ -88,10 +91,14 @@ legal stage types are closed under the face maps (`StageType.IsLegal.restrictFac
 relation symbol of the base language for each legal stage type at stage `ω`.  Under the reading of
 rows 43–45 the first clause of Lemma 4.28 (all templates in `L` are legal templates) fails for the
 legal stage types here as they stand: at every stage there is a legal stage type on a scheme
-violating clause 4 (`StageType.exists_isLegal_not_hasPrintedRange`), so the relation symbols of
-`σ[L]` are indexed by a strictly smaller class than those of `baseLanguage`.  Either of two
-results would resolve this, and neither is chosen here: a proof that the class restricted by
-clause 4 suffices for the main theorem, or a correction of clause 4 recorded as C.
+violating clause 4 (`StageType.exists_isLegal_not_hasPrintedRange`).  Under this reading a
+template carries no labelling, so `σ[L]` and `baseLanguage` are indexed by different kinds of
+object (templates, legal stage types); their underlying schemes differ by clause 4
+(`pointRow 2`), and a comparison of the two languages needs the representation of README item 1
+(row 9) in any case.  Under the coherent-rows reading of row 9 the witness, whose labels are all
+`⊥`, satisfies clause 4; there clause 4 bounds the labels.  Either of two results would resolve
+this, and neither is chosen here: a proof that the class restricted by clause 4 suffices for the
+main theorem, or a correction of clause 4 recorded as C.
 [AFK26, Theorem 4.29], the counterexample, corresponds to the main theorem in its conditional
 composition `vaughtCounterexample_of_expansionDomains` (`MainTheorem/Assembly`), with the density
 sentence for `σ[L]`; both rows are still to be proved, the identification of `σ[L]` subject to the
@@ -100,6 +107,10 @@ same difference of classes.
 ## Placement
 
 The concordance and its notes are in `roadmap/IMPLEMENTATION.md`, "Manuscript concordance".
+The import of `Extension/CodingExamples` supplies `IsStronglyCoded` (`Extension/Coding`),
+`Scheme.IsLegal.toStageType` (`Extension/PinnedExtension`), and `CodingExamples.pointRow`.  When
+`toStageType` moves to `Stage/Legal` (the placement recorded in `Extension/PinnedExtension`),
+`pointRow` can move with it to `Stage/LegalExamples`.
 -/
 
 universe u

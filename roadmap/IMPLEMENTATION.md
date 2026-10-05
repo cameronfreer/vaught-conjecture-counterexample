@@ -1311,11 +1311,15 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     [Kni26, Lemma 2.5.13]: `CodingExamples.pointRow 2` is legal, satisfies that bound
     (`Scheme.isStronglyCoded_pointRow_two`), and violates clause 4
     (`Scheme.not_hasPrintedRange_pointRow_two`, `Scheme.exists_isLegal_not_hasPrintedRange`), all
-    compiled in this repository (theorem named).  So the legal schemes form a strictly larger class
-    than the legal templates of [AFK26] under this reading, and resolution (2) of the fidelity
-    question of item 1 can hold only up to this bound.  Compiled in this repository (theorem named):
-    `Scheme.IsLegal.correctedLegal` (a legal scheme with clause 4 satisfies the corrected definition
-    at every stage `θ ≥ ω ^ 2` that is zero or a limit), `Scheme.IsLegal.correctedLegal_omega_one`,
+    compiled in this repository (theorem named).  So the two classes differ: with clause 1
+    corrected and clause 3 required at every stage together with the cap `-∞`, the legal templates
+    of [AFK26] are exactly the legal schemes satisfying clause 4
+    (`Scheme.isLegal_and_hasPrintedRange_iff`), a strictly smaller class; that a legal template as
+    printed (clause 3 at `ω₁` only) is a legal scheme is not proved (row 44).  Under the reading of
+    note 43, resolution (2) of the fidelity question of item 1 can hold only up to this bound.
+    Compiled in this repository (theorem named): `Scheme.IsLegal.correctedLegal` (a legal scheme
+    with clause 4 satisfies the corrected definition at every stage `θ ≥ ω ^ 2` that is zero or a
+    limit), `Scheme.IsLegal.correctedLegal_omega_one`,
     and the equivalence `Scheme.isLegal_and_hasPrintedRange_iff` (with the corrected definition at
     every such stage and the cap `-∞` of row 44).  Departures that are not fields: the plan
     conditions of [AFK26, Definition 4.1] (supplied by `Scheme.IsWellFormed` in the equivalence),
@@ -1336,14 +1340,20 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     is chosen here: (a) a proof that the class restricted by clause 4 suffices for the main
     theorem (it is not known to be preserved by the coatom amalgam and the completion, and
     legality may not be strengthened, `README.md`, Layer 3, checkpoint 2.2); or (b) a correction
-    of clause 4 of Definition 4.27, recorded as C.  That the legal stage types form a template
-    system of [AFK26] representing every legal template up to relabelling isomorphism is still to
-    be proved after that; it rests on rows 9 and 45.
+    of clause 4 of Definition 4.27, recorded as C.  Under the coherent-rows reading of row 9 the
+    witness does not apply: it is the bottom labelling, its coherent local rows are all `⊥`, and
+    it satisfies clause 4; there clause 4 bounds the labels (note 43), and its effect on Lemma 4.28
+    is not recorded.  That the legal stage types form a template system of [AFK26] representing
+    every legal template up to relabelling isomorphism is still to be proved: under the reading of
+    note 43 after one of (a) and (b); under the coherent-rows reading it rests on rows 9 and 45
+    (the representation of item 1 by coherent local rows, under which clause 4 bounds the labels).
 47. Statement only.  The corresponding statement here is the main theorem in its conditional
     composition `vaughtCounterexample_of_expansionDomains` (`MainTheorem/Assembly`), compiled in
-    this repository (theorem named), whose hypotheses are still to be proved.  The relation
-    symbols of `σ[L]` are indexed by the legal templates of [AFK26], a strictly smaller class
-    than the legal stage types indexing `baseLanguage` (note 46), so `σ[L]` cannot be literally
+    this repository (theorem named), whose hypotheses are still to be proved.  Under the reading
+    of note 43 a template carries no labelling, so `σ[L]` and `baseLanguage` are indexed by
+    different kinds of object (templates, legal stage types); their underlying schemes differ by
+    clause 4 (`CodingExamples.pointRow 2`, note 46), and a comparison of the two languages needs
+    the representation of item 1 (row 9) in any case.  So `σ[L]` cannot be literally
     `densitySentence` as things stand; their identification needs one of the two resolutions of
     note 46, and then rows 12 and 13.  The first assertion of Theorem 4.29, about
     the system `K[L]`, has no counterpart here (prospective).
