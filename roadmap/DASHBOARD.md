@@ -31,7 +31,7 @@ percentage of 100 would not by itself mean that the hypotheses of a layer are pr
 | 4, continuation | 62% | `Realization.stableCandidate` | output 3: (R4), the apex property |
 | 5, domains, agreement | 85% | `Expansion.expansionDomain_loss_countable` | the hypotheses below |
 | 6, the bounds | 90% | `densitySentence_hasThinAlephOneSpectrum_of_terminalClassification` | the hypotheses below |
-| Manuscript correspondence | 20% | the concordance rows (`IMPLEMENTATION.md`) | no row is P |
+| Manuscript correspondence | 25% | `CellScheme.Rows.printedRespects_iff` | rows 2–5 P; row 6 S (one direction at `ω₁`); the rest S or C |
 | **Overall** | **≈ 78%** | | |
 
 Notes on the rows, each with its marker:
