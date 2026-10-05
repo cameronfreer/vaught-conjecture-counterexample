@@ -23,8 +23,9 @@ Special cases of `VaughtConjecture.Continuation.Candidate`:
   hypothesis; a top-free type has none.  The failure of availability for a pointwise minimum of two
   lawful lifts with twins is the stage-type example of `VaughtConjecture.Stage.ThresholdExamples`;
   no realization-level counterexample is claimed.  Stable availability for twin types in models is
-  open, with no conditional statement here; synchronizing cofaces and twin ordering, the
-  hypotheses on single types examined for it, are refuted in
+  open, with no conditional statement here apart from the case of an existing next-block
+  expansion (`Realization.isStablyLawful_of_reduce_eq`); synchronizing cofaces and twin ordering,
+  the hypotheses on single types examined for it, are refuted in
   `VaughtConjecture.Continuation.CandidateCounterexamples`;
 * **a model expansion**: at `ξ = 0`, the reduction of an exactly consistent
   realization at `ω + ω` with legal types and finite-extension receiving is stably lawful, given

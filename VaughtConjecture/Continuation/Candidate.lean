@@ -68,8 +68,10 @@ because a stage type carries the lawfulness of its labels.
   labelled the formal top at one graded index: a forced disjunction is not a disjunction of
   forcings, and the pointwise minimum of two lawful lifts need not satisfy availability (the
   stage-type example of `VaughtConjecture.Stage.ThresholdExamples`; no realization-level
-  counterexample is claimed).  **Stable availability for twin types in models is open**, and no
-  conditional statement of it is made here.
+  counterexample is claimed).  **Stable availability for twin types in models is open**; apart
+  from the case of an existing next-block expansion (`Realization.isStablyLawful_of_reduce_eq`,
+  below, which presupposes the expansion that output 3 is to construct), no conditional statement
+  of it is made here.
 
 Hence a realization is stably lawful under exact consistency and covering when no type has twins
 (`Realization.isStablyLawful_of_injOn_gradedIndex`), and with no hypothesis at all when it is

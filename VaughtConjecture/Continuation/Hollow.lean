@@ -67,16 +67,15 @@ receiving, (R1) or forcing donors.  When `R` is not cover-hollow, some cell labe
 has a proper stable label `λ_ξ + i`
 (`Realization.exists_stableLabel_eq_coe_add_of_not_isCoverHollow`).
 
-**Relation to the original definition of hollowness.**  The roadmap states output 3, the count
-of terminal classes, (R3) and (R4) with `IsCoverHollow` (roadmap, Layer 4; semantic contract,
-item 8), and keeps the original anchor definition of hollowness as a separate notion.
-`IsCoverHollow` is phrased through rooted covers and forcing; it is not that definition, and no
-equivalence with it is claimed here.  The equivalence of `IsCoverHollow` with the original
-hollowness is still to be proved.  The countable cover of terminal classes (condition 2, terminal
-countability; `VaughtConjecture.Expansion.Losses`) and the modelhood criterion (output 3,
-`ContinuationCriterion`) are stated with `IsCoverHollow` elsewhere.  Classification and receiving
-for `IsCoverHollow` enter there as separate named hypotheses, the continuation criterion and (R3);
-neither follows from anything proved here.
+**Relation to the original definition of hollowness.**  The roadmap retains the original anchor
+definition of hollowness (roadmap, Layer 4; semantic contract, item 8), with stable-label fixedness
+as a theorem for models.  `IsCoverHollow` is a separate predicate, phrased through rooted covers
+and forcing; it is not that definition, and no equivalence with it is claimed here.  The
+equivalence of `IsCoverHollow` with the original hollowness is still to be proved.  The countable
+cover of terminal classes (condition 2, terminal countability; `VaughtConjecture.Expansion.Losses`)
+and the modelhood criterion (output 3, `ContinuationCriterion`) are stated with `IsCoverHollow`
+elsewhere.  Classification and receiving for `IsCoverHollow` enter there as separate named
+hypotheses, the continuation criterion and (R3); neither follows from anything proved here.
 
 The word *anchor* here is unrelated to the anchor of a donor cell in `Extension/Gate` (a private
 cell from which a gate reading reads the label of a donor cell).

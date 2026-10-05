@@ -13,7 +13,7 @@ no refutation is known), or *refuted* (false, with the negative special case nam
 proved under named hypotheses is *compiled conditionally*; each of those hypotheses keeps its own
 status, and a conditional theorem never counts as a proof of its hypotheses.
 
-**Convention for the percentages.**  The percentage of a layer is the coordinator's estimate of
+**Convention for the percentages.**  The percentage of a layer is an editorial estimate of
 the share of the roadmap's statements for that layer that are compiled, a conditional theorem
 counting as compiled and its hypotheses being counted where they are stated.  It is an estimate of
 progress, not a measure of proof: no percentage below 100 bounds the work that remains, and a
@@ -42,33 +42,42 @@ Notes on the rows, each with its marker:
   grade `2 ≤ j < m` (`Seed.nonempty_completionBelowFullGrade_of_twoFaceLift_or_deadAt`).  Refuted:
   the union fill (`UnionFillCounterexample.not_unionFill_seed`) and `2FL(2)`
   (`TwoFaceLiftCounterexample.not_twoFaceLift_two`, hence
-  `TwoFaceLiftCounterexample.not_forall_twoFaceLift`).  Prospective, not refuted:
-  `StageType.HasCoatomExtensions`, `StageType.HasApexCoatomExtensions`.
-- *Layer 3, receiving.*  Compiled: finite-extension receiving from finite-cut receiving
-  (`HasFiniteCutReceiving.hasFiniteExtensionReceiving`); gate recovery
+  `TwoFaceLiftCounterexample.not_forall_twoFaceLift`).  Still to be proved, not refuted:
+  `StageType.HasCoatomExtensions`, `StageType.HasApexCoatomExtensions`.  Prospective: the
+  existential two-face lift `2FL∃(j)` and the choosing one-grade lift.
+- *Layer 3, receiving.*  Compiled: finite-extension receiving from finite-cut receiving, for an
+  exactly consistent realization at a stage that is zero or a limit
+  (`Realization.HasFiniteCutReceiving.hasFiniteExtensionReceiving`); gate recovery
   (`StageType.GatedExtension.recover`); (R1) conditional on `StageType.HasGatedPinnedExtensions`
   (`Realization.IsModel.hasFiniteCutReceiving_of_hasGatedPinnedExtensions`); the cap-to-model
   theorem at a limit stage, conditional on the nonemptiness of the instances of uniformity and
   dominance (`Realization.isModel_of_hasFiniteCutReceiving`); the top-free witnesses, steps 1–7,
-  conditionally (`nonempty_loss_of_hasApexCoatomExtensions`).  Still to be proved: 4b-ii, the
-  gated construction as data; (R2), (R3), (R4).
+  conditionally: steps 2–3 under `StageType.HasCoatomExtensions`, and step 7 under
+  `StageType.HasApexCoatomExtensions` at `λ_η` and the uniqueness of model expansions at `λ_η`
+  (`nonempty_loss_of_hasApexCoatomExtensions`).  Still to be proved: 4b-ii, the gated
+  construction as data; (R2), (R3), (R4).
 - *Layer 4.*  Compiled: normalization, conditional on finite-extension receiving and forcing donors
   (`Realization.label_eq_stableLabel`); the structural candidate given its lawfulness
   (`Realization.stableCandidate`), lawful without twins
   (`Realization.isStablyLawful_of_injOn_gradedIndex`); cover-hollowness and stable-label fixedness
   (`Realization.isCoverHollow_iff_forall_stableLabel_eq_top`); the exact-age comparison
-  (`Realization.nonempty_equiv_of_exactReceivingWithin`); the three comparisons, the residual and
-  hollow ones conditional on (R2) and (R3) (`Realization.nonempty_equiv_of_residual`,
-  `Realization.nonempty_equiv_of_hollow`); the cover of the terminal models, conditional on the
-  continuation criterion (`Realization.exists_hasTerminalProperty`).  Open: stable availability at
-  twins.  Still to be proved: output 3; the equivalence of cover-hollowness with the original
-  anchor definition of hollowness; the exact-age Scott sentences.
-- *Layers 5 and 6.*  Compiled conditionally on the hypotheses below: uniqueness and limit
-  existence (`ModelExpansion.subsingleton`, `ModelExpansion.nonempty_of_forall_lt`), next-block
-  uniqueness (`Expansion.NextBlockUniqueness.of_forcingDonors`), logical agreement
+  (`Realization.nonempty_equiv_of_exactReceivingWithin`); the three comparisons, the rigid-core one
+  conditional on finite-extension receiving (from (R1);
+  `Realization.nonempty_equiv_of_isGloballyRigidCore`), the residual and hollow ones on (R2) and
+  (R3) (`Realization.nonempty_equiv_of_residual`, `Realization.nonempty_equiv_of_hollow`); the
+  cover of the terminal models, conditional on the continuation criterion
+  (`Realization.exists_hasTerminalProperty`).  Open: stable availability at twins.  Still to be
+  proved: output 3; the equivalence of cover-hollowness (with which the compiled statements are
+  formulated) and the original anchor predicate (the meaning of "hollow", `SEMANTIC_CONTRACT.md`,
+  item 8); the exact-age Scott sentences.
+- *Layers 5 and 6.*  Compiled conditionally on the hypotheses below, or on next-block uniqueness,
+  derived from them: uniqueness and limit existence (`ModelExpansion.subsingleton`,
+  `ModelExpansion.nonempty_of_forall_lt`, under next-block uniqueness), next-block uniqueness
+  (`Expansion.NextBlockUniqueness.of_forcingDonors`), logical agreement
   (`Expansion.bfEquiv_of_modelExpansions`), countable losses
   (`Expansion.expansionDomain_loss_countable`), nonempty losses
-  (`hasNonemptyLosses_of_hasApexCoatomExtensions`), and the thin `ℵ₁` spectrum
+  (`hasNonemptyLosses_of_hasApexCoatomExtensions`, also on the coatom extension property with
+  apex at every countable block stage; item 7 below), and the thin `ℵ₁` spectrum
   (`densitySentence_hasThinAlephOneSpectrum_of_terminalClassification`).
 
 ## The named hypotheses of the main theorem
@@ -91,7 +100,7 @@ library.
 Status of each:
 
 1. `CapToModel`: still to be proved.  Compiled conditionally on the coatom extension property with
-   apex at `ω` (`CapToModel.of_hasApexCoatomExtensions`), which is prospective.
+   apex at `ω` (`CapToModel.of_hasApexCoatomExtensions`), which is still to be proved.
 2. `Expansion.FiniteCutReceiving`: still to be proved.  Compiled conditionally on the gated pinned
    extension property (`Expansion.finiteCutReceiving_of_hasGatedPinnedExtensions`), which is still
    to be proved (4b-ii).  It is also used for the rigid-core comparison.
@@ -108,24 +117,34 @@ Status of each:
    the theorem above in a compiled statement.
 
 There is no hypothesis of countable losses and none of next-block uniqueness: the first is
-`Expansion.expansionDomain_loss_countable`, the second `Expansion.NextBlockUniqueness.of_forcingDonors`,
-each compiled conditionally on hypotheses in the list.
+`Expansion.expansionDomain_loss_countable`, the second
+`Expansion.NextBlockUniqueness.of_forcingDonors`, each compiled conditionally on hypotheses in the
+list.
 
 ## The research front
 
 Each item is open or still to be proved; none is assumed by a theorem of the library except as a
-named hypothesis.
+named hypothesis.  A result marked *under review, not yet merged* is not on `main` and is not
+counted as compiled.
 
 1. **Layer 3 at `m ≥ 3`** (open).  The existential two-face lift `2FL∃(j)`, with a choosing
    variant of `CellScheme.Rows.cappedLift_of_boundary_short` (both prospective, stated in prose in
    `README.md`, Layer 3, 3.1, (R6), 2.7); whether every seed has `2FL(j)` or `Seed.DeadAt j` at each
-   grade (undecided).  It gives `StageType.HasApexCoatomExtensions`, hence the coatom extension
-   hypotheses of the cap-to-model theorem, the top-free witnesses, and output 3.
-2. **Stable availability at twins** (open, with no conditional statement).  Refuted hypotheses on
-   single types: `Continuation.CandidateCounterexamples.not_synchronizingCofaces_blockStage` (with
-   two variants) and `Continuation.CandidateCounterexamples.not_twinOrdering_blockStage`.
+   grade (undecided on `main`).  The two prospective statements would give
+   `StageType.HasApexCoatomExtensions` (an implication not yet stated in the library), hence the
+   coatom extension hypotheses of the cap-to-model theorem, the top-free witnesses, and output 3.
+   Under review, not yet merged: the per-grade disjunction `2FL(j) ∨ Seed.DeadAt j` does not cover
+   every seed at `m = 3`, while `2FL∃(j)` is equivalent to the step of the tower and holds on the
+   seed of that counterexample, so 2.7 is to be conditioned on `2FL∃`.
+2. **Stable availability at twins** (open).  Apart from the case of an existing next-block
+   expansion (`Realization.isStablyLawful_of_reduce_eq`, which presupposes what output 3 is to
+   construct), no conditional statement of it is made.  Refuted hypotheses on single types:
+   `Continuation.CandidateCounterexamples.not_synchronizingCofaces_blockStage` (with two variants)
+   and `Continuation.CandidateCounterexamples.not_twinOrdering_blockStage`.
 3. **4b-ii** (still to be proved): the gated construction as data, that is,
-   `StageType.HasGatedPinnedExtensions`.
+   `StageType.HasGatedPinnedExtensions`.  Under review, not yet merged: that property is refuted at
+   every stage, so the conditional (R1) (`Expansion.finiteCutReceiving_of_hasGatedPinnedExtensions`)
+   is vacuous, and a corrected gate predicate is to be designed.
 4. **Forcing donors** (still to be proved): the finite construction behind `ForcingDonors`.
 5. **Output 3, part D, and (R4)** (still to be proved): (R4) over positive roots, the empty root by
    the coatom extension over the empty face, the coatom extension properties at `λ_{ξ+1}`, and the

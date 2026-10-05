@@ -18,7 +18,8 @@ reconstruction, Layer 4; semantic contract, items 5 and 9.
 stage `λ_{ξ+1} = λ_ξ + ω`, `ξ < ω₁`, on one carrier, with the same stage reduction to `λ_ξ`, are
 equal.  It is a consequence of normalization (output 2 of higher-stage reconstruction, Layer 4:
 every actual next-block model expansion agrees with the structural candidate read from its
-reduction), which is still to be proved; here it is an explicit hypothesis, and it is the only
+reduction), compiled conditionally on finite-extension receiving and forcing donors
+(`Realization.label_eq_stableLabel`); here it is an explicit hypothesis, and it is the only
 statement of Layer 4 used in this file.  It is derived from finite-cut receiving of models and
 forcing donors (`Expansion.NextBlockUniqueness.of_forcingDonors`, in
 `VaughtConjecture.Expansion.UniquenessOfForcing`), both still to be proved.  A stronger
@@ -71,7 +72,8 @@ namespace Expansion
 /-- **Next-block uniqueness of models**: two models at the block stage `λ_{ξ+1} = λ_ξ + ω`,
 `ξ < ω₁`, on one carrier in the universe `w`, with the same stage reduction to `λ_ξ`, are equal.
 It is a consequence of normalization (output 2 of higher-stage reconstruction, Layer 4 of the
-roadmap; checkpoint 5), still to be proved, and is a hypothesis here.  It is derived from finite-cut
+roadmap; checkpoint 5), compiled conditionally on finite-extension receiving and forcing donors
+(`Realization.label_eq_stableLabel`), and is a hypothesis here.  It is derived from finite-cut
 receiving of models and forcing donors (`Expansion.NextBlockUniqueness.of_forcingDonors`, in
 `VaughtConjecture.Expansion.UniquenessOfForcing`), both still to be proved.  It also follows from
 block determination at every countable block, a stronger hypothesis
