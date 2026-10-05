@@ -118,8 +118,10 @@ defined, and refuted, only in `VaughtConjecture.Continuation.CandidateCounterexa
 So no hypothesis that orders a twin above `s₀` in all lifts of a single type can hold.  The
 transfer that does hold happens inside the forcing cover: it carries a level forced at `s₀` over a
 legal cover to a twin over the same cover, and per-lift statements ignore the forced level.  On
-the five-cell type the forced level at `s₀` is its grade `1`, which every twin also has by the
-order law, while lifts still order the twins both ways above level `1`.
+the five-cell type the forced level at `s₀` is its grade `1`: it is at least the grade by the order
+law, and at most `1` because every cell labelled the formal top has grade `1`, so the capped lift
+with `K = 1` is a lift of the type (`StageType.capLift_reduce`).  Every twin also has level `1` by
+the order law, while lifts still order the twins both ways above level `1`.
 
 **The cases.**
 

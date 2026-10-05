@@ -1905,7 +1905,8 @@ Each checkpoint needs both its abstract API and a concrete application:
    (`Realization.IsModel.isStablyLawful`); two hypotheses on single types are refuted (section 4
    above). Output 3 (stated as the hypothesis `ContinuationCriterion`) is compiled conditionally on
    (R4) and the coface instances at the next block
-   (`ContinuationCriterion.of_stableCappedReceiving`); (R4) is still to be proved. Step 7 is
+   (`ContinuationCriterion.of_stableCappedReceiving`); (R4) and the coatom extension property with
+   apex at `λ_{ξ+1}` are still to be proved. Step 7 is
    compiled conditionally (`README.md`, the section on the top-free witnesses): the loss at `η`
    under uniqueness at `λ_η` (`nonempty_loss_of_topFreeWitness`), and per block under
    `StageType.HasApexCoatomExtensions` at `λ_η` and uniqueness of the model expansions at `λ_η`

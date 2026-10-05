@@ -423,13 +423,21 @@ noncomputable def capLift (hα : β + ω ≤ α) (q : StageType.{u} β m) (K : �
   atStage _ := .inl ((min_le_right _ _).trans_lt (coe_add_lt_of_le hα K))
 
 variable (hβ) in
+/-- The label of the capped lift at a cell is the minimum of the label of `q` and `β + K`. -/
+@[simp] theorem capLift_label (hα : β + ω ≤ α) (q : StageType.{u} β m) (K : ℕ)
+    (hK : ∀ d, q.label d = ⊤ → q.toCellScheme.grade d ≤ K) (d : Fin q.card) :
+    (capLift hβ hα q K hK).label d = min (q.label d) ((β + K : Ordinal.{u}) : Label.{u}) :=
+  rfl
+
+variable (hβ) in
 /-- The capped lift reduces to `q`. -/
 theorem capLift_reduce (hα : β + ω ≤ α) (q : StageType.{u} β m) (K : ℕ)
     (hK : ∀ d, q.label d = ⊤ → q.toCellScheme.grade d ≤ K) :
     (capLift hβ hα q K hK).reduce hβ = q :=
   StageType.ext rfl fun i j hij ↦ by
     obtain rfl : i = j := Fin.ext hij
-    change Label.reduce β (min (q.label i) ((β + K : Ordinal.{u}) : Label.{u})) = q.label i
+    -- `i` is indexed by the reduction, so both lemmas are given their arguments explicitly
+    rw [reduce_label (t := capLift hβ hα q K hK) hβ i, capLift_label hβ hα q K hK i]
     rcases q.atStage i with h | h
     · rw [min_eq_left (h.le.trans (coe_le_coe_add β K)), Label.reduce_of_lt h]
     · rw [h, min_eq_right le_top]
@@ -466,8 +474,7 @@ theorem exists_forcesThreshold_twin (hα : β + ω ≤ α) (hq : q.IsLegal) {s�
   have hQ₀ := capLift_reduce hβ hα q K hK
   have hNK : N ≤ K := by
     have h := hN.2 _ _ hQ₀ (restrictFace_refl _) s₀ rfl
-    change _ ≤ min (q.label s₀) _ at h
-    rw [hs, min_eq_right le_top] at h
+    rw [capLift_label, hs, min_eq_right le_top] at h
     exact coe_add_le_coe_add_iff.mp h
   -- a full-scope cell `D` of grade `K` labelled the formal top
   obtain ⟨E, hE, hEK⟩ := exists_mem_eq_sup T hT fun d ↦ q.toCellScheme.grade d
@@ -508,7 +515,7 @@ theorem exists_forcesThreshold_twin (hα : β + ω ≤ α) (hq : q.IsLegal) {s�
     exact (le_min h₁ h₂).trans (h₃.trans (min_le_left _ _))
   refine ⟨u.1, hu', ?_, hforce⟩
   have h := hforce.2 _ _ hQ₀ (restrictFace_refl _) u.1 rfl
-  change _ ≤ min (q.label u.1) _ at h
+  rw [capLift_label] at h
   rcases q.atStage u.1 with hlt | htop
   · exact absurd ((coe_le_coe_add β N).trans (h.trans (min_le_left _ _))) (not_le.mpr hlt)
   · exact htop
@@ -541,6 +548,7 @@ theorem exists_forcesThreshold_twin_face (hα : β + ω ≤ α) (hq : q.IsLegal)
     exact Scheme.mem_visibleCells.mp (q.toScheme.cellMap_mem f t₀)
   obtain ⟨w, rfl⟩ := hvis
   refine ⟨w, ?_, hw't, (key w N).mpr hw'f⟩
+  -- the graded index of `comap f hf` is that of the underlying scheme `q.toScheme.comap f`
   change (q.toScheme.comap f).toCellScheme.gradedIndex w =
     (q.toScheme.comap f).toCellScheme.gradedIndex t₀
   have h := hw'

@@ -64,8 +64,10 @@ realization with legal types (`Realization.availability_stableSection_of_hasLega
 rooted cover that forces a level at `s₀` forces it, over the same cover, at a cell labelled the
 formal top at the graded index of `t₀` (`StageType.exists_forcesThreshold_twin_face`).  The
 statements refuted here compare the cells in every lift and ignore the forced level.  On the
-five-cell type the forced level at `0` is its grade `1`, which both twins also have by the order
-law, while the lifts order the twins both ways above that level.
+five-cell type the forced level at `0` is its grade `1`: it is at least the grade by the order law,
+and at most `1` because `0` and the twins, the cells labelled the formal top, have grade `1`, so the
+capped lift with `K = 1` is a lift of the type (`StageType.capLift_reduce`).  Both twins also have
+level `1` by the order law, while the lifts order the twins both ways above that level.
 
 ## Placement
 
