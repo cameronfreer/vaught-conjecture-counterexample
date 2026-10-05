@@ -177,13 +177,6 @@ theorem exists_isLegalBelowFullGrade_doublingChain (hα : Order.IsSuccPrelimit �
   · rw [← restrictFace_trans _ _ _ (F.restrictFace_left_truncate hα)]
     exact hg
 
-/-- The first point of a two-point type spans a closed face: singletons are closed in a plan. -/
-theorem exists_restrictFace_castSuccEmb_of_two (t : StageType.{u} α 2) :
-    ∃ p, restrictFace (Fin.castSuccEmb : Fin 1 ↪ Fin 2) t = some p := by
-  refine Option.isSome_iff_exists.mp ((isSome_restrictFace_iff _ _).mpr ?_)
-  rw [show univ.map (Fin.castSuccEmb : Fin 1 ↪ Fin 2) = {0} by decide]
-  exact t.isPlan.singleton_mem (mem_univ 0)
-
 end StageType
 
 /-! ### Forcing donors -/

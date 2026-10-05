@@ -64,7 +64,7 @@ example {η : Ordinal.{u}} :
   obtain ⟨t, ht, d, hd, hn, hall⟩ := OnePoint.le_of_forcingDonor (η := η) (j := 4) (by omega)
   exact ⟨t, ht, d, forcingDonors_onePoint t ht d hd 4 hn le_rfl, hall⟩
 
-/-- **A one-point type does not force `2` by itself**: its only cell has grade `1`. -/
+/-- **A one-point type does not force `2` by itself**: every cell has grade `1`. -/
 example {η : Ordinal.{u}} (t : StageType.{u} (blockStage η) 1) (d : Fin t.card)
     (hd : t.label d = ⊤) :
     ¬ StageType.ForcesThreshold (blockStage (η + 1)) (isSuccPrelimit_blockStage η) t
