@@ -109,7 +109,8 @@ structure FiniteExtensionReceiving : Prop where
 /-- **Finite-cut receiving for models** on the carriers in the universe `w`: every model at a
 countable limit stage has the finite-cut receiving property.  This is (R1) of the table of
 Layer 3, not proved here; it holds conditional on the gated pinned extension property
-(`finiteCutReceiving_of_hasGatedPinnedExtensions`). -/
+(`finiteCutReceiving_of_hasGatedPinnedExtensions`, in
+`VaughtConjecture.Expansion.GatedReceiving`). -/
 structure FiniteCutReceiving : Prop where
   /-- Every model at a countable limit stage has finite-cut receiving. -/
   receive : ∀ {α : Ordinal.{0}} {M : Type w}, Order.IsSuccLimit α → α < ω₁ →
