@@ -121,12 +121,13 @@ variable {K m : ℕ} {D : StageType.{u} α m}
 /-- The legal stage types of top grade at most `K` are closed under the face maps. -/
 example (hD : D.IsLegal ∧ D.topGrade ≤ K) {f : Fin n ↪ Fin m} {p : StageType.{u} α n}
     (hf : restrictFace f D = some p) : p.IsLegal ∧ p.topGrade ≤ K :=
-  isLegal_and_topGrade_le_of_restrictFace hD hf
+  ⟨hD.1.restrictFace f hf, (topGrade_le_of_restrictFace hf).trans hD.2⟩
 
 /-- …and under reindexing, the face map along a bijection. -/
 example (hD : D.IsLegal ∧ D.topGrade ≤ K) (e : Fin m ≃ Fin m) :
     (D.reindex e).IsLegal ∧ (D.reindex e).topGrade ≤ K :=
-  isLegal_and_topGrade_le_of_restrictFace hD (restrictFace_equiv D e)
+  ⟨hD.1.restrictFace _ (restrictFace_equiv D e),
+    (topGrade_le_of_restrictFace (restrictFace_equiv D e)).trans hD.2⟩
 
 end Residual
 

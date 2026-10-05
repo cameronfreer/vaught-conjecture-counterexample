@@ -4,7 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.ClassicalLimit.Age
-import VaughtConjecture.Extension.SectionTheorem
 import VaughtConjecture.Stage.Cap
 
 /-!

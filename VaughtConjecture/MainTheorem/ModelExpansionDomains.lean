@@ -76,9 +76,11 @@ open scoped Ordinal
 /-- **The expansion domains of the density sentence**: the expansion domains on the classes of
 the density sentence (`DensityClass`) whose domain at `η` is the actual expansion domain
 `Expansion.expansionDomain η`.  The first domain is every class conditional on the cap-to-model
-theorem (`hcap`; Layer 3, 3.4; checkpoint 4), and the limit clause is conditional on next-block
-uniqueness of models (`hu`; Layer 4, output 2; checkpoint 5); both are still to be proved.  The
-domains decrease and are empty at and above `ω₁` unconditionally. -/
+theorem (`hcap`; Layer 3, 3.4; checkpoint 4; it follows from the coatom extension property with
+apex at `ω`, `CapToModel.of_hasApexCoatomExtensions`), and the limit clause is conditional on
+next-block uniqueness of models (`hu`; Layer 4, output 2; checkpoint 5; it follows from (R1) and
+forcing donors, `Expansion.NextBlockUniqueness.of_forcingDonors`); both are still to be proved.
+The domains decrease and are empty at and above `ω₁` unconditionally. -/
 def modelExpansionDomains (hcap : CapToModel.{0}) (hu : NextBlockUniqueness.{0}) :
     ExpansionDomains DensityClass where
   domain := expansionDomain
