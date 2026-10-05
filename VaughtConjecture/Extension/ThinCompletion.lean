@@ -58,7 +58,8 @@ below both coatoms (`ThinCompletionExamples.exists_not_restriction`).  The orien
 a seed whose coatom types are `TL` and `T5` has, at each `(univ, k)`, `1 ≤ k ≤ 3`, a cell whose row
 reads `({3}, 1)` strictly below `({4}, 1)` (`exists_separating_cell_of_completion_of_le_three`; at
 `(univ, 2)`, `exists_separating_cell_of_completion`), and the thin completion has only one cell
-there.
+there.  At `(univ, 4)` no separating cell is forced: the only cell of the thin completion there
+(`eq_newCell`) reads `({3}, 1)` and `({4}, 1)` both at `⊥` (`row_newCell_four_eq_bot_iff`).
 
 **Consequences.**  The identified obstruction of the tower (step 3 of
 `not_twoFaceLiftExists_two_of`: a new cell at `(univ, 2)` where the catalogue entry reaches the cap

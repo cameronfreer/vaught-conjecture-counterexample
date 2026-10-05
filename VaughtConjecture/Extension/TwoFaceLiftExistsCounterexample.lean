@@ -99,18 +99,18 @@ the tower, and so the tower as a completion of `seedL`.
 **A completion outside the tower.**  `seedL` has a completion below the full grade that is not built
 as a tower: the thin completion of the module `VaughtConjecture.Extension.ThinCompletion`
 (`ThinCompletion.nonempty_completionBelowFullGrade_seedL`), with one new cell at each `(univ, k)`
-whose rows at the grades `k ≤ 3` are *ordered*, reading the cells of grade `1` of `C` strictly below
-those of `D`.  At a stage that is zero or a limit it gives a legal stage type with an apex whose
-faces along the two coatoms are `TL` and `T5` (`CompletionBelowFullGrade.exists_coatomExtension`).
+whose rows at the grades `k ≤ 3` are *ordered*, reading the live cells of grade `1` of `C` strictly
+below those of `D`.  At every stage it gives a legal stage type with an apex whose faces along the
+two coatoms are `TL` and `T5` (`ThinCompletionExamples.exists_coatomExtension_seedL`).
 Every completion below the full grade meets a necessary condition, proved in the module
 `VaughtConjecture.Extension.SeparatingCell` (`ThinCompletion.exists_separating_cell`): for a cap
-`c`, the prescription `(A, ⊤, ⊤)` on `C` with `A` of finite part `1`, and every labelling `q` lawful
-below `(univ, 3)` that agrees with it capped at `c`, some cell `u` of the completion at `(univ, 2)`
-with `q(u) ≥ c` *separates* `d₁` and `d₂`: its row reads `d₁` strictly below `d₂` (with no cap,
-`ThinCompletion.exists_separating_cell_of_completion`; at every `(univ, k)`, `1 ≤ k ≤ 3`,
-`ThinCompletion.exists_separating_cell_of_le_three`).  The tower does not meet it (argued from step
-3, not formalized: every cell at `(univ, 2)` where `a` reaches `h` reads `d₁` and `d₂` at the same
-value).
+`c` self-visible at `3`, the prescription `(A, ⊤, ⊤)` on `C` with `A` of finite part `1`, and
+every labelling `q` lawful below `(univ, 3)` that agrees with it capped at `c`, some cell `u` of
+the completion at `(univ, 2)` with `q(u) ≥ c` *separates* `d₁` and `d₂`: its row reads `d₁`
+strictly below `d₂` (with no cap, `ThinCompletion.exists_separating_cell_of_completion`; at every
+`(univ, k)`, `1 ≤ k ≤ 3`, `ThinCompletion.exists_separating_cell_of_le_three`).  The tower does
+not meet it (argued from step 3, not formalized: every cell at `(univ, 2)` where `a` reaches `h`
+reads `d₁` and `d₂` at the same value).
 
 **Redesigns examined** (argued, not formalized).  The identified obstruction survives the
 redesigns examined:
@@ -123,9 +123,11 @@ redesigns examined:
   faces: `2FL∃(2)` already quantifies existentially over `w_D` and the extension, and an owner
   changes only how the extension is found.
 
-Not examined: rows of the layers, other than the ordered rows, that are not entries of catalogue
-entries at the old cells, and a catalogue at the grade `j + 1` restricted so that its entries do not
-reach the cap only at cells reading `d₁` and `d₂` alike.
+Not examined: other rows of the layers that are not entries of catalogue entries at the old cells,
+and a catalogue at the grade `j + 1` restricted so that its entries do not reach the cap only at
+cells reading `d₁` and `d₂` alike.  The ordered rows of the thin completion (above) are not entries
+of catalogue entries, and the obstruction does not apply to them: the only cell of the thin
+completion at `(univ, 2)` separates `d₁` and `d₂` (`ThinCompletionExamples.row_newCell_two_lt`).
 
 ## Placement
 

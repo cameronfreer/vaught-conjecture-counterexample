@@ -34,10 +34,10 @@ coupling `G ≤ A` of `T5`); availability from a cell of grade `k` where `w` is 
 `(univ, k)` with `w u = ⊤ ≥ c`; and locality at `u` with `w d₁ = A < ⊤ = w d₂` forces the row of
 `u` to read `d₁` below `d₂`.  With `c = ⊥` and `q = ⊥`: every completion has a separating cell at
 each `(univ, k)` (`exists_separating_cell_of_completion_of_le_three`; at `(univ, 2)`,
-`exists_separating_cell_of_completion`; for `seedL`, `exists_separating_cell_seedL`).  The tower
-of the step does not meet this condition (argued from step 3 of `not_twoFaceLiftExists_two_of`,
-not formalized: every new cell at `(univ, 2)` where the catalogue entry reaches the cap reads `d₁`
-and `d₂` at the same value); that the tower fails for `seedL` is
+`exists_separating_cell_of_completion`; for `seedL`, `exists_separating_cell_seedL_of_le_three`).
+The tower of the step does not meet this condition (argued from step 3 of
+`not_twoFaceLiftExists_two_of`, not formalized: every new cell at `(univ, 2)` where the catalogue
+entry reaches the cap reads `d₁` and `d₂` at the same value); that the tower fails for `seedL` is
 `not_towerInvariant_top_seedL`.
 
 **Collisions.**  A *collision* at a cell `z` of grade `2` is a labelling that carries one label
@@ -105,23 +105,6 @@ theorem exists_block {x : Label.{u}} (hb : x ≠ ⊥) (ht : x ≠ ⊤) :
   | coe o =>
     obtain ⟨q, n, rfl⟩ := exists_eq_omega0_mul_add_natCast o
     exact ⟨q, n, rfl⟩
-
-/-- Two replacements at thresholds at most `2`. -/
-theorem visibilityReplace_visibilityReplace_two {k : ℕ} (hk : k ≤ 2) (i j : ℕ)
-    (A : Label.{u}) :
-    visibilityReplace k i (visibilityReplace 2 j A) =
-      visibilityReplace 2 (if j < k then i else j) A := by
-  induction A using recBotCoeTop with
-  | bot => simp
-  | top => simp
-  | coe o =>
-    obtain ⟨b, n, rfl⟩ := exists_eq_omega0_mul_add_natCast o
-    have key : (if (if n < 2 then j else n) < k then i else (if n < 2 then j else n)) =
-        (if n < 2 then (if j < k then i else j) else n) := by split_ifs <;> omega
-    rw [visibilityReplace_coe, visibilityReplace_coe, visibilityReplace_coe,
-      Ordinal.visibilityReplace_omega0_mul_add_natCast,
-      Ordinal.visibilityReplace_omega0_mul_add_natCast,
-      Ordinal.visibilityReplace_omega0_mul_add_natCast, key]
 
 /-- A label self-visible at `1` is fixed by visibility replacement at `2` with value `1`. -/
 theorem visibilityReplace_two_one_of_isSelfVisible {a : Label.{u}} (ha : IsSelfVisible 1 a) :

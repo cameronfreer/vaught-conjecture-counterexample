@@ -145,7 +145,7 @@ private theorem one_le_lt_two {q : Ordinal.{u}} (h1 : ¬ q < 1) (h2 : q < 2) : q
 theorem twoStrip_le_f (hab : visibilityReplace 2 2 a ≤ visibilityReplace 2 0 b)
     (hbf : visibilityReplace 2 2 b ≤ f) (x : Label.{u}) : twoStrip a b f x ≤ f := by
   have hb0 : visibilityReplace 2 0 b ≤ visibilityReplace 2 2 b :=
-    TwoFaceLiftCounterexample.visibilityReplace_le_visibilityReplace (by omega) b
+    Label.visibilityReplace_le_visibilityReplace (by omega) b
   by_cases hx : x = ⊥
   · rw [hx, twoStrip_bot]; exact bot_le
   by_cases hxt : x = ⊤
@@ -153,9 +153,9 @@ theorem twoStrip_le_f (hab : visibilityReplace 2 2 a ≤ visibilityReplace 2 0 b
   obtain ⟨q, n, rfl⟩ := exists_block hx hxt
   rw [twoStrip_block]
   split_ifs
-  · exact (TwoFaceLiftCounterexample.visibilityReplace_le_visibilityReplace (by omega) a).trans
+  · exact (Label.visibilityReplace_le_visibilityReplace (by omega) a).trans
       (hab.trans (hb0.trans hbf))
-  · exact (TwoFaceLiftCounterexample.visibilityReplace_le_visibilityReplace (by omega) b).trans
+  · exact (Label.visibilityReplace_le_visibilityReplace (by omega) b).trans
       hbf
   · exact le_rfl
 
@@ -175,7 +175,7 @@ theorem monotone_twoStrip (hab : visibilityReplace 2 2 a ≤ visibilityReplace 2
   rw [WithBot.coe_le_coe, WithTop.coe_le_coe, omega0_mul_add_natCast_le_iff] at hxy
   rw [twoStrip_block, twoStrip_block]
   have hvr := fun (A : Label.{u}) (i j : ℕ) (h : i ≤ j) ↦
-    TwoFaceLiftCounterexample.visibilityReplace_le_visibilityReplace (k := 2) h A
+    Label.visibilityReplace_le_visibilityReplace (k := 2) h A
   rcases hxy with hlt | ⟨rfl, hle⟩
   · by_cases h1' : q' < 1
     · exfalso
@@ -228,10 +228,10 @@ theorem isWitness_twoStrip (hf : IsSelfVisible 2 f)
         split_ifs <;> omega
       rw [visibilityReplace_block, twoStrip_block, twoStrip_block]
       by_cases h1 : q < 1
-      · rw [ite_eq_left h1, ite_eq_left h1, visibilityReplace_visibilityReplace_two hk, hm]
+      · rw [ite_eq_left h1, ite_eq_left h1, visibilityReplace_visibilityReplace_of_le hk, hm]
       · rw [ite_eq_right h1, ite_eq_right h1]
         by_cases h2 : q < 2
-        · rw [ite_eq_left h2, ite_eq_left h2, visibilityReplace_visibilityReplace_two hk, hm]
+        · rw [ite_eq_left h2, ite_eq_left h2, visibilityReplace_visibilityReplace_of_le hk, hm]
         · rw [ite_eq_right h2, ite_eq_right h2]
           exact ((hf.mono hk).visibilityReplace_eq i).symm
     · have hg : constStepSuppressor 2 f k = ⊥ := by
