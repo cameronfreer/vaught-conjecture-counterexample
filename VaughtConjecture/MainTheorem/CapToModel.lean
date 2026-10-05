@@ -29,12 +29,19 @@ theorem and by the empty-root case of receiving
 (`StageType.HasNonemptyCofaceInstances.of_hasApexCoatomExtensions`): the amalgam over the empty
 face is the pinned extension over the empty face, and the uniformity and dominance instances are
 those above.  At the block stages `λ_{ξ+1}` this gives output 3 of higher-stage reconstruction
-(`Realization.isModel_stableCandidate_of_hasApexCoatomExtensions`) and the continuation criterion
-(`ContinuationCriterion.of_hasApexCoatomExtensions`) conditional on (R4)
-(`StableCappedReceiving`), the coatom extension property with apex at every `λ_{ξ+1}` with
-`ξ < ω₁`, and stable lawfulness of the models in the domain of the criterion
-(`ModelStableLawfulness`; equivalent to the criterion given the other two, forcing donors and
-(R1)), none of which is proved.
+for a stably lawful model (`Realization.isModel_stableCandidate_of_hasApexCoatomExtensions`),
+conditional on (R4) (`StableCappedReceiving`) and the coatom extension property with apex at
+`λ_{ξ+1}`, neither of which is proved.  It also gives the continuation criterion from stable
+lawfulness of the models in its domain (`ContinuationCriterion.of_hasApexCoatomExtensions`, from
+`ModelStableLawfulness`, (R4), and the coatom extension property with apex at every `λ_{ξ+1}` with
+`ξ < ω₁`).  This is not a derivation of the criterion: under (R1), forcing donors, (R4) and the
+coface instances, `ModelStableLawfulness` is equivalent to the criterion
+(`continuationCriterion_iff_modelStableLawfulness`; the criterion gives stable lawfulness by
+forcing donors and (R1), and stable lawfulness gives the criterion by (R4) and the coface
+instances).  The remaining open problem is stable lawfulness, that is, availability of the stable
+section at twins (two cells labelled the formal top at one graded index), of the terminal models
+at countable blocks that are not cover-hollow and have top-grade supremum `⊤`; stating it as a
+hypothesis does not prove it.
 
 ## Placement
 
@@ -102,11 +109,13 @@ theorem Realization.isModel_stableCandidate_of_hasApexCoatomExtensions {ξ : Ord
   isModel_stableCandidate hξ hR hlaw hnh hgrow hR4
     (.of_hasApexCoatomExtensions hapex (isSuccLimit_blockStage (ξ + 1)).isSuccPrelimit)
 
-/-- **The continuation criterion under the coatom extension property with apex at every next
-block**, conditional on (R4) (`hR4`), the coatom extension property with apex at every `λ_{ξ+1}`
-with `ξ < ω₁` (`hext`), and stable lawfulness of the models in the domain of the criterion
-(`hlaw`; open, and equivalent to the criterion given the other two, forcing donors and (R1)), none
-of which is proved. -/
+/-- **The continuation criterion from stable lawfulness under the coatom extension property with
+apex at every next block**, conditional on (R4) (`hR4`), the coatom extension property with apex
+at every `λ_{ξ+1}` with `ξ < ω₁` (`hext`), and stable lawfulness of the models in the domain of the
+criterion (`hlaw`), none of which is proved.  This is one direction of an equivalence, not a
+derivation of the criterion: under (R1) and forcing donors, `hlaw` is equivalent to the criterion
+(`continuationCriterion_iff_modelStableLawfulness`).  The open problem is stable lawfulness of the
+terminal models that are not cover-hollow and have top-grade supremum `⊤`. -/
 theorem ContinuationCriterion.of_hasApexCoatomExtensions (hR4 : StableCappedReceiving.{w})
     (hext : ∀ ξ < ω₁, HasApexCoatomExtensions.{0} (blockStage (ξ + 1)))
     (hlaw : ModelStableLawfulness.{w}) : ContinuationCriterion.{w} :=

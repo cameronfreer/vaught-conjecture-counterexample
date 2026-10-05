@@ -156,17 +156,6 @@ open Finset Ordinal StageType
 
 /-! ### Auxiliary facts -/
 
-/-- The label of an offset is monotone in the offset. -/
-private theorem ofOffset_le_ofOffset {β : Ordinal.{u}} {o o' : ℕ∞} (h : o ≤ o') :
-    Label.ofOffset β o ≤ Label.ofOffset β o' := by
-  induction o' using ENat.recTopCoe with
-  | top => exact Label.ofOffset_top ▸ le_top
-  | coe m' =>
-    obtain ⟨m, rfl⟩ := ENat.ne_top_iff_exists.mp (ne_top_of_le_ne_top (ENat.natCast_ne_top m') h)
-    rw [Label.ofOffset_natCast, Label.ofOffset_natCast]
-    exact WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr
-      (add_le_add_right (Nat.cast_le.mpr (ENat.natCast_le_natCast.mp h)) _))
-
 /-- `β ≤ β + n` as labels. -/
 private theorem coe_le_coe_add (β : Ordinal.{u}) (n : ℕ) :
     (β : Label.{u}) ≤ ((β + n : Ordinal.{u}) : Label.{u}) :=
@@ -616,7 +605,7 @@ private theorem stableSection_le_of_forall_lift (ht : R.eval u = some t) {a b : 
         (∀ d, Label.reduce (blockStage ξ) (ℓ d) = t.label d) → ℓ a ≤ ℓ b) :
     R.stableSection u t a ≤ R.stableSection u t b := by
   rw [stableSection_of_eq_top ha, stableSection_of_eq_top hb]
-  refine ofOffset_le_ofOffset (ENat.forall_natCast_le_iff_le.mp fun n hn ↦ ?_)
+  refine Label.ofOffset_mono (ENat.forall_natCast_le_iff_le.mp fun n hn ↦ ?_)
   obtain ⟨x, hx, hcov⟩ := (natCast_le_stableOffset_iff (covers_of_eval u ht) ha).mp hn
   refine (natCast_le_stableOffset_iff (covers_of_eval u ht) hb).mpr
     ⟨x, ⟨hx.1, fun Q P hQ hP i hi ↦ ?_⟩, hcov⟩

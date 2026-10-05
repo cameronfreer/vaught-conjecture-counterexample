@@ -6,20 +6,21 @@ Authors: Cameron Freer
 import VaughtConjecture.Continuation.Continuation
 
 /-!
-# Examples: the continuation criterion from stable capped receiving
+# Examples: output 3 from stable capped receiving, and the continuation criterion
 
 Special cases of `VaughtConjecture.Continuation.Continuation`, each conditional only where stated:
 
 * **The first block** `ξ = 0`: the candidate lives at `λ_1 = ω + ω`, and output 3 there is the
   assembly under (R4) and the coface instances at `ω + ω`.
-* **Stable lawfulness without twins**: if no type of a model at a countable block has two cells
-  labelled the formal top at one graded index, the hypothesis `ModelStableLawfulness` holds.
-* **Stable lawfulness is the content of the criterion**: a model that is not stably lawful is not
-  cover-hollow, and, given forcing donors and (R1), it is terminal; under the four other inputs,
-  the criterion is equivalent to `ModelStableLawfulness`.
+* **Stable lawfulness without twins**: if no type of a model at a countable block has twins (two
+  cells labelled the formal top at one graded index), the hypothesis `ModelStableLawfulness`
+  holds.
+* **Stable lawfulness and the criterion**: a model that is not stably lawful is not cover-hollow,
+  and, given forcing donors and (R1), it is terminal; under (R1), forcing donors, (R4) and the
+  coface instances, the criterion is equivalent to `ModelStableLawfulness`.
 * **Cover-hollow models**: the candidate is not a model, so under the coface instances it lacks
-  finite-cut receiving; (R4) cannot be extended to cover-hollow models, and its non-hollowness
-  hypothesis is necessary.
+  finite-cut receiving; so (R4) extended to cover-hollow models would, with the coface instances,
+  exclude cover-hollow models with unbounded growth.
 * **Bounded stable labels**: likewise the candidate lacks finite-cut receiving; unbounded growth
   excludes such a bound.
 * **Top-free models**: cover-hollow vacuously, with top-grade supremum `0`, stably lawful, and with

@@ -110,6 +110,17 @@ noncomputable def ofOffset (β : Ordinal.{u}) (o : ℕ∞) : Label.{u} :=
     ofOffset β n = ((β + n : Ordinal.{u}) : Label.{u}) := by
   simp [ofOffset]
 
+/-- The label of an offset is monotone in the offset. -/
+theorem ofOffset_mono : Monotone (ofOffset β) := by
+  intro o o' h
+  induction o' using ENat.recTopCoe with
+  | top => exact ofOffset_top ▸ le_top
+  | coe m' =>
+    obtain ⟨m, rfl⟩ := ENat.ne_top_iff_exists.mp (ne_top_of_le_ne_top (ENat.natCast_ne_top m') h)
+    rw [ofOffset_natCast, ofOffset_natCast]
+    exact WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr
+      (add_le_add_right (Nat.cast_le.mpr (ENat.natCast_le_natCast.mp h)) _))
+
 /-- The label of an offset is the formal top exactly when the offset is infinite. -/
 @[simp] theorem ofOffset_eq_top_iff : ofOffset β o = ⊤ ↔ o = ⊤ := by
   induction o using ENat.recTopCoe with

@@ -5,11 +5,10 @@ Authors: Cameron Freer
 -/
 import VaughtConjecture.Continuation.Candidate
 import VaughtConjecture.Continuation.Classification
-import VaughtConjecture.Continuation.Terminal
 import VaughtConjecture.Realization.CapToModel
 
 /-!
-# The continuation criterion from stable capped receiving
+# Output 3 from stable capped receiving, and the continuation criterion
 
 Roadmap, Layer 4, output 3 of higher-stage reconstruction (the modelhood criterion: non-hollow
 unbounded top-grade growth makes the stable candidate a model, by (R4) of the table of Layer 3
@@ -20,8 +19,7 @@ Throughout, `R` is a realization at the block stage `λ_ξ = blockStage ξ` on a
 the stable candidate of `VaughtConjecture.Continuation.Candidate` at `λ_{ξ+1}`, defined from a
 proof `hlaw` that `R` is stably lawful.
 
-**Output 3 is not proved here.**  It is derived conditionally on three hypotheses, each still to
-be proved:
+**Output 3 is proved here only conditionally**, on three hypotheses, each still to be proved:
 
 * **(R4)**, stable capped receiving (`StableCappedReceiving`), as stated below;
 * **the nonempty coface instances at `λ_{ξ+1}`** (`StageType.HasNonemptyCofaceInstances`): the
@@ -33,7 +31,8 @@ be proved:
 * **stable lawfulness** of `R` (`Realization.IsStablyLawful`), the argument of the definition of
   the candidate.  The criterion takes it as an explicit hypothesis on the models in its domain
   (`ModelStableLawfulness`: every model at `λ_ξ`, `ξ < ω₁`, that is not cover-hollow and has
-  top-grade supremum `⊤` is stably lawful).  It is open, and it is not a side condition (below).
+  top-grade supremum `⊤` is stably lawful).  It is open, and it is equivalent to the criterion
+  under the other inputs (below).
 
 **(R4)** (`StableCappedReceiving`).  For a model `R` at `λ_ξ`, `ξ < ω₁`, stably lawful, not
 cover-hollow, with top-grade supremum `⊤`: over every occurrence of the candidate of positive
@@ -90,50 +89,62 @@ concern the new block `[λ_ξ, λ_ξ + ω)`:
 These two lemmas are not used in the assembly; they show that the candidate has the labels that
 these clauses require, and (R4) is to realize such labels over every root.
 
-**The criterion** (`ContinuationCriterion.of_stableCappedReceiving`).  From (R4), the coface
-instances at every `λ_{ξ+1}` with `ξ < ω₁`, and `ModelStableLawfulness`, the continuation
-criterion of `VaughtConjecture.Continuation.Classification` holds: the expansion of a model `R`
-that is not cover-hollow and has top-grade supremum `⊤` is its stable candidate, which reduces to
-`R` (`Realization.stableCandidate_reduce`).
+**Stable lawfulness gives the criterion** (`ContinuationCriterion.of_stableCappedReceiving`).
+From (R4), the coface instances at every `λ_{ξ+1}` with `ξ < ω₁`, and `ModelStableLawfulness`,
+the continuation criterion of `VaughtConjecture.Continuation.Classification` holds: the expansion
+of a model `R` that is not cover-hollow and has top-grade supremum `⊤` is its stable candidate,
+which reduces to `R` (`Realization.stableCandidate_reduce`).  This is one direction of an
+equivalence, not a derivation of the criterion (below).
 
-**Stable lawfulness is the content of the criterion.**  The order law and locality of the stable
-section are proved under exact consistency and covering, so only availability can fail, and only
-at a pair whose first cell is labelled the formal top.  There, availability is exactly the
-transfer of every threshold forced at the first cell over a realized rooted cover to some cell
-labelled the formal top at the graded index of the second, over a possibly different realized
-rooted cover (`Realization.availability_stableSection_iff`, with no hypothesis on `R`).  It holds
+**Stable lawfulness and the criterion.**  The order law and locality of the stable section are
+proved under exact consistency and covering, so only availability can fail, and only at a pair
+whose first cell is labelled the formal top.  There, availability is exactly the transfer of every
+threshold forced at the first cell over a realized rooted cover to some cell labelled the formal
+top at the graded index of the second, over a possibly different realized rooted cover
+(`Realization.availability_stableSection_iff`, with no hypothesis on `R`).  Two cells of one type
+labelled the formal top at one graded index are *twins*.  Availability holds
 
-* when no type has two cells labelled the formal top at one graded index
-  (`Realization.isStablyLawful_of_injOn_gradedIndex`), and for cover-hollow realizations;
+* when no type has twins (`Realization.isStablyLawful_of_injOn_gradedIndex`), and for cover-hollow
+  realizations;
 * for the reduction of an exactly consistent realization at `λ_{ξ+1}` with legal types and
   finite-extension receiving, given forcing donors at `ξ`
   (`Realization.isStablyLawful_of_reduce_eq`): in particular for a model with a model expansion
-  to `λ_{ξ+1}`, given (R1) there.
+  to `λ_{ξ+1}`, given (R1) there.  This case gives nothing toward the criterion: such a model
+  already has the expansion that the candidate is to supply.  It is used only in the direction
+  from the criterion to stable lawfulness.
 
-So the open case is the terminal one.  Given forcing donors at `ξ` and finite-extension
-receiving of the models at `λ_{ξ+1}` ((R1) there, equivalent to finite-cut receiving for models
-by `Realization.IsModel.hasFiniteExtensionReceiving_iff`), a realization that is not stably
-lawful is terminal at `ξ` (`Realization.isTerminalAt_of_not_isStablyLawful`), and it is never
-cover-hollow (`Realization.not_isCoverHollow_of_not_isStablyLawful`).  Hence the criterion, with
-forcing donors and (R1), gives stable lawfulness of every model with unbounded top-grade growth at
-a countable block (`Realization.isStablyLawful_of_continuationCriterion`,
+So stable lawfulness matters only for the terminal models, which the criterion asserts do not
+exist in its domain.  Given forcing donors at `ξ` and finite-extension receiving of the models at
+`λ_{ξ+1}` ((R1) there, equivalent to finite-cut receiving for models by a lemma of
+`VaughtConjecture.Realization.Receiving`, which this file does not import), a realization that is
+not stably lawful is terminal at `ξ` (`Realization.isTerminalAt_of_not_isStablyLawful`), and it is
+never cover-hollow (`Realization.not_isCoverHollow_of_not_isStablyLawful`).  Hence the criterion,
+with forcing donors and (R1), gives stable lawfulness of every model with unbounded top-grade
+growth at a countable block (`Realization.isStablyLawful_of_continuationCriterion`,
 `ModelStableLawfulness.of_continuationCriterion`); a model with unbounded growth that is not
-stably lawful refutes the criterion together with these inputs
-(`Realization.not_continuationCriterion_of_not_isStablyLawful`); and, given (R4), the coface
-instances, forcing donors and (R1), the criterion is equivalent to `ModelStableLawfulness`
-(`continuationCriterion_iff_modelStableLawfulness`).
+stably lawful refutes the conjunction of the criterion, forcing donors and (R1)
+(`Realization.not_continuationCriterion_and_forcingDonors_and_receiving_of_not_isStablyLawful`);
+and, under (R1), forcing donors, (R4) and the coface instances, `ModelStableLawfulness` is
+equivalent to the criterion (`continuationCriterion_iff_modelStableLawfulness`): the criterion
+gives stable lawfulness by forcing donors and (R1), and stable lawfulness gives the criterion by
+(R4) and the coface instances.
 
-No compiled statement refutes `ModelStableLawfulness`, and no single clause of a model supplies
-it.  The clauses prescribe, for realized covers, schemes, bottom patterns and labels below `λ_ξ`,
-all visible below a cap self-visible at the arity of the cover; by bountifulness of a legal cover
-(`StageType.exists_isLawful_lift`) a comparison holding in every lawful section that agrees with
-the cover below such a cap already holds in every lift of the base type, so it forces no new
+**The open problem.**  Neither direction proves the criterion, and `ModelStableLawfulness` as a
+hypothesis in its place proves nothing new.  The remaining open problem is stable lawfulness,
+that is, availability at twins, of the terminal models at countable blocks that are not
+cover-hollow and have top-grade supremum `⊤`.
+
+No compiled statement refutes `ModelStableLawfulness`, and no single clause of a model is known to
+supply it.  The clauses prescribe, for realized covers, schemes, bottom patterns and labels below
+`λ_ξ`, all visible below a cap self-visible at the arity of the cover; by bountifulness of a legal
+cover (`StageType.exists_isLawful_lift`) a comparison holding in every lawful section that agrees
+with the cover below such a cap already holds in every lift of the base type, so it forces no new
 threshold.  Only which cells of realized covers are labelled the formal top can transfer forcing
 to a twin, and no clause prescribes those.  (This reason is argued here, not compiled.)
 
-The derivation of the criterion uses neither its converse, nor (R1), forcing donors,
-normalization, or uniqueness of expansions; (R1) and forcing donors enter only the statements
-relating stable lawfulness to the criterion.
+The direction from stable lawfulness to the criterion uses neither the converse of the criterion,
+nor (R1), forcing donors, normalization, or uniqueness of expansions; (R1) and forcing donors
+enter only the direction from the criterion to stable lawfulness.
 
 ## Placement
 
@@ -288,17 +299,6 @@ section Availability
 
 variable {ξ : Ordinal.{u}} {M : Type v} {k : ℕ} {R : Realization.{u, v} (blockStage ξ) M}
 
-/-- The label of an offset is monotone in the offset. -/
-private theorem ofOffset_mono {β : Ordinal.{u}} {o o' : ℕ∞} (h : o ≤ o') :
-    Label.ofOffset β o ≤ Label.ofOffset β o' := by
-  induction o' using ENat.recTopCoe with
-  | top => exact Label.ofOffset_top ▸ le_top
-  | coe m' =>
-    obtain ⟨m, rfl⟩ := ENat.ne_top_iff_exists.mp (ne_top_of_le_ne_top (ENat.natCast_ne_top m') h)
-    rw [Label.ofOffset_natCast, Label.ofOffset_natCast]
-    exact WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr
-      (add_le_add_right (Nat.cast_le.mpr (ENat.natCast_le_natCast.mp h)) _))
-
 variable (R) in
 /-- **Forcing over a realized rooted cover**: some rooted cover `(m, q, f)` of `u` realized in `R`
 (the tuple `u` extends along `f` to a cover of `q`) forces the threshold `n` at the cell `d` of `t`,
@@ -352,7 +352,7 @@ theorem availability_stableSection_iff {u : Fin k ↪ M} {t : StageType.{u} (blo
     obtain ⟨-, hw₀i, hw₀t⟩ := mem_filter.mp hw₀
     refine ⟨w₀, hw₀i, ?_⟩
     rw [stableSection_of_eq_top hs₀, stableSection_of_eq_top hw₀t]
-    refine ofOffset_mono (ENat.forall_natCast_le_iff_le.mp fun n hn ↦ ?_)
+    refine Label.ofOffset_mono (ENat.forall_natCast_le_iff_le.mp fun n hn ↦ ?_)
     obtain ⟨w, hw, hwt, hf⟩ := h n ((natCast_le_stableOffset_iff hc hs₀).mp hn)
     exact ((natCast_le_stableOffset_iff hc hwt).mpr hf).trans
       (hmax w (mem_filter.mpr ⟨mem_univ _, hw, hwt⟩))
@@ -398,10 +398,13 @@ structure StableCappedReceiving : Prop where
 
 /-- **Stable lawfulness of the models in the domain of the continuation criterion**, a hypothesis
 still to be proved: every model at `λ_ξ`, `ξ < ω₁`, that is not cover-hollow and has top-grade
-supremum `⊤` is stably lawful.  It holds for the models without twins
-(`Realization.isStablyLawful_of_injOn_gradedIndex`) and for the models with a model expansion to
-`λ_{ξ+1}` given forcing donors and (R1) (`Realization.isStablyLawful_of_reduce_eq`); for terminal
-models with twins it is open.  Given (R4), the coface instances, forcing donors and (R1), it is
+supremum `⊤` is stably lawful.  It holds for the models without twins (two cells labelled the
+formal top at one graded index; `Realization.isStablyLawful_of_injOn_gradedIndex`).  Given forcing
+donors and (R1), it also holds for the models with a model expansion to `λ_{ξ+1}`
+(`Realization.isStablyLawful_of_reduce_eq`), but that case gives nothing toward the criterion: such
+a model already has the expansion that the candidate is to supply.  The hypothesis matters only on
+the terminal models, which the criterion asserts do not exist in its domain; for terminal models
+with twins it is open.  Under (R1), forcing donors, (R4) and the coface instances, it is
 equivalent to the continuation criterion (`continuationCriterion_iff_modelStableLawfulness`).  The
 hypothesis that `R` is not cover-hollow is redundant (cover-hollow realizations are stably lawful)
 and is kept to match the criterion. -/
@@ -465,12 +468,12 @@ end Realization
 
 /-! ### The continuation criterion -/
 
-/-- **The continuation criterion from stable capped receiving**, conditional on (R4) (`hR4`), the
-coface instances at every `λ_{ξ+1}` with `ξ < ω₁` (`hinst`; from the coatom extension property
-with apex there), and stable lawfulness of the models in the domain of the criterion (`hlaw`), each
-still to be proved: the model expansion is the stable candidate.  The last hypothesis is
-equivalent to the conclusion given the first two, forcing donors and (R1)
-(`continuationCriterion_iff_modelStableLawfulness`). -/
+/-- **The continuation criterion from stable lawfulness and stable capped receiving**, conditional
+on (R4) (`hR4`), the coface instances at every `λ_{ξ+1}` with `ξ < ω₁` (`hinst`; from the coatom
+extension property with apex there), and stable lawfulness of the models in the domain of the
+criterion (`hlaw`), each still to be proved: the model expansion is the stable candidate.  This is
+one direction of an equivalence, not a derivation of the criterion: under forcing donors and (R1),
+`hlaw` is equivalent to the conclusion (`continuationCriterion_iff_modelStableLawfulness`). -/
 theorem ContinuationCriterion.of_stableCappedReceiving (hR4 : StableCappedReceiving.{w})
     (hinst : ∀ ξ < ω₁, StageType.HasNonemptyCofaceInstances.{0} (blockStage (ξ + 1)))
     (hlaw : ModelStableLawfulness.{w}) : ContinuationCriterion.{w} :=
@@ -498,10 +501,10 @@ theorem isStablyLawful_of_continuationCriterion (hcont : ContinuationCriterion.{
     hcont.exists_model R hξ hR (not_isCoverHollow_of_not_isStablyLawful h) hg
   exact isTerminalAt_of_not_isStablyLawful hF hrec h R' hR' hred
 
-/-- **A model that is not stably lawful refutes the criterion** together with forcing donors at
-`ξ` and (R1) at `λ_{ξ+1}`, when it has top-grade supremum `⊤` at a countable block. -/
-theorem not_continuationCriterion_of_not_isStablyLawful (hξ : ξ < ω₁) (hR : R.IsModel)
-    (hg : R.topGradeSup = ⊤) (h : ¬ R.IsStablyLawful) :
+/-- **A model that is not stably lawful refutes the conjunction** of the criterion, forcing donors
+at `ξ` and (R1) at `λ_{ξ+1}`, when it has top-grade supremum `⊤` at a countable block. -/
+theorem not_continuationCriterion_and_forcingDonors_and_receiving_of_not_isStablyLawful
+    (hξ : ξ < ω₁) (hR : R.IsModel) (hg : R.topGradeSup = ⊤) (h : ¬ R.IsStablyLawful) :
     ¬ (ContinuationCriterion.{w} ∧ ForcingDonors.{0} ξ ∧
       ∀ R' : Realization.{0, w} (blockStage (ξ + 1)) M, R'.IsModel →
         R'.HasFiniteExtensionReceiving) :=
@@ -521,7 +524,9 @@ theorem ModelStableLawfulness.of_continuationCriterion (hcont : ContinuationCrit
 
 /-- **The continuation criterion is equivalent to stable lawfulness of the models in its domain**,
 given (R4), the coface instances at every `λ_{ξ+1}` with `ξ < ω₁`, forcing donors at every
-countable block, and (R1) at every `λ_{ξ+1}` with `ξ < ω₁`, all still to be proved. -/
+countable block, and (R1) at every `λ_{ξ+1}` with `ξ < ω₁`, all still to be proved.  The criterion
+gives stable lawfulness by forcing donors and (R1); stable lawfulness gives the criterion by (R4)
+and the coface instances. -/
 theorem continuationCriterion_iff_modelStableLawfulness (hR4 : StableCappedReceiving.{w})
     (hinst : ∀ ξ < ω₁, StageType.HasNonemptyCofaceInstances.{0} (blockStage (ξ + 1)))
     (hF : ∀ ξ < ω₁, ForcingDonors.{0} ξ)

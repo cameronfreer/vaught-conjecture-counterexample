@@ -3,6 +3,7 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
+import VaughtConjecture.MainTheorem.CapToModel
 import VaughtConjecture.MainTheorem.ModelExpansionDomains
 
 /-!
@@ -19,11 +20,10 @@ Special cases of `VaughtConjecture.MainTheorem.ModelExpansionDomains`:
 * next-block uniqueness derived from finite-cut receiving and forcing donors
   (`NextBlockUniqueness.of_forcingDonors`) in place of `hu`; the theorems with forcing donors are
   the theorems with next-block uniqueness applied to it, by `rfl`;
-* the continuation criterion from stable capped receiving: the theorems with (R4), the coatom
-  extension property with apex at every next block, and stable lawfulness are the theorems with
-  the continuation criterion applied to `ContinuationCriterion.of_hasApexCoatomExtensions`, by
-  `rfl`; under the other inputs, the criterion is equivalent to stable lawfulness of the models
-  in its domain; and the hypotheses of the spectrum theorem in this form.
+* the continuation criterion and stable lawfulness: under (R1), forcing donors, (R4) and the
+  coatom extension property with apex at every next block, the continuation criterion (the
+  hypothesis `hcont` of the theorems from the terminal classification) is equivalent to stable
+  lawfulness of the models in its domain (`continuationCriterion_iff_modelStableLawfulness`).
 
 ## Placement
 
@@ -123,25 +123,14 @@ example (hrec : FiniteCutReceiving.{0}) (hF : ∀ ξ < ω₁, ForcingDonors.{0} 
         (.of_forcingDonors hrec hF) hrec hc :=
   rfl
 
-/-! ### The continuation criterion from stable capped receiving -/
+/-! ### The continuation criterion and stable lawfulness -/
 
-/-- The spectrum theorem from stable capped receiving is the spectrum theorem from the terminal
-classification, applied to `ContinuationCriterion.of_hasApexCoatomExtensions`. -/
-example (hrec : FiniteCutReceiving.{0}) (hF : ∀ ξ < ω₁, ForcingDonors.{0} ξ)
-    (hR4 : StableCappedReceiving.{0})
-    (hext : ∀ ξ < ω₁, StageType.HasApexCoatomExtensions.{0} (blockStage (ξ + 1)))
-    (hlaw : ModelStableLawfulness.{0}) (hres : Realization.ResidualReceiving.{0, 0})
-    (hhol : Realization.HollowReceiving.{0, 0} Realization.IsCoverHollowAtBlock)
-    (hn : ∀ ξ < ω₁, (expansionDomain ξ \ expansionDomain (ξ + 1)).Nonempty) :
-    densitySentence_hasThinAlephOneSpectrum_of_stableCappedReceiving hcap hrec hF hR4 hext hlaw
-        hres hhol hn =
-      densitySentence_hasThinAlephOneSpectrum_of_terminalClassification hcap hrec hF
-        (.of_hasApexCoatomExtensions hR4 hext hlaw) hres hhol hn :=
-  rfl
-
-/-- Under (R1), forcing donors, (R4) and the coatom extension property with apex at every next
-block, the continuation criterion is equivalent to stable lawfulness of the models in its domain:
-the hypothesis `hlaw` of the spectrum theorem below is the content of the criterion. -/
+/-- Under (R1) and forcing donors, as in the theorems from the terminal classification, and under
+(R4) and the coatom extension property with apex at every next block, the continuation criterion
+is equivalent to stable lawfulness of the models in its domain.  The criterion gives stable
+lawfulness by forcing donors and (R1); stable lawfulness gives the criterion by (R4) and the apex
+property.  So stable lawfulness in place of the hypothesis `hcont` of those theorems would restate
+it, not prove it. -/
 example (hrec : FiniteCutReceiving.{0}) (hF : ∀ ξ < ω₁, ForcingDonors.{0} ξ)
     (hR4 : StableCappedReceiving.{0})
     (hext : ∀ ξ < ω₁, StageType.HasApexCoatomExtensions.{0} (blockStage (ξ + 1))) :
@@ -151,30 +140,5 @@ example (hrec : FiniteCutReceiving.{0}) (hF : ∀ ξ < ω₁, ForcingDonors.{0} 
       (isSuccLimit_blockStage (ξ + 1)).isSuccPrelimit) hF
     (fun _ _ R' hξ hR' ↦ hrec.finiteExtensionReceiving.receive (isSuccLimit_blockStage _)
       (blockStage_lt_omega_one ((Cardinal.isSuccLimit_omega 1).add_one_lt hξ)) R' hR')
-
-/-- **The hypotheses of the spectrum theorem from stable capped receiving**, as printed by
-`#check @densitySentence_hasThinAlephOneSpectrum_of_stableCappedReceiving`:
-```
-CapToModel →
-  FiniteCutReceiving →
-    (∀ ξ < Ordinal.omega 1, ForcingDonors ξ) →
-      StableCappedReceiving →
-        (∀ ξ < Ordinal.omega 1, StageType.HasApexCoatomExtensions (blockStage (ξ + 1))) →
-          ModelStableLawfulness →
-            Realization.ResidualReceiving →
-              (Realization.HollowReceiving fun {α} {M} => Realization.IsCoverHollowAtBlock) →
-                (∀ ξ < Ordinal.omega 1, (expansionDomain ξ \ expansionDomain (ξ + 1)).Nonempty) →
-                  HasThinAlephOneSpectrum densitySentence
-```
-No continuation criterion, no hypothesis on the countability of the losses, and no next-block
-uniqueness; each hypothesis is still to be proved. -/
-example : CapToModel.{0} → FiniteCutReceiving.{0} → (∀ ξ < ω₁, ForcingDonors.{0} ξ) →
-    StableCappedReceiving.{0} →
-    (∀ ξ < ω₁, StageType.HasApexCoatomExtensions.{0} (blockStage (ξ + 1))) →
-    ModelStableLawfulness.{0} → Realization.ResidualReceiving.{0, 0} →
-    Realization.HollowReceiving.{0, 0} Realization.IsCoverHollowAtBlock →
-    (∀ ξ < ω₁, (expansionDomain ξ \ expansionDomain (ξ + 1)).Nonempty) →
-    HasThinAlephOneSpectrum densitySentence.{0} :=
-  densitySentence_hasThinAlephOneSpectrum_of_stableCappedReceiving
 
 end VaughtConjecture.MainTheorem
