@@ -112,12 +112,14 @@ theorem mem_expansionDomain_zero_iff (c : ModelsOf densitySentence.{0}) :
 /-- **The domain at `0` is every class, conditional on the cap-to-model theorem** at `ω` on `ℕ`
 (`hcap`, in the unbundled form of `VaughtConjecture.Language.Density`; Layer 3, 3.4, and
 checkpoint 4 of the roadmap, still to be proved; the bundled `MainTheorem.CapToModel.{0}` supplies
-it as `fun R ↦ hcap.isModel R`).  The structure of every code satisfies the density sentence, so
-its realization has legal types, a nonempty carrier, exact consistency, covering, and the
-finite-cut receiving property (`realize_densitySentence_iff`); the receiving used is the one the
-density sentence itself provides, not (R1).  Nothing weaker than `hcap` on these realizations
-suffices: by `mem_expansionDomain_zero_iff`, the conclusion is equivalent to the modelhood of the
-realization of every code of a model of the density sentence. -/
+it as `fun R ↦ hcap.isModel R`, and follows from the coatom extension property with apex at `ω`,
+`MainTheorem.CapToModel.of_hasApexCoatomExtensions`, in
+`VaughtConjecture.MainTheorem.CapToModel`).  The structure of every code satisfies the density
+sentence, so its realization has legal types, a nonempty carrier, exact consistency, covering,
+and the finite-cut receiving property (`realize_densitySentence_iff`); the receiving used is the
+one the density sentence itself provides, not (R1).  Nothing weaker than `hcap` on these
+realizations suffices: by `mem_expansionDomain_zero_iff`, the conclusion is equivalent to the
+modelhood of the realization of every code of a model of the density sentence. -/
 theorem expansionDomain_zero
     (hcap : ∀ R : Realization.{0, 0} ω ℕ, Nonempty ℕ → R.HasLegalTypes → R.IsConsistent →
       R.IsCovering → R.HasFiniteCutReceiving → R.IsModel) :
