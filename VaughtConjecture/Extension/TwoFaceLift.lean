@@ -261,7 +261,7 @@ theorem twoFaceLift_one : I.TwoFaceLift 1 := by
       I.amalgam.toCellScheme.gradedIndex d ≤ (univ.erase (Fin.last (m + 1)), 1) ∨
         I.amalgam.toCellScheme.gradedIndex d ≤ (univ.erase (Fin.castSucc (Fin.last m)), 1) :=
     (I.scope_subset_or (mem_insert_self _ _)
-      (mem_insert_of_mem (mem_singleton_self _)) (Fin.castSucc_lt_last _).ne' d).imp
+      (mem_insert_of_mem (mem_singleton_self _)) last_ne_castSucc d).imp
       (fun h ↦ ⟨h, hd⟩) fun h ↦ ⟨h, hd⟩
   have hpos (d : Fin I.amalgam.card) : 1 ≤ I.amalgam.toCellScheme.grade d :=
     (I.amalgam.isWellFormed.isWellFormed.gradedIndex_mem d).2.1
@@ -283,7 +283,7 @@ theorem twoFaceLift_one : I.TwoFaceLift 1 := by
       I.towerEmbed 1 d ∈ (I.tower 1).toCellScheme.below
         (univ.erase (Fin.castSucc (Fin.last m)), 1) :=
     (I.scope_subset_or (mem_insert_self _ _)
-      (mem_insert_of_mem (mem_singleton_self _)) (Fin.castSucc_lt_last _).ne' d).imp
+      (mem_insert_of_mem (mem_singleton_self _)) last_ne_castSucc d).imp
       (fun h ↦ I.towerEmbed_mem_below_iff.mpr ⟨h, hd⟩)
       fun h ↦ I.towerEmbed_mem_below_iff.mpr ⟨h, hd⟩
   rw [Function.comp_apply, hr'f _ hb, hf_def, hρ_def]
