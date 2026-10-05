@@ -35,6 +35,7 @@ of `σ`.
 
 * reflexivity (`TransformsTo.refl`), pullback along a map of cell families
   (`TransformsTo.reindex`), and the bottom cases (`TransformsTo.bot`, `TransformsTo.eq_bot`);
+* every witness reads `a` at most as `b` exactly when `a ≤ b` (`le_iff_forall_isWitness`);
 * monotonicity in the source and antitonicity in the grade (`TransformsTo.le_of_le`), and
   preservation of self-visibility at the grade (`TransformsTo.isSelfVisible`);
 * lowering the suppressor (`IsWitness.of_le`, `IsWitness.of_le_stepSuppressor`), the pointwise
@@ -128,6 +129,12 @@ theorem IsWitness.id_top : IsWitness (fun _ ↦ (⊤ : Label.{u})) id :=
 theorem IsWitness.bot_top : IsWitness (fun _ ↦ (⊤ : Label.{u})) (fun _ ↦ ⊥) :=
   ⟨antitone_const, fun _ ↦ isSelfVisible_top _, rfl, monotone_const,
     fun _ _ _ _ _ ↦ (visibilityReplace_bot _ _).symm⟩
+
+/-- **Every witness reads `a` at most as `b` exactly when `a ≤ b`**: shifters are monotone, and
+the identity is a witness. -/
+theorem le_iff_forall_isWitness {a b : Label.{u}} :
+    (∀ (g : ℕ → Label.{u}) (σ : Label.{u} → Label.{u}), IsWitness g σ → σ a ≤ σ b) ↔ a ≤ b :=
+  ⟨fun h ↦ h _ id IsWitness.id_top, fun h _ _ hw ↦ hw.monotone h⟩
 
 /-- Every labelling transforms to itself. -/
 theorem TransformsTo.refl (grade : D → ℕ) (p : D → Label.{u}) : TransformsTo grade p p :=

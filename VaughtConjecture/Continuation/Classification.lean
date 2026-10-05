@@ -47,14 +47,17 @@ point.  There is no canonical property of a model, and no disjointness is claime
 **The continuation criterion** (`ContinuationCriterion`) is output 3 of higher-stage
 reconstruction in its sufficiency direction, and is **still to be proved**; here it is a
 hypothesis.  It states that a model at `λ_ξ`, for `ξ < ω₁`, that is not cover-hollow and has
-top-grade supremum `⊤` is the stage reduction of a model at `λ_{ξ+1}` on the same carrier.  Its
-intended derivation rests on:
+top-grade supremum `⊤` is the stage reduction of a model at `λ_{ξ+1}` on the same carrier.  It is
+derived (`ContinuationCriterion.of_stableCappedReceiving`, in
+`VaughtConjecture.Continuation.Continuation`) from:
 
-* output 1b (lawfulness of the stable candidate at `λ_{ξ+1}`);
 * (R4) of the table of Layer 3, with its empty-root base case;
-* the apex coatom extension property at `λ_{ξ+1}`.
+* the apex coatom extension property at `λ_{ξ+1}`, through the coface instances there.
 
-None of these is proved.  The converse of the criterion (H1) is neither stated nor used.
+Neither of these is proved.  Output 1b, the lawfulness of the stable candidate at `λ_{ξ+1}`, is
+proved for every model (`Realization.IsModel.isStablyLawful`, in
+`VaughtConjecture.Continuation.Candidate`).  The converse of the criterion (H1) is neither stated
+nor used.
 
 **The cover of the terminal models** (`exists_hasTerminalProperty`).  Under the continuation
 criterion, every model at `λ_ξ` that is terminal at `ξ` (`Realization.IsTerminalAt`) has some
@@ -128,10 +131,10 @@ end Realization
 
 /-- **The continuation criterion**, output 3 of higher-stage reconstruction in its sufficiency
 direction, still to be proved: a model at `λ_ξ`, for `ξ < ω₁`, that is not cover-hollow and has
-top-grade supremum `⊤` is the stage reduction of a model at `λ_{ξ+1}` on the same carrier.  Its
-intended derivation rests on output 1b (lawfulness of the stable candidate), (R4) of the table of
-Layer 3 with its empty-root base case, and the apex coatom extension property at `λ_{ξ+1}`; none
-of these is proved.  The converse is not part of the criterion. -/
+top-grade supremum `⊤` is the stage reduction of a model at `λ_{ξ+1}` on the same carrier.  It
+follows from (R4) of the table of Layer 3 with its empty-root base case and the apex coatom
+extension property at `λ_{ξ+1}`, neither of which is proved; the lawfulness of the stable
+candidate (output 1b) is proved for every model.  The converse is not part of the criterion. -/
 structure ContinuationCriterion : Prop where
   /-- A model that is not cover-hollow and has unbounded top-grade growth is the reduction of a
   model at the next block stage. -/
