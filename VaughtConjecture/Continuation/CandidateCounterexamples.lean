@@ -5,6 +5,7 @@ Authors: Cameron Freer
 -/
 import VaughtConjecture.Continuation.Candidate
 import VaughtConjecture.Extension.SmallArityExamples
+import VaughtConjecture.Label.StepWitness
 
 /-!
 # Synchronizing cofaces and twin ordering are refuted
@@ -56,8 +57,18 @@ from `({0}, 1)` and from `({1}, 1)` to `(univ, 1)`.  For `β` zero or a limit, t
 `β`, with `0` and both twins labelled the formal top.  On that type every lift sets `0` to the
 larger twin, and both orders of the twins occur, so no cell at the graded index of the twins is at
 least `0` in every lift.  Hence no hypothesis that orders a twin above `s₀` in all lifts of a
-single type can hold; availability at twins has to use information about the realization.  Whether
-stable availability holds for twin types in models is open.
+single type can hold.
+
+**The lesson.**  Availability of the stable section at twins is nevertheless proved, for every
+realization with legal types (`Realization.availability_stableSection_of_hasLegalTypes`, in
+`VaughtConjecture.Continuation.Candidate`).  The transfer happens inside the forcing cover: a legal
+rooted cover that forces a level at `s₀` forces it, over the same cover, at a cell labelled the
+formal top at the graded index of `t₀` (`StageType.exists_forcesThreshold_twin_face`).  The
+statements refuted here compare the cells in every lift and ignore the forced level.  On the
+five-cell type the forced level at `0` is its grade `1`: it is at least the grade by the order law,
+and at most `1` because `0` and the twins, the cells labelled the formal top, have grade `1`, so the
+capped lift with `K = 1` is a lift of the type (`StageType.capLift_reduce`).  Both twins also have
+level `1` by the order law, while the lifts order the twins both ways above that level.
 
 ## Placement
 
@@ -519,21 +530,6 @@ private theorem isLawfulBelow_fiveCellScheme {w : Fin 5 → Label.{u}}
   CellScheme.Rows.isLawfulBelow_iff_forall.mpr
     ⟨fun d _ ↦ h.orderly d, fun s _ ↦ h.locality s, fun s t _ hst hg ↦ h.availability s t hst hg⟩
 
-/-- The formal top at labels at least the cap `c`, and the label itself below it. -/
-private noncomputable def topAbove (c z : Label.{u}) : Label.{u} := if c ≤ z then ⊤ else z
-
-private theorem min_topAbove (c z : Label.{u}) : min (topAbove c z) c = min z c := by
-  unfold topAbove
-  split_ifs with h
-  · rw [min_top_left, min_eq_right h]
-  · rfl
-
-private theorem isSelfVisible_topAbove {c z : Label.{u}} (hz : IsSelfVisible 1 z) :
-    IsSelfVisible 1 (topAbove c z) := by
-  unfold topAbove
-  split_ifs
-  exacts [isSelfVisible_top _, hz]
-
 /-- **Lawful sections below `(univ, 1)`**, necessary conditions: `⊥` at `1`, self-visible at `1`
 at `0`, `2`, `3`, the twins at most `0`, and `0` at most the larger twin. -/
 private theorem conditions_of_isLawfulBelow {w : Fin 5 → Label.{u}}
@@ -588,20 +584,20 @@ private theorem cappedLift_scope_zero
     have := hpq ⟨0, m0X⟩
     rwa [hqw] at this
   let w' : Fin 5 → Label.{u} :=
-    ![x', ⊥, min (topAbove c (wq 2)) x', min (topAbove c (wq 3)) x', ⊥]
+    ![x', ⊥, min (raise c (wq 2)) x', min (raise c (wq 3)) x', ⊥]
   have hlaw : fiveCellScheme.{u}.rows.IsLawful w' := by
-    refine isLawful_fiveCellScheme rfl rfl hv0' ((isSelfVisible_topAbove hv2).min hv0')
-      ((isSelfVisible_topAbove hv3).min hv0') (min_le_right _ _) (min_le_right _ _) ?_
+    refine isLawful_fiveCellScheme rfl rfl hv0' ((isSelfVisible_raise c hv2).min hv0')
+      ((isSelfVisible_raise c hv3).min hv0') (min_le_right _ _) (min_le_right _ _) ?_
     -- the section `w'` at the cells `0`, `2` and `3`
-    change x' ≤ max (min (topAbove c (wq 2)) x') (min (topAbove c (wq 3)) x')
+    change x' ≤ max (min (raise c (wq 2)) x') (min (raise c (wq 3)) x')
     by_cases hcx : c ≤ x'
     · have hc0 : c ≤ wq 0 := by
         rw [min_eq_right hcx] at hcap
         exact min_eq_right_iff.mp hcap
       rcases le_max_iff.mp q0 with h2 | h3
-      · rw [show topAbove c (wq 2) = ⊤ from ite_eq_left (hc0.trans h2), min_top_left]
+      · rw [show raise c (wq 2) = ⊤ from ite_eq_left (hc0.trans h2), min_top_left]
         exact le_max_left _ _
-      · rw [show topAbove c (wq 3) = ⊤ from ite_eq_left (hc0.trans h3), min_top_left]
+      · rw [show raise c (wq 3) = ⊤ from ite_eq_left (hc0.trans h3), min_top_left]
         exact le_max_right _ _
     · have hlt : x' < c := not_le.mp hcx
       have h0 : wq 0 = x' := by
@@ -610,9 +606,9 @@ private theorem cappedLift_scope_zero
         · rwa [min_eq_left h] at hcap
         · rw [min_eq_right h] at hcap
           exact absurd hcap.symm hlt.ne
-      have hh2 : topAbove c (wq 2) = wq 2 :=
+      have hh2 : raise c (wq 2) = wq 2 :=
         ite_eq_right (not_le.mpr ((q20.trans_eq h0).trans_lt hlt))
-      have hh3 : topAbove c (wq 3) = wq 3 :=
+      have hh3 : raise c (wq 3) = wq 3 :=
         ite_eq_right (not_le.mpr ((q30.trans_eq h0).trans_lt hlt))
       rw [hh2, hh3, min_eq_left (q20.trans_eq h0), min_eq_left (q30.trans_eq h0), ← h0]
       exact q0
@@ -626,12 +622,12 @@ private theorem cappedLift_scope_zero
       change min ⊥ c = min (wq 1) c
       rw [q1]
     · -- `w'` at the first twin
-      change min (min (topAbove c (wq 2)) x') c = min (wq 2) c
-      rw [min_assoc, ← hcap, min_left_comm, min_topAbove, min_comm,
+      change min (min (raise c (wq 2)) x') c = min (wq 2) c
+      rw [min_assoc, ← hcap, min_left_comm, min_raise, min_comm,
         min_eq_left ((min_le_left _ _).trans q20)]
     · -- `w'` at the second twin
-      change min (min (topAbove c (wq 3)) x') c = min (wq 3) c
-      rw [min_assoc, ← hcap, min_left_comm, min_topAbove, min_comm,
+      change min (min (raise c (wq 3)) x') c = min (wq 3) c
+      rw [min_assoc, ← hcap, min_left_comm, min_raise, min_comm,
         min_eq_left ((min_le_left _ _).trans q30)]
     · exact absurd hd' (by decide)
   · obtain ⟨d, hd⟩ := d
