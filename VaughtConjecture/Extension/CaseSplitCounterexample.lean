@@ -3,12 +3,8 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
-import Mathlib.Data.Fin.VecNotation
-import Mathlib.Tactic.FinCases
 import VaughtConjecture.Extension.TwoFaceLiftCounterexample
 import VaughtConjecture.Extension.TwoFaceLiftExists
-import VaughtConjecture.Geometry.IntervalPlan
-import VaughtConjecture.Label.StepWitness
 
 /-!
 # A legal seed outside the case split `2FL(j) ∨ DeadAt j`, with its completion
@@ -93,7 +89,7 @@ Checkpoints 2.6 and 2.7 of the completion of the coatom extension construction
 
 universe u
 
-namespace VaughtConjecture.TwoFaceLiftExistsCounterexample
+namespace VaughtConjecture.CaseSplitCounterexample
 
 open Finset Label CellScheme
 open Ordinal hiding univ
@@ -117,8 +113,9 @@ live cell of grade `2`, and `G` at the live cells of grade `3`. -/
 noncomputable def labelling (A F G : Label.{u}) (d : Fin 19) : Label.{u} :=
   if live d = true then (if cellGrade d = 1 then A else if cellGrade d = 2 then F else G) else ⊥
 
-/-- The rows: a live cell of grade at most `2` reads `labelling v1 v2`; a live cell of grade `3`
-reads every live cell at `v3`; a dead cell reads `⊥`. -/
+/-- The rows: a live cell of grade at most `2` reads the live cells of grade `1` at `v1` and the
+other live cells at `v2`; a live cell of grade `3` reads every live cell at `v3`; every other
+entry is `⊥`. -/
 noncomputable def rows : cells.Rows.{u} :=
   ⟨fun s t ↦ if live s = true ∧ live t.1 = true then
     (if cellGrade s = 3 then v3 else if cellGrade t.1 = 1 then v1 else v2) else ⊥⟩
@@ -615,6 +612,9 @@ noncomputable def T5₀ (α : Ordinal.{u}) : StageType.{u} α 4 where
 noncomputable def T5 (α : Ordinal.{u}) : StageType.{u} α 4 :=
   (T5₀ α).addApex isLegalBelowFullGrade_S (by omega)
 
+/-- **`T5` is legal**: `S` is legal below the full grade (`isLegalBelowFullGrade_S`; every pair
+lifts capped to every larger one, `cappedLift_all`), and adding the apex to it gives a legal stage
+type (`StageType.isLegal_addApex`). -/
 theorem isLegal_T5 (α : Ordinal.{u}) : (T5 α).IsLegal :=
   StageType.isLegal_addApex _ _
 
@@ -1055,7 +1055,7 @@ at least `G` there and then `G` is the label of `a`), so `V` with `G` at its liv
 theorem raisedUnionFill_two {I : Seed.{u} α 3} (hIL : I.left = T5 α) (hIR : I.right = T5 α) :
     I.RaisedUnionFill 2 := by
   classical
-  intro x hx y hy hxy a _ haD h hh hbot wC hwC hag
+  intro x hx y hy hxy a _ haD h hh _ hbot wC hwC hag
   obtain ⟨AC, FC, GC, -, -, hGC, hGAC, hGFC, hwCt⟩ :=
     exists_tripleLabelling hIL hIR hx (k := 2 + 1) (by omega) wC hwC
   obtain ⟨Aa, Fa, Ga, -, -, -, hGAa, hGFa, haDt⟩ :=
@@ -1182,9 +1182,10 @@ theorem nonempty_completionBelowFullGrade_seed5 :
   nonempty_completionBelowFullGrade_of rfl rfl
 
 /-- **`2FL∃(2)` holds where the case split `2FL(2) ∨ Seed.DeadAt 2` fails**: for the seed of `T5`
-with itself.  Each disjunct implies `2FL∃(2)` (`Seed.twoFaceLiftExists_of_twoFaceLift`,
-`Seed.twoFaceLiftExists_of_deadAt`), so the case split is strictly stronger than the hypothesis of
-the step stated exactly. -/
+with itself.  On this seed each disjunct implies `2FL∃(2)` (`Seed.twoFaceLiftExists_of_twoFaceLift`,
+which needs `2 ≤ m`, here `m = 3`; `Seed.twoFaceLiftExists_of_deadAt`, which needs the invariant at
+the grade `2`, here from `Seed.twoFaceLift_one`), so on this seed the case split is strictly
+stronger than the hypothesis of the step stated exactly. -/
 theorem twoFaceLiftExists_and_not_twoFaceLift_or_deadAt :
     (seed5 α).TwoFaceLiftExists 2 ∧ ¬ ((seed5 α).TwoFaceLift 2 ∨ (seed5 α).DeadAt 2) :=
   ⟨twoFaceLiftExists_two rfl rfl, not_twoFaceLift_or_deadAt⟩
@@ -1209,4 +1210,4 @@ theorem twoFaceLiftExists_two_seed4 (α : Ordinal.{u}) :
       (TwoFaceLiftCounterexample.seed4 α).twoFaceLift_one)
     (TwoFaceLiftCounterexample.deadAt_two rfl rfl)
 
-end VaughtConjecture.TwoFaceLiftExistsCounterexample
+end VaughtConjecture.CaseSplitCounterexample

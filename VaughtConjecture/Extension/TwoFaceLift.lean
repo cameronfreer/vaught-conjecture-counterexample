@@ -85,7 +85,7 @@ coatom over the common face, which fails for a legal seed at the grade `2` (modu
 (`Seed.towerInvariant_succ_of_dead`) and at the top grade (`Seed.towerInvariant_top`).  The case
 split `2FL(j) ∨ Seed.DeadAt j` does not cover every legal seed either: both fail at `j = 2` for a
 legal seed on five points
-(`TwoFaceLiftExistsCounterexample.not_forall_twoFaceLift_or_deadAt`), which nevertheless has a
+(`CaseSplitCounterexample.not_forall_twoFaceLift_or_deadAt`), which nevertheless has a
 completion below the full grade.  The hypothesis of the step, stated exactly, is the *existential
 two-face lift* `2FL∃(j)` (`Seed.TwoFaceLiftExists`, module
 `VaughtConjecture.Extension.TwoFaceLiftExists`): for every catalogue entry `a` at the grade
@@ -101,9 +101,9 @@ sufficient hypothesis.  The step uses `CellScheme.Rows.cappedLift_of_boundaries_
 degenerate triple `U = V = O = (C, j + 1)` at the positive caps; the choice of `w_D` is made inside
 the hypothesis.  `2FL∃(j)` holds under `2FL(j)` (for `j ≤ m`), under deadness together with the
 invariant at `j`, and for the seeds whose two coatom types are the type `T5` of the module
-`VaughtConjecture.Extension.TwoFaceLiftExistsCounterexample`, where neither `2FL(2)` nor deadness
+`VaughtConjecture.Extension.CaseSplitCounterexample`, where neither `2FL(2)` nor deadness
 holds; for the seed of the failure of `2FL(2)` above it holds by deadness
-(`TwoFaceLiftExistsCounterexample.twoFaceLiftExists_two_seed4`).
+(`CaseSplitCounterexample.twoFaceLiftExists_two_seed4`).
 
 What stays open is whether `2FL∃(j)` holds for every seed at the grades `2 ≤ j < m`; the next case
 to decide is a seed whose two coatom types differ but share a face, with a row coupling the cell

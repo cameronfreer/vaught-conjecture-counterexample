@@ -52,8 +52,8 @@ into `D`).  Deadness of the old cells of the grade `j + 1` (`Seed.DeadAt j`), to
 invariant at `j`, implies it (`Seed.twoFaceLiftExists_of_deadAt`: `w_D` is the invariant's lift of
 `w_C` from `(C, j)`, read on `D`, with `⊥` at the grade `j + 1`).  `2FL∃(j)` does not imply the
 disjunction: for a legal seed on five points `2FL∃(2)` holds while `2FL(2)` and deadness both fail
-(`TwoFaceLiftExistsCounterexample.twoFaceLiftExists_and_not_twoFaceLift_or_deadAt`, module
-`VaughtConjecture.Extension.TwoFaceLiftExistsCounterexample`), so the case split
+(`CaseSplitCounterexample.twoFaceLiftExists_and_not_twoFaceLift_or_deadAt`, module
+`VaughtConjecture.Extension.CaseSplitCounterexample`), so the case split
 `2FL(j) ∨ Seed.DeadAt j` does not cover every legal seed, while the completion of that seed exists.
 
 **A sufficient condition on the amalgam: the raised union fill** (`Seed.RaisedUnionFill j`;
@@ -61,14 +61,15 @@ disjunction: for a legal seed on five points `2FL∃(2)` holds while `2FL(2)` an
 `⊥ < h`, self-visible at `j + 1`, the labelling `a` *raised to `⊤` above `h`* is `raise h ∘ a`
 (`Label.raise`): `⊤` where `a ≥ h` and `a` elsewhere.  Below the pairs of grade at most `j` it is
 lawful where `a` is, `raise h` being a witness bounded by the grade `j` (`Label.isWitness_raise`),
-and it agrees with `a` capped at `h`.  The condition mentions no tower: it asks for a cap `c ≥ h`,
-self-visible at `j` and at most `w_C` at the cells of `(C, j)` where `a` reaches `h`, such that
-every labelling lawful below `(D, j)` that agrees with the raised `a` capped at `c` and with `w_C`
-on the common face is filled at the cells of the grade `j + 1` of `D`, taking `w_C` on the common
-face and agreeing with `a` capped at `h`.  The invariant's lift of `w_C` from `(C, j)` to
-`(univ, j)` along the raised `a`, at the cap `c`, is then the two-face extension.  Deadness gives
-the raised union fill (`Seed.raisedUnionFill_of_deadAt`: the cap `h` and the fill by `⊥`).  It fills
-the same cells as the union fill refuted in the module
+and it agrees with `a` capped at `h`.  The condition mentions no tower: for such a cap `h`, also
+short at `j + 1`, it asks for a cap `c ≥ h`, self-visible at `j` and at most `w_C` at the cells of
+`(C, j)` where `a` reaches `h`, such that every labelling lawful below `(D, j)` that agrees with
+the raised `a` capped at `c` and with `w_C` on the common face is filled at the cells of the grade
+`j + 1` of `D`, taking `w_C` on the common face and agreeing with `a` capped at `h`.  The
+invariant's lift of `w_C` from `(C, j)` to `(univ, j)` along the raised `a`, at the cap `c`, is
+then the two-face extension.  Deadness gives the raised union fill
+(`Seed.raisedUnionFill_of_deadAt`: the cap `h` and the fill by `⊥`).  It fills the same cells as
+the union fill refuted in the module
 `VaughtConjecture.Extension.UnionFillCounterexample`, but only for the labellings that agree with
 the raised `a` at the cap `c`; that union fill is not used.
 
@@ -84,7 +85,7 @@ conditional on the step at every grade.
 whether the invariant of the tower reaches the top grade for every seed.  It holds at `j` for the
 seeds satisfying `2FL(j)`, for the seeds whose old cells of the grade `j + 1` are dead and which
 satisfy the invariant at `j`, and, at `j = 2`, for the seeds whose two coatom types
-are the type `T5` of the module `VaughtConjecture.Extension.TwoFaceLiftExistsCounterexample`; no
+are the type `T5` of the module `VaughtConjecture.Extension.CaseSplitCounterexample`; no
 compiled fact refutes its universal form.  `StageType.HasApexCoatomExtensions` and
 `StageType.HasCoatomExtensions` remain to be proved, and they are not refuted: a seed failing
 `2FL∃(j)` would refute this route through the tower only, not the existence of a completion below
@@ -545,19 +546,20 @@ theorem towerInvariant_top_iff :
 open Classical in
 /-- **The raised union fill at the grade `j`**, a condition on the amalgam.  For both orders of the
 coatoms `C = univ.erase x`, `D = univ.erase y`, every labelling `a` of the amalgam lawful below
-both coatoms at the grade `j + 1`, every cap `h` self-visible at `j + 1` with `⊥ < h`, and every
-prescription `wC` lawful below `(C, j + 1)` agreeing with `a` capped at `h`, some cap `c ≥ h`
-self-visible at `j` is below `wC` at every cell of `(C, j)` where `a` reaches `h`, and every
-labelling `V` lawful below `(D, j)` that agrees with `a` *raised to `⊤` above `h`* capped at `c`
-(and with `wC` on the common face) extends to `(D, j + 1)`, the cells of the grade `j + 1` taking
-`wC` on the common face and agreeing with `a` capped at `h`. -/
+both coatoms at the grade `j + 1`, every cap `h` self-visible and short at `j + 1` with `⊥ < h`,
+and every prescription `wC` lawful below `(C, j + 1)` agreeing with `a` capped at `h`, some cap
+`c ≥ h` self-visible at `j` is below `wC` at every cell of `(C, j)` where `a` reaches `h`, and
+every labelling `V` lawful below `(D, j)` that agrees with `a` *raised to `⊤` above `h`* capped at
+`c` (and with `wC` on the common face) extends to `(D, j + 1)`, the cells of the grade `j + 1`
+taking `wC` on the common face and agreeing with `a` capped at `h`.  The caps `h` are those of
+`2FL∃(j)` (`Seed.TwoFaceLiftExists`). -/
 def RaisedUnionFill (j : ℕ) : Prop :=
   ∀ x ∈ ({Fin.last (m + 1), Fin.castSucc (Fin.last m)} : Finset (Fin (m + 2))),
   ∀ y ∈ ({Fin.last (m + 1), Fin.castSucc (Fin.last m)} : Finset (Fin (m + 2))), x ≠ y →
   ∀ a : Fin I.amalgam.card → Label.{u},
     I.amalgam.rows.IsLawfulBelow (univ.erase x, j + 1) (fun d ↦ a d) →
     I.amalgam.rows.IsLawfulBelow (univ.erase y, j + 1) (fun d ↦ a d) →
-  ∀ h : Label.{u}, IsSelfVisible (j + 1) h → ⊥ < h →
+  ∀ h : Label.{u}, IsSelfVisible (j + 1) h → IsShort (j + 1) h → ⊥ < h →
   ∀ wC : Fin I.amalgam.card → Label.{u},
     I.amalgam.rows.IsLawfulBelow (univ.erase x, j + 1) (fun d ↦ wC d) →
     (∀ d ∈ I.amalgam.toCellScheme.below (univ.erase x, j + 1), min (wC d) h = min (a d) h) →
@@ -591,7 +593,7 @@ theorem twoFaceLiftExists_of_raisedUnionFill {j : ℕ} (hinv : I.TowerInvariant 
       fun d ↦ a (I.towerEmbed j d) :=
     (I.isLawfulBelow_tower_iff (g := a) (ne_univ_erase z)).mp (haL.isLawfulBelow _)
   obtain ⟨c, hc, hhc, hcw, hfill⟩ := hR x hx y hy hxy (fun d ↦ a (I.towerEmbed j d)) (haX x)
-    (haX y) h hh hbot wC hwC hag
+    (haX y) h hh hs hbot wC hwC hag
   -- The raised ambient.
   set q' : (I.tower j).toCellScheme.below (univ, j) → Label.{u} := fun e ↦ raise h (a e)
     with hq'_def
@@ -661,7 +663,7 @@ theorem twoFaceLiftExists_of_raisedUnionFill {j : ℕ} (hinv : I.TowerInvariant 
 `j + 1` of the other coatom. -/
 theorem raisedUnionFill_of_deadAt {j : ℕ} (hdead : I.DeadAt j) : I.RaisedUnionFill j := by
   classical
-  intro x hx y hy hxy a hax hay h hh hbot wC hwC hag
+  intro x hx y hy hxy a hax hay h hh _ hbot wC hwC hag
   refine ⟨h, hh.mono (Nat.le_succ j), le_rfl, fun d hd hle ↦ ?_, fun V hV _ _ ↦ ?_⟩
   · have := hag d ⟨hd.1, hd.2.trans (Nat.le_succ j)⟩
     rw [min_eq_right hle] at this

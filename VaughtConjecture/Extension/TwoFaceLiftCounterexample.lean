@@ -63,7 +63,7 @@ would be `⊤` at `s`, hence, by availability, `⊤` at a new cell `u` at `(univ
 would then force the prescriptions at `d₁` and `d₂` to be equal.  They are not.  The argument
 uses only these three cells and the lawfulness of `pairLabelling` below both coatoms, so it applies
 to every seed on five points with them (such as the seeds of the module
-`VaughtConjecture.Extension.TwoFaceLiftExistsCounterexample`).
+`VaughtConjecture.Extension.CaseSplitCounterexample`).
 
 **What this shows.**  The failure concerns the existence of the extension, not a method of
 constructing it: no labelling with the three properties of `2FL(2)` exists for these `a`, `h` and
