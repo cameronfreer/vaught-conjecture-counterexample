@@ -43,7 +43,9 @@ Visibility replacement of an ordinal at threshold `k` with value `i` replaces it
 * In the block `[μ, μ + ω)` of an ordinal `μ` that is zero or a limit, an ordinal `μ + k` whose
   finite part `k` is below the threshold `n` is not self-visible at `n`
   (`not_isSelfVisible_coe_add_natCast`), and replacement at `n` with value `i` gives `μ + i`
-  (`visibilityReplace_coe_add_natCast`).
+  (`visibilityReplace_coe_add_natCast`).  Every ordinal is `μ + j` with `μ` zero or a limit and
+  `j` finite (`exists_eq_add_natCast_isSuccPrelimit`), and replacement at `K` with value `m` sends
+  `μ + j` to `μ + m` if `j < K` and fixes it otherwise (`visibilityReplace_coe_add`).
 * On a natural number `n` it gives `i` if `n < k` and `n` otherwise (`visibilityReplace_natCast`,
   with `visibilityReplace_zero`, `visibilityReplace_one`, `visibilityReplace_ofNat` for numerals).
 
@@ -340,6 +342,25 @@ theorem IsSelfVisible.visibilityReplace_eq (h : IsSelfVisible k x) (i : ℕ) :
   | bot => rfl
   | coe o => simpa using Ordinal.visibilityReplace_of_le (isSelfVisible_coe.mp h) i
   | top => rfl
+
+/-- Every ordinal is `μ + j` with `μ` zero or a limit and `j` finite: `μ = ω * (o / ω)` and
+`j = o % ω`. -/
+theorem exists_eq_add_natCast_isSuccPrelimit (o : Ordinal.{u}) :
+    ∃ μ : Ordinal.{u}, Order.IsSuccPrelimit μ ∧ ∃ j : ℕ, o = μ + j := by
+  obtain ⟨j, hj⟩ := lt_omega0.mp (mod_lt o omega0_ne_zero)
+  exact ⟨ω * (o / ω), isSuccPrelimit_iff_omega0_dvd.mpr (dvd_mul_right _ _), j, by
+    rw [← hj, div_add_mod]⟩
+
+/-- **Visibility replacement in the normal form of [Kni26, Definition 2.2.3]**: for `μ` zero or a
+limit and `j` finite, replacement at threshold `K` with value `m` sends `μ + j` to `μ + m` if
+`j < K`, and fixes it otherwise. -/
+theorem visibilityReplace_coe_add {μ : Ordinal.{u}} (hμ : Order.IsSuccPrelimit μ) (K m j : ℕ) :
+    visibilityReplace K m ((μ + j : Ordinal.{u}) : Label.{u}) =
+      if j < K then ((μ + m : Ordinal.{u}) : Label.{u})
+      else ((μ + j : Ordinal.{u}) : Label.{u}) := by
+  split_ifs with hj
+  · exact visibilityReplace_coe_add_natCast hμ hj m
+  · exact (isSelfVisible_coe_add hμ (not_lt.mp hj)).visibilityReplace_eq m
 
 /-- Self-visibility at a threshold implies self-visibility at every lower threshold. -/
 theorem IsSelfVisible.mono (h : IsSelfVisible k x) (hk : k' ≤ k) : IsSelfVisible k' x := by
