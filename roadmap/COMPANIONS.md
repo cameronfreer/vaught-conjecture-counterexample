@@ -1307,8 +1307,8 @@ is compiled conditionally on block determination (below).  None is an input to t
   full well-founded trees are isomorphic; and the finite-extension estimate, that finite
   ancestor-closed subtrees matched with ranks agreeing after capping at `δ + m` admit, for an
   extension by `m` vertices added parent before child, a match in a full target with agreement
-  after capping at `δ`.  The same-index equivalence of [AFK26, Proposition 8.6] is not a
-  statement: it is false (`LITERATURE.md`, §9).  Two non-implications are to be compiled with
+  after capping at `δ`.  The same-index equivalence stated in an earlier version of [AFK26] (its
+  Proposition 8.6) is not a statement: it is false (`LITERATURE.md`, §9).  Two non-implications are to be compiled with
   it as examples (`IMPLEMENTATION.md`, "Checkpoint order and acceptance"): a labelling by ordinals
   that is at least as large at a parent as at each child need not be a rank, and branching at
   nodes of high rank does not give the extension property at nodes of low rank.

@@ -14,16 +14,20 @@ row 1 (`IMPLEMENTATION.md`, "Manuscript concordance").
 **The printed indexing.**  [AFK26] indexes its projections by the countable ordinals `β < ω₁` and
 reads the projection of index `β` at the stage `ω · β`:
 
-* the `β`-truncation function [AFK26, Definition 3.9] keeps an ordinal below `β` and sends every
+* the `β`-truncation function [AFK26, Definition 3.12] keeps an ordinal below `β` and sends every
   other ordinal, and `∞`, to `∞`; it is extended by `-∞ ↦ -∞` [AFK26, Definition 4.9].  It is the
   stage reduction `Label.reduce β` of a label, clause by clause (`Label.reduce_bot`,
-  `Label.reduce_coe_eq_ite`, `Label.reduce_top`);
+  `Label.reduce_coe_eq_ite`, `Label.reduce_top`).  `Label.reduce_coe_eq_ite` is stated for all
+  ordinals `β` and `o`; the printed function, with `β < ω₁` and domain `ω₁ ∪ {∞}`, is its
+  restriction;
 * the projection of index `β` is the truncation at `ω · β`: in the example of trees,
-  `τ_β = τ⁻_{ω·β}` [AFK26, Definition 3.18], and for templates `τ_β(Q_t) = Q_{t*}` with `t*` the
-  truncation of `t` at `ω · β` (the definition of `τ_β` in [AFK26, §4.2], which carries no number);
-* a stage is a limit ordinal below `ω₁` [AFK26, Definition 4.23].
+  `τ_β = τ⁻_{ω·β}` [AFK26, Definition 3.20], and for templates `τ_β(Q_t) = Q_{t*}` with `t*` the
+  truncation of `t` at `ω · β` [AFK26, Definition 4.16]; the structures of index `β` of the
+  system of templates satisfy density at `ω · β` [AFK26, Definition 4.20];
+* the limit ordinals below `ω₁` are the stages of an earlier version of [AFK26] (its
+  Definition 4.23); the current version has no separate notion of a stage.
 
-**The identification.**  The block stage `λ_ξ = ω + ω · ξ` (`blockStage`) is the printed stage of
+**The comparison.**  The block stage `λ_ξ = ω + ω · ξ` (`blockStage`) is the printed stage of
 the index `1 + ξ`: `blockStage ξ = ω * (1 + ξ)` (`blockStage_eq_mul`).  So the two indexings agree
 at every infinite index (`blockStage_eq_omega0_mul_of_omega0_le`), and at a finite index `n` the
 block stage is the printed stage of `n + 1` (`blockStage_natCast`).  The conventions:
@@ -32,19 +36,24 @@ block stage is the printed stage of `n + 1` (`blockStage_natCast`).  The convent
   block stage; the printed indices of block stages are exactly the positive ordinals
   (`exists_blockStage_eq_omega0_mul_iff`), and the reindexing `ξ ↦ 1 + ξ` is an order embedding
   (`strictMono_one_add`) onto them (`exists_one_add_eq_iff`) preserving countability
-  (`one_add_lt_omega_one_iff`);
+  (`one_add_lt_omega_one_iff`; these three in `VaughtConjecture.Realization.Expansion`);
 * **at limits**: block stages are continuous (`isNormal_blockStage`): at a limit index the block
   stage is the supremum of the block stages below it (`blockStage_eq_iSup_of_isSuccLimit`), as
   the printed stage `ω · γ` is at a limit `γ`;
 * **the stages**: the block stages are exactly the limit ordinals
-  (`isSuccLimit_iff_exists_blockStage`), and those of countable index are exactly the stages of
-  [AFK26, Definition 4.23] (`isSuccLimit_and_lt_omega_one_iff`).
+  (`isSuccLimit_iff_exists_blockStage`), and those of countable index are exactly the limit
+  ordinals below `ω₁` (`isSuccLimit_and_lt_omega_one_iff`).
 
-**Departure.**  The index of a block stage is the printed index shifted by one at finite indices,
-and the printed index `0`, the reduction to the stage `0`, has no block index.  The shift is
-needed for the compatibility of the projections with the base relations, which fails at the
-printed index `0` (`VaughtConjecture.Correspondence.not_isCompatibleWith_omega0MulSystem`, in
-`VaughtConjecture.Correspondence.InvariantSystem`).
+**Departure.**  The printed index `0` reads the stage `0`, and the projection of that index is not
+compatible with the base relations
+(`VaughtConjecture.Correspondence.not_isCompatibleWith_omega0MulSystem`, in
+`VaughtConjecture.Correspondence.InvariantSystem`): this index is corrected, and it has no block
+index.  Only the index `0` is forced: the printed projections with the index `0` read at the stage
+`ω` form a compatible system (`Correspondence.isCompatibleWith_omega0MulMaxOneSystem`) that agrees
+with the printed one at every positive index (`Correspondence.omega0MulMaxOneSystem_τ_of_ne_zero`).
+The shift by one at the other finite indices, the index of a block stage being the printed index
+`1 + ξ` (`Correspondence.omega0MulSystem_τ_one_add`), is the convention of `blockStage`
+(`λ_0 = ω`), not a consequence of compatibility.
 
 ## Placement
 
@@ -66,7 +75,7 @@ open Ordinal Order
 
 namespace Label
 
-/-- **The truncation function of [AFK26] on an ordinal** [AFK26, Definition 3.9]: stage
+/-- **The truncation function of [AFK26] on an ordinal** [AFK26, Definition 3.12]: stage
 reduction keeps an ordinal below the stage and sends every other ordinal to the formal top.  With
 `Label.reduce_top` (the top is sent to the top) and `Label.reduce_bot` (the extension
 `-∞ ↦ -∞` of [AFK26, Definition 4.9]) this is the printed function, clause by clause. -/
@@ -93,21 +102,6 @@ theorem blockStage_natCast (n : ℕ) :
   push_cast
   rfl
 
-/-- **The reindexing `ξ ↦ 1 + ξ` is strictly increasing.** -/
-theorem strictMono_one_add : StrictMono fun ξ : Ordinal.{u} ↦ 1 + ξ :=
-  fun _ _ h ↦ (add_lt_add_iff_left 1).mpr h
-
-/-- **The reindexing `ξ ↦ 1 + ξ` is onto the positive indices.** -/
-theorem exists_one_add_eq_iff {β : Ordinal.{u}} : (∃ ξ, 1 + ξ = β) ↔ β ≠ 0 := by
-  refine ⟨?_, fun hβ ↦ ⟨β - 1, Ordinal.add_sub_cancel_of_le (one_le_iff_ne_zero.mpr hβ)⟩⟩
-  rintro ⟨ξ, rfl⟩
-  exact (lt_of_lt_of_le zero_lt_one le_self_add).ne'
-
-/-- **The reindexing `ξ ↦ 1 + ξ` preserves countability.** -/
-theorem one_add_lt_omega_one_iff {ξ : Ordinal.{u}} : 1 + ξ < ω₁ ↔ ξ < ω₁ := by
-  refine ⟨fun h ↦ le_add_self.trans_lt h, fun h ↦ ?_⟩
-  exact isPrincipal_add_omega 1 (one_lt_omega0.trans omega0_lt_omega_one) h
-
 /-- **The printed indices of the block stages are the positive ordinals**: the printed stage
 `ω · β` is a block stage exactly when `β ≠ 0`.  The printed index `0` reads the stage `0`. -/
 theorem exists_blockStage_eq_omega0_mul_iff {β : Ordinal.{u}} :
@@ -132,7 +126,7 @@ theorem isSuccLimit_iff_exists_blockStage {α : Ordinal.{u}} :
 theorem blockStage_lt_omega_one_iff {ξ : Ordinal.{u}} : blockStage ξ < ω₁ ↔ ξ < ω₁ :=
   ⟨fun h ↦ (le_blockStage ξ).trans_lt h, blockStage_lt_omega_one⟩
 
-/-- **The stages of [AFK26, Definition 4.23] are the block stages of countable index**: a limit
+/-- **The countable limit ordinals are the block stages of countable index**: a limit
 ordinal below `ω₁` is the block stage of a countable index, and conversely. -/
 theorem isSuccLimit_and_lt_omega_one_iff {α : Ordinal.{u}} :
     IsSuccLimit α ∧ α < ω₁ ↔ ∃ ξ < ω₁, blockStage ξ = α := by

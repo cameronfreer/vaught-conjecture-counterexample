@@ -41,6 +41,19 @@ here with one field for each printed clause.
 * The compatibility of a diagram and a system [AFK26, Definition 2.8] is
   `InvarianceDiagram.IsCompatibleWith`, with its two clauses.
 
+What these transcriptions do and do not constrain:
+
+* `InvariantSystem.τ` is a map at every ordinal, and no field constrains its values at
+  `β ≥ ω₁`; two systems that agree below `ω₁` are the same printed system but may be different
+  terms here.  Only the values below `ω₁` are read (every field is stated for `β < ω₁`).
+* Countability, a convention of [AFK26, §1.4], is imposed only on the structure of the third
+  clause of [AFK26, Definition 2.4] (`InvarianceDiagram.realized`); `IsGeometry`,
+  `IsStructuredGeometry`, `InvarianceDiagram.IsCompatible` and the round trip below hold for
+  carriers of every cardinality, a generalization of the printed statements.
+* The second clause of [AFK26, Definition 2.5] is read as "every pair of the diagram holds"
+  (`SatisfiesPairs`), including pairs whose second formula is an equality literal; the
+  diagram of the stage types has no such pairs, so this reading does not affect it.
+
 **The instance of the stage types.**  The invariance language `invariantLanguage` has the symbols
 `P_n`, an invariant `Q_p` for each legal stage type `p` at stage `ω₁` (labels below `ω₁`, `-∞`,
 or `∞`), and a base relation for each relation symbol of the base language, a legal stage type at
@@ -76,23 +89,30 @@ the projections along a stage function (`reductionSystem`): `τ_β` is the proje
   `blockSystem.τ ξ` (`omega0MulSystem_τ_one_add`).  `blockSystem` is compatible with
   `stageDiagram` (`isCompatibleWith_blockSystem`), and `omega0MulSystem` is not
   (`not_isCompatibleWith_omega0MulSystem`): its projection of index `0`, to the stage `0`, changes
-  the base relation of a legal one-point type with label `1`.
+  the base relation of a legal one-point type with label `1`.  Every reduction system whose stages
+  are at least `ω` is compatible (`isCompatibleWith_reductionSystem`); in particular so is the
+  printed system corrected at the index `0` only (`omega0MulMaxOneSystem`, the stages
+  `ω · max β 1`: `isCompatibleWith_omega0MulMaxOneSystem`), which agrees with the printed system at
+  every positive index (`omega0MulMaxOneSystem_τ_of_ne_zero`).
 
 **Departures.**
 
 * The invariants are legal stage types, with fixed coded rows and a separate labelling, in place
   of the templates of [AFK26, Definition 4.6] (concordance row 9).
-* The invariance diagram of the templates is not printed (the body of [AFK26, Definition 4.17] is
-  that of the diagram of trees, [AFK26, Definition 3.6], with a note that it is to be defined);
-  `stageDiagram` is the diagram supplied here.
-* The language `L_c` of [AFK26, Definition 4.16] is printed as the symbols of the invariants fixed
-  by `τ_ω`; here the base relations are the legal stage types at stage `ω`, the invariants fixed
-  by `τ_1` in the printed indexing (by `τ_0` in the block indexing), as in the proof of
-  [AFK26, Lemma 4.21].
+* The invariance diagram of the templates [AFK26, Definition 4.18] has the templates as its
+  invariants, and a clause for an order symbol `≤`, carried over from the diagram of trees
+  [AFK26, Definition 3.6], which is not a symbol of the language of templates
+  [AFK26, Definitions 4.15 and 4.17]; `stageDiagram`, the diagram of the legal stage types, is
+  supplied here in its place, and the two are not compared clause by clause.
+* The language `L_c` of [AFK26, Definition 4.17] is printed as `L_a` with the symbols of the
+  invariants fixed by `τ_ω`; here the base relations are the legal stage types at stage `ω`, the
+  invariants fixed by `τ_1` in the printed indexing (by `τ_0` in the block indexing), as in the
+  proof of [AFK26, Lemma 4.22].
 * The printed compatibility of the diagram of the templates with the printed projections
-  [AFK26, Lemma 4.18] fails at the printed index `0` for the stage types
-  (`not_isCompatibleWith_omega0MulSystem`); it holds with the block indexing
-  (`isCompatibleWith_blockSystem`), which is the printed indexing shifted by one at finite indices
+  [AFK26, Lemma 4.19] fails at the printed index `0` for the stage types, and only there
+  (`not_isCompatibleWith_omega0MulSystem`, `isCompatibleWith_omega0MulMaxOneSystem`); it holds
+  with the block indexing (`isCompatibleWith_blockSystem`), whose shift by one at the finite
+  indices is the convention of `blockStage`, not a consequence of compatibility
   (`VaughtConjecture.Correspondence.StageIndexing`).
 * The fact after [AFK26, Definition 2.8] that projections preserve compatibility
   [AFK26, Lemma 2.9] is not compiled here.
@@ -503,15 +523,6 @@ theorem relMap_comp_iff (hR : R.IsConsistent) {t : Fin n ↪ M} {p : StageType.{
       hR t p ⟨j, h⟩ ht
     rwa [he]
 
-/-- **The supports of an exactly consistent covering realization are closed under
-intersection.** -/
-theorem isSupport_inter [DecidableEq M] (hR : R.IsConsistent) (hc : R.IsCovering)
-    {S T : Finset M} (hS : R.IsSupport S) (hT : R.IsSupport T) : R.IsSupport (S ∩ T) := by
-  rw [← finiteHull_eq_self_iff hR hc]
-  refine Subset.antisymm (subset_inter ?_ ?_) (subset_finiteHull _)
-  · exact finiteHull_subset_of_isSupport hR hc hS inter_subset_left
-  · exact finiteHull_subset_of_isSupport hR hc hT inter_subset_right
-
 /-- **Closed tuples are the enumerations of supports** [AFK26, Definition 2.1]: the symbol `P_n`
 holds of a tuple in the structure of an exactly consistent realization exactly when the tuple is
 injective and its set of points is a support. -/
@@ -591,6 +602,7 @@ theorem isStructuredGeometry_toInvariantStructure (hR : R.IsConsistent) (hc : R.
     | closed => exact hs.elim
     | base r => exact hs.elim
     | invariant p hp =>
+      -- `x` and `y` as the coercions of the embeddings they underlie, for `relMap_comp_iff`
       change RelMap S (⇑(⟨x, hx⟩ : Fin n ↪ M) ∘ i) ↔ RelMap S (⇑(⟨y, hy⟩ : Fin n ↪ M) ∘ i)
       rw [relMap_comp_iff R hR hex, relMap_comp_iff R hR hey]
 
@@ -603,6 +615,7 @@ theorem realize_rel_iff (hR : R.IsConsistent) {t : Fin n ↪ M} {p : StageType.{
       S.1.HoldsIn p (termIndex ∘ ts) := by
   let := R.toInvariantStructure
   rw [← relMap_comp_iff R hR ht]
+  -- unfold the realization of an atomic formula to `RelMap` of the realized terms
   change RelMap S (fun i ↦ (ts i).realize (Sum.elim t default)) ↔ _
   simp only [realize_termIndex]
   rfl
@@ -617,6 +630,7 @@ theorem satisfiesPairs_toInvariantStructure (hR : R.IsConsistent) :
   | closed => exact hπ.elim
   | base r => exact hπ.elim
   | invariant p hp =>
+    -- `HoldsAt` of an invariant symbol is the equation of the type
     change R.eval ⟨x, h⟩ = some p at he
     cases ψ with
     | rel S ts => exact (realize_rel_iff R hR he S ts).mpr hπ
@@ -625,6 +639,7 @@ theorem satisfiesPairs_toInvariantStructure (hR : R.IsConsistent) :
       | rel S ts =>
         cases χ with
         | falsum =>
+          -- the literal of a negated atom is the negation of `HoldsIn`
           change ¬ _ at hπ
           exact fun h' ↦ (hπ ((realize_rel_iff R hR he S ts).mp h')).elim
         | _ => exact hπ.elim
@@ -755,6 +770,7 @@ theorem toRealization_eval_eq_some_iff {n : ℕ} (hn : 0 < n) (t : Fin n ↪ N)
     (p : StageType.{u} ω₁ n) :
     (toRealization N).eval t = some p ↔ ∃ hp : p.IsLegal, RelMap (invariantRel p hp hn) ⇑t := by
   obtain ⟨k, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hn.ne'
+  -- unfold `toRealization` at a tuple of positive length
   change (if h : ∃ (p : StageType.{u} ω₁ (k + 1)) (hp : p.IsLegal),
       RelMap (invariantRel p hp k.succ_pos) ⇑t then some h.choose else none) = some p ↔ _
   split_ifs with h
@@ -812,6 +828,7 @@ theorem isConsistent_toRealization : (toRealization N).IsConsistent := by
       | none =>
         refine (toRealization_eval_eq_none_iff hN l.succ_pos _).mpr fun h ↦ ?_
         obtain ⟨hj, h'⟩ := (key _ _ f).mp h
+        -- `HoldsAt` of the symbol `P_l` is definedness of the face
         change (StageType.restrictFace f p).isSome at h'
         rw [hf] at h'
         exact Bool.false_ne_true h'
@@ -990,15 +1007,18 @@ theorem project_project_of_le (hγ : IsSuccPrelimit γ) (hδ : IsSuccPrelimit δ
     (hδω : δ ≤ ω₁) : (p.project hδ).project hγ = p.project hγ :=
   ext rfl fun i j hij ↦ by
     have hij' : (i : Fin p.card) = j := Fin.ext hij
+    -- the labels of a projection, by the definition of `project` and of `StageType.reduce`
     change Label.reduce ω₁ (Label.reduce γ (Label.reduce ω₁ (Label.reduce δ (p.label i)))) =
       Label.reduce ω₁ (Label.reduce γ (p.label j))
     rw [hij', reduce_omega_one_reduce hδω, reduce_reduce_of_le hγδ]
 
-/-- **Projections compose to the lower one**: `τ_δ ∘ τ_γ = τ_γ` for `γ ≤ δ ≤ ω₁`. -/
-theorem project_project_of_le' (hγ : IsSuccPrelimit γ) (hδ : IsSuccPrelimit δ) (hγδ : γ ≤ δ)
+/-- **Projecting to a higher stage after a lower one gives the lower one**: `τ_δ ∘ τ_γ = τ_γ` for
+`γ ≤ δ ≤ ω₁`. -/
+theorem project_project_of_ge (hγ : IsSuccPrelimit γ) (hδ : IsSuccPrelimit δ) (hγδ : γ ≤ δ)
     (hδω : δ ≤ ω₁) : (p.project hγ).project hδ = p.project hγ :=
   ext rfl fun i j hij ↦ by
     have hij' : (i : Fin p.card) = j := Fin.ext hij
+    -- the labels of a projection, by the definition of `project` and of `StageType.reduce`
     change Label.reduce ω₁ (Label.reduce δ (Label.reduce ω₁ (Label.reduce γ (p.label i)))) =
       Label.reduce ω₁ (Label.reduce γ (p.label j))
     rw [hij', reduce_omega_one_reduce (hγδ.trans hδω), reduce_omega_one_reduce hδω]
@@ -1080,7 +1100,7 @@ noncomputable def reductionSystem (hf : ∀ β, IsSuccPrelimit (f β)) (hmono : 
     obtain ⟨p, hp, hn, rfl⟩ := stageSignature.exists_eq_invariant Q
     simp only [projectInvariant_invariant, invariant_eq_invariant_iff]
     exact ⟨p.project_project_of_le _ _ (hmono hαβ) (hlt β hβ).le,
-      p.project_project_of_le' _ _ (hmono hαβ) (hlt β hβ).le⟩
+      p.project_project_of_ge _ _ (hmono hαβ) (hlt β hβ).le⟩
   countable β hβ := by
     have := fun n ↦ StageType.countable_of_lt_omega_one (hlt β hβ) n
     let g : (Σ n, {q : StageType.{u} (f β) n // q.IsLegal ∧ 0 < n}) →
@@ -1131,7 +1151,7 @@ noncomputable def blockSystem : InvariantSystem.{u} stageSignature.{u} :=
         (lt_add_one o).trans_le (le_blockStage (o + 1))⟩
 
 /-- **The invariant system of the printed indexing**: `τ_β` is the projection to the stage
-`ω · β`, as in [AFK26, Definition 3.18] and the definition of `τ_β` in [AFK26, §4.2]. -/
+`ω · β`, as in [AFK26, Definitions 3.20 and 4.16]. -/
 noncomputable def omega0MulSystem : InvariantSystem.{u} stageSignature.{u} :=
   reductionSystem (ω * ·) (fun β ↦ isSuccPrelimit_iff_omega0_dvd.mpr (dvd_mul_right ω β))
     (isNormal_mul_right omega0_pos).strictMono.monotone
@@ -1152,6 +1172,24 @@ theorem omega0MulSystem_τ_one_add (ξ : Ordinal.{u}) {n : ℕ}
     (Q : stageSignature.{u}.Invariant n) : omega0MulSystem.τ (1 + ξ) Q = blockSystem.τ ξ Q :=
   projectInvariant_congr (blockStage_eq_mul ξ).symm _ _ Q
 
+/-- **The printed indexing corrected at the index `0` only**: `τ_β` is the projection to the stage
+`ω · max β 1`, the printed stage `ω · β` at every positive index and `ω` at the index `0`. -/
+noncomputable def omega0MulMaxOneSystem : InvariantSystem.{u} stageSignature.{u} :=
+  reductionSystem (fun β ↦ ω * max β 1)
+    (fun _ ↦ isSuccPrelimit_iff_omega0_dvd.mpr (dvd_mul_right ω _))
+    (fun _ _ h ↦ (isNormal_mul_right omega0_pos).strictMono.monotone (max_le_max_right 1 h))
+    (fun _ h ↦ isPrincipal_mul_omega 1 omega0_lt_omega_one
+      (max_lt h (one_lt_omega0.trans omega0_lt_omega_one)))
+    fun o ho ↦ ⟨o + 1, (Cardinal.isSuccLimit_omega 1).succ_lt ho,
+      (lt_add_one o).trans_le ((le_mul_right (o + 1) omega0_pos).trans
+        ((isNormal_mul_right omega0_pos).strictMono.monotone (le_max_left _ _)))⟩
+
+/-- **The correction at the index `0` changes no other index**: at every positive index the
+system `omega0MulMaxOneSystem` is the printed system. -/
+theorem omega0MulMaxOneSystem_τ_of_ne_zero {β : Ordinal.{u}} (hβ : β ≠ 0) {n : ℕ}
+    (Q : stageSignature.{u}.Invariant n) : omega0MulMaxOneSystem.τ β Q = omega0MulSystem.τ β Q :=
+  projectInvariant_congr (by simp only [max_eq_left (Order.one_le_iff_ne_zero.mpr hβ)]) _ _ Q
+
 /-- **The reduction systems at stages at least `ω` are compatible with the invariance diagram of
 the stage types** [AFK26, Definition 2.8]: projection carries a face of a type to the face of its
 projection, keeps the closed faces, and keeps the reductions to `ω`. -/
@@ -1165,10 +1203,12 @@ theorem isCompatibleWith_reductionSystem (f : Ordinal.{u} → Ordinal.{u})
     obtain ⟨hj, he⟩ : ∃ hj : Function.Injective j, StageType.restrictFace ⟨j, hj⟩ p = some q :=
       hPQ
     refine ⟨hj, ?_⟩
+    -- `HoldsAt` of the projected invariant symbol, with `τ_β` unfolded to `project`
     change StageType.restrictFace ⟨j, hj⟩ (p.project (hf β)) = some (q.project (hf β))
     rw [StageType.restrictFace_project, he, Option.map_some]
   · obtain ⟨p, hp, hn, rfl⟩ := stageSignature.exists_eq_invariant P
     obtain ⟨s, hk⟩ := R
+    -- membership in the pairs is `HoldsIn`, with `τ_β` unfolded to `project`
     change InvariantSymbol.HoldsIn s p j ↔ InvariantSymbol.HoldsIn s (p.project (hf β)) j
     refine exists_congr fun hj ↦ ?_
     rw [StageType.restrictFace_project]
@@ -1186,10 +1226,20 @@ theorem isCompatibleWith_reductionSystem (f : Ordinal.{u} → Ordinal.{u})
 theorem isCompatibleWith_blockSystem : stageDiagram.{u}.IsCompatibleWith blockSystem :=
   isCompatibleWith_reductionSystem _ _ _ _ _ fun β _ ↦ omega0_le_blockStage β
 
+/-- **Only the printed index `0` is forced to change**: the printed indexing corrected at the
+index `0` only is compatible with the invariance diagram of the stage types
+[AFK26, Definition 2.8], and it agrees with the printed indexing at every positive index
+(`omega0MulMaxOneSystem_τ_of_ne_zero`). -/
+theorem isCompatibleWith_omega0MulMaxOneSystem :
+    stageDiagram.{u}.IsCompatibleWith omega0MulMaxOneSystem :=
+  isCompatibleWith_reductionSystem _ _ _ _ _ fun β _ ↦
+    le_mul_left ω (zero_lt_one.trans_le (le_max_right β 1))
+
 /-- **The printed indexing is not compatible with the invariance diagram of the stage types**: at
 the printed index `0` the projection is the reduction to the stage `0`, which sends the label `1`
 of a legal one-point type to the top, and so changes its base relation at `ω`.  This is why the
-block stages start at `ω` (`VaughtConjecture.Correspondence.StageIndexing`). -/
+printed index `0` is corrected (`isCompatibleWith_omega0MulMaxOneSystem`); the block stages start
+at `ω` (`VaughtConjecture.Correspondence.StageIndexing`). -/
 theorem not_isCompatibleWith_omega0MulSystem :
     ¬ stageDiagram.{u}.IsCompatibleWith omega0MulSystem := by
   intro h
@@ -1200,6 +1250,7 @@ theorem not_isCompatibleWith_omega0MulSystem :
     ⟨.base (baseLanguage.symbol (d.reduce hω) (hd.reduce hω)), one_pos⟩ id id
   have hl : InvariantSymbol.HoldsIn (.base (baseLanguage.symbol (d.reduce hω) (hd.reduce hω))) d
       id := ⟨Function.injective_id, by
+    -- `HoldsAt` of a base symbol along the identity embedding
     change (StageType.restrictFace (Function.Embedding.refl _) d).map _ = _
     rw [StageType.restrictFace_refl]
     rfl⟩
@@ -1207,9 +1258,11 @@ theorem not_isCompatibleWith_omega0MulSystem :
       (d.project (isSuccPrelimit_iff_omega0_dvd.mpr (dvd_mul_right ω 0))) id :=
     key.mp hl
   obtain ⟨hj, he⟩ := hm
+  -- `HoldsAt` of a base symbol along the identity embedding
   change (StageType.restrictFace (Function.Embedding.refl _) _).map _ = _ at he
   rw [StageType.restrictFace_refl, Option.map_some, Option.some_inj] at he
   have hlab := StageType.label_congr he (i := i) (j := i) rfl
+  -- the labels of the reductions to `ω`, by the definition of `project` and `StageType.reduce`
   change Label.reduce ω (Label.reduce ω₁ (Label.reduce (ω * 0) (d.label i))) =
     Label.reduce ω (d.label i) at hlab
   rw [hi, mul_zero] at hlab
