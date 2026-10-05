@@ -30,6 +30,10 @@ label is an ordinal (`IsProper`); the formal top is not an ordinal and lies abov
 Stage reduction is not capped observation (`VaughtConjecture.Label.Cap`): reduction keeps the
 formal top, while a cap at a proper cutoff forgets it.
 
+The cast of a natural number `n` to a label is the label of the ordinal `n` (`natCast_label`);
+these casts are injective and order-preserving, lie below `ω` and above `⊥`, and are the only
+labels other than `⊥` below `ω` (`exists_natCast_of_lt_omega`).
+
 If there are countably many ordinals below `α`, there are countably many labels at stage `α`
 (`countable_setOf_atStage`); in particular the labels below `ω ^ 2` form a countable set
 (`countable_setOf_lt_omega0_sq`).
@@ -242,6 +246,43 @@ theorem le_of_le_reduce_add_one {y z : Label.{u}} (hy : y ≤ o) (h : y ≤ redu
   rcases le_or_gt z o with hz | hz
   · rwa [reduce_add_one_of_le hz] at h
   · exact hy.trans hz.le
+
+/-! ### Natural numbers -/
+
+section NatCast
+
+open Ordinal
+
+/-- The cast of a natural number to a label is the label of its cast to an ordinal. -/
+theorem natCast_label (n : ℕ) : (n : Label.{u}) = ((n : Ordinal.{u}) : Label.{u}) := by
+  rw [← WithBot.coe_natCast, ← WithTop.coe_natCast]
+
+theorem natCast_label_inj {n m : ℕ} : (n : Label.{u}) = m ↔ n = m := by
+  rw [natCast_label, natCast_label, WithBot.coe_inj, WithTop.coe_inj, Nat.cast_inj]
+
+theorem natCast_label_le {n m : ℕ} : (n : Label.{u}) ≤ m ↔ n ≤ m := by
+  rw [natCast_label, natCast_label, WithBot.coe_le_coe, WithTop.coe_le_coe, Nat.cast_le]
+
+theorem natCast_label_lt_omega (n : ℕ) :
+    (n : Label.{u}) < ((ω : Ordinal.{u}) : Label.{u}) := by
+  rw [natCast_label, WithBot.coe_lt_coe, WithTop.coe_lt_coe]
+  exact natCast_lt_omega0 n
+
+theorem natCast_label_ne_bot (n : ℕ) : (n : Label.{u}) ≠ ⊥ := by
+  rw [natCast_label]; exact WithBot.coe_ne_bot
+
+/-- A label other than `⊥` below `ω` is a natural number. -/
+theorem exists_natCast_of_lt_omega {x : Label.{u}} (hx : x ≠ ⊥)
+    (hxω : x < ((ω : Ordinal.{u}) : Label.{u})) : ∃ n : ℕ, x = n := by
+  induction x using recBotCoeTop with
+  | bot => exact absurd rfl hx
+  | top => exact absurd hxω (not_lt.mpr le_top)
+  | coe o =>
+    rw [WithBot.coe_lt_coe, WithTop.coe_lt_coe] at hxω
+    obtain ⟨n, rfl⟩ := lt_omega0.mp hxω
+    exact ⟨n, (natCast_label n).symm⟩
+
+end NatCast
 
 /-! ### Countability -/
 

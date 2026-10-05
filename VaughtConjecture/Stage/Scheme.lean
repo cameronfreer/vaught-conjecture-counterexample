@@ -37,6 +37,7 @@ Graded indices are transported along `f` by `Prod.map (Finset.map f) id`, `(C, j
 which identifies the graded faces of the restriction with the graded faces of `S` inside the range
 of `f` (`mem_gradedFaces_comap`), and the cell map sends the cells below a pair onto the cells below
 its image (`image_cellMap_below`); completeness, codedness, and consistency pass to the restriction.
+The restriction reads the rows of the visible cells only (`comap_mk_congr`).
 Along a bijection of the points the cell map is surjective (`surjective_cellMap_equiv`), and the
 faces of a well-formed scheme form a plan on all of its points (`IsWellFormed.isPlan`).
 
@@ -208,6 +209,20 @@ theorem map_comap_gradedIndex (i : Fin (S.comap f).card) :
     Prod.map (Finset.map f) id ((S.comap f).toCellScheme.gradedIndex i) =
       S.toCellScheme.gradedIndex (S.cellMap f i) :=
   Prod.ext (S.map_comap_scope f i) rfl
+
+/-- **The restriction reads only the rows of the visible cells**: two schemes with the same cells
+whose rows agree at the cells visible through `f` have the same restriction along `f`. -/
+theorem comap_mk_congr {c : ℕ} {D : CellScheme (Fin c) (Fin n)} {R R' : D.Rows.{u}}
+    (h : ∀ s ∈ (Scheme.mk c D R).visibleCells f, R.row s = R'.row s) :
+    (Scheme.mk c D R).comap f = (Scheme.mk c D R').comap f := by
+  refine Scheme.ext rfl rfl rfl (fun i j hij ↦ ?_) (fun i j hij ↦ ?_) (fun s s' t t' hs ht ↦ ?_)
+  · obtain rfl : i = j := Fin.ext hij
+    rfl
+  · obtain rfl : i = j := Fin.ext hij
+    rfl
+  · rw [comap_row, comap_row, h _ (cellMap_mem _ _ _)]
+    exact R'.row_congr (congrArg _ (Fin.ext hs))
+      (congrArg (fun i ↦ ((Scheme.mk c D R).cellMap f i : Fin c)) (Fin.ext ht))
 
 /-- The cell map of the restriction along `f` maps the cells below a pair onto the cells below its
 image. -/
