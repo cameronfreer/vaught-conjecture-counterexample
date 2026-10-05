@@ -37,6 +37,16 @@ the gate's graded index, of grade `n`, gives its twin hypothesis.  It is stated 
 with gate data (`mem_receivingFamily_of_isGate`); the labels of `q` are lawful because `q` is a
 stage type, and no legality of `q` or of the display is used.
 
+**Gate recovery with the twin–gate coupling** (`mem_receivingFamily_of_twinsReadGate`).  When the
+rows of `Q` couple the twins of the gate to it (`CellScheme.Rows.TwinsReadGate`: every twin reads
+the gate at least as the cap), the same conclusion holds for every stage type `q` on the scheme of
+`Q` with literal private face, a member of the family of generalized saturation
+(`Realization.saturationFamily`): neither the bottom pattern of `q` nor a bound on the grade of the
+gate is used, since the gate inequality then holds for every lawful labelling of the rows
+(`CellScheme.Rows.IsGate.recover_of_twinsReadGate`).  For a coupled gated extension
+(`StageType.CoupledGatedExtension`) the donor face is defined
+(`CoupledGatedExtension.exists_restrictFace_mem_receivingFamily`).
+
 **What is unconditional and what is not.**  Every statement here is a theorem about a given gated
 extension, and stands.  Gated extensions exist for some inputs
 (`StageType.GatedExtension.instance_two_zero`), but the universal gated extension hypothesis
@@ -50,9 +60,11 @@ uniformity and high-arity-dominance clauses, with exact consistency (no generali
 (`Realization.IsModel.exists_privateContext`).  The bottom-pattern clause of a model
 (`Realization.IsModel.bottomPattern`), applied over an occurrence of the private type to the
 scheme and labels of a display, realizes a member of the bottom-pattern family read here; its
-guard is met, since the display is a legal coface of the private type in that family.  A route
-to (R1) through these pieces needs a gate predicate that legal displays over every private
-context satisfy (prospective).
+guard is met, since the display is a legal coface of the private type in that family.  With the
+coupled gate, generalized saturation suffices in place of the bottom-pattern clause; a route to
+(R1) through these pieces needs coupled gated extensions over every private context
+(`StageType.HasCoupledGatedPinnedExtensions`, a named hypothesis that is open), and finite-cut
+receiving is proved conditional on it in `VaughtConjecture.Realization.CoupledFiniteCutReceiving`.
 
 ## Placement
 
@@ -190,6 +202,60 @@ theorem exists_restrictFace_mem_receivingFamily (hP : restrictFace Fin.castSuccE
   exact ⟨_, restrictFace_of_mem q _ hf, E.recover hP hq (restrictFace_of_mem q _ hf)⟩
 
 end GatedExtension
+
+/-! ### Gate recovery with the twin–gate coupling -/
+
+/-- **Gate recovery for stage types with the twin–gate coupling.**  Let `Q` on `n + 1` points have
+literal faces `P` along `Fin.castSuccEmb` and `d` along `extendByLast f`, and gate data at a cell
+`G` with cap `C`, whose twins read `G` at least as `C` (`CellScheme.Rows.TwinsReadGate`).  A stage
+type `q` on the scheme of `Q` with literal face `P` has a donor face that agrees with `d` below the
+label of `C`.  No bottom pattern and no bound on the grade of `G` is assumed: the coupling is a
+condition on the rows, which `q` shares with `Q`. -/
+theorem mem_receivingFamily_of_twinsReadGate {P : StageType.{u} α n} {f : Fin m ↪ Fin n}
+    {d : StageType.{u} α (m + 1)} {Q : StageType.{u} α (n + 1)} {G C : Fin Q.card}
+    (hQP : restrictFace Fin.castSuccEmb Q = some P)
+    (hQd : restrictFace (extendByLast f) Q = some d) (htw : Q.rows.TwinsReadGate G C)
+    (hgate : Q.rows.IsGate G C (Q.toCellScheme.visible (Set.range Fin.castSuccEmb))
+      (Q.toCellScheme.visible (Set.range (extendByLast f))) Q.label)
+    {q : StageType.{u} α (n + 1)} (hP : restrictFace Fin.castSuccEmb q = some P)
+    (hq : q ∈ saturationFamily Q.toScheme) {d' : StageType.{u} α (m + 1)}
+    (hd' : restrictFace (extendByLast f) q = some d') :
+    d' ∈ receivingFamily d (Q.label C) := by
+  obtain ⟨S, ℓ, hw, hc, hℓ, hat⟩ := q
+  obtain rfl : S = Q.toScheme := hq
+  obtain ⟨-, rfl⟩ := (restrictFace_eq_some_iff _ _).mp hQd
+  obtain ⟨-, rfl⟩ := (restrictFace_eq_some_iff _ _).mp hd'
+  obtain ⟨_, hQP⟩ := (restrictFace_eq_some_iff _ _).mp hQP
+  obtain ⟨_, hqP⟩ := (restrictFace_eq_some_iff _ _).mp hP
+  -- The literal private face: `ℓ` is the display's labelling on the private cells.
+  have hlit : ∀ x ∈ Q.toCellScheme.visible (Set.range Fin.castSuccEmb), ℓ x = Q.label x := by
+    intro x hx
+    have hx' : x ∈ Set.range (Q.cellMap Fin.castSuccEmb) := by
+      rw [Scheme.range_cellMap, mem_coe, Scheme.mem_visibleCells]
+      exact hx
+    obtain ⟨i, rfl⟩ := hx'
+    exact label_congr (hqP.trans hQP.symm) (i := i) (j := i) rfl
+  have hrec := (hgate.recover_of_twinsReadGate hℓ hlit htw).2
+  refine ⟨rfl, fun i j hij ↦ ?_⟩
+  obtain rfl := Fin.ext hij
+  exact hrec _ (Scheme.mem_visibleCells.mp (Q.cellMap_mem _ i))
+
+/-- **The donor face of a coupled gated extension is defined, and agrees with the donor below the
+cap**, for every stage type on the scheme of the display with literal private face `P`: a member
+of the family of generalized saturation over the scheme of the display. -/
+theorem CoupledGatedExtension.exists_restrictFace_mem_receivingFamily
+    {P : StageType.{u} α n} {f : Fin m ↪ Fin n} {d : StageType.{u} α (m + 1)}
+    (E : CoupledGatedExtension P f d) {q : StageType.{u} α (n + 1)}
+    (hP : restrictFace Fin.castSuccEmb q = some P) (hq : q ∈ saturationFamily E.display.toScheme) :
+    ∃ d' : StageType.{u} α (m + 1), restrictFace (extendByLast f) q = some d' ∧
+      d' ∈ receivingFamily d (E.display.label E.cap) := by
+  have hf : univ.map (extendByLast f) ∈ q.toCellScheme.faces := by
+    have hq' : q.toScheme = E.display.toScheme := hq
+    rw [hq', ← isSome_restrictFace_iff, E.restrictFace_extendByLast]
+    rfl
+  exact ⟨_, restrictFace_of_mem q _ hf,
+    mem_receivingFamily_of_twinsReadGate E.restrictFace_castSuccEmb E.restrictFace_extendByLast
+      E.twinsReadGate E.isGate hP hq (restrictFace_of_mem q _ hf)⟩
 
 end StageType
 

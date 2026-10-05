@@ -73,6 +73,21 @@ recovered (`IsGate.eq_of_cap_eq_top`).
   nothing bounds the gate or the donor tops: a lawful labelling may realize a donor top as `w C`
   itself (`VaughtConjecture.Extension.GateExamples`).
 
+**Gate recovery with the twin–gate coupling** (`IsGate.recover_of_twinsReadGate`).  The twin
+hypothesis of `IsGate.recover` enters only through the gate inequality `w C ≤ q G`
+(`IsGate.recover_of_cap_le_gate`).  The rows **couple the twins to the gate**
+(`TwinsReadGate`) when every twin `t` of `G` reads `G` at least as it reads `C`:
+`R.row t C ≤ R.row t G`.  Then every lawful labelling `q` has `q C ≤ q G`
+(`cap_le_gate_of_twinsReadGate`): availability gives a cell `u` with the graded index of `G` and
+`q C ≤ q u`, and if `u` is a twin, locality at `u` with its witness `(g, σ)` gives, at equal
+grades, `q C = min (σ (R.row u C)) (g N) ≤ min (σ (R.row u G)) (g N) = min (q G) (q u) ≤ q G`.
+The coupling is a condition on rows, so it holds for every lawful labelling of the rows at once,
+and nothing is assumed about the values at the twins: a twin may carry any label, `⊤` included.
+It is the weakest condition on the entries `R.row t C`, `R.row t G` under which every witness reads
+`C` at most as `G`, since the identity is a witness (`Label.le_iff_forall_isWitness`).  It is not
+necessary for the gate inequality: a twin whose own entry is `⊥` is `⊥` in every lawful labelling
+and never serves availability.
+
 **Findings.**
 
 * *The recovery hypothesis is the bottom pattern of the whole graded index of the gate*: the gate
@@ -80,7 +95,10 @@ recovered (`IsGate.eq_of_cap_eq_top`).
   imply agreement from lawfulness alone when the gate has a twin: a twin labelled `⊤` serves
   availability against the cap, so the cap no longer bounds the gate from below, and the bottom
   pattern of the twins cannot be dropped (the counterexamples `GateExamples.twin_bottom_gate` and
-  `GateExamples.twin_small_gate`).  When the gate has no twins, the literal private face
+  `GateExamples.twin_small_gate`).  The twin of those counterexamples reads the cap at `⊤` and the
+  gate at `3`, so its rows do not couple it to the gate
+  (`CoupledGateExamples.not_twinsReadGate_twin`); a condition on the rows that replaces the bottom
+  pattern of the twins is the coupling above.  When the gate has no twins, the literal private face
   alone gives recovery (`IsGate.recover_of_unique`), and the gate is not bottom by the gate
   inequality.  When the gate's row is bottom at every twin, a non-bottom gate makes the twins
   bottom (`IsLawful.eq_bot_of_row_eq_bot`, `IsGate.recover_of_row_twin`).  The bottom-pattern
@@ -96,8 +114,10 @@ recovered (`IsGate.eq_of_cap_eq_top`).
   of the private context over the root.  So the construction of a legal gated scheme contains
   completion problems of the kind of (R6).  With its twins labelled `⊥`, such a scheme need not
   exist: the universal gated extension hypothesis `StageType.HasGatedPinnedExtensions` fails at
-  every stage (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`).  General (R1) is
-  open.
+  every stage (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`).  With the coupling of
+  the rows in place of the labels `⊥` of the twins, a legal scheme carrying a gate exists at the
+  input of that refutation (`CoupledGateExamples.exists_coupledGatedExtension_comap_g₁`); the
+  universal form `StageType.HasCoupledGatedPinnedExtensions` is open, and so is general (R1).
 
 ## Placement
 
@@ -244,6 +264,13 @@ structure IsGate (R : D.Rows.{u}) (G C : ι) (P Q : Set ι) (w : ι → Label.{u
   /-- The row of the gate reads every donor cell outside the private cells. -/
   reads : ∀ e (he : e ∈ Q), e ∉ P → GateReads R G C P w ⟨e, le_gate e he⟩
 
+/-- **The twins read the gate at least as the cap**: every twin `t` of `G` (a cell `t ≠ G` with
+the graded index of `G`) reads `C` at most as it reads `G`, `R.row t C ≤ R.row t G`.  A condition
+on the rows, not on any labelling. -/
+def TwinsReadGate (R : D.Rows.{u}) (G C : ι) : Prop :=
+  ∀ t (hC : C ∈ D.below (D.gradedIndex t)) (hG : G ∈ D.below (D.gradedIndex t)),
+    D.gradedIndex t = D.gradedIndex G → t ≠ G → R.row t ⟨C, hC⟩ ≤ R.row t ⟨G, hG⟩
+
 namespace IsLawful
 
 /-- **One witness at the gate.**  The locality at a cell `G` has a witness `(g, σ)` with
@@ -359,6 +386,40 @@ theorem min_eq_of_gateReads (hq : R.IsLawful q) (hlit : ∀ x ∈ P, q x = w x) 
 
 end IsLawful
 
+/-- **The gate inequality from the twin–gate coupling.**  If the scope of `C` lies in that of
+`G`, their grades agree, and the twins of `G` read `G` at least as `C` (`TwinsReadGate`), then
+`q C ≤ q G` for every lawful labelling `q`.  Availability gives a cell `u` with the graded index
+of `G` and `q C ≤ q u`; if `u` is a twin, locality at `u` reads `C` at most as `G` with one
+witness, at equal grades.  Nothing is assumed about the values of `q` at the twins. -/
+theorem cap_le_gate_of_twinsReadGate (hq : R.IsLawful q) (hCG : D.scope C ⊆ D.scope G)
+    (hgr : D.grade C = D.grade G) (htw : R.TwinsReadGate G C) : q C ≤ q G := by
+  obtain ⟨u, hu, hle⟩ := hq.availability C G hCG hgr
+  rcases eq_or_ne u G with rfl | huG
+  · exact hle
+  have hC : C ∈ D.below (D.gradedIndex u) := by
+    rw [CellScheme.mem_below, hu]; exact (D.gradedIndex_le_iff).mpr ⟨hCG, hgr.le⟩
+  have hG : G ∈ D.below (D.gradedIndex u) := by rw [CellScheme.mem_below, hu]
+  obtain ⟨g, σ, hw, heq⟩ := hq.locality u
+  have hC' : min (q C) (q u) = min (σ (R.row u ⟨C, hC⟩)) (g (D.grade C)) := heq ⟨C, hC⟩
+  have hG' : min (q G) (q u) = min (σ (R.row u ⟨G, hG⟩)) (g (D.grade G)) := heq ⟨G, hG⟩
+  rw [min_eq_left hle] at hC'
+  calc q C = min (σ (R.row u ⟨C, hC⟩)) (g (D.grade C)) := hC'
+    _ ≤ min (σ (R.row u ⟨G, hG⟩)) (g (D.grade G)) := by
+        rw [hgr]; exact min_le_min_right _ (hw.monotone (htw u hC hG hu huG))
+    _ = min (q G) (q u) := hG'.symm
+    _ ≤ q G := min_le_left _ _
+
+/-- **Gate recovery from the gate inequality alone**: the twin hypothesis of `IsGate.recover`
+enters only through `w C ≤ q G`.  A lawful labelling literally `w` on the private cells with
+`w C ≤ q G` agrees with the display on every donor cell below `w C`. -/
+theorem IsGate.recover_of_cap_le_gate (hgate : R.IsGate G C P Q w) (hq : R.IsLawful q)
+    (hlit : ∀ x ∈ P, q x = w x) (hCG : w C ≤ q G) :
+    ∀ e ∈ Q, min (q e) (w C) = min (w e) (w C) := by
+  intro e he
+  by_cases heP : e ∈ P
+  · rw [hlit e heP]
+  · exact hq.min_eq_of_gateReads hlit hgate.cap_ne_bot hCG (hgate.reads e he heP)
+
 namespace IsGate
 
 variable (hgate : R.IsGate G C P Q w) (hq : R.IsLawful q) (hlit : ∀ x ∈ P, q x = w x)
@@ -386,11 +447,9 @@ theorem eq_or_le (e : ι) (he : e ∈ Q) :
 /-- **Gate recovery.**  A lawful labelling `q` that is literally the display `w` on the private
 cells and is bottom at every twin of the gate has `w C ≤ q G`, and agrees with the display on
 every donor cell below the label `w C` of the private cap. -/
-theorem recover : w C ≤ q G ∧ ∀ e ∈ Q, min (q e) (w C) = min (w e) (w C) := by
-  refine ⟨hgate.cap_le_gate hq hlit htwin, fun e he ↦ ?_⟩
-  rcases hgate.eq_or_le hq hlit htwin e he with ⟨h, -⟩ | ⟨h₁, h₂⟩
-  · rw [h]
-  · rw [min_eq_right h₁, min_eq_right h₂]
+theorem recover : w C ≤ q G ∧ ∀ e ∈ Q, min (q e) (w C) = min (w e) (w C) :=
+  ⟨hgate.cap_le_gate hq hlit htwin,
+    hgate.recover_of_cap_le_gate hq hlit (hgate.cap_le_gate hq hlit htwin)⟩
 
 /-- **Exact recovery below the private cap**: a donor cell with display label below `w C` has its
 display label. -/
@@ -423,5 +482,16 @@ theorem IsGate.recover_of_row_twin (hgate : R.IsGate G C P Q w) (hq : R.IsLawful
     (hrow : ∀ t (ht : D.gradedIndex t = D.gradedIndex G), t ≠ G → R.row G ⟨t, ht.le⟩ = ⊥)
     (hG : q G ≠ ⊥) : w C ≤ q G ∧ ∀ e ∈ Q, min (q e) (w C) = min (w e) (w C) :=
   hgate.recover hq hlit fun t ht htG ↦ hq.eq_bot_of_row_eq_bot hG (hrow t ht htG)
+
+/-- **Gate recovery with the twin–gate coupling**: when the twins of the gate read the gate at
+least as the cap (`TwinsReadGate`), a lawful labelling literally `w` on the private cells has
+`w C ≤ q G` and agrees with the display on every donor cell below `w C`.  Nothing is assumed about
+the values of `q` at the twins. -/
+theorem IsGate.recover_of_twinsReadGate (hgate : R.IsGate G C P Q w) (hq : R.IsLawful q)
+    (hlit : ∀ x ∈ P, q x = w x) (htw : R.TwinsReadGate G C) :
+    w C ≤ q G ∧ ∀ e ∈ Q, min (q e) (w C) = min (w e) (w C) := by
+  have hCG : w C ≤ q G := hlit C hgate.cap_mem ▸
+    cap_le_gate_of_twinsReadGate hq hgate.scope_cap_subset hgate.grade_cap htw
+  exact ⟨hCG, hgate.recover_of_cap_le_gate hq hlit hCG⟩
 
 end VaughtConjecture.CellScheme.Rows
