@@ -68,11 +68,12 @@ Notes on the rows, each with its marker:
   cover of the terminal models, conditional on the continuation criterion
   (`Realization.exists_hasTerminalProperty`).  Open: stable availability at twins.  Still to be
   proved: output 3; the equivalence of cover-hollowness (with which the compiled statements are
-  formulated) and the original anchor predicate (the meaning of "hollow", `SEMANTIC_CONTRACT.md`,
-  item 8); the exact-age Scott sentences.
-- *Layers 5 and 6.*  Compiled conditionally on the hypotheses below, or on next-block uniqueness,
-  derived from them: uniqueness and limit existence (`ModelExpansion.subsingleton`,
-  `ModelExpansion.nonempty_of_forall_lt`, under next-block uniqueness), next-block uniqueness
+  formulated) and the original no-anchor predicate (the meaning of "hollow",
+  `SEMANTIC_CONTRACT.md`, item 8); the exact-age Scott sentences.
+- *Layers 5 and 6.*  Compiled conditionally on the hypotheses below, or on statements derived
+  from them (next-block uniqueness; finite-extension receiving, from (R1)): uniqueness and limit
+  existence (`ModelExpansion.subsingleton`, `ModelExpansion.nonempty_of_forall_lt`, under
+  next-block uniqueness), next-block uniqueness
   (`Expansion.NextBlockUniqueness.of_forcingDonors`), logical agreement
   (`Expansion.bfEquiv_of_modelExpansions`), countable losses
   (`Expansion.expansionDomain_loss_countable`), nonempty losses
@@ -135,7 +136,8 @@ counted as compiled.
    coatom extension hypotheses of the cap-to-model theorem, the top-free witnesses, and output 3.
    Under review, not yet merged: the per-grade disjunction `2FL(j) ∨ Seed.DeadAt j` does not cover
    every seed at `m = 3`, while `2FL∃(j)` is equivalent to the step of the tower and holds on the
-   seed of that counterexample, so 2.7 is to be conditioned on `2FL∃`.
+   seed at `m = 3` where the disjunction fails (a seed other than `seed4`), so 2.7 is to be
+   conditioned on `2FL∃`.
 2. **Stable availability at twins** (open).  Apart from the case of an existing next-block
    expansion (`Realization.isStablyLawful_of_reduce_eq`, which presupposes what output 3 is to
    construct), no conditional statement of it is made.  Refuted hypotheses on single types:

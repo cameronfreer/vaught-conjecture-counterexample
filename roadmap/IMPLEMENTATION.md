@@ -371,13 +371,14 @@ must belong to the extendible family; atomic agreement alone does not suffice.  
 classes by an overlapping countable family of singleton conditions: specified rigid-core type,
 coreless eventual top grade, and hollow growth.  Do not construct a complete profile invariant.
 Eventual top grade zero is the rigid-core case: the empty tuple is then a rigid core
-(`TerminalProperty`, `Realization.HasTerminalProperty`).  Preserve the original anchor definition
+(`TerminalProperty`, `Realization.HasTerminalProperty`).  Preserve the original no-anchor predicate
 (the meaning of "hollow", `SEMANTIC_CONTRACT.md`, item 8); stable-label fixedness is a
 characterization under stated hypotheses.  The compiled statements of output 3, the terminal count,
-(R3), and (R4) are presently formulated with cover-hollowness (`Realization.IsCoverHollow`), a
+and (R3) are presently formulated with cover-hollowness (`Realization.IsCoverHollow`), and (R4),
+which has no statement in the library yet, is to be stated with it; cover-hollowness is a
 separate named predicate whose stable-label fixedness holds for every realization at a block stage,
 with no hypothesis (`Realization.isCoverHollow_iff_forall_stableLabel_eq_top`); the equivalence of
-cover-hollowness with the original anchor predicate is still to be proved.
+cover-hollowness with the original no-anchor predicate is still to be proved.
 
 ### 5. Unique expansions, domains, and the main theorem
 
