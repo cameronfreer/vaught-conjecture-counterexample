@@ -40,8 +40,8 @@ stage types at `α`: no realization, and no legality (legality depends only on t
   least `β` plus the grade of `C` by the order law.
 * **No forcing above the top grade** (`not_forcesThreshold_of_grade_le`): if every grade of `q` is
   at most `K` and `β + K < α`, then `(q, f)` does not force `K + 1` at a cell labelled the formal
-  top, since the labels of `q` capped at `β + K` form a lift of `q`.  A pair forcing `n` thus has a
-  cell of grade at least `n`, by whatever mechanism it forces.
+  top, since the labels of `q` capped at `β + K` form a lift of `q`.  A pair forcing `n` (with
+  `β + (n - 1) < α`) thus has a cell of grade at least `n`, by whatever mechanism it forces.
 
 **The provisional offset** of `d` at `(q, f)` (`StageType.provisionalOffset`) is the supremum in
 `ℕ∞` of the thresholds forced at `d`.  When `q` restricts to `p` along `f` and `d` reduces to the
@@ -241,8 +241,9 @@ theorem forcesThreshold_of_row_le (hfp : restrictFace f q = some p) {C e : Fin q
 /-- **No forcing above the top grade.**  If every cell of `q` has grade at most `K` and `β + K`
 lies below `α`, then `(q, f)` does not force `K + 1` at a cell `d` of `p` labelled the formal top:
 capping the labels of `q` at `β + K` (self-visible at `K`) gives a stage type at `α` reducing to
-`q` whose label at the position of `d` is `β + K`.  So a pair forcing `n` at such a cell has a
-cell of grade at least `n`, hence at least `n` points, whatever the mechanism of the forcing. -/
+`q` whose label at the position of `d` is `β + K`.  So when `β + (n - 1) < α`, a pair forcing `n`
+at such a cell has a cell of grade at least `n`, hence at least `n` points, whatever the mechanism
+of the forcing. -/
 theorem not_forcesThreshold_of_grade_le {K : ℕ} (hα : β + K < α)
     (hK : ∀ c, q.toCellScheme.grade c ≤ K) (hfp : restrictFace f q = some p)
     (hd : p.label d = ⊤) : ¬ ForcesThreshold α hβ q f p d (K + 1) := by
@@ -260,6 +261,7 @@ theorem not_forcesThreshold_of_grade_le {K : ℕ} (hα : β + K < α)
   have hQ : Q.reduce hβ = q := by
     refine ext rfl fun i j hij ↦ ?_
     obtain rfl : i = j := Fin.ext hij
+    -- the label of `Q.reduce hβ` at `i`, unfolded (`reduce_label`)
     change Label.reduce β (min (q.label i) c) = q.label i
     rcases q.atStage i with hlt | htop
     · rw [min_eq_left (hlt.le.trans hβc), Label.reduce_of_lt hlt]
@@ -275,6 +277,7 @@ theorem not_forcesThreshold_of_grade_le {K : ℕ} (hα : β + K < α)
     rw [show q.label (q.cellMap f i₀) = (q.comap f hf).label i₀ from (comap_label q f hf i₀).symm]
     exact (label_congr hcomap rfl).trans hd
   have hP : (Q.comap f hf').label i₀ = c := by
+    -- the label of the face of `Q`, unfolded (`comap_label`; `Q` has the scheme of `q`)
     change min (q.label (q.cellMap f i₀)) c = c
     rw [hqd, min_top_left]
   rw [hP, Nat.cast_add_one, ← add_assoc] at hle

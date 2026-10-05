@@ -3,6 +3,7 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
+import VaughtConjecture.Extension.FamilyCofaces
 import VaughtConjecture.Extension.TiedApex
 import VaughtConjecture.Extension.TwoFaceLift
 import VaughtConjecture.Realization.BlockStages
@@ -22,7 +23,7 @@ reduction to `λ_η` (`StageType.ForcesThreshold`).  The donor is a stage type, 
 involves a realization: the construction uses no uniqueness of expansions, no (R1), no receiving,
 and no termination.
 
-**The forcing-donor property is not proved here in general.**  What is proved:
+**The forcing-donor property is not proved in general.**  What is proved:
 
 * **One-point inputs, `n ≤ 4`, unconditionally** (`forcingDonors_onePoint`).
 * **One-point inputs at every `n`, given completions up to the arity `n - 2`**
@@ -57,13 +58,15 @@ is legal below the full grade and has `t` as a face along a proper face; the tie
 donor.  The tie needs the label of `d` self-visible at the number `N` of points of the donor,
 that is `N ≤ j` (`Label.isSelfVisible_of_coe_add_le`).  For a one-point type, `N = max n 2`.
 
-**The arity of a donor is set by the threshold, not by the input.**  A pair forcing `n` at a cell
-labelled the formal top has a cell of grade at least `n`, hence at least `n` points
+**The arity of a donor is set by the threshold, not by the input.**  A pair at `λ_{η+1}` forcing `n`
+at a cell labelled the formal top has a cell of grade at least `n`, hence at least `n` points
 (`StageType.not_forcesThreshold_of_grade_le`), and legal one-point inputs exist at every offset
 (`OnePoint.le_of_forcingDonor`: for every `j ≥ 1`, a legal one-point type labelled `λ_η + j` all
-of whose donors at the threshold `j` have at least `j` points).  So the forcing-donor property
-needs donors on arbitrarily many points already for one-point types: the unconditional completions
-at the arities `m ≤ 2` give donors on at most `4` points, hence the thresholds `n ≤ 4`.
+of whose donors at the threshold `j` have at least `j` points; the type is
+`StageType.exists_onePoint_label`).  So the forcing-donor property needs donors on arbitrarily many
+points already for one-point types.  The construction from the unconditional completions at the
+arities `m ≤ 2` gives donors on at most `4` points, hence the thresholds `n ≤ 4`; the statements
+assert only that some donor exists (`∃ m`), not this bound.
 
 **What remains.**  A tie cell `C` forcing `n` has its label at most that of `d` and at least `λ_η`
 plus its grade (`StageType.forcesThreshold_of_row_le`), so its grade lies between `n` and `j`.
@@ -74,11 +77,13 @@ plus its grade (`StageType.forcesThreshold_of_row_le`), so its grade lies betwee
   three or more points it also needs a reindexing of `t` to make its face along `Fin.castSuccEmb`
   defined.  Otherwise the donor of the face is to be amalgamated with `t` over the face
   (`StageType.exists_amalgam`, from `StageType.HasCoatomExtensions`).  Neither is compiled beyond
-  the instances above.
-* *The residual inputs*, with `grade d < n ≤ j ≤ #(scope d)`: no tie cell of full scope over a face
-  containing `scope d` has grade at most `j`, so no top tie exists.  The smallest has two points:
-  `d` at `({0, 1}, 1)`, labelled exactly `λ_η + 2`, with `n = 2`.  These inputs need a completion
-  with one prescribed tie at an intermediate grade, prospective here:
+  the cases above.
+* *The residual inputs*, with `grade d < n ≤ j ≤ #(scope d)`.  A **top tie** is a tie cell at the
+  full graded index `(univ, N)` of a donor on `N` points having a face containing `scope d` along a
+  proper face, as in the tied apex.  Its grade is `N ≥ #(scope d) + 1 > j`, so no top tie exists.
+  The smallest residual input has two points: `d` at `({0, 1}, 1)`, labelled exactly `λ_η + 2`,
+  with `n = 2`.  These inputs need a completion with one prescribed tie at an intermediate grade
+  (prospective):
 
   **`TiedLayer`** (prospective): for a seed `I` at the arity `m`, a grade `j' < m + 2`, and an
   old cell `e` of grade at most `j'` whose glued label is self-visible at `j'`, a completion below
@@ -91,11 +96,12 @@ plus its grade (`StageType.forcesThreshold_of_row_le`), so its grade lies betwee
   library has no completion with a prescribed tie.  `TiedLayer` is not refuted.
 
 **A tie is an upper bound only.**  A tie bounds the tied cell from above and prescribes nothing at
-the other cells of its graded index.  In a capped lift, lowering the tied cell to the cap keeps
-both its locality and the tie (`Label.TransformsTo.cap_tied`).  So a tied cell is not subject to
-the mechanism by which bottom twins and availability force a cell above two incomparable cells,
-the obstruction met by the gated pinned extension property
-(`StageType.HasGatedPinnedExtensions`).
+the other cells of its graded index.  In a capped lift, locality at the tied cell and the tie never
+need a value above the cap (`Label.TransformsTo.cap_tied`).  This does not cover availability at
+the graded index of the tied cell, which can still force it upward, nor the rows of the cells that
+read it; so it is not shown that a tied cell escapes the mechanism by which bottom twins and
+availability force a cell above two incomparable cells, the obstruction met by the gated pinned
+extension property (`StageType.HasGatedPinnedExtensions`).
 
 ## Placement
 
@@ -190,7 +196,8 @@ variable {η : Ordinal.{u}}
 `λ_{η+1}` on `m₀ + 1` points whose face along `Fin.castSuccEmb` is defined, `d` a cell of `t`
 reducing to the formal top, and `n` a threshold.  If the label of `d` is at least
 `λ_η + max n (m₀ + 2)` and completions exist up to the arity `max n (m₀ + 2) - 2`, a forcing donor
-exists: the tied apex over the doubling chain, on `max n (m₀ + 2)` points. -/
+exists: the tied apex over the doubling chain.  The construction gives a donor on `max n (m₀ + 2)`
+points; the statement asserts only that some donor exists. -/
 theorem forcingDonor_of_completions {m₀ : ℕ} {t : StageType.{u} (blockStage (η + 1)) (m₀ + 1)}
     (ht : t.IsLegal) (hp : ∃ p, StageType.restrictFace Fin.castSuccEmb t = some p)
     {d : Fin t.card} (hd : (t.reduce (isSuccPrelimit_blockStage η)).label d = ⊤) {n : ℕ}
@@ -239,8 +246,9 @@ theorem forcingDonors_onePoint_of_completions (t : StageType.{u} (blockStage (η
       (by rwa [hmax])
 
 /-- **Forcing donors for one-point types, up to the threshold `4`, unconditionally.**  Every input
-of `ForcingDonors η` on one point with `n ≤ 4` has a donor, on at most `4` points: the
-completions of the doubling chain are at the arities `m ≤ 2`. -/
+of `ForcingDonors η` on one point with `n ≤ 4` has a donor: the completions of the doubling chain
+are at the arities `m ≤ 2`.  The construction gives a donor on at most `4` points; the statement
+asserts only that some donor exists. -/
 theorem forcingDonors_onePoint (t : StageType.{u} (blockStage (η + 1)) 1) (ht : t.IsLegal)
     (d : Fin t.card) (hd : (t.reduce (isSuccPrelimit_blockStage η)).label d = ⊤) (n : ℕ)
     (hn : ((blockStage η + n : Ordinal.{u}) : Label.{u}) ≤ t.label d) (hn4 : n ≤ 4) :
@@ -299,139 +307,30 @@ theorem forcingDonors_twoPoint_face (t : StageType.{u} (blockStage (η + 1)) 2) 
     F.restrictFace_left_completion hα, ?_⟩
   have hDE : StageType.restrictFace (Coatom.right 1) ((F.completion hα).reduce hβ) =
       some (E.reduce hβ) := by
+    -- `rfl`: `Option.map` on `some`, and the second coatom type of the seed is `E`
     rw [StageType.restrictFace_reduce, F.restrictFace_right_completion hα]; rfl
   have hDt : StageType.restrictFace (Coatom.left 1) ((F.completion hα).reduce hβ) =
       some (t.reduce hβ) := by
+    -- `rfl`: `Option.map` on `some`, and the first coatom type of the seed is `t`
     rw [StageType.restrictFace_reduce, F.restrictFace_left_completion hα]; rfl
   have h1 := hFE.trans_face hDE
   rw [show (Fin.castSuccEmb : Fin 1 ↪ Fin 2).trans (Coatom.right 1) =
       (Fin.castSuccEmb : Fin 1 ↪ Fin 2).trans (Coatom.left 1) from
     castSuccEmb_trans_extendByLast _] at h1
+  -- the reduction keeps the scheme (`reduce_toScheme`), hence the faces
   have hf' : univ.map (Fin.castSuccEmb : Fin 1 ↪ Fin 2) ∈ (t.reduce hβ).toCellScheme.faces := hf
   exact (StageType.ForcesThreshold.trans_comap_iff hDt hf' d').mp h1
 
 end Forcing
 
-/-! ### One-point legal types at every offset, and the arity of their donors -/
+/-! ### The arity of the donors of one-point types -/
 
 namespace OnePoint
 
-open Ordinal
-
-/-- The two-value shifter: bottom below `ω`, and `a` from `ω` on. -/
-noncomputable def shift (a x : Label.{u}) : Label.{u} :=
-  if x < ((ω : Ordinal.{u}) : Label.{u}) then ⊥ else a
-
-/-- The two-value shifter with a value self-visible at `1` is a witness bounded by grade `1`. -/
-theorem isWitness_shift {a : Label.{u}} (ha : IsSelfVisible 1 a) :
-    IsWitness (stepSuppressor 1) (shift a) where
-  antitone := (IsWitness.id_step 1).antitone
-  isSelfVisible := (IsWitness.id_step 1).isSelfVisible
-  map_bot := by simp [shift, WithBot.bot_lt_coe]
-  monotone := by
-    intro x y hxy
-    simp only [shift]
-    by_cases hy : y < ((ω : Ordinal.{u}) : Label.{u})
-    · rw [ite_eq_left (hxy.trans_lt hy), ite_eq_left hy]
-    · rw [ite_eq_right hy]
-      split_ifs
-      exacts [bot_le, le_rfl]
-  visibilityReplace_comm x k hg i hi := by
-    have hlt : visibilityReplace k i x < ((ω : Ordinal.{u}) : Label.{u}) ↔
-        x < ((ω : Ordinal.{u}) : Label.{u}) :=
-      Label.visibilityReplace_lt_iff isSuccLimit_omega0.isSuccPrelimit
-    simp only [shift, hlt]
-    split_ifs with hx
-    · rfl
-    · rcases le_or_gt k 1 with hk | hk
-      · exact ((ha.mono hk).visibilityReplace_eq i).symm
-      · simp only [shift, hx, ↓reduceIte, stepSuppressor_of_lt hk, le_bot_iff] at hg
-        rw [hg, visibilityReplace_bot]
-
-/-- The row value `ω + 1`: self-visible at `1`, and below `ω ^ 2`. -/
-noncomputable abbrev code : Label.{u} := ((ω + ((1 : ℕ) : Ordinal.{u}) : Ordinal.{u}) : Label.{u})
-
-/-- The one-point scheme: one cell of scope and graded index `({0}, 1)`, whose row is `ω + 1`. -/
-noncomputable def scheme : Scheme.{u} 1 where
-  card := 1
-  toCellScheme := ⟨Finset.univ, Geometry.intervalPlan Finset.univ, fun _ ↦ Finset.univ, fun _ ↦ 1⟩
-  rows := ⟨fun _ _ ↦ code⟩
-
-theorem isSelfVisible_code : IsSelfVisible 1 (code : Label.{u}) :=
-  isSelfVisible_coe_add isSuccLimit_omega0.isSuccPrelimit le_rfl
-
-theorem omega_le_code : ((ω : Ordinal.{u}) : Label.{u}) ≤ code :=
-  WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr le_self_add)
-
-/-- Every constant labelling self-visible at `1` is lawful for the one-point scheme. -/
-theorem isLawful_scheme {a : Label.{u}} (ha : IsSelfVisible 1 a) :
-    scheme.{u}.rows.IsLawful fun _ ↦ a where
-  orderly _ := ha
-  locality _ := ⟨stepSuppressor 1, shift a, isWitness_shift ha, fun _ ↦ by
-    change min a a = min (shift a code) (stepSuppressor 1 1)
-    rw [stepSuppressor_of_le le_rfl, min_top_right, min_self, shift,
-      ite_eq_right (not_lt.mpr omega_le_code)]⟩
-  availability _ t _ _ := ⟨t, rfl, le_rfl⟩
-
-theorem isWellFormed_scheme : scheme.{u}.IsWellFormed :=
-  ⟨rfl, ⟨inferInstance, Geometry.isPlan_intervalPlan _, fun _ ↦ by
-    simp [scheme, CellScheme.gradedIndex]⟩⟩
-
-/-- The only graded face of the one-point scheme is `({0}, 1)`. -/
-theorem eq_of_mem_gradedFaces {X : Finset (Fin 1) × ℕ}
-    (hX : X ∈ scheme.{u}.toCellScheme.gradedFaces) : X = (Finset.univ, 1) := by
-  obtain ⟨C, j⟩ := X
-  obtain ⟨_, hpos, hle⟩ := hX
-  have hC : #C ≤ 1 := card_le_univ C
-  have hC' : C = Finset.univ :=
-    (card_eq_iff_eq_univ C).mp (by simp only at hpos hle ⊢; simp; omega)
-  simp only at hpos hle
-  ext
-  · simp [hC']
-  · simp; omega
-
-/-- **The one-point scheme is legal.** -/
-theorem isLegal_scheme : scheme.{u}.IsLegal where
-  isWellFormed := isWellFormed_scheme
-  isCoded _ _ := by
-    change code < _
-    refine WithBot.coe_lt_coe.mpr (WithTop.coe_lt_coe.mpr ?_)
-    have h1 : ω + ((1 : ℕ) : Ordinal.{u}) < ω + ω :=
-      (add_lt_add_iff_left ω).mpr (Ordinal.natCast_lt_omega0 1)
-    have h2 : ω + ω = ω * (2 : Ordinal.{u}) := by
-      rw [show (2 : Ordinal.{u}) = Order.succ 1 by simp [Order.succ_eq_add_one, one_add_one_eq_two],
-        Ordinal.mul_succ, mul_one]
-    have h3 : ω * (2 : Ordinal.{u}) < ω * ω :=
-      mul_lt_mul_of_pos_left (Ordinal.natCast_lt_omega0 2) Ordinal.omega0_pos
-    rw [sq]; exact h1.trans (h2 ▸ h3)
-  isConsistent s := (isLawful_scheme isSelfVisible_code).isLawfulBelow _
-  isBountiful X Y hX hY hXY := by
-    obtain rfl := eq_of_mem_gradedFaces hX
-    obtain rfl := eq_of_mem_gradedFaces hY
-    exact CellScheme.Rows.cappedLift_refl _
-  isComplete X hX := ⟨⟨0, Nat.one_pos⟩, by rw [eq_of_mem_gradedFaces hX]; rfl⟩
-
-variable {α : Ordinal.{u}}
-
-/-- **A legal one-point type with the label `a`**, for `a` self-visible at `1` and at the stage
-`α`. -/
-noncomputable def type (a : Label.{u}) (ha : IsSelfVisible 1 a) (hα : AtStage α a) :
-    StageType.{u} α 1 where
-  toScheme := scheme
-  label _ := a
-  isWellFormed := isWellFormed_scheme
-  isCoded := isLegal_scheme.isCoded
-  isLawful := isLawful_scheme ha
-  atStage _ := hα
-
-/-- The one-point type is legal. -/
-theorem isLegal_type {a : Label.{u}} (ha : IsSelfVisible 1 a) (hα : AtStage α a) :
-    (type a ha hα).IsLegal :=
-  isLegal_scheme
-
-/-- **Donors of one-point types have unbounded arity.**  For every `j ≥ 1`, the legal one-point
-type at `λ_{η+1}` labelled `λ_η + j` is an input of `ForcingDonors η` at the threshold `j`, and
-every donor for it, on `m` points, has `j ≤ m`. -/
+/-- **Donors of one-point types have unbounded arity.**  For every `j ≥ 1`, some legal one-point
+type at `λ_{η+1}` labelled `λ_η + j` (`StageType.exists_onePoint_label`) is an input of
+`ForcingDonors η` at the threshold `j`, and every donor for it, on `m` points, has `j ≤ m`
+(`StageType.not_forcesThreshold_of_grade_le`). -/
 theorem le_of_forcingDonor {η : Ordinal.{u}} {j : ℕ} (hj : 1 ≤ j) :
     ∃ t : StageType.{u} (blockStage (η + 1)) 1, t.IsLegal ∧
       ∃ d : Fin t.card, (t.reduce (isSuccPrelimit_blockStage η)).label d = ⊤ ∧
@@ -442,20 +341,19 @@ theorem le_of_forcingDonor {η : Ordinal.{u}} {j : ℕ} (hj : 1 ≤ j) :
             (D.reduce (isSuccPrelimit_blockStage η)) g (t.reduce (isSuccPrelimit_blockStage η))
             d j → j ≤ m := by
   have hβ := isSuccPrelimit_blockStage η
-  set a : Label.{u} := ((blockStage η + j : Ordinal.{u}) : Label.{u})
-  have ha : IsSelfVisible 1 a := isSelfVisible_coe_add hβ hj
   have hlt (i : ℕ) : blockStage η + i < blockStage (η + 1) := by
     rw [blockStage_add_one]; exact (add_lt_add_iff_left _).mpr (Ordinal.natCast_lt_omega0 i)
-  have hα : AtStage (blockStage (η + 1)) a :=
-    .inl (WithBot.coe_lt_coe.mpr (WithTop.coe_lt_coe.mpr (hlt j)))
-  have hβa : Label.reduce (blockStage η) a = ⊤ :=
-    Label.reduce_eq_top_iff.mpr (WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr le_self_add))
-  refine ⟨type a ha hα, isLegal_type ha hα, ⟨0, Nat.one_pos⟩, hβa, le_rfl, fun m D g hgD h ↦ ?_⟩
+  obtain ⟨t, ht, d, -, htd⟩ := StageType.exists_onePoint_label (α := blockStage (η + 1))
+    (isSelfVisible_coe_add hβ hj) (hlt j)
+  have hβd : (t.reduce hβ).label d = ⊤ := by
+    rw [StageType.reduce_label, htd]
+    exact Label.reduce_eq_top_iff.mpr (WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr le_self_add))
+  refine ⟨t, ht, d, hβd, htd.ge, fun m D g hgD h ↦ ?_⟩
   by_contra hjm
-  have hD : StageType.restrictFace g (D.reduce hβ) = some ((type a ha hα).reduce hβ) := by
-    rw [StageType.restrictFace_reduce, hgD]; rfl
-  exact StageType.not_forcesThreshold_of_grade_le (hlt m) (fun c ↦ D.grade_le c) hD
-    (d := ⟨0, Nat.one_pos⟩) hβa (h.mono (by omega))
+  have hD : StageType.restrictFace g (D.reduce hβ) = some (t.reduce hβ) := by
+    rw [StageType.restrictFace_reduce, hgD, Option.map_some]
+  exact StageType.not_forcesThreshold_of_grade_le (hlt m) (fun c ↦ D.grade_le c) hD hβd
+    (h.mono (by omega))
 
 end OnePoint
 

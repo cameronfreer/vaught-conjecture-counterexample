@@ -529,6 +529,15 @@ theorem isLawful_blockEncode_apexCodes :
     t.rows.IsLawful (blockEncode (apexCodes ht) n ∘ t.label) :=
   (t.isLawful.exists_blockEncode (K := n) fun d ↦ (ht.grade_lt d).le).choose_spec.2
 
+include ht in
+/-- After appending a cell of grade `n` to a scheme legal below the full grade, every cell has
+grade at most `n`. -/
+theorem grade_appendFullCellScheme_le (d : Fin (t.card + 1)) :
+    (t.toScheme.appendFullCellScheme n).grade d ≤ n := by
+  induction d using Fin.lastCases with
+  | last => rw [Scheme.appendFullCellScheme_grade_last]
+  | cast d => rw [Scheme.appendFullCellScheme_grade_castSucc]; exact (ht.grade_lt d).le
+
 /-- The **row of the apex**: the coded copy of the labels of `t`, and the code of the formal top at
 the apex itself. -/
 noncomputable def apexRow : Fin (t.card + 1) → Label.{u} :=

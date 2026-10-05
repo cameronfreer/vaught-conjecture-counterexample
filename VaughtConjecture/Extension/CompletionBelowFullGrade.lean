@@ -143,10 +143,6 @@ theorem restrictFace_withLabel (hq : F.scheme.rows.IsLawful q) (hqα : ∀ d, At
   obtain ⟨y, rfl⟩ : x ∈ Set.range f := hz (mem_coe.mpr (he.symm ▸ mem_univ x))
   exact mem_map_of_mem _ (mem_univ y)
 
-/-- The first coatom is not the whole ground set. -/
-theorem _root_.VaughtConjecture.Coatom.univ_map_left_ne : univ.map (Coatom.left m) ≠ univ :=
-  fun he ↦ Coatom.last_notMem_univ_map_left (he ▸ mem_univ (Fin.last (m + 1)))
-
 /-- The second coatom is not the whole ground set. -/
 private theorem univ_map_right_ne : univ.map (Coatom.right m) ≠ univ := fun he ↦ by
   have h := mem_univ (Fin.castSucc (Fin.last m))

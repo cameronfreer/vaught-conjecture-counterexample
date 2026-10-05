@@ -59,8 +59,9 @@ reduction to `β` forces `N` at `d`.  When `β` is zero or a limit and the label
 **The tie is an upper bound only.**  A tie asks that the label of `C` be at most that of `e` in
 every lawful labelling, and that `C` be the formal top after reduction; nothing is prescribed at
 the other cells of the graded index of `C`.  In a capped lift, lowering `C` to the cap keeps
-locality at `C` and the inequality (`Label.TransformsTo.cap_tied`), so a tied cell never needs a
-value above the cap.
+locality at `C` and the inequality (`Label.TransformsTo.cap_tied`), so locality at a tied cell, and
+the tie, never need a value above the cap.  Availability at the graded index of `C` and the rows
+of the cells that read `C` are not covered.
 
 The construction uses no realization, no uniqueness of expansions, and no receiving: it is a
 statement about stage types.
@@ -116,15 +117,6 @@ def tiedApexLabel : Fin (t.card + 1) → Label.{u} :=
 /-- The label of the tied apex is the label of `e`. -/
 @[simp] theorem tiedApexLabel_last : tiedApexLabel e (Fin.last _) = t.label e :=
   Fin.snoc_last (α := fun _ ↦ Label.{u}) ..
-
-include ht in
-/-- After appending a cell of grade `n` to a scheme legal below the full grade, every cell has
-grade at most `n`. -/
-theorem grade_appendFullCellScheme_le (d : Fin (t.card + 1)) :
-    (t.toScheme.appendFullCellScheme n).grade d ≤ n := by
-  induction d using Fin.lastCases with
-  | last => rw [Scheme.appendFullCellScheme_grade_last]
-  | cast d => rw [Scheme.appendFullCellScheme_grade_castSucc]; exact (ht.grade_lt d).le
 
 variable {e} (he : IsSelfVisible n (t.label e))
 include he
@@ -203,6 +195,7 @@ theorem mem_range_castSucc_of_addTiedApex {k : ℕ} (f : Fin k ↪ Fin n) (hf : 
   | last =>
     refine absurd (eq_univ_of_forall fun x ↦ ?_) hf
     obtain ⟨y, rfl⟩ : x ∈ Set.range f := hz (mem_coe.mpr (by
+      -- the cell scheme of the tied apex is `appendFullCellScheme` by definition
       change x ∈ (t.toScheme.appendFullCellScheme n).scope (Fin.last _)
       rw [Scheme.appendFullCellScheme_scope_last]; exact mem_univ x))
     exact mem_map_of_mem _ (mem_univ y)
@@ -231,6 +224,7 @@ theorem forcesThreshold_addTiedApex {β : Ordinal.{u}} (hβ : Order.IsSuccPrelim
     rw [restrictFace_reduce, restrictFace_addTiedApex ht he hn f hf, hfp, Option.map_some]
   have heC : e.castSucc ∈ (D.reduce hβ).toCellScheme.below
       ((D.reduce hβ).toCellScheme.gradedIndex (Fin.last _)) := by
+    -- the reduction keeps the scheme, which is `appendFullCellScheme` by definition
     change (t.toScheme.appendFullCellScheme n).gradedIndex e.castSucc ≤
       (t.toScheme.appendFullCellScheme n).gradedIndex (Fin.last _)
     rw [Scheme.appendFullCellScheme_gradedIndex_castSucc,
@@ -244,18 +238,20 @@ theorem forcesThreshold_addTiedApex {β : Ordinal.{u}} (hβ : Order.IsSuccPrelim
     have hlt : (i : ℕ) < (t.toScheme.comap f).card := by
       obtain ⟨hf', rfl⟩ := (restrictFace_eq_some_iff t f).mp hfp
       exact hi ▸ d.2
+    -- the reduction keeps the scheme, hence the cell map
     change D.toScheme.cellMap f i = e.castSucc
     rw [Scheme.cellMap_eq_of_strictMono_of_mem_range (S := t.toScheme) (T := D.toScheme) f
       Fin.strictMono_castSucc (Scheme.appendFullCellScheme_scope_castSucc _ _)
       (mem_range_castSucc_of_addTiedApex ht he hn f hf) (i := ⟨i, hlt⟩) rfl,
       hde ⟨i, hlt⟩ hi]
-  · change Label.reduce β (tiedApexLabel e (Fin.last _)) = ⊤
+  · -- the reduced label of the new cell, unfolded (`reduce_label`)
+    change Label.reduce β (tiedApexLabel e (Fin.last _)) = ⊤
     rw [tiedApexLabel_last]
     exact Label.reduce_eq_top_iff.mpr hβe
-  · refine le_of_eq ?_
-    change (if hs : Fin.last t.card = Fin.last t.card then tiedApexRow ht e (Fin.last _) else _) =
-      (if hs : Fin.last t.card = Fin.last t.card then tiedApexRow ht e e.castSucc else _)
-    rw [dite_eq_left rfl, dite_eq_left rfl, tiedApexRow_last, tiedApexRow_castSucc]
+  · -- the reduction keeps the rows; both entries are read in the row of the new cell
+    refine le_of_eq ((Scheme.appendFullCell_row_last (h := ht.not_le) _).trans
+      (Eq.trans ?_ (Scheme.appendFullCell_row_last (h := ht.not_le) _).symm))
+    rw [tiedApexRow_last, tiedApexRow_castSucc]
 
 end TiedApex
 
