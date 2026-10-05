@@ -3,6 +3,7 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
+import VaughtConjecture.Extension.GatedExtension
 import VaughtConjecture.Realization.Model
 
 /-!
@@ -59,11 +60,19 @@ embeddings `f` with the tuple equation, and the literal face is the face map
 proper labels; a bottom or top label contributes the block start `0`, whose reference cell is not
 used.  Uniformity at `0` needs `0 < α`, which follows from `γ < α`.
 
+**The anchoring corollary** (`IsModel.exists_privateContext_isAnchored`) restates the private
+context in the form of the anchoring condition of a gated extension (`StageType.IsAnchored`): a
+non-bottom label of a new donor cell below the private cap is not the formal top, hence an
+ordinal, and its reference cell is an anchor.  Of the clauses of a model it uses uniformity,
+high-arity dominance, and exact consistency (for the literal face of the root).
+
 This is the acquisition of the private context of the ordinary construction (R1) only.  The
-gated scheme, the recovery of the donor from the gate, and the assembly of (R1) are not here, and
-(R1) itself is still to be proved; its intended proof is conditional on a stage-level existence
-property (a named hypothesis), the gated extension.  Nothing here concerns uniqueness or
-coherence of the context, or exact projected receiving.
+gated scheme and the recovery of the donor from the gate are not here.  Finite-cut receiving for
+all models, (R1) itself, is open: the universal gated extension hypothesis
+`StageType.HasGatedPinnedExtensions` fails at every stage
+(`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`), and a route through a corrected
+gate predicate is prospective.  Nothing here concerns uniqueness or coherence of the context, or
+exact projected receiving.
 
 ## References
 
@@ -208,6 +217,27 @@ theorem IsModel.exists_privateContext (x : R.Occurrence) (d : StageType.{u} α (
   · rw [ho, visibilityReplace_coe_add_natCast (hμ j).1 hkn]
   · exact not_isSelfVisible_coe_add_natCast (hμ j).1 hkn
   · exact lt_of_le_of_lt (WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr hkB)) hBC
+
+/-- **The private context, anchored**: over an occurrence `x` and for a donor `d` on
+`x.arity + 1` points, an occurrence `y` containing `x` as a literal face along `f` (with its type
+restricting along `f` to that of `x`), of arity above `x.arity + 1`, with a cell `C` of graded
+index `(univ, y.arity)` labelled above `γ < α`, below which `d` is anchored in the type of `y`.
+Only the uniformity, high-arity-dominance, and exact-consistency clauses are used. -/
+theorem IsModel.exists_privateContext_isAnchored (x : R.Occurrence)
+    (d : StageType.{u} α (x.arity + 1)) {γ : Ordinal.{u}} (hγ : γ < α) :
+    ∃ (y : R.Occurrence) (f : Fin x.arity ↪ Fin y.arity) (C : Fin y.type.card),
+      f.trans y.tuple = x.tuple ∧ StageType.restrictFace f y.type = some x.type ∧
+        x.arity + 1 < y.arity ∧ y.type.toCellScheme.gradedIndex C = (univ, y.arity) ∧
+        (γ : Label.{u}) < y.type.label C ∧ StageType.IsAnchored y.type C d := by
+  obtain ⟨y, f, C, hf, hn, -, hC, hγC, hanc⟩ := hR.exists_privateContext x d hγ 0
+  refine ⟨y, f, C, hf, Occurrence.restrictFace_eq_some_of_trans_eq hR.isConsistent hf, hn, hC,
+    hγC, fun j _ hbot hlt ↦ ?_⟩
+  induction hj : d.label j using recBotCoeTop with
+  | bot => exact absurd hj hbot
+  | coe o =>
+    obtain ⟨z, i, hi, he, -, -⟩ := hanc j o hj
+    exact ⟨z, i, hi.le, hj ▸ he⟩
+  | top => exact absurd (hj ▸ hlt) not_top_lt
 
 end Realization
 
