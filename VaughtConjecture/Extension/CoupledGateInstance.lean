@@ -31,12 +31,34 @@ and root and a donor whose cell is labelled `⊥`
 
 **Cap lowering at this instance.**  The gate reads the donor cell at least as it reads the cap.
 So in every lawful labelling of the display the donor cell bounds both full private cells
-(`le_label_five`).  A lift from a face containing the new point that prescribes a value `v` below
-`⊤` at the donor cell therefore lowers the cap, which the display labels `⊤`, to at most `v`.
+(`le_five_of_isLawful`).  A lift from a face containing the new point that prescribes a value `v`
+below `⊤` at the donor cell therefore lowers the cap, which the display labels `⊤`, to at most `v`.
 For a cap `c ≤ v` self-visible at `2`, the labelling that is `c` at the full cells and their copies
 and `v` at the donor cell and its copies is lawful and lies in the cap ball of the display at `c`
-(`isLawful_capLowered`).  Cap lowering holds for every legal private type
-(`StageType.IsLegal.capLowering`, in `VaughtConjecture.Extension.CapLowering`).
+(`isLawful_capLowered`).
+
+**The compiled statement and the requirement.**  The private-face half of this lowering holds for
+every legal private type (`StageType.IsLegal.capLowering`, at an arbitrary lawful ambient
+`StageType.IsLegal.capLowering_of_isLawful`, in `VaughtConjecture.Extension.CapLowering`).  That
+half is only part of what the display needs, in the only range `v ≥ c` where it can hold; there
+the bound `≤ v` is trivial, since the lowered value is at most `c`.  Proving it does not establish
+that the construction's open requirement is satisfied.  The requirement at a forcing lift is a
+legal display: `CappedLift` from a coatom `(F ∪ {y}, n)`, `y` the new point, to `(univ, n)`, for
+every self-visible cap and every lawful ambient labelling.  Its four parts are:
+1. the private half at an arbitrary ambient (compiled);
+2. whether the readings of the donor cells or of the anchors can force the gate below some
+   `v < c` while the ambient cap is at least `c` (open);
+3. the joint lawfulness of the lowered private labelling with the gate, the twins, the donor cells
+   and the cells of grade `n` that contain the new point (open);
+4. the existence of rows satisfying `CellScheme.Rows.IsGate` and `CellScheme.Rows.TwinsReadGate`
+   for every anchored legal donor (open).
+
+At this instance all four hold.  Part 2 cannot happen: the gate reads the donor cell through
+`top`, at `3` as it reads the cap, and a prescription at the donor class that differs from the
+ambient `⊤` is at least `c` by the cap ball.  Parts 3 and 4 are the legality of `Q α` (cases 4 and
+5 below, at every lawful ambient) and the coupled gated extensions below, checked by hand.  The
+open point in general is the bountifulness of the display at lifts from coatoms containing the new
+point, jointly over all its cells and at every lawful ambient labelling.
 
 **The display `Q α`** (`Q`, `isLegal_Q`).  On three points with the interval plan, twelve cells.
 A cell is **dead** when its kind is `0`, **live** otherwise; the cells of kind `3` are the
@@ -742,11 +764,13 @@ private theorem cappedLift_grade_one {X Y : Finset (Fin 3) × ℕ} (h : X ≤ Y)
     rw [hvq 5 h5Y, hwp 5 h5]; exact hpq ⟨5, h5⟩
   refine ⟨fun d ↦ lab ⊥ ⊥ (w 5) d, (isLawful_lab hgood).isLawfulBelow _, fun d ↦ ?_,
     fun d ↦ ?_⟩
+  -- The lift at `d` is `lab ⊥ ⊥ (w 5)` at the underlying cell (by definition).
   · change min (lab ⊥ ⊥ (w 5) d.1) c = min (q d) c
     rw [← hvq d.1 d.2]
     rcases hY d.1 d.2 with h0 | h3
     · rw [lab_zero h0, eq_bot_of_dead hQ' d.2 h0]
     · rw [lab_three h3, eq_five hQ' d.2 h3]; exact hc5.symm
+  -- The same, for the agreement with the prescription `p` below `X`.
   · change lab ⊥ ⊥ (w 5) d.1 = p d
     rw [← hwp d.1 d.2]
     rcases hY d.1 (cells.below_mono h d.2) with h0 | h3
@@ -773,7 +797,8 @@ theorem isBountiful_rows : rows.{u}.IsBountiful := by
     simp only at h1 h2 h3
     subst h1 h2 h3
     exact cappedLift_donor _
-  · refine cappedLift_grade_one _ ⟨?_, ?_⟩ fun d hd ↦ kind_of_grade_le_one d ?_
+  · -- The scope and grade of a cell of `cells` are `cellScope` and `cellGrade` (by definition).
+    refine cappedLift_grade_one _ ⟨?_, ?_⟩ fun d hd ↦ kind_of_grade_le_one d ?_
     · change cellScope 5 ⊆ X.1
       rw [show cellScope 5 = {2} from rfl, singleton_subset_iff]; exact h2
     · change cellGrade 5 ≤ X.2
@@ -1051,9 +1076,9 @@ theorem isAnchored_donor (α : Ordinal.{u}) (C : Fin (GatedExtensionCounterexamp
 
 /-! ### Cap lowering at this instance -/
 
-/-- **The donor cell bounds the full private cells** in every lawful labelling of the display:
+/-- **The donor cell bounds the full private cells** in every lawful labelling `q` of the display:
 the gate reads the donor cell `5` at least as the cap. -/
-theorem le_label_five {α : Ordinal.{u}} {q : Fin (Q α).card → Label.{u}}
+theorem le_five_of_isLawful {α : Ordinal.{u}} {q : Fin (Q α).card → Label.{u}}
     (hq : (Q α).rows.IsLawful q) : q (cellQ α 3) ≤ q (cellQ α 5) ∧ q (cellQ α 4) ≤ q (cellQ α 5) :=
   le_five_of_isLawfulBelow_univ_two (w := q) (hq.isLawfulBelow ((univ : Finset (Fin 3)), 2))
 
@@ -1061,7 +1086,8 @@ theorem le_label_five {α : Ordinal.{u}} {q : Fin (Q α).card → Label.{u}}
 `1` prescribed at the donor cell, the labelling `c` at the full cells, the gate and the twin, and
 `v` at the donor cell and its copies, is lawful for the rows of the display, lies in the cap ball
 of the display at `c`, and labels the private cap `c ≤ v`.  This is the labelling that the lift
-from `({2}, 1)`, `({1, 2}, 1)` or `({1, 2}, 2)` gives at the prescription `v` when `v ≠ ⊤`. -/
+from `({2}, 1)`, `({1, 2}, 1)` or `({1, 2}, 2)` to `(univ, 2)`, with the display's labelling as
+ambient, gives at the prescription `v` when `v ≠ ⊤`. -/
 theorem isLawful_capLowered (α : Ordinal.{u}) {c v : Label.{u}} (hc : IsSelfVisible 2 c)
     (hv : IsSelfVisible 1 v) (hcv : c ≤ v) :
     (Q α).rows.IsLawful (lab c c v) ∧ (∀ d, min (lab c c v d) c = min ((Q α).label d) c) ∧
@@ -1143,13 +1169,16 @@ private noncomputable def E (α : Ordinal.{u}) (C G : Fin 12) (hC : C = 3 ∧ G 
         -- The donor cell is labelled `⊤`, at least the cap: the row of the gate reads it at
         -- `3`, as it reads the cap.
         refine .top ⟨cellQ α C, ?_⟩ ?_ le_rfl ?_ ?_
-        · change (cellScope C, cellGrade C) ≤ (cellScope G, cellGrade G)
+        · -- The graded index of a cell is its scope and grade (by definition).
+          change (cellScope C, cellGrade C) ≤ (cellScope G, cellGrade G)
           rcases hC with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;> exact ⟨by decide, le_rfl⟩
         · rcases hC with ⟨rfl, -⟩ | ⟨rfl, -⟩
           exacts [mem_visible_castSuccEmb α 3 (by decide), mem_visible_castSuccEmb α 4 (by decide)]
-        · change lab ⊤ ⊤ ⊤ C ≤ lab ⊤ ⊤ ⊤ 5
+        · -- The labels of the display are `lab ⊤ ⊤ ⊤` (by definition).
+          change lab ⊤ ⊤ ⊤ C ≤ lab ⊤ ⊤ ⊤ 5
           rw [lab_three (d := 5) rfl]; exact le_top
-        · change rowValue G C ≤ rowValue G 5
+        · -- The rows of the display are `rowValue` (by definition).
+          change rowValue G C ≤ rowValue G 5
           rcases hC with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;>
             rw [rowValue_three (by decide) (by decide) (by decide),
               rowValue_three (by decide) (by decide) (by decide)] }

@@ -12,33 +12,60 @@ import VaughtConjecture.Stage.Legal
 Roadmap, Layer 3, 3.2 (the ordinary construction (R1): the display and its gate); the coupled
 gated pinned extension property of `VaughtConjecture.Extension.GatedExtension`.
 
-**The theorem** (`StageType.IsLegal.capLowering`).  Cap lowering (CL), stated in the docstring of
-`StageType.HasCoupledGatedPinnedExtensions`, holds for every legal private type.  Let `P` be a
-legal stage type on `n > 0` points, `(F, n - 1)` a graded face of `P`, `c` a cap self-visible at
-`n`, and `p` a labelling lawful below `(F, n - 1)` in the cap ball of the labelling of `P` at `c`.
-For every cell `C` of grade `n` and every label `v ≥ c`, some lawful labelling of `P` extends `p`,
-lies in that cap ball, and is at most `v` at `C`.
+**The theorems.**
+* `StageType.IsLegal.capLowering`: cap lowering (CL), as stated in the docstring of
+  `StageType.HasCoupledGatedPinnedExtensions`, holds for every legal private type on `n ≥ 2`
+  points.  Let `P` be a legal stage type on `n` points, `(F, n - 1)` a graded face of `P`, `c` a
+  cap self-visible at `n`, and `p` a labelling lawful below `(F, n - 1)` in the cap ball of the
+  labelling of `P` at `c`.  For every cell `C` of grade `n` and every label `v ≥ c`, some lawful
+  labelling of `P` extends `p`, lies in that cap ball, and is at most `v` at `C`.  At `n = 1` the
+  statement is vacuous, since a graded face `(F, n - 1)` needs `0 < n - 1`; the property uses only
+  `n ≥ 2` (its arities satisfy `m + 1 < n`).
+* `StageType.IsLegal.capLowering_of_isLawful`: the same with an arbitrary lawful labelling `q` of
+  `P` as the ambient, in place of the labelling of `P`.
+* `StageType.IsLegal.capLowering_eq_of_isLawful`: when `c ≤ q C`, the lowered value at `C` is
+  exactly `c`.
 
-**The proof** (`StageType.IsLegal.exists_capLowering`).
+**The proof** (`StageType.IsLegal.exists_capLowering_of_isLawful`).
 1. Bountifulness of `P` from `(F, n - 1)` to `(univ, n)` at the cap `c` lifts `p` to a lawful
-   labelling `r₁` of `P` in the cap ball of the labelling of `P` at `c`.
+   labelling `r₁` of `P` in the cap ball of `q` at `c`.
 2. Capping `r₁` at `c` at the cells of grade `n` only keeps it lawful
-   (`CellScheme.Rows.IsLawful.capTopGrade`).  No grade exceeds `n`, so the locality at a cell of
-   grade `n` is that of `r₁` capped at `c` (`Label.TransformsTo.min_const`); the cells below a
-   cell of lower grade have lower grade, so its locality does not change; and availability
-   compares cells of equal grade.
+   (`CellScheme.Rows.IsLawful.capTopGrade`).
 3. The cells below `(F, n - 1)` have grade below `n`, so the result extends `p`.  Capping at `c`
    does not change the observation capped at `c`, so the result lies in the cap ball.  At every
-   cell of grade `n` it is at most `c ≤ v`.
+   cell of grade `n` it is at most `c`.
 
-The value `v` plays no role beyond `c ≤ v`: the cap is lowered to `c` itself.
+**What the statement says.**  `capLowering` is the private-face half of what the display needs at
+a lift from a coatom containing the new point, in the only range where that half can hold.  The
+bound `≤ v` is trivial: the lowered labelling is at most `c` at every cell of grade `n`, so (CL)
+for every `v ≥ c` is its case `v = c` followed by `c ≤ v` (the proof of `capLowering`).  When
+`c ≤ P.label C`, no labelling in the cap ball is below `c` at `C`, and the lowered value at `C` is
+exactly `c` (`capLowering_eq_of_isLawful`); the case `v < c`, which the hypothesis `c ≤ v`
+excludes, has no solution there.  So proving (CL) as stated does not establish that the open
+requirement of the construction is satisfied.
 
-**What this does not show.**  (CL) is a statement about the private type alone.  It was recorded
-as the open point of the coupled gated pinned extension property: a strengthening of what the
-construction of the display needs at a lift from a coatom containing the new point, not shown
-necessary and not shown sufficient.  Since (CL) holds for every legal private type, no failure of
-that property comes from (CL).  Nothing is proved here about the property itself, which is open,
-or about (R1).
+**The requirement at a forcing lift.**  `StageType.HasCoupledGatedPinnedExtensions` asks for a
+legal display.  At a forcing lift this is the bountifulness of the display: `CappedLift` from a
+coatom `(F ∪ {y}, n)`, `y` the new point, to `(univ, n)`, for every cap `c` self-visible at `n` and
+every lawful ambient labelling of the display, not only its own labelling.  It has four parts.
+1. **The private half at an arbitrary ambient.**  The private face of a lawful labelling of the
+   display is an arbitrary lawful labelling of `P`.  This half is compiled here
+   (`capLowering_of_isLawful`).
+2. **Whether the readings of the donor cells or of the anchors can force the gate below some
+   `v < c` while the ambient cap is at least `c`.**  The gate dominates the cap
+   (`StageType.CoupledGatedExtension.cap_le_gate`), so then no lift exists.  This is open; it
+   cannot happen at the instance of `VaughtConjecture.Extension.CoupledGateInstance`.
+3. **Joint lawfulness.**  The lowered private labelling must extend to one labelling of the
+   display lawful below `(univ, n)`, jointly with the gate, the twins, the donor cells, and the
+   cells of grade `n` that contain the new point.  `capLowering` caps every private cell of grade
+   `n` at `c`, a top-grade anchor `z` included, which changes the anchored readings
+   `vr_n(label z, i)`.  This is open.
+4. **The rows of the display.**  For every anchored legal donor, rows satisfying
+   `CellScheme.Rows.IsGate` and `CellScheme.Rows.TwinsReadGate` must exist.  This is open.
+
+The open point is therefore the bountifulness of the display at lifts from coatoms containing the
+new point, jointly over all its cells and at every lawful ambient labelling.  Nothing is proved
+here about the property itself, which is open, or about (R1).
 
 ## Placement
 
@@ -51,67 +78,24 @@ namespace VaughtConjecture
 
 open Finset Label
 
-namespace CellScheme.Rows
-
-variable {ι α : Type*} {D : CellScheme ι α} {R : D.Rows.{u}} {r : ι → Label.{u}}
-
-/-- **Capping the top grade.**  If every grade is at most `N` and `c` is self-visible at `N`, then
-capping a lawful section at `c` at the cells of grade `N` only, and keeping it at the others, gives
-a lawful section.  At a cell of grade `N` the locality is that of `r` capped at `c`
-(`Label.TransformsTo.min_const`); below a cell of lower grade nothing changes. -/
-theorem IsLawful.capTopGrade (hr : R.IsLawful r) {N : ℕ} (hN : ∀ d, D.grade d ≤ N)
-    {c : Label.{u}} (hc : IsSelfVisible N c) :
-    R.IsLawful fun d ↦ if D.grade d = N then min (r d) c else r d where
-  orderly d := by
-    split_ifs with h
-    · exact (hr.orderly d).min (h ▸ hc)
-    · exact hr.orderly d
-  locality s := by
-    by_cases hs : D.grade s = N
-    · have := (hr.locality s).min_const (fun d ↦ hN d.1) hc
-      convert this using 2 with d
-      simp only [hs, ite_true]
-      split_ifs with hd
-      · rw [min_min_min_comm, min_self]
-      · rw [min_assoc]
-    · convert hr.locality s using 2 with d
-      have hd : D.grade d.1 ≠ N := fun h ↦ hs (le_antisymm (hN s) (h ▸ d.2.2))
-      simp only [hs, hd, ite_false]
-  availability s t hst hg := by
-    obtain ⟨u, hu, hle⟩ := hr.availability s t hst hg
-    refine ⟨u, hu, ?_⟩
-    have hgu : D.grade u = D.grade s := (congrArg Prod.snd hu).trans hg.symm
-    by_cases h : D.grade s = N
-    · simp only [h, hgu, ite_true]
-      exact min_le_min_right c hle
-    · simp only [h, hgu, ite_false]
-      exact hle
-
-/-- A labelling of all cells lawful below a pair above every cell is lawful. -/
-theorem isLawful_of_isLawfulBelow {X : Finset α × ℕ} {w : ι → Label.{u}}
-    (hall : ∀ d, d ∈ D.below X) (h : R.IsLawfulBelow X (fun d ↦ w d)) : R.IsLawful w := by
-  obtain ⟨ho, hl, ha⟩ := isLawfulBelow_iff_forall.mp h
-  exact ⟨fun d ↦ ho d (hall d), fun s ↦ hl s (hall s), fun s t hst hg ↦ ha s t (hall t) hst hg⟩
-
-end CellScheme.Rows
-
 namespace StageType
 
 variable {α : Ordinal.{u}} {n : ℕ}
 
-/-- **Cap lowering for a legal private type.**  Let `P` be a legal stage type on `n > 0` points,
-`(F, n - 1)` a graded face of `P`, `c` a cap self-visible at `n`, and `p` a labelling lawful below
-`(F, n - 1)` in the cap ball of the labelling of `P` at `c`.  Some lawful labelling `r` of `P`
-extends `p`, lies in the cap ball of the labelling of `P` at `c`, and is at most `c` at every cell
-of grade `n`: lift `p` by bountifulness from `(F, n - 1)` to `(univ, n)`, then cap the cells of
-grade `n` at `c` (`CellScheme.Rows.IsLawful.capTopGrade`). -/
-theorem IsLegal.exists_capLowering {P : StageType.{u} α n} (hP : P.IsLegal)
+/-- **Cap lowering for a legal private type, at a lawful ambient.**  Let `P` be a legal stage type
+on `n ≥ 2` points, `(F, n - 1)` a graded face of `P`, `c` a cap self-visible at `n`, `q` a lawful
+labelling of `P`, and `p` a labelling lawful below `(F, n - 1)` in the cap ball of `q` at `c`.
+Some lawful labelling `r` of `P` extends `p`, lies in the cap ball of `q` at `c`, and is at most
+`c` at every cell of grade `n`: lift `p` by bountifulness from `(F, n - 1)` to `(univ, n)`, then
+cap the cells of grade `n` at `c` (`CellScheme.Rows.IsLawful.capTopGrade`). -/
+theorem IsLegal.exists_capLowering_of_isLawful {P : StageType.{u} α n} (hP : P.IsLegal)
     {F : Finset (Fin n)} (hF : (F, n - 1) ∈ P.toCellScheme.gradedFaces) (hn : 0 < n)
-    {c : Label.{u}} (hc : IsSelfVisible n c) {p : P.toCellScheme.below (F, n - 1) → Label.{u}}
-    (hp : p ∈ P.rows.capBall (F, n - 1) c (fun d ↦ P.label d)) :
+    {c : Label.{u}} (hc : IsSelfVisible n c) {q : Fin P.card → Label.{u}}
+    (hq : P.rows.IsLawful q) {p : P.toCellScheme.below (F, n - 1) → Label.{u}}
+    (hp : p ∈ P.rows.capBall (F, n - 1) c (fun d ↦ q d)) :
     ∃ r : Fin P.card → Label.{u}, P.rows.IsLawful r ∧
       (∀ d : P.toCellScheme.below (F, n - 1), r d = p d) ∧
-      (∀ d, min (r d) c = min (P.label d) c) ∧
+      (∀ d, min (r d) c = min (q d) c) ∧
       ∀ d, P.toCellScheme.grade d = n → r d ≤ c := by
   have hY : ((univ : Finset (Fin n)), n) ∈ P.toCellScheme.gradedFaces :=
     ⟨P.univ_mem_faces, hn, by simp⟩
@@ -119,11 +103,10 @@ theorem IsLegal.exists_capLowering {P : StageType.{u} α n} (hP : P.IsLegal)
   have hall : ∀ d, d ∈ P.toCellScheme.below ((univ : Finset (Fin n)), n) :=
     fun d ↦ ⟨subset_univ _, P.grade_le d⟩
   obtain ⟨q', hq', hcap, hres⟩ := (CellScheme.Rows.cappedLift_iff_forall_exists hXY).mp
-    (hP.isBountiful hF hY hXY) c hc p (fun d ↦ P.label d) hp.1 (P.isLawful.isLawfulBelow _)
+    (hP.isBountiful hF hY hXY) c hc p (fun d ↦ q d) hp.1 (hq.isLawfulBelow _)
     fun d ↦ (hp.2 d).symm
-  set r₁ : Fin P.card → Label.{u} := fun d ↦ q' ⟨d, hall d⟩ with hr₁
-  have hlaw : P.rows.IsLawful r₁ :=
-    CellScheme.Rows.isLawful_of_isLawfulBelow hall (by convert hq' using 1)
+  set r₁ : Fin P.card → Label.{u} := fun d ↦ q' ⟨d, hall d⟩
+  have hlaw : P.rows.IsLawful r₁ := hq'.isLawful hall
   refine ⟨_, hlaw.capTopGrade P.grade_le hc, fun d ↦ ?_, fun d ↦ ?_, fun d hd ↦ ?_⟩
   · have hd : P.toCellScheme.grade d.1 ≠ n := fun h ↦ by
       have : P.toCellScheme.grade d.1 ≤ n - 1 := d.2.2
@@ -137,12 +120,68 @@ theorem IsLegal.exists_capLowering {P : StageType.{u} α n} (hP : P.IsLegal)
   · simp only [hd, ite_true]
     exact min_le_right _ _
 
+/-- **Cap lowering for a legal private type**: `IsLegal.exists_capLowering_of_isLawful` at the
+labelling of `P` as the ambient. -/
+theorem IsLegal.exists_capLowering {P : StageType.{u} α n} (hP : P.IsLegal)
+    {F : Finset (Fin n)} (hF : (F, n - 1) ∈ P.toCellScheme.gradedFaces) (hn : 0 < n)
+    {c : Label.{u}} (hc : IsSelfVisible n c) {p : P.toCellScheme.below (F, n - 1) → Label.{u}}
+    (hp : p ∈ P.rows.capBall (F, n - 1) c (fun d ↦ P.label d)) :
+    ∃ r : Fin P.card → Label.{u}, P.rows.IsLawful r ∧
+      (∀ d : P.toCellScheme.below (F, n - 1), r d = p d) ∧
+      (∀ d, min (r d) c = min (P.label d) c) ∧
+      ∀ d, P.toCellScheme.grade d = n → r d ≤ c :=
+  hP.exists_capLowering_of_isLawful hF hn hc P.isLawful hp
+
+/-- **Cap lowering (CL) at a cell of grade `n`, at a lawful ambient**: for a legal private type `P`
+on `n ≥ 2` points, a graded face `(F, n - 1)` (so `F` has at least `n - 1` points), a cap `c`
+self-visible at `n`, a lawful labelling `q` of `P`, a labelling `p` lawful below `(F, n - 1)` in
+the cap ball of `q` at `c`, a cell `C` of grade `n`, and a label `v ≥ c`, some lawful labelling of
+`P` extends `p`, lies in that cap ball, and is at most `v` at `C`.  This is the private-face half
+of what the display needs at a lift from a coatom containing the new point, at the ambient whose
+private face is `q`. -/
+theorem IsLegal.capLowering_of_isLawful {P : StageType.{u} α n} (hP : P.IsLegal)
+    {F : Finset (Fin n)} (hF : (F, n - 1) ∈ P.toCellScheme.gradedFaces) (hn : 0 < n)
+    {c : Label.{u}} (hc : IsSelfVisible n c) {q : Fin P.card → Label.{u}}
+    (hq : P.rows.IsLawful q) {p : P.toCellScheme.below (F, n - 1) → Label.{u}}
+    (hp : p ∈ P.rows.capBall (F, n - 1) c (fun d ↦ q d)) {C : Fin P.card}
+    (hC : P.toCellScheme.grade C = n) {v : Label.{u}} (hcv : c ≤ v) :
+    ∃ r : Fin P.card → Label.{u}, P.rows.IsLawful r ∧
+      (∀ d : P.toCellScheme.below (F, n - 1), r d = p d) ∧
+      (∀ d, min (r d) c = min (q d) c) ∧ r C ≤ v := by
+  obtain ⟨r, hr, hres, hcap, htop⟩ := hP.exists_capLowering_of_isLawful hF hn hc hq hp
+  exact ⟨r, hr, hres, hcap, (htop C hC).trans hcv⟩
+
+/-- **The lowered value is the cap**: under the hypotheses of `IsLegal.capLowering_of_isLawful`,
+when `c ≤ q C` the lowered labelling is exactly `c` at `C`.  Its value at `C` is at most `c`, and
+its observation capped at `c` is that of `q`, which is `c`. -/
+theorem IsLegal.capLowering_eq_of_isLawful {P : StageType.{u} α n} (hP : P.IsLegal)
+    {F : Finset (Fin n)} (hF : (F, n - 1) ∈ P.toCellScheme.gradedFaces) (hn : 0 < n)
+    {c : Label.{u}} (hc : IsSelfVisible n c) {q : Fin P.card → Label.{u}}
+    (hq : P.rows.IsLawful q) {p : P.toCellScheme.below (F, n - 1) → Label.{u}}
+    (hp : p ∈ P.rows.capBall (F, n - 1) c (fun d ↦ q d)) {C : Fin P.card}
+    (hC : P.toCellScheme.grade C = n) (hcC : c ≤ q C) :
+    ∃ r : Fin P.card → Label.{u}, P.rows.IsLawful r ∧
+      (∀ d : P.toCellScheme.below (F, n - 1), r d = p d) ∧
+      (∀ d, min (r d) c = min (q d) c) ∧ r C = c := by
+  obtain ⟨r, hr, hres, hcap, htop⟩ := hP.exists_capLowering_of_isLawful hF hn hc hq hp
+  refine ⟨r, hr, hres, hcap, le_antisymm (htop C hC) ?_⟩
+  have h := hcap C
+  rw [min_eq_right hcC, min_eq_left (htop C hC)] at h
+  exact h.ge
+
 /-- **Cap lowering (CL) at a cell of grade `n`**, in the form of the docstring of
-`StageType.HasCoupledGatedPinnedExtensions`: for a legal private type `P`, a face `F` of `n - 1`
-points (a graded face at grade `n - 1`), a cap `c` self-visible at `n`, a labelling `p` lawful
-below `(F, n - 1)` in the cap ball of the labelling of `P` at `c`, a cell `C` of grade `n`, and a
-label `v ≥ c`, some lawful labelling of `P` extends `p`, lies in that cap ball, and is at most `v`
-at `C`. -/
+`StageType.HasCoupledGatedPinnedExtensions`: for a legal private type `P` on `n ≥ 2` points, a
+graded face `(F, n - 1)` (so `F` has at least `n - 1` points), a cap `c` self-visible at `n`, a
+labelling `p` lawful below `(F, n - 1)` in the cap ball of the labelling of `P` at `c`, a cell `C`
+of grade `n`, and a label `v ≥ c`, some lawful labelling of `P` extends `p`, lies in that cap
+ball, and is at most `v` at `C`.
+
+This is the private-face half of what the display needs at a lift from a coatom containing the new
+point, with the labelling of `P` as the ambient, in the only range `v ≥ c` where that half can
+hold; it is its case `v = c` followed by `c ≤ v`.  It does not establish that the construction's
+open requirement is satisfied.  It does not address whether the readings of the donor cells or of
+the anchors can force the gate below some `v < c`, the joint lawfulness of the whole display at
+every lawful ambient, or the existence of its rows (see the module docstring). -/
 theorem IsLegal.capLowering {P : StageType.{u} α n} (hP : P.IsLegal)
     {F : Finset (Fin n)} (hF : (F, n - 1) ∈ P.toCellScheme.gradedFaces) (hn : 0 < n)
     {c : Label.{u}} (hc : IsSelfVisible n c) {p : P.toCellScheme.below (F, n - 1) → Label.{u}}
@@ -150,9 +189,8 @@ theorem IsLegal.capLowering {P : StageType.{u} α n} (hP : P.IsLegal)
     (hC : P.toCellScheme.grade C = n) {v : Label.{u}} (hcv : c ≤ v) :
     ∃ r : Fin P.card → Label.{u}, P.rows.IsLawful r ∧
       (∀ d : P.toCellScheme.below (F, n - 1), r d = p d) ∧
-      (∀ d, min (r d) c = min (P.label d) c) ∧ r C ≤ v := by
-  obtain ⟨r, hr, hres, hcap, htop⟩ := hP.exists_capLowering hF hn hc hp
-  exact ⟨r, hr, hres, hcap, (htop C hC).trans hcv⟩
+      (∀ d, min (r d) c = min (P.label d) c) ∧ r C ≤ v :=
+  hP.capLowering_of_isLawful hF hn hc P.isLawful hp hC hcv
 
 end StageType
 
