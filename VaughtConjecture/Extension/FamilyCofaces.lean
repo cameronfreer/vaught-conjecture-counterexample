@@ -5,7 +5,6 @@ Authors: Cameron Freer
 -/
 import VaughtConjecture.Extension.Apex
 import VaughtConjecture.Extension.PinnedExtension
-import VaughtConjecture.Extension.SectionTheorem
 import VaughtConjecture.Realization.Families
 
 /-!

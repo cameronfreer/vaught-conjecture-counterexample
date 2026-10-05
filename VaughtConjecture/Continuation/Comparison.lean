@@ -79,14 +79,14 @@ so that one predicate is used in both.  Both statements are still to be proved; 
 both use, among other inputs, the coatom extension construction ((R6)), that is, the coatom
 extension property `StageType.HasCoatomExtensions`, which is not proved.  The families
 `{D | D legal, topGrade D ≤ K}` and `{D | D legal}` are closed under the face maps
-(`StageType.isLegal_and_topGrade_le_of_restrictFace`), so the one-point form gives exact receiving
-within them (`Realization.ExactReceivingWithin.of_one_point`); every actual type of a model lies in
-them (top grade at most the top-grade supremum, `Occurrence.topGrade_le_topGradeSup`), and the
-initial match is the pair of empty covers.  Hence the residual comparison
-(`Realization.nonempty_equiv_of_residual`: two expansions with no cover that is a globally rigid
-core and with the same top-grade supremum `K`, under `ResidualReceiving`) and the hollow comparison
-(`Realization.nonempty_equiv_of_hollow`: two expansions satisfying `H` with unbounded growth, under
-`HollowReceiving H`).
+(`StageType.IsLegal.restrictFace`, `StageType.topGrade_le_of_restrictFace`), so the one-point
+form gives exact receiving within them (`Realization.ExactReceivingWithin.of_one_point`); every
+actual type of a model lies in them (top grade at most the top-grade supremum,
+`Occurrence.topGrade_le_topGradeSup`), and the initial match is the pair of empty covers.  Hence
+the residual comparison (`Realization.nonempty_equiv_of_residual`: two expansions with no cover
+that is a globally rigid core and with the same top-grade supremum `K`, under
+`ResidualReceiving`) and the hollow comparison (`Realization.nonempty_equiv_of_hollow`: two
+expansions satisfying `H` with unbounded growth, under `HollowReceiving H`).
 
 ## Placement
 
@@ -169,6 +169,13 @@ def rigidCoreAge (p : StageType.{u} α k₀) (m : ℕ) (ι : Fin k₀ ↪ Fin m)
     Set (StageType.{u} α m) :=
   {D | D.IsLegal ∧ restrictFace ι D = some p ∧ D.IsRigidCoreIn ι}
 
+/-- **Membership in the pointed age of a rigid core**: a legal stage type with face `p` along `ι`,
+in which the core along `ι` is rigid. -/
+@[simp] theorem mem_rigidCoreAge {p : StageType.{u} α k₀} {ι : Fin k₀ ↪ Fin m}
+    {D : StageType.{u} α m} :
+    D ∈ rigidCoreAge p m ι ↔ D.IsLegal ∧ restrictFace ι D = some p ∧ D.IsRigidCoreIn ι :=
+  Iff.rfl
+
 /-- **The pointed age on no points** is the set of legal top-free stage types, at a limit stage:
 the stage type on no points is unique, and the empty core is rigid exactly in the top-free
 types. -/
@@ -181,7 +188,7 @@ theorem rigidCoreAge_zero (hα : Order.IsSuccLimit α) (p : StageType.{u} α 0)
   rw [hp', eq_of_zero p' p]
 
 /-- Legality and a bound on the top grade pass to faces. -/
-theorem isLegal_and_topGrade_le_of_restrictFace {K : ℕ} {D : StageType.{u} α m}
+private theorem isLegal_and_topGrade_le_of_restrictFace {K : ℕ} {D : StageType.{u} α m}
     (hD : D.IsLegal ∧ D.topGrade ≤ K) {f : Fin n ↪ Fin m} {p : StageType.{u} α n}
     (hf : StageType.restrictFace f D = some p) : p.IsLegal ∧ p.topGrade ≤ K :=
   ⟨hD.1.restrictFace f hf, (StageType.topGrade_le_of_restrictFace hf).trans hD.2⟩
@@ -217,8 +224,9 @@ consistent realization at a limit stage with finite-extension receiving. -/
 theorem exactReceivingWithinAt_rigidCoreAge (hR : R.IsConsistent) (hα : Order.IsSuccLimit α)
     (hrec : R.HasFiniteExtensionReceiving) (x₀ : Fin k₀ → M) (p : StageType.{u} α k₀) :
     R.ExactReceivingWithinAt x₀ (StageType.rigidCoreAge p) :=
-  fun _ _ _ _ ι hc _ _ g hD hg ↦ exists_covers_of_isRigidCoreIn hR hα hrec hc hD.1 hg
-    (hD.2.2.mono (by rintro _ ⟨i, rfl⟩; exact ⟨ι i, rfl⟩))
+  fun _ _ _ _ ι hc _ _ g hD hg ↦
+    exists_covers_of_isRigidCoreIn hR hα hrec hc (StageType.mem_rigidCoreAge.mp hD).1 hg
+      ((StageType.mem_rigidCoreAge.mp hD).2.2.mono (by rintro _ ⟨i, rfl⟩; exact ⟨ι i, rfl⟩))
 
 /-- **The top-free case**: exact receiving of the legal top-free stage types, for an exactly
 consistent realization at a limit stage with finite-extension receiving; every core is rigid in a
@@ -236,7 +244,8 @@ theorem IsGloballyRigidCore.mem_rigidCoreAge {p : StageType.{u} α k₀} {x₀ :
     (hcore : R.IsGloballyRigidCore x₀) (hR : R.IsModel) (hc : R.Covers p x₀) {s : Fin m ↪ M}
     (ι : Fin k₀ ↪ Fin m) {D : StageType.{u} α m} (hs : R.eval s = some D) (hsι : ⇑s ∘ ι = x₀) :
     D ∈ StageType.rigidCoreAge p m ι := by
-  refine ⟨hR.isLegal s D hs, ?_, hcore D s ι (covers_of_eval s hs) hsι⟩
+  refine StageType.mem_rigidCoreAge.mpr
+    ⟨hR.isLegal s D hs, ?_, hcore D s ι (covers_of_eval s hs) hsι⟩
   rw [← hR.isConsistent s D ι hs, ← hc.eval_eq]
   congr 1
   ext i
