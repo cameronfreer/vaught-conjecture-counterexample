@@ -38,6 +38,14 @@ stage types at `α`: no realization, and no legality (legality depends only on t
   `e` as at `C`, then `(q, f)` forces the grade of `C`.  Locality of `Q` at `C`
   (`Label.TransformsTo.le_of_le`) gives that the label of `e` is at least that of `C`, which is at
   least `β` plus the grade of `C` by the order law.
+* **Capped lifts** (`StageType.capLiftOfLt`, `StageType.capLiftOfLt_reduce`): for `β + K < α`
+  and `K` at least the grade of every cell of `q` labelled the formal top, the labels of `q`
+  capped at `β + K` form a lift of `q` to `α`; they are lawful because `β + K` is self-visible at
+  the grade of each such cell ([Kni26, Lemma 2.5.8]).
+* **No forcing above the top grade** (`not_forcesThreshold_of_grade_le`): if every grade of `q` is
+  at most `K` and `β + K < α`, then `(q, f)` does not force `K + 1` at a cell labelled the formal
+  top, since the capped lift has the label `β + K` there.  A pair forcing `n` (with
+  `β + (n - 1) < α`) thus has a cell of grade at least `n`, by whatever mechanism it forces.
 
 **The provisional offset** of `d` at `(q, f)` (`StageType.provisionalOffset`) is the supremum in
 `ℕ∞` of the thresholds forced at `d`.  When `q` restricts to `p` along `f` and `d` reduces to the
@@ -75,13 +83,12 @@ labels by lifts (roadmap, Layer 4, output 1; `Realization.stableOffset_comap` an
 `Label.atStage_ofOffset`), and it is never `β + ω` (`Label.ofOffset_ne_coe_add_omega0`): an
 infinite offset is the formal top, not `β + ω`.
 
-**Forced thresholds at twins.**  For `β + ω ≤ α` and `K` at least the grade of every cell of `q`
-labelled the formal top, the labelling `min (q.label d) (β + K)` is a lift of `q` to `α`
-(`StageType.capLift`, `StageType.capLift_reduce`); it is lawful because `β + K` is self-visible
-at the grade of each such cell ([Kni26, Lemma 2.5.8]).  For a legal `q` and cells `s₀`, `t₀` of
-`q` with `s₀` labelled the formal top, the scope of `s₀` in that of `t₀` and equal grades, every
-threshold `N` forced at `s₀` by `q` itself is forced at some cell labelled the formal top at the
-graded index of `t₀` (`StageType.exists_forcesThreshold_twin`):
+**Forced thresholds at twins.**  For `β + ω ≤ α` the capped lift exists for every `K` at least the
+grade of every cell of `q` labelled the formal top (`StageType.capLift`,
+`StageType.capLift_reduce`: the capped lift below `α`, as `β + K < α` follows from `β + ω ≤ α`).
+For a legal `q` and cells `s₀`, `t₀` of `q` with `s₀` labelled the formal top, the scope of `s₀` in
+that of `t₀` and equal grades, every threshold `N` forced at `s₀` by `q` itself is forced at some
+cell labelled the formal top at the graded index of `t₀` (`StageType.exists_forcesThreshold_twin`):
 
 * for `N` at most the grade of `s₀`, at the cell given by availability of `q`, by the order law;
 * otherwise the capped lift gives `N ≤ K` for the largest grade `K` of a cell labelled the formal
@@ -272,6 +279,78 @@ theorem forcesThreshold_of_row_le (hfp : restrictFace f q = some p) {C e : Fin q
   rw [comap_label, hie]
   exact hCβ.trans hCe
 
+/-! ### Capped lifts -/
+
+variable (hβ) in
+/-- **The capped lift below `α`**: for `β + K < α` and `K` at least the grade of every cell of `q`
+labelled the formal top, the scheme of `q` with the labels `min (q.label d) (β + K)` is a stage
+type at `α`.  Its labels are lawful because `β + K` is self-visible at the grade of each cell
+labelled the formal top ([Kni26, Lemma 2.5.8]). -/
+noncomputable def capLiftOfLt (q : StageType.{u} β m) (K : ℕ) (hα : β + K < α)
+    (hK : ∀ d, q.label d = ⊤ → q.toCellScheme.grade d ≤ K) : StageType.{u} α m where
+  toScheme := q.toScheme
+  label d := min (q.label d) ((β + K : Ordinal.{u}) : Label.{u})
+  isWellFormed := q.isWellFormed
+  isCoded := q.isCoded
+  isLawful := q.isLawful.min_const fun d hd ↦ by
+    rcases q.atStage d with h | h
+    · exact absurd h ((Label.coe_le_coe_add β K).trans hd).not_gt
+    · exact Label.isSelfVisible_coe_add hβ (hK d h)
+  atStage _ := .inl ((min_le_right _ _).trans_lt
+    (WithBot.coe_lt_coe.mpr (WithTop.coe_lt_coe.mpr hα)))
+
+variable (hβ) in
+/-- The label of the capped lift below `α` at a cell is the minimum of the label of `q` and
+`β + K`. -/
+@[simp] theorem capLiftOfLt_label (q : StageType.{u} β m) (K : ℕ) (hα : β + K < α)
+    (hK : ∀ d, q.label d = ⊤ → q.toCellScheme.grade d ≤ K) (d : Fin q.card) :
+    (capLiftOfLt hβ q K hα hK).label d = min (q.label d) ((β + K : Ordinal.{u}) : Label.{u}) :=
+  rfl
+
+variable (hβ) in
+/-- The capped lift below `α` reduces to `q`. -/
+theorem capLiftOfLt_reduce (q : StageType.{u} β m) (K : ℕ) (hα : β + K < α)
+    (hK : ∀ d, q.label d = ⊤ → q.toCellScheme.grade d ≤ K) :
+    (capLiftOfLt hβ q K hα hK).reduce hβ = q :=
+  StageType.ext rfl fun i j hij ↦ by
+    obtain rfl : i = j := Fin.ext hij
+    -- `i` is indexed by the reduction, so both lemmas are given their arguments explicitly
+    rw [reduce_label (t := capLiftOfLt hβ q K hα hK) hβ i, capLiftOfLt_label hβ q K hα hK i]
+    rcases q.atStage i with h | h
+    · rw [min_eq_left (h.le.trans (Label.coe_le_coe_add β K)), Label.reduce_of_lt h]
+    · rw [h, min_eq_right le_top]
+      exact Label.reduce_of_le (Label.coe_le_coe_add β K)
+
+/-- **No forcing above the top grade.**  If every cell of `q` has grade at most `K` and `β + K`
+lies below `α`, then `(q, f)` does not force `K + 1` at a cell `d` of `p` labelled the formal top:
+capping the labels of `q` at `β + K` (self-visible at `K`) gives a stage type at `α` reducing to
+`q` whose label at the position of `d` is `β + K`.  So when `β + (n - 1) < α`, a pair forcing `n`
+at such a cell has a cell of grade at least `n`, hence at least `n` points, whatever the mechanism
+of the forcing. -/
+theorem not_forcesThreshold_of_grade_le {K : ℕ} (hα : β + K < α)
+    (hK : ∀ c, q.toCellScheme.grade c ≤ K) (hfp : restrictFace f q = some p)
+    (hd : p.label d = ⊤) : ¬ ForcesThreshold α hβ q f p d (K + 1) := by
+  set c : Label.{u} := ((β + K : Ordinal.{u}) : Label.{u})
+  set Q := capLiftOfLt hβ q K hα fun e _ ↦ hK e
+  have hQ : Q.reduce hβ = q := capLiftOfLt_reduce hβ q K hα _
+  obtain ⟨hf, hcomap⟩ := (restrictFace_eq_some_iff q f).mp hfp
+  intro h
+  have hf' : Finset.univ.map f ∈ Q.toCellScheme.faces := hf
+  have hcard : (q.comap f hf).card = p.card :=
+    congrArg (fun s : StageType.{u} β k ↦ s.card) hcomap
+  set i₀ : Fin (Q.comap f hf').card := ⟨d, lt_of_lt_of_eq d.2 hcard.symm⟩
+  have hle := h.2 Q (Q.comap f hf') hQ (restrictFace_of_mem Q f hf') i₀ rfl
+  have hqd : q.label (q.cellMap f i₀) = ⊤ := by
+    rw [show q.label (q.cellMap f i₀) = (q.comap f hf).label i₀ from (comap_label q f hf i₀).symm]
+    exact (label_congr hcomap rfl).trans hd
+  have hP : (Q.comap f hf').label i₀ = c := by
+    -- the label of the face of `Q`, unfolded (`comap_label`, `capLiftOfLt_label`; `Q` has the
+    -- scheme of `q`)
+    change min (q.label (q.cellMap f i₀)) c = c
+    rw [hqd, min_top_left]
+  rw [hP, Nat.cast_add_one, ← add_assoc] at hle
+  exact (lt_add_one (β + K)).not_ge (WithTop.coe_le_coe.mp (WithBot.coe_le_coe.mp hle))
+
 /-! ### The provisional offset -/
 
 /-- The **provisional offset** of the cell `d` at `(q, f)`: the supremum in `ℕ∞` of the
@@ -395,11 +474,9 @@ section Twins
 
 open Finset
 
-/-- `β + K < α` as labels for `β + ω ≤ α`. -/
-private theorem coe_add_lt_of_le (hα : β + ω ≤ α) (K : ℕ) :
-    ((β + K : Ordinal.{u}) : Label.{u}) < (α : Label.{u}) :=
-  WithBot.coe_lt_coe.mpr (WithTop.coe_lt_coe.mpr
-    ((add_lt_add_right (natCast_lt_omega0 K) β).trans_le hα))
+/-- `β + K < α` for `β + ω ≤ α`. -/
+private theorem add_natCast_lt_of_le (hα : β + ω ≤ α) (K : ℕ) : β + K < α :=
+  (add_lt_add_right (natCast_lt_omega0 K) β).trans_le hα
 
 /-- `β + N ≤ β + K` as labels exactly when `N ≤ K`. -/
 private theorem coe_add_le_coe_add_iff {N K : ℕ} :
@@ -408,19 +485,11 @@ private theorem coe_add_le_coe_add_iff {N K : ℕ} :
 
 variable (hβ) in
 /-- **The capped lift**: the lift of `q` to a stage `α ≥ β + ω` with the label `β + K` at every
-cell labelled the formal top, for `K` at least the grade of each such cell.  Its labels are lawful
-because `β + K` is self-visible at the grade of each such cell ([Kni26, Lemma 2.5.8]). -/
+cell labelled the formal top, for `K` at least the grade of each such cell: the capped lift below
+`α` (`capLiftOfLt`), since `β + K < β + ω ≤ α`. -/
 noncomputable def capLift (hα : β + ω ≤ α) (q : StageType.{u} β m) (K : ℕ)
-    (hK : ∀ d, q.label d = ⊤ → q.toCellScheme.grade d ≤ K) : StageType.{u} α m where
-  toScheme := q.toScheme
-  label d := min (q.label d) ((β + K : Ordinal.{u}) : Label.{u})
-  isWellFormed := q.isWellFormed
-  isCoded := q.isCoded
-  isLawful := q.isLawful.min_const fun d hd ↦ by
-    rcases q.atStage d with h | h
-    · exact absurd h ((Label.coe_le_coe_add β K).trans hd).not_gt
-    · exact Label.isSelfVisible_coe_add hβ (hK d h)
-  atStage _ := .inl ((min_le_right _ _).trans_lt (coe_add_lt_of_le hα K))
+    (hK : ∀ d, q.label d = ⊤ → q.toCellScheme.grade d ≤ K) : StageType.{u} α m :=
+  capLiftOfLt hβ q K (add_natCast_lt_of_le hα K) hK
 
 variable (hβ) in
 /-- The label of the capped lift at a cell is the minimum of the label of `q` and `β + K`. -/
@@ -434,14 +503,7 @@ variable (hβ) in
 theorem capLift_reduce (hα : β + ω ≤ α) (q : StageType.{u} β m) (K : ℕ)
     (hK : ∀ d, q.label d = ⊤ → q.toCellScheme.grade d ≤ K) :
     (capLift hβ hα q K hK).reduce hβ = q :=
-  StageType.ext rfl fun i j hij ↦ by
-    obtain rfl : i = j := Fin.ext hij
-    -- `i` is indexed by the reduction, so both lemmas are given their arguments explicitly
-    rw [reduce_label (t := capLift hβ hα q K hK) hβ i, capLift_label hβ hα q K hK i]
-    rcases q.atStage i with h | h
-    · rw [min_eq_left (h.le.trans (Label.coe_le_coe_add β K)), Label.reduce_of_lt h]
-    · rw [h, min_eq_right le_top]
-      exact Label.reduce_of_le (Label.coe_le_coe_add β K)
+  capLiftOfLt_reduce hβ q K _ hK
 
 /-- **Forced twins**: if `q` is legal and every lift of `q` to `α ≥ β + ω` is at least `β + N` at a
 cell `s₀` labelled the formal top, then for every cell `t₀` with the scope of `s₀` in that of `t₀`
