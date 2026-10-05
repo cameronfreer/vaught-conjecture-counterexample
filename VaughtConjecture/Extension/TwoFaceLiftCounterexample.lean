@@ -169,25 +169,25 @@ noncomputable def stripShifter (A x : Label.{u}) : Label.{u} :=
 
 /-! ### Facts about labels -/
 
-private theorem natCast_label (n : ℕ) : (n : Label.{u}) = ((n : Ordinal.{u}) : Label.{u}) := by
+theorem natCast_label (n : ℕ) : (n : Label.{u}) = ((n : Ordinal.{u}) : Label.{u}) := by
   rw [← WithBot.coe_natCast, ← WithTop.coe_natCast]
 
-private theorem natCast_label_inj {n m : ℕ} : (n : Label.{u}) = m ↔ n = m := by
+theorem natCast_label_inj {n m : ℕ} : (n : Label.{u}) = m ↔ n = m := by
   rw [natCast_label, natCast_label, WithBot.coe_inj, WithTop.coe_inj, Nat.cast_inj]
 
-private theorem natCast_label_le {n m : ℕ} : (n : Label.{u}) ≤ m ↔ n ≤ m := by
+theorem natCast_label_le {n m : ℕ} : (n : Label.{u}) ≤ m ↔ n ≤ m := by
   rw [natCast_label, natCast_label, WithBot.coe_le_coe, WithTop.coe_le_coe, Nat.cast_le]
 
-private theorem natCast_label_lt_omega (n : ℕ) :
+theorem natCast_label_lt_omega (n : ℕ) :
     (n : Label.{u}) < ((ω : Ordinal.{u}) : Label.{u}) := by
   rw [natCast_label, WithBot.coe_lt_coe, WithTop.coe_lt_coe]
   exact natCast_lt_omega0 n
 
-private theorem natCast_label_ne_bot (n : ℕ) : (n : Label.{u}) ≠ ⊥ := by
+theorem natCast_label_ne_bot (n : ℕ) : (n : Label.{u}) ≠ ⊥ := by
   rw [natCast_label]; exact WithBot.coe_ne_bot
 
 /-- A label other than `⊥` below `ω` is a natural number. -/
-private theorem exists_natCast_of_lt_omega {x : Label.{u}} (hx : x ≠ ⊥)
+theorem exists_natCast_of_lt_omega {x : Label.{u}} (hx : x ≠ ⊥)
     (hxω : x < ((ω : Ordinal.{u}) : Label.{u})) : ∃ n : ℕ, x = n := by
   induction x using recBotCoeTop with
   | bot => exact absurd rfl hx
@@ -198,7 +198,7 @@ private theorem exists_natCast_of_lt_omega {x : Label.{u}} (hx : x ≠ ⊥)
     exact ⟨n, (natCast_label n).symm⟩
 
 /-- Visibility replacement keeps a label at or above `ω` at or above `ω`. -/
-private theorem not_lt_omega_visibilityReplace {x : Label.{u}} (hx : x ≠ ⊥)
+theorem not_lt_omega_visibilityReplace {x : Label.{u}} (hx : x ≠ ⊥)
     (hxω : ¬ x < ((ω : Ordinal.{u}) : Label.{u})) (k i : ℕ) :
     ¬ visibilityReplace k i x < ((ω : Ordinal.{u}) : Label.{u}) := by
   induction x using recBotCoeTop with
@@ -235,7 +235,7 @@ private theorem visibilityReplace_visibilityReplace_two {k : ℕ} (hk : k ≤ 2)
       Ordinal.visibilityReplace_omega0_mul_add_natCast, key]
 
 /-- Replacement at a larger value gives a larger label. -/
-private theorem visibilityReplace_le_visibilityReplace {k i j : ℕ} (hij : i ≤ j)
+theorem visibilityReplace_le_visibilityReplace {k i j : ℕ} (hij : i ≤ j)
     (A : Label.{u}) : visibilityReplace k i A ≤ visibilityReplace k j A := by
   induction A using recBotCoeTop with
   | bot => simp
@@ -326,7 +326,7 @@ theorem isWitness_stripShifter {A F : Label.{u}} (hF : IsSelfVisible 2 F) :
         stripShifter_of_not_lt (by rwa [Ne, visibilityReplace_eq_bot_iff])
           (not_lt_omega_visibilityReplace hx0 hxω k i)]
 
-private theorem v1_eq : (v1 : Label.{u}) = ((1 : ℕ) : Label.{u}) := by
+theorem v1_eq : (v1 : Label.{u}) = ((1 : ℕ) : Label.{u}) := by
   rw [natCast_label]; simp [v1, gridPoint]
 
 theorem stripShifter_v1 {A : Label.{u}} (hA : IsSelfVisible 1 A) :
@@ -830,7 +830,7 @@ private theorem pairLabelling_map {f : Label.{u} → Label.{u}} (hf : f ⊥ = �
   generalize pairKind X = c
   fin_cases c <;> simp [hf]
 
-private theorem Q_le_Q {b f f' : ℕ} (h : f ≤ f') : Q.{u} b f ≤ Q b f' := by
+theorem Q_le_Q {b f f' : ℕ} (h : f ≤ f') : Q.{u} b f ≤ Q b f' := by
   unfold Q
   rw [WithBot.coe_le_coe, WithTop.coe_le_coe]
   gcongr

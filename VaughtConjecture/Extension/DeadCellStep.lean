@@ -50,7 +50,11 @@ as a statement of coverage, not the completion: the seed has a completion below 
 through the hypothesis of the step stated exactly, the existential two-face lift
 (`CaseSplitCounterexample.nonempty_completionBelowFullGrade_seed5`; module
 `VaughtConjecture.Extension.TwoFaceLiftExists`, where deadness, together with the invariant at
-the grade `j`, is shown to imply that hypothesis).
+the grade `j`, is shown to imply that hypothesis).  The existential two-face lift fails for
+another legal seed on five points (`TwoFaceLiftExistsCounterexample.not_twoFaceLiftExists_two`),
+for which the case split fails as well
+(`TwoFaceLiftExistsCounterexample.not_twoFaceLift_or_deadAt`); whether that seed has a completion
+below the full grade is open.
 A legal seed on five points where `2FL(2)` fails and the cells of the grade `3` are dead is in the
 module `VaughtConjecture.Extension.TwoFaceLiftCounterexample`.
 

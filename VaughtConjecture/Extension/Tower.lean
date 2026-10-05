@@ -113,10 +113,14 @@ need not be short at the grades of the layers it crosses.
   the existential two-face lift (`Seed.TwoFaceLiftExists`, module
   `VaughtConjecture.Extension.TwoFaceLiftExists`), implied by `2FL(j)` (for `j ≤ m`) and by
   deadness together with the invariant at `j`, and holding for a legal seed where neither
-  `2FL(j)` nor deadness does.  Bountifulness and legality of the tower and the
-  completion below the full grade are proved from the invariant at the top grade in the module
-  `VaughtConjecture.Extension.TwoFaceLift`: with no hypothesis at the arities `m ≤ 2`, and for a
-  seed satisfying `2FL(j)` at the grades `2 ≤ j < m` at every arity.
+  `2FL(j)` nor deadness does.  It fails at `j = 2` for another legal seed on five points
+  (`TwoFaceLiftExistsCounterexample.not_twoFaceLiftExists_two`, module
+  `VaughtConjecture.Extension.TwoFaceLiftExistsCounterexample`), so the tower does not complete
+  every seed; a completion of that seed by another construction is not refuted.  Bountifulness
+  and legality of the tower and the completion below the full grade are proved from the invariant
+  at the top grade in the module `VaughtConjecture.Extension.TwoFaceLift`: with no hypothesis at
+  the arities `m ≤ 2`, and for a seed satisfying `2FL(j)` at the grades `2 ≤ j < m` at every
+  arity.
   `StageType.HasApexCoatomExtensions` and `StageType.HasCoatomExtensions` at the stages that are
   zero or a limit are still to be proved (their statement at those stages is not made here); they
   are not refuted.

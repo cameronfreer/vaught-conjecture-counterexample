@@ -10,8 +10,8 @@ import VaughtConjecture.Label.StepWitness
 # The existential two-face lift: the hypothesis of the step of the tower, stated exactly
 
 Roadmap, Layer 3, 3.1, (R6), checkpoints 2.6 and 2.7 (the recursion on the grade; here the
-hypothesis of the step from the grade `j` to `j + 1`, stated exactly, and the coatom extension
-property reformulated through the tower); semantic contract, items 2–4.
+hypothesis of the step from the grade `j` to `j + 1`, stated exactly); semantic contract,
+items 2–4.
 
 Let `I` be a seed on `m + 2` points, with coatoms `C = univ.erase x` and `D = univ.erase y` (both
 orders of the two omitted points), common face `E`, and tower `T j` (module
@@ -73,23 +73,26 @@ the union fill refuted in the module
 `VaughtConjecture.Extension.UnionFillCounterexample`, but only for the labellings that agree with
 the raised `a` at the cap `c`; that union fill is not used.
 
-**The completion, and 2.7 reformulated through the tower.**  A seed satisfying `2FL∃(j)` at the
-grades `2 ≤ j < m` has a completion below the full grade
-(`Seed.nonempty_completionBelowFullGrade_of_twoFaceLiftExists`).  At a stage that is zero or a
-limit, if every seed satisfies `2FL∃(j)` at the grades `2 ≤ j < m`, then
-`StageType.HasApexCoatomExtensions` holds
-(`StageType.hasApexCoatomExtensions_of_twoFaceLiftExists`): the coatom extension property
-conditional on the step at every grade.
+**The completion.**  A seed satisfying `2FL∃(j)` at the grades `2 ≤ j < m` has a completion below
+the full grade (`Seed.nonempty_completionBelowFullGrade_of_twoFaceLiftExists`, a hypothesis on the
+seed).
 
-**What is open.**  Whether `2FL∃(j)` holds for every seed at the grades `2 ≤ j < m`, equivalently
-whether the invariant of the tower reaches the top grade for every seed.  It holds at `j` for the
-seeds satisfying `2FL(j)`, for the seeds whose old cells of the grade `j + 1` are dead and which
-satisfy the invariant at `j`, and, at `j = 2`, for the seeds whose two coatom types
-are the type `T5` of the module `VaughtConjecture.Extension.CaseSplitCounterexample`; no
-compiled fact refutes its universal form.  `StageType.HasApexCoatomExtensions` and
-`StageType.HasCoatomExtensions` remain to be proved, and they are not refuted: a seed failing
-`2FL∃(j)` would refute this route through the tower only, not the existence of a completion below
-the full grade.
+**Where the step fails, and what is open.**  `2FL∃(j)` remains the exact hypothesis of the step.
+It holds at `j` for the seeds satisfying `2FL(j)`, for the seeds whose old cells of the grade
+`j + 1` are dead and which satisfy the invariant at `j`, and, at `j = 2`, for the seeds whose two
+coatom types are the type `T5` of the module `VaughtConjecture.Extension.CaseSplitCounterexample`.
+The step fails for a legal seed: for the seed `seedL` on five points of the module
+`VaughtConjecture.Extension.TwoFaceLiftExistsCounterexample`, whose two coatom types differ,
+`2FL∃(2)` fails (`TwoFaceLiftExistsCounterexample.not_twoFaceLiftExists_two`), so the invariant of
+its tower fails at the top grade (`TwoFaceLiftExistsCounterexample.not_towerInvariant_top_seedL`)
+and `2FL∃(j)` at the grades `2 ≤ j < m` is false as a statement about every seed, at every stage
+(`TwoFaceLiftExistsCounterexample.not_forall_twoFaceLiftExists`).  The tower does not complete
+every seed.  Not refuted: a completion below the full grade of `seedL` by another construction,
+and `StageType.HasApexCoatomExtensions` and `StageType.HasCoatomExtensions`, which remain to be
+proved.  Whether `seedL` has a completion below the full grade at all is open.  That module gives
+a necessary condition, argued and not formalized (a cell at `(univ, 2)` where the labelling reaches
+the cap and whose row reads the cell `({3}, 1)` strictly below the cell `({4}, 1)`; the tower has
+no such cell), and a prospective candidate.
 
 ## Placement
 
@@ -540,7 +543,6 @@ theorem towerInvariant_top_iff :
   ⟨fun hinv _ _ hjm ↦ I.twoFaceLiftExists_of_towerInvariant_top hinv hjm.le,
     fun hE ↦ I.towerInvariant_of_twoFaceLiftExists hE (m + 1) le_rfl⟩
 
-
 /-! ### The raised union fill -/
 
 open Classical in
@@ -683,23 +685,3 @@ theorem towerInvariant_succ_of_raisedUnionFill {j : ℕ} (hjm : j ≤ m)
     (I.twoFaceLiftExists_of_raisedUnionFill hinv hR)
 
 end VaughtConjecture.Seed
-
-namespace VaughtConjecture.StageType
-
-/-- **The coatom extension property with apex, reformulated through the tower**: conditional on the
-step at every grade.  At a stage `α` that is zero or a limit, if every seed on `m + 2` points
-satisfies `2FL∃(j)` at the grades `2 ≤ j < m`, then every seed has a completion below the full
-grade (`Seed.nonempty_completionBelowFullGrade_of_twoFaceLiftExists`), and so
-(`StageType.HasApexCoatomExtensions.of_completionBelowFullGrade`) any two legal coatom types with
-the same face are the faces of one legal stage type with an apex.  The hypothesis is the step of
-the tower at every grade, stated exactly (`Seed.towerInvariant_top_iff`); its universal form is
-open. -/
-theorem hasApexCoatomExtensions_of_twoFaceLiftExists {α : Ordinal.{u}}
-    (hα : Order.IsSuccPrelimit α)
-    (hE : ∀ (m : ℕ) (I : Seed.{u} α m) (j : ℕ), 2 ≤ j → j < m → I.TwoFaceLiftExists j) :
-    HasApexCoatomExtensions.{u} α :=
-  HasApexCoatomExtensions.of_completionBelowFullGrade hα fun m _ _ _ hla hlb hpa hpb ↦
-    (Seed.ofCoatoms hla hlb hpa hpb).nonempty_completionBelowFullGrade_of_twoFaceLiftExists
-      (hE m _)
-
-end VaughtConjecture.StageType

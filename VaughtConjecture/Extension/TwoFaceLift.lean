@@ -105,20 +105,21 @@ invariant at `j`, and for the seeds whose two coatom types are the type `T5` of 
 holds; for the seed of the failure of `2FL(2)` above it holds by deadness
 (`CaseSplitCounterexample.twoFaceLiftExists_two_seed4`).
 
-What stays open is whether `2FL∃(j)` holds for every seed at the grades `2 ≤ j < m`; the next case
-to decide is a seed whose two coatom types differ but share a face, with a row coupling the cell
-of the common face to cells of lower grade on one side only, together with the strip case.  A
-redesign of the layers under which a two-face lift at the grade `2` would hold for every seed is
-not pursued: the identified obstruction, the strip case, survives the redesigns examined (of the
-encoding, of the alignment, and of an owner seeing both faces); the existential form chooses `w_D`
-instead.  The coatom extension properties
-`StageType.HasApexCoatomExtensions` and `StageType.HasCoatomExtensions` at the stages that are zero
-or a limit quantify over the seeds of every arity
+The step fails for a legal seed.  For the seed `seedL` on five points whose two coatom types differ
+and share a face, with a row coupling the cell of the common face to cells of lower grade on one
+side only, `2FL∃(2)` fails (`TwoFaceLiftExistsCounterexample.not_twoFaceLiftExists_two`, module
+`VaughtConjecture.Extension.TwoFaceLiftExistsCounterexample`): the strip case occurs together with
+that coupling, and no choice of `w_D` gives the extension.  So the tower does not complete every
+seed, and `2FL∃(j)` for every seed at the grades `2 ≤ j < m` is false at every stage
+(`TwoFaceLiftExistsCounterexample.not_forall_twoFaceLiftExists`).  A redesign of the layers under
+which a two-face lift at the grade `2` would hold for every seed is not pursued: the identified
+obstruction survives the redesigns examined (of the encoding, of the alignment, of the catalogue
+at the grade `2`, of the grid of agreement heights, and of an owner seeing both faces).  The coatom
+extension properties `StageType.HasApexCoatomExtensions` and `StageType.HasCoatomExtensions` at
+the stages that are zero or a limit quantify over the seeds of every arity
 (`StageType.HasApexCoatomExtensions.of_completionBelowFullGrade`); they remain to be proved, and
-they are not refuted.  Conditional on the step at every grade, that is on `2FL∃(j)` for every seed
-at the grades `2 ≤ j < m`, the first holds
-(`StageType.hasApexCoatomExtensions_of_twoFaceLiftExists`: 2.7 reformulated through the tower);
-that hypothesis is open, and no compiled fact refutes it.
+they are not refuted, nor is a completion below the full grade of `seedL` by another
+construction.  Whether `seedL` has a completion below the full grade at all is open.
 
 No hypothesis on the stage enters, no union fill (module
 `VaughtConjecture.Extension.UnionFillCounterexample`) and no completion is assumed, and neither

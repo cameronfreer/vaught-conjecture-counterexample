@@ -78,8 +78,11 @@ completion.  So `2FL∃(2)` holds where `2FL(2)` and deadness both fail
 (`twoFaceLiftExists_and_not_twoFaceLift_or_deadAt`); it holds also for the seed of `T4` with
 itself, by deadness (`twoFaceLiftExists_two_seed4`).
 
-Nothing is claimed for seeds whose two coatom types differ: the coupling on `C` is what bounds
-`w_C` below by `G_C` where `a` reaches the cap.
+The argument needs the coupling on `C`, which bounds `w_C` below by `G_C` where `a` reaches the
+cap.  Without it `2FL∃(2)` can fail: for the seed whose first coatom type couples the parameter of
+grade `3` to `F` only, and whose second is `T5`, it fails
+(`TwoFaceLiftExistsCounterexample.not_twoFaceLiftExists_two`, module
+`VaughtConjecture.Extension.TwoFaceLiftExistsCounterexample`).
 
 ## Placement
 
@@ -123,24 +126,24 @@ noncomputable def rows : cells.Rows.{u} :=
 /-- The scheme on four points. -/
 noncomputable def S : Scheme.{u} 4 := ⟨19, cells, rows⟩
 
-private theorem live_le_live : ∀ s d : Fin 19, live s = true → live d = true →
+theorem live_le_live : ∀ s d : Fin 19, live s = true → live d = true →
     cells.gradedIndex d ≤ cells.gradedIndex s →
       cellGrade d = cellGrade s ∨ (cellGrade d = 1 ∧ cellGrade s = 2) ∨ cellGrade s = 3 := by
   simp only [gradedIndex_cells, Prod.mk_le_mk]; decide +kernel
 
 /-- The live cells are closed upward under inclusion of scopes at the same grade. -/
-private theorem live_up : ∀ s t : Fin 19, live s = true → cellScope s ⊆ cellScope t →
+theorem live_up : ∀ s t : Fin 19, live s = true → cellScope s ⊆ cellScope t →
     cellGrade s = cellGrade t → live t = true := by decide +kernel
 
-private theorem live_grade (d : Fin 19) (hd : live d = true) :
+theorem live_grade (d : Fin 19) (hd : live d = true) :
     cellGrade d = 1 ∨ cellGrade d = 2 ∨ cellGrade d = 3 := by
   revert d; decide +kernel
 
-private theorem grade_le_three (d : Fin 19) : cellGrade d ≤ 3 := by revert d; decide
+theorem grade_le_three (d : Fin 19) : cellGrade d ≤ 3 := by revert d; decide
 
 /-! ### The labellings `labelling A F G` are lawful -/
 
-private theorem isSelfVisible_labelling {A F G : Label.{u}} (hA : IsSelfVisible 1 A)
+theorem isSelfVisible_labelling {A F G : Label.{u}} (hA : IsSelfVisible 1 A)
     (hF : IsSelfVisible 2 F) (hG : IsSelfVisible 3 G) (d : Fin 19) :
     IsSelfVisible (cellGrade d) (labelling A F G d) := by
   unfold labelling
@@ -243,50 +246,50 @@ theorem isLawful_labelling {A F G : Label.{u}} (hA : IsSelfVisible 1 A) (hF : Is
 
 /-! ### Cell facts -/
 
-private theorem labelling_dead {A F G : Label.{u}} {d : Fin 19} (hd : live d = false) :
+theorem labelling_dead {A F G : Label.{u}} {d : Fin 19} (hd : live d = false) :
     labelling A F G d = ⊥ := by
   simp [labelling, hd]
 
-private theorem labelling_one {A F G : Label.{u}} {d : Fin 19} (hd : live d = true)
+theorem labelling_one {A F G : Label.{u}} {d : Fin 19} (hd : live d = true)
     (hg : cellGrade d = 1) : labelling A F G d = A := by
   simp [labelling, hd, hg]
 
-private theorem labelling_two {A F G : Label.{u}} {d : Fin 19} (hd : live d = true)
+theorem labelling_two {A F G : Label.{u}} {d : Fin 19} (hd : live d = true)
     (hg : cellGrade d = 2) : labelling A F G d = F := by
   simp [labelling, hd, hg]
 
-private theorem labelling_three {A F G : Label.{u}} {d : Fin 19} (hd : live d = true)
+theorem labelling_three {A F G : Label.{u}} {d : Fin 19} (hd : live d = true)
     (hg : cellGrade d = 3) : labelling A F G d = G := by
   simp [labelling, hd, hg]
 
 /-- Every live cell of grade `1` lies above the cell `3`, at `({3}, 1)`. -/
-private theorem three_le_of_grade_one : ∀ d : Fin 19, live d = true → cellGrade d = 1 →
+theorem three_le_of_grade_one : ∀ d : Fin 19, live d = true → cellGrade d = 1 →
     cells.gradedIndex 3 ≤ cells.gradedIndex d := by
   simp only [gradedIndex_cells, Prod.mk_le_mk]; decide +kernel
 
 /-- The only live cell of grade `2` is the cell `15`, at `(univ, 2)`. -/
-private theorem eq_fifteen_of_grade_two : ∀ d : Fin 19, live d = true → cellGrade d = 2 →
+theorem eq_fifteen_of_grade_two : ∀ d : Fin 19, live d = true → cellGrade d = 2 →
     d = 15 := by decide +kernel
 
 /-- The live cells of grade `3` are the cells `16`, at `({0, 1, 2}, 3)`, and `18`, at
 `(univ, 3)`. -/
-private theorem grade_three_cases : ∀ d : Fin 19, live d = true → cellGrade d = 3 →
+theorem grade_three_cases : ∀ d : Fin 19, live d = true → cellGrade d = 3 →
     d = 16 ∨ d = 18 := by decide +kernel
 
-private theorem le_eighteen : ∀ d : Fin 19, cells.gradedIndex d ≤ cells.gradedIndex 18 := by
+theorem le_eighteen : ∀ d : Fin 19, cells.gradedIndex d ≤ cells.gradedIndex 18 := by
   simp only [gradedIndex_cells, Prod.mk_le_mk]; decide +kernel
 
-private theorem sixteen_le_of_grade_three : ∀ d : Fin 19, live d = true → cellGrade d = 3 →
+theorem sixteen_le_of_grade_three : ∀ d : Fin 19, live d = true → cellGrade d = 3 →
     cells.gradedIndex 16 ≤ cells.gradedIndex d := by
   simp only [gradedIndex_cells, Prod.mk_le_mk]; decide +kernel
 
-private theorem live_cases (d : Fin 19) :
+theorem live_cases (d : Fin 19) :
     live d = false ∨ (live d = true ∧ cellGrade d = 1) ∨ (live d = true ∧ cellGrade d = 2) ∨
       (live d = true ∧ cellGrade d = 3) := by
   revert d; decide
 
 /-- A pair above the cell `16` and above the cell `3` or `15` is above the cell `18`. -/
-private theorem eighteen_mem_below {Y : Finset (Fin 4) × ℕ} (h16 : (16 : Fin 19) ∈ cells.below Y)
+theorem eighteen_mem_below {Y : Finset (Fin 4) × ℕ} (h16 : (16 : Fin 19) ∈ cells.below Y)
     (h : (3 : Fin 19) ∈ cells.below Y ∨ (15 : Fin 19) ∈ cells.below Y) :
     (18 : Fin 19) ∈ cells.below Y := by
   obtain ⟨B, k⟩ := Y
@@ -392,7 +395,7 @@ theorem isLawfulBelow_iff {Y : Finset (Fin 4) × ℕ} {x : Fin 19 → Label.{u}}
 /-! ### Bountifulness -/
 
 /-- The lifted parameter of grade `3` is at most a lifted parameter of grade `1` or `2`. -/
-private theorem lift_le {Ap Aq Gp Gq c : Label.{u}} {P3 P16 b : Prop} [Decidable P3]
+theorem lift_le {Ap Aq Gp Gq c : Label.{u}} {P3 P16 b : Prop} [Decidable P3]
     [Decidable P16] [Decidable b] (hGAp : Gp ≤ Ap) (hGAq : Gq ≤ Aq)
     (h3 : P3 → min Aq c = min Ap c) (h16 : P16 → min Gq c = min Gp c) :
     (if P16 then Gp else if Gq < c then Gq else if b then c else ⊥) ≤
@@ -698,7 +701,7 @@ private theorem tripleKind_right : ∀ d : Fin 19,
       ![0, 3, 4, 5] (liveKind d) := by
   decide +kernel
 
-private theorem tripleLabelling_left (AC FC AD FD G : Label.{u}) (d : Fin 19) :
+theorem tripleLabelling_left (AC FC AD FD G : Label.{u}) (d : Fin 19) :
     tripleLabelling AC FC AD FD G
         (Prod.map (Finset.map (Coatom.left 3)) id (cells.gradedIndex d)) =
       labelling AC FC G d := by
@@ -706,7 +709,7 @@ private theorem tripleLabelling_left (AC FC AD FD G : Label.{u}) (d : Fin 19) :
   generalize liveKind d = c
   fin_cases c <;> rfl
 
-private theorem tripleLabelling_right (AC FC AD FD G : Label.{u}) (d : Fin 19) :
+theorem tripleLabelling_right (AC FC AD FD G : Label.{u}) (d : Fin 19) :
     tripleLabelling AC FC AD FD G
         (Prod.map (Finset.map (Coatom.right 3)) id (cells.gradedIndex d)) =
       labelling AD FD G d := by
@@ -731,7 +734,7 @@ private theorem isLawfulBelow_T5_of_eq {A F G : Label.{u}} (hA : IsSelfVisible 1
 
 /-- A labelling of graded indices whose reading along `f` is `labelling A F G` is lawful below the
 coatom `univ.map f` at the grade `3`, for a stage type whose face along `f` is `T5`. -/
-private theorem isLawfulBelow_coatom {A F G : Label.{u}} (hA : IsSelfVisible 1 A)
+theorem isLawfulBelow_coatom {A F G : Label.{u}} (hA : IsSelfVisible 1 A)
     (hF : IsSelfVisible 2 F) (hG : IsSelfVisible 3 G) (hGA : G ≤ A) (hGF : G ≤ F)
     {f : Fin 4 ↪ Fin 5} {Am : StageType.{u} α 5}
     (hf : StageType.restrictFace f Am = some (T5 α)) {Lf : Finset (Fin 5) × ℕ → Label.{u}}
@@ -770,7 +773,7 @@ theorem isLawfulBelow_tripleLabelling {I : Seed.{u} α 3} (hIL : I.left = T5 α)
       (tripleLabelling_right AC FC AD FD G)
 
 /-- A cell of `T5` carried into the amalgam along a coatom whose face is `T5`. -/
-private theorem exists_cell {f : Fin 4 ↪ Fin 5} {Am : StageType.{u} α 5}
+theorem exists_cell {f : Fin 4 ↪ Fin 5} {Am : StageType.{u} α 5}
     (hf : StageType.restrictFace f Am = some (T5 α)) (d : Fin 19) :
     ∃ e : Fin Am.card, Am.toCellScheme.gradedIndex e =
       Prod.map (Finset.map f) id (cells.gradedIndex d) := by
@@ -858,7 +861,7 @@ theorem not_twoFaceLift_or_deadAt : ¬ ((seed5 α).TwoFaceLift 2 ∨ (seed5 α).
 
 /-! ### The existential two-face lift for the seeds of `T5` -/
 
-private theorem cases_T5 (i : Fin (T5 α).card) :
+theorem cases_T5 (i : Fin (T5 α).card) :
     i = Fin.last 19 ∨ ∃ d : Fin 19, i = Fin.castSucc d := by
   change Fin (19 + 1) at i
   induction i using Fin.lastCases with
@@ -866,7 +869,7 @@ private theorem cases_T5 (i : Fin (T5 α).card) :
   | cast d => exact .inr ⟨d, rfl⟩
 
 /-- Lawful labellings of an amalgam below a coatom whose type is `T5`, read on `T5`. -/
-private theorem exists_labelling_of_comap {f : Fin 4 ↪ Fin 5} {Am : StageType.{u} α 5}
+theorem exists_labelling_of_comap {f : Fin 4 ↪ Fin 5} {Am : StageType.{u} α 5}
     (hf : StageType.restrictFace f Am = some (T5 α)) {k : ℕ} (hk : k ≤ 3)
     (p : Fin Am.card → Label.{u}) (hp : Am.rows.IsLawfulBelow (univ.map f, k) fun d ↦ p d) :
     ∃ A F G : Label.{u}, IsSelfVisible 1 A ∧ IsSelfVisible 2 F ∧ IsSelfVisible 3 G ∧ G ≤ A ∧
@@ -935,10 +938,10 @@ private theorem exists_tripleLabelling {I : Seed.{u} α 3} (hIL : I.left = T5 α
 
 private theorem liveC_three : ∀ Y ∈ liveC, (3 : Fin 5) ∈ Y.1 ∧ Y.2 ≤ 2 := by decide
 private theorem liveD_four : ∀ Y ∈ liveD, (4 : Fin 5) ∈ Y.1 ∧ Y.2 ≤ 2 := by decide
-private theorem liveG_three : ∀ Y ∈ liveG, Y.2 = 3 := by decide
+theorem liveG_three : ∀ Y ∈ liveG, Y.2 = 3 := by decide
 
 /-- At a graded index of grade at most `2`, the parameter `G` is not read. -/
-private theorem tripleLabelling_eq_of_le_two {X : Finset (Fin 5) × ℕ} (hX : X.2 ≤ 2)
+theorem tripleLabelling_eq_of_le_two {X : Finset (Fin 5) × ℕ} (hX : X.2 ≤ 2)
     (A F A' F' G G' : Label.{u}) :
     tripleLabelling A F A' F' G X = tripleLabelling A F A' F' G' X := by
   have hG : X ∉ liveG := fun h ↦ by have := liveG_three X h; omega
