@@ -1063,6 +1063,10 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     The class–level incidence translation and the three properties it must preserve (incidence of
     classes at levels, countability of levels, coverage) are those of item 5; until they are
     proved, `FullPresentations` stays prospective as an instance of the system of [AFK26].
+    Countability of levels, read with terminal model expansions of codes in place of maximal
+    presentations, is `MainTheorem.countable_isoClasses_terminalAt`
+    (`MainTheorem/CountablyManyMaximal`), compiled in this repository (theorem named),
+    conditional on (R1), `ContinuationCriterion`, (R2), and (R3), each still to be proved.
 28. What is corrected is a statement: the same-index equivalence of Proposition 8.6 is false (an
     informal counterexample, `LITERATURE.md`, §9; not compiled); `COMPANIONS.md`, "Full trees":
     prospective.
@@ -1211,6 +1215,11 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     route proves stopping for each base that is a model as its conclusion and assumes no
     termination; it is not a dependency of the expansion-domain endpoint and is not combined with
     the conditional of row 31 in a cycle.
+    The maximal presentation it yields at `ρ` is terminal; read in the coded encoding (through
+    the conversion, still to be proved), its class lies among the classes terminal at `ρ`, of
+    which there are countably many at each countable level
+    (`MainTheorem.countable_isoClasses_terminalAt`, compiled in this repository (theorem named),
+    conditional on (R1), `ContinuationCriterion`, (R2), and (R3), each still to be proved).
 
 **Completion criteria, item by item** (the items of `README.md`, "Manuscript correspondence
 (required)").  For every item, each row of the concordance that it concerns is P or C, with its
@@ -2001,6 +2010,7 @@ Each checkpoint needs both its abstract API and a concrete application:
    | C | the countable index of terminal properties; the cover | `Continuation/Classification` |
    | D | the comparison of expansions sharing a property | `Continuation/Comparison` |
    | E | losses are terminal; one class per property; the count | `Expansion/Losses` |
+   | F | the classes terminal at a level; one class per property; the count | `MainTheorem/CountablyManyMaximal` |
 
    - A: `Realization.nonempty_equiv_of_exactReceivingWithin`, pointed
      `Realization.exists_equiv_comp_eq_of_exactReceivingWithinAt`; no named hypothesis.
@@ -2022,6 +2032,13 @@ Each checkpoint needs both its abstract API and a concrete application:
      (Layer 0); the main theorem with no hypothesis of countable losses,
      `densitySentence_hasThinAlephOneSpectrum_of_terminalClassification`
      (`MainTheorem/ModelExpansionDomains`).
+   - F: `MainTheorem.loss_subset_terminalClasses`, unconditional;
+     `MainTheorem.terminalClasses_subset_iUnion`, conditional on `ContinuationCriterion`;
+     `MainTheorem.subsingleton_propertyClasses`, conditional on (R1), (R2), and (R3) for
+     `Realization.IsCoverHollowAtBlock`; `MainTheorem.exists_injective_terminalProperty` and
+     `MainTheorem.countable_isoClasses_terminalAt` (countably many classes terminal at each
+     countable level), conditional on these four; the rigid-core comparison keeping the core,
+     `ModelExpansion.exists_equiv_comp_eq_of_isGloballyRigidCore`, conditional on (R1).
 6. Domain hypotheses of the counting theorem, the upper and lower bounds, thinness, and the
    reduction to `ℕ` (all countable carriers).  Status: the conditional compositions of both routes
    are compiled, on `ℕ` (`MainTheorem/Assembly`) and on all countable carriers
