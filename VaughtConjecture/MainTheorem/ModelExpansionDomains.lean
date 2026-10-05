@@ -169,10 +169,8 @@ theorem densitySentence_hasThinAlephOneSpectrum_of_forcingDonors (hcap : CapToMo
 sentence has no perfect set of pairwise nonisomorphic models coded on `ℕ`, conditional on the
 following hypotheses, each still to be proved:
 * the cap-to-model theorem (`hcap`; Layer 3, 3.4; checkpoint 4): the first domain;
-* finite-cut receiving of models (`hrec`; (R1) of the table of Layer 3, which follows from the
-  gated pinned extension property `StageType.HasGatedPinnedExtensions` by
-  `Expansion.finiteCutReceiving_of_hasGatedPinnedExtensions`): next-block uniqueness, logical
-  agreement, and the rigid-core comparison;
+* finite-cut receiving of models (`hrec`; (R1) of the table of Layer 3, open): next-block
+  uniqueness, logical agreement, and the rigid-core comparison;
 * forcing donors at every countable block index (`hF`; a finite construction of Layer 3, awaiting
   the completion below the full grade): next-block uniqueness, for the limit clause;
 * the continuation criterion (`hcont`; output 3 of higher-stage reconstruction, Layer 4): the

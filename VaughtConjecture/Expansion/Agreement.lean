@@ -44,8 +44,10 @@ finite-cut receiving, (R1) of the table of Layer 3.  The first follows from the 
 (`finiteExtensionReceiving_iff`).  **(R1) is not proved here, and nothing here proves it**: the
 theorems below take `FiniteExtensionReceiving` as an explicit hypothesis, which
 `FiniteCutReceiving.finiteExtensionReceiving` supplies from (R1), and they remain conditional on
-(R1).  (R1) itself holds conditional on the gated pinned extension property
-(`finiteCutReceiving_of_hasGatedPinnedExtensions`, in `VaughtConjecture.Expansion.GatedReceiving`).
+(R1).  (R1) itself is open in general: the universal gated extension hypothesis
+`StageType.HasGatedPinnedExtensions` fails at every stage
+(`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`), and finite-cut receiving is proved
+for the top-free witnesses (`hasFiniteCutReceiving_reconstruct`), not for all models.
 
 **The laws.**
 
@@ -98,9 +100,7 @@ namespace Expansion
 /-- **Finite-extension receiving for models** on the carriers in the universe `w`: every model at
 a countable limit stage has finite-extension receiving.  It follows from finite-cut receiving of
 models (`FiniteCutReceiving.finiteExtensionReceiving`), which is (R1) of the table of Layer 3,
-not proved here; it holds conditional on the gated pinned extension property
-(`finiteExtensionReceiving_of_hasGatedPinnedExtensions`, in
-`VaughtConjecture.Expansion.GatedReceiving`). -/
+open. -/
 structure FiniteExtensionReceiving : Prop where
   /-- Every model at a countable limit stage has finite-extension receiving. -/
   receive : ∀ {α : Ordinal.{0}} {M : Type w}, Order.IsSuccLimit α → α < ω₁ →
@@ -108,8 +108,7 @@ structure FiniteExtensionReceiving : Prop where
 
 /-- **Finite-cut receiving for models** on the carriers in the universe `w`: every model at a
 countable limit stage has the finite-cut receiving property.  This is (R1) of the table of
-Layer 3, not proved here; it holds conditional on the gated pinned extension property
-(`finiteCutReceiving_of_hasGatedPinnedExtensions`). -/
+Layer 3, open. -/
 structure FiniteCutReceiving : Prop where
   /-- Every model at a countable limit stage has finite-cut receiving. -/
   receive : ∀ {α : Ordinal.{0}} {M : Type w}, Order.IsSuccLimit α → α < ω₁ →
@@ -182,8 +181,7 @@ with `c` and `x`; `d'` is received for `D` over `d` at the permitted cutoff `λ_
 
 This is conditional on finite-extension receiving of the expansion `f` (`hf`), which follows from
 its finite-cut receiving (`Realization.HasFiniteCutReceiving.hasFiniteExtensionReceiving`);
-finite-cut receiving of models, (R1), is still to be proved, and holds conditional on the gated
-pinned extension property. -/
+finite-cut receiving of models, (R1), is open. -/
 theorem exists_extend_covers {α : Ordinal.{0}} {k : ℕ}
     {e : ModelExpansion M (blockStage (α + 1))} {f : ModelExpansion N (blockStage (α + 1))}
     (hf : f.1.HasFiniteExtensionReceiving)
@@ -227,8 +225,7 @@ theorem exists_extend_covers {α : Ordinal.{0}} {k : ℕ}
 
 This is conditional on finite-extension receiving of the expansion of `M` (`he`), which follows
 from its finite-cut receiving (`Realization.HasFiniteCutReceiving.hasFiniteExtensionReceiving`);
-finite-cut receiving of models, (R1), is still to be proved, and holds conditional on the gated
-pinned extension property. -/
+finite-cut receiving of models, (R1), is open. -/
 theorem exists_extend_covers_back {α : Ordinal.{0}} {k : ℕ}
     {e : ModelExpansion M (blockStage (α + 1))} {f : ModelExpansion N (blockStage (α + 1))}
     (he : e.1.HasFiniteExtensionReceiving)
@@ -251,7 +248,7 @@ the countable block stages `λ_{α+1}` with `α + 1 ≤ η`.
 
 This is conditional on finite-extension receiving of models (`hrec`), which follows from
 finite-cut receiving of models (`FiniteCutReceiving.finiteExtensionReceiving`); that is (R1),
-still to be proved, and holds conditional on the gated pinned extension property. -/
+open. -/
 def expansionMatchData (hrec : FiniteExtensionReceiving.{w}) (M N : Type w)
     [baseLanguage.{0}.Structure M] [baseLanguage.{0}.Structure N] {η : Ordinal.{0}}
     (hη : η < ω₁) : ExpansionMatchData baseLanguage.{0} M N η where
@@ -279,7 +276,7 @@ stage type on no points (`ModelExpansion.exists_covers_zero`), and there is only
 
 This is conditional on finite-extension receiving of models (`hrec`), which follows from
 finite-cut receiving of models (`FiniteCutReceiving.finiteExtensionReceiving`); that is (R1),
-still to be proved, and holds conditional on the gated pinned extension property. -/
+open. -/
 theorem bfEquiv_of_modelExpansions (hrec : FiniteExtensionReceiving.{w}) {η : Ordinal.{0}}
     (hη : η < ω₁) (hM : Nonempty (ModelExpansion M (blockStage η)))
     (hN : Nonempty (ModelExpansion N (blockStage η))) :
@@ -298,7 +295,7 @@ back-and-forth equivalence of `bfEquiv_of_modelExpansions`.
 
 This is conditional on finite-extension receiving of models (`hrec`), which follows from
 finite-cut receiving of models (`FiniteCutReceiving.finiteExtensionReceiving`); that is (R1),
-still to be proved, and holds conditional on the gated pinned extension property. -/
+open. -/
 theorem realize_iff_of_modelExpansions (hrec : FiniteExtensionReceiving.{w}) {η : Ordinal.{0}}
     (hη : η < ω₁) (hM : Nonempty (ModelExpansion M (blockStage η)))
     (hN : Nonempty (ModelExpansion N (blockStage η))) (θ : baseLanguage.{0}.Sentenceω)
@@ -313,7 +310,7 @@ at most `η`.  This is condition 3 of the reduction to expansion domains, for co
 
 This is conditional on finite-extension receiving of models (`hrec`), which follows from
 finite-cut receiving of models (`FiniteCutReceiving.finiteExtensionReceiving`); that is (R1),
-still to be proved, and holds conditional on the gated pinned extension property. -/
+open. -/
 theorem mem_modelsOf_iff_of_modelExpansions (hrec : FiniteExtensionReceiving.{0})
     {η : Ordinal.{0}} (hη : η < ω₁) (c₁ c₂ : StructureSpace baseLanguage.{0})
     (h₁ : Nonempty (@ModelExpansion ℕ c₁.toStructure (blockStage η)))

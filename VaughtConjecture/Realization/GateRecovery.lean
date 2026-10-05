@@ -38,16 +38,18 @@ with gate data (`mem_receivingFamily_of_isGate`); the labels of `q` are lawful b
 stage type, and no legality of `q` or of the display is used.
 
 **What is unconditional and what is not.**  Every statement here is a theorem about a given gated
-extension.  No gated extension is exhibited: its legality needs the construction, and the gated
-pinned extension property `StageType.HasGatedPinnedExtensions` that would supply one is a
-hypothesis, still to be proved.  Finite-cut receiving (R1) is not claimed here.  Its assembly,
-conditional on `HasGatedPinnedExtensions`, is
-`Realization.IsModel.hasFiniteCutReceiving_of_hasGatedPinnedExtensions`
-(`VaughtConjecture.Realization.FiniteCutReceiving`): the private context is acquired by the
-uniformity and high-arity-dominance clauses, with exact consistency (no generalized saturation)
-(`Realization.IsModel.exists_privateContext`), and the bottom-pattern clause of the model is
-applied with the display's labels, its instance witnessed nonempty by the display itself; then
-the agreement here gives receiving at the requested cutoff.
+extension, and stands.  Gated extensions exist for some inputs
+(`StageType.GatedExtension.instance_two_zero`), but the universal gated extension hypothesis
+`StageType.HasGatedPinnedExtensions`, which would supply one for every private context, fails at
+every stage (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`): a private type with
+two cells of full scope and full grade that lawful labellings order either way has no gated
+extension.  Finite-cut receiving
+for all models, (R1), is not claimed here; it is open in general.  The private context is
+acquired by the uniformity and high-arity-dominance clauses, with exact consistency (no
+generalized saturation) (`Realization.IsModel.exists_privateContext`), and the bottom-pattern
+clause of a model, applied with the labels of a display, realizes the bottom pattern read here;
+a route to (R1) through these pieces needs a gate predicate that legal displays over every
+private context satisfy (prospective).
 
 ## Placement
 

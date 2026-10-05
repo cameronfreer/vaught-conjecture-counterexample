@@ -53,9 +53,7 @@ disjoint, and no canonical property of a class is chosen.
 
 The hypotheses, **each still to be proved**, and where they are used:
 
-* (R1) of the table of Layer 3 (`FiniteCutReceiving`; it follows from the gated pinned extension
-  property `StageType.HasGatedPinnedExtensions`, also unproved, by
-  `Expansion.finiteCutReceiving_of_hasGatedPinnedExtensions`): the rigid-core comparison;
+* (R1) of the table of Layer 3 (`FiniteCutReceiving`, open): the rigid-core comparison;
 * output 3 of higher-stage reconstruction, Layer 4 (`ContinuationCriterion`, sufficiency only):
   the cover;
 * (R2) of the table of Layer 3 (`Realization.ResidualReceiving`): the residual comparison;
@@ -130,8 +128,7 @@ theorem subsingleton_classes_of_property (hrec : FiniteCutReceiving.{0})
   exact Quotient.sound (isoSetoid_r_iff.mpr ⟨i⟩)
 
 /-- **The successor losses of the expansion domains are countable**, conditional on the following
-hypotheses, each still to be proved: (R1) of the table of Layer 3 (`hrec`; it follows from the
-gated pinned extension property, `finiteCutReceiving_of_hasGatedPinnedExtensions`), output 3 of
+hypotheses, each still to be proved: (R1) of the table of Layer 3 (`hrec`), output 3 of
 higher-stage reconstruction (`hcont`, the continuation criterion; Layer 4), (R2) (`hres`) and (R3)
 (`hhol`) of the table of Layer 3.  The
 loss at `ξ` is covered by the countably many subsingletons of classes with a given terminal

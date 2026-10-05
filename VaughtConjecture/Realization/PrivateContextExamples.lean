@@ -11,7 +11,7 @@ import VaughtConjecture.Realization.PrivateContext
 Special cases of `VaughtConjecture.Realization.PrivateContext`:
 
 * **the empty root**: over an occurrence on no points the literal-face equation holds for every
-  embedding, and the private context has arity at least `2`;
+  embedding, and the private context, also in its anchored form, has arity at least `2`;
 * **the anchoring condition of the gated extension**: every non-bottom label of a new donor cell
   (a cell whose scope contains the new point) below the private cap is `vr_n(i, label z)` for
   some cell `z` of the private type and some `i ≤ n`, with no condition on `z`.  It holds for
@@ -60,6 +60,14 @@ example (hR : R.IsModel) {γ : Ordinal.{u}} (hγ : γ < α) :
   obtain ⟨-, -, d, -, -⟩ := hR.dominance x γ hγ
   obtain ⟨y, -, C, -, hy, -, hC, hγC, -⟩ := hR.exists_privateContext x d hγ 0
   exact ⟨x, y, C, hx, by omega, hC, hγC⟩
+
+/-- **The empty root, anchored**: over an occurrence on no points, the anchored private context
+(`IsModel.exists_privateContext_isAnchored`) has arity at least `2`. -/
+example (hR : R.IsModel) (x : R.Occurrence) (hx : x.arity = 0) (d : StageType.{u} α (x.arity + 1))
+    {γ : Ordinal.{u}} (hγ : γ < α) :
+    ∃ (y : R.Occurrence) (C : Fin y.type.card), 2 ≤ y.arity ∧ IsAnchored y.type C d := by
+  obtain ⟨y, -, C, -, -, hn, -, -, hanc⟩ := hR.exists_privateContext_isAnchored x d hγ
+  exact ⟨y, C, by omega, hanc⟩
 
 /-! ### The anchoring condition of the gated extension -/
 
