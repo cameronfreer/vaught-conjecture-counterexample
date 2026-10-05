@@ -60,9 +60,24 @@ bountifulness asks for keep the twins at `⊥`, so availability makes the gate d
 and the one witness of the gate cannot read both orders.  The definition is kept to state that
 refutation.  The structure `GatedExtension` is inhabited, for a private type with a unique cell of
 full scope and full grade (`StageType.GatedExtension.instance_two_zero`), and the statements about
-a given gated extension, here and in `VaughtConjecture.Realization.GateRecovery`, stand.  A
-corrected gate predicate, for instance one in which every twin reads the gate as it reads the cap
-instead of being labelled `⊥`, is prospective.
+a given gated extension, here and in `VaughtConjecture.Realization.GateRecovery`, stand.
+
+**The coupled gate.**  A **coupled gated extension** (`StageType.CoupledGatedExtension`) has the
+same data with the clause on the twins replaced by a condition on the rows of the display: every
+twin `t` of the gate `G` reads `G` at least as it reads the cap `C`, `row t C ≤ row t G`
+(`CellScheme.Rows.TwinsReadGate`).  Then the gate is at least the cap in every lawful labelling of
+the rows of the display (`CoupledGatedExtension.gate_ge_cap_of_lawful`), by availability and
+locality alone, so the display does not label the gate `⊥`
+(`CoupledGatedExtension.label_gate_ne_bot`), and the readings of the gate still force anchoring
+(`CoupledGatedExtension.isAnchored`).  The **coupled gated pinned extension property**
+(`StageType.HasCoupledGatedPinnedExtensions α`) asks for a coupled gated extension for the same
+inputs.  It is a named hypothesis and it is **open**.  It holds at the input that refutes the
+gated pinned extension property: over the empty root, with the donor `P α|{0}` and the cap `3`,
+the private type `GatedExtensionCounterexample.P α` has a coupled gated extension, whose gate has a
+twin labelled `⊤` (`CoupledGateExamples.exists_coupledGatedExtension_refutingInput`).  Nothing more
+is proved about it: the other donors of `P α` (a donor labelled `⊤`, which needs the cap of `P α`
+lowered, and donors with several cells) and general private types are not covered.  The open point
+is **cap lowering**, stated in the docstring of `StageType.HasCoupledGatedPinnedExtensions`.
 
 ## Placement
 
@@ -168,6 +183,83 @@ theorem label_gate_ne_bot : E.display.label E.gate ≠ ⊥ :=
 
 end GatedExtension
 
+/-- A **coupled gated extension** of a stage type `P` on `n` points over the face `f`, with donor
+`d` on `m + 1` points: a gated extension (`GatedExtension`) in which the twins of the gate are not
+required to be labelled `⊥`; instead the rows of the display couple them to the gate: every twin
+reads the gate at least as it reads the cap (`CellScheme.Rows.TwinsReadGate`). -/
+structure CoupledGatedExtension (P : StageType.{u} α n) (f : Fin m ↪ Fin n)
+    (d : StageType.{u} α (m + 1)) where
+  /-- The display. -/
+  display : StageType.{u} α (n + 1)
+  /-- The display is legal. -/
+  isLegal : display.IsLegal
+  /-- The private face of the display is literally `P`. -/
+  restrictFace_castSuccEmb : restrictFace Fin.castSuccEmb display = some P
+  /-- The donor face of the display is literally `d`. -/
+  restrictFace_extendByLast : restrictFace (extendByLast f) display = some d
+  /-- The gate. -/
+  gate : Fin display.card
+  /-- The cap, the private cap seen in the display. -/
+  cap : Fin display.card
+  /-- The gate has full scope and grade `n`. -/
+  gradedIndex_gate : display.toCellScheme.gradedIndex gate = (univ, n)
+  /-- The cap has full scope on the private points and grade `n`. -/
+  gradedIndex_cap : display.toCellScheme.gradedIndex cap = (univ.map Fin.castSuccEmb, n)
+  /-- The twins of the gate read the gate at least as the cap. -/
+  twinsReadGate : display.rows.TwinsReadGate gate cap
+  /-- The gate data: the row of the gate reads every new donor cell. -/
+  isGate : display.rows.IsGate gate cap (display.toCellScheme.visible (Set.range Fin.castSuccEmb))
+    (display.toCellScheme.visible (Set.range (extendByLast f))) display.label
+
+variable (α) in
+/-- The **coupled gated pinned extension property** at stage `α`: the gated pinned extension
+property (`HasGatedPinnedExtensions`) with coupled gated extensions in place of gated extensions.
+For every legal `P` on `n` points, every face `f` of `P` with restriction `p`, every legal
+one-point coface `d` of `p`, and every cell `C` of `P` of graded index `(univ, n)` not labelled
+`⊥` below which `d` is anchored, if `m + 1 < n` there is a coupled gated extension of `P` over `f`
+with donor `d` whose cap carries the label of `C`.
+
+This is a **named hypothesis, and it is open**.  It is proved at one input only: the input at
+which `HasGatedPinnedExtensions` is refuted, the private type `GatedExtensionCounterexample.P α`
+over the empty root with the donor `P α|{0}` and the cap `3`
+(`CoupledGateExamples.exists_coupledGatedExtension_refutingInput`).  The open point is **cap
+lowering (CL)**.  In every lawful labelling of the display the gate dominates the cap, so a lift
+from a coatom `(F ∪ {y}, n)` (`F` a face of `n - 1` private points containing the root, `y` the new
+point) whose prescriptions at a donor cell and at its anchor force the gate below a label `v`
+also forces the private cap below `v`.  The statement to be decided is: for the private type `P`,
+a face `F` of `n - 1` points, a cap `c` self-visible at `n`, a labelling `p` lawful below
+`(F, n - 1)` in the cap ball of the labelling of `P` at `c`, and a label `v ≥ c` self-visible at
+`n`, some lawful labelling of `P` extends `p`, lies in that cap ball, and is at most `v` at `C`.
+The case of a donor labelled `⊤` on `P α`, which exercises it, is not compiled. -/
+def HasCoupledGatedPinnedExtensions : Prop :=
+  ∀ {n m : ℕ} (P : StageType.{u} α n) (f : Fin m ↪ Fin n) (p : StageType.{u} α m)
+    (d : StageType.{u} α (m + 1)) (C : Fin P.card),
+    P.IsLegal → restrictFace f P = some p → d.IsLegal → restrictFace Fin.castSuccEmb d = some p →
+    P.toCellScheme.gradedIndex C = (univ, n) → P.label C ≠ ⊥ → m + 1 < n → IsAnchored P C d →
+    ∃ E : CoupledGatedExtension P f d, E.display.label E.cap = P.label C
+
+namespace CoupledGatedExtension
+
+variable {P : StageType.{u} α n} {f : Fin m ↪ Fin n} {d : StageType.{u} α (m + 1)}
+  (E : CoupledGatedExtension P f d)
+
+/-- The gate has grade `n`. -/
+theorem grade_gate : E.display.toCellScheme.grade E.gate = n :=
+  congrArg Prod.snd E.gradedIndex_gate
+
+/-- **The gate inequality for every lawful labelling of the rows of the display**, the display's
+own labelling, the lifts that bountifulness asks for, and the realized types alike. -/
+theorem gate_ge_cap_of_lawful {q : Fin E.display.card → Label.{u}}
+    (hq : E.display.rows.IsLawful q) : q E.cap ≤ q E.gate :=
+  CellScheme.Rows.gate_ge_cap_of_lawful hq E.isGate.scope_cap_subset E.isGate.grade_cap
+    E.twinsReadGate
+
+/-- The display labels the gate at least as the cap, so not `⊥`. -/
+theorem label_gate_ne_bot : E.display.label E.gate ≠ ⊥ := fun h ↦
+  E.isGate.cap_ne_bot (le_bot_iff.mp (h ▸ E.gate_ge_cap_of_lawful E.display.isLawful))
+
+end CoupledGatedExtension
+
 /-- **The readings of a gate force anchoring**, for a display `Q` with literal faces `P` and `d`:
 if the row of a cell `G` of grade `n` reads every new donor cell against a cap `C'` labelled as the
 cell `C` of `P`, the donor is anchored in `P` below `C`. -/
@@ -215,6 +307,15 @@ the label of a cell `C` of `P` is anchored in `P` below `C`.  So the anchoring h
 `HasGatedPinnedExtensions` is necessary for its conclusion. -/
 theorem GatedExtension.isAnchored {P : StageType.{u} α n} {f : Fin m ↪ Fin n}
     {d : StageType.{u} α (m + 1)} (E : GatedExtension P f d) {C : Fin P.card}
+    (hC : E.display.label E.cap = P.label C) : IsAnchored P C d :=
+  isAnchored_of_isGate E.restrictFace_castSuccEmb E.restrictFace_extendByLast E.grade_gate
+    E.isGate hC
+
+/-- **A coupled gated extension has an anchored donor**: the donor of a coupled gated extension
+whose cap carries the label of a cell `C` of `P` is anchored in `P` below `C`.  So the anchoring
+hypothesis of `HasCoupledGatedPinnedExtensions` is necessary for its conclusion. -/
+theorem CoupledGatedExtension.isAnchored {P : StageType.{u} α n} {f : Fin m ↪ Fin n}
+    {d : StageType.{u} α (m + 1)} (E : CoupledGatedExtension P f d) {C : Fin P.card}
     (hC : E.display.label E.cap = P.label C) : IsAnchored P C d :=
   isAnchored_of_isGate E.restrictFace_castSuccEmb E.restrictFace_extendByLast E.grade_gate
     E.isGate hC
