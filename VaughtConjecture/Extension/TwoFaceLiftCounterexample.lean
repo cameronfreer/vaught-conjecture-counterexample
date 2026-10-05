@@ -50,7 +50,8 @@ graded indices (`pairLabelling A_C F_C A_D F_D`, lawful below both coatoms at th
 `isLawfulBelow_pairLabelling`).  The statements are proved for every seed on five points whose two
 coatom types are `T4` (`I.left = T4 α`, `I.right = T4 α`) and specialized to `seed4` by `rfl`.
 
-**The failure** (`not_twoFaceLift_two_of`, `not_twoFaceLift_two`).  Take `d₁` the cell at
+**The failure** (`not_twoFaceLift_two_of_isLawfulBelow_pairLabelling`, `not_twoFaceLift_two_of`,
+`not_twoFaceLift_two`).  Take `d₁` the cell at
 `({3}, 1)` on `C`, `d₂` the cell at `({4}, 1)` on `D`, and `s` the cell at `({0, 1, 2, 4}, 2)`.  A
 catalogue entry `b₀` of the layer at the grade `2` takes one value `β₁` at `d₁` and `d₂`, with
 finite part `1` and strictly below its *strip cap* `h₂ = visibilityReplace 2 2 β₁`.  The catalogue
@@ -59,7 +60,10 @@ grade `2` only when the entry of that cell agrees with `b₀` capped at `h₂`, 
 `d₁` and `d₂` at the same value.  The prescription `w`, equal to `a` on `C` and to `⊤` at the live
 cells of `D`, is lawful below both coatoms and agrees with `a` capped at `h`.  A two-face lift
 would be `⊤` at `s`, hence, by availability, `⊤` at a new cell `u` at `(univ, 2)`; locality at `u`
-would then force the prescriptions at `d₁` and `d₂` to be equal.  They are not.
+would then force the prescriptions at `d₁` and `d₂` to be equal.  They are not.  The argument
+uses only these three cells and the lawfulness of `pairLabelling` below both coatoms, so it applies
+to every seed on five points with them (such as the seeds of the module
+`VaughtConjecture.Extension.TwoFaceLiftExistsCounterexample`).
 
 **What this shows.**  The failure concerns the existence of the extension, not a method of
 constructing it: no labelling with the three properties of `2FL(2)` exists for these `a`, `h` and
@@ -278,7 +282,7 @@ private theorem stripShifter_of_not_lt {A x : Label.{u}} (hx : x ≠ ⊥)
   unfold stripShifter
   rw [ite_eq_right hx, ite_eq_right hxω]
 
-private theorem stripShifter_bot (A : Label.{u}) : stripShifter A ⊥ = ⊥ := by
+theorem stripShifter_bot (A : Label.{u}) : stripShifter A ⊥ = ⊥ := by
   unfold stripShifter; rw [ite_eq_left rfl]
 
 private theorem monotone_stripShifter (A : Label.{u}) : Monotone (stripShifter A) := by
@@ -325,12 +329,12 @@ theorem isWitness_stripShifter {A F : Label.{u}} (hF : IsSelfVisible 2 F) :
 private theorem v1_eq : (v1 : Label.{u}) = ((1 : ℕ) : Label.{u}) := by
   rw [natCast_label]; simp [v1, gridPoint]
 
-private theorem stripShifter_v1 {A : Label.{u}} (hA : IsSelfVisible 1 A) :
+theorem stripShifter_v1 {A : Label.{u}} (hA : IsSelfVisible 1 A) :
     stripShifter A v1 = A := by
   rw [v1_eq, stripShifter_natCast]
   exact visibilityReplace_two_one hA
 
-private theorem stripShifter_v2 (A : Label.{u}) : stripShifter A v2 = ⊤ := by
+theorem stripShifter_v2 (A : Label.{u}) : stripShifter A v2 = ⊤ := by
   refine stripShifter_of_not_lt (gridPoint_ne_bot 2 1) ?_
   simp only [v2, gridPoint, WithBot.coe_lt_coe, WithTop.coe_lt_coe, not_lt, Nat.cast_one,
     mul_one]
@@ -429,7 +433,7 @@ private theorem three_le_of_grade_one : ∀ d : Fin 19, live d = true → cellGr
 private theorem eq_fifteen_of_grade_two : ∀ d : Fin 19, live d = true → cellGrade d = 2 →
     d = 15 := by decide +kernel
 
-private theorem mem_below_of_le {Z : Finset (Fin 4) × ℕ} {d e : Fin 19} (hd : d ∈ cells.below Z)
+theorem mem_below_of_le {Z : Finset (Fin 4) × ℕ} {d e : Fin 19} (hd : d ∈ cells.below Z)
     (h : cells.gradedIndex e ≤ cells.gradedIndex d) : e ∈ cells.below Z := le_trans h hd
 
 private theorem live_cases (d : Fin 19) :
@@ -592,7 +596,7 @@ theorem isCoded_S : S.{u}.IsCoded := by
   · exact gridPoint_lt_omega0_sq 2 1
   · exact WithBot.bot_lt_coe _
 
-private theorem complete_below : ∀ B ∈ Geometry.intervalPlan (univ : Finset (Fin 4)), ∀ k < 4,
+theorem complete_below : ∀ B ∈ Geometry.intervalPlan (univ : Finset (Fin 4)), ∀ k < 4,
     0 < k → k ≤ #B → ∃ d : Fin 19, cellScope d = B ∧ cellGrade d = k := by
   decide +kernel
 
@@ -856,8 +860,10 @@ private theorem visibilityReplace_three_lt {y : Label.{u}} {b : Ordinal.{u}} (hy
 
 /-! ### The refutation -/
 
-/-- **`2FL(2)` fails on every seed on five points whose two coatom types are `T4`.**  With the
-cells `d₁ = ({3}, 1)` on `C`, `d₂ = ({4}, 1)` on `D` and `s = ({0, 1, 2, 4}, 2)`:
+/-- **`2FL(2)` fails on every seed on five points with cells `d₁ = ({3}, 1)` on `C`,
+`d₂ = ({4}, 1)` on `D` and `s = ({0, 1, 2, 4}, 2)` on which `pairLabelling A_C F_C A_D F_D` is
+lawful below both coatoms at the grade `3`** whenever `A_C`, `A_D` are self-visible at `1` and
+`F_C`, `F_D` at `2` (for instance the seeds whose two coatom types are `T4`):
 
 1. a catalogue entry `b₀` of the layer at the grade `2` reading `ω + 1` at the live cells of grade
    `1` and `ω + 2` at the live cells of grade `2` (`Seed.exists_orbitCode_mem_catalogue_two`)
@@ -871,14 +877,20 @@ cells `d₁ = ({3}, 1)` on `C`, `d₂ = ({4}, 1)` on `D` and `s = ({0, 1, 2, 4},
    `r u = ⊤`, hence `a u ≥ h`; then the entry of `u` agrees with `b₀` capped at `h₂`, so its row
    reads `d₁` and `d₂` at the same value `β₁`, and locality at `u` gives
    `⊤ = r d₂ ≤ r d₁ = a d₁`, while `a d₁ ≠ ⊤`. -/
-theorem not_twoFaceLift_two_of {I : Seed.{u} α 3} (hIL : I.left = T4 α) (hIR : I.right = T4 α) :
+theorem not_twoFaceLift_two_of_isLawfulBelow_pairLabelling {I : Seed.{u} α 3}
+    {d₁ d₂ sD : Fin I.amalgam.card}
+    (hd₁ : I.amalgam.toCellScheme.gradedIndex d₁ = (({3} : Finset (Fin 5)), 1))
+    (hd₂ : I.amalgam.toCellScheme.gradedIndex d₂ = (({4} : Finset (Fin 5)), 1))
+    (hsD : I.amalgam.toCellScheme.gradedIndex sD = (({0, 1, 2, 4} : Finset (Fin 5)), 2))
+    (hlaw : ∀ {AC FC AD FD : Label.{u}}, IsSelfVisible 1 AC → IsSelfVisible 2 FC →
+      IsSelfVisible 1 AD → IsSelfVisible 2 FD →
+      I.amalgam.rows.IsLawfulBelow (univ.erase (Fin.last 4), 3)
+          (fun d ↦ pairLabelling AC FC AD FD (I.amalgam.toCellScheme.gradedIndex d)) ∧
+        I.amalgam.rows.IsLawfulBelow (univ.erase (Fin.castSucc (Fin.last 3)), 3)
+          (fun d ↦ pairLabelling AC FC AD FD (I.amalgam.toCellScheme.gradedIndex d))) :
     ¬ I.TwoFaceLift 2 := by
   classical
   intro H
-  -- The cells `d₁ = ({3}, 1)`, `d₂ = ({4}, 1)` and `s = ({0, 1, 2, 4}, 2)`.
-  obtain ⟨d₁, hd₁⟩ := exists_d₁ hIL
-  obtain ⟨d₂, hd₂⟩ := exists_d₂ hIR
-  obtain ⟨sD, hsD⟩ := exists_s hIR
   have hg₁ : I.amalgam.toCellScheme.grade d₁ = 1 := congrArg Prod.snd hd₁
   have hg₂ : I.amalgam.toCellScheme.grade d₂ = 1 := congrArg Prod.snd hd₂
   have hgs : I.amalgam.toCellScheme.grade sD = 2 := congrArg Prod.snd hsD
@@ -890,7 +902,7 @@ theorem not_twoFaceLift_two_of {I : Seed.{u} α 3} (hIL : I.left = T4 α) (hIR :
   have hsv22 : IsSelfVisible 2 (Q.{u} 1 2) := isSelfVisible_Q.mpr le_rfl
   set P : Fin I.amalgam.card → Label.{u} := fun d ↦
     pairLabelling (Q 1 1) (Q 1 2) (Q 1 1) (Q 1 2) (I.amalgam.toCellScheme.gradedIndex d) with hP
-  obtain ⟨hPC, hPD⟩ := isLawfulBelow_pairLabelling hIL hIR hsv11 hsv22 hsv11 hsv22
+  obtain ⟨hPC, hPD⟩ := hlaw hsv11 hsv22 hsv11 hsv22
   have hPC2 : I.amalgam.rows.IsLawfulBelow (univ.erase (Fin.last (3 + 1)), 2)
       fun d ↦ P d :=
     hPC.mono (X := (univ.erase (Fin.last 4), 2)) ⟨subset_rfl, by omega⟩
@@ -1054,7 +1066,7 @@ theorem not_twoFaceLift_two_of {I : Seed.{u} α 3} (hIL : I.left = T4 α) (hIR :
   -- The prescription `w`: `a` on the first coatom, `⊤` on the live cells of the second.
   set w : Fin I.amalgam.card → Label.{u} := fun d ↦
     pairLabelling A₃ F₃ ⊤ ⊤ (I.amalgam.toCellScheme.gradedIndex d) with hw_def
-  obtain ⟨hwC, hwD⟩ := isLawfulBelow_pairLabelling hIL hIR hA₃sv hF₃sv (isSelfVisible_top 1)
+  obtain ⟨hwC, hwD⟩ := hlaw hA₃sv hF₃sv (isSelfVisible_top 1)
     (isSelfVisible_top 2)
   have hag : ∀ d, I.amalgam.toCellScheme.grade d ≤ 2 + 1 →
       min (w d) h = min (a (I.towerEmbed 2 d)) h := by
@@ -1148,6 +1160,16 @@ theorem not_twoFaceLift_two_of {I : Seed.{u} α 3} (hIL : I.left = T4 α) (hIR :
     hRu, hrw d₂ (by omega), hrw d₁ (by omega), hw_def] at h21
   simp only [pairLabelling, hd₁, hd₂, hk₁, hk₂, min_top_right] at h21
   exact hA₃top (top_le_iff.mp h21)
+
+/-- **`2FL(2)` fails on every seed on five points whose two coatom types are `T4`**
+(`not_twoFaceLift_two_of_isLawfulBelow_pairLabelling`, with `isLawfulBelow_pairLabelling`). -/
+theorem not_twoFaceLift_two_of {I : Seed.{u} α 3} (hIL : I.left = T4 α) (hIR : I.right = T4 α) :
+    ¬ I.TwoFaceLift 2 := by
+  obtain ⟨d₁, hd₁⟩ := exists_d₁ hIL
+  obtain ⟨d₂, hd₂⟩ := exists_d₂ hIR
+  obtain ⟨sD, hsD⟩ := exists_s hIR
+  exact not_twoFaceLift_two_of_isLawfulBelow_pairLabelling hd₁ hd₂ hsD
+    (isLawfulBelow_pairLabelling hIL hIR)
 
 /-- **`2FL(2)` fails for the seed of `T4` with itself.** -/
 theorem not_twoFaceLift_two : ¬ (seed4 α).TwoFaceLift 2 :=

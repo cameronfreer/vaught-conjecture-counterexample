@@ -76,27 +76,48 @@ through the step from deadness of the old cells of the grade `3`: they are *dead
 every labelling of the amalgam lawful below a coatom (`Seed.DeadAt 2`;
 `Seed.towerInvariant_succ_of_dead`, module `VaughtConjecture.Extension.DeadCellStep`).
 
-**What stays open.**  The coatom extension properties `StageType.HasApexCoatomExtensions` and
-`StageType.HasCoatomExtensions` at the stages that are zero or a limit quantify over the seeds of
-every arity (`StageType.HasApexCoatomExtensions.of_completionBelowFullGrade`); they are prospective,
-and they are not refuted.  Neither boundary triple of the library for the step to a grade
-`j + 1 ≤ m` serves every seed: the triple through `(D, j + 1)` uses `2FL(j)`, which fails for a
-legal seed at `j = 2`; the triple through `(univ, j)` uses a union fill of the other coatom over the
-common face, which fails for a legal seed at the grade `2` (module
+**The step, stated exactly, and what stays open.**  Neither boundary triple of the library for the
+step to a grade `j + 1 ≤ m` serves every seed: the triple through `(D, j + 1)` uses `2FL(j)`, which
+fails for a legal seed at `j = 2`; the triple through `(univ, j)` uses a union fill of the other
+coatom over the common face, which fails for a legal seed at the grade `2` (module
 `VaughtConjecture.Extension.UnionFillCounterexample`).  Each serves some seeds: the first at `j = 1`
 (`Seed.twoFaceLift_one`), the second when the old cells of the grade `j + 1` are dead
-(`Seed.towerInvariant_succ_of_dead`) and at the top grade (`Seed.towerInvariant_top`).  The open
-point is an *existential two-face lift* `2FL∃(j)`: for every catalogue entry `a` at the grade
+(`Seed.towerInvariant_succ_of_dead`) and at the top grade (`Seed.towerInvariant_top`).  The case
+split `2FL(j) ∨ Seed.DeadAt j` does not cover every legal seed either: both fail at `j = 2` for a
+legal seed on five points
+(`TwoFaceLiftExistsCounterexample.not_forall_twoFaceLift_or_deadAt`), which nevertheless has a
+completion below the full grade.  The hypothesis of the step, stated exactly, is the *existential
+two-face lift* `2FL∃(j)` (`Seed.TwoFaceLiftExists`, module
+`VaughtConjecture.Extension.TwoFaceLiftExists`): for every catalogue entry `a` at the grade
 `j + 1`, every cap `h` self-visible and short at `j + 1` with `⊥ < h`, and every labelling `w_C`
 lawful below `(C, j + 1)` that agrees with `a` capped at `h`, the step chooses a labelling `w_D`
 lawful below `(D, j + 1)`, equal to `w_C` at the cells of the common face of grade at most `j + 1`
 and agreeing with `a` capped at `h`, such that the labelling glued from `w_C` and `w_D` satisfies
-the conclusion of `2FL(j)`.  The step would use it through a variant of
-`CellScheme.Rows.cappedLift_of_boundary_short` in which the extension from the boundary is asked
-only for the boundary labellings whose part on `V` the step itself chooses.  Whether `2FL∃(j)`
-holds is undecided.  In the configuration of that failure it holds, with `w_D` equal to `a` on
-`D` (not compiled, and immediate: there `w_C` is `a` on `C`, so the glued labelling is `a`, and
-`r = a` has the properties of the conclusion).
+the conclusion of `2FL(j)`.  For `j ≤ m` and under the invariant at the grade `j`, the invariant at
+`j + 1` holds exactly when `2FL∃(j)` does (`Seed.towerInvariant_succ_iff_twoFaceLiftExists`), and
+the invariant at the top grade holds exactly when `2FL∃(j)` holds at the grades `2 ≤ j < m`
+(`Seed.towerInvariant_top_iff`): a reformulation of the step through the tower, not a weaker
+sufficient hypothesis.  The step uses `CellScheme.Rows.cappedLift_of_boundaries_short` with the
+degenerate triple `U = V = O = (C, j + 1)` at the positive caps; the choice of `w_D` is made inside
+the hypothesis.  `2FL∃(j)` holds under `2FL(j)` (for `j ≤ m`), under deadness together with the
+invariant at `j`, and for the seeds whose two coatom types are the type `T5` of the module
+`VaughtConjecture.Extension.TwoFaceLiftExistsCounterexample`, where neither `2FL(2)` nor deadness
+holds; for the seed of the failure of `2FL(2)` above it holds by deadness
+(`TwoFaceLiftExistsCounterexample.twoFaceLiftExists_two_seed4`).
+
+What stays open is whether `2FL∃(j)` holds for every seed at the grades `2 ≤ j < m`; the next case
+to decide is a seed whose two coatom types differ but share a face, with a row coupling the cell
+of the common face to cells of lower grade on one side only, together with the strip case.  For a
+two-face lift `2FL(2)` holding for every seed, the identified obstruction, the strip case, survives
+the redesigns examined (of the encoding, of the alignment, and of an owner seeing both faces); the
+existential form chooses `w_D` instead.  The coatom extension properties
+`StageType.HasApexCoatomExtensions` and `StageType.HasCoatomExtensions` at the stages that are zero
+or a limit quantify over the seeds of every arity
+(`StageType.HasApexCoatomExtensions.of_completionBelowFullGrade`); they remain to be proved, and
+they are not refuted.  Conditional on the step at every grade, that is on `2FL∃(j)` for every seed
+at the grades `2 ≤ j < m`, the first holds
+(`StageType.hasApexCoatomExtensions_of_twoFaceLiftExists`: 2.7 reformulated through the tower);
+that hypothesis is open, and no compiled fact refutes it.
 
 No hypothesis on the stage enters, no union fill (module
 `VaughtConjecture.Extension.UnionFillCounterexample`) and no completion is assumed, and neither

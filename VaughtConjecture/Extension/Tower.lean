@@ -109,7 +109,10 @@ need not be short at the grades of the layers it crosses.
   every labelling lawful below a coatom, `Seed.DeadAt 2`), and the step from deadness
   (`Seed.towerInvariant_succ_of_dead`, module
   `VaughtConjecture.Extension.DeadCellStep`), which uses the boundary triples of the step to the
-  top grade, gives the invariant without `2FL(2)`.  Bountifulness and legality of the tower and the
+  top grade, gives the invariant without `2FL(2)`.  The hypothesis of the step, stated exactly, is
+  the existential two-face lift (`Seed.TwoFaceLiftExists`, module
+  `VaughtConjecture.Extension.TwoFaceLiftExists`), implied by `2FL(j)` and by deadness, and holding
+  for a legal seed where neither does.  Bountifulness and legality of the tower and the
   completion below the full grade are proved from the invariant at the top grade in the module
   `VaughtConjecture.Extension.TwoFaceLift`: with no hypothesis at the arities `m ≤ 2`, and for a
   seed satisfying `2FL(j)` at the grades `2 ≤ j < m` at every arity.
@@ -551,7 +554,7 @@ theorem last_ne_castSucc : (Fin.last (m + 1) : Fin (m + 2)) ≠ Fin.castSucc (Fi
   (Fin.castSucc_lt_last _).ne'
 
 /-- Two distinct points omitted by the coatoms are the two points, in some order. -/
-private theorem pair_cases {x y : Fin (m + 2)}
+theorem pair_cases {x y : Fin (m + 2)}
     (hx : x ∈ ({Fin.last (m + 1), Fin.castSucc (Fin.last m)} : Finset (Fin (m + 2))))
     (hy : y ∈ ({Fin.last (m + 1), Fin.castSucc (Fin.last m)} : Finset (Fin (m + 2))))
     (hxy : x ≠ y) :
