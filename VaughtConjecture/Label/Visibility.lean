@@ -33,7 +33,9 @@ Visibility replacement of an ordinal at threshold `k` with value `i` replaces it
   above `ω` (`not_lt_omega_visibilityReplace`).
 * At a stage `α` that is zero or a limit, `α + K` is self-visible at every `k ≤ K`
   (`isSelfVisible_coe_add`); a label at least `α` and self-visible at `n` is at least `α + n`
-  (`coe_add_le_of_isSelfVisible`), since `α` is a multiple of `ω`; replacement with a value
+  (`coe_add_le_of_isSelfVisible`), since `α` is a multiple of `ω`, and conversely a label at the
+  stage `α + ω` that is at least `α + n` is self-visible at `n`
+  (`isSelfVisible_of_coe_add_le`); replacement with a value
   `i ≤ K` keeps a label at most `α + K` at most `α + K` (`visibilityReplace_le_coe_add`); finitely
   many labels below `α` have a common bound below `α` that is self-visible at a given threshold
   (`exists_isSelfVisible_bound`), and between an ordinal `o` and a stage `β > o` that is zero or
@@ -290,6 +292,25 @@ theorem coe_add_le_of_isSelfVisible {β : Ordinal.{u}} {x : Label.{u}} {n : ℕ}
     refine WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr ?_)
     rw [← div_add_mod v ω]
     exact add_le_add hb (isSelfVisible_coe.mp hv)
+
+/-- **A converse of the order law**: at a stage `β` that is zero or a limit, a label at the stage
+`β + ω` that is at least `β + N` is self-visible at `N`: it is `β + j` with `N ≤ j`, or the formal
+top. -/
+theorem isSelfVisible_of_coe_add_le {β : Ordinal.{u}} (hβ : Order.IsSuccPrelimit β) {N : ℕ}
+    (hx : AtStage (β + ω) x) (hN : ((β + N : Ordinal.{u}) : Label.{u}) ≤ x) :
+    IsSelfVisible N x := by
+  induction x using recBotCoeTop with
+  | bot => exact absurd hN (not_le.mpr (WithBot.bot_lt_coe _))
+  | top => exact isSelfVisible_top N
+  | coe v =>
+    have hNv : β + N ≤ v := WithTop.coe_le_coe.mp (WithBot.coe_le_coe.mp hN)
+    have hβv : β ≤ v := le_self_add.trans hNv
+    have hj : v - β < ω := by
+      rw [← add_lt_add_iff_left β, Ordinal.add_sub_cancel_of_le hβv]
+      exact atStage_coe.mp hx
+    obtain ⟨j, hj'⟩ := lt_omega0.mp hj
+    obtain rfl : v = β + j := by rw [← hj', Ordinal.add_sub_cancel_of_le hβv]
+    exact isSelfVisible_coe_add hβ (by exact_mod_cast (add_le_add_iff_left β).mp hNv)
 
 section Block
 

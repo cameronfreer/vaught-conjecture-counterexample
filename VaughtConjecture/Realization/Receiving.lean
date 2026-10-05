@@ -101,7 +101,8 @@ density sentence; no clause of a model is used.
 of finite-cut receiving along stage reduction, are proved here.  Finite-cut receiving of models in
 general, (R1) of the table of Layer 3, is open (the universal gated extension hypothesis
 `StageType.HasGatedPinnedExtensions` fails at every stage,
-`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`), and through
+`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`, and the coupled form
+`StageType.HasCoupledGatedPinnedExtensions` is open), and through
 `Expansion.FiniteCutReceiving` it is the remaining hypothesis of the transfer of
 `VaughtConjecture.Expansion.Agreement`.
 

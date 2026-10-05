@@ -102,8 +102,10 @@ type of an occurrence of positive arity given by covering, received over that oc
 restricted to the new point (`StageType.exists_restrictFace_mem_receivingFamily`).
 That every model has finite-cut receiving is (R1) of the table of Layer 3, open in general; the
 universal gated extension hypothesis `StageType.HasGatedPinnedExtensions`, which would give it,
-fails at every stage (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`).  It is proved
-for the top-free witnesses (`hasFiniteCutReceiving_reconstruct`, in
+fails at every stage (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`).  (R1) holds
+conditional on the coupled gated pinned extension property, a named hypothesis that is open
+(`IsModel.hasFiniteCutReceiving_of_hasCoupledGatedPinnedExtensions`).  Finite-cut receiving is
+proved for the top-free witnesses (`hasFiniteCutReceiving_reconstruct`, in
 `VaughtConjecture.ClassicalLimit.Receiving`).
 
 ## References
