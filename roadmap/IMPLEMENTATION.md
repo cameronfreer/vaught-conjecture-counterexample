@@ -862,10 +862,12 @@ concern it (or *prospective*), and one of three statuses:
 The availability markers are those of `README.md`, Layer 0; an argument with no theorem named in
 this repository is prospective here.  Rows are added as notions are reached.  A row becomes P only
 when the theorem or the definition-level identification that performs the comparison is named, and
-becomes C only when the correction is recorded.  Rows 2–5 are P, by the definition-level
+becomes C only when the correction is recorded.  Rows 2–5 and 43 are P, by the definition-level
 identifications of `VaughtConjecture/Correspondence` named in their notes.  Row 6 is S:
 `IsBountiful` is the printed definition required at every stage that is zero or a limit (note 6),
-and at `ω₁` only the implication from `IsBountiful` is proved.  The other rows whose declaration
+and at `ω₁` only the implication from `IsBountiful` is proved.  Rows 41–47 concern the legal
+templates of the current draft of [AFK26] and cite its current numbering (its §4, "The
+Counterexample"), not the earlier numbering of rows 9 and 10.  The other rows whose declaration
 carries the manuscript's number but whose clauses have not been compared are S, with the compiled
 declarations listed in the notes.
 
@@ -911,6 +913,13 @@ declarations listed in the notes.
 | 38 | [AFK26] | terminal refinement of a higher presentation (item 5; no numbered statement) | S |
 | 39 | [AFK26] | exactly one expansion over a domain (item 5; no numbered statement) | S |
 | 40 | [AFK26] | maximal presentations by Scott isolation (item 5; no numbered statement) | S |
+| 41 | [AFK26] | visibility maps and self-visibility, Definition 4.24 | C |
+| 42 | [AFK26] | the relation `u ⇒ v` on labellings of a frame, Definition 4.25 | C |
+| 43 | [AFK26] | lawful local labellings, Definition 4.26 | P |
+| 44 | [AFK26] | the balls `B_γ(q)` and bountiful rows, Definition 4.26 | S |
+| 45 | [AFK26] | legal templates, Definition 4.27 | S; clause 1: C |
+| 46 | [AFK26] | a template system of legal templates, Lemma 4.28 (statement) | S |
+| 47 | [AFK26] | the counterexample, Theorem 4.29 (statement) | S |
 
 The items are those of `README.md`, "Manuscript correspondence (required)".  Notes to the rows:
 
@@ -1208,6 +1217,93 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     route proves stopping for each base that is a model as its conclusion and assumes no
     termination; it is not a dependency of the expansion-domain endpoint and is not combined with
     the conditional of row 31 in a cycle.
+41. `Label.visibilityReplace`, `Label.IsSelfVisible` (`Label/Visibility`).  The correction,
+    recorded in `Correspondence/Current/Visibility`: the printed clause sends `ω · α + n` to the
+    natural number `i` or `n`; it is read as `ω · α + i` or `ω · α + n`, the operation of
+    [Kni26, Definition 2.2.3] (row 2).  Read literally, the image of every ordinal is finite
+    (`Label.PrintedVisibilityMap.apply_coe_lt_omega0`), no ordinal `≥ ω` is self-visible
+    (`Label.PrintedVisibilityMap.apply_ne_self`), and the map is not visibility replacement
+    (`Label.PrintedVisibilityMap.ne_visibilityReplace`).  The corrected clauses
+    (`Label.CorrectedVisibilityMap`) are visibility replacement on the labels at the stage
+    (`Label.correctedVisibilityMap_iff`; on `{-∞} ∪ ω₁ ∪ {∞}`,
+    `Label.correctedVisibilityMap_omega_one_iff`), self-visibility is `Label.IsSelfVisible`
+    (`Label.CorrectedVisibilityMap.apply_eq_self_iff`), the printed domain `α ∈ ω₁` is that of the
+    stage `ω₁` (`Label.omega0_mul_add_natCast_lt_omega_one_iff`), and the definition of [Kni26] is
+    the corrected one at every stage
+    (`Label.printedVisibilityReplace_iff_forall_correctedVisibilityMap`); all compiled in this
+    repository (theorem named).
+42. `Label.PrintedTransformsTo` (row 3), that is `Label.TransformsTo`.  The printed relation
+    (`Label.PrintedFrameWitness`, `Label.PrintedFrameTransformsTo`,
+    `Correspondence/Current/Transform`) has no monotonicity clause for the shifter.  The
+    corrections: clause 4 of [Kni26, Definition 2.3.9] (monotonicity) restored; "visible at `k`"
+    read as self-visibility (Definition 4.24); the visibility map that of row 41.  Compiled in
+    this repository (theorem named): the two printed witnesses differ exactly by monotonicity
+    (`Label.printedWitness_iff_printedFrameWitness`); the relations of [Kni26] and of this
+    development give the printed one (`Label.PrintedTransformsTo.printedFrameTransformsTo`,
+    `Label.TransformsTo.printedFrameTransformsTo`); and the omission is not harmless: at `ω₁` the
+    printed relation reverses the order of two labels of grade `1`, which neither of the others
+    does (`Label.exists_printedFrameTransformsTo_not_transformsTo`).
+43. `CellScheme.Rows.IsLawfulBelow` (`Scheme/Row`).  The definition-level identification
+    `CellScheme.Rows.printedLawfulLocal_iff`, at every stage that is zero or a limit, and
+    `CellScheme.Rows.printedLawfulLocal_omega_one_iff`, on the printed labels
+    (`Correspondence/Current/LocalLabelling`), compiled in this repository (theorem named); the
+    clauses are the fields of `CellScheme.Rows.PrintedLawfulLocal`.  Departures: the cell `e'` of
+    Availability ranges over `D` but is read in `D↓U` (`CellScheme.mem_below_of_gradedIndex_eq`);
+    `D↓d` is computed in `D` (transported along a bijection in the proof of the identification);
+    the range of the labels, as in row 3.  The notions the clauses use: self-visibility (row 41, C),
+    the relation `⇒` (row 42, C), and the frame, row system, graded faces, and cells below a graded
+    face of [AFK26, Definitions 4.2 and 4.4–4.6], which are the cell scheme with its rows (the
+    templates of row 9, C), `CellScheme.below`, and the printed graded faces
+    `CellScheme.printedGradedFaces` (grade `0` allowed; `CellScheme.mem_printedGradedFaces_iff`;
+    lawfulness is defined below every pair).  The definition of [Kni26] (row 4) is the same
+    lawfulness (`CellScheme.Rows.printedLawfulLocal_iff_printedRespects`, compiled in this
+    repository (theorem named)).
+44. `CellScheme.Rows.IsBountiful` (`Scheme/Bountiful`); status S.  The clauses are the fields of
+    `CellScheme.Rows.PrintedBallHypotheses`, with the ball `CellScheme.Rows.printedBall` and the
+    definition `CellScheme.Rows.PrintedBountifulRows` (`Correspondence/Current/Bountiful`).
+    Compiled in this repository (theorem named), for finitely many cells with graded index in the
+    graded plan: `IsBountiful` is the printed definition at every stage that is zero or a limit
+    and carries the values of the rows, together with the extension of every labelling lawful
+    below a graded face to one lawful below every larger graded face (the cap `-∞`)
+    (`CellScheme.Rows.isBountiful_iff_forall_printedBountifulRows`); `IsBountiful` implies the
+    printed definition at each such stage (`CellScheme.Rows.IsBountiful.printedBountifulRows`), in
+    particular at `ω₁` (`CellScheme.Rows.IsBountiful.printedBountifulRows_omega_one`).  Not proved:
+    the converse at a single stage (as in row 6), and the cap `-∞`, which the printed definition
+    omits (`γ ∈ ω₁`) and [Kni26, Definition 2.5.14] includes (clause 4).  Harmless by named
+    theorems: the printed graded faces of grade `0`
+    (`CellScheme.Rows.printedBountifulRows_iff_gradedFaces`) and the cap `∞` (in the proof of the
+    characterization).  The two printed definitions are related by
+    `CellScheme.Rows.forall_printedBountiful_iff_forall_printedBountifulRows`, compiled in this
+    repository (theorem named).
+45. `Scheme.IsLegal` with `Scheme.IsCoded` (`Stage/Legal`, `Stage/Scheme`; row 7); the printed
+    definition `CellScheme.Rows.PrintedLegal`, the corrected one `CellScheme.Rows.CorrectedLegal`
+    (`Correspondence/Current/LegalTemplate`).  Clause 1 (C): a printed graded face may have grade
+    `0`, and clause 1 then fails for every frame whose cells have positive grade
+    (`CellScheme.Rows.not_printedLegal`, compiled in this repository (theorem named)); it is
+    corrected to the graded faces of positive grade of [Kni26, Definition 2.1.8], that is to
+    `CellScheme.IsComplete`.  Clause 2 is consistency (row 43), clause 3 is row 44 (S).  Clause 4
+    (`CellScheme.Rows.HasPrintedRange`) is strictly stronger than `Scheme.IsCoded`
+    (`CellScheme.Rows.HasPrintedRange.row_lt`; a legal scheme violating it,
+    `Scheme.exists_isLegal_not_hasPrintedRange`), so the legal schemes form a larger class.
+    Compiled in this repository (theorem named): `Scheme.IsLegal.correctedLegal` (a legal scheme
+    with clause 4 satisfies the corrected definition at every stage `θ ≥ ω ^ 2` that is zero or a
+    limit), `Scheme.IsLegal.correctedLegal_omega_one`, and the equivalence
+    `Scheme.isLegal_and_hasPrintedRange_iff` (with the corrected definition at every such stage and
+    the cap `-∞` of row 44).  Still to be proved: legality from the corrected definition at the
+    single stage `ω₁`, and whether every legal scheme is equivalent to one satisfying clause 4.
+46. Statement only.  Compiled in this repository (theorem named), in `Stage/Legal`: the legal stage
+    types are closed under the face maps (`StageType.IsLegal.restrictFace`), reindexing
+    (`StageType.IsLegal.reindex`), and stage reduction (`StageType.isLegal_reduce_iff`), and there
+    are countably many on `n` points at a countable stage (`StageType.countable_setOf_isLegal`);
+    the base language has one relation symbol for each legal stage type at `ω` (`baseLanguage`,
+    `Language/Basic`).  That they form a template system of [AFK26] representing every legal
+    template up to relabelling isomorphism is still to be proved; it rests on rows 9 and 45.
+47. Statement only.  The corresponding statement here is the main theorem in its conditional
+    composition `vaughtCounterexample_of_expansionDomains` (`MainTheorem/Assembly`), compiled in
+    this repository (theorem named), whose hypotheses are still to be proved.  That the sentence
+    `σ[L]` is the density sentence `densitySentence` is still to be proved (rows 12 and 13); the
+    first assertion of Theorem 4.29, about the system `K[L]`, has no counterpart here
+    (prospective).
 
 **Completion criteria, item by item** (the items of `README.md`, "Manuscript correspondence
 (required)").  For every item, each row of the concordance that it concerns is P or C, with its
