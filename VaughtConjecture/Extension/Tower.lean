@@ -114,7 +114,7 @@ need not be short at the grades of the layers it crosses.
   `VaughtConjecture.Extension.TwoFaceLiftExists`), implied by `2FL(j)` (for `j ≤ m`) and by
   deadness together with the invariant at `j`, and holding for a legal seed where neither
   `2FL(j)` nor deadness does.  It fails at `j = 2` for another legal seed on five points
-  (`TwoFaceLiftExistsCounterexample.not_twoFaceLiftExists_two`, module
+  (`TwoFaceLiftExistsCounterexample.not_twoFaceLiftExists_two_seedL`, module
   `VaughtConjecture.Extension.TwoFaceLiftExistsCounterexample`), so the tower does not complete
   every seed; a completion of that seed by another construction is not refuted.  Bountifulness
   and legality of the tower and the completion below the full grade are proved from the invariant

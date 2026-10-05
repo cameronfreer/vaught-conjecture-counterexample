@@ -17,13 +17,13 @@ The existential two-face lift `2FL∃(j)` (`Seed.TwoFaceLiftExists`, module
 grade `j` to `j + 1`, stated exactly (`Seed.towerInvariant_succ_iff_twoFaceLiftExists`, for
 `j ≤ m` and under the invariant at `j`), and the invariant at the top grade holds exactly when
 `2FL∃(j)` holds at the grades `2 ≤ j < m` (`Seed.towerInvariant_top_iff`).  This module shows that
-`2FL∃(2)` fails for a legal seed on five points (`not_twoFaceLiftExists_two`), at every stage.  So
-the step fails for that seed: the invariant of its tower fails at the grade `3` and at the top
-grade `4` (`not_towerInvariant_three_seedL`, `not_towerInvariant_top_seedL`), and the tower does
-not complete every seed.  `2FL∃(j)` at the grades `2 ≤ j < m` is false as a statement about every
-seed, at every stage (`not_forall_twoFaceLiftExists`), and so are the raised union fill at the
-grade `2` (`not_raisedUnionFill_two`) and the case split `2FL(2) ∨ Seed.DeadAt 2`
-(`not_twoFaceLift_or_deadAt`) for that seed.
+`2FL∃(2)` fails for a legal seed on five points (`not_twoFaceLiftExists_two_seedL`), at every
+stage.  So the step fails for that seed: the invariant of its tower fails at the grade `3` and at
+the top grade `4` (`not_towerInvariant_three_seedL`, `not_towerInvariant_top_seedL`), and the
+tower does not complete every seed.  `2FL∃(j)` at the grades `2 ≤ j < m` is false as a statement
+about every seed, at every stage (`not_forall_twoFaceLiftExists`), and so are the raised union
+fill at the grade `2` (`not_raisedUnionFill_two_seedL`) and the case split
+`2FL(2) ∨ Seed.DeadAt 2` (`not_twoFaceLift_or_deadAt_seedL`) for that seed.
 
 **The left type `TL`** (`TL`, `isLegal_TL`).  The scheme `SL` on four points has the cells of the
 type `T5` of the module `VaughtConjecture.Extension.CaseSplitCounterexample` (nineteen cells, one
@@ -35,18 +35,21 @@ cells of grade `1` at the ordinal `1` and the other live cells at `ω + 3`.
 
 **The lawful labellings** (`isLawfulBelow_iff`).  Below every pair, the lawful labellings are the
 restrictions of `labelling A F G` (`⊥` at the dead cells and `A`, `F`, `G` at the live cells of
-grade `1`, `2`, `3`), for `A`, `F`, `G` self-visible at `1`, `2`, `3` with `G ≤ F` and `Cond A G`:
-if `A < G`, then `visibilityReplace 3 1 A = A`, that is, a finite part of `A` below `3` is `1`.
-So the parameter `G` of grade `3` is coupled to `F` only, while in `T5` it is coupled to `A` and to
-`F` (`G ≤ A`, `G ≤ F`).  Locality at the cell `18`, whose row has equal entries at the cells `15`
-and `18`, gives `G ≤ F`; and it gives `Cond A G` (`cond_of_transformsTo`): if `A < G`, a witness
-`(g, σ)` at the cell `18` has `σ 1 = A ≤ g 3`, and its commutation with `visibilityReplace 3 1` at
-the natural number `1` gives `A = visibilityReplace 3 1 A`.  Sufficiency uses at the cell `18` the
-*strip shifter at the grade `3`* (`strip3`, `isWitness_strip3`), the strip shifter of `T4` one
-grade up: it sends `⊥` to `⊥`, a natural number `n` to `visibilityReplace 3 (min n 3) A`, and every
-label `≥ ω` to `⊤`; under `Cond A G`, `min (visibilityReplace 3 1 A) G = min A G`
+grade `1`, `2`, `3`), for `A`, `F`, `G` self-visible at `1`, `2`, `3` with `G ≤ F` and
+`VisibilityReplaceFixedOfLT A G`: if `A < G`, then `visibilityReplace 3 1 A = A`, that is, if the
+finite part of `A` is below `3`, it is `1`.  So the parameter `G` of grade `3` is coupled to `F`
+only, while in `T5` it is coupled to `A` and to `F` (`G ≤ A`, `G ≤ F`).  Locality at the cell
+`18`, whose row has equal entries at the cells `15` and `18`, gives `G ≤ F`; and it gives
+`VisibilityReplaceFixedOfLT A G` (`visibilityReplaceFixedOfLT_of_transformsTo`): if `A < G`, a
+witness `(g, σ)` at the cell `18` has `σ 1 = A ≤ g 3`, and its commutation with
+`visibilityReplace 3 1` at the natural number `1` gives `A = visibilityReplace 3 1 A`.
+Sufficiency uses at the cell `18` the *strip shifter at the grade `3`* (`strip3`,
+`isWitness_strip3`), the strip shifter of `T4` one grade up: it sends `⊥` to `⊥`, a natural number
+`n` to `visibilityReplace 3 (min n 3) A`, and every label `≥ ω` to `⊤`; under
+`VisibilityReplaceFixedOfLT A G`, `min (visibilityReplace 3 1 A) G = min A G`
 (`min_visibilityReplace_three_one`).  Every pair lifts capped to every larger one
-(`cappedLift_all`; the lifted parameters satisfy `Cond` by `cond_lift`), so `TL` is legal.
+(`cappedLift_all`; the lifted parameters satisfy `VisibilityReplaceFixedOfLT` by
+`visibilityReplaceFixedOfLT_lift`), so `TL` is legal.
 
 **The seed** (`seedL`).  The rows of `TL` and `T5` differ only at the cell `18` and at the apex,
 whose scopes are not in `{0, 1, 2}`, so the two types have the same face on `{0, 1, 2}`
@@ -56,9 +59,10 @@ and `D = {0, 1, 2, 4}` (of type `T5`) and common face `E = {0, 1, 2}`, which car
 `g`, at `({0, 1, 2}, 3)`.  Both types have exactly one cell at each graded index.  The labellings
 of the amalgam used are `tripleLabelling A_C F_C A_D F_D G` of the module
 `VaughtConjecture.Extension.CaseSplitCounterexample`, lawful below both coatoms at the grade `3`
-when `G ≤ F_C`, `Cond A_C G`, `G ≤ A_D` and `G ≤ F_D` (`isLawfulBelow_tripleLabelling`).  The
-refutation is proved for every seed on five points whose left coatom type is `TL` and whose right
-coatom type is `T5` (`not_twoFaceLiftExists_two_of`) and specialized to `seedL` by `rfl`.
+when `G ≤ F_C`, `VisibilityReplaceFixedOfLT A_C G`, `G ≤ A_D` and `G ≤ F_D`
+(`isLawfulBelow_tripleLabelling`).  The refutation is proved for every seed on five points whose
+left coatom type is `TL` and whose right coatom type is `T5` (`not_twoFaceLiftExists_two_of`) and
+specialized to `seedL` by `rfl`.
 
 **The failure** (`not_twoFaceLiftExists_two_of`).  Take `d₁` the cell at `({3}, 1)` on `C`, `d₂`
 the cell at `({4}, 1)` on `D`, and `s_C` the cell at `({0, 1, 2, 3}, 2)`.
@@ -82,27 +86,27 @@ the cell at `({4}, 1)` on `D`, and `s_C` the cell at `({0, 1, 2, 3}, 2)`.
    `u` gives `⊤ = w_D(d₂) ≤ w_C(d₁) = a(d₁) < ⊤`.
 
 The argument concerns the existence of `w_D` and of the extension: `2FL∃(2)` lets the step choose
-both, and no choice works.  In the argument for `T4` the cap is `ω·(2ρ − 1) + 3`, and a coupling of
-`g` below `d₂` would keep the label of `g` in the catalogue entry below that cap, so it would not
-constrain `w_D`; this holds for that cap only.  With the cap `h = a(g)` used here, the coupling
-forces `w_D(d₂) = ⊤`.
+both, and no choice works.  In the argument for `T4` the cap is `ω·(2ρ − 1) + 3`, with `ρ` the key
+rank of `β₁` at the grade `3`, and a coupling of `g` below `d₂` would keep the label of `g` in the
+catalogue entry below that cap, so it would not constrain `w_D`; this holds for that cap only.
+With the cap `h = a(g)` used here, the coupling forces `w_D(d₂) = ⊤`.
 
 **What is not refuted.**  Nothing is claimed about a completion below the full grade of `seedL`
 built by another construction, nor about `StageType.HasApexCoatomExtensions` or
 `StageType.HasCoatomExtensions`.  What fails is the step of the tower, and so the tower as a
 completion of `seedL`.
 
-**The open point.**  Whether `seedL` has a completion below the full grade at all (one would
-give a legal stage type with an apex whose faces along the two coatoms are `TL` and `T5`,
-`CompletionBelowFullGrade.exists_coatomExtension`).  A necessary condition, argued and not
-formalized: for a cap `c`, the prescription
-`(A, ⊤, ⊤)` on `C` with `A` of finite part `1`, and every labelling `q` lawful below `(univ, 3)`
-that agrees with it capped at `c`, some cell `u` of the completion at `(univ, 2)` with `q(u) ≥ c`
-*separates* `d₁` and `d₂`: its row reads `d₁` strictly below `d₂`.  The tower never meets it: in
-step 3, every cell at `(univ, 2)` where `a` reaches `h` reads `d₁` and `d₂` at the same value.  A
-candidate, prospective and not constructed, is a completion with one new cell at each `(univ, k)`,
-whose cell at `(univ, 2)` has an *ordered* row, reading the cells of grade `1` of `C` strictly
-below those of `D`.
+**The open point.**  Whether `seedL` has a completion below the full grade at all (at a stage
+that is zero or a limit, one would give a legal stage type with an apex whose faces along the two
+coatoms are `TL` and `T5`, `CompletionBelowFullGrade.exists_coatomExtension`).  A necessary
+condition, argued and not formalized: for a cap `c`, the prescription `(A, ⊤, ⊤)` on `C` with `A`
+of finite part `1`, and every labelling `q` lawful below `(univ, 3)` that agrees with it capped at
+`c`, some cell `u` of the completion at `(univ, 2)` with `q(u) ≥ c` *separates* `d₁` and `d₂`: its
+row reads `d₁` strictly below `d₂`.  The tower never meets it: in step 3, every cell at
+`(univ, 2)` where `a` reaches `h` reads `d₁` and `d₂` at the same value.  A candidate, prospective
+and not constructed, is a completion with one new cell at each `(univ, k)`, whose cell at
+`(univ, 2)` has an *ordered* row, reading the cells of grade `1` of `C` strictly below those of
+`D`.
 
 **Redesigns examined** (argued, not formalized).  The identified obstruction survives the
 redesigns examined:
@@ -254,8 +258,9 @@ noncomputable def rowsL : cells.Rows.{u} :=
 /-- The scheme on four points. -/
 noncomputable def SL : Scheme.{u} 4 := ⟨19, cells, rowsL⟩
 
-/-- The extra condition of `TL`: `A < G → visibilityReplace 3 1 A = A`. -/
-def Cond (A G : Label.{u}) : Prop := A < G → visibilityReplace 3 1 A = A
+/-- The condition of `TL` on its parameters `A` (of grade `1`) and `G` (of grade `3`): if `A < G`,
+then `visibilityReplace 3 1 A = A`, that is, if the finite part of `A` is below `3`, it is `1`. -/
+def VisibilityReplaceFixedOfLT (A G : Label.{u}) : Prop := A < G → visibilityReplace 3 1 A = A
 
 /-- Below the cell `16`, the only live cell is `16`. -/
 private theorem eq_sixteen_of_le : ∀ d : Fin 19, live d = true →
@@ -269,9 +274,10 @@ private theorem v3'_not_lt : ¬ (v3' : Label.{u}) < ((ω : Ordinal.{u}) : Label.
 
 private theorem v3'_ne_bot : (v3' : Label.{u}) ≠ ⊥ := gridPoint_ne_bot 3 1
 
-/-- The key identity at the cell `18`: under `Cond A G`, `min (vr 3 1 A) G = min A G`. -/
+/-- The key identity at the cell `18`: under `VisibilityReplaceFixedOfLT A G`,
+`min (vr 3 1 A) G = min A G`. -/
 theorem min_visibilityReplace_three_one {A G : Label.{u}} (hG : IsSelfVisible 3 G)
-    (hc : Cond A G) : min (visibilityReplace 3 1 A) G = min A G := by
+    (hc : VisibilityReplaceFixedOfLT A G) : min (visibilityReplace 3 1 A) G = min A G := by
   rcases lt_or_ge A G with hlt | hle
   · rw [hc hlt]
   · rw [min_eq_right hle, min_eq_right]
@@ -279,9 +285,9 @@ theorem min_visibilityReplace_three_one {A G : Label.{u}} (hG : IsSelfVisible 3 
       _ ≤ visibilityReplace 3 1 A := monotone_visibilityReplace (by omega) hle
 
 /-- **`labelling A F G` is lawful in `TL`** when `A`, `F`, `G` are self-visible at `1`, `2`, `3`,
-`G ≤ F` and `Cond A G`. -/
+`G ≤ F` and `VisibilityReplaceFixedOfLT A G`. -/
 theorem isLawful_labelling {A F G : Label.{u}} (hA : IsSelfVisible 1 A) (hF : IsSelfVisible 2 F)
-    (hG : IsSelfVisible 3 G) (hGF : G ≤ F) (hc : Cond A G) :
+    (hG : IsSelfVisible 3 G) (hGF : G ≤ F) (hc : VisibilityReplaceFixedOfLT A G) :
     rowsL.IsLawful (labelling A F G) where
   orderly d := isSelfVisible_labelling hA hF hG d
   locality s := by
@@ -293,6 +299,7 @@ theorem isLawful_labelling {A F G : Label.{u}} (hA : IsSelfVisible 1 A) (hF : Is
             (isSelfVisible_constStepSuppressor hA),
           fun d ↦ ?_⟩
         have hds : cells.gradedIndex d.1 ≤ cells.gradedIndex s := d.2
+        -- Unfold the restriction of `labelling A F G` and the row of `s` in `rowsL`.
         change min (labelling A F G d.1) (labelling A F G s) =
           min (topShifter (if live s = true ∧ live d.1 = true then
             (if s = 18 then (if cellGrade d.1 = 1 then v1 else v3')
@@ -311,6 +318,7 @@ theorem isLawful_labelling {A F G : Label.{u}} (hA : IsSelfVisible 1 A) (hF : Is
       · have hs18 : s ≠ 18 := by rintro rfl; exact absurd hs2 (by decide)
         refine ⟨constStepSuppressor 2 F, stripShifter A, isWitness_stripShifter hF, fun d ↦ ?_⟩
         have hds : cells.gradedIndex d.1 ≤ cells.gradedIndex s := d.2
+        -- Unfold the restriction of `labelling A F G` and the row of `s` in `rowsL`.
         change min (labelling A F G d.1) (labelling A F G s) =
           min (stripShifter A (if live s = true ∧ live d.1 = true then
             (if s = 18 then (if cellGrade d.1 = 1 then v1 else v3')
@@ -338,6 +346,7 @@ theorem isLawful_labelling {A F G : Label.{u}} (hA : IsSelfVisible 1 A) (hF : Is
             isWitness_topShifter (antitone_constStepSuppressor _ _)
               (isSelfVisible_constStepSuppressor hG),
             fun d ↦ ?_⟩
+          -- Unfold the restriction of `labelling A F G` and the row of the cell `16` in `rowsL`.
           change min (labelling A F G d.1) (labelling A F G 16) =
             min (topShifter (if live 16 = true ∧ live d.1 = true then
               (if (16 : Fin 19) = 18 then (if cellGrade d.1 = 1 then v1 else v3')
@@ -355,6 +364,7 @@ theorem isLawful_labelling {A F G : Label.{u}} (hA : IsSelfVisible 1 A) (hF : Is
             simp
         · -- The cell `18`: the strip shifter at the grade `3`.
           refine ⟨constStepSuppressor 3 G, strip3 A, isWitness_strip3 hG, fun d ↦ ?_⟩
+          -- Unfold the restriction of `labelling A F G` and the row of the cell `18` in `rowsL`.
           change min (labelling A F G d.1) (labelling A F G 18) =
             min (strip3 A (if live 18 = true ∧ live d.1 = true then
               (if (18 : Fin 19) = 18 then (if cellGrade d.1 = 1 then v1 else v3')
@@ -400,10 +410,11 @@ private theorem row18_eighteen :
 private theorem visibilityReplace_three_one_v1 : visibilityReplace 3 1 (v1 : Label.{u}) = v1 := by
   rw [v1_eq, Label.visibilityReplace_natCast]; simp
 
-/-- **Necessity of `Cond`**: locality at the cell `18` forces `x 3 < x 18 → vr 3 1 (x 3) = x 3`. -/
-private theorem cond_of_transformsTo {x : Fin 19 → Label.{u}}
+/-- **Necessity of `VisibilityReplaceFixedOfLT`**: locality at the cell `18` forces
+`x 3 < x 18 → vr 3 1 (x 3) = x 3`. -/
+private theorem visibilityReplaceFixedOfLT_of_transformsTo {x : Fin 19 → Label.{u}}
     (hT : TransformsTo (fun d : cells.below (cells.gradedIndex 18) ↦ cells.grade d.1)
-      (rowsL.row 18) fun d ↦ min (x d.1) (x 18)) : Cond (x 3) (x 18) := by
+      (rowsL.row 18) fun d ↦ min (x d.1) (x 18)) : VisibilityReplaceFixedOfLT (x 3) (x 18) := by
   intro hlt
   obtain ⟨g, σ, hw, heq⟩ := hT
   have h3 := heq ⟨3, le_eighteen 3⟩
@@ -411,6 +422,7 @@ private theorem cond_of_transformsTo {x : Fin 19 → Label.{u}}
   dsimp only at h3 h18
   rw [row18_three] at h3
   rw [row18_eighteen, min_self] at h18
+  -- Read the grades of the cells `3` and `18`: `1` and `3`.
   change min (x 3) (x 18) = min (σ v1) (g 1) at h3
   change x 18 = min (σ v3') (g 3) at h18
   have hg3 : x 18 ≤ g 3 := h18 ▸ min_le_right _ _
@@ -427,10 +439,11 @@ private theorem cond_of_transformsTo {x : Fin 19 → Label.{u}}
   exact this.symm
 
 /-- **The lawful labellings below a pair** are the restrictions of the labellings
-`labelling A F G` with `A`, `F`, `G` self-visible at `1`, `2`, `3`, `G ≤ F` and `Cond A G`. -/
+`labelling A F G` with `A`, `F`, `G` self-visible at `1`, `2`, `3`, `G ≤ F` and
+`VisibilityReplaceFixedOfLT A G`. -/
 theorem isLawfulBelow_iff {Y : Finset (Fin 4) × ℕ} {x : Fin 19 → Label.{u}} :
     rowsL.IsLawfulBelow Y (fun d ↦ x d) ↔ ∃ A F G : Label.{u}, IsSelfVisible 1 A ∧
-      IsSelfVisible 2 F ∧ IsSelfVisible 3 G ∧ G ≤ F ∧ Cond A G ∧
+      IsSelfVisible 2 F ∧ IsSelfVisible 3 G ∧ G ≤ F ∧ VisibilityReplaceFixedOfLT A G ∧
       ∀ d ∈ cells.below Y, x d = labelling A F G d := by
   classical
   constructor
@@ -492,12 +505,12 @@ theorem isLawfulBelow_iff {Y : Finset (Fin 4) × ℕ} {x : Fin 19 → Label.{u}}
       · exact le_top
       · exact bot_le
       · exact bot_le
-    have hc : Cond A G := by
+    have hc : VisibilityReplaceFixedOfLT A G := by
       rw [hG_def, hA_def]
       split_ifs with h3 h16 h16
       · have h18m := eighteen_mem_below h16 (.inl h3)
         rw [h1618 h18m]
-        exact cond_of_transformsTo (hl 18 h18m)
+        exact visibilityReplaceFixedOfLT_of_transformsTo (hl 18 h18m)
       · exact fun h ↦ absurd h (not_lt.mpr bot_le)
       · exact fun h ↦ absurd h (not_lt.mpr le_top)
       · exact fun h ↦ absurd h (not_lt.mpr bot_le)
@@ -525,11 +538,12 @@ theorem isLawfulBelow_iff {Y : Finset (Fin 4) × ℕ} {x : Fin 19 → Label.{u}}
 
 /-! ### Bountifulness -/
 
-/-- The condition `Cond` passes to the lifted parameters. -/
-private theorem cond_lift {Ap Aq Gp Gq c : Label.{u}} {P3 P16 b : Prop} [Decidable P3]
-    [Decidable P16] [Decidable b] (hcp : Cond Ap Gp) (hcq : Cond Aq Gq)
+/-- The condition `VisibilityReplaceFixedOfLT` passes to the lifted parameters. -/
+private theorem visibilityReplaceFixedOfLT_lift {Ap Aq Gp Gq c : Label.{u}} {P3 P16 b : Prop}
+    [Decidable P3] [Decidable P16] [Decidable b] (hcp : VisibilityReplaceFixedOfLT Ap Gp)
+    (hcq : VisibilityReplaceFixedOfLT Aq Gq)
     (h3 : P3 → min Aq c = min Ap c) (h16 : P16 → min Gq c = min Gp c) :
-    Cond (if P3 then Ap else if Aq < c then Aq else ⊤)
+    VisibilityReplaceFixedOfLT (if P3 then Ap else if Aq < c then Aq else ⊤)
       (if P16 then Gp else if Gq < c then Gq else if b then c else ⊥) := by
   intro hlt
   by_cases hP3 : P3
@@ -608,11 +622,13 @@ theorem cappedLift_all {X Y : Finset (Fin 4) × ℕ} (h : X ≤ Y) : rowsL.Cappe
     · exact hc.mono h3
     · exact isSelfVisible_bot 3
   have hGF' : G' ≤ F' := lift_le hGFp hGFq hcap15 hcap16
-  have hc' : Cond A' G' := cond_lift hcp hcq hcap3 hcap16
+  have hc' : VisibilityReplaceFixedOfLT A' G' :=
+    visibilityReplaceFixedOfLT_lift hcp hcq hcap3 hcap16
   refine ⟨fun d ↦ labelling A' F' G' d,
     isLawfulBelow_iff.mpr ⟨A', F', G', hSA, hSF, hSG, hGF', hc', fun _ _ ↦ rfl⟩,
     fun d ↦ ?_, fun d ↦ ?_⟩
   · rw [hqd]
+    -- Beta-reduce the lifted labelling at `d`.
     change min (labelling A' F' G' d.1) c = min (labelling Aq Fq Gq d.1) c
     rcases live_cases d.1 with hdl | ⟨hdl, hg⟩ | ⟨hdl, hg⟩ | ⟨hdl, hg⟩
     · rw [labelling_dead hdl, labelling_dead hdl]
@@ -628,6 +644,7 @@ theorem cappedLift_all {X Y : Finset (Fin 4) × ℕ} (h : X ≤ Y) : rowsL.Cappe
       · rw [min_top_left, min_eq_right (not_lt.mp hlt)]
     · have hY3 : 3 ≤ Y.2 := by
         have h2 := d.2.2
+        -- The grade of `d` in `cells` is `cellGrade d`, at most `Y.2` since `d` is below `Y`.
         change cellGrade d.1 ≤ Y.2 at h2
         omega
       rw [labelling_three hdl hg, labelling_three hdl hg, hG']
@@ -636,6 +653,7 @@ theorem cappedLift_all {X Y : Finset (Fin 4) × ℕ} (h : X ≤ Y) : rowsL.Cappe
       · rfl
       · rw [min_self, min_eq_right (not_lt.mp hlt)]
   · rw [hpd]
+    -- Beta-reduce the lifted labelling at the inclusion of `d` into the cells below `Y`.
     change labelling A' F' G' d.1 = labelling Ap Fp Gp d.1
     rcases live_cases d.1 with hdl | ⟨hdl, hg⟩ | ⟨hdl, hg⟩ | ⟨hdl, hg⟩
     · rw [labelling_dead hdl, labelling_dead hdl]
@@ -689,7 +707,7 @@ theorem isConsistent_rowsL : rowsL.{u}.IsConsistent := by
     by_cases h18 : s = 18
     · subst h18; simp [hl18, hg18]
     · by_cases hs : live s = true <;> by_cases hs3 : cellGrade s = 3 <;> simp [hs, hs3, h18]
-  have hc : Cond As Gs := by
+  have hc : VisibilityReplaceFixedOfLT As Gs := by
     intro hlt
     rw [hGs, hAs] at hlt; rw [hAs]
     by_cases h18 : s = 18
@@ -759,6 +777,7 @@ noncomputable def TL₀ (α : Ordinal.{u}) : StageType.{u} α 4 where
 noncomputable def TL (α : Ordinal.{u}) : StageType.{u} α 4 :=
   (TL₀ α).addApex isLegalBelowFullGrade_SL (by omega)
 
+/-- **`TL` is legal**, at every stage. -/
 theorem isLegal_TL (α : Ordinal.{u}) : (TL α).IsLegal :=
   StageType.isLegal_addApex _ _
 
@@ -769,6 +788,7 @@ section Face
 variable {α : Ordinal.{u}}
 
 theorem face_mem_TL : univ.map (Coatom.face 3) ∈ (TL α).toCellScheme.faces := by
+  -- The faces of `TL` are those of the interval plan on four points.
   change univ.map (Coatom.face 3) ∈ Geometry.intervalPlan univ
   decide +kernel
 
@@ -796,7 +816,8 @@ private theorem visible_cases (s : Fin (SL.{u}.card + 1))
 theorem comap_TL_eq :
     (TL α).comap (Coatom.face 3) face_mem_TL = CaseSplitCounterexample.faceT5 α := by
   refine StageType.ext ?_ (fun i j h ↦ ?_)
-  · change (Scheme.mk (SL.card + 1) (Scheme.appendFullCellScheme SL 4) _).comap (Coatom.face 3) =
+  · -- Both sides are comaps of `SL` with the full cell appended, with the rows of `TL` and `T5`.
+    change (Scheme.mk (SL.card + 1) (Scheme.appendFullCellScheme SL 4) _).comap (Coatom.face 3) =
       (Scheme.mk (SL.card + 1) (Scheme.appendFullCellScheme SL 4) _).comap (Coatom.face 3)
     refine Scheme.comap_mk_congr _ fun s hs ↦ ?_
     rw [Scheme.mem_visibleCells] at hs
@@ -842,7 +863,8 @@ theorem isLawfulBelow_TL_iff {X : Finset (Fin 4) × ℕ}
   Scheme.isLawfulBelow_appendFullCell_iff (h := isLegalBelowFullGrade_SL.not_le) hX
 
 private theorem isLawfulBelow_coatomL {A F G : Label.{u}} (hA : IsSelfVisible 1 A)
-    (hF : IsSelfVisible 2 F) (hG : IsSelfVisible 3 G) (hGF : G ≤ F) (hc : Cond A G)
+    (hF : IsSelfVisible 2 F) (hG : IsSelfVisible 3 G) (hGF : G ≤ F)
+    (hc : VisibilityReplaceFixedOfLT A G)
     {f : Fin 4 ↪ Fin 5} {Am : StageType.{u} α 5}
     (hf : StageType.restrictFace f Am = some (TL α)) {Lf : Finset (Fin 5) × ℕ → Label.{u}}
     (hL : ∀ d, Lf (Prod.map (Finset.map f) id (cells.gradedIndex d)) = labelling A F G d) :
@@ -867,12 +889,13 @@ private theorem isLawfulBelow_coatomL {A F G : Label.{u}} (hA : IsSelfVisible 1 
     (hlaw _ fun i ↦ congrArg Lf (Am.toScheme.map_comap_gradedIndex f i).symm)
 
 /-- **`tripleLabelling` is lawful below both coatoms at the grade `3`** on a seed whose left type
-is `TL` and right type `T5`: on the left under `G ≤ F_C` and `Cond A_C G`; on the right under
-`G ≤ A_D`, `G ≤ F_D`. -/
+is `TL` and right type `T5`: on the left under `G ≤ F_C` and `VisibilityReplaceFixedOfLT A_C G`;
+on the right under `G ≤ A_D`, `G ≤ F_D`. -/
 theorem isLawfulBelow_tripleLabelling {I : Seed.{u} α 3} (hIL : I.left = TL α)
     (hIR : I.right = CaseSplitCounterexample.T5 α) {AC FC AD FD G : Label.{u}}
     (hAC : IsSelfVisible 1 AC) (hFC : IsSelfVisible 2 FC) (hAD : IsSelfVisible 1 AD)
-    (hFD : IsSelfVisible 2 FD) (hG : IsSelfVisible 3 G) (hGFC : G ≤ FC) (hcC : Cond AC G)
+    (hFD : IsSelfVisible 2 FD) (hG : IsSelfVisible 3 G) (hGFC : G ≤ FC)
+    (hcC : VisibilityReplaceFixedOfLT AC G)
     (hGAD : G ≤ AD) (hGFD : G ≤ FD) :
     I.amalgam.rows.IsLawfulBelow (univ.erase (Fin.last 4), 3)
         (fun d ↦ tripleLabelling AC FC AD FD G (I.amalgam.toCellScheme.gradedIndex d)) ∧
@@ -921,9 +944,11 @@ theorem le_of_isLawfulBelow_right {I : Seed.{u} α 3}
     CaseSplitCounterexample.exists_labelling_of_comap (hIR ▸ I.restrictFace_right) (k := 2 + 1)
       (by omega) w hw
   have hmem2 : d₂ ∈ I.amalgam.toCellScheme.below (univ.map (Coatom.right 3), 2 + 1) := by
+    -- Membership below a pair is comparison of graded indices.
     change I.amalgam.toCellScheme.gradedIndex d₂ ≤ _
     rw [hd₂, Coatom.univ_map_right]; decide +kernel
   have hmemg : g ∈ I.amalgam.toCellScheme.below (univ.map (Coatom.right 3), 2 + 1) := by
+    -- Membership below a pair is comparison of graded indices.
     change I.amalgam.toCellScheme.gradedIndex g ≤ _
     rw [hg, Coatom.univ_map_right]; decide +kernel
   obtain ⟨c₂, hc₂, hw₂⟩ := hall d₂ hmem2
@@ -931,6 +956,7 @@ theorem le_of_isLawfulBelow_right {I : Seed.{u} α 3}
   obtain rfl := right_eq_three c₂ (hc₂.symm.trans hd₂)
   obtain rfl := right_eq_sixteen cg (hcg.symm.trans hg)
   rw [hw₂, hwg]
+  -- The matched cells of `T5` are its cells `16` (at `({0, 1, 2}, 3)`) and `3` (at `({4}, 1)`).
   change labelling A F G 16 ≤ labelling A F G 3
   rw [labelling_three rfl rfl, labelling_one rfl rfl]
   exact hGA
@@ -970,24 +996,10 @@ private theorem gridPoint_three_lt_gridPoint_four {c B : ℕ} (h : c < B) :
 /-- **`2FL∃(2)` fails on every seed on five points whose left coatom type is `TL` and whose right
 coatom type is `T5`.**
 
-1. As for `T4`: a catalogue entry `b₀` at the grade `2` takes the strip value `β₁ = ω * B + 1` at
-   `d₁ = ({3}, 1)` and `d₂ = ({4}, 1)`, with strip cap `h₂ = ω * B + 2`; `r₂` is its extension
-   through the layer at the grade `2`, at the cap `h₂`.
-2. Unlike `T4`, the grade-`3` cells are not spliced to `⊥`: the labelling of `T 2` is `r₂` below
-   `(univ, 2)` and, on the old cells, `tripleLabelling β₁ φ β₁ φ γ` with `γ = ω * (B - 1) + 4`
-   (lawful on both coatoms: `γ ≤ β₁` for the coupling of `T5`).  Its orbit code at `3`, spliced,
-   is the catalogue entry `a`, and the cap is `h = a(g)`, the code of `γ`.
-3. A new cell of the layer at the grade `2` where `a ≥ h` has key at least `γ` at the grade `3`;
-   its value in `r₂` is then not an agreement height below `h₂` (those are `ω * c + 2` with
-   `c < B`, of key `ω * c + 3 < γ`), so its entry agrees with `b₀` capped at `h₂` and reads `d₁`
-   and `d₂` at the same value `β₁`.
-4. The prescription `w_C` on the left is `A₃ = a(d₁)` at the live cells of grade `1` and `⊤` at the
-   live cells of grade `2` and `3`, lawful in `TL` (`A₃ < ⊤` with `vr 3 1 A₃ = A₃`), agreeing with
-   `a` capped at `h`.
-5. Any `w_D` lawful in `T5` and equal to `w_C` on the common face is `⊤` at the cell of the common
-   face of grade `3`, hence `⊤` at `d₂`.  The two-face extension `r` is `⊤` at the cell `(C, 2)`,
-   so by availability `⊤` at a new cell `u` at `(univ, 2)`, where `a ≥ h`; locality at `u` gives
-   `⊤ = r d₂ ≤ r d₁ = A₃`. -/
+The proof follows the steps 1–5 of the module docstring, which are numbered in the proof.  In
+step 2 the labelling of `T 2` is the extension `r₂` of `b₀` below `(univ, 2)` and
+`tripleLabelling β₁ φ β₁ φ γ` on the old cells, with `φ` the value of `b₀` at the old live cells
+of grade `2`, and `a` is the orbit code at `3` of its splice. -/
 theorem not_twoFaceLiftExists_two_of {I : Seed.{u} α 3} (hIL : I.left = TL α)
     (hIR : I.right = CaseSplitCounterexample.T5 α) : ¬ I.TwoFaceLiftExists 2 := by
   classical
@@ -1025,21 +1037,25 @@ theorem not_twoFaceLiftExists_two_of {I : Seed.{u} α 3} (hIL : I.left = TL α)
     rw [hy_def]; exact mem_insert_of_mem (mem_singleton_self _)
   have hxy : x ≠ y := by decide
   have hd₁C : d₁ ∈ I.amalgam.toCellScheme.below (univ.erase x, 2 + 1) := by
+    -- Membership below a pair is comparison of graded indices.
     change I.amalgam.toCellScheme.gradedIndex d₁ ≤ _; rw [hd₁]; decide +kernel
   have hd₂C : d₂ ∉ I.amalgam.toCellScheme.below (univ.erase x, 2 + 1) := by
     intro h
     have h' : I.amalgam.toCellScheme.gradedIndex d₂ ≤ (univ.erase x, 2 + 1) := h
     rw [hd₂] at h'; revert h'; decide +kernel
   have hsCC : sC ∈ I.amalgam.toCellScheme.below (univ.erase x, 2 + 1) := by
+    -- Membership below a pair is comparison of graded indices.
     change I.amalgam.toCellScheme.gradedIndex sC ≤ _; rw [hsC]; decide +kernel
   have hgC : gE ∈ I.amalgam.toCellScheme.below (univ.erase x, 2 + 1) := by
+    -- Membership below a pair is comparison of graded indices.
     change I.amalgam.toCellScheme.gradedIndex gE ≤ _; rw [hgE]; decide +kernel
   have hgD : gE ∈ I.amalgam.toCellScheme.below (univ.erase y, 2 + 1) := by
+    -- Membership below a pair is comparison of graded indices.
     change I.amalgam.toCellScheme.gradedIndex gE ≤ _; rw [hgE]; decide +kernel
-  -- 1. The serving entry `b₀` at the grade `2` and its strip.
+  -- 1. The catalogue entry `b₀` at the grade `2` and its strip.
   have hsv11 : IsSelfVisible 1 (Q.{u} 1 1) := isSelfVisible_Q.mpr le_rfl
   have hsv22 : IsSelfVisible 2 (Q.{u} 1 2) := isSelfVisible_Q.mpr le_rfl
-  have hcondP : Cond (Q.{u} 1 1) ⊥ := fun h ↦ absurd h (not_lt.mpr bot_le)
+  have hcondP : VisibilityReplaceFixedOfLT (Q.{u} 1 1) ⊥ := fun h ↦ absurd h (not_lt.mpr bot_le)
   set P : Fin I.amalgam.card → Label.{u} := fun d ↦
     tripleLabelling (Q 1 1) (Q 1 2) (Q 1 1) (Q 1 2) ⊥ (I.amalgam.toCellScheme.gradedIndex d)
     with hP
@@ -1212,7 +1228,7 @@ theorem not_twoFaceLiftExists_two_of {I : Seed.{u} α 3} (hIL : I.left = TL α)
   have hA₃sv : IsSelfVisible 1 A₃ := by
     have := (Scheme.mem_catalogue.mp ha).1.orderly (I.towerEmbed 2 d₁)
     rwa [Seed.grade_towerEmbed, hg₁, hA₃d₁] at this
-  -- `A₃` has finite part `1`, so `Cond A₃ ⊤`.
+  -- `A₃` has finite part `1`, so `VisibilityReplaceFixedOfLT A₃ ⊤`.
   have hL₃d₁ : L₃ d₁ = β₁ := by
     rw [hL₃]; dsimp only; rw [hd₁]; simp only [tripleLabelling, hk₁]; rfl
   have hkey3 : IsOrbitKey 3 t₃ β₁ := by
@@ -1229,7 +1245,7 @@ theorem not_twoFaceLiftExists_two_of {I : Seed.{u} α 3} (hIL : I.left = TL α)
     rw [hA₃_def, orbitMap_of_isOrbitKey hkey3]
     conv_lhs => arg 2; rw [hβ₁eq]
     rw [gridPoint, moveToBlock_omega0_mul_add]
-  have hcondA₃ : Cond A₃ ⊤ := fun _ ↦ by
+  have hcondA₃ : VisibilityReplaceFixedOfLT A₃ ⊤ := fun _ ↦ by
     rw [hA₃eq, visibilityReplace_coe, Ordinal.visibilityReplace_omega0_mul_add_natCast]
     simp
   -- 4. The prescription `w_C`.
@@ -1343,7 +1359,7 @@ theorem not_twoFaceLiftExists_two_of {I : Seed.{u} α 3} (hIL : I.left = TL α)
   exact hA₃top (top_le_iff.mp h21)
 
 /-- **`2FL∃(2)` fails for the asymmetric seed.** -/
-theorem not_twoFaceLiftExists_two : ¬ (seedL α).TwoFaceLiftExists 2 :=
+theorem not_twoFaceLiftExists_two_seedL : ¬ (seedL α).TwoFaceLiftExists 2 :=
   not_twoFaceLiftExists_two_of rfl rfl
 
 end Refutation
@@ -1351,33 +1367,35 @@ end Refutation
 /-- **The invariant of the tower fails at the grade `3` for the asymmetric seed**: it would give
 `2FL∃(2)` (`Seed.twoFaceLiftExists_of_towerInvariant`). -/
 theorem not_towerInvariant_three_seedL (α : Ordinal.{u}) : ¬ (seedL α).TowerInvariant 3 :=
-  fun h ↦ not_twoFaceLiftExists_two ((seedL α).twoFaceLiftExists_of_towerInvariant h)
+  fun h ↦ not_twoFaceLiftExists_two_seedL ((seedL α).twoFaceLiftExists_of_towerInvariant h)
 
 /-- **Nor at the top grade `4`** (`Seed.towerInvariant_top_iff`): the tower of the asymmetric seed
-is not a completion below the full grade. -/
+is not a completion below the full grade (its top scheme is not bountiful). -/
 theorem not_towerInvariant_top_seedL (α : Ordinal.{u}) : ¬ (seedL α).TowerInvariant (3 + 1) :=
-  fun h ↦ not_twoFaceLiftExists_two ((seedL α).towerInvariant_top_iff.mp h 2 le_rfl (by omega))
+  fun h ↦ not_twoFaceLiftExists_two_seedL
+    ((seedL α).towerInvariant_top_iff.mp h 2 le_rfl (by omega))
 
 /-- **`2FL∃(j)` at the grades `2 ≤ j < m` fails as a statement about every legal seed**, at every
 stage: the tower does not complete every seed (`Seed.towerInvariant_top_iff`). -/
 theorem not_forall_twoFaceLiftExists (α : Ordinal.{u}) :
     ¬ ∀ (m : ℕ) (I : Seed.{u} α m) (j : ℕ), 2 ≤ j → j < m → I.TwoFaceLiftExists j :=
-  fun h ↦ not_twoFaceLiftExists_two (h 3 (seedL α) 2 le_rfl (by omega))
+  fun h ↦ not_twoFaceLiftExists_two_seedL (h 3 (seedL α) 2 le_rfl (by omega))
 
-/-- The invariant at the grade `2` holds (from `2FL(1)`), so on the asymmetric seed the raised
-union fill fails at the grade `2`. -/
-theorem not_raisedUnionFill_two (α : Ordinal.{u}) : ¬ (seedL α).RaisedUnionFill 2 := fun h ↦
-  not_twoFaceLiftExists_two ((seedL α).twoFaceLiftExists_of_raisedUnionFill
+/-- **The raised union fill fails at the grade `2` for the asymmetric seed**: the invariant at the
+grade `2` holds (from `2FL(1)`), and with it the raised union fill would give `2FL∃(2)`
+(`Seed.twoFaceLiftExists_of_raisedUnionFill`). -/
+theorem not_raisedUnionFill_two_seedL (α : Ordinal.{u}) : ¬ (seedL α).RaisedUnionFill 2 := fun h ↦
+  not_twoFaceLiftExists_two_seedL ((seedL α).twoFaceLiftExists_of_raisedUnionFill
     ((seedL α).towerInvariant_succ (by omega) (seedL α).towerInvariant_one
       (seedL α).twoFaceLift_one) h)
 
 /-- **Both per-seed hypotheses of the library fail as well**: `2FL(2)` (it would give `2FL∃(2)`,
 `2 ≤ m = 3`) and deadness at the grade `3` (with the invariant at `2`). -/
-theorem not_twoFaceLift_or_deadAt (α : Ordinal.{u}) :
+theorem not_twoFaceLift_or_deadAt_seedL (α : Ordinal.{u}) :
     ¬ ((seedL α).TwoFaceLift 2 ∨ (seedL α).DeadAt 2) := by
   rintro (h | h)
-  · exact not_twoFaceLiftExists_two ((seedL α).twoFaceLiftExists_of_twoFaceLift (by omega) h)
-  · exact not_twoFaceLiftExists_two ((seedL α).twoFaceLiftExists_of_deadAt
+  · exact not_twoFaceLiftExists_two_seedL ((seedL α).twoFaceLiftExists_of_twoFaceLift (by omega) h)
+  · exact not_twoFaceLiftExists_two_seedL ((seedL α).twoFaceLiftExists_of_deadAt
       ((seedL α).towerInvariant_succ (by omega) (seedL α).towerInvariant_one
         (seedL α).twoFaceLift_one) h)
 

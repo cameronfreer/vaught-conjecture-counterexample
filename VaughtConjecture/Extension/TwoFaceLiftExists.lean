@@ -83,16 +83,19 @@ It holds at `j` for the seeds satisfying `2FL(j)`, for the seeds whose old cells
 coatom types are the type `T5` of the module `VaughtConjecture.Extension.CaseSplitCounterexample`.
 The step fails for a legal seed: for the seed `seedL` on five points of the module
 `VaughtConjecture.Extension.TwoFaceLiftExistsCounterexample`, whose two coatom types differ,
-`2FL∃(2)` fails (`TwoFaceLiftExistsCounterexample.not_twoFaceLiftExists_two`), so the invariant of
-its tower fails at the top grade (`TwoFaceLiftExistsCounterexample.not_towerInvariant_top_seedL`)
-and `2FL∃(j)` at the grades `2 ≤ j < m` is false as a statement about every seed, at every stage
+`2FL∃(2)` fails (`TwoFaceLiftExistsCounterexample.not_twoFaceLiftExists_two_seedL`), so the
+invariant of its tower fails at the top grade
+(`TwoFaceLiftExistsCounterexample.not_towerInvariant_top_seedL`) and `2FL∃(j)` at the grades
+`2 ≤ j < m` is false as a statement about every seed, at every stage
 (`TwoFaceLiftExistsCounterexample.not_forall_twoFaceLiftExists`).  The tower does not complete
 every seed.  Not refuted: a completion below the full grade of `seedL` by another construction,
 and `StageType.HasApexCoatomExtensions` and `StageType.HasCoatomExtensions`, which remain to be
 proved.  Whether `seedL` has a completion below the full grade at all is open.  That module gives
 a necessary condition, argued and not formalized (a cell at `(univ, 2)` where the labelling reaches
-the cap and whose row reads the cell `({3}, 1)` strictly below the cell `({4}, 1)`; the tower has
-no such cell), and a prospective candidate.
+the cap and whose row reads the cell `({3}, 1)` strictly below the cell `({4}, 1)`; for the
+catalogue entry `a` and the cap `h` of the failure, no cell of the tower at `(univ, 2)` where `a`
+reaches `h` separates these two cells, while separating cells where `a < h` may exist), and a
+prospective candidate.
 
 ## Placement
 

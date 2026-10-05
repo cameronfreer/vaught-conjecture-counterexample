@@ -107,7 +107,8 @@ holds; for the seed of the failure of `2FL(2)` above it holds by deadness
 
 The step fails for a legal seed.  For the seed `seedL` on five points whose two coatom types differ
 and share a face, with a row coupling the cell of the common face to cells of lower grade on one
-side only, `2FL∃(2)` fails (`TwoFaceLiftExistsCounterexample.not_twoFaceLiftExists_two`, module
+side only, `2FL∃(2)` fails
+(`TwoFaceLiftExistsCounterexample.not_twoFaceLiftExists_two_seedL`, module
 `VaughtConjecture.Extension.TwoFaceLiftExistsCounterexample`): the strip case occurs together with
 that coupling, and no choice of `w_D` gives the extension.  So the tower does not complete every
 seed, and `2FL∃(j)` for every seed at the grades `2 ≤ j < m` is false at every stage

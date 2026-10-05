@@ -81,7 +81,7 @@ itself, by deadness (`twoFaceLiftExists_two_seed4`).
 The argument needs the coupling on `C`, which bounds `w_C` below by `G_C` where `a` reaches the
 cap.  Without it `2FL∃(2)` can fail: for the seed whose first coatom type couples the parameter of
 grade `3` to `F` only, and whose second is `T5`, it fails
-(`TwoFaceLiftExistsCounterexample.not_twoFaceLiftExists_two`, module
+(`TwoFaceLiftExistsCounterexample.not_twoFaceLiftExists_two_seedL`, module
 `VaughtConjecture.Extension.TwoFaceLiftExistsCounterexample`).
 
 ## Placement
