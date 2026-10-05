@@ -137,31 +137,12 @@ open Finset Label CellScheme
 open Ordinal hiding univ
 open TwoFaceLiftCounterexample (cellScope cellGrade cells v1 v2 gradedIndex_cells
   gradedIndex_injective complete_below mem_below_of_le stripShifter isWitness_stripShifter
-  stripShifter_bot stripShifter_v1 stripShifter_v2 natCast_label natCast_label_inj natCast_label_le
-  natCast_label_lt_omega natCast_label_ne_bot exists_natCast_of_lt_omega
-  not_lt_omega_visibilityReplace visibilityReplace_le_visibilityReplace v1_eq Q_le_Q)
+  stripShifter_bot stripShifter_v1 stripShifter_v2 v1_eq Q_le_Q)
 open CaseSplitCounterexample (live v3 labelling tripleLabelling tripleKind live_le_live live_up
   live_grade grade_le_three grade_three_cases live_cases le_eighteen three_le_of_grade_one
   eq_fifteen_of_grade_two sixteen_le_of_grade_three eighteen_mem_below labelling_dead labelling_one
   labelling_two labelling_three isSelfVisible_labelling lift_le tripleLabelling_left
   tripleLabelling_right tripleLabelling_eq_of_le_two)
-
-/-- Two replacements at thresholds at most `3`. -/
-theorem visibilityReplace_visibilityReplace_three {k : ℕ} (hk : k ≤ 3) (i j : ℕ)
-    (A : Label.{u}) :
-    visibilityReplace k i (visibilityReplace 3 j A) =
-      visibilityReplace 3 (if j < k then i else j) A := by
-  induction A using recBotCoeTop with
-  | bot => simp
-  | top => simp
-  | coe o =>
-    obtain ⟨b, n, rfl⟩ := exists_eq_omega0_mul_add_natCast o
-    have key : (if (if n < 3 then j else n) < k then i else (if n < 3 then j else n)) =
-        (if n < 3 then (if j < k then i else j) else n) := by split_ifs <;> omega
-    rw [visibilityReplace_coe, visibilityReplace_coe, visibilityReplace_coe,
-      Ordinal.visibilityReplace_omega0_mul_add_natCast,
-      Ordinal.visibilityReplace_omega0_mul_add_natCast,
-      Ordinal.visibilityReplace_omega0_mul_add_natCast, key]
 
 /-! ### The strip shifter at the grade `3` -/
 
@@ -233,7 +214,7 @@ theorem isWitness_strip3 {A G : Label.{u}} (hG : IsSelfVisible 3 G) :
           ((if n < k then i else n : ℕ) : Label.{u}) := by split_ifs <;> rfl
       rw [hcast, strip3_natCast, strip3_natCast]
       by_cases hk : k ≤ 3
-      · rw [visibilityReplace_visibilityReplace_three hk]
+      · rw [visibilityReplace_visibilityReplace_of_le hk]
         congr 1
         split_ifs <;> omega
       · rw [strip3_natCast, constStepSuppressor, ite_eq_right hk, le_bot_iff,
