@@ -172,11 +172,6 @@ open Finset Ordinal StageType
 
 /-! ### Auxiliary facts -/
 
-/-- `β ≤ β + n` as labels. -/
-private theorem coe_le_coe_add (β : Ordinal.{u}) (n : ℕ) :
-    (β : Label.{u}) ≤ ((β + n : Ordinal.{u}) : Label.{u}) :=
-  WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr le_self_add)
-
 /-- `β + n < β + N` as labels for `n < N`. -/
 private theorem coe_add_lt_coe_add (β : Ordinal.{u}) {n N : ℕ} (h : n < N) :
     ((β + n : Ordinal.{u}) : Label.{u}) < ((β + N : Ordinal.{u}) : Label.{u}) :=
@@ -350,7 +345,7 @@ private theorem exists_isLawful_collapse_inf'_aux (hS : S.IsConsistent) (hc : S.
       le_antisymm ((inf'_le _ hj₀).trans_eq (((hℓ j₀).2 (mem_filter.mp hj₀).2).1 e he))
         (le_inf' _ _ fun j hj ↦ (((hℓ j).2 (mem_filter.mp hj).2).1 e he).ge)
     rw [ite_eq_right he, hinf, Label.collapse,
-      Label.reduce_of_lt (((t.atStage e).resolve_right he).trans_le (coe_le_coe_add β N))]
+      Label.reduce_of_lt (((t.atStage e).resolve_right he).trans_le (Label.coe_le_coe_add β N))]
 
 end Rooted
 
@@ -736,7 +731,7 @@ theorem not_isModel_stableCandidate_of_stableLabel_le {K : ℕ}
   · rw [stableSection_of_eq_top hd]
     exact hK w t ht d hd
   · rw [stableSection_of_ne_top hd]
-    exact ((t.atStage d).resolve_right hd).le.trans (coe_le_coe_add _ K)
+    exact ((t.atStage d).resolve_right hd).le.trans (Label.coe_le_coe_add _ K)
 
 /-! ### A model expansion -/
 

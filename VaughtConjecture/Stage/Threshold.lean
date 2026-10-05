@@ -143,6 +143,11 @@ theorem ofOffset_mono : Monotone (ofOffset β) := by
     exact WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr
       (add_le_add_right (Nat.cast_le.mpr (ENat.natCast_le_natCast.mp h)) _))
 
+/-- `β ≤ β + n` as labels. -/
+theorem coe_le_coe_add (β : Ordinal.{u}) (n : ℕ) :
+    (β : Label.{u}) ≤ ((β + n : Ordinal.{u}) : Label.{u}) :=
+  WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr le_self_add)
+
 /-- The label of an offset is the formal top exactly when the offset is infinite. -/
 @[simp] theorem ofOffset_eq_top_iff : ofOffset β o = ⊤ ↔ o = ⊤ := by
   induction o using ENat.recTopCoe with
@@ -390,11 +395,6 @@ section Twins
 
 open Finset
 
-/-- `β ≤ β + K` as labels. -/
-private theorem coe_le_coe_add (β : Ordinal.{u}) (K : ℕ) :
-    (β : Label.{u}) ≤ ((β + K : Ordinal.{u}) : Label.{u}) :=
-  WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr le_self_add)
-
 /-- `β + K < α` as labels for `β + ω ≤ α`. -/
 private theorem coe_add_lt_of_le (hα : β + ω ≤ α) (K : ℕ) :
     ((β + K : Ordinal.{u}) : Label.{u}) < (α : Label.{u}) :=
@@ -418,7 +418,7 @@ noncomputable def capLift (hα : β + ω ≤ α) (q : StageType.{u} β m) (K : �
   isCoded := q.isCoded
   isLawful := q.isLawful.min_const fun d hd ↦ by
     rcases q.atStage d with h | h
-    · exact absurd h ((coe_le_coe_add β K).trans hd).not_gt
+    · exact absurd h ((Label.coe_le_coe_add β K).trans hd).not_gt
     · exact Label.isSelfVisible_coe_add hβ (hK d h)
   atStage _ := .inl ((min_le_right _ _).trans_lt (coe_add_lt_of_le hα K))
 
@@ -439,9 +439,9 @@ theorem capLift_reduce (hα : β + ω ≤ α) (q : StageType.{u} β m) (K : ℕ)
     -- `i` is indexed by the reduction, so both lemmas are given their arguments explicitly
     rw [reduce_label (t := capLift hβ hα q K hK) hβ i, capLift_label hβ hα q K hK i]
     rcases q.atStage i with h | h
-    · rw [min_eq_left (h.le.trans (coe_le_coe_add β K)), Label.reduce_of_lt h]
+    · rw [min_eq_left (h.le.trans (Label.coe_le_coe_add β K)), Label.reduce_of_lt h]
     · rw [h, min_eq_right le_top]
-      exact Label.reduce_of_le (coe_le_coe_add β K)
+      exact Label.reduce_of_le (Label.coe_le_coe_add β K)
 
 /-- **Forced twins**: if `q` is legal and every lift of `q` to `α ≥ β + ω` is at least `β + N` at a
 cell `s₀` labelled the formal top, then for every cell `t₀` with the scope of `s₀` in that of `t₀`
@@ -517,7 +517,7 @@ theorem exists_forcesThreshold_twin (hα : β + ω ≤ α) (hq : q.IsLegal) {s�
   have h := hforce.2 _ _ hQ₀ (restrictFace_refl _) u.1 rfl
   rw [capLift_label] at h
   rcases q.atStage u.1 with hlt | htop
-  · exact absurd ((coe_le_coe_add β N).trans (h.trans (min_le_left _ _))) (not_le.mpr hlt)
+  · exact absurd ((Label.coe_le_coe_add β N).trans (h.trans (min_le_left _ _))) (not_le.mpr hlt)
   · exact htop
 
 /-- **Forced twins over a face**: if a legal `q` restricts to `p` along `f` and `(q, f)` forces `N`
