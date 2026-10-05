@@ -1115,7 +1115,14 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     repository (theorem named): with no model expansion at the next block, every expansion is
     terminal; and `FullPresentations`, with `presentedAt`, on `DensityClass`
     (`MainTheorem/Assembly`), the class–level incidence of row 27, which stores no presentation.
-    The conversion between the raw base and the common invariant encodings: prospective.
+    The conversion between the raw base and the common invariant encodings: prospective.  In the raw
+    base encoding, maximal (and terminal) model expansions of the base structure of a model on a
+    countable carrier are compiled conditional on `Expansion.FiniteCutReceiving` ((R1)),
+    `Expansion.NextBlockUniqueness`, and `StageType.HasApexCoatomExtensions` at every countable
+    block stage, each still to be proved: `MainTheorem.exists_isGreatest_servingIndex` and
+    `MainTheorem.exists_maximalRefinement_of_modelExpansion` (`MainTheorem/MaximalRefinement`).  The
+    row stays S: the hypotheses are open, and the notion of the manuscript is read in the common
+    invariant encoding.
 34. Prospective.  1 ⇒ 2 is the uniform fixing stage of row 31 for the family of model
     presentations, through `StageProjection.exists_uniform_fixing_stage` (available at the pin
     `e460cb6`, signatures checked; "Dependency pins"), and is the only step using a countable
@@ -1128,7 +1135,11 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     model reduction (row 35), an explicit hypothesis until proved; 5 ⇒ 1 uses maximality and the
     strict threshold only.  4 ⇒ 5 is route (a) of milestone 5 of `README.md`, item 5, "Uniform
     fixing bounds from positive niceness", with the dependencies named there.  The equivalence
-    characterizes termination for one base; it is not a separate proof of termination.
+    characterizes termination for one base; it is not a separate proof of termination.  In the raw
+    base encoding, 4 ⇒ 5 is compiled conditional on `Expansion.NextBlockUniqueness`, on any carrier:
+    `MainTheorem.exists_isGreatest_servingIndex_of_le` (`MainTheorem/MaximalRefinement`), through
+    `exists_isGreatest_of_closed` (`Label/GreatestIndex`, no hypothesis; the same statement is
+    available upstream in InfinitaryLogic, not at the pin `e460cb6`).
 35. Prospective, conditional on the injectivity of model reduction at each countable index (two
     model presentations of the base at one index are equal), an explicit hypothesis until proved.
     Both its steps use it: the inequality at `ρ` (terminal collision, which also uses
@@ -1142,11 +1153,14 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     expansions at one block; it bounds no index and supplies no terminal presentation.  The
     terminality of the reconstructed top-free realization, `reduce_ne_reconstruct`
     (`ClassicalLimit/Modelhood`), compiled in this repository (theorem named), concerns the
-    realization, not its base reduct.
+    realization, not its base reduct.  In the raw base encoding, literal uniqueness (both steps) is
+    compiled conditional on `Expansion.NextBlockUniqueness`, on any carrier:
+    `MainTheorem.exists_le_reduceBlock_eq_of_isTerminalAt` (`MainTheorem/MaximalRefinement`).
 36. Prospective.  It rests on row 32, on the inequality step of row 35 (so on the injectivity of
     model reduction at `ρ` only), and on `COMPANIONS.md`, "Fixing ranks are zero or successors"
     and "Limit heights are unattained suprema", each still to be proved.  No declaration of this
-    repository names a fixing rank (row 30).
+    repository names a fixing rank (row 30).  Its inequality step, in the raw base encoding, is the
+    first component of `MainTheorem.exists_le_reduceBlock_eq_of_isTerminalAt` (row 35).
 37. Prospective: no declaration of this repository states density at an observation (row 25) or
     its witness-bounded form.  The fixation of the returned invariant rests on
     `Realization.reduce_eval` and `Realization.isSome_reduce_eval` (`Realization/Transport`),
@@ -1156,7 +1170,8 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     supplied separately by `Realization.IsConsistent` (`Realization/Basic`), clause 2 of
     `Realization.IsModel`, and is part of neither predicate.  It keeps the root and the realizing
     occurrence together and supplies no projected-donor lifting.
-38. Prospective.  Compiled in this repository (theorem named): `Realization.IsTerminalAt` with
+38. Compiled conditionally (the last sentences of this note).  Compiled in this repository
+    (theorem named): `Realization.IsTerminalAt` with
     `Realization.isTerminalAt_iff_forall_lt` (`Continuation/Terminal`),
     `Realization.IsModel.reduce` (`Realization/Model`), and `Realization.IsModel.lt_omega_one`
     with `le_blockStage` (`Realization/Expansion`), which give `β < ω₁` before the given model is
@@ -1165,7 +1180,14 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     proof of note 30 (the countable-slot argument, or the Scott route of row 40, whose maximal
     presentation is terminal); literal-reduct uniqueness is row 35, conditional on the
     injectivity of model reduction.  Through the Scott route no global termination theorem is
-    used; the stage index is not assumed countable.
+    used; the stage index is not assumed countable.  Compiled conditional on
+    `Expansion.FiniteCutReceiving` ((R1)), `Expansion.NextBlockUniqueness`, and
+    `StageType.HasApexCoatomExtensions` at every countable block stage, each still to be proved,
+    through the Scott route: `MainTheorem.exists_maximalRefinement`
+    (`MainTheorem/MaximalRefinement`): a model `V` at `λ_β` on a countable carrier `X` is the stage
+    reduction to `λ_β`, literally, of a model `W` at `λ_ρ` on `X`, `β ≤ ρ < ω₁`, terminal at `ρ`,
+    and every model on `X` at a block stage `λ_η` with the base structure of `V` has `η ≤ ρ`;
+    `β < ω₁` is derived from `β ≤ ρ`.
 39. Prospective as a combined statement, which is not named, in two forms: carrier-general (a
     base structure on any carrier, with `ξ < ω₁` an explicit hypothesis) and coded (codes on
     `ℕ`, where `ξ < ω₁` follows from `Expansion.expansionDomain_eq_empty`).  Its ingredients are
@@ -1183,7 +1205,8 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     and, conditional on block determination, `realize_blockFormula_iff`,
     `ModelExpansion.relMap_toChartStructure_iff`, and `ModelExpansion.map_eq_of_determines`.  No
     new structure of hypotheses is introduced.
-40. Prospective.  The second stopping proof of note 30.  Scott isolation for one class, at the
+40. Steps 1–5 compiled conditionally (the last sentences of this note).  The second stopping
+    proof of note 30.  Scott isolation for one class, at the
     pin: `stabilizationOrdinal_spec` with `stabilizationOrdinal_lt_omega1'` (signatures
     checked), or `scottSentence_characterizes` with `scottFormula_qrank_le` and
     `BFEquiv_implies_agreeQR` (signatures checked), the latter form also using
@@ -1206,11 +1229,26 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     Attainment: `Realization.IsModel.reduce` and `ModelExpansion.nonempty_of_forall_lt`, the
     latter conditional on `Expansion.NextBlockUniqueness`.  These are compiled in this repository
     (theorem named; `ModelExpansion.map` is a definition), except the library statements and the
-    conversion; their hypotheses are still to be proved.  The strict bound on serving stages, the
-    attainment for a literal base, and positive niceness (5 ⇒ 1 of row 34) are prospective.  The
+    conversion; their hypotheses are still to be proved.  Positive niceness (5 ⇒ 1 of row 34) is
+    prospective; the strict bound and the attainment are compiled conditionally (below).  The
     route proves stopping for each base that is a model as its conclusion and assumes no
     termination; it is not a dependency of the expansion-domain endpoint and is not combined with
-    the conditional of row 31 in a cycle.
+    the conditional of row 31 in a cycle.  Steps 1–5, in the raw base encoding, are compiled
+    conditional on `Expansion.FiniteCutReceiving` ((R1)), `Expansion.NextBlockUniqueness`, and
+    `StageType.HasApexCoatomExtensions` at every countable block stage, each still to be proved
+    (`MainTheorem/MaximalRefinement`): the isolating sentence `MainTheorem.exists_isolates` (the
+    Scott sentence, through `scottSentence_characterizes`), of quantifier rank below `ω₁`
+    (`MainTheorem.qrank_lt_omega_one`, `MainTheorem/Spectrum`); two classes in each countable
+    domain, `MainTheorem.expansionDomain_nontrivial` (per block,
+    `nonempty_loss_of_hasApexCoatomExtensions` at `δ` and `δ + 1`, without `CapToModel`); the
+    subsingleton domain `MainTheorem.expansionDomain_subsingleton_of_isolates` and the strict bound
+    `MainTheorem.lt_qrank_of_isolates`, with the agreement taken between the base structure on its
+    own carrier and the codes of the classes of the domain
+    (`Expansion.realize_iff_of_modelExpansions`), so that neither the conversion between the
+    encodings nor a code of the base is used; the attainment
+    `MainTheorem.exists_isGreatest_servingIndex`; and the terminal refinement of row 38.  The bound
+    is the quantifier rank of the chosen isolating sentence, not a Scott rank.  Positive niceness
+    and the forms in the common invariant encoding are prospective.
 
 **Completion criteria, item by item** (the items of `README.md`, "Manuscript correspondence
 (required)").  For every item, each row of the concordance that it concerns is P or C, with its

@@ -86,6 +86,10 @@ Notes on the rows, each with its marker:
   (`hasNonemptyLosses_of_hasApexCoatomExtensions`, also on the coatom extension property with
   apex at every countable block stage; item 7 below), and the thin `ℵ₁` spectrum
   (`densitySentence_hasThinAlephOneSpectrum_of_terminalClassification`).
+- *Manuscript correspondence, item 5.*  Compiled conditionally on (R1), next-block uniqueness,
+  and the coatom extension property with apex at every countable block stage: the maximal
+  refinement of a prescribed model (`MainTheorem.exists_maximalRefinement`); rows 33–36, 38, 40
+  stay S.
 
 ## The named hypotheses of the main theorem
 
