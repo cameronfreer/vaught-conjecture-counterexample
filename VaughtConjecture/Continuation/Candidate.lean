@@ -60,27 +60,38 @@ because a stage type carries the lawfulness of its labels.
   (`Label.collapse`) of the pointwise minimum of these finitely many lawful sections
   (`Realization.exists_isLawful_collapse_inf'`); locality follows from `Label.TransformsTo.inf`
   and `Label.TransformsTo.collapse`.
-* **Availability** is the only law that can fail.  It holds whenever the stable section at the
-  first cell is a label of `t` below `λ_ξ`, and, at a cell labelled the formal top, whenever the
-  graded index of the second cell carries at most one cell labelled the formal top
-  (`Realization.availability_stableSection_of_injOn`, unconditional): every lift then carries a
-  label at least the first one at that cell.  It can fail for **twins**, two or more cells
-  labelled the formal top at one graded index: a forced disjunction is not a disjunction of
-  forcings, and the pointwise minimum of two lawful lifts need not satisfy availability (the
-  stage-type example of `VaughtConjecture.Stage.ThresholdExamples`; no realization-level
-  counterexample is claimed).  **Stable availability for twin types in models is open**; apart
-  from the case of an existing next-block expansion (`Realization.isStablyLawful_of_reduce_eq`,
-  below, which presupposes the expansion that output 3 is to construct), no conditional statement
-  of it is made here.
+* **Availability** holds whenever the stable section at the first cell is a label of `t` below
+  `λ_ξ`.  At a first cell `s₀` labelled the formal top, availability for the pair `(s₀, t₀)` is
+  exactly the transfer of every threshold forced at `s₀` over a realized rooted cover to some
+  cell labelled the formal top at the graded index of `t₀`, over a realized rooted cover
+  (`Realization.availability_stableSection_iff`, with no hypothesis on `R`).  When that graded
+  index carries at most one cell labelled the formal top, every lift carries there a label at
+  least the one at `s₀` (`Realization.availability_stableSection_of_injOn`, unconditional).  Two or
+  more cells labelled the formal top at one graded index are **twins**; there the pointwise
+  minimum of two lawful lifts need not satisfy availability (the stage-type example of
+  `VaughtConjecture.Stage.ThresholdExamples`, on an incomplete scheme).  **Availability at twins
+  is proved from legal types** (`Realization.availability_stableSection_of_hasLegalTypes`): a legal
+  rooted cover `(q, f)` forcing `N` at `s₀` forces `N`, over the same cover, at a cell labelled the
+  formal top at the graded index of `t₀` (`StageType.exists_forcesThreshold_twin_face`, in
+  `VaughtConjecture.Stage.Threshold`).  The capped lift of `q` at `λ_ξ + K`, for `K` the largest
+  grade of a cell of `q` labelled the formal top, gives `N ≤ K`; completeness and availability of
+  `q` give a cell `D` of full scope and grade `K` labelled the formal top; availability of the row
+  of `D`, which is lawful below `D` by consistency of the rows, names a cell `w` at the graded
+  index of `t₀` with the row of `D` at least as large at `w` as at `s₀`; and locality of every
+  lift at `D` gives the label of `w` at least the minimum of those of `s₀` and `D`, both at least
+  `λ_ξ + N`.
 
-Hence a realization is stably lawful under exact consistency and covering when no type has twins
+Hence every exactly consistent covering realization with legal types is stably lawful
+(`Realization.isStablyLawful_of_hasLegalTypes`), in particular every model
+(`Realization.IsModel.isStablyLawful`).  A realization is also stably lawful under exact
+consistency and covering, without legal types, when no type has twins
 (`Realization.isStablyLawful_of_injOn_gradedIndex`), and with no hypothesis at all when it is
 cover-hollow (`Realization.isStablyLawful_of_isCoverHollow`).  Unbounded top-grade growth and
 non-hollowness are not used for lawfulness; they concern receiving of the candidate, below.
 
-**The hypotheses on single types examined here are refuted.**  Two finite statements about stage
-types were examined as routes to availability at twins.  Both are false; they are defined, and
-refuted, only in `VaughtConjecture.Continuation.CandidateCounterexamples`.
+**Two hypotheses on single types are refuted** (negative special cases).  Two finite statements
+about stage types that would give availability at twins through every lift are false; they are
+defined, and refuted, only in `VaughtConjecture.Continuation.CandidateCounterexamples`.
 
 * **Synchronizing cofaces** would transfer forcing from a cell `a` to a cell `b` at a graded index
   with twins: for a legal stage type `q` and cells `a`, `b` labelled the formal top with the scope
@@ -104,9 +115,13 @@ refuted, only in `VaughtConjecture.Continuation.CandidateCounterexamples`.
   `{1}` and grade `1`, two twins of full scope and grade `1`, and a cell of full scope and grade
   `2`.  On its type every lift sets `s₀` to the larger twin, and both orders of the twins occur.
 
-So no hypothesis that orders a twin above `s₀` in all lifts of a single type can hold;
-availability at twins has to use information about the realization, such as which lifts of a
-type extend to lifts of the covers realized in `R`.
+So no hypothesis that orders a twin above `s₀` in all lifts of a single type can hold.  The
+transfer that does hold happens inside the forcing cover: it carries a level forced at `s₀` over a
+legal cover to a twin over the same cover, and per-lift statements ignore the forced level.  On
+the five-cell type the forced level at `s₀` is its grade `1`: it is at least the grade by the order
+law, and at most `1` because every cell labelled the formal top has grade `1`, so the capped lift
+with `K = 1` is a lift of the type (`StageType.capLift_reduce`).  Every twin also has level `1` by
+the order law, while lifts still order the twins both ways above level `1`.
 
 **The cases.**
 
@@ -128,7 +143,7 @@ type extend to lifts of the covers realized in `R`.
 **Relation to the roadmap.**  The roadmap builds the structural candidate "from consistency and
 covering" (Layer 4, output 1).  Here the order law, locality, exact partial evaluation, the
 reduction, legality, covering and exact consistency need no more; availability needs, in
-addition, the absence of twins; at twins it is open.  The splice of two witnesses (roadmap, Layer
+addition, legal types (or the absence of twins).  The splice of two witnesses (roadmap, Layer
 3, the transformation lemma still to be proved there) is not used: locality comes from pointwise
 minima and collapse.
 
@@ -140,10 +155,9 @@ for a model with non-hollow unbounded top-grade growth; still to be proved); the
 through the coatom extension at `λ_{ξ+1}` over the empty face; and the plain and apex coatom
 extension properties at `λ_{ξ+1}` (`StageType.HasCoatomExtensions` and
 `StageType.HasApexCoatomExtensions` at `blockStage (ξ + 1)`) for the uniformity and dominance
-instances; and, as the argument `hlaw` of the definition, the stable lawfulness of `R`, which
-comes from `Realization.isStablyLawful_of_injOn_gradedIndex` when no type of `R` has twins and is
-otherwise an open input.  None of these is stated here.  No (R1), forcing donors, normalization or
-uniqueness of expansions is used except in the last case above.
+instances.  None of these is stated here.  The argument `hlaw` of the definition, the stable
+lawfulness of `R`, is supplied for every model by `Realization.IsModel.isStablyLawful`.  No (R1),
+forcing donors, normalization or uniqueness of expansions is used except in the last case above.
 
 ## Placement
 
@@ -157,17 +171,6 @@ namespace VaughtConjecture
 open Finset Ordinal StageType
 
 /-! ### Auxiliary facts -/
-
-/-- The label of an offset is monotone in the offset. -/
-private theorem ofOffset_le_ofOffset {β : Ordinal.{u}} {o o' : ℕ∞} (h : o ≤ o') :
-    Label.ofOffset β o ≤ Label.ofOffset β o' := by
-  induction o' using ENat.recTopCoe with
-  | top => exact Label.ofOffset_top ▸ le_top
-  | coe m' =>
-    obtain ⟨m, rfl⟩ := ENat.ne_top_iff_exists.mp (ne_top_of_le_ne_top (ENat.natCast_ne_top m') h)
-    rw [Label.ofOffset_natCast, Label.ofOffset_natCast]
-    exact WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr
-      (add_le_add_right (Nat.cast_le.mpr (ENat.natCast_le_natCast.mp h)) _))
 
 /-- `β ≤ β + n` as labels. -/
 private theorem coe_le_coe_add (β : Ordinal.{u}) (n : ℕ) :
@@ -618,7 +621,7 @@ private theorem stableSection_le_of_forall_lift (ht : R.eval u = some t) {a b : 
         (∀ d, Label.reduce (blockStage ξ) (ℓ d) = t.label d) → ℓ a ≤ ℓ b) :
     R.stableSection u t a ≤ R.stableSection u t b := by
   rw [stableSection_of_eq_top ha, stableSection_of_eq_top hb]
-  refine ofOffset_le_ofOffset (ENat.forall_natCast_le_iff_le.mp fun n hn ↦ ?_)
+  refine Label.ofOffset_mono (ENat.forall_natCast_le_iff_le.mp fun n hn ↦ ?_)
   obtain ⟨x, hx, hcov⟩ := (natCast_le_stableOffset_iff (covers_of_eval u ht) ha).mp hn
   refine (natCast_le_stableOffset_iff (covers_of_eval u ht) hb).mpr
     ⟨x, ⟨hx.1, fun Q P hQ hP i hi ↦ ?_⟩, hcov⟩
@@ -659,7 +662,8 @@ theorem availability_stableSection_of_injOn
 /-! ### Stable lawfulness -/
 
 /-- **Stable lawfulness without twins**: an exactly consistent covering realization in whose types
-no two cells labelled the formal top share a graded index is stably lawful. -/
+no two cells labelled the formal top share a graded index is stably lawful.  Legal types are not
+assumed (compare `isStablyLawful_of_hasLegalTypes`). -/
 theorem isStablyLawful_of_injOn_gradedIndex (hR : R.IsConsistent) (hc : R.IsCovering)
     (hinj : ∀ ⦃n : ℕ⦄ (u : Fin n ↪ M) (t : StageType.{u} (blockStage ξ) n), R.eval u = some t →
       Set.InjOn t.toCellScheme.gradedIndex {d | t.label d = ⊤}) : R.IsStablyLawful :=
@@ -758,6 +762,108 @@ theorem isStablyLawful_of_reduce_eq (hF : ForcingDonors.{u} ξ)
       exact Label.reduce_of_lt (Label.reduce_lt_iff.mp hlt)
   rw [heq]
   exact T.isLawful
+
+end Realization
+
+/-! ### Availability at twins from legal types -/
+
+namespace Realization
+
+section Availability
+
+variable {ξ : Ordinal.{u}} {M : Type v} {k : ℕ} {R : Realization.{u, v} (blockStage ξ) M}
+
+variable (R) in
+/-- **Forcing over a realized rooted cover**: some rooted cover `(m, q, f)` of `u` realized in `R`
+(the tuple `u` extends along `f` to a cover of `q`) forces the threshold `n` at the cell `d` of `t`,
+read at `λ_{ξ+1}`. -/
+def ForcesOverCover (u : Fin k ↪ M) (t : StageType.{u} (blockStage ξ) k) (d : Fin t.card)
+    (n : ℕ) : Prop :=
+  ∃ x : Σ m : ℕ, StageType.{u} (blockStage ξ) m × (Fin k ↪ Fin m),
+    ForcesThreshold (blockStage (ξ + 1)) (isSuccPrelimit_blockStage ξ) x.2.1 x.2.2 t d n ∧
+      R.ExtendsToCover u x
+
+/-- **Availability of the stable section at a cell labelled the formal top**: at a typed tuple `u`
+of type `t` and a cell `s₀` labelled the formal top, the availability law of the stable section
+for the pair `(s₀, t₀)` holds exactly when every threshold forced at `s₀` over a realized rooted
+cover is forced, over a realized rooted cover, at some cell labelled the formal top at the graded
+index of `t₀`.  No hypothesis on `R`; the cell may depend on the threshold, and the law takes the
+one with the largest stable offset. -/
+theorem availability_stableSection_iff {u : Fin k ↪ M} {t : StageType.{u} (blockStage ξ) k}
+    (ht : R.eval u = some t) {s₀ t₀ : Fin t.card} (hs₀ : t.label s₀ = ⊤) :
+    (∃ w, t.toCellScheme.gradedIndex w = t.toCellScheme.gradedIndex t₀ ∧
+        R.stableSection u t s₀ ≤ R.stableSection u t w) ↔
+      ∀ n : ℕ, R.ForcesOverCover u t s₀ n →
+        ∃ w, t.toCellScheme.gradedIndex w = t.toCellScheme.gradedIndex t₀ ∧ t.label w = ⊤ ∧
+          R.ForcesOverCover u t w n := by
+  have hc : R.Covers t u := covers_of_eval u ht
+  constructor
+  · rintro ⟨w, hw, hle⟩ n hn
+    have h₁ : ((blockStage ξ + n : Ordinal.{u}) : Label.{u}) ≤ R.stableSection u t s₀ := by
+      rw [stableSection_of_eq_top hs₀]
+      exact (coe_add_le_stableLabel_iff hc hs₀).mpr hn
+    have hwt : t.label w = ⊤ := by
+      by_contra hwt
+      rw [stableSection_of_ne_top hwt] at hle
+      exact (h₁.trans hle).not_gt (((t.atStage w).resolve_right hwt).trans_le
+        (WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr le_self_add)))
+    refine ⟨w, hw, hwt, ?_⟩
+    have h₂ := h₁.trans hle
+    rw [stableSection_of_eq_top hwt] at h₂
+    exact (coe_add_le_stableLabel_iff hc hwt).mp h₂
+  · intro h
+    classical
+    set T := univ.filter fun w : Fin t.card ↦
+      t.toCellScheme.gradedIndex w = t.toCellScheme.gradedIndex t₀ ∧ t.label w = ⊤
+    set o : Fin t.card → ℕ∞ := fun d ↦
+      R.stableOffset (blockStage (ξ + 1)) (isSuccPrelimit_blockStage ξ) u t d
+    have hT : T.Nonempty := by
+      obtain ⟨w, hw, hwt, -⟩ := h 0 ⟨⟨k, t, Function.Embedding.refl _⟩,
+        forcesThreshold_zero (restrictFace_refl t) hs₀, u, rfl, hc⟩
+      exact ⟨w, mem_filter.mpr ⟨mem_univ _, hw, hwt⟩⟩
+    obtain ⟨w₀, hw₀, hmax⟩ := T.exists_max_image o hT
+    obtain ⟨-, hw₀i, hw₀t⟩ := mem_filter.mp hw₀
+    refine ⟨w₀, hw₀i, ?_⟩
+    rw [stableSection_of_eq_top hs₀, stableSection_of_eq_top hw₀t]
+    refine Label.ofOffset_mono (ENat.forall_natCast_le_iff_le.mp fun n hn ↦ ?_)
+    obtain ⟨w, hw, hwt, hf⟩ := h n ((natCast_le_stableOffset_iff hc hs₀).mp hn)
+    exact ((natCast_le_stableOffset_iff hc hwt).mpr hf).trans
+      (hmax w (mem_filter.mpr ⟨mem_univ _, hw, hwt⟩))
+
+/-- **Availability of the stable section from legal types**, at every typed tuple and every pair,
+with no hypothesis on `R` beyond the legality of its types.  At a first cell labelled the formal
+top, the rooted cover that forces a threshold there forces it at a cell labelled the formal top at
+the graded index of the second cell (`StageType.exists_forcesThreshold_twin_face`), and
+`availability_stableSection_iff` applies. -/
+theorem availability_stableSection_of_hasLegalTypes (hl : R.HasLegalTypes)
+    {u : Fin k ↪ M} {t : StageType.{u} (blockStage ξ) k} (ht : R.eval u = some t)
+    {s₀ t₀ : Fin t.card} (hst : t.toCellScheme.scope s₀ ⊆ t.toCellScheme.scope t₀)
+    (hg : t.toCellScheme.grade s₀ = t.toCellScheme.grade t₀) :
+    ∃ w, t.toCellScheme.gradedIndex w = t.toCellScheme.gradedIndex t₀ ∧
+      R.stableSection u t s₀ ≤ R.stableSection u t w := by
+  by_cases hs : t.label s₀ = ⊤
+  · refine (availability_stableSection_iff ht hs).mpr fun n ⟨x, hx, hcov⟩ ↦ ?_
+    obtain ⟨s, hs', hcs⟩ := hcov
+    obtain ⟨w, hw, hwt, hwf⟩ := exists_forcesThreshold_twin_face
+      (blockStage_add_one ξ).ge (hl _ _ hcs.eval_eq) hx.1 hst hg hs hx
+    exact ⟨w, hw, hwt, x, hwf, s, hs', hcs⟩
+  · obtain ⟨w, hw, hle⟩ := t.isLawful.availability s₀ t₀ hst hg
+    exact ⟨w, hw, stableSection_le_of_ne_top hs hle⟩
+
+/-- **Stable lawfulness from legal types**: every exactly consistent covering realization with
+legal types at a block stage is stably lawful.  The order law needs no hypothesis, locality comes
+from exact consistency and covering, and availability from legal types. -/
+theorem isStablyLawful_of_hasLegalTypes (hR : R.IsConsistent) (hc : R.IsCovering)
+    (hl : R.HasLegalTypes) : R.IsStablyLawful := fun _ _ _ ht ↦
+  { orderly := orderly_stableSection ht
+    locality := locality_stableSection hR hc ht
+    availability := fun _ _ hst hg ↦ availability_stableSection_of_hasLegalTypes hl ht hst hg }
+
+/-- **Every model at a block stage is stably lawful.** -/
+theorem IsModel.isStablyLawful (hR : R.IsModel) : R.IsStablyLawful :=
+  isStablyLawful_of_hasLegalTypes hR.isConsistent hR.isCovering hR.hasLegalTypes
+
+end Availability
 
 end Realization
 
