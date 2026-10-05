@@ -24,8 +24,10 @@ first cell and not the second:
   not at the cell of grade `2`, where its own label is bottom (`mem_bottomPatternFamily_bot_top`):
   a cell of grade `n + 1` is not tested.
 
-No gated extension is exhibited here: a gated extension is legal, and its construction is the
-gated pinned extension property, a hypothesis still to be proved.
+No gated extension is exhibited here; one is in
+`VaughtConjecture.Extension.GatedExtensionCounterexample`
+(`StageType.GatedExtension.instance_two_zero`), where the universal gated extension hypothesis is
+also refuted.
 -/
 
 namespace VaughtConjecture.StageType.GateRecoveryExamples

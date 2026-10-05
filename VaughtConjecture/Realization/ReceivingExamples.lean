@@ -26,6 +26,8 @@ Special cases of `VaughtConjecture.Realization.Receiving`:
 * **the empty root**: every legal donor is received over a typed empty tuple;
 * **descent along stage reduction**: receiving at a limit stage `α ≥ ω` descends to the reduction
   to `ω`, cutoff by cutoff; the reduction to stage `0` has no permitted cutoff;
+* **donor tops**: a member of the receiving family of a donor at a cutoff is labelled at least the
+  cutoff where the donor is labelled `⊤`, and nothing more is known there;
 * **stage `ω`**: every structure satisfying the density sentence has finite-extension receiving,
   unconditionally.
 
@@ -159,6 +161,18 @@ to stage `0` has finite-cut receiving, vacuously. -/
 example : (R.reduce Ordinal.isSuccPrelimit_zero).HasFiniteCutReceiving := fun _ _ _ c hc ↦ by
   obtain ⟨δ, hδ, -⟩ := isPermittedCutoff_iff.mp hc
   exact (not_lt_zero hδ).elim
+
+/-! ### Donor tops -/
+
+/-- **Donor tops come back only as values at least the cutoff**: a member of the receiving family
+at `c` of a donor labelled `⊤` at a cell is labelled at least `c` at that cell, and nothing more is
+known there. -/
+example {n : ℕ} {d q : StageType.{u} α n} {c : Label.{u}} (hq : q ∈ receivingFamily d c)
+    (i : Fin q.card) (j : Fin d.card) (hij : (i : ℕ) = j) (hj : d.label j = ⊤) :
+    c ≤ q.label i := by
+  have h := hq.2 i j hij
+  rw [hj, top_inf_eq] at h
+  exact min_eq_right_iff.mp h
 
 end VaughtConjecture.Realization
 

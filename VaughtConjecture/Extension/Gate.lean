@@ -94,8 +94,10 @@ recovered (`IsGate.eq_of_cap_eq_top`).
   whole set; accessibility of plans and completeness then put cells on a chain of faces between
   them, and the restriction to the last coatom of that chain is an exact pinned extension of a face
   of the private context over the root.  So the construction of a legal gated scheme contains
-  completion problems of the kind of (R6), and general (R1) remains conditional on that
-  construction, which is still to be proved.
+  completion problems of the kind of (R6).  With its twins labelled `⊥`, such a scheme need not
+  exist: the universal gated extension hypothesis `StageType.HasGatedPinnedExtensions` fails at
+  every stage (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`).  General (R1) is
+  open.
 
 ## Placement
 
