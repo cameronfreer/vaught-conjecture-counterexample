@@ -2760,8 +2760,11 @@ witnesses).**
   whose row is a coded copy of the labels, completed above it), is destined for `Extension/`, built
   from the completion below the full grade, without (R1).
 - The bound of the provisional offset by the top grade, the optional bound (d) of the
-  normalization (prospective): the capping lemma is now in `Scheme/Row`, and the bound waits for
-  `StageType.topGrade` (`Continuation/Terminal`) to move to `Stage/`.
+  normalization (prospective), stated with `StageType.provisionalOffset`.  Its forcing form is
+  compiled: if every grade of `q` is at most `K` and `β + K < α`, then `(q, f)` does not force
+  `K + 1` at a cell labelled the formal top (`StageType.not_forcesThreshold_of_grade_le`,
+  `Stage/Threshold`).  The bound itself waits for `StageType.topGrade` (`Continuation/Terminal`) to
+  move to `Stage/`.
 - The existential two-face lift `2FL∃(j)` and the choosing variant of
   `CellScheme.Rows.cappedLift_of_boundary_short` (checkpoint 2.7), in prose only.
 - The ordinary construction of (R1) as data (4b-ii), the proof of
