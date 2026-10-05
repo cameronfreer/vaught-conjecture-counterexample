@@ -21,8 +21,8 @@ at least `ω` (`omega0_le_blockStage`), block stages are strictly increasing
 (`blockStage_strictMono`) and at least their index (`le_blockStage`), and they are countable at
 countable indices (`blockStage_lt_omega_one`).  The stage `λ_ξ` is a permitted cutoff at the
 stage `λ_{ξ+1}` (`isPermittedCutoff_blockStage`).  The reindexing `ξ ↦ 1 + ξ` of
-`blockStage_eq_mul` is strictly increasing (`strictMono_one_add`), onto the positive ordinals
-(`exists_one_add_eq_iff`), and preserves countability (`one_add_lt_omega_one_iff`).
+`blockStage_eq_mul` is strictly increasing (Mathlib's `add_right_strictMono`), onto the positive
+ordinals (`exists_one_add_eq_iff`), and preserves countability (`one_add_lt_omega_one_iff`).
 
 **Model expansions.**  A realization `R` at stage `α` on the carrier of a base structure `M` (a
 structure of `baseLanguage`) is an **expansion** of `M` (`Realization.IsExpansionOf`) when it is a
@@ -110,10 +110,6 @@ theorem blockStage_add_one (ξ : Ordinal.{u}) : blockStage (ξ + 1) = blockStage
 /-- The block stage is `ω · (1 + ξ)`. -/
 theorem blockStage_eq_mul (ξ : Ordinal.{u}) : blockStage ξ = ω * (1 + ξ) := by
   rw [blockStage, mul_add, mul_one]
-
-/-- **The reindexing `ξ ↦ 1 + ξ` is strictly increasing.** -/
-theorem strictMono_one_add : StrictMono fun ξ : Ordinal.{u} ↦ 1 + ξ :=
-  (isNormal_add_right 1).strictMono
 
 /-- **The reindexing `ξ ↦ 1 + ξ` is onto the positive ordinals.** -/
 theorem exists_one_add_eq_iff {β : Ordinal.{u}} : (∃ ξ, 1 + ξ = β) ↔ β ≠ 0 := by

@@ -26,7 +26,8 @@ here with one field for each printed clause.
   `injective` and `perm`, then `exists_closed` and `inter`), and `Th_StrGeo`
   [AFK26, Definition 2.2] is `IsStructuredGeometry` (clauses (a)–(d)).  Each sentence is stated by
   its satisfaction in a structure; clause (b) is a disjunction over `L_b^n`, which here has `ℵ₁`
-  members.
+  members.  Its languages are those of a `GeometrySignature`, so the countability of `L_c^n` of
+  Convention 2.3, which the printed Definition 2.2 does not assume, is part of the setting.
 * An invariance diagram [AFK26, Definition 2.4] is `InvarianceDiagram`.  A pair
   `(P(x₀, …, x_{n-1}), ψ)` is `⟨n, P, ψ⟩` with `ψ : L.Formula (Fin n)` (`DiagramPair`): the
   printed condition that the variables of `ψ` are among the `x_i` is the type of `ψ`.  The fields
@@ -109,13 +110,15 @@ the projections along a stage function (`reductionSystem`): `τ_β` is the proje
   invariants fixed by `τ_1` in the printed indexing (by `τ_0` in the block indexing), as in the
   proof of [AFK26, Lemma 4.22].
 * The printed compatibility of the diagram of the templates with the printed projections
-  [AFK26, Lemma 4.19] fails at the printed index `0` for the stage types, and only there
-  (`not_isCompatibleWith_omega0MulSystem`, `isCompatibleWith_omega0MulMaxOneSystem`); it holds
-  with the block indexing (`isCompatibleWith_blockSystem`), whose shift by one at the finite
+  [AFK26, Lemma 4.19] fails for the stage types, with `stageDiagram`, at the printed index `0`,
+  and only there (`not_isCompatibleWith_omega0MulSystem`, `isCompatibleWith_omega0MulMaxOneSystem`;
+  with the printed `L_c` it would fail at every finite index, `IMPLEMENTATION.md`, note 14); it
+  holds with the block indexing (`isCompatibleWith_blockSystem`), whose shift by one at the finite
   indices is the convention of `blockStage`, not a consequence of compatibility
   (`VaughtConjecture.Correspondence.StageIndexing`).
-* The fact after [AFK26, Definition 2.8] that projections preserve compatibility
-  [AFK26, Lemma 2.9] is not compiled here.
+* The projection of a structure and its rank [AFK26, Definition 2.7], and the fact after
+  [AFK26, Definition 2.8] that projections preserve compatibility [AFK26, Lemma 2.9], are not
+  compiled here.
 
 ## Placement
 
@@ -194,7 +197,9 @@ structure IsGeometry : Prop where
 /-- **A structure with an `(L_a, L_b, L_c)`-structured geometry** [AFK26, Definition 2.2]: the
 structure satisfies the theory `Th_StrGeo`, each of whose clauses is stated here by its
 satisfaction (clause (b) is a disjunction over `L_b^n`, which is not a formula of `L_{ω₁,ω}` when
-`L_b^n` is uncountable). -/
+`L_b^n` is uncountable).  The languages are those of a `GeometrySignature`, which includes the
+countability `|L_c^n| ≤ ω` of [AFK26, Convention 2.3]: Definition 2.2, printed before the
+Convention, does not assume it, and the Convention fixes the languages for the rest of §2. -/
 structure IsStructuredGeometry : Prop where
   /-- (a) The structure has an `L_a`-geometry. -/
   isGeometry : IsGeometry σ M

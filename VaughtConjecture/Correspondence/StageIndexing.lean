@@ -22,10 +22,14 @@ reads the projection of index `β` at the stage `ω · β`:
   restriction;
 * the projection of index `β` is the truncation at `ω · β`: in the example of trees,
   `τ_β = τ⁻_{ω·β}` [AFK26, Definition 3.20], and for templates `τ_β(Q_t) = Q_{t*}` with `t*` the
-  truncation of `t` at `ω · β` [AFK26, Definition 4.16]; the structures of index `β` of the
-  system of templates satisfy density at `ω · β` [AFK26, Definition 4.20];
-* the limit ordinals below `ω₁` are the stages of an earlier version of [AFK26] (its
+  truncation of `t` at `ω · β` [AFK26, Definition 4.16];
+* the limit ordinals below `ω₁` are the stages of the version of 4 October 2026 of [AFK26] (its
   Definition 4.23); the current version has no separate notion of a stage.
+
+Printed material, not used here: the structures of index `β` of the system of templates are asked
+for density at the index `ω · β` [AFK26, Definition 4.20], density at an index being read through
+the projection of that index [AFK26, Definition 2.10]; by [AFK26, Definition 4.16] that projection
+is the truncation at `ω² · β`, not at `ω · β`.
 
 **The comparison.**  The block stage `λ_ξ = ω + ω · ξ` (`blockStage`) is the printed stage of
 the index `1 + ξ`: `blockStage ξ = ω * (1 + ξ)` (`blockStage_eq_mul`).  So the two indexings agree
@@ -35,8 +39,8 @@ block stage is the printed stage of `n + 1` (`blockStage_natCast`).  The convent
 * **at zero**: the printed index `0` reads the stage `ω · 0 = 0`, which is not a limit and is no
   block stage; the printed indices of block stages are exactly the positive ordinals
   (`exists_blockStage_eq_omega0_mul_iff`), and the reindexing `ξ ↦ 1 + ξ` is an order embedding
-  (`strictMono_one_add`) onto them (`exists_one_add_eq_iff`) preserving countability
-  (`one_add_lt_omega_one_iff`; these three in `VaughtConjecture.Realization.Expansion`);
+  (Mathlib's `add_right_strictMono`) onto them (`exists_one_add_eq_iff`) preserving countability
+  (`one_add_lt_omega_one_iff`; these two in `VaughtConjecture.Realization.Expansion`);
 * **at limits**: block stages are continuous (`isNormal_blockStage`): at a limit index the block
   stage is the supremum of the block stages below it (`blockStage_eq_iSup_of_isSuccLimit`), as
   the printed stage `ω · γ` is at a limit `γ`;
@@ -48,9 +52,10 @@ block stage is the printed stage of `n + 1` (`blockStage_natCast`).  The convent
 compatible with the base relations
 (`VaughtConjecture.Correspondence.not_isCompatibleWith_omega0MulSystem`, in
 `VaughtConjecture.Correspondence.InvariantSystem`): this index is corrected, and it has no block
-index.  Only the index `0` is forced: the printed projections with the index `0` read at the stage
-`ω` form a compatible system (`Correspondence.isCompatibleWith_omega0MulMaxOneSystem`) that agrees
-with the printed one at every positive index (`Correspondence.omega0MulMaxOneSystem_τ_of_ne_zero`).
+index.  With the diagram of the stage types (`Correspondence.stageDiagram`), only the index `0`
+is forced: the printed projections with the index `0` read at the stage `ω` form a compatible
+system (`Correspondence.isCompatibleWith_omega0MulMaxOneSystem`) that agrees with the printed one
+at every positive index (`Correspondence.omega0MulMaxOneSystem_τ_of_ne_zero`).
 The shift by one at the other finite indices, the index of a block stage being the printed index
 `1 + ξ` (`Correspondence.omega0MulSystem_τ_one_add`), is the convention of `blockStage`
 (`λ_0 = ω`), not a consequence of compatibility.
