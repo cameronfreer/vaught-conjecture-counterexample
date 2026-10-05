@@ -44,17 +44,23 @@ The corresponding nonemptiness of the uniformity and dominance instances at limi
 ([Kni26, Lemmas 4.4.2 and 4.4.3], by amalgamation through [Kni26, Corollary 4.3.22], with
 [Kni26, Lemma 4.2.2] for the seed) is not proved here; it is in
 `VaughtConjecture.Extension.FamilyCofaces`, under the coatom extension property (uniformity) and
-its form with apex (dominance).  The three lemmas together give [Kni26, Lemma 4.4.1].
+its form with apex (dominance).  The three lemmas together give [Kni26, Lemma 4.4.1].  The
+uniformity and dominance instances, with the amalgam of a legal stage type and a legal stage type
+on one point over the empty face, are bundled as the statement `HasNonemptyCofaceInstances α` used
+by the cap-to-model theorem and by the empty-root case of receiving.
 
 **Receiving.**  The receiving family of a stage type `d` at a cutoff `c` (`receivingFamily d c`)
 consists of the stage types on the scheme of `d` with the observation of `d` at `c`; it contains
 `d` (`self_mem_receivingFamily`), and membership is transitive (`mem_receivingFamily_trans`),
 passes to lower cutoffs (`mem_receivingFamily_of_le`), and reindexes
-(`reindex_mem_receivingFamily`).  **Repair**: if the face of a legal `D` along `f` is `p'`, and
-`p` agrees with `p'` at a cap `c ≤ α` self-visible at the arity of `D`, then at a zero-or-limit
-stage `α` some legal `d` has face `p` along `f` literally and agrees with `D` at `c`
-(`exists_restrictFace_eq_mem_receivingFamily`): bountifulness of the scheme of `D` extends the
-labels of `p` to a lawful section with the observation of `D` at `c`
+(`reindex_mem_receivingFamily`); faces of its members are members of the receiving families of the
+faces (`exists_restrictFace_mem_receivingFamily`), and a stage type on the scheme of `d` that
+equals `d` at every cell not labelled the formal top and exceeds `γ` at every other cell is in the
+receiving family of `d` at the cutoff `γ` (`mem_receivingFamily_of_capped`).  **Repair**: if the
+face of a legal `D` along `f` is `p'`, and `p` agrees with `p'` at a cap `c ≤ α` self-visible at
+the arity of `D`, then at a zero-or-limit stage `α` some legal `d` has face `p` along `f` literally
+and agrees with `D` at `c` (`exists_restrictFace_eq_mem_receivingFamily`): bountifulness of the
+scheme of `D` extends the labels of `p` to a lawful section with the observation of `D` at `c`
 (`exists_isLawful_extend_of_mem_receivingFamily`).  The bottom-pattern family of a labelling
 depends on the labelling only through which of its values are bottom
 (`bottomPatternFamily_congr`).
@@ -239,6 +245,35 @@ theorem reindex_mem_receivingFamily {D q : StageType.{u} α n} {c : Label.{u}} (
   refine ⟨rfl, fun i j hij ↦ ?_⟩
   obtain rfl := Fin.ext hij
   exact hl _ _ rfl
+
+/-- **Faces of members of a receiving family**: if `Q` is in the receiving family of `D` at `c`,
+then along every face at which `D` restricts to `d`, `Q` restricts to a member of the receiving
+family of `d` at `c`. -/
+theorem exists_restrictFace_mem_receivingFamily {D Q : StageType.{u} α n} {c : Label.{u}}
+    (hQ : Q ∈ receivingFamily D c) {f : Fin m ↪ Fin n} {d : StageType.{u} α m}
+    (hd : restrictFace f D = some d) :
+    ∃ q, restrictFace f Q = some q ∧ q ∈ receivingFamily d c := by
+  obtain ⟨hf, rfl⟩ := (restrictFace_eq_some_iff D f).mp hd
+  obtain ⟨hS, hl⟩ := hQ
+  obtain ⟨S, ℓ, _, _, _, _⟩ := Q
+  obtain ⟨S', ℓ', _, _, _, _⟩ := D
+  obtain rfl : S = S' := hS
+  refine ⟨_, restrictFace_of_mem _ f (by exact hf), rfl, fun i j hij ↦ ?_⟩
+  obtain rfl : i = j := Fin.ext hij
+  exact hl _ _ rfl
+
+/-- **Capped agreement gives receiving**: a stage type on the scheme of `D` that equals `D` at
+every cell where `D` is not the formal top and exceeds `γ` at every cell where `D` is the formal
+top is in the receiving family of `D` at the cutoff `γ`. -/
+theorem mem_receivingFamily_of_capped {D Q : StageType.{u} α n} {γ : Ordinal.{u}}
+    (hS : Q.toScheme = D.toScheme)
+    (h : ∀ (i : Fin Q.card) (j : Fin D.card), (i : ℕ) = j →
+      (D.label j ≠ ⊤ → Q.label i = D.label j) ∧ (D.label j = ⊤ → (γ : Label.{u}) < Q.label i)) :
+    Q ∈ receivingFamily D γ := by
+  refine ⟨hS, fun i j hij ↦ ?_⟩
+  by_cases hD : D.label j = ⊤
+  · rw [hD, min_eq_right ((h i j hij).2 hD).le, min_eq_right le_top]
+  · rw [(h i j hij).1 hD]
 
 /-! ### Repairing a donor to a received face
 
@@ -517,6 +552,29 @@ theorem ofIsLawful_mem_cofaces_of_lift (hα : Order.IsSuccPrelimit α) (hβ : Or
     (comap_toScheme_of_mem_cofaces hq') hρ hext
 
 end Lift
+
+/-! ### Nonempty coface instances -/
+
+variable (α) in
+/-- **Nonempty coface instances** at a stage `α`: the three statements about legal stage types at
+`α` used by the cap-to-model theorem at `α` and by the empty-root case of receiving.  Each follows
+from the coatom extension property with apex at `α`
+(`StageType.HasNonemptyCofaceInstances.of_hasApexCoatomExtensions`, in
+`VaughtConjecture.Extension.FamilyCofaces`). -/
+structure HasNonemptyCofaceInstances : Prop where
+  /-- **The amalgam over the empty face**: a legal stage type `P` on `n` points and a legal stage
+  type `d` on one point are the faces, along the first `n` points and along the last point, of
+  one coface of `P`. -/
+  exists_amalgam_empty ⦃n : ℕ⦄ (P : StageType.{u} α n) (d : StageType.{u} α 1) :
+    P.IsLegal → d.IsLegal → ∃ Q ∈ P.cofaces, restrictFace (Fin.natAddEmb n) Q = some d
+  /-- **Uniformity instances**: for `γ` zero or a limit below `α`, some coface of a legal stage
+  type has a label in `[γ, γ + ω)`. -/
+  uniformity ⦃n : ℕ⦄ (p : StageType.{u} α n) : p.IsLegal → ∀ γ : Ordinal.{u},
+    Order.IsSuccPrelimit γ → γ < α → (p.cofaces ∩ uniformityFamily γ).Nonempty
+  /-- **Dominance instances**: for `γ` below `α`, some coface of a legal stage type on `n` points
+  has a label above `γ` at a cell of grade `n + 1`. -/
+  dominance ⦃n : ℕ⦄ (p : StageType.{u} α n) : p.IsLegal → ∀ γ : Ordinal.{u}, γ < α →
+    (p.cofaces ∩ dominanceFamily γ).Nonempty
 
 end StageType
 

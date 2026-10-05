@@ -197,6 +197,10 @@ theorem last_notMem_univ_map_left : Fin.last (m + 1) ∉ univ.map (left m) := by
   simp only [mem_map, mem_univ, true_and, not_exists]
   exact fun i hi ↦ (Fin.castSucc_lt_last i).ne hi
 
+/-- The first coatom is not the whole ground set. -/
+theorem univ_map_left_ne : univ.map (left m) ≠ univ :=
+  fun he ↦ last_notMem_univ_map_left (he ▸ mem_univ (Fin.last (m + 1)))
+
 /-- The image under the first coatom of a set lies in the second coatom exactly when the set lies
 in the common face. -/
 theorem map_left_subset_univ_map_right_iff {S : Finset (Fin (m + 1))} :
