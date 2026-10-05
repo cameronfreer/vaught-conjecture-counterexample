@@ -47,16 +47,22 @@ cells whose scope contains its last point.
   `(univ, n)` of `P`, for every legal `P`, every face `f` of `P` with restriction `p`, and every
   legal one-point coface `d` of `p` anchored in `P` below `C`, when `m + 1 < n`.
 
-`HasGatedPinnedExtensions` is a **named hypothesis**, in the pattern of
-`StageType.HasCoatomExtensions`, not a theorem, and nothing here claims it.  The legality of a
-gated extension contains (an analysis, not compiled here) an exact pinned extension of a face of
-`P` over the root (the restriction to the last coatom of a chain of faces from the root with the
-new point to the whole set, by accessibility of plans and completeness) and a full-scope layer of
-grade `n` in which the gate and its twins are controlled.  The planned derivation, from
-`HasCoatomExtensions` for the coatom extensions of the chain before the last, as in
-`StageType.exists_pinned_extension`, together with a gated form of the last coatom extension, is
-prospective.  No gated extension is exhibited here: the abstract schemes of
-`VaughtConjecture.Extension.GateExamples` carry no legality.
+`HasGatedPinnedExtensions` is a universal hypothesis, in the pattern of
+`StageType.HasCoatomExtensions`, and it is **false at every stage**
+(`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`, in
+`VaughtConjecture.Extension.GatedExtensionCounterexample`).  The legal private type
+`GatedExtensionCounterexample.P α` on two points, with two cells of full scope and full grade
+ordered oppositely by two lawful labellings in the cap ball of its labelling at `2`, has no gated
+extension, whatever the face and the donor (`GatedExtensionCounterexample.isEmpty_gatedExtension`):
+in every legal one-point extension of it, every cell of graded index `(univ, 2)` has a twin not
+labelled `⊥` (`GatedExtensionCounterexample.exists_twin_label_ne_bot`).  The capped lifts that
+bountifulness asks for keep the twins at `⊥`, so availability makes the gate dominate both cells,
+and the one witness of the gate cannot read both orders.  The definition is kept to state that
+refutation.  The structure `GatedExtension` is inhabited, for a private type with a unique cell of
+full scope and full grade (`StageType.GatedExtension.instance_two_zero`), and the statements about
+a given gated extension, here and in `VaughtConjecture.Realization.GateRecovery`, stand.  A
+corrected gate predicate, for instance one in which every twin reads the gate as it reads the cap
+instead of being labelled `⊥`, is prospective.
 
 ## Placement
 
@@ -128,10 +134,12 @@ face `f` of `P` with restriction `p`, every legal one-point coface `d` of `p`, a
 `P` of graded index `(univ, n)` not labelled `⊥` below which `d` is anchored, if `m + 1 < n` there
 is a gated extension of `P` over `f` with donor `d` whose cap carries the label of `C`.
 
-This is an existence statement, a hypothesis and not a theorem: it is still to be proved.  The
-legality of the display contains (an analysis, not compiled here) an exact pinned extension of a
-face of `P` over the root and a controlled full-scope layer of grade `n`; the planned derivation
-from `HasCoatomExtensions` and a gated last coatom extension is prospective. -/
+This universal hypothesis is false at every stage
+(`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`): it fails at `n = 2` over the empty
+root with a donor whose new cell is labelled `⊥`, for a private type with two cells of full scope
+and full grade ordered oppositely by two lawful labellings in the cap ball of its labelling at `2`
+(`GatedExtensionCounterexample.P α`); the labels `⊥` of the twins of the gate are incompatible
+with the bountifulness of the display. -/
 def HasGatedPinnedExtensions : Prop :=
   ∀ {n m : ℕ} (P : StageType.{u} α n) (f : Fin m ↪ Fin n) (p : StageType.{u} α m)
     (d : StageType.{u} α (m + 1)) (C : Fin P.card),
