@@ -47,30 +47,30 @@ to its grade:
 * at `(univ, 4)` and at the apexes, the top shifter (`transformsTo_rowFour`,
   `transformsTo_topShifter`).
 
-**The constraints** (`ThinOK A_C A_D F G`): `A_C`, `A_D`, `F`, `G` self-visible at `1`, `1`, `2`,
-`3`; `A_C ≤ A_D`; `G ≤ F`; `G ≤ A_D`; `VisibilityReplaceFixedOfLT A_C G` (the condition of `TL`: if
-`A_C < G`, the finite part of `A_C`, if below `3`, is `1`); and no collision: `A_C = A_D < F` forces
-`A_C` self-visible at `2`.  These are exactly the constraints of the labellings of the thin
-completion lawful below `(univ, 3)` (`ThinCompletion.isLawfulBelow_thinLabel`,
-`ThinCompletion.exists_of_isLawfulBelow_three`).  They are not all the labellings of the amalgam
-lawful below both coatoms: the new cells impose `A_C ≤ A_D` (at `(univ, 1)`), `F_C = F_D` (at
-`(univ, 2)`, which reads both at one value), and the exclusion of collisions (at `(univ, 2)`, by the
-collision lemma).
+**The constraints** (`IsThinLawfulBelow A_C A_D F G`): `A_C`, `A_D`, `F`, `G` self-visible at `1`,
+`1`, `2`, `3`; `A_C ≤ A_D`; `G ≤ F`; `G ≤ A_D`; `VisibilityReplaceFixedOfLT A_C G` (the condition of
+`TL`: if `A_C < G`, the finite part of `A_C`, if below `3`, is `1`); and no collision:
+`A_C = A_D < F` forces `A_C` self-visible at `2`.  These are exactly the constraints of the
+labellings of the thin completion lawful below `(univ, 3)`
+(`ThinCompletion.isLawfulBelow_thinLabel`, `ThinCompletion.exists_of_isLawfulBelow_three`).  They
+are not all the labellings of the amalgam lawful below both coatoms: the new cells impose
+`A_C ≤ A_D` (at `(univ, 1)`), `F_C = F_D` (at `(univ, 2)`, which reads both at one value), and the
+exclusion of collisions (at `(univ, 2)`, by the collision lemma).
 
-**The lift of parameters** (`exists_thinLift`).  Let the ambient parameters satisfy `ThinOK`, let
-`c` be a cap, and let a prescription fix some of the parameters, satisfying the constraints among
-themselves and agreeing with the ambient capped at `c`.  The lift keeps the prescribed parameters;
-an unprescribed parameter keeps its ambient value below the cap; at or above the cap it is set to
-`G := c`, `A_D := ⊤`, `F := max c G`, `A_C := max c G`.  The lifted parameters satisfy `ThinOK` and
-agree with the ambient capped at `c`, when `c` is self-visible at `1`, at `2` unless `F` is
-prescribed `⊥`, and at `3` unless `G` is prescribed.  Every monotone constraint passes from the
-ambient by `le_of_approx`; `VisibilityReplaceFixedOfLT` and the exclusion of collisions take
-separate case analyses.
-Every capped lift of the thin completion into `(univ, k)`, `k ≤ 3`, is an instance
-(`ThinCompletion.exists_lift_left`, `ThinCompletion.exists_lift_right`).  The lift of the
-necessary condition of `VaughtConjecture.Extension.SeparatingCell`, from `(C, 3)` with the
-prescription `(A, ⊤, ⊤)`, is `exists_criticalLift`: it sets `A_D := ⊤`, and the new cell at
-`(univ, 2)` then reads `A_C = A < ⊤ = A_D`.
+**The lift of parameters** (`exists_thinLift`).  Let the ambient parameters satisfy
+`IsThinLawfulBelow`, let `c` be a cap, and let a prescription fix some of the parameters, satisfying
+the constraints among themselves and agreeing with the ambient capped at `c`.  The lift keeps the
+prescribed parameters; an unprescribed parameter keeps its ambient value below the cap; at or above
+the cap it is set to `G := c`, `A_D := ⊤`, `F := max c G`, `A_C := max c G`.  The lifted parameters
+satisfy `IsThinLawfulBelow` and agree with the ambient capped at `c`, when `c` is self-visible at
+`1`, at `2` unless `F` is prescribed `⊥`, and at `3` unless `G` is prescribed.  Every monotone
+constraint passes from the ambient by `le_of_approx`; `VisibilityReplaceFixedOfLT` and the exclusion
+of collisions take separate case analyses.  Every capped lift of the thin completion into
+`(univ, k)`, `k ≤ 3`, is an instance (`ThinCompletion.exists_lift_left`,
+`ThinCompletion.exists_lift_right`).  The lift of the necessary condition of
+`VaughtConjecture.Extension.SeparatingCell`, from `(C, 3)` with the prescription `(A, ⊤, ⊤)`, is
+`exists_criticalLift`: it sets `A_D := ⊤`, and the new cell at `(univ, 2)` then reads
+`A_C = A < ⊤ = A_D`.
 
 ## Placement
 
@@ -387,6 +387,7 @@ theorem transformsTo_rowOne {D : Type*} (grade : D → ℕ) (kind : D → Fin 6)
   dsimp only
   have h := hk d
   generalize kind d = k at h ⊢
+  -- In each case, `change` evaluates `kindLabel` and `thinRow 1` at the kind.
   fin_cases k
   · change min ⊥ AD = min (blockConst AC AD ⊥) AD
     unfold blockConst; simp
@@ -427,6 +428,7 @@ theorem transformsTo_rowTwo {D : Type*} (grade : D → ℕ) (kind : D → Fin 6)
   dsimp only
   have h := hk d
   generalize kind d = k at h ⊢
+  -- In each case, `change` evaluates `kindLabel` and `thinRow 2` at the kind.
   fin_cases k
   · change min ⊥ F = min (twoStrip _ _ F ⊥) F
     rw [twoStrip_bot]
@@ -461,6 +463,7 @@ theorem transformsTo_rowThree {D : Type*} (grade : D → ℕ) (kind : D → Fin 
   dsimp only
   have h := hk d
   generalize kind d = k at h ⊢
+  -- In each case, `change` evaluates `kindLabel` and `thinRow 3` at the kind.
   fin_cases k
   · change min ⊥ G = min (strip3 AC ⊥) G
     rw [strip3_bot]
@@ -507,7 +510,7 @@ theorem transformsTo_rowFour {D : Type*} (grade : D → ℕ) (kind : D → Fin 6
 cells of grade `1` of `C`), `A_D` (those of `D`, and the new cell at `(univ, 1)`), `F` (the cells
 `(C, 2)`, `(D, 2)` and the new cell at `(univ, 2)`) and `G` (the live cells of grade `3`, and the
 new cell at `(univ, 3)`). -/
-structure ThinOK (AC AD F G : Label.{u}) : Prop where
+structure IsThinLawfulBelow (AC AD F G : Label.{u}) : Prop where
   /-- `A_C` is self-visible at `1`. -/
   svAC : IsSelfVisible 1 AC
   /-- `A_D` is self-visible at `1`. -/
@@ -525,7 +528,7 @@ structure ThinOK (AC AD F G : Label.{u}) : Prop where
   /-- The condition of `TL` on the finite part of `A_C` below `G`. -/
   visibilityReplaceFixed : VisibilityReplaceFixedOfLT AC G
   /-- No collision at `(univ, 2)`: `A_C = A_D < F` forces `A_C` self-visible at `2`. -/
-  nc : AC = AD → AC < F → IsSelfVisible 2 AC
+  noCollision : AC = AD → AC < F → IsSelfVisible 2 AC
 
 /-- The lifted value of a parameter: the prescription if there is one; otherwise the ambient
 value if it lies below the cap, and the value `hi ≥ c` otherwise. -/
@@ -602,11 +605,11 @@ theorem le_of_approx {c xz xw qz qw : Label.{u}} (hq : qz ≤ qw)
     · exact hzc.le.trans (not_lt.mp hwc)
     · exact hhigh (not_lt.mp hzc) (not_lt.mp hwc)
 
-/-- **The parameter-level capped lift.**  Let `q = (q_AC, q_AD, q_F, q_G)` satisfy `ThinOK` (the
-ambient), let `c` be a cap, and let a prescription fix some of the parameters (`some`), subject
-to the constraints of `ThinOK` among the prescribed parameters and agreeing with `q` capped at
-`c`.  Then some `x` satisfies `ThinOK`, agrees with `q` capped at `c`, and equals the
-prescription where it is given.
+/-- **The parameter-level capped lift.**  Let `q = (q_AC, q_AD, q_F, q_G)` satisfy
+`IsThinLawfulBelow` (the ambient), let `c` be a cap, and let a prescription fix some of the
+parameters (`some`), subject to the constraints of `IsThinLawfulBelow` among the prescribed
+parameters and agreeing with `q` capped at `c`.  Then some `x` satisfies `IsThinLawfulBelow`, agrees
+with `q` capped at `c`, and equals the prescription where it is given.
 
 The choice: an unprescribed parameter keeps its ambient value below the cap; at or above the cap,
 `G := c`, `A_D := ⊤`, and `F, A_C := max c G`.  The hypotheses on the cap: `c` self-visible at
@@ -615,7 +618,7 @@ prescribed (the pairs `(·, (univ, j))`, `j ≤ 2`, prescribe `G = ⊥`). -/
 theorem exists_thinLift {c : Label.{u}} (hc1 : IsSelfVisible 1 c)
     {PAC PAD PF PG : Option Label.{u}}
     (hc2 : IsSelfVisible 2 c ∨ PF = some ⊥) (hc3 : IsSelfVisible 3 c ∨ PG.isSome)
-    {qAC qAD qF qG : Label.{u}} (hq : ThinOK qAC qAD qF qG)
+    {qAC qAD qF qG : Label.{u}} (hq : IsThinLawfulBelow qAC qAD qF qG)
     (svAC : ∀ a ∈ PAC, IsSelfVisible 1 a) (svAD : ∀ a ∈ PAD, IsSelfVisible 1 a)
     (svF : ∀ a ∈ PF, IsSelfVisible 2 a) (svG : ∀ a ∈ PG, IsSelfVisible 3 a)
     (pleAD : ∀ a ∈ PAC, ∀ b ∈ PAD, a ≤ b) (pGF : ∀ g ∈ PG, ∀ f ∈ PF, g ≤ f)
@@ -624,10 +627,12 @@ theorem exists_thinLift {c : Label.{u}} (hc1 : IsSelfVisible 1 c)
     (pnc : ∀ a ∈ PAC, ∀ b ∈ PAD, ∀ f ∈ PF, a = b → a < f → IsSelfVisible 2 a)
     (hAC : ∀ a ∈ PAC, min a c = min qAC c) (hAD : ∀ a ∈ PAD, min a c = min qAD c)
     (hF : ∀ a ∈ PF, min a c = min qF c) (hG : ∀ a ∈ PG, min a c = min qG c) :
-    ∃ xAC xAD xF xG : Label.{u}, ThinOK xAC xAD xF xG ∧
+    ∃ xAC xAD xF xG : Label.{u}, IsThinLawfulBelow xAC xAD xF xG ∧
       min xAC c = min qAC c ∧ min xAD c = min qAD c ∧ min xF c = min qF c ∧
       min xG c = min qG c ∧
       (∀ a ∈ PAC, xAC = a) ∧ (∀ a ∈ PAD, xAD = a) ∧ (∀ a ∈ PF, xF = a) ∧ (∀ a ∈ PG, xG = a) := by
+  -- The lifted parameters: the prescription where given; otherwise the ambient below the cap, and
+  -- `c`, `⊤`, `max c G`, `max c G` (for `G`, `A_D`, `F`, `A_C`) at or above it.
   set xG := liftedParam PG qG c c with hxG
   set xAD := liftedParam PAD qAD c ⊤ with hxAD
   set xF := liftedParam PF qF c (max c xG) with hxF
@@ -752,7 +757,7 @@ theorem exists_thinLift {c : Label.{u}} (hc1 : IsSelfVisible 1 c)
         · rw [← hqAC, ← eF hf]; exact hlt
         · exact (hqAC ▸ hz).trans_le (le_of_le_liftedParam hF hcM hf)
       rw [hqAC]
-      exact hq.nc (by rw [← hqAC, ← hqAD]; exact heq) hqlt
+      exact hq.noCollision (by rw [← hqAC, ← hqAD]; exact heq) hqlt
     · have hw : c ≤ xAD := heq ▸ hz
       cases hPAD : PAD with
       | none => rw [heq, hiAD hPAD hw]; exact isSelfVisible_top 2
@@ -781,6 +786,7 @@ theorem exists_thinLift {c : Label.{u}} (hc1 : IsSelfVisible 1 c)
             · rw [hPF] at hc2
               rw [hxf, Option.some_inj.mp hc2] at hlt
               exact absurd hlt (not_lt.mpr bot_le)
+  -- The constraints hold; agreement capped at `c` and with the prescription hold by construction.
   refine ⟨xAC, xAD, xF, xG,
     ⟨hsvAC, hsvAD, hsvF, hsvG, hACAD, hGF, hGAD, hcond, hnc⟩,
     min_liftedParam hAC hcM, min_liftedParam hAD hcT, min_liftedParam hF hcM,
@@ -794,14 +800,15 @@ theorem exists_thinLift {c : Label.{u}} (hc1 : IsSelfVisible 1 c)
 
 /-- **The critical lift**, from `(C, 3)` to `(univ, 3)` with the prescription `(A, ⊤, ⊤)` of the
 necessary condition, at every cap `c` self-visible at `3` and every ambient `q` satisfying
-`ThinOK` and agreeing with it capped at `c`: some `A_D` completes the prescription to parameters
-satisfying `ThinOK`, agreeing with `q` capped at `c`.  (In the thin completion, the new cell at
-`(univ, 2)` then carries `F = ⊤` and reads `A_C = A < ⊤ = A_D`, as the necessary condition
-demands.) -/
+`IsThinLawfulBelow` and agreeing with it capped at `c`: some `A_D` completes the prescription to
+parameters satisfying `IsThinLawfulBelow`, agreeing with `q` capped at `c`.  (In the thin
+completion, the new cell at `(univ, 2)` then carries `F = ⊤` and reads `A_C = A < ⊤ = A_D`, as the
+necessary condition demands.) -/
 theorem exists_criticalLift {c A : Label.{u}} (hc : IsSelfVisible 3 c) (hA : IsSelfVisible 1 A)
-    (hAc : VisibilityReplaceFixedOfLT A ⊤) {qAC qAD qF qG : Label.{u}} (hq : ThinOK qAC qAD qF qG)
+    (hAc : VisibilityReplaceFixedOfLT A ⊤) {qAC qAD qF qG : Label.{u}}
+    (hq : IsThinLawfulBelow qAC qAD qF qG)
     (hAq : min A c = min qAC c) (hFq : min ⊤ c = min qF c) (hGq : min ⊤ c = min qG c) :
-    ∃ xAD : Label.{u}, ThinOK A xAD ⊤ ⊤ ∧ min xAD c = min qAD c := by
+    ∃ xAD : Label.{u}, IsThinLawfulBelow A xAD ⊤ ⊤ ∧ min xAD c = min qAD c := by
   obtain ⟨xAC, xAD, xF, xG, hx, -, hAD, -, -, hxa, -, hxf, hxg⟩ :=
     exists_thinLift (hc.mono (by omega)) (PAC := some A) (PAD := none) (PF := some ⊤)
       (PG := some ⊤) (.inl (hc.mono (by omega))) (.inr rfl) hq
@@ -825,8 +832,8 @@ theorem exists_criticalLift {c A : Label.{u}} (hc : IsSelfVisible 3 c) (hA : IsS
 
 /-- The row at `(univ, 3)` (`A_C` at `1`, every other live kind at `ω + 3`) satisfies the
 constraints: the rows are consistent at the new cell at `(univ, 3)`. -/
-theorem thinOK_row_three :
-    ThinOK (gridPoint.{u} 1 0) (gridPoint 3 1) (gridPoint 3 1) (gridPoint 3 1) where
+theorem isThinLawfulBelow_row_three :
+    IsThinLawfulBelow (gridPoint.{u} 1 0) (gridPoint 3 1) (gridPoint 3 1) (gridPoint 3 1) where
   svAC := isSelfVisible_gridPoint 1 0
   svAD := (isSelfVisible_gridPoint 3 1).mono (by omega)
   svF := (isSelfVisible_gridPoint 3 1).mono (by omega)
@@ -838,14 +845,14 @@ theorem thinOK_row_three :
   G_le_AD := le_rfl
   visibilityReplaceFixed _ := by
     rw [gridPoint, visibilityReplace_block]; simp
-  nc h := absurd h (ne_of_lt (by
+  noCollision h := absurd h (ne_of_lt (by
     rw [gridPoint, gridPoint, WithBot.coe_lt_coe, WithTop.coe_lt_coe]
     exact omega0_mul_add_natCast_lt (by simp) _ _))
 
 /-- The row at `(univ, 2)` (`A_C` at `1`, `A_D` at `ω + 1`, the kind `F` at `ω·2 + 2`; `G` absent)
 satisfies the constraints. -/
-theorem thinOK_row_two :
-    ThinOK (gridPoint.{u} 1 0) (gridPoint 1 1) (gridPoint 2 2) ⊥ where
+theorem isThinLawfulBelow_row_two :
+    IsThinLawfulBelow (gridPoint.{u} 1 0) (gridPoint 1 1) (gridPoint 2 2) ⊥ where
   svAC := isSelfVisible_gridPoint 1 0
   svAD := isSelfVisible_gridPoint 1 1
   svF := isSelfVisible_gridPoint 2 2
@@ -854,11 +861,11 @@ theorem thinOK_row_two :
   G_le_F := bot_le
   G_le_AD := bot_le
   visibilityReplaceFixed h := absurd h (not_lt.mpr bot_le)
-  nc h := absurd h (gridPoint_lt_gridPoint.mpr (by omega)).ne
+  noCollision h := absurd h (gridPoint_lt_gridPoint.mpr (by omega)).ne
 
 
 /-- The row at `(univ, 1)` (`A_C` at `1`, `A_D` at `ω + 1`) satisfies the constraints. -/
-theorem thinOK_row_one : ThinOK (gridPoint.{u} 1 0) (gridPoint 1 1) ⊥ ⊥ where
+theorem isThinLawfulBelow_row_one : IsThinLawfulBelow (gridPoint.{u} 1 0) (gridPoint 1 1) ⊥ ⊥ where
   svAC := isSelfVisible_gridPoint 1 0
   svAD := isSelfVisible_gridPoint 1 1
   svF := isSelfVisible_bot 2
@@ -867,6 +874,6 @@ theorem thinOK_row_one : ThinOK (gridPoint.{u} 1 0) (gridPoint 1 1) ⊥ ⊥ wher
   G_le_F := le_rfl
   G_le_AD := bot_le
   visibilityReplaceFixed h := absurd h (not_lt.mpr bot_le)
-  nc h := absurd h (gridPoint_lt_gridPoint.mpr (by omega)).ne
+  noCollision h := absurd h (gridPoint_lt_gridPoint.mpr (by omega)).ne
 
 end VaughtConjecture.ThinCompletion

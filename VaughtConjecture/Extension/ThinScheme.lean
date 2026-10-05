@@ -33,7 +33,7 @@ cell is old or one of the four new cells (`cell_cases`), and a cell of scope oth
 set is old (`exists_eq_oldCell`).
 
 **The lawful labellings below `(univ, 3)`**, for a seed whose coatom types are `TL` and `T5`, are
-exactly the thin labellings of parameters satisfying `ThinOK`:
+exactly the thin labellings of parameters satisfying `IsThinLawfulBelow`:
 
 * *sufficiency* (`isLawfulBelow_thinLabel`): on the old cells the thin labelling is
   `tripleLabelling A_C F A_D F G`, lawful below both coatoms at the grade `3`
@@ -187,8 +187,8 @@ noncomputable abbrev thinScheme₂ : Scheme.{u} 5 :=
   addThinCell (addThinCell I.amalgam.toScheme 1 (noneAbove_amalgam I)) 2
     (noneAbove_addThinCell _)
 
-/-- **The thin scheme**: the amalgam of `seedL`, followed by one new cell at each `(univ, k)`,
-`k = 1, 2, 3, 4`, whose row is `thinRow k` read off the kinds. -/
+/-- **The thin scheme** of a seed `I` on five points: its amalgam, followed by one new cell at each
+`(univ, k)`, `k = 1, 2, 3, 4`, whose row is `thinRow k` read off the kinds. -/
 noncomputable abbrev thinScheme : Scheme.{u} 5 :=
   addThinCell (addThinCell (thinScheme₂ I) 3 (noneAbove_addThinCell _)) 4
     (noneAbove_addThinCell _)
@@ -305,6 +305,7 @@ theorem isLowerEmbedding_oldCell :
 /-- **The rows of the thin scheme pull back to those of the amalgam** along the old cells. -/
 theorem comap_rows_oldCell :
     (thinScheme I).rows.comap (isLowerEmbedding_oldCell I) = I.amalgam.rows := by
+  -- Unfold the embedding of the old cells into the composite of the four one-cell embeddings.
   change (thinScheme I).rows.comap
     ((isLowerEmbedding_addThinCell _ 4 (noneAbove_addThinCell _)).comp
       ((isLowerEmbedding_addThinCell _ 3 (noneAbove_addThinCell _)).comp
@@ -343,6 +344,7 @@ theorem grade_newCell {k : ℕ} (hk1 : 1 ≤ k) (hk4 : k ≤ 4) :
 theorem cell_cases (z : Fin (thinScheme I).card) :
     (∃ d, z = oldCell I d) ∨ z = newCell I 1 ∨ z = newCell I 2 ∨ z = newCell I 3 ∨
       z = newCell I 4 := by
+  -- The thin scheme has the cells of the amalgam and four more, so `Fin.lastCases` applies.
   change Fin (I.amalgam.card + 1 + 1 + 1 + 1) at z
   induction z using Fin.lastCases with
   | last => exact .inr (.inr (.inr (.inr rfl)))
@@ -382,15 +384,13 @@ theorem image_oldCell_below {X : Finset (Fin 5) × ℕ} (hX : X.1 ≠ univ) :
   ext z
   constructor
   · rintro ⟨d, hd, rfl⟩
-    change (thinScheme I).toCellScheme.gradedIndex (oldCell I d) ≤ X
-    rw [gradedIndex_oldCell]
+    rw [CellScheme.mem_below, gradedIndex_oldCell]
     exact hd
   · intro hz
     obtain ⟨d, rfl⟩ := exists_eq_oldCell (I := I) (z := z) fun h ↦
       hX (univ_subset_iff.mp (h ▸ hz.1))
     refine ⟨d, ?_, rfl⟩
-    change I.amalgam.toCellScheme.gradedIndex d ≤ X
-    rw [← gradedIndex_oldCell]
+    rw [CellScheme.mem_below, ← gradedIndex_oldCell]
     exact hz
 
 /-- **Below a pair of scope other than the ground set, lawfulness in the thin scheme is
@@ -446,6 +446,7 @@ theorem scope_oldCell_ne (d : Fin I.amalgam.card) :
 /-- The cells of `TL`: the nineteen cells of `SL` and the apex. -/
 theorem cases_TL {α : Ordinal.{u}} (i : Fin (TL α).card) :
     i = Fin.last 19 ∨ ∃ d : Fin 19, i = Fin.castSucc d := by
+  -- `TL` has the nineteen cells of `SL` and the apex, so `Fin.lastCases` applies.
   change Fin (19 + 1) at i
   induction i using Fin.lastCases with
   | last => exact .inl rfl
@@ -490,8 +491,7 @@ theorem exists_labelling_of_comap_TL {f : Fin 4 ↪ Fin 5} {Am : StageType.{u} �
       simp only at h2
       omega
     · refine ⟨c, gradedIndex_TL_castSucc c, hAF c ?_⟩
-      change TwoFaceLiftCounterexample.cells.gradedIndex c ≤ _
-      rw [← gradedIndex_TL_castSucc (α := α) c]
+      rw [CellScheme.mem_below, ← gradedIndex_TL_castSucc (α := α) c]
       exact hi
   obtain ⟨A, F, G, hA, hF, hG, hGF, hc, hall⟩ := hgen (fun i ↦ p (Am.toScheme.cellMap f i))
     ((Scheme.isLawfulBelow_comap_cellMap_iff Am.toScheme f _ p).mpr hp)
@@ -641,11 +641,9 @@ theorem mem_below_coatom_of_ne {z : Fin (thinScheme I).card} {k : ℕ}
   have hg : I.amalgam.toCellScheme.grade d ≤ k := by rw [← grade_oldCell]; exact hz.2
   rcases mem_below_coatom hg with h | h
   · left
-    change (thinScheme I).toCellScheme.gradedIndex (oldCell I d) ≤ _
-    rw [gradedIndex_oldCell]; exact h
+    rw [CellScheme.mem_below, gradedIndex_oldCell]; exact h
   · right
-    change (thinScheme I).toCellScheme.gradedIndex (oldCell I d) ≤ _
-    rw [gradedIndex_oldCell]; exact h
+    rw [CellScheme.mem_below, gradedIndex_oldCell]; exact h
 
 /-- A cell of full scope below `(univ, k)` is one of the new cells, of grade at most `k`. -/
 theorem eq_newCell_of_scope {z : Fin (thinScheme I).card}
@@ -681,7 +679,7 @@ theorem thinLabel_newCell {k : ℕ} (hk1 : 1 ≤ k) (hk4 : k ≤ 4) (AC AD F G �
 include hIL hIR in
 /-- **The thin labellings are lawful below the coatoms** at the grade `3`: on the old cells they
 are the labellings `tripleLabelling A_C F A_D F G`. -/
-theorem isLawfulBelow_coatom_thinLabel {AC AD F G Ω : Label.{u}} (h : ThinOK AC AD F G) :
+theorem isLawfulBelow_coatom_thinLabel {AC AD F G Ω : Label.{u}} (h : IsThinLawfulBelow AC AD F G) :
     (thinScheme I).rows.IsLawfulBelow (coatomC, 3)
         (fun z ↦ thinLabelling I AC AD F G Ω z) ∧
       (thinScheme I).rows.IsLawfulBelow (coatomD, 3)
@@ -703,9 +701,9 @@ theorem isLawfulBelow_coatom_thinLabel {AC AD F G Ω : Label.{u}} (h : ThinOK AC
       fun d hd ↦ (key d hd.2).symm).mp hCD.2
 
 include hIL hIR in
-/-- **Sufficiency**: the thin labelling of parameters satisfying `ThinOK` is lawful below
+/-- **Sufficiency**: the thin labelling of parameters satisfying `IsThinLawfulBelow` is lawful below
 `(univ, 3)`. -/
-theorem isLawfulBelow_thinLabel {AC AD F G Ω : Label.{u}} (h : ThinOK AC AD F G) :
+theorem isLawfulBelow_thinLabel {AC AD F G Ω : Label.{u}} (h : IsThinLawfulBelow AC AD F G) :
     (thinScheme I).rows.IsLawfulBelow ((univ : Finset (Fin 5)), 3)
       (fun z ↦ thinLabelling I AC AD F G Ω z) := by
   obtain ⟨hC, hD⟩ := isLawfulBelow_coatom_thinLabel hIL hIR (Ω := Ω) h
@@ -730,7 +728,8 @@ theorem isLawfulBelow_thinLabel {AC AD F G Ω : Label.{u}} (h : ThinOK AC AD F G
     · rw [row_newCell_eq (by omega) (by omega), thinLabel_newCell (by omega) (by omega)]
       exact transformsTo_rowTwo _ (fun t ↦ thinKind ((thinScheme I).toCellScheme.gradedIndex t.1))
         (grade_le_of_mem_below_newCell (by omega) (by omega))
-        (thinKind_le_of_mem_below_newCell (by omega) (by omega)) h.svAC h.svAD h.svF h.le_AD h.nc
+        (thinKind_le_of_mem_below_newCell (by omega) (by omega)) h.svAC h.svAD h.svF h.le_AD
+        h.noCollision
     · rw [row_newCell_eq (by omega) (by omega), thinLabel_newCell (by omega) (by omega)]
       exact transformsTo_rowThree _
         (fun t ↦ thinKind ((thinScheme I).toCellScheme.gradedIndex t.1))
@@ -792,14 +791,12 @@ theorem exists_oldCell_right (hIR : I.right = CaseSplitCounterexample.T5 α) (c 
 theorem oldCell_mem_below {d : Fin I.amalgam.card} {X : Finset (Fin 5) × ℕ}
     (h : I.amalgam.toCellScheme.gradedIndex d ≤ X) :
     oldCell I d ∈ (thinScheme I).toCellScheme.below X := by
-  change (thinScheme I).toCellScheme.gradedIndex (oldCell I d) ≤ X
-  rw [gradedIndex_oldCell]; exact h
+  rw [CellScheme.mem_below, gradedIndex_oldCell]; exact h
 
 /-- A new cell is below `(univ, k)` for `j ≤ k`. -/
 theorem newCell_mem_below {j k : ℕ} (hj1 : 1 ≤ j) (hj4 : j ≤ 4) (hjk : j ≤ k) :
     newCell I j ∈ (thinScheme I).toCellScheme.below ((univ : Finset (Fin 5)), k) := by
-  change (thinScheme I).toCellScheme.gradedIndex (newCell I j) ≤ _
-  rw [gradedIndex_newCell hj1 hj4]; exact ⟨subset_rfl, hjk⟩
+  rw [CellScheme.mem_below, gradedIndex_newCell hj1 hj4]; exact ⟨subset_rfl, hjk⟩
 
 /-- The new cell at `(univ, k)` is below itself. -/
 theorem newCell_mem_below_self {k : ℕ} :
@@ -817,15 +814,17 @@ theorem oldCell_mem_below_newCell {d : Fin I.amalgam.card} {k : ℕ} (hk1 : 1 �
 
 include hIL hIR in
 /-- **Necessity**: every labelling lawful below `(univ, 3)` is a thin labelling, of parameters
-satisfying `ThinOK`.  On each coatom it is a labelling of `TL` or of `T5`; locality and
+satisfying `IsThinLawfulBelow`.  On each coatom it is a labelling of `TL` or of `T5`; locality and
 availability at the new cells identify `A_D`, `F` (on both coatoms) and `G` with their labels, and
 give `A_C ≤ A_D`; and the collision lemma at the new cell at `(univ, 2)` gives the exclusion of
 collisions. -/
 theorem exists_of_isLawfulBelow_three {w : Fin (thinScheme I).card → Label.{u}}
     (hw : (thinScheme I).rows.IsLawfulBelow ((univ : Finset (Fin 5)), 3) fun z ↦ w z) :
-    ∃ AC AD F G : Label.{u}, ThinOK AC AD F G ∧
+    ∃ AC AD F G : Label.{u}, IsThinLawfulBelow AC AD F G ∧
       ∀ z ∈ (thinScheme I).toCellScheme.below ((univ : Finset (Fin 5)), 3),
         w z = thinLabelling I AC AD F G ⊥ z := by
+  -- Step 1: below each coatom, `w` is a labelling of `TL` (parameters `A_C`, `F_C`, `G_C`) or of
+  -- `T5` (parameters `A_D`, `F_D`, `G_D`).
   have hC : (thinScheme I).rows.IsLawfulBelow (coatomC, 3) fun z ↦ w z :=
     hw.mono (X := (coatomC, 3)) ⟨subset_univ _, le_rfl⟩
   have hD : (thinScheme I).rows.IsLawfulBelow (coatomD, 3) fun z ↦ w z :=
@@ -833,7 +832,7 @@ theorem exists_of_isLawfulBelow_three {w : Fin (thinScheme I).card → Label.{u}
   obtain ⟨AC, FC, GC, hAC, hFC, hGC, hGFC, hcC, hC'⟩ := exists_of_isLawfulBelow_left hIL hC
   obtain ⟨AD, FD, GD, hAD, hFD, hGD, hGAD, hGFD, hD'⟩ := exists_of_isLawfulBelow_right hIR hD
   obtain ⟨-, hl, ha⟩ := Rows.isLawfulBelow_iff_forall.mp hw
-  -- The old cells used.
+  -- Step 2: the old cells used, one of each live kind, and their labels.
   obtain ⟨d₁, hd₁⟩ : ∃ d : Fin I.amalgam.card,
       I.amalgam.toCellScheme.gradedIndex d = (({3} : Finset (Fin 5)), 1) := by
     obtain ⟨e, he⟩ := exists_oldCell_left hIL 3
@@ -854,7 +853,6 @@ theorem exists_of_isLawfulBelow_three {w : Fin (thinScheme I).card → Label.{u}
       I.amalgam.toCellScheme.gradedIndex d = (({0, 1, 2, 4} : Finset (Fin 5)), 2) := by
     obtain ⟨e, he⟩ := exists_oldCell_right hIR 15
     exact ⟨e, he.trans (by decide +kernel)⟩
-  -- Their labels.
   have hw₁ : w (oldCell I d₁) = AC := by
     rw [hC' _ (oldCell_mem_below (by rw [hd₁]; decide)), gradedIndex_oldCell, hd₁]; rfl
   have hwsC : w (oldCell I sC) = FC := by
@@ -868,7 +866,9 @@ theorem exists_of_isLawfulBelow_three {w : Fin (thinScheme I).card → Label.{u}
   have hwsD : w (oldCell I sD) = FD := by
     rw [hD' _ (oldCell_mem_below (by rw [hsD]; decide)), gradedIndex_oldCell, hsD]; rfl
   have hGCD : GC = GD := hwgC.symm.trans hwgD
-  -- Locality and availability at the new cells.
+  -- Step 3: locality (`hle`) and availability (`hge`) at the new cell at `(univ, k)` compare its
+  -- label with that of an old cell of grade `k`; they identify the labels of the new cells with
+  -- `A_D`, `F_C = F_D` and `G`, and give `A_C ≤ A_D`.
   have hrow {k : ℕ} (hk1 : 1 ≤ k) (hk4 : k ≤ 4) {d : Fin I.amalgam.card}
       (hd : I.amalgam.toCellScheme.grade d ≤ k) :
       (thinScheme I).rows.row (newCell I k) ⟨oldCell I d, oldCell_mem_below_newCell hk1 hk4 hd⟩ =
@@ -916,7 +916,7 @@ theorem exists_of_isLawfulBelow_three {w : Fin (thinScheme I).card → Label.{u}
       (hge (by omega) le_rfl (congrArg Prod.snd hgE))
   have hACAD : AC ≤ AD := hw₁ ▸ hn₁ ▸ hge le_rfl (by omega) (congrArg Prod.snd hd₁)
   have hFCD : FC = FD := hn₂C.symm.trans hn₂D
-  -- No collision: the collision lemma at the new cell at `(univ, 2)`.
+  -- Step 4: no collision, by the collision lemma at the new cell at `(univ, 2)`.
   have hnc : AC = AD → AC < FC → IsSelfVisible 2 AC := by
     intro heq hlt
     by_contra hev
@@ -937,6 +937,8 @@ theorem exists_of_isLawfulBelow_three {w : Fin (thinScheme I).card → Label.{u}
       (by simp only; rw [hn₂C, min_self]; exact hlt)
     rw [hrow (by omega) (by omega) hg₁, hrow (by omega) (by omega) hg₂, hd₁, hd₂] at this
     exact absurd this (gridPoint_lt_gridPoint.mpr (by omega)).ne
+  -- Step 5: `w` is the thin labelling of these parameters: at the new cells by step 3, and at
+  -- the old cells by step 1 (the kinds merge `F_C`, `F_D` into `F` and `G_C`, `G_D` into `G`).
   refine ⟨AC, AD, FC, GC, ⟨hAC, hAD, hFC, hGC, hACAD, hGFC, hGCD ▸ hGAD, hcC, hnc⟩,
     fun z hz ↦ ?_⟩
   by_cases hne : (thinScheme I).toCellScheme.scope z = univ

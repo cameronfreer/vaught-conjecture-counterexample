@@ -29,8 +29,9 @@ types are `TL` and `T5` (`nonempty_completionBelowFullGrade_of`) and specialized
 * Well formed and coded: each new cell has a graded face as its graded index, and every value of
   the row of a new cell is `⊥` or a grid point below `ω²`.
 * Consistent (`isConsistent_thinScheme`): the old rows are those of the amalgam; the row of the new
-  cell at `(univ, k)` is the thin labelling of the parameters `thinOK_row_one`, `thinOK_row_two`,
-  `thinOK_row_three` for `k ≤ 3`, and the labelling of `Ω = ω + 4` alone for `k = 4`.
+  cell at `(univ, k)` is the thin labelling of the parameters `isThinLawfulBelow_row_one`,
+  `isThinLawfulBelow_row_two`, `isThinLawfulBelow_row_three` for `k ≤ 3`, and the labelling of
+  `Ω = ω + 4` alone for `k = 4`.
 * Complete below the full grade: one new cell at each `(univ, k)`, `k < 5`.
 * Bountiful (`isBountiful_thinScheme`): it is enough to lift between pairs of the same grade
   (`Rows.isBountiful_iff_forall_cappedLift_fst`).  Below a coatom the lifts are those of the
@@ -53,9 +54,11 @@ grade `4` (`amalgam_row_apex`).  The labels of the amalgam are `⊤` at the apex
 **What the thin completion imposes.**  Its lawful labellings below `(univ, 3)` impose `A_C ≤ A_D`
 and `F_C = F_D` and exclude collisions: they are not all the labellings of the amalgam lawful
 below both coatoms (`ThinCompletionExamples.exists_not_restriction`).  The orientation `C` before
-`D` of its ordered rows is forced only at `(univ, 2)`, where every completion of a seed whose
-coatom types are `TL` and `T5` has a separating cell (`exists_separating_cell`); at `(univ, 1)` it
-is a consistent choice, not forced.
+`D` of its ordered rows is forced at `(univ, 1)`, `(univ, 2)` and `(univ, 3)`: every completion of
+a seed whose coatom types are `TL` and `T5` has, at each `(univ, k)`, `1 ≤ k ≤ 3`, a cell whose row
+reads `({3}, 1)` strictly below `({4}, 1)` (`exists_separating_cell_of_completion_of_le_three`; at
+`(univ, 2)`, `exists_separating_cell_of_completion`), and the thin completion has only one cell
+there.
 
 **Consequences.**  The identified obstruction of the tower (step 3 of
 `not_twoFaceLiftExists_two_of`: a new cell at `(univ, 2)` where the catalogue entry reaches the cap
@@ -63,9 +66,9 @@ reads `({3}, 1)` and `({4}, 1)` at one value) does not apply to the thin complet
 at `(univ, 2)` separates (`ThinCompletionExamples.row_newCell_two_lt`).
 `StageType.HasApexCoatomExtensions` is not refuted by `seedL`: `seedL` has the coatom extension
 property with apex at `m = 3` (`ThinCompletionExamples.exists_coatomExtension_seedL`, at every stage
-since the labels `⊥` and `⊤` lie at every stage; through
-`StageType.HasApexCoatomExtensions.of_completionBelowFullGrade` at the stages that are zero or a
-limit).  `StageType.HasApexCoatomExtensions` is still to be proved in general.
+since the labels `⊥` and `⊤` lie at every stage; at the stages that are zero or a limit, this is
+also `CompletionBelowFullGrade.exists_coatomExtension` applied to the thin completion).
+`StageType.HasApexCoatomExtensions` is still to be proved in general.
 
 **Special cases** (argued, not formalized).  The thin pattern also completes the seeds of `T4` and
 of `T5` with themselves, which the tower already completes
@@ -166,6 +169,7 @@ elsewhere. -/
 theorem label_addApex {n : ℕ} {t : StageType.{u} α n} (ht : t.IsLegalBelowFullGrade)
     (hn : 0 < n) (hbot : ∀ d, t.label d = ⊥) (i : Fin (t.addApex ht hn).card) :
     (t.addApex ht hn).label i = if (t.addApex ht hn).toCellScheme.grade i = n then ⊤ else ⊥ := by
+  -- `t.addApex` has the cells of `t` and the apex, so `Fin.lastCases` applies.
   change Fin (t.card + 1) at i
   induction i using Fin.lastCases with
   | last =>
@@ -174,6 +178,7 @@ theorem label_addApex {n : ℕ} {t : StageType.{u} α n} (ht : t.IsLegalBelowFul
     rw [StageType.addApex_label_last, ite_eq_left h]
   | cast d =>
     have h : (t.addApex ht hn).toCellScheme.grade d.castSucc ≠ n := by
+      -- The cell scheme of `t.addApex` is `appendFullCellScheme`.
       change (Scheme.appendFullCellScheme t.toScheme n).grade d.castSucc ≠ n
       rw [Scheme.appendFullCellScheme_grade_castSucc]
       exact (ht.grade_lt d).ne
@@ -186,10 +191,12 @@ theorem row_addApex {n : ℕ} {t : StageType.{u} α n} (ht : t.IsLegalBelowFullG
     (hs : (t.addApex ht hn).toCellScheme.grade s = n)
     (i : (t.addApex ht hn).toCellScheme.below ((t.addApex ht hn).toCellScheme.gradedIndex s)) :
     ((t.addApex ht hn).rows.row s i = ⊥ ↔ (t.addApex ht hn).toCellScheme.grade i ≠ n) := by
+  -- `t.addApex` has the cells of `t` and the apex, so `Fin.lastCases` applies.
   change Fin (t.card + 1) at s
   induction s using Fin.lastCases with
   | cast d =>
     exfalso
+    -- The cell scheme of `t.addApex` is `appendFullCellScheme`.
     change (Scheme.appendFullCellScheme t.toScheme n).grade d.castSucc = n at hs
     rw [Scheme.appendFullCellScheme_grade_castSucc] at hs
     exact (ht.grade_lt d).ne hs
@@ -197,6 +204,7 @@ theorem row_addApex {n : ℕ} {t : StageType.{u} α n} (ht : t.IsLegalBelowFullG
     rw [show (t.addApex ht hn).rows.row (Fin.last _) i = StageType.apexRow ht i.1 from
       Scheme.appendFullCell_row_last (h := ht.not_le) i]
     obtain ⟨i, hi⟩ := i
+    -- As for `s`: the cells of `t` and the apex.
     change Fin (t.card + 1) at i
     induction i using Fin.lastCases with
     | last =>
@@ -206,6 +214,7 @@ theorem row_addApex {n : ℕ} {t : StageType.{u} α n} (ht : t.IsLegalBelowFullG
     | cast d =>
       rw [StageType.apexRow_castSucc, hbot, blockEncode_bot]
       simp only [true_iff]
+      -- The cell scheme of `t.addApex` is `appendFullCellScheme`.
       change (Scheme.appendFullCellScheme t.toScheme n).grade d.castSucc ≠ n
       rw [Scheme.appendFullCellScheme_grade_castSucc]
       exact (ht.grade_lt d).ne
@@ -332,6 +341,7 @@ theorem eq_newCell_four {w : Fin (thinScheme I).card → Label.{u}}
   · have hr : (thinScheme I).rows.row (newCell I 4) ⟨newCell I 4, newCell_mem_below_self⟩ ≤
         (thinScheme I).rows.row (newCell I 4) ⟨z, hz'⟩ := by
       rw [row_newCell (by omega) le_rfl, row_newCell (by omega) le_rfl]
+      -- Read the graded indices of the two cells off the subtype.
       change thinRow 4 (thinKind ((thinScheme I).toCellScheme.gradedIndex (newCell I 4))) ≤
         thinRow 4 (thinKind ((thinScheme I).toCellScheme.gradedIndex z))
       rw [gradedIndex_newCell (by omega) le_rfl, thinKind_univ_four,
@@ -427,7 +437,7 @@ theorem min_thinLabel_eq {c AC AD F G AC' AD' F' G' : Label.{u}}
 include hIL hIR in
 /-- **The lift from `(C, 3)` to `(univ, 3)`**, for a cap `c` self-visible at `1`, and at `2` unless
 the prescription is `⊥` at the grade `2`.  The parameters of the prescription (`TL`) and of the
-ambient (`ThinOK`) are lifted by `exists_thinLift`, with `A_D` unprescribed. -/
+ambient (`IsThinLawfulBelow`) are lifted by `exists_thinLift`, with `A_D` unprescribed. -/
 theorem exists_lift_left {c : Label.{u}} (hc1 : IsSelfVisible 1 c)
     {p q : Fin (thinScheme I).card → Label.{u}}
     (hp : (thinScheme I).rows.IsLawfulBelow (coatomC, 3) fun z ↦ p z)
@@ -440,8 +450,11 @@ theorem exists_lift_left {c : Label.{u}} (hc1 : IsSelfVisible 1 c)
       (∀ z ∈ (thinScheme I).toCellScheme.below ((univ : Finset (Fin 5)), 3),
         min (x z) c = min (q z) c) ∧
       ∀ z ∈ (thinScheme I).toCellScheme.below (coatomC, 3), x z = p z := by
+  -- Step 1: read the parameters `(A, F, G)` of the prescription (a labelling of `TL`) and the
+  -- parameters of the ambient (`IsThinLawfulBelow`).
   obtain ⟨Ap, Fp, Gp, hAp, hFp, hGp, hGFp, hcp, hp'⟩ := exists_of_isLawfulBelow_left hIL hp
   obtain ⟨qAC, qAD, qF, qG, hq', hqz⟩ := exists_of_isLawfulBelow_three hIL hIR hq
+  -- Step 2: the cells `({3}, 1)`, `(C, 2)` and `(E, 3)`, one of each live kind on `C`.
   obtain ⟨d₁, hd₁⟩ : ∃ d : Fin I.amalgam.card,
       I.amalgam.toCellScheme.gradedIndex d = (({3} : Finset (Fin 5)), 1) := by
     obtain ⟨e, he⟩ := exists_oldCell_left hIL 3
@@ -463,6 +476,7 @@ theorem exists_lift_left {c : Label.{u}} (hc1 : IsSelfVisible 1 c)
   have hmem {z} (hz : z ∈ (thinScheme I).toCellScheme.below (coatomC, 3)) :
       z ∈ (thinScheme I).toCellScheme.below ((univ : Finset (Fin 5)), 3) :=
     ⟨subset_univ _, hz.2⟩
+  -- Step 3: at those cells, the prescribed parameters agree with the ambient capped at `c`.
   have hAq : min Ap c = min qAC c := by
     have := hpq _ h₁
     rw [hp' _ h₁, hqz _ (hmem h₁), thinLabelling, gradedIndex_oldCell, hd₁] at this
@@ -475,6 +489,7 @@ theorem exists_lift_left {c : Label.{u}} (hc1 : IsSelfVisible 1 c)
     have := hpq _ hg
     rw [hp' _ hg, hqz _ (hmem hg), thinLabelling, gradedIndex_oldCell, hgE] at this
     exact this.symm
+  -- Step 4: the parameter-level lift, with `A_D` unprescribed; its thin labelling is the lift.
   have hc2' : IsSelfVisible 2 c ∨ some Fp = some ⊥ := by
     refine hc2.imp_right fun h ↦ ?_
     have := h _ hs (by rw [grade_oldCell]; exact congrArg Prod.snd hsC)
@@ -497,7 +512,7 @@ theorem exists_lift_left {c : Label.{u}} (hc1 : IsSelfVisible 1 c)
 include hIL hIR in
 /-- **The lift from `(D, 3)` to `(univ, 3)`**, for a cap `c` self-visible at `1`, and at `2` unless
 the prescription is `⊥` at the grade `2`.  The parameters of the prescription (`T5`) and of the
-ambient (`ThinOK`) are lifted by `exists_thinLift`, with `A_C` unprescribed. -/
+ambient (`IsThinLawfulBelow`) are lifted by `exists_thinLift`, with `A_C` unprescribed. -/
 theorem exists_lift_right {c : Label.{u}} (hc1 : IsSelfVisible 1 c)
     {p q : Fin (thinScheme I).card → Label.{u}}
     (hp : (thinScheme I).rows.IsLawfulBelow (coatomD, 3) fun z ↦ p z)
@@ -510,8 +525,11 @@ theorem exists_lift_right {c : Label.{u}} (hc1 : IsSelfVisible 1 c)
       (∀ z ∈ (thinScheme I).toCellScheme.below ((univ : Finset (Fin 5)), 3),
         min (x z) c = min (q z) c) ∧
       ∀ z ∈ (thinScheme I).toCellScheme.below (coatomD, 3), x z = p z := by
+  -- Step 1: read the parameters `(A, F, G)` of the prescription (a labelling of `T5`) and the
+  -- parameters of the ambient (`IsThinLawfulBelow`).
   obtain ⟨Ap, Fp, Gp, hAp, hFp, hGp, hGAp, hGFp, hp'⟩ := exists_of_isLawfulBelow_right hIR hp
   obtain ⟨qAC, qAD, qF, qG, hq', hqz⟩ := exists_of_isLawfulBelow_three hIL hIR hq
+  -- Step 2: the cells `({4}, 1)`, `(D, 2)` and `(E, 3)`, one of each live kind on `D`.
   obtain ⟨d₂, hd₂⟩ : ∃ d : Fin I.amalgam.card,
       I.amalgam.toCellScheme.gradedIndex d = (({4} : Finset (Fin 5)), 1) := by
     obtain ⟨e, he⟩ := exists_oldCell_right hIR 3
@@ -533,6 +551,7 @@ theorem exists_lift_right {c : Label.{u}} (hc1 : IsSelfVisible 1 c)
   have hmem {z} (hz : z ∈ (thinScheme I).toCellScheme.below (coatomD, 3)) :
       z ∈ (thinScheme I).toCellScheme.below ((univ : Finset (Fin 5)), 3) :=
     ⟨subset_univ _, hz.2⟩
+  -- Step 3: at those cells, the prescribed parameters agree with the ambient capped at `c`.
   have hAq : min Ap c = min qAD c := by
     have := hpq _ h₂
     rw [hp' _ h₂, hqz _ (hmem h₂), thinLabelling, gradedIndex_oldCell, hd₂] at this
@@ -545,6 +564,7 @@ theorem exists_lift_right {c : Label.{u}} (hc1 : IsSelfVisible 1 c)
     have := hpq _ hg
     rw [hp' _ hg, hqz _ (hmem hg), thinLabelling, gradedIndex_oldCell, hgE] at this
     exact this.symm
+  -- Step 4: the parameter-level lift, with `A_C` unprescribed; its thin labelling is the lift.
   have hc2' : IsSelfVisible 2 c ∨ some Fp = some ⊥ := by
     refine hc2.imp_right fun h ↦ ?_
     have := h _ hs (by rw [grade_oldCell]; exact congrArg Prod.snd hsD)
@@ -682,6 +702,7 @@ theorem cappedLift_of_exists_lift {B : Finset (Fin 5)} {k : ℕ} (hk1 : 1 ≤ k)
     rw [hxq z.1 ⟨subset_univ _, hz.trans hk3⟩, hq', ite_eq_left hz,
       Rows.extendBot_of_mem q z.2]
   · have hz : (thinScheme I).toCellScheme.grade z.1 ≤ k := z.2.2
+    -- The restriction of `x` below `(univ, k)`, at `z`.
     change x z.1 = p z
     rw [hxp z.1 ⟨z.2.1, hz.trans hk3⟩, hp', ite_eq_left hz, Rows.extendBot_of_mem p z.2]
 
@@ -712,6 +733,7 @@ theorem cappedLift_four {B : Finset (Fin 5)} (hB : B = coatomC ∨ B = coatomD)
       ⟨subset_univ _, le_rfl⟩) :
     (thinScheme I).rows.CappedLift (X := (B, 4)) (Y := ((univ : Finset (Fin 5)), 4))
       ⟨subset_univ _, le_rfl⟩ := by
+  -- Step 1: the apex `a` at `(B, 4)` is the only cell of grade `4` below `(B, 4)`.
   have hBne : B ≠ univ := by rcases hB with rfl | rfl <;> decide
   have hBcard : #B = 4 := by rcases hB with rfl | rfl <;> decide
   -- The apex at `(B, 4)`.
@@ -739,6 +761,8 @@ theorem cappedLift_four {B : Finset (Fin 5)} (hB : B = coatomC ∨ B = coatomD)
       z ∈ (thinScheme I).toCellScheme.below
         ((thinScheme I).toCellScheme.gradedIndex (oldCell I a)) := fun z hz ↦ by
     rw [gradedIndex_oldCell, ha]; exact hz
+  -- Step 2: extend the prescription `p` and the ambient `q` by `⊥` to all cells (`p'`, `q'`); it
+  -- is enough to lift `p'` against `q'`.  The ambient is constant at the grade `4`.
   refine (Rows.cappedLift_iff_forall_exists _).mpr fun c hc p q hp hq hpq ↦ ?_
   let p' := Rows.extendBot (B, 4) p
   let q' := Rows.extendBot ((univ : Finset (Fin 5)), 4) q
@@ -762,10 +786,13 @@ theorem cappedLift_four {B : Finset (Fin 5)} (hB : B = coatomC ∨ B = coatomD)
     obtain ⟨x, hx, hxq, hxp⟩ := h
     refine ⟨fun z ↦ x z, hx, fun z ↦ ?_, fun z ↦ ?_⟩
     · rw [hxq, hq'z z.1]
-    · change x z.1 = p z
+    · -- The restriction of `x` below `(univ, 4)`, at `z`.
+      change x z.1 = p z
       rw [hxp z.1 z.2, hp'z z.1 z.2]
   by_cases hω : p' (oldCell I a) = ⊥
-  · -- The prescription is `⊥` at the apex.
+  · -- Step 3: the prescription is `⊥` at the apex.  If the ambient is not `⊥` at the grade `4`,
+    -- the cap is `⊥`; replace the ambient by `⊥` (`q₃`), lift below the grade `3` by `h3`, and
+    -- extend by `⊥` above the grade `3`.
     have hc0 : q' (newCell I 4) ≠ ⊥ → c = ⊥ := fun h ↦ by
       have := hpq' _ haB
       rw [hω, min_bot_left, hqa] at this
@@ -813,7 +840,9 @@ theorem cappedLift_four {B : Finset (Fin 5)} (hB : B = coatomC ∨ B = coatomD)
       · have hz4 : (thinScheme I).toCellScheme.grade z = 4 := by
           have := grade_le_four z; omega
         rw [ite_eq_right hz3, huniq z hz hz4, hω]
-  · -- The prescription is not `⊥` at the apex.
+  · -- Step 4: the prescription is not `⊥` at the apex, hence `⊥` below the grade `4` (the row of
+    -- the apex); the lift is the labelling of its apex label `Ω` alone.  If `c ≠ ⊥`, the ambient
+    -- is not `⊥` at the grade `4`, hence `⊥` below it, and agrees with `Ω` capped at `c` there.
     obtain ⟨ho, hl, -⟩ := Rows.isLawfulBelow_iff_forall.mp hpl
     have hωsv : IsSelfVisible 4 (p' (oldCell I a)) := hag' ▸ ho _ haB
     refine ⟨thinLabelling I ⊥ ⊥ ⊥ ⊥ (p' (oldCell I a)), isLawfulBelow_omega hIL hIR hωsv,
@@ -924,10 +953,10 @@ theorem isCoded_thinScheme : (thinScheme I).IsCoded :=
     (isCoded_addThinCell I.amalgam.isCoded)))
 
 include hIL hIR in
-/-- **The rows of the thin scheme are consistent.**  The old rows are those of the amalgam; the
-row of the new cell at `(univ, k)` is the thin labelling of the parameters `thinOK_row_one`,
-`thinOK_row_two`, `thinOK_row_three` for `k ≤ 3`, and the labelling of `Ω = ω + 4` alone for
-`k = 4`. -/
+/-- **The rows of the thin scheme are consistent.**  The old rows are those of the amalgam; the row
+of the new cell at `(univ, k)` is the thin labelling of the parameters `isThinLawfulBelow_row_one`,
+`isThinLawfulBelow_row_two`, `isThinLawfulBelow_row_three` for `k ≤ 3`, and the labelling of
+`Ω = ω + 4` alone for `k = 4`. -/
 theorem isConsistent_thinScheme : (thinScheme I).rows.IsConsistent := by
   intro s
   rcases cell_cases s with ⟨a, rfl⟩ | rfl | rfl | rfl | rfl
@@ -939,11 +968,11 @@ theorem isConsistent_thinScheme : (thinScheme I).rows.IsConsistent := by
     exact congrArg (fun R : I.amalgam.toCellScheme.Rows ↦ R.row a t) comap_rows_oldCell
   all_goals
     rw [row_newCell_eq (by omega) (by omega)]
-  · exact (isLawfulBelow_thinLabel hIL hIR (Ω := ⊥) thinOK_row_one).mono
+  · exact (isLawfulBelow_thinLabel hIL hIR (Ω := ⊥) isThinLawfulBelow_row_one).mono
       (by rw [gradedIndex_newCell (by omega) (by omega)]; exact ⟨subset_rfl, by omega⟩)
-  · exact (isLawfulBelow_thinLabel hIL hIR (Ω := ⊥) thinOK_row_two).mono
+  · exact (isLawfulBelow_thinLabel hIL hIR (Ω := ⊥) isThinLawfulBelow_row_two).mono
       (by rw [gradedIndex_newCell (by omega) (by omega)]; exact ⟨subset_rfl, by omega⟩)
-  · exact (isLawfulBelow_thinLabel hIL hIR (Ω := ⊥) thinOK_row_three).mono
+  · exact (isLawfulBelow_thinLabel hIL hIR (Ω := ⊥) isThinLawfulBelow_row_three).mono
       (by rw [gradedIndex_newCell (by omega) (by omega)])
   · exact (isLawfulBelow_omega hIL hIR (isSelfVisible_gridPoint 4 1)).mono
       (by rw [gradedIndex_newCell (by omega) (by omega)])
@@ -995,6 +1024,7 @@ noncomputable def thinCompletion : CompletionBelowFullGrade I where
   label := thinLabelling I ⊥ ⊥ ⊥ ⊥ ⊤
   isLawful := (isLawfulBelow_omega hIL hIR (isSelfVisible_top 4)).isLawful mem_below_univ_four
   label_embed d := by
+    -- `embedOld` is `oldCell` and the label is the thin labelling of `Ω = ⊤` alone.
     change thinLabelling I ⊥ ⊥ ⊥ ⊥ ⊤ (oldCell I d) = _
     rw [thinLabelling_omega, grade_oldCell, amalgam_label hIL hIR]
 

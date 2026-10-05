@@ -24,7 +24,8 @@ items 2–4.
   at `(univ, 2)` reads the cell `({3}, 1)` at `1`, strictly below the cell `({4}, 1)`, read at
   `ω + 1`.  So the thin completion meets the necessary condition of
   `VaughtConjecture.Extension.SeparatingCell` (`exists_separating_cell_seedL`), which the tower of
-  the step does not meet.
+  the step does not meet (argued from step 3 of `not_twoFaceLiftExists_two_of`, not formalized;
+  the tower fails for `seedL` by `not_towerInvariant_top_seedL`).
 * **The lawful labellings of the thin completion are not all labellings of the amalgam**
   (`le_and_eq_of_isLawfulBelow_three`, `exists_not_restriction`).  Every labelling lawful below
   `(univ, 3)` has `A_C ≤ A_D` (its label at `({3}, 1)` is at most its label at `({4}, 1)`) and
@@ -77,6 +78,7 @@ theorem row_newCell_two_lt {d₁ d₂ : Fin I.amalgam.card}
     (thinScheme I).rows.row (newCell I 2) ⟨oldCell I d₁, h₁⟩ <
       (thinScheme I).rows.row (newCell I 2) ⟨oldCell I d₂, h₂⟩ := by
   rw [row_newCell (by omega) (by omega), row_newCell (by omega) (by omega)]
+  -- Read the graded indices of the two old cells off the subtype.
   change thinRow 2 (thinKind ((thinScheme I).toCellScheme.gradedIndex (oldCell I d₁))) <
     thinRow 2 (thinKind ((thinScheme I).toCellScheme.gradedIndex (oldCell I d₂)))
   rw [gradedIndex_oldCell, gradedIndex_oldCell, hd₁, hd₂]
