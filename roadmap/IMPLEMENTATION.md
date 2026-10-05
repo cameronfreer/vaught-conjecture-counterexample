@@ -834,7 +834,19 @@ language a countable family of countable structures has a level `γ < ω₁` at 
 `BFEquiv0` implies isomorphism (`exists_isolating_level`, the supremum of the stabilization
 ordinals); hence, if every countable level has two nonisomorphic `BFEquiv0`-related members, the
 index is uncountable (`not_countable_of_forall_unisolated`).  No application of it is compiled in
-this repository.
+this repository.  A per-class proof of the lower-bound criterion of `README.md` ("Reduction to
+full presentations"), isolating one class at a time with no countability of the classes (where
+`README.md` bounds the isolating levels of countably many classes by one `γ`), can quote Scott
+separation (`exists_countable_strict_stage_bound_of_isolation` and
+`IsolatedPresentation.exists_countable_strict_stage_bound`; available upstream, not yet at our
+pinned dependency: signatures verified against the upstream source at `2cd44c3`, not compiled
+here; "Dependency pins"): every class leaves the domains strictly before a countable stage.  The
+domains having two or more members at every countable stage, the classes are then uncountable,
+since countably many countable bounds have a countable supremum (`iSup_add_one_lt_omega1`,
+`OrdinalCountability`, available at the pin, not `#check`ed in `SuggestedInterfaces.lean`) at
+which the domain is nonempty.  With countable complements of the domains in addition,
+`mk_eq_aleph_one_of_domains` (available at the pin, signatures checked) gives exactly `ℵ₁`
+classes.  Both are prospective applications, not compiled here.
 
 ## Manuscript concordance
 
@@ -1314,9 +1326,14 @@ hypothesis of each statement of 2–4 that uses it, until it is proved as a theo
    countable index (`ModelExpansion.subsingleton`, conditional on
    `Expansion.NextBlockUniqueness`), and limit coherence (`ModelExpansion.nonempty_of_forall_lt`,
    under the same hypothesis); so both equivalences carry the injectivity of model reduction as an
-   explicit hypothesis.  The negative special case (the everywhere-undefined assignment: criteria 1
-   and 4 vacuous, criterion 5 false) compiled as an example.  No proof of criterion 1 that uses
-   termination is cited as a proof of termination.
+   explicit hypothesis.  The intended quotation for bounded-stage attainment is
+   `exists_greatest_stage_lt_omega1` (`OrdinalUtil`; available upstream, not yet at our pinned
+   dependency: signatures verified against the upstream source at `2cd44c3`, not compiled here;
+   "Dependency pins"), with `P` the serving indices, `hzero` from a model base, `hdown` from
+   downward model reduction, `hlim` from limit coherence, and `hA` and `hbound` from criterion 4
+   (a prospective application).  The negative special case (the everywhere-undefined assignment:
+   criteria 1 and 4 vacuous, criterion 5 false) compiled as an example.  No proof of criterion 1
+   that uses termination is cited as a proof of termination.
 3. *Literal uniqueness:* for a terminal model presentation at `ρ`, every model presentation at `η`
    has `η ≤ ρ` and is literally its reduct, with no countability assumed; two terminal model
    presentations of one base have the same index and are equal; and no extension of a partial
@@ -1365,7 +1382,15 @@ named, and none is complete because another is.
    of a countable family is not among them; if it is ever used, it is quoted only once
    "Dependency pins" records a pin containing it, signatures checked.  No hypothesis or lemma
    about termination enters; the conditional of row 31 and this route are not used in a cycle;
-   and the expansion-domain endpoint does not depend on it.
+   and the expansion-domain endpoint does not depend on it.  The intended quotations (available
+   upstream, not yet at our pinned dependency: signatures verified against the upstream source at
+   `2cd44c3`, not compiled here; "Dependency pins"; a prospective application) are Scott
+   separation for the strict bound on serving stages (`stage_lt_rank_of_isolating` for one class,
+   at the rank of its isolating sentence, with nonsingletonness of the domain there from an
+   element of a loss at a countable stage at or above that rank and an element of the next domain
+   (condition 4 at that stage and at the next); or
+   `IsolatedPresentation.exists_countable_strict_stage_bound` for all classes at once) and
+   `exists_greatest_stage_lt_omega1` for the attained maximum.
 5. *The stopping proofs and positive niceness:* each stopping proof that is used (the
    countable-slot argument; the Scott route, 4 above) stated as its own theorem, concluding a
    terminal presentation of each base that is a model, with its own dependencies, the two not
@@ -1729,10 +1754,148 @@ theorem: it isolates one class at a time by `stabilizationOrdinal_spec` with
 
 **Available upstream, not yet available at our pinned dependency:** of InfinitaryLogic, at
 `30c186f` (the merge of its pull request #163, after the pin `e460cb6`; same toolchain and
-Mathlib), concentration at back-and-forth levels (`Descriptive/BFConcentration`).  Of
-ComputableModelTheory: none (its `main` is the pin `a1fe761`).  A statement merged upstream after
-the pins above is listed here, named in prose only and never `#check`ed in the sketches, until a
-repin containing it is recorded in this subsection.
+Mathlib), concentration at back-and-forth levels (`Descriptive/BFConcentration`); at `c16de09`
+(the merge of its pull request #170, after `30c186f`; the statements entered with its pull
+request #165; same toolchain and Mathlib), the attainment of a greatest countable stage
+(`OrdinalUtil`, namespace `InfinitaryLogic`, with Mathlib imports only); and at `2cd44c3` (the
+merge of its pull request #169, which contains `c16de09`; same toolchain and Mathlib), Scott
+separation for rank-uniform domains (`OrdinalCountability`, `Lomega1omega/QuantifierRank`,
+`Descriptive/ScottDefinability`).  Of ComputableModelTheory: none (its `main` is the pin
+`a1fe761`).  A statement merged upstream after the pins above is listed here, recorded here only
+and never `#check`ed in the sketches, until a repin containing it is recorded in this subsection
+(a repin to a revision containing `2cd44c3` is listed as a possible future checkpoint, "Checkpoint
+order and acceptance"; none has been made, and none is decided).
+
+**Upstream statements quoted, not compiled here.**  The definition of "signatures checked" at the
+head of this subsection does not apply to the Lean blocks below.  They are the statements of
+`c16de09` and `2cd44c3`, as merged (hypotheses included), available upstream, not yet at our
+pinned dependency: signatures verified against the upstream source at `2cd44c3` (which contains
+`c16de09`), not compiled here (neither compiled against our pin `e460cb6` nor `#check`ed in
+`SuggestedInterfaces.lean`); no application is compiled in this repository.
+
+- *Greatest attained stage* (`OrdinalUtil`): a predicate on stages that holds at `0`, is closed
+  downward, is closed under successor limits below `ω₁`, and is bounded on the stages below `ω₁`
+  by a countable `A` has a greatest stage `ρ ≤ A`, and holds exactly at the stages `ξ ≤ ρ`, at
+  every ordinal `ξ`, not only below `ω₁` (downward closure is global):
+
+  ```lean
+  theorem exists_greatest_stage_lt_omega1 (P : Ordinal.{0} → Prop) (hzero : P 0)
+      (hdown : ∀ {α β}, α ≤ β → P β → P α)
+      (hlim : ∀ l, Order.IsSuccLimit l → l < Ordinal.omega 1 → (∀ ξ, ξ < l → P ξ) → P l)
+      {A : Ordinal.{0}} (hA : A < Ordinal.omega 1)
+      (hbound : ∀ ξ, ξ < Ordinal.omega 1 → P ξ → ξ ≤ A) :
+      ∃ ρ, ρ ≤ A ∧ P ρ ∧ ∀ ξ, P ξ ↔ ξ ≤ ρ
+  ```
+
+  with the general forms `exists_forall_iff_le_of_bounded_of_isSuccLimit_closed` (on
+  `Ordinal.{u}`, with no countability and with limit closure at every successor limit) and
+  `exists_isGreatest_setOf_of_bounded_of_isSuccLimit_closed` (the same, stated with
+  `IsGreatest`).  The form with `(Cardinal.aleph 1).ord` and the conclusion restricted to
+  `ξ < (Cardinal.aleph 1).ord` follows by `Cardinal.ord_aleph`, the equation
+  `(Cardinal.aleph o).ord = Ordinal.omega o`.
+- *Scott separation* (`OrdinalCountability`, namespace `InfinitaryLogic`; `Sat` and `rank` are
+  parameters and the proofs use no model theory): an observation `φ` isolating a point `q`
+  excludes `q` from every set of two or more points on which `φ` is constant; so along decreasing
+  domains on which the observations of rank at most the stage agree, `q` lies in no domain at
+  or above the rank of `φ` when the domain at that rank has two or more points, and, when every
+  point is isolated by an observation of countable rank and every domain at a countable stage
+  has two or more points, every point leaves the domains strictly before a countable stage:
+
+  ```lean
+  theorem notMem_of_isolating_of_uniform {X : Type u} {F : Type v}
+      (Sat : F → X → Prop) {D : Set X} {q : X} {φ : F}
+      (hiso : ∀ x, Sat φ x ↔ x = q)
+      (huniform : ∀ ⦃x y⦄, x ∈ D → y ∈ D → (Sat φ x ↔ Sat φ y))
+      (htwo : D.Nontrivial) :
+      q ∉ D
+
+  theorem lt_index_of_isolating_of_antitone {X : Type u} {F : Type v}
+      {ι : Type w} [LinearOrder ι] (Sat : F → X → Prop)
+      (D : ι → Set X) (hanti : Antitone D) {q : X} {φ : F} {ζ : ι}
+      (hiso : ∀ x, Sat φ x ↔ x = q)
+      (huniform : ∀ ⦃x y⦄, x ∈ D ζ → y ∈ D ζ → (Sat φ x ↔ Sat φ y))
+      (htwo : (D ζ).Nontrivial) {η : ι} (hq : q ∈ D η) :
+      η < ζ
+
+  theorem lt_rank_of_isolating_of_antitone {X : Type u} {F : Type v}
+      {ι : Type w} [LinearOrder ι] (Sat : F → X → Prop)
+      (rank : F → ι) (D : ι → Set X) (hanti : Antitone D) {q : X} {φ : F}
+      (hiso : ∀ x, Sat φ x ↔ x = q)
+      (huniform : ∀ ⦃x y⦄, x ∈ D (rank φ) → y ∈ D (rank φ) → (Sat φ x ↔ Sat φ y))
+      (htwo : (D (rank φ)).Nontrivial) {η : ι} (hq : q ∈ D η) :
+      η < rank φ
+
+  theorem stage_lt_rank_of_isolating {X : Type u} {F : Type v}
+      (Sat : F → X → Prop) (rank : F → Ordinal.{0})
+      (D : Ordinal.{0} → Set X) (hanti : Antitone D) {q : X} {φ : F}
+      (hiso : ∀ x, Sat φ x ↔ x = q)
+      (huniform : ∀ ⦃x y⦄, x ∈ D (rank φ) → y ∈ D (rank φ) → (Sat φ x ↔ Sat φ y))
+      (htwo : (D (rank φ)).Nontrivial) {η : Ordinal.{0}} (hq : q ∈ D η) :
+      η < rank φ
+
+  theorem exists_countable_strict_stage_bound_of_isolation {X : Type u} {F : Type v}
+      (Sat : F → X → Prop) (rank : F → Ordinal.{0})
+      (D : Ordinal.{0} → Set X) (hanti : Antitone D)
+      (huniform : ∀ η, η < Ordinal.omega 1 → ∀ φ, rank φ ≤ η →
+        ∀ ⦃x y⦄, x ∈ D η → y ∈ D η → (Sat φ x ↔ Sat φ y))
+      (htwo : ∀ η, η < Ordinal.omega 1 → (D η).Nontrivial)
+      (hisolate : ∀ q, ∃ φ, rank φ < Ordinal.omega 1 ∧ ∀ x, Sat φ x ↔ x = q) (q : X) :
+      ∃ θ, θ < Ordinal.omega 1 ∧ ∀ η, q ∈ D η → η < θ
+  ```
+
+  Every formula of `Lω₁ω`, in every language, has countable quantifier rank
+  (`Lomega1omega/QuantifierRank`; a syntactic fact):
+
+  ```lean
+  theorem FirstOrder.Language.BoundedFormulaω.qrank_lt_omega1 {L : Language.{u, v}} {α : Type*} :
+      ∀ {n : ℕ} (φ : L.BoundedFormulaω α n), φ.qrank < Ordinal.omega 1
+  theorem FirstOrder.Language.Sentenceω.qrank_lt_omega1 {L : Language.{u, v}}
+      (φ : L.Sentenceω) : φ.qrank < Ordinal.omega 1
+  ```
+
+  and an isolated presentation (`IsolatedPresentation truth`: every class is the only one
+  satisfying some sentence) isolates each class by a sentence of countable quantifier rank, so
+  the countable strict bound holds for the domains of its classes
+  (`Descriptive/ScottDefinability`):
+
+  ```lean
+  theorem FirstOrder.Language.IsolatedPresentation.exists_qrank_lt_omega1 {L : Language.{u, v}}
+      {Q : Type w} {truth : L.Sentenceω → Q → Prop}
+      (hisol : IsolatedPresentation truth) (q : Q) :
+      ∃ σ : L.Sentenceω, σ.qrank < Ordinal.omega 1 ∧ ∀ s, truth σ s ↔ s = q
+
+  theorem FirstOrder.Language.IsolatedPresentation.exists_countable_strict_stage_bound
+      {L : Language.{u, v}} {Q : Type w}
+      {truth : L.Sentenceω → Q → Prop} (hisol : IsolatedPresentation truth)
+      (D : Ordinal.{0} → Set Q) (hanti : Antitone D)
+      (huniform : ∀ η, η < Ordinal.omega 1 → ∀ φ : L.Sentenceω, φ.qrank ≤ η →
+        ∀ ⦃x y⦄, x ∈ D η → y ∈ D η → (truth φ x ↔ truth φ y))
+      (htwo : ∀ η, η < Ordinal.omega 1 → (D η).Nontrivial) (q : Q) :
+      ∃ θ, θ < Ordinal.omega 1 ∧ ∀ η, q ∈ D η → η < θ
+  ```
+
+**The scope of these statements.**  In Scott separation the bound is the quantifier rank of a
+chosen isolating sentence: it is not an internal Scott rank, not a stabilization ordinal, and not
+an attained stage (attainment is the separate greatest-stage theorem, under its closure
+hypotheses), and two isolating sentences of different ranks give different bounds, the larger
+not the least strict bound.  Agreement at stage `η` is for the sentences of quantifier rank **at
+most** `η` (the convention of `EquivQRω`); under agreement only for ranks strictly below `η` the
+bound at the rank (`stage_lt_rank_of_isolating`) fails, and a countable strict bound needs
+`θ := rank φ + 1`, with agreement and nonsingletonness at that later stage.  Nonsingletonness of
+the domains (`Set.Nontrivial`) is essential: neither nonemptiness nor an ambient `Nontrivial`
+type replaces it.  No countability of classes is assumed, and the hypotheses of
+`exists_countable_strict_stage_bound_of_isolation` imply that the class space is uncountable, so
+on a countable class space it applies only vacuously (the exclusion and the bound at the rank
+are not vacuous on finite spaces).  Under antitonicity its conclusion is `q ∉ D θ`, the
+hypothesis that every point leaves the domains, of `mk_le_aleph_one_of_domains` and
+`mk_eq_aleph_one_of_domains` (`OrdinalCountability`, available at the pin, signatures checked).
+Where the nonsingletonness at `θ` is obtained from an element of `D θ \ D (θ + 1)` and an element of
+`D (θ + 1)`, that pair is to be required only at the countable stages `θ < ω₁`: required at every
+ordinal, it is inconsistent with isolation, agreement and antitonicity, since the countable bound
+forces `D ω₁ = ∅`.  In the greatest-stage theorem each of `hzero`, downward closure, limit closure
+and a countable bound is needed (the stages `ξ < ω` without limit closure, and `ξ < ω₁` with the
+bound `A = ω₁`, have no greatest stage).  Both statements use `Ordinal.omega 1`; a statement written
+with `(Cardinal.aleph 1).ord` is converted by `Cardinal.ord_aleph`.
 
 **Available at the pin `e460cb6` since `cf80917`, used by `COMPANIONS.md`, "Quantitative
 reconstruction", targets 2 and 3** (listed as available upstream before the repin to `cf80917`):
@@ -1753,7 +1916,7 @@ back-and-forth theorem is retired: both of its intended applications compile thr
 `bfEquiv_of_gradedMatching` (at the pin, signatures checked), on abstract hypotheses (`README.md`,
 Layer 0, for where the height guard and the selection of coordinates go).  No statement of this
 roadmap relies on any of them, or on the statements available upstream, as pinned until this
-subsection records a pin containing it; until then they are named in prose only (`README.md`,
+subsection records a pin containing it; until then they are recorded here only (`README.md`,
 Layer 0), never `#check`ed in the sketches.
 
 ### Applications of library theorems
@@ -2050,6 +2213,19 @@ Each checkpoint needs both its abstract API and a concrete application:
    (`Realization.IsCoverHollow.isTerminalAt`).  `ContinuationCriterion`, (R1), uniqueness of
    expansions, and global termination are not used.  Unbounded top-grade growth of the realization
    is still to be proved and is not used.
+
+**A listed future repin, outside the order 1–7.**  A repin of InfinitaryLogic to a revision
+containing `2cd44c3` (or the release tag that follows it) has been neither made nor decided.  A
+controlled move, if undertaken, would be a separate checkpoint, before the first application of
+the greatest-stage theorem or of Scott separation, done as the move to `e460cb6` (this
+repository's pull request #97): the revisions in `lakefile.toml` and `lake-manifest.json` changed
+as in that pull request, which edited the manifest by hand, and the `lakefile.toml` comment on
+bumping (which runs `lake update InfinitaryLogic`) and its list of merged pull requests updated to
+match; the toolchain and Mathlib checked against InfinitaryLogic's manifest at the new revision;
+ComputableModelTheory built against it; call sites adapted with no statement changed; the
+statements listed as available upstream ("Dependency pins") `#check`ed in
+`SuggestedInterfaces.lean`; and that subsection updated.  Until such a repin is recorded in
+"Dependency pins", no statement here applies the greatest-stage theorem or Scott separation.
 
 **Six non-implications, as examples.**  Each is a statement that fails in general, to be shown by
 an example in the examples module of its layer; only the second is compiled.
