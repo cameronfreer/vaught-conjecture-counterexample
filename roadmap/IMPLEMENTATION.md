@@ -486,15 +486,15 @@ rows).
    (`Realization.stableCandidate_eval_of_isCoverHollow`), both compiled in this repository (theorem
    named).  Conversely, a model is stably lawful (`Realization.IsModel.isStablyLawful`, compiled in
    this repository (theorem named)), so its candidate is defined, and it is literal weakening only
-   if every stable label is `⊤`, which is cover-hollowness
-   (`Realization.isCoverHollow_iff_forall_stableLabel_eq_top`, compiled in this repository (theorem
-   named)).  The equality of the candidate with literal weakening holds for every stably lawful `R`;
-   models are taken because there the candidate is a structural successor.  Then the structural
-   successors form a subsingleton, and each is the stable candidate.  Not a continuation theorem: a
-   structural successor need not be a model, and the uniqueness supplies no expansion; for a model
-   that is not cover-hollow the two differ, with no conflict with the uniqueness of model
-   expansions.  Stated for models only, with cover-hollowness, not hollowness in the sense of
-   `SEMANTIC_CONTRACT.md`, item 8.
+   if every cell labelled the formal top has the formal top as its stable label, which is
+   cover-hollowness (`Realization.isCoverHollow_iff_forall_stableLabel_eq_top`, compiled in this
+   repository (theorem named)).  The equivalence of this equality with cover-hollowness holds for
+   every stably lawful `R`; models are taken because there the candidate is a structural
+   successor.  Then the structural successors form a subsingleton, and each is the stable
+   candidate.  Not a continuation theorem: a structural successor need not be a model, and the
+   uniqueness supplies no expansion; for a model that is not cover-hollow the two differ, with no
+   conflict with the uniqueness of model expansions.  Stated for models only, with
+   cover-hollowness, not hollowness in the sense of `SEMANTIC_CONTRACT.md`, item 8.
 10. *Complementary global routes* (`README.md`, the section on the top-free witnesses,
     "Complementary global routes").  Separate statements with their own hypotheses, none derived
     from statements 1–9: classical Fraïssé existence for terminal examples at one level (the
