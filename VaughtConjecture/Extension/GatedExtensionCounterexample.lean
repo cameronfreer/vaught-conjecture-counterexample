@@ -77,12 +77,11 @@ models, (R1) of the table of Layer 3, is open in general; its form for the top-f
 unaffected.  The coupled gate replaces the labels `⊥` of the twins in the display by a condition on
 rows, that every twin reads the gate at least as it reads the cap
 (`CellScheme.Rows.TwinsReadGate`), which bounds the cap by the gate in every lawful labelling by
-availability and locality alone (`CellScheme.Rows.gate_ge_cap_of_lawful`).  At the input used
-here such a display is legal (`CoupledGateExamples.exists_coupledGatedExtension_refutingInput`);
+availability and locality alone (`CellScheme.Rows.cap_le_gate_of_twinsReadGate`).  At the input
+used here such a display is legal (`CoupledGateExamples.exists_coupledGatedExtension_comap_g₁`);
 the coupled gated pinned extension property (`StageType.HasCoupledGatedPinnedExtensions`) is open
-in general.  The private context of
-[Kni26, Lemma 8.1.1] also carries a marker, not used by the gated extension; its role there is to
-be compared with this obstruction (prospective).
+in general.  The private context of [Kni26, Lemma 8.1.1] also carries a marker, not used by the
+gated extension; its role there is to be compared with this obstruction (prospective).
 
 ## Placement
 

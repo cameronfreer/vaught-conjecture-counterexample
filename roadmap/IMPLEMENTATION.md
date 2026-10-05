@@ -1862,18 +1862,31 @@ Each checkpoint needs both its abstract API and a concrete application:
    the block of the cutoff (the private cap is labelled above the cutoff); 4b-iii, gate recovery,
    for rows (`CellScheme.Rows.IsGate.recover`, `Extension/Gate`) and for a gated extension
    (`StageType.GatedExtension.recover`, `Realization/GateRecovery`), with no legality, no
-   completion, and no (R6); and 4b-iv, conditional on the gated-extension property, stated as
-   `StageType.HasGatedPinnedExtensions` (`Extension/GatedExtension`), with the bottom-pattern
-   clause used in its guarded form, witnessed by the display, and no hypothesis on the stage
-   (`Realization.IsModel.hasFiniteCutReceiving_of_hasGatedPinnedExtensions`,
-   `Expansion.finiteCutReceiving_of_hasGatedPinnedExtensions`), are
-   compiled in this repository (theorem named). 4b-ii, the construction as data, and with it the
-   gated-extension property, is still to be proved; at a stage where the property fails the
-   conditional theorem is vacuous, and nothing rules that out. The conditional theorem receives one
-   permitted cutoff at a time and is not exact projected receiving. Projected-donor lifting is not
-   part of checkpoint 4 (`README.md`, Layer 3, 3.3, the density boundary). This status concerns (R1)
-   only: (R2), (R3), and the fidelity theorem of this checkpoint remain to be proved; the
-   cap-to-model theorem at a limit stage is compiled
+   completion, and no (R6), and with the twin–gate coupling in place of the bottom pattern of the
+   twins (`CellScheme.Rows.IsGate.recover_of_twinsReadGate`,
+   `StageType.CoupledGatedExtension.exists_restrictFace_mem_receivingFamily`); and 4b-iv,
+   conditional on the gated-extension property, stated as
+   `StageType.HasCoupledGatedPinnedExtensions` (`Extension/GatedExtension`), with generalized
+   saturation over the private context, witnessed by the display, and no hypothesis on the stage
+   (`Realization.IsModel.hasFiniteCutReceiving_of_hasCoupledGatedPinnedExtensions`,
+   `Realization/CoupledFiniteCutReceiving`,
+   `Expansion.finiteCutReceiving_of_hasCoupledGatedPinnedExtensions`), are compiled in this
+   repository (theorem named). The first form of the property, `StageType.HasGatedPinnedExtensions`,
+   whose displays label the twins of the gate `⊥`, is refuted at every stage
+   (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`, compiled in this repository
+   (theorem named)); the coupled form replaces that clause by the condition on rows
+   `CellScheme.Rows.TwinsReadGate` and holds at the refuting input
+   (`CoupledGateExamples.exists_coupledGatedExtension_comap_g₁`, compiled in this repository
+   (theorem named)). 4b-ii, the construction as data, and with it
+   `StageType.HasCoupledGatedPinnedExtensions`, is open. Its open point is cap lowering (CL),
+   stated in its docstring, the uniform form of what the construction needs, a strengthening not
+   shown necessary: a failure of (CL) refutes the coupled design only at a pair that a forcing
+   prescription from an anchored legal donor actually realizes. At a stage where the hypothesis
+   fails the conditional theorem is vacuous, and nothing rules that out. The conditional theorem
+   receives one permitted cutoff at a time and is not exact projected receiving. Projected-donor
+   lifting is not part of checkpoint 4 (`README.md`, Layer 3, 3.3, the density boundary). This
+   status concerns (R1) only: (R2), (R3), and the fidelity theorem of this checkpoint remain to be
+   proved; the cap-to-model theorem at a limit stage is compiled
    (`Realization.isModel_of_hasFiniteCutReceiving`, `Realization/CapToModel`) conditional on the
    nonemptiness of the instances of uniformity and dominance, which the coatom extension property
    with apex gives (`CapToModel.of_hasApexCoatomExtensions`, at `ω`).
@@ -2589,7 +2602,8 @@ witnesses).**
 - The existential two-face lift `2FL∃(j)` and the choosing variant of
   `CellScheme.Rows.cappedLift_of_boundary_short` (checkpoint 2.7), in prose only.
 - The ordinary construction of (R1) as data (4b-ii), the proof of
-  `StageType.HasGatedPinnedExtensions`; (R2), (R3), (R4); and output 3, the proof of
+  `StageType.HasCoupledGatedPinnedExtensions` (open; its first form
+  `StageType.HasGatedPinnedExtensions` is refuted); (R2), (R3), (R4); and output 3, the proof of
   `ContinuationCriterion`.
 - The graded back-and-forth theorem (`README.md`, Layer 0), formerly listed here,
   is retired, not moved: both of its intended applications, approximate comparison of full

@@ -14,8 +14,8 @@ open; none of them is a proof of (R1):
 
 * **the empty root**: over an occurrence on no points the anchored private context has arity at
   least `2`, and the donor is received over it at every permitted cutoff;
-* **the two routes**: generalized saturation and the bottom-pattern clause give the same
-  conclusion;
+* **the two routes**: the bottom-pattern clause, in place of generalized saturation, gives the
+  same conclusion;
 * **a donor whose new cells are all labelled `⊤`** is anchored below every cell, so it needs no
   reference cell (on `GatedExtensionCounterexample.P α`, the coupled gated extension for such a
   donor is not compiled: it needs the cap lowered, the open point of the hypothesis);
@@ -57,11 +57,30 @@ example (hR : R.IsModel) (hg : HasCoupledGatedPinnedExtensions α) (x : R.Occurr
 
 /-! ### The two routes -/
 
-/-- **Generalized saturation and the bottom-pattern clause give the same conclusion.** -/
-example (hR : R.IsModel) (hg : HasCoupledGatedPinnedExtensions α) :
-    R.HasFiniteCutReceiving ∧ R.HasFiniteCutReceiving :=
-  ⟨hR.hasFiniteCutReceiving_of_hasCoupledGatedPinnedExtensions hg,
-    hR.hasFiniteCutReceiving_of_hasCoupledGatedPinnedExtensions' hg⟩
+/-- **The bottom-pattern clause gives the same conclusion as generalized saturation**: the assembly
+of `IsModel.hasFiniteCutReceiving_of_hasCoupledGatedPinnedExtensions` with the bottom-pattern
+clause for the scheme and labels of the display in place of generalized saturation (the
+bottom-pattern family lies in the family of generalized saturation).  Conditional on the same open
+named hypothesis; not a proof of (R1). -/
+example (hR : R.IsModel) (hg : HasCoupledGatedPinnedExtensions α) : R.HasFiniteCutReceiving := by
+  intro x d hd c hc
+  obtain ⟨γ, hγα, rfl⟩ := isPermittedCutoff_iff.mp hc
+  obtain ⟨y, f, C, hf, hfp, hn, hC, hγC, hanc⟩ := hR.exists_privateContext_isAnchored x d hγα
+  obtain ⟨E, hE⟩ := hg y.type f x.type d C (hR.isLegal _ _ y.eval_tuple) hfp hd.1 hd.2 hC
+    (ne_bot_of_gt hγC) hn hanc
+  -- the bottom-pattern clause over `y`, witnessed nonempty by the display
+  obtain ⟨u, hu, q, hq, he⟩ := hR.bottomPattern y E.display.toScheme E.display.label
+    ⟨E.display, ⟨E.isLegal, E.restrictFace_castSuccEmb⟩, rfl, fun i j hij _ ↦ by
+      rw [Fin.ext hij]⟩
+  -- the literal private face of the realized type, by exact consistency
+  have hqP : restrictFace Fin.castSuccEmb q = some y.type := by
+    rw [← hR.isConsistent u q _ he, hu, y.eval_tuple]
+  obtain ⟨d', hd', hmem⟩ := E.exists_restrictFace_mem_receivingFamily hqP hq.1
+  refine ⟨(extendByLast f).trans u, ?_, d', mem_receivingFamily_of_le hmem
+    (hγC.le.trans_eq hE.symm), ?_⟩
+  · rw [← Function.Embedding.trans_assoc, castSuccEmb_trans_extendByLast,
+      Function.Embedding.trans_assoc, hu, hf]
+  · rw [hR.isConsistent u q _ he, hd']
 
 /-! ### Donors whose new cells are labelled `⊤` -/
 

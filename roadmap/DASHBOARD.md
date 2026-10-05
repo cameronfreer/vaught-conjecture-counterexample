@@ -27,7 +27,7 @@ percentage of 100 would not by itself mean that the hypotheses of a layer are pr
 | 1, finite kernel | 98% | `StageType.provisionalOffset` | the bound (d) of the offset (prospective) |
 | 2, realizations, syntax | 95% | `Realization.eq_of_eval_eq_some` | hull items 4–5 for realizations |
 | 3, the completion (R6) | 72% | `Seed.nonempty_completionBelowFullGrade_of_le_two` | the step at `m ≥ 3` |
-| 3, receiving | 90% | `Expansion.finiteCutReceiving_of_hasGatedPinnedExtensions` | 4b-ii; (R2)–(R4) |
+| 3, receiving | 90% | `Expansion.finiteCutReceiving_of_hasCoupledGatedPinnedExtensions` | 4b-ii; (R2)–(R4) |
 | 4, continuation | 62% | `Realization.stableCandidate` | twins; output 3 |
 | 5, domains, agreement | 85% | `Expansion.expansionDomain_loss_countable` | the hypotheses below |
 | 6, the bounds | 90% | `densitySentence_hasThinAlephOneSpectrum_of_terminalClassification` | the hypotheses below |
@@ -48,8 +48,13 @@ Notes on the rows, each with its marker:
 - *Layer 3, receiving.*  Compiled: finite-extension receiving from finite-cut receiving, for an
   exactly consistent realization at a stage that is zero or a limit
   (`Realization.HasFiniteCutReceiving.hasFiniteExtensionReceiving`); gate recovery
-  (`StageType.GatedExtension.recover`); (R1) conditional on `StageType.HasGatedPinnedExtensions`
-  (`Realization.IsModel.hasFiniteCutReceiving_of_hasGatedPinnedExtensions`); the cap-to-model
+  (`StageType.GatedExtension.recover`) and with the twin–gate coupling
+  (`CellScheme.Rows.IsGate.recover_of_twinsReadGate`); (R1) conditional on
+  `StageType.HasCoupledGatedPinnedExtensions`, which is open
+  (`Realization.IsModel.hasFiniteCutReceiving_of_hasCoupledGatedPinnedExtensions`); the refutation
+  of the first form `StageType.HasGatedPinnedExtensions`
+  (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`); the coupled form at the refuting
+  input (`CoupledGateExamples.exists_coupledGatedExtension_comap_g₁`); the cap-to-model
   theorem at a limit stage, conditional on the nonemptiness of the instances of uniformity and
   dominance (`Realization.isModel_of_hasFiniteCutReceiving`); the top-free witnesses, steps 1–7,
   conditionally: steps 2–3 under `StageType.HasCoatomExtensions`, and step 7 under
@@ -102,9 +107,10 @@ Status of each:
 
 1. `CapToModel`: still to be proved.  Compiled conditionally on the coatom extension property with
    apex at `ω` (`CapToModel.of_hasApexCoatomExtensions`), which is still to be proved.
-2. `Expansion.FiniteCutReceiving`: still to be proved.  Compiled conditionally on the gated pinned
-   extension property (`Expansion.finiteCutReceiving_of_hasGatedPinnedExtensions`), which is still
-   to be proved (4b-ii).  It is also used for the rigid-core comparison.
+2. `Expansion.FiniteCutReceiving`: still to be proved.  Compiled conditionally on the coupled
+   gated pinned extension property
+   (`Expansion.finiteCutReceiving_of_hasCoupledGatedPinnedExtensions`), which is open (4b-ii).  It
+   is also used for the rigid-core comparison.
 3. `ForcingDonors`: still to be proved, by a finite construction of Layer 3 from the completion
    below the full grade (prospective).
 4. `ContinuationCriterion`: still to be proved (sufficiency only; the converse is not stated).
@@ -143,10 +149,18 @@ counted as compiled.
    construct), no conditional statement of it is made.  Refuted hypotheses on single types:
    `Continuation.CandidateCounterexamples.not_synchronizingCofaces_blockStage` (with two variants)
    and `Continuation.CandidateCounterexamples.not_twinOrdering_blockStage`.
-3. **4b-ii** (still to be proved): the gated construction as data, that is,
-   `StageType.HasGatedPinnedExtensions`.  Under review, not yet merged: that property is refuted at
-   every stage, so the conditional (R1) (`Expansion.finiteCutReceiving_of_hasGatedPinnedExtensions`)
-   is vacuous, and a corrected gate predicate is to be designed.
+3. **4b-ii** (open): the gated construction as data, that is,
+   `StageType.HasCoupledGatedPinnedExtensions`.  Its first form,
+   `StageType.HasGatedPinnedExtensions`, is refuted at every stage
+   (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`, compiled in this repository
+   (theorem named)).  The coupled form holds at the refuting input
+   (`CoupledGateExamples.exists_coupledGatedExtension_comap_g₁`, compiled in this repository
+   (theorem named)) and is open in general.  Its open point is cap lowering (CL), the uniform form
+   of what the construction needs, a strengthening not shown necessary: a failure of (CL) refutes
+   the coupled design only at a pair that a forcing prescription from an anchored legal donor
+   actually realizes.  At a stage where the hypothesis fails the conditional (R1)
+   (`Expansion.finiteCutReceiving_of_hasCoupledGatedPinnedExtensions`) is vacuous, and nothing
+   rules that out.
 4. **Forcing donors** (still to be proved): the finite construction behind `ForcingDonors`.
 5. **Output 3, part D, and (R4)** (still to be proved): (R4) over positive roots, the empty root by
    the coatom extension over the empty face, the coatom extension properties at `λ_{ξ+1}`, and the

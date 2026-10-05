@@ -78,7 +78,7 @@ hypothesis of `IsGate.recover` enters only through the gate inequality `w C ≤ 
 (`IsGate.recover_of_cap_le_gate`).  The rows **couple the twins to the gate**
 (`TwinsReadGate`) when every twin `t` of `G` reads `G` at least as it reads `C`:
 `R.row t C ≤ R.row t G`.  Then every lawful labelling `q` has `q C ≤ q G`
-(`gate_ge_cap_of_lawful`): availability gives a cell `u` with the graded index of `G` and
+(`cap_le_gate_of_twinsReadGate`): availability gives a cell `u` with the graded index of `G` and
 `q C ≤ q u`, and if `u` is a twin, locality at `u` with its witness `(g, σ)` gives, at equal
 grades, `q C = min (σ (R.row u C)) (g N) ≤ min (σ (R.row u G)) (g N) = min (q G) (q u) ≤ q G`.
 The coupling is a condition on rows, so it holds for every lawful labelling of the rows at once,
@@ -116,7 +116,7 @@ and never serves availability.
   exist: the universal gated extension hypothesis `StageType.HasGatedPinnedExtensions` fails at
   every stage (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`).  With the coupling of
   the rows in place of the labels `⊥` of the twins, a legal scheme carrying a gate exists at the
-  input of that refutation (`CoupledGateExamples.exists_coupledGatedExtension_refutingInput`); the
+  input of that refutation (`CoupledGateExamples.exists_coupledGatedExtension_comap_g₁`); the
   universal form `StageType.HasCoupledGatedPinnedExtensions` is open, and so is general (R1).
 
 ## Placement
@@ -216,13 +216,6 @@ theorem IsWitness.min_apply_visibilityReplace (hw : IsWitness g σ) (hc : IsSelf
   · have hσ : c ≤ σ x := min_eq_right_iff.mp (hx.trans (min_eq_right hca))
     rw [min_eq_right (hw.le_apply_visibilityReplace_of_le hc hcg hσ hi),
       min_eq_right (le_visibilityReplace_of_le hc hca hi)]
-
-/-- **Every witness reads `a` at most as `b` exactly when `a ≤ b`**: shifters are monotone, and
-the identity is a witness.  So `row t C ≤ row t G` is the weakest condition on the entries of a
-row under which every witness of its locality reads `C` at most as `G`. -/
-theorem le_iff_forall_isWitness :
-    (∀ (g : ℕ → Label.{u}) (σ : Label.{u} → Label.{u}), IsWitness g σ → σ a ≤ σ b) ↔ a ≤ b :=
-  ⟨fun h ↦ h _ id IsWitness.id_top, fun h _ _ hw ↦ hw.monotone h⟩
 
 end VaughtConjecture.Label
 
@@ -398,7 +391,7 @@ end IsLawful
 `q C ≤ q G` for every lawful labelling `q`.  Availability gives a cell `u` with the graded index
 of `G` and `q C ≤ q u`; if `u` is a twin, locality at `u` reads `C` at most as `G` with one
 witness, at equal grades.  Nothing is assumed about the values of `q` at the twins. -/
-theorem gate_ge_cap_of_lawful (hq : R.IsLawful q) (hCG : D.scope C ⊆ D.scope G)
+theorem cap_le_gate_of_twinsReadGate (hq : R.IsLawful q) (hCG : D.scope C ⊆ D.scope G)
     (hgr : D.grade C = D.grade G) (htw : R.TwinsReadGate G C) : q C ≤ q G := by
   obtain ⟨u, hu, hle⟩ := hq.availability C G hCG hgr
   rcases eq_or_ne u G with rfl | huG
@@ -415,6 +408,17 @@ theorem gate_ge_cap_of_lawful (hq : R.IsLawful q) (hCG : D.scope C ⊆ D.scope G
         rw [hgr]; exact min_le_min_right _ (hw.monotone (htw u hC hG hu huG))
     _ = min (q G) (q u) := hG'.symm
     _ ≤ q G := min_le_left _ _
+
+/-- **Gate recovery from the gate inequality alone**: the twin hypothesis of `IsGate.recover`
+enters only through `w C ≤ q G`.  A lawful labelling literally `w` on the private cells with
+`w C ≤ q G` agrees with the display on every donor cell below `w C`. -/
+theorem IsGate.recover_of_cap_le_gate (hgate : R.IsGate G C P Q w) (hq : R.IsLawful q)
+    (hlit : ∀ x ∈ P, q x = w x) (hCG : w C ≤ q G) :
+    ∀ e ∈ Q, min (q e) (w C) = min (w e) (w C) := by
+  intro e he
+  by_cases heP : e ∈ P
+  · rw [hlit e heP]
+  · exact hq.min_eq_of_gateReads hlit hgate.cap_ne_bot hCG (hgate.reads e he heP)
 
 namespace IsGate
 
@@ -443,11 +447,9 @@ theorem eq_or_le (e : ι) (he : e ∈ Q) :
 /-- **Gate recovery.**  A lawful labelling `q` that is literally the display `w` on the private
 cells and is bottom at every twin of the gate has `w C ≤ q G`, and agrees with the display on
 every donor cell below the label `w C` of the private cap. -/
-theorem recover : w C ≤ q G ∧ ∀ e ∈ Q, min (q e) (w C) = min (w e) (w C) := by
-  refine ⟨hgate.cap_le_gate hq hlit htwin, fun e he ↦ ?_⟩
-  rcases hgate.eq_or_le hq hlit htwin e he with ⟨h, -⟩ | ⟨h₁, h₂⟩
-  · rw [h]
-  · rw [min_eq_right h₁, min_eq_right h₂]
+theorem recover : w C ≤ q G ∧ ∀ e ∈ Q, min (q e) (w C) = min (w e) (w C) :=
+  ⟨hgate.cap_le_gate hq hlit htwin,
+    hgate.recover_of_cap_le_gate hq hlit (hgate.cap_le_gate hq hlit htwin)⟩
 
 /-- **Exact recovery below the private cap**: a donor cell with display label below `w C` has its
 display label. -/
@@ -481,17 +483,6 @@ theorem IsGate.recover_of_row_twin (hgate : R.IsGate G C P Q w) (hq : R.IsLawful
     (hG : q G ≠ ⊥) : w C ≤ q G ∧ ∀ e ∈ Q, min (q e) (w C) = min (w e) (w C) :=
   hgate.recover hq hlit fun t ht htG ↦ hq.eq_bot_of_row_eq_bot hG (hrow t ht htG)
 
-/-- **Gate recovery from the gate inequality alone**: the twin hypothesis of `IsGate.recover`
-enters only through `w C ≤ q G`.  A lawful labelling literally `w` on the private cells with
-`w C ≤ q G` agrees with the display on every donor cell below `w C`. -/
-theorem IsGate.recover_of_cap_le_gate (hgate : R.IsGate G C P Q w) (hq : R.IsLawful q)
-    (hlit : ∀ x ∈ P, q x = w x) (hCG : w C ≤ q G) :
-    ∀ e ∈ Q, min (q e) (w C) = min (w e) (w C) := by
-  intro e he
-  by_cases heP : e ∈ P
-  · rw [hlit e heP]
-  · exact hq.min_eq_of_gateReads hlit hgate.cap_ne_bot hCG (hgate.reads e he heP)
-
 /-- **Gate recovery with the twin–gate coupling**: when the twins of the gate read the gate at
 least as the cap (`TwinsReadGate`), a lawful labelling literally `w` on the private cells has
 `w C ≤ q G` and agrees with the display on every donor cell below `w C`.  Nothing is assumed about
@@ -500,7 +491,7 @@ theorem IsGate.recover_of_twinsReadGate (hgate : R.IsGate G C P Q w) (hq : R.IsL
     (hlit : ∀ x ∈ P, q x = w x) (htw : R.TwinsReadGate G C) :
     w C ≤ q G ∧ ∀ e ∈ Q, min (q e) (w C) = min (w e) (w C) := by
   have hCG : w C ≤ q G := hlit C hgate.cap_mem ▸
-    gate_ge_cap_of_lawful hq hgate.scope_cap_subset hgate.grade_cap htw
+    cap_le_gate_of_twinsReadGate hq hgate.scope_cap_subset hgate.grade_cap htw
   exact ⟨hCG, hgate.recover_of_cap_le_gate hq hlit hCG⟩
 
 end VaughtConjecture.CellScheme.Rows

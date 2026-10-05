@@ -66,18 +66,21 @@ a given gated extension, here and in `VaughtConjecture.Realization.GateRecovery`
 same data with the clause on the twins replaced by a condition on the rows of the display: every
 twin `t` of the gate `G` reads `G` at least as it reads the cap `C`, `row t C ≤ row t G`
 (`CellScheme.Rows.TwinsReadGate`).  Then the gate is at least the cap in every lawful labelling of
-the rows of the display (`CoupledGatedExtension.gate_ge_cap_of_lawful`), by availability and
+the rows of the display (`CoupledGatedExtension.cap_le_gate`), by availability and
 locality alone, so the display does not label the gate `⊥`
 (`CoupledGatedExtension.label_gate_ne_bot`), and the readings of the gate still force anchoring
 (`CoupledGatedExtension.isAnchored`).  The **coupled gated pinned extension property**
 (`StageType.HasCoupledGatedPinnedExtensions α`) asks for a coupled gated extension for the same
 inputs.  It is a named hypothesis and it is **open**.  It holds at the input that refutes the
 gated pinned extension property: over the empty root, with the donor `P α|{0}` and the cap `3`,
-the private type `GatedExtensionCounterexample.P α` has a coupled gated extension, whose gate has a
-twin labelled `⊤` (`CoupledGateExamples.exists_coupledGatedExtension_refutingInput`).  Nothing more
-is proved about it: the other donors of `P α` (a donor labelled `⊤`, which needs the cap of `P α`
-lowered, and donors with several cells) and general private types are not covered.  The open point
-is **cap lowering**, stated in the docstring of `StageType.HasCoupledGatedPinnedExtensions`.
+the private type `GatedExtensionCounterexample.P α` has a coupled gated extension
+(`CoupledGateExamples.exists_coupledGatedExtension_comap_g₁`), whose gate has a twin not labelled
+`⊥` (`CoupledGateExamples.exists_coupledGatedExtension`; the display labels it `⊤`).  Every legal
+one-point extension of `P α` has such a twin
+(`GatedExtensionCounterexample.exists_twin_label_ne_bot`).  Nothing more is proved about it: the
+other donors of `P α` (a donor labelled `⊤`, which needs the cap of `P α` lowered, and donors with
+several cells) and general private types are not covered.  The open point is **cap lowering**,
+stated in the docstring of `StageType.HasCoupledGatedPinnedExtensions`.
 
 ## Placement
 
@@ -222,7 +225,7 @@ with donor `d` whose cap carries the label of `C`.
 This is a **named hypothesis, and it is open**.  It is proved at one input only: the input at
 which `HasGatedPinnedExtensions` is refuted, the private type `GatedExtensionCounterexample.P α`
 over the empty root with the donor `P α|{0}` and the cap `3`
-(`CoupledGateExamples.exists_coupledGatedExtension_refutingInput`).  The open point is **cap
+(`CoupledGateExamples.exists_coupledGatedExtension_comap_g₁`).  The open point is **cap
 lowering (CL)**.  In every lawful labelling of the display the gate dominates the cap, so a lift
 from a coatom `(F ∪ {y}, n)` (`F` a face of `n - 1` private points containing the root, `y` the new
 point) whose prescriptions at a donor cell and at its anchor force the gate below a label `v`
@@ -230,7 +233,11 @@ also forces the private cap below `v`.  The statement to be decided is: for the 
 a face `F` of `n - 1` points, a cap `c` self-visible at `n`, a labelling `p` lawful below
 `(F, n - 1)` in the cap ball of the labelling of `P` at `c`, and a label `v ≥ c` self-visible at
 `n`, some lawful labelling of `P` extends `p`, lies in that cap ball, and is at most `v` at `C`.
-The case of a donor labelled `⊤` on `P α`, which exercises it, is not compiled. -/
+(CL) is the uniform form of that requirement, over every `p` and every `v ≥ c`; it is a
+strengthening, not shown necessary for the property and not shown sufficient for it.  A failure
+of (CL) refutes the coupled design only at a pair `(p, v)` that a forcing prescription from an
+anchored legal donor actually realizes.  The case of a donor labelled `⊤` on `P α`, which
+exercises it, is not compiled. -/
 def HasCoupledGatedPinnedExtensions : Prop :=
   ∀ {n m : ℕ} (P : StageType.{u} α n) (f : Fin m ↪ Fin n) (p : StageType.{u} α m)
     (d : StageType.{u} α (m + 1)) (C : Fin P.card),
@@ -249,14 +256,14 @@ theorem grade_gate : E.display.toCellScheme.grade E.gate = n :=
 
 /-- **The gate inequality for every lawful labelling of the rows of the display**, the display's
 own labelling, the lifts that bountifulness asks for, and the realized types alike. -/
-theorem gate_ge_cap_of_lawful {q : Fin E.display.card → Label.{u}}
+theorem cap_le_gate {q : Fin E.display.card → Label.{u}}
     (hq : E.display.rows.IsLawful q) : q E.cap ≤ q E.gate :=
-  CellScheme.Rows.gate_ge_cap_of_lawful hq E.isGate.scope_cap_subset E.isGate.grade_cap
+  CellScheme.Rows.cap_le_gate_of_twinsReadGate hq E.isGate.scope_cap_subset E.isGate.grade_cap
     E.twinsReadGate
 
 /-- The display labels the gate at least as the cap, so not `⊥`. -/
 theorem label_gate_ne_bot : E.display.label E.gate ≠ ⊥ := fun h ↦
-  E.isGate.cap_ne_bot (le_bot_iff.mp (h ▸ E.gate_ge_cap_of_lawful E.display.isLawful))
+  E.isGate.cap_ne_bot (le_bot_iff.mp (h ▸ E.cap_le_gate E.display.isLawful))
 
 end CoupledGatedExtension
 

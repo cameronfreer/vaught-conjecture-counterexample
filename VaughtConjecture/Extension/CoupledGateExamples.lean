@@ -15,7 +15,7 @@ import VaughtConjecture.Extension.GatedExtensionCounterexample
 Roadmap, Layer 3, 3.2 (the ordinary construction (R1): the display and its gate) and 3.4, row
 (R1); the coupled gated extensions of `VaughtConjecture.Extension.GatedExtension`.
 
-**The theorem** (`exists_coupledGatedExtension_refutingInput`).  The coupled gated pinned
+**The theorem** (`exists_coupledGatedExtension_comap_g₁`).  The coupled gated pinned
 extension property (`StageType.HasCoupledGatedPinnedExtensions`) holds at the input at which the
 gated pinned extension property fails (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`):
 the private type `GatedExtensionCounterexample.P α`, the empty root, the donor `P α|{0}`, whose one
@@ -62,7 +62,7 @@ the gated pinned extension property does not apply: in the lift of the labelling
 `(C₁, C₂)` the gate is `⊤` and the twin `2`, and in the lift of `(2, ⊤)` the gate is `2` and the
 twin `⊤`, so the twin serves availability for `C₂`.
 
-**The regression** (`not_twinsReadGate_twin`).  The twin of the counterexamples
+**The twin counterexamples are not coupled** (`not_twinsReadGate_twin`).  The twin of
 `GateExamples.twin_bottom_gate` and `GateExamples.twin_small_gate`, in which a lawful labelling
 with the literal private face loses the gate inequality, reads the cap at `⊤` and the gate at `3`:
 its rows do not satisfy the coupling, as they must not.
@@ -144,6 +144,8 @@ private def AllDead (A : Finset (Fin 3)) (k : ℕ) : Prop :=
 private instance (A : Finset (Fin 3)) (k : ℕ) : Decidable (AllDead A k) := by
   unfold AllDead; infer_instance
 
+-- `decide +kernel` below needs a `Decidable` instance for nested quantifiers over finsets,
+-- larger than the default bound of instance synthesis.
 set_option synthInstance.maxSize 512 in
 /-- Below a graded face of the plan, either the face is that of the target, or every cell below is
 dead, or the pair is `({0, 1}, 2)` under `(univ, 2)`. -/
@@ -231,6 +233,7 @@ private theorem locality_lab (hr : Reads a b) (s : Fin 12) :
     exact TransformsTo.bot _ _
   · obtain ⟨g, σ, hw, ha, hb⟩ := hr.1
     refine ⟨g, σ, hw, fun d ↦ ?_⟩
+    -- The rows are `rowValue` and the grades `cellGrade` (by definition).
     change min (lab a b d.1) (lab a b s) = min (σ (rowValue s d.1)) (g (cellGrade d.1))
     rw [lab_one h1]
     rcases kind_cases d.1 with d0 | d1 | d2
@@ -244,6 +247,7 @@ private theorem locality_lab (hr : Reads a b) (s : Fin 12) :
       exact hb
   · obtain ⟨g, σ, hw, ha, hb⟩ := hr.2
     refine ⟨g, σ, hw, fun d ↦ ?_⟩
+    -- The rows are `rowValue` and the grades `cellGrade` (by definition).
     change min (lab a b d.1) (lab a b s) = min (σ (rowValue s d.1)) (g (cellGrade d.1))
     rw [lab_two h2]
     rcases kind_cases d.1 with d0 | d1 | d2
@@ -260,6 +264,7 @@ private theorem locality_lab (hr : Reads a b) (s : Fin 12) :
 private theorem isLawful_lab (ha : IsSelfVisible 2 a) (hb : IsSelfVisible 2 b) (hr : Reads a b) :
     rows.{u}.IsLawful (lab a b) where
   orderly d := by
+    -- At a live cell the grade is `cellGrade` (by definition), which is `2`.
     rcases kind_cases d with h0 | h1 | h2
     · rw [lab_zero h0]; exact isSelfVisible_bot _
     · rw [lab_one h1]
@@ -299,6 +304,7 @@ private theorem reads_of_localities {w : Fin 12 → Label.{u}}
   have e34 := heq ⟨4, m 3 4 (by decide) le_rfl⟩
   have e43 := heq' ⟨3, m 4 3 (by decide) le_rfl⟩
   have e44 := heq' ⟨4, m 4 4 subset_rfl le_rfl⟩
+  -- The rows are `rowValue` and the grades `cellGrade` (by definition).
   change min (w 3) (w 3) = min (σ (rowValue 3 3)) (g 2) at e33
   change min (w 4) (w 3) = min (σ (rowValue 3 4)) (g 2) at e34
   change min (w 3) (w 4) = min (σ' (rowValue 4 3)) (g' 2) at e43
@@ -339,6 +345,7 @@ theorem eq_of_isLawfulBelow_univ_two {w : Fin 12 → Label.{u}}
     fun d hd ↦ ⟨subset_univ _, hd⟩
   have m : ∀ s d : Fin 12, cellScope d ⊆ cellScope s → cellGrade d ≤ cellGrade s →
       d ∈ cells.below (cells.gradedIndex s) := fun _ _ h1 h2 ↦ ⟨h1, h2⟩
+  -- The localities at the gate `9` and the twin `10`, read at `3`, `4`, `9` and `10`.
   obtain ⟨g, σ, -, heq⟩ := hl 9 (hb 9 le_rfl)
   obtain ⟨g', σ', -, heq'⟩ := hl 10 (hb 10 le_rfl)
   have e93 := heq ⟨3, m 9 3 (by decide) le_rfl⟩
@@ -349,6 +356,7 @@ theorem eq_of_isLawfulBelow_univ_two {w : Fin 12 → Label.{u}}
   have e104 := heq' ⟨4, m 10 4 (by decide) le_rfl⟩
   have e109 := heq' ⟨9, m 10 9 subset_rfl le_rfl⟩
   have e1010 := heq' ⟨10, m 10 10 subset_rfl le_rfl⟩
+  -- The rows are `rowValue` and the grades `cellGrade` (by definition).
   change min (w 3) (w 9) = min (σ (rowValue 9 3)) (g 2) at e93
   change min (w 4) (w 9) = min (σ (rowValue 9 4)) (g 2) at e94
   change min (w 9) (w 9) = min (σ (rowValue 9 9)) (g 2) at e99
@@ -357,6 +365,7 @@ theorem eq_of_isLawfulBelow_univ_two {w : Fin 12 → Label.{u}}
   change min (w 4) (w 10) = min (σ' (rowValue 10 4)) (g' 2) at e104
   change min (w 9) (w 10) = min (σ' (rowValue 10 9)) (g' 2) at e109
   change min (w 10) (w 10) = min (σ' (rowValue 10 10)) (g' 2) at e1010
+  -- The entries: `3` between live cells of equal kinds, `2` between different kinds.
   rw [rowValue_eq (s := 9) (t := 3) (by decide) (by decide) rfl] at e93
   rw [rowValue_eq (s := 9) (t := 9) (by decide) (by decide) rfl] at e99
   rw [rowValue_eq (s := 10) (t := 4) (by decide) (by decide) rfl] at e104
@@ -365,17 +374,20 @@ theorem eq_of_isLawfulBelow_univ_two {w : Fin 12 → Label.{u}}
   rw [rowValue_ne (s := 9) (t := 10) (by decide) (by decide) (by decide)] at e910
   rw [rowValue_ne (s := 10) (t := 3) (by decide) (by decide) (by decide)] at e103
   rw [rowValue_ne (s := 10) (t := 9) (by decide) (by decide) (by decide)] at e109
+  -- The self-readings give `w 9` and `w 10`; substitute them.
   rw [min_self] at e99 e1010
   rw [← e99] at e93
   rw [← e910] at e94
   rw [← e1010] at e104
   rw [← e109] at e103
+  -- The gate and the twin are at most the full cells they copy.
   have hxa : w 9 ≤ w 3 := calc
     w 9 = min (w 3) (w 9) := e93.symm
     _ ≤ w 3 := min_le_left _ _
   have hyb : w 10 ≤ w 4 := calc
     w 10 = min (w 4) (w 10) := e104.symm
     _ ≤ w 4 := min_le_left _ _
+  -- Availability for the full cells `3` and `4` is served by the gate or the twin.
   have av : ∀ s : Fin 12, cellScope s ⊆ cellScope 9 → cellGrade s = cellGrade 9 →
       w s ≤ w 9 ∨ w s ≤ w 10 := by
     intro s hs hg
@@ -436,6 +448,7 @@ private theorem cappedLift_main
   have hc4 : min (v 4) c = min (w 4) c := by
     rw [hvq 4 (cells.below_mono h m4), hwp 4 m4]; exact hpq ⟨4, m4⟩
   refine ⟨fun d ↦ lab (w 3) (w 4) d, hlaw.isLawfulBelow _, fun d ↦ ?_, fun d ↦ ?_⟩
+  -- The lift at `d` is `lab (w 3) (w 4)` at the underlying cell (by definition).
   · change min (lab (w 3) (w 4) d.1) c = min (q d) c
     rw [← hvq d.1 d.2]
     rcases kind_cases d.1 with h0 | h1 | h2
@@ -480,6 +493,7 @@ private theorem natCast_lt_omega0_sq (n : ℕ) :
 
 /-- The entries of the rows are `⊥`, `2` and `3`, all below `ω ^ 2`. -/
 theorem isCoded_S : S.{u}.IsCoded := fun s t ↦ by
+  -- The entries of the rows of `S` are `rowValue` (by definition).
   change rowValue s t.1 < _
   unfold rowValue
   split_ifs
@@ -490,6 +504,7 @@ theorem isCoded_S : S.{u}.IsCoded := fun s t ↦ by
 /-- The rows are consistent: they are `⊥`, `lab 3 2` and `lab 2 3`. -/
 theorem isConsistent_rows : rows.{u}.IsConsistent := by
   intro s
+  -- Consistency asks that the row of `s` be lawful below `s` (by definition).
   change rows.IsLawfulBelow _ (fun t ↦ rows.row s t)
   rcases kind_cases s with h0 | h1 | h2
   · have : (fun t : cells.below (cells.gradedIndex s) ↦ rows.{u}.row s t) = fun _ ↦ ⊥ :=
@@ -498,6 +513,7 @@ theorem isConsistent_rows : rows.{u}.IsConsistent := by
   · have : (fun t : cells.below (cells.gradedIndex s) ↦ rows.{u}.row s t) =
         fun t ↦ lab ((3 : ℕ) : Label.{u}) ((2 : ℕ) : Label.{u}) t.1 :=
       funext fun (t : cells.below (cells.gradedIndex s)) ↦ by
+        -- The row of `s` is `rowValue s` (by definition).
         change rowValue s t.1 = _
         rcases kind_cases t.1 with t0 | t1 | t2
         · rw [rowValue_zero_right t0, lab_zero t0]
@@ -507,6 +523,7 @@ theorem isConsistent_rows : rows.{u}.IsConsistent := by
   · have : (fun t : cells.below (cells.gradedIndex s) ↦ rows.{u}.row s t) =
         fun t ↦ lab ((2 : ℕ) : Label.{u}) ((3 : ℕ) : Label.{u}) t.1 :=
       funext fun (t : cells.below (cells.gradedIndex s)) ↦ by
+        -- The row of `s` is `rowValue s` (by definition).
         change rowValue s t.1 = _
         rcases kind_cases t.1 with t0 | t1 | t2
         · rw [rowValue_zero_right t0, lab_zero t0]
@@ -545,6 +562,7 @@ def cellQ (α : Ordinal.{u}) (i : Fin 12) : Fin (Q α).card := i
 
 private theorem mem_faces_castSuccEmb (α : Ordinal.{u}) :
     univ.map (Fin.castSuccEmb : Fin 2 ↪ Fin 3) ∈ (Q α).toCellScheme.faces := by
+  -- The faces of the display are the interval plan (by definition).
   change _ ∈ Geometry.intervalPlan univ; decide +kernel
 
 private theorem visible_castSuccEmb_iff : ∀ d : Fin 12,
@@ -589,6 +607,7 @@ theorem restrictFace_Q (α : Ordinal.{u}) :
   have hr : ∀ d, d ∈ Set.range e ↔ d ∈ (Q α).toScheme.visibleCells Fin.castSuccEmb := by
     intro d
     simp only [Scheme.visibleCells, mem_filter, mem_univ, true_and]
+    -- The scope of a cell of the display is `cellScope` (by definition).
     change _ ↔ cellScope d ⊆ _
     rw [visible_castSuccEmb_iff d]
     exact ⟨by rintro ⟨i, rfl⟩; exact i.2, fun h ↦ ⟨⟨d, h⟩, rfl⟩⟩
@@ -602,6 +621,7 @@ theorem restrictFace_Q (α : Ordinal.{u}) :
     refine Scheme.ext hcard ?_ ?_ (fun k i hki ↦ ?_) (fun k i hki ↦ ?_)
       (fun s s' t t' hs ht ↦ ?_)
     · rw [Scheme.comap_ground]
+      -- The ground of the display is `univ` (by definition).
       change (univ : Finset (Fin 3)).preimage _ _ = univ
       simp
     · ext C
@@ -612,10 +632,13 @@ theorem restrictFace_Q (α : Ordinal.{u}) :
     · rw [Scheme.comap_grade, ← key hki.symm]
       exact grade_agree i
     · rw [Scheme.comap_row]
+      -- The rows of the display are `rowValue` (by definition).
       change rowValue ((Q α).toScheme.cellMap Fin.castSuccEmb s)
         ((Q α).toScheme.cellMap Fin.castSuccEmb t.1) = _
       rw [← key hs.symm, ← key ht.symm]
       exact rows_agree s' t'.1 t'.2
+  -- The labels of the display are `lab ⊤ ⊤`, and those of the face are its cells' labels
+  -- (`comap_label`, by definition).
   · change lab ⊤ ⊤ ((Q α).toScheme.cellMap Fin.castSuccEmb i) =
       GatedExtensionCounterexample.labelling ⊤ ⊤ j
     rw [← key hij.symm]
@@ -630,6 +653,7 @@ private theorem univ_map_extendByLast_emptyRoot :
 /-- The donor face `{2}` is a face of the display. -/
 theorem mem_faces_extendByLast (α : Ordinal.{u}) :
     univ.map (extendByLast emptyRoot) ∈ (Q α).toCellScheme.faces := by
+  -- The faces of the display are the interval plan (by definition).
   rw [univ_map_extendByLast_emptyRoot]; change _ ∈ Geometry.intervalPlan univ; decide +kernel
 
 /-- The donor: the face `{2}` of the display, one dead cell labelled `⊥`. -/
@@ -639,6 +663,7 @@ noncomputable def donor (α : Ordinal.{u}) : StageType.{u} α 1 :=
 /-- The empty root is a face of `P α`. -/
 theorem mem_faces_emptyRoot (α : Ordinal.{u}) :
     univ.map emptyRoot ∈ (GatedExtensionCounterexample.P α).toCellScheme.faces := by
+  -- The faces of `P α` are the interval plan (by definition).
   change _ ∈ Geometry.intervalPlan univ; decide +kernel
 
 /-- The type of the empty root. -/
@@ -671,6 +696,7 @@ private theorem range_castSuccEmb :
 private theorem eq_five_of_visible (α : Ordinal.{u}) (e : Fin (Q α).card)
     (he : e ∈ (Q α).toCellScheme.visible (Set.range (extendByLast emptyRoot))) :
     e = cellQ α 5 := by
+  -- A cell is visible when its scope lies in the range (by definition).
   change ((cellScope e : Finset (Fin 3)) : Set (Fin 3)) ⊆ _ at he
   rw [range_extendByLast, coe_subset] at he
   exact eq_five_of_scope e he
@@ -679,6 +705,7 @@ private theorem eq_five_of_visible (α : Ordinal.{u}) (e : Fin (Q α).card)
 theorem isAnchored_donor (α : Ordinal.{u}) :
     (GatedExtensionCounterexample.P α).IsAnchored (3 : Fin 5) (donor α) := by
   refine isAnchored_of_forall_label_eq_bot_or_top _ _ fun j _ ↦ .inl ?_
+  -- The labels of the donor face are the labels of its cells (`comap_label`, by definition).
   change (Q α).label ((Q α).cellMap (extendByLast emptyRoot) j) = ⊥
   have hj := (Q α).cellMap_mem (extendByLast emptyRoot) j
   rw [Scheme.mem_visibleCells] at hj
@@ -699,6 +726,7 @@ private noncomputable def E (α : Ordinal.{u}) :
   cap := cellQ α 3
   gradedIndex_gate := rfl
   gradedIndex_cap := by
+    -- The graded index of a cell is its scope and grade (by definition).
     change (cellScope 3, cellGrade 3) = (univ.map (Fin.castSuccEmb : Fin 2 ↪ Fin 3), 2)
     decide +kernel
   twinsReadGate := fun t _ _ ht htG ↦ by
@@ -706,18 +734,23 @@ private noncomputable def E (α : Ordinal.{u}) :
     rcases eq_of_gradedIndex_nine t ht' with h | h
     · exact absurd h htG
     · subst h
+      -- The rows of the display are `rowValue` (by definition).
       change rowValue 10 3 ≤ rowValue 10 9
       rw [rowValue_ne (s := 10) (t := 3) (by decide) (by decide) (by decide),
         rowValue_ne (s := 10) (t := 9) (by decide) (by decide) (by decide)]
   isGate :=
     { cap_mem := by
+        -- A cell is visible when its scope lies in the range (by definition).
         change ((cellScope 3 : Finset (Fin 3)) : Set (Fin 3)) ⊆ Set.range Fin.castSuccEmb
         rw [range_castSuccEmb, coe_subset]; decide
+      -- The scope of a cell of the display is `cellScope` (by definition).
       scope_cap_subset := by change cellScope 3 ⊆ cellScope 9; decide
       grade_cap := rfl
+      -- The labels of the display are `lab ⊤ ⊤` (by definition).
       cap_ne_bot := by change lab ⊤ ⊤ 3 ≠ ⊥; simp [lab, kind]
       le_gate := fun e he ↦ by
         rw [eq_five_of_visible α e he]
+        -- The graded index of a cell is its scope and grade (by definition).
         change (cellScope 5, cellGrade 5) ≤ (cellScope 9, cellGrade 9)
         exact ⟨by decide, by decide⟩
       reads := fun e he _ ↦ by
@@ -741,6 +774,7 @@ theorem exists_coupledGatedExtension (α : Ordinal.{u}) :
   ⟨root α, donor α, restrictFace_root α, (isLegal_Q α).restrictFace _ (restrictFace_donor α),
     restrictFace_donor_castSuccEmb α, isAnchored_donor α,
     GatedExtensionCounterexample.isEmpty_gatedExtension _ _, E α, rfl, cellQ α 10, rfl,
+    -- The cells of the display are elements of `Fin 12`, labelled `lab ⊤ ⊤` (by definition).
     fun h ↦ absurd (congrArg Fin.val h) (by change (10 : ℕ) ≠ 9; decide),
     by change lab ⊤ ⊤ 10 ≠ ⊥; simp [lab, kind]⟩
 
@@ -758,6 +792,7 @@ def g₁ : Fin 1 ↪ Fin 2 := ⟨fun _ ↦ 0, fun a b _ ↦ Subsingleton.elim a 
 /-- The face `{0}` is a face of `P α`. -/
 theorem mem_faces_g₁ (α : Ordinal.{u}) :
     univ.map g₁ ∈ (GatedExtensionCounterexample.P α).toCellScheme.faces := by
+  -- The faces of `P α` are the interval plan (by definition).
   change _ ∈ Geometry.intervalPlan univ; decide +kernel
 
 private theorem visible_extendByLast_iff : ∀ d : Fin 12,
@@ -784,6 +819,7 @@ private theorem rowP_dead : ∀ s : Fin 5, s ≠ 3 → s ≠ 4 →
 face `{0}` of `P α`. -/
 theorem donor_eq (α : Ordinal.{u}) :
     donor α = (GatedExtensionCounterexample.P α).comap g₁ (mem_faces_g₁ α) := by
+  -- The one visible cell on each side: `5` in the display, `0` in `P α`.
   let e₁ : Fin 1 → Fin (Q α).card := fun _ ↦ cellQ α 5
   let e₂ : Fin 1 → Fin (GatedExtensionCounterexample.P α).card := fun _ ↦ (0 : Fin 5)
   have he₁ : StrictMono e₁ := fun a b h ↦
@@ -803,6 +839,7 @@ theorem donor_eq (α : Ordinal.{u}) :
     change _ ↔ GatedExtensionCounterexample.cellScope d ⊆ _
     rw [visible_g₁_iff d]
     exact ⟨by rintro ⟨i, rfl⟩; rfl, fun h ↦ ⟨0, h.symm⟩⟩
+  -- Both faces have one cell, and their cell maps are constant.
   have hc₁ := (Q α).toScheme.card_visibleCells_eq_of_strictMono (extendByLast emptyRoot) he₁ hr₁
   have hc₂ := (GatedExtensionCounterexample.P α).toScheme.card_visibleCells_eq_of_strictMono g₁
     he₂ hr₂
@@ -818,32 +855,40 @@ theorem donor_eq (α : Ordinal.{u}) :
       (i := 0) (j := j) (by
         have h : (j : ℕ) < 1 := lt_of_lt_of_eq j.2 hc₂
         rw [Fin.val_zero]; omega)).symm
+  -- Equal schemes (ground, faces, scopes, grades, rows), then equal labels.
   refine StageType.ext ?_ (fun i j _ ↦ ?_)
   · rw [donor, StageType.comap_toScheme, StageType.comap_toScheme]
     refine Scheme.ext (hc₁.trans hc₂.symm) ?_ ?_ (fun k i _ ↦ ?_) (fun k i _ ↦ ?_)
       (fun s s' t t' _ _ ↦ ?_)
+    -- Ground: both are all of `Fin 1`.
     · rw [Scheme.comap_ground, Scheme.comap_ground]
       ext x
       rw [Finset.mem_preimage, Finset.mem_preimage, (Q α).isWellFormed.ground_eq,
         (GatedExtensionCounterexample.P α).isWellFormed.ground_eq]
       simp
+    -- Faces: both plans are interval plans (by definition).
     · ext C
       rw [Scheme.mem_comap_faces, Scheme.mem_comap_faces]
       change C.map _ ∈ Geometry.intervalPlan (univ : Finset (Fin 3)) ↔
         C.map _ ∈ Geometry.intervalPlan (univ : Finset (Fin 2))
       revert C; decide +kernel
+    -- Scopes: `cellScope 5` and the scope of `0` in `P α` pull back to the same set.
     · rw [Scheme.comap_scope, Scheme.comap_scope, key₁, key₂]
       ext x
       rw [Finset.mem_preimage, Finset.mem_preimage]
       exact scope_agree_donor x
+    -- Grades: both cells have grade `1`.
     · rw [Scheme.comap_grade, Scheme.comap_grade, key₁, key₂]
       rfl
+    -- Rows: both cells are dead, so both rows are `⊥`; the rows are `rowValue` (by definition).
     · rw [Scheme.comap_row, Scheme.comap_row]
       change rowValue ((Q α).toScheme.cellMap (extendByLast emptyRoot) s)
           ((Q α).toScheme.cellMap (extendByLast emptyRoot) t.1) = _
       rw [key₁ s]
       exact (rowValue_zero_left (s := (5 : Fin 12)) (by decide)).trans
         (rowP_dead _ (by rw [key₂ s']; decide) (by rw [key₂ s']; decide) _).symm
+  -- Labels: both cells are labelled `⊥`; the labels of a face are its cells' labels
+  -- (`comap_label`, by definition).
   · change (Q α).label ((Q α).toScheme.cellMap (extendByLast emptyRoot) i) =
       (GatedExtensionCounterexample.P α).label
         ((GatedExtensionCounterexample.P α).toScheme.cellMap g₁ j)
@@ -854,7 +899,7 @@ theorem donor_eq (α : Ordinal.{u}) :
 pinned extension property** (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`: the
 private type `P α`, the empty root, the donor `P α|{0}`, the cap `3`).  This is the only input at
 which `StageType.HasCoupledGatedPinnedExtensions` is proved. -/
-theorem exists_coupledGatedExtension_refutingInput (α : Ordinal.{u}) :
+theorem exists_coupledGatedExtension_comap_g₁ (α : Ordinal.{u}) :
     ∃ E : StageType.CoupledGatedExtension (GatedExtensionCounterexample.P α) emptyRoot
         ((GatedExtensionCounterexample.P α).comap g₁ (mem_faces_g₁ α)),
       E.display.label E.cap = (GatedExtensionCounterexample.P α).label (3 : Fin 5) :=
@@ -869,6 +914,7 @@ theorem not_twinsReadGate_twin :
     ¬ GateExamples.twinRows.TwinsReadGate (3 : Fin 5) (1 : Fin 5) := by
   intro h
   have := h 4 ⟨by decide, by decide⟩ ⟨by decide, by decide⟩ (by decide) (by decide)
+  -- The twin's row at the cap is `⊤` and at the gate `3` (by definition).
   change (⊤ : Label.{0}) ≤ 3 at this
   have h3 : (3 : Label.{0}) = ((3 : Ordinal.{0}) : Label.{0}) := rfl
   rw [h3] at this

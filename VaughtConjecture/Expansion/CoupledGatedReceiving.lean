@@ -24,12 +24,13 @@ receiving uses that the stage is a limit and exact consistency of models.
 
 The coupled gated pinned extension property (`StageType.HasCoupledGatedPinnedExtensions`) is a
 named hypothesis that is **open**: it is proved at one input only
-(`CoupledGateExamples.exists_coupledGatedExtension_refutingInput`), and its general form needs cap
-lowering, stated in its docstring.  So these statements are (R1) **conditional on it, and not a
-proof of (R1)**.  The gated pinned extension property, of which it is the correction, fails at
-every stage (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`).  With the coupled
-property, the theorems of `VaughtConjecture.Expansion.Agreement` that take finite-extension
-receiving as a hypothesis hold under it instead
+(`CoupledGateExamples.exists_coupledGatedExtension_comap_g₁`), and its open point is cap lowering,
+stated in its docstring.  So these statements are (R1) **conditional on it, and not a proof of
+(R1)**.  They are vacuous if the hypothesis fails at some countable limit stage, and nothing here
+rules out that it fails at every one.  The gated pinned extension property, of which it is the
+correction, fails at every stage (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`).
+With the coupled property, the theorems of `VaughtConjecture.Expansion.Agreement` that take
+finite-extension receiving as a hypothesis hold under it instead
 (`VaughtConjecture.Expansion.CoupledGatedReceivingExamples`).
 
 ## Placement

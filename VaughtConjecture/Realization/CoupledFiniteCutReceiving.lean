@@ -50,22 +50,28 @@ Steps 1–3 and 6 are those of the assembly from the gated pinned extension prop
 the bottom-pattern clause there, because gate recovery read the labels `⊥` of the twins in the
 realized type; with the coupling, generalized saturation suffices.  The bottom-pattern clause also
 works, since its family lies in the family of generalized saturation
-(`IsModel.hasFiniteCutReceiving_of_hasCoupledGatedPinnedExtensions'`).
+(`VaughtConjecture.Realization.CoupledFiniteCutReceivingExamples`).
 
 **Hypotheses, by use.**  Of the clauses of a model (`IsModel`) only these are used: uniformity
 and high-arity dominance (step 2, through `IsModel.exists_privateContext`); legality of types (the
 type of `y` is legal, a hypothesis of the coupled property); exact consistency (steps 2, 4 and 6);
-and generalized saturation (step 4), or the bottom-pattern clause in the primed form.  Nonemptiness
-of the carrier and covering are not used.  There is **no hypothesis on the stage** `α`.
+and generalized saturation (step 4).  Nonemptiness of the carrier and covering are not used.  There
+is **no hypothesis on the stage** `α`.
 
 **The open point.**  The coupled property is proved at one input only, the input that refutes the
 gated pinned extension property: the private type `GatedExtensionCounterexample.P α`, the empty
 root, the donor `P α|{0}` (one cell, labelled `⊥`), and the cap `3`
-(`CoupledGateExamples.exists_coupledGatedExtension_refutingInput`).  Its general form needs **cap
-lowering (CL)**, stated in the docstring of `StageType.HasCoupledGatedPinnedExtensions`: since the
-gate dominates the cap in every lawful labelling, a lift from a coatom whose prescriptions force
-the gate below a label `v` must also bring the private cap below `v`.  The donor labelled `⊤` on
-`P α`, which exercises (CL), is not compiled (prospective).
+(`CoupledGateExamples.exists_coupledGatedExtension_comap_g₁`).  Since the gate dominates the cap in
+every lawful labelling, its general form needs, at each lift from a coatom whose prescriptions force
+the gate below a label `v`, a lawful private labelling in the cap ball with the cap at most `v`.
+**Cap lowering (CL)**, stated in the docstring of `StageType.HasCoupledGatedPinnedExtensions`, is
+the uniform form of this requirement, over every labelling `p` lawful below `(F, n - 1)` in the cap
+ball and every `v` at least the cap: a strengthening, not shown necessary.  A failure of (CL)
+refutes the coupled design only at a pair `(p, v)` that a forcing prescription from an anchored
+legal donor actually realizes.  The donor labelled `⊤` on `P α`, which exercises (CL), is not
+compiled (prospective).  At any stage at which the hypothesis fails the theorem is vacuous, and
+nothing here rules out that it fails at every limit stage.
+
 
 **Special cases.**  The empty root; donors whose new cells are labelled `⊥` or `⊤`, which are
 anchored below every cell (`StageType.isAnchored_of_forall_label_eq_bot_or_top`); donor tops,
@@ -97,9 +103,9 @@ input; that the coupled property holds for `P α` at its other donors (a donor l
 with several new cells) or for other private types; that the twins of the gate are `⊥` or that
 the gate is unique; that a layer of copies of the private cells of full grade, with the gate the
 copy of the cap, extends to the cells containing the new point; that the marker controls the
-twins; that a cell added by `Scheme.fieldLayer` can serve as the gate;
-coding of the anchored entries by `Label.canonicalCode`; the transitivity of
-[Kni26, Lemma 2.3.14] or the offset bound of [Kni26, Lemma 2.5.13]; exact projected receiving.
+twins; that a cell added by `Scheme.fieldLayer` can serve as the gate; coding of the anchored
+entries by `Label.canonicalCode`; the transitivity of [Kni26, Lemma 2.3.14] or the offset bound of
+[Kni26, Lemma 2.5.13]; exact projected receiving.
 Different cutoffs may use different private contexts and different occurrences.
 
 ## Placement
@@ -145,31 +151,6 @@ theorem IsModel.hasFiniteCutReceiving_of_hasCoupledGatedPinnedExtensions (hR : R
   have hqP : StageType.restrictFace Fin.castSuccEmb q = some y.type := by
     rw [← hR.isConsistent u q _ he, hu, y.eval_tuple]
   obtain ⟨d', hd', hmem⟩ := E.exists_restrictFace_mem_receivingFamily hqP hq
-  refine ⟨(extendByLast f).trans u, ?_, d', StageType.mem_receivingFamily_of_le hmem
-    (hγC.le.trans_eq hE.symm), ?_⟩
-  · rw [← Function.Embedding.trans_assoc, castSuccEmb_trans_extendByLast,
-      Function.Embedding.trans_assoc, hu, hf]
-  · rw [hR.isConsistent u q _ he, hd']
-
-/-- **The same, through the bottom-pattern clause**: the assembly of
-`IsModel.hasFiniteCutReceiving_of_hasCoupledGatedPinnedExtensions` with the bottom-pattern clause
-for the scheme and labels of the display in place of generalized saturation (the bottom-pattern
-family lies in the family of generalized saturation).  Conditional on the same open named
-hypothesis; not a proof of (R1). -/
-theorem IsModel.hasFiniteCutReceiving_of_hasCoupledGatedPinnedExtensions' (hR : R.IsModel)
-    (hg : StageType.HasCoupledGatedPinnedExtensions α) : R.HasFiniteCutReceiving := by
-  intro x d hd c hc
-  obtain ⟨γ, hγα, rfl⟩ := isPermittedCutoff_iff.mp hc
-  obtain ⟨y, f, C, hf, hfp, hn, hC, hγC, hanc⟩ := hR.exists_privateContext_isAnchored x d hγα
-  obtain ⟨E, hE⟩ := hg y.type f x.type d C (hR.isLegal _ _ y.eval_tuple) hfp hd.1 hd.2 hC
-    (ne_bot_of_gt hγC) hn hanc
-  -- the bottom-pattern clause over `y`, witnessed nonempty by the display
-  obtain ⟨u, hu, q, hq, he⟩ := hR.bottomPattern y E.display.toScheme E.display.label
-    ⟨E.display, ⟨E.isLegal, E.restrictFace_castSuccEmb⟩, rfl, fun i j hij _ ↦ by
-      rw [Fin.ext hij]⟩
-  have hqP : StageType.restrictFace Fin.castSuccEmb q = some y.type := by
-    rw [← hR.isConsistent u q _ he, hu, y.eval_tuple]
-  obtain ⟨d', hd', hmem⟩ := E.exists_restrictFace_mem_receivingFamily hqP hq.1
   refine ⟨(extendByLast f).trans u, ?_, d', StageType.mem_receivingFamily_of_le hmem
     (hγC.le.trans_eq hE.symm), ?_⟩
   · rw [← Function.Embedding.trans_assoc, castSuccEmb_trans_extendByLast,
