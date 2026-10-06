@@ -86,11 +86,11 @@ Notes on the rows, each with its marker:
   (`hasNonemptyLosses_of_hasApexCoatomExtensions`, also on the coatom extension property with
   apex at every countable block stage; item 7 below), and the thin `ℵ₁` spectrum
   (`densitySentence_hasThinAlephOneSpectrum_of_terminalClassification`).
-- *Manuscript correspondence, item 5.*  Compiled, with no hypothesis beyond modelhood: strictness
-  for models (`Realization.IsModel.isFixedAt_blockStage_iff`: a model at `λ_η` is fixed by
-  projection at the index `ξ` exactly when `η ≤ ξ`, from the uniformity clause), and the bound of
-  serving indices under strictness (`Realization.IsStrict.le_of_forall_isFixedAt`), with the
-  negative special case (`Realization.StrictnessExamples.not_isStrict_undefinedFamily`).  Row 32
+- *Manuscript correspondence, item 5.*  Compiled: strictness for models, from modelhood alone
+  (`Realization.IsModel.isFixedAt_blockStage_iff`: a model at `λ_η` is fixed by projection at the
+  index `ξ` exactly when `η ≤ ξ`, from the uniformity clause); the bound of serving indices,
+  given strictness and an index at which every member is fixed
+  (`Realization.IsStrict.le_of_forall_isFixedAt`); and the negative special case (`Realization.StrictnessExamples.not_isStrict_undefinedFamily`).  Row 32
   stays S: the uniform fixing stage of the construction it applies to is prospective.
 
 ## The named hypotheses of the main theorem

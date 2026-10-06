@@ -15,9 +15,10 @@ Roadmap, manuscript correspondence, item 5 (strictness and serving indices).
 
 **The top-free witness at `ω`.**  Under the coatom extension property with apex at `ω`, the
 reconstructed realization of an ultrahomogeneous structure whose age is the age of top-free
-charts at `ω` is a model (`isModel_reconstruct_of_hasApexCoatomExtensions`), so the least index at
-which it is fixed by projection is `0` (`Realization.IsModel.isLeast_isFixedAt_blockStage`), and it
-is not fixed by projection at stage `0`.
+charts at `ω` is a model (`isModel_reconstruct_of_hasApexCoatomExtensions`), so it is not fixed by
+projection at stage `0` (`Realization.IsModel.not_isFixedAt`).  At the index `0`, that is at its own
+stage `λ_0 = ω`, every realization at `λ_0` is fixed by projection, model or not
+(`Realization.isFixedAt_self`).
 
 **Strictness fails for arbitrary realizations.**  Two families show that modelhood cannot be
 dropped from `Realization.isStrict_of_forall_isModel`.
@@ -44,16 +45,14 @@ open Ordinal FirstOrder Language
 
 /-- **The top-free witness at `ω`**: under the coatom extension property with apex at `ω`, the
 reconstructed realization of an ultrahomogeneous structure whose age is the age of top-free charts
-is fixed by projection at the index `ξ` exactly from `ξ = 0` on. -/
+is not fixed by projection at stage `0`. -/
 example {M : Type} [(hullLanguage.{0} (blockStage 0)).Structure M]
     (hext : StageType.HasApexCoatomExtensions.{0} (blockStage 0))
     (hage : (hullLanguage.{0} (blockStage 0)).age M = topFreeAge (blockStage 0))
     (hu : (hullLanguage.{0} (blockStage 0)).IsUltrahomogeneous M) :
-    IsLeast {ξ : Ordinal.{0} | (reconstruct (blockStage 0) M).IsFixedAt (blockStage ξ)} 0 ∧
-      ¬ (reconstruct (blockStage 0) M).IsFixedAt 0 := by
-  have hS := isModel_reconstruct_of_hasApexCoatomExtensions hext hage hu (isSuccLimit_blockStage 0)
-  exact ⟨hS.isLeast_isFixedAt_blockStage,
-    hS.not_isFixedAt Ordinal.isSuccPrelimit_zero (by simp [omega0_pos])⟩
+    ¬ (reconstruct (blockStage 0) M).IsFixedAt 0 :=
+  (isModel_reconstruct_of_hasApexCoatomExtensions hext hage hu
+    (isSuccLimit_blockStage 0)).not_isFixedAt Ordinal.isSuccPrelimit_zero (by simp [omega0_pos])
 
 /-! ### The all-undefined realization -/
 
@@ -75,7 +74,7 @@ theorem reduce_undefined {α β : Ordinal.{0}} (M : Type) (hβ : Order.IsSuccPre
 def undefinedFamily (M : Type) (ξ : Ordinal.{0}) : Set (Realization.{0, 0} (blockStage ξ) M) :=
   {undefined (blockStage ξ) M}
 
-/-- Every index serves the constant family of all-undefined realizations. -/
+/-- Every index is a serving index of the constant family of all-undefined realizations. -/
 theorem nonempty_undefinedFamily (M : Type) (ξ : Ordinal.{0}) : (undefinedFamily M ξ).Nonempty :=
   Set.singleton_nonempty _
 
