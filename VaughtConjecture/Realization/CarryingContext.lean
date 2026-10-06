@@ -52,13 +52,14 @@ asks for one carrying context, not that every acquired context carries.
     of `C` reads below the end of the block of a dropped cell
     (`CellScheme.Rows.IsLawful.eq_bot_of_row_le_block`).  So the condition holds when the cap
     reads an anchor of every donor label below it in the block of its reading of itself
-    (`StageType.carriesBottoms_of_row_mem_block`), and it can fail only at a donor cell all of
-    whose anchors the cap reads in lower blocks, through a lawful labelling that drops them all.
+    (`StageType.carriesBottoms_of_row_mem_block`); it follows that it can fail only at a donor
+    cell all of whose anchors the cap reads in lower blocks, through a lawful labelling that
+    drops them all (a corollary, not stated as a theorem).
     The first clause of the condition (a donor cell all of whose anchors are dropped is `⊥`) alone
     is met by the labelling `⊥`, and the second (a donor cell none of whose serving cells is
     dropped is not `⊥`) alone by the donor's own labelling; what is open is the two together, at
     the donor cells all of whose anchors the cap reads below its own block.
-  - **The acquisition does not give it.**  The refuting input of the coupled property satisfies
+  - **The conclusions of the acquisition theorems do not give it.**  The refuting input of the coupled property satisfies
     every conclusion of `IsModel.exists_privateContext` (at every floor, and every `N₀ ≤ 2`) and
     of its anchored form, and fails the condition
     (`CoupledGatedExtensionCounterexample.exists_privateContext_not_carriesBottoms`).

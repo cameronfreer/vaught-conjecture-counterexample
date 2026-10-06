@@ -2151,8 +2151,8 @@ Each checkpoint needs both its abstract API and a concrete application:
    (`CellScheme.Rows.IsLawful.lt_row_self_of_eq_bot`).
    Hence the condition holds when the cap reads an anchor of every donor label below it in the
    block of its reading of the cap itself (`StageType.carriesBottoms_of_row_mem_block`), which the
-   refuting private type does not satisfy, and it can fail only at a donor cell all of whose
-   anchors the cap reads in lower blocks.  Open: whether every model at a limit stage acquires
+   refuting private type does not satisfy; it follows (not stated as a theorem) that it can fail
+   only at a donor cell all of whose anchors the cap reads in lower blocks.  Open: whether every model at a limit stage acquires
    carrying contexts.  The clauses of a model bound labels (dominance gives the private cap a label
    above the floor) or prescribe schemes without a lower bound on a label of full grade
    (generalized saturation, the bottom pattern at the grades below the new arity); none prescribes

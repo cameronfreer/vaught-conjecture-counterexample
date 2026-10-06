@@ -192,8 +192,8 @@ counted as compiled.
    acquisition do not give it
    (`CoupledGatedExtensionCounterexample.exists_privateContext_not_carriesBottoms`); and a lawful
    private labelling that keeps the cap drops only cells that the cap's row reads in a block
-   strictly below its reading of itself (`CellScheme.Rows.IsLawful.lt_row_self_of_eq_bot`), a row
-   that no clause of a model prescribes.  The coupled property restricted to carrying contexts is
+   strictly below its reading of itself (`CellScheme.Rows.IsLawful.lt_row_self_of_eq_bot`); that
+   no clause of a model prescribes this row is an observation, not a compiled statement.  The coupled property restricted to carrying contexts is
    not stated (prospective).
 4. **Forcing donors** (still to be proved): the finite construction behind `ForcingDonors`.
 5. **Output 3, part D, and (R4)** (still to be proved): (R4) over positive roots, the empty root by
