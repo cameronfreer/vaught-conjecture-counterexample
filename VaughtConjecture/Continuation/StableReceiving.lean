@@ -115,8 +115,8 @@ false**.  Its cap is already the formal top at `λ_ξ` (a label at least `λ_ξ`
 coupled gate form of (R1) (`StageType.HasCoupledGatedPinnedExtensions`) is a cap of full scope and
 full grade `N` with stable value above `λ_ξ + ℓ > γ`, a marker offset below `N` (in the design
 only), a reference cell (an anchor, `StageType.IsAnchored`) for each block of a proper label of
-`D`, and the arity bound `k + 1 < m` for a root of `k` points in `T⁺` on `m` points.  The form of (R1) without the coupling,
-`StageType.HasGatedPinnedExtensions`, is refuted
+`D`, and the arity bound `k + 1 < m` for a root of `k` points in `T⁺` on `m` points.  The form of
+(R1) without the coupling, `StageType.HasGatedPinnedExtensions`, is refuted
 (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`).  The recovery clause covers every
 stage type on the scheme with face `T⁺`, so every proper label of `D` at a new cell, also in a
 block below `λ_ξ` with no cell of `T⁺`, must be determined by the rows of the scheme from the
