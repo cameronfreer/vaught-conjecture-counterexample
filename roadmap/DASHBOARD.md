@@ -102,7 +102,9 @@ Notes on the rows, each with its marker:
   (`densitySentence_hasThinAlephOneSpectrum_of_terminalClassification`, and with `CapToModel` and
   nonempty losses derived from the coatom extension property with apex at every countable block
   stage,
-  `densitySentence_hasThinAlephOneSpectrum_of_terminalClassification_of_hasApexCoatomExtensions`).
+  `densitySentence_hasThinAlephOneSpectrum_of_terminalClassification_of_hasApexCoatomExtensions`,
+  and with forcing donors also derived from it,
+  `densitySentence_hasThinAlephOneSpectrum_of_terminalClassification_of_hasApexCoatomExtensions'`).
 - *Manuscript correspondence, item 5.*  Compiled conditionally on (R1), next-block uniqueness,
   and the coatom extension property with apex at every countable block stage: the maximal
   refinement of a prescribed model (`MainTheorem.exists_maximalRefinement`); rows 33–36, 38, 40
@@ -110,8 +112,9 @@ Notes on the rows, each with its marker:
 
 ## The named hypotheses of the main theorem
 
-Two forms of the main theorem on `ℕ` are compiled, each conditionally on named hypotheses; the
-second does not replace the first, and both are kept.
+Three forms of the main theorem on `ℕ` are compiled, each conditionally on named hypotheses; none
+replaces another, and all three are kept.  At present the fewest hypotheses are five.  The count
+went from seven to six to five only by compiled derivations; no hypothesis of the list is proved.
 
 - **Seven hypotheses.**  `densitySentence_hasThinAlephOneSpectrum_of_terminalClassification`
   (`MainTheorem/ModelExpansionDomains`) is compiled conditionally on hypotheses 1–7 of the table
@@ -127,24 +130,37 @@ second does not replace the first, and both are kept.
   (`CapToModel.of_hasApexCoatomExtensions`), and nonempty losses from hypothesis 8 and next-block
   uniqueness (`hasNonemptyLosses_of_hasApexCoatomExtensions`).  It is obtained from the first form
   by the two derivations above.
+- **Five hypotheses.**
+  `densitySentence_hasThinAlephOneSpectrum_of_terminalClassification_of_hasApexCoatomExtensions'`
+  (`MainTheorem/Composition`; on all countable carriers,
+  `vaughtCounterexample_allCarriers_of_terminalClassification_of_hasApexCoatomExtensions'`) is
+  compiled conditionally on hypotheses 2, 4–6 and 8: (R1), the continuation criterion, (R2), (R3),
+  and the coatom extension property with apex at every countable block stage.  It is obtained from
+  the six-hypothesis form by deriving hypothesis 3 from hypothesis 8 at the next block stage
+  (`forcingDonors_of_forall_hasApexCoatomExtensions`).  In it `CapToModel` is derived from
+  hypothesis 8, forcing donors from hypothesis 8, next-block uniqueness from hypotheses 2 and 3,
+  countable losses from hypotheses 2 and 4–6, and nonempty losses from hypothesis 8 and next-block
+  uniqueness; hypothesis 8 does not by itself give next-block uniqueness or countable losses.  A
+  form with hypothesis 6 restricted is a separate statement (prospective).
 
 Each hypothesis is a separate statement with its own status.  None of them is derived from another
 in the library, except hypotheses 1 and 7, which are derived from hypothesis 8 (with next-block
 uniqueness, from hypotheses 2 and 3, for hypothesis 7), hypothesis 3, which is derived from
-hypothesis 8 (`forcingDonors_of_forall_hasApexCoatomExtensions`; the six-hypothesis form still
-takes it), and hypothesis 4, which is derived from hypothesis 8 together with (R4)
-(`ContinuationCriterion.of_hasApexCoatomExtensions`); (R4) is in neither list.
+hypothesis 8 (`forcingDonors_of_forall_hasApexCoatomExtensions`; the six-hypothesis form takes
+it, the five-hypothesis form derives it), and hypothesis 4, which is derived from hypothesis 8
+together with (R4) (`ContinuationCriterion.of_hasApexCoatomExtensions`); (R4) is in none of the
+lists.
 
-| Hypothesis | Lean | Used for | Seven | Six |
-| --- | --- | --- | --- | --- |
-| 1. the cap-to-model theorem at `ω` | `CapToModel` | the first domain | yes | derived |
-| 2. (R1), finite-cut receiving of models | `Expansion.FiniteCutReceiving` | uniqueness, agreement | yes | yes |
-| 3. forcing donors | `ForcingDonors` (every `ξ < ω₁`) | next-block uniqueness | yes | yes |
-| 4. the continuation criterion (output 3) | `ContinuationCriterion` | the terminal cover | yes | yes |
-| 5. (R2), exact residual receiving | `Realization.ResidualReceiving` | the residual comparison | yes | yes |
-| 6. (R3), exact hollow-growth receiving | `Realization.HollowReceiving` | the hollow comparison | yes | yes |
-| 7. nonempty losses (condition 4) | the hypothesis `hn` | the lower bound | yes | derived |
-| 8. the coatom extension property with apex | `StageType.HasApexCoatomExtensions` (every `λ_η`, `η < ω₁`) | hypotheses 1 and 7 | no | yes |
+| Hypothesis | Lean | Used for | Seven | Six | Five |
+| --- | --- | --- | --- | --- | --- |
+| 1. the cap-to-model theorem at `ω` | `CapToModel` | the first domain | yes | derived | derived |
+| 2. (R1), finite-cut receiving of models | `Expansion.FiniteCutReceiving` | uniqueness, agreement | yes | yes | yes |
+| 3. forcing donors | `ForcingDonors` (every `ξ < ω₁`) | next-block uniqueness | yes | yes | derived |
+| 4. the continuation criterion (output 3) | `ContinuationCriterion` | the terminal cover | yes | yes | yes |
+| 5. (R2), exact residual receiving | `Realization.ResidualReceiving` | the residual comparison | yes | yes | yes |
+| 6. (R3), exact hollow-growth receiving | `Realization.HollowReceiving` | the hollow comparison | yes | yes | yes |
+| 7. nonempty losses (condition 4) | the hypothesis `hn` | the lower bound | yes | derived | derived |
+| 8. the coatom extension property with apex | `StageType.HasApexCoatomExtensions` (every `λ_η`, `η < ω₁`) | hypotheses 1, 3 and 7 | no | yes | yes |
 
 Status of each:
 
@@ -157,14 +173,14 @@ Status of each:
 3. `ForcingDonors`: still to be proved.  Compiled conditionally on the coatom extension property
    at `λ_{ξ+1}` (`forcingDonors_of_hasCoatomExtensions`, `Extension/ForcingDonorsCoatom`), hence on
    the coatom extension property with apex at every countable block stage
-   (`forcingDonors_of_forall_hasApexCoatomExtensions`), hypothesis 8.  The six-hypothesis form on
-   `main` keeps forcing donors as its hypothesis `hF`; `hF` can now be dropped by a separate
-   composition (prospective).  Unconditionally: one- and two-point inputs up to the threshold `4`
+   (`forcingDonors_of_forall_hasApexCoatomExtensions`), hypothesis 8.  The six-hypothesis form
+   keeps forcing donors as its hypothesis `hF`; the five-hypothesis form derives them.
+   Unconditionally: one- and two-point inputs up to the threshold `4`
    (`forcingDonorsUpTo_one_four`, `forcingDonorsUpTo_two_four`).
 4. `ContinuationCriterion`: still to be proved (sufficiency only; the converse is not stated).
    Compiled conditionally on (R4) and the coatom extension property with apex at every successor
    block stage (`ContinuationCriterion.of_hasApexCoatomExtensions`); (R4) is still to be proved,
-   so the six-hypothesis form keeps the criterion as a hypothesis.
+   so the six- and five-hypothesis forms keep the criterion as a hypothesis.
 5. `Realization.ResidualReceiving`: still to be proved (the LOW construction).
 6. `Realization.HollowReceiving` for `Realization.IsCoverHollowAtBlock`: still to be proved (the
    growth construction).
@@ -172,11 +188,12 @@ Status of each:
    with apex at every countable block stage and on next-block uniqueness
    (`hasNonemptyLosses_of_hasApexCoatomExtensions`, stated for the bundled domains, which also take
    `CapToModel`; per block, `nonempty_loss_of_hasApexCoatomExtensions`); composed with
-   hypotheses 2–6 in the six-hypothesis form.
+   hypotheses 2–6 in the six-hypothesis form, and with hypotheses 2 and 4–6 in the
+   five-hypothesis form.
 8. `StageType.HasApexCoatomExtensions` at every countable block stage: still to be proved, not
    refuted (Layer 3, 3.1, the open part of (R6); the row "Layer 3, the completion" above).
 
-There is no hypothesis of countable losses and none of next-block uniqueness in either form: the
+There is no hypothesis of countable losses and none of next-block uniqueness in any form: the
 first is `Expansion.expansionDomain_loss_countable`, the second
 `Expansion.NextBlockUniqueness.of_forcingDonors`, each compiled conditionally on hypotheses in the
 list.
