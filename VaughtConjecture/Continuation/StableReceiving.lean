@@ -113,9 +113,9 @@ So (R4) follows from the single finite statement `StageType.HasStableRecoverySch
 false**.  Its cap is already the formal top at `λ_ξ` (a label at least `λ_ξ` reduces to `⊤`,
 `Label.reduce_of_le`).  What it lacks relative to the roadmap's design (Layer 3, 3.3) and to the
 coupled gate form of (R1) (`StageType.HasCoupledGatedPinnedExtensions`) is a cap of full scope and
-full grade `N` with stable value above `λ_ξ + ℓ > γ`, a marker offset below `N`, a reference cell
-(an anchor, `StageType.IsAnchored`) for each block of a proper label of `D`, and the arity bound
-`k + 1 < m` for a root of `k` points in `T⁺` on `m` points.  The form of (R1) without the coupling,
+full grade `N` with stable value above `λ_ξ + ℓ > γ`, a marker offset below `N` (in the design
+only), a reference cell (an anchor, `StageType.IsAnchored`) for each block of a proper label of
+`D`, and the arity bound `k + 1 < m` for a root of `k` points in `T⁺` on `m` points.  The form of (R1) without the coupling,
 `StageType.HasGatedPinnedExtensions`, is refuted
 (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`).  The recovery clause covers every
 stage type on the scheme with face `T⁺`, so every proper label of `D` at a new cell, also in a
@@ -227,10 +227,9 @@ variable (ξ) in
 realization: every legal stage type `T⁺` at `λ_{ξ+1}` satisfying `C` for an embedding `f`
 (of positive length), a coface `D` of the face of `T⁺` along `f`, and an ordinal `γ < λ_{ξ+1}`,
 has a stable recovery scheme.  In the roadmap's design (Layer 3, 3.1 and 3.3) `C` is the calibrated
-data of (R4) and the scheme is the growth construction, shared with (R3).  It is open for every
-calibration whose acquisition is proved; for the marker and cap calibration
-(`StageType.MarkerCapCalibration`) it **may be false**, since that calibration lacks the full
-cap, the reference cells and the arity bound of the design. -/
+data of (R4) and the scheme is the growth construction, shared with (R3).  For the marker and cap
+calibration (`StageType.MarkerCapCalibration`, acquisition proved) it **may be false**, since that
+calibration lacks the full cap, the reference cells and the arity bound of the design. -/
 def HasStableRecoverySchemes
     (C : ∀ ⦃m k : ℕ⦄, StageType.{u} (blockStage (ξ + 1)) m → (Fin k ↪ Fin m) →
       StageType.{u} (blockStage (ξ + 1)) (k + 1) → Ordinal.{u} → Prop) : Prop :=
@@ -245,8 +244,9 @@ variable (ξ) in
 **cap**).  It does not depend on `f` and `D`.  The cap is the formal top at `λ_ξ` (a label at least
 `λ_ξ` reduces to `⊤`).  This is less than the calibrated data of the roadmap (Layer 3, 3.3) and of
 the coupled gate form of (R1) (`StageType.HasCoupledGatedPinnedExtensions`), which also ask for a
-cap of full scope and full grade `N`, a marker offset below `N`, reference cells for the blocks of
-the proper labels of `D` (anchors, `StageType.IsAnchored`), and the arity bound `k + 1 < m`.
+cap of full scope and full grade `N`, a marker offset below `N` (in the design only), reference
+cells for the blocks of the proper labels of `D` (anchors, `StageType.IsAnchored`), and the arity
+bound `k + 1 < m`.
 Stable recovery schemes for it (`StageType.HasStableRecoverySchemes`) are open and **may not
 exist**. -/
 def MarkerCapCalibration ⦃m k : ℕ⦄ (Tp : StageType.{u} (blockStage (ξ + 1)) m) (_ : Fin k ↪ Fin m)
