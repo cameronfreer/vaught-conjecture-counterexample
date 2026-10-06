@@ -20,8 +20,9 @@ to show that explicit labellings are lawful:
 * the *step suppressor with value `a`* `constStepSuppressor K a`, equal to `a` at the grades
   `≤ K` and `⊥` above; it is antitone (`antitone_constStepSuppressor`), and its value at each
   grade `n` is self-visible at `n` when `a` is self-visible at `K`
-  (`isSelfVisible_constStepSuppressor`).  The step suppressor `stepSuppressor K` is the case
-  `a = ⊤`;
+  (`isSelfVisible_constStepSuppressor`), so that with the top shifter it is a witness
+  (`isWitness_constStepSuppressor_topShifter`).  The step suppressor `stepSuppressor K` is the
+  case `a = ⊤`;
 * *raising above a cap* `h`, `raise h`, sending every label `≥ h` to `⊤` and fixing the labels
   below `h`; we say that `raise h x` is `x` *raised to `⊤` above `h`*.  It keeps `x` capped at `h`
   (`min_raise`), and when `⊥ < h` and `h` is self-visible at `K + 1` it is a witness bounded by
@@ -35,6 +36,10 @@ namespace VaughtConjecture.Label
 
 /-- The shifter sending `⊥` to `⊥` and every other label to `⊤`. -/
 noncomputable def topShifter (x : Label.{u}) : Label.{u} := if x = ⊥ then ⊥ else ⊤
+
+/-- The top shifter sends every natural number to the formal top. -/
+theorem topShifter_natCast (n : ℕ) : topShifter (n : Label.{u}) = ⊤ := by
+  simp [topShifter]
 
 /-- The top shifter is a witness for every antitone suppressor whose values are self-visible at
 their grades. -/
@@ -75,6 +80,12 @@ theorem isSelfVisible_constStepSuppressor {K : ℕ} {a : Label.{u}} (ha : IsSelf
   split_ifs with hn
   · exact ha.mono hn
   · exact isSelfVisible_bot n
+
+/-- **The top shifter with a step suppressor**: for `a` self-visible at `K`, the step suppressor
+with value `a` and the top shifter form a witness. -/
+theorem isWitness_constStepSuppressor_topShifter {K : ℕ} {a : Label.{u}}
+    (ha : IsSelfVisible K a) : IsWitness (constStepSuppressor K a) topShifter :=
+  isWitness_topShifter (antitone_constStepSuppressor _ _) (isSelfVisible_constStepSuppressor ha)
 
 open Ordinal in
 /-- **Visibility replacement does not cross a label self-visible above its threshold**: for `h`

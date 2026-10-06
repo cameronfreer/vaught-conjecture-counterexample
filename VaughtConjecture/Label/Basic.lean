@@ -34,8 +34,9 @@ Stage reduction is not capped observation (`VaughtConjecture.Label.Cap`): reduct
 formal top, while a cap at a proper cutoff forgets it.
 
 The cast of a natural number `n` to a label is the label of the ordinal `n` (`natCast_label`);
-these casts are injective and order-preserving, lie below `ω` and above `⊥`, and are the only
-labels other than `⊥` below `ω` (`exists_natCast_of_lt_omega`).
+these casts are injective and order-preserving, lie below `ω` (so below `ω ^ 2`,
+`natCast_label_lt_omega0_sq`) and above `⊥`, and are the only labels other than `⊥` below `ω`
+(`exists_natCast_of_lt_omega`).
 
 If there are countably many ordinals below `α`, there are countably many labels at stage `α`
 (`countable_setOf_atStage`); in particular the labels below `ω ^ 2` form a countable set
@@ -286,10 +287,20 @@ theorem natCast_label_inj {n m : ℕ} : (n : Label.{u}) = m ↔ n = m := by
 theorem natCast_label_le {n m : ℕ} : (n : Label.{u}) ≤ m ↔ n ≤ m := by
   rw [natCast_label, natCast_label, WithBot.coe_le_coe, WithTop.coe_le_coe, Nat.cast_le]
 
+/-- The casts of natural numbers to labels are strictly ordered as the natural numbers. -/
+theorem natCast_label_lt {n m : ℕ} : (n : Label.{u}) < m ↔ n < m := by
+  rw [natCast_label, natCast_label, WithBot.coe_lt_coe, WithTop.coe_lt_coe, Nat.cast_lt]
+
 theorem natCast_label_lt_omega (n : ℕ) :
     (n : Label.{u}) < ((ω : Ordinal.{u}) : Label.{u}) := by
   rw [natCast_label, WithBot.coe_lt_coe, WithTop.coe_lt_coe]
   exact natCast_lt_omega0 n
+
+/-- Every natural number lies below `ω ^ 2`. -/
+theorem natCast_label_lt_omega0_sq (n : ℕ) :
+    (n : Label.{u}) < ((ω ^ 2 : Ordinal.{u}) : Label.{u}) := by
+  rw [natCast_label, WithBot.coe_lt_coe, WithTop.coe_lt_coe, pow_two]
+  exact (natCast_lt_omega0 n).trans_le (le_mul_left _ omega0_pos)
 
 theorem natCast_label_ne_bot (n : ℕ) : (n : Label.{u}) ≠ ⊥ := by
   rw [natCast_label]; exact WithBot.coe_ne_bot
