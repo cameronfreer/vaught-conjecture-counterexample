@@ -63,6 +63,20 @@ gives thinness (`densitySentence_isThinOnNatModels_of_terminalClassification`) a
 spectrum (`densitySentence_hasThinAlephOneSpectrum_of_terminalClassification`) with no hypothesis
 on the countability of the losses.
 
+**The restricted hollow property.**  With the hollow property restricted to cover-hollow models
+without a globally rigid core (`Realization.HasRestrictedTerminalProperty`), the countability of
+the losses follows from (R1), the continuation criterion, (R2), and (R3) for cover-hollowness
+without a globally rigid core at a block stage
+(`Expansion.expansionDomain_loss_countable_of_restrictedTerminalClassification`).  Substituting it
+gives thinness (`densitySentence_isThinOnNatModels_of_restrictedTerminalClassification`) and the
+thin `ℵ₁` spectrum (`densitySentence_hasThinAlephOneSpectrum_of_restrictedTerminalClassification`)
+under the same hypotheses as the theorems above, except that (R3) is taken for the restricted
+predicate `Realization.IsCoverHollowWithoutRigidCoreAtBlock`.  (R3) for cover-hollowness at a
+block stage implies (R3) for the restricted predicate
+(`Realization.HollowReceiving.withoutRigidCore`), so this hypothesis set is weaker than or equal
+to the unrestricted one; that it is strictly weaker is not shown.  The theorems with the
+unrestricted hypothesis are kept.
+
 ## Placement
 
 This file belongs to Layer 5 of `roadmap/README.md`.
@@ -203,5 +217,48 @@ theorem densitySentence_hasThinAlephOneSpectrum_of_terminalClassification
     HasThinAlephOneSpectrum densitySentence.{0} :=
   densitySentence_hasThinAlephOneSpectrum_of_forcingDonors hcap hrec hF
     (expansionDomain_loss_countable hrec hcont hres hhol) hn
+
+/-- **Thinness for the expansion domains from the terminal classification with the restricted
+hollow property**: the density sentence has no perfect set of pairwise nonisomorphic models coded
+on `ℕ`, conditional on the following hypotheses, each still to be proved:
+* the cap-to-model theorem (`hcap`; Layer 3, 3.4; checkpoint 4): the first domain;
+* finite-cut receiving of models (`hrec`; (R1) of the table of Layer 3, open): next-block
+  uniqueness, logical agreement, and the rigid-core comparison;
+* forcing donors at every countable block index (`hF`; a finite construction of Layer 3, awaiting
+  the completion below the full grade): next-block uniqueness, for the limit clause;
+* the continuation criterion (`hcont`; output 3 of higher-stage reconstruction, Layer 4): the
+  cover of the terminal models;
+* exact residual receiving (`hres`; (R2) of the table of Layer 3): the residual comparison;
+* exact hollow-growth receiving for cover-hollowness without a globally rigid core at a block
+  stage (`hhol`; (R3) of the table of Layer 3, for the restricted predicate): the hollow
+  comparison for the restricted hollow property.
+The countability of the losses is derived
+(`Expansion.expansionDomain_loss_countable_of_restrictedTerminalClassification`).  (R3) for
+cover-hollowness at a block stage gives `hhol` (`Realization.HollowReceiving.withoutRigidCore`). -/
+theorem densitySentence_isThinOnNatModels_of_restrictedTerminalClassification
+    (hcap : CapToModel.{0}) (hrec : FiniteCutReceiving.{0}) (hF : ∀ ξ < ω₁, ForcingDonors.{0} ξ)
+    (hcont : ContinuationCriterion.{0}) (hres : Realization.ResidualReceiving.{0, 0})
+    (hhol : Realization.HollowReceiving.{0, 0} Realization.IsCoverHollowWithoutRigidCoreAtBlock) :
+    densitySentence.{0}.IsThinOnNatModels :=
+  densitySentence_isThinOnNatModels_of_forcingDonors hcap hrec hF
+    (expansionDomain_loss_countable_of_restrictedTerminalClassification hrec hcont hres hhol)
+
+/-- **The thin `ℵ₁` spectrum for the expansion domains from the terminal classification with the
+restricted hollow property**: the density sentence has exactly `ℵ₁` classes of models coded on
+`ℕ` and no perfect set of pairwise nonisomorphic ones, conditional on the hypotheses of
+`densitySentence_isThinOnNatModels_of_restrictedTerminalClassification`, and on nonempty losses of
+the expansion domains (`hn`; condition 4 of the reduction, Layer 6), each still to be proved.  The
+countability of the losses is derived
+(`Expansion.expansionDomain_loss_countable_of_restrictedTerminalClassification`).  (R3) for
+cover-hollowness at a block stage gives `hhol` (`Realization.HollowReceiving.withoutRigidCore`), so
+`densitySentence_hasThinAlephOneSpectrum_of_terminalClassification` follows from this theorem. -/
+theorem densitySentence_hasThinAlephOneSpectrum_of_restrictedTerminalClassification
+    (hcap : CapToModel.{0}) (hrec : FiniteCutReceiving.{0}) (hF : ∀ ξ < ω₁, ForcingDonors.{0} ξ)
+    (hcont : ContinuationCriterion.{0}) (hres : Realization.ResidualReceiving.{0, 0})
+    (hhol : Realization.HollowReceiving.{0, 0} Realization.IsCoverHollowWithoutRigidCoreAtBlock)
+    (hn : ∀ ξ < ω₁, (expansionDomain ξ \ expansionDomain (ξ + 1)).Nonempty) :
+    HasThinAlephOneSpectrum densitySentence.{0} :=
+  densitySentence_hasThinAlephOneSpectrum_of_forcingDonors hcap hrec hF
+    (expansionDomain_loss_countable_of_restrictedTerminalClassification hrec hcont hres hhol) hn
 
 end VaughtConjecture.MainTheorem

@@ -129,6 +129,24 @@ There is no hypothesis of countable losses and none of next-block uniqueness: th
 `Expansion.NextBlockUniqueness.of_forcingDonors`, each compiled conditionally on hypotheses in the
 list.
 
+**An alternative hypothesis set.**
+`densitySentence_hasThinAlephOneSpectrum_of_restrictedTerminalClassification`
+(`MainTheorem/ModelExpansionDomains`) is compiled conditionally on items 1–5 and 7 and, in place of
+item 6:
+
+6′. `Realization.HollowReceiving` for `Realization.IsCoverHollowWithoutRigidCoreAtBlock`
+   (cover-hollowness at a block stage without a globally rigid core): still to be proved.
+
+Its terminal properties are the restricted ones (`Realization.HasRestrictedTerminalProperty`,
+`Continuation/RestrictedHollow`), whose hollow property excludes a globally rigid core; the cover
+survives (`Realization.exists_hasRestrictedTerminalProperty`), and the models with a globally rigid
+core go through the rigid-core comparison, on (R1) only.  Item 6 implies item 6′
+(`Realization.HollowReceiving.withoutRigidCore`): weaker or equal; strictly weaker not shown.  An
+informal argument, not compiled, is a risk for item 6 and not for item 6′: if every legal stage
+type had a legal one-point coface in which the root is not rigid, item 6 would force every
+cover-hollow model with unbounded growth to have no globally rigid core.  Neither is proved, and
+item 6 is not claimed to be false.
+
 ## The research front
 
 Each item is open or still to be proved; none is assumed by a theorem of the library except as a

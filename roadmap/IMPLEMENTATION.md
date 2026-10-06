@@ -2335,6 +2335,16 @@ Each checkpoint needs both its abstract API and a concrete application:
      (Layer 0); the main theorem with no hypothesis of countable losses,
      `densitySentence_hasThinAlephOneSpectrum_of_terminalClassification`
      (`MainTheorem/ModelExpansionDomains`).
+   - C and E, with the hollow property restricted to models without a globally rigid core
+     (`Continuation/RestrictedHollow`): the cover `Realization.exists_hasRestrictedTerminalProperty`
+     from `Realization.exists_hasTerminalProperty` (the step itself,
+     `Realization.exists_hasRestrictedTerminalProperty_of_hasTerminalProperty`, has no
+     hypothesis); `Expansion.subsingleton_classes_of_restrictedProperty` and
+     `Expansion.expansionDomain_loss_countable_of_restrictedTerminalClassification`, with (R3) for
+     `Realization.IsCoverHollowWithoutRigidCoreAtBlock`, implied by (R3) for
+     `Realization.IsCoverHollowAtBlock` (`Realization.HollowReceiving.withoutRigidCore`; strictly
+     weaker not shown); the main theorem
+     `densitySentence_hasThinAlephOneSpectrum_of_restrictedTerminalClassification`.
 6. Domain hypotheses of the counting theorem, the upper and lower bounds, thinness, and the
    reduction to `ℕ` (all countable carriers).  Status: the conditional compositions of both routes
    are compiled, on `ℕ` (`MainTheorem/Assembly`) and on all countable carriers
@@ -2976,7 +2986,15 @@ witnesses).**
   `Continuation/Classification`, where the cover of the terminal models uses it; a module proving
   output 3 imports `Continuation/Classification`, or the structure moves to that module, a move to
   record here. `Realization.IsCoverHollowAtBlock` is beside `Realization.IsCoverHollow` in
-  `Continuation/Hollow`.
+  `Continuation/Hollow`. `Continuation/RestrictedHollow` and its examples module: Layer 4, in
+  place; it holds `Realization.IsCoverHollowWithoutRigidCore` and its form at a block stage, the
+  restricted terminal properties with their cover, and
+  `Realization.HollowReceiving.withoutRigidCore`.  It imports `Continuation/Classification` and
+  `Continuation/Comparison`, neither of which imports the other, so the predicate is not beside
+  `Realization.IsCoverHollowAtBlock` in `Continuation/Hollow`, which does not import
+  `Continuation/Terminal`.  The restricted forms of the comparison of model expansions, of the
+  subsingleton step, and of the countable losses are in `Expansion/Losses`, and those of the main
+  theorem in `MainTheorem/ModelExpansionDomains`, beside the unrestricted ones.
 - `Expansion/UniquenessOfForcing`: Layer 5, in place, separate from `Expansion/BlockDetermination`
   so that the import closure of the main theorem contains no `Definability/` module.
   `Expansion/Losses`: Layer 5, in place. `Counting/Domains`:
