@@ -53,13 +53,16 @@ sentence, with the cap-to-model theorem on the carriers of the universe `w` also
 
 The continuation criterion remains a hypothesis.  It follows from (R4) and `hext` at the successor
 blocks (`ContinuationCriterion.of_hasApexCoatomExtensions`), but (R4) is itself still to be proved
-and the criterion is a consequence of it, so replacing the criterion by (R4) would give a weaker
-theorem with as many hypotheses.
+and the criterion is a consequence of it together with `hext` at the successor blocks, so
+replacing the criterion by (R4) would give a weaker theorem with as many hypotheses.
 
 These theorems are conditional; the main theorem of the roadmap has none of these hypotheses.  The
-theorem with seven hypotheses is kept beside them: the theorems here follow from it, and, given
-(R1) and forcing donors, its hypotheses `CapToModel` and nonempty losses follow from the coatom
-extension property with apex at every countable block stage, not conversely.
+theorem with seven hypotheses is kept beside them.  The theorems here are obtained from it by the
+two derivations above (`CapToModel.of_hasApexCoatomExtensions` and
+`hasNonemptyLosses_of_hasApexCoatomExtensions`), which give its hypotheses `CapToModel` and
+nonempty losses from the coatom extension property with apex at every countable block stage,
+given (R1) and forcing donors.  No converse is known; the seven-hypothesis form is not derived
+from the six-hypothesis form.
 
 ## Placement
 
@@ -72,13 +75,6 @@ namespace VaughtConjecture.MainTheorem
 
 open FirstOrder Language Structure baseLanguage Expansion StageType
 open scoped Ordinal
-
-/-- The coatom extension property with apex at every countable block stage gives it at `ω`, the
-block stage `λ_0`. -/
-private theorem hasApexCoatomExtensions_omega
-    (hext : ∀ η < ω₁, HasApexCoatomExtensions.{0} (blockStage η)) :
-    HasApexCoatomExtensions.{0} ω :=
-  blockStage_zero.{0} ▸ hext 0 (Ordinal.omega0_pos.trans Ordinal.omega0_lt_omega_one)
 
 /-- **The thin `ℵ₁` spectrum of the density sentence from the terminal classification and the
 coatom extension property with apex at every countable block stage**: the density sentence has
@@ -129,13 +125,13 @@ theorem vaughtCounterexample_allCarriers_of_terminalClassification_of_hasApexCoa
         ∀ (M : Type w) [L.Structure M] [Countable M], φ.Realize M →
           ∃ c : StructureSpace L, c ∈ ModelsOf φ ∧
             Nonempty (@Language.Equiv L M ℕ _ c.toStructure) :=
-  have hcap : CapToModel.{0} :=
-    CapToModel.of_hasApexCoatomExtensions (hasApexCoatomExtensions_omega hext)
+  have hω := hasApexCoatomExtensions_omega_of_forall_blockStage hext
+  have hcap : CapToModel.{0} := CapToModel.of_hasApexCoatomExtensions hω
   have hnext : NextBlockUniqueness.{0} := NextBlockUniqueness.of_forcingDonors hrec hF
   vaughtCounterexample_allCarriers_of_expansionDomains (modelExpansionDomains hcap hnext)
     (modelExpansionDomains_hasLogicalAgreement hcap hnext hrec)
     ⟨expansionDomain_loss_countable hrec hcont hres hhol⟩
     (hasNonemptyLosses_of_hasApexCoatomExtensions hcap hnext hext)
-    (CapToModel.of_hasApexCoatomExtensions (hasApexCoatomExtensions_omega hext))
+    (CapToModel.of_hasApexCoatomExtensions hω)
 
 end VaughtConjecture.MainTheorem

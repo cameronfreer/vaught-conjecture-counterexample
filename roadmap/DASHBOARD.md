@@ -107,11 +107,14 @@ second does not replace the first, and both are kept.
   criterion, (R2), (R3), and the coatom extension property with apex at every countable block
   stage.  Hypotheses 1 and 7 are derived in it: `CapToModel` from hypothesis 8 at `λ_0 = ω`
   (`CapToModel.of_hasApexCoatomExtensions`), and nonempty losses from hypothesis 8 and next-block
-  uniqueness (`hasNonemptyLosses_of_hasApexCoatomExtensions`).  It follows from the first form.
+  uniqueness (`hasNonemptyLosses_of_hasApexCoatomExtensions`).  It is obtained from the first form
+  by the two derivations above.
 
 Each hypothesis is a separate statement with its own status.  None of them is derived from another
 in the library, except hypotheses 1 and 7, which are derived from hypothesis 8 (with next-block
-uniqueness, from hypotheses 2 and 3, for hypothesis 7).
+uniqueness, from hypotheses 2 and 3, for hypothesis 7), and hypothesis 4, which is derived from
+hypothesis 8 together with (R4) (`ContinuationCriterion.of_hasApexCoatomExtensions`); (R4) is in
+neither list.
 
 | Hypothesis | Lean | Used for | Seven | Six |
 | --- | --- | --- | --- | --- |

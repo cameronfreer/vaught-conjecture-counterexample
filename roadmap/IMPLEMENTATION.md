@@ -2361,7 +2361,9 @@ Each checkpoint needs both its abstract API and a concrete application:
    (`Expansion.NextBlockUniqueness.of_forcingDonors`), countable losses
    (`Expansion.expansionDomain_loss_countable`), and nonempty losses
    (`hasNonemptyLosses_of_hasApexCoatomExtensions`).  The seven-hypothesis form is kept; the
-   six-hypothesis form follows from it.
+   six-hypothesis form is obtained from it by the two derivations above
+   (`CapToModel.of_hasApexCoatomExtensions`, `hasNonemptyLosses_of_hasApexCoatomExtensions`).  No
+   converse is known; the seven-hypothesis form is not derived from the six-hypothesis form.
 
 **A listed future repin, outside the order 1–6.**  A repin of InfinitaryLogic to a revision
 containing `2cd44c3` (or the release tag that follows it) has been neither made nor decided.  A
