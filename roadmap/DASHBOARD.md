@@ -31,7 +31,7 @@ percentage of 100 would not by itself mean that the hypotheses of a layer are pr
 | 4, continuation | 62% | `Realization.stableCandidate` | output 3: (R4), the apex property |
 | 5, domains, agreement | 85% | `Expansion.expansionDomain_loss_countable` | the hypotheses below |
 | 6, the bounds | 90% | `densitySentence_hasThinAlephOneSpectrum_of_terminalClassification` | the hypotheses below |
-| Manuscript correspondence | 20% | the concordance rows (`IMPLEMENTATION.md`) | no row is P |
+| Manuscript correspondence | 25% | `CellScheme.Rows.printedRespects_iff` | rows 2–5 P; row 6 S (one direction at `ω₁`); the rest S or C |
 | **Overall** | **≈ 78%** | | |
 
 Notes on the rows, each with its marker:
@@ -168,3 +168,22 @@ counted as compiled.
    the coatom extension over the empty face, and the coatom extension properties at `λ_{ξ+1}`;
    the lawfulness of the candidate is item 2.  Compiled conditionally on (R4) and the coface
    instances: `ContinuationCriterion.of_stableCappedReceiving`.
+6. **The attained least lift and structural successor leastness** (prospective).  One lift of a
+   legal stage type at a limit stage `β` to `β + ω`, least at every cell (each minimum is attained
+   separately: `StageType.exists_lift_label_eq_ofOffset`); the threshold forced by a cover is read
+   off that one lift, and the threshold characterization and the limit-stage monotonicity are
+   derived from it under that stage hypothesis; the least lift itself rests on the finite row
+   algebra and the lawful provisional lift only, not on that monotonicity.  The stable section is
+   at most every coherent next-block assignment
+   (`README.md`, Layer 3, 3.1, "The attained least lift"; Layer 4, "Status", output 2 refined).
+   The structural successors of a consistent realization `R` (the consistent realizations at the
+   next block with reduct `R`) lie between the stable candidate, where it is lawful, the least
+   (covering used), and literal weakening, the greatest; for a model the two are equal exactly
+   when it is cover-hollow (`Realization.IsCoverHollow`).  Least, not unique: literal weakening
+   is the greatest lift, a pointwise minimum of lifts need not be lawful, and the twin-ordering
+   hypothesis stays refuted.
+   None of these makes the candidate a model (output 3, item 5 above), and none gives exact
+   lifting over a separately prescribed higher root.  Separate global routes: classical Fraïssé
+   existence, Scott isolation with countable-limit existence, terminal presentations, and global
+   termination (`README.md`, the section on the top-free witnesses, "Complementary global
+   routes"; `IMPLEMENTATION.md`, §4, statements 1–10 with their completion criteria).
