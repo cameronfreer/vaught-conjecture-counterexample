@@ -1535,7 +1535,7 @@ named (`README.md`, Layer 0):
 
 - **InfinitaryLogic**: the current pin is `eb9f12d`, its release v6.1.0 (the tag `v6.1.0`, the
   merge of its pull request #172), reached from `e460cb6` (the merge of its pull request #162) by
-  this repository's pull request #PRNUM; `e460cb6` was reached from `cf80917` (the merge of its
+  this repository's pull request #126; `e460cb6` was reached from `cf80917` (the merge of its
   pull request #156) by this repository's pull request #97;
   `cf80917` was reached from `def5cc0` (the merge of its pull request #152) by this repository's
   pull request #63;
@@ -1778,7 +1778,7 @@ universe parameters unchanged, each old module still importing the new one;
 added there).  InfinitaryLogic's release notes for v6.1.0 rest their compatibility claim on a
 text-based audit, with no library depending on InfinitaryLogic built against the release, and
 state that general source compatibility is not guaranteed; the compilation of this repository
-against `eb9f12d` is checked by its CI on the pull request of the repin (#PRNUM).
+against `eb9f12d` is checked by its CI on the pull request of the repin (#126).
 
 **Available upstream, not yet available at our pinned dependency:** none.  InfinitaryLogic's
 `master` is the pin `eb9f12d`, and ComputableModelTheory's `main` is the pin `a1fe761`.  A
@@ -2215,7 +2215,7 @@ Each checkpoint needs both its abstract API and a concrete application:
    reduction to `ℕ` for the density sentence no longer needs `CapToModel`.
 
 **A listed future repin, outside the order 1–6: made.**  The repin of InfinitaryLogic to a
-revision containing `2cd44c3` was made by this repository's pull request #PRNUM, to the release
+revision containing `2cd44c3` was made by this repository's pull request #126, to the release
 v6.1.0 (`eb9f12d`, which contains `30c186f`, `c16de09` and `2cd44c3`), as a separate checkpoint
 before the first application of the greatest-stage theorem or of Scott separation, done as the
 move to `e460cb6` (this repository's pull request #97): the revisions in `lake-manifest.json`
