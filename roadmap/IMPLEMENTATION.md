@@ -2718,9 +2718,26 @@ ones split):
   (`Seed.not_canonicalProduct_seedHG`, by decoding,
   `OrderedLayer.not_canonicalProduct_of_decoding`).
   This refutes the family as a fibre product at those seeds, not the family's step (which holds
-  for `seedHG` at the grade 4, where the clause fails) and not the completion. Open: a canonical
-  multi-layer scheme with rows restricting the pairs for every seed, and the completion at `m ≥ 3`
-  for every seed.
+  for `seedHG` at the grade 4, where the clause fails) and not the completion.
+  Oriented copy rows (`Extension/CanonicalMultiSchemeOriented`,
+  `Extension/CanonicalMultiSchemeOrientedExamples`; compiled in this repository (theorem named)
+  unless marked otherwise). Layer rows oriented toward a coatom (`OrderedLayer.IsOriented ρ b`, a
+  condition on the rows alone) give the oriented copy rows `OrderedLayer.orientedRows I ρ`, under
+  which both copies of a grade read every old cell by the layer row; the lawful labellings are, on
+  the old cells, those of the layer scheme (`OrderedLayer.isLawfulBelow_oriented_iff`), a
+  restriction of the pairs. Under oriented rows the step of the family is exactly the ordered-layer
+  step (`Seed.canonicalMultiStep_oriented_iff`), with no further hypothesis; so the clause replacing
+  the product clause for these rows is `Seed.HasOrientedLayerStep` (an ordered-layer step whose rows
+  are oriented), compiled for `seed4`, `seed5`, `seedL`, `seedLM`, `seedLL`
+  (`OrderedLayer.isOriented_layerRows4` and its companions), which the family therefore completes
+  (`Seed.nonempty_completionBelowFullGrade_seed4_oriented` and its companions); every one of the six
+  compiled seeds has a step of the family (`Seed.hasCanonicalMultiStep_compiledSeeds`). Refuted
+  (negative special cases named), for oriented rows only: at `seedHG`
+  (`Seed.not_canonicalMultiStep_oriented_seedHG`, `Seed.not_hasOrientedLayerStep_seedHG`) and as one
+  choice for both `seedL` and `seedLM` (`Seed.not_exists_canonicalMultiStep_oriented_seedL_seedLM`);
+  this refutes neither the family nor the completion. Open: copy rows giving the step of the family
+  for every seed on five points (`Seed.HasCanonicalMultiStep` for every seed), and the completion at
+  `m ≥ 3` for every seed.
 
 The completion constructs lawful finite extensions and nothing more.  It imports only Layers
 0–1, the stage types, the amalgam, and the section theorem of `README.md`, Layer 3, 3.1 (with
@@ -2998,6 +3015,9 @@ lands, their notes stay in those modules.
   `Label.TransformsTo.false_of_decoding` and `Label.visibilityReplace_three_fixed` belong in
   `Label/Transform` and `Label/Visibility`; `OrderedLayer.isLawfulBelow_omega_of_rows` beside
   `OrderedLayer.isLawfulBelow_omegaLabel` in `Extension/OrderedLayerTop`.
+- `Extension/CanonicalMultiSchemeOriented` and `Extension/CanonicalMultiSchemeOrientedExamples`:
+  checkpoint 2.7, in place.  The reindexing rule `Label.TransformsTo.of_comp` belongs in
+  `Label/Transform`, beside `Label.TransformsTo.reindex`.
 
 **Hull operations, the top-free age, and graded matching (Layers 0 and 2; the top-free
 witnesses).**

@@ -94,9 +94,13 @@ the canonical multi-layer scheme completes every seed of `TH` and `TG`
 the grade `4` coming from the top row and not from the product clause.  So the product clause is
 not uniform in the seed, and what is refuted is the family *as a fibre product* at those seeds and
 grades, not the family's step (which holds for `seedHG` at the grade `4`) and not the completion.
-Whether a canonical multi-layer scheme with rows restricting the pairs completes every seed is
-open; for instance rows *orienting the two coatoms*, under which a copy of `(B, k)` reads the
-parameters of its own coatom above those of the other.
+Copy rows restricting the pairs: the oriented rows of an ordered-layer step whose layer rows are
+oriented (both copies of a grade read every old cell as the new cell of the layer scheme does)
+give the step exactly when that ordered-layer step holds, so they complete `seed4`, `seed5`,
+`seedL`, `seedLM`, `seedLL` and not `seedHG`
+(`VaughtConjecture.Extension.CanonicalMultiSchemeOriented`).  Whether some copy rows complete
+every seed is open; for instance rows under which each copy of `(B, k)` reads the parameters of
+its own coatom above those of the other (opposite orientations for the two copies of a grade).
 
 ## Placement
 
