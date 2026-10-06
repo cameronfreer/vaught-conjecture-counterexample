@@ -242,6 +242,15 @@ theorem restrictFace_eq_some_iff {u : StageType.{u} α m} :
   · simp [restrictFace_of_mem t f hf, hf]
   · simp [restrictFace_of_notMem t f hf, hf]
 
+variable {N : ℕ} in
+/-- A face along an embedding carries the labels and grades of its cells, at their positions. -/
+theorem exists_cellMap_of_restrictFace_eq {Q : StageType.{u} α N} {g : Fin k ↪ Fin N}
+    {P : StageType.{u} α k} (h : restrictFace g Q = some P) (i : Fin P.card) :
+    ∃ j : Fin (Q.toScheme.comap g).card, (j : ℕ) = i ∧ Q.label (Q.cellMap g j) = P.label i ∧
+      Q.toCellScheme.grade (Q.cellMap g j) = P.toCellScheme.grade i := by
+  obtain ⟨hf, rfl⟩ := (restrictFace_eq_some_iff Q g).mp h
+  exact ⟨i, rfl, rfl, rfl⟩
+
 /-- Definedness of the face map depends only on the face. -/
 theorem isSome_restrictFace_congr {f' : Fin k ↪ Fin n} (h : univ.map f = univ.map f') :
     (restrictFace f t).isSome ↔ (restrictFace f' t).isSome := by

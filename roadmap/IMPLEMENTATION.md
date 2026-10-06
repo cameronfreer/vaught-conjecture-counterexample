@@ -2814,16 +2814,19 @@ Each checkpoint needs both its abstract API and a concrete application:
    `Realization.eq_of_reduce_eq_of_forcingDonors`), conditional on finite-extension receiving (from
    (R1)) and on forcing donors (`ForcingDonors`). Next-block uniqueness is derived from (R1)
    (checkpoint 4) and forcing donors (`Expansion.NextBlockUniqueness.of_forcingDonors`). Forcing
-   donors is still to be proved, by a finite construction from the completion below the full grade
-   (checkpoints 2.6–2.7), without (R1). The structural candidate (output 1) is compiled
-   (`Realization.stableCandidate`, `Continuation/Candidate`), with exact consistency, covering, the
-   order law, and locality from exact consistency and covering, and availability from legal types,
-   also at twins (two cells labelled `⊤` at one graded index), so that every model at a block stage
-   is stably lawful (`Realization.IsModel.isStablyLawful`); two hypotheses on single types are
-   refuted (section 4 above). Output 3 (stated as the hypothesis `ContinuationCriterion`) is
-   compiled conditionally on (R4) and the coface instances at the next block
-   (`ContinuationCriterion.of_stableCappedReceiving`); (R4) and the coatom extension property with
-   apex at `λ_{ξ+1}` are still to be proved. Step 7 is
+   donors is still to be proved; it is compiled conditional on the coatom extension property at
+   `λ_{η+1}` (`forcingDonors_of_hasCoatomExtensions`, `Extension/ForcingDonorsCoatom`), by a finite
+   construction without (R1) and without a completion, so it waits for checkpoint 2.7; one- and
+   two-point inputs up to the threshold `4` are compiled unconditionally
+   (`forcingDonorsUpTo_one_four`, `forcingDonorsUpTo_two_four`). The structural candidate
+   (output 1) is compiled (`Realization.stableCandidate`, `Continuation/Candidate`), with exact
+   consistency, covering, the order law, and locality from exact consistency and covering, and
+   availability from legal types, also at twins (two cells labelled `⊤` at one graded index), so
+   that every model at a block stage is stably lawful (`Realization.IsModel.isStablyLawful`); two
+   hypotheses on single types are refuted (section 4 above). Output 3 (stated as the hypothesis
+   `ContinuationCriterion`) is compiled conditionally on (R4) and the coface instances at the next
+   block (`ContinuationCriterion.of_stableCappedReceiving`); (R4) and the coatom extension
+   property with apex at `λ_{ξ+1}` are still to be proved. Step 7 is
    compiled conditionally (`README.md`, the section on the top-free witnesses): the loss at `η`
    under uniqueness at `λ_η` (`nonempty_loss_of_topFreeWitness`), and per block under
    `StageType.HasApexCoatomExtensions` at `λ_η` and uniqueness of the model expansions at `λ_η`
@@ -2905,6 +2908,10 @@ Each checkpoint needs both its abstract API and a concrete application:
    six-hypothesis form is obtained from it by the two derivations above
    (`CapToModel.of_hasApexCoatomExtensions`, `hasNonemptyLosses_of_hasApexCoatomExtensions`).  No
    converse is known; the seven-hypothesis form is not derived from the six-hypothesis form.
+   Forcing donors at every countable block follow from `StageType.HasApexCoatomExtensions` at
+   every countable block stage (`forcingDonors_of_forall_hasApexCoatomExtensions`,
+   `Extension/ForcingDonorsCoatom`), so the hypothesis `hF` of the six-hypothesis form can now be
+   dropped by a separate composition (prospective); the six-hypothesis form on `main` keeps it.
 
 **A listed future repin, outside the order 1–6.**  A repin of InfinitaryLogic to a revision
 containing `2cd44c3` (or the release tag that follows it) has been neither made nor decided.  A
@@ -3288,7 +3295,8 @@ lands, their notes stay in those modules.
   convex geometries (it uses only `subset_of_mem`), to `Geometry.ConvexGeometry`, beside
   `mem_restrict`.
 - `Extension/Basic`: `Fin.Embedding.univ_map_snoc` to Mathlib, `Mathlib.Data.Fin.Tuple.Embedding`,
-  beside `Fin.Embedding.snoc`.
+  beside `Fin.Embedding.snoc`; `pos_of_univ_map_ne` and `univ_map_castLEEmb_ne`, facts about
+  embeddings of `Fin`, are candidates for Mathlib with it.
 - `Extension/Merge`: `Merge` is order theory on finite chains, not about schemes; it belongs in an
   `Order/` folder of the library, and is a candidate for Mathlib.
 - `Extension/CoatomScheme`: `Geometry.IsPlan.map` to `Geometry.Plan`, beside `IsPlan.preimage`;
@@ -3304,6 +3312,9 @@ lands, their notes stay in those modules.
   `Scheme.IsLegal.toStageType` with `Scheme.IsLegal.isLegal_toStageType` to `Stage.Legal`;
   `Scheme.onePoint` with `Scheme.isLegal_onePoint` to `Stage.LegalExamples`, where they replace
   the private `point`.
+- `Extension/PartBelowFullGrade`: `Scheme.cellsBelowFullGrade`, `Scheme.partBelowFullGrade`, and
+  `Scheme.IsLegal.isLegalBelowFullGrade_partBelowFullGrade` to `Extension/Apex`, beside
+  `Scheme.IsLegalBelowFullGrade`.
 
 **Coding (checkpoint 2.2).**
 
@@ -3602,16 +3613,17 @@ witnesses).**
 
 **Statements not yet in any module.**
 
-- Forcing donors: the statement is the hypothesis `ForcingDonors` (`Continuation/Normalization`);
-  its proof, a finite construction (an extension of a legal stage type by a cell of full scope
-  whose row is a coded copy of the labels, completed above it), is destined for `Extension/`, built
-  from the completion below the full grade, without (R1).
 - The bound of the provisional offset by the top grade, the optional bound (d) of the
   normalization (prospective), stated with `StageType.provisionalOffset`.  Its forcing form is
   compiled: if every grade of `q` is at most `K` and `β + K < α`, then `(q, f)` does not force
   `K + 1` at a cell labelled the formal top (`StageType.not_forcesThreshold_of_grade_le`,
   `Stage/Threshold`).  The bound itself waits for `StageType.topGrade` (`Continuation/Terminal`) to
   move to `Stage/`.
+- `TiedLayer` (prospective; recorded in `Extension/ForcingDonors`): a completion below the full
+  grade with one prescribed tie at an intermediate grade.  It is not needed for forcing donors:
+  unconditionally for two-point inputs (`exists_forcingDonor_twoPoint_le_two`), and in general
+  under the coatom extension property (`forcingDonors_of_hasCoatomExtensions`).  `TiedLayer`
+  itself is neither proved nor refuted.
 - The ordinary construction of (R1) as data (4b-ii), the proof of
   `StageType.HasCoupledGatedPinnedExtensions` (open; its first form
   `StageType.HasGatedPinnedExtensions` is refuted); (R2), (R3), (R4); and output 3, the proof of
@@ -3716,8 +3728,8 @@ noted).
   nor the main theorem uses F.
 - Normalization: the threshold lemma uses finite-extension receiving at the cutoff `λ_η` (from
   (R1)) and forcing donors; next-block uniqueness uses both
-  (`Expansion.NextBlockUniqueness.of_forcingDonors`). Forcing donors waits on the completion below
-  the full grade (2.6–2.7).
+  (`Expansion.NextBlockUniqueness.of_forcingDonors`). Forcing donors follows from the coatom
+  extension property (`forcingDonors_of_hasCoatomExtensions`), so it waits on 2.7.
 - The lower bound (step 7) uses next-block uniqueness only at the successor blocks `ξ + 1 ≤ η`, and
   none at `η = 0` (`eq_reconstruct_of_blockStage_zero`); the cap-to-model hypothesis of
   `densitySentence_hasThinAlephOneSpectrum_of_hasApexCoatomExtensions` is derived from the coatom
@@ -3725,5 +3737,7 @@ noted).
 - The six-hypothesis form of the main theorem (`MainTheorem/Composition`) uses the coatom
   extension property with apex at `η = 0` for `CapToModel`, at every countable block stage for
   nonempty losses, and nowhere else; (R1) for next-block uniqueness, logical agreement and countable
-  losses; forcing donors for next-block uniqueness only; `ContinuationCriterion`, (R2) and (R3) for
-  countable losses only.
+  losses; forcing donors for next-block uniqueness only (they follow from the coatom extension
+  property with apex at every countable block stage,
+  `forcingDonors_of_forall_hasApexCoatomExtensions`, so a separate composition can now drop
+  `hF`); `ContinuationCriterion`, (R2) and (R3) for countable losses only.

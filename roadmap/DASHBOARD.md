@@ -70,10 +70,12 @@ Notes on the rows, each with its marker:
   (`nonempty_loss_of_hasApexCoatomExtensions`).  Still to be proved: 4b-ii, the gated
   construction as data; (R2), (R3), (R4).
 - *Layer 4.*  Compiled: normalization, conditional on finite-extension receiving and forcing donors
-  (`Realization.label_eq_stableLabel`); the structural candidate (`Realization.stableCandidate`),
-  stably lawful for every model at a block stage (`Realization.IsModel.isStablyLawful`), and more
-  generally for every exactly consistent covering realization with legal types at a block stage
-  (`Realization.isStablyLawful_of_hasLegalTypes`); output 3 and the
+  (`Realization.label_eq_stableLabel`); forcing donors, conditional on the coatom extension
+  property (`forcingDonors_of_hasCoatomExtensions`); the structural candidate
+  (`Realization.stableCandidate`), stably lawful for every model at a block stage
+  (`Realization.IsModel.isStablyLawful`), and more generally for every exactly consistent covering
+  realization with legal types at a block stage (`Realization.isStablyLawful_of_hasLegalTypes`);
+  output 3 and the
   continuation criterion, conditional on (R4) and the coface instances at the next block
   (`ContinuationCriterion.of_stableCappedReceiving`); cover-hollowness and stable-label fixedness
   (`Realization.isCoverHollow_iff_forall_stableLabel_eq_top`); the exact-age comparison
@@ -136,9 +138,10 @@ second does not replace the first, and both are kept.
 
 Each hypothesis is a separate statement with its own status.  None of them is derived from another
 in the library, except hypotheses 1 and 7, which are derived from hypothesis 8 (with next-block
-uniqueness, from hypotheses 2 and 3, for hypothesis 7), and hypothesis 4, which is derived from
-hypothesis 8 together with (R4) (`ContinuationCriterion.of_hasApexCoatomExtensions`); (R4) is in
-neither list.
+uniqueness, from hypotheses 2 and 3, for hypothesis 7), hypothesis 3, which is derived from
+hypothesis 8 (`forcingDonors_of_forall_hasApexCoatomExtensions`; the six-hypothesis form still
+takes it), and hypothesis 4, which is derived from hypothesis 8 together with (R4)
+(`ContinuationCriterion.of_hasApexCoatomExtensions`); (R4) is in neither list.
 
 | Hypothesis | Lean | Used for | Seven | Six |
 | --- | --- | --- | --- | --- |
@@ -159,8 +162,13 @@ Status of each:
    gated pinned extension property
    (`Expansion.finiteCutReceiving_of_hasCoupledGatedPinnedExtensions`), which is open (4b-ii).  It
    is also used for the rigid-core comparison.
-3. `ForcingDonors`: still to be proved, by a finite construction of Layer 3 from the completion
-   below the full grade (prospective).
+3. `ForcingDonors`: still to be proved.  Compiled conditionally on the coatom extension property
+   at `λ_{ξ+1}` (`forcingDonors_of_hasCoatomExtensions`, `Extension/ForcingDonorsCoatom`), hence on
+   the coatom extension property with apex at every countable block stage
+   (`forcingDonors_of_forall_hasApexCoatomExtensions`), hypothesis 8.  The six-hypothesis form on
+   `main` keeps forcing donors as its hypothesis `hF`; `hF` can now be dropped by a separate
+   composition (prospective).  Unconditionally: one- and two-point inputs up to the threshold `4`
+   (`forcingDonorsUpTo_one_four`, `forcingDonorsUpTo_two_four`).
 4. `ContinuationCriterion`: still to be proved (sufficiency only; the converse is not stated).
    Compiled conditionally on (R4) and the coatom extension property with apex at every successor
    block stage (`ContinuationCriterion.of_hasApexCoatomExtensions`); (R4) is still to be proved,
@@ -230,7 +238,8 @@ named hypothesis.
    actually realizes.  At a stage where the hypothesis fails the conditional (R1)
    (`Expansion.finiteCutReceiving_of_hasCoupledGatedPinnedExtensions`) is vacuous, and nothing
    rules that out.
-4. **Forcing donors** (still to be proved): the finite construction behind `ForcingDonors`.
+4. **Forcing donors** (still to be proved unconditionally): reduced to the coatom extension
+   property (`forcingDonors_of_hasCoatomExtensions`); nothing beyond it remains.
 5. **Output 3, part D, and (R4)** (still to be proved): (R4) over positive roots, the empty root by
    the coatom extension over the empty face, and the coatom extension properties at `λ_{ξ+1}`;
    the lawfulness of the candidate is item 2.  Compiled conditionally on (R4) and the coface

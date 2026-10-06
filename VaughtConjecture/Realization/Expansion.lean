@@ -109,6 +109,11 @@ def blockStage (ξ : Ordinal.{u}) : Ordinal.{u} :=
 theorem blockStage_add_one (ξ : Ordinal.{u}) : blockStage (ξ + 1) = blockStage ξ + ω := by
   rw [blockStage, blockStage, mul_add_one, add_assoc]
 
+variable {η : Ordinal.{u}} in
+/-- `λ_η + n` lies below `λ_{η+1}`. -/
+theorem coe_add_lt_blockStage_add_one (n : ℕ) : blockStage η + n < blockStage (η + 1) := by
+  rw [blockStage_add_one]; exact (add_lt_add_iff_left _).mpr (Ordinal.natCast_lt_omega0 n)
+
 /-- The block stage is `ω · (1 + ξ)`. -/
 theorem blockStage_eq_mul (ξ : Ordinal.{u}) : blockStage ξ = ω * (1 + ξ) := by
   rw [blockStage, mul_add, mul_one]
