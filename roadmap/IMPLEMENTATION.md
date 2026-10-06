@@ -1076,7 +1076,7 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
       repository (theorem named).  The corrected statement, compiled in this repository (theorem
       named): every other graded face carries a cell (`Coatom.exists_gradedIndex_eq_amalgamType`),
       and the scheme is well formed and coded (`Coatom.isWellFormed_amalgam`,
-      `Coatom.isCoded_amalgam`).  The last paragraph of [Kni26, §4.2] calls the union "consistent
+      `Coatom.isCoded_amalgam`).  The end of [Kni26, §4.2] calls the union "consistent
       and bountiful; it is merely not complete".  `LITERATURE.md` does not yet list this
       conclusion among the printed statements that are not correct as stated; it is to be added
       to that list when the list is next brought up to date.

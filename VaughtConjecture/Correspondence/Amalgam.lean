@@ -69,7 +69,7 @@ The printed lemma has three conclusions; they are compared separately.
    ([Kni26, Definitions 2.6.1 and 2.5.15]), and the amalgam has no cell of full scope, so the
    graded face `⟨A, 1⟩` of the printed plan carries no cell (`Coatom.not_isComplete_amalgamType`,
    with `CellScheme.IsComplete` the printed completeness verbatim); the amalgam is not legal
-   (`Coatom.not_isLegal_amalgamType`).  The last paragraph of [Kni26, §4.2] says as much: the
+   (`Coatom.not_isLegal_amalgamType`).  The end of [Kni26, §4.2] says as much: the
    union is "consistent and bountiful; it is merely not complete".  What holds: every other graded
    face carries a cell (`Coatom.exists_gradedIndex_eq_amalgamType`), the scheme is well formed and
    coded (`Coatom.isWellFormed_amalgam`, `Coatom.isCoded_amalgam`).
