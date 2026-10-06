@@ -795,7 +795,7 @@ private noncomputable def fiveCellType {β : Ordinal.{u}} (hβ : Order.IsSuccPre
 
 private theorem reduce_labelAdd {β : Ordinal.{u}} (n : ℕ) :
     Label.reduce β (labelAdd β n) = ⊤ :=
-  Label.reduce_of_le (WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr le_self_add))
+  Label.reduce_of_le (Label.coe_le_coe_add β n)
 
 /-- **Twin ordering is false at every stage that is zero or a limit**: on the legal type
 `fiveCellType`, with `s₀ = 0` and `t₀ = 2`, the cell given at the graded index of the twins is one
