@@ -215,9 +215,17 @@ counted as compiled.
    one point, and a donor with a new cell labelled `λ_ξ + 1`, on a legal scheme of ten cells whose
    cell at `(univ, 2)` reads the new cell and the marker at one value; the cap decodes the new cell
    (`Continuation.StableRecoveryReading.IsReadingTriple.eq_of_lt`), and below the marker leaves it
-   free (`Continuation.StableRecoveryReading.isReadingTriple_of_le`).  So the hypotheses of
-   `of_readsThroughCap` are satisfiable with a proper new label (there the spreading of the reading
-   is empty: `(univ, 2)` is the only graded face of grade `2` containing the cap and the new cell).
+   free (`Continuation.StableRecoveryReading.isReadingTriple_of_le`, for labels self-visible at
+   `1` and a cap self-visible at `2`).  So the hypotheses of `of_readsThroughCap` are satisfiable
+   with a proper new label (there the reading constrains no other graded face: `(univ, 2)` is the
+   only graded face of grade `2` containing both the cap and the new cell).  The input is
+   degenerate, so this is feasibility at the smallest sizes only: recovery copies the marker (in
+   every lawful labelling with the marker at the reference cell and `⊤` at the cap the new cell
+   equals the marker; `n = i = 1`, `c = 0`); no label of `D` is `⊤`, so the clause on `γ` and the
+   branch at `⊤` of `StageType.ReadsThroughCap` are not used; the root is one cell labelled `⊥`;
+   and `N = k + 1`.  The next test is the twin donor of
+   `Continuation.StableRecoveryCounterexample` (`N ≥ 3`, `E` on at least four points, several
+   graded faces of grade `N` containing the cap and the new cells; informal; not compiled).
    The finite statement at every input with the calibration is still to be proved, and with it
    (R4).  The acquisition of the design's cap of full scope and full grade is not compiled.
 6. **The attained least lift and structural successor leastness** (prospective).  One lift of a

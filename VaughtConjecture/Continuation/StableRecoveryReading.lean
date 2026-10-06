@@ -18,8 +18,8 @@ every `ξ < ω₁` (`StableCappedReceiving.of_hasStableRecoverySchemes_gradedCap
 with a cell `s` of the grade `N` of a cap, every cell of whose graded index reads the new cells of
 the donor through the cap and reference cells, is a stable recovery scheme
 (`StageType.IsStableRecoveryScheme.of_readsThroughCap`).  This file compiles an instance of the
-hypotheses of that theorem, at every `ξ`, with the smallest data the calibration allows: a root of
-one point (`k = 1`), a context `T⁺` of two points, a cap of grade `N = 2`, and a donor with a new
+hypotheses of that theorem, at every `ξ`, with the smallest sizes the calibration allows: a root
+of one point (`k = 1`), a context `T⁺` of two points, a cap of grade `N = 2`, and a donor with a new
 cell labelled `λ_ξ + 1`.  So the sufficient condition is satisfiable with a proper new label, and
 the conclusion of `StageType.HasStableRecoverySchemes ξ (StageType.GradedCapCalibration ξ)` holds
 at this input (`exists_isStableRecoveryScheme_gradedCap`).  The finite statement at every input is
@@ -51,8 +51,10 @@ the reference cell and the new cell at one value).  Below a pair without the cap
 
 **The cap decodes the new cell** (`IsReadingTriple.eq_of_lt`, `isReadingTriple_of_le`): a cap
 above the reference cell forces `E = A`, and a cap at most the reference cell leaves `E` free
-above `A`.  So the new cell is recovered through the cap, as in the decoder at one reading cell
-(`CellScheme.Rows.IsLawful.label_eq_of_reading`), not from the face of the context alone.
+above `A` (for `A` and `E` self-visible at `1` and the cap self-visible at `2`, every `E ≥ A`
+gives a reading triple).  So the new cell is recovered through the cap, as in the decoder at one
+reading cell (`CellScheme.Rows.IsLawful.label_eq_of_reading`), not from the face of the context
+alone.
 
 **Legality** (`isLegal_readingScheme`): well formed (the interval plan), coded, consistent (each
 row is the reading labelling of a reading triple), complete (one cell at each graded face), and
@@ -76,10 +78,27 @@ the only cell of `(univ, 2)`; the coface of `T⁺↓λ_ξ` is the reduction of t
 
 **What this does not show.**  `StageType.HasStableRecoverySchemes ξ (StageType.GradedCapCalibration
 ξ)` asks for a stable recovery scheme at every legal `T⁺`, embedding, coface `D` and `γ` with the
-calibration; it is proved here at one input only, and stays open.  (Informal; not compiled: the
-bountifulness constraint that spreads the reading to every graded face of grade `N` containing
-the cap, a reference cell and a new cell is empty here, since `(univ, 2)` is the only such face;
-and the new cells read as `⊥` are dead, so no lawful labelling of the donor's face raises them.)
+calibration; it is proved here at one input only, and stays open.  (Informal; not compiled: by
+bountifulness and completeness the reading constrains every graded face of grade `N` containing
+the cap, a reference cell and a new cell; here the reading constrains no other graded face, since
+`(univ, 2)` is the only graded face of grade `2` containing both the cap and the new cell; and the
+new cells read as `⊥` are dead, so no lawful labelling of the donor's face raises them.)
+
+The input is degenerate, so it shows that reading through the cap is feasible, with a legal
+(bountiful) scheme, at the smallest sizes only:
+
+* recovery copies the marker: in every lawful labelling with the marker at the reference cell `3`
+  and the formal top at the cap, the new cell equals the marker (`IsReadingTriple.eq_of_lt`), so
+  the new label is the reference label (`n = i = 1`, `c = 0` in `StageType.ReadsThroughCap`) and
+  the reading cell reads both at the same value `1`;
+* no label of `D` is the formal top, so the clause on `γ` of `StageType.IsStableRecoveryScheme`
+  and the branch at the formal top of `StageType.ReadsThroughCap` are not used;
+* the root is one cell, labelled `⊥`, so recovery at the old cells is immediate;
+* `N = k + 1`.
+
+The next test is the twin donor of `Continuation.StableRecoveryCounterexample` (finite parts `1`
+and `2`, so `N ≥ 3`; `E` on at least four points; several graded faces of grade `N` containing the
+cap and the new cells) (informal; not compiled).
 
 ## Placement
 
@@ -105,11 +124,11 @@ def readingCells : CellScheme (Fin 10) (Fin 3) :=
 
 /-- The kind of each cell: `0` dead, `1` the reference cell, `2` the new cell, `3` the cell at
 `(univ, 1)`, `4` the cap, `5` the reading cell. -/
-def cellKind : Fin 10 → Fin 6 := ![0, 0, 0, 1, 2, 4, 0, 3, 5, 0]
+private def cellKind : Fin 10 → Fin 6 := ![0, 0, 0, 1, 2, 4, 0, 3, 5, 0]
 
 /-- The rows, by the kind of the cell and the kind of the cell read: the grid points `1`, `ω + 1`,
 `ω + 2`, or `⊥`. -/
-noncomputable def kindRow : Fin 6 → Fin 6 → Label.{u} :=
+private noncomputable def kindRow : Fin 6 → Fin 6 → Label.{u} :=
   ![fun _ ↦ ⊥,
     ![⊥, gridPoint 1 0, ⊥, ⊥, ⊥, ⊥],
     ![⊥, ⊥, gridPoint 1 0, ⊥, ⊥, ⊥],
@@ -122,7 +141,7 @@ noncomputable abbrev readingScheme : Scheme.{u} 3 :=
   ⟨10, readingCells, ⟨fun s d ↦ kindRow (cellKind s) (cellKind d.1)⟩⟩
 
 /-- The row of a cell of the reading scheme, by kinds. -/
-theorem readingScheme_row (s : Fin 10) (d) :
+private theorem readingScheme_row (s : Fin 10) (d) :
     readingScheme.{u}.rows.row s d = kindRow (cellKind s) (cellKind d.1) :=
   rfl
 
@@ -130,7 +149,7 @@ theorem readingScheme_row (s : Fin 10) (d) :
 
 /-- The labels of the kinds for the parameters `A` (the reference cell), `E` (the new cell and the
 cell `(univ, 1)`) and `B` (the cap and the reading cell). -/
-noncomputable def kindValue (A E B : Label.{u}) : Fin 6 → Label.{u} := ![⊥, A, E, E, B, B]
+private noncomputable def kindValue (A E B : Label.{u}) : Fin 6 → Label.{u} := ![⊥, A, E, E, B, B]
 
 /-- The **reading labelling** of parameters `A`, `E`, `B`. -/
 noncomputable def readingLabel (A E B : Label.{u}) (d : Fin 10) : Label.{u} :=
@@ -205,9 +224,11 @@ availability holds since the only cells below another of the same grade are the 
 and the new cell below the cell `(univ, 1)`, and the cap below the reading cell. -/
 theorem isLawful_readingLabel {A E B : Label.{u}} (h : IsReadingTriple A E B) :
     readingScheme.{u}.rows.IsLawful (readingLabel A E B) where
+  -- the order law: each label is `⊥` or a parameter, self-visible at the grade of its cell
   orderly d := by
     fin_cases d <;> simp [readingLabel, kindValue, cellKind, readingCells, isSelfVisible_bot,
       h.isSelfVisible_ref, h.isSelfVisible_new, h.isSelfVisible_cap]
+  -- locality: the witnesses, then the ten cells in order, `⊥` at the dead cells
   locality s := by
     have hx1 : IsSelfVisible 1 (min A B) :=
       h.isSelfVisible_ref.min (h.isSelfVisible_cap.mono (by omega))
@@ -225,31 +246,38 @@ theorem isLawful_readingLabel {A E B : Label.{u}} (h : IsReadingTriple A E B) :
     · exact transformsTo_dead rfl
     · exact transformsTo_dead rfl
     · exact transformsTo_dead rfl
-    · refine transformsTo_of_witness
+    · -- the reference cell `3`: the constant shifter `A`
+      refine transformsTo_of_witness
         (isWitness_blockConst h.isSelfVisible_ref h.isSelfVisible_ref le_rfl) fun d hd ↦ ?_
       fin_cases d <;> first | exact absurd hd (by decide) |
         simp [readingLabel, kindValue, cellKind, kindRow, readingCells, constStepSuppressor,
           blockConst_gridPoint_zero, blockConst_bot]
-    · refine transformsTo_of_witness
+    · -- the new cell `4`: the constant shifter `E`
+      refine transformsTo_of_witness
         (isWitness_blockConst h.isSelfVisible_new h.isSelfVisible_new le_rfl) fun d hd ↦ ?_
       fin_cases d <;> first | exact absurd hd (by decide) |
         simp [readingLabel, kindValue, cellKind, kindRow, readingCells, constStepSuppressor,
           blockConst_gridPoint_zero, blockConst_bot]
-    · refine transformsTo_of_witness hw2 fun d hd ↦ ?_
+    · -- the cap `5`: the two-strip shifter
+      refine transformsTo_of_witness hw2 fun d hd ↦ ?_
       fin_cases d <;> first | exact absurd hd (by decide) |
         simp [readingLabel, kindValue, cellKind, kindRow, readingCells, constStepSuppressor,
           twoStrip_gridPoint_one_zero, twoStrip_gridPoint_two_one, twoStrip_bot, hvr, hBB]
     · exact transformsTo_dead rfl
-    · refine transformsTo_of_witness
+    · -- the cell `7`: `A` on the natural numbers and `E` above
+      refine transformsTo_of_witness
         (isWitness_blockConst h.isSelfVisible_ref h.isSelfVisible_new h.ref_le_new) fun d hd ↦ ?_
       fin_cases d <;> first | exact absurd hd (by decide) |
         simp [readingLabel, kindValue, cellKind, kindRow, readingCells, constStepSuppressor,
           blockConst_gridPoint_zero, blockConst_gridPoint_one, blockConst_bot, hAE]
-    · refine transformsTo_of_witness hw2 fun d hd ↦ ?_
+    · -- the reading cell `8`: the two-strip shifter, with `min E B = min A B`
+      refine transformsTo_of_witness hw2 fun d hd ↦ ?_
       fin_cases d <;> first | exact absurd hd (by decide) |
         simp [readingLabel, kindValue, cellKind, kindRow, readingCells, constStepSuppressor,
           twoStrip_gridPoint_one_zero, twoStrip_gridPoint_two_one, twoStrip_bot, hvr, hBB, hEB]
     · exact transformsTo_dead rfl
+  -- availability: a cell below another of the same grade is itself, `3` or `4` below `7`, `5`
+  -- below `8`, or dead; each is at most the other
   availability s t hst hg := by
     have key : ∀ s t : Fin 10, readingCells.scope s ⊆ readingCells.scope t →
         readingCells.grade s = readingCells.grade t →
@@ -265,24 +293,11 @@ theorem isLawful_readingLabel {A E B : Label.{u}} (h : IsReadingTriple A E B) :
 
 /-! ### The lift of parameters -/
 
-section Order
-
-variable {α : Type*} [LinearOrder α] {a b c : α}
-
-/-- Below the cap, agreement capped at `c` is equality. -/
-private theorem eq_of_min_eq_min_of_lt (h : min a c = min b c) (ha : a < c) : b = a := by
-  rw [min_eq_left ha.le] at h
-  rcases le_total b c with hb | hb
-  · rwa [min_eq_left hb, eq_comm] at h
-  · rw [min_eq_right hb] at h
-    exact absurd h ha.ne
-
-/-- Two different values with one capped observation are both at least the cap. -/
-private theorem le_of_min_eq_min_of_lt (h : min a c = min b c) (hab : a < b) : c ≤ a := by
+/-- Two different labels with one capped observation are both at least the cap. -/
+private theorem le_of_min_eq_min_of_lt {a b c : Label.{u}} (h : min a c = min b c) (hab : a < b) :
+    c ≤ a := by
   by_contra hca
-  exact hab.ne' (eq_of_min_eq_min_of_lt h (not_le.mp hca))
-
-end Order
+  exact hab.ne' (Label.eq_of_min_eq_of_lt h (not_le.mp hca))
 
 /-- **The lift of parameters.**  Let `p` and `q` be reading triples and `c` a cap, self-visible at
 `2` unless the third parameter of `q` is `⊥`.  For the parameters prescribed by `p` (`xa`, `xe`,
@@ -299,6 +314,7 @@ theorem exists_isReadingTriple_lift {pA pE pB qA qE qB c : Label.{u}}
   have hq' := hq
   obtain ⟨pa1, pe1, pb2, ple, pmin⟩ := hp
   obtain ⟨qa1, qe1, qb2, qle, qmin⟩ := hq
+  -- eight cases by which of `xa`, `xe`, `xb` hold; the two with `xb` but not `xa` are impossible
   by_cases ha : xa <;> by_cases he : xe <;> by_cases hb : xb
   · -- everything prescribed: `p` itself
     exact ⟨pA, pE, pB, hp', fun _ ↦ rfl, fun _ ↦ rfl, fun _ ↦ rfl, hA ha, hE he, hB hb⟩
@@ -316,17 +332,17 @@ theorem exists_isReadingTriple_lift {pA pE pB qA qE qB c : Label.{u}}
       rw [min_eq_right ((min_le_right _ _).trans hcA),
         min_eq_right ((min_le_right _ _).trans (hcA.trans ple))]
     · have hlt : pA < c := not_le.mp hcA
-      have hqA : qA = pA := eq_of_min_eq_min_of_lt hA' hlt
+      have hqA : qA = pA := Label.eq_of_min_eq_of_lt hA' hlt
       refine ⟨pA, pE, qB, ⟨pa1, pe1, qb2, ple, ?_⟩, fun _ ↦ rfl, fun _ ↦ rfl,
         fun h ↦ absurd h hb, hA', hE', rfl⟩
       rcases ple.lt_or_eq with hpE | hpE
       · -- `qB ≤ pA`: otherwise `qE = qA = pA` and then `pE = pA`
         have hqB : qB ≤ pA := by
           by_contra hqB
-          have hqE : qE = qA := eq_of_min_eq_min_of_lt qmin (hqA ▸ not_le.mp hqB)
+          have hqE : qE = qA := Label.eq_of_min_eq_of_lt qmin (hqA ▸ not_le.mp hqB)
           have : pE = pA := by
             have h1 : min pE c = min pA c := by rw [hE', hqE, hqA]
-            exact eq_of_min_eq_min_of_lt h1.symm hlt
+            exact Label.eq_of_min_eq_of_lt h1.symm hlt
           exact hpE.ne this.symm
         rw [min_eq_right hqB, min_eq_right (hqB.trans ple)]
       · rw [hpE]
@@ -337,13 +353,13 @@ theorem exists_isReadingTriple_lift {pA pE pB qA qE qB c : Label.{u}}
     · refine ⟨pA, pA, pB, ⟨pa1, pa1, pb2, le_rfl, rfl⟩, fun _ ↦ rfl,
         fun h ↦ absurd h he, fun _ ↦ rfl, hA', ?_, hB'⟩
       by_cases hqAB : qA < qB
-      · rw [eq_of_min_eq_min_of_lt qmin hqAB]
+      · rw [Label.eq_of_min_eq_of_lt qmin hqAB]
         exact hA'
       · -- the cap is at most `pA`
         have hcA : c ≤ pA := by
           by_contra hcA
           have hlt : pA < c := not_le.mp hcA
-          have hqA : qA = pA := eq_of_min_eq_min_of_lt hA' hlt
+          have hqA : qA = pA := Label.eq_of_min_eq_of_lt hA' hlt
           have h1 : min pB c ≤ pA := by
             rw [hB']
             exact (min_le_left _ _).trans (hqA ▸ not_lt.mp hqAB)
@@ -363,12 +379,12 @@ theorem exists_isReadingTriple_lift {pA pE pB qA qE qB c : Label.{u}}
     · refine ⟨pA, pA, qB, ⟨pa1, pa1, qb2, le_rfl, rfl⟩, fun _ ↦ rfl,
         fun h ↦ absurd h he, fun h ↦ absurd h hb, hA', ?_, rfl⟩
       by_cases hqAB : qA < qB
-      · rw [eq_of_min_eq_min_of_lt qmin hqAB]
+      · rw [Label.eq_of_min_eq_of_lt qmin hqAB]
         exact hA'
       · have hpq : pA < qA := hAB.trans_le (not_lt.mp hqAB)
         have hcA : c ≤ pA := by
           by_contra hcA
-          have hqA : qA = pA := eq_of_min_eq_min_of_lt hA' (not_le.mp hcA)
+          have hqA : qA = pA := Label.eq_of_min_eq_of_lt hA' (not_le.mp hcA)
           exact hpq.ne' hqA
         rw [min_eq_right hcA, min_eq_right (hcA.trans (hpq.le.trans qle))]
     · have hBA : qB ≤ pA := not_lt.mp hAB
@@ -376,14 +392,15 @@ theorem exists_isReadingTriple_lift {pA pE pB qA qE qB c : Label.{u}}
         fun _ ↦ rfl, fun h ↦ absurd h he, fun h ↦ absurd h hb, hA', ?_, rfl⟩
       · rw [min_eq_right hBA, min_eq_right (hBA.trans (le_max_left _ _))]
       · rw [min_max_distrib_right, hA', max_eq_right (min_le_min_right c qle)]
-  · exact absurd (hba hb) ha
+  · -- `B` and `E` prescribed without `A`: impossible
+    exact absurd (hba hb) ha
   · -- only `E` prescribed: `A` equal to `E` below `qB`, between `qB` and `E` above
     have hE' := hE he
     by_cases hEB : pE < qB
     · refine ⟨pE, pE, qB, ⟨pe1, pe1, qb2, le_rfl, rfl⟩, fun h ↦ absurd h ha,
         fun _ ↦ rfl, fun h ↦ absurd h hb, ?_, hE', rfl⟩
       by_cases hqEB : qE < qB
-      · rw [eq_of_min_eq_min_of_lt qmin.symm hqEB]
+      · rw [Label.eq_of_min_eq_of_lt qmin.symm hqEB]
         exact hE'
       · have hqBE : qB ≤ qE := not_lt.mp hqEB
         have hpq : pE < qE := hEB.trans_le hqBE
@@ -404,13 +421,14 @@ theorem exists_isReadingTriple_lift {pA pE pB qA qE qB c : Label.{u}}
         refine max_eq_left ?_
         by_cases hqBA : qB ≤ qA
         · exact min_le_min_right c hqBA
-        · have hqE : qE = qA := eq_of_min_eq_min_of_lt qmin (not_le.mp hqBA)
+        · have hqE : qE = qA := Label.eq_of_min_eq_of_lt qmin (not_le.mp hqBA)
           have hcE : c ≤ qE := le_of_min_eq_min_of_lt hE'.symm
             (hqE ▸ (not_le.mp hqBA).trans_le hBE)
           have hcA : c ≤ qA := hqE ▸ hcE
           rw [min_eq_right hcA]
           exact min_le_right _ _
-  · exact absurd (hba hb) ha
+  · -- `B` prescribed without `A`: impossible
+    exact absurd (hba hb) ha
   · -- nothing prescribed: `q` itself
     exact ⟨qA, qE, qB, hq', fun h ↦ absurd h ha, fun h ↦ absurd h he, fun h ↦ absurd h hb, rfl,
       rfl, rfl⟩
@@ -418,13 +436,13 @@ theorem exists_isReadingTriple_lift {pA pE pB qA qE qB c : Label.{u}}
 /-! ### Lawful labellings below a pair -/
 
 /-- Every cell is dead or one of the five live cells. -/
-theorem cellKind_cases (d : Fin 10) :
+private theorem cellKind_cases (d : Fin 10) :
     cellKind d = 0 ∨ d = 3 ∨ d = 4 ∨ d = 7 ∨ d = 5 ∨ d = 8 := by
   revert d
   decide
 
 /-- A dead cell is labelled `⊥`. -/
-theorem readingLabel_of_kind_zero {A E B : Label.{u}} {d : Fin 10} (h : cellKind d = 0) :
+private theorem readingLabel_of_kind_zero {A E B : Label.{u}} {d : Fin 10} (h : cellKind d = 0) :
     readingLabel A E B d = ⊥ := by
   simp [readingLabel, h, kindValue]
 
@@ -453,12 +471,18 @@ private theorem mem_eight (h4 : (4 : Fin 10) ∈ readingCells.below X)
   exact ⟨key C h5.1 h4.1, h5.2⟩
 
 /-- **Every labelling lawful below a pair is a reading labelling** of a reading triple, whose
-third parameter is `⊥` when the cap is not below the pair. -/
+third parameter is `⊥` when the cap is not below the pair: for `r` lawful below `X` there are `A`,
+`E`, `B` with `IsReadingTriple A E B`, `r d = readingLabel A E B d` at every cell `d` below `X`, and
+`B = ⊥` unless the cap `5` is below `X`. -/
 theorem exists_of_isLawfulBelow {r : readingCells.below X → Label.{u}}
     (hr : readingScheme.{u}.rows.IsLawfulBelow X r) :
     ∃ A E B, IsReadingTriple A E B ∧ (∀ d, r d = readingLabel A E B d.1) ∧
       ((5 : Fin 10) ∉ readingCells.below X → B = ⊥) := by
   classical
+  -- `w`: `r` extended by `⊥` to all cells, lawful below `X`; first its values at the dead
+  -- cells, then locality and availability at the cells `7` and `8`; then the triple `(A, E, B)`,
+  -- with `A` and `E` read at `3` and `4` (each replaced by the other off `X`), and the labelling
+  -- cell by cell
   set w := CellScheme.Rows.extendBot X r with hw
   have hlaw : readingScheme.{u}.rows.IsLawfulBelow X (fun d ↦ w d) := by
     rw [hw, CellScheme.Rows.restrict_extendBot]
@@ -484,6 +508,7 @@ theorem exists_of_isLawfulBelow {r : readingCells.below X → Label.{u}}
       w s ≤ w t := fun s t ht hst hg huniq ↦ by
     obtain ⟨u, hu, hle⟩ := ha s t ht hst hg
     rwa [huniq u hu] at hle
+  -- locality and availability at the cell `7`: `w 7 = w 4` and `w 3 ≤ w 4`
   have h7 : (7 : Fin 10) ∈ readingCells.below X → w 7 = w 4 ∧ w 3 ≤ w 4 := fun h7 ↦ by
     have hT := hl 7 h7
     have m3 : (3 : Fin 10) ∈ readingCells.below (readingCells.gradedIndex 7) :=
@@ -503,6 +528,8 @@ theorem exists_of_isLawfulBelow {r : readingCells.below X → Label.{u}}
     have h34' : min (w 3) (w 7) ≤ min (w 4) (w 7) := h34
     rw [min_eq_left h37] at h34'
     exact h34'.trans (min_le_left _ _)
+  -- locality and availability at the reading cell `8`: `w 8 = w 5`, and `w 3`, `w 4` agree below
+  -- the cap
   have h8 : (8 : Fin 10) ∈ readingCells.below X →
       w 8 = w 5 ∧ min (w 3) (w 5) = min (w 4) (w 5) := fun h8 ↦ by
     have hT := hl 8 h8
@@ -528,6 +555,7 @@ theorem exists_of_isLawfulBelow {r : readingCells.below X → Label.{u}}
   refine ⟨if (3 : Fin 10) ∈ readingCells.below X then w 3 else w 4,
     if (4 : Fin 10) ∈ readingCells.below X then w 4 else w 3, w 5, ⟨?_, ?_, hsv 5, ?_, ?_⟩,
     fun d ↦ ?_, fun h5 ↦ hout 5 h5⟩
+  -- the clauses of `IsReadingTriple`: self-visibility, `A ≤ E`, `min A B = min E B`
   · split_ifs
     exacts [hsv 3, hsv 4]
   · split_ifs
@@ -545,16 +573,21 @@ theorem exists_of_isLawfulBelow {r : readingCells.below X → Label.{u}}
         exact (h8 (mem_eight h4 h5)).2
       · simp only [h3, h4, ↓reduceIte]
     · rw [hout 5 h5, min_bot_right, min_bot_right]
-  · obtain ⟨d, hd⟩ := d
+  · -- the labelling, cell by cell
+    obtain ⟨d, hd⟩ := d
     rw [← CellScheme.Rows.extendBot_of_mem r hd]
+    -- the left side is `w d`, the extension of `r` by `⊥` at a cell below `X`
     change w d = _
     rcases cellKind_cases d with h0 | rfl | rfl | rfl | rfl | rfl
     · rw [hdead d h0, readingLabel_of_kind_zero h0]
-    · change _ = if (3 : Fin 10) ∈ readingCells.below X then w 3 else w 4
+    · -- `readingLabel` at the reference cell is the first parameter
+      change _ = if (3 : Fin 10) ∈ readingCells.below X then w 3 else w 4
       rw [ite_eq_left hd]
-    · change _ = if (4 : Fin 10) ∈ readingCells.below X then w 4 else w 3
+    · -- `readingLabel` at the new cell is the second parameter
+      change _ = if (4 : Fin 10) ∈ readingCells.below X then w 4 else w 3
       rw [ite_eq_left hd]
-    · change _ = if (4 : Fin 10) ∈ readingCells.below X then w 4 else w 3
+    · -- `readingLabel` at the cell `7` is the second parameter
+      change _ = if (4 : Fin 10) ∈ readingCells.below X then w 4 else w 3
       rw [ite_eq_left (mem_below_of_le hd (by decide)), (h7 hd).1]
     · rfl
     · exact (h8 hd).1
@@ -588,12 +621,14 @@ theorem cappedLift_readingScheme {X Y : Finset (Fin 3) × ℕ} (h : X ≤ Y) :
     (isLawful_readingLabel hrT).isLawfulBelow Y, fun d ↦ ?_, fun d ↦ ?_⟩
   · rw [hqY]
     obtain ⟨d, hd⟩ := d
+    -- the restriction to `Y` at the cell `d`
     change min (readingLabel rA rE rB d) c = min (readingLabel qA qE qB d) c
     rcases cellKind_cases d with h0 | rfl | rfl | rfl | rfl | rfl
     · rw [readingLabel_of_kind_zero h0, readingLabel_of_kind_zero h0]
     exacts [hcA, hcE, hcE, hcB, hcB]
   · obtain ⟨d, hd⟩ := d
     rw [hpX]
+    -- the restriction to `X` at the cell `d`
     change readingLabel rA rE rB d = readingLabel pA pE pB d
     rcases cellKind_cases d with h0 | rfl | rfl | rfl | rfl | rfl
     · rw [readingLabel_of_kind_zero h0, readingLabel_of_kind_zero h0]
@@ -605,10 +640,12 @@ theorem cappedLift_readingScheme {X Y : Finset (Fin 3) × ℕ} (h : X ≤ Y) :
 
 /-- **The reading scheme is legal.** -/
 theorem isLegal_readingScheme : readingScheme.{u}.IsLegal where
+  -- well formed: the interval plan, each scope a face, each grade at most the size of the scope
   isWellFormed := ⟨rfl, ⟨inferInstance, Geometry.isPlan_intervalPlan _, fun d ↦ by
     have key : ∀ d : Fin 10, readingCells.scope d ∈ readingCells.faces ∧
         0 < readingCells.grade d ∧ readingCells.grade d ≤ #(readingCells.scope d) := by decide
     exact key d⟩⟩
+  -- coded: each row entry is `⊥` or a grid point below `ω ^ 2`
   isCoded s t := by
     have key : ∀ s d : Fin 6, kindRow.{u} s d = ⊥ ∨ kindRow.{u} s d = gridPoint 1 0 ∨
         kindRow.{u} s d = gridPoint 1 1 ∨ kindRow.{u} s d = gridPoint 2 1 := by
@@ -618,6 +655,9 @@ theorem isLegal_readingScheme : readingScheme.{u}.IsLegal where
     rcases key (cellKind s) (cellKind t.1) with h | h | h | h <;> rw [h]
     · exact WithBot.bot_lt_coe _
     all_goals exact gridPoint_lt_omega0_sq _ _
+  -- consistent: each row is the reading labelling of one of four reading triples, `h0` at the
+  -- dead cells, `h1` at the reference cell and the new cell, `h2` at the cap and the reading cell,
+  -- `h3` at the cell `7`
   isConsistent s := by
     have hrow {A E B : Label.{u}} (hT : IsReadingTriple A E B)
         (h : ∀ d : Fin 10, readingCells.gradedIndex d ≤ readingCells.gradedIndex s →
@@ -660,6 +700,7 @@ theorem isLegal_readingScheme : readingScheme.{u}.IsLegal where
     · refine hrow h0 fun d hd ↦ ?_
       fin_cases d <;> first | exact absurd hd (by decide) | rfl
   isBountiful _ _ _ _ h := cappedLift_readingScheme h
+  -- complete: one cell at each graded face
   isComplete X hX := by
     obtain ⟨B, j⟩ := X
     obtain ⟨hB, hj0, hjB⟩ := hX
@@ -673,16 +714,13 @@ theorem isLegal_readingScheme : readingScheme.{u}.IsLegal where
 /-- **The cap decodes the new cell**: in a reading triple, a third parameter (the cap) above the
 first (the reference cell) forces the second (the new cell) to equal the first. -/
 theorem IsReadingTriple.eq_of_lt {A E B : Label.{u}} (h : IsReadingTriple A E B) (hAB : A < B) :
-    E = A := by
-  have := h.min_cap_eq
-  rw [min_eq_left hAB.le] at this
-  rcases le_total E B with hEB | hEB
-  · rwa [min_eq_left hEB, eq_comm] at this
-  · rw [min_eq_right hEB] at this
-    exact absurd this hAB.ne
+    E = A :=
+  Label.eq_of_min_eq_of_lt h.min_cap_eq hAB
 
 /-- **Below the reference cell the cap decodes nothing**: a cap at most the first parameter
-leaves the second free above the first. -/
+leaves the second free above the first; with the first and second parameters self-visible at `1`
+and the cap self-visible at `2`, every second parameter at least the first gives a reading
+triple. -/
 theorem isReadingTriple_of_le {A E B : Label.{u}} (hA : IsSelfVisible 1 A) (hE : IsSelfVisible 1 E)
     (hB : IsSelfVisible 2 B) (hAE : A ≤ E) (hBA : B ≤ A) : IsReadingTriple A E B :=
   ⟨hA, hE, hB, hAE, by rw [min_eq_right hBA, min_eq_right (hBA.trans hAE)]⟩
@@ -747,21 +785,23 @@ noncomputable def readingType : StageType.{u} (blockStage (ξ + 1)) 3 where
 def rootEmb : Fin 1 ↪ Fin 2 := ⟨fun _ ↦ 1, fun _ _ _ ↦ Subsingleton.elim _ _⟩
 
 /-- The first two points span a closed face, the context. -/
-theorem map_castSuccEmb_mem_faces :
+private theorem map_castSuccEmb_mem_faces :
     univ.map (Fin.castSuccEmb : Fin 2 ↪ Fin 3) ∈ readingCells.faces := by
   decide
 
 /-- The root followed by the new point spans `{1, 2}`. -/
-theorem map_extendByLast_eq : univ.map (extendByLast rootEmb) = ({1, 2} : Finset (Fin 3)) := by
+private theorem map_extendByLast_eq :
+    univ.map (extendByLast rootEmb) = ({1, 2} : Finset (Fin 3)) := by
   decide
 
 /-- The root and the new point span a closed face, the face of the donor. -/
-theorem map_extendByLast_mem_faces : univ.map (extendByLast rootEmb) ∈ readingCells.faces := by
+private theorem map_extendByLast_mem_faces :
+    univ.map (extendByLast rootEmb) ∈ readingCells.faces := by
   rw [map_extendByLast_eq]
   decide
 
 /-- The root spans a closed face. -/
-theorem map_rootEmb_mem_faces :
+private theorem map_rootEmb_mem_faces :
     univ.map (rootEmb.trans (Fin.castSuccEmb : Fin 2 ↪ Fin 3)) ∈ readingCells.faces := by
   decide
 
@@ -803,7 +843,7 @@ theorem donorType_mem_cofaces : donorType ξ ∈ (rootType ξ).cofaces := by
 
 /-- The cells of the context type are the cells of the reading scheme visible through the first
 two points. -/
-theorem exists_cellMap_castSuccEmb {d : Fin 10}
+private theorem exists_cellMap_castSuccEmb {d : Fin 10}
     (hd : d ∈ readingScheme.{u}.visibleCells Fin.castSuccEmb) :
     ∃ b, readingScheme.{u}.cellMap Fin.castSuccEmb b = d := by
   have : d ∈ Set.range (readingScheme.{u}.cellMap Fin.castSuccEmb) := by
@@ -818,10 +858,12 @@ theorem exists_cap : ∃ b : Fin (contextType ξ).card,
       (contextType ξ).toCellScheme.grade b = 2 ∧ (contextType ξ).label b = ⊤ := by
   obtain ⟨b, hb⟩ := exists_cellMap_castSuccEmb.{u} (d := 5) (by decide)
   refine ⟨b, hb, ?_, ?_⟩
-  · change readingCells.grade (readingScheme.{u}.cellMap Fin.castSuccEmb b) = 2
+  · -- the grade of a cell of the face is the grade of its image
+    change readingCells.grade (readingScheme.{u}.cellMap Fin.castSuccEmb b) = 2
     rw [hb]
     rfl
-  · change readingLabel (markerLabel ξ) (markerLabel ξ) ⊤
+  · -- the label of a cell of the face is the label of its image
+    change readingLabel (markerLabel ξ) (markerLabel ξ) ⊤
       (readingScheme.{u}.cellMap Fin.castSuccEmb b) = ⊤
     rw [hb]
     rfl
@@ -833,10 +875,12 @@ theorem exists_marker : ∃ a : Fin (contextType ξ).card,
       (contextType ξ).toCellScheme.grade a = 1 ∧ (contextType ξ).label a = markerLabel ξ := by
   obtain ⟨a, ha⟩ := exists_cellMap_castSuccEmb.{u} (d := 3) (by decide)
   refine ⟨a, ha, ?_, ?_⟩
-  · change readingCells.grade (readingScheme.{u}.cellMap Fin.castSuccEmb a) = 1
+  · -- the grade of a cell of the face is the grade of its image
+    change readingCells.grade (readingScheme.{u}.cellMap Fin.castSuccEmb a) = 1
     rw [ha]
     rfl
-  · change readingLabel (markerLabel ξ) (markerLabel ξ) ⊤
+  · -- the label of a cell of the face is the label of its image
+    change readingLabel (markerLabel ξ) (markerLabel ξ) ⊤
       (readingScheme.{u}.cellMap Fin.castSuccEmb a) = markerLabel ξ
     rw [ha]
     rfl
@@ -874,12 +918,14 @@ theorem exists_newCell : ∃ j : Fin (donorType ξ).card,
     decide
   obtain ⟨j, hj⟩ := this
   refine ⟨j, ?_, ?_⟩
-  · change Fin.last 1 ∈ (readingCells.scope
+  · -- the scope of a cell of the face is the preimage of the scope of its image
+    change Fin.last 1 ∈ (readingCells.scope
       (readingScheme.{u}.cellMap (extendByLast rootEmb) j)).preimage (extendByLast rootEmb)
       (extendByLast rootEmb).injective.injOn
     rw [hj, Finset.mem_preimage, extendByLast_last]
     decide
-  · change readingLabel (markerLabel ξ) (markerLabel ξ) ⊤
+  · -- the label of a cell of the face is the label of its image
+    change readingLabel (markerLabel ξ) (markerLabel ξ) ⊤
       (readingScheme.{u}.cellMap (extendByLast rootEmb) j) = markerLabel ξ
     rw [hj]
     rfl
@@ -928,6 +974,7 @@ theorem isStableRecoveryScheme_readingScheme :
         (extendByLast rootEmb).injective.injOn := hj
     rw [Finset.mem_preimage, extendByLast_last] at this
     exact this
+  -- the label of the new cell `i` of `D` is the label of its image in the reading type
   change _ ∧ ∀ u, _ → (contextType ξ).ReadsThroughCap readingScheme b u _
     (readingLabel (markerLabel ξ) (markerLabel ξ) ⊤
       (readingScheme.{u}.cellMap (extendByLast rootEmb) i))
@@ -956,6 +1003,7 @@ theorem isStableRecoveryScheme_readingScheme :
       exact show readingCells.gradedIndex 3 ≤ readingCells.gradedIndex 8 by decide
     refine ⟨by rw [hb]; decide, a, a, 1, ((0 : ℕ) : Ordinal.{u}), rfl, hal.trans h,
       by rw [hb]; decide, ha8, ?_, rfl⟩
+    -- the row of the reading cell, by kinds
     change kindRow (cellKind 8) (cellKind (readingScheme.{u}.cellMap Fin.castSuccEmb a)) = _
     rw [ha]
     rfl
