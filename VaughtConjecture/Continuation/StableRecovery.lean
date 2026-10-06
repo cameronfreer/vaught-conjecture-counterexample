@@ -45,7 +45,7 @@ threshold, and visibility replacement there turns `i` into `o`.  A new cell read
 at least the cap, and a new cell read as `⊥` is `⊥`.  This is the decoder of the roadmap (Layer 3,
 3.3) at one row.
 
-**A stable recovery scheme from one reading graded index**
+**A stable recovery scheme from cells reading through the cap**
 (`StageType.IsStableRecoveryScheme.of_readsThroughCap`).  Let a scheme `E` carry a coface of
 `T⁺↓λ_ξ` and have the scheme of `D` as its face along `f` followed by the new point, let `b` be a
 cell of `T⁺` (the cap) labelled at least `λ_ξ` plus its grade `N`, with `γ < λ_ξ + N`, and let `s`
@@ -54,10 +54,13 @@ the graded index of `s`, and every cell of that graded index reads it through th
 (`StageType.ReadsThroughCap`: as `⊥`, as the cap, or in the block of a reference cell of `T⁺`
 labelled `μ + i`, with `i` and the finite part of the label below `N`), then `E` is a stable
 recovery scheme for `T⁺`, `f`, `D` and `γ`.  The old cells of `D` take their labels from the face
-of `T⁺` (`StageType.label_eq_of_restrictFace_eq`); at a new cell, availability against the cap
+of `T⁺` (`StageType.label_eq_of_mem_visibleCells`); at a new cell, availability against the cap
 gives a cell of the graded index of `s` labelled at least the cap, and the decoder at it recovers
 the label of `D`.  A reference cell read there lies below a graded index of grade `N`, so its grade
-is at most `N`.
+is at most `N`.  (Informal; not compiled: the hypothesis is not confined to the graded index of
+`s`.  By bountifulness at the cap `⊥` and completeness, the reading forces the label of a new cell
+for the lawful labellings below every graded face of grade `N` of `E` containing the cap, a
+reference cell and that new cell.)
 
 **The graded cap calibration** (`StageType.GradedCapCalibration`): a cap `b` of grade `N > k`
 labelled at least `λ_ξ + N`, with `γ < λ_ξ + N`, and for every ordinal label `μ + n` of `D`
@@ -289,7 +292,7 @@ theorem GradedCapCalibration.lt {Tp : StageType.{u} (blockStage (ξ + 1)) m} {f 
   obtain ⟨b, -, hk, -⟩ := h
   exact hk.trans_le (Tp.grade_le b)
 
-/-! ### A stable recovery scheme from one reading graded index -/
+/-! ### A stable recovery scheme from cells reading through the cap -/
 
 /-- **A cell reads a new cell through the cap**: in a scheme `E` on `m + 1` points carrying `T⁺`
 on its first points (the cells of `E.comap Fin.castSuccEmb` matched with the cells of `T⁺` at
@@ -314,7 +317,7 @@ def ReadsThroughCap {α : Ordinal.{u}} (Tp : StageType.{u} α m) (E : Scheme.{u}
             E.rows.row u ⟨_, ha⟩ = ((ω * c + i : Ordinal.{u}) : Label.{u}) ∧
             E.rows.row u ⟨e, he⟩ = ((ω * c + n : Ordinal.{u}) : Label.{u})
 
-/-- **A stable recovery scheme from one reading graded index** (the decoder at one row, with
+/-- **A stable recovery scheme from cells reading through the cap** (the decoder at one row, with
 availability).  Let `E` carry a coface of `T⁺↓λ_ξ` and have the scheme of `D` as its face along
 `f` followed by the new point; let `b` be a cell of `T⁺` (the cap), labelled at least `λ_ξ` plus
 its grade `N`, with `γ < λ_ξ + N`; and let `s` be a cell of `E` of grade `N` whose scope contains
@@ -365,7 +368,7 @@ theorem IsStableRecoveryScheme.of_readsThroughCap {Tp : StageType.{u} (blockStag
       induction x using Fin.lastCases with
       | last => exact absurd hx hj
       | cast x => exact ⟨x, rfl⟩
-    have hl := label_eq_of_restrictFace_eq hED hQP hD.2 hij hvis
+    have hl := label_eq_of_mem_visibleCells hED hQP hD.2 hij hvis
     refine ⟨fun _ ↦ hl, fun h ↦ ?_⟩
     rw [hl, h]
     exact WithBot.coe_lt_coe.mpr (WithTop.coe_lt_top _)

@@ -132,14 +132,10 @@ of the type of the larger occurrence with the same label and the same grade. -/
 theorem exists_label_grade_eq_of_trans_eq (hf : f.trans y.tuple = x.tuple)
     (j : Fin x.type.card) : ∃ z : Fin y.type.card, y.type.label z = x.type.label j ∧
       y.type.toCellScheme.grade z = x.type.toCellScheme.grade j := by
-  obtain ⟨hmem, h⟩ :=
-    (StageType.restrictFace_eq_some_iff _ _).mp (restrictFace_eq_some_of_trans_eq hR hf)
-  have hgrade : ∀ {t t' : StageType.{u} α x.arity} (_ : t = t') (i : Fin t.card) (i' : Fin t'.card),
-      (i : ℕ) = i' → t.toCellScheme.grade i = t'.toCellScheme.grade i' := by
-    rintro t _ rfl i i' hii'
-    rw [Fin.ext hii']
-  exact ⟨_, StageType.label_congr h (i := Fin.cast (congrArg (·.card) h).symm j) rfl,
-    hgrade h (Fin.cast (congrArg (·.card) h).symm j) j rfl⟩
+  have h := restrictFace_eq_some_of_trans_eq hR hf
+  generalize x.type = t at h j ⊢
+  obtain ⟨-, rfl⟩ := (StageType.restrictFace_eq_some_iff _ _).mp h
+  exact ⟨_, rfl, rfl⟩
 
 /-- Every label of a literal face is a label of the larger occurrence (the labels of
 `exists_label_grade_eq_of_trans_eq`). -/

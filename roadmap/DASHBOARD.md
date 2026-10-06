@@ -183,26 +183,31 @@ counted as compiled.
    stable labels at the new cells reducing to the top
    (`Realization.stablyReceivesAt_iff_of_mem_cofaces`); donors with no such cell are received from
    (R1) for the model (`Realization.exists_stableCandidate_eval_eq_of_hasFiniteCutReceiving`).  The
-   evaluation step and the acquisition of the marker and cap calibration are compiled, reducing
-   (R4) to a sufficient finite statement, `StageType.HasStableRecoverySchemes` for
-   `StageType.MarkerCapCalibration` ((R4) from it is
-   `StableCappedReceiving.of_hasStableRecoverySchemes_markerCap`).  That finite hypothesis is false
-   at every `ξ`, over a root with no private point and the twins of the five-cell type
+   evaluation step and the acquisition of the marker and cap calibration are compiled; (R4) follows
+   from `StageType.HasStableRecoverySchemes` for `StageType.MarkerCapCalibration`
+   (`StableCappedReceiving.of_hasStableRecoverySchemes_markerCap`), a finite hypothesis that is
+   false at every `ξ`, over a root with no private point and the twins of the five-cell type
    (`Continuation.StableRecoveryCounterexample.not_hasStableRecoverySchemes_markerCap`); (R4) is
    not refuted.  The calibration is weaker than the design of `README.md`, Layer 3, 3.3, and than
    the coupled gate form of (R1) (`StageType.HasCoupledGatedPinnedExtensions`): it lacks the cap of
    full scope and full grade, the reference cells and the arity bound.  The graded cap calibration
    (`StageType.GradedCapCalibration`: a cap of grade `N` above the arity of the root, labelled at
    least `λ_ξ + N`, and reference cells of grade at most `N` with offsets below `N`) excludes that
-   instance, its acquisition is compiled (`Realization.IsModel.acquiresCalibratedContexts_gradedCap`,
-   from non-hollowness, growth, uniformity and covering), and (R4) follows from stable recovery
+   instance, its acquisition is compiled
+   (`Realization.IsModel.acquiresCalibratedContexts_gradedCap`, from non-hollowness, growth,
+   uniformity and covering), and (R4) follows from stable recovery
    schemes for it (`StableCappedReceiving.of_hasStableRecoverySchemes_gradedCap`; open, still to be
-   proved).  A scheme with one graded index, of the scope and grade of a cap, all of whose cells
-   read the new cells through the cap and reference cells is a stable recovery scheme
+   proved).  A scheme that carries a coface of `T⁺↓λ_ξ`, has the scheme of `D` as its face along
+   `f` followed by the new point, and has a cell `s` of grade `N`, the grade of a cap labelled at
+   least `λ_ξ + N` (with `γ < λ_ξ + N`), whose scope contains the scope of the cap, such that every
+   new cell of `D` lies below the graded index of `s` and every cell of that graded index reads the
+   new cells through the cap and reference cells, is a stable recovery scheme
    (`StageType.IsStableRecoveryScheme.of_readsThroughCap`, from availability and the decoder at
-   one reading cell, `CellScheme.Rows.IsLawful.label_eq_of_reading`); the existence of such
-   schemes is not proved.  The acquisition of the design's cap of full scope and full grade is not
-   compiled.
+   one reading cell, `CellScheme.Rows.IsLawful.label_eq_of_reading`).  This reading is not
+   confined to one graded index (informal; not compiled: by bountifulness at the cap `⊥` and
+   completeness it constrains every graded face of grade `N` containing the cap, a reference cell
+   and a new cell).  The existence of such schemes is not proved, and no instance is compiled.  The
+   acquisition of the design's cap of full scope and full grade is not compiled.
 6. **The attained least lift and structural successor leastness** (prospective).  One lift of a
    legal stage type at a limit stage `β` to `β + ω`, least at every cell (each minimum is attained
    separately: `StageType.exists_lift_label_eq_ofOffset`); the threshold forced by a cover is read

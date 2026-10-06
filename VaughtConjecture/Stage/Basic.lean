@@ -281,23 +281,6 @@ theorem restrictFace_trans_eq_none (hf : restrictFace f t = none)
   rw [restrictFace_eq_none_iff, h]
   exact (restrictFace_eq_none_iff t f).mp hf
 
-/-- **Equal schemes and equal faces give equal labels at the visible cells**: two stage types on
-one scheme with the same face along `g` agree at every cell visible through `g`. -/
-theorem label_eq_of_restrictFace_eq {t t' : StageType.{u} α n} (h : t.toScheme = t'.toScheme)
-    {g : Fin m ↪ Fin n} {r : StageType.{u} α m} (ht : restrictFace g t = some r)
-    (ht' : restrictFace g t' = some r) {i : Fin t.card} {j : Fin t'.card} (hij : (i : ℕ) = j)
-    (hj : j ∈ t'.visibleCells g) : t.label i = t'.label j := by
-  obtain ⟨S, p, _, _, _, _⟩ := t
-  obtain ⟨S', p', _, _, _, _⟩ := t'
-  obtain rfl : S = S' := h
-  obtain ⟨hg, hr⟩ := (restrictFace_eq_some_iff _ _).mp ht
-  obtain ⟨hg', hr'⟩ := (restrictFace_eq_some_iff _ _).mp ht'
-  obtain ⟨j₀, rfl⟩ : j ∈ Set.range (S.cellMap g) := by
-    rw [Scheme.range_cellMap]
-    exact hj
-  obtain rfl : i = S.cellMap g j₀ := Fin.ext hij
-  exact label_congr (hr.trans hr'.symm) (i := j₀) (j := j₀) rfl
-
 /-! ### Cells of full grade -/
 
 /-- **Full grade means full scope**: a cell of grade `n` of a stage type on `n` points has graded

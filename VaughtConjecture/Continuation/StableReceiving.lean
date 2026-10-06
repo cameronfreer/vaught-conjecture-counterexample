@@ -127,10 +127,10 @@ block below `λ_ξ` with no cell of `T⁺`, must be determined by the rows of th
 labels of `T⁺` alone.  The graded cap calibration (`StageType.GradedCapCalibration`, in
 `VaughtConjecture.Continuation.StableRecovery`) adds a cap of grade above the arity of the root,
 the reference offsets and the finite parts of `D`, labelled at least `λ_ξ` plus its grade, and
-reference cells; its acquisition is proved, and stable recovery schemes for it are open.  The
-acquisition of the roadmap's calibration, in particular a cap of full scope and full grade with a
-large stable value, is not proved.  The apex coatom extension property does not enter (R4): it
-enters output 3 only through the coface instances at `λ_{ξ+1}`.
+reference cells of grade at most that of the cap; its acquisition is proved, and stable recovery
+schemes for it are open.  The acquisition of the roadmap's calibration, in particular a cap of full
+scope and full grade with a large stable value, is not proved.  The apex coatom extension property
+does not enter (R4): it enters output 3 only through the coface instances at `λ_{ξ+1}`.
 
 ## References
 

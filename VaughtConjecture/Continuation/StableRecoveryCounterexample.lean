@@ -39,9 +39,10 @@ face and differs from `D` at the twin `2`, where `D` is `λ_ξ + 2`, not the for
 type of scope `univ` are never separated by the face along the first point: only a cell above both,
 whose row reads them differently, separates them.
 
-**What the calibration lacks.**  A stable recovery scheme is given by one graded index of a cell
-`s` of the scope and grade of a cap, all of whose cells read the new cells of `D` through the cap
-and reference cells (`StageType.IsStableRecoveryScheme.of_readsThroughCap`, in
+**What the calibration lacks.**  A stable recovery scheme is obtained from a cell `s` of grade
+`N`, the grade of a cap, whose scope contains the scope of the cap, with every new cell of `D`
+below the graded index of `s` and every cell of that graded index reading the new cells of `D`
+through the cap and reference cells (`StageType.IsStableRecoveryScheme.of_readsThroughCap`, in
 `VaughtConjecture.Continuation.StableRecovery`): availability against the cap holds the label of
 one of them up, and the decoder at it recovers `D`
 (`CellScheme.Rows.IsLawful.label_eq_of_reading`).  Here no such cell exists: over the whole
