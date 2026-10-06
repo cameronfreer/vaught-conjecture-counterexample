@@ -95,8 +95,15 @@ Notes on the rows, each with its marker:
   rows only, as corollaries of `CrossedCouplingCounterexample.not_hasOrderedLayerStep_seedHG` and
   `not_exists_orderedLayerStep_seedL_seedLM` through the iff: at `seedHG`
   (`Seed.not_canonicalMultiStep_oriented_seedHG`) and as one choice for `seedL` and `seedLM`
-  (`Seed.not_exists_canonicalMultiStep_oriented_seedL_seedLM`).  Open: copy rows giving the step of
-  the family for every seed on five points.  Still to be
+  (`Seed.not_exists_canonicalMultiStep_oriented_seedL_seedLM`).  Compiled, for every copy rows: the
+  orientation forced on a copy by a forcing from its coatom
+  (`Seed.MultiLayerStep.copyRows_lt_of_forcesTop`; at `seedHG` the copy of `(D, 2)` reads toward
+  `C` and the copy of `(C, 3)` toward `D`, at `seedL` and `seedLM` the copies of the forcing coatom
+  at the grades 2, 3).  Refuted, for the own-side rows only (`OrderedLayer.ownSideRows`, each copy
+  reading its own coatom above the other): at `seedHG`, `seedL`, `seedLM`
+  (`Seed.not_ownSideStep_seedHG`, `…_seedL`, `…_seedLM`), not the family nor the completion;
+  undecided at `seed4`, `seed5`, `seedLL`.  Open: copy rows giving the step of the family for every
+  seed on five points.  Still to be
   proved, not refuted: `StageType.HasCoatomExtensions`,
   `StageType.HasApexCoatomExtensions`.
 - *Layer 3, receiving.*  Compiled: finite-extension receiving from finite-cut receiving, for an
@@ -263,9 +270,18 @@ named hypothesis.
    (`Seed.not_exists_canonicalMultiStep_oriented_seedL_seedLM`): a refutation of oriented rows as a
    choice uniform in the seed, not of the family nor of the completion.  Neither
    compiled sufficient clause (the product clause below the top grade, the oriented ordered-layer
-   step) holds at every compiled seed.  Open: copy rows giving the step of the family for every seed
-   on five points (`Seed.HasCanonicalMultiStep` for every seed), and the completion at `m ≥ 3` for
-   every seed.
+   step) holds at every compiled seed.  Own-side copy rows (`OrderedLayer.ownSideRows`, defined for
+   every seed: each copy reads its own coatom's cells as its original does, shifted into a higher
+   block, above the other coatom's) are refuted (negative special cases named) at `seedHG`, `seedL`
+   and `seedLM` (`Seed.not_ownSideStep_seedHG`, `…_seedL`, `…_seedLM`, from
+   `Seed.not_ownSideStep_of_forcesTop`): there every step of the family, for every copy rows, has a
+   copy forced to read the other way (`Seed.MultiLayerStep.copyRows_lt_of_forcesTop`,
+   `Seed.copyRows_lt_two_of_TH_TG`, `Seed.copyRows_lt_three_of_TH_TG`,
+   `Seed.copyRows_lt_of_TL_T5`, `Seed.copyRows_lt_of_T5_TL`); compiled in this repository (theorem
+   named).  A refutation of the own-side rows, not of the family nor of the completion; at `seed4`,
+   `seed5`, `seedLL` the own-side step is undecided.  Open: copy rows giving the step of the family
+   for every seed on five points (`Seed.HasCanonicalMultiStep` for every seed), which must meet the
+   orientations forced on the copies, and the completion at `m ≥ 3` for every seed.
 2. **Stable availability at twins** (compiled): from legal types
    (`Realization.availability_stableSection_of_hasLegalTypes`), so every model at a block stage is
    stably lawful (`Realization.IsModel.isStablyLawful`), and so is every exactly consistent

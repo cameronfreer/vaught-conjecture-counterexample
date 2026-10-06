@@ -102,8 +102,12 @@ give the step exactly when that ordered-layer step holds, an exact reformulation
 oriented rows give none at `seedHG`.  A seed *has a step of the canonical multi-layer scheme*
 (`Seed.HasCanonicalMultiStep`) when some copy rows give the step; it then has a completion below
 the full grade (`Seed.HasCanonicalMultiStep.nonempty_completionBelowFullGrade`).  Whether every
-seed has one is open; for instance rows under which each copy of `(B, k)` reads the parameters of
-its own coatom above those of the other (opposite orientations for the two copies of a grade).
+seed has one is open.  The own-side rows, under which each copy of `(B, k)` reads the cells of its
+own coatom above those of the other (opposite orientations for the two copies of a grade), are not
+such a choice: every step of the family at `seedHG`, `seedL` and `seedLM` has a copy forced to read
+the other way, so the own-side rows give those seeds no step
+(`VaughtConjecture.Extension.CanonicalMultiSchemeOwnSide`,
+`VaughtConjecture.Extension.CanonicalMultiSchemeOwnSideExamples`).
 
 ## Placement
 

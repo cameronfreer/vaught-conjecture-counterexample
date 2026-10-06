@@ -2742,9 +2742,30 @@ ones split):
   `not_exists_orderedLayerStep_seedL_seedLM`), for oriented rows only: at `seedHG`
   (`Seed.not_canonicalMultiStep_oriented_seedHG`, `Seed.not_hasOrientedLayerStep_seedHG`) and as one
   choice for both `seedL` and `seedLM` (`Seed.not_exists_canonicalMultiStep_oriented_seedL_seedLM`);
-  this refutes neither the family nor the completion. Open: copy rows giving the step of the family
-  for every seed on five points (`Seed.HasCanonicalMultiStep` for every seed), and the completion at
-  `m ≥ 3` for every seed.
+  this refutes neither the family nor the completion.
+  Own-side copy rows (`Extension/CanonicalMultiSchemeOwnSide`,
+  `Extension/CanonicalMultiSchemeOwnSideExamples`; compiled in this repository (theorem named)
+  unless marked otherwise). The own-side rows `OrderedLayer.ownSideRows I`, defined for every seed
+  from the amalgam: the copy of `(B, k)` reads its own side (the cells below `(B, k)`) as its
+  original does, shifted into the block `OrderedLayer.rowBound I` (`Label.blockShift`), above every
+  value it reads on the other side, where it reads as the other original
+  (`OrderedLayer.ownSideRows_lt`); the step with these rows is `Seed.OwnSideStep`. A necessary
+  condition on every copy rows of a step, the orientation forced on a copy
+  (`Seed.MultiLayerStep.copyRows_lt_of_forcesTop`): a forcing (`Seed.ForcesTop`) from the coatom
+  `B` of a copy, prescribing `⊤` at its original and at a cell `d₂` of the other coatom, and not at
+  a cell `d₁` of `B`, makes the copy read `d₁` strictly below `d₂`. Special cases:
+  `Seed.copyRows_lt_two_of_TH_TG`, `Seed.copyRows_lt_three_of_TH_TG` (at `seedHG`, the copy of
+  `(D, 2)` toward `C`, the copy of `(C, 3)` toward `D`), `Seed.copyRows_lt_of_TL_T5`,
+  `Seed.copyRows_lt_of_T5_TL` (the copies of the forcing coatom at the grades 2, 3 of `seedL`
+  and `seedLM`). Refuted (negative special cases named), for the own-side rows only:
+  `Seed.not_ownSideStep_of_forcesTop`, and at `seedHG`, `seedL`, `seedLM`
+  (`Seed.not_ownSideStep_seedHG`, `…_seedL`, `…_seedLM`); not the family, not the completion. At
+  `seed4`, `seed5`, `seedLL` there is no such forcing and the own-side step is undecided (at
+  `seed4`, argued, not formalized: the own-side lawful labellings below `(univ, 2)` are those with
+  `min F_C F_D ≤ A_C, A_D` and `A = F` on the coatom of the strictly smaller `F`, and they lift in
+  a finite check). Open: copy rows giving the step of the family for every seed on five points
+  (`Seed.HasCanonicalMultiStep` for every seed), meeting the orientations forced on the copies, and
+  the completion at `m ≥ 3` for every seed.
 
 The completion constructs lawful finite extensions and nothing more.  It imports only Layers
 0–1, the stage types, the amalgam, and the section theorem of `README.md`, Layer 3, 3.1 (with
@@ -3027,6 +3048,17 @@ lands, their notes stay in those modules.
   of `Label.TransformsTo.reindex`) belongs in `Label/Transform`, beside it.
   `Seed.HasCanonicalMultiStep` and `Seed.HasCanonicalMultiStep.nonempty_completionBelowFullGrade`
   are in `Extension/CanonicalMultiScheme`, beside `Seed.canonicalMultiStep_of_product`.
+- `Extension/CanonicalMultiSchemeOwnSide` and `Extension/CanonicalMultiSchemeOwnSideExamples`:
+  checkpoint 2.7, in place.  The block shift `Label.blockShift` and its lemmas
+  (`Label.le_blockShift`, `Label.blockShift_lt_omega0_sq`, `Label.eventually_lt_omega0_mul`)
+  belong beside `Label.lt_omega0_sq_iff` in `Extension/Coding`.  The orientation forced on a copy
+  (`Seed.MultiLayerStep.copyRows_lt_of_forcesTop`), the lift from a full coatom graded face
+  (`Seed.MultiLayerStep.cappedLift_copyCoatom`) and `OrderedLayer.copyCoatom_zero`,
+  `OrderedLayer.copyCoatom_one` are statements of the family for every copy rows; their home is
+  `Extension/CanonicalMultiScheme`, kept here because the forcing (`Seed.ForcesTop`) is in
+  `Extension/OrderedLayerObstruction`, which `Extension/CanonicalMultiScheme` does not import.
+  `OrderedLayer.row_ne_bot_of_isLawfulBelow` (a row read at a value other than `⊥`) is a statement
+  of the amalgam, for `Extension/Seed`.
 
 **Hull operations, the top-free age, and graded matching (Layers 0 and 2; the top-free
 witnesses).**

@@ -38,7 +38,9 @@ cell of the amalgam by `ρ (k + 1)`, through its graded index.  So both copies r
 orientation of the layer rows: the copy of the coatom `b` reads its own coatom's parameters at
 least as high as the other coatom's, and the other copy reads them in the same order.  This is one
 choice of the copy rows; the choice under which each copy reads its own coatom above the other
-(opposite orientations for the two copies of a grade) is not the one made here.
+(opposite orientations for the two copies of a grade) is not the one made here (it is
+`OrderedLayer.ownSideRows`, `VaughtConjecture.Extension.CanonicalMultiSchemeOwnSide`, which fails
+at `seedHG`, `seedL` and `seedLM`).
 
 **The lawful labellings** (compiled, for every seed and all oriented layer rows).  The *layer
 base* of a cell of the layer scheme (`OrderedLayer.layerBase`) is the cell itself for an old
@@ -98,7 +100,9 @@ one choice of the copy rows, and they are not uniform in the seed.  Whether some
 rows gives the step for every seed on five points (`Seed.HasCanonicalMultiStep` for every seed) is
 open; oriented rows are not such a choice, since they fail at `seedHG`.  The rows of `seedHG` in
 the family (`CanonicalHG.rowsHG`) read the two copies of the grade `1` in opposite orientations,
-each its own coatom's parameter above the other's.
+each its own coatom's parameter above the other's; at the grades `2` and `3` they read both copies
+alike, toward `C` and toward `D`, as every step of the family at `seedHG` must
+(`Seed.copyRows_lt_two_of_TH_TG`, `Seed.copyRows_lt_three_of_TH_TG`).
 
 ## Placement
 
