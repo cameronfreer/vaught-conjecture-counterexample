@@ -27,7 +27,7 @@ percentage of 100 would not by itself mean that the hypotheses of a layer are pr
 | 1, finite kernel | 98% | `StageType.provisionalOffset` | the bound (d) of the offset (prospective) |
 | 2, realizations, syntax | 95% | `Realization.eq_of_eval_eq_some` | hull items 4–5 for realizations |
 | 3, the completion (R6) | 72% | `Seed.nonempty_completionBelowFullGrade_of_le_two` | the step at `m ≥ 3` |
-| 3, receiving | 90% | `Expansion.finiteCutReceiving_of_hasCoupledGatedPinnedExtensions` | (R1) (4b-ii refuted); (R2)–(R4) |
+| 3, receiving | 90% | `Realization.HasFiniteCutReceiving.hasFiniteExtensionReceiving` | (R1) (4b-ii refuted; the (R1) conditional theorems under it are to be retired in a separate change); (R2)–(R4) |
 | 4, continuation | 62% | `Realization.stableCandidate` | output 3: (R4), the apex property |
 | 5, domains, agreement | 85% | `Expansion.expansionDomain_loss_countable` | the hypotheses below |
 | 6, the bounds | 90% | `densitySentence_hasThinAlephOneSpectrum_of_terminalClassification` | the hypotheses below |
@@ -59,9 +59,10 @@ Notes on the rows, each with its marker:
   `StageType.HasGatedPinnedExtensions`
   (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`); the coupled form at the inputs on
   `GatedExtensionCounterexample.P α` (`CoupledGateExamples.exists_coupledGatedExtension_comap_g₁`,
-  `CoupledGateInstance.coupledGatedPinnedExtension_donor`, and with every anchored legal one-point donor, `CoupledGateOnePointDonors.coupledGatedPinnedExtension_P`); the cap-to-model
-  theorem at a limit stage, conditional on the nonemptiness of the instances of uniformity and
-  dominance (`Realization.isModel_of_hasFiniteCutReceiving`); the top-free witnesses, steps 1–7,
+  `CoupledGateInstance.coupledGatedPinnedExtension_donor`, and with every anchored legal one-point
+  donor, `CoupledGateOnePointDonors.coupledGatedPinnedExtension_P`); the cap-to-model theorem at a
+  limit stage, conditional on the nonemptiness of the instances of uniformity and dominance
+  (`Realization.isModel_of_hasFiniteCutReceiving`); the top-free witnesses, steps 1–7,
   conditionally: steps 2–3 under `StageType.HasCoatomExtensions`, and step 7 under
   `StageType.HasApexCoatomExtensions` at `λ_η` and the uniqueness of model expansions at `λ_η`
   (`nonempty_loss_of_hasApexCoatomExtensions`).  Refuted: 4b-ii, the coupled gated pinned extension
@@ -170,12 +171,13 @@ counted as compiled.
    `⊥`), and the one witness at the gate carries its values at the anchors, through `vr_n`, to the
    donor face.  The private labelling that drops the anchor and keeps the cap is carried to a donor
    labelling that the donor's rows forbid.  Only the clauses of a coupled gated extension are used,
-   not cap lowering (CL), so the refutation holds for every display.  Its first form,
+   not cap lowering (CL), so the refutation holds whatever the display.  Its first form,
    `StageType.HasGatedPinnedExtensions`, is refuted at every stage
    (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`).  The coupled form is compiled at
    inputs without a proper anchor, on `GatedExtensionCounterexample.P α`, whose labels are `⊥` and
    `⊤` (`CoupledGateExamples.exists_coupledGatedExtension_comap_g₁`,
-   `CoupledGateInstance.coupledGatedPinnedExtension_donor`).  The conditional (R1)
+   `CoupledGateInstance.coupledGatedPinnedExtension_donor`, and with every anchored legal one-point
+   donor, `CoupledGateOnePointDonors.coupledGatedPinnedExtension_P`).  The conditional (R1)
    (`Expansion.finiteCutReceiving_of_hasCoupledGatedPinnedExtensions`) is vacuous.  (R1) itself is
    not refuted: open, whether the private contexts that models acquire
    (`Realization.IsModel.exists_privateContext_isAnchored`) satisfy the bottom transport condition

@@ -20,7 +20,9 @@ property (`StageType.HasCoupledGatedPinnedExtensions`) holds at the private type
 `GatedExtensionCounterexample.P α` for every other input: every root `f` (the arities force the
 empty root), every legal one-point donor `d`, every cell `C` of `P α` of graded index `(univ, 2)`,
 under anchoring.  This establishes the property at these inputs only (the private type `P α`,
-every root, every donor); in general it remains open.  Anchoring forces every label of `d` into
+every root, every donor); in general it is false at every stage above `1`
+(`CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`, at a private type with
+a proper anchor below the cap, which `P α` does not have).  Anchoring forces every label of `d` into
 `{⊥, ⊤}` (`labels_mem_bot_top`): the labels of `P α` are `⊥` and `⊤`, fixed by visibility
 replacement.
 
@@ -1476,7 +1478,7 @@ the cap the chosen full private cell and the gate its copy (`extension`). -/
 theorem coupledGatedPinnedExtension_P (α : Ordinal.{u}) {m : ℕ} (f : Fin m ↪ Fin 2)
     (p : StageType.{u} α m) (d : StageType.{u} α (m + 1))
     (C : Fin (GatedExtensionCounterexample.P α).card)
-    (hP : (GatedExtensionCounterexample.P α).IsLegal)
+    (_hP : (GatedExtensionCounterexample.P α).IsLegal)
     (hp : restrictFace f (GatedExtensionCounterexample.P α) = some p) (hd : d.IsLegal)
     (hdp : restrictFace Fin.castSuccEmb d = some p)
     (hC : (GatedExtensionCounterexample.P α).toCellScheme.gradedIndex C = (univ, 2))
@@ -1485,7 +1487,6 @@ theorem coupledGatedPinnedExtension_P (α : Ordinal.{u}) {m : ℕ} (f : Fin m �
     ∃ E : StageType.CoupledGatedExtension (GatedExtensionCounterexample.P α) f d,
       E.display.label E.cap = (GatedExtensionCounterexample.P α).label C := by
   -- The legality of `P α` is not needed: the display is legal for every donor.
-  refine (fun (_ : (GatedExtensionCounterexample.P α).IsLegal) ↦ ?_) hP
   obtain rfl : m = 0 := by omega
   have hℓ := labels_mem_bot_top hC ha
   rcases eq_three_or_four C hC with rfl | rfl

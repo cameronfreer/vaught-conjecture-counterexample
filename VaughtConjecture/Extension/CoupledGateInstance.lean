@@ -43,8 +43,8 @@ every legal private type (`StageType.IsLegal.capLowering`, at an arbitrary lawfu
 `StageType.IsLegal.capLowering_of_isLawful`, in `VaughtConjecture.Extension.CapLowering`).  That
 half is only part of what the display needs.  It is stated in the range `v ≥ c`, which is the only
 one where it can hold when the ambient value at `C` is at least `c`; there the bound `≤ v` is
-trivial, since the lowered value is at most `c`.  Proving it does not establish that the
-construction's open requirement is satisfied.  The hypothesis asks for a legal display; at a
+trivial, since the lowered value is at most `c`.  Proving it does not establish the
+construction's requirement.  The hypothesis asks for a legal display; at a
 forcing lift this is `CappedLift` from a coatom `(F ∪ {y}, n)`, `y` the new point, to `(univ, n)`,
 for every self-visible cap and every lawful ambient labelling.  Four parts are named in
 `CapLowering`, three at that lift and the rows:

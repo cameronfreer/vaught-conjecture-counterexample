@@ -36,12 +36,13 @@ cells whose scope contains its last point.
 * The donor is **anchored** in `P` below a cell `C` (`StageType.IsAnchored P C d`) when every
   new donor cell whose label is neither `⊥` nor at least `P.label C` is labelled
   `vr_n(P.label z, i)` (`Label.visibilityReplace n i`) for some cell `z` of `P` (its **anchor**)
-  and some `i ≤ n`.  The anchor may be self-visible at `n`, and `i = n` is allowed.  When `C` has
-  grade `n`, as in `HasGatedPinnedExtensions`, its label is self-visible at `n`, so the anchor of
-  a donor label below `P.label C` is itself labelled below `P.label C`
-  (`Label.le_visibilityReplace_of_le`).  This is exactly
-  what the readings of the gate force: a gated extension whose cap carries the label of `C` has an
-  anchored donor (`GatedExtension.isAnchored`).
+  and some `i ≤ n`.  The anchor may be self-visible at `n`, and `i = n` is allowed; an anchor whose
+  label is not self-visible at `n` (`¬ Label.IsSelfVisible n (P.label z)`) is a **proper anchor**.
+  When `C` has grade `n`, as in `HasGatedPinnedExtensions`, its label is self-visible at `n`, so
+  the anchor of a donor label below `P.label C` is itself labelled below `P.label C`
+  (`Label.le_visibilityReplace_of_le`).  This is exactly what the readings of the gate force: a
+  gated extension whose cap carries the label of `C` has an anchored donor
+  (`GatedExtension.isAnchored`).
 * The **gated pinned extension property** at stage `α` (`StageType.HasGatedPinnedExtensions α`)
   asks for a gated extension, with cap labelled as a given non-bottom cell `C` of graded index
   `(univ, n)` of `P`, for every legal `P`, every face `f` of `P` with restriction `p`, and every

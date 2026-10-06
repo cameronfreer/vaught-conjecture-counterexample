@@ -2109,41 +2109,41 @@ Each checkpoint needs both its abstract API and a concrete application:
    `CellScheme.Rows.TwinsReadGate` and holds at the refuting input
    (`CoupledGateExamples.exists_coupledGatedExtension_comap_g₁`, compiled in this repository
    (theorem named)), and at the donor labelled `⊤` on the same private type
-   (`CoupledGateInstance.coupledGatedPinnedExtension_donor`, and with every anchored legal one-point donor, `CoupledGateOnePointDonors.coupledGatedPinnedExtension_P`).  4b-ii, the construction
-   as data in the form `StageType.HasCoupledGatedPinnedExtensions`, is refuted at every stage above
-   `1` (`CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`,
+   (`CoupledGateInstance.coupledGatedPinnedExtension_donor`), and with every anchored legal
+   one-point donor (`CoupledGateOnePointDonors.coupledGatedPinnedExtension_P`).  4b-ii, the
+   construction as data in the form `StageType.HasCoupledGatedPinnedExtensions`, is refuted at every
+   stage above `1` (`CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`,
    `Extension/CoupledGatedExtensionCounterexample`, compiled in this repository (theorem named)).
    The mechanism is the bottom transport condition `StageType.CarriesBottoms`, which every coupled
    gated extension forces (`StageType.CoupledGatedExtension.carriesBottoms`, at each input of the
    property `StageType.HasCoupledGatedPinnedExtensions.carriesBottoms`): a lawful labelling of the
-   private type is the private face of a lawful labelling of the display (bountifulness from the
+   private type is the private face of a lawful labelling `q` of the display (bountifulness from the
    private face at the cap `⊥`); the cap is not `⊥` there, so neither is the gate; the one witness
-   at the gate commutes with `vr_n` below the gate, so a donor cell is `⊥` when every possible
-   anchor is (`CellScheme.Rows.IsLawful.eq_bot_of_gateReads`) and is not `⊥` when no private cell
-   that can serve its reading is (`CellScheme.Rows.IsLawful.ne_bot_of_gateReads`); and the donor
-   face is lawful for the donor.  The input: a legal private type on two points whose cell `z₁` of
-   grade `1` is labelled `1`, a proper anchor below the cap (`1` is not self-visible at `2`), with a
-   lawful labelling that drops `z₁` and keeps the cap; the empty root; and a legal donor on one
-   point whose cells `e₁`, `e₂` are labelled `1 = vr_2(1, 1)` and `⊤`, whose rows read `e₁`, `e₂`
-   within one block, so that no lawful labelling of the donor is `⊥` at `e₁` and not at `e₂`.  Only
-   the clauses of a coupled gated extension are used: the refutation holds for every display, and
-   does not use cap lowering (CL) or the lifts from the faces that contain the new point; the parts
-   of (CL) named for the instance on `P α` (the forcing lift, joint lawfulness, the rows) are not
-   decided in general.  (R1) itself is not refuted.  Open, and the next question for (R1) through a
-   gate: whether the private contexts that models acquire
+   at the gate commutes with `vr_n` up to `q G`, so a donor cell is `⊥` when every possible anchor
+   is (`CellScheme.Rows.IsLawful.eq_bot_of_gateReads`) and is not `⊥` when no private cell that can
+   serve its reading is (`CellScheme.Rows.IsLawful.ne_bot_of_gateReads`); and the donor face is
+   lawful for the donor.  The input: a legal private type on two points whose cell `z₁` of grade `1`
+   is labelled `1`, a proper anchor below the cap (`1` is not self-visible at `2`), with a lawful
+   labelling that drops `z₁` and keeps the cap; the empty root; and a legal donor on one point whose
+   cells `e₁`, `e₂` are labelled `1 = vr_2(1, 1)` and `⊤`, whose rows read `e₁`, `e₂` within one
+   block, so that no lawful labelling of the donor is `⊥` at `e₁` and not at `e₂`.  Only the clauses
+   of a coupled gated extension are used: the refutation holds whatever the display, and does not
+   use cap lowering (CL) or the lifts from the faces that contain the new point; the parts of (CL)
+   named for the instance on `P α` (the forcing lift, joint lawfulness, the rows) are not decided in
+   general.  (R1) itself is not refuted.  Open, and the next question for (R1) through a gate:
+   whether the private contexts that models acquire
    (`Realization.IsModel.exists_privateContext_isAnchored`) satisfy the bottom transport condition
    with every donor anchored below their cap (a lawful labelling of the private type that drops a
-   proper anchor and keeps the cap must not exist, or the donors must absorb it), and whether the
-   coupled property restricted to them holds; neither is stated in the library (prospective).  The
-   condition holds when the cap reads an anchor of every donor label below it in the block of its
-   reading of the cap itself (`StageType.carriesBottoms_of_row_mem_block`), which the refuting
-   private type does not satisfy; the condition is necessary for the property, not shown
-   sufficient.  The
-   conditional theorem is vacuous at every stage above `1`. The conditional theorem receives one
-   permitted cutoff at a time and is not exact projected receiving. Projected-donor lifting is not
-   part of checkpoint 4 (`README.md`, Layer 3, 3.3, the density boundary). This status concerns (R1)
-   only: (R2), (R3), and the fidelity theorem of this checkpoint remain to be proved; the
-   cap-to-model theorem at a limit stage is compiled
+   proper anchor and keeps the cap must be carried by the readings of the gate to a labelling that
+   the rows of each such donor allow), and whether the coupled property restricted to them holds;
+   neither is stated in the library (prospective).  The condition holds when the cap reads an anchor
+   of every donor label below it in the block of its reading of the cap itself
+   (`StageType.carriesBottoms_of_row_mem_block`), which the refuting private type does not satisfy;
+   the condition is necessary for the property, not shown sufficient.  The conditional theorem is
+   vacuous at every stage above `1`; it receives one permitted cutoff at a time and is not exact
+   projected receiving. Projected-donor lifting is not part of checkpoint 4 (`README.md`, Layer 3,
+   3.3, the density boundary). This status concerns (R1) only: (R2), (R3), and the fidelity theorem
+   of this checkpoint remain to be proved; the cap-to-model theorem at a limit stage is compiled
    (`Realization.isModel_of_hasFiniteCutReceiving`, `Realization/CapToModel`) conditional on the
    nonemptiness of the instances of uniformity and dominance, which the coatom extension property
    with apex gives (`CapToModel.of_hasApexCoatomExtensions`, at `ω`).

@@ -81,22 +81,23 @@ between two faces at the same grade starts below a dead cell.  The donor on one 
 shifter sending `1` to `⊥` sends `2 = vr_2(1, 2)` to `vr_2(⊥, 2) = ⊥`, the guard of the commutation
 law holding at `⊥`: no lawful labelling of the donor is `⊥` at `e₁` and not at `e₂`
 (`eq_bot_of_isLawful_donor`).  The donor's labelling `1, ⊤` is lawful (the row of `e₂` raised at
-`2`).  The only possible anchor of `e₁` is `z₁` (label `1 = vr_2(1, 1)`; `z₁` is the only cell of `P
-α`
-labelled in the block `[0, ω)`), and every private cell that can serve the reading of `e₂` is
+`2`).  The only possible anchor of `e₁` is `z₁` (label `1 = vr_2(1, 1)`; `z₁` is the only cell of
+`P α` labelled in the block `[0, ω)`), and every private cell that can serve the reading of `e₂` is
 labelled `⊤`.  So the bottom transport condition asks for a lawful labelling of the donor
 `⊥` at `e₁` and not at `e₂` (`not_carriesBottoms`), and no coupled gated extension exists
 (`isEmpty_coupledGatedExtension`).
 
 **What this refutes and what it does not.**
 * It refutes the universal hypothesis `StageType.HasCoupledGatedPinnedExtensions α` at every stage
-  `α > 1`, for every design: only the clauses of `StageType.CoupledGatedExtension` are used (the
-  legality of the display, its literal faces, the graded indices of the gate and the cap, the
-  twin–gate coupling and the readings of the gate).  So the conditional (R1)
+  `α > 1`, whatever the display: only the clauses of `StageType.CoupledGatedExtension` are used
+  (the legality of the display, its literal faces, the graded indices of the gate and the cap, the
+  twin–gate coupling and the readings of the gate).  The identified obstruction survives the
+  redesigns examined (the twins labelled `⊥`, and the twin–gate coupling); a redesign that weakens
+  the legality of the display at the private coatom is not covered.  So the conditional (R1)
   (`Realization.IsModel.hasFiniteCutReceiving_of_hasCoupledGatedPinnedExtensions`,
   `Expansion.finiteCutReceiving_of_hasCoupledGatedPinnedExtensions`) is vacuous at those stages.
 * It does not refute (R1), finite-cut receiving for all models: whether the private types that
-  4b-i acquires from a model (`Realization.IsModel.exists_privateContext`) can carry such an anchor
+  models acquire (`Realization.IsModel.exists_privateContext`) can carry such an anchor
   (a lawful labelling of the private type that is `⊥` at an anchor and not at the cap, with a donor
   whose rows read the transported pattern within one block) is not decided here.
 * The refuting private type has a unique cell of full scope and full grade, and cells of grade
@@ -107,7 +108,8 @@ labelled `⊤`.  So the bottom transport condition asks for a lawful labelling o
   the instances of the property compiled at the private type `GatedExtensionCounterexample.P α`,
   whose labels are `⊥` and `⊤`
   (`CoupledGateExamples.exists_coupledGatedExtension_comap_g₁`,
-  `CoupledGateInstance.coupledGatedPinnedExtension_donor`), have no proper anchor.
+  `CoupledGateInstance.coupledGatedPinnedExtension_donor`, and with every anchored legal one-point
+  donor, `CoupledGateOnePointDonors.coupledGatedPinnedExtension_P`), have no proper anchor.
 
 ## Placement
 

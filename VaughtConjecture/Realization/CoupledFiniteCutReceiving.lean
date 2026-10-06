@@ -106,14 +106,18 @@ construction in its proof are open:
   `CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`?
 
 **What is not assumed.**  None of the following is assumed or claimed here: (R1), receiving,
-uniqueness or coherence of expansions; the coupled property itself, beyond its one compiled
-input; that the coupled property holds for `P α` at its other donors (a donor labelled `⊤`, donors
-with several new cells) or for other private types; that the twins of the gate are `⊥` or that
-the gate is unique; that a layer of copies of the private cells of full grade, with the gate the
-copy of the cap, extends to the cells containing the new point; that the marker controls the
-twins; that a cell added by `Scheme.fieldLayer` can serve as the gate; coding of the anchored
-entries by `Label.canonicalCode`; the transitivity of [Kni26, Lemma 2.3.14] or the offset bound of
-[Kni26, Lemma 2.5.13]; exact projected receiving.
+uniqueness or coherence of expansions; the coupled property itself, beyond its compiled inputs, all
+on `P α` (`CoupledGateExamples.exists_coupledGatedExtension_comap_g₁`,
+`CoupledGateInstance.coupledGatedPinnedExtension_donor`, and every anchored legal one-point donor in
+`CoupledGateOnePointDonors.coupledGatedPinnedExtension_P`); that the coupled property holds for
+other private types without a proper anchor (the property fails at a private type with a proper
+anchor below the cap, at every stage above `1`:
+`CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`); that the twins of the
+gate are `⊥` or that the gate is unique; that a layer of copies of the private cells of full grade,
+with the gate the copy of the cap, extends to the cells containing the new point; that the marker
+controls the twins; that a cell added by `Scheme.fieldLayer` can serve as the gate; coding of the
+anchored entries by `Label.canonicalCode`; the transitivity of [Kni26, Lemma 2.3.14] or the offset
+bound of [Kni26, Lemma 2.5.13]; exact projected receiving.
 Different cutoffs may use different private contexts and different occurrences.
 
 ## Placement
