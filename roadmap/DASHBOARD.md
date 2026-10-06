@@ -69,7 +69,7 @@ Notes on the rows, each with its marker:
   forcing donors (`Expansion.stableCappedReceiving_of_continuationCriterion`), so the two are
   equivalent under (R1), forcing donors and the coface instances
   (`Expansion.stableCappedReceiving_iff_continuationCriterion`); (R4) from the finite statement
-  `StageType.HasStableRecoverySchemes` for the marker and cap calibration, open
+  `StageType.HasStableRecoverySchemes` for the marker and cap calibration, open and possibly false
   (`StableCappedReceiving.of_hasStableRecoverySchemes_markerCap`); cover-hollowness and stable-label
   fixedness (`Realization.isCoverHollow_iff_forall_stableLabel_eq_top`); the exact-age comparison
   (`Realization.nonempty_equiv_of_exactReceivingWithin`); the three comparisons, the rigid-core one
@@ -179,11 +179,14 @@ counted as compiled.
    stable labels at the new cells reducing to the top
    (`Realization.stablyReceivesAt_iff_of_mem_cofaces`); donors with no such cell are received from
    (R1) for the model (`Realization.exists_stableCandidate_eval_eq_of_hasFiniteCutReceiving`).  The
-   evaluation step and the acquisition of the marker and cap calibration are compiled, leaving one
-   finite statement, `StageType.HasStableRecoverySchemes` for `StageType.MarkerCapCalibration`
-   (open, not tested on any instance; weaker calibration than the design of `README.md`, Layer 3,
-   3.3, whose full-grade cap labelled the formal top is not acquired): (R4) from it is
-   `StableCappedReceiving.of_hasStableRecoverySchemes_markerCap`.
+   evaluation step and the acquisition of the marker and cap calibration are compiled, reducing
+   (R4) to a sufficient finite statement, `StageType.HasStableRecoverySchemes` for
+   `StageType.MarkerCapCalibration` (open, possibly false; not known to follow from (R4)): (R4)
+   from it is `StableCappedReceiving.of_hasStableRecoverySchemes_markerCap`.  The calibration is
+   weaker than the design of `README.md`, Layer 3, 3.3, and than the coupled gate form of (R1)
+   (`StageType.HasCoupledGatedPinnedExtensions`): it lacks the cap of full scope and full grade,
+   the reference cells and the arity bound, and the acquisition of the design's cap is not
+   compiled.
 6. **The attained least lift and structural successor leastness** (prospective).  One lift of a
    legal stage type at a limit stage `β` to `β + ω`, least at every cell (each minimum is attained
    separately: `StageType.exists_lift_label_eq_ofOffset`); the threshold forced by a cover is read

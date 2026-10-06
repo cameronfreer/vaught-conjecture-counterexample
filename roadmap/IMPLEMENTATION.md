@@ -2306,8 +2306,9 @@ Each checkpoint needs both its abstract API and a concrete application:
    reducing to the top; the evaluation step and the acquisition of the marker and cap calibration
    are compiled, so (R4) follows from the finite statement `StageType.HasStableRecoverySchemes` for
    `StageType.MarkerCapCalibration` at every `ξ < ω₁`
-   (`StableCappedReceiving.of_hasStableRecoverySchemes_markerCap`), new and open (`README.md`, Layer
-   4, status, output 3). Step 7 is
+   (`StableCappedReceiving.of_hasStableRecoverySchemes_markerCap`), new and open, and possibly
+   false: the calibration lacks the cap of full scope and full grade, the reference cells and the
+   arity bound of the design (`README.md`, Layer 4, status, output 3). Step 7 is
    compiled conditionally (`README.md`, the section on the top-free witnesses): the loss at `η`
    under uniqueness at `λ_η` (`nonempty_loss_of_topFreeWitness`), and per block under
    `StageType.HasApexCoatomExtensions` at `λ_η` and uniqueness of the model expansions at `λ_η`
@@ -2987,6 +2988,11 @@ witnesses).**
   output 3 imports `Continuation/Classification`, or the structure moves to that module, a move to
   record here. `Realization.IsCoverHollowAtBlock` is beside `Realization.IsCoverHollow` in
   `Continuation/Hollow`.
+- `Continuation/StableReceiving` and its examples module: Layer 4, in place.
+  `Expansion/StableReceiving` and its examples module: Layer 4, placed in `Expansion/` because the
+  equivalence of (R4) with the continuation criterion takes (R1) as `Expansion.FiniteCutReceiving`
+  (`Expansion/Agreement`, Layer 5), and no module of `Continuation/` imports a module of
+  `Expansion/`.
 - `Expansion/UniquenessOfForcing`: Layer 5, in place, separate from `Expansion/BlockDetermination`
   so that the import closure of the main theorem contains no `Definability/` module.
   `Expansion/Losses`: Layer 5, in place. `Counting/Domains`:
