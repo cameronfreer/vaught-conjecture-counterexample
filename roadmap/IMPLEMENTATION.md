@@ -2347,6 +2347,22 @@ Each checkpoint needs both its abstract API and a concrete application:
    `StageType.HasCoatomExtensions` at `ω`, still to be proved); once that property is proved, the
    reduction to `ℕ` for the density sentence no longer needs `CapToModel`.
 
+   **The main theorem: two forms.**
+   `densitySentence_hasThinAlephOneSpectrum_of_terminalClassification`
+   (`MainTheorem/ModelExpansionDomains`) is compiled conditionally on seven named hypotheses:
+   `CapToModel`, (R1), forcing donors, `ContinuationCriterion`, (R2), (R3), and nonempty losses.
+   `densitySentence_hasThinAlephOneSpectrum_of_terminalClassification_of_hasApexCoatomExtensions`,
+   with its form on all countable carriers
+   `vaughtCounterexample_allCarriers_of_terminalClassification_of_hasApexCoatomExtensions`
+   (`MainTheorem/Composition`), is compiled conditionally on six: (R1), forcing donors,
+   `ContinuationCriterion`, (R2), (R3), and `StageType.HasApexCoatomExtensions` at every countable
+   block stage.  Derived in it, not assumed: `CapToModel` (`CapToModel.of_hasApexCoatomExtensions`,
+   at `λ_0 = ω`, for the carriers of every universe), next-block uniqueness
+   (`Expansion.NextBlockUniqueness.of_forcingDonors`), countable losses
+   (`Expansion.expansionDomain_loss_countable`), and nonempty losses
+   (`hasNonemptyLosses_of_hasApexCoatomExtensions`).  The seven-hypothesis form is kept; the
+   six-hypothesis form follows from it.
+
 **A listed future repin, outside the order 1–6.**  A repin of InfinitaryLogic to a revision
 containing `2cd44c3` (or the release tag that follows it) has been neither made nor decided.  A
 controlled move, if undertaken, would be a separate checkpoint, before the first application of
@@ -3107,3 +3123,8 @@ noted).
   none at `η = 0` (`eq_reconstruct_of_blockStage_zero`); the cap-to-model hypothesis of
   `densitySentence_hasThinAlephOneSpectrum_of_hasApexCoatomExtensions` is derived from the coatom
   extension property with apex at `η = 0`.
+- The six-hypothesis form of the main theorem (`MainTheorem/Composition`) uses the coatom
+  extension property with apex at `η = 0` for `CapToModel`, at every countable block stage for
+  nonempty losses, and nowhere else; (R1) for next-block uniqueness, logical agreement and countable
+  losses; forcing donors for next-block uniqueness only; `ContinuationCriterion`, (R2) and (R3) for
+  countable losses only.
