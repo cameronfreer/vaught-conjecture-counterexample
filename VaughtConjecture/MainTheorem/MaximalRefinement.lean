@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import InfinitaryLogic.Scott.RefinementCount
-import VaughtConjecture.Label.GreatestIndex
+import VaughtConjecture.Counting.OrdinalAttainment
 import VaughtConjecture.MainTheorem.LowerBound
 
 /-!
@@ -56,7 +56,7 @@ for model expansions of base structures isomorphic to `B` on any carrier
    coherence of the expansions below the limit derived from next-block uniqueness), and are
    bounded by the countable `qrank σ`; so they have a greatest element `ρ` (bounded-stage
    attainment, `exists_isGreatest_servingIndex_of_le`, for any countable bound, through
-   `exists_isGreatest_of_closed`, in `VaughtConjecture.Label.GreatestIndex`).
+   `exists_isGreatest_of_closed`, in `VaughtConjecture.Counting.OrdinalAttainment`).
 5. *Terminality and the literal reduct* (`exists_maximalRefinement_of_modelExpansion`).  A model
    expansion `f` of `B` to `λ_ρ` is terminal at `ρ`, since `ρ + 1` is not serving
    (`Realization.IsExpansionOf.isTerminalAt`).  Literal uniqueness of a terminal model expansion

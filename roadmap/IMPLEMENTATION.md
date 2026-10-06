@@ -1300,9 +1300,9 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     characterizes termination for one base; it is not a separate proof of termination.  In the raw
     base encoding, 4 ⇒ 5 is compiled conditional on `Expansion.NextBlockUniqueness`, on any carrier:
     `MainTheorem.exists_isGreatest_servingIndex_of_le` (`MainTheorem/MaximalRefinement`), through
-    `exists_isGreatest_of_closed` (`Label/GreatestIndex`, no hypothesis).  That ordinal statement
-    is not the same as the greatest-stage statements of `OrdinalUtil` ("Dependency pins",
-    **Upstream statements quoted, not compiled here**), but follows from each:
+    `exists_isGreatest_of_closed` (`Counting/OrdinalAttainment`, Layer 0, no hypothesis).  That
+    ordinal statement is not the same as the greatest-stage statements of `OrdinalUtil`
+    ("Dependency pins", **Upstream statements quoted, not compiled here**), but follows from each:
     `exists_greatest_stage_lt_omega1` assumes `P 0` (here from `P β` by downward closure) and a
     bound `ξ ≤ A` only below `ω₁` (here `A = δ`), and concludes `P ξ ↔ ξ ≤ ρ`; the general forms
     `exists_forall_iff_le_of_bounded_of_isSuccLimit_closed` and
@@ -1531,10 +1531,11 @@ hypothesis of each statement of 2–4 that uses it, until it is proved as a theo
    (a prospective application).  Bounded-stage attainment is compiled here conditionally, in the
    raw base encoding: `MainTheorem.exists_isGreatest_servingIndex_of_le`, conditional on
    `Expansion.NextBlockUniqueness`, through the local ordinal statement
-   `exists_isGreatest_of_closed` (`Label/GreatestIndex`; note 34), which the quotation replaces at
-   a repin containing `c16de09` and `2cd44c3` ("Placement record").  The negative special case
-   (the everywhere-undefined assignment: criteria 1 and 4 vacuous, criterion 5 false) compiled as
-   an example.  No proof of criterion 1 that uses termination is cited as a proof of termination.
+   `exists_isGreatest_of_closed` (`Counting/OrdinalAttainment`; note 34), which the quotation
+   replaces at a repin containing `c16de09` and `2cd44c3` ("Placement record").  The negative
+   special case (the everywhere-undefined assignment: criteria 1 and 4 vacuous, criterion 5 false)
+   compiled as an example.  No proof of criterion 1 that uses termination is cited as a proof of
+   termination.
 3. *Literal uniqueness:* for a terminal model presentation at `ρ`, every model presentation at `η`
    has `η ≤ ρ` and is literally its reduct, with no countability assumed; two terminal model
    presentations of one base have the same index and are equal; and no extension of a partial
@@ -1598,9 +1599,9 @@ named, and none is complete because another is.
    `MainTheorem.expansionDomain_subsingleton_of_isolates`, and `MainTheorem.lt_qrank_of_isolates`,
    which specialize `notMem_of_isolating_of_uniform` to the domain at the quantifier rank of the
    isolating sentence, and the attained maximum by `exists_isGreatest_of_closed`
-   (`Label/GreatestIndex`).  At a repin containing `c16de09` and `2cd44c3`, the quotations
-   replace them: `exists_isGreatest_of_closed` by the greatest-stage statement, and the local
-   two-class argument by Scott separation ("Placement record").
+   (`Counting/OrdinalAttainment`).  At a repin containing `c16de09` and `2cd44c3`, the
+   quotations replace them: `exists_isGreatest_of_closed` by the greatest-stage statement, and the
+   local two-class argument by Scott separation ("Placement record").
 5. *The stopping proofs and positive niceness:* each stopping proof that is used (the
    countable-slot argument; the Scott route, 4 above) stated as its own theorem, concluding a
    terminal presentation of each base that is a model, with its own dependencies, the two not
@@ -1983,7 +1984,8 @@ pinned dependency: signatures verified against the upstream source at `2cd44c3` 
 `c16de09`), not compiled here (neither compiled against our pin `e460cb6` nor `#check`ed in
 `SuggestedInterfaces.lean`); no application is compiled in this repository.  Local statements
 compiled in place of the greatest-stage statement and of Scott separation, to be replaced by
-these at a repin containing them, are listed in the "Placement record" (`Label/GreatestIndex`).
+these at a repin containing them, are listed in the "Placement record"
+(`Counting/OrdinalAttainment` and `MainTheorem/MaximalRefinement`).
 
 - *Greatest attained stage* (`OrdinalUtil`): a predicate on stages that holds at `0`, is closed
   downward, is closed under successor limits below `ω₁`, and is bounded on the stages below `ω₁`
@@ -2843,14 +2845,11 @@ lands, their notes stay in those modules.
   A3, **Upstream ingredients**: each with its upstream module, except the two `realize_*_equiv`
   lemmas, which become redundant once `BoundedFormulaω.realize_equiv` and `LomegaEquiv.of_equiv`
   are generalized across carrier universes.
-- `Label/GreatestIndex`: `exists_isGreatest_of_closed`, an ordinal statement used by
-  `MainTheorem/MaximalRefinement`, is to be replaced at a repin containing `c16de09` and
-  `2cd44c3` by a quotation of the greatest-stage statements of InfinitaryLogic (`OrdinalUtil`;
-  "Dependency pins", **Upstream statements quoted, not compiled here**), from which it follows
-  (note 34).  At the same repin, the two-class argument of
-  `MainTheorem/MaximalRefinement` (`expansionDomain_subsingleton_of_isolates` with
-  `lt_qrank_of_isolates`) is to be derived from `notMem_of_isolating_of_uniform`
-  (`OrdinalCountability`), with the statements kept.
+- `MainTheorem/MaximalRefinement`: at a repin containing `c16de09` and `2cd44c3`, the two-class
+  argument (`expansionDomain_subsingleton_of_isolates` with `lt_qrank_of_isolates`) is to be
+  derived from `notMem_of_isolating_of_uniform` (`OrdinalCountability`), with the statements kept.
+  Its attained greatest index is the Layer 0 statement of `Counting/OrdinalAttainment` (below,
+  "Counting").
 - `MainTheorem/Scatteredness` (pull request #42): every statement is generic (none mentions the
   density sentence), and its statements are quotations of InfinitaryLogic (at the pin `e460cb6`):
   `isThinOn_of_countable_bfClasses` of `isThinOn_of_bfScattered` (`Descriptive/BFScattered`),
@@ -3002,8 +3001,13 @@ witnesses).**
 - The import guard of `Definability/*` (its forbidden prefixes are listed in `README.md`, "Import
   guards") is to be added with the other guards of `scripts/check.sh`.
 
-**Counting (Layers 5–6).**
+**Counting (Layers 0, 5–6).**
 
+- `Counting/OrdinalAttainment`: Layer 0, a general ordinal statement (Mathlib only, no
+  construction imports).  `exists_isGreatest_of_closed`, used by `MainTheorem/MaximalRefinement`,
+  is to be replaced at a repin containing `c16de09` and `2cd44c3` by a quotation of the
+  greatest-stage statements of InfinitaryLogic (`OrdinalUtil`; "Dependency pins", **Upstream
+  statements quoted, not compiled here**), from which it follows (note 34).
 - `Counting/Filtration` and `Counting/Separation`: their generic statements are proved as quotations
   of InfinitaryLogic's `OrdinalCountability` (at the pin `e460cb6`), with their statements kept:
   `Filtration.ofRank` is built from `rankTail` (its domain is `rankTail r` by definition), and

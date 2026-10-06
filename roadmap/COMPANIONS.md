@@ -740,7 +740,7 @@ is compiled conditionally on block determination (below).  None is an input to t
   `expansionDomain_nontrivial` and `expansionDomain_subsingleton_of_isolates`, which specialize
   the upstream `notMem_of_isolating_of_uniform`, and the attainment by
   `MainTheorem.exists_isGreatest_servingIndex_of_le`, through `exists_isGreatest_of_closed`
-  (`Label/GreatestIndex`).  At a repin containing `c16de09` and `2cd44c3`, the upstream
+  (`Counting/OrdinalAttainment`).  At a repin containing `c16de09` and `2cd44c3`, the upstream
   quotations replace them: `exists_isGreatest_of_closed` by the greatest-stage statement, and the
   local two-class argument by Scott separation (`IMPLEMENTATION.md`, "Placement record").  For
   one literal base that is a model, a bound of this kind over all its model presentations is
