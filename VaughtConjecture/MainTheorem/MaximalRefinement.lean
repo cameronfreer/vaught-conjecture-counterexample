@@ -25,6 +25,10 @@ is a model expansion of `B` to `λ_β`.  The **maximal refinement** of `V`
 * `ρ` is the greatest serving index of `B`: every model on `X` at a block stage `λ_η` whose base
   structure is `B` has `η ≤ ρ`.
 
+Maximality is read literally, for the base structure `B` on `X`; it holds up to isomorphism too,
+for model expansions of base structures isomorphic to `B` on any carrier
+(`le_of_modelExpansion_of_equiv`, through `ModelExpansion.map`).
+
 **The route.**
 1. *An isolating sentence* (`exists_isolates`).  A sentence `σ` **isolates** `B` (`Isolates`)
    when a countable structure of the base language in `Type` satisfies `σ` exactly when it is
@@ -251,6 +255,16 @@ theorem exists_maximalRefinement_of_modelExpansion (hrec : FiniteCutReceiving.{0
     (Order.lt_add_one_iff.mpr le_rfl).not_ge (hmax h)
   obtain ⟨h, hfe⟩ := exists_le_reduceBlock_eq_of_isTerminalAt hnext hρ f hterm e
   exact ⟨ρ, h, hρ, f, hterm, congrArg Subtype.val hfe, fun _ h ↦ hmax h⟩
+
+omit [Countable B] in
+/-- **Maximality up to isomorphism**: if every serving index of `B` is at most `ρ`, then every
+model expansion, to a block stage `λ_η`, of a base structure isomorphic to `B`, on any carrier,
+has `η ≤ ρ`: it is carried back to a model expansion of `B` (`ModelExpansion.map`). -/
+theorem le_of_modelExpansion_of_equiv {ρ η : Ordinal.{0}}
+    (hmax : ∀ η, Nonempty (ModelExpansion B (blockStage η)) → η ≤ ρ) {N : Type*}
+    [baseLanguage.{0}.Structure N] (i : B ≃[baseLanguage.{0}] N)
+    (g : ModelExpansion N (blockStage η)) : η ≤ ρ :=
+  hmax η ⟨g.map i.symm⟩
 
 /-- **Maximal refinement of a prescribed model**: a model `V` at a block stage `λ_β` on a
 countable carrier `X` is the stage reduction, literally, of a model `W` at a block stage `λ_ρ` on

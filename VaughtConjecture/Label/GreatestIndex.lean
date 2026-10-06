@@ -16,8 +16,15 @@ which `P` holds; if `P` failed at `ρ`, it would hold at every ordinal below `ρ
 closure, so `ρ` would be neither zero (`P β` with `β ≤ ρ`), nor a successor (the supremum of
 ordinals below `a + 1` is at most `a`), nor a limit (closure at limits).
 
-The statement uses Mathlib only.  The same statement is available upstream in InfinitaryLogic,
-not at the pin `e460cb6`.
+The statement uses Mathlib only.  It is not stated in InfinitaryLogic at the pin `e460cb6`.  It
+follows from the greatest-stage statements of InfinitaryLogic (`OrdinalUtil`), available
+upstream, not at the pin, but it is not the same statement as any of them:
+* the general forms `exists_isGreatest_setOf_of_bounded_of_isSuccLimit_closed` and
+  `exists_forall_iff_le_of_bounded_of_isSuccLimit_closed` assume closure at every nonzero limit,
+  not only below `ω₁`; here closure at a limit above `δ` holds vacuously, since `P` fails at `δ`;
+* the countable form `exists_greatest_stage_lt_omega1`, on `Ordinal.{0}`, assumes `P 0` (here
+  from `P β` by downward closure) and a bound `ξ ≤ A` on the countable `ξ` at which `P` holds
+  (here `A = δ`), and concludes that `P ξ` holds exactly when `ξ ≤ ρ`.
 
 ## Placement
 
@@ -32,8 +39,9 @@ open Order Ordinal
 
 /-- **An attained greatest index**: a predicate on ordinals that holds at `β`, is closed
 downward, is closed at the nonzero countable limits, and holds only below a countable ordinal `δ`
-has a greatest element `ρ`, with `β ≤ ρ < δ`.  Mathlib only; the same statement is available
-upstream in InfinitaryLogic, not at the pin `e460cb6`. -/
+has a greatest element `ρ`, with `β ≤ ρ < δ`.  Mathlib only; it follows from the greatest-stage
+statements of InfinitaryLogic, available upstream, not at the pin `e460cb6`, whose hypotheses and
+conclusions differ (see the module docstring). -/
 theorem exists_isGreatest_of_closed {P : Ordinal.{u} → Prop} {β δ : Ordinal.{u}} (hβ : P β)
     (hdown : ∀ ⦃a b⦄, a ≤ b → P b → P a)
     (hlim : ∀ l, IsSuccLimit l → l < ω₁ → (∀ a < l, P a) → P l)

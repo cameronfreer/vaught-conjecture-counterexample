@@ -1150,8 +1150,15 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     characterizes termination for one base; it is not a separate proof of termination.  In the raw
     base encoding, 4 ⇒ 5 is compiled conditional on `Expansion.NextBlockUniqueness`, on any carrier:
     `MainTheorem.exists_isGreatest_servingIndex_of_le` (`MainTheorem/MaximalRefinement`), through
-    `exists_isGreatest_of_closed` (`Label/GreatestIndex`, no hypothesis; the same statement is
-    available upstream in InfinitaryLogic, not at the pin `e460cb6`).
+    `exists_isGreatest_of_closed` (`Label/GreatestIndex`, no hypothesis).  That ordinal statement
+    is not the same as the greatest-stage statements of `OrdinalUtil` ("Dependency pins",
+    **Upstream statements quoted, not compiled here**), but follows from each:
+    `exists_greatest_stage_lt_omega1` assumes `P 0` (here from `P β` by downward closure) and a
+    bound `ξ ≤ A` only below `ω₁` (here `A = δ`), and concludes `P ξ ↔ ξ ≤ ρ`; the general forms
+    `exists_forall_iff_le_of_bounded_of_isSuccLimit_closed` and
+    `exists_isGreatest_setOf_of_bounded_of_isSuccLimit_closed` assume closure at every successor
+    limit (here vacuous above `δ`, where `P` fails).  It is to be replaced by a quotation of one
+    of them at a repin containing `c16de09` and `2cd44c3` ("Placement record").
 35. Prospective, conditional on the injectivity of model reduction at each countable index (two
     model presentations of the base at one index are equal), an explicit hypothesis until proved.
     Both its steps use it: the inequality at `ρ` (terminal collision, which also uses
@@ -1187,7 +1194,8 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     `Realization.isTerminalAt_iff_forall_lt` (`Continuation/Terminal`),
     `Realization.IsModel.reduce` (`Realization/Model`), and `Realization.IsModel.lt_omega_one`
     with `le_blockStage` (`Realization/Expansion`), which give `β < ω₁` before the given model is
-    read as a model presentation.  The terminal model is on the same carrier as the given model,
+    read as a model presentation (the planned route; the compiled form below does not use them).
+    The terminal model is on the same carrier as the given model,
     not on an isomorphic copy.  A terminal presentation of the base comes from either stopping
     proof of note 30 (the countable-slot argument, or the Scott route of row 40, whose maximal
     presentation is terminal); literal-reduct uniqueness is row 35, conditional on the
@@ -1199,7 +1207,8 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     (`MainTheorem/MaximalRefinement`): a model `V` at `λ_β` on a countable carrier `X` is the stage
     reduction to `λ_β`, literally, of a model `W` at `λ_ρ` on `X`, `β ≤ ρ < ω₁`, terminal at `ρ`,
     and every model on `X` at a block stage `λ_η` with the base structure of `V` has `η ≤ ρ`;
-    `β < ω₁` is derived from `β ≤ ρ`.
+    `β < ω₁` is derived from `β ≤ ρ`.  Maximality up to isomorphism of the base, on any carrier,
+    follows by `MainTheorem.le_of_modelExpansion_of_equiv` (through `ModelExpansion.map`).
 39. Prospective as a combined statement, which is not named, in two forms: carrier-general (a
     base structure on any carrier, with `ξ < ω₁` an explicit hypothesis) and coded (codes on
     `ℕ`, where `ξ < ω₁` follows from `Expansion.expansionDomain_eq_empty`).  Its ingredients are
@@ -1369,9 +1378,13 @@ hypothesis of each statement of 2–4 that uses it, until it is proved as a theo
    dependency: signatures verified against the upstream source at `2cd44c3`, not compiled here;
    "Dependency pins"), with `P` the serving indices, `hzero` from a model base, `hdown` from
    downward model reduction, `hlim` from limit coherence, and `hA` and `hbound` from criterion 4
-   (a prospective application).  The negative special case (the everywhere-undefined assignment:
-   criteria 1 and 4 vacuous, criterion 5 false) compiled as an example.  No proof of criterion 1
-   that uses termination is cited as a proof of termination.
+   (a prospective application).  Bounded-stage attainment is compiled here conditionally, in the
+   raw base encoding: `MainTheorem.exists_isGreatest_servingIndex_of_le`, conditional on
+   `Expansion.NextBlockUniqueness`, through the local ordinal statement
+   `exists_isGreatest_of_closed` (`Label/GreatestIndex`; note 34), which the quotation replaces at
+   a repin containing `c16de09` and `2cd44c3` ("Placement record").  The negative special case
+   (the everywhere-undefined assignment: criteria 1 and 4 vacuous, criterion 5 false) compiled as
+   an example.  No proof of criterion 1 that uses termination is cited as a proof of termination.
 3. *Literal uniqueness:* for a terminal model presentation at `ρ`, every model presentation at `η`
    has `η ≤ ρ` and is literally its reduct, with no countability assumed; two terminal model
    presentations of one base have the same index and are equal; and no extension of a partial
@@ -1403,9 +1416,9 @@ named, and none is complete because another is.
    carrier, a model on the same carrier (not an isomorphic copy), terminal at a countable
    `ρ ≥ β`, whose stage reduction to `λ_β` is literally the given model, compiled with `β` not
    assumed countable (`β < ω₁` derived first, from `Realization.IsModel.lt_omega_one` and
-   `le_blockStage`).  Its named dependencies: a terminal presentation of the base from either
-   stopping proof (5 below) and literal uniqueness (row 35), under the injectivity of model
-   reduction.
+   `le_blockStage`, or, as in the compiled form of note 38, from `β ≤ ρ`).  Its named
+   dependencies: a terminal presentation of the base from either stopping proof (5 below) and
+   literal uniqueness (row 35), under the injectivity of model reduction.
 3. *Unique reconstruction:* the `∃!` statement in its carrier-general form (no countability of
    the carrier added; `ξ < ω₁` explicit) and its coded form (a code whose class lies in
    `expansionDomain ξ`), compiled with `Expansion.NextBlockUniqueness` or block determination (or
@@ -1428,7 +1441,16 @@ named, and none is complete because another is.
    element of a loss at a countable stage at or above that rank and an element of the next domain
    (condition 4 at that stage and at the next); or
    `IsolatedPresentation.exists_countable_strict_stage_bound` for all classes at once) and
-   `exists_greatest_stage_lt_omega1` for the attained maximum.
+   `exists_greatest_stage_lt_omega1` for the attained maximum.  These two steps are compiled here
+   (note 40), in the raw base encoding, conditional on `Expansion.FiniteCutReceiving` ((R1)),
+   `Expansion.NextBlockUniqueness`, and `StageType.HasApexCoatomExtensions` at every countable
+   block stage: the strict bound by `MainTheorem.expansionDomain_nontrivial`,
+   `MainTheorem.expansionDomain_subsingleton_of_isolates`, and `MainTheorem.lt_qrank_of_isolates`,
+   which specialize `notMem_of_isolating_of_uniform` to the domain at the quantifier rank of the
+   isolating sentence, and the attained maximum by `exists_isGreatest_of_closed`
+   (`Label/GreatestIndex`).  At a repin containing `c16de09` and `2cd44c3`, the quotations
+   replace them: `exists_isGreatest_of_closed` by the greatest-stage statement, and the local
+   two-class argument by Scott separation ("Placement record").
 5. *The stopping proofs and positive niceness:* each stopping proof that is used (the
    countable-slot argument; the Scott route, 4 above) stated as its own theorem, concluding a
    terminal presentation of each base that is a model, with its own dependencies, the two not
@@ -1809,7 +1831,9 @@ head of this subsection does not apply to the Lean blocks below.  They are the s
 `c16de09` and `2cd44c3`, as merged (hypotheses included), available upstream, not yet at our
 pinned dependency: signatures verified against the upstream source at `2cd44c3` (which contains
 `c16de09`), not compiled here (neither compiled against our pin `e460cb6` nor `#check`ed in
-`SuggestedInterfaces.lean`); no application is compiled in this repository.
+`SuggestedInterfaces.lean`); no application is compiled in this repository.  Local statements
+compiled in place of the greatest-stage statement and of Scott separation, to be replaced by
+these at a repin containing them, are listed in the "Placement record" (`Label/GreatestIndex`).
 
 - *Greatest attained stage* (`OrdinalUtil`): a predicate on stages that holds at `0`, is closed
   downward, is closed under successor limits below `ω₁`, and is bounded on the stages below `ω₁`
@@ -2669,6 +2693,14 @@ lands, their notes stay in those modules.
   A3, **Upstream ingredients**: each with its upstream module, except the two `realize_*_equiv`
   lemmas, which become redundant once `BoundedFormulaω.realize_equiv` and `LomegaEquiv.of_equiv`
   are generalized across carrier universes.
+- `Label/GreatestIndex`: `exists_isGreatest_of_closed`, an ordinal statement used by
+  `MainTheorem/MaximalRefinement`, is to be replaced at a repin containing `c16de09` and
+  `2cd44c3` by a quotation of the greatest-stage statements of InfinitaryLogic (`OrdinalUtil`;
+  "Dependency pins", **Upstream statements quoted, not compiled here**), from which it follows
+  (note 34).  At the same repin, the two-class argument of
+  `MainTheorem/MaximalRefinement` (`expansionDomain_subsingleton_of_isolates` with
+  `lt_qrank_of_isolates`) is to be derived from `notMem_of_isolating_of_uniform`
+  (`OrdinalCountability`), with the statements kept.
 - `MainTheorem/Scatteredness` (pull request #42): every statement is generic (none mentions the
   density sentence), and its statements are quotations of InfinitaryLogic (at the pin `e460cb6`):
   `isThinOn_of_countable_bfClasses` of `isThinOn_of_bfScattered` (`Descriptive/BFScattered`),
