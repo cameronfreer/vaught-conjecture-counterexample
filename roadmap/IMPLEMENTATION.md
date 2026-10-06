@@ -1077,7 +1077,7 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     proved, `FullPresentations` stays prospective as an instance of the system of [AFK26].
     Countability of levels, read with terminal model expansions of codes in place of maximal
     presentations, is `MainTheorem.countable_isoClasses_terminalAt`
-    (`MainTheorem/CountablyManyMaximal`), compiled in this repository (theorem named),
+    (`MainTheorem/TerminalClasses`), compiled in this repository (theorem named),
     conditional on (R1), `ContinuationCriterion`, (R2), and (R3), each still to be proved.
 28. What is corrected is a statement: the same-index equivalence of Proposition 8.6 is false (an
     informal counterexample, `LITERATURE.md`, §9; not compiled); `COMPANIONS.md`, "Full trees":
@@ -1227,11 +1227,16 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     route proves stopping for each base that is a model as its conclusion and assumes no
     termination; it is not a dependency of the expansion-domain endpoint and is not combined with
     the conditional of row 31 in a cycle.
-    The maximal presentation it yields at `ρ` is terminal; read in the coded encoding (through
-    the conversion, still to be proved), its class lies among the classes terminal at `ρ`, of
-    which there are countably many at each countable level
-    (`MainTheorem.countable_isoClasses_terminalAt`, compiled in this repository (theorem named),
-    conditional on (R1), `ContinuationCriterion`, (R2), and (R3), each still to be proved).
+    The maximal presentation it yields at `ρ` is terminal.  Read in the coded encoding (through
+    the conversion, still to be proved), the class of the base lies in the loss at `ρ`
+    (`Expansion.mem_expansionDomain_iff` with `ModelExpansion.map`), hence among the classes
+    terminal at `ρ` (`MainTheorem.loss_subset_terminalClasses`, unconditional), of which there
+    are countably many at each countable level (`MainTheorem.countable_isoClasses_terminalAt`,
+    compiled in this repository (theorem named), conditional on (R1), `ContinuationCriterion`,
+    (R2), and (R3), each still to be proved); the loss alone is already countable under the same
+    hypotheses (`Expansion.expansionDomain_loss_countable`).  The terminality of the presentation
+    itself transports to the code along the isomorphism (`Realization.IsTerminalAt.map`,
+    unconditional).
 
 **Completion criteria, item by item** (the items of `README.md`, "Manuscript correspondence
 (required)").  For every item, each row of the concordance that it concerns is P or C, with its
@@ -2162,9 +2167,12 @@ Each checkpoint needs both its abstract API and a concrete application:
    `StageType.HasApexCoatomExtensions` at `λ_η` and uniqueness of the model expansions at `λ_η`
    (`nonempty_loss_of_hasApexCoatomExtensions`, `MainTheorem/LowerBound`).
 
-   **Condition 2: checkpoints A–E.**  Condition 2 of the reduction (countable successor losses)
-   is complete conditionally on output 3 (`ContinuationCriterion`), (R1), (R2), and (R3).  Each
-   checkpoint is compiled in this repository (theorem named); its hypotheses are listed below.
+   **Condition 2 and the count at one level: checkpoints A–F.**  Condition 2 of the reduction
+   (countable successor losses) is complete at E, conditionally on output 3
+   (`ContinuationCriterion`), (R1), (R2), and (R3).  F is the count at one level for the terminal
+   models (`README.md`, "Reduction to full presentations"), a strengthening of E's count that
+   condition 2 does not need.  Each checkpoint is compiled in this repository (theorem named);
+   its hypotheses are listed below.
 
    | Checkpoint | Content | Module |
    | --- | --- | --- |
@@ -2173,7 +2181,7 @@ Each checkpoint needs both its abstract API and a concrete application:
    | C | the countable index of terminal properties; the cover | `Continuation/Classification` |
    | D | the comparison of expansions sharing a property | `Continuation/Comparison` |
    | E | losses are terminal; one class per property; the count | `Expansion/Losses` |
-   | F | the classes terminal at a level; one class per property; the count | `MainTheorem/CountablyManyMaximal` |
+   | F | the classes terminal at a level; the cover; the count | `MainTheorem/TerminalClasses` |
 
    - A: `Realization.nonempty_equiv_of_exactReceivingWithin`, pointed
      `Realization.exists_equiv_comp_eq_of_exactReceivingWithinAt`; no named hypothesis.
@@ -2197,11 +2205,15 @@ Each checkpoint needs both its abstract API and a concrete application:
      (`MainTheorem/ModelExpansionDomains`).
    - F: `MainTheorem.loss_subset_terminalClasses`, unconditional;
      `MainTheorem.terminalClasses_subset_iUnion`, conditional on `ContinuationCriterion`;
-     `MainTheorem.subsingleton_propertyClasses`, conditional on (R1), (R2), and (R3) for
-     `Realization.IsCoverHollowAtBlock`; `MainTheorem.exists_injective_terminalProperty` and
      `MainTheorem.countable_isoClasses_terminalAt` (countably many classes terminal at each
-     countable level), conditional on these four; the rigid-core comparison keeping the core,
-     `ModelExpansion.exists_equiv_comp_eq_of_isGloballyRigidCore`, conditional on (R1).
+     countable level), conditional on these and on (R1), (R2), and (R3) for
+     `Realization.IsCoverHollowAtBlock`, through E's `Expansion.subsingleton_classes_of_property`
+     and `Counting.countable_of_subsingleton_cover`; the rigid-core comparison keeping the core,
+     `ModelExpansion.exists_equiv_comp_eq_of_isGloballyRigidCore` (`Expansion/Losses`),
+     conditional on (R1); the transport of terminality along a bijection of carriers,
+     `Realization.IsTerminalAt.map` (`Continuation/Terminal`), unconditional.  Examples:
+     `MainTheorem/TerminalClassesExamples` (the losses from the count, the base block `β = 0`,
+     the pointed comparison at the empty core).
 6. Domain hypotheses of the counting theorem, the upper and lower bounds, thinness, and the
    reduction to `ℕ` (all countable carriers).  Status: the conditional compositions of both routes
    are compiled, on `ℕ` (`MainTheorem/Assembly`) and on all countable carriers
@@ -2966,6 +2978,8 @@ noted).
   as the named hypotheses of the residual and hollow cases.
 - Checkpoint E uses C, D, and `Counting.countable_of_subsingleton_cover`; the main theorem uses
   forcing donors only for next-block uniqueness, that is, for the limit clause of the domains.
+- Checkpoint F uses C, and E's `Expansion.subsingleton_classes_of_property`; neither condition 2
+  nor the main theorem uses F.
 - Normalization: the threshold lemma uses finite-extension receiving at the cutoff `λ_η` (from
   (R1)) and forcing donors; next-block uniqueness uses both
   (`Expansion.NextBlockUniqueness.of_forcingDonors`). Forcing donors waits on the completion below

@@ -30,7 +30,9 @@ that is zero or a limit reduces to `R` (`isTerminalAt_iff_forall_lt`): such a `�
 reduction to `λ_ξ` (`Realization.reduce_reduce`).  If no model at `λ_{ξ+1}` on the carrier of a
 base structure `M` is an expansion of `M`, every expansion of `M` at `λ_ξ` is terminal
 (`IsExpansionOf.isTerminalAt`): a model at `λ_{ξ+1}` reducing to it would have the base reduct
-`M`.  No uniqueness of expansions is used.
+`M`.  No uniqueness of expansions is used.  Terminality transports along a bijection of carriers
+(`IsTerminalAt.map`), so a model expansion transported along an isomorphism of base structures
+(`ModelExpansion.map`) is terminal when the original is.
 
 **Top grade.**  The **top grade** of a stage type (`StageType.topGrade`) is the largest grade of a
 cell labelled `⊤`, and `0` if there is none; it is `0` exactly for the top-free types
@@ -138,6 +140,15 @@ theorem IsExpansionOf.isTerminalAt [baseLanguage.{u}.Structure M] {ξ : Ordinal.
   rw [← R'.reduce_reduce (isSuccPrelimit_blockStage ξ) Ordinal.isSuccLimit_omega0.isSuccPrelimit
     (omega0_le_blockStage ξ), heq]
   exact hR.toStructure_reduce
+
+/-- **Terminality transports along a bijection of carriers**: if `R` is terminal at `ξ`, so is its
+transport along `e : M ≃ N`.  A model at `λ_{ξ+1}` on `N` reducing to the transport would
+transport back to a model on `M` reducing to `R` (`Realization.reduce_map`, `IsModel.map`). -/
+theorem IsTerminalAt.map {N : Type*} {ξ : Ordinal.{u}} {R : Realization.{u, v} (blockStage ξ) M}
+    (h : R.IsTerminalAt ξ) (e : M ≃ N) : (R.map e).IsTerminalAt ξ := by
+  intro R' hR' hred
+  apply h (R'.map e.symm) (hR'.map _)
+  rw [reduce_map, hred, map_symm_map]
 
 end Realization
 
