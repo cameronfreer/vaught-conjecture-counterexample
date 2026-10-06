@@ -100,19 +100,6 @@ section Apex
 variable {α : Ordinal.{u}} {n : ℕ} {t : StageType.{u} α n} (ht : t.IsLegalBelowFullGrade)
   (hn : 0 < n)
 
-/-- The cells of the type with the apex added that are visible through a proper face are old. -/
-theorem mem_range_castSucc_of_addApex {k : ℕ} (f : Fin k ↪ Fin n) (hf : univ.map f ≠ univ)
-    (z : Fin (t.addApex ht hn).card)
-    (hz : ((t.addApex ht hn).toCellScheme.scope z : Set (Fin n)) ⊆ Set.range f) :
-    z ∈ Set.range (Fin.castSucc : Fin t.card → Fin (t.card + 1)) := by
-  induction z using Fin.lastCases with
-  | last =>
-    refine absurd (eq_univ_of_forall fun x ↦ ?_) hf
-    obtain ⟨y, rfl⟩ : x ∈ Set.range f :=
-      hz (mem_coe.mpr ((addApex_scope_last ht hn).symm ▸ mem_univ x))
-    exact mem_map_of_mem _ (mem_univ y)
-  | cast z => exact ⟨z, rfl⟩
-
 /-- **The apex forces through its row.**  If `t` restricts to `p` along a proper face `f`, the cell
 `d` of `p` is carried to `e`, and a cell `x` of `t` with label at least `β` (zero or a limit) and at
 most the label of `e` has grade at least that of `e`, then the reduction to `β` of `t` with the
@@ -172,18 +159,6 @@ section Constructions
 
 variable {α : Ordinal.{u}} {k l N : ℕ}
 
-/-- A face along an embedding carries the labels and grades of its cells, at their positions. -/
-theorem exists_cellMap_of_restrictFace_eq {Q : StageType.{u} α N} {g : Fin k ↪ Fin N}
-    {P : StageType.{u} α k} (h : restrictFace g Q = some P) (i : Fin P.card) :
-    ∃ j : Fin (Q.toScheme.comap g).card, (j : ℕ) = i ∧ Q.label (Q.cellMap g j) = P.label i ∧
-      Q.toCellScheme.grade (Q.cellMap g j) = P.toCellScheme.grade i := by
-  obtain ⟨hf, rfl⟩ := (restrictFace_eq_some_iff Q g).mp h
-  exact ⟨i, rfl, rfl, rfl⟩
-
-/-- A proper face rules out the type on no points. -/
-theorem pos_of_univ_map_ne {g : Fin k ↪ Fin N} (hg : univ.map g ≠ univ) : 0 < N :=
-  Nat.pos_of_ne_zero fun h ↦ hg (by subst h; exact Subsingleton.elim _ _)
-
 /-- **A cell of full grade tied to a cell of a proper face.**  If `W` is legal on `N` points, `r`
 is its face along a proper face `h`, and the label of the cell `i` of `r` is self-visible at `N`,
 then some legal `U` on `N` points has the proper faces of `W` and a cell of grade `N` labelled as
@@ -240,36 +215,6 @@ section Padding
 
 variable {α : Ordinal.{u}} {k N : ℕ}
 
-/-- **Padding**: under the coatom extension property, every legal stage type on `k` points is the
-face along `Fin.castLEEmb` of a legal stage type on any `N ≥ k` points. -/
-theorem exists_isLegal_restrictFace_castLEEmb (hext : HasCoatomExtensions.{u} α)
-    {P : StageType.{u} α k} (hP : P.IsLegal) (hkN : k ≤ N) :
-    ∃ Q : StageType.{u} α N, Q.IsLegal ∧ restrictFace (Fin.castLEEmb hkN) Q = some P := by
-  induction N, hkN using Nat.le_induction with
-  | base =>
-    refine ⟨P, hP, ?_⟩
-    rw [show Fin.castLEEmb (le_refl k) = Function.Embedding.refl _ from
-      Function.Embedding.ext fun _ ↦ Fin.ext rfl]
-    exact restrictFace_refl P
-  | succ N hkN ih =>
-    obtain ⟨Q, hQ, hQP⟩ := ih
-    obtain ⟨Q', hQ', hQ'Q⟩ := exists_extension hext hQ
-    refine ⟨Q', hQ', ?_⟩
-    rw [show Fin.castLEEmb (hkN.trans (Nat.le_succ N)) =
-        (Fin.castLEEmb hkN).trans Fin.castSuccEmb from Function.Embedding.ext fun _ ↦ Fin.ext rfl,
-      ← restrictFace_trans _ _ _ hQ'Q]
-    exact hQP
-
-/-- The image of `Fin.castLEEmb` is a proper subset when the target is larger. -/
-theorem univ_map_castLEEmb_ne {hkN : k ≤ N} (hlt : k < N) :
-    univ.map (Fin.castLEEmb hkN) ≠ univ := fun h ↦ by
-  have hmem := mem_univ (⟨k, hlt⟩ : Fin N)
-  rw [← h, mem_map] at hmem
-  obtain ⟨y, -, hy⟩ := hmem
-  have h1 : ((Fin.castLEEmb hkN y : Fin N) : ℕ) = k := Fin.ext_iff.mp hy
-  have h2 : ((Fin.castLEEmb hkN y : Fin N) : ℕ) = y := rfl
-  omega
-
 /-- **A legal type with a cell of full grade labelled `β + n`**, for `2 ≤ n`, `β` zero or a limit,
 and `β + n < α`, under the coatom extension property: a legal one-point type labelled `β + n`,
 padded to `n` points, cut to its part below the full grade, and closed by the tied apex at the cell
@@ -289,21 +234,11 @@ end Padding
 
 end StageType
 
-/-- The second coatom is not the whole ground set. -/
-theorem Coatom.univ_map_right_ne {m : ℕ} : univ.map (Coatom.right m) ≠ univ := fun he ↦ by
-  have h := mem_univ (Fin.castSucc (Fin.last m))
-  rw [← he, Coatom.univ_map_right] at h
-  exact notMem_erase _ _ h
-
 /-! ### Forcing donors -/
 
 section Forcing
 
 variable {η : Ordinal.{u}}
-
-/-- `λ_η + n` lies below `λ_{η+1}`. -/
-theorem coe_add_lt_blockStage_add_one (n : ℕ) : blockStage η + n < blockStage (η + 1) := by
-  rw [blockStage_add_one]; exact (add_lt_add_iff_left _).mpr (Ordinal.natCast_lt_omega0 n)
 
 /-- **The coatom extension property at `λ_{η+1}` gives forcing donors at `η`**, at every input:
 the order law when the threshold is at most the grade of the cell, and otherwise the apex over

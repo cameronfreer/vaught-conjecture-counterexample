@@ -130,9 +130,10 @@ second does not replace the first, and both are kept.
 
 Each hypothesis is a separate statement with its own status.  None of them is derived from another
 in the library, except hypotheses 1 and 7, which are derived from hypothesis 8 (with next-block
-uniqueness, from hypotheses 2 and 3, for hypothesis 7), and hypothesis 4, which is derived from
-hypothesis 8 together with (R4) (`ContinuationCriterion.of_hasApexCoatomExtensions`); (R4) is in
-neither list.
+uniqueness, from hypotheses 2 and 3, for hypothesis 7), hypothesis 3, which is derived from
+hypothesis 8 (`forcingDonors_of_forall_hasApexCoatomExtensions`; the six-hypothesis form still
+takes it), and hypothesis 4, which is derived from hypothesis 8 together with (R4)
+(`ContinuationCriterion.of_hasApexCoatomExtensions`); (R4) is in neither list.
 
 | Hypothesis | Lean | Used for | Seven | Six |
 | --- | --- | --- | --- | --- |
@@ -156,10 +157,10 @@ Status of each:
 3. `ForcingDonors`: still to be proved.  Compiled conditionally on the coatom extension property
    at `λ_{ξ+1}` (`forcingDonors_of_hasCoatomExtensions`, `Extension/ForcingDonorsCoatom`), hence on
    the coatom extension property with apex at every countable block stage
-   (`forcingDonors_of_forall_hasApexCoatomExtensions`), the hypothesis of the conditional forms of
-   items 1 and 7: with it, `ForcingDonors` is not a separate assumption.  Unconditionally: one- and
-   two-point inputs up to the threshold `4` (`forcingDonorsUpTo_one_four`,
-   `forcingDonorsUpTo_two_four`).
+   (`forcingDonors_of_forall_hasApexCoatomExtensions`), hypothesis 8.  The six-hypothesis form on
+   `main` keeps forcing donors as its hypothesis `hF`; `hF` can now be dropped by a separate
+   composition (prospective).  Unconditionally: one- and two-point inputs up to the threshold `4`
+   (`forcingDonorsUpTo_one_four`, `forcingDonorsUpTo_two_four`).
 4. `ContinuationCriterion`: still to be proved (sufficiency only; the converse is not stated).
    Compiled conditionally on (R4) and the coatom extension property with apex at every successor
    block stage (`ContinuationCriterion.of_hasApexCoatomExtensions`); (R4) is still to be proved,

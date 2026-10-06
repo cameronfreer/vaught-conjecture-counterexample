@@ -2887,6 +2887,10 @@ Each checkpoint needs both its abstract API and a concrete application:
    six-hypothesis form is obtained from it by the two derivations above
    (`CapToModel.of_hasApexCoatomExtensions`, `hasNonemptyLosses_of_hasApexCoatomExtensions`).  No
    converse is known; the seven-hypothesis form is not derived from the six-hypothesis form.
+   Forcing donors at every countable block follow from `StageType.HasApexCoatomExtensions` at
+   every countable block stage (`forcingDonors_of_forall_hasApexCoatomExtensions`,
+   `Extension/ForcingDonorsCoatom`), so the hypothesis `hF` of the six-hypothesis form can now be
+   dropped by a separate composition (prospective); the six-hypothesis form on `main` keeps it.
 
 **A listed future repin, outside the order 1–6.**  A repin of InfinitaryLogic to a revision
 containing `2cd44c3` (or the release tag that follows it) has been neither made nor decided.  A
@@ -3270,7 +3274,8 @@ lands, their notes stay in those modules.
   convex geometries (it uses only `subset_of_mem`), to `Geometry.ConvexGeometry`, beside
   `mem_restrict`.
 - `Extension/Basic`: `Fin.Embedding.univ_map_snoc` to Mathlib, `Mathlib.Data.Fin.Tuple.Embedding`,
-  beside `Fin.Embedding.snoc`.
+  beside `Fin.Embedding.snoc`; `pos_of_univ_map_ne` and `univ_map_castLEEmb_ne`, facts about
+  embeddings of `Fin`, are candidates for Mathlib with it.
 - `Extension/Merge`: `Merge` is order theory on finite chains, not about schemes; it belongs in an
   `Order/` folder of the library, and is a candidate for Mathlib.
 - `Extension/CoatomScheme`: `Geometry.IsPlan.map` to `Geometry.Plan`, beside `IsPlan.preimage`;
@@ -3289,12 +3294,6 @@ lands, their notes stay in those modules.
 - `Extension/PartBelowFullGrade`: `Scheme.cellsBelowFullGrade`, `Scheme.partBelowFullGrade`, and
   `Scheme.IsLegal.isLegalBelowFullGrade_partBelowFullGrade` to `Extension/Apex`, beside
   `Scheme.IsLegalBelowFullGrade`.
-- `Extension/ForcingDonorsCoatom`: `StageType.exists_cellMap_of_restrictFace_eq` to
-  `Stage.Basic`; `StageType.pos_of_univ_map_ne` and `StageType.univ_map_castLEEmb_ne`, which are
-  facts about embeddings of `Fin`, out of the namespace `StageType` to `Extension/Basic`, beside
-  `Fin.Embedding.univ_map_snoc`; `coe_add_lt_blockStage_add_one` to `Realization/Expansion`, beside
-  `blockStage_add_one`; `Coatom.univ_map_right_ne` to `Extension/CoatomScheme`, where it replaces
-  the private copy in `Extension/CompletionBelowFullGrade`.
 
 **Coding (checkpoint 2.2).**
 
@@ -3717,5 +3716,7 @@ noted).
 - The six-hypothesis form of the main theorem (`MainTheorem/Composition`) uses the coatom
   extension property with apex at `η = 0` for `CapToModel`, at every countable block stage for
   nonempty losses, and nowhere else; (R1) for next-block uniqueness, logical agreement and countable
-  losses; forcing donors for next-block uniqueness only; `ContinuationCriterion`, (R2) and (R3) for
-  countable losses only.
+  losses; forcing donors for next-block uniqueness only (they follow from the coatom extension
+  property with apex at every countable block stage,
+  `forcingDonors_of_forall_hasApexCoatomExtensions`, so a separate composition can now drop
+  `hF`); `ContinuationCriterion`, (R2) and (R3) for countable losses only.
