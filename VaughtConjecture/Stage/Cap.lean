@@ -32,8 +32,9 @@ graded order, `t.capOn Z c` (`StageType.capOn`) caps at `c` only the cells of `Z
 when every cell outside `Z` whose scope lies in the scope of a cell of `Z` of the same grade is
 labelled at most `c` (`CellScheme.Rows.IsLawful.min_const_of_upper`), and its faces along
 embeddings whose visible cells are outside `Z` are those of `t` (`StageType.restrictFace_capOn`).
-The cells through a point of grade above a bound, and the cells of grade at least a bound, are
-such sets (`VaughtConjecture.Continuation.AvailableTopDetermination`).
+The cells through a point of grade above a bound are such a set
+(`VaughtConjecture.Continuation.AvailableTopDetermination`), and so are the cells of grade at least
+a bound (`VaughtConjecture.Continuation.AvailableTopDeterminationCounterexample`).
 
 **The cap.**  At a limit stage, such a cap exists above the labels of any two top-free stage types,
 self-visible at any arity (`StageType.exists_cap`, from `Label.exists_lt_lt_isSelfVisible`): a

@@ -2912,14 +2912,18 @@ witnesses).**
   `Continuation/AnchoredDetermination` and `Extension/PinnedExtension` (for the coface carrying the
   donor in the acquisition, `StageType.exists_pinned_extension`).  The capping of an upper set of
   cells, `CellScheme.Rows.IsLawful.min_const_of_upper`, is in `Scheme/Row`, beside
-  `CellScheme.Rows.IsLawful.min_const_of_mem_scope` (a special case, kept with its own proof), and
+  `CellScheme.Rows.IsLawful.min_const_of_mem_scope` (its special case for the cells whose scope
+  contains a point, now derived from it), and
   `StageType.capOn`, with `StageType.restrictFace_capOn`, in `Stage/Cap`, beside
   `StageType.capThrough`.  `StageType.exists_pinned_extension_of_lt`, the exact pinned extension
   from the coatom extensions at arities below that of the chart, is in `Extension/PinnedExtension`,
   and `StageType.exists_pinned_extension` is now its instance (no statement changed).
-  `Realization.IsModel.exists_privateContext` and
-  `Realization.IsModel.exists_privateContext_isAnchored` now take a donor on any number of points
-  (it enters only through its labels); every use is unchanged.
+  Statement change on main (generalization): `Realization.IsModel.exists_privateContext` now
+  takes a donor on any number of points, `(d : StageType α (x.arity + 1))` →
+  `{m : ℕ} (d : StageType α m)`, and `Realization.IsModel.exists_privateContext_isAnchored` a donor
+  on any positive number of points, `(d : StageType α (x.arity + 1))` →
+  `{m : ℕ} (d : StageType α (m + 1))` (the donor enters only through its labels).  The old
+  statements are the instances `m = x.arity + 1` and `m = x.arity`, and every use is unchanged.
   `Realization.exists_covers_snoc_of_cutoffDonorDetermination`
   (`Continuation/AnchoredDetermination`) is now public, for the residual template with donors of
   bounded top grade.  `StageType.not_isRigidCoreIn_of_restrictFace_isTopFree` generalizes the

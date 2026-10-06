@@ -111,7 +111,7 @@ theorem exists_pinned_extension_of_le_three (hα : Order.IsSuccPrelimit α) {n m
 
 /-- The scheme `UnionFillCounterexample.S` on three points with the labelling `labelling ⊤ ⊤`:
 the live cells labelled `⊤`, the others `⊥`. -/
-noncomputable def topBase (α : Ordinal.{u}) : StageType.{u} α 3 where
+private noncomputable def topBase (α : Ordinal.{u}) : StageType.{u} α 3 where
   toScheme := S
   label := labelling ⊤ ⊤
   isWellFormed := isWellFormed_S
@@ -133,57 +133,59 @@ theorem isLegal_topType : (topType α).IsLegal :=
   isLegal_addApex _ _
 
 /-- The cell of `topType α` coming from the cell `d` of `S`. -/
-noncomputable def oldCell (d : Fin 9) : Fin (topType α).card :=
+private noncomputable def oldCell (d : Fin 9) : Fin (topType α).card :=
   Fin.castSucc (n := (topBase α).card) d
 
 /-- The apex of `topType α`. -/
-noncomputable def apexCell : Fin (topType α).card := Fin.last (topBase α).card
+private noncomputable def apexCell : Fin (topType α).card := Fin.last (topBase α).card
 
 /-- The cells of `topType α` are the cells of `S` and the apex. -/
-theorem cases_topType (x : Fin (topType α).card) : x = apexCell ∨ ∃ d : Fin 9, x = oldCell d := by
+private theorem cases_topType (x : Fin (topType α).card) :
+    x = apexCell ∨ ∃ d : Fin 9, x = oldCell d := by
+  -- the cells of `topType α` are those of `topBase α` and the apex
   change Fin ((topBase α).card + 1) at x
   induction x using Fin.lastCases with
   | last => exact .inl rfl
   | cast d => exact .inr ⟨d, rfl⟩
 
 /-- The cells of `S` keep their graded indices in `topType α`. -/
-theorem gradedIndex_oldCell (d : Fin 9) :
+private theorem gradedIndex_oldCell (d : Fin 9) :
     (topType α).toCellScheme.gradedIndex (oldCell d) = cells.gradedIndex d :=
   Scheme.appendFullCellScheme_gradedIndex_castSucc S 3 d
 
 /-- The cells of `S` keep their grades in `topType α`. -/
-theorem grade_oldCell (d : Fin 9) :
+private theorem grade_oldCell (d : Fin 9) :
     (topType α).toCellScheme.grade (oldCell d) = cellGrade d :=
   congrArg Prod.snd (gradedIndex_oldCell d)
 
 /-- The cells of `S` keep their scopes in `topType α`. -/
-theorem scope_oldCell (d : Fin 9) :
+private theorem scope_oldCell (d : Fin 9) :
     (topType α).toCellScheme.scope (oldCell d) = cellScope d :=
   congrArg Prod.fst (gradedIndex_oldCell d)
 
 /-- The apex of `topType α` has graded index `(univ, 3)`. -/
-theorem gradedIndex_apexCell :
+private theorem gradedIndex_apexCell :
     (topType α).toCellScheme.gradedIndex apexCell = ((univ : Finset (Fin 3)), 3) :=
   Scheme.appendFullCellScheme_gradedIndex_last S 3
 
 /-- The apex of `topType α` has full scope. -/
-theorem scope_apexCell : (topType α).toCellScheme.scope apexCell = univ :=
+private theorem scope_apexCell : (topType α).toCellScheme.scope apexCell = univ :=
   congrArg Prod.fst (gradedIndex_apexCell (α := α))
 
 /-- The apex of `topType α` has grade `3`. -/
-theorem grade_apexCell : (topType α).toCellScheme.grade apexCell = 3 :=
+private theorem grade_apexCell : (topType α).toCellScheme.grade apexCell = 3 :=
   congrArg Prod.snd (gradedIndex_apexCell (α := α))
 
 /-- The labels of the cells of `S` in `topType α`. -/
-theorem label_oldCell (d : Fin 9) : (topType α).label (oldCell d) = labelling ⊤ ⊤ d :=
+private theorem label_oldCell (d : Fin 9) : (topType α).label (oldCell d) = labelling ⊤ ⊤ d :=
   addApex_label_castSucc (t := topBase α) _ _ d
 
 /-- The apex of `topType α` is labelled `⊤`. -/
-theorem label_apexCell : (topType α).label apexCell = ⊤ :=
+private theorem label_apexCell : (topType α).label apexCell = ⊤ :=
   addApex_label_last (t := topBase α) _ _
 
 /-- Every label of `topType α` is `⊥` or `⊤`. -/
-theorem label_topType_eq_bot_or_top (x : Fin (topType α).card) :
+private theorem label_topType_eq_bot_or_top (x : Fin (topType α).card) :
     (topType α).label x = ⊥ ∨ (topType α).label x = ⊤ := by
   rcases cases_topType x with rfl | ⟨d, rfl⟩
   · exact .inr label_apexCell
@@ -206,26 +208,28 @@ private theorem two_le_grade_upper {t : StageType.{u} α 3} (x s : Fin t.card)
 /-- **The context** at a cap `c < α` self-visible at `3`: `topType α` with its cells of grade at
 least `2` capped at `c` (`StageType.capOn`).  Availability relates cells of equal grades, so no
 condition is needed. -/
-noncomputable def context {c : Ordinal.{u}} (hc : IsSelfVisible 3 (c : Label.{u})) (hcα : c < α) :
-    StageType.{u} α 3 :=
+private noncomputable def context {c : Ordinal.{u}} (hc : IsSelfVisible 3 (c : Label.{u}))
+    (hcα : c < α) : StageType.{u} α 3 :=
   (topType α).capOn (fun x ↦ 2 ≤ (topType α).toCellScheme.grade x) c hc hcα two_le_grade_upper
     fun _ _ _ hg hs hs' ↦ absurd (hg ▸ hs') hs
 
 variable {c : Ordinal.{u}} (hc : IsSelfVisible 3 (c : Label.{u})) (hcα : c < α)
 
 /-- The context is legal: it has the scheme of `topType α`. -/
-theorem isLegal_context : (context hc hcα).IsLegal :=
+private theorem isLegal_context : (context hc hcα).IsLegal :=
   isLegal_topType
 
 /-- **The top grade of the context is at most `1`**: its cells of grade at least `2` are capped
 at the ordinal `c`. -/
-theorem topGrade_context_le : (context hc hcα).topGrade ≤ 1 := by
+private theorem topGrade_context_le : (context hc hcα).topGrade ≤ 1 := by
   refine topGrade_le_iff.mpr fun x hx ↦ ?_
   by_contra hlt
-  -- the label of the context at `x` (`StageType.capOn_label`) is capped at `c`
+  -- the label of the context at `x` is capped at `c` (by `change`: `StageType.capOn_label` does
+  -- not apply at a cell of the context, a cell of the capped type only up to unfolding)
   change (if 2 ≤ (topType α).toCellScheme.grade x then min ((topType α).label x) c
     else (topType α).label x) = ⊤ at hx
   have hx2 : 2 ≤ (topType α).toCellScheme.grade x := by
+    -- the context has the scheme of `topType α`
     change 2 ≤ (context hc hcα).toCellScheme.grade x
     omega
   rw [ite_eq_left hx2] at hx
@@ -234,15 +238,13 @@ theorem topGrade_context_le : (context hc hcα).topGrade ≤ 1 := by
   exact WithBot.coe_injective.ne WithTop.coe_ne_top hle
 
 /-- The context is not top-free: its cell at `({2}, 1)`, of grade `1`, is not capped. -/
-theorem not_isTopFree_context : ¬ (context hc hcα).IsTopFree := fun h ↦ h (oldCell 2) (by
-  -- unfold the label of the context (`StageType.capOn_label`)
-  change (if 2 ≤ (topType α).toCellScheme.grade (oldCell 2) then
-    min ((topType α).label (oldCell 2)) c else (topType α).label (oldCell 2)) = ⊤
+private theorem not_isTopFree_context : ¬ (context hc hcα).IsTopFree := fun h ↦ h (oldCell 2) (by
+  simp only [context, capOn_label]
   rw [grade_oldCell, label_oldCell]
   rfl)
 
 /-- The face `{0, 1}` is a face of `topType α`. -/
-theorem face_mem_topType :
+private theorem face_mem_topType :
     univ.map (Fin.castSuccEmb : Fin 2 ↪ Fin 3) ∈ (topType α).toCellScheme.faces := by
   -- the faces of `topType α` are those of the interval plan
   change univ.map (Fin.castSuccEmb : Fin 2 ↪ Fin 3) ∈ Geometry.intervalPlan univ
@@ -252,7 +254,7 @@ theorem face_mem_topType :
 def pointEmb : Fin 1 ↪ Fin 3 := (Fin.castSuccEmb : Fin 1 ↪ Fin 2).trans Fin.castSuccEmb
 
 /-- The face `{0}` is a face of `topType α`. -/
-theorem pointFace_mem_topType : univ.map pointEmb ∈ (topType α).toCellScheme.faces := by
+private theorem pointFace_mem_topType : univ.map pointEmb ∈ (topType α).toCellScheme.faces := by
   -- the faces of `topType α` are those of the interval plan
   change univ.map pointEmb ∈ Geometry.intervalPlan univ
   decide +kernel
@@ -291,7 +293,8 @@ private theorem grade_le_one_of_mem_visibleCells {t : StageType.{u} α 3} {x : F
 
 /-- **The face on `{0}` is the face of the context along `pointEmb`**: the context agrees with
 `topType α` on the cells of grade `1`. -/
-theorem restrictFace_context : restrictFace pointEmb (context hc hcα) = some (pointFace α) := by
+private theorem restrictFace_context :
+    restrictFace pointEmb (context hc hcα) = some (pointFace α) := by
   rw [context, restrictFace_capOn fun x hx h2 ↦ by
     have := grade_le_one_of_mem_visibleCells hx
     omega]
@@ -342,6 +345,7 @@ theorem exists_new_top_pairFace : ∃ j, Fin.last 1 ∈ (pairFace α).toCellSche
     exact hvis
   refine ⟨j, ?_, ?_, ?_⟩
   · have hm := Scheme.map_comap_scope (topType α).toScheme Fin.castSuccEmb j
+    -- the scope of a cell of the face, mapped along the face, is that of its cell in `topType α`
     change ((pairFace α).toCellScheme.scope j).map Fin.castSuccEmb =
       (topType α).toCellScheme.scope ((topType α).cellMap Fin.castSuccEmb j) at hm
     rw [hj, scope_oldCell] at hm
@@ -350,10 +354,12 @@ theorem exists_new_top_pairFace : ∃ j, Fin.last 1 ∈ (pairFace α).toCellSche
       rw [hm]
       decide
     exact (mem_map' _).mp h1
-  · change (topType α).toCellScheme.grade ((topType α).cellMap Fin.castSuccEmb j) = 2
+  · -- the grade of a cell of the face is that of its cell in `topType α`
+    change (topType α).toCellScheme.grade ((topType α).cellMap Fin.castSuccEmb j) = 2
     rw [hj, grade_oldCell]
     rfl
-  · change (topType α).label ((topType α).cellMap Fin.castSuccEmb j) = ⊤
+  · -- the label of a cell of the face is that of its cell in `topType α`
+    change (topType α).label ((topType α).cellMap Fin.castSuccEmb j) = ⊤
     rw [hj, label_oldCell]
     rfl
 
@@ -372,14 +378,13 @@ theorem not_isRigidCoreIn_pairFace (hα : Order.IsSuccLimit α) :
 /-- **The context is an anchored context for the face on `{0, 1}`**: `1 + 1 < 3`, its apex, of
 graded index `(univ, 3)`, is labelled `c` (capped), above the label `⊥` of every cell of the donor
 not labelled `⊤`, and the donor, labelled `⊥` or `⊤`, is anchored vacuously. -/
-theorem isAnchoredContext_context : (context hc hcα).IsAnchoredContext (pairFace α) := by
+private theorem isAnchoredContext_context : (context hc hcα).IsAnchoredContext (pairFace α) := by
   refine ⟨by omega, apexCell, gradedIndex_apexCell, fun j hj ↦ ?_,
     isAnchored_of_forall_label_eq_bot_or_top _ _ fun j _ ↦ label_topType_eq_bot_or_top _⟩
   -- a label of the face on `{0, 1}` other than `⊤` is `⊥`, below the capped apex
   have hbot : (pairFace α).label j = ⊥ := (label_topType_eq_bot_or_top _).resolve_right hj
   rw [hbot]
-  change ⊥ < (if 2 ≤ (topType α).toCellScheme.grade apexCell then
-    min ((topType α).label apexCell) c else (topType α).label apexCell)
+  simp only [context, capOn_label]
   rw [ite_eq_left (by rw [grade_apexCell]; omega), label_apexCell,
     min_eq_right le_top]
   exact WithBot.bot_lt_coe _
@@ -388,7 +393,7 @@ theorem isAnchoredContext_context : (context hc hcα).IsAnchoredContext (pairFac
 a limit stage: it is an anchored context, it is not top-free, and the exact pinned extension on
 three points (`exists_pinned_extension_of_le_three`) gives a legal one-point coface carrying the
 donor; its private top is available by completeness. -/
-theorem isAnchoredContextWithTop_context (hα : Order.IsSuccLimit α) :
+private theorem isAnchoredContextWithTop_context (hα : Order.IsSuccLimit α) :
     (context hc hcα).IsAnchoredContextWithTop pointEmb (pairFace α) := by
   obtain ⟨D', hD', hD't', hD'd⟩ := exists_pinned_extension_of_le_three hα.isSuccPrelimit le_rfl
     (isLegal_context hc hcα) (restrictFace_context hc hcα) isLegal_pairFace restrictFace_pairFace
@@ -439,7 +444,7 @@ theorem not_cutoffDonorDetermination :
 def emptyEmb : Fin 0 ↪ Fin 2 := Function.Embedding.ofIsEmpty
 
 /-- The face `{2}` is a face of `topType α`. -/
-theorem newPoint_mem_topType :
+private theorem newPoint_mem_topType :
     univ.map (extendByLast emptyEmb) ∈ (topType α).toCellScheme.faces := by
   -- the faces of `topType α` are those of the interval plan
   change univ.map (extendByLast emptyEmb) ∈ Geometry.intervalPlan univ
@@ -458,7 +463,7 @@ theorem topType_mem_cofaces : topType α ∈ (pairFace α).cofaces :=
   ⟨isLegal_topType, restrictFace_of_mem _ _ face_mem_topType⟩
 
 /-- The cell of the face on `{0, 1}` at the live cell `6` of `S`, of graded index `(univ, 2)`. -/
-theorem exists_cell_six_pairFace : ∃ j : Fin (pairFace α).card,
+private theorem exists_cell_six_pairFace : ∃ j : Fin (pairFace α).card,
     (topType α).cellMap Fin.castSuccEmb j = oldCell 6 ∧
       (pairFace α).toCellScheme.gradedIndex j = (univ, 2) ∧ (pairFace α).label j = ⊤ := by
   have hvis : oldCell (α := α) 6 ∈ (topType α).visibleCells Fin.castSuccEmb := by
@@ -472,6 +477,7 @@ theorem exists_cell_six_pairFace : ∃ j : Fin (pairFace α).card,
     rw [Scheme.range_cellMap]
     exact hvis
   have hm := Scheme.map_comap_scope (topType α).toScheme Fin.castSuccEmb j
+  -- the scope of a cell of the face, mapped along the face, is that of its cell in `topType α`
   change ((pairFace α).toCellScheme.scope j).map Fin.castSuccEmb =
     (topType α).toCellScheme.scope ((topType α).cellMap Fin.castSuccEmb j) at hm
   rw [hj, scope_oldCell] at hm
@@ -481,10 +487,12 @@ theorem exists_cell_six_pairFace : ∃ j : Fin (pairFace α).card,
     revert z
     decide
   refine ⟨j, hj, Prod.ext hscope ?_, ?_⟩
-  · change (topType α).toCellScheme.grade ((topType α).cellMap Fin.castSuccEmb j) = 2
+  · -- the grade of a cell of the face is that of its cell in `topType α`
+    change (topType α).toCellScheme.grade ((topType α).cellMap Fin.castSuccEmb j) = 2
     rw [hj, grade_oldCell]
     rfl
-  · change (topType α).label ((topType α).cellMap Fin.castSuccEmb j) = ⊤
+  · -- the label of a cell of the face is that of its cell in `topType α`
+    change (topType α).label ((topType α).cellMap Fin.castSuccEmb j) = ⊤
     rw [hj, label_oldCell]
     rfl
 
@@ -553,6 +561,7 @@ theorem readsAtLeast_topType : ∀ x ∈ (topType α).visibleCells (extendByLast
   have hu8 : u = oldCell 8 := by
     rcases cases_topType u with rfl | ⟨d, rfl⟩
     · have := congrArg Prod.snd hu
+      -- the grade of the apex, read off the graded index
       change (topType α).toCellScheme.grade apexCell = cellGrade 6 at this
       rw [grade_apexCell] at this
       exact absurd this (by decide)
@@ -575,15 +584,16 @@ theorem isReadingContext_pairFace :
 /-- **Determination over a graded context with a top, at a non-rigid donor**: at a limit stage,
 the face on `{2}` is a coface of the empty face of the face on `{0, 1}` in which the empty root is
 not a rigid core, the face on `{0, 1}` is a graded anchored context with a top for it along the
-empty embedding (`StageType.IsGradedTopContext`), and the donor is determined over it within the
-receiving family of `topType α` at a permitted cutoff (by
+empty embedding (`StageType.IsGradedTopContext`), `topType α` is a legal one-point coface of the
+face on `{0, 1}`, and the donor is determined over it within the receiving family of `topType α`
+at a permitted cutoff, so the clause of cutoff determination with a donor holds at this instance (by
 `StageType.isDeterminedWithin_receivingFamily_of_readsAtLeast`).  So the graded predicate is not
 refuted by this instance; whether determination holds for it in general is open. -/
 theorem exists_isGradedTopContext_isDeterminedWithin (hα : Order.IsSuccLimit α) :
     ∃ t : StageType.{u} α 0, restrictFace emptyEmb (pairFace α) = some t ∧
       newPointFace α ∈ t.cofaces ∧ ¬ (newPointFace α).IsRigidCoreIn Fin.castSuccEmb ∧
       (pairFace α).IsGradedTopContext emptyEmb (newPointFace α) ∧
-      ∃ δ : Label.{u}, IsPermittedCutoff α δ ∧
+      topType α ∈ (pairFace α).cofaces ∧ ∃ δ : Label.{u}, IsPermittedCutoff α δ ∧
         IsDeterminedWithin (receivingFamily (topType α) δ) (pairFace α) emptyEmb
           (newPointFace α) := by
   obtain ⟨t, ht⟩ := Option.isSome_iff_exists.mp ((pairFace α).isSome_restrictFace_of_zero emptyEmb)
@@ -602,12 +612,13 @@ theorem exists_isGradedTopContext_isDeterminedWithin (hα : Order.IsSuccLimit α
       rw [Scheme.range_cellMap]
       exact hvis
     refine htf i ?_
+    -- the label of a cell of the donor is that of its cell in `topType α`
     change (topType α).label ((topType α).cellMap (extendByLast emptyEmb) i) = ⊤
     rw [hi, label_oldCell]
     rfl
   exact ⟨t, ht, mem_cofaces_of_zero isLegal_newPointFace, fun hr ↦ hntf
     ((isRigidCoreIn_empty_iff_isTopFree hα isLegal_newPointFace Fin.castSuccEmb).mp hr),
-    isGradedTopContext_pairFace, δ, isPermittedCutoff_iff.mpr ⟨δ, hδα, rfl⟩,
+    isGradedTopContext_pairFace, topType_mem_cofaces, δ, isPermittedCutoff_iff.mpr ⟨δ, hδα, rfl⟩,
     isDeterminedWithin_receivingFamily_of_readsAtLeast isLegal_topType
       (restrictFace_of_mem _ _ face_mem_topType) (restrictFace_of_mem _ _ newPoint_mem_topType)
       readsAtLeast_topType hδ⟩

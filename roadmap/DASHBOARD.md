@@ -149,12 +149,12 @@ Status of each:
    (`Realization.donorAcquisition_isAnchoredContextWithTop`); cutoff determination with a donor is
    refuted (`AvailableTopDeterminationCounterexample.not_cutoffDonorDetermination`: a context
    whose tops have grade 1, a donor with a new top of grade 2).  This refutes the predicate, not
-   (R2).  A predicate for which determination holds must give a context of top grade at least
-   the grade of every new top of the donor
+   (R2).  For a predicate for which determination holds, at each non-rigid donor over a legal
+   context, the top grade of the context is at least the grade of every new top of the donor
    (`Realization.CutoffDonorDetermination.grade_le_topGrade`,
    `Realization.CutoffDonorDetermination.topGrade_le`).  For the graded predicate
    (`StageType.IsGradedTopContext`), residual donor acquisition for the donors of top grade at
-   most `K` holds under the coatom extension property
+   most `K` holds under the coatom extension property at every limit stage
    (`Realization.residualDonorAcquisition_isGradedTopContext`) and determination is open (it holds
    at a compiled instance, and over a coface that reads the new tops as a private top,
    `Realization.cutoffDonorDetermination_isReadingContext`); so (R2) is compiled conditionally on

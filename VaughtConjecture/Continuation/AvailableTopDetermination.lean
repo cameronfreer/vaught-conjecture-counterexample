@@ -47,19 +47,24 @@ the donor (`StageType.isAnchoredContextWithTop_iff`).
   the private cap; in the residual case its grade is at most `K`;
 * the coatom extension property at the stage (`StageType.HasCoatomExtensions α`, [Kni26,
   Corollary 4.3.22] without the apex; still to be proved), for the coface carrying the donor: the
-  exact pinned extension (`StageType.exists_pinned_extension`).
+  exact pinned extension (`StageType.exists_pinned_extension`).  It is the plain form, not the
+  form with the apex (`StageType.HasApexCoatomExtensions α`); the form with the apex implies it
+  (`StageType.HasApexCoatomExtensions.hasCoatomExtensions`).
 
 The last hypothesis is not particular to this predicate.  Determination at a coface needs the
 coface to carry the donor (it is a member of its own receiving family), so for every predicate for
-which cutoff determination holds the acquired contexts have a legal one-point coface carrying the
-donor (`Realization.CutoffDonorDetermination.exists_hasAvailablePrivateTop`); the donor is not
-assumed realized over the cover, and (informally; no non-implication is compiled) no clause of
-modelhood gives such a coface.  For contexts on at most three points the coface exists at every
-limit stage without hypothesis
-(`AvailableTopDeterminationCounterexample.exists_pinned_extension_of_le_three`).  Given the coatom
-extension property at every limit stage, donor acquisition holds in the residual case
+which cutoff determination with a donor holds, at each non-rigid donor over a legal context, the
+context has a legal one-point coface carrying the donor
+(`Realization.CutoffDonorDetermination.exists_hasAvailablePrivateTop`).  The acquisition uses the
+coatom extension property at every donor, the rigid ones included, at which determination asks
+nothing.  The donor is not assumed realized over the cover, and (informally; no non-implication is
+compiled) each route examined from the clauses of modelhood to such a coface uses a condition on
+rows.  For contexts on at most three points the coface exists at every limit stage without
+hypothesis (`AvailableTopDeterminationCounterexample.exists_pinned_extension_of_le_three`).  Given
+the coatom extension property at every limit stage, donor acquisition holds in the residual case
 (`Realization.donorAcquisition_isAnchoredContextWithTop`, every donor) and in the hollow case
-(through the graded predicate below).
+(`Realization.donorAcquisition_isAnchoredContextWithTop_of_topGradeSup_eq_top`, a weakening of
+the acquisition of the graded predicate below).
 
 **Determination fails for this predicate**
 (`AvailableTopDeterminationCounterexample.not_cutoffDonorDetermination`).  The failing clause is
@@ -95,11 +100,12 @@ grade is at least that of the donor.
   grade `g` (`StageType.ReadsAtLeast`); availability makes one such cell `⊤` and locality then
   forces the new top (`StageType.ReadsAtLeast.label_eq_top`,
   `StageType.isDeterminedWithin_receivingFamily_of_readsAtLeast`,
-  `Realization.cutoffDonorDetermination_isReadingContext`).  From a graded context with a top to a
-  reading context is an existence statement for a pinned extension whose new cells of full scope
-  read the donor's tops at least as a private top, a condition on the rows of the new cells of the
-  kind of the twin–gate coupling of the coupled gated pinned extensions
-  (`StageType.HasCoupledGatedPinnedExtensions`, open); it is not stated here.
+  `Realization.cutoffDonorDetermination_isReadingContext`).  Passing from a graded context with a
+  top to a reading context, and so acquisition of reading contexts, is an existence statement for
+  a pinned extension with a condition on the rows of its new cells of full scope (open; not stated
+  in the library).  Informally (no implication is compiled), this condition is of the same kind as
+  the twin–gate coupling `CellScheme.Rows.TwinsReadGate` of the coupled gated pinned extension
+  property (`StageType.HasCoupledGatedPinnedExtensions`), which is itself open.
 
 **Templates** (`Realization.residualReceiving_of_residualDonorAcquisition`,
 `Realization.residualReceiving_of_cutoffDonorDetermination_isGradedTopContext`,
@@ -109,7 +115,8 @@ property at every limit stage, and cutoff determination with a donor for the gra
 is assumed in the universes of the conclusion, stronger in stage range than
 `Expansion.FiniteCutReceiving` (limit stages below `ω₁`, universe `0`), which does not supply it;
 the coatom extension property is still to be proved; determination for the graded predicate is
-open.  These are templates, not reductions: no hypothesis other than the two acquisitions is proved.
+open.  These are templates, not reductions: the acquisitions are proved under the coatom extension
+property; the other hypotheses are not.
 
 ## Placement
 
@@ -235,7 +242,8 @@ theorem not_isDeterminedWithin_receivingFamily_of_topGrade_lt
   have hq : q ∈ receivingFamily D' o₀ := by
     refine ⟨rfl, fun i j hij ↦ ?_⟩
     obtain rfl : i = j := Fin.ext hij
-    -- unfold the label of `q` at `i` (`StageType.capOn_label`) inside the cutoff
+    -- unfold the label of `q` at `i` inside the cutoff (`StageType.capOn_label` does not apply
+    -- here: `i` is a cell of `D'`, a cell of `q` only up to unfolding)
     change min (if Fin.last k ∈ D'.toCellScheme.scope i ∧ G < D'.toCellScheme.grade i then
       min (D'.label i) c else D'.label i) _ = _
     split_ifs
@@ -258,8 +266,9 @@ theorem not_isDeterminedWithin_receivingFamily_of_topGrade_lt
     rw [← hm, ← extendByLast_last h]
     exact mem_map_of_mem _ hjs
   have hl := label_congr hq' (i := j) (j := j) rfl
-  -- `q` has the scheme of `D'`, so its cell under `j` is `x`; unfold its label there, and the
-  -- label and grade of `d` at `j` as those of `D'` at `x`
+  -- `q` has the scheme of `D'`, so its cell under `j` is `x`; unfold its label there (by `change`:
+  -- `StageType.capOn_label` does not apply at a cell of `D'`), and the label and grade of `d` at
+  -- `j` as those of `D'` at `x`
   change (if Fin.last k ∈ D'.toCellScheme.scope x ∧ G < D'.toCellScheme.grade x then
     min (D'.label x) c else D'.label x) = D'.label x at hl
   change D'.label x = ⊤ at hjt
@@ -646,6 +655,19 @@ theorem donorAcquisition_isGradedTopContext
       fun t' h d ↦ t'.IsGradedTopContext h d where
   exists_context _ _ _ hα hR hH _ _ _ hc _ hd :=
     hR.exists_isGradedTopContext hα.bot_lt (hext hα) hc hd (hH.2 ▸ le_top) (hH.2 ▸ le_top)
+
+/-- **Donor acquisition of anchored contexts with a top in the hollow case**, under the coatom
+extension property at every limit stage: in every model at a limit stage satisfying any `H` with
+top-grade supremum `⊤`.  A weakening of `Realization.donorAcquisition_isGradedTopContext`. -/
+theorem donorAcquisition_isAnchoredContextWithTop_of_topGradeSup_eq_top
+    (hext : ∀ ⦃α : Ordinal.{u}⦄, Order.IsSuccLimit α → StageType.HasCoatomExtensions.{u} α)
+    (H : ∀ {α : Ordinal.{u}} {M : Type w}, Realization.{u, w} α M → Prop) :
+    DonorAcquisition.{u, w} (fun R ↦ H R ∧ R.topGradeSup = ⊤)
+      fun t' h d ↦ t'.IsAnchoredContextWithTop h d where
+  exists_context _ _ _ hα hR hH _ t c hc d hd :=
+    let ⟨k, t', c', h, hc', hcc', hP⟩ :=
+      (donorAcquisition_isGradedTopContext hext H).exists_context hα hR hH t c hc d hd
+    ⟨k, t', c', h, hc', hcc', hP.1⟩
 
 /-! ### The residual template with donors of bounded top grade -/
 
