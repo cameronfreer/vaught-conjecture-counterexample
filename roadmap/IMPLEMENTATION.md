@@ -1003,9 +1003,11 @@ classes.  Both are prospective applications, not compiled here.
 
 The milestone of `README.md`, "Manuscript correspondence (required)", spans layers 2–5 here (layers
 2–6 of `README.md`).  It concerns the correspondence with [Kni26] and [AFK26], kept distinct: each
-row of the concordance below names its source, and both are cited only by the numbered statements
-the roadmap already cites (those of [Kni26] are listed in `LITERATURE.md`, "Bibliographic access
-record"); a notion with no numbered statement is named by its source and described in words.  Each
+row of the concordance below names its source, and both are cited only by numbered statements:
+those of [Kni26] that the roadmap already cites (listed in `LITERATURE.md`, "Bibliographic access
+record"), and those of [AFK26] in the numbering of its current version, the version named in that
+record, or in the numbering of an earlier version, marked as such and named by its date in that
+record; a notion with no numbered statement is named by its source and described in words.  Each
 row gives a notion of the manuscript that the proof uses, the declarations of this repository that
 concern it (or *prospective*), and one of three statuses:
 
@@ -1028,16 +1030,20 @@ concern it (or *prospective*), and one of three statuses:
 The availability markers are those of `README.md`, Layer 0; an argument with no theorem named in
 this repository is prospective here.  Rows are added as notions are reached.  A row becomes P only
 when the theorem or the definition-level identification that performs the comparison is named, and
-becomes C only when the correction is recorded.  Rows 2–5 are P, by the definition-level
-identifications of `VaughtConjecture/Correspondence` named in their notes.  Row 6 is S:
-`IsBountiful` is the printed definition required at every stage that is zero or a limit (note 6),
-and at `ω₁` only the implication from `IsBountiful` is proved.  The other rows whose declaration
-carries the manuscript's number but whose clauses have not been compared are S, with the compiled
-declarations listed in the notes.
+becomes C only when the correction is recorded.  Row 29 is P, row 14 is P for the printed
+definitions of §2 that it names and C for the language of templates, their diagram, and its lemma
+(Definitions 4.17 and 4.18, Lemma 4.19), and row 1 is C with its truncation function P.  Rows 2–5
+are P, by the definition-level identifications of `VaughtConjecture/Correspondence` named in their
+notes.  Row 6 is S: `IsBountiful` is the printed definition required at every stage that is zero
+or a limit (note 6), and at `ω₁` only the implication from `IsBountiful` is proved.  The other
+rows whose declaration carries the manuscript's number but whose clauses have not been compared
+are S, with the compiled declarations listed in the notes.  A line with the first two cells empty
+continues the row above it: a further notion of the same row, with its own status.
 
 | Row | Source | Manuscript notion | Status |
 | --- | --- | --- | --- |
-| 1 | [AFK26] | the observation index `ξ` (no numbered statement) | S |
+| 1 | [AFK26] | the observation index `ξ`, Definitions 3.20 and 4.16 | C |
+| | | its truncation function, Definitions 3.12 and 4.9 | P |
 | 2 | [Kni26] | visibility replacement, Definition 2.2.3 | P |
 | 3 | [Kni26] | witnesses and transformation, Definition 2.3.9 | P |
 | 4 | [Kni26] | lawful labellings, Definition 2.5.4; orderly labellings, Definition 2.3.4 | P |
@@ -1045,12 +1051,14 @@ declarations listed in the notes.
 | 6 | [Kni26] | bountiful rows, Definition 2.5.14 | S |
 | 7 | [Kni26] | domains (legal schemes), Definition 2.6.1 | C |
 | 8 | [Kni26] | stage types and face maps, Definitions 3.1.1 and 3.1.5 | S |
-| 9 | [AFK26] | templates, Definitions 9.5 and 9.7 | C; item 1: S |
-| 10 | [AFK26] | the stage operation on templates (truncation), Definitions 9.5 and 9.7 | C |
+| 9 | [AFK26] | templates, Definitions 4.6 and 4.10 | C; item 1: S |
+| 10 | [AFK26] | the stage operation on templates (truncation), Definitions 4.6 and 4.10 | C |
 | 11 | [Kni26] | realizations and models, Definition 3.2.1 | S |
 | 12 | [Kni26] | the four extension families as a sentence, Definition 3.2.1, clause 4 | S |
 | 13 | [Kni26] | the density sentence against clause 4 (the fidelity theorem of this roadmap) | S |
-| 14 | [AFK26] | invariant diagram and system compatible (item 2; no numbered statement) | S |
+| 14 | [AFK26] | geometries and structured geometries, Convention 2.3, Definitions 2.1 and 2.2 | P |
+| | | invariance diagram and system compatible, Definitions 2.4–2.6 and 2.8 | P |
+| | | the language and diagram of templates, Definitions 4.17 and 4.18, Lemma 4.19 | C |
 | 15 | [Kni26] | the amalgam of two coatom types, Definition 4.3.1, and its rows, Lemma 4.3.2 | S |
 | 16 | [Kni26] | the completion of the amalgam, Definition 4.3.14 | C |
 | 17 | [Kni26] | the coatom extension with apex, Corollary 4.3.22 | S |
@@ -1059,13 +1067,16 @@ declarations listed in the notes.
 | 20 | [Kni26] | the saturated model, Definition 4.1.1 and Proposition 4.4.5 | S |
 | 21 | [Kni26] | the private context, Lemma 8.1.1, clauses 3 and 4 | S |
 | 22 | [Kni26] | `Correct`, Definition 8.3.1 | S |
-| 23 | [AFK26] | invariants and projections, Definitions 3.2 and 3.4 | C |
-| 24 | [AFK26] | back-and-forth systems, Definition 4.1 and Theorem 4.2 | C |
+| 23 | [AFK26] | invariants and projections, 1 October 2026 version: Definitions 3.2 and 3.4 | C |
+| | | the same, current version: Definitions 2.2 and 2.6 | P (row 14) |
+| 24 | [AFK26] | back-and-forth systems, 1 October 2026 version: Definition 4.1, Theorem 4.2 | C |
+| | | the same, current version: Definition 2.16 and Theorem 2.17 | C (a starting match specified) |
 | 25 | [AFK26] | density at an observation, two-index form (item 3; no numbered statement) | S |
 | 26 | [AFK26] | comparison of models with a common invariant (item 4; no numbered statement) | S |
 | 27 | [AFK26] | maximal presentations, class–level incidence (item 5; no numbered statement) | S |
-| 28 | [AFK26] | full trees, Definition 8.4 and Proposition 8.6 (item 6) | C |
-| 29 | [AFK26] | closed tuples as supported tuples (item 2; no numbered statement) | S |
+| 28 | [AFK26] | same-index equivalence (item 6), 1 October 2026 version: Proposition 8.6 | C |
+| | | full trees, current version: Definition 3.10 | S |
+| 29 | [AFK26] | closed tuples as supported tuples, Definition 2.1 (item 2) | P |
 | 30 | [AFK26] | positive niceness over all admissible lifts (item 5; no numbered statement) | S |
 | 31 | [AFK26] | a uniform fixing stage of a family (item 5; no numbered statement) | S |
 | 32 | [AFK26] | the bound of serving indices under strictness (item 5; no numbered statement) | S |
@@ -1080,10 +1091,33 @@ declarations listed in the notes.
 
 The items are those of `README.md`, "Manuscript correspondence (required)".  Notes to the rows:
 
-1. `blockStage ξ`, defined as `ω + ω * ξ`; `blockStage_eq_mul : blockStage ξ = ω * (1 + ξ)`,
-   `blockStage_zero`, `blockStage_add_one` (`Realization/Expansion`): the identities are compiled
-   in this repository (theorem named); that this is the indexing of [AFK26] is item 1, still to be
-   proved.
+1. [AFK26] reads its projection of index `β` at the stage `ω · β` (Definitions 3.20 and 4.16).
+   Corrected (C): the printed index `0` reads the stage `0`, at which the projections are not
+   compatible with the base relations (`Correspondence.not_isCompatibleWith_omega0MulSystem`,
+   row 14).  Here the observation index `ξ` is read at `blockStage ξ`, defined as `ω + ω * ξ`,
+   the printed stage of the index `1 + ξ` (`blockStage_eq_mul : blockStage ξ = ω * (1 + ξ)`,
+   `Realization/Expansion`).  With the diagram of row 14, only the index `0` is forced to change:
+   the printed system corrected at the index `0` alone is compatible and agrees with the printed
+   one at every positive index (`Correspondence.isCompatibleWith_omega0MulMaxOneSystem`,
+   `Correspondence.omega0MulMaxOneSystem_τ_of_ne_zero`); the shift by one at the other finite
+   indices is the convention of `blockStage` (`λ_0 = ω`).  (With the printed `L_c` of
+   Definition 4.17 in place of the base relations, compatibility would fail at every finite index;
+   note 14.)  Theorems about the corrected notion, compiled in this repository (theorem named), in
+   `Correspondence/StageIndexing` unless noted: the two indexings differ by the reindexing
+   `ξ ↦ 1 + ξ` (`Correspondence.omega0MulSystem_τ_one_add`, `Correspondence/InvariantSystem`); at
+   zero, the printed indices of the block stages are the positive ordinals
+   (`exists_blockStage_eq_omega0_mul_iff`, with `blockStage_natCast`); at limits, block stages are
+   continuous (`isNormal_blockStage`, `blockStage_eq_iSup_of_isSuccLimit`); the two indexings
+   agree from `ω` on (`blockStage_eq_omega0_mul_of_omega0_le`); and the block stages of countable
+   index are the limit ordinals below `ω₁` (`isSuccLimit_and_lt_omega_one_iff`), the stages of the
+   later of the two versions of 4 October 2026 of [AFK26] (its Definition 4.23; the earlier
+   version of that date defines them in its Definition 4.15, and the current version does not
+   define stages).  Proved correspondence (P): the printed truncation function (Definitions 3.12
+   and 4.9) is `Label.reduce`, clause by clause (`Label.reduce_coe_eq_ite`, `Label.reduce_bot`,
+   `Label.reduce_top`, `Label/Basic`).  Printed material, not used here: Definition 4.20 asks for
+   density at the index `ω · β` (density at an index being read through the projection of that
+   index, Definition 2.10), which by Definition 4.16 is the truncation at `ω² · β`, not at
+   `ω · β`.
 2. `Label.visibilityReplace` (`Label/Visibility`).  The definition-level identification
    `Label.printedVisibilityReplace_iff` (`Correspondence/Visibility`), compiled in this repository
    (theorem named): a map of labels satisfies the three clauses of the definition
@@ -1165,9 +1199,24 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
    types here have fixed coded rows (row 9), and the comparison with the two definitions is not
    recorded.
 9. `StageType` (a `Scheme` with fixed coded rows and a separate `label`); the correction is
-   recorded in `README.md`, layer 2, "The templates of [AFK26] and the stage types here".  The
-   coherent local rows `r_d(e) = min(p(e), p(d))` and the identification of item 1: prospective,
-   still to be proved.
+   recorded in `README.md`, layer 2, "The templates of [AFK26] and the stage types here".  It is
+   carried by theorems compiled in this repository (theorem named), `Correspondence/Template`: the
+   printed template as `Correspondence.Template`, one field for each clause of Definitions 4.4–4.6
+   (the frame conditions of Definitions 4.2 and 4.4 as `Correspondence.IsFrame`, with the plan of
+   Definition 4.1 as `Geometry.IsPlan`, whose comparison with that definition is not recorded),
+   the well-formed cell schemes of the stage types being exactly the frames with finitely many
+   cells and positive grades (`Correspondence.isWellFormed_iff_isFrame`; a printed graded face
+   allows the grade `0`),
+   the coherent local rows `r_d(e) = min(p(e), p(d))` (`Correspondence.coherentRows`), the labels
+   from the diagonal (`Correspondence.diagonal_coherentRows`), both round trips between lawful
+   labellings and coherent row systems (`Correspondence.lawfulRowsEquiv`,
+   `StageType.toTemplate_ofCoherentRows`, `StageType.ofCoherentRows_toTemplate`,
+   `StageType.eq_of_toTemplate_eq`), compatibility with projection
+   (`StageType.toTemplate_reduce`: entrywise reduction, the printed truncation of Definition 4.10)
+   and with restriction (`StageType.coherentRows_comap`, with `StageType.restrictFace_eq_none_iff`
+   for undefined faces).  Item 1, still to be proved: the fidelity question of `README.md`,
+   item 1 (whether the legal templates of Definition 4.27, with the lawful local labellings and
+   bountiful rows of Definition 4.26, are the coherent ones; not compared here).
 10. `StageType.reduce`, on labels only, coherent by `StageType.reduce_reduce` (`Stage/Basic`).
 11. `Realization`, `Realization.IsModel` (`Realization/Model`).  The docstrings of the fields of
     `Realization.IsModel` record its clauses as clauses 1, 2, 3, 4(a)i, 4(a)ii, 4(b), and 4(c) of
@@ -1186,13 +1235,58 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
 `baseLanguage.realize_densitySentence_iff_fourFamilySentence_of_hasFiniteCutReceiving_of_capToModel`
     (`Language/Density`), compiled in this repository (theorem named), conditional on (R1) and the
     cap-to-model theorem, both still to be proved; the four-family side rests on row 12.
-14. At `ω`: `baseLanguage.toStructure_toRealization`, `baseLanguage.toRealization_toStructure`,
+14. Definition-level identification (`Correspondence/InvariantSystem`, with the comparison of the
+    clauses recorded there): Convention 2.3 as `GeometrySignature`, Definitions 2.1 and 2.2 as
+    `IsGeometry` and `IsStructuredGeometry`, Definition 2.4 as `InvarianceDiagram`, Definition 2.5
+    as `InvarianceDiagram.IsCompatible`, Definition 2.6 as `InvariantSystem`, and Definition 2.8 as
+    `InvarianceDiagram.IsCompatibleWith`, one field for each printed clause; the maps `τ_β` of an
+    invariant system are indexed, as printed, by the countable ordinals `β < ω₁` (the subtype
+    `{β : Ordinal // β < ω₁}`), so a system is determined by its maps at the printed indices
+    (`Correspondence.InvariantSystem.ext`, compiled in this repository (theorem named)); P for these
+    printed definitions, every notion their clauses use being P (Definition 2.2, Convention 2.3):
+    the definitions are generic in the signature `σ : GeometrySignature L`, so the invariants of an
+    instance do not enter them.  Definition 2.7 (the projection of a structure and its rank) and
+    Lemma 2.9 (projections preserve compatibility): not compiled.  For the base language and the
+    realizations, compiled in this repository (theorem named), with the diagram supplied here: the
+    invariance diagram of the legal stage types at stage `ω₁` with the base relations at `ω`
+    (`Correspondence.stageDiagram`) satisfies each clause of Definition 2.4, the projections to the
+    block stages (`Correspondence.blockSystem`) each clause of Definition 2.6, and they are
+    compatible (`Correspondence.isCompatibleWith_blockSystem`); the compatible structures are
+    exactly the structures of the exactly consistent covering realizations with legal types at
+    stage `ω₁`, by literal mutually inverse maps
+    (`Correspondence.isCompatible_iff_exists_toInvariantStructure_eq`,
+    `Correspondence.toRealization_toInvariantStructure`,
+    `Correspondence.invariantLanguage.toInvariantStructure_toRealization`), with the base relations
+    of the reduction to `ω` (`Realization.relMap_base_iff`); the relations of [AFK26] have positive
+    arity, so no nonemptiness clause enters.  Corrected (C), Definitions 4.17, 4.18 and
+    Lemma 4.19: the printed diagram of the templates (Definition 4.18) has the templates as its
+    invariants, ranges over all templates `t` (not only `t ∈ T`), and has a clause for an order
+    symbol `≤`, carried over from the diagram of trees (Definition 3.6), that is not a symbol of
+    the language of templates (Definitions 4.15 and 4.17); the diagram of the legal stage types is
+    supplied in its place.  The two diagrams are not compared clause by clause because their
+    invariants differ: such a comparison needs the identification of the templates with the legal
+    stage types, which is row 9, item 1, still to be proved.  The clause map, recorded for that
+    comparison: the clause for `≤` has no counterpart; the clause "`P_k`, distinct places, a closed
+    set" is `InvariantSymbol.HoldsAt` at `closed` through `StageType.restrictFace` (defined exactly
+    when the places span a face, `StageType.restrictFace_eq_none_iff`); and the clause "`Q_{t*}`
+    or `R_{t*}`, with `t*` isomorphic to a renaming of the restriction of `t`" is `HoldsAt` at
+    `invariant` and at `base` through `restrictFace`, with the base relations at `ω` in place of
+    `R_{t*}`.  The base relations are the types at `ω`, fixed by the printed `τ_1` as in the proof
+    of Lemma 4.22; Definition 4.17 prints `L_c` as `L_a` with the symbols `R_t` of the templates
+    fixed by `τ_ω` (labels below `ω²`).  With that printed
+    `L_c`, and the isomorphism of the third clause of Definition 4.18 read as preserving rows,
+    Lemma 4.19 would fail at every finite index `β`: for a template `t` fixed by `τ_ω` with a label
+    `λ`, `ω · β ≤ λ < ω²`, the pair `(Q_t, R_t)` is in the diagram and `(τ_β(Q_t), R_t)` is not
+    (an informal observation; not compiled).  And the printed indexing is not compatible at the
+    index `0`, and, with the diagram supplied here, only there
+    (`Correspondence.not_isCompatibleWith_omega0MulSystem`,
+    `Correspondence.isCompatibleWith_omega0MulMaxOneSystem`), so the block indexing of row 1 is
+    used.  Earlier comparisons of two declarations of this repository: at `ω`,
+    `baseLanguage.toStructure_toRealization`, `baseLanguage.toRealization_toStructure`,
     `baseLanguage.realize_structuralSentence_iff_toRealization`; for structures covered by top-free
-    charts, at any stage: `reconstruct_toHullStructure`, `toHullStructure_reconstruct`; all
-    compiled in this repository (theorem named), each comparing two declarations of this
-    repository.  That the base language and the realizations (with legal types, on a nonempty
-    carrier) are the diagram and the system of [AFK26], and the round trip at a general fixed
-    stage: still to be proved (prospective).
+    charts, at any stage, `reconstruct_toHullStructure`, `toHullStructure_reconstruct`.  The round
+    trip in the stage chart language at a general fixed countable stage (`README.md`, item 2):
+    prospective.
 15. `Coatom.amalgamType`, `Coatom.isBountiful_amalgamType` (`Extension/CoatomAmalgam`): the lemma
     is compiled in this repository (theorem named) for the amalgam here; the comparison of the
     amalgam with the clauses of Definition 4.3.1 is not recorded, and the lemma rests on row 6.
@@ -1211,11 +1305,25 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     repository (theorem named) for the models here (row 11); the comparison of its conclusion with
     clauses 3 and 4 of the lemma is not recorded.
 22. Prospective (`README.md`, layer 3, 3.3).
-23. `FullPresentation.LevelObservations`, `FullPresentation.ObservedPresentation`
+23. The corrected statements are those of the version of 1 October 2026 (its Definitions 3.2
+    and 3.4: the composition law in one order, which does not give nested ranges, and a single
+    exclusive partition by invariants holding both a full invariant and its projections), replaced
+    by `FullPresentation.LevelObservations`, `FullPresentation.ObservedPresentation`
     (`Comparison/GradedMatchingApplications`): separate level sets, explicit projections; the
-    correction is recorded in `LITERATURE.md`, §9.
+    correction is recorded in `LITERATURE.md`, §9.  The current Definitions 2.2 and 2.6 are P
+    (row 14): Definition 2.6(c) has the composition law in both orders, and the projection of a
+    structure is a separate structure (Definition 2.7, not compiled); the disjunction of
+    Definition 2.2(b), over `ℵ₁` invariants for the stage types, is transcribed by its
+    satisfaction, not as a sentence of `L_{ω₁,ω}`.
 24. InfinitaryLogic's `BFEquiv` with a specified initial match;
-    `FullPresentation.bfEquiv_comp_of_obs_eq`; the correction is recorded in `LITERATURE.md`, §9.
+    `FullPresentation.bfEquiv_comp_of_obs_eq`.  Corrected against the version of 1 October 2026
+    (its Definition 4.1 and Theorem 4.2: the same full invariant at every level, every family of
+    matches allowed to be empty), which the current Definition 2.16 no longer has (its last family
+    is nonempty, and its matches are closed tuples with the same relations of `L_c`).  Corrected
+    against the current text: the systems of Definition 2.16 have no starting match (the empty
+    tuple is not closed, as the remark after the definition says); a specified starting match is
+    used here, and the conclusion of Theorem 2.17 is read for these systems.  Both corrections are
+    recorded in `LITERATURE.md`, §9.
 25. Prospective; ingredient `StageType.reduce_eq_of_mem_receivingFamily` (`Realization/Expansion`).
 26. `ExpansionMatchData.bfEquiv_of_expansionMatch`; `Expansion.bfEquiv_of_modelExpansions`,
     conditional on `Expansion.FiniteExtensionReceiving`, still to be proved; the structural form:
@@ -1230,19 +1338,21 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     presentations, is `MainTheorem.countable_isoClasses_terminalAt`
     (`MainTheorem/TerminalClasses`), compiled in this repository (theorem named),
     conditional on (R1), `ContinuationCriterion`, (R2), and (R3), each still to be proved.
-28. What is corrected is a statement: the same-index equivalence of Proposition 8.6 is false (an
-    informal counterexample, `LITERATURE.md`, §9; not compiled); `COMPANIONS.md`, "Full trees":
-    prospective.
-29. An injective tuple is typed exactly when its set of points is a support
-    (`Realization.isSome_eval_iff_isSupport`, `Realization/Hull`, under exact consistency); a
-    finite set is closed for the canonical closure exactly when it is a support
-    (`Realization.isClosed_coe_iff`, `Realization.isClosed_iff_of_finite`, `Realization/Closure`,
-    under exact consistency and covering); stage reduction keeps typed and untyped tuples
-    (`Realization.isSome_reduce_eval`, `Realization/Transport`) and the closure
-    (`Realization.closure_reduce`, `Realization/Closure`).  All compiled in this repository
-    (theorem named), each comparing declarations of this repository; the combined statement (an
-    injective tuple supported exactly when closed) is not named, and its comparison with the
-    closed tuples of [AFK26] is still to be proved, with item 2.  Milestone 1 of the uniform fixing
+28. What is corrected is a statement of the version of 1 October 2026: the same-index
+    equivalence of full trees (its Proposition 8.6) is false (an informal counterexample,
+    `LITERATURE.md`, §9; not compiled); it is absent from the current version.  The current
+    Definition 3.10 (the `β`-full trees, followed by an extension lemma for full trees,
+    Lemma 3.11) is cited to locate the notion and is not compared (S).  `COMPANIONS.md`, "Full
+    trees": prospective.
+29. The closed tuples of [AFK26] (Definition 2.1: the tuples satisfying `P_n`), in the structure
+    of an exactly consistent realization (row 14), are the injective tuples whose set of points is
+    a support (`Realization.relMap_closed_iff_isSupport`), equivalently, under covering, a finite
+    closed set of the canonical closure (`Realization.relMap_closed_iff_isClosed`), both in
+    `Correspondence/InvariantSystem`, compiled in this repository (theorem named).  Ingredients:
+    `Realization.isSome_eval_iff_isSupport` (`Realization/Hull`), `Realization.isClosed_coe_iff`
+    and `Realization.isClosed_iff_of_finite` (`Realization/Closure`); stage reduction keeps typed
+    and untyped tuples (`Realization.isSome_reduce_eval`, `Realization/Transport`) and the closure
+    (`Realization.closure_reduce`, `Realization/Closure`).  Milestone 1 of the uniform fixing
     bounds (`README.md`, item 5).
 30. Prospective: no declaration of this repository states positive niceness or names a fixing
     rank.  Milestone 2; it is the row "invariance over all admissible presentations, with an
@@ -1470,8 +1580,9 @@ source named.
    anything of [AFK26]; and the two counting endpoints kept with their termination dependence
    explicit, the second never silently quoted for the first.
 6. *The tree discussion:* the three refutations compiled as examples (the same-index equivalence
-   of [AFK26, Proposition 8.6], and non-implications 1 and 5 of "Checkpoint order and
-   acceptance"); the positive classification of density for trees is not part of this criterion.
+   stated in the version of 1 October 2026 of [AFK26] (its Proposition 8.6), and non-implications
+   1 and 5 of "Checkpoint order and acceptance"); the positive classification of density for trees
+   is not part of this criterion.
 
 **Completion criteria of the uniform fixing bounds, milestone by milestone** (`README.md`,
 "Manuscript correspondence (required)", item 5, "Uniform fixing bounds from positive niceness";
