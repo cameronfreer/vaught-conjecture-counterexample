@@ -52,6 +52,15 @@ the cap itself, then no lawful labelling of `P` that keeps the cap drops that an
 `⊥` sends its whole block to `⊥`), and the donor's own labelling meets the condition.  The
 condition is necessary for the property, not shown sufficient.
 
+**The anchor readings at a positive cap**
+(`CellScheme.Rows.IsLawful.min_eq_visibilityReplace_of_min_eq`).  Part 2 of the requirement named
+in `VaughtConjecture.Extension.CapLowering` asks whether the readings of the donor cells or of the
+anchors can force the gate below some `v < c` while the ambient gate is at least `c`.  For the
+anchor readings they cannot: every labelling in the cap ball of the ambient at `c` satisfies
+`min (q' e) c = min (vr_n(q' z, i)) c`, the reading at the gate value `c`.  The joint lawfulness of
+such a lift (part 3) and the rows (part 4) are not decided in general; the property fails before
+them, at the lift from the private face at the cap `⊥`.
+
 **The input** (`P`, `donor`, `isLegal_P`, `isLegal_donor`).  The private type `P α` on two points
 with the interval plan:
 
@@ -169,6 +178,29 @@ theorem ne_bot_of_gateReads (hq : R.IsLawful q) (hG : q G ≠ ⊥)
     rw [h0, le_bot_iff] at hle
     exact (min_eq_bot.mp hle).elim (hz z hzP (.inr ⟨hzC, heC⟩)) hG
 
+
+/-- **An anchor reading does not force the gate below a cap that the gate exceeds.**  Let `q` be
+lawful, `c ≤ q G` a cap self-visible at the grade `N` of the gate `G`, and let the row of `G` read
+a donor cell `e` as `vr_N` of its reading of an anchor `z`.  Then every labelling `q'` that agrees
+with `q` capped at `c` at `z` and at `e` satisfies the reading at the gate value `c`:
+`min (q' e) c = min (vr_N(q' z, i)) c`.  So in a lift at the cap `c` the anchor readings are
+consistent with a gate lowered to `c`; whether the whole locality at the gate holds there is the
+joint lawfulness of the lift, not addressed here. -/
+theorem min_eq_visibilityReplace_of_min_eq (hq : R.IsLawful q)
+    {z e : D.below (D.gradedIndex G)} {i : ℕ} (hi : i ≤ D.grade G)
+    (hrow : R.row G e = visibilityReplace (D.grade G) i (R.row G z)) {c : Label.{u}}
+    (hc : IsSelfVisible (D.grade G) c) (hcG : c ≤ q G) {q' : ι → Label.{u}}
+    (hz : min (q' z) c = min (q z) c) (he : min (q' e) c = min (q e) c) :
+    min (q' e) c = min (visibilityReplace (D.grade G) i (q' z)) c := by
+  obtain ⟨g, σ, hw, hgN, heq⟩ := hq.exists_gateWitness G
+  have hz' : min (σ (R.row G z)) (q G) = min (q z) (q G) := (heq z).symm
+  have h' := hw.min_apply_visibilityReplace (hq.orderly G) hgN hz' hi
+  rw [← hrow, ← heq e] at h'
+  -- Cap the reading at `c ≤ q G`.
+  have hcap : min (q e) c = min (visibilityReplace (D.grade G) i (q z)) c := by
+    rw [← min_eq_right hcG, ← min_assoc, h', min_assoc]
+  rw [he, hcap, ← visibilityReplace_min_of_isSelfVisible hi hc, ← hz,
+    visibilityReplace_min_of_isSelfVisible hi hc]
 
 /-- **A cap that reads an anchor in its own block keeps it.**  If the row of `C` reads a cell `z`
 below it and `C` itself in one block `[μ, μ + ω)` (`μ` zero or a limit), then a lawful labelling
