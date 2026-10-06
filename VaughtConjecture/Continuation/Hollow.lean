@@ -189,6 +189,20 @@ theorem isCoverHollow_of_isTopFree (h : ∀ x : R.Occurrence, x.type.IsTopFree) 
     R.IsCoverHollow :=
   fun ⟨x, a, _, ha, _⟩ ↦ h x a ha
 
+/-- **An anchor at the top transports** along a bijection of carriers: the transport of the
+occurrence is an anchor at the same cell and bound, since the rooted covers of the transport are
+the transports of the rooted covers (`extendsToCover_map_iff`). -/
+theorem HasTopAnchor.map {L : Type*} (h : R.HasTopAnchor) (e : M ≃ L) : (R.map e).HasTopAnchor :=
+  let ⟨x, a, N, ha, hx⟩ := h
+  ⟨x.map e, a, N, ha, fun y hy ↦ hx y <| by
+    have hc : e.symm ∘ (x.map e).tuple = x.tuple := funext fun i ↦ e.symm_apply_apply (x.tuple i)
+    exact hc ▸ (extendsToCover_map_iff e).mp hy⟩
+
+/-- **Cover-hollowness is invariant under transport** along a bijection of carriers. -/
+@[simp] theorem isCoverHollow_map_iff {L : Type*} (e : M ≃ L) :
+    (R.map e).IsCoverHollow ↔ R.IsCoverHollow :=
+  not_congr ⟨fun h ↦ map_symm_map R e ▸ h.map e.symm, fun h ↦ h.map e⟩
+
 end Realization
 
 end VaughtConjecture

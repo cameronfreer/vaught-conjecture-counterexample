@@ -42,7 +42,9 @@ core on no points), the residual comparison under (R2), and the hollow compariso
 finite-extension receiving that the rigid-core comparison takes for each expansion is supplied by
 (R1) (`FiniteCutReceiving.finiteExtensionReceiving`); no exact receiving for donors with top cells
 is assumed, since rigidity of the core is what makes cutoff receiving exact.  Terminality is not
-used here.
+used here.  In the rigid-core case the comparison keeps the core
+(`ModelExpansion.exists_equiv_comp_eq_of_isGloballyRigidCore`, on (R1) only): the isomorphism
+carries the one core to the other.  The count uses only the unpointed comparison.
 
 **Countability** (`expansionDomain_loss_countable`).  The loss at `ξ < ω₁` is covered by the
 countably many sets of classes with a given terminal property (`countable_terminalProperty`): each
@@ -108,6 +110,23 @@ theorem ModelExpansion.nonempty_equiv_of_hasTerminalProperty {M N : Type w}
   · exact Realization.nonempty_equiv_of_residual hres hα e.2 e'.2 h.1 h'.1 h.2 h'.2
   · exact Realization.nonempty_equiv_of_hollow hhol hα e.2 e'.2 ⟨ξ, rfl, h.1⟩ ⟨ξ, rfl, h'.1⟩ h.2
       h'.2
+
+/-- **The rigid-core comparison of model expansions keeps the core**: two model expansions to
+`λ_ξ`, `ξ < ω₁`, of countable base structures, with globally rigid cores `x₀` and `y₀` covering
+one stage type `p`, have an isomorphism of their base structures carrying `x₀` to `y₀`,
+conditional on (R1) of the table of Layer 3 (`hrec`), still to be proved. -/
+theorem ModelExpansion.exists_equiv_comp_eq_of_isGloballyRigidCore {M N : Type w}
+    [baseLanguage.{0}.Structure M] [baseLanguage.{0}.Structure N] [Countable M] [Countable N]
+    (hrec : Expansion.FiniteCutReceiving.{w}) {ξ : Ordinal.{0}} (hξ : ξ < ω₁) {k : ℕ}
+    {p : StageType.{0} (blockStage ξ) k} (e : ModelExpansion M (blockStage ξ))
+    (e' : ModelExpansion N (blockStage ξ)) {x₀ : Fin k → M} {y₀ : Fin k → N}
+    (hx : e.1.Covers p x₀) (hy : e'.1.Covers p y₀) (hcx : e.1.IsGloballyRigidCore x₀)
+    (hcy : e'.1.IsGloballyRigidCore y₀) : ∃ i : M ≃[baseLanguage.{0}] N, ⇑i ∘ x₀ = y₀ := by
+  have hα := isSuccLimit_blockStage ξ
+  have hr {K : Type w} (R : Realization.{0, w} (blockStage ξ) K) :=
+    hrec.finiteExtensionReceiving.receive hα (blockStage_lt_omega_one hξ) R
+  exact Realization.exists_equiv_comp_eq_of_isGloballyRigidCore hα e.2 e'.2 (hr _ e.2.isModel)
+    (hr _ e'.2.isModel) hx hy hcx hcy
 
 namespace Expansion
 

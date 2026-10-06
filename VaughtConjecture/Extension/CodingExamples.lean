@@ -101,7 +101,7 @@ private theorem eq_of_mem_gradedFaces_pointRow {x : Label.{u}} {X : Finset (Fin 
 
 /-- **`pointRow x` is legal** when `x` lies below `ω ^ 2` and is self-visible at grade `1`, with no
 bound on the finite part of `x` in terms of the grade. -/
-private theorem isLegal_pointRow {x : Label.{u}} (hx : x < ((ω ^ 2 : Ordinal.{u}) : Label.{u}))
+theorem isLegal_pointRow {x : Label.{u}} (hx : x < ((ω ^ 2 : Ordinal.{u}) : Label.{u}))
     (hv : Label.IsSelfVisible 1 x) : (pointRow x).IsLegal where
   isWellFormed := ⟨rfl, ⟨inferInstance, Geometry.isPlan_intervalPlan _, fun _ ↦ by
     simp [pointRow, CellScheme.gradedIndex]⟩⟩
