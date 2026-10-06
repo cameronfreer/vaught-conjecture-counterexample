@@ -703,13 +703,16 @@ is compiled conditionally on block determination (below).  None is an input to t
   conditions 3 and 4 must cover every class, a persistent class included, by its own argument.
 
   **An alternative route to the lower bound** (prospective; a reading of statements recorded
-  elsewhere, each still to be proved, and not restated here).  The lower bound can also be read
-  along one chain: (i) charts of every fixing rank (the **fixing rank** of a stage type at `λ_η` is
-  the least `ξ ≤ η` such that its reduction to `λ_ξ` changes no label; it is not a Scott rank), from
+  elsewhere, each still to be proved except step (ii), and not restated here).  The lower bound
+  can also be read along one chain: (i) charts of every fixing rank (the **fixing rank** of a stage
+  type at `λ_η` is the least `ξ ≤ η` such that its reduction to `λ_ξ` changes no label; it is not a
+  Scott rank), from
   finite data ("Quantitative reconstruction", below, "Fixing ranks of finite charts" and "Charts of
   every fixing rank"; no termination used); (ii) for each such chart, a model in which it occurs as
-  an actual chart (expected to need, like the top-free witnesses, the coatom extension property
-  `StageType.HasCoatomExtensions` and the cap-to-model theorem; no termination used); (iii) hence
+  an actual chart (compiled in this repository (theorem named), for every legal chart at every
+  countable block stage, conditional on the coatom extension property with apex
+  `StageType.HasApexCoatomExtensions`: `exists_saturated_reconstruct`, through the compiled
+  cap-to-model theorem, without the hypothesis `CapToModel`; no termination used); (iii) hence
   fixing ranks of realized charts cofinal in `ω₁` (no termination used); (iv) noncollapse:
   uncountably many classes, by the bounded-levels criterion in its form for relations between
   classes and countable ordinals (`README.md`, "Reduction to full presentations", "Bounded levels"),
@@ -876,7 +879,12 @@ is compiled conditionally on block determination (below).  None is an input to t
   directions: a model at `λ_η` has a model expansion to `λ_{η+1}` if and only if it is non-hollow
   with unbounded top-grade growth.  Sufficiency is output 3 of `README.md`, Layer 4; necessity is a
   further statement, required here though not by the main theorem (`README.md`, Layer 4, the
-  qualification after the count of terminal classes).  (b) At a nonzero limit `δ`, the guard is the
+  qualification after the count of terminal classes).  Its cover-hollow half, that a realization at
+  `λ_η` with a model expansion to `λ_{η+1}` is not cover-hollow, is compiled in this repository
+  (theorem named), with no hypothesis, as the contrapositive of
+  `Realization.IsCoverHollow.isTerminalAt` (`Continuation/Hollow`); the growth half, and the hollow
+  half for the original no-anchor predicate (`SEMANTIC_CONTRACT.md`, item 8), are still to be
+  proved.  (b) At a nonzero limit `δ`, the guard is the
   conjunction of the guards along a cofinal sequence of lower blocks (cofinal in the weak sense:
   every `ξ < δ` lies below some term).  Downward closure, that a model expansion to a higher block
   reduces to every lower block (output 4), turns expansions along the sequence into expansions at

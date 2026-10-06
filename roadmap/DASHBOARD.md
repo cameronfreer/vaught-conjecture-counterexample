@@ -117,6 +117,10 @@ Notes on the rows, each with its marker:
   and the coatom extension property with apex at every countable block stage: the maximal
   refinement of a prescribed model (`MainTheorem.exists_maximalRefinement`); rows 33–36, 38, 40
   stay S.
+- *Acceptance lemma 1 (same-level maximal realization).*  Compiled conditionally on
+  `StageType.HasApexCoatomExtensions` at `λ_β` and `ForcingDonors β` (`exists_sameLevelMaximal`).
+  Terminality of every cover-hollow realization at a block stage is compiled with no hypothesis
+  (`Realization.IsCoverHollow.isTerminalAt`, Layer 4).
 
 ## The named hypotheses of the main theorem
 
