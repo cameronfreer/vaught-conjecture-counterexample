@@ -2908,6 +2908,34 @@ witnesses).**
   `Extension/GatedExtensionCounterexample` for its legal two-point type with two cells of full
   scope and full grade (`GatedExtensionCounterexample.P`), and `Extension/FamilyCofaces` for the
   one-point scheme with no cells (`StageType.cellless`).
+- `Continuation/AvailableTopDetermination`: Layer 3, in place; it imports
+  `Continuation/AnchoredDetermination` and `Extension/PinnedExtension` (for the coface carrying the
+  donor in the acquisition, `StageType.exists_pinned_extension`).  The capping of an upper set of
+  cells, `CellScheme.Rows.IsLawful.min_const_of_upper`, is in `Scheme/Row`, beside
+  `CellScheme.Rows.IsLawful.min_const_of_mem_scope` (a special case, kept with its own proof), and
+  `StageType.capOn`, with `StageType.restrictFace_capOn`, in `Stage/Cap`, beside
+  `StageType.capThrough`.  `StageType.exists_pinned_extension_of_lt`, the exact pinned extension
+  from the coatom extensions at arities below that of the chart, is in `Extension/PinnedExtension`,
+  and `StageType.exists_pinned_extension` is now its instance (no statement changed).
+  `Realization.IsModel.exists_privateContext` and
+  `Realization.IsModel.exists_privateContext_isAnchored` now take a donor on any number of points
+  (it enters only through its labels); every use is unchanged.
+  `Realization.exists_covers_snoc_of_cutoffDonorDetermination`
+  (`Continuation/AnchoredDetermination`) is now public, for the residual template with donors of
+  bounded top grade.  `StageType.not_isRigidCoreIn_of_restrictFace_isTopFree` generalizes the
+  direction of `StageType.isRigidCoreIn_empty_iff_isTopFree` (`Continuation/Terminal`) that
+  excludes rigidity, from the empty core to any top-free face, with the same cap; it belongs in
+  `Continuation/Terminal`, beside that lemma, and is stated here so that the file is unchanged.
+- `Continuation/AvailableTopDeterminationCounterexample`: Layer 3, in place.  It imports
+  `Extension/UnionFillCounterexample` for its legal scheme on three points
+  (`UnionFillCounterexample.S`, with its lawful labellings `UnionFillCounterexample.labelling`),
+  `Extension/TwoFaceLift` and
+  `Extension/CompletionBelowFullGrade` for the coatom extension at arity at most `2`
+  (`AvailableTopDeterminationCounterexample.exists_coatomExtension_of_le_two`), and
+  `Extension/FamilyCofaces` for `StageType.mem_cofaces_of_zero`.  The coatom extension at arity at
+  most `2` and the pinned extension on at most three points are general statements; they belong in
+  `Extension/CompletionBelowFullGrade` (or a module importing it and `Extension/TwoFaceLift`), and
+  are stated here so that those files are unchanged.
 
 **Quantitative reconstruction, row 1 (`COMPANIONS.md`, "Further companion results").**
 

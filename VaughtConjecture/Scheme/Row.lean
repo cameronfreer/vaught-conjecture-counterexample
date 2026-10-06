@@ -48,7 +48,9 @@ grades (`IsLawful.min_const_of_isSelfVisible`), and below a pair (`IsLawfulBelow
 `IsLawfulBelow.min_const_of_isSelfVisible`); capping at a cutoff that is not self-visible need
 not keep lawfulness.  Capping only the cells whose scope contains a point `a` keeps lawfulness when
 availability carries no label above the cap into them from a cell avoiding `a`
-(`IsLawful.min_const_of_mem_scope`).
+(`IsLawful.min_const_of_mem_scope`); more generally, capping only the cells of a set closed
+upward in the graded order keeps lawfulness when availability carries no label above the cap into
+the set (`IsLawful.min_const_of_upper`).
 
 The constant bottom labelling is lawful for all rows (`isLawful_const_bot`), and a cell whose row is
 bottom at the cell itself has bottom label in every lawful section
@@ -299,6 +301,48 @@ theorem min_const_of_mem_scope [DecidableEq α] (hp : R.IsLawful p) (a : α) {K 
       · simpa only [hs, hu', ↓reduceIte] using le_min hle (havail s t hst hg hs ht)
     · have hs : a ∉ D.scope s := fun h ↦ ht (hst h)
       have hu' : a ∉ D.scope u := hut ▸ ht
+      simpa only [hs, hu', ↓reduceIte] using hle
+
+/-- **Capping an upper set of cells.**  Let `c` be self-visible at a bound `K` on the grades, and
+let `Z` be a set of cells closed upward in the graded order.  Capping at `c` only the cells of `Z`
+keeps a lawful section lawful, provided availability carries no label above `c` into `Z`: every
+cell outside `Z` whose scope lies in the scope of a cell of `Z` of the same grade is labelled at
+most `c`.  Locality at a cell of `Z` is capped at `c` (`Label.TransformsTo.min_const`), and
+locality at a cell outside `Z` is unchanged, since the cells below it are outside `Z`.  The cells
+whose scope contains a point form such a set (`IsLawful.min_const_of_mem_scope`), and so do the
+cells whose scope contains a point and whose grade is at least a bound, and the cells of grade at
+least a bound. -/
+theorem min_const_of_upper (hp : R.IsLawful p) (Z : ι → Prop) [DecidablePred Z]
+    (hZ : ∀ d s, Z d → D.gradedIndex d ≤ D.gradedIndex s → Z s) {K : ℕ}
+    (hK : ∀ d, D.grade d ≤ K) {c : Label.{u}} (hc : IsSelfVisible K c)
+    (havail : ∀ s t, D.scope s ⊆ D.scope t → D.grade s = D.grade t → ¬ Z s → Z t → p s ≤ c) :
+    R.IsLawful fun d ↦ if Z d then min (p d) c else p d where
+  orderly d := by
+    split_ifs
+    · exact (hp.orderly d).min (hc.mono (hK d))
+    · exact hp.orderly d
+  locality s := by
+    by_cases hs : Z s
+    · convert (hp.locality s).min_const (fun d ↦ d.2.2) (hc.mono (hK s)) using 2 with d
+      by_cases hd : Z d
+      · simp only [hs, hd, ↓reduceIte]
+        rw [min_min_min_comm, min_self]
+      · simp only [hs, hd, ↓reduceIte, min_assoc]
+    · convert hp.locality s using 2 with d
+      -- the cells below `s` are outside `Z`
+      have hd : ¬ Z d := fun h ↦ hs (hZ _ _ h d.2)
+      simp only [hs, hd, ↓reduceIte]
+  availability s t hst hg := by
+    obtain ⟨u, hu, hle⟩ := hp.availability s t hst hg
+    refine ⟨u, hu, ?_⟩
+    have hut : Z u ↔ Z t := ⟨fun h ↦ hZ _ _ h hu.le, fun h ↦ hZ _ _ h hu.ge⟩
+    by_cases ht : Z t
+    · have hu' : Z u := hut.mpr ht
+      by_cases hs : Z s
+      · simpa only [hs, hu', ↓reduceIte] using min_le_min_right c hle
+      · simpa only [hs, hu', ↓reduceIte] using le_min hle (havail s t hst hg hs ht)
+    · have hs : ¬ Z s := fun h ↦ ht (hZ _ _ h ⟨hst, hg.le⟩)
+      have hu' : ¬ Z u := fun h ↦ ht (hut.mp h)
       simpa only [hs, hu', ↓reduceIte] using hle
 
 end IsLawful

@@ -141,6 +141,26 @@ Status of each:
    top-free, with a top available to a new cell of a coface carrying the donor
    (`Realization.CutoffDonorDetermination.exists_hasAvailablePrivateTop`); a rigid context suffices
    (`Realization.cutoffDonorDetermination_isRigidContext`), but its acquisition is not proved.
+   With that condition built in (`Continuation/AvailableTopDetermination`), the anchored context
+   with a top (`StageType.IsAnchoredContextWithTop`; in a legal coface an available private top
+   is any top of the context, `StageType.hasAvailablePrivateTop_iff_not_isTopFree`): donor
+   acquisition holds in the models with no globally rigid core under the coatom extension property
+   at every limit stage, which is still to be proved and gives the coface carrying the donor
+   (`Realization.donorAcquisition_isAnchoredContextWithTop`); cutoff determination with a donor is
+   refuted (`AvailableTopDeterminationCounterexample.not_cutoffDonorDetermination`: a context
+   whose tops have grade 1, a donor with a new top of grade 2).  This refutes the predicate, not
+   (R2).  A predicate for which determination holds must give a context of top grade at least
+   the grade of every new top of the donor
+   (`Realization.CutoffDonorDetermination.grade_le_topGrade`,
+   `Realization.CutoffDonorDetermination.topGrade_le`).  For the graded predicate
+   (`StageType.IsGradedTopContext`), residual donor acquisition for the donors of top grade at
+   most `K` holds under the coatom extension property
+   (`Realization.residualDonorAcquisition_isGradedTopContext`) and determination is open (it holds
+   at a compiled instance, and over a coface that reads the new tops as a private top,
+   `Realization.cutoffDonorDetermination_isReadingContext`); so (R2) is compiled conditionally on
+   (R1) in the stronger form above, the coatom extension property at every limit stage, and that
+   open determination statement
+   (`Realization.residualReceiving_of_cutoffDonorDetermination_isGradedTopContext`), a template.
 6. `Realization.HollowReceiving` for `Realization.IsCoverHollowAtBlock`: still to be proved (the
    growth construction).  Exactly reformulated as exact receiving of all legal types
    (`Realization.hollowReceiving_iff`).  A reduction is compiled: it follows from
@@ -153,7 +173,12 @@ Status of each:
    donor over its type (`Realization.HollowReceiving.isRigidCoreIn`).  The template with the
    donor (`Realization.hollowReceiving_of_cutoffDonorDetermination`, any `H`, with (R1) in the
    stronger form of item 5) gives nothing for the anchored context: donor acquisition holds for it
-   and cutoff determination with a donor is refuted for it, as in item 5.
+   and cutoff determination with a donor is refuted for it, as in item 5; nor for the anchored
+   context with a top, refuted as in item 5.  For the graded predicate, donor acquisition holds in
+   every model satisfying `H` with unbounded growth under the coatom extension property at every
+   limit stage (`Realization.donorAcquisition_isGradedTopContext`) and determination is open, as in
+   item 5 (`Realization.hollowReceiving_of_cutoffDonorDetermination_isGradedTopContext`, any `H`,
+   a template).
 7. Nonempty losses: still to be proved.  Compiled conditionally on the coatom extension property
    with apex at every countable block stage and on next-block uniqueness
    (`hasNonemptyLosses_of_hasApexCoatomExtensions`, stated for the bundled domains, which also take
