@@ -1016,7 +1016,10 @@ concern it (or *prospective*), and one of three statuses:
   identification is named: a declaration with one clause for each clause of the manuscript's
   definition, the comparison of the clauses recorded with the declaration, every departure from a
   printed clause proved equivalent to it by a named theorem, and every notion its clauses use
-  itself in proved correspondence or corrected;
+  itself in proved correspondence or corrected.  A corrected notion (C) counts toward P only if
+  every one of its differences from the printed definition is either a recorded correction or
+  proved equivalent; a row whose clauses use a notion with a part still to be proved records that
+  part as S in its status (rows 8 and 11, `P; domains: S (row 6)`);
 - **corrected manuscript definition or statement** (C): the manuscript's definition or statement is
   replaced by a corrected one, the correction recorded where named; a theorem about the corrected
   notion is noted when one exists;
@@ -1049,11 +1052,11 @@ continues the row above it: a further notion of the same row, with its own statu
 | 4 | [Kni26] | lawful labellings, Definition 2.5.4; orderly labellings, Definition 2.3.4 | P |
 | 5 | [Kni26] | lawful capping, Lemma 2.5.8 | P |
 | 6 | [Kni26] | bountiful rows, Definition 2.5.14 | S |
-| 7 | [Kni26] | domains (legal schemes), Definition 2.6.1 | C |
-| 8 | [Kni26] | stage types and face maps, Definitions 3.1.1 and 3.1.5 | S |
+| 7 | [Kni26] | domains (legal schemes), Definition 2.6.1 | C; bountifulness at ω₁: S (row 6) |
+| 8 | [Kni26] | stage types and face maps, Definitions 3.1.1 and 3.1.5 | P; domains: S (row 6) |
 | 9 | [AFK26] | templates, Definitions 4.6 and 4.10 | C; item 1: S |
 | 10 | [AFK26] | the stage operation on templates (truncation), Definitions 4.6 and 4.10 | C |
-| 11 | [Kni26] | realizations and models, Definition 3.2.1 | S |
+| 11 | [Kni26] | realizations and models, Definition 3.2.1 | P; domains: S (row 6) |
 | 12 | [Kni26] | the four extension families as a sentence, Definition 3.2.1, clause 4 | S |
 | 13 | [Kni26] | the density sentence against clause 4 (the fidelity theorem of this roadmap) | S |
 | 14 | [AFK26] | geometries and structured geometries, Convention 2.3, Definitions 2.1 and 2.2 | P |
@@ -1192,12 +1195,81 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
    ([Kni26, Definition 2.5.12], `CellScheme.Rows.IsConsistent` in `Scheme/Row`) that the definition
    presupposes (`CellScheme.Rows.isBountiful_iff_forall_printedBountiful` and
    `CellScheme.Rows.IsBountiful.printedBountiful` hold without it).
-7. `Scheme.IsLegal`, with the coding clause `Scheme.IsCoded` (`Stage/Legal`, `Stage/Scheme`):
-   coding imposed as a clause, not derived from the offset bound of [Kni26, Lemma 2.5.13];
-   recoverability by representation (`README.md`, layer 3, vocabulary).
-8. `StageType`, `StageType.restrictFace` (`Stage/Basic`), `none` at invisible faces; the stage
-   types here have fixed coded rows (row 9), and the comparison with the two definitions is not
-   recorded.
+7. `Scheme.IsLegal` (`Stage/Legal`), with the coding clause `Scheme.IsCoded` (`Stage/Scheme`);
+   status C, with bountifulness at `ω₁` S (row 6).  The clauses of the definition are the fields of
+   `CellScheme.Rows.PrintedDomain` (`Correspondence/Legal`); compiled in this repository (theorem
+   named): consistency [Kni26, Definition 2.5.12] is `CellScheme.Rows.IsConsistent`
+   (`CellScheme.Rows.printedConsistent_iff`), and at a stage that is zero or a limit the printed
+   definition is well-formedness, consistency, the printed bountifulness at that stage, and
+   completeness (`CellScheme.Rows.printedDomain_iff`).  Compiled in this repository (theorem named):
+   a legal scheme is a domain as printed at every stage that is zero or a limit and carries the
+   values of its rows (`Scheme.IsLegal.printedDomain`), in particular at `ω₁`
+   (`Scheme.IsLegal.printedDomain_omega_one`); and a scheme is legal exactly when its ground set is
+   all of its points, its rows are coded, and it is a domain as printed at every such stage
+   (`Scheme.isLegal_iff_forall_printedDomain`).  The correction: the coding clause `Scheme.IsCoded`
+   (every row value bottom or below `ω ^ 2`) is imposed as a clause, not derived.  The printed
+   definition bounds no value, and the printed clauses compared here, the fields of
+   `CellScheme.Rows.PrintedDomain`, which omit the recoverability clause, do not imply the range
+   bound `Scheme.IsCoded` (`Scheme.exists_printedDomain_not_isCoded`, compiled in this repository
+   (theorem named): the scheme on one point whose single cell has the formal top as row satisfies
+   them at every stage that is zero or a limit and is not coded).  The bound comes from the coding
+   described after [Kni26, Definition 2.6.2], which stores each `E(Σ)` in `{-∞} ∪ ω ^ 2` by the
+   first clause of [Kni26, Lemma 2.5.13], a function equivalent under `⇔` when only the functions
+   respecting `E` matter; that clause is not compiled, the effect of the replacement on consistency,
+   bountifulness, and completeness is not stated there, and the offset bound of the same lemma is
+   not correct as stated (`README.md`, Layer 1) and is not used.  The recoverability clause, that
+   `⟨B,j⟩`, `P↾B`, `D↾⟨B,j⟩`, and `E↾⟨B,j⟩` are recovered from a cell, has no field: it holds by
+   representation (`README.md`, layer 3, vocabulary) and is not compared.  The codes of the cells
+   are forgotten, as a second part of the correction: the coding after [Kni26, Definition 2.6.2]
+   gives each `Ξ ∈ D_{B,j}` a natural-number code `⌜⌜Ξ⌝⌝`, one-to-one, which the map `Df` of
+   [Kni26, Proposition 2.6.3, clause 5] keeps; here the cells are the positions `Fin card`, and
+   `Scheme` has no code accessor, so printed domains that differ only in their codes correspond to
+   the same scheme, and the face maps of row 8 are compared on positions.  Bountifulness is
+   `IsBountiful`, the printed definition at every stage that is zero or a limit; at `ω₁` only the
+   implication from `IsBountiful` is proved (row 6, S).  This difference is neither a recorded
+   correction nor proved equivalent, so it is recorded as S in the status of this row and of the
+   rows whose clauses use domains (rows 8 and 11): their identifications hold over legal schemes,
+   and a coded scheme that is a domain as printed at `ω₁` but not at some other stage that is zero
+   or a limit would not be legal.  Two routes make this row plain C and rows 8 and 11 plain P:
+   (a) the converse at `ω₁` of row 6 for coded rows, `PrintedBountiful ω₁ → IsBountiful`; or
+   (b) recording the requirement at every stage as part of the correction of this row, with its
+   reason stated (the steps of the construction that use bountifulness at the stages `α < ω₁`);
+   without a stated reason, (b) would only relabel the part still to be proved.  The points are
+   `Fin n`, the ground set all of them.
+8. `StageType`, `StageType.IsLegal`, `StageType.restrictFace` (`Stage/Basic`, `Stage/Legal`), `none`
+   at invisible faces.  The definition-level identifications of `Correspondence/StageType`, compiled
+   in this repository (theorem named).  Types, [Kni26, Definition 3.1.1]: the clauses are the fields
+   of `Scheme.PrintedType` (a plan on the points, a domain on it, labels at the stage `α`, respect
+   of the semantics); for `α ≤ ω₁` a labelling is a type as printed exactly when the scheme is legal
+   and the labelling is a lawful section with labels at stage `α`
+   (`Scheme.printedType_omega_one_iff`; at a general stage `Scheme.printedType_iff`), so a stage
+   type is legal exactly when its scheme and labels are a type as printed
+   (`StageType.isLegal_iff_printedType`), and the legal stage types correspond to the types as
+   printed by forgetting the laws (`StageType.legalEquivPrintedType`).  Face maps,
+   [Kni26, Definition 3.1.5]: the clauses are the fields of `StageType.PrintedFaceMap` (definedness
+   at `ran f ∈ P`; the plan `(Pf)(P)` of [Kni26, Definition 2.1.9]; the map `Df` of
+   [Kni26, Proposition 2.6.3, clause 5] on cells, scopes, arities, and rows; the labels); the face
+   map is `u` exactly when `u` is a printed face map with its cells numbered in increasing order
+   (`StageType.restrictFace_eq_some_iff_exists_printedFaceMap`), and it is undefined exactly when
+   `ran f ∉ P` (`StageType.restrictFace_eq_none_iff`); the laws of the definition are
+   `StageType.restrictFace_refl`, `StageType.restrictFace_trans_of_bind_eq_some`
+   (`S^α (f ∘ g) ⊇ (S^α g) ∘ (S^α f)`), and, along bijections, `StageType.reindex_reindex`.  Basis
+   of P: the clauses use the domains of row 7 (C, with bountifulness at `ω₁` S, row 6; the field
+   `Scheme.PrintedType.domain` is the corrected definition), respect (row 4, P), and the coding of
+   row 7; through row 6 the types are identified over legal schemes only, so the status is
+   `P; domains: S (row 6)`.  Departures, recorded with the module: the points `Fin n`; the stage `α`
+   unrestricted (harmless: the identifications hold for every `α ≤ ω₁`, limit or not); `⇒` at a
+   stage `θ`, printed at `ω₁`; the scheme of a type carried as data; and the codes of the cells
+   forgotten, part of the correction of row 7.  The printed `Df` keeps the code `⌜⌜Ξ⌝⌝` of each
+   cell; neither `Scheme` nor `StageType.PrintedFaceMap` has a code accessor, so the preservation
+   of codes is not compared.  The strict monotonicity of the positional map `φ` (`StrictMono φ`) is
+   the convention that numbers the cells of the face in the increasing order of the positions of the
+   corresponding cells of `t`; it preserves the order of the enumeration, not codes (a one-cell
+   domain with code `5` and one with code `7` both have the identity `Fin 1 → Fin 1` as positional
+   map).  The face maps are identified with the printed ones under this renumbering of the cells of
+   `D'` by positions, and the status above holds on that convention.  The stage types have fixed
+   coded rows (row 9); in
+   [Kni26, Definition 3.1.1] too the semantics is the one associated with the domain.
 9. `StageType` (a `Scheme` with fixed coded rows and a separate `label`); the correction is
    recorded in `README.md`, layer 2, "The templates of [AFK26] and the stage types here".  It is
    carried by theorems compiled in this repository (theorem named), `Correspondence/Template`: the
@@ -1218,15 +1290,38 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
    item 1 (whether the legal templates of Definition 4.27, with the lawful local labellings and
    bountiful rows of Definition 4.26, are the coherent ones; not compared here).
 10. `StageType.reduce`, on labels only, coherent by `StageType.reduce_reduce` (`Stage/Basic`).
-11. `Realization`, `Realization.IsModel` (`Realization/Model`).  The docstrings of the fields of
-    `Realization.IsModel` record its clauses as clauses 1, 2, 3, 4(a)i, 4(a)ii, 4(b), and 4(c) of
-    the definition, and its guarded clauses are compared with the printed ones at stages zero or
-    limits by named theorems (`Realization.IsModel.saturation_of_isLegal`,
-    `Realization.IsModel.bottomPattern_of_isLawful`,
-    `StageType.nonempty_cofaces_inter_saturationFamily_iff`,
-    `StageType.nonempty_cofaces_inter_bottomPatternFamily_iff`): this is the form of a
-    definition-level identification, but its clauses use legal stage types (rows 7 and 8) and the
-    four families, whose comparison with [Kni26] is still to be proved.
+11. `Realization`, `Realization.IsModel` (`Realization/Model`).  The definition-level identification
+    `Realization.printedModel_tupleEval_iff` (`Correspondence/Model`), compiled in this repository
+    (theorem named): at a stage `α ≤ ω₁` that is zero or a limit, a realization, read on all finite
+    tuples (`Realization.tupleEval`), satisfies the printed clauses, the fields of
+    `Realization.PrintedModel`, exactly when it is a model; its two directions are
+    `Realization.PrintedModel.isModel` and `Realization.IsModel.printedModel`.  The fields keep the
+    printed guards and the printed order of the quantifiers: the nonempty carrier; clause 1 in two
+    parts (undefined at a repeated entry; a type in `S^α n`, row 8); clause 2 (`S^α f` of row 8,
+    defined or not); clause 3 (`a⌢x`); and clauses 4(a)i, 4(a)ii, 4(b), and 4(c), each with its
+    parameters and guards (a domain `D` with `D⟨n,n⟩ = dom p`; a labelling `q'` respecting the
+    semantics of `D` with `q'↾dom p = p`; `γ` not a successor with `0 ≤ γ < α`; `γ < α`) before `y`
+    and `q`.  A set `U` of clause 4 is read as the members of `(S^α ι_{n,n+1})⁻¹(p)` satisfying the
+    condition of its kind, the manuscript's own reading: [Kni26, Lemma 4.4.1] states that every such
+    `U` is nonempty, and [Kni26, Lemmas 4.4.2 and 4.4.3] prove it as "some `q` with `q_a = p`
+    satisfies the condition of the kind".  Every printed clause is met by the identification.
+    Departures, each proved equivalent at those stages by named theorems: realizations evaluate only
+    injective tuples (`Realization.tupleEval_ofTupleEval`, `Realization.ofTupleEval_tupleEval`); the
+    conclusions of clause 4 in `IsModel` omit `(S^α ι_{n,n+1})⁻¹(p)`
+    (`Realization.RealizesOver.inter_cofaces`); the guards of clauses 4(a)i and 4(a)ii in `IsModel`
+    are the nonemptiness of the family among the cofaces
+    (`StageType.nonempty_cofaces_inter_saturationFamily_iff`,
+    `StageType.nonempty_cofaces_inter_bottomPatternFamily_iff`, with
+    `Scheme.map_univ_mem_faces_of_comap_eq` for `D⟨n,n⟩ = dom p`); covering by faces instead of
+    initial segments (`Realization.isCovering_iff_exists_castAdd`); and the labelling of clause
+    4(a)ii unrestricted in `IsModel` (`StageType.nonempty_cofaces_inter_bottomPatternFamily_iff`).
+    Basis of P: the clauses use the domains of row 7 (C, with bountifulness at `ω₁` S, row 6), the
+    types and face maps of row 8 (P, with the codes of the cells forgotten and the cells of a face
+    numbered by positions, the convention of row 7, so clause 2 is compared on that convention),
+    and respect (row 4, P); through row 6 the identification is
+    over legal schemes, both for `S^α n` in clause 1 and for the domains `D` of clause 4(a), so the
+    status is `P; domains: S (row 6)`; the four families are written out in the fields, so row 12,
+    which compares two declarations of this repository, is not a prerequisite.
 12. `baseLanguage.fourFamilySentence`; `baseLanguage.realize_fourFamilySentence_iff`
     (`Language/Satisfaction`), compiled in this repository (theorem named): the sentence holds
     exactly when the realization of the structure is a model at `ω`.  It compares two declarations
