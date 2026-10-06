@@ -5,6 +5,7 @@ Authors: Cameron Freer
 -/
 import Mathlib.Tactic.Order
 import VaughtConjecture.Extension.OrderedLayerStep
+import VaughtConjecture.Extension.OrderedLayerTop
 import VaughtConjecture.Extension.FieldLayer
 
 /-!
@@ -343,6 +344,21 @@ theorem exists_multiOldCell_of_mem_below {s : Fin I.amalgam.card}
       d ∈ I.amalgam.toCellScheme.below (I.amalgam.toCellScheme.gradedIndex s) := by
   obtain ⟨d, rfl⟩ := (isLowerEmbedding_multiOldCell I M r).mem_range s z hz
   exact ⟨d, rfl, ((isLowerEmbedding_multiOldCell I M r).le_iff d s).mp hz⟩
+
+/-- The row of an old cell of grade `4` of a multi-layer scheme over a seed with bottom apexes is
+`⊥` exactly at the cells of grade other than `4`. -/
+theorem row_multiOldCell_eq_bot_iff (hI : I.HasBottomApexes) {a : Fin I.amalgam.card}
+    (ha : I.amalgam.toCellScheme.grade a = 4)
+    (z : (multiLayerScheme I M r).toCellScheme.below
+      ((multiLayerScheme I M r).toCellScheme.gradedIndex (multiOldCell I M a))) :
+    (multiLayerScheme I M r).rows.row (multiOldCell I M a) z = ⊥ ↔
+      (multiLayerScheme I M r).toCellScheme.grade z.1 ≠ 4 := by
+  obtain ⟨e, he, hea⟩ := exists_multiOldCell_of_mem_below z.2
+  have hrow : (multiLayerScheme I M r).rows.row (multiOldCell I M a) z =
+      I.amalgam.rows.row a ⟨e, hea⟩ := by
+    rw [← row_multiOldCell a e (he ▸ z.2) hea]
+    exact (multiLayerScheme I M r).rows.row_congr rfl he
+  rw [hrow, hI.row_apex ha, he, grade_multiOldCell]
 
 /-- An old cell is below a pair when its graded index is. -/
 theorem multiOldCell_mem_below {d : Fin I.amalgam.card} {X : Finset (Fin 5) × ℕ}

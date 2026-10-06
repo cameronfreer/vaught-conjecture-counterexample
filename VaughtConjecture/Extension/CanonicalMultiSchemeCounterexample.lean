@@ -13,8 +13,8 @@ import VaughtConjecture.Extension.CrossedCouplingCompletion
 # The product clause of the canonical multi-layer scheme fails at the compiled seeds
 
 Roadmap, Layer 3, 3.1, (R6), checkpoint 2.7 (the completion below the full grade at `m = 3`; here
-the clause of the canonical multi-layer scheme that does not hold for every seed, refuted at the
-six compiled seeds); semantic contract, items 2–4.
+the product clause, a sufficient hypothesis for the step of the canonical multi-layer scheme,
+refuted at the six compiled seeds); semantic contract, items 2–4.
 
 The canonical multi-layer scheme (`VaughtConjecture.Extension.CanonicalMultiScheme`) puts, at each
 `(univ, k)`, two copies of the cells at `(C, k)` and `(D, k)`, each reading every cell through its
@@ -45,7 +45,7 @@ product clause both, read through the bases, are lawful, so the one row of `κ` 
   bottom apexes the labelling `⊤` at the apex of `C`, `⊥` elsewhere on `C`, and a labelling of `D`
   with the apex `⊥` is lawful below both coatoms (`OrderedLayer.isLawfulBelow_four_of_three`), and
   the parameter of grade `1` of `D` takes the values `1` and `2` there
-  (`OrderedLayer.not_canonicalProduct_four_of`).
+  (`OrderedLayer.not_canonicalProduct_four_of_bottomApexes`).
 
 **The six compiled seeds** (compiled, for every copy rows): the product clause fails at the grades
 `2`, `3` and `4` for `seed4`, `seed5`, `seedL`, `seedLM` and `seedLL`
@@ -55,10 +55,16 @@ product clause both, read through the bases, are lawful, so the one row of `κ` 
 (`Seed.not_canonicalProduct_seedHG`); for `seedHG` it holds at the grades `1`, `2`, `3`
 (`VaughtConjecture.Extension.CanonicalMultiSchemeExamples`).  This refutes, at those seeds and
 grades, the canonical family *as a fibre product*: the classification of its lawful labellings as
-the pairs agreeing on the common face, and so the lifts as the lifts from the common face.  It
-does not refute a completion of those seeds (each has one), nor a canonical multi-layer scheme whose
-rows restrict the pairs, for instance by orienting the two coatoms, or by the labelling of `Ω`
-alone at the grade `4`, as `Seed.canonicalMultiStep_of_productBelowTop` does.
+the pairs agreeing on the common face, and so the lifts as the lifts from the common face.  The
+product clause is sufficient for the step of the family, not necessary, so this refutes neither
+the family's step (for `seedHG` it holds at the grade `4`, where the clause fails:
+`Seed.canonicalMultiStep_of_TH_TG`, the grade `4` coming from the top row through
+`OrderedLayer.cappedLift_four_of_oldCells`) nor a completion of those seeds (each has one).  Nor
+does it refute the family with rows restricting the pairs: by the labelling of `Ω` alone at the
+grade `4`, as `Seed.canonicalMultiStep_of_productBelowTop` does (under which the labellings of the
+decoding refutation are not lawful, `OrderedLayer.eq_bot_of_grade_four_canonical`), or by rows
+*orienting the two coatoms*, under which a copy of `(B, k)` reads the parameters of its own coatom
+above those of the other.
 
 ## Placement
 
@@ -152,7 +158,7 @@ theorem transformsTo_copy_of_canonicalProduct {j : ℕ} (hP : I.CanonicalProduct
   simpa only [copyBase_multiNewCell] using this
 
 /-- An old cell of grade at most `k + 1` is below each copy of grade `k + 1`. -/
-theorem multiOldCell_mem_below_copy {k : Fin 4} (i : Fin 2) {d : Fin I.amalgam.card}
+private theorem multiOldCell_mem_below_copy {k : Fin 4} (i : Fin 2) {d : Fin I.amalgam.card}
     (hd : I.amalgam.toCellScheme.grade d ≤ (k : ℕ) + 1) :
     multiOldCell I canonicalMult d ∈ (canonicalMultiScheme I R).toCellScheme.below
       ((canonicalMultiScheme I R).toCellScheme.gradedIndex (multiNewCell I canonicalMult k i)) := by
@@ -217,9 +223,11 @@ theorem not_canonicalProduct_of_decoding {j : ℕ} {k : Fin 4} (i : Fin 2) (hk :
   have ms := (canonicalMultiScheme I R).toCellScheme.mem_below_gradedIndex
     (multiNewCell I canonicalMult k i)
   refine TransformsTo.false_of_decoding L₁ L₂ (s := ⟨_, ms⟩) (e := ⟨_, me⟩) ?_ ?_ ?_ ?_ ?_ ?_
-  · change 3 ≤ (canonicalMultiScheme I R).toCellScheme.grade (multiNewCell I canonicalMult k i)
+  · -- The grade of the subtype element is that of the copy.
+    change 3 ≤ (canonicalMultiScheme I R).toCellScheme.grade (multiNewCell I canonicalMult k i)
     rw [grade_multiNewCell]; exact hk
-  · change (canonicalMultiScheme I R).toCellScheme.grade (multiOldCell I canonicalMult e) ≤
+  · -- The grades of the subtype elements are those of the old cell and the copy.
+    change (canonicalMultiScheme I R).toCellScheme.grade (multiOldCell I canonicalMult e) ≤
       (canonicalMultiScheme I R).toCellScheme.grade (multiNewCell I canonicalMult k i)
     rw [grade_multiOldCell, grade_multiNewCell]; exact he
   · simp only [copyBase_multiNewCell, h₁, min_self]
@@ -278,6 +286,7 @@ theorem isLawfulBelow_four_of_three (hI : I.HasBottomApexes) {B : Finset (Fin 5)
           rw [hts, min_self, ite_eq_right (fun h ↦ key.mp h ht4)]
         · have htB : t.1 ∈ I.amalgam.toCellScheme.below (B, 3) :=
             ⟨htsB, by
+              -- The grade bound of `t`, as a statement about the grade of its cell.
               change I.amalgam.toCellScheme.grade t.1 ≤ 3
               have : I.amalgam.toCellScheme.grade t.1 ≤ 4 := hgr t.1
               omega⟩
@@ -294,8 +303,9 @@ theorem isLawfulBelow_four_of_three (hI : I.HasBottomApexes) {B : Finset (Fin 5)
 coatom carries a cell `e` of grade at most `3` (in practice `({4}, 1)`) at which labellings lawful
 below both coatoms at the grade `3`, `⊥` below `(C, 3)`, take the values `1` and `2`.  Put `⊤` at
 the apex of `C` and `⊥` at the apex of `D`; the copy of `(C, 4)` would read `e` as `1` and `2`. -/
-theorem not_canonicalProduct_four_of (hI : I.HasBottomApexes) {e : Fin I.amalgam.card}
-    (he : I.amalgam.toCellScheme.grade e ≤ 3) (L : Label.{u} → Fin I.amalgam.card → Label.{u})
+theorem not_canonicalProduct_four_of_bottomApexes (hI : I.HasBottomApexes)
+    {e : Fin I.amalgam.card} (he : I.amalgam.toCellScheme.grade e ≤ 3)
+    (L : Label.{u} → Fin I.amalgam.card → Label.{u})
     (hL : ∀ b : Label.{u}, b = 1 ∨ b = 2 →
       I.amalgam.rows.IsLawfulBelow (coatomC, 3) (fun d ↦ L b d) ∧
         I.amalgam.rows.IsLawfulBelow (coatomD, 3) (fun d ↦ L b d))
@@ -374,24 +384,24 @@ open TwoFaceLiftCounterexample (liveC liveD pairKind pairLabelling)
 open CaseSplitCounterexample (liveG tripleKind tripleLabelling)
 
 /-- The live graded indices of the second coatom contain the point `4`. -/
-theorem four_mem_of_mem_liveD : ∀ X ∈ liveD, (4 : Fin 5) ∈ X.1 := by decide
+private theorem four_mem_of_mem_liveD : ∀ X ∈ liveD, (4 : Fin 5) ∈ X.1 := by decide
 
 /-- Off the point `4`, the pair labelling with the parameters of the first coatom `⊥` is `⊥`. -/
-theorem pairLabelling_eq_bot {X : Finset (Fin 5) × ℕ} (hX : (4 : Fin 5) ∉ X.1)
+private theorem pairLabelling_eq_bot {X : Finset (Fin 5) × ℕ} (hX : (4 : Fin 5) ∉ X.1)
     (b : Label.{u}) : pairLabelling ⊥ ⊥ b ⊥ X = ⊥ := by
   have h : X ∉ liveD := fun h ↦ hX (four_mem_of_mem_liveD X h)
   simp only [pairLabelling, pairKind, h, ite_false]
   split_ifs <;> rfl
 
 /-- Off the point `4`, the triple labelling with every parameter but `A_D` equal to `⊥` is `⊥`. -/
-theorem tripleLabelling_eq_bot {X : Finset (Fin 5) × ℕ} (hX : (4 : Fin 5) ∉ X.1)
+private theorem tripleLabelling_eq_bot {X : Finset (Fin 5) × ℕ} (hX : (4 : Fin 5) ∉ X.1)
     (b : Label.{u}) : tripleLabelling ⊥ ⊥ b ⊥ ⊥ X = ⊥ := by
   have h : X ∉ liveD := fun h ↦ hX (four_mem_of_mem_liveD X h)
   simp only [tripleLabelling, tripleKind, h, ite_false]
   split_ifs <;> rfl
 
 /-- A cell below `(C, k)` does not contain the point `4`. -/
-theorem four_notMem_of_mem_below_C {α : Ordinal.{u}} {I : Seed.{u} α 3} {k : ℕ}
+private theorem four_notMem_of_mem_below_C {α : Ordinal.{u}} {I : Seed.{u} α 3} {k : ℕ}
     {d : Fin I.amalgam.card} (hd : d ∈ I.amalgam.toCellScheme.below (coatomC, k)) :
     (4 : Fin 5) ∉ (I.amalgam.toCellScheme.gradedIndex d).1 := fun h ↦ by
   have := hd.1 h
@@ -423,7 +433,8 @@ theorem not_canonicalProduct_of_T4 (hIL : I.left = T4 α) (hIR : I.right = T4 α
   intro j h2 h4
   rcases (show j ≤ 3 ∨ j = 4 by omega) with h3 | rfl
   swap
-  · refine not_canonicalProduct_four_of R (hasBottomApexes_of_T4 hIL hIR) (e := d₄)
+  · refine not_canonicalProduct_four_of_bottomApexes R (hasBottomApexes_of_T4 hIL hIR)
+      (e := d₄)
       (by rw [show I.amalgam.toCellScheme.grade d₄ = 1 from congrArg Prod.snd e₄]; omega)
       (fun b d ↦ pairLabelling ⊥ ⊥ b ⊥ (I.amalgam.toCellScheme.gradedIndex d))
       (fun b hb ↦ ?_) (fun b d hd ↦ pairLabelling_eq_bot (four_notMem_of_mem_below_C hd) b)
@@ -466,7 +477,7 @@ theorem not_canonicalProduct_of_triple (hI : I.HasBottomApexes) {d₃ d₄ : Fin
   intro j h2 h4
   rcases (show j ≤ 3 ∨ j = 4 by omega) with h3 | rfl
   swap
-  · refine not_canonicalProduct_four_of R hI (e := d₄)
+  · refine not_canonicalProduct_four_of_bottomApexes R hI (e := d₄)
       (by rw [show I.amalgam.toCellScheme.grade d₄ = 1 from congrArg Prod.snd e₄]; omega)
       (fun b d ↦ tripleLabelling ⊥ ⊥ b ⊥ ⊥ (I.amalgam.toCellScheme.gradedIndex d))
       (fun b hb ↦ ?_) (fun b d hd ↦ tripleLabelling_eq_bot (four_notMem_of_mem_below_C hd) b)
@@ -492,7 +503,7 @@ theorem not_canonicalProduct_of_triple (hI : I.HasBottomApexes) {d₃ d₄ : Fin
     rfl
 
 /-- The condition of `TL` on the finite part of `A` below `G` holds for `G = ⊥`. -/
-theorem visibilityReplaceFixedOfLT_bot (A : Label.{u}) : VisibilityReplaceFixedOfLT A ⊥ :=
+private theorem visibilityReplaceFixedOfLT_bot (A : Label.{u}) : VisibilityReplaceFixedOfLT A ⊥ :=
   fun h ↦ absurd h (not_lt_bot)
 
 /-- **The product clause fails at the grades `2`, `3` and `4` for a seed of `T5` with itself.** -/
@@ -547,7 +558,8 @@ theorem not_canonicalProduct_of_TL_TL (hIL : I.left = TL α) (hIR : I.right = TL
 open CrossedCouplingCounterexample (TH TG kindOld kindD CellKind Coupled) in
 /-- Off the point `4`, the labelling by kinds of `seedHG` with every parameter but `A_D` equal to
 `⊥` is `⊥`: the kind `A_D` is read through the point `4`. -/
-theorem val_kindOld_eq_bot {X : Finset (Fin 5) × ℕ} (hX : (4 : Fin 5) ∉ X.1) (b : Label.{u}) :
+private theorem val_kindOld_eq_bot {X : Finset (Fin 5) × ℕ} (hX : (4 : Fin 5) ∉ X.1)
+    (b : Label.{u}) :
     (kindOld X).val ⊥ b ⊥ ⊥ ⊥ = ⊥ := by
   have hD : kindD X = 1 → (4 : Fin 5) ∈ X.1 := by
     unfold kindD
@@ -568,7 +580,8 @@ cross below a copy, since `TH` couples `H ≤ A_C` and `TG` couples `G ≤ A_D`.
 theorem not_canonicalProduct_four_of_TH_TG (hIL : I.left = TH α) (hIR : I.right = TG α)
     (R : CopyRows I) : ¬ I.CanonicalProduct R 4 := by
   obtain ⟨-, d₄, -, h₄⟩ := CrossedCouplingCounterexample.exists_cells hIL hIR
-  refine not_canonicalProduct_four_of R (CrossedCouplingCounterexample.hasBottomApexes_HG hIL hIR)
+  refine not_canonicalProduct_four_of_bottomApexes R
+    (CrossedCouplingCounterexample.hasBottomApexes_HG hIL hIR)
     (e := d₄) (by rw [show I.amalgam.toCellScheme.grade d₄ = 1 from congrArg Prod.snd h₄]; omega)
     (fun b d ↦ (kindOld (I.amalgam.toCellScheme.gradedIndex d)).val ⊥ b ⊥ ⊥ ⊥)
     (fun b hb ↦ ?_) (fun b d hd ↦ val_kindOld_eq_bot (four_notMem_of_mem_below_C hd) b)

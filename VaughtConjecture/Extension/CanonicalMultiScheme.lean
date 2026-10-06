@@ -13,8 +13,8 @@ import VaughtConjecture.Extension.Tower
 # The canonical multi-layer scheme: copies of the full cells of the coatoms
 
 Roadmap, Layer 3, 3.1, (R6), checkpoint 2.7 (the completion below the full grade at `m = 3`: a
-finite family of new cells defined for every seed on five points, the clauses of legality that
-hold for every seed, and the clause that does not); semantic contract, items 2–4.
+finite family of new cells defined for every seed on five points, what holds for every seed, and a
+sufficient hypothesis for its step that does not); semantic contract, items 2–4.
 
 Let `I` be a seed on five points (`m = 3`), with coatoms `C = {0, 1, 2, 3}`, `D = {0, 1, 2, 4}`
 and common face `C ∩ D = {0, 1, 2}`.
@@ -23,13 +23,15 @@ and common face `C ∩ D = {0, 1, 2}`.
 are two new cells of full scope, the *copies* `multiNewCell k 0` and `multiNewCell k 1` of the
 *originals* `copyOrig I k 0` and `copyOrig I k 1`, cells of the amalgam at the full coatom graded
 faces `(C, k + 1)` and `(D, k + 1)` (`OrderedLayer.copyOrig`, chosen by completeness of the
-amalgam; for the coatom types of the compiled special cases the cell at each of these graded faces
-is unique).  So the multiplicities are `2, 2, 2, 2` (`OrderedLayer.canonicalMult`).  Each cell has a
-*base* in the amalgam (`OrderedLayer.copyBase`): an old cell is its own base, a copy has its
-original as base.  The rows are given by *copy rows* `R k i`, labellings of the amalgam: the row of
-the copy `(k, i)` reads every cell through its base, `z ↦ R k i (copyBase z)`
-(`OrderedLayer.canonicalRows`).  In particular a copy reads every copy of grade at most `k + 1`
-exactly as it reads that copy's original.
+amalgam; the proofs use only the graded index of an original, `OrderedLayer.gradedIndex_copyOrig`,
+so they hold for any choice of originals).  So the multiplicities are `2, 2, 2, 2`
+(`OrderedLayer.canonicalMult`).  Each cell has a *base* in the amalgam (`OrderedLayer.copyBase`):
+an old cell is its own base, a copy has its original as base.  The rows are given by *copy rows*
+`R k i`, labellings of the amalgam: the row of the copy `(k, i)` reads every cell through its
+base, `z ↦ R k i (copyBase z)` (`OrderedLayer.canonicalRows`).  In particular a copy reads every
+copy of grade at most `k + 1` exactly as it reads that copy's original.  *Canonical* refers to the
+cells and the shape of the rows, which the seed fixes up to the choice of originals; the values of
+the rows, the copy rows `R`, are a parameter.
 
 **What holds for every seed and all copy rows** (compiled):
 
@@ -54,9 +56,12 @@ exactly as it reads that copy's original.
 rows and the grade): the converse of the classification, that every labelling of the amalgam
 lawful below `(C, j)` and `(D, j)`, read through the bases, is lawful below `(univ, j)`.  It is
 exactly the statement that the lawful labellings below `(univ, j)` are the pairs of coatom
-labellings agreeing on the common face (`OrderedLayer.isLawfulBelow_canonical_iff`).  It is the
-only clause of the family that does not hold for every seed: its content is locality at the
-copies, one row reading the other coatom's parameters for every pair at once.
+labellings agreeing on the common face (`OrderedLayer.isLawfulBelow_canonical_iff`).  It is not a
+field of the multi-layer step (`Seed.MultiLayerStep`) but a sufficient hypothesis for it: the only
+hypothesis of `Seed.canonicalMultiStep_of_product` beyond copy rows coded and lawful below both
+coatoms (the form below the top grade adds bottom apexes and the top row).  It is not necessary:
+for `seedHG` the step holds at the grade `4` although the clause fails there (below).  Its content
+is locality at the copies, one row reading the other coatom's parameters for every pair at once.
 
 **From the product clause** (compiled):
 
@@ -67,9 +72,16 @@ copies, one row reading the other coatom's parameters for every pair at once.
 * the step (`Seed.canonicalMultiStep_of_product`): the product clause at the grades `1, …, 4`, with
   copy rows that are coded and lawful below both coatoms, gives the multi-layer step, hence a
   completion below the full grade (`Seed.nonempty_completionBelowFullGrade_of_canonicalProduct`);
+  its hypothesis at the grade `4` fails at all six compiled seeds (below), so this form applies at
+  none of them;
 * for a seed with bottom apexes and the top row at the grade `4`, the product clause at the grades
-  `1, 2, 3` suffices (`Seed.canonicalMultiStep_of_productBelowTop`), the grade `4` coming from the
-  grade `3` (`OrderedLayer.cappedLift_four_of_oldCells`).
+  `1, 2, 3`, with copy rows at those grades coded and lawful below both coatoms, suffices
+  (`Seed.canonicalMultiStep_of_productBelowTop`), the grade `4` coming from the grade `3`
+  (`OrderedLayer.cappedLift_four_of_oldCells`) and not from the product clause.  The top row
+  restricts the lawful labellings below `(univ, 4)`: one that is not `⊥` at the first copy of
+  grade `4` is `⊥` below the grade `4` (`OrderedLayer.eq_bot_of_grade_four_canonical`), so the
+  labellings of the decoding refutation (`⊤` at a copy of grade `4`, `1` or `2` at a cell of grade
+  `1`) are not lawful there.
 
 **Status at the compiled seeds** (compiled).  For every copy rows, the product clause fails at the
 grades `2`, `3`, `4` for `seed4`, `seed5`, `seedL`, `seedLM`, `seedLL` (two parameters of grade
@@ -78,9 +90,13 @@ grades `2`, `3`, `4` for `seed4`, `seed5`, `seedL`, `seedLM`, `seedLL` (two para
 both `1` and `2`): `VaughtConjecture.Extension.CanonicalMultiSchemeCounterexample`.  For `seedHG`
 it holds at the grades `1`, `2`, `3` with the rows of `CrossedCouplingCounterexample.schemeHG`, so
 the canonical multi-layer scheme completes every seed of `TH` and `TG`
-(`Seed.canonicalMultiStep_of_TH_TG`, `VaughtConjecture.Extension.CanonicalMultiSchemeExamples`).
-So the product clause is not uniform: whether a canonical multi-layer scheme with rows restricting
-the pairs (orienting the two coatoms) completes every seed is open.
+(`Seed.canonicalMultiStep_of_TH_TG`, `VaughtConjecture.Extension.CanonicalMultiSchemeExamples`),
+the grade `4` coming from the top row and not from the product clause.  So the product clause is
+not uniform in the seed, and what is refuted is the family *as a fibre product* at those seeds and
+grades, not the family's step (which holds for `seedHG` at the grade `4`) and not the completion.
+Whether a canonical multi-layer scheme with rows restricting the pairs completes every seed is
+open; for instance rows *orienting the two coatoms*, under which a copy of `(B, k)` reads the
+parameters of its own coatom above those of the other.
 
 ## Placement
 
@@ -469,6 +485,7 @@ theorem cappedLift_of_canonicalProduct {B B' : Finset (Fin 5)}
   · -- The cap agreement: the ambient is read through the bases.
     have hqz : q z = Q (multiOldCell I canonicalMult (copyBase I z)) := by
       rw [← eq_copyBase_of_isLawfulBelow R hQ z.2, hQdef, Rows.extendBot_of_mem q z.2]
+    -- The labelling at a cell below the cap is `V` at its base, by definition.
     change min (V (copyBase I z.1)) c = _
     rw [hqz]
     have hgz : I.amalgam.toCellScheme.grade (copyBase I z) ≤ k :=
@@ -486,6 +503,7 @@ theorem cappedLift_of_canonicalProduct {B B' : Finset (Fin 5)}
       have := d.2
       rw [he, CellScheme.mem_below, gradedIndex_multiOldCell] at this
       exact this
+    -- The restricted labelling at `d` is `V` at its base, by definition.
     change V (copyBase I d.1) = p d
     rw [he, copyBase_multiOldCell, hVB e heB, hPdef, ← he, Rows.extendBot_of_mem p d.2]
 
@@ -503,7 +521,10 @@ variable {α : Ordinal.{u}} {I : Seed.{u} α 3} {R : CopyRows I}
 `1, …, 4`, copy rows that are coded and lawful below both coatoms give the multi-layer step of the
 canonical multi-layer scheme: the rows are consistent by the product clause, the lifts into the
 full scope are the lifts from the common face (`Seed.hasCommonFaceLifts`), and the glued labelling
-read through the bases is lawful. -/
+read through the bases is lawful.  The hypothesis at the grade `4` fails at all six compiled seeds,
+for every copy rows (`Seed.not_canonicalProduct_seedHG` and its companions), so this form applies
+at none of them; the form that applies to `seedHG` is
+`Seed.canonicalMultiStep_of_productBelowTop`. -/
 theorem canonicalMultiStep_of_product
     (hP : ∀ j, 1 ≤ j → j ≤ 4 → I.CanonicalProduct R j)
     (hcode : ∀ (k : Fin 4) (i : Fin 2) (d : Fin I.amalgam.card),
@@ -586,21 +607,6 @@ theorem isLawfulBelow_omega_of_rows {S : Scheme.{u} 5} (hgr : ∀ z, S.toCellSch
 
 variable {I : Seed.{u} α 3}
 
-/-- The row of an old cell of grade `4` of a multi-layer scheme over a seed with bottom apexes is
-`⊥` exactly at the cells of grade other than `4`. -/
-theorem row_multiOldCell_eq_bot_iff {M : Fin 4 → ℕ} {r : MultiRows I M} (hI : I.HasBottomApexes)
-    {a : Fin I.amalgam.card} (ha : I.amalgam.toCellScheme.grade a = 4)
-    (z : (multiLayerScheme I M r).toCellScheme.below
-      ((multiLayerScheme I M r).toCellScheme.gradedIndex (multiOldCell I M a))) :
-    (multiLayerScheme I M r).rows.row (multiOldCell I M a) z = ⊥ ↔
-      (multiLayerScheme I M r).toCellScheme.grade z.1 ≠ 4 := by
-  obtain ⟨e, he, hea⟩ := exists_multiOldCell_of_mem_below z.2
-  have hrow : (multiLayerScheme I M r).rows.row (multiOldCell I M a) z =
-      I.amalgam.rows.row a ⟨e, hea⟩ := by
-    rw [← row_multiOldCell a e (he ▸ z.2) hea]
-    exact (multiLayerScheme I M r).rows.row_congr rfl he
-  rw [hrow, hI.row_apex ha, he, grade_multiOldCell]
-
 variable (I) in
 /-- **The top row of the amalgam**: `ω + 4` at the cells of grade `4`, `⊥` elsewhere. -/
 noncomputable def amalgamTopRow (d : Fin I.amalgam.card) : Label.{u} :=
@@ -628,6 +634,7 @@ theorem row_eq_bot_iff_of_grade_four_canonical (hI : I.HasBottomApexes)
   · rw [grade_multiNewCell] at hs
     obtain rfl : k = 3 := Fin.ext (by omega)
     rw [row_canonical, hR3, amalgamTopRow, topRow]
+    -- The top row at the base, by its definition through the graded index.
     change (if I.amalgam.toCellScheme.grade (copyBase I t.1) = 4 then _ else _) = ⊥ ↔ _
     rw [grade_copyBase]
     split_ifs with h
@@ -662,6 +669,7 @@ theorem eq_of_grade_four_canonical (hR3 : ∀ i, R 3 i = amalgamTopRow I)
           ⟨multiNewCell I canonicalMult 3 i, bel i _⟩ ≤
         (canonicalMultiScheme I R).rows.row (multiNewCell I canonicalMult 3 i) ⟨y, bel i y⟩ := by
       rw [row_canonical, row_canonical, hR3, amalgamTopRow, amalgamTopRow, topRow, topRow]
+      -- Both readings are the top row at the bases, by its definition through the graded index.
       change (if I.amalgam.toCellScheme.grade (copyBase I (multiNewCell I canonicalMult 3 i)) = 4
         then _ else _) ≤ (if I.amalgam.toCellScheme.grade (copyBase I y) = 4 then _ else _)
       rw [grade_copyBase, grade_copyBase, gκ, hy]

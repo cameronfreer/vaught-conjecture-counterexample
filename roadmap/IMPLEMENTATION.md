@@ -2691,20 +2691,34 @@ ones split):
   rows `R`: two copies of the cells at `(C, k)` and `(D, k)` at each `(univ, k)`, reading through
   their bases (`OrderedLayer.canonicalMultiScheme`); forcedness
   (`OrderedLayer.eq_copyOrig_of_isLawfulBelow`); the lifts from the common face
-  (`Seed.hasCommonFaceLifts`). Named hypothesis: the product clause `Seed.CanonicalProduct I R j`.
-  It gives the classification as pairs agreeing on the common face
-  (`OrderedLayer.isLawfulBelow_canonical_iff`), the lifts
-  (`OrderedLayer.cappedLift_of_canonicalProduct`),
-  and the multi-layer step (`Seed.canonicalMultiStep_of_product`; with bottom apexes and the top
-  row, from the grades 1–3, `Seed.canonicalMultiStep_of_productBelowTop`). It holds below the top
-  grade for `seedHG` (`OrderedLayer.CanonicalHG.canonicalProduct`,
-  `Seed.nonempty_completionBelowFullGrade_canonical_seedHG`). Refuted (negative special cases
+  (`Seed.hasCommonFaceLifts`). Named hypothesis: the product clause `Seed.CanonicalProduct I R j`,
+  a sufficient hypothesis for the step, not a field of `Seed.MultiLayerStep`. It gives the
+  classification as pairs agreeing on the common face (`OrderedLayer.isLawfulBelow_canonical_iff`)
+  and the lifts (`OrderedLayer.cappedLift_of_canonicalProduct`). The conditional step theorems,
+  with the status of each hypothesis: (a) `Seed.canonicalMultiStep_of_product` assumes the product
+  clause at the grades 1–4 (refuted at the grade 4 at all six compiled seeds, so this form applies
+  at none of them), `hcode` (copy rows coded) and `hpair` (copy rows lawful below both coatoms),
+  the last two conditions on the choice of copy rows; (b)
+  `Seed.canonicalMultiStep_of_productBelowTop` assumes the product clause at the grades 1–3 (holds
+  for `seedHG`, `OrderedLayer.CanonicalHG.canonicalProduct`; refuted at the grades 2, 3 for the
+  other five seeds), `hcode` and `hpair` at those grades (compiled for `seedHG`,
+  `OrderedLayer.CanonicalHG.rowsHG_lt`, `OrderedLayer.CanonicalHG.isLawfulBelow_rowsHG`),
+  `Seed.HasBottomApexes` (compiled for all six seeds) and `hR3`, the top row at the grade 4 (a
+  choice of the copy rows); its grade 4 comes from the grade 3
+  (`OrderedLayer.cappedLift_four_of_oldCells`), not from the product clause. With every
+  hypothesis compiled, the second form completes `seedHG`
+  (`Seed.nonempty_completionBelowFullGrade_canonical_seedHG`). Both completions of `seedHG` obtain
+  the grade 4 from the labelling of `Ω` alone at the top row through
+  `OrderedLayer.cappedLift_four_of_oldCells`, never from a fibre product, and under the top row the
+  labellings of the decoding refutation are not lawful below `(univ, 4)`
+  (`OrderedLayer.eq_bot_of_grade_four_canonical`). Refuted (negative special cases
   named), for every copy rows: at the grades 2–4 for `seed4`, `seed5`, `seedL`, `seedLM`, `seedLL`
   (`Seed.not_canonicalProduct_seed4` and its companions, by crossing,
   `OrderedLayer.not_canonicalProduct_of_crossing`), and at the grade 4 for all six seeds
   (`Seed.not_canonicalProduct_seedHG`, by decoding,
   `OrderedLayer.not_canonicalProduct_of_decoding`).
-  This refutes the family as a fibre product at those seeds, not the completion. Open: a canonical
+  This refutes the family as a fibre product at those seeds, not the family's step (which holds
+  for `seedHG` at the grade 4, where the clause fails) and not the completion. Open: a canonical
   multi-layer scheme with rows restricting the pairs for every seed, and the completion at `m ≥ 3`
   for every seed.
 
@@ -2972,14 +2986,18 @@ lands, their notes stay in those modules.
   (`OrderedLayer.cappedLift_four_of_oldCells`) is stated once, in `Extension/OrderedLayerTop`, and
   quoted for the layer scheme (`OrderedLayer.cappedLift_four`) and for the multi-layer scheme of
   `seedHG` (`CrossedCouplingCounterexample.cappedLift_four_HG`).  The order lemma forcing two new
-  cells of one graded index by their readings (`OrderedLayer.eq_of_forced_pair`) is in
-  `Extension/MultiLayerStep`, quoted by `seedHG` and by the canonical multi-layer scheme.
+  cells of one graded index by their readings (`OrderedLayer.eq_of_forced_pair`) and the row of an
+  old cell of grade `4` over a seed with bottom apexes (`OrderedLayer.row_multiOldCell_eq_bot_iff`)
+  are in `Extension/MultiLayerStep`, quoted by `seedHG` and by the canonical multi-layer scheme.
+  The strip shifter as a witness up to the grade `1`
+  (`TwoFaceLiftCounterexample.isWitness_stripShifter_one`) is in
+  `Extension/TwoFaceLiftCounterexample`, beside `TwoFaceLiftCounterexample.isWitness_stripShifter`,
+  quoted by `seedHG` and by the canonical multi-layer scheme.
 - `Extension/CanonicalMultiScheme`, `Extension/CanonicalMultiSchemeCounterexample`, and
   `Extension/CanonicalMultiSchemeExamples`: checkpoint 2.7, in place.  The decoding lemma
   `Label.TransformsTo.false_of_decoding` and `Label.visibilityReplace_three_fixed` belong in
-  `Label/Transform` and `Label/Visibility`; `OrderedLayer.isLawfulBelow_omega_of_rows` and
-  `OrderedLayer.row_multiOldCell_eq_bot_iff` beside `OrderedLayer.isLawfulBelow_omegaLabel` in
-  `Extension/OrderedLayerTop`.
+  `Label/Transform` and `Label/Visibility`; `OrderedLayer.isLawfulBelow_omega_of_rows` beside
+  `OrderedLayer.isLawfulBelow_omegaLabel` in `Extension/OrderedLayerTop`.
 
 **Hull operations, the top-free age, and graded matching (Layers 0 and 2; the top-free
 witnesses).**

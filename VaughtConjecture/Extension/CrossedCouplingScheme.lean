@@ -69,7 +69,7 @@ namespace VaughtConjecture.CrossedCouplingCounterexample
 open Finset Label CellScheme OrderedLayer
 open Ordinal hiding univ
 open TwoFaceLiftCounterexample (cellScope cellGrade cells v1 v2 gradedIndex_cells stripShifter
-  isWitness_stripShifter stripShifter_v1 stripShifter_v2)
+  isWitness_stripShifter isWitness_stripShifter_one stripShifter_v1 stripShifter_v2)
 open TwoFaceLiftExistsCounterexample (strip3 isWitness_strip3)
 
 /-! ### Kinds of cells on five points -/
@@ -626,20 +626,6 @@ theorem transformsTo_kindLabel {u : Fin (schemeHG I).card} {j : ℕ}
   | top =>
     simp only [kindLabel, hk, CellKind.val]; rw [g5.mp hk]
     exact htop (by have := g5.mp hk; omega)
-
-omit hIL hIR in
-/-- The strip shifter is a witness for a suppressor up to the grade `1`. -/
-private theorem isWitness_stripShifter_one {A F : Label.{u}} (hF : IsSelfVisible 1 F) :
-    IsWitness (constStepSuppressor 1 F) (stripShifter A) :=
-  (isWitness_stripShifter (A := A) (isSelfVisible_top 2)).of_le
-    (fun n ↦ by
-      unfold constStepSuppressor
-      split_ifs
-      · exact le_top
-      · omega
-      · exact bot_le
-      · exact le_rfl)
-    (antitone_constStepSuppressor 1 F) (isSelfVisible_constStepSuppressor hF)
 
 /-- **The labelling by kinds is lawful** on the completed scheme, for parameters self-visible at
 `1`, `1`, `2`, `3` and coupled as in `TH` and `TG`, with `⊥` at the cells of grade `4`. -/

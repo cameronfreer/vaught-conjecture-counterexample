@@ -564,20 +564,6 @@ private theorem kindLabel_omega (Ω : Label.{u}) (z : Fin (schemeHG I).card) :
     | top => exact absurd (g5.mp hk) h
     | _ => simp [kindLabel, hk, CellKind.val]
 
-/-- The row of an old cell of grade `4` is `⊥` exactly below the grade `4`. -/
-private theorem row_multiOldCell_eq_bot_iff {a : Fin I.amalgam.card}
-    (ha : I.amalgam.toCellScheme.grade a = 4)
-    (z : (schemeHG I).toCellScheme.below
-      ((schemeHG I).toCellScheme.gradedIndex (multiOldCell I multHG a))) :
-    (schemeHG I).rows.row (multiOldCell I multHG a) z = ⊥ ↔
-      (schemeHG I).toCellScheme.grade z.1 ≠ 4 := by
-  obtain ⟨e, he, hea⟩ := exists_multiOldCell_of_mem_below z.2
-  have hrow : (schemeHG I).rows.row (multiOldCell I multHG a) z =
-      I.amalgam.rows.row a ⟨e, hea⟩ := by
-    rw [← row_multiOldCell a e (he ▸ z.2) hea]
-    exact (schemeHG I).rows.row_congr rfl he
-  rw [hrow, (hasBottomApexes_HG hIL hIR).row_apex ha, he, grade_multiOldCell]
-
 /-- **The capped lift from a coatom at the grade `4` to `(univ, 4)`**, from the capped lift at the
 grade `3` (`OrderedLayer.cappedLift_four_of_oldCells`, with the old cells, the new cell `cellT`
 and the labellings by kinds of `Ω` alone).  If the prescription is `⊥` at the apex, lift its
@@ -591,7 +577,8 @@ theorem cappedLift_four_HG {B : Finset (Fin 5)} (hB : B = coatomC ∨ B = coatom
       ⟨subset_univ _, le_rfl⟩ :=
   cappedLift_four_of_oldCells (hasBottomApexes_HG hIL hIR) (multiOldCell I multHG)
     gradedIndex_multiOldCell (fun _ hz ↦ exists_eq_multiOldCell hz)
-    (fun _ ha ↦ row_multiOldCell_eq_bot_iff hIL hIR ha) grade_le_four_multi (cellT I)
+    (fun _ ha ↦ row_multiOldCell_eq_bot_iff (hasBottomApexes_HG hIL hIR) ha) grade_le_four_multi
+    (cellT I)
     (fun _ hw _ hz ↦ eq_of_isLawfulBelow_four hw hz)
     (fun _ hw hT _ hz ↦ eq_bot_of_isLawfulBelow_four hw hT hz)
     (fun _ hΩ ↦ by

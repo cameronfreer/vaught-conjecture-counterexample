@@ -38,8 +38,12 @@ face holds here, and the lifts into the full scope are the lifts from the common
 `Seed.nonempty_completionBelowFullGrade_canonical_seedHG`): with
 `Seed.canonicalMultiStep_of_productBelowTop`, the canonical multi-layer scheme of these rows is a
 completion below the full grade of every seed of `TH` and `TG`.  At the grade `4` the product
-clause fails (`Seed.not_canonicalProduct_seedHG`), and the top row restricts the lawful labellings
-to the labellings of `Ω` alone.
+clause fails (`Seed.not_canonicalProduct_seedHG`, for every copy rows), and the top row restricts
+the lawful labellings to the labellings of `Ω` alone
+(`OrderedLayer.eq_bot_of_grade_four_canonical`), so the lifts at the grade `4` come from those at
+the grade `3` (`OrderedLayer.cappedLift_four_of_oldCells`), not from the product clause.  So the
+product clause is sufficient for the step of the family, not necessary: here the step holds at the
+grade `4` where the clause fails.
 
 ## Placement
 
@@ -58,8 +62,8 @@ open CrossedCouplingCounterexample (TH TG kindOld kindOld_spec CellKind Coupled 
   isSelfVisible_v2
   isSelfVisible_w2 isSelfVisible_w3 strip3_w2 strip3_w3 min_visibilityReplace_A
   min_visibilityReplace_H)
-open TwoFaceLiftCounterexample (v1 v2 stripShifter isWitness_stripShifter stripShifter_v1
-  stripShifter_v2)
+open TwoFaceLiftCounterexample (v1 v2 stripShifter isWitness_stripShifter
+  isWitness_stripShifter_one stripShifter_v1 stripShifter_v2)
 open TwoFaceLiftExistsCounterexample (strip3 isWitness_strip3)
 
 variable {α : Ordinal.{u}} (I : Seed.{u} α 3)
@@ -139,19 +143,6 @@ theorem transformsTo_kindVal {R : CopyRows I} (k : Fin 4) (i : Fin 2)
   | h => simp only [CellKind.val]; rw [g3 hk]; exact hh (by have := g3 hk; omega)
   | g => simp only [CellKind.val]; rw [g4 hk]; exact hg (by have := g4 hk; omega)
   | top => simp only [CellKind.val]; rw [g5.mp hk]; exact htop (by have := g5.mp hk; omega)
-
-/-- The strip shifter is a witness for a suppressor up to the grade `1`. -/
-theorem isWitness_stripShifter_one {A F : Label.{u}} (hF : IsSelfVisible 1 F) :
-    IsWitness (constStepSuppressor 1 F) (stripShifter A) :=
-  (isWitness_stripShifter (A := A) (isSelfVisible_top 2)).of_le
-    (fun n ↦ by
-      unfold constStepSuppressor
-      split_ifs
-      · exact le_top
-      · omega
-      · exact bot_le
-      · exact le_rfl)
-    (antitone_constStepSuppressor 1 F) (isSelfVisible_constStepSuppressor hF)
 
 variable {H G : Label.{u}}
 
@@ -252,6 +243,7 @@ theorem isLawful_kindVal {AC AD : Label.{u}} (hAC : IsSelfVisible 1 AC)
   · -- Availability: every cell of grade `k + 1` is at most the copy of its kind.
     have hgs := (grade_copyBase (rowsHG I) s).trans hs
     obtain ⟨g1, g2, g3, g4, g5⟩ := grade_of_kindOld (copyBase I s)
+    -- The labelling read through the bases, by definition.
     change ∃ i, kindVal I AC AD H G ⊥ (copyBase I s) ≤
       kindVal I AC AD H G ⊥ (copyBase I (multiNewCell I canonicalMult k i))
     simp only [hcopy]
