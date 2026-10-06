@@ -144,7 +144,7 @@ theorem monotone_bandMap (α β : Ordinal.{u}) (K : ℕ) : Monotone (bandMap α 
 
 /-- The band map sends every label other than bottom to a label at least `α`. -/
 theorem coe_le_bandMap (hx : x ≠ ⊥) : (α : Label.{u}) ≤ bandMap α β K x :=
-  le_min (coe_le_translate hx) (WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr le_self_add))
+  le_min (coe_le_translate hx) (coe_le_coe_add α K)
 
 /-- The band map is at most `α + K`. -/
 theorem bandMap_le (x : Label.{u}) : bandMap α β K x ≤ ((α + K : Ordinal.{u}) : Label.{u}) :=
