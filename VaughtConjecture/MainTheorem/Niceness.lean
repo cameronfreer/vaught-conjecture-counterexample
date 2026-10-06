@@ -21,13 +21,16 @@ and "Two stopping proofs; positive niceness from a terminal presentation"; `IMPL
 base language) is a model expansion of `M` at `λ_α` (`ModelExpansion M (blockStage α)`): a model at
 `λ_α` on the carrier of `M` whose base reduct is literally `M`.  That these are the stage classes
 of [AFK26] is still to be proved (`README.md`, item 5, first row of its table).  A closed tuple of
-`M` is read as a **supported** tuple: an injective tuple typed in the realization of `M` at `ω`
-(`baseLanguage.toRealization`), that is, one of which some relation of the base language holds.
-The comparison of these with the closed tuples of [AFK26] is still to be proved (concordance
-row 29, with item 2).  An invariant realized at a tuple is its stage type; the invariant `Q` of a
-lift at `λ_α` is realized at the same tuple by a lift at a higher stage `λ_{α'}` when that lift
-evaluates the tuple to `Q` read at `λ_{α'}` (`StageType.castLE`, the same scheme and labels): the
-comparison is in the alphabet of all labels.
+`M` is read as a **supported** tuple of positive arity: an injective tuple `u : Fin n ↪ M` with
+`0 < n` typed in the realization of `M` at `ω` (`baseLanguage.toRealization`), that is, one of
+which some relation of the base language holds.  Arity `0` is excluded: the closed tuples of
+[AFK26, Definition 2.1] are those satisfying some `P_n`, which exists only for `n ≥ 1`, and the
+empty tuple is not closed there, although it is supported in every base structure with a lift.
+The comparison of the supported tuples of positive arity with the closed tuples of [AFK26] is
+still to be proved (concordance row 29, with item 2).  An invariant realized at a tuple is its
+stage type; the invariant `Q` of a lift at `λ_α` is realized at the same tuple by a lift at a
+higher stage `λ_{α'}` when that lift evaluates the tuple to `Q` read at `λ_{α'}`
+(`StageType.castLE`, the same scheme and labels): the comparison is in the alphabet of all labels.
 
 **Niceness** [AFK26, Definition 2.19] (numbering of the current draft).  A tuple `u` is **nice at
 the threshold `α` with the invariant `Q`** (`IsNiceTupleAt`) when
@@ -36,9 +39,10 @@ the threshold `α` with the invariant `Q`** (`IsNiceTupleAt`) when
    (`IsNiceTupleAt.forall_lift`).
 
 The tuple is **nice** (`IsNiceTuple`) when it is nice at some countable threshold with some
-invariant, and `M` is **nice** (`IsNice`) when every closed tuple is.  Clause 2 quantifies over all
-lifts at every higher index, not over one chosen lift; this is positive niceness over all
-admissible lifts (concordance row 30), for the family of all model presentations of `M`.
+invariant, and `M` is **nice** (`IsNice`) when every closed tuple, of positive arity, is.
+Clause 2 quantifies over all lifts at every higher index, not over one chosen lift; this is
+positive niceness over all admissible lifts (concordance row 30), for the family of all model
+presentations of `M`.
 
 **Maximality gives niceness** (the implication 5 ⇒ 1 of the five criteria).  The **serving
 indices** of `M` are the countable indices at which `M` has a lift (`README.md`, item 5), and an
@@ -56,21 +60,29 @@ to `λ_ρ` of a lift at a higher index is a lift at `ρ`, equal to the given one
 model expansions (`ModelExpansion.subsingleton`), which contradicts terminality
 (`Realization.isTerminalAt_iff_forall_lt`).
 
-**Terminal refinement** (`HasMaximalRefinement`, a named hypothesis, still to be proved).  Every
+**Terminal refinement** (`HasTerminalRefinement`, a named hypothesis, still to be proved).  Every
 model `V` at a block stage `λ_β` on a countable carrier is literally the stage reduction of a model
 `W` at `λ_ρ` on the same carrier, for a countable `ρ ≥ β`, terminal at `ρ`: the specified terminal
-refinement of `README.md`, item 5 (concordance row 38).
+refinement of `README.md`, item 5 (concordance row 38).  The refinement is terminal; it is known
+to be maximal only together with next-block uniqueness, by terminal collision.  With it, the
+hypothesis is a stopping statement for each base: it entails eventual departure, since no model on
+a countable carrier then has lifts of its base at every countable index.  A maximal refinement on
+carriers in `Type`, which adds to the conclusion that every lift of the same base has index at
+most `ρ` (prospective, conditional on finite-cut receiving of every model, next-block uniqueness
+and the apex coatom extension property at every countable block stage), would give
+`HasTerminalRefinement.{0}` by projecting out that conjunct.
 
 **Condition (c) of the system** [AFK26, Definition 2.22, clause (c)]: the base reduct of every
-model of the system is nice.  Here, conditional on `HasMaximalRefinement` and
+model of the system is nice.  Here, conditional on `HasTerminalRefinement` and
 `Expansion.NextBlockUniqueness`, both still to be proved, the base reduct of every model at a block
 stage on a countable carrier is nice (`Realization.IsModel.isNice_toStructure_reduce`; for a base
-structure with a lift, `isNice_of_hasMaximalRefinement`).  One terminal refinement serves every
+structure with a lift, `isNice_of_hasTerminalRefinement`).  One terminal refinement serves every
 closed tuple at once: a single maximal presentation supplies an inhabited threshold `ρ` for all
 closed tuples, with its own invariant at each as the actual witness
-(`exists_isNiceTupleAt_of_hasMaximalRefinement`).  The order of the argument is the one of the
-roadmap: a terminal presentation first, then positive niceness; no fixing bound is used, and no
-termination hypothesis enters beyond `HasMaximalRefinement`.
+(`exists_isNiceTupleAt_of_hasTerminalRefinement`, which also covers the empty tuple).  The order
+of the argument is the one of the roadmap: a terminal presentation first, then positive niceness;
+no fixing bound is used, and no termination hypothesis enters beyond `HasTerminalRefinement`,
+itself a stopping statement for each base.
 
 ## Placement
 
@@ -105,10 +117,12 @@ def IsNiceTuple (u : Fin n ↪ M) : Prop :=
   ∃ α < ω₁, ∃ Q : StageType.{0} (blockStage α) n, IsNiceTupleAt M u α Q
 
 /-- **A nice base structure** [AFK26, Definition 2.19, last sentence]: every closed tuple of `M`,
-read as a tuple supported in the realization of `M` at `ω`, is nice. -/
+read as a tuple of positive arity supported in the realization of `M` at `ω`, is nice.  The empty
+tuple, supported in every base structure with a lift, is not closed in [AFK26] and is excluded. -/
 structure IsNice : Prop where
-  /-- Every closed tuple is nice. -/
-  isNiceTuple : ∀ ⦃n : ℕ⦄ (u : Fin n ↪ M), ((toRealization M).eval u).isSome → IsNiceTuple M u
+  /-- Every closed tuple, of positive arity, is nice. -/
+  isNiceTuple : ∀ ⦃n : ℕ⦄, 0 < n → ∀ u : Fin n ↪ M, ((toRealization M).eval u).isSome →
+    IsNiceTuple M u
 
 /-- `ρ` **bounds the serving indices** of `M`: every countable index at which `M` has a lift (a
 model expansion at its block stage) is at most `ρ`. -/
@@ -116,22 +130,6 @@ def BoundsServingIndices (ρ : Ordinal.{0}) : Prop :=
   ∀ ⦃α : Ordinal.{0}⦄, α < ω₁ → Nonempty (ModelExpansion M (blockStage α)) → α ≤ ρ
 
 variable {M}
-
-/-- **The realization of the base structure is the base reduct of a lift**: for a model
-expansion `e` of `M`, the realization of `M` at `ω` is the stage reduction of `e` to `ω`. -/
-theorem ModelExpansion.toRealization_eq_reduce {α : Ordinal.{0}} (e : ModelExpansion M α) :
-    toRealization M = e.1.reduce isSuccLimit_omega0.isSuccPrelimit := by
-  obtain ⟨R, hR⟩ := e
-  have h := hR.toStructure_reduce
-  change toRealization M = R.reduce _
-  rw [← h]
-  exact toRealization_toStructure (hR.isModel.hasLegalTypes.reduce _)
-
-/-- **A closed tuple is typed in every lift**: a tuple supported in the realization of `M` at `ω`
-has a type in every model expansion of `M`. -/
-theorem ModelExpansion.isSome_eval {α : Ordinal.{0}} (e : ModelExpansion M α) {u : Fin n ↪ M}
-    (hu : ((toRealization M).eval u).isSome) : (e.1.eval u).isSome := by
-  rwa [e.toRealization_eq_reduce, Realization.isSome_reduce_eval] at hu
 
 /-- **Maximality gives a niceness threshold** (the implication 5 ⇒ 1): if `ρ` bounds the serving
 indices of `M`, the invariant `Q` of a tuple in a lift at `ρ` makes the tuple nice at `ρ`; the lift
@@ -145,7 +143,7 @@ theorem isNiceTupleAt_of_boundsServingIndices {ρ : Ordinal.{0}} (hb : BoundsSer
 bounds its serving indices, then `M` is nice, every closed tuple at the threshold `ρ`. -/
 theorem isNice_of_boundsServingIndices {ρ : Ordinal.{0}} (hρ : ρ < ω₁)
     (hb : BoundsServingIndices M ρ) (e : ModelExpansion M (blockStage ρ)) : IsNice M :=
-  ⟨fun _ u hu ↦ by
+  ⟨fun _ _ u hu ↦ by
     obtain ⟨Q, hQ⟩ := Option.isSome_iff_exists.mp (e.isSome_eval hu)
     exact ⟨ρ, hρ, Q, isNiceTupleAt_of_boundsServingIndices hb e hQ⟩⟩
 
@@ -169,8 +167,13 @@ end Niceness
 /-- **Terminal refinement on the same carrier** (a named hypothesis, still to be proved): every
 model `V` at a block stage `λ_β` on a countable carrier in the universe `w` is literally the stage
 reduction of a model `W` at `λ_ρ` on the same carrier, for a countable `ρ ≥ β`, with `W` terminal
-at `ρ`.  It is the specified terminal refinement of `README.md`, item 5 (concordance row 38). -/
-structure HasMaximalRefinement : Prop where
+at `ρ`.  It is the specified terminal refinement of `README.md`, item 5 (concordance row 38).
+The refinement `W` is terminal; it is known to be maximal (every lift of its base has index at
+most `ρ`) only together with next-block uniqueness
+(`ModelExpansion.boundsServingIndices_of_isTerminalAt`).  With
+next-block uniqueness this hypothesis entails eventual departure: no model on a countable carrier
+has lifts of its base at every countable index. -/
+structure HasTerminalRefinement : Prop where
   /-- Every model on a countable carrier is the reduction of a terminal model above it. -/
   exists_isTerminalAt : ∀ {M : Type w} [Countable M] {β : Ordinal.{0}}
     (V : Realization.{0, w} (blockStage β) M), V.IsModel →
@@ -182,11 +185,12 @@ section Refinement
 variable {M : Type w} [baseLanguage.{0}.Structure M] [Countable M]
 
 /-- **A single maximal presentation serves every closed tuple**, conditional on
-`HasMaximalRefinement` and `Expansion.NextBlockUniqueness`, both still to be proved: a base
+`HasTerminalRefinement` and `Expansion.NextBlockUniqueness`, both still to be proved: a base
 structure `M` on a countable carrier with a lift `V` at `λ_β` has a lift `e` at a countable
 `ρ ≥ β` reducing to `V`, terminal at `ρ` and bounding the serving indices of `M`, at which every
-closed tuple is nice with its own invariant in `e` as the actual witness. -/
-theorem exists_isNiceTupleAt_of_hasMaximalRefinement (hmax : HasMaximalRefinement.{w})
+closed tuple is nice with its own invariant in `e` as the actual witness.  The tuples here are of
+every arity, the empty tuple included, so this is stronger than the niceness of `M` (`IsNice`). -/
+theorem exists_isNiceTupleAt_of_hasTerminalRefinement (hmax : HasTerminalRefinement.{w})
     (hu : Expansion.NextBlockUniqueness.{w}) {β : Ordinal.{0}}
     (V : ModelExpansion M (blockStage β)) :
     ∃ ρ : Ordinal.{0}, β ≤ ρ ∧ ρ < ω₁ ∧ ∃ e : ModelExpansion M (blockStage ρ),
@@ -204,25 +208,25 @@ theorem exists_isNiceTupleAt_of_hasMaximalRefinement (hmax : HasMaximalRefinemen
   obtain ⟨Q, hQ⟩ := Option.isSome_iff_exists.mp (e.isSome_eval hu')
   exact ⟨Q, hQ, isNiceTupleAt_of_boundsServingIndices hb e hQ⟩
 
-/-- **Niceness from terminal refinement**, conditional on `HasMaximalRefinement` and
+/-- **Niceness from terminal refinement**, conditional on `HasTerminalRefinement` and
 `Expansion.NextBlockUniqueness`, both still to be proved: a base structure on a countable carrier
 with a lift at some block stage is nice. -/
-theorem isNice_of_hasMaximalRefinement (hmax : HasMaximalRefinement.{w})
+theorem isNice_of_hasTerminalRefinement (hmax : HasTerminalRefinement.{w})
     (hu : Expansion.NextBlockUniqueness.{w}) {β : Ordinal.{0}}
     (V : ModelExpansion M (blockStage β)) : IsNice M := by
-  obtain ⟨ρ, -, hρ, e, -, -, hb, -⟩ := exists_isNiceTupleAt_of_hasMaximalRefinement hmax hu V
+  obtain ⟨ρ, -, hρ, e, -, -, hb, -⟩ := exists_isNiceTupleAt_of_hasTerminalRefinement hmax hu V
   exact isNice_of_boundsServingIndices hρ hb e
 
 end Refinement
 
 /-- **Condition (c) of the system** [AFK26, Definition 2.22, clause (c)], conditional on
-`HasMaximalRefinement` and `Expansion.NextBlockUniqueness`, both still to be proved: the base
+`HasTerminalRefinement` and `Expansion.NextBlockUniqueness`, both still to be proved: the base
 reduct of every model at a block stage on a countable carrier is nice. -/
-theorem Realization.IsModel.isNice_toStructure_reduce (hmax : HasMaximalRefinement.{w})
+theorem Realization.IsModel.isNice_toStructure_reduce (hmax : HasTerminalRefinement.{w})
     (hu : Expansion.NextBlockUniqueness.{w}) {M : Type w} [Countable M] {β : Ordinal.{0}}
     {V : Realization.{0, w} (blockStage β) M} (hV : V.IsModel) :
     @IsNice M (V.reduce isSuccLimit_omega0.isSuccPrelimit).toStructure :=
   letI := (V.reduce isSuccLimit_omega0.isSuccPrelimit).toStructure
-  isNice_of_hasMaximalRefinement hmax hu ⟨V, hV, rfl⟩
+  isNice_of_hasTerminalRefinement hmax hu ⟨V, hV, rfl⟩
 
 end VaughtConjecture

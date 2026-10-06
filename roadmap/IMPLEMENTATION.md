@@ -1065,7 +1065,7 @@ declarations listed in the notes.
 | 27 | [AFK26] | maximal presentations, class–level incidence (item 5; no numbered statement) | S |
 | 28 | [AFK26] | full trees, Definition 8.4 and Proposition 8.6 (item 6) | C |
 | 29 | [AFK26] | closed tuples as supported tuples (item 2; no numbered statement) | S |
-| 30 | [AFK26] | positive niceness over all admissible lifts (item 5; no numbered statement) | S |
+| 30 | [AFK26] | niceness, Definition 2.19; condition (c) of Definition 2.22 (current draft) | S |
 | 31 | [AFK26] | a uniform fixing stage of a family (item 5; no numbered statement) | S |
 | 32 | [AFK26] | the bound of serving indices under strictness (item 5; no numbered statement) | S |
 | 33 | [AFK26] | maximal presentations of a literal base (item 5; no numbered statement) | S |
@@ -1242,13 +1242,15 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
 30. Niceness of a tuple and of a base structure ([AFK26, Definition 2.19], in the numbering of the
     current draft): `IsNiceTupleAt` (one field for each of its two clauses), `IsNiceTuple` and
     `IsNice` (`MainTheorem/Niceness`), read in the raw base encoding: the lifts at `α` are the model
-    expansions at `λ_α`, the closed tuples the supported tuples of the realization of the base at
-    `ω` (row 29), and the invariant at a higher stage is compared by `StageType.castLE`.  Positive
+    expansions at `λ_α`, the closed tuples the supported tuples of positive arity of the
+    realization of the base at `ω` (row 29), and the invariant at a higher stage is compared by
+    `StageType.castLE`.  The empty tuple is excluded: it is supported in every base structure with
+    a lift, but not closed in [AFK26] (Definition 2.1 has `P_n` only for `n ≥ 1`).  Positive
     niceness for the base reduct of every model at a block stage on a countable carrier, with one
     threshold `ρ` for all closed tuples and the invariant of each in a lift at `ρ` as the actual
-    witness: `exists_isNiceTupleAt_of_hasMaximalRefinement`, `isNice_of_hasMaximalRefinement`, and
+    witness: `exists_isNiceTupleAt_of_hasTerminalRefinement`, `isNice_of_hasTerminalRefinement`, and
     `Realization.IsModel.isNice_toStructure_reduce` (condition (c) of [AFK26, Definition 2.22]),
-    compiled conditional on `HasMaximalRefinement` (row 38) and `Expansion.NextBlockUniqueness`,
+    compiled conditional on `HasTerminalRefinement` (row 38) and `Expansion.NextBlockUniqueness`,
     both still to be proved.  Status S: the hypotheses are still to be proved, and the
     identifications of the lifts and of the closed tuples with those of [AFK26] are still to be
     proved (the first row of the table of item 5; row 29).  No declaration of this repository names
@@ -1349,7 +1351,7 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     presentation is terminal); literal-reduct uniqueness is row 35, conditional on the
     injectivity of model reduction.  Through the Scott route no global termination theorem is
     used; the stage index is not assumed countable.  The statement is the named hypothesis
-    `HasMaximalRefinement` (`MainTheorem/Niceness`), still to be proved, on which the positive
+    `HasTerminalRefinement` (`MainTheorem/Niceness`), still to be proved, on which the positive
     niceness of row 30 is compiled conditionally.
 39. Prospective as a combined statement, which is not named, in two forms: carrier-general (a
     base structure on any carrier, with `ξ < ω₁` an explicit hypothesis) and coded (codes on

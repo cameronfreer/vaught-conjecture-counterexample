@@ -42,7 +42,9 @@ structure induced by the isomorphism, which is the target structure
 realization of its base structure (`ModelExpansion.val_eq_toRealization`), so there is at most one
 (`ModelExpansion.instSubsingletonOmega`), and a type assignment has one exactly when its
 realization is a model (`ModelExpansion.nonempty_omega_iff`); uniqueness at higher stages is not
-proved here.
+proved here.  At every stage, the realization of the base structure is the stage reduction of an
+expansion to `ω` (`ModelExpansion.toRealization_eq_reduce`), so a tuple supported in the base
+structure is typed in every expansion (`ModelExpansion.isSome_eval`).
 
 **Countable stages.**  A model on a countable carrier has a countable stage
 (`Realization.IsModel.lt_omega_one`): over one occurrence, the uniformity clause at each block
@@ -360,6 +362,25 @@ theorem ModelExpansion.val_eq_toRealization (e : ModelExpansion M (ω : Ordinal.
   change R = toRealization M
   rw [← h]
   exact (toRealization_toStructure hR.isModel.hasLegalTypes).symm
+
+/-- **The realization of the base structure is the base reduct of an expansion**: for a model
+expansion `e` of `M` at any stage, the realization of `M` at `ω` is the stage reduction of `e` to
+`ω`.  At the base stage this is `ModelExpansion.val_eq_toRealization`. -/
+theorem ModelExpansion.toRealization_eq_reduce (e : ModelExpansion M α) :
+    toRealization M = e.1.reduce isSuccLimit_omega0.isSuccPrelimit := by
+  obtain ⟨R, hR⟩ := e
+  have h := hR.toStructure_reduce
+  -- the realization of `⟨R, hR⟩` is `R`; unfold the subtype projection before rewriting the
+  -- base structure, which also occurs in the type of `hR`
+  change toRealization M = R.reduce _
+  rw [← h]
+  exact toRealization_toStructure (hR.isModel.hasLegalTypes.reduce _)
+
+/-- **A supported tuple is typed in every expansion**: a tuple supported in the realization of
+`M` at `ω` has a type in every model expansion of `M`. -/
+theorem ModelExpansion.isSome_eval (e : ModelExpansion M α) {n : ℕ} {u : Fin n ↪ M}
+    (hu : ((toRealization M).eval u).isSome) : (e.1.eval u).isSome := by
+  rwa [e.toRealization_eq_reduce, Realization.isSome_reduce_eval] at hu
 
 /-- **At most one model expansion at the base stage.** -/
 instance ModelExpansion.instSubsingletonOmega :
