@@ -63,8 +63,9 @@ the family's step (for `seedHG` it holds at the grade `4`, where the clause fail
 does it refute the family with rows restricting the pairs: by the labelling of `Ω` alone at the
 grade `4`, as `Seed.canonicalMultiStep_of_productBelowTop` does (under which the labellings of the
 decoding refutation are not lawful, `OrderedLayer.eq_bot_of_grade_four_canonical`), by the
-oriented rows of an oriented ordered-layer step, which complete the five seeds above
-(`VaughtConjecture.Extension.CanonicalMultiSchemeOriented`), or by rows under which each copy of
+oriented rows of an oriented ordered-layer step, which give the family a step at the five seeds
+above (`VaughtConjecture.Extension.CanonicalMultiSchemeOriented`; an exact reformulation of their
+ordered-layer steps, which already complete them), or by rows under which each copy of
 `(B, k)` reads the parameters of its own coatom above those of the other.
 
 ## Placement

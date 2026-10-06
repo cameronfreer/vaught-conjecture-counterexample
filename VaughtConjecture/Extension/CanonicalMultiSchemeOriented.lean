@@ -49,8 +49,9 @@ cell, and the original of the copy `b` of grade `k` for the new cell at `(univ, 
   the canonical multi-layer scheme.  Locality at a copy is locality at the new cell of its grade
   capped at the label of the original (`Label.TransformsTo.min_const`), read along the bases;
   availability into a copy goes through the new cell, whose label is that of the original of the
-  copy `b` (`OrderedLayer.layer_newCell_facts`, `OrderedLayer.eq_layerBase_of_isLawfulBelow`): the
-  new cell reads itself and that original at one value.
+  copy `b` (`OrderedLayer.newCell_bounds_of_isLawfulBelow`,
+  `OrderedLayer.eq_layerBase_of_isLawfulBelow`): the new cell reads itself and that original at
+  one value.
 * *To the layer scheme* (`OrderedLayer.isLawfulBelow_layer_of_oriented`): a labelling lawful below
   `(univ, j)` in the canonical multi-layer scheme, read through the layer bases, is lawful below
   `(univ, j)` in the layer scheme.  Locality at the new cell of grade `k` is locality at the copy
@@ -75,25 +76,29 @@ the oriented rows has the multi-layer step exactly when the layer scheme has the
 * `Seed.orderedLayerStep_of_canonicalMultiStep_oriented`: the converse, symmetrically
   (`OrderedLayer.cappedLift_layer_of_oriented`).
 
-So the finite clause that replaces the product clause for oriented rows is the ordered-layer step
-with oriented rows (`Seed.HasOrientedLayerStep`), and it gives a step of the canonical multi-layer
-scheme (`Seed.HasOrientedLayerStep.hasCanonicalMultiStep`) and a completion below the full grade
-(`Seed.nonempty_completionBelowFullGrade_of_orderedLayerStep`).  Since both copies of a grade read
-alike, oriented rows add nothing to the layer scheme: they complete exactly the seeds whose
-ordered-layer step has oriented rows.
+This iff is an exact reformulation of the ordered-layer step: both copies of a grade read alike,
+so under oriented rows the family adds nothing to the layer scheme.  The clause for these rows is
+the ordered-layer step itself, with oriented rows (`Seed.HasOrientedLayerStep`); it gives a step
+of the canonical multi-layer scheme (`Seed.HasOrientedLayerStep.hasCanonicalMultiStep`) and a
+completion below the full grade (`Seed.nonempty_completionBelowFullGrade_of_orderedLayerStep`),
+and oriented rows give a step exactly at the seeds whose ordered-layer step has oriented rows.
 
 **Status** (`VaughtConjecture.Extension.CanonicalMultiSchemeOrientedExamples`).  The five seeds
-`seed4`, `seed5`, `seedL`, `seedLM`, `seedLL` have ordered-layer steps with oriented rows, so the
-canonical multi-layer scheme completes each of them.  Oriented rows do not complete `seedHG`
-(it has no ordered-layer step), which the family completes with the rows of the product clause
-below the top grade (`Seed.canonicalMultiStep_of_TH_TG`), and no oriented layer rows serve both
-`seedL` and `seedLM`.  The copy family is viable for every seed on five points; the fibre product
-was refuted at those seeds and grades; oriented rows are one choice of the copy rows, and they are
-not uniform in the seed.  Whether some choice of copy rows gives the step for every seed on five
-points (`Seed.HasCanonicalMultiStep` for every seed) is open; oriented rows are not such a choice,
-since they fail at `seedHG`.  The rows of `seedHG` in the family (`CanonicalHG.rowsHG`) read the
-two copies of the grade `1` in opposite orientations, each its own coatom's parameter above the
-other's.
+`seed4`, `seed5`, `seedL`, `seedLM`, `seedLL` have ordered-layer steps with oriented rows; those
+steps already complete them (`Seed.orderedLayerStep_seed4`, `…_seed5`, `…_seedL`, `…_seedLM`,
+`…_seedLL`), and what is new is only that the canonical multi-layer scheme itself has a step at
+them.  Oriented rows give `seedHG` no step, since it has no ordered-layer step; so they give no
+completion of `seedHG` by the canonical multi-layer scheme, whose step with given rows is exactly
+the content of such a completion (`Seed.multiLayerStep_iff`).  The family has a step at `seedHG`
+with the rows of the product clause below the top grade (`Seed.canonicalMultiStep_of_TH_TG`).
+No oriented layer rows serve both `seedL` and `seedLM`.  So the canonical multi-layer scheme has a
+step at every compiled seed (`Seed.hasCanonicalMultiStep_seed4_seed5_seedL_seedLM_seedLL_seedHG`),
+and no seed refutes it; the fibre product was refuted at those seeds and grades; oriented rows are
+one choice of the copy rows, and they are not uniform in the seed.  Whether some choice of copy
+rows gives the step for every seed on five points (`Seed.HasCanonicalMultiStep` for every seed) is
+open; oriented rows are not such a choice, since they fail at `seedHG`.  The rows of `seedHG` in
+the family (`CanonicalHG.rowsHG`) read the two copies of the grade `1` in opposite orientations,
+each its own coatom's parameter above the other's.
 
 ## Placement
 
@@ -116,12 +121,14 @@ namespace Label
 variable {D D' : Type*} {grade : D → ℕ} {p q : D → Label.{u}}
 
 /-- **A transformation read along a map**: if `p` transforms to `q`, then `p'` transforms to `q'`
-whenever the grades, sources and targets of `p'` and `q'` are those of `p` and `q` along a map. -/
+whenever the grades, sources and targets of `p'` and `q'` are those of `p` and `q` along a map.
+The pointwise form of `Label.TransformsTo.reindex`. -/
 theorem TransformsTo.of_comp (h : TransformsTo grade p q) {grade' : D' → ℕ}
     {p' q' : D' → Label.{u}} (φ : D' → D) (hg : ∀ d, grade' d = grade (φ d))
     (hp : ∀ d, p' d = p (φ d)) (hq : ∀ d, q' d = q (φ d)) : TransformsTo grade' p' q' := by
-  obtain ⟨g, σ, hw, heq⟩ := h
-  exact ⟨g, σ, hw, fun d ↦ by rw [hq, heq, hp, hg]⟩
+  rw [show grade' = grade ∘ φ from funext hg, show p' = p ∘ φ from funext hp,
+    show q' = q ∘ φ from funext hq]
+  exact h.reindex φ
 
 end Label
 
@@ -224,20 +231,11 @@ private theorem oldCell_mem_below_iff {d : Fin I.amalgam.card} {X : Finset (Fin 
       d ∈ I.amalgam.toCellScheme.below X := by
   rw [CellScheme.mem_below, gradedIndex_oldCell]; rfl
 
-/-- An old cell of the amalgam lies below one of the two coatoms at its grade. -/
-private theorem mem_below_coatom (d : Fin I.amalgam.card) {j : ℕ}
-    (hd : I.amalgam.toCellScheme.grade d ≤ j) :
-    d ∈ I.amalgam.toCellScheme.below (coatomC, j) ∨
-      d ∈ I.amalgam.toCellScheme.below (coatomD, j) := by
-  rcases I.subset_or_subset _ (I.amalgam.isWellFormed.isWellFormed.scope_mem d)
-    (I.scope_ne_univ d) with h | h
-  exacts [.inl ⟨h, hd⟩, .inr ⟨h, hd⟩]
-
 /-- **The new cells of a lawful labelling of the layer scheme**, for layer rows oriented toward
 `b`: below `(univ, j)`, the new cell at `(univ, k + 1)`, `k + 1 ≤ j`, is at least every old cell of
 grade `k + 1` (availability) and at most the original of the copy `b` of grade `k + 1` (it reads
 itself and that original at one value). -/
-theorem layer_newCell_facts {b : Fin 2} (hρ : IsOriented ρ b) {j : ℕ}
+theorem newCell_bounds_of_isLawfulBelow {b : Fin 2} (hρ : IsOriented ρ b) {j : ℕ}
     {W : Fin (layerScheme I ρ).card → Label.{u}}
     (hW : (layerScheme I ρ).rows.IsLawfulBelow ((univ : Finset (Fin 5)), j) fun z ↦ W z)
     (k : Fin 4) (hkj : (k : ℕ) + 1 ≤ j) :
@@ -266,7 +264,8 @@ theorem layer_newCell_facts {b : Fin 2} (hρ : IsOriented ρ b) {j : ℕ}
     have := hL.le_of_le (d := ⟨_, hself⟩) (d' := ⟨_, hob⟩) (by
       rw [row_newCell hN1 hN4, row_newCell hN1 hN4, gradedIndex_oldCell, gradedIndex_copyOrig,
         gradedIndex_newCell hN1 hN4, hρ.read _ _ hN1 le_rfl hN4]) (by
-      -- The grades of the two cells, as cells of the layer scheme.
+      -- The grades of the two cells, as cells of the layer scheme: the goal reads them through
+      -- `Subtype.val` of anonymous constructors, which `rw [grade_oldCell]` does not match.
       change (layerScheme I ρ).toCellScheme.grade (oldCell I ρ (copyOrig I k b)) ≤
         (layerScheme I ρ).toCellScheme.grade (newCell I ρ ((k : ℕ) + 1))
       rw [grade_oldCell, grade_copyOrig, grade_newCell hN1 hN4])
@@ -288,7 +287,7 @@ theorem eq_layerBase_of_isLawfulBelow {b : Fin 2} (hρ : IsOriented ρ b) {j : �
         W (oldCell I ρ (layerBase I ρ b (newCell I ρ ((k : ℕ) + 1)))) := by
     have hkj : (k : ℕ) + 1 ≤ j := (congrArg Prod.snd (gradedIndex_newCell (I := I) (ρ := ρ)
       (k := (k : ℕ) + 1) (by omega) (by omega))).symm.trans_le hz.2
-    obtain ⟨-, hle, hNb⟩ := layer_newCell_facts hρ hW k hkj
+    obtain ⟨-, hle, hNb⟩ := newCell_bounds_of_isLawfulBelow hρ hW k hkj
     rw [layerBase_newCell]
     exact le_antisymm hNb (hle _ (grade_copyOrig I k b))
   rcases cell_cases z with ⟨d, rfl⟩ | rfl | rfl | rfl | rfl
@@ -326,17 +325,15 @@ theorem isLawfulBelow_oriented_of_layer {b : Fin 2} (hρ : IsOriented ρ b) {j :
       oldCell I ρ (copyBase I z) ∈ (layerScheme I ρ).toCellScheme.below
         ((univ : Finset (Fin 5)), j') :=
     oldCell_mem_below_iff.mpr ⟨subset_univ _, (grade_copyBase _ z).trans_le hz⟩
-  have newCell_facts := layer_newCell_facts hρ hW
+  have newCell_facts := newCell_bounds_of_isLawfulBelow hρ hW
   refine (Rows.isLawfulBelow_iff_forall
     (w := fun z ↦ W (oldCell I ρ (copyBase I z)))).mpr
     ⟨fun z hz ↦ ?_, fun s hs ↦ ?_, fun s t ht hst hg ↦ ?_⟩
   · have := ho _ (hmem hz.2)
     rwa [grade_oldCell, grade_copyBase] at this
   · rcases multiCell_cases (r := canonicalRows I (orientedRows I ρ)) s with ⟨a, rfl⟩ | ⟨k, i, rfl⟩
-    · have ha' := multiOldCell_mem_below_iff.mp hs
-      rcases mem_below_coatom a ha'.2 with h | h
-      · exact hBC.2.1 _ (multiOldCell_mem_below_iff.mpr h)
-      · exact hBD.2.1 _ (multiOldCell_mem_below_iff.mpr h)
+    · rcases mem_below_coatom_of_ne_multi hs (scope_multiOldCell_ne a) with h | h
+      exacts [hBC.2.1 _ h, hBD.2.1 _ h]
     · have hkj : (k : ℕ) + 1 ≤ j := by
         have := hs.2
         rwa [gradedIndex_multiNewCell] at this
@@ -361,7 +358,8 @@ theorem isLawfulBelow_oriented_of_layer {b : Fin 2} (hρ : IsOriented ρ b) {j :
         have := t.2.2.trans_eq (congrArg Prod.snd
           (gradedIndex_multiNewCell (r := canonicalRows I (orientedRows I ρ)) k i))
         exact this
-      · -- The grades of a cell and of its base.
+      · -- The grades of a cell and of its base: the right side is `Subtype.val` of an anonymous
+        -- constructor, which `rw [grade_oldCell]` does not match.
         change _ = (layerScheme I ρ).toCellScheme.grade (oldCell I ρ (copyBase I t.1))
         rw [grade_oldCell, grade_copyBase]
       · rw [row_canonical, row_newCell hN1 hN4, gradedIndex_oldCell]
@@ -369,10 +367,8 @@ theorem isLawfulBelow_oriented_of_layer {b : Fin 2} (hρ : IsOriented ρ b) {j :
       · simp only [copyBase_multiNewCell]
         rw [min_assoc, min_eq_right hoN]
   · rcases multiCell_cases (r := canonicalRows I (orientedRows I ρ)) t with ⟨e, rfl⟩ | ⟨k, i, rfl⟩
-    · have he' := multiOldCell_mem_below_iff.mp ht
-      rcases mem_below_coatom e he'.2 with h | h
-      · exact hBC.2.2 s _ (multiOldCell_mem_below_iff.mpr h) hst hg
-      · exact hBD.2.2 s _ (multiOldCell_mem_below_iff.mpr h) hst hg
+    · rcases mem_below_coatom_of_ne_multi ht (scope_multiOldCell_ne e) with h | h
+      exacts [hBC.2.2 s _ h hst hg, hBD.2.2 s _ h hst hg]
     · have hkj : (k : ℕ) + 1 ≤ j := by
         have := ht.2
         rwa [gradedIndex_multiNewCell] at this
@@ -443,7 +439,8 @@ theorem isLawfulBelow_layer_of_oriented {b : Fin 2} (hρ : IsOriented ρ b) {j :
         rw [row_canonical, row_canonical, copyBase_multiOldCell, copyBase_multiOldCell,
           orientedRows_apply, orientedRows_apply, gradedIndex_copyOrig, gradedIndex_copyOrig]
         exact hρ.le _ i hN1 hN4) (by
-        -- The grades of the two originals, as cells of the canonical scheme.
+        -- The grades of the two originals, as cells of the canonical scheme: the goal reads them
+        -- through `Subtype.val` of anonymous constructors, which `rw` does not match.
         change (canonicalMultiScheme I (orientedRows I ρ)).toCellScheme.grade
             (multiOldCell I canonicalMult (copyOrig I k b)) ≤
           (canonicalMultiScheme I (orientedRows I ρ)).toCellScheme.grade
@@ -459,7 +456,8 @@ theorem isLawfulBelow_layer_of_oriented {b : Fin 2} (hρ : IsOriented ρ b) {j :
         refine hmem ?_
         have := t.2.2.trans_eq (congrArg Prod.snd (gradedIndex_newCell hN1 hN4))
         exact this
-      · -- The grades of a cell and of its layer base.
+      · -- The grades of a cell and of its layer base: the right side is `Subtype.val` of an
+        -- anonymous constructor, which `rw [grade_multiOldCell]` does not match.
         change _ = (canonicalMultiScheme I (orientedRows I ρ)).toCellScheme.grade
           (multiOldCell I canonicalMult (layerBase I ρ b t.1))
         rw [grade_multiOldCell, grade_layerBase]
@@ -490,10 +488,8 @@ theorem isLawfulBelow_layer_of_oriented {b : Fin 2} (hρ : IsOriented ρ b) {j :
   · have := ho _ (hmem hz.2)
     rwa [grade_multiOldCell, grade_layerBase] at this
   · rcases cell_cases s with ⟨a, rfl⟩ | rfl | rfl | rfl | rfl
-    · have ha' := oldCell_mem_below_iff.mp hs
-      rcases mem_below_coatom a ha'.2 with h | h
-      · exact hBC.2.1 _ (oldCell_mem_below_iff.mpr h)
-      · exact hBD.2.1 _ (oldCell_mem_below_iff.mpr h)
+    · rcases mem_below_coatom_of_ne hs (scope_oldCell_ne a) with h | h
+      exacts [hBC.2.1 _ h, hBD.2.1 _ h]
     · exact (newCell_facts 0 (newMem (k := 0) rfl hs)).1
     · exact (newCell_facts 1 (newMem (k := 1) rfl hs)).1
     · exact (newCell_facts 2 (newMem (k := 2) rfl hs)).1
@@ -507,10 +503,8 @@ theorem isLawfulBelow_layer_of_oriented {b : Fin 2} (hρ : IsOriented ρ b) {j :
       refine ⟨_, rfl, (newCell_facts k (newMem rfl ht)).2 s ?_⟩
       rw [hg, grade_newCell (by omega) (by omega)]
     rcases cell_cases t with ⟨e, rfl⟩ | rfl | rfl | rfl | rfl
-    · have he' := oldCell_mem_below_iff.mp ht
-      rcases mem_below_coatom e he'.2 with h | h
-      · exact hBC.2.2 s _ (oldCell_mem_below_iff.mpr h) hst hg
-      · exact hBD.2.2 s _ (oldCell_mem_below_iff.mpr h) hst hg
+    · rcases mem_below_coatom_of_ne ht (scope_oldCell_ne e) with h | h
+      exacts [hBC.2.2 s _ h hst hg, hBD.2.2 s _ h hst hg]
     · exact avail 0 rfl
     · exact avail 1 rfl
     · exact avail 2 rfl
@@ -574,7 +568,8 @@ theorem cappedLift_oriented {b : Fin 2} (hρ : IsOriented ρ b) {B : Finset (Fin
         (oldCell_mem_below_iff.mp hd)
       have heU := multiOldCell_mem_below_iff (R := orientedRows I ρ) (X := (univ, k)) |>.mpr
         ⟨subset_univ _, (oldCell_mem_below_iff.mp hd).2⟩
-      -- The two labellings at the old cell `e`, through the inclusion of the cells below `B`.
+      -- The two labellings at the old cell `e`, through the inclusion of the cells below `B`:
+      -- the value of `Set.inclusion _ d` is `d.1` only by unfolding, so `rw [he]` needs `d.1`.
       change min (Q (multiOldCell I canonicalMult (layerBase I ρ b d.1))) c =
         min (P (multiOldCell I canonicalMult (layerBase I ρ b d.1))) c
       rw [he, layerBase_oldCell, hQdef, hPdef, Rows.extendBot_of_mem q heU,
@@ -601,7 +596,8 @@ theorem cappedLift_oriented {b : Fin 2} (hρ : IsOriented ρ b) {B : Finset (Fin
       oldCell_mem_below_iff.mpr (multiOldCell_mem_below_iff.mp hd)
     have heU : oldCell I ρ e ∈ (layerScheme I ρ).toCellScheme.below ((univ : Finset (Fin 5)), k) :=
       oldCell_mem_below_iff.mpr ⟨subset_univ _, (multiOldCell_mem_below_iff.mp hd).2⟩
-    -- The lift at the old cell `e`, through the inclusion of the cells below `B`.
+    -- The lift at the old cell `e`, through the inclusion of the cells below `B`: the goal is an
+    -- unreduced application to `Set.inclusion _ d`, whose value is `d.1` only by unfolding.
     change Rows.extendBot ((univ : Finset (Fin 5)), k) r (oldCell I ρ (copyBase I d.1)) = p d
     rw [he, copyBase_multiOldCell, Rows.extendBot_of_mem r heU, hrp ⟨_, heB⟩]
     dsimp only
@@ -645,7 +641,8 @@ theorem cappedLift_layer_of_oriented {b : Fin 2} (hρ : IsOriented ρ b) {B : Fi
       have heU : oldCell I ρ e ∈ (layerScheme I ρ).toCellScheme.below
           ((univ : Finset (Fin 5)), k) :=
         oldCell_mem_below_iff.mpr ⟨subset_univ _, (multiOldCell_mem_below_iff.mp hd).2⟩
-      -- The two labellings at the old cell `e`, through the inclusion of the cells below `B`.
+      -- The two labellings at the old cell `e`, through the inclusion of the cells below `B`:
+      -- the value of `Set.inclusion _ d` is `d.1` only by unfolding, so `rw [he]` needs `d.1`.
       change min (Q (oldCell I ρ (copyBase I d.1))) c = min (P (oldCell I ρ (copyBase I d.1))) c
       rw [he, copyBase_multiOldCell, hQdef, hPdef, Rows.extendBot_of_mem q heU,
         Rows.extendBot_of_mem p heB]
@@ -675,7 +672,8 @@ theorem cappedLift_layer_of_oriented {b : Fin 2} (hρ : IsOriented ρ b) {B : Fi
         (canonicalMultiScheme I (orientedRows I ρ)).toCellScheme.below
           ((univ : Finset (Fin 5)), k) :=
       multiOldCell_mem_below_iff.mpr ⟨subset_univ _, (oldCell_mem_below_iff.mp hd).2⟩
-    -- The lift at the old cell `e`, through the inclusion of the cells below `B`.
+    -- The lift at the old cell `e`, through the inclusion of the cells below `B`: the goal is an
+    -- unreduced application to `Set.inclusion _ d`, whose value is `d.1` only by unfolding.
     change Rows.extendBot ((univ : Finset (Fin 5)), k) r
       (multiOldCell I canonicalMult (layerBase I ρ b d.1)) = p d
     rw [he, layerBase_oldCell, Rows.extendBot_of_mem r heU, hrp ⟨_, heB⟩]
@@ -772,28 +770,20 @@ theorem orderedLayerStep_of_canonicalMultiStep_oriented (hρ : IsOriented ρ b)
 
 /-- **Under oriented rows, the step of the canonical multi-layer scheme is the ordered-layer
 step**: for layer rows oriented toward `b`, the canonical multi-layer scheme of the oriented rows
-has the multi-layer step exactly when the layer scheme has the ordered-layer step.  Both copies of
-a grade read alike, so the family adds nothing to the layer scheme under these rows. -/
+has the multi-layer step exactly when the layer scheme has the ordered-layer step.  This is an
+exact reformulation: both copies of a grade read alike, so the family adds nothing to the layer
+scheme under these rows. -/
 theorem canonicalMultiStep_oriented_iff (hρ : IsOriented ρ b) :
     I.MultiLayerStep canonicalMult (canonicalRows I (orientedRows I ρ)) ↔ I.OrderedLayerStep ρ :=
   ⟨orderedLayerStep_of_canonicalMultiStep_oriented hρ,
     fun h ↦ canonicalMultiStep_of_orderedLayerStep h hρ⟩
 
 variable (I) in
-/-- A seed on five points **has a step of the canonical multi-layer scheme** when some copy rows
-give the canonical multi-layer scheme the multi-layer step. -/
-def HasCanonicalMultiStep : Prop :=
-  ∃ R : CopyRows I, I.MultiLayerStep canonicalMult (canonicalRows I R)
-
-/-- **A step of the canonical multi-layer scheme gives a completion below the full grade.** -/
-theorem HasCanonicalMultiStep.nonempty_completionBelowFullGrade (h : I.HasCanonicalMultiStep) :
-    Nonempty (CompletionBelowFullGrade I) :=
-  h.choose_spec.nonempty_completionBelowFullGrade
-
-variable (I) in
 /-- A seed on five points **has an oriented ordered-layer step** when it has an ordered-layer step
-whose layer rows are oriented toward one of the two coatoms: the finite clause that, for the
-oriented rows, replaces the product clause of the canonical multi-layer scheme. -/
+whose layer rows are oriented toward one of the two coatoms.  Under the oriented rows the step of
+the canonical multi-layer scheme is exactly this ordered-layer step
+(`Seed.canonicalMultiStep_oriented_iff`, an exact reformulation), so this is the ordered-layer step
+itself, with oriented rows, and not a new clause. -/
 def HasOrientedLayerStep : Prop :=
   ∃ (ρ : LayerRows.{u}) (b : Fin 2), I.OrderedLayerStep ρ ∧ IsOriented ρ b
 

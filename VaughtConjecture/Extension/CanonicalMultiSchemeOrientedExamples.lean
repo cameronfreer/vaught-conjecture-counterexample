@@ -13,8 +13,8 @@ import VaughtConjecture.Extension.ThinCompletionTLTL
 # The canonical multi-layer scheme with oriented rows at the compiled seeds
 
 Roadmap, Layer 3, 3.1, (R6), checkpoint 2.7 (the completion below the full grade at `m = 3`: the
-canonical multi-layer scheme completes the five seeds at which its product clause fails, with
-oriented copy rows; where oriented rows fail); semantic contract, items 2–4.
+canonical multi-layer scheme has a step, with oriented copy rows, at the five seeds at which its
+product clause fails; where oriented rows fail); semantic contract, items 2–4.
 
 The canonical multi-layer scheme (`VaughtConjecture.Extension.CanonicalMultiScheme`) is defined
 for every seed on five points; its product clause, a sufficient hypothesis for its step, fails at
@@ -22,8 +22,11 @@ the grades `2`, `3`, `4` for `seed4`, `seed5`, `seedL`, `seedLM`, `seedLL`, for 
 (`VaughtConjecture.Extension.CanonicalMultiSchemeCounterexample`).  The copy rows of this module
 restrict the pairs instead: the oriented rows of the layer rows of an ordered-layer step
 (`OrderedLayer.orientedRows`, `VaughtConjecture.Extension.CanonicalMultiSchemeOriented`), under
-which the step of the family is exactly the ordered-layer step
-(`Seed.canonicalMultiStep_oriented_iff`).
+which the step of the family *is* the ordered-layer step (`Seed.canonicalMultiStep_oriented_iff`,
+an exact reformulation: both copies of a grade read alike, so the family adds nothing to the layer
+scheme).  The five seeds below were already completed by their ordered-layer steps
+(`Seed.orderedLayerStep_seed4`, `…_seed5`, `…_seedL`, `…_seedLM`, `…_seedLL`); what is new here is
+only that the canonical multi-layer scheme itself has a step at them.
 
 **The orientations** (compiled): the layer rows of the ordered-layer steps of the five seeds are
 oriented (`OrderedLayer.IsOriented`).
@@ -43,35 +46,39 @@ at `1`; at the grades `2`, `3`, `4` they read the full graded faces of the two c
 **The steps** (compiled): for every seed of the types of each row of the table, the canonical
 multi-layer scheme with the oriented rows has the multi-layer step
 (`Seed.canonicalMultiStep_oriented_of_T4`, `…_of_T5`, `…_of_TL_T5`, `…_of_T5_TL`, `…_of_TL_TL`),
-so the five seeds have completions below the full grade by the canonical multi-layer scheme
-(`Seed.nonempty_completionBelowFullGrade_seed4_oriented` and its four companions).  At the grade
-`4` the lifts come, through the layer scheme, from those at the grade `3`
-(`OrderedLayer.cappedLift_four_of_oldCells` for `seed4`, `seed5`, `seedLM`, `seedLL`, and the same
-argument in `VaughtConjecture.Extension.ThinCompletion` for `seedL`).
+each the ordered-layer step of that row transported through the iff.  So the five seeds have
+completions below the full grade by the canonical multi-layer scheme
+(`Seed.nonempty_completionBelowFullGrade_seed4_oriented` and its four companions), besides those
+by their ordered-layer steps.  At the grade `4` the lifts come, through the layer scheme, from
+those at the grade `3` (`OrderedLayer.cappedLift_four_of_oldCells` for `seed4`, `seed5`, `seedLM`,
+`seedLL`, and the same argument in `VaughtConjecture.Extension.ThinCompletion` for `seedL`).
 
-**Every compiled seed** (`Seed.hasCanonicalMultiStep_compiledSeeds`): the six seeds `seed4`,
-`seed5`, `seedL`, `seedLM`, `seedLL` (oriented rows) and `seedHG` (the rows of the product clause
-below the top grade, `Seed.canonicalMultiStep_of_TH_TG`) each have a step of the canonical
-multi-layer scheme for some copy rows.
+**Every compiled seed** (`Seed.hasCanonicalMultiStep_seed4_seed5_seedL_seedLM_seedLL_seedHG`): the
+six seeds `seed4`, `seed5`, `seedL`, `seedLM`, `seedLL` (oriented rows) and `seedHG` (the rows of
+the product clause below the top grade, `Seed.canonicalMultiStep_of_TH_TG`) each have a step of the
+canonical multi-layer scheme for some copy rows.
 
 **Where oriented rows fail** (compiled refutations of the oriented rows, not of the family and not
-of a completion):
+of a completion; each is a corollary, through the iff, of a refutation of the ordered-layer step):
 
 * `seedHG`: no oriented layer rows give it a step of the family
   (`Seed.not_canonicalMultiStep_oriented_seedHG`, `Seed.not_hasOrientedLayerStep_seedHG`), since it
-  has no ordered-layer step; the family completes it with other copy rows;
+  has no ordered-layer step (`CrossedCouplingCounterexample.not_hasOrderedLayerStep_seedHG`); the
+  family has a step at it with other copy rows;
 * `seedL` and `seedLM`: no oriented layer rows serve both
-  (`Seed.not_exists_canonicalMultiStep_oriented_seedL_seedLM`): the orientation of the rows depends
-  on the seed.
+  (`Seed.not_exists_canonicalMultiStep_oriented_seedL_seedLM`), since no layer rows give both an
+  ordered-layer step (`not_exists_orderedLayerStep_seedL_seedLM`): the orientation of the rows
+  depends on the seed.
 
 | seed | product clause at `2`, `3` | oriented layer step | step of the family |
 |---|---|---|---|
 | `seed4`, `seed5`, `seedL`, `seedLM`, `seedLL` | refuted (all rows) | holds | holds |
 | `seedHG` | holds (`CanonicalHG.rowsHG`) | refuted (all rows) | holds |
 
-So the copy family is viable for every compiled seed; the fibre product was refuted at the five
-seeds above and at the grade `4` of `seedHG`; oriented rows are one choice of the copy rows, and
-neither of the two compiled sufficient clauses holds at every compiled seed.
+So the canonical multi-layer scheme has a step at every compiled seed, and no seed refutes it; the
+fibre product was refuted at the five seeds above and at the grade `4` of `seedHG`; oriented rows
+are one choice of the copy rows, and neither of the two compiled sufficient clauses holds at every
+compiled seed.
 
 ## Placement
 
@@ -280,7 +287,7 @@ theorem nonempty_completionBelowFullGrade_seedLL_oriented :
 /-- **Every compiled seed has a step of the canonical multi-layer scheme**: `seed4`, `seed5`,
 `seedL`, `seedLM`, `seedLL` with oriented rows, and `seedHG` with the rows of the product clause
 below the top grade. -/
-theorem hasCanonicalMultiStep_compiledSeeds :
+theorem hasCanonicalMultiStep_seed4_seed5_seedL_seedLM_seedLL_seedHG :
     (seed4 α).HasCanonicalMultiStep ∧ (seed5 α).HasCanonicalMultiStep ∧
       (seedL α).HasCanonicalMultiStep ∧ (seedLM α).HasCanonicalMultiStep ∧
       (seedLL α).HasCanonicalMultiStep ∧
@@ -292,9 +299,9 @@ theorem hasCanonicalMultiStep_compiledSeeds :
 
 /-! ### Where oriented rows fail -/
 
-/-- **No oriented rows give `seedHG` a step of the canonical multi-layer scheme**: under oriented
-rows the step is the ordered-layer step (`Seed.canonicalMultiStep_oriented_iff`), which `seedHG`
-does not have (`CrossedCouplingCounterexample.not_hasOrderedLayerStep_seedHG`).  This refutes the
+/-- **No oriented rows give `seedHG` a step of the canonical multi-layer scheme**: a corollary,
+through `Seed.canonicalMultiStep_oriented_iff`, of
+`CrossedCouplingCounterexample.not_hasOrderedLayerStep_seedHG`.  This refutes the
 oriented rows at `seedHG`, not the family: `seedHG` has a step of the family with other copy rows
 (`Seed.canonicalMultiStep_of_TH_TG`). -/
 theorem not_canonicalMultiStep_oriented_seedHG {ρ : LayerRows.{u}} {b : Fin 2}
@@ -304,14 +311,16 @@ theorem not_canonicalMultiStep_oriented_seedHG {ρ : LayerRows.{u}} {b : Fin 2}
   CrossedCouplingCounterexample.not_hasOrderedLayerStep_seedHG
     ⟨ρ, (canonicalMultiStep_oriented_iff hρ).mp h⟩
 
-/-- **`seedHG` has no oriented ordered-layer step.** -/
+/-- **`seedHG` has no oriented ordered-layer step**: a corollary of
+`CrossedCouplingCounterexample.not_hasOrderedLayerStep_seedHG`, forgetting the orientation. -/
 theorem not_hasOrientedLayerStep_seedHG :
     ¬ (CrossedCouplingCounterexample.seedHG α).HasOrientedLayerStep := fun ⟨ρ, _, h, _⟩ ↦
   CrossedCouplingCounterexample.not_hasOrderedLayerStep_seedHG ⟨ρ, h⟩
 
-/-- **No oriented layer rows serve both `seedL` and `seedLM`**: under oriented rows the step is
-the ordered-layer step, and no layer rows give both seeds one
-(`not_exists_orderedLayerStep_seedL_seedLM`).  So oriented rows are not uniform in the seed. -/
+/-- **No oriented layer rows serve both `seedL` and `seedLM`**: a corollary, through
+`Seed.canonicalMultiStep_oriented_iff`, of `not_exists_orderedLayerStep_seedL_seedLM` (no layer
+rows, oriented or not, give both seeds an ordered-layer step).  So oriented rows are not uniform
+in the seed. -/
 theorem not_exists_canonicalMultiStep_oriented_seedL_seedLM :
     ¬ ∃ (ρ : LayerRows.{u}) (b b' : Fin 2), IsOriented ρ b ∧ IsOriented ρ b' ∧
       (seedL α).MultiLayerStep canonicalMult (canonicalRows _ (orientedRows _ ρ)) ∧

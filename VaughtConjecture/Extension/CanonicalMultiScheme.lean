@@ -96,10 +96,13 @@ not uniform in the seed, and what is refuted is the family *as a fibre product* 
 grades, not the family's step (which holds for `seedHG` at the grade `4`) and not the completion.
 Copy rows restricting the pairs: the oriented rows of an ordered-layer step whose layer rows are
 oriented (both copies of a grade read every old cell as the new cell of the layer scheme does)
-give the step exactly when that ordered-layer step holds, so they complete `seed4`, `seed5`,
-`seedL`, `seedLM`, `seedLL` and not `seedHG`
-(`VaughtConjecture.Extension.CanonicalMultiSchemeOriented`).  Whether some copy rows complete
-every seed is open; for instance rows under which each copy of `(B, k)` reads the parameters of
+give the step exactly when that ordered-layer step holds, an exact reformulation of it
+(`VaughtConjecture.Extension.CanonicalMultiSchemeOriented`).  So the family has a step at `seed4`,
+`seed5`, `seedL`, `seedLM`, `seedLL`, which their ordered-layer steps already complete, and the
+oriented rows give none at `seedHG`.  A seed *has a step of the canonical multi-layer scheme*
+(`Seed.HasCanonicalMultiStep`) when some copy rows give the step; it then has a completion below
+the full grade (`Seed.HasCanonicalMultiStep.nonempty_completionBelowFullGrade`).  Whether every
+seed has one is open; for instance rows under which each copy of `(B, k)` reads the parameters of
 its own coatom above those of the other (opposite orientations for the two copies of a grade).
 
 ## Placement
@@ -569,6 +572,17 @@ theorem nonempty_completionBelowFullGrade_of_canonicalProduct
         I.amalgam.rows.IsLawfulBelow (coatomD, (k : ℕ) + 1) (fun d ↦ R k i d)) :
     Nonempty (CompletionBelowFullGrade I) :=
   (canonicalMultiStep_of_product hP hcode hpair).nonempty_completionBelowFullGrade
+
+variable (I) in
+/-- A seed on five points **has a step of the canonical multi-layer scheme** when some copy rows
+give the canonical multi-layer scheme the multi-layer step. -/
+def HasCanonicalMultiStep : Prop :=
+  ∃ R : CopyRows I, I.MultiLayerStep canonicalMult (canonicalRows I R)
+
+/-- **A step of the canonical multi-layer scheme gives a completion below the full grade.** -/
+theorem HasCanonicalMultiStep.nonempty_completionBelowFullGrade (h : I.HasCanonicalMultiStep) :
+    Nonempty (CompletionBelowFullGrade I) :=
+  h.choose_spec.nonempty_completionBelowFullGrade
 
 end VaughtConjecture.Seed
 
