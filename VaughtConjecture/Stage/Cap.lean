@@ -19,6 +19,14 @@ the grades of a cell being at most `n` (`StageType.grade_le`).  It is legal exac
 and along a closed face whose labels are at most `c` it restricts to the same stage type as `t`,
 labels included (`StageType.restrictFace_cap`).
 
+**Capping the cells through a point.**  For a point `a`, the stage type `t.capThrough a c`
+(`StageType.capThrough`) caps at `c` only the cells whose scope contains `a`.  It is lawful when
+every cell whose scope avoids `a` and lies in the scope of a cell of the same grade containing `a`
+is labelled at most `c` (`CellScheme.Rows.IsLawful.min_const_of_mem_scope`), and its faces along
+embeddings whose range avoids `a` are those of `t` (`StageType.restrictFace_capThrough`).  Capping
+the cells through the new point of a coface lowers its new top labels while keeping its private
+face (`VaughtConjecture.Continuation.AnchoredDetermination`).
+
 **The cap.**  At a limit stage, such a cap exists above the labels of any two top-free stage types,
 self-visible at any arity (`StageType.exists_cap`, from `Label.exists_lt_lt_isSelfVisible`): a
 top-free label at a nonzero stage is bounded by an ordinal below the stage
@@ -102,6 +110,63 @@ theorem restrictFace_cap {f : Fin m ↪ Fin n} {p : StageType.{u} α m}
   refine congrArg some (ext rfl fun i j hij ↦ ?_)
   obtain rfl : i = j := Fin.ext hij
   exact min_eq_left (hpc i)
+
+/-! ### Capping the cells through a point -/
+
+/-- The **stage type capped through a point** `a`: the scheme of `t` with the cells whose scope
+contains `a` capped at `c` and the other labels kept.  It is lawful when availability carries no
+label above `c` into the cells through `a` (`CellScheme.Rows.IsLawful.min_const_of_mem_scope`):
+every cell whose scope avoids `a` and lies in the scope of a cell of the same grade containing `a`
+is labelled at most `c`. -/
+noncomputable def capThrough (t : StageType.{u} α n) (a : Fin n) (c : Ordinal.{u})
+    (hc : IsSelfVisible n (c : Label)) (hcα : c < α)
+    (havail : ∀ s s', t.toCellScheme.scope s ⊆ t.toCellScheme.scope s' →
+      t.toCellScheme.grade s = t.toCellScheme.grade s' → a ∉ t.toCellScheme.scope s →
+      a ∈ t.toCellScheme.scope s' → t.label s ≤ c) : StageType.{u} α n where
+  toScheme := t.toScheme
+  label d := if a ∈ t.toCellScheme.scope d then min (t.label d) c else t.label d
+  isWellFormed := t.isWellFormed
+  isCoded := t.isCoded
+  isLawful := t.isLawful.min_const_of_mem_scope a t.grade_le hc havail
+  atStage d := by
+    split_ifs
+    · exact (t.cap c hc hcα).atStage d
+    · exact t.atStage d
+
+section CapThrough
+
+variable {a : Fin n} {havail : ∀ s s',
+  t.toCellScheme.scope s ⊆ t.toCellScheme.scope s' →
+    t.toCellScheme.grade s = t.toCellScheme.grade s' → a ∉ t.toCellScheme.scope s →
+    a ∈ t.toCellScheme.scope s' → t.label s ≤ c}
+
+/-- The scheme of a type capped through a point is the scheme of the type. -/
+@[simp] theorem capThrough_toScheme : (t.capThrough a c hc hcα havail).toScheme = t.toScheme :=
+  rfl
+
+/-- The labels of a type capped through `a`: capped at the cells through `a`, kept elsewhere. -/
+theorem capThrough_label (d : Fin t.card) : (t.capThrough a c hc hcα havail).label d =
+    if a ∈ t.toCellScheme.scope d then min (t.label d) c else t.label d :=
+  rfl
+
+/-- **Faces avoiding the point are unchanged**: along `f` whose range avoids `a`, a type capped
+through `a` restricts as the type does, definedness included. -/
+theorem restrictFace_capThrough {f : Fin m ↪ Fin n} (hf : a ∉ Set.range f) :
+    restrictFace f (t.capThrough a c hc hcα havail) = restrictFace f t := by
+  by_cases hfm : univ.map f ∈ t.toCellScheme.faces
+  · rw [restrictFace_of_mem t f hfm, restrictFace_of_mem (t.capThrough a c hc hcα havail) f hfm]
+    refine congrArg some (ext rfl fun i j hij ↦ ?_)
+    obtain rfl : i = j := Fin.ext hij
+    -- the cell of `t` under `i` is visible through `f`, so its scope avoids `a`
+    have ha : a ∉ t.toCellScheme.scope (t.cellMap f i) := fun ha ↦
+      hf (Scheme.mem_visibleCells.mp (t.cellMap_mem f i) (mem_coe.mpr ha))
+    change (if a ∈ t.toCellScheme.scope (t.cellMap f i) then _ else _) = t.label (t.cellMap f i)
+    simp only [ha, ↓reduceIte]
+    rfl
+  · rw [restrictFace_of_notMem t f hfm,
+      restrictFace_of_notMem (t.capThrough a c hc hcα havail) f hfm]
+
+end CapThrough
 
 /-! ### The cap -/
 

@@ -108,7 +108,9 @@ in the hollow case the acquired context has the private cap and the marker label
 coface `D'` is on the constructed legal scheme of the growth construction, and the marker clause of
 `Correct` gives scheme determination.  Neither predicate `P` is defined here, neither acquisition
 nor determination is proved for any `P`, and determination is proved only in the rigid-core
-instance.
+instance.  The predicate of the anchored private context, which takes the donor, is in
+`VaughtConjecture.Continuation.AnchoredDetermination`: acquisition holds for it in every model, and
+determination fails for it.
 
 **Determination needs an acquired context.**  Over a top-free root `t` along the identity, a
 one-point coface `d` of `t` that is not top-free is determined neither at a cutoff nor by a scheme
@@ -467,8 +469,9 @@ structure SchemeDetermination
         ∃ D' ∈ t'.cofaces,
           StageType.IsDeterminedWithin (StageType.saturationFamily D'.toScheme) t' h d
 
-/-- The face of an acquired context along `h` is the type of the original cover. -/
-private theorem restrictFace_of_covers (hR : R.IsConsistent) {t : StageType.{u} α n}
+/-- **The face of an acquired context**: under exact consistency, if `c'` covers `t'` and
+`c' ∘ h` is a cover `c` of `t`, the face of `t'` along `h` is `t`. -/
+theorem restrictFace_of_covers (hR : R.IsConsistent) {t : StageType.{u} α n}
     {c : Fin n → M} (hc : R.Covers t c) {t' : StageType.{u} α k} {c' : Fin k → M}
     (hc' : R.Covers t' c') {h : Fin n ↪ Fin k} (hcc' : c' ∘ h = c) :
     StageType.restrictFace h t' = some t := by
@@ -480,7 +483,8 @@ private theorem restrictFace_of_covers (hR : R.IsConsistent) {t : StageType.{u} 
 /-- **(R2) from (R1), residual acquisition, and cutoff determination**, for any predicate `P` on
 acquired contexts.  (R1) is assumed for every model at every limit stage, of every universe:
 stronger in stage range than `Expansion.FiniteCutReceiving` (limit stages below `ω₁`, universe
-`0`), which does not supply it.  No `P` is defined in the library; this is a template. -/
+`0`), which does not supply it.  No predicate `P` on pairs `(t', h)` is defined in the library;
+this is a template. -/
 theorem residualReceiving_of_cutoffDetermination
     {P : ∀ {α : Ordinal.{u}} {n k : ℕ}, ℕ → StageType.{u} α k → (Fin n ↪ Fin k) → Prop}
     (hrec : ∀ ⦃α : Ordinal.{u}⦄ ⦃M : Type w⦄ ⦃R : Realization.{u, w} α M⦄,

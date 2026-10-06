@@ -46,7 +46,9 @@ self-visible at the grade of every cell whose label is at least `c` keeps it law
 (`IsLawful.min_const`, [Kni26, Lemma 2.5.8]), in particular at a cap self-visible at a bound on all
 grades (`IsLawful.min_const_of_isSelfVisible`), and below a pair (`IsLawfulBelow.min_const`,
 `IsLawfulBelow.min_const_of_isSelfVisible`); capping at a cutoff that is not self-visible need
-not keep lawfulness.
+not keep lawfulness.  Capping only the cells whose scope contains a point `a` keeps lawfulness when
+availability carries no label above the cap into them from a cell avoiding `a`
+(`IsLawful.min_const_of_mem_scope`).
 
 The constant bottom labelling is lawful for all rows (`isLawful_const_bot`), and a cell whose row is
 bottom at the cell itself has bottom label in every lawful section
@@ -259,6 +261,45 @@ theorem min_const (hp : R.IsLawful p) {c : Label.{u}}
 theorem min_const_of_isSelfVisible {K : ℕ} (hp : R.IsLawful p) (hK : ∀ d, D.grade d ≤ K)
     {c : Label.{u}} (hc : IsSelfVisible K c) : R.IsLawful fun d ↦ min (p d) c :=
   hp.min_const fun d _ ↦ hc.mono (hK d)
+
+/-- **Capping the cells through a point.**  Let `c` be self-visible at a bound `K` on the grades,
+and let `a` be a point.  Capping at `c` only the cells whose scope contains `a` keeps a lawful
+section lawful, provided availability carries no label above `c` into them: every cell whose
+scope avoids `a` and lies in the scope of a cell of the same grade containing `a` is labelled at
+most `c`.  Locality at a cell through `a` is capped at `c` (`Label.TransformsTo.min_const`), and
+locality at a cell avoiding `a` is unchanged, since the cells below it avoid `a`. -/
+theorem min_const_of_mem_scope [DecidableEq α] (hp : R.IsLawful p) (a : α) {K : ℕ}
+    (hK : ∀ d, D.grade d ≤ K) {c : Label.{u}} (hc : IsSelfVisible K c)
+    (havail : ∀ s t, D.scope s ⊆ D.scope t → D.grade s = D.grade t → a ∉ D.scope s →
+      a ∈ D.scope t → p s ≤ c) :
+    R.IsLawful fun d ↦ if a ∈ D.scope d then min (p d) c else p d where
+  orderly d := by
+    split_ifs
+    · exact (hp.orderly d).min (hc.mono (hK d))
+    · exact hp.orderly d
+  locality s := by
+    by_cases hs : a ∈ D.scope s
+    · convert (hp.locality s).min_const (fun d ↦ d.2.2) (hc.mono (hK s)) using 2 with d
+      by_cases hd : a ∈ D.scope d
+      · simp only [hs, hd, ↓reduceIte]
+        rw [min_min_min_comm, min_self]
+      · simp only [hs, hd, ↓reduceIte, min_assoc]
+    · convert hp.locality s using 2 with d
+      -- the cells below `s` avoid `a`
+      have hd : a ∉ D.scope d := fun h ↦ hs (d.2.1 h)
+      simp only [hs, hd, ↓reduceIte]
+  availability s t hst hg := by
+    obtain ⟨u, hu, hle⟩ := hp.availability s t hst hg
+    have hut : D.scope u = D.scope t := congrArg Prod.fst hu
+    refine ⟨u, hu, ?_⟩
+    by_cases ht : a ∈ D.scope t
+    · have hu' : a ∈ D.scope u := hut ▸ ht
+      by_cases hs : a ∈ D.scope s
+      · simpa only [hs, hu', ↓reduceIte] using min_le_min_right c hle
+      · simpa only [hs, hu', ↓reduceIte] using le_min hle (havail s t hst hg hs ht)
+    · have hs : a ∉ D.scope s := fun h ↦ ht (hst h)
+      have hu' : a ∉ D.scope u := hut ▸ ht
+      simpa only [hs, hu', ↓reduceIte] using hle
 
 end IsLawful
 
