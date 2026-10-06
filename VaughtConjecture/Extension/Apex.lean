@@ -677,6 +677,19 @@ theorem exists_apex_addApex : ∃ d, (t.addApex ht hn).toCellScheme.gradedIndex 
   ⟨Fin.last _, Scheme.appendFullCellScheme_gradedIndex_last _ _,
     fun _ ↦ by rw [addApex_label_last]; exact le_top⟩
 
+/-- The cells of the type with the apex added that are visible through a proper face are old. -/
+theorem mem_range_castSucc_of_addApex {k : ℕ} (f : Fin k ↪ Fin n) (hf : univ.map f ≠ univ)
+    (z : Fin (t.addApex ht hn).card)
+    (hz : ((t.addApex ht hn).toCellScheme.scope z : Set (Fin n)) ⊆ Set.range f) :
+    z ∈ Set.range (Fin.castSucc : Fin t.card → Fin (t.card + 1)) := by
+  induction z using Fin.lastCases with
+  | last =>
+    refine absurd (eq_univ_of_forall fun x ↦ ?_) hf
+    obtain ⟨y, rfl⟩ : x ∈ Set.range f :=
+      hz (mem_coe.mpr ((addApex_scope_last ht hn).symm ▸ mem_univ x))
+    exact mem_map_of_mem _ (mem_univ y)
+  | cast z => exact ⟨z, rfl⟩
+
 /-- **The proper faces after adding the apex are those of `t`**: along an embedding whose image is
 not the whole ground set, the face maps of `t.addApex ht hn` and of `t` agree, including
 definedness. -/
@@ -687,15 +700,7 @@ theorem restrictFace_addApex (f : Fin m ↪ Fin n) (hf : univ.map f ≠ univ) :
     (Scheme.isLowerEmbedding_castSucc n (apexRow ht) ht.not_le)
     (Scheme.appendFullCellScheme_scope_castSucc _ _) (Scheme.comap_rows_castSucc (h := ht.not_le))
     rfl rfl
-    (addApex_label_castSucc ht hn) fun z hz ↦ ?_
-  induction z using Fin.lastCases with
-  | last =>
-    refine absurd (eq_univ_of_forall fun x ↦ ?_) hf
-    have hx : x ∈ Set.range f :=
-      hz (mem_coe.mpr ((addApex_scope_last ht hn).symm ▸ mem_univ x))
-    obtain ⟨y, rfl⟩ := hx
-    exact mem_map_of_mem _ (mem_univ y)
-  | cast z => exact ⟨z, rfl⟩
+    (addApex_label_castSucc ht hn) (mem_range_castSucc_of_addApex ht hn f hf)
 
 /-! ### Adding the apex to `⊥` labels -/
 
