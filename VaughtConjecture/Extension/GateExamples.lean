@@ -143,7 +143,7 @@ private noncomputable def killFinite (x : Label.{0}) : Label.{0} :=
   open Classical in if x < omega then ⊥ else x
 
 private theorem killFinite_om (n : ℕ) : killFinite (om n) = om n :=
-  ite_eq_right (not_lt.mpr (WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr le_self_add)))
+  ite_eq_right (not_lt.mpr (Label.coe_le_coe_add _ n))
 
 private theorem killFinite_ofNat (n : ℕ) [n.AtLeastTwo] :
     killFinite (ofNat(n) : Label.{0}) = ⊥ := by
