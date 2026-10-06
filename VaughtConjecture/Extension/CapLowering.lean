@@ -67,8 +67,9 @@ labelling.  Four parts are named here: three at that lift, and the rows.
    `n` at `c`, a top-grade anchor `z` included.  The gate's witness decodes each donor cell
    anchored at `z` (`CellScheme.Rows.GateReads.ref`) from the value at `z`, so lowering it lowers
    what the gate reads there below the gate.  At a top-grade anchor `vr_n(·, i)` fixes the labels
-   self-visible at `n`, so the value read is the lowered one, `c`.  Below the gate it must agree
-   with the value prescribed at that donor cell.  This is open.
+   self-visible at `n`, so the value read is the lowered one, `c` (when the ambient value at `z`
+   is at least `c`; the lowered value at a top-grade `z` is `min (q z) c`).  Below the gate it
+   must agree with the value prescribed at that donor cell.  This is open.
 4. **The rows of the display.**  For every anchored legal donor, rows satisfying
    `CellScheme.Rows.IsGate` and `CellScheme.Rows.TwinsReadGate` must exist.  This is open.
 

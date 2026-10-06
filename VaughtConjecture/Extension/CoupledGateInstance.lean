@@ -60,7 +60,7 @@ At this instance all four hold.  Part 2 cannot happen, since every lift of `Q α
 At a lawful ambient `lab a b x` whose cap value is at least `c`, the donor class is at least `c`
 too (`le_five_of_isLawful`), and so is every prescription there in the cap ball at `c`.  Parts 3
 and 4 are the legality of `Q α` (cases 4 and 5 below, at every lawful ambient) and the coupled
-gated extensions below, checked by hand.
+gated extensions below, by explicit case analysis.
 
 In general, the new content of the open point sits at the lifts from coatoms containing the new
 point (parts 2 and 3), jointly with the gate, the twins and the donor cells, at every lawful
