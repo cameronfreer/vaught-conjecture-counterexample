@@ -167,20 +167,6 @@ noncomputable def stripShifter (A x : Label.{u}) : Label.{u} :=
       else visibilityReplace 2 2 A)
   else ⊤
 
-/-! ### Facts about labels -/
-
-/-- A label self-visible at `1` is fixed by replacement at threshold `2` with value `1`. -/
-private theorem visibilityReplace_two_one {A : Label.{u}} (hA : IsSelfVisible 1 A) :
-    visibilityReplace 2 1 A = A := by
-  induction A using recBotCoeTop with
-  | bot => simp
-  | top => simp
-  | coe o =>
-    obtain ⟨b, n, rfl⟩ := exists_eq_omega0_mul_add_natCast o
-    rw [isSelfVisible_coe, omega0_mul_add_natCast_mod, Nat.cast_le] at hA
-    have key : (if n < 2 then 1 else n) = n := by split_ifs <;> omega
-    rw [visibilityReplace_coe, Ordinal.visibilityReplace_omega0_mul_add_natCast, key]
-
 /-! ### The strip shifter is a witness -/
 
 private theorem stripShifter_natCast (A : Label.{u}) (n : ℕ) :
@@ -254,7 +240,7 @@ theorem v1_eq : (v1 : Label.{u}) = ((1 : ℕ) : Label.{u}) := by
 theorem stripShifter_v1 {A : Label.{u}} (hA : IsSelfVisible 1 A) :
     stripShifter A v1 = A := by
   rw [v1_eq, stripShifter_natCast]
-  exact visibilityReplace_two_one hA
+  exact visibilityReplace_two_one_of_isSelfVisible hA
 
 theorem stripShifter_v2 (A : Label.{u}) : stripShifter A v2 = ⊤ := by
   refine stripShifter_of_not_lt (gridPoint_ne_bot 2 1) ?_

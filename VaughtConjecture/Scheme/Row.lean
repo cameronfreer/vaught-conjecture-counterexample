@@ -344,6 +344,62 @@ theorem restrict [DecidableEq α] (hR : R.IsConsistent) (B : Finset α) :
 
 end IsConsistent
 
+/-! ### Changing a labelling below a pair -/
+
+/-- A labelling equal to another below a pair is lawful there exactly when the other is. -/
+theorem isLawfulBelow_congr {ι β : Type*} {D : CellScheme ι β} {R : D.Rows.{u}}
+    {X : Finset β × ℕ} {w w' : ι → Label.{u}} (h : ∀ d ∈ D.below X, w d = w' d) :
+    R.IsLawfulBelow X (fun d : D.below X ↦ w d) ↔
+      R.IsLawfulBelow X (fun d : D.below X ↦ w' d) := by
+  have : (fun d : D.below X ↦ w d) = fun d : D.below X ↦ w' d := funext fun d ↦ h d d.2
+  rw [this]
+
+/-- **Extension by bottom above a grade.**  A labelling lawful below `(B, k)`, replaced by `⊥` at
+every cell of grade above `k`, is lawful below `(B, K)` for every `K`: the new cells of the lower
+set carry `⊥`, their targets are `⊥`, and they are available to every cell. -/
+theorem isLawfulBelow_extendAbove {ι β : Type*} {D : CellScheme ι β} {R : D.Rows.{u}}
+    {B : Finset β} {k K : ℕ} {w : ι → Label.{u}} (hw : R.IsLawfulBelow (B, k) fun d ↦ w d) :
+    R.IsLawfulBelow (B, K) fun d ↦ if D.grade d ≤ k then w d else ⊥ := by
+  have hmem {d : ι} (hd : d ∈ D.below (B, K)) (h : D.grade d ≤ k) : d ∈ D.below (B, k) :=
+    ⟨hd.1, h⟩
+  refine isLawfulBelow_iff.mpr ⟨fun d ↦ ?_, fun s ↦ ?_, fun s t hst hg ↦ ?_⟩
+  · -- The grade of a cell of the scheme of cells below `(B, K)` is its grade in `D`.
+    change IsSelfVisible (D.grade d.1) (if D.grade d.1 ≤ k then w d.1 else ⊥)
+    split_ifs with h
+    · exact hw.orderly ⟨d.1, hmem d.2 h⟩
+    · exact isSelfVisible_bot _
+  · by_cases h : D.grade s.1 ≤ k
+    · have hs : s.1 ∈ D.below (B, k) := hmem s.2 h
+      have hl : TransformsTo (fun d : D.below (D.gradedIndex s.1) ↦ D.grade d) (R.row s.1)
+          (fun d ↦ min (if D.grade d.1 ≤ k then w d.1 else ⊥)
+            (if D.grade s.1 ≤ k then w s.1 else ⊥)) := by
+        have he : (fun d : D.below (D.gradedIndex s.1) ↦
+            min (if D.grade d.1 ≤ k then w d.1 else ⊥) (if D.grade s.1 ≤ k then w s.1 else ⊥)) =
+            fun d ↦ min (w d.1) (w s.1) := by
+          funext d
+          have hd : D.grade d.1 ≤ k := d.2.2.trans h
+          rw [ite_eq_left hd, ite_eq_left h]
+        rw [he]
+        exact (hw.locality ⟨s.1, hs⟩).reindex fun d : D.below (D.gradedIndex s.1) ↦
+          ⟨⟨d.1, (le_trans d.2 hs : D.gradedIndex d.1 ≤ (B, k))⟩, d.2⟩
+      exact hl.reindex (D' := (D.reindex ((↑) : D.below (B, K) → ι)).below
+        ((D.reindex ((↑) : D.below (B, K) → ι)).gradedIndex s)) fun t ↦ ⟨t.1.1, t.2⟩
+    · simp only [ite_eq_right h, min_bot_right]
+      exact TransformsTo.bot _ _
+  · by_cases h : D.grade t.1 ≤ k
+    · obtain ⟨u, hu, hle⟩ := hw.availability ⟨s.1, hmem s.2 (hg ▸ h)⟩ ⟨t.1, hmem t.2 h⟩ hst hg
+      -- Graded indices in the scheme of cells below `(B, k)` are those of `D`.
+      change D.gradedIndex u.1 = D.gradedIndex t.1 at hu
+      refine ⟨⟨u.1, (hu ▸ t.2 : D.gradedIndex u.1 ≤ (B, K))⟩, hu, ?_⟩
+      have hu' : D.grade u.1 ≤ k := (congrArg Prod.snd hu).trans_le h
+      -- The labelling at `s` and `u`, unfolded.
+      change (if D.grade s.1 ≤ k then w s.1 else ⊥) ≤ (if D.grade u.1 ≤ k then w u.1 else ⊥)
+      rw [ite_eq_left (hg ▸ h), ite_eq_left hu']
+      exact hle
+    · refine ⟨t, rfl, ?_⟩
+      rw [ite_eq_right (hg ▸ h)]
+      exact bot_le
+
 /-! ### The bottom rows -/
 
 variable (D) in

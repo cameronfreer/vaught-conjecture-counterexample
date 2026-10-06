@@ -6,6 +6,7 @@ Authors: Cameron Freer
 import VaughtConjecture.Continuation.Terminal
 import VaughtConjecture.Expansion.Uniqueness
 import VaughtConjecture.Language.Structure
+import VaughtConjecture.MainTheorem.MaximalRefinement
 
 /-!
 # Niceness of base reducts from a terminal refinement
@@ -60,7 +61,7 @@ to `λ_ρ` of a lift at a higher index is a lift at `ρ`, equal to the given one
 model expansions (`ModelExpansion.subsingleton`), which contradicts terminality
 (`Realization.isTerminalAt_iff_forall_lt`).
 
-**Terminal refinement** (`HasTerminalRefinement`, a named hypothesis, still to be proved).  Every
+**Terminal refinement** (`HasTerminalRefinement`, a named hypothesis for arbitrary universes). Every
 model `V` at a block stage `λ_β` on a countable carrier is literally the stage reduction of a model
 `W` at `λ_ρ` on the same carrier, for a countable `ρ ≥ β`, terminal at `ρ`: the specified terminal
 refinement of `README.md`, item 5 (concordance row 38).  The refinement is terminal; it is known
@@ -68,13 +69,14 @@ to be maximal only together with next-block uniqueness, by terminal collision.  
 hypothesis is a stopping statement for each base: it entails eventual departure, since no model on
 a countable carrier then has lifts of its base at every countable index.  A maximal refinement on
 carriers in `Type`, which adds to the conclusion that every lift of the same base has index at
-most `ρ` (prospective, conditional on finite-cut receiving of every model, next-block uniqueness
-and the apex coatom extension property at every countable block stage), would give
-`HasTerminalRefinement.{0}` by projecting out that conjunct.
+most `ρ` is compiled conditional on finite-cut receiving of every model, next-block uniqueness
+and the apex coatom extension property at every countable block stage
+(`MainTheorem.exists_maximalRefinement`). It gives `HasTerminalRefinement.{0}` by projection
+(`HasTerminalRefinement.of_hasApexCoatomExtensions`); the arbitrary-universe hypothesis remains.
 
 **Condition (c) of the system** [AFK26, Definition 2.22, clause (c)]: the base reduct of every
 model of the system is nice.  Here, conditional on `HasTerminalRefinement` and
-`Expansion.NextBlockUniqueness`, both still to be proved, the base reduct of every model at a block
+`Expansion.NextBlockUniqueness`, explicit in arbitrary carrier universes, the base reduct at a block
 stage on a countable carrier is nice (`Realization.IsModel.isNice_toStructure_reduce`; for a base
 structure with a lift, `isNice_of_hasTerminalRefinement`).  One terminal refinement serves every
 closed tuple at once: a single maximal presentation supplies an inhabited threshold `ρ` for all
@@ -156,15 +158,11 @@ theorem ModelExpansion.boundsServingIndices_of_isTerminalAt
     (e : ModelExpansion M (blockStage ρ)) (he : e.1.IsTerminalAt ρ) :
     BoundsServingIndices M ρ := by
   intro α _ ⟨e'⟩
-  by_contra hlt
-  have hρα : ρ < α := not_le.mp hlt
-  have heq : e'.reduceBlock hρα.le = e := (ModelExpansion.subsingleton hu hρ).elim _ _
-  exact Realization.isTerminalAt_iff_forall_lt.mp he (isSuccPrelimit_blockStage α)
-    (blockStage_strictMono hρα) e'.1 e'.2.isModel (congrArg Subtype.val heq)
+  exact (ModelExpansion.exists_le_reduceBlock_eq_of_isTerminalAt hu hρ e he e').choose
 
 end Niceness
 
-/-- **Terminal refinement on the same carrier** (a named hypothesis, still to be proved): every
+/-- **Terminal refinement on the same carrier** (a named hypothesis for arbitrary universes): every
 model `V` at a block stage `λ_β` on a countable carrier in the universe `w` is literally the stage
 reduction of a model `W` at `λ_ρ` on the same carrier, for a countable `ρ ≥ β`, with `W` terminal
 at `ρ`.  It is the specified terminal refinement of `README.md`, item 5 (concordance row 38).
@@ -180,12 +178,24 @@ structure HasTerminalRefinement : Prop where
       ∃ ρ : Ordinal.{0}, β ≤ ρ ∧ ρ < ω₁ ∧ ∃ W : Realization.{0, w} (blockStage ρ) M,
         W.IsModel ∧ W.IsTerminalAt ρ ∧ W.reduce (isSuccPrelimit_blockStage β) = V
 
+/-- **Terminal refinement in universe zero**, conditional on finite-cut receiving, next-block
+uniqueness, and the apex coatom extension property at every countable block stage. This projects
+the literal terminal refinement from `exists_maximalRefinement`; all three premises remain open.
+It does not discharge `HasTerminalRefinement` in arbitrary carrier universes. -/
+theorem HasTerminalRefinement.of_hasApexCoatomExtensions
+    (hrec : Expansion.FiniteCutReceiving.{0}) (hu : Expansion.NextBlockUniqueness.{0})
+    (hext : ∀ η < ω₁, StageType.HasApexCoatomExtensions.{0} (blockStage η)) :
+    HasTerminalRefinement.{0} := by
+  refine ⟨fun {M} _ {β} V hV ↦ ?_⟩
+  obtain ⟨ρ, hβρ, hρ, W, hW, ht, hred, _⟩ := exists_maximalRefinement hrec hu hext hV
+  exact ⟨ρ, hβρ, hρ, W, hW, ht, hred⟩
+
 section Refinement
 
 variable {M : Type w} [baseLanguage.{0}.Structure M] [Countable M]
 
 /-- **A single maximal presentation serves every closed tuple**, conditional on
-`HasTerminalRefinement` and `Expansion.NextBlockUniqueness`, both still to be proved: a base
+`HasTerminalRefinement` and `Expansion.NextBlockUniqueness`, explicit in universe `w`: a base
 structure `M` on a countable carrier with a lift `V` at `λ_β` has a lift `e` at a countable
 `ρ ≥ β` reducing to `V`, terminal at `ρ` and bounding the serving indices of `M`, at which every
 closed tuple is nice with its own invariant in `e` as the actual witness.  The tuples here are of
@@ -220,7 +230,7 @@ theorem isNice_of_hasTerminalRefinement (hmax : HasTerminalRefinement.{w})
 end Refinement
 
 /-- **Condition (c) of the system** [AFK26, Definition 2.22, clause (c)], conditional on
-`HasTerminalRefinement` and `Expansion.NextBlockUniqueness`, both still to be proved: the base
+`HasTerminalRefinement` and `Expansion.NextBlockUniqueness`, explicit in universe `w`: the base
 reduct of every model at a block stage on a countable carrier is nice. -/
 theorem Realization.IsModel.isNice_toStructure_reduce (hmax : HasTerminalRefinement.{w})
     (hu : Expansion.NextBlockUniqueness.{w}) {M : Type w} [Countable M] {β : Ordinal.{0}}

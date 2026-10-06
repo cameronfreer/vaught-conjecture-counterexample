@@ -5,6 +5,7 @@ Authors: Cameron Freer
 -/
 import VaughtConjecture.Expansion.Domains
 import VaughtConjecture.Realization.Limit
+import VaughtConjecture.Continuation.Terminal
 
 /-!
 # Uniqueness of model expansions and continuity of the expansion domains at limits
@@ -52,7 +53,13 @@ in the intersection has, for one fixed code, a model expansion to every earlier 
 to that code.  The inclusion is the limit clause of `ExpansionDomains`; the reverse inclusion is
 the downward closure (`expansionDomain_antitone`).
 
-The only hypothesis is `NextBlockUniqueness`, used at successor steps; the base case and the limit
+**Terminal collision** (`ModelExpansion.exists_le_reduceBlock_eq_of_isTerminalAt`): given a
+terminal expansion at a countable index, every model expansion of the same base is its reduction.
+Next-block uniqueness supplies equality at the terminal index and then at each lower index.
+This statement permits arbitrary carrier universes and assumes no countability of the carrier.
+
+The only hypothesis of uniqueness and limit existence is `NextBlockUniqueness`, used at successor
+steps; the base case and the limit
 step of the induction are unconditional.  No coherence of expansions, no termination of the
 expansions of a class below `ω₁`, and no receiving property is assumed.
 
@@ -118,6 +125,19 @@ theorem ModelExpansion.subsingleton (hu : Expansion.NextBlockUniqueness.{w}) {ξ
     refine ⟨fun e e' ↦ Subtype.ext (Realization.eq_of_forall_reduce_eq hδ fun ζ hζ ↦ ?_)⟩
     have := ih ζ hζ (hζ.trans hξ)
     exact congrArg Subtype.val (Subsingleton.elim (e.reduceBlock hζ.le) (e'.reduceBlock hζ.le))
+
+/-- **Literal uniqueness of a terminal expansion**, given next-block uniqueness: every model
+expansion of the same base is a reduction of a terminal expansion at a countable index.
+The carrier may lie in any universe and need not be countable. -/
+theorem ModelExpansion.exists_le_reduceBlock_eq_of_isTerminalAt
+    (hu : Expansion.NextBlockUniqueness.{w}) {ρ η : Ordinal.{0}} (hρ : ρ < ω₁)
+    (f : ModelExpansion M (blockStage ρ)) (hf : f.1.IsTerminalAt ρ)
+    (e : ModelExpansion M (blockStage η)) : ∃ h : η ≤ ρ, f.reduceBlock h = e := by
+  have hle : η ≤ ρ := le_of_not_gt fun hlt ↦ by
+    let e' := e.reduceBlock (Order.add_one_le_of_lt hlt)
+    exact hf e'.1 e'.2.isModel (congrArg Subtype.val
+      ((ModelExpansion.subsingleton hu hρ).elim (e'.reduceBlock (Order.le_succ ρ)) f))
+  exact ⟨hle, (ModelExpansion.subsingleton hu (hle.trans_lt hρ)).elim _ _⟩
 
 /-- **Coherence from uniqueness**, given next-block uniqueness: for `ζ ≤ ξ < ω₁`, the reduction
 to `λ_ζ` of any model expansion to `λ_ξ` is the given model expansion to `λ_ζ`. -/
