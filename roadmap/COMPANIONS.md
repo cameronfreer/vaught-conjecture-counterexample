@@ -723,10 +723,15 @@ is compiled conditionally on block determination (below).  None is an input to t
   as a conclusion, proved for each base from conditions 3 and 4, when it is taken from the Scott
   route to maximal presentations (`README.md`, item 5; prospective), whose strict bound on
   serving stages is eventual departure (1 above) read for one class, followed by greatest-stage
-  attainment (bounded-stage attainment, 4 ⇒ 5 of the five criteria there).  For one literal
-  base that is a model, a bound of this kind over all its model presentations is equivalent to
-  a maximal presentation of the base (criteria 3 and 5 of `README.md`, item 5,
-  "Maximal presentations: equivalent criteria, uniqueness, the optimal bound"; prospective),
+  attainment (bounded-stage attainment, 4 ⇒ 5 of the five criteria there; intended quotation
+  `exists_greatest_stage_lt_omega1`, `OrdinalUtil`, available upstream, not yet at our pinned
+  dependency: signatures verified against the upstream source at `2cd44c3`, not compiled
+  here; `IMPLEMENTATION.md`, "Dependency pins": a stage predicate holding at `0`, closed
+  downward and under countable limits, and bounded by a countable stage has a greatest
+  stage, and holds exactly at the stages up to it).  For one literal base that is a model,
+  a bound of this kind over all its model presentations is equivalent to a maximal
+  presentation of the base (criteria 3 and 5 of `README.md`, item 5, "Maximal
+  presentations: equivalent criteria, uniqueness, the optimal bound"; prospective),
   conditional on the injectivity of model reduction at each countable index (raw form
   `ModelExpansion.subsingleton`, conditional on `Expansion.NextBlockUniqueness`, still to be
   proved), which 3 ⇒ 5 uses through bounded-stage attainment; so supplying the bound of (iv)
@@ -754,7 +759,15 @@ is compiled conditionally on block determination (below).  None is an input to t
   by the rank of `σ_q` as soon as another class has a presentation at every higher level, and the
   bounded-levels criterion (`README.md`, "Reduction to full presentations", "Bounded levels") gives
   uncountably many classes; this is eventual departure (1 above) with explicit levels, and the
-  lower-bound criterion of `README.md` is the same argument with Scott isolating levels.  Explicit
+  lower-bound criterion of `README.md` is the same argument with Scott isolating levels.  Its
+  generic form is Scott separation (`stage_lt_rank_of_isolating` and
+  `exists_countable_strict_stage_bound_of_isolation`, `OrdinalCountability`, with
+  `IsolatedPresentation.exists_countable_strict_stage_bound`, `Descriptive/ScottDefinability`;
+  available upstream, not yet at our pinned dependency: signatures verified against the upstream
+  source at `2cd44c3`, not compiled here; `IMPLEMENTATION.md`, "Dependency pins"): a class isolated
+  by a sentence of rank `r` lies in no domain of two or more classes on which the sentences of rank
+  at most `r` agree, so, the domains decreasing and the one at `r`, on which the sentences of rank
+  at most `r` agree, having two or more classes, it lies in no domain at a stage `η ≥ r`.  Explicit
   levels for the terminal expansions at block `η` are the syntax bounds of the table below
   (`ω·(η+2)`, and `ω·(η+2)+k` in the core case), with the stabilization-ordinal bounds of target 2
   and the orbit-rank bounds of target 3.  Uses of termination, marked: the Scott sentences and their
