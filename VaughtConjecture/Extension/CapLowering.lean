@@ -79,8 +79,12 @@ The hypothesis needs more at every input: the rows (part 4), consistency and com
 display, and bountifulness at its other pairs of graded faces.  Those pairs include the lift from
 the private coatom `(univ.map Fin.castSuccEmb, n)` to `(univ, n)`, where the readings of the gate
 must be realized on the donor face for an arbitrary lawful private labelling, and the lifts to
-`(univ, n + 1)`.  None of this is addressed here.  Nothing is proved here about the property
-itself, which is open, or about (R1).
+`(univ, n + 1)`.  None of this is addressed here.  The property itself is false at every stage above
+`1` (`CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`): the lift from the
+private coatom fails at a private type with a proper anchor below the cap, where the readings of
+the gate carry a lawful private labelling that drops the anchor and keeps the cap to a donor
+labelling that the donor's rows forbid (`StageType.CoupledGatedExtension.carriesBottoms`).  Parts
+2–4 are not decided there.  Nothing here concerns (R1).
 
 ## Placement
 

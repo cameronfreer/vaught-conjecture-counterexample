@@ -47,8 +47,10 @@ theorems below take `FiniteExtensionReceiving` as an explicit hypothesis, which
 (R1).  (R1) itself is open in general: the universal gated extension hypothesis
 `StageType.HasGatedPinnedExtensions` fails at every stage
 (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`), its coupled form
-`StageType.HasCoupledGatedPinnedExtensions` is open, and finite-cut receiving is proved
-for the top-free witnesses (`hasFiniteCutReceiving_reconstruct`), not for all models.
+`StageType.HasCoupledGatedPinnedExtensions` is false at every stage above `1`
+(`CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`), and finite-cut
+receiving is proved for the top-free witnesses (`hasFiniteCutReceiving_reconstruct`), not for all
+models.
 
 **The laws.**
 
@@ -108,10 +110,11 @@ structure FiniteExtensionReceiving : Prop where
     ∀ R : Realization.{0, w} α M, R.IsModel → R.HasFiniteExtensionReceiving
 
 /-- **Finite-cut receiving for models** on the carriers in the universe `w`: every model at a
-countable limit stage has the finite-cut receiving property.  This is (R1) of the table of
-Layer 3, open; it holds conditional on the coupled gated pinned extension property, a named
-hypothesis that is open (`finiteCutReceiving_of_hasCoupledGatedPinnedExtensions`, in
-`VaughtConjecture.Expansion.CoupledGatedReceiving`). -/
+countable limit stage has the finite-cut receiving property.  This is (R1) of the table of Layer 3,
+open; it holds conditional on the coupled gated pinned extension property, a named hypothesis that
+is false at every stage above `1` (`finiteCutReceiving_of_hasCoupledGatedPinnedExtensions`, in
+`VaughtConjecture.Expansion.CoupledGatedReceiving`;
+`CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`). -/
 structure FiniteCutReceiving : Prop where
   /-- Every model at a countable limit stage has finite-cut receiving. -/
   receive : ∀ {α : Ordinal.{0}} {M : Type w}, Order.IsSuccLimit α → α < ω₁ →

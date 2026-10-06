@@ -16,12 +16,14 @@ cutoff); semantic contract, item 12 (receiving one permitted cutoff at a time).
 **The theorem** (`IsModel.hasFiniteCutReceiving_of_hasCoupledGatedPinnedExtensions`).  Every model
 `R` at a stage `α` at which the coupled gated pinned extension property holds
 (`StageType.HasCoupledGatedPinnedExtensions α`) has the finite-cut receiving property.  The
-hypothesis is **a named hypothesis that is open**, so this theorem is (R1) of the table of Layer 3
-**conditional on it, and not a proof of (R1)**.  The gated pinned extension property
-(`StageType.HasGatedPinnedExtensions`), whose displays label the twins of the gate `⊥`, fails at
-every stage (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`); the coupled property
-replaces that clause by a condition on the rows of the display (`CellScheme.Rows.TwinsReadGate`:
-every twin reads the gate at least as the cap).
+hypothesis is **a named hypothesis that is false at every stage above `1`**
+(`CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`), so this theorem is (R1)
+of the table of Layer 3 **conditional on it, vacuous at those stages, and not a proof of (R1)**.
+The gated pinned extension property (`StageType.HasGatedPinnedExtensions`), whose displays label the
+twins of the gate `⊥`, fails at every stage
+(`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`); the coupled property replaces that
+clause by a condition on the rows of the display (`CellScheme.Rows.TwinsReadGate`: every twin reads
+the gate at least as the cap).
 
 Over an occurrence `x` (the **root**), for a coface `d` of its type (the **donor**) and a
 permitted cutoff `c`, the construction is:
@@ -58,19 +60,23 @@ type of `y` is legal, a hypothesis of the coupled property); exact consistency (
 and generalized saturation (step 4).  Nonemptiness of the carrier and covering are not used.  There
 is **no hypothesis on the stage** `α`.
 
-**The open point.**  The coupled property is proved at one input only, the input that refutes the
-gated pinned extension property: the private type `GatedExtensionCounterexample.P α`, the empty
-root, the donor `P α|{0}` (one cell, labelled `⊥`), and the cap `3`
-(`CoupledGateExamples.exists_coupledGatedExtension_comap_g₁`).  Since the gate dominates the cap in
-every lawful labelling, its general form needs, at each lift from a coatom whose prescriptions force
-the gate below a label `v`, a lawful private labelling in the cap ball with the cap at most `v`.
-**Cap lowering (CL)**, stated in the docstring of `StageType.HasCoupledGatedPinnedExtensions`, is
-the uniform form of this requirement, over every labelling `p` lawful below `(F, n - 1)` in the cap
-ball and every `v` at least the cap: a strengthening, not shown necessary.  A failure of (CL)
-refutes the coupled design only at a pair `(p, v)` that a forcing prescription from an anchored
-legal donor actually realizes.  The donor labelled `⊤` on `P α`, which exercises (CL), is not
-compiled (prospective).  At any stage at which the hypothesis fails the theorem is vacuous, and
-nothing here rules out that it fails at every limit stage.
+**The refutation.**  The coupled property fails at a private type with a proper anchor below the
+cap: the readings of the gate carry every lawful private labelling, at the anchors, to the donor
+face (`StageType.CoupledGatedExtension.carriesBottoms`), and a labelling that drops the anchor while
+keeping the cap is carried to a donor labelling that the donor's rows forbid
+(`CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`).  It holds at the input
+that refutes the gated pinned extension property: the private type
+`GatedExtensionCounterexample.P α`, the empty root, the donor `P α|{0}` (one cell, labelled `⊥`),
+and the cap `3` (`CoupledGateExamples.exists_coupledGatedExtension_comap_g₁`), and at `P α` with the
+donor labelled `⊤` (`CoupledGateInstance.coupledGatedPinnedExtension_donor`); `P α` has no proper
+anchor.  Since the gate dominates the cap in every lawful labelling, its general form needs, at each
+lift from a coatom whose prescriptions force the gate below a label `v`, a lawful private labelling
+in the cap ball with the cap at most `v`.  **Cap lowering (CL)**, stated in the docstring of
+`StageType.HasCoupledGatedPinnedExtensions`, is the uniform form of this requirement, over every
+labelling `p` lawful below `(F, n - 1)` in the cap ball and every `v` at least the cap: a
+strengthening, not shown necessary.  A failure of (CL) refutes the coupled design only at a pair
+`(p, v)` that a forcing prescription from an anchored legal donor actually realizes.  The refutation
+does not use (CL).  The theorem is vacuous at every stage above `1`.
 
 
 **Special cases.**  The empty root; donors whose new cells are labelled `⊥` or `⊤`, which are
@@ -95,7 +101,9 @@ construction in its proof are open:
   at all?
 * (M4) Does the private context of the lemma satisfy a condition that excludes private types like
   `P α`, such as a marker of grade below `n` not labelled `⊥`, or a unique cell of full scope and
-  full grade?
+  full grade?  Does it exclude a lawful labelling of the private type that is `⊥` at a proper anchor
+  and not at the cap, the configuration of
+  `CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`?
 
 **What is not assumed.**  None of the following is assumed or claimed here: (R1), receiving,
 uniqueness or coherence of expansions; the coupled property itself, beyond its one compiled
@@ -124,9 +132,11 @@ namespace Realization
 variable {α : Ordinal.{u}} {M : Type v} {R : Realization.{u, v} α M}
 
 /-- **Finite-cut receiving for models, conditional on the coupled gated pinned extension
-property**: a model at a stage `α` at which `StageType.HasCoupledGatedPinnedExtensions α` holds
-has the finite-cut receiving property.  This is (R1) of the table of Layer 3 conditional on that
-named hypothesis, which is open; it is not a proof of (R1).
+property**: a model at a stage `α` at which `StageType.HasCoupledGatedPinnedExtensions α` holds has
+the finite-cut receiving property.  This is (R1) of the table of Layer 3 conditional on that named
+hypothesis, which is false at every stage above `1`
+(`CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`); it is not a proof of
+(R1).
 
 The private context at the floor of the cutoff (`IsModel.exists_privateContext_isAnchored`) and
 the coupled gated extension given by the hypothesis are realized over the private tuple by

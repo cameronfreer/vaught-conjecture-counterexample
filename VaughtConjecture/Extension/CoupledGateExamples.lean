@@ -15,17 +15,18 @@ import VaughtConjecture.Extension.GatedExtensionCounterexample
 Roadmap, Layer 3, 3.2 (the ordinary construction (R1): the display and its gate) and 3.4, row
 (R1); the coupled gated extensions of `VaughtConjecture.Extension.GatedExtension`.
 
-**The theorem** (`exists_coupledGatedExtension_comap_g₁`).  The coupled gated pinned
-extension property (`StageType.HasCoupledGatedPinnedExtensions`) holds at the input at which the
-gated pinned extension property fails (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`):
-the private type `GatedExtensionCounterexample.P α`, the empty root, the donor `P α|{0}`, whose one
-cell is labelled `⊥`, and the cap `3`.  So the obstruction of
+**The theorem** (`exists_coupledGatedExtension_comap_g₁`).  The coupled gated pinned extension
+property (`StageType.HasCoupledGatedPinnedExtensions`) holds at the input at which the gated pinned
+extension property fails (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`): the private
+type `GatedExtensionCounterexample.P α`, the empty root, the donor `P α|{0}`, whose one cell is
+labelled `⊥`, and the cap `3`.  So the obstruction of
 `VaughtConjecture.Extension.GatedExtensionCounterexample`, which forces a twin of the gate not
-labelled `⊥` in every legal one-point extension of `P α`, does not refute the coupled property.
-Nothing more is proved about the coupled property, which is open: the donor labelled `⊤` on `P α`
-(which needs the cap of `P α` lowered in the lift from `({1, 2}, 2)`, the open point (CL) of
-`StageType.HasCoupledGatedPinnedExtensions`), donors with several new cells, and other private
-types are not compiled (prospective).
+labelled `⊥` in every legal one-point extension of `P α`, does not refute the coupled property.  The
+coupled property also holds at `P α` with the donor labelled `⊤`
+(`CoupledGateInstance.coupledGatedPinnedExtension_donor`, which needs the cap of `P α` lowered in
+the lift from `({1, 2}, 2)`), and it is false at every stage above `1`, at a private type with a
+proper anchor below the cap
+(`CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`).
 
 **The display `Q α`** (`Q`, `isLegal_Q`).  On three points with the interval plan, twelve cells;
 a cell is **dead** when its kind is `0`, **live** otherwise:

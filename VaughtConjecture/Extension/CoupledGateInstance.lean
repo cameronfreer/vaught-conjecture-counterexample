@@ -24,10 +24,11 @@ Roadmap, Layer 3, 3.2 (the ordinary construction (R1): the display and its gate)
 
 Every hypothesis of the property holds there, and a coupled gated extension whose cap carries the
 label of the chosen cell exists (`exists_coupledGatedExtension_donor`).  The property holds at this
-instance only.  Nothing is proved here about the property in general, which is open, or about
-(R1).  The input at which the gated pinned extension property is refuted has the same private type
-and root and a donor whose cell is labelled `⊥`
-(`CoupledGateExamples.exists_coupledGatedExtension`).
+instance only.  The property in general is false at every stage above `1`
+(`CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`, at a private type with a
+proper anchor below the cap, which `P α` does not have); nothing is proved here about (R1).  The
+input at which the gated pinned extension property is refuted has the same private type and root and
+a donor whose cell is labelled `⊥` (`CoupledGateExamples.exists_coupledGatedExtension`).
 
 **Cap lowering at this instance.**  The gate reads the donor cell at least as it reads the cap.
 So in every lawful labelling of the display the donor cell bounds both full private cells
@@ -54,6 +55,9 @@ for every self-visible cap and every lawful ambient labelling.  Four parts are n
    and the cells of grade `n` that contain the new point (open);
 4. the existence of rows satisfying `CellScheme.Rows.IsGate` and `CellScheme.Rows.TwinsReadGate`
    for every anchored legal donor (open).
+
+Parts 2–4 are not decided in general; the property fails before them, at the lift from the private
+coatom (`CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`).
 
 At this instance all four hold.  Part 2 cannot happen, since every lift of `Q α` exists
 (`isLegal_Q`).  Directly: the gate reads the donor cell through `top`, at `3` as it reads the cap.

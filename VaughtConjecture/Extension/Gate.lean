@@ -117,7 +117,9 @@ and never serves availability.
   every stage (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`).  With the coupling of
   the rows in place of the labels `⊥` of the twins, a legal scheme carrying a gate exists at the
   input of that refutation (`CoupledGateExamples.exists_coupledGatedExtension_comap_g₁`); the
-  universal form `StageType.HasCoupledGatedPinnedExtensions` is open, and so is general (R1).
+  universal form `StageType.HasCoupledGatedPinnedExtensions` is false at every stage above `1`
+  (`CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`, at a private type with
+  a proper anchor below the cap), and general (R1) is open.
 
 ## Placement
 

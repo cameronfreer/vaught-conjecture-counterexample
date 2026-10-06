@@ -53,17 +53,18 @@ extension, and stands.  Gated extensions exist for some inputs
 `StageType.HasGatedPinnedExtensions`, which would supply one for every private context, fails at
 every stage (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`): the private type
 `GatedExtensionCounterexample.P α`, whose two cells of full scope and full grade are ordered
-oppositely by two lawful labellings in the cap ball of its labelling at `2`, has no gated
-extension (`GatedExtensionCounterexample.isEmpty_gatedExtension`).  Finite-cut receiving for all
-models, (R1), is not claimed here; it is open in general.  The private context is acquired by the
-uniformity and high-arity-dominance clauses, with exact consistency (no generalized saturation)
+oppositely by two lawful labellings in the cap ball of its labelling at `2`, has no gated extension
+(`GatedExtensionCounterexample.isEmpty_gatedExtension`).  Finite-cut receiving for all models, (R1),
+is not claimed here; it is open in general.  The private context is acquired by the uniformity and
+high-arity-dominance clauses, with exact consistency (no generalized saturation)
 (`Realization.IsModel.exists_privateContext`).  The bottom-pattern clause of a model
-(`Realization.IsModel.bottomPattern`), applied over an occurrence of the private type to the
-scheme and labels of a display, realizes a member of the bottom-pattern family read here; its
-guard is met, since the display is a legal coface of the private type in that family.  With the
-coupled gate, generalized saturation suffices in place of the bottom-pattern clause; a route to
-(R1) through these pieces needs coupled gated extensions over every private context
-(`StageType.HasCoupledGatedPinnedExtensions`, a named hypothesis that is open), and finite-cut
+(`Realization.IsModel.bottomPattern`), applied over an occurrence of the private type to the scheme
+and labels of a display, realizes a member of the bottom-pattern family read here; its guard is met,
+since the display is a legal coface of the private type in that family.  With the coupled gate,
+generalized saturation suffices in place of the bottom-pattern clause; a route to (R1) through these
+pieces needs coupled gated extensions over every private context
+(`StageType.HasCoupledGatedPinnedExtensions`, a named hypothesis that is false at every stage above
+`1`, `CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`), and finite-cut
 receiving is proved conditional on it in `VaughtConjecture.Realization.CoupledFiniteCutReceiving`.
 
 ## Placement
