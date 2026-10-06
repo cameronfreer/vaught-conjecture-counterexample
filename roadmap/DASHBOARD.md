@@ -66,9 +66,10 @@ Notes on the rows, each with its marker:
   conditionally: steps 2–3 under `StageType.HasCoatomExtensions`, and step 7 under
   `StageType.HasApexCoatomExtensions` at `λ_η` and the uniqueness of model expansions at `λ_η`
   (`nonempty_loss_of_hasApexCoatomExtensions`).  Refuted: 4b-ii, the coupled gated pinned extension
-  property (`CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`).  Still to be
-  proved: (R1) by another construction, or by the coupled one restricted to the private contexts
-  that models acquire (prospective); (R2), (R3), (R4).
+  property (`CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`).  Open: the
+  acquisition of carrying private contexts by every model (`Realization.AcquiresCarryingContexts`,
+  item 3 below).  Still to be proved: (R1) by another construction, or by the coupled one
+  restricted to carrying private contexts (prospective); (R2), (R3), (R4).
 - *Layer 4.*  Compiled: normalization, conditional on finite-extension receiving and forcing donors
   (`Realization.label_eq_stableLabel`); the structural candidate (`Realization.stableCandidate`),
   stably lawful for every model (`Realization.IsModel.isStablyLawful`); output 3 and the
@@ -179,12 +180,21 @@ counted as compiled.
    `CoupledGateInstance.coupledGatedPinnedExtension_donor`, and with every anchored legal one-point
    donor, `CoupledGateOnePointDonors.coupledGatedPinnedExtension_P`).  The conditional (R1)
    (`Expansion.finiteCutReceiving_of_hasCoupledGatedPinnedExtensions`) is vacuous.  (R1) itself is
-   not refuted: open, whether the private contexts that models acquire
-   (`Realization.IsModel.exists_privateContext_isAnchored`) satisfy the bottom transport condition
-   with every anchored donor, and whether the coupled property restricted to them holds.  The
-   condition holds when the cap reads an anchor of every donor label below it in the block of its
-   reading of the cap itself (`StageType.carriesBottoms_of_row_mem_block`); it is necessary for the
-   property, not shown sufficient.
+   not refuted.  The condition holds when the cap reads an anchor of every donor label below it in
+   the block of its reading of the cap itself (`StageType.carriesBottoms_of_row_mem_block`); it is
+   necessary for the property, not shown sufficient.  **Acquisition, the first step of a repair**
+   (open): whether every model acquires carrying private contexts
+   (`Realization.AcquiresCarryingContexts`, stated in `Realization/CarryingContext`: over every
+   root, for every coface and floor, a private context of the acquired form satisfying the
+   condition).  Compiled: for donors whose new cells are labelled `⊥` or `⊤`
+   (`Realization.IsModel.hasCarryingPrivateContext_of_forall_label`); necessity for the coupled
+   route (`Realization.hasCarryingPrivateContext_of_coupledGatedExtension`); the conclusions of the
+   acquisition do not give it
+   (`CoupledGatedExtensionCounterexample.exists_privateContext_not_carriesBottoms`); and a lawful
+   private labelling that keeps the cap drops only cells that the cap's row reads in a block
+   strictly below its reading of itself (`CellScheme.Rows.IsLawful.lt_row_self_of_eq_bot`), a row
+   that no clause of a model prescribes.  The coupled property restricted to carrying contexts is
+   not stated (prospective).
 4. **Forcing donors** (still to be proved): the finite construction behind `ForcingDonors`.
 5. **Output 3, part D, and (R4)** (still to be proved): (R4) over positive roots, the empty root by
    the coatom extension over the empty face, and the coatom extension properties at `λ_{ξ+1}`;

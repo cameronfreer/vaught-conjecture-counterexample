@@ -2130,16 +2130,37 @@ Each checkpoint needs both its abstract API and a concrete application:
    of a coupled gated extension are used: the refutation holds whatever the display, and does not
    use cap lowering (CL) or the lifts from the faces that contain the new point; the parts of (CL)
    named for the instance on `P α` (the forcing lift, joint lawfulness, the rows) are not decided in
-   general.  (R1) itself is not refuted.  Open, and the next question for (R1) through a gate:
-   whether the private contexts that models acquire
-   (`Realization.IsModel.exists_privateContext_isAnchored`) satisfy the bottom transport condition
-   with every donor anchored below their cap (a lawful labelling of the private type that drops a
-   proper anchor and keeps the cap must be carried by the readings of the gate to a labelling that
-   the rows of each such donor allow), and whether the coupled property restricted to them holds;
-   neither is stated in the library (prospective).  The condition holds when the cap reads an anchor
-   of every donor label below it in the block of its reading of the cap itself
-   (`StageType.carriesBottoms_of_row_mem_block`), which the refuting private type does not satisfy;
-   the condition is necessary for the property, not shown sufficient.  The conditional theorem is
+   general.  (R1) itself is not refuted.  The repair is ordered: acquisition of private contexts
+   satisfying the condition, then the extension property restricted to them, then receiving.  The
+   acquisition step is stated (`Realization.HasCarryingPrivateContext`: a private context in the
+   form of `Realization.IsModel.exists_privateContext_isAnchored` whose type satisfies
+   `StageType.CarriesBottoms` with the donor at the label of its cap; and
+   `Realization.AcquiresCarryingContexts`: one over every occurrence, for every coface and every
+   floor below the stage; `Realization/CarryingContext`).  Compiled in this repository (theorem
+   named): models acquire carrying contexts for donors whose new cells are labelled `⊥` or `⊤`
+   (`Realization.IsModel.hasCarryingPrivateContext_of_forall_label`); a private context of the
+   acquired form at which a coupled gated extension exists is carrying
+   (`Realization.hasCarryingPrivateContext_of_coupledGatedExtension`), so acquisition is necessary
+   for the coupled route; the refuting input satisfies every conclusion of the acquisition at every
+   floor and fails the condition
+   (`CoupledGatedExtensionCounterexample.exists_privateContext_not_carriesBottoms`), so the
+   conclusions of the acquisition do not give it; and a lawful labelling that keeps a cell `C` drops
+   everything that the row of `C` reads below the end of the block of a dropped cell
+   (`CellScheme.Rows.IsLawful.eq_bot_of_row_le_block`), so it drops only cells that the row of `C`
+   reads in a block strictly below its reading of `C`
+   (`CellScheme.Rows.IsLawful.lt_row_self_of_eq_bot`).
+   Hence the condition holds when the cap reads an anchor of every donor label below it in the
+   block of its reading of the cap itself (`StageType.carriesBottoms_of_row_mem_block`), which the
+   refuting private type does not satisfy, and it can fail only at a donor cell all of whose
+   anchors the cap reads in lower blocks.  Open: whether every model at a limit stage acquires
+   carrying contexts.  The clauses of a model bound labels (dominance gives the private cap a label
+   above the floor) or prescribe schemes without a lower bound on a label of full grade
+   (generalized saturation, the bottom pattern at the grades below the new arity); none prescribes
+   the row of the private cap.  The two clauses of the condition are each met alone (by the
+   labelling `⊥` and by the donor's own labelling); what is open is the two together at the donor
+   cells whose anchors the cap reads below its own block.  The extension property restricted to
+   carrying contexts is not stated (prospective); the condition is necessary for the property, not
+   shown sufficient.  The conditional theorem is
    vacuous at every stage above `1`; it receives one permitted cutoff at a time and is not exact
    projected receiving. Projected-donor lifting is not part of checkpoint 4 (`README.md`, Layer 3,
    3.3, the density boundary). This status concerns (R1) only: (R2), (R3), and the fidelity theorem
@@ -2765,6 +2786,13 @@ witnesses).**
   (`Extension/PinnedExtension`); a lemma shared by the two, in a module both import (for instance
   `Extension/Basic`, or `Stage/` for the closed-point choice), is a later change of proofs only,
   with no statement change.
+- `Extension/CoupledGatedExtensionCounterexample`: the statements on rows that do not concern the
+  refuting input (`CellScheme.Rows.IsLawful.eq_bot_of_gateReads`, `ne_bot_of_gateReads`,
+  `min_eq_visibilityReplace_of_min_eq`, `ne_bot_of_row_mem_block`, `eq_bot_of_row_le_block`,
+  `lt_row_self_of_eq_bot`) to `Extension/Gate`, beside `CellScheme.Rows.GateReads`;
+  `StageType.CarriesBottoms`, its sufficient conditions and the theorems that force it, to
+  `Extension/GatedExtension` or a module of their own, imported by `Realization/CarryingContext`.
+- `Realization/CarryingContext`: Layer 3, the acquisition step of a repair of (R1), in place.
 
 **Quantitative reconstruction, row 1 (`COMPANIONS.md`, "Further companion results").**
 
@@ -2878,8 +2906,9 @@ witnesses).**
 - The ordinary construction of (R1) as data (4b-ii): `StageType.HasCoupledGatedPinnedExtensions` is
   refuted at every stage above `1`
   (`CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`), as is its first form
-  `StageType.HasGatedPinnedExtensions`; a construction for the private contexts that models acquire
-  is prospective; (R2), (R3), (R4); and output 3, the proof of `ContinuationCriterion`.
+  `StageType.HasGatedPinnedExtensions`; whether every model acquires carrying private contexts
+  (`Realization.AcquiresCarryingContexts`) is open, and a construction for them is prospective;
+  (R2), (R3), (R4); and output 3, the proof of `ContinuationCriterion`.
 - The graded back-and-forth theorem (`README.md`, Layer 0), formerly listed here,
   is retired, not moved: both of its intended applications, approximate comparison of full
   presentations and the back-and-forth form of condition 3 of the expansion-domain route, compile

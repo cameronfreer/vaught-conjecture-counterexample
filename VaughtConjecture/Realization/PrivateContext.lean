@@ -74,8 +74,10 @@ all models, (R1) itself, is open: the universal gated extension hypothesis
 gate (`IsModel.hasFiniteCutReceiving_of_hasCoupledGatedPinnedExtensions`) is conditional on a named
 hypothesis that is false at every stage above `1`
 (`CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`), so it is vacuous
-there.  Nothing here concerns uniqueness or coherence of the context, or exact projected
-receiving.
+there.  Whether models acquire private contexts that satisfy the bottom transport condition
+forced by every coupled gated extension (`Realization.AcquiresCarryingContexts`, in
+`VaughtConjecture.Realization.CarryingContext`) is open; the conclusions here do not give it.
+Nothing here concerns uniqueness or coherence of the context, or exact projected receiving.
 
 ## References
 
