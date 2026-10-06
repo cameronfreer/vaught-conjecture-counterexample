@@ -697,6 +697,7 @@ theorem orderedLayerStep_iff : I.OrderedLayerStep ρ ↔
       ⟨(isWellFormed_layerScheme I ρ).univ_mem_faces, hk1, by simp; omega⟩
     exact hL.isBountiful hX hY _
 
+variable (I ρ) in
 /-- **The ordered-layer step below the top grade**: the fields of `OrderedLayerStep` at the grades
 `k ≤ 3`.  For a seed whose two coatom types are the apex added to `⊥` labels
 (`Seed.HasBottomApexes`), with the top row at the grade `4` (`OrderedLayer.topRow`), it gives the
@@ -718,6 +719,7 @@ structure OrderedLayerStepBelowTop : Prop where
   cappedLift_right : ∀ k, 1 ≤ k → k ≤ 3 → (layerScheme I ρ).rows.CappedLift (X := (coatomD, k))
     (Y := ((univ : Finset (Fin 5)), k)) ⟨subset_univ _, le_rfl⟩
 
+variable (I) in
 /-- A seed on five points **has an ordered-layer step** when it has one for some layer rows. -/
 def HasOrderedLayerStep : Prop := ∃ ρ : LayerRows.{u}, I.OrderedLayerStep ρ
 
