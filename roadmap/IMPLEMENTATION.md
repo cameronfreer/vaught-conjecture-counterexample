@@ -2118,8 +2118,8 @@ Each checkpoint needs both its abstract API and a concrete application:
    gated extension forces (`StageType.CoupledGatedExtension.carriesBottoms`, at each input of the
    property `StageType.HasCoupledGatedPinnedExtensions.carriesBottoms`): a lawful labelling of the
    private type is the private face of a lawful labelling `q` of the display (bountifulness from the
-   private face at the cap `⊥`); the cap is not `⊥` there, so neither is the gate; the one witness
-   at the gate commutes with `vr_n` up to `q G`, so a donor cell is `⊥` when every possible anchor
+   private face at the cap `⊥`); the cap is not `⊥` there, so neither is the gate `G`; the one
+   witness at the gate commutes with `vr_n` up to `q G`, so a donor cell is `⊥` when every possible anchor
    is (`CellScheme.Rows.IsLawful.eq_bot_of_gateReads`) and is not `⊥` when no private cell that can
    serve its reading is (`CellScheme.Rows.IsLawful.ne_bot_of_gateReads`); and the donor face is
    lawful for the donor.  The input: a legal private type on two points whose cell `z₁` of grade `1`
