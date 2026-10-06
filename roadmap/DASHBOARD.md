@@ -103,6 +103,14 @@ Notes on the rows, each with its marker:
   nonempty losses derived from the coatom extension property with apex at every countable block
   stage,
   `densitySentence_hasThinAlephOneSpectrum_of_terminalClassification_of_hasApexCoatomExtensions`).
+  Positive niceness of the
+  base reduct of every model at a block stage on a countable carrier
+  (`Realization.IsModel.isNice_toStructure_reduce`, `MainTheorem/Niceness`; manuscript
+  correspondence, row 30, S), with one threshold for all closed tuples
+  (`exists_isNiceTupleAt_of_hasTerminalRefinement`), compiled conditional on
+  `HasTerminalRefinement.{w}` (the specified terminal refinement, row 38) and next-block uniqueness.
+  At `w = 0` the refinement is derived from (R1), next-block uniqueness, and the countable-block
+  apex property, all still open; the main theorem does not use niceness.
 - *Manuscript correspondence, item 5.*  Compiled conditionally on (R1), next-block uniqueness,
   and the coatom extension property with apex at every countable block stage: the maximal
   refinement of a prescribed model (`MainTheorem.exists_maximalRefinement`); rows 33–36, 38, 40
