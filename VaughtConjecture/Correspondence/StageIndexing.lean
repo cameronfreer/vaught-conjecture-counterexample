@@ -23,8 +23,9 @@ reads the projection of index `β` at the stage `ω · β`:
 * the projection of index `β` is the truncation at `ω · β`: in the example of trees,
   `τ_β = τ⁻_{ω·β}` [AFK26, Definition 3.20], and for templates `τ_β(Q_t) = Q_{t*}` with `t*` the
   truncation of `t` at `ω · β` [AFK26, Definition 4.16];
-* the limit ordinals below `ω₁` are the stages of the version of 4 October 2026 of [AFK26] (its
-  Definition 4.23); the current version has no separate notion of a stage.
+* the limit ordinals below `ω₁` are the stages of the later of the two versions of 4 October 2026
+  of [AFK26] (its Definition 4.23; the earlier version of that date defines them in its
+  Definition 4.15); the current version has no separate notion of a stage.
 
 Printed material, not used here: the structures of index `β` of the system of templates are asked
 for density at the index `ω · β` [AFK26, Definition 4.20], density at an index being read through

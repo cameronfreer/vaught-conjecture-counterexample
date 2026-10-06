@@ -886,11 +886,13 @@ are P, by the definition-level identifications of `VaughtConjecture/Corresponden
 notes.  Row 6 is S: `IsBountiful` is the printed definition required at every stage that is zero
 or a limit (note 6), and at `ω₁` only the implication from `IsBountiful` is proved.  The other
 rows whose declaration carries the manuscript's number but whose clauses have not been compared
-are S, with the compiled declarations listed in the notes.
+are S, with the compiled declarations listed in the notes.  A line with the first two cells empty
+continues the row above it: a further notion of the same row, with its own status.
 
 | Row | Source | Manuscript notion | Status |
 | --- | --- | --- | --- |
-| 1 | [AFK26] | the observation index `ξ`, Definitions 3.20 and 4.16 | C; truncation function, Definitions 3.12/4.9: P |
+| 1 | [AFK26] | the observation index `ξ`, Definitions 3.20 and 4.16 | C |
+| | | its truncation function, Definitions 3.12 and 4.9 | P |
 | 2 | [Kni26] | visibility replacement, Definition 2.2.3 | P |
 | 3 | [Kni26] | witnesses and transformation, Definition 2.3.9 | P |
 | 4 | [Kni26] | lawful labellings, Definition 2.5.4; orderly labellings, Definition 2.3.4 | P |
@@ -903,7 +905,9 @@ are S, with the compiled declarations listed in the notes.
 | 11 | [Kni26] | realizations and models, Definition 3.2.1 | S |
 | 12 | [Kni26] | the four extension families as a sentence, Definition 3.2.1, clause 4 | S |
 | 13 | [Kni26] | the density sentence against clause 4 (the fidelity theorem of this roadmap) | S |
-| 14 | [AFK26] | invariance diagram and system compatible, Convention 2.3, Definitions 2.1, 2.2, 2.4–2.6 and 2.8 | P; Definitions 4.17, 4.18 and Lemma 4.19: C |
+| 14 | [AFK26] | geometries and structured geometries, Convention 2.3, Definitions 2.1 and 2.2 | P |
+| | | invariance diagram and system compatible, Definitions 2.4–2.6 and 2.8 | P |
+| | | the language and diagram of templates, Definitions 4.17 and 4.18, Lemma 4.19 | C |
 | 15 | [Kni26] | the amalgam of two coatom types, Definition 4.3.1, and its rows, Lemma 4.3.2 | S |
 | 16 | [Kni26] | the completion of the amalgam, Definition 4.3.14 | C |
 | 17 | [Kni26] | the coatom extension with apex, Corollary 4.3.22 | S |
@@ -912,12 +916,15 @@ are S, with the compiled declarations listed in the notes.
 | 20 | [Kni26] | the saturated model, Definition 4.1.1 and Proposition 4.4.5 | S |
 | 21 | [Kni26] | the private context, Lemma 8.1.1, clauses 3 and 4 | S |
 | 22 | [Kni26] | `Correct`, Definition 8.3.1 | S |
-| 23 | [AFK26] | invariants and projections, Definitions 3.2 and 3.4 of the version of 1 October 2026; Definitions 2.2 and 2.6 | C; Definitions 2.2 and 2.6: P (row 14) |
-| 24 | [AFK26] | back-and-forth systems, Definition 4.1 and Theorem 4.2 of the version of 1 October 2026; Definition 2.16 and Theorem 2.17 | C; Definition 2.16 and Theorem 2.17: C (a starting match specified) |
+| 23 | [AFK26] | invariants and projections, 1 October 2026 version: Definitions 3.2 and 3.4 | C |
+| | | the same, current version: Definitions 2.2 and 2.6 | P (row 14) |
+| 24 | [AFK26] | back-and-forth systems, 1 October 2026 version: Definition 4.1, Theorem 4.2 | C |
+| | | the same, current version: Definition 2.16 and Theorem 2.17 | C (a starting match specified) |
 | 25 | [AFK26] | density at an observation, two-index form (item 3; no numbered statement) | S |
 | 26 | [AFK26] | comparison of models with a common invariant (item 4; no numbered statement) | S |
 | 27 | [AFK26] | maximal presentations, class–level incidence (item 5; no numbered statement) | S |
-| 28 | [AFK26] | the same-index equivalence of full trees, Proposition 8.6 of the version of 1 October 2026 (item 6); full trees, Definition 3.10 | C; Definition 3.10: S |
+| 28 | [AFK26] | same-index equivalence (item 6), 1 October 2026 version: Proposition 8.6 | C |
+| | | full trees, current version: Definition 3.10 | S |
 | 29 | [AFK26] | closed tuples as supported tuples, Definition 2.1 (item 2) | P |
 | 30 | [AFK26] | positive niceness over all admissible lifts (item 5; no numbered statement) | S |
 | 31 | [AFK26] | a uniform fixing stage of a family (item 5; no numbered statement) | S |
@@ -952,8 +959,9 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
    continuous (`isNormal_blockStage`, `blockStage_eq_iSup_of_isSuccLimit`); the two indexings
    agree from `ω` on (`blockStage_eq_omega0_mul_of_omega0_le`); and the block stages of countable
    index are the limit ordinals below `ω₁` (`isSuccLimit_and_lt_omega_one_iff`), the stages of the
-   version of 4 October 2026 of [AFK26] (its Definition 4.23; the current version does not define
-   stages).  Proved correspondence (P): the printed truncation function (Definitions 3.12
+   later of the two versions of 4 October 2026 of [AFK26] (its Definition 4.23; the earlier
+   version of that date defines them in its Definition 4.15, and the current version does not
+   define stages).  Proved correspondence (P): the printed truncation function (Definitions 3.12
    and 4.9) is `Label.reduce`, clause by clause (`Label.reduce_coe_eq_ite`, `Label.reduce_bot`,
    `Label.reduce_top`).  Printed material, not used here: Definition 4.20 asks for density at the
    index `ω · β` (density at an index being read through the projection of that index,
@@ -1080,8 +1088,9 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     `IsGeometry` and `IsStructuredGeometry`, Definition 2.4 as `InvarianceDiagram`, Definition 2.5
     as `InvarianceDiagram.IsCompatible`, Definition 2.6 as `InvariantSystem`, and Definition 2.8 as
     `InvarianceDiagram.IsCompatibleWith`, one field for each printed clause; P for these printed
-    definitions, every notion their clauses use being P (Definition 2.2, Convention 2.3) or C (the
-    invariants, row 9).  Definition 2.7 (the projection of a structure and its rank) and
+    definitions, every notion their clauses use being P (Definition 2.2, Convention 2.3): the
+    definitions are generic in the signature `σ : GeometrySignature L`, so the invariants of an
+    instance do not enter them.  Definition 2.7 (the projection of a structure and its rank) and
     Lemma 2.9 (projections preserve compatibility): not compiled.  For the base language and the
     realizations, compiled in this repository (theorem named), with the diagram supplied here: the
     invariance diagram of the legal stage types at stage `ω₁` with the base relations at `ω`
