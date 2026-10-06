@@ -22,9 +22,9 @@ Roadmap, Layer 3 (the finite construction for forcing donors), for Layer 4, outp
 The five-cell twin type of `Continuation.CandidateCounterexamples` is not instantiated: its scheme
 is private there.  Its cell `0` (label `β + 2`, threshold `2`) falls under
 `exists_forcingDonor_twoPoint_face` (argued); its twin labelled `β + 1` needs only the threshold
-`1`, its grade (the order law); its twin labelled `β + 2` at the threshold `2` is a residual input,
-for which a donor with a single tie cell at the graded index `({0, 1, 2}, 2)` is argued, not
-compiled.
+`1`, its grade (the order law); its twin labelled `β + 2` at the threshold `2` has no donor through
+a tie of full grade, and has one through the apex row (`exists_forcingDonor_twoPoint_le_two`, in
+`VaughtConjecture.Extension.ForcingDonorsCoatom`).
 -/
 
 universe u

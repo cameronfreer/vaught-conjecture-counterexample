@@ -23,7 +23,10 @@ reduction to `λ_η` (`StageType.ForcesThreshold`).  The donor is a stage type, 
 involves a realization: the construction uses no uniqueness of expansions, no (R1), no receiving,
 and no termination.
 
-**The forcing-donor property is not proved in general.**  What is proved:
+**The forcing-donor property is not proved here in general.**  It follows at every input from
+the coatom extension property (`forcingDonors_of_hasCoatomExtensions`, in
+`VaughtConjecture.Extension.ForcingDonorsCoatom`).  What is proved here, unconditionally or from
+completions at given arities:
 
 * **One-point inputs, `n ≤ 4`, unconditionally** (`exists_forcingDonor_onePoint`).
 * **One-point inputs at every `n`, given completions up to the arity `n - 2`**
@@ -69,32 +72,22 @@ points already for one-point types.  The construction from the unconditional com
 arities `m ≤ 2` gives donors on at most `4` points, hence the thresholds `n ≤ 4`; the statements
 assert only that some donor exists (`∃ m`), not this bound.
 
-**What remains.**  A tie cell `C` forcing `n` has its label at most that of `d` and at least `λ_η`
-plus its grade (`StageType.forcesThreshold_of_row_le`), so its grade lies between `n` and `j`.
+**Beyond the tie: forcing through the apex row** (`VaughtConjecture.Extension.ForcingDonorsCoatom`).
+A tie cell `C` forcing `n` has its label at most that of `d` and at least `λ_η` plus its grade
+(`StageType.forcesThreshold_of_row_le`), so its grade lies between `n` and `j`.  For the inputs
+with `grade d < n ≤ j ≤ #(scope d)` no tie cell of full grade over a face containing `scope d`
+exists (its grade would be at least `#(scope d) + 1 > j`).  These inputs are served without a tie:
+locality at an apex whose row is the coded copy of the labels bounds `d` below by a second cell `x`
+of grade `n` labelled between `λ_η` and the label of `d`, which need not lie above `d`
+(`StageType.forcesThreshold_of_row_le_of_grade_le`).  So:
 
-* *Top ties beyond the compiled cases.*  When `max n (#(scope d) + 1) ≤ j`, a tied apex over a
-  type with the face of `t` at `scope d` as a face forces `n`.  For the doubling chain of `t` itself
-  this needs `max n (k + 1) ≤ j` and the completions up to the arity `max n (k + 1) - 2`; for
-  three or more points it also needs a reindexing of `t` to make its face along `Fin.castSuccEmb`
-  defined.  Otherwise the donor of the face is to be amalgamated with `t` over the face
-  (`StageType.exists_amalgam`, from `StageType.HasCoatomExtensions`).  Neither is compiled beyond
-  the cases above.
-* *The residual inputs*, with `grade d < n ≤ j ≤ #(scope d)`.  A **top tie** is a tie cell at the
-  full graded index `(univ, N)` of a donor on `N` points having a face containing `scope d` along a
-  proper face, as in the tied apex.  Its grade is `N ≥ #(scope d) + 1 > j`, so no top tie exists.
-  The smallest residual input has two points: `d` at `({0, 1}, 1)`, labelled exactly `λ_η + 2`,
-  with `n = 2`.  These inputs need a completion with one prescribed tie at an intermediate grade
-  (prospective):
+* the forcing-donor property holds at every input under the coatom extension property at
+  `λ_{η+1}` (`forcingDonors_of_hasCoatomExtensions`), hence under the coatom extension property
+  with apex (`forcingDonors_of_hasApexCoatomExtensions`);
+* two-point inputs have donors up to the threshold `4` unconditionally, the inputs no tie serves
+  included (`exists_forcingDonor_twoPoint_le_two`, `forcingDonorsUpTo_two_four`).
 
-  **`TiedLayer`** (prospective): for a seed `I` at the arity `m`, a grade `j' < m + 2`, and an
-  old cell `e` of grade at most `j'` whose glued label is self-visible at `j'`, a completion below
-  the full grade of `I`, with its lawful labelling, having one further cell `C` at the graded
-  index `(univ, j')` whose row is at most as large at `C` as at `e`, and labelled with the label
-  of `e`.  The apex completion of it would force `j'` at `e`.
-
-  The rows of the new cells of the tower (`Scheme.fieldRow`) take at their own cell the agreement
-  height of an entry with itself, above every value at an old cell, so they tie no old cell: the
-  library has no completion with a prescribed tie.  `TiedLayer` is not refuted.
+No completion with a tie at an intermediate grade is needed.
 
 **A tie is an upper bound only.**  A tie bounds the tied cell from above and prescribes nothing at
 the other cells of its graded index.  In a capped lift, locality at the tied cell and the tie never

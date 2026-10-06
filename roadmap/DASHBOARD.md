@@ -62,8 +62,10 @@ Notes on the rows, each with its marker:
   (`nonempty_loss_of_hasApexCoatomExtensions`).  Still to be proved: 4b-ii, the gated
   construction as data; (R2), (R3), (R4).
 - *Layer 4.*  Compiled: normalization, conditional on finite-extension receiving and forcing donors
-  (`Realization.label_eq_stableLabel`); the structural candidate (`Realization.stableCandidate`),
-  stably lawful for every model (`Realization.IsModel.isStablyLawful`); output 3 and the
+  (`Realization.label_eq_stableLabel`); forcing donors, conditional on the coatom extension
+  property (`forcingDonors_of_hasCoatomExtensions`); the structural candidate
+  (`Realization.stableCandidate`), stably lawful for every model
+  (`Realization.IsModel.isStablyLawful`); output 3 and the
   continuation criterion, conditional on (R4) and the coface instances at the next block
   (`ContinuationCriterion.of_stableCappedReceiving`); cover-hollowness and stable-label fixedness
   (`Realization.isCoverHollow_iff_forall_stableLabel_eq_top`); the exact-age comparison
@@ -112,8 +114,13 @@ Status of each:
    gated pinned extension property
    (`Expansion.finiteCutReceiving_of_hasCoupledGatedPinnedExtensions`), which is open (4b-ii).  It
    is also used for the rigid-core comparison.
-3. `ForcingDonors`: still to be proved, by a finite construction of Layer 3 from the completion
-   below the full grade (prospective).
+3. `ForcingDonors`: still to be proved.  Compiled conditionally on the coatom extension property
+   at `λ_{ξ+1}` (`forcingDonors_of_hasCoatomExtensions`, `Extension/ForcingDonorsCoatom`), hence on
+   the coatom extension property with apex at every countable block stage
+   (`forcingDonors_of_forall_hasApexCoatomExtensions`), the hypothesis of the conditional forms of
+   items 1 and 7: with it, `ForcingDonors` is not a separate assumption.  Unconditionally: one- and
+   two-point inputs up to the threshold `4` (`forcingDonorsUpTo_one_four`,
+   `forcingDonorsUpTo_two_four`).
 4. `ContinuationCriterion`: still to be proved (sufficiency only; the converse is not stated).
 5. `Realization.ResidualReceiving`: still to be proved (the LOW construction).
 6. `Realization.HollowReceiving` for `Realization.IsCoverHollowAtBlock`: still to be proved (the
@@ -163,7 +170,8 @@ counted as compiled.
    actually realizes.  At a stage where the hypothesis fails the conditional (R1)
    (`Expansion.finiteCutReceiving_of_hasCoupledGatedPinnedExtensions`) is vacuous, and nothing
    rules that out.
-4. **Forcing donors** (still to be proved): the finite construction behind `ForcingDonors`.
+4. **Forcing donors** (still to be proved unconditionally): reduced to the coatom extension
+   property (`forcingDonors_of_hasCoatomExtensions`); nothing beyond it remains.
 5. **Output 3, part D, and (R4)** (still to be proved): (R4) over positive roots, the empty root by
    the coatom extension over the empty face, and the coatom extension properties at `λ_{ξ+1}`;
    the lawfulness of the candidate is item 2.  Compiled conditionally on (R4) and the coface
