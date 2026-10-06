@@ -2294,9 +2294,10 @@ Each checkpoint needs both its abstract API and a concrete application:
    two-point inputs up to the threshold `4` are compiled unconditionally
    (`forcingDonorsUpTo_one_four`, `forcingDonorsUpTo_two_four`). The structural candidate
    (output 1) is compiled (`Realization.stableCandidate`, `Continuation/Candidate`), with exact
-   consistency, covering, the order law, and locality from exact consistency and covering, and availability from legal types,
-   also at twins (two cells labelled `⊤` at one graded index), so that every model is stably lawful
-   (`Realization.IsModel.isStablyLawful`); two hypotheses on single types are refuted (section 4
+   consistency, covering, the order law, and locality from exact consistency and covering, and
+   availability from legal types, also at twins (two cells labelled `⊤` at one graded index), so
+   that every model is stably lawful (`Realization.IsModel.isStablyLawful`); two hypotheses on
+   single types are refuted (section 4
    above). Output 3 (stated as the hypothesis `ContinuationCriterion`) is compiled conditionally on
    (R4) and the coface instances at the next block
    (`ContinuationCriterion.of_stableCappedReceiving`); (R4) and the coatom extension property with
@@ -2711,11 +2712,12 @@ lands, their notes stay in those modules.
 - `Extension/PartBelowFullGrade`: `Scheme.cellsBelowFullGrade`, `Scheme.partBelowFullGrade`, and
   `Scheme.IsLegal.isLegalBelowFullGrade_partBelowFullGrade` to `Extension/Apex`, beside
   `Scheme.IsLegalBelowFullGrade`.
-- `Extension/ForcingDonorsCoatom`: `StageType.forcesThreshold_of_row_le_of_grade_le` to
-  `Stage/Threshold`, beside `StageType.forcesThreshold_of_row_le`;
-  `StageType.exists_cellMap_of_restrictFace_eq` to `Stage.Basic`; `Coatom.univ_map_right_ne` to
-  `Extension/CoatomScheme`, where it replaces the private copy in
-  `Extension/CompletionBelowFullGrade`.
+- `Extension/ForcingDonorsCoatom`: `StageType.exists_cellMap_of_restrictFace_eq` to
+  `Stage.Basic`; `StageType.pos_of_univ_map_ne` and `StageType.univ_map_castLEEmb_ne`, which are
+  facts about embeddings of `Fin`, out of the namespace `StageType` to `Extension/Basic`, beside
+  `Fin.Embedding.univ_map_snoc`; `coe_add_lt_blockStage_add_one` to `Realization/Expansion`, beside
+  `blockStage_add_one`; `Coatom.univ_map_right_ne` to `Extension/CoatomScheme`, where it replaces
+  the private copy in `Extension/CompletionBelowFullGrade`.
 
 **Coding (checkpoint 2.2).**
 
@@ -3004,6 +3006,11 @@ witnesses).**
   `K + 1` at a cell labelled the formal top (`StageType.not_forcesThreshold_of_grade_le`,
   `Stage/Threshold`).  The bound itself waits for `StageType.topGrade` (`Continuation/Terminal`) to
   move to `Stage/`.
+- `TiedLayer` (prospective; recorded in `Extension/ForcingDonors`): a completion below the full
+  grade with one prescribed tie at an intermediate grade.  It is not needed for forcing donors:
+  unconditionally for two-point inputs (`exists_forcingDonor_twoPoint_le_two`), and in general
+  under the coatom extension property (`forcingDonors_of_hasCoatomExtensions`).  `TiedLayer`
+  itself is neither proved nor refuted.
 - The existential two-face lift `2FL∃(j)` and the choosing variant of
   `CellScheme.Rows.cappedLift_of_boundary_short` (checkpoint 2.7), in prose only.
 - The ordinary construction of (R1) as data (4b-ii), the proof of

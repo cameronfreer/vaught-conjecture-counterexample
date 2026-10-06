@@ -18,21 +18,23 @@ Roadmap, Layer 3 (the finite construction for forcing donors), for Layer 4, outp
 Write `λ_η = blockStage η`.  **The coatom extension property at `λ_{η+1}` implies the forcing-donor
 property at `η`** (`forcingDonors_of_hasCoatomExtensions`), at every input: every arity `k`, every
 cell, every threshold.  Hence the coatom extension property with apex implies it too
-(`forcingDonors_of_hasApexCoatomExtensions`), and `ForcingDonors ξ` for all `ξ < ω₁` follows from
+(`forcingDonors_of_hasApexCoatomExtensions`).  So `ForcingDonors ξ` for all `ξ < ω₁` follows from
+`StageType.HasCoatomExtensions (blockStage (ξ + 1))` for all `ξ < ω₁`
+(`forcingDonors_of_forall_hasCoatomExtensions`), hence from
 `StageType.HasApexCoatomExtensions (blockStage η)` for all `η < ω₁`
 (`forcingDonors_of_forall_hasApexCoatomExtensions`).  The construction uses no completion below the
 full grade, no tie at an intermediate grade, and nothing about the stage beyond its being a block
 stage.
 
-**Forcing through the row of a cell** (`StageType.forcesThreshold_of_row_le_of_grade_le`).  Let
-`C` and `x` be cells of `q` labelled the formal top, with `x` and the cell `e` carrying `d` both
-below `C`.  If the row of `C` is at most as large at `x` as at `e`, and the grade of `e` is at most
-that of `x`, then `(q, f)` forces at `d` every threshold up to the grades of `C` and `x`.  Locality
-of a lift `Q` at `C` gives `min (Q x) (Q C) ≤ min (Q e) (Q C)` (`Label.TransformsTo.le_of_le`:
-monotone in the row, antitone in the grade), and the order law bounds `Q x` and `Q C` from below.
-For `x = C` this is the tie (`StageType.forcesThreshold_of_row_le`).  Here `x` need not lie above
-`e`: the bound reaches `e` through the row of `C`, and the grade of `C` may exceed the label offset
-of `d`.
+**Forcing through the row of a cell** (`StageType.forcesThreshold_of_row_le_of_grade_le`, in
+`VaughtConjecture.Stage.Threshold`).  Let `C` and `x` be cells of `q` labelled the formal top, with
+`x` and the cell `e` carrying `d` both below `C`.  If the row of `C` is at most as large at `x` as
+at `e`, and the grade of `e` is at most that of `x`, then `(q, f)` forces at `d` every threshold up
+to the grades of `C` and `x`.  Locality of a lift `Q` at `C` gives
+`min (Q x) (Q C) ≤ min (Q e) (Q C)` (`Label.TransformsTo.le_of_le`: monotone in the row, antitone
+in the grade), and the order law bounds `Q x` and `Q C` from below.  For `x = C` this is the tie
+(`StageType.forcesThreshold_of_row_le`).  Here `x` need not lie above `e`: the bound reaches `e`
+through the row of `C`, and the grade of `C` may exceed the label offset of `d`.
 
 **At the apex** (`StageType.forcesThreshold_addApex_of_label_le`).  The row of the apex
 (`StageType.addApex`) is the coded copy of the labels, monotone in the labels
@@ -57,7 +59,7 @@ law).  Otherwise:
    the copy of `x` has grade `n` and label `λ_η + n`; so the apex forces `n` at `d`.
 
 Steps 1 and 2 use the coatom extension property through one-point extensions
-(`StageType.exists_pinned_extension`) and amalgams (`StageType.exists_amalgam`); step 3 uses
+(`StageType.exists_extension`) and amalgams (`StageType.exists_amalgam`); step 3 uses
 nothing.  The two constructions on a legal type with a proper face, the tied apex at a cell of the
 face (`StageType.exists_isLegal_tiedApex`) and the apex forcing through the row
 (`StageType.exists_donor_addApex_of_isLegal`), are stated separately.
@@ -90,42 +92,6 @@ namespace VaughtConjecture
 open Finset Label
 
 namespace StageType
-
-/-! ### Forcing through the row of a cell -/
-
-section Relay
-
-variable {α β : Ordinal.{u}} {k m : ℕ} {q : StageType.{u} β m} {f : Fin k ↪ Fin m}
-  {p : StageType.{u} β k} {d : Fin p.card} {hβ : Order.IsSuccPrelimit β}
-
-/-- **Forcing through the row of a cell.**  Let `C` and `x` be cells of `q` labelled the formal
-top, with `x` and the cell `e` carrying `d` below `C`.  If the row of `C` is at most as large at `x`
-as at `e`, and the grade of `e` is at most that of `x`, then `(q, f)` forces at `d` every threshold
-`n` up to the grades of `C` and `x`.  For `x = C` this is the tie (`forcesThreshold_of_row_le`). -/
-theorem forcesThreshold_of_row_le_of_grade_le (hfp : restrictFace f q = some p) {C x e : Fin q.card}
-    (he : ∀ i : Fin (q.toScheme.comap f).card, (i : ℕ) = d → q.cellMap f i = e)
-    (hC : q.label C = ⊤) (hx : q.label x = ⊤)
-    (hxC : x ∈ q.toCellScheme.below (q.toCellScheme.gradedIndex C))
-    (heC : e ∈ q.toCellScheme.below (q.toCellScheme.gradedIndex C))
-    (hrow : q.rows.row C ⟨x, hxC⟩ ≤ q.rows.row C ⟨e, heC⟩)
-    (hgrade : q.toCellScheme.grade e ≤ q.toCellScheme.grade x) {n : ℕ}
-    (hnC : n ≤ q.toCellScheme.grade C) (hnx : n ≤ q.toCellScheme.grade x) :
-    ForcesThreshold α hβ q f p d n := by
-  refine ⟨hfp, fun Q P hQ hP i hi ↦ ?_⟩
-  subst hQ
-  obtain ⟨hf, rfl⟩ := (restrictFace_eq_some_iff Q f).mp hP
-  -- locality at `C`: the row is monotone in the source and antitone in the grade
-  have hloc : min (Q.label x) (Q.label C) ≤ min (Q.label e) (Q.label C) :=
-    (Q.isLawful.locality C).le_of_le (d := ⟨x, hxC⟩) (d' := ⟨e, heC⟩) hrow hgrade
-  have hCβ := Label.coe_add_le_of_isSelfVisible hβ (Label.reduce_eq_top_iff.mp hC)
-    ((Q.isLawful.orderly C).mono hnC)
-  have hxβ := Label.coe_add_le_of_isSelfVisible hβ (Label.reduce_eq_top_iff.mp hx)
-    ((Q.isLawful.orderly x).mono hnx)
-  have hie : Q.cellMap f i = e := he i hi
-  rw [comap_label, hie]
-  exact (le_min hxβ hCβ).trans (hloc.trans (min_le_left _ _))
-
-end Relay
 
 /-! ### Forcing at the apex -/
 
@@ -274,18 +240,6 @@ section Padding
 
 variable {α : Ordinal.{u}} {k N : ℕ}
 
-/-- **One more point**: under the coatom extension property, every legal stage type on `N` points
-is the face along `Fin.castSuccEmb` of a legal stage type on `N + 1` points, its one-point
-extension over the empty face by the one-point type with the bottom labels. -/
-theorem exists_isLegal_restrictFace_castSuccEmb (hext : HasCoatomExtensions.{u} α)
-    {P : StageType.{u} α N} (hP : P.IsLegal) :
-    ∃ Q : StageType.{u} α (N + 1), Q.IsLegal ∧ restrictFace Fin.castSuccEmb Q = some P := by
-  obtain ⟨p0, hp0⟩ := Option.isSome_iff_exists.mp
-    (P.isSome_restrictFace_of_zero (Function.Embedding.ofIsEmpty : Fin 0 ↪ Fin N))
-  have hd := Scheme.isLegal_onePoint.{u}.isLegal_toStageType α
-  obtain ⟨Q, hQ, hQP, -⟩ := exists_pinned_extension hext hP hp0 hd (mem_cofaces_of_zero hd).2
-  exact ⟨Q, hQ, hQP⟩
-
 /-- **Padding**: under the coatom extension property, every legal stage type on `k` points is the
 face along `Fin.castLEEmb` of a legal stage type on any `N ≥ k` points. -/
 theorem exists_isLegal_restrictFace_castLEEmb (hext : HasCoatomExtensions.{u} α)
@@ -299,7 +253,7 @@ theorem exists_isLegal_restrictFace_castLEEmb (hext : HasCoatomExtensions.{u} α
     exact restrictFace_refl P
   | succ N hkN ih =>
     obtain ⟨Q, hQ, hQP⟩ := ih
-    obtain ⟨Q', hQ', hQ'Q⟩ := exists_isLegal_restrictFace_castSuccEmb hext hQ
+    obtain ⟨Q', hQ', hQ'Q⟩ := exists_extension hext hQ
     refine ⟨Q', hQ', ?_⟩
     rw [show Fin.castLEEmb (hkN.trans (Nat.le_succ N)) =
         (Fin.castLEEmb hkN).trans Fin.castSuccEmb from Function.Embedding.ext fun _ ↦ Fin.ext rfl,
@@ -376,7 +330,7 @@ theorem forcingDonors_of_hasCoatomExtensions
     (U.isSome_restrictFace_of_zero (Function.Embedding.ofIsEmpty : Fin 0 ↪ Fin n))
   rw [StageType.eq_of_zero q₀ p₀] at hq₀
   obtain ⟨N, W, i, j, hW, hWt, hWU, -⟩ := StageType.exists_amalgam hext ht hU hp₀ hq₀
-  obtain ⟨W', hW', hW'W⟩ := StageType.exists_isLegal_restrictFace_castSuccEmb hext hW
+  obtain ⟨W', hW', hW'W⟩ := StageType.exists_extension hext hW
   -- the faces of `t` and `U` miss the last point
   have hproper {l : ℕ} (g : Fin l ↪ Fin N) : univ.map (g.trans Fin.castSuccEmb) ≠ univ :=
     fun h ↦ by
@@ -396,6 +350,14 @@ theorem forcingDonors_of_hasCoatomExtensions
 theorem forcingDonors_of_hasApexCoatomExtensions
     (hext : StageType.HasApexCoatomExtensions.{u} (blockStage (η + 1))) : ForcingDonors.{u} η :=
   forcingDonors_of_hasCoatomExtensions hext.hasCoatomExtensions
+
+/-- **Forcing donors at every countable block index from the coatom extension property at every
+countable successor block stage**: `ForcingDonors ξ` for `ξ < ω₁` follows from
+`StageType.HasCoatomExtensions (blockStage (ξ + 1))` for `ξ < ω₁`. -/
+theorem forcingDonors_of_forall_hasCoatomExtensions
+    (hext : ∀ ξ < Ordinal.omega 1, StageType.HasCoatomExtensions.{0} (blockStage (ξ + 1))) :
+    ∀ ξ < Ordinal.omega 1, ForcingDonors.{0} ξ := fun ξ hξ ↦
+  forcingDonors_of_hasCoatomExtensions (hext ξ hξ)
 
 /-- **Forcing donors at every countable block index from the coatom extension property with apex
 at every countable block stage**: the hypothesis `ForcingDonors ξ` for `ξ < ω₁` follows from

@@ -24,7 +24,7 @@ involves a realization: the construction uses no uniqueness of expansions, no (R
 and no termination.
 
 **The forcing-donor property is not proved here in general.**  It follows at every input from
-the coatom extension property (`forcingDonors_of_hasCoatomExtensions`, in
+the coatom extension property at `λ_{η+1}` (`forcingDonors_of_hasCoatomExtensions`, in
 `VaughtConjecture.Extension.ForcingDonorsCoatom`).  What is proved here, unconditionally or from
 completions at given arities:
 
@@ -87,7 +87,13 @@ of grade `n` labelled between `λ_η` and the label of `d`, which need not lie a
 * two-point inputs have donors up to the threshold `4` unconditionally, the inputs no tie serves
   included (`exists_forcingDonor_twoPoint_le_two`, `forcingDonorsUpTo_two_four`).
 
-No completion with a tie at an intermediate grade is needed.
+The prospective **`TiedLayer`** (for a seed `I` at the arity `m`, a grade `j' < m + 2`, and an
+old cell `e` of grade at most `j'` whose glued label is self-visible at `j'`: a completion below
+the full grade of `I` with one further cell at the graded index `(univ, j')`, tied to `e` and
+labelled with the label of `e`) is therefore not needed for these inputs: the earlier claim that
+they need a completion with one prescribed tie at an intermediate grade is false, unconditionally
+for two points and in general under the coatom extension property.  `TiedLayer` itself is neither
+proved nor refuted.
 
 **A tie is an upper bound only.**  A tie bounds the tied cell from above and prescribes nothing at
 the other cells of its graded index.  In a capped lift, locality at the tied cell and the tie never

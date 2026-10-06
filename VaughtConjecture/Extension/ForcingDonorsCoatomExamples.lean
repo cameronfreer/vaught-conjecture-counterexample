@@ -12,7 +12,7 @@ import VaughtConjecture.Extension.ForcingDonorsCoatom
 Roadmap, Layer 3 (the finite construction for forcing donors), for Layer 4, output 2, and the
 hypotheses of the main theorem (Layer 6, "Status").
 
-* **The hypothesis `ForcingDonors` is not independent of the apex form**: the coatom extension
+* **The hypothesis `ForcingDonors` follows from the apex form**: the coatom extension
   property with apex at every countable block stage gives forcing donors at every countable block
   index, and, with (R1), next-block uniqueness.
 * **The smallest input no tie serves**: a two-point type, a cell of grade `1` labelled at least
