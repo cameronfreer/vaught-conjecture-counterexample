@@ -27,8 +27,8 @@ percentage of 100 would not by itself mean that the hypotheses of a layer are pr
 | 1, finite kernel | 98% | `StageType.provisionalOffset` | the bound (d) of the offset (prospective) |
 | 2, realizations, syntax | 95% | `Realization.eq_of_eval_eq_some` | hull items 4–5 for realizations |
 | 3, the completion (R6) | 72% | `Seed.nonempty_completionBelowFullGrade_of_le_two` | the step at `m ≥ 3` |
-| 3, receiving | 90% | `Expansion.finiteCutReceiving_of_hasGatedPinnedExtensions` | 4b-ii; (R2)–(R4) |
-| 4, continuation | 62% | `Realization.stableCandidate` | twins; output 3 |
+| 3, receiving | 90% | `Expansion.finiteCutReceiving_of_hasCoupledGatedPinnedExtensions` | 4b-ii; (R2)–(R4) |
+| 4, continuation | 62% | `Realization.stableCandidate` | output 3: (R4), the apex property |
 | 5, domains, agreement | 85% | `Expansion.expansionDomain_loss_countable` | the hypotheses below |
 | 6, the bounds | 90% | `densitySentence_hasThinAlephOneSpectrum_of_terminalClassification` | the hypotheses below |
 | Manuscript correspondence | 25% | `CellScheme.Rows.printedRespects_iff` | rows 2–5 P; row 6 S (one direction at `ω₁`); the rest S or C |
@@ -48,8 +48,13 @@ Notes on the rows, each with its marker:
 - *Layer 3, receiving.*  Compiled: finite-extension receiving from finite-cut receiving, for an
   exactly consistent realization at a stage that is zero or a limit
   (`Realization.HasFiniteCutReceiving.hasFiniteExtensionReceiving`); gate recovery
-  (`StageType.GatedExtension.recover`); (R1) conditional on `StageType.HasGatedPinnedExtensions`
-  (`Realization.IsModel.hasFiniteCutReceiving_of_hasGatedPinnedExtensions`); the cap-to-model
+  (`StageType.GatedExtension.recover`) and with the twin–gate coupling
+  (`CellScheme.Rows.IsGate.recover_of_twinsReadGate`); (R1) conditional on
+  `StageType.HasCoupledGatedPinnedExtensions`, which is open
+  (`Realization.IsModel.hasFiniteCutReceiving_of_hasCoupledGatedPinnedExtensions`); the refutation
+  of the first form `StageType.HasGatedPinnedExtensions`
+  (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`); the coupled form at the refuting
+  input (`CoupledGateExamples.exists_coupledGatedExtension_comap_g₁`); the cap-to-model
   theorem at a limit stage, conditional on the nonemptiness of the instances of uniformity and
   dominance (`Realization.isModel_of_hasFiniteCutReceiving`); the top-free witnesses, steps 1–7,
   conditionally: steps 2–3 under `StageType.HasCoatomExtensions`, and step 7 under
@@ -57,19 +62,20 @@ Notes on the rows, each with its marker:
   (`nonempty_loss_of_hasApexCoatomExtensions`).  Still to be proved: 4b-ii, the gated
   construction as data; (R2), (R3), (R4).
 - *Layer 4.*  Compiled: normalization, conditional on finite-extension receiving and forcing donors
-  (`Realization.label_eq_stableLabel`); the structural candidate given its lawfulness
-  (`Realization.stableCandidate`), lawful without twins
-  (`Realization.isStablyLawful_of_injOn_gradedIndex`); cover-hollowness and stable-label fixedness
+  (`Realization.label_eq_stableLabel`); the structural candidate (`Realization.stableCandidate`),
+  stably lawful for every model (`Realization.IsModel.isStablyLawful`); output 3 and the
+  continuation criterion, conditional on (R4) and the coface instances at the next block
+  (`ContinuationCriterion.of_stableCappedReceiving`); cover-hollowness and stable-label fixedness
   (`Realization.isCoverHollow_iff_forall_stableLabel_eq_top`); the exact-age comparison
   (`Realization.nonempty_equiv_of_exactReceivingWithin`); the three comparisons, the rigid-core one
   conditional on finite-extension receiving (from (R1);
   `Realization.nonempty_equiv_of_isGloballyRigidCore`), the residual and hollow ones on (R2) and
   (R3) (`Realization.nonempty_equiv_of_residual`, `Realization.nonempty_equiv_of_hollow`); the
   cover of the terminal models, conditional on the continuation criterion
-  (`Realization.exists_hasTerminalProperty`).  Open: stable availability at twins.  Still to be
-  proved: output 3; the equivalence of cover-hollowness (with which the compiled statements are
-  formulated) and the original no-anchor predicate (the meaning of "hollow",
-  `SEMANTIC_CONTRACT.md`, item 8); the exact-age Scott sentences.
+  (`Realization.exists_hasTerminalProperty`).  Still to be proved: (R4) and the coatom extension
+  property with apex at the next block, for output 3; the equivalence of cover-hollowness (with
+  which the compiled statements are formulated) and the original no-anchor predicate (the meaning
+  of "hollow", `SEMANTIC_CONTRACT.md`, item 8); the exact-age Scott sentences.
 - *Layers 5 and 6.*  Compiled conditionally on the hypotheses below, or on statements derived
   from them (next-block uniqueness; finite-extension receiving, from (R1)): uniqueness and limit
   existence (`ModelExpansion.subsingleton`, `ModelExpansion.nonempty_of_forall_lt`, under
@@ -102,9 +108,10 @@ Status of each:
 
 1. `CapToModel`: still to be proved.  Compiled conditionally on the coatom extension property with
    apex at `ω` (`CapToModel.of_hasApexCoatomExtensions`), which is still to be proved.
-2. `Expansion.FiniteCutReceiving`: still to be proved.  Compiled conditionally on the gated pinned
-   extension property (`Expansion.finiteCutReceiving_of_hasGatedPinnedExtensions`), which is still
-   to be proved (4b-ii).  It is also used for the rigid-core comparison.
+2. `Expansion.FiniteCutReceiving`: still to be proved.  Compiled conditionally on the coupled
+   gated pinned extension property
+   (`Expansion.finiteCutReceiving_of_hasCoupledGatedPinnedExtensions`), which is open (4b-ii).  It
+   is also used for the rigid-core comparison.
 3. `ForcingDonors`: still to be proved, by a finite construction of Layer 3 from the completion
    below the full grade (prospective).
 4. `ContinuationCriterion`: still to be proved (sufficiency only; the converse is not stated).
@@ -138,17 +145,26 @@ counted as compiled.
    every seed at `m = 3`, while `2FL∃(j)` is equivalent to the step of the tower and holds on the
    seed at `m = 3` where the disjunction fails (a seed other than `seed4`), so 2.7 is to be
    conditioned on `2FL∃`.
-2. **Stable availability at twins** (open).  Apart from the case of an existing next-block
-   expansion (`Realization.isStablyLawful_of_reduce_eq`, which presupposes what output 3 is to
-   construct), no conditional statement of it is made.  Refuted hypotheses on single types:
+2. **Stable availability at twins** (compiled): from legal types
+   (`Realization.availability_stableSection_of_hasLegalTypes`), so every model is stably lawful
+   (`Realization.IsModel.isStablyLawful`).  Refuted hypotheses on single types, negative special
+   cases:
    `Continuation.CandidateCounterexamples.not_synchronizingCofaces_blockStage` (with two variants)
    and `Continuation.CandidateCounterexamples.not_twinOrdering_blockStage`.
-3. **4b-ii** (still to be proved): the gated construction as data, that is,
-   `StageType.HasGatedPinnedExtensions`.  Under review, not yet merged: that property is refuted at
-   every stage, so the conditional (R1) (`Expansion.finiteCutReceiving_of_hasGatedPinnedExtensions`)
-   is vacuous, and a corrected gate predicate is to be designed.
+3. **4b-ii** (open): the gated construction as data, that is,
+   `StageType.HasCoupledGatedPinnedExtensions`.  Its first form,
+   `StageType.HasGatedPinnedExtensions`, is refuted at every stage
+   (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`, compiled in this repository
+   (theorem named)).  The coupled form holds at the refuting input
+   (`CoupledGateExamples.exists_coupledGatedExtension_comap_g₁`, compiled in this repository
+   (theorem named)) and is open in general.  Its open point is cap lowering (CL), the uniform form
+   of what the construction needs, a strengthening not shown necessary: a failure of (CL) refutes
+   the coupled design only at a pair that a forcing prescription from an anchored legal donor
+   actually realizes.  At a stage where the hypothesis fails the conditional (R1)
+   (`Expansion.finiteCutReceiving_of_hasCoupledGatedPinnedExtensions`) is vacuous, and nothing
+   rules that out.
 4. **Forcing donors** (still to be proved): the finite construction behind `ForcingDonors`.
 5. **Output 3, part D, and (R4)** (still to be proved): (R4) over positive roots, the empty root by
-   the coatom extension over the empty face, the coatom extension properties at `λ_{ξ+1}`, and the
-   lawfulness of the candidate (`Realization.IsStablyLawful`), from the twin-free case or, at
-   twins, item 2.
+   the coatom extension over the empty face, and the coatom extension properties at `λ_{ξ+1}`;
+   the lawfulness of the candidate is item 2.  Compiled conditionally on (R4) and the coface
+   instances: `ContinuationCriterion.of_stableCappedReceiving`.
