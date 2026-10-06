@@ -87,8 +87,8 @@ Notes on the rows, each with its marker:
   apex at every countable block stage; item 7 below), and the thin `ℵ₁` spectrum
   (`densitySentence_hasThinAlephOneSpectrum_of_terminalClassification`).
 - *Layer 6, thinness in scatteredness form.*  Compiled conditionally on the cap-to-model theorem,
-  (R1), forcing donors, the continuation criterion, (R2) and (R3), each still to be proved, with
-  neither sentence separation nor López–Escobar
+  (R1), forcing donors at every countable block index, the continuation criterion, (R2) and (R3),
+  each still to be proved, with neither sentence separation nor López–Escobar
   (`densitySentence_isThinOnNatModels_of_terminalClassification_bfScattered`).
 
 ## The named hypotheses of the main theorem

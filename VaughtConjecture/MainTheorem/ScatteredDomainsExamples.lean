@@ -17,6 +17,9 @@ Special cases of `VaughtConjecture.MainTheorem.ScatteredDomains`:
   back-and-forth equivalent at every countable level, the sentence is back-and-forth scattered;
 * the two thinness theorems are `isThinOn_of_bfScattered` applied to the scatteredness theorems,
   by `rfl`;
+* the thinness theorem from the terminal classification in scatteredness form has the type of
+  `densitySentence_isThinOnNatModels_of_terminalClassification` (the same hypotheses and the same
+  conclusion);
 * every family of full presentations has scattered tails under the hypotheses of the terminal
   classification.
 
@@ -43,8 +46,8 @@ example : Countable (Quotient (bfEquivSetoid densitySentence.{0} 0)) :=
 
 /-- The generic statement with every class in every set: back-and-forth equivalence of all codes
 of models at every countable level gives back-and-forth scatteredness. -/
-example {L : Language.{0, 0}} [L.IsRelational] [Countable (Σ l, L.Relations l)]
-    {φ : L.Sentenceω} (h : ∀ η < ω₁, ∀ c d : ModelsOf φ, CodeBFEquiv η c.1 d.1) :
+example {L : Language} [L.IsRelational] {φ : L.Sentenceω}
+    (h : ∀ η < ω₁, ∀ c d : ModelsOf φ, CodeBFEquiv η c.1 d.1) :
     BFScattered (ModelsOf φ) :=
   bfScattered_of_countable_compl (fun _ ↦ Set.univ) (fun _ _ ↦ by simp)
     fun η hη c d _ _ ↦ h η hη c d
@@ -55,6 +58,11 @@ example : densitySentence_isThinOnNatModels_of_terminalClassification_bfScattere
     hcont hres hhol = isThinOn_of_bfScattered
       (densitySentence_bfScattered_of_terminalClassification hcap hrec hF hcont hres hhol) :=
   rfl
+
+/-- The thinness theorem from the terminal classification in scatteredness form has the same
+hypotheses and the same conclusion as the one through sentence separation. -/
+example : type_of% densitySentence_isThinOnNatModels_of_terminalClassification :=
+  densitySentence_isThinOnNatModels_of_terminalClassification_bfScattered
 
 /-- Under the hypotheses of the terminal classification, every family of full presentations has
 scattered tails. -/
