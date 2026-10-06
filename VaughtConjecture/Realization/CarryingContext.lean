@@ -60,8 +60,8 @@ asks for one carrying context, not that every acquired context carries.
     dropped is not `⊥`) alone by the donor's own labelling; what is open is the two together, at
     the donor cells all of whose anchors the cap reads below its own block.
   - **The conclusions of the acquisition theorems do not give it.**  The refuting input of the
-    coupled property satisfies every conclusion of `IsModel.exists_privateContext` (at every floor, and every `N₀ ≤ 2`) and
-    of its anchored form, and fails the condition
+    coupled property satisfies every conclusion of `IsModel.exists_privateContext` (at every
+    floor, and every `N₀ ≤ 2`) and of its anchored form, and fails the condition
     (`CoupledGatedExtensionCounterexample.exists_privateContext_not_carriesBottoms`).
     The clauses that the acquisition uses (uniformity, high-arity dominance, exact consistency)
     bound labels; the private cap is the cell that the last dominance step gives, labelled above
