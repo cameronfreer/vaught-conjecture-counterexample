@@ -29,6 +29,8 @@ import InfinitaryLogic.Scott.OrbitParameters
 import InfinitaryLogic.Scott.InternalRankBounds
 import InfinitaryLogic.Scott.IsolatingLevel
 import InfinitaryLogic.UniformFixation
+import InfinitaryLogic.OrdinalUtil
+import InfinitaryLogic.Descriptive.BFConcentration
 import ComputableModelTheory.Classical
 import Mathlib.ModelTheory.Fraisse
 
@@ -175,7 +177,7 @@ set_option linter.hashCommand false in
 set_option linter.hashCommand false in
 #check FirstOrder.Language.internalScottRank_le_of_orbits_determined
 
--- InfinitaryLogic at the pin `e460cb6` (signatures checked): the orbit-formula
+-- InfinitaryLogic at the pin `eb9f12d` (signatures checked): the orbit-formula
 -- threshold and rank bound and the preservation of infinitary formulas by maps agreeing locally
 -- with automorphisms, imported through the two narrow modules (never `InfinitaryLogic.All`).
 set_option linter.hashCommand false in
@@ -198,7 +200,7 @@ set_option linter.hashCommand false in
 #check FirstOrder.Language.BoundedFormulaω.realize_comp_append_of_localAutomorphisms
 
 -- The rank comparison of the Scott process (InfinitaryLogic, merged at `a640bbb`, contained in
--- the pin `e460cb6`), through its two modules.
+-- the pin `eb9f12d`), through its two modules.
 set_option linter.hashCommand false in
 #check FirstOrder.Language.selfStabilizesCompletely_iff_orbitRank_le
 set_option linter.hashCommand false in
@@ -237,7 +239,7 @@ set_option linter.hashCommand false in
 set_option linter.hashCommand false in
 #check FirstOrder.Language.age.fg_substructure
 
--- InfinitaryLogic at the pin `e460cb6` (signatures checked): uniform
+-- InfinitaryLogic at the pin `eb9f12d` (signatures checked): uniform
 -- back-and-forth separation of analytic sets of nonisomorphic pairs of codes
 -- (`Descriptive/BFSeparation`); it enters the compiled `isThinOn_of_countable_bfClasses`
 -- (`VaughtConjecture.MainTheorem.Scatteredness`; `README.md`, Layer 6) through InfinitaryLogic's
@@ -251,14 +253,14 @@ set_option linter.hashCommand false in
 set_option linter.hashCommand false in
 #check FirstOrder.Language.exists_uniform_bfSeparation_of_analyticSets
 
--- InfinitaryLogic at the pin `e460cb6` (signatures checked): the forward Karp
+-- InfinitaryLogic at the pin `eb9f12d` (signatures checked): the forward Karp
 -- lemma, agreement on formulas of quantifier rank at most `α` from `BFEquiv α`, for a relational
 -- language.  Its application to the expansion domains (condition 3 of `README.md`) is a
 -- statement still to be proved; no application of it is compiled here.
 set_option linter.hashCommand false in
 #check FirstOrder.Language.BFEquiv_implies_agreeQR
 
--- The ordinal-indexed hierarchy (`Lomega1omega/InHierarchy`), at the pin `e460cb6`
+-- The ordinal-indexed hierarchy (`Lomega1omega/InHierarchy`), at the pin `eb9f12d`
 -- (signatures checked): the signed-traversal classes `IsSigmaIn`/`IsPiIn`, which are syntactic
 -- classes, and the normal forms `IsSigmaInNF`/`IsPiInNF`, which lie in them; the converse,
 -- up to logical equivalence, is not formalized (`README.md`, Layer 4).  A normal form at level
@@ -289,7 +291,7 @@ set_option linter.hashCommand false in
 
 -- Montalbán's explicit Scott sentence from a family of orbit formulas and its complexity
 -- (InfinitaryLogic, `Scott/MontalbanSentence` and `Scott/MontalbanComplexity`), at the pin
--- `e460cb6` (signatures checked).  For a countable `M` in
+-- `eb9f12d` (signatures checked).  For a countable `M` in
 -- a language with countably many relation symbols, a family `Φ n a : L.Formulaω (Fin n)` over
 -- all tuples; `D_a` is `atomicDiagram a`, a countable conjunction of atoms and negated atoms
 -- (`Π^in_1`).  If `1 ≤ α` and every `Φ n a` is `IsSigmaIn α`, the sentence is `IsPiIn (α + 1)`
@@ -329,7 +331,7 @@ set_option linter.hashCommand false in
 set_option linter.hashCommand false in
 #check FirstOrder.Language.exists_isPiIn_two_scottSentence_of_sigmaIn_zero_orbits
 
--- Graded matching (InfinitaryLogic, `Scott/GradedMatching`), available at the pin `e460cb6`
+-- Graded matching (InfinitaryLogic, `Scott/GradedMatching`), available at the pin `eb9f12d`
 -- (signatures checked).  A family `R α n a b` of relations between tuples, defined at every
 -- ordinal, atomic at level `0`, lowering for `β ≤ α ≤ height`, and with forth and back one level
 -- down for `α + 1 ≤ height`, relates at a level `α ≤ height` only `BFEquiv α` pairs; any language,
@@ -346,7 +348,7 @@ set_option linter.hashCommand false in
 #check FirstOrder.Language.bfEquiv_of_gradedSystem
 
 -- Rank tails and the least level of a cover (InfinitaryLogic, `OrdinalCountability`), available
--- at the pin `e460cb6` (signatures checked).  For `r : X → Ordinal` below `ω₁` with countable
+-- at the pin `eb9f12d` (signatures checked).  For `r : X → Ordinal` below `ω₁` with countable
 -- fibres, a set is countable iff its ranks are bounded below `ω₁` (`countable_iff_rank_bounded`),
 -- the tails `rankTail r η = {x | η ≤ r x}` have empty intersection below `ω₁`, have nonempty
 -- losses cofinally below `ω₁` iff `X` is uncountable, and give `#X ≤ ℵ₁`, with `#X = ℵ₁` for an
@@ -379,7 +381,7 @@ set_option linter.hashCommand false in
 #check InfinitaryLogic.mk_le_aleph_one_of_domains
 
 -- The stabilization ordinal (`Scott/Sentence`) and the Scott height (`Scott/Height/Defs`) of a
--- countable structure, at the pin `e460cb6` (signatures checked), with the Scott formula's rank
+-- countable structure, at the pin `eb9f12d` (signatures checked), with the Scott formula's rank
 -- bound and characterization: the notions of the prospective one-sided rank comparison
 -- (`COMPANIONS.md`, "Further companion results"); `stabilizationOrdinal_spec` and
 -- `stabilizationOrdinal_lt_omega1'` (`Scott/RefinementCount`) give the per-class isolation level of
@@ -412,7 +414,7 @@ set_option linter.hashCommand false in
 #check FirstOrder.Language.internalScottRank_pureSet
 
 -- Forgetting finitely many parameters (InfinitaryLogic, `Scott/ForgetParameters`), available at
--- the pin `e460cb6` (signatures checked).  The existential closure `existsTuple k φ` of a formula
+-- the pin `eb9f12d` (signatures checked).  The existential closure `existsTuple k φ` of a formula
 -- characterizing `(M, c)` is a Scott sentence of `M` among countable structures, and keeps the
 -- class `Σ^in_α` for `1 ≤ α`; for a countable `M` in a countable relational language, `Σ^in_α`
 -- orbits over a parameter tuple (`1 ≤ α`) give a `Σ^in_{α+2}` Scott sentence, and `Σ^in_1` orbits
@@ -428,7 +430,7 @@ set_option linter.hashCommand false in
 set_option linter.hashCommand false in
 #check FirstOrder.Language.exists_isSigmaIn_three_scottSentence_of_sigmaIn_one_orbits_over
 
--- Quantifier rank and recognition, at the pin `e460cb6` (signatures checked): the names cited by
+-- Quantifier rank and recognition, at the pin `eb9f12d` (signatures checked): the names cited by
 -- the prospective quantitative-reconstruction pathway (`COMPANIONS.md`, "Further companion
 -- results").  The rank of a formula (`BoundedFormulaω.qrank`); the existential closure
 -- `existsTuple`, one quantifier of which adds one to the rank (`qrank_existsLastVar`; the closure
@@ -537,7 +539,7 @@ set_option linter.hashCommand false in
 #check FirstOrder.Language.exists_elementaryEmbedding_of_countable_atomic
 
 -- Thinness from countably many back-and-forth classes at every level (InfinitaryLogic,
--- `Descriptive/BFScattered` and `Descriptive/BFScatteredSentence`), available at the pin `e460cb6`
+-- `Descriptive/BFScattered` and `Descriptive/BFScatteredSentence`), available at the pin `eb9f12d`
 -- (signatures checked).  `BFScattered K`: for every `η < ω₁` the restriction of
 -- `codeBFEquivSetoid L η` (the library's `CodeBFEquiv η` as an equivalence relation) to `K` has
 -- countably many classes, with no definability of `K`; for countably many relation symbols such a
@@ -561,7 +563,7 @@ set_option linter.hashCommand false in
 #check FirstOrder.Language.Sentenceω.isThinOnNatModels_of_bfScattered
 
 -- The cardinality of a nonempty perfect set (InfinitaryLogic, `Topology/Perfect`, a module with
--- Mathlib imports only), available at the pin `e460cb6` (signatures checked): in a complete,
+-- Mathlib imports only), available at the pin `eb9f12d` (signatures checked): in a complete,
 -- second-countable metric space it is the continuum.  Same name and statement as before its move
 -- from `Descriptive/PerfectAntichain`; it is applied in `MainTheorem/Scatteredness`
 -- (`not_countable_of_perfect`, a nonempty perfect set of codes is uncountable), a lemma of the
@@ -571,7 +573,7 @@ set_option linter.hashCommand false in
 #check Perfect.mk_eq_continuum
 
 -- Orbit-rank bounds and recognition at the rank of a Scott sentence (InfinitaryLogic,
--- `Scott/OrbitFormulaThreshold` and `Scott/SentenceRecognition`), available at the pin `e460cb6`
+-- `Scott/OrbitFormulaThreshold` and `Scott/SentenceRecognition`), available at the pin `eb9f12d`
 -- (signatures checked; no application compiled in this repository), for relational languages.  An
 -- infinitary orbit formula `φ : L.Formulaω (Fin n)` of a tuple bounds its orbit rank by
 -- `Ordinal.lift φ.qrank`, and orbit formulas of rank `< α` for every tuple bound the internal Scott
@@ -590,7 +592,7 @@ set_option linter.hashCommand false in
 set_option linter.hashCommand false in
 #check FirstOrder.Language.stabilizationOrdinal_le_of_formula_rank
 
--- Further names of the pin `e460cb6` cited in `IMPLEMENTATION.md`, "Dependency pins"
+-- Further names of the pin `eb9f12d` cited in `IMPLEMENTATION.md`, "Dependency pins"
 -- (signatures checked; no application compiled in this repository).  Isomorphisms
 -- transport atomic types and back-and-forth equivalence of tuples (`SameAtomicType.map_equiv` in
 -- `Scott/AtomicDiagram`, `BFEquiv.map_equiv` in `Scott/BFEquivRelabel`, same statements as before
@@ -614,7 +616,7 @@ set_option linter.hashCommand false in
 #check FirstOrder.Language.stabilizationOrdinal_le_of_sentence_rank
 
 -- Thinness from countable back-and-forth observations (InfinitaryLogic, `Descriptive/BFScattered`),
--- available at the pin `e460cb6` (signatures checked; no application compiled in this
+-- available at the pin `eb9f12d` (signatures checked; no application compiled in this
 -- repository).  If for every `η < ω₁` a map on a set `C` of codes has countable range and any two
 -- codes with the same observation are `CodeBFEquiv η`, then `C` is back-and-forth scattered,
 -- carries no Cantor antichain for isomorphism (every relational language), and, for countably
@@ -628,7 +630,7 @@ set_option linter.hashCommand false in
 
 -- Tuple quantifier blocks, eliminating orbit parameters, and the rank of Montalbán's sentences
 -- (InfinitaryLogic, `Lomega1omega/QuantifierRank`, `Scott/MontalbanSentence`,
--- `Scott/MontalbanQuantifierRank`, `Scott/OrbitParameters`), available at the pin `e460cb6`
+-- `Scott/MontalbanQuantifierRank`, `Scott/OrbitParameters`), available at the pin `eb9f12d`
 -- (signatures checked).  Closing the last `n` of `k + n` free variables (`existsTupleFrom k n`),
 -- or all `n` of them (`existsTuple n`), adds exactly `n` to the rank, on the right; the
 -- existential closure `existsLastVars m` of `VaughtConjecture.Definability.Syntax` agrees with
@@ -663,7 +665,7 @@ set_option linter.hashCommand false in
 #check FirstOrder.Language.qrank_montalbanSentence_le
 
 -- Cross-rank comparisons (InfinitaryLogic, `Scott/InternalRankBounds`), available at the pin
--- `e460cb6` (signatures checked; no application compiled in this repository).  For a countable
+-- `eb9f12d` (signatures checked; no application compiled in this repository).  For a countable
 -- structure over a relational language with countably many relation symbols, the lifts of the
 -- stabilization ordinal and of the Scott height are at most `internalScottRank M + ω`, attained on
 -- the infinite pure set; under `+ ω` the internal Scott rank and the supremum of the orbit ranks
@@ -676,7 +678,7 @@ set_option linter.hashCommand false in
 #check FirstOrder.Language.lift_scottHeight_le_internalScottRank_add_omega0
 
 -- Uniform fixation for stage projections (InfinitaryLogic, `UniformFixation`), available at the
--- pin `e460cb6` (signatures checked; no application compiled in this repository).  A stage
+-- pin `eb9f12d` (signatures checked; no application compiled in this repository).  A stage
 -- projection on a label type `I` has `project α` at every `α : Ordinal.{0}` with
 -- `project α (project β i) = project (min α β) i`.  Over a countable type of coordinates, stage
 -- correctness of the admissible presentations at countable stages and eventual invariance of
@@ -700,7 +702,7 @@ set_option linter.hashCommand false in
 #check InfinitaryLogic.StageProjection.exists_classwise_labelRank_bound
 
 -- A countable isolating level (InfinitaryLogic, `Scott/IsolatingLevel`), available at the pin
--- `e460cb6` (signatures checked; no application compiled in this repository).  Over a countable
+-- `eb9f12d` (signatures checked; no application compiled in this repository).  Over a countable
 -- relational language, a countable family of countable structures has a level `γ < ω₁` at which
 -- empty-tuple `BFEquiv0` between members gives an isomorphism; hence a family with two
 -- `BFEquiv0`-related nonisomorphic members at every countable level has an uncountable index: the
@@ -712,6 +714,69 @@ set_option linter.hashCommand false in
 #check FirstOrder.Language.exists_isolating_level_iff
 set_option linter.hashCommand false in
 #check FirstOrder.Language.not_countable_of_forall_unisolated
+
+-- Concentration at back-and-forth levels (InfinitaryLogic, `Descriptive/BFConcentration`),
+-- available at the pin `eb9f12d` (signatures checked; no application compiled in this
+-- repository).  A class of codes is concentrated when at every level `α < ω₁` all but countably
+-- many of its isomorphism classes lie in one `CodeBFEquiv α`-class; a concentrated class is
+-- back-and-forth scattered, and thin for countably many relation symbols; for those, and an
+-- analytic concentrated class, a relatively Borel split closed under isomorphism within the class
+-- has a side meeting countably many isomorphism classes.
+set_option linter.hashCommand false in
+#check FirstOrder.Language.ConcentratedAtBFLevels
+set_option linter.hashCommand false in
+#check FirstOrder.Language.ConcentratedAtBFLevels.bfScattered
+set_option linter.hashCommand false in
+#check FirstOrder.Language.ConcentratedAtBFLevels.isThinOn
+set_option linter.hashCommand false in
+#check FirstOrder.Language.exists_bfLevel_saturated
+set_option linter.hashCommand false in
+#check FirstOrder.Language.ConcentratedAtBFLevels.countable_isoClasses_or
+
+-- The greatest attained stage (InfinitaryLogic, `OrdinalUtil`, Mathlib imports only), available
+-- at the pin `eb9f12d` (signatures checked; no application compiled in this repository).  A
+-- predicate on stages that holds at `0`, is closed downward and under successor limits below
+-- `ω₁`, and is bounded on the countable stages by a countable `A` has a greatest stage `ρ ≤ A`,
+-- and holds exactly at the stages `ξ ≤ ρ`; the two general forms are on `Ordinal.{u}`, with no
+-- countability.  Its intended application is bounded-stage attainment (`IMPLEMENTATION.md`,
+-- "Dependency pins"; prospective).
+set_option linter.hashCommand false in
+#check InfinitaryLogic.exists_greatest_stage_lt_omega1
+set_option linter.hashCommand false in
+#check InfinitaryLogic.exists_forall_iff_le_of_bounded_of_isSuccLimit_closed
+set_option linter.hashCommand false in
+#check InfinitaryLogic.exists_isGreatest_setOf_of_bounded_of_isSuccLimit_closed
+
+-- Scott separation (InfinitaryLogic, `OrdinalCountability`, `Lomega1omega/QuantifierRank` and
+-- `Descriptive/ScottDefinability`), available at the pin `eb9f12d` (signatures checked; no
+-- application compiled in this repository).  An observation isolating a point excludes it from
+-- every set of two or more points on which the observation is constant; along decreasing domains
+-- on which the observations of rank at most the stage agree, a point isolated at countable rank
+-- leaves the domains strictly before a countable stage when every domain at a countable stage has
+-- two or more points.  Every formula of `Lω₁ω` has countable quantifier rank, so an isolated
+-- presentation satisfies the isolation hypothesis.  The bound is the rank of a chosen isolating
+-- sentence, not a Scott rank and not an attained stage.  The countable supremum of successors
+-- (`iSup_add_one_lt_omega1`) is the step from bounds for countably many classes to one bound.
+set_option linter.hashCommand false in
+#check InfinitaryLogic.notMem_of_isolating_of_uniform
+set_option linter.hashCommand false in
+#check InfinitaryLogic.lt_index_of_isolating_of_antitone
+set_option linter.hashCommand false in
+#check InfinitaryLogic.lt_rank_of_isolating_of_antitone
+set_option linter.hashCommand false in
+#check InfinitaryLogic.stage_lt_rank_of_isolating
+set_option linter.hashCommand false in
+#check InfinitaryLogic.exists_countable_strict_stage_bound_of_isolation
+set_option linter.hashCommand false in
+#check FirstOrder.Language.BoundedFormulaω.qrank_lt_omega1
+set_option linter.hashCommand false in
+#check FirstOrder.Language.Sentenceω.qrank_lt_omega1
+set_option linter.hashCommand false in
+#check FirstOrder.Language.IsolatedPresentation.exists_qrank_lt_omega1
+set_option linter.hashCommand false in
+#check FirstOrder.Language.IsolatedPresentation.exists_countable_strict_stage_bound
+set_option linter.hashCommand false in
+#check InfinitaryLogic.iSup_add_one_lt_omega1
 
 /- Proposed substantive targets (not declared as axioms or claimed proved here):
 

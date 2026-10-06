@@ -11,8 +11,15 @@ platformIndependent = true
 # fork commit carrying the in-flight ModelTheory/Infinitary and Ordinal.lift PR stack), and the
 # toolchain must equal InfinitaryLogic's (checked by `scripts/check.sh`).  To bump: change
 # `rev`, run `lake update InfinitaryLogic`, copy its `lean-toolchain`, and commit the manifest.
-# Pinned to the merge commit of cameronfreer/infinitary-logic#162 (a countable isolating level for a
-# countable family of countable structures), which includes #161 (stage projections, the label rank
+# Pinned to the release v6.1.0 of cameronfreer/infinitary-logic (the tag `v6.1.0`, the merge commit
+# of its #172: the per-level Silver step extracted as one lemma), which includes #171 (isomorphism
+# invariance of realization and of `ModelsOf` moved to lower modules, names unchanged), #170 and
+# #165 (the greatest attained countable stage, `exists_greatest_stage_lt_omega1`), #169 (Scott
+# separation: strict stage bounds from an isolating observation, and the countable quantifier rank
+# of every formula), #168 and #164 (the isolating-rank contract and counting for back-and-forth
+# scattered classes), #167 and #166 (minimally uncountable and minimally unbounded classes), #163
+# (concentration at back-and-forth levels), #162 (a countable isolating level for a countable
+# family of countable structures), #161 (stage projections, the label rank
 # and uniform fixation, `StageProjection.exists_uniform_fixing_stage`), #160 (cross-rank comparisons
 # and the derived `+ ω` bounds), #159 (quantifier-rank bounds for Montalbán's Scott sentences), #158
 # (eliminating orbit parameters), #157 (thinness from countable back-and-forth observations), #156
@@ -32,12 +39,12 @@ platformIndependent = true
 [[require]]
 name = "InfinitaryLogic"
 git = "https://github.com/cameronfreer/infinitary-logic"
-rev = "e460cb6f0bac62bbc23415f8f7957d2b00cd1172"
+rev = "eb9f12dc983778eec067c0875170798efd34c7f0"
 
 # Classical first-order model theory (Fraïssé limits, atomic and prime structures).  Its own
-# manifest pins an InfinitaryLogic revision that is an ancestor of the revision above; this
-# manifest's pin governs.  To bump: change `rev`, run `lake update ComputableModelTheory`, and
-# commit the manifest.
+# manifest pins an InfinitaryLogic revision (the release v6.0.0, `6480603`) that is an ancestor of
+# the revision above; this manifest's pin governs.  To bump: change `rev`, run
+# `lake update ComputableModelTheory`, and commit the manifest.
 # Pinned to cameronfreer/computable-model-theory at the merge of its #58 (its InfinitaryLogic repin
 # to the infinitary-logic release v6.0.0, `6480603`; no declaration changed), which includes #57
 # (the audit of finite diagrams against rooted extension), #56 and #55 (its InfinitaryLogic repins

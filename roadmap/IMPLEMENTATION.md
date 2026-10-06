@@ -50,7 +50,7 @@ below.  The companion milestones are summarized under "Companion boundaries".
 ## Environment
 
 Lean `v4.35.0-rc3`; InfinitaryLogic and ComputableModelTheory at the revisions pinned in
-`lakefile.toml` (`e460cb6` and `a1fe761`); Mathlib inherited from InfinitaryLogic's manifest.
+`lakefile.toml` (`eb9f12d` and `a1fe761`); Mathlib inherited from InfinitaryLogic's manifest.
 Nothing else is imported.
 Search the pinned libraries first and delete any local lemma that duplicates one already
 upstream.
@@ -671,7 +671,7 @@ their notions live; "this repository" means the layers of `README.md`.
 7. *Small back-and-forth quotients and the analytic-pair boundedness argument;* minimality
    is a further assertion needing a common starting observation on high presentations.  Home:
    InfinitaryLogic, `Descriptive/BFSeparation` (`exists_uniform_bfSeparation`, available at the
-   pin `e460cb6`, signatures checked); the composition is `MainTheorem/Scatteredness`
+   pin `eb9f12d`, signatures checked); the composition is `MainTheorem/Scatteredness`
    and the scattered-tails theorems of `MainTheorem/Assembly` (pull request #42; "The
    scatteredness form" below).  The minimality form is already covered through sentences by
    `Sentenceω.isThinOnNatModels_of_countable_sentence_splits`.
@@ -828,7 +828,7 @@ generically, with no construction):
   `COMPANIONS.md`, "Further companion results", only through the passage between [Mon]'s convention
   and InfinitaryLogic's, which is still to be proved.
 
-The isolating-level lower bound, formerly listed here, is available at the pin `e460cb6`
+The isolating-level lower bound, formerly listed here, is available at the pin `eb9f12d`
 (`Scott/IsolatingLevel`, signatures checked; "Dependency pins"): over a countable relational
 language a countable family of countable structures has a level `γ < ω₁` at which empty-tuple
 `BFEquiv0` implies isomorphism (`exists_isolating_level`, the supremum of the stabilization
@@ -838,12 +838,11 @@ this repository.  A per-class proof of the lower-bound criterion of `README.md` 
 full presentations"), isolating one class at a time with no countability of the classes (where
 `README.md` bounds the isolating levels of countably many classes by one `γ`), can quote Scott
 separation (`exists_countable_strict_stage_bound_of_isolation` and
-`IsolatedPresentation.exists_countable_strict_stage_bound`; available upstream, not yet at our
-pinned dependency: signatures verified against the upstream source at `2cd44c3`, not compiled
-here; "Dependency pins"): every class leaves the domains strictly before a countable stage.  The
-domains having two or more members at every countable stage, the classes are then uncountable,
-since countably many countable bounds have a countable supremum (`iSup_add_one_lt_omega1`,
-`OrdinalCountability`, available at the pin, not `#check`ed in `SuggestedInterfaces.lean`) at
+`IsolatedPresentation.exists_countable_strict_stage_bound`; available at the pin `eb9f12d`,
+signatures checked; "Dependency pins"): every class leaves the domains strictly before a
+countable stage.  The domains having two or more members at every countable stage, the classes
+are then uncountable, since countably many countable bounds have a countable supremum
+(`iSup_add_one_lt_omega1`, `OrdinalCountability`, available at the pin, signatures checked) at
 which the domain is nonempty.  With countable complements of the domains in addition,
 `mk_eq_aleph_one_of_domains` (available at the pin, signatures checked) gives exactly `ℵ₁`
 classes.  Both are prospective applications, not compiled here.
@@ -1110,7 +1109,7 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     compiled in this repository (theorem named): `Label.reduce_eq_self_iff` (fixed by projection
     exactly at the labels of the stage), and `Label.reduce_reduce_of_le`, `Label.atStage_reduce`
     and `Label.AtStage.mono` for the law with `min` (`Label/Basic`).  The bound for one arity is
-    `StageProjection.exists_uniform_fixing_stage` (available at the pin `e460cb6`, signatures
+    `StageProjection.exists_uniform_fixing_stage` (available at the pin `eb9f12d`, signatures
     checked; "Dependency pins").  Milestone 3; the conditional statement uses no termination.
 32. Prospective, with the negative special case (the constant family of the all-undefined
     assignment; not compiled).  Strictness for models is to come from `COMPANIONS.md`, "Fixing
@@ -1130,7 +1129,7 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     The conversion between the raw base and the common invariant encodings: prospective.
 34. Prospective.  1 ⇒ 2 is the uniform fixing stage of row 31 for the family of model
     presentations, through `StageProjection.exists_uniform_fixing_stage` (available at the pin
-    `e460cb6`, signatures checked; "Dependency pins"), and is the only step using a countable
+    `eb9f12d`, signatures checked; "Dependency pins"), and is the only step using a countable
     carrier; 2 ⇔ 4 uses strictness for models (row 32); 4 ⇒ 5 uses bounded-stage attainment, whose
     ingredients are compiled in this repository (theorem named) in the raw base encoding:
     `Realization.IsModel.reduce` (`Realization/Model`), `ModelExpansion.nonempty_of_coherent`
@@ -1203,7 +1202,7 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     `BFEquiv.monotone` lowers the level (available at the pin, signatures not yet checked by
     CI).  `SuggestedInterfaces.lean` `#check`s `stabilizationOrdinal_spec` and
     `stabilizationOrdinal_lt_omega1'`.  The isolating level of a countable family
-    (`exists_isolating_level`, `Scott/IsolatingLevel`, available at the pin `e460cb6`, signatures
+    (`exists_isolating_level`, `Scott/IsolatingLevel`, available at the pin `eb9f12d`, signatures
     checked; "Dependency pins") is not used.  Comparison: `Expansion.bfEquiv_of_modelExpansions`,
     and its agreement form on
     the sentences of quantifier rank at most `β`, `Expansion.mem_modelsOf_iff_of_modelExpansions`
@@ -1276,7 +1275,7 @@ is complete because a later one is.
    termination stated as a hypothesis or marked in its proof.
 3. *The uniform fixing stage:* the conditional theorem with exactly hypotheses 1–3 of the
    sub-item, compiled through `StageProjection.exists_uniform_fixing_stage` (available at the pin
-   `e460cb6`, signatures checked), with no ordinal induction of its own and none of the excluded
+   `eb9f12d`, signatures checked), with no ordinal induction of its own and none of the excluded
    assumptions; the empty family and a base assignment with no supported tuple as compiled
    examples; and its application to the data of 2, stage correctness retained, the bound chosen
    before the quantifiers over indices, presentations, arities, and coordinates.
@@ -1327,13 +1326,12 @@ hypothesis of each statement of 2–4 that uses it, until it is proved as a theo
    `Expansion.NextBlockUniqueness`), and limit coherence (`ModelExpansion.nonempty_of_forall_lt`,
    under the same hypothesis); so both equivalences carry the injectivity of model reduction as an
    explicit hypothesis.  The intended quotation for bounded-stage attainment is
-   `exists_greatest_stage_lt_omega1` (`OrdinalUtil`; available upstream, not yet at our pinned
-   dependency: signatures verified against the upstream source at `2cd44c3`, not compiled here;
-   "Dependency pins"), with `P` the serving indices, `hzero` from a model base, `hdown` from
-   downward model reduction, `hlim` from limit coherence, and `hA` and `hbound` from criterion 4
-   (a prospective application).  The negative special case (the everywhere-undefined assignment:
-   criteria 1 and 4 vacuous, criterion 5 false) compiled as an example.  No proof of criterion 1
-   that uses termination is cited as a proof of termination.
+   `exists_greatest_stage_lt_omega1` (`OrdinalUtil`; available at the pin `eb9f12d`, signatures
+   checked; "Dependency pins"), with `P` the serving indices, `hzero` from a model base, `hdown`
+   from downward model reduction, `hlim` from limit coherence, and `hA` and `hbound` from
+   criterion 4 (a prospective application).  The negative special case (the everywhere-undefined
+   assignment: criteria 1 and 4 vacuous, criterion 5 false) compiled as an example.  No proof of
+   criterion 1 that uses termination is cited as a proof of termination.
 3. *Literal uniqueness:* for a terminal model presentation at `ρ`, every model presentation at `η`
    has `η ≤ ρ` and is literally its reduct, with no countability assumed; two terminal model
    presentations of one base have the same index and are equal; and no extension of a partial
@@ -1383,8 +1381,7 @@ named, and none is complete because another is.
    "Dependency pins" records a pin containing it, signatures checked.  No hypothesis or lemma
    about termination enters; the conditional of row 31 and this route are not used in a cycle;
    and the expansion-domain endpoint does not depend on it.  The intended quotations (available
-   upstream, not yet at our pinned dependency: signatures verified against the upstream source at
-   `2cd44c3`, not compiled here; "Dependency pins"; a prospective application) are Scott
+   at the pin `eb9f12d`, signatures checked; "Dependency pins"; a prospective application) are Scott
    separation for the strict bound on serving stages (`stage_lt_rank_of_isolating` for one class,
    at the rank of its isolating sentence, with nonsingletonness of the domain there from an
    element of a loss at a countable stage at or above that rank and an element of the next domain
@@ -1466,7 +1463,7 @@ primeness over named finite parameters (`isAtomic_named_of_orbit_formulas`,
 Their statement shapes and hypotheses are in `README.md`, Layer 0; where the pinned versions name
 them differently, those names prevail.
 
-In the pinned InfinitaryLogic (`e460cb6`, signatures checked): the rank comparison of the Scott
+In the pinned InfinitaryLogic (`eb9f12d`, signatures checked): the rank comparison of the Scott
 process (its pull request #140, merged at `a640bbb`: `selfStabilizesCompletely_iff_orbitRank_le`,
 `bfStabilizationOrdinal_self_eq_iSup_orbitRank`, `stabilizesAt_of_orbitRank_le`,
 `rank_le_of_orbitRank_le`, `lift_rank_le_internalScottRank`,
@@ -1481,7 +1478,7 @@ countability or nonemptiness); `BoundedFormulaω.realize_comp_of_localAutomorphi
 `BoundedFormulaω.realize_comp_append_of_localAutomorphisms` (`Lomega1omega/LocalAutomorphism`,
 any language and carrier).
 
-**A generic interface of InfinitaryLogic (available at the pin `e460cb6`, signatures checked and
+**A generic interface of InfinitaryLogic (available at the pin `eb9f12d`, signatures checked and
 `#check`ed in `SuggestedInterfaces.lean`; its pull requests #142, #143, and #144).** Statement: for
 a relational language (no countability of its symbols), every analytic set `A` of pairs of
 structures on `ℕ` containing no isomorphic pair is uniformly separated at some countable
@@ -1536,14 +1533,16 @@ name and its signature at the pin; it does not assert that the hypotheses hold i
 this roadmap.  An application is claimed only where a compiled theorem applying the statement is
 named (`README.md`, Layer 0):
 
-- **InfinitaryLogic**: the current pin is `e460cb6`, the merge of its pull request #162, reached
-  from `cf80917` (the merge of its pull request #156) by this repository's pull request #97;
+- **InfinitaryLogic**: the current pin is `eb9f12d`, its release v6.1.0 (the tag `v6.1.0`, the
+  merge of its pull request #172), reached from `e460cb6` (the merge of its pull request #162) by
+  this repository's pull request #PRNUM; `e460cb6` was reached from `cf80917` (the merge of its
+  pull request #156) by this repository's pull request #97;
   `cf80917` was reached from `def5cc0` (the merge of its pull request #152) by this repository's
   pull request #63;
   `def5cc0` was reached from `8a15ca5` (the merge of its pull request #148) by this repository's
   pull request #49, and `8a15ca5` from `098fb36` (the merge of its pull request #146) by this
   repository's pull request #45.  The statements of `8a15ca5` are available at our pinned
-  dependency `e460cb6` (signatures checked; `SuggestedInterfaces.lean` `#check`s them): the rank
+  dependency `eb9f12d` (signatures checked; `SuggestedInterfaces.lean` `#check`s them): the rank
   comparison of the Scott process, #140; the orbit-formula threshold and rank bound and
   local-automorphism preservation of `README.md`, Layer 0, #141; analytic tree boundedness, #142;
   the coded forced back-and-forth tree, #143; uniform back-and-forth separation,
@@ -1669,7 +1668,7 @@ named (`README.md`, Layer 0):
   `a1fe761` (its pull request #58) no declaration changed: only its InfinitaryLogic pin and the
   docstrings of `ModelTheory/Computable/InfinitaryBridge` and its audit, outside the entry
   module's imports.  Its own InfinitaryLogic pin is `6480603` (infinitary-logic's release v6.0.0,
-  the merge of its pull request #161), an ancestor of the revision `e460cb6` pinned here; this
+  the merge of its pull request #161), an ancestor of the revision `eb9f12d` pinned here; this
   repository's manifest governs (see the next item).
 - **Mathlib and the toolchain** agree across the three: one Lean toolchain (`v4.35.0-rc3` at
   present) and one Mathlib commit (at present the fork commit `346a4bd`, inherited from
@@ -1677,10 +1676,10 @@ named (`README.md`, Layer 0):
   must be built against the InfinitaryLogic revision pinned here, and the toolchain check of
   `scripts/check.sh` extends to ComputableModelTheory.
 
-**Available at the pin `e460cb6`, after `cf80917`** (InfinitaryLogic's merges #157–#162; same
-toolchain and Mathlib; signatures checked: `SuggestedInterfaces.lean` `#check`s the statements
-named here; no application compiled in this repository, except the agreement of `existsLastVars`
-with `existsTupleFrom` below): thinness from
+**Available at the pin `eb9f12d` since the repin to `e460cb6`, after `cf80917`**
+(InfinitaryLogic's merges #157–#162; same toolchain and Mathlib; signatures checked:
+`SuggestedInterfaces.lean` `#check`s the statements named here; no application compiled in this
+repository, except the agreement of `existsLastVars` with `existsTupleFrom` below): thinness from
 countable back-and-forth observations (#157, `Descriptive/BFScattered`).  If for every `η < ω₁` a
 map `obs η` on a set `C` of codes has countable range and any two codes with the same observation
 are `CodeBFEquiv η`, then `C` is back-and-forth scattered
@@ -1738,7 +1737,7 @@ the threshold (the admissible witness at the threshold is what yields the explic
 (the least stage fixing a label, not a Scott rank), the form for fixing ranks matching milestone 3
 there.
 
-The isolating level for a countable family, available at the pin `e460cb6` (signatures
+The isolating level for a countable family, available at the pin `eb9f12d` (signatures
 checked), has the following scope.  Over a countable relational language, for
 `M : ι → Type w` with `[Countable ι]` and every `M i` countable, `exists_isolating_level` gives
 `∃ γ < ω₁, ∀ i j, BFEquiv0 (M i) (M j) γ → Nonempty (M i ≃[L] M j)`;
@@ -1752,26 +1751,44 @@ theorem: it isolates one class at a time by `stabilizationOrdinal_spec` with
 `stabilizationOrdinal_lt_omega1'`, or by `scottSentence_characterizes` through
 `BFEquiv_implies_agreeQR` (all available at the pin, signatures checked).
 
-**Available upstream, not yet available at our pinned dependency:** of InfinitaryLogic, at
-`30c186f` (the merge of its pull request #163, after the pin `e460cb6`; same toolchain and
-Mathlib), concentration at back-and-forth levels (`Descriptive/BFConcentration`); at `c16de09`
-(the merge of its pull request #170, after `30c186f`; the statements entered with its pull
-request #165; same toolchain and Mathlib), the attainment of a greatest countable stage
-(`OrdinalUtil`, namespace `InfinitaryLogic`, with Mathlib imports only); and at `2cd44c3` (the
-merge of its pull request #169, which contains `c16de09`; same toolchain and Mathlib), Scott
-separation for rank-uniform domains (`OrdinalCountability`, `Lomega1omega/QuantifierRank`,
-`Descriptive/ScottDefinability`).  Of ComputableModelTheory: none (its `main` is the pin
-`a1fe761`).  A statement merged upstream after the pins above is listed here, recorded here only
-and never `#check`ed in the sketches, until a repin containing it is recorded in this subsection
-(a repin to a revision containing `2cd44c3` is listed as a possible future checkpoint, "Checkpoint
-order and acceptance"; none has been made, and none is decided).
+**Available at the pin `eb9f12d`, after `e460cb6`** (InfinitaryLogic's merges #163–#172, its
+release v6.1.0; the same toolchain, Mathlib and transitive packages in InfinitaryLogic's manifest
+at `eb9f12d` as at `e460cb6`; signatures checked: `SuggestedInterfaces.lean` `#check`s the
+statements named here; no application compiled in this repository): concentration at
+back-and-forth levels (#163, `Descriptive/BFConcentration`: `ConcentratedAtBFLevels`,
+`ConcentratedAtBFLevels.bfScattered`, `ConcentratedAtBFLevels.isThinOn`,
+`exists_bfLevel_saturated` and `ConcentratedAtBFLevels.countable_isoClasses_or`); the attainment
+of a greatest countable stage (#165, with the regressions of #170; `OrdinalUtil`, namespace
+`InfinitaryLogic`, with Mathlib imports only); and Scott separation for rank-uniform domains
+(#169; `OrdinalCountability`, `Lomega1omega/QuantifierRank`, `Descriptive/ScottDefinability`),
+both with their statements below.  The countable supremum of successors `iSup_add_one_lt_omega1`
+(`OrdinalCountability`), already at the pin `e460cb6`, is now `#check`ed as well.  The same
+release adds modules imported neither by the library nor by the sketches: the isolating-rank
+contract and counting for back-and-forth scattered classes (#164 and #168,
+`Descriptive/ScatteredCounting`), minimally uncountable and minimally unbounded classes (#166 and
+#167, `Descriptive/MinimallyUncountable`, `Descriptive/MinimallyUnbounded`,
+`Descriptive/MinimallyUncountableThin`, `Conditional/MinimallyUncountableHeadline`), and the
+per-level Silver step (#164 and #172, `Conditional/BFScatteredSilver`, `Conditional/MorleyPerfect`).
+It moves `BoundedFormulaω.realize_equiv` from `Lomega1omega/Theory` to `Lomega1omega/Semantics`,
+and `modelsOf_mem_iff_of_equiv` from `Descriptive/LopezEscobarEasy` to
+`Descriptive/SatisfactionBorel` (#171), with names, statements and the positional order of
+universe parameters unchanged, each old module still importing the new one;
+`Definability/BlockFormulas` applies the first unchanged.  No name added between `e460cb6` and
+`eb9f12d` is declared in this repository or in its sketches (checked against the declarations
+added there).  InfinitaryLogic's release notes for v6.1.0 rest their compatibility claim on a
+text-based audit, with no library depending on InfinitaryLogic built against the release, and
+state that general source compatibility is not guaranteed; the compilation of this repository
+against `eb9f12d` is checked by its CI on the pull request of the repin (#PRNUM).
 
-**Upstream statements quoted, not compiled here.**  The definition of "signatures checked" at the
-head of this subsection does not apply to the Lean blocks below.  They are the statements of
-`c16de09` and `2cd44c3`, as merged (hypotheses included), available upstream, not yet at our
-pinned dependency: signatures verified against the upstream source at `2cd44c3` (which contains
-`c16de09`), not compiled here (neither compiled against our pin `e460cb6` nor `#check`ed in
-`SuggestedInterfaces.lean`); no application is compiled in this repository.
+**Available upstream, not yet available at our pinned dependency:** none.  InfinitaryLogic's
+`master` is the pin `eb9f12d`, and ComputableModelTheory's `main` is the pin `a1fe761`.  A
+statement merged upstream after the pins above is listed here, recorded here only and never
+`#check`ed in the sketches, until a repin containing it is recorded in this subsection.
+
+**Statements of `c16de09` and `2cd44c3`, at the pin `eb9f12d` (signatures checked).**  The Lean
+blocks below are the statements as merged (hypotheses included), quoted for reading.
+`SuggestedInterfaces.lean` `#check`s each name, which establishes its name and signature at the
+pin; the blocks themselves are not compiled, and no application is compiled in this repository.
 
 - *Greatest attained stage* (`OrdinalUtil`): a predicate on stages that holds at `0`, is closed
   downward, is closed under successor limits below `ω₁`, and is bounded on the stages below `ω₁`
@@ -1897,7 +1914,7 @@ and a countable bound is needed (the stages `ξ < ω` without limit closure, and
 bound `A = ω₁`, have no greatest stage).  Both statements use `Ordinal.omega 1`; a statement written
 with `(Cardinal.aleph 1).ord` is converted by `Cardinal.ord_aleph`.
 
-**Available at the pin `e460cb6` since `cf80917`, used by `COMPANIONS.md`, "Quantitative
+**Available at the pin `eb9f12d` since `cf80917`, used by `COMPANIONS.md`, "Quantitative
 reconstruction", targets 2 and 3** (listed as available upstream before the repin to `cf80917`):
 the bound of an orbit rank by the quantifier rank of an infinitary orbit formula
 (`orbitRank_le_lift_qrank_of_infinitaryOrbitFormula`) with its corollary
@@ -1954,7 +1971,7 @@ proved here: the first fact is split over two lines, one for each library theore
 | Local agreement | `BoundedFormulaω.realize_embedding_comp_of_localAutomorphisms` |
 | Local agreement, finite parameters | `BoundedFormulaω.realize_comp_append_of_localAutomorphisms` |
 
-These are available at the pin `e460cb6` (signatures checked; "Dependency pins").
+These are available at the pin `eb9f12d` (signatures checked; "Dependency pins").
 Three qualifications:
 
 1. Countability belongs to the construction-specific homogeneity proof (the back-and-forth of
@@ -2197,18 +2214,20 @@ Each checkpoint needs both its abstract API and a concrete application:
    `StageType.HasCoatomExtensions` at `ω`, still to be proved); once that property is proved, the
    reduction to `ℕ` for the density sentence no longer needs `CapToModel`.
 
-**A listed future repin, outside the order 1–6.**  A repin of InfinitaryLogic to a revision
-containing `2cd44c3` (or the release tag that follows it) has been neither made nor decided.  A
-controlled move, if undertaken, would be a separate checkpoint, before the first application of
-the greatest-stage theorem or of Scott separation, done as the move to `e460cb6` (this
-repository's pull request #97): the revisions in `lakefile.toml` and `lake-manifest.json` changed
-as in that pull request, which edited the manifest by hand, and the `lakefile.toml` comment on
-bumping (which runs `lake update InfinitaryLogic`) and its list of merged pull requests updated to
-match; the toolchain and Mathlib checked against InfinitaryLogic's manifest at the new revision;
-ComputableModelTheory built against it; call sites adapted with no statement changed; the
-statements listed as available upstream ("Dependency pins") `#check`ed in
-`SuggestedInterfaces.lean`; and that subsection updated.  Until such a repin is recorded in
-"Dependency pins", no statement here applies the greatest-stage theorem or Scott separation.
+**A listed future repin, outside the order 1–6: made.**  The repin of InfinitaryLogic to a
+revision containing `2cd44c3` was made by this repository's pull request #PRNUM, to the release
+v6.1.0 (`eb9f12d`, which contains `30c186f`, `c16de09` and `2cd44c3`), as a separate checkpoint
+before the first application of the greatest-stage theorem or of Scott separation, done as the
+move to `e460cb6` (this repository's pull request #97): the revisions in `lake-manifest.json`
+edited by hand (`rev` and `inputRev`, with no `lake update`) and in `lakefile.toml`, the
+`lakefile.toml` comment and its list of merged pull requests updated to match; the toolchain
+(`v4.35.0-rc3`) and Mathlib (`346a4bd`) checked identical in InfinitaryLogic's `lean-toolchain`
+and manifest at `eb9f12d`; ComputableModelTheory unchanged at `a1fe761` and built against the new
+pin by CI; no call site adapted, and no statement changed; the statements listed as
+available upstream `#check`ed in `SuggestedInterfaces.lean`; and "Dependency pins" updated.  The
+compilation of the library and of the sketches against `eb9f12d` is that pull request's CI run.
+The greatest-stage theorem and Scott separation are available at the pin (signatures checked);
+no statement here applies them yet, and their applications named above remain prospective.
 
 **Six non-implications, as examples.**  Each is a statement that fails in general, to be shown by
 an example in the examples module of its layer; only the second is compiled.
@@ -2630,9 +2649,11 @@ lands, their notes stay in those modules.
   `classTruth` with its lemmas, and `exists_mem_modelsOf_equiv`) are recorded in `COMPANIONS.md`,
   A3, **Upstream ingredients**: each with its upstream module, except the two `realize_*_equiv`
   lemmas, which become redundant once `BoundedFormulaω.realize_equiv` and `LomegaEquiv.of_equiv`
-  are generalized across carrier universes.
+  are generalized across carrier universes.  `qrank_lt_omega_one` duplicates InfinitaryLogic's
+  `BoundedFormulaω.qrank_lt_omega1` (`Lomega1omega/QuantifierRank`, at the pin `eb9f12d`, the same
+  statement with `n` bound inside), and is to be replaced by a quotation of it.
 - `MainTheorem/Scatteredness` (pull request #42): every statement is generic (none mentions the
-  density sentence), and its statements are quotations of InfinitaryLogic (at the pin `e460cb6`):
+  density sentence), and its statements are quotations of InfinitaryLogic (at the pin `eb9f12d`):
   `isThinOn_of_countable_bfClasses` of `isThinOn_of_bfScattered` (`Descriptive/BFScattered`),
   `isThinOnNatModels_of_countable_bfClasses` of `Sentenceω.isThinOnNatModels_of_bfScattered`
   (`Descriptive/BFScatteredSentence`), `bfEquivSetoid_eq_comap` of its namesake, `offDiag_noniso` of
@@ -2746,7 +2767,7 @@ witnesses).**
   `Lomega1omega/QuantifierRank` and `Scott/Formula`).  Its existential closure `existsLastVars`,
   with `realize_existsLastVars` and `qrank_existsLastVars`, duplicates InfinitaryLogic's
   `existsTupleFrom`, `realize_existsTupleFrom` (`Scott/MontalbanSentence`) and
-  `qrank_existsTupleFrom` (`Scott/MontalbanQuantifierRank`) at the pin `e460cb6`: the same
+  `qrank_existsTupleFrom` (`Scott/MontalbanQuantifierRank`) at the pin `eb9f12d`: the same
   recursion, any language, and the same rank `φ.qrank + m`, added on the right.  It is kept
   deliberately: importing those modules would bring `Scott/Sentence`, `Scott/OrbitRank`,
   `Scott/Stabilization` and `Karp/PotentialIso`, and, for the rank, `Scott/QuantifierRank` and
@@ -2761,7 +2782,7 @@ witnesses).**
   `realize_extensionEquations`, and `qrank_extensionEquations` are candidates for InfinitaryLogic,
   beside `existsTupleFrom` (the closure they use).  Its former
   `BoundedFormulaω.qrank_mapFreeVars` and `BoundedFormulaω.qrank_inf` are InfinitaryLogic's at the
-  pin `e460cb6` (same names and statements); the module makes the first a `simp` lemma.
+  pin `eb9f12d` (same names and statements); the module makes the first a `simp` lemma.
 - `Realization/BlockStages` (formerly `Definability/BlockStages`): Layers 1–2 (labels and stage
   types at the block stages), in place under `Realization/`; its one-block lemmas
   (`StageType.eq_of_reduce_eq_of_threshold_iff` and the threshold lemmas) are used by the
@@ -2785,7 +2806,7 @@ witnesses).**
 **Counting (Layers 5–6).**
 
 - `Counting/Filtration` and `Counting/Separation`: their generic statements are proved as quotations
-  of InfinitaryLogic's `OrdinalCountability` (at the pin `e460cb6`), with their statements kept:
+  of InfinitaryLogic's `OrdinalCountability` (at the pin `eb9f12d`), with their statements kept:
   `Filtration.ofRank` is built from `rankTail` (its domain is `rankTail r` by definition), and
   the lemmas on `ofRank`, the least-level lemmas, `domain_ofCountableCover`, and the three counts
   `mk_eq_aleph_one_of_rank`, `mk_le_aleph_one_of_rank`, and `mk_le_aleph_one_of_countable_cover`
