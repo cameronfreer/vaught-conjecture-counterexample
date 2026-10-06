@@ -46,7 +46,7 @@ it is lawful on the old cells, self-visible at the new cells, the row of each ne
 to it capped at that cell, and each cell of grade `k + 1` is at most some new cell of grade
 `k + 1`.
 
-**Instance.**  The legal seed `CrossedCouplingCounterexample.seedHG`, which has no ordered-layer
+**Special case.**  The legal seed `CrossedCouplingCounterexample.seedHG`, which has no ordered-layer
 step, has a multi-layer step with two new cells at `(univ, 1)`, one for each forced separation,
 and one at each other graded face of full scope
 (`CrossedCouplingCounterexample.multiLayerStep_HG`,
@@ -69,35 +69,6 @@ universe u
 namespace VaughtConjecture.OrderedLayer
 
 open Finset Label CellScheme
-
-/-- After appending cells at `(univ, j)`, no cell lies above `(univ, k)` for `j < k`. -/
-theorem noneAbove_appendFullCells {S : Scheme.{u} 5} {j M : ℕ}
-    {r : Fin M → Fin (S.card + M) → Label.{u}} (h : NoneAbove S j) :
-    NoneAbove (S.appendFullCells j M r (h j le_rfl)) (j + 1) := by
-  intro k hk d
-  induction d using Fin.addCases with
-  | left d =>
-    -- The cell scheme of the appended scheme is `appendFullCellsScheme`.
-    change ¬ _ ≤ (S.appendFullCellsScheme j M).gradedIndex _
-    rw [Scheme.appendFullCellsScheme_gradedIndex_castAdd]
-    exact h k (by omega) d
-  | right i =>
-    -- The cell scheme of the appended scheme is `appendFullCellsScheme`.
-    change ¬ _ ≤ (S.appendFullCellsScheme j M).gradedIndex _
-    rw [Scheme.appendFullCellsScheme_gradedIndex_natAdd]
-    exact fun h' ↦ by have := h'.2; simp only at this; omega
-
-/-- The row of an old cell after appending cells is its row before. -/
-theorem appendFullCells_row_castAdd {n k M' : ℕ} {S : Scheme.{u} n}
-    {r' : Fin M' → Fin (S.card + M') → Label.{u}}
-    {h : ∀ d, ¬ ((univ : Finset (Fin n)), k) ≤ S.toCellScheme.gradedIndex d} (s : Fin S.card)
-    (t : (S.appendFullCells k M' r' h).toCellScheme.below
-      ((S.appendFullCells k M' r' h).toCellScheme.gradedIndex (Fin.castAdd M' s))) :
-    (S.appendFullCells k M' r' h).rows.row (Fin.castAdd M' s) t =
-      S.rows.row s ⟨⟨t.1, Scheme.lt_card_of_mem_below
-        (Scheme.not_le_gradedIndex_of_lt h s.isLt) t.2⟩, Scheme.mem_below_of_lt h s.isLt t⟩ :=
-  dite_eq_left s.isLt
-
 
 variable {α : Ordinal.{u}} (I : Seed.{u} α 3) (M : Fin 4 → ℕ)
 
@@ -187,16 +158,16 @@ theorem row_multiNewCell (k : Fin 4) (i : Fin (M k))
     (multiLayerScheme I M r).rows.row (multiNewCell I M k i) t = r k i t.1 := by
   match k, i with
   | ⟨0, _⟩, i =>
-    exact (appendFullCells_row_castAdd (S := multiStage₃ I M r) _ t).trans <|
-      (appendFullCells_row_castAdd (S := multiStage₂ I M r) _ _).trans <|
-        (appendFullCells_row_castAdd (S := multiStage₁ I M r) _ _).trans <|
+    exact (Scheme.appendFullCells_row_castAdd (S := multiStage₃ I M r) _ t).trans <|
+      (Scheme.appendFullCells_row_castAdd (S := multiStage₂ I M r) _ _).trans <|
+        (Scheme.appendFullCells_row_castAdd (S := multiStage₁ I M r) _ _).trans <|
           Scheme.appendFullCells_row_natAdd (S := I.amalgam.toScheme) i _
   | ⟨1, _⟩, i =>
-    exact (appendFullCells_row_castAdd (S := multiStage₃ I M r) _ t).trans <|
-      (appendFullCells_row_castAdd (S := multiStage₂ I M r) _ _).trans <|
+    exact (Scheme.appendFullCells_row_castAdd (S := multiStage₃ I M r) _ t).trans <|
+      (Scheme.appendFullCells_row_castAdd (S := multiStage₂ I M r) _ _).trans <|
         Scheme.appendFullCells_row_natAdd (S := multiStage₁ I M r) i _
   | ⟨2, _⟩, i =>
-    exact (appendFullCells_row_castAdd (S := multiStage₃ I M r) _ t).trans <|
+    exact (Scheme.appendFullCells_row_castAdd (S := multiStage₃ I M r) _ t).trans <|
       Scheme.appendFullCells_row_natAdd (S := multiStage₂ I M r) i _
   | ⟨3, _⟩, i =>
     exact Scheme.appendFullCells_row_natAdd (S := multiStage₃ I M r) i t

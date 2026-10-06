@@ -6,6 +6,7 @@ Authors: Cameron Freer
 import VaughtConjecture.Extension.CompletionBelowFullGrade
 import VaughtConjecture.Extension.Gluing
 import VaughtConjecture.Extension.CanonicalCode
+import VaughtConjecture.Extension.FieldLayer
 
 /-!
 # The ordered-layer step on five points
@@ -112,6 +113,23 @@ theorem noneAbove_addLayerCell {S : Scheme.{u} 5} {j : ℕ} {r : Finset (Fin 5) 
   | cast d =>
     rw [Scheme.appendFullCell_toCellScheme, Scheme.appendFullCellScheme_gradedIndex_castSucc]
     exact h k (by omega) d
+
+/-- After appending cells at `(univ, j)`, no cell lies above `(univ, k)` for `j < k`. -/
+theorem noneAbove_appendFullCells {S : Scheme.{u} 5} {j M : ℕ}
+    {r : Fin M → Fin (S.card + M) → Label.{u}} (h : NoneAbove S j) :
+    NoneAbove (S.appendFullCells j M r (h j le_rfl)) (j + 1) := by
+  intro k hk d
+  induction d using Fin.addCases with
+  | left d =>
+    -- The cell scheme of the appended scheme is `appendFullCellsScheme`.
+    change ¬ _ ≤ (S.appendFullCellsScheme j M).gradedIndex _
+    rw [Scheme.appendFullCellsScheme_gradedIndex_castAdd]
+    exact h k (by omega) d
+  | right i =>
+    -- The cell scheme of the appended scheme is `appendFullCellsScheme`.
+    change ¬ _ ≤ (S.appendFullCellsScheme j M).gradedIndex _
+    rw [Scheme.appendFullCellsScheme_gradedIndex_natAdd]
+    exact fun h' ↦ by have := h'.2; simp only at this; omega
 
 variable {α : Ordinal.{u}} (I : Seed.{u} α 3) (ρ : LayerRows.{u})
 

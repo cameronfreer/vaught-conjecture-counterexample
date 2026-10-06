@@ -641,12 +641,6 @@ private theorem isWitness_stripShifter_one {A F : Label.{u}} (hF : IsSelfVisible
       · exact le_rfl)
     (antitone_constStepSuppressor 1 F) (isSelfVisible_constStepSuppressor hF)
 
-omit hIL hIR in
-/-- The suppressor equal to `a` up to the grade `K` is `a` at the grades up to `K`. -/
-theorem constStepSuppressor_of_le {K n : ℕ} (a : Label.{u}) (h : n ≤ K) :
-    constStepSuppressor K a n = a := by
-  unfold constStepSuppressor; rw [ite_eq_left h]
-
 /-- **The labelling by kinds is lawful** on the completed scheme, for parameters self-visible at
 `1`, `1`, `2`, `3` and coupled as in `TH` and `TG`, with `⊥` at the cells of grade `4`. -/
 theorem isLawful_kindLabel {AC AD : Label.{u}} (hAC : IsSelfVisible 1 AC)

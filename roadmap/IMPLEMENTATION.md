@@ -2681,8 +2681,10 @@ ones split):
   `CrossedCouplingCounterexample.exists_of_isLawfulBelow_univ`); the lifts
   `CrossedCouplingCounterexample.cappedLift_C_of_le_three`,
   `CrossedCouplingCounterexample.cappedLift_D_of_le_three`,
-  `CrossedCouplingCounterexample.cappedLift_four_HG`; the coatom extension of `TH` and `TG` with
-  apex at every stage (`CrossedCouplingCounterexample.exists_coatomExtension_seedHG`). Open: a
+  `CrossedCouplingCounterexample.cappedLift_four_HG`, which, like `OrderedLayer.cappedLift_four`,
+  quotes the lift at the grade `4` from the grade `3` in a scheme over the amalgam of a seed with
+  bottom apexes (`OrderedLayer.cappedLift_four_of_oldCells`); the coatom extension of `TH` and `TG`
+  with apex at every stage (`CrossedCouplingCounterexample.exists_coatomExtension_seedHG`). Open: a
   systematic choice of the new cells for every seed on five points (prospective: one new cell per
   forced separation at each graded face of full scope), and the completion at `m ≥ 3` for every
   seed.
@@ -2939,6 +2941,18 @@ lands, their notes stay in those modules.
   `Scheme.appendFullCells` and its laws to `Stage.Scheme`, beside `Scheme.appendFullCell`; the
   canonical catalogue, the field rows, and `Scheme.fieldLayer` in place.
 - `Extension/SmallArities` and `Extension/SmallArityExamples`: checkpoint 2.5, in place.
+- `Extension/OrderedLayerStep`, `Extension/OrderedLayerTop`, `Extension/MultiLayerStep`,
+  `Extension/CrossedCouplingScheme`, and `Extension/CrossedCouplingCompletion`: checkpoint 2.7, in
+  place.  Their statements about appended cells and suppressors are beside the definitions
+  they concern: `Scheme.appendFullCells_row_castAdd` in `Extension/FieldLayer`, beside
+  `Scheme.appendFullCells_row_natAdd` (it moves with the laws of `Scheme.appendFullCells`);
+  `Label.constStepSuppressor_of_le` in `Label/StepWitness`, beside `Label.constStepSuppressor`;
+  `OrderedLayer.noneAbove_appendFullCells` in `Extension/OrderedLayerStep`, beside
+  `OrderedLayer.NoneAbove` and `OrderedLayer.noneAbove_addLayerCell`.  The capped lift at the
+  grade `4` from the grade `3` in a scheme over the amalgam of a seed with bottom apexes
+  (`OrderedLayer.cappedLift_four_of_oldCells`) is stated once, in `Extension/OrderedLayerTop`, and
+  quoted for the layer scheme (`OrderedLayer.cappedLift_four`) and for the multi-layer scheme of
+  `seedHG` (`CrossedCouplingCounterexample.cappedLift_four_HG`).
 
 **Hull operations, the top-free age, and graded matching (Layers 0 and 2; the top-free
 witnesses).**
