@@ -383,6 +383,156 @@ separate named predicate whose stable-label fixedness holds for every realizatio
 with no hypothesis (`Realization.isCoverHollow_iff_forall_stableLabel_eq_top`); the equivalence of
 cover-hollowness with the original no-anchor predicate is still to be proved.
 
+**The finite lifting statements, organized around the attained least lift** (`README.md`, Layer 3,
+3.1, "The attained least lift" and "Least, not unique"; Layer 4, "Status", outputs 2 and 3 and the
+structural successors; "Endpoints and shared foundations", "The finite lifting boundary").  These
+are roadmap targets related to items 1, 4, and 5 of `README.md`, "Manuscript correspondence
+(required)", not rows of the concordance: no statement of [Kni26] or [AFK26] is identified with
+them.  Each statement with its hypotheses and marker.  Here `β` is the lower stage, `q` a stage type
+at `β`, and a lift of `q` a stage type at `β + ω` whose reduction to `β` is `q` (same scheme and
+rows).
+
+1. *The attained least lift* (prospective).  Hypotheses: `β` a limit stage, the stage hypothesis
+   under which the statement is formulated, and a **legal** stage type `q` at `β`
+   (`StageType.IsLegal`), an explicit hypothesis: the availability law is existential, so the
+   cell-wise minima of the lifts of an arbitrary stage type need not be attained by one lawful
+   labelling.  Any further hypothesis its proof needs is recorded with it.  Conclusion: a lift `q₀`
+   of `q` with `q₀.label d ≤ Q.label d` for every lift `Q` of `q` and every cell `d`, one lawful
+   labelling attaining every minimum at once.  The threshold forced by a rooted cover is identified
+   by testing against this one lift, not by combining lifts chosen separately at the cells.
+   Compiled in this repository (theorem named), cell by cell: each minimum is attained by some lift
+   (`StageType.exists_lift_label_eq_ofOffset`, for `β` zero or a limit).  The statement validates no
+   ordering of twins fixed in advance: the twin-ordering hypothesis is refuted
+   (`Continuation.CandidateCounterexamples.not_twinOrdering_blockStage`, compiled in this repository
+   (theorem named)).
+2. *The limit-stage monotonicity* (prospective in its derived form; the monotonicity of thresholds
+   along extensions of rooted covers).  Hypotheses: those of 1.  Per-cover form (Layers 1–3,
+   `Stage/`): along extensions of rooted covers the least lifts increase on the face of the root.
+   Supremum form (Layer 4, `Continuation/Normalization`): the stable offset is the supremum of the
+   offsets of the least lifts, and the stable label its decoding (`Label.ofOffset`).  Compiled in
+   this repository (theorem named), with provisional offsets in place of least lifts:
+   `StageType.ForcesThreshold.trans_face` and `StageType.provisionalOffset_le_trans_face`, which are
+   themselves the forms for an arbitrary second stage (only `β` zero or a limit is assumed) and are
+   kept as separate statements; the supremum through the definitions `Realization.stableOffset` and
+   `Realization.stableLabel`.
+3. *The threshold characterization* (prospective in its derived form).  Hypotheses: those of 1, a
+   rooted cover `(q, f)` of a root `p`, and a cell `d` labelled `⊤` in `p`.  Per-cover form (Layers
+   1–3): `(q, f)` forces `n` at `d` exactly when every lift is at least `β + n` there (the
+   definition), exactly when the least lift is.  Supremum form (Layer 4): `n` is at most the stable
+   offset exactly when the least lift of some rooted cover is at least `β + n` at `d`.  Compiled in
+   this repository (theorem named), with forcing in place of the least lift:
+   `StageType.ForcesThreshold` (`Stage/Threshold`) and `Realization.natCast_le_stableOffset_iff`
+   (`Continuation/Normalization`).
+4. *Structural successor leastness* (the "least" property prospective).  Hypotheses: `R` an exactly
+   consistent covering realization at `λ_ξ`; a coherent next-block assignment (a
+   restriction-compatible labelling of `R` whose values are lifts to `λ_{ξ+1}`).  Conclusion: the
+   stable section is at most the assignment at every cell.  Compiled in this repository (theorem
+   named; `Realization.stableCandidate` is defined in this repository): the candidate with its
+   literal reduct, legal types, covering, and exact consistency (`Continuation/Candidate`);
+   soundness (`Realization.Covers.le_label_of_forcesThreshold`), the domination for an assignment
+   that is an exactly consistent realization reducing to `R`; and, conditional on finite-extension
+   receiving and `ForcingDonors`, the equality of such a realization with the candidate
+   (`Realization.label_eq_stableLabel`).  Attainment (the candidate is lawful) from exact
+   consistency, covering, and legal types, with no receiving and no further clause of modelhood
+   (`Realization.isStablyLawful_of_hasLegalTypes`, `Realization.IsModel.isStablyLawful`): compiled
+   in this repository (theorem named).
+5. *Finite nonuniqueness* (prospective; a caution).  Hypotheses: `β` zero or a limit and `q` at `β`.
+   Conclusions: literal weakening, `q.castLE`, is the greatest lift (its ingredients
+   `StageType.reduce_castLE` and `StageType.reduce_self` are compiled in this repository (theorem
+   named)); the lifts of `q` form a singleton exactly when `q.IsTopFree` (the lift capped at
+   `β + K`, `StageType.capLift`, defined in this repository, a lift by `StageType.capLift_reduce`,
+   compiled in this repository (theorem named)); so the least lift, where it exists, and the
+   greatest agree exactly when `q` is top-free.  These belong to Layers 1–3 (`Stage/`).  A pointwise
+   minimum of lifts need not be lawful (the type of
+   `Continuation.CandidateCounterexamples.not_twinOrdering_blockStage`; informal, not compiled as a
+   separate statement; [Kni26, Lemma 2.5.11] is not relied on, `README.md`, Layer 1); this negative
+   special case is to be compiled in `Continuation/CandidateCounterexamples` (Layer 4), on the
+   five-cell scheme defined privately there (`fiveCells`, `fiveCellRows`, `fiveCellScheme`).
+   "Least lift" is never replaced by "unique lift".
+6. *The separation of leastness from modelhood.*  Statements 1–5, 8, and 9 do not make the candidate
+   a model: receiving, (R1)–(R4), stays its own statement; (R4) (`StableCappedReceiving`) and the
+   coface instances at `λ_{ξ+1}` (`StageType.HasNonemptyCofaceInstances`), both defined in this
+   repository and still to be proved, remain the content of output 3, compiled from them as
+   `ContinuationCriterion.of_stableCappedReceiving` (compiled in this repository (theorem named)).
+   Exact lifting over a separately prescribed higher root (`Seed.TwoFaceLift`, defined in this
+   repository, and `StageType.HasApexCoatomExtensions`) still needs its own proof; leastness alone
+   does not give it.  `ContinuationCriterion` (`Continuation/Classification`) stays a hypothesis of
+   the count, still to be proved.
+7. *The dependency order.*  (i) The finite row algebra and the arithmetic of visibility; (ii) the
+   lawful provisional lift and the finite recovery of labels in a band; (iii) the attained finite
+   leastness (statement 1) and the gap between the least and the greatest lift (statement 5); (iv)
+   the consequences at limit stages and the observations on rooted covers: the per-cover forms of 2
+   and 3; (v) the stable candidate and its leastness: the supremum forms of 2 and 3, and statements
+   4 and 8; (vi) continuation and terminal classification, separately: statements 6 and 9 and output
+   3.  Statement 1 depends on (i) and (ii) only, not on the limit-stage monotonicity.  Steps
+   (i)–(iv), with the composition of capped lifts (`CellScheme.Rows.CappedLift.trans`), belong to
+   Layers 1–3, whose modules import no module of `Continuation/` or `Expansion/`; steps (v) and (vi)
+   and the negative special case of statement 5 belong to Layer 4 and import them.  The stage
+   hypothesis of 1 is a hypothesis of every statement derived from it.
+8. *The least and the greatest structural successor* (prospective; Layer 4).  Hypotheses: `R` a
+   consistent realization at `λ_ξ`, and, for the least, covering as well; no countability and no
+   nonempty carrier.  A structural successor of `R` is a consistent realization at `λ_{ξ+1}` whose
+   reduct to `λ_ξ` is `R`.  Conclusions: literal weakening (`StageType.castLE` on each type, `⊤`
+   kept) is a structural successor and the greatest, from consistency alone; the stable candidate
+   (`Realization.stableCandidate`, defined in this repository), where it is lawful, is the least;
+   each is attained by one coherent realization, least (greatest) at every coordinate at once, and
+   every structural successor lies between them.  Not claimed: the lawfulness of a labelling between
+   them, or closure under pointwise minima.  The rows stay fixed: stage projection changes the
+   labels only, and any other representation of the rows is used only through a transport checked
+   to preserve lawfulness, cells, faces, and reduction.
+9. *Cover-hollowness as the equality of the two* (prospective; Layer 4).  Hypotheses: `R` a model at
+   `λ_ξ`.  Conclusions: the least and the greatest structural successor of `R` are equal exactly
+   when `R.IsCoverHollow`.  For cover-hollow `R` the candidate is lawful
+   (`Realization.isStablyLawful_of_isCoverHollow`) and is literal weakening
+   (`Realization.stableCandidate_eval_of_isCoverHollow`), both compiled in this repository (theorem
+   named).  Conversely, a model is stably lawful (`Realization.IsModel.isStablyLawful`, compiled in
+   this repository (theorem named)), so its candidate is defined, and it is literal weakening only
+   if every cell labelled the formal top has the formal top as its stable label, which is
+   cover-hollowness (`Realization.isCoverHollow_iff_forall_stableLabel_eq_top`, compiled in this
+   repository (theorem named)).  The equivalence of this equality with cover-hollowness holds for
+   every stably lawful `R`; models are taken because there the candidate is a structural
+   successor.  Then the structural successors form a subsingleton, and each is the stable
+   candidate.  Not a continuation theorem: a structural successor need not be a model, and the
+   uniqueness supplies no expansion; for a model that is not cover-hollow the two differ, with no
+   conflict with the uniqueness of model expansions.  Stated for models only, with
+   cover-hollowness, not hollowness in the sense of `SEMANTIC_CONTRACT.md`, item 8.
+10. *Complementary global routes* (`README.md`, the section on the top-free witnesses,
+    "Complementary global routes").  Separate statements with their own hypotheses, none derived
+    from statements 1–9: classical Fraïssé existence for terminal examples at one level (the
+    top-free witnesses); Scott isolation with countable-limit existence for maximal presentations of
+    a prescribed base (concordance rows 40 and 31–36); terminal presentations for countability;
+    global termination as a companion route (`COMPANIONS.md`).
+
+**Completion criteria of the finite lifting statements.**  Each statement above is complete on its
+own criterion, with its stage hypothesis stated, and none is complete because another is.
+
+1. *The attained least lift* (statement 1): the statement compiled for legal stage types at a limit
+   stage, with the lifts at the next block stage on the unchanged scheme and rows, and the literal
+   reduct equation (the reduction of `q₀` to `β` is `q`); the per-cover forms of 2 and 3 derived
+   from it in Layers 1–3 and the supremum forms in Layer 4, each with that stage hypothesis; the
+   forms for an arbitrary second stage kept; no pointwise minimum of chosen lifts used.
+2. *Structural successor leastness* (statement 4): the "least" property compiled for coherent
+   next-block assignments; attainment from exact consistency, covering, and legal types, with no
+   receiving and no further clause of modelhood; the case of an assignment that is a realization
+   reducing to `R` derived from soundness.
+3. *Least, not unique* (statement 5): literal weakening the greatest lift; the singleton criterion
+   for `β` zero or a limit; the pointwise minimum on the twin-ordering type compiled as a negative
+   special case in `Continuation/`.
+4. *The separation of leastness from modelhood* (statement 6): a separate continuation proof for
+   modelhood, output 3 compiled from (R4) and the coface instances at the next block, with the
+   lawfulness, leastness, and uniqueness of the candidate not used in place of either.
+5. *The structural successors* (statements 8 and 9): statement 8's conclusions compiled (literal
+   weakening a structural successor and the greatest; the candidate, where lawful, the least; every
+   structural successor between them); literal root and reduct equations for lifting, the reduct of
+   each structural successor equal to `R` as an equation of realizations, literal weakening included
+   (`StageType.reduce_castLE` with `StageType.reduce_self` on each type), and the face of its value
+   at a rooted cover along the root equal to its value at the root, literally; the equivalence of 9
+   compiled for models only.
+6. *Complementary global routes* (statement 10): for classical reconstruction, a round trip on the
+   given carrier (the literal round trip of the acceptance criterion of finite-age reconstruction,
+   `README.md`, on the carrier of the limit itself); each route compiled as its own theorem, its
+   hypotheses listed, none taking a statement 1–9 as input.
+
 ### 5. Unique expansions, domains, and the main theorem
 
 Prove unique partial expansions and countable-limit existence.  Coherence of a family of lower
@@ -834,7 +984,19 @@ language a countable family of countable structures has a level `γ < ω₁` at 
 `BFEquiv0` implies isomorphism (`exists_isolating_level`, the supremum of the stabilization
 ordinals); hence, if every countable level has two nonisomorphic `BFEquiv0`-related members, the
 index is uncountable (`not_countable_of_forall_unisolated`).  No application of it is compiled in
-this repository.
+this repository.  A per-class proof of the lower-bound criterion of `README.md` ("Reduction to
+full presentations"), isolating one class at a time with no countability of the classes (where
+`README.md` bounds the isolating levels of countably many classes by one `γ`), can quote Scott
+separation (`exists_countable_strict_stage_bound_of_isolation` and
+`IsolatedPresentation.exists_countable_strict_stage_bound`; available upstream, not yet at our
+pinned dependency: signatures verified against the upstream source at `2cd44c3`, not compiled
+here; "Dependency pins"): every class leaves the domains strictly before a countable stage.  The
+domains having two or more members at every countable stage, the classes are then uncountable,
+since countably many countable bounds have a countable supremum (`iSup_add_one_lt_omega1`,
+`OrdinalCountability`, available at the pin, not `#check`ed in `SuggestedInterfaces.lean`) at
+which the domain is nonempty.  With countable complements of the domains in addition,
+`mk_eq_aleph_one_of_domains` (available at the pin, signatures checked) gives exactly `ℵ₁`
+classes.  Both are prospective applications, not compiled here.
 
 ## Manuscript concordance
 
@@ -1337,9 +1499,14 @@ hypothesis of each statement of 2–4 that uses it, until it is proved as a theo
    countable index (`ModelExpansion.subsingleton`, conditional on
    `Expansion.NextBlockUniqueness`), and limit coherence (`ModelExpansion.nonempty_of_forall_lt`,
    under the same hypothesis); so both equivalences carry the injectivity of model reduction as an
-   explicit hypothesis.  The negative special case (the everywhere-undefined assignment: criteria 1
-   and 4 vacuous, criterion 5 false) compiled as an example.  No proof of criterion 1 that uses
-   termination is cited as a proof of termination.
+   explicit hypothesis.  The intended quotation for bounded-stage attainment is
+   `exists_greatest_stage_lt_omega1` (`OrdinalUtil`; available upstream, not yet at our pinned
+   dependency: signatures verified against the upstream source at `2cd44c3`, not compiled here;
+   "Dependency pins"), with `P` the serving indices, `hzero` from a model base, `hdown` from
+   downward model reduction, `hlim` from limit coherence, and `hA` and `hbound` from criterion 4
+   (a prospective application).  The negative special case (the everywhere-undefined assignment:
+   criteria 1 and 4 vacuous, criterion 5 false) compiled as an example.  No proof of criterion 1
+   that uses termination is cited as a proof of termination.
 3. *Literal uniqueness:* for a terminal model presentation at `ρ`, every model presentation at `η`
    has `η ≤ ρ` and is literally its reduct, with no countability assumed; two terminal model
    presentations of one base have the same index and are equal; and no extension of a partial
@@ -1388,7 +1555,15 @@ named, and none is complete because another is.
    of a countable family is not among them; if it is ever used, it is quoted only once
    "Dependency pins" records a pin containing it, signatures checked.  No hypothesis or lemma
    about termination enters; the conditional of row 31 and this route are not used in a cycle;
-   and the expansion-domain endpoint does not depend on it.
+   and the expansion-domain endpoint does not depend on it.  The intended quotations (available
+   upstream, not yet at our pinned dependency: signatures verified against the upstream source at
+   `2cd44c3`, not compiled here; "Dependency pins"; a prospective application) are Scott
+   separation for the strict bound on serving stages (`stage_lt_rank_of_isolating` for one class,
+   at the rank of its isolating sentence, with nonsingletonness of the domain there from an
+   element of a loss at a countable stage at or above that rank and an element of the next domain
+   (condition 4 at that stage and at the next); or
+   `IsolatedPresentation.exists_countable_strict_stage_bound` for all classes at once) and
+   `exists_greatest_stage_lt_omega1` for the attained maximum.
 5. *The stopping proofs and positive niceness:* each stopping proof that is used (the
    countable-slot argument; the Scott route, 4 above) stated as its own theorem, concluding a
    terminal presentation of each base that is a model, with its own dependencies, the two not
@@ -1752,10 +1927,148 @@ theorem: it isolates one class at a time by `stabilizationOrdinal_spec` with
 
 **Available upstream, not yet available at our pinned dependency:** of InfinitaryLogic, at
 `30c186f` (the merge of its pull request #163, after the pin `e460cb6`; same toolchain and
-Mathlib), concentration at back-and-forth levels (`Descriptive/BFConcentration`).  Of
-ComputableModelTheory: none (its `main` is the pin `a1fe761`).  A statement merged upstream after
-the pins above is listed here, named in prose only and never `#check`ed in the sketches, until a
-repin containing it is recorded in this subsection.
+Mathlib), concentration at back-and-forth levels (`Descriptive/BFConcentration`); at `c16de09`
+(the merge of its pull request #170, after `30c186f`; the statements entered with its pull
+request #165; same toolchain and Mathlib), the attainment of a greatest countable stage
+(`OrdinalUtil`, namespace `InfinitaryLogic`, with Mathlib imports only); and at `2cd44c3` (the
+merge of its pull request #169, which contains `c16de09`; same toolchain and Mathlib), Scott
+separation for rank-uniform domains (`OrdinalCountability`, `Lomega1omega/QuantifierRank`,
+`Descriptive/ScottDefinability`).  Of ComputableModelTheory: none (its `main` is the pin
+`a1fe761`).  A statement merged upstream after the pins above is listed here, recorded here only
+and never `#check`ed in the sketches, until a repin containing it is recorded in this subsection
+(a repin to a revision containing `2cd44c3` is listed as a possible future checkpoint, "Checkpoint
+order and acceptance"; none has been made, and none is decided).
+
+**Upstream statements quoted, not compiled here.**  The definition of "signatures checked" at the
+head of this subsection does not apply to the Lean blocks below.  They are the statements of
+`c16de09` and `2cd44c3`, as merged (hypotheses included), available upstream, not yet at our
+pinned dependency: signatures verified against the upstream source at `2cd44c3` (which contains
+`c16de09`), not compiled here (neither compiled against our pin `e460cb6` nor `#check`ed in
+`SuggestedInterfaces.lean`); no application is compiled in this repository.
+
+- *Greatest attained stage* (`OrdinalUtil`): a predicate on stages that holds at `0`, is closed
+  downward, is closed under successor limits below `ω₁`, and is bounded on the stages below `ω₁`
+  by a countable `A` has a greatest stage `ρ ≤ A`, and holds exactly at the stages `ξ ≤ ρ`, at
+  every ordinal `ξ`, not only below `ω₁` (downward closure is global):
+
+  ```lean
+  theorem exists_greatest_stage_lt_omega1 (P : Ordinal.{0} → Prop) (hzero : P 0)
+      (hdown : ∀ {α β}, α ≤ β → P β → P α)
+      (hlim : ∀ l, Order.IsSuccLimit l → l < Ordinal.omega 1 → (∀ ξ, ξ < l → P ξ) → P l)
+      {A : Ordinal.{0}} (hA : A < Ordinal.omega 1)
+      (hbound : ∀ ξ, ξ < Ordinal.omega 1 → P ξ → ξ ≤ A) :
+      ∃ ρ, ρ ≤ A ∧ P ρ ∧ ∀ ξ, P ξ ↔ ξ ≤ ρ
+  ```
+
+  with the general forms `exists_forall_iff_le_of_bounded_of_isSuccLimit_closed` (on
+  `Ordinal.{u}`, with no countability and with limit closure at every successor limit) and
+  `exists_isGreatest_setOf_of_bounded_of_isSuccLimit_closed` (the same, stated with
+  `IsGreatest`).  The form with `(Cardinal.aleph 1).ord` and the conclusion restricted to
+  `ξ < (Cardinal.aleph 1).ord` follows by `Cardinal.ord_aleph`, the equation
+  `(Cardinal.aleph o).ord = Ordinal.omega o`.
+- *Scott separation* (`OrdinalCountability`, namespace `InfinitaryLogic`; `Sat` and `rank` are
+  parameters and the proofs use no model theory): an observation `φ` isolating a point `q`
+  excludes `q` from every set of two or more points on which `φ` is constant; so along decreasing
+  domains on which the observations of rank at most the stage agree, `q` lies in no domain at
+  or above the rank of `φ` when the domain at that rank has two or more points, and, when every
+  point is isolated by an observation of countable rank and every domain at a countable stage
+  has two or more points, every point leaves the domains strictly before a countable stage:
+
+  ```lean
+  theorem notMem_of_isolating_of_uniform {X : Type u} {F : Type v}
+      (Sat : F → X → Prop) {D : Set X} {q : X} {φ : F}
+      (hiso : ∀ x, Sat φ x ↔ x = q)
+      (huniform : ∀ ⦃x y⦄, x ∈ D → y ∈ D → (Sat φ x ↔ Sat φ y))
+      (htwo : D.Nontrivial) :
+      q ∉ D
+
+  theorem lt_index_of_isolating_of_antitone {X : Type u} {F : Type v}
+      {ι : Type w} [LinearOrder ι] (Sat : F → X → Prop)
+      (D : ι → Set X) (hanti : Antitone D) {q : X} {φ : F} {ζ : ι}
+      (hiso : ∀ x, Sat φ x ↔ x = q)
+      (huniform : ∀ ⦃x y⦄, x ∈ D ζ → y ∈ D ζ → (Sat φ x ↔ Sat φ y))
+      (htwo : (D ζ).Nontrivial) {η : ι} (hq : q ∈ D η) :
+      η < ζ
+
+  theorem lt_rank_of_isolating_of_antitone {X : Type u} {F : Type v}
+      {ι : Type w} [LinearOrder ι] (Sat : F → X → Prop)
+      (rank : F → ι) (D : ι → Set X) (hanti : Antitone D) {q : X} {φ : F}
+      (hiso : ∀ x, Sat φ x ↔ x = q)
+      (huniform : ∀ ⦃x y⦄, x ∈ D (rank φ) → y ∈ D (rank φ) → (Sat φ x ↔ Sat φ y))
+      (htwo : (D (rank φ)).Nontrivial) {η : ι} (hq : q ∈ D η) :
+      η < rank φ
+
+  theorem stage_lt_rank_of_isolating {X : Type u} {F : Type v}
+      (Sat : F → X → Prop) (rank : F → Ordinal.{0})
+      (D : Ordinal.{0} → Set X) (hanti : Antitone D) {q : X} {φ : F}
+      (hiso : ∀ x, Sat φ x ↔ x = q)
+      (huniform : ∀ ⦃x y⦄, x ∈ D (rank φ) → y ∈ D (rank φ) → (Sat φ x ↔ Sat φ y))
+      (htwo : (D (rank φ)).Nontrivial) {η : Ordinal.{0}} (hq : q ∈ D η) :
+      η < rank φ
+
+  theorem exists_countable_strict_stage_bound_of_isolation {X : Type u} {F : Type v}
+      (Sat : F → X → Prop) (rank : F → Ordinal.{0})
+      (D : Ordinal.{0} → Set X) (hanti : Antitone D)
+      (huniform : ∀ η, η < Ordinal.omega 1 → ∀ φ, rank φ ≤ η →
+        ∀ ⦃x y⦄, x ∈ D η → y ∈ D η → (Sat φ x ↔ Sat φ y))
+      (htwo : ∀ η, η < Ordinal.omega 1 → (D η).Nontrivial)
+      (hisolate : ∀ q, ∃ φ, rank φ < Ordinal.omega 1 ∧ ∀ x, Sat φ x ↔ x = q) (q : X) :
+      ∃ θ, θ < Ordinal.omega 1 ∧ ∀ η, q ∈ D η → η < θ
+  ```
+
+  Every formula of `Lω₁ω`, in every language, has countable quantifier rank
+  (`Lomega1omega/QuantifierRank`; a syntactic fact):
+
+  ```lean
+  theorem FirstOrder.Language.BoundedFormulaω.qrank_lt_omega1 {L : Language.{u, v}} {α : Type*} :
+      ∀ {n : ℕ} (φ : L.BoundedFormulaω α n), φ.qrank < Ordinal.omega 1
+  theorem FirstOrder.Language.Sentenceω.qrank_lt_omega1 {L : Language.{u, v}}
+      (φ : L.Sentenceω) : φ.qrank < Ordinal.omega 1
+  ```
+
+  and an isolated presentation (`IsolatedPresentation truth`: every class is the only one
+  satisfying some sentence) isolates each class by a sentence of countable quantifier rank, so
+  the countable strict bound holds for the domains of its classes
+  (`Descriptive/ScottDefinability`):
+
+  ```lean
+  theorem FirstOrder.Language.IsolatedPresentation.exists_qrank_lt_omega1 {L : Language.{u, v}}
+      {Q : Type w} {truth : L.Sentenceω → Q → Prop}
+      (hisol : IsolatedPresentation truth) (q : Q) :
+      ∃ σ : L.Sentenceω, σ.qrank < Ordinal.omega 1 ∧ ∀ s, truth σ s ↔ s = q
+
+  theorem FirstOrder.Language.IsolatedPresentation.exists_countable_strict_stage_bound
+      {L : Language.{u, v}} {Q : Type w}
+      {truth : L.Sentenceω → Q → Prop} (hisol : IsolatedPresentation truth)
+      (D : Ordinal.{0} → Set Q) (hanti : Antitone D)
+      (huniform : ∀ η, η < Ordinal.omega 1 → ∀ φ : L.Sentenceω, φ.qrank ≤ η →
+        ∀ ⦃x y⦄, x ∈ D η → y ∈ D η → (truth φ x ↔ truth φ y))
+      (htwo : ∀ η, η < Ordinal.omega 1 → (D η).Nontrivial) (q : Q) :
+      ∃ θ, θ < Ordinal.omega 1 ∧ ∀ η, q ∈ D η → η < θ
+  ```
+
+**The scope of these statements.**  In Scott separation the bound is the quantifier rank of a
+chosen isolating sentence: it is not an internal Scott rank, not a stabilization ordinal, and not
+an attained stage (attainment is the separate greatest-stage theorem, under its closure
+hypotheses), and two isolating sentences of different ranks give different bounds, the larger
+not the least strict bound.  Agreement at stage `η` is for the sentences of quantifier rank **at
+most** `η` (the convention of `EquivQRω`); under agreement only for ranks strictly below `η` the
+bound at the rank (`stage_lt_rank_of_isolating`) fails, and a countable strict bound needs
+`θ := rank φ + 1`, with agreement and nonsingletonness at that later stage.  Nonsingletonness of
+the domains (`Set.Nontrivial`) is essential: neither nonemptiness nor an ambient `Nontrivial`
+type replaces it.  No countability of classes is assumed, and the hypotheses of
+`exists_countable_strict_stage_bound_of_isolation` imply that the class space is uncountable, so
+on a countable class space it applies only vacuously (the exclusion and the bound at the rank
+are not vacuous on finite spaces).  Under antitonicity its conclusion is `q ∉ D θ`, the
+hypothesis that every point leaves the domains, of `mk_le_aleph_one_of_domains` and
+`mk_eq_aleph_one_of_domains` (`OrdinalCountability`, available at the pin, signatures checked).
+Where the nonsingletonness at `θ` is obtained from an element of `D θ \ D (θ + 1)` and an element of
+`D (θ + 1)`, that pair is to be required only at the countable stages `θ < ω₁`: required at every
+ordinal, it is inconsistent with isolation, agreement and antitonicity, since the countable bound
+forces `D ω₁ = ∅`.  In the greatest-stage theorem each of `hzero`, downward closure, limit closure
+and a countable bound is needed (the stages `ξ < ω` without limit closure, and `ξ < ω₁` with the
+bound `A = ω₁`, have no greatest stage).  Both statements use `Ordinal.omega 1`; a statement written
+with `(Cardinal.aleph 1).ord` is converted by `Cardinal.ord_aleph`.
 
 **Available at the pin `e460cb6` since `cf80917`, used by `COMPANIONS.md`, "Quantitative
 reconstruction", targets 2 and 3** (listed as available upstream before the repin to `cf80917`):
@@ -1776,7 +2089,7 @@ back-and-forth theorem is retired: both of its intended applications compile thr
 `bfEquiv_of_gradedMatching` (at the pin, signatures checked), on abstract hypotheses (`README.md`,
 Layer 0, for where the height guard and the selection of coordinates go).  No statement of this
 roadmap relies on any of them, or on the statements available upstream, as pinned until this
-subsection records a pin containing it; until then they are named in prose only (`README.md`,
+subsection records a pin containing it; until then they are recorded here only (`README.md`,
 Layer 0), never `#check`ed in the sketches.
 
 ### Applications of library theorems
@@ -2056,6 +2369,19 @@ Each checkpoint needs both its abstract API and a concrete application:
    (`infinite_of_realize_densitySentence_of_hasCoatomExtensions`, with hypothesis
    `StageType.HasCoatomExtensions` at `ω`, still to be proved); once that property is proved, the
    reduction to `ℕ` for the density sentence no longer needs `CapToModel`.
+
+**A listed future repin, outside the order 1–6.**  A repin of InfinitaryLogic to a revision
+containing `2cd44c3` (or the release tag that follows it) has been neither made nor decided.  A
+controlled move, if undertaken, would be a separate checkpoint, before the first application of
+the greatest-stage theorem or of Scott separation, done as the move to `e460cb6` (this
+repository's pull request #97): the revisions in `lakefile.toml` and `lake-manifest.json` changed
+as in that pull request, which edited the manifest by hand, and the `lakefile.toml` comment on
+bumping (which runs `lake update InfinitaryLogic`) and its list of merged pull requests updated to
+match; the toolchain and Mathlib checked against InfinitaryLogic's manifest at the new revision;
+ComputableModelTheory built against it; call sites adapted with no statement changed; the
+statements listed as available upstream ("Dependency pins") `#check`ed in
+`SuggestedInterfaces.lean`; and that subsection updated.  Until such a repin is recorded in
+"Dependency pins", no statement here applies the greatest-stage theorem or Scott separation.
 
 **Six non-implications, as examples.**  Each is a statement that fails in general, to be shown by
 an example in the examples module of its layer; only the second is compiled.
