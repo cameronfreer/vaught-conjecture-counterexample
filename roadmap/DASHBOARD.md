@@ -203,3 +203,26 @@ counted as compiled.
    existence, Scott isolation with countable-limit existence, terminal presentations, and global
    termination (`README.md`, the section on the top-free witnesses, "Complementary global
    routes"; `IMPLEMENTATION.md`, §4, statements 1–10 with their completion criteria).
+
+## Composition targets (prospective)
+
+Recorded in `IMPLEMENTATION.md`, "The full-presentation route", "Composition targets of the
+tower", and in `README.md`, item 5 of "Manuscript correspondence (required)"; no hypothesis,
+status, or percentage changes.  Each composes statements compiled on `main` with statements that
+are prospective here:
+
+1. the terminal-presentation instance of the second endpoint, with the main theorem by that route
+   on the six hypotheses (R1), forcing donors, the continuation criterion, (R2), (R3), and the
+   coatom extension property with apex at every countable block stage, with no termination
+   statement;
+2. the four conditions of the system of [AFK26] as one structure of statements, and the main
+   theorem from its conditions (a), (b), and (d) (condition (c), niceness, is not used);
+3. niceness of base reducts from maximal refinement, for carriers in `Type`;
+4. the last admitted stage: the stage of a terminal expansion of a base is the last stage of its
+   class, the terminal classes at a block are the loss there, and the tails of the instance of 1
+   are the expansion domains;
+5. fixing bounds from the Scott bound, and the lower bound along fixing ranks through strictness.
+
+`IMPLEMENTATION.md`, "Manuscript concordance", records separately the retargeting of the
+legal-template rows to the current draft of [AFK26] and the identification of its templates with
+the stage types (targets; no status changes).
