@@ -1071,8 +1071,8 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
    unrestricted (harmless: the identifications hold for every `α ≤ ω₁`, limit or not); `⇒` at a
    stage `θ`, printed at `ω₁`; the scheme of a type carried as data; and the cells enumerated in
    increasing code order, the cells of a scheme being the positions `Fin card` in the role of the
-   codes, so that `Df` keeps codes exactly when `φ` is strictly monotone (`StrictMono φ`; the coding
-   of row 7, not a further clause).  The stage types have fixed coded rows (row 9); in
+   codes, so that `Df` keeps codes exactly when `φ` is strictly monotone (`StrictMono φ`; the
+   recoverability clause, not a further clause).  The stage types have fixed coded rows (row 9); in
    [Kni26, Definition 3.1.1] too the semantics is the one associated with the domain.
 9. `StageType` (a `Scheme` with fixed coded rows and a separate `label`); the correction is
    recorded in `README.md`, layer 2, "The templates of [AFK26] and the stage types here".  The

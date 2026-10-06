@@ -79,7 +79,7 @@ canonical isomorphisms (`StageType.restrictFace_equiv`, `StageType.reindex_reind
    cells of a scheme are the positions `Fin card`, which play the role of the codes: each domain
    is enumerated in increasing order of its codes.  Under this convention, `Df` keeps codes
    exactly when `φ` is strictly monotone (`StrictMono φ`), and with it the printed face map is
-   `restrictFace`.  This is the coding of row 7, not a further clause.
+   `restrictFace`.  This is the recoverability clause, not a further clause.
 
 The inclusion case of the face maps, `(S^α ι_{B,A})(p) = p↾D⟨B,|B|⟩`, is the second clause of
 [Kni26, Definition 3.1.2]; its first clause, stage reduction, is row 10.
