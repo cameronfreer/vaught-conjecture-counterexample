@@ -20,7 +20,9 @@ at which the block `[λ_ξ, λ_ξ + ω)` begins.  So `λ_0 = ω` is the base sta
 at least `ω` (`omega0_le_blockStage`), block stages are strictly increasing
 (`blockStage_strictMono`) and at least their index (`le_blockStage`), and they are countable at
 countable indices (`blockStage_lt_omega_one`).  The stage `λ_ξ` is a permitted cutoff at the
-stage `λ_{ξ+1}` (`isPermittedCutoff_blockStage`).
+stage `λ_{ξ+1}` (`isPermittedCutoff_blockStage`).  The reindexing `ξ ↦ 1 + ξ` of
+`blockStage_eq_mul` is strictly increasing (Mathlib's `add_right_strictMono`), onto the positive
+ordinals (`exists_one_add_eq_iff`), and preserves countability (`one_add_lt_omega_one_iff`).
 
 **Model expansions.**  A realization `R` at stage `α` on the carrier of a base structure `M` (a
 structure of `baseLanguage`) is an **expansion** of `M` (`Realization.IsExpansionOf`) when it is a
@@ -110,6 +112,18 @@ theorem blockStage_add_one (ξ : Ordinal.{u}) : blockStage (ξ + 1) = blockStage
 /-- The block stage is `ω · (1 + ξ)`. -/
 theorem blockStage_eq_mul (ξ : Ordinal.{u}) : blockStage ξ = ω * (1 + ξ) := by
   rw [blockStage, mul_add, mul_one]
+
+/-- **The reindexing `ξ ↦ 1 + ξ` is onto the positive ordinals.** -/
+theorem exists_one_add_eq_iff {β : Ordinal.{u}} : (∃ ξ, 1 + ξ = β) ↔ β ≠ 0 := by
+  refine ⟨?_, fun hβ ↦
+    ⟨β - 1, Ordinal.add_sub_cancel_of_le (Order.one_le_iff_ne_zero.mpr hβ)⟩⟩
+  rintro ⟨ξ, rfl⟩
+  exact (lt_of_lt_of_le zero_lt_one le_self_add).ne'
+
+/-- **The reindexing `ξ ↦ 1 + ξ` preserves countability.** -/
+theorem one_add_lt_omega_one_iff {ξ : Ordinal.{u}} : 1 + ξ < ω₁ ↔ ξ < ω₁ := by
+  refine ⟨fun h ↦ le_add_self.trans_lt h, fun h ↦ ?_⟩
+  exact isPrincipal_add_omega 1 (one_lt_omega0.trans omega0_lt_omega_one) h
 
 /-- Every block stage is a limit. -/
 theorem isSuccLimit_blockStage (ξ : Ordinal.{u}) : Order.IsSuccLimit (blockStage ξ) := by
@@ -228,6 +242,16 @@ theorem covers_map_iff (e : M ≃ N) {n : ℕ} {t : StageType.{u} α n} {c : Fin
     (R.map e).Covers t c ↔ R.Covers t (e.symm ∘ c) := by
   refine ⟨fun ⟨hc, h⟩ ↦ ⟨e.symm.injective.comp hc, h⟩, fun ⟨hc, h⟩ ↦ ⟨?_, h⟩⟩
   exact (Function.Injective.of_comp (f := e.symm) hc)
+
+/-- Rooted covers in a transport are the transports of rooted covers. -/
+theorem extendsToCover_map_iff (e : M ≃ N) {n : ℕ} {c : Fin n → N}
+    {x : Σ m : ℕ, StageType.{u} α m × (Fin n ↪ Fin m)} :
+    (R.map e).ExtendsToCover c x ↔ R.ExtendsToCover (e.symm ∘ c) x := by
+  refine ⟨fun ⟨s, hs, h⟩ ↦ ⟨e.symm ∘ s, ?_, (covers_map_iff e).mp h⟩,
+    fun ⟨s, hs, h⟩ ↦ ⟨e ∘ s, ?_, (covers_map_iff e).mpr ?_⟩⟩
+  · rw [Function.comp_assoc, hs]
+  · rw [Function.comp_assoc, hs, ← Function.comp_assoc, Equiv.self_comp_symm, Function.id_comp]
+  · rwa [← Function.comp_assoc, Equiv.symm_comp_self, Function.id_comp]
 
 /-- **The faces of a cover**: under exact consistency, the face of a cover along an injective
 selection `s` of coordinates is evaluated to the face of its type along `s`. -/

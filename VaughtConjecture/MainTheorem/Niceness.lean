@@ -187,7 +187,7 @@ theorem HasTerminalRefinement.of_hasApexCoatomExtensions
     (hext : ∀ η < ω₁, StageType.HasApexCoatomExtensions.{0} (blockStage η)) :
     HasTerminalRefinement.{0} := by
   refine ⟨fun {M} _ {β} V hV ↦ ?_⟩
-  obtain ⟨ρ, hβρ, hρ, W, hW, ht, hred, _⟩ := exists_maximalRefinement hrec hu hext hV
+  obtain ⟨ρ, hβρ, hρ, W, hW, ht, hred, _⟩ := MainTheorem.exists_maximalRefinement hrec hu hext hV
   exact ⟨ρ, hβρ, hρ, W, hW, ht, hred⟩
 
 section Refinement
