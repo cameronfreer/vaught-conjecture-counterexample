@@ -210,10 +210,11 @@ variable {α : Ordinal.{u}} {n m : ℕ}
 
 /-! ### The bottom transport condition -/
 
-/-- The **bottom transport condition** for a private type `P` on `n` points, a face `f`, a donor
-`d` and a cap label `c`: every lawful labelling `a` of `P` that is not `⊥` at the cells of `P` of
-graded index `(univ, n)` labelled `c` has a lawful labelling `ρ` of `d` such that, at every new
-donor cell `j` (one whose scope contains the new point) not labelled `⊥`,
+/-- The **bottom transport condition** for a private type `P` on `n` points, a one-point donor `d`
+(on `m + 1` points, the last one new) and a cap label `c`: every lawful labelling `a` of `P` that
+is not `⊥` at the cells of `P` of graded index `(univ, n)` labelled `c` has a lawful labelling `ρ`
+of `d` such that, at every new donor cell `j` (one whose scope contains the new point) not
+labelled `⊥`,
 * `ρ j = ⊥` if `d.label j` is not at least `c` and `a` is `⊥` at every cell `i` of `P` with
   `d.label j = vr_n(P.label i, k)` for some `k ≤ n` (every possible anchor of `j`);
 * `ρ j ≠ ⊥` if `a` is not `⊥` at any cell `i` of `P` that is a possible anchor of `j` or is
