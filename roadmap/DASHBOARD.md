@@ -89,8 +89,9 @@ Notes on the rows, each with its marker:
   used by the count: eventual departure and the last stage of a class (`COMPANIONS.md`, terminal
   refinement, items 1–2), abstractly under logical agreement, nonempty losses, and isolation
   (`ExpansionDomains.core_eq_empty`, `ExpansionDomains.mem_loss_iff_lastStage_eq`), and for the
-  actual expansion domains under `CapToModel`, next-block uniqueness, (R1), and the coatom
-  extension property with apex at every countable block stage (`expansionDomain_core_eq_empty`).
+  actual expansion domains under next-block uniqueness, (R1), and the coatom extension property
+  with apex at every countable block stage, which also gives `CapToModel`
+  (`expansionDomain_core_eq_empty`).
 
 ## The named hypotheses of the main theorem
 

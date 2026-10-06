@@ -597,27 +597,35 @@ elaborated.  The minimality form, from countable truth sides, is kept.
   under `HasLogicalAgreement` and cofinally (or all) nonempty losses, an isolated class leaves the
   domains below `ω₁`; `ExpansionDomains.core_eq_empty`: with every class isolated, the persistent
   core is empty;
-* `ExpansionDomains.lastStage` (the supremum of the stages containing `q`; no hypothesis),
-  `isGreatest_lastStage` (attained and below `ξ` once `q ∉ D_ξ`, `ξ < ω₁`; the fields `zero`,
-  `antitone`, `limit`, `domain_eq_empty_of_omega_one_le`), and, under isolation, logical
-  agreement and nonempty losses, `exists_lastStage`, `lastStage_lt_omega_one`,
-  `mem_domain_iff_le_lastStage`, `mem_loss_iff_lastStage_eq`, `loss_eq_preimage_lastStage`,
-  `domain_eq_setOf_le_lastStage`; under the sharp agreement, `lastStage_lt_qrank`;
+* `ExpansionDomains.lastStage` (the supremum of the stages containing `q`; no hypothesis), with
+  `le_lastStage`, `lastStage_le_omega_one` and `lastStage_eq_omega_one_of_mem_core` (`ω₁` on the
+  persistent core), which use the field `domain_eq_empty_of_omega_one_le` (through
+  `bddAbove_setOf_mem`); `isGreatest_lastStage` (attained and below `ξ` once `q ∉ D_ξ`, `ξ < ω₁`;
+  the fields `zero`, `antitone` and `limit` only), and `mem_domain_iff_le_lastStage_of_notMem`,
+  `mem_loss_iff_lastStage_eq_of_notMem` (which add `domain_eq_empty_of_omega_one_le`, through
+  `le_lastStage`); under isolation, logical agreement and nonempty losses, `exists_lastStage`,
+  `lastStage_lt_omega_one`, `mem_domain_iff_le_lastStage`, `mem_loss_iff_lastStage_eq`,
+  `loss_eq_preimage_lastStage`, `domain_eq_setOf_le_lastStage`; under the sharp agreement,
+  `lastStage_lt_qrank`;
 * for the classes of coded models (Scott isolation, `exists_classTruth_iff_eq`):
   `core_eq_empty_of_classTruth` and the `…_of_classTruth` forms; for the actual expansion domains,
-  `modelExpansionDomains_hasRankAgreement` (under (R1)), and `expansionDomain_core_eq_empty`,
+  `modelExpansionDomains_hasRankAgreement` (under (R1)); `expansionDomain_core_eq_empty`, under
+  next-block uniqueness, (R1), and the coatom extension property with apex at every countable
+  block stage, which at `0` gives `CapToModel` (`CapToModel.of_hasApexCoatomExtensions`); and
   `mem_expansionDomain_iff_le_lastStage`, `mem_expansionDomain_loss_iff_lastStage_eq`,
-  `lastStage_modelExpansionDomains_lt_qrank`, under `CapToModel`, next-block uniqueness, (R1),
-  and the coatom extension property with apex at every countable block stage, each still to be
-  proved.
+  `lastStage_modelExpansionDomains_lt_qrank`, whose statements mention `modelExpansionDomains hcap
+  hnext` and so take `CapToModel` as well; each of these hypotheses is still to be proved.
 
 The count does not use them, and no hypothesis of a main-theorem statement changes.  Global
-termination is not used.  The terminal expansion at the last stage (terminal refinement, item 3)
-is not stated.  At a repin containing `2cd44c3` ("Dependency pins", "Upstream statements quoted,
-not compiled here"), `ExpansionDomains.notMem_of_isolating` is `notMem_of_isolating_of_uniform`
-applied to the set `D_ξ`, and `ExpansionDomains.lastStage_lt_qrank` combines
-`stage_lt_rank_of_isolating` with the greatest-stage theorem; the local proofs may then quote
-them, with the statements kept.
+termination is not used.  The terminal expansion at the last stage (terminal refinement, item 3) is
+not stated.  A further target, not stated (prospective; it depends on the terminal classes
+`terminalClasses`, not yet in this repository, and on next-block uniqueness): the classes terminal
+at `β` are the fibre of the last stage at `β`, `terminalClasses β = lastStage ⁻¹' {β}`, which
+identifies the losses with the terminal classes.  At a repin containing `2cd44c3` ("Dependency
+pins", "Upstream statements quoted, not compiled here"), `ExpansionDomains.notMem_of_isolating` is
+`notMem_of_isolating_of_uniform` applied to the set `D_ξ`, and `ExpansionDomains.lastStage_lt_qrank`
+combines `stage_lt_rank_of_isolating` with the greatest-stage theorem; the local proofs may then
+quote them, with the statements kept.
 
 ## The top-free witnesses: milestone order and acceptance
 
@@ -2842,8 +2850,9 @@ lands, their notes stay in those modules.
   in a later change of proofs only (no statement changes, and no Lean change here).
 
 - `MainTheorem/LastStage`: `exists_isGreatest_of_closed` uses Mathlib only; the same statement, with
-  the same name, is proposed for `Label/GreatestIndex`, where it belongs, and one copy is kept when
-  both are present.  `ExpansionDomains.notMem_of_isolating` and
+  the same name, is proposed for `Counting/OrdinalAttainment`, where it belongs; once that module
+  is present, the copy here is dropped and `MainTheorem/LastStage` imports it (two copies would fail
+  the all-modules axiom audit of `scripts/check.sh`).  `ExpansionDomains.notMem_of_isolating` and
   `ExpansionDomains.lastStage_lt_qrank` are local forms of InfinitaryLogic's Scott separation
   (`OrdinalCountability`, available upstream at `2cd44c3`, not at the pin `e460cb6`), to be proved
   by quotation at a repin containing it.

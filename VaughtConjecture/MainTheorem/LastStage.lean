@@ -26,9 +26,10 @@ So, under logical agreement (`HasLogicalAgreement`: each observation is constant
 below `ω₁`) and nonempty losses (condition 4), or only cofinally many nonempty losses, a class
 isolated by some observation leaves the domains at a countable stage
 (`exists_notMem_of_isolating`, `exists_notMem_of_isolating_of_cofinal`), and if every class is
-isolated, the persistent core `⋂ ξ < ω₁, D_ξ` is empty (`core_eq_empty`).  This strengthens
-`ExpansionDomains.core_subsingleton`, which uses separation instead of isolation; separation does
-not suffice for departure (`VaughtConjecture.MainTheorem.LastStageExamples`).
+isolated, the persistent core `⋂ ξ < ω₁, D_ξ` is empty (`core_eq_empty`).  Under logical
+agreement and separation it is a subsingleton (`ExpansionDomains.core_subsingleton`); under
+isolation and nonempty losses that subsingleton is empty.  Separation does not suffice for departure
+(`VaughtConjecture.MainTheorem.LastStageExamples`).
 
 With the sentences of a language as observations and condition 3 in its sharp form,
 `HasRankAgreement` (the classes in `D_η` agree on the sentences of quantifier rank at most `η`, at
@@ -71,8 +72,10 @@ extension property with apex at every countable block stage
 (`expansionDomain_core_eq_empty`, `mem_expansionDomain_iff_le_lastStage`,
 `mem_expansionDomain_loss_iff_lastStage_eq`, `lastStage_modelExpansionDomains_lt_qrank`)
 conditional on the following hypotheses, each still to be proved:
-* the cap-to-model theorem at `ω` on `ℕ` (`hcap`; Layer 3, 3.4): the first domain is every class
-  (it follows from `hext` at `0`, `CapToModel.of_hasApexCoatomExtensions`);
+* the cap-to-model theorem at `ω` on `ℕ` (`hcap`; Layer 3, 3.4): the first domain is every class;
+  it follows from `hext` at `0` (`CapToModel.of_hasApexCoatomExtensions`), so it is derived, not
+  assumed, in `expansionDomain_core_eq_empty`, whose statement does not mention it, and kept in
+  the statements about the last stage of `modelExpansionDomains hcap hnext`;
 * next-block uniqueness of models (`hnext`; Layer 4, output 2): the limit clause, and the
   placement of the top-free witness in the loss (it follows from (R1) and forcing donors,
   `Expansion.NextBlockUniqueness.of_forcingDonors`);
@@ -81,11 +84,9 @@ conditional on the following hypotheses, each still to be proved:
   the open part of (R6)): the nonempty losses.
 Countable losses (condition 2) are not used.
 
-**The attained greatest index.**  `exists_isGreatest_of_closed` uses Mathlib only.  The same
-statement, with the same name, is proposed for a module `VaughtConjecture.Label.GreatestIndex`;
-one copy is kept when both are present.  It follows from the greatest-stage statements of
-InfinitaryLogic (`OrdinalUtil`), available upstream, not at the pin `e460cb6`, but it is not the
-same statement as any of them.
+**The attained greatest index.**  `exists_isGreatest_of_closed` uses Mathlib only.  It follows
+from the greatest-stage statements of InfinitaryLogic (`OrdinalUtil`), available upstream, not at
+the pin `e460cb6`, but it is not the same statement as any of them.
 
 ## Placement
 
@@ -104,8 +105,7 @@ has a greatest element `ρ`, with `β ≤ ρ < δ`.  Mathlib only.  The greatest
 supremum of the ordinals at which the predicate holds: if the predicate failed there, it would
 hold everywhere below, so the supremum would be neither zero, nor a successor, nor a limit.  It
 follows from the greatest-stage statements of InfinitaryLogic, available upstream, not at the pin
-`e460cb6`, whose hypotheses and conclusions differ.  The same statement is proposed for
-`VaughtConjecture.Label.GreatestIndex`; one copy is kept when both are present. -/
+`e460cb6`, whose hypotheses and conclusions differ. -/
 theorem exists_isGreatest_of_closed {P : Ordinal.{u} → Prop} {β δ : Ordinal.{u}} (hβ : P β)
     (hdown : ∀ ⦃a b⦄, a ≤ b → P b → P a)
     (hlim : ∀ l, IsSuccLimit l → l < ω₁ → (∀ a < l, P a) → P l)
@@ -227,8 +227,8 @@ theorem exists_notMem_of_isolating {S : Type v} {truth : S → X → Prop}
 
 /-- **The persistent core is empty** (terminal refinement, item 1, corollary): under logical
 agreement (`ha`) and nonempty losses (`hn`), if every class is isolated by some observation
-(`hiso`), no class lies in every domain below `ω₁`.  This strengthens `core_subsingleton`, whose
-separation hypothesis does not suffice for it. -/
+(`hiso`), no class lies in every domain below `ω₁`.  So, under isolation and nonempty losses,
+the subsingleton of `core_subsingleton` is empty; separation alone does not suffice for it. -/
 theorem core_eq_empty {S : Type v} {truth : S → X → Prop} (ha : D.HasLogicalAgreement truth)
     (hn : D.HasNonemptyLosses) (hiso : ∀ q, ∃ s, ∀ p, truth s p ↔ p = q) :
     (⋂ ξ < ω₁, D.domain ξ) = ∅ :=
@@ -242,8 +242,8 @@ variable (D)
 
 /-- The **last stage** of a class `q`: the supremum of the stages `β` with `q ∈ D_β`.  It is
 defined for every class; it is the greatest such stage once `q` leaves the domains below `ω₁`
-(`isGreatest_lastStage`), and it is `ω₁` for a class in every domain below `ω₁`.  It is not a
-Scott rank. -/
+(`isGreatest_lastStage`), and it is `ω₁` for a class in every domain below `ω₁`
+(`lastStage_eq_omega_one_of_mem_core`).  It is not a Scott rank. -/
 noncomputable def lastStage (q : X) : Ordinal.{0} :=
   sSup {β | q ∈ D.domain β}
 
@@ -260,6 +260,13 @@ theorem le_lastStage {q : X} {β : Ordinal.{0}} (hq : q ∈ D.domain β) : β �
 /-- The last stage is at most `ω₁`. -/
 theorem lastStage_le_omega_one (q : X) : D.lastStage q ≤ ω₁ :=
   csSup_le ⟨0, by simp [D.zero]⟩ fun _ hβ ↦ (lt_omega_one_of_mem hβ).le
+
+/-- **The last stage of a class of the persistent core is `ω₁`**: such a class lies in every domain
+below `ω₁`, so its last stage is at least every countable ordinal. -/
+theorem lastStage_eq_omega_one_of_mem_core {q : X} (hq : q ∈ ⋂ ξ < ω₁, D.domain ξ) :
+    D.lastStage q = ω₁ :=
+  (lastStage_le_omega_one q).antisymm <| le_of_forall_lt fun _ hc ↦
+    (lt_succ _).trans_le (le_lastStage (mem_iInter₂.1 hq _ ((isSuccLimit_omega 1).succ_lt hc)))
 
 /-- **The last stage is attained once the class leaves** (terminal refinement, item 2): if
 `q ∉ D_ξ` for some `ξ < ω₁`, the stages at which `q` lies have a greatest element, the last stage
@@ -415,17 +422,21 @@ variable (hcap : CapToModel.{0}) (hnext : NextBlockUniqueness.{0})
   (hrec : FiniteCutReceiving.{0})
   (hext : ∀ η < ω₁, StageType.HasApexCoatomExtensions.{0} (blockStage η))
 
-include hcap hnext hrec hext
-
+include hnext hrec hext in
 /-- **Eventual departure for the expansion domains of the density sentence**: no class has a
-model expansion of a coded representative to every countable block stage, conditional on the
-cap-to-model theorem (`hcap`), next-block uniqueness of models (`hnext`), finite-cut receiving of
-models (`hrec`) and the coatom extension property with apex at every countable block stage
-(`hext`), each still to be proved. -/
+model expansion of a coded representative to every countable block stage, conditional on
+next-block uniqueness of models (`hnext`), finite-cut receiving of models (`hrec`) and the coatom
+extension property with apex at every countable block stage (`hext`), each still to be proved.
+The cap-to-model theorem is not assumed: it follows from `hext` at `0`
+(`CapToModel.of_hasApexCoatomExtensions`). -/
 theorem expansionDomain_core_eq_empty : (⋂ ξ < ω₁, expansionDomain ξ) = ∅ :=
+  have hcap : CapToModel.{0} := CapToModel.of_hasApexCoatomExtensions
+    (blockStage_zero.{0} ▸ hext 0 (omega0_pos.trans omega0_lt_omega_one))
   ExpansionDomains.core_eq_empty_of_classTruth (D := modelExpansionDomains hcap hnext)
     (modelExpansionDomains_hasRankAgreement hcap hnext hrec).hasLogicalAgreement
     (hasNonemptyLosses_of_hasApexCoatomExtensions hcap hnext hext)
+
+include hcap hnext hrec hext
 
 /-- **The expansion domains of the density sentence are the tails of the last stage**: a class
 lies in `expansionDomain β` exactly when `β` is at most its last stage, conditional on `hcap`,
