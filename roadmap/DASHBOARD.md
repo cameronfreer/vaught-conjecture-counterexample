@@ -81,7 +81,9 @@ Notes on the rows, each with its marker:
   construction as data; (R2), (R3), (R4).
 - *Layer 4.*  Compiled: normalization, conditional on finite-extension receiving and forcing donors
   (`Realization.label_eq_stableLabel`); the structural candidate (`Realization.stableCandidate`),
-  stably lawful for every model (`Realization.IsModel.isStablyLawful`); output 3 and the
+  stably lawful for every model at a block stage (`Realization.IsModel.isStablyLawful`), and more
+  generally for every exactly consistent covering realization with legal types at a block stage
+  (`Realization.isStablyLawful_of_hasLegalTypes`); output 3 and the
   continuation criterion, conditional on (R4) and the coface instances at the next block
   (`ContinuationCriterion.of_stableCappedReceiving`); cover-hollowness and stable-label fixedness
   (`Realization.isCoverHollow_iff_forall_stableLabel_eq_top`); the exact-age comparison
@@ -150,8 +152,7 @@ list.
 ## The research front
 
 Each item is open or still to be proved; none is assumed by a theorem of the library except as a
-named hypothesis.  A result marked *under review, not yet merged* is not on `main` and is not
-counted as compiled.
+named hypothesis.
 
 1. **Layer 3 at `m ≥ 3`** (open): the completion below the full grade for every seed at `m ≥ 3`.
    The existential two-face lift `2FL∃(j)` is the step of the tower, stated exactly
@@ -187,9 +188,11 @@ counted as compiled.
    prospective.  Open: whether `seedHG` has a completion below the full grade, and the completion
    at `m ≥ 3` for every seed.
 2. **Stable availability at twins** (compiled): from legal types
-   (`Realization.availability_stableSection_of_hasLegalTypes`), so every model is stably lawful
-   (`Realization.IsModel.isStablyLawful`).  Refuted hypotheses on single types, negative special
-   cases:
+   (`Realization.availability_stableSection_of_hasLegalTypes`), so every model at a block stage is
+   stably lawful (`Realization.IsModel.isStablyLawful`), and so is every exactly consistent
+   covering realization with legal types at a block stage
+   (`Realization.isStablyLawful_of_hasLegalTypes`).  Refuted hypotheses on single types, negative
+   special cases:
    `Continuation.CandidateCounterexamples.not_synchronizingCofaces_blockStage` (with two variants)
    and `Continuation.CandidateCounterexamples.not_twinOrdering_blockStage`.
 3. **4b-ii** (open): the gated construction as data, that is,
