@@ -1184,7 +1184,12 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
    bountifulness, and completeness is not stated there, and the offset bound of the same lemma is
    not correct as stated (`README.md`, Layer 1) and is not used.  The recoverability clause, that
    `⟨B,j⟩`, `P↾B`, `D↾⟨B,j⟩`, and `E↾⟨B,j⟩` are recovered from a cell, has no field: it holds by
-   representation (`README.md`, layer 3, vocabulary) and is not compared.  Bountifulness is
+   representation (`README.md`, layer 3, vocabulary) and is not compared.  The codes of the cells
+   are forgotten, as a second part of the correction: the coding after [Kni26, Definition 2.6.2]
+   gives each `Ξ ∈ D_{B,j}` a natural-number code `⌜⌜Ξ⌝⌝`, one-to-one, which the map `Df` of
+   [Kni26, Proposition 2.6.3, clause 5] keeps; here the cells are the positions `Fin card`, and
+   `Scheme` has no code accessor, so printed domains that differ only in their codes correspond to
+   the same scheme, and the face maps of row 8 are compared on positions.  Bountifulness is
    `IsBountiful`, the printed definition at every stage that is zero or a limit; at `ω₁` only the
    implication from `IsBountiful` is proved (row 6, S).  This difference is neither a recorded
    correction nor proved equivalent, so it is recorded as S in the status of this row and of the
@@ -1219,10 +1224,16 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
    row 7; through row 6 the types are identified over legal schemes only, so the status is
    `P; domains: S (row 6)`.  Departures, recorded with the module: the points `Fin n`; the stage `α`
    unrestricted (harmless: the identifications hold for every `α ≤ ω₁`, limit or not); `⇒` at a
-   stage `θ`, printed at `ω₁`; the scheme of a type carried as data; and the cells enumerated in
-   increasing code order, the cells of a scheme being the positions `Fin card` in the role of the
-   codes, so that `Df` keeps codes exactly when `φ` is strictly monotone (`StrictMono φ`; the
-   recoverability clause, not a further clause).  The stage types have fixed coded rows (row 9); in
+   stage `θ`, printed at `ω₁`; the scheme of a type carried as data; and the codes of the cells
+   forgotten, part of the correction of row 7.  The printed `Df` keeps the code `⌜⌜Ξ⌝⌝` of each
+   cell; neither `Scheme` nor `StageType.PrintedFaceMap` has a code accessor, so the preservation
+   of codes is not compared.  The strict monotonicity of the positional map `φ` (`StrictMono φ`) is
+   the convention that numbers the cells of the face in the increasing order of the positions of the
+   corresponding cells of `t`; it preserves the order of the enumeration, not codes (a one-cell
+   domain with code `5` and one with code `7` both have the identity `Fin 1 → Fin 1` as positional
+   map).  The face maps are identified with the printed ones under this renumbering of the cells of
+   `D'` by positions, and the status above holds on that convention.  The stage types have fixed
+   coded rows (row 9); in
    [Kni26, Definition 3.1.1] too the semantics is the one associated with the domain.
 9. `StageType` (a `Scheme` with fixed coded rows and a separate `label`); the correction is
    recorded in `README.md`, layer 2, "The templates of [AFK26] and the stage types here".  The
@@ -1255,7 +1266,9 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     initial segments (`Realization.isCovering_iff_exists_castAdd`); and the labelling of clause
     4(a)ii unrestricted in `IsModel` (`StageType.nonempty_cofaces_inter_bottomPatternFamily_iff`).
     Basis of P: the clauses use the domains of row 7 (C, with bountifulness at `ω₁` S, row 6), the
-    types and face maps of row 8 (P), and respect (row 4, P); through row 6 the identification is
+    types and face maps of row 8 (P, with the codes of the cells forgotten and the cells of a face
+    numbered by positions, the convention of row 7, so clause 2 is compared on that convention),
+    and respect (row 4, P); through row 6 the identification is
     over legal schemes, both for `S^α n` in clause 1 and for the domains `D` of clause 4(a), so the
     status is `P; domains: S (row 6)`; the four families are written out in the fields, so row 12,
     which compares two declarations of this repository, is not a prerequisite.

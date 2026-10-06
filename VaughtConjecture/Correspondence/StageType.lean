@@ -51,7 +51,8 @@ from the cells of `u` to those of `t`, the inverse of `Df` (`StageType.PrintedFa
 | `(S^α f)(p)((Df)(Ξ)) = p(Ξ)` | `label_eq` | `StageType.comap_label` |
 
 **Identification.**  `restrictFace f t = some u` exactly when `u` is a printed face map of `t`
-along `f` for a strictly monotone `φ` (`StageType.restrictFace_eq_some_iff_exists_printedFaceMap`),
+along `f` for a strictly monotone `φ`, with the codes of the cells forgotten (departure 6;
+`StageType.restrictFace_eq_some_iff_exists_printedFaceMap`),
 and `restrictFace f t = none` exactly when `ran f ∉ P` (`StageType.restrictFace_eq_none_iff`).
 The laws required of the face maps by [Kni26, Definition 3.1.5]: `S^α ι_{A,A}` is the identity
 (`StageType.restrictFace_refl`); `S^α (f ∘ g) ⊇ (S^α g) ∘ (S^α f)`
@@ -75,11 +76,17 @@ canonical isomorphisms (`StageType.restrictFace_equiv`, `StageType.reindex_reind
 5. *The scheme of a type is data.*  A printed type `p` determines its domain `dom p`, and the
    semantics through the coding; here a stage type carries its scheme as a field, as for the
    recoverability clause of row 7.
-6. *The numbering of the cells of a face.*  The printed `Df` keeps the code of each cell.  The
-   cells of a scheme are the positions `Fin card`, which play the role of the codes: each domain
-   is enumerated in increasing order of its codes.  Under this convention, `Df` keeps codes
-   exactly when `φ` is strictly monotone (`StrictMono φ`), and with it the printed face map is
-   `restrictFace`.  This is the recoverability clause, not a further clause.
+6. *The numbering of the cells of a face* (row 7, corrected).  The printed `Df` keeps the code
+   `⌜⌜Ξ⌝⌝` of each cell.  The cells here are the positions `Fin card` and carry no code: neither
+   `Scheme` nor `PrintedFaceMap` has a code accessor, and the codes are forgotten as part of the
+   correction of row 7 (departure 1 of `VaughtConjecture.Correspondence.Legal`).  So the
+   preservation of codes by `Df` has no counterpart and is not compared; what is compared is the
+   positional map `φ`.  Its strict monotonicity (`StrictMono φ`) is the convention that numbers
+   the cells of the face in the increasing order of the positions of the corresponding cells of
+   `t`.  It preserves the order of the enumeration, not codes: a one-cell domain whose cell has
+   code `5` and one whose cell has code `7` both have the identity `Fin 1 → Fin 1` as positional
+   map.  Under this convention, which renumbers the cells of the printed `D'` by positions, the
+   printed face map is `restrictFace`.
 
 The inclusion case of the face maps, `(S^α ι_{B,A})(p) = p↾D⟨B,|B|⟩`, is the second clause of
 [Kni26, Definition 3.1.2]; its first clause, stage reduction, is row 10.
@@ -216,9 +223,11 @@ structure PrintedFaceMap (f : Fin m ↪ Fin n) (t : StageType.{u} α n) (u : Sta
   /-- [Kni26, Definition 3.1.5]: `(S^α f)(p)((Df)(Ξ)) = p(Ξ)`. -/
   label_eq : ∀ i, u.label i = t.label (φ i)
 
-/-- **The face maps are the printed face maps** [Kni26, Definition 3.1.5]: the face map of `t`
-along `f` is `u` exactly when `u` is a printed face map of `t` along `f`, its cells numbered in
-the increasing order of the corresponding cells of `t`. -/
+/-- **The face maps are the printed face maps** [Kni26, Definition 3.1.5], with the codes of the
+cells forgotten (row 7): the face map of `t` along `f` is `u` exactly when `u` is a printed face
+map of `t` along `f`, its cells numbered in the increasing order of the positions of the
+corresponding cells of `t`.  Strict monotonicity of `φ` fixes this numbering; it does not compare
+codes, which the cells here do not carry. -/
 theorem restrictFace_eq_some_iff_exists_printedFaceMap (t : StageType.{u} α n)
     (f : Fin m ↪ Fin n) {u : StageType.{u} α m} :
     restrictFace f t = some u ↔ ∃ φ, StrictMono φ ∧ PrintedFaceMap f t u φ := by

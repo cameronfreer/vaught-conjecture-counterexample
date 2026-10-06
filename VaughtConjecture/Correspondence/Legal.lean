@@ -16,7 +16,8 @@ Roadmap, "Manuscript concordance", row 7.  The printed definition of a domain wi
 compared with the legality of a scheme (`Scheme.IsLegal`).  The comparison shows that legality is
 a corrected form of the printed definition: it adds the coding clause `Scheme.IsCoded`, a bound on
 the range of the rows, which the printed clauses compared here (the fields of `PrintedDomain`) do
-not imply, and it requires bountifulness at every stage.  The status of the row is C, with
+not imply, and it requires bountifulness at every stage; its cells are positions, and the codes
+of the printed cells are forgotten (departure 1).  The status of the row is C, with
 bountifulness at `ω₁` still to be proved (row 6, S).
 
 ## The setting
@@ -51,6 +52,7 @@ In the third column, `IsWellFormed`, `IsComplete`, and `Rows` are in the namespa
 | `E` is bountiful (2.5.14) | `bountiful` | `Rows.IsBountiful` (row 6) |
 | `D_{B,j} ≠ ∅` for `⟨B,j⟩ ∈ P̂` (2.5.15) | `complete` | `IsComplete` |
 | `⟨B,j⟩`, `P↾B`, `D↾⟨B,j⟩`, `E↾⟨B,j⟩` recoverable from `Ξ` | none | departure 1 |
+| the code `⌜⌜Ξ⌝⌝ ∈ D̃_{B,j}` of `Ξ` (after 2.6.2) | none | departure 1 |
 
 **Identification.**  At a stage `θ` that is zero or a limit, the printed definition is
 well-formedness, consistency, the printed bountifulness at `θ`, and completeness, for rows with
@@ -64,11 +66,18 @@ stage that is zero or a limit and carries the values of its rows
 **Departures.**  The row is a corrected definition (C), for the reasons 1 and 2; the comparison
 at a single stage is also incomplete, by 3, so its status is C with bountifulness at `ω₁` still to
 be proved (row 6, S).
-1. *The recoverability clause* (no field).  The printed elements of `D` are sets chosen so that
-   `⟨B,j⟩`, `P↾B`, `D↾⟨B,j⟩`, and `E↾⟨B,j⟩` can be read off each `Ξ ∈ D_{B,j}` by a standard
-   coding.  Here a cell is a position in a scheme whose graded index, faces, cells below, and rows
-   are fields of the scheme, so these are recovered by projection; the clause, a condition on the
-   objects chosen as cells, has no counterpart and is not compared.
+1. *The recoverability clause and the codes of the cells* (no field).  The printed elements of `D`
+   are sets chosen so that `⟨B,j⟩`, `P↾B`, `D↾⟨B,j⟩`, and `E↾⟨B,j⟩` can be read off each
+   `Ξ ∈ D_{B,j}` by a standard coding.  Here a cell is a position in a scheme whose graded index,
+   faces, cells below, and rows are fields of the scheme, so these are recovered by projection; the
+   clause, a condition on the objects chosen as cells, has no counterpart and is not compared.  The
+   coding described after [Kni26, Definition 2.6.2] also gives each `Ξ ∈ D_{B,j}` a code
+   `⌜⌜Ξ⌝⌝`, a natural number in a finite set `D̃_{B,j}`, one-to-one, and the map `Df` of
+   [Kni26, Proposition 2.6.3, clause 5] keeps it.  The cells here are the positions `Fin card` and
+   carry no code (`Scheme` has no code accessor): a printed domain corresponds to a scheme through
+   a numbering of its cells by positions, and the codes are forgotten, so printed domains that
+   differ only in their codes correspond to the same scheme.  Forgetting the codes is part of the
+   correction of this row; the face maps (row 8) are compared under it.
 2. *The range of the rows* (the correction).  `Scheme.IsLegal` requires the rows to be coded, with
    every value bottom or below `ω ^ 2` (`Scheme.IsCoded`).  The printed definition bounds no value.
    The coding described after [Kni26, Definition 2.6.2] stores each `E(Σ)` in `{-∞} ∪ ω ^ 2` by the

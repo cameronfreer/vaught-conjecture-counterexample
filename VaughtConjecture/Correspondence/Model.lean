@@ -19,7 +19,9 @@ The printed model is a partial function `M` from the finite tuples on a nonempty
 type spaces `S^α n`.  Here it is a family `F n : (Fin n → M) → Option (StageType α n)`, the
 arity built into the type; a type in `S^α n` is a legal stage type (row 8,
 `StageType.isLegal_iff_printedType`), the map `S^α f` is `StageType.restrictFace f` (row 8,
-`StageType.restrictFace_eq_some_iff_exists_printedFaceMap`), the inclusion `ι_{n,n+1}` is
+`StageType.restrictFace_eq_some_iff_exists_printedFaceMap`, with the codes of the cells forgotten
+and the cells of a face numbered by the positions of the corresponding cells, as in row 7), the
+inclusion `ι_{n,n+1}` is
 `Fin.castSuccEmb`, the concatenation `x⌢y` is `Fin.snoc x y`, and `a⌢x` is `Fin.append a x`.  A
 realization evaluates only the injective tuples; read on all tuples it is
 `Realization.tupleEval`, undefined at a tuple with a repeated entry, and every such partial
