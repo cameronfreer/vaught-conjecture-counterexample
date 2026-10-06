@@ -17,8 +17,9 @@ import VaughtConjecture.MainTheorem.TerminalClasses
   under (R1) only.
 * **A chosen injection.**  Choosing a terminal property for each terminal class gives an
   injection into the countable index; the choice is not canonical.
-* **Transport.**  A model expansion transported along an isomorphism of base structures is
-  terminal when the original is.
+* **Transport.**  Terminality and the terminal properties are read at any code of a class, and
+  a model expansion transported along an isomorphism of base structures is terminal when the
+  original is, and has its terminal properties.
 -/
 
 namespace VaughtConjecture
@@ -41,8 +42,10 @@ model expansion to `λ_0 = ω`, so a terminal one is not the reduction of an exp
 Unconditional. -/
 example : terminalClasses 0 = expansionDomain 0 \ expansionDomain (0 + 1) := by
   refine Set.Subset.antisymm ?_ (loss_subset_terminalClasses 0)
-  rintro _ ⟨c, e, rfl, ht⟩
+  intro q hq
+  obtain ⟨c, rfl⟩ := Quotient.mk_surjective q
   let := c.1.toStructure
+  obtain ⟨e, ht⟩ := (mem_terminalClasses_iff c).mp hq
   have : Subsingleton (ModelExpansion ℕ (blockStage (0 : Ordinal.{0}))) := by
     rw [blockStage_zero]
     exact ModelExpansion.instSubsingletonOmega
@@ -92,6 +95,29 @@ example (hrec : FiniteCutReceiving.{0}) (hcont : ContinuationCriterion.{0})
   exact subsingleton_classes_of_property hrec hres hhol hβ (f q') (hqq' ▸ hf q) (hf q')
 
 /-! ### Transport -/
+
+/-- **Terminality is read at any code**: two codes of one class have structures with a model
+expansion to `λ_β` terminal at `β` together (`mem_terminalClasses_iff`). -/
+example {β : Ordinal.{0}} (c c' : ModelsOf densitySentence.{0})
+    (h : (Quotient.mk _ c : DensityClass) = Quotient.mk _ c') :
+    (∃ e : @ModelExpansion ℕ c.1.toStructure (blockStage β), e.1.IsTerminalAt β) ↔
+      ∃ e : @ModelExpansion ℕ c'.1.toStructure (blockStage β), e.1.IsTerminalAt β := by
+  rw [← mem_terminalClasses_iff, ← mem_terminalClasses_iff, h]
+
+/-- **A terminal property is read at any code**: two codes of one class have structures with a
+model expansion to `λ_β` with the terminal property `P` together (`mem_propertyClasses_iff`). -/
+example {β : Ordinal.{0}} (P : TerminalProperty β) (c c' : ModelsOf densitySentence.{0})
+    (h : (Quotient.mk _ c : DensityClass) = Quotient.mk _ c') :
+    (∃ e : @ModelExpansion ℕ c.1.toStructure (blockStage β), e.1.HasTerminalProperty P) ↔
+      ∃ e : @ModelExpansion ℕ c'.1.toStructure (blockStage β), e.1.HasTerminalProperty P := by
+  rw [← mem_propertyClasses_iff, ← mem_propertyClasses_iff, h]
+
+/-- A model expansion transported along an isomorphism of base structures has the terminal
+properties of the original (`Realization.hasTerminalProperty_map_iff`). -/
+example {M : Type} {N : Type 1} [baseLanguage.{0}.Structure M] [baseLanguage.{0}.Structure N]
+    {ξ : Ordinal.{0}} (f : ModelExpansion M (blockStage ξ)) (i : M ≃[baseLanguage.{0}] N)
+    (P : TerminalProperty ξ) : (f.map i).1.HasTerminalProperty P ↔ f.1.HasTerminalProperty P := by
+  rw [ModelExpansion.map_val, hasTerminalProperty_map_iff]
 
 /-- A model expansion transported along an isomorphism of base structures is terminal when the
 original is (`Realization.IsTerminalAt.map`); the carriers may lie in different universes. -/

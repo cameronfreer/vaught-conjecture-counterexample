@@ -241,6 +241,12 @@ top-free. -/
 theorem topGradeSup_eq_zero_iff : R.topGradeSup = 0 ↔ ∀ x : R.Occurrence, x.type.IsTopFree := by
   simp only [topGradeSup, ENat.iSup_eq_zero, Nat.cast_eq_zero, StageType.topGrade_eq_zero_iff]
 
+/-- **The top-grade supremum is invariant under transport**: the occurrences of a transport are
+the transports of the occurrences, with the same types. -/
+@[simp] theorem topGradeSup_map {N : Type*} (e : M ≃ N) : (R.map e).topGradeSup = R.topGradeSup :=
+  le_antisymm (iSup_le fun y ↦ (y.comap e).topGrade_le_topGradeSup)
+    (iSup_le fun x ↦ (x.map e).topGrade_le_topGradeSup)
+
 end Realization
 
 /-! ### Admissible top supports and rigid cores -/
@@ -372,6 +378,16 @@ theorem IsModel.isGloballyRigidCore_empty_iff (hR : R.IsModel) (hα : Order.IsSu
   refine (StageType.isRigidCoreIn_empty_iff_isTopFree hα (hR.isLegal _ _ x.eval_tuple)
     Function.Embedding.ofIsEmpty).mp ?_
   exact h x.type x.tuple _ (covers_of_eval _ x.eval_tuple) (funext fun i ↦ i.elim0)
+
+/-- **Globally rigid cores in a transport** are the transports of globally rigid cores: the covers
+of a transport are the transports of the covers (`covers_map_iff`). -/
+theorem isGloballyRigidCore_map_iff {N : Type*} (e : M ≃ N) {c : Fin k → N} :
+    (R.map e).IsGloballyRigidCore c ↔ R.IsGloballyRigidCore (e.symm ∘ c) := by
+  refine ⟨fun h m t x f hx hxf ↦ h t (e ∘ x) f ((covers_map_iff e).mpr ?_) ?_,
+    fun h m t x f hx hxf ↦ h t (e.symm ∘ x) f ((covers_map_iff e).mp hx) ?_⟩
+  · rwa [← Function.comp_assoc, Equiv.symm_comp_self, Function.id_comp]
+  · rw [Function.comp_assoc, hxf, ← Function.comp_assoc, Equiv.self_comp_symm, Function.id_comp]
+  · rw [Function.comp_assoc, hxf]
 
 end Realization
 

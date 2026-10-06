@@ -29,6 +29,13 @@ is chosen.  A maximal presentation (`roadmap/README.md`, "Manuscript corresponde
 item 5) is terminal, so the classes of codes with a maximal presentation at `β`, namely the loss
 at `β`, are among the classes terminal at `β` (`loss_subset_terminalClasses`).
 
+**Membership up to isomorphism** (`mem_terminalClasses_iff`, `mem_propertyClasses_iff`).  The
+membership of a class is read at any code of it: a class is terminal at `β`, or has the terminal
+property `P`, exactly when the structure of a given code has a model expansion to `λ_β` that is
+terminal at `β`, or has the property `P`.  Model expansions transport along isomorphisms of base
+structures (`ModelExpansion.map`), and terminality (`Realization.IsTerminalAt.map`) and the
+terminal properties (`Realization.HasTerminalProperty.map`) along bijections of carriers.
+
 **The count** (`countable_isoClasses_terminalAt`).  For `β < ω₁` the classes terminal at `β`
 form a countable set.  The proof has three steps:
 
@@ -97,6 +104,30 @@ def propertyClasses (β : Ordinal.{0}) (P : TerminalProperty β) : Set DensityCl
     (e : @ModelExpansion ℕ c.1.toStructure (blockStage β)),
       Quotient.mk _ c = q ∧ e.1.HasTerminalProperty P}
 
+/-- **Terminal classes, membership up to isomorphism**: a class is terminal at `β` exactly when the
+structure of a given code of it has a model expansion to `λ_β` that is terminal at `β`.  A
+terminal model expansion of another code of the class transports along an isomorphism of the two
+structures (`ModelExpansion.map`, `Realization.IsTerminalAt.map`). -/
+theorem mem_terminalClasses_iff {β : Ordinal.{0}} (c : ModelsOf densitySentence.{0}) :
+    Quotient.mk _ c ∈ terminalClasses β ↔
+      ∃ e : @ModelExpansion ℕ c.1.toStructure (blockStage β), e.1.IsTerminalAt β := by
+  refine ⟨fun ⟨c', e, hc', ht⟩ ↦ ?_, fun ⟨e, ht⟩ ↦ ⟨c, e, rfl, ht⟩⟩
+  obtain ⟨i⟩ := (isoSetoid_r_iff (c₁ := c') (c₂ := c)).mp (Quotient.exact hc')
+  exact ⟨@ModelExpansion.map ℕ c'.1.toStructure _ ℕ c.1.toStructure e i, ht.map _⟩
+
+/-- **Classes with a terminal property, membership up to isomorphism**: a class has the terminal
+property `P` at `β` exactly when the structure of a given code of it has a model expansion to
+`λ_β` with the property `P`.  A model expansion of another code of the class with the property `P`
+transports along an isomorphism of the two structures (`ModelExpansion.map`,
+`Realization.HasTerminalProperty.map`). -/
+theorem mem_propertyClasses_iff {β : Ordinal.{0}} {P : TerminalProperty β}
+    (c : ModelsOf densitySentence.{0}) :
+    Quotient.mk _ c ∈ propertyClasses β P ↔
+      ∃ e : @ModelExpansion ℕ c.1.toStructure (blockStage β), e.1.HasTerminalProperty P := by
+  refine ⟨fun ⟨c', e, hc', hP⟩ ↦ ?_, fun ⟨e, hP⟩ ↦ ⟨c, e, rfl, hP⟩⟩
+  obtain ⟨i⟩ := (isoSetoid_r_iff (c₁ := c') (c₂ := c)).mp (Quotient.exact hc')
+  exact ⟨@ModelExpansion.map ℕ c'.1.toStructure _ ℕ c.1.toStructure e i, hP.map _⟩
+
 /-- **Losses are terminal classes**: the successor loss of the expansion domains at `ξ` is
 contained in the classes terminal at `ξ`.  Unconditional. -/
 theorem loss_subset_terminalClasses (ξ : Ordinal.{0}) :
@@ -105,7 +136,7 @@ theorem loss_subset_terminalClasses (ξ : Ordinal.{0}) :
   obtain ⟨c, rfl⟩ := Quotient.mk_surjective q
   let := c.1.toStructure
   obtain ⟨e⟩ := (Expansion.mem_expansionDomain_iff c).mp hq.1
-  exact ⟨c, e, rfl, e.isTerminalAt_of_mem_loss hq⟩
+  exact (mem_terminalClasses_iff c).mpr ⟨e, e.isTerminalAt_of_mem_loss hq⟩
 
 /-- **The cover of the terminal classes**: for `β < ω₁`, every class terminal at `β` has a
 terminal property, conditional on the continuation criterion (`hcont`), still to be proved. -/
