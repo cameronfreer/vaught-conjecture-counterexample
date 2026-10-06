@@ -36,7 +36,8 @@ formal top, while a cap at a proper cutoff forgets it.
 The cast of a natural number `n` to a label is the label of the ordinal `n` (`natCast_label`);
 these casts are injective and order-preserving, lie below `ω` (so below `ω ^ 2`,
 `natCast_label_lt_omega0_sq`) and above `⊥`, and are the only labels other than `⊥` below `ω`
-(`exists_natCast_of_lt_omega`).
+(`exists_natCast_of_lt_omega`).  Every ordinal is `ω * b + n` with `n` a natural number
+(`exists_eq_omega0_mul_add_natCast`).
 
 If there are countably many ordinals below `α`, there are countably many labels at stage `α`
 (`countable_setOf_atStage`); in particular the labels below `ω ^ 2` form a countable set
@@ -187,6 +188,14 @@ theorem reduce_bot : reduce α (⊥ : Label.{u}) = ⊥ := reduce_of_lt (WithBot.
 /-- Stage reduction fixes the formal top. -/
 theorem reduce_top : reduce α (⊤ : Label.{u}) = ⊤ := reduce_of_le le_top
 
+/-- Stage reduction of an ordinal label: the ordinal is kept when it is below the stage, and
+becomes the formal top otherwise. -/
+theorem reduce_coe_eq_ite (β o : Ordinal.{u}) :
+    reduce β (o : Label.{u}) = if o < β then (o : Label.{u}) else ⊤ := by
+  split_ifs with h
+  · exact reduce_of_lt (by exact_mod_cast h)
+  · exact reduce_of_le (by exact_mod_cast not_lt.mp h)
+
 /-- Stage reduction never lowers a label. -/
 theorem le_reduce (α : Ordinal.{u}) (x : Label.{u}) : x ≤ reduce α x := by
   unfold reduce; split_ifs <;> simp
@@ -242,10 +251,20 @@ theorem reduce_reduce_of_le (h : β ≤ α) (x : Label.{u}) :
       (not_lt.mp hx)
     rw [reduce_of_le (not_lt.mp hx), reduce_top, reduce_of_le hβ]
 
+/-- Reducing to a stage `α` a label already reduced to a lower stage `β` does not change it. -/
+theorem reduce_reduce_of_ge (h : β ≤ α) (x : Label.{u}) :
+    reduce α (reduce β x) = reduce β x :=
+  ((atStage_reduce β x).mono h).reduce_eq
+
 /-- Stage reduction is idempotent. -/
 @[simp] theorem reduce_reduce (α : Ordinal.{u}) (x : Label.{u}) :
     reduce α (reduce α x) = reduce α x :=
   reduce_reduce_of_le le_rfl x
+
+/-- `β ≤ β + n` as labels. -/
+theorem coe_le_coe_add (β : Ordinal.{u}) (n : ℕ) :
+    (β : Label.{u}) ≤ ((β + n : Ordinal.{u}) : Label.{u}) :=
+  WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr le_self_add)
 
 /-- A label lies below the successor stage `o + 1` exactly when it is at most `o`. -/
 theorem lt_coe_add_one_iff : x < ((o + 1 : Ordinal.{u}) : Label.{u}) ↔ x ≤ o := by
@@ -316,7 +335,45 @@ theorem exists_natCast_of_lt_omega {x : Label.{u}} (hx : x ≠ ⊥)
     obtain ⟨n, rfl⟩ := lt_omega0.mp hxω
     exact ⟨n, (natCast_label n).symm⟩
 
+/-- Every ordinal is `ω * b + n` for an ordinal `b` and a natural number `n`. -/
+theorem exists_eq_omega0_mul_add_natCast (o : Ordinal.{u}) :
+    ∃ (b : Ordinal.{u}) (n : ℕ), o = ω * b + n := by
+  obtain ⟨n, hn⟩ := lt_omega0.mp (mod_lt o omega0_ne_zero)
+  exact ⟨o / ω, n, by rw [← hn, div_add_mod]⟩
+
 end NatCast
+
+/-! ### Labels of the form `ω * q + n` -/
+
+section Block
+
+open Ordinal
+
+/-- A label `ω * q + n` lies below `ω * m` exactly when `q < m`. -/
+theorem coe_block_lt_iff {q m : Ordinal.{u}} {n : ℕ} :
+    ((ω * q + n : Ordinal.{u}) : Label.{u}) < ((ω * m : Ordinal.{u}) : Label.{u}) ↔ q < m := by
+  rw [WithBot.coe_lt_coe, WithTop.coe_lt_coe]
+  constructor
+  · intro h
+    by_contra hmq
+    rw [not_lt] at hmq
+    exact absurd h (not_lt.mpr ((show ω * m ≤ ω * q by gcongr).trans le_self_add))
+  · intro h
+    calc ω * q + n < ω * q + ω := add_lt_add_right (natCast_lt_omega0 n) _
+      _ = ω * Order.succ q := (mul_succ _ _).symm
+      _ ≤ ω * m := by gcongr; exact Order.succ_le_of_lt h
+
+/-- Every label other than `⊥` and `⊤` has the form `ω * q + n`. -/
+theorem exists_block {x : Label.{u}} (hb : x ≠ ⊥) (ht : x ≠ ⊤) :
+    ∃ (q : Ordinal.{u}) (n : ℕ), x = ((ω * q + n : Ordinal.{u}) : Label.{u}) := by
+  induction x using recBotCoeTop with
+  | bot => exact absurd rfl hb
+  | top => exact absurd rfl ht
+  | coe o =>
+    obtain ⟨n, hn⟩ := lt_omega0.mp (mod_lt o omega0_ne_zero)
+    exact ⟨o / ω, n, by rw [← hn, div_add_mod]⟩
+
+end Block
 
 /-! ### Countability -/
 
