@@ -70,6 +70,14 @@ asks for one carrying context, not that every acquired context carries.
     on a label of full grade), prescribes its row.  Whether a model must have, over every root, a
     private context whose cap reads anchors in its own block (or carries the bottoms otherwise),
     or whether some model has none for some donor, is not decided here.
+  - **Where it stands** (`VaughtConjecture.Realization.TightCap`).  Generalized saturation and
+    the bottom pattern bound no label of full grade from below (each nonempty instance has a
+    member labelled `⊥` at every cell of full grade), and a member of a dominance family need not
+    carry; a model that realizes tight caps (`Realization.HasTightCaps`, not a clause of a model)
+    acquires carrying contexts.  One grade below full, availability gives a cell with a row
+    prescribed by saturation and a label above the floor; under the prospective hypothesis on
+    schemes `StageType.HasTightSaturations`, every model has carrying contexts with a cap of that
+    grade (`Realization.IsModel.hasCarryingSubfullContext`), a redesign of the private context.
 * Not stated (prospective, the next step only once acquisition is decided): the coupled gated
   pinned extension property restricted to carrying private contexts, and (R1) from it with
   acquisition.  Nothing here is equivalent to (R1), and (R1) is neither proved nor refuted.
