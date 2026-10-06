@@ -82,8 +82,8 @@ of `VaughtConjecture.Extension.OrderedLayerStep` (`Seed.orderedLayerStep_of_T4`,
   reads `⊥` everywhere (`OrderedLayer.Seed4.layerRows4`);
 * `seed5` (`T5` with itself): the row at `(univ, 3)` reads every live kind at `ω + 3`
   (`OrderedLayer.Seed5.rows5`).  The row at `(univ, 3)` of this module, which reads `A_C` at `1`,
-  is not consistent there: `T5` on `C` couples `G ≤ A_C`, and that row as a labelling has
-  `A_C = 1 < ω + 3 = G`.  The lift keeps `G ≤ A_C`.
+  is not consistent there (argued, not formalized): `T5` on `C` couples `G ≤ A_C`, and that row as
+  a labelling has `A_C = 1 < ω + 3 = G`.  The lift keeps `G ≤ A_C`.
 
 **The ordered-layer step.**  The thin completion is the instance for `seedL` of the ordered-layer
 step (`Seed.orderedLayerStep_thinRows`): one new cell at each graded face of full scope, with rows

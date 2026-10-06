@@ -84,6 +84,7 @@ theorem isLawfulBelow_crossType_iff {X : Finset (Fin 4) × ℕ}
 
 /-- The face `{0, 1, 2}` is a face of the types. -/
 theorem face_mem_crossType : univ.map (Coatom.face 3) ∈ (crossType b α).toCellScheme.faces := by
+  -- The faces of the type are those of the interval plan on four points.
   change univ.map (Coatom.face 3) ∈ Geometry.intervalPlan univ
   decide +kernel
 

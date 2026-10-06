@@ -159,11 +159,13 @@ theorem OrderedLayerStep.thinRow_lt_of_TL_T5 (hIL : I.left = TL α)
       (hd : I.amalgam.toCellScheme.gradedIndex d = (B, 1)) :
       h.completion.embed d ∈ h.completion.scheme.toCellScheme.below
         (h.completion.scheme.toCellScheme.gradedIndex (newCell I ρ k)) := by
+    -- The completion's scheme is the layer scheme, and its embedding is `oldCell`.
     change oldCell I ρ d ∈ (layerScheme I ρ).toCellScheme.below
       ((layerScheme I ρ).toCellScheme.gradedIndex (newCell I ρ k))
     rw [gradedIndex_newCell hk1 (by omega)]
     exact oldCell_mem_below (hd ▸ ⟨subset_univ _, hk1⟩)
   have := hsep (hmem hd₁) (hmem hd₂)
+  -- The separation, read in the rows of the layer scheme.
   change (layerScheme I ρ).rows.row (newCell I ρ k) ⟨oldCell I ρ d₁, hmem hd₁⟩ <
     (layerScheme I ρ).rows.row (newCell I ρ k) ⟨oldCell I ρ d₂, hmem hd₂⟩ at this
   rwa [row_newCell hk1 (by omega), row_newCell hk1 (by omega), gradedIndex_oldCell,

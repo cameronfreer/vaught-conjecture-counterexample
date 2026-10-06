@@ -335,7 +335,8 @@ theorem isLawful_lab (hA : IsSelfVisible 1 A) (hH : IsSelfVisible 2 H) (hG : IsS
   orderly d := isSelfVisible_lab hA hH hG d
   locality s := by
     rcases kind_cases s with hs | hs | rfl | rfl | rfl | rfl
-    · rw [show lab A H G s = ⊥ from lab_of_kind_zero hs]
+    · -- A dead cell: its label is `⊥`, and `⊥` transforms to anything.
+      rw [show lab A H G s = ⊥ from lab_of_kind_zero hs]
       simp only [min_bot_right]
       exact TransformsTo.bot _ _
     · -- A cell of kind `A`: the top shifter, the suppressor `A` up to the grade `1`.
@@ -551,6 +552,7 @@ theorem isLawfulBelow_iff {Y : Finset (Fin 4) × ℕ} {x : Fin 19 → Label.{u}}
               have e3 := heq ⟨3, CaseSplitCounterexample.le_eighteen 3⟩
               have e13 := heq ⟨13, CaseSplitCounterexample.le_eighteen 13⟩
               have e18 := heq ⟨18, CaseSplitCounterexample.le_eighteen 18⟩
+              -- The transformation at the cells `3`, `13`, `18`, with their grades `1`, `2`, `3`.
               change min (x 3) (x 18) = min (σ (rowVal true 18 3)) (g 1) at e3
               change min (x 13) (x 18) = min (σ (rowVal true 18 13)) (g 2) at e13
               change min (x 18) (x 18) = min (σ (rowVal true 18 18)) (g 3) at e18
@@ -704,6 +706,7 @@ parameters of `liftParamsH` (for `TH`) or `liftParamsG` (for `TG`). -/
 theorem cappedLift_all {X Y : Finset (Fin 4) × ℕ} (h : X ≤ Y) : (rows b).CappedLift.{u} h := by
   classical
   refine (Rows.cappedLift_iff_forall_exists h).mpr fun c hc p q hp hq hpq ↦ ?_
+  -- Read the prescription `p` and the ambient `q` as `lab` of their parameters.
   obtain ⟨Ap, Hp, Gp, hAp, hHp, hGp, hcp, hpx⟩ :=
     isLawfulBelow_iff.mp (Rows.isLawfulBelow_extendBot.mpr hp)
   obtain ⟨Aq, Hq, Gq, hAq, hHq, hGq, hcq, hqx⟩ :=
@@ -716,6 +719,7 @@ theorem cappedLift_all {X Y : Finset (Fin 4) × ℕ} (h : X ≤ Y) : (rows b).Ca
       min (lab Aq Hq Gq d) c = min (lab Ap Hp Gp d) c := by
     have := hpq ⟨d, hd⟩
     rwa [hqd, hpd] at this
+  -- The agreement under the cap, read at the cells `3`, `13`, `16` carrying `A`, `H`, `G`.
   have hcap3 (h3 : (3 : Fin 19) ∈ cells.below X) : min Aq c = min Ap c := by
     simpa [lab_of_kind_one (show kind 3 = 1 from rfl)] using hcap 3 h3
   have hcap13 (h13 : (13 : Fin 19) ∈ cells.below X) : min Hq c = min Hp c := by
@@ -725,6 +729,8 @@ theorem cappedLift_all {X Y : Finset (Fin 4) × ℕ} (h : X ≤ Y) : (rows b).Ca
   have hXY {d : Fin 19} (hd : d ∈ cells.below X) : d ∈ cells.below Y := cells.below_mono h hd
   have hc2 (h13 : (13 : Fin 19) ∈ cells.below Y) : IsSelfVisible 2 c := hc.mono h13.2
   have hc3 (h16 : (16 : Fin 19) ∈ cells.below Y) : IsSelfVisible 3 c := hc.mono h16.2
+  -- The lifted parameters: self-visible, coupled, equal to `q`'s under the cap below `Y`, and to
+  -- `p`'s below `X`.
   obtain ⟨A', H', G', hA', hH', hG', hc', ha, hh, hg, pa, ph, pg⟩ : ∃ A' H' G' : Label.{u},
       IsSelfVisible 1 A' ∧ IsSelfVisible 2 H' ∧ IsSelfVisible 3 G' ∧ Coupled b A' H' G' ∧
       ((3 : Fin 19) ∈ cells.below Y → min A' c = min Aq c) ∧
@@ -782,6 +788,7 @@ theorem cappedLift_all {X Y : Finset (Fin 4) × ℕ} (h : X ≤ Y) : (rows b).Ca
       · exact hHp.mono (by omega)
       · exact isSelfVisible_top 1
       · exact hsH'.mono (by omega)
+  -- The lift is `lab A' H' G'`: lawful, capped-equal to `q`, and extending `p`.
   refine ⟨fun d ↦ lab A' H' G' d,
     isLawfulBelow_iff.mpr ⟨A', H', G', hA', hH', hG', hc', fun _ _ ↦ rfl⟩,
     fun d ↦ ?_, fun d ↦ ?_⟩
@@ -811,25 +818,30 @@ theorem w2_le_w3 : (w2 : Label.{u}) ≤ w3 := by
 satisfying the coupling, below the cell. -/
 theorem isConsistent_rows : (rows.{u} b).IsConsistent := by
   intro s
+  -- For each cell `s`, the parameters whose labelling `lab` is the row of `s` below `s`.
   obtain ⟨As, Hs, Gs, hA, hH, hG, hcpl, hrow⟩ : ∃ As Hs Gs : Label.{u}, IsSelfVisible 1 As ∧
       IsSelfVisible 2 Hs ∧ IsSelfVisible 3 Gs ∧ Coupled b As Hs Gs ∧
       ∀ t, cells.gradedIndex t ≤ cells.gradedIndex s → rowVal b s t = lab As Hs Gs t := by
     rcases kind_cases s with hs | hs | rfl | rfl | rfl | rfl
-    · refine ⟨⊥, ⊥, ⊥, isSelfVisible_bot 1, isSelfVisible_bot 2, isSelfVisible_bot 3,
+    · -- A dead cell: every parameter `⊥`.
+      refine ⟨⊥, ⊥, ⊥, isSelfVisible_bot 1, isSelfVisible_bot 2, isSelfVisible_bot 3,
         by cases b <;> simp [Coupled], fun t _ ↦ ?_⟩
       rw [rowVal_of_kind_zero_left hs, lab_bot]
-    · refine ⟨v1, ⊥, ⊥, isSelfVisible_v1, isSelfVisible_bot 2, isSelfVisible_bot 3,
+    · -- A cell of kind `A`: `A = 1`.
+      refine ⟨v1, ⊥, ⊥, isSelfVisible_v1, isSelfVisible_bot 2, isSelfVisible_bot 3,
         by cases b <;> simp [Coupled], fun t ht ↦ ?_⟩
       by_cases hk : kind t = 0
       · rw [rowVal_of_kind_zero_right hk, lab_of_kind_zero hk]
       · rw [rowVal_of_kind_one hs hk, lab_of_kind_one (kind_of_le_kind_one s t hs hk ht)]
-    · refine ⟨v2, v2, ⊥, isSelfVisible_v2.mono (by omega), isSelfVisible_v2,
+    · -- The cell `13`: `A = H = ω + 2`.
+      refine ⟨v2, v2, ⊥, isSelfVisible_v2.mono (by omega), isSelfVisible_v2,
         isSelfVisible_bot 3, by cases b <;> simp [Coupled], fun t ht ↦ ?_⟩
       by_cases hk : kind t = 0
       · rw [rowVal_of_kind_zero_right hk, lab_of_kind_zero hk]
       · obtain rfl := eq_of_le_thirteen t hk ht
         rw [rowVal_thirteen hk, lab_of_kind_two (by decide)]
-    · cases b
+    · -- The cell `15`: `A = 1` for `TG`, `A = ω + 2` for `TH`; `H = ω + 2`.
+      cases b
       · refine ⟨v1, v2, ⊥, isSelfVisible_v1, isSelfVisible_v2, isSelfVisible_bot 3,
           by simp [Coupled], fun t ht ↦ ?_⟩
         by_cases hk : kind t = 0
@@ -844,7 +856,8 @@ theorem isConsistent_rows : (rows.{u} b).IsConsistent := by
         rcases kind_of_le_fifteen t hk ht with h1 | h2
         · rw [rowVal_fifteen_true hk, lab_of_kind_one h1]
         · rw [rowVal_fifteen_true hk, lab_of_kind_two h2]
-    · refine ⟨if b then w2 else ⊤, w2, w3, ?_, isSelfVisible_w2, isSelfVisible_w3, ?_,
+    · -- The cell `16`: `H = 2`, `G = ω + 3`, and `A = 2` for `TH`, `⊤` for `TG`.
+      refine ⟨if b then w2 else ⊤, w2, w3, ?_, isSelfVisible_w2, isSelfVisible_w3, ?_,
         fun t ht ↦ ?_⟩
       · cases b
         · exact isSelfVisible_top 1
@@ -857,7 +870,8 @@ theorem isConsistent_rows : (rows.{u} b).IsConsistent := by
       rcases eq_of_le_sixteen t hk ht with rfl | rfl
       · rw [rowVal_sixteen_two (by decide), lab_of_kind_two (by decide)]
       · rw [rowVal_sixteen_three (by decide), lab_of_kind_three (by decide)]
-    · cases b
+    · -- The cell `18`: `H = 2`, `G = ω + 3`, and `A = ω + 3` for `TG`, `2` for `TH`.
+      cases b
       · refine ⟨w3, w2, w3, isSelfVisible_w3.mono (by omega), isSelfVisible_w2,
           isSelfVisible_w3, by simp [Coupled], fun t _ ↦ ?_⟩
         by_cases hk : kind t = 0
@@ -879,6 +893,7 @@ theorem isConsistent_rows : (rows.{u} b).IsConsistent := by
         · rw [lab_of_kind_one h, ite_eq_right (by rw [h]; decide)]
         · rw [lab_of_kind_two h, ite_eq_right (by rw [h]; decide)]
         · rw [lab_of_kind_three h, ite_eq_left h]
+  -- A row equal to a lawful `lab` below the cell is lawful below it.
   exact (isLawfulBelow_iff (Y := cells.gradedIndex s) (x := fun t ↦ rowVal b s t)).mpr
     ⟨As, Hs, Gs, hA, hH, hG, hcpl, fun t ht ↦ hrow t ht⟩
 
@@ -890,6 +905,7 @@ theorem isWellFormed_S : (S.{u} b).IsWellFormed where
 /-- The rows are coded: every value is `⊥` or a grid point below `ω ^ 2`. -/
 theorem isCoded_S : (S.{u} b).IsCoded := by
   intro s t
+  -- The value of the row of `s` at `t` is `rowVal b s t`.
   change rowVal b s t.1 < _
   unfold rowVal
   split_ifs <;> first

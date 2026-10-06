@@ -214,6 +214,7 @@ theorem grade_le_of_mem_below_newCell {k : ℕ} (hk1 : 1 ≤ k) (hk4 : k ≤ 4)
 
 private theorem cases_T4 (i : Fin (T4 α).card) :
     i = Fin.last 19 ∨ ∃ d : Fin 19, i = Fin.castSucc d := by
+  -- The cells of `T4`: the nineteen cells of the scheme, then the apex.
   change Fin (19 + 1) at i
   induction i using Fin.lastCases with
   | last => exact .inl rfl
@@ -250,6 +251,7 @@ theorem exists_labelling_of_comap_T4 {f : Fin 4 ↪ Fin 5} {Am : StageType.{u} �
       simp only at h2
       omega
     · refine ⟨c, TwoFaceLiftCounterexample.gradedIndex_T4_castSucc c, hAF c ?_⟩
+      -- The graded index of `c` in the scheme, which `T4` keeps.
       change cells.gradedIndex c ≤ _
       rw [← TwoFaceLiftCounterexample.gradedIndex_T4_castSucc (α := α) c]
       exact hi
@@ -429,6 +431,7 @@ theorem isLawfulBelow_layerLabel4 {AC AD F : Label.{u}} (h : IsThinLawfulBelow A
         (grade_le_of_mem_below_newCell (by omega) (by omega)) (fun t ↦ kind4_le_three _)
         h.svAC h.svAD h.svF h.le_AD h.noCollision
     · rw [layerLabel4_newCell (by omega) (by omega)]
+      -- The label of the new cell at `(univ, 3)` is `kindLabel` at the kind `0`, which is `⊥`.
       change TransformsTo _ _ fun d ↦ min _ (kindLabel AC AD F ⊥ ⊥ 0)
       simp only [kindLabel, Matrix.cons_val_zero, min_bot_right]
       exact TransformsTo.bot _ _

@@ -18,10 +18,11 @@ with coatoms `C = {0, 1, 2, 3}` and `D = {0, 1, 2, 4}`; the seed `seedLL` is one
 coatom type couples its parameter `G` of grade `3` to its parameter `A` of grade `1` (`TL` imposes
 `G ≤ F` and `VisibilityReplaceFixedOfLT A G` only), so the argument of
 `VaughtConjecture.Extension.SeparatingCell` forces no separation.  The rows of the thin completion
-of `seedL` do not serve here: its row at `(univ, 3)` reads `A_D` at `ω + 3`, which forces
-`G ≤ A_D`, and `TL` on `D` allows `A_D < G`.  Reading `A_C` and `A_D` at different values also
-fails: with `A_C` forced to `A_D` below `G` at `(univ, 3)` and both read apart at `(univ, 2)`, the
-prescription `(A, F, G) = (1, ⊤, ⊤)` on `C` has no lift (a collision at `(univ, 2)`).
+of `seedL` do not serve here (argued, not formalized): its row at `(univ, 3)` reads `A_D` at
+`ω + 3`, which forces `G ≤ A_D`, and `TL` on `D` allows `A_D < G`.  Reading `A_C` and `A_D` at
+different values also fails (argued, not formalized): with `A_C` forced to `A_D` below `G` at
+`(univ, 3)` and both read apart at `(univ, 2)`, the prescription `(A, F, G) = (1, ⊤, ⊤)` on `C`
+has no lift (a collision at `(univ, 2)`).
 
 **The merged rows** (`rowsLL`).  Every row of a new cell reads the live cells of grade `1` of both
 coatoms at one value, `1`: the row at `(univ, k)` is the thin labelling (`ThinCompletion.thinLabel`)
@@ -135,6 +136,7 @@ theorem rowsLL_lt {k : ℕ} (hk1 : 1 ≤ k) (hk3 : k ≤ 3) (X : Finset (Fin 5) 
     WithBot.bot_lt_coe _
   obtain rfl | rfl | rfl : k = 1 ∨ k = 2 ∨ k = 3 := by omega
   all_goals
+    -- The row `rowsLL k` at `X` is a thin labelling.
     change thinLabel _ _ _ _ _ X < _
     unfold thinLabel
     generalize thinKind X = c

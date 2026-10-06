@@ -25,7 +25,8 @@ grade `2` carrying `F`, those of grade `3` carrying `G`, and the cells of grade 
   at `1`, strictly below those of `D` at `ω + 1`; the live cells of grade `2` at `ω·2 + 2`);
 * at `(univ, 3)`, every live kind at the one value `ω + 3` (`rowThree`): `T5` on `C` couples
   `G ≤ A_C`, so the row of the thin completion of `seedL`, which reads `A_C` at `1` and the others
-  at `ω + 3`, is not consistent here (its own labelling has `A_C = 1 < ω + 3 = G`);
+  at `ω + 3`, is not consistent here (its own labelling has `A_C = 1 < ω + 3 = G`; argued, not
+  formalized);
 * at `(univ, 4)`, the top row `OrderedLayer.topRow`.
 
 **The lawful labellings below `(univ, 3)`** are exactly the thin labellings

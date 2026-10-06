@@ -36,10 +36,10 @@ reading `d₂` below `d₁`.
 **The obstruction to the ordered-layer step** (`Seed.not_hasOrderedLayerStep_of_forcesTop`).  The
 layer scheme has one cell at each graded face of full scope, so a seed on five points with two
 opposite forcings between a cell of the first coatom and a cell of the second at one grade has no
-ordered-layer step, for any layer rows.  Such a seed needs a completion with several new cells at
-one graded face of full scope, one for each orientation.  None of the seeds `seed4`, `seed5`,
-`seedL` has two opposite forcings at one grade, since each has an ordered-layer step
-(`VaughtConjecture.Extension.OrderedLayerExamples`).  The legal seed
+ordered-layer step, for any layer rows.  Every completion of such a seed, if one exists, has
+several new cells at one graded face of full scope, one for each orientation.  None of the seeds
+`seed4`, `seed5`, `seedL` has two opposite forcings at one grade, since each has an ordered-layer
+step (`VaughtConjecture.Extension.OrderedLayerExamples`).  The legal seed
 `CrossedCouplingCounterexample.seedHG` has two opposite forcings at the grade `1`, so it has no
 ordered-layer step (`CrossedCouplingCounterexample.not_hasOrderedLayerStep_seedHG`, module
 `VaughtConjecture.Extension.CrossedCouplingCounterexample`): its two coatom types are coupled
@@ -171,6 +171,7 @@ theorem exists_separating_of_forcesTop {B₁ B₂ : Finset (Fin (m + 2))} {k : �
   rw [not_lt] at hcon
   have h21 := (hloc u huY).le_of_le (d := ⟨_, h₂⟩) (d' := ⟨_, h₁⟩) hcon
     (by
+      -- The grades of the embedded cells, which the embedding preserves.
       change F.scheme.toCellScheme.grade (F.embed d₁) ≤ F.scheme.toCellScheme.grade (F.embed d₂)
       rw [F.isLowerEmbedding.grade_eq, F.isLowerEmbedding.grade_eq]; exact hg)
   simp only at h21

@@ -2636,7 +2636,8 @@ ones split):
   needing capping, `OrderedLayer.isBountiful_layerScheme`); a lawful extension of the glued
   labelling. It gives a completion (`Seed.OrderedLayerStep.completion`) and is exactly legality of
   the layer scheme with a lawful extension (`Seed.orderedLayerStep_iff`), a restriction of the
-  completion and not equivalent to it. For seeds with bottom apexes (`Seed.HasBottomApexes`,
+  completion; whether the converse fails for some seed is open (it fails at `seedHG` if and only if
+  `seedHG` has a completion below the full grade). For seeds with bottom apexes (`Seed.HasBottomApexes`,
   `Seed.hasBottomApexes_of_addApex`) and the top row at `(univ, 4)`, the step follows from its
   fields at `k ≤ 3` (`Seed.OrderedLayerStepBelowTop.orderedLayerStep`,
   `OrderedLayer.cappedLift_four`), and those lifts reduce to the grade `3`
@@ -2657,9 +2658,11 @@ ones split):
   `CrossedCouplingCounterexample.seedHG` of the types `TH`, `TG` coupled crosswise to two parameters
   of the common face (`Extension/CrossedCouplingTypes`, `Extension/CrossedCouplingCounterexample`;
   `CrossedCouplingCounterexample.exists_ne_seedHG`: every completion has two cells at `(univ, 1)`).
-  `Seed.nonempty_completionBelowFullGrade_of_hasOrderedLayerStep`, under the refuted universal form,
-  is kept for now. Open: a completion of `seedHG` (prospective: several new cells per graded face of
-  full scope, one per orientation), and the completion at `m ≥ 3` for every seed.
+  No theorem is stated under the refuted universal form: the theorem
+  `Seed.nonempty_completionBelowFullGrade_of_hasOrderedLayerStep` was deleted because its hypothesis
+  is refuted at every instance. Open: whether `seedHG` has a completion below the full grade
+  (prospective: several new cells per graded face of full scope, one per orientation), and the
+  completion at `m ≥ 3` for every seed.
 
 The completion constructs lawful finite extensions and nothing more.  It imports only Layers
 0–1, the stage types, the amalgam, and the section theorem of `README.md`, Layer 3, 3.1 (with
