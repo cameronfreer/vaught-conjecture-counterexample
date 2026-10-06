@@ -20,9 +20,13 @@ realization at `α` is **cover-hollow without a globally rigid core at a block s
 (`Realization.IsCoverHollowWithoutRigidCoreAtBlock`) when it is cover-hollow at a block stage
 (`Realization.IsCoverHollowAtBlock`) and no cover in it is a globally rigid core; at `λ_ξ` this is
 the predicate above (`Realization.isCoverHollowWithoutRigidCoreAtBlock_iff`).  Cover-hollowness
-itself, and the hollow property of `Realization.HasTerminalProperty`, are unchanged.  The two
-predicates differ: a model whose actual types are top-free is cover-hollow, and the empty tuple is
-a globally rigid core of it (`VaughtConjecture.Continuation.RestrictedHollowExamples`).
+itself, and the hollow property of `Realization.HasTerminalProperty`, are unchanged.  For a model
+whose actual types are top-free, the two predicates differ: such a model is cover-hollow, and the
+empty tuple is a globally rigid core of it
+(`VaughtConjecture.Continuation.RestrictedHollowExamples`; under the coatom extension property
+with apex, the reconstruction of an ultrahomogeneous structure whose age is the age of top-free
+charts is such a model).  The existence of a model on which the two predicates differ is not
+claimed unconditionally.
 
 **The restricted terminal properties** (`Realization.HasRestrictedTerminalProperty`).  The index
 is that of the terminal properties (`TerminalProperty ξ`), and the rigid-core and residual clauses

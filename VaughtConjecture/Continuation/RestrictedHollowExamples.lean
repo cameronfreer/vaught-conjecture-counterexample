@@ -11,10 +11,12 @@ import VaughtConjecture.Continuation.RestrictedHollow
 
 * **The clauses.**  At the base block, the three restricted terminal properties unfold to their
   clauses; the rigid-core and residual ones are those of `HasTerminalProperty`.
-* **The predicates differ.**  A model whose actual types are top-free is cover-hollow, and the
-  empty tuple is a globally rigid core of it, so it is not cover-hollow without a globally rigid
-  core.  The top-free witness at a block stage, under the coatom extension property with apex, is
-  such a model.
+* **For a top-free model, the predicates differ.**  A model whose actual types are top-free is
+  cover-hollow, and the empty tuple is a globally rigid core of it, so it is not cover-hollow
+  without a globally rigid core.  Under the coatom extension property with apex, the
+  reconstruction of an ultrahomogeneous structure whose age is the age of top-free charts is such
+  a model.  Both examples assume such a model (or such a structure); no model on which the
+  predicates differ is constructed here.
 * **The cover.**  Under the continuation criterion, every model at `ω` that is terminal at `0`
   has some restricted terminal property; a model with the hollow property and a globally rigid
   core has a rigid-core property.
@@ -64,10 +66,11 @@ example (h : R.HasTerminalProperty (.inr (.inr ()))) {k : ℕ}
 
 end BaseBlock
 
-/-! ### The predicates differ -/
+/-! ### For a top-free model, the predicates differ -/
 
-/-- **A top-free model is cover-hollow, but not without a globally rigid core**: the empty tuple
-covers the stage type on no points and is a globally rigid core. -/
+/-- **A top-free model is cover-hollow, but not without a globally rigid core**: for a model whose
+actual types are top-free, the empty tuple covers the stage type on no points and is a globally
+rigid core. -/
 example {ξ : Ordinal.{0}} {M : Type} {R : Realization.{0, 0} (blockStage ξ) M} (hR : R.IsModel)
     (h : ∀ x : R.Occurrence, x.type.IsTopFree) :
     R.IsCoverHollow ∧ ¬ R.IsCoverHollowWithoutRigidCore :=
@@ -79,8 +82,9 @@ section Witness
 
 variable {ξ : Ordinal.{0}} {M : Type} [(hullLanguage.{0} (blockStage ξ)).Structure M]
 
-/-- **The top-free witness** at a block stage, under the coatom extension property with apex, is
-cover-hollow at a block stage, but not without a globally rigid core. -/
+/-- **The top-free witness**: under the coatom extension property with apex, for an
+ultrahomogeneous structure whose age is the age of top-free charts, its reconstruction at a block
+stage is cover-hollow at a block stage, but not without a globally rigid core. -/
 example (hext : HasApexCoatomExtensions.{0} (blockStage ξ))
     (hage : (hullLanguage.{0} (blockStage ξ)).age M = topFreeAge (blockStage ξ))
     (hu : (hullLanguage.{0} (blockStage ξ)).IsUltrahomogeneous M) :
