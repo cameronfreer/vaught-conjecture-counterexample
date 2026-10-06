@@ -25,11 +25,11 @@ cells.  On the face `{0, 1, 2}` the live cells are `13` (kind `H`) and `16` (kin
 **The rows** (`rowVal b`, for `b = true` the type `TH` and `b = false` the type `TG`).  Dead cells
 read `⊥`, and every cell reads the dead cells at `⊥`.  A cell of kind `A` reads the cells of kind
 `A` at `1`; the cell `13` reads itself at `ω + 2`; the cell `16` reads `13` at `2` and itself at
-`ω + 3` (the strip shifter `strip3 H` makes `H` and `G` independent).  In `TH`, the cell `15` reads
-all its live cells at `ω + 2` (forcing `H ≤ A`), and the cell `18` reads the cells of kinds `A`
-and `H` at `2` and those of kind `G` at `ω + 3` (through `strip3 A`).  In `TG`, the cell `15` reads
-the cells of kind `A` at `1` and those of kind `H` at `ω + 2` (as in `T4`), and the cell `18`
-reads the cells of kind `H` at `2` and the others at `ω + 3` (forcing `G ≤ A`).
+`ω + 3` (through the strip shifter `strip3 H`, with no relation between `H` and `G`).  In `TH`,
+the cell `15` reads all its live cells at `ω + 2` (forcing `H ≤ A`), and the cell `18` reads the
+cells of kinds `A` and `H` at `2` and those of kind `G` at `ω + 3` (through `strip3 A`).  In `TG`,
+the cell `15` reads the cells of kind `A` at `1` and those of kind `H` at `ω + 2` (as in `T4`), and
+the cell `18` reads the cells of kind `H` at `2` and the others at `ω + 3` (forcing `G ≤ A`).
 
 **The lawful labellings** (`isLawfulBelow_iff`).  Below every pair, the lawful labellings are the
 restrictions of `lab A H G` with `A`, `H`, `G` self-visible at `1`, `2`, `3` and the coupling
@@ -103,15 +103,20 @@ def Coupled (b : Bool) (A H G : Label.{u}) : Prop :=
 
 /-! ### Facts on the nineteen cells -/
 
+/-- Every cell is dead, of kind `A`, or one of the cells `13`, `15`, `16`, `18`. -/
 theorem kind_cases : ∀ s : Fin 19,
     kind s = 0 ∨ kind s = 1 ∨ s = 13 ∨ s = 15 ∨ s = 16 ∨ s = 18 := by decide
 
+/-- The cells of kind `A` have grade `1`. -/
 theorem grade_of_kind_one : ∀ d : Fin 19, kind d = 1 → cellGrade d = 1 := by decide
 
+/-- The cells of kind `H` are `13` and `15`. -/
 theorem kind_two_cases : ∀ d : Fin 19, kind d = 2 → d = 13 ∨ d = 15 := by decide
 
+/-- The cells of kind `G` are `16` and `18`. -/
 theorem kind_three_cases : ∀ d : Fin 19, kind d = 3 → d = 16 ∨ d = 18 := by decide
 
+/-- The four kinds. -/
 theorem kind_live_cases : ∀ d : Fin 19, kind d = 0 ∨ kind d = 1 ∨ kind d = 2 ∨ kind d = 3 := by
   decide
 
@@ -139,13 +144,16 @@ theorem eq_of_le_sixteen : ∀ d : Fin 19, kind d ≠ 0 →
 theorem kind_up : ∀ s t : Fin 19, kind s ≠ 0 → cellScope s ⊆ cellScope t →
     cellGrade s = cellGrade t → kind t = kind s := by decide +kernel
 
+/-- Every cell of kind `A` lies above the cell `3`, at `({3}, 1)`. -/
 theorem three_le : ∀ d : Fin 19, kind d = 1 → cells.gradedIndex 3 ≤ cells.gradedIndex d := by
   simp only [gradedIndex_cells, Prod.mk_le_mk]; decide +kernel
 
+/-- Every cell of kind `H` lies above the cell `13`, at `({0, 1, 2}, 2)`. -/
 theorem thirteen_le : ∀ d : Fin 19, kind d = 2 →
     cells.gradedIndex 13 ≤ cells.gradedIndex d := by
   simp only [gradedIndex_cells, Prod.mk_le_mk]; decide +kernel
 
+/-- Every cell of kind `G` lies above the cell `16`, at `({0, 1, 2}, 3)`. -/
 theorem sixteen_le : ∀ d : Fin 19, kind d = 3 →
     cells.gradedIndex 16 ≤ cells.gradedIndex d := by
   simp only [gradedIndex_cells, Prod.mk_le_mk]; decide +kernel
@@ -175,24 +183,31 @@ theorem thirteen_mem_below {Y : Finset (Fin 4) × ℕ} (h16 : (16 : Fin 19) ∈ 
 
 variable {A H G : Label.{u}} {b : Bool}
 
+/-- `lab` is `⊥` at the dead cells. -/
 theorem lab_of_kind_zero {d : Fin 19} (h : kind d = 0) : lab A H G d = ⊥ := by
   simp [lab, h]
 
+/-- `lab` is `A` at the cells of kind `A`. -/
 theorem lab_of_kind_one {d : Fin 19} (h : kind d = 1) : lab A H G d = A := by
   simp [lab, h]
 
+/-- `lab` is `H` at the cells of kind `H`. -/
 theorem lab_of_kind_two {d : Fin 19} (h : kind d = 2) : lab A H G d = H := by
   simp [lab, h]
 
+/-- `lab` is `G` at the cells of kind `G`. -/
 theorem lab_of_kind_three {d : Fin 19} (h : kind d = 3) : lab A H G d = G := by
   simp [lab, h]
 
+/-- The row of a dead cell is `⊥`. -/
 theorem rowVal_of_kind_zero_left {s t : Fin 19} (h : kind s = 0) : rowVal.{u} b s t = ⊥ := by
   simp [rowVal, h]
 
+/-- Every row reads the dead cells at `⊥`. -/
 theorem rowVal_of_kind_zero_right {s t : Fin 19} (h : kind t = 0) : rowVal.{u} b s t = ⊥ := by
   simp [rowVal, h]
 
+/-- A cell of kind `A` reads its live cells at `1`. -/
 theorem rowVal_of_kind_one {s t : Fin 19} (hs : kind s = 1) (ht : kind t ≠ 0) :
     rowVal.{u} b s t = v1 := by
   have h15 : s ≠ 15 := by rintro rfl; exact absurd hs (by decide)
@@ -201,45 +216,57 @@ theorem rowVal_of_kind_one {s t : Fin 19} (hs : kind s = 1) (ht : kind t ≠ 0) 
   have h13 : s ≠ 13 := by rintro rfl; exact absurd hs (by decide)
   simp [rowVal, hs, ht, h15, h18, h16, h13]
 
+/-- The cell `13` reads its live cells at `ω + 2`. -/
 theorem rowVal_thirteen {t : Fin 19} (ht : kind t ≠ 0) : rowVal.{u} b 13 t = v2 := by
   simp [rowVal, ht, show kind 13 = 2 from rfl]
 
+/-- In `TH`, the cell `15` reads its live cells at `ω + 2`. -/
 theorem rowVal_fifteen_true {t : Fin 19} (ht : kind t ≠ 0) : rowVal.{u} true 15 t = v2 := by
   simp [rowVal, ht, show kind 15 = 2 from rfl]
 
+/-- In `TG`, the cell `15` reads the cells of kind `A` at `1`. -/
 theorem rowVal_fifteen_false_one {t : Fin 19} (ht : kind t = 1) : rowVal.{u} false 15 t = v1 := by
   simp [rowVal, ht, show kind 15 = 2 from rfl]
 
+/-- In `TG`, the cell `15` reads the cells of kind `H` at `ω + 2`. -/
 theorem rowVal_fifteen_false_two {t : Fin 19} (ht : kind t = 2) : rowVal.{u} false 15 t = v2 := by
   simp [rowVal, ht, show kind 15 = 2 from rfl]
 
+/-- The cell `16` reads the cell `13` at `2`. -/
 theorem rowVal_sixteen_two {t : Fin 19} (ht : kind t = 2) : rowVal.{u} b 16 t = w2 := by
   simp [rowVal, ht, show kind 16 = 3 from rfl]
 
+/-- The cell `16` reads itself at `ω + 3`. -/
 theorem rowVal_sixteen_three {t : Fin 19} (ht : kind t = 3) : rowVal.{u} b 16 t = w3 := by
   simp [rowVal, ht, show kind 16 = 3 from rfl]
 
+/-- In `TH`, the cell `18` reads the cells of kind `G` at `ω + 3`, the others at `2`. -/
 theorem rowVal_eighteen_true {t : Fin 19} (ht : kind t ≠ 0) :
     rowVal.{u} true 18 t = if kind t = 3 then w3 else w2 := by
   simp [rowVal, ht, show kind 18 = 3 from rfl]
 
+/-- In `TG`, the cell `18` reads the cells of kind `H` at `2`, the others at `ω + 3`. -/
 theorem rowVal_eighteen_false {t : Fin 19} (ht : kind t ≠ 0) :
     rowVal.{u} false 18 t = if kind t = 2 then w2 else w3 := by
   simp [rowVal, ht, show kind 18 = 3 from rfl]
 
 /-! ### Labels -/
 
+/-- The row value `2` is the natural number `2`. -/
 theorem w2_eq : (w2 : Label.{u}) = ((2 : ℕ) : Label.{u}) := by
   rw [natCast_label]; simp [w2, gridPoint]
 
+/-- The strip shifter at the grade `3` sends `2` to the replacement with the value `2`. -/
 theorem strip3_w2 (A : Label.{u}) : strip3 A w2 = visibilityReplace 3 2 A := by
   rw [w2_eq, strip3_natCast]; rfl
 
+/-- The row value `ω + 3` is not a natural number. -/
 theorem w3_not_lt : ¬ (w3 : Label.{u}) < ((ω : Ordinal.{u}) : Label.{u}) := by
   rw [not_lt, w3, gridPoint, WithBot.coe_le_coe, WithTop.coe_le_coe]
   calc (ω : Ordinal.{u}) = ω * ((1 : ℕ) : Ordinal.{u}) := by simp
     _ ≤ _ := le_self_add
 
+/-- The strip shifter at the grade `3` sends `ω + 3` to `⊤`. -/
 theorem strip3_w3 (A : Label.{u}) : strip3 A w3 = ⊤ :=
   strip3_of_not_lt (gridPoint_ne_bot 3 1) w3_not_lt
 
@@ -275,6 +302,7 @@ theorem min_visibilityReplace_H (hH : IsSelfVisible 2 H) (h1 : H ≤ A) (h2 : mi
 
 /-! ### The labellings `lab A H G` are lawful -/
 
+/-- Each label of `lab A H G` is self-visible at the grade of its cell. -/
 theorem isSelfVisible_lab (hA : IsSelfVisible 1 A) (hH : IsSelfVisible 2 H)
     (hG : IsSelfVisible 3 G) (d : Fin 19) : IsSelfVisible (cellGrade d) (lab A H G d) := by
   rcases kind_live_cases d with h | h | h | h
@@ -383,7 +411,8 @@ theorem isLawful_lab (hA : IsSelfVisible 1 A) (hH : IsSelfVisible 2 H) (hG : IsS
             min_eq_right hGA]
         · rw [lab_of_kind_two h, ite_eq_left h, strip3_w2,
             visibilityReplace_three_two_of_isSelfVisible hH]
-        · rw [lab_of_kind_three h, ite_eq_right (by rw [h]; decide), strip3_w3, min_top_left, min_self]
+        · rw [lab_of_kind_three h, ite_eq_right (by rw [h]; decide), strip3_w3, min_top_left,
+            min_self]
       · -- The cell `18` of `TH`: `strip3 A`, the suppressor `G` up to `3`.
         obtain ⟨h1, h2⟩ : H ≤ A ∧ min A G ≤ H := by simpa [Coupled] using hc
         refine transformsTo_of_forall (isWitness_strip3 (A := A) hG) fun d _ ↦ ?_
@@ -568,14 +597,14 @@ theorem isLawfulBelow_iff {Y : Finset (Fin 4) × ℕ} {x : Fin 19 → Label.{u}}
 
 section Lift
 
-open Classical
-
+open Classical in
 /-- The lifted parameter of kind `G` (or `H`): prescribed when its cells meet the prescription;
 otherwise, when its cells lie below the target, the ambient below the cap and the cap above it;
 `⊥` when no cell of the kind lies below the target. -/
 noncomputable def liftedGH (pX p : Prop) (xp xq c : Label.{u}) : Label.{u} :=
   if pX then xp else if p then (if xq < c then xq else c) else ⊥
 
+open Classical in
 /-- The lifted parameter of kind `A` for `TH`: prescribed when its cells meet the prescription;
 otherwise, when its cells lie below the target, the ambient below the cap and above it `H_p`
 when `H` and `G` are prescribed with `H_p < G_p`, and `⊤` otherwise; the lifted `H` when no cell
@@ -584,6 +613,7 @@ noncomputable def liftedAH (aX a hX gX : Prop) (Ap Aq Hp Gp H' c : Label.{u}) : 
   if aX then Ap else if a then
     (if Aq < c then Aq else if hX ∧ gX ∧ Hp < Gp then Hp else ⊤) else H'
 
+open Classical in
 /-- A lifted parameter that is prescribed, or else the ambient below the cap and `⊤` above. -/
 noncomputable def liftedTop (pX : Prop) (xp xq c : Label.{u}) : Label.{u} :=
   if pX then xp else if xq < c then xq else ⊤
@@ -721,7 +751,8 @@ theorem cappedLift_all {X Y : Finset (Fin 4) × ℕ} (h : X ≤ Y) : (rows b).Ca
       refine ⟨liftedTop ((3 : Fin 19) ∈ cells.below X) Ap Aq c,
         liftedTop ((13 : Fin 19) ∈ cells.below X) Hp Hq c,
         liftedGH ((16 : Fin 19) ∈ cells.below X) ((16 : Fin 19) ∈ cells.below Y) Gp Gq c,
-        ?_, ?_, hsG', by simp only [Coupled, Bool.false_eq_true, ↓reduceIte]; exact hGA, fun _ ↦ hmA,
+        ?_, ?_, hsG', by simp only [Coupled, Bool.false_eq_true, ↓reduceIte]; exact hGA,
+        fun _ ↦ hmA,
         fun _ ↦ min_liftedTop hcap13, hmG, fun h3 ↦ by simp [liftedTop, h3],
         fun h13 ↦ by simp [liftedTop, h13], fun h16 ↦ by simp [liftedGH, h16]⟩
       · unfold liftedTop; split_ifs
@@ -741,7 +772,8 @@ theorem cappedLift_all {X Y : Finset (Fin 4) × ℕ} (h : X ≤ Y) : (rows b).Ca
         (hX := (13 : Fin 19) ∈ cells.below X) (g := (16 : Fin 19) ∈ cells.below Y)
         (gX := (16 : Fin 19) ∈ cells.below X) hXY hXY hXY thirteen_mem_below
         thirteen_mem_below hp1 hp2 hq1 hq2 hcap3 hcap13 hcap16
-      refine ⟨_, _, _, ?_, hsH', hsG', by simp only [Coupled, ↓reduceIte]; exact ⟨c1, c2⟩, ma, mh, mg,
+      refine ⟨_, _, _, ?_, hsH', hsG', by simp only [Coupled, ↓reduceIte]; exact ⟨c1, c2⟩, ma,
+        mh, mg,
         fun h3 ↦ by simp [liftedAH, h3], fun h13 ↦ by simp [liftedGH, h13],
         fun h16 ↦ by simp [liftedGH, h16]⟩
       unfold liftedAH; split_ifs
@@ -756,15 +788,21 @@ theorem cappedLift_all {X Y : Finset (Fin 4) × ℕ} (h : X ≤ Y) : (rows b).Ca
   · rw [hqd]; exact min_lab_eq ha hh hg d.2
   · rw [hpd]; exact lab_eq pa ph pg d.2
 
+/-- **The rows are bountiful.** -/
 theorem isBountiful_rows : (rows.{u} b).IsBountiful := fun _ _ _ _ h ↦ cappedLift_all h
 
 /-! ### Legality -/
 
+/-- The row value `1` is self-visible at `1`. -/
 theorem isSelfVisible_v1 : IsSelfVisible 1 (v1 : Label.{u}) := isSelfVisible_gridPoint 1 0
+/-- The row value `ω + 2` is self-visible at `2`. -/
 theorem isSelfVisible_v2 : IsSelfVisible 2 (v2 : Label.{u}) := isSelfVisible_gridPoint 2 1
+/-- The row value `2` is self-visible at `2`. -/
 theorem isSelfVisible_w2 : IsSelfVisible 2 (w2 : Label.{u}) := isSelfVisible_gridPoint 2 0
+/-- The row value `ω + 3` is self-visible at `3`. -/
 theorem isSelfVisible_w3 : IsSelfVisible 3 (w3 : Label.{u}) := isSelfVisible_gridPoint 3 1
 
+/-- The row value `2` is below `ω + 3`. -/
 theorem w2_le_w3 : (w2 : Label.{u}) ≤ w3 := by
   rw [w2, w3, gridPoint, gridPoint, WithBot.coe_le_coe, WithTop.coe_le_coe]
   exact (omega0_mul_add_natCast_lt (by simp) _ _).le
@@ -844,10 +882,12 @@ theorem isConsistent_rows : (rows.{u} b).IsConsistent := by
   exact (isLawfulBelow_iff (Y := cells.gradedIndex s) (x := fun t ↦ rowVal b s t)).mpr
     ⟨As, Hs, Gs, hA, hH, hG, hcpl, fun t ht ↦ hrow t ht⟩
 
+/-- The scheme is well formed: the interval plan and the nineteen cells. -/
 theorem isWellFormed_S : (S.{u} b).IsWellFormed where
   ground_eq := rfl
   isWellFormed := TwoFaceLiftCounterexample.isWellFormed_S.{u}.isWellFormed
 
+/-- The rows are coded: every value is `⊥` or a grid point below `ω ^ 2`. -/
 theorem isCoded_S : (S.{u} b).IsCoded := by
   intro s t
   change rowVal b s t.1 < _
@@ -856,6 +896,7 @@ theorem isCoded_S : (S.{u} b).IsCoded := by
     | exact WithBot.bot_lt_coe _
     | exact gridPoint_lt_omega0_sq _ _
 
+/-- **The scheme is legal below the full grade.** -/
 theorem isLegalBelowFullGrade_S : (S.{u} b).IsLegalBelowFullGrade where
   isWellFormed := isWellFormed_S
   isCoded := isCoded_S
