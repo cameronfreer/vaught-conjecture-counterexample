@@ -73,11 +73,20 @@ asks for one carrying context, not that every acquired context carries.
   - **Where it stands** (`VaughtConjecture.Realization.TightCap`).  Generalized saturation and
     the bottom pattern bound no label of full grade from below (each nonempty instance has a
     member labelled `⊥` at every cell of full grade), and a member of a dominance family need not
-    carry; a model that realizes tight caps (`Realization.HasTightCaps`, not a clause of a model)
-    acquires carrying contexts.  One grade below full, availability gives a cell with a row
-    prescribed by saturation and a label above the floor; under the prospective hypothesis on
-    schemes `StageType.HasTightSaturations`, every model has carrying contexts with a cap of that
-    grade (`Realization.IsModel.hasCarryingSubfullContext`), a redesign of the private context.
+    carry (this refutes only the finite sufficient condition "every member of a dominance family
+    carries", not the acquisition).  A model that realizes tight caps (`Realization.HasTightCaps`,
+    not a clause of a model) acquires carrying contexts; but `HasTightCaps` is refuted for every
+    model at every stage above `ω` (`Realization.IsModel.not_hasTightCaps`), and open at stages
+    at most `ω`.  One grade below full, availability gives a cell with a row prescribed by
+    saturation and a label above the floor; under the hypothesis on schemes
+    `StageType.HasTightSaturations`, every model has carrying contexts with a cap of that grade
+    (`Realization.IsModel.hasCarryingSubfullContext`), a redesign of the private context; but
+    that hypothesis is false at every stage above `ω` at which a model exists
+    (`Realization.IsModel.not_hasTightSaturations`).  Both conditional theorems are vacuous above
+    `ω`.  The obstruction: a cell reads in its own block labels below its own and not
+    self-visible at its grade only within one block
+    (`StageType.eq_visibilityReplace_of_readsInOwnBlock`).  Acquisition itself is neither proved
+    nor refuted.
 * Not stated (prospective, the next step only once acquisition is decided): the coupled gated
   pinned extension property restricted to carrying private contexts, and (R1) from it with
   acquisition.  Nothing here is equivalent to (R1), and (R1) is neither proved nor refuted.

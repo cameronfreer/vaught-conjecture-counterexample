@@ -70,8 +70,13 @@ Notes on the rows, each with its marker:
   acquisition of carrying private contexts by every model (`Realization.AcquiresCarryingContexts`,
   item 3 below); compiled conditionally: from tight caps
   (`Realization.IsModel.acquiresCarryingContexts_of_hasTightCaps`, not a clause of a model), and
-  with the cap one grade below full, a redesign, from the prospective hypothesis on schemes
-  `StageType.HasTightSaturations` (`Realization.IsModel.hasCarryingSubfullContext`).  Still to be
+  with the cap one grade below full, a redesign, from the hypothesis on schemes
+  `StageType.HasTightSaturations` (`Realization.IsModel.hasCarryingSubfullContext`).  Refuted
+  above `ω`: `Realization.HasTightCaps` for every model at every stage above `ω`
+  (`Realization.IsModel.not_hasTightCaps`; open at stages ≤ `ω`), and
+  `StageType.HasTightSaturations` at every stage above `ω` at which a model exists
+  (`Realization.IsModel.not_hasTightSaturations`), so both conditional theorems are vacuous above
+  `ω`; acquisition itself is not refuted.  Still to be
   proved: (R1) by another construction, or by the coupled one restricted to carrying private
   contexts (prospective); (R2), (R3), (R4).
 - *Layer 4.*  Compiled: normalization, conditional on finite-extension receiving and forcing donors
@@ -198,10 +203,10 @@ counted as compiled.
    private labelling that keeps the cap drops only cells that the cap's row reads in a block
    strictly below its reading of itself (`CellScheme.Rows.IsLawful.lt_row_self_of_eq_bot`).
    **Where acquisition stands** (`Realization/TightCap`).  At full grade no clause of a model asks
-   for a tight cap (one that reads, in its own block, a label of which each donor label below it is
-   a visibility replacement).  Compiled: every nonempty instance of generalized saturation or of
-   the bottom pattern has a member labelled `⊥` at every cell of full grade, hence in no dominance
-   family
+   for a tight cap (one that reads, in its own block, every label of the root at most the floor and
+   not self-visible at its grade).  Compiled: every nonempty instance of generalized saturation or
+   of the bottom pattern has a member labelled `⊥` at every cell of full grade, hence in no
+   dominance family
    (`StageType.exists_mem_cofaces_inter_saturationFamily_not_mem_dominanceFamily`,
    `StageType.exists_mem_cofaces_inter_bottomPatternFamily_label_eq_bot`); a member of a dominance
    family need not carry
@@ -209,18 +214,30 @@ counted as compiled.
    refutation of that finite sufficient condition, not of acquisition).  Compiled conditionally: a
    model with tight caps acquires carrying contexts
    (`Realization.IsModel.acquiresCarryingContexts_of_hasTightCaps`); `Realization.HasTightCaps`,
-   dominance with the row of the dominating cell prescribed, is not a clause of a model and is
-   open.  One grade below full, availability gives a cell with a prescribed row and a label above
-   the floor (`StageType.exists_le_label_of_restrictFace`, compiled): that is the position of the
-   gate, so a private cap there is a redesign of the private context, not a repair of the coupled
-   property, which asks for a cap of full grade.  Compiled conditionally on the prospective
-   hypothesis on schemes `StageType.HasTightSaturations` (a legal one-point extension scheme whose
-   cells of full scope and grade one below full read the proper labels of the face in their own
-   block; a completion problem of the kind of (R6), neither proved nor refuted): every model has,
-   over every root, for every donor and floor, a carrying context with a cap one grade below full
-   (`Realization.IsModel.hasCarryingSubfullContext`, with `StageType.CarriesBottomsAt` at that
-   grade).  No extension property for that design is defined.  The coupled property restricted
-   to carrying contexts is not stated (prospective).
+   dominance with the row of the dominating cell constrained, is not a clause of a model; it is
+   refuted for every model at every stage above `ω` (`Realization.IsModel.not_hasTightCaps`,
+   compiled), so that theorem is vacuous above `ω`, and it is open at stages ≤ `ω`.  One grade
+   below full, availability gives a cell with a prescribed row and a label above the floor
+   (`StageType.exists_le_label_of_restrictFace`, compiled): that is the position of the gate, so a
+   private cap there is a redesign of the private context, not a repair of the coupled property,
+   which asks for a cap of full grade.  Compiled conditionally on the hypothesis on schemes
+   `StageType.HasTightSaturations` (a legal one-point extension scheme whose cells of full scope
+   and grade one below full read the proper labels of the face in their own block): every model
+   has, over every root, for every donor and floor, a carrying context with a cap one grade below
+   full (`Realization.IsModel.hasCarryingSubfullContext`, with `StageType.CarriesBottomsAt` at
+   that grade).  `HasTightSaturations` is false at every stage above `ω` at which a model exists
+   (`Realization.IsModel.not_hasTightSaturations`, compiled), so that theorem is vacuous above
+   `ω`; it is undecided at stages ≤ `ω`.  **The obstruction**: if a cell reads in its own block two
+   labels below its own, neither self-visible at its grade, the two lie in one block (one is a
+   visibility replacement of the other; `StageType.eq_visibilityReplace_of_readsInOwnBlock`,
+   compiled, with `StageType.tightCapFamily_eq_empty`).  So reading anchors in the cap's own block
+   can serve only donors whose proper labels below the cap lie in one block (argued, not
+   compiled), and the identified obstruction survives the redesigns examined (the cap of full
+   grade and the subfull cap).  It says nothing about other ways to obtain the bottom transport
+   condition: acquisition, `Realization.HasCarryingSubfullContext` and (R1) are neither proved nor
+   refuted.  The two vacuous conditional theorems are kept; retiring them is a separate change.  No
+   extension property for that design is defined.  The coupled property restricted to carrying
+   contexts is not stated (prospective).
 4. **Forcing donors** (still to be proved): the finite construction behind `ForcingDonors`.
 5. **Output 3, part D, and (R4)** (still to be proved): (R4) over positive roots, the empty root by
    the coatom extension over the empty face, and the coatom extension properties at `λ_{ξ+1}`;
