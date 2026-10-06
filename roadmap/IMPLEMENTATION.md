@@ -340,8 +340,9 @@ Consistency and covering give the order law and locality of the stable labelling
 no type has twins, two cells labelled `⊤` at one graded index
 (`Realization.isStablyLawful_of_injOn_gradedIndex`); with legal types, availability holds also at
 twins (`Realization.availability_stableSection_of_hasLegalTypes`, through
-`StageType.exists_forcesThreshold_twin_face`), so every model is stably lawful
-(`Realization.isStablyLawful_of_hasLegalTypes`, `Realization.IsModel.isStablyLawful`); these are
+`StageType.exists_forcesThreshold_twin_face`), so every exactly consistent covering realization
+with legal types at a block stage is stably lawful (`Realization.isStablyLawful_of_hasLegalTypes`),
+and in particular every model at a block stage (`Realization.IsModel.isStablyLawful`); these are
 compiled in this repository (theorem named). Two hypotheses on single stage types that would
 give availability at twins through every lift are refuted (negative special cases): synchronizing
 cofaces, in three forms
@@ -2292,10 +2293,10 @@ Each checkpoint needs both its abstract API and a concrete application:
    (checkpoints 2.6–2.7), without (R1). The structural candidate (output 1) is compiled
    (`Realization.stableCandidate`, `Continuation/Candidate`), with exact consistency, covering, the
    order law, and locality from exact consistency and covering, and availability from legal types,
-   also at twins (two cells labelled `⊤` at one graded index), so that every model is stably lawful
-   (`Realization.IsModel.isStablyLawful`); two hypotheses on single types are refuted (section 4
-   above). Output 3 (stated as the hypothesis `ContinuationCriterion`) is compiled conditionally on
-   (R4) and the coface instances at the next block
+   also at twins (two cells labelled `⊤` at one graded index), so that every model at a block stage
+   is stably lawful (`Realization.IsModel.isStablyLawful`); two hypotheses on single types are
+   refuted (section 4 above). Output 3 (stated as the hypothesis `ContinuationCriterion`) is
+   compiled conditionally on (R4) and the coface instances at the next block
    (`ContinuationCriterion.of_stableCappedReceiving`); (R4) and the coatom extension property with
    apex at `λ_{ξ+1}` are still to be proved. Step 7 is
    compiled conditionally (`README.md`, the section on the top-free witnesses): the loss at `η`
@@ -2659,9 +2660,7 @@ ones split):
   `CrossedCouplingCounterexample.seedHG` of the types `TH`, `TG` coupled crosswise to two parameters
   of the common face (`Extension/CrossedCouplingTypes`, `Extension/CrossedCouplingCounterexample`;
   `CrossedCouplingCounterexample.exists_ne_seedHG`: every completion has two cells at `(univ, 1)`).
-  No theorem is stated under the refuted universal form: the theorem
-  `Seed.nonempty_completionBelowFullGrade_of_hasOrderedLayerStep` was deleted because its hypothesis
-  is refuted at every instance. This refutes the step, not the completion.
+  No theorem is stated under the refuted universal form. This refutes the step, not the completion.
   The multi-layer step at `m = 3` (`Extension/MultiLayerStep`, `Extension/CrossedCouplingScheme`,
   `Extension/CrossedCouplingCompletion`; compiled in this repository (theorem named) unless marked
   otherwise). The multi-layer scheme `OrderedLayer.multiLayerScheme I M r` is the amalgam followed
