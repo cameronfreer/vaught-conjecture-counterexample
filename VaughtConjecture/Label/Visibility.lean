@@ -435,4 +435,56 @@ theorem exists_lt_lt_isSelfVisible (hβ : Order.IsSuccPrelimit β) (ho : o < β)
 
 end
 
+/-! ### Labels of the form `ω * q + n` -/
+
+/-- Visibility replacement on a label `ω * q + n` replaces the finite part `n` when `n < k`. -/
+theorem visibilityReplace_block (q : Ordinal.{u}) (n k i : ℕ) :
+    visibilityReplace k i ((ω * q + n : Ordinal.{u}) : Label.{u}) =
+      ((ω * q + ((if n < k then i else n : ℕ) : Ordinal.{u}) : Ordinal.{u}) : Label.{u}) := by
+  rw [visibilityReplace_coe, Ordinal.visibilityReplace, mul_add_div _ omega0_ne_zero,
+    div_eq_zero_of_lt (natCast_lt_omega0 n), add_zero, mul_add_mod_self,
+    mod_eq_of_lt (natCast_lt_omega0 n)]
+  split_ifs <;> simp_all
+
+/-- A label `ω * q + n` is self-visible at `k` exactly when `k ≤ n`. -/
+theorem isSelfVisible_block {q : Ordinal.{u}} {n k : ℕ} :
+    IsSelfVisible k ((ω * q + n : Ordinal.{u}) : Label.{u}) ↔ k ≤ n := by
+  rw [isSelfVisible_coe, mul_add_mod_self, mod_eq_of_lt (natCast_lt_omega0 n), Nat.cast_le]
+
+/-- A label self-visible at `1` is fixed by visibility replacement at `2` with value `1`. -/
+theorem visibilityReplace_two_one_of_isSelfVisible {a : Label.{u}} (ha : IsSelfVisible 1 a) :
+    visibilityReplace 2 1 a = a := by
+  by_cases hb : a = ⊥
+  · rw [hb]; simp
+  by_cases ht : a = ⊤
+  · rw [ht]; simp
+  obtain ⟨b, n, rfl⟩ := exists_block hb ht
+  have hn : 1 ≤ n := isSelfVisible_block.mp ha
+  have hif : (if n < 2 then 1 else n) = n := by split_ifs <;> omega
+  rw [visibilityReplace_block, hif]
+
+/-- **One step above a label of finite part `1`**: if `a` is self-visible at `1` and `a < b`,
+then `visibilityReplace 2 2 a ≤ b`. -/
+theorem visibilityReplace_two_two_le_of_lt {a b : Label.{u}} (ha : IsSelfVisible 1 a)
+    (hab : a < b) :
+    visibilityReplace 2 2 a ≤ b := by
+  by_cases ha2 : IsSelfVisible 2 a
+  · rw [ha2]; exact hab.le
+  have hb : a ≠ ⊥ := fun h ↦ ha2 (h ▸ isSelfVisible_bot 2)
+  have ht : a ≠ ⊤ := fun h ↦ ha2 (h ▸ isSelfVisible_top 2)
+  obtain ⟨q, n, rfl⟩ := exists_block hb ht
+  have hn1 : 1 ≤ n := isSelfVisible_block.mp ha
+  have hn2 : ¬ 2 ≤ n := fun h ↦ ha2 (isSelfVisible_block.mpr h)
+  obtain rfl : n = 1 := by omega
+  rw [visibilityReplace_block, ite_eq_left (by omega)]
+  induction b using recBotCoeTop with
+  | bot => exact absurd hab (not_lt.mpr bot_le)
+  | top => exact le_top
+  | coe o =>
+    rw [WithBot.coe_lt_coe, WithTop.coe_lt_coe] at hab
+    rw [WithBot.coe_le_coe, WithTop.coe_le_coe]
+    have := Order.add_one_le_of_lt hab
+    rw [add_assoc] at this
+    simpa [one_add_one_eq_two] using this
+
 end VaughtConjecture.Label
