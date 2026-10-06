@@ -33,9 +33,9 @@ lift keeps the parameters `A_C`, `H`, `G` of the prescription and takes for `A_D
 the cap and `⊤` above it (`liftParamsG`); the coupling `G ≤ A_D` is kept because below the cap
 the parameter `G` of the prescription is that of the ambient.  From `(D, k)` to `(univ, k)`
 (`cappedLift_D_of_le_three`): the lift keeps `A_D`, `H`, `G` and takes for `A_C` the ambient below
-the cap, and above it `H` when `H < G` and `⊤` otherwise (`liftParamsH`).  At the grade `4`
-(`cappedLift_four_HG`) the lift comes from the lift at the grade `3`, as for the ordered-layer step
-(`OrderedLayer.cappedLift_four`).
+the cap, and above it `H` when `k = 3` and `H < G`, and `⊤` otherwise, so always `⊤` at `k ≤ 2`
+(`liftParamsH`).  At the grade `4` (`cappedLift_four_HG`) the lift comes from the lift at the
+grade `3`, as for the ordered-layer step (`OrderedLayer.cappedLift_four`).
 
 **The completion** (`multiLayerStep_HG`, `nonempty_completionBelowFullGrade_of`,
 `completionHG`, `nonempty_completionBelowFullGrade_seedHG`): every field of
@@ -364,7 +364,8 @@ theorem exists_of_isLawfulBelow_univ {k : ℕ} (hk1 : 1 ≤ k) (hk : k ≤ 3)
 
 omit hIL hIR in
 /-- Two labellings by kinds agree capped at `c` at a cell when their parameters do at its kind. -/
-theorem min_kindLabel_congr {z : Fin (schemeHG I).card} {c AC AD Q AC' AD' H' G' Q' : Label.{u}}
+private theorem min_kindLabel_congr {z : Fin (schemeHG I).card}
+    {c AC AD Q AC' AD' H' G' Q' : Label.{u}}
     (hac : cellKind I z = .ac → min AC c = min AC' c)
     (had : cellKind I z = .ad → min AD c = min AD' c)
     (hh : cellKind I z = .h → min H c = min H' c) (hg : cellKind I z = .g → min G c = min G' c)
@@ -380,7 +381,7 @@ theorem min_kindLabel_congr {z : Fin (schemeHG I).card} {c AC AD Q AC' AD' H' G'
 
 omit hIL hIR in
 /-- A lifted parameter of the form `liftedGH` is self-visible. -/
-theorem isSelfVisible_liftedGH {pX p : Prop} {xp xq c : Label.{u}} {k : ℕ}
+private theorem isSelfVisible_liftedGH {pX p : Prop} {xp xq c : Label.{u}} {k : ℕ}
     (hxp : IsSelfVisible k xp) (hxq : IsSelfVisible k xq) (hc : p → IsSelfVisible k c) :
     IsSelfVisible k (liftedGH pX p xp xq c) := by
   classical
@@ -393,13 +394,14 @@ theorem isSelfVisible_liftedGH {pX p : Prop} {xp xq c : Label.{u}} {k : ℕ}
 
 omit hIL hIR in
 /-- A lifted parameter of the form `liftedGH` with the same presence is the prescription. -/
-theorem liftedGH_of {p : Prop} {xp xq c : Label.{u}} (h : p) : liftedGH p p xp xq c = xp := by
+private theorem liftedGH_of {p : Prop} {xp xq c : Label.{u}} (h : p) :
+    liftedGH p p xp xq c = xp := by
   classical
   unfold liftedGH; rw [ite_eq_left h]
 
 omit hIL hIR in
 /-- A lifted parameter of the form `liftedGH` without presence is `⊥`. -/
-theorem liftedGH_of_not {p : Prop} {xp xq c : Label.{u}} (h : ¬ p) :
+private theorem liftedGH_of_not {p : Prop} {xp xq c : Label.{u}} (h : ¬ p) :
     liftedGH p p xp xq c = ⊥ := by
   classical
   unfold liftedGH; rw [ite_eq_right h, ite_eq_right h]
@@ -480,8 +482,8 @@ theorem cappedLift_C_of_le_three {k : ℕ} (hk1 : 1 ≤ k) (hk : k ≤ 3) :
 /-- **The capped lift from `(D, k)` to `(univ, k)`, `1 ≤ k ≤ 3`.**  Read the prescription as `TG`
 parameters `A`, `H`, `G` and the ambient as parameters `A_C`, `A_D`, `H'`, `G'`; the lift keeps
 `A_D = A`, `H` and `G` (each only when its cells are below the target, else `⊥`) and takes for
-`A_C` the ambient below the cap, and above it `H` when `H < G` and `⊤` otherwise
-(`liftParamsH`). -/
+`A_C` the ambient below the cap, and above it `H` when `k = 3` and `H < G`, and `⊤` otherwise, so
+always `⊤` at `k ≤ 2` (`liftParamsH`). -/
 theorem cappedLift_D_of_le_three {k : ℕ} (hk1 : 1 ≤ k) (hk : k ≤ 3) :
     (schemeHG I).rows.CappedLift (X := (coatomD, k)) (Y := ((univ : Finset (Fin 5)), k))
       ⟨subset_univ _, le_rfl⟩ := by
@@ -564,7 +566,7 @@ theorem cappedLift_D_of_le_three {k : ℕ} (hk1 : 1 ≤ k) (hk : k ≤ 3) :
 
 omit hIL hIR in
 /-- The labelling of `Ω` alone: `Ω` at the cells of grade `4`, `⊥` elsewhere. -/
-theorem kindLabel_omega (Ω : Label.{u}) (z : Fin (schemeHG I).card) :
+private theorem kindLabel_omega (Ω : Label.{u}) (z : Fin (schemeHG I).card) :
     kindLabel I ⊥ ⊥ ⊥ ⊥ Ω z = if (schemeHG I).toCellScheme.grade z = 4 then Ω else ⊥ := by
   obtain ⟨-, -, -, -, g5⟩ := grade_of_cellKind z
   by_cases h : (schemeHG I).toCellScheme.grade z = 4
@@ -575,7 +577,7 @@ theorem kindLabel_omega (Ω : Label.{u}) (z : Fin (schemeHG I).card) :
     | _ => simp [kindLabel, hk, CellKind.val]
 
 /-- The row of an old cell of grade `4` is `⊥` exactly below the grade `4`. -/
-theorem row_multiOldCell_eq_bot_iff {a : Fin I.amalgam.card}
+private theorem row_multiOldCell_eq_bot_iff {a : Fin I.amalgam.card}
     (ha : I.amalgam.toCellScheme.grade a = 4)
     (z : (schemeHG I).toCellScheme.below
       ((schemeHG I).toCellScheme.gradedIndex (multiOldCell I multHG a))) :
@@ -746,7 +748,7 @@ theorem cappedLift_four_HG {B : Finset (Fin 5)} (hB : B = coatomC ∨ B = coatom
 
 omit hIL hIR in
 /-- A labelling by kinds with values below `ω ^ 2` is coded. -/
-theorem kindLabel_lt {AC AD Q : Label.{u}} {o : Label.{u}} (hb : (⊥ : Label.{u}) < o)
+private theorem kindLabel_lt {AC AD Q : Label.{u}} {o : Label.{u}} (hb : (⊥ : Label.{u}) < o)
     (hAC : AC < o) (hAD : AD < o) (hH : H < o) (hG : G < o) (hQ : Q < o)
     (z : Fin (schemeHG I).card) : kindLabel I AC AD H G Q z < o := by
   cases hk : cellKind I z with
@@ -758,7 +760,7 @@ theorem kindLabel_lt {AC AD Q : Label.{u}} {o : Label.{u}} (hb : (⊥ : Label.{u
   | top => simp only [kindLabel, hk, CellKind.val]; exact hQ
 
 /-- **The multi-layer step of a seed whose coatom types are `TH` and `TG`**, with two new cells at
-`(univ, 1)`, one for each forced orientation, and the rows `rowsHG`. -/
+`(univ, 1)`, one for each forced separation, and the rows `rowsHG`. -/
 theorem multiLayerStep_HG : I.MultiLayerStep multHG (rowsHG I) where
   pos k := by fin_cases k <;> decide
   row_lt k i z _ := by
@@ -820,7 +822,7 @@ open Finset Label OrderedLayer
 variable (α : Ordinal.{u})
 
 /-- **The completion below the full grade of `seedHG`**: the multi-layer scheme with two new cells
-at `(univ, 1)`, one for each forced orientation. -/
+at `(univ, 1)`, one for each forced separation. -/
 noncomputable def completionHG : CompletionBelowFullGrade (seedHG α) :=
   (multiLayerStep_HG (I := seedHG α) rfl rfl).completion
 

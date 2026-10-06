@@ -44,7 +44,7 @@ step (`VaughtConjecture.Extension.OrderedLayerExamples`).  The legal seed
 ordered-layer step (`CrossedCouplingCounterexample.not_hasOrderedLayerStep_seedHG`, module
 `VaughtConjecture.Extension.CrossedCouplingCounterexample`): its two coatom types are coupled
 crosswise to two parameters of the common face, at the grades `2` and `3`.  It has a completion
-below the full grade with two new cells at `(univ, 1)`, one for each orientation
+below the full grade with two new cells at `(univ, 1)`, one for each forced separation
 (`CrossedCouplingCounterexample.nonempty_completionBelowFullGrade_seedHG`, module
 `VaughtConjecture.Extension.CrossedCouplingCompletion`).  Two opposite forcings
 at one grade need two such parameters (argued, not formalized): a lawful labelling capped at a cap

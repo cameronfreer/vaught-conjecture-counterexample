@@ -138,7 +138,7 @@ theorem val_rightKind (AC AD H G Q : Label.{u}) (c : Fin 19) :
   fin_cases κ <;> rfl
 
 /-- A graded index of kind `A` along the first coatom has grade `1` and contains the point `3`. -/
-theorem kindC_eq_one {X : Finset (Fin 5) × ℕ} (h : kindC X = 1) :
+private theorem kindC_eq_one {X : Finset (Fin 5) × ℕ} (h : kindC X = 1) :
     X.2 = 1 ∧ (3 : Fin 5) ∈ X.1 := by
   unfold kindC at h
   split_ifs at h with h1 h2 h3
@@ -148,7 +148,7 @@ theorem kindC_eq_one {X : Finset (Fin 5) × ℕ} (h : kindC X = 1) :
 
 /-- A graded index of kind `A` along the second coatom has grade `1` and contains the point
 `4`. -/
-theorem kindD_eq_one {X : Finset (Fin 5) × ℕ} (h : kindD X = 1) :
+private theorem kindD_eq_one {X : Finset (Fin 5) × ℕ} (h : kindD X = 1) :
     X.2 = 1 ∧ (4 : Fin 5) ∈ X.1 := by
   unfold kindD at h
   split_ifs at h with h1 h2 h3
@@ -157,7 +157,7 @@ theorem kindD_eq_one {X : Finset (Fin 5) × ℕ} (h : kindD X = 1) :
   all_goals exact absurd h (by decide)
 
 /-- A graded index of kind `H` along the first coatom has grade `2`. -/
-theorem kindC_eq_two {X : Finset (Fin 5) × ℕ} (h : kindC X = 2) : X.2 = 2 := by
+private theorem kindC_eq_two {X : Finset (Fin 5) × ℕ} (h : kindC X = 2) : X.2 = 2 := by
   unfold kindC at h
   split_ifs at h with h1 h2 h3
   · exact absurd h (by decide)
@@ -166,7 +166,7 @@ theorem kindC_eq_two {X : Finset (Fin 5) × ℕ} (h : kindC X = 2) : X.2 = 2 := 
   all_goals exact absurd h (by decide)
 
 /-- A graded index of kind `H` along the second coatom has grade `2`. -/
-theorem kindD_eq_two {X : Finset (Fin 5) × ℕ} (h : kindD X = 2) : X.2 = 2 := by
+private theorem kindD_eq_two {X : Finset (Fin 5) × ℕ} (h : kindD X = 2) : X.2 = 2 := by
   unfold kindD at h
   split_ifs at h with h1 h2 h3
   · exact absurd h (by decide)
@@ -175,7 +175,7 @@ theorem kindD_eq_two {X : Finset (Fin 5) × ℕ} (h : kindD X = 2) : X.2 = 2 := 
   all_goals exact absurd h (by decide)
 
 /-- A graded index of kind `G` along the first coatom has grade `3`. -/
-theorem kindC_eq_three {X : Finset (Fin 5) × ℕ} (h : kindC X = 3) : X.2 = 3 := by
+private theorem kindC_eq_three {X : Finset (Fin 5) × ℕ} (h : kindC X = 3) : X.2 = 3 := by
   unfold kindC at h
   split_ifs at h with h1 h2 h3
   · exact absurd h (by decide)
@@ -185,7 +185,7 @@ theorem kindC_eq_three {X : Finset (Fin 5) × ℕ} (h : kindC X = 3) : X.2 = 3 :
   · exact absurd h (by decide)
 
 /-- A graded index of kind `G` along the second coatom has grade `3`. -/
-theorem kindD_eq_three {X : Finset (Fin 5) × ℕ} (h : kindD X = 3) : X.2 = 3 := by
+private theorem kindD_eq_three {X : Finset (Fin 5) × ℕ} (h : kindD X = 3) : X.2 = 3 := by
   unfold kindD at h
   split_ifs at h with h1 h2 h3
   · exact absurd h (by decide)
@@ -215,7 +215,7 @@ theorem kindOld_spec (X : Finset (Fin 5) × ℕ) :
 /-! ### The cells of the completion -/
 
 /-- The **multiplicities** of the completion: two new cells at `(univ, 1)`, one for each forced
-orientation, and one new cell at each of `(univ, 2)`, `(univ, 3)`, `(univ, 4)`. -/
+separation, and one new cell at each of `(univ, 2)`, `(univ, 3)`, `(univ, 4)`. -/
 def multHG : Fin 4 → ℕ := ![2, 1, 1, 1]
 
 /-- The kinds of the new cells, in their order: the cell at `(univ, 1)` of kind `A_D`, the cell at
@@ -284,7 +284,7 @@ variable {I}
   exact dite_eq_left (show ((multiOldCell I multHG d : ℕ)) < I.amalgam.card from d.isLt)
 
 /-- The new cells, by position. -/
-theorem multiNewCell_cases (k : Fin 4) (i : Fin (multHG k)) :
+private theorem multiNewCell_cases (k : Fin 4) (i : Fin (multHG k)) :
     multiNewCell I multHG k i = cellAD I ∨ multiNewCell I multHG k i = cellAC I ∨
       multiNewCell I multHG k i = cellH I ∨ multiNewCell I multHG k i = cellG I ∨
         multiNewCell I multHG k i = cellT I := by
@@ -301,7 +301,7 @@ theorem multiNewCell_cases (k : Fin 4) (i : Fin (multHG k)) :
     exact .inr (.inr (.inr (.inr rfl)))
 
 /-- The kind of a new cell is read off its position. -/
-theorem cellKind_of_le {z : Fin (multiCard I multHG)} (h : I.amalgam.card ≤ z) :
+private theorem cellKind_of_le {z : Fin (multiCard I multHG)} (h : I.amalgam.card ≤ z) :
     cellKind I z = newKind (z - I.amalgam.card) :=
   dite_eq_right (not_lt.mpr h)
 
@@ -483,13 +483,6 @@ theorem grade_of_cellKind (z : Fin (schemeHG I).card) :
 
 /-! ### Lawful labellings by kinds -/
 
-/-- A labelling lawful below a pair above every cell is lawful. -/
-theorem isLawful_of_forall_mem_below {ι β : Type*} {D : CellScheme ι β} {R : D.Rows.{u}}
-    {X : Finset β × ℕ} {w : ι → Label.{u}} (hw : R.IsLawfulBelow X fun d ↦ w d)
-    (hX : ∀ d, d ∈ D.below X) : R.IsLawful w := by
-  obtain ⟨ho, hl, ha⟩ := Rows.isLawfulBelow_iff_forall.mp hw
-  exact ⟨fun d ↦ ho d (hX d), fun s ↦ hl s (hX s), fun s t ↦ ha s t (hX t)⟩
-
 variable {b : Bool} {A H G : Label.{u}}
 
 /-- The labelling `lab A H G` of the nineteen cells, with `⊥` at the apex. -/
@@ -497,11 +490,11 @@ noncomputable def labApex (A H G : Label.{u}) : Fin 20 → Label.{u} :=
   Fin.snoc (α := fun _ ↦ Label.{u}) (lab A H G) ⊥
 
 /-- The labelling `labApex` is `⊥` at the apex. -/
-theorem labApex_last : labApex A H G (Fin.last 19) = ⊥ :=
+private theorem labApex_last : labApex A H G (Fin.last 19) = ⊥ :=
   Fin.snoc_last (α := fun _ ↦ Label.{u}) ..
 
 /-- The labelling `labApex` is `lab` at the nineteen cells. -/
-theorem labApex_castSucc (c : Fin 19) : labApex A H G c.castSucc = lab A H G c :=
+private theorem labApex_castSucc (c : Fin 19) : labApex A H G c.castSucc = lab A H G c :=
   Fin.snoc_castSucc (α := fun _ ↦ Label.{u}) ..
 
 /-- The labelling `lab A H G` with `⊥` at the apex is lawful for the type `crossType b`. -/
@@ -578,8 +571,9 @@ theorem isLawful_amalgam_kindOld {AC AD : Label.{u}} (hAC : IsSelfVisible 1 AC)
   have hmem (d : Fin I.amalgam.card) :
       d ∈ I.amalgam.toCellScheme.below ((univ : Finset (Fin 5)), 4) :=
     ⟨subset_univ _, Nat.lt_succ_iff.mp (I.grade_lt d)⟩
-  refine isLawful_of_forall_mem_below (Rows.IsLawfulBelow.glue (w := fun d ↦
-    (kindOld (I.amalgam.toCellScheme.gradedIndex d)).val AC AD H G ⊥) hC hD fun d hd ↦ ?_) hmem
+  refine (Rows.IsLawfulBelow.glue (w := fun d ↦
+    (kindOld (I.amalgam.toCellScheme.gradedIndex d)).val AC AD H G ⊥) hC hD fun d hd ↦ ?_).isLawful
+    hmem
   rcases I.subset_or_subset _ (I.amalgam.isWellFormed.isWellFormed.scope_mem d)
     (I.scope_ne_univ d) with h | h
   · exact .inl ⟨by rw [← coatomC_eq]; exact h, hd.2⟩
@@ -635,7 +629,7 @@ theorem transformsTo_kindLabel {u : Fin (schemeHG I).card} {j : ℕ}
 
 omit hIL hIR in
 /-- The strip shifter is a witness for a suppressor up to the grade `1`. -/
-theorem isWitness_stripShifter_one {A F : Label.{u}} (hF : IsSelfVisible 1 F) :
+private theorem isWitness_stripShifter_one {A F : Label.{u}} (hF : IsSelfVisible 1 F) :
     IsWitness (constStepSuppressor 1 F) (stripShifter A) :=
   (isWitness_stripShifter (A := A) (isSelfVisible_top 2)).of_le
     (fun n ↦ by
@@ -774,7 +768,7 @@ theorem hasBottomApexes_HG : I.HasBottomApexes :=
 
 omit hIL hIR in
 /-- The value of a kind with every parameter `⊥` and `Ω` at the grade `4`. -/
-theorem val_kindOld_omega (Ω : Label.{u}) (X : Finset (Fin 5) × ℕ) :
+private theorem val_kindOld_omega (Ω : Label.{u}) (X : Finset (Fin 5) × ℕ) :
     (kindOld X).val ⊥ ⊥ ⊥ ⊥ Ω = if X.2 = 4 then Ω else ⊥ := by
   unfold kindOld
   split_ifs <;> rfl
@@ -986,7 +980,7 @@ theorem kindLabel_congr {z : Fin (schemeHG I).card} {AC AD Q AC' AD' H' G' Q' : 
 
 omit hIL hIR in
 /-- A cell below a coatom pair is old. -/
-theorem exists_eq_multiOldCell_of_mem_below {B : Finset (Fin 5)} (hB : B ≠ univ) {k : ℕ}
+private theorem exists_eq_multiOldCell_of_mem_below {B : Finset (Fin 5)} (hB : B ≠ univ) {k : ℕ}
     {z : Fin (schemeHG I).card} (hz : z ∈ (schemeHG I).toCellScheme.below (B, k)) :
     ∃ d, z = multiOldCell I multHG d :=
   exists_eq_multiOldCell fun h ↦ hB (univ_subset_iff.mp (h ▸ hz.1))

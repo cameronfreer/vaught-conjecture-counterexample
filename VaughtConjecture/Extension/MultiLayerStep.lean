@@ -47,7 +47,7 @@ to it capped at that cell, and each cell of grade `k + 1` is at most some new ce
 `k + 1`.
 
 **Instance.**  The legal seed `CrossedCouplingCounterexample.seedHG`, which has no ordered-layer
-step, has a multi-layer step with two new cells at `(univ, 1)`, one for each forced orientation,
+step, has a multi-layer step with two new cells at `(univ, 1)`, one for each forced separation,
 and one at each other graded face of full scope
 (`CrossedCouplingCounterexample.multiLayerStep_HG`,
 `VaughtConjecture.Extension.CrossedCouplingCompletion`).

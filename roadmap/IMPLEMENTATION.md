@@ -2672,9 +2672,9 @@ ones split):
   multi-layer scheme with a lawful extension (`Seed.multiLayerStep_iff`); with arbitrary rows it
   reformulates the completion at `m = 3` (argued, not formalized). `seedHG` has a completion below
   the full grade (`CrossedCouplingCounterexample.nonempty_completionBelowFullGrade_seedHG`,
-  `CrossedCouplingCounterexample.completionHG`), every field discharged: the multi-layer step of
+  `CrossedCouplingCounterexample.completionHG`), every field proved: the multi-layer step of
   every seed of the types `TH` and `TG` with two new cells at `(univ, 1)`, one per forced
-  orientation, and one at each `(univ, k)`, `k = 2, 3, 4`
+  separation, and one at each `(univ, k)`, `k = 2, 3, 4`
   (`CrossedCouplingCounterexample.multiLayerStep_HG`); its lawful labellings are labellings by
   kinds of `A_C`, `A_D`, `H`, `G` with the couplings of both types
   (`CrossedCouplingCounterexample.isLawful_kindLabel`,
@@ -2684,7 +2684,7 @@ ones split):
   `CrossedCouplingCounterexample.cappedLift_four_HG`; the coatom extension of `TH` and `TG` with
   apex at every stage (`CrossedCouplingCounterexample.exists_coatomExtension_seedHG`). Open: a
   systematic choice of the new cells for every seed on five points (prospective: one new cell per
-  forced orientation at each graded face of full scope), and the completion at `m ≥ 3` for every
+  forced separation at each graded face of full scope), and the completion at `m ≥ 3` for every
   seed.
 
 The completion constructs lawful finite extensions and nothing more.  It imports only Layers
