@@ -69,8 +69,12 @@ Notes on the rows, each with its marker:
   forcing donors (`Expansion.stableCappedReceiving_of_continuationCriterion`), so the two are
   equivalent under (R1), forcing donors and the coface instances
   (`Expansion.stableCappedReceiving_iff_continuationCriterion`); (R4) from the finite statement
-  `StageType.HasStableRecoverySchemes` for the marker and cap calibration, open
-  (`StableCappedReceiving.of_hasStableRecoverySchemes_markerCap`); cover-hollowness and stable-label
+  `StageType.HasStableRecoverySchemes` for the marker and cap calibration
+  (`StableCappedReceiving.of_hasStableRecoverySchemes_markerCap`), a hypothesis refuted at every `ξ`
+  (`Continuation.StableRecoveryCounterexample.not_hasStableRecoverySchemes_markerCap`), and for the
+  graded cap calibration, open, whose acquisition is compiled
+  (`StableCappedReceiving.of_hasStableRecoverySchemes_gradedCap`,
+  `Realization.IsModel.acquiresCalibratedContexts_gradedCap`); cover-hollowness and stable-label
   fixedness (`Realization.isCoverHollow_iff_forall_stableLabel_eq_top`); the exact-age comparison
   (`Realization.nonempty_equiv_of_exactReceivingWithin`); the three comparisons, the rigid-core one
   conditional on finite-extension receiving (from (R1);
@@ -181,9 +185,19 @@ counted as compiled.
    (R1) for the model (`Realization.exists_stableCandidate_eval_eq_of_hasFiniteCutReceiving`).  The
    evaluation step and the acquisition of the marker and cap calibration are compiled, leaving one
    finite statement, `StageType.HasStableRecoverySchemes` for `StageType.MarkerCapCalibration`
-   (open, not tested on any instance; weaker calibration than the design of `README.md`, Layer 3,
-   3.3, whose full-grade cap labelled the formal top is not acquired): (R4) from it is
-   `StableCappedReceiving.of_hasStableRecoverySchemes_markerCap`.
+   ((R4) from it is `StableCappedReceiving.of_hasStableRecoverySchemes_markerCap`).  That finite
+   hypothesis is false at every `ξ`, over a root with no private point and the twins of the
+   five-cell type
+   (`Continuation.StableRecoveryCounterexample.not_hasStableRecoverySchemes_markerCap`); (R4) is
+   not refuted.  The graded cap calibration (`StageType.GradedCapCalibration`: a cap of
+   grade `N` above the arity of the root, labelled at least `λ_ξ + N`, and reference cells with
+   offsets below `N`) excludes that instance, its acquisition is compiled
+   (`Realization.IsModel.acquiresCalibratedContexts_gradedCap`, from non-hollowness, growth,
+   uniformity and covering), and (R4) follows from stable recovery schemes for it
+   (`StableCappedReceiving.of_hasStableRecoverySchemes_gradedCap`; open, still to be proved).  The
+   decoder at one reading cell (`CellScheme.Rows.IsLawful.label_eq_of_reading`) reduces these to
+   the existence of legal schemes with a graded index all of whose cells read the reference cells,
+   the cap and the new cells; that existence is not proved.
 6. **The attained least lift and structural successor leastness** (prospective).  One lift of a
    legal stage type at a limit stage `β` to `β + ω`, least at every cell (each minimum is attained
    separately: `StageType.exists_lift_label_eq_ofOffset`); the threshold forced by a cover is read

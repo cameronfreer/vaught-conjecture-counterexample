@@ -447,7 +447,7 @@ rows).
    `Continuation.CandidateCounterexamples.not_twinOrdering_blockStage`; informal, not compiled as a
    separate statement; [Kni26, Lemma 2.5.11] is not relied on, `README.md`, Layer 1); this negative
    special case is to be compiled in `Continuation/CandidateCounterexamples` (Layer 4), on the
-   five-cell scheme defined privately there (`fiveCells`, `fiveCellRows`, `fiveCellScheme`).
+   five-cell scheme defined there (`fiveCells`, `fiveCellRows`, `fiveCellScheme`).
    "Least lift" is never replaced by "unique lift".
 6. *The separation of leastness from modelhood.*  Statements 1–5, 8, and 9 do not make the candidate
    a model: receiving, (R1)–(R4), stays its own statement; (R4) (`StableCappedReceiving`) and the
@@ -2306,8 +2306,12 @@ Each checkpoint needs both its abstract API and a concrete application:
    reducing to the top; the evaluation step and the acquisition of the marker and cap calibration
    are compiled, so (R4) follows from the finite statement `StageType.HasStableRecoverySchemes` for
    `StageType.MarkerCapCalibration` at every `ξ < ω₁`
-   (`StableCappedReceiving.of_hasStableRecoverySchemes_markerCap`), new and open (`README.md`, Layer
-   4, status, output 3). Step 7 is
+   (`StableCappedReceiving.of_hasStableRecoverySchemes_markerCap`), a finite hypothesis that is
+   false (`Continuation.StableRecoveryCounterexample.not_forall_hasStableRecoverySchemes_markerCap`,
+   `Continuation/StableRecoveryCounterexample`), and from the same statement for the graded cap
+   calibration (`StableCappedReceiving.of_hasStableRecoverySchemes_gradedCap`,
+   `Continuation/StableRecovery`; acquisition compiled, the finite statement open; `README.md`,
+   Layer 4, status, output 3). Step 7 is
    compiled conditionally (`README.md`, the section on the top-free witnesses): the loss at `η`
    under uniqueness at `λ_η` (`nonempty_loss_of_topFreeWitness`), and per block under
    `StageType.HasApexCoatomExtensions` at `λ_η` and uniqueness of the model expansions at `λ_η`

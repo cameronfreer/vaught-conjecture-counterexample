@@ -108,14 +108,19 @@ and has top-grade supremum `⊤` (`Realization.IsModel.acquiresCalibratedContext
 attained proper stable label, a stable label above `λ_ξ + K` from unbounded growth, and covering).
 So (R4) follows from the single finite statement `StageType.HasStableRecoverySchemes ξ
 (StageType.MarkerCapCalibration ξ)` at every `ξ < ω₁`
-(`StableCappedReceiving.of_hasStableRecoverySchemes_markerCap`), which is new, open, and not tested
-on any instance.  It asks for recovery from less calibration than the roadmap's design (Layer 3,
-3.3: a private cap of full scope and full grade `N`, labelled the formal top in `R`, with stable
-value above `λ_ξ + ℓ > γ`; a marker offset below `N`; a reference cell for each block of a proper
-label of `D`; the growth construction with its section theorem and the recovery statement through
-`Correct`, shared with (R3)), so it may fail where the roadmap's form holds.  The acquisition of the
-roadmap's calibration, in particular a cap of full grade labelled the formal top in `R` with a
-large stable value, is not proved.  The apex coatom extension property does not enter (R4): it
+(`StableCappedReceiving.of_hasStableRecoverySchemes_markerCap`).  That statement is false at every
+`ξ` (`Continuation.StableRecoveryCounterexample.not_hasStableRecoverySchemes_markerCap`, in
+`VaughtConjecture.Continuation.StableRecoveryCounterexample`): over a root with no private point
+(`f` the identity) a stable recovery scheme is the scheme of `D`, and two lifts of one five-cell
+type order its twins both ways.  It asks for recovery from less calibration than the roadmap's
+design (Layer 3, 3.3: a private cap of full scope and full grade `N`, labelled the formal top in
+`R`, with stable value above `λ_ξ + ℓ > γ`; a marker offset below `N`; a reference cell for each
+block of a proper label of `D`; the growth construction with its section theorem and the recovery
+statement through `Correct`, shared with (R3)).  The graded cap calibration
+(`StageType.GradedCapCalibration`, in `VaughtConjecture.Continuation.StableRecovery`) adds a cap of
+grade above the arity of the root, the reference offsets and the finite parts of `D`, labelled at
+least `λ_ξ` plus its grade, and reference cells; its acquisition is proved, and stable recovery
+schemes for it are open.  The apex coatom extension property does not enter (R4): it
 enters output 3 only through the coface instances at `λ_{ξ+1}`.
 
 ## Placement
@@ -226,7 +231,8 @@ variable (ξ) in
 **cap**).  It does not depend on `f` and `D`.  This is less than the calibrated data of the
 roadmap (Layer 3, 3.3), which also ask for a cap of full scope and full grade `N` labelled the
 formal top at `λ_ξ`, a marker offset below `N`, reference cells for the blocks of the proper labels
-of `D`, and an arity bound. -/
+of `D`, and an arity bound.  Stable recovery schemes for it do not exist
+(`Continuation.StableRecoveryCounterexample.not_hasStableRecoverySchemes_markerCap`). -/
 def MarkerCapCalibration ⦃m k : ℕ⦄ (Tp : StageType.{u} (blockStage (ξ + 1)) m) (_ : Fin k ↪ Fin m)
     (_ : StageType.{u} (blockStage (ξ + 1)) (k + 1)) (γ : Ordinal.{u}) : Prop :=
   (∃ (a : Fin Tp.card) (i : ℕ), Tp.label a = ((blockStage ξ + i : Ordinal.{u}) : Label.{u})) ∧
@@ -693,9 +699,9 @@ theorem StableCappedReceiving.of_stableRecoveryContexts (h : StableRecoveryConte
       hD γ hγ
 
 /-- **(R4) from one finite statement**: stable recovery schemes for the marker and cap calibration
-at every `ξ < ω₁`, a finite statement about stage types (open, and not tested on any instance),
-give (R4); the acquisition is proved
-(`Realization.IsModel.acquiresCalibratedContexts_markerCap`). -/
+at every `ξ < ω₁`, a finite statement about stage types, give (R4); the acquisition is proved
+(`Realization.IsModel.acquiresCalibratedContexts_markerCap`).  The hypothesis is false
+(`Continuation.StableRecoveryCounterexample.not_forall_hasStableRecoverySchemes_markerCap`). -/
 theorem StableCappedReceiving.of_hasStableRecoverySchemes_markerCap
     (h : ∀ ξ < ω₁,
       StageType.HasStableRecoverySchemes.{0} ξ (StageType.MarkerCapCalibration.{0} ξ)) :
