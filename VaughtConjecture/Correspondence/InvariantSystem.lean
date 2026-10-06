@@ -36,17 +36,17 @@ here with one field for each printed clause.
 * A structure compatible with a diagram [AFK26, Definition 2.5] is
   `InvarianceDiagram.IsCompatible`, with its two clauses.
 * An invariant system [AFK26, Definition 2.6] is `InvariantSystem`: the type of the field `τ`
-  is clauses (a) and (b) (`τ_β` maps `L_b^n` to `L_b^n`; it is read only at `β < ω₁`), and the
-  fields `comp`, `countable`, `ne_univ`, and `exists_fixed` are clauses (c), (d)(i), (d)(ii),
-  and (d)(iii).
+  is clauses (a) and (b) (`τ_β` maps `L_b^n` to `L_b^n`, for `β` in the subtype of the ordinals
+  below `ω₁`), and the fields `comp`, `countable`, `ne_univ`, and `exists_fixed` are clauses (c),
+  (d)(i), (d)(ii), and (d)(iii).  A system is determined by its maps `τ_β` at the printed indices
+  `β < ω₁` (`InvariantSystem.ext`).
 * The compatibility of a diagram and a system [AFK26, Definition 2.8] is
   `InvarianceDiagram.IsCompatibleWith`, with its two clauses.
 
 What these transcriptions do and do not constrain:
 
-* `InvariantSystem.τ` is a map at every ordinal, and no field constrains its values at
-  `β ≥ ω₁`; two systems that agree below `ω₁` are the same printed system but may be different
-  terms here.  Only the values below `ω₁` are read (every field is stated for `β < ω₁`).
+* `InvariantSystem.τ` is indexed by the countable ordinals, as printed: two systems with the same
+  maps `τ_β` at every `β < ω₁` are equal (`InvariantSystem.ext`).
 * Countability, a convention of [AFK26, §1.4], is imposed only on the structure of the third
   clause of [AFK26, Definition 2.4] (`InvarianceDiagram.realized`); `IsGeometry`,
   `IsStructuredGeometry`, `InvarianceDiagram.IsCompatible` and the round trip below hold for
@@ -86,15 +86,16 @@ the projections along a stage function (`reductionSystem`): `τ_β` is the proje
   support (`Realization.relMap_closed_iff_isSupport`), equivalently a finite closed set of the
   canonical closure (`Realization.relMap_closed_iff_isClosed`).
 * `blockSystem`, the projections to the block stages `λ_ξ`, and `omega0MulSystem`, the projections
-  to the printed stages `ω · β`, are invariant systems, and `omega0MulSystem.τ (1 + ξ)` is
-  `blockSystem.τ ξ` (`omega0MulSystem_τ_one_add`).  `blockSystem` is compatible with
-  `stageDiagram` (`isCompatibleWith_blockSystem`), and `omega0MulSystem` is not
-  (`not_isCompatibleWith_omega0MulSystem`): its projection of index `0`, to the stage `0`, changes
-  the base relation of a legal one-point type with label `1`.  Every reduction system whose stages
-  are at least `ω` is compatible (`isCompatibleWith_reductionSystem`); in particular so is the
-  printed system corrected at the index `0` only (`omega0MulMaxOneSystem`, the stages
-  `ω · max β 1`: `isCompatibleWith_omega0MulMaxOneSystem`), which agrees with the printed system at
-  every positive index (`omega0MulMaxOneSystem_τ_of_ne_zero`).
+  to the printed stages `ω · β`, are invariant systems, and for `ξ < ω₁`,
+  `omega0MulSystem.τ (1 + ξ)` is `blockSystem.τ ξ` (`omega0MulSystem_τ_one_add`).
+  `blockSystem` is compatible with `stageDiagram` (`isCompatibleWith_blockSystem`), and
+  `omega0MulSystem` is not (`not_isCompatibleWith_omega0MulSystem`): its projection of index `0`,
+  to the stage `0`, changes the base relation of a legal one-point type with label `1`.  Every
+  reduction system whose stages are at least `ω` is compatible (`isCompatibleWith_reductionSystem`);
+  in particular so is the printed system corrected at the index `0` only
+  (`omega0MulMaxOneSystem`, the stages `ω · max β 1`: `isCompatibleWith_omega0MulMaxOneSystem`),
+  which agrees with the printed system at every positive index
+  (`omega0MulMaxOneSystem_τ_of_ne_zero`).
 
 **Departures.**
 
@@ -271,30 +272,41 @@ variable (σ) in
 /-- **An invariant system** on `L_b` [AFK26, Definition 2.6]: maps `τ_β` of the invariants indexed
 by the countable ordinals `β`, one field for each clause. -/
 structure InvariantSystem where
-  /-- (a) and (b): `τ_β` maps `L_b^n` to `L_b^n` (it is read only at `β < ω₁`). -/
-  τ (β : Ordinal.{u}) ⦃n : ℕ⦄ : σ.Invariant n → σ.Invariant n
+  /-- (a) and (b): for every countable `β`, `τ_β` maps `L_b^n` to `L_b^n`. -/
+  τ (β : {β : Ordinal.{u} // β < ω₁}) ⦃n : ℕ⦄ : σ.Invariant n → σ.Invariant n
   /-- (c) For `α ≤ β < ω₁`, `τ_α ∘ τ_β = τ_β ∘ τ_α = τ_α`. -/
-  comp ⦃α β : Ordinal.{u}⦄ (hαβ : α ≤ β) (hβ : β < ω₁) ⦃n : ℕ⦄ (Q : σ.Invariant n) :
+  comp ⦃α β : {β : Ordinal.{u} // β < ω₁}⦄ (hαβ : α ≤ β) ⦃n : ℕ⦄ (Q : σ.Invariant n) :
     τ α (τ β Q) = τ α Q ∧ τ β (τ α Q) = τ α Q
   /-- (d)(i) Countably many `β`-invariants, the invariants fixed by `τ_β`. -/
-  countable ⦃β : Ordinal.{u}⦄ (hβ : β < ω₁) :
+  countable (β : {β : Ordinal.{u} // β < ω₁}) :
     {Q : Σ n, σ.Invariant n | τ β Q.2 = Q.2}.Countable
   /-- (d)(ii) Not every invariant is a `β`-invariant. -/
-  ne_univ ⦃β : Ordinal.{u}⦄ (hβ : β < ω₁) : {Q : Σ n, σ.Invariant n | τ β Q.2 = Q.2} ≠ Set.univ
+  ne_univ (β : {β : Ordinal.{u} // β < ω₁}) : {Q : Σ n, σ.Invariant n | τ β Q.2 = Q.2} ≠ Set.univ
   /-- (d)(iii) Every invariant is a `β`-invariant for some countable `β`. -/
-  exists_fixed ⦃n : ℕ⦄ (Q : σ.Invariant n) : ∃ β < ω₁, τ β Q = Q
+  exists_fixed ⦃n : ℕ⦄ (Q : σ.Invariant n) : ∃ β : {β : Ordinal.{u} // β < ω₁}, τ β Q = Q
+
+/-- **Extensionality of invariant systems**: two invariant systems with the same maps `τ_β` at
+every countable `β` are equal. -/
+@[ext] theorem InvariantSystem.ext {S T : InvariantSystem.{u} σ}
+    (h : ∀ (β : {β : Ordinal.{u} // β < ω₁}) (n : ℕ) (Q : σ.Invariant n), S.τ β Q = T.τ β Q) :
+    S = T := by
+  cases S
+  cases T
+  congr
+  funext β n Q
+  exact h β n Q
 
 /-- **An invariance diagram and an invariant system are compatible** [AFK26, Definition 2.8], one
 field for each clause. -/
 structure InvarianceDiagram.IsCompatibleWith (D : InvarianceDiagram σ)
     (S : InvariantSystem.{u} σ) : Prop where
   /-- First clause: a pair `(P(x), Q(x_j))` of invariants is carried by `τ_β` to a pair. -/
-  invariant ⦃β : Ordinal.{u}⦄ (hβ : β < ω₁) ⦃n k : ℕ⦄ (P : σ.Invariant n) (Q : σ.Invariant k)
+  invariant (β : {β : Ordinal.{u} // β < ω₁}) ⦃n k : ℕ⦄ (P : σ.Invariant n) (Q : σ.Invariant k)
     (j : Fin k → Fin n) : ⟨n, P.1, atom Q.1 j⟩ ∈ D.pairs →
       ⟨n, (S.τ β P).1, atom (S.τ β Q).1 j⟩ ∈ D.pairs
   /-- Second clause: for `P ∈ L_b` and `R ∈ L_c`, `(P(x), R(x_j))` is a pair exactly when
   `(τ_β(P)(x), R(x_j))` is. -/
-  base ⦃β : Ordinal.{u}⦄ (hβ : β < ω₁) ⦃n k : ℕ⦄ (P : σ.Invariant n) (R : L.Relations k)
+  base (β : {β : Ordinal.{u} // β < ω₁}) ⦃n k : ℕ⦄ (P : σ.Invariant n) (R : L.Relations k)
     (j : Fin k → Fin n) : ¬ σ.IsInvariant R →
     (⟨n, P.1, atom R j⟩ ∈ D.pairs ↔ ⟨n, (S.τ β P).1, atom R j⟩ ∈ D.pairs)
 
@@ -988,11 +1000,6 @@ theorem label_project (hγ : IsSuccPrelimit γ) (hγω : γ ≤ ω₁) (d : Fin 
     (p.project hγ).label d = Label.reduce γ (p.label d) :=
   (p.reduce hγ).reduce_label_of_le _ hγω d
 
-/-- Reading a label reduced to a stage `γ ≤ ω₁` at stage `ω₁` does not change it. -/
-theorem reduce_omega_one_reduce (hγω : γ ≤ ω₁) (x : Label.{u}) :
-    Label.reduce ω₁ (Label.reduce γ x) = Label.reduce γ x :=
-  ((atStage_reduce γ x).mono hγω).reduce_eq
-
 /-- Projection preserves legality. -/
 theorem IsLegal.project {p : StageType.{u} ω₁ n} (hp : p.IsLegal) (hγ : IsSuccPrelimit γ) :
     (p.project hγ).IsLegal :=
@@ -1015,7 +1022,7 @@ theorem project_project_of_le (hγ : IsSuccPrelimit γ) (hδ : IsSuccPrelimit δ
     -- the labels of a projection, by the definition of `project` and of `StageType.reduce`
     change Label.reduce ω₁ (Label.reduce γ (Label.reduce ω₁ (Label.reduce δ (p.label i)))) =
       Label.reduce ω₁ (Label.reduce γ (p.label j))
-    rw [hij', reduce_omega_one_reduce hδω, reduce_reduce_of_le hγδ]
+    rw [hij', Label.reduce_reduce_of_ge hδω, reduce_reduce_of_le hγδ]
 
 /-- **Projecting to a higher stage after a lower one gives the lower one**: `τ_δ ∘ τ_γ = τ_γ` for
 `γ ≤ δ ≤ ω₁`. -/
@@ -1026,7 +1033,7 @@ theorem project_project_of_ge (hγ : IsSuccPrelimit γ) (hδ : IsSuccPrelimit δ
     -- the labels of a projection, by the definition of `project` and of `StageType.reduce`
     change Label.reduce ω₁ (Label.reduce δ (Label.reduce ω₁ (Label.reduce γ (p.label i)))) =
       Label.reduce ω₁ (Label.reduce γ (p.label j))
-    rw [hij', reduce_omega_one_reduce (hγδ.trans hδω), reduce_omega_one_reduce hδω]
+    rw [hij', Label.reduce_reduce_of_ge (hγδ.trans hδω), Label.reduce_reduce_of_ge hδω]
     exact ((atStage_reduce γ _).mono hγδ).reduce_eq
 
 /-- **Projection commutes with face maps**, including definedness. -/
@@ -1100,13 +1107,14 @@ arguments, and unbounded below `ω₁`. -/
 noncomputable def reductionSystem (hf : ∀ β, IsSuccPrelimit (f β)) (hmono : Monotone f)
     (hlt : ∀ β < ω₁, f β < ω₁) (hunb : ∀ o < ω₁, ∃ β < ω₁, o < f β) :
     InvariantSystem.{u} stageSignature.{u} where
-  τ β _ := projectInvariant (hf β)
-  comp α β hαβ hβ n Q := by
+  τ β _ := projectInvariant (hf β.1)
+  comp α β hαβ n Q := by
+    have hαβ' : f α.1 ≤ f β.1 := hmono (Subtype.coe_le_coe.mpr hαβ)
     obtain ⟨p, hp, hn, rfl⟩ := stageSignature.exists_eq_invariant Q
     simp only [projectInvariant_invariant, invariant_eq_invariant_iff]
-    exact ⟨p.project_project_of_le _ _ (hmono hαβ) (hlt β hβ).le,
-      p.project_project_of_ge _ _ (hmono hαβ) (hlt β hβ).le⟩
-  countable β hβ := by
+    exact ⟨p.project_project_of_le _ _ hαβ' (hlt β.1 β.2).le,
+      p.project_project_of_ge _ _ hαβ' (hlt β.1 β.2).le⟩
+  countable := fun ⟨β, hβ⟩ ↦ by
     have := fun n ↦ StageType.countable_of_lt_omega_one (hlt β hβ) n
     let g : (Σ n, {q : StageType.{u} (f β) n // q.IsLegal ∧ 0 < n}) →
         Σ n, stageSignature.{u}.Invariant n := fun q ↦
@@ -1119,7 +1127,7 @@ noncomputable def reductionSystem (hf : ∀ β, IsSuccPrelimit (f β)) (hmono : 
     simp only [Set.mem_ofPred_eq, projectInvariant_invariant] at hQ ⊢
     simp only [g, Sigma.mk.injEq, heq_eq_eq, true_and]
     exact invariant_eq_invariant_iff.mpr (invariant_eq_invariant_iff.mp hQ)
-  ne_univ β hβ := by
+  ne_univ := fun ⟨β, hβ⟩ ↦ by
     obtain ⟨d, hd, i, -, hi⟩ := StageType.exists_onePoint_label (α := ω₁) (c := f β + 1)
       (by simpa using Label.isSelfVisible_coe_add (k := 1) (K := 1) (hf β) le_rfl)
       ((Cardinal.isSuccLimit_omega 1).succ_lt (hlt β hβ))
@@ -1141,11 +1149,11 @@ noncomputable def reductionSystem (hf : ∀ β, IsSuccPrelimit (f β)) (hmono : 
         exact ⟨β, hβ, h ▸ Label.atStage_coe.mpr hoβ⟩
       · exact ⟨0, omega_pos 1, h ▸ Label.atStage_top⟩
     choose g hg hgd using hd
-    refine ⟨Finset.univ.sup g, (Finset.sup_lt_iff (omega_pos 1)).mpr fun d _ ↦ hg d, ?_⟩
+    have hsup : Finset.univ.sup g < ω₁ := (Finset.sup_lt_iff (omega_pos 1)).mpr fun d _ ↦ hg d
+    refine ⟨⟨Finset.univ.sup g, hsup⟩, ?_⟩
     simp only [projectInvariant_invariant, invariant_eq_invariant_iff]
-    refine (p.project_eq_self_iff _ (hlt _ ?_).le).mpr fun d ↦
+    exact (p.project_eq_self_iff _ (hlt _ hsup).le).mpr fun d ↦
       (hgd d).mono (hmono (Finset.le_sup (Finset.mem_univ d)))
-    exact (Finset.sup_lt_iff (omega_pos 1)).mpr fun d _ ↦ hg d
 
 /-- **The invariant system of the block stages**: `τ_ξ` is the projection to the block stage
 `λ_ξ = ω + ω · ξ`. -/
@@ -1173,8 +1181,9 @@ theorem projectInvariant_congr {γ δ : Ordinal.{u}} (h : γ = δ) (hγ : IsSucc
 
 /-- **The printed projection of index `1 + ξ` is the projection of the block stage `λ_ξ`**: the
 two invariant systems differ by the reindexing `ξ ↦ 1 + ξ` (`blockStage_eq_mul`). -/
-theorem omega0MulSystem_τ_one_add (ξ : Ordinal.{u}) {n : ℕ}
-    (Q : stageSignature.{u}.Invariant n) : omega0MulSystem.τ (1 + ξ) Q = blockSystem.τ ξ Q :=
+theorem omega0MulSystem_τ_one_add {ξ : Ordinal.{u}} (hξ : ξ < ω₁) {n : ℕ}
+    (Q : stageSignature.{u}.Invariant n) :
+    omega0MulSystem.τ ⟨1 + ξ, one_add_lt_omega_one_iff.mpr hξ⟩ Q = blockSystem.τ ⟨ξ, hξ⟩ Q :=
   projectInvariant_congr (blockStage_eq_mul ξ).symm _ _ Q
 
 /-- **The printed indexing corrected at the index `0` only**: `τ_β` is the projection to the stage
@@ -1191,8 +1200,9 @@ noncomputable def omega0MulMaxOneSystem : InvariantSystem.{u} stageSignature.{u}
 
 /-- **The correction at the index `0` changes no other index**: at every positive index the
 system `omega0MulMaxOneSystem` is the printed system. -/
-theorem omega0MulMaxOneSystem_τ_of_ne_zero {β : Ordinal.{u}} (hβ : β ≠ 0) {n : ℕ}
-    (Q : stageSignature.{u}.Invariant n) : omega0MulMaxOneSystem.τ β Q = omega0MulSystem.τ β Q :=
+theorem omega0MulMaxOneSystem_τ_of_ne_zero {β : {β : Ordinal.{u} // β < ω₁}}
+    (hβ : (β : Ordinal.{u}) ≠ 0) {n : ℕ} (Q : stageSignature.{u}.Invariant n) :
+    omega0MulMaxOneSystem.τ β Q = omega0MulSystem.τ β Q :=
   projectInvariant_congr (by simp only [max_eq_left (Order.one_le_iff_ne_zero.mpr hβ)]) _ _ Q
 
 /-- **The reduction systems at stages at least `ω` are compatible with the invariance diagram of
@@ -1202,19 +1212,19 @@ theorem isCompatibleWith_reductionSystem (f : Ordinal.{u} → Ordinal.{u})
     (hf : ∀ β, IsSuccPrelimit (f β)) (hmono : Monotone f) (hlt : ∀ β < ω₁, f β < ω₁)
     (hunb : ∀ o < ω₁, ∃ β < ω₁, o < f β) (hω : ∀ β < ω₁, ω ≤ f β) :
     stageDiagram.IsCompatibleWith (reductionSystem f hf hmono hlt hunb) := by
-  refine ⟨fun β hβ n k P Q j hPQ ↦ ?_, fun β hβ n k P R j hR ↦ ?_⟩
+  refine ⟨fun β n k P Q j hPQ ↦ ?_, fun β n k P R j hR ↦ ?_⟩
   · obtain ⟨p, hp, hn, rfl⟩ := stageSignature.exists_eq_invariant P
     obtain ⟨q, hq, hk, rfl⟩ := stageSignature.exists_eq_invariant Q
     obtain ⟨hj, he⟩ : ∃ hj : Function.Injective j, StageType.restrictFace ⟨j, hj⟩ p = some q :=
       hPQ
     refine ⟨hj, ?_⟩
     -- `HoldsAt` of the projected invariant symbol, with `τ_β` unfolded to `project`
-    change StageType.restrictFace ⟨j, hj⟩ (p.project (hf β)) = some (q.project (hf β))
+    change StageType.restrictFace ⟨j, hj⟩ (p.project (hf β.1)) = some (q.project (hf β.1))
     rw [StageType.restrictFace_project, he, Option.map_some]
   · obtain ⟨p, hp, hn, rfl⟩ := stageSignature.exists_eq_invariant P
     obtain ⟨s, hk⟩ := R
     -- membership in the pairs is `HoldsIn`, with `τ_β` unfolded to `project`
-    change InvariantSymbol.HoldsIn s p j ↔ InvariantSymbol.HoldsIn s (p.project (hf β)) j
+    change InvariantSymbol.HoldsIn s p j ↔ InvariantSymbol.HoldsIn s (p.project (hf β.1)) j
     refine exists_congr fun hj ↦ ?_
     rw [StageType.restrictFace_project]
     cases s with
@@ -1224,7 +1234,7 @@ theorem isCompatibleWith_reductionSystem (f : Ordinal.{u} → Ordinal.{u})
       simp only [InvariantSymbol.HoldsAt, Option.map_map]
       congr! 2
       funext q
-      exact (q.reduce_omega0_project (hf β) (hω β hβ)).symm
+      exact (q.reduce_omega0_project (hf β.1) (hω β.1 β.2)).symm
 
 /-- **The block system is compatible with the invariance diagram of the stage types**
 [AFK26, Definition 2.8]: every block stage is at least `ω`. -/
@@ -1251,7 +1261,7 @@ theorem not_isCompatibleWith_omega0MulSystem :
   have hω : IsSuccPrelimit (ω : Ordinal.{u}) := isSuccLimit_omega0.isSuccPrelimit
   obtain ⟨d, hd, i, -, hi⟩ := StageType.exists_onePoint_label (α := ω₁) (c := 1)
     (by simp) (one_lt_omega0.trans omega0_lt_omega_one)
-  have key := h.base (β := 0) (omega_pos 1) ⟨⟨.invariant d hd, one_pos⟩, trivial⟩
+  have key := h.base ⟨0, omega_pos 1⟩ ⟨⟨.invariant d hd, one_pos⟩, trivial⟩
     ⟨.base (baseLanguage.symbol (d.reduce hω) (hd.reduce hω)), one_pos⟩ id id
   have hl : InvariantSymbol.HoldsIn (.base (baseLanguage.symbol (d.reduce hω) (hd.reduce hω))) d
       id := ⟨Function.injective_id, by

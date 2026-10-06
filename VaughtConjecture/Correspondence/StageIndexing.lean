@@ -16,9 +16,11 @@ reads the projection of index `β` at the stage `ω · β`:
 
 * the `β`-truncation function [AFK26, Definition 3.12] keeps an ordinal below `β` and sends every
   other ordinal, and `∞`, to `∞`; it is extended by `-∞ ↦ -∞` [AFK26, Definition 4.9].  It is the
-  stage reduction `Label.reduce β` of a label, clause by clause (`Label.reduce_bot`,
-  `Label.reduce_coe_eq_ite`, `Label.reduce_top`).  `Label.reduce_coe_eq_ite` is stated for all
-  ordinals `β` and `o`; the printed function, with `β < ω₁` and domain `ω₁ ∪ {∞}`, is its
+  stage reduction `Label.reduce β` of a label, clause by clause (in `VaughtConjecture.Label.Basic`):
+  an ordinal `o` goes to `o` when `o < β` and to the formal top otherwise
+  (`Label.reduce_coe_eq_ite`), `∞`, the formal top, goes to itself (`Label.reduce_top`), and `-∞`,
+  the bottom label, goes to itself (`Label.reduce_bot`).  `Label.reduce_coe_eq_ite` is stated for
+  all ordinals `β` and `o`; the printed function, with `β < ω₁` and domain `ω₁ ∪ {∞}`, is its
   restriction;
 * the projection of index `β` is the truncation at `ω · β`: in the example of trees,
   `τ_β = τ⁻_{ω·β}` [AFK26, Definition 3.20], and for templates `τ_β(Q_t) = Q_{t*}` with `t*` the
@@ -76,22 +78,6 @@ universe u
 namespace VaughtConjecture
 
 open Ordinal Order
-
-/-! ### The printed truncation function -/
-
-namespace Label
-
-/-- **The truncation function of [AFK26] on an ordinal** [AFK26, Definition 3.12]: stage
-reduction keeps an ordinal below the stage and sends every other ordinal to the formal top.  With
-`Label.reduce_top` (the top is sent to the top) and `Label.reduce_bot` (the extension
-`-∞ ↦ -∞` of [AFK26, Definition 4.9]) this is the printed function, clause by clause. -/
-theorem reduce_coe_eq_ite (β o : Ordinal.{u}) :
-    reduce β (o : Label.{u}) = if o < β then (o : Label.{u}) else ⊤ := by
-  split_ifs with h
-  · exact reduce_of_lt (by exact_mod_cast h)
-  · exact reduce_of_le (by exact_mod_cast not_lt.mp h)
-
-end Label
 
 /-! ### Block stages as printed stages -/
 

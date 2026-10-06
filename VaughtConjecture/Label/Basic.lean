@@ -186,6 +186,14 @@ theorem reduce_bot : reduce α (⊥ : Label.{u}) = ⊥ := reduce_of_lt (WithBot.
 /-- Stage reduction fixes the formal top. -/
 theorem reduce_top : reduce α (⊤ : Label.{u}) = ⊤ := reduce_of_le le_top
 
+/-- Stage reduction of an ordinal label: the ordinal is kept when it is below the stage, and
+becomes the formal top otherwise. -/
+theorem reduce_coe_eq_ite (β o : Ordinal.{u}) :
+    reduce β (o : Label.{u}) = if o < β then (o : Label.{u}) else ⊤ := by
+  split_ifs with h
+  · exact reduce_of_lt (by exact_mod_cast h)
+  · exact reduce_of_le (by exact_mod_cast not_lt.mp h)
+
 /-- Stage reduction never lowers a label. -/
 theorem le_reduce (α : Ordinal.{u}) (x : Label.{u}) : x ≤ reduce α x := by
   unfold reduce; split_ifs <;> simp
@@ -240,6 +248,11 @@ theorem reduce_reduce_of_le (h : β ≤ α) (x : Label.{u}) :
   · have hβ : (β : Label.{u}) ≤ x := (WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr h)).trans
       (not_lt.mp hx)
     rw [reduce_of_le (not_lt.mp hx), reduce_top, reduce_of_le hβ]
+
+/-- Reducing to a stage `α` a label already reduced to a lower stage `β` does not change it. -/
+theorem reduce_reduce_of_ge (h : β ≤ α) (x : Label.{u}) :
+    reduce α (reduce β x) = reduce β x :=
+  ((atStage_reduce β x).mono h).reduce_eq
 
 /-- Stage reduction is idempotent. -/
 @[simp] theorem reduce_reduce (α : Ordinal.{u}) (x : Label.{u}) :

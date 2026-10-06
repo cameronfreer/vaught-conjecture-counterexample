@@ -1113,9 +1113,10 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
    version of that date defines them in its Definition 4.15, and the current version does not
    define stages).  Proved correspondence (P): the printed truncation function (Definitions 3.12
    and 4.9) is `Label.reduce`, clause by clause (`Label.reduce_coe_eq_ite`, `Label.reduce_bot`,
-   `Label.reduce_top`).  Printed material, not used here: Definition 4.20 asks for density at the
-   index `ω · β` (density at an index being read through the projection of that index,
-   Definition 2.10), which by Definition 4.16 is the truncation at `ω² · β`, not at `ω · β`.
+   `Label.reduce_top`, `Label/Basic`).  Printed material, not used here: Definition 4.20 asks for
+   density at the index `ω · β` (density at an index being read through the projection of that
+   index, Definition 2.10), which by Definition 4.16 is the truncation at `ω² · β`, not at
+   `ω · β`.
 2. `Label.visibilityReplace` (`Label/Visibility`).  The definition-level identification
    `Label.printedVisibilityReplace_iff` (`Correspondence/Visibility`), compiled in this repository
    (theorem named): a map of labels satisfies the three clauses of the definition
@@ -1237,9 +1238,12 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     clauses recorded there): Convention 2.3 as `GeometrySignature`, Definitions 2.1 and 2.2 as
     `IsGeometry` and `IsStructuredGeometry`, Definition 2.4 as `InvarianceDiagram`, Definition 2.5
     as `InvarianceDiagram.IsCompatible`, Definition 2.6 as `InvariantSystem`, and Definition 2.8 as
-    `InvarianceDiagram.IsCompatibleWith`, one field for each printed clause; P for these printed
-    definitions, every notion their clauses use being P (Definition 2.2, Convention 2.3): the
-    definitions are generic in the signature `σ : GeometrySignature L`, so the invariants of an
+    `InvarianceDiagram.IsCompatibleWith`, one field for each printed clause; the maps `τ_β` of an
+    invariant system are indexed, as printed, by the countable ordinals `β < ω₁` (the subtype
+    `{β : Ordinal // β < ω₁}`), so a system is determined by its maps at the printed indices
+    (`Correspondence.InvariantSystem.ext`, compiled in this repository (theorem named)); P for these
+    printed definitions, every notion their clauses use being P (Definition 2.2, Convention 2.3):
+    the definitions are generic in the signature `σ : GeometrySignature L`, so the invariants of an
     instance do not enter them.  Definition 2.7 (the projection of a structure and its rank) and
     Lemma 2.9 (projections preserve compatibility): not compiled.  For the base language and the
     realizations, compiled in this repository (theorem named), with the diagram supplied here: the
