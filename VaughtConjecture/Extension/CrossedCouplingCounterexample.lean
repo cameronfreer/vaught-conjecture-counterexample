@@ -36,8 +36,10 @@ cells through the point `3` to `H` (`H ≤ A_C`) and leaves it free of `G`; `TG`
 (`exists_ne_seedHG`, from `CompletionBelowFullGrade.exists_ne_of_forcesTop`), so `seedHG` has no
 ordered-layer step, for any layer rows (`not_hasOrderedLayerStep_seedHG`, from
 `Seed.not_hasOrderedLayerStep_of_forcesTop`).  So the ordered-layer step is not a property of
-every legal seed on five points.  Whether `seedHG` has a completion below the full grade, with
-several new cells at `(univ, 1)`, is not settled here.
+every legal seed on five points.  This refutes the step, not the completion: `seedHG` has a
+completion below the full grade, with two new cells at `(univ, 1)`, one for each orientation
+(`nonempty_completionBelowFullGrade_seedHG`, module
+`VaughtConjecture.Extension.CrossedCouplingCompletion`).
 
 ## Placement
 

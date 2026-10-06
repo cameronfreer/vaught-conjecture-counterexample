@@ -47,9 +47,12 @@ every seed.  Conversely, the ordered-layer step is exactly legality below the fu
 layer scheme together with a lawful extension of the glued labelling
 (`Seed.orderedLayerStep_iff`), so the hypothesis is the exact content of a completion of this
 shape: one new cell per graded face of full scope, rows read off graded indices.  The step is a
-restriction of the completion of the seed; whether the converse fails for some seed is open (it
-fails at `CrossedCouplingCounterexample.seedHG` if and only if `seedHG` has a completion below the
-full grade).
+restriction of the completion of the seed, and the converse fails: the legal seed
+`CrossedCouplingCounterexample.seedHG` has a completion below the full grade and no ordered-layer
+step (`CrossedCouplingCounterexample.not_forall_hasOrderedLayerStep_of_nonempty`, module
+`VaughtConjecture.Extension.CrossedCouplingCompletion`).  Several new cells at one graded face of
+full scope, with rows read off cells, are the multi-layer step
+(`VaughtConjecture.Extension.MultiLayerStep`).
 
 **At `m = 3`** (`Seed.HasOrderedLayerStep`): a seed on five points with an ordered-layer step for
 some rows has a completion below the full grade
