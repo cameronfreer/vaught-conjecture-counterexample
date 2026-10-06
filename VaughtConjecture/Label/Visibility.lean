@@ -25,10 +25,17 @@ Visibility replacement of an ordinal at threshold `k` with value `i` replaces it
   and it cannot push a label above a self-visible bound (`visibilityReplace_le_of_le`).
 * Replacing again at the full threshold forgets the first value
   (`visibilityReplace_self_visibilityReplace`); a replacement below the threshold is undone by a
-  second one (`exists_visibilityReplace_visibilityReplace`).
+  second one (`exists_visibilityReplace_visibilityReplace`).  A replacement at threshold `K` with
+  value `j` followed by one at threshold `k ≤ K` with value `i` is the replacement at `K` with
+  value `i` if `j < k` and `j` otherwise (`visibilityReplace_visibilityReplace_of_le`).
+* Replacement with a larger value gives a larger label
+  (`visibilityReplace_le_visibilityReplace`), and replacement keeps a label at or above `ω` at or
+  above `ω` (`not_lt_omega_visibilityReplace`).
 * At a stage `α` that is zero or a limit, `α + K` is self-visible at every `k ≤ K`
   (`isSelfVisible_coe_add`); a label at least `α` and self-visible at `n` is at least `α + n`
-  (`coe_add_le_of_isSelfVisible`), since `α` is a multiple of `ω`; replacement with a value
+  (`coe_add_le_of_isSelfVisible`), since `α` is a multiple of `ω`, and conversely a label at the
+  stage `α + ω` that is at least `α + n` is self-visible at `n`
+  (`isSelfVisible_of_coe_add_le`); replacement with a value
   `i ≤ K` keeps a label at most `α + K` at most `α + K` (`visibilityReplace_le_coe_add`); finitely
   many labels below `α` have a common bound below `α` that is self-visible at a given threshold
   (`exists_isSelfVisible_bound`), and between an ordinal `o` and a stage `β > o` that is zero or
@@ -176,6 +183,47 @@ theorem exists_visibilityReplace_visibilityReplace (hi : i < k) (x : Label.{u}) 
     exact ⟨j, hj, by simp only [visibilityReplace_coe, h]⟩
   | top => exact ⟨i, hi, rfl⟩
 
+/-- **Two replacements, the second at a threshold `k ≤ K`.**  A replacement at threshold `K` with
+value `j` followed by one at threshold `k ≤ K` with value `i` is the replacement at threshold `K`
+with value `i` if `j < k`, and with value `j` otherwise. -/
+theorem visibilityReplace_visibilityReplace_of_le (hk : k ≤ K) (i j : ℕ) (x : Label.{u}) :
+    visibilityReplace k i (visibilityReplace K j x) =
+      visibilityReplace K (if j < k then i else j) x := by
+  induction x using recBotCoeTop with
+  | bot => rfl
+  | coe o =>
+    simp only [visibilityReplace_coe]
+    rw [Ordinal.visibilityReplace, Ordinal.visibilityReplace_div, Ordinal.visibilityReplace_mod,
+      Ordinal.visibilityReplace]
+    obtain ⟨n, hn⟩ := lt_omega0.mp (mod_lt o omega0_ne_zero)
+    rw [hn]
+    split_ifs <;> simp_all
+    omega
+  | top => rfl
+
+/-- Visibility replacement with a larger value gives a larger label. -/
+theorem visibilityReplace_le_visibilityReplace {k i j : ℕ} (hij : i ≤ j)
+    (A : Label.{u}) : visibilityReplace k i A ≤ visibilityReplace k j A := by
+  induction A using recBotCoeTop with
+  | bot => exact le_rfl
+  | coe o =>
+    simp only [visibilityReplace_coe, WithBot.coe_le_coe, WithTop.coe_le_coe,
+      Ordinal.visibilityReplace]
+    gcongr
+    split_ifs
+    · exact_mod_cast hij
+    · exact le_rfl
+  | top => exact le_rfl
+
+/-- Visibility replacement keeps a label at or above `ω` at or above `ω`. -/
+theorem not_lt_omega_visibilityReplace {x : Label.{u}} (hx : x ≠ ⊥)
+    (hxω : ¬ x < ((ω : Ordinal.{u}) : Label.{u})) (k i : ℕ) :
+    ¬ visibilityReplace k i x < ((ω : Ordinal.{u}) : Label.{u}) := by
+  induction x using recBotCoeTop with
+  | bot => exact absurd rfl hx
+  | coe o => rwa [visibilityReplace_lt_iff isSuccLimit_omega0.isSuccPrelimit]
+  | top => rwa [visibilityReplace_top]
+
 /-! ### Self-visible labels -/
 
 /-- A label is *self-visible* at threshold `k` if visibility replacement at threshold `k` with
@@ -246,6 +294,25 @@ theorem coe_add_le_of_isSelfVisible {β : Ordinal.{u}} {x : Label.{u}} {n : ℕ}
     refine WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr ?_)
     rw [← div_add_mod v ω]
     exact add_le_add hb (isSelfVisible_coe.mp hv)
+
+/-- **A converse of the order law**: at a stage `β` that is zero or a limit, a label at the stage
+`β + ω` that is at least `β + N` is self-visible at `N`: it is `β + j` with `N ≤ j`, or the formal
+top. -/
+theorem isSelfVisible_of_coe_add_le {β : Ordinal.{u}} (hβ : Order.IsSuccPrelimit β) {N : ℕ}
+    (hx : AtStage (β + ω) x) (hN : ((β + N : Ordinal.{u}) : Label.{u}) ≤ x) :
+    IsSelfVisible N x := by
+  induction x using recBotCoeTop with
+  | bot => exact absurd hN (not_le.mpr (WithBot.bot_lt_coe _))
+  | top => exact isSelfVisible_top N
+  | coe v =>
+    have hNv : β + N ≤ v := WithTop.coe_le_coe.mp (WithBot.coe_le_coe.mp hN)
+    have hβv : β ≤ v := le_self_add.trans hNv
+    have hj : v - β < ω := by
+      rw [← add_lt_add_iff_left β, Ordinal.add_sub_cancel_of_le hβv]
+      exact atStage_coe.mp hx
+    obtain ⟨j, hj'⟩ := lt_omega0.mp hj
+    obtain rfl : v = β + j := by rw [← hj', Ordinal.add_sub_cancel_of_le hβv]
+    exact isSelfVisible_coe_add hβ (by exact_mod_cast (add_le_add_iff_left β).mp hNv)
 
 section Block
 

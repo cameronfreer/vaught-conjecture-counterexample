@@ -74,12 +74,14 @@ extension property holds for this input.  Gate recovery
 private context (`VaughtConjecture.Realization.PrivateContext`) stand.  Finite-cut receiving for all
 models, (R1) of the table of Layer 3, is open in general; its form for the top-free witnesses
 (`hasFiniteCutReceiving_reconstruct`) and the forms derived from finite-cut receiving are
-unaffected.  A gate predicate that avoids this obstruction would replace the labels `⊥` of the twins
-in the display by a condition on rows, for instance that every twin reads the gate as it reads the
-cap, which bounds the cap by the gate in every lawful labelling by availability and locality alone;
-that such a display can be made legal is not known (prospective).  The private context of
-[Kni26, Lemma 8.1.1] also carries a marker, not used by the gated extension; its role there is to
-be compared with this obstruction (prospective).
+unaffected.  The coupled gate replaces the labels `⊥` of the twins in the display by a condition on
+rows, that every twin reads the gate at least as it reads the cap
+(`CellScheme.Rows.TwinsReadGate`), which bounds the cap by the gate in every lawful labelling by
+availability and locality alone (`CellScheme.Rows.cap_le_gate_of_twinsReadGate`).  At the input
+used here such a display is legal (`CoupledGateExamples.exists_coupledGatedExtension_comap_g₁`);
+the coupled gated pinned extension property (`StageType.HasCoupledGatedPinnedExtensions`) is open
+in general.  The private context of [Kni26, Lemma 8.1.1] also carries a marker, not used by the
+gated extension; its role there is to be compared with this obstruction (prospective).
 
 ## Placement
 

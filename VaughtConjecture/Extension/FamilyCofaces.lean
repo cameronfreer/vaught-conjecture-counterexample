@@ -46,6 +46,11 @@ hence at least the label `c > γ` of the donor.  The apex survives the final rei
 bijection of points (`StageType.exists_apex_of_reindex`).  For `n = 0` the donor is itself the
 coface.
 
+**The coface instances.**  With the amalgam over the empty face, which is the same pinned
+extension of `p` over the empty face read along the last point, these give the coface instances
+`StageType.HasNonemptyCofaceInstances α` under the coatom extension property with apex
+(`StageType.HasNonemptyCofaceInstances.of_hasApexCoatomExtensions`).
+
 ## Placement
 
 This file belongs to Layer 3, 3.4, of `roadmap/README.md`.
@@ -244,6 +249,26 @@ theorem nonempty_cofaces_inter_dominanceFamily (hext : HasApexCoatomExtensions.{
       (mem_cofaces_of_zero hd).2 fun h ↦ (h 0).elim fun j ↦ j.elim0
     obtain ⟨j, hj, -⟩ := exists_label_eq_of_restrictFace_eq hQd i
     exact ⟨Q, ⟨hQ, hQp⟩, a, congrArg Prod.snd ha, hγd.trans_le (hj ▸ hmax j)⟩
+
+/-! ### The coface instances -/
+
+/-- **The coface instances from the coatom extension property with apex**, at a stage that is zero
+or a limit: the amalgam over the empty face is the pinned extension over the empty face, read along
+the last point, and the uniformity and dominance instances are
+`nonempty_cofaces_inter_uniformityFamily` and `nonempty_cofaces_inter_dominanceFamily`. -/
+theorem HasNonemptyCofaceInstances.of_hasApexCoatomExtensions (hext : HasApexCoatomExtensions.{u} α)
+    (hα : Order.IsSuccPrelimit α) : HasNonemptyCofaceInstances α where
+  exists_amalgam_empty n _ _ hP hd := by
+    obtain ⟨Q, hQ, hQd⟩ := exists_pinned_extension_empty hext.hasCoatomExtensions hP hd
+    have he : Fin.natAddEmb n = extendByLast (Function.Embedding.ofIsEmpty : Fin 0 ↪ Fin n) :=
+      Function.Embedding.ext fun i ↦ by
+        obtain rfl : i = Fin.last 0 := Fin.ext (Nat.lt_one_iff.mp i.isLt)
+        rw [extendByLast_last]
+        rfl
+    exact ⟨Q, hQ, he ▸ hQd⟩
+  uniformity _ _ hp _ _ hγ :=
+    nonempty_cofaces_inter_uniformityFamily hext.hasCoatomExtensions hα hp hγ
+  dominance _ _ hp _ hγ := nonempty_cofaces_inter_dominanceFamily hext hα hp hγ
 
 end StageType
 
