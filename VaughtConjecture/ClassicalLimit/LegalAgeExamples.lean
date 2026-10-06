@@ -10,7 +10,8 @@ import VaughtConjecture.ClassicalLimit.LegalAge
 
 Special cases of `VaughtConjecture.ClassicalLimit.LegalAge`:
 
-* the age of top-free charts is contained in the age of legal charts;
+* the one-point top-free chart belongs to the age of legal charts, by the inclusion of the age of
+  top-free charts (`topFreeAge_subset_legalAge`);
 * the one-point chart with the bottom label belongs to the age of legal charts.
 
 ## Placement
@@ -21,9 +22,9 @@ limit" of `roadmap/README.md`.
 
 namespace VaughtConjecture.ClassicalLimit.LegalAgeExamples
 
-/-- The age of top-free charts is contained in the age of legal charts. -/
-example {α : Ordinal.{0}} : topFreeAge α ⊆ legalAge α := fun _ ⟨i, he⟩ ↦
-  ⟨⟨i.1, i.2.1, i.2.2.1⟩, he⟩
+/-- The one-point top-free chart belongs to the age of legal charts. -/
+example {α : Ordinal.{0}} : topFreeChart α (TopFreeIndex.point α) ∈ legalAge α :=
+  topFreeAge_subset_legalAge (topFreeChart_mem_topFreeAge _)
 
 /-- The one-point chart with the bottom label belongs to the age of legal charts. -/
 example {α : Ordinal.{0}} : legalChart α (LegalIndex.point α) ∈ legalAge α :=

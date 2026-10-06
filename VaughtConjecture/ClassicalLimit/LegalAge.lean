@@ -3,8 +3,7 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
-import VaughtConjecture.ClassicalLimit.Amalgamation
-import VaughtConjecture.ClassicalLimit.Reconstruction
+import VaughtConjecture.ClassicalLimit.Receiving
 import VaughtConjecture.Continuation.ExactAge
 import VaughtConjecture.Extension.FamilyCofaces
 import VaughtConjecture.Realization.CapToModel
@@ -19,7 +18,9 @@ the paragraph on the chain construction); semantic contract, item 11.
 **The age of legal charts** (the uncapped age).  A **legal index** at `α` (`LegalIndex α`) is a
 legal stage type at `α` on finitely many points, and its **legal chart** (`legalChart α i`) is the
 chart of the stage type, a finite structure of the hull language `hullLanguage α`.  The **age of
-legal charts** (`legalAge α`) is their representative class.  It is hereditary
+legal charts** (`legalAge α`) is their representative class; these three, and the inclusion of the
+age of top-free charts (`topFreeAge_subset_legalAge`), are in
+`VaughtConjecture.ClassicalLimit.Age`.  The age of legal charts is hereditary
 (`exists_equiv_legalChart`, from `StageType.exists_equiv_comap`, with no hypothesis); under the
 plain coatom extension property it has amalgamation (`exists_amalgam_legalChart`, the amalgam of
 `StageType.exists_amalgam` itself, not capped, so the stage need not be a limit) and joint
@@ -29,31 +30,35 @@ limit (`exists_isFraisseLimit_legalAge`).  Unlike the age of top-free charts
 (`VaughtConjecture.ClassicalLimit.Age`), it contains charts with cells labelled the formal top.
 
 **Reconstruction for legal chart coverage.**  For a structure `M` of the hull language whose age
-is contained in the age of legal charts, every injective tuple factors through an embedding of a
-legal chart (`exists_eq_trans_legalChart`), so the reconstructed realization
-(`reconstruct α M`, `VaughtConjecture.ClassicalLimit.Reconstruction`) is exactly consistent and
-covering (`isConsistent_reconstruct_of_legalAge`, `isCovering_reconstruct_of_legalAge`), and a
-typed tuple is the image of the points of its type under an embedding of its chart
-(`exists_embedding_of_reconstruct_eval_of_legalAge`).  The proofs are those of the top-free case,
-read in a legal chart.  Conversely, when the age of legal charts is contained in the age of `M`,
+is contained in the age of legal charts, the reconstructed realization (`reconstruct α M`) is
+exactly consistent and covering, and a typed tuple is the image of the points of its type under an
+embedding of its chart (`isConsistent_reconstruct_of_legalAge`,
+`isCovering_reconstruct_of_legalAge`, `exists_embedding_of_reconstruct_eval_of_legalAge`, in
+`VaughtConjecture.ClassicalLimit.Reconstruction`, where the statements under top-free chart
+coverage are their case).  Conversely, when the age of legal charts is contained in the age of `M`,
 every legal stage type is the reconstructed type of a cover
-(`exists_covers_reconstruct_of_legalAge`).
+(`exists_covers_reconstruct_of_legalAge`), and the carrier is nonempty
+(`nonempty_of_legalAge_subset`, the case of the age of top-free charts).
 
 **Exact receiving** (`exactReceivingWithin_reconstruct_of_legalAge`).  When the age of `M` is the
 age of legal charts and `M` is ultrahomogeneous, over a cover of `t` and for a legal `D` restricting
 to `t` along `g`, the embedding of the chart of `t` extends along the chart embedding of `g` to an
-embedding of the chart of `D` (`FirstOrder.Language.IsUltrahomogeneous.extend_embedding`), whose
-points cover `D` and extend the root literally.  Exact receiving of legal donors gives finite-cut
-receiving (`Realization.ExactReceivingWithin.hasFiniteCutReceiving`: the donor is in each of its
-receiving families).  The occurrence of every legal stage type comes from the age equality alone
-(`exists_covers_reconstruct_of_legalAge`), not from receiving.
+embedding of the chart of `D`, whose points cover `D` and extend the root literally: exact
+extension along a chart embedding (`exists_reconstruct_eval_eq_of_embedding`, in
+`VaughtConjecture.ClassicalLimit.Receiving`, shared with exact extension of top-free donors).
+Exact receiving of legal donors gives finite-cut receiving
+(`Realization.ExactReceivingWithin.hasFiniteCutReceiving`, in
+`VaughtConjecture.Continuation.ExactAge`).  The occurrence of every legal stage type comes from the
+age equality alone (`exists_covers_reconstruct_of_legalAge`), not from receiving.
 
 **Modelhood** (`isModel_reconstruct_of_legalAge`).  At a nonzero limit stage, the cap-to-model
 theorem (`Realization.isModel_of_hasFiniteCutReceiving`) applies, the uniformity and dominance
 instances being nonempty under the coatom extension property with apex.
 
-**Not here.**  The top-free statements of `VaughtConjecture.ClassicalLimit` are not yet derived as
-the case of the subfamily of top-free legal charts; the legal statements re-prove them.
+**Not here.**  The capped amalgamation and the capped receiving of the age of top-free charts
+(`VaughtConjecture.ClassicalLimit.Amalgamation`, `VaughtConjecture.ClassicalLimit.Receiving`)
+are proved there: a top-free amalgam or donor is capped below the stage, which the age of legal
+charts does not need.
 
 ## Placement
 
@@ -74,22 +79,6 @@ namespace VaughtConjecture
 open FirstOrder Language Structure CategoryTheory Realization StageType
 
 /-! ### The age of legal charts -/
-
-/-- A **legal index** at stage `α`: a legal stage type at stage `α` on some finite number of
-points. -/
-abbrev LegalIndex (α : Ordinal.{u}) : Type (u + 1) :=
-  Σ k : ℕ, {P : StageType.{u} α k // P.IsLegal}
-
-/-- The **legal chart** of a legal index: the chart of its stage type, a finite structure of the
-hull language, bundled in `Type`. -/
-noncomputable abbrev legalChart (α : Ordinal.{u}) (i : LegalIndex.{u} α) :
-    Bundled.{0} (hullLanguage.{u} α).Structure :=
-  ⟨i.2.1.Chart, inferInstance⟩
-
-/-- The **age of legal charts** at stage `α`: the structures of the hull language isomorphic to a
-legal chart. -/
-def legalAge (α : Ordinal.{u}) : Set (Bundled.{0} (hullLanguage.{u} α).Structure) :=
-  representativeClass (legalChart α)
 
 namespace LegalIndex
 
@@ -130,10 +119,6 @@ instance finite_legalChart (i : LegalIndex.{u} α) : Finite (legalChart α i) :=
 /-- A legal chart is finitely generated. -/
 theorem fg_legalChart (i : LegalIndex.{u} α) : Structure.FG (hullLanguage.{u} α) (legalChart α i) :=
   Structure.FG.of_finite
-
-/-- A legal chart belongs to the age of legal charts. -/
-theorem legalChart_mem_legalAge (i : LegalIndex.{u} α) : legalChart α i ∈ legalAge α :=
-  mem_representativeClass _ i
 
 /-- **Substructures of legal charts are legal charts**: the chart of the restriction of the stage
 type to the closed face of the points of the substructure (`StageType.exists_equiv_comap`). -/
@@ -212,48 +197,7 @@ theorem exists_isFraisseLimit_legalAge (hext : StageType.HasCoatomExtensions.{u}
   exists_isFraisseLimit_representativeClass _ fg_legalChart exists_equiv_legalChart
     (exists_jointEmbedding_legalChart hext) (exists_amalgam_legalChart hext)
 
-/-! ### Reconstruction under legal chart coverage -/
-
-section Coverage
-
-variable {M : Type} [(hullLanguage.{u} α).Structure M] {n : ℕ}
-  (hage : (hullLanguage.{u} α).age M ⊆ legalAge α)
-include hage
-
-/-- **Factorization of an injective tuple** through a legal chart, under legal chart coverage. -/
-theorem exists_eq_trans_legalChart (t : Fin n ↪ M) :
-    ∃ (i : LegalIndex.{u} α) (e : i.2.1.Chart ↪[hullLanguage.{u} α] M) (b : Fin n ↪ Fin i.1),
-      b.trans (i.2.1.toChart.toEmbedding.trans e.toEmbedding) = t := by
-  obtain ⟨i, e, b, hb⟩ := exists_factor_embedding_of_age_subset hage t
-  exact ⟨i, e, b, hb⟩
-
-/-- **Exact consistency** of the reconstructed realization, under legal chart coverage. -/
-theorem isConsistent_reconstruct_of_legalAge : (reconstruct α M).IsConsistent := by
-  intro m n t p f ht
-  obtain ⟨i, e, b, rfl⟩ := exists_eq_trans_legalChart hage t
-  rw [reconstruct_eval_trans_chart i.2.2 e b, StageType.faceRealization_eval] at ht
-  rw [← Function.Embedding.trans_assoc, reconstruct_eval_trans_chart i.2.2 e (f.trans b),
-    StageType.faceRealization_eval]
-  exact (StageType.restrictFace_trans _ b f ht).symm
-
-/-- **Covering** of the reconstructed realization, under legal chart coverage. -/
-theorem isCovering_reconstruct_of_legalAge : (reconstruct α M).IsCovering := by
-  intro n t
-  obtain ⟨i, e, b, rfl⟩ := exists_eq_trans_legalChart hage t
-  refine ⟨i.1, i.2.1.toChart.toEmbedding.trans e.toEmbedding, b, rfl, ?_⟩
-  rw [reconstruct_eval_chart i.2.2 e]
-  rfl
-
-/-- **Typed tuples are images of charts**, under legal chart coverage: a tuple of reconstructed type
-`p` is the image of the points of `p`, in order, under an embedding of the chart of `p`. -/
-theorem exists_embedding_of_reconstruct_eval_of_legalAge {t : Fin n ↪ M} {p : StageType.{u} α n}
-    (h : (reconstruct α M).eval t = some p) :
-    ∃ φ : p.Chart ↪[hullLanguage.{u} α] M, ∀ j, φ (p.toChart j) = t j := by
-  obtain ⟨i, e, b, rfl⟩ := exists_eq_trans_legalChart hage t
-  rw [reconstruct_eval_trans_chart i.2.2 e b, StageType.faceRealization_eval] at h
-  exact ⟨e.comp (StageType.chartEmbedding h), fun _ ↦ rfl⟩
-
-end Coverage
+/-! ### Occurrence and exact receiving in a limit -/
 
 section Limit
 
@@ -270,15 +214,14 @@ theorem exists_covers_reconstruct_of_legalAge (h : legalAge α ⊆ (hullLanguage
 /-- **A nonempty carrier**: if the age of legal charts is contained in the age of `M`, the
 one-point chart embeds in `M`. -/
 theorem nonempty_of_legalAge_subset (h : legalAge α ⊆ (hullLanguage.{u} α).age M) :
-    Nonempty M := by
-  obtain ⟨c, -⟩ := exists_covers_reconstruct_of_legalAge h (LegalIndex.point α).2.2
-  exact ⟨c ⟨0, Nat.one_pos⟩⟩
+    Nonempty M :=
+  nonempty_of_topFreeAge_subset (topFreeAge_subset_legalAge.trans h)
 
 /-- **Exact receiving of legal donors**: for a structure whose age is the age of legal charts and
 which is ultrahomogeneous, over every cover of a stage type `t`, every legal stage type `D`
-restricting to `t` along `g` is the type of a cover extending the root along `g` literally.  The
-embedding of the chart of `t` extends along the chart embedding of `g`
-(`IsUltrahomogeneous.extend_embedding`).  No hypothesis on the stage is needed. -/
+restricting to `t` along `g` is the type of a cover extending the root along `g` literally: exact
+extension along the embedding of the chart of `t` (`exists_reconstruct_eval_eq_of_embedding`).  No
+hypothesis on the stage is needed. -/
 theorem exactReceivingWithin_reconstruct_of_legalAge
     (hage : (hullLanguage.{u} α).age M = legalAge α)
     (hu : (hullLanguage.{u} α).IsUltrahomogeneous M) :
@@ -287,36 +230,12 @@ theorem exactReceivingWithin_reconstruct_of_legalAge
   obtain ⟨φ, hφ⟩ := exists_embedding_of_reconstruct_eval_of_legalAge hage.subset hc.eval_eq
   have hmem : legalChart α ⟨m, D, hD⟩ ∈ (hullLanguage.{u} α).age M :=
     hage ▸ legalChart_mem_legalAge _
-  have : Nonempty (D.Chart ↪[hullLanguage.{u} α] M) := hmem.2
-  obtain ⟨ψ, hψ⟩ := hu.extend_embedding (S := t.Chart) (Structure.FG.of_finite) φ
-    (StageType.chartEmbedding hg)
-  refine ⟨D.toChart.toEmbedding.trans ψ.toEmbedding,
-    covers_of_eval _ (reconstruct_eval_chart hD ψ), funext fun j ↦ ?_⟩
-  -- the chart embedding along `g` sends the point `j` of `t` to the point `g j` of `D`
-  have hj := hφ j
-  rw [hψ] at hj
-  exact hj
+  obtain ⟨v, hv, hvD⟩ := exists_reconstruct_eval_eq_of_embedding hu φ hφ hD hmem.2 hg
+  exact ⟨v, covers_of_eval _ hvD, funext fun j ↦ DFunLike.congr_fun hv j⟩
 
 end Limit
 
-/-! ### Receiving and modelhood from exact receiving -/
-
-namespace Realization
-
-variable {M : Type*} {R : Realization.{u, _} α M}
-
-/-- **Exact receiving of legal donors gives finite-cut receiving**: the donor itself is received,
-and it lies in each of its receiving families. -/
-theorem ExactReceivingWithin.hasFiniteCutReceiving
-    (h : R.ExactReceivingWithin fun m ↦ {D : StageType.{u} α m | D.IsLegal}) :
-    R.HasFiniteCutReceiving := by
-  intro x d hd c _
-  obtain ⟨u, hu, hug⟩ := h x.type x.tuple (covers_of_eval _ x.eval_tuple) d Fin.castSuccEmb hd.1
-    hd.2
-  exact ⟨⟨u, hu.injective⟩, Function.Embedding.ext (congrFun hug), d,
-    self_mem_receivingFamily d c, hu.eval_eq⟩
-
-end Realization
+/-! ### Modelhood from exact receiving -/
 
 /-- **Modelhood of the reconstruction of a limit of the age of legal charts**: for a structure whose
 age is the age of legal charts and which is ultrahomogeneous, at a nonzero limit stage, the

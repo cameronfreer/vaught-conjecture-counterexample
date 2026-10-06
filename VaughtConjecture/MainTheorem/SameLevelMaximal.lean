@@ -142,8 +142,9 @@ theorem exists_sameLevelMaximal_reconstruct {β : Ordinal.{0}} (hβ : β < ω₁
 /-- **A bijection of countably infinite types extending a finite injection**: two injective tuples
 of the same length in countably infinite types are matched by a bijection.  This is Mathlib's
 `Cardinal.extend_function_of_lt` for the finite range of the first tuple. -/
-theorem exists_equiv_extend_tuple {M X : Type v} [Countable M] [Infinite M] [Countable X]
-    [Infinite X] {n : ℕ} (c : Fin n ↪ M) (a : Fin n ↪ X) : ∃ e : M ≃ X, ∀ i, e (c i) = a i := by
+private theorem exists_equiv_extend_tuple {M X : Type v} [Countable M] [Infinite M]
+    [Countable X] [Infinite X] {n : ℕ} (c : Fin n ↪ M) (a : Fin n ↪ X) :
+    ∃ e : M ≃ X, ∀ i, e (c i) = a i := by
   let f : Set.range c ↪ X :=
     ⟨fun x ↦ a ((Equiv.ofInjective c c.injective).symm x), a.injective.comp (Equiv.injective _)⟩
   have hs : Cardinal.mk (Set.range c) < Cardinal.mk M :=

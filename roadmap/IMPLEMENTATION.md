@@ -2882,15 +2882,19 @@ witnesses).**
   import of `Extension/SectionTheorem` here and in `Extension/FamilyCofaces` is used only for the
   capping lemma, now in `Scheme/Row`, which is to replace it.
 - `ClassicalLimit/LegalAge` and `ClassicalLimit/LegalAgeExamples`: the uncapped age of all legal
-  charts (`LegalIndex`, `legalChart`, `legalAge`, `isFraisse_legalAge`,
-  `exists_isFraisseLimit_legalAge`), the reconstruction under legal chart coverage
-  (`isConsistent_reconstruct_of_legalAge`, `isCovering_reconstruct_of_legalAge`,
-  `exists_covers_reconstruct_of_legalAge`), exact receiving
-  (`exactReceivingWithin_reconstruct_of_legalAge`,
-  `Realization.ExactReceivingWithin.hasFiniteCutReceiving`), and modelhood
-  (`isModel_reconstruct_of_legalAge`), in place, beside the age of top-free charts.  The top-free
-  statements of `ClassicalLimit/` re-prove the legal ones for top-free charts; they are to become
-  the case of a subfamily of legal charts.
+  charts (its hereditary property, `isFraisse_legalAge`, `exists_isFraisseLimit_legalAge`), the
+  occurrence of every legal stage type (`exists_covers_reconstruct_of_legalAge`), exact receiving
+  (`exactReceivingWithin_reconstruct_of_legalAge`), and modelhood
+  (`isModel_reconstruct_of_legalAge`), in place, beside the age of top-free charts.  The family
+  (`LegalIndex`, `legalChart`, `legalAge`, `legalChart_mem_legalAge`) and the inclusion
+  `topFreeAge_subset_legalAge` are in `ClassicalLimit/Age`; the reconstruction under legal chart
+  coverage (`exists_eq_trans_legalChart`, `isConsistent_reconstruct_of_legalAge`,
+  `isCovering_reconstruct_of_legalAge`, `exists_embedding_of_reconstruct_eval_of_legalAge`) is in
+  `ClassicalLimit/Reconstruction`, where the top-free exact consistency and covering are its case;
+  exact extension along a chart embedding (`exists_reconstruct_eval_eq_of_embedding`), shared by
+  the top-free and the legal exact extension, is in `ClassicalLimit/Receiving`; and
+  `Realization.ExactReceivingWithin.hasFiniteCutReceiving` is in `Continuation/ExactAge`.  The
+  capped top-free amalgamation and receiving stay separate: the legal age needs no cap.
 - `Comparison/GradedMatchingApplications`: Layer 0, in place.  The local graded back-and-forth
   theorem (`README.md`, Layer 0) is retired, not moved: both of its applications compile through
   InfinitaryLogic's `bfEquiv_of_gradedMatching`.
@@ -3012,11 +3016,11 @@ witnesses).**
   `Realization.isCoverHollow_of_exactReceivingWithin`, `Realization.IsCoverHollow.isTerminalAt`,
   and `StageType.exists_forcesThreshold_of_label_eq_top` (the form of `ForcingDonors` used for
   cover-hollowness), Layer 4, in place.  `StageType.ForcesThreshold.congr_root`, a fact about
-  forcing alone, goes to `Stage/Threshold` when that file is next opened.
+  forcing alone, is in `Stage/Threshold`, beside `StageType.ForcesThreshold`.
 - `MainTheorem/SameLevelMaximal` (acceptance lemma 1): `exists_saturated_reconstruct`,
   `exists_sameLevelMaximal_reconstruct`, `exists_sameLevelMaximal_covers`, and
-  `exists_sameLevelMaximal`, in place.  `exists_equiv_extend_tuple` is the case of a finite range
-  of Mathlib's `Cardinal.extend_function_of_lt`, from which it is derived.
+  `exists_sameLevelMaximal`, in place.  `exists_equiv_extend_tuple` (private) is the case of a
+  finite range of Mathlib's `Cardinal.extend_function_of_lt`, from which it is derived.
 - `Extension/OwnerCappedLift`: `CellScheme.Rows.cappedLift_of_boundary_short` is the case of equal
   boundary triples of `CellScheme.Rows.cappedLift_of_boundaries_short`, from which it is to be
   derived when the file is next opened (a change of proofs only).

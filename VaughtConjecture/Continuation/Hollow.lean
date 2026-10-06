@@ -221,16 +221,6 @@ end Realization
 
 namespace StageType
 
-/-- **Forcing along an equality of roots**: a threshold forced at a cell of `p` is forced at the
-cell of the same position of a stage type equal to `p`. -/
-theorem ForcesThreshold.congr_root {α β : Ordinal.{u}} {hβ : Order.IsSuccPrelimit β} {m k : ℕ}
-    {q : StageType.{u} β m} {f : Fin k ↪ Fin m} {p p' : StageType.{u} β k} {d : Fin p.card}
-    {n : ℕ} (h : ForcesThreshold α hβ q f p d n) (hp : p = p') (d' : Fin p'.card)
-    (hd : (d : ℕ) = d') : ForcesThreshold α hβ q f p' d' n := by
-  subst hp
-  obtain rfl : d = d' := Fin.ext hd
-  exact h
-
 /-- **Every threshold at a top cell is forced by a legal extension**, conditional on forcing donors
 at `η`: for a legal stage type `p` at `λ_η` with a cell `d` labelled the formal top and every `n`,
 some legal stage type `D` at `λ_η` restricts to `p` along some `g`, and `(D, g)` forces the
