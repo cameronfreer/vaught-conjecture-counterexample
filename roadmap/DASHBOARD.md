@@ -156,12 +156,14 @@ item 6:
 Its terminal properties are the restricted ones (`Realization.HasRestrictedTerminalProperty`,
 `Continuation/RestrictedHollow`), whose hollow property excludes a globally rigid core; the cover
 survives (`Realization.exists_hasRestrictedTerminalProperty`), and the models with a globally rigid
-core go through the rigid-core comparison, on (R1) only.  Item 6 implies item 6′
-(`Realization.HollowReceiving.withoutRigidCore`): weaker or equal; strictly weaker not shown.  An
-informal argument, not compiled, is a risk for item 6 and not for item 6′: if every legal stage
-type had a legal one-point coface in which the root is not rigid, item 6 would force every
-cover-hollow model with unbounded growth to have no globally rigid core.  Neither is proved, and
-item 6 is not claimed to be false.
+core go through the rigid-core comparison, on (R1) only; the count of the terminal classes
+holds in the same form
+(`MainTheorem.countable_isoClasses_terminalAt_of_restrictedTerminalClassification`).  Item 6
+implies item 6′ (`Realization.HollowReceiving.withoutRigidCore`): weaker or equal; strictly weaker
+not shown.  An informal argument, not compiled, is a risk for item 6 and not for item 6′: if every
+legal stage type had a legal one-point coface in which the root is not rigid, item 6 would force
+every cover-hollow model with unbounded growth to have no globally rigid core.  Neither is proved,
+and item 6 is not claimed to be false.
 
 ## The research front
 

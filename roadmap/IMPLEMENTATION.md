@@ -2428,7 +2428,8 @@ Each checkpoint needs both its abstract API and a concrete application:
      `Realization.IsCoverHollowWithoutRigidCoreAtBlock`, implied by (R3) for
      `Realization.IsCoverHollowAtBlock` (`Realization.HollowReceiving.withoutRigidCore`; strictly
      weaker not shown); the main theorem
-     `densitySentence_hasThinAlephOneSpectrum_of_restrictedTerminalClassification`.
+     `densitySentence_hasThinAlephOneSpectrum_of_restrictedTerminalClassification`; and, for F,
+     `MainTheorem.countable_isoClasses_terminalAt_of_restrictedTerminalClassification`.
    - F: `MainTheorem.loss_subset_terminalClasses`, unconditional;
      `MainTheorem.terminalClasses_subset_iUnion`, conditional on `ContinuationCriterion`;
      `MainTheorem.countable_isoClasses_terminalAt` (countably many classes terminal at each

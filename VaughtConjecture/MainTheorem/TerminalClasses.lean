@@ -79,6 +79,17 @@ property or representative of a class, disjointness of the properties, or the re
 every property.  The equivalence of cover-hollowness with the original anchor definition of
 hollowness (semantic contract, item 8) is still to be proved.
 
+**The restricted hollow property.**  With the hollow property restricted to cover-hollow models
+without a globally rigid core (`Realization.HasRestrictedTerminalProperty`, in
+`VaughtConjecture.Continuation.RestrictedHollow`), the count holds with (R3) for the restricted
+predicate `Realization.IsCoverHollowWithoutRigidCoreAtBlock` in place of (R3) for
+cover-hollowness at a block stage
+(`countable_isoClasses_terminalAt_of_restrictedTerminalClassification`): the cover is
+`Realization.exists_hasRestrictedTerminalProperty`, and one class per restricted property is
+`Expansion.subsingleton_classes_of_restrictedProperty`.  (R3) for cover-hollowness at a block
+stage implies (R3) for the restricted predicate (`Realization.HollowReceiving.withoutRigidCore`);
+that the restricted hypothesis is strictly weaker is not shown.
+
 ## Placement
 
 This file belongs to Layer 5 of `roadmap/README.md`.
@@ -160,5 +171,27 @@ theorem countable_isoClasses_terminalAt (hrec : Expansion.FiniteCutReceiving.{0}
   Counting.countable_of_subsingleton_cover (propertyClasses β)
     (Expansion.subsingleton_classes_of_property hrec hres hhol hβ)
     (terminalClasses_subset_iUnion hcont hβ)
+
+/-- **Countably many terminal classes at each level, with the restricted hollow property**: for
+`β < ω₁`, only countably many classes of models of the density sentence coded on `ℕ` have a code
+with a model expansion to `λ_β` that is terminal at `β`.  Conditional on the following hypotheses,
+each still to be proved: (R1) of the table of Layer 3 (`hrec`), output 3 of higher-stage
+reconstruction (`hcont`, the continuation criterion; Layer 4), (R2) (`hres`), and (R3) for
+cover-hollowness without a globally rigid core at a block stage (`hhol`).  The cover is by the
+classes with a given restricted terminal property
+(`Realization.exists_hasRestrictedTerminalProperty`).  (R3) for cover-hollowness at a block stage
+gives `hhol` (`Realization.HollowReceiving.withoutRigidCore`). -/
+theorem countable_isoClasses_terminalAt_of_restrictedTerminalClassification
+    (hrec : Expansion.FiniteCutReceiving.{0}) (hcont : ContinuationCriterion.{0})
+    (hres : Realization.ResidualReceiving.{0, 0})
+    (hhol : Realization.HollowReceiving.{0, 0} Realization.IsCoverHollowWithoutRigidCoreAtBlock)
+    {β : Ordinal.{0}} (hβ : β < ω₁) : (terminalClasses β).Countable := by
+  have := countable_terminalProperty hβ
+  refine Counting.countable_of_subsingleton_cover _
+    (Expansion.subsingleton_classes_of_restrictedProperty hrec hres hhol hβ) ?_
+  rintro _ ⟨c, e, rfl, ht⟩
+  let := c.1.toStructure
+  obtain ⟨P, hP⟩ := e.1.exists_hasRestrictedTerminalProperty hcont hβ e.2.isModel ht
+  exact Set.mem_iUnion.mpr ⟨P, c, e, rfl, hP⟩
 
 end VaughtConjecture.MainTheorem
