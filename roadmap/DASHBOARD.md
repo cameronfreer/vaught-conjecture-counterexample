@@ -92,7 +92,9 @@ Notes on the rows, each with its marker:
   next-block uniqueness), next-block uniqueness
   (`Expansion.NextBlockUniqueness.of_forcingDonors`), logical agreement
   (`Expansion.bfEquiv_of_modelExpansions`), countable losses
-  (`Expansion.expansionDomain_loss_countable`), nonempty losses
+  (`Expansion.expansionDomain_loss_countable`), countably many classes terminal at each level
+  (`MainTheorem.countable_isoClasses_terminalAt`, on (R1), the continuation criterion, (R2), and
+  (R3)), nonempty losses
   (`hasNonemptyLosses_of_hasApexCoatomExtensions`, also on the coatom extension property with
   apex at every countable block stage; item 7 below), and the thin `ℵ₁` spectrum
   (`densitySentence_hasThinAlephOneSpectrum_of_terminalClassification`).
