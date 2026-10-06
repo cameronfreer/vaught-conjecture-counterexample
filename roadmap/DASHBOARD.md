@@ -117,19 +117,28 @@ Status of each:
 4. `ContinuationCriterion`: still to be proved (sufficiency only; the converse is not stated).
 5. `Realization.ResidualReceiving`: still to be proved (the LOW construction).  Exactly
    reformulated as exact receiving of the legal types of top grade at most `K`
-   (`Realization.residualReceiving_iff`).  Compiled conditionally on (R1) at every limit stage,
-   `Realization.ResidualAcquisition P`, and `Realization.CutoffDetermination P` for a predicate `P`
-   on acquired contexts (`Realization.residualReceiving_of_cutoffDetermination`), each still to be
-   proved; the cofaces in which the root is a rigid core need only (R1)
-   (`Realization.ResidualReceiving.of_not_isRigidCoreIn`).  Determination fails for `P` always
-   true (top-free roots; `Continuation/ExactReceivingExamples`).
+   (`Realization.residualReceiving_iff`).  A reduction is compiled: it follows from (R1) for every
+   model at every limit stage, of every universe (not item 2: `Expansion.FiniteCutReceiving`
+   covers only the limit stages below ω₁ in universe 0 and does not supply it),
+   `Realization.ResidualAcquisition P`, and `Realization.CutoffDetermination P`
+   (`Realization.residualReceiving_of_cutoffDetermination`), for a predicate `P` on acquired
+   contexts not yet defined: the reduction is a template, and its hypotheses are not statements
+   still to be proved (no predicate `P` is defined in the library, and neither acquisition nor
+   determination is proved beyond the rigid-core instance).  For `P` always true, acquisition is
+   immediate and determination fails (compiled; top-free roots,
+   `Continuation/ExactReceivingExamples`), which shows only that determination is not vacuous.
+   The cofaces in which the root is a rigid core need only (R1) in the same stronger form
+   (`Realization.ResidualReceiving.of_not_isRigidCoreIn`).
 6. `Realization.HollowReceiving` for `Realization.IsCoverHollowAtBlock`: still to be proved (the
    growth construction).  Exactly reformulated as exact receiving of all legal types
-   (`Realization.hollowReceiving_iff`).  Compiled conditionally on
-   `Realization.HollowAcquisition H P` and `Realization.SchemeDetermination P`
-   (`Realization.hollowReceiving_of_schemeDetermination`, no receiving used), each still to be
-   proved.  It forces a globally rigid core of a cover-hollow model with unbounded growth to be
-   rigid in every legal donor over its type (`Realization.HollowReceiving.isRigidCoreIn`).
+   (`Realization.hollowReceiving_iff`).  A reduction is compiled: it follows from
+   `Realization.HollowAcquisition H P` and `Realization.SchemeDetermination P` with
+   `H := Realization.IsCoverHollowAtBlock` (`Realization.hollowReceiving_of_schemeDetermination`,
+   no receiving used), for a predicate `P` not yet defined: a template, as in item 5 (for `P`
+   always true, acquisition is immediate and determination fails, compiled).  Under the current definitions the count uses (R3) at every
+   cover-hollow model with unbounded growth, a globally rigid core included.  (R3) forces a
+   globally rigid core of a cover-hollow model with unbounded growth to be rigid in every legal
+   donor over its type (`Realization.HollowReceiving.isRigidCoreIn`).
 7. Nonempty losses: still to be proved.  Compiled conditionally on the coatom extension property
    with apex at every countable block stage and on next-block uniqueness
    (`hasNonemptyLosses_of_hasApexCoatomExtensions`, stated for the bundled domains, which also take

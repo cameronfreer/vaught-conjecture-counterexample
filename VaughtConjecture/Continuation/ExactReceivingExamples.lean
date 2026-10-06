@@ -4,8 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Continuation.ExactReceiving
-import VaughtConjecture.Extension.Apex
-import VaughtConjecture.Geometry.IntervalPlan
+import VaughtConjecture.Extension.FamilyCofaces
 
 /-!
 # Examples: exact residual and hollow receiving
@@ -16,13 +15,15 @@ Checks for `VaughtConjecture.Continuation.ExactReceiving`.
   determination and scheme determination both fail, already at the smallest instance: the root on
   no points (the empty root), and the one-point donor `apexPoint`, the stage type on one point
   whose only cell is an apex labelled `⊤` (`StageType.addApex` over the one-point scheme with no
-  cells).  Its cap is a top-free stage type on the same scheme with the same (empty) root.  So
-  the acquisition statements are where the hypotheses on the model are used.
+  cells, `StageType.cellless`).  Its cap is a top-free stage type on the same scheme with the same
+  (empty) root.  So the acquisition statements are where the hypotheses on the model are used.
 * **The residual statement at `K = 0` is vacuous**: in a model at a limit stage, top-grade
   supremum `0` makes the empty tuple a globally rigid core.
 * **The hollow statement at a model with exact receiving of all legal donors** holds, by the
-  exact reformulation.  This is the situation of the countable saturated model; that it has
-  unbounded top-grade growth is not proved.
+  exact reformulation.  Prospectively (not in the library): an ultrahomogeneous structure whose age
+  is the age of legal charts would have exact receiving of all legal donors, so the conclusion of
+  (R3) would hold for it; the existence of such a structure is conditional on the coatom extension
+  property, which is not proved, and its unbounded top-grade growth is not proved.
 * **Under (R3), a globally rigid core of a cover-hollow model with unbounded growth is rigid in
   every legal donor over its type.**
 * **The rigid-core instance**: top-free one-point cofaces are received exactly under finite-cut
@@ -36,21 +37,6 @@ namespace VaughtConjecture
 open Finset StageType Realization
 
 namespace ExactReceivingExamples
-
-/-- The scheme on one point with no cells; legal below the full grade, since every graded face has
-a positive grade. -/
-private def cellless : Scheme.{0} 1 where
-  card := 0
-  toCellScheme := ⟨univ, Geometry.intervalPlan univ, Fin.elim0, Fin.elim0⟩
-  rows := CellScheme.Rows.bot _
-
-private theorem isLegalBelowFullGrade_cellless : cellless.IsLegalBelowFullGrade where
-  isWellFormed := ⟨rfl, ⟨inferInstance, Geometry.isPlan_intervalPlan _, fun d ↦ d.elim0⟩⟩
-  isCoded s := s.elim0
-  isConsistent := CellScheme.Rows.isConsistent_bot
-  isBountiful := CellScheme.Rows.isBountiful_bot
-  grade_lt d := d.elim0
-  exists_gradedIndex_eq _ hX hX1 := absurd hX.2.1 (by omega)
 
 /-- The stage type at `ω` on one point with no cells. -/
 private def celllessType : StageType.{0} Ordinal.omega0 1 :=
