@@ -94,7 +94,10 @@ The per-block design inherits the obstruction there: at the refuting input the b
 obstruction survives the redesigns examined, namely the cap of full grade
 (`CoupledGatedExtensionCounterexample.not_carriesBottoms`), the subfull cap
 (`CoupledGatedExtensionCounterexample.not_carriesBottomsAt_one`), and one cap and gate per block
-(`CoupledGatedExtensionCounterexample.not_carriesBottomsPerBlock`).  A
+(`CoupledGatedExtensionCounterexample.not_carriesBottomsPerBlock`).  The subfull refutation is at
+`N = 1` over the empty root, where `Realization.HasCarryingSubfullContext` requires
+`x.arity + 1 < N`, which is false; so it refutes the bottom transport condition
+`StageType.CarriesBottomsAt` at the subfull grade, not a subfull carrying context.  A
 restricted per-block property, asking for a per-block coupled gated extension only at per-block
 carrying contexts, excludes that input, which is not per-block carrying.  That property is
 **prospective and not stated**.
@@ -489,7 +492,10 @@ theorem not_carriesBottomsPerBlock_of_one_lt_grade (α : Ordinal.{u}) (hα : 1 <
 
 /-- **The refuting input fails the bottom transport condition at the grade `1`**: no cap label
 above `1` at the cells of graded index `(univ, 1)` carries the bottoms there (the subfull cap of
-`Realization/TightCap`, one grade below the full grade `2`).  It is `not_carriesBottomsPerBlock`
+`Realization/TightCap`, one grade below the full grade `2`).  This is at `N = 1` over the empty
+root, where `Realization.HasCarryingSubfullContext` requires `x.arity + 1 < N`, which is false; so
+it refutes the bottom transport condition `StageType.CarriesBottomsAt` at the subfull grade, not a
+subfull carrying context.  It is `not_carriesBottomsPerBlock`
 with one cap of graded index `(univ, 1)` reading every label
 (`carriesBottomsPerBlock_one_iff_at`). -/
 theorem not_carriesBottomsAt_one (α : Ordinal.{u}) (hα : 1 < α) {c : Label.{u}}
