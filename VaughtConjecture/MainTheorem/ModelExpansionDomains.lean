@@ -152,10 +152,10 @@ donors**: the density sentence has no perfect set of pairwise nonisomorphic mode
 conditional on the following hypotheses, each still to be proved: the cap-to-model theorem
 (`hcap`; Layer 3, 3.4; checkpoint 4), finite-cut receiving of models (`hrec`; (R1) of the table
 of Layer 3; used for next-block uniqueness and for logical agreement), forcing donors at every
-countable block index (`hF`; a finite construction of Layer 3, awaiting the completion below the
-full grade; used for next-block uniqueness), and countable losses of the expansion domains (`hc`;
-condition 2 of the reduction, Layers 4–5).  Next-block uniqueness is derived
-(`NextBlockUniqueness.of_forcingDonors`). -/
+countable block index (`hF`; derived from the coatom extension property at the next block stage,
+`forcingDonors_of_hasCoatomExtensions`; used for next-block uniqueness), and countable losses of
+the expansion domains (`hc`; condition 2 of the reduction, Layers 4–5).  Next-block uniqueness is
+derived (`NextBlockUniqueness.of_forcingDonors`). -/
 theorem densitySentence_isThinOnNatModels_of_forcingDonors (hcap : CapToModel.{0})
     (hrec : FiniteCutReceiving.{0}) (hF : ∀ ξ < ω₁, ForcingDonors.{0} ξ)
     (hc : ∀ ξ < ω₁, (expansionDomain ξ \ expansionDomain (ξ + 1)).Countable) :
@@ -168,11 +168,11 @@ forcing donors**: the density sentence has exactly `ℵ₁` classes of models co
 perfect set of pairwise nonisomorphic ones, conditional on the following hypotheses, each still
 to be proved: the cap-to-model theorem (`hcap`; Layer 3, 3.4; checkpoint 4), finite-cut receiving
 of models (`hrec`; (R1) of the table of Layer 3; used for next-block uniqueness and for logical
-agreement), forcing donors at every countable block index (`hF`; a finite construction of
-Layer 3, awaiting the completion below the full grade; used for next-block uniqueness), countable
-losses of the expansion domains (`hc`; condition 2 of the reduction, Layers 4–5), and nonempty
-losses of the expansion domains (`hn`; condition 4 of the reduction, Layer 6).  Next-block
-uniqueness is derived (`NextBlockUniqueness.of_forcingDonors`). -/
+agreement), forcing donors at every countable block index (`hF`; derived from the coatom extension
+property at the next block stage, `forcingDonors_of_hasCoatomExtensions`; used for next-block
+uniqueness), countable losses of the expansion domains (`hc`; condition 2 of the reduction,
+Layers 4–5), and nonempty losses of the expansion domains (`hn`; condition 4 of the reduction,
+Layer 6).  Next-block uniqueness is derived (`NextBlockUniqueness.of_forcingDonors`). -/
 theorem densitySentence_hasThinAlephOneSpectrum_of_forcingDonors (hcap : CapToModel.{0})
     (hrec : FiniteCutReceiving.{0}) (hF : ∀ ξ < ω₁, ForcingDonors.{0} ξ)
     (hc : ∀ ξ < ω₁, (expansionDomain ξ \ expansionDomain (ξ + 1)).Countable)
@@ -187,8 +187,9 @@ following hypotheses, each still to be proved:
 * the cap-to-model theorem (`hcap`; Layer 3, 3.4; checkpoint 4): the first domain;
 * finite-cut receiving of models (`hrec`; (R1) of the table of Layer 3, open): next-block
   uniqueness, logical agreement, and the rigid-core comparison;
-* forcing donors at every countable block index (`hF`; a finite construction of Layer 3, awaiting
-  the completion below the full grade): next-block uniqueness, for the limit clause;
+* forcing donors at every countable block index (`hF`; derived from the coatom extension property
+  at the next block stage, `forcingDonors_of_hasCoatomExtensions`): next-block uniqueness, for the
+  limit clause;
 * the continuation criterion (`hcont`; output 3 of higher-stage reconstruction, Layer 4): the
   cover of the terminal models;
 * exact residual receiving (`hres`; (R2) of the table of Layer 3): the residual comparison;

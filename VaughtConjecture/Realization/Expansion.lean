@@ -20,7 +20,9 @@ at which the block `[λ_ξ, λ_ξ + ω)` begins.  So `λ_0 = ω` is the base sta
 at least `ω` (`omega0_le_blockStage`), block stages are strictly increasing
 (`blockStage_strictMono`) and at least their index (`le_blockStage`), and they are countable at
 countable indices (`blockStage_lt_omega_one`).  The stage `λ_ξ` is a permitted cutoff at the
-stage `λ_{ξ+1}` (`isPermittedCutoff_blockStage`).
+stage `λ_{ξ+1}` (`isPermittedCutoff_blockStage`).  The reindexing `ξ ↦ 1 + ξ` of
+`blockStage_eq_mul` is strictly increasing (Mathlib's `add_right_strictMono`), onto the positive
+ordinals (`exists_one_add_eq_iff`), and preserves countability (`one_add_lt_omega_one_iff`).
 
 **Model expansions.**  A realization `R` at stage `α` on the carrier of a base structure `M` (a
 structure of `baseLanguage`) is an **expansion** of `M` (`Realization.IsExpansionOf`) when it is a
@@ -42,7 +44,9 @@ structure induced by the isomorphism, which is the target structure
 realization of its base structure (`ModelExpansion.val_eq_toRealization`), so there is at most one
 (`ModelExpansion.instSubsingletonOmega`), and a type assignment has one exactly when its
 realization is a model (`ModelExpansion.nonempty_omega_iff`); uniqueness at higher stages is not
-proved here.
+proved here.  At every stage, the realization of the base structure is the stage reduction of an
+expansion to `ω` (`ModelExpansion.toRealization_eq_reduce`), so a tuple supported in the base
+structure is typed in every expansion (`ModelExpansion.isSome_eval`).
 
 **Countable stages.**  A model on a countable carrier has a countable stage
 (`Realization.IsModel.lt_omega_one`): over one occurrence, the uniformity clause at each block
@@ -105,9 +109,26 @@ def blockStage (ξ : Ordinal.{u}) : Ordinal.{u} :=
 theorem blockStage_add_one (ξ : Ordinal.{u}) : blockStage (ξ + 1) = blockStage ξ + ω := by
   rw [blockStage, blockStage, mul_add_one, add_assoc]
 
+variable {η : Ordinal.{u}} in
+/-- `λ_η + n` lies below `λ_{η+1}`. -/
+theorem coe_add_lt_blockStage_add_one (n : ℕ) : blockStage η + n < blockStage (η + 1) := by
+  rw [blockStage_add_one]; exact (add_lt_add_iff_left _).mpr (Ordinal.natCast_lt_omega0 n)
+
 /-- The block stage is `ω · (1 + ξ)`. -/
 theorem blockStage_eq_mul (ξ : Ordinal.{u}) : blockStage ξ = ω * (1 + ξ) := by
   rw [blockStage, mul_add, mul_one]
+
+/-- **The reindexing `ξ ↦ 1 + ξ` is onto the positive ordinals.** -/
+theorem exists_one_add_eq_iff {β : Ordinal.{u}} : (∃ ξ, 1 + ξ = β) ↔ β ≠ 0 := by
+  refine ⟨?_, fun hβ ↦
+    ⟨β - 1, Ordinal.add_sub_cancel_of_le (Order.one_le_iff_ne_zero.mpr hβ)⟩⟩
+  rintro ⟨ξ, rfl⟩
+  exact (lt_of_lt_of_le zero_lt_one le_self_add).ne'
+
+/-- **The reindexing `ξ ↦ 1 + ξ` preserves countability.** -/
+theorem one_add_lt_omega_one_iff {ξ : Ordinal.{u}} : 1 + ξ < ω₁ ↔ ξ < ω₁ := by
+  refine ⟨fun h ↦ le_add_self.trans_lt h, fun h ↦ ?_⟩
+  exact isPrincipal_add_omega 1 (one_lt_omega0.trans omega0_lt_omega_one) h
 
 /-- Every block stage is a limit. -/
 theorem isSuccLimit_blockStage (ξ : Ordinal.{u}) : Order.IsSuccLimit (blockStage ξ) := by
@@ -370,6 +391,25 @@ theorem ModelExpansion.val_eq_toRealization (e : ModelExpansion M (ω : Ordinal.
   change R = toRealization M
   rw [← h]
   exact (toRealization_toStructure hR.isModel.hasLegalTypes).symm
+
+/-- **The realization of the base structure is the base reduct of an expansion**: for a model
+expansion `e` of `M` at any stage, the realization of `M` at `ω` is the stage reduction of `e` to
+`ω`.  At the base stage this is `ModelExpansion.val_eq_toRealization`. -/
+theorem ModelExpansion.toRealization_eq_reduce (e : ModelExpansion M α) :
+    toRealization M = e.1.reduce isSuccLimit_omega0.isSuccPrelimit := by
+  obtain ⟨R, hR⟩ := e
+  have h := hR.toStructure_reduce
+  -- the realization of `⟨R, hR⟩` is `R`; unfold the subtype projection before rewriting the
+  -- base structure, which also occurs in the type of `hR`
+  change toRealization M = R.reduce _
+  rw [← h]
+  exact toRealization_toStructure (hR.isModel.hasLegalTypes.reduce _)
+
+/-- **A supported tuple is typed in every expansion**: a tuple supported in the realization of
+`M` at `ω` has a type in every model expansion of `M`. -/
+theorem ModelExpansion.isSome_eval (e : ModelExpansion M α) {n : ℕ} {u : Fin n ↪ M}
+    (hu : ((toRealization M).eval u).isSome) : (e.1.eval u).isSome := by
+  rwa [e.toRealization_eq_reduce, Realization.isSome_reduce_eval] at hu
 
 /-- **At most one model expansion at the base stage.** -/
 instance ModelExpansion.instSubsingletonOmega :

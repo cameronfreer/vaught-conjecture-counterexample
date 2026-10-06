@@ -31,7 +31,7 @@ percentage of 100 would not by itself mean that the hypotheses of a layer are pr
 | 4, continuation | 62% | `Realization.stableCandidate` | output 3: (R4), the apex property |
 | 5, domains, agreement | 85% | `Expansion.expansionDomain_loss_countable` | the hypotheses below |
 | 6, the bounds | 90% | `densitySentence_hasThinAlephOneSpectrum_of_terminalClassification` | the hypotheses below |
-| Manuscript correspondence | 25% | `CellScheme.Rows.printedRespects_iff` | rows 2–5 P; row 6 S (one direction at `ω₁`); the rest S or C |
+| Manuscript correspondence | 25% | `CellScheme.Rows.printedRespects_iff`; the concordance rows (`IMPLEMENTATION.md`) | rows 2–5, 29 and 43 P, and row 14 for the printed definitions of [AFK26, §2] that it names; row 1 C, with its truncation function P; rows 6 and 44 S (one direction at `ω₁`); rows 8/11 P on corrected row 7 with domains S; row 15 P/C/P/S by part; the remaining rows S or C |
 | **Overall** | **≈ 78%** | | |
 
 Notes on the rows, each with its marker:
@@ -70,10 +70,12 @@ Notes on the rows, each with its marker:
   (`nonempty_loss_of_hasApexCoatomExtensions`).  Still to be proved: 4b-ii, the gated
   construction as data; (R2), (R3), (R4).
 - *Layer 4.*  Compiled: normalization, conditional on finite-extension receiving and forcing donors
-  (`Realization.label_eq_stableLabel`); the structural candidate (`Realization.stableCandidate`),
-  stably lawful for every model at a block stage (`Realization.IsModel.isStablyLawful`), and more
-  generally for every exactly consistent covering realization with legal types at a block stage
-  (`Realization.isStablyLawful_of_hasLegalTypes`); output 3 and the
+  (`Realization.label_eq_stableLabel`); forcing donors, conditional on the coatom extension
+  property (`forcingDonors_of_hasCoatomExtensions`); the structural candidate
+  (`Realization.stableCandidate`), stably lawful for every model at a block stage
+  (`Realization.IsModel.isStablyLawful`), and more generally for every exactly consistent covering
+  realization with legal types at a block stage (`Realization.isStablyLawful_of_hasLegalTypes`);
+  output 3 and the
   continuation criterion, conditional on (R4) and the coface instances at the next block
   (`ContinuationCriterion.of_stableCappedReceiving`); cover-hollowness and stable-label fixedness
   (`Realization.isCoverHollow_iff_forall_stableLabel_eq_top`); the exact-age comparison
@@ -97,7 +99,18 @@ Notes on the rows, each with its marker:
   (R3)), nonempty losses
   (`hasNonemptyLosses_of_hasApexCoatomExtensions`, also on the coatom extension property with
   apex at every countable block stage; item 7 below), and the thin `ℵ₁` spectrum
-  (`densitySentence_hasThinAlephOneSpectrum_of_terminalClassification`).
+  (`densitySentence_hasThinAlephOneSpectrum_of_terminalClassification`, and with `CapToModel` and
+  nonempty losses derived from the coatom extension property with apex at every countable block
+  stage,
+  `densitySentence_hasThinAlephOneSpectrum_of_terminalClassification_of_hasApexCoatomExtensions`).
+  Positive niceness of the
+  base reduct of every model at a block stage on a countable carrier
+  (`Realization.IsModel.isNice_toStructure_reduce`, `MainTheorem/Niceness`; manuscript
+  correspondence, row 30, S), with one threshold for all closed tuples
+  (`exists_isNiceTupleAt_of_hasTerminalRefinement`), compiled conditional on
+  `HasTerminalRefinement.{w}` (the specified terminal refinement, row 38) and next-block uniqueness.
+  At `w = 0` the refinement is derived from (R1), next-block uniqueness, and the countable-block
+  apex property, all still open; the main theorem does not use niceness.
 - *Manuscript correspondence, item 5.*  Compiled conditionally on (R1), next-block uniqueness,
   and the coatom extension property with apex at every countable block stage: the maximal
   refinement of a prescribed model (`MainTheorem.exists_maximalRefinement`); rows 33–36, 38, 40
@@ -105,20 +118,41 @@ Notes on the rows, each with its marker:
 
 ## The named hypotheses of the main theorem
 
-`densitySentence_hasThinAlephOneSpectrum_of_terminalClassification`
-(`MainTheorem/ModelExpansionDomains`) is compiled conditionally on the seven hypotheses below.
-Each is a separate statement with its own status; none of them is derived from another in the
-library.
+Two forms of the main theorem on `ℕ` are compiled, each conditionally on named hypotheses; the
+second does not replace the first, and both are kept.
 
-| Hypothesis | Lean | Used for |
-| --- | --- | --- |
-| the cap-to-model theorem at `ω` | `CapToModel` | the first domain |
-| (R1), finite-cut receiving of models | `Expansion.FiniteCutReceiving` | uniqueness, agreement |
-| forcing donors | `ForcingDonors` (every `ξ < ω₁`) | next-block uniqueness |
-| the continuation criterion (output 3) | `ContinuationCriterion` | the terminal cover |
-| (R2), exact residual receiving | `Realization.ResidualReceiving` | the residual comparison |
-| (R3), exact hollow-growth receiving | `Realization.HollowReceiving` | the hollow comparison |
-| nonempty losses (condition 4) | the hypothesis `hn` | the lower bound |
+- **Seven hypotheses.**  `densitySentence_hasThinAlephOneSpectrum_of_terminalClassification`
+  (`MainTheorem/ModelExpansionDomains`) is compiled conditionally on hypotheses 1–7 of the table
+  below: `CapToModel`, (R1), forcing donors, the continuation criterion, (R2), (R3), and nonempty
+  losses.
+- **Six hypotheses.**
+  `densitySentence_hasThinAlephOneSpectrum_of_terminalClassification_of_hasApexCoatomExtensions`
+  (`MainTheorem/Composition`; on all countable carriers,
+  `vaughtCounterexample_allCarriers_of_terminalClassification_of_hasApexCoatomExtensions`) is
+  compiled conditionally on hypotheses 2–6 and 8: (R1), forcing donors, the continuation
+  criterion, (R2), (R3), and the coatom extension property with apex at every countable block
+  stage.  Hypotheses 1 and 7 are derived in it: `CapToModel` from hypothesis 8 at `λ_0 = ω`
+  (`CapToModel.of_hasApexCoatomExtensions`), and nonempty losses from hypothesis 8 and next-block
+  uniqueness (`hasNonemptyLosses_of_hasApexCoatomExtensions`).  It is obtained from the first form
+  by the two derivations above.
+
+Each hypothesis is a separate statement with its own status.  None of them is derived from another
+in the library, except hypotheses 1 and 7, which are derived from hypothesis 8 (with next-block
+uniqueness, from hypotheses 2 and 3, for hypothesis 7), hypothesis 3, which is derived from
+hypothesis 8 (`forcingDonors_of_forall_hasApexCoatomExtensions`; the six-hypothesis form still
+takes it), and hypothesis 4, which is derived from hypothesis 8 together with (R4)
+(`ContinuationCriterion.of_hasApexCoatomExtensions`); (R4) is in neither list.
+
+| Hypothesis | Lean | Used for | Seven | Six |
+| --- | --- | --- | --- | --- |
+| 1. the cap-to-model theorem at `ω` | `CapToModel` | the first domain | yes | derived |
+| 2. (R1), finite-cut receiving of models | `Expansion.FiniteCutReceiving` | uniqueness, agreement | yes | yes |
+| 3. forcing donors | `ForcingDonors` (every `ξ < ω₁`) | next-block uniqueness | yes | yes |
+| 4. the continuation criterion (output 3) | `ContinuationCriterion` | the terminal cover | yes | yes |
+| 5. (R2), exact residual receiving | `Realization.ResidualReceiving` | the residual comparison | yes | yes |
+| 6. (R3), exact hollow-growth receiving | `Realization.HollowReceiving` | the hollow comparison | yes | yes |
+| 7. nonempty losses (condition 4) | the hypothesis `hn` | the lower bound | yes | derived |
+| 8. the coatom extension property with apex | `StageType.HasApexCoatomExtensions` (every `λ_η`, `η < ω₁`) | hypotheses 1 and 7 | no | yes |
 
 Status of each:
 
@@ -128,22 +162,32 @@ Status of each:
    gated pinned extension property
    (`Expansion.finiteCutReceiving_of_hasCoupledGatedPinnedExtensions`), which is open (4b-ii).  It
    is also used for the rigid-core comparison.
-3. `ForcingDonors`: still to be proved, by a finite construction of Layer 3 from the completion
-   below the full grade (prospective).
+3. `ForcingDonors`: still to be proved.  Compiled conditionally on the coatom extension property
+   at `λ_{ξ+1}` (`forcingDonors_of_hasCoatomExtensions`, `Extension/ForcingDonorsCoatom`), hence on
+   the coatom extension property with apex at every countable block stage
+   (`forcingDonors_of_forall_hasApexCoatomExtensions`), hypothesis 8.  The six-hypothesis form on
+   `main` keeps forcing donors as its hypothesis `hF`; `hF` can now be dropped by a separate
+   composition (prospective).  Unconditionally: one- and two-point inputs up to the threshold `4`
+   (`forcingDonorsUpTo_one_four`, `forcingDonorsUpTo_two_four`).
 4. `ContinuationCriterion`: still to be proved (sufficiency only; the converse is not stated).
+   Compiled conditionally on (R4) and the coatom extension property with apex at every successor
+   block stage (`ContinuationCriterion.of_hasApexCoatomExtensions`); (R4) is still to be proved,
+   so the six-hypothesis form keeps the criterion as a hypothesis.
 5. `Realization.ResidualReceiving`: still to be proved (the LOW construction).
 6. `Realization.HollowReceiving` for `Realization.IsCoverHollowAtBlock`: still to be proved (the
    growth construction).
 7. Nonempty losses: still to be proved.  Compiled conditionally on the coatom extension property
    with apex at every countable block stage and on next-block uniqueness
    (`hasNonemptyLosses_of_hasApexCoatomExtensions`, stated for the bundled domains, which also take
-   `CapToModel`; per block, `nonempty_loss_of_hasApexCoatomExtensions`); this is not composed with
-   the theorem above in a compiled statement.
+   `CapToModel`; per block, `nonempty_loss_of_hasApexCoatomExtensions`); composed with
+   hypotheses 2–6 in the six-hypothesis form.
+8. `StageType.HasApexCoatomExtensions` at every countable block stage: still to be proved, not
+   refuted (Layer 3, 3.1, the open part of (R6); the row "Layer 3, the completion" above).
 
 **An alternative hypothesis set.**
 `densitySentence_hasThinAlephOneSpectrum_of_restrictedTerminalClassification`
-(`MainTheorem/ModelExpansionDomains`) is compiled conditionally on items 1–5 and 7 and, in place of
-item 6:
+(`MainTheorem/ModelExpansionDomains`) is compiled conditionally on items 1–5 and 7 of the
+seven-hypothesis form and, in place of item 6:
 
 6′. `Realization.HollowReceiving` for `Realization.IsCoverHollowWithoutRigidCoreAtBlock`
    (cover-hollowness at a block stage without a globally rigid core): still to be proved.
@@ -155,13 +199,14 @@ core go through the rigid-core comparison, on (R1) only; the count of the termin
 holds in the same form
 (`MainTheorem.countable_isoClasses_terminalAt_of_restrictedTerminalClassification`).  Item 6
 implies item 6′ (`Realization.HollowReceiving.withoutRigidCore`): weaker or equal; strictly weaker
-not shown.  An informal argument, not compiled, is a risk for item 6 and not for item 6′: if every
-legal stage type had a legal one-point coface in which the root is not rigid, item 6 would force
-every cover-hollow model with unbounded growth to have no globally rigid core.  Neither is proved,
-and item 6 is not claimed to be false.
+not shown.  The six-hypothesis form with item 6′ in place of item 6 is not compiled (a separate
+composition, prospective).  An informal argument, not compiled, is a risk for item 6 and not for
+item 6′: if every legal stage type had a legal one-point coface in which the root is not rigid,
+item 6 would force every cover-hollow model with unbounded growth to have no globally rigid core.
+Neither is proved, and item 6 is not claimed to be false.
 
-There is no hypothesis of countable losses and none of next-block uniqueness: the first is
-`Expansion.expansionDomain_loss_countable`, the second
+There is no hypothesis of countable losses and none of next-block uniqueness in either form: the
+first is `Expansion.expansionDomain_loss_countable`, the second
 `Expansion.NextBlockUniqueness.of_forcingDonors`, each compiled conditionally on hypotheses in the
 list.
 
@@ -214,7 +259,8 @@ named hypothesis.
    actually realizes.  At a stage where the hypothesis fails the conditional (R1)
    (`Expansion.finiteCutReceiving_of_hasCoupledGatedPinnedExtensions`) is vacuous, and nothing
    rules that out.
-4. **Forcing donors** (still to be proved): the finite construction behind `ForcingDonors`.
+4. **Forcing donors** (still to be proved unconditionally): reduced to the coatom extension
+   property (`forcingDonors_of_hasCoatomExtensions`); nothing beyond it remains.
 5. **Output 3, part D, and (R4)** (still to be proved): (R4) over positive roots, the empty root by
    the coatom extension over the empty face, and the coatom extension properties at `λ_{ξ+1}`;
    the lawfulness of the candidate is item 2.  Compiled conditionally on (R4) and the coface

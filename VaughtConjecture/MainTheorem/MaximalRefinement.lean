@@ -210,12 +210,8 @@ the stage reduction of `f`.  The inequality is terminal collision: for `ρ < η`
 theorem exists_le_reduceBlock_eq_of_isTerminalAt (hnext : NextBlockUniqueness.{0})
     {ρ η : Ordinal.{0}} (hρ : ρ < ω₁) (f : ModelExpansion B (blockStage ρ))
     (hf : f.1.IsTerminalAt ρ) (e : ModelExpansion B (blockStage η)) :
-    ∃ h : η ≤ ρ, f.reduceBlock h = e := by
-  have hle : η ≤ ρ := le_of_not_gt fun hlt ↦ by
-    let e' := e.reduceBlock (Order.add_one_le_of_lt hlt)
-    exact hf e'.1 e'.2.isModel (congrArg Subtype.val
-      ((ModelExpansion.subsingleton hnext hρ).elim (e'.reduceBlock (Order.le_succ ρ)) f))
-  exact ⟨hle, (ModelExpansion.subsingleton hnext (hle.trans_lt hρ)).elim _ _⟩
+    ∃ h : η ≤ ρ, f.reduceBlock h = e :=
+  ModelExpansion.exists_le_reduceBlock_eq_of_isTerminalAt hnext hρ f hf e
 
 /-! ### The greatest serving index and the maximal refinement -/
 

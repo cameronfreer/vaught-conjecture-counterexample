@@ -61,7 +61,9 @@ thin `ℵ₁` spectrum of the density sentence, with the nonempty losses derived
 extension property with apex and next-block uniqueness, conditional on the hypotheses that
 remain: the coatom extension property with apex at every countable block stage, next-block
 uniqueness of models, finite-cut receiving of models ((R1)), and countable losses (condition 2).
-It is conditional; the main theorem of the roadmap has none of these hypotheses.
+The cap-to-model theorem is derived from the property at `λ_0 = ω`, which is `hext` at `η = 0`
+(`hasApexCoatomExtensions_omega_of_forall_blockStage`).  It is conditional; the main theorem of
+the roadmap has none of these hypotheses.
 
 Not assumed anywhere in this file: global termination or eventual departure, any cardinality
 conclusion, uniqueness of model expansions beyond the named hypotheses `huniq` (at `λ_η`, for
@@ -240,6 +242,13 @@ theorem nonempty_loss_zero_of_hasApexCoatomExtensions (hext : HasApexCoatomExten
     nonempty_loss_of_hasApexCoatomExtensions (omega0_pos.trans omega0_lt_omega_one)
       (blockStage_zero.{0} ▸ hext) fun N _ _ ↦ subsingleton_blockStage_zero N
 
+/-- The coatom extension property with apex at every countable block stage gives it at `ω`, the
+block stage `λ_0`. -/
+theorem hasApexCoatomExtensions_omega_of_forall_blockStage
+    (hext : ∀ η < ω₁, HasApexCoatomExtensions.{0} (blockStage η)) :
+    HasApexCoatomExtensions.{0} ω :=
+  blockStage_zero.{0} ▸ hext 0 (omega0_pos.trans omega0_lt_omega_one)
+
 /-- **Nonempty losses of the expansion domains of the density sentence** (condition 4 of the
 reduction; the lower bound), under the coatom extension property with apex at every countable
 block stage (`hext`) and next-block uniqueness of models (`hnext`), both still to be proved. -/
@@ -267,8 +276,8 @@ theorem densitySentence_hasThinAlephOneSpectrum_of_hasApexCoatomExtensions
     (hnext : NextBlockUniqueness.{0}) (hrec : FiniteCutReceiving.{0})
     (hc : ∀ ξ < ω₁, (expansionDomain ξ \ expansionDomain (ξ + 1)).Countable) :
     HasThinAlephOneSpectrum densitySentence.{0} :=
-  have hcap : CapToModel.{0} := CapToModel.of_hasApexCoatomExtensions
-    (blockStage_zero.{0} ▸ hext 0 (omega0_pos.trans omega0_lt_omega_one))
+  have hcap : CapToModel.{0} :=
+    CapToModel.of_hasApexCoatomExtensions (hasApexCoatomExtensions_omega_of_forall_blockStage hext)
   densitySentence_hasThinAlephOneSpectrum_of_modelExpansions hcap hnext hrec hc
     (hasNonemptyLosses_of_hasApexCoatomExtensions hcap hnext hext).nonempty_loss
 
