@@ -17,7 +17,8 @@ its range is Mathlib's `Fin.Embedding.snoc f hx`, whose range is that of `f` wit
 (`Fin.Embedding.univ_map_snoc`).  Adding a new point to the chart as well gives
 **`extendByLast f : Fin (m + 1) ↪ Fin (n + 1)`**, the face `f` followed by the new point: it is
 `f` on the old points (`castSuccEmb_trans_extendByLast`), sends the last point to the last point,
-and commutes with composition (`extendByLast_trans`).
+commutes with composition (`extendByLast_trans`), and extends the identity to the identity
+(`extendByLast_refl`).
 
 ## Placement
 
@@ -65,6 +66,14 @@ def extendByLast (f : Fin m ↪ Fin n) : Fin (m + 1) ↪ Fin (n + 1) :=
 theorem castSuccEmb_trans_extendByLast (f : Fin m ↪ Fin n) :
     Fin.castSuccEmb.trans (extendByLast f) = f.trans Fin.castSuccEmb :=
   Fin.Embedding.init_snoc _ _
+
+/-- Extending the identity by the new point is the identity. -/
+@[simp] theorem extendByLast_refl :
+    extendByLast (Function.Embedding.refl (Fin m)) = Function.Embedding.refl (Fin (m + 1)) :=
+  Function.Embedding.ext fun i ↦ by
+    induction i using Fin.lastCases with
+    | last => simp
+    | cast i => simp
 
 /-- Extending a composite by the new point is composing the extensions. -/
 theorem extendByLast_trans (g : Fin k ↪ Fin m) (f : Fin m ↪ Fin n) :

@@ -42,32 +42,43 @@ that of `b`, `i < grade b` and `o ≤ grade b`.  If `p a = μ + i` (`μ` zero or
 witness of locality at `s` above the reference value, so the shifter sends `ω · c + i` to `μ + i`
 exactly; the reference offset `i` is below the threshold `grade b`, so the guard holds at that
 threshold, and visibility replacement there turns `i` into `o`.  A new cell read like the cap is
-at least the cap, and a new cell read as `⊥` is `⊥`.  By availability, some cell at the graded
-index of a cell of the scope and grade of the cap has a label at least the cap; so a scheme `E` all
-of whose cells at one such graded index read the reference cells, the cap and the new cells of `D`
-in this way recovers `D` in every stage type on `E` with face `T⁺`.  This is the decoder of the
-roadmap (Layer 3, 3.3) at one row; it needs a cap whose grade exceeds the reference offsets and
-the finite parts of the labels of `D`, labelled at least `λ_ξ` plus its grade, and a reference
-cell for each block of a proper label of `D`.
+at least the cap, and a new cell read as `⊥` is `⊥`.  This is the decoder of the roadmap (Layer 3,
+3.3) at one row.
+
+**A stable recovery scheme from one reading graded index**
+(`StageType.IsStableRecoveryScheme.of_readsThroughCap`).  Let a scheme `E` carry a coface of
+`T⁺↓λ_ξ` and have the scheme of `D` as its face along `f` followed by the new point, let `b` be a
+cell of `T⁺` (the cap) labelled at least `λ_ξ` plus its grade `N`, with `γ < λ_ξ + N`, and let `s`
+be a cell of `E` of grade `N` whose scope contains that of `b`.  If every new cell of `D` lies below
+the graded index of `s`, and every cell of that graded index reads it through the cap
+(`StageType.ReadsThroughCap`: as `⊥`, as the cap, or in the block of a reference cell of `T⁺`
+labelled `μ + i`, with `i` and the finite part of the label below `N`), then `E` is a stable
+recovery scheme for `T⁺`, `f`, `D` and `γ`.  The old cells of `D` take their labels from the face
+of `T⁺` (`StageType.label_eq_of_restrictFace_eq`); at a new cell, availability against the cap
+gives a cell of the graded index of `s` labelled at least the cap, and the decoder at it recovers
+the label of `D`.  A reference cell read there lies below a graded index of grade `N`, so its grade
+is at most `N`.
 
 **The graded cap calibration** (`StageType.GradedCapCalibration`): a cap `b` of grade `N > k`
 labelled at least `λ_ξ + N`, with `γ < λ_ξ + N`, and for every ordinal label `μ + n` of `D`
-(`μ` zero or a limit) `n < N` and a reference cell labelled `μ + i` with `i < N` (for `μ = λ_ξ`, a
-marker).  It forces a private point, `k < m` (`StageType.GradedCapCalibration.lt`), so it excludes
-the refutation over the whole occurrence.  The cap need not have full scope.  Its acquisition is
+(`μ` zero or a limit) `n < N` and a reference cell of grade at most `N` labelled `μ + i` with
+`i < N` (for `μ = λ_ξ`, a marker).  These are the data that a scheme reading through the cap reads.
+It forces a private point, `k < m` (`StageType.GradedCapCalibration.lt`), so it excludes the
+refutation over the whole occurrence.  The cap need not have full scope.  Its acquisition is
 proved for every model that is not cover-hollow and has top-grade supremum `⊤`
 (`Realization.IsModel.acquiresCalibratedContexts_gradedCap`): reference cells below `λ_ξ` by
 uniformity (`Realization.IsModel.exists_extend_uniformity`), the marker by non-hollowness, the cap
 by unbounded growth (`Realization.exists_coe_add_grade_le_stableCandidate_label`: a cell labelled
-the formal top in `R` of grade `N` has stable label at least `λ_ξ + N`, by the order law), and one
-occurrence containing them by covering, with exact consistency to carry labels and grades
-(`Realization.Occurrence.exists_label_grade_eq_of_trans_eq`).  No premise beyond the hypotheses of
-(R4) and the clauses of a model is used.  So (R4) follows from stable recovery schemes for the
-graded cap calibration at every `ξ < ω₁`
-(`StableCappedReceiving.of_hasStableRecoverySchemes_gradedCap`), a finite statement that is open:
-by the decoder it holds wherever a legal scheme with the coface of `T⁺↓λ_ξ`, the face of `D` along
-`f` followed by the new point, and one graded index all of whose cells read as above exists, and
-that existence is not proved.
+the formal top in `R` of grade `N` has stable label at least `λ_ξ + N`, by the order law) with `N`
+above the arities of the occurrences of the reference cells and the marker, which bound their
+grades, and one occurrence containing them by covering, with exact consistency to carry labels and
+grades (`Realization.Occurrence.exists_label_grade_eq_of_trans_eq`).  No premise beyond the
+hypotheses of (R4) and the clauses of a model is used.  So (R4) follows from stable recovery
+schemes for the graded cap calibration at every `ξ < ω₁`
+(`StableCappedReceiving.of_hasStableRecoverySchemes_gradedCap`), a finite statement that is open.
+By `StageType.IsStableRecoveryScheme.of_readsThroughCap` it holds at every instance at which some
+scheme satisfies the hypotheses of that theorem; the calibration supplies a cap and reference cells
+for such a scheme to read, and the existence of such schemes is not proved.
 
 ## Placement
 
@@ -147,12 +158,16 @@ theorem IsLawful.label_eq_of_reading (h : R.IsLawful p) {s a b e : ι}
   have hqb : min (p b) (p s) = p b := min_eq_left hbs
   have key := (h.locality s).eq_coe_add_of_reading (a := ⟨a, ha⟩) (b := ⟨b, hb⟩) (e := ⟨e, he⟩)
     hμ hab hi ho heb hra hre (by
+      -- the labelling of locality at `s` is `d ↦ min (p d) (p s)`
       change min (p a) (p s) = _
       rw [min_eq_left ((hpa ▸ hib).le.trans hbs), hpa]) (by
+      -- the same labelling, at the cap
       change _ < min (p b) (p s)
       rwa [hqb]) (by
+      -- the same labelling, at the cap
       change _ < min (p b) (p s)
       rwa [hqb])
+  -- the same labelling, at the new cell
   change min (p e) (p s) = _ at key
   rcases le_total (p e) (p s) with h1 | h1
   · rwa [min_eq_left h1] at key
@@ -167,6 +182,7 @@ theorem IsLawful.le_label_of_reading (h : R.IsLawful p) {s b e : ι}
     (heb : D.grade e ≤ D.grade b) (hre : R.row s ⟨e, he⟩ = R.row s ⟨b, hb⟩) (hbs : p b ≤ p s) :
     p b ≤ p e := by
   have key := (h.locality s).le_of_le (d := ⟨b, hb⟩) (d' := ⟨e, he⟩) hre.symm.le heb
+  -- the labelling of locality at `s` is `d ↦ min (p d) (p s)`
   change min (p b) (p s) ≤ min (p e) (p s) at key
   rw [min_eq_left hbs] at key
   exact key.trans (min_le_left _ _)
@@ -177,20 +193,13 @@ theorem IsLawful.label_eq_bot_of_reading (h : R.IsLawful p) {s e : ι}
     (he : e ∈ D.below (D.gradedIndex s)) (hre : R.row s ⟨e, he⟩ = ⊥) (hs : p s ≠ ⊥) :
     p e = ⊥ := by
   have key := (h.locality s).eq_bot (d := ⟨e, he⟩) hre
+  -- the labelling of locality at `s` is `d ↦ min (p d) (p s)`
   change min (p e) (p s) = ⊥ at key
   rcases min_eq_iff.mp key with ⟨h1, -⟩ | ⟨h1, -⟩
   · exact h1
   · exact absurd h1 hs
 
 end CellScheme.Rows
-
-/-- `extendByLast` of the identity is the identity. -/
-theorem extendByLast_refl {m : ℕ} : extendByLast (Function.Embedding.refl (Fin m)) =
-    Function.Embedding.refl (Fin (m + 1)) :=
-  Function.Embedding.ext fun i ↦ by
-    induction i using Fin.lastCases with
-    | last => simp
-    | cast i => simp
 
 namespace StageType
 
@@ -253,9 +262,12 @@ variable (ξ) in
 /-- The **graded cap calibration**: a stage type `T⁺` at `λ_{ξ+1}` on `m` points has a cell `b`
 (the **cap**) of grade `N` above `k`, labelled at least `λ_ξ + N`, with `γ < λ_ξ + N`; and every
 ordinal label of `D` is `μ + n` with `μ` zero or a limit and `n < N`, and `T⁺` has a **reference
-cell** labelled `μ + i` with `i < N` (for `μ = λ_ξ`, a **marker**).  Since the grades of `T⁺` are
-at most `m`, it asks for a point outside the range of `f` (`GradedCapCalibration.lt`).  The cap
-need not have full scope. -/
+cell** of grade at most `N` labelled `μ + i` with `i < N` (for `μ = λ_ξ`, a **marker**).  The
+decoder reads a reference cell at a cell of grade `N`
+(`CellScheme.Rows.IsLawful.label_eq_of_reading` asks for its grade to be at most that of the cap);
+a cell of grade above `N` lies below no graded index of grade `N`.  Since the grades of `T⁺` are
+at most `m`, the calibration asks for a point outside the range of `f`
+(`GradedCapCalibration.lt`).  The cap need not have full scope. -/
 def GradedCapCalibration ⦃m k : ℕ⦄ (Tp : StageType.{u} (blockStage (ξ + 1)) m)
     (_ : Fin k ↪ Fin m) (D : StageType.{u} (blockStage (ξ + 1)) (k + 1)) (γ : Ordinal.{u}) :
     Prop :=
@@ -265,6 +277,7 @@ def GradedCapCalibration ⦃m k : ℕ⦄ (Tp : StageType.{u} (blockStage (ξ + 1
     ∀ (j : Fin D.card) (o : Ordinal.{u}), D.label j = o →
       ∃ (μ : Ordinal.{u}) (n i : ℕ) (a : Fin Tp.card), Order.IsSuccPrelimit μ ∧ o = μ + n ∧
         n < Tp.toCellScheme.grade b ∧ i < Tp.toCellScheme.grade b ∧
+        Tp.toCellScheme.grade a ≤ Tp.toCellScheme.grade b ∧
         Tp.label a = ((μ + i : Ordinal.{u}) : Label.{u})
 
 /-- **The graded cap calibration asks for a private point**: it forces `k < m`, so it never holds
@@ -276,27 +289,153 @@ theorem GradedCapCalibration.lt {Tp : StageType.{u} (blockStage (ξ + 1)) m} {f 
   obtain ⟨b, -, hk, -⟩ := h
   exact hk.trans_le (Tp.grade_le b)
 
+/-! ### A stable recovery scheme from one reading graded index -/
+
+/-- **A cell reads a new cell through the cap**: in a scheme `E` on `m + 1` points carrying `T⁺`
+on its first points (the cells of `E.comap Fin.castSuccEmb` matched with the cells of `T⁺` at
+equal positions), the row of the cell `u` reads the cell `e` as a cell labelled `ℓ`, relative to
+the cap `b`: as `⊥` if `ℓ = ⊥`; as it reads `b` if `ℓ = ⊤`; and, if `ℓ = μ + n` with `μ` zero or
+a limit, with `n` below the grade of `b` and at `ω · c + n`, where it reads at `ω · c + i` a
+**reference cell** of `T⁺` labelled `μ + i`, with `i` below the grade of `b`. -/
+def ReadsThroughCap {α : Ordinal.{u}} (Tp : StageType.{u} α m) (E : Scheme.{u} (m + 1))
+    (b : Fin (E.comap Fin.castSuccEmb).card) (u e : Fin E.card) (ℓ : Label.{u}) : Prop :=
+  ∀ (he : e ∈ E.toCellScheme.below (E.toCellScheme.gradedIndex u))
+    (hb : E.cellMap Fin.castSuccEmb b ∈ E.toCellScheme.below (E.toCellScheme.gradedIndex u)),
+    (ℓ = ⊥ → E.rows.row u ⟨e, he⟩ = ⊥) ∧
+    (ℓ = ⊤ → E.rows.row u ⟨e, he⟩ = E.rows.row u ⟨_, hb⟩) ∧
+    ∀ (μ : Ordinal.{u}) (n : ℕ), Order.IsSuccPrelimit μ →
+      ℓ = ((μ + n : Ordinal.{u}) : Label.{u}) →
+        n < E.toCellScheme.grade (E.cellMap Fin.castSuccEmb b) ∧
+        ∃ (a : Fin (E.comap Fin.castSuccEmb).card) (a₀ : Fin Tp.card) (i : ℕ) (c : Ordinal.{u}),
+          (a : ℕ) = a₀ ∧ Tp.label a₀ = ((μ + i : Ordinal.{u}) : Label.{u}) ∧
+          i < E.toCellScheme.grade (E.cellMap Fin.castSuccEmb b) ∧
+          ∃ ha : E.cellMap Fin.castSuccEmb a ∈
+              E.toCellScheme.below (E.toCellScheme.gradedIndex u),
+            E.rows.row u ⟨_, ha⟩ = ((ω * c + i : Ordinal.{u}) : Label.{u}) ∧
+            E.rows.row u ⟨e, he⟩ = ((ω * c + n : Ordinal.{u}) : Label.{u})
+
+/-- **A stable recovery scheme from one reading graded index** (the decoder at one row, with
+availability).  Let `E` carry a coface of `T⁺↓λ_ξ` and have the scheme of `D` as its face along
+`f` followed by the new point; let `b` be a cell of `T⁺` (the cap), labelled at least `λ_ξ` plus
+its grade `N`, with `γ < λ_ξ + N`; and let `s` be a cell of `E` of grade `N` whose scope contains
+that of `b`, such that every new cell `e` of `D` (a cell whose scope contains the new point) lies
+below the graded index of `s` and every cell of that graded index reads `e` through the cap
+(`StageType.ReadsThroughCap`) as a cell labelled as in `D`.  Then `E` is a stable recovery scheme
+for `T⁺`, `f`, `D` and `γ`.  The old cells of `D` take their labels from the face `P` of `T⁺`;
+at a new cell, availability against the cap gives a cell `u` of the graded index of `s` labelled
+at least the cap, and the decoder at `u` recovers the label of `D`
+(`CellScheme.Rows.IsLawful.label_eq_of_reading`, `CellScheme.Rows.IsLawful.le_label_of_reading`,
+`CellScheme.Rows.IsLawful.label_eq_bot_of_reading`). -/
+theorem IsStableRecoveryScheme.of_readsThroughCap {Tp : StageType.{u} (blockStage (ξ + 1)) m}
+    {f : Fin k ↪ Fin m} {P : StageType.{u} (blockStage (ξ + 1)) k}
+    (hP : restrictFace f Tp = some P) {D : StageType.{u} (blockStage (ξ + 1)) (k + 1)}
+    (hD : D ∈ P.cofaces) {γ : Ordinal.{u}} {E : Scheme.{u} (m + 1)}
+    (hq : ∃ q ∈ (Tp.reduce (isSuccPrelimit_blockStage ξ)).cofaces, q.toScheme = E)
+    (hf : univ.map (extendByLast f) ∈ E.toCellScheme.faces)
+    (hED : E.comap (extendByLast f) = D.toScheme) {b : Fin (E.comap Fin.castSuccEmb).card}
+    {b₀ : Fin Tp.card} (hbb₀ : (b : ℕ) = b₀)
+    (hb : ((blockStage ξ + E.toCellScheme.grade (E.cellMap Fin.castSuccEmb b) : Ordinal.{u}) :
+      Label.{u}) ≤ Tp.label b₀)
+    (hγ : γ < blockStage ξ + E.toCellScheme.grade (E.cellMap Fin.castSuccEmb b)) {s : Fin E.card}
+    (hbs : E.cellMap Fin.castSuccEmb b ∈ E.toCellScheme.below (E.toCellScheme.gradedIndex s))
+    (hgs : E.toCellScheme.grade s = E.toCellScheme.grade (E.cellMap Fin.castSuccEmb b))
+    (hread : ∀ (i : Fin (E.comap (extendByLast f)).card) (j : Fin D.card), (i : ℕ) = j →
+      Fin.last k ∈ D.toCellScheme.scope j →
+        E.cellMap (extendByLast f) i ∈ E.toCellScheme.below (E.toCellScheme.gradedIndex s) ∧
+        ∀ u, E.toCellScheme.gradedIndex u = E.toCellScheme.gradedIndex s →
+          Tp.ReadsThroughCap E b u (E.cellMap (extendByLast f) i) (D.label j)) :
+    Tp.IsStableRecoveryScheme f D γ E := by
+  refine ⟨hq, fun Q' hQ'E hQ'f ↦ ?_⟩
+  subst hQ'E
+  refine ⟨Q'.comap (extendByLast f) hf, restrictFace_of_mem _ _ hf, hED, fun i j hij ↦ ?_⟩
+  -- the labels of `Q'` at the cells of `T⁺`
+  obtain ⟨_, hcT⟩ := (restrictFace_eq_some_iff _ _).mp hQ'f
+  have hlab {a : Fin (Q'.toScheme.comap Fin.castSuccEmb).card} {a₀ : Fin Tp.card}
+      (h : (a : ℕ) = a₀) : Q'.label (Q'.cellMap Fin.castSuccEmb a) = Tp.label a₀ :=
+    label_congr hcT h
+  by_cases hj : Fin.last k ∈ D.toCellScheme.scope j
+  swap
+  · -- an old cell: the face along `f` followed by the new point and `D` have the face `P`
+    have hQP : restrictFace Fin.castSuccEmb (Q'.comap (extendByLast f) hf) = some P := by
+      rw [restrictFace_trans Q' _ _ (restrictFace_of_mem Q' _ hf),
+        castSuccEmb_trans_extendByLast, ← restrictFace_trans Q' _ _ hQ'f, hP]
+    have hvis : j ∈ D.visibleCells Fin.castSuccEmb := by
+      rw [Scheme.mem_visibleCells]
+      intro x hx
+      induction x using Fin.lastCases with
+      | last => exact absurd hx hj
+      | cast x => exact ⟨x, rfl⟩
+    have hl := label_eq_of_restrictFace_eq hED hQP hD.2 hij hvis
+    refine ⟨fun _ ↦ hl, fun h ↦ ?_⟩
+    rw [hl, h]
+    exact WithBot.coe_lt_coe.mpr (WithTop.coe_lt_top _)
+  -- a new cell `e`: availability against the cap `b` gives a cell `u` at the graded index of `s`
+  obtain ⟨he, hread⟩ := hread i j hij hj
+  have hpb := hb.trans_eq (hlab hbb₀).symm
+  obtain ⟨u, hu, hbu⟩ := Q'.isLawful.availability _ s hbs.1 hgs.symm
+  have hgu : Q'.toCellScheme.grade u = Q'.toCellScheme.grade (Q'.cellMap Fin.castSuccEmb b) :=
+    (congrArg Prod.snd hu).trans hgs
+  have he' : Q'.cellMap (extendByLast f) i ∈
+      Q'.toCellScheme.below (Q'.toCellScheme.gradedIndex u) := by
+    rwa [hu]
+  have hb' : Q'.cellMap Fin.castSuccEmb b ∈
+      Q'.toCellScheme.below (Q'.toCellScheme.gradedIndex u) := by
+    rwa [hu]
+  have heb : Q'.toCellScheme.grade (Q'.cellMap (extendByLast f) i) ≤
+      Q'.toCellScheme.grade (Q'.cellMap Fin.castSuccEmb b) :=
+    he.2.trans hgs.le
+  have hpu : Q'.label u ≠ ⊥ := ne_bot_of_le_ne_bot (by simp) (hpb.trans hbu)
+  obtain ⟨hbot, htop, hord⟩ := hread u hu he' hb'
+  -- the label of the face at `i` is the label of `Q'` at `e`
+  change (D.label j ≠ ⊤ → Q'.label (Q'.cellMap (extendByLast f) i) = D.label j) ∧
+    (D.label j = ⊤ → (γ : Label.{u}) < Q'.label (Q'.cellMap (extendByLast f) i))
+  rcases atStage_iff.mp (D.atStage j) with h | ⟨o, ho, h⟩ | h
+  · -- `D` is `⊥` at `j`: the row reads `e` as `⊥`
+    refine ⟨fun _ ↦ ?_, fun h' ↦ absurd (h.symm.trans h') bot_ne_top⟩
+    rw [h]
+    exact CellScheme.Rows.IsLawful.label_eq_bot_of_reading Q'.isLawful he' (hbot h) hpu
+  · -- `D` is an ordinal `μ + n` at `j`: the decoder through a reference cell
+    obtain ⟨μ, n, hμ, rfl, hμξ⟩ : ∃ (μ : Ordinal.{u}) (n : ℕ), Order.IsSuccPrelimit μ ∧
+        o = μ + n ∧ (μ < blockStage ξ ∨ μ = blockStage ξ) := by
+      rcases lt_or_ge o (blockStage ξ) with hlt | hge
+      · obtain ⟨n, hn⟩ := Ordinal.exists_eq_add_natCast_of_le_of_lt_add_omega0
+          (Ordinal.mul_div_le o ω) (Ordinal.lt_mul_div_add o Ordinal.omega0_ne_zero)
+        exact ⟨ω * (o / ω), n, Ordinal.isSuccPrelimit_iff_omega0_dvd.mpr (dvd_mul_right _ _),
+          hn, Or.inl ((Ordinal.mul_div_le o ω).trans_lt hlt)⟩
+      · rw [blockStage_add_one] at ho
+        obtain ⟨n, hn⟩ := Ordinal.exists_eq_add_natCast_of_le_of_lt_add_omega0 hge ho
+        exact ⟨blockStage ξ, n, isSuccPrelimit_blockStage ξ, hn, Or.inr rfl⟩
+    obtain ⟨hnN, a, a₀, i', c, haa₀, ha₀, hiN, ha, hra, hre⟩ := hord μ n hμ h.symm
+    -- every `μ + x` with `x` below the grade of the cap lies below the cap
+    have hlt (x : ℕ) (hx : x < Q'.toCellScheme.grade (Q'.cellMap Fin.castSuccEmb b)) :
+        ((μ + x : Ordinal.{u}) : Label.{u}) < Q'.label (Q'.cellMap Fin.castSuccEmb b) := by
+      refine lt_of_lt_of_le ?_ hpb
+      have : μ + x < blockStage ξ + Q'.toCellScheme.grade (Q'.cellMap Fin.castSuccEmb b) := by
+        rcases hμξ with hμξ | rfl
+        · exact ((isSuccPrelimit_blockStage ξ).add_natCast_lt hμξ x).trans_le
+            le_self_add
+        · exact add_lt_add_right (Nat.cast_lt.mpr hx) _
+      exact_mod_cast this
+    refine ⟨fun _ ↦ ?_, fun h' ↦ absurd (h.trans h') (WithBot.coe_lt_coe.mpr
+      (WithTop.coe_lt_top _)).ne⟩
+    rw [← h]
+    exact CellScheme.Rows.IsLawful.label_eq_of_reading Q'.isLawful ha hb' he' hμ
+      (ha.2.trans hgu.le) hiN hnN.le heb hra hre ((hlab haa₀).trans ha₀) hbu (hlt i' hiN)
+      (hlt n hnN)
+  · -- `D` is the formal top at `j`: the row reads `e` as the cap
+    refine ⟨fun h' ↦ absurd h h', fun _ ↦ ?_⟩
+    have hγ' : (γ : Label.{u}) <
+        ((blockStage ξ + Q'.toCellScheme.grade (Q'.cellMap Fin.castSuccEmb b) : Ordinal.{u}) :
+          Label.{u}) := by
+      exact_mod_cast hγ
+    exact hγ'.trans_le (hpb.trans (CellScheme.Rows.IsLawful.le_label_of_reading Q'.isLawful hb'
+      he' heb (htop h) hbu))
+
 end StageType
 
 namespace Realization
 
 variable {ξ : Ordinal.{u}} {M : Type v} {R : Realization.{u, v} (blockStage ξ) M}
-
-/-- **Literal faces keep labels and grades**: if `x` is the face of `y` along `f`, every cell of
-the type of `x` has a cell of the type of `y` with the same label and the same grade. -/
-theorem Occurrence.exists_label_grade_eq_of_trans_eq {α : Ordinal.{u}}
-    {R : Realization.{u, v} α M} (hR : R.IsConsistent) {x y : R.Occurrence}
-    {f : Fin x.arity ↪ Fin y.arity} (hf : f.trans y.tuple = x.tuple) (j : Fin x.type.card) :
-    ∃ z : Fin y.type.card, y.type.label z = x.type.label j ∧
-      y.type.toCellScheme.grade z = x.type.toCellScheme.grade j := by
-  obtain ⟨hmem, h⟩ :=
-    (StageType.restrictFace_eq_some_iff _ _).mp (Occurrence.restrictFace_eq_some_of_trans_eq hR hf)
-  have hgrade : ∀ {t t' : StageType.{u} α x.arity} (_ : t = t') (i : Fin t.card) (i' : Fin t'.card),
-      (i : ℕ) = i' → t.toCellScheme.grade i = t'.toCellScheme.grade i' := by
-    rintro t _ rfl i i' hii'
-    rw [Fin.ext hii']
-  exact ⟨_, StageType.label_congr h (i := Fin.cast (congrArg (·.card) h).symm j) rfl,
-    hgrade h (Fin.cast (congrArg (·.card) h).symm j) j rfl⟩
 
 /-- **Unbounded growth gives a cap of every grade**: if the top-grade supremum of `R` is `⊤`, then
 for every `K : ℕ` some type of the candidate has a cell of grade above `K` labelled at least
@@ -326,13 +465,14 @@ theorem exists_coe_add_grade_le_stableCandidate_label (hgrow : R.topGradeSup = �
 /-- **Acquisition of the graded cap calibration**: a model `R` at `λ_ξ` that is not cover-hollow
 and has top-grade supremum `⊤` acquires calibrated contexts for the graded cap calibration.  Over
 an occurrence `x` of the candidate, for a coface `D` of its type and `γ ≤ λ_ξ + K`: uniformity
-gives reference cells for the blocks below `λ_ξ` of the labels of `D`
-(`Realization.IsModel.exists_extend_uniformity`), non-hollowness a marker
+gives reference cells for the blocks below `λ_ξ` of the labels of `D` in an occurrence `y`
+(`Realization.IsModel.exists_extend_uniformity`), non-hollowness a marker in an occurrence `z₀`
 (`Realization.exists_stableCandidate_label_eq_coe_add`), unbounded growth a cap of grade above
-every finite part involved, `K` and the arity of `x`
+every finite part involved, `K`, the arity of `x` and the arities of `y` and `z₀`
 (`Realization.exists_coe_add_grade_le_stableCandidate_label`), and covering one occurrence `w`
-containing them; exact consistency of `R` and of the candidate carries the labels and the grade of
-the cap to the stable type of `w`. -/
+containing them; exact consistency of `R` and of the candidate carries the labels and the grades
+to the stable type of `w`.  The grades of the reference cells are at most the arities of `y` and
+`z₀` (`StageType.grade_le`), hence at most that of the cap. -/
 theorem IsModel.acquiresCalibratedContexts_gradedCap (hR : R.IsModel) (hnh : ¬ R.IsCoverHollow)
     (hgrow : R.topGradeSup = ⊤) :
     AcquiresCalibratedContexts ξ (StageType.GradedCapCalibration ξ) R hR.isStablyLawful := by
@@ -365,45 +505,65 @@ theorem IsModel.acquiresCalibratedContexts_gradedCap (hR : R.IsModel) (hnh : ¬ 
         exact (WithTop.coe_injective (WithBot.coe_injective ho')).symm.trans hn
     · exact ⟨0, ⟨Ordinal.isSuccPrelimit_zero, hpos⟩, 0, fun o ho ↦ by simp [h] at ho⟩
   choose ν hν B hB using hblock
+  -- reference cells for the blocks below `λ_ξ`, in an occurrence `y` containing `x`
   obtain ⟨y, fy, K₁, B₁, hfy, -, -, hanc⟩ :=
     hR.exists_extend_uniformity ⟨x.arity, x.tuple, t, ht⟩ hpos (List.ofFn ν) fun μ hμ ↦ by
       obtain ⟨j, rfl⟩ := List.mem_ofFn.mp hμ
       exact hν j
+  -- a marker, in an occurrence `z₀` of the candidate
   obtain ⟨z₀, a₀, i₀, ha₀⟩ := exists_stableCandidate_label_eq_coe_add hnh hR.isStablyLawful
+  -- a cap, in an occurrence `z₁` of the candidate, of grade above everything involved
   obtain ⟨z₁, b₁, hgb₁, hb₁⟩ := exists_coe_add_grade_le_stableCandidate_label hgrow
-    hR.isStablyLawful (K + x.arity + K₁ + i₀ + univ.sup B)
+    hR.isStablyLawful (K + x.arity + K₁ + i₀ + univ.sup B + y.arity + z₀.arity)
+  -- one occurrence `w` containing `y`, `z₀` and `z₁`
   obtain ⟨w, hw⟩ := hR.isCovering.exists_subset_support
     (univ.map y.tuple ∪ univ.map z₀.tuple ∪ univ.map z₁.tuple)
   obtain ⟨g, hg⟩ := w.exists_trans_eq (subset_union_left.trans (subset_union_left.trans hw))
   obtain ⟨f₀, hf₀⟩ := w.exists_trans_eq (subset_union_right.trans (subset_union_left.trans hw))
   obtain ⟨f₁, hf₁⟩ := w.exists_trans_eq (subset_union_right.trans hw)
+  -- the marker and the cap move to the stable type of `w` with their labels and grades
   have hcons := isConsistent_stableCandidate (hlaw := hR.isStablyLawful) hR.isConsistent
     hR.isCovering
   let W : (R.stableCandidate hR.isStablyLawful).Occurrence :=
     ⟨w.arity, w.tuple, _, stableCandidate_eval_of_eval w.eval_tuple⟩
-  obtain ⟨a', ha'⟩ := Occurrence.exists_label_eq_of_trans_eq hcons (y := W) hf₀ a₀
+  obtain ⟨a', ha'l, ha'g⟩ := Occurrence.exists_label_grade_eq_of_trans_eq hcons (y := W) hf₀ a₀
   obtain ⟨b', hb'l, hb'g⟩ := Occurrence.exists_label_grade_eq_of_trans_eq hcons (y := W) hf₁ b₁
-  have hN : K + x.arity + K₁ + i₀ + univ.sup B <
-      (R.stableType hR.isStablyLawful w.tuple w.type w.eval_tuple).toCellScheme.grade b' :=
+  have hN : K + x.arity + K₁ + i₀ + univ.sup B + y.arity + z₀.arity <
+      W.type.toCellScheme.grade b' :=
     hgb₁.trans_eq hb'g.symm
-  refine ⟨w, fy.trans g, by rw [Function.Embedding.trans_assoc, hg, hfy], b', ?_, by omega, ?_,
+  -- the bounds on the grade of the cap, stated for `W.type`, the stable type of `w`
+  have hkN : x.arity < W.type.toCellScheme.grade b' := by omega
+  have hKN : K < W.type.toCellScheme.grade b' := by omega
+  have hBN : univ.sup B < W.type.toCellScheme.grade b' := by omega
+  have hiN : i₀ < W.type.toCellScheme.grade b' := by omega
+  have hK₁N : K₁ < W.type.toCellScheme.grade b' := by omega
+  have hyN : y.arity < W.type.toCellScheme.grade b' := by omega
+  have ha'N : W.type.toCellScheme.grade a' ≤ W.type.toCellScheme.grade b' := by
+    have := z₀.type.grade_le a₀
+    omega
+  refine ⟨w, fy.trans g, by rw [Function.Embedding.trans_assoc, hg, hfy], b', ?_, hkN, ?_,
     fun j o ho ↦ ?_⟩
-  · change _ ≤ W.type.label b'
-    change _ ≤ W.type.toCellScheme.grade b' at hN
-    rw [hb'l, show W.type.toCellScheme.grade b' = z₁.type.toCellScheme.grade b₁ from hb'g]
+  · -- the cap: its label in `W.type` is its label in `z₁.type`
+    change _ ≤ W.type.label b'
+    rw [hb'l, hb'g]
     exact hb₁
-  · exact hK.trans_lt (add_lt_add_right (Nat.cast_lt.mpr (by omega)) _)
+  · exact hK.trans_lt (add_lt_add_right (Nat.cast_lt.mpr hKN) _)
   · have hBj : B j ≤ univ.sup B := le_sup (mem_univ j)
     obtain ⟨n, hn, h | h⟩ := hB j o ho
-    · obtain ⟨z, k, hk, hz, -⟩ := hanc (ν j) (List.mem_ofFn.mpr ⟨j, rfl⟩)
-      obtain ⟨z', hz'⟩ := Occurrence.exists_label_eq_of_trans_eq hR.isConsistent hg z
+    · -- a block below `λ_ξ`: the reference cell of `y`, moved to `w` with its label and grade
+      obtain ⟨z, k, hk, hz, -⟩ := hanc (ν j) (List.mem_ofFn.mpr ⟨j, rfl⟩)
+      obtain ⟨z', hz', hz'g⟩ := Occurrence.exists_label_grade_eq_of_trans_eq hR.isConsistent hg z
       have hne : w.type.label z' ≠ ⊤ := by
         rw [hz', hz]
         exact (WithBot.coe_lt_coe.mpr (WithTop.coe_lt_top _)).ne
-      refine ⟨ν j, n, k, z', (hν j).1, h, by omega, by omega, ?_⟩
+      refine ⟨ν j, n, k, z', (hν j).1, h, (hn.trans_le hBj).trans hBN,
+        hk.trans hK₁N, hz'g.trans_le ((y.type.grade_le z).trans hyN.le), ?_⟩
+      -- the label of the stable type at `z'` is the stable section there
       change R.stableSection w.tuple w.type z' = _
       rw [stableSection_of_ne_top hne, hz', hz]
-    · exact ⟨blockStage ξ, n, i₀, a', hlim, h, by omega, by omega, ha'.trans ha₀⟩
+    · -- the block `λ_ξ`: the marker
+      exact ⟨blockStage ξ, n, i₀, a', hlim, h, (hn.trans_le hBj).trans hBN, hiN, ha'N,
+        ha'l.trans ha₀⟩
 
 end Realization
 

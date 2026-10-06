@@ -2308,9 +2308,13 @@ Each checkpoint needs both its abstract API and a concrete application:
    `StageType.MarkerCapCalibration` at every `ξ < ω₁`
    (`StableCappedReceiving.of_hasStableRecoverySchemes_markerCap`), a finite hypothesis that is
    false (`Continuation.StableRecoveryCounterexample.not_forall_hasStableRecoverySchemes_markerCap`,
-   `Continuation/StableRecoveryCounterexample`), and from the same statement for the graded cap
-   calibration (`StableCappedReceiving.of_hasStableRecoverySchemes_gradedCap`,
-   `Continuation/StableRecovery`; acquisition compiled, the finite statement open; `README.md`,
+   `Continuation/StableRecoveryCounterexample`).
+   `StableCappedReceiving.of_hasStableRecoverySchemes_markerCap` rests on that refuted hypothesis
+   and is to be retired, with an audit of its uses, once this refutation is on `main` (not retired
+   here).  (R4) also follows from the same statement for the graded cap calibration
+   (`StableCappedReceiving.of_hasStableRecoverySchemes_gradedCap`, `Continuation/StableRecovery`;
+   acquisition compiled, the finite statement open; it holds at every instance with a scheme
+   reading through a cap, `StageType.IsStableRecoveryScheme.of_readsThroughCap`; `README.md`,
    Layer 4, status, output 3). Step 7 is
    compiled conditionally (`README.md`, the section on the top-free witnesses): the loss at `η`
    under uniqueness at `λ_η` (`nonempty_loss_of_topFreeWitness`), and per block under

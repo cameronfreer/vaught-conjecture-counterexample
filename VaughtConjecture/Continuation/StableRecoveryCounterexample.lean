@@ -39,20 +39,23 @@ face and differs from `D` at the twin `2`, where `D` is `λ_ξ + 2`, not the for
 type of scope `univ` are never separated by the face along the first point: only a cell above both,
 whose row reads them differently, separates them.
 
-**What the calibration lacks.**  Recovery at a new cell needs a cell of the scheme above it, whose
-label is held up by a cap (availability against a cap of its scope and grade) and whose row reads
-the new cell in the block of a reference cell, with the reference offset below the grade of the cap
-(`CellScheme.Rows.IsLawful.label_eq_of_reading`, in `VaughtConjecture.Continuation.StableRecovery`).
-Here no such cell exists: over the whole occurrence the scheme is the scheme of `D`, and the twins
-have nothing above them but the cell `4`, whose row is `⊥`.  The data missing from the marker and
-cap calibration are a cap of grade above the arity of the root (hence a private point), above the
-marker offset and the finite parts of the labels of `D`, labelled at least `λ_ξ` plus its grade:
-the graded cap calibration (`StageType.GradedCapCalibration`), which excludes this instance
+**What the calibration lacks.**  A stable recovery scheme is given by one graded index of a cell
+`s` of the scope and grade of a cap, all of whose cells read the new cells of `D` through the cap
+and reference cells (`StageType.IsStableRecoveryScheme.of_readsThroughCap`, in
+`VaughtConjecture.Continuation.StableRecovery`): availability against the cap holds the label of
+one of them up, and the decoder at it recovers `D`
+(`CellScheme.Rows.IsLawful.label_eq_of_reading`).  Here no such cell exists: over the whole
+occurrence the scheme is the scheme of `D`, and the twins have nothing above them but the cell `4`,
+whose row is `⊥`.  (Informal; not compiled: that recovery at a new cell needs such a cell.)  The
+data missing from the marker and cap calibration are a cap of grade above the arity of the root
+(hence a private point), above the marker offset and the finite parts of the labels of `D`,
+labelled at least `λ_ξ` plus its grade, and reference cells of grade at most that of the cap: the
+graded cap calibration (`StageType.GradedCapCalibration`), which excludes this instance
 (`not_gradedCapCalibration_twinRoot`) and is acquired in every model that is not cover-hollow and
 has top-grade supremum `⊤` (`Realization.IsModel.acquiresCalibratedContexts_gradedCap`).  Stable
-recovery schemes for the graded cap calibration remain open; at this root and donor they would need
-a private type of at least three points (a cap of grade at least `3`, above the finite part `2`
-of the labels of `D`).
+recovery schemes for the graded cap calibration remain open.  (Informal; not compiled: at this root
+and donor they would need a private type of at least three points, since the finite part `2` of a
+label of `D` is below the grade `N` of the cap and `N` is at most the number of points.)
 
 ## Placement
 
@@ -90,12 +93,12 @@ noncomputable def twinDonor₂ : StageType.{u} (blockStage (ξ + 1)) 2 where
   atStage d := blockStage_add_one ξ ▸ atStage_fiveCellLift₂ d
 
 /-- The first point spans a closed face of the five-cell scheme. -/
-theorem map_castSuccEmb_mem_faces :
+theorem map_castSuccEmb_mem_faces_fiveCells :
     univ.map (Fin.castSuccEmb : Fin 1 ↪ Fin 2) ∈ fiveCells.faces := by
   decide
 
 /-- The only cell of the five-cell scheme visible through the first point is the cell `0`. -/
-theorem eq_zero_of_mem_visibleCells {d : Fin 5}
+theorem eq_zero_of_mem_visibleCells_fiveCellScheme {d : Fin 5}
     (hd : d ∈ fiveCellScheme.{u}.visibleCells (Fin.castSuccEmb : Fin 1 ↪ Fin 2)) : d = 0 := by
   have key : ∀ d : Fin 5, fiveCells.scope d ⊆ univ.map (Fin.castSuccEmb : Fin 1 ↪ Fin 2) →
       d = 0 := by decide
@@ -104,16 +107,17 @@ theorem eq_zero_of_mem_visibleCells {d : Fin 5}
 /-- The root: the face of the first donor along the first point, a single cell labelled
 `λ_ξ + 2`. -/
 noncomputable def twinRoot : StageType.{u} (blockStage (ξ + 1)) 1 :=
-  (twinDonor₁ ξ).comap Fin.castSuccEmb map_castSuccEmb_mem_faces
+  (twinDonor₁ ξ).comap Fin.castSuccEmb map_castSuccEmb_mem_faces_fiveCells
 
 /-- Every cell of the root is the cell `0` of the five-cell scheme. -/
 theorem cellMap_twinRoot (i : Fin (twinRoot ξ).card) :
     fiveCellScheme.{u}.cellMap (Fin.castSuccEmb : Fin 1 ↪ Fin 2) i = 0 :=
-  eq_zero_of_mem_visibleCells (fiveCellScheme.cellMap_mem _ i)
+  eq_zero_of_mem_visibleCells_fiveCellScheme (fiveCellScheme.cellMap_mem _ i)
 
 /-- Every cell of the root is labelled `λ_ξ + 2`. -/
 theorem twinRoot_label (i : Fin (twinRoot ξ).card) :
     (twinRoot ξ).label i = ((blockStage ξ + (2 : ℕ) : Ordinal.{u}) : Label.{u}) := by
+  -- the labels of the root are those of the first donor at the visible cells
   change fiveCellLift₁ (blockStage ξ) (fiveCellScheme.cellMap Fin.castSuccEmb i) = _
   rw [cellMap_twinRoot]
   rfl
@@ -134,14 +138,15 @@ theorem isLegal_twinRoot : (twinRoot ξ).IsLegal :=
 
 /-- The first donor is a coface of the root. -/
 theorem twinDonor₁_mem_cofaces : twinDonor₁ ξ ∈ (twinRoot ξ).cofaces :=
-  ⟨isLegal_fiveCellScheme, restrictFace_of_mem _ _ map_castSuccEmb_mem_faces⟩
+  ⟨isLegal_fiveCellScheme, restrictFace_of_mem _ _ map_castSuccEmb_mem_faces_fiveCells⟩
 
 /-- The face of the second donor along the first point is the root. -/
 theorem restrictFace_twinDonor₂ :
     restrictFace Fin.castSuccEmb (twinDonor₂ ξ) = some (twinRoot ξ) := by
-  rw [restrictFace_of_mem _ _ map_castSuccEmb_mem_faces]
+  rw [restrictFace_of_mem _ _ map_castSuccEmb_mem_faces_fiveCells]
   refine congrArg some (StageType.ext rfl fun i j hij ↦ ?_)
   obtain rfl : i = j := Fin.ext hij
+  -- the labels of both faces are those of the donors at the visible cells
   change fiveCellLift₂ (blockStage ξ) (fiveCellScheme.cellMap Fin.castSuccEmb i) =
     fiveCellLift₁ (blockStage ξ) (fiveCellScheme.cellMap Fin.castSuccEmb i)
   rw [cellMap_twinRoot ξ i]
@@ -175,6 +180,7 @@ theorem not_hasStableRecoverySchemes_markerCap :
     (blockStage ξ) (blockStage_lt_blockStage_add_one ξ) (markerCapCalibration_twinRoot ξ)
   have h2 := hE.label_eq_of_refl (twinDonor₂ ξ) rfl (restrictFace_twinDonor₂ ξ)
     (2 : Fin 5) (2 : Fin 5) rfl (by
+      -- the label of the first donor at the twin `2`
       change fiveCellLift₁ (blockStage ξ) 2 ≠ ⊤
       exact (WithBot.coe_lt_coe.mpr (WithTop.coe_lt_top _)).ne)
   exact not_labelAdd_two_le_one h2.symm.le
@@ -202,6 +208,7 @@ example : ¬ ∃ E, (twinRoot.{0} 0).IsStableRecoveryScheme (Function.Embedding.
   rintro ⟨E, hE⟩
   have h2 := hE.label_eq_of_refl (twinDonor₂ 0) rfl (restrictFace_twinDonor₂ 0)
     (2 : Fin 5) (2 : Fin 5) rfl (by
+      -- the label of the first donor at the twin `2`
       change fiveCellLift₁ (blockStage 0) 2 ≠ ⊤
       exact (WithBot.coe_lt_coe.mpr (WithTop.coe_lt_top _)).ne)
   exact not_labelAdd_two_le_one h2.symm.le

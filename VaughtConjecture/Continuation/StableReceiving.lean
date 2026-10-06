@@ -236,8 +236,9 @@ realization: every legal stage type `T⁺` at `λ_{ξ+1}` satisfying `C` for an 
 (of positive length), a coface `D` of the face of `T⁺` along `f`, and an ordinal `γ < λ_{ξ+1}`,
 has a stable recovery scheme.  In the roadmap's design (Layer 3, 3.1 and 3.3) `C` is the calibrated
 data of (R4) and the scheme is the growth construction, shared with (R3).  For the marker and cap
-calibration (`StageType.MarkerCapCalibration`, acquisition proved) it **may be false**, since that
-calibration lacks the full cap, the reference cells and the arity bound of the design. -/
+calibration (`StageType.MarkerCapCalibration`, acquisition proved) it is **false** at every `ξ`
+(`Continuation.StableRecoveryCounterexample.not_hasStableRecoverySchemes_markerCap`); for the
+graded cap calibration (`StageType.GradedCapCalibration`, acquisition proved) it is open. -/
 def HasStableRecoverySchemes
     (C : ∀ ⦃m k : ℕ⦄, StageType.{u} (blockStage (ξ + 1)) m → (Fin k ↪ Fin m) →
       StageType.{u} (blockStage (ξ + 1)) (k + 1) → Ordinal.{u} → Prop) : Prop :=

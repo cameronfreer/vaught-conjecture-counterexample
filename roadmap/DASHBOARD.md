@@ -193,14 +193,16 @@ counted as compiled.
    the coupled gate form of (R1) (`StageType.HasCoupledGatedPinnedExtensions`): it lacks the cap of
    full scope and full grade, the reference cells and the arity bound.  The graded cap calibration
    (`StageType.GradedCapCalibration`: a cap of grade `N` above the arity of the root, labelled at
-   least `λ_ξ + N`, and reference cells with offsets below `N`) excludes that instance, its
-   acquisition is compiled (`Realization.IsModel.acquiresCalibratedContexts_gradedCap`, from
-   non-hollowness, growth, uniformity and covering), and (R4) follows from stable recovery schemes
-   for it (`StableCappedReceiving.of_hasStableRecoverySchemes_gradedCap`; open, still to be
-   proved).  The decoder at one reading cell (`CellScheme.Rows.IsLawful.label_eq_of_reading`)
-   reduces these to the existence of legal schemes with a graded index all of whose cells read the
-   reference cells, the cap and the new cells; that existence is not proved.  The acquisition of
-   the design's cap of full scope and full grade is not compiled.
+   least `λ_ξ + N`, and reference cells of grade at most `N` with offsets below `N`) excludes that
+   instance, its acquisition is compiled (`Realization.IsModel.acquiresCalibratedContexts_gradedCap`,
+   from non-hollowness, growth, uniformity and covering), and (R4) follows from stable recovery
+   schemes for it (`StableCappedReceiving.of_hasStableRecoverySchemes_gradedCap`; open, still to be
+   proved).  A scheme with one graded index, of the scope and grade of a cap, all of whose cells
+   read the new cells through the cap and reference cells is a stable recovery scheme
+   (`StageType.IsStableRecoveryScheme.of_readsThroughCap`, from availability and the decoder at
+   one reading cell, `CellScheme.Rows.IsLawful.label_eq_of_reading`); the existence of such
+   schemes is not proved.  The acquisition of the design's cap of full scope and full grade is not
+   compiled.
 6. **The attained least lift and structural successor leastness** (prospective).  One lift of a
    legal stage type at a limit stage `β` to `β + ω`, least at every cell (each minimum is attained
    separately: `StageType.exists_lift_label_eq_ofOffset`); the threshold forced by a cover is read
