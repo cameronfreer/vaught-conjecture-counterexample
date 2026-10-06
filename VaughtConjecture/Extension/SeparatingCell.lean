@@ -44,12 +44,12 @@ entry reaches the cap reads `d₁` and `d₂` at the same value); that the tower
 `e = λ + 1`, of finite part `1` (not self-visible at `2`), at two cells of grade `1`, and a label
 above `e` at `z`.  At a separating cell there is no collision (`le_of_separating`): every
 labelling lawful below `(univ, 2)` with `x d₁ = x d₂ = λ + 1` has `x u ≤ λ + 1`.  This is the
-collision lemma (`eq_of_transformsTo_collision`): if a row transforms to a labelling with a
+collision lemma (`Label.eq_of_transformsTo_collision`): if a row transforms to a labelling with a
 collision at `z`, and its values at the two cells are self-visible at `1`, then those values are
 equal.  The suppressor exceeds `e` at the grade `2`, so the shifter sends both row values to `e`;
 if they differed, the commutation of the shifter with `visibilityReplace 2 2` at the smaller one
 would give `visibilityReplace 2 2 e ≤ e`, which fails since `e` is not self-visible at `2`
-(`visibilityReplace_two_two_le_of_lt`).
+(`Label.visibilityReplace_two_two_le_of_lt`).
 
 The separating cell is a necessary condition, not a refutation: the thin completion of
 `VaughtConjecture.Extension.ThinCompletion` (the amalgam with one new cell at each graded face of
@@ -71,172 +71,11 @@ open Ordinal hiding univ
 open TwoFaceLiftExistsCounterexample
 open CaseSplitCounterexample (tripleLabelling tripleKind)
 
-/-! ### Labels of the form `ω * q + n` -/
-
-/-- A label `ω * q + n` lies below `ω * m` exactly when `q < m`. -/
-theorem coe_block_lt_iff {q m : Ordinal.{u}} {n : ℕ} :
-    ((ω * q + n : Ordinal.{u}) : Label.{u}) < ((ω * m : Ordinal.{u}) : Label.{u}) ↔ q < m := by
-  rw [WithBot.coe_lt_coe, WithTop.coe_lt_coe]
-  constructor
-  · intro h
-    by_contra hmq
-    rw [not_lt] at hmq
-    exact absurd h (not_lt.mpr ((show ω * m ≤ ω * q by gcongr).trans le_self_add))
-  · intro h
-    simpa using omega0_mul_add_natCast_lt h n 0
-
-/-- Visibility replacement on a label `ω * q + n` replaces the finite part `n` when `n < k`. -/
-theorem visibilityReplace_block (q : Ordinal.{u}) (n k i : ℕ) :
-    visibilityReplace k i ((ω * q + n : Ordinal.{u}) : Label.{u}) =
-      ((ω * q + ((if n < k then i else n : ℕ) : Ordinal.{u}) : Ordinal.{u}) : Label.{u}) := by
-  rw [visibilityReplace_coe, Ordinal.visibilityReplace_omega0_mul_add_natCast]
-
-/-- A label `ω * q + n` is self-visible at `k` exactly when `k ≤ n`. -/
-theorem isSelfVisible_block {q : Ordinal.{u}} {n k : ℕ} :
-    IsSelfVisible k ((ω * q + n : Ordinal.{u}) : Label.{u}) ↔ k ≤ n := by
-  rw [isSelfVisible_coe, omega0_mul_add_natCast_mod, Nat.cast_le]
-
-/-- Every label other than `⊥` and `⊤` has the form `ω * q + n`. -/
-theorem exists_block {x : Label.{u}} (hb : x ≠ ⊥) (ht : x ≠ ⊤) :
-    ∃ (q : Ordinal.{u}) (n : ℕ), x = ((ω * q + n : Ordinal.{u}) : Label.{u}) := by
-  induction x using recBotCoeTop with
-  | bot => exact absurd rfl hb
-  | top => exact absurd rfl ht
-  | coe o =>
-    obtain ⟨q, n, rfl⟩ := exists_eq_omega0_mul_add_natCast o
-    exact ⟨q, n, rfl⟩
-
-/-- A label self-visible at `1` is fixed by visibility replacement at `2` with value `1`. -/
-theorem visibilityReplace_two_one_of_isSelfVisible {a : Label.{u}} (ha : IsSelfVisible 1 a) :
-    visibilityReplace 2 1 a = a := by
-  induction a using recBotCoeTop with
-  | bot => simp
-  | top => simp
-  | coe o =>
-    obtain ⟨b, n, rfl⟩ := exists_eq_omega0_mul_add_natCast o
-    have hn : 1 ≤ n := isSelfVisible_block.mp ha
-    have hif : (if n < 2 then 1 else n) = n := by split_ifs <;> omega
-    rw [visibilityReplace_block, hif]
-
-/-! ### The collision lemma -/
-
-/-- **One step above a label of finite part `1`**: if `a` is self-visible at `1` and `a < b`,
-then `visibilityReplace 2 2 a ≤ b`. -/
-theorem visibilityReplace_two_two_le_of_lt {a b : Label.{u}} (ha : IsSelfVisible 1 a)
-    (hab : a < b) :
-    visibilityReplace 2 2 a ≤ b := by
-  by_cases ha2 : IsSelfVisible 2 a
-  · rw [ha2]; exact hab.le
-  have hb : a ≠ ⊥ := fun h ↦ ha2 (h ▸ isSelfVisible_bot 2)
-  have ht : a ≠ ⊤ := fun h ↦ ha2 (h ▸ isSelfVisible_top 2)
-  obtain ⟨q, n, rfl⟩ := exists_block hb ht
-  have hn1 : 1 ≤ n := isSelfVisible_block.mp ha
-  have hn2 : ¬ 2 ≤ n := fun h ↦ ha2 (isSelfVisible_block.mpr h)
-  obtain rfl : n = 1 := by omega
-  rw [visibilityReplace_block, ite_eq_left (by omega)]
-  induction b using recBotCoeTop with
-  | bot => exact absurd hab (not_lt.mpr bot_le)
-  | top => exact le_top
-  | coe o =>
-    rw [WithBot.coe_lt_coe, WithTop.coe_lt_coe] at hab
-    rw [WithBot.coe_le_coe, WithTop.coe_le_coe]
-    have := Order.add_one_le_of_lt hab
-    rw [add_assoc] at this
-    simpa [one_add_one_eq_two] using this
-
-/-- **The collision lemma.**  Let `p` transform to `q` over the grades `grade`, let `d₁`, `d₂` be
-cells of grade `1` whose source values are self-visible at `1`, carrying one target value `e` not
-self-visible at `2`, and let `z` be a cell of grade `2` with `e < q z`.  Then `p d₁ = p d₂`.
-
-The suppressor exceeds `e` at the grade `2`, so the shifter sends both source values to `e`; if
-`p d₁ < p d₂`, the guard at the grade `2` gives
-`σ (visibilityReplace 2 2 (p d₁)) = visibilityReplace 2 2 e`, which is above `e` but at most
-`σ (p d₂) = e`. -/
-theorem eq_of_transformsTo_collision {D : Type*} {grade : D → ℕ} {p q : D → Label.{u}}
-    (h : TransformsTo grade p q) {d₁ d₂ z : D} (hg₁ : grade d₁ = 1) (hg₂ : grade d₂ = 1)
-    (hz : grade z = 2) (hp₁ : IsSelfVisible 1 (p d₁)) (hp₂ : IsSelfVisible 1 (p d₂))
-    {e : Label.{u}} (he₁ : q d₁ = e) (he₂ : q d₂ = e) (hev : ¬ IsSelfVisible 2 e)
-    (hez : e < q z) : p d₁ = p d₂ := by
-  obtain ⟨g, σ, hw, hq⟩ := h
-  have hg2 : e < g 2 := hez.trans_le (by rw [hq z, hz]; exact min_le_right _ _)
-  have hg1 : e < g 1 := hg2.trans_le (hw.antitone (by omega))
-  have hσ (d : D) (hd : grade d = 1) (he : q d = e) : σ (p d) = e := by
-    rw [hq d, hd] at he
-    rcases le_total (σ (p d)) (g 1) with hle | hle
-    · rwa [min_eq_left hle] at he
-    · rw [min_eq_right hle] at he; exact absurd he hg1.ne'
-  have key : ∀ a b, IsSelfVisible 1 a → a < b → σ a = e → σ b = e → False := by
-    intro a b ha hab hσa hσb
-    have hcomm := hw.visibilityReplace_comm a 2 (by rw [hσa]; exact hg2.le) 2 le_rfl
-    rw [hσa] at hcomm
-    have hle : σ (visibilityReplace 2 2 a) ≤ σ b :=
-      hw.monotone (visibilityReplace_two_two_le_of_lt ha hab)
-    rw [hcomm, hσb] at hle
-    exact hev (le_antisymm hle (le_visibilityReplace (by omega) e))
-  rcases lt_trichotomy (p d₁) (p d₂) with hlt | heq | hgt
-  · exact (key _ _ hp₁ hlt (hσ d₁ hg₁ he₁) (hσ d₂ hg₂ he₂)).elim
-  · exact heq
-  · exact (key _ _ hp₂ hgt (hσ d₂ hg₂ he₂) (hσ d₁ hg₁ he₁)).elim
-
-/-! ### Transport between a completion and the amalgam -/
-
-section Transport
-
-variable {α : Ordinal.{u}} {m : ℕ} {I : Seed.{u} α m} (F : CompletionBelowFullGrade I)
-
-/-- The old cells of a completion keep their graded indices. -/
-theorem gradedIndex_embed (d : Fin I.amalgam.card) :
-    F.scheme.toCellScheme.gradedIndex (F.embed d) = I.amalgam.toCellScheme.gradedIndex d :=
-  Prod.ext (F.scope_embed d) (F.isLowerEmbedding.grade_eq d)
-
-/-- Below a pair of scope other than the ground set, the cells of a completion are the old
-cells. -/
-theorem image_embed_below {X : Finset (Fin (m + 2)) × ℕ} (hX : X.1 ≠ univ) :
-    F.embed '' I.amalgam.toCellScheme.below X = F.scheme.toCellScheme.below X := by
-  ext z
-  constructor
-  · rintro ⟨d, hd, rfl⟩
-    rw [CellScheme.mem_below, gradedIndex_embed]
-    exact hd
-  · intro hz
-    have hne : F.scheme.toCellScheme.scope z ≠ univ := fun h ↦
-      hX (univ_subset_iff.mp (by rw [← h]; exact hz.1))
-    obtain ⟨d, rfl⟩ := F.mem_range_embed z hne
-    refine ⟨d, ?_, rfl⟩
-    rw [CellScheme.mem_below, ← gradedIndex_embed]
-    exact hz
-
-/-- Below a pair of scope other than the ground set, lawfulness in the completion is lawfulness
-in the amalgam, along the old cells. -/
-theorem isLawfulBelow_embed_iff {X : Finset (Fin (m + 2)) × ℕ} (hX : X.1 ≠ univ)
-    {w : Fin F.scheme.card → Label.{u}} :
-    F.scheme.rows.IsLawfulBelow X (fun z ↦ w z) ↔
-      I.amalgam.rows.IsLawfulBelow X (fun d ↦ w (F.embed d)) := by
-  have h := Rows.isLawfulBelow_comap_iff (R := F.scheme.rows) F.isLowerEmbedding
-    (image_embed_below F hX) (r := fun z ↦ w z)
-  rw [F.comap_rows] at h
-  exact h.symm
-
-end Transport
-
 /-! ### The separating cell -/
 
 section Separation
 
 variable {α : Ordinal.{u}}
-
-/-- A cell of `TL` carried into a stage type along an embedding whose face is `TL`. -/
-theorem exists_cell_TL {f : Fin 4 ↪ Fin 5} {Am : StageType.{u} α 5}
-    (hf : StageType.restrictFace f Am = some (TL α)) (d : Fin 19) :
-    ∃ e : Fin Am.card, Am.toCellScheme.gradedIndex e =
-      Prod.map (Finset.map f) id (TwoFaceLiftCounterexample.cells.gradedIndex d) := by
-  obtain ⟨hf', he⟩ := (StageType.restrictFace_eq_some_iff _ _).mp hf
-  have heq : Am.toScheme.comap f = (TL α).toScheme := congrArg StageType.toScheme he
-  obtain ⟨i, hi⟩ : ∃ i : Fin (Am.toScheme.comap f).card,
-      (Am.toScheme.comap f).toCellScheme.gradedIndex i =
-        TwoFaceLiftCounterexample.cells.gradedIndex d := by
-    rw [heq]; exact ⟨Fin.castSucc d, gradedIndex_TL_castSucc d⟩
-  exact ⟨Am.toScheme.cellMap f i, by rw [← Am.toScheme.map_comap_gradedIndex f i, hi]⟩
 
 /-- **The necessary condition for every completion of the asymmetric seed**, at every grade
 `1 ≤ k ≤ 3` of the full scope.  Let `F` be a completion below the full grade of a seed whose
@@ -291,9 +130,9 @@ theorem exists_separating_cell_of_le_three {I : Seed.{u} α 3} (hIL : I.left = T
     tripleLabelling A ⊤ ⊤ ⊤ ⊤ (F.scheme.toCellScheme.gradedIndex z) with hP
   have hPe (d : Fin I.amalgam.card) :
       P (F.embed d) = tripleLabelling A ⊤ ⊤ ⊤ ⊤ (I.amalgam.toCellScheme.gradedIndex d) := by
-    simp only [hP, gradedIndex_embed]
+    simp only [hP, CompletionBelowFullGrade.gradedIndex_embed]
   have hPlaw : F.scheme.rows.IsLawfulBelow X fun z ↦ P z := by
-    rw [isLawfulBelow_embed_iff F hXne]
+    rw [F.isLawfulBelow_embed_iff hXne]
     simp only [hPe]
     exact (isLawfulBelow_tripleLabelling (I := I) hIL hIR hA (isSelfVisible_top 2)
       (isSelfVisible_top 1) (isSelfVisible_top 2) (isSelfVisible_top 3) le_rfl hAc le_rfl
@@ -312,7 +151,7 @@ theorem exists_separating_cell_of_le_three {I : Seed.{u} α 3} (hIL : I.left = T
   obtain ⟨x', hx'law, hx'c, hx'p⟩ := (Rows.cappedLift_iff_forall_exists hXY).mp hl c hc
     (fun z ↦ P z) (fun z ↦ q z) hPlaw hq (fun z ↦ by
       have hz : (z : Fin F.scheme.card) ∈ F.embed '' I.amalgam.toCellScheme.below X := by
-        rw [image_embed_below F hXne]; exact z.2
+        rw [F.image_embed_below hXne]; exact z.2
       obtain ⟨e, he, hze⟩ := hz
       -- Unfold the restrictions of `q` and `P` to the cells below `X`.
       change min (q z) c = min (P z) c
@@ -331,7 +170,7 @@ theorem exists_separating_cell_of_le_three {I : Seed.{u} α 3} (hIL : I.left = T
   have hmem (d : Fin I.amalgam.card) {Z : Finset (Fin 5) × ℕ}
       (h : I.amalgam.toCellScheme.gradedIndex d ≤ Z) :
       F.embed d ∈ F.scheme.toCellScheme.below Z := by
-    rw [CellScheme.mem_below, gradedIndex_embed]
+    rw [CellScheme.mem_below, CompletionBelowFullGrade.gradedIndex_embed]
     exact h
   have hd₁X := hmem d₁ (Z := X) (by rw [hd₁]; decide +kernel)
   have hsCX := hmem sC (Z := X) (by rw [hsC]; decide +kernel)
@@ -347,14 +186,14 @@ theorem exists_separating_cell_of_le_three {I : Seed.{u} α 3} (hIL : I.left = T
   have hZne : Z.1 ≠ univ := by decide
   have hZY : Z ≤ Y := ⟨subset_univ _, le_rfl⟩
   have hwZ : F.scheme.rows.IsLawfulBelow Z fun z ↦ w z := hw.mono hZY
-  have hwZ' := (isLawfulBelow_embed_iff F hZne).mp hwZ
+  have hwZ' := (F.isLawfulBelow_embed_iff hZne).mp hwZ
   have hD := le_of_isLawfulBelow_right hIR (w := fun d ↦ w (F.embed d)) hwZ' hd₂ hgE
   have hw₂ : w (F.embed d₂) = ⊤ := top_le_iff.mp (hwG ▸ hD)
   -- Step 5: an old cell `s` of grade `k` where `w` is `⊤`: `d₂`, `s_C` or `g`.
   have hgr (d : Fin I.amalgam.card) {W : Finset (Fin 5) × ℕ}
       (h : I.amalgam.toCellScheme.gradedIndex d = W) :
       F.scheme.toCellScheme.grade (F.embed d) = W.2 :=
-    (congrArg Prod.snd (gradedIndex_embed F d)).trans (congrArg Prod.snd h)
+    (congrArg Prod.snd (F.gradedIndex_embed d)).trans (congrArg Prod.snd h)
   obtain ⟨s, hgs, hws⟩ : ∃ s : Fin I.amalgam.card,
       F.scheme.toCellScheme.grade (F.embed s) = k ∧ w (F.embed s) = ⊤ := by
     obtain rfl | rfl | rfl : k = 1 ∨ k = 2 ∨ k = 3 := by omega

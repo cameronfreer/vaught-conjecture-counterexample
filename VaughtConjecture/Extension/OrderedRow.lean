@@ -70,7 +70,8 @@ of collisions take separate case analyses.  Every capped lift of the thin comple
 `ThinCompletion.exists_lift_right`).  The lift of the necessary condition of
 `VaughtConjecture.Extension.SeparatingCell`, from `(C, 3)` with the prescription `(A, ⊤, ⊤)`, is
 `exists_criticalLift`: it sets `A_D := ⊤`, and the new cell at `(univ, 2)` then reads
-`A_C = A < ⊤ = A_D`.
+`A_C = A ≤ ⊤ = A_D`, strictly below when `A ≠ ⊤` (as in the necessary condition); the theorem
+also allows `A = ⊤`.
 
 ## Placement
 
@@ -91,12 +92,12 @@ open TwoFaceLiftExistsCounterexample
 open Classical in
 /-- The strip of `A` at the grade `2`, read off the finite part of `x`: `visibilityReplace 2 j A`
 for `j = min (finite part of x) 2`. -/
-noncomputable def strip2 (A x : Label.{u}) : Label.{u} :=
+private noncomputable def strip2 (A x : Label.{u}) : Label.{u} :=
   if IsSelfVisible 2 x then visibilityReplace 2 2 A
   else if IsSelfVisible 1 x then visibilityReplace 2 1 A else visibilityReplace 2 0 A
 
 /-- The strip of `A` at a label `ω * q + n` is `visibilityReplace 2 (min n 2) A`. -/
-theorem strip2_block (A : Label.{u}) (q : Ordinal.{u}) (n : ℕ) :
+private theorem strip2_block (A : Label.{u}) (q : Ordinal.{u}) (n : ℕ) :
     strip2 A ((ω * q + n : Ordinal.{u}) : Label.{u}) = visibilityReplace 2 (min n 2) A := by
   unfold strip2
   simp only [isSelfVisible_block]
@@ -532,7 +533,7 @@ structure IsThinLawfulBelow (AC AD F G : Label.{u}) : Prop where
 
 /-- The lifted value of a parameter: the prescription if there is one; otherwise the ambient
 value if it lies below the cap, and the value `hi ≥ c` otherwise. -/
-noncomputable def liftedParam (P : Option Label.{u}) (qz c hi : Label.{u}) : Label.{u} :=
+private noncomputable def liftedParam (P : Option Label.{u}) (qz c hi : Label.{u}) : Label.{u} :=
   open Classical in P.getD (if qz < c then qz else hi)
 
 section Choose
@@ -540,7 +541,7 @@ section Choose
 variable {P : Option Label.{u}} {qz c hi : Label.{u}}
 
 /-- The chosen value agrees with the ambient value capped at `c`. -/
-theorem min_liftedParam (hP : ∀ a ∈ P, min a c = min qz c) (hhi : c ≤ hi) :
+private theorem min_liftedParam (hP : ∀ a ∈ P, min a c = min qz c) (hhi : c ≤ hi) :
     min (liftedParam P qz c hi) c = min qz c := by
   unfold liftedParam
   cases P with
@@ -552,7 +553,7 @@ theorem min_liftedParam (hP : ∀ a ∈ P, min a c = min qz c) (hhi : c ≤ hi) 
     · rw [min_eq_right hhi, min_eq_right (not_lt.mp h)]
 
 /-- A chosen value below the cap is the ambient value. -/
-theorem liftedParam_eq_of_lt (hP : ∀ a ∈ P, min a c = min qz c) (hhi : c ≤ hi)
+private theorem liftedParam_eq_of_lt (hP : ∀ a ∈ P, min a c = min qz c) (hhi : c ≤ hi)
     (h : liftedParam P qz c hi < c) : liftedParam P qz c hi = qz := by
   have hm := min_liftedParam hP hhi
   rw [min_eq_left h.le] at hm
@@ -561,7 +562,7 @@ theorem liftedParam_eq_of_lt (hP : ∀ a ∈ P, min a c = min qz c) (hhi : c ≤
   · rw [min_eq_right hq] at hm; exact absurd hm h.ne
 
 /-- At an ambient value below the cap, the chosen value is the ambient value. -/
-theorem liftedParam_eq_of_q_lt (hP : ∀ a ∈ P, min a c = min qz c) (hhi : c ≤ hi)
+private theorem liftedParam_eq_of_q_lt (hP : ∀ a ∈ P, min a c = min qz c) (hhi : c ≤ hi)
     (h : qz < c) : liftedParam P qz c hi = qz := by
   have hm := min_liftedParam hP hhi
   rw [min_eq_left h.le] at hm
@@ -570,31 +571,31 @@ theorem liftedParam_eq_of_q_lt (hP : ∀ a ∈ P, min a c = min qz c) (hhi : c �
   · rw [min_eq_right hx] at hm; exact absurd hm h.ne'
 
 /-- At an ambient value at least the cap, the chosen value is at least the cap. -/
-theorem le_liftedParam_of_le (hP : ∀ a ∈ P, min a c = min qz c) (hhi : c ≤ hi) (h : c ≤ qz) :
-    c ≤ liftedParam P qz c hi := by
+private theorem le_liftedParam_of_le (hP : ∀ a ∈ P, min a c = min qz c) (hhi : c ≤ hi)
+    (h : c ≤ qz) : c ≤ liftedParam P qz c hi := by
   have hm := min_liftedParam hP hhi
   rw [min_eq_right h] at hm
   exact min_eq_right_iff.mp hm
 
 /-- A chosen value at least the cap comes from an ambient value at least the cap. -/
-theorem le_of_le_liftedParam (hP : ∀ a ∈ P, min a c = min qz c) (hhi : c ≤ hi)
+private theorem le_of_le_liftedParam (hP : ∀ a ∈ P, min a c = min qz c) (hhi : c ≤ hi)
     (h : c ≤ liftedParam P qz c hi) : c ≤ qz := by
   have hm := min_liftedParam hP hhi
   rw [min_eq_right h] at hm
   exact min_eq_right_iff.mp hm.symm
 
 /-- Unprescribed, at an ambient value at least the cap, the chosen value is `hi`. -/
-theorem liftedParam_none_of_le (h : c ≤ qz) : liftedParam none qz c hi = hi := by
+private theorem liftedParam_none_of_le (h : c ≤ qz) : liftedParam none qz c hi = hi := by
   unfold liftedParam; simp [not_lt.mpr h]
 
 /-- A prescribed value is chosen. -/
-theorem liftedParam_some (a : Label.{u}) : liftedParam (some a) qz c hi = a := rfl
+private theorem liftedParam_some (a : Label.{u}) : liftedParam (some a) qz c hi = a := rfl
 
 end Choose
 
 /-- A monotone constraint survives the choice if it holds for the ambient and for the values at
 or above the cap. -/
-theorem le_of_approx {c xz xw qz qw : Label.{u}} (hq : qz ≤ qw)
+private theorem le_of_approx {c xz xw qz qw : Label.{u}} (hq : qz ≤ qw)
     (hz' : qz < c → xz = qz) (hw : xw < c → xw = qw)
     (hhigh : c ≤ xz → c ≤ xw → xz ≤ xw) : xz ≤ xw := by
   by_cases hwc : xw < c
@@ -802,8 +803,9 @@ theorem exists_thinLift {c : Label.{u}} (hc1 : IsSelfVisible 1 c)
 necessary condition, at every cap `c` self-visible at `3` and every ambient `q` satisfying
 `IsThinLawfulBelow` and agreeing with it capped at `c`: some `A_D` completes the prescription to
 parameters satisfying `IsThinLawfulBelow`, agreeing with `q` capped at `c`.  (In the thin
-completion, the new cell at `(univ, 2)` then carries `F = ⊤` and reads `A_C = A < ⊤ = A_D`, as the
-necessary condition demands.) -/
+completion, the new cell at `(univ, 2)` then carries `F = ⊤` and reads `A_C = A ≤ ⊤ = A_D`; when
+`A ≠ ⊤`, as in the necessary condition, it reads `A_C < A_D`, as that condition demands.  The
+statement also allows `A = ⊤`.) -/
 theorem exists_criticalLift {c A : Label.{u}} (hc : IsSelfVisible 3 c) (hA : IsSelfVisible 1 A)
     (hAc : VisibilityReplaceFixedOfLT A ⊤) {qAC qAD qF qG : Label.{u}}
     (hq : IsThinLawfulBelow qAC qAD qF qG)

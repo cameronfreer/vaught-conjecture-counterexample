@@ -121,105 +121,6 @@ variable (hIL : I.left = TL α) (hIR : I.right = CaseSplitCounterexample.T5 α)
 
 /-! ### The labels and the apex rows of the amalgam -/
 
-/-- A subset of the image of `f` lies in its range. -/
-theorem coe_subset_range {n m : ℕ} {f : Fin m ↪ Fin n} {B : Finset (Fin n)}
-    (h : B ⊆ univ.map f) : (B : Set (Fin n)) ⊆ Set.range f := fun x hx ↦ by
-  obtain ⟨y, -, rfl⟩ := mem_map.mp (h hx)
-  exact ⟨y, rfl⟩
-
-/-- **Labels of a face type transport to the cells visible through it.** -/
-theorem label_of_restrictFace {n m : ℕ} {Am : StageType.{u} α n} {f : Fin m ↪ Fin n}
-    {t : StageType.{u} α m} (hf : StageType.restrictFace f Am = some t)
-    (P : ℕ → Label.{u} → Prop) (hP : ∀ i, P (t.toCellScheme.grade i) (t.label i))
-    {d : Fin Am.card} (hd : (Am.toCellScheme.scope d : Set (Fin n)) ⊆ Set.range f) :
-    P (Am.toCellScheme.grade d) (Am.label d) := by
-  obtain ⟨hf', rfl⟩ := (StageType.restrictFace_eq_some_iff _ _).mp hf
-  obtain ⟨i, rfl⟩ : d ∈ Set.range (Am.cellMap f) := by
-    rw [Scheme.range_cellMap]; exact Scheme.mem_visibleCells.mpr hd
-  exact hP i
-
-/-- **Rows of a face type transport to the cells visible through it.** -/
-theorem row_of_restrictFace {n m : ℕ} {Am : StageType.{u} α n} {f : Fin m ↪ Fin n}
-    {t : StageType.{u} α m} (hf : StageType.restrictFace f Am = some t)
-    (P : ℕ → ℕ → Label.{u} → Prop)
-    (hP : ∀ s (i : t.toCellScheme.below (t.toCellScheme.gradedIndex s)),
-      P (t.toCellScheme.grade s) (t.toCellScheme.grade i) (t.rows.row s i))
-    {s : Fin Am.card} (hs : (Am.toCellScheme.scope s : Set (Fin n)) ⊆ Set.range f)
-    (i : Am.toCellScheme.below (Am.toCellScheme.gradedIndex s)) :
-    P (Am.toCellScheme.grade s) (Am.toCellScheme.grade i) (Am.rows.row s i) := by
-  obtain ⟨hf', rfl⟩ := (StageType.restrictFace_eq_some_iff _ _).mp hf
-  obtain ⟨s', rfl⟩ : s ∈ Set.range (Am.cellMap f) := by
-    rw [Scheme.range_cellMap]; exact Scheme.mem_visibleCells.mpr hs
-  obtain ⟨i', hi'⟩ : i.1 ∈ Set.range (Am.cellMap f) := by
-    rw [Scheme.range_cellMap]
-    exact Scheme.mem_visibleCells.mpr ((coe_subset.mpr i.2.1).trans hs)
-  have hmem : i' ∈ (Am.toScheme.comap f).toCellScheme.below
-      ((Am.toScheme.comap f).toCellScheme.gradedIndex s') := by
-    refine ((Am.toScheme.isLowerEmbedding_comap f).le_iff i' s').mp ?_
-    rw [hi']; exact i.2
-  have h := hP s' ⟨i', hmem⟩
-  have hrow : (Am.comap f hf').rows.row s' ⟨i', hmem⟩ = Am.rows.row (Am.cellMap f s') i :=
-    Am.rows.row_congr rfl hi'
-  have hgr : (Am.comap f hf').toCellScheme.grade i' = Am.toCellScheme.grade i.1 := by
-    rw [← hi']; rfl
-  rw [hrow, hgr] at h
-  exact h
-
-/-- **The labels of a type with the apex added to `⊥` labels**: `⊤` at the apex and `⊥`
-elsewhere. -/
-theorem label_addApex {n : ℕ} {t : StageType.{u} α n} (ht : t.IsLegalBelowFullGrade)
-    (hn : 0 < n) (hbot : ∀ d, t.label d = ⊥) (i : Fin (t.addApex ht hn).card) :
-    (t.addApex ht hn).label i = if (t.addApex ht hn).toCellScheme.grade i = n then ⊤ else ⊥ := by
-  -- `t.addApex` has the cells of `t` and the apex, so `Fin.lastCases` applies.
-  change Fin (t.card + 1) at i
-  induction i using Fin.lastCases with
-  | last =>
-    have h : (t.addApex ht hn).toCellScheme.grade (Fin.last _) = n :=
-      Scheme.appendFullCellScheme_grade_last _ _
-    rw [StageType.addApex_label_last, ite_eq_left h]
-  | cast d =>
-    have h : (t.addApex ht hn).toCellScheme.grade d.castSucc ≠ n := by
-      -- The cell scheme of `t.addApex` is `appendFullCellScheme`.
-      change (Scheme.appendFullCellScheme t.toScheme n).grade d.castSucc ≠ n
-      rw [Scheme.appendFullCellScheme_grade_castSucc]
-      exact (ht.grade_lt d).ne
-    rw [StageType.addApex_label_castSucc, hbot, ite_eq_right h]
-
-/-- **The row of the apex of a type with `⊥` labels**: `⊥` exactly at the cells other than the
-apex, which are the cells of grade below `n`. -/
-theorem row_addApex {n : ℕ} {t : StageType.{u} α n} (ht : t.IsLegalBelowFullGrade)
-    (hn : 0 < n) (hbot : ∀ d, t.label d = ⊥) (s : Fin (t.addApex ht hn).card)
-    (hs : (t.addApex ht hn).toCellScheme.grade s = n)
-    (i : (t.addApex ht hn).toCellScheme.below ((t.addApex ht hn).toCellScheme.gradedIndex s)) :
-    ((t.addApex ht hn).rows.row s i = ⊥ ↔ (t.addApex ht hn).toCellScheme.grade i ≠ n) := by
-  -- `t.addApex` has the cells of `t` and the apex, so `Fin.lastCases` applies.
-  change Fin (t.card + 1) at s
-  induction s using Fin.lastCases with
-  | cast d =>
-    exfalso
-    -- The cell scheme of `t.addApex` is `appendFullCellScheme`.
-    change (Scheme.appendFullCellScheme t.toScheme n).grade d.castSucc = n at hs
-    rw [Scheme.appendFullCellScheme_grade_castSucc] at hs
-    exact (ht.grade_lt d).ne hs
-  | last =>
-    rw [show (t.addApex ht hn).rows.row (Fin.last _) i = StageType.apexRow ht i.1 from
-      Scheme.appendFullCell_row_last (h := ht.not_le) i]
-    obtain ⟨i, hi⟩ := i
-    -- As for `s`: the cells of `t` and the apex.
-    change Fin (t.card + 1) at i
-    induction i using Fin.lastCases with
-    | last =>
-      rw [StageType.apexRow_last, blockEncode_top]
-      exact ⟨fun h ↦ absurd h WithBot.coe_ne_bot,
-        fun h ↦ absurd (Scheme.appendFullCellScheme_grade_last _ _) h⟩
-    | cast d =>
-      rw [StageType.apexRow_castSucc, hbot, blockEncode_bot]
-      simp only [true_iff]
-      -- The cell scheme of `t.addApex` is `appendFullCellScheme`.
-      change (Scheme.appendFullCellScheme t.toScheme n).grade d.castSucc ≠ n
-      rw [Scheme.appendFullCellScheme_grade_castSucc]
-      exact (ht.grade_lt d).ne
-
 include hIL hIR in
 /-- **The labels of the amalgam**: `⊤` at the two apexes, the cells of grade `4`, and `⊥`
 elsewhere. -/
@@ -227,16 +128,16 @@ theorem amalgam_label (d : Fin I.amalgam.card) :
     I.amalgam.label d = if I.amalgam.toCellScheme.grade d = 4 then ⊤ else ⊥ := by
   have hP := fun (t₀ : StageType.{u} α 4) (ht : t₀.IsLegalBelowFullGrade)
     (hbot : ∀ d, t₀.label d = ⊥) (i : Fin (t₀.addApex ht (by omega)).card) ↦
-    label_addApex ht (by omega) hbot i
+    StageType.label_addApex ht (by omega) hbot i
   rcases I.subset_or_subset _ (I.amalgam.isWellFormed.isWellFormed.scope_mem d)
     (I.scope_ne_univ d) with h | h
-  · exact label_of_restrictFace (hIL ▸ I.restrictFace_left)
+  · exact StageType.label_of_restrictFace (hIL ▸ I.restrictFace_left)
       (fun a l ↦ l = if a = 4 then ⊤ else ⊥) (hP _ isLegalBelowFullGrade_SL fun _ ↦ rfl)
-      (coe_subset_range (Coatom.univ_map_left ▸ h))
-  · exact label_of_restrictFace (hIR ▸ I.restrictFace_right)
+      ((coe_subset.mpr (Coatom.univ_map_left ▸ h)).trans (coe_map_subset_range _ _))
+  · exact StageType.label_of_restrictFace (hIR ▸ I.restrictFace_right)
       (fun a l ↦ l = if a = 4 then ⊤ else ⊥)
       (hP _ CaseSplitCounterexample.isLegalBelowFullGrade_S fun _ ↦ rfl)
-      (coe_subset_range (Coatom.univ_map_right ▸ h))
+      ((coe_subset.mpr (Coatom.univ_map_right ▸ h)).trans (coe_map_subset_range _ _))
 
 include hIL hIR in
 /-- **The rows of the apexes of the amalgam**: the row of a cell of grade `4` is `⊥` exactly at
@@ -249,17 +150,17 @@ theorem amalgam_row_apex {s : Fin I.amalgam.card} (hs : I.amalgam.toCellScheme.g
     (i : (t₀.addApex ht (by omega)).toCellScheme.below
       ((t₀.addApex ht (by omega)).toCellScheme.gradedIndex s))
     (hs : (t₀.addApex ht (by omega)).toCellScheme.grade s = 4) ↦
-    row_addApex ht (by omega) hbot s hs i
+    StageType.row_addApex ht (by omega) hbot s hs i
   rcases I.subset_or_subset _ (I.amalgam.isWellFormed.isWellFormed.scope_mem s)
     (I.scope_ne_univ s) with h | h
-  · exact row_of_restrictFace (hIL ▸ I.restrictFace_left)
+  · exact StageType.row_of_restrictFace (hIL ▸ I.restrictFace_left)
       (fun a b r ↦ a = 4 → (r = ⊥ ↔ b ≠ 4))
       (fun s i hs ↦ hP _ isLegalBelowFullGrade_SL (fun _ ↦ rfl) s i hs)
-      (coe_subset_range (Coatom.univ_map_left ▸ h)) i hs
-  · exact row_of_restrictFace (hIR ▸ I.restrictFace_right)
+      ((coe_subset.mpr (Coatom.univ_map_left ▸ h)).trans (coe_map_subset_range _ _)) i hs
+  · exact StageType.row_of_restrictFace (hIR ▸ I.restrictFace_right)
       (fun a b r ↦ a = 4 → (r = ⊥ ↔ b ≠ 4))
       (fun s i hs ↦ hP _ CaseSplitCounterexample.isLegalBelowFullGrade_S (fun _ ↦ rfl) s i hs)
-      (coe_subset_range (Coatom.univ_map_right ▸ h)) i hs
+      ((coe_subset.mpr (Coatom.univ_map_right ▸ h)).trans (coe_map_subset_range _ _)) i hs
 
 /-! ### The grade `4` -/
 
@@ -587,53 +488,6 @@ theorem exists_lift_right {c : Label.{u}} (hc1 : IsSelfVisible 1 c)
 
 /-! ### One old cell at each graded index -/
 
-/-- **Cells visible through a face whose type has one cell at each graded index have distinct
-graded indices.** -/
-theorem eq_of_gradedIndex_eq_of_restrictFace {n m : ℕ} {Am : StageType.{u} α n}
-    {f : Fin m ↪ Fin n} {t : StageType.{u} α m} (hf : StageType.restrictFace f Am = some t)
-    (ht : Function.Injective t.toCellScheme.gradedIndex) {z z' : Fin Am.card}
-    (hz : (Am.toCellScheme.scope z : Set (Fin n)) ⊆ Set.range f)
-    (hz' : (Am.toCellScheme.scope z' : Set (Fin n)) ⊆ Set.range f)
-    (h : Am.toCellScheme.gradedIndex z = Am.toCellScheme.gradedIndex z') : z = z' := by
-  obtain ⟨hf', rfl⟩ := (StageType.restrictFace_eq_some_iff _ _).mp hf
-  obtain ⟨i, rfl⟩ : z ∈ Set.range (Am.cellMap f) := by
-    rw [Scheme.range_cellMap]; exact Scheme.mem_visibleCells.mpr hz
-  obtain ⟨i', rfl⟩ : z' ∈ Set.range (Am.cellMap f) := by
-    rw [Scheme.range_cellMap]; exact Scheme.mem_visibleCells.mpr hz'
-  rw [← Am.toScheme.map_comap_gradedIndex f i, ← Am.toScheme.map_comap_gradedIndex f i'] at h
-  have hinj : Function.Injective (Prod.map (Finset.map f) (id : ℕ → ℕ)) :=
-    (Finset.map_injective f).prodMap Function.injective_id
-  exact congrArg _ (ht (hinj h))
-
-/-- `TL` has one cell at each graded index. -/
-theorem gradedIndex_injective_TL : Function.Injective (TL α).toCellScheme.gradedIndex := by
-  have hlt : ∀ c : Fin 19, TwoFaceLiftCounterexample.cellGrade c ≠ 4 := by decide
-  intro i i' h
-  rcases cases_TL i with rfl | ⟨c, rfl⟩ <;> rcases cases_TL i' with rfl | ⟨c', rfl⟩
-  · rfl
-  · exact absurd (congrArg Prod.snd
-      (gradedIndex_TL_last.symm.trans (h.trans (gradedIndex_TL_castSucc c')))).symm (hlt c')
-  · exact absurd (congrArg Prod.snd
-      ((gradedIndex_TL_castSucc c).symm.trans (h.trans gradedIndex_TL_last))) (hlt c)
-  · rw [TwoFaceLiftCounterexample.gradedIndex_injective
-      ((gradedIndex_TL_castSucc c).symm.trans (h.trans (gradedIndex_TL_castSucc c')))]
-
-/-- `T5` has one cell at each graded index. -/
-theorem gradedIndex_injective_T5 :
-    Function.Injective (CaseSplitCounterexample.T5 α).toCellScheme.gradedIndex := by
-  have hlt : ∀ c : Fin 19, TwoFaceLiftCounterexample.cellGrade c ≠ 4 := by decide
-  intro i i' h
-  rcases CaseSplitCounterexample.cases_T5 i with rfl | ⟨c, rfl⟩ <;>
-    rcases CaseSplitCounterexample.cases_T5 i' with rfl | ⟨c', rfl⟩
-  · rfl
-  · exact absurd (congrArg Prod.snd (CaseSplitCounterexample.gradedIndex_T5_last.symm.trans
-      (h.trans (CaseSplitCounterexample.gradedIndex_T5_castSucc c')))).symm (hlt c')
-  · exact absurd (congrArg Prod.snd ((CaseSplitCounterexample.gradedIndex_T5_castSucc c).symm.trans
-      (h.trans CaseSplitCounterexample.gradedIndex_T5_last))) (hlt c)
-  · rw [TwoFaceLiftCounterexample.gradedIndex_injective
-      ((CaseSplitCounterexample.gradedIndex_T5_castSucc c).symm.trans
-        (h.trans (CaseSplitCounterexample.gradedIndex_T5_castSucc c')))]
-
 include hIL hIR in
 /-- **The amalgam has one cell at each graded index.** -/
 theorem amalgam_gradedIndex_injective : Function.Injective I.amalgam.toCellScheme.gradedIndex := by
@@ -641,20 +495,21 @@ theorem amalgam_gradedIndex_injective : Function.Injective I.amalgam.toCellSchem
   have hs : I.amalgam.toCellScheme.scope z = I.amalgam.toCellScheme.scope z' := congrArg Prod.fst h
   rcases I.subset_or_subset _ (I.amalgam.isWellFormed.isWellFormed.scope_mem z)
     (I.scope_ne_univ z) with hC | hD
-  · exact eq_of_gradedIndex_eq_of_restrictFace (hIL ▸ I.restrictFace_left) gradedIndex_injective_TL
-      (coe_subset_range (Coatom.univ_map_left ▸ hC))
-      (coe_subset_range (Coatom.univ_map_left ▸ hs ▸ hC)) h
-  · exact eq_of_gradedIndex_eq_of_restrictFace (hIR ▸ I.restrictFace_right)
-      gradedIndex_injective_T5
-      (coe_subset_range (Coatom.univ_map_right ▸ hD))
-      (coe_subset_range (Coatom.univ_map_right ▸ hs ▸ hD)) h
+  · exact StageType.eq_of_gradedIndex_eq_of_restrictFace (hIL ▸ I.restrictFace_left)
+      gradedIndex_injective_TL
+      ((coe_subset.mpr (Coatom.univ_map_left ▸ hC)).trans (coe_map_subset_range _ _))
+      ((coe_subset.mpr (Coatom.univ_map_left ▸ hs ▸ hC)).trans (coe_map_subset_range _ _)) h
+  · exact StageType.eq_of_gradedIndex_eq_of_restrictFace (hIR ▸ I.restrictFace_right)
+      CaseSplitCounterexample.gradedIndex_injective_T5
+      ((coe_subset.mpr (Coatom.univ_map_right ▸ hD)).trans (coe_map_subset_range _ _))
+      ((coe_subset.mpr (Coatom.univ_map_right ▸ hs ▸ hD)).trans (coe_map_subset_range _ _)) h
 
 /-! ### Capped lifts from the coatoms to the full scope -/
 
 /-- **From lifts at the grade `3` to capped lifts at the grades `k ≤ 3`.**  A prescription below
 `(B, k)` and an ambient below `(univ, k)` are extended by `⊥` above the grade `k`; the lift at the
 grade `3` of the extensions, restricted below `(univ, k)`, is the capped lift. -/
-theorem cappedLift_of_exists_lift {B : Finset (Fin 5)} {k : ℕ} (hk1 : 1 ≤ k) (hk3 : k ≤ 3)
+private theorem cappedLift_of_exists_lift {B : Finset (Fin 5)} {k : ℕ} (hk1 : 1 ≤ k) (hk3 : k ≤ 3)
     (H : ∀ c : Label.{u}, IsSelfVisible 1 c → ∀ p q : Fin (thinScheme I).card → Label.{u},
       (thinScheme I).rows.IsLawfulBelow (B, 3) (fun z ↦ p z) →
       (thinScheme I).rows.IsLawfulBelow ((univ : Finset (Fin 5)), 3) (fun z ↦ q z) →
@@ -679,9 +534,9 @@ theorem cappedLift_of_exists_lift {B : Finset (Fin 5)} {k : ℕ} (hk1 : 1 ≤ k)
   have hq' (z) : q' z = if (thinScheme I).toCellScheme.grade z ≤ k then
       Rows.extendBot ((univ : Finset (Fin 5)), k) q z else ⊥ := rfl
   have hpl : (thinScheme I).rows.IsLawfulBelow (B, 3) (fun z ↦ p' z) :=
-    isLawfulBelow_extendAbove (Rows.isLawfulBelow_extendBot.mpr hp)
+    Rows.isLawfulBelow_extendAbove (Rows.isLawfulBelow_extendBot.mpr hp)
   have hql : (thinScheme I).rows.IsLawfulBelow ((univ : Finset (Fin 5)), 3) (fun z ↦ q' z) :=
-    isLawfulBelow_extendAbove (Rows.isLawfulBelow_extendBot.mpr hq)
+    Rows.isLawfulBelow_extendAbove (Rows.isLawfulBelow_extendBot.mpr hq)
   have hpq' : ∀ z ∈ (thinScheme I).toCellScheme.below (B, 3), min (q' z) c = min (p' z) c := by
     intro z hz
     rw [hp', hq']
@@ -821,7 +676,8 @@ theorem cappedLift_four {B : Finset (Fin 5)} (hB : B = coatomC ∨ B = coatomD)
       (fun z ↦ (hq₃c z.1).trans (hpq' z.1 ⟨z.2.1, z.2.2.trans (by omega)⟩))
     refine ⟨fun z ↦ if (thinScheme I).toCellScheme.grade z ≤ 3 then
       Rows.extendBot ((univ : Finset (Fin 5)), 3) x₃ z else ⊥,
-      isLawfulBelow_extendAbove (Rows.isLawfulBelow_extendBot.mpr hx₃), fun z ↦ ?_, fun z hz ↦ ?_⟩
+      Rows.isLawfulBelow_extendAbove (Rows.isLawfulBelow_extendBot.mpr hx₃), fun z ↦ ?_,
+      fun z hz ↦ ?_⟩
     · dsimp only
       by_cases hz3 : (thinScheme I).toCellScheme.grade z ≤ 3
       · have hzm : z ∈ (thinScheme I).toCellScheme.below ((univ : Finset (Fin 5)), 3) :=

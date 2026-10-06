@@ -45,10 +45,11 @@ exactly the thin labellings of parameters satisfying `IsThinLawfulBelow`:
   availability at the new cells identify the label of the new cell at `(univ, 1)` with `A_D`, of
   `(univ, 2)` with both `F_C` and `F_D`, and of `(univ, 3)` with `G`, and give `A_C ≤ A_D`
   (availability into the new cell at `(univ, 1)`); the collision lemma
-  (`eq_of_transformsTo_collision`) at the new cell at `(univ, 2)` excludes collisions.
+  (`Label.eq_of_transformsTo_collision`) at the new cell at `(univ, 2)` excludes collisions.
 
 Below `(univ, k)` for `k < 3` the same holds with `F` or `G` set to `⊥`, through the extension of a
-lawful labelling by `⊥` above a grade (`isLawfulBelow_extendAbove`, for any rows).
+lawful labelling by `⊥` above a grade (`CellScheme.Rows.isLawfulBelow_extendAbove`, for any
+rows).
 
 ## Placement
 
@@ -183,7 +184,7 @@ theorem noneAbove_amalgam : NoneAbove I.amalgam.toScheme 1 :=
   fun k _ d ↦ I.not_univ_le k d
 
 /-- The scheme with the new cells at `(univ, 1)` and `(univ, 2)`. -/
-noncomputable abbrev thinScheme₂ : Scheme.{u} 5 :=
+private noncomputable abbrev thinScheme₂ : Scheme.{u} 5 :=
   addThinCell (addThinCell I.amalgam.toScheme 1 (noneAbove_amalgam I)) 2
     (noneAbove_addThinCell _)
 
@@ -220,33 +221,6 @@ theorem gradedIndex_newCell {k : ℕ} (hk1 : 1 ≤ k) (hk4 : k ≤ 4) :
   all_goals simp only [newCell, Scheme.appendFullCellScheme_gradedIndex_castSucc]
   all_goals exact Scheme.appendFullCellScheme_gradedIndex_last _ _
 
-/-! ### The rows of the new cells -/
-
-section Rows
-
-variable {S : Scheme.{u} 5} {j : ℕ} {r : Fin (S.card + 1) → Label.{u}}
-  {h : ∀ d, ¬ ((univ : Finset (Fin 5)), j) ≤ S.toCellScheme.gradedIndex d}
-
-/-- A row read off the graded indices stays so after appending a cell. -/
-theorem row_castSucc_eq {s : Fin S.card} {ρ : Finset (Fin 5) × ℕ → Label.{u}}
-    (hs : ∀ t, S.rows.row s t = ρ (S.toCellScheme.gradedIndex t.1))
-    (t : (S.appendFullCell j r h).toCellScheme.below
-      ((S.appendFullCell j r h).toCellScheme.gradedIndex s.castSucc)) :
-    (S.appendFullCell j r h).rows.row s.castSucc t =
-      ρ ((S.appendFullCell j r h).toCellScheme.gradedIndex t.1) := by
-  have ht : t.1 ≠ Fin.last _ := Scheme.ne_last_of_mem_below (by
-    rw [Scheme.appendFullCell_toCellScheme, Scheme.appendFullCellScheme_gradedIndex_castSucc]
-    exact h s) t.2
-  refine (dite_eq_right (Fin.castSucc_ne_last s)).trans ?_
-  have hmem : t.1.castPred ht ∈ S.toCellScheme.below (S.toCellScheme.gradedIndex s) := by
-    rw [CellScheme.mem_below, Scheme.gradedIndex_castPred t.1 ht,
-      ← Scheme.appendFullCellScheme_gradedIndex_castSucc S j s]
-    exact t.2
-  refine (S.rows.row_congr (Fin.castPred_castSucc _) (t' := ⟨t.1.castPred ht, hmem⟩) rfl).trans ?_
-  rw [hs, Scheme.gradedIndex_castPred t.1 ht]
-
-end Rows
-
 /-- The row of the cell appended by `addThinCell` reads the kinds by `thinRow j`. -/
 theorem row_last_addThinCell {S : Scheme.{u} 5} {j : ℕ} {h : NoneAbove S j}
     (t : (addThinCell S j h).toCellScheme.below
@@ -263,7 +237,7 @@ theorem row_castSucc_addThinCell {S : Scheme.{u} 5} {j : ℕ} {hS : NoneAbove S 
       ((addThinCell S j hS).toCellScheme.gradedIndex s.castSucc)) :
     (addThinCell S j hS).rows.row s.castSucc t =
       ρ ((addThinCell S j hS).toCellScheme.gradedIndex t.1) :=
-  row_castSucc_eq hs t
+  Scheme.row_castSucc_eq hs t
 
 /-- **The row of the new cell at `(univ, k)` reads the kinds by `thinRow k`.** -/
 theorem row_newCell {k : ℕ} (hk1 : 1 ≤ k) (hk4 : k ≤ 4)
@@ -404,14 +378,6 @@ theorem isLawfulBelow_oldCell_iff {X : Finset (Fin 5) × ℕ} (hX : X.1 ≠ univ
   rw [comap_rows_oldCell] at h
   exact h.symm
 
-/-- A labelling equal to another below a pair is lawful there exactly when the other is. -/
-theorem isLawfulBelow_congr {ι β : Type*} {D : CellScheme ι β} {R : D.Rows.{u}}
-    {X : Finset β × ℕ} {w w' : ι → Label.{u}} (h : ∀ d ∈ D.below X, w d = w' d) :
-    R.IsLawfulBelow X (fun d : D.below X ↦ w d) ↔
-      R.IsLawfulBelow X (fun d : D.below X ↦ w' d) := by
-  have : (fun d : D.below X ↦ w d) = fun d : D.below X ↦ w' d := funext fun d ↦ h d d.2
-  rw [this]
-
 /-! ### The two coatoms -/
 
 /-- The first coatom `C = {0, 1, 2, 3}`. -/
@@ -442,66 +408,6 @@ theorem scope_oldCell_ne (d : Fin I.amalgam.card) :
   rw [scope_oldCell]; exact I.scope_ne_univ d
 
 /-! ### Lawful labellings below the two coatoms -/
-
-/-- The cells of `TL`: the nineteen cells of `SL` and the apex. -/
-theorem cases_TL {α : Ordinal.{u}} (i : Fin (TL α).card) :
-    i = Fin.last 19 ∨ ∃ d : Fin 19, i = Fin.castSucc d := by
-  -- `TL` has the nineteen cells of `SL` and the apex, so `Fin.lastCases` applies.
-  change Fin (19 + 1) at i
-  induction i using Fin.lastCases with
-  | last => exact .inl rfl
-  | cast d => exact .inr ⟨d, rfl⟩
-
-/-- The apex of `TL` has graded index `(univ, 4)`. -/
-theorem gradedIndex_TL_last {α : Ordinal.{u}} :
-    (TL α).toCellScheme.gradedIndex (Fin.last 19) = ((univ : Finset (Fin 4)), 4) :=
-  Scheme.appendFullCellScheme_gradedIndex_last SL 4
-
-/-- **Lawful labellings below a coatom whose type is `TL`**, read on `TL`: the labellings
-`labelling A F G` with `G ≤ F` and `VisibilityReplaceFixedOfLT A G`. -/
-theorem exists_labelling_of_comap_TL {f : Fin 4 ↪ Fin 5} {Am : StageType.{u} α 5}
-    (hf : StageType.restrictFace f Am = some (TL α)) {k : ℕ} (hk : k ≤ 3)
-    (p : Fin Am.card → Label.{u}) (hp : Am.rows.IsLawfulBelow (univ.map f, k) fun d ↦ p d) :
-    ∃ A F G : Label.{u}, IsSelfVisible 1 A ∧ IsSelfVisible 2 F ∧ IsSelfVisible 3 G ∧ G ≤ F ∧
-      VisibilityReplaceFixedOfLT A G ∧ ∀ d ∈ Am.toCellScheme.below (univ.map f, k), ∃ c : Fin 19,
-        Am.toCellScheme.gradedIndex d =
-          Prod.map (Finset.map f) id (TwoFaceLiftCounterexample.cells.gradedIndex c) ∧
-        p d = CaseSplitCounterexample.labelling A F G c := by
-  obtain ⟨hf', he⟩ := (StageType.restrictFace_eq_some_iff _ _).mp hf
-  have heq : Am.toScheme.comap f = (TL α).toScheme := congrArg StageType.toScheme he
-  have hgen : ∀ x : Fin (Am.toScheme.comap f).card → Label.{u},
-      (Am.toScheme.comap f).rows.IsLawfulBelow ((univ : Finset (Fin 4)), k) (fun i ↦ x i) →
-      ∃ A F G : Label.{u}, IsSelfVisible 1 A ∧ IsSelfVisible 2 F ∧ IsSelfVisible 3 G ∧ G ≤ F ∧
-        VisibilityReplaceFixedOfLT A G ∧
-        ∀ i ∈ (Am.toScheme.comap f).toCellScheme.below ((univ : Finset (Fin 4)), k),
-          ∃ c : Fin 19, (Am.toScheme.comap f).toCellScheme.gradedIndex i =
-            TwoFaceLiftCounterexample.cells.gradedIndex c ∧
-            x i = CaseSplitCounterexample.labelling A F G c := by
-    rw [heq]
-    intro x hx
-    have hx' := (isLawfulBelow_TL_iff (α := α) (w := x) (fun h ↦ by
-      have := h.2; simp only at this; omega)).mp hx
-    obtain ⟨A, F, G, hA, hF, hG, hGF, hc, hAF⟩ :=
-      (TwoFaceLiftExistsCounterexample.isLawfulBelow_iff (x := fun e ↦ x (Fin.castSucc e))).mp hx'
-    refine ⟨A, F, G, hA, hF, hG, hGF, hc, fun i hi ↦ ?_⟩
-    rcases cases_TL (α := α) i with rfl | ⟨c, rfl⟩
-    · exfalso
-      have h2 := hi.2
-      rw [gradedIndex_TL_last] at h2
-      simp only at h2
-      omega
-    · refine ⟨c, gradedIndex_TL_castSucc c, hAF c ?_⟩
-      rw [CellScheme.mem_below, ← gradedIndex_TL_castSucc (α := α) c]
-      exact hi
-  obtain ⟨A, F, G, hA, hF, hG, hGF, hc, hall⟩ := hgen (fun i ↦ p (Am.toScheme.cellMap f i))
-    ((Scheme.isLawfulBelow_comap_cellMap_iff Am.toScheme f _ p).mpr hp)
-  refine ⟨A, F, G, hA, hF, hG, hGF, hc, fun d hd ↦ ?_⟩
-  have hd' : d ∈ Am.toScheme.cellMap f '' (Am.toScheme.comap f).toCellScheme.below
-      ((univ : Finset (Fin 4)), k) := by
-    rw [Am.toScheme.image_cellMap_below f]; exact hd
-  obtain ⟨i, hi, rfl⟩ := hd'
-  obtain ⟨c, hgi, hpc⟩ := hall i hi
-  exact ⟨c, by rw [← Am.toScheme.map_comap_gradedIndex f i, hgi], hpc⟩
 
 variable (hIL : I.left = TL α) (hIR : I.right = CaseSplitCounterexample.T5 α)
 include hIL in
@@ -547,46 +453,6 @@ theorem exists_of_isLawfulBelow_right {w : Fin (thinScheme I).card → Label.{u}
   · rw [hgi, CaseSplitCounterexample.tripleLabelling_right]
   · rw [← hgi]; exact I.scope_ne_univ d
   · rw [← hgi]; have := hd.2; simp only at this; omega
-
-/-! ### Extension by bottom above a grade -/
-
-/-- **Extension by bottom above a grade.**  A labelling lawful below `(B, k)`, replaced by `⊥` at
-every cell of grade above `k`, is lawful below `(B, K)` for every `K`: the new cells of the lower
-set carry `⊥`, their targets are `⊥`, and they are available to every cell. -/
-theorem isLawfulBelow_extendAbove {ι β : Type*} {D : CellScheme ι β} {R : D.Rows.{u}}
-    {B : Finset β} {k K : ℕ} {w : ι → Label.{u}} (hw : R.IsLawfulBelow (B, k) fun d ↦ w d) :
-    R.IsLawfulBelow (B, K) fun d ↦ if D.grade d ≤ k then w d else ⊥ := by
-  obtain ⟨ho, hl, ha⟩ := Rows.isLawfulBelow_iff_forall.mp hw
-  refine (Rows.isLawfulBelow_iff_forall (w := fun e ↦ if D.grade e ≤ k then w e else ⊥)).mpr
-    ⟨fun d hd ↦ ?_, fun s hs ↦ ?_, fun s t ht hst hg ↦ ?_⟩
-  · split_ifs with h
-    · exact ho d ⟨hd.1, h⟩
-    · exact isSelfVisible_bot _
-  · by_cases h : D.grade s ≤ k
-    · have he : (fun d : D.below (D.gradedIndex s) ↦
-          min (if D.grade d ≤ k then w d else ⊥) (if D.grade s ≤ k then w s else ⊥)) =
-          fun d : D.below (D.gradedIndex s) ↦ min (w d) (w s) := by
-        funext d
-        have hd : D.grade d.1 ≤ k := d.2.2.trans h
-        rw [ite_eq_left hd, ite_eq_left h]
-      rw [he]
-      exact hl s ⟨hs.1, h⟩
-    · have he : (fun d : D.below (D.gradedIndex s) ↦
-          min (if D.grade d ≤ k then w d else ⊥) (if D.grade s ≤ k then w s else ⊥)) =
-          fun _ ↦ ⊥ := by
-        funext d
-        rw [ite_eq_right h, min_bot_right]
-      rw [he]
-      exact TransformsTo.bot _ _
-  · by_cases h : D.grade t ≤ k
-    · obtain ⟨u, hu, hle⟩ := ha s t ⟨ht.1, h⟩ hst hg
-      have hu' : D.grade u ≤ k := (congrArg Prod.snd hu).trans_le h
-      refine ⟨u, hu, ?_⟩
-      rw [ite_eq_left (hg ▸ h), ite_eq_left hu']
-      exact hle
-    · refine ⟨t, rfl, ?_⟩
-      rw [ite_eq_right (hg ▸ h)]
-      exact bot_le
 
 /-! ### Kinds and grades -/
 
@@ -694,10 +560,10 @@ theorem isLawfulBelow_coatom_thinLabel {AC AD F G Ω : Label.{u}} (h : IsThinLaw
       (show I.amalgam.toCellScheme.grade d ≠ 4 by omega) _ _ _ _ _
   constructor
   · rw [isLawfulBelow_oldCell_iff (by decide)]
-    exact (isLawfulBelow_congr (D := I.amalgam.toCellScheme) (X := (coatomC, 3))
+    exact (Rows.isLawfulBelow_congr (D := I.amalgam.toCellScheme) (X := (coatomC, 3))
       fun d hd ↦ (key d hd.2).symm).mp hCD.1
   · rw [isLawfulBelow_oldCell_iff (by decide)]
-    exact (isLawfulBelow_congr (D := I.amalgam.toCellScheme) (X := (coatomD, 3))
+    exact (Rows.isLawfulBelow_congr (D := I.amalgam.toCellScheme) (X := (coatomD, 3))
       fun d hd ↦ (key d hd.2).symm).mp hCD.2
 
 include hIL hIR in
