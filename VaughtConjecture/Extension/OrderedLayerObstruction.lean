@@ -82,12 +82,12 @@ variable {α : Ordinal.{u}} {m : ℕ} {I : Seed.{u} α m} (F : CompletionBelowFu
 open Classical in
 /-- The extension of a labelling of the amalgam to the cells of a completion: the label of the
 old cell, and `⊥` at the new cells. -/
-noncomputable def extendOld (P : Fin I.amalgam.card → Label.{u}) (z : Fin F.scheme.card) :
+private noncomputable def extendOld (P : Fin I.amalgam.card → Label.{u}) (z : Fin F.scheme.card) :
     Label.{u} :=
   if h : ∃ d, F.embed d = z then P h.choose else ⊥
 
 /-- The extension of a labelling to the cells of a completion is the labelling at the old cells. -/
-theorem extendOld_embed (P : Fin I.amalgam.card → Label.{u}) (d : Fin I.amalgam.card) :
+private theorem extendOld_embed (P : Fin I.amalgam.card → Label.{u}) (d : Fin I.amalgam.card) :
     F.extendOld P (F.embed d) = P d := by
   have h : ∃ d', F.embed d' = F.embed d := ⟨d, rfl⟩
   rw [extendOld, dite_eq_left h, F.embed.injective h.choose_spec]

@@ -22,7 +22,8 @@ to show that explicit labellings are lawful:
   grade `n` is self-visible at `n` when `a` is self-visible at `K`
   (`isSelfVisible_constStepSuppressor`), so that with the top shifter it is a witness
   (`isWitness_constStepSuppressor_topShifter`).  The step suppressor `stepSuppressor K` is the
-  case `a = ⊤`;
+  case `a = ⊤`.  When every grade is at most `K`, the two transform a row to the labelling that
+  is `a` where the row is not `⊥` and `⊥` where it is (`transformsTo_of_eq_bot_iff`);
 * *raising above a cap* `h`, `raise h`, sending every label `≥ h` to `⊤` and fixing the labels
   below `h`; we say that `raise h x` is `x` *raised to `⊤` above `h`*.  It keeps `x` capped at `h`
   (`min_raise`), and when `⊥ < h` and `h` is self-visible at `K + 1` it is a witness bounded by
@@ -86,6 +87,20 @@ with value `a` and the top shifter form a witness. -/
 theorem isWitness_constStepSuppressor_topShifter {K : ℕ} {a : Label.{u}}
     (ha : IsSelfVisible K a) : IsWitness (constStepSuppressor K a) topShifter :=
   isWitness_topShifter (antitone_constStepSuppressor _ _) (isSelfVisible_constStepSuppressor ha)
+
+/-- **The top shifter on a row with one nonzero kind.**  If the suppressor `Ω` is self-visible at
+`K` and every grade is at most `K`, a row transforms to the labelling that is `Ω` where the row is
+not `⊥` and `⊥` where it is. -/
+theorem transformsTo_of_eq_bot_iff {D : Type*} (grade : D → ℕ) {K : ℕ} (hgr : ∀ d, grade d ≤ K)
+    {Ω : Label.{u}} (hΩ : IsSelfVisible K Ω) (r q : D → Label.{u})
+    (hq : ∀ d, q d = if r d = ⊥ then ⊥ else Ω) : TransformsTo grade r q := by
+  refine ⟨constStepSuppressor K Ω, topShifter,
+    isWitness_topShifter (antitone_constStepSuppressor _ _)
+      (isSelfVisible_constStepSuppressor hΩ), fun d ↦ ?_⟩
+  have hg : constStepSuppressor K Ω (grade d) = Ω := by
+    unfold constStepSuppressor; rw [ite_eq_left (hgr d)]
+  rw [hg, hq, topShifter]
+  split_ifs <;> simp
 
 open Ordinal in
 /-- **Visibility replacement does not cross a label self-visible above its threshold**: for `h`
