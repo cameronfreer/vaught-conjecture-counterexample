@@ -2297,7 +2297,17 @@ Each checkpoint needs both its abstract API and a concrete application:
    above). Output 3 (stated as the hypothesis `ContinuationCriterion`) is compiled conditionally on
    (R4) and the coface instances at the next block
    (`ContinuationCriterion.of_stableCappedReceiving`); (R4) and the coatom extension property with
-   apex at `λ_{ξ+1}` are still to be proved. Step 7 is
+   apex at `λ_{ξ+1}` are still to be proved.  Under (R1), forcing donors and the coface instances,
+   (R4) is equivalent to `ContinuationCriterion`
+   (`Expansion.stableCappedReceiving_iff_continuationCriterion`, `Expansion/StableReceiving`), so it
+   is a reformulation of output 3, not a weaker step.  (R4) at one occurrence
+   (`Realization.StablyReceivesAt`, `Continuation/StableReceiving`) is exact receiving in the model
+   of the reduction of the donor together with the calibration of the stable labels at the new cells
+   reducing to the top; the evaluation step and the acquisition of the marker and cap calibration
+   are compiled, so (R4) follows from the finite statement `StageType.HasStableRecoverySchemes` for
+   `StageType.MarkerCapCalibration` at every `ξ < ω₁`
+   (`StableCappedReceiving.of_hasStableRecoverySchemes_markerCap`), new and open (`README.md`, Layer
+   4, status, output 3). Step 7 is
    compiled conditionally (`README.md`, the section on the top-free witnesses): the loss at `η`
    under uniqueness at `λ_η` (`nonempty_loss_of_topFreeWitness`), and per block under
    `StageType.HasApexCoatomExtensions` at `λ_η` and uniqueness of the model expansions at `λ_η`
