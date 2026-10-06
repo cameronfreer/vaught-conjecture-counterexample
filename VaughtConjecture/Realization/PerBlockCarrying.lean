@@ -16,9 +16,9 @@ after `VaughtConjecture.Realization.TightCap`.
 bottoms (`StageType.carriesBottoms_of_row_mem_block`), but a cell reads in its own block labels
 below its own and not self-visible at its grade only within one block
 (`StageType.eq_visibilityReplace_of_readsInOwnBlock`).  So one cap can carry in this way only donors
-whose proper labels below it lie in one block.  This file examines the design with one cap for each
-block of the donor's labels.  It is a **redesign** of the private context and of the display, not a
-repair of the coupled gated pinned extension property.
+whose proper labels below it lie in one block (argued, not compiled).  This file examines the design
+with one cap for each block of the donor's labels.  It is a **redesign** of the private context and
+of the display, not a repair of the coupled gated pinned extension property.
 
 **Per-block caps need per-block gates.**  The statements on rows that a gate uses
 (`CellScheme.Rows.cap_le_gate_of_twinsReadGate`, `CellScheme.Rows.IsLawful.eq_bot_of_gateReads`,
@@ -36,7 +36,8 @@ is therefore part of the design.
   necessity lemma uses are stated.  No universal extension property is stated for this design.
 * `StageType.CarriesBottomsPerBlock`: one lawful donor labelling for each lawful private labelling,
   satisfying the two clauses of `StageType.CarriesBottoms` at every gate whose cap the private
-  labelling keeps.  With one cap of full scope and full grade reading every label it is
+  labelling keeps.  With one cap of full scope and grade `k` reading every label it is
+  `CarriesBottomsAt` at `k` (`StageType.carriesBottomsPerBlock_one_iff_at`), and at full grade
   `CarriesBottoms` (`StageType.carriesBottomsPerBlock_one_iff`).
 * **Necessity** (compiled): every per-block coupled gated extension forces it
   (`StageType.PerBlockCoupledGatedExtension.carriesBottomsPerBlock`).  At the level of
@@ -70,9 +71,9 @@ is therefore part of the design.
   (`StageType.HasTightSaturations.hasBlockTightSaturations`).  The refutation of the latter above
   `ω` (`Realization.IsModel.not_hasTightSaturations`) needs one cell to read labels of two blocks,
   so it does not apply.  Whether the hypothesis holds is **undecided**: it asks for legal one-point
-  extension schemes with prescribed rows, a completion problem of the kind of (R6).  Argued, not
-  compiled: such a cap labelled beyond its block reads itself at a finite part above its grade.
-  The library's coding of rows allows this.
+  extension schemes with prescribed rows, a completion problem of the kind of (R6).  Compiled: such
+  a cap labelled beyond its block reads itself at a finite part above its grade
+  (`StageType.label_le_of_readsInOwnBlock`).  The library's coding of rows allows this.
 * Argued, not compiled: the clauses of a model give a cell with both a prescribed row and a lower
   bound on its label only in this way (availability from the face in a saturation step).  No clause
   prescribes the row of a cell of full grade (`Realization/TightCap`).  So without a hypothesis on
@@ -86,9 +87,14 @@ one gate per block is one gate there, and the obstruction remains.
   (`CoupledGatedExtensionCounterexample.not_carriesBottomsPerBlock_of_one_lt_grade`).
 * No per-block coupled gated extension reads both donor labels against caps above `1`
   (`CoupledGatedExtensionCounterexample.not_perBlockCoupledGatedExtension`).
+* No cap label above `1` satisfies the bottom transport condition at the grade `1`
+  (`CoupledGatedExtensionCounterexample.not_carriesBottomsAt_one`).
 
-The per-block design inherits the obstruction there: the identified obstruction survives the
-redesigns examined (the cap of full grade, the subfull cap, and one cap and gate per block).  A
+The per-block design inherits the obstruction there: at the refuting input the bottom transport
+obstruction survives the redesigns examined, namely the cap of full grade
+(`CoupledGatedExtensionCounterexample.not_carriesBottoms`), the subfull cap
+(`CoupledGatedExtensionCounterexample.not_carriesBottomsAt_one`), and one cap and gate per block
+(`CoupledGatedExtensionCounterexample.not_carriesBottomsPerBlock`).  A
 restricted per-block property, asking for a per-block coupled gated extension only at per-block
 carrying contexts, excludes that input, which is not per-block carrying.  That property is
 **prospective and not stated**.
@@ -178,21 +184,30 @@ def CarriesBottomsPerBlock (P : StageType.{u} α n) (d : StageType.{u} α (m + 1
         ((∀ i, ((∃ k' ≤ (X t).2, d.label j = visibilityReplace (X t).2 k' (P.label i)) ∨
             (c t ≤ P.label i ∧ c t ≤ d.label j)) → a i ≠ ⊥) → ρ j ≠ ⊥)
 
-/-- **One cap of full scope and full grade reading every label: the bottom transport
-condition.** -/
-theorem carriesBottomsPerBlock_one_iff {P : StageType.{u} α n} {d : StageType.{u} α (m + 1)}
-    {c : Label.{u}} :
-    CarriesBottomsPerBlock P d (fun _ : Fin 1 ↦ ((univ : Finset (Fin n)), n)) (fun _ ↦ c)
-      (fun _ ↦ Set.univ) ↔ CarriesBottoms P d c := by
+/-- **One cap of full scope and grade `k` reading every label: the bottom transport condition at
+the grade `k`** (`CarriesBottomsAt`).  Forward, take the one cap; backward, where the private
+labelling drops the cap the labelling of the donor itself serves. -/
+theorem carriesBottomsPerBlock_one_iff_at {P : StageType.{u} α n}
+    {d : StageType.{u} α (m + 1)} {c : Label.{u}} {k : ℕ} :
+    CarriesBottomsPerBlock P d (fun _ : Fin 1 ↦ ((univ : Finset (Fin n)), k)) (fun _ ↦ c)
+      (fun _ ↦ Set.univ) ↔ CarriesBottomsAt P d c k := by
   constructor
   · intro h a ha hcap
     obtain ⟨ρ, hρ, hj⟩ := h a ha
     exact ⟨ρ, hρ, fun j hj' hne ↦ hj 0 hcap j hj' hne trivial⟩
   · intro h a ha
-    by_cases hcap : ∀ i, P.toCellScheme.gradedIndex i = (univ, n) → P.label i = c → a i ≠ ⊥
+    by_cases hcap : ∀ i, P.toCellScheme.gradedIndex i = (univ, k) → P.label i = c → a i ≠ ⊥
     · obtain ⟨ρ, hρ, hj⟩ := h a ha hcap
       exact ⟨ρ, hρ, fun _ _ j hj' hne _ ↦ hj j hj' hne⟩
     · exact ⟨d.label, d.isLawful, fun _ h ↦ absurd h hcap⟩
+
+/-- **One cap of full scope and full grade reading every label: the bottom transport
+condition.** -/
+theorem carriesBottomsPerBlock_one_iff {P : StageType.{u} α n} {d : StageType.{u} α (m + 1)}
+    {c : Label.{u}} :
+    CarriesBottomsPerBlock P d (fun _ : Fin 1 ↦ ((univ : Finset (Fin n)), n)) (fun _ ↦ c)
+      (fun _ ↦ Set.univ) ↔ CarriesBottoms P d c :=
+  carriesBottomsPerBlock_one_iff_at.trans carriesBottomsAt_iff
 
 /-- **The per-block condition holds at caps that read their anchors in their own block**: let
 `C t` be cells of `P`, and suppose that every new donor label `l ∈ L t`, neither `⊥` nor at least
@@ -312,6 +327,55 @@ theorem exists_readsInOwnBlock_of_restrictFace {p : StageType.{u} α m} {q : Sta
     ⟨q.cellMap f z, ((q.toScheme.isLowerEmbedding_comap f).le_iff z C).mpr hz, hzl, μ, hμ, i, i',
       hrz, hrC⟩⟩
 
+/-- **The self-reading of a cell labelled beyond a label that it reads in its own block**: let the
+row of `C` read, in its own block `[μ, μ + ω)`, the label `l` of a cell `z` below it at the finite
+part `i` and `C` itself at the finite part `i'`, with `l` below the label of `C` and not
+self-visible at the grade `K` of `C`.  If `i' ≤ K`, the label of `C` is at most `vr_K(l, i')`,
+that is, within the block of `l`.  So a cap labelled beyond the block of a label that it reads in
+its own block reads itself at a finite part above its grade.  The proof uses the locality clause
+of the lawfulness of the labels of `P` at `C`: its witness sends the reading of `z` to `l` and
+commutes with visibility replacement at `K`. -/
+theorem label_le_of_readsInOwnBlock {P : StageType.{u} α n} {C : Fin P.card} {l : Label.{u}}
+    (h : P.ReadsInOwnBlock C l) (hl : l < P.label C)
+    (hv : ¬ IsSelfVisible (P.toCellScheme.grade C) l) :
+    ∃ z, ∃ hz : z ∈ P.toCellScheme.below (P.toCellScheme.gradedIndex C), P.label z = l ∧
+      ∃ μ : Ordinal.{u}, Order.IsSuccPrelimit μ ∧ ∃ i i' : ℕ,
+      P.rows.row C ⟨z, hz⟩ = ((μ + i : Ordinal.{u}) : Label.{u}) ∧
+      P.rows.row C ⟨C, P.toCellScheme.mem_below_gradedIndex C⟩ =
+        ((μ + i' : Ordinal.{u}) : Label.{u}) ∧
+      (i' ≤ P.toCellScheme.grade C →
+        P.label C ≤ visibilityReplace (P.toCellScheme.grade C) i' l) := by
+  obtain ⟨z, hz, hzl, μ, hμ, i, i', hrz, hrC⟩ := h
+  refine ⟨z, hz, hzl, μ, hμ, i, i', hrz, hrC, fun hi' ↦ ?_⟩
+  obtain ⟨g, σ, hw, heq⟩ := P.isLawful.locality C
+  set K := P.toCellScheme.grade C
+  have hCg : P.label C ≤ g K := by
+    have := heq ⟨C, P.toCellScheme.mem_below_gradedIndex C⟩
+    simp only [min_self] at this
+    rw [this]; exact min_le_right _ _
+  have hCσ : P.label C ≤ σ ((μ + i' : Ordinal.{u}) : Label.{u}) := by
+    have := heq ⟨C, P.toCellScheme.mem_below_gradedIndex C⟩
+    simp only [min_self] at this
+    rw [this, ← hrC]; exact min_le_left _ _
+  have hσz : σ ((μ + i : Ordinal.{u}) : Label.{u}) = l := by
+    have hgy : g K ≤ g (P.toCellScheme.grade z) :=
+      hw.antitone ((CellScheme.mem_below _).mp hz).2
+    have := heq ⟨z, hz⟩
+    simp only [hzl, min_eq_left hl.le] at this
+    rcases min_eq_iff.mp this.symm with ⟨h1, -⟩ | ⟨h1, -⟩
+    · rw [← hrz]; exact h1
+    · exact absurd (h1 ▸ hl.trans_le (hCg.trans hgy)) (lt_irrefl _)
+  have hiK : i < K := by
+    by_contra hKk
+    have hc := hw.visibilityReplace_comm ((μ + i : Ordinal.{u}) : Label.{u}) K
+      (hσz ▸ hl.le.trans hCg) K le_rfl
+    rw [isSelfVisible_coe_add hμ (not_lt.mp hKk), hσz] at hc
+    exact hv hc.symm
+  have hc := hw.visibilityReplace_comm ((μ + i : Ordinal.{u}) : Label.{u}) K
+    (hσz ▸ hl.le.trans hCg) i' hi'
+  rw [visibilityReplace_coe_add_natCast hμ hiK i', hσz] at hc
+  exact hCσ.trans_eq hc
+
 /-! ### The finite hypothesis, one block at a time -/
 
 variable (α) in
@@ -422,6 +486,16 @@ theorem not_carriesBottomsPerBlock_of_one_lt_grade (α : Ordinal.{u}) (hα : 1 <
     exact WithBot.coe_lt_coe.mpr (WithTop.coe_lt_top _)
   have htop : ∀ t, (1 : Label.{u}) < (P α hα).label (C t) := fun t ↦ key (C t) (hC t)
   exact not_carriesBottomsPerBlock α hα h₁ (htop t₁) h₂ (htop t₂)
+
+/-- **The refuting input fails the bottom transport condition at the grade `1`**: no cap label
+above `1` at the cells of graded index `(univ, 1)` carries the bottoms there (the subfull cap of
+`Realization/TightCap`, one grade below the full grade `2`).  It is `not_carriesBottomsPerBlock`
+with one cap of graded index `(univ, 1)` reading every label
+(`carriesBottomsPerBlock_one_iff_at`). -/
+theorem not_carriesBottomsAt_one (α : Ordinal.{u}) (hα : 1 < α) {c : Label.{u}}
+    (hc : (1 : Label.{u}) < c) : ¬ (P α hα).CarriesBottomsAt (donor α hα) c 1 := fun h ↦
+  not_carriesBottomsPerBlock α hα (t₁ := 0) (t₂ := 0) (Set.mem_univ _) hc (Set.mem_univ _) hc
+    (carriesBottomsPerBlock_one_iff_at.mpr h)
 
 /-- **The refuting input has no per-block coupled gated extension reading the donor above `1`**:
 over the empty root, no per-block coupled gated extension of `P α` with the donor has a gate that

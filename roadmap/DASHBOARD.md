@@ -247,12 +247,16 @@ counted as compiled.
    reads its block's anchors in its own block
    (`StageType.carriesBottomsPerBlock_of_readsInOwnBlock`); at the refuting input of the coupled
    property (one block) it fails for every family of caps above `1` reading both donor labels
-   (`CoupledGatedExtensionCounterexample.not_carriesBottomsPerBlock`), so the obstruction survives
-   this redesign too.  Compiled conditionally: every model acquires per-block contexts
+   (`CoupledGatedExtensionCounterexample.not_carriesBottomsPerBlock`), so at the refuting input the
+   bottom transport obstruction survives the redesigns examined, each refuted there by a compiled
+   theorem: the cap of full grade (`CoupledGatedExtensionCounterexample.not_carriesBottoms`), the
+   subfull cap (`CoupledGatedExtensionCounterexample.not_carriesBottomsAt_one`), and one cap and
+   gate per block (`CoupledGatedExtensionCounterexample.not_carriesBottomsPerBlock`).  Compiled
+   conditionally: every model acquires per-block contexts
    (`Realization.AcquiresPerBlockContexts`) given the hypothesis on schemes
    `StageType.HasBlockTightSaturations` (`HasTightSaturations` one block at a time;
    `Realization.IsModel.acquiresPerBlockContexts_of_hasBlockTightSaturations`).  That hypothesis is
-   undecided: the same-block lemma does not bite, and whether such legal schemes exist is a
+   undecided: the same-block lemma does not apply, and whether such legal schemes exist is a
    completion problem of the kind of (R6).  Per-block acquisition is neither proved nor refuted;
    the restricted per-block extension property is not stated (prospective).
 4. **Forcing donors** (still to be proved): the finite construction behind `ForcingDonors`.
