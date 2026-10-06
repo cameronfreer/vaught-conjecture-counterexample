@@ -3132,19 +3132,21 @@ witnesses).**
   `Continuation/Classification`, where the cover of the terminal models uses it; a module proving
   output 3 imports `Continuation/Classification`, or the structure moves to that module, a move to
   record here. `Realization.IsCoverHollowAtBlock` is beside `Realization.IsCoverHollow` in
-  `Continuation/Hollow`. `Continuation/RestrictedHollow` and its examples module: Layer 4, in
-  place; it holds `Realization.IsCoverHollowWithoutRigidCore` and its form at a block stage, the
-  restricted terminal properties with their cover, and
-  `Realization.HollowReceiving.withoutRigidCore`.  It imports `Continuation/Classification` and
-  `Continuation/Comparison`, neither of which imports the other, so the predicate is not beside
-  `Realization.IsCoverHollowAtBlock` in `Continuation/Hollow`, which does not import
-  `Continuation/Terminal`.  The restricted forms of the comparison of model expansions, of the
-  subsingleton step, and of the countable losses are in `Expansion/Losses`, and those of the main
-  theorem in `MainTheorem/ModelExpansionDomains`, beside the unrestricted ones.
+  `Continuation/Hollow`.
 - `Expansion/UniquenessOfForcing`: Layer 5, in place, separate from `Expansion/BlockDetermination`
   so that the import closure of the main theorem contains no `Definability/` module.
   `Expansion/Losses`: Layer 5, in place. `Counting/Domains`:
   `Counting.countable_of_subsingleton_cover`, a general result of Layer 0, in place.
+- `Continuation/RestrictedHollow` and its examples module: Layer 4, in place; it holds
+  `Realization.IsCoverHollowWithoutRigidCore` and its form at a block stage, the restricted
+  terminal properties with their cover, and `Realization.HollowReceiving.withoutRigidCore`.  It
+  imports `Continuation/Classification` and `Continuation/Comparison`, neither of which imports
+  the other, so the predicate is not beside `Realization.IsCoverHollowAtBlock` in
+  `Continuation/Hollow`, which does not import `Continuation/Terminal`.  The restricted forms of
+  the comparison of model expansions, of the subsingleton step, and of the countable losses are in
+  `Expansion/Losses`, that of the count of the terminal classes in `MainTheorem/TerminalClasses`,
+  and those of the main theorem in `MainTheorem/ModelExpansionDomains`, beside the unrestricted
+  ones.
 - `Extension/OwnerCappedLift`: `CellScheme.Rows.cappedLift_of_boundary_short` is the case of equal
   boundary triples of `CellScheme.Rows.cappedLift_of_boundaries_short`, from which it is to be
   derived when the file is next opened (a change of proofs only).

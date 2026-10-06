@@ -140,11 +140,6 @@ Status of each:
    `CapToModel`; per block, `nonempty_loss_of_hasApexCoatomExtensions`); this is not composed with
    the theorem above in a compiled statement.
 
-There is no hypothesis of countable losses and none of next-block uniqueness: the first is
-`Expansion.expansionDomain_loss_countable`, the second
-`Expansion.NextBlockUniqueness.of_forcingDonors`, each compiled conditionally on hypotheses in the
-list.
-
 **An alternative hypothesis set.**
 `densitySentence_hasThinAlephOneSpectrum_of_restrictedTerminalClassification`
 (`MainTheorem/ModelExpansionDomains`) is compiled conditionally on items 1–5 and 7 and, in place of
@@ -164,6 +159,11 @@ not shown.  An informal argument, not compiled, is a risk for item 6 and not for
 legal stage type had a legal one-point coface in which the root is not rigid, item 6 would force
 every cover-hollow model with unbounded growth to have no globally rigid core.  Neither is proved,
 and item 6 is not claimed to be false.
+
+There is no hypothesis of countable losses and none of next-block uniqueness: the first is
+`Expansion.expansionDomain_loss_countable`, the second
+`Expansion.NextBlockUniqueness.of_forcingDonors`, each compiled conditionally on hypotheses in the
+list.
 
 ## The research front
 
