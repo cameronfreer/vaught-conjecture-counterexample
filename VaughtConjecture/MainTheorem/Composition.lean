@@ -59,12 +59,13 @@ and the criterion is a consequence of it together with `hext` at the successor b
 replacing the criterion by (R4) would give a weaker theorem with as many hypotheses.
 
 These theorems are conditional; the main theorem of the roadmap has none of these hypotheses.  The
-theorem with seven hypotheses is kept beside them.  The theorems here are obtained from it by the
+theorem with seven hypotheses is kept beside them.  The six-hypothesis form comes from it by the
 two derivations above (`CapToModel.of_hasApexCoatomExtensions` and
 `hasNonemptyLosses_of_hasApexCoatomExtensions`), which give its hypotheses `CapToModel` and
 nonempty losses from the coatom extension property with apex at every countable block stage,
-given (R1) and forcing donors.  No converse is known; the seven-hypothesis form is not derived
-from the six-hypothesis form.
+given (R1) and forcing donors; the five-hypothesis form (below) adds the derivation of forcing
+donors.  No converse is known; the seven-hypothesis form is not derived from the six-hypothesis
+form.
 
 ## The five-hypothesis form
 
@@ -76,9 +77,9 @@ which take five hypotheses: (R1), the continuation criterion, (R2), (R3), and `h
 the cap-to-model theorem is derived from `hext` (at `η = 0`); forcing donors from `hext` at the
 next block stage; next-block uniqueness from (R1) and forcing donors; countable losses from (R1),
 the continuation criterion, (R2) and (R3); and nonempty losses from `hext` and next-block
-uniqueness.  The coatom extension property with apex does not by itself give next-block
-uniqueness or countable losses.  The six-hypothesis form is kept, and the five-hypothesis form is
-obtained from it by the derivation of forcing donors.
+uniqueness.  No compiled theorem derives next-block uniqueness or countable losses from the
+coatom extension property with apex alone; both derivations use (R1).  The six-hypothesis form is
+kept, and the five-hypothesis form is obtained from it by the derivation of forcing donors.
 
 ## Placement
 

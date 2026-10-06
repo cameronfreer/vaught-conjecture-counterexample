@@ -120,9 +120,10 @@ Notes on the rows, each with its marker:
 
 ## The named hypotheses of the main theorem
 
-Three forms of the main theorem on `ℕ` are compiled, each conditionally on named hypotheses; none
-replaces another, and all three are kept.  At present the fewest hypotheses are five.  The count
-went from seven to six to five only by compiled derivations; no hypothesis of the list is proved.
+Three forms of the main theorem on `ℕ` are compiled, each conditionally on named hypotheses.  The
+five-hypothesis form is the stronger statement and implies the six-hypothesis form; all three are
+kept.  At present the fewest hypotheses are five.  The count went from seven to six to five only
+by compiled derivations; no hypothesis of the list is proved.
 
 - **Seven hypotheses.**  `densitySentence_hasThinAlephOneSpectrum_of_terminalClassification`
   (`MainTheorem/ModelExpansionDomains`) is compiled conditionally on hypotheses 1–7 of the table
@@ -148,8 +149,9 @@ went from seven to six to five only by compiled derivations; no hypothesis of th
   (`forcingDonors_of_forall_hasApexCoatomExtensions`).  In it `CapToModel` is derived from
   hypothesis 8, forcing donors from hypothesis 8, next-block uniqueness from hypotheses 2 and 3,
   countable losses from hypotheses 2 and 4–6, and nonempty losses from hypothesis 8 and next-block
-  uniqueness; hypothesis 8 does not by itself give next-block uniqueness or countable losses.  A
-  form with hypothesis 6 restricted is a separate statement (prospective).
+  uniqueness.  No compiled theorem derives next-block uniqueness or countable losses from
+  hypothesis 8 alone; both derivations use (R1).  The five-hypothesis restricted form, with
+  hypothesis 6 restricted, is a separate statement (prospective).
 
 Each hypothesis is a separate statement with its own status.  None of them is derived from another
 in the library, except hypotheses 1 and 7, which are derived from hypothesis 8 (with next-block

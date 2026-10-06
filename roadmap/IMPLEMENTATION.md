@@ -2919,11 +2919,12 @@ Each checkpoint needs both its abstract API and a concrete application:
    in it, not assumed: `CapToModel` (from the coatom extension property with apex at `λ_0 = ω`),
    forcing donors (from it at the next block stage), next-block uniqueness (from (R1) and forcing
    donors), countable losses (from (R1), `ContinuationCriterion`, (R2) and (R3)), and nonempty
-   losses (from the coatom extension property with apex and next-block uniqueness); the coatom
-   extension property with apex does not by itself give next-block uniqueness or countable losses.
-   The hypothesis count went from seven to six to five only by these compiled derivations; no
-   hypothesis is proved, and the seven- and six-hypothesis forms are kept.  A form with (R3)
-   restricted is a separate follow-up (prospective).
+   losses (from the coatom extension property with apex and next-block uniqueness).  No compiled
+   theorem derives next-block uniqueness or countable losses from the coatom extension property
+   with apex alone; both derivations use (R1).  The hypothesis count went from seven to six to five
+   only by these compiled derivations; no hypothesis is proved, and the seven- and six-hypothesis
+   forms are kept.  The five-hypothesis restricted form, with (R3) restricted, is a separate
+   statement (prospective).
 
 **A listed future repin, outside the order 1–6.**  A repin of InfinitaryLogic to a revision
 containing `2cd44c3` (or the release tag that follows it) has been neither made nor decided.  A
@@ -3750,6 +3751,7 @@ noted).
   extension property with apex at `η = 0` for `CapToModel`, at every countable block stage for
   nonempty losses, and nowhere else; (R1) for next-block uniqueness, logical agreement and countable
   losses; forcing donors for next-block uniqueness only; `ContinuationCriterion`, (R2) and (R3) for
-  countable losses only.  The five-hypothesis form (same module) uses the same hypotheses in the
-  same places, and in addition the coatom extension property with apex at each successor block
-  stage `λ_{ξ+1}` for forcing donors at `ξ` (`forcingDonors_of_forall_hasApexCoatomExtensions`).
+  countable losses only.  The five-hypothesis form (same module) uses the same hypotheses except
+  forcing donors (`hF`), in the same places, and in addition the coatom extension property with
+  apex at each successor block stage `λ_{ξ+1}` for forcing donors at `ξ`
+  (`forcingDonors_of_forall_hasApexCoatomExtensions`).
