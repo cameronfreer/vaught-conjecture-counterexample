@@ -2891,7 +2891,7 @@ Each checkpoint needs both its abstract API and a concrete application:
    `StageType.HasCoatomExtensions` at `ω`, still to be proved); once that property is proved, the
    reduction to `ℕ` for the density sentence no longer needs `CapToModel`.
 
-   **The main theorem: two forms.**
+   **The main theorem: three forms.**
    `densitySentence_hasThinAlephOneSpectrum_of_terminalClassification`
    (`MainTheorem/ModelExpansionDomains`) is compiled conditionally on seven named hypotheses:
    `CapToModel`, (R1), forcing donors, `ContinuationCriterion`, (R2), (R3), and nonempty losses.
@@ -2908,10 +2908,23 @@ Each checkpoint needs both its abstract API and a concrete application:
    six-hypothesis form is obtained from it by the two derivations above
    (`CapToModel.of_hasApexCoatomExtensions`, `hasNonemptyLosses_of_hasApexCoatomExtensions`).  No
    converse is known; the seven-hypothesis form is not derived from the six-hypothesis form.
-   Forcing donors at every countable block follow from `StageType.HasApexCoatomExtensions` at
-   every countable block stage (`forcingDonors_of_forall_hasApexCoatomExtensions`,
-   `Extension/ForcingDonorsCoatom`), so the hypothesis `hF` of the six-hypothesis form can now be
-   dropped by a separate composition (prospective); the six-hypothesis form on `main` keeps it.
+   `densitySentence_hasThinAlephOneSpectrum_of_terminalClassification_of_hasApexCoatomExtensions'`,
+   with its form on all countable carriers
+   `vaughtCounterexample_allCarriers_of_terminalClassification_of_hasApexCoatomExtensions'`
+   (`MainTheorem/Composition`), is compiled conditionally on five: (R1), `ContinuationCriterion`,
+   (R2), (R3), and `StageType.HasApexCoatomExtensions` at every countable block stage.  It is the
+   six-hypothesis form applied with forcing donors at every countable block derived from
+   `StageType.HasApexCoatomExtensions` at the next block stage
+   (`forcingDonors_of_forall_hasApexCoatomExtensions`, `Extension/ForcingDonorsCoatom`).  Derived
+   in it, not assumed: `CapToModel` (from the coatom extension property with apex at `λ_0 = ω`),
+   forcing donors (from it at the next block stage), next-block uniqueness (from (R1) and forcing
+   donors), countable losses (from (R1), `ContinuationCriterion`, (R2) and (R3)), and nonempty
+   losses (from the coatom extension property with apex and next-block uniqueness).  No compiled
+   theorem derives next-block uniqueness or countable losses from the coatom extension property
+   with apex alone; both derivations use (R1).  The hypothesis count went from seven to six to five
+   only by these compiled derivations; no hypothesis is proved, and the seven- and six-hypothesis
+   forms are kept.  The five-hypothesis restricted form, with (R3) restricted, is a separate
+   statement (prospective).
 
 **A listed future repin, outside the order 1–6.**  A repin of InfinitaryLogic to a revision
 containing `2cd44c3` (or the release tag that follows it) has been neither made nor decided.  A
@@ -3737,7 +3750,8 @@ noted).
 - The six-hypothesis form of the main theorem (`MainTheorem/Composition`) uses the coatom
   extension property with apex at `η = 0` for `CapToModel`, at every countable block stage for
   nonempty losses, and nowhere else; (R1) for next-block uniqueness, logical agreement and countable
-  losses; forcing donors for next-block uniqueness only (they follow from the coatom extension
-  property with apex at every countable block stage,
-  `forcingDonors_of_forall_hasApexCoatomExtensions`, so a separate composition can now drop
-  `hF`); `ContinuationCriterion`, (R2) and (R3) for countable losses only.
+  losses; forcing donors for next-block uniqueness only; `ContinuationCriterion`, (R2) and (R3) for
+  countable losses only.  The five-hypothesis form (same module) uses the same hypotheses except
+  forcing donors (`hF`), in the same places, and in addition the coatom extension property with
+  apex at each successor block stage `λ_{ξ+1}` for forcing donors at `ξ`
+  (`forcingDonors_of_forall_hasApexCoatomExtensions`).
