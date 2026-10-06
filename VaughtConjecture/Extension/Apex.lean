@@ -470,6 +470,14 @@ theorem IsLegalBelowFullGrade.not_le (hS : S.IsLegalBelowFullGrade) (d : Fin S.c
     ¬ ((univ : Finset (Fin n)), n) ≤ S.toCellScheme.gradedIndex d :=
   fun hle ↦ (hS.grade_lt d).not_ge hle.2
 
+/-- After appending a cell of grade `n` to a scheme legal below the full grade, every cell has
+grade at most `n`. -/
+theorem IsLegalBelowFullGrade.grade_appendFullCellScheme_le (hS : S.IsLegalBelowFullGrade)
+    (d : Fin (S.card + 1)) : (S.appendFullCellScheme n).grade d ≤ n := by
+  induction d using Fin.lastCases with
+  | last => rw [appendFullCellScheme_grade_last]
+  | cast d => rw [appendFullCellScheme_grade_castSucc]; exact (hS.grade_lt d).le
+
 /-- **A cell of full grade keeps bountifulness.**  Below the full grade the lifts are those of
 `S`; a lift to a pair of full grade starts at the full face itself, where it is trivial. -/
 theorem isBountiful_appendFullCell (hB : S.rows.IsBountiful) :
@@ -507,6 +515,37 @@ theorem isComplete_appendFullCell
 
 end Scheme
 
+/-! ### Rows read off the graded indices -/
+
+namespace Scheme
+
+section Rows
+
+variable {n : ℕ} {S : Scheme.{u} n} {j : ℕ} {r : Fin (S.card + 1) → Label.{u}}
+  {h : ∀ d, ¬ ((univ : Finset (Fin n)), j) ≤ S.toCellScheme.gradedIndex d}
+
+/-- A row read off the graded indices stays so after appending a cell. -/
+theorem row_castSucc_eq {s : Fin S.card} {ρ : Finset (Fin n) × ℕ → Label.{u}}
+    (hs : ∀ t, S.rows.row s t = ρ (S.toCellScheme.gradedIndex t.1))
+    (t : (S.appendFullCell j r h).toCellScheme.below
+      ((S.appendFullCell j r h).toCellScheme.gradedIndex s.castSucc)) :
+    (S.appendFullCell j r h).rows.row s.castSucc t =
+      ρ ((S.appendFullCell j r h).toCellScheme.gradedIndex t.1) := by
+  have ht : t.1 ≠ Fin.last _ := Scheme.ne_last_of_mem_below (by
+    rw [Scheme.appendFullCell_toCellScheme, Scheme.appendFullCellScheme_gradedIndex_castSucc]
+    exact h s) t.2
+  refine (dite_eq_right (Fin.castSucc_ne_last s)).trans ?_
+  have hmem : t.1.castPred ht ∈ S.toCellScheme.below (S.toCellScheme.gradedIndex s) := by
+    rw [CellScheme.mem_below, Scheme.gradedIndex_castPred t.1 ht,
+      ← Scheme.appendFullCellScheme_gradedIndex_castSucc S j s]
+    exact t.2
+  refine (S.rows.row_congr (Fin.castPred_castSucc _) (t' := ⟨t.1.castPred ht, hmem⟩) rfl).trans ?_
+  rw [hs, Scheme.gradedIndex_castPred t.1 ht]
+
+end Rows
+
+end Scheme
+
 /-! ### Adding the apex -/
 
 namespace StageType
@@ -528,15 +567,6 @@ theorem label_mem_apexCodes (d : Fin t.card) : t.label d ∈ apexCodes ht :=
 theorem isLawful_blockEncode_apexCodes :
     t.rows.IsLawful (blockEncode (apexCodes ht) n ∘ t.label) :=
   (t.isLawful.exists_blockEncode (K := n) fun d ↦ (ht.grade_lt d).le).choose_spec.2
-
-include ht in
-/-- After appending a cell of grade `n` to a scheme legal below the full grade, every cell has
-grade at most `n`. -/
-theorem grade_appendFullCellScheme_le (d : Fin (t.card + 1)) :
-    (t.toScheme.appendFullCellScheme n).grade d ≤ n := by
-  induction d using Fin.lastCases with
-  | last => rw [Scheme.appendFullCellScheme_grade_last]
-  | cast d => rw [Scheme.appendFullCellScheme_grade_castSucc]; exact (ht.grade_lt d).le
 
 /-- The **row of the apex**: the coded copy of the labels of `t`, and the code of the formal top at
 the apex itself. -/
@@ -666,6 +696,63 @@ theorem restrictFace_addApex (f : Fin m ↪ Fin n) (hf : univ.map f ≠ univ) :
     obtain ⟨y, rfl⟩ := hx
     exact mem_map_of_mem _ (mem_univ y)
   | cast z => exact ⟨z, rfl⟩
+
+/-! ### Adding the apex to `⊥` labels -/
+
+/-- **The labels of a type with the apex added to `⊥` labels**: `⊤` at the apex and `⊥`
+elsewhere. -/
+theorem label_addApex {n : ℕ} {t : StageType.{u} α n} (ht : t.IsLegalBelowFullGrade)
+    (hn : 0 < n) (hbot : ∀ d, t.label d = ⊥) (i : Fin (t.addApex ht hn).card) :
+    (t.addApex ht hn).label i = if (t.addApex ht hn).toCellScheme.grade i = n then ⊤ else ⊥ := by
+  -- `t.addApex` has the cells of `t` and the apex, so `Fin.lastCases` applies.
+  change Fin (t.card + 1) at i
+  induction i using Fin.lastCases with
+  | last =>
+    have h : (t.addApex ht hn).toCellScheme.grade (Fin.last _) = n :=
+      Scheme.appendFullCellScheme_grade_last _ _
+    rw [StageType.addApex_label_last, ite_eq_left h]
+  | cast d =>
+    have h : (t.addApex ht hn).toCellScheme.grade d.castSucc ≠ n := by
+      -- The cell scheme of `t.addApex` is `appendFullCellScheme`.
+      change (Scheme.appendFullCellScheme t.toScheme n).grade d.castSucc ≠ n
+      rw [Scheme.appendFullCellScheme_grade_castSucc]
+      exact (ht.grade_lt d).ne
+    rw [StageType.addApex_label_castSucc, hbot, ite_eq_right h]
+
+/-- **The row of the apex of a type with `⊥` labels**: `⊥` exactly at the cells other than the
+apex, which are the cells of grade below `n`. -/
+theorem row_addApex {n : ℕ} {t : StageType.{u} α n} (ht : t.IsLegalBelowFullGrade)
+    (hn : 0 < n) (hbot : ∀ d, t.label d = ⊥) (s : Fin (t.addApex ht hn).card)
+    (hs : (t.addApex ht hn).toCellScheme.grade s = n)
+    (i : (t.addApex ht hn).toCellScheme.below ((t.addApex ht hn).toCellScheme.gradedIndex s)) :
+    ((t.addApex ht hn).rows.row s i = ⊥ ↔ (t.addApex ht hn).toCellScheme.grade i ≠ n) := by
+  -- `t.addApex` has the cells of `t` and the apex, so `Fin.lastCases` applies.
+  change Fin (t.card + 1) at s
+  induction s using Fin.lastCases with
+  | cast d =>
+    exfalso
+    -- The cell scheme of `t.addApex` is `appendFullCellScheme`.
+    change (Scheme.appendFullCellScheme t.toScheme n).grade d.castSucc = n at hs
+    rw [Scheme.appendFullCellScheme_grade_castSucc] at hs
+    exact (ht.grade_lt d).ne hs
+  | last =>
+    rw [show (t.addApex ht hn).rows.row (Fin.last _) i = StageType.apexRow ht i.1 from
+      Scheme.appendFullCell_row_last (h := ht.not_le) i]
+    obtain ⟨i, hi⟩ := i
+    -- As for `s`: the cells of `t` and the apex.
+    change Fin (t.card + 1) at i
+    induction i using Fin.lastCases with
+    | last =>
+      rw [StageType.apexRow_last, blockEncode_top]
+      exact ⟨fun h ↦ absurd h WithBot.coe_ne_bot,
+        fun h ↦ absurd (Scheme.appendFullCellScheme_grade_last _ _) h⟩
+    | cast d =>
+      rw [StageType.apexRow_castSucc, hbot, blockEncode_bot]
+      simp only [true_iff]
+      -- The cell scheme of `t.addApex` is `appendFullCellScheme`.
+      change (Scheme.appendFullCellScheme t.toScheme n).grade d.castSucc ≠ n
+      rw [Scheme.appendFullCellScheme_grade_castSucc]
+      exact (ht.grade_lt d).ne
 
 end StageType
 

@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Correspondence.Current.Bountiful
+import VaughtConjecture.Correspondence.Legal
 import VaughtConjecture.Extension.CodingExamples
 import VaughtConjecture.Stage.Legal
 
@@ -101,8 +102,8 @@ this, and neither is chosen here: a proof that the class restricted by clause 4 
 main theorem, or a correction of clause 4 recorded as C.
 [AFK26, Theorem 4.29], the counterexample, corresponds to the main theorem in its conditional
 composition `vaughtCounterexample_of_expansionDomains` (`MainTheorem/Assembly`), with the density
-sentence for `σ[L]`; both rows are still to be proved, the identification of `σ[L]` subject to the
-same difference of classes.
+sentence for `σ[L]`; both rows are still to be proved.  Under the fixed-semantic-rows reading,
+the identification of `σ[L]` is subject to the same difference of classes.
 
 ## Placement
 
@@ -185,10 +186,6 @@ variable {n : ℕ} {S : Scheme.{u} n} {θ : Ordinal.{u}}
 private theorem isSuccPrelimit_omega0_sq : Order.IsSuccPrelimit (ω ^ 2 : Ordinal.{u}) :=
   isSuccPrelimit_iff_omega0_dvd.mpr (dvd_pow_self ω two_ne_zero)
 
-/-- The rows of a scheme with coded rows take values at every stage `θ ≥ ω ^ 2`. -/
-theorem IsCoded.atStage (hS : S.IsCoded) (hθ : ω ^ 2 ≤ θ) (s t) : AtStage θ (S.rows.row s t) :=
-  .inl ((hS s t).trans_le (WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr hθ)))
-
 /-- **Legal schemes are legal templates, with the range clause** [AFK26, Definition 4.27]: a legal
 scheme whose rows satisfy clause 4 satisfies the corrected definition at every stage `θ ≥ ω ^ 2`
 that is zero or a limit. -/
@@ -202,16 +199,11 @@ theorem IsLegal.correctedLegal (hS : S.IsLegal) (hr : S.rows.HasPrintedRange)
     (hS.isCoded.atStage hθ2)
   range := hr
 
-/-- `ω ^ 2 < ω₁`. -/
-private theorem omega0_sq_lt_omega_one : (ω ^ 2 : Ordinal.{u}) < Ordinal.omega 1 := by
-  rw [sq, ← add_zero (ω * ω)]
-  exact_mod_cast (omega0_mul_add_natCast_lt_omega_one_iff ω 0).mpr omega0_lt_omega_one
-
 /-- **Legal schemes are legal templates of [AFK26, Definition 4.27] at `ω₁`**, corrected, when their
 rows satisfy clause 4. -/
 theorem IsLegal.correctedLegal_omega_one (hS : S.IsLegal) (hr : S.rows.HasPrintedRange) :
     S.rows.CorrectedLegal (Ordinal.omega 1) :=
-  hS.correctedLegal hr (Cardinal.isSuccLimit_omega 1).isSuccPrelimit omega0_sq_lt_omega_one.le
+  hS.correctedLegal hr (Cardinal.isSuccLimit_omega 1).isSuccPrelimit Label.omega0_sq_lt_omega_one.le
 
 /-- **Legal schemes with the range clause are the legal templates of [AFK26, Definition 4.27] at
 every stage, with the extension of lawful labellings**: a scheme is legal and satisfies clause 4
