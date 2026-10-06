@@ -228,22 +228,27 @@ counted as compiled.
    and `N = k + 1`.  **The twin donors** of `Continuation.StableRecoveryCounterexample` need a
    context of at least three points
    (`Continuation.StableRecoveryTwin.three_le_of_gradedCapCalibration`); with one context of three
-   points (the root `λ_ξ + 2` as reference cell, a cap of grade `3` labelled `⊤`) and `γ = λ_ξ`
-   the calibration holds for both donors, and each has a stable recovery scheme
+   points (the root `λ_ξ + 2` as reference cell, a cap of grade `3` labelled `⊤`) and `γ = λ_ξ` the
+   calibration holds for both donors, and each has a stable recovery scheme
    (`Continuation.StableRecoveryTwin.exists_isStableRecoveryScheme_twinDonors`): a legal scheme on
-   four points with twenty-three cells (`Continuation.StableRecoveryTwin.isLegal_twinScheme`),
-   whose cell at `(univ, 3)` reads the root and the higher twin at `2` and the lower twin at `1`
-   (so `n = 1 ≠ i = 2` for the lower twin).  The reading is made coherent in two places (informal;
-   not compiled as necessity statements): a pair of cells reading the twins in both orders at each
-   graded face of grade `1` containing them, and the cap reading the root at the offset of the
-   reading cell.  No scheme serves both donors
+   four points with twenty-three cells (`Continuation.StableRecoveryTwin.isLegal_twinScheme`), whose
+   cell at `(univ, 3)` reads the root and the higher twin at `2` and the lower twin at `1` (so
+   `n = 1 ≠ i = 2` for the lower twin).  Bountifulness constrains the reading in two places
+   (informal; not compiled as necessity statements): a pair of cells reading the twins in both
+   orders at each graded face of grade `1` containing them, and the cap reading the root at the
+   offset of the reading cell.  No scheme serves both donors
    (`Continuation.StableRecoveryTwin.not_isStableRecoveryScheme_twinDonor₁_and_twinDonor₂`): the
-   scheme depends on the donor.  So the finite statement is not refuted where the marker and cap
-   calibration is.  Still special: no label `⊤` in the donors (the clause on `γ` unused), the cap
-   `⊤`, the higher twin copying the reference, references in the block `λ_ξ` only, and
-   `(univ, 3)` the only graded face of grade `N = 3` containing the cap and the new cells (several
-   need a context of at least four points; informal; not compiled).  The finite statement at every
-   input with the calibration is still to be proved, and with it (R4).  The acquisition of the design's cap of full scope and full grade is not compiled.
+   scheme depends on the donor.  This is a fact about `StageType.IsStableRecoveryScheme` alone, not
+   an obstruction: `StageType.HasStableRecoverySchemes` chooses the scheme after the donor, and the
+   growth construction of Layer 3, 3.4, builds its scheme from the donor by design.  So the finite
+   statement is not refuted where the marker and cap calibration is.  Still special: no label `⊤` in
+   the donors (the clause on `γ` unused), the cap `⊤`, the higher twin copying the reference,
+   references in the block `λ_ξ` only, `(univ, 3)` the only graded face of grade `N = 3` containing
+   the cap and the new cells (several need a context of at least four points; informal; not
+   compiled), and the reference cell the root itself (a cell of the face along `f`; the private
+   context supplies only the cap).  The finite statement at every input with the calibration is
+   still to be proved, and with it (R4).  The acquisition of the design's cap of full scope and full
+   grade is not compiled.
 6. **The attained least lift and structural successor leastness** (prospective).  One lift of a
    legal stage type at a limit stage `β` to `β + ω`, least at every cell (each minimum is attained
    separately: `StageType.exists_lift_label_eq_ofOffset`); the threshold forced by a cover is read

@@ -2323,9 +2323,9 @@ Each checkpoint needs both its abstract API and a concrete application:
    `Continuation/StableRecoveryTwin` and `Continuation/StableRecoveryTwinScheme`; no scheme serves
    both twin donors,
    `Continuation.StableRecoveryTwin.not_isStableRecoveryScheme_twinDonor₁_and_twinDonor₂`; the
-   finite statement at every input is still to be proved; `README.md`, Layer 4, status, output 3). Step 7 is
-   compiled conditionally (`README.md`, the section on the top-free witnesses): the loss at `η`
-   under uniqueness at `λ_η` (`nonempty_loss_of_topFreeWitness`), and per block under
+   finite statement at every input is still to be proved; `README.md`, Layer 4, status, output 3).
+   Step 7 is compiled conditionally (`README.md`, the section on the top-free witnesses): the loss
+   at `η` under uniqueness at `λ_η` (`nonempty_loss_of_topFreeWitness`), and per block under
    `StageType.HasApexCoatomExtensions` at `λ_η` and uniqueness of the model expansions at `λ_η`
    (`nonempty_loss_of_hasApexCoatomExtensions`, `MainTheorem/LowerBound`).
 

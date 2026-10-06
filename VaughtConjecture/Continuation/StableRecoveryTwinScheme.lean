@@ -66,14 +66,22 @@ below the cap, an ambient twin below `c` kept, the others raised to the root).  
 two facts about caps self-visible at `3`: they do not separate finite parts below `3`
 (`le_visibilityReplace_three_one`, `visibilityReplace_three_two_lt`).
 
-**Where the reading must be coherent** (informal; not compiled as necessity statements; the
-scheme above meets both constraints, which are compiled as part of its legality).  A cell of
+**Where bountifulness constrains the reading** (informal; not compiled as necessity statements;
+the scheme above meets both constraints, which are compiled as part of its legality).  A cell of
 grade `1` held up by the root reads the twins in one order (or as equal); since every lawful
 labelling of the twins below `({2, 3}, 1)` lifts (bountifulness at the cap `⊥`), every graded face
 of grade `1` containing the twins carries a pair of cells reading them in both orders, here at
 `({1, 2, 3}, 1)` and `(univ, 1)`.  And the reading cell forces the capped root to have finite part
 `2` or at least `3`; a labelling of the context `({0, 1, 2}, 3)` without that constraint would not
 lift to `(univ, 3)`, so the cap reads the root at `2` as the reading cell does.
+
+## Implementation notes
+
+The two orders of the twins are compared only through rows and values that do not depend on the
+order (`baseRow`, `kindRow_of_ne`, `kindValue_of_ne`), and these two lemmas are proved by
+`fin_cases` and `simp`.  A proof by `rfl` (or by `match` with `rfl` branches), like any `rfl`
+between `twinScheme false` and `twinScheme true`, makes the kernel compare the tails of the `![…]`
+rows by unfolding their ordinal labels, which takes minutes and gigabytes.
 
 ## Placement
 
@@ -122,21 +130,8 @@ theorem visibilityReplace_three_one_le (hx : IsSelfVisible 1 x) :
 /-- **A cap self-visible at `3` does not separate finite parts below `3`**: a label `c`
 self-visible at `3` below `y` lies below `visibilityReplace 3 1 y`. -/
 theorem le_visibilityReplace_three_one (hc : IsSelfVisible 3 c) (h : c ≤ y) :
-    c ≤ visibilityReplace 3 1 y := by
-  by_cases hcb : c = ⊥
-  · rw [hcb]; exact bot_le
-  by_cases hyt : y = ⊤
-  · rw [hyt, visibilityReplace_top]; exact le_top
-  have hyb : y ≠ ⊥ := fun h' ↦ hcb (le_bot_iff.mp (h' ▸ h))
-  have hct : c ≠ ⊤ := fun h' ↦ hyt (top_le_iff.mp (h' ▸ h))
-  obtain ⟨q, n, rfl⟩ := exists_block hyb hyt
-  obtain ⟨q', n', rfl⟩ := exists_block hcb hct
-  have hn' : 3 ≤ n' := isSelfVisible_block.mp hc
-  rw [visibilityReplace_block]
-  rw [WithBot.coe_le_coe, WithTop.coe_le_coe, omega0_mul_add_natCast_le_iff] at h ⊢
-  rcases h with h | ⟨rfl, h⟩
-  · exact .inl h
-  · exact .inr ⟨rfl, by split_ifs <;> omega⟩
+    c ≤ visibilityReplace 3 1 y :=
+  (hc.visibilityReplace_eq 1).symm.le.trans (monotone_visibilityReplace (by omega) h)
 
 /-- **A cap self-visible at `3` above a label stays above its replacement at `2`**: for `c`
 self-visible at `3` and `y < c`, `visibilityReplace 3 2 y < c`. -/
@@ -244,7 +239,7 @@ noncomputable def baseRow : Fin 6 → Fin 6 → Label.{u} :=
 /-- Away from the reading cell the rows do not depend on the order of the twins. -/
 theorem kindRow_of_ne (o : Bool) {k : Fin 6} (hk : k ≠ 5) (k' : Fin 6) :
     kindRow.{u} o k k' = baseRow k k' := by
-  fin_cases k <;> first | rfl | exact absurd rfl hk
+  fin_cases k <;> simp [kindRow, baseRow] at hk ⊢
 
 /-- The cells of the twin scheme do not depend on the order of the twins. -/
 @[simp] theorem twinScheme_toCellScheme (o : Bool) : (twinScheme.{u} o).toCellScheme = twinCells :=
@@ -268,7 +263,7 @@ noncomputable def twinLabel (R A B C : Label.{u}) (d : Fin 23) : Label.{u} :=
 /-- Away from the twin kinds the labels do not depend on the twins. -/
 theorem kindValue_of_ne {R A B A' B' C : Label.{u}} {k : Fin 6} (h2 : k ≠ 2) (h3 : k ≠ 3) :
     kindValue R A B C k = kindValue R A' B' C k := by
-  fin_cases k <;> first | rfl | exact absurd rfl h2 | exact absurd rfl h3
+  fin_cases k <;> simp [kindValue] at h2 h3 ⊢
 
 /-- A **twin tuple**: the parameters of a lawful twin labelling, with the higher twin `H` and the
 lower twin `L`. -/
