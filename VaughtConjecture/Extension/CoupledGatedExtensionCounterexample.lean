@@ -90,9 +90,13 @@ labelled `⊤`.  So the bottom transport condition asks for a lawful labelling o
   4b-i acquires from a model (`Realization.IsModel.exists_privateContext`) can carry such an anchor
   (a lawful labelling of the private type that is `⊥` at an anchor and not at the cap, with a donor
   whose rows read the transported pattern within one block) is not decided here.
+* The refuting private type has a unique cell of full scope and full grade, and cells of grade
+  `1` not labelled `⊥`; so neither of the conditions on private contexts asked about in
+  `VaughtConjecture.Realization.CoupledFiniteCutReceiving` (question (M4)) excludes it.
 * The input has a proper anchor below the cap.  When every donor label below the cap is `⊥`, the
-  condition is met by the donor's own labelling; the instances of the property compiled at the
-  private type `GatedExtensionCounterexample.P α`, whose labels are `⊥` and `⊤`
+  condition is met by the donor's own labelling (`StageType.carriesBottoms_of_forall_label`);
+  the instances of the property compiled at the private type `GatedExtensionCounterexample.P α`,
+  whose labels are `⊥` and `⊤`
   (`CoupledGateExamples.exists_coupledGatedExtension_comap_g₁`,
   `CoupledGateInstance.coupledGatedPinnedExtension_donor`), have no proper anchor.
 
@@ -226,6 +230,17 @@ def CarriesBottoms (P : StageType.{u} α n) (d : StageType.{u} α (m + 1)) (c : 
           (∀ i, ∀ k ≤ n, d.label j = visibilityReplace n k (P.label i) → a i = ⊥) → ρ j = ⊥) ∧
         ((∀ i, ((∃ k ≤ n, d.label j = visibilityReplace n k (P.label i)) ∨
             (c ≤ P.label i ∧ c ≤ d.label j)) → a i ≠ ⊥) → ρ j ≠ ⊥)
+
+/-- **The bottom transport condition holds without donor labels strictly below the cap**: if every
+new donor cell is labelled `⊥` or at least `c`, the labelling of `d` itself meets the condition.
+So the condition can fail only through a donor label strictly between `⊥` and `c`, which an
+anchored donor reads through an anchor. -/
+theorem carriesBottoms_of_forall_label {P : StageType.{u} α n} {d : StageType.{u} α (m + 1)}
+    {c : Label.{u}}
+    (hd : ∀ j, Fin.last m ∈ d.toCellScheme.scope j → d.label j = ⊥ ∨ c ≤ d.label j) :
+    CarriesBottoms P d c := fun _ _ _ ↦
+  ⟨d.label, d.isLawful, fun j hj hne ↦
+    ⟨fun hlt _ ↦ ((hd j hj).resolve_left hne |> hlt).elim, fun _ ↦ hne⟩⟩
 
 /-- **The bottom transport condition holds when the cap reads an anchor of every donor label below
 it in its own block.**  Let `C` be a cell of `P` of graded index `(univ, n)`, and suppose every new
