@@ -2881,6 +2881,16 @@ witnesses).**
   `TopFreeIndex.restrictFace_empty`, to `ClassicalLimit/Age`, beside `TopFreeIndex.empty`. The
   import of `Extension/SectionTheorem` here and in `Extension/FamilyCofaces` is used only for the
   capping lemma, now in `Scheme/Row`, which is to replace it.
+- `ClassicalLimit/LegalAge` and `ClassicalLimit/LegalAgeExamples`: the uncapped age of all legal
+  charts (`LegalIndex`, `legalChart`, `legalAge`, `isFraisse_legalAge`,
+  `exists_isFraisseLimit_legalAge`), the reconstruction under legal chart coverage
+  (`isConsistent_reconstruct_of_legalAge`, `isCovering_reconstruct_of_legalAge`,
+  `exists_covers_reconstruct_of_legalAge`), exact receiving
+  (`exactReceivingWithin_reconstruct_of_legalAge`,
+  `Realization.ExactReceivingWithin.hasFiniteCutReceiving`), and modelhood
+  (`isModel_reconstruct_of_legalAge`), in place, beside the age of top-free charts.  The top-free
+  statements of `ClassicalLimit/` re-prove the legal ones for top-free charts; they are to become
+  the case of a subfamily of legal charts.
 - `Comparison/GradedMatchingApplications`: Layer 0, in place.  The local graded back-and-forth
   theorem (`README.md`, Layer 0) is retired, not moved: both of its applications compile through
   InfinitaryLogic's `bfEquiv_of_gradedMatching`.
@@ -2998,26 +3008,15 @@ witnesses).**
   so that the import closure of the main theorem contains no `Definability/` module.
   `Expansion/Losses`: Layer 5, in place. `Counting/Domains`:
   `Counting.countable_of_subsingleton_cover`, a general result of Layer 0, in place.
-- `MainTheorem/SameLevelMaximal` (acceptance lemma 1): the age of legal charts (`LegalIndex`,
-  `legalChart`, `legalAge`, `exists_equiv_legalChart`, `exists_amalgam_legalChart`,
-  `exists_jointEmbedding_legalChart`, `isFraisse_legalAge`, `exists_isFraisseLimit_legalAge`) to
-  `ClassicalLimit/Age` and `ClassicalLimit/Amalgamation`, beside the age of top-free charts; the
-  reconstruction under legal chart coverage (`exists_eq_trans_legalChart`,
-  `isConsistent_reconstruct_of_legalAge`, `isCovering_reconstruct_of_legalAge`,
-  `exists_embedding_of_reconstruct_eval_of_legalAge`, `exists_covers_reconstruct_of_legalAge`,
-  `nonempty_of_legalAge_subset`) to `ClassicalLimit/Reconstruction`, where the top-free statements
-  are to become the case of a subfamily of legal charts;
-  `exactReceivingWithin_reconstruct_of_legalAge` to `ClassicalLimit/Receiving` and
-  `isModel_reconstruct_of_legalAge` to `ClassicalLimit/Modelhood`;
-  `Realization.ExactReceivingWithin.hasFiniteCutReceiving` to `Continuation/ExactAge`;
-  `StageType.ForcesThreshold.congr_root` to `Stage/Threshold`;
-  `StageType.exists_forcesThreshold_of_label_eq_top` to `Continuation/Normalization`, beside
-  `ForcingDonors`; `Realization.isCoverHollow_of_exactReceivingWithin`,
-  `Realization.IsCoverHollow.isTerminalAt`, and `Realization.IsTerminalAt.map` to
-  `Continuation/Hollow`, which is then to import `Continuation/Terminal`; and
-  `exists_equiv_extend_tuple`, a fact about countably infinite types, a Mathlib candidate.  The
-  acceptance lemma itself (`exists_saturated_reconstruct`, `exists_sameLevelMaximal_reconstruct`,
-  `exists_sameLevelMaximal_covers`, `exists_sameLevelMaximal`) stays in `MainTheorem/`.
+- `Continuation/Hollow` (importing `Continuation/Terminal` and `Continuation/ExactAge`):
+  `Realization.isCoverHollow_of_exactReceivingWithin`, `Realization.IsCoverHollow.isTerminalAt`,
+  and `StageType.exists_forcesThreshold_of_label_eq_top` (the form of `ForcingDonors` used for
+  cover-hollowness), Layer 4, in place.  `StageType.ForcesThreshold.congr_root`, a fact about
+  forcing alone, goes to `Stage/Threshold` when that file is next opened.
+- `MainTheorem/SameLevelMaximal` (acceptance lemma 1): `exists_saturated_reconstruct`,
+  `exists_sameLevelMaximal_reconstruct`, `exists_sameLevelMaximal_covers`, and
+  `exists_sameLevelMaximal`, in place.  `exists_equiv_extend_tuple` is the case of a finite range
+  of Mathlib's `Cardinal.extend_function_of_lt`, from which it is derived.
 - `Extension/OwnerCappedLift`: `CellScheme.Rows.cappedLift_of_boundary_short` is the case of equal
   boundary triples of `CellScheme.Rows.cappedLift_of_boundaries_short`, from which it is to be
   derived when the file is next opened (a change of proofs only).

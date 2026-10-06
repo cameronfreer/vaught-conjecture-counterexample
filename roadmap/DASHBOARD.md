@@ -88,6 +88,8 @@ Notes on the rows, each with its marker:
   (`densitySentence_hasThinAlephOneSpectrum_of_terminalClassification`).
 - *Acceptance lemma 1 (same-level maximal realization).*  Compiled conditionally on
   `StageType.HasApexCoatomExtensions` at `λ_β` and `ForcingDonors β` (`exists_sameLevelMaximal`).
+  Terminality of every cover-hollow realization at a block stage is compiled with no hypothesis
+  (`Realization.IsCoverHollow.isTerminalAt`, Layer 4).
 
 ## The named hypotheses of the main theorem
 

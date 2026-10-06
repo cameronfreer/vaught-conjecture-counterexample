@@ -10,11 +10,6 @@ import VaughtConjecture.MainTheorem.SameLevelMaximal
 
 Special cases of `VaughtConjecture.MainTheorem.SameLevelMaximal`:
 
-* the age of top-free charts is contained in the age of legal charts;
-* a realization at a block stage whose actual types are top-free is cover-hollow vacuously
-  (`Realization.isCoverHollow_of_isTopFree`), hence terminal, with no hypothesis; for the
-  reconstruction of a structure covered by top-free charts this is the terminality of the top-free
-  witnesses (`reduce_ne_reconstruct`) at the next block stage;
 * acceptance lemma 1 at the first block, `λ_0 = ω`, on the carrier `ℕ`, with a prescribed cover of
   the one-point stage type with the bottom label at the point `0`.
 
@@ -26,15 +21,6 @@ This file belongs to the section "Reduction to full presentations" of `roadmap/R
 namespace VaughtConjecture.MainTheorem.SameLevelMaximalExamples
 
 open FirstOrder Language Realization
-
-/-- The age of top-free charts is contained in the age of legal charts. -/
-example {α : Ordinal.{0}} : topFreeAge α ⊆ legalAge α := fun _ ⟨i, he⟩ ↦
-  ⟨⟨i.1, i.2.1, i.2.2.1⟩, he⟩
-
-/-- A realization at a block stage with top-free actual types is terminal. -/
-example {ξ : Ordinal.{0}} {M : Type} {R : Realization.{0, 0} (blockStage ξ) M}
-    (h : ∀ x : R.Occurrence, x.type.IsTopFree) : R.IsTerminalAt ξ :=
-  (isCoverHollow_of_isTopFree h).isTerminalAt
 
 /-- Acceptance lemma 1 at the first block, on `ℕ`, with the one-point stage type with the bottom
 label covered by the point `0`. -/
