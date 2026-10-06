@@ -28,8 +28,8 @@ which some relation of the base language holds.  Arity `0` is excluded: the clos
 [AFK26, Definition 2.1] are those satisfying some `P_n`, which exists only for `n ≥ 1`, and the
 empty tuple is not closed there, although it is supported in every base structure with a lift.
 The comparison of the supported tuples of positive arity with the closed tuples of [AFK26] is
-proved in `Correspondence.InvariantSystem` (concordance row 29).  An invariant realized at a tuple is its
-stage type; the invariant `Q` of a lift at `λ_α` is realized at the same tuple by a lift at a
+proved in `Correspondence.InvariantSystem` (concordance row 29).  An invariant realized at a tuple
+is its stage type; the invariant `Q` of a lift at `λ_α` is realized at the same tuple by a lift at a
 higher stage `λ_{α'}` when that lift evaluates the tuple to `Q` read at `λ_{α'}`
 (`StageType.castLE`, the same scheme and labels): the comparison is in the alphabet of all labels.
 
