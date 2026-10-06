@@ -59,7 +59,7 @@ Notes on the rows, each with its marker:
   `StageType.HasGatedPinnedExtensions`
   (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`); the coupled form at the inputs on
   `GatedExtensionCounterexample.P α` (`CoupledGateExamples.exists_coupledGatedExtension_comap_g₁`,
-  `CoupledGateInstance.coupledGatedPinnedExtension_donor`); the cap-to-model
+  `CoupledGateInstance.coupledGatedPinnedExtension_donor`, and with every anchored legal one-point donor, `CoupledGateOnePointDonors.coupledGatedPinnedExtension_P`); the cap-to-model
   theorem at a limit stage, conditional on the nonemptiness of the instances of uniformity and
   dominance (`Realization.isModel_of_hasFiniteCutReceiving`); the top-free witnesses, steps 1–7,
   conditionally: steps 2–3 under `StageType.HasCoatomExtensions`, and step 7 under

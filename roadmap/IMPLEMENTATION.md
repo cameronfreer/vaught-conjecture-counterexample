@@ -2109,7 +2109,7 @@ Each checkpoint needs both its abstract API and a concrete application:
    `CellScheme.Rows.TwinsReadGate` and holds at the refuting input
    (`CoupledGateExamples.exists_coupledGatedExtension_comap_g₁`, compiled in this repository
    (theorem named)), and at the donor labelled `⊤` on the same private type
-   (`CoupledGateInstance.coupledGatedPinnedExtension_donor`).  4b-ii, the construction
+   (`CoupledGateInstance.coupledGatedPinnedExtension_donor`, and with every anchored legal one-point donor, `CoupledGateOnePointDonors.coupledGatedPinnedExtension_P`).  4b-ii, the construction
    as data in the form `StageType.HasCoupledGatedPinnedExtensions`, is refuted at every stage above
    `1` (`CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`,
    `Extension/CoupledGatedExtensionCounterexample`, compiled in this repository (theorem named)).
