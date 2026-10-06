@@ -91,22 +91,26 @@ rank of `β₁` at the grade `3`, and a coupling of `g` below `d₂` would keep 
 catalogue entry below that cap, so it would not constrain `w_D`; this holds for that cap only.
 With the cap `h = a(g)` used here, the coupling forces `w_D(d₂) = ⊤`.
 
-**What is not refuted.**  Nothing is claimed about a completion below the full grade of `seedL`
-built by another construction, nor about `StageType.HasApexCoatomExtensions` or
-`StageType.HasCoatomExtensions`.  What fails is the step of the tower, and so the tower as a
-completion of `seedL`.
+**What is not refuted.**  The refutation says nothing about a completion below the full grade of
+`seedL` built by another construction (one exists, see below), nor about
+`StageType.HasApexCoatomExtensions` or `StageType.HasCoatomExtensions`.  What fails is the step of
+the tower, and so the tower as a completion of `seedL`.
 
-**The open point.**  Whether `seedL` has a completion below the full grade at all (at a stage
-that is zero or a limit, one would give a legal stage type with an apex whose faces along the two
-coatoms are `TL` and `T5`, `CompletionBelowFullGrade.exists_coatomExtension`).  A necessary
-condition, argued and not formalized: for a cap `c`, the prescription `(A, ⊤, ⊤)` on `C` with `A`
-of finite part `1`, and every labelling `q` lawful below `(univ, 3)` that agrees with it capped at
-`c`, some cell `u` of the completion at `(univ, 2)` with `q(u) ≥ c` *separates* `d₁` and `d₂`: its
-row reads `d₁` strictly below `d₂`.  The tower never meets it: in step 3, every cell at
-`(univ, 2)` where `a` reaches `h` reads `d₁` and `d₂` at the same value.  A candidate, prospective
-and not constructed, is a completion with one new cell at each `(univ, k)`, whose cell at
-`(univ, 2)` has an *ordered* row, reading the cells of grade `1` of `C` strictly below those of
-`D`.
+**A completion outside the tower.**  `seedL` has a completion below the full grade that is not built
+as a tower: the thin completion of the module `VaughtConjecture.Extension.ThinCompletion`
+(`ThinCompletion.nonempty_completionBelowFullGrade_seedL`), with one new cell at each `(univ, k)`
+whose rows at the grades `k ≤ 3` are *ordered*, reading the live cells of grade `1` of `C` strictly
+below those of `D`.  At every stage it gives a legal stage type with an apex whose faces along the
+two coatoms are `TL` and `T5` (`ThinCompletionExamples.exists_coatomExtension_seedL`).
+Every completion below the full grade meets a necessary condition, proved in the module
+`VaughtConjecture.Extension.SeparatingCell` (`ThinCompletion.exists_separating_cell`): for a cap
+`c` self-visible at `3`, the prescription `(A, ⊤, ⊤)` on `C` with `A` of finite part `1`, and
+every labelling `q` lawful below `(univ, 3)` that agrees with it capped at `c`, some cell `u` of
+the completion at `(univ, 2)` with `q(u) ≥ c` *separates* `d₁` and `d₂`: its row reads `d₁`
+strictly below `d₂` (with no cap, `ThinCompletion.exists_separating_cell_of_completion`; at every
+`(univ, k)`, `1 ≤ k ≤ 3`, `ThinCompletion.exists_separating_cell_of_le_three`).  The tower does
+not meet it (argued from step 3, not formalized: every cell at `(univ, 2)` where `a` reaches `h`
+reads `d₁` and `d₂` at the same value).
 
 **Redesigns examined** (argued, not formalized).  The identified obstruction survives the
 redesigns examined:
@@ -119,9 +123,11 @@ redesigns examined:
   faces: `2FL∃(2)` already quantifies existentially over `w_D` and the extension, and an owner
   changes only how the extension is found.
 
-Not examined: rows of the layers that are not entries of catalogue entries at the old cells (such
-as the ordered rows above), a catalogue at the grade `j + 1` restricted so that its entries do not
-reach the cap only at cells reading `d₁` and `d₂` alike, and completions not built as a tower.
+Not examined: other rows of the layers that are not entries of catalogue entries at the old cells,
+and a catalogue at the grade `j + 1` restricted so that its entries do not reach the cap only at
+cells reading `d₁` and `d₂` alike.  The ordered rows of the thin completion (above) are not entries
+of catalogue entries, and the obstruction does not apply to them: the only cell of the thin
+completion at `(univ, 2)` separates `d₁` and `d₂` (`ThinCompletionExamples.row_newCell_two_lt`).
 
 ## Placement
 
@@ -843,6 +849,79 @@ theorem isLawfulBelow_TL_iff {X : Finset (Fin 4) × ℕ}
       rowsL.IsLawfulBelow X (fun d ↦ w (Fin.castSucc d.1)) :=
   Scheme.isLawfulBelow_appendFullCell_iff (h := isLegalBelowFullGrade_SL.not_le) hX
 
+/-- The cells of `TL`: the nineteen cells of `SL` and the apex. -/
+theorem cases_TL (i : Fin (TL α).card) :
+    i = Fin.last 19 ∨ ∃ d : Fin 19, i = Fin.castSucc d := by
+  -- `TL` has the nineteen cells of `SL` and the apex, so `Fin.lastCases` applies.
+  change Fin (19 + 1) at i
+  induction i using Fin.lastCases with
+  | last => exact .inl rfl
+  | cast d => exact .inr ⟨d, rfl⟩
+
+/-- The apex of `TL` has graded index `(univ, 4)`. -/
+theorem gradedIndex_TL_last :
+    (TL α).toCellScheme.gradedIndex (Fin.last 19) = ((univ : Finset (Fin 4)), 4) :=
+  Scheme.appendFullCellScheme_gradedIndex_last SL 4
+
+/-- **Lawful labellings below a coatom whose type is `TL`**, read on `TL`: the labellings
+`labelling A F G` with `G ≤ F` and `VisibilityReplaceFixedOfLT A G`. -/
+theorem exists_labelling_of_comap_TL {f : Fin 4 ↪ Fin 5} {Am : StageType.{u} α 5}
+    (hf : StageType.restrictFace f Am = some (TL α)) {k : ℕ} (hk : k ≤ 3)
+    (p : Fin Am.card → Label.{u}) (hp : Am.rows.IsLawfulBelow (univ.map f, k) fun d ↦ p d) :
+    ∃ A F G : Label.{u}, IsSelfVisible 1 A ∧ IsSelfVisible 2 F ∧ IsSelfVisible 3 G ∧ G ≤ F ∧
+      VisibilityReplaceFixedOfLT A G ∧ ∀ d ∈ Am.toCellScheme.below (univ.map f, k), ∃ c : Fin 19,
+        Am.toCellScheme.gradedIndex d =
+          Prod.map (Finset.map f) id (TwoFaceLiftCounterexample.cells.gradedIndex c) ∧
+        p d = CaseSplitCounterexample.labelling A F G c := by
+  obtain ⟨hf', he⟩ := (StageType.restrictFace_eq_some_iff _ _).mp hf
+  have heq : Am.toScheme.comap f = (TL α).toScheme := congrArg StageType.toScheme he
+  have hgen : ∀ x : Fin (Am.toScheme.comap f).card → Label.{u},
+      (Am.toScheme.comap f).rows.IsLawfulBelow ((univ : Finset (Fin 4)), k) (fun i ↦ x i) →
+      ∃ A F G : Label.{u}, IsSelfVisible 1 A ∧ IsSelfVisible 2 F ∧ IsSelfVisible 3 G ∧ G ≤ F ∧
+        VisibilityReplaceFixedOfLT A G ∧
+        ∀ i ∈ (Am.toScheme.comap f).toCellScheme.below ((univ : Finset (Fin 4)), k),
+          ∃ c : Fin 19, (Am.toScheme.comap f).toCellScheme.gradedIndex i =
+            TwoFaceLiftCounterexample.cells.gradedIndex c ∧
+            x i = CaseSplitCounterexample.labelling A F G c := by
+    rw [heq]
+    intro x hx
+    have hx' := (isLawfulBelow_TL_iff (α := α) (w := x) (fun h ↦ by
+      have := h.2; simp only at this; omega)).mp hx
+    obtain ⟨A, F, G, hA, hF, hG, hGF, hc, hAF⟩ :=
+      (TwoFaceLiftExistsCounterexample.isLawfulBelow_iff (x := fun e ↦ x (Fin.castSucc e))).mp hx'
+    refine ⟨A, F, G, hA, hF, hG, hGF, hc, fun i hi ↦ ?_⟩
+    rcases cases_TL (α := α) i with rfl | ⟨c, rfl⟩
+    · exfalso
+      have h2 := hi.2
+      rw [gradedIndex_TL_last] at h2
+      simp only at h2
+      omega
+    · refine ⟨c, gradedIndex_TL_castSucc c, hAF c ?_⟩
+      rw [CellScheme.mem_below, ← gradedIndex_TL_castSucc (α := α) c]
+      exact hi
+  obtain ⟨A, F, G, hA, hF, hG, hGF, hc, hall⟩ := hgen (fun i ↦ p (Am.toScheme.cellMap f i))
+    ((Scheme.isLawfulBelow_comap_cellMap_iff Am.toScheme f _ p).mpr hp)
+  refine ⟨A, F, G, hA, hF, hG, hGF, hc, fun d hd ↦ ?_⟩
+  have hd' : d ∈ Am.toScheme.cellMap f '' (Am.toScheme.comap f).toCellScheme.below
+      ((univ : Finset (Fin 4)), k) := by
+    rw [Am.toScheme.image_cellMap_below f]; exact hd
+  obtain ⟨i, hi, rfl⟩ := hd'
+  obtain ⟨c, hgi, hpc⟩ := hall i hi
+  exact ⟨c, by rw [← Am.toScheme.map_comap_gradedIndex f i, hgi], hpc⟩
+
+/-- `TL` has one cell at each graded index. -/
+theorem gradedIndex_injective_TL : Function.Injective (TL α).toCellScheme.gradedIndex := by
+  have hlt : ∀ c : Fin 19, TwoFaceLiftCounterexample.cellGrade c ≠ 4 := by decide
+  intro i i' h
+  rcases cases_TL i with rfl | ⟨c, rfl⟩ <;> rcases cases_TL i' with rfl | ⟨c', rfl⟩
+  · rfl
+  · exact absurd (congrArg Prod.snd
+      (gradedIndex_TL_last.symm.trans (h.trans (gradedIndex_TL_castSucc c')))).symm (hlt c')
+  · exact absurd (congrArg Prod.snd
+      ((gradedIndex_TL_castSucc c).symm.trans (h.trans gradedIndex_TL_last))) (hlt c)
+  · rw [TwoFaceLiftCounterexample.gradedIndex_injective
+      ((gradedIndex_TL_castSucc c).symm.trans (h.trans (gradedIndex_TL_castSucc c')))]
+
 private theorem isLawfulBelow_coatomL {A F G : Label.{u}} (hA : IsSelfVisible 1 A)
     (hF : IsSelfVisible 2 F) (hG : IsSelfVisible 3 G) (hGF : G ≤ F)
     (hc : VisibilityReplaceFixedOfLT A G)
@@ -891,7 +970,8 @@ theorem isLawfulBelow_tripleLabelling {I : Seed.{u} α 3} (hIL : I.left = TL α)
       (hIR ▸ I.restrictFace_right)
       (tripleLabelling_right AC FC AD FD G)
 
-private theorem exists_cellL {f : Fin 4 ↪ Fin 5} {Am : StageType.{u} α 5}
+/-- A cell of `TL` carried into a stage type along an embedding whose face is `TL`. -/
+theorem exists_cell_TL {f : Fin 4 ↪ Fin 5} {Am : StageType.{u} α 5}
     (hf : StageType.restrictFace f Am = some (TL α)) (d : Fin 19) :
     ∃ e : Fin Am.card, Am.toCellScheme.gradedIndex e =
       Prod.map (Finset.map f) id (cells.gradedIndex d) := by
@@ -988,15 +1068,15 @@ theorem not_twoFaceLiftExists_two_of {I : Seed.{u} α 3} (hIL : I.left = TL α)
   -- The cells.
   obtain ⟨d₁, hd₁⟩ : ∃ e : Fin I.amalgam.card,
       I.amalgam.toCellScheme.gradedIndex e = (({3} : Finset (Fin 5)), 1) := by
-    obtain ⟨e, he⟩ := exists_cellL (hIL ▸ I.restrictFace_left) 3
+    obtain ⟨e, he⟩ := exists_cell_TL (hIL ▸ I.restrictFace_left) 3
     exact ⟨e, he.trans (by decide +kernel)⟩
   obtain ⟨sC, hsC⟩ : ∃ e : Fin I.amalgam.card,
       I.amalgam.toCellScheme.gradedIndex e = (({0, 1, 2, 3} : Finset (Fin 5)), 2) := by
-    obtain ⟨e, he⟩ := exists_cellL (hIL ▸ I.restrictFace_left) 15
+    obtain ⟨e, he⟩ := exists_cell_TL (hIL ▸ I.restrictFace_left) 15
     exact ⟨e, he.trans (by decide +kernel)⟩
   obtain ⟨gE, hgE⟩ : ∃ e : Fin I.amalgam.card,
       I.amalgam.toCellScheme.gradedIndex e = (({0, 1, 2} : Finset (Fin 5)), 3) := by
-    obtain ⟨e, he⟩ := exists_cellL (hIL ▸ I.restrictFace_left) 16
+    obtain ⟨e, he⟩ := exists_cell_TL (hIL ▸ I.restrictFace_left) 16
     exact ⟨e, he.trans (by decide +kernel)⟩
   obtain ⟨d₂, hd₂⟩ : ∃ e : Fin I.amalgam.card,
       I.amalgam.toCellScheme.gradedIndex e = (({4} : Finset (Fin 5)), 1) := by
