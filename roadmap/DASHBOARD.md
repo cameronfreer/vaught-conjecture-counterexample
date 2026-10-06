@@ -212,9 +212,9 @@ status, or percentage changes.  Each composes statements compiled on `main` with
 are prospective here:
 
 1. the terminal-presentation instance of the second endpoint, with the main theorem by that route
-   on the six hypotheses (R1), forcing donors, the continuation criterion, (R2), (R3), and the
-   coatom extension property with apex at every countable block stage, with no termination
-   statement;
+   on the hypotheses of its current composed form (six at present: (R1), forcing donors, the
+   continuation criterion, (R2), (R3), and the coatom extension property with apex at every
+   countable block stage; fewer only by a compiled derivation), with no termination statement;
 2. the four conditions of the system of [AFK26] as one structure of statements, and the main
    theorem from its conditions (a), (b), and (d) (condition (c), niceness, is not used);
 3. niceness of base reducts from maximal refinement, for carriers in `Type`;

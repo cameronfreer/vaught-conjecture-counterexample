@@ -1009,22 +1009,22 @@ which the domain is nonempty.  With countable complements of the domains in addi
 classes.  Both are prospective applications, not compiled here.
 
 **Composition targets of the tower** (each prospective).  The statements below compose statements
-that are compiled on `main` (theorem named) or stated in separate changes not yet merged (cited
-by name and marked so).  Each is to be compiled conditionally on the hypotheses named with it;
-none adds a hypothesis to a form of the main theorem, none is a termination statement, and none
-is to be used as a hypothesis of a main-theorem form (each is a target, and assuming it would be
-a reformulation).  They are recorded here before the Lean statements, in this order.
+that are compiled on `main` (theorem named) or stated in open pull requests not yet merged (cited
+by name, with the number of the pull request).  Each is to be compiled conditionally on the
+hypotheses named with it; none adds a hypothesis to a form of the main theorem, none is a
+termination statement, and none is to be used as a hypothesis of a main-theorem form (each is a
+target, and assuming it would be a reformulation).  They are recorded here before the Lean
+statements, in this order.
 
 1. *The terminal-presentation instance* (`README.md`, "Reduction to full presentations", "The
    terminal-presentation instance").  A term of `FullPresentations DensityClass` (indicative name
    `terminalLevels`) whose `presentedAt β` is the set of classes of codes on `ℕ` with a model
-   expansion terminal at `β` (`terminalClasses β`, in a separate change on the count at one
-   level, not yet merged), with the fields: countability from the count at one level
-   (`countable_isoClasses_terminalAt`, same change; (R1), the continuation criterion, (R2),
-   (R3)); coverage from the first domain (`Expansion.expansionDomain_zero`, compiled, under the
-   cap-to-model theorem) and the maximal refinement of a model expansion
-   (`exists_maximalRefinement_of_modelExpansion`, in a separate change on maximal refinement, not
-   yet merged; (R1), next-block uniqueness, and `StageType.HasApexCoatomExtensions` at every
+   expansion terminal at `β` (`terminalClasses β`, #120, not yet merged), with the fields:
+   countability from the count at one level (`countable_isoClasses_terminalAt`, #120; (R1), the
+   continuation criterion, (R2), (R3)); coverage from the first domain
+   (`Expansion.expansionDomain_zero`, compiled, under the cap-to-model theorem) and the maximal
+   refinement of a model expansion (`exists_maximalRefinement_of_modelExpansion`, #124, not yet
+   merged; (R1), next-block uniqueness, and `StageType.HasApexCoatomExtensions` at every
    countable block stage); emptiness from `ω₁` on (`ModelExpansion.isEmpty_of_omega_one_le`,
    compiled, no hypothesis).  Then: the tail at `η < ω₁` lies in `expansionDomain η` (coverage
    and `ModelExpansion.reduceBlock`; no uniqueness of expansions is used); bounded comparison of
@@ -1032,75 +1032,78 @@ a reformulation).  They are recorded here before the Lean statements, in this or
    tails from `Expansion.bfEquiv_of_modelExpansions`; `UncountablyManyClasses` from
    `hasNonemptyLosses_of_hasApexCoatomExtensions` with `ExpansionDomains.aleph_one_le_mk` (both
    compiled on their hypotheses); and `vaughtCounterexample_of_presentations` and
-   `vaughtCounterexample_of_scatteredTails` for this instance on the six hypotheses (R1), forcing
-   donors, the continuation criterion, (R2), (R3), and the apex form at every countable block
-   stage, with `CapToModel` from the apex form at `ω` (`CapToModel.of_hasApexCoatomExtensions`)
-   and next-block uniqueness from `Expansion.NextBlockUniqueness.of_forcingDonors`.  *Completion
-   criterion:* these compiled, with a walk of the constants of the final statements that finds
-   no termination statement and no hypothesis `FullPresentations`; only then does the entry
-   "Termination" of the second endpoint (`README.md`, item 5, "The two counting endpoints")
-   change, with a fresh review of that entry.  As in `README.md`, the instance replaces none of
+   `vaughtCounterexample_of_scatteredTails` for this instance on the hypotheses of the current
+   composed form of the main theorem (six at present: (R1), forcing donors, the continuation
+   criterion, (R2), (R3), and the apex form at every countable block stage), with `CapToModel`
+   from the apex form at `ω` (`CapToModel.of_hasApexCoatomExtensions`) and next-block uniqueness
+   from `Expansion.NextBlockUniqueness.of_forcingDonors`.  *Completion criterion:* these
+   compiled, with a walk of the constants of the final statements that finds no termination
+   statement and no hypothesis `FullPresentations`, and with the docstring stating that coverage
+   comes through the Scott route, hence depends on conditions 3 and 4 of the expansion-domain
+   reduction (`lt_qrank_of_isolates` uses agreement and nonempty losses; both derived here from
+   the same hypotheses), not on its count.  Only then does the entry "Termination" of the second
+   endpoint (`README.md`, item 5, "The two counting endpoints") change, with a fresh review of
+   that entry, which states the same dependence.  As in `README.md`, the instance replaces none of
    the statements of the full-presentation route (statements 1–9 above stay its own).
 2. *The four conditions of the system of [AFK26]* (`README.md`, item 5, "The four conditions of
    the system of [AFK26], assembled").  A structure of statements (indicative name
    `SystemConditions`) for carriers in `Type`, whose fields are the conclusions of: (a)
-   `exists_maximalRefinement` (the change on maximal refinement); (b)
-   `countable_isoClasses_terminalAt` at every countable block (the change on the count at one
-   level); (c) `Realization.IsModel.isNice_toStructure_reduce` (a separate change on niceness, not
-   yet merged); (d) `exists_sameLevelMaximal` at `ℕ` (a separate change on the same-level
-   terminal realization, not yet merged; the apex form at the block stage and forcing donors
-   there).  Statements (indicative names): `systemConditions_of_hasApexCoatomExtensions`, on the
-   six hypotheses of item 1; `vaughtCounterexample_of_systemConditions`, the main theorem and its
-   form on all countable carriers from (a), (b), (d), (R1), next-block uniqueness, and
-   `CapToModel`, through item 1, with uncountably many classes from (d): by (R1) the base of the
-   model of (d) at a countable block is a model of the density sentence
-   (`baseLanguage.realize_toStructure_densitySentence_iff`, compiled), and two terminal models
-   with isomorphic bases lie at the same block (terminal collision under next-block uniqueness,
-   `le_of_modelExpansion_of_equiv` in the change on maximal refinement); and the main theorem by
-   this route on the six hypotheses.  *Dependencies:* (1a) item 1 and the main theorem from (a),
-   (b), and (d), with noncollapse from nonempty losses until (d) is merged, need the changes on
-   the count at one level and on maximal refinement; (1b) the structure with (c) and (d) needs in
-   addition the changes on niceness and on the same-level terminal realization, and item 3.
-   *Completion criterion:* compiled; the docstring of the main-theorem statement records that
-   condition (c) is not used; its hypotheses are exactly the six of item 1.
-3. *Niceness from maximal refinement* (`README.md`, item 5).  `HasTerminalRefinement.{0}` (the
-   change on niceness) from `exists_maximalRefinement` by forgetting maximality, hence niceness
-   of the base reducts of models on countable carriers in `Type`, conditional on (R1), next-block
-   uniqueness, and the apex form at every countable block stage.  For carriers in `Type` only.
-   *Dependencies:* the changes on niceness and on maximal refinement.
+   `exists_maximalRefinement` (#124); (b) `countable_isoClasses_terminalAt` at every countable
+   block (#120); (c) `Realization.IsModel.isNice_toStructure_reduce` (#121, not yet merged), that
+   is `IsNice`, a threshold for each closed tuple (one threshold for all tuples is the stronger
+   `exists_isNiceTupleAt_of_hasTerminalRefinement`, #121, not the field); (d)
+   `exists_sameLevelMaximal` at `ℕ` (#123, not yet merged; the apex form at the block stage and
+   forcing donors there).  Statements (indicative names):
+   `systemConditions_of_hasApexCoatomExtensions`, on the hypotheses of item 1;
+   `vaughtCounterexample_of_systemConditions`, the main theorem and its form on all countable
+   carriers, taking (a), (b), (d), (R1), next-block uniqueness, and `CapToModel` as separate
+   arguments (each used; the form from the structure is a corollary), through item 1, with
+   uncountably many classes from (d): by (R1) the base of the model of (d) at a countable block
+   is a model of the density sentence (`baseLanguage.realize_toStructure_densitySentence_iff`,
+   compiled), and two terminal models with isomorphic bases lie at the same block (terminal
+   collision under next-block uniqueness, `le_of_modelExpansion_of_equiv`, #124); and the main
+   theorem by this route on the hypotheses of item 1.  *Dependencies:* (1a) item 1 and the main
+   theorem from (a) and (b), with noncollapse from nonempty losses, need #120 and #124; (1b) (d)
+   replaces that input, and the structure with (c) and (d) needs in addition #121, #123, and
+   item 3.  *Completion criterion:* compiled; the docstring of the main-theorem statement records
+   that condition (c) is not used; its hypotheses are exactly those of the current composed form
+   of the main theorem (six at present; fewer only by a compiled derivation, e.g. forcing donors
+   from the apex form, `forcingDonors_of_forall_hasApexCoatomExtensions`, #137, not yet merged).
+3. *Niceness from maximal refinement* (`README.md`, item 5).  `HasTerminalRefinement.{0}` (#121)
+   from `exists_maximalRefinement` by forgetting maximality, hence niceness of the base reducts
+   of models on countable carriers in `Type`, conditional on (R1), next-block uniqueness, and
+   the apex form at every countable block stage.  For carriers in `Type` only.
+   *Dependencies:* #121 and #124.
 4. *The last admitted stage: agreement, fibres, tails* (`COMPANIONS.md`, terminal refinement,
    item 3).  With the last stage of a class on the expansion domains
-   (`ExpansionDomains.lastStage`, `mem_expansionDomain_iff_le_lastStage`, in a separate change on
-   eventual departure, not yet merged): (a) a base structure on any carrier with a model
+   (`ExpansionDomains.lastStage`, `mem_expansionDomain_iff_le_lastStage`, #133, not yet merged):
+   (a) a base structure on any carrier in `Type`, not necessarily countable, with a model
    expansion at `λ_ρ`, `ρ < ω₁`, terminal at `ρ`, has a model expansion at `λ_η` exactly when
    `η ≤ ρ`, for every ordinal `η` (under next-block uniqueness, from
-   `exists_le_reduceBlock_eq_of_isTerminalAt` in the change on maximal refinement, and
-   `ModelExpansion.reduceBlock`; no countability of the carrier); (b) for a code on `ℕ` of class
-   `q`, that `ρ`, for any base structure isomorphic to the code, is the last stage of `q`
-   (through `Expansion.mem_expansionDomain_iff` and `ModelExpansion.map`, compiled); (c) at
-   `β < ω₁` the terminal classes at `β` are exactly the loss at `β`, hence the classes whose last
-   stage is `β` (one inclusion is `loss_subset_terminalClasses`, in the change on the count at
-   one level; the other a form of `notMem_expansionDomain_succ_of_topFreeWitness`, compiled, for
-   every terminal model expansion, under next-block uniqueness); (d) for the instance of item 1,
-   the tail at `η` equals `expansionDomain η`, so the least-level filtration of that instance
-   and the filtration of the expansion-domain route are one.  Hypotheses: those of the density
-   instance of the last stage (`CapToModel`, next-block uniqueness, (R1), and the apex form at
-   every countable block stage).  Neither count uses these statements.  *Dependencies:* the
-   changes on the count at one level, on maximal refinement, and on eventual departure.
+   `exists_le_reduceBlock_eq_of_isTerminalAt`, #124, and `ModelExpansion.reduceBlock`; no
+   countability of the carrier); (b) for a code on `ℕ` of class `q`, that `ρ`, for any base
+   structure isomorphic to the code, is the last stage of `q` (through
+   `Expansion.mem_expansionDomain_iff` and `ModelExpansion.map`, compiled); (c) at `β < ω₁` the
+   terminal classes at `β` are exactly the loss at `β`, hence the classes whose last stage is `β`
+   (one inclusion is `loss_subset_terminalClasses`, #120; the other is terminal collision,
+   `exists_le_reduceBlock_eq_of_isTerminalAt`, #124, with `Expansion.mem_expansionDomain_iff`,
+   under next-block uniqueness); (d) for the instance of item 1, the tail at `η` equals
+   `expansionDomain η`, so the least-level filtration of that instance and the filtration of the
+   expansion-domain route are one.  Hypotheses: those of the density instance of the last stage
+   (`CapToModel`, next-block uniqueness, (R1), and the apex form at every countable block stage).
+   Neither count uses these statements.  *Dependencies:* #120, #124, and #133.
 5. *Fixing bounds from the Scott bound* (`README.md`, item 5, "Fixing bounds from the Scott
-   bound").  From `lt_qrank_of_isolates` (the change on maximal refinement) and
-   `Realization.isFixedAt_of_le` (a separate change on strictness, not yet merged): every model
-   presentation of a base on a countable carrier in `Type` is fixed by projection at `λ_r`, with
-   `r` the quantifier rank of a chosen isolating sentence (criterion 2, and criterion 3 in its
-   form for whole assignments).  From `Realization.IsModel.not_isFixedAt` (the change on
-   strictness) applied to the top-free witness at block `β + 1` (modelhood compiled conditionally
-   on the apex form there, `isModel_reconstruct_of_hasApexCoatomExtensions`): a model at
-   `λ_{β+1}` not fixed by projection at `λ_β`, at every countable `β`.  Hence the lower bound
-   along fixing ranks (`COMPANIONS.md`, terminal refinement, "An alternative route to the lower
-   bound", step (iv)), with its steps (i)–(iii) replaced by strictness.  Hypotheses: (R1),
-   next-block uniqueness, and the apex form at every countable block stage.  *Dependencies:* the
-   changes on maximal refinement and on strictness.  No fixing rank is identified with a Scott
-   rank.
+   bound").  From `lt_qrank_of_isolates` (#124) and `Realization.isFixedAt_of_le` (#132, not yet
+   merged): every model presentation of a base on a countable carrier in `Type` is fixed by
+   projection at `λ_r`, with `r` the quantifier rank of a chosen isolating sentence (criterion 2,
+   and criterion 3 in its form for whole assignments).  From `Realization.IsModel.not_isFixedAt`
+   (#132) applied to the top-free witness at block `β + 1` (modelhood compiled conditionally on
+   the apex form there, `isModel_reconstruct_of_hasApexCoatomExtensions`): a model at `λ_{β+1}`
+   not fixed by projection at `λ_β`, at every countable `β`.  Hence the lower bound along fixing
+   ranks (`COMPANIONS.md`, terminal refinement, "An alternative route to the lower bound", step
+   (iv)), with its steps (i)–(iii) replaced by strictness.  Hypotheses: (R1), next-block
+   uniqueness, and the apex form at every countable block stage.  *Dependencies:* #124 and #132.
+   No fixing rank is identified with a Scott rank.
 
 ## Manuscript concordance
 
@@ -1671,23 +1674,27 @@ correspondence (required)", item 1).  Three targets follow, in this order.
 1. *Retargeting.*  The legal-template rows proposed beside rows 1–40 (prospective here; compared
    with the earlier draft) are to cite the current numbering: the visibility map, Definition 4.26;
    the transformation `⇒`, Definition 4.27; bountiful rows, Definition 4.28; legal templates,
-   Definition 4.29; the template system, Lemma 4.30; the construction, Theorem 4.31.  The reading of
-   a template's rows is settled as the fixed one, and rows 1, 9, 10, and 25 are to be compared again
-   with Definitions 4.17, 4.5 and 4.10, and 4.16 and 4.21 of that draft.  The range clause of
-   Definition 4.4 is to be identified with `Scheme.IsCoded`.  Corrections to record, each present in
-   that draft unless marked: (1) the conditions of a legal template do not require the label to be
-   lawful for the rows; (2) the printed visibility map drops the block `ω·α` (the two-parameter map
-   is `Label.visibilityReplace`); (3) the shifter of `⇒` is not required to be monotone; (4) the
-   offset clause bounds the offset by the grade, one below `Label.IsStronglyCoded` (offset at most
-   the grade plus one), while `Scheme.IsLegal` bounds no offset beyond `Scheme.IsCoded` (partly
-   corrected: the range `{-∞} ∪ ω²` of the rows is now printed); (5) the caps of bountiful rows are
-   ordinals only, so the bottom cap is missing and the caps coincide with the cutoffs of receiving;
-   (6) legal templates are not required to be finite, and the invariance of legality under renaming
-   and isomorphism is not stated (partly corrected: renaming carries the label, and the templates of
-   the system are finite); (7) truncation is required at every countable stage, successors included
-   (the closure clause of the template system, and the reductions of Definitions 4.16 and 4.21),
-   while stage reduction here is defined at stages that are zero or limits and needs that hypothesis
-   (the counterexample in `Stage/Examples`, still private there, to be made public).
+   Definition 4.29; the template system, Lemma 4.30; the construction, Theorem 4.31.  The reading
+   of a template's rows is settled as the fixed one, and these rows are to be compared again with
+   that draft: row 1 with Definition 4.17, rows 9 and 10 with Definitions 4.5 and 4.10, and row 25
+   with Definitions 4.16 and 4.21.  The range clause of Definition 4.4 is to be identified with
+   `Scheme.IsCoded`.  To record, each present in that draft unless marked, six corrections and one
+   discrepancy: (1) the conditions of a legal template do not require the label to be lawful for
+   the rows; (2) the printed visibility map drops the block `ω·α` (the two-parameter map is
+   `Label.visibilityReplace`); (3) the shifter of `⇒` is not required to be monotone; (4) a
+   discrepancy, not a correction: the offset clause bounds the offset by the grade, one below
+   `Label.IsStronglyCoded` (offset at most the grade plus one), while `Scheme.IsLegal` bounds no
+   offset beyond `Scheme.IsCoded`, and the two classes still differ with the offset bounded by the
+   grade plus one; whether this is resolved by a correction of the clause or by a proof that the
+   strongly coded class suffices is not decided here (the range `{-∞} ∪ ω²` of the rows is now
+   printed); (5) the caps of bountiful rows are ordinals only, so the bottom cap is missing and the
+   caps coincide with the cutoffs of receiving; (6) legal templates are not required to be finite,
+   and the invariance of legality under renaming and isomorphism is not stated (partly corrected:
+   renaming carries the label, and the templates of the system are finite); (7) truncation is
+   required at every countable stage, successors included (the closure clause of the template
+   system, and the reductions of Definitions 4.16 and 4.21), while stage reduction here is defined
+   at stages that are zero or limits and needs that hypothesis (the counterexample in
+   `Stage/Examples`, still private there, to be made public).
 2. *The identification of templates with stage types* (a row to be added with it).  A stage type
    gives a template with lawful label; a template on `Fin n`, with cells `Fin card`, positive
    grades, a well-formed plan, and a label lawful at a stage, gives a stage type; both round trips
