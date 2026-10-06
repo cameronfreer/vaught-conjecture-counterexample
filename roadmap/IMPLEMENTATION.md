@@ -2322,8 +2322,17 @@ Each checkpoint needs both its abstract API and a concrete application:
    `Continuation.StableRecoveryTwin.exists_isStableRecoveryScheme_twinDonors`,
    `Continuation/StableRecoveryTwin` and `Continuation/StableRecoveryTwinScheme`; no scheme serves
    both twin donors,
-   `Continuation.StableRecoveryTwin.not_isStableRecoveryScheme_twinDonor₁_and_twinDonor₂`; the
-   finite statement at every input is still to be proved; `README.md`, Layer 4, status, output 3). Step 7 is
+   `Continuation.StableRecoveryTwin.not_isStableRecoveryScheme_twinDonor₁_and_twinDonor₂`; and at
+   four further tests, each positive: a proper cap and lower blocks,
+   `Continuation.StableRecoveryTwinFamily.exists_isStableRecoveryScheme_twinFamily`,
+   `Continuation/StableRecoveryTwinFamily`; a new cell labelled `⊤`,
+   `Continuation.StableRecoveryTopCell.exists_isStableRecoveryScheme_topCell`,
+   `Continuation/StableRecoveryTopCell`; an interior cap, where every scheme has two graded faces
+   of grade `N` containing the cap and the new point,
+   `StageType.IsStableRecoveryScheme.exists_face_ne_univ`, with coherent readings at both,
+   `Continuation.StableRecoveryInterior.exists_isStableRecoveryScheme_interiorCap`,
+   `Continuation/StableRecoveryInterior` and `Continuation/StableRecoveryInteriorScheme`; no second
+   calibration is refuted; the finite statement at every input is still to be proved; `README.md`, Layer 4, status, output 3). Step 7 is
    compiled conditionally (`README.md`, the section on the top-free witnesses): the loss at `η`
    under uniqueness at `λ_η` (`nonempty_loss_of_topFreeWitness`), and per block under
    `StageType.HasApexCoatomExtensions` at `λ_η` and uniqueness of the model expansions at `λ_η`

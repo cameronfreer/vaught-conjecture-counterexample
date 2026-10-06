@@ -87,7 +87,15 @@ for such a scheme to read.  Such a scheme exists at one input, at every `ξ`
 of the marker and cap calibration, with one context of three points for both
 (`Continuation.StableRecoveryTwin.exists_isStableRecoveryScheme_twinDonors`, in
 `VaughtConjecture.Continuation.StableRecoveryTwin`); its existence at every input with the
-calibration is not proved.
+calibration is not proved.  Further inputs with a scheme
+(`VaughtConjecture.Continuation.StableRecoveryTwinFamily`,
+`VaughtConjecture.Continuation.StableRecoveryTopCell`,
+`VaughtConjecture.Continuation.StableRecoveryInterior`): a cap labelled a proper ordinal, down to
+`λ_ξ + N` with `γ = λ_ξ + N - 1`; reference cells and donor labels in a block below `λ_ξ`; a donor
+with a new cell labelled the formal top, recovered as the proper value of the cap; and an interior
+cap, where every scheme has two graded faces of grade `N` containing the cap and the new point,
+with coherent readings at both.  The lower bound `λ_ξ + N` on the cap is the order law for a cell
+labelled at least `λ_ξ` (`StageType.coe_add_grade_le_label`).
 
 ## Placement
 

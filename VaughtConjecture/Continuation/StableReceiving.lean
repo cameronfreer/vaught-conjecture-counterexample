@@ -242,7 +242,11 @@ graded cap calibration (`StageType.GradedCapCalibration`, acquisition proved) it
 conclusion holds at one input
 (`Continuation.StableRecoveryReading.exists_isStableRecoveryScheme_gradedCap`) and at the twin
 donors of the refutation above, with a context of three points
-(`Continuation.StableRecoveryTwin.exists_isStableRecoveryScheme_twinDonors`). -/
+(`Continuation.StableRecoveryTwin.exists_isStableRecoveryScheme_twinDonors`), with a proper cap and
+in lower blocks (`Continuation.StableRecoveryTwinFamily.exists_isStableRecoveryScheme_twinFamily`),
+with a new cell labelled the formal top
+(`Continuation.StableRecoveryTopCell.exists_isStableRecoveryScheme_topCell`), and with an interior
+cap (`Continuation.StableRecoveryInterior.exists_isStableRecoveryScheme_interiorCap`). -/
 def HasStableRecoverySchemes
     (C : ∀ ⦃m k : ℕ⦄, StageType.{u} (blockStage (ξ + 1)) m → (Fin k ↪ Fin m) →
       StageType.{u} (blockStage (ξ + 1)) (k + 1) → Ordinal.{u} → Prop) : Prop :=

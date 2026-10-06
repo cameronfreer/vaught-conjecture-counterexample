@@ -67,6 +67,11 @@ stays open, and (R4) with it.  The inputs are still special:
   at least four points (informal; not compiled);
 * the references are in the block `λ_ξ` only (no reference cell below `λ_ξ`).
 
+The cap below the formal top and the lower blocks are tested in
+`VaughtConjecture.Continuation.StableRecoveryTwinFamily`, a new cell labelled the formal top in
+`VaughtConjecture.Continuation.StableRecoveryTopCell`, and several graded faces of grade `N`
+containing the cap and the new cells in `VaughtConjecture.Continuation.StableRecoveryInterior`.
+
 ## Placement
 
 This file belongs to Layer 4 of `roadmap/README.md`.
