@@ -1262,9 +1262,21 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     and `Label.AtStage.mono` for the law with `min` (`Label/Basic`).  The bound for one arity is
     `StageProjection.exists_uniform_fixing_stage` (available at the pin `e460cb6`, signatures
     checked; "Dependency pins").  Milestone 3; the conditional statement uses no termination.
-32. Prospective, with the negative special case (the constant family of the all-undefined
-    assignment; not compiled).  Strictness for models is to come from `COMPANIONS.md`, "Fixing
-    ranks of finite charts" (the supremum at block `η` is `η`), still to be proved.  Milestone 4.
+32. Its strictness half is compiled in this repository (theorem named), with no hypothesis
+    beyond modelhood: a model at `λ_η` is fixed by projection at the index `ξ` exactly when
+    `η ≤ ξ` (`Realization.IsModel.isFixedAt_blockStage_iff`, from
+    `Realization.IsModel.not_isFixedAt`, the uniformity clause at `γ = λ_ξ`;
+    `Realization/Strictness`), so the least fixing index of a model's whole assignment is its index
+    (`Realization.IsModel.isLeast_isFixedAt_blockStage`) and every family of models is strict
+    (`Realization.isStrict_of_forall_isModel`, `Realization.isStrict_isExpansionOf`).  The bound
+    of serving indices under strictness is compiled for families of realizations at the block
+    stages on one carrier (`Realization.IsStrict.le_of_forall_isFixedAt`,
+    `Realization.le_of_forall_isModel_of_forall_isFixedAt`).  The negative special case (the
+    constant family of the all-undefined assignment) is compiled
+    (`Realization.StrictnessExamples.not_isStrict_undefinedFamily`).  Strictness does not use
+    `COMPANIONS.md`, "Fixing ranks of finite charts".  The row stays S: its application to the
+    uniform fixing stage of the construction (milestone 3) and the identification of these
+    statements with those of [AFK26] are still to be proved.  Milestone 4.
     The row is required for item 5, whether or not the main theorem uses a bound of serving
     indices: the completion criterion of item 5 asks every row of the item to be P or C, so
     matching the manuscript needs milestone 4.
@@ -1281,7 +1293,8 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
 34. Prospective.  1 ⇒ 2 is the uniform fixing stage of row 31 for the family of model
     presentations, through `StageProjection.exists_uniform_fixing_stage` (available at the pin
     `e460cb6`, signatures checked; "Dependency pins"), and is the only step using a countable
-    carrier; 2 ⇔ 4 uses strictness for models (row 32); 4 ⇒ 5 uses bounded-stage attainment, whose
+    carrier; 2 ⇔ 4 uses strictness for models (row 32; compiled,
+    `Realization.IsModel.isFixedAt_blockStage_iff`); 4 ⇒ 5 uses bounded-stage attainment, whose
     ingredients are compiled in this repository (theorem named) in the raw base encoding:
     `Realization.IsModel.reduce` (`Realization/Model`), `ModelExpansion.nonempty_of_coherent`
     (`Realization/Limit`), and `ModelExpansion.nonempty_of_forall_lt` (`Expansion/Uniqueness`,
@@ -1305,10 +1318,10 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     terminality of the reconstructed top-free realization, `reduce_ne_reconstruct`
     (`ClassicalLimit/Modelhood`), compiled in this repository (theorem named), concerns the
     realization, not its base reduct.
-36. Prospective.  It rests on row 32, on the inequality step of row 35 (so on the injectivity of
-    model reduction at `ρ` only), and on `COMPANIONS.md`, "Fixing ranks are zero or successors"
-    and "Limit heights are unattained suprema", each still to be proved.  No declaration of this
-    repository names a fixing rank (row 30).
+36. Prospective.  It rests on row 32 (its strictness half compiled), on the inequality step of
+    row 35 (so on the injectivity of model reduction at `ρ` only), and on `COMPANIONS.md`,
+    "Fixing ranks are zero or successors" and "Limit heights are unattained suprema", each still
+    to be proved.  No declaration of this repository names a fixing rank (row 30).
 37. Prospective: no declaration of this repository states density at an observation (row 25) or
     its witness-bounded form.  The fixation of the returned invariant rests on
     `Realization.reduce_eval` and `Realization.isSome_reduce_eval` (`Realization/Transport`),
@@ -1412,8 +1425,8 @@ source named.
 
 **Completion criteria of the uniform fixing bounds, milestone by milestone** (`README.md`,
 "Manuscript correspondence (required)", item 5, "Uniform fixing bounds from positive niceness";
-rows 29–32, each still to be proved).  Each milestone is complete on its own criterion, and none
-is complete because a later one is.
+rows 29–32, each still to be proved; the strictness half of row 32 is compiled).  Each milestone
+is complete on its own criterion, and none is complete because a later one is.
 
 1. *Closedness is supportedness:* the combined statement, that in an exactly consistent covering
    realization an injective tuple is supported exactly when its set of points is closed, compiled
@@ -1434,7 +1447,11 @@ is complete because a later one is.
    of serving indices): strictness for the models of the construction proved as a separate
    theorem, the bound of serving indices derived from it, and the negative special case (the
    constant family of the all-undefined assignment, fixed at `0` and serving at every index)
-   compiled as an example.
+   compiled as an example.  Compiled in this repository (theorem named):
+   `Realization.IsModel.isFixedAt_blockStage_iff`, `Realization.IsStrict.le_of_forall_isFixedAt`
+   and `Realization.le_of_forall_isModel_of_forall_isFixedAt` (`Realization/Strictness`), and
+   `Realization.StrictnessExamples.not_isStrict_undefinedFamily`; the milestone is complete once
+   the bound is applied to the uniform fixing stage of 3.
 5. *The separate statements:* the existence and coverage of maximal presentations, the terminal
    comparison, and noncollapse each proved by its own argument, with its dependencies stated.  The
    bounds of 2–4 are not sufficient for any of them alone; they are cited only with the additional
@@ -1497,8 +1514,8 @@ hypothesis of each statement of 2–4 that uses it, until it is proved as a theo
    has fixing rank `ρ`; and no identification of `ρ` with a Scott rank.  Its named dependencies:
    the inequality step of literal uniqueness (3), that is, terminal collision, hence the
    injectivity of model reduction at `ρ` only, as an explicit hypothesis (the equality step, at
-   `η`, is not used); strictness for models (row 32); and `COMPANIONS.md`, "Fixing ranks are zero
-   or successors", for the limit case.
+   `η`, is not used); strictness for models (row 32; compiled); and `COMPANIONS.md`, "Fixing
+   ranks are zero or successors", for the limit case.
 
 **Completion criteria of witness-bounded density, terminal refinement, unique reconstruction,
 the Scott route, and the stopping proofs** (`README.md`, "Manuscript correspondence
