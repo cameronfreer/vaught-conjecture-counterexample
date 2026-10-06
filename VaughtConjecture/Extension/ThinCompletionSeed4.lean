@@ -33,7 +33,7 @@ cells of grade `1` of `C` at `1`, those of `D` at `ω + 1`, the live cells of gr
 `ThinCompletion.IsThinLawfulBelow A_C A_D F ⊥`: `A_C`, `A_D` self-visible at `1`, `F` at `2`,
 `A_C ≤ A_D`, and no collision (`isLawfulBelow_layerLabel4`, `exists_of_isLawfulBelow_three4`).
 
-**The step below the top grade** (`orderedLayerStepBelowTop_seed4`): the rows are coded, each row
+**The step below the top grade** (`orderedLayerStepBelowTop_of`): the rows are coded, each row
 at `(univ, k)`, `k ≤ 3`, is the labelling of the parameters of `isThinLawfulBelow_row_one`,
 `isThinLawfulBelow_row_two`, or `⊥`, and the capped lifts from `(C, k)` and `(D, k)` into
 `(univ, k)` reduce to lifts at the grade `3` (`OrderedLayer.cappedLift_of_lift_three`), which are
@@ -774,7 +774,7 @@ include hIL hIR in
 /-- **The ordered-layer step below the top grade for the seeds of `T4`**: with the layer rows
 `layerRows4`, the rows at `(univ, k)`, `k ≤ 3`, are coded and consistent, and the rows lift capped
 from `(C, k)` and `(D, k)` into `(univ, k)`. -/
-theorem orderedLayerStepBelowTop_seed4 : I.OrderedLayerStepBelowTop layerRows4.{u} where
+theorem orderedLayerStepBelowTop_of : I.OrderedLayerStepBelowTop layerRows4.{u} where
   row_lt k hk1 hk3 z _ := by
     obtain rfl | rfl | rfl : k = 1 ∨ k = 2 ∨ k = 3 := by omega
     · exact thinRow_lt 1 _
@@ -797,8 +797,8 @@ theorem orderedLayerStepBelowTop_seed4 : I.OrderedLayerStepBelowTop layerRows4.{
 end Coatoms
 
 /-- **The ordered-layer step below the top grade for `seed4`.** -/
-theorem orderedLayerStepBelowTop_seed4' (α : Ordinal.{u}) :
+theorem orderedLayerStepBelowTop_seed4 (α : Ordinal.{u}) :
     (TwoFaceLiftCounterexample.seed4 α).OrderedLayerStepBelowTop layerRows4.{u} :=
-  orderedLayerStepBelowTop_seed4 rfl rfl
+  orderedLayerStepBelowTop_of rfl rfl
 
 end VaughtConjecture.OrderedLayer.Seed4
