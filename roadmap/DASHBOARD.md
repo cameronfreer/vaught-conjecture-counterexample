@@ -238,6 +238,23 @@ counted as compiled.
    refuted.  The two vacuous conditional theorems are kept; retiring them is a separate change.  No
    extension property for that design is defined.  The coupled property restricted to carrying
    contexts is not stated (prospective).
+   **One cap and one gate per block** (`Realization/PerBlockCarrying`, a further redesign).  A cap
+   reads anchors of one block only, so the design takes one cap per block of the donor's labels,
+   and one gate of each cap's grade (the gate statements need cap and gate of equal grades; argued).
+   Compiled: every per-block coupled gated extension forces the per-block condition
+   `StageType.CarriesBottomsPerBlock`
+   (`StageType.PerBlockCoupledGatedExtension.carriesBottomsPerBlock`), which holds when each cap
+   reads its block's anchors in its own block
+   (`StageType.carriesBottomsPerBlock_of_readsInOwnBlock`); at the refuting input of the coupled
+   property (one block) it fails for every family of caps above `1` reading both donor labels
+   (`CoupledGatedExtensionCounterexample.not_carriesBottomsPerBlock`), so the obstruction survives
+   this redesign too.  Compiled conditionally: every model acquires per-block contexts
+   (`Realization.AcquiresPerBlockContexts`) given the hypothesis on schemes
+   `StageType.HasBlockTightSaturations` (`HasTightSaturations` one block at a time;
+   `Realization.IsModel.acquiresPerBlockContexts_of_hasBlockTightSaturations`).  That hypothesis is
+   undecided: the same-block lemma does not bite, and whether such legal schemes exist is a
+   completion problem of the kind of (R6).  Per-block acquisition is neither proved nor refuted;
+   the restricted per-block extension property is not stated (prospective).
 4. **Forcing donors** (still to be proved): the finite construction behind `ForcingDonors`.
 5. **Output 3, part D, and (R4)** (still to be proved): (R4) over positive roots, the empty root by
    the coatom extension over the empty face, and the coatom extension properties at `λ_{ξ+1}`;

@@ -2219,7 +2219,50 @@ Each checkpoint needs both its abstract API and a concrete application:
    neither proved nor refuted.  The two vacuous conditional theorems are kept; retiring them is a
    separate change.  The extension property restricted to carrying contexts is not stated
    (prospective), in either design; the condition is necessary for the property, not shown
-   sufficient.  The conditional theorem is
+   sufficient.  One cap and one gate per block (`Realization/PerBlockCarrying`), a further
+   redesign of the private context and of the display: the same-block lemma allows a cap to read
+   anchors of one block only, so the design takes one cap for each block of the donor's labels,
+   and, since the statements on rows that a gate uses ask for a cap and a gate of equal grades
+   (availability compares cells of equal grade), one gate of the cap's grade for each cap (argued,
+   not compiled).  Stated: `StageType.PerBlockCoupledGatedExtension` (a legal display with literal
+   faces and `k` gates, each with its cap, its twin–gate coupling and its gate readings of a set of
+   donor labels; only the clauses the necessity lemma uses), the per-block bottom transport
+   condition `StageType.CarriesBottomsPerBlock` (one lawful donor labelling for each lawful private
+   labelling, with the two clauses of `StageType.CarriesBottoms` at every gate whose cap the private
+   labelling keeps; it is `CarriesBottoms` for one cap of full scope and full grade reading every
+   label, `StageType.carriesBottomsPerBlock_one_iff`), and `Realization.HasCarryingPerBlockContext`,
+   `Realization.AcquiresPerBlockContexts` (caps of grade above the root's arity plus one, labelled
+   above the floor, each reading donor labels of one block below its label, every new donor label
+   read by some cap, anchoring at each cap's grade, and the per-block condition).
+   Compiled in this repository (theorem named): necessity
+   (`StageType.PerBlockCoupledGatedExtension.carriesBottomsPerBlock`,
+   `Realization.hasCarryingPerBlockContext_of_perBlockCoupledGatedExtension`); the row condition,
+   sufficient and not necessary (`StageType.carriesBottomsPerBlock_of_readsInOwnBlock`: each cap
+   reads in its own block an anchor of every donor label below it that it reads); and at the
+   refuting input of the coupled property, whose donor has its proper labels in one block, the
+   per-block condition fails for every family of caps above `1` reading both donor labels
+   (`CoupledGatedExtensionCounterexample.not_carriesBottomsPerBlock`; for every family of caps of
+   grade above `0 + 1`,
+   `CoupledGatedExtensionCounterexample.not_carriesBottomsPerBlock_of_one_lt_grade`; no per-block
+   coupled gated extension there,
+   `CoupledGatedExtensionCounterexample.not_perBlockCoupledGatedExtension`): the identified
+   obstruction survives this redesign too.  Compiled conditionally: every model acquires per-block
+   contexts given the hypothesis on schemes `StageType.HasBlockTightSaturations α`
+   (`Realization.IsModel.acquiresPerBlockContexts_of_hasBlockTightSaturations`, through
+   `Realization.IsModel.exists_extend_blockCaps`: per block, a dominance step, then saturation and
+   availability from the face give a cap one grade below full labelled above the floor whose row
+   reads the block's reference cell in its own block; later steps keep it as a cell of a face,
+   `StageType.exists_readsInOwnBlock_of_restrictFace`).  The hypothesis is `HasTightSaturations`
+   restricted to one block at a time (`StageType.HasTightSaturations.hasBlockTightSaturations`);
+   the refutation of the latter above `ω` reads two blocks at one cell and does not apply.
+   Undecided: whether `HasBlockTightSaturations` holds (legal one-point extension schemes with
+   prescribed rows, a completion problem of the kind of (R6)); argued, not compiled, that a cap
+   labelled beyond its block then reads itself at a finite part above its grade, which the
+   library's coding of rows allows, and that the clauses of a model give a prescribed row and a
+   lower bound on a label at one cell only in this way.  So `Realization.AcquiresPerBlockContexts`
+   is neither proved nor refuted; the per-block extension property restricted to per-block
+   carrying contexts, which excludes the refuting input, is not stated (prospective), and agreement
+   below the cutoff would have to be re-derived gate by gate for it.  The conditional theorem is
    vacuous at every stage above `1`; it receives one permitted cutoff at a time and is not exact
    projected receiving. Projected-donor lifting is not part of checkpoint 4 (`README.md`, Layer 3,
    3.3, the density boundary). This status concerns (R1) only: (R2), (R3), and the fidelity theorem
@@ -2852,6 +2895,13 @@ witnesses).**
   `StageType.CarriesBottoms`, its sufficient conditions and the theorems that force it, to
   `Extension/GatedExtension` or a module of their own, imported by `Realization/CarryingContext`.
 - `Realization/CarryingContext`: Layer 3, the acquisition step of a repair of (R1), in place.
+- `Realization/PerBlockCarrying`: Layer 3, the per-block redesign, in place for the statements on
+  realizations.  `StageType.PerBlockCoupledGatedExtension` and its necessity lemma go with
+  `StageType.CoupledGatedExtension` (`Extension/GatedExtension`); `StageType.CarriesBottomsPerBlock`
+  and its sufficient condition with `StageType.CarriesBottoms`;
+  `StageType.exists_readsInOwnBlock_of_restrictFace` and `StageType.HasBlockTightSaturations` with
+  `StageType.ReadsInOwnBlock`; the three statements on the refuting input to the counterexample
+  module.
 - `Realization/TightCap`: Layer 3, where that acquisition stands, in place for the statements on
   realizations (including `Realization.IsModel.not_hasTightCaps` and
   `Realization.IsModel.not_hasTightSaturations`).  Its statements on stage types
@@ -2983,7 +3033,10 @@ witnesses).**
   carrying contexts with a cap one grade below full (a redesign), is false at every stage above
   `ω` at which a model exists (`Realization.IsModel.not_hasTightSaturations`) and undecided at
   stages ≤ `ω`, while `Realization.HasCarryingSubfullContext` itself is neither proved nor
-  refuted; (R2), (R3), (R4); and output 3, the proof of
+  refuted; per-block contexts (`Realization.AcquiresPerBlockContexts`, one cap and one gate per
+  block, a redesign) are acquired conditional on `StageType.HasBlockTightSaturations`, which is
+  undecided, and are neither proved nor refuted for all models; (R2), (R3), (R4); and output 3,
+  the proof of
   `ContinuationCriterion`.
 - The graded back-and-forth theorem (`README.md`, Layer 0), formerly listed here,
   is retired, not moved: both of its intended applications, approximate comparison of full
