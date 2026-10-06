@@ -48,9 +48,11 @@ Notes on the rows, each with its marker:
   `2FL(j) ∨ Seed.DeadAt j` (`CaseSplitCounterexample.not_forall_twoFaceLift_or_deadAt`); and
   `2FL∃(2)` for the legal seed `TwoFaceLiftExistsCounterexample.seedL`
   (`TwoFaceLiftExistsCounterexample.not_twoFaceLiftExists_two_seedL`, hence
-  `TwoFaceLiftExistsCounterexample.not_forall_twoFaceLiftExists`).  Still to be proved, not
-  refuted: `StageType.HasCoatomExtensions`, `StageType.HasApexCoatomExtensions`.  Prospective: a
-  completion of `seedL` outside the tower.
+  `TwoFaceLiftExistsCounterexample.not_forall_twoFaceLiftExists`).  Compiled for `seedL` outside
+  the tower: its thin completion (`ThinCompletion.nonempty_completionBelowFullGrade_seedL`) and the
+  coatom extension of `TL` and `T5` with apex at every stage
+  (`ThinCompletionExamples.exists_coatomExtension_seedL`).  Still to be proved, not refuted:
+  `StageType.HasCoatomExtensions`, `StageType.HasApexCoatomExtensions`.
 - *Layer 3, receiving.*  Compiled: finite-extension receiving from finite-cut receiving, for an
   exactly consistent realization at a stage that is zero or a limit
   (`Realization.HasFiniteCutReceiving.hasFiniteExtensionReceiving`); gate recovery
@@ -69,7 +71,9 @@ Notes on the rows, each with its marker:
   construction as data; (R2), (R3), (R4).
 - *Layer 4.*  Compiled: normalization, conditional on finite-extension receiving and forcing donors
   (`Realization.label_eq_stableLabel`); the structural candidate (`Realization.stableCandidate`),
-  stably lawful for every model (`Realization.IsModel.isStablyLawful`); output 3 and the
+  stably lawful for every model at a block stage (`Realization.IsModel.isStablyLawful`), and more
+  generally for every exactly consistent covering realization with legal types at a block stage
+  (`Realization.isStablyLawful_of_hasLegalTypes`); output 3 and the
   continuation criterion, conditional on (R4) and the coface instances at the next block
   (`ContinuationCriterion.of_stableCappedReceiving`); cover-hollowness and stable-label fixedness
   (`Realization.isCoverHollow_iff_forall_stableLabel_eq_top`); the exact-age comparison
@@ -154,16 +158,22 @@ named hypothesis.
    (`CaseSplitCounterexample.not_forall_twoFaceLift_or_deadAt`, refuted), while the seed where it
    fails has a completion (`CaseSplitCounterexample.nonempty_completionBelowFullGrade_seed5`).  No
    theorem is conditioned on the universal form of `2FL∃(j)`.  For `seedL` the identified
-   obstruction survives the redesigns examined (argued, not formalized); a completion of `seedL`
-   outside the tower is prospective.  A completion below the full grade for every seed of two legal
-   coatom types gives `StageType.HasApexCoatomExtensions` at the stages that are zero or a limit
+   obstruction survives the redesigns examined (argued, not formalized), and `seedL` has a
+   completion below the full grade outside the tower, the thin completion
+   (`ThinCompletion.nonempty_completionBelowFullGrade_seedL`, compiled in this repository (theorem
+   named)), which with the apex added gives the coatom extension of `TL` and `T5` with apex at
+   every stage (`ThinCompletionExamples.exists_coatomExtension_seedL`, compiled in this repository
+   (theorem named)).  A completion below the full grade for every seed of two legal coatom types
+   gives `StageType.HasApexCoatomExtensions` at the stages that are zero or a limit
    (`StageType.HasApexCoatomExtensions.of_completionBelowFullGrade`, compiled in this repository
    (theorem named)), hence the coatom extension hypotheses of the cap-to-model theorem, the top-free
    witnesses, and output 3.
 2. **Stable availability at twins** (compiled): from legal types
-   (`Realization.availability_stableSection_of_hasLegalTypes`), so every model is stably lawful
-   (`Realization.IsModel.isStablyLawful`).  Refuted hypotheses on single types, negative special
-   cases:
+   (`Realization.availability_stableSection_of_hasLegalTypes`), so every model at a block stage is
+   stably lawful (`Realization.IsModel.isStablyLawful`), and so is every exactly consistent
+   covering realization with legal types at a block stage
+   (`Realization.isStablyLawful_of_hasLegalTypes`).  Refuted hypotheses on single types, negative
+   special cases:
    `Continuation.CandidateCounterexamples.not_synchronizingCofaces_blockStage` (with two variants)
    and `Continuation.CandidateCounterexamples.not_twinOrdering_blockStage`.
 3. **4b-ii** (open): the gated construction as data, that is,

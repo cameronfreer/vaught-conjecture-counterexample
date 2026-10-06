@@ -340,8 +340,9 @@ Consistency and covering give the order law and locality of the stable labelling
 no type has twins, two cells labelled `⊤` at one graded index
 (`Realization.isStablyLawful_of_injOn_gradedIndex`); with legal types, availability holds also at
 twins (`Realization.availability_stableSection_of_hasLegalTypes`, through
-`StageType.exists_forcesThreshold_twin_face`), so every model is stably lawful
-(`Realization.isStablyLawful_of_hasLegalTypes`, `Realization.IsModel.isStablyLawful`); these are
+`StageType.exists_forcesThreshold_twin_face`), so every exactly consistent covering realization
+with legal types at a block stage is stably lawful (`Realization.isStablyLawful_of_hasLegalTypes`),
+and in particular every model at a block stage (`Realization.IsModel.isStablyLawful`); these are
 compiled in this repository (theorem named). Two hypotheses on single stage types that would
 give availability at twins through every lift are refuted (negative special cases): synchronizing
 cofaces, in three forms
@@ -2292,10 +2293,10 @@ Each checkpoint needs both its abstract API and a concrete application:
    (checkpoints 2.6–2.7), without (R1). The structural candidate (output 1) is compiled
    (`Realization.stableCandidate`, `Continuation/Candidate`), with exact consistency, covering, the
    order law, and locality from exact consistency and covering, and availability from legal types,
-   also at twins (two cells labelled `⊤` at one graded index), so that every model is stably lawful
-   (`Realization.IsModel.isStablyLawful`); two hypotheses on single types are refuted (section 4
-   above). Output 3 (stated as the hypothesis `ContinuationCriterion`) is compiled conditionally on
-   (R4) and the coface instances at the next block
+   also at twins (two cells labelled `⊤` at one graded index), so that every model at a block stage
+   is stably lawful (`Realization.IsModel.isStablyLawful`); two hypotheses on single types are
+   refuted (section 4 above). Output 3 (stated as the hypothesis `ContinuationCriterion`) is
+   compiled conditionally on (R4) and the coface instances at the next block
    (`ContinuationCriterion.of_stableCappedReceiving`); (R4) and the coatom extension property with
    apex at `λ_{ξ+1}` are still to be proved. Step 7 is
    compiled conditionally (`README.md`, the section on the top-free witnesses): the loss at `η`
@@ -2616,9 +2617,18 @@ ones split):
   reaches its cap reads the cells `({3}, 1)` and `({4}, 1)` at one value) survives the redesigns
   examined (argued, not formalized; the module docstring of
   `Extension/TwoFaceLiftExistsCounterexample`).
-  Open: the completion below the full grade at `m ≥ 3` for every seed, in particular for `seedL`,
-  where the tower fails. A completion of `seedL` outside the tower is prospective, still to be
-  merged.
+  Compiled in this repository (theorem named), outside the tower: `seedL` has a completion below
+  the full grade (`ThinCompletion.nonempty_completionBelowFullGrade_seedL`,
+  `Extension/ThinCompletion`), the **thin completion**, the amalgam with one new cell at each
+  graded face `(univ, k)` of full scope below the full grade, labelled `⊤` at the cells of grade
+  `4` and `⊥` elsewhere. The identified obstruction does not apply to it: its only cell at
+  `(univ, 2)` reads `({3}, 1)` strictly below `({4}, 1)`
+  (`ThinCompletionExamples.row_newCell_two_lt`). With the apex added it gives, at every stage, a
+  legal stage type on five points whose faces along the two coatoms are `TL` and `T5`, with a cell
+  of full scope and full grade carrying the largest label
+  (`ThinCompletionExamples.exists_coatomExtension_seedL`, `Extension/ThinCompletionExamples`); so
+  `seedL` is not a counterexample to `StageType.HasApexCoatomExtensions` at `m = 3`.
+  Open: the completion below the full grade at `m ≥ 3` for every seed.
 
 The completion constructs lawful finite extensions and nothing more.  It imports only Layers
 0–1, the stage types, the amalgam, and the section theorem of `README.md`, Layer 3, 3.1 (with
@@ -3028,8 +3038,6 @@ witnesses).**
   `K + 1` at a cell labelled the formal top (`StageType.not_forcesThreshold_of_grade_le`,
   `Stage/Threshold`).  The bound itself waits for `StageType.topGrade` (`Continuation/Terminal`) to
   move to `Stage/`.
-- A completion below the full grade of `TwoFaceLiftExistsCounterexample.seedL`, outside the tower
-  (checkpoint 2.7), prospective.
 - The ordinary construction of (R1) as data (4b-ii), the proof of
   `StageType.HasCoupledGatedPinnedExtensions` (open; its first form
   `StageType.HasGatedPinnedExtensions` is refuted); (R2), (R3), (R4); and output 3, the proof of
