@@ -2659,11 +2659,9 @@ ones split):
   `CrossedCouplingCounterexample.seedHG` of the types `TH`, `TG` coupled crosswise to two parameters
   of the common face (`Extension/CrossedCouplingTypes`, `Extension/CrossedCouplingCounterexample`;
   `CrossedCouplingCounterexample.exists_ne_seedHG`: every completion has two cells at `(univ, 1)`).
-  No theorem is stated under the refuted universal form: the theorem
-  `Seed.nonempty_completionBelowFullGrade_of_hasOrderedLayerStep` was deleted because its hypothesis
-  is refuted at every instance. Open: whether `seedHG` has a completion below the full grade
-  (prospective: several new cells per graded face of full scope, one per orientation), and the
-  completion at `m ≥ 3` for every seed.
+  No theorem is stated under the refuted universal form. Open: whether `seedHG` has a completion
+  below the full grade (prospective: several new cells per graded face of full scope, one per
+  orientation), and the completion at `m ≥ 3` for every seed.
 
 The completion constructs lawful finite extensions and nothing more.  It imports only Layers
 0–1, the stage types, the amalgam, and the section theorem of `README.md`, Layer 3, 3.1 (with

@@ -37,7 +37,7 @@ cells through the point `3` to `H` (`H ≤ A_C`) and leaves it free of `G`; `TG`
 ordered-layer step, for any layer rows (`not_hasOrderedLayerStep_seedHG`, from
 `Seed.not_hasOrderedLayerStep_of_forcesTop`).  So the ordered-layer step is not a property of
 every legal seed on five points.  Whether `seedHG` has a completion below the full grade, with
-several new cells at `(univ, 1)`, is not settled here.
+several new cells at `(univ, 1)`, is open.
 
 ## Placement
 
