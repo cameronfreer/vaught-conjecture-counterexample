@@ -3,7 +3,7 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
-import VaughtConjecture.Correspondence.Bountiful
+import VaughtConjecture.Correspondence.Legal
 import VaughtConjecture.Extension.CoatomAmalgam
 
 /-!
@@ -20,10 +20,11 @@ A finite set `A` of size `n ≥ 2`, a plan `P` on `A`, distinct `a, b ∈ A` wit
 `E^a`, `E^b` are their semantics.  Here `A = Fin (m + 2)`, `a` is the last point and `b = m`;
 `D^a` and `D^b` are schemes `Sa` and `Sb` on `m + 1` points placed along `Coatom.left m` and
 `Coatom.right m`, and the coincidence of the restrictions is the hypothesis
-`h : Sa.comap (face m) = Sb.comap (face m)`.  The cells of a scheme are positions `Fin card`, which
-play the role of the codes of the elements of a domain ([Kni26, §2.6]; row 7): enumerating each
-domain in the order of its codes, the printed equality of the two restrictions, as sets of coded
-elements, is the literal equality `h` of the restricted schemes, cell order included.  The
+`h : Sa.comap (face m) = Sb.comap (face m)`.  The cells of a scheme are positions `Fin card`;
+the printed codes are forgotten under the corrected convention of row 7.  The comparison is
+made on these numbered schemes, with the common-face numbering preserved: coincidence of their
+restrictions is the literal equality `h`, cell order included, not an assertion that the schemes
+recover the printed codes.  The
 identification of a cell of the common face of `Sa` with the same cell of `Sb` is
 `Coatom.overlap h`.  Neither completeness nor any other law of `Sa` and `Sb` is assumed by the
 identification below, which therefore holds in particular under them.
@@ -370,18 +371,6 @@ theorem atStage_amalgam_row {θ : Ordinal.{u}} (ha : ∀ s t, AtStage θ (Sa.row
   rw [amalgam_row]
   exact key _ _
 
-/-- Consistency in the printed form [Kni26, Definition 2.5.12] is consistency, for a scheme whose
-cells have their graded indices in the graded plan, at a stage `θ` that is zero or a limit, for
-rows with values at stage `θ`. -/
-private theorem forall_printedRespects_iff_isConsistent {ι α : Type*} {D : CellScheme ι α}
-    {R : D.Rows.{u}} {θ : Ordinal.{u}} (hθ : Order.IsSuccPrelimit θ)
-    (hD : ∀ d, D.gradedIndex d ∈ D.gradedFaces) (hR : ∀ s t, AtStage θ (R.row s t)) :
-    (∀ s, D.gradedIndex s ∈ D.gradedFaces →
-      (R.comap (CellScheme.IsLowerEmbedding.subtypeVal_below D (D.gradedIndex s))).PrintedRespects
-        θ (R.row s)) ↔ R.IsConsistent :=
-  ⟨fun hc s ↦ (CellScheme.Rows.printedRespects_below_iff hθ hD hR (hR s)).mp (hc s (hD s)),
-    fun hc s _ ↦ (CellScheme.Rows.printedRespects_below_iff hθ hD hR (hR s)).mpr (hc s)⟩
-
 /-- **The rows of the amalgam are a consistent semantics** [Kni26, Lemma 4.3.2], in the printed
 form of [Kni26, Definition 2.5.12] (for every `⟨B, j⟩ ∈ P̂` and `Σ ∈ D_{B,j}`, `E(Σ)` respects the
 semantics `E_{⟨B,j⟩}`; in particular `E(Σ)` is orderly, as a semantics requires,
@@ -402,12 +391,12 @@ theorem printedRespects_row_amalgam {θ : Ordinal.{u}} (hθ : Order.IsSuccPrelim
     ((amalgam h).rows.comap (CellScheme.IsLowerEmbedding.subtypeVal_below
       (amalgam h).toCellScheme ((amalgam h).toCellScheme.gradedIndex s))).PrintedRespects θ
         ((amalgam h).rows.row s) :=
-  (forall_printedRespects_iff_isConsistent hθ
+  (CellScheme.Rows.printedConsistent_iff hθ
       (isWellFormed_amalgam h hSa hSb hf).isWellFormed.gradedIndex_mem
       (atStage_amalgam_row ha hb)).mpr
     (isConsistent_amalgam h
-      ((forall_printedRespects_iff_isConsistent hθ hSa.isWellFormed.gradedIndex_mem ha).mp hca)
-      ((forall_printedRespects_iff_isConsistent hθ hSb.isWellFormed.gradedIndex_mem hb).mp hcb))
+      ((CellScheme.Rows.printedConsistent_iff hθ hSa.isWellFormed.gradedIndex_mem ha).mp hca)
+      ((CellScheme.Rows.printedConsistent_iff hθ hSb.isWellFormed.gradedIndex_mem hb).mp hcb))
     s hs
 
 /-- **The rows of the amalgam are bountiful as printed at every stage** [Kni26, Lemma 4.3.2], in
@@ -436,22 +425,13 @@ variable {α : Ordinal.{u}} {ta tb : StageType.{u} α (m + 1)} {p : StageType.{u
   {hta : StageType.restrictFace (face m) ta = some p}
   {htb : StageType.restrictFace (face m) tb = some p}
 
-/-- Coded rows take their values among the printed labels `{-∞} ∪ ω₁ ∪ {∞}`. -/
-private theorem atStage_omega_one_of_isCoded {n : ℕ} {S : Scheme.{u} n}
-    (hS : S.IsCoded) (s : Fin S.card)
-    (t : S.toCellScheme.below (S.toCellScheme.gradedIndex s)) :
-    AtStage (Ordinal.omega 1) (S.rows.row s t) := by
-  refine Or.inl ((hS s t).trans (WithBot.coe_lt_coe.mpr (WithTop.coe_lt_coe.mpr ?_)))
-  rw [sq]
-  exact Ordinal.isPrincipal_mul_omega 1 Ordinal.omega0_lt_omega_one Ordinal.omega0_lt_omega_one
-
 /-- **The rows of the amalgam of two legal stage types are bountiful as printed at `ω₁`**
 [Kni26, Lemma 4.3.2], from the bountifulness of `ta` and `tb` in the sense of `IsBountiful`. -/
 theorem printedBountiful_omega_one_amalgamType (hla : ta.IsLegal) (hlb : tb.IsLegal) :
     (amalgamType hta htb).rows.PrintedBountiful (Ordinal.omega 1) :=
   (isBountiful_amalgamType hta htb hla hlb).printedBountiful_omega_one
     (amalgamType hta htb).isWellFormed.isWellFormed.gradedIndex_mem
-    (atStage_omega_one_of_isCoded (amalgamType hta htb).isCoded)
+    (amalgamType hta htb).isCoded.atStage_omega_one
 
 end StageType
 
