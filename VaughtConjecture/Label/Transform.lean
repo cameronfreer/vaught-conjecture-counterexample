@@ -568,4 +568,40 @@ theorem TransformsTo.not_transitive :
 
 end Nontransitive
 
+/-! ### Collisions -/
+
+/-- **The collision lemma.**  Let `p` transform to `q` over the grades `grade`, let `d₁`, `d₂` be
+cells of grade `1` whose source values are self-visible at `1`, carrying one target value `e` not
+self-visible at `2`, and let `z` be a cell of grade `2` with `e < q z`.  Then `p d₁ = p d₂`.
+
+The suppressor exceeds `e` at the grade `2`, so the shifter sends both source values to `e`; if
+`p d₁ < p d₂`, the guard at the grade `2` gives
+`σ (visibilityReplace 2 2 (p d₁)) = visibilityReplace 2 2 e`, which is above `e` but at most
+`σ (p d₂) = e`. -/
+theorem eq_of_transformsTo_collision {D : Type*} {grade : D → ℕ} {p q : D → Label.{u}}
+    (h : TransformsTo grade p q) {d₁ d₂ z : D} (hg₁ : grade d₁ = 1) (hg₂ : grade d₂ = 1)
+    (hz : grade z = 2) (hp₁ : IsSelfVisible 1 (p d₁)) (hp₂ : IsSelfVisible 1 (p d₂))
+    {e : Label.{u}} (he₁ : q d₁ = e) (he₂ : q d₂ = e) (hev : ¬ IsSelfVisible 2 e)
+    (hez : e < q z) : p d₁ = p d₂ := by
+  obtain ⟨g, σ, hw, hq⟩ := h
+  have hg2 : e < g 2 := hez.trans_le (by rw [hq z, hz]; exact min_le_right _ _)
+  have hg1 : e < g 1 := hg2.trans_le (hw.antitone (by omega))
+  have hσ (d : D) (hd : grade d = 1) (he : q d = e) : σ (p d) = e := by
+    rw [hq d, hd] at he
+    rcases le_total (σ (p d)) (g 1) with hle | hle
+    · rwa [min_eq_left hle] at he
+    · rw [min_eq_right hle] at he; exact absurd he hg1.ne'
+  have key : ∀ a b, IsSelfVisible 1 a → a < b → σ a = e → σ b = e → False := by
+    intro a b ha hab hσa hσb
+    have hcomm := hw.visibilityReplace_comm a 2 (by rw [hσa]; exact hg2.le) 2 le_rfl
+    rw [hσa] at hcomm
+    have hle : σ (visibilityReplace 2 2 a) ≤ σ b :=
+      hw.monotone (visibilityReplace_two_two_le_of_lt ha hab)
+    rw [hcomm, hσb] at hle
+    exact hev (le_antisymm hle (le_visibilityReplace (by omega) e))
+  rcases lt_trichotomy (p d₁) (p d₂) with hlt | heq | hgt
+  · exact (key _ _ hp₁ hlt (hσ d₁ hg₁ he₁) (hσ d₂ hg₂ he₂)).elim
+  · exact heq
+  · exact (key _ _ hp₂ hgt (hσ d₂ hg₂ he₂) (hσ d₁ hg₁ he₁)).elim
+
 end VaughtConjecture.Label

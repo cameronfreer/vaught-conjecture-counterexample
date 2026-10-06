@@ -117,6 +117,41 @@ namespace CompletionBelowFullGrade
 variable {α : Ordinal.{u}} {m : ℕ} {I : Seed.{u} α m} (F : CompletionBelowFullGrade I)
   {q : Fin F.scheme.card → Label.{u}}
 
+/-! ### The old cells -/
+
+/-- The old cells of a completion keep their graded indices. -/
+theorem gradedIndex_embed (d : Fin I.amalgam.card) :
+    F.scheme.toCellScheme.gradedIndex (F.embed d) = I.amalgam.toCellScheme.gradedIndex d :=
+  Prod.ext (F.scope_embed d) (F.isLowerEmbedding.grade_eq d)
+
+/-- Below a pair of scope other than the ground set, the cells of a completion are the old
+cells. -/
+theorem image_embed_below {X : Finset (Fin (m + 2)) × ℕ} (hX : X.1 ≠ univ) :
+    F.embed '' I.amalgam.toCellScheme.below X = F.scheme.toCellScheme.below X := by
+  ext z
+  constructor
+  · rintro ⟨d, hd, rfl⟩
+    rw [CellScheme.mem_below, gradedIndex_embed]
+    exact hd
+  · intro hz
+    have hne : F.scheme.toCellScheme.scope z ≠ univ := fun h ↦
+      hX (univ_subset_iff.mp (by rw [← h]; exact hz.1))
+    obtain ⟨d, rfl⟩ := F.mem_range_embed z hne
+    refine ⟨d, ?_, rfl⟩
+    rw [CellScheme.mem_below, ← gradedIndex_embed]
+    exact hz
+
+/-- Below a pair of scope other than the ground set, lawfulness in the completion is lawfulness
+in the amalgam, along the old cells. -/
+theorem isLawfulBelow_embed_iff {X : Finset (Fin (m + 2)) × ℕ} (hX : X.1 ≠ univ)
+    {w : Fin F.scheme.card → Label.{u}} :
+    F.scheme.rows.IsLawfulBelow X (fun z ↦ w z) ↔
+      I.amalgam.rows.IsLawfulBelow X (fun d ↦ w (F.embed d)) := by
+  have h := CellScheme.Rows.isLawfulBelow_comap_iff (R := F.scheme.rows) F.isLowerEmbedding
+    (image_embed_below F hX) (r := fun z ↦ w z)
+  rw [F.comap_rows] at h
+  exact h.symm
+
 /-! ### Stage types on the completed scheme -/
 
 /-- The completed scheme with a lawful labelling `q` at the stage `α`, as a stage type on `m + 2`
@@ -218,8 +253,7 @@ labels included: the truncation keeps the glued labels. -/
 theorem restrictFace_left_completion :
     StageType.restrictFace (Coatom.left m) (F.completion hα) = some I.left :=
   (StageType.restrictFace_addApex _ _ _ Coatom.univ_map_left_ne).trans
-    ((F.restrictFace_withLabel _ _ (F.truncate_label_embed hα) _ Coatom.univ_map_left_ne).trans
-      I.restrictFace_left)
+    (F.restrictFace_left_truncate hα)
 
 /-- **The face of the completion along `extendByLast Fin.castSuccEmb` is the second coatom
 type**, literally, labels included: the truncation keeps the glued labels. -/
