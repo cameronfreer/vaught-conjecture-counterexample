@@ -24,6 +24,8 @@ jobs:
     # Mathlib cache misses the ~2100 modules downstream of the fork's changes.  Those, plus
     # InfinitaryLogic itself, are built once per dependency pin and then carried between runs
     # by the `deps` GitHub cache below; a cold run (new pin) is slow, a warm run takes minutes.
+    # Once the remote Lake artifact cache is configured (docs/ci/remote-cache.md), a cold run
+    # downloads what the dependencies' own CI published instead of compiling it.
     timeout-minutes: 150
     steps:
       - uses: actions/checkout@v7
@@ -123,6 +125,22 @@ jobs:
           key: build-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.sha }}
           restore-keys: |
             build-v1-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-
+
+      # Remote Lake artifact cache (docs/ci/remote-cache.md), cold dependency cache only.  Inert
+      # until the repository variable LAKE_CACHE_ENDPOINT (the public, anonymous read host) is set.
+      # Downloads the outputs that the InfinitaryLogic and ComputableModelTheory CI published for
+      # the pinned revisions (the Mathlib fork's modules included) into a Lake cache directory, and
+      # exports that directory to the later steps, whose builds then unpack those modules instead
+      # of compiling them.  A package that cannot be fetched completely is left out (its mappings
+      # are removed), so the next step compiles it exactly as before; the project's own modules are
+      # always compiled.  The step cannot fail the job.
+      - name: Fetch dependency outputs from the Lake artifact cache (cold dependency cache only)
+        if: steps.deps-cache.outputs.cache-hit != 'true' && vars.LAKE_CACHE_ENDPOINT != ''
+        continue-on-error: true
+        env:
+          CACHE_BASE: ${{ vars.LAKE_CACHE_ENDPOINT }}
+          LAKE_CACHE_DIR: ${{ runner.temp }}/lake-cache
+        run: bash scripts/ci/lake-cache-get.sh
 
       # Only on a cold dependency cache: fetch the public Mathlib cache for the modules the
       # fork shares with upstream, then compile InfinitaryLogic, the classical entry module of

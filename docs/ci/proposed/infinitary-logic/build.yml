@@ -1,0 +1,122 @@
+# PROPOSED for cameronfreer/infinitary-logic: .github/workflows/build.yml
+# (not active here; see docs/ci/remote-cache.md).  The existing `build` job is unchanged up to and
+# including "Run all guards" except for `persist-credentials: false` on the checkout; the staging
+# steps and the `publish` job are new.  Everything new is inert until the repository variable
+# LAKE_CACHE_UPLOAD_ENDPOINT is set.
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+# Pure CI: build + checks only (~5 min). The site (API docs, blueprint web/PDF,
+# homepage, Pages deploy) is built by docs.yml — weekly cron or manual dispatch
+# (gh workflow run docs.yml) — since doc-gen4 alone takes ~21 min per run.
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Build project and run checks
+    outputs:
+      staged: ${{ steps.stage.outputs.staged }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # Lean code runs at elaboration time; nothing in this job needs the token in .git/config.
+          persist-credentials: false
+
+      - name: Build Lean project and blueprint data
+        uses: leanprover/lean-action@c544e89643240c6b398f14a431bcdc6309e36b3e
+        with:
+          build: true
+          build-args: "InfinitaryLogic InfinitaryLogic.Everything :blueprint :blueprintJson InfinitaryLogicWIP"
+          use-github-cache: true
+          use-mathlib-cache: true
+
+      - name: Run all guards (shared list with scripts/build_gate.sh)
+        run: bash scripts/check_all_guards.sh
+
+      # --- Lake artifact cache: staging (master pushes only; inert until configured) ----------
+      # Records the input-to-output mappings of InfinitaryLogic (the root package) and of the
+      # Mathlib fork (`--package mathlib`) for the targets built above, packs one `.ltar` per
+      # module into a local Lake cache, and copies exactly the named archives into a staging
+      # directory.  No credential and no network: the key exists only in the `publish` job, which
+      # runs no code from this repository or its dependencies (Lean code runs at elaboration time
+      # here, so a secret in any later step of this job would be within its reach).
+      - name: Stage the Lake artifacts for publication
+        id: stage
+        if: >-
+          github.event_name == 'push' && github.ref == 'refs/heads/master' &&
+          vars.LAKE_CACHE_UPLOAD_ENDPOINT != ''
+        env:
+          # Writable local cache: the builds below copy the outputs into it and pack the archives.
+          LAKE_ARTIFACT_CACHE: "true"
+          LAKE_CACHE_DIR: ${{ runner.temp }}/lake-cache
+          PUBLIC: ${{ vars.LAKE_CACHE_ENDPOINT }}
+          STAGING: ${{ runner.temp }}/lake-cache-staging
+        run: |
+          set -euo pipefail
+          TARGETS="InfinitaryLogic InfinitaryLogic.Everything"
+          # The cache copies (about 1.3 GiB) and archives (about 0.4 GiB) need room next to the
+          # unpacked Mathlib; drop preinstalled toolchains that are never used.
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc /usr/local/.ghcup || true
+          # Archives left in the build directories by an earlier run (restored by the GitHub
+          # cache) would be recorded without their platform flag and dropped from the
+          # platform-free Mathlib mappings (lean4#15231, not in v4.35.0-rc3); repack them.
+          find .lake/build .lake/packages/mathlib/.lake/build \
+            \( -name '*.ltar' -o -name '*.ltar.hash' \) -delete
+          # No compilation: every target is up to date; this copies outputs into the cache.
+          lake build $TARGETS > /dev/null
+          lake build $TARGETS --no-build --rehash -o "$RUNNER_TEMP/il.jsonl"
+          echo "InfinitaryLogic mappings: $(($(wc -l < "$RUNNER_TEMP/il.jsonl") - 1))"
+          lake cache stage "$RUNNER_TEMP/il.jsonl" "$STAGING/InfinitaryLogic"
+          # The fork is published once per fork revision (its map is immutable thereafter).
+          MATHLIB_REV="$(jq -r '.packages[] | select(.name == "mathlib") | .rev' lake-manifest.json)"
+          if [ -n "$PUBLIC" ] && curl -fsS -o /dev/null \
+              "${PUBLIC%/}/revisions/cameronfreer/mathlib4/$MATHLIB_REV.jsonl"; then
+            echo "Mathlib fork $MATHLIB_REV is already published; not staged"
+          else
+            lake build $TARGETS --no-build --rehash -o "$RUNNER_TEMP/mathlib.jsonl" --package mathlib
+            n=$(($(wc -l < "$RUNNER_TEMP/mathlib.jsonl") - 1))
+            echo "Mathlib fork mappings: $n"
+            # The closure of InfinitaryLogic has about 1,700 Mathlib modules; far fewer means
+            # mappings were dropped, and a partial map must not be published as the fork's map.
+            if [ "$n" -lt 1000 ]; then
+              echo "::error::only $n Mathlib mappings recorded; not staging the fork"
+              exit 1
+            fi
+            lake cache stage "$RUNNER_TEMP/mathlib.jsonl" "$STAGING/mathlib"
+          fi
+          du -sh "$STAGING"/*
+          echo "staged=true" >> "$GITHUB_OUTPUT"
+
+      - name: Hand the staged artifacts to the publish job
+        if: ${{ steps.stage.outputs.staged == 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: lake-cache-staging
+          path: ${{ runner.temp }}/lake-cache-staging
+          if-no-files-found: error
+          retention-days: 1
+          # `.ltar` archives are already compressed.
+          compression-level: 0
+
+  publish:
+    needs: build
+    if: ${{ needs.build.outputs.staged == 'true' }}
+    uses: ./.github/workflows/publish-lake-cache.yml
+    with:
+      revision: ${{ github.sha }}
+      artifact-name: lake-cache-staging
+    secrets:
+      LAKE_CACHE_KEY: ${{ secrets.LAKE_CACHE_KEY }}
