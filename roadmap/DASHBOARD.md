@@ -263,3 +263,15 @@ named hypothesis.
    existence, Scott isolation with countable-limit existence, terminal presentations, and global
    termination (`README.md`, the section on the top-free witnesses, "Complementary global
    routes"; `IMPLEMENTATION.md`, §4, statements 1–10 with their completion criteria).
+7. **The common core of the receiving routes** (open; the labels form refuted).  The finite
+   hypotheses of the routes to (R1)–(R4) and the completion are instances of one hypothesis on
+   stage types, prescribed rows at the cells of full scope
+   (`StageType.HasPrescribedFullRows`), at inputs where the route's prescription is consistent with
+   the faces (`Extension/PrescribedFullRowsRoutes`, compiled in this repository (theorems named)).
+   Consistency is necessary (`StageType.IsFullRowRealization.isFaceConsistent`, compiled).  The
+   form consistent only at the labels is refuted at every stage at `P α`
+   (`PrescribedFullRowsCounterexample.not_hasPrescribedFullRowsAtLabels`, refuted); the uniform
+   form survives that input (`PrescribedFullRowsCounterexample.not_isFaceConsistent`) and is open.
+   Under it the coatom extension property is the consistency of the empty prescription
+   (`StageType.HasPrescribedFullRows.hasCoatomExtensions_iff`), so a general proof first meets the
+   open completion of item 1.  The routes' gaps are unchanged and kept separate.

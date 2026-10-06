@@ -3230,6 +3230,130 @@ construction chosen builds grade by grade over the boundary, in one fixed order 
 chooses the full-scope cell that serves each lift (defined with 2.6) before extending on the
 other coatom, and tops out in a single apex cell.
 
+## The common core of the receiving routes
+
+**The observation.**  The open finite hypotheses of the receiving routes, and the completion of the
+coatom amalgam, each ask for a legal one-point extension over a context (for (R1)–(R4), a context
+acquired in a model) whose cells of full scope (graded index `(univ, g)`) satisfy a condition on
+their rows at prescribed cells: (R1), per block, the private cap reads the labels of one block in
+its own block (block-tight saturations); (R2) and (R3), the cells of full scope read each new top
+of the donor at least as a private top (the reading context of the determination with a private
+top); (R4), the cells of full scope of the cap's grade read the new cells of the donor through the
+cap (the cap-reading scheme of the stable recovery through a reading cell); the completion, no
+condition (the coatom extension).  These row-prescription conditions recur across the routes.  The
+four gaps stay separate: the implications below count only as compiled, each at inputs where the
+consistency hypothesis of the core holds.
+
+**The statement** (`Extension/PrescribedFullRows`).  A context `t'` on `k` points and a donor `d`
+on `n + 1` points with the common face `t` (the face of `t'` along `h` and of `d` along the first
+points); a **full-row prescription** `Φ` (`StageType.FullRowPrescription`), at each grade `g` a
+condition on the readings of the known cells (those of `t'` and `d`) and of the cell itself by a
+cell of graded index `(univ, g)`; a **realization** (`StageType.IsFullRowRealization`), a legal
+one-point extension of `t'` carrying `d` along `h` whose scheme realizes `Φ`
+(`StageType.RealizesFullRows`, a condition on the scheme, so generalized saturation reaches it:
+`Realization.IsModel.realizesOver_realizesFullRows`).  **Admissibility** of a row at a labelling
+of the known cells (`StageType.IsAdmissibleRow`): the readings meet `Φ`, are coded, are lawful
+below `(univ, g)` in the rows of `t'` and of `d`, and transform to the labelling capped at a value
+at least the label of the known cell served.  **Consistency with the faces**
+(`StageType.IsFaceConsistent`): admissibility at every lawful labelling of `t'` and some lawful
+labelling of `d` agreeing with it on `t`; **at the labels** (`StageType.IsFaceConsistentAtLabels`):
+at the labels of `t'` only.  The common core is
+`StageType.HasPrescribedFullRows α`: every prescription consistent with the faces over legal `t'`
+and `d` has a realization.  Its labels form is `StageType.HasPrescribedFullRowsAtLabels α`.
+
+**Compiled.**
+
+1. Forcing: a reading of `x` at least as `s` at every cell of a graded index of the grade of `s`
+   forces `p s ≤ p x` in every lawful section (`CellScheme.Rows.IsLawful.le_of_forall_row_le`);
+   every lawful labelling of a face of a legal stage type extends to it
+   (`StageType.exists_isLawful_extend_of_restrictFace`).
+2. Necessity of both consistency conditions for a realization
+   (`StageType.IsFullRowRealization.isFaceConsistent`,
+   `StageType.IsFullRowRealization.isFaceConsistentAtLabels`), through
+   `StageType.RealizesFullRows.isAdmissibleAt`.
+3. The labels form implies the uniform form
+   (`StageType.HasPrescribedFullRowsAtLabels.hasPrescribedFullRows`) and is **false at every stage**
+   (`PrescribedFullRowsCounterexample.not_hasPrescribedFullRowsAtLabels`): over `P α` with the
+   empty root and the one-point donor, the prescription that every cell of graded index `(univ, 2)`
+   reads `C₂` at least as `C₁` is consistent at the labels (`⊤, ⊤`;
+   `PrescribedFullRowsCounterexample.isFaceConsistentAtLabels`) and has no realization, since the
+   lawful labelling `3, 2` extends to every legal one-point extension of `P α`
+   (`PrescribedFullRowsCounterexample.not_isFullRowRealization`).  It is not consistent uniformly
+   (`PrescribedFullRowsCounterexample.not_isFaceConsistent`), so the uniform form survives the
+   refuting input.
+4. The empty prescription (`StageType.emptyPrescription`): the coatom extension property makes it
+   consistent (`StageType.HasCoatomExtensions.hasConsistentEmptyPrescription`) and realizes it
+   (`StageType.HasCoatomExtensions.isFullRowRealization_empty`); the core with its consistency
+   gives the coatom extension property (`StageType.HasPrescribedFullRows.hasCoatomExtensions`); so
+   under the core the coatom extension property is equivalent to
+   `StageType.HasConsistentEmptyPrescription α`
+   (`StageType.HasPrescribedFullRows.hasCoatomExtensions_iff`).
+5. The routes (`Extension/PrescribedFullRowsRoutes`, with the routes' conditions stated in full):
+   - (R2)/(R3): a realization of the reading prescription of a choice of private tops is a reading
+     coface (`PrescribedFullRows.IsFullRowRealization.isReadingContext`); the core with the
+     consistency of that prescription gives a reading context
+     (`StageType.HasPrescribedFullRows.isReadingContext`); a reading context determines a choice
+     whose reading prescription is consistent
+     (`PrescribedFullRows.IsReadingContext.exists_isFaceConsistent`); and a reading context forces,
+     at every lawful labelling `a` of the context, a lawful labelling of the donor agreeing on the
+     common face under which every new top is at least `a` at some private top of at least its
+     grade (`PrescribedFullRows.IsReadingContext.forall_exists_le`).
+   - (R1): a realization of the block prescription (old cells read in the own block) is
+     block-tight (`PrescribedFullRows.IsFullRowRealization.isBlockTight`); the core with the
+     consistency of every block prescription over the empty face gives block-tight saturations
+     (`StageType.HasPrescribedFullRows.hasBlockTightSaturations`).
+   - (R4): a realization of the cap prescription is a cap-reading scheme when the cap's grade
+     exceeds the number of points of the donor's root
+     (`PrescribedFullRows.IsFullRowRealization.isCapReadingScheme`,
+     `StageType.HasPrescribedFullRows.exists_isCapReadingScheme`).
+   - The completion: a step of the canonical multi-layer scheme of a seed
+     (`Seed.HasCanonicalMultiStep`) is **not an instance**: it asks for a completion of one shape
+     (two copies at each graded index of full scope, reading through their originals), while a
+     realization of the empty prescription is a coatom extension of any shape.
+
+**Status of each named hypothesis, separately.**
+
+- `StageType.HasPrescribedFullRowsAtLabels α`: refuted at every stage.
+- `StageType.HasPrescribedFullRows α`: open, a hypothesis introduced here.  Not refuted at the
+  inputs tested: at `P α` the refuting prescription is excluded by uniform consistency; at the twin
+  input of (R4), the six compiled seeds and the amalgam of `seedHG`, the conditions of the routes
+  and the completion have realizations in the routes' own analyses, so their prescriptions are
+  consistent there by necessity (argued from those realizations, which are not on this base).
+- `StageType.HasConsistentEmptyPrescription α`: open; implied by the coatom extension property.
+- The coatom extension property (`StageType.HasCoatomExtensions α`): still to be proved, unchanged.
+- Block-tight saturations ((R1), per block): undecided, unchanged; conditional on the core and the
+  consistency of the block prescriptions.
+- Acquisition of reading contexts ((R2)/(R3)): open, unchanged; under the core it is the
+  consistency of a reading prescription, and the forcing condition above is necessary.
+- Cap-reading schemes at the calibrated inputs ((R4)): open, unchanged; conditional on the core and
+  the consistency of the cap prescription.
+- The canonical multi-layer step for every seed (completion): open, unchanged, not an instance.
+- (R1)–(R4): neither proved nor refuted.
+
+**What the routes have in common that fails, and what survives.**  Consistency with the labels of
+the faces does not make a prescription realizable: bountifulness of the one-point extension at the
+cap `⊥` makes every lawful labelling of the context count, and a reading prescribed at every cell
+of a graded index forces an order on each of them.  The refuting prescription is the reading of the
+(R2)/(R3) condition (read `x` at least as `s`), with `x` a cell of the context of the grade of `s`
+that the rows order both ways.  The uniform form survives the refuting input.  Restricted forms
+survive it as well: the per-block reading of (R1) reads cells in the block of the reading of the
+cap itself and is not of the refuting shape, and every prescription consistent uniformly is
+excluded from the refutation by definition.
+
+**The first clause that does not close.**  A general proof of `StageType.HasPrescribedFullRows`
+constructs, at the empty prescription, coatom extensions at every input where the empty
+prescription is consistent.  The completion results of checkpoints 2.1–2.7 give coatom extensions
+only from completions below the full grade
+(`StageType.HasCoatomExtensions.of_completionBelowFullGrade`), open for every seed at `m ≥ 3`;
+that is the first clause of a general proof that does not close.
+
+**Restatements.**  `Extension/PrescribedFullRowsRoutes` states `ReadsAtLeast`,
+`IsReadingContext`, `ReadsInOwnBlock`, `IsBlockTight`, `HasBlockTightSaturations` and
+`ReadsThroughCap` in full, because the modules of the routes are not on this base; the statements
+are identical to the routes' own (checked by `rfl` against them in a merge of the routes' heads,
+together with the compositions with their acquisition and recovery theorems).  When those modules
+land, the restatements are replaced by their declarations.
+
 ## Companion boundaries
 
 Companion topics: definable domain/logical cuts with strict loss-rank lower bounds; canonical
@@ -3288,6 +3412,19 @@ module yet, are grouped last ("Statements not yet in any module").  The declarat
 modules under `Language/` and `Realization/` whose own notes name earlier files move to those files
 directly, in the Layer 2 consolidation (pull request #34), and are not recorded here; until it
 lands, their notes stay in those modules.
+
+**Prescribed rows (Layer 3, 3.4).**
+
+- `Extension/PrescribedFullRows`: `CellScheme.Rows.IsLawful.le_of_forall_row_le` to `Scheme/Row`,
+  beside the locality and availability lemmas; `Scheme.rowAt`, `Scheme.faceCell`,
+  `Scheme.cellMap_cellMap`, `Scheme.cellMap_congr` and the lemmas of `rowAt` and `faceCell` to
+  `Stage/Scheme`, beside `cellMap`; `StageType.faceCell`,
+  `StageType.comap_toScheme_of_restrictFace`, `StageType.isLawful_comp_faceCell`,
+  `StageType.exists_isLawful_extend_of_restrictFace` and `StageType.faceCell_faceCell` to
+  `Stage/Basic` and `Stage/Legal`.
+- `Extension/PrescribedFullRowsRoutes`: the restatements of the routes' conditions are replaced by
+  the routes' declarations (`Continuation/AvailableTopDetermination`, `Realization/TightCap`,
+  `Realization/PerBlockCarrying`, `Continuation/StableRecovery`) when those modules land.
 
 **Finite geometry and the coatom amalgam (Layer 3, (R6)).**
 
