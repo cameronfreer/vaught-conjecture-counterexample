@@ -37,13 +37,13 @@ reading `d₂` below `d₁`.
 layer scheme has one cell at each graded face of full scope, so a seed on five points with two
 opposite forcings between a cell of the first coatom and a cell of the second at one grade has no
 ordered-layer step, for any layer rows.  Such a seed needs a completion with several new cells at
-one graded face of full scope, one for each orientation.  Two opposite forcings at one grade need
-two parameters of the common face to which the two coatom types are coupled crosswise: the
-labellings that are lawful and agree capped at a self-visible cap are closed under the cap, so a
-forcing is a lower bound by face parameters, and within one coatom type the cell of full scope at
-the grade `1` orders all the cells of the grade `1`.  None of the seeds `seed4`, `seed5`, `seedL`
-has two opposite forcings: each has one coupling parameter of the common face, the parameter of
-the grade `3`.
+one graded face of full scope, one for each orientation.  None of the seeds `seed4`, `seed5`,
+`seedL` has two opposite forcings at one grade, since each has an ordered-layer step
+(`VaughtConjecture.Extension.OrderedLayerExamples`).  Two opposite forcings at one grade need two
+parameters of the common face to which the two coatom types are coupled crosswise (argued, not
+formalized): a lawful labelling capped at a cap self-visible at every grade stays lawful, so a
+forcing is a lower bound by parameters of the common face, and within one coatom type the cell of
+full scope at the grade `1` orders all the cells of the grade `1`.
 
 ## Placement
 
