@@ -38,6 +38,12 @@ stage types at `α`: no realization, and no legality (legality depends only on t
   `e` as at `C`, then `(q, f)` forces the grade of `C`.  Locality of `Q` at `C`
   (`Label.TransformsTo.le_of_le`) gives that the label of `e` is at least that of `C`, which is at
   least `β` plus the grade of `C` by the order law.
+* **Forcing through the row of a cell** (`forcesThreshold_of_row_le_of_grade_le`): if cells `C`
+  and `x` of `q` are labelled the formal top, `x` and `e` lie below `C`, the row of `C` is at most
+  as large at `x` as at `e`, and the grade of `e` is at most that of `x`, then `(q, f)` forces
+  every threshold up to the grades of `C` and `x`.  Locality at `C` gives
+  `min (Q x) (Q C) ≤ min (Q e) (Q C)`, and the order law bounds `Q x` and `Q C` from below.  The
+  tie is the case `x = C`; in general `x` need not lie above `e`.
 * **Capped lifts** (`StageType.capLiftOfLt`, `StageType.capLiftOfLt_reduce`): for `β + K < α`
   and `K` at least the grade of every cell of `q` labelled the formal top, the labels of `q`
   capped at `β + K` form a lift of `q` to `α`; they are lawful because `β + K` is self-visible at
@@ -252,27 +258,43 @@ theorem forcesThreshold_zero (hfp : restrictFace f q = some p) (hd : p.label d =
     ForcesThreshold α hβ q f p d 0 :=
   forcesThreshold_of_le_grade hfp hd (Nat.zero_le _)
 
+/-- **Forcing through the row of a cell.**  Let `C` and `x` be cells of `q` labelled the formal
+top, with `x` and the cell `e` carrying `d` below `C`.  If the row of `C` is at most as large at `x`
+as at `e`, and the grade of `e` is at most that of `x`, then `(q, f)` forces at `d` every threshold
+`n` up to the grades of `C` and `x`.  For `x = C` this is the tie (`forcesThreshold_of_row_le`). -/
+theorem forcesThreshold_of_row_le_of_grade_le (hfp : restrictFace f q = some p) {C x e : Fin q.card}
+    (he : ∀ i : Fin (q.toScheme.comap f).card, (i : ℕ) = d → q.cellMap f i = e)
+    (hC : q.label C = ⊤) (hx : q.label x = ⊤)
+    (hxC : x ∈ q.toCellScheme.below (q.toCellScheme.gradedIndex C))
+    (heC : e ∈ q.toCellScheme.below (q.toCellScheme.gradedIndex C))
+    (hrow : q.rows.row C ⟨x, hxC⟩ ≤ q.rows.row C ⟨e, heC⟩)
+    (hgrade : q.toCellScheme.grade e ≤ q.toCellScheme.grade x) {n : ℕ}
+    (hnC : n ≤ q.toCellScheme.grade C) (hnx : n ≤ q.toCellScheme.grade x) :
+    ForcesThreshold α hβ q f p d n := by
+  refine ⟨hfp, fun Q P hQ hP i hi ↦ ?_⟩
+  subst hQ
+  obtain ⟨hf, rfl⟩ := (restrictFace_eq_some_iff Q f).mp hP
+  -- locality at `C`: the row is monotone in the source and antitone in the grade
+  have hloc : min (Q.label x) (Q.label C) ≤ min (Q.label e) (Q.label C) :=
+    (Q.isLawful.locality C).le_of_le (d := ⟨x, hxC⟩) (d' := ⟨e, heC⟩) hrow hgrade
+  have hCβ := Label.coe_add_le_of_isSelfVisible hβ (Label.reduce_eq_top_iff.mp hC)
+    ((Q.isLawful.orderly C).mono hnC)
+  have hxβ := Label.coe_add_le_of_isSelfVisible hβ (Label.reduce_eq_top_iff.mp hx)
+    ((Q.isLawful.orderly x).mono hnx)
+  have hie : Q.cellMap f i = e := he i hi
+  rw [comap_label, hie]
+  exact (le_min hxβ hCβ).trans (hloc.trans (min_le_left _ _))
+
 /-- **A tie forces the grade of the tied cell**: if a cell `C` of `q` is labelled the formal top,
 the cell `e` of `q` transported from `d` along `f` lies below `C`, and the row of `C` is at least
-as large at `e` as at `C`, then `(q, f)` forces the grade of `C`. -/
+as large at `e` as at `C`, then `(q, f)` forces the grade of `C`.  This is the case `x = C` of
+`forcesThreshold_of_row_le_of_grade_le`. -/
 theorem forcesThreshold_of_row_le (hfp : restrictFace f q = some p) {C e : Fin q.card}
     (he : ∀ i : Fin (q.toScheme.comap f).card, (i : ℕ) = d → q.cellMap f i = e)
     (hC : q.label C = ⊤) (heC : e ∈ q.toCellScheme.below (q.toCellScheme.gradedIndex C))
     (hrow : q.rows.row C ⟨C, q.toCellScheme.mem_below_gradedIndex C⟩ ≤ q.rows.row C ⟨e, heC⟩) :
-    ForcesThreshold α hβ q f p d (q.toCellScheme.grade C) := by
-  refine ⟨hfp, fun Q P hQ hP i hi ↦ ?_⟩
-  subst hQ
-  obtain ⟨hf, rfl⟩ := (restrictFace_eq_some_iff Q f).mp hP
-  have hCe : Q.label C ≤ Q.label e := by
-    have h := (Q.isLawful.locality C).le_of_le (d := ⟨C, Q.toCellScheme.mem_below_gradedIndex C⟩)
-      (d' := ⟨e, heC⟩) hrow heC.2
-    rw [min_self] at h
-    exact h.trans (min_le_left _ _)
-  have hCβ := Label.coe_add_le_of_isSelfVisible hβ (Label.reduce_eq_top_iff.mp hC)
-    (Q.isLawful.orderly C)
-  have hie : Q.cellMap f i = e := he i hi
-  rw [comap_label, hie]
-  exact hCβ.trans hCe
+    ForcesThreshold α hβ q f p d (q.toCellScheme.grade C) :=
+  forcesThreshold_of_row_le_of_grade_le hfp he hC hC _ heC hrow heC.2 le_rfl le_rfl
 
 /-! ### Capped lifts -/
 

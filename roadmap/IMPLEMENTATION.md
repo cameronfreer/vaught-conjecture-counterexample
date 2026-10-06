@@ -340,8 +340,9 @@ Consistency and covering give the order law and locality of the stable labelling
 no type has twins, two cells labelled `⊤` at one graded index
 (`Realization.isStablyLawful_of_injOn_gradedIndex`); with legal types, availability holds also at
 twins (`Realization.availability_stableSection_of_hasLegalTypes`, through
-`StageType.exists_forcesThreshold_twin_face`), so every model is stably lawful
-(`Realization.isStablyLawful_of_hasLegalTypes`, `Realization.IsModel.isStablyLawful`); these are
+`StageType.exists_forcesThreshold_twin_face`), so every exactly consistent covering realization
+with legal types at a block stage is stably lawful (`Realization.isStablyLawful_of_hasLegalTypes`),
+and in particular every model at a block stage (`Realization.IsModel.isStablyLawful`); these are
 compiled in this repository (theorem named). Two hypotheses on single stage types that would
 give availability at twins through every lift are refuted (negative special cases): synchronizing
 cofaces, in three forms
@@ -1002,9 +1003,11 @@ classes.  Both are prospective applications, not compiled here.
 
 The milestone of `README.md`, "Manuscript correspondence (required)", spans layers 2–5 here (layers
 2–6 of `README.md`).  It concerns the correspondence with [Kni26] and [AFK26], kept distinct: each
-row of the concordance below names its source, and both are cited only by the numbered statements
-the roadmap already cites (those of [Kni26] are listed in `LITERATURE.md`, "Bibliographic access
-record"); a notion with no numbered statement is named by its source and described in words.  Each
+row of the concordance below names its source, and both are cited only by numbered statements:
+those of [Kni26] that the roadmap already cites (listed in `LITERATURE.md`, "Bibliographic access
+record"), and those of [AFK26] in the numbering of its current version, the version named in that
+record, or in the numbering of an earlier version, marked as such and named by its date in that
+record; a notion with no numbered statement is named by its source and described in words.  Each
 row gives a notion of the manuscript that the proof uses, the declarations of this repository that
 concern it (or *prospective*), and one of three statuses:
 
@@ -1013,7 +1016,10 @@ concern it (or *prospective*), and one of three statuses:
   identification is named: a declaration with one clause for each clause of the manuscript's
   definition, the comparison of the clauses recorded with the declaration, every departure from a
   printed clause proved equivalent to it by a named theorem, and every notion its clauses use
-  itself in proved correspondence or corrected;
+  itself in proved correspondence or corrected.  A corrected notion (C) counts toward P only if
+  every one of its differences from the printed definition is either a recorded correction or
+  proved equivalent; a row whose clauses use a notion with a part still to be proved records that
+  part as S in its status (rows 8 and 11, `P; domains: S (row 6)`);
 - **corrected manuscript definition or statement** (C): the manuscript's definition or statement is
   replaced by a corrected one, the correction recorded where named; a theorem about the corrected
   notion is noted when one exists;
@@ -1027,30 +1033,42 @@ concern it (or *prospective*), and one of three statuses:
 The availability markers are those of `README.md`, Layer 0; an argument with no theorem named in
 this repository is prospective here.  Rows are added as notions are reached.  A row becomes P only
 when the theorem or the definition-level identification that performs the comparison is named, and
-becomes C only when the correction is recorded.  Rows 2–5 are P, by the definition-level
-identifications of `VaughtConjecture/Correspondence` named in their notes.  Row 6 is S:
-`IsBountiful` is the printed definition required at every stage that is zero or a limit (note 6),
-and at `ω₁` only the implication from `IsBountiful` is proved.  The other rows whose declaration
-carries the manuscript's number but whose clauses have not been compared are S, with the compiled
-declarations listed in the notes.
+becomes C only when the correction is recorded.  Row 29 is P, row 14 is P for the printed
+definitions of §2 that it names and C for the language of templates, their diagram, and its lemma
+(Definitions 4.17 and 4.18, Lemma 4.19), and row 1 is C with its truncation function P.  Rows 2–5 and 43
+are P, by the definition-level identifications of `VaughtConjecture/Correspondence` named in their
+notes.  Row 6 is S: `IsBountiful` is the printed definition required at every stage that is zero
+or a limit (note 6), and at `ω₁` only the implication from `IsBountiful` is proved.  The other
+rows whose declaration carries the manuscript's number but whose clauses have not been compared
+are S, with the compiled declarations listed in the notes.  A line with the first two cells empty
+continues the row above it: a further notion of the same row, with its own status.
+Rows 41–47 concern the legal templates of the current draft of [AFK26] and cite its numbering
+(its §4, "The Counterexample");
+rows 9 and 10 cite the numbering of their own notes.  Rows 43–47 read the row system of a template
+as the fixed semantic rows of a scheme, not as the coherent local rows of row 9 (note 43); row 43
+identifies lawful labellings, and does not make the legal schemes here the legal templates of
+[AFK26] (note 45).
 
 | Row | Source | Manuscript notion | Status |
 | --- | --- | --- | --- |
-| 1 | [AFK26] | the observation index `ξ` (no numbered statement) | S |
+| 1 | [AFK26] | the observation index `ξ`, Definitions 3.20 and 4.16 | C |
+| | | its truncation function, Definitions 3.12 and 4.9 | P |
 | 2 | [Kni26] | visibility replacement, Definition 2.2.3 | P |
 | 3 | [Kni26] | witnesses and transformation, Definition 2.3.9 | P |
 | 4 | [Kni26] | lawful labellings, Definition 2.5.4; orderly labellings, Definition 2.3.4 | P |
 | 5 | [Kni26] | lawful capping, Lemma 2.5.8 | P |
 | 6 | [Kni26] | bountiful rows, Definition 2.5.14 | S |
-| 7 | [Kni26] | domains (legal schemes), Definition 2.6.1 | C |
-| 8 | [Kni26] | stage types and face maps, Definitions 3.1.1 and 3.1.5 | S |
-| 9 | [AFK26] | templates, Definitions 9.5 and 9.7 | C; item 1: S |
-| 10 | [AFK26] | the stage operation on templates (truncation), Definitions 9.5 and 9.7 | C |
-| 11 | [Kni26] | realizations and models, Definition 3.2.1 | S |
+| 7 | [Kni26] | domains (legal schemes), Definition 2.6.1 | C; bountifulness at ω₁: S (row 6) |
+| 8 | [Kni26] | stage types and face maps, Definitions 3.1.1 and 3.1.5 | P; domains: S (row 6) |
+| 9 | [AFK26] | templates, Definitions 4.6 and 4.10 | C; item 1: S |
+| 10 | [AFK26] | the stage operation on templates (truncation), Definitions 4.6 and 4.10 | C |
+| 11 | [Kni26] | realizations and models, Definition 3.2.1 | P; domains: S (row 6) |
 | 12 | [Kni26] | the four extension families as a sentence, Definition 3.2.1, clause 4 | S |
 | 13 | [Kni26] | the density sentence against clause 4 (the fidelity theorem of this roadmap) | S |
-| 14 | [AFK26] | invariant diagram and system compatible (item 2; no numbered statement) | S |
-| 15 | [Kni26] | the amalgam of two coatom types, Definition 4.3.1, and its rows, Lemma 4.3.2 | S |
+| 14 | [AFK26] | geometries and structured geometries, Convention 2.3, Definitions 2.1 and 2.2 | P |
+| | | invariance diagram and system compatible, Definitions 2.4–2.6 and 2.8 | P |
+| | | the language and diagram of templates, Definitions 4.17 and 4.18, Lemma 4.19 | C |
+| 15 | [Kni26] | the amalgam of two coatom types, Definition 4.3.1, and Lemma 4.3.2 | P; C, P, S |
 | 16 | [Kni26] | the completion of the amalgam, Definition 4.3.14 | C |
 | 17 | [Kni26] | the coatom extension with apex, Corollary 4.3.22 | S |
 | 18 | [Kni26] | the exact pinned one-point extension, Proposition 4.3.23 | S |
@@ -1058,14 +1076,17 @@ declarations listed in the notes.
 | 20 | [Kni26] | the saturated model, Definition 4.1.1 and Proposition 4.4.5 | S |
 | 21 | [Kni26] | the private context, Lemma 8.1.1, clauses 3 and 4 | S |
 | 22 | [Kni26] | `Correct`, Definition 8.3.1 | S |
-| 23 | [AFK26] | invariants and projections, Definitions 3.2 and 3.4 | C |
-| 24 | [AFK26] | back-and-forth systems, Definition 4.1 and Theorem 4.2 | C |
+| 23 | [AFK26] | invariants and projections, 1 October 2026 version: Definitions 3.2 and 3.4 | C |
+| | | the same, current version: Definitions 2.2 and 2.6 | P (row 14) |
+| 24 | [AFK26] | back-and-forth systems, 1 October 2026 version: Definition 4.1, Theorem 4.2 | C |
+| | | the same, current version: Definition 2.16 and Theorem 2.17 | C (a starting match specified) |
 | 25 | [AFK26] | density at an observation, two-index form (item 3; no numbered statement) | S |
 | 26 | [AFK26] | comparison of models with a common invariant (item 4; no numbered statement) | S |
 | 27 | [AFK26] | maximal presentations, class–level incidence (item 5; no numbered statement) | S |
-| 28 | [AFK26] | full trees, Definition 8.4 and Proposition 8.6 (item 6) | C |
-| 29 | [AFK26] | closed tuples as supported tuples (item 2; no numbered statement) | S |
-| 30 | [AFK26] | positive niceness over all admissible lifts (item 5; no numbered statement) | S |
+| 28 | [AFK26] | same-index equivalence (item 6), 1 October 2026 version: Proposition 8.6 | C |
+| | | full trees, current version: Definition 3.10 | S |
+| 29 | [AFK26] | closed tuples as supported tuples, Definition 2.1 (item 2) | P |
+| 30 | [AFK26] | niceness, Definition 2.19; condition (c) of Definition 2.22 (current draft) | S |
 | 31 | [AFK26] | a uniform fixing stage of a family (item 5; no numbered statement) | S |
 | 32 | [AFK26] | the bound of serving indices under strictness (item 5; no numbered statement) | S |
 | 33 | [AFK26] | maximal presentations of a literal base (item 5; no numbered statement) | S |
@@ -1076,13 +1097,43 @@ declarations listed in the notes.
 | 38 | [AFK26] | terminal refinement of a higher presentation (item 5; no numbered statement) | S |
 | 39 | [AFK26] | exactly one expansion over a domain (item 5; no numbered statement) | S |
 | 40 | [AFK26] | maximal presentations by Scott isolation (item 5; no numbered statement) | S |
+| 41 | [AFK26] | visibility maps and self-visibility, Definition 4.24 | C |
+| 42 | [AFK26] | the relation `u ⇒ v` on labellings of a frame, Definition 4.25 | C |
+| 43 | [AFK26] | lawful local labellings, Definition 4.26 | P |
+| 44 | [AFK26] | the balls `B_γ(q)` and bountiful rows, Definition 4.26 | S |
+| 45 | [AFK26] | legal templates, Definition 4.27 | S; clause 1: C |
+| 46 | [AFK26] | a template system of legal templates, Lemma 4.28 (statement) | S |
+| 47 | [AFK26] | the counterexample, Theorem 4.29 (statement) | S |
 
 The items are those of `README.md`, "Manuscript correspondence (required)".  Notes to the rows:
 
-1. `blockStage ξ`, defined as `ω + ω * ξ`; `blockStage_eq_mul : blockStage ξ = ω * (1 + ξ)`,
-   `blockStage_zero`, `blockStage_add_one` (`Realization/Expansion`): the identities are compiled
-   in this repository (theorem named); that this is the indexing of [AFK26] is item 1, still to be
-   proved.
+1. [AFK26] reads its projection of index `β` at the stage `ω · β` (Definitions 3.20 and 4.16).
+   Corrected (C): the printed index `0` reads the stage `0`, at which the projections are not
+   compatible with the base relations (`Correspondence.not_isCompatibleWith_omega0MulSystem`,
+   row 14).  Here the observation index `ξ` is read at `blockStage ξ`, defined as `ω + ω * ξ`,
+   the printed stage of the index `1 + ξ` (`blockStage_eq_mul : blockStage ξ = ω * (1 + ξ)`,
+   `Realization/Expansion`).  With the diagram of row 14, only the index `0` is forced to change:
+   the printed system corrected at the index `0` alone is compatible and agrees with the printed
+   one at every positive index (`Correspondence.isCompatibleWith_omega0MulMaxOneSystem`,
+   `Correspondence.omega0MulMaxOneSystem_τ_of_ne_zero`); the shift by one at the other finite
+   indices is the convention of `blockStage` (`λ_0 = ω`).  (With the printed `L_c` of
+   Definition 4.17 in place of the base relations, compatibility would fail at every finite index;
+   note 14.)  Theorems about the corrected notion, compiled in this repository (theorem named), in
+   `Correspondence/StageIndexing` unless noted: the two indexings differ by the reindexing
+   `ξ ↦ 1 + ξ` (`Correspondence.omega0MulSystem_τ_one_add`, `Correspondence/InvariantSystem`); at
+   zero, the printed indices of the block stages are the positive ordinals
+   (`exists_blockStage_eq_omega0_mul_iff`, with `blockStage_natCast`); at limits, block stages are
+   continuous (`isNormal_blockStage`, `blockStage_eq_iSup_of_isSuccLimit`); the two indexings
+   agree from `ω` on (`blockStage_eq_omega0_mul_of_omega0_le`); and the block stages of countable
+   index are the limit ordinals below `ω₁` (`isSuccLimit_and_lt_omega_one_iff`), the stages of the
+   later of the two versions of 4 October 2026 of [AFK26] (its Definition 4.23; the earlier
+   version of that date defines them in its Definition 4.15, and the current version does not
+   define stages).  Proved correspondence (P): the printed truncation function (Definitions 3.12
+   and 4.9) is `Label.reduce`, clause by clause (`Label.reduce_coe_eq_ite`, `Label.reduce_bot`,
+   `Label.reduce_top`, `Label/Basic`).  Printed material, not used here: Definition 4.20 asks for
+   density at the index `ω · β` (density at an index being read through the projection of that
+   index, Definition 2.10), which by Definition 4.16 is the truncation at `ω² · β`, not at
+   `ω · β`.
 2. `Label.visibilityReplace` (`Label/Visibility`).  The definition-level identification
    `Label.printedVisibilityReplace_iff` (`Correspondence/Visibility`), compiled in this repository
    (theorem named): a map of labels satisfies the three clauses of the definition
@@ -1157,26 +1208,133 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
    ([Kni26, Definition 2.5.12], `CellScheme.Rows.IsConsistent` in `Scheme/Row`) that the definition
    presupposes (`CellScheme.Rows.isBountiful_iff_forall_printedBountiful` and
    `CellScheme.Rows.IsBountiful.printedBountiful` hold without it).
-7. `Scheme.IsLegal`, with the coding clause `Scheme.IsCoded` (`Stage/Legal`, `Stage/Scheme`):
-   coding imposed as a clause, not derived from the offset bound of [Kni26, Lemma 2.5.13];
-   recoverability by representation (`README.md`, layer 3, vocabulary).
-8. `StageType`, `StageType.restrictFace` (`Stage/Basic`), `none` at invisible faces; the stage
-   types here have fixed coded rows (row 9), and the comparison with the two definitions is not
-   recorded.
+7. `Scheme.IsLegal` (`Stage/Legal`), with the coding clause `Scheme.IsCoded` (`Stage/Scheme`);
+   status C, with bountifulness at `ω₁` S (row 6).  The clauses of the definition are the fields of
+   `CellScheme.Rows.PrintedDomain` (`Correspondence/Legal`); compiled in this repository (theorem
+   named): consistency [Kni26, Definition 2.5.12] is `CellScheme.Rows.IsConsistent`
+   (`CellScheme.Rows.printedConsistent_iff`), and at a stage that is zero or a limit the printed
+   definition is well-formedness, consistency, the printed bountifulness at that stage, and
+   completeness (`CellScheme.Rows.printedDomain_iff`).  Compiled in this repository (theorem named):
+   a legal scheme is a domain as printed at every stage that is zero or a limit and carries the
+   values of its rows (`Scheme.IsLegal.printedDomain`), in particular at `ω₁`
+   (`Scheme.IsLegal.printedDomain_omega_one`); and a scheme is legal exactly when its ground set is
+   all of its points, its rows are coded, and it is a domain as printed at every such stage
+   (`Scheme.isLegal_iff_forall_printedDomain`).  The correction: the coding clause `Scheme.IsCoded`
+   (every row value bottom or below `ω ^ 2`) is imposed as a clause, not derived.  The printed
+   definition bounds no value, and the printed clauses compared here, the fields of
+   `CellScheme.Rows.PrintedDomain`, which omit the recoverability clause, do not imply the range
+   bound `Scheme.IsCoded` (`Scheme.exists_printedDomain_not_isCoded`, compiled in this repository
+   (theorem named): the scheme on one point whose single cell has the formal top as row satisfies
+   them at every stage that is zero or a limit and is not coded).  The bound comes from the coding
+   described after [Kni26, Definition 2.6.2], which stores each `E(Σ)` in `{-∞} ∪ ω ^ 2` by the
+   first clause of [Kni26, Lemma 2.5.13], a function equivalent under `⇔` when only the functions
+   respecting `E` matter; that clause is not compiled, the effect of the replacement on consistency,
+   bountifulness, and completeness is not stated there, and the offset bound of the same lemma is
+   not correct as stated (`README.md`, Layer 1) and is not used.  The recoverability clause, that
+   `⟨B,j⟩`, `P↾B`, `D↾⟨B,j⟩`, and `E↾⟨B,j⟩` are recovered from a cell, has no field: it holds by
+   representation (`README.md`, layer 3, vocabulary) and is not compared.  The codes of the cells
+   are forgotten, as a second part of the correction: the coding after [Kni26, Definition 2.6.2]
+   gives each `Ξ ∈ D_{B,j}` a natural-number code `⌜⌜Ξ⌝⌝`, one-to-one, which the map `Df` of
+   [Kni26, Proposition 2.6.3, clause 5] keeps; here the cells are the positions `Fin card`, and
+   `Scheme` has no code accessor, so printed domains that differ only in their codes correspond to
+   the same scheme, and the face maps of row 8 are compared on positions.  Bountifulness is
+   `IsBountiful`, the printed definition at every stage that is zero or a limit; at `ω₁` only the
+   implication from `IsBountiful` is proved (row 6, S).  This difference is neither a recorded
+   correction nor proved equivalent, so it is recorded as S in the status of this row and of the
+   rows whose clauses use domains (rows 8 and 11): their identifications hold over legal schemes,
+   and a coded scheme that is a domain as printed at `ω₁` but not at some other stage that is zero
+   or a limit would not be legal.  Two routes make this row plain C and rows 8 and 11 plain P:
+   (a) the converse at `ω₁` of row 6 for coded rows, `PrintedBountiful ω₁ → IsBountiful`; or
+   (b) recording the requirement at every stage as part of the correction of this row, with its
+   reason stated (the steps of the construction that use bountifulness at the stages `α < ω₁`);
+   without a stated reason, (b) would only relabel the part still to be proved.  The points are
+   `Fin n`, the ground set all of them.
+8. `StageType`, `StageType.IsLegal`, `StageType.restrictFace` (`Stage/Basic`, `Stage/Legal`), `none`
+   at invisible faces.  The definition-level identifications of `Correspondence/StageType`, compiled
+   in this repository (theorem named).  Types, [Kni26, Definition 3.1.1]: the clauses are the fields
+   of `Scheme.PrintedType` (a plan on the points, a domain on it, labels at the stage `α`, respect
+   of the semantics); for `α ≤ ω₁` a labelling is a type as printed exactly when the scheme is legal
+   and the labelling is a lawful section with labels at stage `α`
+   (`Scheme.printedType_omega_one_iff`; at a general stage `Scheme.printedType_iff`), so a stage
+   type is legal exactly when its scheme and labels are a type as printed
+   (`StageType.isLegal_iff_printedType`), and the legal stage types correspond to the types as
+   printed by forgetting the laws (`StageType.legalEquivPrintedType`).  Face maps,
+   [Kni26, Definition 3.1.5]: the clauses are the fields of `StageType.PrintedFaceMap` (definedness
+   at `ran f ∈ P`; the plan `(Pf)(P)` of [Kni26, Definition 2.1.9]; the map `Df` of
+   [Kni26, Proposition 2.6.3, clause 5] on cells, scopes, arities, and rows; the labels); the face
+   map is `u` exactly when `u` is a printed face map with its cells numbered in increasing order
+   (`StageType.restrictFace_eq_some_iff_exists_printedFaceMap`), and it is undefined exactly when
+   `ran f ∉ P` (`StageType.restrictFace_eq_none_iff`); the laws of the definition are
+   `StageType.restrictFace_refl`, `StageType.restrictFace_trans_of_bind_eq_some`
+   (`S^α (f ∘ g) ⊇ (S^α g) ∘ (S^α f)`), and, along bijections, `StageType.reindex_reindex`.  Basis
+   of P: the clauses use the domains of row 7 (C, with bountifulness at `ω₁` S, row 6; the field
+   `Scheme.PrintedType.domain` is the corrected definition), respect (row 4, P), and the coding of
+   row 7; through row 6 the types are identified over legal schemes only, so the status is
+   `P; domains: S (row 6)`.  Departures, recorded with the module: the points `Fin n`; the stage `α`
+   unrestricted (harmless: the identifications hold for every `α ≤ ω₁`, limit or not); `⇒` at a
+   stage `θ`, printed at `ω₁`; the scheme of a type carried as data; and the codes of the cells
+   forgotten, part of the correction of row 7.  The printed `Df` keeps the code `⌜⌜Ξ⌝⌝` of each
+   cell; neither `Scheme` nor `StageType.PrintedFaceMap` has a code accessor, so the preservation
+   of codes is not compared.  The strict monotonicity of the positional map `φ` (`StrictMono φ`) is
+   the convention that numbers the cells of the face in the increasing order of the positions of the
+   corresponding cells of `t`; it preserves the order of the enumeration, not codes (a one-cell
+   domain with code `5` and one with code `7` both have the identity `Fin 1 → Fin 1` as positional
+   map).  The face maps are identified with the printed ones under this renumbering of the cells of
+   `D'` by positions, and the status above holds on that convention.  The stage types have fixed
+   coded rows (row 9); in
+   [Kni26, Definition 3.1.1] too the semantics is the one associated with the domain.
 9. `StageType` (a `Scheme` with fixed coded rows and a separate `label`); the correction is
-   recorded in `README.md`, layer 2, "The templates of [AFK26] and the stage types here".  The
-   coherent local rows `r_d(e) = min(p(e), p(d))` and the identification of item 1: prospective,
-   still to be proved.
+   recorded in `README.md`, layer 2, "The templates of [AFK26] and the stage types here".  It is
+   carried by theorems compiled in this repository (theorem named), `Correspondence/Template`: the
+   printed template as `Correspondence.Template`, one field for each clause of Definitions 4.4–4.6
+   (the frame conditions of Definitions 4.2 and 4.4 as `Correspondence.IsFrame`, with the plan of
+   Definition 4.1 as `Geometry.IsPlan`, whose comparison with that definition is not recorded),
+   the well-formed cell schemes of the stage types being exactly the frames with finitely many
+   cells and positive grades (`Correspondence.isWellFormed_iff_isFrame`; a printed graded face
+   allows the grade `0`),
+   the coherent local rows `r_d(e) = min(p(e), p(d))` (`Correspondence.coherentRows`), the labels
+   from the diagonal (`Correspondence.diagonal_coherentRows`), both round trips between lawful
+   labellings and coherent row systems (`Correspondence.lawfulRowsEquiv`,
+   `StageType.toTemplate_ofCoherentRows`, `StageType.ofCoherentRows_toTemplate`,
+   `StageType.eq_of_toTemplate_eq`), compatibility with projection
+   (`StageType.toTemplate_reduce`: entrywise reduction, the printed truncation of Definition 4.10)
+   and with restriction (`StageType.coherentRows_comap`, with `StageType.restrictFace_eq_none_iff`
+   for undefined faces).  Item 1, still to be proved: the fidelity question of `README.md`,
+   item 1 (whether the legal templates of Definition 4.27, with the lawful local labellings and
+   bountiful rows of Definition 4.26, are the coherent ones; not compared here).
 10. `StageType.reduce`, on labels only, coherent by `StageType.reduce_reduce` (`Stage/Basic`).
-11. `Realization`, `Realization.IsModel` (`Realization/Model`).  The docstrings of the fields of
-    `Realization.IsModel` record its clauses as clauses 1, 2, 3, 4(a)i, 4(a)ii, 4(b), and 4(c) of
-    the definition, and its guarded clauses are compared with the printed ones at stages zero or
-    limits by named theorems (`Realization.IsModel.saturation_of_isLegal`,
-    `Realization.IsModel.bottomPattern_of_isLawful`,
-    `StageType.nonempty_cofaces_inter_saturationFamily_iff`,
-    `StageType.nonempty_cofaces_inter_bottomPatternFamily_iff`): this is the form of a
-    definition-level identification, but its clauses use legal stage types (rows 7 and 8) and the
-    four families, whose comparison with [Kni26] is still to be proved.
+11. `Realization`, `Realization.IsModel` (`Realization/Model`).  The definition-level identification
+    `Realization.printedModel_tupleEval_iff` (`Correspondence/Model`), compiled in this repository
+    (theorem named): at a stage `α ≤ ω₁` that is zero or a limit, a realization, read on all finite
+    tuples (`Realization.tupleEval`), satisfies the printed clauses, the fields of
+    `Realization.PrintedModel`, exactly when it is a model; its two directions are
+    `Realization.PrintedModel.isModel` and `Realization.IsModel.printedModel`.  The fields keep the
+    printed guards and the printed order of the quantifiers: the nonempty carrier; clause 1 in two
+    parts (undefined at a repeated entry; a type in `S^α n`, row 8); clause 2 (`S^α f` of row 8,
+    defined or not); clause 3 (`a⌢x`); and clauses 4(a)i, 4(a)ii, 4(b), and 4(c), each with its
+    parameters and guards (a domain `D` with `D⟨n,n⟩ = dom p`; a labelling `q'` respecting the
+    semantics of `D` with `q'↾dom p = p`; `γ` not a successor with `0 ≤ γ < α`; `γ < α`) before `y`
+    and `q`.  A set `U` of clause 4 is read as the members of `(S^α ι_{n,n+1})⁻¹(p)` satisfying the
+    condition of its kind, the manuscript's own reading: [Kni26, Lemma 4.4.1] states that every such
+    `U` is nonempty, and [Kni26, Lemmas 4.4.2 and 4.4.3] prove it as "some `q` with `q_a = p`
+    satisfies the condition of the kind".  Every printed clause is met by the identification.
+    Departures, each proved equivalent at those stages by named theorems: realizations evaluate only
+    injective tuples (`Realization.tupleEval_ofTupleEval`, `Realization.ofTupleEval_tupleEval`); the
+    conclusions of clause 4 in `IsModel` omit `(S^α ι_{n,n+1})⁻¹(p)`
+    (`Realization.RealizesOver.inter_cofaces`); the guards of clauses 4(a)i and 4(a)ii in `IsModel`
+    are the nonemptiness of the family among the cofaces
+    (`StageType.nonempty_cofaces_inter_saturationFamily_iff`,
+    `StageType.nonempty_cofaces_inter_bottomPatternFamily_iff`, with
+    `Scheme.map_univ_mem_faces_of_comap_eq` for `D⟨n,n⟩ = dom p`); covering by faces instead of
+    initial segments (`Realization.isCovering_iff_exists_castAdd`); and the labelling of clause
+    4(a)ii unrestricted in `IsModel` (`StageType.nonempty_cofaces_inter_bottomPatternFamily_iff`).
+    Basis of P: the clauses use the domains of row 7 (C, with bountifulness at `ω₁` S, row 6), the
+    types and face maps of row 8 (P, with the codes of the cells forgotten and the cells of a face
+    numbered by positions, the convention of row 7, so clause 2 is compared on that convention),
+    and respect (row 4, P); through row 6 the identification is
+    over legal schemes, both for `S^α n` in clause 1 and for the domains `D` of clause 4(a), so the
+    status is `P; domains: S (row 6)`; the four families are written out in the fields, so row 12,
+    which compares two declarations of this repository, is not a prerequisite.
 12. `baseLanguage.fourFamilySentence`; `baseLanguage.realize_fourFamilySentence_iff`
     (`Language/Satisfaction`), compiled in this repository (theorem named): the sentence holds
     exactly when the realization of the structure is a model at `ω`.  It compares two declarations
@@ -1185,16 +1343,110 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
 `baseLanguage.realize_densitySentence_iff_fourFamilySentence_of_hasFiniteCutReceiving_of_capToModel`
     (`Language/Density`), compiled in this repository (theorem named), conditional on (R1) and the
     cap-to-model theorem, both still to be proved; the four-family side rests on row 12.
-14. At `ω`: `baseLanguage.toStructure_toRealization`, `baseLanguage.toRealization_toStructure`,
+14. Definition-level identification (`Correspondence/InvariantSystem`, with the comparison of the
+    clauses recorded there): Convention 2.3 as `GeometrySignature`, Definitions 2.1 and 2.2 as
+    `IsGeometry` and `IsStructuredGeometry`, Definition 2.4 as `InvarianceDiagram`, Definition 2.5
+    as `InvarianceDiagram.IsCompatible`, Definition 2.6 as `InvariantSystem`, and Definition 2.8 as
+    `InvarianceDiagram.IsCompatibleWith`, one field for each printed clause; the maps `τ_β` of an
+    invariant system are indexed, as printed, by the countable ordinals `β < ω₁` (the subtype
+    `{β : Ordinal // β < ω₁}`), so a system is determined by its maps at the printed indices
+    (`Correspondence.InvariantSystem.ext`, compiled in this repository (theorem named)); P for these
+    printed definitions, every notion their clauses use being P (Definition 2.2, Convention 2.3):
+    the definitions are generic in the signature `σ : GeometrySignature L`, so the invariants of an
+    instance do not enter them.  Definition 2.7 (the projection of a structure and its rank) and
+    Lemma 2.9 (projections preserve compatibility): not compiled.  For the base language and the
+    realizations, compiled in this repository (theorem named), with the diagram supplied here: the
+    invariance diagram of the legal stage types at stage `ω₁` with the base relations at `ω`
+    (`Correspondence.stageDiagram`) satisfies each clause of Definition 2.4, the projections to the
+    block stages (`Correspondence.blockSystem`) each clause of Definition 2.6, and they are
+    compatible (`Correspondence.isCompatibleWith_blockSystem`); the compatible structures are
+    exactly the structures of the exactly consistent covering realizations with legal types at
+    stage `ω₁`, by literal mutually inverse maps
+    (`Correspondence.isCompatible_iff_exists_toInvariantStructure_eq`,
+    `Correspondence.toRealization_toInvariantStructure`,
+    `Correspondence.invariantLanguage.toInvariantStructure_toRealization`), with the base relations
+    of the reduction to `ω` (`Realization.relMap_base_iff`); the relations of [AFK26] have positive
+    arity, so no nonemptiness clause enters.  Corrected (C), Definitions 4.17, 4.18 and
+    Lemma 4.19: the printed diagram of the templates (Definition 4.18) has the templates as its
+    invariants, ranges over all templates `t` (not only `t ∈ T`), and has a clause for an order
+    symbol `≤`, carried over from the diagram of trees (Definition 3.6), that is not a symbol of
+    the language of templates (Definitions 4.15 and 4.17); the diagram of the legal stage types is
+    supplied in its place.  The two diagrams are not compared clause by clause because their
+    invariants differ: such a comparison needs the identification of the templates with the legal
+    stage types, which is row 9, item 1, still to be proved.  The clause map, recorded for that
+    comparison: the clause for `≤` has no counterpart; the clause "`P_k`, distinct places, a closed
+    set" is `InvariantSymbol.HoldsAt` at `closed` through `StageType.restrictFace` (defined exactly
+    when the places span a face, `StageType.restrictFace_eq_none_iff`); and the clause "`Q_{t*}`
+    or `R_{t*}`, with `t*` isomorphic to a renaming of the restriction of `t`" is `HoldsAt` at
+    `invariant` and at `base` through `restrictFace`, with the base relations at `ω` in place of
+    `R_{t*}`.  The base relations are the types at `ω`, fixed by the printed `τ_1` as in the proof
+    of Lemma 4.22; Definition 4.17 prints `L_c` as `L_a` with the symbols `R_t` of the templates
+    fixed by `τ_ω` (labels below `ω²`).  With that printed
+    `L_c`, and the isomorphism of the third clause of Definition 4.18 read as preserving rows,
+    Lemma 4.19 would fail at every finite index `β`: for a template `t` fixed by `τ_ω` with a label
+    `λ`, `ω · β ≤ λ < ω²`, the pair `(Q_t, R_t)` is in the diagram and `(τ_β(Q_t), R_t)` is not
+    (an informal observation; not compiled).  And the printed indexing is not compatible at the
+    index `0`, and, with the diagram supplied here, only there
+    (`Correspondence.not_isCompatibleWith_omega0MulSystem`,
+    `Correspondence.isCompatibleWith_omega0MulMaxOneSystem`), so the block indexing of row 1 is
+    used.  Earlier comparisons of two declarations of this repository: at `ω`,
+    `baseLanguage.toStructure_toRealization`, `baseLanguage.toRealization_toStructure`,
     `baseLanguage.realize_structuralSentence_iff_toRealization`; for structures covered by top-free
-    charts, at any stage: `reconstruct_toHullStructure`, `toHullStructure_reconstruct`; all
-    compiled in this repository (theorem named), each comparing two declarations of this
-    repository.  That the base language and the realizations (with legal types, on a nonempty
-    carrier) are the diagram and the system of [AFK26], and the round trip at a general fixed
-    stage: still to be proved (prospective).
-15. `Coatom.amalgamType`, `Coatom.isBountiful_amalgamType` (`Extension/CoatomAmalgam`): the lemma
-    is compiled in this repository (theorem named) for the amalgam here; the comparison of the
-    amalgam with the clauses of Definition 4.3.1 is not recorded, and the lemma rests on row 6.
+    charts, at any stage, `reconstruct_toHullStructure`, `toHullStructure_reconstruct`.  The round
+    trip in the stage chart language at a general fixed countable stage (`README.md`, item 2):
+    prospective.
+15. `Coatom.amalgam`, `Coatom.amalgamType` (`Extension/CoatomAmalgam`), from
+    `Coatom.amalgamCellScheme` and `Coatom.amalgamRows` (`Extension/CoatomScheme`): the amalgam
+    of two coatom types and its rows.  The status is given for Definition 4.3.1 (P) and for the
+    three conclusions of Lemma 4.3.2 (C, P, S, in order), separately.
+    - *Definition 4.3.1*, P.  The definition-level identification `Coatom.printedAmalgam_iff`
+      (`Correspondence/Amalgam`), compiled in this repository (theorem named): a cell scheme with
+      rows satisfies the clauses `D = D^a ∪ D^b` and `E = E^a ∪ E^b` (the fields of
+      `Coatom.PrintedAmalgam`) exactly when it is `Coatom.amalgamCellScheme h` with
+      `Coatom.amalgamRows h`, reindexed along a bijection of cells sending the cells of `D^a` and
+      `D^b` to the given ones.  For the amalgam here: `Coatom.printedAmalgam_amalgam` and
+      `Coatom.printedAmalgam_amalgamType`, compiled in this repository (theorem named).  The
+      setting of [Kni26, §4.3]: `A = Fin (m + 2)`; the plan `Q ∪ R ∪ {A}` of Definition 2.1.1,
+      clause 3(c), is `Coatom.amalgamFaces`; the equality of the restrictions of `D^a` and `D^b`
+      to `⟨A \ {a, b}, n - 2⟩` (equivalently, as printed, `D^a_{⟨A \ {b}, n - 2⟩} =
+      D^b_{⟨A \ {a}, n - 2⟩}`) is the hypothesis `h`, literal equality of the restricted schemes,
+      with the codes forgotten and the common-face numbering preserved (the corrected
+      representation of domains, row 7); the cells of the common face are identified by
+      `Coatom.overlap h`.  Departures, both
+      harmless by `Coatom.printedAmalgam_iff`: the merged enumeration of the cells of
+      `Coatom.amalgam` (it holds for every bijection of cells), and the laws of `D^a` and `D^b`
+      (it holds without them).  The definition uses no legality: it uses only the representation
+      of domains of row 7, a scheme with its rows (the semantics as rows, row 7's notion), with
+      the cells as positions and codes forgotten; its status is on that convention and does not
+      depend on row 6.  The clause `eq_iff` is, in the direction "if", the equality of the two
+      restrictions in the setting, and in the direction "only if", Proposition 2.6.3, clause 6.
+      The labels of `Coatom.amalgamType` are those of the two types
+      (`Coatom.amalgamType_label_posLeft`, `Coatom.amalgamType_label_posRight`); Definition 4.3.1
+      does not mention them.
+    - *Lemma 4.3.2, "`D` is a domain"*, C: not correct as stated.  A domain has a complete
+      semantics (Definitions 2.6.1 and 2.5.15; `CellScheme.IsComplete` is Definition 2.5.15
+      verbatim), and the graded face `⟨A, 1⟩` of the plan carries no cell:
+      `Coatom.not_isComplete_amalgamType` and `Coatom.not_isLegal_amalgamType`, compiled in this
+      repository (theorem named).  The corrected statement, compiled in this repository (theorem
+      named): every other graded face carries a cell (`Coatom.exists_gradedIndex_eq_amalgamType`),
+      and the scheme is well formed and coded (`Coatom.isWellFormed_amalgam`,
+      `Coatom.isCoded_amalgam`).  The end of [Kni26, §4.2] calls the union "consistent
+      and bountiful; it is merely not complete".  `LITERATURE.md` does not yet list this
+      conclusion among the printed statements that are not correct as stated; it is to be added
+      to that list when the list is next brought up to date.
+    - *Lemma 4.3.2, "`E` is a consistent semantics"*, P: `Coatom.printedRespects_row_amalgam`,
+      compiled in this repository (theorem named).  At every stage that is zero or a limit and
+      carries the values of the rows, if every row of `D^a` and of `D^b` respects the semantics
+      below it as printed (Definition 2.5.12, through row 4), so does every row of the amalgam;
+      respecting includes the orderliness that a semantics requires (Definition 2.5.3).
+    - *Lemma 4.3.2, "`E` is bountiful"*, S: it rests on row 6.  Compiled in this repository
+      (theorem named): `Coatom.isBountiful_amalgamType`, in the sense of `IsBountiful`;
+      `Coatom.printedBountiful_omega_one_amalgamType`, the printed definition at `ω₁` for the
+      amalgam of legal stage types (whose rows are bountiful in the sense of `IsBountiful`); and
+      `Coatom.forall_printedBountiful_amalgam`, the printed definition at every stage that is zero
+      or a limit, from the same for `D^a` and `D^b`.  From the printed definition at `ω₁` alone
+      for `D^a` and `D^b`, nothing is proved: that needs the converse of
+      `CellScheme.Rows.IsBountiful.printedBountiful` at a single stage, which row 6 lacks.
 16. The completion of checkpoints 2.1–2.7 replaces it; the bountifulness of the printed completion
     is unproved, not refuted.
 17. `StageType.HasApexCoatomExtensions` (`Extension/PinnedExtension`), a hypothesis.
@@ -1206,15 +1458,51 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     still to be proved.
 20. The classical limit of the uncapped age (`README.md`, the section on the top-free witnesses):
     prospective.
-21. `Realization.IsModel.exists_privateContext` (`Realization/PrivateContext`), compiled in this
-    repository (theorem named) for the models here (row 11); the comparison of its conclusion with
-    clauses 3 and 4 of the lemma is not recorded.
+21. `Realization.IsModel.exists_privateContext` (`Realization/PrivateContext`); status S.  Only
+    clauses 3 and 4 of Lemma 8.1.1 are compared; clauses 1 and 2 (the hollow case) are not.
+    Clauses 3 and 4 are the fields of `Realization.PrintedPrivateContext`
+    (`Correspondence/PrivateContext`), with the cells `Ω_μ` of clause 3 as data, since clause 4(d)
+    refers to them.  Compiled in this repository (theorem named):
+    `Realization.IsModel.exists_printedPrivateContext`, derived from the conclusion of
+    `exists_privateContext`.  For a model at a positive stage (the printed stage is a limit),
+    every occurrence `x`, every donor on `x.arity + 1` points, and every `K`, it gives an
+    extension meeting clause 3 and, with `N` the arity of the extension, the bounds (a)–(d) of
+    clause 4 ((b) for the given `K`) and a cell `Ω` of full scope and arity `N` labelled above
+    every label of the donor below `∞`.  Not met: the alternative of clause 4 for infinite
+    characteristic arity, `p'(Ω) = ∞`; the characteristic arity (Definition 5.4.1) has no
+    counterpart here.  Departures: `x` is a literal face of the extension along an embedding, not
+    an initial segment (not proved equivalent here); the hypotheses of Proposition 7.3.3
+    (hollowness or finite characteristic arity, a core, the donor extending the type of `x`) are
+    not assumed (harmless: `Realization.IsModel.exists_printedPrivateContext` holds without
+    them).  Clause 3 and the structure concern limits `μ` only; the conclusion of
+    `exists_privateContext`, which treats every block start, also gives a cell with label in
+    `[0, ω)` when some label of the donor lies there, outside the comparison.  The row stays S
+    for three reasons: clauses 1 and 2 are not compared; the alternative `p'(Ω) = ∞` of clause 4
+    is not produced; and the literal face is not proved equivalent to the initial segment.  The
+    printed proof of clause 4 cites high-arity dominance as clause 4(a) of Definition 3.2.1, where
+    it is clause 4(c) (`LITERATURE.md`): a correction of the citation that does not affect the
+    statement; the proofs here use uniformity, clause 4(b), and high-arity dominance, clause 4(c)
+    (`Realization.IsModel.uniformity`, `Realization.IsModel.dominance`).
 22. Prospective (`README.md`, layer 3, 3.3).
-23. `FullPresentation.LevelObservations`, `FullPresentation.ObservedPresentation`
+23. The corrected statements are those of the version of 1 October 2026 (its Definitions 3.2
+    and 3.4: the composition law in one order, which does not give nested ranges, and a single
+    exclusive partition by invariants holding both a full invariant and its projections), replaced
+    by `FullPresentation.LevelObservations`, `FullPresentation.ObservedPresentation`
     (`Comparison/GradedMatchingApplications`): separate level sets, explicit projections; the
-    correction is recorded in `LITERATURE.md`, §9.
+    correction is recorded in `LITERATURE.md`, §9.  The current Definitions 2.2 and 2.6 are P
+    (row 14): Definition 2.6(c) has the composition law in both orders, and the projection of a
+    structure is a separate structure (Definition 2.7, not compiled); the disjunction of
+    Definition 2.2(b), over `ℵ₁` invariants for the stage types, is transcribed by its
+    satisfaction, not as a sentence of `L_{ω₁,ω}`.
 24. InfinitaryLogic's `BFEquiv` with a specified initial match;
-    `FullPresentation.bfEquiv_comp_of_obs_eq`; the correction is recorded in `LITERATURE.md`, §9.
+    `FullPresentation.bfEquiv_comp_of_obs_eq`.  Corrected against the version of 1 October 2026
+    (its Definition 4.1 and Theorem 4.2: the same full invariant at every level, every family of
+    matches allowed to be empty), which the current Definition 2.16 no longer has (its last family
+    is nonempty, and its matches are closed tuples with the same relations of `L_c`).  Corrected
+    against the current text: the systems of Definition 2.16 have no starting match (the empty
+    tuple is not closed, as the remark after the definition says); a specified starting match is
+    used here, and the conclusion of Theorem 2.17 is read for these systems.  Both corrections are
+    recorded in `LITERATURE.md`, §9.
 25. Prospective; ingredient `StageType.reduce_eq_of_mem_receivingFamily` (`Realization/Expansion`).
 26. `ExpansionMatchData.bfEquiv_of_expansionMatch`; `Expansion.bfEquiv_of_modelExpansions`,
     conditional on `Expansion.FiniteExtensionReceiving`, still to be proved; the structural form:
@@ -1225,37 +1513,58 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     The class–level incidence translation and the three properties it must preserve (incidence of
     classes at levels, countability of levels, coverage) are those of item 5; until they are
     proved, `FullPresentations` stays prospective as an instance of the system of [AFK26].
-28. What is corrected is a statement: the same-index equivalence of Proposition 8.6 is false (an
-    informal counterexample, `LITERATURE.md`, §9; not compiled); `COMPANIONS.md`, "Full trees":
-    prospective.
-29. An injective tuple is typed exactly when its set of points is a support
-    (`Realization.isSome_eval_iff_isSupport`, `Realization/Hull`, under exact consistency); a
-    finite set is closed for the canonical closure exactly when it is a support
-    (`Realization.isClosed_coe_iff`, `Realization.isClosed_iff_of_finite`, `Realization/Closure`,
-    under exact consistency and covering); stage reduction keeps typed and untyped tuples
-    (`Realization.isSome_reduce_eval`, `Realization/Transport`) and the closure
-    (`Realization.closure_reduce`, `Realization/Closure`).  All compiled in this repository
-    (theorem named), each comparing declarations of this repository; the combined statement (an
-    injective tuple supported exactly when closed) is not named, and its comparison with the
-    closed tuples of [AFK26] is still to be proved, with item 2.  Milestone 1 of the uniform fixing
+    Countability of levels, read with terminal model expansions of codes in place of maximal
+    presentations, is `MainTheorem.countable_isoClasses_terminalAt`
+    (`MainTheorem/TerminalClasses`), compiled in this repository (theorem named),
+    conditional on (R1), `ContinuationCriterion`, (R2), and (R3), each still to be proved.
+28. What is corrected is a statement of the version of 1 October 2026: the same-index
+    equivalence of full trees (its Proposition 8.6) is false (an informal counterexample,
+    `LITERATURE.md`, §9; not compiled); it is absent from the current version.  The current
+    Definition 3.10 (the `β`-full trees, followed by an extension lemma for full trees,
+    Lemma 3.11) is cited to locate the notion and is not compared (S).  `COMPANIONS.md`, "Full
+    trees": prospective.
+29. The closed tuples of [AFK26] (Definition 2.1: the tuples satisfying `P_n`), in the structure
+    of an exactly consistent realization (row 14), are the injective tuples whose set of points is
+    a support (`Realization.relMap_closed_iff_isSupport`), equivalently, under covering, a finite
+    closed set of the canonical closure (`Realization.relMap_closed_iff_isClosed`), both in
+    `Correspondence/InvariantSystem`, compiled in this repository (theorem named).  Ingredients:
+    `Realization.isSome_eval_iff_isSupport` (`Realization/Hull`), `Realization.isClosed_coe_iff`
+    and `Realization.isClosed_iff_of_finite` (`Realization/Closure`); stage reduction keeps typed
+    and untyped tuples (`Realization.isSome_reduce_eval`, `Realization/Transport`) and the closure
+    (`Realization.closure_reduce`, `Realization/Closure`).  Milestone 1 of the uniform fixing
     bounds (`README.md`, item 5).
-30. Prospective: no declaration of this repository states positive niceness or names a fixing
-    rank.  Milestone 2; it is the row "invariance over all admissible presentations, with an
-    inhabited threshold" of the table of item 5.  For the models here it is derived from a
-    terminal presentation of each base, which supplies it immediately by terminal collision and
-    the injectivity of model reduction (the inequality step of row 35, then 5 ⇒ 1 of row 34),
-    with no further stabilization argument.  The terminal presentations come from either of two
-    distinct stopping proofs, both prospective: (i) the countable-slot argument (the termination
-    argument of [AFK26]), or (ii) the Scott route of row 40.  For (i), "countably many slots,
-    each used at most once" alone does not establish even the stopping half of global
-    termination.  A proof along it is to supply (a) which events use a slot, (b) why every
-    relevant continuation uses a fresh slot, and (c) why exhausting those events yields an actual
-    terminal presentation; countably many events may still continue through a countable limit,
-    whose supremum is not by itself an attainment or a terminality proof.  That its conclusion is
-    eventual departure, the stopping half of global termination (`README.md`, "The persistent
-    core"), and not terminal fullness, which is the first special statement, is prospective, to
-    be supplied by (a)–(c).  Neither may use positive niceness, and neither is a dependency of
-    the expansion-domain endpoint.
+30. Niceness of a tuple and of a base structure ([AFK26, Definition 2.19], in the numbering of the
+    current draft): `IsNiceTupleAt` (one field for each of its two clauses), `IsNiceTuple` and
+    `IsNice` (`MainTheorem/Niceness`), read in the raw base encoding: the lifts at `α` are the model
+    expansions at `λ_α`, the closed tuples the supported tuples of positive arity of the
+    realization of the base at `ω` (row 29), and the invariant at a higher stage is compared by
+    `StageType.castLE`.  The empty tuple is excluded: it is supported in every base structure with
+    a lift, but not closed in [AFK26] (Definition 2.1 has `P_n` only for `n ≥ 1`).  Positive
+    niceness for the base reduct of every model at a block stage on a countable carrier, with one
+    threshold `ρ` for all closed tuples and the invariant of each in a lift at `ρ` as the actual
+    witness: `exists_isNiceTupleAt_of_hasTerminalRefinement`, `isNice_of_hasTerminalRefinement`, and
+    `Realization.IsModel.isNice_toStructure_reduce` (condition (c) of [AFK26, Definition 2.22]),
+    compiled conditional on `HasTerminalRefinement.{w}` (row 38) and
+    `Expansion.NextBlockUniqueness.{w}`; at `w = 0`, the refinement is derived from (R1),
+    next-block uniqueness, and the countable-block apex property, each still to be proved.
+    Status S: the hypotheses and the identification of the lifts with those of [AFK26] are still
+    to be proved (the first row of the table of item 5); the closed-tuples comparison is recorded
+    in row 29.  No declaration of this repository names
+    a fixing rank.  Milestone 2; it is the row "invariance over all admissible presentations, with
+    an inhabited threshold" of the table of item 5.  For the models here it is derived from a
+    terminal presentation of each base, which supplies it immediately by terminal collision and the
+    injectivity of model reduction (the inequality step of row 35, then 5 ⇒ 1 of row 34), with no
+    further stabilization argument.  The terminal presentations come from either of two distinct
+    stopping proofs, both prospective: (i) the countable-slot argument (the termination argument of
+    [AFK26]), or (ii) the Scott route of row 40.  For (i), "countably many slots, each used at most
+    once" alone does not establish even the stopping half of global termination.  A proof along it
+    is to supply (a) which events use a slot, (b) why every relevant continuation uses a fresh slot,
+    and (c) why exhausting those events yields an actual terminal presentation; countably many
+    events may still continue through a countable limit, whose supremum is not by itself an
+    attainment or a terminality proof.  That its conclusion is eventual departure, the stopping half
+    of global termination (`README.md`, "The persistent core"), and not terminal fullness, which is
+    the first special statement, is prospective, to be supplied by (a)–(c).  Neither may use
+    positive niceness, and neither is a dependency of the expansion-domain endpoint.
 31. Prospective: no declaration of this repository states it.  Its ingredients for labels are
     compiled in this repository (theorem named): `Label.reduce_eq_self_iff` (fixed by projection
     exactly at the labels of the stage), and `Label.reduce_reduce_of_le`, `Label.atStage_reduce`
@@ -1268,16 +1577,27 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     The row is required for item 5, whether or not the main theorem uses a bound of serving
     indices: the completion criterion of item 5 asks every row of the item to be P or C, so
     matching the manuscript needs milestone 4.
-33. Prospective: no declaration of this repository states a model presentation of a literal base
-    or its maximality (`README.md`, item 5, "Maximal presentations: equivalent criteria,
-    uniqueness, the optimal bound").  Related declarations, none of them this notion:
+33. In the raw base encoding, a maximal presentation of a base structure `M` is a model expansion
+    of `M` at `λ_ρ`, `ρ < ω₁`, such that `ρ` bounds the serving indices of `M`
+    (`BoundsServingIndices`, `MainTheorem/Niceness`: every countable index at which `M` has a
+    model expansion is at most `ρ`).  In the common invariant encoding no declaration of this
+    repository states a model presentation of a literal base or its maximality (`README.md`, item
+    5, "Maximal presentations: equivalent criteria, uniqueness, the optimal bound").  Related
+    declarations, none of them this notion:
     `Realization.IsTerminalAt` with `Realization.isTerminalAt_iff_forall_lt`
     (`Continuation/Terminal`), terminality at a block, which a maximal presentation has; in the raw
     base encoding, `Realization.IsExpansionOf.isTerminalAt` (same module), compiled in this
     repository (theorem named): with no model expansion at the next block, every expansion is
     terminal; and `FullPresentations`, with `presentedAt`, on `DensityClass`
     (`MainTheorem/Assembly`), the class–level incidence of row 27, which stores no presentation.
-    The conversion between the raw base and the common invariant encodings: prospective.
+    The conversion between the raw base and the common invariant encodings: prospective.  In the raw
+    base encoding, maximal (and terminal) model expansions of the base structure of a model on a
+    countable carrier are compiled conditional on `Expansion.FiniteCutReceiving` ((R1)),
+    `Expansion.NextBlockUniqueness`, and `StageType.HasApexCoatomExtensions` at every countable
+    block stage, each still to be proved: `MainTheorem.exists_isGreatest_servingIndex` and
+    `MainTheorem.exists_maximalRefinement_of_modelExpansion` (`MainTheorem/MaximalRefinement`).  The
+    row stays S: the hypotheses are open, and the notion of the manuscript is read in the common
+    invariant encoding.
 34. Prospective.  1 ⇒ 2 is the uniform fixing stage of row 31 for the family of model
     presentations, through `StageProjection.exists_uniform_fixing_stage` (available at the pin
     `e460cb6`, signatures checked; "Dependency pins"), and is the only step using a countable
@@ -1285,12 +1605,25 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     ingredients are compiled in this repository (theorem named) in the raw base encoding:
     `Realization.IsModel.reduce` (`Realization/Model`), `ModelExpansion.nonempty_of_coherent`
     (`Realization/Limit`), and `ModelExpansion.nonempty_of_forall_lt` (`Expansion/Uniqueness`,
-    conditional on `Expansion.NextBlockUniqueness`, still to be proved).  So 4 ⇒ 5, and with it
-    the equivalence and that of 2–5 for arbitrary carriers, is conditional on the injectivity of
-    model reduction (row 35), an explicit hypothesis until proved; 5 ⇒ 1 uses maximality and the
-    strict threshold only.  4 ⇒ 5 is route (a) of milestone 5 of `README.md`, item 5, "Uniform
+    conditional on `Expansion.NextBlockUniqueness`, still to be proved).  So 4 ⇒ 5, and with it the
+    equivalence and that of 2–5 for arbitrary carriers, is conditional on the injectivity of model
+    reduction (row 35), an explicit hypothesis until proved; 5 ⇒ 1 uses maximality and the strict
+    threshold only, and is compiled in this repository (theorem named) in the raw base encoding,
+    with no hypothesis: `isNiceTupleAt_of_boundsServingIndices` and `isNice_of_boundsServingIndices`
+    (`MainTheorem/Niceness`).  4 ⇒ 5 is route (a) of milestone 5 of `README.md`, item 5, "Uniform
     fixing bounds from positive niceness", with the dependencies named there.  The equivalence
-    characterizes termination for one base; it is not a separate proof of termination.
+    characterizes termination for one base; it is not a separate proof of termination.  In the raw
+    base encoding, 4 ⇒ 5 is compiled conditional on `Expansion.NextBlockUniqueness`, on any carrier:
+    `MainTheorem.exists_isGreatest_servingIndex_of_le` (`MainTheorem/MaximalRefinement`), through
+    `exists_isGreatest_of_closed` (`Counting/OrdinalAttainment`, Layer 0, no hypothesis).  That
+    ordinal statement is not the same as the greatest-stage statements of `OrdinalUtil`
+    ("Dependency pins", **Upstream statements quoted, not compiled here**), but follows from each:
+    `exists_greatest_stage_lt_omega1` assumes `P 0` (here from `P β` by downward closure) and a
+    bound `ξ ≤ A` only below `ω₁` (here `A = δ`), and concludes `P ξ ↔ ξ ≤ ρ`; the general forms
+    `exists_forall_iff_le_of_bounded_of_isSuccLimit_closed` and
+    `exists_isGreatest_setOf_of_bounded_of_isSuccLimit_closed` assume closure at every successor
+    limit (here vacuous above `δ`, where `P` fails).  It is to be replaced by a quotation of one
+    of them at a repin containing `c16de09` and `2cd44c3` ("Placement record").
 35. Prospective, conditional on the injectivity of model reduction at each countable index (two
     model presentations of the base at one index are equal), an explicit hypothesis until proved.
     Both its steps use it: the inequality at `ρ` (terminal collision, which also uses
@@ -1304,11 +1637,14 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     expansions at one block; it bounds no index and supplies no terminal presentation.  The
     terminality of the reconstructed top-free realization, `reduce_ne_reconstruct`
     (`ClassicalLimit/Modelhood`), compiled in this repository (theorem named), concerns the
-    realization, not its base reduct.
+    realization, not its base reduct.  In the raw base encoding, literal uniqueness (both steps) is
+    compiled conditional on `Expansion.NextBlockUniqueness`, on any carrier:
+    `MainTheorem.exists_le_reduceBlock_eq_of_isTerminalAt` (`MainTheorem/MaximalRefinement`).
 36. Prospective.  It rests on row 32, on the inequality step of row 35 (so on the injectivity of
     model reduction at `ρ` only), and on `COMPANIONS.md`, "Fixing ranks are zero or successors"
     and "Limit heights are unattained suprema", each still to be proved.  No declaration of this
-    repository names a fixing rank (row 30).
+    repository names a fixing rank (row 30).  Its inequality step, in the raw base encoding, is the
+    first component of `MainTheorem.exists_le_reduceBlock_eq_of_isTerminalAt` (row 35).
 37. Prospective: no declaration of this repository states density at an observation (row 25) or
     its witness-bounded form.  The fixation of the returned invariant rests on
     `Realization.reduce_eval` and `Realization.isSome_reduce_eval` (`Realization/Transport`),
@@ -1318,16 +1654,26 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     supplied separately by `Realization.IsConsistent` (`Realization/Basic`), clause 2 of
     `Realization.IsModel`, and is part of neither predicate.  It keeps the root and the realizing
     occurrence together and supplies no projected-donor lifting.
-38. Prospective.  Compiled in this repository (theorem named): `Realization.IsTerminalAt` with
+38. Compiled conditionally (the last sentences of this note).  Compiled in this repository
+    (theorem named): `Realization.IsTerminalAt` with
     `Realization.isTerminalAt_iff_forall_lt` (`Continuation/Terminal`),
     `Realization.IsModel.reduce` (`Realization/Model`), and `Realization.IsModel.lt_omega_one`
     with `le_blockStage` (`Realization/Expansion`), which give `β < ω₁` before the given model is
-    read as a model presentation.  The terminal model is on the same carrier as the given model,
+    read as a model presentation (the planned route; the compiled form below does not use them).
+    The terminal model is on the same carrier as the given model,
     not on an isomorphic copy.  A terminal presentation of the base comes from either stopping
     proof of note 30 (the countable-slot argument, or the Scott route of row 40, whose maximal
     presentation is terminal); literal-reduct uniqueness is row 35, conditional on the
     injectivity of model reduction.  Through the Scott route no global termination theorem is
-    used; the stage index is not assumed countable.
+    used; the stage index is not assumed countable.  Compiled conditional on
+    `Expansion.FiniteCutReceiving` ((R1)), `Expansion.NextBlockUniqueness`, and
+    `StageType.HasApexCoatomExtensions` at every countable block stage, each still to be proved,
+    through the Scott route: `MainTheorem.exists_maximalRefinement`
+    (`MainTheorem/MaximalRefinement`): a model `V` at `λ_β` on a countable carrier `X` is the stage
+    reduction to `λ_β`, literally, of a model `W` at `λ_ρ` on `X`, `β ≤ ρ < ω₁`, terminal at `ρ`,
+    and every model on `X` at a block stage `λ_η` with the base structure of `V` has `η ≤ ρ`;
+    `β < ω₁` is derived from `β ≤ ρ`.  Maximality up to isomorphism of the base, on any carrier,
+    follows by `MainTheorem.le_of_modelExpansion_of_equiv` (through `ModelExpansion.map`).
 39. Prospective as a combined statement, which is not named, in two forms: carrier-general (a
     base structure on any carrier, with `ξ < ω₁` an explicit hypothesis) and coded (codes on
     `ℕ`, where `ξ < ω₁` follows from `Expansion.expansionDomain_eq_empty`).  Its ingredients are
@@ -1345,7 +1691,8 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     and, conditional on block determination, `realize_blockFormula_iff`,
     `ModelExpansion.relMap_toChartStructure_iff`, and `ModelExpansion.map_eq_of_determines`.  No
     new structure of hypotheses is introduced.
-40. Prospective.  The second stopping proof of note 30.  Scott isolation for one class, at the
+40. Steps 1–5 compiled conditionally (the last sentences of this note).  The second stopping
+    proof of note 30.  Scott isolation for one class, at the
     pin: `stabilizationOrdinal_spec` with `stabilizationOrdinal_lt_omega1'` (signatures
     checked), or `scottSentence_characterizes` with `scottFormula_qrank_le` and
     `BFEquiv_implies_agreeQR` (signatures checked), the latter form also using
@@ -1368,11 +1715,172 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     Attainment: `Realization.IsModel.reduce` and `ModelExpansion.nonempty_of_forall_lt`, the
     latter conditional on `Expansion.NextBlockUniqueness`.  These are compiled in this repository
     (theorem named; `ModelExpansion.map` is a definition), except the library statements and the
-    conversion; their hypotheses are still to be proved.  The strict bound on serving stages, the
-    attainment for a literal base, and positive niceness (5 ⇒ 1 of row 34) are prospective.  The
+    conversion; their hypotheses are still to be proved.  Positive niceness (5 ⇒ 1 of row 34) is
+    prospective; the strict bound and the attainment are compiled conditionally (below).  The
     route proves stopping for each base that is a model as its conclusion and assumes no
     termination; it is not a dependency of the expansion-domain endpoint and is not combined with
     the conditional of row 31 in a cycle.
+    The maximal presentation it yields at `ρ` is terminal.  Read in the coded encoding (through
+    the conversion, still to be proved), the class of the base lies in the loss at `ρ`
+    (`Expansion.mem_expansionDomain_iff` with `ModelExpansion.map`), hence among the classes
+    terminal at `ρ` (`MainTheorem.loss_subset_terminalClasses`, unconditional), of which there
+    are countably many at each countable level (`MainTheorem.countable_isoClasses_terminalAt`,
+    compiled in this repository (theorem named), conditional on (R1), `ContinuationCriterion`,
+    (R2), and (R3), each still to be proved); the loss alone is already countable under the same
+    hypotheses (`Expansion.expansionDomain_loss_countable`).  The terminality of the presentation
+    itself transports to the code along the isomorphism (`Realization.IsTerminalAt.map`,
+    unconditional).
+    Steps 1–5, in the raw base encoding, are compiled
+    conditional on `Expansion.FiniteCutReceiving` ((R1)), `Expansion.NextBlockUniqueness`, and
+    `StageType.HasApexCoatomExtensions` at every countable block stage, each still to be proved
+    (`MainTheorem/MaximalRefinement`): the isolating sentence `MainTheorem.exists_isolates` (the
+    Scott sentence, through `scottSentence_characterizes`), of quantifier rank below `ω₁`
+    (`MainTheorem.qrank_lt_omega_one`, `MainTheorem/Spectrum`); two classes in each countable
+    domain, `MainTheorem.expansionDomain_nontrivial` (per block,
+    `nonempty_loss_of_hasApexCoatomExtensions` at `δ` and `δ + 1`, without `CapToModel`); the
+    subsingleton domain `MainTheorem.expansionDomain_subsingleton_of_isolates` and the strict bound
+    `MainTheorem.lt_qrank_of_isolates`, with the agreement taken between the base structure on its
+    own carrier and the codes of the classes of the domain
+    (`Expansion.realize_iff_of_modelExpansions`), so that neither the conversion between the
+    encodings nor a code of the base is used; the attainment
+    `MainTheorem.exists_isGreatest_servingIndex`; and the terminal refinement of row 38.  The bound
+    is the quantifier rank of the chosen isolating sentence, not a Scott rank.  Positive niceness
+    and the forms in the common invariant encoding are prospective.
+41. `Label.visibilityReplace`, `Label.IsSelfVisible` (`Label/Visibility`).  The correction,
+    recorded in `Correspondence/Current/Visibility`: the printed clause sends `ω · α + n` to the
+    natural number `i` or `n`; it is read as `ω · α + i` or `ω · α + n`, the operation of
+    [Kni26, Definition 2.2.3] (row 2).  Read literally, the image of every ordinal is finite
+    (`Label.PrintedVisibilityMap.apply_coe_lt_omega0`), no ordinal `≥ ω` is self-visible
+    (`Label.PrintedVisibilityMap.apply_ne_self`), and the map is not visibility replacement
+    (`Label.PrintedVisibilityMap.ne_visibilityReplace`).  The corrected clauses
+    (`Label.CorrectedVisibilityMap`) are visibility replacement on the labels at the stage
+    (`Label.correctedVisibilityMap_iff`; on `{-∞} ∪ ω₁ ∪ {∞}`,
+    `Label.correctedVisibilityMap_omega_one_iff`), self-visibility is `Label.IsSelfVisible`
+    (`Label.CorrectedVisibilityMap.apply_eq_self_iff`), the printed domain `α ∈ ω₁` is that of the
+    stage `ω₁` (`Label.omega0_mul_add_natCast_lt_omega_one_iff`), and the definition of [Kni26] is
+    the corrected one at every stage
+    (`Label.printedVisibilityReplace_iff_forall_correctedVisibilityMap`); all compiled in this
+    repository (theorem named).
+42. `Label.PrintedTransformsTo` (row 3), that is `Label.TransformsTo`.  The printed relation
+    (`Label.PrintedFrameWitness`, `Label.PrintedFrameTransformsTo`,
+    `Correspondence/Current/Transform`) has no monotonicity clause for the shifter.  The
+    corrections: clause 4 of [Kni26, Definition 2.3.9] (monotonicity) restored; "visible at `k`"
+    read as self-visibility (Definition 4.24); the visibility map that of row 41.  Compiled in
+    this repository (theorem named): the two printed witnesses differ exactly by monotonicity
+    (`Label.printedWitness_iff_printedFrameWitness`); the relations of [Kni26] and of this
+    development give the printed one (`Label.PrintedTransformsTo.printedFrameTransformsTo`,
+    `Label.TransformsTo.printedFrameTransformsTo`); and the omission is not harmless: at `ω₁` the
+    printed relation reverses the order of two labels of grade `1`, which neither of the others
+    does (`Label.exists_printedFrameTransformsTo_not_transformsTo`).
+43. `CellScheme.Rows.IsLawfulBelow` (`Scheme/Row`).  The definition-level identification
+    `CellScheme.Rows.printedLawfulLocal_iff`, at every stage that is zero or a limit, and
+    `CellScheme.Rows.printedLawfulLocal_omega_one_iff`, on the printed labels
+    (`Correspondence/Current/LocalLabelling`), compiled in this repository (theorem named); the
+    clauses are the fields of `CellScheme.Rows.PrintedLawfulLocal`.  *The reading* (rows 43–47):
+    the row system `Σ` of a template is the fixed semantic rows `R : D.Rows` of a cell scheme.
+    This is not the representation of item 1 and row 9, in which a labelling `p` is represented
+    by its coherent local rows `min(p(e), p(d))`; the two readings make different objects legal
+    (under the coherent-rows reading clause 4 of Definition 4.27 would forbid `⊤` and labels
+    `≥ ω ^ 2` in `p`, note 45), and which one [AFK26] intends is part of the fidelity question of
+    item 1.  The identification holds for every row system, so the status P does not depend on
+    the reading.  Departures: the cell `e'` of Availability ranges over `D` but is read in `D↓U`
+    (`CellScheme.mem_below_of_gradedIndex_eq`); `D↓d` is computed in `D` (transported along a
+    bijection in the proof of the identification); the range of the labels, as in row 3.  The
+    notions the clauses use: self-visibility (row 41, C), the relation `⇒` (row 42, C), and the
+    frame, row system, graded faces, and cells below a graded face of [AFK26, Definitions 4.2 and
+    4.4–4.6], transcribed literally (the frame is the gradings of a `CellScheme`, the row system
+    is `D.Rows`), with `CellScheme.below` and the printed graded faces
+    `CellScheme.printedGradedFaces` (grade `0` allowed; `CellScheme.mem_printedGradedFaces_iff`;
+    lawfulness is defined below every pair).  The definition of [Kni26] (row 4) is the same
+    lawfulness (`CellScheme.Rows.printedLawfulLocal_iff_printedRespects`, compiled in this
+    repository (theorem named)).
+44. `CellScheme.Rows.IsBountiful` (`Scheme/Bountiful`); status S.  The rows are read as in
+    note 43.  The clauses are the fields of `CellScheme.Rows.PrintedBallHypotheses`, with the ball
+    `CellScheme.Rows.printedBall` and the definition `CellScheme.Rows.PrintedBountifulRows`
+    (`Correspondence/Current/Bountiful`).  Compiled in this repository (theorem named), for
+    finitely many cells with graded index in the graded plan: `IsBountiful` is the printed
+    definition at every stage that is zero or a limit and carries the values of the rows,
+    together with the extension of every labelling lawful below a graded face to one lawful below
+    every larger graded face (the cap `-∞`)
+    (`CellScheme.Rows.isBountiful_iff_forall_printedBountifulRows_and_capBot`); `IsBountiful`
+    implies the printed definition at each such stage
+    (`CellScheme.Rows.IsBountiful.printedBountifulRows`), in particular at `ω₁`
+    (`CellScheme.Rows.IsBountiful.printedBountifulRows_omega_one`).  Not proved: the converse at a
+    single stage (as in row 6), and the cap `-∞`, which the printed definition omits (`γ ∈ ω₁`)
+    and [Kni26, Definition 2.5.14] includes (clause 4).  Harmless by named theorems, when every
+    cell has a graded face of positive grade (the hypothesis `hD`; clause 1 of Definition 4.27
+    instead asks for cells of grade `0`, note 45): the printed graded faces of grade `0`
+    (`CellScheme.Rows.printedBountifulRows_iff_gradedFaces`); and the cap `∞` (in the proof of the
+    characterization).  The two printed definitions are related by
+    `CellScheme.Rows.forall_printedBountiful_iff_forall_printedBountifulRows_and_capBot`, compiled
+    in this repository (theorem named).
+45. `Scheme.IsLegal` with `Scheme.IsCoded` (`Stage/Legal`, `Stage/Scheme`; row 7); the printed
+    definition `CellScheme.Rows.PrintedLegal`, the corrected one `CellScheme.Rows.CorrectedLegal`
+    (`Correspondence/Current/LegalTemplate`), with the rows read as in note 43.  Clause 1 (C): a
+    printed graded face may have grade `0`, and clause 1 then fails for every frame whose cells have
+    positive grade (`CellScheme.Rows.not_printedLegal`, compiled in this repository (theorem
+    named)).  Within [AFK26] clause 1 is consistent, since its frames may have cells of grade `0`;
+    the correction is one of the graded faces of [AFK26, Definition 4.2], taken of positive grade as
+    in [Kni26, Definition 2.1.8], which the frames here follow, and clause 1 becomes
+    `CellScheme.IsComplete`.  No theorem relates a printed legal template with cells of grade `0` to
+    a corrected one.  `Correspondence.IsFrame` (`Correspondence/Template`, row 9) follows
+    Definition 4.2 literally and permits cells of grade `0`, as does
+    `CellScheme.printedGradedFaces`; their correspondence is still to be proved.  Clause 2 is
+    consistency (row 43), clause 3 is row 44 (S).  Agreement on lawful labellings (row 43) is not
+    correspondence of legal schemes: clause 4 (`CellScheme.Rows.HasPrintedRange`, `i ≤ g(d)`) is an
+    offset bound, which legality here deliberately omits (`README.md`, Layer 3, "legal scheme" and
+    checkpoint 2.2).  It is strictly stronger than `Scheme.IsCoded`
+    (`CellScheme.Rows.HasPrintedRange.row_lt`), and one tighter than the offset bound `j ≤ k + 1` of
+    [Kni26, Lemma 2.5.13]: `CodingExamples.pointRow 2` is legal, satisfies that bound
+    (`Scheme.isStronglyCoded_pointRow_two`), and violates clause 4
+    (`Scheme.not_hasPrintedRange_pointRow_two`, `Scheme.exists_isLegal_not_hasPrintedRange`), all
+    compiled in this repository (theorem named).  So the two classes differ: with clause 1
+    corrected and clause 3 required at every stage together with the cap `-∞`, the legal templates
+    of [AFK26] are exactly the legal schemes satisfying clause 4
+    (`Scheme.isLegal_and_hasPrintedRange_iff`), a strictly smaller class; that a legal template as
+    printed (clause 3 at `ω₁` only) is a legal scheme is not proved (row 44).  Under the reading of
+    note 43, resolution (2) of the fidelity question of item 1 can hold only up to this bound.
+    Compiled in this repository (theorem named): `Scheme.IsLegal.correctedLegal` (a legal scheme
+    with clause 4 satisfies the corrected definition at every stage `θ ≥ ω ^ 2` that is zero or a
+    limit), `Scheme.IsLegal.correctedLegal_omega_one`,
+    and the equivalence `Scheme.isLegal_and_hasPrintedRange_iff` (with the corrected definition at
+    every such stage and the cap `-∞` of row 44).  Departures that are not fields: the plan
+    conditions of [AFK26, Definition 4.1] (supplied by `Scheme.IsWellFormed` in the equivalence),
+    and the finiteness of the cells (`Fin card`; `[Finite ι]` in row 44).  Still to be proved:
+    legality from the corrected definition at the single stage `ω₁`, and whether every legal scheme
+    is equivalent to one satisfying clause 4.
+46. Statement only.  Compiled in this repository (theorem named), in `Stage/Legal`: the legal stage
+    types are closed under the face maps (`StageType.IsLegal.restrictFace`), reindexing
+    (`StageType.IsLegal.reindex`), and stage reduction (`StageType.isLegal_reduce_iff`), and there
+    are countably many on `n` points at a countable stage (`StageType.countable_setOf_isLegal`);
+    the base language has one relation symbol for each legal stage type at `ω` (`baseLanguage`,
+    `Language/Basic`).  Under the reading of note 43, the first clause of Lemma 4.28 (all
+    templates in `L` are legal templates) fails for the legal stage types here as they stand: at
+    every stage there is a legal stage type on a scheme violating clause 4
+    (`StageType.exists_isLegal_not_hasPrintedRange`, compiled in this repository (theorem named),
+    on `CodingExamples.pointRow 2`; note 45).  So a literal identification of `L` with the legal
+    stage types is ruled out, not pending.  Either of two results would address this range
+    obstruction, and neither
+    is chosen here: (a) a proof that the class restricted by clause 4 suffices for the main
+    theorem (it is not known to be preserved by the coatom amalgam and the completion, and
+    legality may not be strengthened, `README.md`, Layer 3, checkpoint 2.2); or (b) a correction
+    of clause 4 of Definition 4.27, recorded as C.  Under the coherent-rows reading of row 9 the
+    witness does not apply: it is the bottom labelling, its coherent local rows are all `⊥`, and
+    it satisfies clause 4; there clause 4 bounds the labels (note 43), and its effect on Lemma 4.28
+    is not recorded.  That the legal stage types form a template system of [AFK26] representing
+    every legal template up to relabelling isomorphism is still to be proved: under the reading of
+    note 43 after one of (a) and (b); under the coherent-rows reading it rests on item 1's fidelity
+    question (row 9, item 1: S) and row 45, with clause 4 bounding the labels.
+47. Statement only.  The corresponding statement here is the main theorem in its conditional
+    composition `vaughtCounterexample_of_expansionDomains` (`MainTheorem/Assembly`), compiled in
+    this repository (theorem named), whose hypotheses are still to be proved.  Under the reading
+    of note 43 a template carries no labelling, so `σ[L]` and `baseLanguage` are indexed by
+    different kinds of object (templates, legal stage types); their underlying schemes differ by
+    clause 4 (`CodingExamples.pointRow 2`, note 46), and a comparison of the two languages needs
+    the representation of item 1 (row 9) in any case.  So `σ[L]` cannot be literally
+    `densitySentence` as things stand; under the reading of note 43, their identification needs
+    one of the two resolutions of note 46, and then rows 12 and 13.  The first assertion of Theorem 4.29, about
+    the system `K[L]`, has no counterpart here (prospective).
 
 **Completion criteria, item by item** (the items of `README.md`, "Manuscript correspondence
 (required)").  For every item, each row of the concordance that it concerns is P or C, with its
@@ -1407,8 +1915,9 @@ source named.
    anything of [AFK26]; and the two counting endpoints kept with their termination dependence
    explicit, the second never silently quoted for the first.
 6. *The tree discussion:* the three refutations compiled as examples (the same-index equivalence
-   of [AFK26, Proposition 8.6], and non-implications 1 and 5 of "Checkpoint order and
-   acceptance"); the positive classification of density for trees is not part of this criterion.
+   stated in the version of 1 October 2026 of [AFK26] (its Proposition 8.6), and non-implications
+   1 and 5 of "Checkpoint order and acceptance"); the positive classification of density for trees
+   is not part of this criterion.
 
 **Completion criteria of the uniform fixing bounds, milestone by milestone** (`README.md`,
 "Manuscript correspondence (required)", item 5, "Uniform fixing bounds from positive niceness";
@@ -1481,9 +1990,14 @@ hypothesis of each statement of 2–4 that uses it, until it is proved as a theo
    dependency: signatures verified against the upstream source at `2cd44c3`, not compiled here;
    "Dependency pins"), with `P` the serving indices, `hzero` from a model base, `hdown` from
    downward model reduction, `hlim` from limit coherence, and `hA` and `hbound` from criterion 4
-   (a prospective application).  The negative special case (the everywhere-undefined assignment:
-   criteria 1 and 4 vacuous, criterion 5 false) compiled as an example.  No proof of criterion 1
-   that uses termination is cited as a proof of termination.
+   (a prospective application).  Bounded-stage attainment is compiled here conditionally, in the
+   raw base encoding: `MainTheorem.exists_isGreatest_servingIndex_of_le`, conditional on
+   `Expansion.NextBlockUniqueness`, through the local ordinal statement
+   `exists_isGreatest_of_closed` (`Counting/OrdinalAttainment`; note 34), which the quotation
+   replaces at a repin containing `c16de09` and `2cd44c3` ("Placement record").  The negative
+   special case (the everywhere-undefined assignment: criteria 1 and 4 vacuous, criterion 5 false)
+   compiled as an example.  No proof of criterion 1 that uses termination is cited as a proof of
+   termination.
 3. *Literal uniqueness:* for a terminal model presentation at `ρ`, every model presentation at `η`
    has `η ≤ ρ` and is literally its reduct, with no countability assumed; two terminal model
    presentations of one base have the same index and are equal; and no extension of a partial
@@ -1515,9 +2029,9 @@ named, and none is complete because another is.
    carrier, a model on the same carrier (not an isomorphic copy), terminal at a countable
    `ρ ≥ β`, whose stage reduction to `λ_β` is literally the given model, compiled with `β` not
    assumed countable (`β < ω₁` derived first, from `Realization.IsModel.lt_omega_one` and
-   `le_blockStage`).  Its named dependencies: a terminal presentation of the base from either
-   stopping proof (5 below) and literal uniqueness (row 35), under the injectivity of model
-   reduction.
+   `le_blockStage`, or, as in the compiled form of note 38, from `β ≤ ρ`).  Its named
+   dependencies: a terminal presentation of the base from either stopping proof (5 below) and
+   literal uniqueness (row 35), under the injectivity of model reduction.
 3. *Unique reconstruction:* the `∃!` statement in its carrier-general form (no countability of
    the carrier added; `ξ < ω₁` explicit) and its coded form (a code whose class lies in
    `expansionDomain ξ`), compiled with `Expansion.NextBlockUniqueness` or block determination (or
@@ -1540,7 +2054,16 @@ named, and none is complete because another is.
    element of a loss at a countable stage at or above that rank and an element of the next domain
    (condition 4 at that stage and at the next); or
    `IsolatedPresentation.exists_countable_strict_stage_bound` for all classes at once) and
-   `exists_greatest_stage_lt_omega1` for the attained maximum.
+   `exists_greatest_stage_lt_omega1` for the attained maximum.  These two steps are compiled here
+   (note 40), in the raw base encoding, conditional on `Expansion.FiniteCutReceiving` ((R1)),
+   `Expansion.NextBlockUniqueness`, and `StageType.HasApexCoatomExtensions` at every countable
+   block stage: the strict bound by `MainTheorem.expansionDomain_nontrivial`,
+   `MainTheorem.expansionDomain_subsingleton_of_isolates`, and `MainTheorem.lt_qrank_of_isolates`,
+   which specialize `notMem_of_isolating_of_uniform` to the domain at the quantifier rank of the
+   isolating sentence, and the attained maximum by `exists_isGreatest_of_closed`
+   (`Counting/OrdinalAttainment`).  At a repin containing `c16de09` and `2cd44c3`, the
+   quotations replace them: `exists_isGreatest_of_closed` by the greatest-stage statement, and the
+   local two-class argument by Scott separation ("Placement record").
 5. *The stopping proofs and positive niceness:* each stopping proof that is used (the
    countable-slot argument; the Scott route, 4 above) stated as its own theorem, concluding a
    terminal presentation of each base that is a model, with its own dependencies, the two not
@@ -1921,7 +2444,10 @@ head of this subsection does not apply to the Lean blocks below.  They are the s
 `c16de09` and `2cd44c3`, as merged (hypotheses included), available upstream, not yet at our
 pinned dependency: signatures verified against the upstream source at `2cd44c3` (which contains
 `c16de09`), not compiled here (neither compiled against our pin `e460cb6` nor `#check`ed in
-`SuggestedInterfaces.lean`); no application is compiled in this repository.
+`SuggestedInterfaces.lean`); no application is compiled in this repository.  Local statements
+compiled in place of the greatest-stage statement and of Scott separation, to be replaced by
+these at a repin containing them, are listed in the "Placement record"
+(`Counting/OrdinalAttainment` and `MainTheorem/MaximalRefinement`).
 
 - *Greatest attained stage* (`OrdinalUtil`): a predicate on stages that holds at `0`, is closed
   downward, is closed under successor limits below `ω₁`, and is bounded on the stages below `ω₁`
@@ -2288,19 +2814,22 @@ Each checkpoint needs both its abstract API and a concrete application:
    `Realization.eq_of_reduce_eq_of_forcingDonors`), conditional on finite-extension receiving (from
    (R1)) and on forcing donors (`ForcingDonors`). Next-block uniqueness is derived from (R1)
    (checkpoint 4) and forcing donors (`Expansion.NextBlockUniqueness.of_forcingDonors`). Forcing
-   donors is still to be proved, by a finite construction from the completion below the full grade
-   (checkpoints 2.6–2.7), without (R1). The structural candidate (output 1) is compiled
-   (`Realization.stableCandidate`, `Continuation/Candidate`), with exact consistency, covering, the
-   order law, and locality from exact consistency and covering, and availability from legal types,
-   also at twins (two cells labelled `⊤` at one graded index), so that every model is stably lawful
-   (`Realization.IsModel.isStablyLawful`); two hypotheses on single types are refuted (section 4
-   above). Output 3 (stated as the hypothesis `ContinuationCriterion`) is compiled conditionally on
-   (R4) and the coface instances at the next block
-   (`ContinuationCriterion.of_stableCappedReceiving`); (R4) and the coatom extension property with
-   apex at `λ_{ξ+1}` are still to be proved.  Under (R1), forcing donors and the coface instances,
-   (R4) is equivalent to `ContinuationCriterion`
+   donors is still to be proved; it is compiled conditional on the coatom extension property at
+   `λ_{η+1}` (`forcingDonors_of_hasCoatomExtensions`, `Extension/ForcingDonorsCoatom`), by a finite
+   construction without (R1) and without a completion, so it waits for checkpoint 2.7; one- and
+   two-point inputs up to the threshold `4` are compiled unconditionally
+   (`forcingDonorsUpTo_one_four`, `forcingDonorsUpTo_two_four`). The structural candidate
+   (output 1) is compiled (`Realization.stableCandidate`, `Continuation/Candidate`), with exact
+   consistency, covering, the order law, and locality from exact consistency and covering, and
+   availability from legal types, also at twins (two cells labelled `⊤` at one graded index), so
+   that every model at a block stage is stably lawful (`Realization.IsModel.isStablyLawful`); two
+   hypotheses on single types are refuted (section 4 above). Output 3 (stated as the hypothesis
+   `ContinuationCriterion`) is compiled conditionally on (R4) and the coface instances at the next
+   block (`ContinuationCriterion.of_stableCappedReceiving`); (R4) and the coatom extension
+   property with apex at `λ_{ξ+1}` are still to be proved. Under (R1), forcing donors and the coface
+   instances, (R4) is equivalent to `ContinuationCriterion`
    (`Expansion.stableCappedReceiving_iff_continuationCriterion`, `Expansion/StableReceiving`), so it
-   is a reformulation of output 3, not a weaker step.  (R4) at one occurrence
+   is a reformulation of output 3, not a weaker step. For `λ_ξ ≤ γ`, (R4) at one occurrence
    (`Realization.StablyReceivesAt`, `Continuation/StableReceiving`) is exact receiving in the model
    of the reduction of the donor together with the calibration of the stable labels at the new cells
    reducing to the top; the evaluation step and the acquisition of the marker and cap calibration
@@ -2314,9 +2843,12 @@ Each checkpoint needs both its abstract API and a concrete application:
    `StageType.HasApexCoatomExtensions` at `λ_η` and uniqueness of the model expansions at `λ_η`
    (`nonempty_loss_of_hasApexCoatomExtensions`, `MainTheorem/LowerBound`).
 
-   **Condition 2: checkpoints A–E.**  Condition 2 of the reduction (countable successor losses)
-   is complete conditionally on output 3 (`ContinuationCriterion`), (R1), (R2), and (R3).  Each
-   checkpoint is compiled in this repository (theorem named); its hypotheses are listed below.
+   **Condition 2 and the count at one level: checkpoints A–F.**  Condition 2 of the reduction
+   (countable successor losses) is complete at E, conditionally on output 3
+   (`ContinuationCriterion`), (R1), (R2), and (R3).  F is the count at one level for the terminal
+   models (`README.md`, "Reduction to full presentations"), a strengthening of E's count that
+   condition 2 does not need.  Each checkpoint is compiled in this repository (theorem named);
+   its hypotheses are listed below.
 
    | Checkpoint | Content | Module |
    | --- | --- | --- |
@@ -2325,6 +2857,7 @@ Each checkpoint needs both its abstract API and a concrete application:
    | C | the countable index of terminal properties; the cover | `Continuation/Classification` |
    | D | the comparison of expansions sharing a property | `Continuation/Comparison` |
    | E | losses are terminal; one class per property; the count | `Expansion/Losses` |
+   | F | the classes terminal at a level; the cover; the count | `MainTheorem/TerminalClasses` |
 
    - A: `Realization.nonempty_equiv_of_exactReceivingWithin`, pointed
      `Realization.exists_equiv_comp_eq_of_exactReceivingWithinAt`; no named hypothesis.
@@ -2346,6 +2879,17 @@ Each checkpoint needs both its abstract API and a concrete application:
      (Layer 0); the main theorem with no hypothesis of countable losses,
      `densitySentence_hasThinAlephOneSpectrum_of_terminalClassification`
      (`MainTheorem/ModelExpansionDomains`).
+   - F: `MainTheorem.loss_subset_terminalClasses`, unconditional;
+     `MainTheorem.terminalClasses_subset_iUnion`, conditional on `ContinuationCriterion`;
+     `MainTheorem.countable_isoClasses_terminalAt` (countably many classes terminal at each
+     countable level), conditional on these and on (R1), (R2), and (R3) for
+     `Realization.IsCoverHollowAtBlock`, through E's `Expansion.subsingleton_classes_of_property`
+     and `Counting.countable_of_subsingleton_cover`; the rigid-core comparison keeping the core,
+     `ModelExpansion.exists_equiv_comp_eq_of_isGloballyRigidCore` (`Expansion/Losses`),
+     conditional on (R1); the transport of terminality along a bijection of carriers,
+     `Realization.IsTerminalAt.map` (`Continuation/Terminal`), unconditional.  Examples:
+     `MainTheorem/TerminalClassesExamples` (the losses from the count, the base block `β = 0`,
+     the pointed comparison at the empty core).
 6. Domain hypotheses of the counting theorem, the upper and lower bounds, thinness, and the
    reduction to `ℕ` (all countable carriers).  Status: the conditional compositions of both routes
    are compiled, on `ℕ` (`MainTheorem/Assembly`) and on all countable carriers
@@ -2357,6 +2901,41 @@ Each checkpoint needs both its abstract API and a concrete application:
    (`infinite_of_realize_densitySentence_of_hasCoatomExtensions`, with hypothesis
    `StageType.HasCoatomExtensions` at `ω`, still to be proved); once that property is proved, the
    reduction to `ℕ` for the density sentence no longer needs `CapToModel`.
+
+   **The main theorem: three forms.**
+   `densitySentence_hasThinAlephOneSpectrum_of_terminalClassification`
+   (`MainTheorem/ModelExpansionDomains`) is compiled conditionally on seven named hypotheses:
+   `CapToModel`, (R1), forcing donors, `ContinuationCriterion`, (R2), (R3), and nonempty losses.
+   `densitySentence_hasThinAlephOneSpectrum_of_terminalClassification_of_hasApexCoatomExtensions`,
+   with its form on all countable carriers
+   `vaughtCounterexample_allCarriers_of_terminalClassification_of_hasApexCoatomExtensions`
+   (`MainTheorem/Composition`), is compiled conditionally on six: (R1), forcing donors,
+   `ContinuationCriterion`, (R2), (R3), and `StageType.HasApexCoatomExtensions` at every countable
+   block stage.  Derived in it, not assumed: `CapToModel` (`CapToModel.of_hasApexCoatomExtensions`,
+   at `λ_0 = ω`, for the carriers of every universe), next-block uniqueness
+   (`Expansion.NextBlockUniqueness.of_forcingDonors`), countable losses
+   (`Expansion.expansionDomain_loss_countable`), and nonempty losses
+   (`hasNonemptyLosses_of_hasApexCoatomExtensions`).  The seven-hypothesis form is kept; the
+   six-hypothesis form is obtained from it by the two derivations above
+   (`CapToModel.of_hasApexCoatomExtensions`, `hasNonemptyLosses_of_hasApexCoatomExtensions`).  No
+   converse is known; the seven-hypothesis form is not derived from the six-hypothesis form.
+   `densitySentence_hasThinAlephOneSpectrum_of_terminalClassification_of_hasApexCoatomExtensions'`,
+   with its form on all countable carriers
+   `vaughtCounterexample_allCarriers_of_terminalClassification_of_hasApexCoatomExtensions'`
+   (`MainTheorem/Composition`), is compiled conditionally on five: (R1), `ContinuationCriterion`,
+   (R2), (R3), and `StageType.HasApexCoatomExtensions` at every countable block stage.  It is the
+   six-hypothesis form applied with forcing donors at every countable block derived from
+   `StageType.HasApexCoatomExtensions` at the next block stage
+   (`forcingDonors_of_forall_hasApexCoatomExtensions`, `Extension/ForcingDonorsCoatom`).  Derived
+   in it, not assumed: `CapToModel` (from the coatom extension property with apex at `λ_0 = ω`),
+   forcing donors (from it at the next block stage), next-block uniqueness (from (R1) and forcing
+   donors), countable losses (from (R1), `ContinuationCriterion`, (R2) and (R3)), and nonempty
+   losses (from the coatom extension property with apex and next-block uniqueness).  No compiled
+   theorem derives next-block uniqueness or countable losses from the coatom extension property
+   with apex alone; both derivations use (R1).  The hypothesis count went from seven to six to five
+   only by these compiled derivations; no hypothesis is proved, and the seven- and six-hypothesis
+   forms are kept.  The five-hypothesis restricted form, with (R3) restricted, is a separate
+   statement (prospective).
 
 **A listed future repin, outside the order 1–6.**  A repin of InfinitaryLogic to a revision
 containing `2cd44c3` (or the release tag that follows it) has been neither made nor decided.  A
@@ -2571,9 +3150,9 @@ ones split):
   (`Seed.towerInvariant_succ_of_dead`, `Extension/DeadCellStep`), and per seed the completion holds
   when each grade `2 ≤ j < m` has `2FL(j)` or `Seed.DeadAt j`
   (`Seed.towerInvariant_of_twoFaceLift_or_deadAt`,
-  `Seed.nonempty_completionBelowFullGrade_of_twoFaceLift_or_deadAt`). Open: the existential
-  two-face lift `2FL∃(j)` and a choosing variant of `CellScheme.Rows.cappedLift_of_boundary_short`
-  (2.7; both prospective, in prose only).
+  `Seed.nonempty_completionBelowFullGrade_of_twoFaceLift_or_deadAt`). That this case split covers
+  every seed is refuted, and the exact hypothesis of the step, the existential two-face lift
+  `2FL∃(j)`, is compiled and fails for a legal seed (both under 2.7).
 - **2.7. The theorem.**  At a stage that is zero or a limit the apex form holds; hence the plain
   form and (R6).  The improvement from limit stages to zero-or-limit stages is a separate lemma,
   with the zero stage handled explicitly.  That truncation to the stage fails at successor stages
@@ -2584,21 +3163,61 @@ ones split):
   form (`StageType.HasApexCoatomExtensions.of_completionBelowFullGrade`,
   compiled in this repository (theorem named)), quantifying over the seeds of every arity. 2.7 is
   not conditioned on the universal two-face lift, which is false at every stage (2.6), and no
-  theorem is stated under it. Per seed, `2FL(j)` or `Seed.DeadAt j` at each grade
-  `2 ≤ j < m` suffices (2.6); whether every seed satisfies it is undecided. A *boundary triple*
+  theorem is stated under it. A *boundary triple*
   (`Extension/Tower`) for the one-grade lift from `(C, j + 1)` to `(B, j + 1)` is a triple of pairs
   `U, V ≤ (B, j + 1)` and `O ≤ U, V` with `(C, j + 1) ≤ U`, every cell below both `U` and `V`
   lying below `O`, together with capped lifts from `(C, j + 1)` to `U` and from `O` to `V`; it is
   the input of `CellScheme.Rows.cappedLift_of_boundary_short`. Neither boundary triple
   of the library for the step to `j + 1 ≤ m` serves every seed: the triple through `(D, j + 1)`
   uses `2FL(j)`, refuted at `j = 2`, and the triple through `(univ, j)` uses the union fill,
-  refuted at the grade `2`. The open lemma is `2FL∃(j)` (`README.md`, Layer 3, 3.1, (R6), 2.7): for
-  every catalogue entry `a` at `j + 1`, every cap `h` self-visible and short at `j + 1` with
-  `⊥ < h`, and every `w_C` lawful below `(C, j + 1)` agreeing with `a` capped at `h`, the step
-  chooses `w_D` lawful below `(D, j + 1)`, equal to `w_C` on the cells of the common face of grade
-  at most `j + 1` and agreeing with `a` capped at `h`, for which the glued labelling has the
-  conclusion of `2FL(j)`; with it, the choosing variant of the one-grade lift. Whether `2FL∃(j)`
-  holds is undecided.
+  refuted at the grade `2`.
+  Compiled in this repository (theorem named): the existential two-face lift `2FL∃(j)`
+  (`Seed.TwoFaceLiftExists`, `Extension/TwoFaceLiftExists`): for every catalogue entry `a` at
+  `j + 1`, every cap `h` self-visible and short at `j + 1` with `⊥ < h`, and every `w_C` lawful
+  below `(C, j + 1)` agreeing with `a` capped at `h`, some `w_D` lawful below `(D, j + 1)`, equal
+  to `w_C` on the cells of the common face of grade at most `j + 1` and agreeing with `a` capped at
+  `h`, is such that the glued labelling has the conclusion of `2FL(j)`. It is the step of the
+  tower, stated exactly: for `j ≤ m` and under the invariant at `j`, the invariant at `j + 1`
+  holds exactly when `2FL∃(j)` does (`Seed.towerInvariant_succ_iff_twoFaceLiftExists`), and the
+  invariant at the top grade holds exactly when `2FL∃(j)` holds at the grades `2 ≤ j < m`
+  (`Seed.towerInvariant_top_iff`). Sufficiency (`Seed.towerInvariant_succ_of_twoFaceLiftExists`)
+  uses `CellScheme.Rows.cappedLift_of_boundaries_short` with the degenerate triple
+  `U = V = O = (C, j + 1)` at the positive caps, so no separate choosing variant of the one-grade
+  lift is needed. `2FL(j)` implies `2FL∃(j)` for `j ≤ m`
+  (`Seed.twoFaceLiftExists_of_twoFaceLift`), and so does `Seed.DeadAt j` under the invariant at `j`
+  (`Seed.twoFaceLiftExists_of_deadAt`); a seed with `2FL∃(j)` at the grades `2 ≤ j < m` has a
+  completion below the full grade (`Seed.nonempty_completionBelowFullGrade_of_twoFaceLiftExists`).
+  Refuted, each for a legal seed on five points (negative special cases): the coverage of every
+  seed by the case split `2FL(j) ∨ Seed.DeadAt j`
+  (`CaseSplitCounterexample.not_forall_twoFaceLift_or_deadAt`, at `CaseSplitCounterexample.seed5`,
+  where `2FL∃(2)` holds: `CaseSplitCounterexample.twoFaceLiftExists_and_not_twoFaceLift_or_deadAt`),
+  and `2FL∃(2)` itself, for the seed `TwoFaceLiftExistsCounterexample.seedL` of the coatom types
+  `TwoFaceLiftExistsCounterexample.TL` and `CaseSplitCounterexample.T5`
+  (`TwoFaceLiftExistsCounterexample.not_twoFaceLiftExists_two_seedL`). So `2FL∃(j)` at the grades
+  `2 ≤ j < m` for every seed is false at every stage
+  (`TwoFaceLiftExistsCounterexample.not_forall_twoFaceLiftExists`), and for `seedL` the invariant
+  of the tower fails at the top grade
+  (`TwoFaceLiftExistsCounterexample.not_towerInvariant_top_seedL`). No theorem is stated under the
+  universal form of `2FL∃(j)`, and 2.7 is not conditioned on it. The per-seed completions remain:
+  at `m ≤ 2`, under the case split or under `2FL∃(j)` (2.6 and above), and for the two seeds above
+  (`TwoFaceLiftCounterexample.nonempty_completionBelowFullGrade_seed4`,
+  `CaseSplitCounterexample.nonempty_completionBelowFullGrade_seed5`). For `seedL`, the identified
+  obstruction (every new cell of the tower at `(univ, 2)` where the catalogue entry of the failure
+  reaches its cap reads the cells `({3}, 1)` and `({4}, 1)` at one value) survives the redesigns
+  examined (argued, not formalized; the module docstring of
+  `Extension/TwoFaceLiftExistsCounterexample`).
+  Compiled in this repository (theorem named), outside the tower: `seedL` has a completion below
+  the full grade (`ThinCompletion.nonempty_completionBelowFullGrade_seedL`,
+  `Extension/ThinCompletion`), the **thin completion**, the amalgam with one new cell at each
+  graded face `(univ, k)` of full scope below the full grade, labelled `⊤` at the cells of grade
+  `4` and `⊥` elsewhere. The identified obstruction does not apply to it: its only cell at
+  `(univ, 2)` reads `({3}, 1)` strictly below `({4}, 1)`
+  (`ThinCompletionExamples.row_newCell_two_lt`). With the apex added it gives, at every stage, a
+  legal stage type on five points whose faces along the two coatoms are `TL` and `T5`, with a cell
+  of full scope and full grade carrying the largest label
+  (`ThinCompletionExamples.exists_coatomExtension_seedL`, `Extension/ThinCompletionExamples`); so
+  `seedL` is not a counterexample to `StageType.HasApexCoatomExtensions` at `m = 3`.
+  Open: the completion below the full grade at `m ≥ 3` for every seed.
 
 The completion constructs lawful finite extensions and nothing more.  It imports only Layers
 0–1, the stage types, the amalgam, and the section theorem of `README.md`, Layer 3, 3.1 (with
@@ -2700,7 +3319,8 @@ lands, their notes stay in those modules.
   convex geometries (it uses only `subset_of_mem`), to `Geometry.ConvexGeometry`, beside
   `mem_restrict`.
 - `Extension/Basic`: `Fin.Embedding.univ_map_snoc` to Mathlib, `Mathlib.Data.Fin.Tuple.Embedding`,
-  beside `Fin.Embedding.snoc`.
+  beside `Fin.Embedding.snoc`; `pos_of_univ_map_ne` and `univ_map_castLEEmb_ne`, facts about
+  embeddings of `Fin`, are candidates for Mathlib with it.
 - `Extension/Merge`: `Merge` is order theory on finite chains, not about schemes; it belongs in an
   `Order/` folder of the library, and is a candidate for Mathlib.
 - `Extension/CoatomScheme`: `Geometry.IsPlan.map` to `Geometry.Plan`, beside `IsPlan.preimage`;
@@ -2716,6 +3336,9 @@ lands, their notes stay in those modules.
   `Scheme.IsLegal.toStageType` with `Scheme.IsLegal.isLegal_toStageType` to `Stage.Legal`;
   `Scheme.onePoint` with `Scheme.isLegal_onePoint` to `Stage.LegalExamples`, where they replace
   the private `point`.
+- `Extension/PartBelowFullGrade`: `Scheme.cellsBelowFullGrade`, `Scheme.partBelowFullGrade`, and
+  `Scheme.IsLegal.isLegalBelowFullGrade_partBelowFullGrade` to `Extension/Apex`, beside
+  `Scheme.IsLegalBelowFullGrade`.
 
 **Coding (checkpoint 2.2).**
 
@@ -2724,6 +3347,12 @@ lands, their notes stay in those modules.
   `CellScheme.Rows.IsStronglyCoded`, and the lemmas on their preservation to `Scheme.Row`;
   `Scheme.isCoded_iff`, `Scheme.isCoded_of_isLowerEmbedding`, and
   `Scheme.isCoded_of_isLowerEmbedding_of_isStronglyCodedAt` to `Stage.Scheme`.
+- `Extension/CodingExamples`: `CodingExamples.pointRow` to `Stage.LegalExamples`, once
+  `Scheme.IsLegal.toStageType` is in `Stage.Legal` (the entry for `Extension/PinnedExtension`).
+  `Correspondence/Current/LegalTemplate` imports `Extension/CodingExamples` for
+  `CellScheme.Rows.IsStronglyCoded` and `Label.lt_omega0_sq_iff` (`Extension/Coding`),
+  `Scheme.IsLegal.toStageType`
+  (`Extension/PinnedExtension`), and `CodingExamples.pointRow`.
 
 **The transformation algebra (checkpoints 2.1 and 2.3).**
 
@@ -2792,6 +3421,11 @@ lands, their notes stay in those modules.
   A3, **Upstream ingredients**: each with its upstream module, except the two `realize_*_equiv`
   lemmas, which become redundant once `BoundedFormulaω.realize_equiv` and `LomegaEquiv.of_equiv`
   are generalized across carrier universes.
+- `MainTheorem/MaximalRefinement`: at a repin containing `c16de09` and `2cd44c3`, the two-class
+  argument (`expansionDomain_subsingleton_of_isolates` with `lt_qrank_of_isolates`) is to be
+  derived from `notMem_of_isolating_of_uniform` (`OrdinalCountability`), with the statements kept.
+  Its attained greatest index is the Layer 0 statement of `Counting/OrdinalAttainment` (below,
+  "Counting").
 - `MainTheorem/Scatteredness` (pull request #42): every statement is generic (none mentions the
   density sentence), and its statements are quotations of InfinitaryLogic (at the pin `e460cb6`):
   `isThinOn_of_countable_bfClasses` of `isThinOn_of_bfScattered` (`Descriptive/BFScattered`),
@@ -2943,8 +3577,13 @@ witnesses).**
 - The import guard of `Definability/*` (its forbidden prefixes are listed in `README.md`, "Import
   guards") is to be added with the other guards of `scripts/check.sh`.
 
-**Counting (Layers 5–6).**
+**Counting (Layers 0, 5–6).**
 
+- `Counting/OrdinalAttainment`: Layer 0, a general ordinal statement (Mathlib only, no
+  construction imports).  `exists_isGreatest_of_closed`, used by `MainTheorem/MaximalRefinement`,
+  is to be replaced at a repin containing `c16de09` and `2cd44c3` by a quotation of the
+  greatest-stage statements of InfinitaryLogic (`OrdinalUtil`; "Dependency pins", **Upstream
+  statements quoted, not compiled here**), from which it follows (note 34).
 - `Counting/Filtration` and `Counting/Separation`: their generic statements are proved as quotations
   of InfinitaryLogic's `OrdinalCountability` (at the pin `e460cb6`), with their statements kept:
   `Filtration.ofRank` is built from `rankTail` (its domain is `rankTail r` by definition), and
@@ -3003,18 +3642,17 @@ witnesses).**
 
 **Statements not yet in any module.**
 
-- Forcing donors: the statement is the hypothesis `ForcingDonors` (`Continuation/Normalization`);
-  its proof, a finite construction (an extension of a legal stage type by a cell of full scope
-  whose row is a coded copy of the labels, completed above it), is destined for `Extension/`, built
-  from the completion below the full grade, without (R1).
 - The bound of the provisional offset by the top grade, the optional bound (d) of the
   normalization (prospective), stated with `StageType.provisionalOffset`.  Its forcing form is
   compiled: if every grade of `q` is at most `K` and `β + K < α`, then `(q, f)` does not force
   `K + 1` at a cell labelled the formal top (`StageType.not_forcesThreshold_of_grade_le`,
   `Stage/Threshold`).  The bound itself waits for `StageType.topGrade` (`Continuation/Terminal`) to
   move to `Stage/`.
-- The existential two-face lift `2FL∃(j)` and the choosing variant of
-  `CellScheme.Rows.cappedLift_of_boundary_short` (checkpoint 2.7), in prose only.
+- `TiedLayer` (prospective; recorded in `Extension/ForcingDonors`): a completion below the full
+  grade with one prescribed tie at an intermediate grade.  It is not needed for forcing donors:
+  unconditionally for two-point inputs (`exists_forcingDonor_twoPoint_le_two`), and in general
+  under the coatom extension property (`forcingDonors_of_hasCoatomExtensions`).  `TiedLayer`
+  itself is neither proved nor refuted.
 - The ordinary construction of (R1) as data (4b-ii), the proof of
   `StageType.HasCoupledGatedPinnedExtensions` (open; its first form
   `StageType.HasGatedPinnedExtensions` is refuted); (R2), (R3), (R4); and output 3, the proof of
@@ -3115,11 +3753,21 @@ noted).
   as the named hypotheses of the residual and hollow cases.
 - Checkpoint E uses C, D, and `Counting.countable_of_subsingleton_cover`; the main theorem uses
   forcing donors only for next-block uniqueness, that is, for the limit clause of the domains.
+- Checkpoint F uses C, and E's `Expansion.subsingleton_classes_of_property`; neither condition 2
+  nor the main theorem uses F.
 - Normalization: the threshold lemma uses finite-extension receiving at the cutoff `λ_η` (from
   (R1)) and forcing donors; next-block uniqueness uses both
-  (`Expansion.NextBlockUniqueness.of_forcingDonors`). Forcing donors waits on the completion below
-  the full grade (2.6–2.7).
+  (`Expansion.NextBlockUniqueness.of_forcingDonors`). Forcing donors follows from the coatom
+  extension property (`forcingDonors_of_hasCoatomExtensions`), so it waits on 2.7.
 - The lower bound (step 7) uses next-block uniqueness only at the successor blocks `ξ + 1 ≤ η`, and
   none at `η = 0` (`eq_reconstruct_of_blockStage_zero`); the cap-to-model hypothesis of
   `densitySentence_hasThinAlephOneSpectrum_of_hasApexCoatomExtensions` is derived from the coatom
   extension property with apex at `η = 0`.
+- The six-hypothesis form of the main theorem (`MainTheorem/Composition`) uses the coatom
+  extension property with apex at `η = 0` for `CapToModel`, at every countable block stage for
+  nonempty losses, and nowhere else; (R1) for next-block uniqueness, logical agreement and countable
+  losses; forcing donors for next-block uniqueness only; `ContinuationCriterion`, (R2) and (R3) for
+  countable losses only.  The five-hypothesis form (same module) uses the same hypotheses except
+  forcing donors (`hF`), in the same places, and in addition the coatom extension property with
+  apex at each successor block stage `λ_{ξ+1}` for forcing donors at `ξ`
+  (`forcingDonors_of_forall_hasApexCoatomExtensions`).

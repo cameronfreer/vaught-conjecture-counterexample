@@ -178,12 +178,6 @@ theorem restrictFace_withLabel (hq : F.scheme.rows.IsLawful q) (hqα : ∀ d, At
   obtain ⟨y, rfl⟩ : x ∈ Set.range f := hz (mem_coe.mpr (he.symm ▸ mem_univ x))
   exact mem_map_of_mem _ (mem_univ y)
 
-/-- The second coatom is not the whole ground set. -/
-private theorem univ_map_right_ne : univ.map (Coatom.right m) ≠ univ := fun he ↦ by
-  have h := mem_univ (Fin.castSucc (Fin.last m))
-  rw [← he, Coatom.univ_map_right] at h
-  exact notMem_erase _ _ h
-
 /-- **The coatom extension with apex from a labelling at the stage** [Kni26, Corollary 4.3.22]:
 for any lawful labelling of the completed scheme at the stage extending the glued one, adding the
 apex gives a legal stage type on `m + 2` points whose faces along the two coatoms are the coatom
@@ -198,8 +192,8 @@ theorem exists_coatomExtension_of_label (hq : F.scheme.rows.IsLawful q)
     StageType.isLegal_addApex _ _,
     (StageType.restrictFace_addApex _ _ _ Coatom.univ_map_left_ne).trans
       ((F.restrictFace_withLabel hq hqα hqe _ Coatom.univ_map_left_ne).trans I.restrictFace_left),
-    (StageType.restrictFace_addApex _ _ _ univ_map_right_ne).trans
-      ((F.restrictFace_withLabel hq hqα hqe _ univ_map_right_ne).trans I.restrictFace_right),
+    (StageType.restrictFace_addApex _ _ _ Coatom.univ_map_right_ne).trans
+      ((F.restrictFace_withLabel hq hqα hqe _ Coatom.univ_map_right_ne).trans I.restrictFace_right),
     StageType.exists_apex_addApex _ _⟩
 
 /-- **The coatom extension with apex when the labels already lie at the stage**: no truncation and
@@ -259,8 +253,8 @@ theorem restrictFace_left_completion :
 type**, literally, labels included: the truncation keeps the glued labels. -/
 theorem restrictFace_right_completion :
     StageType.restrictFace (Coatom.right m) (F.completion hα) = some I.right :=
-  (StageType.restrictFace_addApex _ _ _ univ_map_right_ne).trans
-    ((F.restrictFace_withLabel _ _ (F.truncate_label_embed hα) _ univ_map_right_ne).trans
+  (StageType.restrictFace_addApex _ _ _ Coatom.univ_map_right_ne).trans
+    ((F.restrictFace_withLabel _ _ (F.truncate_label_embed hα) _ Coatom.univ_map_right_ne).trans
       I.restrictFace_right)
 
 include F hα in
