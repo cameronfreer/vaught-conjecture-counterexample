@@ -39,11 +39,15 @@ opposite forcings between a cell of the first coatom and a cell of the second at
 ordered-layer step, for any layer rows.  Such a seed needs a completion with several new cells at
 one graded face of full scope, one for each orientation.  None of the seeds `seed4`, `seed5`,
 `seedL` has two opposite forcings at one grade, since each has an ordered-layer step
-(`VaughtConjecture.Extension.OrderedLayerExamples`).  Two opposite forcings at one grade need two
-parameters of the common face to which the two coatom types are coupled crosswise (argued, not
-formalized): a lawful labelling capped at a cap self-visible at every grade stays lawful, so a
-forcing is a lower bound by parameters of the common face, and within one coatom type the cell of
-full scope at the grade `1` orders all the cells of the grade `1`.
+(`VaughtConjecture.Extension.OrderedLayerExamples`).  The legal seed
+`CrossedCouplingCounterexample.seedHG` has two opposite forcings at the grade `1`, so it has no
+ordered-layer step (`CrossedCouplingCounterexample.not_hasOrderedLayerStep_seedHG`, module
+`VaughtConjecture.Extension.CrossedCouplingCounterexample`): its two coatom types are coupled
+crosswise to two parameters of the common face, at the grades `2` and `3`.  Two opposite forcings
+at one grade need two such parameters (argued, not formalized): a lawful labelling capped at a cap
+self-visible at every grade stays lawful, so a forcing is a lower bound by parameters of the common
+face, and within one coatom type the cell of full scope at the grade `1` orders all the cells of the
+grade `1`.
 
 ## Placement
 

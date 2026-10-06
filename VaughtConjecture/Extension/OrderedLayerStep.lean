@@ -51,7 +51,13 @@ equivalent to the completion of the seed, which may need several cells at one gr
 
 **At `m = 3`** (`Seed.HasOrderedLayerStep`): if every seed on five points has an ordered-layer
 step for some rows, every such seed has a completion below the full grade
-(`Seed.nonempty_completionBelowFullGrade_of_hasOrderedLayerStep`).
+(`Seed.nonempty_completionBelowFullGrade_of_hasOrderedLayerStep`).  That hypothesis is refuted:
+the legal seed `CrossedCouplingCounterexample.seedHG` has no ordered-layer step
+(`CrossedCouplingCounterexample.not_forall_hasOrderedLayerStep`, module
+`VaughtConjecture.Extension.CrossedCouplingCounterexample`).  The ordered-layer step holds for the
+seeds `seed4`, `seed5`, `seedL`, its mirror `seedLM`, and `seedLL`
+(`VaughtConjecture.Extension.OrderedLayerExamples`, `ThinCompletionMirrorExamples`,
+`ThinCompletionTLTL`).
 
 ## Placement
 
@@ -730,7 +736,8 @@ theorem HasOrderedLayerStep.nonempty_completionBelowFullGrade (h : I.HasOrderedL
   h.choose_spec.nonempty_completionBelowFullGrade
 
 /-- **The completion for every seed on five points from the ordered-layer step**: if every seed on
-five points has an ordered-layer step, every such seed has a completion below the full grade. -/
+five points has an ordered-layer step, every such seed has a completion below the full grade.  The
+hypothesis is refuted (`CrossedCouplingCounterexample.not_forall_hasOrderedLayerStep`). -/
 theorem nonempty_completionBelowFullGrade_of_hasOrderedLayerStep
     (h : ∀ I : Seed.{u} α 3, I.HasOrderedLayerStep) (I : Seed.{u} α 3) :
     Nonempty (CompletionBelowFullGrade I) :=
