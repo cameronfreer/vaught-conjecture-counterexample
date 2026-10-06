@@ -579,9 +579,26 @@ agreement at quantifier rank at most `η` is then the corollary `BFEquiv_implies
 at the pin, signatures checked), not a separate induction on sentences.  On this route thinness also
 has the scatteredness form: `D_η` lies in one back-and-forth class at `η` and has countable
 complement, so the codes of models meet countably many classes of `bfEquivSetoid Φ η`, and
-`isThinOnNatModels_of_countable_bfClasses` (compiled in this repository (theorem named),
-`MainTheorem/Scatteredness`) applies, with no López–Escobar; this application is expected, not
-elaborated.  The minimality form, from countable truth sides, is kept.
+InfinitaryLogic's `isThinOn_of_bfScattered` applies, with no López–Escobar.  This application is
+compiled conditional on the cap-to-model theorem, (R1), forcing donors at every countable block
+index, the continuation criterion, (R2) and (R3), each still to be proved
+(`densitySentence_isThinOnNatModels_of_terminalClassification_bfScattered`,
+`MainTheorem/ScatteredDomains`): `bfScattered_of_countable_compl` (cocountable sets of
+back-and-forth equivalent classes give `BFScattered`, through InfinitaryLogic's
+`bfScattered_of_countable_bfObservations`), `codeBFEquiv_of_mem_expansionDomain` (one
+back-and-forth class in `D_η`, conditional on (R1)),
+`densitySentence_bfScattered_of_modelExpansions` (conditional on the cap-to-model theorem,
+next-block uniqueness, (R1) and countable losses; the complements are
+`ExpansionDomains.compl_countable` for `modelExpansionDomains`),
+`densitySentence_bfScattered_of_terminalClassification`, the thinness theorems
+`densitySentence_isThinOnNatModels_of_modelExpansions_bfScattered` and
+`densitySentence_isThinOnNatModels_of_terminalClassification_bfScattered`, and
+`FullPresentations.HasScatteredTails.of_bfScattered` (back-and-forth scatteredness gives scattered
+tails to every family of full presentations).  Checked on the proof terms, the thinness theorem
+of `MainTheorem/ScatteredDomains` with the hypotheses of the terminal classification contains
+neither `sentence_separates_analytic_classes` nor any López–Escobar constant, while
+`densitySentence_isThinOnNatModels_of_terminalClassification` contains both.  The minimality
+form, from countable truth sides, is kept.
 
 ## The top-free witnesses: milestone order and acceptance
 
@@ -1657,10 +1674,12 @@ and well-founded ranks, then analytic tree boundedness, then uniform back-and-fo
 thinness and invariant-Borel concentration; López–Escobar, invariant separation, and the
 model-theoretic boundedness route are excluded from this path by import and proof-dependency guards.
 Combined with the cocountable concentration of the expansion domains (classes in `D_η` agree at
-back-and-forth level `η`), it is expected to give thinness without sentence minimality and without
-López–Escobar (not elaborated; the compiled composition, `isThinOn_of_countable_bfClasses`, is
-applied to full presentations; for the expansion domains, the composition is the scatteredness form
-of `README.md`, Layer 6, from the back-and-forth form of condition 3). It does not replace the
+back-and-forth level `η`), it gives thinness without sentence minimality and without López–Escobar
+(the compiled composition, `isThinOn_of_countable_bfClasses`, is applied to full presentations;
+for the expansion domains, the composition is the scatteredness form of `README.md`, Layer 6, from
+the back-and-forth form of condition 3, compiled conditional on the hypotheses of
+`densitySentence_isThinOnNatModels_of_terminalClassification`, each still to be proved:
+`densitySentence_isThinOnNatModels_of_terminalClassification_bfScattered`). It does not replace the
 working thinness route (`Sentenceω.isThinOnNatModels_of_countable_sentence_splits`, from countable
 truth sides), the Gδ/Polish model-code results stay optional, and any improvement it brings is
 described as reduced dependencies of the thinness proof, not as a smaller trusted kernel.
