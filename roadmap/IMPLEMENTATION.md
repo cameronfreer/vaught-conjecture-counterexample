@@ -2991,6 +2991,11 @@ witnesses).**
   output 3 imports `Continuation/Classification`, or the structure moves to that module, a move to
   record here. `Realization.IsCoverHollowAtBlock` is beside `Realization.IsCoverHollow` in
   `Continuation/Hollow`.
+- `Continuation/StableReceiving` and its examples module: Layer 4, in place.
+  `Expansion/StableReceiving` and its examples module: Layer 4, placed in `Expansion/` because the
+  equivalence of (R4) with the continuation criterion takes (R1) as `Expansion.FiniteCutReceiving`
+  (`Expansion/Agreement`, Layer 5), and no module of `Continuation/` imports a module of
+  `Expansion/`.
 - `Expansion/UniquenessOfForcing`: Layer 5, in place, separate from `Expansion/BlockDetermination`
   so that the import closure of the main theorem contains no `Definability/` module.
   `Expansion/Losses`: Layer 5, in place. `Counting/Domains`:

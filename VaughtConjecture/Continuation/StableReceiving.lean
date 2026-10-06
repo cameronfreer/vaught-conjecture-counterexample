@@ -70,10 +70,11 @@ model.
 `Realization.stablyReceivesAt_of_reduce_eq`).  If `R` is the reduction of an exactly consistent
 realization `R'` at `λ_{ξ+1}` with legal types and finite-extension receiving, given forcing donors
 at `ξ`, then `R'` is the candidate (normalization, `Realization.label_eq_stableLabel`), and if `R'`
-has finite-cut receiving, (R4) holds at every `(x, D, γ)` of `R`.  This is the only class of models
-at which (R4) is proved here; it is derived from the expansion, so it cannot be used to construct
-the expansion.  The resulting equivalence of `StableCappedReceiving` with the continuation
-criterion, under (R1), forcing donors and the coface instances, is
+has finite-cut receiving, (R4) holds at every `(x, D, γ)` of `R`.  Apart from its reformulation
+as finite-cut receiving of the candidate, this is the only class of models at which (R4) is proved
+here; it is derived from the expansion, so it cannot be used to construct the expansion.  The
+resulting equivalence of `StableCappedReceiving` with the continuation criterion, under (R1),
+forcing donors and the coface instances, is
 `Expansion.stableCappedReceiving_iff_continuationCriterion`, in
 `VaughtConjecture.Expansion.StableReceiving`.
 
@@ -112,16 +113,28 @@ So (R4) follows from the single finite statement `StageType.HasStableRecoverySch
 `ξ` (`Continuation.StableRecoveryCounterexample.not_hasStableRecoverySchemes_markerCap`, in
 `VaughtConjecture.Continuation.StableRecoveryCounterexample`): over a root with no private point
 (`f` the identity) a stable recovery scheme is the scheme of `D`, and two lifts of one five-cell
-type order its twins both ways.  It asks for recovery from less calibration than the roadmap's
-design (Layer 3, 3.3: a private cap of full scope and full grade `N`, labelled the formal top in
-`R`, with stable value above `λ_ξ + ℓ > γ`; a marker offset below `N`; a reference cell for each
-block of a proper label of `D`; the growth construction with its section theorem and the recovery
-statement through `Correct`, shared with (R3)).  The graded cap calibration
-(`StageType.GradedCapCalibration`, in `VaughtConjecture.Continuation.StableRecovery`) adds a cap of
-grade above the arity of the root, the reference offsets and the finite parts of `D`, labelled at
-least `λ_ξ` plus its grade, and reference cells; its acquisition is proved, and stable recovery
-schemes for it are open.  The apex coatom extension property does not enter (R4): it
+type order its twins both ways.  Its cap is already the formal top at `λ_ξ` (a label at least
+`λ_ξ` reduces to `⊤`, `Label.reduce_of_le`).  What it lacks relative to the roadmap's design
+(Layer 3, 3.3) and to the coupled gate form of (R1) (`StageType.HasCoupledGatedPinnedExtensions`)
+is a cap of full scope and full grade `N` with stable value above `λ_ξ + ℓ > γ`, a marker offset
+below `N`, a reference cell (an anchor, `StageType.IsAnchored`) for each block of a proper label
+of `D`, and the arity bound `k + 1 < m` for a root of `k` points in `T⁺` on `m` points.  The form
+of (R1) without the coupling, `StageType.HasGatedPinnedExtensions`, is refuted
+(`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`).  The recovery clause covers every
+stage type on the scheme with face `T⁺`, so every proper label of `D` at a new cell, also in a
+block below `λ_ξ` with no cell of `T⁺`, must be determined by the rows of the scheme from the
+labels of `T⁺` alone.  The graded cap calibration (`StageType.GradedCapCalibration`, in
+`VaughtConjecture.Continuation.StableRecovery`) adds a cap of grade above the arity of the root,
+the reference offsets and the finite parts of `D`, labelled at least `λ_ξ` plus its grade, and
+reference cells; its acquisition is proved, and stable recovery schemes for it are open.  The
+acquisition of the roadmap's calibration, in particular a cap of full scope and full grade with a
+large stable value, is not proved.  The apex coatom extension property does not enter (R4): it
 enters output 3 only through the coface instances at `λ_{ξ+1}`.
+
+## References
+
+Generalized saturation, which realizes a stable recovery scheme over an occurrence, is
+[Kni26, Definition 3.2.1, clause 4(a)i].
 
 ## Placement
 
@@ -199,7 +212,12 @@ variable {ξ : Ordinal.{u}}
 * **recovery**: every stage type `Q'` at `λ_{ξ+1}` on `E` whose face along the first `m` points is
   `T⁺` has, along `f` followed by the new point, a face `Q` on the scheme of `D` that equals `D` at
   every cell where `D` is not the formal top and exceeds `γ` at every cell where `D` is the formal
-  top. -/
+  top.
+
+The recovery clause is the counterpart for (R4) of the recovery of a coupled gated extension in
+(R1), where every stage type on the display with literal private face has a donor face in the
+receiving family (`StageType.CoupledGatedExtension.exists_restrictFace_mem_receivingFamily`, under
+`StageType.HasCoupledGatedPinnedExtensions`). -/
 def IsStableRecoveryScheme (Tp : StageType.{u} (blockStage (ξ + 1)) m) (f : Fin k ↪ Fin m)
     (D : StageType.{u} (blockStage (ξ + 1)) (k + 1)) (γ : Ordinal.{u}) (E : Scheme.{u} (m + 1)) :
     Prop :=
@@ -213,10 +231,13 @@ def IsStableRecoveryScheme (Tp : StageType.{u} (blockStage (ξ + 1)) m) (f : Fin
 
 variable (ξ) in
 /-- **Stable recovery schemes for a calibration `C`**, a finite statement about stage types with no
-realization, open: every legal stage type `T⁺` at `λ_{ξ+1}` satisfying `C` for an embedding `f`
+realization: every legal stage type `T⁺` at `λ_{ξ+1}` satisfying `C` for an embedding `f`
 (of positive length), a coface `D` of the face of `T⁺` along `f`, and an ordinal `γ < λ_{ξ+1}`,
 has a stable recovery scheme.  In the roadmap's design (Layer 3, 3.1 and 3.3) `C` is the calibrated
-data of (R4) and the scheme is the growth construction, shared with (R3). -/
+data of (R4) and the scheme is the growth construction, shared with (R3).  It is open for every
+calibration whose acquisition is proved; for the marker and cap calibration
+(`StageType.MarkerCapCalibration`) it **may be false**, since that calibration lacks the full
+cap, the reference cells and the arity bound of the design. -/
 def HasStableRecoverySchemes
     (C : ∀ ⦃m k : ℕ⦄, StageType.{u} (blockStage (ξ + 1)) m → (Fin k ↪ Fin m) →
       StageType.{u} (blockStage (ξ + 1)) (k + 1) → Ordinal.{u} → Prop) : Prop :=
@@ -228,10 +249,12 @@ def HasStableRecoverySchemes
 variable (ξ) in
 /-- The **marker and cap calibration**: a stage type `T⁺` at `λ_{ξ+1}` has a cell labelled
 `λ_ξ + i` for some `i : ℕ` (a **marker**) and a cell labelled at least `λ_ξ` and above `γ` (a
-**cap**).  It does not depend on `f` and `D`.  This is less than the calibrated data of the
-roadmap (Layer 3, 3.3), which also ask for a cap of full scope and full grade `N` labelled the
-formal top at `λ_ξ`, a marker offset below `N`, reference cells for the blocks of the proper labels
-of `D`, and an arity bound.  Stable recovery schemes for it do not exist
+**cap**).  It does not depend on `f` and `D`.  The cap is the formal top at `λ_ξ` (a label at least
+`λ_ξ` reduces to `⊤`).  This is less than the calibrated data of the roadmap (Layer 3, 3.3) and of
+the coupled gate form of (R1) (`StageType.HasCoupledGatedPinnedExtensions`), which also ask for a
+cap of full scope and full grade `N`, a marker offset below `N`, reference cells for the blocks of
+the proper labels of `D` (anchors, `StageType.IsAnchored`), and the arity bound `k + 1 < m`.
+Stable recovery schemes for it do not exist
 (`Continuation.StableRecoveryCounterexample.not_hasStableRecoverySchemes_markerCap`). -/
 def MarkerCapCalibration ⦃m k : ℕ⦄ (Tp : StageType.{u} (blockStage (ξ + 1)) m) (_ : Fin k ↪ Fin m)
     (_ : StageType.{u} (blockStage (ξ + 1)) (k + 1)) (γ : Ordinal.{u}) : Prop :=
@@ -313,6 +336,8 @@ theorem stablyReceivesAt_iff (hγ : blockStage ξ ≤ γ) :
     obtain rfl : t = D.reduce (isSuccPrelimit_blockStage ξ) := by
       refine StageType.ext hS fun i j hij ↦ ?_
       refine (reduce_stableSection (R := R) (u := u) i).symm.trans ?_
+      -- `(D.reduce _).label j` is `Label.reduce (blockStage ξ) (D.label j)` by definition
+      -- (`StageType.reduce_label`, which `rw` does not match here)
       change _ = Label.reduce (blockStage ξ) (D.label j)
       by_cases hj : D.label j = ⊤
       · have hle : ((blockStage ξ : Ordinal.{u}) : Label.{u}) ≤ R.stableSection u t i :=
@@ -396,7 +421,8 @@ theorem stablyReceivesAt_iff_of_mem_cofaces (hR : R.IsConsistent) (hc : R.IsCove
 
 /-- **(R4) fails at a cover-hollow realization for every donor with a label in the new block**: if
 `R` is cover-hollow, the candidate types have no label in `[λ_ξ, λ_ξ + ω)`, so (R4) fails at
-`(x, D, γ)` for every `D` with a label `λ_ξ + i` and every `γ`. -/
+`(x, D, γ)` for every `D` with a label `λ_ξ + i` and every `γ`.  Cover-hollow models are excluded
+by the hypotheses of `StableCappedReceiving`, so this refutes nothing. -/
 theorem not_stablyReceivesAt_of_isCoverHollow (hh : R.IsCoverHollow) {j : Fin D.card} {i : ℕ}
     (hj : D.label j = ((blockStage ξ + i : Ordinal.{u}) : Label.{u})) (γ : Ordinal.{u}) :
     ¬ R.StablyReceivesAt hlaw x D γ := by
@@ -418,7 +444,9 @@ theorem not_stablyReceivesAt_of_isCoverHollow (hh : R.IsCoverHollow) {j : Fin D.
 /-- **(R4) fails at bounded stable labels for every donor with a top cell**: if every stable label
 of `R` at a cell labelled the formal top is at most `λ_ξ + K`, every label of the candidate is at
 most `λ_ξ + K`, so (R4) fails at `(x, D, λ_ξ + K)` for every `D` with a cell labelled the formal
-top. -/
+top.  Under top-grade supremum `⊤` the stable labels are unbounded
+(`Realization.not_forall_stableLabel_le_of_topGradeSup_eq_top`), so `hK` is excluded by the
+hypotheses of `StableCappedReceiving`, and this refutes nothing. -/
 theorem not_stablyReceivesAt_of_stableLabel_le {K : ℕ}
     (hK : ∀ ⦃n : ℕ⦄ (u : Fin n ↪ M) (t : StageType.{u} (blockStage ξ) n), R.eval u = some t →
       ∀ d, t.label d = ⊤ → R.stableLabel (blockStage (ξ + 1)) (isSuccPrelimit_blockStage ξ) u t d ≤
@@ -436,6 +464,29 @@ theorem not_stablyReceivesAt_of_stableLabel_le {K : ℕ}
   · rw [stableSection_of_ne_top hd]
     exact ((t.atStage k).resolve_right hd).le.trans (Label.coe_le_coe_add _ K)
 
+/-- **Unbounded growth excludes bounded stable labels**: for a stably lawful `R` with top-grade
+supremum `⊤`, the stable labels at the cells labelled the formal top are not all at most
+`λ_ξ + K`, since some label of the candidate exceeds `λ_ξ + K`
+(`Realization.exists_lt_stableCandidate_label`).  So the hypothesis of
+`Realization.not_stablyReceivesAt_of_stableLabel_le` is excluded by those of
+`StableCappedReceiving`. -/
+theorem not_forall_stableLabel_le_of_topGradeSup_eq_top (hgrow : R.topGradeSup = ⊤)
+    (hlaw : R.IsStablyLawful) (K : ℕ) :
+    ¬ ∀ ⦃n : ℕ⦄ (u : Fin n ↪ M) (t : StageType.{u} (blockStage ξ) n), R.eval u = some t →
+      ∀ d, t.label d = ⊤ → R.stableLabel (blockStage (ξ + 1)) (isSuccPrelimit_blockStage ξ) u t d ≤
+        ((blockStage ξ + K : Ordinal.{u}) : Label.{u}) := by
+  intro hK
+  obtain ⟨⟨n, u, T, hT⟩, a, ha⟩ := exists_lt_stableCandidate_label hgrow hlaw K
+  obtain ⟨t, ht, rfl⟩ := exists_eq_stableType_of_stableCandidate_eval hT
+  -- the label of the stable type at `a` is the stable section there
+  change ((blockStage ξ + K : Ordinal.{u}) : Label.{u}) < R.stableSection u t a at ha
+  refine ha.not_ge ?_
+  by_cases hd : t.label a = ⊤
+  · rw [stableSection_of_eq_top hd]
+    exact hK u t ht a hd
+  · rw [stableSection_of_ne_top hd]
+    exact ((t.atStage a).resolve_right hd).le.trans (Label.coe_le_coe_add _ K)
+
 /-! ### Donors without new top cells -/
 
 /-- **Exact receiving of a donor without new top cells**, conditional on finite-cut receiving of
@@ -450,10 +501,9 @@ theorem exists_stableCandidate_eval_eq_of_hasFiniteCutReceiving (hR : R.IsConsis
       (R.stableCandidate hlaw).eval u = some D := by
   obtain ⟨t, ht, -⟩ := exists_eq_stableType_of_stableCandidate_eval x.eval_tuple
   have hd := reduce_mem_cofaces ht hD
-  obtain ⟨δ, hδ, hlt⟩ := (D.reduce (isSuccPrelimit_blockStage ξ)).exists_lt_forall_label_lt
-    (isSuccLimit_blockStage ξ)
-  obtain ⟨u, hu, q, hq, hqe⟩ :=
-    hrec ⟨x.arity, x.tuple, t, ht⟩ _ hd δ (isPermittedCutoff_coe.mpr hδ)
+  obtain ⟨c, hcut, hDc, hγc⟩ := exists_isPermittedCutoff_capped (isSuccLimit_blockStage ξ)
+    (D.reduce (isSuccPrelimit_blockStage ξ)) (isSuccLimit_blockStage ξ).bot_lt
+  obtain ⟨u, hu, q, hq, hqe⟩ := hrec ⟨x.arity, x.tuple, t, ht⟩ _ hd c hcut
   have hqt : restrictFace Fin.castSuccEmb q = some t := by
     rw [← hR u q _ hqe, hu]
     exact ht
@@ -461,12 +511,7 @@ theorem exists_stableCandidate_eval_eq_of_hasFiniteCutReceiving (hR : R.IsConsis
     refine StageType.ext hq.1 fun i j hij ↦ ?_
     by_cases hj : (D.reduce (isSuccPrelimit_blockStage ξ)).label j = ⊤
     · exact label_eq_of_mem_visibleCells hq.1 hqt hd.2 hij (hnew j hj)
-    · have h := hq.2 i j hij
-      rw [min_eq_left (hlt j hj).le] at h
-      rcases le_or_gt (δ : Label.{u}) (q.label i) with hqδ | hqδ
-      · rw [min_eq_right hqδ] at h
-        exact absurd h (hlt j hj).ne'
-      · rwa [min_eq_left hqδ.le] at h
+    · exact (capped_of_mem_receivingFamily hq hDc hγc i j hij).1 hj
   refine ⟨u, hu, (stableCandidate_eval_of_eval hqe).trans
     (congrArg some (StageType.ext rfl fun i j hij ↦ ?_))⟩
   obtain rfl : i = j := Fin.ext hij

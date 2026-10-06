@@ -20,7 +20,9 @@ stated:
 * **Models with a model expansion**: (R4) at every occurrence, from finite-cut receiving of the
   expansion and forcing donors at `0`; non-hollowness and unbounded growth are not used.
 * **Cover-hollowness and bounded stable labels**: (R4) fails at one donor with a label in the new
-  block, and at one donor with a top cell at `γ = λ_ξ + K`.
+  block, and at one donor with a top cell at `γ = λ_ξ + K`.  Both hypotheses are excluded by those
+  of `StableCappedReceiving` (non-hollowness, and unbounded growth, which makes the stable labels
+  unbounded), so neither failure refutes (R4).
 * **The evaluation step**: a stable recovery scheme over an occurrence containing `x` gives (R4)
   at `x`.
 * **The marker and cap calibration**: acquired in every model that is not cover-hollow and has
@@ -101,19 +103,28 @@ example (hF : ForcingDonors.{0} 0) {R : Realization.{0, 0} (blockStage 0) M}
 
 /-! ### Where non-hollowness and unbounded growth are used -/
 
-/-- **Cover-hollow realizations**: (R4) fails at every donor with a label `λ_ξ + i`. -/
+/-- **Cover-hollow realizations**: (R4) fails at every donor with a label `λ_ξ + i`.  Cover-hollow
+models are excluded by the hypotheses of `StableCappedReceiving`. -/
 example (hh : R.IsCoverHollow) {j : Fin D.card} {i : ℕ}
     (hj : D.label j = ((blockStage ξ + i : Ordinal.{0}) : Label.{0})) (γ : Ordinal.{0}) :
     ¬ R.StablyReceivesAt hlaw x D γ :=
   not_stablyReceivesAt_of_isCoverHollow hh hj γ
 
-/-- **Bounded stable labels**: (R4) fails at `γ = λ_ξ + K` at every donor with a top cell. -/
+/-- **Bounded stable labels**: (R4) fails at `γ = λ_ξ + K` at every donor with a top cell.  Bounded
+stable labels are excluded by top-grade supremum `⊤`, a hypothesis of `StableCappedReceiving`. -/
 example {K : ℕ}
     (hK : ∀ ⦃n : ℕ⦄ (u : Fin n ↪ M) (t : StageType.{0} (blockStage ξ) n), R.eval u = some t →
       ∀ d, t.label d = ⊤ → R.stableLabel (blockStage (ξ + 1)) (isSuccPrelimit_blockStage ξ) u t d ≤
         ((blockStage ξ + K : Ordinal.{0}) : Label.{0}))
     {j : Fin D.card} (hj : D.label j = ⊤) : ¬ R.StablyReceivesAt hlaw x D (blockStage ξ + K) :=
   not_stablyReceivesAt_of_stableLabel_le hK hj
+
+/-- Under top-grade supremum `⊤`, the stable labels at the top cells are unbounded. -/
+example (hgrow : R.topGradeSup = ⊤) (K : ℕ) :
+    ¬ ∀ ⦃n : ℕ⦄ (u : Fin n ↪ M) (t : StageType.{0} (blockStage ξ) n), R.eval u = some t →
+      ∀ d, t.label d = ⊤ → R.stableLabel (blockStage (ξ + 1)) (isSuccPrelimit_blockStage ξ) u t d ≤
+        ((blockStage ξ + K : Ordinal.{0}) : Label.{0}) :=
+  not_forall_stableLabel_le_of_topGradeSup_eq_top hgrow hlaw K
 
 /-! ### The evaluation step -/
 
