@@ -147,8 +147,10 @@ named hypothesis.
    `TwoFaceLiftExistsCounterexample.seedL`
    (`TwoFaceLiftExistsCounterexample.not_twoFaceLiftExists_two_seedL`, refuted), so `2FL∃(j)` for
    every seed is false at every stage
-   (`TwoFaceLiftExistsCounterexample.not_forall_twoFaceLiftExists`) and the tower does not complete
-   every seed.  The per-grade case split `2FL(j) ∨ Seed.DeadAt j` does not cover every seed
+   (`TwoFaceLiftExistsCounterexample.not_forall_twoFaceLiftExists`) and the invariant of the tower
+   of `seedL` fails at the top grade
+   (`TwoFaceLiftExistsCounterexample.not_towerInvariant_top_seedL`).  The per-grade case split
+   `2FL(j) ∨ Seed.DeadAt j` does not cover every seed
    (`CaseSplitCounterexample.not_forall_twoFaceLift_or_deadAt`, refuted), while the seed where it
    fails has a completion (`CaseSplitCounterexample.nonempty_completionBelowFullGrade_seed5`).  No
    theorem is conditioned on the universal form of `2FL∃(j)`.  For `seedL` the identified

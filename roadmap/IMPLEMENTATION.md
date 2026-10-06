@@ -2440,9 +2440,10 @@ ones split):
   tower, stated exactly: for `j ≤ m` and under the invariant at `j`, the invariant at `j + 1`
   holds exactly when `2FL∃(j)` does (`Seed.towerInvariant_succ_iff_twoFaceLiftExists`), and the
   invariant at the top grade holds exactly when `2FL∃(j)` holds at the grades `2 ≤ j < m`
-  (`Seed.towerInvariant_top_iff`). Sufficiency uses `CellScheme.Rows.cappedLift_of_boundaries_short`
-  with the degenerate triple `U = V = O = (C, j + 1)` at the positive caps, so no separate choosing
-  variant of the one-grade lift is needed. `2FL(j)` implies `2FL∃(j)`
+  (`Seed.towerInvariant_top_iff`). Sufficiency (`Seed.towerInvariant_succ_of_twoFaceLiftExists`)
+  uses `CellScheme.Rows.cappedLift_of_boundaries_short` with the degenerate triple
+  `U = V = O = (C, j + 1)` at the positive caps, so no separate choosing variant of the one-grade
+  lift is needed. `2FL(j)` implies `2FL∃(j)` for `j ≤ m`
   (`Seed.twoFaceLiftExists_of_twoFaceLift`), and so does `Seed.DeadAt j` under the invariant at `j`
   (`Seed.twoFaceLiftExists_of_deadAt`); a seed with `2FL∃(j)` at the grades `2 ≤ j < m` has a
   completion below the full grade (`Seed.nonempty_completionBelowFullGrade_of_twoFaceLiftExists`).
@@ -2454,11 +2455,11 @@ ones split):
   `TwoFaceLiftExistsCounterexample.TL` and `CaseSplitCounterexample.T5`
   (`TwoFaceLiftExistsCounterexample.not_twoFaceLiftExists_two_seedL`). So `2FL∃(j)` at the grades
   `2 ≤ j < m` for every seed is false at every stage
-  (`TwoFaceLiftExistsCounterexample.not_forall_twoFaceLiftExists`), and the tower does not complete
-  every seed (`TwoFaceLiftExistsCounterexample.not_towerInvariant_top_seedL`). No theorem is stated
-  under the universal form of `2FL∃(j)` (the corollary with that hypothesis is retired), and 2.7 is
-  not conditioned on it. The per-seed completions remain: at `m ≤ 2`, under the case split or under
-  `2FL∃(j)` (2.6 and above), and for the two seeds above
+  (`TwoFaceLiftExistsCounterexample.not_forall_twoFaceLiftExists`), and for `seedL` the invariant
+  of the tower fails at the top grade
+  (`TwoFaceLiftExistsCounterexample.not_towerInvariant_top_seedL`). No theorem is stated under the
+  universal form of `2FL∃(j)`, and 2.7 is not conditioned on it. The per-seed completions remain:
+  at `m ≤ 2`, under the case split or under `2FL∃(j)` (2.6 and above), and for the two seeds above
   (`TwoFaceLiftCounterexample.nonempty_completionBelowFullGrade_seed4`,
   `CaseSplitCounterexample.nonempty_completionBelowFullGrade_seed5`). For `seedL`, the identified
   obstruction (every new cell of the tower at `(univ, 2)` where the catalogue entry of the failure
