@@ -35,7 +35,8 @@ formal top, while a cap at a proper cutoff forgets it.
 
 The cast of a natural number `n` to a label is the label of the ordinal `n` (`natCast_label`);
 these casts are injective and order-preserving, lie below `ω` and above `⊥`, and are the only
-labels other than `⊥` below `ω` (`exists_natCast_of_lt_omega`).
+labels other than `⊥` below `ω` (`exists_natCast_of_lt_omega`).  Every ordinal is `ω * b + n`
+with `n` a natural number (`exists_eq_omega0_mul_add_natCast`).
 
 If there are countably many ordinals below `α`, there are countably many labels at stage `α`
 (`countable_setOf_atStage`); in particular the labels below `ω ^ 2` form a countable set
@@ -304,6 +305,12 @@ theorem exists_natCast_of_lt_omega {x : Label.{u}} (hx : x ≠ ⊥)
     rw [WithBot.coe_lt_coe, WithTop.coe_lt_coe] at hxω
     obtain ⟨n, rfl⟩ := lt_omega0.mp hxω
     exact ⟨n, (natCast_label n).symm⟩
+
+/-- Every ordinal is `ω * b + n` for an ordinal `b` and a natural number `n`. -/
+theorem exists_eq_omega0_mul_add_natCast (o : Ordinal.{u}) :
+    ∃ (b : Ordinal.{u}) (n : ℕ), o = ω * b + n := by
+  obtain ⟨n, hn⟩ := lt_omega0.mp (mod_lt o omega0_ne_zero)
+  exact ⟨o / ω, n, by rw [← hn, div_add_mod]⟩
 
 end NatCast
 

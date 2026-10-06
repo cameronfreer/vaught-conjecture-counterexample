@@ -107,10 +107,6 @@ same difference of classes.
 ## Placement
 
 The concordance and its notes are in `roadmap/IMPLEMENTATION.md`, "Manuscript concordance".
-The import of `Extension/CodingExamples` supplies `IsStronglyCoded` (`Extension/Coding`),
-`Scheme.IsLegal.toStageType` (`Extension/PinnedExtension`), and `CodingExamples.pointRow`.  When
-`toStageType` moves to `Stage/Legal` (the placement recorded in `Extension/PinnedExtension`),
-`pointRow` can move with it to `Stage/LegalExamples`.
 -/
 
 universe u
@@ -172,22 +168,10 @@ theorem not_printedLegal (hD : ∀ d, D.gradedIndex d ∈ D.gradedFaces) (hF : D
   rw [hd] at this
   exact absurd this (lt_irrefl 0)
 
-/-- An ordinal `ω · n + i` with `n`, `i` finite is below `ω ^ 2`. -/
-private theorem omega0_mul_add_natCast_lt_omega0_sq (n i : ℕ) :
-    ω * (n : Ordinal.{u}) + i < ω ^ 2 :=
-  calc ω * (n : Ordinal.{u}) + i < ω * n + ω := (add_lt_add_iff_left _).mpr (natCast_lt_omega0 i)
-    _ = ω * ((n + 1 : ℕ) : Ordinal.{u}) := by push_cast; rw [mul_add_one]
-    _ < ω * ω := mul_lt_mul_of_pos_left (natCast_lt_omega0 _) omega0_pos
-    _ = ω ^ 2 := (sq ω).symm
-
 /-- **The range clause implies the coding clause**: the rows take values below `ω ^ 2`. -/
 theorem HasPrintedRange.row_lt (h : R.HasPrintedRange) (s : ι) (t : D.below (D.gradedIndex s)) :
-    R.row s t < ((ω ^ 2 : Ordinal.{u}) : Label.{u}) := by
-  rcases h s t with h | ⟨n, i, -, h⟩
-  · rw [h]
-    exact WithBot.bot_lt_coe _
-  · rw [h]
-    exact WithBot.coe_lt_coe.mpr (WithTop.coe_lt_coe.mpr (omega0_mul_add_natCast_lt_omega0_sq n i))
+    R.row s t < ((ω ^ 2 : Ordinal.{u}) : Label.{u}) :=
+  lt_omega0_sq_iff.mpr ((h s t).imp_right fun ⟨n, i, _, h⟩ ↦ ⟨n, i, h⟩)
 
 end CellScheme.Rows
 

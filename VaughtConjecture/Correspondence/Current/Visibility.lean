@@ -75,12 +75,6 @@ theorem omega0_mul_add_natCast_lt_omega_one_iff (α : Ordinal.{u}) (n : ℕ) :
         exact Cardinal.natCast_le_aleph0
     _ = Cardinal.aleph0 := by rw [Cardinal.aleph0_mul_aleph0, Cardinal.aleph0_add_aleph0]
 
-/-- Every ordinal is `ω · α + n` with `n` finite. -/
-theorem exists_eq_omega0_mul_add_natCast (o : Ordinal.{u}) :
-    ∃ (α : Ordinal.{u}) (n : ℕ), o = ω * α + n := by
-  obtain ⟨n, hn⟩ := lt_omega0.mp (mod_lt o omega0_ne_zero)
-  exact ⟨o / ω, n, by rw [← hn, div_add_mod]⟩
-
 /-- Visibility replacement in the form `ω · α + n`: replacement at threshold `k` with value `i`
 sends `ω · α + n` to `ω · α + i` if `n < k`, and fixes it otherwise. -/
 theorem visibilityReplace_omega0_mul_add (k i : ℕ) (α : Ordinal.{u}) (n : ℕ) :

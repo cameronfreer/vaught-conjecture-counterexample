@@ -2709,6 +2709,11 @@ lands, their notes stay in those modules.
   `CellScheme.Rows.IsStronglyCoded`, and the lemmas on their preservation to `Scheme.Row`;
   `Scheme.isCoded_iff`, `Scheme.isCoded_of_isLowerEmbedding`, and
   `Scheme.isCoded_of_isLowerEmbedding_of_isStronglyCodedAt` to `Stage.Scheme`.
+- `Extension/CodingExamples`: `CodingExamples.pointRow` to `Stage.LegalExamples`, once
+  `Scheme.IsLegal.toStageType` is in `Stage.Legal` (the entry for `Extension/PinnedExtension`).
+  `Correspondence/Current/LegalTemplate` imports `Extension/CodingExamples` for
+  `Label.IsStronglyCoded` (`Extension/Coding`), `Scheme.IsLegal.toStageType`
+  (`Extension/PinnedExtension`), and `CodingExamples.pointRow`.
 
 **The transformation algebra (checkpoints 2.1 and 2.3).**
 
