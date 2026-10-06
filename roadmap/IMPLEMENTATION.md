@@ -2636,8 +2636,9 @@ ones split):
   needing capping, `OrderedLayer.isBountiful_layerScheme`); a lawful extension of the glued
   labelling. It gives a completion (`Seed.OrderedLayerStep.completion`) and is exactly legality of
   the layer scheme with a lawful extension (`Seed.orderedLayerStep_iff`), a restriction of the
-  completion; whether the converse fails for some seed is open (it fails at `seedHG` if and only if
-  `seedHG` has a completion below the full grade). For seeds with bottom apexes (`Seed.HasBottomApexes`,
+  completion and strictly stronger than it (`seedHG` has a completion and no ordered-layer step,
+  `CrossedCouplingCounterexample.not_forall_hasOrderedLayerStep_of_nonempty`). For seeds with
+  bottom apexes (`Seed.HasBottomApexes`,
   `Seed.hasBottomApexes_of_addApex`) and the top row at `(univ, 4)`, the step follows from its
   fields at `k ≤ 3` (`Seed.OrderedLayerStepBelowTop.orderedLayerStep`,
   `OrderedLayer.cappedLift_four`), and those lifts reduce to the grade `3`
@@ -2660,9 +2661,32 @@ ones split):
   `CrossedCouplingCounterexample.exists_ne_seedHG`: every completion has two cells at `(univ, 1)`).
   No theorem is stated under the refuted universal form: the theorem
   `Seed.nonempty_completionBelowFullGrade_of_hasOrderedLayerStep` was deleted because its hypothesis
-  is refuted at every instance. Open: whether `seedHG` has a completion below the full grade
-  (prospective: several new cells per graded face of full scope, one per orientation), and the
-  completion at `m ≥ 3` for every seed.
+  is refuted at every instance. This refutes the step, not the completion.
+  The multi-layer step at `m = 3` (`Extension/MultiLayerStep`, `Extension/CrossedCouplingScheme`,
+  `Extension/CrossedCouplingCompletion`; compiled in this repository (theorem named) unless marked
+  otherwise). The multi-layer scheme `OrderedLayer.multiLayerScheme I M r` is the amalgam followed
+  by `M k` new cells at each `(univ, k + 1)`, the `i`-th with row `r k i`, read off cells. Named
+  hypothesis `Seed.MultiLayerStep I M r`: positive multiplicities; coded rows; each new row lawful
+  below its graded index; the capped lifts from `(C, k)` and `(D, k)` into `(univ, k)`
+  (`OrderedLayer.isBountiful_multiLayerScheme`); a lawful extension of the glued labelling. It
+  gives a completion (`Seed.MultiLayerStep.completion`) and is exactly legality of the
+  multi-layer scheme with a lawful extension (`Seed.multiLayerStep_iff`); with arbitrary rows it
+  reformulates the completion at `m = 3` (argued, not formalized). `seedHG` has a completion below
+  the full grade (`CrossedCouplingCounterexample.nonempty_completionBelowFullGrade_seedHG`,
+  `CrossedCouplingCounterexample.completionHG`), every field discharged: the multi-layer step of
+  every seed of the types `TH` and `TG` with two new cells at `(univ, 1)`, one per forced
+  orientation, and one at each `(univ, k)`, `k = 2, 3, 4`
+  (`CrossedCouplingCounterexample.multiLayerStep_HG`); its lawful labellings are labellings by
+  kinds of `A_C`, `A_D`, `H`, `G` with the couplings of both types
+  (`CrossedCouplingCounterexample.isLawful_kindLabel`,
+  `CrossedCouplingCounterexample.exists_of_isLawfulBelow_univ`); the lifts
+  `CrossedCouplingCounterexample.cappedLift_C_of_le_three`,
+  `CrossedCouplingCounterexample.cappedLift_D_of_le_three`,
+  `CrossedCouplingCounterexample.cappedLift_four_HG`; the coatom extension of `TH` and `TG` with
+  apex at every stage (`CrossedCouplingCounterexample.exists_coatomExtension_seedHG`). Open: a
+  systematic choice of the new cells for every seed on five points (prospective: one new cell per
+  forced orientation at each graded face of full scope), and the completion at `m ≥ 3` for every
+  seed.
 
 The completion constructs lawful finite extensions and nothing more.  It imports only Layers
 0–1, the stage types, the amalgam, and the section theorem of `README.md`, Layer 3, 3.1 (with
