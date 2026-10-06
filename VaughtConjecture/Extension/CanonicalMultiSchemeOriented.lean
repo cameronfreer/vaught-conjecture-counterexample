@@ -264,10 +264,6 @@ theorem newCell_bounds_of_isLawfulBelow {b : Fin 2} (hρ : IsOriented ρ b) {j :
     have := hL.le_of_le (d := ⟨_, hself⟩) (d' := ⟨_, hob⟩) (by
       rw [row_newCell hN1 hN4, row_newCell hN1 hN4, gradedIndex_oldCell, gradedIndex_copyOrig,
         gradedIndex_newCell hN1 hN4, hρ.read _ _ hN1 le_rfl hN4]) (by
-      -- The grades of the two cells, as cells of the layer scheme: the goal reads them through
-      -- `Subtype.val` of anonymous constructors, which `rw [grade_oldCell]` does not match.
-      change (layerScheme I ρ).toCellScheme.grade (oldCell I ρ (copyOrig I k b)) ≤
-        (layerScheme I ρ).toCellScheme.grade (newCell I ρ ((k : ℕ) + 1))
       rw [grade_oldCell, grade_copyOrig, grade_newCell hN1 hN4])
     simp only [min_self] at this
     exact this.trans (min_le_left _ _)
@@ -358,10 +354,7 @@ theorem isLawfulBelow_oriented_of_layer {b : Fin 2} (hρ : IsOriented ρ b) {j :
         have := t.2.2.trans_eq (congrArg Prod.snd
           (gradedIndex_multiNewCell (r := canonicalRows I (orientedRows I ρ)) k i))
         exact this
-      · -- The grades of a cell and of its base: the right side is `Subtype.val` of an anonymous
-        -- constructor, which `rw [grade_oldCell]` does not match.
-        change _ = (layerScheme I ρ).toCellScheme.grade (oldCell I ρ (copyBase I t.1))
-        rw [grade_oldCell, grade_copyBase]
+      · rw [grade_oldCell, grade_copyBase]
       · rw [row_canonical, row_newCell hN1 hN4, gradedIndex_oldCell]
         rfl
       · simp only [copyBase_multiNewCell]
@@ -439,12 +432,6 @@ theorem isLawfulBelow_layer_of_oriented {b : Fin 2} (hρ : IsOriented ρ b) {j :
         rw [row_canonical, row_canonical, copyBase_multiOldCell, copyBase_multiOldCell,
           orientedRows_apply, orientedRows_apply, gradedIndex_copyOrig, gradedIndex_copyOrig]
         exact hρ.le _ i hN1 hN4) (by
-        -- The grades of the two originals, as cells of the canonical scheme: the goal reads them
-        -- through `Subtype.val` of anonymous constructors, which `rw` does not match.
-        change (canonicalMultiScheme I (orientedRows I ρ)).toCellScheme.grade
-            (multiOldCell I canonicalMult (copyOrig I k b)) ≤
-          (canonicalMultiScheme I (orientedRows I ρ)).toCellScheme.grade
-            (multiOldCell I canonicalMult (copyOrig I k i))
         rw [grade_multiOldCell, grade_multiOldCell, grade_copyOrig, grade_copyOrig])
       simp only [hforce i, min_self] at this
       exact this.trans (min_le_left _ _)
@@ -456,11 +443,7 @@ theorem isLawfulBelow_layer_of_oriented {b : Fin 2} (hρ : IsOriented ρ b) {j :
         refine hmem ?_
         have := t.2.2.trans_eq (congrArg Prod.snd (gradedIndex_newCell hN1 hN4))
         exact this
-      · -- The grades of a cell and of its layer base: the right side is `Subtype.val` of an
-        -- anonymous constructor, which `rw [grade_multiOldCell]` does not match.
-        change _ = (canonicalMultiScheme I (orientedRows I ρ)).toCellScheme.grade
-          (multiOldCell I canonicalMult (layerBase I ρ b t.1))
-        rw [grade_multiOldCell, grade_layerBase]
+      · rw [grade_multiOldCell, grade_layerBase]
       · rw [row_newCell hN1 hN4, row_canonical, copyBase_multiOldCell, orientedRows_apply,
           row_layerBase hρ hN4]
         have := t.2.2.trans_eq (congrArg Prod.snd (gradedIndex_newCell hN1 hN4))
@@ -568,10 +551,6 @@ theorem cappedLift_oriented {b : Fin 2} (hρ : IsOriented ρ b) {B : Finset (Fin
         (oldCell_mem_below_iff.mp hd)
       have heU := multiOldCell_mem_below_iff (R := orientedRows I ρ) (X := (univ, k)) |>.mpr
         ⟨subset_univ _, (oldCell_mem_below_iff.mp hd).2⟩
-      -- The two labellings at the old cell `e`, through the inclusion of the cells below `B`:
-      -- the value of `Set.inclusion _ d` is `d.1` only by unfolding, so `rw [he]` needs `d.1`.
-      change min (Q (multiOldCell I canonicalMult (layerBase I ρ b d.1))) c =
-        min (P (multiOldCell I canonicalMult (layerBase I ρ b d.1))) c
       rw [he, layerBase_oldCell, hQdef, hPdef, Rows.extendBot_of_mem q heU,
         Rows.extendBot_of_mem p heB]
       exact hpq ⟨_, heB⟩
@@ -641,9 +620,6 @@ theorem cappedLift_layer_of_oriented {b : Fin 2} (hρ : IsOriented ρ b) {B : Fi
       have heU : oldCell I ρ e ∈ (layerScheme I ρ).toCellScheme.below
           ((univ : Finset (Fin 5)), k) :=
         oldCell_mem_below_iff.mpr ⟨subset_univ _, (multiOldCell_mem_below_iff.mp hd).2⟩
-      -- The two labellings at the old cell `e`, through the inclusion of the cells below `B`:
-      -- the value of `Set.inclusion _ d` is `d.1` only by unfolding, so `rw [he]` needs `d.1`.
-      change min (Q (oldCell I ρ (copyBase I d.1))) c = min (P (oldCell I ρ (copyBase I d.1))) c
       rw [he, copyBase_multiOldCell, hQdef, hPdef, Rows.extendBot_of_mem q heU,
         Rows.extendBot_of_mem p heB]
       exact hpq ⟨_, heB⟩
