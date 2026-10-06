@@ -59,8 +59,8 @@ asks for one carrying context, not that every acquired context carries.
     is met by the labelling `⊥`, and the second (a donor cell none of whose serving cells is
     dropped is not `⊥`) alone by the donor's own labelling; what is open is the two together, at
     the donor cells all of whose anchors the cap reads below its own block.
-  - **The conclusions of the acquisition theorems do not give it.**  The refuting input of the coupled property satisfies
-    every conclusion of `IsModel.exists_privateContext` (at every floor, and every `N₀ ≤ 2`) and
+  - **The conclusions of the acquisition theorems do not give it.**  The refuting input of the
+    coupled property satisfies every conclusion of `IsModel.exists_privateContext` (at every floor, and every `N₀ ≤ 2`) and
     of its anchored form, and fails the condition
     (`CoupledGatedExtensionCounterexample.exists_privateContext_not_carriesBottoms`).
     The clauses that the acquisition uses (uniformity, high-arity dominance, exact consistency)
