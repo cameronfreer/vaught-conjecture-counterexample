@@ -246,6 +246,11 @@ theorem reduce_reduce_of_le (h : β ≤ α) (x : Label.{u}) :
     reduce α (reduce α x) = reduce α x :=
   reduce_reduce_of_le le_rfl x
 
+/-- `β ≤ β + n` as labels. -/
+theorem coe_le_coe_add (β : Ordinal.{u}) (n : ℕ) :
+    (β : Label.{u}) ≤ ((β + n : Ordinal.{u}) : Label.{u}) :=
+  WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr le_self_add)
+
 /-- A label lies below the successor stage `o + 1` exactly when it is at most `o`. -/
 theorem lt_coe_add_one_iff : x < ((o + 1 : Ordinal.{u}) : Label.{u}) ↔ x ≤ o := by
   induction x using recBotCoeTop with

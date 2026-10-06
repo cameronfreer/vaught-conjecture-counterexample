@@ -340,7 +340,7 @@ theorem le_of_forcingDonor {η : Ordinal.{u}} {j : ℕ} (hj : 1 ≤ j) :
     (isSelfVisible_coe_add hβ hj) (hlt j)
   have hβd : (t.reduce hβ).label d = ⊤ := by
     rw [StageType.reduce_label, htd]
-    exact Label.reduce_eq_top_iff.mpr (WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr le_self_add))
+    exact Label.reduce_eq_top_iff.mpr (Label.coe_le_coe_add _ _)
   refine ⟨t, ht, d, hβd, htd.ge, fun m D g hgD h ↦ ?_⟩
   by_contra hjm
   have hD : StageType.restrictFace g (D.reduce hβ) = some (t.reduce hβ) := by
