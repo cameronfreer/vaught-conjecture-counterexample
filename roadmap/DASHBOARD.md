@@ -115,9 +115,21 @@ Status of each:
 3. `ForcingDonors`: still to be proved, by a finite construction of Layer 3 from the completion
    below the full grade (prospective).
 4. `ContinuationCriterion`: still to be proved (sufficiency only; the converse is not stated).
-5. `Realization.ResidualReceiving`: still to be proved (the LOW construction).
+5. `Realization.ResidualReceiving`: still to be proved (the LOW construction).  Exactly
+   reformulated as exact receiving of the legal types of top grade at most `K`
+   (`Realization.residualReceiving_iff`).  Compiled conditionally on (R1) at every limit stage,
+   `Realization.ResidualAcquisition P`, and `Realization.CutoffDetermination P` for a predicate `P`
+   on acquired contexts (`Realization.residualReceiving_of_cutoffDetermination`), each still to be
+   proved; the cofaces in which the root is a rigid core need only (R1)
+   (`Realization.ResidualReceiving.of_not_isRigidCoreIn`).  Determination fails for `P` always
+   true (top-free roots; `Continuation/ExactReceivingExamples`).
 6. `Realization.HollowReceiving` for `Realization.IsCoverHollowAtBlock`: still to be proved (the
-   growth construction).
+   growth construction).  Exactly reformulated as exact receiving of all legal types
+   (`Realization.hollowReceiving_iff`).  Compiled conditionally on
+   `Realization.HollowAcquisition H P` and `Realization.SchemeDetermination P`
+   (`Realization.hollowReceiving_of_schemeDetermination`, no receiving used), each still to be
+   proved.  It forces a globally rigid core of a cover-hollow model with unbounded growth to be
+   rigid in every legal donor over its type (`Realization.HollowReceiving.isRigidCoreIn`).
 7. Nonempty losses: still to be proved.  Compiled conditionally on the coatom extension property
    with apex at every countable block stage and on next-block uniqueness
    (`hasNonemptyLosses_of_hasApexCoatomExtensions`, stated for the bundled domains, which also take
