@@ -276,11 +276,6 @@ theorem forcesThreshold_of_row_le (hfp : restrictFace f q = some p) {C e : Fin q
 
 /-! ### Capped lifts -/
 
-/-- `β ≤ β + K` as labels. -/
-private theorem coe_le_coe_add (β : Ordinal.{u}) (K : ℕ) :
-    (β : Label.{u}) ≤ ((β + K : Ordinal.{u}) : Label.{u}) :=
-  WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr le_self_add)
-
 variable (hβ) in
 /-- **The capped lift below `α`**: for `β + K < α` and `K` at least the grade of every cell of `q`
 labelled the formal top, the scheme of `q` with the labels `min (q.label d) (β + K)` is a stage
@@ -294,7 +289,7 @@ noncomputable def capLiftOfLt (q : StageType.{u} β m) (K : ℕ) (hα : β + K <
   isCoded := q.isCoded
   isLawful := q.isLawful.min_const fun d hd ↦ by
     rcases q.atStage d with h | h
-    · exact absurd h ((coe_le_coe_add β K).trans hd).not_gt
+    · exact absurd h ((Label.coe_le_coe_add β K).trans hd).not_gt
     · exact Label.isSelfVisible_coe_add hβ (hK d h)
   atStage _ := .inl ((min_le_right _ _).trans_lt
     (WithBot.coe_lt_coe.mpr (WithTop.coe_lt_coe.mpr hα)))
@@ -317,9 +312,9 @@ theorem capLiftOfLt_reduce (q : StageType.{u} β m) (K : ℕ) (hα : β + K < α
     -- `i` is indexed by the reduction, so both lemmas are given their arguments explicitly
     rw [reduce_label (t := capLiftOfLt hβ q K hα hK) hβ i, capLiftOfLt_label hβ q K hα hK i]
     rcases q.atStage i with h | h
-    · rw [min_eq_left (h.le.trans (coe_le_coe_add β K)), Label.reduce_of_lt h]
+    · rw [min_eq_left (h.le.trans (Label.coe_le_coe_add β K)), Label.reduce_of_lt h]
     · rw [h, min_eq_right le_top]
-      exact Label.reduce_of_le (coe_le_coe_add β K)
+      exact Label.reduce_of_le (Label.coe_le_coe_add β K)
 
 /-- **No forcing above the top grade.**  If every cell of `q` has grade at most `K` and `β + K`
 lies below `α`, then `(q, f)` does not force `K + 1` at a cell `d` of `p` labelled the formal top:
@@ -579,7 +574,7 @@ theorem exists_forcesThreshold_twin (hα : β + ω ≤ α) (hq : q.IsLegal) {s�
   have h := hforce.2 _ _ hQ₀ (restrictFace_refl _) u.1 rfl
   rw [capLift_label] at h
   rcases q.atStage u.1 with hlt | htop
-  · exact absurd ((coe_le_coe_add β N).trans (h.trans (min_le_left _ _))) (not_le.mpr hlt)
+  · exact absurd ((Label.coe_le_coe_add β N).trans (h.trans (min_le_left _ _))) (not_le.mpr hlt)
   · exact htop
 
 /-- **Forced twins over a face**: if a legal `q` restricts to `p` along `f` and `(q, f)` forces `N`
