@@ -253,8 +253,7 @@ labels included: the truncation keeps the glued labels. -/
 theorem restrictFace_left_completion :
     StageType.restrictFace (Coatom.left m) (F.completion hα) = some I.left :=
   (StageType.restrictFace_addApex _ _ _ Coatom.univ_map_left_ne).trans
-    ((F.restrictFace_withLabel _ _ (F.truncate_label_embed hα) _ Coatom.univ_map_left_ne).trans
-      I.restrictFace_left)
+    (F.restrictFace_left_truncate hα)
 
 /-- **The face of the completion along `extendByLast Fin.castSuccEmb` is the second coatom
 type**, literally, labels included: the truncation keeps the glued labels. -/
