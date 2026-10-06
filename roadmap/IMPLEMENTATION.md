@@ -2937,7 +2937,24 @@ Each checkpoint needs both its abstract API and a concrete application:
    forms are kept.  The five-hypothesis restricted form, with (R3) restricted, is a separate
    statement (prospective).
 
-**A listed future repin, outside the order 1–6.**  A repin of InfinitaryLogic to a revision
+7. Acceptance lemma 1 (same-level maximal realization; `README.md`, "Reduction to full
+   presentations"): for a countable `β`, on every countably infinite carrier, a model at
+   `λ_β = blockStage β` that realizes every legal stage type at `λ_β`, receives every legal donor
+   exactly over every actual root, and is cover-hollow and terminal at `β`, with a prescribed
+   tuple covering a prescribed legal stage type.  Status: compiled conditional on
+   `StageType.HasApexCoatomExtensions (blockStage β)` and `ForcingDonors β`, both still to be
+   proved (`exists_sameLevelMaximal`, `exists_sameLevelMaximal_covers`,
+   `MainTheorem/SameLevelMaximal`).  The realization is the reconstruction of a Fraïssé limit of
+   the uncapped age of all legal charts (`exists_isFraisseLimit_legalAge`, under
+   `StageType.HasCoatomExtensions` only), a model with exact receiving of legal donors under the
+   apex form (`exists_saturated_reconstruct`); `ForcingDonors β` enters only for cover-hollowness
+   (`Realization.isCoverHollow_of_exactReceivingWithin`), and terminality of every cover-hollow
+   realization at a block stage is compiled with no hypothesis
+   (`Realization.IsCoverHollow.isTerminalAt`).  `ContinuationCriterion`, (R1), uniqueness of
+   expansions, and global termination are not used.  Unbounded top-grade growth of the realization
+   is still to be proved and is not used.
+
+**A listed future repin, outside the order 1–7.**  A repin of InfinitaryLogic to a revision
 containing `2cd44c3` (or the release tag that follows it) has been neither made nor decided.  A
 controlled move, if undertaken, would be a separate checkpoint, before the first application of
 the greatest-stage theorem or of Scott separation, done as the move to `e460cb6` (this
@@ -3509,6 +3526,20 @@ witnesses).**
   `TopFreeIndex.restrictFace_empty`, to `ClassicalLimit/Age`, beside `TopFreeIndex.empty`. The
   import of `Extension/SectionTheorem` here and in `Extension/FamilyCofaces` is used only for the
   capping lemma, now in `Scheme/Row`, which is to replace it.
+- `ClassicalLimit/LegalAge` and `ClassicalLimit/LegalAgeExamples`: the uncapped age of all legal
+  charts (its hereditary property, `isFraisse_legalAge`, `exists_isFraisseLimit_legalAge`), the
+  occurrence of every legal stage type (`exists_covers_reconstruct_of_legalAge`), exact receiving
+  (`exactReceivingWithin_reconstruct_of_legalAge`), and modelhood
+  (`isModel_reconstruct_of_legalAge`), in place, beside the age of top-free charts.  The family
+  (`LegalIndex`, `legalChart`, `legalAge`, `legalChart_mem_legalAge`) and the inclusion
+  `topFreeAge_subset_legalAge` are in `ClassicalLimit/Age`; the reconstruction under legal chart
+  coverage (`exists_eq_trans_legalChart`, `isConsistent_reconstruct_of_legalAge`,
+  `isCovering_reconstruct_of_legalAge`, `exists_embedding_of_reconstruct_eval_of_legalAge`) is in
+  `ClassicalLimit/Reconstruction`, where the top-free exact consistency and covering are its case;
+  exact extension along a chart embedding (`exists_reconstruct_eval_eq_of_embedding`), shared by
+  the top-free and the legal exact extension, is in `ClassicalLimit/Receiving`; and
+  `Realization.ExactReceivingWithin.hasFiniteCutReceiving` is in `Continuation/ExactAge`.  The
+  capped top-free amalgamation and receiving stay separate: the legal age needs no cap.
 - `Comparison/GradedMatchingApplications`: Layer 0, in place.  The local graded back-and-forth
   theorem (`README.md`, Layer 0) is retired, not moved: both of its applications compile through
   InfinitaryLogic's `bfEquiv_of_gradedMatching`.
@@ -3636,6 +3667,15 @@ witnesses).**
   so that the import closure of the main theorem contains no `Definability/` module.
   `Expansion/Losses`: Layer 5, in place. `Counting/Domains`:
   `Counting.countable_of_subsingleton_cover`, a general result of Layer 0, in place.
+- `Continuation/Hollow` (importing `Continuation/Terminal` and `Continuation/ExactAge`):
+  `Realization.isCoverHollow_of_exactReceivingWithin`, `Realization.IsCoverHollow.isTerminalAt`,
+  and `StageType.exists_forcesThreshold_of_label_eq_top` (the form of `ForcingDonors` used for
+  cover-hollowness), Layer 4, in place.  `StageType.ForcesThreshold.congr_root`, a fact about
+  forcing alone, is in `Stage/Threshold`, beside `StageType.ForcesThreshold`.
+- `MainTheorem/SameLevelMaximal` (acceptance lemma 1): `exists_saturated_reconstruct`,
+  `exists_sameLevelMaximal_reconstruct`, `exists_sameLevelMaximal_covers`, and
+  `exists_sameLevelMaximal`, in place.  `exists_equiv_extend_tuple` (private) is the case of a
+  finite range of Mathlib's `Cardinal.extend_function_of_lt`, from which it is derived.
 - `Extension/OwnerCappedLift`: `CellScheme.Rows.cappedLift_of_boundary_short` is the case of equal
   boundary triples of `CellScheme.Rows.cappedLift_of_boundaries_short`, from which it is to be
   derived when the file is next opened (a change of proofs only).
