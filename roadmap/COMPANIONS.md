@@ -599,9 +599,13 @@ is compiled conditionally on block determination (below).  None is an input to t
   largest stage `λ_ξ` to which it expands (the set of such `ξ` is an initial segment closed under
   limits by limit continuity, so it has a largest element unless it is all of `ω₁`; the expansion
   is unique by expansion uniqueness); its **height** is that `ξ`, or `ω₁` for a class in the
-  persistent core.  Targets: the naturality of greatest refinements under isomorphism, and their
-  relationship to the expansion domains (a class lies in `D_ξ` exactly when its height is at
-  least `ξ`).  The count of the main theorem does not use them.  For the family of expansions of one
+  persistent core.  For one base structure, in the raw base encoding, the attainment of the
+  largest stage is compiled conditionally: `MainTheorem.exists_isGreatest_servingIndex_of_le`
+  (`MainTheorem/MaximalRefinement`), conditional on `Expansion.NextBlockUniqueness`, given a
+  countable bound on the stages to which it expands, on any carrier.  Targets: the naturality of
+  greatest refinements under isomorphism, and their relationship to the expansion domains (a
+  class lies in `D_ξ` exactly when its height is at least `ξ`).  The count of the main theorem
+  does not use them.  For the family of expansions of one
   model, conditional on positive niceness for that family, the bound of serving indices under
   strictness (`README.md`, "Manuscript correspondence (required)", item 5, "Uniform fixing bounds
   from positive niceness"; prospective) bounds its height.  Positive niceness for that family
@@ -721,17 +725,27 @@ is compiled conditionally on block determination (below).  None is an input to t
   supremum of countably many stages is not by itself one) are still to be supplied (`README.md`,
   item 5, "Two stopping proofs; positive niceness from a terminal presentation", (i)); and only
   as a conclusion, proved for each base from conditions 3 and 4, when it is taken from the Scott
-  route to maximal presentations (`README.md`, item 5; prospective), whose strict bound on
+  route to maximal presentations (`README.md`, item 5; its steps 1–5 compiled conditionally in
+  the raw base encoding, positive niceness prospective), whose strict bound on
   serving stages is eventual departure (1 above) read for one class, followed by greatest-stage
   attainment (bounded-stage attainment, 4 ⇒ 5 of the five criteria there; intended quotation
   `exists_greatest_stage_lt_omega1`, `OrdinalUtil`, available upstream, not yet at our pinned
   dependency: signatures verified against the upstream source at `2cd44c3`, not compiled
   here; `IMPLEMENTATION.md`, "Dependency pins": a stage predicate holding at `0`, closed
   downward and under countable limits, and bounded by a countable stage has a greatest
-  stage, and holds exactly at the stages up to it).  For one literal base that is a model,
-  a bound of this kind over all its model presentations is equivalent to a maximal
-  presentation of the base (criteria 3 and 5 of `README.md`, item 5, "Maximal
-  presentations: equivalent criteria, uniqueness, the optimal bound"; prospective),
+  stage, and holds exactly at the stages up to it).  These two steps are compiled here
+  conditionally, in the raw base encoding (`MainTheorem/MaximalRefinement`, conditional on (R1),
+  `Expansion.NextBlockUniqueness`, and `StageType.HasApexCoatomExtensions` at every countable
+  block stage): the strict bound by `MainTheorem.lt_qrank_of_isolates`, through
+  `expansionDomain_nontrivial` and `expansionDomain_subsingleton_of_isolates`, which specialize
+  the upstream `notMem_of_isolating_of_uniform`, and the attainment by
+  `MainTheorem.exists_isGreatest_servingIndex_of_le`, through `exists_isGreatest_of_closed`
+  (`Counting/OrdinalAttainment`).  At a repin containing `c16de09` and `2cd44c3`, the upstream
+  quotations replace them: `exists_isGreatest_of_closed` by the greatest-stage statement, and the
+  local two-class argument by Scott separation (`IMPLEMENTATION.md`, "Placement record").  For
+  one literal base that is a model, a bound of this kind over all its model presentations is
+  equivalent to a maximal presentation of the base (criteria 3 and 5 of `README.md`, item 5,
+  "Maximal presentations: equivalent criteria, uniqueness, the optimal bound"; prospective),
   conditional on the injectivity of model reduction at each countable index (raw form
   `ModelExpansion.subsingleton`, conditional on `Expansion.NextBlockUniqueness`, still to be
   proved), which 3 ⇒ 5 uses through bounded-stage attainment; so supplying the bound of (iv)

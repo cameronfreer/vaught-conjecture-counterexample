@@ -241,6 +241,16 @@ theorem covers_map_iff (e : M ≃ N) {n : ℕ} {t : StageType.{u} α n} {c : Fin
   refine ⟨fun ⟨hc, h⟩ ↦ ⟨e.symm.injective.comp hc, h⟩, fun ⟨hc, h⟩ ↦ ⟨?_, h⟩⟩
   exact (Function.Injective.of_comp (f := e.symm) hc)
 
+/-- Rooted covers in a transport are the transports of rooted covers. -/
+theorem extendsToCover_map_iff (e : M ≃ N) {n : ℕ} {c : Fin n → N}
+    {x : Σ m : ℕ, StageType.{u} α m × (Fin n ↪ Fin m)} :
+    (R.map e).ExtendsToCover c x ↔ R.ExtendsToCover (e.symm ∘ c) x := by
+  refine ⟨fun ⟨s, hs, h⟩ ↦ ⟨e.symm ∘ s, ?_, (covers_map_iff e).mp h⟩,
+    fun ⟨s, hs, h⟩ ↦ ⟨e ∘ s, ?_, (covers_map_iff e).mpr ?_⟩⟩
+  · rw [Function.comp_assoc, hs]
+  · rw [Function.comp_assoc, hs, ← Function.comp_assoc, Equiv.self_comp_symm, Function.id_comp]
+  · rwa [← Function.comp_assoc, Equiv.symm_comp_self, Function.id_comp]
+
 /-- **The faces of a cover**: under exact consistency, the face of a cover along an injective
 selection `s` of coordinates is evaluated to the face of its type along `s`. -/
 theorem Covers.eval_comp (hR : R.IsConsistent) (h : R.Covers t c) {m : ℕ} {s : Fin m → Fin k}
