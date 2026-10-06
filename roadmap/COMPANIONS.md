@@ -614,15 +614,25 @@ is compiled conditionally on block determination (below).  None is an input to t
   upper bound of the fixing ranks across all model presentations of that base (`README.md`, item
   5, "Maximal presentations: equivalent criteria, uniqueness, the optimal bound"; prospective,
   under the injectivity of model reduction).
-* **Terminal refinement** (every item a conditional target, to be proved; none is an input to the
-  counting theorem).  Hypotheses, all explicit: conditions 1–4 of the expansion-domain reduction
+* **Terminal refinement** (items 1 and 2 compiled in this repository (theorem named), abstractly
+  on `ExpansionDomains`, conditional on the hypotheses below, in `MainTheorem/LastStage`; item 3 a
+  conditional target, to be proved; none is an input to the counting theorem).  Hypotheses, all explicit: conditions 1–4 of the expansion-domain reduction
   (`README.md`), which are hypotheses of the count, not its conclusions; Scott isolation, a Scott
   sentence `σ_q` for each class `q`, of countable quantifier rank and true in `q` only
   (`scottSentence_characterizes`); and, for 3 only, expansion uniqueness and the countable family of
   terminal conditions of layer 4.  No conclusion of the count (the countable complements `Q \ D_η`,
   the bound `|Q| ≤ ℵ₁`, the uncountability of `Q`) is used.  Under these hypotheses, the targets, in
-  order:
-  1. **Eventual departure** (a theorem to be proved).  *Assume that the expansion domains `D_η`
+  order (for the actual expansion domains, items 1 and 2 are compiled conditional on `CapToModel`,
+  next-block uniqueness, (R1), and the coatom extension property with apex at every countable
+  block stage, each still to be proved, which give conditions 1, 3 and 4:
+  `expansionDomain_core_eq_empty`, `mem_expansionDomain_iff_le_lastStage`,
+  `mem_expansionDomain_loss_iff_lastStage_eq`, `lastStage_modelExpansionDomains_lt_qrank`):
+  1. **Eventual departure** (compiled in this repository (theorem named), abstractly:
+     `ExpansionDomains.exists_notMem_of_isolating_of_cofinal`, and
+     `ExpansionDomains.exists_notMem_of_isolating` with every successor loss nonempty; the
+     agreement is used in the weaker form that each observation is constant on some domain,
+     `HasLogicalAgreement`, which the agreement on `D_β` implies,
+     `ExpansionDomains.HasRankAgreement.hasLogicalAgreement`).  *Assume that the expansion domains `D_η`
      satisfy conditions 1–4, in particular the agreement on `D_β`: any two classes in `D_β` satisfy
      the same sentences of quantifier rank at most `β`; that every class `q` has a Scott sentence
      `σ_q` of countable quantifier rank (true in `q` and in no other class); and that the successor
@@ -636,14 +646,18 @@ is compiled conditionally on block determination (below).  None is an input to t
      family of domains with that agreement and cofinally nonempty successor losses (on the
      least-level filtration of the full-presentation route departure is immediate, the tails of a
      total rank having empty intersection, `biInter_rankTail_eq_empty`).  **Corollary** (conditional
-     on the same hypotheses): under condition 4 the persistent core `⋂_{η<ω₁} D_η` is empty.
+     on the same hypotheses): under condition 4 the persistent core `⋂_{η<ω₁} D_η` is empty
+     (compiled: `ExpansionDomains.core_eq_empty`; for the classes of coded models, with Scott
+     isolation `exists_classTruth_iff_eq`, `ExpansionDomains.core_eq_empty_of_classTruth`).
      **Control:** the argument uses isolation of each class by one sentence; pairwise separation
      (for `p ≠ q`, some sentence true in one and false in the other) does not suffice for it,
      because the rank of a sentence separating `q` from `p` depends on `p` while the class lost at
      `β` varies with `β`, so no level need lie above the rank of the sentence separating `q` from
      the class lost there.  For instance, on `Q = ω₁ ∪ {q}` with `D_β = {q} ∪ [β, ω₁)` and, for each
      `α < ω₁`, a sentence of rank `α + 1` true at `α` only, the agreement and the cofinally
-     nonempty losses hold and distinct points are separated, yet `q` lies in every `D_β`.
+     nonempty losses hold and distinct points are separated, yet `q` lies in every `D_β`.  The same
+     example, with the observations "is the ordinal `α`" in place of the sentences, is compiled in
+     `MainTheorem/LastStageExamples`.
 
      **Cofinally nonempty successor losses** (a separate lemma, to be proved).  *Let `D_η ⊆ Q`, for
      `η < ω₁`, satisfy `D_0 = Q`, `D_ζ ⊆ D_ξ` for `ξ ≤ ζ`, continuity `D_δ = ⋂_{ξ<δ} D_ξ` at nonzero
@@ -674,7 +688,17 @@ is compiled conditionally on block determination (below).  None is an input to t
   2. **the last admitted stage** (a definition conditional on 1): for a class `q` that leaves the
      expansion domains, the least `ξ` with `q ∉ D_ξ` is a successor `ζ + 1` (`D_0 = Q`, and limit
      continuity excludes a limit), and `λ_ζ` is then called the last admitted stage of `q`; `q` lies
-     in the loss `D_ζ \ D_{ζ+1}`;
+     in the loss `D_ζ \ D_{ζ+1}`.  Compiled in this repository (theorem named), for the index `ζ`
+     (not the block stage `λ_ζ`): `ExpansionDomains.lastStage`, the supremum of the stages at which
+     `q` lies, defined for every class; once `q ∉ D_ξ` for a countable `ξ`, it is the greatest such
+     stage and is below `ξ`, from condition 1 alone (`ExpansionDomains.isGreatest_lastStage`,
+     through the attained greatest index `exists_isGreatest_of_closed`); under the hypotheses of 1,
+     `q ∈ D_β ↔ β ≤ ζ` at every ordinal `β`, and the losses are the fibres of the last stage and
+     the domains its tails (`ExpansionDomains.mem_domain_iff_le_lastStage`,
+     `ExpansionDomains.mem_loss_iff_lastStage_eq`, `ExpansionDomains.loss_eq_preimage_lastStage`,
+     `ExpansionDomains.domain_eq_setOf_le_lastStage`); under the agreement on `D_β` and condition
+     4, `ζ` is below the quantifier rank of every sentence isolating `q`
+     (`ExpansionDomains.lastStage_lt_qrank`; the rank of a chosen sentence, not a Scott rank);
   3. **the terminal expansion** (to be proved, given 2): the expansion of a model in `q` to its last
      admitted stage is unique by expansion uniqueness and terminal, and is covered by the countable
      family of terminal conditions of layer 4 (rigid-core type, positive eventual top grade, hollow
@@ -685,8 +709,8 @@ is compiled conditionally on block determination (below).  None is an input to t
      countable-slot argument, or the Scott route to maximal presentations), under the
      injectivity of model reduction and without that family.
 
-  None of these is proved, and no class is asserted to have a last admitted stage or a terminal
-  expansion before 1 is proved.  If 1–3 are proved, the greatest refinement above (itself a target)
+  Items 1 and 2 are compiled, conditionally on the hypotheses above; item 3 is not proved, and no
+  class is asserted to have a terminal expansion.  If 1–3 are proved, the greatest refinement above (itself a target)
   is the terminal expansion, and no class has height `ω₁`.  Terminal refinement is not a
   prerequisite of the counting theorem, and its eventual departure is not downstream of the count:
   it uses hypotheses of the count (the agreement of condition 3 and the nonempty losses of condition
@@ -767,7 +791,12 @@ is compiled conditionally on block determination (below).  None is an input to t
   source at `2cd44c3`, not compiled here; `IMPLEMENTATION.md`, "Dependency pins"): a class isolated
   by a sentence of rank `r` lies in no domain of two or more classes on which the sentences of rank
   at most `r` agree, so, the domains decreasing and the one at `r`, on which the sentences of rank
-  at most `r` agree, having two or more classes, it lies in no domain at a stage `η ≥ r`.  Explicit
+  at most `r` agree, having two or more classes, it lies in no domain at a stage `η ≥ r`.  Local
+  forms of these statements for `ExpansionDomains` are compiled in this repository (theorem named;
+  `MainTheorem/LastStage`): `ExpansionDomains.notMem_of_isolating` (the exclusion from a domain of
+  two or more classes), `ExpansionDomains.notMem_of_isolating_of_qrank_le` (at the rank, the two
+  classes from condition 4), and `ExpansionDomains.lastStage_lt_qrank` (the strict bound, with
+  attainment).  Explicit
   levels for the terminal expansions at block `η` are the syntax bounds of the table below
   (`ω·(η+2)`, and `ω·(η+2)+k` in the core case), with the stabilization-ordinal bounds of target 2
   and the orbit-rank bounds of target 3.  Uses of termination, marked: the Scott sentences and their
