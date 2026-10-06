@@ -1062,7 +1062,7 @@ continues the row above it: a further notion of the same row, with its own statu
 | 14 | [AFK26] | geometries and structured geometries, Convention 2.3, Definitions 2.1 and 2.2 | P |
 | | | invariance diagram and system compatible, Definitions 2.4–2.6 and 2.8 | P |
 | | | the language and diagram of templates, Definitions 4.17 and 4.18, Lemma 4.19 | C |
-| 15 | [Kni26] | the amalgam of two coatom types, Definition 4.3.1, and its rows, Lemma 4.3.2 | S |
+| 15 | [Kni26] | the amalgam of two coatom types, Definition 4.3.1, and Lemma 4.3.2 | P; C, P, S |
 | 16 | [Kni26] | the completion of the amalgam, Definition 4.3.14 | C |
 | 17 | [Kni26] | the coatom extension with apex, Corollary 4.3.22 | S |
 | 18 | [Kni26] | the exact pinned one-point extension, Proposition 4.3.23 | S |
@@ -1382,9 +1382,58 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     charts, at any stage, `reconstruct_toHullStructure`, `toHullStructure_reconstruct`.  The round
     trip in the stage chart language at a general fixed countable stage (`README.md`, item 2):
     prospective.
-15. `Coatom.amalgamType`, `Coatom.isBountiful_amalgamType` (`Extension/CoatomAmalgam`): the lemma
-    is compiled in this repository (theorem named) for the amalgam here; the comparison of the
-    amalgam with the clauses of Definition 4.3.1 is not recorded, and the lemma rests on row 6.
+15. `Coatom.amalgam`, `Coatom.amalgamType` (`Extension/CoatomAmalgam`), from
+    `Coatom.amalgamCellScheme` and `Coatom.amalgamRows` (`Extension/CoatomScheme`): the amalgam
+    of two coatom types and its rows.  The status is given for Definition 4.3.1 (P) and for the
+    three conclusions of Lemma 4.3.2 (C, P, S, in order), separately.
+    - *Definition 4.3.1*, P.  The definition-level identification `Coatom.printedAmalgam_iff`
+      (`Correspondence/Amalgam`), compiled in this repository (theorem named): a cell scheme with
+      rows satisfies the clauses `D = D^a ∪ D^b` and `E = E^a ∪ E^b` (the fields of
+      `Coatom.PrintedAmalgam`) exactly when it is `Coatom.amalgamCellScheme h` with
+      `Coatom.amalgamRows h`, reindexed along a bijection of cells sending the cells of `D^a` and
+      `D^b` to the given ones.  For the amalgam here: `Coatom.printedAmalgam_amalgam` and
+      `Coatom.printedAmalgam_amalgamType`, compiled in this repository (theorem named).  The
+      setting of [Kni26, §4.3]: `A = Fin (m + 2)`; the plan `Q ∪ R ∪ {A}` of Definition 2.1.1,
+      clause 3(c), is `Coatom.amalgamFaces`; the equality of the restrictions of `D^a` and `D^b`
+      to `⟨A \ {a, b}, n - 2⟩` (equivalently, as printed, `D^a_{⟨A \ {b}, n - 2⟩} =
+      D^b_{⟨A \ {a}, n - 2⟩}`) is the hypothesis `h`, literal equality of the restricted schemes,
+      with the codes forgotten and the common-face numbering preserved (the corrected
+      representation of domains, row 7); the cells of the common face are identified by
+      `Coatom.overlap h`.  Departures, both
+      harmless by `Coatom.printedAmalgam_iff`: the merged enumeration of the cells of
+      `Coatom.amalgam` (it holds for every bijection of cells), and the laws of `D^a` and `D^b`
+      (it holds without them).  The definition uses no legality: it uses only the representation
+      of domains of row 7, a scheme with its rows (the semantics as rows, row 7's notion), with
+      the cells as positions and codes forgotten; its status is on that convention and does not
+      depend on row 6.  The clause `eq_iff` is, in the direction "if", the equality of the two
+      restrictions in the setting, and in the direction "only if", Proposition 2.6.3, clause 6.
+      The labels of `Coatom.amalgamType` are those of the two types
+      (`Coatom.amalgamType_label_posLeft`, `Coatom.amalgamType_label_posRight`); Definition 4.3.1
+      does not mention them.
+    - *Lemma 4.3.2, "`D` is a domain"*, C: not correct as stated.  A domain has a complete
+      semantics (Definitions 2.6.1 and 2.5.15; `CellScheme.IsComplete` is Definition 2.5.15
+      verbatim), and the graded face `⟨A, 1⟩` of the plan carries no cell:
+      `Coatom.not_isComplete_amalgamType` and `Coatom.not_isLegal_amalgamType`, compiled in this
+      repository (theorem named).  The corrected statement, compiled in this repository (theorem
+      named): every other graded face carries a cell (`Coatom.exists_gradedIndex_eq_amalgamType`),
+      and the scheme is well formed and coded (`Coatom.isWellFormed_amalgam`,
+      `Coatom.isCoded_amalgam`).  The end of [Kni26, §4.2] calls the union "consistent
+      and bountiful; it is merely not complete".  `LITERATURE.md` does not yet list this
+      conclusion among the printed statements that are not correct as stated; it is to be added
+      to that list when the list is next brought up to date.
+    - *Lemma 4.3.2, "`E` is a consistent semantics"*, P: `Coatom.printedRespects_row_amalgam`,
+      compiled in this repository (theorem named).  At every stage that is zero or a limit and
+      carries the values of the rows, if every row of `D^a` and of `D^b` respects the semantics
+      below it as printed (Definition 2.5.12, through row 4), so does every row of the amalgam;
+      respecting includes the orderliness that a semantics requires (Definition 2.5.3).
+    - *Lemma 4.3.2, "`E` is bountiful"*, S: it rests on row 6.  Compiled in this repository
+      (theorem named): `Coatom.isBountiful_amalgamType`, in the sense of `IsBountiful`;
+      `Coatom.printedBountiful_omega_one_amalgamType`, the printed definition at `ω₁` for the
+      amalgam of legal stage types (whose rows are bountiful in the sense of `IsBountiful`); and
+      `Coatom.forall_printedBountiful_amalgam`, the printed definition at every stage that is zero
+      or a limit, from the same for `D^a` and `D^b`.  From the printed definition at `ω₁` alone
+      for `D^a` and `D^b`, nothing is proved: that needs the converse of
+      `CellScheme.Rows.IsBountiful.printedBountiful` at a single stage, which row 6 lacks.
 16. The completion of checkpoints 2.1–2.7 replaces it; the bountifulness of the printed completion
     is unproved, not refuted.
 17. `StageType.HasApexCoatomExtensions` (`Extension/PinnedExtension`), a hypothesis.
@@ -1396,9 +1445,31 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     still to be proved.
 20. The classical limit of the uncapped age (`README.md`, the section on the top-free witnesses):
     prospective.
-21. `Realization.IsModel.exists_privateContext` (`Realization/PrivateContext`), compiled in this
-    repository (theorem named) for the models here (row 11); the comparison of its conclusion with
-    clauses 3 and 4 of the lemma is not recorded.
+21. `Realization.IsModel.exists_privateContext` (`Realization/PrivateContext`); status S.  Only
+    clauses 3 and 4 of Lemma 8.1.1 are compared; clauses 1 and 2 (the hollow case) are not.
+    Clauses 3 and 4 are the fields of `Realization.PrintedPrivateContext`
+    (`Correspondence/PrivateContext`), with the cells `Ω_μ` of clause 3 as data, since clause 4(d)
+    refers to them.  Compiled in this repository (theorem named):
+    `Realization.IsModel.exists_printedPrivateContext`, derived from the conclusion of
+    `exists_privateContext`.  For a model at a positive stage (the printed stage is a limit),
+    every occurrence `x`, every donor on `x.arity + 1` points, and every `K`, it gives an
+    extension meeting clause 3 and, with `N` the arity of the extension, the bounds (a)–(d) of
+    clause 4 ((b) for the given `K`) and a cell `Ω` of full scope and arity `N` labelled above
+    every label of the donor below `∞`.  Not met: the alternative of clause 4 for infinite
+    characteristic arity, `p'(Ω) = ∞`; the characteristic arity (Definition 5.4.1) has no
+    counterpart here.  Departures: `x` is a literal face of the extension along an embedding, not
+    an initial segment (not proved equivalent here); the hypotheses of Proposition 7.3.3
+    (hollowness or finite characteristic arity, a core, the donor extending the type of `x`) are
+    not assumed (harmless: `Realization.IsModel.exists_printedPrivateContext` holds without
+    them).  Clause 3 and the structure concern limits `μ` only; the conclusion of
+    `exists_privateContext`, which treats every block start, also gives a cell with label in
+    `[0, ω)` when some label of the donor lies there, outside the comparison.  The row stays S
+    for three reasons: clauses 1 and 2 are not compared; the alternative `p'(Ω) = ∞` of clause 4
+    is not produced; and the literal face is not proved equivalent to the initial segment.  The
+    printed proof of clause 4 cites high-arity dominance as clause 4(a) of Definition 3.2.1, where
+    it is clause 4(c) (`LITERATURE.md`): a correction of the citation that does not affect the
+    statement; the proofs here use uniformity, clause 4(b), and high-arity dominance, clause 4(c)
+    (`Realization.IsModel.uniformity`, `Realization.IsModel.dominance`).
 22. Prospective (`README.md`, layer 3, 3.3).
 23. The corrected statements are those of the version of 1 October 2026 (its Definitions 3.2
     and 3.4: the composition law in one order, which does not give nested ranges, and a single
