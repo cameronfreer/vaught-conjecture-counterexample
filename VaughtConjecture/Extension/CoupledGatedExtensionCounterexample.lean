@@ -429,7 +429,7 @@ private theorem isWitness_dropFinite : IsWitness (fun _ ↦ (⊤ : Label.{u})) d
 /-! ### Label arithmetic -/
 
 /-- The label `ω + j`. -/
-private noncomputable def omegaAdd (j : ℕ) : Label.{u} := ((ω + j : Ordinal.{u}) : Label.{u})
+noncomputable def omegaAdd (j : ℕ) : Label.{u} := ((ω + j : Ordinal.{u}) : Label.{u})
 
 private theorem isSuccPrelimit_omega0 : Order.IsSuccPrelimit (ω : Ordinal.{u}) :=
   Ordinal.isSuccLimit_omega0.isSuccPrelimit
