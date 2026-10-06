@@ -60,12 +60,10 @@ labelling.  Four parts are named here: three at that lift, and the rows.
    `v < c` while the ambient cap is at least `c`.**  The gate dominates the cap
    (`StageType.CoupledGatedExtension.cap_le_gate`), so then no lift exists.  The anchor readings
    alone do not force it: at a cap `c` at most the gate, every labelling in the cap ball satisfies
-   them at the gate value `c`
-   (`CellScheme.Rows.IsLawful.min_eq_visibilityReplace_of_min_eq`, in
+   them at the gate value `c` (`CellScheme.Rows.IsLawful.min_eq_visibilityReplace_of_min_eq`, in
    `VaughtConjecture.Extension.CoupledGatedExtensionCounterexample`); jointly with the rest of the
-   display this is open.  At the
-   instance of `VaughtConjecture.Extension.CoupledGateInstance` it does not occur, since every lift
-   of the display there exists (`CoupledGateInstance.isLegal_Q`).
+   display this is open.  At the instance of `VaughtConjecture.Extension.CoupledGateInstance` it
+   does not occur, since every lift of the display there exists (`CoupledGateInstance.isLegal_Q`).
 3. **Joint lawfulness.**  The lowered private labelling must extend to one labelling of the
    display lawful below `(univ, n)`, jointly with the gate, the twins, the donor cells, and the
    cells of grade `n` that contain the new point.  `capLowering` caps every private cell of grade
