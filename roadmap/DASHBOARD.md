@@ -31,7 +31,7 @@ percentage of 100 would not by itself mean that the hypotheses of a layer are pr
 | 4, continuation | 62% | `Realization.stableCandidate` | output 3: (R4), the apex property |
 | 5, domains, agreement | 85% | `Expansion.expansionDomain_loss_countable` | the hypotheses below |
 | 6, the bounds | 90% | `densitySentence_hasThinAlephOneSpectrum_of_terminalClassification` | the hypotheses below |
-| Manuscript correspondence | 25% | `CellScheme.Rows.printedRespects_iff` | rows 2–5 P; row 6 S (one direction at `ω₁`); the rest S or C |
+| Manuscript correspondence | 25% | `CellScheme.Rows.printedRespects_iff`; the concordance rows (`IMPLEMENTATION.md`) | rows 2–5, 29 and 43 P, and row 14 for the printed definitions of [AFK26, §2] that it names; row 1 C, with its truncation function P; rows 6 and 44 S (one direction at `ω₁`); rows 8/11 P on corrected row 7 with domains S; row 15 P/C/P/S by part; the remaining rows S or C |
 | **Overall** | **≈ 78%** | | |
 
 Notes on the rows, each with its marker:
@@ -39,12 +39,20 @@ Notes on the rows, each with its marker:
 - *Layer 3, the completion.*  Compiled: 2.1–2.5; the tower and its invariant
   (`Seed.towerInvariant_succ`, `Seed.towerInvariant_top`); `2FL(1)` (`Seed.twoFaceLift_one`); the
   completion below the full grade at `m ≤ 2`; per seed, under `2FL(j)` or `Seed.DeadAt j` at each
-  grade `2 ≤ j < m` (`Seed.nonempty_completionBelowFullGrade_of_twoFaceLift_or_deadAt`).  Refuted:
-  the union fill (`UnionFillCounterexample.not_unionFill_seed`) and `2FL(2)`
+  grade `2 ≤ j < m` (`Seed.nonempty_completionBelowFullGrade_of_twoFaceLift_or_deadAt`); the
+  existential two-face lift `2FL∃(j)` (`Seed.TwoFaceLiftExists`), the step of the tower stated
+  exactly (`Seed.towerInvariant_succ_iff_twoFaceLiftExists`, `Seed.towerInvariant_top_iff`).
+  Refuted: the union fill (`UnionFillCounterexample.not_unionFill_seed`); `2FL(2)`
   (`TwoFaceLiftCounterexample.not_twoFaceLift_two`, hence
-  `TwoFaceLiftCounterexample.not_forall_twoFaceLift`).  Still to be proved, not refuted:
-  `StageType.HasCoatomExtensions`, `StageType.HasApexCoatomExtensions`.  Prospective: the
-  existential two-face lift `2FL∃(j)` and the choosing one-grade lift.
+  `TwoFaceLiftCounterexample.not_forall_twoFaceLift`); the coverage of every seed by the case split
+  `2FL(j) ∨ Seed.DeadAt j` (`CaseSplitCounterexample.not_forall_twoFaceLift_or_deadAt`); and
+  `2FL∃(2)` for the legal seed `TwoFaceLiftExistsCounterexample.seedL`
+  (`TwoFaceLiftExistsCounterexample.not_twoFaceLiftExists_two_seedL`, hence
+  `TwoFaceLiftExistsCounterexample.not_forall_twoFaceLiftExists`).  Compiled for `seedL` outside
+  the tower: its thin completion (`ThinCompletion.nonempty_completionBelowFullGrade_seedL`) and the
+  coatom extension of `TL` and `T5` with apex at every stage
+  (`ThinCompletionExamples.exists_coatomExtension_seedL`).  Still to be proved, not refuted:
+  `StageType.HasCoatomExtensions`, `StageType.HasApexCoatomExtensions`.
 - *Layer 3, receiving.*  Compiled: finite-extension receiving from finite-cut receiving, for an
   exactly consistent realization at a stage that is zero or a limit
   (`Realization.HasFiniteCutReceiving.hasFiniteExtensionReceiving`); gate recovery
@@ -64,8 +72,10 @@ Notes on the rows, each with its marker:
 - *Layer 4.*  Compiled: normalization, conditional on finite-extension receiving and forcing donors
   (`Realization.label_eq_stableLabel`); forcing donors, conditional on the coatom extension
   property (`forcingDonors_of_hasCoatomExtensions`); the structural candidate
-  (`Realization.stableCandidate`), stably lawful for every model
-  (`Realization.IsModel.isStablyLawful`); output 3 and the
+  (`Realization.stableCandidate`), stably lawful for every model at a block stage
+  (`Realization.IsModel.isStablyLawful`), and more generally for every exactly consistent covering
+  realization with legal types at a block stage (`Realization.isStablyLawful_of_hasLegalTypes`);
+  output 3 and the
   continuation criterion, conditional on (R4) and the coface instances at the next block
   (`ContinuationCriterion.of_stableCappedReceiving`); cover-hollowness and stable-label fixedness
   (`Realization.isCoverHollow_iff_forall_stableLabel_eq_top`); the exact-age comparison
@@ -84,27 +94,56 @@ Notes on the rows, each with its marker:
   next-block uniqueness), next-block uniqueness
   (`Expansion.NextBlockUniqueness.of_forcingDonors`), logical agreement
   (`Expansion.bfEquiv_of_modelExpansions`), countable losses
-  (`Expansion.expansionDomain_loss_countable`), nonempty losses
+  (`Expansion.expansionDomain_loss_countable`), countably many classes terminal at each level
+  (`MainTheorem.countable_isoClasses_terminalAt`, on (R1), the continuation criterion, (R2), and
+  (R3)), nonempty losses
   (`hasNonemptyLosses_of_hasApexCoatomExtensions`, also on the coatom extension property with
   apex at every countable block stage; item 7 below), and the thin `ℵ₁` spectrum
-  (`densitySentence_hasThinAlephOneSpectrum_of_terminalClassification`).
+  (`densitySentence_hasThinAlephOneSpectrum_of_terminalClassification`, and with `CapToModel` and
+  nonempty losses derived from the coatom extension property with apex at every countable block
+  stage,
+  `densitySentence_hasThinAlephOneSpectrum_of_terminalClassification_of_hasApexCoatomExtensions`).
+- *Manuscript correspondence, item 5.*  Compiled conditionally on (R1), next-block uniqueness,
+  and the coatom extension property with apex at every countable block stage: the maximal
+  refinement of a prescribed model (`MainTheorem.exists_maximalRefinement`); rows 33–36, 38, 40
+  stay S.
 
 ## The named hypotheses of the main theorem
 
-`densitySentence_hasThinAlephOneSpectrum_of_terminalClassification`
-(`MainTheorem/ModelExpansionDomains`) is compiled conditionally on the seven hypotheses below.
-Each is a separate statement with its own status; none of them is derived from another in the
-library.
+Two forms of the main theorem on `ℕ` are compiled, each conditionally on named hypotheses; the
+second does not replace the first, and both are kept.
 
-| Hypothesis | Lean | Used for |
-| --- | --- | --- |
-| the cap-to-model theorem at `ω` | `CapToModel` | the first domain |
-| (R1), finite-cut receiving of models | `Expansion.FiniteCutReceiving` | uniqueness, agreement |
-| forcing donors | `ForcingDonors` (every `ξ < ω₁`) | next-block uniqueness |
-| the continuation criterion (output 3) | `ContinuationCriterion` | the terminal cover |
-| (R2), exact residual receiving | `Realization.ResidualReceiving` | the residual comparison |
-| (R3), exact hollow-growth receiving | `Realization.HollowReceiving` | the hollow comparison |
-| nonempty losses (condition 4) | the hypothesis `hn` | the lower bound |
+- **Seven hypotheses.**  `densitySentence_hasThinAlephOneSpectrum_of_terminalClassification`
+  (`MainTheorem/ModelExpansionDomains`) is compiled conditionally on hypotheses 1–7 of the table
+  below: `CapToModel`, (R1), forcing donors, the continuation criterion, (R2), (R3), and nonempty
+  losses.
+- **Six hypotheses.**
+  `densitySentence_hasThinAlephOneSpectrum_of_terminalClassification_of_hasApexCoatomExtensions`
+  (`MainTheorem/Composition`; on all countable carriers,
+  `vaughtCounterexample_allCarriers_of_terminalClassification_of_hasApexCoatomExtensions`) is
+  compiled conditionally on hypotheses 2–6 and 8: (R1), forcing donors, the continuation
+  criterion, (R2), (R3), and the coatom extension property with apex at every countable block
+  stage.  Hypotheses 1 and 7 are derived in it: `CapToModel` from hypothesis 8 at `λ_0 = ω`
+  (`CapToModel.of_hasApexCoatomExtensions`), and nonempty losses from hypothesis 8 and next-block
+  uniqueness (`hasNonemptyLosses_of_hasApexCoatomExtensions`).  It is obtained from the first form
+  by the two derivations above.
+
+Each hypothesis is a separate statement with its own status.  None of them is derived from another
+in the library, except hypotheses 1 and 7, which are derived from hypothesis 8 (with next-block
+uniqueness, from hypotheses 2 and 3, for hypothesis 7), and hypothesis 4, which is derived from
+hypothesis 8 together with (R4) (`ContinuationCriterion.of_hasApexCoatomExtensions`); (R4) is in
+neither list.
+
+| Hypothesis | Lean | Used for | Seven | Six |
+| --- | --- | --- | --- | --- |
+| 1. the cap-to-model theorem at `ω` | `CapToModel` | the first domain | yes | derived |
+| 2. (R1), finite-cut receiving of models | `Expansion.FiniteCutReceiving` | uniqueness, agreement | yes | yes |
+| 3. forcing donors | `ForcingDonors` (every `ξ < ω₁`) | next-block uniqueness | yes | yes |
+| 4. the continuation criterion (output 3) | `ContinuationCriterion` | the terminal cover | yes | yes |
+| 5. (R2), exact residual receiving | `Realization.ResidualReceiving` | the residual comparison | yes | yes |
+| 6. (R3), exact hollow-growth receiving | `Realization.HollowReceiving` | the hollow comparison | yes | yes |
+| 7. nonempty losses (condition 4) | the hypothesis `hn` | the lower bound | yes | derived |
+| 8. the coatom extension property with apex | `StageType.HasApexCoatomExtensions` (every `λ_η`, `η < ω₁`) | hypotheses 1 and 7 | no | yes |
 
 Status of each:
 
@@ -122,40 +161,60 @@ Status of each:
    two-point inputs up to the threshold `4` (`forcingDonorsUpTo_one_four`,
    `forcingDonorsUpTo_two_four`).
 4. `ContinuationCriterion`: still to be proved (sufficiency only; the converse is not stated).
+   Compiled conditionally on (R4) and the coatom extension property with apex at every successor
+   block stage (`ContinuationCriterion.of_hasApexCoatomExtensions`); (R4) is still to be proved,
+   so the six-hypothesis form keeps the criterion as a hypothesis.
 5. `Realization.ResidualReceiving`: still to be proved (the LOW construction).
 6. `Realization.HollowReceiving` for `Realization.IsCoverHollowAtBlock`: still to be proved (the
    growth construction).
 7. Nonempty losses: still to be proved.  Compiled conditionally on the coatom extension property
    with apex at every countable block stage and on next-block uniqueness
    (`hasNonemptyLosses_of_hasApexCoatomExtensions`, stated for the bundled domains, which also take
-   `CapToModel`; per block, `nonempty_loss_of_hasApexCoatomExtensions`); this is not composed with
-   the theorem above in a compiled statement.
+   `CapToModel`; per block, `nonempty_loss_of_hasApexCoatomExtensions`); composed with
+   hypotheses 2–6 in the six-hypothesis form.
+8. `StageType.HasApexCoatomExtensions` at every countable block stage: still to be proved, not
+   refuted (Layer 3, 3.1, the open part of (R6); the row "Layer 3, the completion" above).
 
-There is no hypothesis of countable losses and none of next-block uniqueness: the first is
-`Expansion.expansionDomain_loss_countable`, the second
+There is no hypothesis of countable losses and none of next-block uniqueness in either form: the
+first is `Expansion.expansionDomain_loss_countable`, the second
 `Expansion.NextBlockUniqueness.of_forcingDonors`, each compiled conditionally on hypotheses in the
 list.
 
 ## The research front
 
 Each item is open or still to be proved; none is assumed by a theorem of the library except as a
-named hypothesis.  A result marked *under review, not yet merged* is not on `main` and is not
-counted as compiled.
+named hypothesis.
 
-1. **Layer 3 at `m ≥ 3`** (open).  The existential two-face lift `2FL∃(j)`, with a choosing
-   variant of `CellScheme.Rows.cappedLift_of_boundary_short` (both prospective, stated in prose in
-   `README.md`, Layer 3, 3.1, (R6), 2.7); whether every seed has `2FL(j)` or `Seed.DeadAt j` at each
-   grade (undecided on `main`).  The two prospective statements would give
-   `StageType.HasApexCoatomExtensions` (an implication not yet stated in the library), hence the
-   coatom extension hypotheses of the cap-to-model theorem, the top-free witnesses, and output 3.
-   Under review, not yet merged: the per-grade disjunction `2FL(j) ∨ Seed.DeadAt j` does not cover
-   every seed at `m = 3`, while `2FL∃(j)` is equivalent to the step of the tower and holds on the
-   seed at `m = 3` where the disjunction fails (a seed other than `seed4`), so 2.7 is to be
-   conditioned on `2FL∃`.
+1. **Layer 3 at `m ≥ 3`** (open): the completion below the full grade for every seed at `m ≥ 3`.
+   The existential two-face lift `2FL∃(j)` is the step of the tower, stated exactly
+   (`Seed.towerInvariant_succ_iff_twoFaceLiftExists`, `Seed.towerInvariant_top_iff`, compiled in
+   this repository (theorem named)), and it fails at `j = 2` for the legal seed
+   `TwoFaceLiftExistsCounterexample.seedL`
+   (`TwoFaceLiftExistsCounterexample.not_twoFaceLiftExists_two_seedL`, refuted), so `2FL∃(j)` for
+   every seed is false at every stage
+   (`TwoFaceLiftExistsCounterexample.not_forall_twoFaceLiftExists`) and the invariant of the tower
+   of `seedL` fails at the top grade
+   (`TwoFaceLiftExistsCounterexample.not_towerInvariant_top_seedL`).  The per-grade case split
+   `2FL(j) ∨ Seed.DeadAt j` does not cover every seed
+   (`CaseSplitCounterexample.not_forall_twoFaceLift_or_deadAt`, refuted), while the seed where it
+   fails has a completion (`CaseSplitCounterexample.nonempty_completionBelowFullGrade_seed5`).  No
+   theorem is conditioned on the universal form of `2FL∃(j)`.  For `seedL` the identified
+   obstruction survives the redesigns examined (argued, not formalized), and `seedL` has a
+   completion below the full grade outside the tower, the thin completion
+   (`ThinCompletion.nonempty_completionBelowFullGrade_seedL`, compiled in this repository (theorem
+   named)), which with the apex added gives the coatom extension of `TL` and `T5` with apex at
+   every stage (`ThinCompletionExamples.exists_coatomExtension_seedL`, compiled in this repository
+   (theorem named)).  A completion below the full grade for every seed of two legal coatom types
+   gives `StageType.HasApexCoatomExtensions` at the stages that are zero or a limit
+   (`StageType.HasApexCoatomExtensions.of_completionBelowFullGrade`, compiled in this repository
+   (theorem named)), hence the coatom extension hypotheses of the cap-to-model theorem, the top-free
+   witnesses, and output 3.
 2. **Stable availability at twins** (compiled): from legal types
-   (`Realization.availability_stableSection_of_hasLegalTypes`), so every model is stably lawful
-   (`Realization.IsModel.isStablyLawful`).  Refuted hypotheses on single types, negative special
-   cases:
+   (`Realization.availability_stableSection_of_hasLegalTypes`), so every model at a block stage is
+   stably lawful (`Realization.IsModel.isStablyLawful`), and so is every exactly consistent
+   covering realization with legal types at a block stage
+   (`Realization.isStablyLawful_of_hasLegalTypes`).  Refuted hypotheses on single types, negative
+   special cases:
    `Continuation.CandidateCounterexamples.not_synchronizingCofaces_blockStage` (with two variants)
    and `Continuation.CandidateCounterexamples.not_twinOrdering_blockStage`.
 3. **4b-ii** (open): the gated construction as data, that is,
