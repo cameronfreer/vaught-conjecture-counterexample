@@ -24,9 +24,11 @@ context of `VaughtConjecture.Continuation.AnchoredDetermination`.
 * the **context** (`AnchoredDeterminationCounterexample.context α`) is the legal two-point type
   `GatedExtensionCounterexample.P α`, whose cells `3` and `4` have graded index `(univ, 2)` and
   are labelled `⊤`, capped at an ordinal `c < α` self-visible at `2` (`StageType.cap`).  It is
-  legal and top-free, and cell `3`, labelled `c`, is a private cap: the donor has no proper label
-  and is anchored below it (`StageType.isAnchored_of_forall_label_eq_bot_or_top`), so the context
-  is an anchored context for the donor (`StageType.IsAnchoredContext`).
+  legal and top-free, and cell `3`, labelled `c`, is a private cap.  The donor's only label is `⊤`
+  (`AnchoredDeterminationCounterexample.donor_label_eq_top`), so the label bound and the anchoring
+  (`StageType.isAnchored_of_forall_label_eq_bot_or_top`) hold vacuously, and the context is an
+  anchored context for the donor (`StageType.IsAnchoredContext`).  The instance uses only the
+  clauses `n + 1 < k` and the existence of a cell of graded index `(univ, k)`.
 
 Over this context, along the empty face, the donor is determined neither within the receiving
 family of any coface at any permitted cutoff nor within the stage types on the scheme of any
@@ -39,6 +41,10 @@ cutoff determination with a donor fails for the anchored context
 for it in every model (`Realization.donorAcquisition_isAnchoredContext`).
 
 The refuted statement is determination for this predicate; nothing here refutes (R2) or (R3).
+
+## Placement
+
+This file belongs to Layer 3 of `roadmap/README.md`.
 -/
 
 universe u
@@ -68,13 +74,9 @@ theorem isLegal_donor : (donor α).IsLegal :=
 theorem not_isTopFree_donor : ¬ (donor α).IsTopFree :=
   fun h ↦ h (Fin.last _) (addApex_label_last _ one_pos)
 
-/-- Every label of the donor is `⊥` or `⊤`. -/
-theorem donor_label_eq_bot_or_top (j : Fin (donor α).card) :
-    (donor α).label j = ⊥ ∨ (donor α).label j = ⊤ := by
-  have h := label_addApex (t := celllessType α) isLegalBelowFullGrade_cellless one_pos
-    (fun _ ↦ rfl) j
-  split_ifs at h
-  exacts [.inr h, .inl h]
+/-- The donor has exactly one cell, the apex, so its only label is `⊤`. -/
+theorem donor_label_eq_top (j : Fin (donor α).card) : (donor α).label j = ⊤ := by
+  obtain rfl : j = Fin.last _ := Subsingleton.elim (α := Fin 1) _ _; exact addApex_label_last _ _
 
 /-- **The empty root is not a rigid core of the donor**, at a limit stage. -/
 theorem not_isRigidCoreIn_donor (hα : Order.IsSuccLimit α) :
@@ -98,18 +100,14 @@ theorem isLegal_context : (context α hc hcα).IsLegal :=
 theorem isTopFree_context : (context α hc hcα).IsTopFree :=
   isTopFree_cap
 
-/-- **The context is an anchored context for the donor**: its cell `3`, of graded index
-`(univ, 2)`, is labelled `c`, above `⊥`, the only proper-or-bottom label of the donor, and the
-donor, labelled `⊥` or `⊤`, is anchored below it. -/
-theorem isAnchoredContext_context : (context α hc hcα).IsAnchoredContext (donor α) := by
-  let C : Fin (context α hc hcα).card := ⟨3, by change 3 < 5; omega⟩
-  have hC : (context α hc hcα).label C = c := by
-    change min (GatedExtensionCounterexample.labelling ⊤ ⊤ 3) (c : Label.{u}) = c
-    simp [GatedExtensionCounterexample.labelling]
-  refine ⟨by omega, C, rfl, fun j hj ↦ ?_,
-    isAnchored_of_forall_label_eq_bot_or_top _ _ fun j _ ↦ donor_label_eq_bot_or_top α j⟩
-  rw [hC, (donor_label_eq_bot_or_top α j).resolve_right hj]
-  exact WithBot.bot_lt_coe _
+/-- **The context is an anchored context for the donor**: its cell `3` has graded index
+`(univ, 2)` (and is labelled `c`, by the cap).  The donor's only label is `⊤`
+(`donor_label_eq_top`), so the label bound and the anchoring hold vacuously. -/
+theorem isAnchoredContext_context : (context α hc hcα).IsAnchoredContext (donor α) :=
+  -- the context has five cells (`GatedExtensionCounterexample.P`); cell `3` has graded index
+  -- `(univ, 2)`
+  ⟨by omega, ⟨3, by change 3 < 5; omega⟩, rfl, fun j hj ↦ absurd (donor_label_eq_top α j) hj,
+    isAnchored_of_forall_label_eq_bot_or_top _ _ fun j _ ↦ .inr (donor_label_eq_top α j)⟩
 
 /-- **The refuting instance**: at a limit stage, the context is a legal anchored context for the
 donor whose face along the empty embedding is a stage type `t` on no points, the donor is a coface

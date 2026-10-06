@@ -57,11 +57,14 @@ the context.
 **Acquisition holds, from modelhood** (`Realization.IsModel.exists_isAnchoredContext`,
 `Realization.donorAcquisition_isAnchoredContext`, for every `Q`): the anchored private context
 (`Realization.IsModel.exists_privateContext_isAnchored`) with its floor above every proper label of
-the donor.  By label class:
+the donor.  It corresponds to the context of [Kni26, Lemma 8.1.1], clauses 3 (the anchors) and 4
+(the private cap), where the cell of clause 4 is labelled above the labels of the donor other than
+`⊤` (the lemma labels it `⊤` when the characteristic arity is infinite).  By label class:
 
-* proper labels: the anchors are the reference cells, from uniformity, clause 4(b) of modelhood;
-* the private cap: from high-arity dominance, clause 4(c); it is a cell labelled above a requested
-  floor, not necessarily `⊤`;
+* proper labels: the anchors are the reference cells, from uniformity, clause 4(b) of modelhood
+  ([Kni26, Definition 3.2.1, clause 4(b)]);
+* the private cap: from high-arity dominance, clause 4(c) ([Kni26, Definition 3.2.1,
+  clause 4(c)]); it is a cell labelled above a requested floor, not necessarily `⊤`;
 * `⊥`: anchoring asks nothing of a label `⊥`, and no clause is used;
 * `⊤`: no clause of modelhood is used, and the context need not contain `⊤`.
 
@@ -105,11 +108,11 @@ stage types on its scheme.  A coface in which the root is not a rigid core has a
   non-rigid coface `d`, some coface `D'` of `t'` has face `d` along `h` followed by the new point
   and a private top available to a new cell; in particular `t'` is not top-free
   (`Realization.CutoffDonorDetermination.not_isTopFree`).  The private cells of `D'` are the cells
-  of `t'`.  In a model with top-grade supremum `K` every cell labelled `⊤` of the type of a cover
-  has grade at most `K` (`Realization.Covers.label_ne_top_of_topGradeSup_eq`).  So, combining the
-  two informally (no single statement is compiled), in the residual case the available top is a
-  cell of grade at most `K` of an acquired context, and the private cap, of grade the arity of the
-  context, is not it once the arity exceeds `K`.
+  of `t'`.  For a realization with top-grade supremum `K` every cell labelled `⊤` of the type of a
+  cover has grade at most `K` (`Realization.Covers.label_ne_top_of_topGradeSup_eq`).  So,
+  combining the two informally (no single statement is compiled), in the residual case the
+  available top is a cell of grade at most `K` of an acquired context, and the private cap, of
+  grade the arity of the context, is not it once the arity exceeds `K`.
 * *Sufficient* (`StageType.isDeterminedWithin_receivingFamily_of_isRigidCoreIn_castSucc`): if
   some legal coface `D'` of `t'` has face `d` along `h` followed by the new point and the private
   face is a rigid core of `D'`, then `d` is determined over `t'` along `h` within the receiving
@@ -220,6 +223,7 @@ theorem not_isDeterminedWithin_receivingFamily_of_not_hasAvailablePrivateTop
   have hq : q ∈ receivingFamily D' o₀ := by
     refine ⟨rfl, fun i j hij ↦ ?_⟩
     obtain rfl : i = j := Fin.ext hij
+    -- unfold the label of `q` at `i` (`StageType.capThrough_label`) inside the cutoff
     change min (if Fin.last k ∈ D'.toCellScheme.scope i then min (D'.label i) c else D'.label i)
       _ = _
     split_ifs
@@ -239,6 +243,8 @@ theorem not_isDeterminedWithin_receivingFamily_of_not_hasAvailablePrivateTop
     exact mem_map_of_mem _ hjs
   set x := D'.cellMap (extendByLast h) j
   have hl := label_congr hq' (i := j) (j := j) rfl
+  -- `q` has the scheme of `D'`, so its cell under `j` is `x`; unfold its label there, and the
+  -- label of `d` at `j` as that of `D'` at `x`
   change (if Fin.last k ∈ D'.toCellScheme.scope x then min (D'.label x) c else D'.label x) =
     D'.label x at hl
   change D'.label x = ⊤ at hjt
@@ -361,9 +367,11 @@ theorem residualReceiving_of_cutoffDonorDetermination
       (hacq.exists_context hα hR hcore t c hc d hd)
 
 /-- **(R3) from (R1), donor acquisition, and cutoff determination with a donor**, for any `P` and
-any predicate `H` on models (the cover-hollow ones, with or without the exclusion of a globally
-rigid core).  (R1) is assumed as in `residualReceiving_of_cutoffDonorDetermination`.  A template:
-no predicate is known for which both hypotheses hold. -/
+any predicate `H` on models (for instance `Realization.IsCoverHollowAtBlock`; prospectively, its
+restriction excluding a globally rigid core, which is not in the library).  (R1) is assumed for
+every model at every limit stage, in the universes of the conclusion: stronger in stage range than
+`Expansion.FiniteCutReceiving` (limit stages below `ω₁`, universe `0`), which does not supply it.
+A template: no predicate is known for which both hypotheses hold. -/
 theorem hollowReceiving_of_cutoffDonorDetermination
     {H : ∀ {α : Ordinal.{u}} {M : Type w}, Realization.{u, w} α M → Prop}
     {P : ∀ {α : Ordinal.{u}} {n k : ℕ}, StageType.{u} α k → (Fin n ↪ Fin k) →
@@ -421,9 +429,10 @@ theorem cutoffDonorDetermination_isRigidContext :
       StageType.isDeterminedWithin_receivingFamily_of_isRigidCoreIn_castSucc hD'.1 hD'.2 hD'd
         hrig hδ⟩
 
-/-- **In a model with top-grade supremum `K`, a cell of grade above `K` of a cover is not `⊤`.**
-So in the residual case the private cap of an acquired context, of grade the arity of the context,
-is a proper label or `⊥` once that arity exceeds `K`. -/
+/-- **For a realization with top-grade supremum `K`, a cell of grade above `K` of the type of a
+cover is not `⊤`.**  No modelhood is assumed.  So in the residual case the private cap of an
+acquired context, of grade the arity of the context, is a proper label or `⊥` once that arity
+exceeds `K`. -/
 theorem Covers.label_ne_top_of_topGradeSup_eq {t' : StageType.{u} α k} {c' : Fin k → M}
     (hc' : R.Covers t' c') {K : ℕ} (hK : R.topGradeSup = K) {j : Fin t'.card}
     (hj : K < t'.toCellScheme.grade j) : t'.label j ≠ ⊤ := fun htop ↦ by
@@ -435,16 +444,16 @@ theorem Covers.label_ne_top_of_topGradeSup_eq {t' : StageType.{u} α k} {c' : Fi
 
 /-! ### Acquisition of anchored contexts -/
 
-/-- **Acquisition of an anchored context**: in a model at a limit stage, every cover `c` of `t`
+/-- **Acquisition of an anchored context**: in a model at a nonzero stage, every cover `c` of `t`
 and every one-point type `d` over it give a cover `c'` of an anchored context `t'` for `d` along
 some `h` with `c' ∘ h = c`.  The anchored private context
 (`Realization.IsModel.exists_privateContext_isAnchored`) at a floor above every label of `d` other
 than `⊤`; it uses uniformity, high-arity dominance, and exact consistency. -/
-theorem IsModel.exists_isAnchoredContext (hR : R.IsModel) (hα : Order.IsSuccLimit α)
+theorem IsModel.exists_isAnchoredContext (hR : R.IsModel) (hα : 0 < α)
     {t : StageType.{u} α n} {c : Fin n → M} (hc : R.Covers t c) (d : StageType.{u} α (n + 1)) :
     ∃ (k : ℕ) (t' : StageType.{u} α k) (c' : Fin k → M) (h : Fin n ↪ Fin k),
       R.Covers t' c' ∧ c' ∘ h = c ∧ t'.IsAnchoredContext d := by
-  obtain ⟨o, hoα, ho⟩ := d.exists_label_le hα.bot_lt
+  obtain ⟨o, hoα, ho⟩ := d.exists_label_le hα
   obtain ⟨y, f, C, hf, -, hn, hC, hoC, hanc⟩ :=
     hR.exists_privateContext_isAnchored ⟨n, ⟨c, hc.injective⟩, t, hc.eval_eq⟩ d hoα
   refine ⟨y.arity, y.type, y.tuple, f, covers_of_eval _ y.eval_tuple, ?_, hn, C, hC,
@@ -457,7 +466,7 @@ alone suffices. -/
 theorem donorAcquisition_isAnchoredContext
     (Q : ∀ {α : Ordinal.{u}} {M : Type w}, Realization.{u, w} α M → Prop) :
     DonorAcquisition.{u, w} Q fun t' _ d ↦ t'.IsAnchoredContext d where
-  exists_context _ _ _ hα hR _ _ _ _ hc d _ := hR.exists_isAnchoredContext hα hc d
+  exists_context _ _ _ hα hR _ _ _ _ hc d _ := hR.exists_isAnchoredContext hα.bot_lt hc d
 
 end Realization
 

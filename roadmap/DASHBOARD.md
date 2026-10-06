@@ -136,7 +136,8 @@ Status of each:
    (`Realization.donorAcquisition_isAnchoredContext`) and cutoff determination with a donor is
    refuted (`AnchoredDeterminationCounterexample.not_cutoffDonorDetermination`: a top-free anchored
    context over the empty root, with the one-point donor labelled `⊤`).  This refutes the
-   predicate, not (R2).  A predicate for which determination holds must give a context that is not
+   predicate, not (R2).  A predicate for which determination holds must give, at each non-rigid
+   donor (for legal `t'` whose face along `h` has `d` as a coface), a context that is not
    top-free, with a top available to a new cell of a coface carrying the donor
    (`Realization.CutoffDonorDetermination.exists_hasAvailablePrivateTop`); a rigid context suffices
    (`Realization.cutoffDonorDetermination_isRigidContext`), but its acquisition is not proved.

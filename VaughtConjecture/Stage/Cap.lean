@@ -160,6 +160,8 @@ theorem restrictFace_capThrough {f : Fin m ↪ Fin n} (hf : a ∉ Set.range f) :
     -- the cell of `t` under `i` is visible through `f`, so its scope avoids `a`
     have ha : a ∉ t.toCellScheme.scope (t.cellMap f i) := fun ha ↦
       hf (Scheme.mem_visibleCells.mp (t.cellMap_mem f i) (mem_coe.mpr ha))
+    -- the capped type has the scheme of `t`, so its cell under `i` is that of `t`; unfold the
+    -- capped label there (`StageType.capThrough_label`)
     change (if a ∈ t.toCellScheme.scope (t.cellMap f i) then _ else _) = t.label (t.cellMap f i)
     simp only [ha, ↓reduceIte]
     rfl

@@ -2896,8 +2896,9 @@ witnesses).**
   module imports `Continuation/Comparison`, `Extension/Basic`, and `Realization/Receiving`; the
   reductions assume (R1) for every model at every limit stage, stronger in stage range than
   `Expansion.FiniteCutReceiving` (limit stages below `ω₁`).
-- `Continuation/AnchoredDetermination`: Layer 3, in place; it imports `Continuation/ExactReceiving`
-  and `Realization/PrivateContext`.  The templates with the donor (`Realization.DonorAcquisition`,
+- `Continuation/AnchoredDetermination`: Layer 3, in place; it imports `Continuation/ExactReceiving`,
+  `Realization/PrivateContext`, and `Realization/CapToModel` (for
+  `StageType.receivingFamily_subset_saturationFamily`).  The templates with the donor (`Realization.DonorAcquisition`,
   `Realization.CutoffDonorDetermination`) are here, not in `Continuation/ExactReceiving`, since
   their only predicate is defined here.  The general capping lemma
   `CellScheme.Rows.IsLawful.min_const_of_mem_scope` is in `Scheme/Row`, beside
