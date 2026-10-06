@@ -65,7 +65,16 @@ Notes on the rows, each with its marker:
   with two new cells at `(univ, 1)`, one per forced separation
   (`CrossedCouplingCounterexample.nonempty_completionBelowFullGrade_seedHG`, from
   `Seed.MultiLayerStep`), so the ordered-layer step is strictly stronger than the completion
-  (`CrossedCouplingCounterexample.not_forall_hasOrderedLayerStep_of_nonempty`).  Still to be
+  (`CrossedCouplingCounterexample.not_forall_hasOrderedLayerStep_of_nonempty`).  Compiled for
+  every seed on five points, conditionally on the named product clause `Seed.CanonicalProduct`:
+  the completion by the canonical multi-layer scheme (two copies of `(C, k)` and `(D, k)` at each
+  `(univ, k)`; `Seed.canonicalMultiStep_of_product`, `Seed.canonicalMultiStep_of_productBelowTop`),
+  with forcedness and the lifts from the common face for every seed; the clause holds below the top
+  grade for `seedHG` (`Seed.nonempty_completionBelowFullGrade_canonical_seedHG`).  Refuted, for
+  every copy rows: the product clause at the grades 2–4 for `seed4`, `seed5`, `seedL`, `seedLM`,
+  `seedLL` and at the grade 4 for `seedHG` (`Seed.not_canonicalProduct_seed4`,
+  `Seed.not_canonicalProduct_seedHG`), a refutation of the family as a fibre product, not of the
+  completion.  Still to be
   proved, not refuted: `StageType.HasCoatomExtensions`,
   `StageType.HasApexCoatomExtensions`.
 - *Layer 3, receiving.*  Compiled: finite-extension receiving from finite-cut receiving, for an
@@ -195,9 +204,18 @@ named hypothesis.
    (`CrossedCouplingCounterexample.multiLayerStep_HG`,
    `CrossedCouplingCounterexample.nonempty_completionBelowFullGrade_seedHG`, compiled in this
    repository (theorem named)), so the ordered-layer step is strictly stronger than the completion
-   (`CrossedCouplingCounterexample.not_forall_hasOrderedLayerStep_of_nonempty`).  A systematic
-   choice of the new cells for every seed on five points (one per forced separation at each graded
-   face of full scope) is prospective.  Open: the completion at `m ≥ 3` for every seed.
+   (`CrossedCouplingCounterexample.not_forall_hasOrderedLayerStep_of_nonempty`).  The systematic
+   family, two copies of the cells at `(C, k)` and `(D, k)` at each `(univ, k)` (the canonical
+   multi-layer scheme), is compiled for every seed on five points with forcedness and the lifts
+   from the common face; it completes a seed under the named product clause
+   `Seed.CanonicalProduct` (`Seed.canonicalMultiStep_of_product`, and from the grades 1–3 for seeds
+   with bottom apexes, `Seed.canonicalMultiStep_of_productBelowTop`), and it completes `seedHG`
+   (`Seed.nonempty_completionBelowFullGrade_canonical_seedHG`); all compiled in this repository
+   (theorem named).  The product clause is refuted (negative special cases named, for every copy
+   rows) at the grades 2–4 for `seed4`, `seed5`, `seedL`, `seedLM`, `seedLL` and at the grade 4 for
+   all six seeds: this refutes the family as a fibre product at those seeds, not the completion.
+   Open: a canonical multi-layer scheme with rows restricting the pairs for every seed, and the
+   completion at `m ≥ 3` for every seed.
 2. **Stable availability at twins** (compiled): from legal types
    (`Realization.availability_stableSection_of_hasLegalTypes`), so every model at a block stage is
    stably lawful (`Realization.IsModel.isStablyLawful`), and so is every exactly consistent

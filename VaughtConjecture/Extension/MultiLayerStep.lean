@@ -3,6 +3,7 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
+import Mathlib.Tactic.Order
 import VaughtConjecture.Extension.OrderedLayerStep
 import VaughtConjecture.Extension.FieldLayer
 
@@ -51,6 +52,9 @@ step, has a multi-layer step with two new cells at `(univ, 1)`, one for each for
 and one at each other graded face of full scope
 (`CrossedCouplingCounterexample.multiLayerStep_HG`,
 `VaughtConjecture.Extension.CrossedCouplingCompletion`).
+The multiplicities `2, 2, 2, 2` with copies of the cells at `(C, k)` and `(D, k)` reading through
+their originals give the canonical multi-layer scheme of every seed
+(`VaughtConjecture.Extension.CanonicalMultiScheme`).
 
 ## Placement
 
@@ -171,6 +175,21 @@ theorem row_multiNewCell (k : Fin 4) (i : Fin (M k))
       Scheme.appendFullCells_row_natAdd (S := multiStage₂ I M r) i _
   | ⟨3, _⟩, i =>
     exact Scheme.appendFullCells_row_natAdd (S := multiStage₃ I M r) i t
+
+/-! ### Two new cells forced by their readings -/
+
+/-- **Two values forced by two opposite readings**: in a linear order, if `x₁ ≤ A_D`, `x₂ ≤ A_C`,
+`x₁` reads `A_C` as it reads `x₂`, `x₂` reads `A_D` as it reads `x₁`, and each of `A_C`, `A_D` is
+at most `x₁` or `x₂`, then `x₁ = A_D` and `x₂ = A_C`.  This forces the labels of two new cells of
+one graded index that read each other as two old cells, each at least its own label, each old
+cell being at most one of them. -/
+theorem eq_of_forced_pair {L : Type*} [LinearOrder L] {AC AD x1 x2 : L} (a1 : x1 ≤ AD)
+    (a2 : x2 ≤ AC) (c1 : min AC x1 = min x2 x1) (c2 : min AD x2 = min x1 x2)
+    (e : AD ≤ x1 ∨ AD ≤ x2) (f : AC ≤ x1 ∨ AC ≤ x2) : x1 = AD ∧ x2 = AC := by
+  rcases le_total AC x1 with h1 | h1 <;> rcases le_total x2 x1 with h2 | h2 <;>
+    rcases le_total AD x2 with h3 | h3 <;> rcases le_total x1 x2 with h4 | h4 <;>
+    simp only [min_eq_left, min_eq_right, h1, h2, h3, h4] at c1 c2 <;>
+    constructor <;> rcases e with e | e <;> rcases f with f | f <;> order
 
 /-! ### The old cells -/
 

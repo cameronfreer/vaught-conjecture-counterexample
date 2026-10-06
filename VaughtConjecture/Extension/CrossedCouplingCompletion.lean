@@ -21,12 +21,12 @@ the value of the old cell of the same kind: at `cellAD` and `cellAC` the values 
 `({3}, 1)` (`eq_of_isLawfulBelow_one`: each new cell reads its own kind at `ω + 2` and the other at
 `1`, so it lies below its parameter and agrees with it capped at the other cell, and availability
 from `({3}, 1)` and `({4}, 1)` places each parameter below one of the two cells;
-`eq_of_forced_pair`), at `cellH` and `cellG` the values at `({0, 1, 2}, 2)` and `({0, 1, 2}, 3)`
-(`eq_of_isLawfulBelow_two`, `eq_of_isLawfulBelow_three`), and at the grade `4` one value at every
-cell, which, if not `⊥`, forces `⊥` below the grade `4` (`eq_of_isLawfulBelow_four`,
-`eq_bot_of_isLawfulBelow_four`).  So below `(univ, k)`, `1 ≤ k ≤ 3`, the lawful labellings are
-exactly the labellings by kinds with parameters coupled as in `TH` and `TG`
-(`exists_of_isLawfulBelow_univ`, with `isLawful_kindLabel`).
+`OrderedLayer.eq_of_forced_pair`), at `cellH` and `cellG` the values at `({0, 1, 2}, 2)` and
+`({0, 1, 2}, 3)` (`eq_of_isLawfulBelow_two`, `eq_of_isLawfulBelow_three`), and at the grade `4`
+one value at every cell, which, if not `⊥`, forces `⊥` below the grade `4`
+(`eq_of_isLawfulBelow_four`, `eq_bot_of_isLawfulBelow_four`).  So below `(univ, k)`,
+`1 ≤ k ≤ 3`, the lawful labellings are exactly the labellings by kinds with parameters coupled as
+in `TH` and `TG` (`exists_of_isLawfulBelow_univ`, with `isLawful_kindLabel`).
 
 **The capped lifts.**  From `(C, k)` to `(univ, k)`, `k ≤ 3` (`cappedLift_C_of_le_three`): the
 lift keeps the parameters `A_C`, `H`, `G` of the prescription and takes for `A_D` the ambient below
@@ -74,18 +74,6 @@ variable (hIL : I.left = TH α) (hIR : I.right = TG α)
 include hIL hIR
 
 /-! ### The new cells carry the parameters -/
-
-omit hIL hIR in
-/-- **Two values forced by two opposite readings**: in a linear order, if `x₁ ≤ A_D`, `x₂ ≤ A_C`,
-`x₁` reads `A_C` as it reads `x₂`, `x₂` reads `A_D` as it reads `x₁`, and each of `A_C`, `A_D` is
-at most `x₁` or `x₂`, then `x₁ = A_D` and `x₂ = A_C`. -/
-private theorem eq_of_forced_pair {L : Type*} [LinearOrder L] {AC AD x1 x2 : L} (a1 : x1 ≤ AD)
-    (a2 : x2 ≤ AC) (c1 : min AC x1 = min x2 x1) (c2 : min AD x2 = min x1 x2)
-    (e : AD ≤ x1 ∨ AD ≤ x2) (f : AC ≤ x1 ∨ AC ≤ x2) : x1 = AD ∧ x2 = AC := by
-  rcases le_total AC x1 with h1 | h1 <;> rcases le_total x2 x1 with h2 | h2 <;>
-    rcases le_total AD x2 with h3 | h3 <;> rcases le_total x1 x2 with h4 | h4 <;>
-    simp only [min_eq_left, min_eq_right, h1, h2, h3, h4] at c1 c2 <;>
-    constructor <;> rcases e with e | e <;> rcases f with f | f <;> order
 
 omit hIL hIR in
 /-- **The new cells at `(univ, 1)` carry the parameters `A_D` and `A_C`**: below `(univ, k)`,
