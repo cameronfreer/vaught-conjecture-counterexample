@@ -338,8 +338,9 @@ theorem residualReceiving_of_cutoffDonorDetermination
 
 /-- **(R3) from (R1), donor acquisition, and cutoff determination with a donor**, for any `P` and
 any predicate `H` on models (for instance `Realization.IsCoverHollowAtBlock`, or its restriction
-`Realization.IsCoverHollowWithoutRigidCoreAtBlock` in `Continuation/RestrictedHollow`).  (R1) is assumed for
-every model at every limit stage, in the universes of the conclusion: stronger in stage range than
+`Realization.IsCoverHollowWithoutRigidCoreAtBlock` in `Continuation/RestrictedHollow`).  (R1) is
+assumed for every model at every limit stage, in the universes of the conclusion: stronger in stage
+range than
 `Expansion.FiniteCutReceiving` (limit stages below `ω₁`, universe `0`), which does not supply it.
 A template: no predicate is known for which both hypotheses hold. -/
 theorem hollowReceiving_of_cutoffDonorDetermination
