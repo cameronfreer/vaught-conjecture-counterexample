@@ -234,6 +234,20 @@ theorem isWitness_stripShifter {A F : Label.{u}} (hF : IsSelfVisible 2 F) :
         stripShifter_of_not_lt (by rwa [Ne, visibilityReplace_eq_bot_iff])
           (not_lt_omega_visibilityReplace hx0 hxω k i)]
 
+/-- **The strip shifter is a witness** for a suppressor up to the grade `1`: the suppressor
+`F` at the grade `1` is below the suppressor `⊤` up to the grade `2`. -/
+theorem isWitness_stripShifter_one {A F : Label.{u}} (hF : IsSelfVisible 1 F) :
+    IsWitness (constStepSuppressor 1 F) (stripShifter A) :=
+  (isWitness_stripShifter (A := A) (isSelfVisible_top 2)).of_le
+    (fun n ↦ by
+      unfold constStepSuppressor
+      split_ifs
+      · exact le_top
+      · omega
+      · exact bot_le
+      · exact le_rfl)
+    (antitone_constStepSuppressor 1 F) (isSelfVisible_constStepSuppressor hF)
+
 theorem v1_eq : (v1 : Label.{u}) = ((1 : ℕ) : Label.{u}) := by
   rw [natCast_label]; simp [v1, gridPoint]
 

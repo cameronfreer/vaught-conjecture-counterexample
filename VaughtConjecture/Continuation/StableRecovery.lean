@@ -34,7 +34,8 @@ this case, and stable recovery schemes for it fail at every `ξ`
 
 **The decoder at one reading cell** (`Label.TransformsTo.eq_coe_add_of_reading`,
 `CellScheme.Rows.IsLawful.label_eq_of_reading`, `CellScheme.Rows.IsLawful.le_label_of_reading`,
-`CellScheme.Rows.IsLawful.label_eq_bot_of_reading`).  In a lawful section `p`, let `s` be a cell
+`CellScheme.Rows.IsLawful.label_eq_bot_of_reading`, in `VaughtConjecture.Label.Transform` and
+`VaughtConjecture.Scheme.Row`).  In a lawful section `p`, let `s` be a cell
 whose label is at least that of a cap `b`, and let the row of `s` read a reference cell `a` and a
 new cell `e` in one block, at `ω · c + i` and `ω · c + o`, with the grades of `a` and `e` at most
 that of `b`, `i < grade b` and `o ≤ grade b`.  If `p a = μ + i` (`μ` zero or a limit) and `μ + i`,
@@ -43,7 +44,7 @@ witness of locality at `s` above the reference value, so the shifter sends `ω �
 exactly; the reference offset `i` is below the threshold `grade b`, so the guard holds at that
 threshold, and visibility replacement there turns `i` into `o`.  A new cell read like the cap is
 at least the cap, and a new cell read as `⊥` is `⊥`.  This is the decoder of the roadmap (Layer 3,
-3.3) at one row.
+3.3) at one row; it uses no continuation, block-stage or calibration hypothesis.
 
 **A stable recovery scheme from cells reading through the cap**
 (`StageType.IsStableRecoveryScheme.of_readsThroughCap`).  Let a scheme `E` carry a coface of
@@ -110,116 +111,6 @@ universe u v w
 namespace VaughtConjecture
 
 open Finset Ordinal Label StageType
-
-/-! ### Reading a new cell through a reference cell and a cap -/
-
-namespace Label
-
-variable {ι : Type*} {grade : ι → ℕ} {r q : ι → Label.{u}}
-
-/-- **Reading through a reference cell under a cap** (the decoder at one row).  Let the labelling
-`r` transform to `q` over the grades `grade`, and let `a`, `b`, `e` be three cells, with the
-grades of `a` and `e` at most that of `b` and `i < grade b`, `o ≤ grade b`.  If `r` reads `a` and
-`e` in one block, at `ω · c + i` and `ω · c + o`, and `q a = μ + i` for `μ` zero or a limit, with
-`μ + i` and `μ + o` strictly below `q b`, then `q e = μ + o`.  The cap `b` keeps the suppressor
-above the reference value at the grade of `a` and above `μ + o` at the grade of `e`, so the
-shifter sends `ω · c + i` to `μ + i` exactly; under the guard at the threshold `grade b` it
-commutes with the visibility replacement that turns `i` into `o`. -/
-theorem TransformsTo.eq_coe_add_of_reading (h : TransformsTo grade r q) {μ c : Ordinal.{u}}
-    (hμ : Order.IsSuccPrelimit μ) {a b e : ι} {i o : ℕ} (hab : grade a ≤ grade b)
-    (hi : i < grade b) (ho : o ≤ grade b) (heb : grade e ≤ grade b)
-    (hra : r a = ((ω * c + i : Ordinal.{u}) : Label.{u}))
-    (hre : r e = ((ω * c + o : Ordinal.{u}) : Label.{u}))
-    (hqa : q a = ((μ + i : Ordinal.{u}) : Label.{u}))
-    (hib : ((μ + i : Ordinal.{u}) : Label.{u}) < q b)
-    (hob : ((μ + o : Ordinal.{u}) : Label.{u}) < q b) :
-    q e = ((μ + o : Ordinal.{u}) : Label.{u}) := by
-  obtain ⟨g, σ, hw, heq⟩ := h
-  have hgb : q b ≤ g (grade b) := (heq b).trans_le (min_le_right _ _)
-  have hσa : σ (r a) = ((μ + i : Ordinal.{u}) : Label.{u}) := by
-    have h1 := heq a
-    rw [hqa] at h1
-    have hg : ((μ + i : Ordinal.{u}) : Label.{u}) < g (grade a) :=
-      (hib.trans_le hgb).trans_le (hw.antitone hab)
-    rcases le_total (σ (r a)) (g (grade a)) with h2 | h2
-    · rw [min_eq_left h2] at h1
-      exact h1.symm
-    · rw [min_eq_right h2] at h1
-      exact absurd h1 hg.ne
-  have hcm := hw.visibilityReplace_comm (r a) (grade b) (hσa ▸ (hib.trans_le hgb).le) o ho
-  have hc : Order.IsSuccPrelimit (ω * c) :=
-    Ordinal.isSuccPrelimit_iff_omega0_dvd.mpr (dvd_mul_right _ _)
-  rw [hσa, visibilityReplace_coe_add_natCast hμ hi, hra,
-    visibilityReplace_coe_add_natCast hc hi, ← hre] at hcm
-  rw [heq e, hcm]
-  exact min_eq_left ((hob.trans_le hgb).le.trans (hw.antitone heb))
-
-end Label
-
-namespace CellScheme.Rows
-
-variable {ι α : Type*} {D : CellScheme ι α} {R : D.Rows.{u}} {p : ι → Label.{u}}
-
-/-- **Recovery of a proper label at a reading cell**: in a lawful section `p`, let `s` be a cell
-whose label is at least that of a cell `b` (the cap), and let the row of `s` read a reference cell
-`a` and a cell `e` in one block, at `ω · c + i` and `ω · c + o`, with the grades of `a` and `e` at
-most that of `b` and `i < grade b`, `o ≤ grade b`.  If `p a = μ + i` (`μ` zero or a limit) and
-`μ + i`, `μ + o` lie strictly below `p b`, then `p e = μ + o`. -/
-theorem IsLawful.label_eq_of_reading (h : R.IsLawful p) {s a b e : ι}
-    (ha : a ∈ D.below (D.gradedIndex s)) (hb : b ∈ D.below (D.gradedIndex s))
-    (he : e ∈ D.below (D.gradedIndex s)) {μ c : Ordinal.{u}} (hμ : Order.IsSuccPrelimit μ)
-    {i o : ℕ} (hab : D.grade a ≤ D.grade b) (hi : i < D.grade b) (ho : o ≤ D.grade b)
-    (heb : D.grade e ≤ D.grade b) (hra : R.row s ⟨a, ha⟩ = ((ω * c + i : Ordinal.{u}) : Label.{u}))
-    (hre : R.row s ⟨e, he⟩ = ((ω * c + o : Ordinal.{u}) : Label.{u}))
-    (hpa : p a = ((μ + i : Ordinal.{u}) : Label.{u})) (hbs : p b ≤ p s)
-    (hib : ((μ + i : Ordinal.{u}) : Label.{u}) < p b)
-    (hob : ((μ + o : Ordinal.{u}) : Label.{u}) < p b) :
-    p e = ((μ + o : Ordinal.{u}) : Label.{u}) := by
-  have hqb : min (p b) (p s) = p b := min_eq_left hbs
-  have key := (h.locality s).eq_coe_add_of_reading (a := ⟨a, ha⟩) (b := ⟨b, hb⟩) (e := ⟨e, he⟩)
-    hμ hab hi ho heb hra hre (by
-      -- the labelling of locality at `s` is `d ↦ min (p d) (p s)`
-      change min (p a) (p s) = _
-      rw [min_eq_left ((hpa ▸ hib).le.trans hbs), hpa]) (by
-      -- the same labelling, at the cap
-      change _ < min (p b) (p s)
-      rwa [hqb]) (by
-      -- the same labelling, at the cap
-      change _ < min (p b) (p s)
-      rwa [hqb])
-  -- the same labelling, at the new cell
-  change min (p e) (p s) = _ at key
-  rcases le_total (p e) (p s) with h1 | h1
-  · rwa [min_eq_left h1] at key
-  · rw [min_eq_right h1] at key
-    exact absurd key (hob.trans_le hbs).ne'
-
-/-- **A cell read like the cap is at least the cap**: in a lawful section `p`, if the row of a cell
-`s` with label at least that of `b` reads `e` as it reads `b`, and the grade of `e` is at most that
-of `b`, then `p b ≤ p e`. -/
-theorem IsLawful.le_label_of_reading (h : R.IsLawful p) {s b e : ι}
-    (hb : b ∈ D.below (D.gradedIndex s)) (he : e ∈ D.below (D.gradedIndex s))
-    (heb : D.grade e ≤ D.grade b) (hre : R.row s ⟨e, he⟩ = R.row s ⟨b, hb⟩) (hbs : p b ≤ p s) :
-    p b ≤ p e := by
-  have key := (h.locality s).le_of_le (d := ⟨b, hb⟩) (d' := ⟨e, he⟩) hre.symm.le heb
-  -- the labelling of locality at `s` is `d ↦ min (p d) (p s)`
-  change min (p b) (p s) ≤ min (p e) (p s) at key
-  rw [min_eq_left hbs] at key
-  exact key.trans (min_le_left _ _)
-
-/-- **A cell read as bottom is bottom**: in a lawful section `p`, if the row of a cell `s` with a
-label other than bottom reads `e` as `⊥`, then `p e = ⊥`. -/
-theorem IsLawful.label_eq_bot_of_reading (h : R.IsLawful p) {s e : ι}
-    (he : e ∈ D.below (D.gradedIndex s)) (hre : R.row s ⟨e, he⟩ = ⊥) (hs : p s ≠ ⊥) :
-    p e = ⊥ := by
-  have key := (h.locality s).eq_bot (d := ⟨e, he⟩) hre
-  -- the labelling of locality at `s` is `d ↦ min (p d) (p s)`
-  change min (p e) (p s) = ⊥ at key
-  rcases min_eq_iff.mp key with ⟨h1, -⟩ | ⟨h1, -⟩
-  · exact h1
-  · exact absurd h1 hs
-
-end CellScheme.Rows
 
 namespace StageType
 
@@ -318,7 +209,6 @@ theorem coe_add_grade_le_label (T : StageType.{u} (blockStage (ξ + 1)) m) {b : 
     (hb : ((blockStage ξ : Ordinal.{u}) : Label.{u}) ≤ T.label b) :
     ((blockStage ξ + T.toCellScheme.grade b : Ordinal.{u}) : Label.{u}) ≤ T.label b :=
   Label.coe_add_le_of_isSelfVisible (isSuccPrelimit_blockStage ξ) hb (T.isLawful.orderly b)
-
 /-! ### A stable recovery scheme from cells reading through the cap -/
 
 /-- **A cell reads a new cell through the cap**: in a scheme `E` on `m + 1` points carrying `T⁺`

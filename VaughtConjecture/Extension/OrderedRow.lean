@@ -560,7 +560,7 @@ structure IsThinLawfulBelow (AC AD F G : Label.{u}) : Prop where
 
 /-- The lifted value of a parameter: the prescription if there is one; otherwise the ambient
 value if it lies below the cap, and the value `hi ≥ c` otherwise. -/
-private noncomputable def liftedParam (P : Option Label.{u}) (qz c hi : Label.{u}) : Label.{u} :=
+noncomputable def liftedParam (P : Option Label.{u}) (qz c hi : Label.{u}) : Label.{u} :=
   open Classical in P.getD (if qz < c then qz else hi)
 
 section Choose
@@ -568,7 +568,7 @@ section Choose
 variable {P : Option Label.{u}} {qz c hi : Label.{u}}
 
 /-- The chosen value agrees with the ambient value capped at `c`. -/
-private theorem min_liftedParam (hP : ∀ a ∈ P, min a c = min qz c) (hhi : c ≤ hi) :
+theorem min_liftedParam (hP : ∀ a ∈ P, min a c = min qz c) (hhi : c ≤ hi) :
     min (liftedParam P qz c hi) c = min qz c := by
   unfold liftedParam
   cases P with
@@ -580,7 +580,7 @@ private theorem min_liftedParam (hP : ∀ a ∈ P, min a c = min qz c) (hhi : c 
     · rw [min_eq_right hhi, min_eq_right (not_lt.mp h)]
 
 /-- A chosen value below the cap is the ambient value. -/
-private theorem liftedParam_eq_of_lt (hP : ∀ a ∈ P, min a c = min qz c) (hhi : c ≤ hi)
+theorem liftedParam_eq_of_lt (hP : ∀ a ∈ P, min a c = min qz c) (hhi : c ≤ hi)
     (h : liftedParam P qz c hi < c) : liftedParam P qz c hi = qz := by
   have hm := min_liftedParam hP hhi
   rw [min_eq_left h.le] at hm
@@ -589,7 +589,7 @@ private theorem liftedParam_eq_of_lt (hP : ∀ a ∈ P, min a c = min qz c) (hhi
   · rw [min_eq_right hq] at hm; exact absurd hm h.ne
 
 /-- At an ambient value below the cap, the chosen value is the ambient value. -/
-private theorem liftedParam_eq_of_q_lt (hP : ∀ a ∈ P, min a c = min qz c) (hhi : c ≤ hi)
+theorem liftedParam_eq_of_q_lt (hP : ∀ a ∈ P, min a c = min qz c) (hhi : c ≤ hi)
     (h : qz < c) : liftedParam P qz c hi = qz := by
   have hm := min_liftedParam hP hhi
   rw [min_eq_left h.le] at hm
@@ -597,32 +597,25 @@ private theorem liftedParam_eq_of_q_lt (hP : ∀ a ∈ P, min a c = min qz c) (h
   · rw [min_eq_left hx.le] at hm; exact hm
   · rw [min_eq_right hx] at hm; exact absurd hm h.ne'
 
-/-- At an ambient value at least the cap, the chosen value is at least the cap. -/
-private theorem le_liftedParam_of_le (hP : ∀ a ∈ P, min a c = min qz c) (hhi : c ≤ hi)
-    (h : c ≤ qz) : c ≤ liftedParam P qz c hi := by
-  have hm := min_liftedParam hP hhi
-  rw [min_eq_right h] at hm
-  exact min_eq_right_iff.mp hm
-
 /-- A chosen value at least the cap comes from an ambient value at least the cap. -/
-private theorem le_of_le_liftedParam (hP : ∀ a ∈ P, min a c = min qz c) (hhi : c ≤ hi)
+theorem le_of_le_liftedParam (hP : ∀ a ∈ P, min a c = min qz c) (hhi : c ≤ hi)
     (h : c ≤ liftedParam P qz c hi) : c ≤ qz := by
   have hm := min_liftedParam hP hhi
   rw [min_eq_right h] at hm
   exact min_eq_right_iff.mp hm.symm
 
 /-- Unprescribed, at an ambient value at least the cap, the chosen value is `hi`. -/
-private theorem liftedParam_none_of_le (h : c ≤ qz) : liftedParam none qz c hi = hi := by
+theorem liftedParam_none_of_le (h : c ≤ qz) : liftedParam none qz c hi = hi := by
   unfold liftedParam; simp [not_lt.mpr h]
 
 /-- A prescribed value is chosen. -/
-private theorem liftedParam_some (a : Label.{u}) : liftedParam (some a) qz c hi = a := rfl
+theorem liftedParam_some (a : Label.{u}) : liftedParam (some a) qz c hi = a := rfl
 
 end Choose
 
 /-- A monotone constraint survives the choice if it holds for the ambient and for the values at
 or above the cap. -/
-private theorem le_of_approx {c xz xw qz qw : Label.{u}} (hq : qz ≤ qw)
+theorem le_of_approx {c xz xw qz qw : Label.{u}} (hq : qz ≤ qw)
     (hz' : qz < c → xz = qz) (hw : xw < c → xw = qw)
     (hhigh : c ≤ xz → c ≤ xw → xz ≤ xw) : xz ≤ xw := by
   by_cases hwc : xw < c

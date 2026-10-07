@@ -203,11 +203,14 @@ A generic theorem of InfinitaryLogic, at our pinned dependency (signatures check
 every analytic set of pairs of structures on `ℕ` containing no isomorphic pair is uniformly
 separated at some countable back-and-forth level (`exists_uniform_bfSeparation`,
 `Descriptive/BFSeparation`). With cocountable back-and-forth concentration (given here by the
-expansion domains, on which classes agree at bounded level) this is expected to yield thinness
-without sentence minimality and without López–Escobar; that composition for the expansion domains,
+expansion domains, on which classes agree at bounded level) this yields conditional thinness
+without sentence minimality and without López–Escobar; the composition for the expansion domains,
 from the back-and-forth form of condition 3 (`README.md`, the reduction to expansion domains and
-Layer 6), is not elaborated.  The compiled application is for full presentations with scattered
-tails (`densitySentence_isThinOnNatModels_of_scatteredTails`, through
+Layer 6), is compiled conditional on the cap-to-model theorem, (R1), forcing donors at every
+countable block index, the continuation criterion, (R2) and (R3), each still to be proved
+(`densitySentence_isThinOnNatModels_of_terminalClassification_bfScattered`,
+`MainTheorem/ScatteredDomains`).  It is also compiled for full presentations with scattered tails
+(`densitySentence_isThinOnNatModels_of_scatteredTails`, through
 `isThinOn_of_countable_bfClasses`). The working thinness route, from countable truth sides, is kept;
 the Gδ/Polish results stay optional; an improvement is described as reduced dependencies, not as a
 smaller trusted kernel. Milestone A does not depend on this interface.
@@ -599,14 +602,22 @@ is compiled conditionally on block determination (below).  None is an input to t
   largest stage `λ_ξ` to which it expands (the set of such `ξ` is an initial segment closed under
   limits by limit continuity, so it has a largest element unless it is all of `ω₁`; the expansion
   is unique by expansion uniqueness); its **height** is that `ξ`, or `ω₁` for a class in the
-  persistent core.  Targets: the naturality of greatest refinements under isomorphism, and their
-  relationship to the expansion domains (a class lies in `D_ξ` exactly when its height is at
-  least `ξ`).  The count of the main theorem does not use them.  For the family of expansions of one
+  persistent core.  For one base structure, in the raw base encoding, the attainment of the
+  largest stage is compiled conditionally: `MainTheorem.exists_isGreatest_servingIndex_of_le`
+  (`MainTheorem/MaximalRefinement`), conditional on `Expansion.NextBlockUniqueness`, given a
+  countable bound on the stages to which it expands, on any carrier.  Targets: the naturality of
+  greatest refinements under isomorphism, and their relationship to the expansion domains (a
+  class lies in `D_ξ` exactly when its height is at least `ξ`).  The count of the main theorem
+  does not use them.  For the family of expansions of one
   model, conditional on positive niceness for that family, the bound of serving indices under
   strictness (`README.md`, "Manuscript correspondence (required)", item 5, "Uniform fixing bounds
-  from positive niceness"; prospective) bounds its height.  Positive niceness for that family
+  from positive niceness"; the bound under strictness and strictness for models are compiled,
+  `Realization.le_of_forall_isModel_of_forall_isFixedAt`, and the uniform fixing stage it is
+  applied to is prospective) bounds its height.  Positive niceness for that family
   follows from a terminal presentation of the base (`README.md`, item 5, "Two stopping proofs;
-  positive niceness from a terminal presentation"; prospective), which either of two distinct
+  positive niceness from a terminal presentation"; compiled in the raw base encoding conditional on
+  `HasTerminalRefinement` and `Expansion.NextBlockUniqueness`; the common-invariant correspondence
+  remains prospective), which either of two distinct
   stopping proofs supplies: the countable-slot argument, or the Scott route to maximal
   presentations (`README.md`, item 5), which uses conditions 3 and 4 with Scott isolation for
   one class and assumes no termination.  For one literal base with a terminal
@@ -614,36 +625,53 @@ is compiled conditionally on block determination (below).  None is an input to t
   upper bound of the fixing ranks across all model presentations of that base (`README.md`, item
   5, "Maximal presentations: equivalent criteria, uniqueness, the optimal bound"; prospective,
   under the injectivity of model reduction).
-* **Terminal refinement** (every item a conditional target, to be proved; none is an input to the
-  counting theorem).  Hypotheses, all explicit: conditions 1–4 of the expansion-domain reduction
-  (`README.md`), which are hypotheses of the count, not its conclusions; Scott isolation, a Scott
-  sentence `σ_q` for each class `q`, of countable quantifier rank and true in `q` only
-  (`scottSentence_characterizes`); and, for 3 only, expansion uniqueness and the countable family of
-  terminal conditions of layer 4.  No conclusion of the count (the countable complements `Q \ D_η`,
-  the bound `|Q| ≤ ℵ₁`, the uncountability of `Q`) is used.  Under these hypotheses, the targets, in
-  order:
-  1. **Eventual departure** (a theorem to be proved).  *Assume that the expansion domains `D_η`
-     satisfy conditions 1–4, in particular the agreement on `D_β`: any two classes in `D_β` satisfy
-     the same sentences of quantifier rank at most `β`; that every class `q` has a Scott sentence
-     `σ_q` of countable quantifier rank (true in `q` and in no other class); and that the successor
-     losses are cofinally nonempty: for every `γ < ω₁` there is `β ≥ γ` with `D_β \ D_{β+1} ≠ ∅`.
-     Then no class lies in every `D_η`.*  Proof: if `q` lay in every `D_η`, choose `β` at least the
-     quantifier rank of `σ_q` with some `p ∈ D_β \ D_{β+1}`; both `p` and `q` lie in `D_β`, so
-     agreement on `D_β` makes `p` satisfy `σ_q`, hence `p = q`; but `q ∈ D_{β+1}` and `p ∉ D_{β+1}`.
-     Of these hypotheses the proof uses only the agreement on every `D_β`, the Scott sentences, and
-     the cofinally nonempty losses; the last are redundant under conditions 1–4, since condition 4
-     makes every successor loss nonempty, and are listed because the same argument applies to any
-     family of domains with that agreement and cofinally nonempty successor losses (on the
-     least-level filtration of the full-presentation route departure is immediate, the tails of a
-     total rank having empty intersection, `biInter_rankTail_eq_empty`).  **Corollary** (conditional
-     on the same hypotheses): under condition 4 the persistent core `⋂_{η<ω₁} D_η` is empty.
-     **Control:** the argument uses isolation of each class by one sentence; pairwise separation
-     (for `p ≠ q`, some sentence true in one and false in the other) does not suffice for it,
-     because the rank of a sentence separating `q` from `p` depends on `p` while the class lost at
-     `β` varies with `β`, so no level need lie above the rank of the sentence separating `q` from
-     the class lost there.  For instance, on `Q = ω₁ ∪ {q}` with `D_β = {q} ∪ [β, ω₁)` and, for each
-     `α < ω₁`, a sentence of rank `α + 1` true at `α` only, the agreement and the cofinally
-     nonempty losses hold and distinct points are separated, yet `q` lies in every `D_β`.
+* **Terminal refinement** (items 1 and 2 compiled in this repository (theorem named), abstractly
+  on `ExpansionDomains`, conditional on the hypotheses below, in `MainTheorem/LastStage`; item 3 a
+  conditional target, to be proved; none is an input to the counting theorem).  Hypotheses, all
+  explicit: conditions 1–4 of the expansion-domain reduction (`README.md`), which are hypotheses of
+  the count, not its conclusions; Scott isolation, a Scott sentence `σ_q` for each class `q`, of
+  countable quantifier rank and true in `q` only (`scottSentence_characterizes`); and, for 3 only,
+  expansion uniqueness and the countable family of terminal conditions of layer 4.  No conclusion
+  of the count (the countable complements `Q \ D_η`, the bound `|Q| ≤ ℵ₁`, the uncountability of
+  `Q`) is used.  Under these hypotheses, the targets, in order (for the actual expansion domains,
+  items 1 and 2 are compiled conditional on next-block uniqueness, finite-cut receiving ((R1)),
+  and the coatom extension
+  property with apex at every countable block stage, each still to be proved, which give
+  conditions 1, 3 and 4: `expansionDomain_core_eq_empty`; and, with `CapToModel` in the statement,
+  which the apex at `0` gives, `mem_expansionDomain_iff_le_lastStage`,
+  `mem_expansionDomain_loss_iff_lastStage_eq`, `lastStage_modelExpansionDomains_lt_qrank`):
+  1. **Eventual departure** (compiled in this repository (theorem named), abstractly:
+     `ExpansionDomains.exists_notMem_of_isolating_of_cofinal`, and
+     `ExpansionDomains.exists_notMem_of_isolating` with every successor loss nonempty; the
+     agreement is used in the weaker form that each observation is constant on some domain,
+     `HasLogicalAgreement`, which the agreement on `D_β` implies,
+     `ExpansionDomains.HasRankAgreement.hasLogicalAgreement`).  *Assume that the expansion domains
+     `D_η` satisfy conditions 1–4, in particular the agreement on `D_β`: any two classes in `D_β`
+     satisfy the same sentences of quantifier rank at most `β`; that every class `q` has a Scott
+     sentence `σ_q` of countable quantifier rank (true in `q` and in no other class); and that the
+     successor losses are cofinally nonempty: for every `γ < ω₁` there is `β ≥ γ` with
+     `D_β \ D_{β+1} ≠ ∅`.  Then no class lies in every `D_η`.*  Proof: if `q` lay in every `D_η`,
+     choose `β` at least the quantifier rank of `σ_q` with some `p ∈ D_β \ D_{β+1}`; both `p` and
+     `q` lie in `D_β`, so agreement on `D_β` makes `p` satisfy `σ_q`, hence `p = q`; but
+     `q ∈ D_{β+1}` and `p ∉ D_{β+1}`.  Of these hypotheses the proof uses only the agreement on
+     every `D_β`, the Scott sentences, and the cofinally nonempty losses; the last are redundant
+     under conditions 1–4, since condition 4 makes every successor loss nonempty, and are listed
+     because the same argument applies to any family of domains with that agreement and cofinally
+     nonempty successor losses (on the least-level filtration of the full-presentation route
+     departure is immediate, the tails of a total rank having empty intersection,
+     `biInter_rankTail_eq_empty`).  **Corollary** (conditional on the same hypotheses): under
+     condition 4 the persistent core `⋂_{η<ω₁} D_η` is empty (compiled:
+     `ExpansionDomains.core_eq_empty`; for the classes of coded models, with Scott isolation
+     `exists_classTruth_iff_eq`, `ExpansionDomains.core_eq_empty_of_classTruth`).  **Control:** the
+     argument uses isolation of each class by one sentence; pairwise separation (for `p ≠ q`, some
+     sentence true in one and false in the other) does not suffice for it, because the rank of a
+     sentence separating `q` from `p` depends on `p` while the class lost at `β` varies with `β`, so
+     no level need lie above the rank of the sentence separating `q` from the class lost there.  For
+     instance, on `Q = ω₁ ∪ {q}` with `D_β = {q} ∪ [β, ω₁)` and, for each `α < ω₁`, a sentence of
+     rank `α + 1` true at `α` only, the agreement and the cofinally nonempty losses hold and
+     distinct points are separated, yet `q` lies in every `D_β`.  The same example, with the
+     observations "is the ordinal `α`" in place of the sentences, is compiled in
+     `MainTheorem/LastStageExamples`.
 
      **Cofinally nonempty successor losses** (a separate lemma, to be proved).  *Let `D_η ⊆ Q`, for
      `η < ω₁`, satisfy `D_0 = Q`, `D_ζ ⊆ D_ξ` for `ξ ≤ ζ`, continuity `D_δ = ⋂_{ξ<δ} D_ξ` at nonzero
@@ -674,7 +702,18 @@ is compiled conditionally on block determination (below).  None is an input to t
   2. **the last admitted stage** (a definition conditional on 1): for a class `q` that leaves the
      expansion domains, the least `ξ` with `q ∉ D_ξ` is a successor `ζ + 1` (`D_0 = Q`, and limit
      continuity excludes a limit), and `λ_ζ` is then called the last admitted stage of `q`; `q` lies
-     in the loss `D_ζ \ D_{ζ+1}`;
+     in the loss `D_ζ \ D_{ζ+1}`.  Compiled in this repository (theorem named), for the index `ζ`
+     (not the block stage `λ_ζ`): `ExpansionDomains.lastStage`, the supremum of the stages at which
+     `q` lies, defined for every class; once `q ∉ D_ξ` for a countable `ξ`, it is the greatest such
+     stage and is below `ξ`, from condition 1 alone (`ExpansionDomains.isGreatest_lastStage`,
+     through the attained greatest index `exists_isGreatest_of_closed`,
+     `Counting/OrdinalAttainment`); under the hypotheses of 1,
+     `q ∈ D_β ↔ β ≤ ζ` at every ordinal `β`, and the losses are the fibres of the last stage and
+     the domains its tails (`ExpansionDomains.mem_domain_iff_le_lastStage`,
+     `ExpansionDomains.mem_loss_iff_lastStage_eq`, `ExpansionDomains.loss_eq_preimage_lastStage`,
+     `ExpansionDomains.domain_eq_setOf_le_lastStage`); under the agreement on `D_β` and condition
+     4, `ζ` is below the quantifier rank of every sentence isolating `q`
+     (`ExpansionDomains.lastStage_lt_qrank`; the rank of a chosen sentence, not a Scott rank);
   3. **the terminal expansion** (to be proved, given 2): the expansion of a model in `q` to its last
      admitted stage is unique by expansion uniqueness and terminal, and is covered by the countable
      family of terminal conditions of layer 4 (rigid-core type, positive eventual top grade, hollow
@@ -685,27 +724,31 @@ is compiled conditionally on block determination (below).  None is an input to t
      countable-slot argument, or the Scott route to maximal presentations), under the
      injectivity of model reduction and without that family.
 
-  None of these is proved, and no class is asserted to have a last admitted stage or a terminal
-  expansion before 1 is proved.  If 1–3 are proved, the greatest refinement above (itself a target)
-  is the terminal expansion, and no class has height `ω₁`.  Terminal refinement is not a
-  prerequisite of the counting theorem, and its eventual departure is not downstream of the count:
-  it uses hypotheses of the count (the agreement of condition 3 and the nonempty losses of condition
-  4, with Scott isolation), not its conclusions.  The full-presentation route (`README.md`, "The
-  persistent core") may therefore take eventual departure from here without circularity; it then
-  depends on conditions 3 and 4 of the expansion-domain route, not on its count, and states that
-  dependence.  Departure proves neither terminal fullness (the fullness of the terminal expansion
-  for its terminal exact age, the first special statement there, which is not part of terminal
-  refinement) nor full-presentation coverage; a full-presentation proof that does not depend on
-  conditions 3 and 4 must cover every class, a persistent class included, by its own argument.
+  Items 1 and 2 are compiled, conditionally on the hypotheses above; item 3 is not proved, and no
+  class is asserted to have a terminal expansion.  If 1–3 are proved, the greatest refinement above
+  (itself a target) is the terminal expansion, and no class has height `ω₁`.  Terminal refinement is
+  not a prerequisite of the counting theorem, and its eventual departure is not downstream of the
+  count: it uses hypotheses of the count (the agreement of condition 3 and the nonempty losses of
+  condition 4, with Scott isolation), not its conclusions.  The full-presentation route
+  (`README.md`, "The persistent core") may therefore take eventual departure from here without
+  circularity; it then depends on conditions 3 and 4 of the expansion-domain route, not on its
+  count, and states that dependence.  Departure proves neither terminal fullness (the fullness of
+  the terminal expansion for its terminal exact age, the first special statement there, which is not
+  part of terminal refinement) nor full-presentation coverage; a full-presentation proof that does
+  not depend on conditions 3 and 4 must cover every class, a persistent class included, by its own
+  argument.
 
   **An alternative route to the lower bound** (prospective; a reading of statements recorded
-  elsewhere, each still to be proved, and not restated here).  The lower bound can also be read
-  along one chain: (i) charts of every fixing rank (the **fixing rank** of a stage type at `λ_η` is
-  the least `ξ ≤ η` such that its reduction to `λ_ξ` changes no label; it is not a Scott rank), from
+  elsewhere, each still to be proved except step (ii), and not restated here).  The lower bound
+  can also be read along one chain: (i) charts of every fixing rank (the **fixing rank** of a stage
+  type at `λ_η` is the least `ξ ≤ η` such that its reduction to `λ_ξ` changes no label; it is not a
+  Scott rank), from
   finite data ("Quantitative reconstruction", below, "Fixing ranks of finite charts" and "Charts of
   every fixing rank"; no termination used); (ii) for each such chart, a model in which it occurs as
-  an actual chart (expected to need, like the top-free witnesses, the coatom extension property
-  `StageType.HasCoatomExtensions` and the cap-to-model theorem; no termination used); (iii) hence
+  an actual chart (compiled in this repository (theorem named), for every legal chart at every
+  countable block stage, conditional on the coatom extension property with apex
+  `StageType.HasApexCoatomExtensions`: `exists_saturated_reconstruct`, through the compiled
+  cap-to-model theorem, without the hypothesis `CapToModel`; no termination used); (iii) hence
   fixing ranks of realized charts cofinal in `ω₁` (no termination used); (iv) noncollapse:
   uncountably many classes, by the bounded-levels criterion in its form for relations between
   classes and countable ordinals (`README.md`, "Reduction to full presentations", "Bounded levels"),
@@ -721,17 +764,27 @@ is compiled conditionally on block determination (below).  None is an input to t
   supremum of countably many stages is not by itself one) are still to be supplied (`README.md`,
   item 5, "Two stopping proofs; positive niceness from a terminal presentation", (i)); and only
   as a conclusion, proved for each base from conditions 3 and 4, when it is taken from the Scott
-  route to maximal presentations (`README.md`, item 5; prospective), whose strict bound on
+  route to maximal presentations (`README.md`, item 5; its steps 1–5 compiled conditionally in
+  the raw base encoding, positive niceness prospective), whose strict bound on
   serving stages is eventual departure (1 above) read for one class, followed by greatest-stage
   attainment (bounded-stage attainment, 4 ⇒ 5 of the five criteria there; intended quotation
   `exists_greatest_stage_lt_omega1`, `OrdinalUtil`, available upstream, not yet at our pinned
   dependency: signatures verified against the upstream source at `2cd44c3`, not compiled
   here; `IMPLEMENTATION.md`, "Dependency pins": a stage predicate holding at `0`, closed
   downward and under countable limits, and bounded by a countable stage has a greatest
-  stage, and holds exactly at the stages up to it).  For one literal base that is a model,
-  a bound of this kind over all its model presentations is equivalent to a maximal
-  presentation of the base (criteria 3 and 5 of `README.md`, item 5, "Maximal
-  presentations: equivalent criteria, uniqueness, the optimal bound"; prospective),
+  stage, and holds exactly at the stages up to it).  These two steps are compiled here
+  conditionally, in the raw base encoding (`MainTheorem/MaximalRefinement`, conditional on (R1),
+  `Expansion.NextBlockUniqueness`, and `StageType.HasApexCoatomExtensions` at every countable
+  block stage): the strict bound by `MainTheorem.lt_qrank_of_isolates`, through
+  `expansionDomain_nontrivial` and `expansionDomain_subsingleton_of_isolates`, which specialize
+  the upstream `notMem_of_isolating_of_uniform`, and the attainment by
+  `MainTheorem.exists_isGreatest_servingIndex_of_le`, through `exists_isGreatest_of_closed`
+  (`Counting/OrdinalAttainment`).  At a repin containing `c16de09` and `2cd44c3`, the upstream
+  quotations replace them: `exists_isGreatest_of_closed` by the greatest-stage statement, and the
+  local two-class argument by Scott separation (`IMPLEMENTATION.md`, "Placement record").  For
+  one literal base that is a model, a bound of this kind over all its model presentations is
+  equivalent to a maximal presentation of the base (criteria 3 and 5 of `README.md`, item 5,
+  "Maximal presentations: equivalent criteria, uniqueness, the optimal bound"; prospective),
   conditional on the injectivity of model reduction at each countable index (raw form
   `ModelExpansion.subsingleton`, conditional on `Expansion.NextBlockUniqueness`, still to be
   proved), which 3 ⇒ 5 uses through bounded-stage attainment; so supplying the bound of (iv)
@@ -767,7 +820,12 @@ is compiled conditionally on block determination (below).  None is an input to t
   source at `2cd44c3`, not compiled here; `IMPLEMENTATION.md`, "Dependency pins"): a class isolated
   by a sentence of rank `r` lies in no domain of two or more classes on which the sentences of rank
   at most `r` agree, so, the domains decreasing and the one at `r`, on which the sentences of rank
-  at most `r` agree, having two or more classes, it lies in no domain at a stage `η ≥ r`.  Explicit
+  at most `r` agree, having two or more classes, it lies in no domain at a stage `η ≥ r`.  Local
+  forms of these statements for `ExpansionDomains` are compiled in this repository (theorem named;
+  `MainTheorem/LastStage`): `ExpansionDomains.notMem_of_isolating` (the exclusion from a domain of
+  two or more classes), `ExpansionDomains.notMem_of_isolating_of_qrank_le` (at the rank, the two
+  classes from condition 4), and `ExpansionDomains.lastStage_lt_qrank` (the strict bound, with
+  attainment).  Explicit
   levels for the terminal expansions at block `η` are the syntax bounds of the table below
   (`ω·(η+2)`, and `ω·(η+2)+k` in the core case), with the stabilization-ordinal bounds of target 2
   and the orbit-rank bounds of target 3.  Uses of termination, marked: the Scott sentences and their
@@ -862,7 +920,12 @@ is compiled conditionally on block determination (below).  None is an input to t
   directions: a model at `λ_η` has a model expansion to `λ_{η+1}` if and only if it is non-hollow
   with unbounded top-grade growth.  Sufficiency is output 3 of `README.md`, Layer 4; necessity is a
   further statement, required here though not by the main theorem (`README.md`, Layer 4, the
-  qualification after the count of terminal classes).  (b) At a nonzero limit `δ`, the guard is the
+  qualification after the count of terminal classes).  Its cover-hollow half, that a realization at
+  `λ_η` with a model expansion to `λ_{η+1}` is not cover-hollow, is compiled in this repository
+  (theorem named), with no hypothesis, as the contrapositive of
+  `Realization.IsCoverHollow.isTerminalAt` (`Continuation/Hollow`); the growth half, and the hollow
+  half for the original no-anchor predicate (`SEMANTIC_CONTRACT.md`, item 8), are still to be
+  proved.  (b) At a nonzero limit `δ`, the guard is the
   conjunction of the guards along a cofinal sequence of lower blocks (cofinal in the weak sense:
   every `ξ < δ` lies below some term).  Downward closure, that a model expansion to a higher block
   reduces to every lower block (output 4), turns expansions along the sequence into expansions at
@@ -1147,11 +1210,19 @@ is compiled conditionally on block determination (below).  None is an input to t
   continuous at limits each lies below some `λ_ξ` with `ξ < η`, so its fixing rank is below `η`.
   The uniform fixing stage of `README.md`, "Manuscript correspondence (required)", item 5, "Uniform
   fixing bounds from positive niceness" (prospective) bounds these fixing ranks uniformly over the
-  presentations, arities, and tuples of a family, and strictness for models there is to come from
-  the supremum statement here.  For a literal base with a terminal model presentation at `ρ`,
-  the least bound across all its model presentations is `ρ` (the optimal all-presentation bound
-  of `README.md`, item 5, "Maximal presentations: equivalent criteria, uniqueness, the optimal
-  bound"; prospective, under the injectivity of model reduction).
+  presentations, arities, and tuples of a family.  Strictness for models there does not depend on
+  the supremum statement here: it is compiled in this repository (theorem named) from the
+  uniformity clause of a model alone (`Realization.IsModel.not_isFixedAt`,
+  `Realization.IsModel.isLeast_isFixedAt_blockStage`, `Realization/Strictness`; a model at `λ_η`
+  is fixed by projection at the index `ξ` exactly when `η ≤ ξ`).  It gives the supremum
+  statement: an index bounds the fixing ranks of all realized finite charts of a model exactly when
+  the model is fixed by projection there, so their least upper bound is `η`; the fixing rank of a
+  chart is not named in this repository, so this reading is not compiled as a statement about
+  fixing ranks, and that the supremum is not attained at a limit `η` remains to be proved.  For a
+  literal base with a terminal model presentation at `ρ`, the least bound across all its model
+  presentations is `ρ` (the optimal all-presentation bound of `README.md`, item 5, "Maximal
+  presentations: equivalent criteria, uniqueness, the optimal bound"; prospective, under the
+  injectivity of model reduction).
 
   *Fixing ranks are zero or successors* (still to be proved).  The fixing rank of a finite chart is
   never a limit ordinal: bottom and top are fixed by every reduction, and a proper label is fixed by
@@ -1320,9 +1391,10 @@ is compiled conditionally on block determination (below).  None is an input to t
   full well-founded trees are isomorphic; and the finite-extension estimate, that finite
   ancestor-closed subtrees matched with ranks agreeing after capping at `δ + m` admit, for an
   extension by `m` vertices added parent before child, a match in a full target with agreement
-  after capping at `δ`.  The same-index equivalence of [AFK26, Proposition 8.6] is not a
-  statement: it is false (`LITERATURE.md`, §9).  Two non-implications are to be compiled with
-  it as examples (`IMPLEMENTATION.md`, "Checkpoint order and acceptance"): a labelling by ordinals
+  after capping at `δ`.  The same-index equivalence stated in the version of 1 October 2026 of
+  [AFK26] (its Proposition 8.6) is not a statement: it is false (`LITERATURE.md`, §9).  Two
+  non-implications are to be compiled with it as examples (`IMPLEMENTATION.md`, "Checkpoint order
+  and acceptance"): a labelling by ordinals
   that is at least as large at a parent as at each child need not be a rank, and branching at
   nodes of high rank does not give the extension property at nodes of low rank.
 * **No invariant probability measure.**  No probability measure on the model-code space that is

@@ -254,7 +254,6 @@ theorem IsStableRecoveryScheme.exists_face_ne_univ {Tp : StageType.{u} (blockSta
   refine Scheme.exists_face_ne_univ_of_not_mem hql.isWellFormed hf hm fun y hy ↦ hS y ?_
   rw [← hT, Scheme.mem_comap_faces]
   exact hy
-
 variable (ξ) in
 /-- **Stable recovery schemes for a calibration `C`**, a finite statement about stage types with no
 realization: every legal stage type `T⁺` at `λ_{ξ+1}` satisfying `C` for an embedding `f`

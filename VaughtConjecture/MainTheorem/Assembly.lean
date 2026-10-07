@@ -164,6 +164,9 @@ excludes a nonempty perfect set of pairwise nonisomorphic coded models by the li
 back-and-forth separation of analytic sets of nonisomorphic pairs (`exists_uniform_bfSeparation`,
 the boundedness of analytic families of well-founded trees).  Neither sentence separation (Scott
 or descriptive) nor López–Escobar nor bounded comparison is used in this composition.
+Back-and-forth scatteredness of the codes of models of the density sentence (InfinitaryLogic's
+`BFScattered`) gives scattered tails to every family of full presentations
+(`FullPresentations.HasScatteredTails.of_bfScattered`).
 
 The **least presentation level** of a class, the least `α < ω₁` with the class in
 `presentedAt α`, is a rank into the countable ordinals with countable fibres, and its tails form
@@ -694,6 +697,16 @@ theorem FullPresentations.HasScatteredTails.of_countable_quotient
     (h : ∀ η, η < ω₁ → Countable (Quotient (bfEquivSetoid densitySentence.{0} η))) :
     P.HasScatteredTails :=
   ⟨fun η hη ↦ have := h η hη; Set.to_countable _⟩
+
+/-- **Scattered tails from back-and-forth scatteredness**: if the codes of models of the density
+sentence are back-and-forth scattered (InfinitaryLogic's `BFScattered`), every family of full
+presentations has scattered tails (`FullPresentations.HasScatteredTails.of_countable_quotient`,
+with the quotient of `bfEquivSetoid densitySentence η` that of the restriction of
+`codeBFEquivSetoid` to the codes of models, by InfinitaryLogic's `bfEquivSetoid_eq_comap`). -/
+theorem FullPresentations.HasScatteredTails.of_bfScattered (P : FullPresentations DensityClass)
+    (h : BFScattered (ModelsOf densitySentence.{0})) : P.HasScatteredTails :=
+  of_countable_quotient fun η hη ↦
+    FirstOrder.Language.bfEquivSetoid_eq_comap densitySentence η ▸ h η hη
 
 /-- **Thinness, conditionally, by full presentations with scattered tails**: full presentations
 of the classes of the density sentence at countable levels with scattered tails give no perfect

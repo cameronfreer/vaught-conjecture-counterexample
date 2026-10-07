@@ -75,7 +75,6 @@ The cap below the formal top and the lower blocks are tested in
 `VaughtConjecture.Continuation.StableRecoveryTwinFamily`, a new cell labelled the formal top in
 `VaughtConjecture.Continuation.StableRecoveryTopCell`, and several graded faces of grade `N`
 containing the cap and the new cells in `VaughtConjecture.Continuation.StableRecoveryInterior`.
-
 ## Placement
 
 This file belongs to Layer 4 of `roadmap/README.md`.
@@ -389,14 +388,9 @@ limit. -/
 private theorem eq_of_labelAdd_eq {β μ : Ordinal.{u}} (hβ : Order.IsSuccPrelimit β)
     (hμ : Order.IsSuccPrelimit μ) {n m : ℕ}
     (h : labelAdd β n = ((μ + m : Ordinal.{u}) : Label.{u})) : m = n := by
-  have h1 : IsSelfVisible n (labelAdd β n) := isSelfVisible_coe_add hβ le_rfl
-  have h2 : ¬ IsSelfVisible (n + 1) (labelAdd β n) :=
-    not_isSelfVisible_coe_add_natCast hβ (Nat.lt_succ_self n)
-  rw [h] at h1 h2
-  by_contra hmn
-  rcases Nat.lt_or_gt_of_ne hmn with hm | hm
-  · exact not_isSelfVisible_coe_add_natCast hμ hm h1
-  · exact h2 (isSelfVisible_coe_add hμ hm)
+  have h' : β + n = μ + m := by
+    simpa only [labelAdd, WithBot.coe_inj, WithTop.coe_inj] using h
+  exact ((Label.add_natCast_eq_add_natCast_iff hβ hμ).mp h').2.symm
 
 /-- The labels of the donors: `λ_ξ + 2` at the root, `⊥` at the dead cells, and `λ_ξ + 2`,
 `λ_ξ + 1` at the twins. -/
