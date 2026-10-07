@@ -66,7 +66,9 @@ decoding refutation are not lawful, `OrderedLayer.eq_bot_of_grade_four_canonical
 oriented rows of an oriented ordered-layer step, which give the family a step at the five seeds
 above (`VaughtConjecture.Extension.CanonicalMultiSchemeOriented`; an exact reformulation of their
 ordered-layer steps, which already complete them), or by rows under which each copy of
-`(B, k)` reads the parameters of its own coatom above those of the other.
+`(B, k)` reads the parameters of its own coatom above those of the other (these fail at `seedHG`,
+`seedL` and `seedLM` for another reason, the orientation forced on the copies,
+`VaughtConjecture.Extension.CanonicalMultiSchemeOwnSideExamples`).
 
 ## Placement
 

@@ -10,28 +10,15 @@ import VaughtConjecture.Stage.TopFree
 /-!
 # Marked caps: forced thresholds are read by the row of a top cap
 
-Roadmap, Layer 3 ((R3) of the table of 3.4: the hollow context, with its private cap and marker;
-3.1: the splice of two witnesses).  Everything here concerns labels and stage types only: no
+Roadmap, Layer 3 ((R3) of the table of 3.4: the hollow context, with its private cap and
+marker).  Everything here concerns labels and stage types only: no
 realization and no model is involved.
 
 Throughout, `β` is a limit stage and `α ≥ β + ω`; in the application `β = λ_ξ` and
 `α = λ_{ξ+1}` are consecutive block stages.
 
-**The splice of two witnesses** (`Label.TransformsTo.splice_bandMap`, in `Label/Band`, compiled in
-this repository (theorem named)).  On a finite family of cells of grades at most `K`, let a source
-`e` transform to `q`, whose values are below `β` or the formal top, and to `r`, which is at least
-`μ` (zero or a limit) wherever `q` is the formal top.  Then `e` transforms to the labelling that is
-`q` where `q` is below `β` and the band map from `μ` to `β` at `K` of `r` where `q` is the formal
-top.  The shifter keeps the values of the first shifter below `β`, capped at a cutoff `c`, and
-otherwise applies the band map to the values of the second shifter at least `μ` and sends the rest
-to `c`; the suppressor is bottom above `K`, the band map of the second suppressor where the first
-is the formal top and the second is at least `μ`, and a smaller cutoff `c₀ < c` elsewhere.  The
-guard of the commutation law with visibility replacement reduces to the guards of the two
-witnesses, except where the second shifter exceeds its suppressor; there both band values are
-`β + K` (`Label.bandMap_lt_bandMap`).  This is the transformation lemma that replaces the
-transitivity step of the printed proof of [Kni26, Lemma 5.3.5] for the rows other than the
-top-witness row (roadmap, Layer 3, 3.1); the band rule (`Label.IsWitness.transformsTo_bandMap`) is
-the top-witness row.
+**The splice of two witnesses** (`Label.TransformsTo.splice_bandMap`, compiled in this repository
+(theorem named)) is in `Label/Band`; the band lift below uses it at every cell labelled `⊤`.
 
 **Top caps and markers.**  A **top cap** of a stage type `q` (`StageType.IsTopCap`) is a cell of
 full scope labelled `⊤` whose grade `N` is the largest grade of a cell labelled `⊤`; every cell
