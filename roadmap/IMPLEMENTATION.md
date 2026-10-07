@@ -4128,6 +4128,11 @@ witnesses).**
   so that the import closure of the main theorem contains no `Definability/` module.
   `Expansion/Losses`: Layer 5, in place. `Counting/Domains`:
   `Counting.countable_of_subsingleton_cover`, a general result of Layer 0, in place.
+- `Continuation/SourceGapContext`: Layer 3, in place, beside `Continuation/ExactReceiving` (it
+  imports `Continuation/ExactReceivingExamples` for the apex-point check, kept in the same module
+  as an example).  It holds `StageType.IsSourceGapContext`, separated top supports, first loss,
+  and `Realization.residualAcquisition_isSourceGapContext`; determination for the predicate is
+  open.
 - `Continuation/RestrictedHollow` and its examples module: Layer 4, in place; it holds
   `Realization.IsCoverHollowWithoutRigidCore` and its form at a block stage, the restricted
   terminal properties with their cover, and `Realization.HollowReceiving.withoutRigidCore`.  It

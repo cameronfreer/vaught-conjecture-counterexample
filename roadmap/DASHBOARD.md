@@ -274,6 +274,20 @@ Status of each:
    `Continuation/ExactReceivingExamples`), which shows only that determination is not vacuous.
    The cofaces in which the root is a rigid core need only (R1) in the same form
    (`Realization.ResidualReceiving.of_not_isRigidCoreIn`).
+   *Source-gap contexts* (`Continuation/SourceGapContext`): one predicate is now defined in this
+   repository, `StageType.IsSourceGapContext K t' h` (a lost point outside the root; an owner of
+   full scope and grade `K = t'.topGrade` labelled `⊤`; a lost top through the lost point; strict
+   source gaps `visibilityReplace K K (row o r) <` the row of the owner at itself and at every top
+   cell avoiding the lost point).  Residual acquisition for it is compiled in this repository
+   (`Realization.residualAcquisition_isSourceGapContext`) with no hypothesis beyond those of
+   `Realization.ResidualAcquisition`, through first loss (`StageType.exists_firstLoss`), an owner
+   by availability (`StageType.exists_owner`), and the gap lemma
+   `CellScheme.Rows.IsLawful.visibilityReplace_row_lt`.  Cutoff determination for it is open, so
+   (R2) is not proved; the predicate excludes the compiled determination counterexamples (not
+   top-free, root not surjective).  An admissible top support is separated (stated through the
+   rows; `StageType.IsAdmissibleTopSupport.isSeparatedTopSupport`), so the residual hypothesis
+   holds for separated supports (`Realization.not_exists_isGloballySeparatedRigidCore`); the
+   converse is not formalized.
 6. `Realization.HollowReceiving` for `Realization.IsCoverHollowAtBlock`: still to be proved (the
    growth construction).  Exactly reformulated as exact receiving of all legal types
    (`Realization.hollowReceiving_iff`).  A reduction is compiled: it follows from
