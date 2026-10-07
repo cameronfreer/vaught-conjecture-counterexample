@@ -36,10 +36,11 @@ face of grade `N` containing the cap and `e` (a face containing the first `m` po
 point is the ground set, `Scheme.eq_univ_of_map_castSuccEmb_subset`).  So for a full-scope cap the
 informal remark of `VaughtConjecture.Continuation.StableRecovery` (the reading through the cap is
 not confined to one graded index, and constrains every graded face of grade `N` containing the cap,
-a reference cell and a new cell) concerns the single graded face `(univ, N)`.
+a reference cell and a new cell) ranges over the single graded face `(univ, N)`; that the reading
+forces labels there stays argued, not formalized.
 
 **A stable recovery scheme from the cells at `(univ, N)`**
-(`StageType.IsStableRecoveryScheme.of_readsThroughUnivCap`).  This is
+(`StageType.IsStableRecoveryScheme.of_readsThroughCap_univ`).  This is
 `StageType.IsStableRecoveryScheme.of_readsThroughCap` with the reading cell taken at the graded
 face `(univ, N)`: completeness of the scheme of the coface gives such a cell, every new cell lies
 below it since its grade is at most `k + 1 ≤ N`, and the cap lies below it whatever its scope.  The
@@ -53,17 +54,20 @@ points is the scheme of `T⁺` carries a coface of `T⁺↓λ_ξ`: the labels of
 section of `E` (bountifulness at the cap `⊥`).  This is the first clause of
 `StageType.IsStableRecoveryScheme`.
 
-**Cap-reading extensions** (`StageType.HasCapReadingExtensions`, a new named statement, open).
-Every legal `T⁺` with a full-scope cap `b` satisfying the clauses of the calibration, and every
-embedding `f`, coface `D` and `γ` as in `StageType.HasStableRecoverySchemes`, has a legal scheme
-`E` with face `T⁺` along the first points and face `D` along `f` followed by the new point, in
-which every cell at `(univ, N)` reads every new cell of `D` through the cap.  It implies stable
+**Cap-reading extensions** (`StageType.HasCapReadingExtensions`, a new named statement, open). Every
+legal `T⁺` with a full-scope cap `b` satisfying the clauses of the calibration, and every embedding
+`f`, coface `D` and `γ` as in `StageType.HasStableRecoverySchemes`, has a **cap-reading extension**
+(`StageType.IsCapReadingExtension`): a legal scheme `E` with face `T⁺` along the first points and
+face `D` along `f` followed by the new point, in which every cell at `(univ, N)` reads every new
+cell of `D` through the cap.  A cap-reading extension for a graded cap is a stable recovery scheme
+(`StageType.IsCapReadingExtension.isStableRecoveryScheme`), so the new statement implies stable
 recovery schemes for the graded cap calibration
-(`StageType.HasCapReadingExtensions.hasStableRecoverySchemes`).  No implication from or to the
-coatom extension property with apex (`StageType.HasApexCoatomExtensions`: two legal cofaces of
-one stage type are two faces of one legal stage type on one more point, with a cell of full scope
-and full grade carrying its largest label) is compiled, and none is claimed: whether cap-reading
-extensions follow from coatom extensions with reading rows at `(univ, N)` is prospective.
+(`StageType.HasCapReadingExtensions.hasStableRecoverySchemes`).  Reading through a cap depends on
+the cap only through its grade, away from the formal top (`StageType.ReadsThroughCap.of_grade_eq`).
+No implication from or to the coatom extension property with apex
+(`StageType.HasApexCoatomExtensions`: two legal cofaces of one stage type are two faces of one legal
+stage type on one more point, with a cell of full scope and full grade carrying its largest label;
+still to be proved) is compiled or stated.
 
 Tests of these statements at the twin donors and at the interior cap are in
 `VaughtConjecture.Continuation.StableRecoveryFullCapExamples`.
@@ -85,23 +89,15 @@ namespace Scheme
 
 variable {m : ℕ}
 
-/-- **A face containing the first `m` points and the new point is the ground set**: a set of
-points of `Fin (m + 1)` containing the range of `Fin.castSuccEmb` and `Fin.last m` is `univ`. -/
-theorem eq_univ_of_map_castSuccEmb_subset {F : Finset (Fin (m + 1))}
-    (h : univ.map (Fin.castSuccEmb : Fin m ↪ Fin (m + 1)) ⊆ F) (hl : Fin.last m ∈ F) :
-    F = univ := by
-  refine eq_univ_of_forall fun x ↦ ?_
-  induction x using Fin.lastCases with
-  | last => exact hl
-  | cast x => exact h (mem_map_of_mem _ (mem_univ x))
-
-/-- **The only graded face of a full-scope cap** (this replaces, for a full-scope cap, the informal
-remark of `VaughtConjecture.Continuation.StableRecovery` that the reading through the cap is not
-confined to one graded index).  Let `E` be a well formed scheme on `m + 1` points, `b` a cell of
-its face along the first `m` points with scope all of them (a full-scope cap) and grade `N`, and
-`e` a cell of `E` of grade at most `N` whose scope contains the new point `Fin.last m`.  Then the
-graded faces of `E` of grade `N` below which both the cap and `e` lie are exactly `(univ, N)`.  A
-reference cell of `T⁺` lies on the first `m` points, so adding it changes nothing. -/
+/-- **The only graded face of a full-scope cap**.  Let `E` be a well formed scheme on `m + 1`
+points, `b` a cell of its face along the first `m` points with scope all of them (a full-scope cap)
+and grade `N`, and `e` a cell of `E` of grade at most `N` whose scope contains the new point
+`Fin.last m`.  Then the graded faces of `E` of grade `N` below which both the cap and `e` lie are
+exactly `(univ, N)`.  A reference cell of `T⁺` lies on the first `m` points, so adding it changes
+nothing.  So for a full-scope cap the graded faces over which the informal remark of
+`VaughtConjecture.Continuation.StableRecovery` ranges reduce to `(univ, N)`.  This is a statement
+about faces only: the claim of that remark that the reading forces the labels of the new cells below
+those faces stays argued, not formalized. -/
 theorem setOf_gradedFaces_univCap_eq_singleton {E : Scheme.{u} (m + 1)} (hE : E.IsWellFormed)
     {b : Fin (E.comap Fin.castSuccEmb).card}
     (hbu : (E.comap Fin.castSuccEmb).toCellScheme.scope b = univ) {e : Fin E.card}
@@ -212,7 +208,9 @@ theorem exists_mem_cofaces_reduce_of_isLegal {Tp : StageType.{u} (blockStage (ξ
 /-- **A stable recovery scheme from a legal extension and recovery**: the first clause of
 `StageType.IsStableRecoveryScheme` (a coface of `T⁺↓λ_ξ` on `E`) holds for every legal `E` whose
 face along the first `m` points has the scheme of `T⁺`
-(`StageType.exists_mem_cofaces_reduce_of_isLegal`), so only the recovery clause remains. -/
+(`StageType.exists_mem_cofaces_reduce_of_isLegal`), so only the recovery clause remains.  It has
+no caller in the library yet: the cap-reading route uses
+`StageType.exists_mem_cofaces_reduce_of_isLegal` directly. -/
 theorem IsStableRecoveryScheme.of_isLegal {Tp : StageType.{u} (blockStage (ξ + 1)) m}
     {f : Fin k ↪ Fin m} {D : StageType.{u} (blockStage (ξ + 1)) (k + 1)} {γ : Ordinal.{u}}
     {E : Scheme.{u} (m + 1)} (hE : E.IsLegal)
@@ -240,7 +238,7 @@ it, and so does every new cell, whose grade is at most `k + 1 ≤ N`.  The scope
 used here: for a full-scope cap, `(univ, N)` is the only graded face of grade `N` containing the
 cap and a new cell (`Scheme.setOf_gradedFaces_univCap_eq_singleton`), and every graded cap can be
 taken of full scope (`StageType.GradedCapCalibration.exists_univ_cap`). -/
-theorem IsStableRecoveryScheme.of_readsThroughUnivCap
+theorem IsStableRecoveryScheme.of_readsThroughCap_univ
     {Tp : StageType.{u} (blockStage (ξ + 1)) m} {f : Fin k ↪ Fin m}
     {P : StageType.{u} (blockStage (ξ + 1)) k} (hP : restrictFace f Tp = some P)
     {D : StageType.{u} (blockStage (ξ + 1)) (k + 1)} (hD : D ∈ P.cofaces) {γ : Ordinal.{u}}
@@ -283,64 +281,60 @@ theorem IsStableRecoveryScheme.of_readsThroughUnivCap
 
 /-! ### Cap-reading extensions -/
 
-variable (ξ) in
-/-- **Cap-reading extensions at `ξ`** (a new named statement; open): for every legal stage type
-`T⁺` at `λ_{ξ+1}` on `m` points, every embedding `f` of `k > 0` points with face `P`, every coface
-`D` of `P`, every `γ < λ_{ξ+1}` and every graded cap `b` of `T⁺` for `D` and `γ`
-(`StageType.IsGradedCap`) of full scope, of grade `N`, there is a legal scheme `E` on `m + 1`
-points such that
+/-- **Reading through a cap depends on the cap only through its grade**, away from the formal top:
+if the row of `u` reads `e` through the cap `b` as a cell labelled `ℓ ≠ ⊤`, then it reads `e`
+through every cap `b'` of the same grade, provided `b` lies below the graded index of `u`.  Only
+the clause at the formal top of `StageType.ReadsThroughCap` mentions the row of `u` at the cap. -/
+theorem ReadsThroughCap.of_grade_eq {α : Ordinal.{u}} {Tp : StageType.{u} α m}
+    {E : Scheme.{u} (m + 1)} {b b' : Fin (E.comap Fin.castSuccEmb).card} {u e : Fin E.card}
+    {ℓ : Label.{u}} (h : Tp.ReadsThroughCap E b u e ℓ) (hℓ : ℓ ≠ ⊤)
+    (hg : E.toCellScheme.grade (E.cellMap Fin.castSuccEmb b') =
+      E.toCellScheme.grade (E.cellMap Fin.castSuccEmb b))
+    (hb : E.cellMap Fin.castSuccEmb b ∈ E.toCellScheme.below (E.toCellScheme.gradedIndex u)) :
+    Tp.ReadsThroughCap E b' u e ℓ := by
+  intro he _
+  obtain ⟨hbot, -, hord⟩ := h he hb
+  refine ⟨hbot, fun h ↦ absurd h hℓ, fun μ n hμ hℓ' ↦ ?_⟩
+  rw [hg]
+  exact hord μ n hμ hℓ'
+
+/-- A **cap-reading extension** of `T⁺` along `f` for `D` and a cell `b` of `T⁺` of grade `N`: a
+legal scheme `E` on `m + 1` points such that
 
 * the first `m` points span a face of `E`, with the scheme of `T⁺`;
 * `f` followed by the new point spans a face of `E`, with the scheme of `D`; and
 * every cell of `E` at the graded face `(univ, N)` reads every new cell of `D` (a cell whose scope
   contains the new point) through the cap (`StageType.ReadsThroughCap`, with the cell of the face
-  of `E` at the position of `b` as the cap).
+  of `E` at the position of `b` as the cap). -/
+def IsCapReadingExtension {α : Ordinal.{u}} (Tp : StageType.{u} α m) (f : Fin k ↪ Fin m)
+    (D : StageType.{u} α (k + 1)) (b : Fin Tp.card) (E : Scheme.{u} (m + 1)) : Prop :=
+  E.IsLegal ∧ univ.map Fin.castSuccEmb ∈ E.toCellScheme.faces ∧
+    E.comap Fin.castSuccEmb = Tp.toScheme ∧ univ.map (extendByLast f) ∈ E.toCellScheme.faces ∧
+    E.comap (extendByLast f) = D.toScheme ∧
+    ∃ b' : Fin (E.comap Fin.castSuccEmb).card, (b' : ℕ) = b ∧
+      ∀ u, E.toCellScheme.gradedIndex u =
+          ((univ : Finset (Fin (m + 1))), Tp.toCellScheme.grade b) →
+        ∀ (i : Fin (E.comap (extendByLast f)).card) (j : Fin D.card), (i : ℕ) = j →
+          Fin.last k ∈ D.toCellScheme.scope j →
+            Tp.ReadsThroughCap E b' u (E.cellMap (extendByLast f) i) (D.label j)
 
-It is a finite statement about stage types and schemes, with no realization.  It implies stable
-recovery schemes for the graded cap calibration
-(`StageType.HasCapReadingExtensions.hasStableRecoverySchemes`).  It is not proved, and no
-implication from or to the coatom extension property with apex
-(`StageType.HasApexCoatomExtensions`) is compiled. -/
-def HasCapReadingExtensions : Prop :=
-  ∀ ⦃m k : ℕ⦄ (Tp : StageType.{u} (blockStage (ξ + 1)) m) (f : Fin k ↪ Fin m)
-    (P : StageType.{u} (blockStage (ξ + 1)) k), Tp.IsLegal → 0 < k →
-    restrictFace f Tp = some P → ∀ D ∈ P.cofaces, ∀ γ : Ordinal.{u}, γ < blockStage (ξ + 1) →
-      ∀ b : Fin Tp.card, Tp.toCellScheme.scope b = univ → IsGradedCap ξ Tp D γ b →
-        ∃ E : Scheme.{u} (m + 1), E.IsLegal ∧ univ.map Fin.castSuccEmb ∈ E.toCellScheme.faces ∧
-          E.comap Fin.castSuccEmb = Tp.toScheme ∧
-          univ.map (extendByLast f) ∈ E.toCellScheme.faces ∧
-          E.comap (extendByLast f) = D.toScheme ∧
-          ∃ b' : Fin (E.comap Fin.castSuccEmb).card, (b' : ℕ) = b ∧
-            ∀ u, E.toCellScheme.gradedIndex u =
-                ((univ : Finset (Fin (m + 1))), Tp.toCellScheme.grade b) →
-              ∀ (i : Fin (E.comap (extendByLast f)).card) (j : Fin D.card), (i : ℕ) = j →
-                Fin.last k ∈ D.toCellScheme.scope j →
-                  Tp.ReadsThroughCap E b' u (E.cellMap (extendByLast f) i) (D.label j)
-
-/-- Equal schemes have equal grades at cells with equal positions. -/
-private theorem grade_congr {n : ℕ} {S S' : Scheme.{u} n} (h : S = S') {i : Fin S.card}
-    {j : Fin S'.card} (hij : (i : ℕ) = j) : S.toCellScheme.grade i = S'.toCellScheme.grade j := by
-  subst h
-  rw [Fin.ext hij]
-
-/-- **Cap-reading extensions give stable recovery schemes for the graded cap calibration.**  Given
-the calibration, take a full-scope graded cap (`StageType.GradedCapCalibration.exists_univ_cap`)
-and a cap-reading extension `E` for it; `E` carries a coface of `T⁺↓λ_ξ`
-(`StageType.exists_mem_cofaces_reduce_of_isLegal`), and its cells at `(univ, N)` read the new cells
-of `D` through the cap, so it is a stable recovery scheme
-(`StageType.IsStableRecoveryScheme.of_readsThroughUnivCap`).  Both statements are open; this is
-the implication between them only. -/
-theorem HasCapReadingExtensions.hasStableRecoverySchemes (h : HasCapReadingExtensions ξ) :
-    HasStableRecoverySchemes ξ (GradedCapCalibration ξ) := by
-  intro m k Tp f P hT hk hP D hD γ hγ hC
-  obtain ⟨b, hbu, hcap⟩ := hC.exists_univ_cap hT
-  obtain ⟨E, hE, hc, hcT, hf, hED, b', hb'b, hread⟩ := h Tp f P hT hk hP D hD γ hγ b hbu hcap
+/-- **A cap-reading extension for a graded cap is a stable recovery scheme**: it carries a coface
+of `T⁺↓λ_ξ` (`StageType.exists_mem_cofaces_reduce_of_isLegal`), and its cells at `(univ, N)` read
+the new cells of `D` through the cap
+(`StageType.IsStableRecoveryScheme.of_readsThroughCap_univ`).  The scope of `b` is not used. -/
+theorem IsCapReadingExtension.isStableRecoveryScheme {Tp : StageType.{u} (blockStage (ξ + 1)) m}
+    {f : Fin k ↪ Fin m} {P : StageType.{u} (blockStage (ξ + 1)) k}
+    (hP : restrictFace f Tp = some P) {D : StageType.{u} (blockStage (ξ + 1)) (k + 1)}
+    (hD : D ∈ P.cofaces) {γ : Ordinal.{u}} {b : Fin Tp.card} (hcap : IsGradedCap ξ Tp D γ b)
+    {E : Scheme.{u} (m + 1)} (h : IsCapReadingExtension Tp f D b E) :
+    Tp.IsStableRecoveryScheme f D γ E := by
+  obtain ⟨hE, hc, hcT, hf, hED, b', hb'b, hread⟩ := h
   obtain ⟨hb, hkb, hγb, -⟩ := hcap
   -- the grade of the cap in `E` is its grade in `T⁺`
   have hg : E.toCellScheme.grade (E.cellMap Fin.castSuccEmb b') = Tp.toCellScheme.grade b :=
-    grade_congr hcT hb'b
-  refine ⟨E, IsStableRecoveryScheme.of_readsThroughUnivCap hP hD
-    (exists_mem_cofaces_reduce_of_isLegal hE hc hcT) hf hED hb'b ?_ ?_ ?_ ?_⟩
+    Scheme.grade_congr hcT hb'b
+  refine IsStableRecoveryScheme.of_readsThroughCap_univ hP hD
+    (exists_mem_cofaces_reduce_of_isLegal hE hc hcT) hf hED hb'b ?_ ?_ ?_ ?_
   · rw [hg]
     exact hb
   · rw [hg]
@@ -349,6 +343,41 @@ theorem HasCapReadingExtensions.hasStableRecoverySchemes (h : HasCapReadingExten
     exact hγb
   · rw [hg]
     exact hread
+
+variable (ξ) in
+/-- **Cap-reading extensions at `ξ`** (a new named statement; open): for every legal stage type
+`T⁺` at `λ_{ξ+1}` on `m` points, every embedding `f` of `k > 0` points with face `P`, every coface
+`D` of `P`, every `γ < λ_{ξ+1}` and every graded cap `b` of `T⁺` for `D` and `γ`
+(`StageType.IsGradedCap`) of full scope, there is a cap-reading extension of `T⁺` along `f` for
+`D` and `b` (`StageType.IsCapReadingExtension`).
+
+It is a finite statement about stage types and schemes, with no realization.  It implies stable
+recovery schemes for the graded cap calibration
+(`StageType.HasCapReadingExtensions.hasStableRecoverySchemes`).  Its legality and face clauses hold
+for every stable recovery scheme (argued, not formalized); its reading clause, a condition on the
+rows of `E` at `(univ, N)`, replaces the recovery clause over every stage type on `E`: sufficient
+(`StageType.IsStableRecoveryScheme.of_readsThroughCap_univ`), not known to be necessary, and asked
+for every full-scope graded cap.  It is not proved, and no implication from or to the coatom
+extension property with apex (`StageType.HasApexCoatomExtensions`, still to be proved) is compiled.
+-/
+def HasCapReadingExtensions : Prop :=
+  ∀ ⦃m k : ℕ⦄ (Tp : StageType.{u} (blockStage (ξ + 1)) m) (f : Fin k ↪ Fin m)
+    (P : StageType.{u} (blockStage (ξ + 1)) k), Tp.IsLegal → 0 < k →
+    restrictFace f Tp = some P → ∀ D ∈ P.cofaces, ∀ γ : Ordinal.{u}, γ < blockStage (ξ + 1) →
+      ∀ b : Fin Tp.card, Tp.toCellScheme.scope b = univ → IsGradedCap ξ Tp D γ b →
+        ∃ E : Scheme.{u} (m + 1), IsCapReadingExtension Tp f D b E
+
+/-- **Cap-reading extensions give stable recovery schemes for the graded cap calibration.**  Given
+the calibration, take a full-scope graded cap (`StageType.GradedCapCalibration.exists_univ_cap`)
+and a cap-reading extension for it, a stable recovery scheme
+(`StageType.IsCapReadingExtension.isStableRecoveryScheme`).  Both statements are open; this is the
+implication between them only. -/
+theorem HasCapReadingExtensions.hasStableRecoverySchemes (h : HasCapReadingExtensions ξ) :
+    HasStableRecoverySchemes ξ (GradedCapCalibration ξ) := by
+  intro m k Tp f P hT hk hP D hD γ hγ hC
+  obtain ⟨b, hbu, hcap⟩ := hC.exists_univ_cap hT
+  obtain ⟨E, hE⟩ := h Tp f P hT hk hP D hD γ hγ b hbu hcap
+  exact ⟨E, hE.isStableRecoveryScheme hP hD hcap⟩
 
 end StageType
 

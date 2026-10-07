@@ -97,6 +97,12 @@ scopes, grades, and rows at cells with equal positions. -/
   obtain rfl : R = R' := CellScheme.Rows.ext (funext fun s ↦ funext fun t ↦ hrow s s t t rfl rfl)
   rfl
 
+/-- Equal schemes have equal grades at cells with equal positions. -/
+theorem grade_congr {S S' : Scheme.{u} n} (h : S = S') {i : Fin S.card} {j : Fin S'.card}
+    (hij : (i : ℕ) = j) : S.toCellScheme.grade i = S'.toCellScheme.grade j := by
+  subst h
+  rw [Fin.ext hij]
+
 /-! ### Visible cells and the cell map -/
 
 variable (f : Fin m ↪ Fin n) (g : Fin k ↪ Fin m)
@@ -365,6 +371,18 @@ theorem isConsistent_comap {S : Scheme.{u} n} (hS : S.rows.IsConsistent) :
 theorem isComplete_comap {S : Scheme.{u} n} (hS : S.toCellScheme.IsComplete) :
     (S.comap f).toCellScheme.IsComplete :=
   (hS.comap f).reindex (S.cellEquiv f).surjective
+
+/-! ### The first `m` points and the new point -/
+
+/-- **A set containing the first `m` points and the new point is the ground set**: a set of points
+of `Fin (m + 1)` containing the range of `Fin.castSuccEmb` and `Fin.last m` is `univ`. -/
+theorem eq_univ_of_map_castSuccEmb_subset {F : Finset (Fin (m + 1))}
+    (h : univ.map (Fin.castSuccEmb : Fin m ↪ Fin (m + 1)) ⊆ F) (hl : Fin.last m ∈ F) :
+    F = univ := by
+  refine eq_univ_of_forall fun x ↦ ?_
+  induction x using Fin.lastCases with
+  | last => exact hl
+  | cast x => exact h (mem_map_of_mem _ (mem_univ x))
 
 /-! ### A face avoiding an extreme point -/
 

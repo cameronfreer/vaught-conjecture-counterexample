@@ -2337,16 +2337,22 @@ Each checkpoint needs both its abstract API and a concrete application:
    `N` that are not nested, reference cells in two blocks for one donor, and `N > k + 2`; the finite
    statement at every input is still to be proved; a full-scope cap,
    `Continuation/StableRecoveryFullCap`: every graded cap can be taken of full scope at a legal
-   context, `StageType.GradedCapCalibration.exists_univ_cap`, the only graded face of grade `N`
-   containing a full-scope cap and a new cell is `(univ, N)`,
-   `Scheme.setOf_gradedFaces_univCap_eq_singleton`, recovery from the cells at `(univ, N)`,
-   `StageType.IsStableRecoveryScheme.of_readsThroughUnivCap`, and the coface from legality,
-   `StageType.exists_mem_cofaces_reduce_of_isLegal`; the new named statement
-   `StageType.HasCapReadingExtensions` (open; no implication from or to
-   `StageType.HasApexCoatomExtensions` compiled) implies the finite statement,
+   context, `StageType.GradedCapCalibration.exists_univ_cap`; the graded faces of grade `N`
+   containing a full-scope cap and a new cell reduce to `(univ, N)`,
+   `Scheme.setOf_gradedFaces_univCap_eq_singleton` (faces only; the forcing of labels stays
+   informal); recovery from the cells at `(univ, N)`,
+   `StageType.IsStableRecoveryScheme.of_readsThroughCap_univ`; the coface from legality,
+   `StageType.exists_mem_cofaces_reduce_of_isLegal`; reading through a cap depends on its grade
+   only, away from the formal top, `StageType.ReadsThroughCap.of_grade_eq`; the new named statement
+   `StageType.HasCapReadingExtensions` (cap-reading extensions, `StageType.IsCapReadingExtension`;
+   open; no implication from or to `StageType.HasApexCoatomExtensions`, still to be proved,
+   compiled) implies the finite statement,
    `StageType.HasCapReadingExtensions.hasStableRecoverySchemes`; tests in
-   `Continuation/StableRecoveryFullCapExamples`, the twin donors through `(univ, N)` and a
-   full-scope cap at the interior context; `README.md`, Layer 4, status, output 3).
+   `Continuation/StableRecoveryFullCapExamples`: the twin donors through `(univ, N)`, a full-scope
+   cap at the interior context, and the interior scheme as a cap-reading extension for every
+   full-scope graded cap there,
+   `Continuation.StableRecoveryInterior.isCapReadingExtension_interiorScheme`; `README.md`, Layer 4,
+   status, output 3).
    Step 7 is compiled conditionally (`README.md`, the section on the top-free witnesses): the loss
    at `η` under uniqueness at `λ_η` (`nonempty_loss_of_topFreeWitness`), and per block under
    `StageType.HasApexCoatomExtensions` at `λ_η` and uniqueness of the model expansions at `λ_η`
