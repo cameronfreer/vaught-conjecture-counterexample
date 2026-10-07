@@ -69,7 +69,7 @@ open scoped Ordinal
 section Examples
 
 /-- The countable ordinals. -/
-private abbrev CountableOrdinal : Type 1 := Iio (ω₁ : Ordinal.{0})
+abbrev CountableOrdinal : Type 1 := Iio (ω₁ : Ordinal.{0})
 
 /-- The `2 ^ ℵ₁` further classes: the sets of countable ordinals. -/
 private abbrev FurtherClasses : Type 1 := Set CountableOrdinal
@@ -98,7 +98,7 @@ private theorem uniform_eq {X : Type*} {D : Set X} {s : X} (hs : s ∉ D) :
   simp only [hp', hq']
 
 /-- The successor of a countable ordinal is countable. -/
-private theorem add_one_lt_omega_one {ξ : Ordinal.{0}} (hξ : ξ < ω₁) : ξ + 1 < ω₁ :=
+theorem add_one_lt_omega_one {ξ : Ordinal.{0}} (hξ : ξ < ω₁) : ξ + 1 < ω₁ :=
   (isSuccLimit_omega 1).succ_lt hξ
 
 /-- One is a countable ordinal. -/
@@ -106,14 +106,14 @@ private theorem one_lt_omega_one : (1 : Ordinal.{0}) < ω₁ :=
   Ordinal.one_lt_omega0.trans Ordinal.omega0_lt_omega_one
 
 /-- A countable ordinal is not at least its successor. -/
-private theorem not_add_one_le (ξ : Ordinal.{0}) : ¬ ξ + 1 ≤ ξ :=
+theorem not_add_one_le (ξ : Ordinal.{0}) : ¬ ξ + 1 ≤ ξ :=
   (Order.lt_add_one_iff.2 le_rfl).not_ge
 
 /-! ### The tail domains -/
 
 /-- The tail domains of the countable ordinals: stage `ξ` keeps the ordinals `≥ ξ`, so the
 stages at or above `ω₁` are empty. -/
-private def tail : ExpansionDomains CountableOrdinal where
+def tail : ExpansionDomains CountableOrdinal where
   domain ξ := {x | ξ ≤ x.1}
   zero := eq_univ_of_forall fun x ↦ (zero_le : (0 : Ordinal) ≤ x.1)
   antitone _ _ h _ hx := h.trans hx
@@ -160,8 +160,8 @@ example : (⋂ ξ < ω₁, tail.domain ξ) = ∅ :=
 
 /-! ### Logical agreement is needed -/
 
-/-- The tail domains with the further classes adjoined to every domain below `ω₁`. -/
-private def adjoinPersistent : ExpansionDomains (CountableOrdinal ⊕ FurtherClasses) where
+/-- The tail domains with the classes of `Y` adjoined to every domain below `ω₁`. -/
+def adjoinPersistent (Y : Type*) : ExpansionDomains (CountableOrdinal ⊕ Y) where
   domain ξ := {z | Sum.elim (· ∈ tail.domain ξ) (fun _ ↦ ξ < ω₁) z}
   zero := eq_univ_of_forall fun
     | .inl x => by simp [tail.zero]
@@ -179,21 +179,22 @@ private def adjoinPersistent : ExpansionDomains (CountableOrdinal ⊕ FurtherCla
 /-- **Logical agreement cannot be dropped**: the domains with the further classes adjoined have
 countable and nonempty losses and more than `ℵ₁` classes, so no family of observations
 separating the classes is constant on the domains. -/
-example : adjoinPersistent.HasCountableLosses ∧ adjoinPersistent.HasNonemptyLosses ∧
+example : (adjoinPersistent FurtherClasses).HasCountableLosses ∧
+    (adjoinPersistent FurtherClasses).HasNonemptyLosses ∧
     ℵ₁ < #(CountableOrdinal ⊕ FurtherClasses) ∧
     ∀ (truth : CountableOrdinal ⊕ FurtherClasses → CountableOrdinal ⊕ FurtherClasses → Prop),
       (∀ p q, p ≠ q → ∃ s, ¬ (truth s p ↔ truth s q)) →
-        ¬ adjoinPersistent.HasLogicalAgreement truth := by
-  have hc : adjoinPersistent.HasCountableLosses := by
+        ¬ (adjoinPersistent FurtherClasses).HasLogicalAgreement truth := by
+  have hc : (adjoinPersistent FurtherClasses).HasCountableLosses := by
     refine ⟨fun ξ hξ ↦ ((tail_hasCountableLosses.countable_loss ξ hξ).image Sum.inl).mono ?_⟩
     rintro (x | y) ⟨h₁, h₂⟩
     · exact mem_image_of_mem _ ⟨h₁, h₂⟩
     · exact (h₂ (add_one_lt_omega_one hξ)).elim
-  have hn : adjoinPersistent.HasNonemptyLosses := ⟨fun ξ hξ ↦
+  have hn : (adjoinPersistent FurtherClasses).HasNonemptyLosses := ⟨fun ξ hξ ↦
     have ⟨x, hx⟩ := tail_hasNonemptyLosses.nonempty_loss ξ hξ
     ⟨.inl x, hx⟩⟩
   exact ⟨hc, hn, aleph_one_lt_mk_sum, fun truth hsep ha ↦
-    aleph_one_lt_mk_sum.ne' (adjoinPersistent.mk_eq_aleph_one hc hn ha hsep)⟩
+    aleph_one_lt_mk_sum.ne' ((adjoinPersistent FurtherClasses).mk_eq_aleph_one hc hn ha hsep)⟩
 
 /-! ### Countable losses are needed -/
 
