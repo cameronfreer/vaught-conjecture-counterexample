@@ -2877,6 +2877,28 @@ Each checkpoint needs both its abstract API and a concrete application:
    (`Realization.isModel_of_hasFiniteCutReceiving`, `Realization/CapToModel`) conditional on the
    nonemptiness of the instances of uniformity and dominance, which the coatom extension property
    with apex gives (`CapToModel.of_hasApexCoatomExtensions`, at `ω`).
+   Status of the attached gate (a route to 4b-ii; its target text, with the conclusion
+   `R.IsModel → R.HasFiniteCutReceiving` at every limit stage, is in a separate open change).
+   Step 1, acquisition: 4b-i above (arity above any requested bound, the cap labelled above any
+   floor below the stage, anchoring).  Step 2, the attached gated extension as data
+   (`StageType.AttachedGatedExtension`, `Extension/AttachedGate`): open in general.  Compiled: the
+   lifts its legality forces at caps not `⊥`, as a necessary condition
+   (`StageType.AttachedGatedExtension.exists_lift`); the row design in which the gate's row is `⊥`
+   at every twin except one ceiling fails at `GatedExtensionCounterexample.P α`
+   (`AttachedGateCounterexample.exists_reader`, from `StageType.not_forall_le_of_opposite`, stated
+   at every arity, through lifts whose private faces are not the labels of `P α`); instances with
+   one reader (`AttachedGateExamples.exists_attachedGatedExtension_two_zero`) and with two readers
+   at `P α` (`AttachedGateExamples.attachedGatedExtensionP`).  Argued, not formalized: nothing is
+   forced through the readers at the cap `⊥`.  Open: whether, for the literal private face,
+   availability from the private cap must reach a reader other than the ceiling (so the target's
+   step 3 as written is neither proved nor refuted), and any analogue at arity at least `4`.
+   Step 3, recovery through the readers (`CellScheme.Rows.IsLawful.recover_of_readsOnly`,
+   `StageType.AttachedGatedExtension.recover`): compiled.  Step 4, the gate from the
+   bottom-pattern clause (`Realization.IsModel.exists_attachedGate`): compiled.  Step 5, the
+   assembly at a given attached gated extension
+   (`Realization.IsModel.realizesOver_receivingFamily_of_attachedGatedExtension`,
+   `Realization/AttachedGateReceiving`): compiled.  (R1) is not claimed: it needs step 2 over every
+   acquired private context.
 5. Structural continuation (the structural stable candidate); then items 3.2 and 3.3 for (R4)
    (the acquisition of its calibrated data, its occurrence, and the evaluation of the stable
    labelling by the recovery statement of checkpoint 4); three terminal comparisons (the first
@@ -4026,6 +4048,18 @@ witnesses).**
   `Extension/Basic`, or `Stage/` for the closed-point choice), is a later change of proofs only,
   with no statement change.
 
+- The attached gate: `Label.ne_bot_of_min_eq_of_ne_bot` is in `Label/Basic`;
+  `CellScheme.Rows.ReadsOnly` and the row lemmas stated with it
+  (`CellScheme.Rows.le_of_row_self_le_of_locality`,
+  `CellScheme.Rows.IsLawful.le_of_row_self_le`, `exists_mem_le_of_readsOnly`,
+  `recover_of_readsOnly`, `min_eq_visibilityReplace_of_row_eq`,
+  `CellScheme.Rows.row_lt_of_le_dominant`,
+  `CellScheme.Rows.IsLawfulBelow.le_of_readsOnly_singleton`) are in `Extension/Gate`, beside
+  `CellScheme.Rows.IsGate`.  In place: `Extension/AttachedGate` (the structure, its lemmas,
+  `StageType.IsLegal.exists_isLawfulBelow_castSucc`, `StageType.not_forall_le_of_opposite`),
+  `Extension/AttachedGateCounterexample`, `Extension/AttachedGateExamples`, and
+  `Realization/AttachedGateReceiving`, beside `Realization/GateRecovery`.
+
 **Quantitative reconstruction, row 1 (`COMPANIONS.md`, "Further companion results").**
 
 - `Definability/Syntax`: Layer 0.  It imports no module of this repository (only InfinitaryLogic's
@@ -4165,8 +4199,9 @@ witnesses).**
   itself is neither proved nor refuted.
 - The ordinary construction of (R1) as data (4b-ii), the proof of
   `StageType.HasCoupledGatedPinnedExtensions` (open; its first form
-  `StageType.HasGatedPinnedExtensions` is refuted); (R2), (R3), (R4); and output 3, the proof of
-  `ContinuationCriterion`.
+  `StageType.HasGatedPinnedExtensions` is refuted), or an attached gated extension
+  (`StageType.AttachedGatedExtension`) over every acquired private context (open); (R2), (R3),
+  (R4); and output 3, the proof of `ContinuationCriterion`.
 - The graded back-and-forth theorem (`README.md`, Layer 0), formerly listed here,
   is retired, not moved: both of its intended applications, approximate comparison of full
   presentations and the back-and-forth form of condition 3 of the expansion-domain route, compile
