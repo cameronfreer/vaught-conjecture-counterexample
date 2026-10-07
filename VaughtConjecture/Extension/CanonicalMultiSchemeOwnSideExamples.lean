@@ -254,8 +254,8 @@ theorem copyRows_lt_of_T5_TL (hIL : I.left = T5 α) (hIR : I.right = TL α) {R :
     | (rw [gradedIndex_copyOrig]; rfl)
 
 /-- **The copies of `(D, 2)` and `(D, 3)` read the dead common cell below `({3}, 1)`** in every step
-of the canonical multi-layer scheme of a seed whose coatom types are `T5` and `T5` (`seed5`): the
-prescription with every parameter `⊤` below `(D, 3)` forces `⊤` at `({3}, 1)` (the coupling
+of the canonical multi-layer scheme of a seed whose coatom types are `T5` and `T5` (e.g. `seed5`):
+the prescription with every parameter `⊤` below `(D, 3)` forces `⊤` at `({3}, 1)` (the coupling
 `G ≤ A_C` of `T5`), is `⊤` at `(D, 2)` and `(D, 3)`, and is `⊥` at `({0}, 1)`. -/
 theorem copyRows_lt_of_T5_T5 (hIL : I.left = T5 α) (hIR : I.right = T5 α) {R : CopyRows I}
     (h : I.MultiLayerStep canonicalMult (canonicalRows I R)) {d₀ d₃ : Fin I.amalgam.card}
