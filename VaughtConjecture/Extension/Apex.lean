@@ -54,7 +54,8 @@ transforms it back to the labels.  The result is legal (`StageType.isLegal_addAp
   cell.
 
 The new cell is the apex: its graded index is `(univ, n)` and its label `⊤` is the largest
-(`StageType.exists_apex_addApex`), and the faces along embeddings onto proper subsets are those of
+(`StageType.exists_apex_addApex`); it is the only cell of full grade
+(`StageType.eq_of_grade_addApex`), and the faces along embeddings onto proper subsets are those of
 `t` (`StageType.restrictFace_addApex`).  Adding the apex uses no hypothesis on the stage: the apex
 label `⊤` occurs at every stage.  (The stage enters before it: the completion
 (`CompletionBelowFullGrade.completion`) truncates a completion below the full grade of a seed to a
@@ -701,6 +702,22 @@ theorem restrictFace_addApex (f : Fin m ↪ Fin n) (hf : univ.map f ≠ univ) :
     (Scheme.appendFullCellScheme_scope_castSucc _ _) (Scheme.comap_rows_castSucc (h := ht.not_le))
     rfl rfl
     (addApex_label_castSucc ht hn) (mem_range_castSucc_of_addApex ht hn f hf)
+
+/-- **After adding the apex, the apex is the only cell of full grade.** -/
+theorem eq_of_grade_addApex {n : ℕ} {t : StageType.{u} α n} (ht : t.IsLegalBelowFullGrade)
+    (hn : 0 < n) {i : Fin (t.addApex ht hn).card}
+    (hi : (t.addApex ht hn).toCellScheme.grade i = n) :
+    i = Fin.last _ := by
+  -- `t.addApex` has the cells of `t` and the apex, so `Fin.lastCases` applies.
+  change Fin (t.card + 1) at i
+  induction i using Fin.lastCases with
+  | last => rfl
+  | cast d =>
+    exfalso
+    -- The cell scheme of `t.addApex` is `appendFullCellScheme`.
+    change (Scheme.appendFullCellScheme t.toScheme n).grade d.castSucc = n at hi
+    rw [Scheme.appendFullCellScheme_grade_castSucc] at hi
+    exact (ht.grade_lt d).ne hi
 
 /-! ### Adding the apex to `⊥` labels -/
 
