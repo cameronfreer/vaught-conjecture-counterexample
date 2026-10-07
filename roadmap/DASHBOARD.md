@@ -287,10 +287,10 @@ Status of each:
    item 2), `Realization.ResidualAcquisition P`, and `Realization.CutoffDetermination P`
    (`Realization.residualReceiving_of_cutoffDetermination`), for a predicate `P` on acquired
    contexts: the reduction is a template, and its hypotheses are not statements still to be
-   proved (one predicate is defined in a separate open change, with acquisition compiled and
-   determination open; none is defined in the library, and neither acquisition nor determination
-   is proved here beyond the rigid-core instance).  For `P` always true, acquisition is
-   immediate and determination fails (compiled; top-free roots,
+   proved (no predicate for (R2) is defined in the library, and neither acquisition nor
+   determination for (R2) is proved beyond the rigid-core instance; one is defined in a separate
+   open change, with acquisition compiled and determination open).  For `P` always true,
+   acquisition is immediate and determination fails (compiled; top-free roots,
    `Continuation/ExactReceivingExamples`), which shows only that determination is not vacuous.
    The cofaces in which the root is a rigid core need only (R1) in the same form
    (`Realization.ResidualReceiving.of_not_isRigidCoreIn`).
@@ -299,9 +299,9 @@ Status of each:
    (`Realization.hollowReceiving_iff`).  A reduction is compiled: it follows from
    `Realization.HollowAcquisition H P` and `Realization.SchemeDetermination P` with
    `H := Realization.IsCoverHollowAtBlock` (`Realization.hollowReceiving_of_schemeDetermination`,
-   no receiving used), for a predicate `P`: a template, as in item 5; one predicate is defined,
-   the marked-cap context (acquisition and determination open; below), and for `P` always true
-   acquisition is immediate and determination fails (compiled).  With item 6, the
+   no receiving used), for a predicate `P`: a template, as in item 5.  One predicate for (R3) is
+   defined (the marked-cap context, below), with acquisition and determination open; for `P`
+   always true, acquisition is immediate and determination fails (compiled).  With item 6, the
    count uses (R3) at every cover-hollow model with unbounded growth, a globally rigid core
    included (item 6′ below excludes it).  (R3) forces a globally rigid core of a cover-hollow
    model with unbounded growth to be rigid in every legal donor over its type
