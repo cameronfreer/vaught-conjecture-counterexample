@@ -187,6 +187,16 @@ Notes on the rows, each with its marker:
   each still to be proved, with neither sentence separation nor López–Escobar
   (`densitySentence_isThinOnNatModels_of_terminalClassification_bfScattered`).
 
+## Targets from the unconditional route
+
+Prospective (`IMPLEMENTATION.md`, "Targets from the unconditional route"): one contract for each
+hypothesis of the five-hypothesis form, complete only when that hypothesis is compiled for every
+input.  U1, (R1) through an attached gated scheme (a gate at `⊤` realized by the bottom-pattern
+clause), first; U2, `StableCappedReceiving` by calibrated receiving in the model, then the
+continuation criterion; U3, (R3) and (R2) by exact recovery; U4, the apex property by a completion
+over the whole boundary.  The known failures (the gated and coupled inputs, `seedL`, the twin
+donors, the grade of private tops) are their tests.  No status on this page changes.
+
 ## The named hypotheses of the main theorem
 
 Three forms of the main theorem on `ℕ` are compiled, each conditionally on named hypotheses.  The
