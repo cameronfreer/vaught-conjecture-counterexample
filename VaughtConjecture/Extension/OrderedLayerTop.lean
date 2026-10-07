@@ -33,7 +33,9 @@ fields at the grades `k ≤ 3` (`Seed.OrderedLayerStepBelowTop`):
   `4` (`eq_newCell_four`) and, if not `⊥` there, `⊥` below the grade `4`
   (`eq_bot_of_newCell_four`); if the prescription is `⊥` at its apex, lift its restriction below the
   grade `3` and extend by `⊥`; otherwise it is `⊥` below its apex, and the lift is the labelling of
-  its apex label alone;
+  its apex label alone.  The argument holds in every scheme over the amalgam with these facts at
+  the grade `4` (`cappedLift_four_of_oldCells`), for example in a multi-layer scheme
+  (`CrossedCouplingCounterexample.cappedLift_four_HG`);
 * the lawful extension of the glued labelling is the labelling of `⊤` at the cells of grade `4`
   alone.
 
@@ -243,16 +245,47 @@ theorem isLawfulBelow_omegaLabel {Ω : Label.{u}} (hΩ : IsSelfVisible 4 Ω) :
 
 /-! ### The capped lift at the grade `4` -/
 
-/-- **The capped lift from a coatom at the grade `4` to `(univ, 4)`**, from the capped lift at the
-grade `3`.  If the prescription is `⊥` at the apex, lift its restriction below the grade `3` (with
-the ambient, or with `⊥` when the ambient is not `⊥` at the grade `4`, where the cap is then `⊥`)
-and extend by `⊥`; otherwise the prescription is `⊥` below its apex, and the lift is the labelling
-of its apex label alone. -/
-theorem cappedLift_four {B : Finset (Fin 5)} (hB : B = coatomC ∨ B = coatomD)
-    (h3 : (layerScheme I ρ).rows.CappedLift (X := (B, 3)) (Y := ((univ : Finset (Fin 5)), 3))
+omit hρ4 in
+/-- **The capped lift from a coatom at the grade `4` to `(univ, 4)`, in a scheme over the
+amalgam of a seed with bottom apexes**, from the capped lift at the grade `3`.  The scheme `S` on
+five points has every grade at most `4`; its cells of scope other than the ground set are the
+images `o d` of the cells `d` of the amalgam, with their graded indices, and the row of `o a`, for
+`a` of grade `4`, is `⊥` exactly below the grade `4`.  At the grade `4`, a labelling lawful below
+`(univ, 4)` takes at every cell of grade `4` its value at a cell `t`, and, if not `⊥` there, is
+`⊥` below the grade `4`; and the labelling of `Ω` at the cells of grade `4` alone is lawful below
+`(univ, 4)` for every `Ω` self-visible at `4`.
+
+If the prescription is `⊥` at the apex, lift its restriction below the grade `3` (with the
+ambient, or with `⊥` when the ambient is not `⊥` at the grade `4`, where the cap is then `⊥`) and
+extend by `⊥`; otherwise the prescription is `⊥` below its apex, and the lift is the labelling of
+its apex label alone. -/
+theorem cappedLift_four_of_oldCells {S : Scheme.{u} 5} (o : Fin I.amalgam.card → Fin S.card)
+    (hgi : ∀ d, S.toCellScheme.gradedIndex (o d) = I.amalgam.toCellScheme.gradedIndex d)
+    (hold : ∀ z, S.toCellScheme.scope z ≠ univ → ∃ d, z = o d)
+    (hrow : ∀ a, I.amalgam.toCellScheme.grade a = 4 →
+      ∀ z : S.toCellScheme.below (S.toCellScheme.gradedIndex (o a)),
+        S.rows.row (o a) z = ⊥ ↔ S.toCellScheme.grade z.1 ≠ 4)
+    (hgr : ∀ z, S.toCellScheme.grade z ≤ 4) (t : Fin S.card)
+    (heq : ∀ w : Fin S.card → Label.{u},
+      S.rows.IsLawfulBelow ((univ : Finset (Fin 5)), 4) (fun z ↦ w z) →
+      ∀ z, S.toCellScheme.grade z = 4 → w z = w t)
+    (hbot : ∀ w : Fin S.card → Label.{u},
+      S.rows.IsLawfulBelow ((univ : Finset (Fin 5)), 4) (fun z ↦ w z) → w t ≠ ⊥ →
+      ∀ z, S.toCellScheme.grade z ≠ 4 → w z = ⊥)
+    (hΩ : ∀ Ω : Label.{u}, IsSelfVisible 4 Ω →
+      S.rows.IsLawfulBelow ((univ : Finset (Fin 5)), 4)
+        (fun z ↦ if S.toCellScheme.grade z = 4 then Ω else ⊥))
+    {B : Finset (Fin 5)} (hB : B = coatomC ∨ B = coatomD)
+    (h3 : S.rows.CappedLift (X := (B, 3)) (Y := ((univ : Finset (Fin 5)), 3))
       ⟨subset_univ _, le_rfl⟩) :
-    (layerScheme I ρ).rows.CappedLift (X := (B, 4)) (Y := ((univ : Finset (Fin 5)), 4))
+    S.rows.CappedLift (X := (B, 4)) (Y := ((univ : Finset (Fin 5)), 4))
       ⟨subset_univ _, le_rfl⟩ := by
+  have hgo (d) : S.toCellScheme.grade (o d) = I.amalgam.toCellScheme.grade d :=
+    congrArg Prod.snd (hgi d)
+  have hso (d) : S.toCellScheme.scope (o d) = I.amalgam.toCellScheme.scope d :=
+    congrArg Prod.fst (hgi d)
+  have hmem (z) : z ∈ S.toCellScheme.below ((univ : Finset (Fin 5)), 4) :=
+    ⟨subset_univ _, hgr z⟩
   -- Step 1: the apex `a` at `(B, 4)` is the only cell of grade `4` below `(B, 4)`.
   have hBne : B ≠ univ := by rcases hB with rfl | rfl <;> decide
   have hBcard : #B = 4 := by rcases hB with rfl | rfl <;> decide
@@ -262,132 +295,140 @@ theorem cappedLift_four {B : Finset (Fin 5)} (hB : B = coatomC ∨ B = coatomD)
     · exact coatomC_mem_faces I
     · exact coatomD_mem_faces I
   have hag : I.amalgam.toCellScheme.grade a = 4 := congrArg Prod.snd ha
-  have hag' : (layerScheme I ρ).toCellScheme.grade (oldCell I ρ a) = 4 := by
-    rw [grade_oldCell, hag]
-  have haB : oldCell I ρ a ∈ (layerScheme I ρ).toCellScheme.below (B, 4) := oldCell_mem_below ha.le
-  have huniq : ∀ z ∈ (layerScheme I ρ).toCellScheme.below (B, 4),
-      (layerScheme I ρ).toCellScheme.grade z = 4 → z = oldCell I ρ a := by
+  have hag' : S.toCellScheme.grade (o a) = 4 := by rw [hgo, hag]
+  have haB : o a ∈ S.toCellScheme.below (B, 4) := by
+    rw [CellScheme.mem_below, hgi]; exact ha.le
+  have huniq : ∀ z ∈ S.toCellScheme.below (B, 4), S.toCellScheme.grade z = 4 → z = o a := by
     intro z hz hz4
-    obtain ⟨d, rfl⟩ := exists_eq_oldCell (z := z) fun h ↦ hBne (univ_subset_iff.mp (h ▸ hz.1))
-    have hs : I.amalgam.toCellScheme.scope d ⊆ B := by rw [← scope_oldCell (ρ := ρ)]; exact hz.1
-    have hg : I.amalgam.toCellScheme.grade d = 4 := by rw [← grade_oldCell (ρ := ρ)]; exact hz4
+    obtain ⟨d, rfl⟩ := hold z fun h ↦ hBne (univ_subset_iff.mp (h ▸ hz.1))
+    have hs : I.amalgam.toCellScheme.scope d ⊆ B := by rw [← hso]; exact hz.1
+    have hg : I.amalgam.toCellScheme.grade d = 4 := by rw [← hgo]; exact hz4
     have hcard : 4 ≤ #(I.amalgam.toCellScheme.scope d) :=
       hg ▸ I.amalgam.isWellFormed.isWellFormed.grade_le_card d
-    refine congrArg (oldCell I ρ) (hI.eq_of_grade_four hg hag ?_)
+    refine congrArg o (hI.eq_of_grade_four hg hag ?_)
     rw [show I.amalgam.toCellScheme.scope a = B from congrArg Prod.fst ha]
     exact eq_of_subset_of_card_le hs (by rw [hBcard]; exact hcard)
-  have hbelow : ∀ z ∈ (layerScheme I ρ).toCellScheme.below (B, 4),
-      z ∈ (layerScheme I ρ).toCellScheme.below
-        ((layerScheme I ρ).toCellScheme.gradedIndex (oldCell I ρ a)) := fun z hz ↦ by
-    rw [gradedIndex_oldCell, ha]; exact hz
+  have hbelow : ∀ z ∈ S.toCellScheme.below (B, 4),
+      z ∈ S.toCellScheme.below (S.toCellScheme.gradedIndex (o a)) := fun z hz ↦ by
+    rw [hgi, ha]; exact hz
   -- Step 2: extend the prescription `p` and the ambient `q` by `⊥` to all cells (`p'`, `q'`); it
   -- is enough to lift `p'` against `q'`.  The ambient is constant at the grade `4`.
   refine (Rows.cappedLift_iff_forall_exists _).mpr fun c hc p q hp hq hpq ↦ ?_
   let p' := Rows.extendBot (B, 4) p
   let q' := Rows.extendBot ((univ : Finset (Fin 5)), 4) q
-  have hpl : (layerScheme I ρ).rows.IsLawfulBelow (B, 4) (fun z ↦ p' z) :=
-    Rows.isLawfulBelow_extendBot.mpr hp
-  have hql : (layerScheme I ρ).rows.IsLawfulBelow ((univ : Finset (Fin 5)), 4) (fun z ↦ q' z) :=
+  have hpl : S.rows.IsLawfulBelow (B, 4) (fun z ↦ p' z) := Rows.isLawfulBelow_extendBot.mpr hp
+  have hql : S.rows.IsLawfulBelow ((univ : Finset (Fin 5)), 4) (fun z ↦ q' z) :=
     Rows.isLawfulBelow_extendBot.mpr hq
-  have hp'z : ∀ z (hz : z ∈ (layerScheme I ρ).toCellScheme.below (B, 4)), p' z = p ⟨z, hz⟩ :=
+  have hp'z : ∀ z (hz : z ∈ S.toCellScheme.below (B, 4)), p' z = p ⟨z, hz⟩ :=
     fun _ hz ↦ Rows.extendBot_of_mem p hz
-  have hq'z : ∀ z, q' z = q ⟨z, mem_below_univ_four z⟩ :=
-    fun z ↦ Rows.extendBot_of_mem q (mem_below_univ_four z)
-  have hpq' : ∀ z ∈ (layerScheme I ρ).toCellScheme.below (B, 4), min (q' z) c = min (p' z) c :=
+  have hq'z : ∀ z, q' z = q ⟨z, hmem z⟩ := fun z ↦ Rows.extendBot_of_mem q (hmem z)
+  have hpq' : ∀ z ∈ S.toCellScheme.below (B, 4), min (q' z) c = min (p' z) c :=
     fun z hz ↦ by
       rw [hp'z z hz, hq'z z]
       exact hpq ⟨z, hz⟩
-  have hqa : q' (oldCell I ρ a) = q' (newCell I ρ 4) := eq_newCell_four hρ4 hql hag'
-  suffices h : ∃ x : Fin (layerScheme I ρ).card → Label.{u},
-      (layerScheme I ρ).rows.IsLawfulBelow ((univ : Finset (Fin 5)), 4) (fun z ↦ x z) ∧
-      (∀ z, min (x z) c = min (q' z) c) ∧
-      ∀ z ∈ (layerScheme I ρ).toCellScheme.below (B, 4), x z = p' z by
+  have hqa : q' (o a) = q' t := heq _ hql _ hag'
+  suffices h : ∃ x : Fin S.card → Label.{u},
+      S.rows.IsLawfulBelow ((univ : Finset (Fin 5)), 4) (fun z ↦ x z) ∧
+      (∀ z, min (x z) c = min (q' z) c) ∧ ∀ z ∈ S.toCellScheme.below (B, 4), x z = p' z by
     obtain ⟨x, hx, hxq, hxp⟩ := h
     refine ⟨fun z ↦ x z, hx, fun z ↦ ?_, fun z ↦ ?_⟩
     · rw [hxq, hq'z z.1]
     · -- The restriction of `x` below `(univ, 4)`, at `z`.
       change x z.1 = p z
       rw [hxp z.1 z.2, hp'z z.1 z.2]
-  by_cases hω : p' (oldCell I ρ a) = ⊥
+  by_cases hω : p' (o a) = ⊥
   · -- Step 3: the prescription is `⊥` at the apex.  If the ambient is not `⊥` at the grade `4`,
     -- the cap is `⊥`; replace the ambient by `⊥` (`q₃`), lift below the grade `3` by `h3`, and
     -- extend by `⊥` above the grade `3`.
-    have hc0 : q' (newCell I ρ 4) ≠ ⊥ → c = ⊥ := fun h ↦ by
+    have hc0 : q' t ≠ ⊥ → c = ⊥ := fun h ↦ by
       have := hpq' _ haB
       rw [hω, min_bot_left, hqa] at this
       exact (min_eq_bot.mp this).resolve_left h
-    let q₃ : Fin (layerScheme I ρ).card → Label.{u} := fun z ↦
-      if q' (newCell I ρ 4) = ⊥ then q' z else ⊥
-    have hq₃ : (layerScheme I ρ).rows.IsLawfulBelow ((univ : Finset (Fin 5)), 3)
-        (fun z ↦ q₃ z) := by
-      by_cases h : q' (newCell I ρ 4) = ⊥
-      · have he : (fun z : (layerScheme I ρ).toCellScheme.below
-              ((univ : Finset (Fin 5)), 3) ↦ q₃ z) =
-            fun z : (layerScheme I ρ).toCellScheme.below ((univ : Finset (Fin 5)), 3) ↦ q' z :=
+    let q₃ : Fin S.card → Label.{u} := fun z ↦ if q' t = ⊥ then q' z else ⊥
+    have hq₃ : S.rows.IsLawfulBelow ((univ : Finset (Fin 5)), 3) (fun z ↦ q₃ z) := by
+      by_cases h : q' t = ⊥
+      · have he : (fun z : S.toCellScheme.below ((univ : Finset (Fin 5)), 3) ↦ q₃ z) =
+            fun z : S.toCellScheme.below ((univ : Finset (Fin 5)), 3) ↦ q' z :=
           funext fun z ↦ ite_eq_left h
         rw [he]
         exact hql.mono (X := ((univ : Finset (Fin 5)), 3)) ⟨subset_rfl, by omega⟩
-      · have he : (fun z : (layerScheme I ρ).toCellScheme.below
-              ((univ : Finset (Fin 5)), 3) ↦ q₃ z) = fun _ ↦ ⊥ :=
+      · have he : (fun z : S.toCellScheme.below ((univ : Finset (Fin 5)), 3) ↦ q₃ z) =
+            fun _ ↦ ⊥ :=
           funext fun z ↦ ite_eq_right h
         rw [he]
         exact Rows.isLawfulBelow_const_bot _
     have hq₃c : ∀ z, min (q₃ z) c = min (q' z) c := fun z ↦ by
-      by_cases h : q' (newCell I ρ 4) = ⊥
+      by_cases h : q' t = ⊥
       · exact congrArg (min · c) (ite_eq_left h)
       · rw [hc0 h, min_bot_right, min_bot_right]
     obtain ⟨x₃, hx₃, hx₃q, hx₃p⟩ := (Rows.cappedLift_iff_forall_exists _).mp h3 c
       (hc.mono (by omega)) (fun z ↦ p' z) (fun z ↦ q₃ z)
       (hpl.mono (X := (B, 3)) ⟨subset_rfl, by omega⟩) hq₃
       (fun z ↦ (hq₃c z.1).trans (hpq' z.1 ⟨z.2.1, z.2.2.trans (by omega)⟩))
-    refine ⟨fun z ↦ if (layerScheme I ρ).toCellScheme.grade z ≤ 3 then
+    refine ⟨fun z ↦ if S.toCellScheme.grade z ≤ 3 then
       Rows.extendBot ((univ : Finset (Fin 5)), 3) x₃ z else ⊥,
       Rows.isLawfulBelow_extendAbove (Rows.isLawfulBelow_extendBot.mpr hx₃), fun z ↦ ?_,
       fun z hz ↦ ?_⟩
     · dsimp only
-      by_cases hz3 : (layerScheme I ρ).toCellScheme.grade z ≤ 3
-      · have hzm : z ∈ (layerScheme I ρ).toCellScheme.below ((univ : Finset (Fin 5)), 3) :=
+      by_cases hz3 : S.toCellScheme.grade z ≤ 3
+      · have hzm : z ∈ S.toCellScheme.below ((univ : Finset (Fin 5)), 3) :=
           ⟨subset_univ _, hz3⟩
         rw [ite_eq_left hz3, Rows.extendBot_of_mem x₃ hzm, hx₃q ⟨z, hzm⟩]
         exact hq₃c z
-      · have hz4 : (layerScheme I ρ).toCellScheme.grade z = 4 := by
-          have := grade_le_four z; omega
-        rw [ite_eq_right hz3, eq_newCell_four hρ4 hql hz4]
-        by_cases h : q' (newCell I ρ 4) = ⊥
+      · have hz4 : S.toCellScheme.grade z = 4 := by have := hgr z; omega
+        rw [ite_eq_right hz3, heq _ hql _ hz4]
+        by_cases h : q' t = ⊥
         · rw [h]
         · rw [hc0 h, min_bot_right, min_bot_right]
     · dsimp only
-      by_cases hz3 : (layerScheme I ρ).toCellScheme.grade z ≤ 3
+      by_cases hz3 : S.toCellScheme.grade z ≤ 3
       · rw [ite_eq_left hz3, Rows.extendBot_of_mem x₃ ⟨subset_univ _, hz3⟩]
         exact hx₃p ⟨z, ⟨hz.1, hz3⟩⟩
-      · have hz4 : (layerScheme I ρ).toCellScheme.grade z = 4 := by
-          have := grade_le_four z; omega
+      · have hz4 : S.toCellScheme.grade z = 4 := by have := hgr z; omega
         rw [ite_eq_right hz3, huniq z hz hz4, hω]
   · -- Step 4: the prescription is not `⊥` at the apex, hence `⊥` below the grade `4` (the row of
     -- the apex); the lift is the labelling of its apex label `Ω` alone.  If `c ≠ ⊥`, the ambient
     -- is not `⊥` at the grade `4`, hence `⊥` below it, and agrees with `Ω` capped at `c` there.
     obtain ⟨ho, hl, -⟩ := Rows.isLawfulBelow_iff_forall.mp hpl
-    have hωsv : IsSelfVisible 4 (p' (oldCell I ρ a)) := hag' ▸ ho _ haB
-    refine ⟨omegaLabel I ρ (p' (oldCell I ρ a)), isLawfulBelow_omegaLabel hρ4 hI hωsv,
+    have hωsv : IsSelfVisible 4 (p' (o a)) := hag' ▸ ho _ haB
+    refine ⟨fun z ↦ if S.toCellScheme.grade z = 4 then p' (o a) else ⊥, hΩ _ hωsv,
       fun z ↦ ?_, fun z hz ↦ ?_⟩
     · by_cases hc0 : c = ⊥
       · rw [hc0, min_bot_right, min_bot_right]
-      have hΩq : q' (newCell I ρ 4) ≠ ⊥ := by
+      have hΩq : q' t ≠ ⊥ := by
         intro h
         have := hpq' _ haB
         rw [hqa, h, min_bot_left] at this
         exact (min_eq_bot.mp this.symm).elim hω hc0
-      rw [omegaLabel]
+      dsimp only
       split_ifs with hz4
-      · rw [eq_newCell_four hρ4 hql hz4, ← hqa]
+      · rw [heq _ hql _ hz4, ← hqa]
         exact (hpq' _ haB).symm
-      · rw [eq_bot_of_newCell_four hρ4 hql hΩq hz4]
-    · rw [omegaLabel]
+      · rw [hbot _ hql hΩq _ hz4]
+    · dsimp only
       split_ifs with hz4
       · rw [huniq z hz hz4]
       · have := (hl _ haB).eq_bot (d := ⟨z, hbelow z hz⟩)
-          ((row_eq_bot_iff_of_grade_four hρ4 hI hag' ⟨z, hbelow z hz⟩).mpr hz4)
+          ((hrow a hag ⟨z, hbelow z hz⟩).mpr hz4)
         exact ((min_eq_bot.mp this).resolve_right hω).symm
+
+/-- **The capped lift from a coatom at the grade `4` to `(univ, 4)`**, from the capped lift at the
+grade `3` (`cappedLift_four_of_oldCells`, with the old cells, the new cell at `(univ, 4)` and the
+top row).  If the prescription is `⊥` at the apex, lift its restriction below the grade `3` (with
+the ambient, or with `⊥` when the ambient is not `⊥` at the grade `4`, where the cap is then `⊥`)
+and extend by `⊥`; otherwise the prescription is `⊥` below its apex, and the lift is the labelling
+of its apex label alone. -/
+theorem cappedLift_four {B : Finset (Fin 5)} (hB : B = coatomC ∨ B = coatomD)
+    (h3 : (layerScheme I ρ).rows.CappedLift (X := (B, 3)) (Y := ((univ : Finset (Fin 5)), 3))
+      ⟨subset_univ _, le_rfl⟩) :
+    (layerScheme I ρ).rows.CappedLift (X := (B, 4)) (Y := ((univ : Finset (Fin 5)), 4))
+      ⟨subset_univ _, le_rfl⟩ :=
+  cappedLift_four_of_oldCells hI (oldCell I ρ) gradedIndex_oldCell
+    (fun _ hz ↦ exists_eq_oldCell hz)
+    (fun a ha ↦ row_eq_bot_iff_of_grade_four hρ4 hI (by rw [grade_oldCell, ha]))
+    grade_le_four (newCell I ρ 4) (fun _ hw _ hz ↦ eq_newCell_four hρ4 hw hz)
+    (fun _ hw hΩ _ hz ↦ eq_bot_of_newCell_four hρ4 hw hΩ hz)
+    (fun _ hΩ ↦ isLawfulBelow_omegaLabel hρ4 hI hΩ) hB h3
 
 end OrderedLayer
 
