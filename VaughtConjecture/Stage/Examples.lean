@@ -63,11 +63,6 @@ private theorem isSome_restrictFace_first_trans_outer :
   rw [isSome_restrictFace_iff]
   decide
 
-/-- Every natural number lies below `ω ^ 2`. -/
-private theorem natCast_lt_omega0_sq (n : ℕ) : (n : Ordinal.{0}) < Ordinal.omega0 ^ 2 := by
-  rw [pow_two]
-  exact (Ordinal.natCast_lt_omega0 n).trans_le (Ordinal.le_mul_left _ Ordinal.omega0_pos)
-
 /-- The cell scheme on two points with the cells `({0}, 1)` and `({0, 1}, 2)`, whose faces are the
 intervals. -/
 private def succCells : CellScheme (Fin 2) (Fin 2) :=
@@ -109,10 +104,8 @@ private noncomputable def succ : StageType.{0} 3 2 where
   isCoded s t := by
     dsimp only [succRows]
     split_ifs
-    · exact WithBot.coe_lt_coe.mpr
-        (WithTop.coe_lt_coe.mpr (by exact_mod_cast natCast_lt_omega0_sq 1))
-    · exact WithBot.coe_lt_coe.mpr
-        (WithTop.coe_lt_coe.mpr (by exact_mod_cast natCast_lt_omega0_sq 2))
+    · exact_mod_cast Label.natCast_label_lt_omega0_sq 1
+    · exact_mod_cast Label.natCast_label_lt_omega0_sq 2
   isLawful := isLawful_succLabel
   atStage d := by
     fin_cases d

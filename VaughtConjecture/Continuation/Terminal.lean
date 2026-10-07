@@ -30,7 +30,9 @@ that is zero or a limit reduces to `R` (`isTerminalAt_iff_forall_lt`): such a `�
 reduction to `λ_ξ` (`Realization.reduce_reduce`).  If no model at `λ_{ξ+1}` on the carrier of a
 base structure `M` is an expansion of `M`, every expansion of `M` at `λ_ξ` is terminal
 (`IsExpansionOf.isTerminalAt`): a model at `λ_{ξ+1}` reducing to it would have the base reduct
-`M`.  No uniqueness of expansions is used.
+`M`.  No uniqueness of expansions is used.  Terminality transports along a bijection of carriers
+(`IsTerminalAt.map`), so a model expansion transported along an isomorphism of base structures
+(`ModelExpansion.map`) is terminal when the original is.
 
 **Top grade.**  The **top grade** of a stage type (`StageType.topGrade`) is the largest grade of a
 cell labelled `⊤`, and `0` if there is none; it is `0` exactly for the top-free types
@@ -142,6 +144,15 @@ theorem IsExpansionOf.isTerminalAt [baseLanguage.{u}.Structure M] {ξ : Ordinal.
     (omega0_le_blockStage ξ), heq]
   exact hR.toStructure_reduce
 
+/-- **Terminality transports along a bijection of carriers**: if `R` is terminal at `ξ`, so is its
+transport along `e : M ≃ N`.  A model at `λ_{ξ+1}` on `N` reducing to the transport would
+transport back to a model on `M` reducing to `R` (`Realization.reduce_map`, `IsModel.map`). -/
+theorem IsTerminalAt.map {N : Type*} {ξ : Ordinal.{u}} {R : Realization.{u, v} (blockStage ξ) M}
+    (h : R.IsTerminalAt ξ) (e : M ≃ N) : (R.map e).IsTerminalAt ξ := by
+  intro R' hR' hred
+  apply h (R'.map e.symm) (hR'.map _)
+  rw [reduce_map, hred, map_symm_map]
+
 end Realization
 
 /-! ### Top grade -/
@@ -232,6 +243,12 @@ theorem exists_forall_le_topGrade_eq (hR : R.IsConsistent) (hc : R.IsCovering) {
 top-free. -/
 theorem topGradeSup_eq_zero_iff : R.topGradeSup = 0 ↔ ∀ x : R.Occurrence, x.type.IsTopFree := by
   simp only [topGradeSup, ENat.iSup_eq_zero, Nat.cast_eq_zero, StageType.topGrade_eq_zero_iff]
+
+/-- **The top-grade supremum is invariant under transport**: the occurrences of a transport are
+the transports of the occurrences, with the same types. -/
+@[simp] theorem topGradeSup_map {N : Type*} (e : M ≃ N) : (R.map e).topGradeSup = R.topGradeSup :=
+  le_antisymm (iSup_le fun y ↦ (y.comap e).topGrade_le_topGradeSup)
+    (iSup_le fun x ↦ (x.map e).topGrade_le_topGradeSup)
 
 end Realization
 
@@ -390,6 +407,16 @@ theorem IsModel.isGloballyRigidCore_empty_iff (hR : R.IsModel) (hα : Order.IsSu
   refine (StageType.isRigidCoreIn_empty_iff_isTopFree hα (hR.isLegal _ _ x.eval_tuple)
     Function.Embedding.ofIsEmpty).mp ?_
   exact h x.type x.tuple _ (covers_of_eval _ x.eval_tuple) (funext fun i ↦ i.elim0)
+
+/-- **Globally rigid cores in a transport** are the transports of globally rigid cores: the covers
+of a transport are the transports of the covers (`covers_map_iff`). -/
+theorem isGloballyRigidCore_map_iff {N : Type*} (e : M ≃ N) {c : Fin k → N} :
+    (R.map e).IsGloballyRigidCore c ↔ R.IsGloballyRigidCore (e.symm ∘ c) := by
+  refine ⟨fun h m t x f hx hxf ↦ h t (e ∘ x) f ((covers_map_iff e).mpr ?_) ?_,
+    fun h m t x f hx hxf ↦ h t (e.symm ∘ x) f ((covers_map_iff e).mp hx) ?_⟩
+  · rwa [← Function.comp_assoc, Equiv.symm_comp_self, Function.id_comp]
+  · rw [Function.comp_assoc, hxf, ← Function.comp_assoc, Equiv.self_comp_symm, Function.id_comp]
+  · rw [Function.comp_assoc, hxf]
 
 end Realization
 

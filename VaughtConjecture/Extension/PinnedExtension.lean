@@ -330,6 +330,27 @@ theorem exists_extension (hext : HasCoatomExtensions.{u} α) {P : StageType.{u} 
     (Scheme.isLegal_onePoint.isLegal_toStageType α) (hp'.trans (congrArg some (eq_of_zero p' p)))
   exact ⟨Q, hQ, hQP⟩
 
+variable {N : ℕ} in
+/-- **Padding**: under the coatom extension property, every legal stage type on `k` points is the
+face along `Fin.castLEEmb` of a legal stage type on any `N ≥ k` points. -/
+theorem exists_isLegal_restrictFace_castLEEmb (hext : HasCoatomExtensions.{u} α)
+    {P : StageType.{u} α k} (hP : P.IsLegal) (hkN : k ≤ N) :
+    ∃ Q : StageType.{u} α N, Q.IsLegal ∧ restrictFace (Fin.castLEEmb hkN) Q = some P := by
+  induction N, hkN using Nat.le_induction with
+  | base =>
+    refine ⟨P, hP, ?_⟩
+    rw [show Fin.castLEEmb (le_refl k) = Function.Embedding.refl _ from
+      Function.Embedding.ext fun _ ↦ Fin.ext rfl]
+    exact restrictFace_refl P
+  | succ N hkN ih =>
+    obtain ⟨Q, hQ, hQP⟩ := ih
+    obtain ⟨Q', hQ', hQ'Q⟩ := exists_extension hext hQ
+    refine ⟨Q', hQ', ?_⟩
+    rw [show Fin.castLEEmb (hkN.trans (Nat.le_succ N)) =
+        (Fin.castLEEmb hkN).trans Fin.castSuccEmb from Function.Embedding.ext fun _ ↦ Fin.ext rfl,
+      ← restrictFace_trans _ _ _ hQ'Q]
+    exact hQP
+
 /-- **Amalgamation over a common face**, from the coatom extension property: two legal stage types
 `P` and `R` whose faces along `f` and `g` are the same stage type `p` are the faces of one legal
 stage type, along embeddings `i` and `j` with `i ∘ f = j ∘ g`.  The points of `R` outside the face
