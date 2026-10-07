@@ -4024,12 +4024,13 @@ other coatom, and tops out in a single apex cell.
 coatom amalgam, ask for objects over a context (for (R1)–(R4), a context acquired in a model) whose
 cells of full scope (graded index `(univ, g)`) satisfy a condition on their rows at prescribed
 cells.  (R2) and (R3) ask for a legal one-point extension: the cells of full scope read each new top
-of the donor at least as a private top (the reading context, a condition on stage types of the route
-to determination with a private top, not on `main`; on `main`, (R2) follows from (R1) for every
-model at every limit stage, `Realization.ResidualAcquisition` and `Realization.CutoffDetermination`,
-and (R3) from `Realization.HollowAcquisition` and `Realization.SchemeDetermination`, README, "Status
-of (R2) and (R3)").  (R1) and (R4) ask for schemes: (R1), per block, a scheme on which every coface
-of the context has its cells of full scope of the top grade read the labels of one block in their
+of the donor at least as a private top (the reading context, `StageType.IsReadingContext`,
+`Continuation/AvailableTopDetermination`).  Determination for reading contexts is compiled;
+their acquisition from graded contexts is open.  The templates for (R2) and (R3), including the
+all-limit-stage receiving and plain coatom extension hypotheses of the graded-context route, are
+in README, "Status of (R2) and (R3)".  (R1) and (R4) ask for schemes: (R1), per block, a scheme
+on which every coface of the context has its cells of full scope of the top grade read the labels
+of one block in their
 own block (block-tight saturations, `IsBlockTight` = "some scheme, and every coface on it …"); (R4),
 a scheme carrying a coface of the stage reduction `T⁺↓β` whose cells of full scope of the cap's
 grade read the new cells of the donor through the cap (the cap-reading scheme of the stable recovery
@@ -4190,15 +4191,17 @@ reaches a coface on a prescribed scheme, which is why the core is stated on stag
 
 **Restatements.**  The (R4) condition is `main`'s own `StageType.ReadsThroughCap`
 (`Continuation/StableRecovery`), used directly.  `Extension/PrescribedFullRowsRoutes` states
-`ReadsAtLeast`, `IsReadingContext`, `ReadsInOwnBlock` and `HasBlockTightSaturations` in full,
-because the modules of the (R2)/(R3) route and of the per-block route are not on `main`;
+`ReadsAtLeast`, `IsReadingContext`, `ReadsInOwnBlock` and `HasBlockTightSaturations` in full.
+The (R2)/(R3) declarations now also occur in `Continuation/AvailableTopDetermination`; the
+per-block route is not on `main`.
 `IsBlockTight` is new (the per-input body of `HasBlockTightSaturations`).  The four restatements
 were checked `rfl`-equal to the routes' own declarations at the heads of the routes' branches; that
-check is outside the repository.  When those modules land, the restatements are replaced by their
-declarations: `ReadsAtLeast` and `IsReadingContext` by the (R2)/(R3) module's (moving
+check is outside the repository.  Consolidation of the (R2)/(R3) interfaces remains:
+`ReadsAtLeast` and `IsReadingContext` are to quote that module's declarations (moving
 `exists_isFaceCompatible` and `forall_exists_le` beside them); `ReadsInOwnBlock` and
-`HasBlockTightSaturations` by the per-block module's (keeping `IsBlockTight` beside them, and
-compiling the joining lemma of item 5).  The composition of `IsCapReadingScheme` with the cap's
+`HasBlockTightSaturations` are to quote the per-block module's once it lands (keeping `IsBlockTight`
+beside them, and compiling the joining lemma of item 5).  The composition of `IsCapReadingScheme`
+with the cap's
 label and the calibration to a stable recovery scheme
 (`StageType.IsStableRecoveryScheme.of_readsThroughCap`) is not compiled here.
 
@@ -4943,6 +4946,40 @@ witnesses).**
   (`ExactReceivingExamples.celllessTypeAt`, `apexPointAt`, with legality and failure of
   top-freeness).  Its existing donor names and the earlier omega examples specialize that
   fixture; neither the donor nor the omega-example statement changes.
+- `Continuation/AvailableTopDetermination`: Layer 3, in place; it imports
+  `Continuation/AnchoredDetermination` and `Extension/PinnedExtension` (for the coface carrying the
+  donor in the acquisition, `StageType.exists_pinned_extension`).  The capping of an upper set of
+  cells, `CellScheme.Rows.IsLawful.min_const_of_upper`, is in `Scheme/Row`, beside
+  `CellScheme.Rows.IsLawful.min_const_of_mem_scope` (its special case for the cells whose scope
+  contains a point, now derived from it), and
+  `StageType.capOn`, with `StageType.restrictFace_capOn`, in `Stage/Cap`, beside
+  `StageType.capThrough`.  `StageType.exists_pinned_extension_of_lt`, the exact pinned extension
+  from the coatom extensions at arities below that of the chart, is in `Extension/PinnedExtension`,
+  and `StageType.exists_pinned_extension` is now its instance (no statement changed).
+  Statement change on main (generalization): `Realization.IsModel.exists_privateContext` now
+  takes a donor on any number of points, `(d : StageType α (x.arity + 1))` →
+  `{m : ℕ} (d : StageType α m)`, and `Realization.IsModel.exists_privateContext_isAnchored` a donor
+  on any positive number of points, `(d : StageType α (x.arity + 1))` →
+  `{m : ℕ} (d : StageType α (m + 1))` (the donor enters only through its labels).  The old
+  statements are the instances `m = x.arity + 1` and `m = x.arity`, and every use is unchanged.
+  `Realization.exists_covers_snoc_of_cutoffDonorDetermination`
+  (`Continuation/AnchoredDetermination`) is now public, for the residual template with donors of
+  bounded top grade.  The non-rigidity argument is proved once, in `Continuation/Terminal`:
+  `StageType.not_isRigidCoreIn_of_forall_visibleCells` (at a limit stage, a core on which no top
+  cell is supported is not rigid in a legal type that is not top-free; the cap makes the empty set
+  an admissible top support).  Both `StageType.isRigidCoreIn_empty_iff_isTopFree` (statement
+  unchanged, proof now through it) and `StageType.not_isRigidCoreIn_of_restrictFace_isTopFree`
+  (the top-free face, beside it in `Continuation/Terminal`) are derived from it.
+- `Continuation/AvailableTopDeterminationCounterexample`: Layer 3, in place.  It imports
+  `Extension/UnionFillCounterexample` for its legal scheme on three points
+  (`UnionFillCounterexample.S`, with its lawful labellings `UnionFillCounterexample.labelling`),
+  `Extension/TwoFaceLift` and
+  `Extension/CompletionBelowFullGrade` for the coatom extension at arity at most `2`
+  (`AvailableTopDeterminationCounterexample.exists_coatomExtension_of_le_two`), and
+  `Extension/FamilyCofaces` for `StageType.mem_cofaces_of_zero`.  The coatom extension at arity at
+  most `2` and the pinned extension on at most three points are general statements; they belong in
+  `Extension/CompletionBelowFullGrade` (or a module importing it and `Extension/TwoFaceLift`), and
+  are stated here so that those files are unchanged.
 
 **Quantitative reconstruction, row 1 (`COMPANIONS.md`, "Further companion results").**
 
