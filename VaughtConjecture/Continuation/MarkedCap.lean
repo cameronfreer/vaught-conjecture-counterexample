@@ -53,9 +53,8 @@ of `VaughtConjecture.Stage.MarkedCap` or of this file.
   repository (theorem named)).
 * The anchored predicate with a top (the refuting instance is not in this library): its context,
   on three points over a root on one point, has its cells of grade at least `2` capped at an
-  ordinal, so its top grade is at most `1` (compiled in a separate open change, not in this
-  library; argued here); a context of top grade
-  at most `1` is not a marked-cap context over a root on one point
+  ordinal, so its top grade is at most `1` (argued here); a context of top grade at most `1` is
+  not a marked-cap context over a root on one point
   (`MarkedCapExclusions.not_isMarkedCapContext_of_topGrade_le_one`, compiled in this repository
   (theorem named)): the clause `n + 1 < N` fails.
 

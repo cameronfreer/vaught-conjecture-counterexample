@@ -319,12 +319,12 @@ Status of each:
    stage `β`, with its lifts at `β + ω`, that forces `L` at a top of its root, `L ≤ N` and the row
    inequality at `L` hold for every top cap and marker.  When the forcing comes from the order law
    or from rows, the inequality already follows from the minimality of the marker; its content is in
-   thresholds forced by all lifts otherwise, which no compiled instance exhibits.
-   `GatedExtensionCounterexample.P α` is a marked-cap context over the empty root (compiled).  The
-   proof is a lawful lift whose labels at the tops are the band map of the row of the top cap from
-   the block of the marker (`StageType.IsMarker.exists_lift`); its locality is the two-witness
-   splice of Layer 3, 3.1 (`Label.TransformsTo.splice_bandMap`, compiled in this repository (theorem
-   named)).  The finite step of acquisition is compiled
+   thresholds forced by all lifts otherwise, which no compiled instance exhibits.  The proof is a
+   lawful lift whose labels at the tops are the band map of the row of the top cap from the block
+   of the marker (`StageType.IsMarker.exists_lift`); its locality is the two-witness splice of
+   Layer 3, 3.1 (`Label.TransformsTo.splice_bandMap`, compiled in this repository (theorem
+   named)).  `GatedExtensionCounterexample.P α` is a marked-cap context over the empty root
+   (compiled).  The finite step of acquisition is compiled
    (`StageType.isMarkedCapContext_of_forcesThreshold`); one cover of top grade above `n + 1` forcing
    `n + 1` at every top of a root at once is prospective, and `Realization.HollowAcquisition` and
    `Realization.SchemeDetermination` for the predicate are open, so item 6 is not reduced.  The
