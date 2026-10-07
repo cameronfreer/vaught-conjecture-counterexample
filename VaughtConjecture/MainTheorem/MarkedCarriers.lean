@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Continuation.MarkedCarrierAcquisition
+import VaughtConjecture.Expansion.ReceivingHollowLosses
 import VaughtConjecture.MainTheorem.Composition
 
 /-!
@@ -27,6 +28,13 @@ repository (theorem named)), so the conclusion holds conditional on:
 
 Each is still to be proved.  No implication between marked carriers and the coatom extension
 property is compiled.
+
+`densitySentence_hasThinAlephOneSpectrum_of_hasTopMarkedCarriers` has the same hypotheses with
+top-marked carriers (`StageType.HasTopMarkedCarriers`, open; the cutoff form, which prescribes only
+the readings of the new tops) in place of marked carriers.  There (R3) is used for cover-hollow
+models with finite-cut receiving (`Realization.IsCoverHollowWithReceivingAtBlock`), which (R1)
+provides at the countable block stages of the count
+(`Expansion.expansionDomain_loss_countable_of_receivingHollow`).
 
 ## Placement
 
@@ -74,5 +82,27 @@ theorem vaughtCounterexample_allCarriers_of_hasMarkedCarriers
             Nonempty (@Language.Equiv L M ℕ _ c.toStructure) :=
   vaughtCounterexample_allCarriers_of_terminalClassification_of_hasApexCoatomExtensions'
     hrec hcont hres (Realization.hollowReceiving_of_hasMarkedCarriers hcar) hext
+
+/-- **The thin `ℵ₁` spectrum of the density sentence with top-marked carriers in place of (R3)**:
+the conclusion of `densitySentence_hasThinAlephOneSpectrum_of_hasMarkedCarriers`, conditional on
+(R1) (`hrec`), the continuation criterion (`hcont`), (R2) (`hres`), top-marked carriers at every
+block stage (`hcar`), and the coatom extension property with apex at every countable block stage
+(`hext`), each still to be proved.  The hollow comparison uses (R3) for cover-hollow models with
+finite-cut receiving, derived from `hcar`
+(`Realization.hollowReceiving_withReceiving_of_hasTopMarkedCarriers`); `hrec` gives the hollow
+models of the count finite-cut receiving
+(`Expansion.expansionDomain_loss_countable_of_receivingHollow`).  Forcing donors are derived from
+`hext` (`forcingDonors_of_forall_hasApexCoatomExtensions`). -/
+theorem densitySentence_hasThinAlephOneSpectrum_of_hasTopMarkedCarriers
+    (hrec : FiniteCutReceiving.{0}) (hcont : ContinuationCriterion.{0})
+    (hres : Realization.ResidualReceiving.{0, 0})
+    (hcar : ∀ ξ : Ordinal.{0}, HasTopMarkedCarriers.{0} (blockStage ξ))
+    (hext : ∀ η < ω₁, HasApexCoatomExtensions.{0} (blockStage η)) :
+    HasThinAlephOneSpectrum densitySentence.{0} :=
+  densitySentence_hasThinAlephOneSpectrum_of_hasApexCoatomExtensions hext
+    (NextBlockUniqueness.of_forcingDonors hrec
+      (forcingDonors_of_forall_hasApexCoatomExtensions hext)) hrec
+    (expansionDomain_loss_countable_of_receivingHollow hrec hcont hres
+      (Realization.hollowReceiving_withReceiving_of_hasTopMarkedCarriers hcar))
 
 end VaughtConjecture.MainTheorem

@@ -350,6 +350,41 @@ theorem hollowReceiving_of_hasTopMarkedCarriers
     exact exists_covers_snoc_of_isDeterminedWithin hR.isConsistent hc'
       ((hrec ξ M R hR).realizesOver_receivingFamily hc' ⟨hD.1, hD.2.1⟩ hδc) hdet
 
+/-! ### (R3) for cover-hollow models with finite-cut receiving -/
+
+/-- A realization is **cover-hollow with finite-cut receiving at a block stage** when it is
+cover-hollow at a block stage and has finite-cut receiving ((R1) for this realization). -/
+def IsCoverHollowWithReceivingAtBlock {α : Ordinal.{u}} {M : Type w}
+    (R : Realization.{u, w} α M) : Prop :=
+  R.IsCoverHollowAtBlock ∧ R.HasFiniteCutReceiving
+
+/-- **(R3) for cover-hollow models with finite-cut receiving, from top-marked carriers**: if
+`StageType.HasTopMarkedCarriers` holds at every block stage, then (R3) holds for the predicate
+`Realization.IsCoverHollowWithReceivingAtBlock`; no receiving hypothesis on other models is used.
+The argument is that of `Realization.hollowReceiving_of_hasTopMarkedCarriers`, with the finite-cut
+receiving of the model itself. -/
+theorem hollowReceiving_withReceiving_of_hasTopMarkedCarriers
+    (hcar : ∀ ξ : Ordinal.{u}, StageType.HasTopMarkedCarriers.{u} (blockStage ξ)) :
+    HollowReceiving.{u, w} IsCoverHollowWithReceivingAtBlock where
+  exists_covers α M R hα hR hH htop n t c hc d hd := by
+    obtain ⟨hH, hrec⟩ := hH
+    obtain ⟨k, t', c', h, hc', hcc', ctx, r, hctx⟩ :=
+      hollowAcquisition_isMarkedCapContext.exists_context hα hR hH htop t c hc
+    obtain ⟨ξ, rfl, -⟩ := hH
+    have ht : StageType.restrictFace h t' = some t := by
+      rw [← hR.isConsistent ⟨c', hc'.injective⟩ t' h hc'.eval_eq, ← hc.eval_eq]
+      congr 1
+      ext i
+      exact congrFun hcc' i
+    obtain ⟨D, hD⟩ := hcar ξ t' h t ht d hd.2 ctx r (hR.isLegal _ _ hc'.eval_eq) hd.1 hctx
+    obtain ⟨δ, hδα, hδ⟩ := D.exists_lt_forall_label_lt hα
+    have hδc : IsPermittedCutoff (blockStage ξ) (δ : Label.{u}) := isPermittedCutoff_coe.mpr hδα
+    have hdet := StageType.isDeterminedWithin_receivingFamily_of_isPrescribedExtension ht hd.2
+      hctx.1 hctx.2.1.1 hctx.2.2.1.le hD hδ
+    rw [← hcc']
+    exact exists_covers_snoc_of_isDeterminedWithin hR.isConsistent hc'
+      (hrec.realizesOver_receivingFamily hc' ⟨hD.1, hD.2.1⟩ hδc) hdet
+
 end Realization
 
 end VaughtConjecture
