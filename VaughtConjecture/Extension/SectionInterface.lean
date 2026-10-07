@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Extension.RankProfileScheme
+import VaughtConjecture.Extension.TowerSection
 
 /-!
 # Selected sections through the tower at the grade two, read by a layer of profiles
@@ -31,6 +32,18 @@ cap or ambient labelling.  The clauses asked of it, for the profiles of the cata
 extension from the boundary at the caps self-visible and short at `3`, and the consistency of the
 rows of a grade-`3` layer of profiles uses (iv) at agreement heights in `Label.grid 3`, which are
 self-visible and short at `3`.  So (iv) is needed at the caps self-visible and short at `3`.
+
+**The interface theorem** (`exists_sectionOp`; compiled in this repository, for every seed on
+five points).  The tower section operator `towerSectionOp`, the tower section at the grade `2`
+(`Seed.towerSection`, module `VaughtConjecture.Extension.TowerSection`) read by the upper decoder
+(`Label.upperDecoder`, module `VaughtConjecture.Extension.UpperDecoder`), satisfies (i)
+(`towerSectionOp_isLawful`), (ii) (`towerSectionOp_isShort`: its values lie in
+`Label.codeGrid 3 (2 N + 2)`), (iii) (`towerSectionOp_isLiteral`), and (iv) at every cap
+self-visible and short at `3` (`towerSectionOp_isCapAgreeingAt`).  It is one function of the
+profile; its only hypothesis is the seed.  The orbit decoder of the tower's own extension at `⊥`
+reads an agreement height between the codes of two keys as the lower key, which breaks (iv) at a
+cap `ω * γ + 3` that is not short at the grade of the layer; the upper decoder reads it as the
+largest label of the code grid self-visible at that grade and at most the next value.
 
 **(iv) at every cap short at `3` fails** (`not_isCapAgreeingAt_of_collision`,
 `not_isCapAgreeingAt_one`, `not_isCapAgreeingAt_one_seedL`,
@@ -98,9 +111,53 @@ def IsCapAgreeingAt (σ : SectionOp I) (h : Label.{u}) : Prop :=
 
 end SectionOp
 
-/-! ### The collision -/
+/-! ### The interface at the caps self-visible and short at `3` -/
 
 variable {I}
+
+variable (I) in
+/-- **The tower section operator**: the tower section at the grade `2`
+(`Seed.towerSection`), with the block bound `2 N + 2` of the catalogue (`RankProfile.gridBound`),
+read by the upper decoder (`Label.upperDecoder`).  One function of the profile. -/
+noncomputable def towerSectionOp : SectionOp I :=
+  fun P ↦ I.towerSection (RankProfile.gridBound I) 2 P
+
+/-- (i) The tower section operator is lawful. -/
+theorem towerSectionOp_isLawful : (towerSectionOp I).IsLawful := fun P hP ↦ by
+  obtain ⟨⟨hC, hD⟩, -⟩ := mem_rankCat.mp hP
+  exact Seed.isLawfulBelow_towerSection
+    (I.scope_subset_or (x := Fin.last 4) (y := Fin.castSucc (Fin.last 3)) (by simp) (by simp)
+      (by decide)) 2 (by omega)
+    (hC.mono (X := (OrderedLayer.coatomC, 2)) ⟨subset_rfl, by omega⟩)
+    (hD.mono (X := (OrderedLayer.coatomD, 2)) ⟨subset_rfl, by omega⟩)
+
+/-- (ii) The tower section operator is short at `3` and never the formal top: its values lie in
+the code grid `codeGrid 3 (2 N + 2)`. -/
+theorem towerSectionOp_isShort : (towerSectionOp I).IsShort := fun P hP t ↦ by
+  have hm := Seed.towerSection_mem_codeGrid 2 (by omega)
+    (fun d ↦ RankProfile.mem_codeGrid_of_mem_rankCat hP d) t
+  exact ⟨isShort_of_mem_codeGrid hm, ne_top_of_mem_codeGrid hm⟩
+
+/-- (iii) The tower section operator is literal. -/
+theorem towerSectionOp_isLiteral : (towerSectionOp I).IsLiteral := fun P d ↦
+  Seed.towerSection_towerEmbed 2 P d
+
+/-- (iv) **The tower section operator agrees capped at every cap self-visible and short at
+`3`** (`Seed.min_towerSection_eq`). -/
+theorem towerSectionOp_isCapAgreeingAt {h : Label.{u}} (hh : IsSelfVisible 3 h)
+    (hs : Label.IsShort 3 h) : (towerSectionOp I).IsCapAgreeingAt h := fun _ hP _ _ hPQ t ↦
+  Seed.min_towerSection_eq hh hs 2 le_rfl
+    (fun d ↦ RankProfile.mem_codeGrid_of_mem_rankCat hP d) hPQ t
+
+/-- **The interface theorem at the caps self-visible and short at `3`**, for every seed on five
+points: one section operator through `T 2` is lawful, short at `3` and never the formal top,
+literal, and agrees capped at every cap self-visible and short at `3` (`towerSectionOp`). -/
+theorem exists_sectionOp : ∃ σ : SectionOp I, σ.IsLawful ∧ σ.IsShort ∧ σ.IsLiteral ∧
+    ∀ h, IsSelfVisible 3 h → Label.IsShort 3 h → σ.IsCapAgreeingAt h :=
+  ⟨towerSectionOp I, towerSectionOp_isLawful, towerSectionOp_isShort, towerSectionOp_isLiteral,
+    fun _ hh hs ↦ towerSectionOp_isCapAgreeingAt hh hs⟩
+
+/-! ### The collision -/
 
 /-- **Capped agreement fails at a collision.**  Let `σ` be lawful and literal, and let `P`, `Q` be
 profiles of the catalogue that agree capped at a label `e` not self-visible at `2`.  Let `d₁`,
