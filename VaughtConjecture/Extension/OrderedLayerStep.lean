@@ -6,6 +6,7 @@ Authors: Cameron Freer
 import VaughtConjecture.Extension.CompletionBelowFullGrade
 import VaughtConjecture.Extension.Gluing
 import VaughtConjecture.Extension.CanonicalCode
+import VaughtConjecture.Extension.FieldLayer
 
 /-!
 # The ordered-layer step on five points
@@ -47,9 +48,12 @@ every seed.  Conversely, the ordered-layer step is exactly legality below the fu
 layer scheme together with a lawful extension of the glued labelling
 (`Seed.orderedLayerStep_iff`), so the hypothesis is the exact content of a completion of this
 shape: one new cell per graded face of full scope, rows read off graded indices.  The step is a
-restriction of the completion of the seed; whether the converse fails for some seed is open (it
-fails at `CrossedCouplingCounterexample.seedHG` if and only if `seedHG` has a completion below the
-full grade).
+restriction of the completion of the seed, and the converse fails: the legal seed
+`CrossedCouplingCounterexample.seedHG` has a completion below the full grade and no ordered-layer
+step (`CrossedCouplingCounterexample.not_forall_hasOrderedLayerStep_of_nonempty`, module
+`VaughtConjecture.Extension.CrossedCouplingCompletion`).  Several new cells at one graded face of
+full scope, with rows read off cells, are the multi-layer step
+(`VaughtConjecture.Extension.MultiLayerStep`).
 
 **At `m = 3`** (`Seed.HasOrderedLayerStep`): a seed on five points with an ordered-layer step for
 some rows has a completion below the full grade
@@ -109,6 +113,23 @@ theorem noneAbove_addLayerCell {S : Scheme.{u} 5} {j : ℕ} {r : Finset (Fin 5) 
   | cast d =>
     rw [Scheme.appendFullCell_toCellScheme, Scheme.appendFullCellScheme_gradedIndex_castSucc]
     exact h k (by omega) d
+
+/-- After appending cells at `(univ, j)`, no cell lies above `(univ, k)` for `j < k`. -/
+theorem noneAbove_appendFullCells {S : Scheme.{u} 5} {j M : ℕ}
+    {r : Fin M → Fin (S.card + M) → Label.{u}} (h : NoneAbove S j) :
+    NoneAbove (S.appendFullCells j M r (h j le_rfl)) (j + 1) := by
+  intro k hk d
+  induction d using Fin.addCases with
+  | left d =>
+    -- The cell scheme of the appended scheme is `appendFullCellsScheme`.
+    change ¬ _ ≤ (S.appendFullCellsScheme j M).gradedIndex _
+    rw [Scheme.appendFullCellsScheme_gradedIndex_castAdd]
+    exact h k (by omega) d
+  | right i =>
+    -- The cell scheme of the appended scheme is `appendFullCellsScheme`.
+    change ¬ _ ≤ (S.appendFullCellsScheme j M).gradedIndex _
+    rw [Scheme.appendFullCellsScheme_gradedIndex_natAdd]
+    exact fun h' ↦ by have := h'.2; simp only at this; omega
 
 variable {α : Ordinal.{u}} (I : Seed.{u} α 3) (ρ : LayerRows.{u})
 

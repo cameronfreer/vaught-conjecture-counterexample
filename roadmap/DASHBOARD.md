@@ -61,7 +61,12 @@ Notes on the rows, each with its marker:
   (`CompletionBelowFullGrade.exists_separating_of_forcesTop`).  Refuted: the ordered-layer step for
   every seed on five points (`CrossedCouplingCounterexample.not_forall_hasOrderedLayerStep`, at the
   legal seed `CrossedCouplingCounterexample.seedHG`, every completion of which has two cells at
-  `(univ, 1)`; whether one exists is open).  Still to be proved, not refuted: `StageType.HasCoatomExtensions`,
+  `(univ, 1)`).  Compiled: `seedHG` has a completion below the full grade, the multi-layer scheme
+  with two new cells at `(univ, 1)`, one per forced separation
+  (`CrossedCouplingCounterexample.nonempty_completionBelowFullGrade_seedHG`, from
+  `Seed.MultiLayerStep`), so the ordered-layer step is strictly stronger than the completion
+  (`CrossedCouplingCounterexample.not_forall_hasOrderedLayerStep_of_nonempty`).  Still to be
+  proved, not refuted: `StageType.HasCoatomExtensions`,
   `StageType.HasApexCoatomExtensions`.
 - *Layer 3, receiving.*  Compiled: finite-extension receiving from finite-cut receiving, for an
   exactly consistent realization at a stage that is zero or a limit
@@ -91,8 +96,12 @@ Notes on the rows, each with its marker:
   forcing donors (`Expansion.stableCappedReceiving_of_continuationCriterion`), so the two are
   equivalent under (R1), forcing donors and the coface instances
   (`Expansion.stableCappedReceiving_iff_continuationCriterion`); (R4) from the finite statement
-  `StageType.HasStableRecoverySchemes` for the marker and cap calibration, open and possibly false
-  (`StableCappedReceiving.of_hasStableRecoverySchemes_markerCap`); cover-hollowness and stable-label
+  `StageType.HasStableRecoverySchemes` for the marker and cap calibration
+  (`StableCappedReceiving.of_hasStableRecoverySchemes_markerCap`), a hypothesis refuted at every `ξ`
+  (`Continuation.StableRecoveryCounterexample.not_hasStableRecoverySchemes_markerCap`), and for the
+  graded cap calibration, open, whose acquisition is compiled
+  (`StableCappedReceiving.of_hasStableRecoverySchemes_gradedCap`,
+  `Realization.IsModel.acquiresCalibratedContexts_gradedCap`); cover-hollowness and stable-label
   fixedness (`Realization.isCoverHollow_iff_forall_stableLabel_eq_top`); the exact-age comparison
   (`Realization.nonempty_equiv_of_exactReceivingWithin`); the three comparisons, the rigid-core one
   conditional on finite-extension receiving (from (R1);
@@ -210,9 +219,31 @@ Status of each:
    Compiled conditionally on (R4) and the coatom extension property with apex at every successor
    block stage (`ContinuationCriterion.of_hasApexCoatomExtensions`); (R4) is still to be proved,
    so the six- and five-hypothesis forms keep the criterion as a hypothesis.
-5. `Realization.ResidualReceiving`: still to be proved (the LOW construction).
+5. `Realization.ResidualReceiving`: still to be proved (the LOW construction).  Exactly
+   reformulated as exact receiving of the legal types of top grade at most `K`
+   (`Realization.residualReceiving_iff`).  A reduction is compiled: it follows from (R1) for every
+   model at every limit stage (a receiving hypothesis that ranges over every limit stage at fixed
+   universe levels and is not supplied by the countable-stage `Expansion.FiniteCutReceiving`,
+   item 2), `Realization.ResidualAcquisition P`, and `Realization.CutoffDetermination P`
+   (`Realization.residualReceiving_of_cutoffDetermination`), for a predicate `P` on acquired
+   contexts not yet defined: the reduction is a template, and its hypotheses are not statements
+   still to be proved (no predicate `P` is defined in the library, and neither acquisition nor
+   determination is proved beyond the rigid-core instance).  For `P` always true, acquisition is
+   immediate and determination fails (compiled; top-free roots,
+   `Continuation/ExactReceivingExamples`), which shows only that determination is not vacuous.
+   The cofaces in which the root is a rigid core need only (R1) in the same form
+   (`Realization.ResidualReceiving.of_not_isRigidCoreIn`).
 6. `Realization.HollowReceiving` for `Realization.IsCoverHollowAtBlock`: still to be proved (the
-   growth construction).
+   growth construction).  Exactly reformulated as exact receiving of all legal types
+   (`Realization.hollowReceiving_iff`).  A reduction is compiled: it follows from
+   `Realization.HollowAcquisition H P` and `Realization.SchemeDetermination P` with
+   `H := Realization.IsCoverHollowAtBlock` (`Realization.hollowReceiving_of_schemeDetermination`,
+   no receiving used), for a predicate `P` not yet defined: a template, as in item 5 (for `P`
+   always true, acquisition is immediate and determination fails, compiled).  With item 6, the
+   count uses (R3) at every cover-hollow model with unbounded growth, a globally rigid core
+   included (item 6′ below excludes it).  (R3) forces a globally rigid core of a cover-hollow
+   model with unbounded growth to be rigid in every legal donor over its type
+   (`Realization.HollowReceiving.isRigidCoreIn`).
 7. Nonempty losses: still to be proved.  Compiled conditionally on the coatom extension property
    with apex at every countable block stage and on next-block uniqueness
    (`hasNonemptyLosses_of_hasApexCoatomExtensions`, stated for the bundled domains, which also take
@@ -238,10 +269,11 @@ holds in the same form
 (`MainTheorem.countable_isoClasses_terminalAt_of_restrictedTerminalClassification`).  Item 6
 implies item 6′ (`Realization.HollowReceiving.withoutRigidCore`): weaker or equal; strictly weaker
 not shown.  The six- and five-hypothesis forms with item 6′ in place of item 6 are not compiled
-(separate compositions, prospective).  An informal argument, not compiled, is a risk for item 6
-and not for item 6′: if every legal stage type had a legal one-point coface in which the root is
-not rigid, item 6 would force every cover-hollow model with unbounded growth to have no globally
-rigid core.  Neither is proved, and item 6 is not claimed to be false.
+(separate compositions, prospective).  An informal argument, not compiled beyond its first step
+(`Realization.HollowReceiving.isRigidCoreIn`, item 6 above), is a risk for item 6 and not for
+item 6′: if every legal stage type had a legal one-point coface in which the root is not rigid,
+item 6 would force every cover-hollow model with unbounded growth to have no globally rigid
+core.  Neither is proved, and item 6 is not claimed to be false.
 
 There is no hypothesis of countable losses and none of next-block uniqueness in any form: the
 first is `Expansion.expansionDomain_loss_countable`, the second
@@ -282,10 +314,16 @@ named hypothesis.
    repository (theorem named)); for every seed it is refuted
    (`CrossedCouplingCounterexample.not_forall_hasOrderedLayerStep`, negative special case named):
    the legal seed `CrossedCouplingCounterexample.seedHG` has two opposite forced separations at the
-   grade `1`, so every completion of it has two new cells at `(univ, 1)` (whether one exists is
-   open).  The form of the step with several new cells per graded face of full scope is
-   prospective.  Open: whether `seedHG` has a completion below the full grade, and the completion
-   at `m ≥ 3` for every seed.
+   grade `1`, so every completion of it has two new cells at `(univ, 1)`.  It has one: the
+   multi-layer step `Seed.MultiLayerStep` (several new cells per graded face of full scope, rows
+   read off cells; `Seed.MultiLayerStep.completion`) holds for it with two new cells at
+   `(univ, 1)`, one per forced separation, every field of the completion proved
+   (`CrossedCouplingCounterexample.multiLayerStep_HG`,
+   `CrossedCouplingCounterexample.nonempty_completionBelowFullGrade_seedHG`, compiled in this
+   repository (theorem named)), so the ordered-layer step is strictly stronger than the completion
+   (`CrossedCouplingCounterexample.not_forall_hasOrderedLayerStep_of_nonempty`).  A systematic
+   choice of the new cells for every seed on five points (one per forced separation at each graded
+   face of full scope) is prospective.  Open: the completion at `m ≥ 3` for every seed.
 2. **Stable availability at twins** (compiled): from legal types
    (`Realization.availability_stableSection_of_hasLegalTypes`), so every model at a block stage is
    stably lawful (`Realization.IsModel.isStablyLawful`), and so is every exactly consistent
@@ -318,14 +356,31 @@ named hypothesis.
    stable labels at the new cells reducing to the top
    (`Realization.stablyReceivesAt_iff_of_mem_cofaces`); donors with no such cell are received from
    (R1) for the model (`Realization.exists_stableCandidate_eval_eq_of_hasFiniteCutReceiving`).  The
-   evaluation step and the acquisition of the marker and cap calibration are compiled, reducing
-   (R4) to a sufficient finite statement, `StageType.HasStableRecoverySchemes` for
-   `StageType.MarkerCapCalibration` (open, possibly false; not known to follow from (R4)): (R4)
-   from it is `StableCappedReceiving.of_hasStableRecoverySchemes_markerCap`.  The calibration is
-   weaker than the design of `README.md`, Layer 3, 3.3, and than the coupled gate form of (R1)
-   (`StageType.HasCoupledGatedPinnedExtensions`): it lacks the cap of full scope and full grade,
-   the reference cells and the arity bound, and the acquisition of the design's cap is not
-   compiled.
+   evaluation step and the acquisition of the marker and cap calibration are compiled; (R4) follows
+   from `StageType.HasStableRecoverySchemes` for `StageType.MarkerCapCalibration`
+   (`StableCappedReceiving.of_hasStableRecoverySchemes_markerCap`), a finite hypothesis that is
+   false at every `ξ`, over a root with no private point and the twins of the five-cell type
+   (`Continuation.StableRecoveryCounterexample.not_hasStableRecoverySchemes_markerCap`); (R4) is
+   not refuted.  The calibration is weaker than the design of `README.md`, Layer 3, 3.3, and than
+   the coupled gate form of (R1) (`StageType.HasCoupledGatedPinnedExtensions`): it lacks the cap of
+   full scope and full grade, the reference cells and the arity bound.  The graded cap calibration
+   (`StageType.GradedCapCalibration`: a cap of grade `N` above the arity of the root, labelled at
+   least `λ_ξ + N`, and reference cells of grade at most `N` with offsets below `N`) excludes that
+   instance, its acquisition is compiled
+   (`Realization.IsModel.acquiresCalibratedContexts_gradedCap`, from non-hollowness, growth,
+   uniformity and covering), and (R4) follows from stable recovery
+   schemes for it (`StableCappedReceiving.of_hasStableRecoverySchemes_gradedCap`; open, still to be
+   proved).  A scheme that carries a coface of `T⁺↓λ_ξ`, has the scheme of `D` as its face along
+   `f` followed by the new point, and has a cell `s` of grade `N`, the grade of a cap labelled at
+   least `λ_ξ + N` (with `γ < λ_ξ + N`), whose scope contains the scope of the cap, such that every
+   new cell of `D` lies below the graded index of `s` and every cell of that graded index reads the
+   new cells through the cap and reference cells, is a stable recovery scheme
+   (`StageType.IsStableRecoveryScheme.of_readsThroughCap`, from availability and the decoder at
+   one reading cell, `CellScheme.Rows.IsLawful.label_eq_of_reading`).  This reading is not
+   confined to one graded index (informal; not compiled: by bountifulness at the cap `⊥` and
+   completeness it constrains every graded face of grade `N` containing the cap, a reference cell
+   and a new cell).  The existence of such schemes is not proved, and no instance is compiled.  The
+   acquisition of the design's cap of full scope and full grade is not compiled.
 6. **The attained least lift and structural successor leastness** (prospective).  One lift of a
    legal stage type at a limit stage `β` to `β + ω`, least at every cell (each minimum is attained
    separately: `StageType.exists_lift_label_eq_ofOffset`); the threshold forced by a cover is read
