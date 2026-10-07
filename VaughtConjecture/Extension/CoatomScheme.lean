@@ -268,6 +268,12 @@ theorem univ_map_right : univ.map (right m) = univ.erase (Fin.castSucc (Fin.last
       | last => exact absurd rfl hi
       | cast k => exact ⟨k.castSucc, ⟨k, rfl⟩, rfl⟩
 
+/-- The second coatom is not the whole ground set. -/
+theorem univ_map_right_ne : univ.map (right m) ≠ univ := fun he ↦ by
+  have h := mem_univ (Fin.castSucc (Fin.last m))
+  rw [← he, univ_map_right] at h
+  exact notMem_erase _ _ h
+
 /-- The common face is the ground set with the two points removed. -/
 theorem map_univ_map_face : (univ.map (face m)).map (left m) =
     (univ.erase (Fin.last (m + 1))).erase (Fin.castSucc (Fin.last m)) := by
