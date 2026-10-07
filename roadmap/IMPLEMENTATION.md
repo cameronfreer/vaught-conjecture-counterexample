@@ -3150,10 +3150,27 @@ Each checkpoint needs both its abstract API and a concrete application:
    reading through a cap, `StageType.IsStableRecoveryScheme.of_readsThroughCap`, and such a scheme
    is compiled at one input at every `ξ`,
    `Continuation.StableRecoveryReading.exists_isStableRecoveryScheme_gradedCap`,
-   `Continuation/StableRecoveryReading`; the finite statement at every input is still to be
-   proved; `README.md`, Layer 4, status, output 3). Step 7 is
-   compiled conditionally (`README.md`, the section on the top-free witnesses): the loss at `η`
-   under uniqueness at `λ_η` (`nonempty_loss_of_topFreeWitness`), and per block under
+   `Continuation/StableRecoveryReading`, and at the twin donors of the refutation, with one context
+   of three points for both,
+   `Continuation.StableRecoveryTwin.exists_isStableRecoveryScheme_twinDonors`,
+   `Continuation/StableRecoveryTwin` and `Continuation/StableRecoveryTwinScheme`; no scheme serves
+   both twin donors,
+   `Continuation.StableRecoveryTwin.not_isStableRecoveryScheme_twinDonor₁_and_twinDonor₂`; and at
+   four further tests, each positive: a proper cap and lower blocks,
+   `Continuation.StableRecoveryTwinFamily.exists_isStableRecoveryScheme_twinFamily`,
+   `Continuation/StableRecoveryTwinFamily`; a new cell labelled `⊤`,
+   `Continuation.StableRecoveryTopCell.exists_isStableRecoveryScheme_topCell`,
+   `Continuation/StableRecoveryTopCell`; an interior cap, where every scheme has a face other than
+   its ground set containing the cap and the new point,
+   `StageType.IsStableRecoveryScheme.exists_face_ne_univ`, with a reading cell at two graded faces
+   of grade `N` whose reading constraints agree,
+   `Continuation.StableRecoveryInterior.exists_isStableRecoveryScheme_interiorCap`,
+   `Continuation/StableRecoveryInterior` and `Continuation/StableRecoveryInteriorScheme`; no second
+   calibration is refuted; the next tests, prospective, are these features together, faces of grade
+   `N` that are not nested, reference cells in two blocks for one donor, and `N > k + 2`; the finite
+   statement at every input is still to be proved; `README.md`, Layer 4, status, output 3).
+   Step 7 is compiled conditionally (`README.md`, the section on the top-free witnesses): the loss
+   at `η` under uniqueness at `λ_η` (`nonempty_loss_of_topFreeWitness`), and per block under
    `StageType.HasApexCoatomExtensions` at `λ_η` and uniqueness of the model expansions at `λ_η`
    (`nonempty_loss_of_hasApexCoatomExtensions`, `MainTheorem/LowerBound`).
 
@@ -3676,6 +3693,38 @@ ones split):
   this refutes neither the family nor the completion. Open: copy rows giving the step of the family
   for every seed on five points (`Seed.HasCanonicalMultiStep` for every seed), and the completion at
   `m ≥ 3` for every seed.
+  Profile catalogues (`Extension/ProfileCatalogue`, `Extension/ProfileCatalogueExamples`; compiled
+  in this repository (theorem named) unless marked otherwise). A profile is a labelling of all the
+  cells of the amalgam, normalized into the bounded value set `Label.grid k N` at the cells of grade
+  `k`; the catalogue at the grade `j` (`ProfileCatalogue.catalogue`) is the set of normalized
+  profiles lawful below `(C, j)` and `(D, j)`; the profile scheme `ProfileCatalogue.profileScheme I
+  N J` is literally the multi-layer scheme with one new cell per entry at each `(univ, j)`, `j ≤ J`,
+  whose rows read the old cells by the profile and the new cells by agreement heights of whole
+  profiles in `Label.grid 3 (N + 1)`; field labellings are lawful below `(univ, 3)`
+  (`ProfileCatalogue.isLawfulBelow_fieldLabelling`). It departs from the intended construction in
+  two ways (agreement heights instead of a selected section on lower new cells; a fixed grid instead
+  of the rank-normalized patterns of 2.5), so it does not test that construction as intended. At the
+  seeds of `TL` and `T5`: a capped lift from `(C, 3)` at `(A, ⊤, ⊤)` reaches its cap at a cell at
+  `(univ, 2)` reading `({3}, 1)` strictly below `({4}, 1)`
+  (`ProfileCatalogue.exists_separating_of_lift`); for `J = 2` the lift fails at the tie profile with
+  the cap `4` at `({0, 1, 2}, 3)` (`ProfileCatalogue.not_exists_lift_two`,
+  `ProfileCatalogue.not_cappedLift_two`; refuted, negative special case named); for `J = 3` that
+  ambient labelling is excluded (`ProfileCatalogue.not_isLawfulBelow_three`; that the rows at the
+  grade 3 see the cap in general is argued, not formalized), and the lift fails at the top of the
+  bounded value set (`ProfileCatalogue.not_exists_lift_top`,
+  `ProfileCatalogue.not_cappedLift_three`; refuted, negative special case named). A configured lift
+  at the tie profile with its own cap `3` exists for every `J ≤ 3` and `N ≥ 3`
+  (`ProfileCatalogue.exists_lift_tie`), fails at `N = 1`
+  (`ProfileCatalogue.not_exists_lift_tie_one`), and is open at `N = 2`; it is not the refuted
+  configuration and not the lift at every ambient labelling. The fields of `Seed.MultiLayerStep` for
+  the profile scheme: `pos` fails for every `J ≤ 3` (`mult I N J 3 = 0`), `row_lt`,
+  `isLawfulBelow_row` and `exists_isLawful` are not proved, `cappedLift_left` at `k = 3` is refuted
+  for `J = 2, 3` and every other lift is not proved; so neither scheme is a completion as it stands.
+  At the seeds of `TH` and `TG` the grade-1 catalogue has two cells separating `({3}, 1)` and `({4},
+  1)` in the two orders (`ProfileCatalogue.exists_separating_cells_of`,
+  `ProfileCatalogue.exists_separating_cells_seedHG`). Open: normalization by rank (a proposed repair
+  until its preservation properties compile), the selected-section rows, the lift at every ambient,
+  the other fields, and the completion at `m ≥ 3` for every seed.
 
 The completion constructs lawful finite extensions and nothing more.  It imports only Layers
 0–1, the stage types, the amalgam, and the section theorem of `README.md`, Layer 3, 3.1 (with

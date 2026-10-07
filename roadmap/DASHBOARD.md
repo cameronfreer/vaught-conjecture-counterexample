@@ -134,7 +134,14 @@ Notes on the rows, each with its marker:
   (`StableCappedReceiving.of_hasStableRecoverySchemes_gradedCap`,
   `Realization.IsModel.acquiresCalibratedContexts_gradedCap`), with a stable recovery scheme for
   it at one input at every `ξ`, reading the new cell through the cap
-  (`Continuation.StableRecoveryReading.exists_isStableRecoveryScheme_gradedCap`);
+  (`Continuation.StableRecoveryReading.exists_isStableRecoveryScheme_gradedCap`), and at the twin
+  donors of the refutation, with one context of three points
+  (`Continuation.StableRecoveryTwin.exists_isStableRecoveryScheme_twinDonors`), and at four
+  further tests: a proper cap and lower blocks
+  (`Continuation.StableRecoveryTwinFamily.exists_isStableRecoveryScheme_twinFamily`), a new cell
+  labelled `⊤` (`Continuation.StableRecoveryTopCell.exists_isStableRecoveryScheme_topCell`), and
+  an interior cap with two graded faces of grade `N`
+  (`Continuation.StableRecoveryInterior.exists_isStableRecoveryScheme_interiorCap`);
   cover-hollowness and stable-label fixedness
   (`Realization.isCoverHollow_iff_forall_stableLabel_eq_top`); the exact-age comparison
   (`Realization.nonempty_equiv_of_exactReceivingWithin`); the three comparisons, the rigid-core one
@@ -459,6 +466,38 @@ named hypothesis.
    step) holds at every compiled seed.  Open: copy rows giving the step of the family for every seed
    on five points (`Seed.HasCanonicalMultiStep` for every seed), and the completion at `m ≥ 3` for
    every seed.
+   Profile catalogues (`Extension/ProfileCatalogue`, `Extension/ProfileCatalogueExamples`;
+   compiled in this repository (theorem named) unless marked otherwise; a test of one scheme, not
+   of the completion, `StageType.HasApexCoatomExtensions` or hypothesis 8): one new cell at
+   `(univ, j)` per normalized profile (a labelling of all the cells of the amalgam, values in a
+   fixed bounded value set `Label.grid k N`) lawful on the grade-`j` cut, rows by agreement heights
+   of whole profiles (`ProfileCatalogue.profileScheme`, literally a `multiLayerScheme`).  Two
+   departures from the intended construction: agreement heights instead of a selected section on
+   the lower new cells, and a fixed grid instead of the rank-normalized patterns of `README.md`
+   2.5; so the construction as intended is neither confirmed nor refuted.  At every seed of `TL` and
+   `T5`, with the *ambient labelling* the lawful labelling whose capped observation a capped lift
+   keeps: with catalogues at the grades 1 and 2 only, at the configuration of the seedL refutation
+   (a tie at `({3}, 1)`, `({4}, 1)`, the cap `4` the ambient label at `({0, 1, 2}, 3)`, the
+   prescription `(ω + 1, ⊤, ⊤)` on `C`), the capped lift from `(C, 3)` fails and the refutation
+   transfers (`ProfileCatalogue.not_exists_lift_two`, `ProfileCatalogue.not_cappedLift_two`,
+   negative special case named); with the catalogue at the grade 3 added, that ambient is excluded
+   (`ProfileCatalogue.not_isLawfulBelow_three`).  That the rows at the grade 3 see the cap in
+   general is argued from these two, not compiled; it refutes, as stated, the diagnosis that the
+   values of grade-2 profiles at `({0, 1, 2}, 3)` remove the obstruction.  A configured lift at the
+   tie profile with its own cap `3` exists for every top layer `J ≤ 3` and bound `N ≥ 3`
+   (`ProfileCatalogue.exists_lift_tie`; not the refuted configuration, and not the lift at every
+   ambient); at `N = 1` it fails (`ProfileCatalogue.not_exists_lift_tie_one`), `N = 2` is open.
+   With the grade-3 catalogue the scheme still does not lift capped from `(C, 3)`, at the top of its
+   bounded value set (`ProfileCatalogue.not_cappedLift_three`, negative special case named; a
+   failure of the same kind as `SmallArityExamples.cappedLift_fourCellSeed` and `README.md` 2.5,
+   with different combinatorics).  Normalization by rank, leaving room above every value, is a
+   proposed repair (prospective) until its preservation properties compile.  Of the fields of
+   `Seed.MultiLayerStep`: `pos` fails by construction for every `J ≤ 3` (no cell at `(univ, 4)`),
+   `row_lt`, `isLawfulBelow_row` and `exists_isLawful` are not proved, `cappedLift_left` at `k = 3`
+   is refuted for `J = 2, 3` and every other lift is not proved, so neither scheme is a completion
+   as it stands.  `seedHG`: the grade-1 catalogue has both forced separations
+   (`ProfileCatalogue.exists_separating_cells_seedHG`).  The completion at `m ≥ 3` for every seed
+   and hypothesis 8 stay open.
 2. **Stable availability at twins** (compiled): from legal types
    (`Realization.availability_stableSection_of_hasLegalTypes`), so every model at a block stage is
    stably lawful (`Realization.IsModel.isStablyLawful`), and so is every exactly consistent
@@ -544,13 +583,55 @@ named hypothesis.
    every lawful labelling with the marker at the reference cell and `⊤` at the cap the new cell
    equals the marker; `n = i = 1`, `c = 0`); no label of `D` is `⊤`, so the clause on `γ` and the
    branch at `⊤` of `StageType.ReadsThroughCap` are not used; the root is one cell labelled `⊥`;
-   and `N = k + 1`.  The next test is the twin donor of
-   `Continuation.StableRecoveryCounterexample` (`N ≥ 3`, `E` on at least four points), testing
-   distinct offsets.  At minimal `m = N = 3` the cap has full old scope, so only `(univ, 3)`
-   contains the cap and the new cells; a separately chosen larger-context test is needed for
-   compatibility across several graded faces (informal; not compiled).
-   The finite statement at every input with the calibration is still to be proved, and with it
-   (R4).  The acquisition of the design's cap of full scope and full grade is not compiled.
+   and `N = k + 1`.  **The twin donors** of `Continuation.StableRecoveryCounterexample` need a
+   context of at least three points
+   (`Continuation.StableRecoveryTwin.three_le_of_gradedCapCalibration`); with one context of three
+   points (the root `λ_ξ + 2` as reference cell, a cap of grade `3` labelled `⊤`) and `γ = λ_ξ` the
+   calibration holds for both donors, and each has a stable recovery scheme
+   (`Continuation.StableRecoveryTwin.exists_isStableRecoveryScheme_twinDonors`): a legal scheme on
+   four points with twenty-three cells (`Continuation.StableRecoveryTwin.isLegal_twinScheme`), whose
+   cell at `(univ, 3)` reads the root and the higher twin at `2` and the lower twin at `1` (so
+   `n = 1 ≠ i = 2` for the lower twin).  Bountifulness constrains the reading in two places
+   (informal; not compiled as necessity statements): a pair of cells reading the twins in both
+   orders at each graded face of grade `1` containing them, and the cap reading the root at the
+   offset of the reading cell.  No scheme serves both donors
+   (`Continuation.StableRecoveryTwin.not_isStableRecoveryScheme_twinDonor₁_and_twinDonor₂`): the
+   scheme depends on the donor.  This is a fact about `StageType.IsStableRecoveryScheme` alone, not
+   an obstruction: `StageType.HasStableRecoverySchemes` chooses the scheme after the donor, and the
+   growth construction of Layer 3, 3.4, builds its scheme from the donor by design.  So the finite
+   statement is not refuted where the marker and cap calibration is.  Still special: no label `⊤` in
+   the donors (the clause on `γ` unused), the cap `⊤`, the higher twin copying the reference,
+   references in the block `λ_ξ` only, `(univ, 3)` the only graded face of grade `N = 3` containing
+   the cap and the new cells (several need a context of at least four points; informal; not
+   compiled), and the reference cell the root itself (a cell of the face along `f`; the private
+   context supplies only the cap).  **Four further tests**, each positive, none a refutation: (b) a
+   proper cap, the twin schemes with the cap labelled exactly `λ_ξ + 3 = λ_ξ + N` and `γ = λ_ξ + 2`
+   (`Continuation.StableRecoveryTwinFamily.exists_isStableRecoveryScheme_properCap`; every cap
+   `C ≥ λ_ξ + 3` and `γ < λ_ξ + 3`,
+   `Continuation.StableRecoveryTwinFamily.exists_isStableRecoveryScheme_twinFamily`): no clause of
+   `ReadsThroughCap` carries the cap's label, which enters only through `λ_ξ + N ≤ T⁺ b` (the order
+   law, `StageType.coe_add_grade_le_label`) and `γ < λ_ξ + N`; (a) a donor with a new cell labelled
+   `⊤`, under the cap `λ_ξ + 2` with `γ = λ_ξ + 1`
+   (`Continuation.StableRecoveryTopCell.exists_isStableRecoveryScheme_topCell`): the branch at `⊤`
+   and the clause on `γ` are used, and the `⊤` cell is recovered as exactly `λ_ξ + 2`
+   (`Continuation.StableRecoveryTopCell.label_newCap_eq`); (c) a lower block, references and twins
+   `μ + 2, μ + 1` with `μ < λ_ξ`
+   (`Continuation.StableRecoveryTwinFamily.exists_isStableRecoveryScheme_lowerBlock`); (d) an
+   interior cap (scope without extreme points of the context; four points needed, informal; not
+   compiled): every stable recovery scheme then has a face other than its ground set containing the
+   cap and the new point (`StageType.IsStableRecoveryScheme.exists_face_ne_univ`), so two graded
+   faces of grade `N` contain them (informal; not compiled), and a legal scheme of thirty-five cells
+   with a reading cell at both, the reading constraints agreeing across the two faces, is a stable
+   recovery scheme, for every cap value `B ≥ λ_ξ + 2` and `γ < λ_ξ + 2`
+   (`Continuation.StableRecoveryInterior.exists_isStableRecoveryScheme_interiorCap`).  So reading
+   through the cap at two faces does not obstruct the finite statement at that input, and no second
+   calibration is refuted.  Still special: recovery copies the marker in (a) and (d), `N = k + 1`
+   there, the twin tests read one block through the root, the faces at the interior cap are nested,
+   and the four features are tested separately.  The next tests (prospective): the features together
+   (an interior cap with the twin donors, a `⊤` cell at an interior cap), faces of grade `N` that
+   are not nested, reference cells in two blocks for one donor, and `N > k + 2`.  The finite
+   statement at every input with the calibration is still to be proved, and with it (R4).  The
+   acquisition of the design's cap of full scope and full grade is not compiled.
 6. **The attained least lift and structural successor leastness** (prospective).  One lift of a
    legal stage type at a limit stage `β` to `β + ω`, least at every cell (each minimum is attained
    separately: `StageType.exists_lift_label_eq_ofOffset`); the threshold forced by a cover is read

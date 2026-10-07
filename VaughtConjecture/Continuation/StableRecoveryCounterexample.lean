@@ -55,10 +55,14 @@ graded cap calibration (`StageType.GradedCapCalibration`), which excludes this i
 (`not_gradedCapCalibration_twinRoot`) and is acquired in every model that is not cover-hollow and
 has top-grade supremum `⊤` (`Realization.IsModel.acquiresCalibratedContexts_gradedCap`).  Stable
 recovery schemes for the graded cap calibration are open; one input with such a scheme is
-compiled (`Continuation.StableRecoveryReading.exists_isStableRecoveryScheme_gradedCap`).
-(Informal; not compiled: at this root and donor they would need a private type of at least three
-points, since the finite part `2` of a label of `D` is below the grade `N` of the cap and `N` is at
-most the number of points.)
+compiled (`Continuation.StableRecoveryReading.exists_isStableRecoveryScheme_gradedCap`).  At this
+root and these donors the graded cap calibration needs a context of at least three points (the
+finite part `2` of a label of `D` is below the grade `N` of the cap, and `N` is at most the number
+of points: `Continuation.StableRecoveryTwin.three_le_of_gradedCapCalibration`), and with a context
+of three points it holds for both donors, each with a stable recovery scheme
+(`Continuation.StableRecoveryTwin.exists_isStableRecoveryScheme_twinDonors`, in
+`VaughtConjecture.Continuation.StableRecoveryTwin`); no scheme serves both donors
+(`Continuation.StableRecoveryTwin.not_isStableRecoveryScheme_twinDonor₁_and_twinDonor₂`).
 
 ## Placement
 
