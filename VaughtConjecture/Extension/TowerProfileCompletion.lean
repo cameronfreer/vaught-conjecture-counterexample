@@ -45,7 +45,8 @@ of the tower at the arities `m ≤ 2`, **the coatom extension property with apex
 arities `m ≤ 3`** at every stage that is zero or a limit
 (`StageType.hasApexCoatomExtensions_of_le_three`, via
 `CompletionBelowFullGrade.exists_coatomExtension`: legal, literal faces along both coatoms, an
-apex).  The arities `m ≥ 4` are not treated here.
+apex).  The arities `m ≥ 4` are treated in
+`VaughtConjecture.Extension.ProfileTowerCompletion`.
 
 The construction is not presented as an `OrderedLayer.multiLayerScheme` with a
 `Seed.MultiLayerStep`: the scheme is built as a sequence of `Scheme.appendFullCells` layers and
