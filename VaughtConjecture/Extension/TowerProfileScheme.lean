@@ -47,12 +47,9 @@ cell of a profile `P'` the agreement height of `P` and `P'` in `Label.grid 3 (2 
 * **`seedL`** (`TowerProfile.cappedLift_three_seedL`): the scheme lifts at the grade `3` from both
   coatoms, while the tower's own layer at the grade `3` does not.
 
-**Not proved here.**  The scheme has no cell at `(univ, 4)`, so it is not a completion below the
-full grade; a top layer at the grade `4` (as `OrderedLayer.cappedLift_four_of_oldCells` gives for
-seeds with bottom apexes) and its lifts are not built.  The extension of a lawful labelling of the
-amalgam to a lawful labelling of the scheme (the field `exists_isLawful` of the completion) is not
-proved.  The scheme is not presented as an `OrderedLayer.multiLayerScheme`, so the fields of
-`Seed.MultiLayerStep` are stated here for this scheme only, not as that structure.
+The scheme has no cell at `(univ, 4)`; the canonical field layer at the grade `4` over it, and
+the completion below the full grade, are in the module
+`VaughtConjecture.Extension.TowerProfileCompletion`.
 
 ## Placement
 
