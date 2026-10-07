@@ -601,7 +601,7 @@ elaborated.  The minimality form, from countable truth sides, is kept.
 * `ExpansionDomains.lastStage` (the supremum of the stages containing `q`; no hypothesis), with
   `le_lastStage`, `lastStage_le_omega_one` and `lastStage_eq_omega_one_of_mem_core` (`ω₁` on the
   persistent core), which use the field `domain_eq_empty_of_omega_one_le` (through
-  `bddAbove_setOf_mem`); `isGreatest_lastStage` (attained and below `ξ` once `q ∉ D_ξ`, `ξ < ω₁`;
+  `lt_omega_one_of_mem`, directly or via `bddAbove_setOf_mem`); `isGreatest_lastStage` (attained and below `ξ` once `q ∉ D_ξ`, `ξ < ω₁`;
   the fields `zero`, `antitone` and `limit` only), and `mem_domain_iff_le_lastStage_of_notMem`,
   `mem_loss_iff_lastStage_eq_of_notMem` (which add `domain_eq_empty_of_omega_one_le`, through
   `le_lastStage`); under isolation, logical agreement and nonempty losses, `exists_lastStage`,
@@ -610,7 +610,7 @@ elaborated.  The minimality form, from countable truth sides, is kept.
   `lastStage_lt_qrank`;
 * for the classes of coded models (Scott isolation, `exists_classTruth_iff_eq`):
   `core_eq_empty_of_classTruth` and the `…_of_classTruth` forms; for the actual expansion domains,
-  `modelExpansionDomains_hasRankAgreement` (under (R1)); `expansionDomain_core_eq_empty`, under
+  `modelExpansionDomains_hasRankAgreement` (for `modelExpansionDomains hcap hnext`, under (R1)); `expansionDomain_core_eq_empty`, under
   next-block uniqueness, finite-cut receiving ((R1)), and the coatom extension property with apex
   at every countable block stage, which at `0` gives `CapToModel`
   (`CapToModel.of_hasApexCoatomExtensions`), so `CapToModel` is not a premise of it; and
@@ -3711,7 +3711,8 @@ witnesses).**
 **Counting (Layers 0, 5–6).**
 
 - `Counting/OrdinalAttainment`: Layer 0, a general ordinal statement (Mathlib only, no
-  construction imports).  `exists_isGreatest_of_closed`, used by `MainTheorem/MaximalRefinement`,
+  construction imports).  `exists_isGreatest_of_closed`, used by `MainTheorem/MaximalRefinement` and
+  `MainTheorem/LastStage`,
   is to be replaced at a repin containing `c16de09` and `2cd44c3` by a quotation of the
   greatest-stage statements of InfinitaryLogic (`OrdinalUtil`; "Dependency pins", **Upstream
   statements quoted, not compiled here**), from which it follows (note 34).
