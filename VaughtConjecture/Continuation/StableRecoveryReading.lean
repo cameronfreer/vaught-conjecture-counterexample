@@ -96,11 +96,13 @@ The input is degenerate, so it shows that reading through the cap is feasible, w
 * the root is one cell, labelled `⊥`, so recovery at the old cells is immediate;
 * `N = k + 1`.
 
-The next test is the twin donor of `Continuation.StableRecoveryCounterexample` (finite parts `1`
-and `2`, so `N ≥ 3`; `E` on at least four points), testing distinct offsets.  At the minimal
-`m = N = 3` the cap has full old scope, so only `(univ, 3)` contains both the cap and the new
-cells.  Compatibility across several graded faces requires a separately chosen larger-context
-test (informal; not compiled).
+The next test, the twin donors of `Continuation.StableRecoveryCounterexample` (finite parts `1`
+and `2`, so `N ≥ 3`; `E` on four points), is compiled in
+`VaughtConjecture.Continuation.StableRecoveryTwin`
+(`Continuation.StableRecoveryTwin.exists_isStableRecoveryScheme_twinDonors`).
+At the minimal `m = N = 3` the cap has full old scope, so only `(univ, 3)` contains both the
+cap and the new cells. Compatibility across several graded faces requires a separately chosen
+larger-context test (informal; not compiled).
 
 ## Placement
 
