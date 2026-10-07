@@ -39,7 +39,8 @@ preorder (`IsCovering.isDirected`).
 The **canonical finite hull** `R.finiteHull F` is the hull of `F` in any occurrence containing
 it (`finiteHull_eq`).  It is a closure operator on finite sets (`Realization.hullClosure`), the
 least support containing `F` (`finiteHull_subset_of_isSupport`); its closed sets
-are exactly the supports of occurrences (`finiteHull_eq_self_iff`), and a tuple is typed exactly
+are exactly the supports of occurrences (`finiteHull_eq_self_iff`), so the supports are closed
+under intersection (`isSupport_inter`), and a tuple is typed exactly
 when its support is such a support (`isSome_eval_iff_isSupport`).  Every hull is the hull of at
 most two of its generators (`exists_subset_card_le_two_finiteHull_eq`), and the hull satisfies
 anti-exchange (`finiteHull_antiExchange`), which reduces to anti-exchange at the closed hull of the
@@ -315,6 +316,16 @@ theorem finiteHull_subset_of_isSupport (hR : R.IsConsistent) (hc : R.IsCovering)
 theorem finiteHull_subset_iff (hR : R.IsConsistent) (hc : R.IsCovering) (hS : R.IsSupport S) :
     R.finiteHull F ⊆ S ↔ F ⊆ S :=
   ⟨(subset_finiteHull F).trans, finiteHull_subset_of_isSupport hR hc hS⟩
+
+variable (R) in
+/-- **The supports of an exactly consistent covering realization are closed under
+intersection.** -/
+theorem isSupport_inter [DecidableEq M] (hR : R.IsConsistent) (hc : R.IsCovering)
+    {S T : Finset M} (hS : R.IsSupport S) (hT : R.IsSupport T) : R.IsSupport (S ∩ T) := by
+  rw [← finiteHull_eq_self_iff hR hc]
+  refine Subset.antisymm (subset_inter ?_ ?_) (subset_finiteHull _)
+  · exact finiteHull_subset_of_isSupport hR hc hS inter_subset_left
+  · exact finiteHull_subset_of_isSupport hR hc hT inter_subset_right
 
 /-- **Typed tuples are the enumerations of supports**: under exact consistency, a tuple is typed
 exactly when its set of points is the support of an occurrence. -/

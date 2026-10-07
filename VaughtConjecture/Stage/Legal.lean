@@ -296,4 +296,25 @@ end Lift
 
 end StageType
 
+/-! ### Lawful sections of a face of a stage type -/
+
+namespace StageType
+
+variable {α : Ordinal.{u}} {n m k : ℕ} {D : StageType.{u} α n} {f : Fin m ↪ Fin n}
+  {t : StageType.{u} α m}
+
+/-- **Lawful sections of a face extend**: every lawful section of the rows of a face of a legal
+stage type extends to a lawful section of its rows (bountifulness at the cap `⊥`,
+`Scheme.IsLegal.exists_isLawful_extend`).  It concerns all lawful sections of the face, not only
+its labels. -/
+theorem exists_isLawful_extend_of_restrictFace (hD : D.IsLegal) (h : restrictFace f D = some t)
+    {a : Fin t.card → Label.{u}} (ha : t.rows.IsLawful a) :
+    ∃ a' : Fin D.card → Label.{u}, D.rows.IsLawful a' ∧ ∀ i, a' (faceCell h i) = a i := by
+  obtain ⟨hf, rfl⟩ := (restrictFace_eq_some_iff D f).mp h
+  obtain ⟨r, hr, -, hext⟩ := Scheme.IsLegal.exists_isLawful_extend hD hf (isSelfVisible_bot n)
+    ha D.isLawful fun _ ↦ by simp
+  exact ⟨r, hr, fun i ↦ hext i⟩
+
+end StageType
+
 end VaughtConjecture

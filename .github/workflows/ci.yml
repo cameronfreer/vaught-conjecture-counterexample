@@ -58,18 +58,18 @@ jobs:
         uses: actions/cache/restore@v6
         with:
           path: .lake/packages
-          key: deps-v6-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
+          key: deps-v7-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
           lookup-only: true
 
       # Emits `enough=true` only if the measured available bytes are an integer of at least
-      # 12 GiB (12884901888 bytes); a failed or unparseable measurement gives `enough=false`,
+      # 10.25 GiB (11005853696 bytes); a failed or unparseable measurement gives `enough=false`,
       # so the cleanup runs.  The comparison is first checked at and around the boundary.
       - name: Measure free disk space
         id: disk
         run: |
           df -h / || true
-          enough() { [[ "$1" =~ ^[0-9]+$ ]] && (( 10#$1 >= 12884901888 )); }
-          for t in 12884901887:false 12884901888:true 12884901889:true x:false :false; do
+          enough() { [[ "$1" =~ ^[0-9]+$ ]] && (( 10#$1 >= 11005853696 )); }
+          for t in 11005853695:false 11005853696:true 11005853697:true x:false :false; do
             if enough "${t%%:*}"; then got=true; else got=false; fi
             if [[ "$got" != "${t##*:}" ]]; then
               echo "disk guard self-test failed for '${t%%:*}'"; exit 1
@@ -77,18 +77,21 @@ jobs:
           done
           avail=$(df --output=avail -B1 / 2>/dev/null | tail -n 1 | tr -d ' ') || avail=
           if enough "$avail"; then result=true; else result=false; fi
-          echo "available bytes: ${avail:-unknown}; at least 12 GiB: $result"
+          echo "available bytes: ${avail:-unknown}; at least 10.25 GiB: $result"
           echo "enough=$result" >> "$GITHUB_OUTPUT"
 
       # The cold path (dependency cache missed) restores nothing and then fetches the Mathlib
       # cache of the pin and builds the dependencies, which needs the room, so the cleanup
       # always runs there, as before (the toolchain install above it is unaffected).
-      # The warm path needs room for the restored dependency cache: a 1.9 GiB archive that is
-      # extracted to about 7.7 GiB (both on disk during extraction, so a peak of about
-      # 9.7 GiB), plus under 0.1 GiB of root build outputs; the sketch checks and audits write
-      # nothing large.  The cleanup is therefore also run unless at least 12 GiB is free, and
-      # is skipped only on a hit with at least 12 GiB free (it takes up to 1.5 minutes).  The
-      # cleanup drops the large preinstalled toolchains we never use.
+      # The warm path needs room for the restored dependency cache, pruned before it was saved
+      # (see the step before "Save dependency cache"): a 1.8 GiB archive that is extracted to
+      # about 6.4 GiB (both on disk during extraction, so a peak of about 8.2 GiB), plus about
+      # 0.2 GiB of root build outputs; the sketch checks and audits write nothing large.  The
+      # cleanup is therefore also run unless at least 10.25 GiB (the peak plus 2 GiB) is free,
+      # and is skipped only on a hit with that much free (it takes about 2 minutes).  Runners
+      # have reported about 10.4 GiB free at this point, below the 12 GiB the unpruned cache
+      # (1.9 GiB archive, 7.7 GiB extracted) required.  The cleanup drops the large preinstalled
+      # toolchains we never use.
       - name: Free disk space
         if: >-
           steps.deps-lookup.outputs.cache-hit != 'true' ||
@@ -148,6 +151,32 @@ jobs:
       - name: Build the classical entry module of ComputableModelTheory
         run: lake build ComputableModelTheory.Classical
 
+      # Before saving, drop from the dependency tree what a warm run never reads.  A warm run
+      # only checks each dependency module's trace and imports its `.olean`, `.olean.server`,
+      # `.olean.private` and `.ir` (all read by `import` from a file outside the module system,
+      # as ours and the sketches are), so those stay, with every `.trace` and `.hash`.
+      #   * `*.setup.json` (in `.lake/build/ir`): the arguments Lake passed to Lean when it
+      #     compiled the module; never read for an up-to-date module.  Deleted.
+      #   * `.lake/build/bin` (Mathlib's `cache` executable): only `lake exe cache get` uses it,
+      #     and that runs on the cold path alone, which restores nothing and rebuilds it.  Deleted.
+      #   * `*.c` (generated C) and `*.ilean` (the language server's reference index): Lake
+      #     treats a module as up to date only if these files exist, but takes their hashes from
+      #     the `.hash` files beside them and never reads them, and nothing on the warm path
+      #     compiles C or queries references.  They are therefore emptied, not deleted (deleting
+      #     them makes Lake rebuild every dependency).
+      # Measured on the pins of this cache key: 7.7 GiB on disk before, 6.4 GiB after; the
+      # zstd archive 1.9 GiB before, 1.8 GiB after.  The tree is pruned in place, so the
+      # run that saves it goes on to the sketch checks and the audits against the pruned tree.
+      - name: Prune dependency outputs the warm path does not read
+        if: steps.deps-cache.outputs.cache-hit != 'true'
+        run: |
+          du -sh .lake/packages
+          find .lake/packages -path '*/.lake/build/*' -type f -name '*.setup.json' -delete
+          find .lake/packages -path '*/.lake/build/bin' -type d -prune -exec rm -rf {} +
+          find .lake/packages -path '*/.lake/build/*' -type f \( -name '*.c' -o -name '*.ilean' \) \
+            -size +0 -exec truncate -s 0 {} +
+          du -sh .lake/packages
+
       # Save the dependency cache right after a successful build, before the sketch checks and
       # the audits, so a failure in either cannot discard a valid cache.
       - name: Save dependency cache
@@ -163,9 +192,9 @@ jobs:
       # visible to later runs of that pull request only, never to `main` or to other pull
       # requests, while `main`'s entries are visible to every pull request.  The repository
       # limit is 10 GB, evicting least-recently-used entries.  An entry here is about 7.5 MB
-      # compressed against 2.1 GB for a dependency cache, so even with four dependency caches
-      # present (8.4 GB) about 200 build entries fit; their pressure on the dependency caches
-      # is negligible.
+      # compressed against 1.9 GB for a (pruned) dependency cache, so even with four dependency
+      # caches present (7.7 GB) about 300 build entries fit; their pressure on the dependency
+      # caches is negligible.
       - name: Save root build cache
         if: steps.root-cache.outputs.cache-hit != 'true'
         uses: actions/cache/save@v6
