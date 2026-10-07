@@ -185,6 +185,12 @@ Notes on the rows, each with its marker:
   `StageType.HasApexCoatomExtensions` at `λ_β` and `ForcingDonors β` (`exists_sameLevelMaximal`).
   Terminality of every cover-hollow realization at a block stage is compiled with no hypothesis
   (`Realization.IsCoverHollow.isTerminalAt`, Layer 4).
+- *Manuscript correspondence, item 5.*  Compiled: strictness for models, from modelhood alone
+  (`Realization.IsModel.isFixedAt_blockStage_iff`: a model at `λ_η` is fixed by projection at the
+  index `ξ` exactly when `η ≤ ξ`, from the uniformity clause); the bound of serving indices,
+  given strictness and an index at which every member is fixed
+  (`Realization.IsStrict.le_of_forall_isFixedAt`); and the negative special case (`Realization.StrictnessExamples.not_isStrict_undefinedFamily`).  Row 32
+  stays S: the uniform fixing stage of the construction it applies to is prospective.
 - *Layer 6, thinness in scatteredness form.*  Compiled conditionally on the cap-to-model theorem,
   (R1), forcing donors at every countable block index, the continuation criterion, (R2) and (R3),
   each still to be proved, with neither sentence separation nor López–Escobar
