@@ -25,6 +25,10 @@ consistency, bountifulness, or completeness of `R` is assumed unless it is a hyp
 * **Lifting within a face** (`Rows.cappedLift_of_fst_eq`): for pairs `X ≤ Y` on the same face,
   any rows lift capped from `X` to `Y`: keep the prescription below `X` and cap the ambient labels
   above it.  This is the case `B = C = A` of the proof of [Kni26, Lemma 4.3.2].
+* **Lifting from bottom cells** (`Rows.cappedLift_of_forall_row_self_eq_bot`): if the row of
+  every cell below `X` is bottom at the cell itself, such cells are `⊥` in every labelling lawful
+  below a pair above them (`Rows.IsLawfulBelow.eq_bot_of_row_self_eq_bot`), and the rows lift
+  capped from `X` to every `Y ≥ X` by keeping the ambient labelling.
 * **Bountifulness at a fixed grade** (`Rows.isBountiful_iff_forall_cappedLift_fst`): rows are
   bountiful exactly when they lift capped from every graded face `X` to `(C, grade of X)`, for every
   graded face `(C, j)` above `X`.
@@ -130,6 +134,14 @@ theorem IsLawfulBelow.glue₃ {U V W Y : Finset α × ℕ} {w : ι → Label.{u}
   · exact (hY s hs).elim (hlU s) fun h ↦ h.elim (hlV s) (hlW s)
   · exact (hY t ht).elim (haU s t) fun h ↦ h.elim (haV s t) (haW s t)
 
+/-- A cell below `X` whose row is bottom at the cell itself has bottom label in every labelling
+lawful below `X`. -/
+theorem IsLawfulBelow.eq_bot_of_row_self_eq_bot {X : Finset α × ℕ} {w : ι → Label.{u}}
+    (hw : R.IsLawfulBelow X (fun d ↦ w d)) {d : ι} (hd : d ∈ D.below X)
+    (h : R.row d ⟨d, D.mem_below_gradedIndex d⟩ = ⊥) : w d = ⊥ := by
+  simpa using ((isLawfulBelow_iff_forall.mp hw).2.1 d hd).eq_bot
+    (d := ⟨d, D.mem_below_gradedIndex d⟩) h
+
 /-! ### Extension by bottom -/
 
 open Classical in
@@ -224,6 +236,20 @@ theorem cappedLift_of_fst_eq (h : X ≤ Y) (hXY : X.1 = Y.1) : R.CappedLift h :=
         exact min_le_min_right c hle
   refine ⟨fun d ↦ w d, hl, fun d ↦ hcap d d.2, fun d ↦ ?_⟩
   exact hwX _ d.2
+
+/-- **Lifting from bottom cells.**  If the row of every cell below `X` is bottom at the cell
+itself, the rows lift capped from `X` to every `Y ≥ X`: keep the ambient labelling, which is `⊥`,
+as the prescription is, at every cell below `X`. -/
+theorem cappedLift_of_forall_row_self_eq_bot (h : X ≤ Y)
+    (hX : ∀ d ∈ D.below X, R.row d ⟨d, D.mem_below_gradedIndex d⟩ = ⊥) : R.CappedLift h := by
+  refine (cappedLift_iff_forall_exists h).mpr fun c _ p q hp hq _ ↦
+    ⟨q, hq, fun _ ↦ rfl, fun d ↦ ?_⟩
+  have hdY : d.1 ∈ D.below Y := D.below_mono h d.2
+  have e1 := (isLawfulBelow_extendBot.mpr hq).eq_bot_of_row_self_eq_bot hdY (hX d d.2)
+  have e2 := (isLawfulBelow_extendBot.mpr hp).eq_bot_of_row_self_eq_bot d.2 (hX d d.2)
+  rw [extendBot_of_mem _ hdY] at e1
+  rw [extendBot_of_mem _ d.2] at e2
+  exact e1.trans e2.symm
 
 /-! ### Bountifulness at a fixed grade -/
 

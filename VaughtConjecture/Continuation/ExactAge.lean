@@ -36,7 +36,10 @@ form (`ExactReceivingWithin.of_one_point`): the image of `g` is a closed face of
 closed faces form a convex geometry, so a chain of closed sets, each one point larger than the
 last (`Geometry.IsConvexGeometry.exists_insert_mem`), leads from the image of `g` to all points
 of `D`; each step is one-point receiving of a face of `D`, which lies in `A`.  Exact receiving is
-invariant under transport along bijections of carriers (`exactReceivingWithin_map_iff`).
+invariant under transport along bijections of carriers (`exactReceivingWithin_map_iff`).  Exact
+receiving within the family of all legal stage types gives finite-cut receiving
+(`ExactReceivingWithin.hasFiniteCutReceiving`): the donor itself is received, and it lies in each
+of its receiving families.
 
 **The pointed form.**  For a **core** `x₀ : Fin k₀ → M`, the families are indexed also by the
 position of the core: `A m ι` for `ι : Fin k₀ ↪ Fin m`.  Exact receiving within `A` at `x₀`
@@ -232,6 +235,19 @@ theorem ExactReceivingWithin.map (h : R.ExactReceivingWithin A) (e : M ≃ N) :
 @[simp] theorem exactReceivingWithin_map_iff (e : M ≃ N) :
     (R.map e).ExactReceivingWithin A ↔ R.ExactReceivingWithin A :=
   ⟨fun h ↦ map_symm_map R e ▸ h.map e.symm, fun h ↦ h.map e⟩
+
+/-! ### Finite-cut receiving -/
+
+/-- **Exact receiving of legal donors gives finite-cut receiving**: the donor itself is received,
+and it lies in each of its receiving families. -/
+theorem ExactReceivingWithin.hasFiniteCutReceiving
+    (h : R.ExactReceivingWithin fun m ↦ {D : StageType.{u} α m | D.IsLegal}) :
+    R.HasFiniteCutReceiving := by
+  intro x d hd c _
+  obtain ⟨u, hu, hug⟩ := h x.type x.tuple (covers_of_eval _ x.eval_tuple) d Fin.castSuccEmb hd.1
+    hd.2
+  exact ⟨⟨u, hu.injective⟩, Function.Embedding.ext (congrFun hug), d,
+    StageType.self_mem_receivingFamily d c, hu.eval_eq⟩
 
 end Receiving
 
