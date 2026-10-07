@@ -3,7 +3,8 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
-import VaughtConjecture.Continuation.ExactReceivingExamples
+import VaughtConjecture.Continuation.ExactReceiving
+import VaughtConjecture.Extension.Apex
 
 /-!
 # Source-gap contexts: residual acquisition, and separated top supports
@@ -27,10 +28,12 @@ point**), a cell `o` (the **owner**) and a cell `r` (the **lost top**) with:
 
 Rows are read through `Scheme.rowAt` (the row of a cell at a cell below it, `⊥` elsewhere); every
 top cell lies below the owner, since its grade is at most the top grade.  The cells visible through
-`h` avoid `l`, so the top cells of the root are retained
-(`StageType.IsSourceGapContextAt.gap_visible`).  This predicate is defined in this repository; it
-transcribes the private-gap context of the residual construction of 3.3, with the lost point and
-the owner explicit.
+`h` avoid `l`, so the top cells of the root are retained.  This predicate is defined in this
+repository.  The owner and the lost top form a private gap in the sense of the LOW construction
+of 3.3 (`roadmap/README.md`: a cell `c` of grade `K` and a cell `r` below it with
+`visibilityReplace K K (E_c r) < E_c c`, the row above the replaced value at the root tops), with
+the lost point, the full scope of the owner, and the gap at every retained top cell made
+explicit.
 
 **Residual acquisition** (compiled in this repository,
 `Realization.residualAcquisition_isSourceGapContext`), with no hypothesis beyond those of
@@ -40,8 +43,9 @@ and the root along the initial segment (`Realization.exists_covers_isSourceGapCo
 
 * `K > 0`, since at top-grade supremum `0` the empty tuple is a globally rigid core
   (`Realization.IsModel.isGloballyRigidCore_empty_iff`);
-* the tail (`Realization.exists_forall_le_topGrade_eq`) and covering give an occurrence `z` of top
-  grade `K` containing the cover, hence a top cell of grade `K` in its type
+* the **tail** is an occurrence `x₀` above which (in the inclusion order of supports) every
+  occurrence has top grade `K` (`Realization.exists_forall_le_topGrade_eq`); covering gives an
+  occurrence `z` above it containing the cover, hence a top cell of grade `K` in its type
   (`StageType.exists_grade_eq_topGrade`);
 * `z` is not a globally rigid core: some cover `x` of a stage type `Q` along `e₀` has an admissible
   top support `H` (`StageType.IsAdmissibleTopSupport`) containing the top cells visible through
@@ -61,10 +65,26 @@ and the root along the initial segment (`Realization.exists_covers_isSourceGapCo
   (`CellScheme.Rows.IsLawful.visibilityReplace_row_lt`); restricted to the face on
   `insert p B`, enumerated with `p` last, these are the gaps.
 
+The last four steps concern stage types only and use no model
+(`StageType.exists_isSourceGapContextAt_comap`).
+
 **Determination is open.**  Cutoff determination for source-gap contexts
-(`Realization.CutoffDetermination`) is not attempted here; with it and (R1) for every model at
-every limit stage, `Realization.residualReceiving_of_cutoffDetermination` would give (R2).  Nothing
-here proves (R2) or any part of it.
+(`Realization.CutoffDetermination`) is not attempted here.  With it and (R1) for every model at
+every limit stage, (R2) follows
+(`Realization.residualReceiving_of_cutoffDetermination_isSourceGapContext`, compiled in this
+repository, with determination a hypothesis).  Nothing here proves (R2).
+
+**Non-vacuity is open: a dichotomy.**  If no legal stage type is a source-gap context, (R2) holds
+outright: the compiled acquisition leaves no model at a limit stage with no cover that is a
+globally rigid core and with natural top-grade supremum
+(`Realization.residualReceiving_of_forall_not_isSourceGapContext`).  So either some legal stage
+type is a source-gap context, or (R2) holds; neither side is claimed here.  Whether a legal
+source-gap context exists is open: it needs a legal type whose owner row has a gap at a lost top
+(the row laws allow a locality witness sending every label from some point on to `⊤`), and
+nothing compiled exhibits one.  No stage type built with `StageType.addApex` is a source-gap context
+(`StageType.not_isSourceGapContext_addApex`): the owner must be the apex, whose row is the coded
+copy of the labels and reads every top cell at the code of `⊤`, so the gap at the owner fails
+(`Label.le_visibilityReplace`).
 
 **Separated top supports.**  An admissible top support is defined through a lawful section (a
 legal relabelling that is `⊤` exactly on the support).  A **separated top support**
@@ -90,8 +110,8 @@ predicate that is always true over a top-free root along the identity
 point `ExactReceivingExamples.apexPoint`.  A source-gap context is not top-free (its owner is
 labelled `⊤`, `StageType.not_isSourceGapContext_of_isTopFree`) and its root map is not surjective
 (`StageType.not_isSourceGapContext_of_surjective`), so neither the general obstruction nor the apex
-instance (the example at the end of this file) is a source-gap context.  This says nothing about
-determination for source-gap contexts.
+instance is a source-gap context (`VaughtConjecture.Continuation.SourceGapContextExamples`).  This
+says nothing about determination for source-gap contexts.
 
 ## Placement
 
@@ -180,7 +200,10 @@ variable (t) in
   `H`, replaced at the grade of `o` (`Label.visibilityReplace`), lies strictly below the row of
   `o` at every cell `a` of `H` (the cell `o` itself included).
 
-This is the form of a top support stated through the rows, with no lawful section quantified. -/
+It is a necessary condition for admissibility (`IsAdmissibleTopSupport.isSeparatedTopSupport`),
+stated through the rows, with no lawful section quantified.  The acquisition below works with
+admissible supports directly; this form and its rigid cores are kept to record the direction of
+the comparison between the two forms of top support. -/
 structure IsSeparatedTopSupport (H : Set (Fin t.card)) : Prop where
   /-- The support consists of top cells. -/
   subset : H ⊆ {d | t.label d = ⊤}
@@ -297,10 +320,6 @@ namespace IsSourceGapContextAt
 
 variable {K : ℕ} {t' : StageType.{u} α k} {h : Fin n ↪ Fin k} {l : Fin k} {o r : Fin t'.card}
 
-/-- The grade of a source-gap context is positive. -/
-theorem pos (hs : t'.IsSourceGapContextAt K h l o r) : 0 < K :=
-  hs.grade_owner ▸ t'.isWellFormed.isWellFormed.grade_pos o
-
 /-- A source-gap context is not top-free: its owner is labelled `⊤`. -/
 theorem not_isTopFree (hs : t'.IsSourceGapContextAt K h l o r) : ¬ t'.IsTopFree :=
   fun ht ↦ ht o hs.label_owner
@@ -309,22 +328,7 @@ theorem not_isTopFree (hs : t'.IsSourceGapContextAt K h l o r) : ¬ t'.IsTopFree
 theorem not_surjective (hs : t'.IsSourceGapContextAt K h l o r) : ¬ Function.Surjective h :=
   fun hh ↦ hs.notMem_range (hh l)
 
-/-- **The gaps hold at the top cells of the root**: a cell visible through `h` avoids the lost
-point. -/
-theorem gap_visible (hs : t'.IsSourceGapContextAt K h l o r) {a : Fin t'.card}
-    (ha : a ∈ t'.visibleCells h) (hat : t'.label a = ⊤) :
-    visibilityReplace K K (t'.rowAt o r) < t'.rowAt o a :=
-  hs.gap_retained a hat fun hl ↦ hs.notMem_range (Scheme.mem_visibleCells.mp ha hl)
-
 end IsSourceGapContextAt
-
-/-- A one-point type within the top grade of (R2) lies within the top grade of the context. -/
-theorem IsSourceGapContext.topGrade_le {K : ℕ} {t' : StageType.{u} α k} {h : Fin n ↪ Fin k}
-    (hs : t'.IsSourceGapContext K h) {d : StageType.{u} α m} (hd : d.topGrade ≤ K) :
-    d.topGrade ≤ t'.topGrade := by
-  obtain ⟨l, o, r, hs⟩ := hs
-  rw [hs.topGrade_eq]
-  exact hd
 
 /-- **A top-free type is not a source-gap context.** -/
 theorem not_isSourceGapContext_of_isTopFree {K : ℕ} {t' : StageType.{u} α k}
@@ -398,92 +402,41 @@ theorem exists_owner {Q : StageType.{u} α m} (hQ : Q.IsLegal) {τ : Fin Q.card 
   obtain ⟨u, hu, hle⟩ := hτ.availability s w (hwF ▸ hsF) (congrArg Prod.snd hw).symm
   exact ⟨u, hu.trans hw, top_le_iff.mp (hs.symm.le.trans hle)⟩
 
-end StageType
-
-/-! ### Residual acquisition -/
-
-namespace Realization
-
-variable {α : Ordinal.{u}} {M : Type w} {R : Realization.{u, w} α M} {n : ℕ}
-
-/-- A tuple whose points are among the values of `φ` factors through `φ` along an embedding. -/
-private theorem exists_embedding_comp_eq {k : ℕ} {c : Fin n → M} (hc : Function.Injective c)
-    {φ : Fin k → M} (h : ∀ i, ∃ j, φ j = c i) : ∃ e : Fin n ↪ Fin k, φ ∘ e = c := by
+/-- A tuple whose values are among the values of `φ` factors through `φ` along an embedding. -/
+private theorem exists_embedding_comp_eq {β : Type*} {c : Fin n → β} (hc : Function.Injective c)
+    {φ : Fin k → β} (h : ∀ i, ∃ j, φ j = c i) : ∃ e : Fin n ↪ Fin k, φ ∘ e = c := by
   choose j hj using h
   exact ⟨⟨j, fun a b hab ↦ hc (by rw [← hj a, ← hj b, hab])⟩, funext hj⟩
 
-/-- **Residual acquisition of a source-gap context**, in the form with the lost point last: in a
-model at a limit stage with no cover that is a globally rigid core and with top-grade supremum
-`K`, every cover `c` of a stage type `t` extends to a cover `c'` of a stage type `t'` on `k + 1`
-points along `e` followed by the initial segment, and `t'` is a source-gap context of grade `K`
-along it with the last point lost.
+/-- **A source-gap context from a proper admissible top support** (stage types only, no model):
+let `Q` be legal of top grade `K`, let `H` be an admissible top support of `Q` containing every top
+cell with scope in a closed face `G` and missing some top cell, and let a top cell `s₀` of grade
+`K` have scope in `G`.  Then every injective `g` with values in `G` factors as
+`ι ∘ Fin.castSucc ∘ e` through an enumeration `ι` of a closed face, and the face of `Q` along `ι`
+is a source-gap context of grade `K` along `e` followed by the initial segment, with the last
+point lost.
 
-The tail above an occurrence of top grade `K` (`exists_forall_le_topGrade_eq`) and covering give
-an occurrence `z` of top grade `K` containing `c`, with a top cell of grade `K` (`K > 0`, since
-otherwise the empty tuple is a globally rigid core).  As `z` is not a globally rigid core, a cover
-`x` of a stage type `Q` along `e₀` has an admissible top support `H` containing the top cells
-visible through `e₀` and missing a top cell.  First loss (`StageType.exists_firstLoss`) gives a
-closed face `B` on which `H` is full and a point `p` with `insert p B` closed and a lost top `r`;
-the top cell of grade `K` gives an owner in `H` of graded index `(insert p B, K)`
-(`StageType.exists_owner`); `t'` is the face of `Q` on `insert p B`, enumerated with `p` last.  The
+First loss (`exists_firstLoss`) gives `B ⊇ G` and `p`; `ι` enumerates `insert p B` with `p` last;
+the owner is the cell of `H` of graded index `(insert p B, K)` (`exists_owner`, from `s₀`); the
 gaps are `CellScheme.Rows.IsLawful.visibilityReplace_row_lt` for the lawful section witnessing
-`H`, restricted to that face. -/
-theorem exists_covers_isSourceGapContextAt (hα : Order.IsSuccLimit α) (hR : R.IsModel)
-    (hcore : ¬ ∃ (k : ℕ) (p : StageType.{u} α k) (c : Fin k → M), R.Covers p c ∧
-      R.IsGloballyRigidCore c)
-    {K : ℕ} (hK : R.topGradeSup = K) {t : StageType.{u} α n} {c : Fin n → M}
-    (hc : R.Covers t c) :
-    ∃ (k : ℕ) (t' : StageType.{u} α (k + 1)) (c' : Fin (k + 1) → M) (e : Fin n ↪ Fin k),
-      R.Covers t' c' ∧ c' ∘ (e.trans Fin.castSuccEmb) = c ∧
-        ∃ o r, t'.IsSourceGapContextAt K (e.trans Fin.castSuccEmb) (Fin.last k) o r := by
+`H`, restricted to the face. -/
+theorem exists_isSourceGapContextAt_comap {Q : StageType.{u} α m} (hQ : Q.IsLegal) {K : ℕ}
+    (hQK : Q.topGrade = K) {H : Set (Fin Q.card)} (hH : Q.IsAdmissibleTopSupport H)
+    {G : Finset (Fin m)} (hG : G ∈ Q.toCellScheme.faces)
+    (hfull : ∀ d, Q.toCellScheme.scope d ⊆ G → Q.label d = ⊤ → d ∈ H)
+    (hloss : ∃ d, Q.label d = ⊤ ∧ d ∉ H) {s₀ : Fin Q.card} (hs₀ : Q.label s₀ = ⊤)
+    (hs₀K : Q.toCellScheme.grade s₀ = K) (hs₀G : Q.toCellScheme.scope s₀ ⊆ G) {g : Fin n → Fin m}
+    (hg : Function.Injective g) (hgG : ∀ i, g i ∈ G) :
+    ∃ (k : ℕ) (ι : Fin (k + 1) ↪ Fin m) (hι : univ.map ι ∈ Q.toCellScheme.faces)
+      (e : Fin n ↪ Fin k), (∀ i, ι (e i).castSucc = g i) ∧
+        ∃ o r,
+          (Q.comap ι hι).IsSourceGapContextAt K (e.trans Fin.castSuccEmb) (Fin.last k) o r := by
   classical
-  -- the eventual top grade is positive: otherwise the empty tuple is a globally rigid core
-  have hKpos : 0 < K := by
-    refine Nat.pos_of_ne_zero fun hK0 ↦ hcore ?_
-    obtain ⟨p, hp⟩ := hR.exists_covers_zero
-    exact ⟨0, p, ![], hp, (hR.isGloballyRigidCore_empty_iff hα).mpr (by rw [hK, hK0]; rfl)⟩
-  -- the tail, and an occurrence `z` above it containing the points of `c`
-  obtain ⟨x₀, hx₀⟩ := exists_forall_le_topGrade_eq hR.isConsistent hR.isCovering hK
-  obtain ⟨z, hz⟩ := hR.isCovering.exists_subset_support (univ.image c ∪ x₀.support)
-  have hzK : z.type.topGrade = K := hx₀ z (subset_union_right.trans hz)
-  -- `z` is not a globally rigid core
-  have hnr : ¬ R.IsGloballyRigidCore z.tuple :=
-    fun h ↦ hcore ⟨_, _, _, covers_of_eval _ z.eval_tuple, h⟩
-  simp only [IsGloballyRigidCore, StageType.IsRigidCoreIn] at hnr
-  push Not at hnr
-  obtain ⟨m, Q, x, e₀, hx, hxe, H, hH, hcoreH, d₀, hd₀, hd₀H⟩ := hnr
-  have hQ : Q.IsLegal := hR.isLegal _ _ hx.eval_eq
-  -- the occurrence of `x` lies above `z`, so `Q` has top grade `K`
-  let y : R.Occurrence := ⟨m, ⟨x, hx.injective⟩, Q, hx.eval_eq⟩
-  have hzy : z ≤ y := by
-    intro a ha
-    obtain ⟨j, rfl⟩ := (Occurrence.mem_support _).mp ha
-    exact (Occurrence.mem_support _).mpr ⟨e₀ j, congrFun hxe j⟩
-  have hQK : Q.topGrade = K := hx₀ y ((subset_union_right.trans hz).trans hzy)
-  -- the face of `Q` along `e₀` is the type of `z`
-  have hface : StageType.restrictFace e₀ Q = some z.type := by
-    have he : e₀.trans ⟨x, hx.injective⟩ = z.tuple := Function.Embedding.ext fun j ↦ congrFun hxe j
-    rw [← hR.isConsistent _ Q e₀ hx.eval_eq, he, z.eval_tuple]
-  have hG : univ.map e₀ ∈ Q.toCellScheme.faces := ((StageType.restrictFace_eq_some_iff _ _).mp
-    hface).1
-  have hfull (d : Fin Q.card) (hd : Q.toCellScheme.scope d ⊆ univ.map e₀) (hdt : Q.label d = ⊤) :
-      d ∈ H :=
-    hcoreH d (mem_filter.mpr ⟨mem_univ _, hd⟩) hdt
-  -- a top cell `s₀` of grade `K` visible through `e₀`, so in `H`
-  obtain ⟨s, hs, hsK⟩ := StageType.exists_grade_eq_topGrade (t := z.type) (hzK ▸ hKpos)
-  set s₀ := StageType.faceCell hface s
-  have hs₀ : Q.label s₀ = ⊤ := (StageType.label_faceCell hface s).trans hs
-  have hs₀K : Q.toCellScheme.grade s₀ = K := (StageType.grade_faceCell hface s).trans
-    (hsK.trans hzK)
-  have hs₀G : Q.toCellScheme.scope s₀ ⊆ univ.map e₀ := by
-    rw [StageType.scope_faceCell]
-    exact map_subset_map.mpr (subset_univ _)
   -- the lawful section witnessing `H`
   obtain ⟨τ, hτ, hτH⟩ := hH.exists_isLawful
   -- first loss and the owner
-  obtain ⟨B, p, hGB, hpB, hF, hBfull, r, hr, hrH, hrF, hpr⟩ :=
-    StageType.exists_firstLoss hG hfull ⟨d₀, hd₀, hd₀H⟩
-  obtain ⟨o, ho, hoτ⟩ := StageType.exists_owner hQ hτ hF ((hτH s₀).mpr (hfull s₀ hs₀G hs₀))
+  obtain ⟨B, p, hGB, hpB, hF, hBfull, r, hr, hrH, hrF, hpr⟩ := exists_firstLoss hG hfull hloss
+  obtain ⟨o, ho, hoτ⟩ := exists_owner hQ hτ hF ((hτH s₀).mpr (hfull s₀ hs₀G hs₀))
     (hs₀G.trans (hGB.trans (subset_insert _ _)))
   rw [hs₀K] at ho
   -- the enumeration `ι` of `insert p B` with `p` last
@@ -512,24 +465,15 @@ theorem exists_covers_isSourceGapContextAt (hα : Order.IsSuccLimit α) (hR : R.
         exact ⟨i.castSucc, hιc i⟩
   have hF' : univ.map ι ∈ Q.toCellScheme.faces := hιF ▸ hF
   set t' := Q.comap ι hF'
-  have hι : StageType.restrictFace ι Q = some t' := StageType.restrictFace_of_mem _ _ hF'
+  have hι : restrictFace ι Q = some t' := restrictFace_of_mem _ _ hF'
   -- the root embedding `e`
-  obtain ⟨e, he⟩ := exists_embedding_comp_eq (φ := x ∘ φ) hc.injective fun i ↦ by
-    obtain ⟨j₀, hj₀⟩ := (Occurrence.mem_support _).mp
-      (hz (mem_union_left _ (mem_image_of_mem c (mem_univ i))))
-    have hB : e₀ j₀ ∈ B := hGB (mem_map_of_mem _ (mem_univ j₀))
-    obtain ⟨j, hj⟩ : e₀ j₀ ∈ Set.range φ := hφr ▸ hB
-    exact ⟨j, by rw [Function.comp_apply, hj, ← hj₀]; exact congrFun hxe j₀⟩
-  refine ⟨k, t', x ∘ ι, e, ⟨hx.injective.comp ι.injective, ?_⟩, ?_, ?_⟩
-  · have hxι : (⟨x ∘ ι, hx.injective.comp ι.injective⟩ : Fin (k + 1) ↪ M) =
-        ι.trans ⟨x, hx.injective⟩ := Function.Embedding.ext fun _ ↦ rfl
-    rw [hxι, hR.isConsistent _ Q ι hx.eval_eq, hι]
-  · funext i
-    simp only [Function.comp_apply, Function.Embedding.trans_apply, Fin.coe_castSuccEmb, hιc]
-    exact congrFun he i
+  obtain ⟨e, he⟩ := exists_embedding_comp_eq hg (φ := φ) fun i ↦ by
+    obtain ⟨j, hj⟩ : g i ∈ Set.range φ := hφr ▸ hGB (hgG i)
+    exact ⟨j, hj⟩
+  refine ⟨k, ι, hF', e, fun i ↦ (hιc (e i)).trans (congrFun he i), ?_⟩
   -- the cells of `t'`
   have hvis {d : Fin Q.card} (hd : Q.toCellScheme.scope d ⊆ insert p B) :
-      ∃ d', StageType.faceCell hι d' = d :=
+      ∃ d', faceCell hι d' = d :=
     Q.toScheme.exists_faceCell_eq _ (Scheme.mem_visibleCells.mpr fun y hy ↦ by
       obtain ⟨i, -, hi⟩ := mem_map.mp (hιF ▸ hd hy)
       exact ⟨i, hi⟩)
@@ -539,22 +483,22 @@ theorem exists_covers_isSourceGapContextAt (hα : Order.IsSuccLimit α) (hR : R.
   obtain ⟨r', rfl⟩ := hvis hrF
   have hscope_o : t'.toCellScheme.scope o' = univ := by
     refine map_injective ι ?_
-    rw [← StageType.scope_faceCell hι, hoF, hιF]
-  have hgrade_o : t'.toCellScheme.grade o' = K := (StageType.grade_faceCell hι o').symm.trans hoK
+    rw [← scope_faceCell hι, hoF, hιF]
+  have hgrade_o : t'.toCellScheme.grade o' = K := (grade_faceCell hι o').symm.trans hoK
   have hlabel_o : t'.label o' = ⊤ :=
-    (StageType.label_faceCell hι o').symm.trans (hH.subset ((hτH _).mp hoτ))
-  have htopK : t'.topGrade = K := le_antisymm (hQK ▸ StageType.topGrade_le_of_restrictFace hι)
-    (hgrade_o ▸ StageType.grade_le_topGrade hlabel_o)
+    (label_faceCell hι o').symm.trans (hH.subset ((hτH _).mp hoτ))
+  have htopK : t'.topGrade = K := le_antisymm (hQK ▸ topGrade_le_of_restrictFace hι)
+    (hgrade_o ▸ grade_le_topGrade hlabel_o)
   -- every top cell of `t'` lies below the owner
   have hbelow {a : Fin t'.card} (ha : t'.label a = ⊤) :
       a ∈ t'.toCellScheme.below (t'.toCellScheme.gradedIndex o') :=
     (CellScheme.gradedIndex_le_iff _).mpr
       ⟨(CellScheme.gradedIndex_fst _ ▸ hscope_o ▸ subset_univ _ :),
-        (CellScheme.gradedIndex_snd _ ▸ hgrade_o ▸ htopK ▸ StageType.grade_le_topGrade ha :)⟩
-  have hlabel_r : t'.label r' = ⊤ := (StageType.label_faceCell hι r').symm.trans hr
+        (CellScheme.gradedIndex_snd _ ▸ hgrade_o ▸ htopK ▸ grade_le_topGrade ha :)⟩
+  have hlabel_r : t'.label r' = ⊤ := (label_faceCell hι r').symm.trans hr
   -- the lawful section witnessing `H`, on the face
-  have hτ' := StageType.isLawful_comp_faceCell hι hτ
-  have hgap {a : Fin t'.card} (ha : t'.label a = ⊤) (haτ : τ (StageType.faceCell hι a) = ⊤) :
+  have hτ' := isLawful_comp_faceCell hι hτ
+  have hgap {a : Fin t'.card} (ha : t'.label a = ⊤) (haτ : τ (faceCell hι a) = ⊤) :
       visibilityReplace K K (t'.rowAt o' r') < t'.rowAt o' a := by
     have := Scheme.visibilityReplace_rowAt_lt hτ' hoτ (mt (hτH _).mp hrH) haτ (hbelow hlabel_r)
       (hbelow ha)
@@ -564,18 +508,148 @@ theorem exists_covers_isSourceGapContextAt (hα : Order.IsSuccLimit α) (hR : R.
   · -- the root avoids the last point
     exact (Fin.castSucc_lt_last (e i)).ne hi
   · -- the lost top contains the last point
-    rw [StageType.scope_faceCell hι, mem_map] at hpr
+    rw [scope_faceCell hι, mem_map] at hpr
     obtain ⟨y, hy, hyp⟩ := hpr
     obtain rfl : y = Fin.last k := ι.injective (hyp.trans hιl.symm)
     exact hy
   · -- a top cell avoiding the last point is visible in `B`, so in `H`
-    refine (hτH _).mpr (hBfull _ ?_ ((StageType.label_faceCell hι a).trans ha))
-    rw [StageType.scope_faceCell hι]
+    refine (hτH _).mpr (hBfull _ ?_ ((label_faceCell hι a).trans ha))
+    rw [scope_faceCell hι]
     intro y hy
     obtain ⟨y', hy', rfl⟩ := mem_map.mp hy
     obtain ⟨i, rfl⟩ := Fin.exists_castSucc_eq.mpr fun h ↦ hla (h ▸ hy')
     rw [hιc, ← mem_coe, ← hφr]
     exact Set.mem_range_self i
+
+/-! ### Types with an apex are not source-gap contexts -/
+
+/-- **No type with an apex added is a source-gap context** (`addApex`), at any grade and along any
+root.  The owner has grade at least the grade `n` of the apex (the top grade), so it is the apex
+(`eq_of_grade_addApex`); the row of the apex is the coded copy of the labels (`apexRow`), which
+reads every top cell, the apex included, at the code of `⊤`; so the gap at the owner would make a
+label strictly larger than its own replacement at `K ≤ n`, against `le_visibilityReplace`. -/
+theorem not_isSourceGapContext_addApex {t : StageType.{u} α n} (ht : t.IsLegalBelowFullGrade)
+    (hn : 0 < n) (K : ℕ) (h : Fin k ↪ Fin n) : ¬ (t.addApex ht hn).IsSourceGapContext K h := by
+  rintro ⟨l, o, r, hs⟩
+  have hgi : (t.addApex ht hn).toCellScheme.gradedIndex (Fin.last _) = (univ, n) :=
+    Scheme.appendFullCellScheme_gradedIndex_last _ _
+  have hlast : (t.addApex ht hn).toCellScheme.grade (Fin.last _) = n := congrArg Prod.snd hgi
+  have hgo : (t.addApex ht hn).toCellScheme.grade o = n := by
+    refine le_antisymm ((t.addApex ht hn).grade_le o) ?_
+    have := grade_le_topGrade (addApex_label_last ht hn)
+    rw [hlast, hs.topGrade_eq] at this
+    rw [hs.grade_owner]
+    exact this
+  obtain rfl := eq_of_grade_addApex ht hn hgo
+  have key (x : Fin (t.addApex ht hn).card) (hx : (t.addApex ht hn).label x = ⊤) :
+      (t.addApex ht hn).rowAt (Fin.last _) x = apexRow ht (Fin.last _) := by
+    have hb : x ∈ (t.addApex ht hn).toCellScheme.below
+        ((t.addApex ht hn).toCellScheme.gradedIndex (Fin.last _)) := by
+      rw [CellScheme.mem_below, hgi, CellScheme.gradedIndex_le_iff]
+      exact ⟨subset_univ _, (t.addApex ht hn).grade_le x⟩
+    rw [Scheme.rowAt_of_mem hb]
+    -- the rows of `t.addApex` are those of `appendFullCell`
+    change (t.toScheme.appendFullCell n (apexRow ht) ht.not_le).rows.row (Fin.last _) ⟨x, hb⟩ = _
+    rw [Scheme.appendFullCell_row_last]
+    -- the cells of `t.addApex` are the cells of `t` and the apex
+    change Fin (t.card + 1) at x
+    induction x using Fin.lastCases with
+    | last => rfl
+    | cast d =>
+      rw [addApex_label_castSucc] at hx
+      rw [apexRow_castSucc, hx, apexRow_last]
+  have hgap := hs.gap_owner
+  rw [key r hs.label_lost, key _ hs.label_owner] at hgap
+  exact (le_visibilityReplace (by omega) _).not_gt hgap
+
+end StageType
+
+/-! ### Residual acquisition -/
+
+namespace Realization
+
+variable {α : Ordinal.{u}} {M : Type w} {R : Realization.{u, w} α M} {n : ℕ}
+
+/-- **Residual acquisition of a source-gap context**, in the form with the lost point last: in a
+model at a limit stage with no cover that is a globally rigid core and with top-grade supremum
+`K`, every cover `c` of a stage type `t` extends to a cover `c'` of a stage type `t'` on `k + 1`
+points along `e` followed by the initial segment, and `t'` is a source-gap context of grade `K`
+along it with the last point lost.
+
+The **tail** is an occurrence `x₀` above which (in the inclusion order of supports) every
+occurrence has top grade `K` (`exists_forall_le_topGrade_eq`).  Covering gives an occurrence `z`
+above `x₀` containing `c`, of top grade `K`, with a top cell of grade `K` (`K > 0`, since otherwise
+the empty tuple is a globally rigid core).  As `z` is not a globally rigid core, a cover `x` of a
+stage type `Q` along `e₀` has an admissible top support `H` containing the top cells visible
+through `e₀` and missing a top cell, and `Q` has top grade `K` (it lies above the tail).  The rest
+is `StageType.exists_isSourceGapContextAt_comap` with `G` the range of `e₀`. -/
+theorem exists_covers_isSourceGapContextAt (hα : Order.IsSuccLimit α) (hR : R.IsModel)
+    (hcore : ¬ ∃ (k : ℕ) (p : StageType.{u} α k) (c : Fin k → M), R.Covers p c ∧
+      R.IsGloballyRigidCore c)
+    {K : ℕ} (hK : R.topGradeSup = K) {t : StageType.{u} α n} {c : Fin n → M}
+    (hc : R.Covers t c) :
+    ∃ (k : ℕ) (t' : StageType.{u} α (k + 1)) (c' : Fin (k + 1) → M) (e : Fin n ↪ Fin k),
+      R.Covers t' c' ∧ c' ∘ (e.trans Fin.castSuccEmb) = c ∧
+        ∃ o r, t'.IsSourceGapContextAt K (e.trans Fin.castSuccEmb) (Fin.last k) o r := by
+  classical
+  -- the eventual top grade is positive: otherwise the empty tuple is a globally rigid core
+  have hKpos : 0 < K := by
+    refine Nat.pos_of_ne_zero fun hK0 ↦ hcore ?_
+    obtain ⟨p, hp⟩ := hR.exists_covers_zero
+    exact ⟨0, p, ![], hp, (hR.isGloballyRigidCore_empty_iff hα).mpr (by rw [hK, hK0]; rfl)⟩
+  -- the tail, and an occurrence `z` above it containing the points of `c`
+  obtain ⟨x₀, hx₀⟩ := exists_forall_le_topGrade_eq hR.isConsistent hR.isCovering hK
+  obtain ⟨z, hz⟩ := hR.isCovering.exists_subset_support (univ.image c ∪ x₀.support)
+  have hzK : z.type.topGrade = K := hx₀ z (subset_union_right.trans hz)
+  -- `z` is not a globally rigid core
+  have hnr : ¬ R.IsGloballyRigidCore z.tuple :=
+    fun h ↦ hcore ⟨_, _, _, covers_of_eval _ z.eval_tuple, h⟩
+  simp only [IsGloballyRigidCore, StageType.IsRigidCoreIn] at hnr
+  push Not at hnr
+  obtain ⟨m, Q, x, e₀, hx, hxe, H, hH, hcoreH, d₀, hd₀, hd₀H⟩ := hnr
+  -- the occurrence of `x` lies above `z`, so `Q` has top grade `K`
+  let y : R.Occurrence := ⟨m, ⟨x, hx.injective⟩, Q, hx.eval_eq⟩
+  have hzy : z ≤ y := by
+    intro a ha
+    obtain ⟨j, rfl⟩ := (Occurrence.mem_support _).mp ha
+    exact (Occurrence.mem_support _).mpr ⟨e₀ j, congrFun hxe j⟩
+  have hQK : Q.topGrade = K := hx₀ y ((subset_union_right.trans hz).trans hzy)
+  -- the face of `Q` along `e₀` is the type of `z`
+  have hface : StageType.restrictFace e₀ Q = some z.type := by
+    have he : e₀.trans ⟨x, hx.injective⟩ = z.tuple := Function.Embedding.ext fun j ↦ congrFun hxe j
+    rw [← hR.isConsistent _ Q e₀ hx.eval_eq, he, z.eval_tuple]
+  have hG : univ.map e₀ ∈ Q.toCellScheme.faces := ((StageType.restrictFace_eq_some_iff _ _).mp
+    hface).1
+  have hfull (d : Fin Q.card) (hd : Q.toCellScheme.scope d ⊆ univ.map e₀) (hdt : Q.label d = ⊤) :
+      d ∈ H :=
+    hcoreH d (mem_filter.mpr ⟨mem_univ _, hd⟩) hdt
+  -- a top cell `s` of grade `K` of the type of `z`, visible through `e₀` in `Q`
+  obtain ⟨s, hs, hsK⟩ := StageType.exists_grade_eq_topGrade (t := z.type) (hzK ▸ hKpos)
+  have hsG : Q.toCellScheme.scope (StageType.faceCell hface s) ⊆ univ.map e₀ := by
+    rw [StageType.scope_faceCell]
+    exact map_subset_map.mpr (subset_univ _)
+  -- the positions `g` of `c` in `x`, inside the range of `e₀`
+  have hpos (i : Fin n) : ∃ j₀, x (e₀ j₀) = c i := by
+    obtain ⟨j₀, hj₀⟩ := (Occurrence.mem_support _).mp
+      (hz (mem_union_left _ (mem_image_of_mem c (mem_univ i))))
+    exact ⟨j₀, (congrFun hxe j₀).trans hj₀⟩
+  obtain ⟨g, hg⟩ := StageType.exists_embedding_comp_eq hc.injective (φ := x) fun i ↦
+    let ⟨j₀, hj₀⟩ := hpos i
+    ⟨e₀ j₀, hj₀⟩
+  have hgG (i : Fin n) : g i ∈ univ.map e₀ := by
+    obtain ⟨j₀, hj₀⟩ := hpos i
+    exact mem_map.mpr ⟨j₀, mem_univ _, hx.injective (hj₀.trans (congrFun hg i).symm)⟩
+  obtain ⟨k, ι, hι, e, he, o, r, hsg⟩ := StageType.exists_isSourceGapContextAt_comap
+    (hR.isLegal _ _ hx.eval_eq) hQK hH hG hfull ⟨d₀, hd₀, hd₀H⟩
+    ((StageType.label_faceCell hface s).trans hs)
+    ((StageType.grade_faceCell hface s).trans (hsK.trans hzK)) hsG g.injective hgG
+  refine ⟨k, Q.comap ι hι, x ∘ ι, e, ⟨hx.injective.comp ι.injective, ?_⟩, ?_, o, r, hsg⟩
+  · have hxι : (⟨x ∘ ι, hx.injective.comp ι.injective⟩ : Fin (k + 1) ↪ M) =
+        ι.trans ⟨x, hx.injective⟩ := Function.Embedding.ext fun _ ↦ rfl
+    rw [hxι, hR.isConsistent _ Q ι hx.eval_eq, StageType.restrictFace_of_mem _ _ hι]
+  · funext i
+    simp only [Function.comp_apply, Function.Embedding.trans_apply, Fin.coe_castSuccEmb, he]
+    exact congrFun hg i
 
 /-- **Residual acquisition for source-gap contexts** (`ResidualAcquisition`), with no hypothesis:
 the acquired context of `exists_covers_isSourceGapContextAt`. -/
@@ -586,22 +660,31 @@ theorem residualAcquisition_isSourceGapContext :
       exists_covers_isSourceGapContextAt hα hR hcore hK hc
     exact ⟨k + 1, t', c', _, hc', hcc', Fin.last k, o, r, hs⟩
 
+/-- **(R2) from (R1) and cutoff determination for source-gap contexts**: the reduction
+`residualReceiving_of_cutoffDetermination` with the compiled acquisition
+`residualAcquisition_isSourceGapContext`.  Cutoff determination for source-gap contexts is open:
+it is a hypothesis here, not proved.  (R1) is assumed for every model at every limit stage, as in
+the reduction. -/
+theorem residualReceiving_of_cutoffDetermination_isSourceGapContext
+    (hrec : ∀ ⦃α : Ordinal.{u}⦄ ⦃M : Type w⦄ ⦃R : Realization.{u, w} α M⦄,
+      Order.IsSuccLimit α → R.IsModel → R.HasFiniteCutReceiving)
+    (hdet : CutoffDetermination.{u} fun K t' h ↦ t'.IsSourceGapContext K h) :
+    ResidualReceiving.{u, w} :=
+  residualReceiving_of_cutoffDetermination hrec residualAcquisition_isSourceGapContext hdet
+
+/-- **If no legal stage type is a source-gap context, (R2) holds**: the compiled acquisition
+leaves no model at a limit stage with no cover that is a globally rigid core and with natural
+top-grade supremum, so (R2) holds vacuously.  So either some legal stage type is a source-gap
+context (open), or (R2) holds; neither side is claimed here. -/
+theorem residualReceiving_of_forall_not_isSourceGapContext
+    (hvac : ∀ ⦃α : Ordinal.{u}⦄ ⦃n k K : ℕ⦄ (t' : StageType.{u} α k) (h : Fin n ↪ Fin k),
+      t'.IsLegal → ¬ t'.IsSourceGapContext K h) :
+    ResidualReceiving.{u, w} where
+  exists_covers _ _ R _ hα hR hcore hK _ t c hc _ _ _ := by
+    obtain ⟨k, t', c', h, hc', -, hP⟩ :=
+      residualAcquisition_isSourceGapContext.exists_context hα hR hcore hK t c hc
+    exact absurd hP (hvac t' h (hR.isLegal _ _ hc'.eval_eq))
+
 end Realization
-
-/-! ### The compiled determination counterexamples are excluded -/
-
-namespace ExactReceivingExamples
-
-open StageType
-
-/-- **The context of the determination counterexample for `P ≡ True` is not a source-gap
-context**: the root of `apexPoint` (the stage type on no points) along the identity, at every
-grade. -/
-example (t : StageType.{0} Ordinal.omega0 0)
-    (_ : restrictFace Fin.castSuccEmb apexPoint = some t) (K : ℕ) :
-    ¬ t.IsSourceGapContext K (Function.Embedding.refl _) :=
-  not_isSourceGapContext_of_surjective fun i ↦ ⟨i, rfl⟩
-
-end ExactReceivingExamples
 
 end VaughtConjecture
