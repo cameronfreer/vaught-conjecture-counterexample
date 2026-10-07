@@ -188,6 +188,16 @@ Notes on the rows, each with its marker:
   and the coatom extension property with apex at every countable block stage: the maximal
   refinement of a prescribed model (`MainTheorem.exists_maximalRefinement`); rows 33–36, 38, 40
   stay S.
+- *Manuscript correspondence, [AFK26] of 7 October.*  The concordance cites the draft of
+  7 October 2026; rows 48–56 are new to the concordance, all S.  Adopted there and recorded without a change of
+  status: the block indexing of row 1 in §4, the fixed rows of rows 9 and 10, the corrections of
+  rows 41 and 42, the cap `-∞` of row 44, and clause 1 of row 45; its range clause of legality is
+  now strong coding (row 45).  [AFK26] states Propositions 4.32 (amalgamation of charts, where
+  hypothesis 8 enters), 4.34 and 4.35 without proof and sketches Lemma 4.33.  Their counterparts
+  here are compiled (the hereditary property, `hereditary_legalAge`, with no hypothesis) or
+  compiled conditionally on the hypotheses below, and every compiled form of the main theorem is
+  conditional on the five named hypotheses, or on hypotheses derived from them, each still to be
+  proved.
 - *Acceptance lemma 1 (same-level maximal realization).*  Compiled conditionally on
   `StageType.HasApexCoatomExtensions` at `λ_β` and `ForcingDonors β` (`exists_sameLevelMaximal`).
   Terminality of every cover-hollow realization at a block stage is compiled with no hypothesis
@@ -294,12 +304,24 @@ Status of each:
    item 2), `Realization.ResidualAcquisition P`, and `Realization.CutoffDetermination P`
    (`Realization.residualReceiving_of_cutoffDetermination`), for a predicate `P` on acquired
    contexts not yet defined: the reduction is a template, and its hypotheses are not statements
-   still to be proved (no predicate `P` is defined in the library, and neither acquisition nor
+   still to be proved (no predicate `P` on pairs `(t', h)` is defined in the library, and neither acquisition nor
    determination is proved beyond the rigid-core instance).  For `P` always true, acquisition is
    immediate and determination fails (compiled; top-free roots,
    `Continuation/ExactReceivingExamples`), which shows only that determination is not vacuous.
    The cofaces in which the root is a rigid core need only (R1) in the same form
-   (`Realization.ResidualReceiving.of_not_isRigidCoreIn`).
+   (`Realization.ResidualReceiving.of_not_isRigidCoreIn`).  Templates with the donor, compiled
+   (`Continuation/AnchoredDetermination`): (R2) follows from (R1) in the same all-limit-stage form,
+   `Realization.DonorAcquisition Q P`, and `Realization.CutoffDonorDetermination P`
+   (`Realization.residualReceiving_of_cutoffDonorDetermination`).  For the anchored private
+   context (`StageType.IsAnchoredContext`), donor acquisition holds in every model
+   (`Realization.donorAcquisition_isAnchoredContext`) and cutoff determination with a donor is
+   refuted (`AnchoredDeterminationCounterexample.not_cutoffDonorDetermination`: a top-free anchored
+   context over the empty root, with the one-point donor labelled `⊤`).  This refutes the
+   predicate, not (R2).  A predicate for which determination holds must give, at each non-rigid
+   donor (for legal `t'` whose face along `h` has `d` as a coface), a context that is not
+   top-free, with a top available to a new cell of a coface carrying the donor
+   (`Realization.CutoffDonorDetermination.exists_hasAvailablePrivateTop`); a rigid context suffices
+   (`Realization.cutoffDonorDetermination_isRigidContext`), but its acquisition is not proved.
 6. `Realization.HollowReceiving` for `Realization.IsCoverHollowAtBlock`: still to be proved (the
    growth construction).  Exactly reformulated as exact receiving of all legal types
    (`Realization.hollowReceiving_iff`).  A reduction is compiled: it follows from
@@ -310,7 +332,10 @@ Status of each:
    count uses (R3) at every cover-hollow model with unbounded growth, a globally rigid core
    included (item 6′ below excludes it).  (R3) forces a globally rigid core of a cover-hollow
    model with unbounded growth to be rigid in every legal donor over its type
-   (`Realization.HollowReceiving.isRigidCoreIn`).
+   (`Realization.HollowReceiving.isRigidCoreIn`).  The template with the
+   donor (`Realization.hollowReceiving_of_cutoffDonorDetermination`, any `H`, with (R1) in the
+   stronger form of item 5) gives nothing for the anchored context: donor acquisition holds for it
+   and cutoff determination with a donor is refuted for it, as in item 5.
 7. Nonempty losses: still to be proved.  Compiled conditionally on the coatom extension property
    with apex at every countable block stage and on next-block uniqueness
    (`hasNonemptyLosses_of_hasApexCoatomExtensions`, stated for the bundled domains, which also take
