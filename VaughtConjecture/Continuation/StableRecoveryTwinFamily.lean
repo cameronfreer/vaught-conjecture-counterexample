@@ -16,7 +16,7 @@ twin donors through a cap labelled the formal top, with reference labels in the 
 (`Continuation.StableRecoveryTwin.exists_isStableRecoveryScheme_twinDonors`).  In (R4) the cap is
 a cell of the stable type of an occurrence, whose stable value is in general a proper ordinal
 `λ_ξ + M`; and the labels of a donor may lie in a block `[μ, μ + ω)` below `λ_ξ`, with a
-reference cell there (supplied by uniformity in the acquisition,
+reference cell there (given by uniformity in the acquisition,
 `Realization.IsModel.acquiresCalibratedContexts_gradedCap`).  This file runs the twin schemes at
 both.
 

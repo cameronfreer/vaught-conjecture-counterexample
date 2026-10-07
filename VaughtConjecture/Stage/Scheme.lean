@@ -40,9 +40,9 @@ its image (`image_cellMap_below`); completeness, codedness, and consistency pass
 The restriction reads the rows of the visible cells only (`comap_mk_congr`).
 Along a bijection of the points the cell map is surjective (`surjective_cellMap_equiv`), and the
 faces of a well-formed scheme form a plan on all of its points (`IsWellFormed.isPlan`).  So in a
-well-formed scheme on `m + 1` points whose first `m` points span a face, some face other than the
-ground set contains the last point and every set of the first `m` points that contains no extreme
-point of them (`exists_face_ne_univ_of_not_mem`).
+well-formed scheme on `m + 1` points, `0 < m`, whose first `m` points span a face, some face other
+than the ground set contains the last point and every set of the first `m` points that contains no
+extreme point of them (`exists_face_ne_univ_of_not_mem`).
 
 ## References
 

@@ -91,8 +91,8 @@ with face `T⁺` (exact consistency of the candidate); and its face along `f` fo
 point is the candidate type of the received tuple.  The recovery is required for every stage type
 on `E` with face `T⁺`, the form of the recovery statement of the roadmap (3.2: for every
 restriction-compatible labelling), here applied to the stable labelling.  Since a coface of
-`T⁺↓λ_ξ` lies on `E`, a set of points of `T⁺` with no extreme point of `T⁺` lies, with the new
-point, in a face of `E` other than its ground set
+`T⁺↓λ_ξ` lies on `E`, for `m > 0` a set of points of `T⁺` with no extreme point of `T⁺` lies, with
+the new point, in a face of `E` other than its ground set
 (`StageType.IsStableRecoveryScheme.exists_face_ne_univ`).
 
 **The reduction of (R4)** (`StableCappedReceiving.of_stableRecoveryContexts`,
