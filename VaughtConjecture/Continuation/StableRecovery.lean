@@ -82,7 +82,10 @@ schemes for the graded cap calibration at every `ξ < ω₁`
 (`StableCappedReceiving.of_hasStableRecoverySchemes_gradedCap`), a finite statement that is open.
 By `StageType.IsStableRecoveryScheme.of_readsThroughCap` it holds at every instance at which some
 scheme satisfies the hypotheses of that theorem; the calibration supplies a cap and reference cells
-for such a scheme to read, and the existence of such schemes is not proved.
+for such a scheme to read.  Such a scheme exists at one input, at every `ξ`
+(`Continuation.StableRecoveryReading.exists_isStableRecoveryScheme_gradedCap`, in
+`VaughtConjecture.Continuation.StableRecoveryReading`); its existence at every input with the
+calibration is not proved.
 
 ## Placement
 

@@ -132,8 +132,11 @@ Notes on the rows, each with its marker:
   (`Continuation.StableRecoveryCounterexample.not_hasStableRecoverySchemes_markerCap`), and for the
   graded cap calibration, open, whose acquisition is compiled
   (`StableCappedReceiving.of_hasStableRecoverySchemes_gradedCap`,
-  `Realization.IsModel.acquiresCalibratedContexts_gradedCap`); cover-hollowness and stable-label
-  fixedness (`Realization.isCoverHollow_iff_forall_stableLabel_eq_top`); the exact-age comparison
+  `Realization.IsModel.acquiresCalibratedContexts_gradedCap`), with a stable recovery scheme for
+  it at one input at every `ξ`, reading the new cell through the cap
+  (`Continuation.StableRecoveryReading.exists_isStableRecoveryScheme_gradedCap`);
+  cover-hollowness and stable-label fixedness
+  (`Realization.isCoverHollow_iff_forall_stableLabel_eq_top`); the exact-age comparison
   (`Realization.nonempty_equiv_of_exactReceivingWithin`); the three comparisons, the rigid-core one
   conditional on finite-extension receiving (from (R1);
   `Realization.nonempty_equiv_of_isGloballyRigidCore`), the residual and hollow ones on (R2) and
@@ -182,10 +185,26 @@ Notes on the rows, each with its marker:
   `StageType.HasApexCoatomExtensions` at `λ_β` and `ForcingDonors β` (`exists_sameLevelMaximal`).
   Terminality of every cover-hollow realization at a block stage is compiled with no hypothesis
   (`Realization.IsCoverHollow.isTerminalAt`, Layer 4).
+- *Manuscript correspondence, item 5.*  Compiled: strictness for models, from modelhood alone
+  (`Realization.IsModel.isFixedAt_blockStage_iff`: a model at `λ_η` is fixed by projection at the
+  index `ξ` exactly when `η ≤ ξ`, from the uniformity clause); the bound of serving indices,
+  given strictness and an index at which every member is fixed
+  (`Realization.IsStrict.le_of_forall_isFixedAt`); and the negative special case (`Realization.StrictnessExamples.not_isStrict_undefinedFamily`).  Row 32
+  stays S: the uniform fixing stage of the construction it applies to is prospective.
 - *Layer 6, thinness in scatteredness form.*  Compiled conditionally on the cap-to-model theorem,
   (R1), forcing donors at every countable block index, the continuation criterion, (R2) and (R3),
   each still to be proved, with neither sentence separation nor López–Escobar
   (`densitySentence_isThinOnNatModels_of_terminalClassification_bfScattered`).
+
+## Targets from the unconditional route
+
+Prospective (`IMPLEMENTATION.md`, "Targets from the unconditional route"): one contract for each
+hypothesis of the five-hypothesis form, complete only when that hypothesis is compiled for every
+input.  U1, (R1) through an attached gated scheme (a gate at `⊤` realized by the bottom-pattern
+clause), first; U2, `StableCappedReceiving` by calibrated receiving in the model, then the
+continuation criterion; U3, (R3) and (R2) by exact recovery; U4, the apex property by a completion
+over the whole boundary.  The known failures (the gated and coupled inputs, `seedL`, the twin
+donors, the grade of private tops) are their tests.  No status on this page changes.
 
 ## The named hypotheses of the main theorem
 
@@ -345,6 +364,24 @@ first is `Expansion.expansionDomain_loss_countable`, the second
 `Expansion.NextBlockUniqueness.of_forcingDonors`, each compiled conditionally on hypotheses in the
 list.
 
+**The hypotheses by property of the tower** (`README.md`, "The tower and its four properties").
+The seven-hypothesis form above, grouped by the property of the tower of model expansions that
+each hypothesis serves. The six- and five-hypothesis derivations and the separate restricted-R3
+form are retained as stated above; no hypothesis, status, or percentage changes.
+
+| Property of the tower | Named hypotheses (numbered as above) |
+| --- | --- |
+| the bottom of the tower, `D₀ = Q` | 1, `CapToModel` |
+| (R) reconstruction | 3, forcing donors, with 2, (R1), through next-block uniqueness |
+| (L) coherent limits | none: compiled with no hypothesis (`Realization.IsModel.glue`) |
+| (D) projected extension | 2, (R1) |
+| (T), terminal existence | 7, nonempty losses, with (R) placing each witness in its loss |
+| (T), terminal countability | 4, the continuation criterion; 5, (R2); 6, (R3); 2, (R1) |
+
+In the last row (R1) serves the rigid-core comparison.  Terminal countability is not used by the
+lower bound, and enters no statement of terminal refinement (conditionally compiled at universe
+zero under (R1), next-block uniqueness, and apex at every countable block stage).
+
 ## The research front
 
 Each item is open or still to be proved; none is assumed by a theorem of the library except as a
@@ -446,6 +483,22 @@ named hypothesis.
    actually realizes.  At a stage where the hypothesis fails the conditional (R1)
    (`Expansion.finiteCutReceiving_of_hasCoupledGatedPinnedExtensions`) is vacuous, and nothing
    rules that out.
+   *The attached gate* (a redesign, by step).  An attached gated extension
+   (`StageType.AttachedGatedExtension`) has readers of graded index `(univ, n)`, each reading
+   every new donor cell through the anchors; the row of the gate is `⊥` at the other twins and
+   reads one reader at least as itself; no label of a twin is prescribed.  Compiled in this
+   repository (theorem named): recovery through whichever reader availability reaches
+   (`CellScheme.Rows.IsLawful.recover_of_readsOnly`); the gate from the bottom-pattern clause
+   (`Realization.IsModel.exists_attachedGate`); receiving at a given attached gated extension
+   (`Realization.IsModel.realizesOver_receivingFamily_of_attachedGatedExtension`); the lifts its
+   legality forces at caps not `⊥` (`StageType.AttachedGatedExtension.exists_lift`; that nothing
+   is forced at the cap `⊥` is argued, not formalized); and, a negative special case of a row
+   design, at `GatedExtensionCounterexample.P α` the gate's row cannot be `⊥` at every twin but one
+   ceiling (`AttachedGateCounterexample.exists_reader`), while two readers are realized there
+   (`AttachedGateExamples.attachedGatedExtensionP`, donor labelled `⊤`).  Open: an attached gated
+   extension over the private contexts that models acquire; whether availability from the
+   literal-face cap must reach a reader other than the ceiling.  (R1) is neither proved nor
+   refuted.
 4. **Forcing donors** (still to be proved unconditionally): reduced to the coatom extension
    property (`forcingDonors_of_hasCoatomExtensions`); nothing beyond it remains.
 5. **Output 3, part D, and (R4)** (still to be proved): (R4) over positive roots, the empty root by
@@ -481,8 +534,27 @@ named hypothesis.
    one reading cell, `CellScheme.Rows.IsLawful.label_eq_of_reading`).  This reading is not
    confined to one graded index (informal; not compiled: by bountifulness at the cap `⊥` and
    completeness it constrains every graded face of grade `N` containing the cap, a reference cell
-   and a new cell).  The existence of such schemes is not proved, and no instance is compiled.  The
-   acquisition of the design's cap of full scope and full grade is not compiled.
+   and a new cell).  Such a scheme is compiled at one input, at every `ξ`
+   (`Continuation.StableRecoveryReading.exists_isStableRecoveryScheme_gradedCap`): a context of two
+   points with a cap of grade `2` labelled `⊤` and the marker `λ_ξ + 1` as reference cell, a root of
+   one point, and a donor with a new cell labelled `λ_ξ + 1`, on a legal scheme of ten cells whose
+   cell at `(univ, 2)` reads the new cell and the marker at one value; the cap decodes the new cell
+   (`Continuation.StableRecoveryReading.IsReadingTriple.eq_of_lt`), and below the marker leaves it
+   free (`Continuation.StableRecoveryReading.isReadingTriple_of_le`, for labels self-visible at
+   `1` and a cap self-visible at `2`).  So the hypotheses of `of_readsThroughCap` are satisfiable
+   with a proper new label (there the reading constrains no other graded face: `(univ, 2)` is the
+   only graded face of grade `2` containing both the cap and the new cell).  The input is
+   degenerate, so this is feasibility at the smallest sizes only: recovery copies the marker (in
+   every lawful labelling with the marker at the reference cell and `⊤` at the cap the new cell
+   equals the marker; `n = i = 1`, `c = 0`); no label of `D` is `⊤`, so the clause on `γ` and the
+   branch at `⊤` of `StageType.ReadsThroughCap` are not used; the root is one cell labelled `⊥`;
+   and `N = k + 1`.  The next test is the twin donor of
+   `Continuation.StableRecoveryCounterexample` (`N ≥ 3`, `E` on at least four points), testing
+   distinct offsets.  At minimal `m = N = 3` the cap has full old scope, so only `(univ, 3)`
+   contains the cap and the new cells; a separately chosen larger-context test is needed for
+   compatibility across several graded faces (informal; not compiled).
+   The finite statement at every input with the calibration is still to be proved, and with it
+   (R4).  The acquisition of the design's cap of full scope and full grade is not compiled.
 6. **The attained least lift and structural successor leastness** (prospective).  One lift of a
    legal stage type at a limit stage `β` to `β + ω`, least at every cell (each minimum is attained
    separately: `StageType.exists_lift_label_eq_ofOffset`); the threshold forced by a cover is read
@@ -547,3 +619,33 @@ named hypothesis.
    (`PrescribedFullRowsCounterexample.not_isFaceCompatible`), and is open.  A general proof of the
    core first meets the open completion of item 1.  The routes' gaps are unchanged and kept
    separate.
+
+## Composition targets and compiled ingredients
+
+Recorded in `IMPLEMENTATION.md`, "The full-presentation route", "Composition targets of the
+tower", and in `README.md`, item 5 of "Manuscript correspondence (required)"; no hypothesis,
+status, or percentage changes.  The unimplemented assemblies remain prospective and use the
+named conditionally compiled ingredients; the niceness consequence in item 3 is already
+conditionally compiled:
+
+1. the terminal-presentation instance of the second endpoint, with the main theorem by that route
+   on the hypotheses of its current composed form (five: (R1), the continuation criterion, (R2), block
+   cover-hollow (R3), and the coatom extension property with apex at every countable block stage;
+   the seven/six forms and separate restricted-R3 form are retained), with no termination statement;
+2. the four conditions of the system of [AFK26] as one structure of statements, and an abstract
+   assembly that may assume
+   its conditions (a), (b), and (d) (condition (c), niceness, is not used), distinct from the
+   concrete composition that must derive those conditions from the five hypotheses;
+3. niceness of base reducts from maximal refinement, conditionally compiled for carriers in
+   `Type` under (R1), next-block uniqueness, and apex at every countable block stage; in universe
+   `w`, the compiled niceness theorem retains `HasTerminalRefinement.{w}` plus next-block uniqueness;
+4. the last admitted stage: the stage of a terminal expansion of a base is the last stage of its
+   class, the terminal classes at a block are the loss there, and the tails of the instance of 1
+   are the expansion domains (these identifications remain prospective; last-stage attainment
+   and its loss fibres are already compiled under `CapToModel`, next-block uniqueness, (R1),
+   and apex at every countable block stage);
+5. fixing bounds from the Scott bound, and the lower bound along fixing ranks through strictness.
+
+`IMPLEMENTATION.md`, "Manuscript concordance", records separately the retargeting of the
+legal-template rows to the current draft of [AFK26] and the identification of its templates with
+the stage types (targets; no status changes).
