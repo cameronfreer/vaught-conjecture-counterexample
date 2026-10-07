@@ -2335,7 +2335,18 @@ Each checkpoint needs both its abstract API and a concrete application:
    `Continuation/StableRecoveryInterior` and `Continuation/StableRecoveryInteriorScheme`; no second
    calibration is refuted; the next tests, prospective, are these features together, faces of grade
    `N` that are not nested, reference cells in two blocks for one donor, and `N > k + 2`; the finite
-   statement at every input is still to be proved; `README.md`, Layer 4, status, output 3).
+   statement at every input is still to be proved; a full-scope cap,
+   `Continuation/StableRecoveryFullCap`: every graded cap can be taken of full scope at a legal
+   context, `StageType.GradedCapCalibration.exists_univ_cap`, the only graded face of grade `N`
+   containing a full-scope cap and a new cell is `(univ, N)`,
+   `Scheme.setOf_gradedFaces_univCap_eq_singleton`, recovery from the cells at `(univ, N)`,
+   `StageType.IsStableRecoveryScheme.of_readsThroughUnivCap`, and the coface from legality,
+   `StageType.exists_mem_cofaces_reduce_of_isLegal`; the new named statement
+   `StageType.HasCapReadingExtensions` (open; no implication from or to
+   `StageType.HasApexCoatomExtensions` compiled) implies the finite statement,
+   `StageType.HasCapReadingExtensions.hasStableRecoverySchemes`; tests in
+   `Continuation/StableRecoveryFullCapExamples`, the twin donors through `(univ, N)` and a
+   full-scope cap at the interior context; `README.md`, Layer 4, status, output 3).
    Step 7 is compiled conditionally (`README.md`, the section on the top-free witnesses): the loss
    at `η` under uniqueness at `λ_η` (`nonempty_loss_of_topFreeWitness`), and per block under
    `StageType.HasApexCoatomExtensions` at `λ_η` and uniqueness of the model expansions at `λ_η`

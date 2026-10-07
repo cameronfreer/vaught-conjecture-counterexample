@@ -216,7 +216,8 @@ counted as compiled.
    one reading cell, `CellScheme.Rows.IsLawful.label_eq_of_reading`).  This reading is not
    confined to one graded index (informal; not compiled: by bountifulness at the cap `⊥` and
    completeness it constrains every graded face of grade `N` containing the cap, a reference cell
-   and a new cell).  Such a scheme is compiled at one input, at every `ξ`
+   and a new cell); for a cap of full scope there is one such face, `(univ, N)` (compiled, below).
+   Such a scheme is compiled at one input, at every `ξ`
    (`Continuation.StableRecoveryReading.exists_isStableRecoveryScheme_gradedCap`): a context of two
    points with a cap of grade `2` labelled `⊤` and the marker `λ_ξ + 1` as reference cell, a root of
    one point, and a donor with a new cell labelled `λ_ξ + 1`, on a legal scheme of ten cells whose
@@ -277,8 +278,40 @@ counted as compiled.
    and the four features are tested separately.  The next tests (prospective): the features together
    (an interior cap with the twin donors, a `⊤` cell at an interior cap), faces of grade `N` that
    are not nested, reference cells in two blocks for one donor, and `N > k + 2`.  The finite
-   statement at every input with the calibration is still to be proved, and with it (R4).  The
-   acquisition of the design's cap of full scope and full grade is not compiled.
+   statement at every input with the calibration is still to be proved, and with it (R4).
+   **A full-scope cap** (`Continuation/StableRecoveryFullCap`, compiled in this repository (theorem
+   named)).  For a legal `T⁺` every graded cap (`StageType.IsGradedCap`, the calibration at one
+   cell) can be taken of full scope, with the same grade and reference cells, by completeness and
+   availability in `T⁺` (`StageType.IsGradedCap.exists_univ_cap`,
+   `StageType.GradedCapCalibration.exists_univ_cap`).  For a full-scope cap of grade `N`,
+   `(univ, N)` is the only graded face of grade `N` containing the cap and a new cell
+   (`Scheme.setOf_gradedFaces_univCap_eq_singleton`): the remark above that the reading is not
+   confined to one graded index is compiled for such a cap.  `of_readsThroughCap` with the reading
+   cell at `(univ, N)` needs only `k < N` and the reading of the new cells by every cell there
+   (`StageType.IsStableRecoveryScheme.of_readsThroughUnivCap`; the scope of the cap is not used),
+   and the coface of `T⁺↓λ_ξ` follows from legality of the scheme and its face along the first
+   points (`StageType.exists_mem_cofaces_reduce_of_isLegal`,
+   `StageType.IsStableRecoveryScheme.of_isLegal`).  New named statement, open:
+   `StageType.HasCapReadingExtensions ξ` (every legal `T⁺` with a full-scope graded cap of grade
+   `N`, and every root, donor `D` and `γ` as in `HasStableRecoverySchemes`, has a legal scheme with
+   `T⁺` and `D` as literal faces whose cells at `(univ, N)` read the new cells of `D` through the
+   cap).  Compiled: it implies
+   `StageType.HasStableRecoverySchemes ξ (StageType.GradedCapCalibration ξ)`
+   (`StageType.HasCapReadingExtensions.hasStableRecoverySchemes`).  No implication from or to the
+   coatom extension property with apex (`StageType.HasApexCoatomExtensions`) is compiled.  Tests
+   (`Continuation/StableRecoveryFullCapExamples`): the twin donors through the full-scope graded
+   face
+   (`Continuation.StableRecoveryTwin.exists_isStableRecoveryScheme_twinDonors_of_readsThroughUnivCap`),
+   and a full-scope graded cap at the interior context
+   (`Continuation.StableRecoveryInterior.exists_univ_cap_contextType`), where the interior case
+   disappears once the cap is taken of full scope (one graded face of grade `N`, by
+   `Scheme.setOf_gradedFaces_univCap_eq_singleton`).  Status, each named statement separately:
+   `HasStableRecoverySchemes ξ (GradedCapCalibration ξ)` open; `HasCapReadingExtensions ξ` open;
+   `HasApexCoatomExtensions` open; the only compiled implication among them is the one above.  The
+   acquisition of the design's cap of full scope and full grade is not compiled (at a legal context
+   the full scope is free, by `StageType.GradedCapCalibration.exists_univ_cap`; the full grade is
+   not, and the composition with `Realization.IsModel.acquiresCalibratedContexts_gradedCap` is not
+   stated).
 6. **The attained least lift and structural successor leastness** (prospective).  One lift of a
    legal stage type at a limit stage `β` to `β + ω`, least at every cell (each minimum is attained
    separately: `StageType.exists_lift_label_eq_ofOffset`); the threshold forced by a cover is read
