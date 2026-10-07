@@ -182,6 +182,12 @@ Notes on the rows, each with its marker:
   `StageType.HasApexCoatomExtensions` at `λ_β` and `ForcingDonors β` (`exists_sameLevelMaximal`).
   Terminality of every cover-hollow realization at a block stage is compiled with no hypothesis
   (`Realization.IsCoverHollow.isTerminalAt`, Layer 4).
+- *Manuscript correspondence, item 5.*  Compiled: strictness for models, from modelhood alone
+  (`Realization.IsModel.isFixedAt_blockStage_iff`: a model at `λ_η` is fixed by projection at the
+  index `ξ` exactly when `η ≤ ξ`, from the uniformity clause); the bound of serving indices,
+  given strictness and an index at which every member is fixed
+  (`Realization.IsStrict.le_of_forall_isFixedAt`); and the negative special case (`Realization.StrictnessExamples.not_isStrict_undefinedFamily`).  Row 32
+  stays S: the uniform fixing stage of the construction it applies to is prospective.
 - *Layer 6, thinness in scatteredness form.*  Compiled conditionally on the cap-to-model theorem,
   (R1), forcing donors at every countable block index, the continuation criterion, (R2) and (R3),
   each still to be proved, with neither sentence separation nor López–Escobar
@@ -582,3 +588,33 @@ named hypothesis.
    (`PrescribedFullRowsCounterexample.not_isFaceCompatible`), and is open.  A general proof of the
    core first meets the open completion of item 1.  The routes' gaps are unchanged and kept
    separate.
+
+## Composition targets and compiled ingredients
+
+Recorded in `IMPLEMENTATION.md`, "The full-presentation route", "Composition targets of the
+tower", and in `README.md`, item 5 of "Manuscript correspondence (required)"; no hypothesis,
+status, or percentage changes.  The unimplemented assemblies remain prospective and use the
+named conditionally compiled ingredients; the niceness consequence in item 3 is already
+conditionally compiled:
+
+1. the terminal-presentation instance of the second endpoint, with the main theorem by that route
+   on the hypotheses of its current composed form (five: (R1), the continuation criterion, (R2), block
+   cover-hollow (R3), and the coatom extension property with apex at every countable block stage;
+   the seven/six forms and separate restricted-R3 form are retained), with no termination statement;
+2. the four conditions of the system of [AFK26] as one structure of statements, and an abstract
+   assembly that may assume
+   its conditions (a), (b), and (d) (condition (c), niceness, is not used), distinct from the
+   concrete composition that must derive those conditions from the five hypotheses;
+3. niceness of base reducts from maximal refinement, conditionally compiled for carriers in
+   `Type` under (R1), next-block uniqueness, and apex at every countable block stage; in universe
+   `w`, the compiled niceness theorem retains `HasTerminalRefinement.{w}` plus next-block uniqueness;
+4. the last admitted stage: the stage of a terminal expansion of a base is the last stage of its
+   class, the terminal classes at a block are the loss there, and the tails of the instance of 1
+   are the expansion domains (these identifications remain prospective; last-stage attainment
+   and its loss fibres are already compiled under `CapToModel`, next-block uniqueness, (R1),
+   and apex at every countable block stage);
+5. fixing bounds from the Scott bound, and the lower bound along fixing ranks through strictness.
+
+`IMPLEMENTATION.md`, "Manuscript concordance", records separately the retargeting of the
+legal-template rows to the current draft of [AFK26] and the identification of its templates with
+the stage types (targets; no status changes).

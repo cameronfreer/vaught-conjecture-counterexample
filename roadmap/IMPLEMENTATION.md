@@ -1081,6 +1081,129 @@ which the domain is nonempty.  With countable complements of the domains in addi
 `mk_eq_aleph_one_of_domains` (available at the pin, signatures checked) gives exactly `ℵ₁`
 classes.  Both are prospective applications, not compiled here.
 
+**Composition targets of the tower.** The assemblies below remain prospective, except for the
+conditionally compiled niceness consequence in item 3. They use the named theorems of this
+repository with their premises explicit; no completion or unconditional theorem is asserted.
+None adds a hypothesis to the concrete compositions of the main theorem or makes a termination
+statement their premise. The abstract assembly in item 2 may assume its interface conditions as
+explicit arguments. Its concrete composition must instead derive those conditions from the
+current five hypotheses: (R1), the continuation criterion, (R2), block cover-hollow (R3), and
+the coatom extension property with apex at every countable block stage. The seven- and
+six-hypothesis forms and the separate restricted-R3 form are retained; the restricted five-form
+remains prospective. The statements are recorded here before the Lean assemblies, in this order.
+
+1. *The terminal-presentation instance* (`README.md`, "Reduction to full presentations", "The
+   terminal-presentation instance").  A term of `FullPresentations DensityClass` (indicative name
+   `terminalLevels`) whose `presentedAt β` is the set of classes of codes on `ℕ` with a model
+   expansion terminal at `β` (`terminalClasses β`, `MainTheorem/TerminalClasses`, compiled),
+   with the fields: countability from the count at one level (`countable_isoClasses_terminalAt`,
+   compiled for codes on `ℕ` at `β < ω₁`, under
+   (R1), the continuation criterion, (R2), and block cover-hollow (R3); the separate
+   restricted-R3 alternative is
+   `countable_isoClasses_terminalAt_of_restrictedTerminalClassification`); coverage from the first domain
+   (`Expansion.expansionDomain_zero`, compiled, under the cap-to-model theorem) and the maximal
+   refinement of a model expansion (`exists_maximalRefinement_of_modelExpansion`, compiled in
+   universe zero under (R1), next-block uniqueness, and `StageType.HasApexCoatomExtensions` at
+   every countable block stage); emptiness from `ω₁` on (`ModelExpansion.isEmpty_of_omega_one_le`,
+   compiled, no hypothesis).  Then: the tail at `η < ω₁` lies in `expansionDomain η` (coverage
+   and `ModelExpansion.reduceBlock`; no uniqueness of expansions is used); bounded comparison of
+   the tails from `Expansion.realize_iff_of_modelExpansions` (compiled, under (R1)) and scattered
+   tails from `Expansion.bfEquiv_of_modelExpansions`; `UncountablyManyClasses` from
+   `hasNonemptyLosses_of_hasApexCoatomExtensions` with `ExpansionDomains.aleph_one_le_mk` (both
+   compiled on their hypotheses); and `vaughtCounterexample_of_presentations` and
+   `vaughtCounterexample_of_scatteredTails` for this instance on the hypotheses of the current
+   composed form of the main theorem (five: (R1), the continuation criterion, (R2), block
+   cover-hollow (R3), and the apex form at every countable block stage), with `CapToModel`
+   from the apex form at `ω` (`CapToModel.of_hasApexCoatomExtensions`), forcing donors from
+   apex at the next block (`forcingDonors_of_forall_hasApexCoatomExtensions`), and next-block
+   uniqueness from (R1) plus those donors (`Expansion.NextBlockUniqueness.of_forcingDonors`).
+   *Completion criterion:* these
+   compiled, with a walk of the constants of the final statements that finds no termination
+   statement and no hypothesis `FullPresentations`, and with the docstring stating that coverage
+   comes through the Scott route, hence depends on conditions 3 and 4 of the expansion-domain
+   reduction (`lt_qrank_of_isolates` uses agreement and nonempty losses; both derived here from
+   the same hypotheses), not on its count.  Only then does the entry "Termination" of the second
+   endpoint (`README.md`, item 5, "The two counting endpoints") change, with a fresh review of
+   that entry, which states the same dependence.  As in `README.md`, the instance replaces none of
+   the statements of the full-presentation route (statements 1–9 above stay its own).
+2. *The four conditions of the system of [AFK26]* (`README.md`, item 5, "The four conditions of
+   the system of [AFK26], assembled").  A structure of statements (indicative name
+   `SystemConditions`) for carriers in `Type`, whose fields are the conclusions of: (a)
+   `exists_maximalRefinement` (compiled under (R1), next-block uniqueness, and apex at every
+   countable block); (b) `countable_isoClasses_terminalAt` at every countable block (compiled
+   on codes on `ℕ`, under (R1), the continuation criterion, (R2), and block cover-hollow (R3));
+   (c) `Realization.IsModel.isNice_toStructure_reduce` (compiled under
+   `HasTerminalRefinement.{w}` plus `Expansion.NextBlockUniqueness.{w}`), that
+   is `IsNice`, a threshold for each closed tuple (one threshold for all tuples is the stronger
+   `exists_isNiceTupleAt_of_hasTerminalRefinement`, compiled under the same two premises, not
+   the field); (d) `exists_sameLevelMaximal` at `ℕ` (compiled under the apex form at that
+   countable block stage and forcing donors there).  Statements (indicative names):
+   `systemConditions_of_hasApexCoatomExtensions`, on the hypotheses of item 1;
+   `vaughtCounterexample_of_systemConditions`, the main theorem and its form on all countable
+   carriers, taking (a), (b), (d), (R1), next-block uniqueness, and `CapToModel` as separate
+   arguments (each used; the form from the structure is a corollary). This abstract assembly
+   may assume those interface conditions, unlike its concrete composition, which derives them.
+   It proceeds through item 1, with
+   uncountably many classes from (d): by (R1) the base of the model of (d) at a countable block
+   is a model of the density sentence (`baseLanguage.realize_toStructure_densitySentence_iff`,
+   compiled), and two terminal models with isomorphic bases lie at the same block (terminal
+   collision under next-block uniqueness, `le_of_modelExpansion_of_equiv`, compiled); and the main
+   theorem by this route on the hypotheses of item 1.  *Dependencies:* (1a) item 1 and the main
+   theorem from (a) and (b), with noncollapse from nonempty losses, need the terminal count and
+   maximal refinement; (1b) (d)
+   replaces that input, and the structure with (c) and (d) additionally uses niceness,
+   same-level terminal realization, and item 3, each with the premises above.
+   *Completion criterion:* compiled; the docstring of the main-theorem statement records
+   that condition (c) is not used. The abstract assembly has the explicit arguments just listed;
+   the concrete composition has exactly the five hypotheses of item 1, deriving the interface
+   conditions rather than assuming them. The seven- and six-hypothesis forms stay unchanged.
+3. *Niceness from maximal refinement* (`README.md`, item 5; conditionally compiled consequence).
+   `HasTerminalRefinement.of_hasApexCoatomExtensions` derives `HasTerminalRefinement.{0}`
+   from (R1), next-block uniqueness, and apex at every countable block stage, by projecting
+   `exists_maximalRefinement`. Together with
+   `Realization.IsModel.isNice_toStructure_reduce`, this gives niceness of the base reducts
+   of models on countable carriers in `Type`. In arbitrary universe `w` the latter theorem
+   still requires `HasTerminalRefinement.{w}` plus `Expansion.NextBlockUniqueness.{w}`;
+   the Scott-route derivation of refinement is only at `w = 0`.
+4. *The last admitted stage: agreement, fibres, tails* (`COMPANIONS.md`, terminal refinement,
+   item 3).  With the last stage of a class on the expansion domains
+   (`ExpansionDomains.lastStage`, `mem_expansionDomain_iff_le_lastStage`, `MainTheorem/LastStage`,
+   compiled conditionally as below; no supremum-to-attainment shortcut):
+   (a) a base structure on any carrier in `Type`, not necessarily countable, with a model
+   expansion at `λ_ρ`, `ρ < ω₁`, terminal at `ρ`, has a model expansion at `λ_η` exactly when
+   `η ≤ ρ`, for every ordinal `η` (under next-block uniqueness, from
+   `exists_le_reduceBlock_eq_of_isTerminalAt`, compiled, and `ModelExpansion.reduceBlock`; no
+   countability of the carrier); (b) for a code on `ℕ` of class `q`, that `ρ`, for any base
+   structure isomorphic to the code, is the last stage of `q` (through
+   `Expansion.mem_expansionDomain_iff` and `ModelExpansion.map`, compiled); (c) at `β < ω₁` the
+   terminal classes at `β` are exactly the loss at `β`, hence the classes whose last stage is `β`
+   (one inclusion is `loss_subset_terminalClasses`, compiled; the other is terminal collision,
+   `exists_le_reduceBlock_eq_of_isTerminalAt`, compiled, with `Expansion.mem_expansionDomain_iff`,
+   under next-block uniqueness); (d) for the instance of item 1, the tail at `η` equals
+   `expansionDomain η`, so the least-level filtration of that instance and the filtration of the
+   expansion-domain route are one.  Hypotheses: those of the density instance of the last stage
+   (`CapToModel`, next-block uniqueness, (R1), and the apex form at every countable block stage).
+   Last-stage attainment and its loss fibres are already compiled on these premises;
+   the identifications (a)–(d), including terminal classes as those fibres and the tails of
+   the unimplemented instance in item 1, remain prospective assemblies. Neither count uses them.
+   *Dependencies:* `MainTheorem/TerminalClasses`, `MainTheorem/MaximalRefinement`, and
+   `MainTheorem/LastStage`.
+5. *Fixing bounds from the Scott bound* (`README.md`, item 5, "Fixing bounds from the Scott
+   bound").  From `lt_qrank_of_isolates` (compiled under (R1), next-block uniqueness, and apex at every
+   countable block stage) and `Realization.isFixedAt_of_le` (#132, not yet
+   merged): every model presentation of a base on a countable carrier in `Type` is fixed by
+   projection at `λ_r`, with `r` the quantifier rank of a chosen isolating sentence (criterion 2,
+   and criterion 3 in its form for whole assignments).  From `Realization.IsModel.not_isFixedAt`
+   (#132) applied to the top-free witness at block `β + 1` (modelhood compiled conditionally on
+   the apex form there, `isModel_reconstruct_of_hasApexCoatomExtensions`): a model at `λ_{β+1}`
+   not fixed by projection at `λ_β`, at every countable `β`.  Hence the lower bound along fixing
+   ranks (`COMPANIONS.md`, terminal refinement, "An alternative route to the lower bound", step
+   (iv)), with its steps (i)–(iii) replaced by strictness.  Hypotheses: (R1), next-block
+   uniqueness, and the apex form at every countable block stage.
+   *Dependencies:* `MainTheorem/MaximalRefinement` and the still prospective fixing and
+   strictness statements (#132).
+   No fixing rank is identified with a Scott rank.
+
 ## Manuscript concordance
 
 The milestone of `README.md`, "Manuscript correspondence (required)", spans layers 2–5 here (layers
@@ -1654,9 +1777,21 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     and `Label.AtStage.mono` for the law with `min` (`Label/Basic`).  The bound for one arity is
     `StageProjection.exists_uniform_fixing_stage` (available at the pin `e460cb6`, signatures
     checked; "Dependency pins").  Milestone 3; the conditional statement uses no termination.
-32. Prospective, with the negative special case (the constant family of the all-undefined
-    assignment; not compiled).  Strictness for models is to come from `COMPANIONS.md`, "Fixing
-    ranks of finite charts" (the supremum at block `η` is `η`), still to be proved.  Milestone 4.
+32. Its strictness half is compiled in this repository (theorem named), with no hypothesis
+    beyond modelhood: a model at `λ_η` is fixed by projection at the index `ξ` exactly when
+    `η ≤ ξ` (`Realization.IsModel.isFixedAt_blockStage_iff`, from
+    `Realization.IsModel.not_isFixedAt`, the uniformity clause at `γ = λ_ξ`;
+    `Realization/Strictness`), so the least fixing index of a model's whole assignment is its index
+    (`Realization.IsModel.isLeast_isFixedAt_blockStage`) and every family of models is strict
+    (`Realization.isStrict_of_forall_isModel`, `Realization.isStrict_isExpansionOf`).  The bound
+    of serving indices under strictness is compiled for families of realizations at the block
+    stages on one carrier (`Realization.IsStrict.le_of_forall_isFixedAt`,
+    `Realization.le_of_forall_isModel_of_forall_isFixedAt`).  The negative special case (the
+    constant family of the all-undefined assignment) is compiled
+    (`Realization.StrictnessExamples.not_isStrict_undefinedFamily`).  Strictness does not use
+    `COMPANIONS.md`, "Fixing ranks of finite charts".  The row stays S: its application to the
+    uniform fixing stage of the construction (milestone 3) and the identification of these
+    statements with those of [AFK26] are still to be proved.  Milestone 4.
     The row is required for item 5, whether or not the main theorem uses a bound of serving
     indices: the completion criterion of item 5 asks every row of the item to be P or C, so
     matching the manuscript needs milestone 4.
@@ -1684,7 +1819,8 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
 34. Prospective.  1 ⇒ 2 is the uniform fixing stage of row 31 for the family of model
     presentations, through `StageProjection.exists_uniform_fixing_stage` (available at the pin
     `e460cb6`, signatures checked; "Dependency pins"), and is the only step using a countable
-    carrier; 2 ⇔ 4 uses strictness for models (row 32); 4 ⇒ 5 uses bounded-stage attainment, whose
+    carrier; 2 ⇔ 4 uses strictness for models (row 32; compiled,
+    `Realization.IsModel.isFixedAt_blockStage_iff`); 4 ⇒ 5 uses bounded-stage attainment, whose
     ingredients are compiled in this repository (theorem named) in the raw base encoding:
     `Realization.IsModel.reduce` (`Realization/Model`), `ModelExpansion.nonempty_of_coherent`
     (`Realization/Limit`), and `ModelExpansion.nonempty_of_forall_lt` (`Expansion/Uniqueness`,
@@ -1723,8 +1859,9 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     realization, not its base reduct.  In the raw base encoding, literal uniqueness (both steps) is
     compiled conditional on `Expansion.NextBlockUniqueness`, on any carrier:
     `MainTheorem.exists_le_reduceBlock_eq_of_isTerminalAt` (`MainTheorem/MaximalRefinement`).
-36. Prospective.  It rests on row 32, on the inequality step of row 35 (so on the injectivity of
-    model reduction at `ρ` only), and on `COMPANIONS.md`, "Fixing ranks are zero or successors"
+36. Prospective.  It rests on row 32 (its strictness half compiled), on the inequality step of
+    row 35 (so on the injectivity of model reduction at `ρ` only), and on `COMPANIONS.md`,
+    "Fixing ranks are zero or successors"
     and "Limit heights are unattained suprema", each still to be proved.  No declaration of this
     repository names a fixing rank (row 30).  Its inequality step, in the raw base encoding, is the
     first component of `MainTheorem.exists_le_reduceBlock_eq_of_isTerminalAt` (row 35).
@@ -2004,8 +2141,8 @@ source named.
 
 **Completion criteria of the uniform fixing bounds, milestone by milestone** (`README.md`,
 "Manuscript correspondence (required)", item 5, "Uniform fixing bounds from positive niceness";
-rows 29–32, each still to be proved).  Each milestone is complete on its own criterion, and none
-is complete because a later one is.
+rows 29–32, each still to be proved; the strictness half of row 32 is compiled).  Each milestone
+is complete on its own criterion, and none is complete because a later one is.
 
 1. *Closedness is supportedness:* the combined statement, that in an exactly consistent covering
    realization an injective tuple is supported exactly when its set of points is closed, compiled
@@ -2026,7 +2163,11 @@ is complete because a later one is.
    of serving indices): strictness for the models of the construction proved as a separate
    theorem, the bound of serving indices derived from it, and the negative special case (the
    constant family of the all-undefined assignment, fixed at `0` and serving at every index)
-   compiled as an example.
+   compiled as an example.  Compiled in this repository (theorem named):
+   `Realization.IsModel.isFixedAt_blockStage_iff`, `Realization.IsStrict.le_of_forall_isFixedAt`
+   and `Realization.le_of_forall_isModel_of_forall_isFixedAt` (`Realization/Strictness`), and
+   `Realization.StrictnessExamples.not_isStrict_undefinedFamily`; the milestone is complete once
+   the bound is applied to the uniform fixing stage of 3.
 5. *The separate statements:* the existence and coverage of maximal presentations, the terminal
    comparison, and noncollapse each proved by its own argument, with its dependencies stated.  The
    bounds of 2–4 are not sufficient for any of them alone; they are cited only with the additional
@@ -2094,8 +2235,8 @@ hypothesis of each statement of 2–4 that uses it, until it is proved as a theo
    has fixing rank `ρ`; and no identification of `ρ` with a Scott rank.  Its named dependencies:
    the inequality step of literal uniqueness (3), that is, terminal collision, hence the
    injectivity of model reduction at `ρ` only, as an explicit hypothesis (the equality step, at
-   `η`, is not used); strictness for models (row 32); and `COMPANIONS.md`, "Fixing ranks are zero
-   or successors", for the limit case.
+   `η`, is not used); strictness for models (row 32; compiled); and `COMPANIONS.md`, "Fixing
+   ranks are zero or successors", for the limit case.
 
 **Completion criteria of witness-bounded density, terminal refinement, unique reconstruction,
 the Scott route, and the stopping proofs** (`README.md`, "Manuscript correspondence
@@ -2161,6 +2302,57 @@ named, and none is complete because another is.
 
 The five acceptance criteria of `README.md` ("Acceptance criteria of the correspondence") apply to
 every item: reconstruction, density, finite objects, rank budgets, and priorities.
+
+**The legal templates of the current draft of [AFK26]** (targets; prospective; no row changes
+status here).  The current draft of [AFK26] (its §4; numbering of that draft) defines a template
+as a triple of a frame, a row system whose rows take values in `{-∞} ∪ ω²`, and a label;
+truncation changes the label only, and an isomorphism of templates keeps the rows and the label
+[AFK26, Definitions 4.4, 4.5, 4.7, and 4.10].  That is the shape of `StageType`: a `Scheme` with
+fixed coded rows (`Scheme.IsCoded`) and a separate `label` (`README.md`, "Manuscript
+correspondence (required)", item 1).  Three targets follow, in this order.
+
+1. *Retargeting.*  The legal-template rows proposed beside rows 1–40 (prospective here; compared
+   with the earlier draft) are to cite the current numbering: the visibility map, Definition 4.26;
+   the transformation `⇒`, Definition 4.27; bountiful rows, Definition 4.28; legal templates,
+   Definition 4.29; the template system, Lemma 4.30; the construction, Theorem 4.31.  The reading
+   of a template's rows is settled as the fixed one, and these rows are to be compared again with
+   that draft: row 1 with Definition 4.17, rows 9 and 10 with Definitions 4.5 and 4.10, and row 25
+   with Definitions 4.16 and 4.21.  The range clause of Definition 4.4 is to be identified with
+   `Scheme.IsCoded`.  To record, each present in that draft unless marked, six corrections and one
+   discrepancy: (1) the conditions of a legal template do not require the label to be lawful for
+   the rows; (2) the printed visibility map drops the block `ω·α` (the two-parameter map is
+   `Label.visibilityReplace`); (3) the shifter of `⇒` is not required to be monotone; (4) a
+   discrepancy, not a correction: the offset clause bounds the offset by the grade, one below
+   `Label.IsStronglyCoded` (offset at most the grade plus one), while `Scheme.IsLegal` bounds no
+   offset beyond `Scheme.IsCoded`, and the two classes still differ with the offset bounded by the
+   grade plus one; whether this is resolved by a correction of the clause or by a proof that the
+   strongly coded class suffices is not decided here (the range `{-∞} ∪ ω²` of the rows is now
+   printed); (5) the caps of bountiful rows are ordinals only, so the bottom cap is missing and the
+   caps coincide with the cutoffs of receiving; (6) legal templates are not required to be finite,
+   and the invariance of legality under renaming and isomorphism is not stated (partly corrected:
+   renaming carries the label, and the templates of the system are finite); (7) truncation is
+   required at every countable stage, successors included (the closure clause of the template
+   system, and the reductions of Definitions 4.16 and 4.21), while stage reduction here is defined
+   at stages that are zero or limits and needs that hypothesis (the counterexample in
+   `Stage/Examples`, still private there, to be made public).
+2. *The identification of templates with stage types* (a row to be added with it).  A stage type
+   gives a template with lawful label; a template on `Fin n`, with cells `Fin card`, positive
+   grades, a well-formed plan, and a label lawful at a stage, gives a stage type; both round trips
+   hold up to renaming of cells.  Restriction corresponds to `StageType.restrictFace` on closed
+   faces, truncation to `StageType.reduce` at stages that are zero or limits (correction (7) at
+   the others), and renaming and isomorphism to `StageType.reindex` and the reindexing of cells,
+   with legality invariant (`StageType.IsLegal.reindex`, `CellScheme.Rows.IsBountiful.reindex`).
+   With it, the coherent local rows of `README.md`, item 1, are no longer on the path of the
+   correspondence (they may still be used inside the library), and rows 9 and 10 are to be
+   compared again.
+3. *The template system, in part.*  Its clauses (a)–(c) and (e) for the corrected class of legal
+   templates (the stage types at a stage), (d) at stages that are zero or limits (correction (7)
+   at the others), and the canonical cell order; its clause (f) is the extension property of the
+   construction, still to be proved, and "extends" for templates needs a recorded definition.
+   The rows of the template system and of the construction stay still to be proved.
+
+The order is the order of the Lean statements: 1 (with the identification of the range clause),
+then 2, then 3.  They follow the legal-template rows and the numbering of [AFK26] in rows 1–40.
 
 ## Upstream building blocks
 
