@@ -102,7 +102,8 @@ Countable-loss induction gives countable complements.  Scott separation makes th
 disjoint cofinal losses give the reverse inequality.  With a Scott sentence for each class, the
 agreement in `Dη` and the cofinally nonempty losses (hypotheses of this count, not its conclusions)
 also make the persistent core empty, by eventual departure (`COMPANIONS.md`, "Further companion
-results", terminal refinement); the count uses only the subsingleton form, and departure is not an
+results", terminal refinement; compiled conditionally, `ExpansionDomains.core_eq_empty`,
+`MainTheorem/LastStage`); the count uses only the subsingleton form, and departure is not an
 input to it.  This counting argument (countable complements and Scott separation give at most `ℵ₁`
 classes) belongs to the setting of minimal counterexamples of Harnik–Makkai [HM77]; see Larson
 [Lar14], Remark 10.9, and its discussion of minimal counterexamples.  Separately, homogeneous
@@ -601,6 +602,54 @@ classification contains neither `sentence_separates_analytic_classes` nor any L�
 constant, while `densitySentence_isThinOnNatModels_of_terminalClassification` contains both.  The
 minimality form, from countable truth sides, is kept.
 
+**Eventual departure and the last stage** (`MainTheorem/LastStage`, compiled in this repository
+(theorem named); `COMPANIONS.md`, terminal refinement, items 1 and 2).  On any `ExpansionDomains`:
+* `ExpansionDomains.notMem_of_isolating`: an observation isolating `q` and constant on a domain
+  with two members excludes `q` from it (no hypothesis on the domains);
+* `ExpansionDomains.HasNonemptyLosses.nontrivial_domain`: nonempty losses at `ξ` and `ξ + 1` give
+  two members of `D_ξ` (the field `antitone`);
+* `ExpansionDomains.notMem_of_isolating_of_qrank_le`: under `ExpansionDomains.HasRankAgreement`
+  (condition 3 in sentence form, rank `≤ η` at stage `η`, no offset) and nonempty losses, a class
+  isolated by a sentence of rank `δ < ω₁` is not in `D_δ`;
+* `ExpansionDomains.exists_notMem_of_isolating_of_cofinal` and `exists_notMem_of_isolating`:
+  under `HasLogicalAgreement` and cofinally (or all) nonempty losses, an isolated class leaves the
+  domains below `ω₁`; `ExpansionDomains.core_eq_empty`: with every class isolated, the persistent
+  core is empty;
+* `ExpansionDomains.lastStage` (the supremum of the stages containing `q`; no hypothesis), with
+  `le_lastStage`, `lastStage_le_omega_one` and `lastStage_eq_omega_one_of_mem_core` (`ω₁` on the
+  persistent core), which use the field `domain_eq_empty_of_omega_one_le` (through
+  `lt_omega_one_of_mem`, directly or via `bddAbove_setOf_mem`); `isGreatest_lastStage` (attained
+  and below `ξ` once `q ∉ D_ξ`, `ξ < ω₁`;
+  the fields `zero`, `antitone` and `limit` only), and `mem_domain_iff_le_lastStage_of_notMem`,
+  `mem_loss_iff_lastStage_eq_of_notMem` (which add `domain_eq_empty_of_omega_one_le`, through
+  `le_lastStage`); under isolation, logical agreement and nonempty losses, `exists_lastStage`,
+  `lastStage_lt_omega_one`, `mem_domain_iff_le_lastStage`, `mem_loss_iff_lastStage_eq`,
+  `loss_eq_preimage_lastStage`, `domain_eq_setOf_le_lastStage`; under the sharp agreement,
+  `lastStage_lt_qrank`;
+* for the classes of coded models (Scott isolation, `exists_classTruth_iff_eq`):
+  `core_eq_empty_of_classTruth` and the `…_of_classTruth` forms; for the actual expansion domains,
+  `modelExpansionDomains_hasRankAgreement` (for `modelExpansionDomains hcap hnext`, under (R1));
+  `expansionDomain_core_eq_empty`, under
+  next-block uniqueness, finite-cut receiving ((R1)), and the coatom extension property with apex
+  at every countable block stage, which at `0` gives `CapToModel`
+  (`CapToModel.of_hasApexCoatomExtensions`), so `CapToModel` is not a premise of it; and
+  `mem_expansionDomain_iff_le_lastStage`, `mem_expansionDomain_loss_iff_lastStage_eq`,
+  `lastStage_modelExpansionDomains_lt_qrank`, whose statements mention `modelExpansionDomains hcap
+  hnext` and so take `CapToModel` as well; each of these hypotheses is still to be proved.
+
+The count does not use them, and no hypothesis of a main-theorem statement changes.  Global
+termination is not used.  The terminal expansion at the last stage (terminal refinement, item 3) is
+not stated.  The classes terminal at `β`, `MainTheorem.terminalClasses β`
+(`MainTheorem/TerminalClasses`, compiled in this repository (theorem named)), contain the loss at
+`β` (`MainTheorem.loss_subset_terminalClasses`, unconditional).  A further target, not stated
+(prospective; it depends on next-block uniqueness): the classes terminal at `β` are the fibre of
+the last stage at `β`, `terminalClasses β = lastStage (modelExpansionDomains hcap hnext) ⁻¹' {β}`,
+which identifies the losses with the terminal classes.  At a repin containing `2cd44c3` ("Dependency
+pins", "Upstream statements quoted, not compiled here"), `ExpansionDomains.notMem_of_isolating` is
+`notMem_of_isolating_of_uniform` applied to the set `D_ξ`, and `ExpansionDomains.lastStage_lt_qrank`
+combines `stage_lt_rank_of_isolating` with the greatest-stage theorem; the local proofs may then
+quote them, with the statements kept.
+
 ## The top-free witnesses: milestone order and acceptance
 
 `README.md`, section "The top-free witnesses: the finite age and its classical limit", is the
@@ -827,10 +876,11 @@ their notions live; "this repository" means the layers of `README.md`.
    goes through global termination (every class leaves the expansion domains at a countable stage,
    where its terminal expansion is full for its terminal exact age); the finite-stage arguments do
    not cover the persistent class (`README.md`, "The persistent core").  Eventual departure, the
-   first half of global termination, is a conditional target of terminal refinement
-   (`COMPANIONS.md`, "Further companion results"), to be proved from hypotheses of the
-   expansion-domain count (the agreement of condition 3 and the nonempty losses of condition 4, with
-   a Scott sentence for each class), not from its conclusions; under them the persistent core is
+   first half of global termination, is terminal refinement, item 1 (`COMPANIONS.md`, "Further
+   companion results"), compiled conditionally (`ExpansionDomains.core_eq_empty`,
+   `MainTheorem/LastStage`) from hypotheses of the expansion-domain count (the agreement of
+   condition 3 and the nonempty losses of condition 4, with a Scott sentence for each class), not
+   from its conclusions; under them the persistent core is
    empty.  The second half, that the terminal expansion is full for its terminal exact age, is the
    first special statement and is not part of terminal refinement.  A proof of this route may take
    departure from terminal refinement without circularity, stating its dependence on conditions 3
@@ -2143,8 +2193,9 @@ In the pinned InfinitaryLogic:
   which every point leaves, with neither monotonicity nor nonempty domains;
   `mk_eq_aleph_one_of_domains` adds both for the equality.  The spine does not use them for
   `|Q| ≤ ℵ₁`, which is its direct cover (the persistent core is a subsingleton and each complement
-  `Q \ Dη` is countable).  Once eventual departure is proved (`COMPANIONS.md`, terminal refinement,
-  from the agreement in `Dη` and the nonempty losses with a Scott sentence for each class), every
+  `Q \ Dη` is countable).  With eventual departure (`COMPANIONS.md`, terminal refinement, from the
+  agreement in `Dη` and the nonempty losses with a Scott sentence for each class; compiled
+  conditionally, `ExpansionDomains.exists_notMem_of_isolating`, `MainTheorem/LastStage`), every
   class leaves some domain and `mk_le_aleph_one_of_domains` applies to the expansion domains
   directly; this would be a second proof of the upper bound through departure, not taken by the
   spine (departure is not an input to the count), and is not compiled;
@@ -3452,6 +3503,190 @@ construction chosen builds grade by grade over the boundary, in one fixed order 
 chooses the full-scope cell that serves each lift (defined with 2.6) before extending on the
 other coatom, and tops out in a single apex cell.
 
+## The common core of the receiving routes
+
+**The observation.**  The open finite hypotheses of the receiving routes, and the completion of the
+coatom amalgam, ask for objects over a context (for (R1)–(R4), a context acquired in a model) whose
+cells of full scope (graded index `(univ, g)`) satisfy a condition on their rows at prescribed
+cells.  (R2) and (R3) ask for a legal one-point extension: the cells of full scope read each new top
+of the donor at least as a private top (the reading context, a condition on stage types of the route
+to determination with a private top, not on `main`; on `main`, (R2) follows from (R1) for every
+model at every limit stage, `Realization.ResidualAcquisition` and `Realization.CutoffDetermination`,
+and (R3) from `Realization.HollowAcquisition` and `Realization.SchemeDetermination`, README, "Status
+of (R2) and (R3)").  (R1) and (R4) ask for schemes: (R1), per block, a scheme on which every coface
+of the context has its cells of full scope of the top grade read the labels of one block in their
+own block (block-tight saturations, `IsBlockTight` = "some scheme, and every coface on it …"); (R4),
+a scheme carrying a coface of the stage reduction `T⁺↓β` whose cells of full scope of the cap's
+grade read the new cells of the donor through the cap (the cap-reading scheme of the stable recovery
+through a reading cell).  The completion asks for a coatom extension, with no condition on the rows.
+These row-prescription conditions recur across the routes.  The four gaps stay separate: the
+implications below count only as compiled, each under the **compatibility hypothesis**: the route's
+prescription is compatible with the faces (`StageType.IsFaceCompatible`, defined under "The
+statement" below) at the input.  For (R1) that hypothesis fails at the known refuting context
+(below).
+
+**The statement** (`Extension/PrescribedFullRows`).  A context `t'` on `k` points and a donor `d`
+on `n + 1` points with the common face `t` (the face of `t'` along `h` and of `d` along the first
+points); a **full-row prescription** `Φ` (`StageType.FullRowPrescription`), at each grade `g` a
+condition on the readings of the known cells (those of `t'` and `d`) and of the cell itself by a
+cell of graded index `(univ, g)`; a **prescribed extension** (`StageType.IsPrescribedExtension`), a
+legal one-point extension of `t'` carrying `d` along `h` whose scheme extends `t'` and `d` with the
+rows prescribed by `Φ` (`StageType.ExtendsWithPrescribedRows`, a condition on the scheme, so at a
+stage that is zero or a limit, `Order.IsSuccPrelimit α`, generalized saturation reaches it:
+`Realization.IsModel.realizesOver_extendsWithPrescribedRows`).
+**Admissibility** of a row at a labelling of the known cells (`StageType.IsAdmissibleRow`): the
+readings meet `Φ`, are coded, are lawful below `(univ, g)` in the rows of `t'` and of `d`, and
+transform to the labelling capped at a value at least the label of the known cell served.
+**Compatibility with the faces** (`StageType.IsFaceCompatible`): admissibility at every lawful
+labelling of `t'` and some lawful labelling of `d` agreeing with it on `t`; **at the labels of
+`t'`** (`StageType.IsFaceCompatibleAtLabels`): at the labels of `t'` only, with some lawful
+labelling of `d`.  The common core is `StageType.HasPrescribedFullRows α`: every prescription
+compatible with the faces over legal `t'` and `d` has a prescribed extension.  Its labels form is
+`StageType.HasPrescribedFullRowsAtLabels α`.
+
+**Compiled.**
+
+1. Forcing: a reading of `x` at least as `s` at every cell of a graded index of the grade of `s`
+   forces `p s ≤ p x` in every lawful section (`CellScheme.Rows.IsLawful.le_of_forall_row_le`);
+   every lawful labelling of a face of a legal stage type extends to it
+   (`StageType.exists_isLawful_extend_of_restrictFace`).
+2. Necessity of both compatibility conditions for a prescribed extension
+   (`StageType.IsPrescribedExtension.isFaceCompatible`,
+   `StageType.IsPrescribedExtension.isFaceCompatibleAtLabels`), through
+   `StageType.ExtendsWithPrescribedRows.isAdmissibleAt`.
+3. The labels form is **false at every stage**
+   (`PrescribedFullRowsCounterexample.not_hasPrescribedFullRowsAtLabels`): over
+   `GatedExtensionCounterexample.P α` with the empty root and the one-point donor, the prescription
+   that every cell of graded index `(univ, 2)` reads `C₂` at least as `C₁` is compatible at the
+   labels of the context (`⊤, ⊤`; `PrescribedFullRowsCounterexample.isFaceCompatibleAtLabels`) and
+   has no prescribed extension, since the lawful labelling `3, 2` extends to every legal one-point
+   extension of `GatedExtensionCounterexample.P α`
+   (`PrescribedFullRowsCounterexample.not_isPrescribedExtension`).  It is not
+   compatible uniformly (`PrescribedFullRowsCounterexample.not_isFaceCompatible`), so the uniform
+   form is not tested by this input (its compatibility premise fails there).  The labels form
+   implies the uniform form (`StageType.HasPrescribedFullRowsAtLabels.hasPrescribedFullRows`); that
+   implication is vacuous, its hypothesis being refuted, and is kept only as the comparison of the
+   two forms.
+4. The empty prescription (`StageType.emptyPrescription`): the coatom extension property makes it
+   compatible (`StageType.HasCoatomExtensions.hasCompatibleEmptyPrescription`) and gives a
+   prescribed extension for it (`StageType.HasCoatomExtensions.isPrescribedExtension_empty`); the
+   core with its compatibility gives the coatom extension property
+   (`StageType.HasPrescribedFullRows.hasCoatomExtensions`); so under the core the coatom extension
+   property is equivalent to `StageType.HasCompatibleEmptyPrescription α`
+   (`StageType.HasPrescribedFullRows.hasCoatomExtensions_iff`).  The core alone does not give the
+   coatom extension property.
+5. The routes (`Extension/PrescribedFullRowsRoutes`, with the routes' conditions stated in full):
+   - (R2)/(R3): a prescribed extension for the reading prescription of a choice of private tops is
+     a reading coface (`PrescribedFullRows.IsPrescribedExtension.isReadingContext`); the core with
+     the compatibility of that prescription gives a reading context
+     (`StageType.HasPrescribedFullRows.isReadingContext`); a reading context determines a choice
+     whose reading prescription is compatible
+     (`PrescribedFullRows.IsReadingContext.exists_isFaceCompatible`), so under the core, at a legal
+     input `(t', d)`, `IsReadingContext t' h d` is equivalent to the existence of a choice `σ` with
+     `IsTopChoice t' d σ` whose reading prescription is compatible; and a reading context forces,
+     at every lawful labelling `a` of the context, a lawful labelling of the donor agreeing on the
+     common face under which every new top is at least `a` at some private top of at least its
+     grade
+     (`PrescribedFullRows.IsReadingContext.forall_exists_le`).  The route's open passage from a
+     graded context with a top to a reading context is not derived from the core.
+   - (R1): a prescribed extension for the block prescription (old cells read in the own block) is
+     block-tight (`PrescribedFullRows.IsPrescribedExtension.isBlockTight`); the core with the
+     compatibility of every block prescription over the empty face gives block-tight saturations
+     (`StageType.HasPrescribedFullRows.hasBlockTightSaturations`).  The block prescription is **not
+     compatible** wherever the context has a lawful labelling that is `⊥` at a cell of the block,
+     not self-visible at the top grade `N`, and not `⊥` at a cell of grade `N`
+     (`PrescribedFullRows.not_isFaceCompatible_block`, with
+     `PrescribedFullRows.not_isAdmissibleRow_block`).  At the refuting context of the per-block
+     route, `CoupledGatedExtensionCounterexample.P α` (not on `main`), these hypotheses hold at
+     every stage `α > 1`: that module proves the context legal (`isLegal_P`), its cell `z₁` is
+     labelled `1` and not self-visible at the grade `2`, and it has the lawful labelling
+     `⊥, ⊥, ⊥, ω + 1, ω + 2` (`isLawful_lab_bot_omegaAdd`).  So the hypothesis of
+     `hasBlockTightSaturations` fails at every `α > 1` (argued from those compiled pieces; the
+     joining lemma is to be compiled once that module lands), and the (R1) arrow is **not a
+     reduction**.  The cause is the domain of `Φ`: it names only known cells, while block-tightness
+     accepts any cell with the label, new cells included.  Redesigning the prescription to read
+     cells of the donor would have to be re-tested at this input.
+   - (R4): a prescribed extension for the cap prescription is a cap-reading scheme when the cap's
+     grade exceeds the number of points of the donor's root
+     (`PrescribedFullRows.IsPrescribedExtension.isCapReadingScheme`,
+     `StageType.HasPrescribedFullRows.exists_isCapReadingScheme`).  This is only the part of the
+     sufficient condition for a stable recovery scheme concerning the scheme
+     (`StageType.IsStableRecoveryScheme.of_readsThroughCap`, on `main`); the composition with the
+     cap's label and the calibration is not compiled here.
+   - The completion: a step of the canonical multi-layer scheme of a seed
+     (the multi-layer step `Seed.MultiLayerStep` on `OrderedLayer.canonicalMultiScheme`) is **not
+     an instance** (argued, not compiled):
+     it asks for a completion of one shape (two copies at each graded index of full scope, reading
+     through their originals), while a prescribed extension for the empty prescription is a coatom
+     extension of any shape.
+
+**Status of each named hypothesis, separately.**
+
+- `StageType.HasPrescribedFullRowsAtLabels α`: refuted at every stage.
+- `StageType.HasPrescribedFullRows α`: open, a hypothesis introduced here.  Not refuted at the
+  inputs tested: at `GatedExtensionCounterexample.P α` the refuting prescription is not uniformly
+  compatible, so the input does not test it; at the six compiled seeds and the amalgam of `seedHG`
+  the completion's coatom extensions are prescribed extensions for the empty prescription, so that
+  prescription is compatible there by necessity (argued from the routes' own analyses of those
+  inputs).  At the twin input of (R4) the route's analysis gives a stable recovery scheme,
+  not a prescribed extension for the cap prescription, so the input does not test the core.
+  Sufficiency of compatibility is unproved (it is the hypothesis itself): compatibility is asked
+  per lawful labelling and per served cell, and a construction of a prescribed extension would
+  still need finitely many fixed rows serving every lawful labelling, rows lawful on all of the
+  extension (including the cells that are neither known cells nor the cell itself), and legality
+  of the extension at every graded face.
+- `StageType.HasCompatibleEmptyPrescription α`: open; implied by the coatom extension property.
+- The coatom extension property (`StageType.HasCoatomExtensions α`): still to be proved, unchanged.
+- Block-tight saturations ((R1), per block): undecided, unchanged.  The arrow from the core is
+  vacuous at `CoupledGatedExtensionCounterexample.P α` for every `α > 1` (argued; item 5), so the
+  core gives nothing here.
+- The reading-context property at a legal input ((R2)/(R3)): under the core it is equivalent to a
+  choice of private tops with a compatible reading prescription (item 5), and the forcing condition
+  above is necessary.  Obtaining a reading context from a graded context with a top is open,
+  unchanged, and not derived from the core.
+- Cap-reading schemes at the calibrated inputs ((R4)): open, unchanged; conditional on the core and
+  the compatibility of the cap prescription; the composition to a stable recovery scheme is not
+  compiled here.
+- The canonical multi-layer step (completion): open as a statement about every seed, unchanged,
+  not an instance (argued).
+- (R1)–(R4): neither proved nor refuted.
+
+**What the routes have in common that fails.**  Compatibility at the labels of the context does not
+make a prescription have a prescribed extension: bountifulness of the one-point extension at the cap
+`⊥` makes every lawful labelling of the context count, and a reading prescribed at every cell of a
+graded index forces an order on each of them.  The refuting prescription has the shape of
+`ReadsAtLeast`, but between two cells `C₁`, `C₂` of the context of the same grade that the rows
+order both ways; it is not the reading prescription of (R2)/(R3) for any choice (the donor has no
+new top, so every reading prescription holds trivially there), and the refutation says nothing
+about (R2) or (R3).  The uniform form is not tested by the refuting input.  For (R1) the uniform
+form gives nothing at the per-block route's refuting context (item 5).
+
+**The first clause that does not close.**  A general proof of `StageType.HasPrescribedFullRows`
+constructs, at the empty prescription, coatom extensions at every input where the empty
+prescription is compatible.  The completion results of checkpoints 2.1–2.7 give coatom extensions
+only from completions below the full grade
+(`StageType.HasCoatomExtensions.of_completionBelowFullGrade`), open as a statement about every
+seed at `m ≥ 3`;
+that is the first clause of a general proof that does not close.
+
+**No clause of a model prescribes full rows** (argued, not compiled): no clause of
+`Realization.IsModel` prescribes the row of a cell of full scope; generalized saturation only
+reaches a coface on a prescribed scheme, which is why the core is stated on stage types.
+
+**Restatements.**  The (R4) condition is `main`'s own `StageType.ReadsThroughCap`
+(`Continuation/StableRecovery`), used directly.  `Extension/PrescribedFullRowsRoutes` states
+`ReadsAtLeast`, `IsReadingContext`, `ReadsInOwnBlock` and `HasBlockTightSaturations` in full,
+because the modules of the (R2)/(R3) route and of the per-block route are not on `main`;
+`IsBlockTight` is new (the per-input body of `HasBlockTightSaturations`).  The four restatements
+were checked `rfl`-equal to the routes' own declarations at the heads of the routes' branches; that
+check is outside the repository.  When those modules land, the restatements are replaced by their
+declarations: `ReadsAtLeast` and `IsReadingContext` by the (R2)/(R3) module's (moving
+`exists_isFaceCompatible` and `forall_exists_le` beside them); `ReadsInOwnBlock` and
+`HasBlockTightSaturations` by the per-block module's (keeping `IsBlockTight` beside them, and
+compiling the joining lemma of item 5).  The composition of `IsCapReadingScheme` with the cap's
+label and the calibration to a stable recovery scheme
+(`StageType.IsStableRecoveryScheme.of_readsThroughCap`) is not compiled here.
+
 ## Companion boundaries
 
 Companion topics: definable domain/logical cuts with strict loss-rank lower bounds; canonical
@@ -3460,8 +3695,9 @@ arbitrary-carrier Scott/`T∞` theory dichotomy.  The joint embedding and amalga
 finite top-free charts are step 2 of the top-free witnesses and belong to the core.  These do not
 assert strong AP, a proper self-embedding, uncountable categoricity, Scott-rank equality, or
 existence of a model of all of `T∞`.  Terminal refinement (eventual departure by Scott isolation,
-the last admitted stage, and the terminal expansion; conditional targets) is never an input to the
-count, and its eventual departure is to be proved from hypotheses of the count (the agreement of
+the last admitted stage, and the terminal expansion; the first two compiled conditionally in
+`MainTheorem/LastStage`, the third a conditional target) is never an input to the count, and its
+eventual departure is proved from hypotheses of the count (the agreement of
 condition 3 and the nonempty losses of condition 4, with Scott sentences), not from its conclusions;
 the agreement filtration (defined by `T∞`) and the rank filtration (defined by Scott rank) are
 defined differently; no relation between them is asserted, and any comparison is a separate
@@ -3510,6 +3746,22 @@ module yet, are grouped last ("Statements not yet in any module").  The declarat
 modules under `Language/` and `Realization/` whose own notes name earlier files move to those files
 directly, in the Layer 2 consolidation (pull request #34), and are not recorded here; until it
 lands, their notes stay in those modules.
+
+**Prescribed rows (Layer 3, 3.4).**
+
+- Done: `CellScheme.Rows.IsLawful.le_of_forall_row_le` is in `Scheme/Row`; `Scheme.rowAt`,
+  `Scheme.faceCell`, `Scheme.cellMap_cellMap`, `Scheme.cellMap_congr` and the lemmas of `rowAt`
+  and `faceCell` are in `Stage/Scheme`; `StageType.faceCell`,
+  `StageType.comap_toScheme_of_restrictFace`, `StageType.label_faceCell`,
+  `StageType.grade_faceCell`, `StageType.scope_faceCell`, `StageType.isLawful_comp_faceCell`,
+  `StageType.last_notMem_scope_faceCell` and `StageType.exists_faceCell_eq_of_last_notMem` are in
+  `Stage/Basic`; `StageType.exists_isLawful_extend_of_restrictFace` is in `Stage/Legal`;
+  `StageType.faceCell_faceCell` and `StageType.last_mem_scope_faceCell_iff` are in
+  `Extension/PinnedExtension`, beside `extendByLast` (which `Stage/Basic` does not import).  The
+  (R4) condition is `main`'s `StageType.ReadsThroughCap` (`Continuation/StableRecovery`).
+- `Extension/PrescribedFullRowsRoutes`: the remaining restatements of the routes' conditions are
+  replaced by the routes' declarations (`Continuation/AvailableTopDetermination`,
+  `Realization/TightCap`, `Realization/PerBlockCarrying`) when those modules land.
 
 **Finite geometry and the coatom amalgam (Layer 3, (R6)).**
 
@@ -3647,6 +3899,12 @@ lands, their notes stay in those modules.
   `FullPresentations.HasScatteredTails` is in effect the range `bfProjRange` of the tail, stated as
   an image of codes; the proof is to use `bfProj` and `bfProj_mk` in place of the local derivation,
   in a later change of proofs only (no statement changes, and no Lean change here).
+
+- `MainTheorem/LastStage`: the attained greatest index `exists_isGreatest_of_closed` is imported
+  from `Counting/OrdinalAttainment` (Layer 0), with no local copy.
+  `ExpansionDomains.notMem_of_isolating` and `ExpansionDomains.lastStage_lt_qrank` are local forms
+  of InfinitaryLogic's Scott separation (`OrdinalCountability`, available upstream at `2cd44c3`,
+  not at the pin `e460cb6`), to be proved by quotation at a repin containing it.
 
 **Lifting and alignment (checkpoint 2.4; Layer 3, (R6)).**
 
@@ -3831,7 +4089,8 @@ witnesses).**
 **Counting (Layers 0, 5–6).**
 
 - `Counting/OrdinalAttainment`: Layer 0, a general ordinal statement (Mathlib only, no
-  construction imports).  `exists_isGreatest_of_closed`, used by `MainTheorem/MaximalRefinement`,
+  construction imports).  `exists_isGreatest_of_closed`, used by `MainTheorem/MaximalRefinement` and
+  `MainTheorem/LastStage`,
   is to be replaced at a repin containing `c16de09` and `2cd44c3` by a quotation of the
   greatest-stage statements of InfinitaryLogic (`OrdinalUtil`; "Dependency pins", **Upstream
   statements quoted, not compiled here**), from which it follows (note 34).
