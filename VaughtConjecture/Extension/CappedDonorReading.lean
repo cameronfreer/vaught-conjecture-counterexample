@@ -111,7 +111,7 @@ enters; the capped-donor lemma uses of it only that every reference label lies b
   donor lawfully (`TwoBlockInput.isLawful_reading`); the actual labels read the donor itself
   (`TwoBlockInput.reading_actual`); and the active lawful labelling `1, ω + 1, 2`, whose cut is `2`,
   reads it as `1, 2`, a lawful donor labelling not `⊥` anywhere and other than the donor's labels
-  (`TwoBlockInput.reading_lab_one_omegaAdd_two`, `TwoBlockInput.isLawful_donorLab_one_two`).
+  (`TwoBlockInput.reading_lab_two`, `TwoBlockInput.isLawful_donorLab_one_two`).
 
 **What is not claimed.**  The lemma is stated for given reference data with the margin.  Its
 acquisition from modelhood is prospective: `Realization.IsModel.exists_privateContext` gives
