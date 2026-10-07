@@ -19,7 +19,7 @@ the cap avoids both extreme points of the context (an **interior cap**), there a
 faces in every scheme: the new point is an extreme point of the points of the scheme, the other
 extreme point is an extreme point of the context, and the face obtained by deleting it contains the
 cap and the new point (`StageType.IsStableRecoveryScheme.exists_face_ne_univ`, in
-`VaughtConjecture.Continuation.StableRecoveryInterior`).  An interior cap of grade `N ≥ 2` needs a
+`VaughtConjecture.Continuation.StableReceiving`).  An interior cap of grade `N ≥ 2` needs a
 context of at least four points (informal; not compiled).  This file builds a legal scheme on five
 points with an interior cap of grade `2` and two reading cells, one at each of the two graded faces
 of grade `2` containing the cap and the new cell; the stage types are in
@@ -73,8 +73,7 @@ universe u
 namespace VaughtConjecture.Continuation.StableRecoveryInterior
 
 open Finset Label StageType ThinCompletion
-open StableRecoveryReading (IsReadingTriple exists_isReadingTriple_lift blockConst_gridPoint_zero
-  blockConst_gridPoint_one blockConst_bot twoStrip_gridPoint_one_zero twoStrip_gridPoint_two_one)
+open StableRecoveryReading (IsReadingTriple exists_isReadingTriple_lift)
 open Ordinal hiding univ
 
 /-! ### The scheme -/

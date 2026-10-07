@@ -312,20 +312,6 @@ theorem exists_lowerTwin (h : IsTwinCap ξ μ C) (o : Bool) :
 
 /-! ### The calibration and the reading -/
 
-/-- The finite part of a label `μ + n` is `n`, in every normal form `μ' + m` with `μ'` zero or a
-limit. -/
-private theorem eq_of_labelAdd_eq {β μ' : Ordinal.{u}} (hβ : Order.IsSuccPrelimit β)
-    (hμ' : Order.IsSuccPrelimit μ') {n m : ℕ}
-    (h : labelAdd β n = ((μ' + m : Ordinal.{u}) : Label.{u})) : m = n := by
-  have h1 : IsSelfVisible n (labelAdd β n) := isSelfVisible_coe_add hβ le_rfl
-  have h2 : ¬ IsSelfVisible (n + 1) (labelAdd β n) :=
-    not_isSelfVisible_coe_add_natCast hβ (Nat.lt_succ_self n)
-  rw [h] at h1 h2
-  by_contra hmn
-  rcases Nat.lt_or_gt_of_ne hmn with hm | hm
-  · exact not_isSelfVisible_coe_add_natCast hμ' hm h1
-  · exact h2 (isSelfVisible_coe_add hμ' hm)
-
 /-- **The graded cap calibration holds for the donor of a twin cap**, for every `γ < λ_ξ + 3`: the
 cap has grade `3 > 1` and label `C ≥ λ_ξ + 3`; the ordinal labels `μ + 2` and `μ + 1` of the donor
 have finite parts below `3`, with the root `μ + 2` (grade `1`) as reference cell. -/
@@ -357,19 +343,6 @@ theorem gradedCapCalibration_contextAt (h : IsTwinCap ξ μ C) (o : Bool) {γ : 
     | exact hgr 2 (by omega) hl
     | exact hgr 1 (by omega) hl
 
-/-- `μ + n = μ' + n` for `n ∈ {1, 2}` gives `μ + 2 = μ' + 2`. -/
-private theorem labelAdd_two_eq {μ' : Ordinal.{u}} {n : ℕ} (hn : n = 1 ∨ n = 2)
-    (h : labelAdd μ n = ((μ' + n : Ordinal.{u}) : Label.{u})) :
-    labelAdd μ 2 = ((μ' + ((2 : ℕ) : Ordinal.{u}) : Ordinal.{u}) : Label.{u}) := by
-  have h' : μ + (n : Ordinal.{u}) = μ' + n := WithTop.coe_injective (WithBot.coe_injective h)
-  have h2 : ((2 : ℕ) : Ordinal.{u}) = ((1 : ℕ) : Ordinal.{u}) + ((1 : ℕ) : Ordinal.{u}) :=
-    Nat.cast_add 1 1
-  rcases hn with rfl | rfl
-  · have : μ + ((2 : ℕ) : Ordinal.{u}) = μ' + ((2 : ℕ) : Ordinal.{u}) := by
-      rw [h2, ← add_assoc, ← add_assoc, h']
-    exact congrArg (fun x : Ordinal.{u} ↦ ((x : Ordinal.{u}) : Label.{u})) this
-  · exact h
-
 /-- **The reading cell reads a twin through the cap**: a new cell `e` labelled `μ + n₀`
 (`n₀ ∈ {1, 2}`), read by the reading cell `21` at `n₀`, is read through the cap, with the root
 `μ + 2` of the context, read at `2`, as reference cell. -/
@@ -387,7 +360,9 @@ theorem readsThroughCap_twinAt (h : IsTwinCap ξ μ C) (o : Bool)
   intro he _
   refine ⟨fun h' ↦ absurd h' WithBot.coe_ne_bot,
     fun h' ↦ absurd (WithBot.coe_injective h') WithTop.coe_ne_top, fun μ' n hμ' h' ↦ ?_⟩
-  obtain rfl : n = n₀ := eq_of_labelAdd_eq h.isSuccPrelimit hμ' h'
+  -- the block and the finite part of the label are unique
+  obtain ⟨rfl, rfl⟩ := (add_natCast_eq_add_natCast_iff hμ' h.isSuccPrelimit).mp
+    (WithTop.coe_injective (WithBot.coe_injective h')).symm
   have ha21 : (twinScheme.{u} o).cellMap Fin.castSuccEmb a ∈
       (twinScheme.{u} o).toCellScheme.below ((twinScheme.{u} o).toCellScheme.gradedIndex 21) := by
     rw [ha]
@@ -395,7 +370,7 @@ theorem readsThroughCap_twinAt (h : IsTwinCap ξ μ C) (o : Bool)
     change twinCells.gradedIndex 2 ≤ twinCells.gradedIndex 21
     decide
   refine ⟨by rw [hgb]; omega, a, refAt h, 2, ((0 : ℕ) : Ordinal.{u}), rfl,
-    (label_refAt h).trans (labelAdd_two_eq hn₀ h'), by rw [hgb]; omega, ha21, ?_, ?_⟩
+    label_refAt h, by rw [hgb]; omega, ha21, ?_, ?_⟩
   · -- the row of the reading cell, by kinds
     change kindRow o 5 (cellKind ((twinScheme.{u} o).cellMap Fin.castSuccEmb a)) = _
     rw [ha]

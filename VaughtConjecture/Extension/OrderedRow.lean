@@ -135,6 +135,18 @@ theorem twoStrip_block (q : Ordinal.{u}) (n : ℕ) :
   simp only [coe_block_lt_iff, strip2_block]
   rw [ite_eq_right WithBot.coe_ne_bot]
 
+/-- `twoStrip a b f` at the grid point of the block `0` at grade `1`: the strip of `a`. -/
+theorem twoStrip_gridPoint_one_zero :
+    twoStrip a b f (gridPoint.{u} 1 0) = visibilityReplace 2 1 a := by
+  rw [gridPoint, twoStrip_block]
+  simp
+
+/-- `twoStrip a b f` at the grid point of the block `1` at grade `2`: the strip of `b`. -/
+theorem twoStrip_gridPoint_two_one :
+    twoStrip a b f (gridPoint.{u} 2 1) = visibilityReplace 2 2 b := by
+  rw [gridPoint, twoStrip_block]
+  simp
+
 /-- An ordinal at least `1` and below `2` is `1`. -/
 private theorem one_le_lt_two {q : Ordinal.{u}} (h1 : ¬ q < 1) (h2 : q < 2) : q = 1 := by
   have : q ≤ 1 := by
@@ -298,6 +310,21 @@ theorem blockConst_block (q : Ordinal.{u}) (n : ℕ) :
   unfold blockConst
   simp only [coe_block_lt_iff]
   rw [ite_eq_right WithBot.coe_ne_bot]
+
+/-- `blockConst a b` sends the grid points of the block `0` to `a`. -/
+theorem blockConst_gridPoint_zero (k : ℕ) : blockConst a b (gridPoint.{u} k 0) = a := by
+  rw [gridPoint, blockConst_block]
+  simp
+
+/-- `blockConst a b` sends the grid points of the block `1` to `b`. -/
+theorem blockConst_gridPoint_one (k : ℕ) : blockConst a b (gridPoint.{u} k 1) = b := by
+  rw [gridPoint, blockConst_block]
+  simp
+
+/-- `blockConst a b` fixes `⊥`. -/
+theorem blockConst_bot : blockConst a b ⊥ = ⊥ := by
+  unfold blockConst
+  simp
 
 /-- **`blockConst a b` is a witness** for the suppressor `b` up to the grade `1`, for `a ≤ b`
 self-visible at `1`. -/

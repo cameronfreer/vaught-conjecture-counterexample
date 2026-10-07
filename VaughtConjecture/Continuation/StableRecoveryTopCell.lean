@@ -242,7 +242,7 @@ theorem isLawful_topLabel {A E B : Label.{u}} (h : IsReadingTriple A E B) :
 `p` and `q` and a cap `c`, self-visible at `2` unless the third parameter of `q` is `⊥`, if the
 second and third parameters of `p` agree with those of `q` capped at `c`, some first parameter
 completes them to a reading triple agreeing with `q` capped at `c`. -/
-theorem exists_isReadingTriple_lift_of_new {pA pE pB qA qE qB c : Label.{u}}
+private theorem exists_isReadingTriple_lift_of_new {pA pE pB qA qE qB c : Label.{u}}
     (hp : IsReadingTriple pA pE pB) (hq : IsReadingTriple qA qE qB)
     (hE : min pE c = min qE c) (hB : min pB c = min qB c) :
     ∃ rA, IsReadingTriple rA pE pB ∧ min rA c = min qA c := by
@@ -287,7 +287,7 @@ theorem exists_isReadingTriple_lift_of_new {pA pE pB qA qE qB c : Label.{u}}
 `StableRecoveryReading.exists_isReadingTriple_lift`, with the third parameter prescribed whenever
 the first or the second is (the cap lies above the reference cell, the new cap above the new
 cell). -/
-theorem exists_isReadingTriple_lift_top {pA pE pB qA qE qB c : Label.{u}}
+private theorem exists_isReadingTriple_lift_top {pA pE pB qA qE qB c : Label.{u}}
     (hp : IsReadingTriple pA pE pB) (hq : IsReadingTriple qA qE qB)
     (hc2 : IsSelfVisible 2 c ∨ qB = ⊥) {xa xe xb : Prop} (hba : xb → xa ∨ xe)
     (hA : xa → min pA c = min qA c) (hE : xe → min pE c = min qE c)

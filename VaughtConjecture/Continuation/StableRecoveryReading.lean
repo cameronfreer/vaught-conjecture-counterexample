@@ -169,39 +169,6 @@ structure IsReadingTriple (A E B : Label.{u}) : Prop where
   /-- The reference and new parameters agree below the cap (the reading cell). -/
   min_cap_eq : min A B = min E B
 
-section Witness
-
-variable {a b : Label.{u}}
-
-/-- `blockConst a b` sends the grid points of the block `0` to `a`. -/
-theorem blockConst_gridPoint_zero (k : ℕ) : blockConst a b (gridPoint.{u} k 0) = a := by
-  rw [gridPoint, blockConst_block]
-  simp
-
-/-- `blockConst a b` sends the grid points of the block `1` to `b`. -/
-theorem blockConst_gridPoint_one (k : ℕ) : blockConst a b (gridPoint.{u} k 1) = b := by
-  rw [gridPoint, blockConst_block]
-  simp
-
-/-- `blockConst a b` fixes `⊥`. -/
-theorem blockConst_bot : blockConst a b ⊥ = ⊥ := by
-  unfold blockConst
-  simp
-
-/-- `twoStrip a b f` at the grid point of the block `0` at grade `1`: the strip of `a`. -/
-theorem twoStrip_gridPoint_one_zero {f : Label.{u}} :
-    twoStrip a b f (gridPoint.{u} 1 0) = visibilityReplace 2 1 a := by
-  rw [gridPoint, twoStrip_block]
-  simp
-
-/-- `twoStrip a b f` at the grid point of the block `1` at grade `2`: the strip of `b`. -/
-theorem twoStrip_gridPoint_two_one {f : Label.{u}} :
-    twoStrip a b f (gridPoint.{u} 2 1) = visibilityReplace 2 2 b := by
-  rw [gridPoint, twoStrip_block]
-  simp
-
-end Witness
-
 /-! ### Lawful labellings -/
 
 /-- Locality at `s` from one witness checked at every cell below `s`. -/

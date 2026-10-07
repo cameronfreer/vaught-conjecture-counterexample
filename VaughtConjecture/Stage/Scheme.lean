@@ -39,7 +39,10 @@ of `f` (`mem_gradedFaces_comap`), and the cell map sends the cells below a pair 
 its image (`image_cellMap_below`); completeness, codedness, and consistency pass to the restriction.
 The restriction reads the rows of the visible cells only (`comap_mk_congr`).
 Along a bijection of the points the cell map is surjective (`surjective_cellMap_equiv`), and the
-faces of a well-formed scheme form a plan on all of its points (`IsWellFormed.isPlan`).
+faces of a well-formed scheme form a plan on all of its points (`IsWellFormed.isPlan`).  So in a
+well-formed scheme on `m + 1` points whose first `m` points span a face, some face other than the
+ground set contains the last point and every set of the first `m` points that contains no extreme
+point of them (`exists_face_ne_univ_of_not_mem`).
 
 ## References
 
@@ -362,6 +365,55 @@ theorem isConsistent_comap {S : Scheme.{u} n} (hS : S.rows.IsConsistent) :
 theorem isComplete_comap {S : Scheme.{u} n} (hS : S.toCellScheme.IsComplete) :
     (S.comap f).toCellScheme.IsComplete :=
   (hS.comap f).reindex (S.cellEquiv f).surjective
+
+/-! ### A face avoiding an extreme point -/
+
+/-- **A face avoiding an extreme point of the first `m` points**: in a well formed scheme on
+`m + 1` points (`0 < m`) in which the first `m` points span a face, the new point `m` is an extreme
+point of the ground set, and so is some other point `y`, which is then an extreme point of the
+first `m` points.  So for a set `S` of the first `m` points containing no extreme point of them,
+the face `univ \ {y}` is a face other than the ground set containing `S` and the new point.  The
+proof uses that a closed set with at least two points has exactly two extreme points
+(`Geometry.IsPlan.card_extremes`) and that faces are closed under intersection. -/
+theorem exists_face_ne_univ_of_not_mem {E : Scheme.{u} (m + 1)} (hE : E.IsWellFormed)
+    (hold : univ.map (Fin.castSuccEmb : Fin m ↪ Fin (m + 1)) ∈ E.toCellScheme.faces)
+    (hm : 0 < m) {S : Finset (Fin m)}
+    (hS : ∀ y : Fin m, (univ.erase y).map Fin.castSuccEmb ∈ E.toCellScheme.faces → y ∉ S) :
+    ∃ F ∈ E.toCellScheme.faces, F ≠ univ ∧ S.map Fin.castSuccEmb ⊆ F ∧ Fin.last m ∈ F := by
+  have hP : Geometry.IsPlan univ E.toCellScheme.faces := hE.isPlan
+  have h2 := hP.card_extremes hP.ground_mem (by rw [Finset.card_univ, Fintype.card_fin]; omega)
+  have hold' : univ.erase (Fin.last m) = univ.map (Fin.castSuccEmb : Fin m ↪ Fin (m + 1)) := by
+    ext x
+    induction x using Fin.lastCases with
+    | last => simp
+    | cast x => simp [Fin.castSucc_ne_last]
+  -- the new point is one extreme point of the ground set; `y` is the other
+  obtain ⟨y, hy, hyl⟩ : ∃ y ∈ Geometry.extremes E.toCellScheme.faces univ, y ≠ Fin.last m := by
+    by_contra! h
+    have : Geometry.extremes E.toCellScheme.faces univ ⊆ {Fin.last m} := fun y hy ↦
+      mem_singleton.mpr (h y hy)
+    have := card_le_card this
+    rw [card_singleton] at this
+    omega
+  obtain ⟨y', rfl⟩ := Fin.exists_castSucc_eq.mpr hyl
+  have hyF : univ.erase (Fin.castSucc y') ∈ E.toCellScheme.faces := (mem_filter.mp hy).2
+  -- `y` is an extreme point of the first `m` points
+  have hcap := hP.infClosed hyF hold
+  have heq : univ.erase (Fin.castSucc y') ⊓ univ.map (Fin.castSuccEmb : Fin m ↪ Fin (m + 1)) =
+      (univ.erase y').map Fin.castSuccEmb := by
+    ext x
+    induction x using Fin.lastCases with
+    | last => simp
+    | cast x => simp
+  rw [mem_coe, heq] at hcap
+  have hyS := hS y' hcap
+  refine ⟨_, hyF, fun h ↦ ?_, fun x hx ↦ ?_, ?_⟩
+  · have := h ▸ mem_univ (Fin.castSucc y')
+    simp at this
+  · obtain ⟨z, hz, rfl⟩ := mem_map.mp hx
+    refine mem_erase.mpr ⟨fun h ↦ hyS ?_, mem_univ _⟩
+    rwa [← Fin.castSucc_inj.mp h]
+  · exact mem_erase.mpr ⟨(Fin.castSucc_ne_last y').symm, mem_univ _⟩
 
 end Scheme
 
