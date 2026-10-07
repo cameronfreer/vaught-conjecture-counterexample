@@ -34,19 +34,21 @@ one graded index) coming from the legality of the realized covers (in
   not proved.
 
 **(R4)** (`StableCappedReceiving`).  For a model `R` at `λ_ξ`, `ξ < ω₁`, not cover-hollow, with
-top-grade supremum `⊤`, and the candidate defined from any proof of its stable lawfulness: over
-every occurrence of the candidate of positive arity, for every coface `D` of its type and every
-ordinal `γ < λ_{ξ+1}`, some point extends the occurrence to one whose candidate type `Q` is on the
-scheme of `D`, equals `D` at every cell where `D` is not the formal top (bottom included), and
-exceeds `γ` at every cell where `D` is the formal top.  Such a `Q` is in the receiving family of
-`D` at the cutoff `γ` (`StageType.mem_receivingFamily_of_capped`), so (R4) is finite-cut receiving
-of the candidate over positive roots.  Its proof is to combine the following, none of which is
-proved or used here: the acquisition, in `R`, of a private context calibrated to the stable labels
-(non-hollowness supplies an attained proper stable value, unbounded growth a private cap whose
-stable value is proper and above every requested `γ`); the growth construction with its section
-theorem, shared with (R3); the recovery statement of (R3) and (R4) for restriction-compatible
-labellings, evaluated on the stable labelling; and the realization of the constructed scheme over
-the private context by generalized saturation of `R`.
+top-grade supremum `⊤`, and its stable candidate `R.stableCandidate hR.isStablyLawful`: over every
+occurrence of the candidate of positive arity, for every coface `D` of its type and every ordinal
+`γ < λ_{ξ+1}`, some point extends the occurrence to one whose candidate type `Q` is on the scheme
+of `D`, equals `D` at every cell where `D` is not the formal top (bottom included), and exceeds `γ`
+at every cell where `D` is the formal top.  Such a `Q` is in the receiving family of `D` at the
+cutoff `γ` (`StageType.mem_receivingFamily_of_capped`), so (R4) is finite-cut receiving of the
+candidate over positive roots.  The candidate does not depend on the proof of stable lawfulness
+from which it is defined, so (R4) is equivalent to its form for the candidate defined from every
+such proof (`stableCappedReceiving_iff_forall_isStablyLawful`).  Its proof is to combine the
+following, none of which is proved or used here: the acquisition, in `R`, of a private context
+calibrated to the stable labels (non-hollowness supplies an attained proper stable value,
+unbounded growth a private cap whose stable value is proper and above every requested `γ`); the
+growth construction with its section theorem, shared with (R3); the recovery statement of (R3)
+and (R4) for restriction-compatible labellings, evaluated on the stable labelling; and the
+realization of the constructed scheme over the private context by generalized saturation of `R`.
 
 **The empty root** (`Realization.hasFiniteCutReceiving_of_pos`, in
 `VaughtConjecture.Realization.Model`).  (R4) concerns positive roots only.  Over the empty root,
@@ -163,24 +165,42 @@ end Realization
 /-! ### (R4) and the assembly -/
 
 /-- **Stable capped receiving**, (R4) of the table of Layer 3, still to be proved: for a model `R`
-at `λ_ξ`, `ξ < ω₁`, not cover-hollow, with top-grade supremum `⊤`, and the candidate defined from
-any proof of its stable lawfulness (every model has one, `Realization.IsModel.isStablyLawful`),
-over every occurrence of positive arity of the stable candidate, for every coface `D` of its type
-and every ordinal `γ < λ_{ξ+1}`, some point extends the occurrence to one whose candidate type is
-on the scheme of `D`, equals `D` at every cell where `D` is not the formal top, and exceeds `γ` at
-every cell where `D` is the formal top.  It is to be proved by the growth construction shared with
-(R3), calibrated to the stable labels and realized by generalized saturation of `R`. -/
+at `λ_ξ`, `ξ < ω₁`, not cover-hollow, with top-grade supremum `⊤`, and its stable candidate
+`R.stableCandidate hR.isStablyLawful` (every model is stably lawful,
+`Realization.IsModel.isStablyLawful`), over every occurrence of positive arity of the candidate,
+for every coface `D` of its type and every ordinal `γ < λ_{ξ+1}`, some point extends the
+occurrence to one whose candidate type is on the scheme of `D`, equals `D` at every cell where `D`
+is not the formal top, and exceeds `γ` at every cell where `D` is the formal top.  It is to be
+proved by the growth construction shared with (R3), calibrated to the stable labels and realized
+by generalized saturation of `R`. -/
 structure StableCappedReceiving : Prop where
   /-- Receiving of the stable candidate over positive roots, capped at every `γ < λ_{ξ+1}`. -/
   receive ⦃ξ : Ordinal.{0}⦄ ⦃M : Type w⦄ (R : Realization.{0, w} (blockStage ξ) M) :
-    ξ < ω₁ → R.IsModel → ∀ hlaw : R.IsStablyLawful, ¬ R.IsCoverHollow → R.topGradeSup = ⊤ →
-      ∀ x : (R.stableCandidate hlaw).Occurrence, 0 < x.arity → ∀ D ∈ x.type.cofaces,
-        ∀ γ : Ordinal.{0}, γ < blockStage (ξ + 1) →
+    ξ < ω₁ → ∀ hR : R.IsModel, ¬ R.IsCoverHollow → R.topGradeSup = ⊤ →
+      ∀ x : (R.stableCandidate hR.isStablyLawful).Occurrence, 0 < x.arity →
+        ∀ D ∈ x.type.cofaces, ∀ γ : Ordinal.{0}, γ < blockStage (ξ + 1) →
           ∃ u : Fin (x.arity + 1) ↪ M, Fin.castSuccEmb.trans u = x.tuple ∧
-            ∃ Q, (R.stableCandidate hlaw).eval u = some Q ∧ Q.toScheme = D.toScheme ∧
-              ∀ (i : Fin Q.card) (j : Fin D.card), (i : ℕ) = j →
+            ∃ Q, (R.stableCandidate hR.isStablyLawful).eval u = some Q ∧
+              Q.toScheme = D.toScheme ∧ ∀ (i : Fin Q.card) (j : Fin D.card), (i : ℕ) = j →
                 (D.label j ≠ ⊤ → Q.label i = D.label j) ∧
                   (D.label j = ⊤ → (γ : Label.{0}) < Q.label i)
+
+/-- **(R4) for the candidate defined from every proof of stable lawfulness**: (R4) is equivalent
+to its form in which the stable candidate of the model is defined from an arbitrary proof `hlaw`
+that the model is stably lawful, since the candidate does not depend on that proof. -/
+theorem stableCappedReceiving_iff_forall_isStablyLawful :
+    StableCappedReceiving.{w} ↔
+      ∀ ⦃ξ : Ordinal.{0}⦄ ⦃M : Type w⦄ (R : Realization.{0, w} (blockStage ξ) M),
+        ξ < ω₁ → R.IsModel → ∀ hlaw : R.IsStablyLawful, ¬ R.IsCoverHollow → R.topGradeSup = ⊤ →
+          ∀ x : (R.stableCandidate hlaw).Occurrence, 0 < x.arity → ∀ D ∈ x.type.cofaces,
+            ∀ γ : Ordinal.{0}, γ < blockStage (ξ + 1) →
+              ∃ u : Fin (x.arity + 1) ↪ M, Fin.castSuccEmb.trans u = x.tuple ∧
+                ∃ Q, (R.stableCandidate hlaw).eval u = some Q ∧ Q.toScheme = D.toScheme ∧
+                  ∀ (i : Fin Q.card) (j : Fin D.card), (i : ℕ) = j →
+                    (D.label j ≠ ⊤ → Q.label i = D.label j) ∧
+                      (D.label j = ⊤ → (γ : Label.{0}) < Q.label i) :=
+  ⟨fun h _ _ R hξ hR _ ↦ h.receive R hξ hR,
+    fun h ↦ ⟨fun _ _ R hξ hR ↦ h R hξ hR hR.isStablyLawful⟩⟩
 
 namespace Realization
 
@@ -218,7 +238,7 @@ theorem hasFiniteCutReceiving_stableCandidate (hξ : ξ < ω₁) (hR : R.IsModel
   | top => exact absurd hc not_isPermittedCutoff_top
   | coe γ =>
     obtain ⟨u, hu, Q, hQ, hS, hl⟩ :=
-      hR4.receive R hξ hR hR.isStablyLawful hnh hgrow x hx D hD γ (isPermittedCutoff_coe.mp hc)
+      hR4.receive R hξ hR hnh hgrow x hx D hD γ (isPermittedCutoff_coe.mp hc)
     exact ⟨u, hu, Q, mem_receivingFamily_of_capped hS hl, hQ⟩
 
 /-- **Output 3, conditionally**: the stable candidate of a model at `λ_ξ`, `ξ < ω₁`, that is not

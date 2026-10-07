@@ -64,6 +64,8 @@ universe u
 namespace VaughtConjecture.CoupledGateOnePointDonors
 
 open Finset Label CellScheme StageType
+open CoupledGateExamples (Reads reads_self reads_three_two reads_two_three faces_agree
+  range_castSuccEmb eq_and_eq_of_min_eq)
 
 /-! ### The cells -/
 
@@ -351,19 +353,11 @@ private theorem lab_two {ρ : Fin k → Label.{u}} {c : Cell k} (h : kind c = 2)
     lab a b ρ c = b := by
   rw [lab_of_kind (by omega), ite_eq_right (by omega), ite_eq_left h]
 
-private theorem two_lt_three : ((2 : ℕ) : Label.{u}) < ((3 : ℕ) : Label.{u}) := by
-  rw [← WithBot.coe_natCast, ← WithBot.coe_natCast, WithBot.coe_lt_coe, ← WithTop.coe_natCast,
-    ← WithTop.coe_natCast, WithTop.coe_lt_coe]
-  exact Nat.cast_lt.mpr (by decide)
-
 private theorem sv_two : IsSelfVisible 2 ((2 : ℕ) : Label.{u}) := by simp
 
 private theorem sv_three : IsSelfVisible 2 ((3 : ℕ) : Label.{u}) := by simp
 
 private theorem sv_three_one : IsSelfVisible 1 ((3 : ℕ) : Label.{u}) := by simp
-
-private theorem topShifter_natCast (n : ℕ) : topShifter ((n : ℕ) : Label.{u}) = ⊤ := by
-  simp [topShifter]
 
 end Values
 
@@ -376,14 +370,6 @@ to `j' ↦ min (ρ j') (ρ j)`.  For a donor on one point this is lawfulness for
 def DonorLawful (ρ : Fin d.card → Label.{u}) : Prop :=
   (∀ j, IsSelfVisible 1 (ρ j)) ∧
     ∀ j, TransformsTo (fun _ : Fin d.card ↦ 1) (donorRow d j) (fun j' ↦ min (ρ j') (ρ j))
-
-/-- The two readings that make a labelling local at the full cells on the private points: the
-row of `C₁` reads `(3, 2)` to `(a, min b a)`, the row of `C₂` reads `(2, 3)` to `(min a b, b)`. -/
-def Reads (a b : Label.{u}) : Prop :=
-  (∃ g σ, IsWitness g σ ∧ a = min (σ ((3 : ℕ) : Label.{u})) (g 2) ∧
-      min b a = min (σ ((2 : ℕ) : Label.{u})) (g 2)) ∧
-  (∃ g σ, IsWitness g σ ∧ min a b = min (σ ((2 : ℕ) : Label.{u})) (g 2) ∧
-      b = min (σ ((3 : ℕ) : Label.{u})) (g 2))
 
 /-- **The data of a lawful labelling** `lab a b ρ`: `a` and `b` self-visible at `2` and read by
 the private rows, `ρ` lawful for the rows of the donor, and the coupling: at every donor cell
@@ -402,41 +388,6 @@ structure LawfulData (a b : Label.{u}) (ρ : Fin d.card → Label.{u}) : Prop wh
   le_of_ne_bot : ∀ j, d.label j ≠ ⊥ → a ≤ ρ j ∧ b ≤ ρ j
   /-- The donor cells labelled `⊥` meet the pair at `⊥`. -/
   min_eq_bot : ∀ j, d.label j = ⊥ → min (ρ j) a = ⊥ ∧ min (ρ j) b = ⊥
-
-private theorem topWitness {K : ℕ} {a : Label.{u}} (ha : IsSelfVisible K a) :
-    IsWitness (constStepSuppressor K a) topShifter :=
-  isWitness_topShifter (antitone_constStepSuppressor _ _) (isSelfVisible_constStepSuppressor ha)
-
-private theorem reads_self {a : Label.{u}} (ha : IsSelfVisible 2 a) : Reads a a :=
-  ⟨⟨_, _, topWitness ha, by rw [topShifter_natCast]; simp [constStepSuppressor],
-      by rw [topShifter_natCast]; simp [constStepSuppressor]⟩,
-    ⟨_, _, topWitness ha, by rw [topShifter_natCast]; simp [constStepSuppressor],
-      by rw [topShifter_natCast]; simp [constStepSuppressor]⟩⟩
-
-private theorem reads_three_two : Reads ((3 : ℕ) : Label.{u}) ((2 : ℕ) : Label.{u}) :=
-  ⟨⟨_, id, IsWitness.id_top, (min_top_right _).symm, by
-      rw [min_eq_left two_lt_three.le]; exact (min_top_right _).symm⟩,
-    ⟨_, _, topWitness sv_two, by
-      rw [min_eq_right two_lt_three.le, topShifter_natCast]; simp [constStepSuppressor],
-      by rw [topShifter_natCast]; simp [constStepSuppressor]⟩⟩
-
-private theorem reads_two_three : Reads ((2 : ℕ) : Label.{u}) ((3 : ℕ) : Label.{u}) :=
-  ⟨⟨_, _, topWitness sv_two, by rw [topShifter_natCast]; simp [constStepSuppressor], by
-      rw [min_eq_right two_lt_three.le, topShifter_natCast]; simp [constStepSuppressor]⟩,
-    ⟨_, id, IsWitness.id_top, by
-      rw [min_eq_left two_lt_three.le]; exact (min_top_right _).symm,
-      (min_top_right _).symm⟩⟩
-
-/-- Capping both values at a label self-visible at `2` keeps the readings. -/
-private theorem Reads.min {a b c : Label.{u}} (h : Reads a b) (hc : IsSelfVisible 2 c) :
-    Reads (min a c) (min b c) := by
-  obtain ⟨⟨g, σ, hw, ea, eb⟩, ⟨g', σ', hw', ec, ed⟩⟩ := h
-  refine ⟨⟨_, σ, hw.cap hc, ?_, ?_⟩, ⟨_, σ', hw'.cap hc, ?_, ?_⟩⟩ <;>
-    simp only [le_refl, ite_true]
-  · rw [ea, min_assoc]
-  · rw [← min_assoc (σ _) (g 2) c, ← eb, min_min_min_comm, min_self]
-  · rw [← min_assoc (σ' _) (g' 2) c, ← ec, min_min_min_comm, min_self]
-  · rw [ed, min_assoc]
 
 /-- Locality at a cell of kind `1` or `2` from a reading `(g, σ)` of the cell's own label `a`:
 the suppressor capped at `a` (`IsWitness.cap`) reads the donor cells at `a` or `⊥`. -/
@@ -573,11 +524,8 @@ variable {X Y : Finset (Fin 3) × ℕ} {w : Cell d.card → Label.{u}}
 
 /-- Dead cells are `⊥` in every labelling lawful below a pair above them. -/
 private theorem eq_bot_of_dead (hw : (cellRows d).IsLawfulBelow X (fun c ↦ w c))
-    {c : Cell d.card} (hc : c ∈ cells.below X) (h0 : kind c = 0) : w c = ⊥ := by
-  obtain ⟨-, hl, -⟩ := Rows.isLawfulBelow_iff_forall.mp hw
-  have h := (hl c hc).eq_bot (d := ⟨c, cells.mem_below_gradedIndex c⟩)
-    (rowValue_dead d (t := c) (.inl h0))
-  simpa using h
+    {c : Cell d.card} (hc : c ∈ cells.below X) (h0 : kind c = 0) : w c = ⊥ :=
+  hw.eq_bot_of_row_self_eq_bot hc (rowValue_dead d (t := c) (.inl h0))
 
 /-- **The copies of a donor cell agree**: in a labelling lawful below `Y`, every copy of the
 donor cell `j` below `Y` carries the label of `don 0 j`. -/
@@ -609,19 +557,6 @@ private theorem don_eq (hw : (cellRows d).IsLawfulBelow Y (fun c ↦ w c)) {l : 
 
 private theorem below_univ_two {c : Cell d.card} (hc : cellGrade c ≤ 2) :
     c ∈ cells.below ((univ : Finset (Fin 3)), 2) := ⟨subset_univ _, hc⟩
-
-/-- In a linear order: from `x ≤ a`, `y ≤ b`, the two minimum equations, and the two
-dominations, `x = a` and `y = b`. -/
-private theorem eq_and_eq_of_min_eq {L : Type*} [LinearOrder L] {a b x y : L} (hxa : x ≤ a)
-    (hyb : y ≤ b) (h1 : min b x = min y x) (h2 : min a y = min x y) (ha : a ≤ x ∨ a ≤ y)
-    (hb : b ≤ x ∨ b ≤ y) : x = a ∧ y = b := by
-  refine ⟨ha.elim (le_antisymm hxa) fun h ↦ ?_, hb.elim (fun h ↦ ?_) (le_antisymm hyb)⟩
-  · by_contra hne
-    rw [min_eq_left h, min_eq_left ((lt_of_le_of_ne hxa hne).le.trans h)] at h2
-    exact hne h2.symm
-  · by_contra hne
-    rw [min_eq_left h, min_eq_left ((lt_of_le_of_ne hyb hne).le.trans h)] at h1
-    exact hne h1.symm
 
 /-- The locality at a cell `s` of kind `1` or `2` below `X`, read at the cells of kind `1` and `2`
 below `s`: one witness reads `3` at equal kinds and `2` at different kinds. -/
@@ -840,10 +775,6 @@ private theorem donorLawful_raise {ρ : Fin d.card → Label.{u}} (hρ : DonorLa
 
 section Legality
 
-private theorem left_eq_of_min_eq_of_lt {a c v : Label.{u}} (h : min a c = v) (hv : v < c) :
-    a = v :=
-  ((min_eq_iff.mp h).resolve_right fun h' ↦ hv.ne' h'.1).1
-
 private theorem le_raise {a a' x c : Label.{u}} (hca : min a c = min a' c) (ha : a ≤ x) :
     a' ≤ raise c x := by
   unfold raise
@@ -883,8 +814,8 @@ private theorem cappedLift_of_forall {X Y : Finset (Fin 3) × ℕ} (h : X ≤ Y)
 private theorem cappedLift_of_dead {X Y : Finset (Fin 3) × ℕ}
     (hX : ∀ c ∈ cells.below X, kind (c : Cell d.card) = 0) (h : X ≤ Y) :
     (cellRows d).CappedLift h :=
-  cappedLift_of_forall d h fun _ _ w v hw hv _ ↦ ⟨v, hv, fun _ _ ↦ rfl, fun e he ↦ by
-    rw [eq_bot_of_dead d hv (cells.below_mono h he) (hX e he), eq_bot_of_dead d hw he (hX e he)]⟩
+  Rows.cappedLift_of_forall_row_self_eq_bot h fun e he ↦
+    rowValue_dead d (t := e) (.inl (hX e he))
 
 /-- **The private coatom lift** `({0, 1}, 2)` to `(univ, 2)`: keep the prescribed pair, copy it to
 `G₁`, `G₂`; on the donor cells, `d.label` at the cap `⊥`, else the ambient values raised. -/
@@ -1067,11 +998,11 @@ theorem isConsistent_cellRows (hd : d.IsLegal) (hℓ : ∀ j, d.label j = ⊥ �
   · simp only [rowValue_eq_lab d (.inl h1), h1]
     rw [kindRow_three (by omega) rfl, kindRow_two (by omega) (by omega) (by omega)]
     exact (isLawful_lab d (lawfulData_gate d hℓ sv_three sv_two reads_three_two le_rfl
-      two_lt_three.le)).isLawfulBelow _
+      (natCast_label_lt.mpr (by decide : 2 < 3)).le)).isLawfulBelow _
   · simp only [rowValue_eq_lab d (.inr h2), h2]
     rw [kindRow_two (by omega) (by omega) (by omega), kindRow_three (by omega) rfl]
     exact (isLawful_lab d (lawfulData_gate d hℓ sv_two sv_three reads_two_three
-      two_lt_three.le le_rfl)).isLawfulBelow _
+      (natCast_label_lt.mpr (by decide : 2 < 3)).le le_rfl)).isLawfulBelow _
   · obtain ⟨l, j, rfl⟩ := kind_eq_three h3
     have hrow : ∀ t : Cell d.card, rowValue d (.don l j) t = lab ⊥ ⊥ (donorRow d j) t := by
       intro t
@@ -1123,12 +1054,6 @@ theorem isWellFormed_cells : (cells (k := k)).IsWellFormed where
     · exact show (univ : Finset (Fin 3)) ∈ Geometry.intervalPlan univ ∧ 0 < 3 ∧ 3 ≤ #univ
         by decide
 
-private theorem natCast_lt_omega0_sq (n : ℕ) :
-    ((n : ℕ) : Label.{u}) < ((Ordinal.omega0 ^ 2 : Ordinal.{u}) : Label.{u}) := by
-  rw [← WithBot.coe_natCast, WithBot.coe_lt_coe, ← WithTop.coe_natCast, WithTop.coe_lt_coe]
-  refine (Ordinal.natCast_lt_omega0 n).trans_le ?_
-  rw [pow_two]; exact Ordinal.le_mul_left _ Ordinal.omega0_pos
-
 /-- **The rows are coded**: their values are `⊥`, `2`, `3` and the rows of the donor. -/
 theorem rowValue_lt (s t : Cell d.card) :
     rowValue d s t < ((Ordinal.omega0 ^ 2 : Ordinal.{u}) : Label.{u}) := by
@@ -1141,9 +1066,10 @@ theorem rowValue_lt (s t : Cell d.card) :
       change donorRow d i j < _
       unfold donorRow; split_ifs; exacts [d.isCoded _ _, hb]
     · rw [rowValue_don_right d hs]
-      unfold gateRead; split_ifs <;> first | exact hb | exact natCast_lt_omega0_sq 3
+      unfold gateRead; split_ifs <;> first | exact hb | exact natCast_label_lt_omega0_sq 3
   · rw [rowValue_kind d ht]
-    unfold kindRow; split_ifs; exacts [hb, natCast_lt_omega0_sq 3, natCast_lt_omega0_sq 2]
+    unfold kindRow; split_ifs
+    exacts [hb, natCast_label_lt_omega0_sq 3, natCast_label_lt_omega0_sq 2]
 
 end Legality
 
@@ -1190,10 +1116,6 @@ theorem isLegal_display (hd : d.IsLegal) (hℓ : ∀ j, d.label j = ⊥ ∨ d.la
     (isComplete_cells (Nat.lt_of_le_of_lt (Nat.zero_le _) j.isLt)).reindex
       toFin.symm.surjective⟩
 
-private theorem faces_agree : ∀ C : Finset (Fin 2),
-    C.map (Fin.castSuccEmb : Fin 2 ↪ Fin 3) ∈ Geometry.intervalPlan (univ : Finset (Fin 3)) ↔
-      C ∈ Geometry.intervalPlan (univ : Finset (Fin 2)) := by decide +kernel
-
 private theorem scope_agree : ∀ i : Fin 5,
     (privScope i).preimage (Fin.castSuccEmb : Fin 2 ↪ Fin 3)
       Fin.castSuccEmb.injective.injOn = GatedExtensionCounterexample.cellScope i := by
@@ -1217,10 +1139,6 @@ private theorem scope_display (hℓ : ∀ j, d.label j = ⊥ ∨ d.label j = ⊤
     (display d hℓ).toCellScheme.scope y = cellScope (toFin.symm y) := rfl
 
 private theorem privScope_subset : ∀ i : Fin 5, privScope i ⊆ {0, 1} := by decide
-
-private theorem range_castSuccEmb :
-    Set.range (Fin.castSuccEmb : Fin 2 ↪ Fin 3) = (({0, 1} : Finset (Fin 3)) : Set (Fin 3)) := by
-  ext x; fin_cases x <;> simp [Fin.ext_iff]
 
 /-- **A face of the display** along `g` is `T` when the cells `e i`, increasing under `toFin`, are
 the cells visible through `g` and carry the scopes, grades, rows and labels of `T`. -/

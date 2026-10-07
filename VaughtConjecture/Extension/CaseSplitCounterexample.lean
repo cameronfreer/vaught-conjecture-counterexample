@@ -868,6 +868,19 @@ theorem cases_T5 (i : Fin (T5 α).card) :
   | last => exact .inl rfl
   | cast d => exact .inr ⟨d, rfl⟩
 
+/-- `T5` has one cell at each graded index. -/
+theorem gradedIndex_injective_T5 : Function.Injective (T5 α).toCellScheme.gradedIndex := by
+  have hlt : ∀ c : Fin 19, TwoFaceLiftCounterexample.cellGrade c ≠ 4 := by decide
+  intro i i' h
+  rcases cases_T5 i with rfl | ⟨c, rfl⟩ <;> rcases cases_T5 i' with rfl | ⟨c', rfl⟩
+  · rfl
+  · exact absurd (congrArg Prod.snd (gradedIndex_T5_last.symm.trans
+      (h.trans (gradedIndex_T5_castSucc c')))).symm (hlt c')
+  · exact absurd (congrArg Prod.snd ((gradedIndex_T5_castSucc c).symm.trans
+      (h.trans gradedIndex_T5_last))) (hlt c)
+  · rw [TwoFaceLiftCounterexample.gradedIndex_injective
+      ((gradedIndex_T5_castSucc c).symm.trans (h.trans (gradedIndex_T5_castSucc c')))]
+
 /-- Lawful labellings of an amalgam below a coatom whose type is `T5`, read on `T5`. -/
 theorem exists_labelling_of_comap {f : Fin 4 ↪ Fin 5} {Am : StageType.{u} α 5}
     (hf : StageType.restrictFace f Am = some (T5 α)) {k : ℕ} (hk : k ≤ 3)

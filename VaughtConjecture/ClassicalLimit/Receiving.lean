@@ -33,7 +33,10 @@ chart embedding of `p` into `D` along `g` (`StageType.chartEmbedding`) is an emb
 structures, so ultrahomogeneity extends `φ` along it to an embedding `ψ` of the chart of `D`
 (`FirstOrder.Language.IsUltrahomogeneous.extend_embedding`).  The points of `D` under `ψ` have the
 type `D` (`reconstruct_eval_chart`).  This is exact extension, within the age of top-free charts,
-of every top-free donor; it needs no hypothesis on the stage.
+of every top-free donor; it needs no hypothesis on the stage.  Its last step, **exact extension
+along a chart embedding** (`exists_reconstruct_eval_eq_of_embedding`), uses no hypothesis on the
+age; the exact receiving of legal donors (`VaughtConjecture.ClassicalLimit.LegalAge`) is also its
+case.
 
 **Finite-cut receiving** (`hasFiniteCutReceiving_reconstruct`, step 6).  Over an occurrence of
 type `p` on `n` points, a one-point coface `d` of `p` and a permitted cutoff `δ < α`: the labels of
@@ -106,6 +109,28 @@ open scoped Ordinal
 
 variable {α : Ordinal.{u}} {M : Type} [(hullLanguage.{u} α).Structure M]
 
+/-- **Exact extension along a chart embedding**: in an ultrahomogeneous structure, let a tuple `t`
+be the image of the points of a stage type `p`, in order, under an embedding `φ` of the chart of
+`p`, and let `D` be a legal stage type whose chart embeds in the structure and whose face along `g`
+is `p`.  Some tuple extending `t` along `g` literally has the reconstructed type `D`: `φ` extends
+along the chart embedding of `p` into `D` (`IsUltrahomogeneous.extend_embedding`), and the points
+of `D` under the extension have the type `D` (`reconstruct_eval_chart`).  No hypothesis on the age
+or on the stage is needed; the exact extension of top-free donors and the exact receiving of legal
+donors (`exactReceivingWithin_reconstruct_of_legalAge`) are its cases. -/
+theorem exists_reconstruct_eval_eq_of_embedding (hu : (hullLanguage.{u} α).IsUltrahomogeneous M)
+    {n m : ℕ} {t : Fin n ↪ M} {p : StageType.{u} α n} (φ : p.Chart ↪[hullLanguage.{u} α] M)
+    (hφ : ∀ j, φ (p.toChart j) = t j) {D : StageType.{u} α m} (hD : D.IsLegal)
+    (hDM : Nonempty (D.Chart ↪[hullLanguage.{u} α] M)) {g : Fin n ↪ Fin m}
+    (hg : StageType.restrictFace g D = some p) :
+    ∃ v : Fin m ↪ M, g.trans v = t ∧ (reconstruct α M).eval v = some D := by
+  obtain ⟨ψ, hψ⟩ := hu.extend_embedding (S := p.Chart) (Structure.FG.of_finite) φ
+    (StageType.chartEmbedding hg)
+  refine ⟨D.toChart.toEmbedding.trans ψ.toEmbedding, Function.Embedding.ext fun j ↦ ?_,
+    reconstruct_eval_chart hD ψ⟩
+  rw [← hφ j, hψ]
+  -- the chart embedding along `g` sends the point `j` of `p` to the point `g j` of `D`
+  rfl
+
 section Receiving
 
 variable (hage : (hullLanguage.{u} α).age M = topFreeAge α)
@@ -115,7 +140,8 @@ include hage hu
 /-- **Exact extension within the age of top-free charts**: for a structure whose age is the age of
 top-free charts and which is ultrahomogeneous, over a typed tuple `t` of type `p`, every legal
 top-free stage type `D` whose face along `g` is `p` is the type of a tuple extending `t` along `g`
-literally.  No hypothesis on the stage is needed. -/
+literally: exact extension along the embedding of the chart of `p`
+(`exists_reconstruct_eval_eq_of_embedding`).  No hypothesis on the stage is needed. -/
 theorem exists_reconstruct_eval_eq_of_isTopFree {n m : ℕ} {t : Fin n ↪ M}
     {p : StageType.{u} α n} (ht : (reconstruct α M).eval t = some p) {D : StageType.{u} α m}
     (hD : D.IsLegal) (hDt : D.IsTopFree) {g : Fin n ↪ Fin m}
@@ -125,14 +151,7 @@ theorem exists_reconstruct_eval_eq_of_isTopFree {n m : ℕ} {t : Fin n ↪ M}
     (reconstruct_eval_eq_some_iff_exists_embedding hage.subset t p).mp ht
   have hmem : topFreeChart α ⟨m, D, hD, hDt⟩ ∈ (hullLanguage.{u} α).age M :=
     hage ▸ topFreeChart_mem_topFreeAge _
-  have : Nonempty (D.Chart ↪[hullLanguage.{u} α] M) := hmem.2
-  obtain ⟨ψ, hψ⟩ := hu.extend_embedding (S := p.Chart) (Structure.FG.of_finite) φ
-    (StageType.chartEmbedding hg)
-  refine ⟨D.toChart.toEmbedding.trans ψ.toEmbedding, Function.Embedding.ext fun j ↦ ?_,
-    reconstruct_eval_chart hD ψ⟩
-  rw [← hφ j, hψ]
-  -- the chart embedding along `g` sends the point `j` of `p` to the point `g j` of `D`
-  rfl
+  exact exists_reconstruct_eval_eq_of_embedding hu φ hφ hD hmem.2 hg
 
 /-- **Receiving for the reconstructed realization of a classical limit** (roadmap, the top-free
 witnesses, step 6): for a structure whose age is the age of top-free charts and which is

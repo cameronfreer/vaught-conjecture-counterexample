@@ -23,18 +23,21 @@ reduction to `λ_η` (`StageType.ForcesThreshold`).  The donor is a stage type, 
 involves a realization: the construction uses no uniqueness of expansions, no (R1), no receiving,
 and no termination.
 
-**The forcing-donor property is not proved in general.**  What is proved:
+**The forcing-donor property is not proved here in general.**  It follows at every input from
+the coatom extension property at `λ_{η+1}` (`forcingDonors_of_hasCoatomExtensions`, in
+`VaughtConjecture.Extension.ForcingDonorsCoatom`).  What is proved here, unconditionally or from
+completions at given arities:
 
-* **One-point inputs, `n ≤ 4`, unconditionally** (`forcingDonors_onePoint`).
+* **One-point inputs, `n ≤ 4`, unconditionally** (`exists_forcingDonor_onePoint`).
 * **One-point inputs at every `n`, given completions up to the arity `n - 2`**
-  (`forcingDonors_onePoint_of_completions`).
+  (`exists_forcingDonor_onePoint_of_completions`).
 * **Two-point inputs, through the doubling chain**, when the label of `d` is at least
-  `λ_η + max n 3` and `n ≤ 4`, unconditionally (`forcingDonors_twoPoint`).
+  `λ_η + max n 3` and `n ≤ 4`, unconditionally (`exists_forcingDonor_twoPoint`).
 * **Two-point inputs, through a face**: a cell carried from the first point, labelled at least
-  `λ_η + 2`, at the threshold `2`, unconditionally (`forcingDonors_twoPoint_face`).
+  `λ_η + 2`, at the threshold `2`, unconditionally (`exists_forcingDonor_twoPoint_face`).
 * **Inputs on `m₀ + 1` points whose face along `Fin.castSuccEmb` is defined**, when the label of
   `d` is at least `λ_η + max n (m₀ + 2)`, given completions up to the arity
-  `max n (m₀ + 2) - 2` (`forcingDonor_of_completions`).
+  `max n (m₀ + 2) - 2` (`exists_forcingDonor_of_completions`).
 
 The trivial case `n ≤ grade d` holds with `D = t` (the order law,
 `StageType.forcesThreshold_of_le_grade`).
@@ -43,9 +46,10 @@ The trivial case `n ≤ grade d` holds with `D = t` (the order law,
 `m + 1 ≤ M + 1` points at the stage `α` (`Seed.ofCoatoms`) has a completion below the full grade:
 the hypothesis of `StageType.HasApexCoatomExtensions.of_completionBelowFullGrade`, restricted to
 the arities `m ≤ M`.  It holds for `M = 2` (`completionsUpTo_two`, from
-`Seed.nonempty_completionBelowFullGrade_of_le_two`); beyond, it is a hypothesis.  Only the seeds
-`Seed.ofCoatoms` of a type with itself are used, and for one such seed a completion follows from the
-two-face lifts `2FL(j)` at `2 ≤ j < m` (`Seed.nonempty_completionBelowFullGrade_of_twoFaceLift`).
+`Seed.nonempty_completionBelowFullGrade_of_le_two`); beyond, it is a hypothesis.  Of the
+hypothesis `CompletionsUpTo`, only the seeds `Seed.ofCoatoms` of a type with itself are used, and
+for one such seed a completion follows from the two-face lifts `2FL(j)` at `2 ≤ j < m`
+(`Seed.nonempty_completionBelowFullGrade_of_twoFaceLift`).
 The apex of the completion and its maximality are not used.
 
 **The doubling chain** (`StageType.exists_doublingChain`,
@@ -68,32 +72,28 @@ points already for one-point types.  The construction from the unconditional com
 arities `m ≤ 2` gives donors on at most `4` points, hence the thresholds `n ≤ 4`; the statements
 assert only that some donor exists (`∃ m`), not this bound.
 
-**What remains.**  A tie cell `C` forcing `n` has its label at most that of `d` and at least `λ_η`
-plus its grade (`StageType.forcesThreshold_of_row_le`), so its grade lies between `n` and `j`.
+**Beyond the tie: forcing through the apex row** (`VaughtConjecture.Extension.ForcingDonorsCoatom`).
+A tie cell `C` forcing `n` has its label at most that of `d` and at least `λ_η` plus its grade
+(`StageType.forcesThreshold_of_row_le`), so its grade lies between `n` and `j`.  For the inputs
+with `grade d < n ≤ j ≤ #(scope d)` no tie cell of full grade over a face containing `scope d`
+exists (its grade would be at least `#(scope d) + 1 > j`).  These inputs are served without a tie:
+locality at an apex whose row is the coded copy of the labels bounds `d` below by a second cell `x`
+of grade `n` labelled between `λ_η` and the label of `d`, which need not lie above `d`
+(`StageType.forcesThreshold_of_row_le_of_grade_le`).  So:
 
-* *Top ties beyond the compiled cases.*  When `max n (#(scope d) + 1) ≤ j`, a tied apex over a
-  type with the face of `t` at `scope d` as a face forces `n`.  For the doubling chain of `t` itself
-  this needs `max n (k + 1) ≤ j` and the completions up to the arity `max n (k + 1) - 2`; for
-  three or more points it also needs a reindexing of `t` to make its face along `Fin.castSuccEmb`
-  defined.  Otherwise the donor of the face is to be amalgamated with `t` over the face
-  (`StageType.exists_amalgam`, from `StageType.HasCoatomExtensions`).  Neither is compiled beyond
-  the cases above.
-* *The residual inputs*, with `grade d < n ≤ j ≤ #(scope d)`.  A **top tie** is a tie cell at the
-  full graded index `(univ, N)` of a donor on `N` points having a face containing `scope d` along a
-  proper face, as in the tied apex.  Its grade is `N ≥ #(scope d) + 1 > j`, so no top tie exists.
-  The smallest residual input has two points: `d` at `({0, 1}, 1)`, labelled exactly `λ_η + 2`,
-  with `n = 2`.  These inputs need a completion with one prescribed tie at an intermediate grade
-  (prospective):
+* the forcing-donor property holds at every input under the coatom extension property at
+  `λ_{η+1}` (`forcingDonors_of_hasCoatomExtensions`), hence under the coatom extension property
+  with apex (`forcingDonors_of_hasApexCoatomExtensions`);
+* two-point inputs have donors up to the threshold `4` unconditionally, the inputs no tie serves
+  included (`exists_forcingDonor_twoPoint_le_two`, `forcingDonorsUpTo_two_four`).
 
-  **`TiedLayer`** (prospective): for a seed `I` at the arity `m`, a grade `j' < m + 2`, and an
-  old cell `e` of grade at most `j'` whose glued label is self-visible at `j'`, a completion below
-  the full grade of `I`, with its lawful labelling, having one further cell `C` at the graded
-  index `(univ, j')` whose row is at most as large at `C` as at `e`, and labelled with the label
-  of `e`.  The apex completion of it would force `j'` at `e`.
-
-  The rows of the new cells of the tower (`Scheme.fieldRow`) take at their own cell the agreement
-  height of an entry with itself, above every value at an old cell, so they tie no old cell: the
-  library has no completion with a prescribed tie.  `TiedLayer` is not refuted.
+The prospective **`TiedLayer`** (for a seed `I` at the arity `m`, a grade `j' < m + 2`, and an
+old cell `e` of grade at most `j'` whose glued label is self-visible at `j'`: a completion below
+the full grade of `I` with one further cell at the graded index `(univ, j')`, tied to `e` and
+labelled with the label of `e`) is therefore not needed for these inputs: the earlier claim that
+they need a completion with one prescribed tie at an intermediate grade is false, unconditionally
+for two points and in general under the coatom extension property.  `TiedLayer` itself is neither
+proved nor refuted.
 
 **A tie is an upper bound only.**  A tie bounds the tied cell from above and prescribes nothing at
 the other cells of its graded index.  In a capped lift, locality at the tied cell and the tie never
@@ -191,8 +191,9 @@ reducing to the formal top, and `n` a threshold.  If the label of `d` is at leas
 `λ_η + max n (m₀ + 2)` and completions exist up to the arity `max n (m₀ + 2) - 2`, a forcing donor
 exists: the tied apex over the doubling chain.  The construction gives a donor on `max n (m₀ + 2)`
 points; the statement asserts only that some donor exists. -/
-theorem forcingDonor_of_completions {m₀ : ℕ} {t : StageType.{u} (blockStage (η + 1)) (m₀ + 1)}
-    (ht : t.IsLegal) (hp : ∃ p, StageType.restrictFace Fin.castSuccEmb t = some p)
+theorem exists_forcingDonor_of_completions {m₀ : ℕ}
+    {t : StageType.{u} (blockStage (η + 1)) (m₀ + 1)} (ht : t.IsLegal)
+    (hp : ∃ p, StageType.restrictFace Fin.castSuccEmb t = some p)
     {d : Fin t.card} (hd : (t.reduce (isSuccPrelimit_blockStage η)).label d = ⊤) {n : ℕ}
     (hn : ((blockStage η + max n (m₀ + 2) : Ordinal.{u}) : Label.{u}) ≤ t.label d)
     (hC : CompletionsUpTo (blockStage (η + 1)) (max n (m₀ + 2) - 2)) :
@@ -209,7 +210,7 @@ theorem forcingDonor_of_completions {m₀ : ℕ} {t : StageType.{u} (blockStage 
     (isSuccPrelimit_blockStage (η + 1)) ht hp hC'
   have hblock := StageType.label_mem_block t hd
   obtain ⟨D, hD, hDt, hF⟩ := StageType.exists_donor_of_isLegalBelowFullGrade
-    (isSuccPrelimit_blockStage η) hT (by omega) hg hgt hblock.1
+    (isSuccPrelimit_blockStage η) hT hg hgt hblock.1
     (Label.isSelfVisible_of_coe_add_le (isSuccPrelimit_blockStage η) hblock.2
       (by exact_mod_cast hn))
   exact ⟨_, D, g, hD, hDt, hF.mono (by omega)⟩
@@ -217,7 +218,7 @@ theorem forcingDonor_of_completions {m₀ : ℕ} {t : StageType.{u} (blockStage 
 /-- **Forcing donors for one-point types at every threshold, given completions** up to the arity
 `n - 2`: the type itself when `n ≤ 1` (the order law), and otherwise the tied apex over the
 doubling chain of `t`, on `n` points. -/
-theorem forcingDonors_onePoint_of_completions (t : StageType.{u} (blockStage (η + 1)) 1)
+theorem exists_forcingDonor_onePoint_of_completions (t : StageType.{u} (blockStage (η + 1)) 1)
     (ht : t.IsLegal) (d : Fin t.card)
     (hd : (t.reduce (isSuccPrelimit_blockStage η)).label d = ⊤) (n : ℕ)
     (hn : ((blockStage η + n : Ordinal.{u}) : Label.{u}) ≤ t.label d)
@@ -234,7 +235,7 @@ theorem forcingDonors_onePoint_of_completions (t : StageType.{u} (blockStage (η
       StageType.forcesThreshold_of_le_grade (StageType.restrictFace_refl _) hd
         (by rw [hg]; exact h1)⟩
   · have hmax : max n (0 + 2) = n := by omega
-    exact forcingDonor_of_completions (m₀ := 0) ht
+    exact exists_forcingDonor_of_completions (m₀ := 0) ht
       (Option.isSome_iff_exists.mp (t.isSome_restrictFace_of_zero _)) hd (by rwa [hmax])
       (by rwa [hmax])
 
@@ -242,7 +243,7 @@ theorem forcingDonors_onePoint_of_completions (t : StageType.{u} (blockStage (η
 of `ForcingDonors η` on one point with `n ≤ 4` has a donor: the completions of the doubling chain
 are at the arities `m ≤ 2`.  The construction gives a donor on at most `4` points; the statement
 asserts only that some donor exists. -/
-theorem forcingDonors_onePoint (t : StageType.{u} (blockStage (η + 1)) 1) (ht : t.IsLegal)
+theorem exists_forcingDonor_onePoint (t : StageType.{u} (blockStage (η + 1)) 1) (ht : t.IsLegal)
     (d : Fin t.card) (hd : (t.reduce (isSuccPrelimit_blockStage η)).label d = ⊤) (n : ℕ)
     (hn : ((blockStage η + n : Ordinal.{u}) : Label.{u}) ≤ t.label d) (hn4 : n ≤ 4) :
     ∃ (m : ℕ) (D : StageType.{u} (blockStage (η + 1)) m) (g : Fin 1 ↪ Fin m),
@@ -250,26 +251,28 @@ theorem forcingDonors_onePoint (t : StageType.{u} (blockStage (η + 1)) 1) (ht :
       StageType.ForcesThreshold (blockStage (η + 1)) (isSuccPrelimit_blockStage η)
         (D.reduce (isSuccPrelimit_blockStage η)) g (t.reduce (isSuccPrelimit_blockStage η))
           d n :=
-  forcingDonors_onePoint_of_completions t ht d hd n hn (completionsUpTo_two.mono (by omega))
+  exists_forcingDonor_onePoint_of_completions t ht d hd n hn (completionsUpTo_two.mono (by omega))
 
 /-- **Forcing donors for two-point types, through the doubling chain**: unconditionally when the
 label of `d` is at least `λ_η + max n 3` and `n ≤ 4`. -/
-theorem forcingDonors_twoPoint (t : StageType.{u} (blockStage (η + 1)) 2) (ht : t.IsLegal)
+theorem exists_forcingDonor_twoPoint (t : StageType.{u} (blockStage (η + 1)) 2) (ht : t.IsLegal)
     (d : Fin t.card) (hd : (t.reduce (isSuccPrelimit_blockStage η)).label d = ⊤) (n : ℕ)
     (hn : ((blockStage η + max n 3 : Ordinal.{u}) : Label.{u}) ≤ t.label d) (hn4 : n ≤ 4) :
     ∃ (m : ℕ) (D : StageType.{u} (blockStage (η + 1)) m) (g : Fin 2 ↪ Fin m),
       D.IsLegal ∧ StageType.restrictFace g D = some t ∧
       StageType.ForcesThreshold (blockStage (η + 1)) (isSuccPrelimit_blockStage η)
         (D.reduce (isSuccPrelimit_blockStage η)) g (t.reduce (isSuccPrelimit_blockStage η)) d n :=
-  forcingDonor_of_completions (m₀ := 1) ht (StageType.exists_restrictFace_castSuccEmb_of_two t) hd
-    hn (completionsUpTo_two.mono (by omega))
+  exists_forcingDonor_of_completions (m₀ := 1) ht
+    (StageType.exists_restrictFace_castSuccEmb_of_two t) hd hn (completionsUpTo_two.mono (by omega))
 
 /-- **Forcing donors for two-point types through a face**: a cell carried from the first point,
 labelled at least `λ_η + 2`, is forced to `2` by the completion of the seed of `t` with the
 two-point tied-apex donor of its first point; both completions are at the arities `0` and `1`.
-This covers the label `λ_η + 2`, which the doubling chain of `t` (on three points) does not. -/
-theorem forcingDonors_twoPoint_face (t : StageType.{u} (blockStage (η + 1)) 2) (ht : t.IsLegal)
-    (hf : univ.map (Fin.castSuccEmb : Fin 1 ↪ Fin 2) ∈ t.toCellScheme.faces)
+This covers the label `λ_η + 2`, which the doubling chain of `t` (on three points) does not.  The
+hypothesis `hf` always holds: the first point of a two-point type spans a closed face
+(`StageType.exists_restrictFace_castSuccEmb_of_two`). -/
+theorem exists_forcingDonor_twoPoint_face (t : StageType.{u} (blockStage (η + 1)) 2)
+    (ht : t.IsLegal) (hf : univ.map (Fin.castSuccEmb : Fin 1 ↪ Fin 2) ∈ t.toCellScheme.faces)
     (d' : Fin (t.comap Fin.castSuccEmb hf).card)
     (hd : (t.reduce (isSuccPrelimit_blockStage η)).label (t.cellMap Fin.castSuccEmb d') = ⊤)
     (hn : ((blockStage η + 2 : Ordinal.{u}) : Label.{u}) ≤
@@ -291,7 +294,7 @@ theorem forcingDonors_twoPoint_face (t : StageType.{u} (blockStage (η + 1)) 2) 
     (Seed.ofCoatoms ht'l ht'l hp₀ hp₀) (by omega)
   have hblock := StageType.label_mem_block t hd
   obtain ⟨E, hE, hEt', hFE⟩ := StageType.exists_donor_of_isLegalBelowFullGrade hβ
-    F₀.isLegalBelowFullGrade (by omega) Coatom.univ_map_left_ne (F₀.restrictFace_left_truncate hα)
+    F₀.isLegalBelowFullGrade Coatom.univ_map_left_ne (F₀.restrictFace_left_truncate hα)
     (d := d') hblock.1 (Label.isSelfVisible_of_coe_add_le hβ hblock.2 (by exact_mod_cast hn))
   -- The completion of the seed of `t` with the donor `E` over `t'`.
   obtain ⟨F⟩ := Seed.nonempty_completionBelowFullGrade_of_le_two
@@ -327,7 +330,7 @@ type at `λ_{η+1}` labelled `λ_η + j` (`StageType.exists_onePoint_label`) is 
 theorem le_of_forcingDonor {η : Ordinal.{u}} {j : ℕ} (hj : 1 ≤ j) :
     ∃ t : StageType.{u} (blockStage (η + 1)) 1, t.IsLegal ∧
       ∃ d : Fin t.card, (t.reduce (isSuccPrelimit_blockStage η)).label d = ⊤ ∧
-        ((blockStage η + j : Ordinal.{u}) : Label.{u}) ≤ t.label d ∧
+        t.label d = ((blockStage η + j : Ordinal.{u}) : Label.{u}) ∧
         ∀ (m : ℕ) (D : StageType.{u} (blockStage (η + 1)) m) (g : Fin 1 ↪ Fin m),
           StageType.restrictFace g D = some t →
           StageType.ForcesThreshold (blockStage (η + 1)) (isSuccPrelimit_blockStage η)
@@ -340,8 +343,8 @@ theorem le_of_forcingDonor {η : Ordinal.{u}} {j : ℕ} (hj : 1 ≤ j) :
     (isSelfVisible_coe_add hβ hj) (hlt j)
   have hβd : (t.reduce hβ).label d = ⊤ := by
     rw [StageType.reduce_label, htd]
-    exact Label.reduce_eq_top_iff.mpr (WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr le_self_add))
-  refine ⟨t, ht, d, hβd, htd.ge, fun m D g hgD h ↦ ?_⟩
+    exact Label.reduce_eq_top_iff.mpr (Label.coe_le_coe_add _ _)
+  refine ⟨t, ht, d, hβd, htd, fun m D g hgD h ↦ ?_⟩
   by_contra hjm
   have hD : StageType.restrictFace g (D.reduce hβ) = some (t.reduce hβ) := by
     rw [StageType.restrictFace_reduce, hgD, Option.map_some]

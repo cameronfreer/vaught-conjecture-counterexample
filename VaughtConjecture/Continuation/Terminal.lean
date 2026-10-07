@@ -30,7 +30,9 @@ that is zero or a limit reduces to `R` (`isTerminalAt_iff_forall_lt`): such a `�
 reduction to `λ_ξ` (`Realization.reduce_reduce`).  If no model at `λ_{ξ+1}` on the carrier of a
 base structure `M` is an expansion of `M`, every expansion of `M` at `λ_ξ` is terminal
 (`IsExpansionOf.isTerminalAt`): a model at `λ_{ξ+1}` reducing to it would have the base reduct
-`M`.  No uniqueness of expansions is used.
+`M`.  No uniqueness of expansions is used.  Terminality transports along a bijection of carriers
+(`IsTerminalAt.map`), so a model expansion transported along an isomorphism of base structures
+(`ModelExpansion.map`) is terminal when the original is.
 
 **Top grade.**  The **top grade** of a stage type (`StageType.topGrade`) is the largest grade of a
 cell labelled `⊤`, and `0` if there is none; it is `0` exactly for the top-free types
@@ -57,11 +59,14 @@ admissible top support containing the top cells supported on the core (the cells
 `e`, `Scheme.visibleCells`, the range of the cell map of the face) contains every top cell.
 Rigidity concerns admissible top supports, not automorphisms.  A larger core is rigid when a
 smaller one is (`IsRigidCoreIn.mono`), a top-free type has every core rigid
-(`isRigidCoreIn_of_isTopFree`), and at a limit stage the empty core is rigid in a legal type
-exactly when the type is top-free (`isRigidCoreIn_empty_iff_isTopFree`): otherwise the type
+(`isRigidCoreIn_of_isTopFree`).  At a limit stage, a core on which no top cell is supported is not
+rigid in a legal type that is not top-free (`not_isRigidCoreIn_of_forall_visibleCells`): the type
 capped at a cap self-visible at the arity, below the stage and above every proper label
 (`StageType.cap`, lawful by [Kni26, Lemma 2.5.8]), keeps the other labels and lowers every top
-label to the cap, so the empty set is an admissible top support.
+label to the cap, so the empty set is an admissible top support.  In particular a top-free face is
+not a rigid core of a legal type that is not top-free
+(`not_isRigidCoreIn_of_restrictFace_isTopFree`), and the empty core is rigid in a legal type
+exactly when the type is top-free (`isRigidCoreIn_empty_iff_isTopFree`).
 
 A tuple `c` is a **globally rigid core** of `R` (`Realization.IsGloballyRigidCore`) when the core
 along `e` is rigid in `t` for every cover `x` of a stage type `t` in `R` and every `e` with
@@ -138,6 +143,15 @@ theorem IsExpansionOf.isTerminalAt [baseLanguage.{u}.Structure M] {ξ : Ordinal.
   rw [← R'.reduce_reduce (isSuccPrelimit_blockStage ξ) Ordinal.isSuccLimit_omega0.isSuccPrelimit
     (omega0_le_blockStage ξ), heq]
   exact hR.toStructure_reduce
+
+/-- **Terminality transports along a bijection of carriers**: if `R` is terminal at `ξ`, so is its
+transport along `e : M ≃ N`.  A model at `λ_{ξ+1}` on `N` reducing to the transport would
+transport back to a model on `M` reducing to `R` (`Realization.reduce_map`, `IsModel.map`). -/
+theorem IsTerminalAt.map {N : Type*} {ξ : Ordinal.{u}} {R : Realization.{u, v} (blockStage ξ) M}
+    (h : R.IsTerminalAt ξ) (e : M ≃ N) : (R.map e).IsTerminalAt ξ := by
+  intro R' hR' hred
+  apply h (R'.map e.symm) (hR'.map _)
+  rw [reduce_map, hred, map_symm_map]
 
 end Realization
 
@@ -230,6 +244,12 @@ top-free. -/
 theorem topGradeSup_eq_zero_iff : R.topGradeSup = 0 ↔ ∀ x : R.Occurrence, x.type.IsTopFree := by
   simp only [topGradeSup, ENat.iSup_eq_zero, Nat.cast_eq_zero, StageType.topGrade_eq_zero_iff]
 
+/-- **The top-grade supremum is invariant under transport**: the occurrences of a transport are
+the transports of the occurrences, with the same types. -/
+@[simp] theorem topGradeSup_map {N : Type*} (e : M ≃ N) : (R.map e).topGradeSup = R.topGradeSup :=
+  le_antisymm (iSup_le fun y ↦ (y.comap e).topGrade_le_topGradeSup)
+    (iSup_le fun x ↦ (x.map e).topGrade_le_topGradeSup)
+
 end Realization
 
 /-! ### Admissible top supports and rigid cores -/
@@ -283,14 +303,16 @@ theorem IsRigidCoreIn.mono {e : Fin k ↪ Fin n} {e' : Fin m ↪ Fin n} (h : t.I
 theorem isRigidCoreIn_of_isTopFree (ht : t.IsTopFree) (e : Fin k ↪ Fin n) : t.IsRigidCoreIn e :=
   fun _ _ _ d hd ↦ absurd hd (ht d)
 
-/-- **The empty core is rigid exactly in the top-free types**: at a limit stage, the empty core is
-rigid in a legal stage type exactly when the type is top-free.  Otherwise, the type capped at an
-ordinal below the stage, self-visible at the arity and above every proper label (`cap`, lawful by
-[Kni26, Lemma 2.5.8]), lowers every top label to a proper one, keeping the others: the empty set is
-an admissible top support. -/
-theorem isRigidCoreIn_empty_iff_isTopFree (hα : Order.IsSuccLimit α) (ht : t.IsLegal)
-    (e : Fin 0 ↪ Fin n) : t.IsRigidCoreIn e ↔ t.IsTopFree := by
-  refine ⟨fun h d₀ hd₀ ↦ ?_, fun h ↦ isRigidCoreIn_of_isTopFree h e⟩
+/-- **A core carrying no top is not rigid in a type with a top**, at a limit stage: if a legal `t`
+is not top-free and no top cell of `t` is supported on the core along `e`, the core is not rigid in
+`t`.  The type capped at an ordinal below the stage, self-visible at the arity and above every
+proper label (`cap`, lawful by [Kni26, Lemma 2.5.8]), lowers every top label to a proper one,
+keeping the others: the empty set is an admissible top support, it contains the top cells
+supported on the core, of which there are none, and it misses a top cell of `t`. -/
+theorem not_isRigidCoreIn_of_forall_visibleCells (hα : Order.IsSuccLimit α) (ht : t.IsLegal)
+    {e : Fin k ↪ Fin n} (hvis : ∀ d ∈ t.visibleCells e, t.label d ≠ ⊤) (ht' : ¬ t.IsTopFree) :
+    ¬ t.IsRigidCoreIn e := by
+  intro hrig
   obtain ⟨o, hoα, ho⟩ := t.exists_label_le hα.bot_lt
   obtain ⟨c, hoc, hcα, hc⟩ := exists_lt_lt_isSelfVisible hα.isSuccPrelimit hoα n
   have hoc' : (o : Label.{u}) < c := by exact_mod_cast hoc
@@ -301,7 +323,31 @@ theorem isRigidCoreIn_empty_iff_isTopFree (hα : Order.IsSuccLimit α) (ht : t.I
     · exact iff_of_false (isTopFree_cap i) (Set.notMem_empty i)
     · rw [cap_label (t := t) i, hi, min_eq_right le_top]
       exact isProper_coe c
-  refine h ∅ hadm (fun d hd _ ↦ ?_) d₀ hd₀
+  exact ht' fun d hd ↦ Set.notMem_empty d
+    (hrig ∅ hadm (fun d' hd' htop ↦ absurd htop (hvis d' hd')) d hd)
+
+/-- **A top-free core is not rigid in a type with a top**, at a limit stage: if a legal `D` has a
+top-free face `p` along `e` and is not top-free, the core along `e` is not rigid in `D`.  The top
+cells supported on the core are cells of the face, so there are none
+(`not_isRigidCoreIn_of_forall_visibleCells`). -/
+theorem not_isRigidCoreIn_of_restrictFace_isTopFree (hα : Order.IsSuccLimit α)
+    {D : StageType.{u} α m} (hD : D.IsLegal) {e : Fin n ↪ Fin m} {p : StageType.{u} α n}
+    (he : restrictFace e D = some p) (hp : p.IsTopFree) (hD' : ¬ D.IsTopFree) :
+    ¬ D.IsRigidCoreIn e := by
+  obtain ⟨hf, rfl⟩ := (restrictFace_eq_some_iff D e).mp he
+  refine not_isRigidCoreIn_of_forall_visibleCells hα hD (fun y hy ↦ ?_) hD'
+  obtain ⟨i, rfl⟩ : y ∈ Set.range (D.cellMap e) := by
+    rw [Scheme.range_cellMap]
+    exact hy
+  exact hp i
+
+/-- **The empty core is rigid exactly in the top-free types**: at a limit stage, the empty core is
+rigid in a legal stage type exactly when the type is top-free.  No cell is supported on the empty
+core, so otherwise the core is not rigid (`not_isRigidCoreIn_of_forall_visibleCells`). -/
+theorem isRigidCoreIn_empty_iff_isTopFree (hα : Order.IsSuccLimit α) (ht : t.IsLegal)
+    (e : Fin 0 ↪ Fin n) : t.IsRigidCoreIn e ↔ t.IsTopFree := by
+  refine ⟨fun h ↦ by_contra fun ht' ↦ not_isRigidCoreIn_of_forall_visibleCells hα ht
+    (fun d hd _ ↦ ?_) ht' h, fun h ↦ isRigidCoreIn_of_isTopFree h e⟩
   -- no cell is supported on the empty core: its scope would be empty
   have hs : t.toCellScheme.scope d = ∅ := by
     rw [Scheme.mem_visibleCells, Set.range_eq_empty] at hd
@@ -361,6 +407,16 @@ theorem IsModel.isGloballyRigidCore_empty_iff (hR : R.IsModel) (hα : Order.IsSu
   refine (StageType.isRigidCoreIn_empty_iff_isTopFree hα (hR.isLegal _ _ x.eval_tuple)
     Function.Embedding.ofIsEmpty).mp ?_
   exact h x.type x.tuple _ (covers_of_eval _ x.eval_tuple) (funext fun i ↦ i.elim0)
+
+/-- **Globally rigid cores in a transport** are the transports of globally rigid cores: the covers
+of a transport are the transports of the covers (`covers_map_iff`). -/
+theorem isGloballyRigidCore_map_iff {N : Type*} (e : M ≃ N) {c : Fin k → N} :
+    (R.map e).IsGloballyRigidCore c ↔ R.IsGloballyRigidCore (e.symm ∘ c) := by
+  refine ⟨fun h m t x f hx hxf ↦ h t (e ∘ x) f ((covers_map_iff e).mpr ?_) ?_,
+    fun h m t x f hx hxf ↦ h t (e.symm ∘ x) f ((covers_map_iff e).mp hx) ?_⟩
+  · rwa [← Function.comp_assoc, Equiv.symm_comp_self, Function.id_comp]
+  · rw [Function.comp_assoc, hxf, ← Function.comp_assoc, Equiv.self_comp_symm, Function.id_comp]
+  · rw [Function.comp_assoc, hxf]
 
 end Realization
 
