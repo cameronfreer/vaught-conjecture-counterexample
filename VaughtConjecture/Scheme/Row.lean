@@ -46,7 +46,17 @@ self-visible at the grade of every cell whose label is at least `c` keeps it law
 (`IsLawful.min_const`, [Kni26, Lemma 2.5.8]), in particular at a cap self-visible at a bound on all
 grades (`IsLawful.min_const_of_isSelfVisible`), and below a pair (`IsLawfulBelow.min_const`,
 `IsLawfulBelow.min_const_of_isSelfVisible`); capping at a cutoff that is not self-visible need
-not keep lawfulness.
+not keep lawfulness.  Capping only the cells of the top grade `N` at a cap self-visible at `N`
+also keeps a lawful section lawful (`IsLawful.capTopGrade`).
+
+**Reading cells through a row.**  In a lawful section `p`, let the label of a cell `s` be at least
+that of a cell `b` (a cap).  If the row of `s` reads a cell `a` and a cell `e` in one block, at
+`ω · c + i` and `ω · c + o`, with the grades of `a` and `e` at most that of `b`, `i < grade b`,
+`o ≤ grade b`, and `p a = μ + i` (`μ` zero or a limit) with `μ + i`, `μ + o` below `p b`, then
+`p e = μ + o` (`IsLawful.label_eq_of_reading`, from `Label.TransformsTo.eq_coe_add_of_reading`); a
+cell of grade at most that of `b` read as `b` has label at least `p b`
+(`IsLawful.le_label_of_reading`), and a cell read as `⊥` has label `⊥` when `p s ≠ ⊥`
+(`IsLawful.label_eq_bot_of_reading`).
 
 The constant bottom labelling is lawful for all rows (`isLawful_const_bot`), and a cell whose row is
 bottom at the cell itself has bottom label in every lawful section
@@ -259,6 +269,107 @@ theorem min_const (hp : R.IsLawful p) {c : Label.{u}}
 theorem min_const_of_isSelfVisible {K : ℕ} (hp : R.IsLawful p) (hK : ∀ d, D.grade d ≤ K)
     {c : Label.{u}} (hc : IsSelfVisible K c) : R.IsLawful fun d ↦ min (p d) c :=
   hp.min_const fun d _ ↦ hc.mono (hK d)
+
+/-- **Capping the top grade**, the top-grade variant of [Kni26, Lemma 2.5.8].  If every grade is
+at most `N` and `c` is self-visible at `N`, then capping a lawful section at `c` at the cells of
+grade `N` only, and keeping it at the others, gives a lawful section.  At a cell of grade `N` the
+locality is that of `p` capped at `c` (`Label.TransformsTo.min_const`); the cells below a cell of
+lower grade have lower grade, so its locality does not change; and availability compares cells of
+equal grade. -/
+theorem capTopGrade (hp : R.IsLawful p) {N : ℕ} (hN : ∀ d, D.grade d ≤ N)
+    {c : Label.{u}} (hc : IsSelfVisible N c) :
+    R.IsLawful fun d ↦ if D.grade d = N then min (p d) c else p d where
+  orderly d := by
+    split_ifs with h
+    · exact (hp.orderly d).min (h ▸ hc)
+    · exact hp.orderly d
+  locality s := by
+    by_cases hs : D.grade s = N
+    · have := (hp.locality s).min_const (fun d ↦ hN d.1) hc
+      convert this using 2 with d
+      simp only [hs, ite_true]
+      split_ifs with hd
+      · rw [min_min_min_comm, min_self]
+      · rw [min_assoc]
+    · convert hp.locality s using 2 with d
+      have hd : D.grade d.1 ≠ N := fun h ↦ hs (le_antisymm (hN s) (h ▸ d.2.2))
+      simp only [hs, hd, ite_false]
+  availability s t hst hg := by
+    obtain ⟨u, hu, hle⟩ := hp.availability s t hst hg
+    refine ⟨u, hu, ?_⟩
+    have hgu : D.grade u = D.grade s := (congrArg Prod.snd hu).trans hg.symm
+    by_cases h : D.grade s = N
+    · simp only [h, hgu, ite_true]
+      exact min_le_min_right c hle
+    · simp only [h, hgu, ite_false]
+      exact hle
+
+/-! ### Reading cells through a row -/
+
+section Reading
+
+open Ordinal
+
+/-- **Recovery of a proper label at a reading cell**: in a lawful section `p`, let `s` be a cell
+whose label is at least that of a cell `b` (the cap), and let the row of `s` read a reference cell
+`a` and a cell `e` in one block, at `ω · c + i` and `ω · c + o`, with the grades of `a` and `e` at
+most that of `b` and `i < grade b`, `o ≤ grade b`.  If `p a = μ + i` (`μ` zero or a limit) and
+`μ + i`, `μ + o` lie strictly below `p b`, then `p e = μ + o`. -/
+theorem label_eq_of_reading (h : R.IsLawful p) {s a b e : ι}
+    (ha : a ∈ D.below (D.gradedIndex s)) (hb : b ∈ D.below (D.gradedIndex s))
+    (he : e ∈ D.below (D.gradedIndex s)) {μ c : Ordinal.{u}} (hμ : Order.IsSuccPrelimit μ)
+    {i o : ℕ} (hab : D.grade a ≤ D.grade b) (hi : i < D.grade b) (ho : o ≤ D.grade b)
+    (heb : D.grade e ≤ D.grade b) (hra : R.row s ⟨a, ha⟩ = ((ω * c + i : Ordinal.{u}) : Label.{u}))
+    (hre : R.row s ⟨e, he⟩ = ((ω * c + o : Ordinal.{u}) : Label.{u}))
+    (hpa : p a = ((μ + i : Ordinal.{u}) : Label.{u})) (hbs : p b ≤ p s)
+    (hib : ((μ + i : Ordinal.{u}) : Label.{u}) < p b)
+    (hob : ((μ + o : Ordinal.{u}) : Label.{u}) < p b) :
+    p e = ((μ + o : Ordinal.{u}) : Label.{u}) := by
+  have hqb : min (p b) (p s) = p b := min_eq_left hbs
+  have key := (h.locality s).eq_coe_add_of_reading (a := ⟨a, ha⟩) (b := ⟨b, hb⟩) (e := ⟨e, he⟩)
+    hμ hab hi ho heb hra hre (by
+      -- the labelling of locality at `s` is `d ↦ min (p d) (p s)`
+      change min (p a) (p s) = _
+      rw [min_eq_left ((hpa ▸ hib).le.trans hbs), hpa]) (by
+      -- the same labelling, at the cap
+      change _ < min (p b) (p s)
+      rwa [hqb]) (by
+      -- the same labelling, at the cap
+      change _ < min (p b) (p s)
+      rwa [hqb])
+  -- the same labelling, at the new cell
+  change min (p e) (p s) = _ at key
+  rcases le_total (p e) (p s) with h1 | h1
+  · rwa [min_eq_left h1] at key
+  · rw [min_eq_right h1] at key
+    exact absurd key (hob.trans_le hbs).ne'
+
+/-- **A cell read like the cap is at least the cap**: in a lawful section `p`, if the row of a cell
+`s` with label at least that of `b` reads `e` as it reads `b`, and the grade of `e` is at most that
+of `b`, then `p b ≤ p e`. -/
+theorem le_label_of_reading (h : R.IsLawful p) {s b e : ι}
+    (hb : b ∈ D.below (D.gradedIndex s)) (he : e ∈ D.below (D.gradedIndex s))
+    (heb : D.grade e ≤ D.grade b) (hre : R.row s ⟨e, he⟩ = R.row s ⟨b, hb⟩) (hbs : p b ≤ p s) :
+    p b ≤ p e := by
+  have key := (h.locality s).le_of_le (d := ⟨b, hb⟩) (d' := ⟨e, he⟩) hre.symm.le heb
+  -- the labelling of locality at `s` is `d ↦ min (p d) (p s)`
+  change min (p b) (p s) ≤ min (p e) (p s) at key
+  rw [min_eq_left hbs] at key
+  exact key.trans (min_le_left _ _)
+
+/-- **A cell read as bottom is bottom**: in a lawful section `p`, if the row of a cell `s` with a
+label other than bottom reads `e` as `⊥`, then `p e = ⊥`. -/
+theorem label_eq_bot_of_reading (h : R.IsLawful p) {s e : ι}
+    (he : e ∈ D.below (D.gradedIndex s)) (hre : R.row s ⟨e, he⟩ = ⊥) (hs : p s ≠ ⊥) :
+    p e = ⊥ := by
+  have key := (h.locality s).eq_bot (d := ⟨e, he⟩) hre
+  -- the labelling of locality at `s` is `d ↦ min (p d) (p s)`
+  change min (p e) (p s) = ⊥ at key
+  rcases min_eq_iff.mp key with ⟨h1, -⟩ | ⟨h1, -⟩
+  · exact h1
+  · exact absurd h1 hs
+
+end Reading
 
 end IsLawful
 

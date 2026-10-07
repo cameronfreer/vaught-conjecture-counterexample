@@ -227,13 +227,8 @@ private theorem isLawful_labelling_of {a b : Label.{u}} (ha : IsSelfVisible 2 a)
       push Not at hs
       fin_cases s <;> simp_all [labelling]
 
-private theorem natCast_two_lt_three : ((2 : ℕ) : Label.{u}) < ((3 : ℕ) : Label.{u}) := by
-  rw [← WithBot.coe_natCast, ← WithBot.coe_natCast, WithBot.coe_lt_coe, ← WithTop.coe_natCast,
-    ← WithTop.coe_natCast, WithTop.coe_lt_coe]
-  exact Nat.cast_lt.mpr (by decide)
-
 private theorem not_three_le_two : ¬ (3 : Label.{u}) ≤ 2 := by
-  have h := natCast_two_lt_three.{u}
+  have h := (natCast_label_lt.{u} (n := 2) (m := 3)).mpr (by decide)
   simp only [Nat.cast_ofNat] at h
   exact not_le.mpr h
 
@@ -335,17 +330,17 @@ private theorem isLawful_labelling_of' {a b : Label.{u}} (ha : IsSelfVisible 2 a
 theorem isLawful_labelling_three_two :
     rows.{u}.IsLawful (labelling ((3 : ℕ) : Label.{u}) ((2 : ℕ) : Label.{u})) := by
   refine isLawful_labelling_of' isSelfVisible_two_three isSelfVisible_two_two ?_ ?_
-  · rw [min_eq_left natCast_two_lt_three.le]; exact transformsTo_refl_three
-  · rw [min_eq_right natCast_two_lt_three.le]
+  · rw [min_eq_left (natCast_label_le.mpr (by decide : 2 ≤ 3))]; exact transformsTo_refl_three
+  · rw [min_eq_right (natCast_label_le.mpr (by decide : 2 ≤ 3))]
     exact transformsTo_topShifter 4 (.inr rfl) isSelfVisible_two_two
 
 /-- `labelling 2 3` is lawful. -/
 theorem isLawful_labelling_two_three :
     rows.{u}.IsLawful (labelling ((2 : ℕ) : Label.{u}) ((3 : ℕ) : Label.{u})) := by
   refine isLawful_labelling_of' isSelfVisible_two_two isSelfVisible_two_three ?_ ?_
-  · rw [min_eq_right natCast_two_lt_three.le]
+  · rw [min_eq_right (natCast_label_le.mpr (by decide : 2 ≤ 3))]
     exact transformsTo_topShifter 3 (.inl rfl) isSelfVisible_two_two
-  · rw [min_eq_left natCast_two_lt_three.le]; exact transformsTo_refl_four
+  · rw [min_eq_left (natCast_label_le.mpr (by decide : 2 ≤ 3))]; exact transformsTo_refl_four
 
 /-- `labelling ⊤ ⊤` is lawful. -/
 theorem isLawful_labelling_top_top : rows.{u}.IsLawful (labelling (⊤ : Label.{u}) ⊤) := by
@@ -369,12 +364,6 @@ theorem isLawful_labelling_two_top :
 
 /-! ### Legality of the type on two points -/
 
-private theorem natCast_lt_omega0_sq (n : ℕ) :
-    ((n : ℕ) : Label.{u}) < ((Ordinal.omega0 ^ 2 : Ordinal.{u}) : Label.{u}) := by
-  rw [← WithBot.coe_natCast, WithBot.coe_lt_coe, ← WithTop.coe_natCast, WithTop.coe_lt_coe]
-  refine (Ordinal.natCast_lt_omega0 n).trans_le ?_
-  rw [pow_two]; exact Ordinal.le_mul_left _ Ordinal.omega0_pos
-
 /-- The scheme on two points is well formed. -/
 theorem isWellFormed_S : S.{u}.IsWellFormed where
   ground_eq := rfl
@@ -384,8 +373,8 @@ theorem isWellFormed_S : S.{u}.IsWellFormed where
 
 private theorem rowValue_lt (s t : Fin 5) :
     rowValue.{u} s t < ((Ordinal.omega0 ^ 2 : Ordinal.{u}) : Label.{u}) := by
-  have h2 := natCast_lt_omega0_sq.{u} 2
-  have h3 := natCast_lt_omega0_sq.{u} 3
+  have h2 := natCast_label_lt_omega0_sq.{u} 2
+  have h3 := natCast_label_lt_omega0_sq.{u} 3
   have hbot : (⊥ : Label.{u}) < ((Ordinal.omega0 ^ 2 : Ordinal.{u}) : Label.{u}) :=
     WithBot.bot_lt_coe _
   fin_cases s <;> fin_cases t <;> first | exact hbot | exact h2 | exact h3
