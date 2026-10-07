@@ -212,6 +212,27 @@ Status of each:
 8. `StageType.HasApexCoatomExtensions` at every countable block stage: still to be proved, not
    refuted (Layer 3, 3.1, the open part of (R6); the row "Layer 3, the completion" above).
 
+**An alternative hypothesis set.**
+`densitySentence_hasThinAlephOneSpectrum_of_restrictedTerminalClassification`
+(`MainTheorem/ModelExpansionDomains`) is compiled conditionally on items 1–5 and 7 of the
+seven-hypothesis form and, in place of item 6:
+
+6′. `Realization.HollowReceiving` for `Realization.IsCoverHollowWithoutRigidCoreAtBlock`
+   (cover-hollowness at a block stage without a globally rigid core): still to be proved.
+
+Its terminal properties are the restricted ones (`Realization.HasRestrictedTerminalProperty`,
+`Continuation/RestrictedHollow`), whose hollow property excludes a globally rigid core; the cover
+survives (`Realization.exists_hasRestrictedTerminalProperty`), and the models with a globally rigid
+core go through the rigid-core comparison, on (R1) only; the count of the terminal classes
+holds in the same form
+(`MainTheorem.countable_isoClasses_terminalAt_of_restrictedTerminalClassification`).  Item 6
+implies item 6′ (`Realization.HollowReceiving.withoutRigidCore`): weaker or equal; strictly weaker
+not shown.  The six- and five-hypothesis forms with item 6′ in place of item 6 are not compiled
+(separate compositions, prospective).  An informal argument, not compiled, is a risk for item 6
+and not for item 6′: if every legal stage type had a legal one-point coface in which the root is
+not rigid, item 6 would force every cover-hollow model with unbounded growth to have no globally
+rigid core.  Neither is proved, and item 6 is not claimed to be false.
+
 There is no hypothesis of countable losses and none of next-block uniqueness in any form: the
 first is `Expansion.expansionDomain_loss_countable`, the second
 `Expansion.NextBlockUniqueness.of_forcingDonors`, each compiled conditionally on hypotheses in the

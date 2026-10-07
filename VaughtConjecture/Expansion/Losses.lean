@@ -5,6 +5,7 @@ Authors: Cameron Freer
 -/
 import VaughtConjecture.Continuation.Classification
 import VaughtConjecture.Continuation.Comparison
+import VaughtConjecture.Continuation.RestrictedHollow
 import VaughtConjecture.Counting.Domains
 import VaughtConjecture.Expansion.Agreement
 import VaughtConjecture.Expansion.Domains
@@ -66,6 +67,21 @@ Nothing here uses the converse of output 3, next-block uniqueness, normalization
 global termination, disjointness of the properties, or characteristic arity.  The equivalence of
 cover-hollowness with the original anchor definition of hollowness (semantic contract, item 8) is
 still to be proved.
+
+**The restricted form.**  The hollow property may be restricted to cover-hollow models without a
+globally rigid core (`Realization.HasRestrictedTerminalProperty`, in
+`VaughtConjecture.Continuation.RestrictedHollow`); the cover survives
+(`Realization.exists_hasRestrictedTerminalProperty`), the models moved from the hollow property
+going to a rigid-core property.  Then two model expansions sharing a restricted property have
+isomorphic base structures under (R1), (R2), and (R3) for cover-hollowness without a globally
+rigid core at a block stage (`Realization.IsCoverHollowWithoutRigidCoreAtBlock`)
+(`ModelExpansion.nonempty_equiv_of_hasRestrictedTerminalProperty`), at most one class has a given
+restricted property (`subsingleton_classes_of_restrictedProperty`), and the losses are countable
+(`expansionDomain_loss_countable_of_restrictedTerminalClassification`), under these and the
+continuation criterion.  (R3) for cover-hollowness at a block stage implies (R3) for the
+restricted predicate (`Realization.HollowReceiving.withoutRigidCore`), so these hypotheses are
+weaker than or equal to those of `expansionDomain_loss_countable`; that they are strictly weaker
+is not shown.  The statements with the unrestricted hypothesis are kept.
 
 ## Placement
 
@@ -165,6 +181,79 @@ theorem expansionDomain_loss_countable (hrec : FiniteCutReceiving.{0})
   obtain ⟨e⟩ := (mem_expansionDomain_iff c).mp hq.1
   obtain ⟨P, hP⟩ :=
     e.1.exists_hasTerminalProperty hcont hξ e.2.isModel (e.isTerminalAt_of_mem_loss hq)
+  exact Set.mem_iUnion.mpr ⟨P, c, e, rfl, hP⟩
+
+end Expansion
+
+/-! ### The restricted form -/
+
+/-- **Two model expansions sharing a restricted terminal property have isomorphic base
+structures**, for countable carriers at `λ_ξ` with `ξ < ω₁`, conditional on (R1) (`hrec`), (R2)
+(`hres`) and (R3) for cover-hollowness without a globally rigid core at a block stage (`hhol`),
+each still to be proved.  (R1) is used for the rigid-core property, (R2) for the residual
+property, and (R3) for the restricted hollow property. -/
+theorem ModelExpansion.nonempty_equiv_of_hasRestrictedTerminalProperty {M N : Type w}
+    [baseLanguage.{0}.Structure M] [baseLanguage.{0}.Structure N] [Countable M] [Countable N]
+    (hrec : Expansion.FiniteCutReceiving.{w}) (hres : Realization.ResidualReceiving.{0, w})
+    (hhol : Realization.HollowReceiving.{0, w} Realization.IsCoverHollowWithoutRigidCoreAtBlock)
+    {ξ : Ordinal.{0}} (hξ : ξ < ω₁)
+    {P : TerminalProperty ξ} (e : ModelExpansion M (blockStage ξ))
+    (e' : ModelExpansion N (blockStage ξ)) (h : e.1.HasRestrictedTerminalProperty P)
+    (h' : e'.1.HasRestrictedTerminalProperty P) : Nonempty (M ≃[baseLanguage.{0}] N) := by
+  have hα := isSuccLimit_blockStage ξ
+  have hr {K : Type w} (R : Realization.{0, w} (blockStage ξ) K) :=
+    hrec.finiteExtensionReceiving.receive hα (blockStage_lt_omega_one hξ) R
+  rcases P with ⟨_, p⟩ | K | ⟨⟩
+  · obtain ⟨x, hx, hcx⟩ := h
+    obtain ⟨y, hy, hcy⟩ := h'
+    exact Realization.nonempty_equiv_of_isGloballyRigidCore hα e.2 e'.2 (hr _ e.2.isModel)
+      (hr _ e'.2.isModel) hx hy hcx hcy
+  · exact Realization.nonempty_equiv_of_residual hres hα e.2 e'.2 h.1 h'.1 h.2 h'.2
+  · exact Realization.nonempty_equiv_of_hollow hhol hα e.2 e'.2
+      (Realization.isCoverHollowWithoutRigidCoreAtBlock_iff.mpr h.1)
+      (Realization.isCoverHollowWithoutRigidCoreAtBlock_iff.mpr h'.1) h.2 h'.2
+
+namespace Expansion
+
+open Realization
+
+/-- **At most one class per restricted terminal property**: for `ξ < ω₁`, the classes with a code
+having a model expansion to `λ_ξ` with the restricted terminal property `P` form a subsingleton,
+conditional on (R1) (`hrec`), (R2) (`hres`) and (R3) for cover-hollowness without a globally rigid
+core at a block stage (`hhol`), each still to be proved. -/
+theorem subsingleton_classes_of_restrictedProperty (hrec : FiniteCutReceiving.{0})
+    (hres : ResidualReceiving.{0, 0})
+    (hhol : HollowReceiving.{0, 0} IsCoverHollowWithoutRigidCoreAtBlock)
+    {ξ : Ordinal.{0}} (hξ : ξ < ω₁) (P : TerminalProperty ξ) :
+    {q : Quotient (isoSetoid densitySentence.{0}) | ∃ (c : ModelsOf densitySentence.{0})
+      (e : @ModelExpansion ℕ c.1.toStructure (blockStage ξ)),
+        Quotient.mk _ c = q ∧ e.1.HasRestrictedTerminalProperty P}.Subsingleton := by
+  rintro _ ⟨c, e, rfl, h⟩ _ ⟨c', e', rfl, h'⟩
+  obtain ⟨i⟩ := @ModelExpansion.nonempty_equiv_of_hasRestrictedTerminalProperty ℕ ℕ
+    c.1.toStructure c'.1.toStructure _ _ hrec hres hhol ξ hξ P e e' h h'
+  exact Quotient.sound (isoSetoid_r_iff.mpr ⟨i⟩)
+
+/-- **The successor losses of the expansion domains are countable, with the restricted hollow
+property**, conditional on the following hypotheses, each still to be proved: (R1) of the table
+of Layer 3 (`hrec`), output 3 of higher-stage reconstruction (`hcont`, the continuation criterion;
+Layer 4), (R2) (`hres`), and (R3) for cover-hollowness without a globally rigid core at a block
+stage (`hhol`).  The loss at `ξ` is covered by the countably many subsingletons of classes with a
+given restricted terminal property (`Realization.exists_hasRestrictedTerminalProperty`).  (R3) for
+cover-hollowness at a block stage gives `hhol` (`HollowReceiving.withoutRigidCore`). -/
+theorem expansionDomain_loss_countable_of_restrictedTerminalClassification
+    (hrec : FiniteCutReceiving.{0}) (hcont : ContinuationCriterion.{0})
+    (hres : ResidualReceiving.{0, 0})
+    (hhol : HollowReceiving.{0, 0} IsCoverHollowWithoutRigidCoreAtBlock) :
+    ∀ ξ < ω₁, (expansionDomain ξ \ expansionDomain (ξ + 1)).Countable := by
+  intro ξ hξ
+  have := countable_terminalProperty hξ
+  refine Counting.countable_of_subsingleton_cover _
+    (subsingleton_classes_of_restrictedProperty hrec hres hhol hξ) fun q hq ↦ ?_
+  obtain ⟨c, rfl⟩ := Quotient.mk_surjective q
+  let := c.1.toStructure
+  obtain ⟨e⟩ := (mem_expansionDomain_iff c).mp hq.1
+  obtain ⟨P, hP⟩ :=
+    e.1.exists_hasRestrictedTerminalProperty hcont hξ e.2.isModel (e.isTerminalAt_of_mem_loss hq)
   exact Set.mem_iUnion.mpr ⟨P, c, e, rfl, hP⟩
 
 end Expansion
