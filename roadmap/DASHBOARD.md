@@ -162,6 +162,10 @@ Notes on the rows, each with its marker:
   `StageType.HasApexCoatomExtensions` at `λ_β` and `ForcingDonors β` (`exists_sameLevelMaximal`).
   Terminality of every cover-hollow realization at a block stage is compiled with no hypothesis
   (`Realization.IsCoverHollow.isTerminalAt`, Layer 4).
+- *Layer 6, thinness in scatteredness form.*  Compiled conditionally on the cap-to-model theorem,
+  (R1), forcing donors at every countable block index, the continuation criterion, (R2) and (R3),
+  each still to be proved, with neither sentence separation nor López–Escobar
+  (`densitySentence_isThinOnNatModels_of_terminalClassification_bfScattered`).
 
 ## The named hypotheses of the main theorem
 
