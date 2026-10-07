@@ -240,7 +240,9 @@ calibration (`StageType.MarkerCapCalibration`, acquisition proved) it is **false
 (`Continuation.StableRecoveryCounterexample.not_hasStableRecoverySchemes_markerCap`); for the
 graded cap calibration (`StageType.GradedCapCalibration`, acquisition proved) it is open; its
 conclusion holds at one input
-(`Continuation.StableRecoveryReading.exists_isStableRecoveryScheme_gradedCap`). -/
+(`Continuation.StableRecoveryReading.exists_isStableRecoveryScheme_gradedCap`) and at the twin
+donors of the refutation above, with a context of three points
+(`Continuation.StableRecoveryTwin.exists_isStableRecoveryScheme_twinDonors`). -/
 def HasStableRecoverySchemes
     (C : ∀ ⦃m k : ℕ⦄, StageType.{u} (blockStage (ξ + 1)) m → (Fin k ↪ Fin m) →
       StageType.{u} (blockStage (ξ + 1)) (k + 1) → Ordinal.{u} → Prop) : Prop :=

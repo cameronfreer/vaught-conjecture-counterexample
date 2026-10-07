@@ -84,7 +84,10 @@ By `StageType.IsStableRecoveryScheme.of_readsThroughCap` it holds at every insta
 scheme satisfies the hypotheses of that theorem; the calibration supplies a cap and reference cells
 for such a scheme to read.  Such a scheme exists at one input, at every `ξ`
 (`Continuation.StableRecoveryReading.exists_isStableRecoveryScheme_gradedCap`, in
-`VaughtConjecture.Continuation.StableRecoveryReading`); its existence at every input with the
+`VaughtConjecture.Continuation.StableRecoveryReading`), and at the twin donors of the refutation
+of the marker and cap calibration, with one context of three points for both
+(`Continuation.StableRecoveryTwin.exists_isStableRecoveryScheme_twinDonors`, in
+`VaughtConjecture.Continuation.StableRecoveryTwin`); its existence at every input with the
 calibration is not proved.
 
 ## Placement
