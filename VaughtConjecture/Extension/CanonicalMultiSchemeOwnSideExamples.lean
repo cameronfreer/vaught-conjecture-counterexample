@@ -12,14 +12,17 @@ import VaughtConjecture.Extension.ThinCompletionMirrorExamples
 
 Roadmap, Layer 3, 3.1, (R6), checkpoint 2.7 (the completion below the full grade at `m = 3`: the
 own-side rows of the canonical multi-layer scheme at the compiled seeds, and the orientations every
-step of the scheme has at three of them); semantic contract, items 2–4.
+step of the scheme has at four of them); semantic contract, items 2–4.
 
-Write `d₃` for the cell at `({3}, 1)` (on `C`) and `d₄` for the cell at `({4}, 1)` (on `D`).  Each
-seed below has a forcing (`Seed.ForcesTop`) from one coatom, through a parameter of the common face
-coupled to the parameter of grade `1` of the other coatom; the prescription is `⊤` at the full
-graded faces `(B, 2)` and `(B, 3)` of the forcing coatom `B`.  So the copies of `(B, 2)` and
-`(B, 3)` carry `⊤` in the lift of the prescription, and every step of the canonical multi-layer
-scheme, for every copy rows `R`, reads them with the forced orientation
+Write `d₀` for the cell at `({0}, 1)` (on the common face), `d₃` for the cell at `({3}, 1)` (on
+`C`) and `d₄` for the cell at `({4}, 1)` (on `D`).  Each seed below has a forcing (`Seed.ForcesTop`)
+from one coatom `B`, through a parameter of the common face coupled to the parameter of grade `1` of
+the other coatom.  The prescription is `⊤` at the original of each copy listed in the table below:
+at `(B, 2)` and `(B, 3)` for `seedL`, `seedLM` and the seeds of coatom types `T5`, `T5`; at `(D, 2)`
+only for the forcing of `seedHG` from `D` (the prescription `labD 2 ⊤ ⊥` is `⊥` at `(D, 3)`); and
+at `(C, 3)` only for the forcing of `seedHG` from `C` (the prescription `labC 2 2 ⊤` is `2` at
+`(C, 2)`).  So the listed copies carry `⊤` in the lift of the prescription, and every step of the
+canonical multi-layer scheme, for every copy rows `R`, reads them with the forced orientation
 (`Seed.MultiLayerStep.copyRows_lt_of_forcesTop`).
 
 **The orientations forced on the copies** (compiled, for every copy rows of a step):
@@ -30,15 +33,17 @@ scheme, for every copy rows `R`, reads them with the forced orientation
 | `seedHG` | `C` | `A_C = H = 2`, `G = ⊤` | `(C, 3)` | `d₃` below `d₄` |
 | `seedL` | `C` | `A_C = 1`, `F_C = G = ⊤` | `(C, 2)`, `(C, 3)` | `d₃` below `d₄` |
 | `seedLM` | `D` | `A_D = 1`, `F_D = G = ⊤` | `(D, 2)`, `(D, 3)` | `d₄` below `d₃` |
+| `T5`, `T5` (`seed5`) | `D` | all parameters `⊤` | `(D, 2)`, `(D, 3)` | `d₀` below `d₃` |
 
 (`Seed.copyRows_lt_two_of_TH_TG`, `Seed.copyRows_lt_three_of_TH_TG`, `Seed.copyRows_lt_of_TL_T5`,
-`Seed.copyRows_lt_of_T5_TL`.)  In each row the copy reads the cell of its own coatom below the cell
-of the other: the copy of `(D, 2)` at `seedHG` must be oriented toward `C`, the copy of `(C, 3)`
-toward `D`.  The rows `CanonicalHG.rowsHG` meet these orientations (both copies of the grade `2`
-read `A_D` at `1` below `A_C` at `ω + 2`, both of the grade `3` read `A_C` at `2` below `A_D` at
-`ω + 3`), and so do the oriented rows of `seedL` and `seedLM` (toward `D` and toward `C`).
+`Seed.copyRows_lt_of_T5_TL`, `Seed.copyRows_lt_of_T5_T5`.)  In each row the copy reads a cell of
+its own coatom below the cell of the other: the copy of `(D, 2)` at `seedHG` must be oriented toward
+`C`, the copy of `(C, 3)` toward `D`.  The rows `CanonicalHG.rowsHG` meet these orientations (both
+copies of the grade `2` read `A_D` at `1` below `A_C` at `ω + 2`, both of the grade `3` read `A_C`
+at `2` below `A_D` at `ω + 3`), and so do the oriented rows of `seedL` and `seedLM` (toward `D`
+and toward `C`).
 
-**The own-side rows fail at these three seeds** (`Seed.not_ownSideStep_of_TH_TG`,
+**The own-side rows fail at `seedHG`, `seedL` and `seedLM`** (`Seed.not_ownSideStep_of_TH_TG`,
 `Seed.not_ownSideStep_of_TL_T5`, `Seed.not_ownSideStep_of_T5_TL`, and `…_seedHG`, `…_seedL`,
 `…_seedLM`): their copy of the forcing coatom reads its own cell above the other's.  This refutes
 the own-side rows at these seeds, not the canonical multi-layer scheme and not a completion: the
@@ -50,10 +55,16 @@ scheme has a step at each of them with other copy rows
 `(C, 1)` (own side above), and at the grade `2` they differ at the copy of `(D, 2)`, where `rowsHG`
 has the forced orientation and the own-side rows the opposite.
 
-**The other three seeds.**  `seed4`, `seed5` and `seedLL` have no forcing of this kind (the common
-face of `seed4` carries no parameter; in `seed5` a prescription `⊤` at the common parameter `G`
-is `⊤` at `A` on both coatoms; `TL` couples nothing to `⊤`), so the necessary condition above does
-not constrain their copies.  Whether the own-side rows give them a step is not decided here.
+**The other three seeds.**  At `seed5` the forcings of `T5` (`Seed.forcesTop_of_TL_T5`,
+`Seed.forcesTop_of_T5_TL`) apply, and they do constrain the copies: every step reads the dead common
+cell `d₀` below `d₃` at the copies of `(D, 2)` and `(D, 3)` (`Seed.copyRows_lt_of_T5_T5`, last row
+of the table).  But they apply only with `P d₁ = ⊥` at the cells `d₁` of grade `1` of the forcing
+coatom with `P d₁ ≠ ⊤` (argued, not formalized: they prescribe `G = ⊤`, and a lawful prescription
+at `T5` has `G ≤ A`), so `Seed.not_ownSideStep_of_forcesTop`, which needs `P d₁ ∉ {⊥, ⊤}`, does not
+apply.  The own-side rows read `d₀` at `⊥`, as the rows of `T5` read their dead cells, and so meet
+this orientation (argued, not formalized).  At `seed4` and `seedLL` there is no forcing of this
+kind (argued, not formalized: the common face of `seed4` carries no parameter; `TL` couples nothing
+to `⊤`).  Whether the own-side rows give these three seeds a step is not decided here.
 
 ## Placement
 
@@ -240,6 +251,30 @@ theorem copyRows_lt_of_T5_TL (hIL : I.left = T5 α) (hIR : I.right = TL α) {R :
       (Seed.forcesTop_of_T5_TL hIL _ hd₃)
   all_goals first
     | (rw [hd₄]; exact gridPoint_ne_top 1 0)
+    | (rw [gradedIndex_copyOrig]; rfl)
+
+/-- **The copies of `(D, 2)` and `(D, 3)` read the dead common cell below `({3}, 1)`** in every step
+of the canonical multi-layer scheme of a seed whose coatom types are `T5` and `T5` (`seed5`): the
+prescription with every parameter `⊤` below `(D, 3)` forces `⊤` at `({3}, 1)` (the coupling
+`G ≤ A_C` of `T5`), is `⊤` at `(D, 2)` and `(D, 3)`, and is `⊥` at `({0}, 1)`. -/
+theorem copyRows_lt_of_T5_T5 (hIL : I.left = T5 α) (hIR : I.right = T5 α) {R : CopyRows I}
+    (h : I.MultiLayerStep canonicalMult (canonicalRows I R)) {d₀ d₃ : Fin I.amalgam.card}
+    (hd₀ : I.amalgam.toCellScheme.gradedIndex d₀ = (({0} : Finset (Fin 5)), 1))
+    (hd₃ : I.amalgam.toCellScheme.gradedIndex d₃ = (({3} : Finset (Fin 5)), 1))
+    (j : Fin 4) (hj1 : 1 ≤ (j : ℕ)) (hj2 : (j : ℕ) ≤ 2) : R j 1 d₀ < R j 1 d₃ := by
+  have hP : I.amalgam.rows.IsLawfulBelow (copyCoatom 1, 3) fun d ↦
+      tripleLabelling ⊤ ⊤ ⊤ ⊤ ⊤ (I.amalgam.toCellScheme.gradedIndex d) :=
+    (CaseSplitCounterexample.isLawfulBelow_tripleLabelling hIL hIR (isSelfVisible_top 1)
+      (isSelfVisible_top 2) (isSelfVisible_top 1) (isSelfVisible_top 2) (isSelfVisible_top 3)
+      le_rfl le_rfl le_rfl le_rfl).2
+  obtain rfl | rfl : j = 1 ∨ j = 2 := by omega
+  all_goals
+    refine h.copyRows_lt_of_forcesTop (i := 1) (k := 3) (by decide) (by decide) hP
+      (mem_below_of_gradedIndex hd₀ (by decide)) (mem_below_of_gradedIndex hd₃ (by decide))
+      ((grade_eq hd₀).trans (grade_eq hd₃).symm).le ?_ ?_
+      (Seed.forcesTop_of_T5_TL hIL _ hd₃)
+  all_goals first
+    | (rw [hd₀]; exact bot_ne_top)
     | (rw [gradedIndex_copyOrig]; rfl)
 
 /-- **The own-side rows give no step** to a seed whose coatom types are `TL` and `T5`: the own-side

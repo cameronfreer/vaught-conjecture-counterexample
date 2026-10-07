@@ -64,10 +64,23 @@ refutation of the family.
 **Where the own-side rows fail** (`Seed.not_ownSideStep_of_forcesTop`).  Under such a forcing the
 own-side rows read the own cell `d₁` above the other side's cell `d₂`, when `P d₁ ≠ ⊥` (then the
 original reads `d₁` at a value other than `⊥`, by locality of `P` at it) and `d₂` is not below the
-coatom of the copy, against the forced orientation.  So a seed with such a forcing has no own-side
-step.  The instances `seedHG`, `seedL` and `seedLM` are in
+coatom of the copy, against the forced orientation.  So a seed with such a forcing and a cell `d₁`
+with `P d₁ ∉ {⊥, ⊤}` (and `d₂` off the own side) has no own-side step; with `P d₁ = ⊥` the own-side
+rows may read `d₁` at `⊥`, below `d₂`.  The instances `seedHG`, `seedL` and `seedLM` are in
 `VaughtConjecture.Extension.CanonicalMultiSchemeOwnSideExamples`.  This refutes the own-side rows,
 not the family and not a completion.
+
+**The direction of the shift, and the mirror rows.**  The direction here is a choice.  The rows
+first specified for this checkpoint were the *mirror rows*: the copy reads its own coatom's cells
+at their own values and the other coatom's cells shifted into a higher block.  The direction was
+reversed here to match `rowsHG` at the grade `1` (own side above, as above).  The necessary
+condition always concludes that the own cell `d₁` is read below the other side's cell `d₂`, so it
+can refute only rows with the own side above, never the mirror rows: under the mirror rows `d₁` is
+read below `ω · N` and `d₂`, off the own side, at least `ω · N` whenever the other original reads
+it at a value other than `⊥`.  At `seedHG`, `seedL` and `seedLM` this holds at `({3}, 1)` and
+`({4}, 1)`, so the mirror rows meet every orientation compiled there (argued, not formalized); at
+the grade `1` of `seedHG` they also give the two copies opposite orientations.  Whether the mirror
+rows give a step is the next test.
 
 ## Placement
 
