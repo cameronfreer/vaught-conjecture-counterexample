@@ -43,7 +43,9 @@ Visibility replacement of an ordinal at threshold `k` with value `i` replaces it
 * In the block `[μ, μ + ω)` of an ordinal `μ` that is zero or a limit, an ordinal `μ + k` whose
   finite part `k` is below the threshold `n` is not self-visible at `n`
   (`not_isSelfVisible_coe_add_natCast`), and replacement at `n` with value `i` gives `μ + i`
-  (`visibilityReplace_coe_add_natCast`).  Every ordinal is `μ + j` with `μ` zero or a limit and
+  (`visibilityReplace_coe_add_natCast`); it is self-visible at `n` exactly when `n ≤ k`
+  (`isSelfVisible_coe_add_natCast_iff`), and `μ` and `k` are determined by `μ + k`
+  (`add_natCast_eq_add_natCast_iff`).  Every ordinal is `μ + j` with `μ` zero or a limit and
   `j` finite (`exists_eq_add_natCast_isSuccPrelimit`), and replacement at `K` with value `m` sends
   `μ + j` to `μ + m` if `j < K` and fixes it otherwise (`visibilityReplace_coe_add`).
 * On a natural number `n` it gives `i` if `n < k` and `n` otherwise (`visibilityReplace_natCast`,
@@ -338,6 +340,29 @@ theorem not_isSelfVisible_coe_add_natCast (hμ : Order.IsSuccPrelimit μ) (hk : 
     ¬ IsSelfVisible n ((μ + k : Ordinal.{u}) : Label.{u}) := by
   rw [isSelfVisible_coe, add_natCast_mod_omega0 hμ, not_le]
   exact_mod_cast hk
+
+/-- An ordinal `μ + k` of the block of `μ` is self-visible at `n` exactly when its finite part `k`
+is at least `n`. -/
+theorem isSelfVisible_coe_add_natCast_iff (hμ : Order.IsSuccPrelimit μ) :
+    IsSelfVisible n ((μ + k : Ordinal.{u}) : Label.{u}) ↔ n ≤ k := by
+  rw [isSelfVisible_coe, add_natCast_mod_omega0 hμ, Nat.cast_le]
+
+/-- **The block and the finite part of an ordinal are unique**: for `μ` and `μ'` zero or limits,
+`μ + k = μ' + k'` exactly when `μ = μ'` and `k = k'`. -/
+theorem add_natCast_eq_add_natCast_iff {μ' : Ordinal.{u}} (hμ : Order.IsSuccPrelimit μ)
+    (hμ' : Order.IsSuccPrelimit μ') : μ + k = μ' + k' ↔ μ = μ' ∧ k = k' := by
+  refine ⟨fun h ↦ ?_, fun ⟨h₁, h₂⟩ ↦ by rw [h₁, h₂]⟩
+  have hk : k = k' := by
+    have := congrArg (· % ω) h
+    simp only [add_natCast_mod_omega0 hμ, add_natCast_mod_omega0 hμ'] at this
+    exact_mod_cast this
+  subst hk
+  obtain ⟨b, rfl⟩ := isSuccPrelimit_iff_omega0_dvd.mp hμ
+  obtain ⟨b', rfl⟩ := isSuccPrelimit_iff_omega0_dvd.mp hμ'
+  have := congrArg (· / ω) h
+  simp only [mul_add_div _ omega0_ne_zero, div_eq_zero_of_lt (natCast_lt_omega0 _),
+    add_zero] at this
+  exact ⟨by rw [this], rfl⟩
 
 end Block
 

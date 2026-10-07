@@ -31,6 +31,15 @@ the relation of `p` holds at `b` exactly when the face map of `Q` along `b` retu
 (`StageType.relMap_chart`).  On the chart of a legal stage type, reconstruction therefore returns
 its face realization (`reconstruct_chart`, `reconstruct_chart_eval`).
 
+**Legal chart coverage.**  Under `hage : (hullLanguage α).age M ⊆ legalAge α`, every injective
+tuple of `M` is the image of a tuple of points of a legal chart under an embedding of the chart
+(`exists_eq_trans_legalChart`), and the reconstructed realization is exactly consistent and
+covering, a typed tuple being the image of the points of its type under an embedding of its chart
+(`isConsistent_reconstruct_of_legalAge`, `isCovering_reconstruct_of_legalAge`,
+`exists_embedding_of_reconstruct_eval_of_legalAge`).  The age of top-free charts is contained in
+the age of legal charts (`topFreeAge_subset_legalAge`), so the corresponding statements under
+top-free chart coverage below are their case.
+
 **Top-free chart coverage.**  The hypothesis of the statements in the section of that name is
 `hage : (hullLanguage α).age M ⊆ topFreeAge α`: every finitely generated substructure of `M` is
 isomorphic to a *top-free* chart.  This is stricter than the local chart coverage of
@@ -335,6 +344,49 @@ example {α β : Ordinal.{u}} {M : Type v} {n : ℕ} (R : Realization.{u, v} α 
       (R.eval t).map (StageType.reduce · hβ) := by
   rw [reconstruct_reduce_toHullStructure R hR hβ, Realization.reduce_eval]
 
+/-! ### Legal chart coverage -/
+
+section LegalAge
+
+variable {α : Ordinal.{u}} {M : Type} [(hullLanguage.{u} α).Structure M] {n : ℕ}
+  (hage : (hullLanguage.{u} α).age M ⊆ legalAge α)
+include hage
+
+/-- **Factorization of an injective tuple** through a legal chart, under legal chart coverage. -/
+theorem exists_eq_trans_legalChart (t : Fin n ↪ M) :
+    ∃ (i : LegalIndex.{u} α) (e : i.2.1.Chart ↪[hullLanguage.{u} α] M) (b : Fin n ↪ Fin i.1),
+      b.trans (i.2.1.toChart.toEmbedding.trans e.toEmbedding) = t := by
+  obtain ⟨i, e, b, hb⟩ := exists_factor_embedding_of_age_subset hage t
+  exact ⟨i, e, b, hb⟩
+
+/-- **Exact consistency** of the reconstructed realization, under legal chart coverage. -/
+theorem isConsistent_reconstruct_of_legalAge : (reconstruct α M).IsConsistent := by
+  intro m n t p f ht
+  obtain ⟨i, e, b, rfl⟩ := exists_eq_trans_legalChart hage t
+  rw [reconstruct_eval_trans_chart i.2.2 e b, StageType.faceRealization_eval] at ht
+  rw [← Function.Embedding.trans_assoc, reconstruct_eval_trans_chart i.2.2 e (f.trans b),
+    StageType.faceRealization_eval]
+  exact (StageType.restrictFace_trans _ b f ht).symm
+
+/-- **Covering** of the reconstructed realization, under legal chart coverage. -/
+theorem isCovering_reconstruct_of_legalAge : (reconstruct α M).IsCovering := by
+  intro n t
+  obtain ⟨i, e, b, rfl⟩ := exists_eq_trans_legalChart hage t
+  refine ⟨i.1, i.2.1.toChart.toEmbedding.trans e.toEmbedding, b, rfl, ?_⟩
+  rw [reconstruct_eval_chart i.2.2 e]
+  rfl
+
+/-- **Typed tuples are images of charts**, under legal chart coverage: a tuple of reconstructed type
+`p` is the image of the points of `p`, in order, under an embedding of the chart of `p`. -/
+theorem exists_embedding_of_reconstruct_eval_of_legalAge {t : Fin n ↪ M} {p : StageType.{u} α n}
+    (h : (reconstruct α M).eval t = some p) :
+    ∃ φ : p.Chart ↪[hullLanguage.{u} α] M, ∀ j, φ (p.toChart j) = t j := by
+  obtain ⟨i, e, b, rfl⟩ := exists_eq_trans_legalChart hage t
+  rw [reconstruct_eval_trans_chart i.2.2 e b, StageType.faceRealization_eval] at h
+  exact ⟨e.comp (StageType.chartEmbedding h), fun _ ↦ rfl⟩
+
+end LegalAge
+
 /-! ### Top-free chart coverage -/
 
 section Age
@@ -401,25 +453,18 @@ theorem eq_of_relMap_rel {xs : Fin n → M} {p q : StageType.{u} α n} {hp : p.I
   exact Option.some_injective _ (he.symm.trans he')
 
 /-- **Exact partial restriction** (semantic contract, item 11): under top-free chart coverage, the
-reconstructed realization is exactly consistent.  A typed tuple and its faces factor through one
-top-free chart, where face maps compose; an invisible face has no type. -/
-theorem isConsistent_reconstruct : (reconstruct α M).IsConsistent := by
-  intro m n t p f ht
-  obtain ⟨i, e, b, rfl⟩ := exists_eq_trans_topFreeChart hage t
-  rw [reconstruct_eval_trans_chart i.2.2.1 e b, StageType.faceRealization_eval] at ht
-  rw [← Function.Embedding.trans_assoc, reconstruct_eval_trans_chart i.2.2.1 e (f.trans b),
-    StageType.faceRealization_eval]
-  exact (StageType.restrictFace_trans _ b f ht).symm
+reconstructed realization is exactly consistent: the case of legal chart coverage
+(`isConsistent_reconstruct_of_legalAge`).  A typed tuple and its faces factor through one chart,
+where face maps compose; an invisible face has no type. -/
+theorem isConsistent_reconstruct : (reconstruct α M).IsConsistent :=
+  isConsistent_reconstruct_of_legalAge (hage.trans topFreeAge_subset_legalAge)
 
 /-- **Covering** (semantic contract, item 11): under top-free chart coverage, the reconstructed
-realization is covering.  An injective tuple is a face of the points of the top-free chart through
-which it factors, and those points have the type of the chart. -/
-theorem isCovering_reconstruct : (reconstruct α M).IsCovering := by
-  intro n t
-  obtain ⟨i, e, b, rfl⟩ := exists_eq_trans_topFreeChart hage t
-  refine ⟨i.1, i.2.1.toChart.toEmbedding.trans e.toEmbedding, b, rfl, ?_⟩
-  rw [reconstruct_eval_chart i.2.2.1 e]
-  rfl
+realization is covering: the case of legal chart coverage (`isCovering_reconstruct_of_legalAge`).
+An injective tuple is a face of the points of the chart through which it factors, and those points
+have the type of the chart. -/
+theorem isCovering_reconstruct : (reconstruct α M).IsCovering :=
+  isCovering_reconstruct_of_legalAge (hage.trans topFreeAge_subset_legalAge)
 
 /-- **Covering for arbitrary tuples** (semantic contract, item 11): under top-free chart coverage,
 every tuple of `M`, the empty tuple and tuples with repeated coordinates included, lies in the
@@ -451,16 +496,15 @@ theorem mem_topFreeAge_of_reconstruct_eval {t : Fin n ↪ M} {p : StageType.{u} 
 
 /-- **Typed tuples are charts**: under top-free chart coverage, an injective tuple has the
 reconstructed type `p` exactly when `p` is legal and top-free and the tuple is the image of the
-points of `p`, in order, under an embedding of the chart of `p`.  The direction from an embedding
-to the type needs only that `p` is legal (`reconstruct_eval_chart`). -/
+points of `p`, in order, under an embedding of the chart of `p`.  The embedding is that of legal
+chart coverage (`exists_embedding_of_reconstruct_eval_of_legalAge`); the direction from an
+embedding to the type needs only that `p` is legal (`reconstruct_eval_chart`). -/
 theorem reconstruct_eval_eq_some_iff_exists_embedding (t : Fin n ↪ M) (p : StageType.{u} α n) :
     (reconstruct α M).eval t = some p ↔ p.IsLegal ∧ p.IsTopFree ∧
       ∃ φ : p.Chart ↪[hullLanguage.{u} α] M, ∀ j, φ (p.toChart j) = t j := by
-  refine ⟨fun h ↦ ⟨hasLegalTypes_reconstruct t p h, isTopFree_of_reconstruct_eval hage h, ?_⟩,
+  refine ⟨fun h ↦ ⟨hasLegalTypes_reconstruct t p h, isTopFree_of_reconstruct_eval hage h,
+    exists_embedding_of_reconstruct_eval_of_legalAge (hage.trans topFreeAge_subset_legalAge) h⟩,
     fun ⟨hp, _, φ, hφ⟩ ↦ ?_⟩
-  · obtain ⟨i, e, b, rfl⟩ := exists_eq_trans_topFreeChart hage t
-    rw [reconstruct_eval_trans_chart i.2.2.1 e b, StageType.faceRealization_eval] at h
-    exact ⟨e.comp (StageType.chartEmbedding h), fun _ ↦ rfl⟩
   · have ht : p.toChart.toEmbedding.trans φ.toEmbedding = t := Function.Embedding.ext hφ
     rw [← ht]
     exact reconstruct_eval_chart hp φ

@@ -80,6 +80,10 @@ for the stage type `p` on no points, unique by `StageType.eq_of_zero`
 (`Realization.not_hasTerminalProperty_hollow_of_isTopFree`), although it is cover-hollow
 vacuously (`Realization.isCoverHollow_of_isTopFree`).
 
+**Transport** (`hasTerminalProperty_map_iff`).  The terminal properties are invariant under
+transport along a bijection of carriers: so are covers, globally rigid cores, the top-grade
+supremum and cover-hollowness.
+
 Nothing here uses uniqueness or normalization of expansions, global termination, a canonical
 choice of property, or characteristic arity.  Cover-hollowness enters only through the
 continuation criterion and the hollow property; its equivalence with the original anchor
@@ -187,6 +191,31 @@ not `⊤`, although they are cover-hollow vacuously. -/
 theorem not_hasTerminalProperty_hollow_of_isTopFree (h : ∀ x : R.Occurrence, x.type.IsTopFree) :
     ¬ R.HasTerminalProperty (.inr (.inr ())) := fun hP ↦ by
   simp [HasTerminalProperty, topGradeSup_eq_zero_iff.mpr h] at hP
+
+/-- **Terminal properties are invariant under transport** along a bijection of carriers: covers,
+globally rigid cores (`isGloballyRigidCore_map_iff`), the top-grade supremum (`topGradeSup_map`)
+and cover-hollowness (`isCoverHollow_map_iff`) are. -/
+@[simp] theorem hasTerminalProperty_map_iff {N : Type*} (e : M ≃ N) {P : TerminalProperty ξ} :
+    (R.map e).HasTerminalProperty P ↔ R.HasTerminalProperty P := by
+  have hcore : (∃ (k : ℕ) (p : StageType.{0} (blockStage ξ) k) (c : Fin k → N),
+      (R.map e).Covers p c ∧ (R.map e).IsGloballyRigidCore c) ↔
+      ∃ (k : ℕ) (p : StageType.{0} (blockStage ξ) k) (c : Fin k → M),
+        R.Covers p c ∧ R.IsGloballyRigidCore c := by
+    refine exists_congr fun k ↦ exists_congr fun p ↦ ?_
+    simp only [covers_map_iff, isGloballyRigidCore_map_iff]
+    exact ⟨fun ⟨c, h⟩ ↦ ⟨_, h⟩, fun ⟨c, h⟩ ↦ ⟨e ∘ c, by
+      rwa [← Function.comp_assoc, Equiv.symm_comp_self, Function.id_comp]⟩⟩
+  rcases P with ⟨k, p⟩ | K | ⟨⟩
+  · simp only [HasTerminalProperty, covers_map_iff, isGloballyRigidCore_map_iff]
+    exact ⟨fun ⟨c, h⟩ ↦ ⟨_, h⟩, fun ⟨c, h⟩ ↦ ⟨e ∘ c, by
+      rwa [← Function.comp_assoc, Equiv.symm_comp_self, Function.id_comp]⟩⟩
+  · simp only [HasTerminalProperty, hcore, topGradeSup_map]
+  · simp only [HasTerminalProperty, isCoverHollow_map_iff, topGradeSup_map]
+
+/-- **A terminal property transports** along a bijection of carriers. -/
+theorem HasTerminalProperty.map {N : Type*} {P : TerminalProperty ξ}
+    (h : R.HasTerminalProperty P) (e : M ≃ N) : (R.map e).HasTerminalProperty P :=
+  (hasTerminalProperty_map_iff e).mpr h
 
 end Realization
 

@@ -205,6 +205,17 @@ theorem appendFullCells_row_natAdd_eq (i : Fin M) :
     (S.appendFullCells k M r h).rows.row (Fin.natAdd S.card i) = fun t ↦ r i t.1 :=
   funext (appendFullCells_row_natAdd i)
 
+/-- The row of an old cell after appending cells is its row before. -/
+theorem appendFullCells_row_castAdd {n k M' : ℕ} {S : Scheme.{u} n}
+    {r' : Fin M' → Fin (S.card + M') → Label.{u}}
+    {h : ∀ d, ¬ ((univ : Finset (Fin n)), k) ≤ S.toCellScheme.gradedIndex d} (s : Fin S.card)
+    (t : (S.appendFullCells k M' r' h).toCellScheme.below
+      ((S.appendFullCells k M' r' h).toCellScheme.gradedIndex (Fin.castAdd M' s))) :
+    (S.appendFullCells k M' r' h).rows.row (Fin.castAdd M' s) t =
+      S.rows.row s ⟨⟨t.1, Scheme.lt_card_of_mem_below
+        (Scheme.not_le_gradedIndex_of_lt h s.isLt) t.2⟩, Scheme.mem_below_of_lt h s.isLt t⟩ :=
+  dite_eq_left s.isLt
+
 variable (k M r h) in
 /-- **The old cells form a lower embedding** along `Fin.castAdd`. -/
 theorem isLowerEmbedding_castAdd :

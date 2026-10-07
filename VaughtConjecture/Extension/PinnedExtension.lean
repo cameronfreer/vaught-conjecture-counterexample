@@ -308,6 +308,27 @@ theorem exists_extension (hext : HasCoatomExtensions.{u} α) {P : StageType.{u} 
     (Scheme.isLegal_onePoint.isLegal_toStageType α) (hp'.trans (congrArg some (eq_of_zero p' p)))
   exact ⟨Q, hQ, hQP⟩
 
+variable {N : ℕ} in
+/-- **Padding**: under the coatom extension property, every legal stage type on `k` points is the
+face along `Fin.castLEEmb` of a legal stage type on any `N ≥ k` points. -/
+theorem exists_isLegal_restrictFace_castLEEmb (hext : HasCoatomExtensions.{u} α)
+    {P : StageType.{u} α k} (hP : P.IsLegal) (hkN : k ≤ N) :
+    ∃ Q : StageType.{u} α N, Q.IsLegal ∧ restrictFace (Fin.castLEEmb hkN) Q = some P := by
+  induction N, hkN using Nat.le_induction with
+  | base =>
+    refine ⟨P, hP, ?_⟩
+    rw [show Fin.castLEEmb (le_refl k) = Function.Embedding.refl _ from
+      Function.Embedding.ext fun _ ↦ Fin.ext rfl]
+    exact restrictFace_refl P
+  | succ N hkN ih =>
+    obtain ⟨Q, hQ, hQP⟩ := ih
+    obtain ⟨Q', hQ', hQ'Q⟩ := exists_extension hext hQ
+    refine ⟨Q', hQ', ?_⟩
+    rw [show Fin.castLEEmb (hkN.trans (Nat.le_succ N)) =
+        (Fin.castLEEmb hkN).trans Fin.castSuccEmb from Function.Embedding.ext fun _ ↦ Fin.ext rfl,
+      ← restrictFace_trans _ _ _ hQ'Q]
+    exact hQP
+
 /-- **Amalgamation over a common face**, from the coatom extension property: two legal stage types
 `P` and `R` whose faces along `f` and `g` are the same stage type `p` are the faces of one legal
 stage type, along embeddings `i` and `j` with `i ∘ f = j ∘ g`.  The points of `R` outside the face
@@ -366,6 +387,43 @@ theorem exists_amalgam (hext : HasCoatomExtensions.{u} α) {P : StageType.{u} α
       rw [← Function.Embedding.trans_assoc, ← Function.Embedding.trans_assoc,
         castSuccEmb_trans_extendByLast, hgg'] at h
       rw [← h, Function.Embedding.trans_assoc]
+
+end StageType
+
+/-! ### The cells of a pinned extension -/
+
+namespace StageType
+
+variable {α : Ordinal.{u}} {k n : ℕ}
+
+/-- **The root of a pinned extension**: in a one-point extension `D` of `t'` whose face along
+`extendByLast h` is `d`, the cells of the common face `t` (the face of `t'` along `h` and of `d`
+along the initial segment) are the same cells of `D`, reached through `t'` or through `d`. -/
+theorem faceCell_faceCell {n' : ℕ} {D : StageType.{u} α (k + 1)} {t' : StageType.{u} α k}
+    {h : Fin n' ↪ Fin k} {t : StageType.{u} α n'} {d : StageType.{u} α (n' + 1)}
+    (h₁ : restrictFace Fin.castSuccEmb D = some t') (h₂ : restrictFace (extendByLast h) D = some d)
+    (ht : restrictFace h t' = some t) (hd : restrictFace Fin.castSuccEmb d = some t)
+    (i : Fin t.card) : faceCell h₁ (faceCell ht i) = faceCell h₂ (faceCell hd i) := by
+  obtain ⟨hf₁, rfl⟩ := (restrictFace_eq_some_iff D _).mp h₁
+  obtain ⟨hf₂, rfl⟩ := (restrictFace_eq_some_iff D _).mp h₂
+  -- `faceCell` unfolds to the cell maps of the two composite faces
+  change D.toScheme.cellMap _ ((D.toScheme.comap Fin.castSuccEmb).cellMap h _) =
+    D.toScheme.cellMap _ ((D.toScheme.comap (extendByLast h)).cellMap Fin.castSuccEmb _)
+  refine (Scheme.cellMap_cellMap _ _ (j := Fin.cast (congrArg Scheme.card
+    (D.toScheme.comap_comap _ _)) _) rfl).trans ((Scheme.cellMap_congr
+      (castSuccEmb_trans_extendByLast h).symm ?_).trans
+    (Scheme.cellMap_cellMap _ _ (j := Fin.cast (congrArg Scheme.card
+      (D.toScheme.comap_comap _ _)) _) rfl).symm)
+  rfl
+
+/-- The last point lies in the scope of a cell of the face along `extendByLast h` exactly when the
+last point lies in its scope in the face. -/
+theorem last_mem_scope_faceCell_iff {D : StageType.{u} α (k + 1)} {h : Fin n ↪ Fin k}
+    {d : StageType.{u} α (n + 1)} (h₂ : restrictFace (extendByLast h) D = some d)
+    (j : Fin d.card) :
+    Fin.last k ∈ D.toCellScheme.scope (faceCell h₂ j) ↔ Fin.last n ∈ d.toCellScheme.scope j := by
+  rw [scope_faceCell, mem_map, ← extendByLast_last h]
+  exact ⟨fun ⟨y, hy, hye⟩ ↦ (extendByLast h).injective hye ▸ hy, fun hy ↦ ⟨_, hy, rfl⟩⟩
 
 end StageType
 
