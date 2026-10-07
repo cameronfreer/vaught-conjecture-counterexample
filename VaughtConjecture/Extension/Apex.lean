@@ -54,7 +54,8 @@ transforms it back to the labels.  The result is legal (`StageType.isLegal_addAp
   cell.
 
 The new cell is the apex: its graded index is `(univ, n)` and its label `⊤` is the largest
-(`StageType.exists_apex_addApex`), and the faces along embeddings onto proper subsets are those of
+(`StageType.exists_apex_addApex`); it is the only cell of full grade
+(`StageType.eq_of_grade_addApex`), and the faces along embeddings onto proper subsets are those of
 `t` (`StageType.restrictFace_addApex`).  Adding the apex uses no hypothesis on the stage: the apex
 label `⊤` occurs at every stage.  (The stage enters before it: the completion
 (`CompletionBelowFullGrade.completion`) truncates a completion below the full grade of a seed to a
@@ -677,6 +678,19 @@ theorem exists_apex_addApex : ∃ d, (t.addApex ht hn).toCellScheme.gradedIndex 
   ⟨Fin.last _, Scheme.appendFullCellScheme_gradedIndex_last _ _,
     fun _ ↦ by rw [addApex_label_last]; exact le_top⟩
 
+/-- The cells of the type with the apex added that are visible through a proper face are old. -/
+theorem mem_range_castSucc_of_addApex {k : ℕ} (f : Fin k ↪ Fin n) (hf : univ.map f ≠ univ)
+    (z : Fin (t.addApex ht hn).card)
+    (hz : ((t.addApex ht hn).toCellScheme.scope z : Set (Fin n)) ⊆ Set.range f) :
+    z ∈ Set.range (Fin.castSucc : Fin t.card → Fin (t.card + 1)) := by
+  induction z using Fin.lastCases with
+  | last =>
+    refine absurd (eq_univ_of_forall fun x ↦ ?_) hf
+    obtain ⟨y, rfl⟩ : x ∈ Set.range f :=
+      hz (mem_coe.mpr ((addApex_scope_last ht hn).symm ▸ mem_univ x))
+    exact mem_map_of_mem _ (mem_univ y)
+  | cast z => exact ⟨z, rfl⟩
+
 /-- **The proper faces after adding the apex are those of `t`**: along an embedding whose image is
 not the whole ground set, the face maps of `t.addApex ht hn` and of `t` agree, including
 definedness. -/
@@ -687,15 +701,23 @@ theorem restrictFace_addApex (f : Fin m ↪ Fin n) (hf : univ.map f ≠ univ) :
     (Scheme.isLowerEmbedding_castSucc n (apexRow ht) ht.not_le)
     (Scheme.appendFullCellScheme_scope_castSucc _ _) (Scheme.comap_rows_castSucc (h := ht.not_le))
     rfl rfl
-    (addApex_label_castSucc ht hn) fun z hz ↦ ?_
-  induction z using Fin.lastCases with
-  | last =>
-    refine absurd (eq_univ_of_forall fun x ↦ ?_) hf
-    have hx : x ∈ Set.range f :=
-      hz (mem_coe.mpr ((addApex_scope_last ht hn).symm ▸ mem_univ x))
-    obtain ⟨y, rfl⟩ := hx
-    exact mem_map_of_mem _ (mem_univ y)
-  | cast z => exact ⟨z, rfl⟩
+    (addApex_label_castSucc ht hn) (mem_range_castSucc_of_addApex ht hn f hf)
+
+/-- **After adding the apex, the apex is the only cell of full grade.** -/
+theorem eq_of_grade_addApex {n : ℕ} {t : StageType.{u} α n} (ht : t.IsLegalBelowFullGrade)
+    (hn : 0 < n) {i : Fin (t.addApex ht hn).card}
+    (hi : (t.addApex ht hn).toCellScheme.grade i = n) :
+    i = Fin.last _ := by
+  -- `t.addApex` has the cells of `t` and the apex, so `Fin.lastCases` applies.
+  change Fin (t.card + 1) at i
+  induction i using Fin.lastCases with
+  | last => rfl
+  | cast d =>
+    exfalso
+    -- The cell scheme of `t.addApex` is `appendFullCellScheme`.
+    change (Scheme.appendFullCellScheme t.toScheme n).grade d.castSucc = n at hi
+    rw [Scheme.appendFullCellScheme_grade_castSucc] at hi
+    exact (ht.grade_lt d).ne hi
 
 /-! ### Adding the apex to `⊥` labels -/
 
