@@ -87,25 +87,26 @@ permitted cutoff `c`, some point extends the occurrence to one with a type in th
 of `d` at `c` (`StageType.receivingFamily`); the property is invariant under transport and
 isomorphism (`hasFiniteCutReceiving_map_iff`, `IsIso.hasFiniteCutReceiving_iff`).  The
 **finite-extension receiving property** (`HasFiniteExtensionReceiving`) is its form for donors on
-several new points: over every occurrence of type `p`, for every legal stage type `D` restricting
-to `p` along an embedding `g` of coordinates and every permitted cutoff `c`, some tuple extends the
+several new points: over every occurrence of type `p`, for every legal stage type `D` restricting to
+`p` along an embedding `g` of coordinates and every permitted cutoff `c`, some tuple extends the
 occurrence along `g` literally and has a type in the receiving family of `D` at `c`.  It gives
 finite-cut receiving (`HasFiniteExtensionReceiving.hasFiniteCutReceiving`, the donors on one new
-point along the initial segment).  Conversely, for an exactly consistent realization at a stage
-that is zero or a limit, finite-cut receiving gives finite-extension receiving
+point along the initial segment).  Conversely, for an exactly consistent realization at a stage that
+is zero or a limit, finite-cut receiving gives finite-extension receiving
 (`HasFiniteCutReceiving.hasFiniteExtensionReceiving`, in `VaughtConjecture.Realization.Receiving`).
 **The empty root**: on a nonempty carrier, with legal types, exact consistency and covering,
 receiving over every occurrence of positive arity gives finite-cut receiving, provided legal stage
 types amalgamate with legal stage types on one point over the empty face
 (`hasFiniteCutReceiving_of_pos`): over the empty root, the one-point donor is amalgamated with the
 type of an occurrence of positive arity given by covering, received over that occurrence, and
-restricted to the new point (`StageType.exists_restrictFace_mem_receivingFamily`).
-That every model has finite-cut receiving is (R1) of the table of Layer 3, open in general; the
-universal gated extension hypothesis `StageType.HasGatedPinnedExtensions`, which would give it,
-fails at every stage (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`).  (R1) holds
-conditional on the coupled gated pinned extension property, a named hypothesis that is open
-(`IsModel.hasFiniteCutReceiving_of_hasCoupledGatedPinnedExtensions`).  Finite-cut receiving is
-proved for the top-free witnesses (`hasFiniteCutReceiving_reconstruct`, in
+restricted to the new point (`StageType.exists_restrictFace_mem_receivingFamily`).  That every model
+has finite-cut receiving is (R1) of the table of Layer 3, open in general; the universal gated
+extension hypothesis `StageType.HasGatedPinnedExtensions`, which would give it, fails at every stage
+(`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`).  (R1) holds conditional on the
+coupled gated pinned extension property, a named hypothesis that is false at every stage above `1`
+(`CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`), so that theorem
+(`IsModel.hasFiniteCutReceiving_of_hasCoupledGatedPinnedExtensions`) is vacuous there.  Finite-cut
+receiving is proved for the top-free witnesses (`hasFiniteCutReceiving_reconstruct`, in
 `VaughtConjecture.ClassicalLimit.Receiving`).
 
 ## References

@@ -36,12 +36,13 @@ cells whose scope contains its last point.
 * The donor is **anchored** in `P` below a cell `C` (`StageType.IsAnchored P C d`) when every
   new donor cell whose label is neither `⊥` nor at least `P.label C` is labelled
   `vr_n(P.label z, i)` (`Label.visibilityReplace n i`) for some cell `z` of `P` (its **anchor**)
-  and some `i ≤ n`.  The anchor may be self-visible at `n`, and `i = n` is allowed.  When `C` has
-  grade `n`, as in `HasGatedPinnedExtensions`, its label is self-visible at `n`, so the anchor of
-  a donor label below `P.label C` is itself labelled below `P.label C`
-  (`Label.le_visibilityReplace_of_le`).  This is exactly
-  what the readings of the gate force: a gated extension whose cap carries the label of `C` has an
-  anchored donor (`GatedExtension.isAnchored`).
+  and some `i ≤ n`.  The anchor may be self-visible at `n`, and `i = n` is allowed; an anchor whose
+  label is not self-visible at `n` (`¬ Label.IsSelfVisible n (P.label z)`) is a **proper anchor**.
+  When `C` has grade `n`, as in `HasGatedPinnedExtensions`, its label is self-visible at `n`, so
+  the anchor of a donor label below `P.label C` is itself labelled below `P.label C`
+  (`Label.le_visibilityReplace_of_le`).  This is exactly what the readings of the gate force: a
+  gated extension whose cap carries the label of `C` has an anchored donor
+  (`GatedExtension.isAnchored`).
 * The **gated pinned extension property** at stage `α` (`StageType.HasGatedPinnedExtensions α`)
   asks for a gated extension, with cap labelled as a given non-bottom cell `C` of graded index
   `(univ, n)` of `P`, for every legal `P`, every face `f` of `P` with restriction `p`, and every
@@ -66,21 +67,25 @@ a given gated extension, here and in `VaughtConjecture.Realization.GateRecovery`
 same data with the clause on the twins replaced by a condition on the rows of the display: every
 twin `t` of the gate `G` reads `G` at least as it reads the cap `C`, `row t C ≤ row t G`
 (`CellScheme.Rows.TwinsReadGate`).  Then the gate is at least the cap in every lawful labelling of
-the rows of the display (`CoupledGatedExtension.cap_le_gate`), by availability and
-locality alone, so the display does not label the gate `⊥`
-(`CoupledGatedExtension.label_gate_ne_bot`), and the readings of the gate still force anchoring
-(`CoupledGatedExtension.isAnchored`).  The **coupled gated pinned extension property**
-(`StageType.HasCoupledGatedPinnedExtensions α`) asks for a coupled gated extension for the same
-inputs.  It is a named hypothesis and it is **open**.  It holds at the input that refutes the
-gated pinned extension property: over the empty root, with the donor `P α|{0}` and the cap `3`,
-the private type `GatedExtensionCounterexample.P α` has a coupled gated extension
+the rows of the display (`CoupledGatedExtension.cap_le_gate`), by availability and locality alone,
+so the display does not label the gate `⊥` (`CoupledGatedExtension.label_gate_ne_bot`), and the
+readings of the gate still force anchoring (`CoupledGatedExtension.isAnchored`).  The **coupled
+gated pinned extension property** (`StageType.HasCoupledGatedPinnedExtensions α`) asks for a coupled
+gated extension for the same inputs.  It is a named hypothesis, and it is **false at every stage
+above `1`** (`CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`): at a
+private type with a proper anchor below the cap, the readings of the gate carry a lawful private
+labelling that drops the anchor and keeps the cap to a labelling of the donor face that the donor's
+rows forbid (`StageType.CoupledGatedExtension.carriesBottoms`).  The definition is kept to state
+that refutation and the theorems conditional on it.  It holds at the input that refutes the gated
+pinned extension property: over the empty root, with the donor `P α|{0}` and the cap `3`, the
+private type `GatedExtensionCounterexample.P α` has a coupled gated extension
 (`CoupledGateExamples.exists_coupledGatedExtension_comap_g₁`), whose gate has a twin not labelled
 `⊥` (`CoupledGateExamples.exists_coupledGatedExtension`; the display labels it `⊤`).  Every legal
 one-point extension of `P α` has such a twin
-(`GatedExtensionCounterexample.exists_twin_label_ne_bot`).  Nothing more is proved about it: the
-other donors of `P α` (a donor labelled `⊤`, which needs the cap of `P α` lowered, and donors with
-several cells) and general private types are not covered.  The open point is **cap lowering**,
-stated in the docstring of `StageType.HasCoupledGatedPinnedExtensions`.
+(`GatedExtensionCounterexample.exists_twin_label_ne_bot`).  It also holds at `P α` with the donor
+labelled `⊤` (`CoupledGateInstance.coupledGatedPinnedExtension_donor`).  **Cap lowering**, stated in
+the docstring of `StageType.HasCoupledGatedPinnedExtensions`, is a requirement of the construction
+at the lifts from faces containing the new point; the refutation does not use it.
 
 ## Placement
 
@@ -222,22 +227,24 @@ one-point coface `d` of `p`, and every cell `C` of `P` of graded index `(univ, n
 `⊥` below which `d` is anchored, if `m + 1 < n` there is a coupled gated extension of `P` over `f`
 with donor `d` whose cap carries the label of `C`.
 
-This is a **named hypothesis, and it is open**.  It is proved at one input only: the input at
-which `HasGatedPinnedExtensions` is refuted, the private type `GatedExtensionCounterexample.P α`
-over the empty root with the donor `P α|{0}` and the cap `3`
-(`CoupledGateExamples.exists_coupledGatedExtension_comap_g₁`).  The open point is **cap
-lowering (CL)**.  In every lawful labelling of the display the gate dominates the cap, so a lift
-from a coatom `(F ∪ {y}, n)` (`F` a face of `n - 1` private points containing the root, `y` the new
-point) whose prescriptions at a donor cell and at its anchor force the gate below a label `v`
-also forces the private cap below `v`.  The statement to be decided is: for the private type `P`,
-a face `F` of `n - 1` points, a cap `c` self-visible at `n`, a labelling `p` lawful below
-`(F, n - 1)` in the cap ball of the labelling of `P` at `c`, and a label `v ≥ c` self-visible at
-`n`, some lawful labelling of `P` extends `p`, lies in that cap ball, and is at most `v` at `C`.
-(CL) is the uniform form of that requirement, over every `p` and every `v ≥ c`; it is a
-strengthening, not shown necessary for the property and not shown sufficient for it.  A failure
-of (CL) refutes the coupled design only at a pair `(p, v)` that a forcing prescription from an
-anchored legal donor actually realizes.  The case of a donor labelled `⊤` on `P α`, which
-exercises it, is not compiled. -/
+This is a **named hypothesis, and it is false at every stage above `1`**
+(`CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`, at a private type with a
+proper anchor below the cap; `StageType.CoupledGatedExtension.carriesBottoms`).  It holds at the
+input at which `HasGatedPinnedExtensions` is refuted, the private type
+`GatedExtensionCounterexample.P α` over the empty root with the donor `P α|{0}` and the cap `3`
+(`CoupledGateExamples.exists_coupledGatedExtension_comap_g₁`).  **Cap lowering (CL)**, below, is a
+requirement of the construction that the refutation does not use.  In every lawful labelling of the
+display the gate dominates the cap, so a lift from a coatom `(F ∪ {y}, n)` (`F` a face of `n - 1`
+private points containing the root, `y` the new point) whose prescriptions at a donor cell and at
+its anchor force the gate below a label `v` also forces the private cap below `v`.  The statement to
+be decided is: for the private type `P`, a face `F` of `n - 1` points, a cap `c` self-visible at
+`n`, a labelling `p` lawful below `(F, n - 1)` in the cap ball of the labelling of `P` at `c`, and a
+label `v ≥ c` self-visible at `n`, some lawful labelling of `P` extends `p`, lies in that cap ball,
+and is at most `v` at `C`.  (CL) is the uniform form of that requirement, over every `p` and every
+`v ≥ c`; it is a strengthening, not shown necessary for the property and not shown sufficient for
+it.  A failure of (CL) refutes the coupled design only at a pair `(p, v)` that a forcing
+prescription from an anchored legal donor actually realizes.  The case of a donor labelled `⊤` on
+`P α`, which exercises it, is compiled (`CoupledGateInstance.coupledGatedPinnedExtension_donor`). -/
 def HasCoupledGatedPinnedExtensions : Prop :=
   ∀ {n m : ℕ} (P : StageType.{u} α n) (f : Fin m ↪ Fin n) (p : StageType.{u} α m)
     (d : StageType.{u} α (m + 1)) (C : Fin P.card),
@@ -330,3 +337,194 @@ theorem CoupledGatedExtension.isAnchored {P : StageType.{u} α n} {f : Fin m ↪
 end StageType
 
 end VaughtConjecture
+
+namespace VaughtConjecture.StageType
+
+open Finset Label
+
+variable {α : Ordinal.{u}} {n m : ℕ}
+
+/-! ### The bottom transport condition -/
+
+/-- The **bottom transport condition** for a private type `P` on `n` points, a one-point donor `d`
+(on `m + 1` points, the last one new) and a cap label `c`: every lawful labelling `a` of `P` that
+is not `⊥` at the cells of `P` of graded index `(univ, n)` labelled `c` has a lawful labelling `ρ`
+of `d` such that, at every new donor cell `j` (one whose scope contains the new point) not
+labelled `⊥`,
+* `ρ j = ⊥` if `d.label j` is not at least `c` and `a` is `⊥` at every cell `i` of `P` with
+  `d.label j = vr_n(P.label i, k)` for some `k ≤ n` (every possible anchor of `j`);
+* `ρ j ≠ ⊥` if `a` is not `⊥` at any cell `i` of `P` that is a possible anchor of `j` or is
+  labelled at least `c` when `j` is.
+
+Every coupled gated extension forces it (`CoupledGatedExtension.carriesBottoms`). -/
+def CarriesBottoms (P : StageType.{u} α n) (d : StageType.{u} α (m + 1)) (c : Label.{u}) :
+    Prop :=
+  ∀ a : Fin P.card → Label.{u}, P.rows.IsLawful a →
+    (∀ i, P.toCellScheme.gradedIndex i = (univ, n) → P.label i = c → a i ≠ ⊥) →
+    ∃ ρ : Fin d.card → Label.{u}, d.rows.IsLawful ρ ∧
+      ∀ j, Fin.last m ∈ d.toCellScheme.scope j → d.label j ≠ ⊥ →
+        (¬ c ≤ d.label j →
+          (∀ i, ∀ k ≤ n, d.label j = visibilityReplace n k (P.label i) → a i = ⊥) → ρ j = ⊥) ∧
+        ((∀ i, ((∃ k ≤ n, d.label j = visibilityReplace n k (P.label i)) ∨
+            (c ≤ P.label i ∧ c ≤ d.label j)) → a i ≠ ⊥) → ρ j ≠ ⊥)
+
+/-- **The bottom transport condition holds without donor labels strictly below the cap**: if every
+new donor cell is labelled `⊥` or at least `c`, the labelling of `d` itself meets the condition.
+So the condition can fail only through a donor label strictly between `⊥` and `c`, which an
+anchored donor reads through an anchor. -/
+theorem carriesBottoms_of_forall_label {P : StageType.{u} α n} {d : StageType.{u} α (m + 1)}
+    {c : Label.{u}}
+    (hd : ∀ j, Fin.last m ∈ d.toCellScheme.scope j → d.label j = ⊥ ∨ c ≤ d.label j) :
+    CarriesBottoms P d c := fun _ _ _ ↦
+  ⟨d.label, d.isLawful, fun j hj hne ↦
+    ⟨fun hlt _ ↦ ((hd j hj).resolve_left hne |> hlt).elim, fun _ ↦ hne⟩⟩
+
+/-- **The bottom transport condition holds when the cap reads an anchor of every donor label below
+it in its own block.**  Let `C` be a cell of `P` of graded index `(univ, n)`, and suppose every new
+donor cell labelled neither `⊥` nor at least the label of `C` has an anchor `z`
+(`d.label j = vr_n(P.label z, k)`, `k ≤ n`) that the row of `C` reads in the block of its reading
+of `C` itself.  Then a lawful labelling of `P` not `⊥` at `C` is not `⊥` at that anchor
+(`CellScheme.Rows.IsLawful.ne_bot_of_row_mem_block`), and the labelling of `d` itself meets the
+condition.  The private type of `CoupledGatedExtensionCounterexample` fails the hypothesis: its cap
+reads the anchor `z₁` at `1` and itself at `ω + 2`. -/
+theorem carriesBottoms_of_row_mem_block {P : StageType.{u} α n} {d : StageType.{u} α (m + 1)}
+    {C : Fin P.card} (hC : P.toCellScheme.gradedIndex C = (univ, n))
+    (hblock : ∀ j, Fin.last m ∈ d.toCellScheme.scope j → d.label j ≠ ⊥ →
+      d.label j < P.label C →
+      ∃ z, ∃ hz : z ∈ P.toCellScheme.below (P.toCellScheme.gradedIndex C), ∃ k ≤ n,
+        d.label j = visibilityReplace n k (P.label z) ∧ ∃ μ : Ordinal.{u},
+          Order.IsSuccPrelimit μ ∧ ∃ i i' : ℕ,
+            P.rows.row C ⟨z, hz⟩ = ((μ + i : Ordinal.{u}) : Label.{u}) ∧
+            P.rows.row C ⟨C, P.toCellScheme.mem_below_gradedIndex C⟩ =
+              ((μ + i' : Ordinal.{u}) : Label.{u})) :
+    CarriesBottoms P d (P.label C) := by
+  intro a ha hcap
+  refine ⟨d.label, d.isLawful, fun j hj hne ↦ ⟨fun hlt hdrop ↦ ?_, fun _ ↦ hne⟩⟩
+  obtain ⟨z, hz, k, hk, hzk, μ, hμ, i, i', hrz, hrC⟩ := hblock j hj hne (lt_of_not_ge hlt)
+  exact absurd (hdrop z k hk hzk)
+    (ha.ne_bot_of_row_mem_block hz hμ hrz hrC (hcap C hC rfl))
+
+namespace CoupledGatedExtension
+
+variable {P : StageType.{u} α n} {f : Fin m ↪ Fin n} {d : StageType.{u} α (m + 1)}
+  (E : CoupledGatedExtension P f d)
+
+/-- A cell of the display whose scope contains the new point is not a private cell. -/
+private theorem not_mem_visible_castSuccEmb {e : Fin E.display.card}
+    (he : Fin.last n ∈ E.display.toCellScheme.scope e) :
+    e ∉ E.display.toCellScheme.visible (Set.range Fin.castSuccEmb) := fun h ↦ by
+  obtain ⟨i, hi⟩ := h he
+  exact (Fin.castSucc_lt_last i).ne hi
+
+/-- **The gate carries `⊥` from the anchors to a donor cell.**  Let `r` be a lawful labelling of
+the display that is not `⊥` at the cap, and `e` a donor cell containing the new point, labelled
+neither `⊥` nor at least the cap in the display.  If `r` is `⊥` at every private cell whose label
+is sent to the label of `e` by a visibility replacement `vr_n(·, i)`, `i ≤ n`, then `r e = ⊥`. -/
+theorem eq_bot_of_isLawful {r : Fin E.display.card → Label.{u}}
+    (hr : E.display.rows.IsLawful r) (hcap : r E.cap ≠ ⊥) {e : Fin E.display.card}
+    (he : e ∈ E.display.toCellScheme.visible (Set.range (extendByLast f)))
+    (hnew : Fin.last n ∈ E.display.toCellScheme.scope e) (hwe : E.display.label e ≠ ⊥)
+    (hCe : ¬ E.display.label E.cap ≤ E.display.label e)
+    (hz : ∀ z ∈ E.display.toCellScheme.visible (Set.range Fin.castSuccEmb), ∀ i ≤ n,
+      E.display.label e = visibilityReplace n i (E.display.label z) → r z = ⊥) : r e = ⊥ := by
+  have hG : r E.gate ≠ ⊥ := fun h ↦ hcap (le_bot_iff.mp (h ▸ E.cap_le_gate hr))
+  have hgr := E.grade_gate
+  exact hr.eq_bot_of_gateReads hG (E.isGate.reads e he (E.not_mem_visible_castSuccEmb hnew))
+    hwe hCe fun z hzP i hi hez ↦ hz z hzP i (by rwa [hgr] at hi) (by rwa [hgr] at hez)
+
+/-- **The gate keeps `⊥` away from a donor cell.**  Let `r` be a lawful labelling of the display
+that is not `⊥` at the cap, and `e` a donor cell containing the new point, not labelled `⊥` in the
+display.  If `r` is not `⊥` at any private cell whose label is sent to the label of `e` by a
+visibility replacement `vr_n(·, i)`, `i ≤ n`, nor at any private cell labelled at least the cap
+when `e` is, then `r e ≠ ⊥`. -/
+theorem ne_bot_of_isLawful {r : Fin E.display.card → Label.{u}}
+    (hr : E.display.rows.IsLawful r) (hcap : r E.cap ≠ ⊥) {e : Fin E.display.card}
+    (he : e ∈ E.display.toCellScheme.visible (Set.range (extendByLast f)))
+    (hnew : Fin.last n ∈ E.display.toCellScheme.scope e) (hwe : E.display.label e ≠ ⊥)
+    (hz : ∀ z ∈ E.display.toCellScheme.visible (Set.range Fin.castSuccEmb),
+      ((∃ i ≤ n, E.display.label e = visibilityReplace n i (E.display.label z)) ∨
+        (E.display.label E.cap ≤ E.display.label z ∧
+          E.display.label E.cap ≤ E.display.label e)) → r z ≠ ⊥) : r e ≠ ⊥ := by
+  have hG : r E.gate ≠ ⊥ := fun h ↦ hcap (le_bot_iff.mp (h ▸ E.cap_le_gate hr))
+  have hgr := E.grade_gate
+  refine hr.ne_bot_of_gateReads hG (E.isGate.reads e he (E.not_mem_visible_castSuccEmb hnew))
+    hwe fun z hzP h ↦ hz z hzP ?_
+  rcases h with ⟨i, hi, hez⟩ | h
+  · exact .inl ⟨i, by rwa [hgr] at hi, by rwa [hgr] at hez⟩
+  · exact .inr h
+
+/-- **Every coupled gated extension forces the bottom transport condition** for its private type,
+its donor and the label of its cap.  A lawful labelling of `P` extends to a lawful labelling `r`
+of the display (bountifulness from the private face at the cap `⊥`); `r` is not `⊥` at the cap,
+hence not at the gate (`cap_le_gate`); the donor face of `r` is lawful for `d`, and the readings of
+the gate carry `⊥` from the anchors (`eq_bot_of_isLawful`, `ne_bot_of_isLawful`). -/
+theorem carriesBottoms {c : Label.{u}} (hc : E.display.label E.cap = c) :
+    CarriesBottoms P d c := by
+  obtain ⟨hfP, hP⟩ := (restrictFace_eq_some_iff _ _).mp E.restrictFace_castSuccEmb
+  obtain ⟨hfd, hd⟩ := (restrictFace_eq_some_iff _ _).mp E.restrictFace_extendByLast
+  suffices key : CarriesBottoms (E.display.comap Fin.castSuccEmb hfP)
+      (E.display.comap (extendByLast f) hfd) c by
+    rw [hP, hd] at key; exact key
+  intro a ha hcapa
+  obtain ⟨r, hr, -, hra⟩ := Scheme.IsLegal.exists_isLawful_extend E.isLegal hfP
+    (isSelfVisible_bot (n + 1)) ha CellScheme.Rows.isLawful_const_bot
+    fun _ ↦ by simp only [min_bot_right]
+  -- The private cells are the cells of the private face.
+  have hpriv : ∀ z ∈ E.display.toCellScheme.visible (Set.range Fin.castSuccEmb),
+      ∃ i, E.display.toScheme.cellMap Fin.castSuccEmb i = z := fun z hz ↦ by
+    have : z ∈ Set.range (E.display.toScheme.cellMap Fin.castSuccEmb) := by
+      rw [Scheme.range_cellMap, mem_coe, Scheme.mem_visibleCells]; exact hz
+    exact this
+  -- The cap is the cell of the private face labelled `c`, of graded index `(univ, n)` there.
+  have hcap : r E.cap ≠ ⊥ := by
+    obtain ⟨i, hi⟩ := hpriv E.cap E.isGate.cap_mem
+    have hgi : (E.display.comap Fin.castSuccEmb hfP).toCellScheme.gradedIndex i = (univ, n) := by
+      have h := E.display.toScheme.map_comap_gradedIndex Fin.castSuccEmb i
+      rw [hi, E.gradedIndex_cap] at h
+      obtain ⟨h1, h2⟩ := Prod.ext_iff.mp h
+      exact Prod.ext ((Finset.map_injective _) h1) h2
+    rw [← hi, hra i]
+    refine hcapa i hgi ?_
+    -- The labels of the private face are those of its cells (`comap_label`, by definition).
+    change E.display.label (E.display.toScheme.cellMap Fin.castSuccEmb i) = c
+    rw [hi, hc]
+  refine ⟨fun j ↦ r (E.display.toScheme.cellMap (extendByLast f) j),
+    hr.comap (E.display.toScheme.isLowerEmbedding_comap _), fun j hj hjb ↦ ?_⟩
+  set e := E.display.toScheme.cellMap (extendByLast f) j
+  have he : e ∈ E.display.toCellScheme.visible (Set.range (extendByLast f)) :=
+    Scheme.mem_visibleCells.mp (E.display.toScheme.cellMap_mem _ j)
+  have hnew : Fin.last n ∈ E.display.toCellScheme.scope e := by
+    -- The scope of a cell of the donor face is the preimage of the scope of its cell
+    -- (`Scheme.comap_scope`, by definition).
+    have hj' : Fin.last m ∈ (E.display.toCellScheme.scope e).preimage (extendByLast f)
+        (extendByLast f).injective.injOn := hj
+    simpa using mem_preimage.mp hj'
+  have hle : E.display.label e = (E.display.comap (extendByLast f) hfd).label j := rfl
+  refine ⟨fun hCe hanc ↦ E.eq_bot_of_isLawful hr hcap he hnew hjb (by rwa [hc, hle])
+      fun z hz i hi hez ↦ ?_,
+    fun hanc ↦ E.ne_bot_of_isLawful hr hcap he hnew hjb fun z hz hez ↦ ?_⟩
+  · obtain ⟨i', rfl⟩ := hpriv z hz
+    rw [hra i']
+    exact hanc i' i hi hez
+  · obtain ⟨i', rfl⟩ := hpriv z hz
+    rw [hra i']
+    rw [hc] at hez
+    exact hanc i' hez
+
+end CoupledGatedExtension
+
+/-- **The coupled gated pinned extension property forces the bottom transport condition** at each
+of its inputs: for a legal `P`, a face `f` with restriction `p`, a legal one-point coface `d` of
+`p`, and a cell `C` of `P` of graded index `(univ, n)` not labelled `⊥` below which `d` is
+anchored, with `m + 1 < n`, the condition holds for `P`, `d` and the label of `C`. -/
+theorem HasCoupledGatedPinnedExtensions.carriesBottoms
+    (h : HasCoupledGatedPinnedExtensions α) {P : StageType.{u} α n} {f : Fin m ↪ Fin n}
+    {p : StageType.{u} α m} {d : StageType.{u} α (m + 1)} {C : Fin P.card} (hP : P.IsLegal)
+    (hp : restrictFace f P = some p) (hd : d.IsLegal)
+    (hdp : restrictFace Fin.castSuccEmb d = some p)
+    (hC : P.toCellScheme.gradedIndex C = (univ, n)) (hC0 : P.label C ≠ ⊥) (hmn : m + 1 < n)
+    (ha : IsAnchored P C d) : CarriesBottoms P d (P.label C) := by
+  obtain ⟨E, hE⟩ := h P f p d C hP hp hd hdp hC hC0 hmn ha
+  exact E.carriesBottoms hE
+
+end VaughtConjecture.StageType

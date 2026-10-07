@@ -97,12 +97,13 @@ cutoff `0` extends each occurrence by a point off it (`RealizesOver.exists_notMe
 occurrences of every arity.  This is the realization form of the infinitude of models of the
 density sentence; no clause of a model is used.
 
-**Status.**  The reduction of finite-extension receiving to finite-cut receiving, and the descent
-of finite-cut receiving along stage reduction, are proved here.  Finite-cut receiving of models in
+**Status.**  The reduction of finite-extension receiving to finite-cut receiving, and the descent of
+finite-cut receiving along stage reduction, are proved here.  Finite-cut receiving of models in
 general, (R1) of the table of Layer 3, is open (the universal gated extension hypothesis
 `StageType.HasGatedPinnedExtensions` fails at every stage,
 `GatedExtensionCounterexample.not_hasGatedPinnedExtensions`, and the coupled form
-`StageType.HasCoupledGatedPinnedExtensions` is open), and through
+`StageType.HasCoupledGatedPinnedExtensions` is false at every stage above `1`,
+`CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`), and through
 `Expansion.FiniteCutReceiving` it is the remaining hypothesis of the transfer of
 `VaughtConjecture.Expansion.Agreement`.
 
