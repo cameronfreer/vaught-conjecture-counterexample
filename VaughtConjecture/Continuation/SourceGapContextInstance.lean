@@ -27,11 +27,12 @@ context of grade `2`, with lost point `1`, owner `3`, and lost top `4`:
 The roots include the empty root and the root `{0}` along `Fin.castSuccEmb`; the face of `P α`
 on `{0}` is top-free.
 
-**So the vacuity branch of the dichotomy fails** (`Realization.not_forall_not_isSourceGapContext`):
-some legal stage type is a source-gap context, so the hypothesis of
-`Realization.residualReceiving_of_forall_not_isSourceGapContext` is false, and (R2) does not follow
-from vacuity.  This says nothing about whether `P α` is acquired in a residual model, nor about
-cutoff determination over it.
+**So the vacuity argument for (R2) is ruled out**
+(`Realization.not_forall_not_isSourceGapContext`): some legal stage type is a source-gap context,
+so the hypothesis of `Realization.residualReceiving_of_forall_not_isSourceGapContext` is false.
+This rules out that argument only, not (R2): (R2) may still be proved by another argument.  It
+says nothing about whether `P α` is acquired in a residual model, nor about cutoff determination
+over it.
 
 ## Placement
 
@@ -91,7 +92,8 @@ end GatedExtensionCounterexample
 namespace Realization
 
 /-- **Some legal stage type is a source-gap context**: the hypothesis of
-`residualReceiving_of_forall_not_isSourceGapContext` is false, at every universe level. -/
+`residualReceiving_of_forall_not_isSourceGapContext` is false, at every universe level.  This
+rules out the vacuity argument for (R2), not (R2) itself. -/
 theorem not_forall_not_isSourceGapContext :
     ¬ ∀ ⦃α : Ordinal.{u}⦄ ⦃n k K : ℕ⦄ (t' : StageType.{u} α k) (h : Fin n ↪ Fin k),
       t'.IsLegal → ¬ t'.IsSourceGapContext K h :=
