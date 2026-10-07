@@ -20,10 +20,13 @@ Checks for `VaughtConjecture.Continuation.ExactReceiving`.
 * **The residual statement at `K = 0` is vacuous**: in a model at a limit stage, top-grade
   supremum `0` makes the empty tuple a globally rigid core.
 * **The hollow statement at a model with exact receiving of all legal donors** holds, by the
-  exact reformulation.  Prospectively (not in the library): an ultrahomogeneous structure whose age
-  is the age of legal charts would have exact receiving of all legal donors, so the conclusion of
-  (R3) would hold for it; the existence of such a structure is conditional on the coatom extension
-  property, which is not proved, and its unbounded top-grade growth is not proved.
+  exact reformulation.  An ultrahomogeneous structure whose age is the age of legal charts has
+  exact receiving of all legal donors (`exactReceivingWithin_reconstruct_of_legalAge`,
+  `ClassicalLimit/LegalAge`), so the conclusion of (R3) holds for it.  Such a structure exists at
+  a countable block stage, with a reconstruction that is a model, conditional on the coatom
+  extension property with apex there (`exists_saturated_reconstruct`,
+  `MainTheorem/SameLevelMaximal`), which is not proved; its unbounded top-grade growth is not
+  proved.
 * **Under (R3), a globally rigid core of a cover-hollow model with unbounded growth is rigid in
   every legal donor over its type.**
 * **The rigid-core instance**: top-free one-point cofaces are received exactly under finite-cut
