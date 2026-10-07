@@ -111,7 +111,7 @@ acquisition and scheme determination, with no receiving
 in the hollow case the acquired context has the private cap and the marker labelled `⊤`, the
 coface `D'` is on the constructed legal scheme of the growth construction, and the marker clause of
 `Correct` gives scheme determination.  Neither predicate `P` is defined here, neither acquisition
-nor determination is proved for any `P`, and determination is proved only in the rigid-core
+nor determination is proved here for any `P`, and determination is proved only in the rigid-core
 instance.
 
 **Determination needs an acquired context.**  Over a top-free root `t` along the identity, a
