@@ -32,6 +32,14 @@ hull language `hullLanguage α` whose relations are literally the closed faces w
 bundled in `Type`.  The **age of top-free charts** (`topFreeAge α`) is the representative class of
 this family: the structures isomorphic to a top-free chart.
 
+**The age of legal charts.**  A **legal index** (`LegalIndex α`) is a legal stage type at `α` on
+finitely many points, its **legal chart** (`legalChart α i`) is the chart of the stage type, and
+the **age of legal charts** (`legalAge α`) is their representative class.  It contains the age of
+top-free charts (`topFreeAge_subset_legalAge`), so statements proved under legal chart coverage
+(`VaughtConjecture.ClassicalLimit.Reconstruction`) apply under top-free chart coverage.  Its
+hereditary property, amalgamation, and classical limit are in
+`VaughtConjecture.ClassicalLimit.LegalAge`.
+
 **Step 1.**  The index is inhabited, by the chart on no points (`TopFreeIndex.empty`), with no
 hypothesis on `α`; it is countable when there are countably many ordinals below `α`
 (`countable_topFreeIndex`, an instance at `ω`); every top-free chart is finite, hence countable
@@ -195,5 +203,32 @@ theorem countable_quotient_topFreeAge (hα : (Set.Iio α).Countable) :
     (Quotient.mk' '' topFreeAge.{u} α).Countable :=
   haveI := countable_topFreeIndex hα
   representativeClass_countable_quotient _
+
+/-! ### The family of legal charts -/
+
+/-- A **legal index** at stage `α`: a legal stage type at stage `α` on some finite number of
+points. -/
+abbrev LegalIndex (α : Ordinal.{u}) : Type (u + 1) :=
+  Σ k : ℕ, {P : StageType.{u} α k // P.IsLegal}
+
+/-- The **legal chart** of a legal index: the chart of its stage type, a finite structure of the
+hull language, bundled in `Type`. -/
+noncomputable abbrev legalChart (α : Ordinal.{u}) (i : LegalIndex.{u} α) :
+    Bundled.{0} (hullLanguage.{u} α).Structure :=
+  ⟨i.2.1.Chart, inferInstance⟩
+
+/-- The **age of legal charts** at stage `α`: the structures of the hull language isomorphic to a
+legal chart. -/
+def legalAge (α : Ordinal.{u}) : Set (Bundled.{0} (hullLanguage.{u} α).Structure) :=
+  representativeClass (legalChart α)
+
+/-- A legal chart belongs to the age of legal charts. -/
+theorem legalChart_mem_legalAge (i : LegalIndex.{u} α) : legalChart α i ∈ legalAge α :=
+  mem_representativeClass _ i
+
+/-- **The age of top-free charts is contained in the age of legal charts**: a top-free chart is the
+legal chart of the same stage type. -/
+theorem topFreeAge_subset_legalAge : topFreeAge α ⊆ legalAge α := fun _ ⟨i, he⟩ ↦
+  ⟨⟨i.1, i.2.1, i.2.2.1⟩, he⟩
 
 end VaughtConjecture

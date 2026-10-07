@@ -35,33 +35,36 @@ rigid core, and the definitions do not exclude a cover-hollow model with unbound
 globally rigid core (`VaughtConjecture.Continuation.Classification`).  In such a model a received
 donor is the type of a cover containing the core, so under (R3) the core is rigid in every legal
 donor over its type (`Realization.HollowReceiving.isRigidCoreIn`).  So (R3) asserts that such
-models have no legal donor over a rigid core in which the core is not rigid.  Under the current
-definitions the count uses (R3) at every cover-hollow model with unbounded growth, a globally rigid
-core included: the cover of the terminal models (`Realization.exists_hasTerminalProperty`) checks
-unbounded growth first and assigns the hollow property whatever the cores are, and the hollow
-property (`Realization.HasTerminalProperty`) does not exclude a globally rigid core.
+models have no legal donor over a rigid core in which the core is not rigid.  With (R3) for
+cover-hollowness, the count uses (R3) at every cover-hollow model with unbounded growth, a globally
+rigid core included: the cover of the terminal models (`Realization.exists_hasTerminalProperty`)
+checks unbounded growth first and assigns the hollow property whatever the cores are, and the
+hollow property (`Realization.HasTerminalProperty`) does not exclude a globally rigid core.
 
-Prospectively (a change of definition not made in the library): if the hollow property and the
-predicate given to (R3) also excluded a globally rigid core, the cover of the terminal models would
-still follow from `Realization.exists_hasTerminalProperty`, models with a globally rigid core would
-go through the rigid-core comparison, and the count would need (R3) only for that stronger
-predicate, which (R3) for the current predicate implies (`Realization.HollowReceiving.mono`).
+The restricted alternative (`VaughtConjecture.Continuation.RestrictedHollow`) excludes a globally
+rigid core from the hollow property and from the predicate given to (R3)
+(`Realization.HasRestrictedTerminalProperty`, `Realization.IsCoverHollowWithoutRigidCoreAtBlock`):
+the cover of the terminal models survives (`Realization.exists_hasRestrictedTerminalProperty`),
+models with a globally rigid core go through the rigid-core comparison, and the count needs (R3)
+only for that stronger predicate, which (R3) for cover-hollowness implies
+(`Realization.HollowReceiving.withoutRigidCore`, an instance of `Realization.HollowReceiving.mono`).
+It is a separate hypothesis set, not shown equivalent to (R3) for cover-hollowness.
 
 **The rigid part is (R1).**  Under finite-cut receiving ((R1), `Realization.HasFiniteCutReceiving`),
 at a limit stage, a one-point coface in which the root is a rigid core is received exactly
 (`Realization.exists_covers_snoc_of_isRigidCoreIn`, the one-point case of the rigid-core receiving
 `Realization.exists_covers_of_isRigidCoreIn` of the rigid-core comparison): top-free cofaces in
-particular.  So (R2) and (R3) follow from (R1) for every model at every limit stage, of every
-universe, together with their restriction to the cofaces in which the root is not a rigid core
+particular.  So (R2) and (R3) follow from (R1) for every model at every limit stage, together
+with their restriction to the cofaces in which the root is not a rigid core
 (`Realization.ResidualReceiving.of_not_isRigidCoreIn`,
 `Realization.HollowReceiving.of_not_isRigidCoreIn`).  That restriction is where literal-top
 recovery is needed: receiving at a cutoff above the labels of the donor that are not `⊤` returns a
 type agreeing with the donor except that a top cell may carry an ordinal at least the cutoff.
 
-This form of (R1), for every model at every limit stage of every universe, is stronger in stage
-range than the library's (R1) for models, `Expansion.FiniteCutReceiving`, which covers only the
-limit stages below `ω₁` in universe `0` and does not supply it.  The mismatch comes from (R2) and
-(R3), which are themselves stated at every limit stage.
+This receiving hypothesis ranges over every limit stage at fixed universe levels and is not
+supplied by the countable-stage `Expansion.FiniteCutReceiving`, the library's (R1) for models
+(limit stages below `ω₁`, universe `0`).  The mismatch comes from (R2) and (R3), which are
+themselves stated at every limit stage.
 
 **Determination.**  Let `t'` be a stage type on `k` points, `h : Fin n ↪ Fin k`, and `d` a stage
 type on `n + 1` points.  For a set `U` of stage types on `k + 1` points, `d` is **determined over
@@ -82,7 +85,10 @@ member:
 The rigid-core case is the instance with `t'` the root, `h` the identity, `D' = d`, and a cutoff
 above every label of `d` other than `⊤`
 (`StageType.isDeterminedWithin_receivingFamily_of_isRigidCoreIn`, from
-`StageType.eq_of_mem_receivingFamily_of_isRigidCoreIn`).
+`StageType.isDeterminedWithin_receivingFamily_of_isRigidCoreIn_castSucc`, the arbitrary-face
+instance of `StageType.eq_of_mem_receivingFamily_of_isRigidCoreIn`).  Determination is antitone
+in its family (`StageType.IsDeterminedWithin.mono`), so it persists at larger receiving cutoffs
+(`StageType.IsDeterminedWithin.receivingFamily_of_le`).
 
 **The reductions.**  Each of (R2) and (R3) is reduced to two named statements, for a predicate
 `P` on pairs `(t', h)`, the **acquired context**:
@@ -97,8 +103,9 @@ above every label of `d` other than `⊤`
   types on the scheme of some coface of `t'` in the hollow case
   (`Realization.SchemeDetermination`).
 
-Then (R2) follows from (R1) for every model at every limit stage, of every universe (stronger in
-stage range than `Expansion.FiniteCutReceiving`, as above), residual acquisition, and cutoff
+Then (R2) follows from (R1) for every model at every limit stage (a receiving hypothesis that
+ranges over every limit stage at fixed universe levels and is not supplied by the countable-stage
+`Expansion.FiniteCutReceiving`, as above), residual acquisition, and cutoff
 determination (`Realization.residualReceiving_of_cutoffDetermination`), and (R3) from hollow
 acquisition and scheme determination, with no receiving
 (`Realization.hollowReceiving_of_schemeDetermination`).  This is the form of the constructions of
@@ -120,8 +127,8 @@ one-point coface `d` of `t` that is not top-free is determined neither at a cuto
 `t` is a top-free stage type on the scheme of `d`, in its receiving family, with face `t`.  So
 cutoff determination and scheme determination for the predicate that is always true fail, already
 at the empty root and the one-point stage type whose only cell is an apex labelled `⊤`
-(`VaughtConjecture.Continuation.ExactReceivingExamples`).  So, along the identity (the only case
-compiled), the acquired context must carry information that a top-free root lacks; in 3.3 it is
+(`VaughtConjecture.Continuation.ExactReceivingExamples`).  So, along the identity, the acquired
+context must carry information that a top-free root lacks; in 3.3 it is
 acquired from the absence of a rigid core (the private gap) or from hollowness (the private cap and
 the marker labelled `⊤`).
 
@@ -140,14 +147,6 @@ variable {α : Ordinal.{u}} {n k m : ℕ}
 
 /-! ### Determination -/
 
-/-- `extendByLast` of the identity is the identity. -/
-theorem extendByLast_refl : extendByLast (Function.Embedding.refl (Fin n)) =
-    Function.Embedding.refl (Fin (n + 1)) := by
-  ext i
-  induction i using Fin.lastCases with
-  | last => simp
-  | cast i => simp
-
 namespace StageType
 
 /-- A one-point type `d` is **determined over `t'` along `h` within `U`**: every member of `U`
@@ -155,6 +154,34 @@ whose face along the initial segment is `t'` has face `d` along `h` followed by 
 def IsDeterminedWithin (U : Set (StageType.{u} α (k + 1))) (t' : StageType.{u} α k)
     (h : Fin n ↪ Fin k) (d : StageType.{u} α (n + 1)) : Prop :=
   ∀ q ∈ U, restrictFace Fin.castSuccEmb q = some t' → restrictFace (extendByLast h) q = some d
+
+/-- Determination is antitone in the family. -/
+theorem IsDeterminedWithin.mono {U V : Set (StageType.{u} α (k + 1))} {t' : StageType.{u} α k}
+    {h : Fin n ↪ Fin k} {d : StageType.{u} α (n + 1)} (hV : IsDeterminedWithin V t' h d)
+    (hUV : U ⊆ V) : IsDeterminedWithin U t' h d :=
+  fun q hq ↦ hV q (hUV hq)
+
+/-- **Determination at a cutoff persists at every larger cutoff**: the receiving family shrinks as
+the cutoff grows. -/
+theorem IsDeterminedWithin.receivingFamily_of_le {D : StageType.{u} α (k + 1)} {δ δ' : Label.{u}}
+    {t' : StageType.{u} α k} {h : Fin n ↪ Fin k} {d : StageType.{u} α (n + 1)}
+    (hdet : IsDeterminedWithin (receivingFamily D δ) t' h d) (hδ : δ ≤ δ') :
+    IsDeterminedWithin (receivingFamily D δ') t' h d :=
+  hdet.mono fun _ hq ↦ mem_receivingFamily_of_le hq hδ
+
+/-- **Determination over a rigid context**, the rigid-core instance along a face: if a legal `D'`
+has face `t'` along the initial segment and `d` along `h` followed by the new point, and the
+private face is a rigid core of `D'`, then `d` is determined over `t'` along `h` within the
+receiving family of `D'` at a cutoff above every label of `D'` other than `⊤`. -/
+theorem isDeterminedWithin_receivingFamily_of_isRigidCoreIn_castSucc {t' : StageType.{u} α k}
+    {D' : StageType.{u} α (k + 1)} (hD' : D'.IsLegal)
+    (hD't' : restrictFace Fin.castSuccEmb D' = some t') {h : Fin n ↪ Fin k}
+    {d : StageType.{u} α (n + 1)} (hD'd : restrictFace (extendByLast h) D' = some d)
+    (hrig : D'.IsRigidCoreIn Fin.castSuccEmb) {δ : Ordinal.{u}}
+    (hδ : ∀ j, D'.label j ≠ ⊤ → D'.label j < (δ : Label.{u})) :
+    IsDeterminedWithin (receivingFamily D' δ) t' h d := fun q hq hqt ↦ by
+  rw [eq_of_mem_receivingFamily_of_isRigidCoreIn hD' hδ hq hqt hD't' hrig]
+  exact hD'd
 
 /-- **The rigid-core instance of determination**: a legal one-point coface `d` of `t` in which the
 root is a rigid core is determined over `t` along the identity within its receiving family at a
@@ -165,9 +192,8 @@ theorem isDeterminedWithin_receivingFamily_of_isRigidCoreIn {t : StageType.{u} �
     (hrig : d.IsRigidCoreIn Fin.castSuccEmb) {δ : Ordinal.{u}}
     (hδ : ∀ j, d.label j ≠ ⊤ → d.label j < (δ : Label.{u})) :
     IsDeterminedWithin (receivingFamily d δ) t (Function.Embedding.refl (Fin n)) d := by
-  intro q hq hqt
-  rw [extendByLast_refl, restrictFace_refl,
-    eq_of_mem_receivingFamily_of_isRigidCoreIn hd hδ hq hqt hdt hrig]
+  exact isDeterminedWithin_receivingFamily_of_isRigidCoreIn_castSucc hd hdt
+    (by rw [extendByLast_refl, restrictFace_refl]) hrig hδ
 
 /-- A one-point type determined over its root along the identity, within a family containing a
 coface `D'` of the root, is `D'`. -/
@@ -362,7 +388,8 @@ theorem HollowReceiving.isRigidCoreIn
   exact hcore D u g hu hug
 
 /-- **(R3) is antitone in the predicate**: (R3) for `H` gives (R3) for every stronger predicate,
-for instance `H` together with the absence of a globally rigid core. -/
+for instance `H` together with the absence of a globally rigid core
+(`Realization.HollowReceiving.withoutRigidCore`). -/
 theorem HollowReceiving.mono
     {H H' : ∀ {α : Ordinal.{u}} {M : Type w}, Realization.{u, w} α M → Prop}
     (hhol : HollowReceiving.{u, w} H)
@@ -372,10 +399,10 @@ theorem HollowReceiving.mono
 
 /-! ### The rigid part from (R1) -/
 
-/-- **(R2) from (R1) and the non-rigid cofaces**: if every model at every limit stage, of every
-universe, has finite-cut receiving, then (R2) follows from its restriction to the cofaces in which
-the root is not a rigid core.  The hypothesis is stronger in stage range than
-`Expansion.FiniteCutReceiving` (limit stages below `ω₁`, universe `0`), which does not supply it. -/
+/-- **(R2) from (R1) and the non-rigid cofaces**: if every model at every limit stage has
+finite-cut receiving, then (R2) follows from its restriction to the cofaces in which the root is
+not a rigid core.  The receiving hypothesis ranges over every limit stage at fixed universe levels
+and is not supplied by the countable-stage `Expansion.FiniteCutReceiving`. -/
 theorem ResidualReceiving.of_not_isRigidCoreIn
     (hrec : ∀ ⦃α : Ordinal.{u}⦄ ⦃M : Type w⦄ ⦃R : Realization.{u, w} α M⦄,
       Order.IsSuccLimit α → R.IsModel → R.HasFiniteCutReceiving)
@@ -392,10 +419,10 @@ theorem ResidualReceiving.of_not_isRigidCoreIn
     · exact exists_covers_snoc_of_isRigidCoreIn hR.isConsistent hα (hrec hα hR) hc hD hrig
     · exact h hα hR hcore hK t c hc D hD hDK hrig
 
-/-- **(R3) from (R1) and the non-rigid cofaces**: if every model at every limit stage, of every
-universe, has finite-cut receiving, then (R3) follows from its restriction to the cofaces in which
-the root is not a rigid core.  The hypothesis is stronger in stage range than
-`Expansion.FiniteCutReceiving` (limit stages below `ω₁`, universe `0`), which does not supply it. -/
+/-- **(R3) from (R1) and the non-rigid cofaces**: if every model at every limit stage has
+finite-cut receiving, then (R3) follows from its restriction to the cofaces in which the root is
+not a rigid core.  The receiving hypothesis ranges over every limit stage at fixed universe levels
+and is not supplied by the countable-stage `Expansion.FiniteCutReceiving`. -/
 theorem HollowReceiving.of_not_isRigidCoreIn
     {H : ∀ {α : Ordinal.{u}} {M : Type w}, Realization.{u, w} α M → Prop}
     (hrec : ∀ ⦃α : Ordinal.{u}⦄ ⦃M : Type w⦄ ⦃R : Realization.{u, w} α M⦄,
@@ -481,10 +508,10 @@ theorem restrictFace_of_covers (hR : R.IsConsistent) {t : StageType.{u} α n}
   exact congrFun hcc' i
 
 /-- **(R2) from (R1), residual acquisition, and cutoff determination**, for any predicate `P` on
-acquired contexts.  (R1) is assumed for every model at every limit stage, of every universe:
-stronger in stage range than `Expansion.FiniteCutReceiving` (limit stages below `ω₁`, universe
-`0`), which does not supply it.  No predicate `P` on pairs `(t', h)` is defined in the library;
-this is a template. -/
+acquired contexts.  (R1) is assumed for every model at every limit stage: the receiving
+hypothesis ranges over every limit stage at fixed universe levels and is not supplied by the
+countable-stage `Expansion.FiniteCutReceiving`.  No `P` is defined in the library; this is a
+template. -/
 theorem residualReceiving_of_cutoffDetermination
     {P : ∀ {α : Ordinal.{u}} {n k : ℕ}, ℕ → StageType.{u} α k → (Fin n ↪ Fin k) → Prop}
     (hrec : ∀ ⦃α : Ordinal.{u}⦄ ⦃M : Type w⦄ ⦃R : Realization.{u, w} α M⦄,

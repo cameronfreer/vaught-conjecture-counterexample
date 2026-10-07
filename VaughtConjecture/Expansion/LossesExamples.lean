@@ -19,6 +19,9 @@ import VaughtConjecture.MainTheorem.ModelExpansionDomains
   and (R3) for it is exactly (R3) at the block stages for cover-hollow models, so naming it does
   not strengthen (R3).
 * **One class per property**, and the hypotheses of the spectrum theorem.
+* **The restricted hollow property.**  The loss at `0` is countable with (R3) for cover-hollowness
+  without a globally rigid core at a block stage; the spectrum theorem with the unrestricted (R3)
+  follows from the one with the restricted (R3); and the hypotheses of the latter.
 -/
 
 namespace VaughtConjecture
@@ -117,5 +120,49 @@ example : CapToModel.{0} → FiniteCutReceiving.{0} → (∀ ξ < ω₁, Forcing
     (∀ ξ < ω₁, (expansionDomain ξ \ expansionDomain (ξ + 1)).Nonempty) →
     HasThinAlephOneSpectrum densitySentence.{0} :=
   densitySentence_hasThinAlephOneSpectrum_of_terminalClassification
+
+/-! ### The restricted hollow property -/
+
+/-- The loss at `0` is countable, under (R1), the continuation criterion, (R2) and (R3) for
+cover-hollowness without a globally rigid core at a block stage. -/
+example (hrec : FiniteCutReceiving.{0}) (hcont : ContinuationCriterion.{0})
+    (hres : ResidualReceiving.{0, 0})
+    (hhol : HollowReceiving.{0, 0} IsCoverHollowWithoutRigidCoreAtBlock) :
+    (expansionDomain 0 \ expansionDomain (0 + 1)).Countable :=
+  expansionDomain_loss_countable_of_restrictedTerminalClassification hrec hcont hres hhol 0
+    (omega0_pos.trans omega0_lt_omega_one)
+
+/-- **The spectrum theorem with the unrestricted (R3) follows from the one with the restricted
+(R3)**, through `HollowReceiving.withoutRigidCore`. -/
+example (hcap : CapToModel.{0}) (hrec : FiniteCutReceiving.{0})
+    (hF : ∀ ξ < ω₁, ForcingDonors.{0} ξ) (hcont : ContinuationCriterion.{0})
+    (hres : ResidualReceiving.{0, 0}) (hhol : HollowReceiving.{0, 0} IsCoverHollowAtBlock)
+    (hn : ∀ ξ < ω₁, (expansionDomain ξ \ expansionDomain (ξ + 1)).Nonempty) :
+    HasThinAlephOneSpectrum densitySentence.{0} :=
+  densitySentence_hasThinAlephOneSpectrum_of_restrictedTerminalClassification hcap hrec hF hcont
+    hres hhol.withoutRigidCore hn
+
+/-- **The hypotheses of the spectrum theorem with the restricted hollow property**, as printed by
+`#check @densitySentence_hasThinAlephOneSpectrum_of_restrictedTerminalClassification`, with the
+namespaces of this file open:
+```
+CapToModel →
+  FiniteCutReceiving →
+    (∀ ξ < ω_ 1, ForcingDonors ξ) →
+      ContinuationCriterion →
+        ResidualReceiving →
+          (HollowReceiving fun {α} {M} => IsCoverHollowWithoutRigidCoreAtBlock) →
+            (∀ ξ < ω_ 1, (expansionDomain ξ \ expansionDomain (ξ + 1)).Nonempty) →
+              HasThinAlephOneSpectrum densitySentence
+```
+They are those of `densitySentence_hasThinAlephOneSpectrum_of_terminalClassification`, with (R3)
+for `Realization.IsCoverHollowWithoutRigidCoreAtBlock` in place of
+`Realization.IsCoverHollowAtBlock`. -/
+example : CapToModel.{0} → FiniteCutReceiving.{0} → (∀ ξ < ω₁, ForcingDonors.{0} ξ) →
+    ContinuationCriterion.{0} → ResidualReceiving.{0, 0} →
+    HollowReceiving.{0, 0} IsCoverHollowWithoutRigidCoreAtBlock →
+    (∀ ξ < ω₁, (expansionDomain ξ \ expansionDomain (ξ + 1)).Nonempty) →
+    HasThinAlephOneSpectrum densitySentence.{0} :=
+  densitySentence_hasThinAlephOneSpectrum_of_restrictedTerminalClassification
 
 end VaughtConjecture

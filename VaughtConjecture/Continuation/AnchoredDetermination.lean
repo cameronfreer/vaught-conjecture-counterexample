@@ -136,22 +136,6 @@ variable {α : Ordinal.{u}} {n k : ℕ}
 
 namespace StageType
 
-/-! ### Determination within families -/
-
-/-- Determination is antitone in the family. -/
-theorem IsDeterminedWithin.mono {U V : Set (StageType.{u} α (k + 1))} {t' : StageType.{u} α k}
-    {h : Fin n ↪ Fin k} {d : StageType.{u} α (n + 1)} (hV : IsDeterminedWithin V t' h d)
-    (hUV : U ⊆ V) : IsDeterminedWithin U t' h d :=
-  fun q hq ↦ hV q (hUV hq)
-
-/-- **Determination at a cutoff persists at every larger cutoff**: the receiving family shrinks as
-the cutoff grows. -/
-theorem IsDeterminedWithin.receivingFamily_of_le {D : StageType.{u} α (k + 1)} {δ δ' : Label.{u}}
-    {t' : StageType.{u} α k} {h : Fin n ↪ Fin k} {d : StageType.{u} α (n + 1)}
-    (hdet : IsDeterminedWithin (receivingFamily D δ) t' h d) (hδ : δ ≤ δ') :
-    IsDeterminedWithin (receivingFamily D δ') t' h d :=
-  hdet.mono fun _ hq ↦ mem_receivingFamily_of_le hq hδ
-
 /-! ### Available private tops -/
 
 /-- A point other than the last lies in the initial segment. -/
@@ -265,20 +249,6 @@ theorem not_isDeterminedWithin_saturationFamily_of_not_hasAvailablePrivateTop
     (hdet.mono (receivingFamily_subset_saturationFamily (d := D') rfl _))
 
 /-! ### A rigid context determines -/
-
-/-- **Determination over a rigid context**, the rigid-core instance along a face: if a legal `D'`
-has face `t'` along the initial segment and `d` along `h` followed by the new point, and the
-private face is a rigid core of `D'`, then `d` is determined over `t'` along `h` within the
-receiving family of `D'` at a cutoff above every label of `D'` other than `⊤`. -/
-theorem isDeterminedWithin_receivingFamily_of_isRigidCoreIn_castSucc {t' : StageType.{u} α k}
-    {D' : StageType.{u} α (k + 1)} (hD' : D'.IsLegal)
-    (hD't' : restrictFace Fin.castSuccEmb D' = some t') {h : Fin n ↪ Fin k}
-    {d : StageType.{u} α (n + 1)} (hD'd : restrictFace (extendByLast h) D' = some d)
-    (hrig : D'.IsRigidCoreIn Fin.castSuccEmb) {δ : Ordinal.{u}}
-    (hδ : ∀ j, D'.label j ≠ ⊤ → D'.label j < (δ : Label.{u})) :
-    IsDeterminedWithin (receivingFamily D' δ) t' h d := fun q hq hqt ↦ by
-  rw [eq_of_mem_receivingFamily_of_isRigidCoreIn hD' hδ hq hqt hD't' hrig]
-  exact hD'd
 
 /-- A **rigid context** for `d` along `h`: some legal coface of `t'` has face `d` along `h`
 followed by the new point, and the private face is a rigid core of it. -/
