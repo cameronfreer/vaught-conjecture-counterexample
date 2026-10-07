@@ -31,7 +31,8 @@ label is an ordinal (`IsProper`); the formal top is not an ordinal and lies abov
   `o + 1` it keeps exactly the labels `≤ o` (`reduce_add_one_of_le`, `reduce_add_one_of_lt`).
 
 Stage reduction is not capped observation (`VaughtConjecture.Label.Cap`): reduction keeps the
-formal top, while a cap at a proper cutoff forgets it.
+formal top, while a cap at a proper cutoff forgets it.  Capping at a label other than `⊥` keeps
+every label other than `⊥` away from `⊥` (`ne_bot_of_min_eq_of_ne_bot`).
 
 The cast of a natural number `n` to a label is the label of the ordinal `n` (`natCast_label`);
 these casts are injective and order-preserving, lie below `ω` (so below `ω ^ 2`,
@@ -402,6 +403,13 @@ theorem countable_setOf_lt_omega0_sq :
   exact (countable_setOf_atStage h).mono fun _ hx ↦ .inl hx
 
 end Countability
+
+/-- A label whose minimum with a label `c ≠ ⊥` agrees with that of a label `b ≠ ⊥` is not `⊥`. -/
+theorem ne_bot_of_min_eq_of_ne_bot {a b c : Label.{u}} (h : min a c = min b c)
+    (hb : b ≠ ⊥) (hc : c ≠ ⊥) : a ≠ ⊥ := by
+  rintro rfl
+  rw [min_eq_left bot_le] at h
+  exact (min_eq_bot.mp h.symm).elim hb hc
 
 end Label
 

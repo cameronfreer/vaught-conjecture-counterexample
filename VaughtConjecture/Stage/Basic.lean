@@ -610,4 +610,60 @@ theorem eq_of_gradedIndex_eq_of_restrictFace {n m : ℕ} {Am : StageType.{u} α 
 
 end StageType
 
+/-! ### The cells of a face of a stage type -/
+
+namespace StageType
+
+variable {α : Ordinal.{u}} {n m k : ℕ} {D : StageType.{u} α n} {f : Fin m ↪ Fin n}
+  {t : StageType.{u} α m}
+
+/-- The scheme of a face is the restriction of the scheme. -/
+theorem comap_toScheme_of_restrictFace (h : restrictFace f D = some t) :
+    D.toScheme.comap f = t.toScheme := by
+  obtain ⟨hf, rfl⟩ := (restrictFace_eq_some_iff D f).mp h
+  rfl
+
+/-- The cell of `D` at a cell of its face `t` along `f`. -/
+noncomputable def faceCell (h : restrictFace f D = some t) (i : Fin t.card) : Fin D.card :=
+  D.toScheme.faceCell f (comap_toScheme_of_restrictFace h) i
+
+/-- The label of a cell of a face is its label in the face. -/
+@[simp] theorem label_faceCell (h : restrictFace f D = some t) (i : Fin t.card) :
+    D.label (faceCell h i) = t.label i := by
+  obtain ⟨hf, rfl⟩ := (restrictFace_eq_some_iff D f).mp h
+  rfl
+
+/-- The grade of a cell of a face is its grade in the face. -/
+@[simp] theorem grade_faceCell (h : restrictFace f D = some t) (i : Fin t.card) :
+    D.toCellScheme.grade (faceCell h i) = t.toCellScheme.grade i :=
+  D.toScheme.grade_faceCell _ i
+
+/-- The scope of a cell of a face is the image of its scope in the face. -/
+theorem scope_faceCell (h : restrictFace f D = some t) (i : Fin t.card) :
+    D.toCellScheme.scope (faceCell h i) = (t.toCellScheme.scope i).map f :=
+  D.toScheme.scope_faceCell _ i
+
+/-- **Lawful sections restrict to a face.** -/
+theorem isLawful_comp_faceCell (h : restrictFace f D = some t) {a : Fin D.card → Label.{u}}
+    (ha : D.rows.IsLawful a) : t.rows.IsLawful fun i ↦ a (faceCell h i) := by
+  obtain ⟨hf, rfl⟩ := (restrictFace_eq_some_iff D f).mp h
+  exact ha.comap (D.toScheme.isLowerEmbedding_comap f)
+
+/-- A cell of the face along the first points avoids the last point. -/
+theorem last_notMem_scope_faceCell {D : StageType.{u} α (k + 1)} {t' : StageType.{u} α k}
+    (h₁ : restrictFace Fin.castSuccEmb D = some t') (z : Fin t'.card) :
+    Fin.last k ∉ D.toCellScheme.scope (faceCell h₁ z) := by
+  rw [scope_faceCell, mem_map]
+  rintro ⟨y, -, hy⟩
+  exact (Fin.castSucc_lt_last y).ne hy
+
+/-- A cell avoiding the last point is a cell of the face along the first points. -/
+theorem exists_faceCell_eq_of_last_notMem {D : StageType.{u} α (k + 1)} {t' : StageType.{u} α k}
+    (h₁ : restrictFace Fin.castSuccEmb D = some t') {s : Fin D.card}
+    (hs : Fin.last k ∉ D.toCellScheme.scope s) : ∃ z, faceCell h₁ z = s :=
+  D.toScheme.exists_faceCell_eq _ (Scheme.mem_visibleCells.mpr fun _ hx ↦
+    Fin.exists_castSucc_eq.mpr fun hxl ↦ hs (hxl ▸ hx))
+
+end StageType
+
 end VaughtConjecture
