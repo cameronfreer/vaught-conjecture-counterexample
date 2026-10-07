@@ -397,8 +397,8 @@ theorem hollowReceiving_of_cutoffDonorDetermination
 
 /-- **Determination needs an available private top**: if cutoff determination with a donor holds
 for `P` at a limit stage, then over every legal `t'` with face `t` along `h`, and every legal
-non-rigid one-point coface `d` of `t` with `P t' h d`, some coface `D'` of `t'` has face `d` along `h` followed by the
-new point and a private top available to a new cell. -/
+non-rigid one-point coface `d` of `t` with `P t' h d`, some coface `D'` of `t'` has face `d` along
+`h` followed by the new point and a private top available to a new cell. -/
 theorem CutoffDonorDetermination.exists_hasAvailablePrivateTop
     {P : ∀ {α : Ordinal.{u}} {n k : ℕ}, StageType.{u} α k → (Fin n ↪ Fin k) →
       StageType.{u} α (n + 1) → Prop}
