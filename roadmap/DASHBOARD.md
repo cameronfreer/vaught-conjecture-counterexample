@@ -447,25 +447,37 @@ named hypothesis.
    on five points (`Seed.HasCanonicalMultiStep` for every seed), and the completion at `m ≥ 3` for
    every seed.
    Profile catalogues (`Extension/ProfileCatalogue`, `Extension/ProfileCatalogueExamples`;
-   compiled in this repository (theorem named) unless marked otherwise): one new cell at
+   compiled in this repository (theorem named) unless marked otherwise; a test of one scheme, not
+   of the completion, `StageType.HasApexCoatomExtensions` or hypothesis 8): one new cell at
    `(univ, j)` per normalized profile (a labelling of all the cells of the amalgam, values in a
-   fixed bounded grid) lawful on the grade-`j` cut, rows by agreement heights of whole profiles
-   (`ProfileCatalogue.profileScheme`).  Tested at every seed of `TL` and `T5`, at the configuration
-   of the seedL refutation (a tie at `({3}, 1)`, `({4}, 1)`, the cap the ambient label at
-   `({0, 1, 2}, 3)`, the prescription `(A, ⊤, ⊤)` on `C`): with catalogues at the grades 1 and 2
-   only, the position of `2FL∃(2)`, the capped lift from `(C, 3)` fails and the refutation
+   fixed bounded value set `Label.grid k N`) lawful on the grade-`j` cut, rows by agreement heights
+   of whole profiles (`ProfileCatalogue.profileScheme`, literally a `multiLayerScheme`).  Two
+   departures from the intended construction: agreement heights instead of a selected section on
+   the lower new cells, and a fixed grid instead of the rank-normalized patterns of `README.md`
+   2.5; so the construction as intended is neither confirmed nor refuted.  At every seed of `TL` and
+   `T5`, with the *ambient labelling* the lawful labelling whose capped observation a capped lift
+   keeps: with catalogues at the grades 1 and 2 only, at the configuration of the seedL refutation
+   (a tie at `({3}, 1)`, `({4}, 1)`, the cap `4` the ambient label at `({0, 1, 2}, 3)`, the
+   prescription `(ω + 1, ⊤, ⊤)` on `C`), the capped lift from `(C, 3)` fails and the refutation
    transfers (`ProfileCatalogue.not_exists_lift_two`, `ProfileCatalogue.not_cappedLift_two`,
    negative special case named); with the catalogue at the grade 3 added, that ambient is excluded
-   (`ProfileCatalogue.not_isLawfulBelow_three`) and the lift exists at the tie configuration
-   (`ProfileCatalogue.exists_lift_three`), so the cap is seen through the rows at the grade 3, not
-   through the values of the grade-2 profiles at `({0, 1, 2}, 3)`.  With the grade-3 catalogue the
-   scheme is still not bountiful, at the top of its bounded inventory
-   (`ProfileCatalogue.not_cappedLift_three`, the failure of
-   `SmallArityExamples.not_isBountiful_flatRows` at `m = 3`; negative special case named); that
-   normalization by rank, which leaves room above every value, removes it is argued, not
-   formalized.  `seedHG`: the grade-1 catalogue has both forced separations
-   (`ProfileCatalogue.exists_separating_cells_seedHG`).  Prospective: the lift of a profile scheme
-   at every ambient labelling; the completion at `m ≥ 3` for every seed stays open.
+   (`ProfileCatalogue.not_isLawfulBelow_three`).  That the rows at the grade 3 see the cap in
+   general is argued from these two, not compiled; it refutes, as stated, the diagnosis that the
+   values of grade-2 profiles at `({0, 1, 2}, 3)` remove the obstruction.  A configured lift at the
+   tie profile with its own cap `3` exists for every top layer `J ≤ 3` and bound `N ≥ 3`
+   (`ProfileCatalogue.exists_lift_tie`; not the refuted configuration, and not the lift at every
+   ambient); at `N = 1` it fails (`ProfileCatalogue.not_exists_lift_tie_one`), `N = 2` is open.
+   With the grade-3 catalogue the scheme still does not lift capped from `(C, 3)`, at the top of its
+   bounded value set (`ProfileCatalogue.not_cappedLift_three`, negative special case named; a
+   failure of the same kind as `SmallArityExamples.cappedLift_fourCellSeed` and `README.md` 2.5,
+   with different combinatorics).  Normalization by rank, leaving room above every value, is a
+   proposed repair (prospective) until its preservation properties compile.  Of the fields of
+   `Seed.MultiLayerStep`: `pos` fails by construction for every `J ≤ 3` (no cell at `(univ, 4)`),
+   `row_lt`, `isLawfulBelow_row` and `exists_isLawful` are not proved, `cappedLift_left` at `k = 3`
+   is refuted for `J = 2, 3` and every other lift is not proved, so neither scheme is a completion
+   as it stands.  `seedHG`: the grade-1 catalogue has both forced separations
+   (`ProfileCatalogue.exists_separating_cells_seedHG`).  The completion at `m ≥ 3` for every seed
+   and hypothesis 8 stay open.
 2. **Stable availability at twins** (compiled): from legal types
    (`Realization.availability_stableSection_of_hasLegalTypes`), so every model at a block stage is
    stably lawful (`Realization.IsModel.isStablyLawful`), and so is every exactly consistent

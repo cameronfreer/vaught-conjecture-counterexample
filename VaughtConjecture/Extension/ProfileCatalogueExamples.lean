@@ -14,19 +14,19 @@ the profile catalogue of `VaughtConjecture.Extension.ProfileCatalogue` at the se
 opposite forced separations); semantic contract, items 2–4.
 
 The legal seed `CrossedCouplingCounterexample.seedHG` (coatom types `TH` and `TG`) has two opposite
-forced separations at the grade `1`: every completion below the full grade of it has two
-different cells at `(univ, 1)`, one reading `({3}, 1)` strictly below `({4}, 1)` and one the
-reverse (`CrossedCouplingCounterexample.exists_ne_seedHG`, from
+forced separations at the grade `1`: every completion below the full grade of it has two different
+cells at `(univ, 1)`, one reading `({3}, 1)` strictly below `({4}, 1)` and one the reverse
+(`CrossedCouplingCounterexample.exists_ne_seedHG`, from
 `CompletionBelowFullGrade.exists_ne_of_forcesTop`), so one new cell per graded face of full scope
 does not suffice.  The profile catalogue at the grade `1` has one new cell per normalized profile
 lawful on the grade-`1` cut, so its multiplicity at `(univ, 1)` depends on the seed.  The profile
 `profileD` (`1` at the cells of the kind `A` of `D`, the cells of grade `1` through the point `4`,
 and `⊥` elsewhere) and the profile `profileC` (the same on `C`) are in the catalogue at the grade
 `1` (`profileD_mem`, `profileC_mem`), and their two new cells are different and read `({3}, 1)` and
-`({4}, 1)` in the two orders (`exists_separating_cells_seedHG`, compiled in this repository
-(theorem named)): the two separations that `exists_ne_seedHG` asks of every completion.  This is a
-statement about the cells and rows of the profile scheme of `seedHG`; its lifts are not studied
-here (prospective).
+`({4}, 1)` in the two orders (`exists_separating_cells_of` for every seed of `TH` and `TG`,
+`exists_separating_cells_seedHG` for `seedHG`, compiled in this repository (theorem named)): the two
+separations that `exists_ne_seedHG` asks of every completion.  This is a statement about the cells
+and rows of the profile scheme of `seedHG`; its lifts are not studied here (prospective).
 
 ## Placement
 
@@ -117,27 +117,28 @@ theorem profileD_mem (hIR : I.right = TG α) (N : ℕ) : profileD I ∈ catalogu
         (hIR ▸ I.restrictFace_right) (labD_right _ _ _)
     exact h.mono (X := (coatomD, 1)) ⟨subset_rfl, by omega⟩
 
-/-- **The grade-`1` profile catalogue of `seedHG` separates both ways.**  In the profile scheme
-of `seedHG` with top layer `J ≥ 1`, at every inventory bound `N`, two different new cells at
-`(univ, 1)`, of the profiles `profileD` and `profileC`, read `({3}, 1)` strictly below `({4}, 1)`
-and `({4}, 1)` strictly below `({3}, 1)` (the row of the `i`-th new cell of grade `1` is
-`rows (seedHG α) N J 0 i`, `OrderedLayer.row_multiNewCell`). -/
-theorem exists_separating_cells_seedHG (N J : ℕ) (hJ : 1 ≤ J) :
-    ∃ (d₁ d₂ : Fin (seedHG α).amalgam.card) (i i' : Fin (mult (seedHG α) N J 0)),
-      (seedHG α).amalgam.toCellScheme.gradedIndex d₁ = (({3} : Finset (Fin 5)), 1) ∧
-      (seedHG α).amalgam.toCellScheme.gradedIndex d₂ = (({4} : Finset (Fin 5)), 1) ∧ i ≠ i' ∧
-      rows (seedHG α) N J 0 i (multiOldCell _ _ d₁) <
-        rows (seedHG α) N J 0 i (multiOldCell _ _ d₂) ∧
-      rows (seedHG α) N J 0 i' (multiOldCell _ _ d₂) <
-        rows (seedHG α) N J 0 i' (multiOldCell _ _ d₁) := by
-  obtain ⟨d₁, d₂, hd₁, hd₂⟩ := exists_cells (I := seedHG α) rfl rfl
-  obtain ⟨i, hi, he⟩ := exists_entry_eq (profileD_mem (I := seedHG α) rfl N)
-  obtain ⟨i', hi', he'⟩ := exists_entry_eq (profileC_mem (I := seedHG α) rfl N)
-  have hm : mult (seedHG α) N J 0 = (catalogue (seedHG α) N 1).card := mult_of_lt (by simpa)
-  have hD₁ : profileD (seedHG α) d₁ = ⊥ := by rw [profileD, hd₁]; rfl
-  have hD₂ : profileD (seedHG α) d₂ = gridPoint 1 0 := by rw [profileD, hd₂]; rfl
-  have hC₁ : profileC (seedHG α) d₁ = gridPoint 1 0 := by rw [profileC, hd₁]; rfl
-  have hC₂ : profileC (seedHG α) d₂ = ⊥ := by rw [profileC, hd₂]; rfl
+/-- **The grade-`1` profile catalogue separates both ways**, for every seed whose coatom types
+are `TH` and `TG`.  In the profile scheme with top layer `J ≥ 1`, at every bound `N`, two different
+new cells at `(univ, 1)`, of the profiles `profileD` and `profileC`, read `({3}, 1)` strictly below
+`({4}, 1)` and `({4}, 1)` strictly below `({3}, 1)` (the row of the `i`-th new cell of grade `1` is
+`rows I N J 0 i`, `OrderedLayer.row_multiNewCell`). -/
+theorem exists_separating_cells_of (hIL : I.left = TH α) (hIR : I.right = TG α) (N J : ℕ)
+    (hJ : 1 ≤ J) :
+    ∃ (d₁ d₂ : Fin I.amalgam.card) (i i' : Fin (mult I N J 0)),
+      I.amalgam.toCellScheme.gradedIndex d₁ = (({3} : Finset (Fin 5)), 1) ∧
+      I.amalgam.toCellScheme.gradedIndex d₂ = (({4} : Finset (Fin 5)), 1) ∧ i ≠ i' ∧
+      rows I N J 0 i (multiOldCell _ _ d₁) <
+        rows I N J 0 i (multiOldCell _ _ d₂) ∧
+      rows I N J 0 i' (multiOldCell _ _ d₂) <
+        rows I N J 0 i' (multiOldCell _ _ d₁) := by
+  obtain ⟨d₁, d₂, hd₁, hd₂⟩ := exists_cells hIL hIR
+  obtain ⟨i, hi, he⟩ := exists_entry_eq (profileD_mem hIR N)
+  obtain ⟨i', hi', he'⟩ := exists_entry_eq (profileC_mem hIL N)
+  have hm : mult I N J 0 = (catalogue I N 1).card := mult_of_lt (by simpa)
+  have hD₁ : profileD I d₁ = ⊥ := by rw [profileD, hd₁]; rfl
+  have hD₂ : profileD I d₂ = gridPoint 1 0 := by rw [profileD, hd₂]; rfl
+  have hC₁ : profileC I d₁ = gridPoint 1 0 := by rw [profileC, hd₁]; rfl
+  have hC₂ : profileC I d₂ = ⊥ := by rw [profileC, hd₂]; rfl
   have hpos : (⊥ : Label.{u}) < gridPoint 1 0 := bot_lt_iff_ne_bot.mpr (gridPoint_ne_bot 1 0)
   refine ⟨d₁, d₂, ⟨i, hm ▸ hi⟩, ⟨i', hm ▸ hi'⟩, hd₁, hd₂, fun h ↦ ?_, ?_, ?_⟩
   · have h' : i = i' := congrArg Fin.val h
@@ -147,13 +148,26 @@ theorem exists_separating_cells_seedHG (N J : ℕ) (hJ : 1 ≤ J) :
     exact gridPoint_ne_bot 1 0 this.symm
   · rw [rows_multiOldCell, rows_multiOldCell]
     -- The grade of the new cells is `0 + 1 = 1`.
-    change entry (seedHG α) N 1 i d₁ < entry (seedHG α) N 1 i d₂
+    change entry I N 1 i d₁ < entry I N 1 i d₂
     rw [he, hD₁, hD₂]
     exact hpos
   · rw [rows_multiOldCell, rows_multiOldCell]
     -- The grade of the new cells is `0 + 1 = 1`.
-    change entry (seedHG α) N 1 i' d₂ < entry (seedHG α) N 1 i' d₁
+    change entry I N 1 i' d₂ < entry I N 1 i' d₁
     rw [he', hC₁, hC₂]
     exact hpos
+
+/-- **The grade-`1` profile catalogue of `seedHG` separates both ways**: in the profile scheme of
+`seedHG` with top layer `J ≥ 1`, at every bound `N`, two different new cells at `(univ, 1)` read
+`({3}, 1)` and `({4}, 1)` in the two orders (`exists_separating_cells_of`). -/
+theorem exists_separating_cells_seedHG (N J : ℕ) (hJ : 1 ≤ J) :
+    ∃ (d₁ d₂ : Fin (seedHG α).amalgam.card) (i i' : Fin (mult (seedHG α) N J 0)),
+      (seedHG α).amalgam.toCellScheme.gradedIndex d₁ = (({3} : Finset (Fin 5)), 1) ∧
+      (seedHG α).amalgam.toCellScheme.gradedIndex d₂ = (({4} : Finset (Fin 5)), 1) ∧ i ≠ i' ∧
+      rows (seedHG α) N J 0 i (multiOldCell _ _ d₁) <
+        rows (seedHG α) N J 0 i (multiOldCell _ _ d₂) ∧
+      rows (seedHG α) N J 0 i' (multiOldCell _ _ d₂) <
+        rows (seedHG α) N J 0 i' (multiOldCell _ _ d₁) :=
+  exists_separating_cells_of rfl rfl N J hJ
 
 end VaughtConjecture.ProfileCatalogue
