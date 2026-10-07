@@ -284,7 +284,7 @@ Status of each:
    item 2), `Realization.ResidualAcquisition P`, and `Realization.CutoffDetermination P`
    (`Realization.residualReceiving_of_cutoffDetermination`), for a predicate `P` on acquired
    contexts not yet defined: the reduction is a template, and its hypotheses are not statements
-   still to be proved (no predicate `P` is defined in the library, and neither acquisition nor
+   still to be proved (no predicate `P` on pairs `(t', h)` is defined in the library, and neither acquisition nor
    determination is proved beyond the rigid-core instance).  For `P` always true, acquisition is
    immediate and determination fails (compiled; top-free roots,
    `Continuation/ExactReceivingExamples`), which shows only that determination is not vacuous.
