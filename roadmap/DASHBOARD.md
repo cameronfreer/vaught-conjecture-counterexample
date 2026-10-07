@@ -286,7 +286,7 @@ named hypothesis.
    rows first specified were the mirror rows (other side shifted up), reversed to match `rowsHG` at
    the grade 1 (`README.md` 2.7).  Through a cell `d₂` off the own side that the other original
    reads above `⊥`, the necessary condition can refute only rows with the own side above, never
-   the mirror rows (argued, not formalized; on the common face it constrains the original's row),
+   the mirror rows (argued, not formalized; on the common face it constrains the own original's row),
    which are the next test.  Open: copy rows giving the step of the family for every seed on five
    points (`Seed.HasCanonicalMultiStep` for every seed), which must meet the orientations forced
    on the copies, and the completion at `m ≥ 3` for every seed.
