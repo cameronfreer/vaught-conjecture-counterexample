@@ -151,6 +151,10 @@ Notes on the rows, each with its marker:
   given strictness and an index at which every member is fixed
   (`Realization.IsStrict.le_of_forall_isFixedAt`); and the negative special case (`Realization.StrictnessExamples.not_isStrict_undefinedFamily`).  Row 32
   stays S: the uniform fixing stage of the construction it applies to is prospective.
+- *Layer 6, thinness in scatteredness form.*  Compiled conditionally on the cap-to-model theorem,
+  (R1), forcing donors at every countable block index, the continuation criterion, (R2) and (R3),
+  each still to be proved, with neither sentence separation nor López–Escobar
+  (`densitySentence_isThinOnNatModels_of_terminalClassification_bfScattered`).
 
 ## The named hypotheses of the main theorem
 

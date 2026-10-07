@@ -203,11 +203,14 @@ A generic theorem of InfinitaryLogic, at our pinned dependency (signatures check
 every analytic set of pairs of structures on `ℕ` containing no isomorphic pair is uniformly
 separated at some countable back-and-forth level (`exists_uniform_bfSeparation`,
 `Descriptive/BFSeparation`). With cocountable back-and-forth concentration (given here by the
-expansion domains, on which classes agree at bounded level) this is expected to yield thinness
-without sentence minimality and without López–Escobar; that composition for the expansion domains,
+expansion domains, on which classes agree at bounded level) this yields conditional thinness
+without sentence minimality and without López–Escobar; the composition for the expansion domains,
 from the back-and-forth form of condition 3 (`README.md`, the reduction to expansion domains and
-Layer 6), is not elaborated.  The compiled application is for full presentations with scattered
-tails (`densitySentence_isThinOnNatModels_of_scatteredTails`, through
+Layer 6), is compiled conditional on the cap-to-model theorem, (R1), forcing donors at every
+countable block index, the continuation criterion, (R2) and (R3), each still to be proved
+(`densitySentence_isThinOnNatModels_of_terminalClassification_bfScattered`,
+`MainTheorem/ScatteredDomains`).  It is also compiled for full presentations with scattered tails
+(`densitySentence_isThinOnNatModels_of_scatteredTails`, through
 `isThinOn_of_countable_bfClasses`). The working thinness route, from countable truth sides, is kept;
 the Gδ/Polish results stay optional; an improvement is described as reduced dependencies, not as a
 smaller trusted kernel. Milestone A does not depend on this interface.
