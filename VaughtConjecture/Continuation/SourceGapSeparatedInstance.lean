@@ -51,7 +51,8 @@ reads the lost top `0`.  So the conclusion of the separated pinned extension pro
 (`StageType.HasSeparatedPinnedExtensions`) holds at this context and this donor, and the donor is
 determined over the context at every cutoff: every member of the receiving family of the display
 with face the context has face the donor, the new top included.  This is one input, with the
-empty root and grade `1`; the property itself is open.
+empty root and grade `1`; the property itself is false
+(`SeparationObstruction.not_hasSeparatedPinnedExtensions`).
 
 ## Placement
 

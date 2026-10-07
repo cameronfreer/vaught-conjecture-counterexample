@@ -53,12 +53,17 @@ one-point receiving of the cofaces of top grade at most `K`
 (`Realization.exists_covers_snoc_of_hasSeparatedPinnedExtensions`, compiled in this repository).
 Neither (R1) for other models nor the property at other stages is used.
 
-Status of the hypothesis: open.  The coatom extension property `StageType.HasCoatomExtensions α`
-gives the pinned extension (`StageType.exists_pinned_extension`) but says nothing about the rows
-of the cells of full scope; it gives the separated pinned extension at donors without a new top,
-where the reading is vacuous (`StageType.exists_separated_of_hasCoatomExtensions`, in
-`VaughtConjecture.Continuation.SourceGapPinned`), and no implication at donors with a new top, from
-it or from `StageType.HasApexCoatomExtensions`, is compiled.  The strict source gaps of the
+Status of the hypothesis: **false at every stage**
+(`SeparationObstruction.not_hasSeparatedPinnedExtensions`, in
+`VaughtConjecture.Continuation.SourceGapSeparationObstruction`): a legal source-gap context with a
+lawful labelling that keeps the lost top at `⊤` and lowers a root top, and a donor bounding a new
+top by that root top, have no separating coface.  The reductions above are correct, with a false
+hypothesis; determination for source-gap contexts is not refuted.  The coatom extension property
+`StageType.HasCoatomExtensions α` gives the pinned extension (`StageType.exists_pinned_extension`)
+but says nothing about the rows of the cells of full scope; it gives the separated pinned
+extension at donors without a new top, where the reading is vacuous
+(`StageType.exists_separated_of_hasCoatomExtensions`, in
+`VaughtConjecture.Continuation.SourceGapPinned`).  The strict source gaps of the
 context are not used by the determination; they are what the legality of such a `D'` is expected
 to need (argued, not formalized): in a lawful labelling of `D'` in which a cell of graded index
 `(univ, K)` dominates the lost top and a new top, the reading keeps the lost top at most the new
@@ -241,8 +246,9 @@ variable (α) in
 `t'` of grade `K` along `h`, with lost top `r`, and every legal one-point coface `d` of top grade at
 most `K` of the face `t` of `t'` along `h`, some legal one-point coface `D'` of `t'` has face `d`
 along `h` followed by the new point and separates the new tops along `h` through `r` at grade `K`
-(`StageType.SeparatesThrough`).  A hypothesis, not a theorem; from the coatom extension property
-it is compiled only at donors without a new top. -/
+(`StageType.SeparatesThrough`).  False at every stage
+(`SeparationObstruction.not_hasSeparatedPinnedExtensions`); from the coatom extension property it
+is compiled only at donors without a new top. -/
 def HasSeparatedPinnedExtensions : Prop :=
   ∀ ⦃K n k : ℕ⦄ (t' : StageType.{u} α k) (h : Fin n ↪ Fin k) (l : Fin k) (o r : Fin t'.card),
     t'.IsLegal → t'.IsSourceGapContextAt K h l o r → ∀ t : StageType.{u} α n,
@@ -331,7 +337,8 @@ theorem exists_covers_snoc_of_hasSeparatedPinnedExtensions (hα : Order.IsSuccLi
 
 /-- **(R2) from (R1) and separated pinned extensions**: (R1) for every model at every limit stage
 and the separated pinned extension property at every limit stage give (R2), through the compiled
-residual acquisition of source-gap contexts.  Both hypotheses are open. -/
+residual acquisition of source-gap contexts.  The second hypothesis is false
+(`SeparationObstruction.not_hasSeparatedPinnedExtensions`). -/
 theorem residualReceiving_of_hasSeparatedPinnedExtensions
     (hrec : ∀ ⦃α : Ordinal.{u}⦄ ⦃M : Type w⦄ ⦃R : Realization.{u, w} α M⦄,
       Order.IsSuccLimit α → R.IsModel → R.HasFiniteCutReceiving)

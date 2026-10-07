@@ -39,8 +39,10 @@ derives it with (R1) in the library's form.
 
 So for the count, (R2) reduces to the separated pinned extension property at the countable block
 stages, with (R1) in the library's form
-(`Expansion.expansionDomain_loss_countable_of_hasSeparatedPinnedExtensions`); the separated pinned
-extension property is open.
+(`Expansion.expansionDomain_loss_countable_of_hasSeparatedPinnedExtensions`).  The separated
+pinned extension property is false at every stage
+(`SeparationObstruction.not_hasSeparatedPinnedExtensions`), so the statements through it have a
+false hypothesis; the statements through (R2) at the countable block stages stand.
 
 ## Placement
 
@@ -76,7 +78,8 @@ theorem ResidualReceiving.blockResidualReceiving (h : ResidualReceiving.{0, w}) 
 
 /-- **(R2) at the countable block stages from (R1) and separated pinned extensions**: (R1) in the
 library's form (every model at a countable limit stage, universe `0`) and the separated pinned
-extension property at every countable block stage.  Both hypotheses are open. -/
+extension property at every countable block stage.  The second hypothesis is false
+(`SeparationObstruction.not_hasSeparatedPinnedExtensions`). -/
 theorem blockResidualReceiving_of_hasSeparatedPinnedExtensions
     (hrec : Expansion.FiniteCutReceiving.{w})
     (hsep : ∀ ξ : Ordinal.{0}, ξ < ω₁ → StageType.HasSeparatedPinnedExtensions (blockStage ξ)) :

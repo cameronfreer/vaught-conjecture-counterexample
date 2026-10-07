@@ -21,9 +21,10 @@ under the coatom extension property `StageType.HasCoatomExtensions α` it exists
 (`StageType.exists_pinned_extension`).  So, under the coatom extension property, the separated
 pinned extension property holds at every donor without a new top
 (`StageType.exists_separated_of_hasCoatomExtensions`, compiled in this repository), over every
-legal context and root, source-gap or not.  What is open is the donors with a new top: there the
-rows of the cells of full scope must be controlled, which the coatom extension property does not
-state.
+legal context and root, source-gap or not.  At donors with a new top the property fails: some
+legal source-gap context and donor with a new top have no separating coface at all
+(`SeparationObstruction.not_exists_separatesThrough`, in
+`VaughtConjecture.Continuation.SourceGapSeparationObstruction`).
 
 ## Placement
 
