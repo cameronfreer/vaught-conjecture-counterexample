@@ -59,7 +59,9 @@ extension property at every `λ_{ξ+1}` and reading coatom completions at every 
 hypothesis 8 at every `λ_{ξ+1}` and reading coatom completions at every `ξ < ω₁`.  So (R4) is
 reduced, by a compiled implication, to hypothesis 8 (already among the named hypotheses) and the
 new named statement `StageType.HasReadingCoatomCompletions`.  The new statement is proved at no
-general input.
+general input; its clause holds at two inputs, one and two coatom steps
+(`VaughtConjecture.Continuation.StableRecoveryCoatomExamples`), and its reading rows exist on the
+cells of the coatoms at every input (`StageType.exists_codedReadingLabelling`).
 
 **Why the last step is a separate statement** (argued, not formalized).  The reading clause
 quantifies over every cell at `(univ, N)`, a graded face of full scope; in a coatom extension these
