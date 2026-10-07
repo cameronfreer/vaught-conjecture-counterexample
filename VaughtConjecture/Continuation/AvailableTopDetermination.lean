@@ -16,8 +16,10 @@ items 5 and 8.
 `VaughtConjecture.Continuation.AnchoredDetermination` reduces (R2) and (R3), given (R1) for every
 model at every limit stage, to donor acquisition and cutoff determination with a donor for a
 predicate on contexts, refutes determination for the anchored context
-(`StageType.IsAnchoredContext`), and shows that a predicate for which determination holds must give,
-at each non-rigid donor, a coface carrying the donor with a private top available to a new cell
+(`StageType.IsAnchoredContext`), and shows that a predicate `P` for which determination holds must
+give, at a limit stage, over a legal context `t'` with `P t' h d` at a non-rigid donor `d` (a legal
+one-point coface of the face of `t'` along `h` in which the root is not a rigid core), a legal
+coface of `t'` carrying the donor with a private top available to a new cell
 (`Realization.CutoffDonorDetermination.exists_hasAvailablePrivateTop`).  This file builds that
 condition into the predicate, proves acquisition for it under the coatom extension property,
 refutes determination for it, and isolates a further condition, on grades.  The refutation is of
@@ -52,8 +54,9 @@ the donor (`StageType.isAnchoredContextWithTop_iff`).
   (`StageType.HasApexCoatomExtensions.hasCoatomExtensions`).
 
 The last hypothesis is not particular to this predicate.  Determination at a coface needs the
-coface to carry the donor (it is a member of its own receiving family), so for every predicate for
-which cutoff determination with a donor holds, at each non-rigid donor over a legal context, the
+coface to carry the donor (it is a member of its own receiving family), so for every predicate `P`
+for which cutoff determination with a donor holds, at a limit stage, over a legal context `t'` with
+`P t' h d` at a non-rigid donor `d` (a legal one-point coface of the face of `t'` along `h`), the
 context has a legal one-point coface carrying the donor
 (`Realization.CutoffDonorDetermination.exists_hasAvailablePrivateTop`).  The acquisition uses the
 coatom extension property at every donor, the rigid ones included, at which determination asks
@@ -80,11 +83,13 @@ context on three points whose tops have grade `1` and a donor on two points with
 `2`.
 
 **What a predicate must have, refined.**  If cutoff determination with a donor holds for `P`, then
-at every non-rigid donor every new top of `d` has grade at most the top grade of `t'`
-(`Realization.CutoffDonorDetermination.grade_le_topGrade`), so the top grade of `d` is at most that
-of `t'` (`Realization.CutoffDonorDetermination.topGrade_le`).  This sharpens
-`Realization.CutoffDonorDetermination.not_isTopFree`.  In the residual case the top grade of `t'`,
-the type of a cover, is at most `K`, and (R2) concerns only donors of top grade at most `K`.
+at a limit stage, over a legal context `t'` with `P t' h d` at a non-rigid donor `d` (a legal
+one-point coface of the face of `t'` along `h`), every new top of `d` has grade at most the top
+grade of `t'` (`Realization.CutoffDonorDetermination.grade_le_topGrade`), so the top grade of `d`
+is at most that of `t'` (`Realization.CutoffDonorDetermination.topGrade_le`).  This sharpens
+`Realization.CutoffDonorDetermination.not_isTopFree`, under the same hypotheses.  In the residual
+case the top grade of `t'`, the type of a cover, is at most `K`, and (R2) concerns only donors of
+top grade at most `K`.
 
 **The graded predicate** (`StageType.IsGradedTopContext`): an anchored context with a top whose top
 grade is at least that of the donor.
@@ -303,34 +308,6 @@ theorem topGrade_le_of_forall_new {d : StageType.{u} α (n + 1)} {t : StageType.
   · exact hnew j hl hj
   · obtain ⟨i, rfl⟩ := mem_range_cellMap_castSuccEmb hl
     exact (grade_le_topGrade (t := d.comap Fin.castSuccEmb hf) (d := i) hj).trans htN
-
-/-- **A top-free core is not rigid in a type with a top**, at a limit stage: if a legal `D` has a
-top-free face `p` along `e` and is not top-free, the core along `e` is not rigid in `D`.  The type
-capped at an ordinal below the stage, self-visible at the arity and above every proper label
-(`StageType.cap`), lowers every top to a proper label and keeps the other labels, so the empty set
-is an admissible top support; it contains the tops supported on the core, of which there are
-none. -/
-theorem not_isRigidCoreIn_of_restrictFace_isTopFree {m : ℕ} (hα : Order.IsSuccLimit α)
-    {D : StageType.{u} α m} (hD : D.IsLegal) {e : Fin n ↪ Fin m} {p : StageType.{u} α n}
-    (he : restrictFace e D = some p) (hp : p.IsTopFree) (hD' : ¬ D.IsTopFree) :
-    ¬ D.IsRigidCoreIn e := by
-  intro hrig
-  obtain ⟨hf, rfl⟩ := (restrictFace_eq_some_iff D e).mp he
-  obtain ⟨o, hoα, ho⟩ := D.exists_label_le hα.bot_lt
-  obtain ⟨c, hoc, hcα, hc⟩ := exists_lt_lt_isSelfVisible hα.isSuccPrelimit hoα m
-  have hoc' : (o : Label.{u}) < c := by exact_mod_cast hoc
-  have hadm : D.IsAdmissibleTopSupport ∅ := by
-    refine ⟨D.cap c hc hcα, hD, rfl, fun i j hij ↦ ?_⟩
-    obtain rfl : i = j := Fin.ext hij
-    refine ⟨fun hne ↦ min_eq_left ((ho i hne).trans hoc'.le), ?_, fun hi _ ↦ ?_⟩
-    · exact iff_of_false (isTopFree_cap i) (Set.notMem_empty i)
-    · rw [cap_label (t := D) i, hi, min_eq_right le_top]
-      exact isProper_coe c
-  refine hD' fun x hx ↦ Set.notMem_empty x (hrig ∅ hadm (fun y hy htop ↦ ?_) x hx)
-  obtain ⟨i, rfl⟩ : y ∈ Set.range (D.cellMap e) := by
-    rw [Scheme.range_cellMap]
-    exact hy
-  exact absurd htop (hp i)
 
 /-! ### The anchored context with a top -/
 

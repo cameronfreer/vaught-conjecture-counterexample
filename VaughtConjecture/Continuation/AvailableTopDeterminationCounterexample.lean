@@ -34,22 +34,21 @@ with the apex added (`StageType.addApex`).  Its faces on `{0, 1}`, `{0}` and `{2
 
 **The refuting instance** (`exists_not_isDeterminedWithin`, at every limit stage):
 
-* the **context** (`context`) is `topType α` with its cells of grade at least `2` capped at an
-  ordinal `c < α` self-visible at `3` (`StageType.capOn`; availability relates cells of equal
-  grades, so the cap is lawful).  It is legal, its tops are the live cells of grade `1`, so its top
-  grade is `1` (`topGrade_context_le`), and its apex, of graded index `(univ, 3)`, is labelled `c`;
+* the **context** is `topType α` with its cells of grade at least `2` capped at an ordinal
+  `c < α` self-visible at `3` (`StageType.capOn`; availability relates cells of equal grades, so
+  the cap is lawful).  It is legal, its tops are the live cells of grade `1`, so its top grade is
+  `1`, and its apex, of graded index `(univ, 3)`, is labelled `c`;
 * the **root** is `pointFace α`, the face on `{0}`, along `pointEmb`; its only cell is dead, so it
-  is top-free, and the context agrees with `topType α` there (`restrictFace_context`);
+  is top-free, and the context agrees with `topType α` there;
 * the **donor** is `pairFace α`, the face on `{0, 1}` with new point `1`.  It is a legal coface of
   the root, and its cell at `({0, 1}, 2)` is a new top of grade `2`; the root is not a rigid core
   of it (`StageType.not_isRigidCoreIn_of_restrictFace_isTopFree`).
 
-The context is an anchored context with a top for the donor along `pointEmb`
-(`isAnchoredContextWithTop_context`): the apex is a private cap above the labels `⊥` of the donor,
-anchoring holds vacuously, the context is not top-free, and the exact pinned extension on three
-points gives a legal coface carrying the donor.  The new top of the donor has grade `2`, above the
-top grade `1` of the context, so the donor is determined over the context within the receiving
-family of no coface at any permitted cutoff
+The context is an anchored context with a top for the donor along `pointEmb`: the apex is a
+private cap above the labels `⊥` of the donor, anchoring holds vacuously, the context is not
+top-free, and the exact pinned extension on three points gives a legal coface carrying the donor.
+The new top of the donor has grade `2`, above the top grade `1` of the context, so the donor is
+determined over the context within the receiving family of no coface at any permitted cutoff
 (`StageType.not_isDeterminedWithin_receivingFamily_of_topGrade_lt`), and cutoff determination with
 a donor fails for the anchored context with a top (`not_cutoffDonorDetermination`).  The refuted
 statement is determination for this predicate; nothing here refutes (R2) or (R3).
@@ -124,7 +123,9 @@ private noncomputable def topBase (α : Ordinal.{u}) : StageType.{u} α 3 where
     · exact atStage_top
     · exact atStage_bot
 
-/-- **The legal type** `topType α`: `topBase α` with the apex added. -/
+/-- **The legal type** `topType α`: the scheme `UnionFillCounterexample.S` on three points with
+the labelling `labelling ⊤ ⊤` (the live cells labelled `⊤`, the others `⊥`), with the apex
+added. -/
 noncomputable def topType (α : Ordinal.{u}) : StageType.{u} α 3 :=
   (topBase α).addApex isLegalBelowFullGrade_S (by omega)
 
@@ -224,8 +225,9 @@ at the ordinal `c`. -/
 private theorem topGrade_context_le : (context hc hcα).topGrade ≤ 1 := by
   refine topGrade_le_iff.mpr fun x hx ↦ ?_
   by_contra hlt
-  -- the label of the context at `x` is capped at `c` (by `change`: `StageType.capOn_label` does
-  -- not apply at a cell of the context, a cell of the capped type only up to unfolding)
+  -- the label of the context at `x` is capped at `c` (by `change`: `rw`/`simp` cannot use
+  -- `StageType.capOn_label` at a cell of the context, a cell of the capped type only up to
+  -- unfolding)
   change (if 2 ≤ (topType α).toCellScheme.grade x then min ((topType α).label x) c
     else (topType α).label x) = ⊤ at hx
   have hx2 : 2 ≤ (topType α).toCellScheme.grade x := by

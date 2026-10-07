@@ -2926,10 +2926,12 @@ witnesses).**
   statements are the instances `m = x.arity + 1` and `m = x.arity`, and every use is unchanged.
   `Realization.exists_covers_snoc_of_cutoffDonorDetermination`
   (`Continuation/AnchoredDetermination`) is now public, for the residual template with donors of
-  bounded top grade.  `StageType.not_isRigidCoreIn_of_restrictFace_isTopFree` generalizes the
-  direction of `StageType.isRigidCoreIn_empty_iff_isTopFree` (`Continuation/Terminal`) that
-  excludes rigidity, from the empty core to any top-free face, with the same cap; it belongs in
-  `Continuation/Terminal`, beside that lemma, and is stated here so that the file is unchanged.
+  bounded top grade.  The non-rigidity argument is proved once, in `Continuation/Terminal`:
+  `StageType.not_isRigidCoreIn_of_forall_visibleCells` (at a limit stage, a core on which no top
+  cell is supported is not rigid in a legal type that is not top-free; the cap makes the empty set
+  an admissible top support).  Both `StageType.isRigidCoreIn_empty_iff_isTopFree` (statement
+  unchanged, proof now through it) and `StageType.not_isRigidCoreIn_of_restrictFace_isTopFree`
+  (the top-free face, beside it in `Continuation/Terminal`) are derived from it.
 - `Continuation/AvailableTopDeterminationCounterexample`: Layer 3, in place.  It imports
   `Extension/UnionFillCounterexample` for its legal scheme on three points
   (`UnionFillCounterexample.S`, with its lawful labellings `UnionFillCounterexample.labelling`),

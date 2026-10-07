@@ -136,8 +136,9 @@ Status of each:
    (`Realization.donorAcquisition_isAnchoredContext`) and cutoff determination with a donor is
    refuted (`AnchoredDeterminationCounterexample.not_cutoffDonorDetermination`: a top-free anchored
    context over the empty root, with the one-point donor labelled `⊤`).  This refutes the
-   predicate, not (R2).  A predicate for which determination holds must give, at each non-rigid
-   donor (for legal `t'` whose face along `h` has `d` as a coface), a context that is not
+   predicate, not (R2).  A predicate for which determination holds must give, at a limit stage, at
+   each non-rigid donor (for legal `t'` satisfying it whose face along `h` has `d` as a legal
+   coface), a context that is not
    top-free, with a top available to a new cell of a coface carrying the donor
    (`Realization.CutoffDonorDetermination.exists_hasAvailablePrivateTop`); a rigid context suffices
    (`Realization.cutoffDonorDetermination_isRigidContext`), but its acquisition is not proved.
@@ -149,8 +150,9 @@ Status of each:
    (`Realization.donorAcquisition_isAnchoredContextWithTop`); cutoff determination with a donor is
    refuted (`AvailableTopDeterminationCounterexample.not_cutoffDonorDetermination`: a context
    whose tops have grade 1, a donor with a new top of grade 2).  This refutes the predicate, not
-   (R2).  For a predicate for which determination holds, at each non-rigid donor over a legal
-   context, the top grade of the context is at least the grade of every new top of the donor
+   (R2).  For a predicate for which determination holds, at a limit stage, over a legal context
+   satisfying it at a non-rigid donor (a legal one-point coface of the face of the context along
+   `h`), the top grade of the context is at least the grade of every new top of the donor
    (`Realization.CutoffDonorDetermination.grade_le_topGrade`,
    `Realization.CutoffDonorDetermination.topGrade_le`).  For the graded predicate
    (`StageType.IsGradedTopContext`), residual donor acquisition for the donors of top grade at
