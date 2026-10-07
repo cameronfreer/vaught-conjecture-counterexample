@@ -193,6 +193,16 @@ Notes on the rows, each with its marker:
   each still to be proved, with neither sentence separation nor López–Escobar
   (`densitySentence_isThinOnNatModels_of_terminalClassification_bfScattered`).
 
+## Targets from the unconditional route
+
+Prospective (`IMPLEMENTATION.md`, "Targets from the unconditional route"): one contract for each
+hypothesis of the five-hypothesis form, complete only when that hypothesis is compiled for every
+input.  U1, (R1) through an attached gated scheme (a gate at `⊤` realized by the bottom-pattern
+clause), first; U2, `StableCappedReceiving` by calibrated receiving in the model, then the
+continuation criterion; U3, (R3) and (R2) by exact recovery; U4, the apex property by a completion
+over the whole boundary.  The known failures (the gated and coupled inputs, `seedL`, the twin
+donors, the grade of private tops) are their tests.  No status on this page changes.
+
 ## The named hypotheses of the main theorem
 
 Three forms of the main theorem on `ℕ` are compiled, each conditionally on named hypotheses.  The
@@ -428,6 +438,22 @@ named hypothesis.
    actually realizes.  At a stage where the hypothesis fails the conditional (R1)
    (`Expansion.finiteCutReceiving_of_hasCoupledGatedPinnedExtensions`) is vacuous, and nothing
    rules that out.
+   *The attached gate* (a redesign, by step).  An attached gated extension
+   (`StageType.AttachedGatedExtension`) has readers of graded index `(univ, n)`, each reading
+   every new donor cell through the anchors; the row of the gate is `⊥` at the other twins and
+   reads one reader at least as itself; no label of a twin is prescribed.  Compiled in this
+   repository (theorem named): recovery through whichever reader availability reaches
+   (`CellScheme.Rows.IsLawful.recover_of_readsOnly`); the gate from the bottom-pattern clause
+   (`Realization.IsModel.exists_attachedGate`); receiving at a given attached gated extension
+   (`Realization.IsModel.realizesOver_receivingFamily_of_attachedGatedExtension`); the lifts its
+   legality forces at caps not `⊥` (`StageType.AttachedGatedExtension.exists_lift`; that nothing
+   is forced at the cap `⊥` is argued, not formalized); and, a negative special case of a row
+   design, at `GatedExtensionCounterexample.P α` the gate's row cannot be `⊥` at every twin but one
+   ceiling (`AttachedGateCounterexample.exists_reader`), while two readers are realized there
+   (`AttachedGateExamples.attachedGatedExtensionP`, donor labelled `⊤`).  Open: an attached gated
+   extension over the private contexts that models acquire; whether availability from the
+   literal-face cap must reach a reader other than the ceiling.  (R1) is neither proved nor
+   refuted.
 4. **Forcing donors** (still to be proved unconditionally): reduced to the coatom extension
    property (`forcingDonors_of_hasCoatomExtensions`); nothing beyond it remains.
 5. **Output 3, part D, and (R4)** (still to be proved): (R4) over positive roots, the empty root by
