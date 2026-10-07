@@ -325,11 +325,33 @@ Status of each:
    (`Realization.donorAcquisition_isAnchoredContext`) and cutoff determination with a donor is
    refuted (`AnchoredDeterminationCounterexample.not_cutoffDonorDetermination`: a top-free anchored
    context over the empty root, with the one-point donor labelled `⊤`).  This refutes the
-   predicate, not (R2).  A predicate for which determination holds must give, at each non-rigid
-   donor (for legal `t'` whose face along `h` has `d` as a coface), a context that is not
-   top-free, with a top available to a new cell of a coface carrying the donor
-   (`Realization.CutoffDonorDetermination.exists_hasAvailablePrivateTop`); a rigid context suffices
-   (`Realization.cutoffDonorDetermination_isRigidContext`), but its acquisition is not proved.
+   predicate, not (R2).  A predicate for which determination holds must give, at a limit stage, at
+   each non-rigid donor (for legal `t'` satisfying it whose face along `h` has `d` as a legal
+   coface), a context that is not top-free, with a top available to a new cell of a coface
+   carrying the donor (`Realization.CutoffDonorDetermination.exists_hasAvailablePrivateTop`); a
+   rigid context suffices (`Realization.cutoffDonorDetermination_isRigidContext`), but its
+   acquisition is not proved.
+   With that condition built in (`Continuation/AvailableTopDetermination`), the anchored context
+   with a top (`StageType.IsAnchoredContextWithTop`; in a legal coface an available private top
+   is any top of the context, `StageType.hasAvailablePrivateTop_iff_not_isTopFree`): donor
+   acquisition holds in the models with no globally rigid core under the coatom extension property
+   at every limit stage, which is still to be proved and gives the coface carrying the donor
+   (`Realization.donorAcquisition_isAnchoredContextWithTop`); cutoff determination with a donor is
+   refuted (`AvailableTopDeterminationCounterexample.not_cutoffDonorDetermination`: a context
+   whose tops have grade 1, a donor with a new top of grade 2).  This refutes the predicate, not
+   (R2).  For a predicate for which determination holds, at a limit stage, over a legal context
+   satisfying it at a non-rigid donor (a legal one-point coface of the face of the context along
+   `h`), the top grade of the context is at least the grade of every new top of the donor
+   (`Realization.CutoffDonorDetermination.grade_le_topGrade`,
+   `Realization.CutoffDonorDetermination.topGrade_le`).  For the graded predicate
+   (`StageType.IsGradedTopContext`), residual donor acquisition for the donors of top grade at
+   most `K` holds under the coatom extension property at every limit stage
+   (`Realization.residualDonorAcquisition_isGradedTopContext`) and determination is open (it holds
+   at a compiled instance, and over a coface that reads the new tops as a private top,
+   `Realization.cutoffDonorDetermination_isReadingContext`); so (R2) is compiled conditionally on
+   (R1) in the stronger form above, the coatom extension property at every limit stage, and that
+   open determination statement
+   (`Realization.residualReceiving_of_cutoffDonorDetermination_isGradedTopContext`), a template.
 6. `Realization.HollowReceiving` for `Realization.IsCoverHollowAtBlock`: still to be proved (the
    growth construction).  Exactly reformulated as exact receiving of all legal types
    (`Realization.hollowReceiving_iff`).  A reduction is compiled: it follows from
@@ -367,12 +389,18 @@ Status of each:
    three refuted determination statements are excluded: the empty root of the apex point and the
    capped two-point context refuting the anchored context (`StageType.IsAnchoredContext`) are
    top-free (compiled in this repository (theorem named)), and the context refuting the anchored
-   context with a top has top grade at most `1` over a root on one point (the exclusion of every
-   such context compiled in this repository (theorem named); the bound on that context compiled in
-   a separate open change, not on `main`).  The template with the donor
-   (`Realization.hollowReceiving_of_cutoffDonorDetermination`, any `H`, with (R1) in the stronger
-   form of item 5) gives nothing for the anchored context: donor acquisition holds for it and
-   cutoff determination with a donor is refuted for it, as in item 5.
+   context with a top (`AvailableTopDeterminationCounterexample`) has top grade at most `1` over a
+   root on one point (the exclusion of every such context compiled in this repository (theorem
+   named); the bound on that context is proved there as a private statement).
+   The template with the
+   donor (`Realization.hollowReceiving_of_cutoffDonorDetermination`, any `H`, with (R1) in the
+   stronger form of item 5) gives nothing for the anchored context: donor acquisition holds for it
+   and cutoff determination with a donor is refuted for it, as in item 5; nor for the anchored
+   context with a top, refuted as in item 5.  For the graded predicate, donor acquisition holds in
+   every model satisfying `H` with unbounded growth under the coatom extension property at every
+   limit stage (`Realization.donorAcquisition_isGradedTopContext`) and determination is open, as in
+   item 5 (`Realization.hollowReceiving_of_cutoffDonorDetermination_isGradedTopContext`, any `H`,
+   a template).
 7. Nonempty losses: still to be proved.  Compiled conditionally on the coatom extension property
    with apex at every countable block stage and on next-block uniqueness
    (`hasNonemptyLosses_of_hasApexCoatomExtensions`, stated for the bundled domains, which also take
@@ -685,11 +713,13 @@ named hypothesis.
    extension), implies parts of the routes' finite hypotheses at inputs where the route's
    prescription is compatible with the faces (`Extension/PrescribedFullRowsRoutes`, compiled in
    this repository (theorems named)); route by route:
-   - (R2)/(R3), the reading context of the route to determination with a private top (that route
-     is not on `main`): the core with a compatible reading prescription gives a reading context
+   - (R2)/(R3), the reading context of the route to determination with a private top
+     (`StageType.IsReadingContext`, `Continuation/AvailableTopDetermination`): the core with a
+     compatible reading prescription gives a reading context in its prescribed-row interface
      (`StageType.HasPrescribedFullRows.isReadingContext`); conversely a reading context makes some
      reading prescription compatible
      (`PrescribedFullRows.IsReadingContext.exists_isFaceCompatible`).
+     The composition of that interface with the determination templates is not compiled here.
      So, under the core and at a legal input, the reading-context property is equivalent to a
      choice of private tops with a compatible reading prescription.  Obtaining a reading context
      from a graded context with a top, the route's open step, is not derived from the core.
