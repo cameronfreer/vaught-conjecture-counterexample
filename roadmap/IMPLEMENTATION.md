@@ -116,6 +116,16 @@ The general counting argument above needs cofinal nonemptiness, not nonemptiness
 successor loss.  The concrete top-free construction proves the stronger statement.  Do not
 replace either hypothesis by mere nonemptiness of the domains.
 
+**The tower.**  The spine is one of two readings of the tower of model expansions (`README.md`,
+"The tower and its four properties"; the other is the full-presentation route below).  Items 1–4
+come from its four properties: item 1 from (L) and (R), item 2 from terminal countability, item 3
+from terminal existence with (R), and item 4 from (D) through the comparison.  Both readings are
+retained, each with its own statements and completion criterion.  The organizing principle is few
+arguments with explicit dependencies (`README.md`, the three interfaces), not the fewest lines in
+the final theorem.  The next Lean statement (prospective) is a small assembly theorem stating the
+main theorem in the order of the paper from those interfaces; it is not another representation of
+models and not another back-and-forth induction, and the existing compositions are unchanged.
+
 ## Required layers and first applications
 
 ### 1. Finite geometry and guarded label algebra
