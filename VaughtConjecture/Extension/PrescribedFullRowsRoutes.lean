@@ -78,10 +78,11 @@ implication, and it is necessary for a prescribed extension
 
 The completion route is the empty prescription (`StageType.emptyPrescription`,
 `StageType.HasPrescribedFullRows.hasCoatomExtensions_iff`).  A step of the canonical multi-layer
-scheme of a seed (`Seed.HasCanonicalMultiStep`, not on this base) is not an instance (argued, not
-compiled): it asks for a completion of one shape (two copies at each graded index of full scope
-reading through their originals), while a prescribed extension for the empty prescription is a
-coatom extension of any shape.
+scheme of a seed (the multi-layer step `Seed.MultiLayerStep` on
+`OrderedLayer.canonicalMultiScheme`) is not an instance (argued, not compiled): it asks for a
+completion of one shape (two copies at each graded index of full scope reading through their
+originals), while a prescribed extension for the empty prescription is a coatom extension of any
+shape.
 
 ## Placement
 

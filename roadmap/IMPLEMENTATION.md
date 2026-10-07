@@ -3521,7 +3521,8 @@ compatible with the faces over legal `t'` and `d` has a prescribed extension.  I
      (`StageType.IsStableRecoveryScheme.of_readsThroughCap`, on `main`); the composition with the
      cap's label and the calibration is not compiled here.
    - The completion: a step of the canonical multi-layer scheme of a seed
-     (`Seed.HasCanonicalMultiStep`, not on `main`) is **not an instance** (argued, not compiled):
+     (the multi-layer step `Seed.MultiLayerStep` on `OrderedLayer.canonicalMultiScheme`) is **not
+     an instance** (argued, not compiled):
      it asks for a completion of one shape (two copies at each graded index of full scope, reading
      through their originals), while a prescribed extension for the empty prescription is a coatom
      extension of any shape.
@@ -3553,8 +3554,8 @@ compatible with the faces over legal `t'` and `d` has a prescribed extension.  I
 - Cap-reading schemes at the calibrated inputs ((R4)): open, unchanged; conditional on the core and
   the compatibility of the cap prescription; the composition to a stable recovery scheme is not
   compiled here.
-- The canonical multi-layer step for every seed (completion): open, unchanged, not an instance
-  (argued).
+- The canonical multi-layer step (completion): open as a statement about every seed, unchanged,
+  not an instance (argued).
 - (R1)–(R4): neither proved nor refuted.
 
 **What the routes have in common that fails.**  Compatibility at the labels of the context does not
