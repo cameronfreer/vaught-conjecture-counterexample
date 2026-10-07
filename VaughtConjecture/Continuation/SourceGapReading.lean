@@ -46,7 +46,11 @@ chosen afterwards, above the labels of `D'` other than `⊤`.
 **Separation through the lost top is a special case**
 (`StageType.SeparatesThrough.readsEachNewTop`): with the owner as `w` and the lost top as `s`.
 So the separated instance (`SeparatedInstance.exists_separatesThrough`) gives the conclusion of the
-property at its input (`SeparatedInstance.exists_readsEachNewTop`).
+property at its input (`SeparatedInstance.exists_readsEachNewTop`).  At the input refuting
+separation through the lost top, `SeparationObstruction.T α` with itself as donor, the conclusion
+holds too, with a different choice of private top for each new top
+(`ReadingInstance.exists_readsEachNewTop_T`, in
+`VaughtConjecture.Continuation.SourceGapReadingInstance`).
 
 ## Placement
 
