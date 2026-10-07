@@ -53,16 +53,19 @@ one-point receiving of the cofaces of top grade at most `K`
 (`Realization.exists_covers_snoc_of_hasSeparatedPinnedExtensions`, compiled in this repository).
 Neither (R1) for other models nor the property at other stages is used.
 
-Status of the hypothesis: open.  It is not implied by the coatom extension property
-`StageType.HasCoatomExtensions α` as stated (which gives the pinned extension,
-`StageType.exists_pinned_extension`, but says nothing about the rows of the cells of full scope);
-no implication from `StageType.HasCoatomExtensions` or `StageType.HasApexCoatomExtensions` is
-compiled.  The strict source gaps of the context are not used by the determination; they are what
-the legality of such a `D'` is expected to need (argued, not formalized): in a lawful labelling of
-`D'` in which a cell of graded index `(univ, K)` dominates the lost top and a new top, the reading
-keeps the lost top at most the new top, so a donor labelling lowering a new top must be met by a
-labelling of `t'` lowering the lost top while the retained top cells stay `⊤`, which is what the
-strict gaps at the owner allow.
+Status of the hypothesis: open.  The coatom extension property `StageType.HasCoatomExtensions α`
+gives the pinned extension (`StageType.exists_pinned_extension`) but says nothing about the rows
+of the cells of full scope; it gives the separated pinned extension at donors without a new top,
+where the reading is vacuous (`StageType.exists_separated_of_hasCoatomExtensions`, in
+`VaughtConjecture.Continuation.SourceGapPinned`), and no implication at donors with a new top, from
+it or from `StageType.HasApexCoatomExtensions`, is compiled.  The strict source gaps of the
+context are not used by the determination; they are what the legality of such a `D'` is expected
+to need (argued, not formalized): in a lawful labelling of `D'` in which a cell of graded index
+`(univ, K)` dominates the lost top and a new top, the reading keeps the lost top at most the new
+top, so a donor labelling lowering a new top must be met by a labelling of `t'` lowering the lost
+top while the retained top cells stay `⊤`; below the owner, the strict gaps give such a labelling
+(`StageType.IsSourceGapContextAt.exists_isLawfulBelow`, in
+`VaughtConjecture.Continuation.SourceGapLowering`).
 
 **The compiled determination counterexamples.**  The hypothesis is stated only over source-gap
 contexts, which exclude the apex point over the empty root and the top-free contexts
@@ -238,8 +241,8 @@ variable (α) in
 `t'` of grade `K` along `h`, with lost top `r`, and every legal one-point coface `d` of top grade at
 most `K` of the face `t` of `t'` along `h`, some legal one-point coface `D'` of `t'` has face `d`
 along `h` followed by the new point and separates the new tops along `h` through `r` at grade `K`
-(`StageType.SeparatesThrough`).  A hypothesis, not a theorem; no implication from the coatom
-extension property is compiled. -/
+(`StageType.SeparatesThrough`).  A hypothesis, not a theorem; from the coatom extension property
+it is compiled only at donors without a new top. -/
 def HasSeparatedPinnedExtensions : Prop :=
   ∀ ⦃K n k : ℕ⦄ (t' : StageType.{u} α k) (h : Fin n ↪ Fin k) (l : Fin k) (o r : Fin t'.card),
     t'.IsLegal → t'.IsSourceGapContextAt K h l o r → ∀ t : StageType.{u} α n,
