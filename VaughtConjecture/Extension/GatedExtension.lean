@@ -288,9 +288,10 @@ on `m + 1` points and `k` gates: a legal display on `n + 1` points whose two fac
 graded index `capIndex t` in `P`; the twins of each gate read it at least as its cap
 (`CellScheme.Rows.TwinsReadGate`), and the row of each gate reads, against its cap, the donor cells
 whose labels lie in `readLabels t` (`CellScheme.Rows.IsGate`, whose clauses ask that cap and gate
-have equal grades and nested scopes).  With one gate, a cap of graded index `(univ, n)` and every
-label read, it is a coupled gated extension (`CoupledGatedExtension.toPerBlock`).  Only the
-clauses that the per-block bottom transport condition uses are stated
+have equal grades and nested scopes).  A coupled gated extension is the case of one gate, with the
+gate and cap of graded index `(univ, n)` (`CoupledGatedExtension.gradedIndex_gate`) and every label
+read (`CoupledGatedExtension.toPerBlock`).  Only the clauses that the per-block bottom transport
+condition uses are stated
 (`PerBlockCoupledGatedExtension.carriesBottomsPerBlock`); no universal extension property for it
 is stated. -/
 structure PerBlockCoupledGatedExtension (P : StageType.{u} α n) (f : Fin m ↪ Fin n)
