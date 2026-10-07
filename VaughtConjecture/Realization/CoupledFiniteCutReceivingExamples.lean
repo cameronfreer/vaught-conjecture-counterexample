@@ -10,15 +10,17 @@ import VaughtConjecture.Realization.CoupledFiniteCutReceiving
 
 Special cases of `VaughtConjecture.Realization.CoupledFiniteCutReceiving`, under the coupled gated
 pinned extension property (`StageType.HasCoupledGatedPinnedExtensions`), a named hypothesis that is
-open; none of them is a proof of (R1):
+false at every stage above `1`
+(`CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`); none of them is a proof
+of (R1):
 
 * **the empty root**: over an occurrence on no points the anchored private context has arity at
   least `2`, and the donor is received over it at every permitted cutoff;
 * **the two routes**: the bottom-pattern clause, in place of generalized saturation, gives the
   same conclusion;
 * **a donor whose new cells are all labelled `⊤`** is anchored below every cell, so it needs no
-  reference cell (on `GatedExtensionCounterexample.P α`, the coupled gated extension for such a
-  donor is not compiled: it needs the cap lowered, the open point of the hypothesis);
+  reference cell (on `GatedExtensionCounterexample.P α`, the coupled gated extension for the donor
+  labelled `⊤` is `CoupledGateInstance.coupledGatedPinnedExtension_donor`);
 * **donor tops** come back only as values at least the cutoff: a member of the receiving family
   at `c` of a donor labelled `⊤` at a cell is labelled at least `c` there, and nothing more is
   known;
@@ -58,10 +60,10 @@ example (hR : R.IsModel) (hg : HasCoupledGatedPinnedExtensions α) (x : R.Occurr
 /-! ### The two routes -/
 
 /-- **The bottom-pattern clause gives the same conclusion as generalized saturation**: the assembly
-of `IsModel.hasFiniteCutReceiving_of_hasCoupledGatedPinnedExtensions` with the bottom-pattern
-clause for the scheme and labels of the display in place of generalized saturation (the
-bottom-pattern family lies in the family of generalized saturation).  Conditional on the same open
-named hypothesis; not a proof of (R1). -/
+of `IsModel.hasFiniteCutReceiving_of_hasCoupledGatedPinnedExtensions` with the bottom-pattern clause
+for the scheme and labels of the display in place of generalized saturation (the bottom-pattern
+family lies in the family of generalized saturation).  Conditional on the same named hypothesis,
+false at every stage above `1`; not a proof of (R1). -/
 example (hR : R.IsModel) (hg : HasCoupledGatedPinnedExtensions α) : R.HasFiniteCutReceiving := by
   intro x d hd c hc
   obtain ⟨γ, hγα, rfl⟩ := isPermittedCutoff_iff.mp hc
