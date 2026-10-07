@@ -52,7 +52,9 @@ root at `2`.  The lower twin is recovered at an offset other than that of the re
 every context with an embedding of one point and every `γ`, no scheme is a stable recovery scheme
 for both donors (some stage type on it has the face `T⁺`, and its face along the root and the new
 point would equal both donors at a twin).  Here the two twin schemes differ only in the row of the
-reading cell.
+reading cell.  This is a fact about `StageType.IsStableRecoveryScheme` alone, not an obstruction:
+`StageType.HasStableRecoverySchemes` chooses the scheme after the donor, and the growth
+construction of Layer 3, 3.4, builds its scheme from the donor by design.
 
 **What this does not show.**  `StageType.HasStableRecoverySchemes ξ
 (StageType.GradedCapCalibration ξ)` asks for a stable recovery scheme at every legal `T⁺`,
@@ -65,7 +67,9 @@ stays open, and (R4) with it.  The inputs are still special:
 * `(univ, 3)` is the only graded face of grade `N = 3` containing the cap and the new cells: the
   cap of grade `3` has all three points of `T⁺` as its scope; several such faces need a context of
   at least four points (informal; not compiled);
-* the references are in the block `λ_ξ` only (no reference cell below `λ_ξ`).
+* the references are in the block `λ_ξ` only (no reference cell below `λ_ξ`);
+* the reference cell is the root itself, a cell of the face `twinRoot` along `rootEmb`: the
+  private context supplies only the cap.
 
 The cap below the formal top and the lower blocks are tested in
 `VaughtConjecture.Continuation.StableRecoveryTwinFamily`, a new cell labelled the formal top in

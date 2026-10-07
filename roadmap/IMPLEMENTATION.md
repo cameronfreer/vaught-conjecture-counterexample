@@ -2327,14 +2327,17 @@ Each checkpoint needs both its abstract API and a concrete application:
    `Continuation.StableRecoveryTwinFamily.exists_isStableRecoveryScheme_twinFamily`,
    `Continuation/StableRecoveryTwinFamily`; a new cell labelled `⊤`,
    `Continuation.StableRecoveryTopCell.exists_isStableRecoveryScheme_topCell`,
-   `Continuation/StableRecoveryTopCell`; an interior cap, where every scheme has two graded faces
-   of grade `N` containing the cap and the new point,
-   `StageType.IsStableRecoveryScheme.exists_face_ne_univ`, with coherent readings at both,
+   `Continuation/StableRecoveryTopCell`; an interior cap, where every scheme has a face other than
+   its ground set containing the cap and the new point,
+   `StageType.IsStableRecoveryScheme.exists_face_ne_univ`, with a reading cell at two graded faces
+   of grade `N` whose reading constraints agree,
    `Continuation.StableRecoveryInterior.exists_isStableRecoveryScheme_interiorCap`,
    `Continuation/StableRecoveryInterior` and `Continuation/StableRecoveryInteriorScheme`; no second
-   calibration is refuted; the finite statement at every input is still to be proved; `README.md`, Layer 4, status, output 3). Step 7 is
-   compiled conditionally (`README.md`, the section on the top-free witnesses): the loss at `η`
-   under uniqueness at `λ_η` (`nonempty_loss_of_topFreeWitness`), and per block under
+   calibration is refuted; the next tests, prospective, are these features together, faces of grade
+   `N` that are not nested, reference cells in two blocks for one donor, and `N > k + 2`; the finite
+   statement at every input is still to be proved; `README.md`, Layer 4, status, output 3).
+   Step 7 is compiled conditionally (`README.md`, the section on the top-free witnesses): the loss
+   at `η` under uniqueness at `λ_η` (`nonempty_loss_of_topFreeWitness`), and per block under
    `StageType.HasApexCoatomExtensions` at `λ_η` and uniqueness of the model expansions at `λ_η`
    (`nonempty_loss_of_hasApexCoatomExtensions`, `MainTheorem/LowerBound`).
 
