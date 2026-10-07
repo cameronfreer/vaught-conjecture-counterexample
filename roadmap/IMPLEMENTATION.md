@@ -3341,6 +3341,54 @@ construction chosen builds grade by grade over the boundary, in one fixed order 
 chooses the full-scope cell that serves each lift (defined with 2.6) before extending on the
 other coatom, and tops out in a single apex cell.
 
+## Companion boundaries
+
+Companion topics: definable domain/logical cuts with strict loss-rank lower bounds; canonical
+top-free classes converging sentencewise; local automorphisms of self-embeddings; and the
+arbitrary-carrier Scott/`T∞` theory dichotomy.  The joint embedding and amalgamation properties of
+finite top-free charts are step 2 of the top-free witnesses and belong to the core.  These do not
+assert strong AP, a proper self-embedding, uncountable categoricity, Scott-rank equality, or
+existence of a model of all of `T∞`.  Terminal refinement (eventual departure by Scott isolation,
+the last admitted stage, and the terminal expansion; conditional targets) is never an input to the
+count, and its eventual departure is to be proved from hypotheses of the count (the agreement of
+condition 3 and the nonempty losses of condition 4, with Scott sentences), not from its conclusions;
+the agreement filtration (defined by `T∞`) and the rank filtration (defined by Scott rank) are
+defined differently; no relation between them is asserted, and any comparison is a separate
+prospective theorem (`COMPANIONS.md`, "Further companion results").  Quantitative reconstruction
+(base-language definitions and Scott sentences with bounds on their quantifier rank) and its
+recognition and base-reduct orbit-rank targets are companion statements, used by neither route,
+with their own completion criterion (`COMPANIONS.md`, "Further companion results"); its first row
+is compiled conditionally on block determination (`Definability/BlockFormulas`), and the rest is
+prospective.  The main
+theorem is proved without them; if any is added, give it a separate definite completion criterion.
+Direct limits of structures and the classical existence theorem (available at the pin) belong to the
+two libraries, not to the finite constructions of layer 3.  [`COMPANIONS.md`](COMPANIONS.md) gives
+these topics and the full-chart orbit theory below such criteria, as three milestones (A: filtration
+and infinitary theory; B: top-free chart homogeneity and its consequences; C: a geometric
+obstruction).
+
+### Full-chart orbit theory: a companion checkpoint
+
+The targets of this checkpoint are milestones B and C of [`COMPANIONS.md`](COMPANIONS.md),
+which states each with its hypotheses, upstream ingredients, instantiation, special cases, and
+non-claims, and gives the companion sketch [`SuggestedCompanions.lean`](SuggestedCompanions.lean).
+In summary: in the full stage chart language (not the base reduct), a countable nonempty top-free
+realization with exact consistency, covering, and finite-cut receiving has automorphism orbits
+defined by explicit first-order chart formulas, hence isolated complete types, atomicity,
+internal Scott rank at most `ω` in the library's convention, and primeness among models of its
+complete theory in arbitrary universes.  The development proves the orbit formulas and the
+local automorphism property; the isolation, atomicity, primeness, rank, and preservation
+theorems are quoted from the two libraries ("Applications of library theorems" above).
+Separately, consistency and covering alone bound every set of absolute indiscernibles (a set
+whose permutations all extend to automorphisms) by two points, a theorem kept below receiving by
+an import guard.  Milestone A of
+`COMPANIONS.md` treats the definable cuts, witness convergence, and the Scott/`T∞` dichotomy
+listed above.
+
+**Completion criterion.**  This companion checkpoint is complete when milestones B and C of
+`COMPANIONS.md` meet their completion criteria.  It is not a core checkpoint, and the main
+theorem does not depend on it.
+
 ## Targets from the unconditional route
 
 This section states, as contracts, one prospective target for each open hypothesis of the
@@ -3397,7 +3445,9 @@ form, at arbitrary limit stages.
   conditional on `StageType.HasCoatomExtensions α`, taken from the apex form by
   `StageType.HasApexCoatomExtensions.hasCoatomExtensions`, not completion.
 - *Reused.*  `Realization.IsModel.exists_privateContext_isAnchored` (the private context);
-  `CellScheme.Rows.IsGate.recover` (the pattern of recovery through a gate); the catalogue,
+  `CellScheme.Rows.IsGate.recover` (the pattern of recovery through a gate);
+  `StageType.exists_pinned_extension` (the compiled form in which step 2 uses the plain coatom
+  extension property: one coatom extension for each private point outside the root); the catalogue,
   decoders, and owner alignment of checkpoints 2.3–2.5 (`Label.exists_ownerAlignment`,
   `CellScheme.Rows.cappedLift_of_boundary`); the assembly of
   `Realization.IsModel.hasFiniteCutReceiving_of_hasCoupledGatedPinnedExtensions`, with the coupled
@@ -3410,30 +3460,36 @@ form, at arbitrary limit stages.
   whose restrictions along the private embedding and the donor embedding (the root followed by the
   new point) are literally the schemes of `u` and `d` (same cells, same order, same rows), the root
   their literal common face; its proper scopes, and the full scope below the grade `N`, filled by
-  the coatom extension construction (the amalgam of two coatom types, `README.md`, Layer 3, 3.1;
-  U4) along the plan of `E`; at the grade `N`, for each entry of the catalogue (whose fields are
-  the private and donor cells and one **gate field**, the field that the entry's gate reads), two
-  cells of graded index `(univ, N)`: the entry's **ceiling cell**, whose row reads every field of
-  the entry capped at its own label, and the entry's **gate**, whose row reads the gate field;
-  above them an apex of grade `N + 1` with row `⊥`.  The display labels the gate of the entry of
-  `(u, d)` by `⊤`, keeps the private and donor labels literally, and is bounded by the stage at
-  every auxiliary cell.  Bountifulness includes the entries whose gate field is `⊥`: every lawful
-  private labelling extends to a lawful labelling of `E` with every gate `⊥`.  (3) *Recovery*, a
-  statement about rows: every lawful labelling of `E` with the literal private face and the
-  selected gate not `⊥` agrees with `d` below the actual cut of `u`.  To be proved: when the
-  selected gate is not `⊥`, availability from the private cap reaches a cell that is not a twin of
-  the selected gate, namely the ceiling cell of the selected entry, whose locality reads every
-  field, and not another cell of graded index `(univ, N)` (another entry's ceiling cell or gate);
-  the gate not `⊥` makes the entry's gate field not `⊥`.  Contrast `README.md`, Layer 3, 3.3,
-  recovery statement 1: a literal private face and a non-bottom gate do not give the agreement
-  from lawfulness alone when the gate has a twin.  (4) *The gate from the bottom-pattern clause*:
-  the clause 4(a)ii of [Kni26, Definition 3.2.1] over the private tuple, with the display
-  witnessing admissibility, realizes a one-point extension of `u` on `E` with the display's bottom
-  pattern on the cells of grade at most `N`.  To be proved: this is exactly what step 3 needs, the
-  selected gate (of grade `N`) not `⊥`, and step 3 uses nothing else about the realized labels (in
-  particular not the twins of the gate, so the display need not label them `⊥`).  (5) *Assembly*:
-  exact consistency labels `x.tuple⌢y` with the face of that extension along the donor embedding,
-  on the scheme of `d` and agreeing with `d` below `δ`.
+  the coatom extension construction (the amalgam of two coatom types, `README.md`, Layer 3, 3.1; U4)
+  along the plan of `E`; at the grade `N`, the fields of this construction being the private and
+  donor cells and one **gate field** (an extra field, like the cutoff field of LOW), whose value in
+  a state vector is the label prescribed for the gate, for each entry of the catalogue two cells of
+  graded index `(univ, N)`: the entry's **ceiling cell**, whose row reads every field of the entry,
+  capped at the ceiling cell's label, and the entry's **gate**, whose row reads the gate field;
+  above them an apex of grade `N + 1` with row `⊥`.  The entry of `(u, d)` is the **selected
+  entry**, and its gate the **selected gate**; as in `README.md`, Layer 3, the other cells of the
+  gate's graded index `(univ, N)` are its twins.  The display labels the selected gate by `⊤`, keeps
+  the private and donor labels literally, and is bounded by the stage at every auxiliary cell.
+  Bountifulness includes the vectors whose gate field is `⊥`: every lawful private labelling extends
+  to a lawful labelling of `E` with every gate `⊥`.  The grade-`N` layer and this bountifulness are
+  step 2's own statement: the abstract coatom extension property does not supply the final layer of
+  full scope (`README.md`, Layer 3, 3.4, the (R1) row); if step 2 needs the internals of the
+  construction below `N` (its catalogue), its hypothesis is the completion (U4), not the plain
+  property.  (3) *Recovery*, a statement about rows: every lawful labelling of `E` with the literal
+  private face and the selected gate not `⊥` agrees with `d` below the actual cut of `u`.  To be
+  proved: when the selected gate is not `⊥`, availability from the private cap is witnessed by the
+  ceiling cell of the selected entry (a twin of the gate, of graded index `(univ, N)`), whose
+  locality reads every field, and not by a cell of another entry (its ceiling cell or gate); the
+  gate not `⊥` makes the entry's gate field not `⊥`.  Contrast `README.md`, Layer 3, 3.3, recovery
+  statement 1: a literal private face and a non-bottom gate do not give the agreement from
+  lawfulness alone when the gate has a twin.  (4) *The gate from the bottom-pattern clause*: the
+  clause 4(a)ii of [Kni26, Definition 3.2.1] over the private tuple, with the display witnessing
+  admissibility, realizes an extension of `u` by one point on `E` with the display's bottom pattern
+  on the cells of grade at most `N`.  To be proved: this is exactly what step 3 needs, the selected
+  gate (of grade `N`) not `⊥`, and step 3 uses nothing else about the realized labels (in particular
+  not the realized labels at the twins, so the display need not label them `⊥`).  (5) *Assembly*:
+  exact consistency labels `x.tuple⌢y` with the face of that extension along the donor embedding, on
+  the scheme of `d` and agreeing with `d` below `δ`.
 - *Acceptance test.*  `R.IsModel → R.HasFiniteCutReceiving` compiled for every limit `α` and every
   `R` at `α`, with modelhood as the only hypothesis on `R`, standard axioms, and the root kept
   literally; `Expansion.FiniteCutReceiving` then by restriction to `α < ω₁`.
@@ -3483,11 +3539,13 @@ form, at arbitrary limit stages.
   with proper stable label `λ_ξ + i`, `i < N` (attained because `R` is not cover-hollow); and
   `ℓ < N` with every proper label of `D` below `λ_ξ + ℓ` and of finite part below `ℓ`, and
   `γ < λ_ξ + ℓ` (`README.md`, Layer 3, 3.3).  `Correct` capped at the stable label of the cap then
-  gives `D` exactly at the bottom and proper cells (the reference clause) and a stable label at
-  least `λ_ξ + ℓ > γ` at every top cell of `D` (the marker clause): the strict inequality.  At twins
-  (cells of the realized occurrence of one graded index, labelled `⊤` in `R`, with different stable
+  gives `D` exactly at the bottom and proper cells (the bottom and reference clauses) and a stable
+  label at least `λ_ξ + ℓ > γ` at every top cell of `D` (the marker clause): the strict
+  inequality.  At **twin cells** (in the sense of the stable section, `README.md`, Layer 4: cells
+  of the realized occurrence of one graded index, labelled `⊤` in `R`; here with different stable
   labels) the reference clause returns each proper label of `D` exactly, in the order that `D`
-  prescribes, and at a twin that `D` labels `⊤`, `γ < Q` by the marker clause, as at every top cell.
+  prescribes, and at a twin cell that `D` labels `⊤`, `γ < Q` by the marker clause, as at every
+  top cell.
 - *Missing steps.*  (1) Acquisition of the calibrated context.  (2) The growth construction of U3,
   step 2, as data, with this calibration.  (3) Its realization in `R` by generalized saturation,
   clause 4(a)i, at a new point `u` over `x.tuple`.  (4) The recovery statement of (R4) at a proper
@@ -3504,22 +3562,25 @@ form, at arbitrary limit stages.
   the stable labels of the new cells calibrated at the cells where `D↓λ_ξ` is `⊤`, by (4) applied
   to the stable labelling (restriction-compatible, lawful, with the bottom class of the actual
   private labels): each proper label of `D` exactly, and `γ < Q` strictly at every cell where `D`
-  is `⊤`, twins included.  The requests of the cap-to-model theorem count only through (5); a
+  is `⊤`, twin cells included.  The requests of the cap-to-model theorem count only through (5); a
   statement that renames `StableCappedReceiving` is not progress.
 - *Acceptance test.*  `StableCappedReceiving` compiled for every model; `ContinuationCriterion` then
   from the apex form alone.
-- *Known failures, as tests.*  The marker-and-cap calibration fails (under review) at a root of one
-  cell labelled `λ_ξ + 2` serving as marker and cap, with the two twin donors of the twin-ordering
-  type (`Continuation.CandidateCounterexamples`); here the calibration needs a private point and
-  `N ≥ 3`, and the test is both twin donors over that root through a context of at least three
-  points.  Cover-hollow models fail single donors
-  (`Realization.not_stablyReceivesAt_of_isCoverHollow`) and are excluded by hypothesis.  The grade
-  obstruction of private tops (under review: a new `⊤` of the donor of grade above every private
-  top can be lowered) does not apply, the cap having grade `N` above the donor's arity; it is a
-  test all the same.
-- *How it differs from `StableCappedReceiving.of_hasStableRecoverySchemes_markerCap`.*  The
-  requests come from receiving in `R`, read through `Correct` by the stable labelling, not from a
-  recovery scheme on the literal stable private face.
+- *Known failures, as tests.*  Stable recovery schemes for the marker and cap calibration do not
+  exist (under review) at a root of one cell labelled `λ_ξ + 2` serving as marker and cap, with the
+  two twin donors of the twin-ordering type (`Continuation.CandidateCounterexamples`); here the
+  calibration needs a private point and `N ≥ 3`, and the test is both twin donors over that root
+  through a context of at least three points.  Cover-hollow models fail (R4) at every donor with a
+  label in the new block, at every `γ` (`Realization.not_stablyReceivesAt_of_isCoverHollow`), and
+  are excluded by hypothesis.  The grade obstruction of private tops (under review: a new `⊤` of the
+  donor of grade above every private top can be lowered) does not apply, the cap having grade `N`
+  above the donor's arity; it is a test all the same.
+- *How it differs from `StableCappedReceiving.of_hasStableRecoverySchemes_markerCap`*, whose
+  hypothesis (stable recovery schemes for the marker and cap calibration at every `ξ < ω₁`) is
+  refuted at every `ξ` by research under review (the instance above, the twin donors over a root
+  of one cell): that theorem is not an alternative route.  Here the requests come from receiving in
+  `R`, read through `Correct` by the stable labelling, not from a recovery scheme on the literal
+  stable private face.
 - *Source.*  The parallel development (stable modelhood through receiving at positive roots;
   correctness at a proper cap); `Correct` and the calibration: `README.md`, Layer 3, 3.3.
 
@@ -3530,7 +3591,13 @@ form, at arbitrary limit stages.
   every cover `c` of `t` (the empty cover included), and every `D ∈ t.cofaces`, some `y` with
   `R.Covers D (Fin.snoc c y)`: the root `c` kept literally, exact, with no cutoff.  And
   `Realization.ResidualReceiving`: the same with no globally rigid core, `R.topGradeSup = K`, and
-  `D.topGrade ≤ K`.
+  `D.topGrade ≤ K`.  The first closes hypothesis 6 in its unrestricted form.  It also gives item
+  6′ of `DASHBOARD.md`, "An alternative hypothesis set" (`Realization.HollowReceiving` for
+  `Realization.IsCoverHollowWithoutRigidCoreAtBlock`), by
+  `Realization.HollowReceiving.withoutRigidCore`; 6′ is taken by
+  `densitySentence_hasThinAlephOneSpectrum_of_restrictedTerminalClassification` in place of
+  hypothesis 6 of the seven-hypothesis form; the five-hypothesis form with 6′ is not compiled, so
+  U3 targets the unrestricted form.
 - *Assumptions.*  Modelhood and the case hypotheses, at every limit `α`.  Padding (step 5) uses the
   plain form, and so does the LOW construction of (R2), which imports (R6) (`README.md`, Layer 3,
   3.4); until U4 is complete, the result is a compiled theorem conditional on
@@ -3570,11 +3637,14 @@ form, at arbitrary limit stages.
   scheme on the one realized occurrence, not from forcing the coface within a family.  The grade
   obstruction of private tops (under review): the cap of step 1 has grade above the arity of `D`.
   The twin donors: received exactly, in either order.  Seeds where the tower fails: through the
-  padding and step 2 (U4).  Under (R3) a globally rigid core of such a model is rigid in every legal
-  donor over its type (under review); whether such a model has a globally rigid core is to be
-  settled with step 1, as a question.
-- *Source.*  The context: [Kni26, Lemma 8.1.1]; the marker of least entry, the derived root
-  alignment, and exact receiving over every root: the parallel development.
+  padding and step 2 (U4).  Under (R3) a globally rigid core of such a model receives every
+  one-point coface of its type exactly and is rigid in it (the informal risk for item 6 recorded in
+  `DASHBOARD.md`, "An alternative hypothesis set", not compiled); whether such a model has a
+  globally rigid core is to be settled with step 1, as a question.  Item 6′ does not depend on this
+  argument.
+- *Source.*  The context: [Kni26, Lemma 8.1.1]; the marker of least entry, the root's alignment
+  derived from the offsets below `N` (step 2), and exact receiving over every root: the parallel
+  development.
 
 **U4.  The coatom extension property with apex, by a completion over the whole boundary.**
 
@@ -3591,28 +3661,33 @@ form, at arbitrary limit stages.
   `StageType.HasApexCoatomExtensions.of_completionBelowFullGrade`); no named hypothesis.
 - *Reused.*  `Seed.nonempty_completionBelowFullGrade_of_le_two` (`m ≤ 2`); the canonical code of
   2.5; `Label.exists_ownerAlignment`, `CellScheme.Rows.cappedLift_of_boundary`.
-- *Missing steps.*  (1) At each grade `j` of the full scope the new cells are indexed by the
-  catalogue (`README.md`, Layer 3, 3.1: canonical lawful labellings, normal forms without top) of
-  **all** cells of the boundary (both coatoms, every grade, those of grade above `j` kept
+- *Missing steps.*  (1) At each grade `j` in the full scope the new cells are indexed by the
+  catalogue (`README.md`, Layer 3: "canonical admitted vectors at grade `j`: normal forms, without
+  top") of **all** cells of the boundary (both coatoms, every grade, those of grade above `j` kept
   literally), not only of the cells below as in `Seed.tower`; one cell of each graded face
   `(univ, j)` is built from the bottom pattern of the boundary, so completeness does not depend on
-  the catalogue.  (2) The invariant, in place of `Seed.TowerInvariant`, is extension:
-  every lawful labelling of the boundary at the current grade extends to a lawful labelling of the
-  layers built so far that restricts to it literally, and the layers built so far are bountiful at
-  the current grade cut.  (3) The step: availability gives, for each prescription at the grade `j`,
-  an owner of that prescription (checkpoint 2.4) of largest label; owner alignment and the
-  extension from the boundary give an owner-capped lift with a coded source section; bountifulness
-  at the previous grade cut restores the prescriptions of lower grade literally, `⊤` included.
-  (4) The apex at the literal `⊤`, then the truncation to the stage.
+  the catalogue.  (2) The invariant, in place of `Seed.TowerInvariant`, is extension: every lawful
+  labelling of the boundary at the current grade extends to a lawful labelling of the layers built
+  so far that restricts to it literally, and the layers built so far are bountiful at the current
+  grade cut.  (3) The step: availability gives, for each prescription at the grade `j`, an owner of
+  that prescription (`README.md`, Layer 3, the vocabulary of checkpoint 2.4); owner alignment and
+  the extension from the boundary give an owner-capped lift with a coded source section;
+  bountifulness at the previous grade cut restores the prescriptions of lower grade literally, `⊤`
+  included.  (4) The apex at the literal `⊤`, then the truncation to the stage.
 - *Acceptance test.*  `CompletionBelowFullGrade I` compiled for every stage zero or a limit, every
   `m`, and every seed `I`; constructed seeds are tests.
 - *Known failures, as tests.*  `TwoFaceLiftExistsCounterexample.seedL`, where `2FL∃(2)` and the
   invariant of the tower fail; `CaseSplitCounterexample.seed5` and
-  `TwoFaceLiftCounterexample.seed4`; the seed with two opposite forced separations at the grade 1
-  (under review), where one cell at a graded face of full scope cannot read two boundary cells in
-  both orders; a catalogue over the whole boundary has a cell for each order.
+  `TwoFaceLiftCounterexample.seed4`; the legal seed `CrossedCouplingCounterexample.seedHG`, with
+  two opposite forced separations at the grade 1, every completion of which has two different
+  cells at `(univ, 1)` (`CrossedCouplingCounterexample.exists_ne_seedHG`, through
+  `CompletionBelowFullGrade.exists_ne_of_forcesTop`): one cell at a graded face of full scope
+  cannot read two boundary cells in both orders.  A catalogue over the whole boundary has a cell
+  for each order, as the compiled completion of `seedHG` has, one new cell at `(univ, 1)` per
+  forced separation (`CrossedCouplingCounterexample.nonempty_completionBelowFullGrade_seedHG`,
+  from `Seed.MultiLayerStep`).
 - *Source.*  [Kni26, §4.3]; the two small seeds followed by a recursion over the whole boundary with
-  a section invariant and the apex at `⊤`: the parallel development.
+  the extension invariant of step 2 and the apex at `⊤`: the parallel development.
 
 **U5.  The composition and the losses: no new target.**  Each clause of the count that uses no
 global termination (countable losses, limit continuity, countable exceptions to uniform comparison,
@@ -3623,54 +3698,6 @@ Layers 5–6); nonempty losses enter through `nonempty_loss_of_topFreeWitness` a
 **Order.**  U1 first, beginning with its tests (a)–(c) and (f); then U2; U4 continues alongside,
 and U1, step 2, and U3, step 5, use it; U3 after U1 for (R2).  With U1–U4 compiled, the
 five-hypothesis form has no hypothesis left.
-
-## Companion boundaries
-
-Companion topics: definable domain/logical cuts with strict loss-rank lower bounds; canonical
-top-free classes converging sentencewise; local automorphisms of self-embeddings; and the
-arbitrary-carrier Scott/`T∞` theory dichotomy.  The joint embedding and amalgamation properties of
-finite top-free charts are step 2 of the top-free witnesses and belong to the core.  These do not
-assert strong AP, a proper self-embedding, uncountable categoricity, Scott-rank equality, or
-existence of a model of all of `T∞`.  Terminal refinement (eventual departure by Scott isolation,
-the last admitted stage, and the terminal expansion; conditional targets) is never an input to the
-count, and its eventual departure is to be proved from hypotheses of the count (the agreement of
-condition 3 and the nonempty losses of condition 4, with Scott sentences), not from its conclusions;
-the agreement filtration (defined by `T∞`) and the rank filtration (defined by Scott rank) are
-defined differently; no relation between them is asserted, and any comparison is a separate
-prospective theorem (`COMPANIONS.md`, "Further companion results").  Quantitative reconstruction
-(base-language definitions and Scott sentences with bounds on their quantifier rank) and its
-recognition and base-reduct orbit-rank targets are companion statements, used by neither route,
-with their own completion criterion (`COMPANIONS.md`, "Further companion results"); its first row
-is compiled conditionally on block determination (`Definability/BlockFormulas`), and the rest is
-prospective.  The main
-theorem is proved without them; if any is added, give it a separate definite completion criterion.
-Direct limits of structures and the classical existence theorem (available at the pin) belong to the
-two libraries, not to the finite constructions of layer 3.  [`COMPANIONS.md`](COMPANIONS.md) gives
-these topics and the full-chart orbit theory below such criteria, as three milestones (A: filtration
-and infinitary theory; B: top-free chart homogeneity and its consequences; C: a geometric
-obstruction).
-
-### Full-chart orbit theory: a companion checkpoint
-
-The targets of this checkpoint are milestones B and C of [`COMPANIONS.md`](COMPANIONS.md),
-which states each with its hypotheses, upstream ingredients, instantiation, special cases, and
-non-claims, and gives the companion sketch [`SuggestedCompanions.lean`](SuggestedCompanions.lean).
-In summary: in the full stage chart language (not the base reduct), a countable nonempty top-free
-realization with exact consistency, covering, and finite-cut receiving has automorphism orbits
-defined by explicit first-order chart formulas, hence isolated complete types, atomicity,
-internal Scott rank at most `ω` in the library's convention, and primeness among models of its
-complete theory in arbitrary universes.  The development proves the orbit formulas and the
-local automorphism property; the isolation, atomicity, primeness, rank, and preservation
-theorems are quoted from the two libraries ("Applications of library theorems" above).
-Separately, consistency and covering alone bound every set of absolute indiscernibles (a set
-whose permutations all extend to automorphisms) by two points, a theorem kept below receiving by
-an import guard.  Milestone A of
-`COMPANIONS.md` treats the definable cuts, witness convergence, and the Scott/`T∞` dichotomy
-listed above.
-
-**Completion criterion.**  This companion checkpoint is complete when milestones B and C of
-`COMPANIONS.md` meet their completion criteria.  It is not a core checkpoint, and the main
-theorem does not depend on it.
 
 ## Placement record
 
