@@ -85,7 +85,10 @@ member:
 The rigid-core case is the instance with `t'` the root, `h` the identity, `D' = d`, and a cutoff
 above every label of `d` other than `⊤`
 (`StageType.isDeterminedWithin_receivingFamily_of_isRigidCoreIn`, from
-`StageType.eq_of_mem_receivingFamily_of_isRigidCoreIn`).
+`StageType.isDeterminedWithin_receivingFamily_of_isRigidCoreIn_castSucc`, the arbitrary-face
+instance of `StageType.eq_of_mem_receivingFamily_of_isRigidCoreIn`).  Determination is antitone
+in its family (`StageType.IsDeterminedWithin.mono`), so it persists at larger receiving cutoffs
+(`StageType.IsDeterminedWithin.receivingFamily_of_le`).
 
 **The reductions.**  Each of (R2) and (R3) is reduced to two named statements, for a predicate
 `P` on pairs `(t', h)`, the **acquired context**:
@@ -112,7 +115,9 @@ in the hollow case the acquired context has the private cap and the marker label
 coface `D'` is on the constructed legal scheme of the growth construction, and the marker clause of
 `Correct` gives scheme determination.  Neither predicate `P` is defined here, neither acquisition
 nor determination is proved here for any `P`, and determination is proved only in the rigid-core
-instance.
+instance.  The predicate of the anchored private context, which takes the donor, is in
+`VaughtConjecture.Continuation.AnchoredDetermination`: acquisition holds for it in every model, and
+determination fails for it.
 
 **Determination needs an acquired context.**  Over a top-free root `t` along the identity, a
 one-point coface `d` of `t` that is not top-free is determined neither at a cutoff nor by a scheme
@@ -122,8 +127,8 @@ one-point coface `d` of `t` that is not top-free is determined neither at a cuto
 `t` is a top-free stage type on the scheme of `d`, in its receiving family, with face `t`.  So
 cutoff determination and scheme determination for the predicate that is always true fail, already
 at the empty root and the one-point stage type whose only cell is an apex labelled `⊤`
-(`VaughtConjecture.Continuation.ExactReceivingExamples`).  So, along the identity (the only case
-compiled), the acquired context must carry information that a top-free root lacks; in 3.3 it is
+(`VaughtConjecture.Continuation.ExactReceivingExamples`).  So, along the identity, the acquired
+context must carry information that a top-free root lacks; in 3.3 it is
 acquired from the absence of a rigid core (the private gap) or from hollowness (the private cap and
 the marker labelled `⊤`).
 
@@ -150,6 +155,34 @@ def IsDeterminedWithin (U : Set (StageType.{u} α (k + 1))) (t' : StageType.{u} 
     (h : Fin n ↪ Fin k) (d : StageType.{u} α (n + 1)) : Prop :=
   ∀ q ∈ U, restrictFace Fin.castSuccEmb q = some t' → restrictFace (extendByLast h) q = some d
 
+/-- Determination is antitone in the family. -/
+theorem IsDeterminedWithin.mono {U V : Set (StageType.{u} α (k + 1))} {t' : StageType.{u} α k}
+    {h : Fin n ↪ Fin k} {d : StageType.{u} α (n + 1)} (hV : IsDeterminedWithin V t' h d)
+    (hUV : U ⊆ V) : IsDeterminedWithin U t' h d :=
+  fun q hq ↦ hV q (hUV hq)
+
+/-- **Determination at a cutoff persists at every larger cutoff**: the receiving family shrinks as
+the cutoff grows. -/
+theorem IsDeterminedWithin.receivingFamily_of_le {D : StageType.{u} α (k + 1)} {δ δ' : Label.{u}}
+    {t' : StageType.{u} α k} {h : Fin n ↪ Fin k} {d : StageType.{u} α (n + 1)}
+    (hdet : IsDeterminedWithin (receivingFamily D δ) t' h d) (hδ : δ ≤ δ') :
+    IsDeterminedWithin (receivingFamily D δ') t' h d :=
+  hdet.mono fun _ hq ↦ mem_receivingFamily_of_le hq hδ
+
+/-- **Determination over a rigid context**, the rigid-core instance along a face: if a legal `D'`
+has face `t'` along the initial segment and `d` along `h` followed by the new point, and the
+private face is a rigid core of `D'`, then `d` is determined over `t'` along `h` within the
+receiving family of `D'` at a cutoff above every label of `D'` other than `⊤`. -/
+theorem isDeterminedWithin_receivingFamily_of_isRigidCoreIn_castSucc {t' : StageType.{u} α k}
+    {D' : StageType.{u} α (k + 1)} (hD' : D'.IsLegal)
+    (hD't' : restrictFace Fin.castSuccEmb D' = some t') {h : Fin n ↪ Fin k}
+    {d : StageType.{u} α (n + 1)} (hD'd : restrictFace (extendByLast h) D' = some d)
+    (hrig : D'.IsRigidCoreIn Fin.castSuccEmb) {δ : Ordinal.{u}}
+    (hδ : ∀ j, D'.label j ≠ ⊤ → D'.label j < (δ : Label.{u})) :
+    IsDeterminedWithin (receivingFamily D' δ) t' h d := fun q hq hqt ↦ by
+  rw [eq_of_mem_receivingFamily_of_isRigidCoreIn hD' hδ hq hqt hD't' hrig]
+  exact hD'd
+
 /-- **The rigid-core instance of determination**: a legal one-point coface `d` of `t` in which the
 root is a rigid core is determined over `t` along the identity within its receiving family at a
 cutoff above every label of `d` other than `⊤`. -/
@@ -159,9 +192,8 @@ theorem isDeterminedWithin_receivingFamily_of_isRigidCoreIn {t : StageType.{u} �
     (hrig : d.IsRigidCoreIn Fin.castSuccEmb) {δ : Ordinal.{u}}
     (hδ : ∀ j, d.label j ≠ ⊤ → d.label j < (δ : Label.{u})) :
     IsDeterminedWithin (receivingFamily d δ) t (Function.Embedding.refl (Fin n)) d := by
-  intro q hq hqt
-  rw [extendByLast_refl, restrictFace_refl,
-    eq_of_mem_receivingFamily_of_isRigidCoreIn hd hδ hq hqt hdt hrig]
+  exact isDeterminedWithin_receivingFamily_of_isRigidCoreIn_castSucc hd hdt
+    (by rw [extendByLast_refl, restrictFace_refl]) hrig hδ
 
 /-- A one-point type determined over its root along the identity, within a family containing a
 coface `D'` of the root, is `D'`. -/
@@ -464,8 +496,9 @@ structure SchemeDetermination
         ∃ D' ∈ t'.cofaces,
           StageType.IsDeterminedWithin (StageType.saturationFamily D'.toScheme) t' h d
 
-/-- The face of an acquired context along `h` is the type of the original cover. -/
-private theorem restrictFace_of_covers (hR : R.IsConsistent) {t : StageType.{u} α n}
+/-- **The face of an acquired context**: under exact consistency, if `c'` covers `t'` and
+`c' ∘ h` is a cover `c` of `t`, the face of `t'` along `h` is `t`. -/
+theorem restrictFace_of_covers (hR : R.IsConsistent) {t : StageType.{u} α n}
     {c : Fin n → M} (hc : R.Covers t c) {t' : StageType.{u} α k} {c' : Fin k → M}
     (hc' : R.Covers t' c') {h : Fin n ↪ Fin k} (hcc' : c' ∘ h = c) :
     StageType.restrictFace h t' = some t := by
