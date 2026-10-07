@@ -2345,8 +2345,8 @@ Each checkpoint needs both its abstract API and a concrete application:
    `StageType.exists_mem_cofaces_reduce_of_isLegal`; reading through a cap depends on its grade
    only, away from the formal top, `StageType.ReadsThroughCap.of_grade_eq`; the new named statement
    `StageType.HasCapReadingExtensions` (cap-reading extensions, `StageType.IsCapReadingExtension`;
-   open; no implication from or to `StageType.HasApexCoatomExtensions`, still to be proved,
-   compiled) implies the finite statement,
+   open; no implication compiled from or to `StageType.HasApexCoatomExtensions`, itself still to
+   be proved) implies the finite statement,
    `StageType.HasCapReadingExtensions.hasStableRecoverySchemes`; tests in
    `Continuation/StableRecoveryFullCapExamples`: the twin donors through `(univ, N)`, a full-scope
    cap at the interior context, and the interior scheme as a cap-reading extension for every

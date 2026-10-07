@@ -357,7 +357,8 @@ recovery schemes for the graded cap calibration
 for every stable recovery scheme (argued, not formalized); its reading clause, a condition on the
 rows of `E` at `(univ, N)`, replaces the recovery clause over every stage type on `E`: sufficient
 (`StageType.IsStableRecoveryScheme.of_readsThroughCap_univ`), not known to be necessary, and asked
-for every full-scope graded cap.  It is not proved, and no implication from or to the coatom
+for every full-scope graded cap: a strengthening at the level of rows, not a reformulation.  It is
+not proved, and no implication from or to the coatom
 extension property with apex (`StageType.HasApexCoatomExtensions`, still to be proved) is compiled.
 -/
 def HasCapReadingExtensions : Prop :=
