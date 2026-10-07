@@ -132,7 +132,7 @@ theorem isLawful_tiedApexRow :
     exact tiedApexRow_castSucc ht e d
   · rw [tiedApexRow_last]
     exact he.blockEncode le_rfl
-  · exact (TransformsTo.refl _ _).min_const (grade_appendFullCellScheme_le ht)
+  · exact (TransformsTo.refl _ _).min_const ht.grade_appendFullCellScheme_le
       (by rw [tiedApexRow_last]; exact he.blockEncode le_rfl)
 
 /-- **The labels with the tied apex are lawful**: the decoding transforms the tie row to the labels
@@ -158,13 +158,19 @@ theorem isLawful_tiedApexLabel :
       | cast d =>
         rw [tiedApexLabel_castSucc, tiedApexRow_castSucc,
           blockDecode_blockEncode (label_mem_apexCodes ht d)]
-    exact hdec.min_const (grade_appendFullCellScheme_le ht) (by rw [tiedApexLabel_last]; exact he)
+    exact hdec.min_const ht.grade_appendFullCellScheme_le (by rw [tiedApexLabel_last]; exact he)
 
 variable (hn : 0 < n)
 
 /-- **The tied apex** over `t` at the cell `e`: one cell of full scope and full grade `n` appended
 last, labelled with the label of `e`, whose row is the coded copy of the labels with the code of
-the label of `e` at the new cell (`StageType.tiedApexRow`). -/
+the label of `e` at the new cell (`StageType.tiedApexRow`).
+
+It is not `StageType.addApex` with another label: the row of the new cell is part of the scheme,
+and here it takes the code of the label of `e` at the new cell, not the code of the formal top.
+The two constructions share the laws of a full cell (`Scheme.isLawful_appendFullCell`,
+`Scheme.isConsistent_appendFullCell`, `Scheme.isBountiful_appendFullCell`,
+`Scheme.isComplete_appendFullCell`). -/
 noncomputable def addTiedApex : StageType.{u} α n where
   toScheme := t.toScheme.appendFullCell n (tiedApexRow ht e) ht.not_le
   label := tiedApexLabel e
@@ -178,6 +184,15 @@ noncomputable def addTiedApex : StageType.{u} α n where
     induction d using Fin.lastCases with
     | last => rw [tiedApexLabel_last]; exact t.atStage e
     | cast d => rw [tiedApexLabel_castSucc]; exact t.atStage d
+
+/-- The label of an old cell with the tied apex is its label in `t`. -/
+@[simp] theorem addTiedApex_label_castSucc (d : Fin t.card) :
+    (t.addTiedApex ht he hn).label d.castSucc = t.label d :=
+  tiedApexLabel_castSucc e d
+
+/-- The label of the tied apex is the label of `e`. -/
+@[simp] theorem addTiedApex_label_last : (t.addTiedApex ht he hn).label (Fin.last _) = t.label e :=
+  tiedApexLabel_last e
 
 /-- **The tied apex is legal**: consistency, and the bountifulness and completeness of the apex,
 unchanged. -/
@@ -208,7 +223,7 @@ theorem restrictFace_addTiedApex {k : ℕ} (f : Fin k ↪ Fin n) (hf : univ.map 
     (φ := (Fin.castSucc : Fin t.card → Fin (t.card + 1))) Fin.strictMono_castSucc
     (Scheme.isLowerEmbedding_castSucc n (tiedApexRow ht e) ht.not_le)
     (Scheme.appendFullCellScheme_scope_castSucc _ _) (Scheme.comap_rows_castSucc (h := ht.not_le))
-    rfl rfl (tiedApexLabel_castSucc e) (mem_range_castSucc_of_addTiedApex ht he hn f hf)
+    rfl rfl (addTiedApex_label_castSucc ht he hn) (mem_range_castSucc_of_addTiedApex ht he hn f hf)
 
 /-- **The tied apex forces its grade at the tied cell.**  If `t` restricts to `p` along a proper
 face `f`, the cell `d` of `p` is carried to `e`, and `e` is labelled at least `β`, a stage that is
@@ -244,10 +259,8 @@ theorem forcesThreshold_addTiedApex {β : Ordinal.{u}} (hβ : Order.IsSuccPrelim
       Fin.strictMono_castSucc (Scheme.appendFullCellScheme_scope_castSucc _ _)
       (mem_range_castSucc_of_addTiedApex ht he hn f hf) (i := ⟨i, hlt⟩) rfl,
       hde ⟨i, hlt⟩ hi]
-  · -- the reduced label of the new cell, unfolded (`reduce_label`)
-    change Label.reduce β (tiedApexLabel e (Fin.last _)) = ⊤
-    rw [tiedApexLabel_last]
-    exact Label.reduce_eq_top_iff.mpr hβe
+  · -- the reduced label of the new cell is `Label.reduce β` of its label (`reduce_label`)
+    exact Label.reduce_eq_top_iff.mpr (hβe.trans_eq (addTiedApex_label_last ht he hn).symm)
   · -- the reduction keeps the rows; both entries are read in the row of the new cell
     refine le_of_eq ((Scheme.appendFullCell_row_last (h := ht.not_le) _).trans
       (Eq.trans ?_ (Scheme.appendFullCell_row_last (h := ht.not_le) _).symm))
@@ -260,16 +273,17 @@ end TiedApex
 variable {β : Ordinal.{u}} {N k : ℕ} {T : StageType.{u} α N} {t : StageType.{u} α k}
 
 /-- **A forcing donor from a type legal below the full grade.**  If `t` is the face of `T` along a
-proper face `g`, `T` is legal below the full grade on `N > 0` points, and the label of `d` is at
-least `β` (zero or a limit) and self-visible at `N`, then the tied apex over `T` at the cell
-carrying `d` is a legal stage type with `t` as its face along `g`, whose reduction to `β` forces
-`N` at `d`. -/
+proper face `g`, `T` is legal below the full grade on `N` points, and the label of `d` is at least
+`β` (zero or a limit) and self-visible at `N`, then the tied apex over `T` at the cell carrying `d`
+is a legal stage type with `t` as its face along `g`, whose reduction to `β` forces `N` at `d`.
+The hypothesis `hg` gives `N > 0`: on no points, every face is the whole ground set. -/
 theorem exists_donor_of_isLegalBelowFullGrade (hβ : Order.IsSuccPrelimit β)
-    (hT : T.IsLegalBelowFullGrade) (hN : 0 < N) {g : Fin k ↪ Fin N} (hg : univ.map g ≠ univ)
+    (hT : T.IsLegalBelowFullGrade) {g : Fin k ↪ Fin N} (hg : univ.map g ≠ univ)
     (hgt : restrictFace g T = some t) {d : Fin t.card} (hβd : (β : Label.{u}) ≤ t.label d)
     (hv : IsSelfVisible N (t.label d)) :
     ∃ D : StageType.{u} α N, D.IsLegal ∧ restrictFace g D = some t ∧
       ForcesThreshold α hβ (D.reduce hβ) g (t.reduce hβ) d N := by
+  have hN : 0 < N := Nat.pos_of_ne_zero fun h ↦ hg (by subst h; exact Subsingleton.elim _ _)
   obtain ⟨hf, hcomap⟩ := (restrictFace_eq_some_iff T g).mp hgt
   have hcard : (T.comap g hf).card = t.card :=
     congrArg (fun s : StageType.{u} α k ↦ s.card) hcomap

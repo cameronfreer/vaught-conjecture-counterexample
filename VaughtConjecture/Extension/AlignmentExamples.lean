@@ -90,7 +90,7 @@ noncomputable abbrev six : Label.{u} := ((ω * (6 : ℕ) : Ordinal.{u}) : Label.
 
 /-- Every point of the block `6` is at least its start. -/
 private theorem six_le_pt {n : ℕ} : six.{u} ≤ pt 6 n :=
-  WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr le_self_add)
+  Label.coe_le_coe_add _ n
 
 /-- The grades: `d = false` has grade `1`, the owner `o = true` grade `2`. -/
 def stripGrade : Bool → ℕ := fun e ↦ if e then 2 else 1

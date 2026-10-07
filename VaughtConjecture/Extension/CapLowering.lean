@@ -58,12 +58,9 @@ labelling.  Four parts are named here: three at that lift, and the rows.
    (`capLowering_of_isLawful`).
 2. **Whether the readings of the donor cells or of the anchors can force the gate below some
    `v < c` while the ambient cap is at least `c`.**  The gate dominates the cap
-   (`StageType.CoupledGatedExtension.cap_le_gate`), so then no lift exists.  The anchor readings
-   alone do not force it: at a cap `c` at most the gate, every labelling in the cap ball satisfies
-   them at the gate value `c` (`CellScheme.Rows.IsLawful.min_eq_visibilityReplace_of_min_eq`, in
-   `VaughtConjecture.Extension.CoupledGatedExtensionCounterexample`); jointly with the rest of the
-   display this is open.  At the instance of `VaughtConjecture.Extension.CoupledGateInstance` it
-   does not occur, since every lift of the display there exists (`CoupledGateInstance.isLegal_Q`).
+   (`StageType.CoupledGatedExtension.cap_le_gate`), so then no lift exists.  This is open.  At the
+   instance of `VaughtConjecture.Extension.CoupledGateInstance` it does not occur, since every lift
+   of the display there exists (`CoupledGateInstance.isLegal_Q`).
 3. **Joint lawfulness.**  The lowered private labelling must extend to one labelling of the
    display lawful below `(univ, n)`, jointly with the gate, the twins, the donor cells, and the
    cells of grade `n` that contain the new point.  `capLowering` caps every private cell of grade
@@ -82,12 +79,8 @@ The hypothesis needs more at every input: the rows (part 4), consistency and com
 display, and bountifulness at its other pairs of graded faces.  Those pairs include the lift from
 the private coatom `(univ.map Fin.castSuccEmb, n)` to `(univ, n)`, where the readings of the gate
 must be realized on the donor face for an arbitrary lawful private labelling, and the lifts to
-`(univ, n + 1)`.  None of this is addressed here.  The property itself is false at every stage above
-`1` (`CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`): the lift from the
-private coatom fails at a private type with a proper anchor below the cap, where the readings of
-the gate carry a lawful private labelling that drops the anchor and keeps the cap to a donor
-labelling that the donor's rows forbid (`StageType.CoupledGatedExtension.carriesBottoms`).  Parts
-2–4 are not decided there.  Nothing here concerns (R1).
+`(univ, n + 1)`.  None of this is addressed here.  Nothing is proved here about the property
+itself, which is open, or about (R1).
 
 ## Placement
 
