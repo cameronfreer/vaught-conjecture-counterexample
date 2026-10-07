@@ -17,7 +17,12 @@ its range is Mathlib's `Fin.Embedding.snoc f hx`, whose range is that of `f` wit
 (`Fin.Embedding.univ_map_snoc`).  Adding a new point to the chart as well gives
 **`extendByLast f : Fin (m + 1) ↪ Fin (n + 1)`**, the face `f` followed by the new point: it is
 `f` on the old points (`castSuccEmb_trans_extendByLast`), sends the last point to the last point,
-and commutes with composition (`extendByLast_trans`).
+commutes with composition (`extendByLast_trans`), and extends the identity to the identity
+(`extendByLast_refl`).
+
+A proper face, an embedding whose image is not the whole ground set, has a nonempty target
+(`pos_of_univ_map_ne`); `Fin.castLEEmb` into a strictly larger `Fin` is a proper face
+(`univ_map_castLEEmb_ne`).
 
 ## Placement
 
@@ -66,6 +71,14 @@ theorem castSuccEmb_trans_extendByLast (f : Fin m ↪ Fin n) :
     Fin.castSuccEmb.trans (extendByLast f) = f.trans Fin.castSuccEmb :=
   Fin.Embedding.init_snoc _ _
 
+/-- Extending the identity by the new point is the identity. -/
+@[simp] theorem extendByLast_refl :
+    extendByLast (Function.Embedding.refl (Fin m)) = Function.Embedding.refl (Fin (m + 1)) :=
+  Function.Embedding.ext fun i ↦ by
+    induction i using Fin.lastCases with
+    | last => simp
+    | cast i => simp
+
 /-- Extending a composite by the new point is composing the extensions. -/
 theorem extendByLast_trans (g : Fin k ↪ Fin m) (f : Fin m ↪ Fin n) :
     (extendByLast g).trans (extendByLast f) = extendByLast (g.trans f) :=
@@ -79,5 +92,22 @@ point added. -/
 theorem univ_map_extendByLast (f : Fin m ↪ Fin n) :
     univ.map (extendByLast f) = insert (Fin.last n) ((univ.map f).map Fin.castSuccEmb) := by
   rw [extendByLast, Fin.Embedding.univ_map_snoc, ← map_map]
+
+variable {N : ℕ}
+
+/-- An embedding into `Fin N` whose image is not the whole ground set has `0 < N`: a proper face
+rules out the chart on no points. -/
+theorem pos_of_univ_map_ne {g : Fin k ↪ Fin N} (hg : univ.map g ≠ univ) : 0 < N :=
+  Nat.pos_of_ne_zero fun h ↦ hg (by subst h; exact Subsingleton.elim _ _)
+
+/-- The image of `Fin.castLEEmb` is a proper subset when the target is larger. -/
+theorem univ_map_castLEEmb_ne {hkN : k ≤ N} (hlt : k < N) :
+    univ.map (Fin.castLEEmb hkN) ≠ univ := fun h ↦ by
+  have hmem := mem_univ (⟨k, hlt⟩ : Fin N)
+  rw [← h, mem_map] at hmem
+  obtain ⟨y, -, hy⟩ := hmem
+  have h1 : ((Fin.castLEEmb hkN y : Fin N) : ℕ) = k := Fin.ext_iff.mp hy
+  have h2 : ((Fin.castLEEmb hkN y : Fin N) : ℕ) = y := rfl
+  omega
 
 end VaughtConjecture

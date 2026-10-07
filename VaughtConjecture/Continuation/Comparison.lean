@@ -188,7 +188,7 @@ theorem rigidCoreAge_zero (hα : Order.IsSuccLimit α) (p : StageType.{u} α 0)
   rw [hp', eq_of_zero p' p]
 
 /-- Legality and a bound on the top grade pass to faces. -/
-private theorem isLegal_and_topGrade_le_of_restrictFace {K : ℕ} {D : StageType.{u} α m}
+theorem isLegal_and_topGrade_le_of_restrictFace {K : ℕ} {D : StageType.{u} α m}
     (hD : D.IsLegal ∧ D.topGrade ≤ K) {f : Fin n ↪ Fin m} {p : StageType.{u} α n}
     (hf : StageType.restrictFace f D = some p) : p.IsLegal ∧ p.topGrade ≤ K :=
   ⟨hD.1.restrictFace f hf, (StageType.topGrade_le_of_restrictFace hf).trans hD.2⟩

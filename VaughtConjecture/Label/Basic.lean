@@ -31,11 +31,14 @@ label is an ordinal (`IsProper`); the formal top is not an ordinal and lies abov
   `o + 1` it keeps exactly the labels `≤ o` (`reduce_add_one_of_le`, `reduce_add_one_of_lt`).
 
 Stage reduction is not capped observation (`VaughtConjecture.Label.Cap`): reduction keeps the
-formal top, while a cap at a proper cutoff forgets it.
+formal top, while a cap at a proper cutoff forgets it.  Capping at a label other than `⊥` keeps
+every label other than `⊥` away from `⊥` (`ne_bot_of_min_eq_of_ne_bot`).
 
 The cast of a natural number `n` to a label is the label of the ordinal `n` (`natCast_label`);
-these casts are injective and order-preserving, lie below `ω` and above `⊥`, and are the only
-labels other than `⊥` below `ω` (`exists_natCast_of_lt_omega`).
+these casts are injective and order-preserving, lie below `ω` (so below `ω ^ 2`,
+`natCast_label_lt_omega0_sq`) and above `⊥`, and are the only labels other than `⊥` below `ω`
+(`exists_natCast_of_lt_omega`).  Every ordinal is `ω * b + n` with `n` a natural number
+(`exists_eq_omega0_mul_add_natCast`).
 
 If there are countably many ordinals below `α`, there are countably many labels at stage `α`
 (`countable_setOf_atStage`); in particular the labels below `ω ^ 2` form a countable set
@@ -186,6 +189,14 @@ theorem reduce_bot : reduce α (⊥ : Label.{u}) = ⊥ := reduce_of_lt (WithBot.
 /-- Stage reduction fixes the formal top. -/
 theorem reduce_top : reduce α (⊤ : Label.{u}) = ⊤ := reduce_of_le le_top
 
+/-- Stage reduction of an ordinal label: the ordinal is kept when it is below the stage, and
+becomes the formal top otherwise. -/
+theorem reduce_coe_eq_ite (β o : Ordinal.{u}) :
+    reduce β (o : Label.{u}) = if o < β then (o : Label.{u}) else ⊤ := by
+  split_ifs with h
+  · exact reduce_of_lt (by exact_mod_cast h)
+  · exact reduce_of_le (by exact_mod_cast not_lt.mp h)
+
 /-- Stage reduction never lowers a label. -/
 theorem le_reduce (α : Ordinal.{u}) (x : Label.{u}) : x ≤ reduce α x := by
   unfold reduce; split_ifs <;> simp
@@ -241,6 +252,11 @@ theorem reduce_reduce_of_le (h : β ≤ α) (x : Label.{u}) :
       (not_lt.mp hx)
     rw [reduce_of_le (not_lt.mp hx), reduce_top, reduce_of_le hβ]
 
+/-- Reducing to a stage `α` a label already reduced to a lower stage `β` does not change it. -/
+theorem reduce_reduce_of_ge (h : β ≤ α) (x : Label.{u}) :
+    reduce α (reduce β x) = reduce β x :=
+  ((atStage_reduce β x).mono h).reduce_eq
+
 /-- Stage reduction is idempotent. -/
 @[simp] theorem reduce_reduce (α : Ordinal.{u}) (x : Label.{u}) :
     reduce α (reduce α x) = reduce α x :=
@@ -291,10 +307,20 @@ theorem natCast_label_inj {n m : ℕ} : (n : Label.{u}) = m ↔ n = m := by
 theorem natCast_label_le {n m : ℕ} : (n : Label.{u}) ≤ m ↔ n ≤ m := by
   rw [natCast_label, natCast_label, WithBot.coe_le_coe, WithTop.coe_le_coe, Nat.cast_le]
 
+/-- The casts of natural numbers to labels are strictly ordered as the natural numbers. -/
+theorem natCast_label_lt {n m : ℕ} : (n : Label.{u}) < m ↔ n < m := by
+  rw [natCast_label, natCast_label, WithBot.coe_lt_coe, WithTop.coe_lt_coe, Nat.cast_lt]
+
 theorem natCast_label_lt_omega (n : ℕ) :
     (n : Label.{u}) < ((ω : Ordinal.{u}) : Label.{u}) := by
   rw [natCast_label, WithBot.coe_lt_coe, WithTop.coe_lt_coe]
   exact natCast_lt_omega0 n
+
+/-- Every natural number lies below `ω ^ 2`. -/
+theorem natCast_label_lt_omega0_sq (n : ℕ) :
+    (n : Label.{u}) < ((ω ^ 2 : Ordinal.{u}) : Label.{u}) := by
+  rw [natCast_label, WithBot.coe_lt_coe, WithTop.coe_lt_coe, pow_two]
+  exact (natCast_lt_omega0 n).trans_le (le_mul_left _ omega0_pos)
 
 theorem natCast_label_ne_bot (n : ℕ) : (n : Label.{u}) ≠ ⊥ := by
   rw [natCast_label]; exact WithBot.coe_ne_bot
@@ -309,6 +335,12 @@ theorem exists_natCast_of_lt_omega {x : Label.{u}} (hx : x ≠ ⊥)
     rw [WithBot.coe_lt_coe, WithTop.coe_lt_coe] at hxω
     obtain ⟨n, rfl⟩ := lt_omega0.mp hxω
     exact ⟨n, (natCast_label n).symm⟩
+
+/-- Every ordinal is `ω * b + n` for an ordinal `b` and a natural number `n`. -/
+theorem exists_eq_omega0_mul_add_natCast (o : Ordinal.{u}) :
+    ∃ (b : Ordinal.{u}) (n : ℕ), o = ω * b + n := by
+  obtain ⟨n, hn⟩ := lt_omega0.mp (mod_lt o omega0_ne_zero)
+  exact ⟨o / ω, n, by rw [← hn, div_add_mod]⟩
 
 end NatCast
 
@@ -371,6 +403,13 @@ theorem countable_setOf_lt_omega0_sq :
   exact (countable_setOf_atStage h).mono fun _ hx ↦ .inl hx
 
 end Countability
+
+/-- A label whose minimum with a label `c ≠ ⊥` agrees with that of a label `b ≠ ⊥` is not `⊥`. -/
+theorem ne_bot_of_min_eq_of_ne_bot {a b c : Label.{u}} (h : min a c = min b c)
+    (hb : b ≠ ⊥) (hc : c ≠ ⊥) : a ≠ ⊥ := by
+  rintro rfl
+  rw [min_eq_left bot_le] at h
+  exact (min_eq_bot.mp h.symm).elim hb hc
 
 end Label
 

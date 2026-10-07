@@ -59,12 +59,9 @@ open Finset Label CellScheme
 open CrossedCouplingCounterexample (TH TG kindOld kindOld_spec CellKind Coupled crossType
   leftKind rightKind kindOld_left kindOld_right val_leftKind val_rightKind exists_lab_of_comap
   isLawful_amalgam_kindOld hasBottomApexes_HG exists_paramCells w2 w3 isSelfVisible_v1
-  isSelfVisible_v2
-  isSelfVisible_w2 isSelfVisible_w3 strip3_w2 strip3_w3 min_visibilityReplace_A
-  min_visibilityReplace_H)
-open TwoFaceLiftCounterexample (v1 v2 stripShifter isWitness_stripShifter
-  isWitness_stripShifter_one stripShifter_v1 stripShifter_v2)
-open TwoFaceLiftExistsCounterexample (strip3 isWitness_strip3)
+  isSelfVisible_v2 isSelfVisible_w2 isSelfVisible_w3 transformsTo_val_ac transformsTo_val_ad
+  transformsTo_val_h transformsTo_val_g)
+open TwoFaceLiftCounterexample (v1 v2)
 
 variable {α : Ordinal.{u}} (I : Seed.{u} α 3)
 
@@ -112,37 +109,28 @@ theorem grade_of_kindOld (d : Fin I.amalgam.card) :
   obtain ⟨h1, h2, h3, h4, h5⟩ := kindOld_spec (I.amalgam.toCellScheme.gradedIndex d)
   exact ⟨fun h ↦ (h1 h).1, fun h ↦ (h2 h).1, h3, h4, h5⟩
 
-/-- **A row by kinds transforms to a labelling by kinds capped at `x`** at a copy of grade
-`k + 1`, when the witness does so kind by kind, at the grade of each kind below the copy. -/
-theorem transformsTo_kindVal {R : CopyRows I} (k : Fin 4) (i : Fin 2)
-    {g : ℕ → Label.{u}} {σ : Label.{u} → Label.{u}} (hw : IsWitness g σ)
-    {RAC RAD RH RG RQ AC AD H G Q x : Label.{u}}
-    (hac : min AC x = min (σ RAC) (g 1)) (had : min AD x = min (σ RAD) (g 1))
-    (hh : 2 ≤ (k : ℕ) + 1 → min H x = min (σ RH) (g 2))
-    (hg : 3 ≤ (k : ℕ) + 1 → min G x = min (σ RG) (g 3))
-    (htop : 4 ≤ (k : ℕ) + 1 → min Q x = min (σ RQ) (g 4)) :
-    TransformsTo (fun t : (canonicalMultiScheme I R).toCellScheme.below
-        ((canonicalMultiScheme I R).toCellScheme.gradedIndex (multiNewCell I canonicalMult k i)) ↦
-        (canonicalMultiScheme I R).toCellScheme.grade t)
-      (fun t ↦ kindVal I RAC RAD RH RG RQ (copyBase I t.1))
-      (fun t ↦ min (kindVal I AC AD H G Q (copyBase I t.1)) x) := by
-  refine ⟨g, σ, hw, fun t ↦ ?_⟩
-  have ht : (canonicalMultiScheme I R).toCellScheme.grade t.1 ≤ (k : ℕ) + 1 :=
-    (le_of_le_of_eq (t.2 : (canonicalMultiScheme I R).toCellScheme.gradedIndex t.1 ≤ _)
-      (gradedIndex_multiNewCell (r := canonicalRows I R) k i)).2
-  have hg' := grade_copyBase R t.1
-  obtain ⟨g1, g2, g3, g4, g5⟩ := grade_of_kindOld (copyBase I t.1)
-  dsimp only
-  rw [← hg']
-  rw [← hg'] at ht
-  unfold kindVal
-  cases hk : kindOld (I.amalgam.toCellScheme.gradedIndex (copyBase I t.1)) with
-  | dead => simp only [CellKind.val, hw.map_bot, bot_le, min_eq_left]
-  | ac => simp only [CellKind.val]; rw [g1 hk]; exact hac
-  | ad => simp only [CellKind.val]; rw [g2 hk]; exact had
-  | h => simp only [CellKind.val]; rw [g3 hk]; exact hh (by have := g3 hk; omega)
-  | g => simp only [CellKind.val]; rw [g4 hk]; exact hg (by have := g4 hk; omega)
-  | top => simp only [CellKind.val]; rw [g5.mp hk]; exact htop (by have := g5.mp hk; omega)
+/-- The grade of a cell of the canonical multi-layer scheme is that of the kind of its base. -/
+theorem grade_of_kindOld_copyBase (R : CopyRows I) (z : Fin (canonicalMultiScheme I R).card) :
+    (kindOld (I.amalgam.toCellScheme.gradedIndex (copyBase I z)) = .ac →
+        (canonicalMultiScheme I R).toCellScheme.grade z = 1) ∧
+      (kindOld (I.amalgam.toCellScheme.gradedIndex (copyBase I z)) = .ad →
+        (canonicalMultiScheme I R).toCellScheme.grade z = 1) ∧
+      (kindOld (I.amalgam.toCellScheme.gradedIndex (copyBase I z)) = .h →
+        (canonicalMultiScheme I R).toCellScheme.grade z = 2) ∧
+      (kindOld (I.amalgam.toCellScheme.gradedIndex (copyBase I z)) = .g →
+        (canonicalMultiScheme I R).toCellScheme.grade z = 3) ∧
+      (kindOld (I.amalgam.toCellScheme.gradedIndex (copyBase I z)) = .top ↔
+        (canonicalMultiScheme I R).toCellScheme.grade z = 4) := by
+  rw [← grade_copyBase R z]
+  exact grade_of_kindOld (copyBase I z)
+
+/-- The cells below a copy of grade `k + 1` have grade at most `k + 1`. -/
+theorem grade_le_of_mem_below_copy {R : CopyRows I} {k : Fin 4} {i : Fin 2}
+    (t : (canonicalMultiScheme I R).toCellScheme.below
+      ((canonicalMultiScheme I R).toCellScheme.gradedIndex (multiNewCell I canonicalMult k i))) :
+    (canonicalMultiScheme I R).toCellScheme.grade t.1 ≤ (k : ℕ) + 1 :=
+  (le_of_le_of_eq (t.2 : (canonicalMultiScheme I R).toCellScheme.gradedIndex t.1 ≤ _)
+    (gradedIndex_multiNewCell (r := canonicalRows I R) k i)).2
 
 variable {H G : Label.{u}}
 
@@ -170,45 +158,21 @@ theorem transformsTo_copy {AC AD : Label.{u}} (hAC : IsSelfVisible 1 AC)
         (fun t ↦ rowsHG I k i (copyBase I t.1))
         (fun t ↦ min (kindVal I AC AD H G ⊥ (copyBase I t.1)) ((copyKind k i).val AC AD H G ⊥))
   | ⟨0, _⟩, ⟨0, _⟩ => by
-    -- The copy of `(C, 1)`, labelled `A_C`: the strip shifter of `A_D`, up to `A_C`.
-    refine transformsTo_kindVal _ _ (isWitness_stripShifter_one (A := AD) hAC) ?_ ?_
-      (fun h ↦ absurd h (by simp)) (fun h ↦ absurd h (by simp)) (fun h ↦ absurd h (by simp))
-    · simp only [copyKind, CellKind.val]
-      rw [stripShifter_v2, constStepSuppressor_of_le _ le_rfl, min_top_left, min_self]
-    · simp only [copyKind, CellKind.val]
-      rw [stripShifter_v1 hAD, constStepSuppressor_of_le _ le_rfl]
+    -- The copy of `(C, 1)`, labelled `A_C`, as the cell of kind `A_C` of `schemeHG`.
+    refine transformsTo_val_ac (fun t ↦ ?_) (fun t ↦ ?_) hAC hAD
+    exacts [grade_of_kindOld_copyBase _ t.1, grade_le_of_mem_below_copy t]
   | ⟨0, _⟩, ⟨1, _⟩ => by
-    -- The copy of `(D, 1)`, labelled `A_D`: the strip shifter of `A_C`, up to `A_D`.
-    refine transformsTo_kindVal _ _ (isWitness_stripShifter_one (A := AC) hAD) ?_ ?_
-      (fun h ↦ absurd h (by simp)) (fun h ↦ absurd h (by simp)) (fun h ↦ absurd h (by simp))
-    · simp only [copyKind, CellKind.val]
-      rw [stripShifter_v1 hAC, constStepSuppressor_of_le _ le_rfl]
-    · simp only [copyKind, CellKind.val]
-      rw [stripShifter_v2, constStepSuppressor_of_le _ le_rfl, min_top_left, min_self]
+    -- The copy of `(D, 1)`, labelled `A_D`, as the cell of kind `A_D` of `schemeHG`.
+    refine transformsTo_val_ad (fun t ↦ ?_) (fun t ↦ ?_) hAC hAD
+    exacts [grade_of_kindOld_copyBase _ t.1, grade_le_of_mem_below_copy t]
   | ⟨1, _⟩, _ => by
-    -- The copies of `(C, 2)` and `(D, 2)`, labelled `H`: the strip shifter of `A_D`, up to `H`.
-    refine transformsTo_kindVal _ _ (isWitness_stripShifter (A := AD) hH) ?_ ?_ (fun _ ↦ ?_)
-      (fun h ↦ absurd h (by simp)) (fun h ↦ absurd h (by simp))
-    · simp only [copyKind, CellKind.val]
-      rw [stripShifter_v2, constStepSuppressor_of_le _ (by omega), min_top_left, min_eq_right h1]
-    · simp only [copyKind, CellKind.val]
-      rw [stripShifter_v1 hAD, constStepSuppressor_of_le _ (by omega)]
-    · simp only [copyKind, CellKind.val]
-      rw [stripShifter_v2, constStepSuppressor_of_le _ le_rfl, min_top_left, min_self]
+    -- The copies of `(C, 2)` and `(D, 2)`, labelled `H`, as the cell at `(univ, 2)` of `schemeHG`.
+    refine transformsTo_val_h (fun t ↦ ?_) (fun t ↦ ?_) hAD hH h1
+    exacts [grade_of_kindOld_copyBase _ t.1, grade_le_of_mem_below_copy t]
   | ⟨2, _⟩, _ => by
-    -- The copies of `(C, 3)` and `(D, 3)`, labelled `G`: `strip3 A_C`, up to `G`.
-    refine transformsTo_kindVal _ _ (isWitness_strip3 (A := AC) hG) ?_ ?_ (fun _ ↦ ?_)
-      (fun _ ↦ ?_) (fun h ↦ absurd h (by simp))
-    · simp only [copyKind, CellKind.val]
-      rw [strip3_w2, constStepSuppressor_of_le _ (by omega)]
-      exact min_visibilityReplace_A hH h1 h2
-    · simp only [copyKind, CellKind.val]
-      rw [strip3_w3, constStepSuppressor_of_le _ (by omega), min_top_left, min_eq_right hGA]
-    · simp only [copyKind, CellKind.val]
-      rw [strip3_w2, constStepSuppressor_of_le _ (by omega)]
-      exact min_visibilityReplace_H hH h1 h2
-    · simp only [copyKind, CellKind.val]
-      rw [strip3_w3, constStepSuppressor_of_le _ le_rfl, min_top_left, min_self]
+    -- The copies of `(C, 3)` and `(D, 3)`, labelled `G`, as the cell at `(univ, 3)` of `schemeHG`.
+    refine transformsTo_val_g (fun t ↦ ?_) (fun t ↦ ?_) hH hG h1 h2 hGA
+    exacts [grade_of_kindOld_copyBase _ t.1, grade_le_of_mem_below_copy t]
   | ⟨3, _⟩, _ => by
     -- The copies of `(C, 4)` and `(D, 4)`: their label is `⊥`.
     simp only [copyKind, CellKind.val, min_bot_right]

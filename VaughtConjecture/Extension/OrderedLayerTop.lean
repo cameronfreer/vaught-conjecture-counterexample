@@ -27,7 +27,9 @@ fields at the grades `k ≤ 3` (`Seed.OrderedLayerStepBelowTop`):
 
 * the top row is coded and consistent: it is the labelling of `ω + 4` at the cells of grade `4`
   alone, lawful through the top shifter, since every row of a cell of grade `4` is `⊥` exactly
-  below the grade `4` (`isLawfulBelow_omegaLabel`);
+  below the grade `4` (`isLawfulBelow_omegaLabel`); this holds in every scheme on five points of
+  grades at most `4` whose cells of grade `4` have such rows (`isLawfulBelow_omega_of_rows`), for
+  example in a multi-layer scheme (`Seed.canonicalMultiStep_of_productBelowTop`);
 * the capped lift from a coatom at the grade `4` into `(univ, 4)` comes from the lift at the grade
   `3` (`cappedLift_four`): a lawful labelling below `(univ, 4)` is constant on the cells of grade
   `4` (`eq_newCell_four`) and, if not `⊥` there, `⊥` below the grade `4`
@@ -53,53 +55,6 @@ universe u
 namespace VaughtConjecture
 
 open Finset Label CellScheme
-
-/-! ### Cells of one grade visible through a face -/
-
-namespace StageType
-
-variable {α : Ordinal.{u}}
-
-/-- **Cells of grade `k` visible through a face whose type has one cell at each graded index of
-grade `k` are determined by their graded indices.** -/
-theorem eq_of_gradedIndex_eq_of_restrictFace_of_grade {n m k : ℕ} {Am : StageType.{u} α n}
-    {f : Fin m ↪ Fin n} {t : StageType.{u} α m} (hf : StageType.restrictFace f Am = some t)
-    (ht : ∀ i i', t.toCellScheme.gradedIndex i = t.toCellScheme.gradedIndex i' →
-      t.toCellScheme.grade i = k → i = i')
-    {z z' : Fin Am.card}
-    (hz : (Am.toCellScheme.scope z : Set (Fin n)) ⊆ Set.range f)
-    (hz' : (Am.toCellScheme.scope z' : Set (Fin n)) ⊆ Set.range f)
-    (hzk : Am.toCellScheme.grade z = k)
-    (h : Am.toCellScheme.gradedIndex z = Am.toCellScheme.gradedIndex z') : z = z' := by
-  obtain ⟨hf', rfl⟩ := (StageType.restrictFace_eq_some_iff _ _).mp hf
-  obtain ⟨i, rfl⟩ : z ∈ Set.range (Am.cellMap f) := by
-    rw [Scheme.range_cellMap]; exact Scheme.mem_visibleCells.mpr hz
-  obtain ⟨i', rfl⟩ : z' ∈ Set.range (Am.cellMap f) := by
-    rw [Scheme.range_cellMap]; exact Scheme.mem_visibleCells.mpr hz'
-  have hk : (Am.comap f hf').toCellScheme.grade i = k :=
-    (congrArg Prod.snd (Am.toScheme.map_comap_gradedIndex f i)).trans hzk
-  rw [← Am.toScheme.map_comap_gradedIndex f i, ← Am.toScheme.map_comap_gradedIndex f i'] at h
-  have hinj : Function.Injective (Prod.map (Finset.map f) (id : ℕ → ℕ)) :=
-    (Finset.map_injective f).prodMap Function.injective_id
-  exact congrArg _ (ht i i' (hinj h) hk)
-
-/-- **After adding the apex, the apex is the only cell of full grade.** -/
-theorem eq_of_grade_addApex {n : ℕ} {t : StageType.{u} α n} (ht : t.IsLegalBelowFullGrade)
-    (hn : 0 < n) {i : Fin (t.addApex ht hn).card}
-    (hi : (t.addApex ht hn).toCellScheme.grade i = n) :
-    i = Fin.last _ := by
-  -- `t.addApex` has the cells of `t` and the apex, so `Fin.lastCases` applies.
-  change Fin (t.card + 1) at i
-  induction i using Fin.lastCases with
-  | last => rfl
-  | cast d =>
-    exfalso
-    -- The cell scheme of `t.addApex` is `appendFullCellScheme`.
-    change (Scheme.appendFullCellScheme t.toScheme n).grade d.castSucc = n at hi
-    rw [Scheme.appendFullCellScheme_grade_castSucc] at hi
-    exact (ht.grade_lt d).ne hi
-
-end StageType
 
 /-! ### Seeds with bottom apexes -/
 
@@ -174,20 +129,6 @@ end Seed
 namespace OrderedLayer
 
 variable {α : Ordinal.{u}} {I : Seed.{u} α 3} {ρ : LayerRows.{u}}
-
-/-- **The top shifter on a row with one nonzero kind.**  If the suppressor `Ω` is self-visible at
-`K` and every grade is at most `K`, a row transforms to the labelling that is `Ω` where the row is
-not `⊥` and `⊥` where it is. -/
-theorem transformsTo_of_eq_bot_iff {D : Type*} (grade : D → ℕ) {K : ℕ} (hgr : ∀ d, grade d ≤ K)
-    {Ω : Label.{u}} (hΩ : IsSelfVisible K Ω) (r q : D → Label.{u})
-    (hq : ∀ d, q d = if r d = ⊥ then ⊥ else Ω) : TransformsTo grade r q := by
-  refine ⟨constStepSuppressor K Ω, topShifter,
-    isWitness_topShifter (antitone_constStepSuppressor _ _)
-      (isSelfVisible_constStepSuppressor hΩ), fun d ↦ ?_⟩
-  have hg : constStepSuppressor K Ω (grade d) = Ω := by
-    unfold constStepSuppressor; rw [ite_eq_left (hgr d)]
-  rw [hg, hq, topShifter]
-  split_ifs <;> simp
 
 variable (I ρ) in
 /-- The **labelling of `Ω` alone**: `Ω` at the cells of grade `4`, `⊥` elsewhere. -/
@@ -276,33 +217,44 @@ theorem row_eq_bot_iff_of_grade_four {s : Fin (layerScheme I ρ).card}
       exact (layerScheme I ρ).rows.row_congr rfl he
     rw [hrow, hI.row_apex hs, he, grade_oldCell]
 
-/-- **The labelling of `Ω` alone is lawful below `(univ, 4)`**, for `Ω` self-visible at `4`: at
-the cells of grade `4`, whose rows are `⊥` exactly below the grade `4`, the top shifter is a
-witness. -/
-theorem isLawfulBelow_omegaLabel {Ω : Label.{u}} (hΩ : IsSelfVisible 4 Ω) :
-    (layerScheme I ρ).rows.IsLawfulBelow ((univ : Finset (Fin 5)), 4)
-      fun z ↦ omegaLabel I ρ Ω z := by
-  refine Rows.isLawfulBelow_iff_forall.mpr ⟨fun d _ ↦ ?_, fun s _ ↦ ?_, fun s t _ hst hg ↦ ?_⟩
-  · rw [omegaLabel]
-    split_ifs with h
+omit hρ4 hI in
+/-- **The labelling of `Ω` alone at the grade `4`** is lawful below `(univ, 4)` in a scheme on five
+points whose grades are at most `4` and in which the row of every cell of grade `4` is `⊥` exactly
+at the cells of grade other than `4`: at the cells of grade `4` the top shifter is a witness. -/
+theorem isLawfulBelow_omega_of_rows {S : Scheme.{u} 5} (hgr : ∀ z, S.toCellScheme.grade z ≤ 4)
+    (hrow : ∀ s, S.toCellScheme.grade s = 4 →
+      ∀ t : S.toCellScheme.below (S.toCellScheme.gradedIndex s),
+        S.rows.row s t = ⊥ ↔ S.toCellScheme.grade t.1 ≠ 4)
+    {Ω : Label.{u}} (hΩ : IsSelfVisible 4 Ω) :
+    S.rows.IsLawfulBelow ((univ : Finset (Fin 5)), 4)
+      fun z ↦ if S.toCellScheme.grade z = 4 then Ω else ⊥ := by
+  refine (Rows.isLawfulBelow_iff_forall
+    (w := fun z ↦ if S.toCellScheme.grade z = 4 then Ω else ⊥)).mpr
+    ⟨fun d _ ↦ ?_, fun s _ ↦ ?_, fun s t _ hst hg ↦ ?_⟩
+  · split_ifs with h
     · rw [h]; exact hΩ
     · exact isSelfVisible_bot _
-  · by_cases hs : (layerScheme I ρ).toCellScheme.grade s = 4
-    · have hws : omegaLabel I ρ Ω s = Ω := by rw [omegaLabel, ite_eq_left hs]
-      refine transformsTo_of_eq_bot_iff _
-        (fun d : (layerScheme I ρ).toCellScheme.below
-          ((layerScheme I ρ).toCellScheme.gradedIndex s) ↦ grade_le_four d.1) hΩ _ _ fun d ↦ ?_
-      have key := row_eq_bot_iff_of_grade_four hρ4 hI hs d
-      rw [hws, omegaLabel]
-      by_cases hd4 : (layerScheme I ρ).toCellScheme.grade d.1 = 4
+  · by_cases hs : S.toCellScheme.grade s = 4
+    · refine transformsTo_of_eq_bot_iff _
+        (fun d : S.toCellScheme.below (S.toCellScheme.gradedIndex s) ↦ hgr d.1) hΩ _ _
+        fun d ↦ ?_
+      have key := hrow s hs d
+      rw [ite_eq_left hs]
+      by_cases hd4 : S.toCellScheme.grade d.1 = 4
       · rw [ite_eq_left hd4, min_self, ite_eq_right (fun h ↦ (key.mp h) hd4)]
       · rw [ite_eq_right hd4, min_bot_left, ite_eq_left (key.mpr hd4)]
-    · have hws : omegaLabel I ρ Ω s = ⊥ := by rw [omegaLabel, ite_eq_right hs]
-      rw [hws]
-      simp only [min_bot_right]
+    · simp only [ite_eq_right hs, min_bot_right]
       exact TransformsTo.bot _ _
-  · refine ⟨t, rfl, ?_⟩
-    rw [omegaLabel, omegaLabel, hg]
+  · exact ⟨t, rfl, by rw [hg]⟩
+
+/-- **The labelling of `Ω` alone is lawful below `(univ, 4)`**, for `Ω` self-visible at `4`: the
+row of every cell of grade `4` is `⊥` exactly below the grade `4`
+(`isLawfulBelow_omega_of_rows`). -/
+theorem isLawfulBelow_omegaLabel {Ω : Label.{u}} (hΩ : IsSelfVisible 4 Ω) :
+    (layerScheme I ρ).rows.IsLawfulBelow ((univ : Finset (Fin 5)), 4)
+      fun z ↦ omegaLabel I ρ Ω z :=
+  isLawfulBelow_omega_of_rows grade_le_four
+    (fun _ hs ↦ row_eq_bot_iff_of_grade_four hρ4 hI hs) hΩ
 
 /-! ### The capped lift at the grade `4` -/
 

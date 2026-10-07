@@ -101,8 +101,11 @@ rows gives the step for every seed on five points (`Seed.HasCanonicalMultiStep` 
 open; oriented rows are not such a choice, since they fail at `seedHG`.  The rows of `seedHG` in
 the family (`CanonicalHG.rowsHG`) read the two copies of the grade `1` in opposite orientations,
 each its own coatom's parameter above the other's; at the grades `2` and `3` they read both copies
-alike, toward `C` and toward `D`, as every step of the family at `seedHG` must
-(`Seed.copyRows_lt_two_of_TH_TG`, `Seed.copyRows_lt_three_of_TH_TG`).
+alike, toward `C` and toward `D`. Every step of the family at `seedHG` must have the copy of
+`(D, 2)` read `({4}, 1)` strictly below `({3}, 1)` (`R 1 1`,
+`Seed.copyRows_lt_two_of_TH_TG`), and the copy of `(C, 3)` read the reverse (`R 2 0`,
+`Seed.copyRows_lt_three_of_TH_TG`); these conclusions concern those specified copies and pairs,
+not both copies at either grade.
 
 ## Placement
 

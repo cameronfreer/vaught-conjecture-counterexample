@@ -7,7 +7,6 @@ import VaughtConjecture.Extension.CanonicalMultiScheme
 import VaughtConjecture.Extension.OrderedLayerObstruction
 import VaughtConjecture.Extension.Coding
 import Mathlib.Order.Filter.Finite
-import Mathlib.Order.Filter.AtTopBot.Basic
 
 /-!
 # Own-side copy rows, and the orientations forced on the copies
@@ -26,8 +25,9 @@ cell through its base by the copy rows `R k i`.
 (`copyCoatom i`) and `B'` the other coatom, reads
 
 * a cell `d` below `(B, k + 1)` (its own side, the common face included) as its original reads `d`
-  in the amalgam, shifted into a higher block: `blockShift N x = ω · N + x` for an ordinal `x`, `⊥`
-  and `⊤` fixed (`Label.blockShift`);
+  in the amalgam, with its coded row value shifted `N` blocks higher. In general,
+  `blockShift N x = ω · N + x` is left addition for an ordinal `x`, with `⊥` and `⊤` fixed
+  (`Label.blockShift`); the finite-block description applies to coded row values;
 * a cell `d` below `(B', k + 1)` and not below `(B, k + 1)` (the other side) as the original of the
   other copy of its grade reads `d`, unshifted;
 * every other cell at `⊥`.
@@ -105,54 +105,6 @@ namespace VaughtConjecture
 open Finset CellScheme
 open Ordinal hiding univ
 
-namespace Label
-
-/-- **Shifting into a higher block**: `⊥` and `⊤` are fixed, and an ordinal `x` goes to
-`ω · N + x`, the same finite part in the block `N` places higher. -/
-noncomputable def blockShift (N : ℕ) : Label.{u} → Label.{u} :=
-  WithBot.map (WithTop.map fun o ↦ ω * (N : Ordinal.{u}) + o)
-
-/-- The block shift fixes `⊥`. -/
-@[simp] theorem blockShift_bot (N : ℕ) : blockShift N (⊥ : Label.{u}) = ⊥ := rfl
-
-/-- The block shift of an ordinal. -/
-theorem blockShift_coe (N : ℕ) (o : Ordinal.{u}) :
-    blockShift N (o : Label.{u}) = ((ω * (N : Ordinal.{u}) + o : Ordinal.{u}) : Label.{u}) := rfl
-
-/-- **A shifted label other than `⊥` is at least `ω · N`.** -/
-theorem le_blockShift {N : ℕ} {x : Label.{u}} (hx : x ≠ ⊥) :
-    ((ω * (N : Ordinal.{u}) : Ordinal.{u}) : Label.{u}) ≤ blockShift N x := by
-  induction x using recBotCoeTop with
-  | bot => exact absurd rfl hx
-  | coe o =>
-    rw [blockShift_coe]
-    exact WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr le_self_add)
-  | top => exact le_top
-
-/-- **The block shift keeps coded labels coded**: below `ω ^ 2`. -/
-theorem blockShift_lt_omega0_sq {N : ℕ} {x : Label.{u}}
-    (hx : x < ((ω ^ 2 : Ordinal.{u}) : Label.{u})) :
-    blockShift N x < ((ω ^ 2 : Ordinal.{u}) : Label.{u}) := by
-  rcases lt_omega0_sq_iff.mp hx with rfl | ⟨i, j, rfl⟩
-  · exact hx
-  · rw [blockShift_coe]
-    refine lt_omega0_sq_iff.mpr (.inr ⟨N + i, j, ?_⟩)
-    rw [← add_assoc, ← mul_add, Nat.cast_add]
-
-/-- A coded label lies below `ω · N` for every large `N`. -/
-theorem eventually_lt_omega0_mul {x : Label.{u}} (hx : x < ((ω ^ 2 : Ordinal.{u}) : Label.{u})) :
-    ∀ᶠ N : ℕ in Filter.atTop, x < ((ω * (N : Ordinal.{u}) : Ordinal.{u}) : Label.{u}) := by
-  rcases lt_omega0_sq_iff.mp hx with rfl | ⟨i, j, rfl⟩
-  · exact Filter.Eventually.of_forall fun _ ↦ WithBot.bot_lt_coe _
-  · refine Filter.eventually_atTop.mpr ⟨i + 1, fun N hN ↦ ?_⟩
-    refine WithBot.coe_lt_coe.mpr (WithTop.coe_lt_coe.mpr ?_)
-    calc ω * (i : Ordinal.{u}) + j < ω * i + ω :=
-        (add_lt_add_iff_left _).mpr (natCast_lt_omega0 j)
-      _ = ω * ((i + 1 : ℕ) : Ordinal.{u}) := by rw [Nat.cast_succ, mul_add_one]
-      _ ≤ ω * N := by gcongr
-
-end Label
-
 namespace OrderedLayer
 
 open Label
@@ -178,12 +130,6 @@ theorem row_lt_rowBound (s : Fin I.amalgam.card)
     I.amalgam.rows.row s t < ((ω * (rowBound I : Ordinal.{u}) : Ordinal.{u}) : Label.{u}) :=
   (exists_rowBound I).choose_spec s t
 
-/-- The coatom of the first copy is `C`. -/
-@[simp] theorem copyCoatom_zero : copyCoatom 0 = coatomC := rfl
-
-/-- The coatom of the second copy is `D`. -/
-@[simp] theorem copyCoatom_one : copyCoatom 1 = coatomD := rfl
-
 variable {I}
 
 /-- A cell below `(copyCoatom i, k + 1)` is below the original of the copy `(k, i)`. -/
@@ -195,7 +141,7 @@ theorem mem_below_copyOrig {k : Fin 4} {i : Fin 2} {d : Fin I.amalgam.card}
 variable (I) in
 open Classical in
 /-- **The own-side rows**: the copy `(k, i)` reads a cell below its own coatom at the grade `k + 1`
-as its original does, shifted into the block `rowBound I`; a cell below the other coatom only as
+as its original does, shifted `rowBound I` blocks higher; a cell below the other coatom only as
 the original of the other copy of its grade does; every other cell at `⊥`. -/
 noncomputable def ownSideRows : CopyRows I := fun k i d ↦
   if hd : d ∈ I.amalgam.toCellScheme.below (copyCoatom i, (k : ℕ) + 1) then
@@ -239,18 +185,6 @@ theorem ownSideRows_lt_omega0_sq (k : Fin 4) (i : Fin 2) (d : Fin I.amalgam.card
   · exact I.amalgam.isCoded _ _
   · exact WithBot.bot_lt_coe _
 
-/-- **A row read at a value other than `⊥`**: if `P` is lawful below `X`, the cell `s` lies below
-`X`, and `min (P d) (P s) ≠ ⊥` at a cell `d` below `s`, the row of `s` reads `d` at a value other
-than `⊥` (locality at `s`). -/
-theorem row_ne_bot_of_isLawfulBelow {X : Finset (Fin 5) × ℕ} {P : Fin I.amalgam.card → Label.{u}}
-    (hP : I.amalgam.rows.IsLawfulBelow X fun d ↦ P d) {s d : Fin I.amalgam.card}
-    (hs : s ∈ I.amalgam.toCellScheme.below X) (hPd : min (P d) (P s) ≠ ⊥)
-    (h : d ∈ I.amalgam.toCellScheme.below (I.amalgam.toCellScheme.gradedIndex s)) :
-    I.amalgam.rows.row s ⟨d, h⟩ ≠ ⊥ := by
-  intro hbot
-  obtain ⟨-, hloc, -⟩ := Rows.isLawfulBelow_iff_forall.mp hP
-  exact hPd ((hloc s hs).eq_bot (d := ⟨d, h⟩) hbot)
-
 end OrderedLayer
 
 namespace Seed
@@ -268,19 +202,6 @@ variable {I}
 /-- The own-side step is a step of the canonical multi-layer scheme. -/
 theorem OwnSideStep.hasCanonicalMultiStep (h : I.OwnSideStep) : I.HasCanonicalMultiStep :=
   ⟨ownSideRows I, h⟩
-
-/-- A multi-layer step lifts capped from each full coatom graded face `(copyCoatom i, k)` into
-`(univ, k)`. -/
-theorem MultiLayerStep.cappedLift_copyCoatom {M : Fin 4 → ℕ} {r : MultiRows I M}
-    (h : I.MultiLayerStep M r) (i : Fin 2) {k : ℕ} (hk1 : 1 ≤ k) (hk4 : k ≤ 4) :
-    (multiLayerScheme I M r).rows.CappedLift (X := (copyCoatom i, k))
-      (Y := ((univ : Finset (Fin 5)), k)) ⟨subset_univ _, le_rfl⟩ := by
-  have key : ∀ B : Finset (Fin 5), B = coatomC ∨ B = coatomD →
-      (multiLayerScheme I M r).rows.CappedLift (X := (B, k))
-        (Y := ((univ : Finset (Fin 5)), k)) ⟨subset_univ _, le_rfl⟩ := by
-    rintro B (rfl | rfl)
-    exacts [h.cappedLift_left k hk1 hk4, h.cappedLift_right k hk1 hk4]
-  exact key _ (copyCoatom_eq i)
 
 /-- **The orientation forced on a copy.**  Let `P` be lawful below `(B, k)`, `B` the coatom of the
 copy `(j, i)` with `j + 1 ≤ k ≤ 4`, with `P` equal to `⊤` at the original of the copy, and let
