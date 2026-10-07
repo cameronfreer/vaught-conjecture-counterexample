@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Continuation.AnchoredDetermination
-import VaughtConjecture.Extension.FamilyCofaces
+import VaughtConjecture.Continuation.ExactReceivingExamples
 import VaughtConjecture.Extension.GatedExtensionCounterexample
 
 /-!
@@ -57,22 +57,20 @@ variable (α : Ordinal.{u})
 
 /-- The stage type on one point with no cells. -/
 def celllessType : StageType.{u} α 1 :=
-  ⟨cellless, fun _ ↦ ⊥, isLegalBelowFullGrade_cellless.isWellFormed,
-    isLegalBelowFullGrade_cellless.isCoded, CellScheme.Rows.isLawful_const_bot,
-    fun _ ↦ atStage_bot⟩
+  ExactReceivingExamples.celllessTypeAt α
 
 /-- **The donor**: the stage type on one point whose only cell is an apex of grade `1`, labelled
 `⊤`. -/
 noncomputable def donor : StageType.{u} α 1 :=
-  (celllessType α).addApex isLegalBelowFullGrade_cellless one_pos
+  ExactReceivingExamples.apexPointAt α
 
 /-- The donor is legal. -/
 theorem isLegal_donor : (donor α).IsLegal :=
-  isLegal_addApex _ one_pos
+  ExactReceivingExamples.isLegal_apexPointAt α
 
 /-- The donor is not top-free: its apex is labelled `⊤`. -/
 theorem not_isTopFree_donor : ¬ (donor α).IsTopFree :=
-  fun h ↦ h (Fin.last _) (addApex_label_last _ one_pos)
+  ExactReceivingExamples.not_isTopFree_apexPointAt α
 
 /-- The donor has exactly one cell, the apex, so its only label is `⊤`. -/
 theorem donor_label_eq_top (j : Fin (donor α).card) : (donor α).label j = ⊤ := by

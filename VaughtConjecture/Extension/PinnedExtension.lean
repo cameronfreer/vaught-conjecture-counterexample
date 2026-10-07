@@ -412,4 +412,41 @@ theorem exists_amalgam (hext : HasCoatomExtensions.{u} α) {P : StageType.{u} α
 
 end StageType
 
+/-! ### The cells of a pinned extension -/
+
+namespace StageType
+
+variable {α : Ordinal.{u}} {k n : ℕ}
+
+/-- **The root of a pinned extension**: in a one-point extension `D` of `t'` whose face along
+`extendByLast h` is `d`, the cells of the common face `t` (the face of `t'` along `h` and of `d`
+along the initial segment) are the same cells of `D`, reached through `t'` or through `d`. -/
+theorem faceCell_faceCell {n' : ℕ} {D : StageType.{u} α (k + 1)} {t' : StageType.{u} α k}
+    {h : Fin n' ↪ Fin k} {t : StageType.{u} α n'} {d : StageType.{u} α (n' + 1)}
+    (h₁ : restrictFace Fin.castSuccEmb D = some t') (h₂ : restrictFace (extendByLast h) D = some d)
+    (ht : restrictFace h t' = some t) (hd : restrictFace Fin.castSuccEmb d = some t)
+    (i : Fin t.card) : faceCell h₁ (faceCell ht i) = faceCell h₂ (faceCell hd i) := by
+  obtain ⟨hf₁, rfl⟩ := (restrictFace_eq_some_iff D _).mp h₁
+  obtain ⟨hf₂, rfl⟩ := (restrictFace_eq_some_iff D _).mp h₂
+  -- `faceCell` unfolds to the cell maps of the two composite faces
+  change D.toScheme.cellMap _ ((D.toScheme.comap Fin.castSuccEmb).cellMap h _) =
+    D.toScheme.cellMap _ ((D.toScheme.comap (extendByLast h)).cellMap Fin.castSuccEmb _)
+  refine (Scheme.cellMap_cellMap _ _ (j := Fin.cast (congrArg Scheme.card
+    (D.toScheme.comap_comap _ _)) _) rfl).trans ((Scheme.cellMap_congr
+      (castSuccEmb_trans_extendByLast h).symm ?_).trans
+    (Scheme.cellMap_cellMap _ _ (j := Fin.cast (congrArg Scheme.card
+      (D.toScheme.comap_comap _ _)) _) rfl).symm)
+  rfl
+
+/-- The last point lies in the scope of a cell of the face along `extendByLast h` exactly when the
+last point lies in its scope in the face. -/
+theorem last_mem_scope_faceCell_iff {D : StageType.{u} α (k + 1)} {h : Fin n ↪ Fin k}
+    {d : StageType.{u} α (n + 1)} (h₂ : restrictFace (extendByLast h) D = some d)
+    (j : Fin d.card) :
+    Fin.last k ∈ D.toCellScheme.scope (faceCell h₂ j) ↔ Fin.last n ∈ d.toCellScheme.scope j := by
+  rw [scope_faceCell, mem_map, ← extendByLast_last h]
+  exact ⟨fun ⟨y, hy, hye⟩ ↦ (extendByLast h).injective hye ▸ hy, fun hy ↦ ⟨_, hy, rfl⟩⟩
+
+end StageType
+
 end VaughtConjecture

@@ -20,10 +20,13 @@ Checks for `VaughtConjecture.Continuation.ExactReceiving`.
 * **The residual statement at `K = 0` is vacuous**: in a model at a limit stage, top-grade
   supremum `0` makes the empty tuple a globally rigid core.
 * **The hollow statement at a model with exact receiving of all legal donors** holds, by the
-  exact reformulation.  Prospectively (not in the library): an ultrahomogeneous structure whose age
-  is the age of legal charts would have exact receiving of all legal donors, so the conclusion of
-  (R3) would hold for it; the existence of such a structure is conditional on the coatom extension
-  property, which is not proved, and its unbounded top-grade growth is not proved.
+  exact reformulation.  An ultrahomogeneous structure whose age is the age of legal charts has
+  exact receiving of all legal donors (`exactReceivingWithin_reconstruct_of_legalAge`,
+  `ClassicalLimit/LegalAge`), so the conclusion of (R3) holds for it.  Such a structure exists at
+  a countable block stage, with a reconstruction that is a model, conditional on the coatom
+  extension property with apex there (`exists_saturated_reconstruct`,
+  `MainTheorem/SameLevelMaximal`), which is not proved; its unbounded top-grade growth is not
+  proved.
 * **Under (R3), a globally rigid core of a cover-hollow model with unbounded growth is rigid in
   every legal donor over its type.**
 * **The rigid-core instance**: top-free one-point cofaces are received exactly under finite-cut
@@ -38,24 +41,36 @@ open Finset StageType Realization
 
 namespace ExactReceivingExamples
 
-/-- The stage type at `ω` on one point with no cells. -/
-private def celllessType : StageType.{0} Ordinal.omega0 1 :=
+/-- The stage type on one point with no cells, at any stage and universe. -/
+def celllessTypeAt (α : Ordinal.{u}) : StageType.{u} α 1 :=
   ⟨cellless, fun _ ↦ ⊥, isLegalBelowFullGrade_cellless.isWellFormed,
     isLegalBelowFullGrade_cellless.isCoded, CellScheme.Rows.isLawful_const_bot,
     fun _ ↦ Label.atStage_bot⟩
 
+/-- The one-point type whose only cell is an apex of grade `1`, labelled `⊤`, at any stage. -/
+noncomputable def apexPointAt (α : Ordinal.{u}) : StageType.{u} α 1 :=
+  (celllessTypeAt α).addApex isLegalBelowFullGrade_cellless one_pos
+
+/-- The apex point is legal at every stage. -/
+theorem isLegal_apexPointAt (α : Ordinal.{u}) : (apexPointAt α).IsLegal :=
+  isLegal_addApex _ one_pos
+
+/-- The apex point is not top-free at any stage: its cell is labelled `⊤`. -/
+theorem not_isTopFree_apexPointAt (α : Ordinal.{u}) : ¬ (apexPointAt α).IsTopFree :=
+  fun h ↦ h (Fin.last _) (addApex_label_last _ one_pos)
+
 /-- **The apex point**: the stage type at `ω` on one point whose only cell is an apex of grade
 `1`, labelled `⊤`. -/
 noncomputable def apexPoint : StageType.{0} Ordinal.omega0 1 :=
-  celllessType.addApex isLegalBelowFullGrade_cellless one_pos
+  apexPointAt Ordinal.omega0
 
 /-- The apex point is legal. -/
 theorem isLegal_apexPoint : apexPoint.IsLegal :=
-  isLegal_addApex _ one_pos
+  isLegal_apexPointAt Ordinal.omega0
 
 /-- The apex point is not top-free: its cell is labelled `⊤`. -/
 theorem not_isTopFree_apexPoint : ¬ apexPoint.IsTopFree :=
-  fun h ↦ h (Fin.last _) (addApex_label_last _ one_pos)
+  not_isTopFree_apexPointAt Ordinal.omega0
 
 /-- The top grade of the apex point is at most `1`. -/
 theorem topGrade_apexPoint_le : apexPoint.topGrade ≤ 1 :=
