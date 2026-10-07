@@ -611,9 +611,13 @@ is compiled conditionally on block determination (below).  None is an input to t
   does not use them.  For the family of expansions of one
   model, conditional on positive niceness for that family, the bound of serving indices under
   strictness (`README.md`, "Manuscript correspondence (required)", item 5, "Uniform fixing bounds
-  from positive niceness"; prospective) bounds its height.  Positive niceness for that family
+  from positive niceness"; the bound under strictness and strictness for models are compiled,
+  `Realization.le_of_forall_isModel_of_forall_isFixedAt`, and the uniform fixing stage it is
+  applied to is prospective) bounds its height.  Positive niceness for that family
   follows from a terminal presentation of the base (`README.md`, item 5, "Two stopping proofs;
-  positive niceness from a terminal presentation"; prospective), which either of two distinct
+  positive niceness from a terminal presentation"; compiled in the raw base encoding conditional on
+  `HasTerminalRefinement` and `Expansion.NextBlockUniqueness`; the common-invariant correspondence
+  remains prospective), which either of two distinct
   stopping proofs supplies: the countable-slot argument, or the Scott route to maximal
   presentations (`README.md`, item 5), which uses conditions 3 and 4 with Scott isolation for
   one class and assumes no termination.  For one literal base with a terminal
@@ -1208,11 +1212,19 @@ is compiled conditionally on block determination (below).  None is an input to t
   continuous at limits each lies below some `λ_ξ` with `ξ < η`, so its fixing rank is below `η`.
   The uniform fixing stage of `README.md`, "Manuscript correspondence (required)", item 5, "Uniform
   fixing bounds from positive niceness" (prospective) bounds these fixing ranks uniformly over the
-  presentations, arities, and tuples of a family, and strictness for models there is to come from
-  the supremum statement here.  For a literal base with a terminal model presentation at `ρ`,
-  the least bound across all its model presentations is `ρ` (the optimal all-presentation bound
-  of `README.md`, item 5, "Maximal presentations: equivalent criteria, uniqueness, the optimal
-  bound"; prospective, under the injectivity of model reduction).
+  presentations, arities, and tuples of a family.  Strictness for models there does not depend on
+  the supremum statement here: it is compiled in this repository (theorem named) from the
+  uniformity clause of a model alone (`Realization.IsModel.not_isFixedAt`,
+  `Realization.IsModel.isLeast_isFixedAt_blockStage`, `Realization/Strictness`; a model at `λ_η`
+  is fixed by projection at the index `ξ` exactly when `η ≤ ξ`).  It gives the supremum
+  statement: an index bounds the fixing ranks of all realized finite charts of a model exactly when
+  the model is fixed by projection there, so their least upper bound is `η`; the fixing rank of a
+  chart is not named in this repository, so this reading is not compiled as a statement about
+  fixing ranks, and that the supremum is not attained at a limit `η` remains to be proved.  For a
+  literal base with a terminal model presentation at `ρ`, the least bound across all its model
+  presentations is `ρ` (the optimal all-presentation bound of `README.md`, item 5, "Maximal
+  presentations: equivalent criteria, uniqueness, the optimal bound"; prospective, under the
+  injectivity of model reduction).
 
   *Fixing ranks are zero or successors* (still to be proved).  The fixing rank of a finite chart is
   never a limit ordinal: bottom and top are fixed by every reduction, and a proper label is fixed by
