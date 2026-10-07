@@ -23,7 +23,8 @@ hypothesis.
 a **private cap** `C` of grade `N` (the full grade) below which every cell lies; a finite set of
 requested **blocks**, by their indices `b` (the block of index `b` is `[ω * b, ω * b + ω)`); and
 for each block a **reference cell** `ref b` labelled `ω * b + off b` with `off b < N`.  The
-**margin** asks the cap to lie above every `ω * b + N`.
+**margin** asks the cap to be labelled at least every `ω * b + N` (the private context of
+[Kni26, Lemma 8.1.1], with the cap above the reference cells by the full grade).
 
 * **The cut** of a labelling `v` of the private cells (`PrivateReference.cut`) is
   `min (v C) (max_b vr_N(N, v (ref b)))`, `vr_N` being visibility replacement at the threshold
@@ -66,7 +67,7 @@ the reading is constantly `⊥`.
   `CellScheme.Rows.IsLawful.map_of_isShort_or` does not either.  The criterion used is
   `CellScheme.Rows.IsLawful.map_of_apply_eq_bot` (`VaughtConjecture.Extension.CapTransport`): `ν`
   sends no label of `ℓ` other than `⊥` to `⊥`, by activity of the reference cells and since the
-  cut is not `⊥`.  It was already in the library; nothing new is needed for it.  No coding of rows
+  cut is not `⊥`.  No coding of rows
   (`VaughtConjecture.Extension.Coding`, `VaughtConjecture.Extension.OrbitCode`) is used: the codes
   are the entries of the row of the cap itself.
 
@@ -75,15 +76,20 @@ the reading is constantly `⊥`.
 recovers every donor label other than `⊤` and reads `⊤` as the cut.  This is where the margin
 enters; the capped-donor lemma uses of it only that every reference label lies below the cap.
 
-**Two inputs.**
+**Three inputs.**
 
-* *A proper anchor* (`CappedDonorReading.AnchorInput`).  The two-point private type with the dead
-  cells `{0}`, `{1}`, the cells `z₁`, `z₂` of graded index `(univ, 1)` labelled `1` and `⊤`, and
-  the cap of graded index `(univ, 2)` labelled `⊤`, with the one-point donor `1, ⊤` whose rows read
-  both donor cells in the block `[0, ω)`: the input at which, on a separate open change, a lift at
-  the cap `⊥` carries the lawful private labelling `⊥, ⊥, ⊥, ω + 1, ω + 2` (which keeps the cap and
-  drops `z₁`) to a donor labelling `⊥` at the first donor cell and not at the second, which the
-  donor's rows forbid (`AnchorInput.eq_bot_of_isLawful_donor`).  Here the margin holds with the
+* *A proper anchor* (`CappedDonorReading.AnchorInput`).  A **proper anchor** is a private cell
+  labelled by an ordinal that is not self-visible at the full grade, through which a donor label
+  below the cap is read by visibility replacement.  The two-point private type with the dead cells
+  `{0}`, `{1}`, the cells `z₁`, `z₂` of graded index `(univ, 1)` labelled `1` and `⊤`, and the cap
+  of graded index `(univ, 2)` labelled `⊤`, has the proper anchor `z₁` (`1` is not self-visible at
+  `2`).  Its one-point donor `1, ⊤` has rows reading both donor cells in the block `[0, ω)`, so no
+  lawful donor labelling is `⊥` at the first donor cell and not at the second
+  (`AnchorInput.eq_bot_of_isLawful_donor`); the private type has the lawful labelling
+  `⊥, ⊥, ⊥, ω + 1, ω + 2`, which keeps the cap and drops `z₁`
+  (`AnchorInput.isLawful_lab_bot_omegaAdd`).  A design that transports the bottom pattern of every
+  lawful private labelling at the anchors to the donor fails at this input (argued, not compiled
+  here).  Here the margin holds with the
   block `[0, ω)` and the reference cell `z₁` (`AnchorInput.hasMargin`), so every active lawful
   labelling reads the donor lawfully (`AnchorInput.isLawful_reading`); the actual labels read
   `1, 2` (`AnchorInput.reading_lab_one_top_top`); the labelling that drops `z₁` is lawful, keeps
@@ -95,10 +101,17 @@ enters; the capped-donor lemma uses of it only that every reference label lies b
   `GatedExtensionCounterexample.P α`, whose two full cells are ordered oppositely by the lawful
   labellings `⊤, 2` and `2, ⊤`.  Both are active (`OppositeCellsInput.isActive_labelling`), and
   for both the capped reading of every lawful donor labelled `⊥` and `⊤` is lawful
-  (`OppositeCellsInput.isLawful_reading`).  The test is weak: no cell of `P α` carries an ordinal
-  label, so there is no reference cell and no requested block, the cut is `⊥`
-  (`OppositeCellsInput.cut_eq_bot`), and both readings are constantly `⊥`.  It shows only that the
-  order of the full cells does not enter the reading.
+  (`OppositeCellsInput.isLawful_reading`).  This holds vacuously: no cell of `P α` carries an
+  ordinal label, so there is no reference cell and no requested block, the cut is `⊥`
+  (`OppositeCellsInput.cut_eq_bot`), and both readings are constantly `⊥`.
+* *Two blocks* (`CappedDonorReading.TwoBlockInput`).  A private type with three cells, reference
+  cells labelled `1` and `ω + 1` (blocks `[0, ω)` and `[ω, ω * 2)`) and a cap of grade `2` labelled
+  `⊤`, with the one-point donor `1, ω + 1` whose second row reads both donor cells in their two
+  blocks.  The margin holds (`TwoBlockInput.hasMargin`), so every active lawful labelling reads the
+  donor lawfully (`TwoBlockInput.isLawful_reading`); the actual labels read the donor itself
+  (`TwoBlockInput.reading_actual`); and the active lawful labelling `1, ω + 1, 2`, whose cut is `2`,
+  reads it as `1, 2`, a lawful donor labelling not `⊥` anywhere and other than the donor's labels
+  (`TwoBlockInput.reading_lab_one_omegaAdd_two`, `TwoBlockInput.isLawful_donorLab_one_two`).
 
 **What is not claimed.**  The lemma is stated for given reference data with the margin.  Its
 acquisition from modelhood is prospective: `Realization.IsModel.exists_privateContext` gives
@@ -111,9 +124,14 @@ acquire are open; nothing here implies them.
 
 ## Placement
 
-This file belongs to Layer 3 of `roadmap/README.md`.  `Label.IsWitness.min_const_of_isSelfVisible`
-belongs in `VaughtConjecture.Extension.WitnessAlgebra`, beside `Label.IsWitness.max`; it is stated
-here so that that file is unchanged.
+This file belongs to Layer 3 of `roadmap/README.md`.  The generic statements are stated here so
+that the files where they belong are unchanged: `Label.IsWitness.min_const_of_isSelfVisible`
+belongs in `VaughtConjecture.Extension.WitnessAlgebra`, beside `Label.IsWitness.max`, and the block
+pieces (`CappedDonorReading.piece` and its lemmas) beside its block arithmetic;
+`Label.exists_eq_of_not_isSelfVisible`, `CappedDonorReading.finitePart` and its lemmas,
+`CappedDonorReading.isSuccPrelimit_omega0_mul`, `CappedDonorReading.coe_omega0_mul_add_le_coe_iff`
+and `CappedDonorReading.min_visibilityReplace_natCast` belong beside the blocks of
+`VaughtConjecture.Label.Visibility`.
 -/
 
 universe u
@@ -202,6 +220,14 @@ theorem piece_omega0_mul_add {N n : ℕ} (hn : n ≤ N) (b r : Ordinal.{u}) :
       ((ω * r + n : Ordinal.{u}) : Label.{u}) := by
   rw [piece_coe, ite_eq_right (not_lt.mpr le_self_add), Ordinal.add_sub_cancel,
     min_eq_left (by exact_mod_cast hn)]
+
+/-- The block piece at a point `ω * b' + n` of a higher block `b' > b` is `ω * r + N`. -/
+theorem piece_omega0_mul_add_of_lt {N : ℕ} {b b' : Ordinal.{u}} (h : b < b') (r : Ordinal.{u})
+    (n : ℕ) : piece N b r ((ω * b' + n : Ordinal.{u}) : Label.{u}) =
+      ((ω * r + N : Ordinal.{u}) : Label.{u}) := by
+  have hlt : ω * b + N < ω * b' + n := omega0_mul_add_natCast_lt h N n
+  rw [piece_coe, ite_eq_right (not_lt.mpr (le_self_add.trans hlt.le)), min_eq_right
+    (Ordinal.le_sub_of_add_le hlt.le)]
 
 /-- The block piece is monotone. -/
 theorem monotone_piece (N : ℕ) (b r : Ordinal.{u}) : Monotone (piece N b r) := by
@@ -340,7 +366,8 @@ def ReadsInBlocks {κ : Type*} (ℓ : κ → Label.{u}) : Prop :=
 /-- **The laws of reference data with the margin**, for rows `R` of a cell scheme `D` and a
 labelling `w` (the actual labels of the private cells): `w` is lawful, every cell lies below the
 cap, the cap has grade `N`, each reference cell `ref b` is labelled `ω * b + off b` with
-`off b < N`, and the **margin**: the cap is labelled above every `ω * b + N`. -/
+`off b < N`, and the **margin**: the cap is labelled at least every `ω * b + N`
+([Kni26, Lemma 8.1.1], clauses 3 and 4). -/
 structure HasMargin (R : D.Rows.{u}) (w : ι → Label.{u}) : Prop where
   /-- The actual labels are lawful. -/
   isLawful : R.IsLawful w
@@ -353,9 +380,9 @@ structure HasMargin (R : D.Rows.{u}) (w : ι → Label.{u}) : Prop where
   /-- The label of a reference cell. -/
   label_ref (b : Ordinal.{u}) : b ∈ P.blocks →
     w (P.ref b) = ((ω * b + P.off b : Ordinal.{u}) : Label.{u})
-  /-- The margin: the cap lies above every `ω * b + N`. -/
+  /-- The margin: the cap is labelled at least every `ω * b + N`. -/
   margin (b : Ordinal.{u}) : b ∈ P.blocks →
-    ((ω * b + P.fullGrade : Ordinal.{u}) : Label.{u}) < w P.cap
+    ((ω * b + P.fullGrade : Ordinal.{u}) : Label.{u}) ≤ w P.cap
 
 /-- The capped reading fixes `⊥`. -/
 @[simp] theorem reading_bot : P.reading v ⊥ = ⊥ := rfl
@@ -363,24 +390,22 @@ structure HasMargin (R : D.Rows.{u}) (w : ι → Label.{u}) : Prop where
 /-- The capped reading sends `⊤` to the cut. -/
 @[simp] theorem reading_top : P.reading v ⊤ = P.cut v := rfl
 
+/-- The capped reading at an ordinal. -/
+theorem reading_coe (o : Ordinal.{u}) : P.reading v (o : Label.{u}) =
+    min (visibilityReplace P.fullGrade (finitePart o) (v (P.ref (o / ω)))) (P.cut v) := rfl
+
 /-- The capped reading at a point `ω * b + n` of the block `b`. -/
 theorem reading_omega0_mul_add (b : Ordinal.{u}) (n : ℕ) :
     P.reading v ((ω * b + n : Ordinal.{u}) : Label.{u}) =
       min (visibilityReplace P.fullGrade n (v (P.ref b))) (P.cut v) := by
-  -- The reading of an ordinal label is its defining formula (`reading`, by definition).
-  change min (visibilityReplace P.fullGrade (finitePart (ω * b + n))
-    (v (P.ref ((ω * b + n) / ω)))) (P.cut v) = _
-  rw [finitePart_omega0_mul_add, omega0_mul_add_natCast_div]
+  rw [reading_coe, finitePart_omega0_mul_add, omega0_mul_add_natCast_div]
 
 /-- When the cut is `⊥`, the capped reading is constantly `⊥`. -/
 theorem reading_of_cut_eq_bot (h : P.cut v = ⊥) (x : Label.{u}) : P.reading v x = ⊥ := by
   induction x using recBotCoeTop with
   | bot => rfl
   | top => exact h
-  | coe o =>
-    -- The reading of an ordinal label is its defining formula (`reading`, by definition).
-    change min _ (P.cut v) = ⊥
-    rw [h, min_bot_right]
+  | coe o => rw [reading_coe, h, min_bot_right]
 
 /-- The cut is self-visible at `N` when the label of the cap is. -/
 theorem isSelfVisible_cut (hC : IsSelfVisible P.fullGrade (v P.cap)) :
@@ -417,7 +442,8 @@ theorem HasMargin.exists_isWitness_capped (hP : P.HasMargin R w) (hv : R.IsLawfu
   exact ⟨τ, hτ, hτC, fun x ↦ hτrow ⟨x, hP.mem_below x⟩⟩
 
 /-- A label that is not self-visible at `N` is a point `ω * r + j` with `j < N`. -/
-theorem exists_eq_of_not_isSelfVisible {N : ℕ} {c : Label.{u}} (hc : ¬ IsSelfVisible N c) :
+theorem _root_.VaughtConjecture.Label.exists_eq_of_not_isSelfVisible {N : ℕ} {c : Label.{u}}
+    (hc : ¬ IsSelfVisible N c) :
     ∃ (r : Ordinal.{u}) (j : ℕ), j < N ∧ c = ((ω * r + j : Ordinal.{u}) : Label.{u}) := by
   induction c using recBotCoeTop with
   | bot => exact absurd (isSelfVisible_bot N) hc
@@ -441,7 +467,7 @@ theorem HasMargin.exists_code (hP : P.HasMargin R w) :
   have hτref (b : Ordinal.{u}) (hb : b ∈ P.blocks) :
       τ (R.row P.cap ⟨P.ref b, hP.mem_below _⟩) =
         ((ω * b + P.off b : Ordinal.{u}) : Label.{u}) := by
-    rw [hrow, hP.label_ref b hb, min_eq_left (le_trans ?_ (hP.margin b hb).le)]
+    rw [hrow, hP.label_ref b hb, min_eq_left (le_trans ?_ (hP.margin b hb))]
     exact coe_omega0_mul_add_le_coe_iff.mpr (.inr ⟨rfl, (hP.off_lt b hb).le⟩)
   have hcode (b : Ordinal.{u}) (hb : b ∈ P.blocks) : ∃ (r : Ordinal.{u}) (j : ℕ),
       j < P.fullGrade ∧ R.row P.cap ⟨P.ref b, hP.mem_below _⟩ =
@@ -591,7 +617,7 @@ theorem HasMargin.isLawful_reading (hP : P.HasMargin R w) (hv : R.IsLawful v)
 /-! ### The reading at the actual labels -/
 
 /-- **The cut at the actual labels** is the largest of the `ω * b + N`: the replacement of
-`ω * b + off b` at the threshold and value `N` is `ω * b + N`, and the margin puts the cap above
+`ω * b + off b` at the threshold and value `N` is `ω * b + N`, and the margin puts the cap at least
 all of them. -/
 theorem HasMargin.cut_eq (hP : P.HasMargin R w) :
     P.cut w = P.blocks.sup fun b ↦ ((ω * b + P.fullGrade : Ordinal.{u}) : Label.{u}) := by
@@ -600,7 +626,7 @@ theorem HasMargin.cut_eq (hP : P.HasMargin R w) :
     Finset.sup_congr rfl fun b hb ↦ by
       rw [hP.label_ref b hb, visibilityReplace_coe,
         Ordinal.visibilityReplace_omega0_mul_add_natCast, ite_eq_left (hP.off_lt b hb)]
-  rw [cut, hsup, min_eq_right (Finset.sup_le fun b hb ↦ (hP.margin b hb).le)]
+  rw [cut, hsup, min_eq_right (Finset.sup_le fun b hb ↦ hP.margin b hb)]
 
 /-- **The reading at the actual labels** is the label capped by the cut, at every label that
 reads in the blocks. -/
@@ -880,7 +906,7 @@ theorem eq_bot_of_isLawful_donor {ρ : Fin 2 → Label.{u}} (hρ : donorRows.IsL
 cell `z₁ = 2`, labelled `1 = ω * 0 + 1`. -/
 def reference : PrivateReference.{u} (Fin 5) := ⟨4, 2, {0}, fun _ ↦ 2, fun _ ↦ 1⟩
 
-/-- **The margin holds** at the actual labels `⊥, ⊥, 1, ⊤, ⊤`: the cap is labelled `⊤`, above
+/-- **The margin holds** at the actual labels `⊥, ⊥, 1, ⊤, ⊤`: the cap is labelled `⊤`, at least
 `ω * 0 + 2`. -/
 theorem hasMargin : reference.{u}.HasMargin rows (lab (1 : Label.{u}) ⊤ ⊤) where
   isLawful := isLawful_lab_one_top_top
@@ -893,7 +919,7 @@ theorem hasMargin : reference.{u}.HasMargin rows (lab (1 : Label.{u}) ⊤ ⊤) w
   label_ref b hb := by
     rw [show b = 0 from mem_singleton.mp hb]
     simp [reference, lab]
-  margin b _ := WithBot.coe_lt_coe.mpr (WithTop.coe_lt_top _)
+  margin b _ := le_top
 
 /-- The donor labelling `1, ⊤` reads in the block `[0, ω)`, with finite part `1 ≤ 2`. -/
 theorem readsInBlocks_donorLab : reference.{u}.ReadsInBlocks (donorLab (1 : Label.{u}) ⊤) := by
@@ -951,7 +977,7 @@ theorem reading_eq_bot_of_reading_eq_bot (v : Fin 5 → Label.{u})
   have h1 : ((1 : Label.{u})) = ((ω * 0 + (1 : ℕ) : Ordinal.{u}) : Label.{u}) := by simp
   -- The donor labels are `1` and `⊤` (`donorLab`, by definition).
   change reference.reading v 1 = ⊥ at h
-  -- The same labels, at `e₂`.
+  -- The reading at `e₂`, labelled `⊤`, is the cut (`donorLab` and `reading`, by definition).
   change reference.cut v = ⊥
   rw [h1, PrivateReference.reading_omega0_mul_add, min_eq_bot, visibilityReplace_eq_bot_iff] at h
   rcases h with h | h
@@ -977,7 +1003,8 @@ def reference : PrivateReference.{u} (Fin 5) := ⟨3, 2, ∅, fun _ ↦ 3, fun _
 theorem hasMargin (α : Ordinal.{u}) : reference.{u}.HasMargin (P α).rows (P α).label where
   isLawful := (P α).isLawful
   mem_below x := by
-    -- The cells of `P α` are those of `GatedExtensionCounterexample.cells` (`P`, by definition).
+    -- The cells of `P α` are those of `GatedExtensionCounterexample.cells` (`P`, by definition),
+    -- and membership below the cap is the comparison of graded indices (`CellScheme.mem_below`).
     change cells.gradedIndex x ≤ cells.gradedIndex 3
     revert x; decide
   grade_cap := rfl
@@ -1018,6 +1045,269 @@ theorem isLawful_reading {κ β : Type*} {E : CellScheme κ β} {Q : E.Rows.{u}}
       (readsInBlocks_of_bot_or_top hbt)⟩
 
 end OppositeCellsInput
+
+/-! ### Two requested blocks -/
+
+namespace TwoBlockInput
+
+open CellScheme
+
+/-- The point `ω * b + n` of the block `b`, as a label. -/
+noncomputable def pt (b : Ordinal.{u}) (n : ℕ) : Label.{u} :=
+  ((ω * b + n : Ordinal.{u}) : Label.{u})
+
+/-- Points compare lexicographically in block and finite part. -/
+theorem pt_le_pt_iff {a b : Ordinal.{u}} {m n : ℕ} : pt a m ≤ pt b n ↔ a < b ∨ a = b ∧ m ≤ n :=
+  coe_omega0_mul_add_le_coe_iff
+
+/-- A point is self-visible at `k` exactly when its finite part is at least `k`. -/
+theorem isSelfVisible_pt {k n : ℕ} {b : Ordinal.{u}} : IsSelfVisible k (pt b n) ↔ k ≤ n := by
+  rw [pt, isSelfVisible_coe, omega0_mul_add_natCast_mod, Nat.cast_le]
+
+/-- Visibility replacement of a point replaces its finite part. -/
+theorem visibilityReplace_pt (k i n : ℕ) (b : Ordinal.{u}) :
+    visibilityReplace k i (pt b n) = pt b (if n < k then i else n) := by
+  rw [pt, pt, visibilityReplace_coe, Ordinal.visibilityReplace_omega0_mul_add_natCast]
+
+/-- A point is not `⊥`. -/
+theorem pt_ne_bot (b : Ordinal.{u}) (n : ℕ) : pt b n ≠ ⊥ := WithBot.coe_ne_bot
+
+/-- A point is not `⊤`. -/
+theorem pt_ne_top (b : Ordinal.{u}) (n : ℕ) : pt b n ≠ ⊤ := fun h ↦
+  WithTop.coe_ne_top (WithBot.coe_injective h)
+
+/-- The three private cells, on two points: the reference cells `0` and `1` of grade `1`, and the
+cap `2` of grade `2`, all of full scope. -/
+def cells : CellScheme (Fin 3) (Fin 2) :=
+  ⟨univ, Geometry.intervalPlan univ, fun _ ↦ univ, ![1, 1, 2]⟩
+
+/-- The row values: the cap reads the codes `1`, `ω + 1`, `ω + 3`; the cell `0` reads `1` at both
+cells of grade `1`; the cell `1` reads `1`, `ω + 1`. -/
+noncomputable def rowValue (s t : Fin 3) : Label.{u} :=
+  if s = 2 then ![pt 0 1, pt 1 1, pt 1 3] t
+  else if s = 0 then pt 0 1 else ![pt 0 1, pt 1 1, ⊥] t
+
+/-- The rows of the private type. -/
+noncomputable def rows : cells.Rows.{u} := ⟨fun s t ↦ rowValue s t.1⟩
+
+/-- The labelling `x, y, c` of the private cells. -/
+noncomputable def lab (x y c : Label.{u}) : Fin 3 → Label.{u} := ![x, y, c]
+
+/-- The labellings `lab x y c` are lawful once the three localities hold. -/
+private theorem isLawful_lab_of {x y c : Label.{u}} (hx : IsSelfVisible 1 x)
+    (hy : IsSelfVisible 1 y) (hc : IsSelfVisible 2 c)
+    (h0 : TransformsTo (fun d : cells.below (cells.gradedIndex 0) ↦ cells.grade d) (rows.row 0)
+      (fun d ↦ min (lab x y c d) x))
+    (h1 : TransformsTo (fun d : cells.below (cells.gradedIndex 1) ↦ cells.grade d) (rows.row 1)
+      (fun d ↦ min (lab x y c d) y))
+    (h2 : TransformsTo (fun d : cells.below (cells.gradedIndex 2) ↦ cells.grade d) (rows.row 2)
+      (fun d ↦ min (lab x y c d) c)) : rows.{u}.IsLawful (lab x y c) where
+  orderly d := by
+    fin_cases d
+    exacts [hx, hy, hc]
+  locality s := by
+    fin_cases s
+    exacts [h0, h1, h2]
+  availability s _ _ hg := ⟨s, Prod.ext rfl hg, le_rfl⟩
+
+/-- A locality of the private type from a witness, checked cell by cell. -/
+private theorem transformsTo_of (s : Fin 3) {g : ℕ → Label.{u}} {σ : Label.{u} → Label.{u}}
+    (hw : IsWitness g σ) {F : Fin 3 → Label.{u}}
+    (h : ∀ d : Fin 3, cells.gradedIndex d ≤ cells.gradedIndex s →
+      F d = min (σ (rowValue s d)) (g (cells.grade d))) :
+    TransformsTo (fun d : cells.below (cells.gradedIndex s) ↦ cells.grade d) (rows.row s)
+      (fun d ↦ F d) :=
+  ⟨g, σ, hw, fun d ↦ h d.1 d.2⟩
+
+private theorem pt01_le_pt11 : pt.{u} 0 1 ≤ pt 1 1 := pt_le_pt_iff.mpr (.inl zero_lt_one)
+
+private theorem pt02_le_pt11 : pt.{u} 0 2 ≤ pt 1 1 := pt_le_pt_iff.mpr (.inl zero_lt_one)
+
+private theorem pt01_le_pt02 : pt.{u} 0 1 ≤ pt 0 2 := pt_le_pt_iff.mpr (.inr ⟨rfl, by omega⟩)
+
+/-- The locality at the reference cell `0`, labelled `1`. -/
+private theorem locality_zero (c : Label.{u}) :
+    TransformsTo (fun d : cells.below (cells.gradedIndex 0) ↦ cells.grade d) (rows.row 0)
+      (fun d ↦ min (lab (pt 0 1) (pt 1 1) c d) (pt 0 1)) := by
+  refine transformsTo_of 0 (F := fun d ↦ min (lab _ _ _ d) _) IsWitness.id_top fun d hd ↦ ?_
+  fin_cases d
+  · simp [lab, rowValue]
+  · simp [lab, rowValue, min_eq_right pt01_le_pt11]
+  · exact absurd hd (by decide)
+
+/-- The locality at the reference cell `1`, labelled `ω + 1`. -/
+private theorem locality_one (c : Label.{u}) :
+    TransformsTo (fun d : cells.below (cells.gradedIndex 1) ↦ cells.grade d) (rows.row 1)
+      (fun d ↦ min (lab (pt 0 1) (pt 1 1) c d) (pt 1 1)) := by
+  refine transformsTo_of 1 (F := fun d ↦ min (lab _ _ _ d) _) IsWitness.id_top fun d hd ↦ ?_
+  fin_cases d
+  · simp [lab, rowValue, min_eq_left pt01_le_pt11]
+  · simp [lab, rowValue]
+  · exact absurd hd (by decide)
+
+/-- **The actual labels** `1, ω + 1, ⊤` are lawful: the codes at `ω + 3` and above raised to `⊤`. -/
+theorem isLawful_lab_top : rows.{u}.IsLawful (lab (pt 0 1) (pt 1 1) ⊤) := by
+  have hraise : IsWitness (stepSuppressor.{u} 2) (raise (pt 1 3)) :=
+    isWitness_raise (isSelfVisible_pt.mpr le_rfl) (bot_lt_iff_ne_bot.mpr (pt_ne_bot 1 3))
+  have h1 : ¬ pt.{u} 1 3 ≤ pt 0 1 := fun h ↦ by
+    rcases pt_le_pt_iff.mp h with h | ⟨h, -⟩
+    · exact absurd h (not_lt.mpr zero_le_one)
+    · exact one_ne_zero h
+  have h2 : ¬ pt.{u} 1 3 ≤ pt 1 1 := fun h ↦ by
+    rcases pt_le_pt_iff.mp h with h | ⟨-, h⟩
+    · exact lt_irrefl _ h
+    · omega
+  refine isLawful_lab_of (isSelfVisible_pt.mpr le_rfl) (isSelfVisible_pt.mpr le_rfl)
+    (isSelfVisible_top 2) (locality_zero ⊤) (locality_one ⊤) ?_
+  refine transformsTo_of 2 (F := fun d ↦ min (lab _ _ _ d) _) hraise fun d _ ↦ ?_
+  fin_cases d <;> simp [lab, rowValue, cells, raise, h1, h2]
+
+/-- **An active lawful labelling with a lower cut**: `1, ω + 1, 2`, the codes read by the block
+piece that keeps the block `[0, ω)` with finite parts capped at `2` and sends every higher block
+to `2`. -/
+theorem isLawful_lab_two : rows.{u}.IsLawful (lab (pt 0 1) (pt 1 1) (pt 0 2)) := by
+  refine isLawful_lab_of (isSelfVisible_pt.mpr le_rfl) (isSelfVisible_pt.mpr le_rfl)
+    (isSelfVisible_pt.mpr le_rfl) (locality_zero _) (locality_one _) ?_
+  have hp1 : piece 2 0 0 (pt.{u} 0 1) = pt 0 1 := piece_omega0_mul_add (by omega) 0 0
+  have hp2 (n : ℕ) : piece 2 0 0 (pt.{u} 1 n) = pt 0 2 :=
+    piece_omega0_mul_add_of_lt zero_lt_one 0 n
+  refine transformsTo_of 2 (F := fun d ↦ min (lab _ _ _ d) _) (isWitness_piece 2 0 0)
+    fun d _ ↦ ?_
+  fin_cases d <;> simp [lab, rowValue, cells, hp1, hp2, min_eq_left pt01_le_pt02,
+    min_eq_right pt02_le_pt11]
+
+/-! The donor `1, ω + 1` on one point. -/
+
+/-- The donor cells: two cells of graded index `(univ, 1)` on one point. -/
+def donorCells : CellScheme (Fin 2) (Fin 1) :=
+  ⟨univ, Geometry.intervalPlan univ, fun _ ↦ univ, fun _ ↦ 1⟩
+
+/-- The donor row values: the row of `e₁ = 0` reads `1, 1`, the row of `e₂ = 1` reads
+`1, ω + 1`, in two blocks. -/
+noncomputable def donorRowValue (s t : Fin 2) : Label.{u} :=
+  if s = 0 then pt 0 1 else ![pt 0 1, pt 1 1] t
+
+/-- The rows of the donor. -/
+noncomputable def donorRows : donorCells.Rows.{u} := ⟨fun s t ↦ donorRowValue s t.1⟩
+
+/-- The labelling `x₀, x₁` of the donor cells. -/
+noncomputable def donorLab (x₀ x₁ : Label.{u}) : Fin 2 → Label.{u} := ![x₀, x₁]
+
+/-- **The donor labelling** `1, ω + 1` is lawful: each row is read by the identity. -/
+theorem isLawful_donorLab : donorRows.{u}.IsLawful (donorLab (pt 0 1) (pt 1 1)) where
+  orderly d := by fin_cases d <;> exact isSelfVisible_pt.mpr le_rfl
+  locality s := by
+    refine ⟨_, _, IsWitness.id_top, fun d ↦ ?_⟩
+    obtain ⟨d, -⟩ := d
+    fin_cases s <;> fin_cases d <;>
+      simp [donorLab, donorRows, donorRowValue, min_eq_left pt01_le_pt11,
+        min_eq_right pt01_le_pt11]
+  availability s _ _ _ := ⟨s, rfl, le_rfl⟩
+
+/-! The reference data and the readings. -/
+
+/-- **The reference data**: the cap `2`, the full grade `2`, the blocks `[0, ω)` and `[ω, ω * 2)`
+with the reference cells `0` and `1`, both labelled with finite part `1`. -/
+noncomputable def reference : PrivateReference.{u} (Fin 3) :=
+  ⟨2, 2, {0, 1}, fun b ↦ if b = 0 then 0 else 1, fun _ ↦ 1⟩
+
+private theorem ref_zero : reference.{u}.ref 0 = 0 := by simp [reference]
+
+private theorem ref_one : reference.{u}.ref 1 = 1 := by simp [reference]
+
+private theorem lab_zero (x y c : Label.{u}) : lab x y c 0 = x := rfl
+
+private theorem lab_one (x y c : Label.{u}) : lab x y c 1 = y := rfl
+
+/-- The capped reading at a point. -/
+private theorem reading_pt (v : Fin 3 → Label.{u}) (b : Ordinal.{u}) (n : ℕ) :
+    reference.reading v (pt b n) =
+      min (visibilityReplace reference.{u}.fullGrade n (v (reference.ref b))) (reference.cut v) :=
+  reference.reading_omega0_mul_add b n
+
+/-- **The margin holds** at the actual labels `1, ω + 1, ⊤`. -/
+theorem hasMargin : reference.{u}.HasMargin rows (lab (pt 0 1) (pt 1 1) ⊤) where
+  isLawful := isLawful_lab_top
+  mem_below x := by
+    -- Membership below the cap is the comparison of graded indices (`CellScheme.mem_below`).
+    change cells.gradedIndex x ≤ cells.gradedIndex 2
+    revert x; decide
+  grade_cap := rfl
+  off_lt _ _ := Nat.one_lt_two
+  label_ref b hb := by
+    rcases mem_insert.mp hb with rfl | hb
+    · rw [ref_zero]; rfl
+    · rw [mem_singleton.mp hb, ref_one]; rfl
+  margin _ _ := le_top
+
+/-- The donor `1, ω + 1` reads in the two blocks. -/
+theorem readsInBlocks_donorLab : reference.{u}.ReadsInBlocks (donorLab (pt 0 1) (pt 1 1)) := by
+  intro t o ho
+  have key (b : Ordinal.{u}) (hb : b ∈ reference.{u}.blocks) (h : pt b 1 = (o : Label.{u})) :
+      o / ω ∈ reference.{u}.blocks ∧ o % ω ≤ reference.{u}.fullGrade := by
+    obtain rfl := WithTop.coe_injective (WithBot.coe_injective h)
+    rw [omega0_mul_add_natCast_div, omega0_mul_add_natCast_mod]
+    exact ⟨hb, Nat.cast_le.mpr Nat.one_lt_two.le⟩
+  fin_cases t
+  · exact key 0 (by simp [reference]) ho
+  · exact key 1 (by simp [reference]) ho
+
+/-- **The capped-donor lemma at two blocks**: every active lawful labelling of the private type
+reads the donor `1, ω + 1` lawfully. -/
+theorem isLawful_reading {v : Fin 3 → Label.{u}} (hv : rows.IsLawful v)
+    (hact : reference.IsActive v) :
+    donorRows.IsLawful (reference.reading v ∘ donorLab (pt 0 1) (pt 1 1)) :=
+  hasMargin.isLawful_reading hv hact isLawful_donorLab (fun _ ↦ Nat.one_lt_two.le)
+    readsInBlocks_donorLab
+
+/-- **The reading at the actual labels** is the donor `1, ω + 1` itself. -/
+theorem reading_actual : reference.reading (lab (pt 0 1) (pt 1 1) ⊤) ∘
+    donorLab (pt 0 1) (pt 1 1) = donorLab.{u} (pt 0 1) (pt 1 1) := by
+  funext t
+  refine hasMargin.reading_eq_self (readsInBlocks_donorLab t) ?_
+  fin_cases t
+  exacts [pt_ne_top 0 1, pt_ne_top 1 1]
+
+/-- The labelling `1, ω + 1, 2` is active. -/
+theorem isActive_lab_two : reference.{u}.IsActive (lab (pt 0 1) (pt 1 1) (pt 0 2)) := by
+  have h (i : Fin 3) : lab (pt.{u} 0 1) (pt 1 1) (pt 0 2) i ≠ ⊥ := by
+    fin_cases i
+    exacts [pt_ne_bot 0 1, pt_ne_bot 1 1, pt_ne_bot 0 2]
+  exact ⟨h _, fun _ _ ↦ h _⟩
+
+/-- **The cut of `1, ω + 1, 2` is `2`**: the replacement `2` of the first reference label is
+already the label of the cap. -/
+theorem cut_lab_two : reference.cut (lab (pt 0 1) (pt 1 1) (pt 0 2)) = pt.{u} 0 2 := by
+  refine le_antisymm (min_le_left _ _) (le_min le_rfl (le_sup_of_le (b := 0) (by
+    simp [reference]) ?_))
+  rw [ref_zero, lab_zero, visibilityReplace_pt]
+  exact le_rfl
+
+/-- **The reading of `1, ω + 1, 2`** is the donor labelling `1, 2`: the first donor label is read
+through its reference cell below the cut, the second is capped by the cut `2`. -/
+theorem reading_lab_two : reference.reading (lab (pt 0 1) (pt 1 1) (pt 0 2)) ∘
+    donorLab (pt 0 1) (pt 1 1) = donorLab.{u} (pt 0 1) (pt 0 2) := by
+  funext t
+  fin_cases t
+  · -- The first donor label is `pt 0 1` (`donorLab`, by definition).
+    change reference.reading _ (pt 0 1) = pt 0 1
+    rw [reading_pt, cut_lab_two, ref_zero, lab_zero, visibilityReplace_pt]
+    exact min_eq_left pt01_le_pt02
+  · -- The second donor label is `pt 1 1` (`donorLab`, by definition).
+    change reference.reading _ (pt 1 1) = pt 0 2
+    rw [reading_pt, cut_lab_two, ref_one, lab_one, visibilityReplace_pt]
+    exact min_eq_right pt02_le_pt11
+
+/-- **A lawful reading that is neither the donor nor `⊥`**: the reading `1, 2` of the active
+labelling `1, ω + 1, 2` is lawful for the donor's rows (`isLawful_reading`), and not `⊥` at either
+donor cell. -/
+theorem isLawful_donorLab_one_two : donorRows.IsLawful (donorLab (pt 0 1) (pt.{u} 0 2)) ∧
+    ∀ t, donorLab (pt 0 1) (pt.{u} 0 2) t ≠ ⊥ := by
+  refine ⟨reading_lab_two ▸ isLawful_reading isLawful_lab_two isActive_lab_two, fun t ↦ ?_⟩
+  fin_cases t
+  exacts [pt_ne_bot 0 1, pt_ne_bot 0 2]
+
+end TwoBlockInput
 
 end CappedDonorReading
 
