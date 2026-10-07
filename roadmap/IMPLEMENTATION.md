@@ -3440,10 +3440,12 @@ form, at arbitrary limit stages.
   `Expansion.FiniteCutReceiving`, its instance at `α < ω₁`; and the form for finite covers,
   `HasFiniteCutReceiving.hasFiniteExtensionReceiving`, at every limit `α`, the form that the LOW
   construction of (R2) (U3) reads.
-- *Assumptions.*  Modelhood of `R` and `α` a limit; no named hypothesis.  Step 2 uses the plain
-  coatom extension property at `α` (U4); until U4 is complete, the result is a compiled theorem
-  conditional on `StageType.HasCoatomExtensions α`, taken from the apex form by
-  `StageType.HasApexCoatomExtensions.hasCoatomExtensions`, not completion.
+- *Assumptions.*  Modelhood of `R` and `α` a limit.  Step 2 uses the plain coatom extension
+  property at `α` (U4).  The intended interim theorem is conditional on
+  `StageType.HasCoatomExtensions α`, taken from the apex form by
+  `StageType.HasApexCoatomExtensions.hasCoatomExtensions`.  This assembly is prospective until
+  the construction, realization and recovery steps below are proved; the compiled implication
+  from the apex property to the plain property does not prove those steps.
 - *Reused.*  `Realization.IsModel.exists_privateContext_isAnchored` (the private context);
   `CellScheme.Rows.IsGate.recover` (the pattern of recovery through a gate);
   `StageType.exists_pinned_extension` (the compiled form in which step 2 uses the plain coatom
@@ -3600,9 +3602,11 @@ form, at arbitrary limit stages.
   U3 targets the unrestricted form.
 - *Assumptions.*  Modelhood and the case hypotheses, at every limit `α`.  Padding (step 5) uses the
   plain form, and so does the LOW construction of (R2), which imports (R6) (`README.md`, Layer 3,
-  3.4); until U4 is complete, the result is a compiled theorem conditional on
-  `StageType.HasCoatomExtensions α` at every limit `α`, taken from the apex form by
-  `StageType.HasApexCoatomExtensions.hasCoatomExtensions`, not completion.
+  3.4).  The intended interim theorems are conditional on `StageType.HasCoatomExtensions α`
+  at every limit `α`, taken from the apex form by
+  `StageType.HasApexCoatomExtensions.hasCoatomExtensions`; (R2) also uses U1's per-model
+  finite-cut receiving statement.  These assemblies remain prospective until the missing
+  constructions and receiving proofs below are supplied.
 - *Reused.*  `Realization.IsModel.exists_extend_uniformity`,
   `Realization.isCoverHollow_iff_forall_stableLabel_eq_top`, `StageType.exists_pinned_extension`,
   and, for (R2), the per-model form of U1 at every limit `α` (`R.IsModel →
@@ -3693,7 +3697,12 @@ form, at arbitrary limit stages.
 global termination (countable losses, limit continuity, countable exceptions to uniform comparison,
 a subsingleton persistent core, thinness) is compiled here on the named hypotheses (`README.md`,
 Layers 5–6); nonempty losses enter through `nonempty_loss_of_topFreeWitness` and
-`hasNonemptyLosses_of_hasApexCoatomExtensions`, from U4.
+`hasNonemptyLosses_of_hasApexCoatomExtensions`, with its cap-to-model and next-block uniqueness
+premises explicit.  The dependency chain is: U4 gives the apex property at every countable block,
+hence cap-to-model at `ω` (`CapToModel.of_hasApexCoatomExtensions`) and forcing donors;
+U1's finite-cut receiving together with those forcing donors gives next-block uniqueness
+(`Expansion.NextBlockUniqueness.of_forcingDonors`).  The existing loss theorems then apply.
+U4 alone is not asserted to give next-block uniqueness or nonempty losses.
 
 **Order.**  U1 first, beginning with its tests (a)–(c) and (f); then U2; U4 continues alongside,
 and U1, step 2, and U3, step 5, use it; U3 after U1 for (R2).  With U1–U4 compiled, the
