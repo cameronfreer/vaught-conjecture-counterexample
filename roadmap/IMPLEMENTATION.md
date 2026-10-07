@@ -752,7 +752,12 @@ any construction is adapted to it:
    `bfEquiv_of_gradedMatching` gives `BFEquiv`; on abstract hypotheses this is
    `FullPresentation.bfEquiv_comp_of_obs_eq`, compiled in this repository (theorem named)), and
    approximate comparison gives the sentence form of bounded comparison through
-   `BFEquiv_implies_agreeQR`;
+   `BFEquiv_implies_agreeQR`; for model expansions to `λ_η` from an arbitrary common chart with a
+   selector, the comparison is `ModelExpansion.bfEquiv_comp_of_covers`, with formula form
+   `ModelExpansion.realize_comp_iff_of_covers` (`Expansion/Agreement`), compiled conditional on
+   `Expansion.FiniteExtensionReceiving` ((R1), still to be proved); it goes through
+   `ExpansionMatchData.bfEquiv_of_match`, a parallel result, not an instance of
+   `FullPresentation.bfEquiv_comp_of_obs_eq`;
 3. **a concrete full-presentation construction from the terminal classification:** the full
    presentations of the terminal models (pointed at the named core, residual, hollow) and of the
    top-free age, to see whether the new organization shortens the argument that faces the
@@ -1504,9 +1509,10 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     used here, and the conclusion of Theorem 2.17 is read for these systems.  Both corrections are
     recorded in `LITERATURE.md`, §9.
 25. Prospective; ingredient `StageType.reduce_eq_of_mem_receivingFamily` (`Realization/Expansion`).
-26. `ExpansionMatchData.bfEquiv_of_expansionMatch`; `Expansion.bfEquiv_of_modelExpansions`,
-    conditional on `Expansion.FiniteExtensionReceiving`, still to be proved; the structural form:
-    prospective.
+26. `ExpansionMatchData.bfEquiv_of_expansionMatch`; `Expansion.bfEquiv_of_modelExpansions` and,
+    from an arbitrary common chart, `ModelExpansion.bfEquiv_comp_of_covers` and its formula form
+    `ModelExpansion.realize_comp_iff_of_covers`, conditional on
+    `Expansion.FiniteExtensionReceiving`, still to be proved; the structural form: prospective.
 27. `FullPresentations` (`MainTheorem/Assembly`), a structure of hypotheses storing sets of classes
     at levels with countability and coverage, not presentations or maximality; and
     `vaughtCounterexample_of_presentations` (`MainTheorem/Assembly`), whose hypotheses include it.
