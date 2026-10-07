@@ -32,7 +32,7 @@ label is an ordinal (`IsProper`); the formal top is not an ordinal and lies abov
 
 Stage reduction is not capped observation (`VaughtConjecture.Label.Cap`): reduction keeps the
 formal top, while a cap at a proper cutoff forgets it.  Capping at a label other than `⊥` keeps
-every label other than `⊥` other than `⊥` (`ne_bot_of_min_eq_of_ne_bot`).
+every label other than `⊥` away from `⊥` (`ne_bot_of_min_eq_of_ne_bot`).
 
 The cast of a natural number `n` to a label is the label of the ordinal `n` (`natCast_label`);
 these casts are injective and order-preserving, lie below `ω` (so below `ω ^ 2`,

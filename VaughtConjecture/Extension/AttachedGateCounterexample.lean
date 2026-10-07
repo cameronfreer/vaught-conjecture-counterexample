@@ -7,7 +7,7 @@ import VaughtConjecture.Extension.AttachedGate
 import VaughtConjecture.Extension.GatedExtensionCounterexample
 
 /-!
-# One ceiling is not enough at the private type `P α`
+# The single-ceiling row design fails at the private type `P α`
 
 Roadmap, Layer 3, 3.2 (the ordinary construction (R1): the display and its gate) and 3.3 (the
 recovery statements, item 1); the attached gated extensions of

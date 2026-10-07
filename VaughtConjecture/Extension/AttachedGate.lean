@@ -55,7 +55,8 @@ cap `⊥` a lift may label the gate and every reader `⊥`, so nothing is forced
 there; and since `c ≠ ⊥`, `a` is not `⊥` at a private cell not labelled `⊥`
 (`Label.ne_bot_of_min_eq_of_ne_bot`), so the transported readings force no `⊥` at a donor cell not
 labelled `⊥`.  The coupled gate, by contrast, forces the readings of its gate for every lawful
-private labelling, at the cap `⊥` included.
+private labelling, at the cap `⊥` included (by `cap_le_gate_of_twinsReadGate` with
+`min_eq_visibilityReplace_of_row_eq`; argued, not formalized).
 
 **One dominating cell for two opposite cells is impossible**
 (`StageType.not_forall_le_of_opposite`).  If two cells of the private face of graded index
