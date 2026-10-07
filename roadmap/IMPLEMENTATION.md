@@ -3628,8 +3628,15 @@ lands, their notes stay in those modules.
 - `Extension/CanonicalMultiScheme`, `Extension/CanonicalMultiSchemeCounterexample`, and
   `Extension/CanonicalMultiSchemeExamples`: checkpoint 2.7, in place.  The decoding lemma
   `Label.TransformsTo.false_of_decoding` and `Label.visibilityReplace_three_fixed` belong in
-  `Label/Transform` and `Label/Visibility`; `OrderedLayer.isLawfulBelow_omega_of_rows` beside
-  `OrderedLayer.isLawfulBelow_omegaLabel` in `Extension/OrderedLayerTop`.
+  `Label/Transform` and `Label/Visibility`.  The labelling of `Ω` alone at the grade `4` in a
+  scheme whose cells of grade `4` have rows `⊥` exactly below the grade `4`
+  (`OrderedLayer.isLawfulBelow_omega_of_rows`) is in `Extension/OrderedLayerTop`, quoted by the
+  layer scheme (`OrderedLayer.isLawfulBelow_omegaLabel`) and by the canonical multi-layer scheme.
+  The kind-by-kind transformation (`CrossedCouplingCounterexample.transformsTo_val_of_kind`) and
+  the witnesses of the rows of kinds `A_D`, `A_C`, `H`, `G`
+  (`CrossedCouplingCounterexample.transformsTo_val_ad`, `transformsTo_val_ac`,
+  `transformsTo_val_h`, `transformsTo_val_g`) are in `Extension/CrossedCouplingScheme`, quoted by
+  `seedHG` and by the copies of the canonical multi-layer scheme.
 
 **Hull operations, the top-free age, and graded matching (Layers 0 and 2; the top-free
 witnesses).**

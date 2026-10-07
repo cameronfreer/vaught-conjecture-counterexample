@@ -47,9 +47,13 @@ amalgam it is `lab` along each coatom (`isLawful_amalgam_kindOld`, from
 `isLawfulBelow_coatom_four`); at `cellAD` the witness is the strip shifter of `A_C` up to `A_D`, at
 `cellAC` that of `A_D` up to `A_C`, at `cellH` that of `A_D` up to `H` (as for the cell `15` of
 `TG`), and at `cellG` the strip shifter `strip3 A_C` up to `G` (as for the cell `18` of `TH`, the
-coupling `G ≤ A_D` covering the side of `D`).  The labelling of a label `Ω` alone at the cells of
-grade `4` is lawful (`isLawful_kindLabel_omega`), since the seed has bottom apexes
-(`hasBottomApexes_HG`).
+coupling `G ≤ A_D` covering the side of `D`).  These four witnesses are stated for every family of
+cells whose kinds have their grades (`transformsTo_val_ad`, `transformsTo_val_ac`,
+`transformsTo_val_h`, `transformsTo_val_g`, from the kind-by-kind transformation
+`transformsTo_val_of_kind`), so they hold in every scheme whose new rows are rows by kinds, such as
+the canonical multi-layer scheme (`OrderedLayer.CanonicalHG.transformsTo_copy`).  The labelling
+of a label `Ω` alone at the cells of grade `4` is lawful (`isLawful_kindLabel_omega`), since the
+seed has bottom apexes (`hasBottomApexes_HG`).
 
 **Reading lawful labellings.**  Below `(C, k)` and `(D, k)`, `k ≤ 3`, the lawful labellings are
 labellings by kinds with parameters coupled as in `TH` and `TG` (`exists_of_isLawfulBelow_C`,
@@ -211,6 +215,92 @@ theorem kindOld_spec (X : Finset (Fin 5) × ℕ) :
     · simp [kindC_eq_three h5]
     · simp [kindD_eq_three h5]
   · simp [h4]
+
+/-! ### Rows by kinds -/
+
+section RowsByKinds
+
+variable {D : Type*} {grade : D → ℕ} {kind : D → CellKind}
+  (hkind : ∀ d, (kind d = .ac → grade d = 1) ∧ (kind d = .ad → grade d = 1) ∧
+    (kind d = .h → grade d = 2) ∧ (kind d = .g → grade d = 3) ∧ (kind d = .top ↔ grade d = 4))
+include hkind
+
+/-- **A row by kinds transforms to a labelling by kinds capped at `x`**, on a family of cells of
+grades at most `j` whose kinds have their grades, when the witness does so kind by kind, at the
+grade of each kind present. -/
+theorem transformsTo_val_of_kind {j : ℕ} (hj : ∀ d, grade d ≤ j)
+    {g : ℕ → Label.{u}} {σ : Label.{u} → Label.{u}} (hw : IsWitness g σ)
+    {RAC RAD RH RG RQ AC AD H G Q x : Label.{u}}
+    (hac : 1 ≤ j → min AC x = min (σ RAC) (g 1)) (had : 1 ≤ j → min AD x = min (σ RAD) (g 1))
+    (hh : 2 ≤ j → min H x = min (σ RH) (g 2)) (hg : 3 ≤ j → min G x = min (σ RG) (g 3))
+    (htop : 4 ≤ j → min Q x = min (σ RQ) (g 4)) :
+    TransformsTo grade (fun d ↦ (kind d).val RAC RAD RH RG RQ)
+      (fun d ↦ min ((kind d).val AC AD H G Q) x) := by
+  refine ⟨g, σ, hw, fun d ↦ ?_⟩
+  obtain ⟨g1, g2, g3, g4, g5⟩ := hkind d
+  have := hj d
+  dsimp only
+  cases hk : kind d with
+  | dead => simp only [CellKind.val, hw.map_bot, bot_le, min_eq_left]
+  | ac => simp only [CellKind.val]; rw [g1 hk]; exact hac (by have := g1 hk; omega)
+  | ad => simp only [CellKind.val]; rw [g2 hk]; exact had (by have := g2 hk; omega)
+  | h => simp only [CellKind.val]; rw [g3 hk]; exact hh (by have := g3 hk; omega)
+  | g => simp only [CellKind.val]; rw [g4 hk]; exact hg (by have := g4 hk; omega)
+  | top => simp only [CellKind.val]; rw [g5.mp hk]; exact htop (by have := g5.mp hk; omega)
+
+variable {AC AD H G Q : Label.{u}}
+
+/-- **The row of kind `A_D` at the grade `1`** (`A_C` at `1`, `A_D` at `ω + 2`) transforms to the
+labelling by kinds capped at `A_D`: the strip shifter of `A_C`, up to `A_D`. -/
+theorem transformsTo_val_ad (hj : ∀ d, grade d ≤ 1) (hAC : IsSelfVisible 1 AC)
+    (hAD : IsSelfVisible 1 AD) :
+    TransformsTo grade (fun d ↦ (kind d).val v1 v2 ⊥ ⊥ ⊥)
+      (fun d ↦ min ((kind d).val AC AD H G Q) AD) := by
+  refine transformsTo_val_of_kind hkind hj (isWitness_stripShifter_one (A := AC) hAD)
+    (fun _ ↦ ?_) (fun _ ↦ ?_) (by omega) (by omega) (by omega)
+  · rw [stripShifter_v1 hAC, constStepSuppressor_of_le _ le_rfl]
+  · rw [stripShifter_v2, constStepSuppressor_of_le _ le_rfl, min_top_left, min_self]
+
+/-- **The row of kind `A_C` at the grade `1`** (`A_C` at `ω + 2`, `A_D` at `1`) transforms to the
+labelling by kinds capped at `A_C`: the strip shifter of `A_D`, up to `A_C`. -/
+theorem transformsTo_val_ac (hj : ∀ d, grade d ≤ 1) (hAC : IsSelfVisible 1 AC)
+    (hAD : IsSelfVisible 1 AD) :
+    TransformsTo grade (fun d ↦ (kind d).val v2 v1 ⊥ ⊥ ⊥)
+      (fun d ↦ min ((kind d).val AC AD H G Q) AC) := by
+  refine transformsTo_val_of_kind hkind hj (isWitness_stripShifter_one (A := AD) hAC)
+    (fun _ ↦ ?_) (fun _ ↦ ?_) (by omega) (by omega) (by omega)
+  · rw [stripShifter_v2, constStepSuppressor_of_le _ le_rfl, min_top_left, min_self]
+  · rw [stripShifter_v1 hAD, constStepSuppressor_of_le _ le_rfl]
+
+/-- **The row of kind `H` at the grade `2`** (`A_C` and `H` at `ω + 2`, `A_D` at `1`) transforms
+to the labelling by kinds capped at `H`, for `H ≤ A_C`: the strip shifter of `A_D`, up to `H`. -/
+theorem transformsTo_val_h (hj : ∀ d, grade d ≤ 2) (hAD : IsSelfVisible 1 AD)
+    (hH : IsSelfVisible 2 H) (h1 : H ≤ AC) :
+    TransformsTo grade (fun d ↦ (kind d).val v2 v1 v2 ⊥ ⊥)
+      (fun d ↦ min ((kind d).val AC AD H G Q) H) := by
+  refine transformsTo_val_of_kind hkind hj (isWitness_stripShifter (A := AD) hH)
+    (fun _ ↦ ?_) (fun _ ↦ ?_) (fun _ ↦ ?_) (by omega) (by omega)
+  · rw [stripShifter_v2, constStepSuppressor_of_le _ (by omega), min_top_left, min_eq_right h1]
+  · rw [stripShifter_v1 hAD, constStepSuppressor_of_le _ (by omega)]
+  · rw [stripShifter_v2, constStepSuppressor_of_le _ le_rfl, min_top_left, min_self]
+
+/-- **The row of kind `G` at the grade `3`** (`A_C` and `H` at `2`, `A_D` and `G` at `ω + 3`)
+transforms to the labelling by kinds capped at `G`, for the couplings `H ≤ A_C`, `min A_C G ≤ H`
+of `TH` and `G ≤ A_D` of `TG`: the strip shifter `strip3 A_C`, up to `G`. -/
+theorem transformsTo_val_g (hj : ∀ d, grade d ≤ 3) (hH : IsSelfVisible 2 H)
+    (hG : IsSelfVisible 3 G) (h1 : H ≤ AC) (h2 : min AC G ≤ H) (hGA : G ≤ AD) :
+    TransformsTo grade (fun d ↦ (kind d).val w2 w3 w2 w3 ⊥)
+      (fun d ↦ min ((kind d).val AC AD H G Q) G) := by
+  refine transformsTo_val_of_kind hkind hj (isWitness_strip3 (A := AC) hG)
+    (fun _ ↦ ?_) (fun _ ↦ ?_) (fun _ ↦ ?_) (fun _ ↦ ?_) (by omega)
+  · rw [strip3_w2, constStepSuppressor_of_le _ (by omega)]
+    exact min_visibilityReplace_A hH h1 h2
+  · rw [strip3_w3, constStepSuppressor_of_le _ (by omega), min_top_left, min_eq_right hGA]
+  · rw [strip3_w2, constStepSuppressor_of_le _ (by omega)]
+    exact min_visibilityReplace_H hH h1 h2
+  · rw [strip3_w3, constStepSuppressor_of_le _ le_rfl, min_top_left, min_self]
+
+end RowsByKinds
 
 /-! ### The cells of the completion -/
 
@@ -609,23 +699,9 @@ theorem transformsTo_kindLabel {u : Fin (schemeHG I).card} {j : ℕ}
         ((schemeHG I).toCellScheme.gradedIndex u) ↦ (schemeHG I).toCellScheme.grade t)
       (fun t ↦ kindLabel I RAC RAD RH RG RQ t.1)
       (fun t ↦ min (kindLabel I AC AD H G Q t.1) x) := by
-  refine ⟨g, σ, hw, fun t ↦ ?_⟩
-  have htj : (schemeHG I).toCellScheme.grade t.1 ≤ j :=
-    (le_of_le_of_eq (t.2 : (schemeHG I).toCellScheme.gradedIndex t.1 ≤ _) hu).2
-  obtain ⟨g1, g2, g3, g4, g5⟩ := grade_of_cellKind t.1
-  cases hk : cellKind I t.1 with
-  | dead => simp only [kindLabel, hk, CellKind.val, hw.map_bot, bot_le, min_eq_left]
-  | ac =>
-    simp only [kindLabel, hk, CellKind.val]; rw [g1 hk]; exact hac (by have := g1 hk; omega)
-  | ad =>
-    simp only [kindLabel, hk, CellKind.val]; rw [g2 hk]; exact had (by have := g2 hk; omega)
-  | h =>
-    simp only [kindLabel, hk, CellKind.val]; rw [g3 hk]; exact hh (by have := g3 hk; omega)
-  | g =>
-    simp only [kindLabel, hk, CellKind.val]; rw [g4 hk]; exact hg (by have := g4 hk; omega)
-  | top =>
-    simp only [kindLabel, hk, CellKind.val]; rw [g5.mp hk]
-    exact htop (by have := g5.mp hk; omega)
+  refine transformsTo_val_of_kind (fun t ↦ ?_) (fun t ↦ ?_) hw hac had hh hg htop
+  · exact grade_of_cellKind t.1
+  · exact (le_of_le_of_eq (t.2 : (schemeHG I).toCellScheme.gradedIndex t.1 ≤ _) hu).2
 
 /-- **The labelling by kinds is lawful** on the completed scheme, for parameters self-visible at
 `1`, `1`, `2`, `3` and coupled as in `TH` and `TG`, with `⊥` at the cells of grade `4`. -/
@@ -644,67 +720,32 @@ theorem isLawful_kindLabel {AC AD : Label.{u}} (hAC : IsSelfVisible 1 AC)
   · have := isSelfVisible_kindLabel hAC hAD hH hG (isSelfVisible_bot 4)
       (multiNewCell I multHG k i)
     rwa [grade_multiNewCell] at this
-  · obtain ⟨i, hi⟩ := i
+  · -- Locality at a new cell: the witness of its kind.
+    have hj {j : ℕ} (hu : (schemeHG I).toCellScheme.gradedIndex (multiNewCell I multHG k i) =
+        ((univ : Finset (Fin 5)), j)) (t : (schemeHG I).toCellScheme.below
+          ((schemeHG I).toCellScheme.gradedIndex (multiNewCell I multHG k i))) :
+        (schemeHG I).toCellScheme.grade t.1 ≤ j :=
+      (le_of_le_of_eq (t.2 : (schemeHG I).toCellScheme.gradedIndex t.1 ≤ _) hu).2
+    have hkind (t : (schemeHG I).toCellScheme.below
+        ((schemeHG I).toCellScheme.gradedIndex (multiNewCell I multHG k i))) :=
+      grade_of_cellKind t.1
+    obtain ⟨i, hi⟩ := i
     fin_cases k
     · obtain rfl | rfl : i = 0 ∨ i = 1 := by simp [multHG] at hi; omega
-      · -- The cell of kind `A_D` at `(univ, 1)`: the strip shifter of `A_C`, up to `A_D`.
-        refine transformsTo_kindLabel (j := 1) (gradedIndex_multiNewCell _ _)
-          (isWitness_stripShifter_one (A := AC) hAD) (fun _ ↦ ?_) (fun _ ↦ ?_)
-          (by omega) (by omega) (by omega)
-        · -- The value of `cellAD` is the parameter of its kind.
-          change min AC (kindLabel I AC AD H G ⊥ (cellAD I)) = _
-          rw [kindLabel_cellAD, stripShifter_v1 hAC, constStepSuppressor_of_le _ le_rfl]
-        · -- The value of `cellAD` is the parameter of its kind.
-          change min AD (kindLabel I AC AD H G ⊥ (cellAD I)) = _
-          rw [kindLabel_cellAD, stripShifter_v2, constStepSuppressor_of_le _ le_rfl, min_top_left,
-            min_self]
-      · -- The cell of kind `A_C` at `(univ, 1)`: the strip shifter of `A_D`, up to `A_C`.
-        refine transformsTo_kindLabel (j := 1) (gradedIndex_multiNewCell _ _)
-          (isWitness_stripShifter_one (A := AD) hAC) (fun _ ↦ ?_) (fun _ ↦ ?_)
-          (by omega) (by omega) (by omega)
-        · -- The value of `cellAC` is the parameter of its kind.
-          change min AC (kindLabel I AC AD H G ⊥ (cellAC I)) = _
-          rw [kindLabel_cellAC, stripShifter_v2, constStepSuppressor_of_le _ le_rfl, min_top_left,
-            min_self]
-        · -- The value of `cellAC` is the parameter of its kind.
-          change min AD (kindLabel I AC AD H G ⊥ (cellAC I)) = _
-          rw [kindLabel_cellAC, stripShifter_v1 hAD, constStepSuppressor_of_le _ le_rfl]
+      · rw [show kindLabel I AC AD H G ⊥ (multiNewCell I multHG _ ⟨0, hi⟩) = AD from
+          kindLabel_cellAD _ _ _ _ _]
+        exact transformsTo_val_ad hkind (hj (gradedIndex_multiNewCell _ _)) hAC hAD
+      · rw [show kindLabel I AC AD H G ⊥ (multiNewCell I multHG _ ⟨1, hi⟩) = AC from
+          kindLabel_cellAC _ _ _ _ _]
+        exact transformsTo_val_ac hkind (hj (gradedIndex_multiNewCell _ _)) hAC hAD
     · obtain rfl : i = 0 := by simp [multHG] at hi; omega
-      -- The cell at `(univ, 2)`: the strip shifter of `A_D`, up to `H`.
-      refine transformsTo_kindLabel (j := 2) (gradedIndex_multiNewCell _ _)
-        (isWitness_stripShifter (A := AD) hH) (fun _ ↦ ?_) (fun _ ↦ ?_) (fun _ ↦ ?_)
-        (by omega) (by omega)
-      · -- The value of `cellH` is the parameter of its kind.
-        change min AC (kindLabel I AC AD H G ⊥ (cellH I)) = _
-        rw [kindLabel_cellH, stripShifter_v2, constStepSuppressor_of_le _ (by omega), min_top_left,
-          min_eq_right h1]
-      · -- The value of `cellH` is the parameter of its kind.
-        change min AD (kindLabel I AC AD H G ⊥ (cellH I)) = _
-        rw [kindLabel_cellH, stripShifter_v1 hAD, constStepSuppressor_of_le _ (by omega)]
-      · -- The value of `cellH` is the parameter of its kind.
-        change min H (kindLabel I AC AD H G ⊥ (cellH I)) = _
-        rw [kindLabel_cellH, stripShifter_v2, constStepSuppressor_of_le _ le_rfl, min_top_left,
-          min_self]
+      rw [show kindLabel I AC AD H G ⊥ (multiNewCell I multHG _ ⟨0, hi⟩) = H from
+        kindLabel_cellH _ _ _ _ _]
+      exact transformsTo_val_h hkind (hj (gradedIndex_multiNewCell _ _)) hAD hH h1
     · obtain rfl : i = 0 := by simp [multHG] at hi; omega
-      -- The cell at `(univ, 3)`: the strip shifter `strip3 A_C`, up to `G`.
-      refine transformsTo_kindLabel (j := 3) (gradedIndex_multiNewCell _ _)
-        (isWitness_strip3 (A := AC) hG) (fun _ ↦ ?_) (fun _ ↦ ?_) (fun _ ↦ ?_) (fun _ ↦ ?_)
-        (by omega)
-      · -- The value of `cellG` is the parameter of its kind.
-        change min AC (kindLabel I AC AD H G ⊥ (cellG I)) = _
-        rw [kindLabel_cellG, strip3_w2, constStepSuppressor_of_le _ (by omega)]
-        exact min_visibilityReplace_A hH h1 h2
-      · -- The value of `cellG` is the parameter of its kind.
-        change min AD (kindLabel I AC AD H G ⊥ (cellG I)) = _
-        rw [kindLabel_cellG, strip3_w3, constStepSuppressor_of_le _ (by omega), min_top_left,
-          min_eq_right hGA]
-      · -- The value of `cellG` is the parameter of its kind.
-        change min H (kindLabel I AC AD H G ⊥ (cellG I)) = _
-        rw [kindLabel_cellG, strip3_w2, constStepSuppressor_of_le _ (by omega)]
-        exact min_visibilityReplace_H hH h1 h2
-      · -- The value of `cellG` is the parameter of its kind.
-        change min G (kindLabel I AC AD H G ⊥ (cellG I)) = _
-        rw [kindLabel_cellG, strip3_w3, constStepSuppressor_of_le _ le_rfl, min_top_left, min_self]
+      rw [show kindLabel I AC AD H G ⊥ (multiNewCell I multHG _ ⟨0, hi⟩) = G from
+        kindLabel_cellG _ _ _ _ _]
+      exact transformsTo_val_g hkind (hj (gradedIndex_multiNewCell _ _)) hH hG h1 h2 hGA
     · obtain rfl : i = 0 := by simp [multHG] at hi; omega
       -- The cell at `(univ, 4)`: its label is `⊥`.
       rw [show multiNewCell I multHG _ ⟨0, hi⟩ = cellT I from rfl]
