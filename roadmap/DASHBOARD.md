@@ -95,8 +95,16 @@ Notes on the rows, each with its marker:
   rows only, as corollaries of `CrossedCouplingCounterexample.not_hasOrderedLayerStep_seedHG` and
   `not_exists_orderedLayerStep_seedL_seedLM` through the iff: at `seedHG`
   (`Seed.not_canonicalMultiStep_oriented_seedHG`) and as one choice for `seedL` and `seedLM`
-  (`Seed.not_exists_canonicalMultiStep_oriented_seedL_seedLM`).  Open: copy rows giving the step of
-  the family for every seed on five points.  Still to be
+  (`Seed.not_exists_canonicalMultiStep_oriented_seedL_seedLM`).  Compiled, for every copy rows: the
+  orientation forced on a copy by a forcing from its coatom
+  (`Seed.MultiLayerStep.copyRows_lt_of_forcesTop`; at `seedHG` the copy of `(D, 2)` reads toward
+  `C` and the copy of `(C, 3)` toward `D`, at `seedL` and `seedLM` the copies of the forcing coatom
+  at the grades 2, 3; at `seed5` the copies of `(D, 2)`, `(D, 3)`, `Seed.copyRows_lt_of_T5_T5`).
+  Refuted, for the own-side rows only (`OrderedLayer.ownSideRows`, each copy reading its own
+  coatom's values other than `⊥` above the other's): at `seedHG`, `seedL`, `seedLM`
+  (`Seed.not_ownSideStep_seedHG`, `…_seedL`, `…_seedLM`), not the family nor the completion;
+  undecided at `seed4`, `seed5`, `seedLL`.  Open: copy rows giving the step of the family for every
+  seed on five points.  Still to be
   proved, not refuted: `StageType.HasCoatomExtensions`,
   `StageType.HasApexCoatomExtensions`.
 - *Layer 3, receiving.*  Compiled: finite-extension receiving from finite-cut receiving, for an
@@ -136,7 +144,12 @@ Notes on the rows, each with its marker:
   it at one input at every `ξ`, reading the new cell through the cap
   (`Continuation.StableRecoveryReading.exists_isStableRecoveryScheme_gradedCap`), and at the twin
   donors of the refutation, with one context of three points
-  (`Continuation.StableRecoveryTwin.exists_isStableRecoveryScheme_twinDonors`);
+  (`Continuation.StableRecoveryTwin.exists_isStableRecoveryScheme_twinDonors`), and at four
+  further tests: a proper cap and lower blocks
+  (`Continuation.StableRecoveryTwinFamily.exists_isStableRecoveryScheme_twinFamily`), a new cell
+  labelled `⊤` (`Continuation.StableRecoveryTopCell.exists_isStableRecoveryScheme_topCell`), and
+  an interior cap with two graded faces of grade `N`
+  (`Continuation.StableRecoveryInterior.exists_isStableRecoveryScheme_interiorCap`);
   cover-hollowness and stable-label fixedness
   (`Realization.isCoverHollow_iff_forall_stableLabel_eq_top`); the exact-age comparison
   (`Realization.nonempty_equiv_of_exactReceivingWithin`); the three comparisons, the rigid-core one
@@ -183,6 +196,16 @@ Notes on the rows, each with its marker:
   and the coatom extension property with apex at every countable block stage: the maximal
   refinement of a prescribed model (`MainTheorem.exists_maximalRefinement`); rows 33–36, 38, 40
   stay S.
+- *Manuscript correspondence, [AFK26] of 7 October.*  The concordance cites the draft of
+  7 October 2026; rows 48–56 are new to the concordance, all S.  Adopted there and recorded without a change of
+  status: the block indexing of row 1 in §4, the fixed rows of rows 9 and 10, the corrections of
+  rows 41 and 42, the cap `-∞` of row 44, and clause 1 of row 45; its range clause of legality is
+  now strong coding (row 45).  [AFK26] states Propositions 4.32 (amalgamation of charts, where
+  hypothesis 8 enters), 4.34 and 4.35 without proof and sketches Lemma 4.33.  Their counterparts
+  here are compiled (the hereditary property, `hereditary_legalAge`, with no hypothesis) or
+  compiled conditionally on the hypotheses below, and every compiled form of the main theorem is
+  conditional on the five named hypotheses, or on hypotheses derived from them, each still to be
+  proved.
 - *Acceptance lemma 1 (same-level maximal realization).*  Compiled conditionally on
   `StageType.HasApexCoatomExtensions` at `λ_β` and `ForcingDonors β` (`exists_sameLevelMaximal`).
   Terminality of every cover-hollow realization at a block stage is compiled with no hypothesis
@@ -480,9 +503,25 @@ named hypothesis.
    (`Seed.not_exists_canonicalMultiStep_oriented_seedL_seedLM`): a refutation of oriented rows as a
    choice uniform in the seed, not of the family nor of the completion.  Neither
    compiled sufficient clause (the product clause below the top grade, the oriented ordered-layer
-   step) holds at every compiled seed.  Open: copy rows giving the step of the family for every seed
-   on five points (`Seed.HasCanonicalMultiStep` for every seed), and the completion at `m ≥ 3` for
-   every seed.
+   step) holds at every compiled seed.  Own-side copy rows (`OrderedLayer.ownSideRows`, defined for
+   every seed: each copy reads its own coatom's cells as its original does, shifted into a higher
+   block, every value other than `⊥` above every value it reads on the other coatom) are refuted
+   (negative special cases named) at `seedHG`, `seedL` and `seedLM` (`Seed.not_ownSideStep_seedHG`,
+   `…_seedL`, `…_seedLM`, from `Seed.not_ownSideStep_of_forcesTop`): there every step of the
+   family, for every copy rows, has a copy forced to read the other way
+   (`Seed.MultiLayerStep.copyRows_lt_of_forcesTop`, `Seed.copyRows_lt_two_of_TH_TG`,
+   `Seed.copyRows_lt_three_of_TH_TG`, `Seed.copyRows_lt_of_TL_T5`, `Seed.copyRows_lt_of_T5_TL`);
+   compiled in this repository (theorem named).  A refutation of the own-side rows, not of the
+   family nor of the completion; at `seed4`, `seed5`, `seedLL` the own-side step is undecided (at
+   `seed5` a forcing constrains the copies, `Seed.copyRows_lt_of_T5_T5`, but only with `P d₁ = ⊥`
+   (argued, not formalized), outside the refutation).  The direction of the shift is a choice: the
+   rows first specified were the mirror rows (other side shifted up), reversed to match `rowsHG` at
+   the grade 1 (`README.md` 2.7).  Through a cell `d₂` off the own side that the other original
+   reads above `⊥`, the necessary condition can refute only rows with the own side above, never the
+   mirror rows (argued, not formalized; on the common face it constrains the own original's row),
+   which are the next test.  Open: copy rows giving the step of the family for every seed on five
+   points (`Seed.HasCanonicalMultiStep` for every seed), which must meet the orientations forced
+   on the copies, and the completion at `m ≥ 3` for every seed.
 2. **Stable availability at twins** (compiled): from legal types
    (`Realization.availability_stableSection_of_hasLegalTypes`), so every model at a block stage is
    stably lawful (`Realization.IsModel.isStablyLawful`), and so is every exactly consistent
@@ -589,9 +628,34 @@ named hypothesis.
    references in the block `λ_ξ` only, `(univ, 3)` the only graded face of grade `N = 3` containing
    the cap and the new cells (several need a context of at least four points; informal; not
    compiled), and the reference cell the root itself (a cell of the face along `f`; the private
-   context supplies only the cap).  The finite statement at every input with the calibration is
-   still to be proved, and with it (R4).  The acquisition of the design's cap of full scope and full
-   grade is not compiled.
+   context supplies only the cap).  **Four further tests**, each positive, none a refutation: (b) a
+   proper cap, the twin schemes with the cap labelled exactly `λ_ξ + 3 = λ_ξ + N` and `γ = λ_ξ + 2`
+   (`Continuation.StableRecoveryTwinFamily.exists_isStableRecoveryScheme_properCap`; every cap
+   `C ≥ λ_ξ + 3` and `γ < λ_ξ + 3`,
+   `Continuation.StableRecoveryTwinFamily.exists_isStableRecoveryScheme_twinFamily`): no clause of
+   `ReadsThroughCap` carries the cap's label, which enters only through `λ_ξ + N ≤ T⁺ b` (the order
+   law, `StageType.coe_add_grade_le_label`) and `γ < λ_ξ + N`; (a) a donor with a new cell labelled
+   `⊤`, under the cap `λ_ξ + 2` with `γ = λ_ξ + 1`
+   (`Continuation.StableRecoveryTopCell.exists_isStableRecoveryScheme_topCell`): the branch at `⊤`
+   and the clause on `γ` are used, and the `⊤` cell is recovered as exactly `λ_ξ + 2`
+   (`Continuation.StableRecoveryTopCell.label_newCap_eq`); (c) a lower block, references and twins
+   `μ + 2, μ + 1` with `μ < λ_ξ`
+   (`Continuation.StableRecoveryTwinFamily.exists_isStableRecoveryScheme_lowerBlock`); (d) an
+   interior cap (scope without extreme points of the context; four points needed, informal; not
+   compiled): every stable recovery scheme then has a face other than its ground set containing the
+   cap and the new point (`StageType.IsStableRecoveryScheme.exists_face_ne_univ`), so two graded
+   faces of grade `N` contain them (informal; not compiled), and a legal scheme of thirty-five cells
+   with a reading cell at both, the reading constraints agreeing across the two faces, is a stable
+   recovery scheme, for every cap value `B ≥ λ_ξ + 2` and `γ < λ_ξ + 2`
+   (`Continuation.StableRecoveryInterior.exists_isStableRecoveryScheme_interiorCap`).  So reading
+   through the cap at two faces does not obstruct the finite statement at that input, and no second
+   calibration is refuted.  Still special: recovery copies the marker in (a) and (d), `N = k + 1`
+   there, the twin tests read one block through the root, the faces at the interior cap are nested,
+   and the four features are tested separately.  The next tests (prospective): the features together
+   (an interior cap with the twin donors, a `⊤` cell at an interior cap), faces of grade `N` that
+   are not nested, reference cells in two blocks for one donor, and `N > k + 2`.  The finite
+   statement at every input with the calibration is still to be proved, and with it (R4).  The
+   acquisition of the design's cap of full scope and full grade is not compiled.
 6. **The attained least lift and structural successor leastness** (prospective).  One lift of a
    legal stage type at a limit stage `β` to `β + ω`, least at every cell (each minimum is attained
    separately: `StageType.exists_lift_label_eq_ofOffset`); the threshold forced by a cover is read
