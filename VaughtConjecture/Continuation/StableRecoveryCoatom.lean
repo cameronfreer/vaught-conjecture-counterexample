@@ -69,12 +69,14 @@ does not help: availability then picks some cell at `(univ, N)` above the cap, p
 one, and making the new cell dominate the old ones asks each old row to read the new cell like the
 cap, which ties the new row to the old, uncontrolled ones.  So the reading coatom completion is the
 completion of the amalgam of the last coatom pair (the content of hypothesis 8 at that pair) with
-the rows at `(univ, N)` prescribed, not a consequence of hypothesis 8.  On the cells of the two
-coatoms a reading row can be lawful: the coded copy of the glued labels capped at the cap
-(`CellScheme.Rows.IsLawful.exists_blockEncode`) reads the reference cells and the new cells of `D`
-in one block per label block, the formal top like the cap and `⊥` as `⊥` (argued, not formalized);
-the cap row of `VaughtConjecture.Continuation.StableRecoveryCapRow` is another reading row on the
-cells of `T⁺`.  The open part is the completion at the cells of full scope.
+the rows at `(univ, N)` prescribed, not a consequence of hypothesis 8.  On the cells of every
+labelled extension, in particular of the two coatoms, a reading row exists (compiled): the coded
+copy of the labels capped at the label of the cap is lawful below `(univ, N)` and reads the
+reference cells and the new cells of `D` in one block per label block, the formal top like the cap
+and `⊥` as `⊥` (`StageType.exists_codedReadingLabelling`, in
+`VaughtConjecture.Continuation.StableRecoveryCodedReading`, whatever the intermediate coface); the
+cap row of `VaughtConjecture.Continuation.StableRecoveryCapRow` is another reading row on the cells
+of `T⁺`.  The open part is the completion at the cells of full scope.
 
 ## Placement
 
