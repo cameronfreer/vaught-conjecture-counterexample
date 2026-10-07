@@ -4901,6 +4901,33 @@ witnesses).**
   `Extension/AttachedGateCounterexample`, `Extension/AttachedGateExamples`, and
   `Realization/AttachedGateReceiving`, beside `Realization/GateRecovery`.
 
+**Exact residual and hollow receiving, (R2) and (R3) (Layer 3).**
+
+- `Continuation/ExactReceiving` and `Continuation/ExactReceivingExamples`: Layer 3, in place.  The
+  module imports `Continuation/Comparison`, `Extension/Basic`, and `Realization/Receiving`; the
+  reductions assume (R1) for every model at every limit stage at fixed universe levels, not
+  supplied by the countable-stage `Expansion.FiniteCutReceiving` (limit stages below `ω₁`).
+  Family/cutoff monotonicity (`StageType.IsDeterminedWithin.mono`, `receivingFamily_of_le`) and
+  arbitrary-face rigid-core determination
+  (`StageType.isDeterminedWithin_receivingFamily_of_isRigidCoreIn_castSucc`) are beside
+  `StageType.IsDeterminedWithin` in `Continuation/ExactReceiving`; the identity specialization
+  quotes the arbitrary-face result with its statement unchanged.
+- `Continuation/AnchoredDetermination`: Layer 3, in place; it imports `Continuation/ExactReceiving`,
+  `Realization/PrivateContext`, and `Realization/CapToModel` (for
+  `StageType.receivingFamily_subset_saturationFamily`).  The templates with the donor (`Realization.DonorAcquisition`,
+  `Realization.CutoffDonorDetermination`) are here, not in `Continuation/ExactReceiving`, since
+  their only predicate is defined here.  The general capping lemma
+  `CellScheme.Rows.IsLawful.min_const_of_mem_scope` is in `Scheme/Row`, beside
+  `CellScheme.Rows.IsLawful.min_const`, and the stage type `StageType.capThrough`, with
+  `StageType.restrictFace_capThrough`, in `Stage/Cap`, beside `StageType.cap`.
+- `Continuation/AnchoredDeterminationCounterexample`: Layer 3, in place.  It imports
+  `Extension/GatedExtensionCounterexample` for its legal two-point type with two cells of full
+  scope and full grade (`GatedExtensionCounterexample.P`), and
+  `Continuation/ExactReceivingExamples` for the shared universe-polymorphic one-point fixture
+  (`ExactReceivingExamples.celllessTypeAt`, `apexPointAt`, with legality and failure of
+  top-freeness).  Its existing donor names and the earlier omega examples specialize that
+  fixture; neither the donor nor the omega-example statement changes.
+
 **Quantitative reconstruction, row 1 (`COMPANIONS.md`, "Further companion results").**
 
 - `Definability/Syntax`: Layer 0.  It imports no module of this repository (only InfinitaryLogic's
