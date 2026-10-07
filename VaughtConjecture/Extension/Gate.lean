@@ -657,3 +657,87 @@ theorem IsLawfulBelow.le_of_readsOnly_singleton {Y : Finset α × ℕ} (hGY : D.
 end Readers
 
 end VaughtConjecture.CellScheme.Rows
+
+namespace VaughtConjecture.CellScheme.Rows.IsLawful
+
+open Finset Label
+
+variable {ι α : Type*} {D : CellScheme ι α} {R : D.Rows.{u}} {G C : ι} {P : Set ι}
+  {w q : ι → Label.{u}}
+
+/-- **A reading carries `⊥` from the anchors.**  Let `q` be lawful with `q G ≠ ⊥`, and let the
+row of the gate `G` read a donor cell `e` whose display label is neither `⊥` nor at least that of
+the cap `C`.  If `q` is `⊥` at every private cell `z` whose display label `w z` is sent to `w e` by
+a visibility replacement `vr_N(·, i)`, `i ≤ N` (`N` the grade of `G`), then `q e = ⊥`: the one
+witness at the gate commutes with the replacement below `q G`. -/
+theorem eq_bot_of_gateReads (hq : R.IsLawful q) (hG : q G ≠ ⊥)
+    {e : D.below (D.gradedIndex G)} (h : GateReads R G C P w e) (hwe : w e ≠ ⊥)
+    (hCe : ¬ w C ≤ w e)
+    (hz : ∀ z : D.below (D.gradedIndex G), z.1 ∈ P → ∀ i ≤ D.grade G,
+      w e = visibilityReplace (D.grade G) i (w z) → q z = ⊥) : q e = ⊥ := by
+  obtain ⟨g, σ, hw, hgN, heq⟩ := hq.exists_gateWitness G
+  cases h with
+  | bot hwe' _ => exact absurd hwe' hwe
+  | botAnchor _ _ _ hwe' _ => exact absurd hwe' hwe
+  | top _ _ _ heC _ => exact absurd heC hCe
+  | ref z hzP i hi hwe' hrow =>
+    have hz' : min (σ (R.row G z)) (q G) = min (q z) (q G) := (heq z).symm
+    have h' := hw.min_apply_visibilityReplace (hq.orderly G) hgN hz' hi
+    rw [← hrow, ← heq e, hz z hzP i hi hwe', visibilityReplace_bot, min_eq_left bot_le] at h'
+    exact (min_eq_bot.mp h').resolve_right hG
+
+/-- **A reading keeps `⊥` away from the donor cells.**  Let `q` be lawful with `q G ≠ ⊥`, and let
+the row of the gate `G` read a donor cell `e` whose display label is not `⊥`.  If `q` is not `⊥`
+at any private cell `z` that can serve the reading of `e` (as an anchor, `w e = vr_N(w z, i)` with
+`i ≤ N`, or as a private cell labelled at least the cap `C` when `e` is), then `q e ≠ ⊥`. -/
+theorem ne_bot_of_gateReads (hq : R.IsLawful q) (hG : q G ≠ ⊥)
+    {e : D.below (D.gradedIndex G)} (h : GateReads R G C P w e) (hwe : w e ≠ ⊥)
+    (hz : ∀ z : D.below (D.gradedIndex G), z.1 ∈ P →
+      ((∃ i ≤ D.grade G, w e = visibilityReplace (D.grade G) i (w z)) ∨
+        (w C ≤ w z ∧ w C ≤ w e)) → q z ≠ ⊥) : q e ≠ ⊥ := by
+  obtain ⟨g, σ, hw, hgN, heq⟩ := hq.exists_gateWitness G
+  have hmin : ∀ x : D.below (D.gradedIndex G), min (q x) (q G) ≠ ⊥ → q x ≠ ⊥ :=
+    fun x hx hqx ↦ hx (by rw [hqx, min_eq_left bot_le])
+  cases h with
+  | bot hwe' _ => exact absurd hwe' hwe
+  | botAnchor _ _ _ hwe' _ => exact absurd hwe' hwe
+  | ref z hzP i hi hwe' hrow =>
+    have hz' : min (σ (R.row G z)) (q G) = min (q z) (q G) := (heq z).symm
+    have h' := hw.min_apply_visibilityReplace (hq.orderly G) hgN hz' hi
+    rw [← hrow, ← heq e] at h'
+    refine hmin e ?_
+    rw [h']
+    exact fun h0 ↦ (min_eq_bot.mp h0).elim
+      (fun h1 ↦ hz z hzP (.inl ⟨i, hi, hwe'⟩) (visibilityReplace_eq_bot_iff.mp h1)) hG
+  | top z hzP hzC heC hrow =>
+    refine hmin e fun h0 ↦ ?_
+    have hle : min (q z) (q G) ≤ min (q e) (q G) := by
+      rw [heq z, heq e]; exact min_le_min_right _ (hw.monotone hrow)
+    rw [h0, le_bot_iff] at hle
+    exact (min_eq_bot.mp hle).elim (hz z hzP (.inr ⟨hzC, heC⟩)) hG
+
+
+/-- **An anchor reading does not force the gate below a cap that the gate exceeds.**  Let `q` be
+lawful, `c ≤ q G` a cap self-visible at the grade `N` of the gate `G`, and let the row of `G` read
+a donor cell `e` as `vr_N` of its reading of an anchor `z`.  Then every labelling `q'` that agrees
+with `q` capped at `c` at `z` and at `e` satisfies the reading at the gate value `c`:
+`min (q' e) c = min (vr_N(q' z, i)) c`.  So in a lift at the cap `c` the anchor readings are
+consistent with a gate lowered to `c`; whether the whole locality at the gate holds there is the
+joint lawfulness of the lift, not addressed here. -/
+theorem min_eq_visibilityReplace_of_min_eq (hq : R.IsLawful q)
+    {z e : D.below (D.gradedIndex G)} {i : ℕ} (hi : i ≤ D.grade G)
+    (hrow : R.row G e = visibilityReplace (D.grade G) i (R.row G z)) {c : Label.{u}}
+    (hc : IsSelfVisible (D.grade G) c) (hcG : c ≤ q G) {q' : ι → Label.{u}}
+    (hz : min (q' z) c = min (q z) c) (he : min (q' e) c = min (q e) c) :
+    min (q' e) c = min (visibilityReplace (D.grade G) i (q' z)) c := by
+  obtain ⟨g, σ, hw, hgN, heq⟩ := hq.exists_gateWitness G
+  have hz' : min (σ (R.row G z)) (q G) = min (q z) (q G) := (heq z).symm
+  have h' := hw.min_apply_visibilityReplace (hq.orderly G) hgN hz' hi
+  rw [← hrow, ← heq e] at h'
+  -- Cap the reading at `c ≤ q G`.
+  have hcap : min (q e) c = min (visibilityReplace (D.grade G) i (q z)) c := by
+    rw [← min_eq_right hcG, ← min_assoc, h', min_assoc]
+  rw [he, hcap, ← visibilityReplace_min_of_isSelfVisible hi hc, ← hz,
+    visibilityReplace_min_of_isSelfVisible hi hc]
+
+end VaughtConjecture.CellScheme.Rows.IsLawful

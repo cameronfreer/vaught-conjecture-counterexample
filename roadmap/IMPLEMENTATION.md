@@ -5021,7 +5021,9 @@ witnesses).**
   refuted at every stage above `1`
   (`CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`), as is its first form
   `StageType.HasGatedPinnedExtensions`; a construction for the private contexts that models acquire
-  is prospective, including an attached gated extension (`StageType.AttachedGatedExtension`) over every acquired private context (open); (R2), (R3), (R4); and output 3, the proof of `ContinuationCriterion`.
+  is prospective, including an attached gated extension (`StageType.AttachedGatedExtension`) over
+  every acquired private context (open); (R2), (R3), (R4); and output 3, the proof of
+  `ContinuationCriterion`.
 - The graded back-and-forth theorem (`README.md`, Layer 0), formerly listed here,
   is retired, not moved: both of its intended applications, approximate comparison of full
   presentations and the back-and-forth form of condition 3 of the expansion-domain route, compile
