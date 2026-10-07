@@ -74,7 +74,8 @@ theorem not_isTopFree_donor : ¬ (donor α).IsTopFree :=
 
 /-- The donor has exactly one cell, the apex, so its only label is `⊤`. -/
 theorem donor_label_eq_top (j : Fin (donor α).card) : (donor α).label j = ⊤ := by
-  obtain rfl : j = Fin.last _ := Subsingleton.elim (α := Fin 1) _ _; exact addApex_label_last _ _
+  obtain rfl : j = Fin.last _ := Subsingleton.elim (α := Fin 1) _ _
+  exact addApex_label_last _ one_pos
 
 /-- **The empty root is not a rigid core of the donor**, at a limit stage. -/
 theorem not_isRigidCoreIn_donor (hα : Order.IsSuccLimit α) :
