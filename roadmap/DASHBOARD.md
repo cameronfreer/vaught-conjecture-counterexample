@@ -26,7 +26,7 @@ percentage of 100 would not by itself mean that the hypotheses of a layer are pr
 | 0, general results | 97% | `Counting.countable_of_subsingleton_cover` | prospective upstream interfaces |
 | 1, finite kernel | 98% | `StageType.provisionalOffset` | the bound (d) of the offset (prospective) |
 | 2, realizations, syntax | 95% | `Realization.eq_of_eval_eq_some` | hull items 4–5 for realizations |
-| 3, the completion (R6) | 72% | `Seed.nonempty_completionBelowFullGrade_of_le_two` | the step at `m ≥ 3` |
+| 3, the completion (R6) | 72% | `Seed.nonempty_completionBelowFullGrade_of_le_two` | the completion at `m ≥ 3` |
 | 3, receiving | 90% | `Expansion.finiteCutReceiving_of_hasCoupledGatedPinnedExtensions` | 4b-ii; (R2)–(R4) |
 | 4, continuation | 62% | `Realization.stableCandidate` | output 3: (R4), the apex property |
 | 5, domains, agreement | 85% | `Expansion.expansionDomain_loss_countable` | the hypotheses below |
@@ -51,8 +51,18 @@ Notes on the rows, each with its marker:
   `TwoFaceLiftExistsCounterexample.not_forall_twoFaceLiftExists`).  Compiled for `seedL` outside
   the tower: its thin completion (`ThinCompletion.nonempty_completionBelowFullGrade_seedL`) and the
   coatom extension of `TL` and `T5` with apex at every stage
-  (`ThinCompletionExamples.exists_coatomExtension_seedL`).  Still to be proved, not refuted:
-  `StageType.HasCoatomExtensions`, `StageType.HasApexCoatomExtensions`.
+  (`ThinCompletionExamples.exists_coatomExtension_seedL`).  Compiled at `m = 3`, conditionally on
+  the named hypothesis `Seed.OrderedLayerStep` (one new cell per graded face of full scope): the
+  completion (`Seed.OrderedLayerStep.completion`); the hypothesis is exactly legality of the layer
+  scheme with a lawful extension (`Seed.orderedLayerStep_iff`), automatic at the top grade for
+  seeds with bottom apexes
+  (`Seed.OrderedLayerStepBelowTop.orderedLayerStep`), with instances `seed4`, `seed5`, `seedL`,
+  `seedLM`, `seedLL`; forced separations in every completion
+  (`CompletionBelowFullGrade.exists_separating_of_forcesTop`).  Refuted: the ordered-layer step for
+  every seed on five points (`CrossedCouplingCounterexample.not_forall_hasOrderedLayerStep`, at the
+  legal seed `CrossedCouplingCounterexample.seedHG`, every completion of which has two cells at
+  `(univ, 1)`; whether one exists is open).  Still to be proved, not refuted: `StageType.HasCoatomExtensions`,
+  `StageType.HasApexCoatomExtensions`.
 - *Layer 3, receiving.*  Compiled: finite-extension receiving from finite-cut receiving, for an
   exactly consistent realization at a stage that is zero or a limit
   (`Realization.HasFiniteCutReceiving.hasFiniteExtensionReceiving`); gate recovery
@@ -222,6 +232,27 @@ Status of each:
 8. `StageType.HasApexCoatomExtensions` at every countable block stage: still to be proved, not
    refuted (Layer 3, 3.1, the open part of (R6); the row "Layer 3, the completion" above).
 
+**An alternative hypothesis set.**
+`densitySentence_hasThinAlephOneSpectrum_of_restrictedTerminalClassification`
+(`MainTheorem/ModelExpansionDomains`) is compiled conditionally on items 1–5 and 7 of the
+seven-hypothesis form and, in place of item 6:
+
+6′. `Realization.HollowReceiving` for `Realization.IsCoverHollowWithoutRigidCoreAtBlock`
+   (cover-hollowness at a block stage without a globally rigid core): still to be proved.
+
+Its terminal properties are the restricted ones (`Realization.HasRestrictedTerminalProperty`,
+`Continuation/RestrictedHollow`), whose hollow property excludes a globally rigid core; the cover
+survives (`Realization.exists_hasRestrictedTerminalProperty`), and the models with a globally rigid
+core go through the rigid-core comparison, on (R1) only; the count of the terminal classes
+holds in the same form
+(`MainTheorem.countable_isoClasses_terminalAt_of_restrictedTerminalClassification`).  Item 6
+implies item 6′ (`Realization.HollowReceiving.withoutRigidCore`): weaker or equal; strictly weaker
+not shown.  The six- and five-hypothesis forms with item 6′ in place of item 6 are not compiled
+(separate compositions, prospective).  An informal argument, not compiled, is a risk for item 6
+and not for item 6′: if every legal stage type had a legal one-point coface in which the root is
+not rigid, item 6 would force every cover-hollow model with unbounded growth to have no globally
+rigid core.  Neither is proved, and item 6 is not claimed to be false.
+
 There is no hypothesis of countable losses and none of next-block uniqueness in any form: the
 first is `Expansion.expansionDomain_loss_countable`, the second
 `Expansion.NextBlockUniqueness.of_forcingDonors`, each compiled conditionally on hypotheses in the
@@ -255,7 +286,16 @@ named hypothesis.
    gives `StageType.HasApexCoatomExtensions` at the stages that are zero or a limit
    (`StageType.HasApexCoatomExtensions.of_completionBelowFullGrade`, compiled in this repository
    (theorem named)), hence the coatom extension hypotheses of the cap-to-model theorem, the top-free
-   witnesses, and output 3.
+   witnesses, and output 3.  At `m = 3` the ordered-layer step `Seed.OrderedLayerStep` (one new
+   cell per graded face of full scope; `README.md`, Layer 3, 3.1, (R6), 2.7) gives the completion
+   and holds for `seed4`, `seed5`, `seedL`, its mirror `seedLM` and `seedLL` (compiled in this
+   repository (theorem named)); for every seed it is refuted
+   (`CrossedCouplingCounterexample.not_forall_hasOrderedLayerStep`, negative special case named):
+   the legal seed `CrossedCouplingCounterexample.seedHG` has two opposite forced separations at the
+   grade `1`, so every completion of it has two new cells at `(univ, 1)` (whether one exists is
+   open).  The form of the step with several new cells per graded face of full scope is
+   prospective.  Open: whether `seedHG` has a completion below the full grade, and the completion
+   at `m ≥ 3` for every seed.
 2. **Stable availability at twins** (compiled): from legal types
    (`Realization.availability_stableSection_of_hasLegalTypes`), so every model at a block stage is
    stably lawful (`Realization.IsModel.isStablyLawful`), and so is every exactly consistent
