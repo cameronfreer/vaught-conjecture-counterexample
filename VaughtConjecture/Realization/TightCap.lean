@@ -247,6 +247,68 @@ theorem ReadsInOwnBlock.exists_ne_bot {P : StageType.{u} α n} {C : Fin P.card} 
   obtain ⟨z, hz, hzl, μ, hμ, i, i', hrz, hrC⟩ := h
   exact ⟨z, hzl, ha.ne_bot_of_row_mem_block hz hμ hrz hrC hC⟩
 
+/-- **A face keeps its readings in the own block**: if `p` is the face of `q` along `f`, every
+cell `C` of `p` is a cell of `q` with the label and the grade of `C` that reads, in its own block,
+every label that `C` reads in its own block (the rows of a face are the rows of its cells). -/
+theorem exists_readsInOwnBlock_of_restrictFace {p : StageType.{u} α m} {q : StageType.{u} α n}
+    {f : Fin m ↪ Fin n} (h : restrictFace f q = some p) (C : Fin p.card) :
+    ∃ C' : Fin q.card, q.label C' = p.label C ∧
+      q.toCellScheme.grade C' = p.toCellScheme.grade C ∧
+      ∀ l, p.ReadsInOwnBlock C l → q.ReadsInOwnBlock C' l := by
+  obtain ⟨hf, rfl⟩ := (restrictFace_eq_some_iff _ _).mp h
+  refine ⟨q.cellMap f C, rfl, rfl, fun l ⟨z, hz, hzl, μ, hμ, i, i', hrz, hrC⟩ ↦
+    ⟨q.cellMap f z, ((q.toScheme.isLowerEmbedding_comap f).le_iff z C).mpr hz, hzl, μ, hμ, i, i',
+      hrz, hrC⟩⟩
+
+/-- **The self-reading of a cell labelled beyond a label that it reads in its own block**: let the
+row of `C` read, in its own block `[μ, μ + ω)`, the label `l` of a cell `z` below it at the finite
+part `i` and `C` itself at the finite part `i'`, with `l` below the label of `C` and not
+self-visible at the grade `K` of `C`.  If `i' ≤ K`, the label of `C` is at most `vr_K(l, i')`,
+that is, within the block of `l`.  So a cap labelled beyond the block of a label that it reads in
+its own block reads itself at a finite part above its grade.  The proof uses the locality clause
+of the lawfulness of the labels of `P` at `C`: its witness sends the reading of `z` to `l` and
+commutes with visibility replacement at `K`. -/
+theorem label_le_of_readsInOwnBlock {P : StageType.{u} α n} {C : Fin P.card} {l : Label.{u}}
+    (h : P.ReadsInOwnBlock C l) (hl : l < P.label C)
+    (hv : ¬ IsSelfVisible (P.toCellScheme.grade C) l) :
+    ∃ z, ∃ hz : z ∈ P.toCellScheme.below (P.toCellScheme.gradedIndex C), P.label z = l ∧
+      ∃ μ : Ordinal.{u}, Order.IsSuccPrelimit μ ∧ ∃ i i' : ℕ,
+      P.rows.row C ⟨z, hz⟩ = ((μ + i : Ordinal.{u}) : Label.{u}) ∧
+      P.rows.row C ⟨C, P.toCellScheme.mem_below_gradedIndex C⟩ =
+        ((μ + i' : Ordinal.{u}) : Label.{u}) ∧
+      (i' ≤ P.toCellScheme.grade C →
+        P.label C ≤ visibilityReplace (P.toCellScheme.grade C) i' l) := by
+  obtain ⟨z, hz, hzl, μ, hμ, i, i', hrz, hrC⟩ := h
+  refine ⟨z, hz, hzl, μ, hμ, i, i', hrz, hrC, fun hi' ↦ ?_⟩
+  obtain ⟨g, σ, hw, heq⟩ := P.isLawful.locality C
+  set K := P.toCellScheme.grade C
+  have hCg : P.label C ≤ g K := by
+    have := heq ⟨C, P.toCellScheme.mem_below_gradedIndex C⟩
+    simp only [min_self] at this
+    rw [this]; exact min_le_right _ _
+  have hCσ : P.label C ≤ σ ((μ + i' : Ordinal.{u}) : Label.{u}) := by
+    have := heq ⟨C, P.toCellScheme.mem_below_gradedIndex C⟩
+    simp only [min_self] at this
+    rw [this, ← hrC]; exact min_le_left _ _
+  have hσz : σ ((μ + i : Ordinal.{u}) : Label.{u}) = l := by
+    have hgy : g K ≤ g (P.toCellScheme.grade z) :=
+      hw.antitone ((CellScheme.mem_below _).mp hz).2
+    have := heq ⟨z, hz⟩
+    simp only [hzl, min_eq_left hl.le] at this
+    rcases min_eq_iff.mp this.symm with ⟨h1, -⟩ | ⟨h1, -⟩
+    · rw [← hrz]; exact h1
+    · exact absurd (h1 ▸ hl.trans_le (hCg.trans hgy)) (lt_irrefl _)
+  have hiK : i < K := by
+    by_contra hKk
+    have hc := hw.visibilityReplace_comm ((μ + i : Ordinal.{u}) : Label.{u}) K
+      (hσz ▸ hl.le.trans hCg) K le_rfl
+    rw [isSelfVisible_coe_add hμ (not_lt.mp hKk), hσz] at hc
+    exact hv hc.symm
+  have hc := hw.visibilityReplace_comm ((μ + i : Ordinal.{u}) : Label.{u}) K
+    (hσz ▸ hl.le.trans hCg) i' hi'
+  rw [visibilityReplace_coe_add_natCast hμ hiK i', hσz] at hc
+  exact hCσ.trans_eq hc
+
 /-- The donor `d` is **anchored at the grade `k`** in `P` below the cell `C`: every new donor cell
 whose label is neither `⊥` nor at least that of `C` is labelled `vr_k(P.label z, i)` for a cell
 `z` of `P` and some `i ≤ k`.  At `k = n` this is `IsAnchored` (`isAnchoredAt_iff`); a design with
@@ -283,6 +345,24 @@ theorem carriesBottomsAt_iff {P : StageType.{u} α n} {d : StageType.{u} α (m +
     {c : Label.{u}} : CarriesBottomsAt P d c n ↔ CarriesBottoms P d c :=
   Iff.rfl
 
+/-- **One cap of full scope and grade `k` reading every label: the bottom transport condition at
+the grade `k`** (`CarriesBottomsAt`).  Forward, take the one cap; backward, where the private
+labelling drops the cap the labelling of the donor itself serves.  At `k = n` it is
+`carriesBottomsPerBlock_one_iff`. -/
+theorem carriesBottomsPerBlock_one_iff_at {P : StageType.{u} α n}
+    {d : StageType.{u} α (m + 1)} {c : Label.{u}} {k : ℕ} :
+    CarriesBottomsPerBlock P d (fun _ : Fin 1 ↦ ((univ : Finset (Fin n)), k)) (fun _ ↦ c)
+      (fun _ ↦ Set.univ) ↔ CarriesBottomsAt P d c k := by
+  constructor
+  · intro h a ha hcap
+    obtain ⟨ρ, hρ, hj⟩ := h a ha
+    exact ⟨ρ, hρ, fun j hj' hne ↦ hj 0 hcap j hj' hne trivial⟩
+  · intro h a ha
+    by_cases hcap : ∀ i, P.toCellScheme.gradedIndex i = (univ, k) → P.label i = c → a i ≠ ⊥
+    · obtain ⟨ρ, hρ, hj⟩ := h a ha hcap
+      exact ⟨ρ, hρ, fun _ _ j hj' hne _ ↦ hj j hj' hne⟩
+    · exact ⟨d.label, d.isLawful, fun _ h ↦ absurd h hcap⟩
+
 /-- **The bottom transport condition at the grade `k` holds at a cap that reads the donor's
 anchors in its own block**: let `C` be a cell of graded index `(univ, k)` of `P`, and suppose
 every new donor label neither `⊥` nor at least the label of `C` is `vr_k(l, k')`, `k' ≤ k`, for a
@@ -302,6 +382,28 @@ theorem carriesBottomsAt_of_readsInOwnBlock {P : StageType.{u} α n}
   obtain ⟨z, hzl, hz⟩ := hl.exists_ne_bot ha (hcap C hC rfl)
   exact (hz (hdrop z k' hk' (hzl ▸ hjl))).elim
 
+/-- **The per-block condition holds at caps that read their anchors in their own block**: let
+`C t` be cells of `P`, and suppose that every new donor label `l ∈ L t`, neither `⊥` nor at least
+the label of `C t`, is `vr_K(l', k')`, `k' ≤ K` the grade of `C t`, for a label `l'` that the row
+of `C t` reads in its own block (`ReadsInOwnBlock`).  Then a lawful labelling of `P` not `⊥` at
+`C t` is not `⊥` at a cell labelled `l'`, a possible anchor, and the labelling of the donor itself
+meets the condition.  By `eq_visibilityReplace_of_readsInOwnBlock`, the labels `l'` that one cap
+reads in this way, below its label and not self-visible at its grade, lie in one block. -/
+theorem carriesBottomsPerBlock_of_readsInOwnBlock {P : StageType.{u} α n}
+    {d : StageType.{u} α (m + 1)} {k : ℕ} {C : Fin k → Fin P.card} {L : Fin k → Set Label.{u}}
+    (hread : ∀ t j, Fin.last m ∈ d.toCellScheme.scope j → d.label j ≠ ⊥ → d.label j ∈ L t →
+      d.label j < P.label (C t) →
+      ∃ l, (∃ k' ≤ P.toCellScheme.grade (C t),
+        d.label j = visibilityReplace (P.toCellScheme.grade (C t)) k' l) ∧
+        P.ReadsInOwnBlock (C t) l) :
+    CarriesBottomsPerBlock P d (fun t ↦ P.toCellScheme.gradedIndex (C t)) (fun t ↦ P.label (C t))
+      L := by
+  intro a ha
+  refine ⟨d.label, d.isLawful, fun t hcap j hj hne hL ↦ ⟨fun hlt hdrop ↦ ?_, fun _ ↦ hne⟩⟩
+  obtain ⟨l, ⟨k', hk', hjl⟩, hl⟩ := hread t j hj hne hL (lt_of_not_ge hlt)
+  obtain ⟨z, hzl, hz⟩ := hl.exists_ne_bot ha (hcap (C t) rfl rfl)
+  exact (hz (hdrop z k' hk' (hzl ▸ hjl))).elim
+
 /-! ### The finite hypothesis for caps of grade below full -/
 
 variable (α) in
@@ -319,6 +421,30 @@ def HasTightSaturations : Prop :=
       ∀ q ∈ p.cofaces ∩ saturationFamily S, ∀ G : Fin q.card,
         q.toCellScheme.gradedIndex G = (univ, N) →
         ∀ z : Fin p.card, ¬ IsSelfVisible N (p.label z) → q.ReadsInOwnBlock G (p.label z)
+
+variable (α) in
+/-- **Block-tight saturations** (a named hypothesis on stage types and schemes, not on models):
+over every legal stage type `p` on `N` points and every block start `μ` (zero or a limit), there
+is a scheme `S` on `N + 1` points with a coface of `p` such that, in every coface of `p` on `S`,
+every cell of graded index `(univ, N)` reads, in its own block, every label of `p` in the block
+`[μ, μ + ω)` that is not self-visible at `N`.  It is `StageType.HasTightSaturations` restricted to
+the labels of one block (`HasTightSaturations.hasBlockTightSaturations`); the refutation of the
+latter above `ω` (`Realization.IsModel.not_hasTightSaturations`) reads two blocks at one cell, and
+does not apply. -/
+def HasBlockTightSaturations : Prop :=
+  ∀ {N : ℕ} (p : StageType.{u} α N), p.IsLegal → ∀ μ : Ordinal.{u}, Order.IsSuccPrelimit μ →
+    ∃ S : Scheme.{u} (N + 1), (p.cofaces ∩ saturationFamily S).Nonempty ∧
+      ∀ q ∈ p.cofaces ∩ saturationFamily S, ∀ G : Fin q.card,
+        q.toCellScheme.gradedIndex G = (univ, N) →
+        ∀ z : Fin p.card, ¬ IsSelfVisible N (p.label z) →
+          (∃ i : ℕ, p.label z = ((μ + i : Ordinal.{u}) : Label.{u})) →
+          q.ReadsInOwnBlock G (p.label z)
+
+/-- Tight saturations give block-tight saturations. -/
+theorem HasTightSaturations.hasBlockTightSaturations (h : HasTightSaturations α) :
+    HasBlockTightSaturations α := fun p hp _ _ ↦
+  let ⟨S, hS, ht⟩ := h p hp
+  ⟨S, hS, fun q hq G hG z hz _ ↦ ht q hq G hG z hz⟩
 
 /-- The **tight cap family** over `p` at the floor `γ`: the stage types on `n + 1` points with a
 cell of full grade labelled above `γ` that is tight: it reads, in its own block, a cell labelled `l`
@@ -463,6 +589,19 @@ theorem exists_mem_dominanceFamily_not_carriesBottoms (α : Ordinal.{u})
   · change (⊤ : Label.{u}) ≠ ⊥
     simp
 
+/-- **The refuting input fails the bottom transport condition at the grade `1`**: no cap label
+above `1` at the cells of graded index `(univ, 1)` carries the bottoms there (the subfull cap of
+`Realization/TightCap`, one grade below the full grade `2`).  This is at `N = 1` over the empty
+root, where `Realization.HasCarryingSubfullContext` requires `x.arity + 1 < N`, which is false; so
+it refutes the bottom transport condition `StageType.CarriesBottomsAt` at the subfull grade, not a
+subfull carrying context.  It is `not_carriesBottomsPerBlock`
+with one cap of graded index `(univ, 1)` reading every label
+(`carriesBottomsPerBlock_one_iff_at`). -/
+theorem not_carriesBottomsAt_one (α : Ordinal.{u}) (hα : 1 < α) {c : Label.{u}}
+    (hc : (1 : Label.{u}) < c) : ¬ (P α hα).CarriesBottomsAt (donor α hα) c 1 := fun h ↦
+  not_carriesBottomsPerBlock α hα (t₁ := 0) (t₂ := 0) (Set.mem_univ _) hc (Set.mem_univ _) hc
+    (StageType.carriesBottomsPerBlock_one_iff_at.mpr h)
+
 end CoupledGatedExtensionCounterexample
 
 namespace Realization
@@ -556,40 +695,18 @@ def HasTightCaps : Prop :=
 /-- **Carrying private contexts from tight caps**: over every occurrence of a model with tight
 caps, every donor has a carrying private context at every floor below the stage.
 
-Uniformity gives the reference cells of the donor's blocks, labelled at most a floor `B ≥ γ`;
-dominance steps raise the arity past their finite parts and the donor's (`exists_extend_dominance`);
-the tight cap over the result at the floor `B` reads the reference cells' labels in its own block,
-which anchors the donor and gives the bottom transport condition
-(`StageType.carriesBottoms_of_row_mem_block`). -/
+Uniformity gives the reference cells of the donor's blocks, labelled at most a floor `B ≥ γ`, and
+dominance steps raise the arity past their finite parts and the donor's
+(`IsModel.exists_referenceCells`); the tight cap over the result at the floor `B` reads the
+reference cells' labels in its own block, which anchors the donor and gives the bottom transport
+condition (`StageType.carriesBottoms_of_row_mem_block`). -/
 theorem IsModel.hasCarryingPrivateContext_of_hasTightCaps (hR : R.IsModel)
     (ht : R.HasTightCaps) (x : R.Occurrence) (d : StageType.{u} α (x.arity + 1))
     {γ : Ordinal.{u}} (hγ : γ < α) : HasCarryingPrivateContext x d γ := by
-  -- the block start and a bound on the finite part of each label of the donor
-  have hblock (j : Fin d.card) : ∃ μ : Ordinal.{u}, (Order.IsSuccPrelimit μ ∧ μ < α) ∧
-      ∃ D : ℕ, ∀ o : Ordinal.{u}, d.label j = o → ∃ i < D, o = μ + i := by
-    rcases atStage_iff.mp (d.atStage j) with h | ⟨o, ho, h⟩ | h
-    · exact ⟨0, ⟨Ordinal.isSuccPrelimit_zero, zero_le.trans_lt hγ⟩, 0,
-        fun o ho ↦ by simp [h] at ho⟩
-    · obtain ⟨i, hi⟩ := Ordinal.exists_eq_add_natCast_of_le_of_lt_add_omega0
-        (Ordinal.mul_div_le o Ordinal.omega0)
-        (Ordinal.lt_mul_div_add o Ordinal.omega0_ne_zero)
-      refine ⟨Ordinal.omega0 * (o / Ordinal.omega0),
-        ⟨Ordinal.isSuccPrelimit_iff_omega0_dvd.mpr (dvd_mul_right _ _),
-          (Ordinal.mul_div_le o Ordinal.omega0).trans_lt ho⟩,
-        i + 1, fun o' ho' ↦ ⟨i, i.lt_succ_self, ?_⟩⟩
-      rw [← h] at ho'
-      exact (WithTop.coe_injective (WithBot.coe_injective ho')).symm.trans hi
-    · exact ⟨0, ⟨Ordinal.isSuccPrelimit_zero, zero_le.trans_lt hγ⟩, 0,
-        fun o ho ↦ by simp [h] at ho⟩
-  choose μ hμ D hD using hblock
-  obtain ⟨y₁, f₁, K, B, hf₁, hγB, hBα, hanc⟩ :=
-    hR.exists_extend_uniformity x hγ (List.ofFn μ) fun ν hν ↦ by
-      obtain ⟨j, rfl⟩ := List.mem_ofFn.mp hν
-      exact hμ j
-  obtain ⟨w, f₂, hf₂, hw, -⟩ := hR.exists_extend_dominance y₁ hBα (x.arity + 1 + K + univ.sup D)
+  obtain ⟨w, f, -, B, μ, hf, hn, hγB, hBα, -, -, hμ, href⟩ := hR.exists_referenceCells x d hγ 0
   obtain ⟨u, hu, q, ⟨C, hCgr, hBC, htight⟩, he⟩ := ht w B hBα
-  have htuple : ((f₁.trans f₂).trans Fin.castSuccEmb).trans u = x.tuple := by
-    rw [Function.Embedding.trans_assoc, hu, Function.Embedding.trans_assoc, hf₂, hf₁]
+  have htuple : (f.trans Fin.castSuccEmb).trans u = x.tuple := by
+    rw [Function.Embedding.trans_assoc, hu, hf]
   have hC : q.toCellScheme.gradedIndex C = (univ, w.arity + 1) :=
     StageType.gradedIndex_eq_univ_of_grade_eq q hCgr
   -- each donor label below `C` is read through a reference cell that `C` reads in its block
@@ -597,16 +714,14 @@ theorem IsModel.hasCarryingPrivateContext_of_hasTightCaps (hR : R.IsModel)
       ∃ l, (∃ k ≤ w.arity + 1, d.label j = visibilityReplace (w.arity + 1) k l) ∧
         q.ReadsInOwnBlock C l := fun j hne hlt ↦ by
     obtain ⟨o, ho⟩ := exists_eq_coe_of_ne_bot_of_lt hne hlt
-    obtain ⟨i, hi, rfl⟩ := hD j o ho
-    obtain ⟨z₁, k, hk, hz₁, hkB⟩ := hanc (μ j) (List.mem_ofFn.mpr ⟨j, rfl⟩)
-    obtain ⟨z, hz⟩ := Occurrence.exists_label_eq_of_trans_eq hR.isConsistent hf₂ z₁
-    have hDj : D j ≤ univ.sup D := le_sup (mem_univ j)
+    obtain ⟨i, hi, rfl⟩ := (hμ j).2 o ho
+    obtain ⟨z, k, hk, hz, hkB⟩ := href j
     have hkn : k < w.arity + 1 := by omega
-    refine ⟨w.type.label z, ⟨i, by omega, ?_⟩, htight z ?_ ?_⟩ <;> rw [hz, hz₁]
+    refine ⟨w.type.label z, ⟨i, by omega, ?_⟩, htight z ?_ ?_⟩ <;> rw [hz]
     · rw [ho, visibilityReplace_coe_add_natCast (hμ j).1 hkn]
     · exact not_isSelfVisible_coe_add_natCast (hμ j).1 hkn
     · exact WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr hkB)
-  refine ⟨⟨_, u, q, he⟩, (f₁.trans f₂).trans Fin.castSuccEmb, C, htuple,
+  refine ⟨⟨_, u, q, he⟩, f.trans Fin.castSuccEmb, C, htuple,
     Occurrence.restrictFace_eq_some_of_trans_eq hR.isConsistent htuple, by simp; omega, hC,
     lt_of_le_of_lt (WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr hγB)) hBC,
     fun j _ hne hlt ↦ ?_, StageType.carriesBottoms_of_row_mem_block hC fun j _ hne hlt ↦ ?_⟩

@@ -392,21 +392,24 @@ named hypothesis.
    refuted.  The two vacuous conditional theorems are kept; retiring them is a separate change.  No
    extension property for that design is defined.  The coupled property restricted to carrying
    contexts is not stated (prospective).
-   **One cap and one gate per block** (`Realization/PerBlockCarrying`, a further redesign).  A cap
-   reads anchors of one block only, so the design takes one cap per block of the donor's labels,
-   and one gate of each cap's grade (the gate statements need cap and gate of equal grades; argued).
-   Compiled: every per-block coupled gated extension forces the per-block condition
-   `StageType.CarriesBottomsPerBlock`
+   **One cap and one gate per block** (`Realization/PerBlockCarrying`, a further redesign).  The
+   labels that a cap reads in its own block, strictly below its label and not self-visible at its
+   grade, lie in one block (the same-block lemma), so the design takes one cap per block of the
+   donor's labels, and one gate of each cap's grade (the gate statements need cap and gate of
+   equal grades; argued).  Compiled: every per-block coupled gated extension forces the per-block
+   condition `StageType.CarriesBottomsPerBlock`
    (`StageType.PerBlockCoupledGatedExtension.carriesBottomsPerBlock`), which holds when each cap
    reads its block's anchors in its own block
-   (`StageType.carriesBottomsPerBlock_of_readsInOwnBlock`); at the refuting input of the coupled
-   property (one block) it fails for every family of caps above `1` reading both donor labels
-   (`CoupledGatedExtensionCounterexample.not_carriesBottomsPerBlock`), so at the refuting input the
-   bottom transport obstruction survives the redesigns examined, each refuted there by a compiled
-   theorem: the cap of full grade (`CoupledGatedExtensionCounterexample.not_carriesBottoms`), the
-   subfull cap (`CoupledGatedExtensionCounterexample.not_carriesBottomsAt_one`), and one cap and
-   gate per block (`CoupledGatedExtensionCounterexample.not_carriesBottomsPerBlock`).  Compiled
-   conditionally: every model acquires per-block contexts
+   (`StageType.carriesBottomsPerBlock_of_readsInOwnBlock`; sufficient, not shown necessary); at the
+   refuting input of the coupled property (one block) it fails for every family of caps labelled
+   above `1` in which some cap reads the donor label `1` and some cap reads the donor label `⊤`
+   (`CoupledGatedExtensionCounterexample.not_carriesBottomsPerBlock`), so at the refuting input
+   the bottom transport obstruction survives the redesigns examined, each refuted there by a
+   compiled theorem: the cap of full grade
+   (`CoupledGatedExtensionCounterexample.not_carriesBottoms`), the subfull cap
+   (`CoupledGatedExtensionCounterexample.not_carriesBottomsAt_one`), and one cap and gate per block
+   (`CoupledGatedExtensionCounterexample.not_carriesBottomsPerBlock`).  Compiled conditionally:
+   every model acquires per-block contexts
    (`Realization.AcquiresPerBlockContexts`) given the hypothesis on schemes
    `StageType.HasBlockTightSaturations` (`HasTightSaturations` one block at a time;
    `Realization.IsModel.acquiresPerBlockContexts_of_hasBlockTightSaturations`).  That hypothesis is

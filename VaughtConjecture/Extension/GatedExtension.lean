@@ -87,6 +87,14 @@ labelled `⊤` (`CoupledGateInstance.coupledGatedPinnedExtension_donor`).  **Cap
 the docstring of `StageType.HasCoupledGatedPinnedExtensions`, is a requirement of the construction
 at the lifts from faces containing the new point; the refutation does not use it.
 
+**Several gates.**  A **per-block coupled gated extension**
+(`StageType.PerBlockCoupledGatedExtension P f d k`) has `k` gates, each with its own cap, a private
+cell of a given graded index, its own twin–gate coupling, and the readings of the donor cells whose
+labels lie in a given set; cap and gate of each pair have equal grades, as the clauses of
+`CellScheme.Rows.IsGate` ask.  A coupled gated extension is one with one gate, whose cap has graded
+index `(univ, n)` and reads every label (`StageType.CoupledGatedExtension.toPerBlock`).  It is the
+display of the per-block design of `VaughtConjecture.Realization.PerBlockCarrying`.
+
 ## Placement
 
 This file belongs to Layer 3 of `roadmap/README.md`.
@@ -273,6 +281,63 @@ theorem label_gate_ne_bot : E.display.label E.gate ≠ ⊥ := fun h ↦
   E.isGate.cap_ne_bot (le_bot_iff.mp (h ▸ E.cap_le_gate E.display.isLawful))
 
 end CoupledGatedExtension
+
+/-- A **per-block coupled gated extension** of `P` on `n` points over the face `f`, with donor `d`
+on `m + 1` points and `k` gates: a legal display on `n + 1` points whose two faces are literally
+`P` and `d`, with, for each `t : Fin k`, a gate `gate t` and a cap `cap t`, a private cell of
+graded index `capIndex t` in `P`; the twins of each gate read it at least as its cap
+(`CellScheme.Rows.TwinsReadGate`), and the row of each gate reads, against its cap, the donor cells
+whose labels lie in `readLabels t` (`CellScheme.Rows.IsGate`, whose clauses ask that cap and gate
+have equal grades and nested scopes).  With one gate, a cap of graded index `(univ, n)` and every
+label read, it is a coupled gated extension (`CoupledGatedExtension.toPerBlock`).  Only the
+clauses that the per-block bottom transport condition uses are stated
+(`PerBlockCoupledGatedExtension.carriesBottomsPerBlock`); no universal extension property for it
+is stated. -/
+structure PerBlockCoupledGatedExtension (P : StageType.{u} α n) (f : Fin m ↪ Fin n)
+    (d : StageType.{u} α (m + 1)) (k : ℕ) where
+  /-- The display. -/
+  display : StageType.{u} α (n + 1)
+  /-- The display is legal. -/
+  isLegal : display.IsLegal
+  /-- The private face of the display is literally `P`. -/
+  restrictFace_castSuccEmb : restrictFace Fin.castSuccEmb display = some P
+  /-- The donor face of the display is literally `d`. -/
+  restrictFace_extendByLast : restrictFace (extendByLast f) display = some d
+  /-- The gates. -/
+  gate : Fin k → Fin display.card
+  /-- The caps, private cells of the display. -/
+  cap : Fin k → Fin display.card
+  /-- The graded index of each cap in the private type. -/
+  capIndex : Fin k → Finset (Fin n) × ℕ
+  /-- Each cap has the graded index `capIndex t` of the private type, on the private points. -/
+  gradedIndex_cap : ∀ t, display.toCellScheme.gradedIndex (cap t) =
+    ((capIndex t).1.map Fin.castSuccEmb, (capIndex t).2)
+  /-- The labels of the donor cells that each gate reads. -/
+  readLabels : Fin k → Set Label.{u}
+  /-- The twins of each gate read the gate at least as its cap. -/
+  twinsReadGate : ∀ t, display.rows.TwinsReadGate (gate t) (cap t)
+  /-- The gate data: the row of each gate reads every donor cell whose label it reads. -/
+  isGate : ∀ t, display.rows.IsGate (gate t) (cap t)
+    (display.toCellScheme.visible (Set.range Fin.castSuccEmb))
+    {e | e ∈ display.toCellScheme.visible (Set.range (extendByLast f)) ∧
+      display.label e ∈ readLabels t} display.label
+
+/-- **A coupled gated extension is a per-block one with one gate**: its gate and its cap, of graded
+index `(univ, n)`, with every donor label read. -/
+def CoupledGatedExtension.toPerBlock {P : StageType.{u} α n} {f : Fin m ↪ Fin n}
+    {d : StageType.{u} α (m + 1)} (E : CoupledGatedExtension P f d) :
+    PerBlockCoupledGatedExtension P f d 1 where
+  display := E.display
+  isLegal := E.isLegal
+  restrictFace_castSuccEmb := E.restrictFace_castSuccEmb
+  restrictFace_extendByLast := E.restrictFace_extendByLast
+  gate _ := E.gate
+  cap _ := E.cap
+  capIndex _ := (univ, n)
+  gradedIndex_cap _ := E.gradedIndex_cap
+  readLabels _ := Set.univ
+  twinsReadGate _ := E.twinsReadGate
+  isGate _ := by simpa only [Set.mem_univ, and_true, Set.ofPred_mem_eq] using E.isGate
 
 /-- **The readings of a gate force anchoring**, for a display `Q` with literal faces `P` and `d`:
 if the row of a cell `G` of grade `n` reads every new donor cell against a cap `C'` labelled as the
