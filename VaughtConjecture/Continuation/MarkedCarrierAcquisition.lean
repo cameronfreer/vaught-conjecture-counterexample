@@ -9,35 +9,52 @@ import VaughtConjecture.Continuation.RestrictedHollow
 import VaughtConjecture.Realization.PrivateContext
 
 /-!
-# Acquisition of marked-carrier contexts, and (R3) from marked carriers
+# Acquisition of marked-cap contexts, and (R3) from marked carriers
 
 Roadmap, Layer 3 ((R3) of the table of 3.4) and Layer 4 (cover-hollowness).
 
-**Acquisition** (`Realization.IsModel.exists_isMarkedCarrierContext`, compiled in this repository
+**Synchronization** (`Realization.IsModel.exists_synchronized`, compiled in this repository
 (theorem named)).  In a model at a block stage `λ_ξ` that is cover-hollow and has unbounded
-growth, every cover of a type `t` extends, for every donor `d`, to a cover of a marked-carrier
-context for `d` (`StageType.IsMarkedCarrierContext`).  The construction synchronizes, in one
-occurrence given by covering: the private context of the root for the donor (its reference cells,
-`Realization.IsModel.exists_privateContext`), an occurrence of large top grade, and for every top
-of the root a rooted cover forcing `n + 1` there, which cover-hollowness provides
+growth, every occurrence `y` containing a root `x` extends to an occurrence of top grade above
+`y.arity + 1` in which the rows of every top cap read the thresholds forced at the tops of the
+root.  By covering one occurrence contains `y`, an occurrence of large top grade, and for every top
+of the root a rooted cover forcing `x.arity + 1` there, which cover-hollowness provides
 (`Realization.IsTopAnchor`).  Forcing passes to the occurrence along the faces
 (`StageType.ForcesThreshold.trans_face`), and the rows of a top cap read it
 (`StageType.IsMarker.visibilityReplace_le_of_forcesThreshold`, from
-`StageType.ForcesThreshold.le_grade_and_visibilityReplace_rowAt_le`).  The clauses of modelhood
-used are uniformity, high-arity dominance, exact consistency, covering and legal types; neither
-generalized saturation nor any receiving hypothesis is used.
+`StageType.ForcesThreshold.le_grade_and_visibilityReplace_rowAt_le`).
 
-**(R3) from marked carriers** (`Realization.hollowReceiving_of_hasMarkedCarriers`, compiled in this
+**Acquisition.**  `Realization.hollowAcquisition_isMarkedCapContext` (compiled in this repository
+(theorem named)) is `Realization.HollowAcquisition` for `Realization.IsCoverHollowAtBlock` and the
+marked-cap context, with `y` the root.  `Realization.IsModel.exists_isMarkedCarrierContext`
+(compiled in this repository (theorem named)) acquires, for every donor, a marked-carrier context
+(`StageType.IsMarkedCarrierContext`), with `y` the private context of the root for the donor
+(`Realization.IsModel.exists_privateContext`), whose reference cells keep their labels and grades.
+The clauses of modelhood used are uniformity, high-arity dominance (for the private context),
+exact consistency, covering and legal types; neither generalized saturation nor any receiving
+hypothesis is used.
+
+**(R3), scheme form** (`Realization.hollowReceiving_of_hasMarkedCarriers`, compiled in this
 repository (theorem named)): `Realization.HollowReceiving` for `Realization.IsCoverHollowAtBlock`
-holds if `StageType.HasMarkedCarriers` (open) holds at every block stage, through the acquisition,
-scheme determination by a marked carrier
-(`StageType.HasMarkedCarriers.exists_coface_isDeterminedWithin`) and the bottom-pattern clause.
-The restricted form follows (`Realization.hollowReceiving_withoutRigidCore_of_hasMarkedCarriers`),
-and so does the form from
+holds if `StageType.HasMarkedCarriers` (open) holds at every block stage, through the acquisition
+of marked-carrier contexts, determination by a marked carrier within its bottom-pattern family
+(`StageType.HasMarkedCarriers.exists_coface_isDeterminedWithin`) and the bottom-pattern clause of
+modelhood.  No receiving hypothesis is used.  The restricted form follows
+(`Realization.hollowReceiving_withoutRigidCore_of_hasMarkedCarriers`), and so does the form from
 `StageType.HasPrescribedFullRows` with the compatibility of the marked prescriptions
-(`Realization.hollowReceiving_of_hasPrescribedFullRows`).  These are conditional: marked carriers,
-prescribed full rows and that compatibility are open, and no implication from the coatom
-extension property is compiled.
+(`Realization.hollowReceiving_of_hasPrescribedFullRows`).
+
+**(R3), cutoff form** (`Realization.hollowReceiving_of_hasTopMarkedCarriers`, compiled in this
+repository (theorem named)): (R3) holds if `StageType.HasTopMarkedCarriers` (open; it prescribes
+only the readings of the new tops) holds at every block stage and every model at every block stage
+has finite-cut receiving ((R1), open; asked here at every block stage and in every universe, which
+is more than the hypothesis `Expansion.FiniteCutReceiving`).  The receiving family at a cutoff
+above the labels of the carrier other than `⊤` keeps the donor's labels other than `⊤`, so no
+reference cell is needed.
+
+All of these are conditional: marked carriers, top-marked carriers, prescribed full rows, the
+compatibility of the prescriptions and (R1) at every block stage are open, and no implication
+from the coatom extension property is compiled.
 
 ## Placement
 
@@ -95,48 +112,43 @@ private theorem exists_coe_eq_of_ne {x : Label.{u}} (hb : x ≠ ⊥) (ht : x ≠
   | coe o => exact ⟨o, rfl⟩
   | top => exact absurd rfl ht
 
-/-- **Acquisition of a marked-carrier context.**  Let `R` be a model at the block stage `λ_ξ`,
-cover-hollow, with unbounded growth (`R.topGradeSup = ⊤`).  Over every cover `c` of a type `t` on
-`n` points and for every donor `d` on `n + 1` points, some cover `c'` of a type `t'` restricts
-along an embedding `h` to `c`, and `t'` is a marked-carrier context along `h` for `d`.
+/-- **Synchronization**: let `R` be a model at the block stage `λ_ξ`, cover-hollow, with unbounded
+growth, `x` an occurrence (the root) and `y` an occurrence containing `x` as a literal face along
+`f`.  Some occurrence `Z` contains `y` as a literal face along an embedding `gy`, has top grade
+above `y.arity + 1`, and at every top cap `c` of its type and every marker `r` of `c` the row of
+`c` satisfies `visibilityReplace N (x.arity + 1) (rowAt c r) ≤ rowAt c a` at every cell `a` of the
+root labelled `⊤` (`N` the grade of `c`).
 
-The context is assembled in one occurrence `Z` containing: the private context of the root for the
-donor (`Realization.IsModel.exists_privateContext`: reference cells for the proper labels of `d`),
-an occurrence of top grade above the arity of the private context (unbounded growth), and, for
-every cell of the root labelled `⊤`, a rooted cover forcing `n + 1` there (cover-hollowness).  By
-covering one occurrence contains all of them; forcing is monotone along extensions
-(`StageType.ForcesThreshold.trans_face`), the reference cells keep their labels and grades, and
-the top grade only grows.  A top cap of the type of `Z` has the top grade, above `n + 1` and above
-the finite parts and grades of the reference cells; with a marker, forcing gives the row
-inequality at the root (`StageType.ForcesThreshold.le_grade_and_visibilityReplace_rowAt_le`).
-
-Of modelhood, uniformity, high-arity dominance, exact consistency, covering and legal types are
-used; generalized saturation and the bottom pattern are not. -/
-theorem IsModel.exists_isMarkedCarrierContext (hR : R.IsModel) (hhol : R.IsCoverHollow)
-    (htop : R.topGradeSup = ⊤) {n : ℕ} {t : StageType.{u} (blockStage ξ) n} {c : Fin n → M}
-    (hc : R.Covers t c) (d : StageType.{u} (blockStage ξ) (n + 1)) :
-    ∃ (k : ℕ) (t' : StageType.{u} (blockStage ξ) k) (c' : Fin k → M) (h : Fin n ↪ Fin k),
-      R.Covers t' c' ∧ c' ∘ h = c ∧ t'.IsMarkedCarrierContext h d := by
+`Z` contains, by covering, `y`, an occurrence of top grade above `y.arity + 1` (unbounded growth),
+and for every cell of the root labelled `⊤` a rooted cover forcing `x.arity + 1` there
+(cover-hollowness, `Realization.IsTopAnchor`).  Forcing is monotone along extensions
+(`StageType.ForcesThreshold.trans_face`), the top grade only grows, and the rows of a top cap
+read the forced thresholds (`StageType.IsMarker.visibilityReplace_le_of_forcesThreshold`). -/
+theorem IsModel.exists_synchronized (hR : R.IsModel) (hhol : R.IsCoverHollow)
+    (htop : R.topGradeSup = ⊤) (x y : R.Occurrence) {f : Fin x.arity ↪ Fin y.arity}
+    (hf : f.trans y.tuple = x.tuple) :
+    ∃ (Z : R.Occurrence) (gy : Fin y.arity ↪ Fin Z.arity), gy.trans Z.tuple = y.tuple ∧
+      y.arity + 1 < Z.type.topGrade ∧ ∀ cc r, Z.type.IsTopCap cc → Z.type.IsMarker cc r →
+        ∀ a ∈ Z.type.visibleCells (f.trans gy), Z.type.label a = ⊤ →
+          visibilityReplace (Z.type.toCellScheme.grade cc) (x.arity + 1) (Z.type.rowAt cc r) ≤
+            Z.type.rowAt cc a := by
   classical
   have hβ := isSuccLimit_blockStage ξ
   have hα : blockStage ξ + ω ≤ blockStage (ξ + 1) := (blockStage_add_one ξ).ge
-  set x : R.Occurrence := ⟨n, ⟨c, hc.injective⟩, t, hc.eval_eq⟩ with hxdef
-  -- the private context: reference cells for the proper labels of the donor
-  obtain ⟨y, f, C, hf, hny, -, -, -, hanc⟩ := hR.exists_privateContext x d hβ.pos 0
-  -- for every cell of the root labelled `⊤`, a rooted cover forcing `n + 1` there
-  have hO (a : Fin t.card) : ∃ O : R.Occurrence, t.label a = ⊤ →
-      ∃ g : Fin n ↪ Fin O.arity, g.trans O.tuple = x.tuple ∧
-        StageType.ForcesThreshold (blockStage (ξ + 1)) (isSuccPrelimit_blockStage ξ) O.type g t a
-          (n + 1) := by
-    by_cases ha : t.label a = ⊤
-    · have hno : ¬ R.IsTopAnchor x a (n + 1) := fun hA ↦ hhol ⟨x, a, n + 1, hA⟩
+  -- for every cell of the root labelled `⊤`, a rooted cover forcing `x.arity + 1` there
+  have hO (a : Fin x.type.card) : ∃ O : R.Occurrence, x.type.label a = ⊤ →
+      ∃ g : Fin x.arity ↪ Fin O.arity, g.trans O.tuple = x.tuple ∧
+        StageType.ForcesThreshold (blockStage (ξ + 1)) (isSuccPrelimit_blockStage ξ) O.type g
+          x.type a (x.arity + 1) := by
+    by_cases ha : x.type.label a = ⊤
+    · have hno : ¬ R.IsTopAnchor x a (x.arity + 1) := fun hA ↦ hhol ⟨x, a, x.arity + 1, hA⟩
       simp only [IsTopAnchor, not_and, not_forall, not_not] at hno
       obtain ⟨⟨m, q, g⟩, ⟨s, hs, hsq⟩, hforce⟩ := hno ha
       refine ⟨⟨m, ⟨s, hsq.injective⟩, q, hsq.eval_eq⟩, fun _ ↦ ⟨g, ?_, hforce⟩⟩
       exact Function.Embedding.ext fun i ↦ congrFun hs i
     · exact ⟨x, fun h ↦ absurd h ha⟩
   choose O hO using hO
-  -- an occurrence of top grade above the arity of the private context
+  -- an occurrence of top grade above `y.arity + 1`
   obtain ⟨w, hw⟩ : ∃ w : R.Occurrence, y.arity + 1 < w.type.topGrade := by
     have hlt : ((y.arity + 1 : ℕ) : ℕ∞) < R.topGradeSup := htop ▸ ENat.natCast_lt_top _
     obtain ⟨w, hw⟩ := lt_iSup_iff.mp hlt
@@ -146,29 +158,20 @@ theorem IsModel.exists_isMarkedCarrierContext (hR : R.IsModel) (hhol : R.IsCover
     (y.support ∪ w.support ∪ univ.biUnion fun a ↦ (O a).support)
   have hyZ : y ≤ Z := subset_union_left.trans (subset_union_left.trans hZ)
   have hwZ : w ≤ Z := subset_union_right.trans (subset_union_left.trans hZ)
-  have hOZ (a : Fin t.card) : O a ≤ Z :=
+  have hOZ (a : Fin x.type.card) : O a ≤ Z :=
     (subset_biUnion_of_mem (fun a ↦ (O a).support) (mem_univ a)).trans
       (subset_union_right.trans hZ)
   obtain ⟨gy, hgy, -⟩ := (Occurrence.le_iff_exists_restrictFace hR.isConsistent).mp hyZ
-  set fZ : Fin n ↪ Fin Z.arity := f.trans gy
+  set fZ : Fin x.arity ↪ Fin Z.arity := f.trans gy
   have hfZ : fZ.trans Z.tuple = x.tuple := by
     rw [Function.Embedding.trans_assoc, hgy, hf]
-  have htZ : StageType.restrictFace fZ Z.type = some t :=
+  have htZ : StageType.restrictFace fZ Z.type = some x.type :=
     Occurrence.restrictFace_eq_some_of_trans_eq hR.isConsistent hfZ
   have hlegal : Z.type.IsLegal := hR.isLegal _ _ Z.eval_tuple
-  -- the top grade of `Z`
-  have hNZ : y.arity + 1 < Z.type.topGrade :=
-    hw.trans_le (Occurrence.topGrade_mono hR.isConsistent hwZ)
-  have hnt : ¬ Z.type.IsTopFree := fun htf ↦ by
-    rw [← StageType.topGrade_eq_zero_iff] at htf
-    omega
-  obtain ⟨cc, hcc⟩ := StageType.exists_isTopCap hlegal hnt
-  obtain ⟨r, hr⟩ := StageType.exists_isMarker hcc.2.1
-  have hgcc := hcc.grade_eq_topGrade
   -- forcing at the root tops, transported to `Z`
-  have hforce (a : Fin t.card) (ha : t.label a = ⊤) :
-      StageType.ForcesThreshold (blockStage (ξ + 1)) (isSuccPrelimit_blockStage ξ) Z.type fZ t a
-        (n + 1) := by
+  have hforce (a : Fin x.type.card) (ha : x.type.label a = ⊤) :
+      StageType.ForcesThreshold (blockStage (ξ + 1)) (isSuccPrelimit_blockStage ξ) Z.type fZ
+        x.type a (x.arity + 1) := by
     obtain ⟨g, hg, hfa⟩ := hO a ha
     obtain ⟨ga, hga, hgar⟩ := (Occurrence.le_iff_exists_restrictFace hR.isConsistent).mp (hOZ a)
     have heq : g.trans ga = fZ := by
@@ -179,8 +182,69 @@ theorem IsModel.exists_isMarkedCarrierContext (hR : R.IsModel) (hhol : R.IsCover
       simp only [Function.Embedding.trans_apply] at h₁ h₂ h₃ ⊢
       rw [h₁, h₂, h₃]
     exact heq ▸ hfa.trans_face hgar
-  refine ⟨Z.arity, Z.type, Z.tuple, fZ, covers_of_eval _ Z.eval_tuple, ?_, cc, r, hcc, hr, ?_,
-    hr.visibilityReplace_le_of_forcesThreshold hβ hα hlegal htZ hcc hforce, fun j hj hjb hjt ↦ ?_⟩
+  exact ⟨Z, gy, hgy, hw.trans_le (Occurrence.topGrade_mono hR.isConsistent hwZ),
+    fun cc r hcc hr ↦ hr.visibilityReplace_le_of_forcesThreshold hβ hα hlegal htZ hcc hforce⟩
+
+/-- An occurrence of positive top grade has a top cap with a marker. -/
+private theorem exists_top_cap_marker (hR : R.IsModel) (Z : R.Occurrence)
+    (hZ : 0 < Z.type.topGrade) :
+    ∃ cc r, Z.type.IsTopCap cc ∧ Z.type.IsMarker cc r := by
+  have hnt : ¬ Z.type.IsTopFree := fun htf ↦ by
+    rw [← StageType.topGrade_eq_zero_iff] at htf
+    omega
+  obtain ⟨cc, hcc⟩ := StageType.exists_isTopCap (hR.isLegal _ _ Z.eval_tuple) hnt
+  obtain ⟨r, hr⟩ := StageType.exists_isMarker hcc.2.1
+  exact ⟨cc, r, hcc, hr⟩
+
+/-- **Hollow acquisition of the marked-cap context**: in every model at a limit stage that is
+cover-hollow at a block stage and has unbounded growth, every cover extends to a cover of a
+marked-cap context (`StageType.IsMarkedCapContext`) along the root.  This is
+`Realization.HollowAcquisition` for `Realization.IsCoverHollowAtBlock` and the marked-cap
+context, through `Realization.IsModel.exists_synchronized` with `y` the root itself. -/
+theorem hollowAcquisition_isMarkedCapContext :
+    HollowAcquisition.{u, w} IsCoverHollowAtBlock fun t' h ↦ t'.IsMarkedCapContext h where
+  exists_context α M R hα hR hH htop n t c hc := by
+    obtain ⟨ξ, rfl, hhol⟩ := hH
+    set x : R.Occurrence := ⟨n, ⟨c, hc.injective⟩, t, hc.eval_eq⟩
+    obtain ⟨Z, gy, hgy, hNZ, hineq⟩ := hR.exists_synchronized hhol htop x x
+      (f := Function.Embedding.refl _) (Function.Embedding.refl_trans _)
+    obtain ⟨cc, r, hcc, hr⟩ := exists_top_cap_marker hR Z (by omega)
+    refine ⟨Z.arity, Z.type, Z.tuple, (Function.Embedding.refl _).trans gy,
+      covers_of_eval _ Z.eval_tuple, ?_, cc, r, hcc, hr, ?_, hineq cc r hcc hr⟩
+    · funext i
+      exact DFunLike.congr_fun hgy i
+    · rw [hcc.grade_eq_topGrade]
+      exact hNZ
+
+/-- **Acquisition of a marked-carrier context.**  Let `R` be a model at the block stage `λ_ξ`,
+cover-hollow, with unbounded growth (`R.topGradeSup = ⊤`).  Over every cover `c` of a type `t` on
+`n` points and for every donor `d` on `n + 1` points, some cover `c'` of a type `t'` restricts
+along an embedding `h` to `c`, and `t'` is a marked-carrier context along `h` for `d`.
+
+The private context of the root for the donor (`Realization.IsModel.exists_privateContext`)
+gives the reference cells; synchronization (`Realization.IsModel.exists_synchronized`) extends it
+to an occurrence of larger top grade where the rows of a top cap read the forced thresholds at the
+root; the reference cells keep their labels and grades, below the top grade.
+
+Of modelhood, uniformity, high-arity dominance, exact consistency, covering and legal types are
+used; generalized saturation and the bottom pattern are not. -/
+theorem IsModel.exists_isMarkedCarrierContext (hR : R.IsModel) (hhol : R.IsCoverHollow)
+    (htop : R.topGradeSup = ⊤) {n : ℕ} {t : StageType.{u} (blockStage ξ) n} {c : Fin n → M}
+    (hc : R.Covers t c) (d : StageType.{u} (blockStage ξ) (n + 1)) :
+    ∃ (k : ℕ) (t' : StageType.{u} (blockStage ξ) k) (c' : Fin k → M) (h : Fin n ↪ Fin k),
+      R.Covers t' c' ∧ c' ∘ h = c ∧ t'.IsMarkedCarrierContext h d := by
+  classical
+  have hβ := isSuccLimit_blockStage ξ
+  set x : R.Occurrence := ⟨n, ⟨c, hc.injective⟩, t, hc.eval_eq⟩ with hxdef
+  -- the private context: reference cells for the proper labels of the donor
+  obtain ⟨y, f, C, hf, hny, -, -, -, hanc⟩ := hR.exists_privateContext x d hβ.pos 0
+  obtain ⟨Z, gy, hgy, hNZ, hineq⟩ := hR.exists_synchronized hhol htop x y hf
+  obtain ⟨cc, r, hcc, hr⟩ := exists_top_cap_marker hR Z (by omega)
+  have hgcc := hcc.grade_eq_topGrade
+  have hfZ : (f.trans gy).trans Z.tuple = x.tuple := by
+    rw [Function.Embedding.trans_assoc, hgy, hf]
+  refine ⟨Z.arity, Z.type, Z.tuple, f.trans gy, covers_of_eval _ Z.eval_tuple, ?_, cc, r, hcc, hr,
+    ?_, hineq cc r hcc hr, fun j hj hjb hjt ↦ ?_⟩
   · funext i
     exact DFunLike.congr_fun hfZ i
   · rw [hgcc]
@@ -250,6 +314,41 @@ theorem hollowReceiving_of_hasPrescribedFullRows
     (hcomp : ∀ ξ : Ordinal.{u}, StageType.HasCompatibleMarkedPrescriptions.{u} (blockStage ξ)) :
     HollowReceiving.{u, w} IsCoverHollowAtBlock :=
   hollowReceiving_of_hasMarkedCarriers fun ξ ↦ (hpr ξ).hasMarkedCarriers (hcomp ξ)
+
+/-! ### (R3) from top-marked carriers and (R1) -/
+
+/-- **(R3) for cover-hollowness from top-marked carriers and finite-cut receiving**: if
+`StageType.HasTopMarkedCarriers` holds at every block stage, and every model at every block stage
+has finite-cut receiving ((R1); this asks more than the hypothesis `Expansion.FiniteCutReceiving`,
+which concerns countable stages in universe `0`), then (R3) holds for cover-hollowness at a block
+stage.  Over a cover in a cover-hollow model with unbounded growth, a marked-cap context is
+acquired (`Realization.hollowAcquisition_isMarkedCapContext`); a top-marked carrier over it
+carrying the donor, at a permitted cutoff above its labels other than `⊤`, determines the donor
+within its receiving family
+(`StageType.isDeterminedWithin_receivingFamily_of_isPrescribedExtension`); (R1) realizes a member
+of that family over the context, and the donor is received. -/
+theorem hollowReceiving_of_hasTopMarkedCarriers
+    (hcar : ∀ ξ : Ordinal.{u}, StageType.HasTopMarkedCarriers.{u} (blockStage ξ))
+    (hrec : ∀ (ξ : Ordinal.{u}) (M : Type w) (R : Realization.{u, w} (blockStage ξ) M),
+      R.IsModel → R.HasFiniteCutReceiving) :
+    HollowReceiving.{u, w} IsCoverHollowAtBlock where
+  exists_covers α M R hα hR hH htop n t c hc d hd := by
+    obtain ⟨k, t', c', h, hc', hcc', ctx, r, hctx⟩ :=
+      hollowAcquisition_isMarkedCapContext.exists_context hα hR hH htop t c hc
+    obtain ⟨ξ, rfl, -⟩ := hH
+    have ht : StageType.restrictFace h t' = some t := by
+      rw [← hR.isConsistent ⟨c', hc'.injective⟩ t' h hc'.eval_eq, ← hc.eval_eq]
+      congr 1
+      ext i
+      exact congrFun hcc' i
+    obtain ⟨D, hD⟩ := hcar ξ t' h t ht d hd.2 ctx r (hR.isLegal _ _ hc'.eval_eq) hd.1 hctx
+    obtain ⟨δ, hδα, hδ⟩ := D.exists_lt_forall_label_lt hα
+    have hδc : IsPermittedCutoff (blockStage ξ) (δ : Label.{u}) := isPermittedCutoff_coe.mpr hδα
+    have hdet := StageType.isDeterminedWithin_receivingFamily_of_isPrescribedExtension ht hd.2
+      hctx.1 hctx.2.1.1 hctx.2.2.1.le hD hδ
+    rw [← hcc']
+    exact exists_covers_snoc_of_isDeterminedWithin hR.isConsistent hc'
+      ((hrec ξ M R hR).realizesOver_receivingFamily hc' ⟨hD.1, hD.2.1⟩ hδc) hdet
 
 end Realization
 
