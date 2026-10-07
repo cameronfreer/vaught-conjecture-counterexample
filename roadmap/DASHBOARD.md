@@ -82,7 +82,21 @@ Notes on the rows, each with its marker:
   product clause at the grades 2–4 for `seed4`, `seed5`, `seedL`, `seedLM`, `seedLL` and at the
   grade 4 for `seedHG` (`Seed.not_canonicalProduct_seed4`, `Seed.not_canonicalProduct_seedHG`), a
   refutation of the family as a fibre product, not of the family's step (which holds for `seedHG`
-  at the grade 4) nor of the completion.  Still to be
+  at the grade 4) nor of the completion.  Compiled, with no hypothesis beyond the orientation of
+  the layer rows: under oriented copy rows (`OrderedLayer.orientedRows`, for layer rows with
+  `OrderedLayer.IsOriented`) the step of the family *is* the ordered-layer step
+  (`Seed.canonicalMultiStep_oriented_iff`, an exact reformulation: both copies of a grade read
+  alike).  The five seeds `seed4`, `seed5`, `seedL`, `seedLM`, `seedLL` were already completed by
+  their ordered-layer steps (`Seed.orderedLayerStep_seed4` and its companions); what is new is only
+  that the canonical multi-layer scheme itself has a step at them
+  (`Seed.nonempty_completionBelowFullGrade_seed4_oriented` and its companions), so all six compiled
+  seeds have a step of the family
+  (`Seed.hasCanonicalMultiStep_seed4_seed5_seedL_seedLM_seedLL_seedHG`).  Refuted, for oriented
+  rows only, as corollaries of `CrossedCouplingCounterexample.not_hasOrderedLayerStep_seedHG` and
+  `not_exists_orderedLayerStep_seedL_seedLM` through the iff: at `seedHG`
+  (`Seed.not_canonicalMultiStep_oriented_seedHG`) and as one choice for `seedL` and `seedLM`
+  (`Seed.not_exists_canonicalMultiStep_oriented_seedL_seedLM`).  Open: copy rows giving the step of
+  the family for every seed on five points.  Still to be
   proved, not refuted: `StageType.HasCoatomExtensions`,
   `StageType.HasApexCoatomExtensions`.
 - *Layer 3, receiving.*  Compiled: finite-extension receiving from finite-cut receiving, for an
@@ -359,8 +373,29 @@ named hypothesis.
    rows) at the grades 2–4 for `seed4`, `seed5`, `seedL`, `seedLM`, `seedLL` and at the grade 4 for
    all six seeds: this refutes the family as a fibre product at those seeds, not the family's step
    (which holds for `seedHG` at the grade 4) and not the completion.
-   Open: a canonical multi-layer scheme with rows restricting the pairs for every seed, and the
-   completion at `m ≥ 3` for every seed.
+   Oriented copy rows (`OrderedLayer.orientedRows`, both copies of a grade reading every old cell by
+   the row of an ordered-layer step whose rows are oriented, `OrderedLayer.IsOriented`) restrict the
+   pairs to the lawful labellings of the layer scheme (`OrderedLayer.isLawfulBelow_oriented_iff`),
+   and under them the step of the family *is* the ordered-layer step
+   (`Seed.canonicalMultiStep_oriented_iff`, an exact reformulation: both copies of a grade read
+   alike, so the family adds nothing to the layer scheme), with no further hypothesis; compiled in
+   this repository (theorem named).  The five seeds `seed4`, `seed5`, `seedL`, `seedLM`, `seedLL`,
+   where the product clause fails, were already completed by their ordered-layer steps
+   (`Seed.orderedLayerStep_seed4`, `…_seed5`, `…_seedL`, `…_seedLM`, `…_seedLL`); what is new is
+   only that the canonical multi-layer scheme itself has a step at them
+   (`Seed.nonempty_completionBelowFullGrade_seed4_oriented` and its companions), so all six compiled
+   seeds have a step of the family
+   (`Seed.hasCanonicalMultiStep_seed4_seed5_seedL_seedLM_seedLL_seedHG`), and no seed refutes it.
+   Oriented rows are refuted (negative special cases named; corollaries, through the iff, of
+   `CrossedCouplingCounterexample.not_hasOrderedLayerStep_seedHG` and
+   `not_exists_orderedLayerStep_seedL_seedLM`) at `seedHG`
+   (`Seed.not_canonicalMultiStep_oriented_seedHG`) and as one choice for `seedL` and `seedLM`
+   (`Seed.not_exists_canonicalMultiStep_oriented_seedL_seedLM`): a refutation of oriented rows as a
+   choice uniform in the seed, not of the family nor of the completion.  Neither
+   compiled sufficient clause (the product clause below the top grade, the oriented ordered-layer
+   step) holds at every compiled seed.  Open: copy rows giving the step of the family for every seed
+   on five points (`Seed.HasCanonicalMultiStep` for every seed), and the completion at `m ≥ 3` for
+   every seed.
 2. **Stable availability at twins** (compiled): from legal types
    (`Realization.availability_stableSection_of_hasLegalTypes`), so every model at a block stage is
    stably lawful (`Realization.IsModel.isStablyLawful`), and so is every exactly consistent
