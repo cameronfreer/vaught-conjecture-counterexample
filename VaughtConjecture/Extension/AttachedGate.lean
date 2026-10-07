@@ -38,7 +38,8 @@ lies below some cell of the graded index of `t`.
 **Recovery through the readers** (`StageType.AttachedGatedExtension.recover_of_isLawful`, from
 `CellScheme.Rows.IsLawful.recover_of_readsOnly`).  Let `q` be a lawful labelling, literally the
 display on the private cells, and not `⊥` at the gate.  Every cell of the graded index of the gate
-outside the readers is `⊥` in `q`, so availability for the private cap and the gate gives a reader
+outside the readers, other than the gate itself, is `⊥` in `q`, so availability for the private
+cap and the gate gives a reader
 at least the label of the cap, and gate recovery through that reader gives agreement with the
 display on every donor cell below that label.  Availability may reach a twin of the gate; what is
 excluded is a twin that is not a reader.  No label of the twins is read, and no legality is used.

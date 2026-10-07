@@ -125,7 +125,8 @@ and never serves availability.
 every other cell of the graded index of `G` outside `S`; the members of `S` that are gates in the
 sense of `IsGate` are its **readers**, and a member `K` that the row of `G` reads at least as `G`
 itself is a **ceiling** of `G`.  In a lawful labelling not `⊥` at `G`, every cell of the graded
-index of `G` outside `S` is `⊥` (`IsLawful.eq_bot_of_row_eq_bot`) and a ceiling is at least `G`
+index of `G` outside `S`, other than `G` itself, is `⊥` (`IsLawful.eq_bot_of_row_eq_bot`),
+and a ceiling is at least `G`
 (`IsLawful.le_of_row_self_le`); so **availability** (the second law of a lawful section: a cell of
 the grade of `G` with scope inside that of `G` lies below some cell of the graded index of `G`)
 puts the private cap below a member of `S` (`IsLawful.exists_mem_le_of_readsOnly`).  If every
