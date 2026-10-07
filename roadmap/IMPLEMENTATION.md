@@ -4059,6 +4059,17 @@ witnesses).**
   `StageType.IsLegal.exists_isLawfulBelow_castSucc`, `StageType.not_forall_le_of_opposite`),
   `Extension/AttachedGateCounterexample`, `Extension/AttachedGateExamples`, and
   `Realization/AttachedGateReceiving`, beside `Realization/GateRecovery`.
+- The capped reading of the donor: `Extension/CappedDonorReading` (the reference data
+  `CappedDonorReading.PrivateReference`, the cut, activity, the capped reading, the capped-donor
+  lemma `CappedDonorReading.PrivateReference.HasMargin.isLawful_reading`, the reading at the actual
+  labels, and the two inputs `CappedDonorReading.AnchorInput` and
+  `CappedDonorReading.OppositeCellsInput`), in place, beside `Extension/AttachedGate`.
+  `Label.IsWitness.min_const_of_isSelfVisible` belongs in `Extension/WitnessAlgebra`, beside
+  `Label.IsWitness.max`, and the block pieces (`CappedDonorReading.piece`,
+  `CappedDonorReading.isWitness_piece`) beside its block arithmetic.
+  `CappedDonorReading.AnchorInput` carries its own copy of the two-point private type with a proper
+  anchor and of its one-point donor, whose module is on a separate open change; once that module is
+  on `main`, the copy is to be replaced by an import, a change of proofs only.
 
 **Quantitative reconstruction, row 1 (`COMPANIONS.md`, "Further companion results").**
 

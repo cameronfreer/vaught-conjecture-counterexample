@@ -438,6 +438,29 @@ named hypothesis.
    extension over the private contexts that models acquire; whether availability from the
    literal-face cap must reach a reader other than the ceiling.  (R1) is neither proved nor
    refuted.
+   *The capped reading of the donor* (one step of the attached route, for a private context and a
+   donor given as data).  Reference data with the margin
+   (`CappedDonorReading.PrivateReference.HasMargin`): a cap of full grade `N` below which every
+   private cell lies, labelled above every `ω * b + N`, and per requested block `b` a reference cell
+   labelled `ω * b + off b` with `off b < N`.  The capped reading sends a donor label `ω * b + n` to
+   `vr_N(n, v (ref b))` capped by the cut `min (v C) (max_b vr_N(N, v (ref b)))`, and `⊤` to the
+   cut.  Compiled in this repository (theorem named): for every active lawful private labelling `v`
+   (not `⊥` at the cap nor at a reference cell) the reading of every lawful donor of grades at most
+   `N` labelled in the requested blocks is lawful
+   (`CappedDonorReading.PrivateReference.HasMargin.isLawful_reading`; only the reference clause of
+   activity is used, `…HasMargin.isLawful_reading_of_ne_bot`); at the actual labels the reading is
+   the donor capped by the cut `max_b (ω * b + N)` (`…HasMargin.cut_eq`,
+   `…HasMargin.reading_eq_min`, `…HasMargin.reading_eq_self`).  Tested at the two-point input with a
+   proper anchor (`CappedDonorReading.AnchorInput`: the margin holds, the lawful labelling that
+   drops the anchor and keeps the cap is inactive, and no private labelling produces the bottom
+   pattern that the donor's rows forbid) and at `GatedExtensionCounterexample.P α`
+   (`CappedDonorReading.OppositeCellsInput`: both oppositely ordered labellings are active and read
+   lawfully; a weak test, since no cell of `P α` is a reference cell and the cut is `⊥` there).
+   Prospective: the acquisition of the margin from modelhood (the acquired private context has
+   reference cells below the cap, not the margin), the clause of the reading at the root, a scheme
+   over the private type and the donor carrying the readings, the gate reading capped by the cut,
+   and the assembly.  (R1) and the attached gated extension over acquired private contexts remain
+   open; nothing compiled here implies them.
 4. **Forcing donors** (still to be proved unconditionally): reduced to the coatom extension
    property (`forcingDonors_of_hasCoatomExtensions`); nothing beyond it remains.
 5. **Output 3, part D, and (R4)** (still to be proved): (R4) over positive roots, the empty root by
