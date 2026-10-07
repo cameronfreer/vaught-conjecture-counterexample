@@ -203,8 +203,8 @@ A generic theorem of InfinitaryLogic, at our pinned dependency (signatures check
 every analytic set of pairs of structures on `ℕ` containing no isomorphic pair is uniformly
 separated at some countable back-and-forth level (`exists_uniform_bfSeparation`,
 `Descriptive/BFSeparation`). With cocountable back-and-forth concentration (given here by the
-expansion domains, on which classes agree at bounded level) this is expected to yield thinness
-without sentence minimality and without López–Escobar; that composition for the expansion domains,
+expansion domains, on which classes agree at bounded level) this yields conditional thinness
+without sentence minimality and without López–Escobar; the composition for the expansion domains,
 from the back-and-forth form of condition 3 (`README.md`, the reduction to expansion domains and
 Layer 6), is compiled conditional on the cap-to-model theorem, (R1), forcing donors at every
 countable block index, the continuation criterion, (R2) and (R3), each still to be proved
@@ -602,9 +602,13 @@ is compiled conditionally on block determination (below).  None is an input to t
   largest stage `λ_ξ` to which it expands (the set of such `ξ` is an initial segment closed under
   limits by limit continuity, so it has a largest element unless it is all of `ω₁`; the expansion
   is unique by expansion uniqueness); its **height** is that `ξ`, or `ω₁` for a class in the
-  persistent core.  Targets: the naturality of greatest refinements under isomorphism, and their
-  relationship to the expansion domains (a class lies in `D_ξ` exactly when its height is at
-  least `ξ`).  The count of the main theorem does not use them.  For the family of expansions of one
+  persistent core.  For one base structure, in the raw base encoding, the attainment of the
+  largest stage is compiled conditionally: `MainTheorem.exists_isGreatest_servingIndex_of_le`
+  (`MainTheorem/MaximalRefinement`), conditional on `Expansion.NextBlockUniqueness`, given a
+  countable bound on the stages to which it expands, on any carrier.  Targets: the naturality of
+  greatest refinements under isomorphism, and their relationship to the expansion domains (a
+  class lies in `D_ξ` exactly when its height is at least `ξ`).  The count of the main theorem
+  does not use them.  For the family of expansions of one
   model, conditional on positive niceness for that family, the bound of serving indices under
   strictness (`README.md`, "Manuscript correspondence (required)", item 5, "Uniform fixing bounds
   from positive niceness"; prospective) bounds its height.  Positive niceness for that family
@@ -702,13 +706,16 @@ is compiled conditionally on block determination (below).  None is an input to t
   conditions 3 and 4 must cover every class, a persistent class included, by its own argument.
 
   **An alternative route to the lower bound** (prospective; a reading of statements recorded
-  elsewhere, each still to be proved, and not restated here).  The lower bound can also be read
-  along one chain: (i) charts of every fixing rank (the **fixing rank** of a stage type at `λ_η` is
-  the least `ξ ≤ η` such that its reduction to `λ_ξ` changes no label; it is not a Scott rank), from
+  elsewhere, each still to be proved except step (ii), and not restated here).  The lower bound
+  can also be read along one chain: (i) charts of every fixing rank (the **fixing rank** of a stage
+  type at `λ_η` is the least `ξ ≤ η` such that its reduction to `λ_ξ` changes no label; it is not a
+  Scott rank), from
   finite data ("Quantitative reconstruction", below, "Fixing ranks of finite charts" and "Charts of
   every fixing rank"; no termination used); (ii) for each such chart, a model in which it occurs as
-  an actual chart (expected to need, like the top-free witnesses, the coatom extension property
-  `StageType.HasCoatomExtensions` and the cap-to-model theorem; no termination used); (iii) hence
+  an actual chart (compiled in this repository (theorem named), for every legal chart at every
+  countable block stage, conditional on the coatom extension property with apex
+  `StageType.HasApexCoatomExtensions`: `exists_saturated_reconstruct`, through the compiled
+  cap-to-model theorem, without the hypothesis `CapToModel`; no termination used); (iii) hence
   fixing ranks of realized charts cofinal in `ω₁` (no termination used); (iv) noncollapse:
   uncountably many classes, by the bounded-levels criterion in its form for relations between
   classes and countable ordinals (`README.md`, "Reduction to full presentations", "Bounded levels"),
@@ -724,17 +731,27 @@ is compiled conditionally on block determination (below).  None is an input to t
   supremum of countably many stages is not by itself one) are still to be supplied (`README.md`,
   item 5, "Two stopping proofs; positive niceness from a terminal presentation", (i)); and only
   as a conclusion, proved for each base from conditions 3 and 4, when it is taken from the Scott
-  route to maximal presentations (`README.md`, item 5; prospective), whose strict bound on
+  route to maximal presentations (`README.md`, item 5; its steps 1–5 compiled conditionally in
+  the raw base encoding, positive niceness prospective), whose strict bound on
   serving stages is eventual departure (1 above) read for one class, followed by greatest-stage
   attainment (bounded-stage attainment, 4 ⇒ 5 of the five criteria there; intended quotation
   `exists_greatest_stage_lt_omega1`, `OrdinalUtil`, available upstream, not yet at our pinned
   dependency: signatures verified against the upstream source at `2cd44c3`, not compiled
   here; `IMPLEMENTATION.md`, "Dependency pins": a stage predicate holding at `0`, closed
   downward and under countable limits, and bounded by a countable stage has a greatest
-  stage, and holds exactly at the stages up to it).  For one literal base that is a model,
-  a bound of this kind over all its model presentations is equivalent to a maximal
-  presentation of the base (criteria 3 and 5 of `README.md`, item 5, "Maximal
-  presentations: equivalent criteria, uniqueness, the optimal bound"; prospective),
+  stage, and holds exactly at the stages up to it).  These two steps are compiled here
+  conditionally, in the raw base encoding (`MainTheorem/MaximalRefinement`, conditional on (R1),
+  `Expansion.NextBlockUniqueness`, and `StageType.HasApexCoatomExtensions` at every countable
+  block stage): the strict bound by `MainTheorem.lt_qrank_of_isolates`, through
+  `expansionDomain_nontrivial` and `expansionDomain_subsingleton_of_isolates`, which specialize
+  the upstream `notMem_of_isolating_of_uniform`, and the attainment by
+  `MainTheorem.exists_isGreatest_servingIndex_of_le`, through `exists_isGreatest_of_closed`
+  (`Counting/OrdinalAttainment`).  At a repin containing `c16de09` and `2cd44c3`, the upstream
+  quotations replace them: `exists_isGreatest_of_closed` by the greatest-stage statement, and the
+  local two-class argument by Scott separation (`IMPLEMENTATION.md`, "Placement record").  For
+  one literal base that is a model, a bound of this kind over all its model presentations is
+  equivalent to a maximal presentation of the base (criteria 3 and 5 of `README.md`, item 5,
+  "Maximal presentations: equivalent criteria, uniqueness, the optimal bound"; prospective),
   conditional on the injectivity of model reduction at each countable index (raw form
   `ModelExpansion.subsingleton`, conditional on `Expansion.NextBlockUniqueness`, still to be
   proved), which 3 ⇒ 5 uses through bounded-stage attainment; so supplying the bound of (iv)
@@ -865,7 +882,12 @@ is compiled conditionally on block determination (below).  None is an input to t
   directions: a model at `λ_η` has a model expansion to `λ_{η+1}` if and only if it is non-hollow
   with unbounded top-grade growth.  Sufficiency is output 3 of `README.md`, Layer 4; necessity is a
   further statement, required here though not by the main theorem (`README.md`, Layer 4, the
-  qualification after the count of terminal classes).  (b) At a nonzero limit `δ`, the guard is the
+  qualification after the count of terminal classes).  Its cover-hollow half, that a realization at
+  `λ_η` with a model expansion to `λ_{η+1}` is not cover-hollow, is compiled in this repository
+  (theorem named), with no hypothesis, as the contrapositive of
+  `Realization.IsCoverHollow.isTerminalAt` (`Continuation/Hollow`); the growth half, and the hollow
+  half for the original no-anchor predicate (`SEMANTIC_CONTRACT.md`, item 8), are still to be
+  proved.  (b) At a nonzero limit `δ`, the guard is the
   conjunction of the guards along a cofinal sequence of lower blocks (cofinal in the weak sense:
   every `ξ < δ` lies below some term).  Downward closure, that a model expansion to a higher block
   reduces to every lower block (output 4), turns expansions along the sequence into expansions at
@@ -1323,9 +1345,10 @@ is compiled conditionally on block determination (below).  None is an input to t
   full well-founded trees are isomorphic; and the finite-extension estimate, that finite
   ancestor-closed subtrees matched with ranks agreeing after capping at `δ + m` admit, for an
   extension by `m` vertices added parent before child, a match in a full target with agreement
-  after capping at `δ`.  The same-index equivalence of [AFK26, Proposition 8.6] is not a
-  statement: it is false (`LITERATURE.md`, §9).  Two non-implications are to be compiled with
-  it as examples (`IMPLEMENTATION.md`, "Checkpoint order and acceptance"): a labelling by ordinals
+  after capping at `δ`.  The same-index equivalence stated in the version of 1 October 2026 of
+  [AFK26] (its Proposition 8.6) is not a statement: it is false (`LITERATURE.md`, §9).  Two
+  non-implications are to be compiled with it as examples (`IMPLEMENTATION.md`, "Checkpoint order
+  and acceptance"): a labelling by ordinals
   that is at least as large at a parent as at each child need not be a rank, and branching at
   nodes of high rank does not give the extension property at nodes of low rank.
 * **No invariant probability measure.**  No probability measure on the model-code space that is
