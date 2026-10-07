@@ -22,16 +22,14 @@ through `FiniteCutReceiving.finiteExtensionReceiving`).  The limit and countabil
 are used only to instantiate the hypothesis; the passage from finite-cut to finite-extension
 receiving uses that the stage is a limit and exact consistency of models.
 
-The coupled gated pinned extension property (`StageType.HasCoupledGatedPinnedExtensions`) is a
-named hypothesis that is **open**: it is proved at one input only
-(`CoupledGateExamples.exists_coupledGatedExtension_comap_g₁`), and its open point is cap lowering,
-stated in its docstring.  So these statements are (R1) **conditional on it, and not a proof of
-(R1)**.  They are vacuous if the hypothesis fails at some countable limit stage, and nothing here
-rules out that it fails at every one.  The gated pinned extension property, of which it is the
-correction, fails at every stage (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`).
-With the coupled property, the theorems of `VaughtConjecture.Expansion.Agreement` that take
-finite-extension receiving as a hypothesis hold under it instead
-(`VaughtConjecture.Expansion.CoupledGatedReceivingExamples`).
+The coupled gated pinned extension property (`StageType.HasCoupledGatedPinnedExtensions`) is a named
+hypothesis that is **false at every stage above `1`**
+(`CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`), in particular at every
+countable limit stage.  So these statements are (R1) **conditional on it, vacuous, and not a proof
+of (R1)**.  The gated pinned extension property, of which it is the correction, fails at every stage
+(`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`).  With the coupled property, the
+theorems of `VaughtConjecture.Expansion.Agreement` that take finite-extension receiving as a
+hypothesis hold under it instead (`VaughtConjecture.Expansion.CoupledGatedReceivingExamples`).
 
 ## Placement
 
@@ -45,8 +43,8 @@ namespace VaughtConjecture.Expansion
 open Ordinal
 
 /-- **Finite-cut receiving for models, conditional on the coupled gated pinned extension
-property** at every countable limit stage.  This is (R1) of the table of Layer 3 conditional on
-that named hypothesis, which is open; it is not a proof of (R1). -/
+property** at every countable limit stage.  This is (R1) of the table of Layer 3 conditional on that
+named hypothesis, which is false at every stage above `1`; it is not a proof of (R1). -/
 theorem finiteCutReceiving_of_hasCoupledGatedPinnedExtensions
     (hg : ∀ ⦃α : Ordinal.{0}⦄, Order.IsSuccLimit α → α < ω₁ →
       StageType.HasCoupledGatedPinnedExtensions α) :
@@ -55,7 +53,7 @@ theorem finiteCutReceiving_of_hasCoupledGatedPinnedExtensions
 
 /-- **Finite-extension receiving for models, conditional on the coupled gated pinned extension
 property** at every countable limit stage (`FiniteCutReceiving.finiteExtensionReceiving`); the
-hypothesis is open, so this is not a proof of (R1). -/
+hypothesis is false at every stage above `1`, so this is not a proof of (R1). -/
 theorem finiteExtensionReceiving_of_hasCoupledGatedPinnedExtensions
     (hg : ∀ ⦃α : Ordinal.{0}⦄, Order.IsSuccLimit α → α < ω₁ →
       StageType.HasCoupledGatedPinnedExtensions α) :

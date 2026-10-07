@@ -72,8 +72,10 @@ all models, (R1) itself, is open: the universal gated extension hypothesis
 `StageType.HasGatedPinnedExtensions` fails at every stage
 (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`), and the route through the coupled
 gate (`IsModel.hasFiniteCutReceiving_of_hasCoupledGatedPinnedExtensions`) is conditional on a named
-hypothesis that is open.  Nothing here concerns uniqueness or coherence of the context, or
-exact projected receiving.
+hypothesis that is false at every stage above `1`
+(`CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`), so it is vacuous
+there.  Nothing here concerns uniqueness or coherence of the context, or exact projected
+receiving.
 
 ## References
 

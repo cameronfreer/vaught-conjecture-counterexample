@@ -637,3 +637,44 @@ theorem IsLawful.le_of_forall_row_le (hp : R.IsLawful p) {Y : Finset α × ℕ}
 end CellScheme.Rows
 
 end VaughtConjecture
+
+namespace VaughtConjecture.CellScheme.Rows.IsLawful
+
+open Label
+
+variable {ι α : Type*} {D : CellScheme ι α} {R : D.Rows.{u}} {G C : ι} {P : Set ι}
+  {w q : ι → Label.{u}}
+
+/-- **A cap that reads an anchor in its own block keeps it.**  If the row of `C` reads a cell `z`
+below it and `C` itself in one block `[μ, μ + ω)` (`μ` zero or a limit), then a lawful labelling
+that is not `⊥` at `C` is not `⊥` at `z`: a shifter sending the reading `μ + i` of `z` to `⊥`
+sends `vr_k(μ + i, i') = μ + i'` (for `k > i`) to `vr_k(⊥, i') = ⊥`, the guard of the commutation
+law holding at `⊥`, and `μ + i'` is the reading of `C`. -/
+theorem ne_bot_of_row_mem_block (hq : R.IsLawful q) {z : ι} (hz : z ∈ D.below (D.gradedIndex C))
+    {μ : Ordinal.{u}} (hμ : Order.IsSuccPrelimit μ) {i i' : ℕ}
+    (hrz : R.row C ⟨z, hz⟩ = ((μ + i : Ordinal.{u}) : Label.{u}))
+    (hrC : R.row C ⟨C, D.mem_below_gradedIndex C⟩ = ((μ + i' : Ordinal.{u}) : Label.{u}))
+    (hC : q C ≠ ⊥) : q z ≠ ⊥ := by
+  obtain ⟨g, σ, hw, heq⟩ := hq.locality C
+  have hCC : min (q C) (q C) = min (σ ((μ + i' : Ordinal.{u}) : Label.{u}))
+      (g (D.grade C)) := by
+    rw [← hrC]; exact heq ⟨C, D.mem_below_gradedIndex C⟩
+  have hzC : min (q z) (q C) = min (σ ((μ + i : Ordinal.{u}) : Label.{u})) (g (D.grade z)) := by
+    rw [← hrz]; exact heq ⟨z, hz⟩
+  rw [min_self] at hCC
+  intro hqz
+  have hg : g (D.grade z) ≠ ⊥ := by
+    have hle : g (D.grade C) ≤ g (D.grade z) := hw.antitone ((D.mem_below).mp hz).2
+    intro h0
+    exact hC (le_bot_iff.mp (hCC ▸ (min_le_right _ _).trans (hle.trans_eq h0)))
+  have hσ : σ ((μ + i : Ordinal.{u}) : Label.{u}) = ⊥ := by
+    rw [hqz, min_eq_left bot_le] at hzC
+    exact (min_eq_bot.mp hzC.symm).resolve_right hg
+  have hvr := visibilityReplace_coe_add_natCast (n := max i i' + 1) hμ
+    (show i < max i i' + 1 by omega) i'
+  have hcomm := hw.visibilityReplace_comm ((μ + i : Ordinal.{u}) : Label.{u}) (max i i' + 1)
+    (by rw [hσ]; exact bot_le) i' (by omega)
+  rw [hvr, hσ, visibilityReplace_bot] at hcomm
+  exact hC (by rw [hCC, hcomm, min_eq_left bot_le])
+
+end VaughtConjecture.CellScheme.Rows.IsLawful
