@@ -160,6 +160,12 @@ Notes on the rows, each with its marker:
   `densitySentence_hasThinAlephOneSpectrum_of_terminalClassification_of_hasApexCoatomExtensions`,
   and with forcing donors also derived from it,
   `densitySentence_hasThinAlephOneSpectrum_of_terminalClassification_of_hasApexCoatomExtensions'`).
+  Also compiled, and not used by the count: eventual departure and the last stage of a class
+  (`COMPANIONS.md`, terminal refinement, items 1–2), abstractly under logical agreement, nonempty
+  losses, and isolation (`ExpansionDomains.core_eq_empty`,
+  `ExpansionDomains.mem_loss_iff_lastStage_eq`), and for the actual expansion domains under
+  next-block uniqueness, finite-cut receiving ((R1)), and the coatom extension property with apex
+  at every countable block stage, which also gives `CapToModel` (`expansionDomain_core_eq_empty`).
   Positive niceness of the
   base reduct of every model at a block stage on a countable carrier
   (`Realization.IsModel.isNice_toStructure_reduce`, `MainTheorem/Niceness`; manuscript

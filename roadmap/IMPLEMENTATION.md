@@ -102,7 +102,8 @@ Countable-loss induction gives countable complements.  Scott separation makes th
 disjoint cofinal losses give the reverse inequality.  With a Scott sentence for each class, the
 agreement in `Dη` and the cofinally nonempty losses (hypotheses of this count, not its conclusions)
 also make the persistent core empty, by eventual departure (`COMPANIONS.md`, "Further companion
-results", terminal refinement); the count uses only the subsingleton form, and departure is not an
+results", terminal refinement; compiled conditionally, `ExpansionDomains.core_eq_empty`,
+`MainTheorem/LastStage`); the count uses only the subsingleton form, and departure is not an
 input to it.  This counting argument (countable complements and Scott separation give at most `ℵ₁`
 classes) belongs to the setting of minimal counterexamples of Harnik–Makkai [HM77]; see Larson
 [Lar14], Remark 10.9, and its discussion of minimal counterexamples.  Separately, homogeneous
@@ -601,6 +602,54 @@ classification contains neither `sentence_separates_analytic_classes` nor any L�
 constant, while `densitySentence_isThinOnNatModels_of_terminalClassification` contains both.  The
 minimality form, from countable truth sides, is kept.
 
+**Eventual departure and the last stage** (`MainTheorem/LastStage`, compiled in this repository
+(theorem named); `COMPANIONS.md`, terminal refinement, items 1 and 2).  On any `ExpansionDomains`:
+* `ExpansionDomains.notMem_of_isolating`: an observation isolating `q` and constant on a domain
+  with two members excludes `q` from it (no hypothesis on the domains);
+* `ExpansionDomains.HasNonemptyLosses.nontrivial_domain`: nonempty losses at `ξ` and `ξ + 1` give
+  two members of `D_ξ` (the field `antitone`);
+* `ExpansionDomains.notMem_of_isolating_of_qrank_le`: under `ExpansionDomains.HasRankAgreement`
+  (condition 3 in sentence form, rank `≤ η` at stage `η`, no offset) and nonempty losses, a class
+  isolated by a sentence of rank `δ < ω₁` is not in `D_δ`;
+* `ExpansionDomains.exists_notMem_of_isolating_of_cofinal` and `exists_notMem_of_isolating`:
+  under `HasLogicalAgreement` and cofinally (or all) nonempty losses, an isolated class leaves the
+  domains below `ω₁`; `ExpansionDomains.core_eq_empty`: with every class isolated, the persistent
+  core is empty;
+* `ExpansionDomains.lastStage` (the supremum of the stages containing `q`; no hypothesis), with
+  `le_lastStage`, `lastStage_le_omega_one` and `lastStage_eq_omega_one_of_mem_core` (`ω₁` on the
+  persistent core), which use the field `domain_eq_empty_of_omega_one_le` (through
+  `lt_omega_one_of_mem`, directly or via `bddAbove_setOf_mem`); `isGreatest_lastStage` (attained
+  and below `ξ` once `q ∉ D_ξ`, `ξ < ω₁`;
+  the fields `zero`, `antitone` and `limit` only), and `mem_domain_iff_le_lastStage_of_notMem`,
+  `mem_loss_iff_lastStage_eq_of_notMem` (which add `domain_eq_empty_of_omega_one_le`, through
+  `le_lastStage`); under isolation, logical agreement and nonempty losses, `exists_lastStage`,
+  `lastStage_lt_omega_one`, `mem_domain_iff_le_lastStage`, `mem_loss_iff_lastStage_eq`,
+  `loss_eq_preimage_lastStage`, `domain_eq_setOf_le_lastStage`; under the sharp agreement,
+  `lastStage_lt_qrank`;
+* for the classes of coded models (Scott isolation, `exists_classTruth_iff_eq`):
+  `core_eq_empty_of_classTruth` and the `…_of_classTruth` forms; for the actual expansion domains,
+  `modelExpansionDomains_hasRankAgreement` (for `modelExpansionDomains hcap hnext`, under (R1));
+  `expansionDomain_core_eq_empty`, under
+  next-block uniqueness, finite-cut receiving ((R1)), and the coatom extension property with apex
+  at every countable block stage, which at `0` gives `CapToModel`
+  (`CapToModel.of_hasApexCoatomExtensions`), so `CapToModel` is not a premise of it; and
+  `mem_expansionDomain_iff_le_lastStage`, `mem_expansionDomain_loss_iff_lastStage_eq`,
+  `lastStage_modelExpansionDomains_lt_qrank`, whose statements mention `modelExpansionDomains hcap
+  hnext` and so take `CapToModel` as well; each of these hypotheses is still to be proved.
+
+The count does not use them, and no hypothesis of a main-theorem statement changes.  Global
+termination is not used.  The terminal expansion at the last stage (terminal refinement, item 3) is
+not stated.  The classes terminal at `β`, `MainTheorem.terminalClasses β`
+(`MainTheorem/TerminalClasses`, compiled in this repository (theorem named)), contain the loss at
+`β` (`MainTheorem.loss_subset_terminalClasses`, unconditional).  A further target, not stated
+(prospective; it depends on next-block uniqueness): the classes terminal at `β` are the fibre of
+the last stage at `β`, `terminalClasses β = lastStage (modelExpansionDomains hcap hnext) ⁻¹' {β}`,
+which identifies the losses with the terminal classes.  At a repin containing `2cd44c3` ("Dependency
+pins", "Upstream statements quoted, not compiled here"), `ExpansionDomains.notMem_of_isolating` is
+`notMem_of_isolating_of_uniform` applied to the set `D_ξ`, and `ExpansionDomains.lastStage_lt_qrank`
+combines `stage_lt_rank_of_isolating` with the greatest-stage theorem; the local proofs may then
+quote them, with the statements kept.
+
 ## The top-free witnesses: milestone order and acceptance
 
 `README.md`, section "The top-free witnesses: the finite age and its classical limit", is the
@@ -827,10 +876,11 @@ their notions live; "this repository" means the layers of `README.md`.
    goes through global termination (every class leaves the expansion domains at a countable stage,
    where its terminal expansion is full for its terminal exact age); the finite-stage arguments do
    not cover the persistent class (`README.md`, "The persistent core").  Eventual departure, the
-   first half of global termination, is a conditional target of terminal refinement
-   (`COMPANIONS.md`, "Further companion results"), to be proved from hypotheses of the
-   expansion-domain count (the agreement of condition 3 and the nonempty losses of condition 4, with
-   a Scott sentence for each class), not from its conclusions; under them the persistent core is
+   first half of global termination, is terminal refinement, item 1 (`COMPANIONS.md`, "Further
+   companion results"), compiled conditionally (`ExpansionDomains.core_eq_empty`,
+   `MainTheorem/LastStage`) from hypotheses of the expansion-domain count (the agreement of
+   condition 3 and the nonempty losses of condition 4, with a Scott sentence for each class), not
+   from its conclusions; under them the persistent core is
    empty.  The second half, that the terminal expansion is full for its terminal exact age, is the
    first special statement and is not part of terminal refinement.  A proof of this route may take
    departure from terminal refinement without circularity, stating its dependence on conditions 3
@@ -2125,8 +2175,9 @@ In the pinned InfinitaryLogic:
   which every point leaves, with neither monotonicity nor nonempty domains;
   `mk_eq_aleph_one_of_domains` adds both for the equality.  The spine does not use them for
   `|Q| ≤ ℵ₁`, which is its direct cover (the persistent core is a subsingleton and each complement
-  `Q \ Dη` is countable).  Once eventual departure is proved (`COMPANIONS.md`, terminal refinement,
-  from the agreement in `Dη` and the nonempty losses with a Scott sentence for each class), every
+  `Q \ Dη` is countable).  With eventual departure (`COMPANIONS.md`, terminal refinement, from the
+  agreement in `Dη` and the nonempty losses with a Scott sentence for each class; compiled
+  conditionally, `ExpansionDomains.exists_notMem_of_isolating`, `MainTheorem/LastStage`), every
   class leaves some domain and `mk_le_aleph_one_of_domains` applies to the expansion domains
   directly; this would be a second proof of the upper bound through departure, not taken by the
   spine (departure is not an input to the count), and is not compiled;
@@ -3626,8 +3677,9 @@ arbitrary-carrier Scott/`T∞` theory dichotomy.  The joint embedding and amalga
 finite top-free charts are step 2 of the top-free witnesses and belong to the core.  These do not
 assert strong AP, a proper self-embedding, uncountable categoricity, Scott-rank equality, or
 existence of a model of all of `T∞`.  Terminal refinement (eventual departure by Scott isolation,
-the last admitted stage, and the terminal expansion; conditional targets) is never an input to the
-count, and its eventual departure is to be proved from hypotheses of the count (the agreement of
+the last admitted stage, and the terminal expansion; the first two compiled conditionally in
+`MainTheorem/LastStage`, the third a conditional target) is never an input to the count, and its
+eventual departure is proved from hypotheses of the count (the agreement of
 condition 3 and the nonempty losses of condition 4, with Scott sentences), not from its conclusions;
 the agreement filtration (defined by `T∞`) and the rank filtration (defined by Scott rank) are
 defined differently; no relation between them is asserted, and any comparison is a separate
@@ -3830,6 +3882,12 @@ lands, their notes stay in those modules.
   an image of codes; the proof is to use `bfProj` and `bfProj_mk` in place of the local derivation,
   in a later change of proofs only (no statement changes, and no Lean change here).
 
+- `MainTheorem/LastStage`: the attained greatest index `exists_isGreatest_of_closed` is imported
+  from `Counting/OrdinalAttainment` (Layer 0), with no local copy.
+  `ExpansionDomains.notMem_of_isolating` and `ExpansionDomains.lastStage_lt_qrank` are local forms
+  of InfinitaryLogic's Scott separation (`OrdinalCountability`, available upstream at `2cd44c3`,
+  not at the pin `e460cb6`), to be proved by quotation at a repin containing it.
+
 **Lifting and alignment (checkpoint 2.4; Layer 3, (R6)).**
 
 - `Extension/GradeCut`: the cell statements to `Scheme.Cell`; the statements on rows, lawfulness,
@@ -4013,7 +4071,8 @@ witnesses).**
 **Counting (Layers 0, 5–6).**
 
 - `Counting/OrdinalAttainment`: Layer 0, a general ordinal statement (Mathlib only, no
-  construction imports).  `exists_isGreatest_of_closed`, used by `MainTheorem/MaximalRefinement`,
+  construction imports).  `exists_isGreatest_of_closed`, used by `MainTheorem/MaximalRefinement` and
+  `MainTheorem/LastStage`,
   is to be replaced at a repin containing `c16de09` and `2cd44c3` by a quotation of the
   greatest-stage statements of InfinitaryLogic (`OrdinalUtil`; "Dependency pins", **Upstream
   statements quoted, not compiled here**), from which it follows (note 34).
