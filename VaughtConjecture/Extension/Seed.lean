@@ -136,4 +136,24 @@ noncomputable def ofCoatoms (hla : ta.IsLegal) (hlb : tb.IsLegal)
 
 end Seed
 
+namespace OrderedLayer
+
+open CellScheme
+
+variable {α : Ordinal.{u}} {I : Seed.{u} α 3}
+
+/-- **A row read at a value other than `⊥`**: if `P` is lawful below `X`, the cell `s` lies below
+`X`, and `min (P d) (P s) ≠ ⊥` at a cell `d` below `s`, the row of `s` reads `d` at a value other
+than `⊥` (locality at `s`). -/
+theorem row_ne_bot_of_isLawfulBelow {X : Finset (Fin 5) × ℕ} {P : Fin I.amalgam.card → Label.{u}}
+    (hP : I.amalgam.rows.IsLawfulBelow X fun d ↦ P d) {s d : Fin I.amalgam.card}
+    (hs : s ∈ I.amalgam.toCellScheme.below X) (hPd : min (P d) (P s) ≠ ⊥)
+    (h : d ∈ I.amalgam.toCellScheme.below (I.amalgam.toCellScheme.gradedIndex s)) :
+    I.amalgam.rows.row s ⟨d, h⟩ ≠ ⊥ := by
+  intro hbot
+  obtain ⟨-, hloc, -⟩ := Rows.isLawfulBelow_iff_forall.mp hP
+  exact hPd ((hloc s hs).eq_bot (d := ⟨d, h⟩) hbot)
+
+end OrderedLayer
+
 end VaughtConjecture
