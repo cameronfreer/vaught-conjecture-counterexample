@@ -46,6 +46,13 @@ follows from separated pinned extensions at every limit stage**
 (`Realization.residualReceiving_of_hasSeparatedPinnedExtensions`, compiled in this repository,
 both hypotheses explicit).
 
+**One model at a time.**  The same argument works in a single model: in a model `R` at a limit
+stage `α` with finite-cut receiving ((R1) for `R` alone), with no cover that is a globally rigid
+core and with top-grade supremum `K`, the separated pinned extension property at `α` gives exact
+one-point receiving of the cofaces of top grade at most `K`
+(`Realization.exists_covers_snoc_of_hasSeparatedPinnedExtensions`, compiled in this repository).
+Neither (R1) for other models nor the property at other stages is used.
+
 Status of the hypothesis: open.  It is not implied by the coatom extension property
 `StageType.HasCoatomExtensions α` as stated (which gives the pinned extension,
 `StageType.exists_pinned_extension`, but says nothing about the rows of the cells of full scope);
@@ -282,6 +289,42 @@ theorem cutoffDetermination_isSourceGapContext
     obtain ⟨δ, hδα, hδ⟩ := D'.exists_lt_forall_label_lt hα
     exact ⟨D', hD', δ, isPermittedCutoff_iff.mpr ⟨δ, hδα, rfl⟩,
       StageType.isDeterminedWithin_of_separatesThrough hs hD' hdK hD'd hsp hδ⟩
+
+variable {α : Ordinal.{u}} {M : Type w} {R : Realization.{u, w} α M} {n : ℕ}
+
+/-- The face of an acquired context along `h` is the type of the original cover. -/
+private theorem restrictFace_of_covers' (hR : R.IsConsistent) {t : StageType.{u} α n}
+    {c : Fin n → M} (hc : R.Covers t c) {k : ℕ} {t' : StageType.{u} α k} {c' : Fin k → M}
+    (hc' : R.Covers t' c') {h : Fin n ↪ Fin k} (hcc' : c' ∘ h = c) :
+    StageType.restrictFace h t' = some t := by
+  rw [← hR ⟨c', hc'.injective⟩ t' h hc'.eval_eq, ← hc.eval_eq]
+  congr 1
+  ext i
+  exact congrFun hcc' i
+
+/-- **Exact residual receiving in one model, from separated pinned extensions at its stage**: in a
+model `R` at a limit stage `α` with finite-cut receiving ((R1) for `R` alone), with no cover that is
+a globally rigid core and with top-grade supremum `K`, if the separated pinned extension property
+holds at `α`, then every one-point coface of top grade at most `K` of the type of a cover is the
+type of the cover extended by one point.  The compiled acquisition of a source-gap context, the
+determination over a separated pinned extension, and finite-cut receiving of `R`. -/
+theorem exists_covers_snoc_of_hasSeparatedPinnedExtensions (hα : Order.IsSuccLimit α)
+    (hR : R.IsModel) (hrec : R.HasFiniteCutReceiving)
+    (hsep : StageType.HasSeparatedPinnedExtensions α)
+    (hcore : ¬ ∃ (k : ℕ) (p : StageType.{u} α k) (c : Fin k → M), R.Covers p c ∧
+      R.IsGloballyRigidCore c)
+    {K : ℕ} (hK : R.topGradeSup = K) {t : StageType.{u} α n} {c : Fin n → M} (hc : R.Covers t c)
+    {d : StageType.{u} α (n + 1)} (hd : d ∈ t.cofaces) (hdK : d.topGrade ≤ K) :
+    ∃ y : M, R.Covers d (Fin.snoc c y) := by
+  obtain ⟨k, t', c', e, hc', hcc', o, r, hs⟩ :=
+    exists_covers_isSourceGapContextAt hα hR hcore hK hc
+  obtain ⟨D', hD', hD'd, hsp⟩ := hsep t' _ _ o r (hR.isLegal _ _ hc'.eval_eq) hs t
+    (restrictFace_of_covers' hR.isConsistent hc hc' hcc') d hd hdK
+  obtain ⟨δ, hδα, hδ⟩ := D'.exists_lt_forall_label_lt hα
+  rw [← hcc']
+  exact exists_covers_snoc_of_isDeterminedWithin hR.isConsistent hc'
+    (hrec.realizesOver_receivingFamily hc' hD' (isPermittedCutoff_iff.mpr ⟨δ, hδα, rfl⟩))
+    (StageType.isDeterminedWithin_of_separatesThrough hs hD' hdK hD'd hsp hδ)
 
 /-- **(R2) from (R1) and separated pinned extensions**: (R1) for every model at every limit stage
 and the separated pinned extension property at every limit stage give (R2), through the compiled
