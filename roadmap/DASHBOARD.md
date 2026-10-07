@@ -287,7 +287,7 @@ Status of each:
    item 2), `Realization.ResidualAcquisition P`, and `Realization.CutoffDetermination P`
    (`Realization.residualReceiving_of_cutoffDetermination`), for a predicate `P` on acquired
    contexts: the reduction is a template.  One predicate is defined, the source-gap context below,
-   with acquisition compiled and determination open; no other `P` is defined, and determination
+   with acquisition compiled and determination open; no other predicate for (R2) is defined, and determination
    is proved for no `P` beyond the rigid-core instance.  For `P` always true, acquisition is
    immediate and determination fails (compiled; top-free roots,
    `Continuation/ExactReceivingExamples`), which shows only that determination is not vacuous.
@@ -306,9 +306,9 @@ Status of each:
    (`Realization.residualReceiving_of_cutoffDetermination_isSourceGapContext`).  Non-vacuity is
    open, as a dichotomy: if no legal stage type is a source-gap context, (R2) holds outright
    (`Realization.residualReceiving_of_forall_not_isSourceGapContext`), so either some legal type
-   is a source-gap context or (R2) holds; neither side is claimed.  No compiled legal type is an
-   instance: no type built with `StageType.addApex` is a source-gap context
-   (`StageType.not_isSourceGapContext_addApex`).  The predicate excludes the compiled
+   is a source-gap context or (R2) holds; neither side is claimed.  No type built with
+   `StageType.addApex` is a source-gap context, the compiled completions included
+   (`StageType.not_isSourceGapContext_addApex`); nothing compiled exhibits an instance.  The predicate excludes the compiled
    determination counterexamples (not top-free, root not surjective).  An admissible top support
    is separated (`StageType.IsAdmissibleTopSupport.isSeparatedTopSupport`), so the residual
    hypothesis holds for separated supports (`Realization.not_exists_isGloballySeparatedRigidCore`);
