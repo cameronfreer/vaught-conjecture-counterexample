@@ -445,10 +445,11 @@ named hypothesis.
    extension), implies parts of the routes' finite hypotheses at inputs where the route's
    prescription is compatible with the faces (`Extension/PrescribedFullRowsRoutes`, compiled in
    this repository (theorems named)); route by route:
-   - (R2)/(R3), the reading context of the route to determination with a private top: the core
-     with a compatible reading prescription gives a reading context
+   - (R2)/(R3), the reading context of the route to determination with a private top (that route
+     is not on `main`): the core with a compatible reading prescription gives a reading context
      (`StageType.HasPrescribedFullRows.isReadingContext`); conversely a reading context makes some
-     reading prescription compatible (`PrescribedFullRows.IsReadingContext.exists_isFaceCompatible`).
+     reading prescription compatible
+     (`PrescribedFullRows.IsReadingContext.exists_isFaceCompatible`).
      So, under the core and at a legal input, the reading-context property is equivalent to a
      choice of private tops with a compatible reading prescription.  Obtaining a reading context
      from a graded context with a top, the route's open step, is not derived from the core.
@@ -464,8 +465,9 @@ named hypothesis.
      it lands).  It is not a reduction.
    - (R4): the core with a compatible cap prescription gives a cap-reading scheme
      (`StageType.HasPrescribedFullRows.exists_isCapReadingScheme`), only the part concerning the
-     scheme of the sufficient condition for a stable recovery scheme; the composition with the
-     cap's label and the calibration is not compiled.
+     scheme of the sufficient condition for a stable recovery scheme
+     (`StageType.IsStableRecoveryScheme.of_readsThroughCap`); the composition with the cap's label
+     and the calibration is not compiled here.
    - The completion is not an instance (argued): under the core the coatom extension property is
      equivalent to the compatibility of the empty prescription
      (`StageType.HasPrescribedFullRows.hasCoatomExtensions_iff`), an additional open hypothesis

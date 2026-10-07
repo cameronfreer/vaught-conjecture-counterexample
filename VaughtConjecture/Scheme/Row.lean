@@ -540,3 +540,41 @@ theorem isConsistent_bot : (bot D : D.Rows.{u}).IsConsistent := fun _ ↦ isLawf
 end Rows
 
 end VaughtConjecture.CellScheme
+
+namespace VaughtConjecture
+
+/-! ### Forcing by a reading at every cell of a graded index -/
+
+namespace CellScheme.Rows
+
+variable {ι α : Type*} {D : CellScheme ι α} {R : D.Rows.{u}} {p : ι → Label.{u}}
+
+/-- **A reading at every cell of a graded index forces an order of labels.**  Let `Y` be the
+graded index of some cell, let `s` have grade `Y.2` and scope inside `Y.1`, and let `x` have scope
+inside `Y.1` and grade at most that of `s`.  If every cell of graded index `Y` reads `x` at least as
+it reads `s`, then every lawful section `p` has `p s ≤ p x`.  Availability puts `s` below a cell
+`u` of graded index `Y` with `p s ≤ p u`, and locality at `u` is monotone in the row value and
+antitone in the grade (`Label.TransformsTo.le_of_le`), so `p s = min (p s) (p u)` is at most
+`min (p x) (p u)`. -/
+theorem IsLawful.le_of_forall_row_le (hp : R.IsLawful p) {Y : Finset α × ℕ}
+    (hY : ∃ u, D.gradedIndex u = Y) {s x : ι} (hsY : D.scope s ⊆ Y.1) (hgs : D.grade s = Y.2)
+    (hxY : D.scope x ⊆ Y.1) (hgx : D.grade x ≤ D.grade s)
+    (hread : ∀ u, D.gradedIndex u = Y → ∀ a b : D.below (D.gradedIndex u), a.1 = s → b.1 = x →
+      R.row u a ≤ R.row u b) : p s ≤ p x := by
+  obtain ⟨u₀, hu₀⟩ := hY
+  have hsc : D.scope u₀ = Y.1 := congrArg Prod.fst hu₀
+  have hgr : D.grade u₀ = Y.2 := congrArg Prod.snd hu₀
+  obtain ⟨u, hu, hsu⟩ := hp.availability s u₀ (hsc ▸ hsY) (hgr ▸ hgs)
+  have huY : D.gradedIndex u = Y := hu.trans hu₀
+  have hs : s ∈ D.below (D.gradedIndex u) := by
+    rw [huY]; exact (D.gradedIndex_le_iff).mpr ⟨hsY, hgs.le⟩
+  have hx : x ∈ D.below (D.gradedIndex u) := by
+    rw [huY]; exact (D.gradedIndex_le_iff).mpr ⟨hxY, hgx.trans hgs.le⟩
+  have key := (hp.locality u).le_of_le (d := ⟨s, hs⟩) (d' := ⟨x, hx⟩)
+    (hread u huY ⟨s, hs⟩ ⟨x, hx⟩ rfl rfl) hgx
+  simp only [min_eq_left hsu] at key
+  exact key.trans (min_le_left _ _)
+
+end CellScheme.Rows
+
+end VaughtConjecture

@@ -3,6 +3,7 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
+import VaughtConjecture.Continuation.StableRecovery
 import VaughtConjecture.Extension.PrescribedFullRows
 
 /-!
@@ -15,7 +16,8 @@ The open finite hypotheses of the receiving routes ask for objects whose cells o
 prescribed cells in a prescribed way: (R2) and (R3) for a legal one-point extension of a context
 (a reading coface), (R1) and (R4) for a scheme (`IsBlockTight` asks for a scheme on which every
 coface of the context reads in its own block; a cap-reading scheme carries a coface of the stage
-reduction `T⁺↓β`).  This file states, in full, the reading conditions of three routes, writes each
+reduction `T⁺↓β`).  This file states in full the reading conditions of (R2)/(R3) and of (R1),
+whose modules are not on this base, uses `StageType.ReadsThroughCap` for (R4), writes each condition
 as a full-row prescription (`VaughtConjecture.Extension.PrescribedFullRows`), and proves that a
 prescribed extension for the prescription gives the condition (for (R4), the part of it concerning
 the scheme); so `StageType.HasPrescribedFullRows α` implies each condition at every input where its
@@ -62,14 +64,16 @@ implication, and it is necessary for a prescribed extension
   with the label, new cells included.  The per-input implication
   `IsPrescribedExtension.isBlockTight` stands, and nothing here refutes block-tight saturations,
   (R1) or `StageType.HasPrescribedFullRows`.
-* **Reading the new cells through the cap** ((R4); `ReadsThroughCap`, `IsCapReadingScheme`).  The
+* **Reading the new cells through the cap** ((R4); `StageType.ReadsThroughCap`,
+  `IsCapReadingScheme`).  The
   cap prescription (`capPrescription`) reads every new cell of the donor as `⊥`, as the cap, or in
   the block of a reference cell; a prescribed extension for it is a cap-reading scheme when the
   cap's grade exceeds `k` (`IsPrescribedExtension.isCapReadingScheme`,
   `StageType.HasPrescribedFullRows.exists_isCapReadingScheme`).  A cap-reading scheme is the part
   concerning the scheme of the sufficient condition for a stable recovery scheme through a reading
-  cell; the remaining hypotheses there concern the label of the cap and the calibration, and the
-  composition giving a stable recovery scheme is not compiled here.  The prescribed extension fixes
+  cell (`StageType.IsStableRecoveryScheme.of_readsThroughCap`); the remaining hypotheses there
+  concern the label of the cap and the calibration, and the composition of a cap-reading scheme with
+  them to a stable recovery scheme is not compiled here.  The prescribed extension fixes
   the labels of the donor, more than a cap-reading scheme asks.
 
 The completion route is the empty prescription (`StageType.emptyPrescription`,
@@ -134,30 +138,6 @@ chosen for a new top, the new top is read at least as the private top. -/
 def readingPrescription (t' : StageType.{u} α k) (d : StageType.{u} α (n + 1))
     (σ : TopChoice t' d) : FullRowPrescription t' d :=
   fun g r _ ↦ ∀ j hj ht, t'.toCellScheme.grade (σ j hj ht) = g → r (.inl (σ j hj ht)) ≤ r (.inr j)
-
-/-- The last point lies in the scope of a cell of the face along `extendByLast h` exactly when the
-last point lies in its scope in the face. -/
-theorem last_mem_scope_faceCell_iff {D : StageType.{u} α (k + 1)} {h : Fin n ↪ Fin k}
-    {d : StageType.{u} α (n + 1)} (h₂ : restrictFace (extendByLast h) D = some d)
-    (j : Fin d.card) :
-    Fin.last k ∈ D.toCellScheme.scope (faceCell h₂ j) ↔ Fin.last n ∈ d.toCellScheme.scope j := by
-  rw [scope_faceCell, mem_map, ← extendByLast_last h]
-  exact ⟨fun ⟨y, hy, hye⟩ ↦ (extendByLast h).injective hye ▸ hy, fun hy ↦ ⟨_, hy, rfl⟩⟩
-
-/-- A cell of the face along the first points avoids the last point. -/
-theorem last_notMem_scope_faceCell {D : StageType.{u} α (k + 1)} {t' : StageType.{u} α k}
-    (h₁ : restrictFace Fin.castSuccEmb D = some t') (z : Fin t'.card) :
-    Fin.last k ∉ D.toCellScheme.scope (faceCell h₁ z) := by
-  rw [scope_faceCell, mem_map]
-  rintro ⟨y, -, hy⟩
-  exact (Fin.castSucc_lt_last y).ne hy
-
-/-- A cell avoiding the last point is a cell of the face along the first points. -/
-theorem exists_faceCell_eq_of_last_notMem {D : StageType.{u} α (k + 1)} {t' : StageType.{u} α k}
-    (h₁ : restrictFace Fin.castSuccEmb D = some t') {s : Fin D.card}
-    (hs : Fin.last k ∉ D.toCellScheme.scope s) : ∃ z, faceCell h₁ z = s :=
-  D.toScheme.exists_faceCell_eq _ (Scheme.mem_visibleCells.mpr fun _ hx ↦
-    Fin.exists_castSucc_eq.mpr fun hxl ↦ hs (hxl ▸ hx))
 
 /-- **A prescribed extension for the reading prescription is a reading coface**: the legal one-point
 extension of `t'` carrying `d` reads every new top at least as its chosen private top. -/
@@ -413,28 +393,6 @@ theorem not_isFaceCompatible_block {N : ℕ} {p : StageType.{u} α N} {t : Stage
   exact not_isAdmissibleRow_block hz hzμ (p.grade_le z) haz hvb hrow
 
 /-! ### Reading the new cells through the cap -/
-
-/-- **A cell reads a new cell through the cap**: in a scheme `E` on `m + 1` points carrying `T⁺`
-on its first points, the row of `u` reads the cell `e` as a cell labelled `ℓ`, relative to the cap
-`b`: as `⊥` if `ℓ = ⊥`; as it reads `b` if `ℓ = ⊤`; and, if `ℓ = μ + n` with `μ` zero or a limit,
-with `n` below the grade of `b` and at `ω · c + n`, where it reads at `ω · c + i` a reference cell
-of `T⁺` labelled `μ + i`, with `i` below the grade of `b`. -/
-def ReadsThroughCap {m : ℕ} (Tp : StageType.{u} α m) (E : Scheme.{u} (m + 1))
-    (b : Fin (E.comap Fin.castSuccEmb).card) (u e : Fin E.card) (ℓ : Label.{u}) : Prop :=
-  ∀ (he : e ∈ E.toCellScheme.below (E.toCellScheme.gradedIndex u))
-    (hb : E.cellMap Fin.castSuccEmb b ∈ E.toCellScheme.below (E.toCellScheme.gradedIndex u)),
-    (ℓ = ⊥ → E.rows.row u ⟨e, he⟩ = ⊥) ∧
-    (ℓ = ⊤ → E.rows.row u ⟨e, he⟩ = E.rows.row u ⟨_, hb⟩) ∧
-    ∀ (μ : Ordinal.{u}) (n : ℕ), Order.IsSuccPrelimit μ →
-      ℓ = ((μ + n : Ordinal.{u}) : Label.{u}) →
-        n < E.toCellScheme.grade (E.cellMap Fin.castSuccEmb b) ∧
-        ∃ (a : Fin (E.comap Fin.castSuccEmb).card) (a₀ : Fin Tp.card) (i : ℕ) (c : Ordinal.{u}),
-          (a : ℕ) = a₀ ∧ Tp.label a₀ = ((μ + i : Ordinal.{u}) : Label.{u}) ∧
-          i < E.toCellScheme.grade (E.cellMap Fin.castSuccEmb b) ∧
-          ∃ ha : E.cellMap Fin.castSuccEmb a ∈
-              E.toCellScheme.below (E.toCellScheme.gradedIndex u),
-            E.rows.row u ⟨_, ha⟩ = ((Ordinal.omega0 * c + i : Ordinal.{u}) : Label.{u}) ∧
-            E.rows.row u ⟨e, he⟩ = ((Ordinal.omega0 * c + n : Ordinal.{u}) : Label.{u})
 
 /-- A scheme `E` on `m + 1` points is a **cap-reading scheme** for `T⁺`, `f`, `D` and the cap
 `b₀` of `T⁺`: it carries a coface of the stage reduction `T⁺↓β`, its face along `extendByLast f`

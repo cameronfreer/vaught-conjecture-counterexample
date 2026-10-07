@@ -23,8 +23,9 @@ cells of `D` of graded index `(univ, g)` are its **cells of full scope**; the ce
 (`StageType.ExtendsWithPrescribedRows`) when its faces are the schemes of `t'` and `d` and every
 cell of full scope meets `Φ`; a **prescribed extension** (`StageType.IsPrescribedExtension`) is a
 legal one-point extension of `t'` carrying `d` on such a scheme.  Since the condition concerns the
-scheme, a model realizes over every occurrence of type `t'`, by generalized saturation, a coface
-whose scheme meets `Φ` (`Realization.IsModel.realizesOver_extendsWithPrescribedRows`).  Prescribed
+scheme, at a stage that is zero or a limit (`Order.IsSuccPrelimit α`) a model realizes over every
+occurrence of type `t'`, by generalized saturation, a coface whose scheme meets `Φ`
+(`Realization.IsModel.realizesOver_extendsWithPrescribedRows`).  Prescribed
 extensions of particular prescriptions imply the conditions of the receiving routes at the inputs
 where those prescriptions are compatible with the faces
 (`VaughtConjecture.Extension.PrescribedFullRowsRoutes`).
@@ -63,10 +64,11 @@ refuted) and is false at every stage
 the labels of `t'` does not suffice, because the reading forces an order on every lawful labelling
 of the face.  The uniform form is not tested by that input, since its compatibility premise fails
 there (`PrescribedFullRowsCounterexample.not_isFaceCompatible`); it is neither proved nor refuted.
-Compatibility is far from sufficient in general: it is asked per lawful labelling and per served
-cell, while a prescribed extension has finitely many fixed rows serving every lawful labelling, rows
-lawful on all of `D` (including the cells that are neither known cells nor the cell itself), and
-legality of `D` at every graded face.
+Sufficiency of compatibility is unproved (it is the hypothesis itself): compatibility is asked per
+lawful labelling and per served cell, and a construction of a prescribed extension would still
+need finitely many fixed rows serving every lawful labelling, rows lawful on all of `D` (including
+the cells that are neither known cells nor the cell itself), and legality of `D` at every graded
+face.
 
 **The empty prescription** (`StageType.emptyPrescription`).  Its prescribed extensions over `ta`
 carrying `tb` along the first points are the coatom extensions.  The coatom extension property
@@ -83,7 +85,8 @@ the empty prescription at every input
 case of the core that the completion addresses: any general proof of `HasPrescribedFullRows`
 constructs, there, coatom extensions at every input where the empty prescription is compatible.
 The coatom extension property follows from completions below the full grade of every coatom seed
-(`StageType.HasCoatomExtensions.of_completionBelowFullGrade`), open at `m ≥ 3`; that construction
+(`StageType.HasCoatomExtensions.of_completionBelowFullGrade`), open as a statement about every
+seed at `m ≥ 3`; that construction
 is the first clause of a general proof that the existing completion results do not close.
 
 **What is not claimed.**  Nothing here proves or refutes (R1)–(R4) or the completion.  The
@@ -106,226 +109,6 @@ universe u v
 namespace VaughtConjecture
 
 open Finset Label
-
-/-! ### Forcing by a reading at every cell of a graded index -/
-
-namespace CellScheme.Rows
-
-variable {ι α : Type*} {D : CellScheme ι α} {R : D.Rows.{u}} {p : ι → Label.{u}}
-
-/-- **A reading at every cell of a graded index forces an order of labels.**  Let `Y` be the
-graded index of some cell, let `s` have grade `Y.2` and scope inside `Y.1`, and let `x` have scope
-inside `Y.1` and grade at most that of `s`.  If every cell of graded index `Y` reads `x` at least as
-it reads `s`, then every lawful section `p` has `p s ≤ p x`.  Availability puts `s` below a cell
-`u` of graded index `Y` with `p s ≤ p u`, and locality at `u` is monotone in the row value and
-antitone in the grade (`Label.TransformsTo.le_of_le`), so `p s = min (p s) (p u)` is at most
-`min (p x) (p u)`. -/
-theorem IsLawful.le_of_forall_row_le (hp : R.IsLawful p) {Y : Finset α × ℕ}
-    (hY : ∃ u, D.gradedIndex u = Y) {s x : ι} (hsY : D.scope s ⊆ Y.1) (hgs : D.grade s = Y.2)
-    (hxY : D.scope x ⊆ Y.1) (hgx : D.grade x ≤ D.grade s)
-    (hread : ∀ u, D.gradedIndex u = Y → ∀ a b : D.below (D.gradedIndex u), a.1 = s → b.1 = x →
-      R.row u a ≤ R.row u b) : p s ≤ p x := by
-  obtain ⟨u₀, hu₀⟩ := hY
-  have hsc : D.scope u₀ = Y.1 := congrArg Prod.fst hu₀
-  have hgr : D.grade u₀ = Y.2 := congrArg Prod.snd hu₀
-  obtain ⟨u, hu, hsu⟩ := hp.availability s u₀ (hsc ▸ hsY) (hgr ▸ hgs)
-  have huY : D.gradedIndex u = Y := hu.trans hu₀
-  have hs : s ∈ D.below (D.gradedIndex u) := by
-    rw [huY]; exact (D.gradedIndex_le_iff).mpr ⟨hsY, hgs.le⟩
-  have hx : x ∈ D.below (D.gradedIndex u) := by
-    rw [huY]; exact (D.gradedIndex_le_iff).mpr ⟨hxY, hgx.trans hgs.le⟩
-  have key := (hp.locality u).le_of_le (d := ⟨s, hs⟩) (d' := ⟨x, hx⟩)
-    (hread u huY ⟨s, hs⟩ ⟨x, hx⟩ rfl rfl) hgx
-  simp only [min_eq_left hsu] at key
-  exact key.trans (min_le_left _ _)
-
-end CellScheme.Rows
-
-/-! ### Rows read at a cell, and the cells of a face -/
-
-namespace Scheme
-
-variable {n m k : ℕ} (S : Scheme.{u} n)
-
-open Classical in
-/-- The row of the cell `u` read at the cell `x`: its value there when `x` lies below the graded
-index of `u`, and `⊥` otherwise. -/
-noncomputable def rowAt (u x : Fin S.card) : Label.{u} :=
-  if hx : x ∈ S.toCellScheme.below (S.toCellScheme.gradedIndex u) then S.rows.row u ⟨x, hx⟩
-  else ⊥
-
-variable {S}
-
-/-- At a cell below `u`, `rowAt` is the row of `u`. -/
-theorem rowAt_of_mem {u x : Fin S.card}
-    (hx : x ∈ S.toCellScheme.below (S.toCellScheme.gradedIndex u)) :
-    S.rowAt u x = S.rows.row u ⟨x, hx⟩ := by
-  simp only [rowAt, hx, ↓reduceDIte]
-
-/-- At a cell not below `u`, `rowAt` is `⊥`. -/
-theorem rowAt_of_notMem {u x : Fin S.card}
-    (hx : x ∉ S.toCellScheme.below (S.toCellScheme.gradedIndex u)) : S.rowAt u x = ⊥ := by
-  simp only [rowAt, hx, ↓reduceDIte]
-
-/-- A cell read by `u` at a value other than `⊥` lies below `u`. -/
-theorem mem_below_of_rowAt_ne_bot {u x : Fin S.card} (h : S.rowAt u x ≠ ⊥) :
-    x ∈ S.toCellScheme.below (S.toCellScheme.gradedIndex u) := by
-  by_contra hx
-  exact h (rowAt_of_notMem hx)
-
-/-- A coded scheme reads every cell below `ω ^ 2`. -/
-theorem IsCoded.rowAt_lt (hS : S.IsCoded) (u x : Fin S.card) :
-    S.rowAt u x < ((Ordinal.omega0 ^ 2 : Ordinal.{u}) : Label.{u}) := by
-  by_cases hx : x ∈ S.toCellScheme.below (S.toCellScheme.gradedIndex u)
-  · rw [rowAt_of_mem hx]; exact hS u _
-  · rw [rowAt_of_notMem hx]; exact WithBot.bot_lt_coe _
-
-/-- **The cells of the composite face**: the cell map along `f` of the cell map along `g` of the
-restriction is the cell map along the composite, at equal positions. -/
-theorem cellMap_cellMap (f : Fin m ↪ Fin n) (g : Fin k ↪ Fin m)
-    {i : Fin ((S.comap f).comap g).card} {j : Fin (S.comap (g.trans f)).card} (h : (i : ℕ) = j) :
-    S.cellMap f ((S.comap f).cellMap g i) = S.cellMap (g.trans f) j :=
-  S.cellMap_eq_of_strictMono _ ((S.cellMap f).strictMono.comp ((S.comap f).cellMap g).strictMono)
-    (S.mem_range_cellMap_comp_iff f g) h
-
-/-- The cell maps along equal embeddings agree at equal positions. -/
-theorem cellMap_congr {f f' : Fin m ↪ Fin n} (hf : f = f') {i : Fin (S.comap f).card}
-    {j : Fin (S.comap f').card} (h : (i : ℕ) = j) : S.cellMap f i = S.cellMap f' j := by
-  subst hf
-  rw [Fin.ext h]
-
-/-- The cell of `S` at position `i` of a face along `f` whose restriction is the scheme `T`. -/
-noncomputable def faceCell (f : Fin m ↪ Fin n) {T : Scheme.{u} m} (he : S.comap f = T)
-    (i : Fin T.card) : Fin S.card :=
-  S.cellMap f (Fin.cast (congrArg Scheme.card he).symm i)
-
-variable {f : Fin m ↪ Fin n} {T : Scheme.{u} m}
-
-/-- The grade of a cell of a face is its grade in the face. -/
-theorem grade_faceCell (he : S.comap f = T) (i : Fin T.card) :
-    S.toCellScheme.grade (S.faceCell f he i) = T.toCellScheme.grade i := by
-  subst he; rfl
-
-/-- The scope of a cell of a face is the image of its scope in the face. -/
-theorem scope_faceCell (he : S.comap f = T) (i : Fin T.card) :
-    S.toCellScheme.scope (S.faceCell f he i) = (T.toCellScheme.scope i).map f := by
-  subst he
-  exact (S.map_comap_scope f i).symm
-
-/-- The cells of a face are visible through it. -/
-theorem faceCell_mem_visibleCells (he : S.comap f = T) (i : Fin T.card) :
-    S.faceCell f he i ∈ S.visibleCells f :=
-  S.cellMap_mem f _
-
-/-- Every visible cell is a cell of the face. -/
-theorem exists_faceCell_eq (he : S.comap f = T) {d : Fin S.card} (hd : d ∈ S.visibleCells f) :
-    ∃ i, S.faceCell f he i = d := by
-  subst he
-  have : d ∈ Set.range (S.cellMap f) := by rw [range_cellMap]; exact hd
-  obtain ⟨i, rfl⟩ := this
-  exact ⟨i, rfl⟩
-
-/-- The cell map of a face is injective. -/
-theorem faceCell_injective (he : S.comap f = T) : Function.Injective (S.faceCell f he) := by
-  subst he
-  exact (S.cellMap f).injective
-
-/-- **A row read through `rowAt` is lawful below the graded index of its cell**, for consistent
-rows. -/
-theorem isLawfulBelow_rowAt (hS : S.rows.IsConsistent) {u : Fin S.card}
-    {X : Finset (Fin n) × ℕ} (hu : S.toCellScheme.gradedIndex u = X) :
-    S.rows.IsLawfulBelow X fun e ↦ S.rowAt u e.1 := by
-  subst hu
-  have : (fun e : S.toCellScheme.below (S.toCellScheme.gradedIndex u) ↦ S.rowAt u e.1) =
-      S.rows.row u := funext fun e ↦ rowAt_of_mem e.2
-  rw [this]
-  exact hS u
-
-/-- **The row of a cell of graded index `(univ, g)`, read on a face, is lawful there**: with
-consistent rows, the readings of the cells of the face along `f` by a cell of graded index
-`(univ, g)` are lawful below `(univ, g)` in the rows of the face. -/
-theorem isLawfulBelow_rowAt_faceCell (hS : S.rows.IsConsistent) {u : Fin S.card} {g : ℕ}
-    (hu : S.toCellScheme.gradedIndex u = (univ, g)) (he : S.comap f = T) :
-    T.rows.IsLawfulBelow ((univ : Finset (Fin m)), g) fun z ↦ S.rowAt u (S.faceCell f he z.1) := by
-  subst he
-  exact (S.isLawfulBelow_comap_cellMap_iff f (univ, g) (S.rowAt u)).mpr
-    ((isLawfulBelow_rowAt hS hu).mono (X := Prod.map (Finset.map f) id ((univ : Finset (Fin m)), g))
-      ⟨subset_univ _, le_rfl⟩)
-
-end Scheme
-
-/-! ### The cells of a face of a stage type -/
-
-namespace StageType
-
-variable {α : Ordinal.{u}} {n m k : ℕ} {D : StageType.{u} α n} {f : Fin m ↪ Fin n}
-  {t : StageType.{u} α m}
-
-/-- The scheme of a face is the restriction of the scheme. -/
-theorem comap_toScheme_of_restrictFace (h : restrictFace f D = some t) :
-    D.toScheme.comap f = t.toScheme := by
-  obtain ⟨hf, rfl⟩ := (restrictFace_eq_some_iff D f).mp h
-  rfl
-
-/-- The cell of `D` at a cell of its face `t` along `f`. -/
-noncomputable def faceCell (h : restrictFace f D = some t) (i : Fin t.card) : Fin D.card :=
-  D.toScheme.faceCell f (comap_toScheme_of_restrictFace h) i
-
-/-- The label of a cell of a face is its label in the face. -/
-@[simp] theorem label_faceCell (h : restrictFace f D = some t) (i : Fin t.card) :
-    D.label (faceCell h i) = t.label i := by
-  obtain ⟨hf, rfl⟩ := (restrictFace_eq_some_iff D f).mp h
-  rfl
-
-/-- The grade of a cell of a face is its grade in the face. -/
-@[simp] theorem grade_faceCell (h : restrictFace f D = some t) (i : Fin t.card) :
-    D.toCellScheme.grade (faceCell h i) = t.toCellScheme.grade i :=
-  D.toScheme.grade_faceCell _ i
-
-/-- The scope of a cell of a face is the image of its scope in the face. -/
-theorem scope_faceCell (h : restrictFace f D = some t) (i : Fin t.card) :
-    D.toCellScheme.scope (faceCell h i) = (t.toCellScheme.scope i).map f :=
-  D.toScheme.scope_faceCell _ i
-
-/-- **Lawful sections restrict to a face.** -/
-theorem isLawful_comp_faceCell (h : restrictFace f D = some t) {a : Fin D.card → Label.{u}}
-    (ha : D.rows.IsLawful a) : t.rows.IsLawful fun i ↦ a (faceCell h i) := by
-  obtain ⟨hf, rfl⟩ := (restrictFace_eq_some_iff D f).mp h
-  exact ha.comap (D.toScheme.isLowerEmbedding_comap f)
-
-/-- **Lawful sections of a face extend**: every lawful section of the rows of a face of a legal
-stage type extends to a lawful section of its rows (bountifulness at the cap `⊥`,
-`Scheme.IsLegal.exists_isLawful_extend`).  It concerns all lawful sections of the face, not only
-its labels. -/
-theorem exists_isLawful_extend_of_restrictFace (hD : D.IsLegal) (h : restrictFace f D = some t)
-    {a : Fin t.card → Label.{u}} (ha : t.rows.IsLawful a) :
-    ∃ a' : Fin D.card → Label.{u}, D.rows.IsLawful a' ∧ ∀ i, a' (faceCell h i) = a i := by
-  obtain ⟨hf, rfl⟩ := (restrictFace_eq_some_iff D f).mp h
-  obtain ⟨r, hr, -, hext⟩ := Scheme.IsLegal.exists_isLawful_extend hD hf (isSelfVisible_bot n)
-    ha D.isLawful fun _ ↦ by simp
-  exact ⟨r, hr, fun i ↦ hext i⟩
-
-/-- **The root of a pinned extension**: in a one-point extension `D` of `t'` whose face along
-`extendByLast h` is `d`, the cells of the common face `t` (the face of `t'` along `h` and of `d`
-along the initial segment) are the same cells of `D`, reached through `t'` or through `d`. -/
-theorem faceCell_faceCell {n' : ℕ} {D : StageType.{u} α (k + 1)} {t' : StageType.{u} α k}
-    {h : Fin n' ↪ Fin k} {t : StageType.{u} α n'} {d : StageType.{u} α (n' + 1)}
-    (h₁ : restrictFace Fin.castSuccEmb D = some t') (h₂ : restrictFace (extendByLast h) D = some d)
-    (ht : restrictFace h t' = some t) (hd : restrictFace Fin.castSuccEmb d = some t)
-    (i : Fin t.card) : faceCell h₁ (faceCell ht i) = faceCell h₂ (faceCell hd i) := by
-  obtain ⟨hf₁, rfl⟩ := (restrictFace_eq_some_iff D _).mp h₁
-  obtain ⟨hf₂, rfl⟩ := (restrictFace_eq_some_iff D _).mp h₂
-  -- `faceCell` unfolds to the cell maps of the two composite faces
-  change D.toScheme.cellMap _ ((D.toScheme.comap Fin.castSuccEmb).cellMap h _) =
-    D.toScheme.cellMap _ ((D.toScheme.comap (extendByLast h)).cellMap Fin.castSuccEmb _)
-  refine (Scheme.cellMap_cellMap _ _ (j := Fin.cast (congrArg Scheme.card
-    (D.toScheme.comap_comap _ _)) _) rfl).trans ((Scheme.cellMap_congr
-      (castSuccEmb_trans_extendByLast h).symm ?_).trans
-    (Scheme.cellMap_cellMap _ _ (j := Fin.cast (congrArg Scheme.card
-      (D.toScheme.comap_comap _ _)) _) rfl).symm)
-  rfl
-
-end StageType
 
 /-! ### Prescriptions, prescribed extensions, and admissibility -/
 

@@ -8,7 +8,7 @@ import VaughtConjecture.Extension.PrescribedFullRows
 import VaughtConjecture.Extension.GatedExtensionCounterexample
 
 /-!
-# Prescribed rows compatible at the labels fail at `P α`
+# Prescribed rows compatible at the labels fail at `GatedExtensionCounterexample.P α`
 
 Roadmap, Layer 3, 3.4 (the common shape of the finite hypotheses of the receiving rows);
 `VaughtConjecture.Extension.PrescribedFullRows`.
@@ -103,11 +103,6 @@ private theorem grade_donor_le (j : Fin (donor α).card) : (donor α).toCellSche
 
 private theorem label_donor (j : Fin (donor α).card) : (donor α).label j = ⊥ := rfl
 
-/-- A stage type on no points has no cells. -/
-private theorem isEmpty_card_zero (t : StageType.{u} α 0) : IsEmpty (Fin t.card) :=
-  ⟨fun i ↦ absurd ((t.isWellFormed.isWellFormed.grade_pos i).trans_le (t.grade_le i))
-    (lt_irrefl 0)⟩
-
 /-! ### The row of `C₂` reads `C₂` at least as `C₁` -/
 
 private theorem three_not_le_two : ¬ ((3 : ℕ) : Label.{u}) ≤ ((2 : ℕ) : Label.{u}) := fun h ↦
@@ -142,8 +137,7 @@ theorem isFaceCompatibleAtLabels {t : StageType.{u} α 0}
     (ht : restrictFace (root) (P α) = some t)
     (hd : restrictFace Fin.castSuccEmb (donor α) = some t) :
     IsFaceCompatibleAtLabels (P α) ht (donor α) hd (prescription α) := by
-  have := isEmpty_card_zero t
-  refine ⟨(donor α).label, (donor α).isLawful, fun i ↦ isEmptyElim i, ?_⟩
+  refine ⟨(donor α).label, (donor α).isLawful, fun i ↦ (Fin.cast t.card_eq_zero i).elim0, ?_⟩
   intro g hg0 hg3 T hT
   by_cases hg2 : g = 2
   · subst hg2
