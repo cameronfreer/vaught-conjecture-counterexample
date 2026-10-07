@@ -23,9 +23,9 @@ cell of a profile `P'` the agreement height of `P` and `P'` in `Label.grid 3 (2 
   below the coatoms at the grade `3` by the lawfulness of the profile, and at a cell of the layer
   by the capped agreement of the sections at the agreement heights in `Label.grid 3`
   (`SectionInterface.towerSectionOp_isCapAgreeingAt`) and the ultrametric inequality.  The
-  scheme is consistent and coded (`TowerProfile.isConsistent_scheme`,
-  `TowerProfile.isCoded_scheme`); the rows of the cells at `(univ, 3)` are short at `3` and never
-  the formal top (`TowerProfile.row_natAdd_props`).
+  scheme is consistent, coded and well formed (`TowerProfile.isConsistent_scheme`,
+  `TowerProfile.isCoded_scheme`, `TowerProfile.isWellFormed_scheme`); the rows of the cells at
+  `(univ, 3)` are short at `3` and never the formal top (`TowerProfile.row_natAdd_props`).
 * **Extension from the boundary** (`TowerProfile.exists_extension`,
   `TowerProfile.exists_extension_bot`).  At a cap `h` self-visible and short at `3`, a labelling
   `w` lawful below both coatoms at the grade `3` and agreeing with a profile `P` capped at `h` at
@@ -629,6 +629,10 @@ theorem isConsistent_scheme : (scheme I).rows.IsConsistent := by
 theorem isCoded_scheme : (scheme I).IsCoded :=
   Scheme.isCoded_appendFullCells (I.isCoded_tower 2) fun i d ↦
     lt_omega0_sq_of_mem_codeGrid (fieldLab_mem_codeGrid (entry_mem i) d)
+
+/-- **The scheme is well formed**: `T 2` is, and `(univ, 3)` is a graded face. -/
+theorem isWellFormed_scheme : (scheme I).IsWellFormed :=
+  Scheme.isWellFormed_appendFullCells (I.isWellFormed_tower 2 (by omega)) (by omega) (by omega)
 
 /-! ### `seedL` -/
 
