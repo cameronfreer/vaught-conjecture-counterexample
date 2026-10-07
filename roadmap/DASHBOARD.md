@@ -136,7 +136,12 @@ Notes on the rows, each with its marker:
   it at one input at every `ξ`, reading the new cell through the cap
   (`Continuation.StableRecoveryReading.exists_isStableRecoveryScheme_gradedCap`), and at the twin
   donors of the refutation, with one context of three points
-  (`Continuation.StableRecoveryTwin.exists_isStableRecoveryScheme_twinDonors`);
+  (`Continuation.StableRecoveryTwin.exists_isStableRecoveryScheme_twinDonors`), and at four
+  further tests: a proper cap and lower blocks
+  (`Continuation.StableRecoveryTwinFamily.exists_isStableRecoveryScheme_twinFamily`), a new cell
+  labelled `⊤` (`Continuation.StableRecoveryTopCell.exists_isStableRecoveryScheme_topCell`), and
+  an interior cap with two graded faces of grade `N`
+  (`Continuation.StableRecoveryInterior.exists_isStableRecoveryScheme_interiorCap`);
   cover-hollowness and stable-label fixedness
   (`Realization.isCoverHollow_iff_forall_stableLabel_eq_top`); the exact-age comparison
   (`Realization.nonempty_equiv_of_exactReceivingWithin`); the three comparisons, the rigid-core one
@@ -547,9 +552,34 @@ named hypothesis.
    references in the block `λ_ξ` only, `(univ, 3)` the only graded face of grade `N = 3` containing
    the cap and the new cells (several need a context of at least four points; informal; not
    compiled), and the reference cell the root itself (a cell of the face along `f`; the private
-   context supplies only the cap).  The finite statement at every input with the calibration is
-   still to be proved, and with it (R4).  The acquisition of the design's cap of full scope and full
-   grade is not compiled.
+   context supplies only the cap).  **Four further tests**, each positive, none a refutation: (b) a
+   proper cap, the twin schemes with the cap labelled exactly `λ_ξ + 3 = λ_ξ + N` and `γ = λ_ξ + 2`
+   (`Continuation.StableRecoveryTwinFamily.exists_isStableRecoveryScheme_properCap`; every cap
+   `C ≥ λ_ξ + 3` and `γ < λ_ξ + 3`,
+   `Continuation.StableRecoveryTwinFamily.exists_isStableRecoveryScheme_twinFamily`): no clause of
+   `ReadsThroughCap` carries the cap's label, which enters only through `λ_ξ + N ≤ T⁺ b` (the order
+   law, `StageType.coe_add_grade_le_label`) and `γ < λ_ξ + N`; (a) a donor with a new cell labelled
+   `⊤`, under the cap `λ_ξ + 2` with `γ = λ_ξ + 1`
+   (`Continuation.StableRecoveryTopCell.exists_isStableRecoveryScheme_topCell`): the branch at `⊤`
+   and the clause on `γ` are used, and the `⊤` cell is recovered as exactly `λ_ξ + 2`
+   (`Continuation.StableRecoveryTopCell.label_newCap_eq`); (c) a lower block, references and twins
+   `μ + 2, μ + 1` with `μ < λ_ξ`
+   (`Continuation.StableRecoveryTwinFamily.exists_isStableRecoveryScheme_lowerBlock`); (d) an
+   interior cap (scope without extreme points of the context; four points needed, informal; not
+   compiled): every stable recovery scheme then has a face other than its ground set containing the
+   cap and the new point (`StageType.IsStableRecoveryScheme.exists_face_ne_univ`), so two graded
+   faces of grade `N` contain them (informal; not compiled), and a legal scheme of thirty-five cells
+   with a reading cell at both, the reading constraints agreeing across the two faces, is a stable
+   recovery scheme, for every cap value `B ≥ λ_ξ + 2` and `γ < λ_ξ + 2`
+   (`Continuation.StableRecoveryInterior.exists_isStableRecoveryScheme_interiorCap`).  So reading
+   through the cap at two faces does not obstruct the finite statement at that input, and no second
+   calibration is refuted.  Still special: recovery copies the marker in (a) and (d), `N = k + 1`
+   there, the twin tests read one block through the root, the faces at the interior cap are nested,
+   and the four features are tested separately.  The next tests (prospective): the features together
+   (an interior cap with the twin donors, a `⊤` cell at an interior cap), faces of grade `N` that
+   are not nested, reference cells in two blocks for one donor, and `N > k + 2`.  The finite
+   statement at every input with the calibration is still to be proved, and with it (R4).  The
+   acquisition of the design's cap of full scope and full grade is not compiled.
 6. **The attained least lift and structural successor leastness** (prospective).  One lift of a
    legal stage type at a limit stage `β` to `β + ω`, least at every cell (each minimum is attained
    separately: `StageType.exists_lift_label_eq_ofOffset`); the threshold forced by a cover is read
