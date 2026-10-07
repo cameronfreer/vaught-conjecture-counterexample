@@ -38,6 +38,10 @@ of `σ`.
 * every witness reads `a` at most as `b` exactly when `a ≤ b` (`le_iff_forall_isWitness`);
 * monotonicity in the source and antitonicity in the grade (`TransformsTo.le_of_le`), and
   preservation of self-visibility at the grade (`TransformsTo.isSelfVisible`);
+* reading through a reference cell under a cap (`TransformsTo.eq_coe_add_of_reading`): if `p`
+  reads cells `a` and `e` in one block, at `ω · c + i` and `ω · c + o`, the grades of `a` and `e`
+  are at most that of a cell `b`, `i < grade b`, `o ≤ grade b`, and `q a = μ + i` (`μ` zero or a
+  limit) with `μ + i` and `μ + o` below `q b`, then `q e = μ + o`;
 * lowering the suppressor (`IsWitness.of_le`, `IsWitness.of_le_stepSuppressor`), the pointwise
   maximum of two suppressors (`IsWitness.sup`), truncation of the suppressor above a grade
   (`IsWitness.truncate`), capping the suppressor by a self-visible label (`IsWitness.cap`), and
@@ -60,7 +64,11 @@ of `σ`.
   sending every label at least `β + N` to the formal top and keeping the others; for `β` zero or a
   limit and all grades at most `K < N`, a transformation to `q` gives one to the collapse of `q`
   (`TransformsTo.collapse`), since the collapse commutes with visibility replacement at thresholds
-  `k < N` (`collapse_visibilityReplace`), although `β + N` is a successor stage for `N ≠ 0`.
+  `k < N` (`collapse_visibilityReplace`), although `β + N` is a successor stage for `N ≠ 0`;
+* the reading at the grade `3` (`reading_of_transformsTo`): if a cell of grade `1` read at `2` has
+  target `min R C` and a cell of grade `3` has target `C` self-visible at `3`, then `min R C` has
+  finite part `2` or at least `3`, and every cell of grade `1` read at `1` has target
+  `min (visibilityReplace 3 1 (min R C)) C`.
 
 Pointwise minima and collapse prove locality of the stable labelling at the next block stage
 (roadmap, Layer 4, output 1), written as a pointwise minimum of finitely many lawful labellings,
@@ -179,6 +187,54 @@ theorem TransformsTo.isSelfVisible (h : TransformsTo grade p q) {d : D}
   rcases le_total (σ (p d)) (g (grade d)) with hle | hle
   · rw [min_eq_left hle]; exact hw.isSelfVisible_apply hp hle
   · rw [min_eq_right hle]; exact hw.isSelfVisible _
+
+/-! ### Reading through a reference cell under a cap -/
+
+section Reading
+
+open Ordinal
+
+variable {r : D → Label.{u}}
+
+/-- **Reading through a reference cell under a cap** (the decoder at one row).  Let the labelling
+`r` transform to `q` over the grades `grade`, and let `a`, `b`, `e` be three cells, with the
+grades of `a` and `e` at most that of `b` and `i < grade b`, `o ≤ grade b`.  If `r` reads `a` and
+`e` in one block, at `ω · c + i` and `ω · c + o`, and `q a = μ + i` for `μ` zero or a limit, with
+`μ + i` and `μ + o` strictly below `q b`, then `q e = μ + o`.  The cap `b` keeps the suppressor
+above the reference value at the grade of `a` and above `μ + o` at the grade of `e`, so the
+shifter sends `ω · c + i` to `μ + i` exactly; under the guard at the threshold `grade b` it
+commutes with the visibility replacement that turns `i` into `o`. -/
+theorem TransformsTo.eq_coe_add_of_reading (h : TransformsTo grade r q) {μ c : Ordinal.{u}}
+    (hμ : Order.IsSuccPrelimit μ) {a b e : D} {i o : ℕ} (hab : grade a ≤ grade b)
+    (hi : i < grade b) (ho : o ≤ grade b) (heb : grade e ≤ grade b)
+    (hra : r a = ((ω * c + i : Ordinal.{u}) : Label.{u}))
+    (hre : r e = ((ω * c + o : Ordinal.{u}) : Label.{u}))
+    (hqa : q a = ((μ + i : Ordinal.{u}) : Label.{u}))
+    (hib : ((μ + i : Ordinal.{u}) : Label.{u}) < q b)
+    (hob : ((μ + o : Ordinal.{u}) : Label.{u}) < q b) :
+    q e = ((μ + o : Ordinal.{u}) : Label.{u}) := by
+  obtain ⟨g, σ, hw, heq⟩ := h
+  have hgb : q b ≤ g (grade b) := (heq b).trans_le (min_le_right _ _)
+  have hσa : σ (r a) = ((μ + i : Ordinal.{u}) : Label.{u}) := by
+    have h1 := heq a
+    rw [hqa] at h1
+    have hg : ((μ + i : Ordinal.{u}) : Label.{u}) < g (grade a) :=
+      (hib.trans_le hgb).trans_le (hw.antitone hab)
+    rcases le_total (σ (r a)) (g (grade a)) with h2 | h2
+    · rw [min_eq_left h2] at h1
+      exact h1.symm
+    · rw [min_eq_right h2] at h1
+      exact absurd h1 hg.ne
+  have hcm := hw.visibilityReplace_comm (r a) (grade b) (hσa ▸ (hib.trans_le hgb).le) o ho
+  have hc : Order.IsSuccPrelimit (ω * c) :=
+    Ordinal.isSuccPrelimit_iff_omega0_dvd.mpr (dvd_mul_right _ _)
+  rw [hσa, visibilityReplace_coe_add_natCast hμ hi, hra,
+    visibilityReplace_coe_add_natCast hc hi, ← hre] at hcm
+  rw [heq e, hcm]
+  exact min_eq_left ((hob.trans_le hgb).le.trans (hw.antitone heb))
+
+
+end Reading
 
 /-! ### Lowering, truncating, and capping the suppressor -/
 
@@ -567,5 +623,98 @@ theorem TransformsTo.not_transitive :
     (fun b ↦ (isSelfVisible_one_two_one_top_bot_top b).2.2) one_two_one_top one_top_bot_top)
 
 end Nontransitive
+
+/-! ### Collisions -/
+
+/-- **The collision lemma.**  Let `p` transform to `q` over the grades `grade`, let `d₁`, `d₂` be
+cells of grade `1` whose source values are self-visible at `1`, carrying one target value `e` not
+self-visible at `2`, and let `z` be a cell of grade `2` with `e < q z`.  Then `p d₁ = p d₂`.
+
+The suppressor exceeds `e` at the grade `2`, so the shifter sends both source values to `e`; if
+`p d₁ < p d₂`, the guard at the grade `2` gives
+`σ (visibilityReplace 2 2 (p d₁)) = visibilityReplace 2 2 e`, which is above `e` but at most
+`σ (p d₂) = e`. -/
+theorem eq_of_transformsTo_collision {D : Type*} {grade : D → ℕ} {p q : D → Label.{u}}
+    (h : TransformsTo grade p q) {d₁ d₂ z : D} (hg₁ : grade d₁ = 1) (hg₂ : grade d₂ = 1)
+    (hz : grade z = 2) (hp₁ : IsSelfVisible 1 (p d₁)) (hp₂ : IsSelfVisible 1 (p d₂))
+    {e : Label.{u}} (he₁ : q d₁ = e) (he₂ : q d₂ = e) (hev : ¬ IsSelfVisible 2 e)
+    (hez : e < q z) : p d₁ = p d₂ := by
+  obtain ⟨g, σ, hw, hq⟩ := h
+  have hg2 : e < g 2 := hez.trans_le (by rw [hq z, hz]; exact min_le_right _ _)
+  have hg1 : e < g 1 := hg2.trans_le (hw.antitone (by omega))
+  have hσ (d : D) (hd : grade d = 1) (he : q d = e) : σ (p d) = e := by
+    rw [hq d, hd] at he
+    rcases le_total (σ (p d)) (g 1) with hle | hle
+    · rwa [min_eq_left hle] at he
+    · rw [min_eq_right hle] at he; exact absurd he hg1.ne'
+  have key : ∀ a b, IsSelfVisible 1 a → a < b → σ a = e → σ b = e → False := by
+    intro a b ha hab hσa hσb
+    have hcomm := hw.visibilityReplace_comm a 2 (by rw [hσa]; exact hg2.le) 2 le_rfl
+    rw [hσa] at hcomm
+    have hle : σ (visibilityReplace 2 2 a) ≤ σ b :=
+      hw.monotone (visibilityReplace_two_two_le_of_lt ha hab)
+    rw [hcomm, hσb] at hle
+    exact hev (le_antisymm hle (le_visibilityReplace (by omega) e))
+  rcases lt_trichotomy (p d₁) (p d₂) with hlt | heq | hgt
+  · exact (key _ _ hp₁ hlt (hσ d₁ hg₁ he₁) (hσ d₂ hg₂ he₂)).elim
+  · exact heq
+  · exact (key _ _ hp₂ hgt (hσ d₂ hg₂ he₂) (hσ d₁ hg₁ he₁)).elim
+
+/-! ### Reading at the grade `3` -/
+
+/-- **The reading at the grade `3`.**  Let `r` transform to `q`, with `a` of grade `1` read at `2`,
+`q a = min R C`, and `b` of grade `3` with `q b = C` self-visible at `3`.  Then the capped root
+`min R C` has finite part `2` or at least `3`, and every `e` of grade `1` read at `1` has
+`q e = min (visibilityReplace 3 1 (min R C)) C`.  Below the cap the shifter sends `2` to the capped
+root and commutes with visibility replacement there; at or above it, a value below the cap at `1`
+would bring the value at `2` below the cap (`visibilityReplace_three_two_lt`). -/
+theorem reading_of_transformsTo {r : D → Label.{u}} (h : TransformsTo grade r q) {a b : D}
+    (ga : grade a = 1) (gb : grade b = 3) (hra : r a = 2) {R C : Label.{u}}
+    (hC : IsSelfVisible 3 C) (hqa : q a = min R C) (hqb : q b = C) :
+    visibilityReplace 3 2 (min R C) = min R C ∧
+      ∀ e, grade e = 1 → r e = 1 → q e = min (visibilityReplace 3 1 (min R C)) C := by
+  obtain ⟨g, σ, hw, heq⟩ := h
+  have v22 : visibilityReplace 3 2 (2 : Label.{u}) = 2 := by simp
+  have v21 : visibilityReplace 3 1 (2 : Label.{u}) = 1 := by simp
+  have v12 : visibilityReplace 3 2 (1 : Label.{u}) = 2 := by simp
+  have h12 : (1 : Label.{u}) ≤ 2 := by simp
+  have hCg : C ≤ g 3 := by
+    have := heq b
+    rw [hqb, gb] at this
+    rw [this]
+    exact min_le_right _ _
+  have hg31 : g 3 ≤ g 1 := hw.antitone (by omega)
+  have ha := heq a
+  rw [hqa, hra, ga] at ha
+  rcases lt_or_ge (min R C) C with hxC | hCx
+  · -- below the cap: the shifter sends `2` to the capped root
+    have hσ : σ 2 = min R C := by
+      rcases le_total (σ 2) (g 1) with h1 | h1
+      · rw [min_eq_left h1] at ha; exact ha.symm
+      · rw [min_eq_right h1] at ha
+        exact absurd (ha ▸ hxC) (not_lt.mpr (hCg.trans hg31))
+    have hcomm := hw.visibilityReplace_comm 2 3 (hσ ▸ hxC.le.trans hCg)
+    have h2 := hcomm 2 (by omega)
+    rw [v22, hσ] at h2
+    refine ⟨h2.symm, fun e ge hre ↦ ?_⟩
+    have h1 := hcomm 1 (by omega)
+    rw [v21, hσ] at h1
+    have hle : visibilityReplace 3 1 (min R C) ≤ min R C :=
+      (visibilityReplace_le_visibilityReplace (by omega : 1 ≤ 2) _).trans_eq h2.symm
+    rw [heq e, hre, ge, h1, min_eq_left (hle.trans (hxC.le.trans (hCg.trans hg31))),
+      min_eq_left (hle.trans hxC.le)]
+  · -- at or above the cap: the value at `1` is at least the cap
+    have hx : min R C = C := le_antisymm (min_le_right _ _) hCx
+    refine ⟨by rw [hx]; exact hC.visibilityReplace_eq 2, fun e ge hre ↦ ?_⟩
+    rw [hx, hC.visibilityReplace_eq 1, min_self, heq e, hre, ge]
+    rw [hx] at ha
+    refine le_antisymm (ha ▸ min_le_min_right _ (hw.monotone h12)) ?_
+    refine le_min ?_ (hCg.trans hg31)
+    by_contra hlt
+    rw [not_le] at hlt
+    have h2 := hw.visibilityReplace_comm 1 3 (hlt.le.trans hCg) 2 (by omega)
+    rw [v12] at h2
+    have : σ 2 < C := h2 ▸ visibilityReplace_three_two_lt hC hlt
+    exact absurd (ha ▸ min_le_left _ _ : C ≤ σ 2) (not_le.mpr this)
 
 end VaughtConjecture.Label

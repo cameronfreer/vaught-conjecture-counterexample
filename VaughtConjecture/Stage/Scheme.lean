@@ -39,7 +39,10 @@ of `f` (`mem_gradedFaces_comap`), and the cell map sends the cells below a pair 
 its image (`image_cellMap_below`); completeness, codedness, and consistency pass to the restriction.
 The restriction reads the rows of the visible cells only (`comap_mk_congr`).
 Along a bijection of the points the cell map is surjective (`surjective_cellMap_equiv`), and the
-faces of a well-formed scheme form a plan on all of its points (`IsWellFormed.isPlan`).
+faces of a well-formed scheme form a plan on all of its points (`IsWellFormed.isPlan`).  So in a
+well-formed scheme on `m + 1` points, `0 < m`, whose first `m` points span a face, some face other
+than the ground set contains the last point and every set of the first `m` points that contains no
+extreme point of them (`exists_face_ne_univ_of_not_mem`).
 
 ## References
 
@@ -362,6 +365,168 @@ theorem isConsistent_comap {S : Scheme.{u} n} (hS : S.rows.IsConsistent) :
 theorem isComplete_comap {S : Scheme.{u} n} (hS : S.toCellScheme.IsComplete) :
     (S.comap f).toCellScheme.IsComplete :=
   (hS.comap f).reindex (S.cellEquiv f).surjective
+
+/-! ### A face avoiding an extreme point -/
+
+/-- **A face avoiding an extreme point of the first `m` points**: in a well formed scheme on
+`m + 1` points (`0 < m`) in which the first `m` points span a face, the new point `m` is an extreme
+point of the ground set, and so is some other point `y`, which is then an extreme point of the
+first `m` points.  So for a set `S` of the first `m` points containing no extreme point of them,
+the face `univ \ {y}` is a face other than the ground set containing `S` and the new point.  The
+proof uses that a closed set with at least two points has exactly two extreme points
+(`Geometry.IsPlan.card_extremes`) and that faces are closed under intersection. -/
+theorem exists_face_ne_univ_of_not_mem {E : Scheme.{u} (m + 1)} (hE : E.IsWellFormed)
+    (hold : univ.map (Fin.castSuccEmb : Fin m ↪ Fin (m + 1)) ∈ E.toCellScheme.faces)
+    (hm : 0 < m) {S : Finset (Fin m)}
+    (hS : ∀ y : Fin m, (univ.erase y).map Fin.castSuccEmb ∈ E.toCellScheme.faces → y ∉ S) :
+    ∃ F ∈ E.toCellScheme.faces, F ≠ univ ∧ S.map Fin.castSuccEmb ⊆ F ∧ Fin.last m ∈ F := by
+  have hP : Geometry.IsPlan univ E.toCellScheme.faces := hE.isPlan
+  have h2 := hP.card_extremes hP.ground_mem (by rw [Finset.card_univ, Fintype.card_fin]; omega)
+  have hold' : univ.erase (Fin.last m) = univ.map (Fin.castSuccEmb : Fin m ↪ Fin (m + 1)) := by
+    ext x
+    induction x using Fin.lastCases with
+    | last => simp
+    | cast x => simp [Fin.castSucc_ne_last]
+  -- the new point is one extreme point of the ground set; `y` is the other
+  obtain ⟨y, hy, hyl⟩ : ∃ y ∈ Geometry.extremes E.toCellScheme.faces univ, y ≠ Fin.last m := by
+    by_contra! h
+    have : Geometry.extremes E.toCellScheme.faces univ ⊆ {Fin.last m} := fun y hy ↦
+      mem_singleton.mpr (h y hy)
+    have := card_le_card this
+    rw [card_singleton] at this
+    omega
+  obtain ⟨y', rfl⟩ := Fin.exists_castSucc_eq.mpr hyl
+  have hyF : univ.erase (Fin.castSucc y') ∈ E.toCellScheme.faces := (mem_filter.mp hy).2
+  -- `y` is an extreme point of the first `m` points
+  have hcap := hP.infClosed hyF hold
+  have heq : univ.erase (Fin.castSucc y') ⊓ univ.map (Fin.castSuccEmb : Fin m ↪ Fin (m + 1)) =
+      (univ.erase y').map Fin.castSuccEmb := by
+    ext x
+    induction x using Fin.lastCases with
+    | last => simp
+    | cast x => simp
+  rw [mem_coe, heq] at hcap
+  have hyS := hS y' hcap
+  refine ⟨_, hyF, fun h ↦ ?_, fun x hx ↦ ?_, ?_⟩
+  · have := h ▸ mem_univ (Fin.castSucc y')
+    simp at this
+  · obtain ⟨z, hz, rfl⟩ := mem_map.mp hx
+    refine mem_erase.mpr ⟨fun h ↦ hyS ?_, mem_univ _⟩
+    rwa [← Fin.castSucc_inj.mp h]
+  · exact mem_erase.mpr ⟨(Fin.castSucc_ne_last y').symm, mem_univ _⟩
+
+end Scheme
+
+/-! ### Rows read at a cell, and the cells of a face -/
+
+namespace Scheme
+
+variable {n m k : ℕ} (S : Scheme.{u} n)
+
+open Classical in
+/-- The row of the cell `u` read at the cell `x`: its value there when `x` lies below the graded
+index of `u`, and `⊥` otherwise. -/
+noncomputable def rowAt (u x : Fin S.card) : Label.{u} :=
+  if hx : x ∈ S.toCellScheme.below (S.toCellScheme.gradedIndex u) then S.rows.row u ⟨x, hx⟩
+  else ⊥
+
+variable {S}
+
+/-- At a cell below `u`, `rowAt` is the row of `u`. -/
+theorem rowAt_of_mem {u x : Fin S.card}
+    (hx : x ∈ S.toCellScheme.below (S.toCellScheme.gradedIndex u)) :
+    S.rowAt u x = S.rows.row u ⟨x, hx⟩ := by
+  simp only [rowAt, hx, ↓reduceDIte]
+
+/-- At a cell not below `u`, `rowAt` is `⊥`. -/
+theorem rowAt_of_notMem {u x : Fin S.card}
+    (hx : x ∉ S.toCellScheme.below (S.toCellScheme.gradedIndex u)) : S.rowAt u x = ⊥ := by
+  simp only [rowAt, hx, ↓reduceDIte]
+
+/-- A cell read by `u` at a value other than `⊥` lies below `u`. -/
+theorem mem_below_of_rowAt_ne_bot {u x : Fin S.card} (h : S.rowAt u x ≠ ⊥) :
+    x ∈ S.toCellScheme.below (S.toCellScheme.gradedIndex u) := by
+  by_contra hx
+  exact h (rowAt_of_notMem hx)
+
+/-- A coded scheme reads every cell below `ω ^ 2`. -/
+theorem IsCoded.rowAt_lt (hS : S.IsCoded) (u x : Fin S.card) :
+    S.rowAt u x < ((Ordinal.omega0 ^ 2 : Ordinal.{u}) : Label.{u}) := by
+  by_cases hx : x ∈ S.toCellScheme.below (S.toCellScheme.gradedIndex u)
+  · rw [rowAt_of_mem hx]; exact hS u _
+  · rw [rowAt_of_notMem hx]; exact WithBot.bot_lt_coe _
+
+/-- **The cells of the composite face**: the cell map along `f` of the cell map along `g` of the
+restriction is the cell map along the composite, at equal positions. -/
+theorem cellMap_cellMap (f : Fin m ↪ Fin n) (g : Fin k ↪ Fin m)
+    {i : Fin ((S.comap f).comap g).card} {j : Fin (S.comap (g.trans f)).card} (h : (i : ℕ) = j) :
+    S.cellMap f ((S.comap f).cellMap g i) = S.cellMap (g.trans f) j :=
+  S.cellMap_eq_of_strictMono _ ((S.cellMap f).strictMono.comp ((S.comap f).cellMap g).strictMono)
+    (S.mem_range_cellMap_comp_iff f g) h
+
+/-- The cell maps along equal embeddings agree at equal positions. -/
+theorem cellMap_congr {f f' : Fin m ↪ Fin n} (hf : f = f') {i : Fin (S.comap f).card}
+    {j : Fin (S.comap f').card} (h : (i : ℕ) = j) : S.cellMap f i = S.cellMap f' j := by
+  subst hf
+  rw [Fin.ext h]
+
+/-- The cell of `S` at position `i` of a face along `f` whose restriction is the scheme `T`. -/
+noncomputable def faceCell (f : Fin m ↪ Fin n) {T : Scheme.{u} m} (he : S.comap f = T)
+    (i : Fin T.card) : Fin S.card :=
+  S.cellMap f (Fin.cast (congrArg Scheme.card he).symm i)
+
+variable {f : Fin m ↪ Fin n} {T : Scheme.{u} m}
+
+/-- The grade of a cell of a face is its grade in the face. -/
+theorem grade_faceCell (he : S.comap f = T) (i : Fin T.card) :
+    S.toCellScheme.grade (S.faceCell f he i) = T.toCellScheme.grade i := by
+  subst he; rfl
+
+/-- The scope of a cell of a face is the image of its scope in the face. -/
+theorem scope_faceCell (he : S.comap f = T) (i : Fin T.card) :
+    S.toCellScheme.scope (S.faceCell f he i) = (T.toCellScheme.scope i).map f := by
+  subst he
+  exact (S.map_comap_scope f i).symm
+
+/-- The cells of a face are visible through it. -/
+theorem faceCell_mem_visibleCells (he : S.comap f = T) (i : Fin T.card) :
+    S.faceCell f he i ∈ S.visibleCells f :=
+  S.cellMap_mem f _
+
+/-- Every visible cell is a cell of the face. -/
+theorem exists_faceCell_eq (he : S.comap f = T) {d : Fin S.card} (hd : d ∈ S.visibleCells f) :
+    ∃ i, S.faceCell f he i = d := by
+  subst he
+  have : d ∈ Set.range (S.cellMap f) := by rw [range_cellMap]; exact hd
+  obtain ⟨i, rfl⟩ := this
+  exact ⟨i, rfl⟩
+
+/-- The cell map of a face is injective. -/
+theorem faceCell_injective (he : S.comap f = T) : Function.Injective (S.faceCell f he) := by
+  subst he
+  exact (S.cellMap f).injective
+
+/-- **A row read through `rowAt` is lawful below the graded index of its cell**, for consistent
+rows. -/
+theorem isLawfulBelow_rowAt (hS : S.rows.IsConsistent) {u : Fin S.card}
+    {X : Finset (Fin n) × ℕ} (hu : S.toCellScheme.gradedIndex u = X) :
+    S.rows.IsLawfulBelow X fun e ↦ S.rowAt u e.1 := by
+  subst hu
+  have : (fun e : S.toCellScheme.below (S.toCellScheme.gradedIndex u) ↦ S.rowAt u e.1) =
+      S.rows.row u := funext fun e ↦ rowAt_of_mem e.2
+  rw [this]
+  exact hS u
+
+/-- **The row of a cell of graded index `(univ, g)`, read on a face, is lawful there**: with
+consistent rows, the readings of the cells of the face along `f` by a cell of graded index
+`(univ, g)` are lawful below `(univ, g)` in the rows of the face. -/
+theorem isLawfulBelow_rowAt_faceCell (hS : S.rows.IsConsistent) {u : Fin S.card} {g : ℕ}
+    (hu : S.toCellScheme.gradedIndex u = (univ, g)) (he : S.comap f = T) :
+    T.rows.IsLawfulBelow ((univ : Finset (Fin m)), g) fun z ↦ S.rowAt u (S.faceCell f he z.1) := by
+  subst he
+  exact (S.isLawfulBelow_comap_cellMap_iff f (univ, g) (S.rowAt u)).mpr
+    ((isLawfulBelow_rowAt hS hu).mono (X := Prod.map (Finset.map f) id ((univ : Finset (Fin m)), g))
+      ⟨subset_univ _, le_rfl⟩)
 
 end Scheme
 

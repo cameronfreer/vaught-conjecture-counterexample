@@ -19,6 +19,8 @@ Special cases of `VaughtConjecture.Continuation.Hollow`:
 * **top-free realizations**: a realization whose occurrences all have arity `0` is top-free, hence
   cover-hollow vacuously; in a cover-hollow realization every threshold at a cell labelled the
   formal top is forced by some compatible rooted cover;
+* **terminality**: a realization at a block stage whose actual types are top-free is cover-hollow
+  vacuously, hence terminal (`Realization.IsCoverHollow.isTerminalAt`), with no hypothesis;
 * **position matching**: along a permutation `e` of the root, the stable offset at the reindexed
   root and the tuple `c ∘ e` is the stable offset at the transported cell, with no hypothesis on the
   realization: along a permutation the rooted covers correspond.  The comparison along an
@@ -151,5 +153,12 @@ example (S : Realization.{u, v} β M) (c : Fin k → M) (p : StageType.{u} β k)
       provisionalOffset α hβ y.2.1 y.2.2 (p.reindex e) i)
       ⟨x.1, x.2.1, e.toEmbedding.trans x.2.2⟩ ⟨s, funext fun j ↦ ?_, hcov⟩ le_rfl
     simp [← hs]
+
+/-! ### Terminality -/
+
+/-- A realization at a block stage with top-free actual types is terminal. -/
+example {R : Realization.{u, v} (blockStage ξ) M} (h : ∀ x : R.Occurrence, x.type.IsTopFree) :
+    R.IsTerminalAt ξ :=
+  (isCoverHollow_of_isTopFree h).isTerminalAt
 
 end VaughtConjecture.Continuation.HollowExamples

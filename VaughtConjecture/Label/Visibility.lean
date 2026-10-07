@@ -43,11 +43,19 @@ Visibility replacement of an ordinal at threshold `k` with value `i` replaces it
 * In the block `[μ, μ + ω)` of an ordinal `μ` that is zero or a limit, an ordinal `μ + k` whose
   finite part `k` is below the threshold `n` is not self-visible at `n`
   (`not_isSelfVisible_coe_add_natCast`), and replacement at `n` with value `i` gives `μ + i`
-  (`visibilityReplace_coe_add_natCast`).  Every ordinal is `μ + j` with `μ` zero or a limit and
+  (`visibilityReplace_coe_add_natCast`); it is self-visible at `n` exactly when `n ≤ k`
+  (`isSelfVisible_coe_add_natCast_iff`), and `μ` and `k` are determined by `μ + k`
+  (`add_natCast_eq_add_natCast_iff`).  Every ordinal is `μ + j` with `μ` zero or a limit and
   `j` finite (`exists_eq_add_natCast_isSuccPrelimit`), and replacement at `K` with value `m` sends
   `μ + j` to `μ + m` if `j < K` and fixes it otherwise (`visibilityReplace_coe_add`).
 * On a natural number `n` it gives `i` if `n < k` and `n` otherwise (`visibilityReplace_natCast`,
   with `visibilityReplace_zero`, `visibilityReplace_one`, `visibilityReplace_ofNat` for numerals).
+* At the threshold `3`: replacement with value `1` gives a label self-visible at `1`
+  (`isSelfVisible_visibilityReplace_three_one`) and does not raise a label self-visible at `1`
+  (`visibilityReplace_three_one_le`); a cap `c` self-visible at `3` does not separate finite parts
+  below `3`: it lies below `visibilityReplace 3 1 y` when `c ≤ y`
+  (`le_visibilityReplace_three_one`) and above `visibilityReplace 3 2 y` when `y < c`
+  (`visibilityReplace_three_two_lt`).
 
 ## References
 
@@ -333,6 +341,29 @@ theorem not_isSelfVisible_coe_add_natCast (hμ : Order.IsSuccPrelimit μ) (hk : 
   rw [isSelfVisible_coe, add_natCast_mod_omega0 hμ, not_le]
   exact_mod_cast hk
 
+/-- An ordinal `μ + k` of the block of `μ` is self-visible at `n` exactly when its finite part `k`
+is at least `n`. -/
+theorem isSelfVisible_coe_add_natCast_iff (hμ : Order.IsSuccPrelimit μ) :
+    IsSelfVisible n ((μ + k : Ordinal.{u}) : Label.{u}) ↔ n ≤ k := by
+  rw [isSelfVisible_coe, add_natCast_mod_omega0 hμ, Nat.cast_le]
+
+/-- **The block and the finite part of an ordinal are unique**: for `μ` and `μ'` zero or limits,
+`μ + k = μ' + k'` exactly when `μ = μ'` and `k = k'`. -/
+theorem add_natCast_eq_add_natCast_iff {μ' : Ordinal.{u}} (hμ : Order.IsSuccPrelimit μ)
+    (hμ' : Order.IsSuccPrelimit μ') : μ + k = μ' + k' ↔ μ = μ' ∧ k = k' := by
+  refine ⟨fun h ↦ ?_, fun ⟨h₁, h₂⟩ ↦ by rw [h₁, h₂]⟩
+  have hk : k = k' := by
+    have := congrArg (· % ω) h
+    simp only [add_natCast_mod_omega0 hμ, add_natCast_mod_omega0 hμ'] at this
+    exact_mod_cast this
+  subst hk
+  obtain ⟨b, rfl⟩ := isSuccPrelimit_iff_omega0_dvd.mp hμ
+  obtain ⟨b', rfl⟩ := isSuccPrelimit_iff_omega0_dvd.mp hμ'
+  have := congrArg (· / ω) h
+  simp only [mul_add_div _ omega0_ne_zero, div_eq_zero_of_lt (natCast_lt_omega0 _),
+    add_zero] at this
+  exact ⟨by rw [this], rfl⟩
+
 end Block
 
 /-- A self-visible label is fixed by visibility replacement at its threshold, with any value. -/
@@ -434,5 +465,107 @@ theorem exists_lt_lt_isSelfVisible (hβ : Order.IsSuccPrelimit β) (ho : o < β)
   exact_mod_cast (by omega : k ≤ m + (k + 1))
 
 end
+
+/-! ### Labels of the form `ω * q + n` -/
+
+/-- Visibility replacement on a label `ω * q + n` replaces the finite part `n` when `n < k`. -/
+theorem visibilityReplace_block (q : Ordinal.{u}) (n k i : ℕ) :
+    visibilityReplace k i ((ω * q + n : Ordinal.{u}) : Label.{u}) =
+      ((ω * q + ((if n < k then i else n : ℕ) : Ordinal.{u}) : Ordinal.{u}) : Label.{u}) := by
+  rw [visibilityReplace_coe, Ordinal.visibilityReplace, mul_add_div _ omega0_ne_zero,
+    div_eq_zero_of_lt (natCast_lt_omega0 n), add_zero, mul_add_mod_self,
+    mod_eq_of_lt (natCast_lt_omega0 n)]
+  split_ifs <;> simp_all
+
+/-- A label `ω * q + n` is self-visible at `k` exactly when `k ≤ n`. -/
+theorem isSelfVisible_block {q : Ordinal.{u}} {n k : ℕ} :
+    IsSelfVisible k ((ω * q + n : Ordinal.{u}) : Label.{u}) ↔ k ≤ n := by
+  rw [isSelfVisible_coe, mul_add_mod_self, mod_eq_of_lt (natCast_lt_omega0 n), Nat.cast_le]
+
+/-- A label self-visible at `1` is fixed by visibility replacement at `2` with value `1`. -/
+theorem visibilityReplace_two_one_of_isSelfVisible {a : Label.{u}} (ha : IsSelfVisible 1 a) :
+    visibilityReplace 2 1 a = a := by
+  by_cases hb : a = ⊥
+  · rw [hb]; simp
+  by_cases ht : a = ⊤
+  · rw [ht]; simp
+  obtain ⟨b, n, rfl⟩ := exists_block hb ht
+  have hn : 1 ≤ n := isSelfVisible_block.mp ha
+  have hif : (if n < 2 then 1 else n) = n := by split_ifs <;> omega
+  rw [visibilityReplace_block, hif]
+
+/-- **One step above a label of finite part `1`**: if `a` is self-visible at `1` and `a < b`,
+then `visibilityReplace 2 2 a ≤ b`. -/
+theorem visibilityReplace_two_two_le_of_lt {a b : Label.{u}} (ha : IsSelfVisible 1 a)
+    (hab : a < b) :
+    visibilityReplace 2 2 a ≤ b := by
+  by_cases ha2 : IsSelfVisible 2 a
+  · rw [ha2]; exact hab.le
+  have hb : a ≠ ⊥ := fun h ↦ ha2 (h ▸ isSelfVisible_bot 2)
+  have ht : a ≠ ⊤ := fun h ↦ ha2 (h ▸ isSelfVisible_top 2)
+  obtain ⟨q, n, rfl⟩ := exists_block hb ht
+  have hn1 : 1 ≤ n := isSelfVisible_block.mp ha
+  have hn2 : ¬ 2 ≤ n := fun h ↦ ha2 (isSelfVisible_block.mpr h)
+  obtain rfl : n = 1 := by omega
+  rw [visibilityReplace_block, ite_eq_left (by omega)]
+  induction b using recBotCoeTop with
+  | bot => exact absurd hab (not_lt.mpr bot_le)
+  | top => exact le_top
+  | coe o =>
+    rw [WithBot.coe_lt_coe, WithTop.coe_lt_coe] at hab
+    rw [WithBot.coe_le_coe, WithTop.coe_le_coe]
+    have := Order.add_one_le_of_lt hab
+    rw [add_assoc] at this
+    simpa [one_add_one_eq_two] using this
+
+/-! ### Labels below a cap self-visible at `3` -/
+
+/-- Visibility replacement at `3` with value `1` gives a label self-visible at `1`. -/
+theorem isSelfVisible_visibilityReplace_three_one (x : Label.{u}) :
+    IsSelfVisible 1 (visibilityReplace 3 1 x) := by
+  by_cases hb : x = ⊥
+  · rw [hb, visibilityReplace_bot]; exact isSelfVisible_bot _
+  by_cases ht : x = ⊤
+  · rw [ht, visibilityReplace_top]; exact isSelfVisible_top _
+  obtain ⟨q, n, rfl⟩ := exists_block hb ht
+  rw [visibilityReplace_block, isSelfVisible_block]
+  split_ifs <;> omega
+
+/-- Visibility replacement at `3` with value `1` does not raise a label self-visible at `1`. -/
+theorem visibilityReplace_three_one_le (hx : IsSelfVisible 1 x) :
+    visibilityReplace 3 1 x ≤ x := by
+  by_cases hb : x = ⊥
+  · rw [hb, visibilityReplace_bot]
+  by_cases ht : x = ⊤
+  · rw [ht, visibilityReplace_top]
+  obtain ⟨q, n, rfl⟩ := exists_block hb ht
+  have hn : 1 ≤ n := isSelfVisible_block.mp hx
+  rw [visibilityReplace_block, WithBot.coe_le_coe, WithTop.coe_le_coe]
+  have hle : (if n < 3 then 1 else n) ≤ n := by split_ifs <;> omega
+  exact add_le_add_right (Nat.cast_le (α := Ordinal.{u}).mpr hle) _
+
+/-- **A cap self-visible at `3` does not separate finite parts below `3`**: a label `c`
+self-visible at `3` below `y` lies below `visibilityReplace 3 1 y`. -/
+theorem le_visibilityReplace_three_one (hc : IsSelfVisible 3 c) (h : c ≤ y) :
+    c ≤ visibilityReplace 3 1 y :=
+  (hc.visibilityReplace_eq 1).symm.le.trans (monotone_visibilityReplace (by omega) h)
+
+/-- **A cap self-visible at `3` above a label stays above its replacement at `2`**: for `c`
+self-visible at `3` and `y < c`, `visibilityReplace 3 2 y < c`.  The replacement is at most `c`
+(`visibilityReplace_le_of_le`); it is `y` if `y` is self-visible at `3`, and otherwise has finite
+part `2`, so it is not the label `c`, which is self-visible at `3`. -/
+theorem visibilityReplace_three_two_lt (hc : IsSelfVisible 3 c) (h : y < c) :
+    visibilityReplace 3 2 y < c := by
+  refine (visibilityReplace_le_of_le (by omega) hc h.le).lt_of_ne fun he ↦ ?_
+  by_cases hy : IsSelfVisible 3 y
+  · exact h.ne ((hy.visibilityReplace_eq 2).symm.trans he)
+  have hb : y ≠ ⊥ := fun h' ↦ hy (h' ▸ isSelfVisible_bot 3)
+  have ht : y ≠ ⊤ := fun h' ↦ hy (h' ▸ isSelfVisible_top 3)
+  obtain ⟨q, n, rfl⟩ := exists_block hb ht
+  have hn : n < 3 := by
+    by_contra hn
+    exact hy (isSelfVisible_block.mpr (by omega))
+  rw [← he, visibilityReplace_block, ite_eq_left hn, isSelfVisible_block] at hc
+  omega
 
 end VaughtConjecture.Label
