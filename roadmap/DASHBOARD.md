@@ -179,7 +179,7 @@ Notes on the rows, each with its marker:
   refinement of a prescribed model (`MainTheorem.exists_maximalRefinement`); rows 33–36, 38, 40
   stay S.
 - *Manuscript correspondence, [AFK26] of 7 October.*  The concordance cites the draft of
-  7 October 2026; rows 48–56 are new, all S.  Adopted there and recorded without a change of
+  7 October 2026; rows 48–56 are new to the concordance, all S.  Adopted there and recorded without a change of
   status: the block indexing of row 1 in §4, the fixed rows of rows 9 and 10, the corrections of
   rows 41 and 42, the cap `-∞` of row 44, and clause 1 of row 45; its range clause of legality is
   now strong coding (row 45).  [AFK26] states Propositions 4.32 (amalgamation of charts, where

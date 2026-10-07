@@ -1117,8 +1117,8 @@ cells empty continues the row above it: a further notion of the same row, with i
 Rows 41–47 concern the legal templates of the current draft of [AFK26] and cite its numbering
 (its §4, "The Counterexample");
 rows 9 and 10 cite the current numbering, and their notes also cite that of the version of
-5 October 2026.  Rows 43–47 read the row system of a template
-as the fixed semantic rows of a scheme, not as the coherent local rows of row 9 (note 43); row 43
+5 October 2026.  Rows 43–47 read the row system of a template as the fixed semantic rows of a
+scheme, not as the coherent local rows of row 9 (note 43); row 43
 identifies lawful labellings, and does not make the legal schemes here the legal templates of
 [AFK26] (note 45).
 
@@ -2023,44 +2023,42 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     templates and which represents every finite legal template up to isomorphism and relabelling.
     A proof is given in [AFK26] of 7 October (in the version of 5 October 2026 it was Lemma 4.28,
     with no proof); our compiled statements are unchanged.  Compiled in this repository (theorem
-    named),
-    in `Stage/Legal`: the legal stage types are closed under the face maps
+    named), in `Stage/Legal`: the legal stage types are closed under the face maps
     (`StageType.IsLegal.restrictFace`), reindexing (`StageType.IsLegal.reindex`), and stage
     reduction (`StageType.isLegal_reduce_iff`), and there are countably many on `n` points at a
-    countable stage (`StageType.countable_setOf_isLegal`); the base language has one relation
-    symbol for each legal stage type at `ω` (`baseLanguage`, `Language/Basic`).  *History.*  Under
-    the reading of note 43 and with the legality definition of the version of 5 October 2026, the
-    first clause of its Lemma 4.28 (all templates in `L` are legal templates) fails for the legal
-    stage types here as they stand: at every stage there is a legal stage type on a scheme
-    violating its clause 4 (`StageType.exists_isLegal_not_hasPrintedRange`, compiled in this
-    repository (theorem named), on `CodingExamples.pointRow 2`; note 45).  Of the two results
-    then named, (a) a proof that the class restricted by that clause suffices for the main
-    theorem, or (b) a correction of the clause recorded as C, [AFK26] of 7 October has in effect
-    taken (b): its range clause is clause 5 of Definition 4.29, the strong coding of the rows
-    (note 45).  *Now.*  That witness no longer applies; the legal stage type of the legal scheme
-    `CodingExamples.pointRow 3` (its bottom labelling) is not strongly coded (compiled examples,
-    `Extension/CodingExamples`), so in the reading of note 43 a literal identification of `L`
-    with all legal stage types is still ruled out (informal; not compiled).  What remains is (a)
-    with strong coding: a proof that the legal stage types with strongly coded rows suffice for
-    the main theorem (strong coding is not known to be preserved by the coatom amalgam and the
-    completion, and legality may not be strengthened, `README.md`, Layer 3, checkpoint 2.2).
-    Under the coherent-rows reading of row 9 the effect of clause 5 is not recorded.  That the
-    legal stage types with strongly coded rows form a template system of [AFK26] representing
-    every legal template up to relabelling isomorphism is still to be proved.  *Its proof*
-    (the second line of the row).  [AFK26] calls clauses (a)–(c), (e) and (f) of Definition 4.11
-    straightforward and argues (d) and (g).  (e) needs, for every `β`, a legal template with an
-    ordinal label at least `ω + ω · β`; (f) needs legal templates of every size (bottom rows are
-    bountiful, `CellScheme.Rows.isBountiful_bot`, compiled in this repository (theorem named)).
-    (d), closure of legality under truncation at `λ = ω + ω · β`: its counterpart for stage types
-    is `StageType.isLegal_reduce_iff` (compiled); the printed step "it is then straightforward to
-    check that `f′, h′` witness that `u ⇒ trunc_λ ∘ v`" leaves one case of the commuting clause
-    of Definition 4.27 open, `h(x) > f(k) ≥ λ`, where `h′(x) = f′(k) = ∞` and the original clause
-    is unavailable, so one needs `h(vis^k_i(x)) ≥ λ` (informal; not compiled).  (g) is the capped
-    lift by bountifulness at a cap `γ`, `δ ≤ γ < λ`, self-visible at the size of the larger
-    template; its counterpart is `CellScheme.Rows.IsBountiful.cappedLift` (`Scheme/Bountiful`,
-    compiled), and the new clause 2 of Definition 4.29 makes the lifted template legal.  The
-    proof uses "`u` extends `trunc_λ(t)`" for templates, a notion [AFK26] defines for labelled
-    trees only (Definition 3.4).  Argued in [AFK26]; not formalized here.
+    countable stage (`StageType.countable_setOf_isLegal`); the base language has one relation symbol
+    for each legal stage type at `ω` (`baseLanguage`, `Language/Basic`).  *History.*  Under the
+    reading of note 43 and with the legality definition of the version of 5 October 2026, the first
+    clause of its Lemma 4.28 (all templates in `L` are legal templates) fails for the legal stage
+    types here as they stand: at every stage there is a legal stage type on a scheme violating its
+    clause 4 (`StageType.exists_isLegal_not_hasPrintedRange`, compiled in this repository (theorem
+    named), on `CodingExamples.pointRow 2`; note 45).  Of the two results then named, (a) a proof
+    that the class restricted by that clause suffices for the main theorem, or (b) a correction of
+    the clause recorded as C, [AFK26] of 7 October has in effect taken (b): its range clause is
+    clause 5 of Definition 4.29, the strong coding of the rows (note 45).  *Now.*  That witness no
+    longer applies; the legal stage type of the legal scheme `CodingExamples.pointRow 3` (its bottom
+    labelling) is not strongly coded (compiled examples, `Extension/CodingExamples`), so in the
+    reading of note 43 a literal identification of `L` with all legal stage types is still ruled out
+    (informal; not compiled).  What remains is (a) with strong coding: a proof that the legal stage
+    types with strongly coded rows suffice for the main theorem (strong coding is not known to be
+    preserved by the coatom amalgam and the completion, and legality may not be strengthened,
+    `README.md`, Layer 3, checkpoint 2.2). Under the coherent-rows reading of row 9 the effect of
+    clause 5 is not recorded.  That the legal stage types with strongly coded rows form a template
+    system of [AFK26] representing every legal template up to relabelling isomorphism is still to be
+    proved.  *Its proof* (the second line of the row).  [AFK26] calls clauses (a)–(c), (e) and (f)
+    of Definition 4.11 straightforward and argues (d) and (g).  (e) needs, for every `β`, a legal
+    template with an ordinal label at least `ω + ω · β`; (f) needs legal templates of every size
+    (bottom rows are bountiful, `CellScheme.Rows.isBountiful_bot`, compiled in this repository
+    (theorem named)). (d), closure of legality under truncation at `λ = ω + ω · β`: its counterpart
+    for stage types is `StageType.isLegal_reduce_iff` (compiled); the printed step "it is then
+    straightforward to check that `f′, h′` witness that `u ⇒ trunc_λ ∘ v`" leaves one case of the
+    commuting clause of Definition 4.27 open, `h(x) > f(k) ≥ λ`, where `h′(x) = f′(k) = ∞` and the
+    original clause is unavailable, so one needs `h(vis^k_i(x)) ≥ λ` (informal; not compiled).  (g)
+    is the capped lift by bountifulness at a cap `γ`, `δ ≤ γ < λ`, self-visible at the size of the
+    larger template; its counterpart is `CellScheme.Rows.IsBountiful.cappedLift`
+    (`Scheme/Bountiful`, compiled), and the new clause 2 of Definition 4.29 makes the lifted
+    template legal.  The proof uses "`u` extends `trunc_λ(t)`" for templates, a notion [AFK26]
+    defines for labelled trees only (Definition 3.4).  Argued in [AFK26]; not formalized here.
 47. Statement: [AFK26, Theorem 4.36], "`σ[L]` has `ℵ₁`-many countable models up to isomorphism and
     does not contain a perfect set of countable models.  In particular `σ[L]` is a
     counter-example to Vaught's conjecture for `L_{ω₁ω}`."  In the version of 5 October 2026 it
@@ -2159,10 +2157,10 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     why the roadmap passes to the hull language `hullLanguage` (Layer 2, `HULL_ALGEBRA.md`).
     Counterparts here: HP, `hereditary_legalAge` (`ClassicalLimit/LegalAge`, compiled in this
     repository (theorem named), with no hypothesis); JEP and AP, `isFraisse_legalAge` and
-    `exists_amalgam_legalChart`, compiled conditional on `StageType.HasCoatomExtensions` (and,
-    for `isFraisse_legalAge`, on the countability `(Set.Iio α).Countable` of the stage), the
+    `exists_amalgam_legalChart`, compiled conditional on `StageType.HasCoatomExtensions`, the
     plain form, which hypothesis 8 implies
-    (`StageType.HasApexCoatomExtensions.hasCoatomExtensions`); still to be proved (Layer 3, 3.1,
+    (`StageType.HasApexCoatomExtensions.hasCoatomExtensions`), and, for `isFraisse_legalAge`,
+    on the countability `(Set.Iio α).Countable` of the stage; still to be proved (Layer 3, 3.1,
     (R6); `DASHBOARD.md`, the research front, item 1).  [AFK26] gives no argument for
     amalgamation.
 54. [AFK26, Lemma 4.33], with a sketched proof (two sentences, from Proposition 4.32 and the
