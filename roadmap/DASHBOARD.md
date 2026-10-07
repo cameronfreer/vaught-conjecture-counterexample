@@ -325,12 +325,14 @@ named hypothesis.
    (`CellScheme.Rows.IsLawful.recover_of_readsOnly`); the gate from the bottom-pattern clause
    (`Realization.IsModel.exists_attachedGate`); receiving at a given attached gated extension
    (`Realization.IsModel.realizesOver_receivingFamily_of_attachedGatedExtension`); the lifts its
-   legality asks for, at caps not `⊥` only (`StageType.AttachedGatedExtension.exists_lift`); and,
-   a negative special case, at `GatedExtensionCounterexample.P α` the gate cannot read only one
+   legality forces at caps not `⊥` (`StageType.AttachedGatedExtension.exists_lift`; that nothing
+   is forced at the cap `⊥` is argued, not formalized); and, a negative special case of a row
+   design, at `GatedExtensionCounterexample.P α` the gate's row cannot be `⊥` at every twin but one
    ceiling (`AttachedGateCounterexample.exists_reader`), while two readers are realized there
-   (`AttachedGateExamples.attachedGatedExtensionP`, donor labelled `⊤`).  Open: an attached
-   gated extension over the private contexts that models acquire (a completion with readers at
-   `(univ, n)`).  (R1) is neither proved nor refuted.
+   (`AttachedGateExamples.attachedGatedExtensionP`, donor labelled `⊤`).  Open: an attached gated
+   extension over the private contexts that models acquire; whether availability from the
+   literal-face cap must reach a reader other than the ceiling.  (R1) is neither proved nor
+   refuted.
 4. **Forcing donors** (still to be proved unconditionally): reduced to the coatom extension
    property (`forcingDonors_of_hasCoatomExtensions`); nothing beyond it remains.
 5. **Output 3, part D, and (R4)** (still to be proved): (R4) over positive roots, the empty root by

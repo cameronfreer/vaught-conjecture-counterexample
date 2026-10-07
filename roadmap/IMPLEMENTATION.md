@@ -2801,14 +2801,18 @@ Each checkpoint needs both its abstract API and a concrete application:
    `R.IsModel → R.HasFiniteCutReceiving` at every limit stage, is in a separate open change).
    Step 1, acquisition: 4b-i above (arity above any requested bound, the cap labelled above any
    floor below the stage, anchoring).  Step 2, the attached gated extension as data
-   (`StageType.AttachedGatedExtension`, `Extension/AttachedGate`): open in general; the lifts its
-   legality asks for at caps not `⊥` are compiled as a necessary condition
-   (`StageType.AttachedGatedExtension.exists_lift`), and none at the cap `⊥`; one ceiling is not
-   enough at `GatedExtensionCounterexample.P α` (`AttachedGateCounterexample.exists_reader`, from
-   `StageType.not_forall_le_of_opposite`, stated at every arity); instances with one reader
-   (`AttachedGateExamples.exists_attachedGatedExtension_two_zero`) and with two readers at `P α`
-   (`AttachedGateExamples.attachedGatedExtensionP`).  Step 3, recovery through the readers
-   (`CellScheme.Rows.IsLawful.recover_of_readsOnly`,
+   (`StageType.AttachedGatedExtension`, `Extension/AttachedGate`): open in general.  Compiled: the
+   lifts its legality forces at caps not `⊥`, as a necessary condition
+   (`StageType.AttachedGatedExtension.exists_lift`); the row design in which the gate's row is `⊥`
+   at every twin except one ceiling fails at `GatedExtensionCounterexample.P α`
+   (`AttachedGateCounterexample.exists_reader`, from `StageType.not_forall_le_of_opposite`, stated
+   at every arity, through lifts whose private faces are not the labels of `P α`); instances with
+   one reader (`AttachedGateExamples.exists_attachedGatedExtension_two_zero`) and with two readers
+   at `P α` (`AttachedGateExamples.attachedGatedExtensionP`).  Argued, not formalized: nothing is
+   forced through the readers at the cap `⊥`.  Open: whether, for the literal private face,
+   availability from the private cap must reach a reader other than the ceiling (so the target's
+   step 3 as written is neither proved nor refuted), and any analogue at arity at least `4`.
+   Step 3, recovery through the readers (`CellScheme.Rows.IsLawful.recover_of_readsOnly`,
    `StageType.AttachedGatedExtension.recover`): compiled.  Step 4, the gate from the
    bottom-pattern clause (`Realization.IsModel.exists_attachedGate`): compiled.  Step 5, the
    assembly at a given attached gated extension
@@ -3666,14 +3670,17 @@ witnesses).**
   `Extension/Basic`, or `Stage/` for the closed-point choice), is a later change of proofs only,
   with no statement change.
 
-- `Extension/AttachedGate`: `Label.ne_bot_of_min_eq_of_ne_bot` to `Label.Basic`;
+- The attached gate: `Label.ne_bot_of_min_eq_of_ne_bot` is in `Label/Basic`;
   `CellScheme.Rows.ReadsOnly` and the row lemmas stated with it
-  (`CellScheme.Rows.IsLawful.le_of_row_self_le`, `exists_mem_le_of_readsOnly`,
+  (`CellScheme.Rows.le_of_row_self_le_of_locality`,
+  `CellScheme.Rows.IsLawful.le_of_row_self_le`, `exists_mem_le_of_readsOnly`,
   `recover_of_readsOnly`, `min_eq_visibilityReplace_of_row_eq`,
   `CellScheme.Rows.row_lt_of_le_dominant`,
-  `CellScheme.Rows.IsLawfulBelow.le_of_readsOnly_singleton`) to `Extension/Gate`, beside
-  `CellScheme.Rows.IsGate`; the structure and its lemmas in place.
-  `Realization/AttachedGateReceiving`: in place, beside `Realization/GateRecovery`.
+  `CellScheme.Rows.IsLawfulBelow.le_of_readsOnly_singleton`) are in `Extension/Gate`, beside
+  `CellScheme.Rows.IsGate`.  In place: `Extension/AttachedGate` (the structure, its lemmas,
+  `StageType.IsLegal.exists_isLawfulBelow_castSucc`, `StageType.not_forall_le_of_opposite`),
+  `Extension/AttachedGateCounterexample`, `Extension/AttachedGateExamples`, and
+  `Realization/AttachedGateReceiving`, beside `Realization/GateRecovery`.
 
 **Quantitative reconstruction, row 1 (`COMPANIONS.md`, "Further companion results").**
 

@@ -22,10 +22,18 @@ gated extensions of `VaughtConjecture.Extension.AttachedGate`.
   and the donor labelled `⊤` over the empty root, is an attached gated extension with gate `9`,
   cap `3` (the full private cell `C₁`), and readers `9` and `10`, the gate being its own ceiling.
   Both readers read the donor cell `5` through the cap, at `3`, at least as they read the cap (at
-  `3` and `2`).  The display labels the twin `10` of the gate `⊤`: no twin is labelled `⊥`, and
-  availability may reach `10`.  At `P α` a second reader is necessary
-  (`AttachedGateCounterexample.exists_reader`); here it is `10`.  The donor has no proper anchor,
-  so this tests the twins of the gate, not the transport of anchors.
+  `3` and `2`).  The display labels the twin `10` of the gate `⊤`, so not every twin is labelled
+  `⊥`.
+  At `P α` the row of the gate must read a second reader not as `⊥`
+  (`AttachedGateCounterexample.exists_reader`); here it is `10`.  The new donor label is `⊤`, so
+  no donor label below the cap needs an anchor: this tests the twins of the gate, not the
+  transport of anchors.
+
+Vocabulary: a **reader** is a cell of the graded index of the gate whose row reads every new donor
+cell through an anchor or through a private cell labelled at least the cap
+(`CellScheme.Rows.IsGate`); the **ceiling** is a reader that the row of the gate reads at least as
+the gate itself; **availability** is the second law of a lawful section (a cell of the grade of a
+cell `t`, with scope inside that of `t`, lies below some cell of the graded index of `t`).
 
 ## Placement
 

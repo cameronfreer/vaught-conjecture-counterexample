@@ -17,8 +17,12 @@ cutoff); semantic contract, item 12 (receiving one permitted cutoff at a time).
 Fix a model `R`, an occurrence `y` of `R` on `n` points (the **private context**), a face `f` of
 it, and an attached gated extension `E` of the type of `y` over `f` with donor `d`
 (`StageType.AttachedGatedExtension`): a legal display on `n + 1` points with literal faces, a gate
-of graded index `(univ, n)` not labelled `⊥`, and readers of that graded index reading every new
-donor cell against the cap.
+of graded index `(univ, n)` not labelled `⊥`, and **readers** of that graded index, cells whose
+rows read every new donor cell through an anchor or through a private cell labelled at least the
+cap (`CellScheme.Rows.IsGate`); the row of the gate is `⊥` at every other cell of its graded index
+outside the readers, and reads one reader, the **ceiling**, at least as itself.  **Availability**
+is the second law of a lawful section: a cell of the grade of a cell `t`, with scope inside that
+of `t`, lies below some cell of the graded index of `t`.
 
 **The gate from the bottom-pattern clause** (`IsModel.exists_attachedGate`).  The bottom-pattern
 clause ([Kni26, Definition 3.2.1], clause 4(a)ii; `IsModel.bottomPattern`) for the scheme of the
@@ -29,13 +33,18 @@ and is `⊥` exactly where the display is at every cell of grade at most `n`.  T
 cells of grade at most the old arity `n` (`StageType.bottomPatternFamily`), and the gate has grade
 `n`, so `q` is not `⊥` at the gate (`StageType.AttachedGatedExtension.label_gate_ne_bot_of_mem`).
 Of the realized labels nothing else is read: in particular not the labels at the twins of the
-gate, which the display need not label `⊥`.
+gate, which the display need not label `⊥`.  The argument is that of
+`StageType.GatedExtension.label_gate_ne_bot_of_mem` (`VaughtConjecture.Realization.GateRecovery`),
+for the gate of an attached gated extension.
 
 **Recovery** (`StageType.AttachedGatedExtension.recover`).  A stage type `q` on the scheme of the
 display with literal private face and not `⊥` at the gate has a donor face, along
 `extendByLast f`, in the receiving family of `d` at the label of the cap: its labels are lawful for
 the rows of the display, and recovery through the readers
-(`CellScheme.Rows.IsLawful.recover_of_readsOnly`) applies.
+(`CellScheme.Rows.IsLawful.recover_of_readsOnly`) applies.  The reduction to the rows (the literal
+private face read off the two equal faces, and the donor face defined because the scheme is that
+of the display) follows `StageType.mem_receivingFamily_of_isGate` and
+`StageType.GatedExtension.exists_restrictFace_mem_receivingFamily`.
 
 **Receiving at a given attached gated extension**
 (`IsModel.realizesOver_receivingFamily_of_attachedGatedExtension`).  Over an occurrence `x` that
@@ -50,10 +59,11 @@ universal hypothesis is introduced.  The existence of an attached gated extensio
 contexts that a model acquires (`IsModel.exists_privateContext`, whose cap is labelled above any
 requested floor below the stage) is **open**: it is the construction of a legal display, a
 completion problem over the coatom amalgam with readers at the graded index `(univ, n)`, and the
-lifts it must realize are those of `StageType.AttachedGatedExtension.exists_lift`.  It is not
-available at the private type `GatedExtensionCounterexample.P α` with a gate that reads only one
-ceiling (`AttachedGateCounterexample.exists_reader`).  Finite-cut receiving for all
-models, (R1), is not claimed.
+lifts it must realize at caps not `⊥` include those of
+`StageType.AttachedGatedExtension.exists_lift`.  At the private type
+`GatedExtensionCounterexample.P α` the row of the gate cannot be `⊥` at every twin but one ceiling
+(`AttachedGateCounterexample.exists_reader`); this concerns that row design only.  Finite-cut
+receiving for all models, (R1), is not claimed.
 
 ## Placement
 
@@ -79,7 +89,8 @@ variable {α : Ordinal.{u}} {n m : ℕ} {P : StageType.{u} α n} {f : Fin m ↪ 
   {d : StageType.{u} α (m + 1)} (E : AttachedGatedExtension P f d) {q : StageType.{u} α (n + 1)}
 
 /-- **The gate equation**: a member of the bottom-pattern family of the display is not `⊥` at the
-gate, a cell of grade `n`, which the family tests. -/
+gate, a cell of grade `n`, which the family tests.  The proof is that of
+`StageType.GatedExtension.label_gate_ne_bot_of_mem`. -/
 theorem label_gate_ne_bot_of_mem (hq : q ∈ bottomPatternFamily E.display.toScheme E.display.label)
     (i : Fin q.card) (hi : (i : ℕ) = E.gate) : q.label i ≠ ⊥ := by
   obtain ⟨S, ℓ, hw, hc, hℓ, hat⟩ := q
@@ -102,7 +113,8 @@ theorem recover (hP : restrictFace Fin.castSuccEmb q = some P)
   obtain ⟨hfd', rfl⟩ := (restrictFace_eq_some_iff _ _).mp hd'
   obtain ⟨_, hQP⟩ := (restrictFace_eq_some_iff _ _).mp E.restrictFace_castSuccEmb
   obtain ⟨_, hqP⟩ := (restrictFace_eq_some_iff _ _).mp hP
-  -- The literal private face: `ℓ` is the display's labelling on the private cells.
+  -- The literal private face: `ℓ` is the display's labelling on the private cells (as in
+  -- `StageType.mem_receivingFamily_of_isGate`).
   have hlit : ∀ x ∈ E.display.toCellScheme.visible (Set.range Fin.castSuccEmb),
       ℓ x = E.display.label x := by
     intro x hx

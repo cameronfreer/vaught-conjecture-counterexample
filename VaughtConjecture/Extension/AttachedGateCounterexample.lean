@@ -13,6 +13,13 @@ Roadmap, Layer 3, 3.2 (the ordinary construction (R1): the display and its gate)
 recovery statements, item 1); the attached gated extensions of
 `VaughtConjecture.Extension.AttachedGate`.
 
+Vocabulary: a **reader** of an attached gated extension is a cell of the graded index of the gate
+whose row reads every new donor cell through an anchor or through a private cell labelled at least
+the cap (`CellScheme.Rows.IsGate`); the **ceiling** is a reader that the row of the gate reads at
+least as the gate itself; **availability** is the second law of a lawful section (a cell of the
+grade of a cell `t`, with scope inside that of `t`, lies below some cell of the graded index of
+`t`).
+
 **The theorem** (`AttachedGateCounterexample.label_gate_eq_bot`).  Let `Q` be a legal stage type on
 three points whose face along `Fin.castSuccEmb` is literally the private type
 `GatedExtensionCounterexample.P α`.  A cell `G` of `Q` of graded index `(univ, 2)` whose row is `⊥`
@@ -24,22 +31,23 @@ The two full private cells `C₁`, `C₂` of `P α` are ordered oppositely by th
 `2`.  If `Q` did not label `G` with `⊥`, the lifts of both labellings to `(univ, 2)` at the cap `2`
 (bountifulness of `Q`) would keep `G` not `⊥`, so the row of `G` would make `K` dominate every
 cell of graded index `(univ, 2)`, and the one row of `K` would order `C₁` and `C₂` both ways
-(`StageType.label_eq_bot_of_readsOnly_singleton`).
+(`StageType.label_eq_bot_of_readsOnly_singleton`).  The lifts have the private faces
+`labelling ⊤ 2` and `labelling 2 ⊤`, not the labels of `P α`.
 
 **The consequence for attached gated extensions** (`AttachedGateCounterexample.exists_reader`).
 Every attached gated extension of `P α`, over any face and with any donor, has a reader other than
-the gate and the ceiling, at which the row of the gate is not `⊥`.  In a lawful labelling not `⊥`
-at the gate, availability for the private cap can therefore reach that reader, a twin of the gate
-and not its ceiling.  So the form of recovery in which availability reaches only the ceiling of
-the selected entry (the gate reading only its gate field and its ceiling) is refuted at `P α`;
-recovery through every reader (`CellScheme.Rows.IsLawful.recover_of_readsOnly`) is the form that
-remains.
+the gate and the ceiling, at which the row of the gate is not `⊥`.  So the row design in which the
+gate's row is `⊥` at every twin except one ceiling fails at `P α`.
 
-**Scope.**  This is a refutation at private arity `2`.  The argument uses only two cells of the
-private face of graded index `(univ, n)` ordered oppositely in a cap ball at a cap `c ≠ ⊥`
-self-visible at `n`, and is stated at every arity (`StageType.not_forall_le_of_opposite`); no
-legal private type of arity at least `4` with that property is constructed here.  It does not
-refute (R1), nor the existence of attached gated extensions with several readers.
+**What this does not decide.**  The statement is about rows.  It does not say that, in a lawful
+labelling with the literal private face `labelling ⊤ ⊤` and the gate not `⊥`, availability from
+the private cap reaches a reader other than the ceiling: availability from one cap gives
+domination of one full private cell, while the argument above needs domination of both, one in
+each lift.  Whether recovery for the literal private face can always go through the ceiling alone
+is open.  This is private arity `2`; the argument is stated at every arity
+(`StageType.not_forall_le_of_opposite`), but no legal private type of arity at least `4` with two
+oppositely ordered full cells is constructed here.  It does not refute (R1), nor the existence of
+attached gated extensions with several readers.
 
 ## Placement
 
@@ -86,7 +94,7 @@ theorem label_gate_eq_bot {α : Ordinal.{u}} (Q : StageType.{u} α 3) (hQ : Q.Is
 
 /-- **Every attached gated extension of `P α` has a second reader**: over any face and with any
 donor, some reader other than the gate and the ceiling is read by the row of the gate not as `⊥`.
-Availability for the private cap can reach it in a lawful labelling not `⊥` at the gate. -/
+A statement about the row of the gate. -/
 theorem exists_reader {α : Ordinal.{u}} {m : ℕ} {f : Fin m ↪ Fin 2}
     {d : StageType.{u} α (m + 1)} (E : StageType.AttachedGatedExtension (P α) f d) :
     ∃ t ∈ E.readers, ∃ ht : E.display.toCellScheme.gradedIndex t =

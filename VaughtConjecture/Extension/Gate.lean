@@ -3,6 +3,7 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
+import VaughtConjecture.Extension.Gluing
 import VaughtConjecture.Scheme.Row
 
 /-!
@@ -118,6 +119,29 @@ and never serves availability.
   the rows in place of the labels `⊥` of the twins, a legal scheme carrying a gate exists at the
   input of that refutation (`CoupledGateExamples.exists_coupledGatedExtension_comap_g₁`); the
   universal form `StageType.HasCoupledGatedPinnedExtensions` is open, and so is general (R1).
+
+**Readers** (`ReadsOnly`, `IsLawful.recover_of_readsOnly`).  A gate may have twins that are not
+`⊥`.  The row of a cell `G` **reads only** a set `S` of cells (`ReadsOnly`) when it is `⊥` at
+every other cell of the graded index of `G` outside `S`; the members of `S` that are gates in the
+sense of `IsGate` are its **readers**, and a member `K` that the row of `G` reads at least as `G`
+itself is a **ceiling** of `G`.  In a lawful labelling not `⊥` at `G`, every cell of the graded
+index of `G` outside `S` is `⊥` (`IsLawful.eq_bot_of_row_eq_bot`) and a ceiling is at least `G`
+(`IsLawful.le_of_row_self_le`); so **availability** (the second law of a lawful section: a cell of
+the grade of `G` with scope inside that of `G` lies below some cell of the graded index of `G`)
+puts the private cap below a member of `S` (`IsLawful.exists_mem_le_of_readsOnly`).  If every
+member of `S` is a reader, gate recovery through that member gives agreement with the display on
+every donor cell below the label of the cap, for every lawful labelling literally the display on
+the private cells and not `⊥` at `G` (`IsLawful.recover_of_readsOnly`).  Availability may reach a
+twin of `G`; it suffices that the twins it can reach are readers.  A reading through an anchor is
+transported to every lawful labelling below the value of the reading cell
+(`IsLawful.min_eq_visibilityReplace_of_row_eq`).
+
+**One dominating cell reads one order** (`row_lt_of_le_dominant`).  If, in a labelling lawful
+below the graded index `Y` of a cell `K`, `K` dominates every cell of graded index `Y`, the row of
+`K` orders any two cells of the grade of `Y` with scopes inside that of `Y` as the labelling does.
+A row of `G` that is `⊥` at every other cell of its graded index except one ceiling makes that
+ceiling dominant in every labelling lawful below that graded index and not `⊥` at `G`
+(`IsLawfulBelow.le_of_readsOnly_singleton`).
 
 ## Placement
 
@@ -493,5 +517,140 @@ theorem IsGate.recover_of_twinsReadGate (hgate : R.IsGate G C P Q w) (hq : R.IsL
   have hCG : w C ≤ q G := hlit C hgate.cap_mem ▸
     cap_le_gate_of_twinsReadGate hq hgate.scope_cap_subset hgate.grade_cap htw
   exact ⟨hCG, hgate.recover_of_cap_le_gate hq hlit hCG⟩
+
+/-! ### Readers -/
+
+section Readers
+
+variable {K : ι} {S : Set ι}
+
+/-- The row of `G` **reads only `S`** at its graded index: it is `⊥` at every other cell of the
+graded index of `G` that is not in `S`. -/
+def ReadsOnly (R : D.Rows.{u}) (G : ι) (S : Set ι) : Prop :=
+  ∀ t (ht : D.gradedIndex t = D.gradedIndex G), t ≠ G → t ∉ S → R.row G ⟨t, ht.le⟩ = ⊥
+
+/-- A cell `K` of the graded index of `G` that the row of `G` reads at least as `G` itself is at
+least `G` in every labelling `q` satisfying the locality at `G`. -/
+theorem le_of_row_self_le_of_locality
+    (hl : TransformsTo (fun d : D.below (D.gradedIndex G) ↦ D.grade d) (R.row G)
+      (fun d ↦ min (q d) (q G)))
+    (hKG : D.gradedIndex K = D.gradedIndex G)
+    (hrow : R.row G ⟨G, D.mem_below_gradedIndex G⟩ ≤ R.row G ⟨K, hKG.le⟩) : q G ≤ q K := by
+  have h := hl.le_of_le (d := ⟨G, D.mem_below_gradedIndex G⟩) (d' := ⟨K, hKG.le⟩) hrow
+    (congrArg Prod.snd hKG).le
+  simp only [min_self] at h
+  exact h.trans (min_le_left _ _)
+
+namespace IsLawful
+
+/-- A cell `K` of the graded index of `G` that the row of `G` reads at least as `G` itself is at
+least `G` in every lawful labelling. -/
+theorem le_of_row_self_le (hq : R.IsLawful q) (hKG : D.gradedIndex K = D.gradedIndex G)
+    (hrow : R.row G ⟨G, D.mem_below_gradedIndex G⟩ ≤ R.row G ⟨K, hKG.le⟩) : q G ≤ q K :=
+  le_of_row_self_le_of_locality (hq.locality G) hKG hrow
+
+/-- **Availability reaches a member of `S`.**  Let the row of `G` read only `S` at its graded
+index, and read some `K ∈ S` of that graded index at least as `G` itself.  In a lawful labelling
+not `⊥` at `G`, every cell `C` with scope in that of `G` and of the grade of `G` lies below some
+member of `S` of the graded index of `G`. -/
+theorem exists_mem_le_of_readsOnly (hq : R.IsLawful q) (honly : R.ReadsOnly G S) (hK : K ∈ S)
+    (hKG : D.gradedIndex K = D.gradedIndex G)
+    (hrow : R.row G ⟨G, D.mem_below_gradedIndex G⟩ ≤ R.row G ⟨K, hKG.le⟩) (hG : q G ≠ ⊥)
+    (hCG : D.scope C ⊆ D.scope G) (hgr : D.grade C = D.grade G) :
+    ∃ u ∈ S, D.gradedIndex u = D.gradedIndex G ∧ q C ≤ q u := by
+  obtain ⟨u, hu, hle⟩ := hq.availability C G hCG hgr
+  by_cases huG : u = G
+  · subst huG
+    exact ⟨K, hK, hKG, hle.trans (hq.le_of_row_self_le hKG hrow)⟩
+  by_cases huS : u ∈ S
+  · exact ⟨u, huS, hu, hle⟩
+  · have h0 : q u = ⊥ := hq.eq_bot_of_row_eq_bot (t := ⟨u, hu.le⟩) hG (honly u hu huG huS)
+    exact ⟨K, hK, hKG, (hle.trans h0.le).trans bot_le⟩
+
+/-- **Recovery through the readers.**  Let the row of `G` read only `S` at its graded index, and
+read some `K ∈ S` of that graded index at least as `G` itself, and let every member of `S` be a
+gate for the private cap `C`, the private cells `P`, the donor cells `Q`, and the display `w`.  A
+lawful labelling `q`, literally `w` on `P` and not `⊥` at `G`, has a member `u` of `S` with
+`w C ≤ q u`, and agrees with `w` on every donor cell below `w C`.  Nothing is assumed about the
+values of `q` at the twins of `G`. -/
+theorem recover_of_readsOnly (hq : R.IsLawful q) (honly : R.ReadsOnly G S)
+    (hS : ∀ u ∈ S, R.IsGate u C P Q w) (hK : K ∈ S) (hKG : D.gradedIndex K = D.gradedIndex G)
+    (hrow : R.row G ⟨G, D.mem_below_gradedIndex G⟩ ≤ R.row G ⟨K, hKG.le⟩)
+    (hlit : ∀ x ∈ P, q x = w x) (hG : q G ≠ ⊥) :
+    ∃ u ∈ S, w C ≤ q u ∧ ∀ e ∈ Q, min (q e) (w C) = min (w e) (w C) := by
+  have hgK := hS K hK
+  have hCG : D.scope C ⊆ D.scope G :=
+    hgK.scope_cap_subset.trans (congrArg Prod.fst hKG).le
+  have hgr : D.grade C = D.grade G := hgK.grade_cap.trans (congrArg Prod.snd hKG)
+  obtain ⟨u, hu, -, hle⟩ := hq.exists_mem_le_of_readsOnly honly hK hKG hrow hG hCG hgr
+  rw [hlit C hgK.cap_mem] at hle
+  exact ⟨u, hu, hle, (hS u hu).recover_of_cap_le_gate hq hlit hle⟩
+
+/-- **A reading through an anchor, transported.**  If the row of `K` reads `e` as `vr_N` of its
+reading of `z`, `N` the grade of `K`, then every lawful labelling `q` labels `e` as `vr_N` of its
+own label at `z`, up to its label at `K`: one witness at `K` commutes with the replacement below
+`q K` (`Label.IsWitness.min_apply_visibilityReplace`). -/
+theorem min_eq_visibilityReplace_of_row_eq (hq : R.IsLawful q) {z e : D.below (D.gradedIndex K)}
+    {i : ℕ} (hi : i ≤ D.grade K)
+    (hrow : R.row K e = visibilityReplace (D.grade K) i (R.row K z)) :
+    min (q e) (q K) = min (visibilityReplace (D.grade K) i (q z)) (q K) := by
+  obtain ⟨g, σ, hw, hgN, heq⟩ := hq.exists_gateWitness K
+  have hz' : min (σ (R.row K z)) (q K) = min (q z) (q K) := (heq z).symm
+  have h' := hw.min_apply_visibilityReplace (hq.orderly K) hgN hz' hi
+  rwa [← hrow, ← heq e] at h'
+
+end IsLawful
+
+/-- **A dominating cell orders what it dominates.**  Let `r` be lawful below the graded index `Y`
+of a cell `K` and let `K` dominate every cell of graded index `Y`.  If `r` orders two cells `A`,
+`B` of the grade of `Y`, with scopes inside that of `Y`, strictly, `r B < r A`, then the row of
+`K` orders them strictly the same way: availability puts `A` below a cell of graded index `Y`,
+hence below `K`, and locality at `K`, at equal grades, reads `A` and `B` with one witness. -/
+theorem row_lt_of_le_dominant {Y : Finset α × ℕ} (hKY : D.gradedIndex K = Y)
+    {r : ι → Label.{u}} (hr : R.IsLawfulBelow Y (fun d ↦ r d))
+    (hdom : ∀ t, D.gradedIndex t = Y → r t ≤ r K) {A B : ι} (hsA : D.scope A ⊆ Y.1)
+    (hgA : D.grade A = Y.2) (hsB : D.scope B ⊆ Y.1) (hgB : D.grade B = Y.2) (hAB : r B < r A) :
+    R.row K ⟨B, by rw [CellScheme.mem_below, hKY]; exact (D.gradedIndex_le_iff).mpr ⟨hsB, hgB.le⟩⟩
+      < R.row K
+        ⟨A, by rw [CellScheme.mem_below, hKY]; exact (D.gradedIndex_le_iff).mpr ⟨hsA, hgA.le⟩⟩ := by
+  obtain ⟨-, hl, ha⟩ := isLawfulBelow_iff_forall.mp hr
+  have hKmem : K ∈ D.below Y := by rw [CellScheme.mem_below, hKY]
+  have hsK : D.scope K = Y.1 := congrArg Prod.fst hKY
+  have hgK : D.grade K = Y.2 := congrArg Prod.snd hKY
+  have hAK : r A ≤ r K := by
+    obtain ⟨u, hu, hle⟩ := ha A K hKmem (hsK ▸ hsA) (hgK ▸ hgA)
+    exact hle.trans (hdom u (hu.trans hKY))
+  by_contra hnot
+  rw [not_lt] at hnot
+  have h := (hl K hKmem).le_of_le
+    (d := ⟨A, by rw [CellScheme.mem_below, hKY]; exact (D.gradedIndex_le_iff).mpr ⟨hsA, hgA.le⟩⟩)
+    (d' := ⟨B, by rw [CellScheme.mem_below, hKY]; exact (D.gradedIndex_le_iff).mpr ⟨hsB, hgB.le⟩⟩)
+    hnot (by simp only; rw [hgA, hgB])
+  simp only at h
+  rw [min_eq_left hAK] at h
+  exact absurd (h.trans (min_le_left _ _)) (not_le.mpr hAB)
+
+/-- **A gate whose row reads only one ceiling makes it dominant.**  Let `r` be lawful below the
+graded index `Y` of `G`, not `⊥` at `G`, and let the row of `G` be `⊥` at every cell of graded
+index `Y` other than `G` and `K`, and read `K` at least as `G`.  Then `K` dominates every cell of
+graded index `Y`. -/
+theorem IsLawfulBelow.le_of_readsOnly_singleton {Y : Finset α × ℕ} (hGY : D.gradedIndex G = Y)
+    (hKG : D.gradedIndex K = D.gradedIndex G) {r : ι → Label.{u}}
+    (hr : R.IsLawfulBelow Y (fun d ↦ r d)) (honly : R.ReadsOnly G {K})
+    (hrow : R.row G ⟨G, D.mem_below_gradedIndex G⟩ ≤ R.row G ⟨K, hKG.le⟩) (hG : r G ≠ ⊥) :
+    ∀ t, D.gradedIndex t = Y → r t ≤ r K := by
+  obtain ⟨-, hl, -⟩ := isLawfulBelow_iff_forall.mp hr
+  have hGmem : G ∈ D.below Y := by rw [CellScheme.mem_below, hGY]
+  have hGK : r G ≤ r K := le_of_row_self_le_of_locality (hl G hGmem) hKG hrow
+  intro t ht
+  by_cases htG : t = G
+  · exact htG ▸ hGK
+  by_cases htK : t = K
+  · exact htK ▸ le_rfl
+  have ht' : D.gradedIndex t = D.gradedIndex G := ht.trans hGY.symm
+  have h0 := (hl G hGmem).eq_bot (d := ⟨t, ht'.le⟩) (honly t ht' htG htK)
+  exact ((min_eq_bot.mp h0).resolve_right hG).le.trans bot_le
+
+end Readers
 
 end VaughtConjecture.CellScheme.Rows

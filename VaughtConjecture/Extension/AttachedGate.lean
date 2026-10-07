@@ -4,7 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Extension.GatedExtension
-import VaughtConjecture.Extension.Gluing
 
 /-!
 # Attached gated extensions
@@ -12,68 +11,66 @@ import VaughtConjecture.Extension.Gluing
 Roadmap, Layer 3, 3.2 (the ordinary construction (R1): one occurrence over the private tuple with
 the display's bottom pattern) and 3.3 (the recovery statements, item 1: agreement below a cutoff);
 the vocabulary of `VaughtConjecture.Extension.Gate` (private cells, donor cells, display, private
-cap, gate, twins, readings).
+cap, gate, twins, readings, anchors).
 
 **The design.**  In a gated extension (`StageType.GatedExtension`) the display labels every twin of
-the gate `⊥`; that property fails at every stage
+the gate `⊥`; the universal form of that property fails at every stage
 (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`).  In a coupled gated extension
 (`StageType.CoupledGatedExtension`) every twin reads the gate at least as the private cap, so the
-gate dominates the cap in every lawful labelling; the universal coupled property fails at every
-stage above `1` (a result under review, at a private type with a proper anchor): a lawful private
-labelling that is `⊥` at an anchor and not at the cap is then carried, through the gate, to a
-donor labelling that the donor's rows forbid.  An **attached gated extension** puts the
-condition on the row of the gate instead, and places no condition on the labels of the twins:
+gate dominates the cap in every lawful labelling; the universal coupled property
+(`StageType.HasCoupledGatedPinnedExtensions`) is open on `main` (a separate open change argues
+that it fails above stage `1`, through a lawful private labelling that is `⊥` at an anchor and not
+at the cap).  An **attached gated extension** puts the condition on the row of the gate instead,
+and places no condition on the labels of the twins:
 
-* a set of **readers**, cells of the graded index `(univ, n)` of the gate whose rows read every
-  donor cell as in `CellScheme.Rows.IsGate` (each reader is a gate in the sense of
-  `VaughtConjecture.Extension.Gate`, for the same private cap and display);
+* a set of **readers**: cells of the graded index `(univ, n)` of the gate that are gates in the
+  sense of `CellScheme.Rows.IsGate`, that is, whose rows read every new donor cell through an
+  anchor or through a private cell labelled at least the cap, for the same cap and display;
 * the row of the gate is `⊥` at every other cell of its graded index outside the readers
   (`CellScheme.Rows.ReadsOnly`), and reads one reader, the **ceiling**, at least as it reads the
-  gate itself;
+  gate itself (so the ceiling is at least the gate in every lawful labelling);
 * the display does not label the gate `⊥`.
 
-A reader may be the gate itself, in which case it may serve as its own ceiling.
+A reader may be the gate itself, which may then serve as its own ceiling.  **Availability** is the
+second law of a lawful section: a cell of the grade of a cell `t`, with scope inside that of `t`,
+lies below some cell of the graded index of `t`.
 
-**Recovery through the readers** (`CellScheme.Rows.IsLawful.recover_of_readsOnly`).  Let `q` be a
-lawful labelling, literally the display on the private cells, and not `⊥` at the gate `G`.  The
-row of `G` makes every cell of its graded index outside the readers `⊥`
-(`CellScheme.Rows.IsLawful.eq_bot_of_row_eq_bot`), and the ceiling at least `q G`
-(`CellScheme.Rows.IsLawful.le_of_row_self_le`).  Availability for the private cap `C` and `G`
-gives a cell of the graded index of `G` at least `q C`; it is therefore a reader, or `G`, below the
-ceiling (`CellScheme.Rows.IsLawful.exists_mem_le_of_readsOnly`).  That reader is a gate whose value
-is at least the label of the cap, and gate recovery from the gate inequality
-(`CellScheme.Rows.IsGate.recover_of_cap_le_gate`) gives agreement with the display on every donor
-cell below the label of the cap.  Availability may reach a twin of the gate: what is excluded is
-a twin that is not a reader, not a twin as such.  No label of the twins is read, and no legality
-is used.
+**Recovery through the readers** (`StageType.AttachedGatedExtension.recover_of_isLawful`, from
+`CellScheme.Rows.IsLawful.recover_of_readsOnly`).  Let `q` be a lawful labelling, literally the
+display on the private cells, and not `⊥` at the gate.  Every cell of the graded index of the gate
+outside the readers is `⊥` in `q`, so availability for the private cap and the gate gives a reader
+at least the label of the cap, and gate recovery through that reader gives agreement with the
+display on every donor cell below that label.  Availability may reach a twin of the gate; what is
+excluded is a twin that is not a reader.  No label of the twins is read, and no legality is used.
 
-**The lifts that legality asks for** (`StageType.AttachedGatedExtension.exists_lift`).  Let `c ≠ ⊥`
+**The lifts that legality forces** (`StageType.AttachedGatedExtension.exists_lift`).  Let `c ≠ ⊥`
 be self-visible at `n + 1`, and `a` a lawful labelling of the private face in the cap ball of the
 display at `c`.  Bountifulness of the display (`Scheme.IsLegal.exists_isLawful_extend`) gives a
 lawful labelling `r` of the display with private face `a` and the observation of the display at
-`c`.  The gate is not `⊥` in the display, so not in `r`; so some reader `K` has `r` at least the
+`c`.  The gate is not `⊥` in the display, so not in `r`; so some reader `K` is at least `r` at the
 cap, and each reading of the row of `K` through an anchor `z` is transported:
 `min (r e) (r C) = min (vr_n(r z, i)) (r C)`
-(`CellScheme.Rows.IsLawful.min_eq_visibilityReplace_of_row_eq`).  This is forced only at caps
-`c ≠ ⊥`, for private labellings that agree with the private labels below `c`; such a labelling is
-not `⊥` at any private cell not labelled `⊥`, so no `⊥` is carried from an anchor to a donor cell
-(`Label.ne_bot_of_min_eq_of_ne_bot`).  At the cap `⊥`, a lift may label the gate `⊥`, and nothing
-is forced through the readers.  This is the difference from the coupled gate, whose bottom
-transport condition is forced at the cap `⊥` for every lawful private labelling.
+(`CellScheme.Rows.IsLawful.min_eq_visibilityReplace_of_row_eq`).  Argued, not formalized: at the
+cap `⊥` a lift may label the gate and every reader `⊥`, so nothing is forced through the readers
+there; and since `c ≠ ⊥`, `a` is not `⊥` at a private cell not labelled `⊥`
+(`Label.ne_bot_of_min_eq_of_ne_bot`), so the transported readings force no `⊥` at a donor cell not
+labelled `⊥`.  The coupled gate, by contrast, forces the readings of its gate for every lawful
+private labelling, at the cap `⊥` included.
 
-**One dominating cell is not enough** (`StageType.not_forall_le_of_opposite`).  If two cells of
-the private face of graded index `(univ, n)` are ordered oppositely by two lawful labellings in the
-cap ball of the private labels at a cap `c ≠ ⊥` self-visible at `n`, then in a legal one-point
-extension no single cell `K` of graded index `(univ, n)` dominates that graded index in every
-labelling lawful below it that is not `⊥` at a cell `G` the extension does not label `⊥`.  The
-lifts of the two labellings keep `G` not `⊥`, and `K`, at least the larger of the two cells by
-availability, would read them in both orders with one row (`CellScheme.Rows.row_lt_of_le_dominant`).
-In particular a gate whose row is `⊥` at every other cell of its graded index except one ceiling
-(the gate itself included) is labelled `⊥` by every such extension
-(`StageType.label_eq_bot_of_readsOnly_singleton`).  So an attached gated extension of such a
-private type has a reader that is neither the gate nor its ceiling, read by the gate not as `⊥`,
-and availability can reach it.  The instance is `GatedExtensionCounterexample.P α`
-(`VaughtConjecture.Extension.AttachedGateCounterexample`).
+**One dominating cell for two opposite cells is impossible**
+(`StageType.not_forall_le_of_opposite`).  If two cells of the private face of graded index
+`(univ, n)` are ordered oppositely by two lawful labellings in the cap ball of the private labels
+at a cap `c ≠ ⊥` self-visible at `n`, then in a legal one-point extension no single cell `K` of
+graded index `(univ, n)` dominates that graded index in every labelling lawful below it that is
+not `⊥` at a cell `G` the extension does not label `⊥`: the lifts of the two labellings
+(`StageType.IsLegal.exists_isLawfulBelow_castSucc`) keep `G` not `⊥`, and `K` would read the two
+cells in both orders with one row (`CellScheme.Rows.row_lt_of_le_dominant`).  These lifts have
+private faces other than the private labels.  In particular a cell `G` whose row is `⊥` at every
+other cell of its graded index except one ceiling (the gate itself included) is labelled `⊥` by
+every such extension (`StageType.label_eq_bot_of_readsOnly_singleton`); this is a statement about
+that row design.  It does not decide whether, for labellings with the literal private face,
+availability from the private cap must reach a reader other than the ceiling.  The instance is
+`GatedExtensionCounterexample.P α` (`VaughtConjecture.Extension.AttachedGateCounterexample`).
 
 ## Placement
 
@@ -91,147 +88,6 @@ universe u
 namespace VaughtConjecture
 
 open Finset Label
-
-/-- A minimum with a label `c ≠ ⊥` that agrees with the minimum of a label not `⊥` is not `⊥`
-at its first argument. -/
-theorem Label.ne_bot_of_min_eq_of_ne_bot {a b c : Label.{u}} (h : min a c = min b c)
-    (hb : b ≠ ⊥) (hc : c ≠ ⊥) : a ≠ ⊥ := by
-  rintro rfl
-  rw [min_eq_left bot_le] at h
-  exact (min_eq_bot.mp h.symm).elim hb hc
-
-namespace CellScheme.Rows
-
-variable {ι α : Type*} {D : CellScheme ι α} {R : D.Rows.{u}} {G K C : ι} {S P Q : Set ι}
-  {w q : ι → Label.{u}}
-
-/-! ### The row of a gate that reads only a set of cells -/
-
-/-- The row of `G` **reads only `S`** at its graded index: it is `⊥` at every other cell of the
-graded index of `G` that is not in `S`. -/
-def ReadsOnly (R : D.Rows.{u}) (G : ι) (S : Set ι) : Prop :=
-  ∀ t (ht : D.gradedIndex t = D.gradedIndex G), t ≠ G → t ∉ S → R.row G ⟨t, ht.le⟩ = ⊥
-
-namespace IsLawful
-
-/-- A cell `K` of the graded index of `G` that the row of `G` reads at least as `G` itself is at
-least `G` in every lawful labelling. -/
-theorem le_of_row_self_le (hq : R.IsLawful q) (hKG : D.gradedIndex K = D.gradedIndex G)
-    (hrow : R.row G ⟨G, D.mem_below_gradedIndex G⟩ ≤ R.row G ⟨K, hKG.le⟩) : q G ≤ q K := by
-  have h := (hq.locality G).le_of_le (d := ⟨G, D.mem_below_gradedIndex G⟩) (d' := ⟨K, hKG.le⟩)
-    hrow (congrArg Prod.snd hKG).le
-  simp only [min_self] at h
-  exact h.trans (min_le_left _ _)
-
-/-- **Availability reaches a member of `S`.**  Let the row of `G` read only `S` at its graded
-index, and read some `K ∈ S` of that graded index at least as `G` itself.  In a lawful labelling
-not `⊥` at `G`, every cell `C` with scope in that of `G` and of the grade of `G` lies below some
-member of `S` of the graded index of `G`. -/
-theorem exists_mem_le_of_readsOnly (hq : R.IsLawful q) (honly : R.ReadsOnly G S) (hK : K ∈ S)
-    (hKG : D.gradedIndex K = D.gradedIndex G)
-    (hrow : R.row G ⟨G, D.mem_below_gradedIndex G⟩ ≤ R.row G ⟨K, hKG.le⟩) (hG : q G ≠ ⊥)
-    (hCG : D.scope C ⊆ D.scope G) (hgr : D.grade C = D.grade G) :
-    ∃ u ∈ S, D.gradedIndex u = D.gradedIndex G ∧ q C ≤ q u := by
-  obtain ⟨u, hu, hle⟩ := hq.availability C G hCG hgr
-  by_cases huG : u = G
-  · subst huG
-    exact ⟨K, hK, hKG, hle.trans (hq.le_of_row_self_le hKG hrow)⟩
-  by_cases huS : u ∈ S
-  · exact ⟨u, huS, hu, hle⟩
-  · have h0 : q u = ⊥ := hq.eq_bot_of_row_eq_bot (t := ⟨u, hu.le⟩) hG (honly u hu huG huS)
-    exact ⟨K, hK, hKG, (hle.trans h0.le).trans bot_le⟩
-
-/-- **Recovery through the readers.**  Let the row of `G` read only `S` at its graded index, and
-read some `K ∈ S` of that graded index at least as `G` itself, and let every member of `S` be a
-gate for the private cap `C`, the private cells `P`, the donor cells `Q`, and the display `w`.  A
-lawful labelling `q`, literally `w` on `P` and not `⊥` at `G`, has a member `u` of `S` with
-`w C ≤ q u`, and agrees with `w` on every donor cell below `w C`.  Nothing is assumed about the
-values of `q` at the twins of `G`. -/
-theorem recover_of_readsOnly (hq : R.IsLawful q) (honly : R.ReadsOnly G S)
-    (hS : ∀ u ∈ S, R.IsGate u C P Q w) (hK : K ∈ S) (hKG : D.gradedIndex K = D.gradedIndex G)
-    (hrow : R.row G ⟨G, D.mem_below_gradedIndex G⟩ ≤ R.row G ⟨K, hKG.le⟩)
-    (hlit : ∀ x ∈ P, q x = w x) (hG : q G ≠ ⊥) :
-    ∃ u ∈ S, w C ≤ q u ∧ ∀ e ∈ Q, min (q e) (w C) = min (w e) (w C) := by
-  have hgK := hS K hK
-  have hCG : D.scope C ⊆ D.scope G :=
-    hgK.scope_cap_subset.trans (congrArg Prod.fst hKG).le
-  have hgr : D.grade C = D.grade G := hgK.grade_cap.trans (congrArg Prod.snd hKG)
-  obtain ⟨u, hu, -, hle⟩ := hq.exists_mem_le_of_readsOnly honly hK hKG hrow hG hCG hgr
-  rw [hlit C hgK.cap_mem] at hle
-  exact ⟨u, hu, hle, (hS u hu).recover_of_cap_le_gate hq hlit hle⟩
-
-/-- **A reading through an anchor, transported.**  If the row of `K` reads `e` as `vr_N` of its
-reading of `z`, `N` the grade of `K`, then every lawful labelling `q` labels `e` as `vr_N` of its
-own label at `z`, up to its label at `K`: one witness at `K` commutes with the replacement below
-`q K` (`Label.IsWitness.min_apply_visibilityReplace`). -/
-theorem min_eq_visibilityReplace_of_row_eq (hq : R.IsLawful q) {z e : D.below (D.gradedIndex K)}
-    {i : ℕ} (hi : i ≤ D.grade K)
-    (hrow : R.row K e = visibilityReplace (D.grade K) i (R.row K z)) :
-    min (q e) (q K) = min (visibilityReplace (D.grade K) i (q z)) (q K) := by
-  obtain ⟨g, σ, hw, hgN, heq⟩ := hq.exists_gateWitness K
-  have hz' : min (σ (R.row K z)) (q K) = min (q z) (q K) := (heq z).symm
-  have h' := hw.min_apply_visibilityReplace (hq.orderly K) hgN hz' hi
-  rwa [← hrow, ← heq e] at h'
-
-end IsLawful
-
-/-! ### One dominating cell reads every order with one row -/
-
-/-- **A dominating cell orders what it dominates.**  Let `r` be lawful below the graded index `Y`
-of a cell `K` and let `K` dominate every cell of graded index `Y`.  If `r` orders two cells `A`,
-`B` of the grade of `Y`, with scopes inside that of `Y`, strictly, `r B < r A`, then the row of
-`K` orders them strictly the same way: availability puts `A` below a cell of graded index `Y`,
-hence below `K`, and locality at `K`, at equal grades, reads `A` and `B` with one witness. -/
-theorem row_lt_of_le_dominant {Y : Finset α × ℕ} (hKY : D.gradedIndex K = Y)
-    {r : ι → Label.{u}} (hr : R.IsLawfulBelow Y (fun d ↦ r d))
-    (hdom : ∀ t, D.gradedIndex t = Y → r t ≤ r K) {A B : ι} (hsA : D.scope A ⊆ Y.1)
-    (hgA : D.grade A = Y.2) (hsB : D.scope B ⊆ Y.1) (hgB : D.grade B = Y.2) (hAB : r B < r A) :
-    R.row K ⟨B, by rw [CellScheme.mem_below, hKY]; exact (D.gradedIndex_le_iff).mpr ⟨hsB, hgB.le⟩⟩
-      < R.row K
-        ⟨A, by rw [CellScheme.mem_below, hKY]; exact (D.gradedIndex_le_iff).mpr ⟨hsA, hgA.le⟩⟩ := by
-  obtain ⟨-, hl, ha⟩ := isLawfulBelow_iff_forall.mp hr
-  have hKmem : K ∈ D.below Y := by rw [CellScheme.mem_below, hKY]
-  have hsK : D.scope K = Y.1 := congrArg Prod.fst hKY
-  have hgK : D.grade K = Y.2 := congrArg Prod.snd hKY
-  have hAK : r A ≤ r K := by
-    obtain ⟨u, hu, hle⟩ := ha A K hKmem (hsK ▸ hsA) (hgK ▸ hgA)
-    exact hle.trans (hdom u (hu.trans hKY))
-  by_contra hnot
-  rw [not_lt] at hnot
-  have h := (hl K hKmem).le_of_le
-    (d := ⟨A, by rw [CellScheme.mem_below, hKY]; exact (D.gradedIndex_le_iff).mpr ⟨hsA, hgA.le⟩⟩)
-    (d' := ⟨B, by rw [CellScheme.mem_below, hKY]; exact (D.gradedIndex_le_iff).mpr ⟨hsB, hgB.le⟩⟩)
-    hnot (by simp only; rw [hgA, hgB])
-  simp only at h
-  rw [min_eq_left hAK] at h
-  exact absurd (h.trans (min_le_left _ _)) (not_le.mpr hAB)
-
-/-- **A gate whose row reads only one ceiling makes it dominant.**  Let `r` be lawful below the
-graded index `Y` of `G`, not `⊥` at `G`, and let the row of `G` be `⊥` at every cell of graded
-index `Y` other than `G` and `K`, and read `K` at least as `G`.  Then `K` dominates every cell of
-graded index `Y`. -/
-theorem IsLawfulBelow.le_of_readsOnly_singleton {Y : Finset α × ℕ} (hGY : D.gradedIndex G = Y)
-    (hKG : D.gradedIndex K = D.gradedIndex G) {r : ι → Label.{u}}
-    (hr : R.IsLawfulBelow Y (fun d ↦ r d)) (honly : R.ReadsOnly G {K})
-    (hrow : R.row G ⟨G, D.mem_below_gradedIndex G⟩ ≤ R.row G ⟨K, hKG.le⟩) (hG : r G ≠ ⊥) :
-    ∀ t, D.gradedIndex t = Y → r t ≤ r K := by
-  obtain ⟨-, hl, -⟩ := isLawfulBelow_iff_forall.mp hr
-  have hGmem : G ∈ D.below Y := by rw [CellScheme.mem_below, hGY]
-  have hGK : r G ≤ r K := by
-    have h := (hl G hGmem).le_of_le (d := ⟨G, D.mem_below_gradedIndex G⟩) (d' := ⟨K, hKG.le⟩)
-      hrow (congrArg Prod.snd hKG).le
-    simp only [min_self] at h
-    exact h.trans (min_le_left _ _)
-  intro t ht
-  by_cases htG : t = G
-  · exact htG ▸ hGK
-  by_cases htK : t = K
-  · exact htK ▸ le_rfl
-  have ht' : D.gradedIndex t = D.gradedIndex G := ht.trans hGY.symm
-  have h0 := (hl G hGmem).eq_bot (d := ⟨t, ht'.le⟩) (honly t ht' htG htK)
-  exact ((min_eq_bot.mp h0).resolve_right hG).le.trans bot_le
-
-end CellScheme.Rows
 
 /-! ### Attached gated extensions -/
 
@@ -389,7 +245,71 @@ def GatedExtension.toAttachedGatedExtension {P : StageType.{u} α n} {f : Fin m 
   row_gate_le_ceiling := le_rfl
   isGate K hK := by rw [Set.mem_singleton_iff.mp hK]; exact E.isGate
 
-/-! ### One dominating cell is not enough -/
+/-! ### One dominating cell for two opposite cells is impossible -/
+
+/-- **Lifting from the private face at a cap.**  Let `Q` be a legal stage type on `n + 1` points,
+`0 < n`, whose face along `Fin.castSuccEmb` is closed, and let `c` be self-visible at `n`.  A
+lawful labelling `q` of the face whose observation at `c` is that of the labels of the face extends
+to a labelling `r` lawful below `(univ, n)`, equal to `q` on the face, with the observation of the
+labels of `Q` at `c` at every cell below `(univ, n)`: bountifulness of `Q` from
+`(univ.map Fin.castSuccEmb, n)` to `(univ, n)`. -/
+theorem IsLegal.exists_isLawfulBelow_castSucc {Q : StageType.{u} α (n + 1)} (hQ : Q.IsLegal)
+    (hfQ : univ.map Fin.castSuccEmb ∈ Q.toCellScheme.faces) (hn : 0 < n) {c : Label.{u}}
+    (hc : IsSelfVisible n c) {q : Fin (Q.comap Fin.castSuccEmb hfQ).card → Label.{u}}
+    (hq : (Q.comap Fin.castSuccEmb hfQ).rows.IsLawful q)
+    (hqc : ∀ i, min ((Q.comap Fin.castSuccEmb hfQ).label i) c = min (q i) c) :
+    ∃ r : Fin Q.card → Label.{u}, Q.rows.IsLawfulBelow (univ, n) (fun x ↦ r x) ∧
+      (∀ x ∈ Q.toCellScheme.below (univ, n), min (r x) c = min (Q.label x) c) ∧
+      ∀ i, r (Q.toScheme.cellMap Fin.castSuccEmb i) = q i := by
+  let φ := Q.toScheme.cellMap Fin.castSuccEmb
+  let X : Finset (Fin (n + 1)) × ℕ := (univ.map Fin.castSuccEmb, n)
+  let Y : Finset (Fin (n + 1)) × ℕ := (univ, n)
+  have hX : X ∈ Q.toCellScheme.gradedFaces := ⟨hfQ, hn, by simp [X]⟩
+  have hY : Y ∈ Q.toCellScheme.gradedFaces := ⟨Q.univ_mem_faces, hn, by simp [Y]⟩
+  have hXY : X ≤ Y := ⟨subset_univ _, le_rfl⟩
+  let x : Fin Q.card → Label.{u} := Function.extend φ q fun _ ↦ ⊥
+  have hxφ : ∀ i, x (φ i) = q i := fun i ↦ φ.injective.extend_apply _ _ i
+  have hxX : Q.rows.IsLawfulBelow X (fun d ↦ x d) := by
+    refine (Q.toScheme.isLawfulBelow_comap_cellMap_iff Fin.castSuccEmb (univ, n) x).mp ?_
+    have h : (Q.toScheme.comap Fin.castSuccEmb).rows.IsLawfulBelow (univ, n)
+        (fun i ↦ q i.1) := hq.isLawfulBelow (univ, n)
+    have heq : (fun i : (Q.toScheme.comap Fin.castSuccEmb).toCellScheme.below (univ, n) ↦
+        x (Q.toScheme.cellMap Fin.castSuccEmb i)) = fun i ↦ q i.1 :=
+      funext fun i ↦ hxφ i.1
+    rw [heq]; exact h
+  have hcapX : ∀ d : Q.toCellScheme.below X,
+      min (Q.label (Set.inclusion (Q.toCellScheme.below_mono hXY) d)) c = min (x d) c := by
+    intro d
+    have hvis : (d : Fin Q.card) ∈ Q.toScheme.visibleCells Fin.castSuccEmb := by
+      rw [Scheme.mem_visibleCells]
+      have : Q.toCellScheme.scope d ⊆ univ.map Fin.castSuccEmb := d.2.1
+      intro z hz
+      obtain ⟨a, -, rfl⟩ := mem_map.mp (this (mem_coe.mp hz))
+      exact ⟨a, rfl⟩
+    obtain ⟨i, hi⟩ : (d : Fin Q.card) ∈ Set.range φ := by
+      rw [Scheme.range_cellMap]; exact mem_coe.mpr hvis
+    -- The inclusion of the cells below `X` into those below `Y` keeps the cell.
+    change min (Q.label d) c = min (x d) c
+    rw [← hi, hxφ i]; exact hqc i
+  obtain ⟨r', hr', hcap, hres⟩ := (CellScheme.Rows.cappedLift_iff_forall_exists hXY).mp
+    (hQ.isBountiful hX hY hXY) c hc (fun d ↦ x d) (fun d ↦ Q.label d) hxX
+    (Q.isLawful.isLawfulBelow Y) hcapX
+  let r := CellScheme.Rows.extendBot Y r'
+  have hrY : ∀ y (hy : y ∈ Q.toCellScheme.below Y), r y = r' ⟨y, hy⟩ :=
+    fun y hy ↦ CellScheme.Rows.extendBot_of_mem r' hy
+  refine ⟨r, CellScheme.Rows.isLawfulBelow_extendBot.mpr hr', fun y hy ↦ ?_, fun i ↦ ?_⟩
+  · rw [hrY y hy]; exact hcap ⟨y, hy⟩
+  · have hiX : φ i ∈ Q.toCellScheme.below X := by
+      have hvis := Q.toScheme.cellMap_mem Fin.castSuccEmb i
+      rw [Scheme.mem_visibleCells] at hvis
+      refine ⟨fun z hz ↦ ?_, ?_⟩
+      · obtain ⟨a, ha⟩ := hvis hz
+        exact mem_map.mpr ⟨a, mem_univ _, ha⟩
+      · have := (Q.comap Fin.castSuccEmb hfQ).grade_le i
+        rw [← Q.toScheme.map_comap_gradedIndex Fin.castSuccEmb i] at *
+        exact this
+    rw [hrY (φ i) (Q.toCellScheme.below_mono hXY hiX)]
+    exact (hres ⟨φ i, hiX⟩).trans (hxφ i)
 
 /-- **No single dominating cell at a private type with two opposite cells.**  Let `Q` be a legal
 stage type on `n + 1` points whose face along `Fin.castSuccEmb` is literally `P`, and let two
@@ -397,7 +317,8 @@ cells `C₁`, `C₂` of `P` of graded index `(univ, n)` be ordered oppositely by
 of `P` in the cap ball of its labels at a cap `c ≠ ⊥` self-visible at `n`.  For every cell `G` of
 `Q` of graded index `(univ, n)` not labelled `⊥` and every cell `K` of that graded index, some
 labelling lawful below `(univ, n)` is not `⊥` at `G` and labels some cell of that graded index
-strictly above `K`. -/
+strictly above `K`.  The labellings used have the two given private faces, not the labels of
+`P`. -/
 theorem not_forall_le_of_opposite {P : StageType.{u} α n} (Q : StageType.{u} α (n + 1))
     (hQ : Q.IsLegal) (hQP : restrictFace Fin.castSuccEmb Q = some P) {C₁ C₂ : Fin P.card}
     (hC₁ : P.toCellScheme.gradedIndex C₁ = (univ, n))
@@ -416,78 +337,28 @@ theorem not_forall_le_of_opposite {P : StageType.{u} α n} (Q : StageType.{u} α
     rwa [show (Q.comap Fin.castSuccEmb hfQ).toCellScheme.grade C₁ = n from
       congrArg Prod.snd hC₁] at h
   let φ := Q.toScheme.cellMap Fin.castSuccEmb
-  let X : Finset (Fin (n + 1)) × ℕ := (univ.map Fin.castSuccEmb, n)
-  let Y : Finset (Fin (n + 1)) × ℕ := (univ, n)
-  have hX : X ∈ Q.toCellScheme.gradedFaces := ⟨hfQ, hn, by simp [X]⟩
-  have hY : Y ∈ Q.toCellScheme.gradedFaces := ⟨Q.univ_mem_faces, hn, by simp [Y]⟩
-  have hXY : X ≤ Y := ⟨subset_univ _, le_rfl⟩
+  have hGY : G ∈ Q.toCellScheme.below (univ, n) := by rw [CellScheme.mem_below, hG]
   have hgi : ∀ i, (Q.comap Fin.castSuccEmb hfQ).toCellScheme.gradedIndex i = (univ, n) →
-      Q.toCellScheme.gradedIndex (φ i) = X := fun i hi ↦ by
+      Q.toCellScheme.gradedIndex (φ i) = (univ.map Fin.castSuccEmb, n) := fun i hi ↦ by
     rw [← Q.toScheme.map_comap_gradedIndex Fin.castSuccEmb i]
     -- The face of `Q` along `Fin.castSuccEmb` has the restricted scheme, by definition.
     change Prod.map (Finset.map Fin.castSuccEmb) id
-      ((Q.comap Fin.castSuccEmb hfQ).toCellScheme.gradedIndex i) = X
+      ((Q.comap Fin.castSuccEmb hfQ).toCellScheme.gradedIndex i) = _
     rw [hi]; rfl
-  -- Each labelling of the face lifts, at the cap `c`, to a labelling lawful below `Y`.
-  have hlift : ∀ q : Fin (Q.comap Fin.castSuccEmb hfQ).card → Label.{u},
-      (Q.comap Fin.castSuccEmb hfQ).rows.IsLawful q →
-      (∀ i, min ((Q.comap Fin.castSuccEmb hfQ).label i) c = min (q i) c) →
-      ∃ r : Fin Q.card → Label.{u}, Q.rows.IsLawfulBelow Y (fun x ↦ r x) ∧ r G ≠ ⊥ ∧
-        ∀ i, r (φ i) = q i := fun q hq hqc ↦ by
-    let x : Fin Q.card → Label.{u} := Function.extend φ q fun _ ↦ ⊥
-    have hxφ : ∀ i, x (φ i) = q i := fun i ↦ φ.injective.extend_apply _ _ i
-    have hxX : Q.rows.IsLawfulBelow X (fun d ↦ x d) := by
-      refine (Q.toScheme.isLawfulBelow_comap_cellMap_iff Fin.castSuccEmb (univ, n) x).mp ?_
-      have h : (Q.toScheme.comap Fin.castSuccEmb).rows.IsLawfulBelow (univ, n)
-          (fun i ↦ q i.1) := hq.isLawfulBelow (univ, n)
-      have heq : (fun i : (Q.toScheme.comap Fin.castSuccEmb).toCellScheme.below (univ, n) ↦
-          x (Q.toScheme.cellMap Fin.castSuccEmb i)) = fun i ↦ q i.1 :=
-        funext fun i ↦ hxφ i.1
-      rw [heq]; exact h
-    have hcapX : ∀ d : Q.toCellScheme.below X,
-        min (Q.label (Set.inclusion (Q.toCellScheme.below_mono hXY) d)) c = min (x d) c := by
-      intro d
-      have hvis : (d : Fin Q.card) ∈ Q.toScheme.visibleCells Fin.castSuccEmb := by
-        rw [Scheme.mem_visibleCells]
-        have : Q.toCellScheme.scope d ⊆ univ.map Fin.castSuccEmb := d.2.1
-        intro z hz
-        obtain ⟨a, -, rfl⟩ := mem_map.mp (this (mem_coe.mp hz))
-        exact ⟨a, rfl⟩
-      obtain ⟨i, hi⟩ : (d : Fin Q.card) ∈ Set.range φ := by
-        rw [Scheme.range_cellMap]; exact mem_coe.mpr hvis
-      change min (Q.label d) c = min (x d) c
-      rw [← hi, hxφ i]; exact hqc i
-    obtain ⟨r', hr', hcap, hres⟩ := (CellScheme.Rows.cappedLift_iff_forall_exists hXY).mp
-      (hQ.isBountiful hX hY hXY) c hc (fun d ↦ x d) (fun d ↦ Q.label d) hxX
-      (Q.isLawful.isLawfulBelow Y) hcapX
-    let r := CellScheme.Rows.extendBot Y r'
-    have hrY : ∀ y (hy : y ∈ Q.toCellScheme.below Y), r y = r' ⟨y, hy⟩ :=
-      fun y hy ↦ CellScheme.Rows.extendBot_of_mem r' hy
-    have hGY : G ∈ Q.toCellScheme.below Y := by rw [CellScheme.mem_below, hG]
-    refine ⟨r, CellScheme.Rows.isLawfulBelow_extendBot.mpr hr', ?_, fun i ↦ ?_⟩
-    · rw [hrY G hGY]
-      exact Label.ne_bot_of_min_eq_of_ne_bot (hcap ⟨G, hGY⟩) hG0 hc0
-    · have hiX : φ i ∈ Q.toCellScheme.below X := by
-        have hvis := Q.toScheme.cellMap_mem Fin.castSuccEmb i
-        rw [Scheme.mem_visibleCells] at hvis
-        refine ⟨fun z hz ↦ ?_, ?_⟩
-        · obtain ⟨a, ha⟩ := hvis hz
-          exact mem_map.mpr ⟨a, mem_univ _, ha⟩
-        · have := (Q.comap Fin.castSuccEmb hfQ).grade_le i
-          rw [← Q.toScheme.map_comap_gradedIndex Fin.castSuccEmb i] at *
-          exact this
-      rw [hrY (φ i) (Q.toCellScheme.below_mono hXY hiX)]
-      exact (hres ⟨φ i, hiX⟩).trans (hxφ i)
-  obtain ⟨r, hr, hrG, hrφ⟩ := hlift p hp hpc
-  obtain ⟨r', hr', hr'G, hr'φ⟩ := hlift p' hp' hp'c
   have hs : ∀ i, (Q.comap Fin.castSuccEmb hfQ).toCellScheme.gradedIndex i = (univ, n) →
-      Q.toCellScheme.scope (φ i) ⊆ Y.1 ∧ Q.toCellScheme.grade (φ i) = Y.2 := fun i hi ↦
+      Q.toCellScheme.scope (φ i) ⊆ (univ : Finset (Fin (n + 1))) ∧
+        Q.toCellScheme.grade (φ i) = n := fun i hi ↦
     ⟨subset_univ _, congrArg Prod.snd (hgi i hi)⟩
+  obtain ⟨r, hr, hrc, hrφ⟩ := hQ.exists_isLawfulBelow_castSucc hfQ hn hc hp hpc
+  obtain ⟨r', hr', hr'c, hr'φ⟩ := hQ.exists_isLawfulBelow_castSucc hfQ hn hc hp' hp'c
+  have hrG : r G ≠ ⊥ := Label.ne_bot_of_min_eq_of_ne_bot (hrc G hGY) hG0 hc0
+  have hr'G : r' G ≠ ⊥ := Label.ne_bot_of_min_eq_of_ne_bot (hr'c G hGY) hG0 hc0
   exact lt_asymm
     (CellScheme.Rows.row_lt_of_le_dominant hK hr (hdom r hr hrG) (hs C₁ hC₁).1 (hs C₁ hC₁).2
       (hs C₂ hC₂).1 (hs C₂ hC₂).2 ((hrφ C₂).trans_lt (h12.trans_eq (hrφ C₁).symm)))
     (CellScheme.Rows.row_lt_of_le_dominant hK hr' (hdom r' hr' hr'G) (hs C₂ hC₂).1
-      (hs C₂ hC₂).2 (hs C₁ hC₁).1 (hs C₁ hC₁).2 ((hr'φ C₁).trans_lt (h21.trans_eq (hr'φ C₂).symm)))
+      (hs C₂ hC₂).2 (hs C₁ hC₁).1 (hs C₁ hC₁).2
+      ((hr'φ C₁).trans_lt (h21.trans_eq (hr'φ C₂).symm)))
 
 /-- **A gate that reads only one ceiling is labelled `⊥`** at a private type with two opposite
 cells: in a legal stage type `Q` on `n + 1` points with literal face `P` along `Fin.castSuccEmb`,
