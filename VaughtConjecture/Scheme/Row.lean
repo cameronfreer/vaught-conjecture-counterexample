@@ -46,7 +46,8 @@ self-visible at the grade of every cell whose label is at least `c` keeps it law
 (`IsLawful.min_const`, [Kni26, Lemma 2.5.8]), in particular at a cap self-visible at a bound on all
 grades (`IsLawful.min_const_of_isSelfVisible`), and below a pair (`IsLawfulBelow.min_const`,
 `IsLawfulBelow.min_const_of_isSelfVisible`); capping at a cutoff that is not self-visible need
-not keep lawfulness.
+not keep lawfulness.  Capping only the cells of the top grade `N` at a cap self-visible at `N`
+also keeps a lawful section lawful (`IsLawful.capTopGrade`).
 
 The constant bottom labelling is lawful for all rows (`isLawful_const_bot`), and a cell whose row is
 bottom at the cell itself has bottom label in every lawful section
@@ -260,6 +261,40 @@ theorem min_const_of_isSelfVisible {K : ℕ} (hp : R.IsLawful p) (hK : ∀ d, D.
     {c : Label.{u}} (hc : IsSelfVisible K c) : R.IsLawful fun d ↦ min (p d) c :=
   hp.min_const fun d _ ↦ hc.mono (hK d)
 
+/-- **Capping the top grade**, the top-grade variant of [Kni26, Lemma 2.5.8].  If every grade is
+at most `N` and `c` is self-visible at `N`, then capping a lawful section at `c` at the cells of
+grade `N` only, and keeping it at the others, gives a lawful section.  At a cell of grade `N` the
+locality is that of `p` capped at `c` (`Label.TransformsTo.min_const`); the cells below a cell of
+lower grade have lower grade, so its locality does not change; and availability compares cells of
+equal grade. -/
+theorem capTopGrade (hp : R.IsLawful p) {N : ℕ} (hN : ∀ d, D.grade d ≤ N)
+    {c : Label.{u}} (hc : IsSelfVisible N c) :
+    R.IsLawful fun d ↦ if D.grade d = N then min (p d) c else p d where
+  orderly d := by
+    split_ifs with h
+    · exact (hp.orderly d).min (h ▸ hc)
+    · exact hp.orderly d
+  locality s := by
+    by_cases hs : D.grade s = N
+    · have := (hp.locality s).min_const (fun d ↦ hN d.1) hc
+      convert this using 2 with d
+      simp only [hs, ite_true]
+      split_ifs with hd
+      · rw [min_min_min_comm, min_self]
+      · rw [min_assoc]
+    · convert hp.locality s using 2 with d
+      have hd : D.grade d.1 ≠ N := fun h ↦ hs (le_antisymm (hN s) (h ▸ d.2.2))
+      simp only [hs, hd, ite_false]
+  availability s t hst hg := by
+    obtain ⟨u, hu, hle⟩ := hp.availability s t hst hg
+    refine ⟨u, hu, ?_⟩
+    have hgu : D.grade u = D.grade s := (congrArg Prod.snd hu).trans hg.symm
+    by_cases h : D.grade s = N
+    · simp only [h, hgu, ite_true]
+      exact min_le_min_right c hle
+    · simp only [h, hgu, ite_false]
+      exact hle
+
 end IsLawful
 
 /-! ### Lawful sections along equivalences -/
@@ -343,6 +378,62 @@ theorem restrict [DecidableEq α] (hR : R.IsConsistent) (B : Finset α) :
   hR.comap (IsLowerEmbedding.restrict D B)
 
 end IsConsistent
+
+/-! ### Changing a labelling below a pair -/
+
+/-- A labelling equal to another below a pair is lawful there exactly when the other is. -/
+theorem isLawfulBelow_congr {ι β : Type*} {D : CellScheme ι β} {R : D.Rows.{u}}
+    {X : Finset β × ℕ} {w w' : ι → Label.{u}} (h : ∀ d ∈ D.below X, w d = w' d) :
+    R.IsLawfulBelow X (fun d : D.below X ↦ w d) ↔
+      R.IsLawfulBelow X (fun d : D.below X ↦ w' d) := by
+  have : (fun d : D.below X ↦ w d) = fun d : D.below X ↦ w' d := funext fun d ↦ h d d.2
+  rw [this]
+
+/-- **Extension by bottom above a grade.**  A labelling lawful below `(B, k)`, replaced by `⊥` at
+every cell of grade above `k`, is lawful below `(B, K)` for every `K`: the new cells of the lower
+set carry `⊥`, their targets are `⊥`, and they are available to every cell. -/
+theorem isLawfulBelow_extendAbove {ι β : Type*} {D : CellScheme ι β} {R : D.Rows.{u}}
+    {B : Finset β} {k K : ℕ} {w : ι → Label.{u}} (hw : R.IsLawfulBelow (B, k) fun d ↦ w d) :
+    R.IsLawfulBelow (B, K) fun d ↦ if D.grade d ≤ k then w d else ⊥ := by
+  have hmem {d : ι} (hd : d ∈ D.below (B, K)) (h : D.grade d ≤ k) : d ∈ D.below (B, k) :=
+    ⟨hd.1, h⟩
+  refine isLawfulBelow_iff.mpr ⟨fun d ↦ ?_, fun s ↦ ?_, fun s t hst hg ↦ ?_⟩
+  · -- The grade of a cell of the scheme of cells below `(B, K)` is its grade in `D`.
+    change IsSelfVisible (D.grade d.1) (if D.grade d.1 ≤ k then w d.1 else ⊥)
+    split_ifs with h
+    · exact hw.orderly ⟨d.1, hmem d.2 h⟩
+    · exact isSelfVisible_bot _
+  · by_cases h : D.grade s.1 ≤ k
+    · have hs : s.1 ∈ D.below (B, k) := hmem s.2 h
+      have hl : TransformsTo (fun d : D.below (D.gradedIndex s.1) ↦ D.grade d) (R.row s.1)
+          (fun d ↦ min (if D.grade d.1 ≤ k then w d.1 else ⊥)
+            (if D.grade s.1 ≤ k then w s.1 else ⊥)) := by
+        have he : (fun d : D.below (D.gradedIndex s.1) ↦
+            min (if D.grade d.1 ≤ k then w d.1 else ⊥) (if D.grade s.1 ≤ k then w s.1 else ⊥)) =
+            fun d ↦ min (w d.1) (w s.1) := by
+          funext d
+          have hd : D.grade d.1 ≤ k := d.2.2.trans h
+          rw [ite_eq_left hd, ite_eq_left h]
+        rw [he]
+        exact (hw.locality ⟨s.1, hs⟩).reindex fun d : D.below (D.gradedIndex s.1) ↦
+          ⟨⟨d.1, (le_trans d.2 hs : D.gradedIndex d.1 ≤ (B, k))⟩, d.2⟩
+      exact hl.reindex (D' := (D.reindex ((↑) : D.below (B, K) → ι)).below
+        ((D.reindex ((↑) : D.below (B, K) → ι)).gradedIndex s)) fun t ↦ ⟨t.1.1, t.2⟩
+    · simp only [ite_eq_right h, min_bot_right]
+      exact TransformsTo.bot _ _
+  · by_cases h : D.grade t.1 ≤ k
+    · obtain ⟨u, hu, hle⟩ := hw.availability ⟨s.1, hmem s.2 (hg ▸ h)⟩ ⟨t.1, hmem t.2 h⟩ hst hg
+      -- Graded indices in the scheme of cells below `(B, k)` are those of `D`.
+      change D.gradedIndex u.1 = D.gradedIndex t.1 at hu
+      refine ⟨⟨u.1, (hu ▸ t.2 : D.gradedIndex u.1 ≤ (B, K))⟩, hu, ?_⟩
+      have hu' : D.grade u.1 ≤ k := (congrArg Prod.snd hu).trans_le h
+      -- The labelling at `s` and `u`, unfolded.
+      change (if D.grade s.1 ≤ k then w s.1 else ⊥) ≤ (if D.grade u.1 ≤ k then w u.1 else ⊥)
+      rw [ite_eq_left (hg ▸ h), ite_eq_left hu']
+      exact hle
+    · refine ⟨t, rfl, ?_⟩
+      rw [ite_eq_right (hg ▸ h)]
+      exact bot_le
 
 /-! ### The bottom rows -/
 

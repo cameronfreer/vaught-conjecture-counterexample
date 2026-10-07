@@ -242,6 +242,15 @@ theorem restrictFace_eq_some_iff {u : StageType.{u} α m} :
   · simp [restrictFace_of_mem t f hf, hf]
   · simp [restrictFace_of_notMem t f hf, hf]
 
+variable {N : ℕ} in
+/-- A face along an embedding carries the labels and grades of its cells, at their positions. -/
+theorem exists_cellMap_of_restrictFace_eq {Q : StageType.{u} α N} {g : Fin k ↪ Fin N}
+    {P : StageType.{u} α k} (h : restrictFace g Q = some P) (i : Fin P.card) :
+    ∃ j : Fin (Q.toScheme.comap g).card, (j : ℕ) = i ∧ Q.label (Q.cellMap g j) = P.label i ∧
+      Q.toCellScheme.grade (Q.cellMap g j) = P.toCellScheme.grade i := by
+  obtain ⟨hf, rfl⟩ := (restrictFace_eq_some_iff Q g).mp h
+  exact ⟨i, rfl, rfl, rfl⟩
+
 /-- Definedness of the face map depends only on the face. -/
 theorem isSome_restrictFace_congr {f' : Fin k ↪ Fin n} (h : univ.map f = univ.map f') :
     (restrictFace f t).isSome ↔ (restrictFace f' t).isSome := by
@@ -525,6 +534,79 @@ applied to its own labels. -/
 theorem reduce_eq_ofIsLawful (hβ : Order.IsSuccPrelimit β) (t : StageType.{u} α n) :
     t.reduce hβ = ofIsLawful hβ t.toScheme t.isWellFormed t.isCoded t.label t.isLawful :=
   rfl
+
+/-! ### Cells visible through a face -/
+
+/-- **Labels of a face type transport to the cells visible through it.** -/
+theorem label_of_restrictFace {n m : ℕ} {Am : StageType.{u} α n} {f : Fin m ↪ Fin n}
+    {t : StageType.{u} α m} (hf : StageType.restrictFace f Am = some t)
+    (P : ℕ → Label.{u} → Prop) (hP : ∀ i, P (t.toCellScheme.grade i) (t.label i))
+    {d : Fin Am.card} (hd : (Am.toCellScheme.scope d : Set (Fin n)) ⊆ Set.range f) :
+    P (Am.toCellScheme.grade d) (Am.label d) := by
+  obtain ⟨hf', rfl⟩ := (StageType.restrictFace_eq_some_iff _ _).mp hf
+  obtain ⟨i, rfl⟩ : d ∈ Set.range (Am.cellMap f) := by
+    rw [Scheme.range_cellMap]; exact Scheme.mem_visibleCells.mpr hd
+  exact hP i
+
+/-- **Rows of a face type transport to the cells visible through it.** -/
+theorem row_of_restrictFace {n m : ℕ} {Am : StageType.{u} α n} {f : Fin m ↪ Fin n}
+    {t : StageType.{u} α m} (hf : StageType.restrictFace f Am = some t)
+    (P : ℕ → ℕ → Label.{u} → Prop)
+    (hP : ∀ s (i : t.toCellScheme.below (t.toCellScheme.gradedIndex s)),
+      P (t.toCellScheme.grade s) (t.toCellScheme.grade i) (t.rows.row s i))
+    {s : Fin Am.card} (hs : (Am.toCellScheme.scope s : Set (Fin n)) ⊆ Set.range f)
+    (i : Am.toCellScheme.below (Am.toCellScheme.gradedIndex s)) :
+    P (Am.toCellScheme.grade s) (Am.toCellScheme.grade i) (Am.rows.row s i) := by
+  obtain ⟨hf', rfl⟩ := (StageType.restrictFace_eq_some_iff _ _).mp hf
+  obtain ⟨s', rfl⟩ : s ∈ Set.range (Am.cellMap f) := by
+    rw [Scheme.range_cellMap]; exact Scheme.mem_visibleCells.mpr hs
+  obtain ⟨i', hi'⟩ : i.1 ∈ Set.range (Am.cellMap f) := by
+    rw [Scheme.range_cellMap]
+    exact Scheme.mem_visibleCells.mpr ((coe_subset.mpr i.2.1).trans hs)
+  have hmem : i' ∈ (Am.toScheme.comap f).toCellScheme.below
+      ((Am.toScheme.comap f).toCellScheme.gradedIndex s') := by
+    refine ((Am.toScheme.isLowerEmbedding_comap f).le_iff i' s').mp ?_
+    rw [hi']; exact i.2
+  have h := hP s' ⟨i', hmem⟩
+  have hrow : (Am.comap f hf').rows.row s' ⟨i', hmem⟩ = Am.rows.row (Am.cellMap f s') i :=
+    Am.rows.row_congr rfl hi'
+  have hgr : (Am.comap f hf').toCellScheme.grade i' = Am.toCellScheme.grade i.1 := by
+    rw [← hi']; rfl
+  rw [hrow, hgr] at h
+  exact h
+
+/-- **Cells of grade `k` visible through a face whose type has one cell at each graded index of
+grade `k` are determined by their graded indices.** -/
+theorem eq_of_gradedIndex_eq_of_restrictFace_of_grade {n m k : ℕ} {Am : StageType.{u} α n}
+    {f : Fin m ↪ Fin n} {t : StageType.{u} α m} (hf : StageType.restrictFace f Am = some t)
+    (ht : ∀ i i', t.toCellScheme.gradedIndex i = t.toCellScheme.gradedIndex i' →
+      t.toCellScheme.grade i = k → i = i')
+    {z z' : Fin Am.card}
+    (hz : (Am.toCellScheme.scope z : Set (Fin n)) ⊆ Set.range f)
+    (hz' : (Am.toCellScheme.scope z' : Set (Fin n)) ⊆ Set.range f)
+    (hzk : Am.toCellScheme.grade z = k)
+    (h : Am.toCellScheme.gradedIndex z = Am.toCellScheme.gradedIndex z') : z = z' := by
+  obtain ⟨hf', rfl⟩ := (StageType.restrictFace_eq_some_iff _ _).mp hf
+  obtain ⟨i, rfl⟩ : z ∈ Set.range (Am.cellMap f) := by
+    rw [Scheme.range_cellMap]; exact Scheme.mem_visibleCells.mpr hz
+  obtain ⟨i', rfl⟩ : z' ∈ Set.range (Am.cellMap f) := by
+    rw [Scheme.range_cellMap]; exact Scheme.mem_visibleCells.mpr hz'
+  have hk : (Am.comap f hf').toCellScheme.grade i = k :=
+    (congrArg Prod.snd (Am.toScheme.map_comap_gradedIndex f i)).trans hzk
+  rw [← Am.toScheme.map_comap_gradedIndex f i, ← Am.toScheme.map_comap_gradedIndex f i'] at h
+  have hinj : Function.Injective (Prod.map (Finset.map f) (id : ℕ → ℕ)) :=
+    (Finset.map_injective f).prodMap Function.injective_id
+  exact congrArg _ (ht i i' (hinj h) hk)
+
+/-- **Cells visible through a face whose type has one cell at each graded index have distinct
+graded indices.** -/
+theorem eq_of_gradedIndex_eq_of_restrictFace {n m : ℕ} {Am : StageType.{u} α n}
+    {f : Fin m ↪ Fin n} {t : StageType.{u} α m} (hf : StageType.restrictFace f Am = some t)
+    (ht : Function.Injective t.toCellScheme.gradedIndex) {z z' : Fin Am.card}
+    (hz : (Am.toCellScheme.scope z : Set (Fin n)) ⊆ Set.range f)
+    (hz' : (Am.toCellScheme.scope z' : Set (Fin n)) ⊆ Set.range f)
+    (h : Am.toCellScheme.gradedIndex z = Am.toCellScheme.gradedIndex z') : z = z' :=
+  eq_of_gradedIndex_eq_of_restrictFace_of_grade hf (fun _ _ hii' _ ↦ ht hii') hz hz' rfl h
 
 end StageType
 
