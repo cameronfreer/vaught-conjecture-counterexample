@@ -401,23 +401,34 @@ named hypothesis.
    termination (`README.md`, the section on the top-free witnesses, "Complementary global
    routes"; `IMPLEMENTATION.md`, §4, statements 1–10 with their completion criteria).
 7. **The common core of the receiving routes** (open; the labels form refuted).  One hypothesis on
-   stage types, prescribed rows at the cells of full scope (`StageType.HasPrescribedFullRows`),
-   implies parts of the routes' finite hypotheses at inputs where the route's prescription is
-   compatible with the faces (`Extension/PrescribedFullRowsRoutes`, compiled in this repository
-   (theorems named)); route by route:
-   - (R2)/(R3): with compatibility it gives the reading context; conversely a reading context makes
-     some reading prescription compatible, so under the core the two are equivalent.  The route's
-     open passage from a graded context with a top to a reading context is not derived from the
-     core.
-   - (R1): the implication to block-tight saturations is vacuous at the known refuting context:
-     the block prescription is not compatible wherever the context has a lawful labelling `⊥` at a
-     block cell and not `⊥` at a cell of the top grade
+   stage types, prescribed rows at the cells of full scope (`StageType.HasPrescribedFullRows`: over
+   legal stage types, every prescription on the rows of the cells of full scope that is
+   *compatible with the faces*, i.e. admits, at every lawful labelling of the context, rows that
+   are coded, lawful in both faces and transform to that labelling, is met by a legal one-point
+   extension), implies parts of the routes' finite hypotheses at inputs where the route's
+   prescription is compatible with the faces (`Extension/PrescribedFullRowsRoutes`, compiled in
+   this repository (theorems named)); route by route:
+   - (R2)/(R3), the reading context of the route to determination with a private top: the core
+     with a compatible reading prescription gives a reading context
+     (`StageType.HasPrescribedFullRows.isReadingContext`); conversely a reading context makes some
+     reading prescription compatible (`PrescribedFullRows.IsReadingContext.exists_isFaceCompatible`).
+     So, under the core and at a legal input, the reading-context property is equivalent to a
+     choice of private tops with a compatible reading prescription.  Obtaining a reading context
+     from a graded context with a top, the route's open step, is not derived from the core.
+   - (R1): *block-tight saturations* (per block, some scheme on which every coface of the context
+     has its cells of full scope of the top grade read the labels of the block in their own block)
+     follow from the core only under the compatibility of every block prescription
+     (`StageType.HasPrescribedFullRows.hasBlockTightSaturations`), and that hypothesis fails at the
+     known refuting context: the block prescription is not compatible wherever the context has a
+     lawful labelling `⊥` at a block cell and not `⊥` at a cell of the top grade
      (`PrescribedFullRows.not_isFaceCompatible_block`, compiled), which holds at the per-block
      route's refuting context `CoupledGatedExtensionCounterexample.P α` for every `α > 1` (argued
-     from compiled pieces of that route, not on `main`).  It is not a reduction.
-   - (R4): only the part concerning the scheme (`PrescribedFullRows.IsCapReadingScheme`); the
-     composition with the cap's label and the calibration to a stable recovery scheme is not
-     compiled.
+     from compiled pieces of that route, not on `main`; the joining lemma is to be compiled once
+     it lands).  It is not a reduction.
+   - (R4): the core with a compatible cap prescription gives a cap-reading scheme
+     (`StageType.HasPrescribedFullRows.exists_isCapReadingScheme`), only the part concerning the
+     scheme of the sufficient condition for a stable recovery scheme; the composition with the
+     cap's label and the calibration is not compiled.
    - The completion is not an instance (argued): under the core the coatom extension property is
      equivalent to the compatibility of the empty prescription
      (`StageType.HasPrescribedFullRows.hasCoatomExtensions_iff`), an additional open hypothesis

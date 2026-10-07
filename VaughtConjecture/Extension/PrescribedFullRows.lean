@@ -58,7 +58,8 @@ over every legal `t'` and legal `d`.  The form with compatibility at the labels 
 `StageType.HasPrescribedFullRowsAtLabels α`, implies it
 (`StageType.HasPrescribedFullRowsAtLabels.hasPrescribedFullRows`, vacuous: its hypothesis is
 refuted) and is false at every stage
-(`PrescribedFullRowsCounterexample.not_hasPrescribedFullRowsAtLabels`, at `P α`): compatibility at
+(`PrescribedFullRowsCounterexample.not_hasPrescribedFullRowsAtLabels`, at
+`GatedExtensionCounterexample.P α`): compatibility at
 the labels of `t'` does not suffice, because the reading forces an order on every lawful labelling
 of the face.  The uniform form is not tested by that input, since its compatibility premise fails
 there (`PrescribedFullRowsCounterexample.not_isFaceCompatible`); it is neither proved nor refuted.

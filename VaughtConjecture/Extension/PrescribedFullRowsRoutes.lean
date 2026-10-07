@@ -29,13 +29,14 @@ implication, and it is necessary for a prescribed extension
   (`IsPrescribedExtension.isReadingContext`), and under prescribed rows a compatible reading
   prescription gives a reading context (`StageType.HasPrescribedFullRows.isReadingContext`).
   Conversely a reading context determines a choice whose reading prescription is compatible
-  (`IsReadingContext.exists_isFaceCompatible`), so under prescribed rows a reading context is
-  equivalent to a choice of private tops with a compatible reading prescription.  Unconditionally,
-  a reading context forces, at every lawful labelling `a` of the context, a lawful labelling of the
-  donor agreeing with `a` on the common face under which every new top is at least `a` at some
-  private top of at least its grade (`IsReadingContext.forall_exists_le`): the passage from a
-  graded context with a top to a reading context needs that at every lawful labelling, not only at
-  the labels.
+  (`IsReadingContext.exists_isFaceCompatible`), so under prescribed rows, at a legal input, a
+  reading context is equivalent to a choice of private tops with a compatible reading
+  prescription.  Unconditionally, a reading context forces, at every lawful labelling `a` of the
+  context, a lawful labelling of the donor agreeing with `a` on the common face under which every
+  new top is at least `a` at some private top of at least its grade
+  (`IsReadingContext.forall_exists_le`): the passage from a graded context with a top to a reading
+  context needs that at every lawful labelling, not only at the labels; that passage is open and
+  not derived from `StageType.HasPrescribedFullRows`.
 * **Reading the labels of one block in the own block** ((R1), the per-block design;
   `ReadsInOwnBlock`, `IsBlockTight`, `HasBlockTightSaturations`).  The block prescription
   (`blockPrescription`) reads the cells of the context in the block of the reading of the cell
@@ -48,19 +49,19 @@ implication, and it is necessary for a prescribed extension
   not `⊥` at a cell of grade `N` (`not_isFaceCompatible_block`): the row serving that cell would
   read `z` in the block of its own reading; the transformation sends the reading of `z` to `⊥`,
   hence, commuting with the visibility replacement, the reading of the cell itself, so the row's
-  value is `⊥`.  At the
-  refuting context of the per-block route (the private type `P α` of
-  `VaughtConjecture.Extension.CoupledGatedExtensionCounterexample`, a module not on this base),
-  these hypotheses hold at every stage `α > 1`: that module proves `P α` legal, its cell `z₁` is
+  value is `⊥`.  At the refuting context of the per-block route, the private type
+  `CoupledGatedExtensionCounterexample.P α` (in a module not on this base), these hypotheses hold
+  at every stage `α > 1`: that module proves it legal, its cell `z₁` is
   labelled `1` and not self-visible at the grade `2`, and it has the lawful labelling
   `⊥, ⊥, ⊥, ω + 1, ω + 2`.  So there the hypothesis of
   `StageType.HasPrescribedFullRows.hasBlockTightSaturations` fails (argued from those compiled
   pieces; the joining lemma is to be compiled once that module is on this base), and the (R1)
-  implication is **not a reduction** of block-tight saturations to the core.  The cause is the
+  implication is **not a reduction** of block-tight saturations to the common core
+  `StageType.HasPrescribedFullRows`.  The cause is the
   domain of the prescription: it names only known cells, while block-tightness accepts any cell
   with the label, new cells included.  The per-input implication
   `IsPrescribedExtension.isBlockTight` stands, and nothing here refutes block-tight saturations,
-  (R1) or the core.
+  (R1) or `StageType.HasPrescribedFullRows`.
 * **Reading the new cells through the cap** ((R4); `ReadsThroughCap`, `IsCapReadingScheme`).  The
   cap prescription (`capPrescription`) reads every new cell of the donor as `⊥`, as the cap, or in
   the block of a reference cell; a prescribed extension for it is a cap-reading scheme when the
@@ -197,8 +198,9 @@ theorem _root_.VaughtConjecture.StageType.HasPrescribedFullRows.isReadingContext
 /-- **Reading contexts make a reading prescription compatible**: a reading coface determines a
 choice of private tops (each new top's private top is a cell of `t'`), is a prescribed extension
 for its reading prescription, and so that prescription is compatible with the faces
-(`StageType.IsPrescribedExtension.isFaceCompatible`).  Under prescribed rows, a reading context is
-therefore equivalent to a choice of private tops with a compatible reading prescription. -/
+(`StageType.IsPrescribedExtension.isFaceCompatible`).  Under prescribed rows, at a legal input, a
+reading context is therefore equivalent to a choice of private tops with a compatible reading
+prescription. -/
 theorem IsReadingContext.exists_isFaceCompatible {t' : StageType.{u} α k} {h : Fin n ↪ Fin k}
     {t : StageType.{u} α n} (ht : restrictFace h t' = some t) {d : StageType.{u} α (n + 1)}
     (hd : restrictFace Fin.castSuccEmb d = some t) (hR : IsReadingContext t' h d) :

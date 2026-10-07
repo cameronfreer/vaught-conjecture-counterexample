@@ -3360,16 +3360,21 @@ other coatom, and tops out in a single apex cell.
 coatom amalgam, ask for objects over a context (for (R1)–(R4), a context acquired in a model) whose
 cells of full scope (graded index `(univ, g)`) satisfy a condition on their rows at prescribed
 cells.  (R2) and (R3) ask for a legal one-point extension: the cells of full scope read each new top
-of the donor at least as a private top (the reading context of the determination with a private
-top).  (R1) and (R4) ask for schemes: (R1), per block, a scheme on which every coface of the context
+of the donor at least as a private top (the reading context, a condition on stage types of the
+route to determination with a private top, not on `main`; on `main`, (R2) follows from (R1),
+`Realization.ResidualAcquisition` and `Realization.CutoffDetermination`, and (R3) from
+`Realization.HollowAcquisition` and `Realization.SchemeDetermination`, README, "Status of (R2) and
+(R3)").  (R1) and (R4) ask for schemes: (R1), per block, a scheme on which every coface of the context
 has its cells of full scope of the top grade read the labels of one block in their own block
 (block-tight saturations, `IsBlockTight` = "some scheme, and every coface on it …"); (R4), a scheme
 carrying a coface of the stage reduction `T⁺↓β` whose cells of full scope of the cap's grade read
 the new cells of the donor through the cap (the cap-reading scheme of the stable recovery through a
 reading cell).  The completion asks for a coatom extension, with no condition on the rows.  These
 row-prescription conditions recur across the routes.  The four gaps stay separate: the
-implications below count only as compiled, each at inputs where the compatibility hypothesis of the
-core holds, and for (R1) that hypothesis fails at the known refuting context (below).
+implications below count only as compiled, each under the **compatibility hypothesis**: the route's
+prescription is compatible with the faces (`StageType.IsFaceCompatible`, defined under "The
+statement" below) at the input.  For (R1) that hypothesis fails at the known refuting context
+(below).
 
 **The statement** (`Extension/PrescribedFullRows`).  A context `t'` on `k` points and a donor `d`
 on `n + 1` points with the common face `t` (the face of `t'` along `h` and of `d` along the first
@@ -3405,7 +3410,8 @@ compatible with the faces over legal `t'` and `d` has a prescribed extension.  I
    that every cell of graded index `(univ, 2)` reads `C₂` at least as `C₁` is compatible at the
    labels of the context (`⊤, ⊤`; `PrescribedFullRowsCounterexample.isFaceCompatibleAtLabels`) and
    has no prescribed extension, since the lawful labelling `3, 2` extends to every legal one-point
-   extension of `P α` (`PrescribedFullRowsCounterexample.not_isPrescribedExtension`).  It is not
+   extension of `GatedExtensionCounterexample.P α`
+   (`PrescribedFullRowsCounterexample.not_isPrescribedExtension`).  It is not
    compatible uniformly (`PrescribedFullRowsCounterexample.not_isFaceCompatible`), so the uniform
    form is not tested by this input (its compatibility premise fails there).  The labels form
    implies the uniform form (`StageType.HasPrescribedFullRowsAtLabels.hasPrescribedFullRows`); that
@@ -3425,8 +3431,9 @@ compatible with the faces over legal `t'` and `d` has a prescribed extension.  I
      the compatibility of that prescription gives a reading context
      (`StageType.HasPrescribedFullRows.isReadingContext`); a reading context determines a choice
      whose reading prescription is compatible
-     (`PrescribedFullRows.IsReadingContext.exists_isFaceCompatible`), so under the core the two are
-     equivalent; and a reading context forces, at every lawful labelling `a` of the context, a
+     (`PrescribedFullRows.IsReadingContext.exists_isFaceCompatible`), so under the core, at a legal
+     input `(t', d)`, `IsReadingContext t' h d` is equivalent to the existence of a choice `σ` with
+     `IsTopChoice t' d σ` whose reading prescription is compatible; and a reading context forces, at every lawful labelling `a` of the context, a
      lawful labelling of the donor agreeing on the common face under which every new top is at
      least `a` at some private top of at least its grade
      (`PrescribedFullRows.IsReadingContext.forall_exists_le`).  The route's open passage from a
@@ -3479,8 +3486,10 @@ compatible with the faces over legal `t'` and `d` has a prescribed extension.  I
 - Block-tight saturations ((R1), per block): undecided, unchanged.  The arrow from the core is
   vacuous at `CoupledGatedExtensionCounterexample.P α` for every `α > 1` (argued; item 5), so the
   core gives nothing here.
-- Acquisition of reading contexts ((R2)/(R3)): open, unchanged; under the core it is equivalent to
-  the compatibility of a reading prescription, and the forcing condition above is necessary.
+- The reading-context property at a legal input ((R2)/(R3)): under the core it is equivalent to a
+  choice of private tops with a compatible reading prescription (item 5), and the forcing condition
+  above is necessary.  Obtaining a reading context from a graded context with a top is open,
+  unchanged, and not derived from the core.
 - Cap-reading schemes at the calibrated inputs ((R4)): open, unchanged; conditional on the core and
   the compatibility of the cap prescription; the composition to a stable recovery scheme is not
   compiled.
@@ -3502,7 +3511,8 @@ form gives nothing at the per-block route's refuting context (item 5).
 constructs, at the empty prescription, coatom extensions at every input where the empty
 prescription is compatible.  The completion results of checkpoints 2.1–2.7 give coatom extensions
 only from completions below the full grade
-(`StageType.HasCoatomExtensions.of_completionBelowFullGrade`), open for every seed at `m ≥ 3`;
+(`StageType.HasCoatomExtensions.of_completionBelowFullGrade`), open as a statement about every
+seed at `m ≥ 3`;
 that is the first clause of a general proof that does not close.
 
 **No clause of a model prescribes full rows** (argued, not compiled): no clause of
