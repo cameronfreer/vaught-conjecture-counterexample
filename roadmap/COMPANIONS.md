@@ -753,7 +753,9 @@ is compiled conditionally on block determination (below).  None is an input to t
   uncountably many classes, by the bounded-levels criterion in its form for relations between
   classes and countable ordinals (`README.md`, "Reduction to full presentations", "Bounded levels"),
   from a bound, for each class, on the fixing ranks of the charts realized in all presentations of
-  that class.  The bound of (iv) is the only place where termination can enter.  Its conditional
+  that class.  In the terms of Knight systems, (iii) and (iv) are the lower bound in the proof of
+  [AFK26, Theorem 2.25], argued there and not formalized (`IMPLEMENTATION.md`, concordance
+  row 49).  The bound of (iv) is the only place where termination can enter.  Its conditional
   form is the uniform fixing stage of `README.md`, "Manuscript correspondence (required)", item 5,
   "Uniform fixing bounds from positive niceness" (prospective), which uses no termination; there
   termination can enter only through the construction of positive niceness (milestone 2): as
