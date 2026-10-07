@@ -580,9 +580,26 @@ agreement at quantifier rank at most `η` is then the corollary `BFEquiv_implies
 at the pin, signatures checked), not a separate induction on sentences.  On this route thinness also
 has the scatteredness form: `D_η` lies in one back-and-forth class at `η` and has countable
 complement, so the codes of models meet countably many classes of `bfEquivSetoid Φ η`, and
-`isThinOnNatModels_of_countable_bfClasses` (compiled in this repository (theorem named),
-`MainTheorem/Scatteredness`) applies, with no López–Escobar; this application is expected, not
-elaborated.  The minimality form, from countable truth sides, is kept.
+InfinitaryLogic's `isThinOn_of_bfScattered` applies, with no López–Escobar.  This application is
+compiled conditional on the cap-to-model theorem, (R1), forcing donors at every countable block
+index, the continuation criterion, (R2) and (R3), each still to be proved
+(`densitySentence_isThinOnNatModels_of_terminalClassification_bfScattered`,
+`MainTheorem/ScatteredDomains`): `bfScattered_of_countable_compl` (`MainTheorem/Scatteredness`;
+cocountable sets of back-and-forth equivalent classes give `BFScattered`, through
+InfinitaryLogic's `bfScattered_of_countable_bfObservations`), `codeBFEquiv_of_mem_expansionDomain`
+(one back-and-forth class in `D_η`, conditional on (R1)),
+`densitySentence_bfScattered_of_modelExpansions` (conditional on the cap-to-model theorem,
+next-block uniqueness, (R1) and countable losses; the complements are
+`ExpansionDomains.compl_countable` for `modelExpansionDomains`),
+`densitySentence_bfScattered_of_terminalClassification`, the thinness theorems
+`densitySentence_isThinOnNatModels_of_modelExpansions_bfScattered` and
+`densitySentence_isThinOnNatModels_of_terminalClassification_bfScattered`, and
+`FullPresentations.HasScatteredTails.of_bfScattered` (`MainTheorem/Assembly`; back-and-forth
+scatteredness gives scattered tails to every family of full presentations).  Checked on the proof
+terms, the thinness theorem of `MainTheorem/ScatteredDomains` with the hypotheses of the terminal
+classification contains neither `sentence_separates_analytic_classes` nor any López–Escobar
+constant, while `densitySentence_isThinOnNatModels_of_terminalClassification` contains both.  The
+minimality form, from countable truth sides, is kept.
 
 ## The top-free witnesses: milestone order and acceptance
 
@@ -2186,10 +2203,12 @@ and well-founded ranks, then analytic tree boundedness, then uniform back-and-fo
 thinness and invariant-Borel concentration; López–Escobar, invariant separation, and the
 model-theoretic boundedness route are excluded from this path by import and proof-dependency guards.
 Combined with the cocountable concentration of the expansion domains (classes in `D_η` agree at
-back-and-forth level `η`), it is expected to give thinness without sentence minimality and without
-López–Escobar (not elaborated; the compiled composition, `isThinOn_of_countable_bfClasses`, is
-applied to full presentations; for the expansion domains, the composition is the scatteredness form
-of `README.md`, Layer 6, from the back-and-forth form of condition 3). It does not replace the
+back-and-forth level `η`), it gives thinness without sentence minimality and without López–Escobar
+(the compiled composition, `isThinOn_of_countable_bfClasses`, is applied to full presentations;
+for the expansion domains, the composition is the scatteredness form of `README.md`, Layer 6, from
+the back-and-forth form of condition 3, compiled conditional on the hypotheses of
+`densitySentence_isThinOnNatModels_of_terminalClassification`, each still to be proved:
+`densitySentence_isThinOnNatModels_of_terminalClassification_bfScattered`). It does not replace the
 working thinness route (`Sentenceω.isThinOnNatModels_of_countable_sentence_splits`, from countable
 truth sides), the Gδ/Polish model-code results stay optional, and any improvement it brings is
 described as reduced dependencies of the thinness proof, not as a smaller trusted kernel.
@@ -2203,7 +2222,9 @@ single universe covers it.
 graded matching (`bfEquiv_of_gradedMatching`, applied in `Comparison/GradedMatchingApplications`),
 the rank tails and least levels of `OrdinalCountability` (quoted in `Counting/`), and
 `BFScattered` (available at the pin, signatures checked in `roadmap/SuggestedInterfaces.lean`;
-quoted in `MainTheorem/Scatteredness`); a
+quoted in `MainTheorem/Scatteredness`, which also derives it from countable complements by
+`bfScattered_of_countable_bfObservations`, and applied to the expansion domains in
+`MainTheorem/ScatteredDomains`); a
 coherent-retraction interface once one is available at a pin.  It needs no new layer of
 ComputableModelTheory.
 
@@ -2359,13 +2380,15 @@ named (`README.md`, Layer 0):
 **Available at the pin `e460cb6`, after `cf80917`** (InfinitaryLogic's merges #157–#162; same
 toolchain and Mathlib; signatures checked: `SuggestedInterfaces.lean` `#check`s the statements
 named here; no application compiled in this repository, except the agreement of `existsLastVars`
-with `existsTupleFrom` below): thinness from
-countable back-and-forth observations (#157, `Descriptive/BFScattered`).  If for every `η < ω₁` a
-map `obs η` on a set `C` of codes has countable range and any two codes with the same observation
-are `CodeBFEquiv η`, then `C` is back-and-forth scattered
-(`bfScattered_of_countable_bfObservations`), carries no Cantor antichain for isomorphism, for every
-relational language (`not_hasCantorAntichainOn_of_countable_bfObservations`), and, for countably
-many relation symbols, is thin (`isThinOn_of_countable_bfObservations`).  The same merge moves
+with `existsTupleFrom` below and the application of `bfScattered_of_countable_bfObservations`):
+thinness from countable back-and-forth observations (#157, `Descriptive/BFScattered`).  If for
+every `η < ω₁` a map `obs η` on a set `C` of codes has countable range and any two codes with the
+same observation are `CodeBFEquiv η`, then `C` is back-and-forth scattered
+(`bfScattered_of_countable_bfObservations`, applied in `bfScattered_of_countable_compl`,
+`MainTheorem/Scatteredness`, for the expansion domains of `MainTheorem/ScatteredDomains`), carries
+no Cantor antichain for isomorphism, for every relational language
+(`not_hasCantorAntichainOn_of_countable_bfObservations`), and, for countably many relation symbols,
+is thin (`isThinOn_of_countable_bfObservations`).  The same merge moves
 `countable_quotient_of_countable_range` to `Descriptive/PerfectAntichain` (not used here).
 Eliminating orbit parameters (#158, `Scott/OrbitParameters`: `existsOrbitParams`,
 `realize_existsOrbitParams_iff_orbit`, `qrank_existsOrbitParams`), which also adds
@@ -3534,6 +3557,9 @@ lands, their notes stay in those modules.
   `not_structureIso_of_mem_offDiag`, `exists_forall_not_codeBFEquiv_of_isClosed` of
   `exists_forall_not_codeBFEquiv_of_analyticSet`, and `analyticSet_offDiag` through
   `MeasureTheory.AnalyticSet.offDiag`; `codeBFEquivSetoid` is InfinitaryLogic's by definition.
+  `bfScattered_of_countable_compl` is not a quotation: it applies
+  `bfScattered_of_countable_bfObservations` (for every relational language), beside which, in
+  `Descriptive/BFScattered`, it belongs upstream.
   `not_countable_of_perfect` stays local: InfinitaryLogic's `Perfect.mk_eq_continuum` assumes a
   metric space, and the space of codes gets one only after a choice of compatible complete metric
   (`TopologicalSpace.upgradeIsCompletelyMetrizable`); to Mathlib, as the uncountability of a
