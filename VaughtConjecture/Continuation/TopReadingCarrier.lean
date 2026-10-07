@@ -19,9 +19,14 @@ extension for the top-marked prescription is one
 (`StageType.IsPrescribedExtension.isTopReadingCarrier`).  It determines the donor at a cutoff
 (`StageType.isDeterminedWithin_receivingFamily_of_isTopReadingCarrier`, compiled in this repository
 (theorem named)), and (R3) for cover-hollow models with finite-cut receiving follows from
-**top-reading carriers** at every block stage (`StageType.HasTopReadingCarriers`, a named hypothesis
-on stage types, open, implied by `StageType.HasTopMarkedCarriers`;
+**top-reading carriers** at every block stage (`StageType.HasTopReadingCarriers`, implied by
+`StageType.HasTopMarkedCarriers`;
 `Realization.hollowReceiving_withReceiving_of_hasTopReadingCarriers`).
+`StageType.HasTopReadingCarriers` is not a further open hypothesis standing in for a proof: it is
+the statement to be proved for contexts on at most four points (prospective), and above arity 3 it
+is the explicit remaining assumption of that theorem.  The route through the canonical completion
+is closed: there a new cell labelled `⊤` is forced at entries with different values where the
+input is `⊤` (`Continuation/FieldLayerForcedTops.lean`).
 
 The cells of graded index `(univ, N)` with a label other than `⊤` are free: they may serve the
 availability of the lawful labellings that a reading cell cannot.
@@ -157,9 +162,17 @@ theorem isDeterminedWithin_receivingFamily_of_isTopReadingCarrier {t' : StageTyp
   rw [hcell, hlab]
 
 variable (α) in
-/-- **Top-reading carriers** at the stage `α` (a named hypothesis on stage types; open): over every
-legal marked-cap context `t'` along `h` with top cap `c` and marker `r`, and every legal donor `d`
-that is a one-point coface of the face of `t'` along `h`, there is a top-reading carrier. -/
+/-- **Top-reading carriers** at the stage `α`: over every legal marked-cap context `t'` along `h`
+with top cap `c` and marker `r`, and every legal donor `d` that is a one-point coface of the face
+of `t'` along `h`, there is a top-reading carrier.
+
+Its role is fixed, and it is not to be restated under another name.  For contexts on at most four
+points it is the statement to be proved (prospective; not proved in this repository).  Above arity
+3 it is the explicit remaining assumption of
+`Realization.hollowReceiving_withReceiving_of_hasTopReadingCarriers`.  The canonical completion
+does not prove it: there the new cells labelled `⊤` include entries with different values at two
+cells where the input is `⊤` (`FieldLayerForcedTops.exists_forced_top`,
+`FieldLayerForcedTops.orbitDecoder_fieldRow_eq_top`). -/
 def HasTopReadingCarriers : Prop :=
   ∀ ⦃k n : ℕ⦄ (t' : StageType.{u} α k) (h : Fin n ↪ Fin k) (t : StageType.{u} α n)
     (_ : restrictFace h t' = some t) (d : StageType.{u} α (n + 1))
