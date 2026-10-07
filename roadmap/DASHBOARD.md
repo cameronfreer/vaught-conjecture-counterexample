@@ -288,13 +288,33 @@ Status of each:
    universe levels and is not supplied by the countable-stage `Expansion.FiniteCutReceiving`,
    item 2), `Realization.ResidualAcquisition P`, and `Realization.CutoffDetermination P`
    (`Realization.residualReceiving_of_cutoffDetermination`), for a predicate `P` on acquired
-   contexts not yet defined: the reduction is a template, and its hypotheses are not statements
-   still to be proved (no predicate `P` is defined in the library, and neither acquisition nor
-   determination is proved beyond the rigid-core instance).  For `P` always true, acquisition is
+   contexts: the reduction is a template.  One predicate is defined, the source-gap context below,
+   with acquisition compiled and determination open; no other predicate for (R2) is defined, and determination
+   is proved for no `P` beyond the rigid-core instance.  For `P` always true, acquisition is
    immediate and determination fails (compiled; top-free roots,
    `Continuation/ExactReceivingExamples`), which shows only that determination is not vacuous.
    The cofaces in which the root is a rigid core need only (R1) in the same form
    (`Realization.ResidualReceiving.of_not_isRigidCoreIn`).
+   *Source-gap contexts* (`Continuation/SourceGapContext`): `StageType.IsSourceGapContext K t' h`
+   is defined in this repository (a lost point outside the root; an owner of full scope and grade
+   `K = t'.topGrade` labelled `⊤`; a lost top through the lost point; strict source gaps
+   `visibilityReplace K K (row o r) <` the row of the owner at itself and at every top cell
+   avoiding the lost point; the owner and the lost top form a private gap of 3.3).  Residual
+   acquisition for it is compiled in this repository
+   (`Realization.residualAcquisition_isSourceGapContext`) with no hypothesis beyond those of
+   `Realization.ResidualAcquisition`; its stage-type part needs no model
+   (`StageType.exists_isSourceGapContextAt_comap`).  Cutoff determination for it is open; with it
+   and (R1) at every limit stage, (R2) follows
+   (`Realization.residualReceiving_of_cutoffDetermination_isSourceGapContext`).  Non-vacuity is
+   open, as a dichotomy: if no legal stage type is a source-gap context, (R2) holds outright
+   (`Realization.residualReceiving_of_forall_not_isSourceGapContext`), so either some legal type
+   is a source-gap context or (R2) holds; neither side is claimed.  No type built with
+   `StageType.addApex` is a source-gap context, the compiled completions included
+   (`StageType.not_isSourceGapContext_addApex`); nothing compiled exhibits an instance.  The predicate excludes the compiled
+   determination counterexamples (not top-free, root not surjective).  An admissible top support
+   is separated (`StageType.IsAdmissibleTopSupport.isSeparatedTopSupport`), so the residual
+   hypothesis holds for separated supports (`Realization.not_exists_isGloballySeparatedRigidCore`);
+   the converse is not formalized.
 6. `Realization.HollowReceiving` for `Realization.IsCoverHollowAtBlock`: still to be proved (the
    growth construction).  Exactly reformulated as exact receiving of all legal types
    (`Realization.hollowReceiving_iff`).  A reduction is compiled: it follows from

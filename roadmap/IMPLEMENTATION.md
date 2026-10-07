@@ -4190,8 +4190,12 @@ form, at arbitrary limit stages.
   included.  (4) *Recovery*: every lawful labelling with the literal private face reads `D`
   exactly, tops included (`Correct` with the cap and the marker `⊤`).  (5) *Padding* (`README.md`,
   Layer 3, 3.4, "Base cases").
-- *Missing steps for (R2).*  The LOW construction of `README.md`, Layer 3, 3.3, as data: the private
-  context and the private gap acquired in the residual model; the display on the LOW scheme received
+- *Missing steps for (R2).*  The LOW construction of `README.md`, Layer 3, 3.3, as data.  The
+  private context and the private gap acquired in the residual model are compiled in the form of a
+  source-gap context (`Realization.residualAcquisition_isSourceGapContext`,
+  `Continuation/SourceGapContext`; whether a legal source-gap context exists is open, and if none
+  does (R2) holds, `Realization.residualReceiving_of_forall_not_isSourceGapContext`).  Missing: the
+  display on the LOW scheme received
   by (R1) in its form for finite covers at a cutoff above the rounded non-top donor maximum; the
   observations below that cutoff force `D`; then exact one-point receiving, one face at a time,
   along an increasing sequence of faces of `D` visible in its plan, each intermediate root received
@@ -4691,6 +4695,13 @@ witnesses).**
   so that the import closure of the main theorem contains no `Definability/` module.
   `Expansion/Losses`: Layer 5, in place. `Counting/Domains`:
   `Counting.countable_of_subsingleton_cover`, a general result of Layer 0, in place.
+- `Continuation/SourceGapContext` and its examples module: Layer 3, in place, beside
+  `Continuation/ExactReceiving` (it imports `Extension/Apex` for the apex check; the examples
+  module imports `Continuation/ExactReceivingExamples` for the apex-point checks).  It holds
+  `StageType.IsSourceGapContext`, separated top supports, first loss, the stage-type part
+  `StageType.exists_isSourceGapContextAt_comap`,
+  `Realization.residualAcquisition_isSourceGapContext`, the composed reduction, and the vacuity
+  dichotomy; determination for the predicate is open.
 - `Continuation/RestrictedHollow` and its examples module: Layer 4, in place; it holds
   `Realization.IsCoverHollowWithoutRigidCore` and its form at a block stage, the restricted
   terminal properties with their cover, and `Realization.HollowReceiving.withoutRigidCore`.  It
