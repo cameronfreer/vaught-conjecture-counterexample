@@ -400,6 +400,29 @@ theorem newCell_mem_below {j k : ℕ} (hj1 : 1 ≤ j) (hj4 : j ≤ 4) (hjk : j �
     newCell I ρ j ∈ (layerScheme I ρ).toCellScheme.below ((univ : Finset (Fin 5)), k) := by
   rw [CellScheme.mem_below, gradedIndex_newCell hj1 hj4]; exact ⟨subset_rfl, hjk⟩
 
+/-- A cell below the new cell at `(univ, k)` has grade at most `k`. -/
+theorem grade_le_of_mem_below_newCell {k : ℕ} (hk1 : 1 ≤ k) (hk4 : k ≤ 4)
+    (t : (layerScheme I ρ).toCellScheme.below
+      ((layerScheme I ρ).toCellScheme.gradedIndex (newCell I ρ k))) :
+    (layerScheme I ρ).toCellScheme.grade t.1 ≤ k := by
+  have h : (layerScheme I ρ).toCellScheme.gradedIndex t.1 ≤ ((univ : Finset (Fin 5)), k) :=
+    gradedIndex_newCell hk1 hk4 ▸ t.2
+  exact h.2
+
+/-- The new cell at `(univ, k)` is below itself. -/
+theorem newCell_mem_below_self {k : ℕ} :
+    newCell I ρ k ∈ (layerScheme I ρ).toCellScheme.below
+      ((layerScheme I ρ).toCellScheme.gradedIndex (newCell I ρ k)) :=
+  (layerScheme I ρ).toCellScheme.mem_below_gradedIndex _
+
+/-- An old cell below the new cell at `(univ, k)`, of grade at most `k`. -/
+theorem oldCell_mem_below_newCell {d : Fin I.amalgam.card} {k : ℕ} (hk1 : 1 ≤ k)
+    (hk4 : k ≤ 4) (hd : I.amalgam.toCellScheme.grade d ≤ k) :
+    oldCell I ρ d ∈ (layerScheme I ρ).toCellScheme.below
+      ((layerScheme I ρ).toCellScheme.gradedIndex (newCell I ρ k)) := by
+  rw [gradedIndex_newCell hk1 hk4]
+  exact oldCell_mem_below ⟨subset_univ _, hd⟩
+
 /-! ### The two coatoms -/
 
 /-- The first coatom `C = {0, 1, 2, 3}`. -/
@@ -436,6 +459,18 @@ theorem mem_below_coatom_of_ne {z : Fin (layerScheme I ρ).card} {k : ℕ}
     (I.scope_ne_univ d) with h | h
   · exact .inl (oldCell_mem_below ⟨h, hz.2⟩)
   · exact .inr (oldCell_mem_below ⟨h, hz.2⟩)
+
+/-- A cell below `(C, k)` misses the point `4`. -/
+theorem four_notMem_of_mem_below {z : Fin (layerScheme I ρ).card} {k : ℕ}
+    (hz : z ∈ (layerScheme I ρ).toCellScheme.below (coatomC, k)) :
+    (4 : Fin 5) ∉ ((layerScheme I ρ).toCellScheme.gradedIndex z).1 := fun h ↦
+  (notMem_erase (Fin.last 4) univ) (hz.1 h)
+
+/-- A cell below `(D, k)` misses the point `3`. -/
+theorem three_notMem_of_mem_below {z : Fin (layerScheme I ρ).card} {k : ℕ}
+    (hz : z ∈ (layerScheme I ρ).toCellScheme.below (coatomD, k)) :
+    (3 : Fin 5) ∉ ((layerScheme I ρ).toCellScheme.gradedIndex z).1 := fun h ↦
+  (notMem_erase (Fin.castSucc (Fin.last 3)) univ) (hz.1 h)
 
 /-! ### Legality below the full grade -/
 

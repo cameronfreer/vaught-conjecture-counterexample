@@ -201,15 +201,6 @@ theorem layerLabel4_newCell {k : ℕ} (hk1 : 1 ≤ k) (hk4 : k ≤ 4) (AC AD F :
       kindLabel4 AC AD F ((univ : Finset (Fin 5)), k) := by
   rw [layerLabel4, gradedIndex_newCell hk1 hk4]
 
-/-- A cell below the new cell at `(univ, k)` has grade at most `k`. -/
-theorem grade_le_of_mem_below_newCell {k : ℕ} (hk1 : 1 ≤ k) (hk4 : k ≤ 4)
-    (t : (layerScheme I layerRows4.{u}).toCellScheme.below
-      ((layerScheme I layerRows4).toCellScheme.gradedIndex (newCell I layerRows4 k))) :
-    (layerScheme I layerRows4).toCellScheme.grade t.1 ≤ k := by
-  have h : (layerScheme I layerRows4).toCellScheme.gradedIndex t.1 ≤
-      ((univ : Finset (Fin 5)), k) := gradedIndex_newCell hk1 hk4 ▸ t.2
-  exact h.2
-
 /-! ### Lawful labellings of `T4` along a coatom -/
 
 private theorem cases_T4 (i : Fin (T4 α).card) :
@@ -448,32 +439,6 @@ theorem isLawfulBelow_layerLabel4 {AC AD F : Label.{u}} (h : IsThinLawfulBelow A
     · exact (mem_below_coatom_of_ne ht hne).elim (haC s t · hst hg) (haD s t · hst hg)
 
 /-! ### Necessity -/
-
-/-- A cell below `(C, k)` misses the point `4`. -/
-theorem four_notMem_of_mem_below {z : Fin (layerScheme I layerRows4.{u}).card} {k : ℕ}
-    (hz : z ∈ (layerScheme I layerRows4).toCellScheme.below (coatomC, k)) :
-    (4 : Fin 5) ∉ ((layerScheme I layerRows4).toCellScheme.gradedIndex z).1 := fun h ↦
-  (notMem_erase (Fin.last 4) univ) (hz.1 h)
-
-/-- A cell below `(D, k)` misses the point `3`. -/
-theorem three_notMem_of_mem_below {z : Fin (layerScheme I layerRows4.{u}).card} {k : ℕ}
-    (hz : z ∈ (layerScheme I layerRows4).toCellScheme.below (coatomD, k)) :
-    (3 : Fin 5) ∉ ((layerScheme I layerRows4).toCellScheme.gradedIndex z).1 := fun h ↦
-  (notMem_erase (Fin.castSucc (Fin.last 3)) univ) (hz.1 h)
-
-/-- An old cell below the new cell at `(univ, k)`, of grade at most `k`. -/
-theorem oldCell_mem_below_newCell {d : Fin I.amalgam.card} {k : ℕ} (hk1 : 1 ≤ k)
-    (hk4 : k ≤ 4) (hd : I.amalgam.toCellScheme.grade d ≤ k) :
-    oldCell I layerRows4.{u} d ∈ (layerScheme I layerRows4).toCellScheme.below
-      ((layerScheme I layerRows4).toCellScheme.gradedIndex (newCell I layerRows4 k)) := by
-  rw [gradedIndex_newCell hk1 hk4]
-  exact oldCell_mem_below ⟨subset_univ _, hd⟩
-
-/-- The new cell at `(univ, k)` is below itself. -/
-theorem newCell_mem_below_self {k : ℕ} :
-    newCell I layerRows4.{u} k ∈ (layerScheme I layerRows4).toCellScheme.below
-      ((layerScheme I layerRows4).toCellScheme.gradedIndex (newCell I layerRows4 k)) :=
-  (layerScheme I layerRows4).toCellScheme.mem_below_gradedIndex _
 
 include hIL hIR in
 /-- **Necessity**: every labelling lawful below `(univ, 3)` is a layer labelling, of parameters
