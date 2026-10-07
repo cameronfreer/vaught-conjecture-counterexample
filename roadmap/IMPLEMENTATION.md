@@ -3147,10 +3147,18 @@ Each checkpoint needs both its abstract API and a concrete application:
    here).  (R4) also follows from the same statement for the graded cap calibration
    (`StableCappedReceiving.of_hasStableRecoverySchemes_gradedCap`, `Continuation/StableRecovery`;
    acquisition compiled, the finite statement open; it holds at every instance with a scheme
-   reading through a cap, `StageType.IsStableRecoveryScheme.of_readsThroughCap`; `README.md`,
-   Layer 4, status, output 3). Step 7 is
-   compiled conditionally (`README.md`, the section on the top-free witnesses): the loss at `η`
-   under uniqueness at `λ_η` (`nonempty_loss_of_topFreeWitness`), and per block under
+   reading through a cap, `StageType.IsStableRecoveryScheme.of_readsThroughCap`, and such a scheme
+   is compiled at one input at every `ξ`,
+   `Continuation.StableRecoveryReading.exists_isStableRecoveryScheme_gradedCap`,
+   `Continuation/StableRecoveryReading`, and at the twin donors of the refutation, with one context
+   of three points for both,
+   `Continuation.StableRecoveryTwin.exists_isStableRecoveryScheme_twinDonors`,
+   `Continuation/StableRecoveryTwin` and `Continuation/StableRecoveryTwinScheme`; no scheme serves
+   both twin donors,
+   `Continuation.StableRecoveryTwin.not_isStableRecoveryScheme_twinDonor₁_and_twinDonor₂`; the
+   finite statement at every input is still to be proved; `README.md`, Layer 4, status, output 3).
+   Step 7 is compiled conditionally (`README.md`, the section on the top-free witnesses): the loss
+   at `η` under uniqueness at `λ_η` (`nonempty_loss_of_topFreeWitness`), and per block under
    `StageType.HasApexCoatomExtensions` at `λ_η` and uniqueness of the model expansions at `λ_η`
    (`nonempty_loss_of_hasApexCoatomExtensions`, `MainTheorem/LowerBound`).
 

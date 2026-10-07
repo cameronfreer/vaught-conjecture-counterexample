@@ -140,8 +140,13 @@ Notes on the rows, each with its marker:
   (`Continuation.StableRecoveryCounterexample.not_hasStableRecoverySchemes_markerCap`), and for the
   graded cap calibration, open, whose acquisition is compiled
   (`StableCappedReceiving.of_hasStableRecoverySchemes_gradedCap`,
-  `Realization.IsModel.acquiresCalibratedContexts_gradedCap`); cover-hollowness and stable-label
-  fixedness (`Realization.isCoverHollow_iff_forall_stableLabel_eq_top`); the exact-age comparison
+  `Realization.IsModel.acquiresCalibratedContexts_gradedCap`), with a stable recovery scheme for
+  it at one input at every `ξ`, reading the new cell through the cap
+  (`Continuation.StableRecoveryReading.exists_isStableRecoveryScheme_gradedCap`), and at the twin
+  donors of the refutation, with one context of three points
+  (`Continuation.StableRecoveryTwin.exists_isStableRecoveryScheme_twinDonors`);
+  cover-hollowness and stable-label fixedness
+  (`Realization.isCoverHollow_iff_forall_stableLabel_eq_top`); the exact-age comparison
   (`Realization.nonempty_equiv_of_exactReceivingWithin`); the three comparisons, the rigid-core one
   conditional on finite-extension receiving (from (R1);
   `Realization.nonempty_equiv_of_isGloballyRigidCore`), the residual and hollow ones on (R2) and
@@ -531,8 +536,44 @@ named hypothesis.
    one reading cell, `CellScheme.Rows.IsLawful.label_eq_of_reading`).  This reading is not
    confined to one graded index (informal; not compiled: by bountifulness at the cap `⊥` and
    completeness it constrains every graded face of grade `N` containing the cap, a reference cell
-   and a new cell).  The existence of such schemes is not proved, and no instance is compiled.  The
-   acquisition of the design's cap of full scope and full grade is not compiled.
+   and a new cell).  Such a scheme is compiled at one input, at every `ξ`
+   (`Continuation.StableRecoveryReading.exists_isStableRecoveryScheme_gradedCap`): a context of two
+   points with a cap of grade `2` labelled `⊤` and the marker `λ_ξ + 1` as reference cell, a root of
+   one point, and a donor with a new cell labelled `λ_ξ + 1`, on a legal scheme of ten cells whose
+   cell at `(univ, 2)` reads the new cell and the marker at one value; the cap decodes the new cell
+   (`Continuation.StableRecoveryReading.IsReadingTriple.eq_of_lt`), and below the marker leaves it
+   free (`Continuation.StableRecoveryReading.isReadingTriple_of_le`, for labels self-visible at
+   `1` and a cap self-visible at `2`).  So the hypotheses of `of_readsThroughCap` are satisfiable
+   with a proper new label (there the reading constrains no other graded face: `(univ, 2)` is the
+   only graded face of grade `2` containing both the cap and the new cell).  The input is
+   degenerate, so this is feasibility at the smallest sizes only: recovery copies the marker (in
+   every lawful labelling with the marker at the reference cell and `⊤` at the cap the new cell
+   equals the marker; `n = i = 1`, `c = 0`); no label of `D` is `⊤`, so the clause on `γ` and the
+   branch at `⊤` of `StageType.ReadsThroughCap` are not used; the root is one cell labelled `⊥`;
+   and `N = k + 1`.  **The twin donors** of `Continuation.StableRecoveryCounterexample` need a
+   context of at least three points
+   (`Continuation.StableRecoveryTwin.three_le_of_gradedCapCalibration`); with one context of three
+   points (the root `λ_ξ + 2` as reference cell, a cap of grade `3` labelled `⊤`) and `γ = λ_ξ` the
+   calibration holds for both donors, and each has a stable recovery scheme
+   (`Continuation.StableRecoveryTwin.exists_isStableRecoveryScheme_twinDonors`): a legal scheme on
+   four points with twenty-three cells (`Continuation.StableRecoveryTwin.isLegal_twinScheme`), whose
+   cell at `(univ, 3)` reads the root and the higher twin at `2` and the lower twin at `1` (so
+   `n = 1 ≠ i = 2` for the lower twin).  Bountifulness constrains the reading in two places
+   (informal; not compiled as necessity statements): a pair of cells reading the twins in both
+   orders at each graded face of grade `1` containing them, and the cap reading the root at the
+   offset of the reading cell.  No scheme serves both donors
+   (`Continuation.StableRecoveryTwin.not_isStableRecoveryScheme_twinDonor₁_and_twinDonor₂`): the
+   scheme depends on the donor.  This is a fact about `StageType.IsStableRecoveryScheme` alone, not
+   an obstruction: `StageType.HasStableRecoverySchemes` chooses the scheme after the donor, and the
+   growth construction of Layer 3, 3.4, builds its scheme from the donor by design.  So the finite
+   statement is not refuted where the marker and cap calibration is.  Still special: no label `⊤` in
+   the donors (the clause on `γ` unused), the cap `⊤`, the higher twin copying the reference,
+   references in the block `λ_ξ` only, `(univ, 3)` the only graded face of grade `N = 3` containing
+   the cap and the new cells (several need a context of at least four points; informal; not
+   compiled), and the reference cell the root itself (a cell of the face along `f`; the private
+   context supplies only the cap).  The finite statement at every input with the calibration is
+   still to be proved, and with it (R4).  The acquisition of the design's cap of full scope and full
+   grade is not compiled.
 6. **The attained least lift and structural successor leastness** (prospective).  One lift of a
    legal stage type at a limit stage `β` to `β + ω`, least at every cell (each minimum is attained
    separately: `StageType.exists_lift_label_eq_ofOffset`); the threshold forced by a cover is read
