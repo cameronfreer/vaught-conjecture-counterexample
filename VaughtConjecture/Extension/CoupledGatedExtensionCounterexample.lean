@@ -689,7 +689,7 @@ theorem not_carriesBottoms (α : Ordinal.{u}) (hα : 1 < α) {c : Label.{u}}
       rw [h4 i hi]; exact omegaAdd_ne_bot 2
   have h0 : ρ (0 : Fin 2) = ⊥ := by
     refine (hj (0 : Fin 2) (Finset.mem_univ _) (by
-      change (1 : Label.{u}) ≠ ⊥; exact natCast_label_ne_bot 1)).1 hc1
+      change (1 : Label.{u}) ≠ ⊥; simpa using natCast_label_ne_bot 1)).1 hc1
       fun i k _ hik ↦ ?_
     -- The labels of the private type and of the donor are `lab 1 ⊤ ⊤` and `donorLab 1 ⊤`.
     change (1 : Label.{u}) = visibilityReplace 2 k (lab 1 ⊤ ⊤ i) at hik

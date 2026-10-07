@@ -59,11 +59,14 @@ admissible top support containing the top cells supported on the core (the cells
 `e`, `Scheme.visibleCells`, the range of the cell map of the face) contains every top cell.
 Rigidity concerns admissible top supports, not automorphisms.  A larger core is rigid when a
 smaller one is (`IsRigidCoreIn.mono`), a top-free type has every core rigid
-(`isRigidCoreIn_of_isTopFree`), and at a limit stage the empty core is rigid in a legal type
-exactly when the type is top-free (`isRigidCoreIn_empty_iff_isTopFree`): otherwise the type
+(`isRigidCoreIn_of_isTopFree`).  At a limit stage, a core on which no top cell is supported is not
+rigid in a legal type that is not top-free (`not_isRigidCoreIn_of_forall_visibleCells`): the type
 capped at a cap self-visible at the arity, below the stage and above every proper label
 (`StageType.cap`, lawful by [Kni26, Lemma 2.5.8]), keeps the other labels and lowers every top
-label to the cap, so the empty set is an admissible top support.
+label to the cap, so the empty set is an admissible top support.  In particular a top-free face is
+not a rigid core of a legal type that is not top-free
+(`not_isRigidCoreIn_of_restrictFace_isTopFree`), and the empty core is rigid in a legal type
+exactly when the type is top-free (`isRigidCoreIn_empty_iff_isTopFree`).
 
 A tuple `c` is a **globally rigid core** of `R` (`Realization.IsGloballyRigidCore`) when the core
 along `e` is rigid in `t` for every cover `x` of a stage type `t` in `R` and every `e` with
@@ -300,14 +303,16 @@ theorem IsRigidCoreIn.mono {e : Fin k ↪ Fin n} {e' : Fin m ↪ Fin n} (h : t.I
 theorem isRigidCoreIn_of_isTopFree (ht : t.IsTopFree) (e : Fin k ↪ Fin n) : t.IsRigidCoreIn e :=
   fun _ _ _ d hd ↦ absurd hd (ht d)
 
-/-- **The empty core is rigid exactly in the top-free types**: at a limit stage, the empty core is
-rigid in a legal stage type exactly when the type is top-free.  Otherwise, the type capped at an
-ordinal below the stage, self-visible at the arity and above every proper label (`cap`, lawful by
-[Kni26, Lemma 2.5.8]), lowers every top label to a proper one, keeping the others: the empty set is
-an admissible top support. -/
-theorem isRigidCoreIn_empty_iff_isTopFree (hα : Order.IsSuccLimit α) (ht : t.IsLegal)
-    (e : Fin 0 ↪ Fin n) : t.IsRigidCoreIn e ↔ t.IsTopFree := by
-  refine ⟨fun h d₀ hd₀ ↦ ?_, fun h ↦ isRigidCoreIn_of_isTopFree h e⟩
+/-- **A core carrying no top is not rigid in a type with a top**, at a limit stage: if a legal `t`
+is not top-free and no top cell of `t` is supported on the core along `e`, the core is not rigid in
+`t`.  The type capped at an ordinal below the stage, self-visible at the arity and above every
+proper label (`cap`, lawful by [Kni26, Lemma 2.5.8]), lowers every top label to a proper one,
+keeping the others: the empty set is an admissible top support, it contains the top cells
+supported on the core, of which there are none, and it misses a top cell of `t`. -/
+theorem not_isRigidCoreIn_of_forall_visibleCells (hα : Order.IsSuccLimit α) (ht : t.IsLegal)
+    {e : Fin k ↪ Fin n} (hvis : ∀ d ∈ t.visibleCells e, t.label d ≠ ⊤) (ht' : ¬ t.IsTopFree) :
+    ¬ t.IsRigidCoreIn e := by
+  intro hrig
   obtain ⟨o, hoα, ho⟩ := t.exists_label_le hα.bot_lt
   obtain ⟨c, hoc, hcα, hc⟩ := exists_lt_lt_isSelfVisible hα.isSuccPrelimit hoα n
   have hoc' : (o : Label.{u}) < c := by exact_mod_cast hoc
@@ -318,7 +323,31 @@ theorem isRigidCoreIn_empty_iff_isTopFree (hα : Order.IsSuccLimit α) (ht : t.I
     · exact iff_of_false (isTopFree_cap i) (Set.notMem_empty i)
     · rw [cap_label (t := t) i, hi, min_eq_right le_top]
       exact isProper_coe c
-  refine h ∅ hadm (fun d hd _ ↦ ?_) d₀ hd₀
+  exact ht' fun d hd ↦ Set.notMem_empty d
+    (hrig ∅ hadm (fun d' hd' htop ↦ absurd htop (hvis d' hd')) d hd)
+
+/-- **A top-free core is not rigid in a type with a top**, at a limit stage: if a legal `D` has a
+top-free face `p` along `e` and is not top-free, the core along `e` is not rigid in `D`.  The top
+cells supported on the core are cells of the face, so there are none
+(`not_isRigidCoreIn_of_forall_visibleCells`). -/
+theorem not_isRigidCoreIn_of_restrictFace_isTopFree (hα : Order.IsSuccLimit α)
+    {D : StageType.{u} α m} (hD : D.IsLegal) {e : Fin n ↪ Fin m} {p : StageType.{u} α n}
+    (he : restrictFace e D = some p) (hp : p.IsTopFree) (hD' : ¬ D.IsTopFree) :
+    ¬ D.IsRigidCoreIn e := by
+  obtain ⟨hf, rfl⟩ := (restrictFace_eq_some_iff D e).mp he
+  refine not_isRigidCoreIn_of_forall_visibleCells hα hD (fun y hy ↦ ?_) hD'
+  obtain ⟨i, rfl⟩ : y ∈ Set.range (D.cellMap e) := by
+    rw [Scheme.range_cellMap]
+    exact hy
+  exact hp i
+
+/-- **The empty core is rigid exactly in the top-free types**: at a limit stage, the empty core is
+rigid in a legal stage type exactly when the type is top-free.  No cell is supported on the empty
+core, so otherwise the core is not rigid (`not_isRigidCoreIn_of_forall_visibleCells`). -/
+theorem isRigidCoreIn_empty_iff_isTopFree (hα : Order.IsSuccLimit α) (ht : t.IsLegal)
+    (e : Fin 0 ↪ Fin n) : t.IsRigidCoreIn e ↔ t.IsTopFree := by
+  refine ⟨fun h ↦ by_contra fun ht' ↦ not_isRigidCoreIn_of_forall_visibleCells hα ht
+    (fun d hd _ ↦ ?_) ht' h, fun h ↦ isRigidCoreIn_of_isTopFree h e⟩
   -- no cell is supported on the empty core: its scope would be empty
   have hs : t.toCellScheme.scope d = ∅ := by
     rw [Scheme.mem_visibleCells, Set.range_eq_empty] at hd

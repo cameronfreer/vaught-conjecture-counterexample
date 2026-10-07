@@ -121,6 +121,12 @@ stage types on its scheme.  A coface in which the root is not a rigid core has a
   This is the rigid-core instance along `h`; it moves the whole content into acquisition, which is
   not proved for it, so it is a diagnosis, not a reduction.
 
+`VaughtConjecture.Continuation.AvailableTopDetermination` builds the necessary condition into the
+predicate (the anchored context with a top), proves acquisition for it under the coatom extension
+property, refutes determination for it, and sharpens the necessary condition: at a limit stage,
+over a legal context, the top grade of the context must be at least the grade of every new top of
+the non-rigid donor.
+
 ## Placement
 
 This file belongs to Layer 3 of `roadmap/README.md`.
@@ -303,8 +309,11 @@ structure CutoffDonorDetermination (P : ∀ {α : Ordinal.{u}} {n k : ℕ}, Stag
           ∃ D' ∈ t'.cofaces, ∃ δ : Label.{u}, IsPermittedCutoff α δ ∧
             StageType.IsDeterminedWithin (StageType.receivingFamily D' δ) t' h d
 
-/-- Receiving at a non-rigid coface from an acquired context and cutoff determination. -/
-private theorem exists_covers_snoc_of_cutoffDonorDetermination
+/-- **Receiving at a non-rigid coface from an acquired context and cutoff determination**: in a
+model with finite-cut receiving at a limit stage, a cover of an acquired context `t'` with
+`P t' h d` over the cover `c` of `t`, together with cutoff determination with a donor for `P`,
+realizes the non-rigid coface `d` over `c`. -/
+theorem exists_covers_snoc_of_cutoffDonorDetermination
     {P : ∀ {α : Ordinal.{u}} {n k : ℕ}, StageType.{u} α k → (Fin n ↪ Fin k) →
       StageType.{u} α (n + 1) → Prop}
     (hdet : CutoffDonorDetermination.{u} P) (hα : Order.IsSuccLimit α) (hR : R.IsModel)
@@ -358,9 +367,9 @@ theorem hollowReceiving_of_cutoffDonorDetermination
 /-! ### What determination needs -/
 
 /-- **Determination needs an available private top**: if cutoff determination with a donor holds
-for `P`, then over every legal `t'` with face `t` along `h`, and every legal non-rigid one-point
-coface `d` of `t` with `P t' h d`, some coface `D'` of `t'` has face `d` along `h` followed by the
-new point and a private top available to a new cell. -/
+for `P` at a limit stage, then over every legal `t'` with face `t` along `h`, and every legal
+non-rigid one-point coface `d` of `t` with `P t' h d`, some coface `D'` of `t'` has face `d` along
+`h` followed by the new point and a private top available to a new cell. -/
 theorem CutoffDonorDetermination.exists_hasAvailablePrivateTop
     {P : ∀ {α : Ordinal.{u}} {n k : ℕ}, StageType.{u} α k → (Fin n ↪ Fin k) →
       StageType.{u} α (n + 1) → Prop}
