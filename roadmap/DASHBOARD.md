@@ -215,9 +215,31 @@ Status of each:
    Compiled conditionally on (R4) and the coatom extension property with apex at every successor
    block stage (`ContinuationCriterion.of_hasApexCoatomExtensions`); (R4) is still to be proved,
    so the six- and five-hypothesis forms keep the criterion as a hypothesis.
-5. `Realization.ResidualReceiving`: still to be proved (the LOW construction).
+5. `Realization.ResidualReceiving`: still to be proved (the LOW construction).  Exactly
+   reformulated as exact receiving of the legal types of top grade at most `K`
+   (`Realization.residualReceiving_iff`).  A reduction is compiled: it follows from (R1) for every
+   model at every limit stage (a receiving hypothesis that ranges over every limit stage at fixed
+   universe levels and is not supplied by the countable-stage `Expansion.FiniteCutReceiving`,
+   item 2), `Realization.ResidualAcquisition P`, and `Realization.CutoffDetermination P`
+   (`Realization.residualReceiving_of_cutoffDetermination`), for a predicate `P` on acquired
+   contexts not yet defined: the reduction is a template, and its hypotheses are not statements
+   still to be proved (no predicate `P` is defined in the library, and neither acquisition nor
+   determination is proved beyond the rigid-core instance).  For `P` always true, acquisition is
+   immediate and determination fails (compiled; top-free roots,
+   `Continuation/ExactReceivingExamples`), which shows only that determination is not vacuous.
+   The cofaces in which the root is a rigid core need only (R1) in the same form
+   (`Realization.ResidualReceiving.of_not_isRigidCoreIn`).
 6. `Realization.HollowReceiving` for `Realization.IsCoverHollowAtBlock`: still to be proved (the
-   growth construction).
+   growth construction).  Exactly reformulated as exact receiving of all legal types
+   (`Realization.hollowReceiving_iff`).  A reduction is compiled: it follows from
+   `Realization.HollowAcquisition H P` and `Realization.SchemeDetermination P` with
+   `H := Realization.IsCoverHollowAtBlock` (`Realization.hollowReceiving_of_schemeDetermination`,
+   no receiving used), for a predicate `P` not yet defined: a template, as in item 5 (for `P`
+   always true, acquisition is immediate and determination fails, compiled).  With item 6, the
+   count uses (R3) at every cover-hollow model with unbounded growth, a globally rigid core
+   included (item 6′ below excludes it).  (R3) forces a globally rigid core of a cover-hollow
+   model with unbounded growth to be rigid in every legal donor over its type
+   (`Realization.HollowReceiving.isRigidCoreIn`).
 7. Nonempty losses: still to be proved.  Compiled conditionally on the coatom extension property
    with apex at every countable block stage and on next-block uniqueness
    (`hasNonemptyLosses_of_hasApexCoatomExtensions`, stated for the bundled domains, which also take
@@ -243,10 +265,11 @@ holds in the same form
 (`MainTheorem.countable_isoClasses_terminalAt_of_restrictedTerminalClassification`).  Item 6
 implies item 6′ (`Realization.HollowReceiving.withoutRigidCore`): weaker or equal; strictly weaker
 not shown.  The six- and five-hypothesis forms with item 6′ in place of item 6 are not compiled
-(separate compositions, prospective).  An informal argument, not compiled, is a risk for item 6
-and not for item 6′: if every legal stage type had a legal one-point coface in which the root is
-not rigid, item 6 would force every cover-hollow model with unbounded growth to have no globally
-rigid core.  Neither is proved, and item 6 is not claimed to be false.
+(separate compositions, prospective).  An informal argument, not compiled beyond its first step
+(`Realization.HollowReceiving.isRigidCoreIn`, item 6 above), is a risk for item 6 and not for
+item 6′: if every legal stage type had a legal one-point coface in which the root is not rigid,
+item 6 would force every cover-hollow model with unbounded growth to have no globally rigid
+core.  Neither is proved, and item 6 is not claimed to be false.
 
 There is no hypothesis of countable losses and none of next-block uniqueness in any form: the
 first is `Expansion.expansionDomain_loss_countable`, the second
