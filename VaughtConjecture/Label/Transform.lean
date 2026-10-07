@@ -60,7 +60,11 @@ of `σ`.
   sending every label at least `β + N` to the formal top and keeping the others; for `β` zero or a
   limit and all grades at most `K < N`, a transformation to `q` gives one to the collapse of `q`
   (`TransformsTo.collapse`), since the collapse commutes with visibility replacement at thresholds
-  `k < N` (`collapse_visibilityReplace`), although `β + N` is a successor stage for `N ≠ 0`.
+  `k < N` (`collapse_visibilityReplace`), although `β + N` is a successor stage for `N ≠ 0`;
+* the reading at the grade `3` (`reading_of_transformsTo`): if a cell of grade `1` read at `2` has
+  target `min R C` and a cell of grade `3` has target `C` self-visible at `3`, then `min R C` has
+  finite part `2` or at least `3`, and every cell of grade `1` read at `1` has target
+  `min (visibilityReplace 3 1 (min R C)) C`.
 
 Pointwise minima and collapse prove locality of the stable labelling at the next block stage
 (roadmap, Layer 4, output 1), written as a pointwise minimum of finitely many lawful labellings,
@@ -603,5 +607,62 @@ theorem eq_of_transformsTo_collision {D : Type*} {grade : D → ℕ} {p q : D �
   · exact (key _ _ hp₁ hlt (hσ d₁ hg₁ he₁) (hσ d₂ hg₂ he₂)).elim
   · exact heq
   · exact (key _ _ hp₂ hgt (hσ d₂ hg₂ he₂) (hσ d₁ hg₁ he₁)).elim
+
+/-! ### Reading at the grade `3` -/
+
+/-- **The reading at the grade `3`.**  Let `r` transform to `q`, with `a` of grade `1` read at `2`,
+`q a = min R C`, and `b` of grade `3` with `q b = C` self-visible at `3`.  Then the capped root
+`min R C` has finite part `2` or at least `3`, and every `e` of grade `1` read at `1` has
+`q e = min (visibilityReplace 3 1 (min R C)) C`.  Below the cap the shifter sends `2` to the capped
+root and commutes with visibility replacement there; at or above it, a value below the cap at `1`
+would bring the value at `2` below the cap (`visibilityReplace_three_two_lt`). -/
+theorem reading_of_transformsTo {r : D → Label.{u}} (h : TransformsTo grade r q) {a b : D}
+    (ga : grade a = 1) (gb : grade b = 3) (hra : r a = 2) {R C : Label.{u}}
+    (hC : IsSelfVisible 3 C) (hqa : q a = min R C) (hqb : q b = C) :
+    visibilityReplace 3 2 (min R C) = min R C ∧
+      ∀ e, grade e = 1 → r e = 1 → q e = min (visibilityReplace 3 1 (min R C)) C := by
+  obtain ⟨g, σ, hw, heq⟩ := h
+  have v22 : visibilityReplace 3 2 (2 : Label.{u}) = 2 := by simp
+  have v21 : visibilityReplace 3 1 (2 : Label.{u}) = 1 := by simp
+  have v12 : visibilityReplace 3 2 (1 : Label.{u}) = 2 := by simp
+  have h12 : (1 : Label.{u}) ≤ 2 := by simp
+  have hCg : C ≤ g 3 := by
+    have := heq b
+    rw [hqb, gb] at this
+    rw [this]
+    exact min_le_right _ _
+  have hg31 : g 3 ≤ g 1 := hw.antitone (by omega)
+  have ha := heq a
+  rw [hqa, hra, ga] at ha
+  rcases lt_or_ge (min R C) C with hxC | hCx
+  · -- below the cap: the shifter sends `2` to the capped root
+    have hσ : σ 2 = min R C := by
+      rcases le_total (σ 2) (g 1) with h1 | h1
+      · rw [min_eq_left h1] at ha; exact ha.symm
+      · rw [min_eq_right h1] at ha
+        exact absurd (ha ▸ hxC) (not_lt.mpr (hCg.trans hg31))
+    have hcomm := hw.visibilityReplace_comm 2 3 (hσ ▸ hxC.le.trans hCg)
+    have h2 := hcomm 2 (by omega)
+    rw [v22, hσ] at h2
+    refine ⟨h2.symm, fun e ge hre ↦ ?_⟩
+    have h1 := hcomm 1 (by omega)
+    rw [v21, hσ] at h1
+    have hle : visibilityReplace 3 1 (min R C) ≤ min R C :=
+      (visibilityReplace_le_visibilityReplace (by omega : 1 ≤ 2) _).trans_eq h2.symm
+    rw [heq e, hre, ge, h1, min_eq_left (hle.trans (hxC.le.trans (hCg.trans hg31))),
+      min_eq_left (hle.trans hxC.le)]
+  · -- at or above the cap: the value at `1` is at least the cap
+    have hx : min R C = C := le_antisymm (min_le_right _ _) hCx
+    refine ⟨by rw [hx]; exact hC.visibilityReplace_eq 2, fun e ge hre ↦ ?_⟩
+    rw [hx, hC.visibilityReplace_eq 1, min_self, heq e, hre, ge]
+    rw [hx] at ha
+    refine le_antisymm (ha ▸ min_le_min_right _ (hw.monotone h12)) ?_
+    refine le_min ?_ (hCg.trans hg31)
+    by_contra hlt
+    rw [not_le] at hlt
+    have h2 := hw.visibilityReplace_comm 1 3 (hlt.le.trans hCg) 2 (by omega)
+    rw [v12] at h2
+    have : σ 2 < C := h2 ▸ visibilityReplace_three_two_lt hC hlt
+    exact absurd (ha ▸ min_le_left _ _ : C ≤ σ 2) (not_le.mpr this)
 
 end VaughtConjecture.Label
