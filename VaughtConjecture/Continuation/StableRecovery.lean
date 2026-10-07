@@ -93,8 +93,9 @@ calibration is not proved.  Further inputs with a scheme
 `VaughtConjecture.Continuation.StableRecoveryInterior`): a cap labelled a proper ordinal, down to
 `λ_ξ + N` with `γ = λ_ξ + N - 1`; reference cells and donor labels in a block below `λ_ξ`; a donor
 with a new cell labelled the formal top, recovered as the proper value of the cap; and an interior
-cap, where every scheme has two graded faces of grade `N` containing the cap and the new point,
-with coherent readings at both.  The lower bound `λ_ξ + N` on the cap is the order law for a cell
+cap, where every scheme has a face other than its ground set containing the cap and the new
+point, and a scheme with reading cells at two graded faces of grade `N`, across which the reading
+constraints agree.  The lower bound `λ_ξ + N` on the cap is the order law for a cell
 labelled at least `λ_ξ` (`StageType.coe_add_grade_le_label`).
 
 ## Placement
@@ -305,6 +306,16 @@ theorem GradedCapCalibration.lt {Tp : StageType.{u} (blockStage (ξ + 1)) m} {f 
     (h : GradedCapCalibration ξ Tp f D γ) : k < m := by
   obtain ⟨b, -, hk, -⟩ := h
   exact hk.trans_le (Tp.grade_le b)
+
+/-- **The lower bound on a cap is the order law**: in a stage type at `λ_{ξ+1}`, a cell labelled
+at least `λ_ξ` is labelled at least `λ_ξ` plus its grade, since its label is self-visible at its
+grade.  So the clause `λ_ξ + N ≤ T⁺ b` of `StageType.GradedCapCalibration` and of
+`StageType.IsStableRecoveryScheme.of_readsThroughCap` asks only that the cap be labelled at least
+`λ_ξ`: the formal top, or a proper ordinal `λ_ξ + M` with `M ≥ N`. -/
+theorem coe_add_grade_le_label (T : StageType.{u} (blockStage (ξ + 1)) m) {b : Fin T.card}
+    (hb : ((blockStage ξ : Ordinal.{u}) : Label.{u}) ≤ T.label b) :
+    ((blockStage ξ + T.toCellScheme.grade b : Ordinal.{u}) : Label.{u}) ≤ T.label b :=
+  Label.coe_add_le_of_isSelfVisible (isSuccPrelimit_blockStage ξ) hb (T.isLawful.orderly b)
 
 /-! ### A stable recovery scheme from cells reading through the cap -/
 

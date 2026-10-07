@@ -66,6 +66,16 @@ with face `T⁺` (`label_newCap_eq`): the formal top of `D` is recovered as a pr
 the root is one dead cell; `N = k + 1`; the reference is in the block `λ_ξ`; and `(univ, 2)` is
 the only graded face of grade `2` containing the cap and the new cells.
 
+## Implementation notes
+
+The two labelled schemes `sourceType` and `capType` differ only in the label of the caps and the
+reading cell, `⊤` against `λ_ξ + 2`.  Their faces along the root are compared in
+`restrictFace_sourceType_root` with the scheme equality stated as
+`show topScheme.comap g = topScheme.comap g from rfl` and the labels compared through the dead cell
+`1` (`cellMap_root_eq`), never through the two labellings.  Closing the same goal by
+`StageType.ext rfl` makes the kernel unfold the ordinal labels of both labellings and hits a
+deterministic timeout.
+
 ## Placement
 
 This file belongs to Layer 4 of `roadmap/README.md`.
@@ -116,34 +126,6 @@ noncomputable def kindValue (A E B : Label.{u}) : Fin 7 → Label.{u} := ![⊥, 
 /-- The **labelling with a new cap** of parameters `A`, `E`, `B`. -/
 noncomputable def topLabel (A E B : Label.{u}) (d : Fin 10) : Label.{u} :=
   kindValue A E B (cellKind d)
-
-section Witness
-
-variable {a b : Label.{u}}
-
-private theorem blockConst_gridPoint_zero (k : ℕ) : blockConst a b (gridPoint.{u} k 0) = a := by
-  rw [gridPoint, blockConst_block]
-  simp
-
-private theorem blockConst_gridPoint_one (k : ℕ) : blockConst a b (gridPoint.{u} k 1) = b := by
-  rw [gridPoint, blockConst_block]
-  simp
-
-private theorem blockConst_bot : blockConst a b ⊥ = ⊥ := by
-  unfold blockConst
-  simp
-
-private theorem twoStrip_gridPoint_one_zero {f : Label.{u}} :
-    twoStrip a b f (gridPoint.{u} 1 0) = visibilityReplace 2 1 a := by
-  rw [gridPoint, twoStrip_block]
-  simp
-
-private theorem twoStrip_gridPoint_two_one {f : Label.{u}} :
-    twoStrip a b f (gridPoint.{u} 2 1) = visibilityReplace 2 2 b := by
-  rw [gridPoint, twoStrip_block]
-  simp
-
-end Witness
 
 /-! ### Lawful labellings -/
 
@@ -337,26 +319,6 @@ private theorem topLabel_of_kind_zero {A E B : Label.{u}} {d : Fin 10} (h : cell
 section Below
 
 variable {X : Finset (Fin 3) × ℕ}
-
-private theorem mem_below_of_le {d e : Fin 10} (hd : d ∈ readingCells.below X)
-    (h : readingCells.gradedIndex e ≤ readingCells.gradedIndex d) : e ∈ readingCells.below X :=
-  le_trans h hd
-
-/-- A pair above the reference cell and the new cell is above the cell `(univ, 1)`. -/
-private theorem mem_seven (h3 : (3 : Fin 10) ∈ readingCells.below X)
-    (h4 : (4 : Fin 10) ∈ readingCells.below X) : (7 : Fin 10) ∈ readingCells.below X := by
-  obtain ⟨C, j⟩ := X
-  have key : ∀ C : Finset (Fin 3), ({0, 1} : Finset (Fin 3)) ⊆ C →
-      ({1, 2} : Finset (Fin 3)) ⊆ C → (univ : Finset (Fin 3)) ⊆ C := by decide
-  exact ⟨key C h3.1 h4.1, h3.2⟩
-
-/-- A pair above the new cell and the cap is above the reading cell. -/
-private theorem mem_eight (h4 : (4 : Fin 10) ∈ readingCells.below X)
-    (h5 : (5 : Fin 10) ∈ readingCells.below X) : (8 : Fin 10) ∈ readingCells.below X := by
-  obtain ⟨C, j⟩ := X
-  have key : ∀ C : Finset (Fin 3), ({0, 1} : Finset (Fin 3)) ⊆ C →
-      ({1, 2} : Finset (Fin 3)) ⊆ C → (univ : Finset (Fin 3)) ⊆ C := by decide
-  exact ⟨key C h5.1 h4.1, h5.2⟩
 
 /-- A pair above the reference cell and the new cap is above the cap. -/
 private theorem mem_five (h3 : (3 : Fin 10) ∈ readingCells.below X)

@@ -63,21 +63,6 @@ This file belongs to Layer 4 of `roadmap/README.md`.
 
 universe u
 
-namespace VaughtConjecture.StageType
-
-/-- **The lower bound on a cap is the order law**: in a stage type at `λ_{ξ+1}`, a cell labelled
-at least `λ_ξ` is labelled at least `λ_ξ` plus its grade, since its label is self-visible at its
-grade.  So the clause `λ_ξ + N ≤ T⁺ b` of `StageType.GradedCapCalibration` and of
-`StageType.IsStableRecoveryScheme.of_readsThroughCap` asks only that the cap be labelled at least
-`λ_ξ`: the formal top, or a proper ordinal `λ_ξ + M` with `M ≥ N`. -/
-theorem coe_add_grade_le_label {ξ : Ordinal.{u}} {m : ℕ}
-    (T : StageType.{u} (blockStage (ξ + 1)) m) {b : Fin T.card}
-    (hb : ((blockStage ξ : Ordinal.{u}) : Label.{u}) ≤ T.label b) :
-    ((blockStage ξ + T.toCellScheme.grade b : Ordinal.{u}) : Label.{u}) ≤ T.label b :=
-  Label.coe_add_le_of_isSelfVisible (isSuccPrelimit_blockStage ξ) hb (T.isLawful.orderly b)
-
-end VaughtConjecture.StageType
-
 namespace VaughtConjecture.Continuation.StableRecoveryTwinFamily
 
 open Finset Label StageType CandidateCounterexamples StableRecoveryCounterexample

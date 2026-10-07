@@ -11,19 +11,18 @@ import VaughtConjecture.Continuation.StableRecoveryReading
 Roadmap, Layer 4, output 3 of higher-stage reconstruction (the modelhood criterion), and Layer 3,
 3.3 (the private cap, the marker and the decoder of (R4)); semantic contract, item 8.
 
-**The question.**  A scheme reading the new cells through the cap
-(`StageType.IsStableRecoveryScheme.of_readsThroughCap`) reads them at one cell `s` of the grade
-`N` of the cap.  By bountifulness the reading constrains every graded face of grade `N`
-containing the cap and the new cells, and these faces must read coherently.  When the scope of
-the cap avoids both extreme points of the context (an **interior cap**), there are at least two
-such faces in every scheme: the new point is an extreme point of the points of the scheme, the
-other extreme point is an extreme point of the context, and the face obtained by deleting it
-contains the cap and the new point
-(`StageType.IsStableRecoveryScheme.exists_face_ne_univ`, in
-`VaughtConjecture.Continuation.StableRecoveryInterior`).  An
-interior cap of grade `N ≥ 2` needs a context of at least four points.  This file builds a legal
-scheme on five points with an interior cap of grade `2` and two reading cells, one at each of the
-two graded faces of grade `2` containing the cap and the new cell; the stage types are in
+**The question.** A scheme reading the new cells through the cap
+(`StageType.IsStableRecoveryScheme.of_readsThroughCap`) reads them at one cell `s` of the grade `N`
+of the cap.  By bountifulness the reading constrains every graded face of grade `N` containing the
+cap and the new cells, so the reading constraints must agree across these faces.  When the scope of
+the cap avoids both extreme points of the context (an **interior cap**), there are at least two such
+faces in every scheme: the new point is an extreme point of the points of the scheme, the other
+extreme point is an extreme point of the context, and the face obtained by deleting it contains the
+cap and the new point (`StageType.IsStableRecoveryScheme.exists_face_ne_univ`, in
+`VaughtConjecture.Continuation.StableRecoveryInterior`).  An interior cap of grade `N ≥ 2` needs a
+context of at least four points (informal; not compiled).  This file builds a legal scheme on five
+points with an interior cap of grade `2` and two reading cells, one at each of the two graded faces
+of grade `2` containing the cap and the new cell; the stage types are in
 `VaughtConjecture.Continuation.StableRecoveryInterior`.
 
 **The scheme** (`interiorScheme`).  Five points: `0`, `1`, `2` (private), `3` (the root) and `4`
@@ -74,7 +73,8 @@ universe u
 namespace VaughtConjecture.Continuation.StableRecoveryInterior
 
 open Finset Label StageType ThinCompletion
-open StableRecoveryReading (IsReadingTriple exists_isReadingTriple_lift)
+open StableRecoveryReading (IsReadingTriple exists_isReadingTriple_lift blockConst_gridPoint_zero
+  blockConst_gridPoint_one blockConst_bot twoStrip_gridPoint_one_zero twoStrip_gridPoint_two_one)
 open Ordinal hiding univ
 
 /-! ### The scheme -/
@@ -189,36 +189,6 @@ theorem rep_le_of_kind : ∀ d : Fin 35,
   decide
 
 end Kinds
-
-/-! ### Witnesses -/
-
-section Witness
-
-variable {a b : Label.{u}}
-
-private theorem blockConst_gridPoint_zero (k : ℕ) : blockConst a b (gridPoint.{u} k 0) = a := by
-  rw [gridPoint, blockConst_block]
-  simp
-
-private theorem blockConst_gridPoint_one (k : ℕ) : blockConst a b (gridPoint.{u} k 1) = b := by
-  rw [gridPoint, blockConst_block]
-  simp
-
-private theorem blockConst_bot : blockConst a b ⊥ = ⊥ := by
-  unfold blockConst
-  simp
-
-private theorem twoStrip_gridPoint_one_zero {f : Label.{u}} :
-    twoStrip a b f (gridPoint.{u} 1 0) = visibilityReplace 2 1 a := by
-  rw [gridPoint, twoStrip_block]
-  simp
-
-private theorem twoStrip_gridPoint_two_one {f : Label.{u}} :
-    twoStrip a b f (gridPoint.{u} 2 1) = visibilityReplace 2 2 b := by
-  rw [gridPoint, twoStrip_block]
-  simp
-
-end Witness
 
 /-! ### Lawful labellings -/
 

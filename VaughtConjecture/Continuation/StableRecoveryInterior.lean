@@ -6,7 +6,7 @@ Authors: Cameron Freer
 import VaughtConjecture.Continuation.StableRecoveryInteriorScheme
 
 /-!
-# A stable recovery scheme with an interior cap: coherent readings at two faces
+# A stable recovery scheme with an interior cap: reading cells at two faces
 
 Roadmap, Layer 4, output 3 of higher-stage reconstruction (the modelhood criterion), and Layer 3,
 3.3 (the private cap, the marker and the decoder of (R4)); semantic contract, item 8.
@@ -33,15 +33,15 @@ the point `3` (one dead cell), and the donor `D` the face along `{3, 4}`: `⊥` 
 `({4}, 1)` and `({3, 4}, 2)`, and `λ_ξ + 1` at the new cell `({3, 4}, 1)`.  The graded cap
 calibration holds for every `γ < λ_ξ + 2` (`gradedCapCalibration_contextType`).
 
-**Two faces, coherent readings.**  The graded faces of grade `2` of the interior scheme containing
-the scope of the cap and the new point are `({1, 2, 3, 4}, 2)` and `(univ, 2)`
+**Two faces, the same reading constraints.**  The graded faces of grade `2` of the interior scheme
+containing the scope of the cap and the new point are `({1, 2, 3, 4}, 2)` and `(univ, 2)`
 (`StableRecoveryInterior.eq_of_mem_faces_of_subset`), and each carries a reading cell, of the
 reading kind.  The hypothesis of `of_readsThroughCap` holds at both
 (`readsThroughCap_of_cellKind_eq_five`), so each reading cell alone makes the interior scheme a
-stable recovery scheme (`isStableRecoveryScheme_of_cellKind_eq_five`).  The two readings are
-coherent because the scheme is legal: the lawful labellings below the two faces are those of the
-same reading triples (`StableRecoveryInterior.exists_of_isLawfulBelow`), and every pair lifts
-capped (`StableRecoveryInterior.cappedLift_interiorScheme`).
+stable recovery scheme (`isStableRecoveryScheme_of_cellKind_eq_five`).  The reading constraints
+agree across the two faces, and the scheme is legal: the lawful labellings below the two faces are
+those of the same reading triples (`StableRecoveryInterior.exists_of_isLawfulBelow`), and every pair
+lifts capped (`StableRecoveryInterior.cappedLift_interiorScheme`).
 
 **Every scheme has two such faces** (`StageType.IsStableRecoveryScheme.exists_face_ne_univ`,
 `exists_face_ne_univ_of_isStableRecoveryScheme`).  In a well formed scheme on the points of `T⁺`
@@ -68,7 +68,7 @@ open.  The inputs are degenerate in other respects:
   `StageType.ReadsThroughCap` are not used;
 * the root is one cell, labelled `⊥`, and `N = k + 1`;
 * the two faces are nested (`{1, 2, 3, 4} ⊆ univ`); faces of grade `N` that are not nested need
-  more points.
+  more points (informal; not compiled).
 
 ## Placement
 
@@ -459,8 +459,8 @@ theorem isStableRecoveryScheme_of_cellKind_eq_five
   · rw [interiorScheme_toCellScheme.{u}, hgb, hgs]
 
 /-- **Stable recovery schemes for the graded cap calibration exist at a context with an interior
-cap, at every `ξ`**: for every cap value `B` self-visible at `2`, at least `λ_ξ + 2` and occurring
-at `λ_{ξ+1}` (the formal top or a proper label `λ_ξ + M`, `M ≥ 2`), and every `γ < λ_ξ + 2`, a
+cap, at every `ξ`**: for every cap value `B` at least `λ_ξ + 2` and occurring at `λ_{ξ+1}` (the
+formal top or a proper label `λ_ξ + M`, `M ≥ 2`, so self-visible at `2`), and every `γ < λ_ξ + 2`, a
 legal context `T⁺` on four points with a cap of grade `2` labelled `B` whose scope `{1, 2}` avoids
 the extreme points `0` and `3`, the embedding of a root on one point, and a coface `D` of the root
 with a new cell labelled `λ_ξ + 1`, satisfy the graded cap calibration and have a stable recovery
@@ -468,8 +468,7 @@ scheme.  So the conclusion of
 `StageType.HasStableRecoverySchemes ξ (StageType.GradedCapCalibration ξ)` holds at these inputs,
 where every scheme has at least two graded faces of grade `2` containing the cap and the new
 cell. -/
-theorem exists_isStableRecoveryScheme_interiorCap (hB2 : IsSelfVisible 2 B)
-    (hBat : AtStage (blockStage (ξ + 1)) B)
+theorem exists_isStableRecoveryScheme_interiorCap (hBat : AtStage (blockStage (ξ + 1)) B)
     (hBcap : ((blockStage ξ + ((2 : ℕ) : Ordinal.{u}) : Ordinal.{u}) : Label.{u}) ≤ B)
     {γ : Ordinal.{u}} (hγ : γ < blockStage ξ + ((2 : ℕ) : Ordinal.{u})) :
     ∃ (Tp : StageType.{u} (blockStage (ξ + 1)) 4) (f : Fin 1 ↪ Fin 4)
@@ -480,7 +479,9 @@ theorem exists_isStableRecoveryScheme_interiorCap (hB2 : IsSelfVisible 2 B)
           Tp.toCellScheme.scope b = {1, 2}) ∧
         (∃ j : Fin D.card, Fin.last 1 ∈ D.toCellScheme.scope j ∧ D.label j = markerLabel ξ) ∧
         ∃ E : Scheme.{u} 5, Tp.IsStableRecoveryScheme f D γ E := by
-  have hB : IsSelfVisible 2 B ∧ AtStage (blockStage (ξ + 1)) B := ⟨hB2, hBat⟩
+  have hB : IsSelfVisible 2 B ∧ AtStage (blockStage (ξ + 1)) B :=
+    ⟨isSelfVisible_of_coe_add_le (isSuccPrelimit_blockStage ξ) (blockStage_add_one ξ ▸ hBat) hBcap,
+      hBat⟩
   have hγ' : γ < blockStage (ξ + 1) := by
     rw [blockStage_add_one]
     exact hγ.trans (add_lt_add_right (natCast_lt_omega0 2) _)
@@ -567,7 +568,8 @@ recovery scheme for `T⁺` on `m > 0` points and `S` is a set of points of `T⁺
 extreme point of its ground set (no `y` with `univ \ {y}` a face of `T⁺`), then some face of `E`
 other than its ground set contains `S` and the new point.  With `S` the scope of a cap of grade
 `N` this gives two graded faces of grade `N` of `E` containing the cap and the new point: that
-face and the ground set. -/
+face and the ground set (informal; not compiled: that the face has at least `N` points, since it
+contains the scope of the cap). -/
 theorem _root_.VaughtConjecture.StageType.IsStableRecoveryScheme.exists_face_ne_univ
     {ξ : Ordinal.{u}} {k : ℕ} {Tp : StageType.{u} (blockStage (ξ + 1)) m} {f : Fin k ↪ Fin m}
     {D : StageType.{u} (blockStage (ξ + 1)) (k + 1)} {γ : Ordinal.{u}} {E : Scheme.{u} (m + 1)}
