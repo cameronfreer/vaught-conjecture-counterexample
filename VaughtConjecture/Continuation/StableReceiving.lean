@@ -238,7 +238,9 @@ has a stable recovery scheme.  In the roadmap's design (Layer 3, 3.1 and 3.3) `C
 data of (R4) and the scheme is the growth construction, shared with (R3).  For the marker and cap
 calibration (`StageType.MarkerCapCalibration`, acquisition proved) it is **false** at every `ξ`
 (`Continuation.StableRecoveryCounterexample.not_hasStableRecoverySchemes_markerCap`); for the
-graded cap calibration (`StageType.GradedCapCalibration`, acquisition proved) it is open. -/
+graded cap calibration (`StageType.GradedCapCalibration`, acquisition proved) it is open; its
+conclusion holds at one input
+(`Continuation.StableRecoveryReading.exists_isStableRecoveryScheme_gradedCap`). -/
 def HasStableRecoverySchemes
     (C : ∀ ⦃m k : ℕ⦄, StageType.{u} (blockStage (ξ + 1)) m → (Fin k ↪ Fin m) →
       StageType.{u} (blockStage (ξ + 1)) (k + 1) → Ordinal.{u} → Prop) : Prop :=
