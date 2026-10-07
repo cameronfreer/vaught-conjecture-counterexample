@@ -26,8 +26,8 @@ stated:
 * **The evaluation step**: a stable recovery scheme over an occurrence containing `x` gives (R4)
   at `x`.
 * **The marker and cap calibration**: acquired in every model that is not cover-hollow and has
-  top-grade supremum `⊤`; with stable recovery schemes for it (open, and may be false) it gives
-  (R4) at every occurrence of positive arity.
+  top-grade supremum `⊤`; with stable recovery schemes for it (false at every `ξ`) it gives (R4) at
+  every occurrence of positive arity.
 -/
 
 namespace VaughtConjecture.Continuation.StableReceivingExamples
@@ -145,8 +145,9 @@ example (hR : R.IsModel) (hnh : ¬ R.IsCoverHollow) (hgrow : R.topGradeSup = ⊤
     AcquiresCalibratedContexts ξ (MarkerCapCalibration ξ) R hR.isStablyLawful :=
   hR.acquiresCalibratedContexts_markerCap hnh hgrow
 
-/-- With stable recovery schemes for the marker and cap calibration at `ξ` (open, and may be
-false), (R4) holds at every occurrence of positive arity of the candidate of such a model. -/
+/-- With stable recovery schemes for the marker and cap calibration at `ξ` (a hypothesis that is
+false, `Continuation.StableRecoveryCounterexample.not_hasStableRecoverySchemes_markerCap`), (R4)
+holds at every occurrence of positive arity of the candidate of such a model. -/
 example (hR : R.IsModel) (hnh : ¬ R.IsCoverHollow) (hgrow : R.topGradeSup = ⊤)
     (hS : HasStableRecoverySchemes ξ (MarkerCapCalibration ξ))
     (x : (R.stableCandidate hR.isStablyLawful).Occurrence) (hx : 0 < x.arity)

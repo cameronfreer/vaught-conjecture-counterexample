@@ -448,7 +448,7 @@ rows).
    `Continuation.CandidateCounterexamples.not_twinOrdering_blockStage`; informal, not compiled as a
    separate statement; [Kni26, Lemma 2.5.11] is not relied on, `README.md`, Layer 1); this negative
    special case is to be compiled in `Continuation/CandidateCounterexamples` (Layer 4), on the
-   five-cell scheme defined privately there (`fiveCells`, `fiveCellRows`, `fiveCellScheme`).
+   five-cell scheme defined there (`fiveCells`, `fiveCellRows`, `fiveCellScheme`).
    "Least lift" is never replaced by "unique lift".
 6. *The separation of leastness from modelhood.*  Statements 1–5, 8, and 9 do not make the candidate
    a model: receiving, (R1)–(R4), stays its own statement; (R4) (`StableCappedReceiving`) and the
@@ -580,9 +580,26 @@ agreement at quantifier rank at most `η` is then the corollary `BFEquiv_implies
 at the pin, signatures checked), not a separate induction on sentences.  On this route thinness also
 has the scatteredness form: `D_η` lies in one back-and-forth class at `η` and has countable
 complement, so the codes of models meet countably many classes of `bfEquivSetoid Φ η`, and
-`isThinOnNatModels_of_countable_bfClasses` (compiled in this repository (theorem named),
-`MainTheorem/Scatteredness`) applies, with no López–Escobar; this application is expected, not
-elaborated.  The minimality form, from countable truth sides, is kept.
+InfinitaryLogic's `isThinOn_of_bfScattered` applies, with no López–Escobar.  This application is
+compiled conditional on the cap-to-model theorem, (R1), forcing donors at every countable block
+index, the continuation criterion, (R2) and (R3), each still to be proved
+(`densitySentence_isThinOnNatModels_of_terminalClassification_bfScattered`,
+`MainTheorem/ScatteredDomains`): `bfScattered_of_countable_compl` (`MainTheorem/Scatteredness`;
+cocountable sets of back-and-forth equivalent classes give `BFScattered`, through
+InfinitaryLogic's `bfScattered_of_countable_bfObservations`), `codeBFEquiv_of_mem_expansionDomain`
+(one back-and-forth class in `D_η`, conditional on (R1)),
+`densitySentence_bfScattered_of_modelExpansions` (conditional on the cap-to-model theorem,
+next-block uniqueness, (R1) and countable losses; the complements are
+`ExpansionDomains.compl_countable` for `modelExpansionDomains`),
+`densitySentence_bfScattered_of_terminalClassification`, the thinness theorems
+`densitySentence_isThinOnNatModels_of_modelExpansions_bfScattered` and
+`densitySentence_isThinOnNatModels_of_terminalClassification_bfScattered`, and
+`FullPresentations.HasScatteredTails.of_bfScattered` (`MainTheorem/Assembly`; back-and-forth
+scatteredness gives scattered tails to every family of full presentations).  Checked on the proof
+terms, the thinness theorem of `MainTheorem/ScatteredDomains` with the hypotheses of the terminal
+classification contains neither `sentence_separates_analytic_classes` nor any López–Escobar
+constant, while `densitySentence_isThinOnNatModels_of_terminalClassification` contains both.  The
+minimality form, from countable truth sides, is kept.
 
 ## The top-free witnesses: milestone order and acceptance
 
@@ -752,7 +769,12 @@ any construction is adapted to it:
    `bfEquiv_of_gradedMatching` gives `BFEquiv`; on abstract hypotheses this is
    `FullPresentation.bfEquiv_comp_of_obs_eq`, compiled in this repository (theorem named)), and
    approximate comparison gives the sentence form of bounded comparison through
-   `BFEquiv_implies_agreeQR`;
+   `BFEquiv_implies_agreeQR`; for model expansions to `λ_η` from an arbitrary common chart with a
+   selector, the comparison is `ModelExpansion.bfEquiv_comp_of_covers`, with formula form
+   `ModelExpansion.realize_comp_iff_of_covers` (`Expansion/Agreement`), compiled conditional on
+   `Expansion.FiniteExtensionReceiving` ((R1), still to be proved); it goes through
+   `ExpansionMatchData.bfEquiv_of_match`, a parallel result, not an instance of
+   `FullPresentation.bfEquiv_comp_of_obs_eq`;
 3. **a concrete full-presentation construction from the terminal classification:** the full
    presentations of the terminal models (pointed at the named core, residual, hollow) and of the
    top-free age, to see whether the new organization shortens the argument that faces the
@@ -1504,9 +1526,10 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     used here, and the conclusion of Theorem 2.17 is read for these systems.  Both corrections are
     recorded in `LITERATURE.md`, §9.
 25. Prospective; ingredient `StageType.reduce_eq_of_mem_receivingFamily` (`Realization/Expansion`).
-26. `ExpansionMatchData.bfEquiv_of_expansionMatch`; `Expansion.bfEquiv_of_modelExpansions`,
-    conditional on `Expansion.FiniteExtensionReceiving`, still to be proved; the structural form:
-    prospective.
+26. `ExpansionMatchData.bfEquiv_of_expansionMatch`; `Expansion.bfEquiv_of_modelExpansions` and,
+    from an arbitrary common chart, `ModelExpansion.bfEquiv_comp_of_covers` and its formula form
+    `ModelExpansion.realize_comp_iff_of_covers`, conditional on
+    `Expansion.FiniteExtensionReceiving`, still to be proved; the structural form: prospective.
 27. `FullPresentations` (`MainTheorem/Assembly`), a structure of hypotheses storing sets of classes
     at levels with countability and coverage, not presentations or maximality; and
     `vaughtCounterexample_of_presentations` (`MainTheorem/Assembly`), whose hypotheses include it.
@@ -2180,10 +2203,12 @@ and well-founded ranks, then analytic tree boundedness, then uniform back-and-fo
 thinness and invariant-Borel concentration; López–Escobar, invariant separation, and the
 model-theoretic boundedness route are excluded from this path by import and proof-dependency guards.
 Combined with the cocountable concentration of the expansion domains (classes in `D_η` agree at
-back-and-forth level `η`), it is expected to give thinness without sentence minimality and without
-López–Escobar (not elaborated; the compiled composition, `isThinOn_of_countable_bfClasses`, is
-applied to full presentations; for the expansion domains, the composition is the scatteredness form
-of `README.md`, Layer 6, from the back-and-forth form of condition 3). It does not replace the
+back-and-forth level `η`), it gives thinness without sentence minimality and without López–Escobar
+(the compiled composition, `isThinOn_of_countable_bfClasses`, is applied to full presentations;
+for the expansion domains, the composition is the scatteredness form of `README.md`, Layer 6, from
+the back-and-forth form of condition 3, compiled conditional on the hypotheses of
+`densitySentence_isThinOnNatModels_of_terminalClassification`, each still to be proved:
+`densitySentence_isThinOnNatModels_of_terminalClassification_bfScattered`). It does not replace the
 working thinness route (`Sentenceω.isThinOnNatModels_of_countable_sentence_splits`, from countable
 truth sides), the Gδ/Polish model-code results stay optional, and any improvement it brings is
 described as reduced dependencies of the thinness proof, not as a smaller trusted kernel.
@@ -2197,7 +2222,9 @@ single universe covers it.
 graded matching (`bfEquiv_of_gradedMatching`, applied in `Comparison/GradedMatchingApplications`),
 the rank tails and least levels of `OrdinalCountability` (quoted in `Counting/`), and
 `BFScattered` (available at the pin, signatures checked in `roadmap/SuggestedInterfaces.lean`;
-quoted in `MainTheorem/Scatteredness`); a
+quoted in `MainTheorem/Scatteredness`, which also derives it from countable complements by
+`bfScattered_of_countable_bfObservations`, and applied to the expansion domains in
+`MainTheorem/ScatteredDomains`); a
 coherent-retraction interface once one is available at a pin.  It needs no new layer of
 ComputableModelTheory.
 
@@ -2353,13 +2380,15 @@ named (`README.md`, Layer 0):
 **Available at the pin `e460cb6`, after `cf80917`** (InfinitaryLogic's merges #157–#162; same
 toolchain and Mathlib; signatures checked: `SuggestedInterfaces.lean` `#check`s the statements
 named here; no application compiled in this repository, except the agreement of `existsLastVars`
-with `existsTupleFrom` below): thinness from
-countable back-and-forth observations (#157, `Descriptive/BFScattered`).  If for every `η < ω₁` a
-map `obs η` on a set `C` of codes has countable range and any two codes with the same observation
-are `CodeBFEquiv η`, then `C` is back-and-forth scattered
-(`bfScattered_of_countable_bfObservations`), carries no Cantor antichain for isomorphism, for every
-relational language (`not_hasCantorAntichainOn_of_countable_bfObservations`), and, for countably
-many relation symbols, is thin (`isThinOn_of_countable_bfObservations`).  The same merge moves
+with `existsTupleFrom` below and the application of `bfScattered_of_countable_bfObservations`):
+thinness from countable back-and-forth observations (#157, `Descriptive/BFScattered`).  If for
+every `η < ω₁` a map `obs η` on a set `C` of codes has countable range and any two codes with the
+same observation are `CodeBFEquiv η`, then `C` is back-and-forth scattered
+(`bfScattered_of_countable_bfObservations`, applied in `bfScattered_of_countable_compl`,
+`MainTheorem/Scatteredness`, for the expansion domains of `MainTheorem/ScatteredDomains`), carries
+no Cantor antichain for isomorphism, for every relational language
+(`not_hasCantorAntichainOn_of_countable_bfObservations`), and, for countably many relation symbols,
+is thin (`isThinOn_of_countable_bfObservations`).  The same merge moves
 `countable_quotient_of_countable_range` to `Descriptive/PerfectAntichain` (not used here).
 Eliminating orbit parameters (#158, `Scott/OrbitParameters`: `existsOrbitParams`,
 `realize_existsOrbitParams_iff_orbit`, `qrank_existsOrbitParams`), which also adds
@@ -2857,9 +2886,16 @@ Each checkpoint needs both its abstract API and a concrete application:
    reducing to the top; the evaluation step and the acquisition of the marker and cap calibration
    are compiled, so (R4) follows from the finite statement `StageType.HasStableRecoverySchemes` for
    `StageType.MarkerCapCalibration` at every `ξ < ω₁`
-   (`StableCappedReceiving.of_hasStableRecoverySchemes_markerCap`), new and open, and possibly
-   false: the calibration lacks the cap of full scope and full grade, the reference cells and the
-   arity bound of the design (`README.md`, Layer 4, status, output 3). Step 7 is
+   (`StableCappedReceiving.of_hasStableRecoverySchemes_markerCap`), a finite hypothesis that is
+   false (`Continuation.StableRecoveryCounterexample.not_forall_hasStableRecoverySchemes_markerCap`,
+   `Continuation/StableRecoveryCounterexample`).
+   `StableCappedReceiving.of_hasStableRecoverySchemes_markerCap` rests on that refuted hypothesis
+   and is to be retired, with an audit of its uses, once this refutation is on `main` (not retired
+   here).  (R4) also follows from the same statement for the graded cap calibration
+   (`StableCappedReceiving.of_hasStableRecoverySchemes_gradedCap`, `Continuation/StableRecovery`;
+   acquisition compiled, the finite statement open; it holds at every instance with a scheme
+   reading through a cap, `StageType.IsStableRecoveryScheme.of_readsThroughCap`; `README.md`,
+   Layer 4, status, output 3). Step 7 is
    compiled conditionally (`README.md`, the section on the top-free witnesses): the loss at `η`
    under uniqueness at `λ_η` (`nonempty_loss_of_topFreeWitness`), and per block under
    `StageType.HasApexCoatomExtensions` at `λ_η` and uniqueness of the model expansions at `λ_η`
@@ -3323,10 +3359,67 @@ ones split):
   `CrossedCouplingCounterexample.cappedLift_four_HG`, which, like `OrderedLayer.cappedLift_four`,
   quotes the lift at the grade `4` from the grade `3` in a scheme over the amalgam of a seed with
   bottom apexes (`OrderedLayer.cappedLift_four_of_oldCells`); the coatom extension of `TH` and `TG`
-  with apex at every stage (`CrossedCouplingCounterexample.exists_coatomExtension_seedHG`). Open: a
-  systematic choice of the new cells for every seed on five points (prospective: one new cell per
-  forced separation at each graded face of full scope), and the completion at `m ≥ 3` for every
-  seed.
+  with apex at every stage (`CrossedCouplingCounterexample.exists_coatomExtension_seedHG`).
+  The canonical multi-layer scheme at `m = 3` (`Extension/CanonicalMultiScheme`,
+  `Extension/CanonicalMultiSchemeCounterexample`, `Extension/CanonicalMultiSchemeExamples`;
+  compiled in this repository (theorem named) unless marked otherwise). For every seed and copy
+  rows `R`: two copies of the cells at `(C, k)` and `(D, k)` at each `(univ, k)`, reading through
+  their bases (`OrderedLayer.canonicalMultiScheme`); forcedness
+  (`OrderedLayer.eq_copyOrig_of_isLawfulBelow`); the lifts from the common face
+  (`Seed.hasCommonFaceLifts`). Named hypothesis: the product clause `Seed.CanonicalProduct I R j`,
+  a sufficient hypothesis for the step, not a field of `Seed.MultiLayerStep`. It gives the
+  classification as pairs agreeing on the common face (`OrderedLayer.isLawfulBelow_canonical_iff`)
+  and the lifts (`OrderedLayer.cappedLift_of_canonicalProduct`). The conditional step theorems,
+  with the status of each hypothesis: (a) `Seed.canonicalMultiStep_of_product` assumes the product
+  clause at the grades 1–4 (refuted at the grade 4 at all six compiled seeds, so this form applies
+  at none of them), `hcode` (copy rows coded) and `hpair` (copy rows lawful below both coatoms),
+  the last two conditions on the choice of copy rows; (b)
+  `Seed.canonicalMultiStep_of_productBelowTop` assumes the product clause at the grades 1–3 (holds
+  for `seedHG`, `OrderedLayer.CanonicalHG.canonicalProduct`; refuted at the grades 2, 3 for the
+  other five seeds), `hcode` and `hpair` at those grades (compiled for `seedHG`,
+  `OrderedLayer.CanonicalHG.rowsHG_lt`, `OrderedLayer.CanonicalHG.isLawfulBelow_rowsHG`),
+  `Seed.HasBottomApexes` (compiled for all six seeds) and `hR3`, the top row at the grade 4 (a
+  choice of the copy rows); its grade 4 comes from the grade 3
+  (`OrderedLayer.cappedLift_four_of_oldCells`), not from the product clause. With every
+  hypothesis compiled, the second form completes `seedHG`
+  (`Seed.nonempty_completionBelowFullGrade_canonical_seedHG`). Both completions of `seedHG` obtain
+  the grade 4 from the labelling of `Ω` alone at the top row through
+  `OrderedLayer.cappedLift_four_of_oldCells`, never from a fibre product, and under the top row the
+  labellings of the decoding refutation are not lawful below `(univ, 4)`
+  (`OrderedLayer.eq_bot_of_grade_four_canonical`). Refuted (negative special cases
+  named), for every copy rows: at the grades 2–4 for `seed4`, `seed5`, `seedL`, `seedLM`, `seedLL`
+  (`Seed.not_canonicalProduct_seed4` and its companions, by crossing,
+  `OrderedLayer.not_canonicalProduct_of_crossing`), and at the grade 4 for all six seeds
+  (`Seed.not_canonicalProduct_seedHG`, by decoding,
+  `OrderedLayer.not_canonicalProduct_of_decoding`).
+  This refutes the family as a fibre product at those seeds, not the family's step (which holds
+  for `seedHG` at the grade 4, where the clause fails) and not the completion.
+  Oriented copy rows (`Extension/CanonicalMultiSchemeOriented`,
+  `Extension/CanonicalMultiSchemeOrientedExamples`; compiled in this repository (theorem named)
+  unless marked otherwise). Layer rows oriented toward a coatom (`OrderedLayer.IsOriented ρ b`, a
+  condition on the rows alone) give the oriented copy rows `OrderedLayer.orientedRows I ρ`, under
+  which both copies of a grade read every old cell by the layer row; the lawful labellings are, on
+  the old cells, those of the layer scheme (`OrderedLayer.isLawfulBelow_oriented_iff`), a
+  restriction of the pairs. Under oriented rows the step of the family *is* the ordered-layer step
+  (`Seed.canonicalMultiStep_oriented_iff`, an exact reformulation: both copies of a grade read
+  alike, so the family adds nothing to the layer scheme), with no further hypothesis; the clause
+  for these rows is the ordered-layer step itself, with oriented rows (`Seed.HasOrientedLayerStep`).
+  The orientations are compiled for `seed4`, `seed5`, `seedL`, `seedLM`, `seedLL`
+  (`OrderedLayer.isOriented_layerRows4` and its companions); with the ordered-layer steps
+  (`Seed.orderedLayerStep_seed4`, `…_seed5`, `…_seedL`, `…_seedLM`, `…_seedLL`), which already
+  complete these five seeds, they give `Seed.HasOrientedLayerStep` there.  What is new is only that
+  the canonical multi-layer scheme itself has a step at them
+  (`Seed.nonempty_completionBelowFullGrade_seed4_oriented` and its companions); every one of the six
+  compiled seeds has a step of the family
+  (`Seed.hasCanonicalMultiStep_seed4_seed5_seedL_seedLM_seedLL_seedHG`), and no seed refutes it.
+  Refuted (negative special cases named; corollaries, through the iff, of
+  `CrossedCouplingCounterexample.not_hasOrderedLayerStep_seedHG` and
+  `not_exists_orderedLayerStep_seedL_seedLM`), for oriented rows only: at `seedHG`
+  (`Seed.not_canonicalMultiStep_oriented_seedHG`, `Seed.not_hasOrientedLayerStep_seedHG`) and as one
+  choice for both `seedL` and `seedLM` (`Seed.not_exists_canonicalMultiStep_oriented_seedL_seedLM`);
+  this refutes neither the family nor the completion. Open: copy rows giving the step of the family
+  for every seed on five points (`Seed.HasCanonicalMultiStep` for every seed), and the completion at
+  `m ≥ 3` for every seed.
 
 The completion constructs lawful finite extensions and nothing more.  It imports only Layers
 0–1, the stage types, the amalgam, and the section theorem of `README.md`, Layer 3, 3.1 (with
@@ -3543,6 +3636,9 @@ lands, their notes stay in those modules.
   `not_structureIso_of_mem_offDiag`, `exists_forall_not_codeBFEquiv_of_isClosed` of
   `exists_forall_not_codeBFEquiv_of_analyticSet`, and `analyticSet_offDiag` through
   `MeasureTheory.AnalyticSet.offDiag`; `codeBFEquivSetoid` is InfinitaryLogic's by definition.
+  `bfScattered_of_countable_compl` is not a quotation: it applies
+  `bfScattered_of_countable_bfObservations` (for every relational language), beside which, in
+  `Descriptive/BFScattered`, it belongs upstream.
   `not_countable_of_perfect` stays local: InfinitaryLogic's `Perfect.mk_eq_continuum` assumes a
   metric space, and the space of codes gets one only after a choice of compatible complete metric
   (`TopologicalSpace.upgradeIsCompletelyMetrizable`); to Mathlib, as the uncountability of a
@@ -3606,7 +3702,31 @@ lands, their notes stay in those modules.
   grade `4` from the grade `3` in a scheme over the amalgam of a seed with bottom apexes
   (`OrderedLayer.cappedLift_four_of_oldCells`) is stated once, in `Extension/OrderedLayerTop`, and
   quoted for the layer scheme (`OrderedLayer.cappedLift_four`) and for the multi-layer scheme of
-  `seedHG` (`CrossedCouplingCounterexample.cappedLift_four_HG`).
+  `seedHG` (`CrossedCouplingCounterexample.cappedLift_four_HG`).  The order lemma forcing two new
+  cells of one graded index by their readings (`OrderedLayer.eq_of_forced_pair`) and the row of an
+  old cell of grade `4` over a seed with bottom apexes (`OrderedLayer.row_multiOldCell_eq_bot_iff`)
+  are in `Extension/MultiLayerStep`, quoted by `seedHG` and by the canonical multi-layer scheme.
+  The strip shifter as a witness up to the grade `1`
+  (`TwoFaceLiftCounterexample.isWitness_stripShifter_one`) is in
+  `Extension/TwoFaceLiftCounterexample`, beside `TwoFaceLiftCounterexample.isWitness_stripShifter`,
+  quoted by `seedHG` and by the canonical multi-layer scheme.
+- `Extension/CanonicalMultiScheme`, `Extension/CanonicalMultiSchemeCounterexample`, and
+  `Extension/CanonicalMultiSchemeExamples`: checkpoint 2.7, in place.  The decoding lemma
+  `Label.TransformsTo.false_of_decoding` and `Label.visibilityReplace_three_fixed` belong in
+  `Label/Transform` and `Label/Visibility`.  The labelling of `Ω` alone at the grade `4` in a
+  scheme whose cells of grade `4` have rows `⊥` exactly below the grade `4`
+  (`OrderedLayer.isLawfulBelow_omega_of_rows`) is in `Extension/OrderedLayerTop`, quoted by the
+  layer scheme (`OrderedLayer.isLawfulBelow_omegaLabel`) and by the canonical multi-layer scheme.
+  The kind-by-kind transformation (`CrossedCouplingCounterexample.transformsTo_val_of_kind`) and
+  the witnesses of the rows of kinds `A_D`, `A_C`, `H`, `G`
+  (`CrossedCouplingCounterexample.transformsTo_val_ad`, `transformsTo_val_ac`,
+  `transformsTo_val_h`, `transformsTo_val_g`) are in `Extension/CrossedCouplingScheme`, quoted by
+  `seedHG` and by the copies of the canonical multi-layer scheme.
+- `Extension/CanonicalMultiSchemeOriented` and `Extension/CanonicalMultiSchemeOrientedExamples`:
+  checkpoint 2.7, in place.  The reindexing rule `Label.TransformsTo.of_comp` (the pointwise form
+  of `Label.TransformsTo.reindex`) belongs in `Label/Transform`, beside it.
+  `Seed.HasCanonicalMultiStep` and `Seed.HasCanonicalMultiStep.nonempty_completionBelowFullGrade`
+  are in `Extension/CanonicalMultiScheme`, beside `Seed.canonicalMultiStep_of_product`.
 
 **Hull operations, the top-free age, and graded matching (Layers 0 and 2; the top-free
 witnesses).**
