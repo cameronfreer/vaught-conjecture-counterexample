@@ -71,29 +71,30 @@ since the labels `⊥` and `⊤` lie at every stage; at the stages that are zero
 also `CompletionBelowFullGrade.exists_coatomExtension` applied to the thin completion).
 `StageType.HasApexCoatomExtensions` is still to be proved in general.
 
-**Special cases** (argued, not formalized).  The thin pattern also completes the seeds of `T4` and
-of `T5` with themselves, which the tower already completes
+**Special cases.**  The thin pattern also completes the seeds of `T4` and of `T5` with themselves,
+which the tower already completes
 (`TwoFaceLiftCounterexample.nonempty_completionBelowFullGrade_seed4`,
-`CaseSplitCounterexample.nonempty_completionBelowFullGrade_seed5`):
+`CaseSplitCounterexample.nonempty_completionBelowFullGrade_seed5`): both have the ordered-layer step
+of `VaughtConjecture.Extension.OrderedLayerStep` (`Seed.orderedLayerStep_of_T4`,
+`Seed.orderedLayerStep_of_T5`, module `VaughtConjecture.Extension.OrderedLayerExamples`):
 
-* `seed4` (`T4` with itself): there is no live cell of grade `3`, so `G = ⊥` throughout and the new
-  cell at `(univ, 3)` reads `⊥` everywhere;
-* `seed5` (`T5` with itself): the row at `(univ, 3)` must read `A_C` at the common value `ω + 3`,
-  not at `1`, since `T5` on `C` couples `G ≤ A_C`; the lift rule keeps `G ≤ A_C`
-  (`A_C := max c G`).
+* `seed4` (`T4` with itself): there is no live cell of grade `3`, and the new cell at `(univ, 3)`
+  reads `⊥` everywhere (`OrderedLayer.Seed4.layerRows4`);
+* `seed5` (`T5` with itself): the row at `(univ, 3)` reads every live kind at `ω + 3`
+  (`OrderedLayer.Seed5.rows5`).  The row at `(univ, 3)` of this module, which reads `A_C` at `1`,
+  is not consistent there (argued, not formalized): `T5` on `C` couples `G ≤ A_C`, and that row as
+  a labelling has `A_C = 1 < ω + 3 = G`.  The lift keeps `G ≤ A_C`.
 
-**Prospective: the ordered-layer step** (argued from `seedL` only, not proved).  Call the coatom
-types of a seed *parametrized per grade* when, below every pair, their lawful labellings are read
-off finitely many live classes per grade, subject to self-visibility, lower bounds by parameters
-of higher grade on the common face, and conditions on the finite part below such a parameter.
-Suppose the coatoms can be ordered `C` before `D` so that every lower bound of a parameter off the
-common face is met by `⊤` on `D` and by the maximum of the cap and its lower bounds on `C`, and
-every condition on a finite part by every label self-visible at the grade of its bound.  Then the
-thin ordered completion (one new cell per `(univ, k)`, whose row reads the classes of `C` of each
-grade in an earlier block than those of `D`, the shared classes at one value) would be a completion
-below the full grade.  At every grade it would replace the layer of the tower, one new cell for
-each entry of a catalogue of lawful labellings of the cells below (`Scheme.fieldLayer`).  It would
-not cover coatom types that are not parametrized per grade.
+**The ordered-layer step.**  The thin completion is the instance for `seedL` of the ordered-layer
+step (`Seed.orderedLayerStep_thinRows`): one new cell at each graded face of full scope, with rows
+read off graded indices, stated for an arbitrary seed on five points as a named hypothesis
+(`Seed.OrderedLayerStep`) from which the completion follows (`Seed.OrderedLayerStep.completion`).
+For the seeds with bottom apexes its top grade is automatic
+(`Seed.OrderedLayerStepBelowTop.orderedLayerStep`, `VaughtConjecture.Extension.OrderedLayerTop`).
+Every ordered-layer step of `seedL` reads `({3}, 1)` strictly below `({4}, 1)` at the grades `1`,
+`2`, `3` (`Seed.OrderedLayerStep.thinRow_lt_of_TL_T5`), and a seed with two opposite forced
+separations at one grade has no ordered-layer step (`Seed.not_hasOrderedLayerStep_of_forcesTop`,
+`VaughtConjecture.Extension.OrderedLayerObstruction`).
 
 ## Placement
 
