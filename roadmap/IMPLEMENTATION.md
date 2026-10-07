@@ -448,7 +448,7 @@ rows).
    `Continuation.CandidateCounterexamples.not_twinOrdering_blockStage`; informal, not compiled as a
    separate statement; [Kni26, Lemma 2.5.11] is not relied on, `README.md`, Layer 1); this negative
    special case is to be compiled in `Continuation/CandidateCounterexamples` (Layer 4), on the
-   five-cell scheme defined privately there (`fiveCells`, `fiveCellRows`, `fiveCellScheme`).
+   five-cell scheme defined there (`fiveCells`, `fiveCellRows`, `fiveCellScheme`).
    "Least lift" is never replaced by "unique lift".
 6. *The separation of leastness from modelhood.*  Statements 1–5, 8, and 9 do not make the candidate
    a model: receiving, (R1)–(R4), stays its own statement; (R4) (`StableCappedReceiving`) and the
@@ -2859,9 +2859,16 @@ Each checkpoint needs both its abstract API and a concrete application:
    reducing to the top; the evaluation step and the acquisition of the marker and cap calibration
    are compiled, so (R4) follows from the finite statement `StageType.HasStableRecoverySchemes` for
    `StageType.MarkerCapCalibration` at every `ξ < ω₁`
-   (`StableCappedReceiving.of_hasStableRecoverySchemes_markerCap`), new and open, and possibly
-   false: the calibration lacks the cap of full scope and full grade, the reference cells and the
-   arity bound of the design (`README.md`, Layer 4, status, output 3). Step 7 is
+   (`StableCappedReceiving.of_hasStableRecoverySchemes_markerCap`), a finite hypothesis that is
+   false (`Continuation.StableRecoveryCounterexample.not_forall_hasStableRecoverySchemes_markerCap`,
+   `Continuation/StableRecoveryCounterexample`).
+   `StableCappedReceiving.of_hasStableRecoverySchemes_markerCap` rests on that refuted hypothesis
+   and is to be retired, with an audit of its uses, once this refutation is on `main` (not retired
+   here).  (R4) also follows from the same statement for the graded cap calibration
+   (`StableCappedReceiving.of_hasStableRecoverySchemes_gradedCap`, `Continuation/StableRecovery`;
+   acquisition compiled, the finite statement open; it holds at every instance with a scheme
+   reading through a cap, `StageType.IsStableRecoveryScheme.of_readsThroughCap`; `README.md`,
+   Layer 4, status, output 3). Step 7 is
    compiled conditionally (`README.md`, the section on the top-free witnesses): the loss at `η`
    under uniqueness at `λ_η` (`nonempty_loss_of_topFreeWitness`), and per block under
    `StageType.HasApexCoatomExtensions` at `λ_η` and uniqueness of the model expansions at `λ_η`
