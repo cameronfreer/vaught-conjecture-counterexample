@@ -123,8 +123,9 @@ stage types on its scheme.  A coface in which the root is not a rigid core has a
 
 `VaughtConjecture.Continuation.AvailableTopDetermination` builds the necessary condition into the
 predicate (the anchored context with a top), proves acquisition for it under the coatom extension
-property, refutes determination for it, and sharpens the necessary condition: the top grade of the
-context must be at least the grade of every new top of the donor.
+property, refutes determination for it, and sharpens the necessary condition: at a limit stage,
+over a legal context, the top grade of the context must be at least the grade of every new top of
+the non-rigid donor.
 
 ## Placement
 
@@ -395,8 +396,8 @@ theorem hollowReceiving_of_cutoffDonorDetermination
 /-! ### What determination needs -/
 
 /-- **Determination needs an available private top**: if cutoff determination with a donor holds
-for `P`, then over every legal `t'` with face `t` along `h`, and every legal non-rigid one-point
-coface `d` of `t` with `P t' h d`, some coface `D'` of `t'` has face `d` along `h` followed by the
+for `P` at a limit stage, then over every legal `t'` with face `t` along `h`, and every legal
+non-rigid one-point coface `d` of `t` with `P t' h d`, some coface `D'` of `t'` has face `d` along `h` followed by the
 new point and a private top available to a new cell. -/
 theorem CutoffDonorDetermination.exists_hasAvailablePrivateTop
     {P : ∀ {α : Ordinal.{u}} {n k : ℕ}, StageType.{u} α k → (Fin n ↪ Fin k) →

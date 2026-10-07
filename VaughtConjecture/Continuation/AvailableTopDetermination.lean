@@ -473,9 +473,9 @@ variable {M : Type w} {R : Realization.{u, w} α M}
 /-! ### What determination needs: the grades of the new tops -/
 
 /-- **Determination needs the context to reach the grades of the new tops**: if cutoff
-determination with a donor holds for `P`, then over every legal `t'` with face `t` along `h`, and
-every legal non-rigid one-point coface `d` of `t` with `P t' h d`, every new cell of `d` labelled
-`⊤` has grade at most the top grade of `t'`. -/
+determination with a donor holds for `P` at a limit stage, then over every legal `t'` with face `t`
+along `h`, and every legal non-rigid one-point coface `d` of `t` with `P t' h d`, every new cell of
+`d` labelled `⊤` has grade at most the top grade of `t'`. -/
 theorem CutoffDonorDetermination.grade_le_topGrade
     {P : ∀ {α : Ordinal.{u}} {n k : ℕ}, StageType.{u} α k → (Fin n ↪ Fin k) →
       StageType.{u} α (n + 1) → Prop}
@@ -491,8 +491,9 @@ theorem CutoffDonorDetermination.grade_le_topGrade
     ⟨j, hj, not_le.mp hlt, htop⟩ hδ hdet'
 
 /-- **Determination needs the context to reach the top grade of the donor**: under cutoff
-determination with a donor for `P`, the top grade of a non-rigid coface `d` with `P t' h d` is at
-most that of `t'`.  The new tops by `CutoffDonorDetermination.grade_le_topGrade`; the root tops are
+determination with a donor for `P` at a limit stage, over a legal `t'`, the top grade of a legal
+non-rigid one-point coface `d` of its face along `h` with `P t' h d` is at most that of `t'`.  The
+new tops by `CutoffDonorDetermination.grade_le_topGrade`; the root tops are
 tops of `t'`. -/
 theorem CutoffDonorDetermination.topGrade_le
     {P : ∀ {α : Ordinal.{u}} {n k : ℕ}, StageType.{u} α k → (Fin n ↪ Fin k) →
