@@ -614,11 +614,12 @@ set_option linter.hashCommand false in
 #check FirstOrder.Language.stabilizationOrdinal_le_of_sentence_rank
 
 -- Thinness from countable back-and-forth observations (InfinitaryLogic, `Descriptive/BFScattered`),
--- available at the pin `e460cb6` (signatures checked; no application compiled in this
--- repository).  If for every `η < ω₁` a map on a set `C` of codes has countable range and any two
--- codes with the same observation are `CodeBFEquiv η`, then `C` is back-and-forth scattered,
--- carries no Cantor antichain for isomorphism (every relational language), and, for countably
--- many relation symbols, is thin: the observation form of the thinness above.
+-- available at the pin `e460cb6` (signatures checked; applied in `bfScattered_of_countable_compl`,
+-- `MainTheorem/Scatteredness`).  If for every `η < ω₁` a map on a set `C` of codes has countable
+-- range and any two codes with the same observation are `CodeBFEquiv η`, then `C` is
+-- back-and-forth scattered, carries no Cantor antichain for isomorphism (every relational
+-- language), and, for countably many relation symbols, is thin: the observation form of the
+-- thinness above.
 set_option linter.hashCommand false in
 #check FirstOrder.Language.bfScattered_of_countable_bfObservations
 set_option linter.hashCommand false in
