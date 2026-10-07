@@ -331,6 +331,24 @@ first is `Expansion.expansionDomain_loss_countable`, the second
 `Expansion.NextBlockUniqueness.of_forcingDonors`, each compiled conditionally on hypotheses in the
 list.
 
+**The hypotheses by property of the tower** (`README.md`, "The tower and its four properties").
+The seven-hypothesis form above, grouped by the property of the tower of model expansions that
+each hypothesis serves. The six- and five-hypothesis derivations and the separate restricted-R3
+form are retained as stated above; no hypothesis, status, or percentage changes.
+
+| Property of the tower | Named hypotheses (numbered as above) |
+| --- | --- |
+| the bottom of the tower, `D₀ = Q` | 1, `CapToModel` |
+| (R) reconstruction | 3, forcing donors, with 2, (R1), through next-block uniqueness |
+| (L) coherent limits | none: compiled with no hypothesis (`Realization.IsModel.glue`) |
+| (D) projected extension | 2, (R1) |
+| (T), terminal existence | 7, nonempty losses, with (R) placing each witness in its loss |
+| (T), terminal countability | 4, the continuation criterion; 5, (R2); 6, (R3); 2, (R1) |
+
+In the last row (R1) serves the rigid-core comparison.  Terminal countability is not used by the
+lower bound, and enters no statement of terminal refinement (conditionally compiled at universe
+zero under (R1), next-block uniqueness, and apex at every countable block stage).
+
 ## The research front
 
 Each item is open or still to be proved; none is assumed by a theorem of the library except as a
