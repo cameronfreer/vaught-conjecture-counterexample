@@ -1116,26 +1116,27 @@ compared are S, with the compiled declarations listed in the notes.  A line with
 cells empty continues the row above it: a further notion of the same row, with its own status.
 Rows 41–47 concern the legal templates of the current draft of [AFK26] and cite its numbering
 (its §4, "The Counterexample");
-rows 9 and 10 cite the numbering of their own notes.  Rows 43–47 read the row system of a template
+rows 9 and 10 cite the current numbering, and their notes also cite that of the version of
+5 October 2026.  Rows 43–47 read the row system of a template
 as the fixed semantic rows of a scheme, not as the coherent local rows of row 9 (note 43); row 43
 identifies lawful labellings, and does not make the legal schemes here the legal templates of
 [AFK26] (note 45).
 
 The current version of [AFK26] is the draft of 7 October 2026 (`LITERATURE.md`, "Bibliographic
-access record"), and every number in the table is its number.  Where that version has adopted a
-correction recorded here, the row says so ("adopted in [AFK26] of 7 October") and its note keeps
-the earlier text as history, cited as the version of 5 October 2026 with that version's numbers.
-An adoption changes no status letter: the letters record the comparisons made here, and a row
-becomes P only by the comparison described above.  Rows 48–56, and the second lines of rows 46
-and 47, record statements new in the version of 7 October; each is S, and its note gives the
-status of the corresponding declarations here: compiled in this repository (theorem named),
-compiled conditionally (the hypotheses named), informal and not compiled, or prospective.
-[AFK26] states Propositions 4.32, 4.34 and 4.35 without proof and sketches the proof of
-Lemma 4.33.  It also states that the proof that its system `K[L]` is a Knight system has been
-formalized; in this repository every compiled form of the main theorem is conditional on the five
-named hypotheses of `DASHBOARD.md` (hypotheses 2, 4–6 and 8), each still to be proved.  The
-docstrings of `VaughtConjecture/Correspondence` cite the numbering of the version of 5 October
-2026.
+access record"), and every number in the table not marked with an earlier date is its number.  Where
+that version has adopted a correction recorded here, the row says so ("adopted in [AFK26] of
+7 October") and its note keeps the earlier text as history, cited as the version of 5 October 2026
+with that version's numbers.  An adoption changes no status letter: the letters record the
+comparisons made here, and a row becomes P only by the comparison described above.  Rows 48–56, and
+the second lines of rows 46 and 47, are rows new to the concordance (rows 49, 50 and 52 concern
+statements already in earlier versions); each is S, and its note gives the status of the
+corresponding declarations here: compiled in this repository (theorem named), compiled conditionally
+(the hypotheses named), informal and not compiled, or prospective.  [AFK26] states Propositions
+4.32, 4.34 and 4.35 without proof and sketches the proof of Lemma 4.33.  It also states that the
+proof that its system `K[L]` is a Knight system has been formalized; in this repository every
+compiled form of the main theorem is conditional on the five named hypotheses of `DASHBOARD.md`
+(hypotheses 2, 4–6 and 8), or on hypotheses derived from them, each still to be proved.  The
+docstrings of `VaughtConjecture/Correspondence` cite the numbering of the version of 5 October 2026.
 
 | Row | Source | Manuscript notion | Status |
 | --- | --- | --- | --- |
@@ -1977,7 +1978,7 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     as in [Kni26, Definition 2.1.8], which the frames here follow, and clause 1 becomes
     `CellScheme.IsComplete`.  No theorem relates a printed legal template with cells of grade `0` to
     a corrected one.  `Correspondence.IsFrame` (`Correspondence/Template`, row 9) follows
-    Definition 4.2 literally and permits cells of grade `0`, as does
+    its Definition 4.2 literally and permits cells of grade `0`, as does
     `CellScheme.printedGradedFaces`; their correspondence is still to be proved.  Clause 2 is
     consistency (row 43), clause 3 is row 44 (S).  Agreement on lawful labellings (row 43) is not
     correspondence of legal schemes: clause 4 (`CellScheme.Rows.HasPrintedRange`, `i ≤ g(d)`) is an
@@ -2020,8 +2021,9 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     (informal; not compiled).  The status (S; clause 1: C) is unchanged.
 46. Statement: [AFK26, Proposition 4.30], a template system `L` whose templates are finite legal
     templates and which represents every finite legal template up to isomorphism and relabelling.
-    Proved in [AFK26] of 7 October (in the version of 5 October 2026 it was Lemma 4.28, with no
-    proof); our compiled statements are unchanged.  Compiled in this repository (theorem named),
+    A proof is given in [AFK26] of 7 October (in the version of 5 October 2026 it was Lemma 4.28,
+    with no proof); our compiled statements are unchanged.  Compiled in this repository (theorem
+    named),
     in `Stage/Legal`: the legal stage types are closed under the face maps
     (`StageType.IsLegal.restrictFace`), reindexing (`StageType.IsLegal.reindex`), and stage
     reduction (`StageType.isLegal_reduce_iff`), and there are countably many on `n` points at a
@@ -2090,8 +2092,8 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     hypothesis 8; row 55) and `isNice_of_hasTerminalRefinement` (row 30), both compiled
     conditionally; the composition into `FullPresentations` (row 27) is prospective.  [AFK26]
     states that this proof has been formalized; in this repository every compiled form of the
-    main theorem is conditional on the five named hypotheses (`DASHBOARD.md`), each still to be
-    proved.
+    main theorem is conditional on the five named hypotheses (`DASHBOARD.md`), or on hypotheses
+    derived from them, each still to be proved.
 48. [AFK26, Theorem 2.19] (weak Knight systems and perfect sets of models): if `K` is a weak
     Knight system and, for every `β`, the members of the base `K_{-∞}` with no lift in `K_β`
     fall into countably many isomorphism classes, then `K_{-∞}` contains no perfect set of
@@ -2157,7 +2159,8 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     why the roadmap passes to the hull language `hullLanguage` (Layer 2, `HULL_ALGEBRA.md`).
     Counterparts here: HP, `hereditary_legalAge` (`ClassicalLimit/LegalAge`, compiled in this
     repository (theorem named), with no hypothesis); JEP and AP, `isFraisse_legalAge` and
-    `exists_amalgam_legalChart`, compiled conditional on `StageType.HasCoatomExtensions`, the
+    `exists_amalgam_legalChart`, compiled conditional on `StageType.HasCoatomExtensions` (and,
+    for `isFraisse_legalAge`, on the countability `(Set.Iio α).Countable` of the stage), the
     plain form, which hypothesis 8 implies
     (`StageType.HasApexCoatomExtensions.hasCoatomExtensions`); still to be proved (Layer 3, 3.1,
     (R6); `DASHBOARD.md`, the research front, item 1).  [AFK26] gives no argument for
@@ -2169,7 +2172,8 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     Fraïssé theorem, that the limit satisfies the geometry axioms (every finite set lies in a
     closed set), and `D[δ]` for donors not fixed at `β`.  Counterparts here, compiled
     conditionally: `exists_isFraisseLimit_legalAge` (conditional on
-    `StageType.HasCoatomExtensions`) and `exactReceivingWithin_reconstruct_of_legalAge`
+    `StageType.HasCoatomExtensions` and `(Set.Iio α).Countable`) and
+    `exactReceivingWithin_reconstruct_of_legalAge`
     (`ClassicalLimit/LegalAge`, for an ultrahomogeneous structure whose age is `legalAge`), and
     `exists_saturated_reconstruct` (`MainTheorem/SameLevelMaximal`, conditional on
     `StageType.HasApexCoatomExtensions` at `λ_β`, concluding `Realization.IsModel`).  Drift:

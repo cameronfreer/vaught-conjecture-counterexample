@@ -183,9 +183,11 @@ Notes on the rows, each with its marker:
   status: the block indexing of row 1 in §4, the fixed rows of rows 9 and 10, the corrections of
   rows 41 and 42, the cap `-∞` of row 44, and clause 1 of row 45; its range clause of legality is
   now strong coding (row 45).  [AFK26] states Propositions 4.32 (amalgamation of charts, where
-  hypothesis 8 enters), 4.34 and 4.35 without proof and sketches Lemma 4.33; their
-  counterparts here are compiled conditionally on the hypotheses below, and every compiled form
-  of the main theorem is conditional on the five named hypotheses, each still to be proved.
+  hypothesis 8 enters), 4.34 and 4.35 without proof and sketches Lemma 4.33.  Their counterparts
+  here are compiled (the hereditary property, `hereditary_legalAge`, with no hypothesis) or
+  compiled conditionally on the hypotheses below, and every compiled form of the main theorem is
+  conditional on the five named hypotheses, or on hypotheses derived from them, each still to be
+  proved.
 - *Acceptance lemma 1 (same-level maximal realization).*  Compiled conditionally on
   `StageType.HasApexCoatomExtensions` at `λ_β` and `ForcingDonors β` (`exists_sameLevelMaximal`).
   Terminality of every cover-hollow realization at a block stage is compiled with no hypothesis
