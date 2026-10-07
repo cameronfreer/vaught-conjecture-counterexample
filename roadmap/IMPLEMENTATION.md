@@ -3745,6 +3745,19 @@ lands, their notes stay in those modules.
   replaced by the routes' declarations (`Continuation/AvailableTopDetermination`,
   `Realization/TightCap`, `Realization/PerBlockCarrying`) when those modules land.
 
+**Marked caps (Layer 3, (R3)).**
+
+- `Stage/MarkedCap`: Layer 1, in place for the statements about stage types.
+  `Label.TransformsTo.splice_bandMap` (the two-witness splice), `Label.isSelfVisible_bandMap` and
+  `Label.bandMap_lt_bandMap` concern labels only and go to `Label/Band`, beside the band rule.
+- `Continuation/MarkedCap`: Layer 4, in place.  `StageType.IsTopCap.grade_eq_topGrade`,
+  `StageType.isTopCap_iff`, `StageType.isMarkedCapContext_iff`,
+  `StageType.IsMarkedCapContext.lt_topGrade` and `StageType.not_isMarkedCapContext_of_topGrade_le`
+  concern stage types only and go to `Stage/MarkedCap` when `StageType.topGrade`
+  (`Continuation/Terminal`) moves to `Stage/`.  `StageType.IsAnchoredMarkedCapContext` uses
+  `StageType.IsAnchored` (`Extension/GatedExtension`) and stays out of `Stage/`.  The exclusions
+  of the determination counterexamples (`MarkedCapExclusions`) stay with their examples.
+
 **Finite geometry and the coatom amalgam (Layer 3, (R6)).**
 
 - `Geometry/PlanAttachment`: `restrict_restrict` and `IsPlan.restrict_self`, a statement about

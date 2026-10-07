@@ -285,6 +285,30 @@ Status of each:
    included (item 6′ below excludes it).  (R3) forces a globally rigid core of a cover-hollow
    model with unbounded growth to be rigid in every legal donor over its type
    (`Realization.HollowReceiving.isRigidCoreIn`).
+   *A candidate predicate* (`Stage/MarkedCap`, `Continuation/MarkedCap`): the marked-cap context
+   `StageType.IsMarkedCapContext` (defined in this repository; acquisition and determination
+   open), a context with a top cap `c` (full scope, labelled `⊤`, at the top grade `N > n + 1`), a
+   marker `r` (least entry of the row of `c` at the cells labelled `⊤`), and
+   `visibilityReplace N (n + 1) (row c r) ≤ row c a` at every cell `a` of the root labelled `⊤`;
+   with reference cells for a donor, `StageType.IsAnchoredMarkedCapContext` (defined in this
+   repository).  Cover-hollowness reads the tops through forcing, and forcing is read by the rows
+   (compiled in this repository (theorem named):
+   `StageType.ForcesThreshold.visibilityReplace_rowAt_le`, and at a cover-hollow realization with
+   legal types `Realization.IsCoverHollow.exists_forcesThreshold_rowAt`): a legal rooted cover at
+   a limit stage that forces `L` at a top of its root has `L ≤ N` and the row inequality at `L`,
+   for every top cap and marker.  The proof is a lawful lift whose labels at the tops are the band
+   map of the row of the top cap from the block of the marker (`StageType.IsMarker.exists_lift`);
+   its locality is the two-witness splice of Layer 3, 3.1 (`Label.TransformsTo.splice_bandMap`,
+   compiled in this repository (theorem named)).  The finite step of acquisition is compiled
+   (`StageType.isMarkedCapContext_of_forcesThreshold`); one cover of top grade above `n + 1`
+   forcing `n + 1` at every top of a root at once is prospective, and
+   `Realization.HollowAcquisition` and `Realization.SchemeDetermination` for the predicate are
+   open, so item 6 is not reduced.  The three refuted determination statements are excluded: the
+   empty root of the apex point and the capped two-point context of the anchored predicate are
+   top-free (compiled in this repository (theorem named)), and the context of the anchored
+   predicate with a top has top grade at most `1` over a root on one point (the exclusion of every
+   such context compiled in this repository (theorem named); the bound on that context argued, not
+   formalized here).
 7. Nonempty losses: still to be proved.  Compiled conditionally on the coatom extension property
    with apex at every countable block stage and on next-block uniqueness
    (`hasNonemptyLosses_of_hasApexCoatomExtensions`, stated for the bundled domains, which also take
