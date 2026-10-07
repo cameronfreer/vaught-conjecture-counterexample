@@ -66,6 +66,11 @@ theorem isWitness_topShifter {g : ℕ → Label.{u}} (hg : Antitone g)
 noncomputable def constStepSuppressor (K : ℕ) (a : Label.{u}) (n : ℕ) : Label.{u} :=
   if n ≤ K then a else ⊥
 
+/-- The suppressor equal to `a` up to the grade `K` is `a` at the grades up to `K`. -/
+theorem constStepSuppressor_of_le {K n : ℕ} (a : Label.{u}) (h : n ≤ K) :
+    constStepSuppressor K a n = a := by
+  unfold constStepSuppressor; rw [ite_eq_left h]
+
 /-- The step suppressor with value `a` is antitone. -/
 theorem antitone_constStepSuppressor (K : ℕ) (a : Label.{u}) :
     Antitone (constStepSuppressor K a) := by

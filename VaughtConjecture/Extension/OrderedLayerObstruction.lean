@@ -43,7 +43,10 @@ step (`VaughtConjecture.Extension.OrderedLayerExamples`).  The legal seed
 `CrossedCouplingCounterexample.seedHG` has two opposite forcings at the grade `1`, so it has no
 ordered-layer step (`CrossedCouplingCounterexample.not_hasOrderedLayerStep_seedHG`, module
 `VaughtConjecture.Extension.CrossedCouplingCounterexample`): its two coatom types are coupled
-crosswise to two parameters of the common face, at the grades `2` and `3`.  Two opposite forcings
+crosswise to two parameters of the common face, at the grades `2` and `3`.  It has a completion
+below the full grade with two new cells at `(univ, 1)`, one for each forced separation
+(`CrossedCouplingCounterexample.nonempty_completionBelowFullGrade_seedHG`, module
+`VaughtConjecture.Extension.CrossedCouplingCompletion`).  Two opposite forcings
 at one grade need two such parameters (argued, not formalized): a lawful labelling capped at a cap
 self-visible at every grade stays lawful, so a forcing is a lower bound by parameters of the common
 face, and within one coatom type the cell of full scope at the grade `1` orders all the cells of the
