@@ -97,8 +97,10 @@ The input is degenerate, so it shows that reading through the cap is feasible, w
 * `N = k + 1`.
 
 The next test is the twin donor of `Continuation.StableRecoveryCounterexample` (finite parts `1`
-and `2`, so `N ≥ 3`; `E` on at least four points; several graded faces of grade `N` containing the
-cap and the new cells) (informal; not compiled).
+and `2`, so `N ≥ 3`; `E` on at least four points), testing distinct offsets.  At the minimal
+`m = N = 3` the cap has full old scope, so only `(univ, 3)` contains both the cap and the new
+cells.  Compatibility across several graded faces requires a separately chosen larger-context
+test (informal; not compiled).
 
 ## Placement
 
@@ -740,14 +742,9 @@ theorem isSelfVisible_markerLabel : IsSelfVisible 1 (markerLabel ξ) :=
 /-- The finite part of the marker label is `1`. -/
 theorem eq_one_of_markerLabel_eq {μ : Ordinal.{u}} {n : ℕ} (hμ : Order.IsSuccPrelimit μ)
     (h : markerLabel ξ = ((μ + n : Ordinal.{u}) : Label.{u})) : n = 1 := by
-  have h1 : IsSelfVisible 1 (markerLabel ξ) := isSelfVisible_markerLabel ξ
-  have h2 : ¬ IsSelfVisible 2 (markerLabel ξ) :=
-    not_isSelfVisible_coe_add_natCast (isSuccPrelimit_blockStage ξ) (by omega)
-  rw [h] at h1 h2
-  by_contra hn
-  rcases Nat.lt_or_gt_of_ne hn with hn | hn
-  · exact not_isSelfVisible_coe_add_natCast hμ hn h1
-  · exact h2 (isSelfVisible_coe_add hμ hn)
+  have h' : blockStage ξ + (1 : ℕ) = μ + n := by
+    simpa only [markerLabel, WithBot.coe_inj, WithTop.coe_inj] using h
+  exact ((Label.add_natCast_eq_add_natCast_iff (isSuccPrelimit_blockStage ξ) hμ).mp h').2.symm
 
 /-- The parameters of the reading type: the marker at the reference cell and the new cell, the
 formal top at the cap. -/
