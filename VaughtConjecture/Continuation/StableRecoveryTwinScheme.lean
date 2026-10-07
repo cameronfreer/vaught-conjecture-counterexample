@@ -48,9 +48,9 @@ and `B` at the twin kinds, `C` at the cap and the reading cell) of the **twin tu
 self-visible at `1` and `C` at `3`; `H, L ≤ R ≤ max H L` (the five-cell scheme); the capped root
 `min R C` of finite part `2` or at least `3` (the cap reads the root at `2`); and, below the cap,
 the higher twin equal to the root and the lower twin equal to the root lowered to finite part `1`
-(the reading cell, `reading_of_transformsTo`).  The cells of the root kind copy the root, and the
-pairs at `({1, 2, 3}, 1)` and `(univ, 1)` copy the twins.  Absent twins are set to the root and to
-the root lowered below the cap (`isTwinTuple_default`).  The witnesses are
+(the reading cell, `Label.reading_of_transformsTo`).  The cells of the root kind copy the root,
+and the pairs at `({1, 2, 3}, 1)` and `(univ, 1)` copy the twins.  Absent twins are set to the
+root and to the root lowered below the cap (`isTwinTuple_default`).  The witnesses are
 `ThinCompletion.blockConst` (the root and twin kinds) and the strip shifter at the grade `3`
 (`TwoFaceLiftExistsCounterexample.strip3`, at the cap and the reading cell).
 
@@ -64,7 +64,7 @@ prescribed below the smaller pair are kept and the others lifted (`exists_isTwin
 unprescribed cap to the ambient cap capped at `c`, unprescribed twins by `exists_twinLift` (forced
 below the cap, an ambient twin below `c` kept, the others raised to the root).  The lift rests on
 two facts about caps self-visible at `3`: they do not separate finite parts below `3`
-(`le_visibilityReplace_three_one`, `visibilityReplace_three_two_lt`).
+(`Label.le_visibilityReplace_three_one`, `Label.visibilityReplace_three_two_lt`).
 
 **Where bountifulness constrains the reading** (informal; not compiled as necessity statements;
 the scheme above meets both constraints, which are compiled as part of its legality).  A cell of
@@ -96,68 +96,6 @@ open Finset Label StageType ThinCompletion CandidateCounterexamples StableRecove
 open TwoFaceLiftExistsCounterexample (strip3 strip3_natCast strip3_of_not_lt strip3_bot
   isWitness_strip3)
 open Ordinal hiding univ
-
-/-! ### Labels below a cap self-visible at `3` -/
-
-section Labels
-
-variable {x y c : Label.{u}}
-
-/-- Visibility replacement at `3` with value `1` gives a label self-visible at `1`. -/
-theorem isSelfVisible_visibilityReplace_three_one (x : Label.{u}) :
-    IsSelfVisible 1 (visibilityReplace 3 1 x) := by
-  by_cases hb : x = ⊥
-  · rw [hb, visibilityReplace_bot]; exact isSelfVisible_bot _
-  by_cases ht : x = ⊤
-  · rw [ht, visibilityReplace_top]; exact isSelfVisible_top _
-  obtain ⟨q, n, rfl⟩ := exists_block hb ht
-  rw [visibilityReplace_block, isSelfVisible_block]
-  split_ifs <;> omega
-
-/-- Visibility replacement at `3` with value `1` does not raise a label self-visible at `1`. -/
-theorem visibilityReplace_three_one_le (hx : IsSelfVisible 1 x) :
-    visibilityReplace 3 1 x ≤ x := by
-  by_cases hb : x = ⊥
-  · rw [hb, visibilityReplace_bot]
-  by_cases ht : x = ⊤
-  · rw [ht, visibilityReplace_top]
-  obtain ⟨q, n, rfl⟩ := exists_block hb ht
-  have hn : 1 ≤ n := isSelfVisible_block.mp hx
-  rw [visibilityReplace_block, WithBot.coe_le_coe, WithTop.coe_le_coe,
-    omega0_mul_add_natCast_le_iff]
-  exact .inr ⟨rfl, by split_ifs <;> omega⟩
-
-/-- **A cap self-visible at `3` does not separate finite parts below `3`**: a label `c`
-self-visible at `3` below `y` lies below `visibilityReplace 3 1 y`. -/
-theorem le_visibilityReplace_three_one (hc : IsSelfVisible 3 c) (h : c ≤ y) :
-    c ≤ visibilityReplace 3 1 y :=
-  (hc.visibilityReplace_eq 1).symm.le.trans (monotone_visibilityReplace (by omega) h)
-
-/-- **A cap self-visible at `3` above a label stays above its replacement at `2`**: for `c`
-self-visible at `3` and `y < c`, `visibilityReplace 3 2 y < c`. -/
-theorem visibilityReplace_three_two_lt (hc : IsSelfVisible 3 c) (h : y < c) :
-    visibilityReplace 3 2 y < c := by
-  by_cases hyb : y = ⊥
-  · rw [hyb, visibilityReplace_bot]; exact hyb ▸ h
-  by_cases hct : c = ⊤
-  · rw [hct]
-    refine lt_top_iff_ne_top.mpr fun h' ↦ ?_
-    rw [visibilityReplace_eq_top_iff] at h'
-    exact absurd (h' ▸ h) (not_lt.mpr le_top)
-  have hyt : y ≠ ⊤ := fun h' ↦ absurd (h' ▸ h) (not_lt.mpr le_top)
-  have hcb : c ≠ ⊥ := fun h' ↦ absurd (h' ▸ h) (not_lt.mpr bot_le)
-  obtain ⟨q, n, rfl⟩ := exists_block hyb hyt
-  obtain ⟨q', n', rfl⟩ := exists_block hcb hct
-  have hn' : 3 ≤ n' := isSelfVisible_block.mp hc
-  rw [visibilityReplace_block]
-  rw [WithBot.coe_lt_coe, WithTop.coe_lt_coe] at h ⊢
-  rw [← not_le, omega0_mul_add_natCast_le_iff] at h ⊢
-  push Not at h ⊢
-  refine ⟨h.1, fun hq ↦ ?_⟩
-  have := h.2 hq
-  split_ifs <;> omega
-
-end Labels
 
 /-! ### The scheme -/
 
@@ -346,6 +284,14 @@ private theorem blockConst_bot' {a b : Label.{u}} : blockConst a b ⊥ = ⊥ := 
 /-- A grid point of the block `0` is a natural number. -/
 private theorem gridPoint_zero_eq (k : ℕ) : gridPoint.{u} k 0 = (k : Label.{u}) := by
   rw [gridPoint, natCast_label]; simp
+
+/-- The grid point `2` of the block `0` is the label numeral `2`. -/
+private theorem gridPoint_two_zero : gridPoint.{u} 2 0 = (2 : Label.{u}) := by
+  rw [gridPoint_zero_eq, Nat.cast_ofNat]
+
+/-- The grid point `1` of the block `0` is the label numeral `1`. -/
+private theorem gridPoint_one_zero : gridPoint.{u} 1 0 = (1 : Label.{u}) := by
+  rw [gridPoint_zero_eq, Nat.cast_one]
 
 /-- The strip shifter at the grade `3` on the natural number `k ≤ 3`. -/
 private theorem strip3_gridPoint_zero {x : Label.{u}} {k : ℕ} (hk : k ≤ 3) :
@@ -818,59 +764,6 @@ end Lift
 
 /-! ### Lawful labellings below a pair -/
 
-/-- **The reading at the grade `3`.**  Let `r` transform to `q`, with `a` of grade `1` read at `2`,
-`q a = min R C`, and `b` of grade `3` with `q b = C` self-visible at `3`.  Then the capped root
-`min R C` has finite part `2` or at least `3`, and every `e` of grade `1` read at `1` has
-`q e = min (visibilityReplace 3 1 (min R C)) C`.  Below the cap the shifter sends `2` to the capped
-root and commutes with visibility replacement there; at or above it, a value below the cap at `1`
-would bring the value at `2` below the cap (`visibilityReplace_three_two_lt`). -/
-theorem reading_of_transformsTo {D : Type*} {grade : D → ℕ} {r q : D → Label.{u}}
-    (h : TransformsTo grade r q) {a b : D} (ga : grade a = 1) (gb : grade b = 3)
-    (hra : r a = gridPoint 2 0) {R C : Label.{u}} (hC : IsSelfVisible 3 C)
-    (hqa : q a = min R C) (hqb : q b = C) :
-    visibilityReplace 3 2 (min R C) = min R C ∧
-      ∀ e, grade e = 1 → r e = gridPoint 1 0 →
-        q e = min (visibilityReplace 3 1 (min R C)) C := by
-  obtain ⟨g, σ, hw, heq⟩ := h
-  have hCg : C ≤ g 3 := by
-    have := heq b
-    rw [hqb, gb] at this
-    rw [this]
-    exact min_le_right _ _
-  have hg31 : g 3 ≤ g 1 := hw.antitone (by omega)
-  have ha := heq a
-  rw [hqa, hra, ga] at ha
-  rcases lt_or_ge (min R C) C with hxC | hCx
-  · -- below the cap: the shifter sends `2` to the capped root
-    have hσ : σ (gridPoint 2 0) = min R C := by
-      rcases le_total (σ (gridPoint 2 0)) (g 1) with h1 | h1
-      · rw [min_eq_left h1] at ha; exact ha.symm
-      · rw [min_eq_right h1] at ha
-        exact absurd (ha ▸ hxC) (not_lt.mpr (hCg.trans hg31))
-    have hcomm := hw.visibilityReplace_comm (gridPoint 2 0) 3 (hσ ▸ hxC.le.trans hCg)
-    have h2 := hcomm 2 (by omega)
-    rw [visibilityReplace_gridPoint 2 2 (by omega), hσ] at h2
-    refine ⟨h2.symm, fun e ge hre ↦ ?_⟩
-    have h1 := hcomm 1 (by omega)
-    rw [visibilityReplace_gridPoint 2 1 (by omega), hσ] at h1
-    have hle : visibilityReplace 3 1 (min R C) ≤ min R C :=
-      (visibilityReplace_le_visibilityReplace (by omega : 1 ≤ 2) _).trans_eq h2.symm
-    rw [heq e, hre, ge, h1, min_eq_left (hle.trans (hxC.le.trans (hCg.trans hg31))),
-      min_eq_left (hle.trans hxC.le)]
-  · -- at or above the cap: the value at `1` is at least the cap
-    have hx : min R C = C := le_antisymm (min_le_right _ _) hCx
-    refine ⟨by rw [hx]; exact hC.visibilityReplace_eq 2, fun e ge hre ↦ ?_⟩
-    rw [hx, hC.visibilityReplace_eq 1, min_self, heq e, hre, ge]
-    rw [hx] at ha
-    refine le_antisymm (ha ▸ min_le_min_right _ (hw.monotone gridPoint_one_le_two)) ?_
-    refine le_min ?_ (hCg.trans hg31)
-    by_contra hlt
-    rw [not_le] at hlt
-    have h2 := hw.visibilityReplace_comm (gridPoint 1 0) 3 (hlt.le.trans hCg) 2 (by omega)
-    rw [visibilityReplace_gridPoint 1 2 (by omega)] at h2
-    have : σ (gridPoint 2 0) < C := h2 ▸ visibilityReplace_three_two_lt hC hlt
-    exact absurd (ha ▸ min_le_left _ _ : C ≤ σ (gridPoint 2 0)) (not_le.mpr this)
-
 /-- **A pair of cells copying the twins**: if `a`, `b` are at most `R`, `a' ≤ a`, `b' ≤ b`, `R`
 is at most the larger of `a'`, `b'`, and `a'` and `b'` see `b` and `a` as each other below
 themselves, then `a' = a` and `b' = b`. -/
@@ -1011,7 +904,8 @@ theorem exists_of_isLawfulBelow {r : twinCells.below X → Label.{u}}
       visibilityReplace 3 2 (min (w 2) (w 19)) = min (w 2) (w 19) := fun h19 ↦
     (reading_of_transformsTo (hl 19 h19)
       (a := ⟨2, show twinCells.gradedIndex 2 ≤ twinCells.gradedIndex 19 by decide⟩)
-      (b := ⟨19, self 19⟩) rfl rfl rfl (hsv 19) rfl (min_self _)).1
+      (b := ⟨19, self 19⟩) rfl rfl (rfl.trans gridPoint_two_zero) (hsv 19) rfl
+      (min_self _)).1
   -- the reading cell is the cap and reads the root and the twins
   have h21 : (21 : Fin 23) ∈ twinCells.below X → w 21 = w 19 ∧
       min (w (twinHi o 6 7)) (w 19) = min (w 2) (w 19) ∧
@@ -1034,8 +928,10 @@ theorem exists_of_isLawfulBelow {r : twinCells.below X → Label.{u}}
     have hrd := reading_of_transformsTo (hl 21 h21)
       (a := ⟨2, show twinCells.gradedIndex 2 ≤ twinCells.gradedIndex 21 by decide⟩)
       (b := ⟨21, self 21⟩)
-      rfl rfl rfl (hsv 19) (R := w 2) (by rw [e21]) (by rw [min_self, e21])
-    have el := hrd.2 ⟨twinLo o 6 7, hlo⟩ (by cases o <;> rfl) (by cases o <;> rfl)
+      rfl rfl (rfl.trans gridPoint_two_zero) (hsv 19) (R := w 2) (by rw [e21])
+      (by rw [min_self, e21])
+    have el := hrd.2 ⟨twinLo o 6 7, hlo⟩ (by cases o <;> rfl)
+      (by rw [← gridPoint_one_zero]; cases o <;> rfl)
     rw [e21] at el
     exact ⟨e21, eh, el⟩
   -- the tuple
