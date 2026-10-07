@@ -75,12 +75,12 @@ variable {α : Ordinal.{u}} {n m k : ℕ}
 
 /-- The scheme on one point with no cells: legal below the full grade, since every graded face has
 a positive grade. -/
-private def cellless : Scheme.{u} 1 where
+def cellless : Scheme.{u} 1 where
   card := 0
   toCellScheme := ⟨univ, Geometry.intervalPlan univ, Fin.elim0, Fin.elim0⟩
   rows := CellScheme.Rows.bot _
 
-private theorem isLegalBelowFullGrade_cellless : cellless.{u}.IsLegalBelowFullGrade where
+theorem isLegalBelowFullGrade_cellless : cellless.{u}.IsLegalBelowFullGrade where
   isWellFormed := ⟨rfl, ⟨inferInstance, Geometry.isPlan_intervalPlan _, fun d ↦ d.elim0⟩⟩
   isCoded s := s.elim0
   isConsistent := CellScheme.Rows.isConsistent_bot

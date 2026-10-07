@@ -594,35 +594,6 @@ variable {α : Ordinal.{u}}
 
 /-! ### The top grade for seeds with bottom apexes -/
 
-/-- **The labelling of `Ω` alone at the grade `4`** is lawful below `(univ, 4)` in a scheme on five
-points whose grades are at most `4` and in which the row of every cell of grade `4` is `⊥` exactly
-at the cells of grade other than `4`: at the cells of grade `4` the top shifter is a witness. -/
-theorem isLawfulBelow_omega_of_rows {S : Scheme.{u} 5} (hgr : ∀ z, S.toCellScheme.grade z ≤ 4)
-    (hrow : ∀ s, S.toCellScheme.grade s = 4 →
-      ∀ t : S.toCellScheme.below (S.toCellScheme.gradedIndex s),
-        S.rows.row s t = ⊥ ↔ S.toCellScheme.grade t.1 ≠ 4)
-    {Ω : Label.{u}} (hΩ : IsSelfVisible 4 Ω) :
-    S.rows.IsLawfulBelow ((univ : Finset (Fin 5)), 4)
-      fun z ↦ if S.toCellScheme.grade z = 4 then Ω else ⊥ := by
-  refine (Rows.isLawfulBelow_iff_forall
-    (w := fun z ↦ if S.toCellScheme.grade z = 4 then Ω else ⊥)).mpr
-    ⟨fun d _ ↦ ?_, fun s _ ↦ ?_, fun s t _ hst hg ↦ ?_⟩
-  · split_ifs with h
-    · rw [h]; exact hΩ
-    · exact isSelfVisible_bot _
-  · by_cases hs : S.toCellScheme.grade s = 4
-    · refine transformsTo_of_eq_bot_iff _
-        (fun d : S.toCellScheme.below (S.toCellScheme.gradedIndex s) ↦ hgr d.1) hΩ _ _
-        fun d ↦ ?_
-      have key := hrow s hs d
-      rw [ite_eq_left hs]
-      by_cases hd4 : S.toCellScheme.grade d.1 = 4
-      · rw [ite_eq_left hd4, min_self, ite_eq_right (fun h ↦ (key.mp h) hd4)]
-      · rw [ite_eq_right hd4, min_bot_left, ite_eq_left (key.mpr hd4)]
-    · simp only [ite_eq_right hs, min_bot_right]
-      exact TransformsTo.bot _ _
-  · exact ⟨t, rfl, by rw [hg]⟩
-
 variable {I : Seed.{u} α 3}
 
 variable (I) in
@@ -734,7 +705,8 @@ variable {α : Ordinal.{u}} {I : Seed.{u} α 3} {R : CopyRows I}
 /-- **The multi-layer step from the product clause below the top grade**, for a seed with bottom
 apexes and the top row at the grade `4`: the product clause at the grades `1, 2, 3`, with copy rows
 at those grades coded and lawful below both coatoms, gives the multi-layer step.  At the grade `4`
-the row is the labelling of `ω + 4` alone, the lifts come from those at the grade `3`
+the row is the labelling of `ω + 4` alone (`OrderedLayer.isLawfulBelow_omega_of_rows`), the lifts
+come from those at the grade `3`
 (`OrderedLayer.cappedLift_four_of_oldCells`), and the glued labelling is the labelling of `⊤`
 alone. -/
 theorem canonicalMultiStep_of_productBelowTop (hI : I.HasBottomApexes)

@@ -432,16 +432,17 @@ private theorem transformsTo_threeValueShifter {D : Type*} {grade : D → ℕ}
 
 /-- The cells on `Fin 2`, with faces the intervals: `0` of scope `{0}`, `1` of scope `{1}`, `2`
 and `3` (the twins) of scope `univ`, all of grade `1`, and `4` of scope `univ` and grade `2`. -/
-private def fiveCells : CellScheme (Fin 5) (Fin 2) :=
+def fiveCells : CellScheme (Fin 5) (Fin 2) :=
   ⟨univ, Geometry.intervalPlan univ, ![{0}, {1}, univ, univ, univ], ![1, 1, 1, 1, 2]⟩
 
 /-- The rows: `ω + 2` at `0`; `⊥` at `1` and `4`; `(ω + 2, ⊥, ω + 2, 1)` at `2` and
 `(ω + 2, ⊥, 1, ω + 2)` at `3`, on the cells `0`–`3`. -/
-private noncomputable def fiveCellRows : Fin 5 → Fin 5 → Label.{u} :=
+noncomputable def fiveCellRows : Fin 5 → Fin 5 → Label.{u} :=
   ![fun _ ↦ omegaAddTwo, fun _ ↦ ⊥, ![omegaAddTwo, ⊥, omegaAddTwo, 1, ⊥],
     ![omegaAddTwo, ⊥, 1, omegaAddTwo, ⊥], fun _ ↦ ⊥]
 
-private noncomputable abbrev fiveCellScheme : Scheme.{u} 2 :=
+/-- The **five-cell scheme** on two points: the cells `fiveCells` with the rows `fiveCellRows`. -/
+noncomputable abbrev fiveCellScheme : Scheme.{u} 2 :=
   ⟨5, fiveCells, ⟨fun s d ↦ fiveCellRows s d.1⟩⟩
 
 private theorem fiveCellScheme_row (s : Fin 5) (d) :
@@ -662,7 +663,7 @@ private theorem cappedLift_scope_one
 
 /-- **The scheme is legal.**  Its row values are `⊥`, `1` and `ω + 2`, each row is a lawful
 section, and bountifulness reduces to the two capped lifts above. -/
-private theorem isLegal_fiveCellScheme : fiveCellScheme.{u}.IsLegal where
+theorem isLegal_fiveCellScheme : fiveCellScheme.{u}.IsLegal where
   isWellFormed := ⟨rfl, ⟨inferInstance, Geometry.isPlan_intervalPlan _, fun d ↦ by
     have key : ∀ d : Fin 5, fiveCells.scope d ∈ fiveCells.faces ∧ 0 < fiveCells.grade d ∧
         fiveCells.grade d ≤ #(fiveCells.scope d) := by decide
@@ -732,14 +733,15 @@ private theorem isLegal_fiveCellScheme : fiveCellScheme.{u}.IsLegal where
 /-! ### Two lifts with the twins in both orders -/
 
 /-- The label `β + n`. -/
-private noncomputable abbrev labelAdd (β : Ordinal.{u}) (n : ℕ) : Label.{u} :=
+noncomputable abbrev labelAdd (β : Ordinal.{u}) (n : ℕ) : Label.{u} :=
   ((β + (n : Ordinal.{u}) : Ordinal.{u}) : Label.{u})
 
 private theorem labelAdd_le (β : Ordinal.{u}) {n n' : ℕ} (h : n ≤ n') :
     labelAdd β n ≤ labelAdd β n' :=
   WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr (add_le_add_right (Nat.cast_le.mpr h) β))
 
-private theorem not_labelAdd_two_le_one {β : Ordinal.{u}} : ¬ labelAdd β 2 ≤ labelAdd β 1 :=
+/-- The label `β + 2` is not at most `β + 1`. -/
+theorem not_labelAdd_two_le_one {β : Ordinal.{u}} : ¬ labelAdd β 2 ≤ labelAdd β 1 :=
   fun h ↦ by
     have := Nat.cast_le.mp ((add_le_add_iff_left β).mp
       (WithTop.coe_le_coe.mp (WithBot.coe_le_coe.mp h)))
@@ -750,30 +752,34 @@ private theorem labelAdd_lt (β : Ordinal.{u}) (n : ℕ) :
   WithBot.coe_lt_coe.mpr (WithTop.coe_lt_coe.mpr (add_lt_add_right (natCast_lt_omega0 n) β))
 
 /-- The first lift `(β + 2, ⊥, β + 2, β + 1, ⊥)`: the second twin below `0`. -/
-private noncomputable def fiveCellLift₁ (β : Ordinal.{u}) : Fin 5 → Label.{u} :=
+noncomputable def fiveCellLift₁ (β : Ordinal.{u}) : Fin 5 → Label.{u} :=
   ![labelAdd β 2, ⊥, labelAdd β 2, labelAdd β 1, ⊥]
 
 /-- The second lift `(β + 2, ⊥, β + 1, β + 2, ⊥)`: the first twin below `0`. -/
-private noncomputable def fiveCellLift₂ (β : Ordinal.{u}) : Fin 5 → Label.{u} :=
+noncomputable def fiveCellLift₂ (β : Ordinal.{u}) : Fin 5 → Label.{u} :=
   ![labelAdd β 2, ⊥, labelAdd β 1, labelAdd β 2, ⊥]
 
-private theorem isLawful_fiveCellLift₁ {β : Ordinal.{u}} (hβ : Order.IsSuccPrelimit β) :
+/-- The first lift is a lawful section of the five-cell scheme, for `β` zero or a limit. -/
+theorem isLawful_fiveCellLift₁ {β : Ordinal.{u}} (hβ : Order.IsSuccPrelimit β) :
     fiveCellScheme.{u}.rows.IsLawful (fiveCellLift₁ β) :=
   isLawful_fiveCellScheme rfl rfl (isSelfVisible_coe_add hβ (by omega))
     (isSelfVisible_coe_add hβ (by omega)) (isSelfVisible_coe_add hβ (by omega)) le_rfl
     (labelAdd_le β (by omega)) le_sup_left
 
-private theorem isLawful_fiveCellLift₂ {β : Ordinal.{u}} (hβ : Order.IsSuccPrelimit β) :
+/-- The second lift is a lawful section of the five-cell scheme, for `β` zero or a limit. -/
+theorem isLawful_fiveCellLift₂ {β : Ordinal.{u}} (hβ : Order.IsSuccPrelimit β) :
     fiveCellScheme.{u}.rows.IsLawful (fiveCellLift₂ β) :=
   isLawful_fiveCellScheme rfl rfl (isSelfVisible_coe_add hβ (by omega))
     (isSelfVisible_coe_add hβ (by omega)) (isSelfVisible_coe_add hβ (by omega))
     (labelAdd_le β (by omega)) le_rfl le_sup_right
 
-private theorem atStage_fiveCellLift₁ {β : Ordinal.{u}} (d : Fin 5) :
+/-- The labels of the first lift occur at the stage `β + ω`. -/
+theorem atStage_fiveCellLift₁ {β : Ordinal.{u}} (d : Fin 5) :
     AtStage (β + ω) (fiveCellLift₁ β d) := by
   fin_cases d <;> first | exact .inl (labelAdd_lt β _) | exact atStage_bot
 
-private theorem atStage_fiveCellLift₂ {β : Ordinal.{u}} (d : Fin 5) :
+/-- The labels of the second lift occur at the stage `β + ω`. -/
+theorem atStage_fiveCellLift₂ {β : Ordinal.{u}} (d : Fin 5) :
     AtStage (β + ω) (fiveCellLift₂ β d) := by
   fin_cases d <;> first | exact .inl (labelAdd_lt β _) | exact atStage_bot
 

@@ -140,9 +140,10 @@ end Realization
 /-- **Forcing donors** at the block index `η`: for every legal stage type `t` at `λ_{η+1}`, every
 cell `d` of `t` reducing to the formal top at `λ_η` and every `n` with `λ_η + n ≤ t.label d`, some
 legal stage type `D` at `λ_{η+1}` has `t` as its face along some `g`, and `(D↓λ_η, g)` forces `n`
-at `d`.  A finite statement about stage types, with no realization.  It is still to be proved: a
-finite construction of Layer 3, to be built from the completion below the full grade (Layer 3),
-without (R1). -/
+at `d`.  A finite statement about stage types, with no realization.  It is still to be proved.  It
+is derived from the coatom extension property at the next block stage `λ_{η+1}`
+(`forcingDonors_of_hasCoatomExtensions`, in `VaughtConjecture.Extension.ForcingDonorsCoatom`), by
+a finite construction of Layer 3 without (R1) and without a completion. -/
 def ForcingDonors (η : Ordinal.{u}) : Prop :=
   ∀ ⦃k : ℕ⦄ (t : StageType.{u} (blockStage (η + 1)) k), t.IsLegal → ∀ d : Fin t.card,
     (t.reduce (isSuccPrelimit_blockStage η)).label d = ⊤ → ∀ n : ℕ,

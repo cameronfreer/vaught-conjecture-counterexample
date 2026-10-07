@@ -127,12 +127,20 @@ theorem restrictFace_eq_some_of_trans_eq (hf : f.trans y.tuple = x.tuple) :
     StageType.restrictFace f y.type = some x.type := by
   rw [← eval_face hR, hf, x.eval_tuple]
 
-/-- Every label of a literal face is a label of the larger occurrence. -/
+/-- **Literal faces keep labels and grades**: every cell of the type of a literal face has a cell
+of the type of the larger occurrence with the same label and the same grade. -/
+theorem exists_label_grade_eq_of_trans_eq (hf : f.trans y.tuple = x.tuple)
+    (j : Fin x.type.card) : ∃ z : Fin y.type.card, y.type.label z = x.type.label j ∧
+      y.type.toCellScheme.grade z = x.type.toCellScheme.grade j := by
+  obtain ⟨_, -, hl, hg⟩ :=
+    StageType.exists_cellMap_of_restrictFace_eq (restrictFace_eq_some_of_trans_eq hR hf) j
+  exact ⟨_, hl, hg⟩
+
+/-- Every label of a literal face is a label of the larger occurrence (the labels of
+`exists_label_grade_eq_of_trans_eq`). -/
 theorem exists_label_eq_of_trans_eq (hf : f.trans y.tuple = x.tuple) (j : Fin x.type.card) :
-    ∃ z : Fin y.type.card, y.type.label z = x.type.label j := by
-  obtain ⟨hmem, h⟩ :=
-    (StageType.restrictFace_eq_some_iff _ _).mp (restrictFace_eq_some_of_trans_eq hR hf)
-  exact ⟨_, StageType.label_congr h (i := Fin.cast (congrArg (·.card) h).symm j) rfl⟩
+    ∃ z : Fin y.type.card, y.type.label z = x.type.label j :=
+  (exists_label_grade_eq_of_trans_eq hR hf j).imp fun _ ↦ And.left
 
 end LiteralFace
 

@@ -38,6 +38,10 @@ of `σ`.
 * every witness reads `a` at most as `b` exactly when `a ≤ b` (`le_iff_forall_isWitness`);
 * monotonicity in the source and antitonicity in the grade (`TransformsTo.le_of_le`), and
   preservation of self-visibility at the grade (`TransformsTo.isSelfVisible`);
+* reading through a reference cell under a cap (`TransformsTo.eq_coe_add_of_reading`): if `p`
+  reads cells `a` and `e` in one block, at `ω · c + i` and `ω · c + o`, the grades of `a` and `e`
+  are at most that of a cell `b`, `i < grade b`, `o ≤ grade b`, and `q a = μ + i` (`μ` zero or a
+  limit) with `μ + i` and `μ + o` below `q b`, then `q e = μ + o`;
 * lowering the suppressor (`IsWitness.of_le`, `IsWitness.of_le_stepSuppressor`), the pointwise
   maximum of two suppressors (`IsWitness.sup`), truncation of the suppressor above a grade
   (`IsWitness.truncate`), capping the suppressor by a self-visible label (`IsWitness.cap`), and
@@ -179,6 +183,54 @@ theorem TransformsTo.isSelfVisible (h : TransformsTo grade p q) {d : D}
   rcases le_total (σ (p d)) (g (grade d)) with hle | hle
   · rw [min_eq_left hle]; exact hw.isSelfVisible_apply hp hle
   · rw [min_eq_right hle]; exact hw.isSelfVisible _
+
+/-! ### Reading through a reference cell under a cap -/
+
+section Reading
+
+open Ordinal
+
+variable {r : D → Label.{u}}
+
+/-- **Reading through a reference cell under a cap** (the decoder at one row).  Let the labelling
+`r` transform to `q` over the grades `grade`, and let `a`, `b`, `e` be three cells, with the
+grades of `a` and `e` at most that of `b` and `i < grade b`, `o ≤ grade b`.  If `r` reads `a` and
+`e` in one block, at `ω · c + i` and `ω · c + o`, and `q a = μ + i` for `μ` zero or a limit, with
+`μ + i` and `μ + o` strictly below `q b`, then `q e = μ + o`.  The cap `b` keeps the suppressor
+above the reference value at the grade of `a` and above `μ + o` at the grade of `e`, so the
+shifter sends `ω · c + i` to `μ + i` exactly; under the guard at the threshold `grade b` it
+commutes with the visibility replacement that turns `i` into `o`. -/
+theorem TransformsTo.eq_coe_add_of_reading (h : TransformsTo grade r q) {μ c : Ordinal.{u}}
+    (hμ : Order.IsSuccPrelimit μ) {a b e : D} {i o : ℕ} (hab : grade a ≤ grade b)
+    (hi : i < grade b) (ho : o ≤ grade b) (heb : grade e ≤ grade b)
+    (hra : r a = ((ω * c + i : Ordinal.{u}) : Label.{u}))
+    (hre : r e = ((ω * c + o : Ordinal.{u}) : Label.{u}))
+    (hqa : q a = ((μ + i : Ordinal.{u}) : Label.{u}))
+    (hib : ((μ + i : Ordinal.{u}) : Label.{u}) < q b)
+    (hob : ((μ + o : Ordinal.{u}) : Label.{u}) < q b) :
+    q e = ((μ + o : Ordinal.{u}) : Label.{u}) := by
+  obtain ⟨g, σ, hw, heq⟩ := h
+  have hgb : q b ≤ g (grade b) := (heq b).trans_le (min_le_right _ _)
+  have hσa : σ (r a) = ((μ + i : Ordinal.{u}) : Label.{u}) := by
+    have h1 := heq a
+    rw [hqa] at h1
+    have hg : ((μ + i : Ordinal.{u}) : Label.{u}) < g (grade a) :=
+      (hib.trans_le hgb).trans_le (hw.antitone hab)
+    rcases le_total (σ (r a)) (g (grade a)) with h2 | h2
+    · rw [min_eq_left h2] at h1
+      exact h1.symm
+    · rw [min_eq_right h2] at h1
+      exact absurd h1 hg.ne
+  have hcm := hw.visibilityReplace_comm (r a) (grade b) (hσa ▸ (hib.trans_le hgb).le) o ho
+  have hc : Order.IsSuccPrelimit (ω * c) :=
+    Ordinal.isSuccPrelimit_iff_omega0_dvd.mpr (dvd_mul_right _ _)
+  rw [hσa, visibilityReplace_coe_add_natCast hμ hi, hra,
+    visibilityReplace_coe_add_natCast hc hi, ← hre] at hcm
+  rw [heq e, hcm]
+  exact min_eq_left ((hob.trans_le hgb).le.trans (hw.antitone heb))
+
+
+end Reading
 
 /-! ### Lowering, truncating, and capping the suppressor -/
 
