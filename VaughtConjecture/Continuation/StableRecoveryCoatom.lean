@@ -63,22 +63,22 @@ general input; its clause holds at two inputs, one and two coatom steps
 (`VaughtConjecture.Continuation.StableRecoveryCoatomExamples`), and its reading rows exist on the
 cells of the coatoms at every input (`StageType.exists_codedReadingLabelling`).
 
-**Why the last step is a separate statement** (argued, not formalized).  The reading clause
-quantifies over every cell at `(univ, N)`, a graded face of full scope; in a coatom extension these
-cells are not cells of either coatom, so the coatom extension property says nothing about their
-rows.  Adding to a given coatom extension one more cell at `(univ, N)` that reads through the cap
-does not help: availability then picks some cell at `(univ, N)` above the cap, possibly an old
-one, and making the new cell dominate the old ones asks each old row to read the new cell like the
-cap, which ties the new row to the old, uncontrolled ones.  So the reading coatom completion is the
-completion of the amalgam of the last coatom pair (the content of hypothesis 8 at that pair) with
-the rows at `(univ, N)` prescribed, not a consequence of hypothesis 8.  On the cells of every
-labelled extension, in particular of the two coatoms, a reading row exists (compiled): the coded
-copy of the labels capped at the label of the cap is lawful below `(univ, N)` and reads the
-reference cells and the new cells of `D` in one block per label block, the formal top like the cap
-and `⊥` as `⊥` (`StageType.exists_codedReadingLabelling`, in
+**Why the last step is stated separately** (argued, not formalized). The reading clause quantifies
+over every cell at `(univ, N)`, a graded face of full scope; in a coatom extension these cells are
+not cells of either coatom, so the coatom extension property says nothing about their rows. Adding
+to a given coatom extension one more cell at `(univ, N)` that reads through the cap does not
+obviously help: availability then picks some cell at `(univ, N)` above the cap, possibly an old one,
+and making the new cell dominate the old ones asks each old row to read the new cell like the cap,
+which ties the new row to the old, uncontrolled ones. So the reading coatom completion asks for a
+completion of the amalgam of the last coatom pair with the rows at `(univ, N)` prescribed; none of
+these arguments establishes whether it follows from hypothesis 8, and no implication either way is
+compiled. On the cells of every labelled extension, in particular of the two coatoms, a reading row
+exists (compiled): the coded copy of the labels capped at the label of the cap is lawful below
+`(univ, N)` and reads the reference cells and the new cells of `D` in one block per label block, the
+formal top like the cap and `⊥` as `⊥` (`StageType.exists_codedReadingLabelling`, in
 `VaughtConjecture.Continuation.StableRecoveryCodedReading`, whatever the intermediate coface); the
 cap row of `VaughtConjecture.Continuation.StableRecoveryCapRow` is another reading row on the cells
-of `T⁺`.  The open part is the completion at the cells of full scope.
+of `T⁺`. The open part is the completion at the cells of full scope.
 
 ## Placement
 
@@ -152,9 +152,10 @@ of `T⁺` for `D` and `γ` (`StageType.IsGradedCap`), there is a reading coatom 
 It is the completion of the amalgam of the coatom pair `(T⁺, tb)` over `p`, with the rows of its
 cells at `(univ, N)` reading the new cells of `D` through the cap.  The intermediate coface `tb` is
 arbitrary.  With the coatom extension property it implies cap-reading extensions
-(`StageType.HasReadingCoatomCompletions.hasCapReadingExtensions`).  It is not proved; it is not
-implied by the coatom extension property with apex (`StageType.HasApexCoatomExtensions`, still to
-be proved), whose cells of full scope are not controlled (argued, not formalized). -/
+(`StageType.HasReadingCoatomCompletions.hasCapReadingExtensions`).  It is not proved, and no
+implication from or to the coatom extension property with apex (`StageType.HasApexCoatomExtensions`,
+still to be proved) is compiled; that property does not prescribe the rows of its cells of full
+scope. -/
 def HasReadingCoatomCompletions : Prop :=
   ∀ ⦃m k : ℕ⦄ (Tp : StageType.{u} (blockStage (ξ + 1)) (m + 1)) (g : Fin m ↪ Fin (m + 1))
     (p : StageType.{u} (blockStage (ξ + 1)) m) (tb : StageType.{u} (blockStage (ξ + 1)) (m + 1))

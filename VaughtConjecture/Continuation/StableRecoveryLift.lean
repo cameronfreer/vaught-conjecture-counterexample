@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Continuation.StableRecoveryCoatom
+import VaughtConjecture.Continuation.StableRecoveryCounterexample
 
 /-!
 # Stable recovery lifts from a closed face of the context
@@ -36,10 +37,27 @@ context containing the root and some calibrated cap with its reference cells (ar
 formalized as a statement over all inputs).
 
 **What this does not give** (argued, not formalized).  The lifted scheme is a stable recovery
-scheme, not a cap-reading extension: its cells at `(univ, N)` are those of the coatom extensions,
-not controlled.  So `StageType.HasReadingCoatomCompletions` is not obtained this way, and no
-universal construction of reading coatom completions is compiled here; at the smallest closed face
-the reading is again at its top graded face, where the completion of the last coatom pair is open.
+scheme, not a cap-reading extension: the coatom extension property does not prescribe its cells at
+`(univ, N)`.  So `StageType.HasReadingCoatomCompletions` is not obtained this way, and no universal
+construction of reading coatom completions is compiled here; at the smallest closed face the
+reading is again at its top graded face, where the completion of the last coatom pair is open.
+
+**The face version is not a different statement**
+(`StageType.hasStableRecoverySchemes_iff_exists_face`).  For every calibration `C`, under the
+coatom extension property at `λ_{ξ+1}`, stable recovery schemes for `C` are equivalent to: every
+input of `C` has a closed face `g` of `T⁺` through which the root factors (`f = f'.trans g`) and a
+stable recovery scheme for the face `p` of `T⁺` along `g`, `f'`, `D` and `γ`.  The face may be the
+whole context (`g` the identity), so this reduction by itself simplifies nothing; a gain needs a
+strictly smaller face.
+
+**The smallest face can fail** (`Continuation.StableRecoveryCounterexample.
+not_isStableRecoveryScheme_twinRoot`).  At the twin donors, the face along the root alone (the twin
+root, with the identity) has no stable recovery scheme for the first donor at any `γ`: the second
+donor is a stage type on the same scheme with the same face and the twins in the other order.  So
+a face carrying recovery must contain more than the root.  At both compiled inputs of
+`VaughtConjecture.Continuation.StableRecoveryCoatomExamples` the calibrated cap has grade equal to
+the number of points of the context, hence full scope (`StageType.gradedIndex_eq_univ_of_grade_eq`),
+so no proper closed face contains it (argued from those compiled facts; not stated as a theorem).
 
 ## Placement
 
@@ -107,6 +125,55 @@ theorem IsStableRecoveryScheme.exists_lift
   exact ⟨Q.toScheme, hB.of_comap hp hQ hc (congrArg StageType.toScheme hcT) hg
     ((congrArg StageType.toScheme hgd).trans hdE)⟩
 
+/-! ### The face version of stable recovery -/
+
+/-- **Stable recovery at a closed face is the same statement.**  For a calibration `C`, under the
+coatom extension property at `λ_{ξ+1}`, stable recovery schemes for `C` hold exactly when every
+input of `C` has a closed face `g` of `T⁺` through which the root factors and a stable recovery
+scheme for the face along `g`.  One direction takes `g` the identity; the other is
+`StageType.IsStableRecoveryScheme.exists_lift`. -/
+theorem hasStableRecoverySchemes_iff_exists_face
+    (hext : HasCoatomExtensions.{u} (blockStage (ξ + 1)))
+    (C : ∀ ⦃m k : ℕ⦄, StageType.{u} (blockStage (ξ + 1)) m → (Fin k ↪ Fin m) →
+      StageType.{u} (blockStage (ξ + 1)) (k + 1) → Ordinal.{u} → Prop) :
+    HasStableRecoverySchemes ξ C ↔
+      ∀ ⦃m k : ℕ⦄ (Tp : StageType.{u} (blockStage (ξ + 1)) m) (f : Fin k ↪ Fin m)
+        (P : StageType.{u} (blockStage (ξ + 1)) k), Tp.IsLegal → 0 < k →
+        restrictFace f Tp = some P → ∀ D ∈ P.cofaces, ∀ γ : Ordinal.{u},
+          γ < blockStage (ξ + 1) → C Tp f D γ →
+            ∃ (m' : ℕ) (g : Fin m' ↪ Fin m) (f' : Fin k ↪ Fin m')
+              (p : StageType.{u} (blockStage (ξ + 1)) m') (EB : Scheme.{u} (m' + 1)),
+              restrictFace g Tp = some p ∧ f'.trans g = f ∧ p.IsStableRecoveryScheme f' D γ EB := by
+  refine ⟨fun h m k Tp f P hT hk hP D hD γ hγ hC ↦ ?_, fun h m k Tp f P hT hk hP D hD γ hγ hC ↦ ?_⟩
+  · obtain ⟨E, hE⟩ := h Tp f P hT hk hP D hD γ hγ hC
+    exact ⟨m, Function.Embedding.refl _, f, Tp, E, restrictFace_refl _,
+      Function.Embedding.ext fun _ ↦ rfl, hE⟩
+  · obtain ⟨m', g, f', p, EB, hp, rfl, hB⟩ := h Tp f P hT hk hP D hD γ hγ hC
+    exact hB.exists_lift hext hT hp
+
 end StageType
+
+namespace Continuation.StableRecoveryCounterexample
+
+open CandidateCounterexamples
+
+variable (ξ : Ordinal.{u})
+
+/-- **No stable recovery at the twin root alone**: for every `γ` and every scheme `E`, `E` is not a
+stable recovery scheme for the twin root, the identity of its point and the first twin donor.  A
+stable recovery scheme there would make every stage type on the five-cell scheme with face the
+root agree with the first donor at its twins (`StageType.IsStableRecoveryScheme.label_eq_of_refl`);
+the second donor has the twins in the other order. -/
+theorem not_isStableRecoveryScheme_twinRoot (γ : Ordinal.{u}) (E : Scheme.{u} 2) :
+    ¬ (twinRoot ξ).IsStableRecoveryScheme (Function.Embedding.refl (Fin 1)) (twinDonor₁ ξ) γ E :=
+  fun hE ↦ by
+  have h2 := hE.label_eq_of_refl (twinDonor₂ ξ) rfl (restrictFace_twinDonor₂ ξ)
+    (2 : Fin 5) (2 : Fin 5) rfl (by
+      -- the label of the first donor at the twin `2`
+      change fiveCellLift₁ (blockStage ξ) 2 ≠ ⊤
+      exact (WithBot.coe_lt_coe.mpr (WithTop.coe_lt_top _)).ne)
+  exact not_labelAdd_two_le_one h2.symm.le
+
+end Continuation.StableRecoveryCounterexample
 
 end VaughtConjecture
