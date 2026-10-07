@@ -281,11 +281,15 @@ named hypothesis.
    `Seed.copyRows_lt_three_of_TH_TG`, `Seed.copyRows_lt_of_TL_T5`, `Seed.copyRows_lt_of_T5_TL`);
    compiled in this repository (theorem named).  A refutation of the own-side rows, not of the
    family nor of the completion; at `seed4`, `seed5`, `seedLL` the own-side step is undecided (at
-   `seed5` a forcing constrains the copies, `Seed.copyRows_lt_of_T5_T5`, but only with `P d₁ = ⊥`,
-   outside the refutation).  The necessary condition can refute only rows with the own side above,
-   never the mirror rows (other side shifted up), which are the next test.  Open: copy rows giving the step of the family
-   for every seed on five points (`Seed.HasCanonicalMultiStep` for every seed), which must meet the
-   orientations forced on the copies, and the completion at `m ≥ 3` for every seed.
+   `seed5` a forcing constrains the copies, `Seed.copyRows_lt_of_T5_T5`, but only with `P d₁ = ⊥`
+   (argued, not formalized), outside the refutation).  The direction of the shift is a choice: the
+   rows first specified were the mirror rows (other side shifted up), reversed to match `rowsHG` at
+   the grade 1 (`README.md` 2.7).  Through a cell `d₂` off the own side that the other original
+   reads above `⊥`, the necessary condition can refute only rows with the own side above, never
+   the mirror rows (argued, not formalized; on the common face it constrains the original's row),
+   which are the next test.  Open: copy rows giving the step of the family for every seed on five
+   points (`Seed.HasCanonicalMultiStep` for every seed), which must meet the orientations forced
+   on the copies, and the completion at `m ≥ 3` for every seed.
 2. **Stable availability at twins** (compiled): from legal types
    (`Realization.availability_stableSection_of_hasLegalTypes`), so every model at a block stage is
    stably lawful (`Realization.IsModel.isStablyLawful`), and so is every exactly consistent

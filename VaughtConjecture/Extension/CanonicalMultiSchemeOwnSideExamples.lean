@@ -33,7 +33,7 @@ canonical multi-layer scheme, for every copy rows `R`, reads them with the force
 | `seedHG` | `C` | `A_C = H = 2`, `G = ⊤` | `(C, 3)` | `d₃` below `d₄` |
 | `seedL` | `C` | `A_C = 1`, `F_C = G = ⊤` | `(C, 2)`, `(C, 3)` | `d₃` below `d₄` |
 | `seedLM` | `D` | `A_D = 1`, `F_D = G = ⊤` | `(D, 2)`, `(D, 3)` | `d₄` below `d₃` |
-| `T5`, `T5` (`seed5`) | `D` | all parameters `⊤` | `(D, 2)`, `(D, 3)` | `d₀` below `d₃` |
+| `T5`, `T5` (e.g. `seed5`) | `D` | all parameters `⊤` | `(D, 2)`, `(D, 3)` | `d₀` below `d₃` |
 
 (`Seed.copyRows_lt_two_of_TH_TG`, `Seed.copyRows_lt_three_of_TH_TG`, `Seed.copyRows_lt_of_TL_T5`,
 `Seed.copyRows_lt_of_T5_TL`, `Seed.copyRows_lt_of_T5_T5`.)  In each row the copy reads a cell of

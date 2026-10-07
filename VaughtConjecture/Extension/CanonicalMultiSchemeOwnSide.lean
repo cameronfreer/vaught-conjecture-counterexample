@@ -74,13 +74,17 @@ not the family and not a completion.
 first specified for this checkpoint were the *mirror rows*: the copy reads its own coatom's cells
 at their own values and the other coatom's cells shifted into a higher block.  The direction was
 reversed here to match `rowsHG` at the grade `1` (own side above, as above).  The necessary
-condition always concludes that the own cell `d₁` is read below the other side's cell `d₂`, so it
-can refute only rows with the own side above, never the mirror rows: under the mirror rows `d₁` is
-read below `ω · N` and `d₂`, off the own side, at least `ω · N` whenever the other original reads
-it at a value other than `⊥`.  At `seedHG`, `seedL` and `seedLM` this holds at `({3}, 1)` and
-`({4}, 1)`, so the mirror rows meet every orientation compiled there (argued, not formalized); at
-the grade `1` of `seedHG` they also give the two copies opposite orientations.  Whether the mirror
-rows give a step is the next test.
+condition always concludes that the own cell `d₁` is read below the other side's cell `d₂`, so
+through a cell `d₂` off the own side that the other original reads at a value other than `⊥` it
+can refute only rows with the own side above, never the mirror rows (argued, not formalized):
+under the mirror rows `d₁` is read below `ω · N` and such a `d₂` at least `ω · N`.  At `seedHG`,
+`seedL` and `seedLM` this holds at `({3}, 1)` and `({4}, 1)`, so the mirror rows meet every
+orientation compiled there (argued, not formalized); at the grade `1` of `seedHG` they also give
+the two copies opposite orientations.  The condition also allows `d₂` on the common face
+(`Seed.MultiLayerStep.copyRows_lt_of_forcesTop` does not place `d₂` off the own side); there the
+mirror rows read both cells unshifted, as the own original does, so it is a condition on that
+original's row, which this argument does not exclude.  Whether the mirror rows give a step is the
+next test.
 
 ## Placement
 

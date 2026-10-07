@@ -2771,12 +2771,15 @@ ones split):
   from `(C, 2)`, and from `(D, 2)` by symmetry, in a finite check. The direction of the shift is a
   choice: the rows first specified for this checkpoint were the mirror rows (own side unshifted,
   the other side shifted into a higher block), reversed to match `rowsHG` at the grade 1. The
-  necessary condition always reads the own cell below the other side's, so it can refute only
-  own-side-above rows, never the mirror rows, which meet every orientation compiled at `seedHG`,
-  `seedL`, `seedLM` (argued, not formalized). Open: copy rows giving the step of the family for
-  every seed on five points (`Seed.HasCanonicalMultiStep` for every seed), meeting the orientations
-  forced on the copies, with the mirror rows the next test; and the completion at `m ≥ 3` for every
-  seed.
+  necessary condition always reads the own cell below the other side's, so through a cell `d₂` off
+  the own side that the other original reads above `⊥` it can refute only own-side-above rows,
+  never the mirror rows (argued, not formalized); the mirror rows meet every orientation compiled
+  at `seedHG`, `seedL`, `seedLM` (argued, not formalized). The condition also allows `d₂` on the
+  common face, where the mirror rows read both cells unshifted, as the own original does; there it
+  is a condition on that original's row, not excluded by this argument. Open: copy rows giving the
+  step of the family for every seed on five points (`Seed.HasCanonicalMultiStep` for every seed),
+  meeting the orientations forced on the copies, with the mirror rows the next test; and the
+  completion at `m ≥ 3` for every seed.
 
 The completion constructs lawful finite extensions and nothing more.  It imports only Layers
 0–1, the stage types, the amalgam, and the section theorem of `README.md`, Layer 3, 3.1 (with
