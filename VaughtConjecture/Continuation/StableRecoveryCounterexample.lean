@@ -54,9 +54,11 @@ labelled at least `λ_ξ` plus its grade, and reference cells of grade at most t
 graded cap calibration (`StageType.GradedCapCalibration`), which excludes this instance
 (`not_gradedCapCalibration_twinRoot`) and is acquired in every model that is not cover-hollow and
 has top-grade supremum `⊤` (`Realization.IsModel.acquiresCalibratedContexts_gradedCap`).  Stable
-recovery schemes for the graded cap calibration remain open.  (Informal; not compiled: at this root
-and donor they would need a private type of at least three points, since the finite part `2` of a
-label of `D` is below the grade `N` of the cap and `N` is at most the number of points.)
+recovery schemes for the graded cap calibration are open; one input with such a scheme is
+compiled (`Continuation.StableRecoveryReading.exists_isStableRecoveryScheme_gradedCap`).
+(Informal; not compiled: at this root and donor they would need a private type of at least three
+points, since the finite part `2` of a label of `D` is below the grade `N` of the cap and `N` is at
+most the number of points.)
 
 ## Placement
 
