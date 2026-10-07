@@ -116,6 +116,26 @@ theorem gridPoint_ne_bot (k b : ℕ) : gridPoint.{u} k b ≠ ⊥ := WithBot.coe_
 theorem gridPoint_ne_top (k b : ℕ) : gridPoint.{u} k b ≠ ⊤ := fun h ↦
   WithTop.coe_ne_top (WithBot.coe_injective h)
 
+/-- Grid points of any grades compare lexicographically in block and grade. -/
+theorem gridPoint_le_gridPoint_iff_lex {k k' a b : ℕ} :
+    gridPoint.{u} k a ≤ gridPoint k' b ↔ a < b ∨ a = b ∧ k ≤ k' := by
+  rw [gridPoint, gridPoint, WithBot.coe_le_coe, WithTop.coe_le_coe,
+    omega0_mul_add_natCast_le_iff]
+  simp only [Nat.cast_lt, Nat.cast_inj]
+
+/-- Grid points of any grades compare strictly lexicographically in block and grade. -/
+theorem gridPoint_lt_gridPoint_iff_lex {k k' a b : ℕ} :
+    gridPoint.{u} k a < gridPoint k' b ↔ a < b ∨ a = b ∧ k < k' := by
+  rw [lt_iff_not_ge, gridPoint_le_gridPoint_iff_lex]
+  omega
+
+/-- A grid point of grade `1` is fixed by the visibility replacement at the threshold `3` with
+value `1`: its finite part is `1`. -/
+theorem visibilityReplace_three_one_gridPoint_one (b : ℕ) :
+    visibilityReplace 3 1 (gridPoint.{u} 1 b) = gridPoint 1 b := by
+  rw [gridPoint, visibilityReplace_coe, Ordinal.visibilityReplace_omega0_mul_add_natCast]
+  simp
+
 /-- A grid point at grade `k` is self-visible at `k`: its finite part is `k`. -/
 theorem isSelfVisible_gridPoint (k b : ℕ) : IsSelfVisible k (gridPoint.{u} k b) :=
   isSelfVisible_coe.mpr (by rw [omega0_mul_add_natCast_mod])
