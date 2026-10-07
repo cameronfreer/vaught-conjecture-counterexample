@@ -3485,6 +3485,190 @@ construction chosen builds grade by grade over the boundary, in one fixed order 
 chooses the full-scope cell that serves each lift (defined with 2.6) before extending on the
 other coatom, and tops out in a single apex cell.
 
+## The common core of the receiving routes
+
+**The observation.**  The open finite hypotheses of the receiving routes, and the completion of the
+coatom amalgam, ask for objects over a context (for (R1)–(R4), a context acquired in a model) whose
+cells of full scope (graded index `(univ, g)`) satisfy a condition on their rows at prescribed
+cells.  (R2) and (R3) ask for a legal one-point extension: the cells of full scope read each new top
+of the donor at least as a private top (the reading context, a condition on stage types of the route
+to determination with a private top, not on `main`; on `main`, (R2) follows from (R1) for every
+model at every limit stage, `Realization.ResidualAcquisition` and `Realization.CutoffDetermination`,
+and (R3) from `Realization.HollowAcquisition` and `Realization.SchemeDetermination`, README, "Status
+of (R2) and (R3)").  (R1) and (R4) ask for schemes: (R1), per block, a scheme on which every coface
+of the context has its cells of full scope of the top grade read the labels of one block in their
+own block (block-tight saturations, `IsBlockTight` = "some scheme, and every coface on it …"); (R4),
+a scheme carrying a coface of the stage reduction `T⁺↓β` whose cells of full scope of the cap's
+grade read the new cells of the donor through the cap (the cap-reading scheme of the stable recovery
+through a reading cell).  The completion asks for a coatom extension, with no condition on the rows.
+These row-prescription conditions recur across the routes.  The four gaps stay separate: the
+implications below count only as compiled, each under the **compatibility hypothesis**: the route's
+prescription is compatible with the faces (`StageType.IsFaceCompatible`, defined under "The
+statement" below) at the input.  For (R1) that hypothesis fails at the known refuting context
+(below).
+
+**The statement** (`Extension/PrescribedFullRows`).  A context `t'` on `k` points and a donor `d`
+on `n + 1` points with the common face `t` (the face of `t'` along `h` and of `d` along the first
+points); a **full-row prescription** `Φ` (`StageType.FullRowPrescription`), at each grade `g` a
+condition on the readings of the known cells (those of `t'` and `d`) and of the cell itself by a
+cell of graded index `(univ, g)`; a **prescribed extension** (`StageType.IsPrescribedExtension`), a
+legal one-point extension of `t'` carrying `d` along `h` whose scheme extends `t'` and `d` with the
+rows prescribed by `Φ` (`StageType.ExtendsWithPrescribedRows`, a condition on the scheme, so at a
+stage that is zero or a limit, `Order.IsSuccPrelimit α`, generalized saturation reaches it:
+`Realization.IsModel.realizesOver_extendsWithPrescribedRows`).
+**Admissibility** of a row at a labelling of the known cells (`StageType.IsAdmissibleRow`): the
+readings meet `Φ`, are coded, are lawful below `(univ, g)` in the rows of `t'` and of `d`, and
+transform to the labelling capped at a value at least the label of the known cell served.
+**Compatibility with the faces** (`StageType.IsFaceCompatible`): admissibility at every lawful
+labelling of `t'` and some lawful labelling of `d` agreeing with it on `t`; **at the labels of
+`t'`** (`StageType.IsFaceCompatibleAtLabels`): at the labels of `t'` only, with some lawful
+labelling of `d`.  The common core is `StageType.HasPrescribedFullRows α`: every prescription
+compatible with the faces over legal `t'` and `d` has a prescribed extension.  Its labels form is
+`StageType.HasPrescribedFullRowsAtLabels α`.
+
+**Compiled.**
+
+1. Forcing: a reading of `x` at least as `s` at every cell of a graded index of the grade of `s`
+   forces `p s ≤ p x` in every lawful section (`CellScheme.Rows.IsLawful.le_of_forall_row_le`);
+   every lawful labelling of a face of a legal stage type extends to it
+   (`StageType.exists_isLawful_extend_of_restrictFace`).
+2. Necessity of both compatibility conditions for a prescribed extension
+   (`StageType.IsPrescribedExtension.isFaceCompatible`,
+   `StageType.IsPrescribedExtension.isFaceCompatibleAtLabels`), through
+   `StageType.ExtendsWithPrescribedRows.isAdmissibleAt`.
+3. The labels form is **false at every stage**
+   (`PrescribedFullRowsCounterexample.not_hasPrescribedFullRowsAtLabels`): over
+   `GatedExtensionCounterexample.P α` with the empty root and the one-point donor, the prescription
+   that every cell of graded index `(univ, 2)` reads `C₂` at least as `C₁` is compatible at the
+   labels of the context (`⊤, ⊤`; `PrescribedFullRowsCounterexample.isFaceCompatibleAtLabels`) and
+   has no prescribed extension, since the lawful labelling `3, 2` extends to every legal one-point
+   extension of `GatedExtensionCounterexample.P α`
+   (`PrescribedFullRowsCounterexample.not_isPrescribedExtension`).  It is not
+   compatible uniformly (`PrescribedFullRowsCounterexample.not_isFaceCompatible`), so the uniform
+   form is not tested by this input (its compatibility premise fails there).  The labels form
+   implies the uniform form (`StageType.HasPrescribedFullRowsAtLabels.hasPrescribedFullRows`); that
+   implication is vacuous, its hypothesis being refuted, and is kept only as the comparison of the
+   two forms.
+4. The empty prescription (`StageType.emptyPrescription`): the coatom extension property makes it
+   compatible (`StageType.HasCoatomExtensions.hasCompatibleEmptyPrescription`) and gives a
+   prescribed extension for it (`StageType.HasCoatomExtensions.isPrescribedExtension_empty`); the
+   core with its compatibility gives the coatom extension property
+   (`StageType.HasPrescribedFullRows.hasCoatomExtensions`); so under the core the coatom extension
+   property is equivalent to `StageType.HasCompatibleEmptyPrescription α`
+   (`StageType.HasPrescribedFullRows.hasCoatomExtensions_iff`).  The core alone does not give the
+   coatom extension property.
+5. The routes (`Extension/PrescribedFullRowsRoutes`, with the routes' conditions stated in full):
+   - (R2)/(R3): a prescribed extension for the reading prescription of a choice of private tops is
+     a reading coface (`PrescribedFullRows.IsPrescribedExtension.isReadingContext`); the core with
+     the compatibility of that prescription gives a reading context
+     (`StageType.HasPrescribedFullRows.isReadingContext`); a reading context determines a choice
+     whose reading prescription is compatible
+     (`PrescribedFullRows.IsReadingContext.exists_isFaceCompatible`), so under the core, at a legal
+     input `(t', d)`, `IsReadingContext t' h d` is equivalent to the existence of a choice `σ` with
+     `IsTopChoice t' d σ` whose reading prescription is compatible; and a reading context forces,
+     at every lawful labelling `a` of the context, a lawful labelling of the donor agreeing on the
+     common face under which every new top is at least `a` at some private top of at least its
+     grade
+     (`PrescribedFullRows.IsReadingContext.forall_exists_le`).  The route's open passage from a
+     graded context with a top to a reading context is not derived from the core.
+   - (R1): a prescribed extension for the block prescription (old cells read in the own block) is
+     block-tight (`PrescribedFullRows.IsPrescribedExtension.isBlockTight`); the core with the
+     compatibility of every block prescription over the empty face gives block-tight saturations
+     (`StageType.HasPrescribedFullRows.hasBlockTightSaturations`).  The block prescription is **not
+     compatible** wherever the context has a lawful labelling that is `⊥` at a cell of the block,
+     not self-visible at the top grade `N`, and not `⊥` at a cell of grade `N`
+     (`PrescribedFullRows.not_isFaceCompatible_block`, with
+     `PrescribedFullRows.not_isAdmissibleRow_block`).  At the refuting context of the per-block
+     route, `CoupledGatedExtensionCounterexample.P α` (not on `main`), these hypotheses hold at
+     every stage `α > 1`: that module proves the context legal (`isLegal_P`), its cell `z₁` is
+     labelled `1` and not self-visible at the grade `2`, and it has the lawful labelling
+     `⊥, ⊥, ⊥, ω + 1, ω + 2` (`isLawful_lab_bot_omegaAdd`).  So the hypothesis of
+     `hasBlockTightSaturations` fails at every `α > 1` (argued from those compiled pieces; the
+     joining lemma is to be compiled once that module lands), and the (R1) arrow is **not a
+     reduction**.  The cause is the domain of `Φ`: it names only known cells, while block-tightness
+     accepts any cell with the label, new cells included.  Redesigning the prescription to read
+     cells of the donor would have to be re-tested at this input.
+   - (R4): a prescribed extension for the cap prescription is a cap-reading scheme when the cap's
+     grade exceeds the number of points of the donor's root
+     (`PrescribedFullRows.IsPrescribedExtension.isCapReadingScheme`,
+     `StageType.HasPrescribedFullRows.exists_isCapReadingScheme`).  This is only the part of the
+     sufficient condition for a stable recovery scheme concerning the scheme
+     (`StageType.IsStableRecoveryScheme.of_readsThroughCap`, on `main`); the composition with the
+     cap's label and the calibration is not compiled here.
+   - The completion: a step of the canonical multi-layer scheme of a seed
+     (the multi-layer step `Seed.MultiLayerStep` on `OrderedLayer.canonicalMultiScheme`) is **not
+     an instance** (argued, not compiled):
+     it asks for a completion of one shape (two copies at each graded index of full scope, reading
+     through their originals), while a prescribed extension for the empty prescription is a coatom
+     extension of any shape.
+
+**Status of each named hypothesis, separately.**
+
+- `StageType.HasPrescribedFullRowsAtLabels α`: refuted at every stage.
+- `StageType.HasPrescribedFullRows α`: open, a hypothesis introduced here.  Not refuted at the
+  inputs tested: at `GatedExtensionCounterexample.P α` the refuting prescription is not uniformly
+  compatible, so the input does not test it; at the six compiled seeds and the amalgam of `seedHG`
+  the completion's coatom extensions are prescribed extensions for the empty prescription, so that
+  prescription is compatible there by necessity (argued from the routes' own analyses of those
+  inputs).  At the twin input of (R4) the route's analysis gives a stable recovery scheme,
+  not a prescribed extension for the cap prescription, so the input does not test the core.
+  Sufficiency of compatibility is unproved (it is the hypothesis itself): compatibility is asked
+  per lawful labelling and per served cell, and a construction of a prescribed extension would
+  still need finitely many fixed rows serving every lawful labelling, rows lawful on all of the
+  extension (including the cells that are neither known cells nor the cell itself), and legality
+  of the extension at every graded face.
+- `StageType.HasCompatibleEmptyPrescription α`: open; implied by the coatom extension property.
+- The coatom extension property (`StageType.HasCoatomExtensions α`): still to be proved, unchanged.
+- Block-tight saturations ((R1), per block): undecided, unchanged.  The arrow from the core is
+  vacuous at `CoupledGatedExtensionCounterexample.P α` for every `α > 1` (argued; item 5), so the
+  core gives nothing here.
+- The reading-context property at a legal input ((R2)/(R3)): under the core it is equivalent to a
+  choice of private tops with a compatible reading prescription (item 5), and the forcing condition
+  above is necessary.  Obtaining a reading context from a graded context with a top is open,
+  unchanged, and not derived from the core.
+- Cap-reading schemes at the calibrated inputs ((R4)): open, unchanged; conditional on the core and
+  the compatibility of the cap prescription; the composition to a stable recovery scheme is not
+  compiled here.
+- The canonical multi-layer step (completion): open as a statement about every seed, unchanged,
+  not an instance (argued).
+- (R1)–(R4): neither proved nor refuted.
+
+**What the routes have in common that fails.**  Compatibility at the labels of the context does not
+make a prescription have a prescribed extension: bountifulness of the one-point extension at the cap
+`⊥` makes every lawful labelling of the context count, and a reading prescribed at every cell of a
+graded index forces an order on each of them.  The refuting prescription has the shape of
+`ReadsAtLeast`, but between two cells `C₁`, `C₂` of the context of the same grade that the rows
+order both ways; it is not the reading prescription of (R2)/(R3) for any choice (the donor has no
+new top, so every reading prescription holds trivially there), and the refutation says nothing
+about (R2) or (R3).  The uniform form is not tested by the refuting input.  For (R1) the uniform
+form gives nothing at the per-block route's refuting context (item 5).
+
+**The first clause that does not close.**  A general proof of `StageType.HasPrescribedFullRows`
+constructs, at the empty prescription, coatom extensions at every input where the empty
+prescription is compatible.  The completion results of checkpoints 2.1–2.7 give coatom extensions
+only from completions below the full grade
+(`StageType.HasCoatomExtensions.of_completionBelowFullGrade`), open as a statement about every
+seed at `m ≥ 3`;
+that is the first clause of a general proof that does not close.
+
+**No clause of a model prescribes full rows** (argued, not compiled): no clause of
+`Realization.IsModel` prescribes the row of a cell of full scope; generalized saturation only
+reaches a coface on a prescribed scheme, which is why the core is stated on stage types.
+
+**Restatements.**  The (R4) condition is `main`'s own `StageType.ReadsThroughCap`
+(`Continuation/StableRecovery`), used directly.  `Extension/PrescribedFullRowsRoutes` states
+`ReadsAtLeast`, `IsReadingContext`, `ReadsInOwnBlock` and `HasBlockTightSaturations` in full,
+because the modules of the (R2)/(R3) route and of the per-block route are not on `main`;
+`IsBlockTight` is new (the per-input body of `HasBlockTightSaturations`).  The four restatements
+were checked `rfl`-equal to the routes' own declarations at the heads of the routes' branches; that
+check is outside the repository.  When those modules land, the restatements are replaced by their
+declarations: `ReadsAtLeast` and `IsReadingContext` by the (R2)/(R3) module's (moving
+`exists_isFaceCompatible` and `forall_exists_le` beside them); `ReadsInOwnBlock` and
+`HasBlockTightSaturations` by the per-block module's (keeping `IsBlockTight` beside them, and
+compiling the joining lemma of item 5).  The composition of `IsCapReadingScheme` with the cap's
+label and the calibration to a stable recovery scheme
+(`StageType.IsStableRecoveryScheme.of_readsThroughCap`) is not compiled here.
+
 ## Companion boundaries
 
 Companion topics: definable domain/logical cuts with strict loss-rank lower bounds; canonical
@@ -3544,6 +3728,22 @@ module yet, are grouped last ("Statements not yet in any module").  The declarat
 modules under `Language/` and `Realization/` whose own notes name earlier files move to those files
 directly, in the Layer 2 consolidation (pull request #34), and are not recorded here; until it
 lands, their notes stay in those modules.
+
+**Prescribed rows (Layer 3, 3.4).**
+
+- Done: `CellScheme.Rows.IsLawful.le_of_forall_row_le` is in `Scheme/Row`; `Scheme.rowAt`,
+  `Scheme.faceCell`, `Scheme.cellMap_cellMap`, `Scheme.cellMap_congr` and the lemmas of `rowAt`
+  and `faceCell` are in `Stage/Scheme`; `StageType.faceCell`,
+  `StageType.comap_toScheme_of_restrictFace`, `StageType.label_faceCell`,
+  `StageType.grade_faceCell`, `StageType.scope_faceCell`, `StageType.isLawful_comp_faceCell`,
+  `StageType.last_notMem_scope_faceCell` and `StageType.exists_faceCell_eq_of_last_notMem` are in
+  `Stage/Basic`; `StageType.exists_isLawful_extend_of_restrictFace` is in `Stage/Legal`;
+  `StageType.faceCell_faceCell` and `StageType.last_mem_scope_faceCell_iff` are in
+  `Extension/PinnedExtension`, beside `extendByLast` (which `Stage/Basic` does not import).  The
+  (R4) condition is `main`'s `StageType.ReadsThroughCap` (`Continuation/StableRecovery`).
+- `Extension/PrescribedFullRowsRoutes`: the remaining restatements of the routes' conditions are
+  replaced by the routes' declarations (`Continuation/AvailableTopDetermination`,
+  `Realization/TightCap`, `Realization/PerBlockCarrying`) when those modules land.
 
 **Finite geometry and the coatom amalgam (Layer 3, (R6)).**
 
