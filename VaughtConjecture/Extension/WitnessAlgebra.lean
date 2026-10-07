@@ -97,12 +97,6 @@ section Blocks
 
 variable {a b x y : Ordinal.{u}}
 
-/-- Every ordinal is `ω * b + n` for an ordinal `b` and a natural number `n`. -/
-theorem exists_eq_omega0_mul_add_natCast (o : Ordinal.{u}) :
-    ∃ (b : Ordinal.{u}) (n : ℕ), o = ω * b + n := by
-  obtain ⟨n, hn⟩ := lt_omega0.mp (mod_lt o omega0_ne_zero)
-  exact ⟨o / ω, n, by rw [← hn, div_add_mod]⟩
-
 /-- The block of `ω * a + x`, for `x < ω`. -/
 theorem omega0_mul_add_div (hx : x < ω) : (ω * a + x) / ω = a := by
   rw [mul_add_div _ omega0_ne_zero, div_eq_zero_of_lt hx, add_zero]
