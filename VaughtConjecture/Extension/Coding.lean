@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Extension.CoatomScheme
+import Mathlib.Order.Filter.AtTopBot.Basic
 
 /-!
 # Coding of rows, and its preservation by appended cells
@@ -144,6 +145,52 @@ theorem lt_omega0_sq_iff :
   | top =>
     simp only [not_top_lt, false_iff, not_or]
     exact ⟨WithBot.coe_ne_bot, fun ⟨_, _, h⟩ ↦ WithTop.top_ne_coe (WithBot.coe_injective h)⟩
+
+/-- **Left addition by `ω · N`**: `⊥` and `⊤` are fixed, and an ordinal `x` goes to
+`ω · N + x`. For a coded ordinal `x = ω · i + j` with `i, j : ℕ`, this is `ω · (N + i) + j`,
+the same finite part in the block `N` places higher; no such description is asserted for an
+arbitrary ordinal. -/
+noncomputable def blockShift (N : ℕ) : Label.{u} → Label.{u} :=
+  WithBot.map (WithTop.map fun o ↦ ω * (N : Ordinal.{u}) + o)
+
+/-- The block shift fixes `⊥`. -/
+@[simp] theorem blockShift_bot (N : ℕ) : blockShift N (⊥ : Label.{u}) = ⊥ := rfl
+
+/-- The block shift of an ordinal. -/
+theorem blockShift_coe (N : ℕ) (o : Ordinal.{u}) :
+    blockShift N (o : Label.{u}) = ((ω * (N : Ordinal.{u}) + o : Ordinal.{u}) : Label.{u}) := rfl
+
+/-- **A shifted label other than `⊥` is at least `ω · N`.** -/
+theorem le_blockShift {N : ℕ} {x : Label.{u}} (hx : x ≠ ⊥) :
+    ((ω * (N : Ordinal.{u}) : Ordinal.{u}) : Label.{u}) ≤ blockShift N x := by
+  induction x using recBotCoeTop with
+  | bot => exact absurd rfl hx
+  | coe o =>
+    rw [blockShift_coe]
+    exact WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr le_self_add)
+  | top => exact le_top
+
+/-- **The block shift keeps coded labels coded**: below `ω ^ 2`. -/
+theorem blockShift_lt_omega0_sq {N : ℕ} {x : Label.{u}}
+    (hx : x < ((ω ^ 2 : Ordinal.{u}) : Label.{u})) :
+    blockShift N x < ((ω ^ 2 : Ordinal.{u}) : Label.{u}) := by
+  rcases lt_omega0_sq_iff.mp hx with rfl | ⟨i, j, rfl⟩
+  · exact hx
+  · rw [blockShift_coe]
+    refine lt_omega0_sq_iff.mpr (.inr ⟨N + i, j, ?_⟩)
+    rw [← add_assoc, ← mul_add, Nat.cast_add]
+
+/-- A coded label lies below `ω · N` for every large `N`. -/
+theorem eventually_lt_omega0_mul {x : Label.{u}} (hx : x < ((ω ^ 2 : Ordinal.{u}) : Label.{u})) :
+    ∀ᶠ N : ℕ in Filter.atTop, x < ((ω * (N : Ordinal.{u}) : Ordinal.{u}) : Label.{u}) := by
+  rcases lt_omega0_sq_iff.mp hx with rfl | ⟨i, j, rfl⟩
+  · exact Filter.Eventually.of_forall fun _ ↦ WithBot.bot_lt_coe _
+  · refine Filter.eventually_atTop.mpr ⟨i + 1, fun N hN ↦ ?_⟩
+    refine WithBot.coe_lt_coe.mpr (WithTop.coe_lt_coe.mpr ?_)
+    calc ω * (i : Ordinal.{u}) + j < ω * i + ω :=
+        (add_lt_add_iff_left _).mpr (natCast_lt_omega0 j)
+      _ = ω * ((i + 1 : ℕ) : Ordinal.{u}) := by rw [Nat.cast_succ, mul_add_one]
+      _ ≤ ω * N := by gcongr
 
 /-- The labels below `ω ^ 2` form an infinite set: they contain all natural numbers.  A finite
 catalogue therefore needs a finite alphabet, not merely the range normalization. -/
