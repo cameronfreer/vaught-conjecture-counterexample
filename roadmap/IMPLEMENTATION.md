@@ -752,7 +752,12 @@ any construction is adapted to it:
    `bfEquiv_of_gradedMatching` gives `BFEquiv`; on abstract hypotheses this is
    `FullPresentation.bfEquiv_comp_of_obs_eq`, compiled in this repository (theorem named)), and
    approximate comparison gives the sentence form of bounded comparison through
-   `BFEquiv_implies_agreeQR`;
+   `BFEquiv_implies_agreeQR`; for model expansions to `λ_η` from an arbitrary common chart with a
+   selector, the comparison is `ModelExpansion.bfEquiv_comp_of_covers`, with formula form
+   `ModelExpansion.realize_comp_iff_of_covers` (`Expansion/Agreement`), compiled conditional on
+   `Expansion.FiniteExtensionReceiving` ((R1), still to be proved); it goes through
+   `ExpansionMatchData.bfEquiv_of_match`, a parallel result, not an instance of
+   `FullPresentation.bfEquiv_comp_of_obs_eq`;
 3. **a concrete full-presentation construction from the terminal classification:** the full
    presentations of the terminal models (pointed at the named core, residual, hollow) and of the
    top-free age, to see whether the new organization shortens the argument that faces the
@@ -1504,9 +1509,10 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     used here, and the conclusion of Theorem 2.17 is read for these systems.  Both corrections are
     recorded in `LITERATURE.md`, §9.
 25. Prospective; ingredient `StageType.reduce_eq_of_mem_receivingFamily` (`Realization/Expansion`).
-26. `ExpansionMatchData.bfEquiv_of_expansionMatch`; `Expansion.bfEquiv_of_modelExpansions`,
-    conditional on `Expansion.FiniteExtensionReceiving`, still to be proved; the structural form:
-    prospective.
+26. `ExpansionMatchData.bfEquiv_of_expansionMatch`; `Expansion.bfEquiv_of_modelExpansions` and,
+    from an arbitrary common chart, `ModelExpansion.bfEquiv_comp_of_covers` and its formula form
+    `ModelExpansion.realize_comp_iff_of_covers`, conditional on
+    `Expansion.FiniteExtensionReceiving`, still to be proved; the structural form: prospective.
 27. `FullPresentations` (`MainTheorem/Assembly`), a structure of hypotheses storing sets of classes
     at levels with countability and coverage, not presentations or maximality; and
     `vaughtCounterexample_of_presentations` (`MainTheorem/Assembly`), whose hypotheses include it.
@@ -2886,6 +2892,17 @@ Each checkpoint needs both its abstract API and a concrete application:
      (Layer 0); the main theorem with no hypothesis of countable losses,
      `densitySentence_hasThinAlephOneSpectrum_of_terminalClassification`
      (`MainTheorem/ModelExpansionDomains`).
+   - C and E, with the hollow property restricted to models without a globally rigid core
+     (`Continuation/RestrictedHollow`): the cover `Realization.exists_hasRestrictedTerminalProperty`
+     from `Realization.exists_hasTerminalProperty` (the step itself,
+     `Realization.exists_hasRestrictedTerminalProperty_of_hasTerminalProperty`, has no
+     hypothesis); `Expansion.subsingleton_classes_of_restrictedProperty` and
+     `Expansion.expansionDomain_loss_countable_of_restrictedTerminalClassification`, with (R3) for
+     `Realization.IsCoverHollowWithoutRigidCoreAtBlock`, implied by (R3) for
+     `Realization.IsCoverHollowAtBlock` (`Realization.HollowReceiving.withoutRigidCore`; strictly
+     weaker not shown); the main theorem
+     `densitySentence_hasThinAlephOneSpectrum_of_restrictedTerminalClassification`; and, for F,
+     `MainTheorem.countable_isoClasses_terminalAt_of_restrictedTerminalClassification`.
    - F: `MainTheorem.loss_subset_terminalClasses`, unconditional;
      `MainTheorem.terminalClasses_subset_iUnion`, conditional on `ContinuationCriterion`;
      `MainTheorem.countable_isoClasses_terminalAt` (countably many classes terminal at each
@@ -3241,7 +3258,66 @@ ones split):
   of full scope and full grade carrying the largest label
   (`ThinCompletionExamples.exists_coatomExtension_seedL`, `Extension/ThinCompletionExamples`); so
   `seedL` is not a counterexample to `StageType.HasApexCoatomExtensions` at `m = 3`.
-  Open: the completion below the full grade at `m ≥ 3` for every seed.
+  The ordered-layer step at `m = 3` (`Extension/OrderedLayerStep`, `Extension/OrderedLayerTop`,
+  `Extension/OrderedLayerExamples`, `Extension/OrderedLayerObstruction`; compiled in this repository
+  (theorem named) unless marked otherwise). The layer scheme `OrderedLayer.layerScheme I ρ` is the
+  amalgam followed by one new cell at each `(univ, k)`, `k = 1, …, 4`, whose row reads the graded
+  indices by `ρ k`. Named hypothesis `Seed.OrderedLayerStep I ρ`: coded rows; each new row lawful
+  below `(univ, k)`; the capped lifts from `(C, k)` and `(D, k)` into `(univ, k)` (the only lifts
+  needing capping, `OrderedLayer.isBountiful_layerScheme`); a lawful extension of the glued
+  labelling. It gives a completion (`Seed.OrderedLayerStep.completion`) and is exactly legality of
+  the layer scheme with a lawful extension (`Seed.orderedLayerStep_iff`), a restriction of the
+  completion and strictly stronger than it (`seedHG` has a completion and no ordered-layer step,
+  `CrossedCouplingCounterexample.not_forall_hasOrderedLayerStep_of_nonempty`). For seeds with
+  bottom apexes (`Seed.HasBottomApexes`,
+  `Seed.hasBottomApexes_of_addApex`) and the top row at `(univ, 4)`, the step follows from its
+  fields at `k ≤ 3` (`Seed.OrderedLayerStepBelowTop.orderedLayerStep`,
+  `OrderedLayer.cappedLift_four`), and those lifts reduce to the grade `3`
+  (`OrderedLayer.cappedLift_of_lift_three`). Instances:
+  `seed4`, `seed5`, `seedL` (`Seed.orderedLayerStep_seed4`, `Seed.orderedLayerStep_seed5`,
+  `Seed.orderedLayerStep_seedL`), the mirror `seedLM` of `seedL` with rows oriented `D` before `C`
+  (`Seed.orderedLayerStep_seedLM`, `Extension/ThinCompletionMirrorExamples`), and `seedLL` of `TL`
+  with itself, with rows reading both coatoms at one value (`Seed.orderedLayerStep_seedLL`,
+  `Extension/ThinCompletionTLTL`). The orientation is forced and depends on the seed
+  (`Seed.OrderedLayerStep.thinRow_lt_of_TL_T5`, `Seed.OrderedLayerStep.rowsLM_lt_of_T5_TL`,
+  `not_exists_orderedLayerStep_seedL_seedLM`). Forced separations in every completion of every seed
+  (`CompletionBelowFullGrade.exists_separating_of_forcesTop`, from `Seed.ForcesTop`); two opposite
+  forcings at one grade give two cells at one graded face of full scope
+  (`CompletionBelowFullGrade.exists_ne_of_forcesTop`) and exclude the ordered-layer step
+  (`Seed.not_hasOrderedLayerStep_of_forcesTop`). Refuted (negative special case named): the
+  ordered-layer step for every seed on five points
+  (`CrossedCouplingCounterexample.not_forall_hasOrderedLayerStep`), at the legal seed
+  `CrossedCouplingCounterexample.seedHG` of the types `TH`, `TG` coupled crosswise to two parameters
+  of the common face (`Extension/CrossedCouplingTypes`, `Extension/CrossedCouplingCounterexample`;
+  `CrossedCouplingCounterexample.exists_ne_seedHG`: every completion has two cells at `(univ, 1)`).
+  No theorem is stated under the refuted universal form. This refutes the step, not the completion.
+  The multi-layer step at `m = 3` (`Extension/MultiLayerStep`, `Extension/CrossedCouplingScheme`,
+  `Extension/CrossedCouplingCompletion`; compiled in this repository (theorem named) unless marked
+  otherwise). The multi-layer scheme `OrderedLayer.multiLayerScheme I M r` is the amalgam followed
+  by `M k` new cells at each `(univ, k + 1)`, the `i`-th with row `r k i`, read off cells. Named
+  hypothesis `Seed.MultiLayerStep I M r`: positive multiplicities; coded rows; each new row lawful
+  below its graded index; the capped lifts from `(C, k)` and `(D, k)` into `(univ, k)`
+  (`OrderedLayer.isBountiful_multiLayerScheme`); a lawful extension of the glued labelling. It
+  gives a completion (`Seed.MultiLayerStep.completion`) and is exactly legality of the
+  multi-layer scheme with a lawful extension (`Seed.multiLayerStep_iff`); with arbitrary rows it
+  reformulates the completion at `m = 3` (argued, not formalized). `seedHG` has a completion below
+  the full grade (`CrossedCouplingCounterexample.nonempty_completionBelowFullGrade_seedHG`,
+  `CrossedCouplingCounterexample.completionHG`), every field proved: the multi-layer step of
+  every seed of the types `TH` and `TG` with two new cells at `(univ, 1)`, one per forced
+  separation, and one at each `(univ, k)`, `k = 2, 3, 4`
+  (`CrossedCouplingCounterexample.multiLayerStep_HG`); its lawful labellings are labellings by
+  kinds of `A_C`, `A_D`, `H`, `G` with the couplings of both types
+  (`CrossedCouplingCounterexample.isLawful_kindLabel`,
+  `CrossedCouplingCounterexample.exists_of_isLawfulBelow_univ`); the lifts
+  `CrossedCouplingCounterexample.cappedLift_C_of_le_three`,
+  `CrossedCouplingCounterexample.cappedLift_D_of_le_three`,
+  `CrossedCouplingCounterexample.cappedLift_four_HG`, which, like `OrderedLayer.cappedLift_four`,
+  quotes the lift at the grade `4` from the grade `3` in a scheme over the amalgam of a seed with
+  bottom apexes (`OrderedLayer.cappedLift_four_of_oldCells`); the coatom extension of `TH` and `TG`
+  with apex at every stage (`CrossedCouplingCounterexample.exists_coatomExtension_seedHG`). Open: a
+  systematic choice of the new cells for every seed on five points (prospective: one new cell per
+  forced separation at each graded face of full scope), and the completion at `m ≥ 3` for every
+  seed.
 
 The completion constructs lawful finite extensions and nothing more.  It imports only Layers
 0–1, the stage types, the amalgam, and the section theorem of `README.md`, Layer 3, 3.1 (with
@@ -3510,6 +3586,18 @@ lands, their notes stay in those modules.
   `Scheme.appendFullCells` and its laws to `Stage.Scheme`, beside `Scheme.appendFullCell`; the
   canonical catalogue, the field rows, and `Scheme.fieldLayer` in place.
 - `Extension/SmallArities` and `Extension/SmallArityExamples`: checkpoint 2.5, in place.
+- `Extension/OrderedLayerStep`, `Extension/OrderedLayerTop`, `Extension/MultiLayerStep`,
+  `Extension/CrossedCouplingScheme`, and `Extension/CrossedCouplingCompletion`: checkpoint 2.7, in
+  place.  Their statements about appended cells and suppressors are beside the definitions
+  they concern: `Scheme.appendFullCells_row_castAdd` in `Extension/FieldLayer`, beside
+  `Scheme.appendFullCells_row_natAdd` (it moves with the laws of `Scheme.appendFullCells`);
+  `Label.constStepSuppressor_of_le` in `Label/StepWitness`, beside `Label.constStepSuppressor`;
+  `OrderedLayer.noneAbove_appendFullCells` in `Extension/OrderedLayerStep`, beside
+  `OrderedLayer.NoneAbove` and `OrderedLayer.noneAbove_addLayerCell`.  The capped lift at the
+  grade `4` from the grade `3` in a scheme over the amalgam of a seed with bottom apexes
+  (`OrderedLayer.cappedLift_four_of_oldCells`) is stated once, in `Extension/OrderedLayerTop`, and
+  quoted for the layer scheme (`OrderedLayer.cappedLift_four`) and for the multi-layer scheme of
+  `seedHG` (`CrossedCouplingCounterexample.cappedLift_four_HG`).
 
 **Hull operations, the top-free age, and graded matching (Layers 0 and 2; the top-free
 witnesses).**
@@ -3674,6 +3762,15 @@ witnesses).**
   so that the import closure of the main theorem contains no `Definability/` module.
   `Expansion/Losses`: Layer 5, in place. `Counting/Domains`:
   `Counting.countable_of_subsingleton_cover`, a general result of Layer 0, in place.
+- `Continuation/RestrictedHollow` and its examples module: Layer 4, in place; it holds
+  `Realization.IsCoverHollowWithoutRigidCore` and its form at a block stage, the restricted
+  terminal properties with their cover, and `Realization.HollowReceiving.withoutRigidCore`.  It
+  imports `Continuation/Classification` and `Continuation/Comparison`, grouping the restricted
+  predicate with its classification and comparison interfaces. The restricted forms of
+  the comparison of model expansions, of the subsingleton step, and of the countable losses are in
+  `Expansion/Losses`, that of the count of the terminal classes in `MainTheorem/TerminalClasses`,
+  and those of the main theorem in `MainTheorem/ModelExpansionDomains`, beside the unrestricted
+  ones.
 - `Continuation/Hollow` (importing `Continuation/Terminal` and `Continuation/ExactAge`):
   `Realization.isCoverHollow_of_exactReceivingWithin`, `Realization.IsCoverHollow.isTerminalAt`,
   and `StageType.exists_forcesThreshold_of_label_eq_top` (the form of `ForcingDonors` used for
