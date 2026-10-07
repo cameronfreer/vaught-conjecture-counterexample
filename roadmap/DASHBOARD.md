@@ -61,7 +61,12 @@ Notes on the rows, each with its marker:
   (`CompletionBelowFullGrade.exists_separating_of_forcesTop`).  Refuted: the ordered-layer step for
   every seed on five points (`CrossedCouplingCounterexample.not_forall_hasOrderedLayerStep`, at the
   legal seed `CrossedCouplingCounterexample.seedHG`, every completion of which has two cells at
-  `(univ, 1)`; whether one exists is open).  Still to be proved, not refuted: `StageType.HasCoatomExtensions`,
+  `(univ, 1)`).  Compiled: `seedHG` has a completion below the full grade, the multi-layer scheme
+  with two new cells at `(univ, 1)`, one per forced separation
+  (`CrossedCouplingCounterexample.nonempty_completionBelowFullGrade_seedHG`, from
+  `Seed.MultiLayerStep`), so the ordered-layer step is strictly stronger than the completion
+  (`CrossedCouplingCounterexample.not_forall_hasOrderedLayerStep_of_nonempty`).  Still to be
+  proved, not refuted: `StageType.HasCoatomExtensions`,
   `StageType.HasApexCoatomExtensions`.
 - *Layer 3, receiving.*  Compiled: finite-extension receiving from finite-cut receiving, for an
   exactly consistent realization at a stage that is zero or a limit
@@ -282,10 +287,16 @@ named hypothesis.
    repository (theorem named)); for every seed it is refuted
    (`CrossedCouplingCounterexample.not_forall_hasOrderedLayerStep`, negative special case named):
    the legal seed `CrossedCouplingCounterexample.seedHG` has two opposite forced separations at the
-   grade `1`, so every completion of it has two new cells at `(univ, 1)` (whether one exists is
-   open).  The form of the step with several new cells per graded face of full scope is
-   prospective.  Open: whether `seedHG` has a completion below the full grade, and the completion
-   at `m ≥ 3` for every seed.
+   grade `1`, so every completion of it has two new cells at `(univ, 1)`.  It has one: the
+   multi-layer step `Seed.MultiLayerStep` (several new cells per graded face of full scope, rows
+   read off cells; `Seed.MultiLayerStep.completion`) holds for it with two new cells at
+   `(univ, 1)`, one per forced separation, every field of the completion proved
+   (`CrossedCouplingCounterexample.multiLayerStep_HG`,
+   `CrossedCouplingCounterexample.nonempty_completionBelowFullGrade_seedHG`, compiled in this
+   repository (theorem named)), so the ordered-layer step is strictly stronger than the completion
+   (`CrossedCouplingCounterexample.not_forall_hasOrderedLayerStep_of_nonempty`).  A systematic
+   choice of the new cells for every seed on five points (one per forced separation at each graded
+   face of full scope) is prospective.  Open: the completion at `m ≥ 3` for every seed.
 2. **Stable availability at twins** (compiled): from legal types
    (`Realization.availability_stableSection_of_hasLegalTypes`), so every model at a block stage is
    stably lawful (`Realization.IsModel.isStablyLawful`), and so is every exactly consistent
