@@ -96,11 +96,14 @@ The input is degenerate, so it shows that reading through the cap is feasible, w
 * the root is one cell, labelled `⊥`, so recovery at the old cells is immediate;
 * `N = k + 1`.
 
-The next test is the twin donor of `Continuation.StableRecoveryCounterexample` (finite parts `1`
-and `2`, so `N ≥ 3`; `E` on at least four points), testing distinct offsets.  At the minimal
-`m = N = 3` the cap has full old scope, so only `(univ, 3)` contains both the cap and the new
-cells.  Compatibility across several graded faces requires a separately chosen larger-context
-test (informal; not compiled).
+The next test, the twin donors of `Continuation.StableRecoveryCounterexample` (finite parts `1`
+and `2`, so `N ≥ 3`; `E` on four points), is compiled in
+`VaughtConjecture.Continuation.StableRecoveryTwin`
+(`Continuation.StableRecoveryTwin.exists_isStableRecoveryScheme_twinDonors`).
+At the minimal `m = N = 3` the cap has full old scope, so only `(univ, 3)` contains both the
+cap and the new cells. The larger-context test in
+`VaughtConjecture.Continuation.StableRecoveryInterior` checks compatibility across several graded
+faces.
 
 ## Placement
 
@@ -169,34 +172,6 @@ structure IsReadingTriple (A E B : Label.{u}) : Prop where
   ref_le_new : A ≤ E
   /-- The reference and new parameters agree below the cap (the reading cell). -/
   min_cap_eq : min A B = min E B
-
-section Witness
-
-variable {a b : Label.{u}}
-
-private theorem blockConst_gridPoint_zero (k : ℕ) : blockConst a b (gridPoint.{u} k 0) = a := by
-  rw [gridPoint, blockConst_block]
-  simp
-
-private theorem blockConst_gridPoint_one (k : ℕ) : blockConst a b (gridPoint.{u} k 1) = b := by
-  rw [gridPoint, blockConst_block]
-  simp
-
-private theorem blockConst_bot : blockConst a b ⊥ = ⊥ := by
-  unfold blockConst
-  simp
-
-private theorem twoStrip_gridPoint_one_zero {f : Label.{u}} :
-    twoStrip a b f (gridPoint.{u} 1 0) = visibilityReplace 2 1 a := by
-  rw [gridPoint, twoStrip_block]
-  simp
-
-private theorem twoStrip_gridPoint_two_one {f : Label.{u}} :
-    twoStrip a b f (gridPoint.{u} 2 1) = visibilityReplace 2 2 b := by
-  rw [gridPoint, twoStrip_block]
-  simp
-
-end Witness
 
 /-! ### Lawful labellings -/
 
@@ -452,12 +427,13 @@ section Below
 
 variable {X : Finset (Fin 3) × ℕ}
 
-private theorem mem_below_of_le {d e : Fin 10} (hd : d ∈ readingCells.below X)
+/-- A cell whose graded index is below that of a cell below `X` is below `X`. -/
+theorem mem_below_of_le {d e : Fin 10} (hd : d ∈ readingCells.below X)
     (h : readingCells.gradedIndex e ≤ readingCells.gradedIndex d) : e ∈ readingCells.below X :=
   le_trans h hd
 
 /-- A pair above the reference cell and the new cell is above the cell `(univ, 1)`. -/
-private theorem mem_seven (h3 : (3 : Fin 10) ∈ readingCells.below X)
+theorem mem_seven (h3 : (3 : Fin 10) ∈ readingCells.below X)
     (h4 : (4 : Fin 10) ∈ readingCells.below X) : (7 : Fin 10) ∈ readingCells.below X := by
   obtain ⟨C, j⟩ := X
   have key : ∀ C : Finset (Fin 3), ({0, 1} : Finset (Fin 3)) ⊆ C →
@@ -465,7 +441,7 @@ private theorem mem_seven (h3 : (3 : Fin 10) ∈ readingCells.below X)
   exact ⟨key C h3.1 h4.1, h3.2⟩
 
 /-- A pair above the new cell and the cap is above the reading cell. -/
-private theorem mem_eight (h4 : (4 : Fin 10) ∈ readingCells.below X)
+theorem mem_eight (h4 : (4 : Fin 10) ∈ readingCells.below X)
     (h5 : (5 : Fin 10) ∈ readingCells.below X) : (8 : Fin 10) ∈ readingCells.below X := by
   obtain ⟨C, j⟩ := X
   have key : ∀ C : Finset (Fin 3), ({0, 1} : Finset (Fin 3)) ⊆ C →

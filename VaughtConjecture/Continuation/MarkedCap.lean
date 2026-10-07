@@ -3,6 +3,7 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
+import VaughtConjecture.Continuation.AnchoredDeterminationCounterexample
 import VaughtConjecture.Continuation.ExactReceivingExamples
 import VaughtConjecture.Continuation.Hollow
 import VaughtConjecture.Extension.GatedExtensionCounterexample
@@ -46,11 +47,14 @@ of `VaughtConjecture.Stage.MarkedCap` or of this file.
   point, along the identity.  It is top-free, so it is not a marked-cap context
   (`MarkedCapExclusions.not_isMarkedCapContext_root_apexPoint`, compiled in this repository
   (theorem named)).
-* The anchored predicate (the refuting instance is not in this library): its context is the legal
-  two-point type `GatedExtensionCounterexample.P α` capped at an ordinal `c < α` self-visible at
-  `2`.  The data are in this library; the capped type is top-free, so it is a marked-cap context
-  along no embedding (`MarkedCapExclusions.not_isMarkedCapContext_cap_P`, compiled in this
-  repository (theorem named)).
+* The anchored context (`StageType.IsAnchoredContext`), refuted by
+  `AnchoredDeterminationCounterexample.not_cutoffDonorDetermination`: its context
+  `AnchoredDeterminationCounterexample.context α hc hcα` is the legal two-point type
+  `GatedExtensionCounterexample.P α` capped at an ordinal `c < α` self-visible at `2`.  The capped
+  type is top-free, so it is a marked-cap context along no embedding
+  (`MarkedCapExclusions.not_isMarkedCapContext_cap_P`,
+  `MarkedCapExclusions.not_isMarkedCapContext_anchoredContext`, compiled in this repository
+  (theorem named)).
 * The anchored predicate with a top (the refuting instance is not in this library): its context,
   on three points over a root on one point, has its cells of grade at least `2` capped at an
   ordinal, so its top grade is at most `1` (argued here); a context of top grade at most `1` is
@@ -219,7 +223,7 @@ theorem not_isMarkedCapContext_root_apexPoint (t : StageType.{0} ω 0) :
     ¬ t.IsMarkedCapContext (Function.Embedding.refl _) :=
   not_isMarkedCapContext_of_zero t _
 
-/-- **The capped context of the anchored predicate is not a marked-cap context**: the legal
+/-- **The capped context of the anchored context is not a marked-cap context**: the legal
 two-point type `GatedExtensionCounterexample.P α` capped at an ordinal `c < α` self-visible at `2`
 is top-free (`StageType.isTopFree_cap`), so it is a marked-cap context along no embedding; an
 instance of `StageType.not_isMarkedCapContext_of_isTopFree`. -/
@@ -227,6 +231,14 @@ theorem not_isMarkedCapContext_cap_P {α c : Ordinal.{u}} (hc : IsSelfVisible 2 
     (hcα : c < α) (h : Fin n ↪ Fin 2) :
     ¬ ((GatedExtensionCounterexample.P α).cap c hc hcα).IsMarkedCapContext h :=
   not_isMarkedCapContext_of_isTopFree isTopFree_cap h
+
+/-- **The context refuting the anchored context is not a marked-cap context**:
+`AnchoredDeterminationCounterexample.context α hc hcα` is the capped two-point type of
+`MarkedCapExclusions.not_isMarkedCapContext_cap_P`. -/
+theorem not_isMarkedCapContext_anchoredContext {α c : Ordinal.{u}}
+    (hc : IsSelfVisible 2 (c : Label.{u})) (hcα : c < α) (h : Fin n ↪ Fin 2) :
+    ¬ (AnchoredDeterminationCounterexample.context α hc hcα).IsMarkedCapContext h :=
+  not_isMarkedCapContext_cap_P hc hcα h
 
 /-- **A context of top grade at most `1` is not a marked-cap context over a one-point root**: the
 clause `n + 1 < N` fails for `n = 1`; an instance of

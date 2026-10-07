@@ -255,59 +255,59 @@ private theorem le_apply_pt_zero (hβ : IsWitness (stepSuppressor m) β) (hi : i
 open Classical in
 /-- The block shift from the strip of `b` to the strip of `b'` at `m`: bottom below the block `b`;
 `ω * b + n ↦ ω * b' + min n m` on the block `b`; and `ω * b' + m` above it. -/
-private noncomputable def blockShift (b b' : Ordinal.{u}) (m : ℕ) (x : Label.{u}) : Label.{u} :=
+private noncomputable def ownerShift (b b' : Ordinal.{u}) (m : ℕ) (x : Label.{u}) : Label.{u} :=
   if x < ((ω * b : Ordinal.{u}) : Label.{u}) then ⊥ else bandMap (ω * b') (ω * b) m x
 
 /-- Below the block `b` the block shift is bottom. -/
-private theorem blockShift_of_lt (h : x < ((ω * b : Ordinal.{u}) : Label.{u})) :
-    blockShift b b' m x = ⊥ := ite_eq_left h
+private theorem ownerShift_of_lt (h : x < ((ω * b : Ordinal.{u}) : Label.{u})) :
+    ownerShift b b' m x = ⊥ := ite_eq_left h
 
 /-- From the block `b` on, the block shift is the band map. -/
-private theorem blockShift_of_le (h : ((ω * b : Ordinal.{u}) : Label.{u}) ≤ x) :
-    blockShift b b' m x = bandMap (ω * b') (ω * b) m x := ite_eq_right (not_lt.mpr h)
+private theorem ownerShift_of_le (h : ((ω * b : Ordinal.{u}) : Label.{u}) ≤ x) :
+    ownerShift b b' m x = bandMap (ω * b') (ω * b) m x := ite_eq_right (not_lt.mpr h)
 
 /-- The block shift carries the strip of `b` onto the strip of `b'` point by point. -/
-private theorem blockShift_pt (hn : n ≤ m) : blockShift b b' m (pt b n) = pt b' n := by
-  rw [blockShift_of_le (by rw [← pt_zero]; exact pt_le_pt_iff.mpr (.inr ⟨rfl, Nat.zero_le n⟩)),
+private theorem ownerShift_pt (hn : n ≤ m) : ownerShift b b' m (pt b n) = pt b' n := by
+  rw [ownerShift_of_le (by rw [← pt_zero]; exact pt_le_pt_iff.mpr (.inr ⟨rfl, Nat.zero_le n⟩)),
     bandMap_coe_add_natCast, min_eq_left hn]
 
 /-- The block shift is bottom, or its argument lies at or above the block `b` and its value at or
 above the block `b'`. -/
-private theorem blockShift_eq_bot_or (x : Label.{u}) :
-    blockShift b b' m x = ⊥ ∨ ((ω * b : Ordinal.{u}) : Label.{u}) ≤ x ∧
-      ((ω * b' : Ordinal.{u}) : Label.{u}) ≤ blockShift b b' m x := by
+private theorem ownerShift_eq_bot_or (x : Label.{u}) :
+    ownerShift b b' m x = ⊥ ∨ ((ω * b : Ordinal.{u}) : Label.{u}) ≤ x ∧
+      ((ω * b' : Ordinal.{u}) : Label.{u}) ≤ ownerShift b b' m x := by
   by_cases h : x < ((ω * b : Ordinal.{u}) : Label.{u})
-  · exact .inl (blockShift_of_lt h)
+  · exact .inl (ownerShift_of_lt h)
   · have hx : x ≠ ⊥ := fun hx ↦ h (hx ▸ WithBot.bot_lt_coe _)
-    exact .inr ⟨not_lt.mp h, (blockShift_of_le (not_lt.mp h)).symm ▸ coe_le_bandMap hx⟩
+    exact .inr ⟨not_lt.mp h, (ownerShift_of_le (not_lt.mp h)).symm ▸ coe_le_bandMap hx⟩
 
 /-- **The block shift is a witness bounded by grade `m`.** -/
-private theorem isWitness_blockShift (b b' : Ordinal.{u}) (m : ℕ) :
-    IsWitness (stepSuppressor.{u} m) (blockShift b b' m) where
+private theorem isWitness_ownerShift (b b' : Ordinal.{u}) (m : ℕ) :
+    IsWitness (stepSuppressor.{u} m) (ownerShift b b' m) where
   antitone := (IsWitness.id_step m).antitone
   isSelfVisible := (IsWitness.id_step m).isSelfVisible
-  map_bot := blockShift_of_lt (WithBot.bot_lt_coe _)
+  map_bot := ownerShift_of_lt (WithBot.bot_lt_coe _)
   monotone x y hxy := by
     by_cases hy : y < ((ω * b : Ordinal.{u}) : Label.{u})
-    · rw [blockShift_of_lt (hxy.trans_lt hy)]; exact bot_le
+    · rw [ownerShift_of_lt (hxy.trans_lt hy)]; exact bot_le
     by_cases hx : x < ((ω * b : Ordinal.{u}) : Label.{u})
-    · rw [blockShift_of_lt hx]; exact bot_le
-    rw [blockShift_of_le (not_lt.mp hx), blockShift_of_le (not_lt.mp hy)]
+    · rw [ownerShift_of_lt hx]; exact bot_le
+    rw [ownerShift_of_le (not_lt.mp hx), ownerShift_of_le (not_lt.mp hy)]
     exact monotone_bandMap _ _ _ hxy
   visibilityReplace_comm x k hx i hi := by
     have hlt : visibilityReplace k i x < ((ω * b : Ordinal.{u}) : Label.{u}) ↔
         x < ((ω * b : Ordinal.{u}) : Label.{u}) :=
       visibilityReplace_lt_iff (isSuccPrelimit_omega0_mul b)
     by_cases hxb : x < ((ω * b : Ordinal.{u}) : Label.{u})
-    · rw [blockShift_of_lt hxb, blockShift_of_lt (hlt.mpr hxb), visibilityReplace_bot]
+    · rw [ownerShift_of_lt hxb, ownerShift_of_lt (hlt.mpr hxb), visibilityReplace_bot]
     by_cases hk : k ≤ m
-    · rw [blockShift_of_le (not_lt.mp hxb), blockShift_of_le (not_lt.mp (mt hlt.mp hxb)),
+    · rw [ownerShift_of_le (not_lt.mp hxb), ownerShift_of_le (not_lt.mp (mt hlt.mp hxb)),
         bandMap_visibilityReplace (isSuccPrelimit_omega0_mul b') (isSuccPrelimit_omega0_mul b) hk
           hi (not_lt.mp hxb)]
     · -- Above `m` the guard forces the value bottom, which happens only below the block.
       rw [stepSuppressor_of_lt (not_le.mp hk), le_bot_iff] at hx
       have hne : x ≠ ⊥ := fun h ↦ hxb (h ▸ WithBot.bot_lt_coe _)
-      have h := (blockShift_of_le (b' := b') (m := m) (not_lt.mp hxb)).symm ▸ coe_le_bandMap hne
+      have h := (ownerShift_of_le (b' := b') (m := m) (not_lt.mp hxb)).symm ▸ coe_le_bandMap hne
       exact absurd (hx ▸ h) (not_le.mpr (WithBot.bot_lt_coe _))
 
 /-! ### Retuning a saturated strip -/
@@ -332,21 +332,21 @@ private theorem exists_retuning {M : Label.{u}} (hα : IsWitness (stepSuppressor
   have hβmono (n : ℕ) : β (pt b' 0) ≤ β (pt b' n) :=
     hβ.monotone (pt_le_pt_iff.mpr (.inr ⟨rfl, Nat.zero_le n⟩))
   -- The composite of the block shift and `β`, repaired above `m` by flattening.
-  have hη := isWitness_blockShift b b' m
-  have hκ : IsWitness (stepSuppressor m) ((β ∘ blockShift b b' m) ∘ flatten m) :=
+  have hη := isWitness_ownerShift b b' m
+  have hκ : IsWitness (stepSuppressor m) ((β ∘ ownerShift b b' m) ∘ flatten m) :=
     isWitness_comp_flatten (by simp [hη.map_bot, hβ.map_bot]) (hβ.monotone.comp hη.monotone)
       fun z k hk i hi ↦ by
         simp only [Function.comp_apply]
         rw [hη.comm_of_le z hk hi, hβ.comm_of_le _ hk hi]
   have hκshort (z : Label.{u}) (hz : IsShort m z) :
-      ((β ∘ blockShift b b' m) ∘ flatten m) z = β (blockShift b b' m z) := by
+      ((β ∘ ownerShift b b' m) ∘ flatten m) z = β (ownerShift b b' m z) := by
     simp only [Function.comp_apply, hz.flatten_eq]
   set ρ : Label.{u} → Label.{u} :=
-    fun z ↦ max (τ z) (((β ∘ blockShift b b' m) ∘ flatten m) z) with hρ_def
+    fun z ↦ max (τ z) (((β ∘ ownerShift b b' m) ∘ flatten m) z) with hρ_def
   have hρ : IsWitness (stepSuppressor m) ρ := hτ.max hκ
   have hρstrip (n : ℕ) (hn : n ≤ m) : ρ (pt b n) = β (pt b' n) := by
     simp only [hρ_def]
-    rw [hκshort _ (isShort_pt.mpr hn), blockShift_pt hn]
+    rw [hκshort _ (isShort_pt.mpr hn), ownerShift_pt hn]
     exact max_eq_right ((hτγ _).trans (hbf.trans (hβmono n)))
   have hδvis : IsSelfVisible m (β (pt b' m)) := by
     have h := hβ.comm_of_le (pt b' m) le_rfl le_rfl
@@ -358,10 +358,10 @@ private theorem exists_retuning {M : Label.{u}} (hα : IsWitness (stepSuppressor
   · exact hβ.monotone (pt_le_of_le_apply hα.map_bot hα.monotone (by omega) hstrip hz)
   · simp only [hρ_def]
     rw [hκshort z hz]
-    rcases blockShift_eq_bot_or (b := b) (b' := b') (m := m) z with h | ⟨hzb, hηz⟩
+    rcases ownerShift_eq_bot_or (b := b) (b' := b') (m := m) z with h | ⟨hzb, hηz⟩
     · rw [h, hβ.map_bot, max_bot_right]
     · have hτz : τ z = γ := le_antisymm (hτγ z) (htf ▸ hτ.monotone (pt_zero b ▸ hzb))
-      have hβz : γ ≤ β (blockShift b b' m z) := hbf.trans (hβ.monotone (pt_zero b' ▸ hηz))
+      have hβz : γ ≤ β (ownerShift b b' m z) := hbf.trans (hβ.monotone (pt_zero b' ▸ hηz))
       rw [hτz, max_eq_right hβz, min_eq_right hβz, min_self]
 
 /-! ### The owner-local alignment -/
