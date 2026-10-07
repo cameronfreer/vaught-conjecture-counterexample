@@ -496,24 +496,76 @@ named hypothesis.
    existence, Scott isolation with countable-limit existence, terminal presentations, and global
    termination (`README.md`, the section on the top-free witnesses, "Complementary global
    routes"; `IMPLEMENTATION.md`, §4, statements 1–10 with their completion criteria).
+7. **The common core of the receiving routes** (open; the labels form refuted).  One hypothesis on
+   stage types, prescribed rows at the cells of full scope (`StageType.HasPrescribedFullRows`: over
+   legal stage types, every prescription on the rows of the cells of full scope that is
+   *compatible with the faces*, i.e. admits, at every lawful labelling of the context, rows that
+   are coded, lawful in both faces and transform to that labelling, is met by a legal one-point
+   extension), implies parts of the routes' finite hypotheses at inputs where the route's
+   prescription is compatible with the faces (`Extension/PrescribedFullRowsRoutes`, compiled in
+   this repository (theorems named)); route by route:
+   - (R2)/(R3), the reading context of the route to determination with a private top (that route
+     is not on `main`): the core with a compatible reading prescription gives a reading context
+     (`StageType.HasPrescribedFullRows.isReadingContext`); conversely a reading context makes some
+     reading prescription compatible
+     (`PrescribedFullRows.IsReadingContext.exists_isFaceCompatible`).
+     So, under the core and at a legal input, the reading-context property is equivalent to a
+     choice of private tops with a compatible reading prescription.  Obtaining a reading context
+     from a graded context with a top, the route's open step, is not derived from the core.
+   - (R1): *block-tight saturations* (per block, some scheme on which every coface of the context
+     has its cells of full scope of the top grade read the labels of the block in their own block)
+     follow from the core only under the compatibility of every block prescription
+     (`StageType.HasPrescribedFullRows.hasBlockTightSaturations`), and that hypothesis fails at the
+     known refuting context: the block prescription is not compatible wherever the context has a
+     lawful labelling `⊥` at a block cell and not `⊥` at a cell of the top grade
+     (`PrescribedFullRows.not_isFaceCompatible_block`, compiled), which holds at the per-block
+     route's refuting context `CoupledGatedExtensionCounterexample.P α` for every `α > 1` (argued
+     from compiled pieces of that route, not on `main`; the joining lemma is to be compiled once
+     it lands).  It is not a reduction.
+   - (R4): the core with a compatible cap prescription gives a cap-reading scheme
+     (`StageType.HasPrescribedFullRows.exists_isCapReadingScheme`), only the part concerning the
+     scheme of the sufficient condition for a stable recovery scheme
+     (`StageType.IsStableRecoveryScheme.of_readsThroughCap`); the composition with the cap's label
+     and the calibration is not compiled here.
+   - The completion is not an instance (argued): under the core the coatom extension property is
+     equivalent to the compatibility of the empty prescription
+     (`StageType.HasPrescribedFullRows.hasCoatomExtensions_iff`), an additional open hypothesis
+     (`StageType.HasCompatibleEmptyPrescription`), and the canonical multi-layer step fixes the
+     shape of the completion.
 
-## Composition targets (prospective)
+   Compatibility is necessary (`StageType.IsPrescribedExtension.isFaceCompatible`, compiled).  The
+   form compatible only at the labels of the context is refuted at every stage at
+   `GatedExtensionCounterexample.P α`
+   (`PrescribedFullRowsCounterexample.not_hasPrescribedFullRowsAtLabels`, refuted); the uniform
+   form is not tested by that input, whose compatibility premise fails
+   (`PrescribedFullRowsCounterexample.not_isFaceCompatible`), and is open.  A general proof of the
+   core first meets the open completion of item 1.  The routes' gaps are unchanged and kept
+   separate.
+
+## Composition targets and compiled ingredients
 
 Recorded in `IMPLEMENTATION.md`, "The full-presentation route", "Composition targets of the
 tower", and in `README.md`, item 5 of "Manuscript correspondence (required)"; no hypothesis,
-status, or percentage changes.  Each composes statements compiled on `main` with statements that
-are prospective here:
+status, or percentage changes.  The unimplemented assemblies remain prospective and use the
+named conditionally compiled ingredients; the niceness consequence in item 3 is already
+conditionally compiled:
 
 1. the terminal-presentation instance of the second endpoint, with the main theorem by that route
-   on the hypotheses of its current composed form (six at present: (R1), forcing donors, the
-   continuation criterion, (R2), (R3), and the coatom extension property with apex at every
-   countable block stage; fewer only by a compiled derivation), with no termination statement;
-2. the four conditions of the system of [AFK26] as one structure of statements, and the main
-   theorem from its conditions (a), (b), and (d) (condition (c), niceness, is not used);
-3. niceness of base reducts from maximal refinement, for carriers in `Type`;
+   on the hypotheses of its current composed form (five: (R1), the continuation criterion, (R2), block
+   cover-hollow (R3), and the coatom extension property with apex at every countable block stage;
+   the seven/six forms and separate restricted-R3 form are retained), with no termination statement;
+2. the four conditions of the system of [AFK26] as one structure of statements, and an abstract
+   assembly that may assume
+   its conditions (a), (b), and (d) (condition (c), niceness, is not used), distinct from the
+   concrete composition that must derive those conditions from the five hypotheses;
+3. niceness of base reducts from maximal refinement, conditionally compiled for carriers in
+   `Type` under (R1), next-block uniqueness, and apex at every countable block stage; in universe
+   `w`, the compiled niceness theorem retains `HasTerminalRefinement.{w}` plus next-block uniqueness;
 4. the last admitted stage: the stage of a terminal expansion of a base is the last stage of its
    class, the terminal classes at a block are the loss there, and the tails of the instance of 1
-   are the expansion domains;
+   are the expansion domains (these identifications remain prospective; last-stage attainment
+   and its loss fibres are already compiled under `CapToModel`, next-block uniqueness, (R1),
+   and apex at every countable block stage);
 5. fixing bounds from the Scott bound, and the lower bound along fixing ranks through strictness.
 
 `IMPLEMENTATION.md`, "Manuscript concordance", records separately the retargeting of the
