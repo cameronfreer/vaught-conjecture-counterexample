@@ -65,7 +65,24 @@ Notes on the rows, each with its marker:
   with two new cells at `(univ, 1)`, one per forced separation
   (`CrossedCouplingCounterexample.nonempty_completionBelowFullGrade_seedHG`, from
   `Seed.MultiLayerStep`), so the ordered-layer step is strictly stronger than the completion
-  (`CrossedCouplingCounterexample.not_forall_hasOrderedLayerStep_of_nonempty`).  Still to be
+  (`CrossedCouplingCounterexample.not_forall_hasOrderedLayerStep_of_nonempty`).  Compiled for
+  every seed on five points: the canonical multi-layer scheme (two copies of `(C, k)` and `(D, k)`
+  at each `(univ, k)`), with forcedness and the lifts from the common face.  Compiled,
+  conditionally on named hypotheses: its multi-layer step, hence a completion.
+  `Seed.canonicalMultiStep_of_product` assumes (i) the product clause `Seed.CanonicalProduct` at
+  the grades 1–4, a sufficient hypothesis, not a field of the step: refuted at the grade 4 at all
+  six compiled seeds, so this form applies at none of them; (ii) `hcode`, copy rows coded; (iii)
+  `hpair`, copy rows lawful below both coatoms; (ii) and (iii) are conditions on the choice of copy
+  rows.  `Seed.canonicalMultiStep_of_productBelowTop` assumes (i) at the grades 1–3 only (holds for
+  `seedHG`; refuted at the grades 2, 3 for the other five seeds), (ii) and (iii) at those grades,
+  (iv) `Seed.HasBottomApexes` (compiled for all six seeds), and (v) `hR3`, the top row at the
+  grade 4 (a choice of the copy rows); it takes the grade 4 from the grade 3, not from the product
+  clause, and completes `seedHG` with every hypothesis compiled
+  (`Seed.nonempty_completionBelowFullGrade_canonical_seedHG`).  Refuted, for every copy rows: the
+  product clause at the grades 2–4 for `seed4`, `seed5`, `seedL`, `seedLM`, `seedLL` and at the
+  grade 4 for `seedHG` (`Seed.not_canonicalProduct_seed4`, `Seed.not_canonicalProduct_seedHG`), a
+  refutation of the family as a fibre product, not of the family's step (which holds for `seedHG`
+  at the grade 4) nor of the completion.  Still to be
   proved, not refuted: `StageType.HasCoatomExtensions`,
   `StageType.HasApexCoatomExtensions`.
 - *Layer 3, receiving.*  Compiled: finite-extension receiving from finite-cut receiving, for an
@@ -325,9 +342,25 @@ named hypothesis.
    (`CrossedCouplingCounterexample.multiLayerStep_HG`,
    `CrossedCouplingCounterexample.nonempty_completionBelowFullGrade_seedHG`, compiled in this
    repository (theorem named)), so the ordered-layer step is strictly stronger than the completion
-   (`CrossedCouplingCounterexample.not_forall_hasOrderedLayerStep_of_nonempty`).  A systematic
-   choice of the new cells for every seed on five points (one per forced separation at each graded
-   face of full scope) is prospective.  Open: the completion at `m ≥ 3` for every seed.
+   (`CrossedCouplingCounterexample.not_forall_hasOrderedLayerStep_of_nonempty`).  The systematic
+   family, two copies of the cells at `(C, k)` and `(D, k)` at each `(univ, k)` (the canonical
+   multi-layer scheme), is compiled for every seed on five points with forcedness and the lifts
+   from the common face.  It completes a seed under named hypotheses, each with its status:
+   `Seed.canonicalMultiStep_of_product` assumes the product clause `Seed.CanonicalProduct` at the
+   grades 1–4 (a sufficient hypothesis, not a field of the step; refuted at the grade 4 at all six
+   compiled seeds, so this form applies at none of them), `hcode` (copy rows coded) and `hpair`
+   (copy rows lawful below both coatoms), the last two conditions on the choice of copy rows;
+   `Seed.canonicalMultiStep_of_productBelowTop` assumes the product clause at the grades 1–3 only,
+   `hcode` and `hpair` at those grades, `Seed.HasBottomApexes` (compiled for all six seeds) and
+   `hR3` (the top row at the grade 4, a choice of the copy rows), and takes the grade 4 from the
+   grade 3, not from the product clause.  With every hypothesis compiled it completes `seedHG`
+   (`Seed.nonempty_completionBelowFullGrade_canonical_seedHG`); all compiled in this repository
+   (theorem named).  The product clause is refuted (negative special cases named, for every copy
+   rows) at the grades 2–4 for `seed4`, `seed5`, `seedL`, `seedLM`, `seedLL` and at the grade 4 for
+   all six seeds: this refutes the family as a fibre product at those seeds, not the family's step
+   (which holds for `seedHG` at the grade 4) and not the completion.
+   Open: a canonical multi-layer scheme with rows restricting the pairs for every seed, and the
+   completion at `m ≥ 3` for every seed.
 2. **Stable availability at twins** (compiled): from legal types
    (`Realization.availability_stableSection_of_hasLegalTypes`), so every model at a block stage is
    stably lawful (`Realization.IsModel.isStablyLawful`), and so is every exactly consistent
