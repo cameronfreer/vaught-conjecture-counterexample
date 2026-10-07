@@ -36,7 +36,8 @@ grade `2` carrying `F`, those of grade `3` carrying `G`, and the cells of grade 
 top shifter: every live cell below it carries a label at least `G`.
 
 **The lifts** (`exists_thin5Lift`): the parameter-level lift of `ThinCompletion.exists_thinLift`,
-which also keeps `G ≤ A_C` (an unprescribed `A_C` at or above the cap is set to `max c G`).  The
+which also keeps `G ≤ A_C` (an unprescribed `A_C` at or above the cap is set to `max c G`), with
+the same choice of each parameter (`ThinCompletion.liftedParam`).  The
 lifts from `(C, 3)` and `(D, 3)` to `(univ, 3)` (`exists_lift_left`, `exists_lift_right`) are its
 instances; the capped lifts at the grades `k ≤ 3` follow by `OrderedLayer.cappedLift_of_lift_three`.
 
@@ -59,7 +60,8 @@ open Ordinal hiding univ
 open ThinCompletion (thinKind thinLabel kindLabel thinRow IsThinLawfulBelow thinKind_le
   snd_eq_kindGrade thinLabel_le thinLabel_eq_tripleLabelling thinKind_ne_one thinKind_ne_two
   thinLabel_congr_one thinLabel_congr_two min_thinLabel_eq transformsTo_rowOne transformsTo_rowTwo
-  transformsTo_topShifter thinRow_lt)
+  transformsTo_topShifter thinRow_lt liftedParam min_liftedParam liftedParam_eq_of_lt
+  liftedParam_eq_of_q_lt le_of_le_liftedParam liftedParam_none_of_le liftedParam_some le_of_approx)
 open TwoFaceLiftExistsCounterexample (VisibilityReplaceFixedOfLT)
 open CaseSplitCounterexample (T5 tripleLabelling)
 
@@ -140,47 +142,12 @@ theorem row_newCell_eq_thinLabel {k : ℕ} (hk1 : 1 ≤ k) (hk3 : k ≤ 3) :
 
 /-! ### Kinds and grades -/
 
-/-- A cell below the new cell at `(univ, k)` has grade at most `k`. -/
-theorem grade_le_of_mem_below_newCell {k : ℕ} (hk1 : 1 ≤ k) (hk4 : k ≤ 4)
-    (t : (layerScheme I rows5).toCellScheme.below
-      ((layerScheme I rows5).toCellScheme.gradedIndex (newCell I rows5 k))) :
-    (layerScheme I rows5).toCellScheme.grade t.1 ≤ k := by
-  have h : (layerScheme I rows5).toCellScheme.gradedIndex t.1 ≤ ((univ : Finset (Fin 5)), k) :=
-    gradedIndex_newCell hk1 hk4 ▸ t.2
-  exact h.2
-
 /-- The kind of a cell below the new cell at `(univ, k)` is at most `k + 1`. -/
 theorem thinKind_le_of_mem_below_newCell {k : ℕ} (hk1 : 1 ≤ k) (hk4 : k ≤ 4)
     (t : (layerScheme I rows5).toCellScheme.below
       ((layerScheme I rows5).toCellScheme.gradedIndex (newCell I rows5 k))) :
     (thinKind ((layerScheme I rows5).toCellScheme.gradedIndex t.1) : ℕ) ≤ k + 1 :=
   (thinKind_le _).trans (Nat.succ_le_succ (grade_le_of_mem_below_newCell hk1 hk4 t))
-
-/-- The new cell at `(univ, k)` is below itself. -/
-theorem newCell_mem_below_self {k : ℕ} :
-    newCell I rows5 k ∈ (layerScheme I rows5).toCellScheme.below
-      ((layerScheme I rows5).toCellScheme.gradedIndex (newCell I rows5 k)) :=
-  (layerScheme I rows5).toCellScheme.mem_below_gradedIndex _
-
-/-- An old cell below the new cell at `(univ, k)`, of grade at most `k`. -/
-theorem oldCell_mem_below_newCell {d : Fin I.amalgam.card} {k : ℕ} (hk1 : 1 ≤ k)
-    (hk4 : k ≤ 4) (hd : I.amalgam.toCellScheme.grade d ≤ k) :
-    oldCell I rows5 d ∈ (layerScheme I rows5).toCellScheme.below
-      ((layerScheme I rows5).toCellScheme.gradedIndex (newCell I rows5 k)) := by
-  rw [gradedIndex_newCell hk1 hk4]
-  exact oldCell_mem_below ⟨subset_univ _, hd⟩
-
-/-- A cell below `(C, k)` misses the point `4`. -/
-theorem four_notMem_of_mem_below {z : Fin (layerScheme I rows5).card} {k : ℕ}
-    (hz : z ∈ (layerScheme I rows5).toCellScheme.below (coatomC, k)) :
-    (4 : Fin 5) ∉ ((layerScheme I rows5).toCellScheme.gradedIndex z).1 := fun h ↦
-  (notMem_erase (Fin.last 4) univ) (hz.1 h)
-
-/-- A cell below `(D, k)` misses the point `3`. -/
-theorem three_notMem_of_mem_below {z : Fin (layerScheme I rows5).card} {k : ℕ}
-    (hz : z ∈ (layerScheme I rows5).toCellScheme.below (coatomD, k)) :
-    (3 : Fin 5) ∉ ((layerScheme I rows5).toCellScheme.gradedIndex z).1 := fun h ↦
-  (notMem_erase (Fin.castSucc (Fin.last 3)) univ) (hz.1 h)
 
 /-! ### Lawful labellings below the two coatoms -/
 
@@ -482,74 +449,6 @@ theorem exists_of_isLawfulBelow_three {w : Fin (layerScheme I rows5).card → La
       exact thinLabel_congr_one (thinKind_ne_one (three_notMem_of_mem_below h)) _ _ _ _ _ _
 
 /-! ### The parameter-level capped lift -/
-
-/-- The lifted value of a parameter: the prescription if there is one; otherwise the ambient
-value if it lies below the cap, and the value `hi ≥ c` otherwise. -/
-private noncomputable def liftedParam (P : Option Label.{u}) (qz c hi : Label.{u}) : Label.{u} :=
-  open Classical in P.getD (if qz < c then qz else hi)
-
-section Choose
-
-variable {P : Option Label.{u}} {qz c hi : Label.{u}}
-
-/-- The chosen value agrees with the ambient value capped at `c`. -/
-private theorem min_liftedParam (hP : ∀ a ∈ P, min a c = min qz c) (hhi : c ≤ hi) :
-    min (liftedParam P qz c hi) c = min qz c := by
-  unfold liftedParam
-  cases P with
-  | some a => exact hP a rfl
-  | none =>
-    simp only [Option.getD_none]
-    split_ifs with h
-    · rfl
-    · rw [min_eq_right hhi, min_eq_right (not_lt.mp h)]
-
-/-- A chosen value below the cap is the ambient value. -/
-private theorem liftedParam_eq_of_lt (hP : ∀ a ∈ P, min a c = min qz c) (hhi : c ≤ hi)
-    (h : liftedParam P qz c hi < c) : liftedParam P qz c hi = qz := by
-  have hm := min_liftedParam hP hhi
-  rw [min_eq_left h.le] at hm
-  rcases lt_or_ge qz c with hq | hq
-  · rw [min_eq_left hq.le] at hm; exact hm
-  · rw [min_eq_right hq] at hm; exact absurd hm h.ne
-
-/-- At an ambient value below the cap, the chosen value is the ambient value. -/
-private theorem liftedParam_eq_of_q_lt (hP : ∀ a ∈ P, min a c = min qz c) (hhi : c ≤ hi)
-    (h : qz < c) : liftedParam P qz c hi = qz := by
-  have hm := min_liftedParam hP hhi
-  rw [min_eq_left h.le] at hm
-  rcases lt_or_ge (liftedParam P qz c hi) c with hx | hx
-  · rw [min_eq_left hx.le] at hm; exact hm
-  · rw [min_eq_right hx] at hm; exact absurd hm h.ne'
-
-/-- A chosen value at least the cap comes from an ambient value at least the cap. -/
-private theorem le_of_le_liftedParam (hP : ∀ a ∈ P, min a c = min qz c) (hhi : c ≤ hi)
-    (h : c ≤ liftedParam P qz c hi) : c ≤ qz := by
-  have hm := min_liftedParam hP hhi
-  rw [min_eq_right h] at hm
-  exact min_eq_right_iff.mp hm.symm
-
-/-- Unprescribed, at an ambient value at least the cap, the chosen value is `hi`. -/
-private theorem liftedParam_none_of_le (h : c ≤ qz) : liftedParam none qz c hi = hi := by
-  unfold liftedParam; simp [not_lt.mpr h]
-
-/-- A prescribed value is chosen. -/
-private theorem liftedParam_some (a : Label.{u}) : liftedParam (some a) qz c hi = a := rfl
-
-end Choose
-
-/-- A monotone constraint survives the choice if it holds for the ambient and for the values at
-or above the cap. -/
-private theorem le_of_approx {c xz xw qz qw : Label.{u}} (hq : qz ≤ qw)
-    (hz' : qz < c → xz = qz) (hw : xw < c → xw = qw)
-    (hhigh : c ≤ xz → c ≤ xw → xz ≤ xw) : xz ≤ xw := by
-  by_cases hwc : xw < c
-  · rw [hw hwc]
-    have : qz < c := hq.trans_lt ((hw hwc) ▸ hwc)
-    rw [hz' this]; exact hq
-  · by_cases hzc : xz < c
-    · exact hzc.le.trans (not_lt.mp hwc)
-    · exact hhigh (not_lt.mp hzc) (not_lt.mp hwc)
 
 /-- **The parameter-level capped lift for `IsThin5`.**  As `ThinCompletion.exists_thinLift`, with
 the coupling `G ≤ A_C` in place of `VisibilityReplaceFixedOfLT A_C G` (which it implies): let the

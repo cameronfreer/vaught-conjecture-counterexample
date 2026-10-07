@@ -54,53 +54,6 @@ namespace VaughtConjecture
 
 open Finset Label CellScheme
 
-/-! ### Cells of one grade visible through a face -/
-
-namespace StageType
-
-variable {α : Ordinal.{u}}
-
-/-- **Cells of grade `k` visible through a face whose type has one cell at each graded index of
-grade `k` are determined by their graded indices.** -/
-theorem eq_of_gradedIndex_eq_of_restrictFace_of_grade {n m k : ℕ} {Am : StageType.{u} α n}
-    {f : Fin m ↪ Fin n} {t : StageType.{u} α m} (hf : StageType.restrictFace f Am = some t)
-    (ht : ∀ i i', t.toCellScheme.gradedIndex i = t.toCellScheme.gradedIndex i' →
-      t.toCellScheme.grade i = k → i = i')
-    {z z' : Fin Am.card}
-    (hz : (Am.toCellScheme.scope z : Set (Fin n)) ⊆ Set.range f)
-    (hz' : (Am.toCellScheme.scope z' : Set (Fin n)) ⊆ Set.range f)
-    (hzk : Am.toCellScheme.grade z = k)
-    (h : Am.toCellScheme.gradedIndex z = Am.toCellScheme.gradedIndex z') : z = z' := by
-  obtain ⟨hf', rfl⟩ := (StageType.restrictFace_eq_some_iff _ _).mp hf
-  obtain ⟨i, rfl⟩ : z ∈ Set.range (Am.cellMap f) := by
-    rw [Scheme.range_cellMap]; exact Scheme.mem_visibleCells.mpr hz
-  obtain ⟨i', rfl⟩ : z' ∈ Set.range (Am.cellMap f) := by
-    rw [Scheme.range_cellMap]; exact Scheme.mem_visibleCells.mpr hz'
-  have hk : (Am.comap f hf').toCellScheme.grade i = k :=
-    (congrArg Prod.snd (Am.toScheme.map_comap_gradedIndex f i)).trans hzk
-  rw [← Am.toScheme.map_comap_gradedIndex f i, ← Am.toScheme.map_comap_gradedIndex f i'] at h
-  have hinj : Function.Injective (Prod.map (Finset.map f) (id : ℕ → ℕ)) :=
-    (Finset.map_injective f).prodMap Function.injective_id
-  exact congrArg _ (ht i i' (hinj h) hk)
-
-/-- **After adding the apex, the apex is the only cell of full grade.** -/
-theorem eq_of_grade_addApex {n : ℕ} {t : StageType.{u} α n} (ht : t.IsLegalBelowFullGrade)
-    (hn : 0 < n) {i : Fin (t.addApex ht hn).card}
-    (hi : (t.addApex ht hn).toCellScheme.grade i = n) :
-    i = Fin.last _ := by
-  -- `t.addApex` has the cells of `t` and the apex, so `Fin.lastCases` applies.
-  change Fin (t.card + 1) at i
-  induction i using Fin.lastCases with
-  | last => rfl
-  | cast d =>
-    exfalso
-    -- The cell scheme of `t.addApex` is `appendFullCellScheme`.
-    change (Scheme.appendFullCellScheme t.toScheme n).grade d.castSucc = n at hi
-    rw [Scheme.appendFullCellScheme_grade_castSucc] at hi
-    exact (ht.grade_lt d).ne hi
-
-end StageType
-
 /-! ### Seeds with bottom apexes -/
 
 namespace Seed
@@ -174,20 +127,6 @@ end Seed
 namespace OrderedLayer
 
 variable {α : Ordinal.{u}} {I : Seed.{u} α 3} {ρ : LayerRows.{u}}
-
-/-- **The top shifter on a row with one nonzero kind.**  If the suppressor `Ω` is self-visible at
-`K` and every grade is at most `K`, a row transforms to the labelling that is `Ω` where the row is
-not `⊥` and `⊥` where it is. -/
-theorem transformsTo_of_eq_bot_iff {D : Type*} (grade : D → ℕ) {K : ℕ} (hgr : ∀ d, grade d ≤ K)
-    {Ω : Label.{u}} (hΩ : IsSelfVisible K Ω) (r q : D → Label.{u})
-    (hq : ∀ d, q d = if r d = ⊥ then ⊥ else Ω) : TransformsTo grade r q := by
-  refine ⟨constStepSuppressor K Ω, topShifter,
-    isWitness_topShifter (antitone_constStepSuppressor _ _)
-      (isSelfVisible_constStepSuppressor hΩ), fun d ↦ ?_⟩
-  have hg : constStepSuppressor K Ω (grade d) = Ω := by
-    unfold constStepSuppressor; rw [ite_eq_left (hgr d)]
-  rw [hg, hq, topShifter]
-  split_ifs <;> simp
 
 variable (I ρ) in
 /-- The **labelling of `Ω` alone**: `Ω` at the cells of grade `4`, `⊥` elsewhere. -/

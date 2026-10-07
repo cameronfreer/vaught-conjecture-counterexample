@@ -193,47 +193,12 @@ variable {α : Ordinal.{u}} {I : Seed.{u} α 3}
 
 /-! ### Cells of the layer scheme -/
 
-/-- A cell below the new cell at `(univ, k)` has grade at most `k`. -/
-theorem grade_le_of_mem_below_newCell {k : ℕ} (hk1 : 1 ≤ k) (hk4 : k ≤ 4)
-    (t : (layerScheme I rowsLM).toCellScheme.below
-      ((layerScheme I rowsLM).toCellScheme.gradedIndex (newCell I rowsLM k))) :
-    (layerScheme I rowsLM).toCellScheme.grade t.1 ≤ k := by
-  have h : (layerScheme I rowsLM).toCellScheme.gradedIndex t.1 ≤ ((univ : Finset (Fin 5)), k) :=
-    gradedIndex_newCell hk1 hk4 ▸ t.2
-  exact h.2
-
 /-- The mirrored kind of a cell below the new cell at `(univ, k)` is at most `k + 1`. -/
 theorem mirrorKind_le_of_mem_below_newCell {k : ℕ} (hk1 : 1 ≤ k) (hk4 : k ≤ 4)
     (t : (layerScheme I rowsLM).toCellScheme.below
       ((layerScheme I rowsLM).toCellScheme.gradedIndex (newCell I rowsLM k))) :
     (mirrorKind ((layerScheme I rowsLM).toCellScheme.gradedIndex t.1) : ℕ) ≤ k + 1 :=
   (mirrorKind_le _).trans (Nat.succ_le_succ (grade_le_of_mem_below_newCell hk1 hk4 t))
-
-/-- The new cell at `(univ, k)` is below itself. -/
-theorem newCell_mem_below_self {k : ℕ} :
-    newCell I rowsLM k ∈ (layerScheme I rowsLM).toCellScheme.below
-      ((layerScheme I rowsLM).toCellScheme.gradedIndex (newCell I rowsLM k)) :=
-  (layerScheme I rowsLM).toCellScheme.mem_below_gradedIndex _
-
-/-- An old cell below the new cell at `(univ, k)`, of grade at most `k`. -/
-theorem oldCell_mem_below_newCell {d : Fin I.amalgam.card} {k : ℕ} (hk1 : 1 ≤ k)
-    (hk4 : k ≤ 4) (hd : I.amalgam.toCellScheme.grade d ≤ k) :
-    oldCell I rowsLM d ∈ (layerScheme I rowsLM).toCellScheme.below
-      ((layerScheme I rowsLM).toCellScheme.gradedIndex (newCell I rowsLM k)) := by
-  rw [gradedIndex_newCell hk1 hk4]
-  exact oldCell_mem_below ⟨subset_univ _, hd⟩
-
-/-- A cell below `(C, k)` misses the point `4`. -/
-theorem four_notMem_of_mem_below {z : Fin (layerScheme I rowsLM).card} {k : ℕ}
-    (hz : z ∈ (layerScheme I rowsLM).toCellScheme.below (coatomC, k)) :
-    (4 : Fin 5) ∉ ((layerScheme I rowsLM).toCellScheme.gradedIndex z).1 := fun h ↦
-  (notMem_erase (Fin.last 4) univ) (hz.1 h)
-
-/-- A cell below `(D, k)` misses the point `3`. -/
-theorem three_notMem_of_mem_below {z : Fin (layerScheme I rowsLM).card} {k : ℕ}
-    (hz : z ∈ (layerScheme I rowsLM).toCellScheme.below (coatomD, k)) :
-    (3 : Fin 5) ∉ ((layerScheme I rowsLM).toCellScheme.gradedIndex z).1 := fun h ↦
-  (notMem_erase (Fin.castSucc (Fin.last 3)) univ) (hz.1 h)
 
 variable (I) in
 /-- The **mirrored labelling** of the cells of the layer scheme, read off their graded indices. -/

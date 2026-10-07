@@ -769,7 +769,7 @@ theorem isLawful_kindLabel_omega {Ω : Label.{u}} (hΩ : IsSelfVisible 4 Ω) :
       · rw [h]; exact hΩ
       · exact isSelfVisible_bot _
     · by_cases hs : I.amalgam.toCellScheme.grade s = 4
-      · refine OrderedLayer.transformsTo_of_eq_bot_iff _ (K := 4)
+      · refine Label.transformsTo_of_eq_bot_iff _ (K := 4)
           (fun d : I.amalgam.toCellScheme.below (I.amalgam.toCellScheme.gradedIndex s) ↦
             Nat.lt_succ_iff.mp (I.grade_lt d.1)) hΩ _ _ fun d ↦ ?_
         rw [ite_eq_left hs]
