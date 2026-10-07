@@ -50,15 +50,21 @@ the row of `c` (lawful below `c` by consistency), whose cell is labelled `⊤` b
 `c`.  Locality at a cell `s` labelled `⊤`: the splice of locality of `q` at `s` with locality at
 `s` of the row of `c`.  The other cells keep the laws of `q`.
 
-**Forcing is read by the rows** (`StageType.IsMarker.visibilityReplace_rowAt_le`,
-`StageType.ForcesThreshold.visibilityReplace_rowAt_le`, compiled in this repository (theorem
-named)).  Cover-hollowness reads the provisional values of the tops through forcing (every lift of
-a rooted cover); the hollow argument reads them through the row of a top cap.  The implication
-holds: if `(q, f)` forces the threshold `L` at a cell of the root labelled `⊤`, transported to the
-cell `e` of `q`, then for every top cap `c` of grade `N` and every marker `r` of `c`, `L ≤ N` and
+**Forcing is read by the rows** (`StageType.IsMarker.le_grade_and_visibilityReplace_rowAt_le`,
+`StageType.ForcesThreshold.le_grade_and_visibilityReplace_rowAt_le`, compiled in this repository
+(theorem named)).  Cover-hollowness reads the provisional values of the tops through forcing
+(every lift of a rooted cover); the hollow construction of the roadmap (Layer 3, 3.3: the private
+cap and the marker labelled `⊤`, and the marker clause of `Correct`) reads them through the row of
+a top cap, the **row reading**.  The implication holds: if `(q, f)` forces the threshold `L` at a
+cell of the root labelled `⊤`, transported to the cell `e` of `q`, then for every top cap `c` of
+grade `N` and every marker `r` of `c`, `L ≤ N` and
 `visibilityReplace N L (q.rowAt c r) ≤ q.rowAt c e`.  The band lift has the label `β + min j' N`
 at `e` when the row of `c` reads `e` in the block of the marker, at `μ + j'`, and `β + N`
-otherwise; forcing `L` makes it at least `β + L`.
+otherwise; forcing `L` makes it at least `β + L`.  Where the inequality says something (the marker
+read at `μ + j` with `j < N`), it gives `q.rowAt c e ≥ μ + L`.  When the forcing comes from the
+order law or from the rows (`StageType.forcesThreshold_of_row_le_of_grade_le`), this already
+follows from the minimality of the marker; the content of the statement lies in thresholds forced
+by all lifts in some other way, which no compiled instance exhibits.
 
 **The marked-cap context** (`StageType.IsMarkedCapContext`, defined in this repository; acquisition
 and determination open).  A stage type `t'` on `k` points is a marked-cap context along
@@ -494,6 +500,7 @@ theorem IsMarker.exists_lift (hβ : IsSuccLimit β) (hα : β + ω ≤ α) (hq :
         have hbelow (x : Fin q.card)
             (hx : x ∈ q.toCellScheme.below (q.toCellScheme.gradedIndex s)) :
             x ∈ q.toCellScheme.below (q.toCellScheme.gradedIndex c) :=
+          -- membership below a cell is the comparison of graded indices, which is transitive
           show q.toCellScheme.gradedIndex x ≤ q.toCellScheme.gradedIndex c from le_trans hx hsc
         have h₂ : TransformsTo
             (fun d : q.toCellScheme.below (q.toCellScheme.gradedIndex s) ↦
@@ -605,7 +612,7 @@ least `β + L` at `e`, then `L ≤ N` and
 
 The band lift (`StageType.IsMarker.exists_lift`) has the label `β + min j' N` at `e` when the row
 of `c` reads `e` in the block `[μ, μ + ω)` of the marker, at `μ + j'`, and `β + N` otherwise. -/
-theorem IsMarker.visibilityReplace_rowAt_le (hβ : IsSuccLimit β) (hα : β + ω ≤ α)
+theorem IsMarker.le_grade_and_visibilityReplace_rowAt_le (hβ : IsSuccLimit β) (hα : β + ω ≤ α)
     (hq : q.IsLegal) (hc : q.IsTopCap c) (hr : q.IsMarker c r) (he : q.label e = ⊤) {L : ℕ}
     (hL : ∀ (Q : StageType.{u} α m) (e' : Fin Q.card), Q.reduce hβ.isSuccPrelimit = q →
       (e' : ℕ) = e → ((β + L : Ordinal.{u}) : Label.{u}) ≤ Q.label e') :
@@ -659,8 +666,8 @@ type at `β` restricting along `f` to a root `p`, `c` a top cap of `q` of grade 
 marker of `c`.  If `(q, f)` forces the threshold `L` at a cell `d` of `p` labelled `⊤`, and `e` is
 the cell of `q` transported from `d`, then `L ≤ N` and
 `visibilityReplace N L (q.rowAt c r) ≤ q.rowAt c e`. -/
-theorem ForcesThreshold.visibilityReplace_rowAt_le (hβ : IsSuccLimit β) (hα : β + ω ≤ α)
-    (hq : q.IsLegal) (hc : q.IsTopCap c) (hr : q.IsMarker c r) {f : Fin k ↪ Fin m}
+theorem ForcesThreshold.le_grade_and_visibilityReplace_rowAt_le (hβ : IsSuccLimit β)
+    (hα : β + ω ≤ α) (hq : q.IsLegal) (hc : q.IsTopCap c) (hr : q.IsMarker c r) {f : Fin k ↪ Fin m}
     {p : StageType.{u} β k} {d : Fin p.card} {L : ℕ}
     (hforce : ForcesThreshold α hβ.isSuccPrelimit q f p d L) (hd : p.label d = ⊤)
     (he : ∀ i : Fin (q.toScheme.comap f).card, (i : ℕ) = d → q.cellMap f i = e) :
@@ -674,7 +681,7 @@ theorem ForcesThreshold.visibilityReplace_rowAt_le (hβ : IsSuccLimit β) (hα :
   have hel : q.label e = ⊤ := by
     rw [← hie, ← comap_label q f hf i₀]
     exact (label_congr hqp rfl).trans hd
-  refine hr.visibilityReplace_rowAt_le hβ hα hq hc hel fun Q e' hQ he' ↦ ?_
+  refine hr.le_grade_and_visibilityReplace_rowAt_le hβ hα hq hc hel fun Q e' hQ he' ↦ ?_
   subst hQ
   have hf' : univ.map f ∈ Q.toCellScheme.faces := hf
   have h := hforce.2 Q (Q.comap f hf') rfl (restrictFace_of_mem Q f hf') i₀ rfl
@@ -711,6 +718,21 @@ theorem not_isMarkedCapContext_of_zero (t : StageType.{u} α 0) (h : Fin n ↪ F
     ¬ t.IsMarkedCapContext h :=
   not_isMarkedCapContext_of_isTopFree (isTopFree_of_zero t) h
 
+/-- **Over the empty root, a top cap of grade above `1` gives a marked-cap context**: no cell of
+positive grade is visible through an embedding of no points, so the row inequality is vacuous. -/
+theorem isMarkedCapContext_of_isTopCap_of_zero {t' : StageType.{u} α k} {c : Fin t'.card}
+    (hc : t'.IsTopCap c) (h1 : 1 < t'.toCellScheme.grade c) (h : Fin 0 ↪ Fin k) :
+    t'.IsMarkedCapContext h := by
+  obtain ⟨r, hr⟩ := exists_isMarker hc.2.1
+  refine ⟨c, r, hc, hr, h1, fun a ha _ ↦ absurd ?_ (Nat.lt_irrefl 0)⟩
+  have hs : t'.toCellScheme.scope a = ∅ := by
+    refine Finset.eq_empty_of_forall_notMem fun z hz ↦ ?_
+    obtain ⟨i, -⟩ := Scheme.mem_visibleCells.mp ha (Finset.mem_coe.mpr hz)
+    exact i.elim0
+  have hcard := t'.isWellFormed.isWellFormed.grade_le_card a
+  rw [hs, Finset.card_empty] at hcard
+  exact lt_of_lt_of_le (t'.isWellFormed.isWellFormed.grade_pos a) hcard
+
 /-- **A context whose cells labelled `⊤` have grades at most `n + 1` is a marked-cap context along
 no embedding of `n` points**: the grade of a top cap is the grade of a cell labelled `⊤`. -/
 theorem not_isMarkedCapContext_of_grade_le {t' : StageType.{u} α k}
@@ -741,7 +763,7 @@ theorem isMarkedCapContext_of_forcesThreshold (hβ : IsSuccLimit β) (hα : β +
   have hd : p.label d = ⊤ := by
     rw [← hat]
     exact (label_congr hqp.symm rfl).trans (comap_label q f hf i)
-  exact (ForcesThreshold.visibilityReplace_rowAt_le hβ hα hq hc hr (hforce d hd) hd
+  exact (ForcesThreshold.le_grade_and_visibilityReplace_rowAt_le hβ hα hq hc hr (hforce d hd) hd
     fun i' hi' ↦ congrArg (q.cellMap f) (Fin.ext hi')).2
 
 end StageType

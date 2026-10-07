@@ -274,7 +274,9 @@ coatom extension construction, pinned and exact pinned extension, restriction-co
    original rows' lawfulness along the exact base table; it uses no bottom reflection of the
    decoder.
    The growth construction of (R3) and (R4) and the LOW construction of (R2) are both required
-   applications.  The two-witness splice is also proved here: for a top-labelled cell `Σ` of
+   applications.  The two-witness splice is compiled in a more general form
+   (`Label.TransformsTo.splice_bandMap`, `Stage/MarkedCap`; compiled in this repository (theorem
+   named)); the case needed here: for a top-labelled cell `Σ` of
    grade `J ≤ K` below a top-witness cell `Θ`, a witness from `E(Σ)` to the labels below `Σ`
    and a witness from `E(Σ)` to the row of `Θ` capped at its entry at `Σ` combine into a
    witness from `E(Σ)` to the labels where they are below `α` and, where they are top, to the
@@ -4302,7 +4304,9 @@ lands, their notes stay in those modules.
   concern stage types only and go to `Stage/MarkedCap` when `StageType.topGrade`
   (`Continuation/Terminal`) moves to `Stage/`.  `StageType.IsAnchoredMarkedCapContext` uses
   `StageType.IsAnchored` (`Extension/GatedExtension`) and stays out of `Stage/`.  The exclusions
-  of the determination counterexamples (`MarkedCapExclusions`) stay with their examples.
+  of the determination counterexamples (`MarkedCapExclusions`), instances of the general
+  exclusions, and the example of a marked-cap context stay in `Continuation/MarkedCap`, which
+  imports the modules of the counterexamples.
 
 **Finite geometry and the coatom amalgam (Layer 3, (R6)).**
 

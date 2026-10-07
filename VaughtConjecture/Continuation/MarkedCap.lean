@@ -39,7 +39,8 @@ exact consistency, covering, receiving, growth, or forcing donors.  The cover de
 single cover of large top grade forcing `n + 1` at every top of a root at once (the synchronization
 step of an acquisition) is prospective.
 
-**The determination counterexamples are excluded.**
+**The determination counterexamples are excluded**, each by an instance of a general exclusion
+of `VaughtConjecture.Stage.MarkedCap` or of this file.
 
 * The predicate always true (`ExactReceivingExamples`): the context is the empty root of the apex
   point, along the identity.  It is top-free, so it is not a marked-cap context
@@ -52,10 +53,17 @@ step of an acquisition) is prospective.
   repository (theorem named)).
 * The anchored predicate with a top (the refuting instance is not in this library): its context,
   on three points over a root on one point, has its cells of grade at least `2` capped at an
-  ordinal, so its top grade is at most `1` (argued, not formalized here); a context of top grade
+  ordinal, so its top grade is at most `1` (compiled in a separate open change, not in this
+  library; argued here); a context of top grade
   at most `1` is not a marked-cap context over a root on one point
   (`MarkedCapExclusions.not_isMarkedCapContext_of_topGrade_le_one`, compiled in this repository
   (theorem named)): the clause `n + 1 < N` fails.
+
+**An instance.**  The legal two-point type `GatedExtensionCounterexample.P α`, uncapped, is a
+marked-cap context over the empty root (`MarkedCapExclusions.isMarkedCapContext_P`, compiled in
+this repository (theorem named)): its cell of graded index `(univ, 2)` labelled `⊤` is a top cap of
+grade `2`, and over the empty root the row inequality is vacuous
+(`StageType.isMarkedCapContext_of_isTopCap_of_zero`).
 
 Acquisition and determination for the marked-cap context are open; nothing here proves or reduces
 (R3) (`Realization.HollowReceiving`).
@@ -184,13 +192,13 @@ theorem IsCoverHollow.exists_forcesThreshold_rowAt (hR : R.IsCoverHollow)
     fun h ↦ h _ (StageType.label_cellMap_eq_top hforce.1 ha i₀ rfl)
   obtain ⟨c, hc⟩ := StageType.exists_isTopCap hq hnt
   obtain ⟨r, hr⟩ := StageType.exists_isMarker hc.2.1
-  have hF := StageType.ForcesThreshold.visibilityReplace_rowAt_le hβ hα hq hc hr hforce ha
-    (e := q.cellMap f i₀) fun i hi ↦ congrArg (q.cellMap f) (Fin.ext hi)
+  have hF := StageType.ForcesThreshold.le_grade_and_visibilityReplace_rowAt_le hβ hα hq hc hr
+    hforce ha (e := q.cellMap f i₀) fun i hi ↦ congrArg (q.cellMap f) (Fin.ext hi)
   refine ⟨⟨m, q, f⟩, hy, hforce, hq, hc.grade_eq_topGrade ▸ hF.1, ⟨c, r, hc, hr⟩,
     fun c' r' hc' hr' i hi ↦ ?_⟩
   rw [← hc'.grade_eq_topGrade]
-  exact (StageType.ForcesThreshold.visibilityReplace_rowAt_le hβ hα hq hc' hr' hforce ha
-    fun i' hi' ↦ congrArg (q.cellMap f) (Fin.ext (hi'.trans hi.symm))).2
+  exact (StageType.ForcesThreshold.le_grade_and_visibilityReplace_rowAt_le hβ hα hq hc' hr'
+    hforce ha fun i' hi' ↦ congrArg (q.cellMap f) (Fin.ext (hi'.trans hi.symm))).2
 
 end Realization
 
@@ -204,25 +212,41 @@ variable {k n : ℕ}
 
 /-- **The empty root of the apex point is not a marked-cap context**: in the refutation of
 determination with the predicate always true (`ExactReceivingExamples`), the context is the root
-of `ExactReceivingExamples.apexPoint` on no points, along the identity; it is top-free. -/
-theorem not_isMarkedCapContext_root_apexPoint {t : StageType.{0} ω 0}
-    (_ht : restrictFace Fin.castSuccEmb ExactReceivingExamples.apexPoint = some t) :
+of `ExactReceivingExamples.apexPoint`, a stage type at `ω` on no points
+(`ExactReceivingExamples.exists_root_apexPoint`), along the identity.  It is the instance on no
+points of `StageType.not_isMarkedCapContext_of_zero`, stated for every stage type at `ω` on no
+points. -/
+theorem not_isMarkedCapContext_root_apexPoint (t : StageType.{0} ω 0) :
     ¬ t.IsMarkedCapContext (Function.Embedding.refl _) :=
   not_isMarkedCapContext_of_zero t _
 
 /-- **The capped context of the anchored predicate is not a marked-cap context**: the legal
 two-point type `GatedExtensionCounterexample.P α` capped at an ordinal `c < α` self-visible at `2`
-is top-free (`StageType.isTopFree_cap`), so it is a marked-cap context along no embedding. -/
+is top-free (`StageType.isTopFree_cap`), so it is a marked-cap context along no embedding; an
+instance of `StageType.not_isMarkedCapContext_of_isTopFree`. -/
 theorem not_isMarkedCapContext_cap_P {α c : Ordinal.{u}} (hc : IsSelfVisible 2 (c : Label.{u}))
     (hcα : c < α) (h : Fin n ↪ Fin 2) :
     ¬ ((GatedExtensionCounterexample.P α).cap c hc hcα).IsMarkedCapContext h :=
   not_isMarkedCapContext_of_isTopFree isTopFree_cap h
 
 /-- **A context of top grade at most `1` is not a marked-cap context over a one-point root**: the
-clause `n + 1 < N` fails for `n = 1`. -/
+clause `n + 1 < N` fails for `n = 1`; an instance of
+`StageType.not_isMarkedCapContext_of_topGrade_le`. -/
 theorem not_isMarkedCapContext_of_topGrade_le_one {α : Ordinal.{u}} {t' : StageType.{u} α k}
     (ht : t'.topGrade ≤ 1) (h : Fin 1 ↪ Fin k) : ¬ t'.IsMarkedCapContext h :=
   not_isMarkedCapContext_of_topGrade_le (ht.trans (by omega)) h
+
+/-- **The uncapped two-point type is a marked-cap context over the empty root**: its cell `3`,
+of graded index `(univ, 2)`, is labelled `⊤` and every grade is at most `2`, so it is a top cap of
+grade `2 > 1` (`StageType.isMarkedCapContext_of_isTopCap_of_zero`).  So the predicate has an
+instance on a legal stage type. -/
+theorem isMarkedCapContext_P (α : Ordinal.{u}) (h : Fin 0 ↪ Fin 2) :
+    (GatedExtensionCounterexample.P α).IsMarkedCapContext h := by
+  have hc : (GatedExtensionCounterexample.P α).IsTopCap (3 : Fin 5) :=
+    ⟨rfl, rfl, fun x _ ↦ (GatedExtensionCounterexample.P α).grade_le x⟩
+  -- the grade of cell `3` is `GatedExtensionCounterexample.cellGrade 3 = 2`
+  have hg : (GatedExtensionCounterexample.P α).toCellScheme.grade (3 : Fin 5) = 2 := rfl
+  exact isMarkedCapContext_of_isTopCap_of_zero hc (by rw [hg]; omega) h
 
 end MarkedCapExclusions
 

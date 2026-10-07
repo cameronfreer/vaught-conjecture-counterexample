@@ -286,9 +286,10 @@ Status of each:
    universe levels and is not supplied by the countable-stage `Expansion.FiniteCutReceiving`,
    item 2), `Realization.ResidualAcquisition P`, and `Realization.CutoffDetermination P`
    (`Realization.residualReceiving_of_cutoffDetermination`), for a predicate `P` on acquired
-   contexts not yet defined: the reduction is a template, and its hypotheses are not statements
-   still to be proved (no predicate `P` is defined in the library, and neither acquisition nor
-   determination is proved beyond the rigid-core instance).  For `P` always true, acquisition is
+   contexts: the reduction is a template, and its hypotheses are not statements still to be
+   proved (one predicate is defined in a separate open change, with acquisition compiled and
+   determination open; none is defined in the library, and neither acquisition nor determination
+   is proved here beyond the rigid-core instance).  For `P` always true, acquisition is
    immediate and determination fails (compiled; top-free roots,
    `Continuation/ExactReceivingExamples`), which shows only that determination is not vacuous.
    The cofaces in which the root is a rigid core need only (R1) in the same form
@@ -298,36 +299,40 @@ Status of each:
    (`Realization.hollowReceiving_iff`).  A reduction is compiled: it follows from
    `Realization.HollowAcquisition H P` and `Realization.SchemeDetermination P` with
    `H := Realization.IsCoverHollowAtBlock` (`Realization.hollowReceiving_of_schemeDetermination`,
-   no receiving used), for a predicate `P` not yet defined: a template, as in item 5 (for `P`
-   always true, acquisition is immediate and determination fails, compiled).  With item 6, the
+   no receiving used), for a predicate `P`: a template, as in item 5; one predicate is defined,
+   the marked-cap context (acquisition and determination open; below), and for `P` always true
+   acquisition is immediate and determination fails (compiled).  With item 6, the
    count uses (R3) at every cover-hollow model with unbounded growth, a globally rigid core
    included (item 6′ below excludes it).  (R3) forces a globally rigid core of a cover-hollow
    model with unbounded growth to be rigid in every legal donor over its type
    (`Realization.HollowReceiving.isRigidCoreIn`).
    *A candidate predicate* (`Stage/MarkedCap`, `Continuation/MarkedCap`): the marked-cap context
-   `StageType.IsMarkedCapContext` (defined in this repository; acquisition and determination
-   open), a context with a top cap `c` (full scope, labelled `⊤`, at the top grade `N > n + 1`), a
-   marker `r` (least entry of the row of `c` at the cells labelled `⊤`), and
-   `visibilityReplace N (n + 1) (row c r) ≤ row c a` at every cell `a` of the root labelled `⊤`;
-   with reference cells for a donor, `StageType.IsAnchoredMarkedCapContext` (defined in this
-   repository).  Cover-hollowness reads the tops through forcing, and forcing is read by the rows
-   (compiled in this repository (theorem named):
-   `StageType.ForcesThreshold.visibilityReplace_rowAt_le`, and at a cover-hollow realization with
-   legal types `Realization.IsCoverHollow.exists_forcesThreshold_rowAt`): a legal rooted cover at
-   a limit stage that forces `L` at a top of its root has `L ≤ N` and the row inequality at `L`,
-   for every top cap and marker.  The proof is a lawful lift whose labels at the tops are the band
-   map of the row of the top cap from the block of the marker (`StageType.IsMarker.exists_lift`);
-   its locality is the two-witness splice of Layer 3, 3.1 (`Label.TransformsTo.splice_bandMap`,
-   compiled in this repository (theorem named)).  The finite step of acquisition is compiled
-   (`StageType.isMarkedCapContext_of_forcesThreshold`); one cover of top grade above `n + 1`
-   forcing `n + 1` at every top of a root at once is prospective, and
-   `Realization.HollowAcquisition` and `Realization.SchemeDetermination` for the predicate are
-   open, so item 6 is not reduced.  The three refuted determination statements are excluded: the
-   empty root of the apex point and the capped two-point context of the anchored predicate are
-   top-free (compiled in this repository (theorem named)), and the context of the anchored
-   predicate with a top has top grade at most `1` over a root on one point (the exclusion of every
-   such context compiled in this repository (theorem named); the bound on that context argued, not
-   formalized here).
+   `StageType.IsMarkedCapContext` (defined in this repository; acquisition and determination open),
+   a context with a top cap `c` (full scope, labelled `⊤`, at the top grade `N > n + 1`), a marker
+   `r` (least entry of the row of `c` at the cells labelled `⊤`), and `visibilityReplace N (n + 1)
+   (row c r) ≤ row c a` at every cell `a` of the root labelled `⊤`; with reference cells for a
+   donor, `StageType.IsAnchoredMarkedCapContext` (defined in this repository).  Cover-hollowness
+   reads the tops through forcing, and forcing is read by the rows (compiled in this repository
+   (theorem named): `StageType.ForcesThreshold.le_grade_and_visibilityReplace_rowAt_le`, and at a
+   cover-hollow realization with legal types
+   `Realization.IsCoverHollow.exists_forcesThreshold_rowAt`): for a legal rooted cover at a limit
+   stage `β`, with its lifts at `β + ω`, that forces `L` at a top of its root, `L ≤ N` and the row
+   inequality at `L` hold for every top cap and marker.  When the forcing comes from the order law
+   or from rows, the inequality already follows from the minimality of the marker; its content is in
+   thresholds forced by all lifts otherwise, which no compiled instance exhibits.
+   `GatedExtensionCounterexample.P α` is a marked-cap context over the empty root (compiled).  The
+   proof is a lawful lift whose labels at the tops are the band map of the row of the top cap from
+   the block of the marker (`StageType.IsMarker.exists_lift`); its locality is the two-witness
+   splice of Layer 3, 3.1 (`Label.TransformsTo.splice_bandMap`, compiled in this repository (theorem
+   named)).  The finite step of acquisition is compiled
+   (`StageType.isMarkedCapContext_of_forcesThreshold`); one cover of top grade above `n + 1` forcing
+   `n + 1` at every top of a root at once is prospective, and `Realization.HollowAcquisition` and
+   `Realization.SchemeDetermination` for the predicate are open, so item 6 is not reduced.  The
+   three refuted determination statements are excluded: the empty root of the apex point and the
+   capped two-point context of the anchored predicate are top-free (compiled in this repository
+   (theorem named)), and the context of the anchored predicate with a top has top grade at most `1`
+   over a root on one point (the exclusion of every such context compiled in this repository
+   (theorem named); the bound on that context compiled in a separate open change, not on `main`).
 7. Nonempty losses: still to be proved.  Compiled conditionally on the coatom extension property
    with apex at every countable block stage and on next-block uniqueness
    (`hasNonemptyLosses_of_hasApexCoatomExtensions`, stated for the bundled domains, which also take
