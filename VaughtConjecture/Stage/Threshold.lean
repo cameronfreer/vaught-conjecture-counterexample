@@ -24,7 +24,8 @@ a label at least `β + n` at the cell of `P` at the position of `d`.  The quanti
 stage types at `α`: no realization, and no legality (legality depends only on the scheme, which
 `Q` shares with `q`).  Forcing reads only the finite data `(q, f, p, d)`.
 
-* Forcing is downward closed in `n` (`ForcesThreshold.mono`).
+* Forcing is downward closed in `n` (`ForcesThreshold.mono`), and transported along an equality
+  of roots (`ForcesThreshold.congr_root`).
 * **Forcing is monotone along extensions** of `q` (`ForcesThreshold.trans_face`): if `q` is the
   face of `q'` along `g`, a threshold forced at `(q, f)` is forced at `(q', f.trans g)`.  Only
   the commutation of reduction with face maps (`restrictFace_reduce`) and the composition law of
@@ -226,6 +227,16 @@ theorem ForcesThreshold.mono (h : ForcesThreshold α hβ q f p d n) (hn : n' ≤
     ForcesThreshold α hβ q f p d n' :=
   ⟨h.1, fun Q P hQ hP i hi ↦ le_trans (WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr
     (add_le_add_right (Nat.cast_le.mpr hn) β))) (h.2 Q P hQ hP i hi)⟩
+
+/-- **Forcing along an equality of roots**: a threshold forced at a cell of `p` is forced at the
+cell of the same position of a stage type equal to `p`. -/
+theorem ForcesThreshold.congr_root {α β : Ordinal.{u}} {hβ : Order.IsSuccPrelimit β} {m k : ℕ}
+    {q : StageType.{u} β m} {f : Fin k ↪ Fin m} {p p' : StageType.{u} β k} {d : Fin p.card}
+    {n : ℕ} (h : ForcesThreshold α hβ q f p d n) (hp : p = p') (d' : Fin p'.card)
+    (hd : (d : ℕ) = d') : ForcesThreshold α hβ q f p' d' n := by
+  subst hp
+  obtain rfl : d = d' := Fin.ext hd
+  exact h
 
 /-- **Forcing is monotone along extensions**: if `q` is the face of `q'` along `g`, a threshold
 forced at `(q, f)` is forced at `(q', f.trans g)`. -/

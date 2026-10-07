@@ -20,6 +20,8 @@ import VaughtConjecture.MainTheorem.TerminalClasses
 * **Transport.**  Terminality and the terminal properties are read at any code of a class, and
   a model expansion transported along an isomorphism of base structures is terminal when the
   original is, and has its terminal properties.
+* **The restricted hollow property.**  The losses are countable from the count with (R3) for
+  cover-hollowness without a globally rigid core at a block stage.
 -/
 
 namespace VaughtConjecture
@@ -125,5 +127,17 @@ example {M : Type} {N : Type 1} [baseLanguage.{0}.Structure M] [baseLanguage.{0}
     {ξ : Ordinal.{0}} (f : ModelExpansion M (blockStage ξ)) (i : M ≃[baseLanguage.{0}] N)
     (h : f.1.IsTerminalAt ξ) : (f.map i).1.IsTerminalAt ξ :=
   h.map _
+
+/-! ### The restricted hollow property -/
+
+/-- The successor losses are countable, from the count of the terminal classes with the
+restricted hollow property, under (R1), the continuation criterion, (R2) and (R3) for
+cover-hollowness without a globally rigid core at a block stage. -/
+example (hrec : FiniteCutReceiving.{0}) (hcont : ContinuationCriterion.{0})
+    (hres : ResidualReceiving.{0, 0})
+    (hhol : HollowReceiving.{0, 0} IsCoverHollowWithoutRigidCoreAtBlock) :
+    ∀ ξ < ω₁, (expansionDomain ξ \ expansionDomain (ξ + 1)).Countable := fun _ hξ ↦
+  (countable_isoClasses_terminalAt_of_restrictedTerminalClassification hrec hcont hres hhol
+    hξ).mono (loss_subset_terminalClasses _)
 
 end VaughtConjecture
