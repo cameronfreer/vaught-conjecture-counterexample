@@ -43,7 +43,7 @@ self-visible and short at `3` (`towerSectionOp_isCapAgreeingAt`).  It is one fun
 profile; its only hypothesis is the seed.  The orbit decoder of the tower's own extension at `⊥`
 reads an agreement height between the codes of two keys as the lower key, which breaks (iv) at a
 cap `ω * γ + 3` that is not short at the grade of the layer; the upper decoder reads it as the
-largest label of the code grid self-visible at that grade and at most the next value.
+largest label of the code grid self-visible at `3` and at most the next value.
 
 **(iv) at every cap short at `3` fails** (`not_isCapAgreeingAt_of_collision`,
 `not_isCapAgreeingAt_one`, `not_isCapAgreeingAt_one_seedL`,

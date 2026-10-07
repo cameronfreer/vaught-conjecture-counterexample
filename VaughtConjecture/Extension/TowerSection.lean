@@ -245,6 +245,26 @@ theorem min_towerSection_eq {h : Label.{u}} (hh : IsSelfVisible 3 h) (hs : IsSho
         (fun t ↦ le_gridPoint_of_mem_codeGrid
           (layerSplice_mem_codeGrid (towerSection_mem_codeGrid j (by omega) hw) t)) hsp _
 
+/-- **The tower section of an orbit-canonical labelling is readable for it**, for `j ≤ 2`, when
+its values lie in the code grid: the orbit decoder at the grade `3` of every labelling coded by it
+reads the section literally below its cap (`Label.min_orbitDecoder_eq_of_isReadable`). -/
+theorem isReadable_towerSection {Q : Fin I.amalgam.card → Label.{u}} (hQ : orbitCode 3 Q = Q)
+    (hQB : ∀ d, Q d ∈ codeGrid 3 B) :
+    (j : ℕ) → j ≤ 2 → ∀ t, IsReadable Q (I.towerSection B j Q t)
+  | 0, _, t => isReadable_apply Q t
+  | j + 1, hj, t => by
+    induction t using Fin.addCases with
+    | left t => rw [towerSection_castAdd]; exact isReadable_towerSection hQ hQB j (by omega) t
+    | right i =>
+      rw [towerSection_natAdd]
+      refine isReadable_upperDecoder hQ hj
+        (layerSplice_mem_codeGrid (towerSection_mem_codeGrid j (by omega) hQB)) (fun t ↦ ?_)
+        (agreementHeight_spec (bot_mem_grid _ _) _ _).1
+      by_cases ht : (I.tower j).toCellScheme.grade t ≤ j + 1
+      · rw [layerSplice, CellScheme.splice_of_le ht]
+        exact isReadable_towerSection hQ hQB j (by omega) t
+      · rw [layerSplice, CellScheme.splice_of_lt (not_le.mp ht)]; exact .inl rfl
+
 end Seed
 
 end VaughtConjecture

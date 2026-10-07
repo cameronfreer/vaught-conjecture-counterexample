@@ -23,7 +23,7 @@ above it that value is.  Two labellings that agree capped at a cap `h` self-visi
 **The upper decoder** (`Label.upperDecoder k B w`) is the larger of the orbit decoder and the
 *gap value* (`Label.gapValue`): at a label `x` other than bottom, the least, over the cells `d`
 whose code has key at least the key of `x`, of the largest member of the code grid
-`Label.codeGrid 3 B` that is self-visible at `k` and at most `w d` (`Label.admissibleBelow`), and
+`Label.codeGrid 3 B` that is self-visible at `3` and at most `w d` (`Label.admissibleBelow`), and
 at most the grid point `ω * B + 3`.
 
 * It is a witness bounded by the grade `k`, for `k ≤ 3` (`Label.isWitness_upperDecoder`): the gap
@@ -40,6 +40,13 @@ at most the grid point `ω * B + 3`.
   from those of the values at least `h` (at least `Γ`), so the two orbit codes agree capped at
   `Γ` and so do the agreement heights; below `Γ` the two decoders read the same cells; at or above
   `Γ` the gap value reads only values at least `h`, whose admissible labels are at least `h`.
+* **Readable labels** (`Label.IsReadable`): a label is readable for `Q` when it is bottom,
+  self-visible at `3`, or its key at `3` is an orbit key of `Q` or not a key of `Q`.  The orbit
+  decoder at the grade `3` of a labelling `W`, at a cap `h` self-visible at `3` where the orbit
+  code of `W` agrees with `W`, keeps the cap at every label readable for that code
+  (`Label.min_orbitDecoder_eq_of_isReadable`), not only at the labels self-visible at `3`; and the
+  upper decoder at the grades `k ≤ 2` keeps readability for an orbit-canonical `Q`
+  (`Label.isReadable_upperDecoder`).
 
 ## Placement
 
@@ -106,7 +113,7 @@ the values of `w` at the cells whose orbit code has key at least the key of `x`,
 noncomputable def gapValue (k B : ℕ) (w : ι → Label.{u}) (x : Label.{u}) : Label.{u} :=
   if x = ⊥ then ⊥ else min (gridPoint 3 B)
     (({d | visibilityReplace k k x ≤ visibilityReplace k k (orbitCode k w d)} : Finset ι).inf
-      fun d ↦ admissibleBelow k B (w d))
+      fun d ↦ admissibleBelow 3 B (w d))
 
 /-- The **upper decoder** of `w` at grade `k` with block bound `B`: the larger of the orbit
 decoder at the least grid point and the gap value. -/
@@ -121,7 +128,7 @@ noncomputable def upperDecoder (k B : ℕ) (w : ι → Label.{u}) (x : Label.{u}
 /-- The gap value off bottom. -/
 theorem gapValue_of_ne_bot (hx : x ≠ ⊥) : gapValue k B w x = min (gridPoint 3 B)
     (({d | visibilityReplace k k x ≤ visibilityReplace k k (orbitCode k w d)} : Finset ι).inf
-      fun d ↦ admissibleBelow k B (w d)) := by
+      fun d ↦ admissibleBelow 3 B (w d)) := by
   unfold gapValue
   exact ite_eq_right hx
 
@@ -133,7 +140,7 @@ theorem isSelfVisible_gapValue (hk : k ≤ 3) (x : Label.{u}) :
     exact isSelfVisible_bot k
   rw [gapValue_of_ne_bot hx]
   exact ((isSelfVisible_gridPoint 3 B).mono hk).min (Finset.inf_induction (isSelfVisible_top k)
-    (fun a ha b hb ↦ ha.min hb) fun d _ ↦ isSelfVisible_admissibleBelow k B (w d))
+    (fun a ha b hb ↦ ha.min hb) fun d _ ↦ (isSelfVisible_admissibleBelow 3 B (w d)).mono hk)
 
 /-- The gap value is at most `ω * B + 3`. -/
 theorem gapValue_le_gridPoint (x : Label.{u}) : gapValue k B w x ≤ gridPoint 3 B := by
@@ -174,7 +181,7 @@ theorem gapValue_orbitCode_le (d : ι) : gapValue k B w (orbitCode k w d) ≤ w 
   rw [gapValue_of_ne_bot (by rwa [Ne, orbitCode_eq_bot_iff])]
   have hmem : d ∈ ({e | visibilityReplace k k (orbitCode k w d) ≤
       visibilityReplace k k (orbitCode k w e)} : Finset ι) := mem_filter.mpr ⟨mem_univ d, le_rfl⟩
-  exact (min_le_right _ _).trans ((Finset.inf_le hmem).trans (admissibleBelow_le k B (w d)))
+  exact (min_le_right _ _).trans ((Finset.inf_le hmem).trans (admissibleBelow_le 3 B (w d)))
 
 /-- The orbit decoder at the least grid point is a witness bounded by the grade `k`. -/
 private theorem isWitness_orbitDecoder_zero :
@@ -271,7 +278,7 @@ theorem upperDecoder_mem_codeGrid (hk : k ≤ 3) (hw : ∀ d, w d ∈ codeGrid 3
     · rw [hx0, gapValue_bot]; exact hbot
     rw [gapValue_of_ne_bot hx0]
     have hT : gridPoint.{u} 3 B ∈ codeGrid 3 B := block_mem_codeGrid le_rfl le_rfl
-    rcases inf_admissibleBelow_cases (k := k) (B := B) w (({d | visibilityReplace k k x ≤
+    rcases inf_admissibleBelow_cases (k := 3) (B := B) w (({d | visibilityReplace k k x ≤
       visibilityReplace k k (orbitCode k w d)} : Finset ι)) with htop | hmem
     · rw [htop, min_eq_left le_top]; exact hT
     · rcases le_total (gridPoint.{u} 3 B) _ with h | h
@@ -508,9 +515,9 @@ private theorem orbitDecoder_le_of_lt (h0 : h ≠ ⊥) (hk : k < 3) {γ : Ordina
     exact bot_le
 
 /-- **The gap values agree capped at `h`**, when `h` is a member of the code grid self-visible at
-`k`. -/
-private theorem min_gapValue_le (hhB : h ∈ codeGrid 3 B) (hhk : IsSelfVisible k h)
-    (hag : ∀ d, min (w d) h = min (w' d) h) (x : Label.{u}) :
+`3` and at `k`. -/
+private theorem min_gapValue_le (hhB : h ∈ codeGrid 3 B) (hh3 : IsSelfVisible 3 h)
+    (hhk : IsSelfVisible k h) (hag : ∀ d, min (w d) h = min (w' d) h) (x : Label.{u}) :
     min (gapValue k B w x) h ≤ min (gapValue k B w' x) h := by
   classical
   by_cases hx0 : x = ⊥
@@ -527,7 +534,7 @@ private theorem min_gapValue_le (hhB : h ∈ codeGrid 3 B) (hhk : IsSelfVisible 
     rw [eq_of_min_eq_of_lt (hag d) hdh]
     exact (min_le_left _ _).trans ((min_le_right _ _).trans (Finset.inf_le hmem))
   · exact (min_le_right _ _).trans
-      (le_admissibleBelow hhB hhk (le_of_min_eq_of_le (hag d) hdh))
+      (le_admissibleBelow hhB hh3 (le_of_min_eq_of_le (hag d) hdh))
 
 /-- At or above the separating grid point the gap value is at least `h`. -/
 private theorem le_gapValue (hk : k < 3) {γ : Ordinal.{u}}
@@ -536,8 +543,6 @@ private theorem le_gapValue (hk : k < 3) {γ : Ordinal.{u}}
     (hx : gridPoint k (2 * #(keysBelow k w h) + 1) ≤ visibilityReplace k k x) :
     h ≤ gapValue k B w x := by
   classical
-  have hhk : IsSelfVisible k h := by
-    rw [hγ]; exact isSelfVisible_block.mpr (by omega)
   have hx0 : x ≠ ⊥ := fun h' ↦ by
     rw [h', visibilityReplace_bot, le_bot_iff] at hx
     exact gridPoint_ne_bot _ _ hx
@@ -546,7 +551,7 @@ private theorem le_gapValue (hk : k < 3) {γ : Ordinal.{u}}
   rcases lt_or_ge (w d) h with hdh | hdh
   · exact absurd ((mem_filter.mp hd).2.trans_lt ((visibilityReplace_orbitCode_lt hk hγ hdh)))
       (not_lt.mpr hx)
-  · exact le_admissibleBelow hhB hhk hdh
+  · exact le_admissibleBelow hhB (by rw [hγ]; exact isSelfVisible_block.mpr le_rfl) hdh
 
 /-- **Capped agreement of the decoded agreement heights.**  For a grade `k < 3`, let `w` have
 values at most `ω * B + 3`, and let `w'` agree with `w` capped at a cap `h` self-visible and short
@@ -622,7 +627,7 @@ theorem min_upperDecoder_agreementHeight_eq (hk : k < 3) {B' : ℕ}
     congr 1
     · rw [le_antisymm (orbitDecoder_le_of_lt h0 hk hγ hag hx)
         (orbitDecoder_le_of_lt h0 hk hγ hag' hx')]
-    · exact le_antisymm (min_gapValue_le hhB hhk hag κ) (min_gapValue_le hhB hhk hag' κ)
+    · exact le_antisymm (min_gapValue_le hhB hh hhk hag κ) (min_gapValue_le hhB hh hhk hag' κ)
   · -- At or above `Γ`: both decoded labels are at least `h`.
     have hge' : Γ ≤ κ' := by
       rw [min_eq_right hge] at hκκ
@@ -634,5 +639,182 @@ theorem min_upperDecoder_agreementHeight_eq (hk : k < 3) {B' : ℕ}
     have h2 : h ≤ upperDecoder k B w' κ' :=
       (le_gapValue hk hγ hhB hT hx').trans (le_max_right _ _)
     rw [min_eq_right h1, min_eq_right h2]
+
+/-! ### Labels read literally by the orbit decoder at the grade `3` -/
+
+/-- A label `x` is **readable** for `Q` when it is bottom, self-visible at `3`, or its key at `3`
+is an orbit key of `Q` or not a key of `Q`: the orbit decoders at the grade `3` of the labellings
+coded by `Q` read it literally below their cap (`Label.min_orbitDecoder_eq_of_isReadable`). -/
+def IsReadable {κ : Type*} (Q : κ → Label.{u}) (x : Label.{u}) : Prop :=
+  x = ⊥ ∨ IsSelfVisible 3 x ∨ IsOrbitKey 3 Q x ∨ ¬ IsKey 3 Q x
+
+omit [Fintype ι] in
+/-- Readability off the self-visible labels depends only on the key at `3`. -/
+private theorem isReadable_of_key {κ : Type*} {Q : κ → Label.{u}} (hy : IsReadable Q y)
+    (hy3 : ¬ IsSelfVisible 3 y)
+    (hxy : visibilityReplace 3 3 x = visibilityReplace 3 3 y) : IsReadable Q x := by
+  rcases hy with rfl | h | h | h
+  · exact absurd (isSelfVisible_bot 3) hy3
+  · exact absurd h hy3
+  · exact .inr (.inr (.inl ((isOrbitKey_congr hxy).mpr h)))
+  · exact .inr (.inr (.inr fun h' ↦ h ((isKey_congr hxy).mp h')))
+
+omit [Fintype ι] in
+/-- The larger of two readable labels is readable. -/
+private theorem IsReadable.max {κ : Type*} {Q : κ → Label.{u}} (hx : IsReadable Q x)
+    (hy : IsReadable Q y) : IsReadable Q (max x y) := by
+  rcases le_total x y with h | h
+  · rwa [max_eq_right h]
+  · rwa [max_eq_left h]
+
+omit [Fintype ι] in
+/-- The values of `Q` are readable for `Q`. -/
+theorem isReadable_apply (Q : ι → Label.{u}) (d : ι) : IsReadable Q (Q d) := by
+  by_cases h3 : IsSelfVisible 3 (Q d)
+  · exact .inr (.inl h3)
+  · exact .inr (.inr (.inl (isOrbitKey_of_not_isSelfVisible h3)))
+
+/-- In an orbit-canonical labelling, a value with the key `3` of the natural strip has an orbit
+key: a key that is not an orbit key has a code block at least `1`. -/
+private theorem isOrbitKey_of_key_three {κ : Type*} [Fintype κ] {Q : κ → Label.{u}}
+    (hQ : orbitCode 3 Q = Q) {d : κ}
+    (hd : Q d ≠ ⊥) (hk : visibilityReplace 3 3 (Q d) = gridPoint 3 0) : IsOrbitKey 3 Q (Q d) := by
+  by_contra ho
+  have hcb := codeBlock_of_not_isOrbitKey (isKey_apply_iff.mpr hd) ho
+  have h1 := one_le_keyRank (k := 3) (isKey_apply_iff.mpr hd)
+  have hkey := visibilityReplace_orbitMap (w := Q) (k := 3) hd
+  rw [← orbitCode_apply, hQ, hk, hcb] at hkey
+  have := gridPoint_le_gridPoint.mp hkey.ge
+  omega
+
+/-- Block points are equal exactly when their blocks and finite parts are. -/
+private theorem block_eq_block_iff {q γ : Ordinal.{u}} {n m : ℕ} :
+    ((ω * q + n : Ordinal.{u}) : Label.{u}) = ((ω * γ + m : Ordinal.{u}) : Label.{u}) ↔
+      q = γ ∧ n = m := by
+  refine ⟨fun h ↦ ?_, fun ⟨h1, h2⟩ ↦ by rw [h1, h2]⟩
+  rcases lt_trichotomy q γ with hlt | rfl | hgt
+  · exact absurd h (block_lt_block_iff.mpr (.inl hlt)).ne
+  · refine ⟨rfl, ?_⟩
+    rcases lt_trichotomy n m with hlt | rfl | hgt
+    · exact absurd h (block_lt_block_iff.mpr (.inr ⟨rfl, hlt⟩)).ne
+    · rfl
+    · exact absurd h.symm (block_lt_block_iff.mpr (.inr ⟨rfl, hgt⟩)).ne
+  · exact absurd h.symm (block_lt_block_iff.mpr (.inl hgt)).ne
+
+omit [Fintype ι] in
+/-- A value of finite part `3` in the code grid has an orbit key at no grade `k < 3`: its strip at
+`k` is itself. -/
+private theorem not_isOrbitKey_of_isSelfVisible_three (hk : k < 3)
+    (hwB : ∀ d, w d ∈ codeGrid 3 B) {d : ι} (h3 : IsSelfVisible 3 (w d)) :
+    ¬ IsOrbitKey k w (w d) := by
+  rintro ⟨e, hek, hesv⟩
+  rw [(h3.mono hk.le).visibilityReplace_eq k] at hek
+  rcases mem_codeGrid.mp (hwB e) with he0 | ⟨b, -, f, -, he⟩
+  · exact hesv (he0 ▸ isSelfVisible_bot k)
+  rcases mem_codeGrid.mp (hwB d) with hd0 | ⟨b', -, f', hf', hd⟩
+  · rw [hd0] at h3 hek
+    rw [visibilityReplace_eq_bot_iff] at hek
+    exact hesv (hek ▸ isSelfVisible_bot k)
+  rw [hd] at h3 hek
+  rw [he] at hek hesv
+  have hf3 : 3 ≤ f' := isSelfVisible_block.mp h3
+  rw [visibilityReplace_block, block_eq_block_iff] at hek
+  exact hesv (isSelfVisible_block.mpr (by split_ifs at hek <;> omega))
+
+/-- **The upper decoder keeps readability**: for `k ≤ 2`, if the values of `w` lie in the code grid
+and are readable for an orbit-canonical `Q`, so is the upper decoder at every point of the grid of
+grade `k`. -/
+theorem isReadable_upperDecoder {κ : Type*} [Fintype κ] {Q : κ → Label.{u}}
+    (hQ : orbitCode 3 Q = Q) (hk : k ≤ 2)
+    (hwB : ∀ d, w d ∈ codeGrid 3 B) (hw : ∀ d, IsReadable Q (w d)) {B' : ℕ}
+    (hx : x ∈ grid k B') : IsReadable Q (upperDecoder k B w x) := by
+  refine IsReadable.max (IsReadable.max ?_ ?_) ?_
+  · -- The capped label: bottom or the least grid point `k`, of key `3`.
+    rcases mem_grid.mp hx with rfl | ⟨b, -, rfl⟩
+    · rw [min_eq_left bot_le]; exact .inl rfl
+    rw [min_eq_right (gridPoint_le_gridPoint.mpr (Nat.zero_le b))]
+    refine .inr (.inr (by_cases (fun hkey ↦ .inl ?_) fun hkey ↦ .inr hkey))
+    obtain ⟨d, hd0, hdk⟩ := hkey
+    have hk3 : visibilityReplace 3 3 (gridPoint.{u} k 0) = gridPoint 3 0 := by
+      rw [gridPoint, gridPoint, visibilityReplace_block, ite_eq_left (by omega)]
+    exact (isOrbitKey_congr hdk).mp (isOrbitKey_of_key_three hQ hd0 (hdk.trans hk3))
+  · refine Finset.sup_induction (p := IsReadable Q) (.inl rfl) (fun a ha b hb ↦ ha.max hb)
+      fun d _ ↦ ?_
+    unfold cellReading
+    split_ifs with h1 h2
+    · exact .inl rfl
+    · -- The block move keeps the key at `3` of the value, which is not self-visible at `3`.
+      have h3 : ¬ IsSelfVisible 3 (w d) := fun h3 ↦
+        not_isOrbitKey_of_isSelfVisible_three (by omega) hwB h3 h2.2
+      rcases mem_grid.mp hx with rfl | ⟨b', -, rfl⟩
+      · rw [moveToBlock_bot]; exact .inl rfl
+      rcases mem_codeGrid.mp (hwB d) with hd0 | ⟨b, -, f, hf, he⟩
+      · exact absurd hd0 h2.2.isKey.ne_bot
+      have hf3 : f < 3 := by
+        rw [he] at h3; exact not_le.mp fun h ↦ h3 (isSelfVisible_block.mpr h)
+      refine isReadable_of_key (hw d) h3 ?_
+      rw [he, gridPoint, moveToBlock_omega0_mul_add, visibilityReplace_block,
+        visibilityReplace_block, ite_eq_left (by omega), ite_eq_left hf3]
+    · by_cases h3 : IsSelfVisible 3 (w d)
+      · rw [(h3.mono (by omega)).visibilityReplace_eq k]; exact .inr (.inl h3)
+      · exact isReadable_of_key (hw d) h3 (visibilityReplace_self_visibilityReplace_of_le le_rfl
+          (by omega) _)
+  · -- The gap value is self-visible at `3`.
+    by_cases hx0 : x = ⊥
+    · rw [hx0, gapValue_bot]; exact .inl rfl
+    rw [gapValue_of_ne_bot hx0]
+    exact .inr (.inl ((isSelfVisible_gridPoint 3 B).min (Finset.inf_induction
+      (isSelfVisible_top 3) (fun a ha b hb ↦ ha.min hb)
+      fun d _ ↦ isSelfVisible_admissibleBelow 3 B (w d))))
+
+/-- **The orbit decoder at the grade `3` reads a readable label literally below its cap.**  Let
+the orbit code of `W` at `3` agree with `W` capped at `h`, self-visible at `3`.  Then at every
+label readable for that code the orbit decoder at `h` agrees with the identity capped at `h`. -/
+theorem min_orbitDecoder_eq_of_isReadable {W : ι → Label.{u}} (hh : IsSelfVisible 3 h)
+    (hag : ∀ d, min (orbitCode 3 W d) h = min (W d) h) (hx : IsReadable (orbitCode 3 W) x) :
+    min (orbitDecoder 3 W h x) h = min x h := by
+  rcases le_or_gt h x with hhx | hxh
+  · rw [min_eq_right hhx]
+    exact min_eq_right ((min_eq_right hhx).ge.trans
+      (show min x h ≤ orbitDecoder 3 W h x from le_max_left _ _))
+  rcases hx with rfl | h3 | hrest
+  · rw [orbitDecoder_bot]
+  · exact min_orbitDecoder_eq h3
+  have hh0 : h ≠ ⊥ := ne_bot_of_gt hxh
+  have hxk : visibilityReplace 3 3 x ≤ h := (monotone_visibilityReplace le_rfl hxh.le).trans_eq hh
+  -- At a cell read at `x`, the key of the code is the key of `x`, and the value has that key.
+  have key (d : ι) (hd : h ≤ visibilityReplace 3 3 (orbitCode 3 W d))
+      (h1 : ¬ visibilityReplace 3 3 x < visibilityReplace 3 3 (orbitCode 3 W d)) :
+      visibilityReplace 3 3 (orbitCode 3 W d) = visibilityReplace 3 3 x ∧
+        IsOrbitKey 3 W (W d) ∧ visibilityReplace 3 3 (W d) = visibilityReplace 3 3 x := by
+    have hkd : visibilityReplace 3 3 (orbitCode 3 W d) = visibilityReplace 3 3 x :=
+      le_antisymm (not_lt.mp h1) (hxk.trans hd)
+    have hd0 : W d ≠ ⊥ := fun h0 ↦ by
+      rw [orbitCode_eq_bot_iff.mpr h0, visibilityReplace_bot] at hd
+      exact hh0 (le_bot_iff.mp hd)
+    rcases hrest with ⟨e, hek, hesv⟩ | hnk
+    · have hQe : orbitCode 3 W e < h := lt_of_le_of_ne
+        ((le_visibilityReplace (Nat.le_succ 3) _).trans (hek.trans_le hxk)) fun h' ↦ hesv (h' ▸ hh)
+      have hWe : W e = orbitCode 3 W e := eq_of_min_eq_of_lt (hag e) hQe
+      have he0 : W e ≠ ⊥ := fun h0 ↦ hesv (by rw [← hWe, h0]; exact isSelfVisible_bot 3)
+      have hWk : visibilityReplace 3 3 (W e) = visibilityReplace 3 3 (W d) := le_antisymm
+        ((visibilityReplace_orbitCode_le_iff hd0 he0).mp (by rw [hkd, hek]))
+        ((visibilityReplace_orbitCode_le_iff he0 hd0).mp (by rw [hkd, hek]))
+      refine ⟨hkd, ⟨e, hWk, by rwa [hWe]⟩, ?_⟩
+      rw [← hWk, hWe, hek]
+    · exact absurd ⟨d, by rwa [Ne, orbitCode_eq_bot_iff], hkd⟩ hnk
+  have hsup : (({d | h ≤ visibilityReplace 3 3 (orbitCode 3 W d)} : Finset ι).sup
+      fun d ↦ cellReading 3 W d x) ≤ x := by
+    classical
+    refine Finset.sup_le fun d hd ↦ ?_
+    have hd' := (mem_filter.mp hd).2
+    unfold cellReading
+    split_ifs with h1 h2
+    · exact bot_le
+    · exact (moveToBlock_eq_self (key d hd' h1).2.2).le
+    · obtain ⟨hkd, ho, -⟩ := key d hd' h1
+      exact absurd ⟨hkd.symm, ho⟩ h2
+  rw [orbitDecoder, min_eq_left hxh.le, max_eq_left hsup]
+  exact min_eq_left hxh.le
 
 end VaughtConjecture.Label
