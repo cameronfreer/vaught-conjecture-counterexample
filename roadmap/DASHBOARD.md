@@ -345,15 +345,35 @@ named hypothesis.
    existence, Scott isolation with countable-limit existence, terminal presentations, and global
    termination (`README.md`, the section on the top-free witnesses, "Complementary global
    routes"; `IMPLEMENTATION.md`, §4, statements 1–10 with their completion criteria).
-7. **The common core of the receiving routes** (open; the labels form refuted).  The finite
-   hypotheses of the routes to (R1)–(R4) and the completion are instances of one hypothesis on
-   stage types, prescribed rows at the cells of full scope
-   (`StageType.HasPrescribedFullRows`), at inputs where the route's prescription is consistent with
-   the faces (`Extension/PrescribedFullRowsRoutes`, compiled in this repository (theorems named)).
-   Consistency is necessary (`StageType.IsFullRowRealization.isFaceConsistent`, compiled).  The
-   form consistent only at the labels is refuted at every stage at `P α`
+7. **The common core of the receiving routes** (open; the labels form refuted).  One hypothesis on
+   stage types, prescribed rows at the cells of full scope (`StageType.HasPrescribedFullRows`),
+   implies parts of the routes' finite hypotheses at inputs where the route's prescription is
+   compatible with the faces (`Extension/PrescribedFullRowsRoutes`, compiled in this repository
+   (theorems named)); route by route:
+   - (R2)/(R3): with compatibility it gives the reading context; conversely a reading context makes
+     some reading prescription compatible, so under the core the two are equivalent.  The route's
+     open passage from a graded context with a top to a reading context is not derived from the
+     core.
+   - (R1): the implication to block-tight saturations is vacuous at the known refuting context:
+     the block prescription is not compatible wherever the context has a lawful labelling `⊥` at a
+     block cell and not `⊥` at a cell of the top grade
+     (`PrescribedFullRows.not_isFaceCompatible_block`, compiled), which holds at the per-block
+     route's refuting context `CoupledGatedExtensionCounterexample.P α` for every `α > 1` (argued
+     from compiled pieces of that route, not on `main`).  It is not a reduction.
+   - (R4): only the part concerning the scheme (`PrescribedFullRows.IsCapReadingScheme`); the
+     composition with the cap's label and the calibration to a stable recovery scheme is not
+     compiled.
+   - The completion is not an instance (argued): under the core the coatom extension property is
+     equivalent to the compatibility of the empty prescription
+     (`StageType.HasPrescribedFullRows.hasCoatomExtensions_iff`), an additional open hypothesis
+     (`StageType.HasCompatibleEmptyPrescription`), and the canonical multi-layer step fixes the
+     shape of the completion.
+
+   Compatibility is necessary (`StageType.IsPrescribedExtension.isFaceCompatible`, compiled).  The
+   form compatible only at the labels of the context is refuted at every stage at
+   `GatedExtensionCounterexample.P α`
    (`PrescribedFullRowsCounterexample.not_hasPrescribedFullRowsAtLabels`, refuted); the uniform
-   form survives that input (`PrescribedFullRowsCounterexample.not_isFaceConsistent`) and is open.
-   Under it the coatom extension property is the consistency of the empty prescription
-   (`StageType.HasPrescribedFullRows.hasCoatomExtensions_iff`), so a general proof first meets the
-   open completion of item 1.  The routes' gaps are unchanged and kept separate.
+   form is not tested by that input, whose compatibility premise fails
+   (`PrescribedFullRowsCounterexample.not_isFaceCompatible`), and is open.  A general proof of the
+   core first meets the open completion of item 1.  The routes' gaps are unchanged and kept
+   separate.
