@@ -394,7 +394,7 @@ end StageType
 
 namespace StageType
 
-variable {α : Ordinal.{u}} {n k : ℕ}
+variable {α : Ordinal.{u}} {k n : ℕ}
 
 /-- **The root of a pinned extension**: in a one-point extension `D` of `t'` whose face along
 `extendByLast h` is `d`, the cells of the common face `t` (the face of `t'` along `h` and of `d`
