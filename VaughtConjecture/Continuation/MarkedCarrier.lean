@@ -8,10 +8,10 @@ import VaughtConjecture.Extension.PrescribedFullRows
 import VaughtConjecture.Stage.MarkedCap
 
 /-!
-# Marked carriers: scheme determination over a marked-cap context with reference cells
+# Marked carriers: determination over a marked-cap context with reference cells
 
 Roadmap, Layer 3 ((R3) of the table of 3.4: the hollow context with its private cap, marker and
-reference cells; scheme determination) and 3.4 (prescribed rows at the cells of full scope).
+reference cells; determination) and 3.4 (prescribed rows at the cells of full scope).
 
 **The marked-carrier context** (`StageType.IsMarkedCarrierContextAt`, defined in this repository).
 A marked-cap context (`StageType.IsMarkedCapContext`, top cap `c` of grade `N > n + 1`, marker `r`,
@@ -20,16 +20,19 @@ and the row inequality at the root) together with a **reference cell** at the th
 at most `N` labelled `μ + kz` with `kz < N`, the donor label being `μ + i` with `i ≤ N`.
 
 **The marked prescription** (`StageType.markedPrescription`).  At the grade `N`, a cell of full
-scope reads every new cell of `d` labelled `⊤` at least as the marker, every new cell labelled `⊥`
-as `⊥`, and every new cell with a proper label in one block with a reference cell.
+scope reads every new cell of `d` labelled `⊤` at least as the marker, and every new cell with a
+proper label in one block with a reference cell; it asks nothing of the new cells labelled `⊥`.
 
 **A marked carrier determines the donor** (`StageType.isDeterminedWithin_of_isPrescribedExtension`,
 compiled in this repository (theorem named)).  A prescribed extension `D` for the marked
-prescription over `t'` carrying `d` determines `d` over `t'` along `h` within the stage types on
-its scheme: availability from the top cap gives a cell of graded index `(univ, N)` labelled `⊤`,
-and its row forces the labels of the new cells (`CellScheme.Rows.IsLawful.eq_top_of_row_le` for
-the tops, with no condition on the grade of the marker; the readings of `⊥` and of a reference
-cell for the others).
+prescription over `t'` carrying `d` determines `d` over `t'` along `h` within the bottom-pattern
+family of `D` (the clause of a model that prescribes where a realized coface is `⊥`, [Kni26,
+Definition 3.2.1, clause 4(a)ii]): the bottom pattern fixes the new cells labelled `⊥`; availability
+from the top cap gives a cell of graded index `(univ, N)` labelled `⊤`, and its row forces the
+other new cells (`CellScheme.Rows.IsLawful.eq_top_of_row_le` for the tops, with no condition on
+the grade of the marker; the reading of a reference cell for the proper labels).  A reading of a
+new cell as `⊥` is avoided on purpose: by bountifulness it would force `⊥` in every extension of
+every lawful labelling of `t'` whose cap is not `⊥`.
 
 **Marked carriers** (`StageType.HasMarkedCarriers`, a named hypothesis on stage types; open): a
 prescribed extension for the marked prescription exists over every legal marked-carrier context
@@ -38,7 +41,7 @@ of the marked prescriptions (`StageType.HasCompatibleMarkedPrescriptions`, open)
 (`StageType.HasPrescribedFullRows.hasMarkedCarriers`), and it implies that compatibility
 (`StageType.HasMarkedCarriers.hasCompatibleMarkedPrescriptions`).  No implication from
 `StageType.HasApexCoatomExtensions` or `StageType.HasCoatomExtensions` is compiled.  Under it,
-scheme determination holds over marked-carrier contexts
+determination within the bottom-pattern family of a coface holds over marked-carrier contexts
 (`StageType.HasMarkedCarriers.exists_coface_isDeterminedWithin`).
 
 ## Placement
@@ -126,15 +129,15 @@ theorem IsMarkedCarrierContext.isMarkedCapContext {t' : StageType.{u} α k} {h :
   ⟨c, r, hc, hr, hn, ha⟩
 
 /-- The **marked prescription** with top cap `c` and marker `r`: at the grade `N` of `c`, a cell
-of full scope reads every new cell of `d` labelled `⊤` at least as `r`, every new cell labelled
-`⊥` as `⊥`, and every new cell with a proper label `μ + i` in one block with a reference cell
-labelled `μ + kz` (`kz < N`, `i ≤ N`, grade at most `N`), at `ω * ν + kz` and `ω * ν + i`.  At
-the other grades it asks nothing. -/
+of full scope reads every new cell of `d` labelled `⊤` at least as `r`, and every new cell with a
+proper label `μ + i` in one block with a reference cell labelled `μ + kz` (`kz < N`, `i ≤ N`,
+grade at most `N`), at `ω * ν + kz` and `ω * ν + i`.  It asks nothing of the new cells labelled
+`⊥` (the bottom pattern fixes them) and nothing at the other grades. -/
 def markedPrescription (t' : StageType.{u} α k) (d : StageType.{u} α (n + 1)) (c r : Fin t'.card) :
     FullRowPrescription t' d :=
   fun g ρ _ ↦ g = t'.toCellScheme.grade c →
     ∀ j : Fin d.card, Fin.last n ∈ d.toCellScheme.scope j →
-      (d.label j = ⊤ → ρ (.inl r) ≤ ρ (.inr j)) ∧ (d.label j = ⊥ → ρ (.inr j) = ⊥) ∧
+      (d.label j = ⊤ → ρ (.inl r) ≤ ρ (.inr j)) ∧
       (d.label j ≠ ⊥ → d.label j ≠ ⊤ → ∃ (z : Fin t'.card) (μ ν : Ordinal.{u}) (kz i : ℕ),
         Order.IsSuccPrelimit μ ∧ t'.toCellScheme.grade z ≤ g ∧
         t'.label z = ((μ + kz : Ordinal.{u}) : Label.{u}) ∧ kz < g ∧
@@ -149,26 +152,27 @@ one-point coface of `t`, let `c` be a top cap of `t'` of grade `N ≥ n + 1`, an
 labelled `⊤`.  If `D` is a prescribed extension for the marked prescription over `t'` carrying
 `d` (a legal one-point extension of `t'` with face `d` along `extendByLast h` whose cells of
 graded index `(univ, N)` read the new cells of `d` as prescribed), then `d` is determined over
-`t'` along `h` within the stage types on the scheme of `D`.
+`t'` along `h` within the bottom-pattern family of `D` (the stage types on the scheme of `D` that
+are `⊥` exactly where `D` is, at the cells of grade at most `k`).
 
 Let `q` be such a stage type with face `t'` along the first points.  The cells of the root keep
-their labels.  The top cap of `t'` is labelled `⊤` in `q`, so by availability some cell `u` of
-graded index `(univ, N)` is labelled `⊤`, and its row reads the new cells of `d` as prescribed: a
-new cell labelled `⊤` in `d` is read at least as `r`, hence is `⊤`
-(`CellScheme.Rows.IsLawful.eq_top_of_row_le`); one labelled `⊥` is read as `⊥`, hence is `⊥`
-(`CellScheme.Rows.IsLawful.label_eq_bot_of_reading`); one with a proper label is read in one block
-with its reference cell, under the top cap, hence has the prescribed label
-(`CellScheme.Rows.IsLawful.label_eq_of_reading`). -/
+their labels, and the new cells labelled `⊥` in `d` are `⊥` in `q` (the bottom pattern).  The top
+cap of `t'` is labelled `⊤` in `q`, so by availability some cell `u` of graded index `(univ, N)` is
+labelled `⊤`, and its row reads the other new cells of `d` as prescribed: a new cell labelled `⊤`
+in `d` is read at least as `r`, hence is `⊤` (`CellScheme.Rows.IsLawful.eq_top_of_row_le`); one
+with a proper label is read in one block with its reference cell, under the top cap, hence has the
+prescribed label (`CellScheme.Rows.IsLawful.label_eq_of_reading`).  No reading forces `⊥`: a
+reading of a cell as `⊥` would force `⊥` in every extension of every lawful labelling of `t'` with
+a cap not `⊥` (bountifulness), while the bottom pattern concerns the realized member only. -/
 theorem isDeterminedWithin_of_isPrescribedExtension {t' : StageType.{u} α k} {h : Fin n ↪ Fin k}
     {t : StageType.{u} α n} {d : StageType.{u} α (n + 1)} {c r : Fin t'.card}
     (ht : restrictFace h t' = some t) (hd : restrictFace Fin.castSuccEmb d = some t)
     (hc : t'.IsTopCap c) (hr : t'.label r = ⊤) (hn : n + 1 ≤ t'.toCellScheme.grade c)
     {D : StageType.{u} α (k + 1)}
     (hD : IsPrescribedExtension t' h d (markedPrescription t' d c r) D) :
-    IsDeterminedWithin (saturationFamily D.toScheme) t' h d := by
+    IsDeterminedWithin (bottomPatternFamily D.toScheme D.label) t' h d := by
   obtain ⟨hDl, h₁, h₂, he₁, he₂, hS⟩ := hD
-  rintro ⟨S, ℓ, hw, hcod, hl, hat⟩ hq hq₁
-  rw [mem_saturationFamily] at hq
+  rintro ⟨S, ℓ, hw, hcod, hl, hat⟩ ⟨hq, hpat⟩ hq₁
   -- the stage type `q` has the scheme of `D`
   change S = D.toScheme at hq
   subst hq
@@ -201,7 +205,7 @@ theorem isDeterminedWithin_of_isPrescribedExtension {t' : StageType.{u} α k} {h
         exact Prod.mk_le_mk.mpr ⟨subset_univ _, hy⟩
       have hx : faceCell h₂ j ∈ D.toCellScheme.below (D.toCellScheme.gradedIndex u) :=
         hbelow _ ((grade_faceCell h₂ j).trans_le ((d.grade_le j).trans hn))
-      obtain ⟨htop, hbot, hprop⟩ := hS u N hu' rfl j hj
+      obtain ⟨htop, hprop⟩ := hS u N hu' rfl j hj
       -- the readings of the known cells are entries of the row of `u`
       have hread (y : Fin D.card) (hy : y ∈ D.toCellScheme.below (D.toCellScheme.gradedIndex u)) :
           D.rowAt u y = D.rows.row u ⟨y, hy⟩ := Scheme.rowAt_of_mem hy
@@ -215,12 +219,12 @@ theorem isDeterminedWithin_of_isPrescribedExtension {t' : StageType.{u} α k} {h
         rw [hjt]
         exact hl.eq_top_of_row_le hs hx hℓu ((hold r).trans hr) hrow
       by_cases hjb : d.label j = ⊥
-      · have hrow := hbot hjb
-        -- the reading is that of the cell of `D` at `j`
-        change D.rowAt u (faceCell h₂ j) = ⊥ at hrow
-        rw [hread _ hx] at hrow
+      · -- the bottom pattern of `D` at the cell of `j`, of grade at most `k`
+        have hgx : D.toCellScheme.grade (faceCell h₂ j) ≤ k :=
+          (grade_faceCell h₂ j).trans_le (((d.grade_le j).trans hn).trans hNk)
         rw [hjb]
-        exact hl.label_eq_bot_of_reading hx hrow (hℓu ▸ top_ne_bot)
+        set x : Fin D.card := faceCell h₂ j
+        exact (hpat x x rfl hgx).mpr ((label_faceCell h₂ j).trans hjb)
       obtain ⟨z, μ, ν, kz, i, hμ, hzN, hz, hkz, hdj, hiN, hρz, hρj⟩ := hprop hjb hjt
       have ha : faceCell h₁ z ∈ D.toCellScheme.below (D.toCellScheme.gradedIndex u) :=
         hbelow _ ((grade_faceCell h₁ z).trans_le hzN)
@@ -263,9 +267,8 @@ variable (α) in
 legal marked-carrier context `t'` along `h` for a legal donor `d`, a one-point coface of the face
 of `t'` along `h`, with top cap `c` and marker `r`, there is a prescribed extension for the marked
 prescription: a legal one-point extension of `t'` carrying `d` whose cells of graded index
-`(univ, N)` (`N` the grade of `c`) read every new cell of `d` labelled `⊤` at least as `r`, every
-new cell labelled `⊥` as `⊥`, and every new cell with a proper label in one block with a reference
-cell. -/
+`(univ, N)` (`N` the grade of `c`) read every new cell of `d` labelled `⊤` at least as `r`, and
+every new cell with a proper label in one block with a reference cell. -/
 def HasMarkedCarriers : Prop :=
   ∀ ⦃k n : ℕ⦄ (t' : StageType.{u} α k) (h : Fin n ↪ Fin k) (t : StageType.{u} α n)
     (_ : restrictFace h t' = some t) (d : StageType.{u} α (n + 1))
@@ -298,15 +301,15 @@ theorem HasMarkedCarriers.hasCompatibleMarkedPrescriptions (hcar : HasMarkedCarr
   let ⟨_, hD⟩ := hcar t' h t ht d hd c r ht' hd' hctx
   hD.isFaceCompatible ht hd
 
-/-- **Scheme determination over a marked-carrier context**, conditional on marked carriers: over a
-legal marked-carrier context `t'` along `h` for a legal one-point coface `d` of the face `t` of
-`t'` along `h`, some legal one-point coface `D'` of `t'` determines `d` within the stage types on
-its scheme. -/
+/-- **Determination over a marked-carrier context**, conditional on marked carriers: over a legal
+marked-carrier context `t'` along `h` for a legal one-point coface `d` of the face `t` of `t'`
+along `h`, some legal one-point coface `D'` of `t'` determines `d` within its bottom-pattern
+family. -/
 theorem HasMarkedCarriers.exists_coface_isDeterminedWithin (hcar : HasMarkedCarriers.{u} α)
     {t' : StageType.{u} α k} (ht' : t'.IsLegal) {h : Fin n ↪ Fin k} {t : StageType.{u} α n}
     (ht : restrictFace h t' = some t) {d : StageType.{u} α (n + 1)} (hd : d ∈ t.cofaces)
     (hctx : t'.IsMarkedCarrierContext h d) :
-    ∃ D' ∈ t'.cofaces, IsDeterminedWithin (saturationFamily D'.toScheme) t' h d := by
+    ∃ D' ∈ t'.cofaces, IsDeterminedWithin (bottomPatternFamily D'.toScheme D'.label) t' h d := by
   obtain ⟨c, r, hcr⟩ := hctx
   obtain ⟨D, hD⟩ := hcar t' h t ht d hd.2 c r ht' hd.1 hcr
   exact ⟨D, ⟨hD.1, hD.2.1⟩, isDeterminedWithin_of_isPrescribedExtension ht hd.2 hcr.1

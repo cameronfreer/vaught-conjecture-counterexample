@@ -31,7 +31,7 @@ generalized saturation nor any receiving hypothesis is used.
 repository (theorem named)): `Realization.HollowReceiving` for `Realization.IsCoverHollowAtBlock`
 holds if `StageType.HasMarkedCarriers` (open) holds at every block stage, through the acquisition,
 scheme determination by a marked carrier
-(`StageType.HasMarkedCarriers.exists_coface_isDeterminedWithin`) and generalized saturation.
+(`StageType.HasMarkedCarriers.exists_coface_isDeterminedWithin`) and the bottom-pattern clause.
 The restricted form follows (`Realization.hollowReceiving_withoutRigidCore_of_hasMarkedCarriers`),
 and so does the form from
 `StageType.HasPrescribedFullRows` with the compatibility of the marked prescriptions
@@ -211,8 +211,8 @@ every block stage, then (R3) holds for cover-hollowness at a block stage.  Over 
 cover-hollow model with unbounded growth, a marked-carrier context is acquired for the donor
 (`Realization.IsModel.exists_isMarkedCarrierContext`); a marked carrier over it determines the
 donor within the stage types on its scheme
-(`StageType.HasMarkedCarriers.exists_coface_isDeterminedWithin`); generalized saturation
-realizes one of them over the context, and the donor is received
+(`StageType.HasMarkedCarriers.exists_coface_isDeterminedWithin`); the bottom-pattern
+clause of modelhood realizes one of them over the context, and the donor is received
 (`Realization.exists_covers_snoc_of_isDeterminedWithin`).  No receiving hypothesis is used. -/
 theorem hollowReceiving_of_hasMarkedCarriers
     (hcar : ∀ ξ : Ordinal.{u}, StageType.HasMarkedCarriers.{u} (blockStage ξ)) :
@@ -228,8 +228,12 @@ theorem hollowReceiving_of_hasMarkedCarriers
     obtain ⟨D', hD', hdet⟩ := (hcar ξ).exists_coface_isDeterminedWithin
       (hR.isLegal _ _ hc'.eval_eq) ht hd hctx
     rw [← hcc']
-    exact exists_covers_snoc_of_isDeterminedWithin hR.isConsistent hc'
-      (hR.realizesOver_saturationFamily hc' hD') hdet
+    -- the bottom pattern of `D'` over the cover `c'`
+    have hU : R.RealizesOver ⟨c', hc'.injective⟩
+        (StageType.bottomPatternFamily D'.toScheme D'.label) :=
+      hR.bottomPattern ⟨k, ⟨c', hc'.injective⟩, t', hc'.eval_eq⟩ D'.toScheme D'.label
+        ⟨D', hD', rfl, fun i j hij _ ↦ by rw [Fin.ext hij]⟩
+    exact exists_covers_snoc_of_isDeterminedWithin hR.isConsistent hc' hU hdet
 
 /-- **The restricted form (item 6′) from marked carriers**: (R3) for cover-hollowness without a
 globally rigid core at a block stage, through `Realization.HollowReceiving.withoutRigidCore`. -/
