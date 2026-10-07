@@ -3,6 +3,7 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
+import VaughtConjecture.Counting.OrdinalAttainment
 import VaughtConjecture.MainTheorem.LowerBound
 
 /-!
@@ -42,7 +43,8 @@ the same index `η`, with no offset), a sentence of quantifier rank `δ < ω₁`
 (`le_lastStage`).  Membership in the domains is downward closed and continuous at the nonzero
 countable limits, and holds at `0`, so once `q ∉ D_ξ` for some `ξ < ω₁` the set of stages at
 which `q` lies has a greatest element, the last stage, below `ξ` (`isGreatest_lastStage`, through
-the attained greatest index `exists_isGreatest_of_closed`): the least stage missing `q` is the
+the attained greatest index `exists_isGreatest_of_closed`, in
+`VaughtConjecture.Counting.OrdinalAttainment`): the least stage missing `q` is the
 successor of the last stage.  Then `q ∈ D_β ↔ β ≤ lastStage D q` for every ordinal `β`, `β ≥ ω₁`
 included.  Under isolation, logical agreement and nonempty losses:
 * `exists_lastStage`: a countable `ρ` with `q ∈ D_β ↔ β ≤ ρ` for every `β`;
@@ -84,10 +86,6 @@ conditional on the following hypotheses, each still to be proved:
   the open part of (R6)): the nonempty losses.
 Countable losses (condition 2) are not used.
 
-**The attained greatest index.**  `exists_isGreatest_of_closed` uses Mathlib only.  It follows
-from the greatest-stage statements of InfinitaryLogic (`OrdinalUtil`), available upstream, not at
-the pin `e460cb6`, but it is not the same statement as any of them.
-
 ## Placement
 
 This file belongs to Layer 6 of `roadmap/README.md`.
@@ -96,39 +94,6 @@ This file belongs to Layer 6 of `roadmap/README.md`.
 universe u v x y
 
 open Order Ordinal
-
-namespace VaughtConjecture
-
-/-- **An attained greatest index**: a predicate on ordinals that holds at `β`, is closed
-downward, is closed at the nonzero countable limits, and holds only below a countable ordinal `δ`
-has a greatest element `ρ`, with `β ≤ ρ < δ`.  Mathlib only.  The greatest element is the
-supremum of the ordinals at which the predicate holds: if the predicate failed there, it would
-hold everywhere below, so the supremum would be neither zero, nor a successor, nor a limit.  It
-follows from the greatest-stage statements of InfinitaryLogic, available upstream, not at the pin
-`e460cb6`, whose hypotheses and conclusions differ. -/
-theorem exists_isGreatest_of_closed {P : Ordinal.{u} → Prop} {β δ : Ordinal.{u}} (hβ : P β)
-    (hdown : ∀ ⦃a b⦄, a ≤ b → P b → P a)
-    (hlim : ∀ l, IsSuccLimit l → l < ω₁ → (∀ a < l, P a) → P l)
-    (hbound : ∀ a, P a → a < δ) (hδ : δ < ω₁) :
-    ∃ ρ, IsGreatest {a | P a} ρ ∧ β ≤ ρ ∧ ρ < δ := by
-  have hbdd : BddAbove {a | P a} := ⟨δ, fun a ha ↦ (hbound a ha).le⟩
-  set ρ := sSup {a | P a}
-  have hle : ∀ a, P a → a ≤ ρ := fun a ha ↦ le_csSup hbdd ha
-  suffices hρ : P ρ from ⟨ρ, ⟨hρ, hle⟩, hle β hβ, hbound ρ hρ⟩
-  by_contra hρ
-  -- below the supremum, `P` holds everywhere
-  have hbelow : ∀ a < ρ, P a := fun a ha ↦
-    let ⟨b, hb, hab⟩ := exists_lt_of_lt_csSup ⟨β, hβ⟩ ha
-    hdown hab.le hb
-  rcases zero_or_succ_or_isSuccLimit ρ with h0 | ⟨a, ha⟩ | hl
-  · exact hρ (hdown (h0.le.trans (zero_le (a := β))) hβ)
-  · -- every element is below `a + 1`, so the supremum is at most `a`
-    have hsup : ρ ≤ a := csSup_le ⟨β, hβ⟩ fun b hb ↦
-      lt_succ_iff.mp (ha ▸ (hle b hb).lt_of_ne fun h ↦ hρ (h ▸ hb))
-    exact (lt_succ a).not_ge (ha ▸ hsup)
-  · exact hρ (hlim ρ hl ((csSup_le ⟨β, hβ⟩ fun b hb ↦ (hbound b hb).le).trans_lt hδ) hbelow)
-
-end VaughtConjecture
 
 namespace VaughtConjecture.MainTheorem
 
