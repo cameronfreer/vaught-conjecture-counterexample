@@ -120,6 +120,58 @@ theorem admits_of_min_eq_of_lt {s s' : Fin t'.card → Label.{u}} {v v' : Fin D.
   · rw [readMarker, ← hc, hread _ _ hR, hvc, ← hcc]
     exact hA.2.2 hy
 
+/-- **The admitted step at or below the cap value of the new section**: if `(s, v)` agrees with an
+admitted `(s', v')` capped at `h > ⊥`, and the cap value `c` of `s` is at most `h` and
+self-visible at the threshold, then `(s, v)` is admitted: the cap value of `s'` is at least `c`,
+and every read of the requests at `s'` capped at `c` is the read at `s`. -/
+theorem admits_of_min_eq_of_le {s s' : Fin t'.card → Label.{u}} {v v' : Fin D.card → Label.{u}}
+    (hadm : Q.Admits s' v') {h : Label.{u}} (hh : h ≠ ⊥)
+    (hs : ∀ x, min (s x) h = min (s' x) h) (hv : ∀ j, min (v j) h = min (v' j) h)
+    (hle : s Q.cap ≤ h) (hvis : IsSelfVisible Q.threshold (s Q.cap))
+    (hoff : ∀ j ∈ Q.exacts, Q.offset j ≤ Q.threshold) (hR : Q.markerOffset ≤ Q.threshold) :
+    Q.Admits s v := by
+  intro hclass hcap j
+  set c := s Q.cap with hc
+  have hcc : c ≤ s' Q.cap := by
+    have h1 := hs Q.cap
+    rw [min_eq_left hle] at h1
+    exact h1.trans_le (min_le_left _ _)
+  have hsc (x) : min (s x) c = min (s' x) c := min_eq_min_of_le (hs x) hle
+  have hvc (j) : min (v j) c = min (v' j) c := min_eq_min_of_le (hv j) hle
+  have hbot (x) : s x = ⊥ ↔ s' x = ⊥ := by
+    have h1 := hs x
+    constructor
+    · intro hx
+      rw [hx, min_eq_left bot_le] at h1
+      rcases min_eq_bot.mp h1.symm with h' | h'
+      · exact h'
+      · exact absurd h' hh
+    · intro hx
+      rw [hx, min_eq_left bot_le] at h1
+      rcases min_eq_bot.mp h1 with h' | h'
+      · exact h'
+      · exact absurd h' hh
+  have hA := hadm (fun x hx hx' ↦ hclass x hx ((hbot x).mpr hx'))
+    (fun h0 ↦ hcap (le_bot_iff.mp (h0 ▸ hcc))) j
+  have hread (x : Fin t'.card) (i : ℕ) (hi : i ≤ Q.threshold) :
+      min (visibilityReplace Q.threshold i (s x)) c =
+        min (visibilityReplace Q.threshold i (s' x)) c := by
+    rw [← visibilityReplace_min_of_isSelfVisible hi hvis, hsc,
+      visibilityReplace_min_of_isSelfVisible hi hvis]
+  refine ⟨fun hz ↦ ?_, fun hf ↦ ?_, fun hy ↦ ?_⟩
+  · rw [hvc, ← min_eq_right hcc, ← min_assoc, hA.1 hz, min_eq_left bot_le]
+  · have h1 := hA.2.1 hf
+    rw [readExact] at h1 ⊢
+    rw [← hc, hvc, hread _ _ (hoff j hf), ← min_eq_right hcc, ← min_assoc, h1, min_assoc]
+  · have h1 := hA.2.2 hy
+    rw [readMarker] at h1 ⊢
+    rw [← hc, hread _ _ hR, hvc]
+    calc min (visibilityReplace Q.threshold Q.markerOffset (s' Q.marker)) c
+        = min (min (visibilityReplace Q.threshold Q.markerOffset (s' Q.marker)) (s' Q.cap)) c := by
+          rw [min_assoc, min_eq_right hcc]
+      _ ≤ min (min (v' j) (s' Q.cap)) c := min_le_min_right _ h1
+      _ = min (v' j) c := by rw [min_assoc, min_eq_right hcc]
+
 /-- **Admission is invariant under a relabelling of the values** by a monotone map that is bottom
 exactly at bottom and commutes with visibility replacement at the threshold with values at most the
 threshold: the reads of the requests are minima and visibility replacements of the values. -/

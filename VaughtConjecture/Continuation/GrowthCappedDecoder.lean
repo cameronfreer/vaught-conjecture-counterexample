@@ -21,8 +21,8 @@ witness `(g, σ)` with `min (u d) (u c) = min (σ (row_c d)) (g (grade d))` for 
   `d` below `c`;
 * is bounded by `u c`, fixes `⊥`, is monotone;
 * commutes with visibility replacement at **every** threshold `k ≤ N` with every value `i ≤ k`,
-  with no guard: below the suppressor at `N` the witness commutes since `g N ≤ g k`; above it the
-  value `g N` is kept, by the failure of the guard (`Label.IsWitness.lt_apply_visibilityReplace`)
+  unconditionally: below the suppressor at `N` the witness commutes since `g N ≤ g k`; above it
+  the value `g N` is kept, by `Label.IsWitness.lt_apply_visibilityReplace`
   or by the crossing lemma `Label.IsSelfVisible.le_visibilityReplace_iff` at `k < N`, and by
   `Label.IsWitness.min_visibilityReplace` at `k = N`; capping at `u c`, self-visible at `N`,
   commutes with visibility replacement at `k ≤ N`.
