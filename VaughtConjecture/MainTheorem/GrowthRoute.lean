@@ -20,8 +20,8 @@ of one growth construction (`GrowthCarrier`, in `VaughtConjecture.Realization.Gr
   for the margin calibration (`StageType.HasStableGrowthCarriers`, evaluated by the stable labels;
   the acquisition is compiled);
 * (R3) for receiving models, `HollowReceiving IsReceivingCoverHollowAtBlock`, from exact growth
-  carriers over the marked-cap contexts respecting the root bottoms
-  (`StageType.HasExactGrowthCarriers`, evaluated by the actual labels; the acquisition is
+  carriers for the hollow reference calibration (`StageType.HasExactGrowthCarriers` for
+  `StageType.HollowReferenceCalibration`, evaluated by the actual labels; the acquisition is
   compiled).
 
 Both finite statements are open.  The second hypothesis, (R2) for receiving models, is kept.
@@ -50,17 +50,16 @@ open FirstOrder Language Structure baseLanguage Expansion
 
 /-- **The thin `ℵ₁` spectrum from growth carriers**: the three-hypothesis receiving route with
 (R4) replaced by stable growth carriers for the margin calibration at every `ξ < ω₁` (`hstab`)
-and (R3) replaced by exact growth carriers over the marked-cap contexts respecting the root
-bottoms (`hexact`); (R2) for receiving models (`hres`) is kept.  The three hypotheses are open. -/
+and (R3) replaced by exact growth carriers for the hollow reference calibration (`hexact`); (R2)
+for receiving models (`hres`) is kept.  The three hypotheses are open. -/
 theorem densitySentence_hasThinAlephOneSpectrum_of_growthCarriers
     (hstab : ∀ ξ < ω₁, HasStableGrowthCarriers.{0} ξ (GradedCapMarginCalibration.{0} ξ))
     (hres : ReceivingResidualReceiving.{0, 0})
-    (hexact : HasExactGrowthCarriers.{0}
-      fun t' h _ ↦ TiedRootCapRelabel.MarkedCapContextBelow' t' h) :
+    (hexact : HasExactGrowthCarriers.{0} HollowReferenceCalibration) :
     HasThinAlephOneSpectrum densitySentence.{0} :=
   densitySentence_hasThinAlephOneSpectrum_of_receivingModels'
     (Expansion.ReceivingStableCappedReceiving.of_hasStableGrowthCarriers_gradedCapMargin hstab)
-    hres (receivingHollowReceiving_of_hasExactGrowthCarriers_markedCap hexact)
+    hres (receivingHollowReceiving_of_hasExactGrowthCarriers_reference hexact)
 
 end MainTheorem
 

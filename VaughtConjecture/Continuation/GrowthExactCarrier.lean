@@ -6,6 +6,7 @@ Authors: Cameron Freer
 import VaughtConjecture.Continuation.TiedRootCapRootBottom
 import VaughtConjecture.MainTheorem.ReceivingDetermination
 import VaughtConjecture.Realization.GrowthCarrier
+import VaughtConjecture.Realization.PrivateContext
 
 /-!
 # (R3) as the actual evaluation of a growth carrier
@@ -42,10 +43,15 @@ the realization is a clause of the model.
   donor, exact growth carriers give scheme determination (`Realization.SchemeDetermination`): every
   stage type on the carrier with face `t'` is a lawful section of its rows.
 
-The marked-cap contexts carry no reference cell for the blocks of the proper labels of `d`; a
-calibration with such cells (as for (R4), `StageType.GradedCapMarginCalibration`) is the expected
-input of a construction of exact carriers, and
-`Realization.hollowReceiving_of_hasExactGrowthCarriers` takes any calibration.
+* `StageType.HollowReferenceCalibration` and its acquisition
+  `Realization.hollowGrowthAcquisition_reference` (compiled, no hypothesis): the marked-cap
+  contexts along an enlarged root carrying a reference cell in the block of every ordinal label of
+  the donor; so `Realization.hollowReceiving_of_hasExactGrowthCarriers_reference` reduces (R3)
+  for cover-hollowness at a block stage to exact growth carriers for this calibration alone.
+
+The marked-cap contexts alone carry no reference cell for the blocks of the proper labels of `d`;
+the reference calibration adds them, as the margin calibration does for (R4)
+(`StageType.GradedCapMarginCalibration`).
 
 ## References
 
@@ -178,6 +184,95 @@ theorem receivingHollowReceiving_of_hasExactGrowthCarriers_markedCap
       fun t' h _ ↦ TiedRootCapRelabel.MarkedCapContextBelow' t' h) :
     HollowReceiving.{u, w} IsReceivingCoverHollowAtBlock :=
   (hollowReceiving_of_hasExactGrowthCarriers_markedCap hcar).receiving
+
+end Realization
+
+/-! ### The reference calibration -/
+
+namespace StageType
+
+/-- The **hollow reference calibration** of a context `t'` along `h` for a donor `d`: `h` factors
+through an enlarged root `g` along which `t'` is a marked-cap context with root offsets below the
+cap that respects the root bottoms (`TiedRootCapRelabel.MarkedCapContextBelow'`), and every
+ordinal label `o = μ + m` of `d`, `μ` zero or a limit, has a **reference cell** of the enlarged
+root in its block: a cell visible through `g` labelled `μ + r` for some `r : ℕ`. -/
+def HollowReferenceCalibration {α : Ordinal.{u}} {n k : ℕ} (t' : StageType.{u} α k)
+    (h : Fin n ↪ Fin k) (d : StageType.{u} α (n + 1)) : Prop :=
+  ∃ (j : ℕ) (g : Fin j ↪ Fin k) (h₀ : Fin n ↪ Fin j), h₀.trans g = h ∧
+    TiedRootCapRelabel.MarkedCapContextBelow' t' g ∧
+    ∀ (i : Fin d.card) (o : Ordinal.{u}), d.label i = o →
+      ∃ (μ : Ordinal.{u}) (m r : ℕ) (a : Fin t'.card), Order.IsSuccPrelimit μ ∧ o = μ + m ∧
+        a ∈ t'.visibleCells g ∧ t'.label a = ((μ + r : Ordinal.{u}) : Label.{u})
+
+/-- At a limit stage every label of a stage type lies in a block below the stage: an ordinal
+label is `μ + m` with `μ` zero or a limit below the stage. -/
+theorem exists_block {α : Ordinal.{u}} {n : ℕ} (hα : Order.IsSuccLimit α)
+    (d : StageType.{u} α n) (i : Fin d.card) :
+    ∃ μ : Ordinal.{u}, (Order.IsSuccPrelimit μ ∧ μ < α) ∧
+      ∀ o : Ordinal.{u}, d.label i = o → ∃ m : ℕ, o = μ + m := by
+  have hpos : (0 : Ordinal.{u}) < α := hα.bot_lt
+  rcases atStage_iff.mp (d.atStage i) with h | ⟨o, ho, h⟩ | h
+  · exact ⟨0, ⟨Ordinal.isSuccPrelimit_zero, hpos⟩, fun o ho ↦ by simp [h] at ho⟩
+  · obtain ⟨m, hm⟩ := Ordinal.exists_eq_add_natCast_of_le_of_lt_add_omega0
+      (Ordinal.mul_div_le o Ordinal.omega0)
+      (Ordinal.lt_mul_div_add o Ordinal.omega0_ne_zero)
+    refine ⟨Ordinal.omega0 * (o / Ordinal.omega0),
+      ⟨Ordinal.isSuccPrelimit_iff_omega0_dvd.mpr (dvd_mul_right _ _),
+        (Ordinal.mul_div_le o Ordinal.omega0).trans_lt ho⟩, fun o' ho' ↦ ⟨m, ?_⟩⟩
+    rw [← h] at ho'
+    exact (WithTop.coe_injective (WithBot.coe_injective ho')).symm.trans hm
+  · exact ⟨0, ⟨Ordinal.isSuccPrelimit_zero, hpos⟩, fun o ho ↦ by simp [h] at ho⟩
+
+end StageType
+
+namespace Realization
+
+/-- **Acquisition of the hollow reference calibration**, with no hypothesis: in a model at a
+limit stage that is cover-hollow at a block stage with top-grade supremum `⊤`, every cover `c` of
+`t` extends, for each one-point coface `d` of `t`, to a cover of a context calibrated for `d`.
+Uniformity gives an occurrence `y` containing `c` with a reference cell in the block of every
+ordinal label of `d` (`Realization.IsModel.exists_extend_uniformity`); the acquisition of
+marked-cap contexts (`Realization.rootBottomAcquisition`) over the cover `y` gives the context,
+along an enlarged root through which the reference cells are visible with their labels. -/
+theorem hollowGrowthAcquisition_reference :
+    HollowGrowthAcquisition.{u, w} IsCoverHollowAtBlock StageType.HollowReferenceCalibration where
+  exists_context α M R hα hR hH htop n t c hc d _ := by
+    choose ν hν hνo using StageType.exists_block hα d
+    let x : R.Occurrence := ⟨n, ⟨c, hc.injective⟩, t, hc.eval_eq⟩
+    obtain ⟨y, fy, K, B, hfy, -, -, href⟩ :=
+      hR.exists_extend_uniformity x hα.bot_lt (List.ofFn ν) fun μ hμ ↦ by
+        obtain ⟨i, rfl⟩ := List.mem_ofFn.mp hμ
+        exact hν i
+    obtain ⟨k, t', c', g, hc', hcg, hP⟩ := rootBottomAcquisition.exists_context hα hR hH htop
+      y.type y.tuple (covers_of_eval _ y.eval_tuple)
+    have hface : restrictFace g t' = some y.type :=
+      restrictFace_of_covers hR.isConsistent (covers_of_eval _ y.eval_tuple) hc' hcg
+    refine ⟨k, t', c', fy.trans g, hc', ?_, y.arity, g, fy, rfl, hP, fun i o ho ↦ ?_⟩
+    · funext i
+      change (c' ∘ g) (fy i) = c i
+      rw [hcg]
+      exact DFunLike.congr_fun hfy i
+    · obtain ⟨m, hm⟩ := hνo i o ho
+      obtain ⟨z, r, -, hz, -⟩ := href (ν i) (List.mem_ofFn.mpr ⟨i, rfl⟩)
+      obtain ⟨z', -, hz'l, -⟩ := exists_cellMap_of_restrictFace_eq hface z
+      exact ⟨ν i, m, r, t'.cellMap g z', (hν i).1, hm, t'.cellMap_mem g z', hz'l.trans hz⟩
+
+/-- **(R3) from exact growth carriers for the hollow reference calibration**: exact growth
+carriers over the contexts of `StageType.HollowReferenceCalibration`, a finite statement about
+stage types (open), give (R3) for cover-hollowness at a block stage; the acquisition is compiled
+(`Realization.hollowGrowthAcquisition_reference`). -/
+theorem hollowReceiving_of_hasExactGrowthCarriers_reference
+    (hcar : HasExactGrowthCarriers.{u} StageType.HollowReferenceCalibration) :
+    HollowReceiving.{u, w} IsCoverHollowAtBlock :=
+  hollowReceiving_of_hasExactGrowthCarriers hollowGrowthAcquisition_reference hcar
+
+/-- **(R3) for receiving models from exact growth carriers for the hollow reference
+calibration**: the third hypothesis of the three-hypothesis main theorem, conditional on the
+finite statement of `hollowReceiving_of_hasExactGrowthCarriers_reference` (open). -/
+theorem receivingHollowReceiving_of_hasExactGrowthCarriers_reference
+    (hcar : HasExactGrowthCarriers.{u} StageType.HollowReferenceCalibration) :
+    HollowReceiving.{u, w} IsReceivingCoverHollowAtBlock :=
+  (hollowReceiving_of_hasExactGrowthCarriers_reference hcar).receiving
 
 end Realization
 
