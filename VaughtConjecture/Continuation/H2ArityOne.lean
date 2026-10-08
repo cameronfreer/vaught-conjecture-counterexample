@@ -39,7 +39,7 @@ open Finset Label StageType FieldAdmission
 /-- **The LOW clause with every designated top its own field.** -/
 def SelfLowG {ιC ιD : Type*} (o r : ιC) (K : ℕ) (Lo Tops : Finset ιD) (L : ιC → Label.{u})
     (R : ιD → Label.{u}) : Prop :=
-  ∀ t ∈ Tops, Lo.sup R < R t → frontierAt o r K L ≤ R t
+  ∀ t ∈ Tops, visibilityReplace K K (Lo.sup R) < R t → frontierAt o r K L ≤ R t
 
 /-! ### The statement at two points -/
 
@@ -93,28 +93,83 @@ private theorem sup_lt_of_lt_cap {Lo : Finset ιD} {W R : ιD → Label.{u}} {h 
   rw [Label.eq_of_min_eq_of_lt (hWR d) (hWd.trans hvh)]
   exact hWd
 
+variable (rc rd K) in
+/-- **Donor raising, refined**: as `FieldAdmission.DonorRaising`, except that a designated top
+may also end at most the replacement at `K` of the low maximum of the served face (then the clause
+asks nothing there). -/
+def DonorRaisingV (C : (ιC → Label.{u}) → Prop) (D : (ιD → Label.{u}) → Prop) (A : Set ιR)
+    (Lo Tops : Finset ιD) : Prop :=
+  ∀ {h c : Label.{u}}, IsSelfVisible K h → IsSelfVisible K c → ∀ {R : ιD → Label.{u}}
+    {f : ιC → Label.{u}}, D R → C f → (∀ x, min (f (rc x)) h = min (R (rd x)) h) →
+    (∀ a ∈ A, c ≤ f (rc a)) →
+    ∃ W : ιD → Label.{u}, D W ∧ (∀ x, W (rd x) = f (rc x)) ∧ (∀ d, min (W d) h = min (R d) h) ∧
+      ∀ t ∈ Tops, h ≤ R t → c ≤ W t ∨ W t ≤ visibilityReplace K K (Lo.sup W)
+
+variable (rc rd K) in
+/-- **Donor raising with the gap**: as `H2.DonorRaisingV`, given in addition that every designated
+top of the served face above the replaced low maximum is at least `min c h` (at a state of the
+clause, `c` the frontier cap of the context face, this is the clause itself). -/
+def DonorRaisingGap (C : (ιC → Label.{u}) → Prop) (D : (ιD → Label.{u}) → Prop) (A : Set ιR)
+    (Lo Tops : Finset ιD) : Prop :=
+  ∀ {h c : Label.{u}}, IsSelfVisible K h → IsSelfVisible K c → ∀ {R : ιD → Label.{u}}
+    {f : ιC → Label.{u}}, D R → C f → (∀ x, min (f (rc x)) h = min (R (rd x)) h) →
+    (∀ a ∈ A, c ≤ f (rc a)) →
+    (∀ t ∈ Tops, visibilityReplace K K (Lo.sup R) < R t → min c h ≤ R t) →
+    ∃ W : ιD → Label.{u}, D W ∧ (∀ x, W (rd x) = f (rc x)) ∧ (∀ d, min (W d) h = min (R d) h) ∧
+      ∀ t ∈ Tops, h ≤ R t → c ≤ W t ∨ W t ≤ visibilityReplace K K (Lo.sup W)
+
+/-- Refined donor raising gives donor raising with the gap. -/
+theorem donorRaisingGap_of_V {C : (ιC → Label.{u}) → Prop} {D : (ιD → Label.{u}) → Prop}
+    {A : Set ιR} {Lo Tops : Finset ιD} (hDR : DonorRaisingV rc rd K C D A Lo Tops) :
+    DonorRaisingGap rc rd K C D A Lo Tops :=
+  fun hh hc _ _ hR hf hroot hA _ ↦ hDR hh hc hR hf hroot hA
+
+/-- Donor raising gives the refined donor raising. -/
+theorem donorRaisingV_of {C : (ιC → Label.{u}) → Prop} {D : (ιD → Label.{u}) → Prop}
+    {A : Set ιR} {Lo Tops : Finset ιD} (hDR : DonorRaising rc rd K C D A Tops) :
+    DonorRaisingV rc rd K C D A Lo Tops := fun {_ _} hh hc {_ _} hR hf hroot hA ↦ by
+  obtain ⟨W, hW, hWr, hWR, hWt⟩ := hDR hh hc hR hf hroot hA
+  exact ⟨W, hW, hWr, hWR, fun t ht hRt ↦ .inl (hWt t ht hRt)⟩
+
+/-- A map fixing `⊥` sends the maximum over `Lo` below the maximum of the images. -/
+theorem le_sup_comp {Lo : Finset ιD} {σ : Label.{u} → Label.{u}} (hσ0 : σ ⊥ = ⊥)
+    (R : ιD → Label.{u}) : σ (Lo.sup R) ≤ Lo.sup fun z ↦ σ (R z) := by
+  rcases Lo.eq_empty_or_nonempty with he | hne
+  · subst he
+    rw [Finset.sup_empty, hσ0]
+    exact bot_le
+  · obtain ⟨d, hd, hdeq⟩ := Finset.exists_mem_eq_sup Lo hne R
+    rw [hdeq]
+    exact Finset.le_sup (f := fun z ↦ σ (R z)) hd
+
+/-- Faces agreeing capped at `h`, with the replaced low maximum of one below a value under `h`,
+have the same low maximum. -/
+theorem sup_eq_of_lt_cap {Lo : Finset ιD} {W R : ιD → Label.{u}} {h v : Label.{u}}
+    (hWR : ∀ d, min (W d) h = min (R d) h) (hvh : v < h)
+    (hlt : visibilityReplace K K (Lo.sup W) < v) : Lo.sup R = Lo.sup W := by
+  refine Finset.sup_congr rfl fun d hd ↦ ?_
+  have hWd : W d < h := (((Finset.le_sup hd).trans (le_visibilityReplace (by omega) _)).trans_lt
+    hlt).trans hvh
+  exact Label.eq_of_min_eq_of_lt (hWR d) hWd
+
 /-- **The clause is an admission of states** under the order law at the owner, the frontier bound
-at the root cells `A`, donor raising, and owner lowering. -/
-theorem selfLow_isStateAdmission {o r : ιC} {C : (ιC → Label.{u}) → Prop}
+at the root cells `A`, donor raising with the gap, and owner lowering. -/
+theorem selfLow_isStateAdmissionGap {o r : ιC} {C : (ιC → Label.{u}) → Prop}
     {D : (ιD → Label.{u}) → Prop} {Lo Tops : Finset ιD} (A : Set ιR)
     (hCo : ∀ f, C f → IsSelfVisible K (f o))
     (hCF : ∀ f, C f → ∀ a ∈ A, frontierAt o r K f ≤ f (rc a))
-    (hDR : DonorRaising rc rd K C D A Tops) (hOL : OwnerLowering rc rd o r K C D) :
+    (hDR : DonorRaisingGap rc rd K C D A Lo Tops) (hOL : OwnerLowering rc rd o r K C D) :
     IsStateAdmission rc rd K C D (SelfLowG o r K Lo Tops) where
   bot := fun _ _ h ↦ absurd h (by simp)
   comp := fun {σ} hσ hσ0 hc {L R} h t ht hlt ↦ by
-    have hlt' : Lo.sup R < R t := by
+    have hlt' : visibilityReplace K K (Lo.sup R) < R t := by
       by_contra hcon
       refine hlt.not_ge ?_
-      have hc' : R t ≤ Lo.sup R := not_lt.mp hcon
-      rcases Lo.eq_empty_or_nonempty with he | hne
-      · subst he
-        rw [Finset.sup_empty, le_bot_iff] at hc'
-        change σ (R t) ≤ _
-        rw [hc', hσ0]
-        exact bot_le
-      · obtain ⟨d, hd, hdeq⟩ := Finset.exists_mem_eq_sup Lo hne R
-        exact (hσ (hc'.trans hdeq.le)).trans (Finset.le_sup (f := fun z ↦ σ (R z)) hd)
+      have hc' : R t ≤ visibilityReplace K K (Lo.sup R) := not_lt.mp hcon
+      calc σ (R t) ≤ σ (visibilityReplace K K (Lo.sup R)) := hσ hc'
+        _ = visibilityReplace K K (σ (Lo.sup R)) := hc _
+        _ ≤ visibilityReplace K K (Lo.sup fun z ↦ σ (R z)) :=
+          monotone_visibilityReplace le_rfl (le_sup_comp hσ0 R)
     have := hσ (h t ht hlt')
     refine le_trans (le_of_eq ?_) this
     rw [frontierAt, frontierAt, hσ.map_min, hc]
@@ -122,17 +177,24 @@ theorem selfLow_isStateAdmission {o r : ιC} {C : (ιC → Label.{u}) → Prop}
     have hroot (x : ιR) : min (f (rc x)) h = min (R (rd x)) h := by rw [hfL, hy]
     have hsv : IsSelfVisible K (frontierAt o r K f) :=
       (hCo f hf).min (visibilityReplace_self_visibilityReplace le_rfl (f r))
-    obtain ⟨W, hW, hWr, hWR, hWt⟩ := hDR hh hsv hR hf hroot (hCF f hf)
+    have hgap : ∀ t ∈ Tops, visibilityReplace K K (Lo.sup R) < R t →
+        min (frontierAt o r K f) h ≤ R t := fun t ht hlt ↦ by
+      rw [frontierAt_cap (o := o) (r := r) hh hfL]
+      exact (min_le_left _ _).trans (hadm t ht hlt)
+    obtain ⟨W, hW, hWr, hWR, hWt⟩ := hDR hh hsv hR hf hroot (hCF f hf) hgap
     refine ⟨W, hW, hWr, hWR, fun t ht hlt ↦ ?_⟩
     by_cases hRt : R t < h
     · have hWt' : W t = R t := Label.eq_of_min_eq_of_lt (hWR t).symm hRt
       rw [hWt'] at hlt ⊢
-      have horig := hadm t ht (sup_lt_of_lt_cap hWR hRt hlt)
+      have hsup := sup_eq_of_lt_cap (Lo := Lo) hWR hRt hlt
+      have horig := hadm t ht (by rw [hsup]; exact hlt)
       have hFF : frontierAt o r K f = frontierAt o r K L :=
         Label.eq_of_min_eq_of_lt (frontierAt_cap (o := o) (r := r) hh hfL).symm (horig.trans_lt hRt)
       rw [hFF]
       exact horig
-    · exact hWt t ht (not_lt.mp hRt)
+    · rcases hWt t ht (not_lt.mp hRt) with h1 | h1
+      · exact h1
+      · exact absurd hlt (not_lt.mpr h1)
   donor := fun {h} hh {L R f} hL hR hy hadm hf hfR ↦ by
     have hroot (x : ιR) : min (f (rd x)) h = min (L (rc x)) h := by rw [hfR, hy]
     obtain ⟨W, hW, hWr, hWL, hWF⟩ := hOL hh hL hf hroot
@@ -140,7 +202,8 @@ theorem selfLow_isStateAdmission {o r : ιC} {C : (ιC → Label.{u}) → Prop}
     by_cases hRt : R t < h
     · have hft : f t = R t := Label.eq_of_min_eq_of_lt (hfR t).symm hRt
       rw [hft] at hlt ⊢
-      have horig := hadm t ht (sup_lt_of_lt_cap hfR hRt hlt)
+      have hsup := sup_eq_of_lt_cap (Lo := Lo) hfR hRt hlt
+      have horig := hadm t ht (by rw [hsup]; exact hlt)
       have hFL : frontierAt o r K L < h := horig.trans_lt hRt
       have hcap := frontierAt_cap (o := o) (r := r) hh hWL
       rw [min_eq_left hWF, min_eq_left hFL.le] at hcap
@@ -151,6 +214,24 @@ theorem selfLow_isStateAdmission {o r : ιC} {C : (ιC → Label.{u}) → Prop}
         rw [min_eq_right (not_lt.mp hRt)] at e
         exact min_eq_right_iff.mp e
       exact hWF.trans hft
+
+/-- **The clause is an admission of states** under the refined donor raising. -/
+theorem selfLow_isStateAdmissionV {o r : ιC} {C : (ιC → Label.{u}) → Prop}
+    {D : (ιD → Label.{u}) → Prop} {Lo Tops : Finset ιD} (A : Set ιR)
+    (hCo : ∀ f, C f → IsSelfVisible K (f o))
+    (hCF : ∀ f, C f → ∀ a ∈ A, frontierAt o r K f ≤ f (rc a))
+    (hDR : DonorRaisingV rc rd K C D A Lo Tops) (hOL : OwnerLowering rc rd o r K C D) :
+    IsStateAdmission rc rd K C D (SelfLowG o r K Lo Tops) :=
+  selfLow_isStateAdmissionGap A hCo hCF (donorRaisingGap_of_V hDR) hOL
+
+/-- **The clause is an admission of states** under donor raising (the unrefined form). -/
+theorem selfLow_isStateAdmission {o r : ιC} {C : (ιC → Label.{u}) → Prop}
+    {D : (ιD → Label.{u}) → Prop} {Lo Tops : Finset ιD} (A : Set ιR)
+    (hCo : ∀ f, C f → IsSelfVisible K (f o))
+    (hCF : ∀ f, C f → ∀ a ∈ A, frontierAt o r K f ≤ f (rc a))
+    (hDR : DonorRaising rc rd K C D A Tops) (hOL : OwnerLowering rc rd o r K C D) :
+    IsStateAdmission rc rd K C D (SelfLowG o r K Lo Tops) :=
+  selfLow_isStateAdmissionV A hCo hCF (donorRaisingV_of hDR) hOL
 
 end StateLevel
 
@@ -182,14 +263,15 @@ theorem isDeterminedWithin_of_key {k p : ℕ} {D : StageType.{u} α (k + 1)}
 
 /-! ### The cutoff -/
 
-/-- **A permitted cutoff above the labels other than `⊤`** of a stage type, at a limit stage. -/
-theorem exists_cutoff {n : ℕ} (hα : Order.IsSuccLimit α) (t : StageType.{u} α n) :
-    ∃ δ : Label.{u}, IsPermittedCutoff α δ ∧ ∀ x, t.label x ≠ ⊤ → t.label x < δ := by
-  obtain ⟨c, -, hcα, -, hc⟩ := exists_isSelfVisible_bound hα.isSuccPrelimit 0
+/-- **A permitted cutoff above a self-visible bound of the labels other than `⊤`** of a stage type,
+at a limit stage. -/
+theorem exists_cutoff {n : ℕ} (K : ℕ) (hα : Order.IsSuccLimit α) (t : StageType.{u} α n) :
+    ∃ c δ : Label.{u}, IsSelfVisible K c ∧ (∀ x, t.label x ≠ ⊤ → t.label x ≤ c) ∧
+      IsPermittedCutoff α δ ∧ c < δ := by
+  obtain ⟨c, -, hcα, hcK, hc⟩ := exists_isSelfVisible_bound hα.isSuccPrelimit K
     (WithBot.bot_lt_coe _ : (⊥ : Label.{u}) < α) t.label
   obtain ⟨δ, hδ, hcδ⟩ := MixedSeed.exists_permittedCutoff_gt hα hcα
-  refine ⟨δ, hδ, fun x hx ↦ (hc x ?_).trans_lt hcδ⟩
-  exact (t.atStage x).resolve_right hx
+  exact ⟨c, δ, hcK, fun x hx ↦ hc x ((t.atStage x).resolve_right hx), hδ, hcδ⟩
 
 /-! ### Generic: cells of a stage type with the apex visible through a proper face -/
 
@@ -251,6 +333,14 @@ end Seed
 
 /-! ### The key step: the clause determines the donor face -/
 
+/-- A cell **determined by the root**: two lawful labellings agreeing at the root cells (visible
+through `Fin.castSuccEmb`) agree at it.  Such a cell is read from the root, literal in the members
+of a receiving family, and need not be designated. -/
+def RootDet {n : ℕ} (t : StageType.{u} α (n + 1)) (x : Fin t.card) : Prop :=
+  ∀ s s' : Fin t.card → Label.{u}, t.rows.IsLawful s → t.rows.IsLawful s' →
+    (∀ y ∈ t.toScheme.visibleCells Fin.castSuccEmb, s y = s' y) → s x = s' x
+
+
 section Key
 
 variable {I : Seed.{u} α 1}
@@ -272,10 +362,11 @@ labels of the donor other than `⊤` agrees with it on the donor face along `ext
 theorem key_completion (F : CompletionBelowFullGrade I) (hα : Order.IsSuccPrelimit α) {K : ℕ}
     {o r : Fin I.left.card} (hlo : I.left.label o = ⊤) (hlr : I.left.label r = ⊤)
     {Lo Tops : Finset (Fin I.right.card)} (hrec : RecProp F o r K Lo Tops) {δ : Label.{u}}
-    (hδ0 : ⊥ < δ) (hδ : ∀ x, I.right.label x ≠ ⊤ → I.right.label x < δ)
+    {c : Label.{u}} (hc : IsSelfVisible K c)
+    (hlabc : ∀ x, I.right.label x ≠ ⊤ → I.right.label x ≤ c) (hcδ : c < δ)
     (hLo : ∀ x ∈ Lo, I.right.label x ≠ ⊤) {n : ℕ} {g : Fin n ↪ Fin 1}
     (hTops : ∀ x, I.right.label x = ⊤ → x ∈ I.right.toScheme.visibleCells (extendByLast g) →
-      x ∉ I.right.toScheme.visibleCells Fin.castSuccEmb → x ∈ Tops)
+      x ∉ I.right.toScheme.visibleCells Fin.castSuccEmb → ¬ RootDet I.right x → x ∈ Tops)
     (ℓ : Fin (F.completion hα).card → Label.{u}) (hℓ : (F.completion hα).rows.IsLawful ℓ)
     (hleft : ∀ x ∈ (F.completion hα).toScheme.visibleCells Fin.castSuccEmb,
       ℓ x = (F.completion hα).label x)
@@ -284,6 +375,8 @@ theorem key_completion (F : CompletionBelowFullGrade I) (hα : Order.IsSuccPreli
       (extendByLast (g.trans (Fin.castSuccEmb : Fin 1 ↪ Fin 2))),
       ℓ y = (F.completion hα).label y := by
   set T := F.truncate hα
+  have hδ (x : Fin I.right.card) (hx : I.right.label x ≠ ⊤) : I.right.label x < δ :=
+    (hlabc x hx).trans_lt hcδ
   have hn : 0 < 1 + 2 := by omega
   have hlab (x : Fin F.scheme.card) : (F.completion hα).label (Fin.castSucc x) = T.label x :=
     addApex_label_castSucc (t := T) F.isLegalBelowFullGrade (Nat.succ_pos _) x
@@ -302,6 +395,28 @@ theorem key_completion (F : CompletionBelowFullGrade I) (hα : Order.IsSuccPreli
       exact ⟨b, rfl⟩
     rw [hleft _ (castSucc_mem_visibleCells_addApex (t := T) F.isLegalBelowFullGrade
       (Nat.succ_pos _) hv), hlab, hTe, StageType.label_faceCell]
+  -- the root cells of the donor are read from the context face
+  have hrootcell (z : Fin I.right.card)
+      (hroot : z ∈ I.right.toScheme.visibleCells Fin.castSuccEmb) :
+      ℓ (Fin.castSucc (F.embed (don I z))) = I.right.label z := by
+    have hv : F.embed (don I z) ∈ T.toScheme.visibleCells Fin.castSuccEmb := by
+      refine Scheme.mem_visibleCells.mpr ?_
+      change ((F.scheme.toCellScheme.scope (F.embed (don I z)) : Set (Fin 3)) ⊆ _)
+      rw [F.scope_embed, StageType.scope_faceCell]
+      intro a ha
+      obtain ⟨b, hb, rfl⟩ := mem_map.mp (mem_coe.mp ha)
+      obtain ⟨c, rfl⟩ := Scheme.mem_visibleCells.mp hroot (mem_coe.mpr hb)
+      exact ⟨Fin.castSucc c, by simp [Coatom.right, Coatom.face]⟩
+    rw [hleft _ (castSucc_mem_visibleCells_addApex (t := T) F.isLegalBelowFullGrade
+      (Nat.succ_pos _) hv), hlab, hTe, StageType.label_faceCell]
+  -- the donor face of `ℓ` is lawful
+  have hdonL : I.right.rows.IsLawful fun z ↦ ℓ (Fin.castSucc (F.embed (don I z))) := by
+    have h2 : I.amalgam.rows.IsLawful fun d ↦ ℓ (Fin.castSucc (F.embed d)) := by
+      have h1 := (show F.scheme.rows.IsLawful fun x ↦ ℓ (Fin.castSucc x) from hqL).comap
+        F.isLowerEmbedding
+      rw [F.comap_rows] at h1
+      exact h1
+    exact StageType.isLawful_comp_faceCell I.restrictFace_right h2
   intro y hy
   obtain ⟨x, hx, rfl⟩ := exists_castSucc_of_mem_visibleCells_addApex (t := T)
     F.isLegalBelowFullGrade (Nat.succ_pos _) ⟨1, one_notMem_range g⟩ hy
@@ -335,16 +450,10 @@ theorem key_completion (F : CompletionBelowFullGrade I) (hα : Order.IsSuccPreli
   by_cases hz : I.right.label z = ⊤
   · by_cases hroot : z ∈ I.right.toScheme.visibleCells Fin.castSuccEmb
     · -- a root cell: visible through the first coatom
-      have hv : F.embed (don I z) ∈ T.toScheme.visibleCells Fin.castSuccEmb := by
-        refine Scheme.mem_visibleCells.mpr ?_
-        change ((F.scheme.toCellScheme.scope (F.embed (don I z)) : Set (Fin 3)) ⊆ _)
-        rw [F.scope_embed, StageType.scope_faceCell]
-        intro a ha
-        obtain ⟨b, hb, rfl⟩ := mem_map.mp (mem_coe.mp ha)
-        obtain ⟨c, rfl⟩ := Scheme.mem_visibleCells.mp hroot (mem_coe.mpr hb)
-        exact ⟨Fin.castSucc c, by simp [Coatom.right, Coatom.face]⟩
-      rw [hleft _ (castSucc_mem_visibleCells_addApex (t := T) F.isLegalBelowFullGrade
-        (Nat.succ_pos _) hv), hlab, hTe, StageType.label_faceCell]
+      exact hrootcell z hroot
+    by_cases hdet : RootDet I.right z
+    · -- a cell determined by the root
+      exact hdet _ _ hdonL I.right.isLawful fun y hy ↦ hrootcell y hy
     · -- a new top: the clause at the reader
       have hzv : z ∈ I.right.toScheme.visibleCells (extendByLast g) := by
         refine Scheme.mem_visibleCells.mpr fun a ha ↦ ?_
@@ -355,7 +464,7 @@ theorem key_completion (F : CompletionBelowFullGrade I) (hα : Order.IsSuccPreli
         obtain ⟨b, hb, hba⟩ := (hrange ▸ he' hmem :
           Coatom.right 1 a ∈ (fun i ↦ Coatom.right 1 i) '' Set.range (extendByLast g))
         exact (Coatom.right 1).injective hba ▸ hb
-      have hTz := hTops z hz hzv hroot
+      have hTz := hTops z hz hzv hroot hdet
       have hqo : (fun x ↦ ℓ (Fin.castSucc x)) (F.embed (ctx I o)) = ⊤ := by
         change ℓ (Fin.castSucc (F.embed (ctx I o))) = ⊤
         rw [hctx, hlo]
@@ -364,12 +473,13 @@ theorem key_completion (F : CompletionBelowFullGrade I) (hα : Order.IsSuccPreli
         have := hcap (Fin.castSucc (F.embed (don I z)))
         rw [hlab, hTe, StageType.label_faceCell, hz, min_eq_right le_top] at this
         exact min_eq_right_iff.mp this
-      have hsup : Lo.sup (fun x ↦ ℓ (Fin.castSucc (F.embed (don I x)))) < δ := by
-        refine (Finset.sup_lt_iff hδ0).mpr fun x hxL ↦ ?_
+      have hsup : visibilityReplace K K
+          (Lo.sup (fun x ↦ ℓ (Fin.castSucc (F.embed (don I x))))) < δ := by
+        refine (visibilityReplace_le_of_le le_rfl hc (Finset.sup_le fun x hxL ↦ ?_)).trans_lt hcδ
         have hxl := hδ x (hLo x hxL)
         have := hcap (Fin.castSucc (F.embed (don I x)))
         rw [hlab, hTe, StageType.label_faceCell] at this
-        exact (Label.eq_of_min_eq_of_lt this.symm hxl).trans_lt hxl
+        exact (Label.eq_of_min_eq_of_lt this.symm hxl).trans_le (hlabc x (hLo x hxL))
       have hfr := hcl (hsup.trans_le hδz)
       change min (ℓ (Fin.castSucc (F.embed (ctx I o))))
         (visibilityReplace K K (ℓ (Fin.castSucc (F.embed (ctx I r))))) ≤ _ at hfr
