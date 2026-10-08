@@ -44,6 +44,14 @@ on this branch).
   layer of the (R3) lane at five points) is legal; such a layer would contradict
   `TiedRootCapCounterexample.exists_cell_reads_lt`.
 
+* **Determination at a cutoff is the top clause**
+  (`StageType.isDeterminedWithin_receivingFamily_iff`,
+  `TiedRootCapCounterexample.isDeterminedWithin_carrier_iff`, compiled): with `δ` above the labels
+  of the carrier other than `⊤`, the donor is determined within the receiving family exactly when
+  every member literal on the context is `⊤` at every cell of the donor labelled `⊤`.  The
+  receiving family keeps the labels below `δ` only: at a cell where the carrier is `⊤` (the apex
+  of the donor) a member is asked to be at least `δ`, not `⊤`, so the clause is not automatic.
+
 **Status.**  Not compiled: a carrier with a lawful labelling, literal on the context and on the
 donor, that is `⊤` at no cell of graded index `(univ, 3)` reading the apex below the cap (while
 availability from the cap forces some such cell labelled `⊤`, which must then read it at least as
@@ -98,6 +106,52 @@ theorem exists_isPermittedCutoff_gt (hα : Order.IsSuccLimit α) {k : ℕ}
     · have hjα : D.label j < α := (D.atStage j).resolve_right hj
       exact (hc j hjα).trans_lt
         (WithBot.coe_lt_coe.mpr (WithTop.coe_lt_coe.mpr (Order.lt_add_one_iff.mpr le_rfl)))
+
+end StageType
+
+namespace StageType
+
+variable {α : Ordinal.{u}}
+
+/-- **Determination at a cutoff is the top clause.**  Let `D` restrict along `extendByLast h` to
+`d`, and let `δ` lie above every label of `D` other than `⊤`.  The donor is determined within the
+receiving family of `D` at `δ` exactly when every member literal on `t'` is `⊤` at every cell of
+`d` labelled `⊤`.  The members agree with `D` below `δ`, hence with `d` at every cell of `d`
+labelled other than `⊤`; at a cell of `d` labelled `⊤` they are only asked to be at least `δ`. -/
+theorem isDeterminedWithin_receivingFamily_iff {k n : ℕ} {t' : StageType.{u} α k}
+    {h : Fin n ↪ Fin k} {d : StageType.{u} α (n + 1)} {D : StageType.{u} α (k + 1)}
+    (h₂ : restrictFace (extendByLast h) D = some d) {δ : Label.{u}}
+    (hδ : ∀ j, D.label j ≠ ⊤ → D.label j < δ) :
+    IsDeterminedWithin (receivingFamily D δ) t' h d ↔
+      ∀ q ∈ receivingFamily D δ, restrictFace Fin.castSuccEmb q = some t' →
+        ∀ (i : Fin q.card) (j : Fin d.card), (i : ℕ) = faceCell h₂ j → d.label j = ⊤ →
+          q.label i = ⊤ := by
+  constructor
+  · rintro hdet ⟨S, ℓ, hw, hcod, hl, hat⟩ hq hq₁ i j hij hj
+    have hq₂ := hdet _ hq hq₁
+    obtain ⟨hS, -⟩ := hq
+    change S = D.toScheme at hS
+    subst hS
+    obtain rfl : i = faceCell h₂ j := Fin.ext hij
+    exact (label_faceCell hq₂ j).trans hj
+  · rintro H ⟨S, ℓ, hw, hcod, hl, hat⟩ hq hq₁
+    have H' := H _ hq hq₁
+    obtain ⟨hS, hcut⟩ := hq
+    change S = D.toScheme at hS
+    subst hS
+    refine (restrictFace_congr_label (t := ⟨D.toScheme, ℓ, hw, hcod, hl, hat⟩) (s := D) rfl
+      fun i j hij hi ↦ ?_).trans h₂
+    obtain rfl : i = j := Fin.ext hij
+    obtain ⟨z, rfl⟩ := exists_faceCell_eq h₂ hi
+    change ℓ (faceCell h₂ z) = D.label (faceCell h₂ z)
+    by_cases hz : d.label z = ⊤
+    · exact (H' _ z rfl hz).trans ((label_faceCell h₂ z).trans hz).symm
+    · have hlt : D.label (faceCell h₂ z) < δ := hδ _ (by rw [label_faceCell]; exact hz)
+      have hmin : min (ℓ (faceCell h₂ z)) δ = D.label (faceCell h₂ z) :=
+        (hcut _ _ rfl).trans (min_eq_left hlt.le)
+      have hℓ : ℓ (faceCell h₂ z) < δ :=
+        (min_lt_iff.mp (hmin ▸ hlt)).resolve_right (lt_irrefl δ)
+      rw [← hmin, min_eq_left hℓ.le]
 
 end StageType
 
@@ -248,6 +302,21 @@ theorem not_exists_fill_bot {D : StageType.{u} α 4}
   change min (g _) (g _) ≤ min (g _) (g _) at hloc'
   rw [hAtop, min_top_right, min_top_right, hgy, hgy] at hloc'
   exact absurd (natCast_label_le.mp hloc') (by decide)
+
+/-- **Cutoff determination at the context, unfolded**: for every carrier and the permitted cutoff
+above its labels other than `⊤`, the donor is determined within the receiving family exactly when
+every member literal on the context is `⊤` at every cell of the donor labelled `⊤` (the apex of the
+donor among them).  The receiving family does not give it: at a cell where the carrier is `⊤` a
+member is only asked to be at least the cutoff. -/
+theorem isDeterminedWithin_carrier_iff {D : StageType.{u} α 4}
+    (h₂ : restrictFace (extendByLast rootEmb) D = some (donor hα)) :
+    ∃ δ : Label.{u}, IsPermittedCutoff α δ ∧
+      (IsDeterminedWithin (receivingFamily D δ) (context hα) rootEmb (donor hα) ↔
+        ∀ q ∈ receivingFamily D δ, restrictFace Fin.castSuccEmb q = some (context hα) →
+          ∀ (i : Fin q.card) (j : Fin (donor hα).card), (i : ℕ) = faceCell h₂ j →
+            (donor hα).label j = ⊤ → q.label i = ⊤) := by
+  obtain ⟨δ, hδ, hδD⟩ := exists_isPermittedCutoff_gt hα D
+  exact ⟨δ, hδ, isDeterminedWithin_receivingFamily_iff h₂ hδD⟩
 
 end TiedRootCapCounterexample
 
