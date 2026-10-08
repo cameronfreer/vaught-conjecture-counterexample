@@ -18,8 +18,8 @@ labelling `e` of the old cells **reads `ps`** (`Scheme.ReadsPairs`) when `e s �
 The statements here are about the layer and its lifts; no existence of a carrier is claimed.
 
 **Compatibility of the reading marks** (compiled in this repository).  Let the marks be the
-catalogue entries that read `ps` (`Scheme.readingMarks`) and the cap the ceiling of the field grid,
-constant (`Scheme.ceilingCap`).
+catalogue entries that read `ps` (`Scheme.pairReadingMarks`) and the cap the ceiling of the field
+grid, constant (`Scheme.ceilingCap`).
 * The cap lies in the field grid and respects capped agreement (`Scheme.ceilingCap_mem`,
   `Scheme.capRespects_ceilingCap`).
 * **Every set of marks is closed** for this cap (`Scheme.markedClosed_ceilingCap`): above the
@@ -30,7 +30,7 @@ constant (`Scheme.ceilingCap`).
   old cells by its entry (`Scheme.markedLayer_row_leaf_castAdd`).  So an entry not reading `ps`
   (the mixed labelling of the input `SeparationObstruction.T α`, context all `⊤`, donor
   `o′ = r′ = 2`, is of this kind) is the entry of a leaf and of no mark
-  (`Scheme.not_mem_readingMarks`), and that leaf does not read `ps`
+  (`Scheme.not_mem_pairReadingMarks`), and that leaf does not read `ps`
   (`Scheme.markedLayer_leaf_not_readsPairs`).  A reading asked at **every** cell of full scope and
   grade `k` therefore fails in every leaf-and-marked layer whose catalogue has such an entry; only
   a reading asked at the cells labelled `⊤` can come from it.
@@ -40,7 +40,7 @@ layer serves a labelling `g` of the old cells, lawful below `(univ, k)`, by a te
 is the orbit code of the splice of `g` (`Scheme.exists_template_markedLayer`).  The orbit code is
 monotone in the label (`Label.monotone_orbitMap`), so **if `g` reads `ps` (at cells of grade at
 most `k`), so does its code, and the code is a reading mark** (`Scheme.orbitCode_splice_mem_
-readingMarks`): every such labelling is served by a marked cell whenever it is served above the
+pairReadingMarks`): every such labelling is served by a marked cell whenever it is served above the
 cap, and by a leaf reading `ps` otherwise.  The labellings that **escape** are those whose code
 does not read `ps`: they are served by a leaf not reading `ps`, along every lift (both coatoms, the
 cap `⊥` and every short positive cap).  A carrier whose labelling makes `⊤` only cells reading `ps`
@@ -83,24 +83,24 @@ def ReadsPairs (ps : Finset (Fin S.card × Fin S.card)) (e : Fin S.card → Labe
 
 variable (S k) in
 /-- The **reading marks**: the catalogue entries reading `ps`. -/
-noncomputable def readingMarks (ps : Finset (Fin S.card × Fin S.card)) :
+noncomputable def pairReadingMarks (ps : Finset (Fin S.card × Fin S.card)) :
     Finset (Fin S.card → Label.{u}) := by
   classical
   exact (S.catalogue k).filter (ReadsPairs ps)
 
-theorem mem_readingMarks {ps : Finset (Fin S.card × Fin S.card)} {e : Fin S.card → Label.{u}} :
-    e ∈ S.readingMarks k ps ↔ e ∈ S.catalogue k ∧ ReadsPairs ps e := by
+theorem mem_pairReadingMarks {ps : Finset (Fin S.card × Fin S.card)} {e : Fin S.card → Label.{u}} :
+    e ∈ S.pairReadingMarks k ps ↔ e ∈ S.catalogue k ∧ ReadsPairs ps e := by
   classical
-  simp [readingMarks]
+  simp [pairReadingMarks]
 
-theorem readingMarks_subset (ps : Finset (Fin S.card × Fin S.card)) :
-    S.readingMarks k ps ⊆ S.catalogue k :=
-  fun _ he ↦ (mem_readingMarks.mp he).1
+theorem pairReadingMarks_subset (ps : Finset (Fin S.card × Fin S.card)) :
+    S.pairReadingMarks k ps ⊆ S.catalogue k :=
+  fun _ he ↦ (mem_pairReadingMarks.mp he).1
 
 /-- An entry not reading `ps` is not a reading mark. -/
-theorem not_mem_readingMarks {ps : Finset (Fin S.card × Fin S.card)} {e : Fin S.card → Label.{u}}
-    (he : ¬ ReadsPairs ps e) : e ∉ S.readingMarks k ps :=
-  fun h ↦ he (mem_readingMarks.mp h).2
+theorem not_mem_pairReadingMarks {ps : Finset (Fin S.card × Fin S.card)}
+    {e : Fin S.card → Label.{u}} (he : ¬ ReadsPairs ps e) : e ∉ S.pairReadingMarks k ps :=
+  fun h ↦ he (mem_pairReadingMarks.mp h).2
 
 variable (S k) in
 /-- The **ceiling cap**: the largest point of the field grid, at every entry. -/
@@ -141,10 +141,10 @@ theorem markedClosed_ceilingCap {Mk : Finset (Fin S.card → Label.{u})} :
 
 /-- **Every marked cell of the reading marks reads `ps`.** -/
 theorem markedLayer_mark_readsPairs {ps : Finset (Fin S.card × Fin S.card)}
-    {κ : (Fin S.card → Label.{u}) → Label.{u}} (m : Fin (S.readingMarks k ps).card) :
-    ReadsPairs ps fun d ↦ S.sheetRow k (S.markedEntry k (S.readingMarks k ps))
+    {κ : (Fin S.card → Label.{u}) → Label.{u}} (m : Fin (S.pairReadingMarks k ps).card) :
+    ReadsPairs ps fun d ↦ S.sheetRow k (S.markedEntry k (S.pairReadingMarks k ps))
       (markedSheet _ _) κ (Fin.natAdd _ m) (Fin.castAdd _ d) :=
-  markedLayer_mark_reads (P := ReadsPairs ps) (fun _ he ↦ (mem_readingMarks.mp he).2) m
+  markedLayer_mark_reads (P := ReadsPairs ps) (fun _ he ↦ (mem_pairReadingMarks.mp he).2) m
 
 /-- **A leaf reads the old cells by its catalogue entry.** -/
 theorem markedLayer_row_leaf_castAdd {Mk : Finset (Fin S.card → Label.{u})}
@@ -169,12 +169,12 @@ theorem markedLayer_leaf_not_readsPairs {Mk : Finset (Fin S.card → Label.{u})}
 /-- **A labelling reading `ps` has a reading mark as code**: if `g` is lawful below `(univ, k)` and
 reads `ps` at cells of grade at most `k`, the orbit code of its splice is a reading mark.  The
 orbit code is monotone in the label. -/
-theorem orbitCode_splice_mem_readingMarks {ps : Finset (Fin S.card × Fin S.card)}
+theorem orbitCode_splice_mem_pairReadingMarks {ps : Finset (Fin S.card × Fin S.card)}
     {g : Fin S.card → Label.{u}} (hg : S.rows.IsLawfulBelow (univ, k) fun d ↦ g d)
     (hps : ∀ p ∈ ps, S.toCellScheme.grade p.1 ≤ k ∧ S.toCellScheme.grade p.2 ≤ k)
     (hr : ReadsPairs ps g) :
-    orbitCode k (S.toCellScheme.splice k (fun _ ↦ ⊥) g) ∈ S.readingMarks k ps := by
-  refine mem_readingMarks.mpr ⟨orbitCode_splice_bot_mem_catalogue hg, fun p hp ↦ ?_⟩
+    orbitCode k (S.toCellScheme.splice k (fun _ ↦ ⊥) g) ∈ S.pairReadingMarks k ps := by
+  refine mem_pairReadingMarks.mpr ⟨orbitCode_splice_bot_mem_catalogue hg, fun p hp ↦ ?_⟩
   rw [orbitCode_apply, orbitCode_apply]
   refine monotone_orbitMap k _ ?_
   rw [CellScheme.splice_of_le (hps p hp).1, CellScheme.splice_of_le (hps p hp).2]
@@ -238,9 +238,9 @@ variable {α : Ordinal.{u}} (I : Seed.{u} α 3)
 cap. -/
 noncomputable def readingSpec (ps : Finset (Fin (scheme I).card × Fin (scheme I).card)) :
     MarkedSpec I where
-  marks := (scheme I).readingMarks 4 ps
+  marks := (scheme I).pairReadingMarks 4 ps
   cap := (scheme I).ceilingCap 4
-  marks_subset := Scheme.readingMarks_subset ps
+  marks_subset := Scheme.pairReadingMarks_subset ps
   cap_mem := Scheme.ceilingCap_mem
   capRespects := Scheme.capRespects_ceilingCap
   closed := Scheme.markedClosed_ceilingCap
