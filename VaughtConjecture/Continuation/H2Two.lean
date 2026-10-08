@@ -10,13 +10,14 @@ import VaughtConjecture.Continuation.TwoCoatomLift
 /-!
 # h2 at two points: the assembly (work file)
 
-WORK FILE (branch `research/work-h2`).  `H2.coatomCutoffDeterminationTwo` from two SCAFFOLD
-statements (each with `sorry`): `H2.donorRaising_two_lostZero` (lost point `0`, root on no point,
-coatom face with a top) and `H2.exists_completion_recProp_one` (top grade `1`).  Donor raising
+WORK FILE (branch `research/work-h2`).  `H2.coatomCutoffDeterminationTwo` from four SCAFFOLD
+statements (each with `sorry`): `H2.exists_completion_recProp_one` (top grade `1`, lost point
+`1`), and, off the critical path, `H2.donorRaising_two_lostZero` and
+`H2.exists_completion_recProp_one_lostZero` (lost point `0`).  The lost-point-last form
+`H2.coatomCutoffDeterminationTwoLast` uses only `H2.exists_completion_recProp_one`.  Donor raising
 with the gap `H2.donorRaising_two` is proved at lost point `1`, and at lost point `0` with a
-top-free coatom face, from capped lifts and the band raise (`H2.donorRaisingGap_of_cappedLift`),
-with every top cell not on the root and not determined by the root designated.  The two-coatom
-lift `H2.hasTwoCoatomLift_two` is proved (`Seed.hasTwoCoatomLift`).
+top-free coatom face, from capped lifts and the band raise (`H2.donorRaisingGap_of_cappedLift`).
+The two-coatom lift `H2.hasTwoCoatomLift_two` is proved (`Seed.hasTwoCoatomLift`).
 -/
 
 universe u
@@ -58,7 +59,10 @@ root is then on no point (`n = 0`: the lost point is not on the root), and the c
 face labelled `⊤` (scope the point `0`, through the lost point) are not designated root tops: the
 context gives no frontier bound at them, so the band raise need not fix them.  (A top-free coatom
 face is proved: `H2.donorRaising_two`; the lost point last is `H2.coatomCutoffDeterminationTwoLast`,
-without this statement.)
+without this statement.)  Off the critical path: the main theorem with the lost point last
+(`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_coatomDeterminations_sourceGapLast_
+markedCap`, branch `research/h2-last-reduction`, standard axioms) asks (R2) only at contexts with
+the lost point last.
 
 Argued, legality unchecked: a state of the clause where the context provision fails.  The donor
 has `x` (scope `{0}`, grade `1`, `⊤`), `t` (scope `{1}`, grade `1`, `⊤`), a unique cell `s` of
@@ -179,18 +183,57 @@ theorem exists_completion_of_stateAdmission {t' : StageType.{u} α 2} (hleg : t'
         (hasTwoCoatomLift_two hleg hp htbleg htbp) ho hq hqo⟩
 
 set_option warningAsError false in
-/-- **SCAFFOLD (contains `sorry`): the case of top grade `1`.** -/
+/-- **SCAFFOLD (contains `sorry`): the case of top grade `1`**, with the designation (non-top
+cells low; top cells of grade at most `1` off the root and not determined by the root designated;
+root cells low or designated root tops), as donor raising at grade `1` needs
+(`H2.donorRaisingGap_oneFace`, `H2.exists_completion_recProp_one_of_admission`). -/
 theorem exists_completion_recProp_one {t' : StageType.{u} α 2} (hleg : t'.IsLegal) {n : ℕ}
     {g : Fin n ↪ Fin 1} {l : Fin 2} {o r : Fin t'.card}
     (hs : t'.IsSourceGapContextAt 1 (g.trans Fin.castSuccEmb) l o r) {p : StageType.{u} α 1}
     (hp : restrictFace Fin.castSuccEmb t' = some p) {tb : StageType.{u} α 2}
     (htbleg : tb.IsLegal) (htbp : restrictFace Fin.castSuccEmb tb = some p)
     {Lo Tops : Finset (Fin tb.card)} (hLo : ∀ x ∈ Lo, tb.label x ≠ ⊤)
+    (hLo' : ∀ x, tb.label x ≠ ⊤ → x ∈ Lo)
     (hTops : ∀ x ∈ Tops, tb.label x = ⊤ ∧ tb.toCellScheme.grade x ≤ 1 ∧
-      x ∉ tb.toScheme.visibleCells Fin.castSuccEmb) :
+      x ∉ tb.toScheme.visibleCells Fin.castSuccEmb)
+    (hTops' : ∀ x, tb.label x = ⊤ → tb.toCellScheme.grade x ≤ 1 →
+      x ∉ tb.toScheme.visibleCells Fin.castSuccEmb → ¬ RootDet tb x → x ∈ Tops)
+    (hroot : ∀ x, StageType.faceCell htbp x ∈ Lo ∨ x ∈ rootTops hp l) :
     ∃ F : CompletionBelowFullGrade (Seed.ofCoatoms hleg htbleg hp htbp),
       RecProp F o r 1 Lo Tops := by
   sorry
+
+set_option warningAsError false in
+/-- **SCAFFOLD (contains `sorry`): the case of top grade `1` at lost point `0`** (root cells
+labelled `⊤` need not be designated root tops).  Off the critical path: the main theorem with the
+lost point last (`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_coatomDeterminations_
+sourceGapLast_markedCap`, branch `research/h2-last-reduction`) asks only lost point `1`
+(`H2.coatomCutoffDeterminationTwoLast`). -/
+theorem exists_completion_recProp_one_lostZero {t' : StageType.{u} α 2} (hleg : t'.IsLegal)
+    {n : ℕ} {g : Fin n ↪ Fin 1} {o r : Fin t'.card}
+    (hs : t'.IsSourceGapContextAt 1 (g.trans Fin.castSuccEmb) 0 o r) {p : StageType.{u} α 1}
+    (hp : restrictFace Fin.castSuccEmb t' = some p) {tb : StageType.{u} α 2}
+    (htbleg : tb.IsLegal) (htbp : restrictFace Fin.castSuccEmb tb = some p)
+    {Lo Tops : Finset (Fin tb.card)} (hLo : ∀ x ∈ Lo, tb.label x ≠ ⊤)
+    (hLo' : ∀ x, tb.label x ≠ ⊤ → x ∈ Lo)
+    (hTops : ∀ x ∈ Tops, tb.label x = ⊤ ∧ tb.toCellScheme.grade x ≤ 1 ∧
+      x ∉ tb.toScheme.visibleCells Fin.castSuccEmb)
+    (hTops' : ∀ x, tb.label x = ⊤ → tb.toCellScheme.grade x ≤ 1 →
+      x ∉ tb.toScheme.visibleCells Fin.castSuccEmb → ¬ RootDet tb x → x ∈ Tops) :
+    ∃ F : CompletionBelowFullGrade (Seed.ofCoatoms hleg htbleg hp htbp),
+      RecProp F o r 1 Lo Tops := by
+  sorry
+
+/-- At lost point `1`, every root cell is low or a designated root top. -/
+theorem root_one {p : StageType.{u} α 1} {tb : StageType.{u} α 2} {t' : StageType.{u} α 2}
+    (hp : restrictFace Fin.castSuccEmb t' = some p)
+    (htbp : restrictFace Fin.castSuccEmb tb = some p) {Lo : Finset (Fin tb.card)}
+    (hLo : ∀ x, tb.label x ≠ ⊤ → x ∈ Lo) (x : Fin p.card) :
+    StageType.faceCell htbp x ∈ Lo ∨ x ∈ rootTops hp 1 := by
+  by_cases hx : p.label x = ⊤
+  · refine .inr ⟨hx, ?_⟩
+    simp [StageType.scope_faceCell, Fin.ext_iff]
+  · exact .inl (hLo _ (by rwa [StageType.label_faceCell]))
 
 /-- **The completion with the reading property** (from the SCAFFOLD statements above). -/
 theorem exists_completion_recProp {t' : StageType.{u} α 2} (hleg : t'.IsLegal) {K n : ℕ}
@@ -198,11 +241,13 @@ theorem exists_completion_recProp {t' : StageType.{u} α 2} (hleg : t'.IsLegal) 
     (hs : t'.IsSourceGapContextAt K (g.trans Fin.castSuccEmb) l o r) {p : StageType.{u} α 1}
     (hp : restrictFace Fin.castSuccEmb t' = some p) {tb : StageType.{u} α 2}
     (htbleg : tb.IsLegal) (htbp : restrictFace Fin.castSuccEmb tb = some p)
-    {Lo Tops : Finset (Fin tb.card)} (hLo : ∀ x ∈ Lo, tb.label x ≠ ⊤)
+    {Lo Tops : Finset (Fin tb.card)}
     (hTops : ∀ x ∈ Tops, tb.label x = ⊤ ∧ tb.toCellScheme.grade x ≤ K ∧
       x ∉ tb.toScheme.visibleCells Fin.castSuccEmb)
     (hTops' : ∀ x, tb.label x = ⊤ → tb.toCellScheme.grade x ≤ K →
       x ∉ tb.toScheme.visibleCells Fin.castSuccEmb → ¬ RootDet tb x → x ∈ Tops)
+    (hone : K = 1 → ∃ F : CompletionBelowFullGrade (Seed.ofCoatoms hleg htbleg hp htbp),
+      RecProp F o r K Lo Tops)
     (hDR : K = 2 → (∀ x, tb.label x = ⊤ → x ∉ tb.toScheme.visibleCells Fin.castSuccEmb →
       ¬ RootDet tb x → x ∈ Tops) →
       DonorRaisingGap (StageType.faceCell hp) (StageType.faceCell htbp) 2 t'.rows.IsLawful
@@ -212,7 +257,7 @@ theorem exists_completion_recProp {t' : StageType.{u} α 2} (hleg : t'.IsLegal) 
   have hK0 : 0 < K := hs.grade_owner ▸ t'.isWellFormed.isWellFormed.grade_pos o
   have hK2 : K ≤ 2 := hs.grade_owner ▸ t'.grade_le o
   rcases (show K = 1 ∨ K = 2 by omega) with rfl | rfl
-  · exact exists_completion_recProp_one hleg hs hp htbleg htbp hLo hTops
+  · exact hone rfl
   · exact exists_completion_of_stateAdmission hleg hs.grade_owner hp htbleg htbp
       (fun x hx ↦ (hTops x hx).1) (stateAdmission_two hleg hs hp htbp
         (hDR rfl fun x h1 h3 h4 ↦ hTops' x h1 (tb.grade_le x) h3 h4))
@@ -231,6 +276,15 @@ theorem exists_coface_two {K n : ℕ} {t' : StageType.{u} α 2} {g : Fin n ↪ F
         x ∉ tb.toScheme.visibleCells Fin.castSuccEmb → ¬ RootDet tb x → x ∈ Tops) →
       DonorRaisingGap (StageType.faceCell hp) (StageType.faceCell htbp) 2 t'.rows.IsLawful
         tb.rows.IsLawful (rootTops hp l) Lo Tops)
+    (hone : K = 1 → ∀ {tb : StageType.{u} α 2} (htbleg : tb.IsLegal)
+      (htbp : restrictFace Fin.castSuccEmb tb = some p) {Lo Tops : Finset (Fin tb.card)},
+      (∀ x ∈ Lo, tb.label x ≠ ⊤) → (∀ x, tb.label x ≠ ⊤ → x ∈ Lo) →
+      (∀ x ∈ Tops, tb.label x = ⊤ ∧ tb.toCellScheme.grade x ≤ 1 ∧
+        x ∉ tb.toScheme.visibleCells Fin.castSuccEmb) →
+      (∀ x, tb.label x = ⊤ → tb.toCellScheme.grade x ≤ 1 →
+        x ∉ tb.toScheme.visibleCells Fin.castSuccEmb → ¬ RootDet tb x → x ∈ Tops) →
+      ∃ F : CompletionBelowFullGrade (Seed.ofCoatoms hleg htbleg hp htbp),
+        RecProp F o r 1 Lo Tops)
     {tb : StageType.{u} α 2} (htbleg : tb.IsLegal)
     (htbp : restrictFace Fin.castSuccEmb tb = some p) {d : StageType.{u} α (n + 1)}
     (hd : restrictFace (extendByLast g) tb = some d) (hdK : d.topGrade ≤ K) :
@@ -257,8 +311,12 @@ theorem exists_coface_two {K n : ℕ} {t' : StageType.{u} α 2} {g : Fin n ↪ F
       have hdi : d.label i = ⊤ := (StageType.label_faceCell hd i).symm.trans hxt
       exact (StageType.grade_faceCell hd i).trans_le ((grade_le_topGrade hdi).trans hdK)
     simp [Tops, hxt, hg, hxr, hxd]
-  obtain ⟨F, hF⟩ := exists_completion_recProp hleg hs hp htbleg htbp hLo hTops
+  obtain ⟨F, hF⟩ := exists_completion_recProp hleg hs hp htbleg htbp hTops
     (fun x h1 h2 h3 h4 ↦ by simp [Tops, h1, h2, h3, h4])
+    (fun hK ↦ by
+      subst hK
+      exact hone rfl htbleg htbp hLo (fun x hx ↦ by simp [Lo, hx]) hTops
+        fun x h1 h2 h3 h4 ↦ by simp [Tops, h1, h2, h3, h4])
     fun hK hT ↦ hDR hK htbleg htbp (fun x hx ↦ by simp [Lo, hx]) hT
   obtain ⟨c, δ, hc, hδlab, hδ, hcδ⟩ := exists_cutoff K hα tb
   have hR := F.restrictFace_right_completion hα'
@@ -274,10 +332,15 @@ theorem exists_coface_two {K n : ℕ} {t' : StageType.{u} α 2} {g : Fin n ↪ F
 /-- **h2 at two points** (modulo the SCAFFOLD statements of this file). -/
 theorem coatomCutoffDeterminationTwo : CoatomCutoffDeterminationTwo.{u} := by
   intro α K n t' g p hα hleg ⟨l, o, r, hs⟩ hp tb ⟨htbleg, htbp⟩ d hd hdK
-  refine exists_coface_two hα hleg hs hp (fun hK _ htbleg htbp _ _ hLo hT ↦ ?_) htbleg htbp hd
-    hdK
-  subst hK
-  exact donorRaising_two hleg hs hp htbleg htbp hLo hT
+  refine exists_coface_two hα hleg hs hp (fun hK _ htbleg htbp _ _ hLo hT ↦ ?_)
+    (fun hK _ htbleg htbp _ _ hLo hLo' hT hT' ↦ ?_) htbleg htbp hd hdK
+  · subst hK
+    exact donorRaising_two hleg hs hp htbleg htbp hLo hT
+  · subst hK
+    obtain rfl | rfl : l = 0 ∨ l = 1 := by omega
+    · exact exists_completion_recProp_one_lostZero hleg hs hp htbleg htbp hLo hLo' hT hT'
+    · exact exists_completion_recProp_one hleg hs hp htbleg htbp hLo hLo' hT hT'
+        (root_one hp htbp hLo')
 
 /-! ### Lost point last -/
 
@@ -299,7 +362,11 @@ def CoatomCutoffDeterminationTwoLast : Prop :=
 grade `1`, only). -/
 theorem coatomCutoffDeterminationTwoLast : CoatomCutoffDeterminationTwoLast.{u} := by
   intro α K n t' g p hα hleg ⟨o, r, hs⟩ hp tb ⟨htbleg, htbp⟩ d hd hdK
-  exact exists_coface_two hα hleg hs hp
-    (fun _ _ htbleg htbp _ _ hLo hT ↦ donorRaising_two_one hp htbleg htbp hLo hT) htbleg htbp hd hdK
+  refine exists_coface_two hα hleg hs hp
+    (fun _ _ htbleg htbp _ _ hLo hT ↦ donorRaising_two_one hp htbleg htbp hLo hT)
+    (fun hK _ htbleg htbp _ _ hLo hLo' hT hT' ↦ ?_) htbleg htbp hd hdK
+  subst hK
+  exact exists_completion_recProp_one hleg hs hp htbleg htbp hLo hLo' hT hT'
+    (root_one hp htbp hLo')
 
 end VaughtConjecture.H2
