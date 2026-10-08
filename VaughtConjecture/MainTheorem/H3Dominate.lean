@@ -23,6 +23,9 @@ Work file (placement later).  Compiled in this repository (theorem named):
 * **The domination conjunct of `H3.exists_raiseCoface` fails there**
   (`H3.not_exists_raiseCoface_dominate`).  This refutes the domination conjunct for every legal
   donor coface at such a context; it says nothing about (R3) or about the class route as a whole.
+* **The forced top needs a root top** (`H3.label_eq_top_of_forced`): the hypothesis on `d` holds
+  only at a root cell labelled `⊤`, so it has no instance at the apex contexts compiled so far
+  (`StageType.markedCapContextBelow'_addApex` asks the root labels to avoid `⊤`).
 -/
 
 universe u
@@ -167,6 +170,19 @@ theorem not_exists_raiseCoface_dominate {t' : StageType.{u} α (k + 1)} {p : Sta
     hcc hccb hwP hwPbot hwPc hsep (hdom (k + 1) (haN.trans hak) le_rfl)
 
 end Dominate
+
+/-- **A forced top lies below a root cell labelled `⊤`**: if every lawful labelling of `d` is at
+the cell `j₀` labelled `⊤` at most its value at the root cell `z₀`, then `z₀` is labelled `⊤` (the
+label of `d` is lawful).  So the hypothesis of `H3.not_donorTopsDominate` on `d` needs a root cell
+labelled `⊤`; the apex contexts of `StageType.markedCapContextBelow'_addApex` have none. -/
+theorem label_eq_top_of_forced {t : StageType.{u} α n} {d : StageType.{u} α (n + 1)}
+    (hdt : restrictFace Fin.castSuccEmb d = some t) {j₀ : Fin d.card} (hj₀ : d.label j₀ = ⊤)
+    {z₀ : Fin t.card}
+    (hforce : ∀ v : Fin d.card → Label.{u}, d.rows.IsLawful v → v j₀ ≤ v (faceCell hdt z₀)) :
+    t.label z₀ = ⊤ := by
+  have h := hforce d.label d.isLawful
+  rw [hj₀, label_faceCell] at h
+  exact top_le_iff.mp h
 
 end H3
 
