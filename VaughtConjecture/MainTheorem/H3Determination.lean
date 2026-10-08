@@ -7,6 +7,7 @@ import VaughtConjecture.MainTheorem.RootBottomRoute
 import VaughtConjecture.Continuation.ReadingLayerDetermination
 import VaughtConjecture.Extension.AdmittedTower
 import VaughtConjecture.Extension.CapRequestsGrade
+import VaughtConjecture.Extension.CapRequestsFill
 
 /-!
 # Hollow coatom cutoff determination at contexts respecting the root bottoms (work file)
@@ -241,11 +242,83 @@ theorem isDeterminedWithin_of_hasAdmittedRows (hα : Order.IsSuccLimit α)
 
 end Determination
 
-/-! ### The completion with correct rows (SCAFFOLD) -/
+/-! ### The completion with correct rows -/
+
+section Completion
+
+variable {t' : StageType.{u} α (k + 1)} {p : StageType.{u} α k} {tb : StageType.{u} α (k + 1)}
+  (ht' : t'.IsLegal) (hp : restrictFace Fin.castSuccEmb t' = some p) (htb : tb ∈ p.cofaces)
+  {g : Fin n ↪ Fin k} {d : StageType.{u} α (n + 1)} (hd : restrictFace (extendByLast g) tb = some d)
+
+/-- **The correct completion from the engine** (`Seed.exists_correctCompletion_T`): with `k ≥ 2`,
+the grade `N` of the cap at least `3`, the common face carrying no cell of grade at least `N`, and
+the fills (a dead common face, or the donor following the root with the fill at the positive
+caps), the seed has a completion whose rows of full scope from `N` are correct. -/
+theorem exists_correctCompletion_of {c r : Fin t'.card}
+    (hctx : t'.IsMarkedCapContextAt (g.trans Fin.castSuccEmb) c r) (hk : 2 ≤ k)
+    (hN3 : 3 ≤ t'.toCellScheme.grade c)
+    (hface : ∀ e, (seed ht' hp htb).amalgam.toCellScheme.scope e ⊆
+        univ.erase (Fin.last (k + 1)) ∩ univ.erase (Fin.castSucc (Fin.last k)) →
+      (seed ht' hp htb).amalgam.toCellScheme.grade e < t'.toCellScheme.grade c)
+    (hfill : CapRequests.IsDeadFace (seed ht' hp htb) (Fin.last (k + 1))
+        (Fin.castSucc (Fin.last k)) ∨
+      ∀ k', t'.toCellScheme.grade c ≤ k' → k' ≤ k + 1 →
+        CapRequests.DonorFollowsRoot (requests ht' hp htb hd c r (by omega)) (Fin.last (k + 1))
+          (Fin.castSucc (Fin.last k)) k' ∧
+        CapRequests.CapFillPosAt (requests ht' hp htb hd c r (by omega)) (Fin.last (k + 1)) k') :
+    ∃ F : CompletionBelowFullGrade (seed ht' hp htb),
+      F.HasAdmittedRows (t'.toCellScheme.grade c)
+        (requests ht' hp htb hd c r (by omega)).IsCorrect := by
+  have hrc : t'.toCellScheme.grade r ≤ t'.toCellScheme.grade c := by
+    have h := hctx.2.1.2.1
+    rw [CellScheme.mem_below] at h
+    exact (Prod.le_def.mp h).2
+  have hn := hctx.2.2.1
+  have hgr := isGraded_requests ht' hp htb hd (r := r) (by omega) hrc hn
+  have hL := restrictFace_left_seed ht' hp htb
+  have hA := restrictFace_donor_seed ht' hp htb hd
+  have hcapg : (seed ht' hp htb).amalgam.toCellScheme.grade (faceCell hL c) =
+      t'.toCellScheme.grade c := grade_faceCell hL c
+  have hcapC : (seed ht' hp htb).amalgam.toCellScheme.scope (faceCell hL c) =
+      univ.erase (Fin.last (k + 1)) := by
+    rw [scope_faceCell, hctx.1.1]
+    exact Coatom.univ_map_left
+  have h := (seed ht' hp htb).exists_correctCompletion_T hk (r := requests ht' hp htb hd c r
+    (by omega)) hgr (xp := Fin.last (k + 1)) (xd := Fin.castSucc (Fin.last k)) (by simp)
+    (by simp) Seed.last_ne_castSucc.symm hcapC (hcapg ▸ hN3)
+    (fun x hx hxe e he ↦ by
+      have hx' : x = Fin.castSucc (Fin.last k) := by
+        simp only [ProfileTower.Pts, mem_insert, mem_singleton] at hx
+        exact hx.resolve_left hxe
+      subst hx'
+      exact (hface e he).trans_eq hcapg.symm)
+    (fun y hy ↦ by
+      obtain ⟨j, hj, hjl, rfl⟩ := hy
+      refine ⟨(label_faceCell hA j).trans hj, fun hsub ↦ ?_, ?_⟩
+      · have hmem : Fin.last (k + 1) ∈
+            (seed ht' hp htb).amalgam.toCellScheme.scope (faceCell hA j) := by
+          rw [scope_faceCell]
+          exact mem_map.mpr ⟨Fin.last n, hjl, by simp⟩
+        simpa using hsub hmem
+      · change (seed ht' hp htb).amalgam.toCellScheme.grade (faceCell hA j) <
+          (seed ht' hp htb).amalgam.toCellScheme.grade (faceCell hL c)
+        rw [grade_faceCell, grade_faceCell]
+        exact (d.grade_le j).trans_lt hn)
+    (fun z hz ↦ absurd hz (Set.notMem_empty _)) rfl
+    (hfill.imp id fun hf k' hk' hkm ↦ hf k' (hcapg ▸ hk') hkm)
+  have hcapg' : (seed ht' hp htb).amalgam.toCellScheme.grade
+      (requests ht' hp htb hd c r (by omega)).cap = t'.toCellScheme.grade c := hcapg
+  rwa [hcapg'] at h
+
+end Completion
+
+/-! ### The open inputs (SCAFFOLD) -/
 
 set_option warningAsError false in
 /-- **SCAFFOLD (`sorry`)**: at an acquired context, the seed of the context and the coatom coface
-has a completion whose rows of full scope from the grade of the cap are correct. -/
+has a completion whose rows of full scope from the grade of the cap are correct.  Reduced by
+`H3.exists_correctCompletion_of` to: `k ≥ 2` and `N ≥ 3` (the small cases), the common face
+carrying no cell of grade at least `N` (`hface`), and the fills. -/
 theorem exists_correctCompletion (hα : Order.IsSuccLimit α) {t' : StageType.{u} α (k + 1)}
     {p : StageType.{u} α k} {tb : StageType.{u} α (k + 1)} (ht' : t'.IsLegal)
     (hp : restrictFace Fin.castSuccEmb t' = some p) (htb : tb ∈ p.cofaces) {g : Fin n ↪ Fin k}
@@ -256,7 +329,14 @@ theorem exists_correctCompletion (hα : Order.IsSuccLimit α) {t' : StageType.{u
     ∃ F : CompletionBelowFullGrade (seed ht' hp htb),
       F.HasAdmittedRows (t'.toCellScheme.grade c)
         (requests ht' hp htb hd c r (by have := hctx.2.2.1; omega)).IsCorrect := by
-  sorry
+  by_cases hsmall : 2 ≤ k ∧ 3 ≤ t'.toCellScheme.grade c
+  · refine exists_correctCompletion_of ht' hp htb hd hctx hsmall.1 hsmall.2 ?_ ?_
+    · -- the common face carries no cell of grade at least the grade of the cap
+      sorry
+    · -- the fills from the private coatom
+      sorry
+  · -- the small cases: `k ≤ 1` or the cap of grade `2`
+    sorry
 
 /-! ### Assembly -/
 
