@@ -20,7 +20,8 @@ stage `ω` (`Realization.isModel_of_hasFiniteCutReceiving`), whose two nonemptin
 at every legal type, uniformity under the plain coatom extension property
 (`StageType.nonempty_cofaces_inter_uniformityFamily`) and dominance under the form with apex
 (`StageType.nonempty_cofaces_inter_dominanceFamily`).  The coatom extension property with apex at
-`ω` is not proved.
+`ω` is compiled (`StageType.hasApexCoatomExtensions`), so the cap-to-model theorem holds with no
+hypothesis (`MainTheorem.capToModel`).
 
 **Output 3 and the continuation criterion.**  At every stage that is zero or a limit, the coatom
 extension property with apex gives the three coface instances used by the cap-to-model theorem and

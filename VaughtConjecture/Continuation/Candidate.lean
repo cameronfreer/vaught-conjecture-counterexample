@@ -138,7 +138,8 @@ the order law, while lifts still order the twins both ways above level `1`.
   with legal types and finite-extension receiving, given forcing donors at `ξ`, the stable section
   is the label section of that realization (normalization, `Realization.label_eq_stableLabel`),
   so `R` is stably lawful (`Realization.isStablyLawful_of_reduce_eq`).  Finite-extension receiving
-  follows from (R1) of the table of Layer 3, and forcing donors are still to be proved.
+  follows from (R1) of the table of Layer 3, and forcing donors are compiled at every block index
+  (`forcingDonors_of_blockStage`).
 
 **Relation to the roadmap.**  The roadmap builds the structural candidate "from consistency and
 covering" (Layer 4, output 1).  Here the order law, locality, exact partial evaluation, the
@@ -735,8 +736,9 @@ theorem not_isModel_stableCandidate_of_stableLabel_le {K : ℕ}
 
 /-! ### A model expansion -/
 
-/-- **Stable lawfulness from a model expansion**, conditional on forcing donors at `ξ` (still to be
-proved) and on finite-extension receiving of `R'` (from (R1), still to be proved): if `R` is the
+/-- **Stable lawfulness from a model expansion**, conditional on forcing donors at `ξ` (compiled at
+every block index, `forcingDonors_of_blockStage`) and on finite-extension receiving of `R'` (from
+(R1), still to be proved): if `R` is the
 reduction of an exactly consistent realization `R'` at `λ_{ξ+1}` with legal types, the stable
 section at every typed tuple is the label section of its type in `R'` (normalization), so `R` is
 stably lawful. -/

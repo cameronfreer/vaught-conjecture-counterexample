@@ -258,7 +258,8 @@ end Realization
 
 /-- **The continuation criterion from stable capped receiving**, conditional on (R4) (`hR4`) and
 the coface instances at every `λ_{ξ+1}` with `ξ < ω₁` (`hinst`; from the coatom extension property
-with apex there), both still to be proved: the model expansion is the stable candidate, which is
+with apex there, which is compiled), the first still to be proved: the model expansion is the stable
+candidate, which is
 defined because every model is stably lawful. -/
 theorem ContinuationCriterion.of_stableCappedReceiving (hR4 : StableCappedReceiving.{w})
     (hinst : ∀ ξ < ω₁, StageType.HasNonemptyCofaceInstances.{0} (blockStage (ξ + 1))) :

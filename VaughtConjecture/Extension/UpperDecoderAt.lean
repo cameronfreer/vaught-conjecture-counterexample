@@ -698,7 +698,7 @@ private theorem not_isOrbitKey_of_isSelfVisible_of_lt (hk : k < K)
   rw [visibilityReplace_block, block_eq_block_iff] at hek
   exact hesv (isSelfVisible_block.mpr (by split_ifs at hek <;> omega))
 
-/-- **The upper decoder keeps readability**: for `k ≤ 2`, if the values of `w` lie in the code grid
+/-- **The upper decoder keeps readability**: for `k < K`, if the values of `w` lie in the code grid
 and are readable for an orbit-canonical `Q`, so is the upper decoder at every point of the grid of
 grade `k`. -/
 theorem isReadableAt_upperDecoderAt {κ : Type*} [Fintype κ] {Q : κ → Label.{u}}
@@ -706,7 +706,7 @@ theorem isReadableAt_upperDecoderAt {κ : Type*} [Fintype κ] {Q : κ → Label.
     (hwB : ∀ d, w d ∈ codeGrid K B) (hw : ∀ d, IsReadableAt K Q (w d)) {B' : ℕ}
     (hx : x ∈ grid k B') : IsReadableAt K Q (upperDecoderAt k K B w x) := by
   refine IsReadableAt.max (IsReadableAt.max ?_ ?_) ?_
-  · -- The capped label: bottom or the least grid point `k`, of key `3`.
+  · -- The capped label: bottom or the least grid point `k`, of key `K`.
     rcases mem_grid.mp hx with rfl | ⟨b, -, rfl⟩
     · rw [min_eq_left bot_le]; exact .inl rfl
     rw [min_eq_right (gridPoint_le_gridPoint.mpr (Nat.zero_le b))]
@@ -720,7 +720,7 @@ theorem isReadableAt_upperDecoderAt {κ : Type*} [Fintype κ] {Q : κ → Label.
     unfold cellReading
     split_ifs with h1 h2
     · exact .inl rfl
-    · -- The block move keeps the key at `3` of the value, which is not self-visible at `3`.
+    · -- The block move keeps the key at `K` of the value, which is not self-visible at `K`.
       have h3 : ¬ IsSelfVisible K (w d) := fun h3 ↦
         not_isOrbitKey_of_isSelfVisible_of_lt (by omega) hwB h3 h2.2
       rcases mem_grid.mp hx with rfl | ⟨b', -, rfl⟩
@@ -736,7 +736,7 @@ theorem isReadableAt_upperDecoderAt {κ : Type*} [Fintype κ] {Q : κ → Label.
       · rw [(h3.mono (by omega)).visibilityReplace_eq k]; exact .inr (.inl h3)
       · exact isReadableAt_of_key (hw d) h3 (visibilityReplace_self_visibilityReplace_of_le le_rfl
           (by omega) _)
-  · -- The gap value is self-visible at `3`.
+  · -- The gap value is self-visible at `K`.
     by_cases hx0 : x = ⊥
     · rw [hx0, gapValueAt_bot]; exact .inl rfl
     rw [gapValueAt_of_ne_bot hx0]

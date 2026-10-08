@@ -64,7 +64,8 @@ a coface of `p`).  Capped, it is (R5) in that case.  So step 6 uses only the equ
 ultrahomogeneity, and capping: neither the coatom extension property
 `StageType.HasCoatomExtensions` nor modelhood (`Realization.IsModel`) is a hypothesis of any
 statement here.  Only the *existence* of a Fraïssé limit of the age of top-free charts
-(`exists_isFraisseLimit_topFreeAge`) needs the coatom extension property, which is not proved.
+(`exists_isFraisseLimit_topFreeAge`) needs the coatom extension property (compiled at every stage
+that is zero or a limit, `StageType.hasCoatomExtensions`).
 
 **Finite-extension receiving** (`hasFiniteExtensionReceiving_reconstruct`): the reconstructed
 realization is exactly consistent (`isConsistent_reconstruct`), so finite-cut receiving gives
@@ -163,8 +164,8 @@ top-free coface of the root's type, is received exactly
 
 Only the equality of ages, ultrahomogeneity, and capping are used: neither the coatom extension
 property `StageType.HasCoatomExtensions` nor modelhood is a hypothesis.  The existence of such a
-structure (`exists_isFraisseLimit_topFreeAge`) needs the coatom extension property, which is not
-proved. -/
+structure (`exists_isFraisseLimit_topFreeAge`) needs the coatom extension property (compiled at
+every stage that is zero or a limit, `StageType.hasCoatomExtensions`). -/
 theorem hasFiniteCutReceiving_reconstruct (hα : Order.IsSuccPrelimit α) :
     (reconstruct α M).HasFiniteCutReceiving := by
   intro x d hd c hc

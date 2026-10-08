@@ -5,6 +5,7 @@ Authors: Cameron Freer
 -/
 import VaughtConjecture.Extension.ForcingDonorsCoatom
 import VaughtConjecture.MainTheorem.AllCarriers
+import VaughtConjecture.MainTheorem.CoatomExtensionTheorem
 import VaughtConjecture.MainTheorem.LowerBound
 
 /-!
@@ -21,8 +22,8 @@ density sentence conditional on seven named hypotheses: the cap-to-model theorem
 (R3) for cover-hollowness at a block stage, and nonempty losses of the expansion domains
 (condition 4).  The theorems of the six-hypothesis form replace the first and the last by one
 hypothesis, the coatom extension property with apex at every countable block stage
-`λ_η = ω + ω · η`, `η < ω₁` (`StageType.HasApexCoatomExtensions`; Layer 3, 3.1, the open part of
-(R6)), leaving six:
+`λ_η = ω + ω · η`, `η < ω₁` (`StageType.HasApexCoatomExtensions`; Layer 3, 3.1, (R6), compiled as
+`StageType.hasApexCoatomExtensions_blockStage`), leaving six:
 
 * the coatom extension property with apex at every countable block stage (`hext`);
 * (R1), finite-cut receiving of models (`hrec`);
@@ -31,8 +32,9 @@ hypothesis, the coatom extension property with apex at every countable block sta
 * (R2), exact residual receiving (`hres`);
 * (R3), exact hollow-growth receiving for cover-hollowness at a block stage (`hhol`).
 
-Each is still to be proved.  The statements formerly taken as hypotheses are derived as follows,
-each by a theorem compiled in this repository:
+Each is still to be proved except the first, now compiled (the four-hypothesis form, below).  The
+statements formerly taken as hypotheses are derived as follows, each by a theorem compiled in this
+repository:
 
 * the cap-to-model theorem at `ω`, from `hext` at `η = 0`
   (`CapToModel.of_hasApexCoatomExtensions`; for the carriers of every universe);
@@ -81,6 +83,16 @@ uniqueness.  No compiled theorem derives next-block uniqueness or countable loss
 coatom extension property with apex alone; both derivations use (R1).  The six-hypothesis form is
 kept, and the five-hypothesis form is obtained from it by the derivation of forcing donors.
 
+## The four-hypothesis form
+
+The coatom extension property with apex holds at every stage that is zero or a limit
+(`StageType.hasApexCoatomExtensions`; compiled in this repository (theorem named)), in particular
+at every block stage (`StageType.hasApexCoatomExtensions_blockStage`).  So `hext` is discharged in
+`densitySentence_hasThinAlephOneSpectrum_of_terminalClassification''` and
+`vaughtCounterexample_allCarriers_of_terminalClassification''`, which take four hypotheses, each
+still to be proved: (R1), the continuation criterion, (R2) and (R3).  They are the five-hypothesis
+forms with `hext` given by that theorem.
+
 ## Placement
 
 This file belongs to Layer 6 of `roadmap/README.md`.
@@ -96,7 +108,8 @@ open scoped Ordinal
 /-- **The thin `ℵ₁` spectrum of the density sentence from the terminal classification and the
 coatom extension property with apex at every countable block stage**: the density sentence has
 exactly `ℵ₁` classes of models coded on `ℕ` and no perfect set of pairwise nonisomorphic ones,
-conditional on the following six hypotheses, each still to be proved:
+conditional on the following six hypotheses, each still to be proved except the last, now compiled
+(`StageType.hasApexCoatomExtensions_blockStage`):
 * finite-cut receiving of models (`hrec`; (R1) of the table of Layer 3): next-block uniqueness,
   logical agreement, and the rigid-core comparison;
 * forcing donors at every countable block index (`hF`; a finite construction of Layer 3):
@@ -107,7 +120,8 @@ conditional on the following six hypotheses, each still to be proved:
 * exact hollow-growth receiving for cover-hollowness at a block stage (`hhol`; (R3) of the table
   of Layer 3): the hollow comparison;
 * the coatom extension property with apex at every countable block stage (`hext`; Layer 3, 3.1,
-  the open part of (R6)): the cap-to-model theorem at `ω` and the top-free witnesses.
+  (R6), compiled as `StageType.hasApexCoatomExtensions_blockStage`): the cap-to-model theorem at `ω`
+  and the top-free witnesses.
 Derived, not assumed: the cap-to-model theorem at `ω` (`CapToModel.of_hasApexCoatomExtensions`,
 from `hext` at `η = 0`), next-block uniqueness (`Expansion.NextBlockUniqueness.of_forcingDonors`),
 countable losses (`Expansion.expansionDomain_loss_countable`), and nonempty losses
@@ -127,7 +141,8 @@ classification and the coatom extension property with apex at every countable bl
 conclusion of `vaughtCounterexample_allCarriers_of_expansionDomains` for the expansion domains of
 the density sentence, conditional on the six hypotheses of
 `densitySentence_hasThinAlephOneSpectrum_of_terminalClassification_of_hasApexCoatomExtensions`,
-each still to be proved.  The cap-to-model theorem, at `ω` on `ℕ` for the first domain and on the
+each still to be proved except `hext`, now compiled.  The cap-to-model theorem, at `ω` on `ℕ` for
+the first domain and on the
 carriers of the universe `w` for the reduction to `ℕ`, is derived from `hext` at `η = 0`
 (`CapToModel.of_hasApexCoatomExtensions`); next-block uniqueness, countable losses and nonempty
 losses are derived as for the spectrum. -/
@@ -155,14 +170,15 @@ theorem vaughtCounterexample_allCarriers_of_terminalClassification_of_hasApexCoa
 coatom extension property with apex at every countable block stage, with forcing donors
 derived**: the conclusion of
 `densitySentence_hasThinAlephOneSpectrum_of_terminalClassification_of_hasApexCoatomExtensions`,
-conditional on the following five hypotheses, each still to be proved:
+conditional on the following five hypotheses, each still to be proved except the last, now compiled
+(`StageType.hasApexCoatomExtensions_blockStage`):
 * finite-cut receiving of models (`hrec`; (R1) of the table of Layer 3);
 * the continuation criterion (`hcont`; output 3 of higher-stage reconstruction, Layer 4);
 * exact residual receiving (`hres`; (R2) of the table of Layer 3);
 * exact hollow-growth receiving for cover-hollowness at a block stage (`hhol`; (R3) of the table
   of Layer 3);
 * the coatom extension property with apex at every countable block stage (`hext`; Layer 3, 3.1,
-  the open part of (R6)).
+  (R6), compiled as `StageType.hasApexCoatomExtensions_blockStage`).
 Derived, not assumed: the cap-to-model theorem at `ω`, from `hext` at `η = 0`
 (`CapToModel.of_hasApexCoatomExtensions`); forcing donors at every countable block index, from
 `hext` at the next block stage (`forcingDonors_of_forall_hasApexCoatomExtensions`); next-block
@@ -186,7 +202,8 @@ forcing donors derived**: the conclusion of
 `vaughtCounterexample_allCarriers_of_terminalClassification_of_hasApexCoatomExtensions`,
 conditional on the five hypotheses of
 `densitySentence_hasThinAlephOneSpectrum_of_terminalClassification_of_hasApexCoatomExtensions'`,
-each still to be proved.  Forcing donors at every countable block index are derived from `hext`
+each still to be proved except `hext`, now compiled.  Forcing donors at every countable block
+index are derived from `hext`
 at the next block stage (`forcingDonors_of_forall_hasApexCoatomExtensions`); the other
 statements are derived as for the six-hypothesis form. -/
 theorem vaughtCounterexample_allCarriers_of_terminalClassification_of_hasApexCoatomExtensions'
@@ -202,5 +219,46 @@ theorem vaughtCounterexample_allCarriers_of_terminalClassification_of_hasApexCoa
             Nonempty (@Language.Equiv L M ℕ _ c.toStructure) :=
   vaughtCounterexample_allCarriers_of_terminalClassification_of_hasApexCoatomExtensions hrec
     (forcingDonors_of_forall_hasApexCoatomExtensions hext) hcont hres hhol hext
+
+/-- **The thin `ℵ₁` spectrum of the density sentence from the terminal classification**: the
+conclusion of
+`densitySentence_hasThinAlephOneSpectrum_of_terminalClassification_of_hasApexCoatomExtensions'`,
+conditional on exactly the following four hypotheses, each still to be proved:
+* finite-cut receiving of models (`hrec`; (R1) of the table of Layer 3);
+* the continuation criterion (`hcont`; output 3 of higher-stage reconstruction, Layer 4);
+* exact residual receiving (`hres`; (R2) of the table of Layer 3);
+* exact hollow-growth receiving for cover-hollowness at a block stage (`hhol`; (R3) of the table
+  of Layer 3).
+The coatom extension property with apex at every countable block stage is not assumed: it is
+`StageType.hasApexCoatomExtensions_blockStage`, compiled in this repository (theorem named).  The
+other statements are derived as in the five-hypothesis form. -/
+theorem densitySentence_hasThinAlephOneSpectrum_of_terminalClassification''
+    (hrec : FiniteCutReceiving.{0}) (hcont : ContinuationCriterion.{0})
+    (hres : Realization.ResidualReceiving.{0, 0})
+    (hhol : Realization.HollowReceiving.{0, 0} Realization.IsCoverHollowAtBlock) :
+    HasThinAlephOneSpectrum densitySentence.{0} :=
+  densitySentence_hasThinAlephOneSpectrum_of_terminalClassification_of_hasApexCoatomExtensions'
+    hrec hcont hres hhol fun η _ ↦ StageType.hasApexCoatomExtensions_blockStage η
+
+/-- **A thin uncountable infinitary class on all countable carriers, from the terminal
+classification**: the conclusion of
+`vaughtCounterexample_allCarriers_of_terminalClassification_of_hasApexCoatomExtensions'`,
+conditional on exactly the four hypotheses of
+`densitySentence_hasThinAlephOneSpectrum_of_terminalClassification''` ((R1), the continuation
+criterion, (R2), (R3)), each still to be proved.  The coatom extension property with apex at every
+countable block stage is `StageType.hasApexCoatomExtensions_blockStage`, compiled in this
+repository (theorem named). -/
+theorem vaughtCounterexample_allCarriers_of_terminalClassification''
+    (hrec : FiniteCutReceiving.{0}) (hcont : ContinuationCriterion.{0})
+    (hres : Realization.ResidualReceiving.{0, 0})
+    (hhol : Realization.HollowReceiving.{0, 0} Realization.IsCoverHollowAtBlock) :
+    ∃ (L : Language.{0, 1}) (_ : L.IsRelational) (_ : Countable (Σ n, L.Relations n))
+      (φ : L.Sentenceω), HasThinAlephOneSpectrum φ ∧
+        HasThinAlephOneSpectrumOnCountableCarriers.{w} φ ∧ ¬ φ.PerfectSetDichotomyAllCountable ∧
+        ∀ (M : Type w) [L.Structure M] [Countable M], φ.Realize M →
+          ∃ c : StructureSpace L, c ∈ ModelsOf φ ∧
+            Nonempty (@Language.Equiv L M ℕ _ c.toStructure) :=
+  vaughtCounterexample_allCarriers_of_terminalClassification_of_hasApexCoatomExtensions'
+    hrec hcont hres hhol fun η _ ↦ StageType.hasApexCoatomExtensions_blockStage η
 
 end VaughtConjecture.MainTheorem

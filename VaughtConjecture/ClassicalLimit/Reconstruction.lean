@@ -660,8 +660,8 @@ the reconstructed realization is exactly consistent and covering with legal top-
 structure of the limit in the hull language is the structure of its reconstructed realization.
 
 The limit is a hypothesis.  Only its age is used, not its ultrahomogeneity; its existence
-(`exists_isFraisseLimit_topFreeAge`) is conditional on the coatom extension property, which is not
-proved, and is not used here. -/
+(`exists_isFraisseLimit_topFreeAge`) is conditional on the coatom extension property (compiled at
+every stage that is zero or a limit, `StageType.hasCoatomExtensions`), and is not used here. -/
 theorem reconstruct_of_isFraisseLimit [Countable (Σ l, (hullLanguage.{u} α).Functions l)]
     [Countable M] (hM : IsFraisseLimit (topFreeAge.{u} α) M) :
     Nonempty M ∧ (reconstruct α M).IsConsistent ∧ (reconstruct α M).IsCovering ∧

@@ -31,7 +31,9 @@ hypothesis of `ExpansionDomains.hasLogicalAgreement_of_modelExpansions` holds by
 the domains, so logical agreement needs only finite-cut receiving of models.  The thinness of the
 density sentence (`densitySentence_isThinOnNatModels_of_modelExpansions`) and its thin `ℵ₁`
 spectrum (`densitySentence_hasThinAlephOneSpectrum_of_modelExpansions`) are then proved
-conditional on the following hypotheses, **each still to be proved**:
+conditional on the following hypotheses, **each still to be proved** except the cap-to-model theorem
+and forcing donors where listed, which are compiled (`MainTheorem.capToModel`,
+`forcingDonors_of_blockStage`):
 * the cap-to-model theorem at `ω` on `ℕ` (`CapToModel.{0}`; Layer 3, 3.4; checkpoint 4);
 * next-block uniqueness of models (`Expansion.NextBlockUniqueness.{0}`; a consequence of
   normalization, output 2 of higher-stage reconstruction, Layer 4; checkpoint 5);
@@ -119,7 +121,10 @@ theorem modelExpansionDomains_hasLogicalAgreement (hcap : CapToModel.{0})
 
 /-- **Thinness for the expansion domains, conditionally on cap-to-model and next-block
 uniqueness**: the density sentence has no perfect set of pairwise nonisomorphic models coded on
-`ℕ`, conditional on the following hypotheses, each still to be proved: the cap-to-model theorem
+`ℕ`, conditional on the following hypotheses, each still to be proved except the cap-to-model
+theorem, forcing donors and the coatom extension property with apex where listed, which are compiled
+(`MainTheorem.capToModel`, `forcingDonors_of_blockStage`,
+`StageType.hasApexCoatomExtensions_blockStage`): the cap-to-model theorem
 (`hcap`; Layer 3, 3.4; checkpoint 4), next-block uniqueness of models (`hu`; Layer 4, output 2;
 checkpoint 5), finite-cut receiving of models (`hrec`; (R1) of the table of Layer 3), and
 countable losses of the expansion domains (`hc`; condition 2 of the reduction, Layers 4–5).  The
@@ -134,7 +139,10 @@ theorem densitySentence_isThinOnNatModels_of_modelExpansions (hcap : CapToModel.
 /-- **The thin `ℵ₁` spectrum for the expansion domains, conditionally on cap-to-model and
 next-block uniqueness**: the density sentence has exactly `ℵ₁` classes of models coded on `ℕ`
 and no perfect set of pairwise nonisomorphic ones, conditional on the following hypotheses, each
-still to be proved: the cap-to-model theorem (`hcap`; Layer 3, 3.4; checkpoint 4), next-block
+still to be proved except the cap-to-model theorem, forcing donors and the coatom extension property
+with apex where listed, which are compiled (`MainTheorem.capToModel`, `forcingDonors_of_blockStage`,
+`StageType.hasApexCoatomExtensions_blockStage`): the cap-to-model theorem (`hcap`; Layer 3, 3.4;
+checkpoint 4), next-block
 uniqueness of models (`hu`; Layer 4, output 2; checkpoint 5), finite-cut receiving of models
 (`hrec`; (R1) of the table of Layer 3), countable losses of the expansion domains (`hc`;
 condition 2 of the reduction, Layers 4–5), and nonempty losses of the expansion domains (`hn`;
@@ -149,7 +157,10 @@ theorem densitySentence_hasThinAlephOneSpectrum_of_modelExpansions (hcap : CapTo
 
 /-- **Thinness for the expansion domains, conditionally on cap-to-model, (R1) and forcing
 donors**: the density sentence has no perfect set of pairwise nonisomorphic models coded on `ℕ`,
-conditional on the following hypotheses, each still to be proved: the cap-to-model theorem
+conditional on the following hypotheses, each still to be proved except the cap-to-model theorem,
+forcing donors and the coatom extension property with apex where listed, which are compiled
+(`MainTheorem.capToModel`, `forcingDonors_of_blockStage`,
+`StageType.hasApexCoatomExtensions_blockStage`): the cap-to-model theorem
 (`hcap`; Layer 3, 3.4; checkpoint 4), finite-cut receiving of models (`hrec`; (R1) of the table
 of Layer 3; used for next-block uniqueness and for logical agreement), forcing donors at every
 countable block index (`hF`; derived from the coatom extension property at the next block stage,
@@ -165,8 +176,11 @@ theorem densitySentence_isThinOnNatModels_of_forcingDonors (hcap : CapToModel.{0
 
 /-- **The thin `ℵ₁` spectrum for the expansion domains, conditionally on cap-to-model, (R1) and
 forcing donors**: the density sentence has exactly `ℵ₁` classes of models coded on `ℕ` and no
-perfect set of pairwise nonisomorphic ones, conditional on the following hypotheses, each still
-to be proved: the cap-to-model theorem (`hcap`; Layer 3, 3.4; checkpoint 4), finite-cut receiving
+perfect set of pairwise nonisomorphic ones, conditional on the following hypotheses, each still to
+be proved except the cap-to-model theorem, forcing donors and the coatom extension property with
+apex where listed, which are compiled (`MainTheorem.capToModel`, `forcingDonors_of_blockStage`,
+`StageType.hasApexCoatomExtensions_blockStage`): the cap-to-model theorem (`hcap`; Layer 3, 3.4;
+checkpoint 4), finite-cut receiving
 of models (`hrec`; (R1) of the table of Layer 3; used for next-block uniqueness and for logical
 agreement), forcing donors at every countable block index (`hF`; derived from the coatom extension
 property at the next block stage, `forcingDonors_of_hasCoatomExtensions`; used for next-block
@@ -183,7 +197,9 @@ theorem densitySentence_hasThinAlephOneSpectrum_of_forcingDonors (hcap : CapToMo
 
 /-- **Thinness for the expansion domains from the terminal classification**: the density
 sentence has no perfect set of pairwise nonisomorphic models coded on `ℕ`, conditional on the
-following hypotheses, each still to be proved:
+following hypotheses, each still to be proved except the cap-to-model theorem, forcing donors and
+the coatom extension property with apex where listed, which are compiled (`MainTheorem.capToModel`,
+`forcingDonors_of_blockStage`, `StageType.hasApexCoatomExtensions_blockStage`):
 * the cap-to-model theorem (`hcap`; Layer 3, 3.4; checkpoint 4): the first domain;
 * finite-cut receiving of models (`hrec`; (R1) of the table of Layer 3, open): next-block
   uniqueness, logical agreement, and the rigid-core comparison;
@@ -221,7 +237,10 @@ theorem densitySentence_hasThinAlephOneSpectrum_of_terminalClassification
 
 /-- **Thinness for the expansion domains from the terminal classification with the restricted
 hollow property**: the density sentence has no perfect set of pairwise nonisomorphic models coded
-on `ℕ`, conditional on the following hypotheses, each still to be proved:
+on `ℕ`, conditional on the following hypotheses, each still to be proved except the cap-to-model
+theorem, forcing donors and the coatom extension property with apex where listed, which are compiled
+(`MainTheorem.capToModel`, `forcingDonors_of_blockStage`,
+`StageType.hasApexCoatomExtensions_blockStage`):
 * the cap-to-model theorem (`hcap`; Layer 3, 3.4; checkpoint 4): the first domain;
 * finite-cut receiving of models (`hrec`; (R1) of the table of Layer 3, open): next-block
   uniqueness, logical agreement, and the rigid-core comparison;

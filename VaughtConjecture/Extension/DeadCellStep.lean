@@ -53,8 +53,9 @@ through the hypothesis of the step stated exactly, the existential two-face lift
 the grade `j`, is shown to imply that hypothesis).  The existential two-face lift fails for
 another legal seed on five points
 (`TwoFaceLiftExistsCounterexample.not_twoFaceLiftExists_two_seedL`), for which the case split
-fails as well (`TwoFaceLiftExistsCounterexample.not_twoFaceLift_or_deadAt_seedL`); whether that
-seed has a completion below the full grade is open.
+fails as well (`TwoFaceLiftExistsCounterexample.not_twoFaceLift_or_deadAt_seedL`); that seed has a
+completion below the full grade by other constructions
+(`ThinCompletion.nonempty_completionBelowFullGrade_seedL`, `ProfileTowerExamples.seedL_completion`).
 A legal seed on five points where `2FL(2)` fails and the cells of the grade `3` are dead is in the
 module `VaughtConjecture.Extension.TwoFaceLiftCounterexample`.
 

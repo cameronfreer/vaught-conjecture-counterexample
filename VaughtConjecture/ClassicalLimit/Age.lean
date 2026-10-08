@@ -60,8 +60,8 @@ property.
   `exists_jointEmbedding_topFreeChart`), under the hypotheses `StageType.HasCoatomExtensions α`,
   `Order.IsSuccPrelimit α`, and `0 < α`: the amalgam of `StageType.exists_amalgam` is capped at a
   cap self-visible at its arity and above every label of the two charts, and joint embedding is
-  amalgamation over the empty chart.  The coatom extension property is still to be proved, so these
-  are conditional.
+  amalgamation over the empty chart.  These are conditional on the coatom extension property, which
+  is compiled at every stage that is zero or a limit (`StageType.hasCoatomExtensions`).
 * **Classical existence** (step 3) is in the same module (`isFraisse_topFreeAge`,
   `exists_isFraisseLimit_topFreeAge`), under the same three hypotheses and the countability of
   the ordinals below `α`, from which the countability of the function symbols needed to state

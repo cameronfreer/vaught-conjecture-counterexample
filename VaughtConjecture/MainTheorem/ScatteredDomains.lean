@@ -32,7 +32,9 @@ The two inputs are:
 The density sentence is then back-and-forth scattered
 (`densitySentence_bfScattered_of_modelExpansions`), and thin by InfinitaryLogic's
 `isThinOn_of_bfScattered` (`densitySentence_isThinOnNatModels_of_modelExpansions_bfScattered`),
-conditional on the following hypotheses, **each still to be proved**:
+conditional on the following hypotheses, **each still to be proved** except the cap-to-model theorem
+and forcing donors where listed, which are compiled (`MainTheorem.capToModel`,
+`forcingDonors_of_blockStage`):
 * the cap-to-model theorem at `ω` on `ℕ` (`CapToModel.{0}`; Layer 3, 3.4; checkpoint 4);
 * next-block uniqueness of models (`Expansion.NextBlockUniqueness.{0}`; Layer 4, output 2;
   checkpoint 5);
@@ -82,7 +84,10 @@ theorem codeBFEquiv_of_mem_expansionDomain (hrec : FiniteCutReceiving.{0}) {η :
 /-- **The density sentence is back-and-forth scattered, conditionally on cap-to-model and
 next-block uniqueness**: for every `η < ω₁`, the codes of models of the density sentence fall into
 countably many classes of `CodeBFEquiv η` (InfinitaryLogic's `BFScattered`), conditional on the
-following hypotheses, each still to be proved: the cap-to-model theorem (`hcap`; Layer 3, 3.4;
+following hypotheses, each still to be proved except the cap-to-model theorem, forcing donors and
+the coatom extension property with apex where listed, which are compiled (`MainTheorem.capToModel`,
+`forcingDonors_of_blockStage`, `StageType.hasApexCoatomExtensions_blockStage`): the cap-to-model
+theorem (`hcap`; Layer 3, 3.4;
 checkpoint 4; the first domain), next-block uniqueness of models (`hu`; Layer 4, output 2;
 checkpoint 5; the limit clause), finite-cut receiving of models (`hrec`; (R1) of the table of
 Layer 3; one back-and-forth class in each domain), and countable losses of the expansion domains
@@ -100,7 +105,9 @@ theorem densitySentence_bfScattered_of_modelExpansions (hcap : CapToModel.{0})
 next-block uniqueness**: the density sentence has no perfect set of pairwise nonisomorphic models
 coded on `ℕ`, by InfinitaryLogic's `isThinOn_of_bfScattered` applied to
 `densitySentence_bfScattered_of_modelExpansions`, conditional on its hypotheses, each still to be
-proved: the cap-to-model theorem (`hcap`; Layer 3, 3.4; checkpoint 4), next-block uniqueness of
+proved except the cap-to-model theorem and forcing donors, which are compiled
+(`MainTheorem.capToModel`, `forcingDonors_of_blockStage`): the cap-to-model theorem (`hcap`; Layer
+3, 3.4; checkpoint 4), next-block uniqueness of
 models (`hu`; Layer 4, output 2; checkpoint 5), finite-cut receiving of models (`hrec`; (R1) of
 the table of Layer 3), and countable losses of the expansion domains (`hc`; condition 2 of the
 reduction, Layers 4–5).  The hypotheses are those of
@@ -116,7 +123,10 @@ theorem densitySentence_isThinOnNatModels_of_modelExpansions_bfScattered (hcap :
 `densitySentence_bfScattered_of_modelExpansions` with next-block uniqueness derived from (R1) and
 forcing donors (`NextBlockUniqueness.of_forcingDonors`) and the countable losses derived from (R1),
 the continuation criterion, (R2) and (R3) (`Expansion.expansionDomain_loss_countable`), conditional
-on the following hypotheses, each still to be proved:
+on the following hypotheses, each still to be proved except the cap-to-model theorem, forcing donors
+and the coatom extension property with apex where listed, which are compiled
+(`MainTheorem.capToModel`, `forcingDonors_of_blockStage`,
+`StageType.hasApexCoatomExtensions_blockStage`):
 * the cap-to-model theorem (`hcap`; Layer 3, 3.4; checkpoint 4): the first domain;
 * finite-cut receiving of models (`hrec`; (R1) of the table of Layer 3): one back-and-forth class
   in each domain, next-block uniqueness, and the rigid-core comparison;
@@ -139,7 +149,9 @@ theorem densitySentence_bfScattered_of_terminalClassification (hcap : CapToModel
 classification**: the density sentence has no perfect set of pairwise nonisomorphic models coded
 on `ℕ`, by InfinitaryLogic's `isThinOn_of_bfScattered` applied to
 `densitySentence_bfScattered_of_terminalClassification`, conditional on its hypotheses, each still
-to be proved: the cap-to-model theorem (`hcap`), (R1) (`hrec`), forcing donors at every countable
+to be proved except the cap-to-model theorem and forcing donors, which are compiled
+(`MainTheorem.capToModel`, `forcingDonors_of_blockStage`): the cap-to-model theorem (`hcap`), (R1)
+(`hrec`), forcing donors at every countable
 block index (`hF`), the continuation criterion (`hcont`), (R2) (`hres`) and (R3) (`hhol`).  The
 hypotheses are those of `densitySentence_isThinOnNatModels_of_terminalClassification`; neither
 sentence separation nor López–Escobar is used, and the lower bound is not used. -/

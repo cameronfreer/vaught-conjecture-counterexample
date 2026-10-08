@@ -90,7 +90,9 @@ invariant of its tower fails at the top grade
 (`TwoFaceLiftExistsCounterexample.not_forall_twoFaceLiftExists`).  The tower does not complete
 every seed.  Not refuted: a completion below the full grade of `seedL` by another construction,
 and `StageType.HasApexCoatomExtensions` and `StageType.HasCoatomExtensions`, which remain to be
-proved.  Whether `seedL` has a completion below the full grade at all is open.  That module gives
+proved.  `seedL` has a completion below the full grade by other constructions
+(`ThinCompletion.nonempty_completionBelowFullGrade_seedL`, `ProfileTowerExamples.seedL_completion`).
+That module gives
 a necessary condition, argued and not formalized (a cell at `(univ, 2)` where the labelling reaches
 the cap and whose row reads the cell `({3}, 1)` strictly below the cell `({4}, 1)`; for the
 catalogue entry `a` and the cap `h` of the failure, no cell of the tower at `(univ, 2)` where `a`

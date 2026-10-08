@@ -28,7 +28,8 @@ depend only on the finite data `(q, f, p, d)`.
   the forcing thresholds, conditional on finite-extension receiving of every model expansion to
   `λ_{η+1}` (a consequence of (R1) of the table of Layer 3, still to be proved; the form for models
   at countable limit stages is `Expansion.FiniteExtensionReceiving.forcingThresholds_determines`,
-  Layer 5) and on forcing donors at `η` (`ForcingDonors`, still to be proved).  It is the threshold
+  Layer 5) and on forcing donors at `η` (`ForcingDonors`, compiled at every block index,
+  `forcingDonors_of_blockStage`).  It is the threshold
   lemma (`Realization.le_label_iff_exists_forcesThreshold`) applied to a model expansion to
   `λ_{η+1}`, whose reduction to `λ_η` is the reduction of the expansion.
 * `realize_blockFormula_forcingThresholds_iff`: the chart formulas built from the forcing thresholds
@@ -80,7 +81,8 @@ theorem forcingThresholds_determines {η : Ordinal.{0}}
 
 /-- **Correctness of the chart formulas built from the forcing thresholds**, conditional on
 finite-extension receiving of the model expansions to `λ_{ξ+1}` (from (R1), still to be proved) and
-on forcing donors (still to be proved) at every block index `ξ < η`: in every model expansion `R`
+on forcing donors (compiled, `forcingDonors_of_blockStage`) at every block index `ξ < η`: in every
+model expansion `R`
 to `λ_η`, the formula of `t` holds of a tuple exactly when the tuple covers `t` in `R`. -/
 theorem realize_blockFormula_forcingThresholds_iff {η : Ordinal.{0}}
     (hrec : ∀ ξ < η, ∀ ⦃M : Type w⦄ [baseLanguage.{0}.Structure M]

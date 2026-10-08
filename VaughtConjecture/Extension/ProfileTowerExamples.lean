@@ -78,7 +78,7 @@ theorem seed6_completion (hα : Order.IsSuccPrelimit α) :
     Nonempty (CompletionBelowFullGrade (seed6 hα)) :=
   ProfileTower.nonempty_completionBelowFullGrade_of_three_le _ (by omega)
 
-/-- **The coatom extension with apex of `seed6`**, on seven points. -/
+/-- **The coatom extension with apex of `seed6`**, on six points. -/
 theorem exists_coatomExtension_seed6 (hα : Order.IsSuccPrelimit α) :
     ∃ t : StageType.{u} α 6, t.IsLegal ∧
       StageType.restrictFace Fin.castSuccEmb t = some (seed6 hα).left ∧

@@ -78,7 +78,8 @@ For two points at `n ≤ 2` the same apex row works over completions at the arit
 (`exists_forcingDonor_twoPoint_le_two`): `U` is the tied apex over the completion of the first
 point of `t` with a one-point type labelled `λ_η + 2`, and `t` and `U` are the two coatom types of a
 seed over the first point.  Beyond, the construction needs coatom extensions at the arity `3` and
-above, still to be proved.
+above, which are compiled (`StageType.hasCoatomExtensions`), so forcing donors hold at every block
+index (`forcingDonors_of_blockStage`).
 
 ## Placement
 
