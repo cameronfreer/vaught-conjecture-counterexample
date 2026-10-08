@@ -356,11 +356,8 @@ variable {α : Ordinal.{u}} {m : ℕ} (I : Seed.{u} α m)
 theorem exists_botKeeping_tower : (j : ℕ) →
     ∃ r, (I.tower j).rows.IsLawful r ∧ (∀ d, r (I.towerEmbed j d) = I.amalgam.label d) ∧
       (I.tower j).BotKeeping r
-  | 0 => ⟨I.amalgam.label, I.amalgam.isLawful, fun _ ↦ rfl, fun u _ hsu ↦ by
-      rcases I.tower_grade_le_or 0 u with h | h
-      · have := I.amalgam.isWellFormed.isWellFormed.grade_pos u
-        exact absurd h (by change ¬ I.amalgam.toCellScheme.grade u ≤ 0; omega)
-      · exact absurd hsu h⟩
+  | 0 => ⟨I.amalgam.label, I.amalgam.isLawful, fun _ ↦ rfl, fun u _ hsu ↦
+      absurd hsu (I.scope_ne_univ u)⟩
   | j + 1 => by
     obtain ⟨r, hr, hre, hrb⟩ := exists_botKeeping_tower j
     obtain ⟨r', hr', hr'r, hr'b⟩ := Scheme.exists_botKeeping_fieldLayer
@@ -451,11 +448,7 @@ theorem exists_botKeeping_of_eq_fieldLayer (F₀ : CompletionBelowFullGrade I)
   change scheme = _ at hsch
   subst hsch
   refine ⟨⟨_, embed, hle, hsc, hrows, hrange, hfaces, hlegal, r, hr, fun d ↦ ?_⟩, hrb⟩
-  have hne : I.amalgam.toCellScheme.scope d ≠ univ := by
-    rcases I.tower_grade_le_or 0 d with h | h
-    · have := I.amalgam.isWellFormed.isWellFormed.grade_pos d
-      exact absurd h (by change ¬ I.amalgam.toCellScheme.grade d ≤ 0; omega)
-    · exact h
+  have hne : I.amalgam.toCellScheme.scope d ≠ univ := I.scope_ne_univ d
   by_cases hlt : (embed d : ℕ) < S.card
   · have he : embed d = Fin.castAdd _ ⟨embed d, hlt⟩ := Fin.ext rfl
     rw [he, hrp]

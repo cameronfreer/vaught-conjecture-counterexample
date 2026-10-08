@@ -56,21 +56,13 @@ namespace Seed
 
 variable {α : Ordinal.{u}} {m : ℕ} (I : Seed.{u} α m) (B : ℕ)
 
-/-- The amalgam has no cell of full scope. -/
-theorem amalgam_scope_ne_univ (d : Fin I.amalgam.card) :
-    I.amalgam.toCellScheme.scope d ≠ univ := by
-  rcases I.tower_grade_le_or 0 d with h | h
-  · have := I.amalgam.isWellFormed.isWellFormed.grade_pos d
-    exact absurd h (by change ¬ I.amalgam.toCellScheme.grade d ≤ 0; omega)
-  · exact h
-
 /-- **The tower section keeps the bottoms**: at a cell of full scope of `T j` where the tower
 section of `w` is not `⊥`, the row reads every old cell where `w` is `⊥` as `⊥`. -/
 theorem towerSection_rowAt_eq_bot : ∀ (j : ℕ) (w : Fin I.amalgam.card → Label.{u})
     (u : Fin (I.tower j).card) (d : Fin I.amalgam.card),
     (I.tower j).toCellScheme.scope u = univ → I.towerSection B j w u ≠ ⊥ → w d = ⊥ →
       (I.tower j).rowAt u (I.towerEmbed j d) = ⊥
-  | 0, _, u, _, hsu, _, _ => absurd hsu (I.amalgam_scope_ne_univ u)
+  | 0, _, u, _, hsu, _, _ => absurd hsu (I.scope_ne_univ u)
   | j + 1, w, u, d, hsu, hu, hd => by
     change Fin ((I.tower j).card + ((I.tower j).catalogue (j + 1)).card) at u
     rw [towerEmbed_succ]
