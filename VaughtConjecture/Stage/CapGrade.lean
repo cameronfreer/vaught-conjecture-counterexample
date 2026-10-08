@@ -8,15 +8,12 @@ import VaughtConjecture.Stage.Cap
 /-!
 # Capping the cells above a grade
 
-**Faces whose capped cells are already below the cap.**  For a set `Z` of cells closed upward in
-the graded order and a cap `c`, the type `t.capOn Z c` (`StageType.capOn`, in
-`VaughtConjecture.Stage.Cap`) restricts along `f` as `t` does as soon as every cell visible
-through `f` that lies in `Z` is labelled at most `c` (`StageType.restrictFace_capOn'`); the cells
-need not avoid `Z` (`StageType.restrictFace_capOn`).
-
-**Capping above a grade.**  For a grade `K`, the cells of grade above `K` form an upper set, and
-availability relates cells of equal grades only, so no cell outside the set is carried into it.
-Capping them at `c` is therefore always lawful (`StageType.capAbove`).  When `c` lies above every
+**Capping above a grade.**  For a grade `K`, the cells of grade above `K` form an upper set
+(`StageType.lt_grade_upper`), and availability relates cells of equal grades only, so no cell
+outside the set is carried into it.  So capping them at `c` (`StageType.capAbove`, the instance of
+`StageType.capOn`, in `VaughtConjecture.Stage.Cap`) needs no availability condition: the
+availability hypothesis of `StageType.capOn` is vacuous, since it concerns cells of equal grade;
+the cap premises `c < α` and self-visibility of `c` at the arity remain.  When `c` lies above every
 label of `t` other than `⊤`, the capped type
 * has the scheme of `t`, so it is legal exactly when `t` is (`StageType.isLegal_capAbove`);
 * keeps every label other than `⊤` (`StageType.capAbove_label_of_ne_top`);
@@ -25,7 +22,9 @@ label of `t` other than `⊤`, the capped type
 * has every face of `t` whose cells labelled `⊤` have grade at most `K` as a face, literally,
   labels above `K` included (`StageType.restrictFace_capAbove`).
 At a limit stage such a cap exists, self-visible at every arity
-(`StageType.exists_cap_ne_top`).
+(`StageType.exists_cap_ne_top`).  The faces are kept through
+`StageType.restrictFace_capOn_of_label_le`: the visible cells of grade above `K` of such a face are
+not labelled `⊤`, so they are already below the cap.
 
 Capping above a grade truncates a pinned extension to a top grade at most `K` while keeping its
 two faces (`VaughtConjecture.MainTheorem.BoundedCoatomDetermination`).
@@ -49,37 +48,6 @@ namespace StageType
 
 variable {α : Ordinal.{u}} {n m : ℕ}
 
-/-! ### Faces whose capped cells are already below the cap -/
-
-section CapOn
-
-variable {t : StageType.{u} α n} {c : Ordinal.{u}} {hc : IsSelfVisible n (c : Label)}
-  {hcα : c < α} {Z : Fin t.card → Prop} [DecidablePred Z]
-  {hZ : ∀ d s, Z d → t.toCellScheme.gradedIndex d ≤ t.toCellScheme.gradedIndex s → Z s}
-  {havail : ∀ s s', t.toCellScheme.scope s ⊆ t.toCellScheme.scope s' →
-    t.toCellScheme.grade s = t.toCellScheme.grade s' → ¬ Z s → Z s' → t.label s ≤ c}
-
-/-- **Faces whose capped cells are already below the cap are unchanged**: along `f` whose visible
-cells in `Z` are labelled at most `c`, a type capped on `Z` restricts as the type does,
-definedness included. -/
-theorem restrictFace_capOn' {f : Fin m ↪ Fin n}
-    (hf : ∀ d ∈ t.visibleCells f, Z d → t.label d ≤ c) :
-    restrictFace f (t.capOn Z c hc hcα hZ havail) = restrictFace f t := by
-  by_cases hfm : univ.map f ∈ t.toCellScheme.faces
-  · rw [restrictFace_of_mem t f hfm, restrictFace_of_mem (t.capOn Z c hc hcα hZ havail) f hfm]
-    refine congrArg some (ext rfl fun i j hij ↦ ?_)
-    obtain rfl : i = j := Fin.ext hij
-    -- the capped type has the scheme of `t`, so its cell under `i` is that of `t`; unfold the
-    -- capped label there (`StageType.capOn_label`)
-    change (if Z (t.cellMap f i) then _ else _) = t.label (t.cellMap f i)
-    split_ifs with hZi
-    · exact min_eq_left (hf _ (t.cellMap_mem f i) hZi)
-    · rfl
-  · rw [restrictFace_of_notMem t f hfm,
-      restrictFace_of_notMem (t.capOn Z c hc hcα hZ havail) f hfm]
-
-end CapOn
-
 /-! ### Capping above a grade -/
 
 /-- The cells of grade above `K` form an upper set of the graded order. -/
@@ -91,7 +59,7 @@ theorem lt_grade_upper (t : StageType.{u} α n) (K : ℕ) (d s : Fin t.card)
 
 /-- The **stage type capped above the grade** `K`: the scheme of `t` with the cells of grade above
 `K` capped at `c` and the other labels kept (`StageType.capOn`).  Availability relates cells of
-equal grades, so no condition is needed for lawfulness. -/
+equal grades, so the availability hypothesis of `StageType.capOn` is vacuous. -/
 noncomputable def capAbove (t : StageType.{u} α n) (K : ℕ) (c : Ordinal.{u})
     (hc : IsSelfVisible n (c : Label)) (hcα : c < α) : StageType.{u} α n :=
   t.capOn (fun d ↦ K < t.toCellScheme.grade d) c hc hcα (t.lt_grade_upper K)
@@ -150,7 +118,7 @@ theorem restrictFace_capAbove (hct : ∀ d, t.label d ≠ ⊤ → t.label d ≤ 
     {p : StageType.{u} α m} (hp : restrictFace f t = some p)
     (hpK : ∀ i, p.label i = ⊤ → p.toCellScheme.grade i ≤ K) :
     restrictFace f (t.capAbove K c hc hcα) = some p := by
-  refine (restrictFace_capOn' fun d hd hdK ↦ ?_).trans hp
+  refine (restrictFace_capOn_of_label_le fun d hd hdK ↦ ?_).trans hp
   by_cases htop : t.label d = ⊤
   · obtain ⟨i, rfl⟩ := exists_faceCell_eq hp hd
     rw [label_faceCell] at htop
