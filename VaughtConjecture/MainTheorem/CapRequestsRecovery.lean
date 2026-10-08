@@ -3,7 +3,7 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
-import VaughtConjecture.Extension.CapRequestsGrade
+import VaughtConjecture.Extension.CapRequestsFill
 import VaughtConjecture.MainTheorem.CutoffCoatomRelabel
 
 /-!
@@ -280,6 +280,11 @@ theorem scope_leftCell (b : Fin X.Tp.card) :
       (X.Tp.toCellScheme.scope b).map (Coatom.left m) :=
   StageType.scope_faceCell X.restrictFace_amalgam_left b
 
+theorem scope_donorCell (j : Fin X.D.card) :
+    X.seed.amalgam.toCellScheme.scope (X.donorCell j) =
+      (X.D.toCellScheme.scope j).map X.donorEmb :=
+  StageType.scope_faceCell X.restrictFace_amalgam_donor j
+
 theorem donorCell_injective : Function.Injective X.donorCell := fun _ _ h ↦
   Fin.cast_injective _ ((X.seed.amalgam.toScheme.cellMap X.donorEmb).injective h)
 
@@ -287,10 +292,11 @@ variable {γ : Ordinal.{u}} (c : MarginCapData X.Tp X.D γ)
 
 open Classical in
 /-- **The requests of the cap data** on the cells of the amalgam: the cap and the marker at their
-cells, the threshold the grade of the cap, the offset `R`; `F` the cells of `D` labelled in the
-block of `λ_ξ` (they reduce to `⊤` at `λ_ξ`), with the references and offsets of the data; `T` the
-cells of `D` labelled `⊤`; `Z` empty.  The cells of `D` labelled `⊥` or below `λ_ξ` are read through
-the receiving family instead (`StageType.FirstCoatomInput.exists_isCutoffStableRecovery`). -/
+cells, the threshold the grade of the cap, the offset `R`; `F` the new cells of `D` (those not
+visible through its first points) labelled in the block of `λ_ξ`, which reduce to `⊤` at `λ_ξ`,
+with the references and offsets of the data; `T` the new cells of `D` labelled `⊤`; `Z` empty.  The
+old cells of `D` are read through the face `T⁺`, and the new cells labelled `⊥` or below `λ_ξ`
+through the receiving family (`StageType.FirstCoatomInput.exists_isCutoffStableRecovery`). -/
 noncomputable def requests : CapRequests (Fin X.seed.amalgam.card) where
   cap := X.leftCell c.cap
   N := X.Tp.toCellScheme.grade c.cap
@@ -298,8 +304,9 @@ noncomputable def requests : CapRequests (Fin X.seed.amalgam.card) where
   R_lt_N := c.R_lt
   Z := ∅
   F := {d | ∃ j, (∃ n : ℕ, X.D.label j = ((blockStage ξ + n : Ordinal.{u}) : Label.{u})) ∧
+    j ∉ X.D.toScheme.visibleCells Fin.castSuccEmb ∧ X.donorCell j = d}
+  T := {d | ∃ j, X.D.label j = ⊤ ∧ j ∉ X.D.toScheme.visibleCells Fin.castSuccEmb ∧
     X.donorCell j = d}
-  T := {d | ∃ j, X.D.label j = ⊤ ∧ X.donorCell j = d}
   ref d := if h : ∃ j, X.donorCell j = d then X.leftCell (c.ref h.choose) else X.leftCell c.cap
   off d := if h : ∃ j, X.donorCell j = d then c.off h.choose else 0
   marker := X.leftCell c.marker
@@ -332,21 +339,21 @@ theorem grade_donorCell_le (j : Fin X.D.card) :
 theorem requests_isGraded : (X.requests c).IsGraded X.seed.amalgam.toCellScheme.grade where
   le_grade_cap := (X.grade_requests_cap c).ge
   off_le f hf := by
-    obtain ⟨j, ⟨n, hn⟩, rfl⟩ := hf
+    obtain ⟨j, ⟨n, hn⟩, -, rfl⟩ := hf
     obtain ⟨μ, i', -, -, hoff, -⟩ := c.ref_spec j _ hn
     rw [requests_off]
     exact hoff.le
   grade_le_of_mem_Z z hz := absurd hz (Set.notMem_empty z)
   grade_le_of_mem_F f hf := by
-    obtain ⟨j, -, rfl⟩ := hf
+    obtain ⟨j, -, -, rfl⟩ := hf
     rw [grade_requests_cap]
     exact X.grade_donorCell_le c j
   grade_le_of_mem_T y hy := by
-    obtain ⟨j, -, rfl⟩ := hy
+    obtain ⟨j, -, -, rfl⟩ := hy
     rw [grade_requests_cap]
     exact X.grade_donorCell_le c j
   grade_ref_le f hf := by
-    obtain ⟨j, ⟨n, hn⟩, rfl⟩ := hf
+    obtain ⟨j, ⟨n, hn⟩, -, rfl⟩ := hf
     obtain ⟨μ, i', -, -, -, -, hr, -⟩ := c.ref_spec j _ hn
     rw [requests_ref, grade_requests_cap, grade_leftCell]
     exact hr
@@ -370,7 +377,7 @@ theorem requests_isCorrect_label : (X.requests c).IsCorrect fun d ↦ X.seed.ama
     exact htop (Label.coe_le_coe_add _ _)
   refine (CapRequests.isCorrect_iff_of_eq_top hc ha).mpr ⟨fun z hz ↦ absurd hz (Set.notMem_empty z),
     fun f hf ↦ ?_, fun y hy ↦ ?_⟩
-  · obtain ⟨j, ⟨n, hn⟩, rfl⟩ := hf
+  · obtain ⟨j, ⟨n, hn⟩, -, rfl⟩ := hf
     obtain ⟨μ, i', hμ, hon, -, -, -, hr⟩ := c.ref_spec j _ hn
     -- the block of the reference is `λ_ξ`: a smaller block would put the label below `λ_ξ`
     have hμle : blockStage ξ ≤ μ := by
@@ -381,7 +388,7 @@ theorem requests_isCorrect_label : (X.requests c).IsCorrect fun d ↦ X.seed.ama
     rw [requests_ref, requests_off, label_donorCell, label_leftCell, hn, hr,
       htop (Label.coe_le_coe_add _ _), htop (le_trans (by exact_mod_cast hμle)
         (Label.coe_le_coe_add μ i')), visibilityReplace_top]
-  · obtain ⟨j, hj, rfl⟩ := hy
+  · obtain ⟨j, hj, -, rfl⟩ := hy
     rw [label_donorCell, hj, Label.reduce_top]
 
 /-- **The common face carries no cell of grade at least the cap's**, from the same statement on the
@@ -446,9 +453,10 @@ completion of the seed of `(T⁺↓λ_ξ, tb↓λ_ξ)` with correct rows from th
 (`Seed.exists_correctCompletion`), with the apex, carries cutoff stable recovery for `T⁺`,
 `f.trans Fin.castSuccEmb`, `D` and `γ`, at a cutoff above every label of `D↓λ_ξ` other than `⊤`,
 and its face along the second coatom is `tb↓λ_ξ`.  For a stage type `Q'` at `λ_{ξ+1}` on its scheme
-with face `T⁺` and `Q'↓λ_ξ` in the receiving family: the cells of `D` labelled `⊥` or below `λ_ξ`
-are read through the receiving family; those labelled in the block of `λ_ξ` exactly from their
-references, and those labelled `⊤` above `γ`, through a cell of `(univ, N)` reached from the cap
+with face `T⁺` and `Q'↓λ_ξ` in the receiving family: the old cells of `D` are read through the face
+`T⁺` (`StageType.label_eq_of_mem_visibleCells`); the new cells labelled `⊥` or below `λ_ξ` through
+the receiving family; those labelled in the block of `λ_ξ` exactly from their references, and those
+labelled `⊤` above `γ`, through a cell of `(univ, N)` reached from the cap
 (`CompletionBelowFullGrade.label_eq_of_hasAdmittedRows`,
 `CompletionBelowFullGrade.lt_label_of_hasAdmittedRows`). -/
 theorem exists_isCutoffStableRecovery (hN3 : 3 ≤ X.Tp.toCellScheme.grade c.cap)
@@ -549,6 +557,17 @@ theorem exists_isCutoffStableRecovery (hN3 : 3 ≤ X.Tp.toCellScheme.grade c.cap
     · rw [Label.reduce_of_le hle] at hr
       exact absurd hr.symm (ne_top_of_lt hlt)
     · rwa [Label.reduce_of_lt (not_le.mp hle)] at hr
+  by_cases hvis : j ∈ X.D.toScheme.visibleCells Fin.castSuccEmb
+  · -- an old cell: the faces of `Q'` and of `D` along the first points are both `P`
+    have hQP : restrictFace Fin.castSuccEmb (Q''.comap X.donorEmb hfmem) = some X.P := by
+      rw [restrictFace_trans Q'' X.donorEmb _ (restrictFace_of_mem Q'' X.donorEmb hfmem),
+        donorEmb, castSuccEmb_trans_extendByLast, ← restrictFace_trans Q'' _ _ hQ'T,
+        ← restrictFace_trans X.Tp _ _ X.restrictFace_Tp, X.restrictFace_p]
+    have hold := label_eq_of_mem_visibleCells
+      (comap_toScheme_of_restrictFace hqD : (F.completion hα).toScheme.comap X.donorEmb =
+        (X.D.reduce hα).toScheme) hQP X.mem_cofaces_D.2 hij hvis
+    rw [← hQl, hold]
+    exact ⟨fun _ ↦ rfl, fun hj ↦ by rw [hj]; exact WithBot.coe_lt_coe.mpr (WithTop.coe_lt_top _)⟩
   refine ⟨fun hne ↦ ?_, fun hj ↦ ?_⟩
   · rcases atStage_iff.mp (X.D.atStage j) with h | ⟨o, ho, h⟩ | h
     · exact hrecv (by rw [h]; exact WithBot.bot_lt_coe _)
@@ -566,12 +585,12 @@ theorem exists_isCutoffStableRecovery (hN3 : 3 ≤ X.Tp.toCellScheme.grade c.cap
           ((blockStage ξ + i' : Ordinal.{u}) : Label.{u}) := by
         rw [requests_ref, hTp, hrl]
       have hres := CompletionBelowFullGrade.label_eq_of_hasAdmittedRows hgr hF hw
-        ⟨j, ⟨n, hnF⟩, rfl⟩ hjN hμ (k := i') hi' href (href ▸ (hlt_cap hi').le)
+        ⟨j, ⟨n, hnF⟩, hvis, rfl⟩ hjN hμ (k := i') hi' href (href ▸ (hlt_cap hi').le)
         (by rw [requests_off]; exact hlt_cap hoff)
       rw [requests_off] at hres
       rw [hres, hnF, hn']
     · exact absurd h hne
-  · exact CompletionBelowFullGrade.lt_label_of_hasAdmittedRows hgr hF hw ⟨j, hj, rfl⟩ hjN
+  · exact CompletionBelowFullGrade.lt_label_of_hasAdmittedRows hgr hF hw ⟨j, hj, hvis, rfl⟩ hjN
       (isSuccPrelimit_blockStage ξ) (i := c.i) c.i_lt
       (by change w (F.embed (X.leftCell c.marker)) = _; rw [hTp, c.label_marker])
       (by
@@ -579,6 +598,43 @@ theorem exists_isCutoffStableRecovery (hN3 : 3 ≤ X.Tp.toCellScheme.grade c.cap
         rw [hTp, c.label_marker]
         exact (hlt_cap c.i_lt).le)
       (hlt_cap c.R_lt).le (by exact_mod_cast c.lt_R)
+
+/-- **The fill at `⊥` when the donor follows the root**, for the requests of the cap data at a
+grade `0 < k' ≤ m + 1`, when no new cell of `D` is labelled in the block of `λ_ξ` (so `F` is
+empty): `CapRequests.capFillBotAt_of_donorFollowsRoot`, with the new top cells of `D` off the
+private coatom (they contain the new point) and labelled `⊤` in the glued labelling.  The
+hypothesis `CapRequests.DonorFollowsRoot` is open. -/
+theorem capFillBotAt_requests_of_donorFollowsRoot (hm : 0 < m) {k' : ℕ} (hk : 0 < k')
+    (hkm : k' ≤ m + 1)
+    (hnoF : ∀ j, j ∉ X.D.toScheme.visibleCells Fin.castSuccEmb → ∀ n : ℕ,
+      X.D.label j ≠ ((blockStage ξ + n : Ordinal.{u}) : Label.{u}))
+    (hfol : CapRequests.DonorFollowsRoot (X.requests c) (Fin.last (m + 1))
+      (Fin.castSucc (Fin.last m)) k') :
+    CapRequests.CapFillBotAt (X.requests c) (Fin.last (m + 1)) k' := by
+  have hcapC : X.seed.amalgam.toCellScheme.scope (X.requests c).cap ⊆
+      univ.erase (Fin.last (m + 1)) := by
+    change X.seed.amalgam.toCellScheme.scope (X.leftCell c.cap) ⊆ _
+    rw [scope_leftCell]
+    intro y hy
+    obtain ⟨x, -, rfl⟩ := mem_map.mp hy
+    exact mem_erase.mpr ⟨Fin.castSucc_ne_last x, mem_univ _⟩
+  refine CapRequests.capFillBotAt_of_donorFollowsRoot (X.requests_isGraded c) hm
+    (by simp [ProfileTower.Pts]) (by simp [ProfileTower.Pts]) (Fin.castSucc_ne_last _) hk hkm
+    hcapC hfol (fun y hy ↦ ?_) (fun z hz ↦ absurd hz (Set.notMem_empty z)) ?_
+  · obtain ⟨j, hj, hvis, rfl⟩ := hy
+    refine ⟨by rw [label_donorCell, hj, Label.reduce_top], fun hsub ↦ hvis ?_⟩
+    rw [Scheme.mem_visibleCells]
+    intro y hy
+    have hy' : X.donorEmb y ∈ X.seed.amalgam.toCellScheme.scope (X.donorCell j) := by
+      rw [scope_donorCell]
+      exact mem_map_of_mem _ hy
+    have hne := (mem_erase.mp (hsub hy')).1
+    induction y using Fin.lastCases with
+    | last => exact absurd (by simp [donorEmb]) hne
+    | cast y => exact ⟨y, rfl⟩
+  · ext d
+    simp only [requests, Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false, not_exists, not_and]
+    exact fun j ⟨n, hn⟩ hvis _ ↦ hnoF j hvis n hn
 
 end FirstCoatomInput
 
