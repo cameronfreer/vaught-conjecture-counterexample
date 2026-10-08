@@ -54,7 +54,8 @@ index of any cell of `D` whose collapsed graded index is its own (the targets of
   structure.
 
 The doubling of a seed whose two coatom types are equal is built from these in
-`VaughtConjecture.Continuation.SourceGapDoubledCompletion`.
+`VaughtConjecture.Continuation.SourceGapDoubledCompletion` at the arity one, and at every arity in
+`VaughtConjecture.Continuation.SourceGapDoubledTower` (one copy layer per grade).
 
 ## Placement
 

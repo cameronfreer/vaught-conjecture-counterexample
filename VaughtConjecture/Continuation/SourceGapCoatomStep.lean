@@ -27,7 +27,9 @@ source-gap context `t'` of grade `K` along `h`, every closed coatom `f` of `t'` 
 coface `D'` of `t'` has face `d'` along `f` followed by the new point and reads each new top of `d`
 along `h` at its tops (`StageType.ReadsEachNewTopAtTops`).  The donor `d'` of the step is
 arbitrary: it is the output of the exact pinned extension; the reading is asked only for the new
-tops of `d`.
+tops of `d`.  Compiled instances: the coatom `Fin.castSuccEmb` with the donor `d' = t'`, at every
+arity (`StageType.exists_coatomStep_self_succ`,
+`VaughtConjecture.Continuation.SourceGapDoubledTower`); donors other than `t'` are open.
 
 **The reduction** (`StageType.hasTopReadingPinnedExtensions_of_coatomSteps`, compiled in this
 repository): the coatom extension property and the coatom step at stage `α` give the top-reading

@@ -39,6 +39,9 @@ private top `s` of the face (labelled as `x`); every cell of full scope reads th
   below `o` as in `Scheme.IsMixedSite.exists_top_lt`; and the mixed labelling is not lawful below
   the full pair (`Seed.eq_of_isLawfulBelow_doubled`).
 
+The coface and the coatom step at every arity are in
+`VaughtConjecture.Continuation.SourceGapDoubledTower` (`StageType.exists_coatomStep_self_succ`).
+
 **The symmetry hypothesis.**  The donor must be the context: the two coatom types of the seed are
 equal.  The coatom step for a donor other than the context, and at a coatom other than
 `Fin.castSuccEmb` up to relabelling the points, is not proved here.

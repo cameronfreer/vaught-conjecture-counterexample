@@ -13,6 +13,9 @@ Roadmap, Layer 3 ((R2) of the table of 3.4, the reading of the new tops at the c
 the doublings of `VaughtConjecture.Continuation.SourceGapDoubling` and the amalgam of a type with
 itself (`VaughtConjecture.Continuation.SourceGapDoubledAmalgam`).
 
+The construction at every arity is `VaughtConjecture.Continuation.SourceGapDoubledTower` (one
+copy layer per grade `1, …, m + 1`); this file, at the arity one, is kept as a test.
+
 Let `I : Seed α 1` be a seed on three points whose two coatom types are equal (`I.left = I.right`,
 a legal stage type `T` on two points).  **The doubled completion** appends to the amalgam two
 layers of cells of full scope:
