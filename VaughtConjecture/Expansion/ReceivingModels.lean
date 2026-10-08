@@ -58,7 +58,12 @@ continuation criterion, a receiving-terminal receiving model with top-grade supr
 cover-hollow (`Realization.IsReceivingTerminalAt.isCoverHollow`).
 
 **Status.**  Proved: the statements above, each from the explicit hypotheses named.  Forcing
-donors, the receiving form of (R4), and the coface instances remain hypotheses.
+donors at every block index and the coface instances at every next block stage are compiled in
+this repository (theorem named) (`forcingDonors_blockStage`;
+`MainTheorem.hasNonemptyCofaceInstances_blockStage_add_one`, from
+`StageType.hasApexCoatomExtensions_blockStage`); the statements here keep them as hypotheses
+because this module does not import those theorems.  The receiving form of (R4) is still to be
+proved.
 
 ## Placement
 

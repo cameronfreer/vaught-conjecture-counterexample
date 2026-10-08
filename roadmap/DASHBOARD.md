@@ -333,7 +333,9 @@ receiving models (`hres : Realization.ReceivingResidualReceiving`), and (R3) for
 the original statement asked only of models with finite-cut receiving, and each follows from the
 original (`MainTheorem.receivingForms_of_stableCappedReceiving`).  The three are open.  (R1) is
 not a hypothesis of it and is not proved by it: receiving is a clause of the class, and (R1)
-stays a later fidelity theorem relating models and receiving models.  The form with the coatom
+stays a later fidelity theorem, here meaning a later theorem relating models and receiving models
+(two presentations of the tower), not the fidelity theorem of Layer 2 (the density sentence
+against the four-family sentence).  The form with the coatom
 extension property with apex as a fourth hypothesis is kept
 (`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_receivingModels`).  The table below and
 the status of each hypothesis are unchanged.

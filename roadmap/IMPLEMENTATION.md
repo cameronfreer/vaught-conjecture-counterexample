@@ -3701,8 +3701,10 @@ Each checkpoint needs both its abstract API and a concrete application:
    and `hhol : Realization.HollowReceiving Realization.IsReceivingCoverHollowAtBlock`, (R4), (R2)
    and (R3) asked only of models with finite-cut receiving.  Each follows from its original form
    (`MainTheorem.receivingForms_of_stableCappedReceiving`); no converse is claimed.  The three are
-   open.  (R1) is not a hypothesis and is not proved: it stays a later fidelity theorem relating
-   models and receiving models.  The four-hypothesis form above, the form with the coatom
+   open.  (R1) is not a hypothesis and is not proved: it stays a later fidelity theorem, here
+   meaning a later theorem relating models and receiving models (two presentations of the
+   tower), not the fidelity theorem of item 13 of the concordance (the density sentence against
+   clause 4).  The four-hypothesis form above, the form with the coatom
    extension property with apex as a hypothesis
    (`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_receivingModels`), and every status
    above are unchanged.
