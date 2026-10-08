@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Extension.CanonicalCode
+import VaughtConjecture.Extension.NormalForm
 
 /-!
 # LOW profiles: the LOW clause, the partner, and activation by a strict comparison
@@ -47,6 +48,15 @@ activation (`Label.eq_top_of_agreementHeight_lt`): a monotone `σ` reading the a
 `a` and the partner strictly below that of `a` and `s` reads every donor top of `a` as `⊤`.  This
 is the per-controller argument of the LOW display: the controller of `a` reads the cell of a
 profile `x` at the agreement height of `a` and `x`.
+
+**Anchors** (`Label.lowAnchors`, compiled in this repository).  A witness `(g, σ)` with
+`g K = ⊤` maps LOW profiles to LOW profiles (`Label.IsLowAt.map`).  So the normal form
+`strongEncode V K ∘ a` of a LOW profile (`VaughtConjecture.Extension.NormalForm`, `V` its set of
+values) is a **LOW anchor**: a LOW profile with values in the coded alphabet with block bound
+`2 · #X + 1` and offset bound `K + 1`, from which the decoder recovers `a`
+(`Label.exists_mem_lowAnchors`).  The LOW anchors with a given block bound are finitely many
+(`Label.finite_lowAnchors`): they index the controllers of a LOW layer.  The coding is that of
+the normal form; no bound on the values of `a` or on the rows is assumed.
 
 ## Placement
 
@@ -224,5 +234,63 @@ theorem eq_top_of_agreementHeight_partner_lt {s a : X → Label.{u}} (hG : ⊥ �
     (ho : σ (a o) = ⊤) (hr : σ (a r) = ⊤) : ∀ x ∈ T, σ (a x) = ⊤ :=
   eq_top_of_agreementHeight_lt hG hh (donorMax_le_cutoffCut s) hsβ (min_partner hsβ.le) hlow hσ
     hgK hlt ho hr
+
+/-! ### Anchors -/
+
+omit [DecidableEq X] [Fintype X] in
+/-- **Witness images of LOW profiles are LOW**: for a witness `(g, σ)` with `g K = ⊤`, if `a` is
+LOW so is `σ ∘ a`.  The donor maximum of `σ ∘ a` is attained at a proper donor field or is `⊥`,
+so a strict comparison for `σ ∘ a` gives one for `a`; `σ` is monotone and commutes with the
+frontier. -/
+theorem IsLowAt.map {a : X → Label.{u}} (hlow : IsLowAt K N T o r β a) {g : ℕ → Label.{u}}
+    {σ : Label.{u} → Label.{u}} (hσ : IsWitness g σ) (hgK : g K = ⊤) :
+    IsLowAt K N T o r β (σ ∘ a) := by
+  intro hlt x hx
+  have hact : donorMax N a < a β := by
+    refine lt_of_not_ge fun hle ↦ ?_
+    rcases N.eq_empty_or_nonempty with hN | hN
+    · rw [donorMax, hN, sup_empty, le_bot_iff] at hle
+      rw [Function.comp_apply, hle, hσ.map_bot] at hlt
+      exact not_lt_bot hlt
+    · obtain ⟨f, hf, hfa⟩ := exists_mem_eq_sup N hN a
+      have h1 : σ (a β) ≤ σ (a f) := hσ.monotone (hfa ▸ hle)
+      exact hlt.not_ge (h1.trans (le_donorMax (a := σ ∘ a) hf))
+  have hfr : frontier K o r (σ ∘ a) = σ (frontier K o r a) := by
+    unfold frontier
+    rw [hσ.monotone.map_min, Function.comp_apply, Function.comp_apply,
+      hσ.visibilityReplace_comm (a r) K (by rw [hgK]; exact le_top) K le_rfl]
+  rw [hfr, Function.comp_apply, Function.comp_apply, ← hσ.monotone.map_max]
+  exact hσ.monotone (hlow hact x hx)
+
+variable (K N T o r β) in
+/-- The **LOW anchors** at `K` with block bound `B`: the LOW profiles with values in the coded
+alphabet with block bound `B` and offset bound `K + 1`.  A finite set
+(`Label.finite_lowAnchors`). -/
+def lowAnchors (B : ℕ) : Set (X → Label.{u}) :=
+  {a | IsLowAt K N T o r β a ∧ ∀ f, a f ∈ codedAlphabet B (K + 1)}
+
+omit [DecidableEq X] [Fintype X] in
+/-- **The LOW anchors are finitely many.** -/
+theorem finite_lowAnchors [Finite X] (B : ℕ) :
+    (lowAnchors K N T o r β B : Set (X → Label.{u})).Finite := by
+  refine (Set.finite_range fun c : X → (codedAlphabet B (K + 1) : Finset Label.{u}) ↦
+    fun f ↦ (c f : Label.{u})).subset fun a ha ↦ ⟨fun f ↦ ⟨a f, ha.2 f⟩, rfl⟩
+
+omit [DecidableEq X] in
+/-- **Every LOW profile has a LOW anchor**: its normal form `strongEncode V K ∘ a`, for `V` its
+set of values, is a LOW anchor with block bound `2 · #X + 1`, from which the decoder recovers
+`a` (`Label.strongDecode_strongEncode`). -/
+theorem exists_mem_lowAnchors {a : X → Label.{u}} (hlow : IsLowAt K N T o r β a) :
+    ∃ a' ∈ lowAnchors K N T o r β (2 * Fintype.card X + 1),
+      ∀ f, strongDecode (univ.image a) K (a' f) = a f := by
+  refine ⟨strongEncode (univ.image a) K ∘ a,
+    ⟨hlow.map isWitness_strongEncode (stepSuppressor_of_le le_rfl), fun f ↦ ?_⟩,
+    fun f ↦ strongDecode_strongEncode (mem_image_of_mem a (mem_univ f))⟩
+  have hV : #(univ.image a) ≤ Fintype.card X := card_image_le.trans_eq card_univ
+  have h := strongEncode_mem_codedAlphabet (V := univ.image a) (K := K) (a f)
+  rw [mem_codedAlphabet] at h ⊢
+  rcases h with h | ⟨i, hi, j, hj, h⟩
+  · exact .inl h
+  · exact .inr ⟨i, by omega, j, hj, h⟩
 
 end VaughtConjecture.Label
