@@ -20,8 +20,11 @@ repository (theorem named):
 
 * **Layer separation** (`ProfileTower.LayerSeparating`, a named condition on the catalogue at a
   grade): for every profile `R_c` of the catalogue and every old cell `a` of that grade, reading
-  itself other than `⊥` and avoiding the last point, some profile of the catalogue is at least
-  `ω * β` at `a` where `R_c` is below.
+  itself other than `⊥` and avoiding the last point, some profile `R` of the catalogue is at least
+  `ω * β` at `a` and agrees with `R_c` only below `ω * β`.  Its strict form (`R_c` itself below
+  `ω * β` at `a`, `ProfileTower.LayerSeparatingStrict`) implies it
+  (`ProfileTower.LayerSeparatingStrict.layerSeparating`) and is refuted at every grade carrying
+  such a cell (`ProfileTower.not_layerSeparatingStrict`: the profile largest at `a`).
 * **Same-layer readers** (`ProfileTower.SameLayerReaders`, `ProfileTower.sameLayerReaders_lvl`,
   `ProfileTower.Lvl.sameLayerReaders_top`): in every good level, and in the top layer at the grades
   at most `m`, every cell `c` of full scope and grade `g ≥ 3` with layer separation at `g` has, for
@@ -29,8 +32,8 @@ repository (theorem named):
   its reading of `a` (`ProfileTower.Lvl.Good.lowerBlock_rowAt_nextS` in the layer of `c`; the rows
   of the old cells are kept by the later layers, `Scheme.rowAt_appendFullCells_castAdd`).
 
-Layer separation is not automatic: the catalogue consists of orbit codes, never `⊤`, and a profile
-largest at `a` among the catalogue leaves no profile above it there.
+Layer separation is not established here.  At a profile `R_c` largest at `a` among the catalogue
+it asks for another profile with the same block at `a` disagreeing with `R_c` below that block.
 
 ## Placement
 
@@ -50,14 +53,47 @@ namespace ProfileTower
 variable {α : Ordinal.{u}} {m : ℕ}
 
 variable (I : Seed.{u} α m) in
-/-- **Layer separation at the grade `g`**: for every profile `R_c` of the catalogue at `g` and
-every old cell `a` of grade `g` reading itself other than `⊥` and avoiding the last point, some
-profile of the catalogue is at least `ω * β` at `a`, where `R_c` is below `ω * β`. -/
-def LayerSeparating (g : ℕ) : Prop :=
+/-- **Strict layer separation at the grade `g`**: for every profile `R_c` of the catalogue at `g`
+and every old cell `a` of grade `g` reading itself other than `⊥` and avoiding the last point, some
+profile of the catalogue is at least `ω * β` at `a`, where `R_c` is below `ω * β`.  It fails as
+soon as such a cell exists (`ProfileTower.not_layerSeparatingStrict`). -/
+def LayerSeparatingStrict (g : ℕ) : Prop :=
   ∀ (i : Fin (cat I g).card) (a : Fin I.amalgam.card), I.amalgam.toCellScheme.grade a = g →
     I.amalgam.toScheme.rowAt a a ≠ ⊥ → Fin.last (m + 1) ∉ I.amalgam.toCellScheme.scope a →
       ∃ R ∈ cat I g, ∃ β : Ordinal.{u}, entry I g i a < ((ω * β : Ordinal.{u}) : Label.{u}) ∧
         ((ω * β : Ordinal.{u}) : Label.{u}) ≤ R a
+
+variable (I : Seed.{u} α m) in
+/-- **Layer separation at the grade `g`**: for every profile `R_c` of the catalogue at `g` and
+every old cell `a` of grade `g` reading itself other than `⊥` and avoiding the last point, some
+profile `R` of the catalogue is at least `ω * β` at `a` and agrees with `R_c` (capped, in the grid
+of the layer) only below `ω * β`.  This is what a reader in the layer of the cell of `R_c` needs
+(`ProfileTower.Lvl.Good.lowerBlock_rowAt_nextS_of_agreementHeight`). -/
+def LayerSeparating (g : ℕ) : Prop :=
+  ∀ (i : Fin (cat I g).card) (a : Fin I.amalgam.card), I.amalgam.toCellScheme.grade a = g →
+    I.amalgam.toScheme.rowAt a a ≠ ⊥ → Fin.last (m + 1) ∉ I.amalgam.toCellScheme.scope a →
+      ∃ R ∈ cat I g, ∃ β : Ordinal.{u},
+        agreementHeight (grid g (bound I)) R (entry I g i) < ((ω * β : Ordinal.{u}) : Label.{u}) ∧
+        ((ω * β : Ordinal.{u}) : Label.{u}) ≤ R a
+
+/-- **Strict layer separation gives layer separation.** -/
+theorem LayerSeparatingStrict.layerSeparating {I : Seed.{u} α m} {g : ℕ}
+    (h : LayerSeparatingStrict I g) : LayerSeparating I g := fun i a ha hlive hlast ↦ by
+  obtain ⟨R, hR, β, hlow, hhigh⟩ := h i a ha hlive hlast
+  exact ⟨R, hR, β, agreementHeight_lt_of_lt_le (bot_mem_grid _ _) hlow hhigh, hhigh⟩
+
+/-- **Strict layer separation fails** at every grade carrying an old cell reading itself other
+than `⊥` and avoiding the last point: the catalogue is finite, and its profile largest at that cell
+has no profile of the catalogue above it there. -/
+theorem not_layerSeparatingStrict {I : Seed.{u} α m} {g : ℕ} {a : Fin I.amalgam.card}
+    (ha : I.amalgam.toCellScheme.grade a = g) (hlive : I.amalgam.toScheme.rowAt a a ≠ ⊥)
+    (hlast : Fin.last (m + 1) ∉ I.amalgam.toCellScheme.scope a) : ¬ LayerSeparatingStrict I g := by
+  intro h
+  obtain ⟨Rmax, hRmax, hmax⟩ := (cat I g).exists_max_image (fun R ↦ R a) ⟨_, bot_mem_cat (I := I) g⟩
+  obtain ⟨i, hi⟩ := exists_entry_eq hRmax
+  obtain ⟨R, hR, β, hlow, hhigh⟩ := h i a ha hlive hlast
+  rw [hi] at hlow
+  exact absurd ((hlow.trans_le hhigh).trans_le (hmax R hR)) (lt_irrefl _)
 
 variable {I : Seed.{u} α m}
 
@@ -125,10 +161,10 @@ theorem sameLayerReaders_lvl (hm : 2 ≤ m) :
         have hgi : (lvl I (j + 1)).S.toCellScheme.grade (Fin.natAdd _ i) = j + 2 + 1 :=
           Scheme.appendFullCellsScheme_grade_natAdd _ _ _ i
         rw [hgi] at hsep ha ⊢
-        obtain ⟨R, hR, β, hlow, hhigh⟩ := hsep i a ha hlive hlast
+        obtain ⟨R, hR, β, hag, hhigh⟩ := hsep i a ha hlive hlast
         obtain ⟨i', rfl⟩ := exists_entry_eq hR
         refine ⟨Fin.natAdd _ i', Scheme.appendFullCellsScheme_gradedIndex_natAdd _ _ _ i', ?_⟩
-        exact hL.lowerBlock_rowAt_nextS i' i ha.le hlow hhigh
+        exact hL.lowerBlock_rowAt_nextS_of_agreementHeight i' i ha.le hag hhigh
 
 /-- **Same-layer readers in the top layer**, at the grades at most `m`. -/
 theorem Lvl.sameLayerReaders_top (N : Lvl I m) (hN : SameLayerReaders I N.S N.embed) :

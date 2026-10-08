@@ -219,6 +219,40 @@ theorem Lvl.Good.lowerBlock_rowAt_nextS (hL : L.Good) (i i' : Fin (cat I (g + 1)
   exact lowerBlock_of_lt_omega0_mul (agreementHeight_lt_of_lt_le (bot_mem_grid _ _) hlow hhigh)
     hhigh
 
+/-- **A reader separating the blocks, from the agreement height**: if the agreement height of the
+profiles of cells `i` and `i'` of the layer is below `ω * β`, at most the profile of `i` at an old
+cell `d` of grade at most `g + 1`, the cell `i` reads the cell `i'` in a block strictly below its
+reading of `d`. -/
+theorem Lvl.Good.lowerBlock_rowAt_nextS_of_agreementHeight (hL : L.Good)
+    (i i' : Fin (cat I (g + 1)).card) {d : Fin I.amalgam.card}
+    (hd : I.amalgam.toCellScheme.grade d ≤ g + 1) {β : Ordinal.{u}}
+    (hag : agreementHeight (grid (g + 1) (bound I)) (entry I (g + 1) i) (entry I (g + 1) i') <
+      ((ω * β : Ordinal.{u}) : Label.{u}))
+    (hhigh : ((ω * β : Ordinal.{u}) : Label.{u}) ≤ entry I (g + 1) i d) :
+    LowerBlock (L.nextS.rowAt (Fin.natAdd _ i) (Fin.natAdd _ i'))
+      (L.nextS.rowAt (Fin.natAdd _ i) (Fin.castAdd _ (L.embed d))) := by
+  have hi' : Fin.natAdd L.S.card i' ∈ L.nextS.toCellScheme.below
+      (L.nextS.toCellScheme.gradedIndex (Fin.natAdd L.S.card i)) := by
+    rw [CellScheme.mem_below]
+    change (L.S.appendFullCellsScheme (g + 1) (cat I (g + 1)).card).gradedIndex _ ≤
+      (L.S.appendFullCellsScheme (g + 1) (cat I (g + 1)).card).gradedIndex _
+    rw [Scheme.appendFullCellsScheme_gradedIndex_natAdd,
+      Scheme.appendFullCellsScheme_gradedIndex_natAdd]
+  have hd' : Fin.castAdd (cat I (g + 1)).card (L.embed d) ∈ L.nextS.toCellScheme.below
+      (L.nextS.toCellScheme.gradedIndex (Fin.natAdd L.S.card i)) := by
+    rw [CellScheme.mem_below]
+    change (L.S.appendFullCellsScheme (g + 1) (cat I (g + 1)).card).gradedIndex _ ≤
+      (L.S.appendFullCellsScheme (g + 1) (cat I (g + 1)).card).gradedIndex _
+    rw [Scheme.appendFullCellsScheme_gradedIndex_castAdd,
+      Scheme.appendFullCellsScheme_gradedIndex_natAdd, hL.gradedIndex_embed]
+    exact ⟨subset_univ _, hd⟩
+  rw [Scheme.rowAt_of_mem hi', Scheme.rowAt_of_mem hd', Scheme.appendFullCells_row_natAdd,
+    Scheme.appendFullCells_row_natAdd]
+  change LowerBlock (L.Φ (entry I (g + 1) i) (Fin.natAdd _ i'))
+    (L.Φ (entry I (g + 1) i) (Fin.castAdd _ (L.embed d)))
+  rw [Lvl.Φ_natAdd, hL.Φ_old]
+  exact lowerBlock_of_lt_omega0_mul hag hhigh
+
 end ProfileTower
 
 end VaughtConjecture
