@@ -49,7 +49,17 @@ itself.
   capped at `h`: a union of the two coatoms at the grade `3` capped at `h` along the arbitrary
   ambient `e`.  The profile layer gives the union at the cap `⊥`
   (`TowerProfile.exists_extension_bot`) and at positive caps along its own rows
-  (`TowerProfile.extendsFromBoundary_row`), not along an arbitrary ambient; not decided here.
+  (`TowerProfile.extendsFromBoundary_row`), not along an arbitrary ambient.
+* **The band reduces to servers** (`TowerProfile.not_exists_fill_of_noServer`,
+  `TowerProfile.not_readingFillPos_left_of_noServer`, `TowerProfile.exists_server_of_lt`,
+  compiled): in the band (`f y < f r` at a left cell `y` of grade at most that of `x ∈ X`), a fill
+  needs a **server**: a cell `u` of graded index `(univ, grade x)` with `h ≤ e u` whose row reads
+  `x` strictly above `y`.  Without one the fill fails (availability at `x`, locality at `u`).
+  A mark
+  with `e y < e x` always has one (its own availability at `x`); so a failure needs a mark with
+  `e x ≤ e y`, low at every cell of `(univ, grade x)` ordering `y` below `x`.  So the union along
+  an arbitrary ambient fails at any such mark, and the band case at `seedThree` is decided by the
+  existence of such a mark (not decided here).
 
 ## Placement
 
@@ -265,6 +275,107 @@ theorem readingFillPos_left_of_noBand (hgr : (scheme I).toCellScheme.grade r = 4
   · obtain ⟨g, hg, hgf, hga⟩ := exists_fill_four (x := Fin.last 4)
       (y := Fin.castSucc (Fin.last 3)) (by simp) (by simp) (by decide) hf hel hh hfe
     exact ⟨g, hg, hgf, hga, reads_of_lt he (not_le.mp hre) hga⟩
+
+/-! ### The band: servers of the new tops -/
+
+/-- **No fill without a server.**  Let `x ∈ X`, `y` a cell of the left coatom of grade at most that
+of `x`, `t` a cell of graded index `(univ, grade x)`, and `f` with `h ≤ f r` and `f y < f r` (the
+band).  If every cell `u` of graded index `(univ, grade x)` with `h ≤ e u` reads `x` at most as `y`
+(no server), no labelling lawful below `(univ, 4)` extends `f`, agrees with `e` capped at `h`, and
+reads `x` at least as `r`: availability at `x` gives a cell `u` at least `x`, hence at least `h`,
+and locality at `u` puts `x` at most at `y`. -/
+theorem not_exists_fill_of_noServer (hrC : r ∈ (scheme I).toCellScheme.below
+      (univ.erase (Fin.last 4), 4)) {e f : Fin (scheme I).card → Label.{u}} {h : Label.{u}}
+    {x y t : Fin (scheme I).card} (hyC : y ∈ (scheme I).toCellScheme.below
+      (univ.erase (Fin.last 4), 4))
+    (hgy : (scheme I).toCellScheme.grade y ≤ (scheme I).toCellScheme.grade x)
+    (ht : (scheme I).toCellScheme.gradedIndex t =
+      ((univ : Finset (Fin 5)), (scheme I).toCellScheme.grade x))
+    (hfr : h ≤ f r) (hband : f y < f r)
+    (hnoserver : ∀ u (hu : (scheme I).toCellScheme.gradedIndex u =
+        ((univ : Finset (Fin 5)), (scheme I).toCellScheme.grade x)), h ≤ e u →
+      (scheme I).rows.row u ⟨x, by rw [CellScheme.mem_below, hu]; exact ⟨subset_univ _, le_rfl⟩⟩ ≤
+        (scheme I).rows.row u ⟨y, by rw [CellScheme.mem_below, hu]; exact ⟨subset_univ _, hgy⟩⟩) :
+    ¬ ∃ g : Fin (scheme I).card → Label.{u},
+      (scheme I).rows.IsLawfulBelow (univ, 4) (fun d ↦ g d) ∧
+      (∀ d ∈ (scheme I).toCellScheme.below (univ.erase (Fin.last 4), 4), g d = f d) ∧
+      (∀ d, min (g d) h = min (e d) h) ∧ g r ≤ g x := by
+  rintro ⟨g, hg, hgf, hga, hgx⟩
+  obtain ⟨-, hloc, havail⟩ := CellScheme.Rows.isLawfulBelow_iff_forall.mp hg
+  have htY : t ∈ (scheme I).toCellScheme.below ((univ : Finset (Fin 5)), 4) :=
+    mem_below_univ_four t
+  obtain ⟨u, hu, hxu⟩ := havail x t htY
+    (by rw [show (scheme I).toCellScheme.scope t = univ from congrArg Prod.fst ht];
+        exact subset_univ _)
+    (congrArg Prod.snd ht).symm
+  have hu' := hu.trans ht
+  have hrx : f r ≤ g x := (hgf r hrC).symm.trans_le hgx
+  have heu : h ≤ e u := by
+    have := hga u
+    rw [min_eq_right (hfr.trans (hrx.trans hxu))] at this
+    exact min_eq_right_iff.mp this.symm
+  have h1 := (hloc u (mem_below_univ_four u)).le_of_le
+    (d := ⟨x, by rw [CellScheme.mem_below, hu']; exact ⟨subset_univ _, le_rfl⟩⟩)
+    (d' := ⟨y, by rw [CellScheme.mem_below, hu']; exact ⟨subset_univ _, hgy⟩⟩)
+    (hnoserver u hu' heu) hgy
+  change min (g x) (g u) ≤ min (g y) (g u) at h1
+  rw [min_eq_left hxu, hgf y hyC] at h1
+  exact absurd ((hrx.trans h1).trans (min_le_left _ _)) (not_le.mpr hband)
+
+/-- **The fill at the short caps from the left coatom fails without a server**: under the
+hypotheses of `TowerProfile.not_exists_fill_of_noServer`, with `e` a reading mark, `h` a short
+positive cap self-visible at `4`, and `f` lawful below the left coatom agreeing with `e` capped at
+`h`, `ReadingFillPos I r X (Fin.last 4)` fails. -/
+theorem not_readingFillPos_left_of_noServer (hrC : r ∈ (scheme I).toCellScheme.below
+      (univ.erase (Fin.last 4), 4)) {e f : Fin (scheme I).card → Label.{u}}
+    (he : e ∈ (scheme I).readingMarks 4 r X) {h : Label.{u}} (hh : IsSelfVisible 4 h)
+    (hs : IsShort 4 h) (hhb : ⊥ < h)
+    (hf : (scheme I).rows.IsLawfulBelow (univ.erase (Fin.last 4), 4) fun d ↦ f d)
+    (hfe : ∀ d ∈ (scheme I).toCellScheme.below (univ.erase (Fin.last 4), 4),
+      min (f d) h = min (e d) h)
+    {x y t : Fin (scheme I).card} (hx : x ∈ X) (hyC : y ∈ (scheme I).toCellScheme.below
+      (univ.erase (Fin.last 4), 4))
+    (hgy : (scheme I).toCellScheme.grade y ≤ (scheme I).toCellScheme.grade x)
+    (ht : (scheme I).toCellScheme.gradedIndex t =
+      ((univ : Finset (Fin 5)), (scheme I).toCellScheme.grade x))
+    (hfr : h ≤ f r) (hband : f y < f r)
+    (hnoserver : ∀ u (hu : (scheme I).toCellScheme.gradedIndex u =
+        ((univ : Finset (Fin 5)), (scheme I).toCellScheme.grade x)), h ≤ e u →
+      (scheme I).rows.row u ⟨x, by rw [CellScheme.mem_below, hu]; exact ⟨subset_univ _, le_rfl⟩⟩ ≤
+        (scheme I).rows.row u ⟨y, by rw [CellScheme.mem_below, hu]; exact ⟨subset_univ _, hgy⟩⟩) :
+    ¬ ReadingFillPos I r X (Fin.last 4) := fun hfill ↦ by
+  obtain ⟨g, hg, hgf, hga, hgr⟩ := hfill e he h hh hs hhb f hf hfe
+  exact not_exists_fill_of_noServer hrC hyC hgy ht hfr hband hnoserver
+    ⟨g, hg, hgf, hga, hgr x hx⟩
+
+/-- **A mark that reads `y` strictly below `x` has a server**: if `e y < e x` (lawful below
+`(univ, 4)`, `y` of grade at most that of `x`, `t` at `(univ, grade x)`), availability at `x` gives
+a cell `u` at `(univ, grade x)` with `e x ≤ e u` whose row reads `x` strictly above `y`.  So the
+obstruction of `TowerProfile.not_exists_fill_of_noServer` needs a mark with `e x ≤ e y`. -/
+theorem exists_server_of_lt {e : Fin (scheme I).card → Label.{u}}
+    (he : (scheme I).rows.IsLawfulBelow (univ, 4) fun d ↦ e d) {x y t : Fin (scheme I).card}
+    (hgy : (scheme I).toCellScheme.grade y ≤ (scheme I).toCellScheme.grade x)
+    (ht : (scheme I).toCellScheme.gradedIndex t =
+      ((univ : Finset (Fin 5)), (scheme I).toCellScheme.grade x)) (hlt : e y < e x) :
+    ∃ u, ∃ hu : (scheme I).toCellScheme.gradedIndex u =
+        ((univ : Finset (Fin 5)), (scheme I).toCellScheme.grade x),
+      e x ≤ e u ∧ ¬ (scheme I).rows.row u
+          ⟨x, by rw [CellScheme.mem_below, hu]; exact ⟨subset_univ _, le_rfl⟩⟩ ≤
+        (scheme I).rows.row u
+          ⟨y, by rw [CellScheme.mem_below, hu]; exact ⟨subset_univ _, hgy⟩⟩ := by
+  obtain ⟨-, hloc, havail⟩ := CellScheme.Rows.isLawfulBelow_iff_forall.mp he
+  obtain ⟨u, hu, hxu⟩ := havail x t (mem_below_univ_four t)
+    (by rw [show (scheme I).toCellScheme.scope t = univ from congrArg Prod.fst ht];
+        exact subset_univ _)
+    (congrArg Prod.snd ht).symm
+  have hu' := hu.trans ht
+  refine ⟨u, hu', hxu, fun hrow ↦ ?_⟩
+  have h1 := (hloc u (mem_below_univ_four u)).le_of_le
+    (d := ⟨x, by rw [CellScheme.mem_below, hu']; exact ⟨subset_univ _, le_rfl⟩⟩)
+    (d' := ⟨y, by rw [CellScheme.mem_below, hu']; exact ⟨subset_univ _, hgy⟩⟩) hrow hgy
+  change min (e x) (e u) ≤ min (e y) (e u) at h1
+  rw [min_eq_left hxu] at h1
+  exact absurd (h1.trans (min_le_left _ _)) (not_le.mpr hlt)
 
 /-! ### Gluing the two coatoms at the grade `4` -/
 
