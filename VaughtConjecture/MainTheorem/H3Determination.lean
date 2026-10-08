@@ -122,6 +122,61 @@ theorem capFillBotAt_of_donorRaiseBotAt (hgr : r.IsGraded I.amalgam.toCellScheme
 
 end CapRequests
 
+namespace Realization
+
+open StageType
+
+/-- **Hollow coatom cutoff determination, existential form**: over every legal `t'` on `k + 1`
+points with `P t' (g.trans Fin.castSuccEmb)` and face `p` along `Fin.castSuccEmb`, every coface `d`
+of the root face has some coface `tb` of `p` with face `d` along `extendByLast g`, and some coface
+`D'` of `t'` with face `tb`, determining `d` at a permitted cutoff.  The donor coface `tb` is
+chosen with the carrier, before any member of the family. -/
+structure HollowCoatomCutoffDeterminationExists
+    (P : ∀ {α : Ordinal.{u}} {n k : ℕ}, StageType.{u} α k → (Fin n ↪ Fin k) → Prop) : Prop where
+  /-- Every coface of the root face is determined through some coface of the coatom face. -/
+  exists_coface ⦃α : Ordinal.{u}⦄ ⦃n k : ℕ⦄ (t' : StageType.{u} α (k + 1))
+    (g : Fin n ↪ Fin k) (p : StageType.{u} α k) :
+    Order.IsSuccLimit α → t'.IsLegal → P t' (g.trans Fin.castSuccEmb) →
+      restrictFace Fin.castSuccEmb t' = some p → ∀ t : StageType.{u} α n,
+        restrictFace (g.trans Fin.castSuccEmb) t' = some t → ∀ d ∈ t.cofaces,
+          ∃ tb ∈ p.cofaces, restrictFace (extendByLast g) tb = some d ∧
+            ∃ D' ∈ t'.cofaces, restrictFace (extendByLast Fin.castSuccEmb) D' = some tb ∧
+              ∃ δ : Label.{u}, IsPermittedCutoff α δ ∧
+                IsDeterminedWithin (receivingFamily D' δ) t' (g.trans Fin.castSuccEmb) d
+
+/-- **Hollow cutoff determination from its existential coatom form**, under the hypotheses of
+`HollowCoatomCutoffDetermination.hollowCutoffDetermination` on the predicate (the relabelling
+putting the root in the first coatom). -/
+theorem HollowCoatomCutoffDeterminationExists.hollowCutoffDetermination
+    {P : ∀ {α : Ordinal.{u}} {n k : ℕ}, StageType.{u} α k → (Fin n ↪ Fin k) → Prop}
+    (hdet : HollowCoatomCutoffDeterminationExists.{u} P)
+    (hns : ∀ ⦃α : Ordinal.{u}⦄ ⦃n k : ℕ⦄ (t' : StageType.{u} α k) (h : Fin n ↪ Fin k),
+      P t' h → ¬ Function.Surjective h)
+    (hinv : ∀ ⦃α : Ordinal.{u}⦄ ⦃n k : ℕ⦄ (t' : StageType.{u} α k) (h : Fin n ↪ Fin k)
+      (σ : Equiv.Perm (Fin k)), P t' h → P (t'.reindex σ) (h.trans σ.symm.toEmbedding)) :
+    HollowCutoffDetermination.{u} P where
+  exists_coface α n k t' h hα ht' hP t ht d hd := by
+    have hs := hns t' h hP
+    obtain ⟨j, rfl⟩ : ∃ j, k = j + 1 := by
+      obtain ⟨x, -⟩ : ∃ x, x ∉ Set.range h := by
+        by_contra! hall
+        exact hs hall
+      exact ⟨k - 1, by have := x.2; omega⟩
+    obtain ⟨σ, g, p, rfl, hp⟩ := exists_perm_root_eq ht hs
+    have hroot : ((g.trans Fin.castSuccEmb).trans σ.toEmbedding).trans σ.symm.toEmbedding =
+        g.trans Fin.castSuccEmb :=
+      Function.Embedding.ext fun i ↦ by simp
+    have hP' := hinv t' _ σ hP
+    rw [hroot] at hP'
+    have ht'' : restrictFace (g.trans Fin.castSuccEmb) (t'.reindex σ) = some t := by
+      rw [restrictFace_reindex]
+      exact ht
+    obtain ⟨-, -, -, D'', hD'', -, δ, hδ, hdet''⟩ :=
+      hdet.exists_coface (t'.reindex σ) g p hα (ht'.reindex σ) hP' hp t ht'' d hd
+    exact ⟨_, reindex_extendPerm_symm_mem_cofaces hD'', δ, hδ, hdet''.reindex_extendPerm⟩
+
+end Realization
+
 namespace H3
 
 variable {α : Ordinal.{u}} {n k : ℕ}
