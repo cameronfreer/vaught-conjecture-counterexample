@@ -29,23 +29,33 @@ lawful row is lawful (`CellScheme.Rows.IsLawful.map_of_bot_reflecting`).
 
 **The lowering** (`StageType.IsSourceGapContextAt.exists_lowering`, compiled in this repository).
 Let `t'` be a legal source-gap context of grade `K` with owner `o` and lost top `r`, `u` lawful
-below `(univ, K)` and **dominated by the owner** (`u d ≤ u o` at the cells of grade at most `K`),
-and `c` self-visible at `K` with `⊥ < c`.  Then `v = min u (lowerMap θ c ∘ row_o)` is lawful
+below `(univ, K)`, `c` self-visible at `K` with `⊥ < c ≤ u o`, and `u` **dominated by the owner
+where the owner reads high** (`u d ≤ u o` at the cells of grade at most `K` that the owner reads
+above `θ`).  Then `v = min u (lowerMap θ c ∘ row_o)` is lawful
 below `(univ, K)`, agrees with `u` capped at `c`, reads the lost top at most `c`, and equals `u`
 at every cell the owner reads above `θ` (the owner and every top of `t'` avoiding the lost point,
 by the strict source gaps) and at every cell where `u` is at most `c`.  Locality of `v` is the
 minimum of two localities (`Label.TransformsTo.inf`); availability passes through the owner's
-row, of which `u` is a witness image by domination.
+row: capped at `u o`, `u` is a witness image of that row, and below the threshold the lowered
+section is at most `c ≤ u o`, while above it domination applies.
 
 **The private installation** (`StageType.IsSourceGapContextAt.exists_installation`, compiled in
 this repository).  With the root prescribed by `u` (the root cells of `t'` avoid the lost point),
 the lowering keeps the root literally when every root cell that is not a top of `t'` is
 prescribed at most `c`: in the LOW construction these are proper donor fields, below the donor
-maximum and so below the cap.  The remaining condition is the domination of the lift by the
-owner: a section lawful below `(univ, K)`, equal to the root prescription, agreeing with the given
-private section capped at `c`, and at most its owner's label at every cell of grade at most `K`.
-A capped lift of the prescription (bountifulness of `t'`) gives the first three; the domination
-is not proved here.
+maximum and so below the cap.  The remaining condition is on the lift: a section lawful below
+`(univ, K)`, equal to the root prescription and agreeing with the given private section capped at
+`c`, at most its owner's label at every cell the owner reads above `R_K (row_o r)`.  A capped lift
+of the prescription (bountifulness of `t'`) gives the first two.  Capping the lift at its owner
+gives the domination and keeps the root when no root cell is prescribed above the owner's label
+(`StageType.IsSourceGapContextAt.exists_installation_of_le_owner`); the root tops are read above
+the threshold (`gap_retained`), so a root top prescribed above the owner's label is the remaining
+case, open here.
+
+**After donor raising** (`Label.le_or_eq_of_raise`, `Label.max_le_of_raise`,
+`Label.le_of_raise_of_lt`): a designated donor top at least the cap `h` that donor raising with the
+gap leaves at least the frontier `c` or at most `R_K M` (`M` the donor maximum) is at least `c`
+unless `h = R_K M` (the tie, at the cutoff cut of the donor), where it is exactly `h`.
 
 ## Placement
 
@@ -141,6 +151,14 @@ theorem max_le_of_raise {M h c W : Label.{u}} (hh : IsSelfVisible K h) (hM : M <
     · exact max_le hW (h2.trans hW)
     · exact max_le hW h2
 
+/-- **No tie, no cap outcome**: if the replacement at `K` of the donor maximum `M` is strictly
+below the cap `h`, a donor top at least `h` that donor raising with the gap leaves at least `c` or
+at most `R_K M` is at least `c`.  So the second outcome of donor raising occurs only at the tie
+`h = R_K M`, the cutoff cut of the donor (`Label.le_or_eq_of_raise`). -/
+theorem le_of_raise_of_lt {M h c W : Label.{u}} (hlt : visibilityReplace K K M < h)
+    (hW : h ≤ W) (hraise : c ≤ W ∨ W ≤ visibilityReplace K K M) : c ≤ W :=
+  hraise.resolve_right fun h1 ↦ (h1.trans_lt hlt).not_ge hW
+
 end Label
 
 namespace StageType
@@ -165,15 +183,17 @@ theorem IsSourceGapContextAt.isLawfulBelow_rowAt (ht' : t'.IsLegal)
   exact h'
 
 /-- **The lowering below a cap** in a legal source-gap context of grade `K`: a section `u`
-lawful below `(univ, K)` and dominated by the owner, and a cap `c` self-visible at `K` with
-`⊥ < c`, give a section `v` lawful below `(univ, K)` agreeing with `u` capped at `c`,
-reading the lost top at most `c`, and equal to `u` at every cell the owner reads above
-`R_K (row_o r)` and at every cell where `u` is at most `c`. -/
+lawful below `(univ, K)`, a cap `c` self-visible at `K` with `⊥ < c ≤ u o`, and `u` at most `u o`
+at every cell of grade at most `K` that the owner reads above `R_K (row_o r)`, give a section
+`v` lawful below `(univ, K)` agreeing with `u` capped at `c`, reading the lost top at most `c`,
+and equal to `u` at every cell the owner reads above `R_K (row_o r)` and at every cell where `u`
+is at most `c`. -/
 theorem IsSourceGapContextAt.exists_lowering (ht' : t'.IsLegal)
     (hs : t'.IsSourceGapContextAt K h l o r) {u : Fin t'.card → Label.{u}}
     (hu : t'.rows.IsLawfulBelow (univ, K) fun d ↦ u d)
-    (hdom : ∀ d, t'.toCellScheme.grade d ≤ K → u d ≤ u o) {c : Label.{u}}
-    (hcv : IsSelfVisible K c) (hc : ⊥ < c) :
+    {c : Label.{u}} (hcv : IsSelfVisible K c) (hc : ⊥ < c) (hco : c ≤ u o)
+    (hdom : ∀ d, t'.toCellScheme.grade d ≤ K →
+      visibilityReplace K K (t'.rowAt o r) < t'.rowAt o d → u d ≤ u o) :
     ∃ v : Fin t'.card → Label.{u}, t'.rows.IsLawfulBelow (univ, K) (fun d ↦ v d) ∧
       (∀ d, t'.toCellScheme.grade d ≤ K → min (v d) c = min (u d) c) ∧ v r ≤ c ∧
       ∀ d, t'.toCellScheme.grade d ≤ K →
@@ -195,21 +215,34 @@ theorem IsSourceGapContextAt.exists_lowering (ht' : t'.IsLegal)
   obtain ⟨g, σ, hσ, heq⟩ := hloc o hob
   have hmem (d : Fin t'.card) (hd : d ∈ t'.toCellScheme.below (univ, K)) :
       d ∈ t'.toCellScheme.below (t'.toCellScheme.gradedIndex o) := by rw [hgi]; exact hd
+  -- capped at its owner, `u` is a witness image of the owner's row
+  have hgK : u o ≤ g K := by
+    have := heq ⟨o, hmem o hob⟩
+    simp only [min_self] at this
+    rw [this, show t'.toCellScheme.grade o = K from hs.grade_owner]
+    exact min_le_right _ _
   have hrep (d : Fin t'.card) (hd : d ∈ t'.toCellScheme.below (univ, K)) :
-      u d = min (σ (E d)) (g (t'.toCellScheme.grade d)) := by
-    have := heq ⟨d, hmem d hd⟩
-    simp only at this
-    rw [min_eq_left (hdom d hd.2)] at this
-    rw [this, hE]
-    simp only
+      min (u d) (u o) = min (σ (E d)) (u o) := by
+    have h1 := heq ⟨d, hmem d hd⟩
+    simp only at h1
+    have hgd : u o ≤ g (t'.toCellScheme.grade d) := hgK.trans (hσ.antitone hd.2)
+    have h2 := congrArg (fun x ↦ min x (u o)) h1
+    simp only [min_assoc, min_self] at h2
+    rw [h2, min_eq_right hgd]
+    simp only [hE]
     rw [Scheme.rowAt_of_mem (hmem d hd)]
+  have hU : ⊥ < u o := hc.trans_le hco
   set v : Fin t'.card → Label.{u} := fun d ↦ min (u d) (lam d) with hv
   have hbel (d : Fin t'.card) (hd : t'.toCellScheme.grade d ≤ K) :
       d ∈ t'.toCellScheme.below (univ, K) := ⟨subset_univ _, hd⟩
   have hbot (d : Fin t'.card) (hd : t'.toCellScheme.grade d ≤ K) (hE0 : E d = ⊥) :
       u d = ⊥ ∧ lam d = ⊥ := by
     refine ⟨?_, by simp only [hlam, hE0, lowerMap_bot]⟩
-    rw [hrep d (hbel d hd), hE0, hσ.map_bot, min_bot_left]
+    have h1 := hrep d (hbel d hd)
+    rw [hE0, hσ.map_bot, min_bot_left] at h1
+    rcases min_eq_bot.mp h1 with h2 | h2
+    · exact h2
+    · exact absurd h2 hU.ne'
   have hlc (d : Fin t'.card) (hE0 : E d ≠ ⊥) : c ≤ lam d := by
     by_cases hEθ : E d ≤ θ
     · simp only [hlam]; rw [lowerMap_of_le hE0 hEθ]
@@ -231,10 +264,16 @@ theorem IsSourceGapContextAt.exists_lowering (ht' : t'.IsLegal)
         rw [CellScheme.mem_below, hw]; exact ht
       have hgw : t'.toCellScheme.grade w = t'.toCellScheme.grade s :=
         (congrArg Prod.snd hw).trans hg.symm
-      refine ⟨w, hw, min_le_min ?_ ?_⟩
-      · rw [hrep s hsb, hrep w hwb, hgw]
-        exact min_le_min (hσ.monotone hEw) le_rfl
-      · exact monotone_lowerMap hEw
+      refine ⟨w, hw, le_min ?_ ((min_le_right _ _).trans (monotone_lowerMap hEw))⟩
+      have hsU : min (u s) (lam s) ≤ min (u s) (u o) := by
+        by_cases hEθ : E s ≤ θ
+        · exact min_le_min le_rfl ((lowerMap_le hEθ).trans hco)
+        · exact (min_le_left _ _).trans (le_min le_rfl (hdom s hsb.2 (not_le.mp hEθ)))
+      refine hsU.trans ?_
+      rw [hrep s hsb]
+      refine (min_le_min (hσ.monotone hEw) le_rfl).trans ?_
+      rw [← hrep w hwb]
+      exact min_le_left _ _
   · -- agreement capped at `c`
     simp only [hv]
     by_cases hE0 : E d = ⊥
@@ -252,9 +291,10 @@ theorem IsSourceGapContextAt.exists_lowering (ht' : t'.IsLegal)
         rw [hu0, hl0, min_self]
       · exact min_eq_left (hd.trans (hlc d hE0))
 
-/-- **The private installation from a lift dominated by the owner.**  In a legal source-gap
-context of grade `K` with lost point `l`, owner `o` and lost top `r`, let `u` be lawful below
-`(univ, K)` and dominated by the owner, and `c` self-visible at `K` with `⊥ < c`.  If `u` is at
+/-- **The private installation from a lift dominated by the owner where the owner reads high.**
+In a legal source-gap context of grade `K` with lost point `l`, owner `o` and lost top `r`, let `u`
+be lawful below `(univ, K)`, `c` self-visible at `K` with `⊥ < c ≤ u o`, and `u` at most `u o` at
+every cell of grade at most `K` that the owner reads above `R_K (row_o r)`.  If `u` is at
 most `c` at every cell of grade at most `K` avoiding `l` that is not a top of `t'` (in the LOW
 construction: the proper root cells, proper donor fields below the cap), then some `v` lawful
 below `(univ, K)` agrees with `u` capped at `c`, reads the lost top at most `c`, and equals `u`
@@ -264,14 +304,15 @@ tops avoiding `l` are read by the owner above the threshold (`gap_retained`), an
 theorem IsSourceGapContextAt.exists_installation (ht' : t'.IsLegal)
     (hs : t'.IsSourceGapContextAt K h l o r) {u : Fin t'.card → Label.{u}}
     (hu : t'.rows.IsLawfulBelow (univ, K) fun d ↦ u d)
-    (hdom : ∀ d, t'.toCellScheme.grade d ≤ K → u d ≤ u o) {c : Label.{u}}
-    (hcv : IsSelfVisible K c) (hc : ⊥ < c)
+    {c : Label.{u}} (hcv : IsSelfVisible K c) (hc : ⊥ < c) (hco : c ≤ u o)
+    (hdom : ∀ d, t'.toCellScheme.grade d ≤ K →
+      visibilityReplace K K (t'.rowAt o r) < t'.rowAt o d → u d ≤ u o)
     (hroot : ∀ d, t'.toCellScheme.grade d ≤ K → l ∉ t'.toCellScheme.scope d → t'.label d ≠ ⊤ →
       u d ≤ c) :
     ∃ v : Fin t'.card → Label.{u}, t'.rows.IsLawfulBelow (univ, K) (fun d ↦ v d) ∧
       (∀ d, t'.toCellScheme.grade d ≤ K → min (v d) c = min (u d) c) ∧ v r ≤ c ∧ v o = u o ∧
       ∀ d, t'.toCellScheme.grade d ≤ K → l ∉ t'.toCellScheme.scope d → v d = u d := by
-  obtain ⟨v, hv, hcap, hr, hkeep⟩ := hs.exists_lowering ht' hu hdom hcv hc
+  obtain ⟨v, hv, hcap, hr, hkeep⟩ := hs.exists_lowering ht' hu hcv hc hco hdom
   refine ⟨v, hv, hcap, hr, hkeep o hs.grade_owner.le (.inl hs.gap_owner), fun d hd hl ↦ ?_⟩
   refine hkeep d hd ?_
   by_cases htop : t'.label d = ⊤
@@ -309,8 +350,8 @@ theorem IsSourceGapContextAt.exists_installation_of_le_owner (ht' : t'.IsLegal)
   have hu₁l : t'.rows.IsLawfulBelow (univ, K) fun d ↦ u₁ d :=
     hu.min_const_of_isSelfVisible (c := u o) hUv
   have hu₁o : u₁ o = u o := min_self _
-  obtain ⟨v, hv, hcap, hr, hvo, hroot'⟩ := hs.exists_installation ht' hu₁l
-    (fun d _ ↦ by rw [hu₁o]; exact min_le_right _ _) hcv hc
+  obtain ⟨v, hv, hcap, hr, hvo, hroot'⟩ := hs.exists_installation ht' hu₁l hcv hc
+    (by rw [hu₁o]; exact hco) (fun d _ _ ↦ by rw [hu₁o]; exact min_le_right _ _)
     (fun d hd hl ht ↦ (min_le_left _ _).trans (hroot d hd hl ht))
   refine ⟨v, hv, fun d hd ↦ ?_, hr, hvo.trans hu₁o, fun d hd hl ↦ ?_⟩
   · rw [hcap d hd, hu₁, min_assoc, min_eq_right hco]
