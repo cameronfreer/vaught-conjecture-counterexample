@@ -44,6 +44,14 @@ layer (`Scheme.markedLayer`, any marked set, any cap).
   `(univ, 4)` that agrees with the entry of the reading cell capped at `τ` and separates `x` below
   `r`.
 
+* **The fill is a raise in a coatom** (`TowerProfile.exists_top_reads_lt_markedTop_of_raise`): when
+  `x` has grade at most `3` (so at every marked-cap context on at most four points, where the donor
+  has at most three points) and `r` lies below a coatom, the separating fill is the extension
+  (`TowerProfile.exists_isLawfulBelow_four`) of a labelling that equals the entry below `(univ, 3)`
+  and is raised at `r` within the coatom at the grade `4`.  A tie blocks the raise
+  (`CellScheme.Rows.IsLawful.le_of_row_self_le_below`): if the row of `r` reads `r` at most as a
+  cell `y` of grade at most that of `r`, every lawful labelling has `w r ≤ w y`.
+
 **What is refuted.**  A carrier whose cells of graded index `(univ, N)` form a leaf-and-marked
 layer (any marked subset, any cap), in which the marker `r` has the grade `N`, labelled through a
 cell that reads `r` at most as a new top `x`, and over which a separating fill with its template
@@ -110,6 +118,23 @@ theorem exists_top_row_lt (hq : R.IsLawful q) {u x r : ι}
   change min (w r) (w v) ≤ min (w x) (w v) at h
   rw [min_eq_left hwv, min_eq_left (hlt.le.trans hwv)] at h
   exact absurd hlt (not_lt.mpr h)
+
+/-- **A cell read by its own row at most as a cell of no larger grade is labelled at most as it.**
+If the row of `r` reads `r` at most as a cell `y` below `r` of grade at most that of `r`, then every
+labelling lawful below a pair above `r` labels `r` at most as `y`: locality at `r` is monotone in
+the row and antitone in the grade.  So such a `y` ties `r` from above in every lawful labelling.
+It extends `CellScheme.Rows.IsLawful.le_of_row_self_le` (a cell of the same graded index) to cells
+of lower grade and to lawfulness below a pair. -/
+theorem le_of_row_self_le_below {X : Finset κ × ℕ} {w : ι → Label.{u}}
+    (hw : R.IsLawfulBelow X fun d ↦ w d) {r y : ι} (hrX : r ∈ D.below X)
+    (hy : y ∈ D.below (D.gradedIndex r)) (hgy : D.grade y ≤ D.grade r)
+    (hrow : R.row r ⟨r, D.mem_below_gradedIndex r⟩ ≤ R.row r ⟨y, hy⟩) : w r ≤ w y := by
+  have h := ((isLawfulBelow_iff_forall.mp hw).2.1 r hrX).le_of_le
+    (d := ⟨r, D.mem_below_gradedIndex r⟩) (d' := ⟨y, hy⟩) hrow hgy
+  -- locality at `r` reads `min (w d) (w r)`
+  change min (w r) (w r) ≤ min (w y) (w r) at h
+  rw [min_self] at h
+  exact h.trans (min_le_left _ _)
 
 end CellScheme.Rows.IsLawful
 
@@ -327,6 +352,45 @@ theorem exists_top_reads_lt_markedTop {q : Fin (markedTop I D).card → Label.{u
     hp hag
   exact Scheme.exists_top_sheetRow_lt (hS := not_univ_four_le) hε D.cap_mem D.capRespects hq hgr
     hgx hqj hqr hread hτ (fun d hd ↦ hag d ⟨subset_univ _, hd⟩) hlt hj₀ hσ
+
+/-- **The separating fill from a raise in a coatom.**  As `exists_top_reads_lt_markedTop`, with the
+fill replaced by a labelling `w` of the profile layer lawful below the coatom `(univ.erase z₁, 4)`
+and below `(univ, 3)`, agreeing with the entry of `j` capped at its value at `r` there, with
+`w x < w r`, for `x` of grade at most `3` and `r` below the coatom: the fill is the extension of
+`w` below `(univ, 4)` (`TowerProfile.exists_isLawfulBelow_four`), which keeps `w` at `x` (below
+`(univ, 3)`) and at `r` (below the coatom).  Since the profile layer below `(univ, 3)` is unchanged,
+`w` differs from the entry only at the cells of the coatom of the grade `4`: the separating fill is
+a raise of `r` within the coatom. -/
+theorem exists_top_reads_lt_markedTop_of_raise {q : Fin (markedTop I D).card → Label.{u}}
+    (hq : (markedTop I D).rows.IsLawful q) {j : Fin (((scheme I).catalogue 4).card + D.marks.card)}
+    {x r : Fin (scheme I).card} (hgr : (scheme I).toCellScheme.grade r = 4)
+    (hgx : (scheme I).toCellScheme.grade x ≤ 3) (hqj : q (Fin.natAdd _ j) = ⊤)
+    (hqr : q (Fin.castAdd _ r) = ⊤)
+    (hread : (scheme I).markedEntry 4 D.marks j r ≤ (scheme I).markedEntry 4 D.marks j x)
+    (hτ : ⊥ < (scheme I).markedEntry 4 D.marks j r) {z₁ z₂ : Fin 5}
+    (hz₁ : z₁ ∈ ({Fin.last 4, Fin.castSucc (Fin.last 3)} : Finset (Fin 5)))
+    (hz₂ : z₂ ∈ ({Fin.last 4, Fin.castSucc (Fin.last 3)} : Finset (Fin 5))) (hz : z₁ ≠ z₂)
+    (hrC : r ∈ (scheme I).toCellScheme.below (univ.erase z₁, 4))
+    {w : Fin (scheme I).card → Label.{u}}
+    (hwU : (scheme I).rows.IsLawfulBelow (univ.erase z₁, 4) fun d ↦ w d)
+    (hwV : (scheme I).rows.IsLawfulBelow (univ, 3) fun d ↦ w d)
+    (hag : ∀ d, d ∈ (scheme I).toCellScheme.below (univ.erase z₁, 4) ∨
+      d ∈ (scheme I).toCellScheme.below (univ, 3) →
+      min (w d) ((scheme I).markedEntry 4 D.marks j r) =
+        min ((scheme I).markedEntry 4 D.marks j d) ((scheme I).markedEntry 4 D.marks j r))
+    (hlt : w x < w r) :
+    ∃ j'', q (Fin.natAdd _ j'') = ⊤ ∧
+      (scheme I).markedEntry 4 D.marks j'' x < (scheme I).markedEntry 4 D.marks j'' r := by
+  have hε := markedEntry_mem_spec D
+  have hvis : IsSelfVisible 4 ((scheme I).markedEntry 4 D.marks j r) := by
+    have h := (Scheme.mem_catalogue.mp (hε j)).1.orderly r
+    rwa [hgr] at h
+  obtain ⟨p, hp, hpw, hpa⟩ := exists_isLawfulBelow_four hz₁ hz₂ hz hwU hwV
+    (Scheme.mem_catalogue.mp (hε j)).1 hvis hag
+  have hx3 : x ∈ (scheme I).toCellScheme.below (univ, 3) := ⟨subset_univ _, hgx⟩
+  refine exists_top_reads_lt_markedTop D hq hgr (hgx.trans (by omega)) hqj hqr hread hτ hp hpa ?_
+  rw [hpw x (.inr hx3), hpw r (.inl hrC)]
+  exact hlt
 
 end TowerProfile
 
