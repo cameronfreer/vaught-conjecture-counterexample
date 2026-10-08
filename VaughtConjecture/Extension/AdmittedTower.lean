@@ -29,17 +29,12 @@ capped agreement, readable) are read off the row labellings as for the canonical
 lift at `g + 1` is `ProfileTower.Lvl.GoodOn.cappedLift_nextSOn`; and the cell at `(univ, g + 1)`
 comes from the provision at `⊥` (the code of a profile lifted from `⊥` lies in `D (g + 1)`).
 
-**The levels on `D`** (`ProfileTower.lvlOn D j`, at the grade `j + 2`): the base level, then the
-next level on `D (j + 3)`.  They are good relative to `D` up to the grade `m`
-(`ProfileTower.lvlOn_goodOn`), and the row of every cell of full scope at a grade `j ≥ 3` reads, at
-the old cells, the splice of a profile of `D j` (`ProfileTower.lvlOn_rowsIn`).
-
-**The admitted completion** (`Seed.exists_admittedCompletion`, from `Seed.exists_rowCompletion` for
-any predicate on states, on the family `ProfileTower.rowFamily`): for an admission with the lift
-provisions (`Seed.LiftAdmission`) from a grade `N ≥ 3`, the downward clause at the grades `≥ N`, and
-the code of the glued labelling admitted at `m + 1` when `N ≤ m + 1`, the family
-`D k = rowCat (N ≤ k → Row) k` (the whole catalogue below `N`, the admitted catalogue from `N`)
-gives a completion below the full grade with admitted rows from `N`.
+**The family of a predicate** (`ProfileTower.rowFamily I N Rw`: the whole catalogue below `N`,
+the catalogue of `Rw` from `N`) has the downward clause at the grades `k ≤ m` from that of `Rw` at
+`N ≤ k ≤ m` (`ProfileTower.rowFamily_down`), and the lift provisions at every grade
+`0 < k ≤ m + 1` from those of `Rw` at `N ≤ k ≤ m + 1` (`ProfileTower.rowFamily_lift`).  The levels
+on the family and the completion are in `VaughtConjecture.Extension.RowCompletionZero`
+(`Seed.exists_rowCompletion₀`).
 
 ## Placement
 
@@ -245,87 +240,6 @@ theorem Lvl.GoodOn.nextOn (hL : L.GoodOn D) (hgm : g + 1 ≤ m + 1)
 
 end NextOn
 
-/-! ### The rows of the layers -/
-
-/-- The rows of a level **read the catalogues of `D`**: the row of every cell of full scope at a
-grade `j ≥ 3`, read at the old cells, is the splice at `j` of a profile of `D j`. -/
-def Lvl.RowsIn {g : ℕ} (D : ℕ → Finset (Prof I)) (L : Lvl I g) : Prop :=
-  ∀ z j, 3 ≤ j → L.S.toCellScheme.gradedIndex z = ((univ : Finset (Fin (m + 2))), j) →
-    ∃ R ∈ D j, ∀ d, L.S.rowAt z (L.embed d) = hat I j R d
-
-/-- **The next level on `D (g + 1)` reads the catalogues of `D`** when the level does. -/
-theorem Lvl.GoodOn.rowsIn_nextOn {g : ℕ} {L : Lvl I g} {D : ℕ → Finset (Prof I)}
-    (hL : L.GoodOn D) (hrows : L.RowsIn D) : (L.nextOn (D (g + 1))).RowsIn D := by
-  intro z j hj hz
-  induction z using Fin.addCases with
-  | left e =>
-    have he : L.S.toCellScheme.gradedIndex e = ((univ : Finset (Fin (m + 2))), j) :=
-      (Scheme.appendFullCellsScheme_gradedIndex_castAdd _ _ _ e).symm.trans hz
-    obtain ⟨R, hR, hrow⟩ := hrows e j hj he
-    exact ⟨R, hR, fun d ↦ (Scheme.rowAt_appendFullCells_castAdd
-      (r' := fun i ↦ L.ΦOn (D (g + 1)) (entryOn (D (g + 1)) i)) (h := L.not_le) e
-      (L.embed d)).trans (hrow d)⟩
-  | right i =>
-    have hji : j = g + 1 := by
-      have := congrArg Prod.snd hz
-      change ((L.S.appendFullCellsScheme (g + 1) (D (g + 1)).card).gradedIndex
-        (Fin.natAdd _ i)).2 = _ at this
-      rw [Scheme.appendFullCellsScheme_gradedIndex_natAdd] at this
-      exact this.symm
-    subst hji
-    obtain ⟨R, hR, hrow⟩ := hL.rowAt_nextSOn (C := D (g + 1)) hz
-    exact ⟨R, hR, hrow⟩
-
-/-! ### The levels on a family of catalogues -/
-
-variable (I) in
-/-- **The levels on `D`**: the level at the grade `j + 2`, the base level then the next levels on
-`D`. -/
-noncomputable def lvlOn (D : ℕ → Finset (Prof I)) : (j : ℕ) → Lvl I (j + 2)
-  | 0 => base I
-  | j + 1 => (lvlOn D j).nextOn (D (j + 2 + 1))
-
-/-- **The levels on `D` are good relative to `D`** up to the grade `m`, under the downward clause
-and the lift provisions at the grades `3 ≤ k ≤ m`. -/
-theorem lvlOn_goodOn (hm : 2 ≤ m) {D : ℕ → Finset (Prof I)} (hD : ∀ k, D k ⊆ cat I k)
-    (hdown : ∀ k, ∀ R ∈ D (k + 1), code k R ∈ D k)
-    (hbot : ∀ k, 3 ≤ k → k ≤ m → ∀ x ∈ (Pts : Finset (Fin (m + 2))),
-      BotLiftProvisionIn (D k) k x)
-    (hcap : ∀ k, 3 ≤ k → k ≤ m → ∀ x ∈ (Pts : Finset (Fin (m + 2))),
-      CapLiftProvisionIn (D k) k x) :
-    (j : ℕ) → j + 2 ≤ m → (lvlOn I D j).GoodOn D
-  | 0, _ => (base_good (by omega)).toGoodOn D
-  | j + 1, hj => (lvlOn_goodOn hm hD hdown hbot hcap j (by omega)).nextOn (by omega) (hD _)
-      (hdown _) (hbot _ (by omega) (by omega)) (hcap _ (by omega) (by omega))
-
-/-- **The levels on `D` read the catalogues of `D`.** -/
-theorem lvlOn_rowsIn (hm : 2 ≤ m) {D : ℕ → Finset (Prof I)} (hD : ∀ k, D k ⊆ cat I k)
-    (hdown : ∀ k, ∀ R ∈ D (k + 1), code k R ∈ D k)
-    (hbot : ∀ k, 3 ≤ k → k ≤ m → ∀ x ∈ (Pts : Finset (Fin (m + 2))),
-      BotLiftProvisionIn (D k) k x)
-    (hcap : ∀ k, 3 ≤ k → k ≤ m → ∀ x ∈ (Pts : Finset (Fin (m + 2))),
-      CapLiftProvisionIn (D k) k x) :
-    (j : ℕ) → j + 2 ≤ m → (lvlOn I D j).RowsIn D
-  | 0, _ => fun z j hj hz ↦ by
-    -- The base level has no cell above the grade `2`.
-    exfalso
-    have h := (base I).inv z
-    have hg : (base I).S.toCellScheme.grade z = j := congrArg Prod.snd hz
-    have hs : (base I).S.toCellScheme.scope z = univ := congrArg Prod.fst hz
-    rcases h with h | h
-    · omega
-    · exact h hs
-  | j + 1, hj => (lvlOn_goodOn hm hD hdown hbot hcap j (by omega)).rowsIn_nextOn
-      (lvlOn_rowsIn hm hD hdown hbot hcap j (by omega))
-
-/-- On the whole catalogues, the levels on `D` are the levels of the tower. -/
-theorem lvlOn_cat : (j : ℕ) → lvlOn I (fun k ↦ cat I k) j = lvl I j
-  | 0 => rfl
-  | j + 1 => by
-    change (lvlOn I (fun k ↦ cat I k) j).nextOn (cat I (j + 2 + 1)) = (lvl I j).next
-    rw [lvlOn_cat j]
-    rfl
-
 /-! ### The catalogues of an admission from its grade -/
 
 /-- The catalogue of a predicate that holds everywhere is the whole catalogue. -/
@@ -355,17 +269,19 @@ theorem rowFamily_of_le {N : ℕ} (Rw : I.State → Prop) {k : ℕ} (hk : N ≤ 
     rowFamily I N Rw k = rowCat Rw k :=
   rowCat_congr (fun _ ↦ ⟨fun h ↦ h hk, fun h _ ↦ h⟩) k
 
-/-- **The downward clause for the family of a predicate**, from the downward clause of its
-catalogues at the grades `≥ N`; below `N` the codes of profiles lie in the catalogue. -/
+/-- **The downward clause for the family of a predicate** at the grades `k ≤ m`, from the
+downward clause of its catalogues at the grades `N ≤ k ≤ m`; below `N` the codes of profiles lie in
+the catalogue. -/
 theorem rowFamily_down {N : ℕ} {Rw : I.State → Prop}
-    (hdown : ∀ k, N ≤ k → ∀ R ∈ rowCat Rw (k + 1), code k R ∈ rowCat Rw k) (k : ℕ)
-    (R : Prof I) (hR : R ∈ rowFamily I N Rw (k + 1)) : code k R ∈ rowFamily I N Rw k := by
+    (hdown : ∀ k, N ≤ k → k ≤ m → ∀ R ∈ rowCat Rw (k + 1), code k R ∈ rowCat Rw k) (k : ℕ)
+    (hkm : k ≤ m) (R : Prof I) (hR : R ∈ rowFamily I N Rw (k + 1)) :
+    code k R ∈ rowFamily I N Rw k := by
   rcases lt_or_ge k N with hk | hk
   · rw [rowFamily_of_lt Rw hk]
     exact code_mem_cat_of_mem_cat (rowCat_subset _ _ hR)
   · rw [rowFamily_of_le Rw hk]
     rw [rowFamily_of_le Rw (by omega)] at hR
-    exact hdown k hk R hR
+    exact hdown k hk hkm R hR
 
 /-- The whole catalogue at the top grade has the lift provision at `⊥`, for `0 < m`. -/
 theorem botLiftProvisionIn_cat_top (hm : 0 < m) {x : Fin (m + 2)}
@@ -409,89 +325,6 @@ end VaughtConjecture.ProfileTower
 namespace VaughtConjecture
 
 open Finset Label ProfileTower
-
-/-- **The completion on the catalogues of a predicate from a grade `N ≥ 3`**: for a seed on
-`m + 2 ≥ 4` points and a predicate `Rw` on states with the lift provisions at every grade
-`N ≤ k ≤ m + 1` from either coatom, the downward clause at the grades `≥ N` and, when
-`N ≤ m + 1`, the code of the glued labelling at `m + 1` in the catalogue, some completion below the
-full grade has the row of every cell of full scope at a grade `≥ N` satisfying `Rw` (read at the
-old cells): the levels on the family of `Rw` (`ProfileTower.lvlOn`) up to the grade `m`, then the
-top layer on its catalogue at `m + 1`. -/
-theorem Seed.exists_rowCompletion {α : Ordinal.{u}} {m : ℕ} (I : Seed.{u} α m)
-    (hm : 2 ≤ m) {N : ℕ} (hN : 3 ≤ N) {Rw : I.State → Prop}
-    (hbotP : ∀ k, N ≤ k → k ≤ m + 1 → ∀ x ∈ (Pts : Finset (Fin (m + 2))),
-      BotLiftProvisionOf Rw k x)
-    (hcapP : ∀ k, N ≤ k → k ≤ m + 1 → ∀ x ∈ (Pts : Finset (Fin (m + 2))),
-      CapLiftProvisionOf Rw k x)
-    (hdown : ∀ k, N ≤ k → ∀ R ∈ rowCat Rw (k + 1), code k R ∈ rowCat Rw k)
-    (hlab : N ≤ m + 1 → Rw (hat I (m + 1) (code (m + 1) fun d ↦ I.amalgam.label d))) :
-    ∃ F : CompletionBelowFullGrade I, F.HasAdmittedRows N Rw := by
-  classical
-  set D := rowFamily I N Rw
-  have hD (k : ℕ) : D k ⊆ cat I k := rowCat_subset _ k
-  have hdD := rowFamily_down hdown
-  have hprov (k : ℕ) (hk0 : 0 < k) (hkm : k ≤ m + 1) (x : Fin (m + 2))
-      (hx : x ∈ (Pts : Finset (Fin (m + 2)))) :=
-    rowFamily_lift (by omega) hbotP hcapP hk0 hkm hx
-  obtain ⟨j, rfl⟩ : ∃ j, m = j + 2 := ⟨m - 2, by omega⟩
-  have hL := lvlOn_goodOn hm hD hdD (fun k hk hkm x hx ↦ (hprov k (by omega) (by omega) x hx).1)
-    (fun k hk hkm x hx ↦ (hprov k (by omega) (by omega) x hx).2) j le_rfl
-  have hR := lvlOn_rowsIn hm hD hdD (fun k hk hkm x hx ↦ (hprov k (by omega) (by omega) x hx).1)
-    (fun k hk hkm x hx ↦ (hprov k (by omega) (by omega) x hx).2) j le_rfl
-  set Rt : I.State → Prop := fun s ↦ N ≤ j + 2 + 1 → Rw s
-  have hdtop : ∀ R ∈ rowCat Rt (j + 2 + 1), code (j + 2) R ∈ D (j + 2) := hdD (j + 2)
-  have hbot (x) (hx : x ∈ (Pts : Finset (Fin (j + 2 + 2)))) :
-      BotLiftProvisionOf Rt (j + 2 + 1) x := (hprov _ (by omega) le_rfl x hx).1
-  have hcap (x) (hx : x ∈ (Pts : Finset (Fin (j + 2 + 2)))) :
-      CapLiftProvisionOf Rt (j + 2 + 1) x := (hprov _ (by omega) le_rfl x hx).2
-  have hlab' : code (j + 2 + 1) (fun d ↦ I.amalgam.label d) ∈ rowCat Rt (j + 2 + 1) := by
-    have hW : IsCutLawful I (j + 2 + 1) fun d ↦ I.amalgam.label d :=
-      ⟨I.amalgam.isLawful.isLawfulBelow _, I.amalgam.isLawful.isLawfulBelow _⟩
-    exact mem_rowCat.mpr ⟨code_mem_cat_of_isCutLawful hW, hlab⟩
-  set L := lvlOn I D j
-  refine ⟨hL.admittedTopCompletion Rt hdtop hbot hcap hlab', fun u k hu hk ↦ ?_⟩
-  -- The rows of the completion: the top layer, then the layers of the levels.
-  change Rw fun d ↦ (L.nextSOn (rowCat Rt (j + 2 + 1))).rowAt u
-    (L.embedOn (rowCat Rt (j + 2 + 1)) d)
-  induction u using Fin.addCases with
-  | right i =>
-    obtain ⟨R, hR', hrow⟩ := hL.rowAt_nextSOn (C := rowCat Rt (j + 2 + 1))
-      (u := Fin.natAdd _ i) (Scheme.appendFullCellsScheme_gradedIndex_natAdd _ _ _ i)
-    have hki : k = j + 2 + 1 := by
-      have := congrArg Prod.snd hu
-      change ((L.S.appendFullCellsScheme (j + 2 + 1) (rowCat Rt (j + 2 + 1)).card).gradedIndex
-        (Fin.natAdd _ i)).2 = _ at this
-      rw [Scheme.appendFullCellsScheme_gradedIndex_natAdd] at this
-      exact this.symm
-    rw [funext hrow]
-    exact (mem_rowCat.mp hR').2 (hki ▸ hk)
-  | left e =>
-    have he : L.S.toCellScheme.gradedIndex e = ((univ : Finset (Fin (j + 2 + 2))), k) :=
-      (Scheme.appendFullCellsScheme_gradedIndex_castAdd _ _ _ e).symm.trans hu
-    obtain ⟨R, hR', hrow⟩ := hR e k (by omega) he
-    have hrow' (d : Fin I.amalgam.card) :
-        (L.nextSOn (rowCat Rt (j + 2 + 1))).rowAt (Fin.castAdd _ e)
-          (L.embedOn (rowCat Rt (j + 2 + 1)) d) = hat I k R d :=
-      (Scheme.rowAt_appendFullCells_castAdd
-        (r' := fun i ↦ L.ΦOn (rowCat Rt (j + 2 + 1)) (entryOn (rowCat Rt (j + 2 + 1)) i))
-        (h := L.not_le) e (L.embed d)).trans (hrow d)
-    rw [funext hrow']
-    exact (mem_rowCat.mp hR').2 hk
-
-/-- **The admitted completion**: for a seed on `m + 2 ≥ 4` points and an admission with the lift
-provisions from a grade `N ≥ 3`, under the downward clause at the grades `≥ N` and, when
-`N ≤ m + 1`, the admission of the code of the glued labelling at `m + 1`, some completion below
-the full grade has admitted rows from `N` (`Seed.exists_rowCompletion` for the reading rows). -/
-theorem Seed.exists_admittedCompletion {α : Ordinal.{u}} {m : ℕ} (I : Seed.{u} α m)
-    (hm : 2 ≤ m) (A : I.LiftAdmission) (hN : 3 ≤ A.N)
-    (hdown : ∀ k, A.N ≤ k → ∀ R ∈ admittedCat A.toAdmission (k + 1),
-      code k R ∈ admittedCat A.toAdmission k)
-    (hlab : A.N ≤ m + 1 → A.Row (hat I (m + 1) (code (m + 1) fun d ↦ I.amalgam.label d))) :
-    ∃ F : CompletionBelowFullGrade I, F.HasAdmittedRows A.N A.Adm := by
-  obtain ⟨F, hF⟩ := I.exists_rowCompletion hm hN (Rw := A.Row)
-    (fun _ hk hkm _ hx ↦ A.botLiftProvision hk hkm hx)
-    (fun _ hk hkm _ hx ↦ A.capLiftProvision hk hkm hx) hdown hlab
-  exact ⟨F, fun _ _ hu hj ↦ (hF hu hj).adm⟩
 
 /-- **The trivial admission with the lift provisions**, from a grade `N ≥ 1`, for `0 < m`. -/
 noncomputable def Seed.LiftAdmission.all {α : Ordinal.{u}} {m : ℕ} (I : Seed.{u} α m)
