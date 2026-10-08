@@ -614,9 +614,7 @@ theorem cappedLift_admittedBy_right (hA : IsLowAdmission Adm) :
 /-- **The admitted layer is bountiful.** -/
 theorem isBountiful_admittedBy (hA : IsLowAdmission Adm) : (admittedBy α Adm).rows.IsBountiful :=
   (I α).isBountiful_admittedDoubledLower (hLR α) (A := AdmBy α Adm)
-    (fun z hz ↦ by
-      rcases hz with rfl | rfl
-      exacts [cappedLift_lowerT_left, cappedLift_lowerT_right])
+    cappedLift_lowerT_left cappedLift_lowerT_right
     (cappedLift_admittedBy_left hA) (cappedLift_admittedBy_right hA)
 
 /-- **The admitted completion at the seed is legal below the full grade.** -/
