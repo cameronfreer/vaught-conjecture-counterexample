@@ -16,9 +16,10 @@ cap by cap, not simultaneous preservation).
 Everything here holds for arbitrary semantic rows `R` of an arbitrary cell scheme `D`; no
 consistency, bountifulness, or completeness of `R` is assumed unless it is a hypothesis.
 
-* **Lawfulness below a pair, pointwise** (`Rows.isLawfulBelow_iff_forall`): a labelling `w` of
-  all cells is lawful below `X` exactly when the order, locality, and availability laws hold at the
-  cells below `X`, with the rows of `D` itself.  In particular lawfulness is local, and labellings
+* **Lawfulness below a pair, pointwise** (`Rows.isLawfulBelow_iff_forall`, in
+  `VaughtConjecture.Scheme.Row`): a labelling `w` of all cells is lawful below `X` exactly when
+  the order, locality, and availability laws hold at the cells below `X`, with the rows of `D`
+  itself.  In particular lawfulness is local, and labellings
   lawful below `U` and below `V` glue to one lawful below any `Y` whose cells are covered by those
   below `U` and `V` (`Rows.IsLawfulBelow.glue`), and likewise along three pairs
   (`Rows.IsLawfulBelow.glue₃`).
@@ -45,10 +46,10 @@ consistency, bountifulness, or completeness of `R` is assumed unless it is a hyp
 
 ## Placement
 
-`Rows.isLawfulBelow_iff_forall`, `Rows.IsLawfulBelow.glue` and `Rows.IsLawfulBelow.glue₃` belong in
-`VaughtConjecture.Scheme.Row`, after the lawful sections, and the lifting statements in
-`VaughtConjecture.Scheme.Bountiful`, after `CellScheme.Rows.CappedLift.trans`.  They are stated
-here so that those files are unchanged.
+`Rows.isLawfulBelow_iff_forall` is stated in `VaughtConjecture.Scheme.Row`, after the lawful
+sections.  `Rows.IsLawfulBelow.glue` and `Rows.IsLawfulBelow.glue₃` belong there too, and the
+lifting statements in `VaughtConjecture.Scheme.Bountiful`, after
+`CellScheme.Rows.CappedLift.trans`.  They are stated here so that those files are unchanged.
 
 ## References
 
