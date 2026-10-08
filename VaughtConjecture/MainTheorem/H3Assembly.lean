@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.MainTheorem.H3RaiseCoface
+import VaughtConjecture.MainTheorem.H3Small
 
 /-!
 # The open inputs of `h3` and the assembly (work file)
@@ -19,7 +20,7 @@ Work file (placement later).  The assembly of `h3` through the rows admitted in 
   root (`H3.RootWitness`).
 * `H3.exists_raiseCoface` (SCAFFOLD, (S2)): a donor coface with the raise in the class form and
   with its tops dominating the common face.
-* `H3.exists_coface_classCompletion` (SCAFFOLD, (S1), (S4), (S5)) and the assembly.
+* `H3.exists_coface_classCompletion` (SCAFFOLD, (S1), (S4)) and the assembly.
 -/
 
 universe u w
@@ -104,9 +105,10 @@ set_option warningAsError false in
 /-- **SCAFFOLD (`sorry`)**: at an acquired context, every coface `d` of the root face has a coface
 `tb` of `p` with face `d` and a completion of the seed of `t'` and `tb` whose rows of full scope
 from the grade of the cap are admitted in the class.  Through `H3.exists_raiseCoface` (S2) and
-`H3.exists_classCompletion_of_fills`, with three `sorry`s: (S1) the lift provisions from the donor
-coatom for the admitted states (from the dominating tops, assumed), (S4) the band of the fill at the
-positive caps, and (S5) the small cases `k ≤ 1` or `N = 2`. -/
+`H3.exists_classCompletion_of_fills₀` (every grade of the cap), with two `sorry`s: (S1) the lift
+provisions from the donor coatom for the admitted states at a cap of grade at most `k` (from the
+dominating tops, assumed; at a cap of top grade they are `H3.donorLiftProvisions_of_lt`), and (S4)
+the band of the fill at the positive caps. -/
 theorem exists_coface_classCompletion (hα : Order.IsSuccLimit α) {t' : StageType.{u} α (k + 1)}
     {p : StageType.{u} α k} (ht' : t'.IsLegal) (hp : restrictFace Fin.castSuccEmb t' = some p)
     {g : Fin n ↪ Fin k} {t : StageType.{u} α n}
@@ -121,16 +123,14 @@ theorem exists_coface_classCompletion (hα : Order.IsSuccLimit α) {t' : StageTy
           ((requests ht' hp htb htbd c r (by have := hctx.2.2.1; omega)).Admits
             (classCells ht' hp htb htbd) ∅) := by
   obtain ⟨tb, htb, htbd, hraise⟩ := exists_raiseCoface hα ht' hp ht hd hctx hoff hbot
-  refine ⟨tb, htb, htbd, ?_⟩
-  by_cases hsmall : 2 ≤ k ∧ 3 ≤ t'.toCellScheme.grade c
-  · refine exists_classCompletion_of_fills ht' hp htb htbd hctx hsmall.1 hsmall.2 ?_
-      (fun k' hk' hkm ↦ (hraise k' hk' hkm).1) ?_
-    · -- (S1) the lift provisions from the donor coatom for the admitted states, from the
-      -- dominating tops `(hraise k' _ _).2` (assumed)
+  refine ⟨tb, htb, htbd, exists_classCompletion_of_fills₀ ht' hp htb htbd hctx ?_
+    (fun k' hk' hkm ↦ (hraise k' hk' hkm).1) ?_⟩
+  · by_cases hkN : k < t'.toCellScheme.grade c
+    · exact donorLiftProvisions_of_lt ht' hp htb htbd hctx hkN
+    · -- (S1) the lift provisions from the donor coatom for the admitted states at a cap of
+      -- grade at most `k`, from the dominating tops `(hraise k' _ _).2` (assumed)
       sorry
-    · -- (S4) the band of the fill at the positive caps
-      sorry
-  · -- (S5) the small cases: `k ≤ 1` or the cap of grade `2`
+  · -- (S4) the band of the fill at the positive caps
     sorry
 
 /-- **The existential coatom form at the contexts respecting the root bottoms** (through the
