@@ -53,6 +53,19 @@ context face, and its value `1` at the cell `0`, labelled `⊥` in the context, 
 owner lowering at the grade `1` fails at this legal context **for every legal donor** with the same
 root face, the context itself among them.  What is refuted is the clause `OwnerLowering … 1 …` at
 this context; donor raising and the other inputs of `H2.stateAdmission_one` are not addressed.
+
+**What remains of the clause** (`H2.OwnerLoweringBelow`, `H2.selfLow_isStateAdmission_of_below`,
+`H2.stateAdmission_one_of_below`).  The donor provision of the clause uses owner lowering only
+through the designated tops: below the cap the frontier of the lowered face is that of the context
+face (agreement capped at `h`), and at or above the cap it must be at most the designated top.  So
+owner lowering may be weakened to **owner lowering below the designated tops**: the frontier of the
+lowered face at most every designated top of the donor face at least `h`.  With it in place of
+owner lowering, the clause is an admission of states at grade `1` under donor raising.  At the
+context above, with itself as donor and the designated tops among the cells `1` and `2`, both
+donor raising (`OwnerGradeOne.donorRaising_ctx`) and owner lowering below the designated tops
+(`OwnerGradeOne.ownerLoweringBelow_ctx`: the root value is at most every top of the donor face)
+hold, so the clause is an admission of states there (`OwnerGradeOne.isStateAdmission_ctx`) although
+owner lowering fails.  Owner lowering below the designated tops at grade `1` in general is open.
 -/
 
 universe u
@@ -129,6 +142,125 @@ theorem not_ownerLowering_one_of_label_ne_top {k n m n' : ℕ} {t' : StageType.{
     (by rw [label_faceCell]; exact hi) (by rw [grade_faceCell]; exact hgi)
   rw [hWr i] at hle
   exact absurd (hle.trans hF) (not_le.mpr hlt)
+
+/-! ### Owner lowering below the designated tops -/
+
+section Below
+
+variable {ιC ιD ιR : Type*} {rc : ιR → ιC} {rd : ιR → ιD} {K : ℕ}
+
+variable (rc rd) in
+/-- **Owner lowering below the designated tops** `Tops`: a lawful context face and a lawful donor
+face `g` agreeing with it on the root capped at `h` give a lawful context face with the root of
+the donor face, agreeing with the context face capped at `h`, whose frontier is at most every
+designated top of `g` at least `h`.  It follows from owner lowering
+(`H2.ownerLoweringBelow_of_ownerLowering`) and is what the donor provision of the clause uses. -/
+def OwnerLoweringBelow (o r : ιC) (K : ℕ) (C : (ιC → Label.{u}) → Prop)
+    (D : (ιD → Label.{u}) → Prop) (Tops : Finset ιD) : Prop :=
+  ∀ {h : Label.{u}}, IsSelfVisible K h → ∀ {L : ιC → Label.{u}} {g : ιD → Label.{u}}, C L → D g →
+    (∀ x, min (g (rd x)) h = min (L (rc x)) h) →
+    ∃ W : ιC → Label.{u}, C W ∧ (∀ x, W (rc x) = g (rd x)) ∧ (∀ d, min (W d) h = min (L d) h) ∧
+      ∀ t ∈ Tops, h ≤ g t → frontierAt o r K W ≤ g t
+
+/-- Owner lowering gives owner lowering below every designation. -/
+theorem ownerLoweringBelow_of_ownerLowering {o r : ιC} {C : (ιC → Label.{u}) → Prop}
+    {D : (ιD → Label.{u}) → Prop} (hOL : OwnerLowering rc rd o r K C D) (Tops : Finset ιD) :
+    OwnerLoweringBelow rc rd o r K C D Tops := fun hh _ _ hL hg hroot ↦ by
+  obtain ⟨W, hW, hWr, hWL, hWF⟩ := hOL hh hL hg hroot
+  exact ⟨W, hW, hWr, hWL, fun _ _ ht ↦ hWF.trans ht⟩
+
+/-- The designated cells below the top of an agreeing face, below a top under the cap, agree. -/
+private theorem sup_lt_of_lt_cap' {Lo : Finset ιD} {W R : ιD → Label.{u}} {h v : Label.{u}}
+    (hWR : ∀ d, min (W d) h = min (R d) h) (hvh : v < h) (hlt : Lo.sup W < v) : Lo.sup R < v := by
+  have hv0 : ⊥ < v := bot_le.trans_lt hlt
+  refine (Finset.sup_lt_iff hv0).mpr fun d hd ↦ ?_
+  have hWd : W d < v := (Finset.sup_lt_iff hv0).mp hlt d hd
+  rw [Label.eq_of_min_eq_of_lt (hWR d) (hWd.trans hvh)]
+  exact hWd
+
+/-- **The clause is an admission of states** under the order law at the owner, the frontier bound
+at the root cells `A`, donor raising, and owner lowering below the designated tops (in place of
+owner lowering, `H2.selfLow_isStateAdmission`).  Below the cap the frontier of the lowered face is
+that of the context face, by agreement capped at `h`; at or above the cap it is at most the
+designated top. -/
+theorem selfLow_isStateAdmission_of_below {o r : ιC} {C : (ιC → Label.{u}) → Prop}
+    {D : (ιD → Label.{u}) → Prop} {Lo Tops : Finset ιD} (A : Set ιR)
+    (hCo : ∀ f, C f → IsSelfVisible K (f o))
+    (hCF : ∀ f, C f → ∀ a ∈ A, frontierAt o r K f ≤ f (rc a))
+    (hDR : DonorRaising rc rd K C D A Tops) (hOL : OwnerLoweringBelow rc rd o r K C D Tops) :
+    IsStateAdmission rc rd K C D (SelfLowG o r K Lo Tops) where
+  bot := fun _ _ h ↦ absurd h (by simp)
+  comp := fun {σ} hσ hσ0 hc {L R} h t ht hlt ↦ by
+    have hlt' : Lo.sup R < R t := by
+      by_contra hcon
+      refine hlt.not_ge ?_
+      have hc' : R t ≤ Lo.sup R := not_lt.mp hcon
+      rcases Lo.eq_empty_or_nonempty with he | hne
+      · subst he
+        rw [Finset.sup_empty, le_bot_iff] at hc'
+        change σ (R t) ≤ _
+        rw [hc', hσ0]
+        exact bot_le
+      · obtain ⟨d, hd, hdeq⟩ := Finset.exists_mem_eq_sup Lo hne R
+        exact (hσ (hc'.trans hdeq.le)).trans (Finset.le_sup (f := fun z ↦ σ (R z)) hd)
+    have := hσ (h t ht hlt')
+    refine le_trans (le_of_eq ?_) this
+    rw [frontierAt, frontierAt, hσ.map_min, hc]
+  context := fun {h} hh {L f R} hL hR hy hadm hf hfL ↦ by
+    have hroot (x : ιR) : min (f (rc x)) h = min (R (rd x)) h := by rw [hfL, hy]
+    have hsv : IsSelfVisible K (frontierAt o r K f) :=
+      (hCo f hf).min (visibilityReplace_self_visibilityReplace le_rfl (f r))
+    obtain ⟨W, hW, hWr, hWR, hWt⟩ := hDR hh hsv hR hf hroot (hCF f hf)
+    refine ⟨W, hW, hWr, hWR, fun t ht hlt ↦ ?_⟩
+    by_cases hRt : R t < h
+    · have hWt' : W t = R t := Label.eq_of_min_eq_of_lt (hWR t).symm hRt
+      rw [hWt'] at hlt ⊢
+      have horig := hadm t ht (sup_lt_of_lt_cap' hWR hRt hlt)
+      have hFF : frontierAt o r K f = frontierAt o r K L :=
+        Label.eq_of_min_eq_of_lt (frontierAt_cap (o := o) (r := r) hh hfL).symm (horig.trans_lt hRt)
+      rw [hFF]
+      exact horig
+    · exact hWt t ht (not_lt.mp hRt)
+  donor := fun {h} hh {L R f} hL hR hy hadm hf hfR ↦ by
+    have hroot (x : ιR) : min (f (rd x)) h = min (L (rc x)) h := by rw [hfR, hy]
+    obtain ⟨W, hW, hWr, hWL, hWF⟩ := hOL hh hL hf hroot
+    refine ⟨W, hW, hWr, hWL, fun t ht hlt ↦ ?_⟩
+    by_cases hRt : R t < h
+    · have hft : f t = R t := Label.eq_of_min_eq_of_lt (hfR t).symm hRt
+      rw [hft] at hlt ⊢
+      have horig := hadm t ht (sup_lt_of_lt_cap' hfR hRt hlt)
+      have hFW : frontierAt o r K W = frontierAt o r K L :=
+        Label.eq_of_min_eq_of_lt (frontierAt_cap (o := o) (r := r) hh hWL).symm
+          (horig.trans_lt hRt)
+      rw [hFW]
+      exact horig
+    · have hft : h ≤ f t := by
+        have e := hfR t
+        rw [min_eq_right (not_lt.mp hRt)] at e
+        exact min_eq_right_iff.mp e
+      exact hWF t ht hft
+
+end Below
+
+/-- **The state-level provisions at grade `1`**, from donor raising and owner lowering below the
+designated tops at the grade `1` (both hypotheses); owner lowering itself
+(`H2.stateAdmission_one`) fails at some legal contexts (`OwnerGradeOne.not_ownerLowering_one`). -/
+theorem stateAdmission_one_of_below {t' : StageType.{u} α 2} {n : ℕ}
+    {g : Fin n ↪ Fin 1} {l : Fin 2} {o r : Fin t'.card}
+    (hs : t'.IsSourceGapContextAt 1 (g.trans Fin.castSuccEmb) l o r) {p : StageType.{u} α 1}
+    (hp : restrictFace Fin.castSuccEmb t' = some p) {tb : StageType.{u} α 2}
+    (htbp : restrictFace Fin.castSuccEmb tb = some p) {Lo Tops : Finset (Fin tb.card)}
+    (hDR : DonorRaising (StageType.faceCell hp) (StageType.faceCell htbp) 1 t'.rows.IsLawful
+      tb.rows.IsLawful (rootTops hp l) Tops)
+    (hOL : OwnerLoweringBelow (StageType.faceCell hp) (StageType.faceCell htbp) o r 1
+      t'.rows.IsLawful tb.rows.IsLawful Tops) :
+    IsStateAdmission (StageType.faceCell hp) (StageType.faceCell htbp) 1 t'.rows.IsLawful
+      tb.rows.IsLawful (SelfLowG o r 1 Lo Tops) := by
+  refine selfLow_isStateAdmission_of_below (rootTops hp l) (fun f hf ↦ ?_)
+    (fun f hf a ha ↦ ?_) hDR hOL
+  · have := hf.orderly o
+    rwa [hs.grade_owner] at this
+  · exact hs.frontier_le hf ((StageType.label_faceCell hp a).trans ha.1) ha.2
 
 end VaughtConjecture.H2
 
@@ -538,5 +670,146 @@ theorem exists_not_ownerLowering_one (α : Ordinal.{u}) :
         ¬ OwnerLowering (faceCell hp) (faceCell htbp) o r 1 t'.rows.IsLawful tb.rows.IsLawful :=
   ⟨ctx α, cellC α 2, cellC α 1, face α, restrictFace_ctx α, isLegal_ctx α,
     isSourceGapContextAt_ctx α _, fun htb _ htbp ↦ not_ownerLowering_one α _ htb htbp⟩
+
+/-! ### The clause is still an admission at the context -/
+
+/-- The dead cell `3` is `⊥` in every lawful labelling. -/
+theorem eq_bot_three {w : Fin 4 → Label.{u}} (hw : S.{u}.rows.IsLawful w) : w 3 = ⊥ :=
+  hw.eq_bot_of_row_self_eq_bot 3 (by
+    -- the row of the dead cell is `⊥`
+    change rowValue 3 3 = ⊥
+    simp [rowValue])
+
+/-- The face on `{0}` is the cell `0`. -/
+theorem faceCell_eq_zero (α : Ordinal.{u}) {p : StageType.{u} α 1}
+    (hp : restrictFace Fin.castSuccEmb (ctx α) = some p) (x : Fin p.card) :
+    faceCell hp x = cellC α 0 := by
+  have key : ∀ d : Fin 4, Fin.last 1 ∉ cells.scope d → d = 0 := by decide
+  exact key _ (last_notMem_scope_faceCell hp x)
+
+/-- **Owner lowering below the designated tops holds at the context** with the context itself as
+donor, for the designated tops among the cells `1` and `2`: the lowered face is
+`(y, max (min b h) y, max (min c h) y, ⊥)` for `y` the root value of the donor face and `(a, b, c)`
+the context face, with frontier at most `max h y`, and `y` is at most every top of the donor
+face. -/
+theorem ownerLoweringBelow_ctx (α : Ordinal.{u}) {p : StageType.{u} α 1}
+    (hp : restrictFace Fin.castSuccEmb (ctx α) = some p) {Tops : Finset (Fin (ctx α).card)}
+    (hTops : ∀ t ∈ Tops, t = cellC α 1 ∨ t = cellC α 2) :
+    H2.OwnerLoweringBelow (faceCell hp) (faceCell hp) (cellC α 2) (cellC α 1) 1
+      (ctx α).rows.IsLawful (ctx α).rows.IsLawful Tops := by
+  intro h hh L g hL hg hroot
+  obtain ⟨-, hL1, hL2, hL01, hL12⟩ := conditions_univ (isLawfulBelow_of_isLawful hL _)
+  obtain ⟨hg0, -, -, hg01, hg12⟩ := conditions_univ (isLawfulBelow_of_isLawful hg _)
+  obtain ⟨z, hz⟩ := exists_faceCell_eq_of_last_notMem hp (s := cellC α 0) (by
+    change Fin.last 1 ∉ cells.scope 0
+    decide)
+  have h0 : min (g (cellC α 0)) h = min (L (cellC α 0)) h := by
+    have := hroot z
+    rwa [hz] at this
+  -- a context label at least the one at `0`, capped at `h` and raised to the root value
+  have hraise {v : Label.{u}} (hv : L (cellC α 0) ≤ v) :
+      min (max (min v h) (g (cellC α 0))) h = min v h := by
+    rw [min_max_distrib_right, min_assoc, min_self, h0, max_eq_left (min_le_min_right h hv)]
+  refine ⟨lab (g (cellC α 0)) (max (min (L (cellC α 1)) h) (g (cellC α 0)))
+      (max (min (L (cellC α 2)) h) (g (cellC α 0))),
+    isLawful_lab hg0 ((hL1.min hh).max hg0) ((hL2.min hh).max hg0) (le_max_right _ _)
+      (max_le_max (min_le_min_right _ hL12) le_rfl), fun x ↦ ?_, fun d ↦ ?_, fun t ht hht ↦ ?_⟩
+  · rw [faceCell_eq_zero α hp x]
+    rfl
+  · have key : ∀ d : Fin 4, d = 0 ∨ d = 1 ∨ d = 2 ∨ d = 3 := by decide
+    rcases key d with rfl | rfl | rfl | rfl
+    · exact h0
+    · exact hraise hL01
+    · exact hraise (hL01.trans hL12)
+    · change min ⊥ h = min (L (cellC α 3)) h
+      rw [eq_bot_three hL]
+  · have hgt : g (cellC α 0) ≤ g t := by
+      rcases hTops t ht with rfl | rfl
+      exacts [hg01, hg01.trans hg12]
+    exact (min_le_left _ _).trans (max_le ((min_le_right _ _).trans hht) hgt)
+
+/-- The raised donor label: `max (max (min y h) x) (c if h ≤ y)`. -/
+private noncomputable def raise (h c x y : Label.{u}) : Label.{u} :=
+  max (max (min y h) x) (if h ≤ y then c else ⊥)
+
+private theorem raise_cap {h c x y y₀ : Label.{u}} (hy : y₀ ≤ y)
+    (h0 : min x h = min y₀ h) : min (raise h c x y) h = min y h := by
+  unfold raise
+  split_ifs with hhy
+  · rw [min_eq_right hhy, min_eq_right]
+    exact (min_eq_right hhy ▸ le_max_left (min y h) x).trans (le_max_left _ _)
+  · have hyh : y < h := not_le.mp hhy
+    have hx : x = y₀ := Label.eq_of_min_eq_of_lt h0.symm (hy.trans_lt hyh)
+    have hmin : min y h = y := min_eq_left hyh.le
+    rw [max_bot_right, hx, hmin, max_eq_left hy, hmin]
+
+private theorem raise_mono {h c x y y' : Label.{u}} (hy : y ≤ y') :
+    raise h c x y ≤ raise h c x y' := by
+  unfold raise
+  refine max_le_max (max_le_max (min_le_min_right _ hy) le_rfl) ?_
+  split_ifs with h1 h2
+  · exact le_rfl
+  · exact absurd (h1.trans hy) h2
+  · exact bot_le
+  · exact le_rfl
+
+private theorem isSelfVisible_raise {h c x y : Label.{u}} (hh : IsSelfVisible 1 h)
+    (hc : IsSelfVisible 1 c) (hx : IsSelfVisible 1 x) (hy : IsSelfVisible 1 y) :
+    IsSelfVisible 1 (raise h c x y) := by
+  unfold raise
+  refine ((hy.min hh).max hx).max ?_
+  split_ifs
+  exacts [hc, isSelfVisible_bot _]
+
+/-- **Donor raising holds at the context** with the context itself as donor, for the designated
+tops among the cells `1` and `2` and every set of root cells: the raised donor face is
+`(x, raise b, raise c, ⊥)` for `x` the root value of the context face and `(a, b, c)` the donor
+face, where `raise y = max (max (min y h) x) (c if h ≤ y)`. -/
+theorem donorRaising_ctx (α : Ordinal.{u}) {p : StageType.{u} α 1}
+    (hp : restrictFace Fin.castSuccEmb (ctx α) = some p) (A : Set (Fin p.card))
+    {Tops : Finset (Fin (ctx α).card)} (hTops : ∀ t ∈ Tops, t = cellC α 1 ∨ t = cellC α 2) :
+    DonorRaising (faceCell hp) (faceCell hp) 1 (ctx α).rows.IsLawful (ctx α).rows.IsLawful A
+      Tops := by
+  intro h c hh hc R f hR hf hroot _
+  obtain ⟨-, hR1, hR2, hR01, hR12⟩ := conditions_univ (isLawfulBelow_of_isLawful hR _)
+  obtain ⟨hf0, -, -, -, -⟩ := conditions_univ (isLawfulBelow_of_isLawful hf _)
+  obtain ⟨z, hz⟩ := exists_faceCell_eq_of_last_notMem hp (s := cellC α 0) (by
+    change Fin.last 1 ∉ cells.scope 0
+    decide)
+  have h0 : min (f (cellC α 0)) h = min (R (cellC α 0)) h := by
+    have := hroot z
+    rwa [hz] at this
+  set x := f (cellC α 0)
+  refine ⟨lab x (raise h c x (R (cellC α 1))) (raise h c x (R (cellC α 2))),
+    isLawful_lab hf0 (isSelfVisible_raise hh hc hf0 hR1) (isSelfVisible_raise hh hc hf0 hR2)
+      ((le_max_right _ _).trans (le_max_left _ _)) (raise_mono hR12), fun y ↦ ?_, fun d ↦ ?_,
+    fun t ht hht ↦ ?_⟩
+  · rw [faceCell_eq_zero α hp y]
+    rfl
+  · have key : ∀ d : Fin 4, d = 0 ∨ d = 1 ∨ d = 2 ∨ d = 3 := by decide
+    rcases key d with rfl | rfl | rfl | rfl
+    · exact h0
+    · exact raise_cap hR01 h0
+    · exact raise_cap (hR01.trans hR12) h0
+    · change min ⊥ h = min (R (cellC α 3)) h
+      rw [eq_bot_three hR]
+  · have hc' (y : Label.{u}) (hy : h ≤ y) : c ≤ raise h c x y := by
+      unfold raise
+      split_ifs
+      exact le_max_right _ _
+    rcases hTops t ht with rfl | rfl
+    exacts [hc' _ hht, hc' _ hht]
+
+/-- **The clause is an admission of states at the context** with the context itself as donor, for
+every designation with the designated tops among the cells `1` and `2`
+(`H2.stateAdmission_one_of_below`), although owner lowering at the grade `1` fails there
+(`OwnerGradeOne.not_ownerLowering_one`). -/
+theorem isStateAdmission_ctx (α : Ordinal.{u}) {p : StageType.{u} α 1}
+    (hp : restrictFace Fin.castSuccEmb (ctx α) = some p) {Lo Tops : Finset (Fin (ctx α).card)}
+    (hTops : ∀ t ∈ Tops, t = cellC α 1 ∨ t = cellC α 2) :
+    H2.IsStateAdmission (faceCell hp) (faceCell hp) 1 (ctx α).rows.IsLawful
+      (ctx α).rows.IsLawful (H2.SelfLowG (cellC α 2) (cellC α 1) 1 Lo Tops) :=
+  H2.stateAdmission_one_of_below (isSourceGapContextAt_ctx α (Function.Embedding.refl _)) hp hp
+    (donorRaising_ctx α hp _ hTops) (ownerLoweringBelow_ctx α hp hTops)
 
 end VaughtConjecture.OwnerGradeOne
