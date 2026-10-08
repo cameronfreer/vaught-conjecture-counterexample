@@ -71,27 +71,35 @@ variable {α : Ordinal.{u}} {m : ℕ} {I : Seed.{u} α m}
 
 /-! ### The lift provisions -/
 
-/-- **The lift provision at the cap `⊥`** at the grade `k` and the coatom `univ.erase x`: every
-profile lawful below the coatom agrees below it with a profile lawful on the grade-`k` cut whose
-code at `k` is admitted. -/
-def BotLiftProvision (A : I.Admission) (k : ℕ) (x : Fin (m + 2)) : Prop :=
+/-- **The lift provision at the cap `⊥`** at the grade `k` and the coatom `univ.erase x`, for a
+predicate `Rw` on states: every profile lawful below the coatom agrees below it with a profile
+lawful on the grade-`k` cut whose code at `k` lies in the catalogue of `Rw`. -/
+def BotLiftProvisionOf (Rw : I.State → Prop) (k : ℕ) (x : Fin (m + 2)) : Prop :=
   ∀ f : Prof I, I.amalgam.rows.IsLawfulBelow (univ.erase x, k) (fun d ↦ f d) →
     ∃ W : Prof I, IsCutLawful I k W ∧
       (∀ d ∈ I.amalgam.toCellScheme.below (univ.erase x, k), W d = f d) ∧
-        code k W ∈ admittedCat A k
+        code k W ∈ rowCat Rw k
 
-/-- **The lift provision at the positive caps** at the grade `k` and the coatom `univ.erase x`: for
-every cap `h` self-visible and short at `k`, every admitted profile `P` and every profile `f`
-lawful below the coatom agreeing with `P` capped at `h` below it, some profile lawful on the
-grade-`k` cut agrees with `f` below the coatom and with `P` capped at `h` everywhere, and has its
-orbit code at `k` admitted. -/
-def CapLiftProvision (A : I.Admission) (k : ℕ) (x : Fin (m + 2)) : Prop :=
-  ∀ h : Label.{u}, IsSelfVisible k h → IsShort k h → ⊥ < h → ∀ P ∈ admittedCat A k,
+/-- **The lift provision at the positive caps** at the grade `k` and the coatom `univ.erase x`, for
+a predicate `Rw` on states: for every cap `h` self-visible and short at `k`, every profile `P` of
+the catalogue of `Rw` and every profile `f` lawful below the coatom agreeing with `P` capped at `h`
+below it, some profile lawful on the grade-`k` cut agrees with `f` below the coatom and with `P`
+capped at `h` everywhere, and has its orbit code at `k` in the catalogue of `Rw`. -/
+def CapLiftProvisionOf (Rw : I.State → Prop) (k : ℕ) (x : Fin (m + 2)) : Prop :=
+  ∀ h : Label.{u}, IsSelfVisible k h → IsShort k h → ⊥ < h → ∀ P ∈ rowCat Rw k,
     ∀ f : Prof I, I.amalgam.rows.IsLawfulBelow (univ.erase x, k) (fun d ↦ f d) →
       (∀ d ∈ I.amalgam.toCellScheme.below (univ.erase x, k), min (f d) h = min (P d) h) →
       ∃ W : Prof I, IsCutLawful I k W ∧
         (∀ d ∈ I.amalgam.toCellScheme.below (univ.erase x, k), W d = f d) ∧
-        (∀ d, min (W d) h = min (P d) h) ∧ orbitCode k W ∈ admittedCat A k
+        (∀ d, min (W d) h = min (P d) h) ∧ orbitCode k W ∈ rowCat Rw k
+
+/-- **The lift provision at the cap `⊥`** for an admission: for its reading rows. -/
+abbrev BotLiftProvision (A : I.Admission) (k : ℕ) (x : Fin (m + 2)) : Prop :=
+  BotLiftProvisionOf A.Row k x
+
+/-- **The lift provision at the positive caps** for an admission: for its reading rows. -/
+abbrev CapLiftProvision (A : I.Admission) (k : ℕ) (x : Fin (m + 2)) : Prop :=
+  CapLiftProvisionOf A.Row k x
 
 section Step
 
@@ -426,3 +434,40 @@ theorem Lvl.Good.cappedLift_next_of_all {g : ℕ} {L : Lvl I g} (hL : L.Good) (h
   rwa [Lvl.admittedNextS_all] at h
 
 end VaughtConjecture.ProfileTower
+
+/-! ### Admissions with the lift provisions -/
+
+namespace VaughtConjecture.Seed
+
+open Finset ProfileTower
+
+variable {α : Ordinal.{u}} {m : ℕ} (I : Seed.{u} α m)
+
+/-- **An admission with the lift provisions**: an admission (with the coatom provision, the
+necessary clause) together with the lift provisions at `⊥` and at the positive caps, the
+sufficient clauses, at every grade `k` with `N ≤ k ≤ m + 1` and from either coatom. -/
+structure LiftAdmission extends I.Admission where
+  /-- The lift provision at the cap `⊥`. -/
+  botLift : ∀ ⦃k : ℕ⦄, N ≤ k → k ≤ m + 1 → ∀ ⦃x : Fin (m + 2)⦄,
+    x ∈ (Pts : Finset (Fin (m + 2))) →
+      BotLiftProvisionOf (fun s ↦ (InClass s ∧ Adm s) ∨ CapBot s) k x
+  /-- The lift provision at the positive caps. -/
+  capLift : ∀ ⦃k : ℕ⦄, N ≤ k → k ≤ m + 1 → ∀ ⦃x : Fin (m + 2)⦄,
+    x ∈ (Pts : Finset (Fin (m + 2))) →
+      CapLiftProvisionOf (fun s ↦ (InClass s ∧ Adm s) ∨ CapBot s) k x
+
+variable {I}
+
+/-- The lift provision at `⊥` of an admission with the lift provisions. -/
+theorem LiftAdmission.botLiftProvision (A : I.LiftAdmission) {k : ℕ} (hk : A.N ≤ k)
+    (hkm : k ≤ m + 1) {x : Fin (m + 2)} (hx : x ∈ (Pts : Finset (Fin (m + 2)))) :
+    BotLiftProvision A.toAdmission k x :=
+  A.botLift hk hkm hx
+
+/-- The lift provision at the positive caps of an admission with the lift provisions. -/
+theorem LiftAdmission.capLiftProvision (A : I.LiftAdmission) {k : ℕ} (hk : A.N ≤ k)
+    (hkm : k ≤ m + 1) {x : Fin (m + 2)} (hx : x ∈ (Pts : Finset (Fin (m + 2)))) :
+    CapLiftProvision A.toAdmission k x :=
+  A.capLift hk hkm hx
+
+end VaughtConjecture.Seed

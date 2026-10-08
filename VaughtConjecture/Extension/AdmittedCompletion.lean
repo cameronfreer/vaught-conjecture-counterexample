@@ -338,6 +338,16 @@ theorem Seed.exists_admittedCompletion_top {α : Ordinal.{u}} {m : ℕ} (I : See
   exact ⟨hL.admittedTopCompletion A hbot hcap hlab, hL.hasAdmittedRows_admittedTopCompletion A
     hbot hcap hlab hN⟩
 
+/-- **An admitted completion from an admission with the lift provisions**, from the grade
+`A.N = m + 1`: the lift provisions are the fields of `Seed.LiftAdmission`. -/
+theorem Seed.exists_admittedCompletion_of_liftAdmission {α : Ordinal.{u}} {m : ℕ}
+    (I : Seed.{u} α m) (hm : 2 ≤ m) (A : I.LiftAdmission) (hN : A.N = m + 1)
+    (hlab : code (m + 1) (fun d ↦ I.amalgam.label d) ∈ admittedCat A.toAdmission (m + 1)) :
+    ∃ F : CompletionBelowFullGrade I, F.HasAdmittedRows A.N A.Adm :=
+  I.exists_admittedCompletion_top hm A.toAdmission hN.ge
+    (fun _ hx ↦ A.botLiftProvision hN.le le_rfl hx)
+    (fun _ hx ↦ A.capLiftProvision hN.le le_rfl hx) hlab
+
 /-- **Every seed on at least four points has a completion below the full grade whose top layer is
 a layer of rank-normalized profiles**: the admitted top of the trivial admission. -/
 theorem Seed.nonempty_completionBelowFullGrade_of_all {α : Ordinal.{u}} {m : ℕ}

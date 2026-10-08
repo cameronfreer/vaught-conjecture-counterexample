@@ -391,15 +391,23 @@ namespace ProfileTower
 variable {α : Ordinal.{u}} {m : ℕ} {I : Seed.{u} α m}
 
 open Classical in
+/-- The **profile catalogue of a predicate** `Rw` on states at the grade `k`: the rank-normalized
+profiles of the catalogue at `k` whose splices at `k` satisfy `Rw`. -/
+noncomputable def rowCat (Rw : I.State → Prop) (k : ℕ) : Finset (Prof I) :=
+  (cat I k).filter fun R ↦ Rw (hat I k R)
+
 /-- The **admitted profile catalogue** at the grade `k`: the rank-normalized profiles of the
 catalogue at `k` whose splices at `k` are reading rows. -/
-noncomputable def admittedCat (A : I.Admission) (k : ℕ) : Finset (Prof I) :=
-  (cat I k).filter fun R ↦ A.Row (hat I k R)
+noncomputable def admittedCat (A : I.Admission) (k : ℕ) : Finset (Prof I) := rowCat A.Row k
+
+theorem mem_rowCat {Rw : I.State → Prop} {k : ℕ} {R : Prof I} :
+    R ∈ rowCat Rw k ↔ R ∈ cat I k ∧ Rw (hat I k R) := by
+  classical
+  simp only [rowCat, Finset.mem_filter]
 
 theorem mem_admittedCat {A : I.Admission} {k : ℕ} {R : Prof I} :
-    R ∈ admittedCat A k ↔ R ∈ cat I k ∧ A.Row (hat I k R) := by
-  classical
-  simp only [admittedCat, Finset.mem_filter]
+    R ∈ admittedCat A k ↔ R ∈ cat I k ∧ A.Row (hat I k R) :=
+  mem_rowCat
 
 theorem admittedCat_subset (A : I.Admission) (k : ℕ) : admittedCat A k ⊆ cat I k :=
   fun _ hR ↦ (mem_admittedCat.mp hR).1
