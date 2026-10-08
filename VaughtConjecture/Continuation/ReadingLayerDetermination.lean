@@ -41,6 +41,15 @@ Roadmap, Layer 3 ((R3) of the table of 3.4).
   (`TopReadingApexExample.not_isDeterminedWithin_rootTwoThree`, compiled): the carrier has no face
   along `{2, 3, 4}`, a set in neither coatom, and the carrier itself, a member of each of its
   receiving families, defeats determination along `rootTwoThree` for every donor and cutoff.
+* **The clause of hollow coatom cutoff determination at one input**
+  (`TopReadingApexExample.hollowCoatomCutoffDetermination_oneType`, compiled; feasibility): the
+  clause `exists_coface` of `Realization.HollowCoatomCutoffDetermination` for
+  `TiedRootCapRelabel.MarkedCapContextBelow'` at `t' = oneType`, the empty root, `p = faceT5` and
+  `tb = rightType`: its hypotheses hold (`oneType` is an acquired context along the empty root,
+  `TopReadingApexExample.markedCapContextBelow'_oneType_empty`), a donor exists, and the carrier,
+  one for every donor, determines each donor at a permitted cutoff.  The roots of the clause lie in
+  the common face `{0, 1, 2}`; the root `{2, 3}` of the acquired context along which the reading
+  layer at `seedOne` was shown legal is not among them.
 
 ## Placement
 
@@ -445,6 +454,69 @@ theorem not_isDeterminedWithin_rootTwoThree (e : StageType.{u} α 3) (δ : Label
     have := h (carrierOne hα) ⟨rfl, fun i j hij ↦ by rw [Fin.ext hij]⟩ (carrierOne_mem_cofaces hα).2
     rw [restrictFace_rootTwoThree_carrierOne] at this
     exact absurd this (by simp)
+
+/-! ### The clause of hollow coatom cutoff determination at `oneType` and `rightType` -/
+
+/-- No cell of `oneType` is visible through the empty root: every scope is nonempty. -/
+theorem not_mem_visibleCells_oneType (y : Fin (oneType hα).card) :
+    y ∉ (oneType hα).visibleCells (g.trans Fin.castSuccEmb) := fun hy ↦ by
+  have key : ∀ a : Fin 19, (TwoFaceLiftCounterexample.cellScope a).Nonempty := by decide
+  have hne : ((oneType hα).toCellScheme.scope y).Nonempty := by
+    rcases cases_oneType hα y with rfl | ⟨a, rfl⟩
+    · exact ⟨0, Eq.mpr (congrArg (0 ∈ ·) (StageType.addApex_scope_last (t := oneBase hα)
+        isLegalBelowFullGrade_S (by omega))) (mem_univ _)⟩
+    · exact Eq.mpr (congrArg Finset.Nonempty
+        (congrArg Prod.fst (gradedIndex_oneType_castSucc hα a))) (key a)
+  obtain ⟨x, hx⟩ := hne
+  obtain ⟨i, -⟩ := Scheme.mem_visibleCells.mp hy (mem_coe.mpr hx)
+  exact i.elim0
+
+/-- `oneType` is an acquired marked-cap context respecting the root bottoms along the empty root
+(`StageType.markedCapContextBelow'_addApex`, its conditions on the root cells vacuous). -/
+theorem markedCapContextBelow'_oneType_empty :
+    TiedRootCapRelabel.MarkedCapContextBelow' (oneType hα) (g.trans Fin.castSuccEmb) :=
+  StageType.markedCapContextBelow'_addApex (t₀ := oneBase hα) isLegalBelowFullGrade_S
+    (by omega) (by omega) (fun y hy ↦ absurd hy (not_mem_visibleCells_oneType hα y))
+    fun y hy ↦ absurd hy (not_mem_visibleCells_oneType hα y)
+
+/-- `rightType` has a donor along the point `3`: its face along `{3}` is defined, `{3}` the scope of
+the new top. -/
+theorem exists_donor_rightType (g : Fin 0 ↪ Fin 3) :
+    ∃ d : StageType.{u} α 1, restrictFace (extendByLast g) (rightType α) = some d := by
+  have hs : (rightType α).toCellScheme.scope (topOne (α := α)) = {Fin.last 3} := by
+    change (Scheme.appendFullCellScheme CaseSplitCounterexample.S 4).scope
+      (Fin.castSucc (⟨3, by decide⟩ : Fin CaseSplitCounterexample.S.{u}.card)) = _
+    rw [Scheme.appendFullCellScheme_scope_castSucc]
+    decide
+  have hm : univ.map (extendByLast g) = {Fin.last 3} := by
+    rw [show (univ : Finset (Fin (0 + 1))) = {Fin.last 0} by decide, map_singleton,
+      extendByLast_last]
+  have hf : univ.map (extendByLast g) ∈ (rightType α).toCellScheme.faces := by
+    rw [hm, ← hs]
+    exact (rightType α).isWellFormed.isWellFormed.scope_mem _
+  exact Option.isSome_iff_exists.mp ((isSome_restrictFace_iff _ _).mpr hf)
+
+/-- **The clause of hollow coatom cutoff determination for acquired contexts at `oneType` and
+`rightType`** (feasibility, one input): the clause `exists_coface` of
+`Realization.HollowCoatomCutoffDetermination` for `TiedRootCapRelabel.MarkedCapContextBelow'` at
+`t' = oneType`, the empty root `g`, `p = faceT5` and `tb = rightType`.  Its hypotheses hold, a donor
+exists, and for every donor `d` the carrier `TopReadingApexExample.carrierOne`, the same for every
+donor, is a coface of `oneType` with face `rightType` determining `d` at a permitted cutoff. -/
+theorem hollowCoatomCutoffDetermination_oneType (g : Fin 0 ↪ Fin 3) :
+    (oneType hα).IsLegal ∧
+      TiedRootCapRelabel.MarkedCapContextBelow' (oneType hα) (g.trans Fin.castSuccEmb) ∧
+      restrictFace Fin.castSuccEmb (oneType hα) = some (faceT5 α) ∧
+      rightType α ∈ (faceT5 α).cofaces ∧
+      (∃ d : StageType.{u} α 1, restrictFace (extendByLast g) (rightType α) = some d) ∧
+      ∀ d : StageType.{u} α 1, restrictFace (extendByLast g) (rightType α) = some d →
+        ∃ D' ∈ (oneType hα).cofaces,
+          restrictFace (extendByLast Fin.castSuccEmb) D' = some (rightType α) ∧
+          ∃ δ : Label.{u}, IsPermittedCutoff α δ ∧
+            IsDeterminedWithin (receivingFamily D' δ) (oneType hα) (g.trans Fin.castSuccEmb) d :=
+  ⟨isLegal_oneType hα, markedCapContextBelow'_oneType_empty hα, restrictFace_oneType hα,
+    ⟨isLegal_rightType α, restrictFace_rightType α⟩, exists_donor_rightType g,
+    fun _ hd ↦ ⟨carrierOne hα, carrierOne_mem_cofaces hα, restrictFace_right_carrierOne hα,
+      exists_isDeterminedWithin_carrierOne hα hd⟩⟩
 
 end TopReadingApexExample
 
