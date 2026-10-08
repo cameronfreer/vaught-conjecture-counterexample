@@ -3,27 +3,29 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
-import VaughtConjecture.Continuation.TiedRootCapRootBottomBase
 import VaughtConjecture.Extension.TwoFaceLift
+import VaughtConjecture.Extension.CodedSection
 
 /-!
 # Bot-keeping labellings and completions
 
-Roadmap, Layer 3 ((R3) of the table of 3.4).
-
-Stage reduction keeps exactly the bottoms (`Label.reduce_eq_bot_iff`).
+Roadmap, Layer 3, 3.1, (R6) (the completion below the full grade).
 
 A labelling `r` of a scheme is **bot-keeping** (`Scheme.BotKeeping`) when every cell of full scope
 not labelled `⊥` reads every cell of proper scope labelled `⊥` as `⊥`.  A completion below the full
 grade is bot-keeping (`CompletionBelowFullGrade.BotKeeping`) when its labelling is.  Compiled in
 this repository (theorem named):
 
+* **The apex row** (`StageType.row_addApex_last_eq`, `StageType.rowAt_addApex_last`,
+  `StageType.rowAt_addApex_last_eq_bot_iff`): the apex reads every cell at the code of its label,
+  so as `⊥` exactly where the label is `⊥`.
 * **The extension at `⊥` through a field layer keeps the bottoms**
   (`Scheme.exists_isLawful_fieldLayer_bot`, with `Label.eq_bot_of_agreementHeight_ne_bot`): the
   new cell of an entry reads the agreement height of that entry with the orbit code of the input,
   `⊥` when the two differ in their bottoms.
 * **Field layers keep bot-keeping** (`Scheme.exists_botKeeping_fieldLayer`), with the rows of the
   old cells (`Scheme.rowAt_appendFullCells_castAdd`, `Scheme.rowAt_appendFullCell_castSucc`).
+  Stage reduction keeps exactly the bottoms (`Label.reduce_eq_bot_iff`).
 * **The tower** (`Seed.exists_botKeeping_tower`) and its completion under the lifting invariant
   (`Seed.exists_botKeeping_of_towerInvariant`), at the arities `m ≤ 2` with no hypothesis
   (`Seed.exists_botKeeping_of_le_two`); `Seed.exists_completion_rowAt_eq_bot`.
@@ -43,22 +45,61 @@ namespace VaughtConjecture
 
 open Finset Label
 
+/-! ### The apex row -/
+
+namespace StageType
+
+variable {α : Ordinal.{u}} {k : ℕ}
+
+section Apex
+
+variable {t₀ : StageType.{u} α k} (ht₀ : t₀.IsLegalBelowFullGrade) (hk : 0 < k)
+
+/-- The apex row reads every cell at the code of its label. -/
+theorem row_addApex_last_eq {z : Fin (t₀.addApex ht₀ hk).card}
+    (hz : z ∈ (t₀.addApex ht₀ hk).toCellScheme.below
+      ((t₀.addApex ht₀ hk).toCellScheme.gradedIndex (Fin.last _))) :
+    (t₀.addApex ht₀ hk).rows.row (Fin.last _) ⟨z, hz⟩ =
+      blockEncode (apexCodes ht₀) k ((t₀.addApex ht₀ hk).label z) := by
+  -- the rows of `t₀.addApex` are those of `appendFullCell`
+  change (t₀.toScheme.appendFullCell k (apexRow ht₀) ht₀.not_le).rows.row (Fin.last _) ⟨z, hz⟩ = _
+  rw [Scheme.appendFullCell_row_last]
+  change Fin (t₀.card + 1) at z
+  induction z using Fin.lastCases with
+  | last => rw [apexRow_last, addApex_label_last]
+  | cast d => rw [apexRow_castSucc, addApex_label_castSucc]
+
+/-- The apex has graded index `(univ, k)`. -/
+theorem addApex_gradedIndex_last :
+    (t₀.addApex ht₀ hk).toCellScheme.gradedIndex (Fin.last _) = (univ, k) :=
+  Scheme.appendFullCellScheme_gradedIndex_last _ _
+
+/-- Every cell lies below the apex. -/
+theorem mem_below_addApex_last (z : Fin (t₀.addApex ht₀ hk).card) :
+    z ∈ (t₀.addApex ht₀ hk).toCellScheme.below
+      ((t₀.addApex ht₀ hk).toCellScheme.gradedIndex (Fin.last _)) := by
+  rw [CellScheme.mem_below, addApex_gradedIndex_last ht₀ hk]
+  exact Prod.mk_le_mk.mpr ⟨subset_univ _, (t₀.addApex ht₀ hk).grade_le z⟩
+
+/-- The apex reads every cell at the code of its label. -/
+theorem rowAt_addApex_last (z : Fin (t₀.addApex ht₀ hk).card) :
+    (t₀.addApex ht₀ hk).toScheme.rowAt (Fin.last _) z =
+      blockEncode (apexCodes ht₀) k ((t₀.addApex ht₀ hk).label z) := by
+  rw [Scheme.rowAt_of_mem (mem_below_addApex_last ht₀ hk z)]
+  exact row_addApex_last_eq ht₀ hk _
+
+/-- **The apex reads a cell as `⊥` exactly when it is labelled `⊥`**: its row is the code of the
+labels. -/
+theorem rowAt_addApex_last_eq_bot_iff (z : Fin (t₀.addApex ht₀ hk).card) :
+    (t₀.addApex ht₀ hk).toScheme.rowAt (Fin.last _) z = ⊥ ↔ (t₀.addApex ht₀ hk).label z = ⊥ := by
+  rw [rowAt_addApex_last, blockEncode_eq_bot_iff]
+
+end Apex
+
+end StageType
+
 /-! ### The extension at `⊥` through a field layer keeps the bottoms -/
 
-namespace Label
-
-variable {ι : Type*} [Fintype ι] {G : Finset Label.{u}} {a b : ι → Label.{u}}
-
-/-- **An agreement height other than `⊥` keeps the bottoms**: where `a` is `⊥`, so is `b`. -/
-theorem eq_bot_of_agreementHeight_ne_bot (hG : ⊥ ∈ G) (h : agreementHeight G a b ≠ ⊥) {d : ι}
-    (hd : a d = ⊥) : b d = ⊥ := by
-  have hspec := (agreementHeight_spec hG a b).2 d
-  rw [hd, min_eq_left bot_le] at hspec
-  rcases min_eq_bot.mp hspec.symm with h' | h'
-  · exact h'
-  · exact absurd h' h
-
-end Label
 
 namespace Scheme
 

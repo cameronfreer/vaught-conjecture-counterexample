@@ -3,18 +3,17 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
-import VaughtConjecture.Continuation.TiedRootCapRootBottom
+import VaughtConjecture.Extension.BotKeeping
 import VaughtConjecture.Extension.ProfileTowerCompletion
 
 /-!
-# Level bot-keeping of the profile tower, and the acquisition of caps respecting the root bottoms
+# Level bot-keeping of the profile tower
 
-Roadmap, Layer 3 ((R3) of the table of 3.4) and Layer 4 (cover-hollowness).
+Roadmap, Layer 3, 3.1, (R6) (the completion below the full grade at every arity).
 
-`Realization.rootBottomAcquisition_of_botKeeping` proves `Realization.RootBottomAcquisition` from
-bot-keeping completions below the full grade (`CompletionBelowFullGrade.BotKeeping`).  This file
-proves that every seed has one, through the profile tower, and concludes.  Compiled in this
-repository (theorem named):
+Every seed has a bot-keeping completion below the full grade
+(`CompletionBelowFullGrade.BotKeeping`), through the profile tower.  Compiled in this repository
+(theorem named):
 
 * **The tower section keeps the bottoms** (`Seed.towerSection_rowAt_eq_bot`): at a cell of full
   scope of `T j` where the tower section of `w` is not `⊥`, the row reads every old cell where `w`
@@ -39,15 +38,13 @@ repository (theorem named):
   (`Seed.exists_botKeeping_of_le_two`), at `m ≥ 3` the completion over the good level
   (`ProfileTower.exists_botKeeping_of_three_le`, through
   `CompletionBelowFullGrade.exists_botKeeping_of_eq_fieldLayer`).
-* **The acquisition** (`Realization.rootBottomAcquisition : Realization.RootBottomAcquisition`),
-  with no hypothesis.
 
 ## Placement
 
-This file belongs to Layer 4 of `roadmap/README.md`.
+This file belongs to Layer 3 of `roadmap/README.md`.
 -/
 
-universe u w
+universe u
 
 namespace VaughtConjecture
 
@@ -276,9 +273,5 @@ theorem Seed.exists_botKeeping {α : Ordinal.{u}} {m : ℕ} (I : Seed.{u} α m) 
   rcases le_or_gt m 2 with hm | hm
   · exact I.exists_botKeeping_of_le_two hm
   · exact ProfileTower.exists_botKeeping_of_three_le I hm
-
-/-- **Acquisition of marked-cap contexts respecting the root bottoms**, with no hypothesis. -/
-theorem Realization.rootBottomAcquisition : Realization.RootBottomAcquisition.{u, w} :=
-  Realization.rootBottomAcquisition_of_botKeeping fun _ _ I ↦ I.exists_botKeeping
 
 end VaughtConjecture

@@ -3,7 +3,8 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
-import VaughtConjecture.Continuation.TiedRootCapBotKeeping
+import VaughtConjecture.Continuation.TiedRootCapRootBottomBase
+import VaughtConjecture.Extension.ProfileBotKeeping
 import VaughtConjecture.Realization.Model
 
 /-!
@@ -42,8 +43,7 @@ every seed has a bot-keeping completion below the full grade
 
 **Status.**  `hcomp` is compiled at every arity (`Seed.exists_botKeeping`, through the tower at
 `m ≤ 2` and the profile tower at `m ≥ 3`), so `Realization.RootBottomAcquisition` holds with no
-hypothesis (`Realization.rootBottomAcquisition`, in
-`VaughtConjecture.Continuation.ProfileBotKeeping`).
+hypothesis (`Realization.rootBottomAcquisition`).
 
 ## Placement
 
@@ -244,6 +244,11 @@ theorem rootBottomAcquisition_of_botKeeping
         ((StageType.label_faceCell hq₀f cc).trans hcc.2.1)
         (by rw [StageType.grade_faceCell, hcc.grade_eq_topGrade]; exact hNZ)
         (by rw [StageType.grade_faceCell, hcc.grade_eq_topGrade]; exact hKZ)
+
+
+/-- **Acquisition of marked-cap contexts respecting the root bottoms**, with no hypothesis. -/
+theorem rootBottomAcquisition : Realization.RootBottomAcquisition.{u, w} :=
+  rootBottomAcquisition_of_botKeeping fun _ _ I ↦ I.exists_botKeeping
 
 end Realization
 

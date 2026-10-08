@@ -6,8 +6,7 @@ Authors: Cameron Freer
 import VaughtConjecture.Continuation.ExactReceiving
 import VaughtConjecture.Continuation.Hollow
 import VaughtConjecture.Continuation.MarkedCap
-import VaughtConjecture.Extension.Apex
-import VaughtConjecture.Extension.CodedSection
+import VaughtConjecture.Extension.BotKeeping
 
 /-!
 # Marked-cap contexts respecting the root bottoms (ported definitions)
@@ -20,8 +19,7 @@ visible cells as cells of a face (`StageType.exists_faceCell_eq`), the marker in
 forcing (`StageType.IsMarker.visibilityReplace_le_of_forcesThreshold`), root offsets below a grade
 and their bound (`StageType.RootOffsetsBelow`, `StageType.exists_offset_bound`), root bottoms
 respected (`StageType.RootBottomRespected`) and the predicate
-`TiedRootCapRelabel.MarkedCapContextBelow'`, the apex row
-(`StageType.rowAt_addApex_last_eq_bot_iff`), and the named acquisition statement
+`TiedRootCapRelabel.MarkedCapContextBelow'`, and the named acquisition statement
 `Realization.RootBottomAcquisition`.  Compiled in this repository (theorem named).
 
 ## Placement
@@ -114,51 +112,6 @@ theorem exists_offset_bound (t : StageType.{u} α n) :
 `h` and labelled `⊥` as `⊥`. -/
 def RootBottomRespected (t' : StageType.{u} α k) (h : Fin n ↪ Fin k) (c : Fin t'.card) : Prop :=
   ∀ y ∈ t'.visibleCells h, t'.label y = ⊥ → t'.rowAt c y = ⊥
-
-section Apex
-
-variable {t₀ : StageType.{u} α k} (ht₀ : t₀.IsLegalBelowFullGrade) (hk : 0 < k)
-
-/-- The apex row reads every cell at the code of its label. -/
-theorem row_addApex_last_eq {z : Fin (t₀.addApex ht₀ hk).card}
-    (hz : z ∈ (t₀.addApex ht₀ hk).toCellScheme.below
-      ((t₀.addApex ht₀ hk).toCellScheme.gradedIndex (Fin.last _))) :
-    (t₀.addApex ht₀ hk).rows.row (Fin.last _) ⟨z, hz⟩ =
-      blockEncode (apexCodes ht₀) k ((t₀.addApex ht₀ hk).label z) := by
-  -- the rows of `t₀.addApex` are those of `appendFullCell`
-  change (t₀.toScheme.appendFullCell k (apexRow ht₀) ht₀.not_le).rows.row (Fin.last _) ⟨z, hz⟩ = _
-  rw [Scheme.appendFullCell_row_last]
-  change Fin (t₀.card + 1) at z
-  induction z using Fin.lastCases with
-  | last => rw [apexRow_last, addApex_label_last]
-  | cast d => rw [apexRow_castSucc, addApex_label_castSucc]
-
-/-- The apex has graded index `(univ, k)`. -/
-theorem addApex_gradedIndex_last :
-    (t₀.addApex ht₀ hk).toCellScheme.gradedIndex (Fin.last _) = (univ, k) :=
-  Scheme.appendFullCellScheme_gradedIndex_last _ _
-
-/-- Every cell lies below the apex. -/
-theorem mem_below_addApex_last (z : Fin (t₀.addApex ht₀ hk).card) :
-    z ∈ (t₀.addApex ht₀ hk).toCellScheme.below
-      ((t₀.addApex ht₀ hk).toCellScheme.gradedIndex (Fin.last _)) := by
-  rw [CellScheme.mem_below, addApex_gradedIndex_last ht₀ hk]
-  exact Prod.mk_le_mk.mpr ⟨subset_univ _, (t₀.addApex ht₀ hk).grade_le z⟩
-
-/-- The apex reads every cell at the code of its label. -/
-theorem rowAt_addApex_last (z : Fin (t₀.addApex ht₀ hk).card) :
-    (t₀.addApex ht₀ hk).toScheme.rowAt (Fin.last _) z =
-      blockEncode (apexCodes ht₀) k ((t₀.addApex ht₀ hk).label z) := by
-  rw [Scheme.rowAt_of_mem (mem_below_addApex_last ht₀ hk z)]
-  exact row_addApex_last_eq ht₀ hk _
-
-/-- **The apex reads a cell as `⊥` exactly when it is labelled `⊥`**: its row is the code of the
-labels. -/
-theorem rowAt_addApex_last_eq_bot_iff (z : Fin (t₀.addApex ht₀ hk).card) :
-    (t₀.addApex ht₀ hk).toScheme.rowAt (Fin.last _) z = ⊥ ↔ (t₀.addApex ht₀ hk).label z = ⊥ := by
-  rw [rowAt_addApex_last, blockEncode_eq_bot_iff]
-
-end Apex
 
 end StageType
 
