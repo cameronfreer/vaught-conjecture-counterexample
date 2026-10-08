@@ -79,6 +79,7 @@ theorem exists_admitted_image {n k : ℕ} {S : Scheme.{u} n} {A : (Fin S.card �
       (fun x ↦ q x))
     {x₀ : Fin S.card} (hx₀ : S.toCellScheme.grade x₀ = k) (hqx : q (Fin.castAdd _ x₀) = ⊤) :
     ∃ a, S.rows.IsLawful a ∧ A a ∧ ∃ σ : Label.{u} → Label.{u}, Monotone σ ∧ σ ⊥ = ⊥ ∧
+      (∀ x, σ (visibilityReplace k k x) = visibilityReplace k k (σ x)) ∧
       ∀ e, q (Fin.castAdd _ e) = σ (a e) := by
   obtain ⟨-, hloc, havail⟩ := CellScheme.Rows.isLawfulBelow_iff_forall.mp hq
   obtain ⟨t, ht⟩ := exists_gradedIndex_eq_admittedFieldLayer (hS := hS) hA0
@@ -98,7 +99,8 @@ theorem exists_admitted_image {n k : ℕ} {S : Scheme.{u} n} {A : (Fin S.card �
     have h2 : (S.admittedFieldLayer k A hS).toCellScheme.grade u = k := congrArg Prod.snd hu
     rw [h2] at h
     exact top_le_iff.mp (h ▸ min_le_right _ _)
-  refine ⟨a, (mem_catalogue.mp ha).1, hA, σ, hw.monotone, hw.map_bot, fun e ↦ ?_⟩
+  refine ⟨a, (mem_catalogue.mp ha).1, hA, σ, hw.monotone, hw.map_bot,
+    fun x ↦ hw.visibilityReplace_comm x k (by rw [hgk]; exact le_top) k le_rfl, fun e ↦ ?_⟩
   have hd : Fin.castAdd _ e ∈ (S.admittedFieldLayer k A hS).toCellScheme.below
       ((S.admittedFieldLayer k A hS).toCellScheme.gradedIndex u) := by
     refine (mem_below _).mpr ?_
@@ -426,7 +428,9 @@ admissions. -/
 structure IsLowAdmission (Adm : (Fin 5 → Label.{u}) → (Fin 5 → Label.{u}) → Prop) : Prop where
   bot : Adm (fun _ ↦ ⊥) (fun _ ↦ ⊥)
   top : Adm (lab ⊤ ⊤ ⊤) (lab ⊤ ⊤ ⊤)
-  comp {σ : Label.{u} → Label.{u}} (hσ : Monotone σ) {L R : Fin 5 → Label.{u}} (h : Adm L R) :
+  comp {σ : Label.{u} → Label.{u}} (hσ : Monotone σ) (hσ0 : σ ⊥ = ⊥)
+    (hc : ∀ x, σ (visibilityReplace 2 2 x) = visibilityReplace 2 2 (σ x))
+    {L R : Fin 5 → Label.{u}} (h : Adm L R) :
     Adm (fun z ↦ σ (L z)) (fun z ↦ σ (R z))
   context {h : Label.{u}} (hh : IsSelfVisible 2 h) {L R f : Fin 5 → Label.{u}}
     (hL : S.{u}.rows.IsLawful L) (hR : S.{u}.rows.IsLawful R) (hy : L 0 = R 0) (hadm : Adm L R)
@@ -463,7 +467,9 @@ theorem admBy_code (hA : IsLowAdmission Adm) {W : Fin (lowerT α).card → Label
   have hsp : (lowerT α).toCellScheme.splice 2 (fun _ ↦ ⊥) W = W :=
     funext fun d ↦ CellScheme.splice_of_le (grade_lowerT_le d)
   rw [hsp]
-  exact hA.comp (isWitness_orbitMap 2 W).monotone hW
+  have hw := isWitness_orbitMap 2 W
+  exact hA.comp hw.monotone hw.map_bot (fun x ↦ hw.visibilityReplace_comm x 2
+    (by rw [stepSuppressor_of_le le_rfl]; exact le_top) 2 le_rfl) hW
 
 /-- Agreement capped at `h` at every cell, from agreement on the two copies and at the copies of
 `z`. -/
@@ -666,7 +672,7 @@ theorem isLowAdmission_lowVia : IsLowAdmission LowVia.{u} where
   top := by
     rw [lowVia_iff]
     exact fun _ ↦ ⟨le_top, le_top⟩
-  comp := lowVia_comp
+  comp := fun {_} hσ _ _ {_ _} h ↦ lowVia_comp hσ h
   context := capProvision_context
   donor := capProvision_donor
 
@@ -705,7 +711,7 @@ theorem eq_top_of_admittedT {q : Fin (admittedT α).card → Label.{u}}
     q (Fin.castAdd _ (Fin.castAdd _ (rc α 3))) = ⊤ := by
   have hx₀ : (lowerT α).toCellScheme.grade (Fin.castAdd _ (lc α 3)) = 2 :=
     congrArg Prod.snd gradedIndex_left_three
-  obtain ⟨a, ha, hA, σ, hσ, hσ0, hold⟩ :=
+  obtain ⟨a, ha, hA, σ, hσ, hσ0, -, hold⟩ :=
     Scheme.exists_admitted_image (hS := (I α).not_univ_two_le_doubledLower (hLR α))
       (admU_bot (α := α)) grade_lowerT_le hq hx₀ ho
   have hadm := lowVia_comp hσ hA
@@ -741,7 +747,7 @@ theorem isLowAdmission_lowViaSelf : IsLowAdmission LowViaSelf.{u} where
     intro hlt
     exact absurd hlt (lt_irrefl _)
   top := lowViaSelf_T
-  comp := lowViaSelf_comp
+  comp := fun {_} hσ _ _ {_ _} h ↦ lowViaSelf_comp hσ h
   context := capProvisionSelf_context
   donor := capProvisionSelf_donor
 
@@ -759,7 +765,7 @@ theorem eq_top_of_admittedSelf {q : Fin (admittedBy α LowViaSelf.{u}).card → 
       q (Fin.castAdd _ (Fin.castAdd _ (rc α 4))) = ⊤ := by
   have hx₀ : (lowerT α).toCellScheme.grade (Fin.castAdd _ (lc α 3)) = 2 :=
     congrArg Prod.snd gradedIndex_left_three
-  obtain ⟨a, ha, hA, σ, hσ, hσ0, hold⟩ :=
+  obtain ⟨a, ha, hA, σ, hσ, hσ0, -, hold⟩ :=
     Scheme.exists_admitted_image (hS := (I α).not_univ_two_le_doubledLower (hLR α))
       (admBy_bot (α := α) isLowAdmission_lowViaSelf) grade_lowerT_le hq hx₀ ho
   have hadm := lowViaSelf_comp hσ hA
