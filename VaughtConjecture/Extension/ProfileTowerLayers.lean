@@ -95,6 +95,66 @@ theorem not_layerSeparatingStrict {I : Seed.{u} α m} {g : ℕ} {a : Fin I.amalg
   rw [hi] at hlow
   exact absurd ((hlow.trans_le hhigh).trans_le (hmax R hR)) (lt_irrefl _)
 
+/-- **Layer separation from a live profile and a cell of higher grade**: if at every old cell `a`
+of grade `g`, reading itself other than `⊥` and avoiding the last point, some profile of the
+catalogue is not `⊥`, and the amalgam has a cell `e` of grade above `g`, then layer separation
+holds at `g`.  Changing a profile at `e` keeps it lawful on the cut at `g`; of the two codes with
+`⊥` and `⊤` at `e`, one has a bottom pattern other than that of `R_c`, so its agreement height
+with `R_c` is `⊥`, below `ω * 0`, while it is not `⊥` at `a`. -/
+theorem layerSeparating_of_live {I : Seed.{u} α m} {g : ℕ}
+    (hlive : ∀ a : Fin I.amalgam.card, I.amalgam.toCellScheme.grade a = g →
+      I.amalgam.toScheme.rowAt a a ≠ ⊥ → Fin.last (m + 1) ∉ I.amalgam.toCellScheme.scope a →
+        ∃ R ∈ cat I g, R a ≠ ⊥)
+    {e : Fin I.amalgam.card} (he : g < I.amalgam.toCellScheme.grade e) :
+    LayerSeparating I g := by
+  classical
+  intro i a ha hla hlast
+  obtain ⟨R₁, hR₁, hR₁a⟩ := hlive a ha hla hlast
+  have hcut := (mem_cat.mp hR₁).1
+  have hae : a ≠ e := fun h ↦ by rw [h] at ha; omega
+  -- changing a profile at `e` keeps it lawful on the cut at `g`, and its code is in the catalogue
+  have hmem (b : Label.{u}) : orbitCode g (Function.update R₁ e b) ∈ cat I g := by
+    have hc : IsCutLawful I g (Function.update R₁ e b) := by
+      have hagree (d) (hd : I.amalgam.toCellScheme.grade d ≤ g) :
+          R₁ d = Function.update R₁ e b d := by
+        rw [Function.update_of_ne fun h ↦ by rw [h] at hd; omega]
+      exact ⟨(Rows.isLawfulBelow_congr (X := (coatC, g)) fun d hd ↦ hagree d hd.2).mp hcut.1,
+        (Rows.isLawfulBelow_congr (X := (coatD, g)) fun d hd ↦ hagree d hd.2).mp hcut.2⟩
+    exact mem_cat.mpr ⟨⟨hc.1.orbitCode fun d ↦ d.2.2, hc.2.orbitCode fun d ↦ d.2.2⟩,
+      orbitCode_orbitCode⟩
+  have hval (b : Label.{u}) : orbitCode g (Function.update R₁ e b) a ≠ ⊥ := by
+    rw [Ne, orbitCode_eq_bot_iff, Function.update_of_ne hae]
+    exact hR₁a
+  have hvale (b : Label.{u}) :
+      orbitCode g (Function.update R₁ e b) e = ⊥ ↔ b = ⊥ := by
+    rw [orbitCode_eq_bot_iff, Function.update_self]
+  -- one of the two codes has, at `e`, a bottom other than that of `R_c`
+  obtain ⟨R, hR, hRa, hRe⟩ : ∃ R ∈ cat I g, R a ≠ ⊥ ∧ (R e = ⊥ ↔ entry I g i e ≠ ⊥) := by
+    by_cases hc : entry I g i e = ⊥
+    · refine ⟨_, hmem ⊤, hval ⊤, ?_⟩
+      rw [hvale, hc]
+      simp
+    · refine ⟨_, hmem ⊥, hval ⊥, ?_⟩
+      rw [hvale]
+      simp [hc]
+  have hag : agreementHeight (grid g (bound I)) R (entry I g i) = ⊥ := by
+    have hspec := (agreementHeight_spec (bot_mem_grid g (bound I)) R (entry I g i)).2 e
+    by_contra hne
+    by_cases hRe' : R e = ⊥
+    · rw [hRe', min_bot_left] at hspec
+      exact (hRe.mp hRe') ((min_eq_bot.mp hspec.symm).resolve_right hne)
+    · have hc : entry I g i e = ⊥ := not_not.mp fun h ↦ hRe' (hRe.mpr h)
+      rw [hc, min_bot_left, min_eq_bot] at hspec
+      exact hRe' (hspec.resolve_right hne)
+  refine ⟨R, hR, 0, ?_, ?_⟩
+  · rw [hag, mul_zero]
+    exact WithBot.bot_lt_coe _
+  · rw [mul_zero]
+    induction h : R a using Label.recBotCoeTop with
+    | bot => exact absurd h hRa
+    | coe o => exact WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr (zero_le (a := o)))
+    | top => exact le_top
+
 variable {I : Seed.{u} α m}
 
 variable (I) in
