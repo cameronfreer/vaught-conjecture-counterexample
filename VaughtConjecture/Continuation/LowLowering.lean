@@ -504,6 +504,30 @@ theorem IsSourceGapContextAt.exists_frontier_le (ht' : t'.IsLegal)
   · exact (min_le_right _ _).trans
       ((monotone_visibilityReplace le_rfl hr).trans_eq (hcv.visibilityReplace_eq K))
 
+/-- **Serving is necessary for a lowering**: if `v` is lawful below `(univ, K)`, at most `u`, at
+most `c` at every cell the owner reads at most the threshold `θ = R_K (row_o r)`, and keeps a cell
+`s` with `c < u s`, then at every graded index `t` that `s` is available to some cell is read by
+`u` at least as `s` and by the owner above `θ`.  So the serving hypothesis of
+`IsSourceGapContextAt.exists_lowering'` is exact for the lowerings that keep the cells read above
+`θ`. -/
+theorem IsSourceGapContextAt.serve_of_lowered {u v : Fin t'.card → Label.{u}}
+    (hv : t'.rows.IsLawfulBelow (univ, K) fun d ↦ v d) (hvu : ∀ d, v d ≤ u d) {c : Label.{u}}
+    (hlow : ∀ d, t'.toCellScheme.grade d ≤ K →
+      t'.rowAt o d ≤ visibilityReplace K K (t'.rowAt o r) → v d ≤ c)
+    {s t : Fin t'.card} (hst : t'.toCellScheme.scope s ⊆ t'.toCellScheme.scope t)
+    (hg : t'.toCellScheme.grade s = t'.toCellScheme.grade t) (htK : t'.toCellScheme.grade t ≤ K)
+    (hvs : v s = u s) (hcs : c < u s) :
+    ∃ w, t'.toCellScheme.gradedIndex w = t'.toCellScheme.gradedIndex t ∧ u s ≤ u w ∧
+      visibilityReplace K K (t'.rowAt o r) < t'.rowAt o w := by
+  obtain ⟨-, -, hva⟩ := CellScheme.Rows.isLawfulBelow_iff_forall.mp hv
+  have htb : t ∈ t'.toCellScheme.below (univ, K) := ⟨subset_univ _, htK⟩
+  obtain ⟨w, hw, hsw⟩ := hva s t htb hst hg
+  have hwK : t'.toCellScheme.grade w ≤ K := by
+    rw [show t'.toCellScheme.grade w = t'.toCellScheme.grade t from congrArg Prod.snd hw]
+    exact htK
+  refine ⟨w, hw, hvs ▸ hsw.trans (hvu w), lt_of_not_ge fun hle ↦ ?_⟩
+  exact (hcs.trans_le (hvs ▸ hsw)).not_ge (hlow w hwK hle)
+
 end StageType
 
 end VaughtConjecture
