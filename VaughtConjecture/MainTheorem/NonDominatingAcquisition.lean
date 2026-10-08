@@ -18,13 +18,14 @@ saturation clause of a model, whose scheme is the completion of the seed of the 
 occurrence with itself.  Compiled in this repository (theorem named):
 
 * **The clause on a scheme** (`Scheme.CapNonDominatingAt`): at a point `x` and a cell `c`, every
-  cell `a` avoiding `x`, of grade at least that of `c`, reading itself other than `⊥`, is read
-  strictly above `c` by some cell of every graded index `(univ, grade a)` present in the scheme.
+  cell `a` avoiding `x`, of grade at least that of `c`, reading itself other than `⊥`, is read in a
+  block strictly above `c` by some cell of every graded index `(univ, grade a)` of the scheme.
 * **Completions dominating no live cell** (`CompletionNonDominating`, a named hypothesis on seeds,
   not on models): every seed has a completion below the full grade whose completion (with the apex)
   satisfies the clause at the last point for every cell of full scope.  Its same-layer part is
-  `ProfileTower.Lvl.Good.rowAt_nextS_natAdd_lt_of_not_agree`; the cross-layer readings and the
-  profiles largest at a cell are open.
+  `ProfileTower.Lvl.Good.lowerBlock_rowAt_nextS` (a profile whose code at `a` lies in a higher block
+  than that of the cap); the cross-layer readings are open.  The one refactor needed to discharge
+  it from the profile tower is exposing the tower inside `Seed.exists_botKeeping`.
 * **The margin calibration with a non-dominating cap** (`StageType.GradedCapMarginCalibrationND`):
   the margin calibration with a floor, a last point `x` off the root with `univ.erase x` a face,
   and the clause at `x` for every cell of full scope.
@@ -56,13 +57,14 @@ variable {n : ℕ}
 
 /-- **The cell `c` dominates no live cell off the point `x`**: for every cell `a` whose scope
 avoids `x`, of grade at least that of `c`, reading itself other than `⊥`, and every cell `G` of
-full scope and the grade of `a`, some cell of the graded index of `G` reads `c` strictly below
-`a`. -/
+full scope and the grade of `a`, some cell of the graded index of `G` reads `c` in a block strictly
+below its reading of `a` (`Label.LowerBlock`). -/
 def CapNonDominatingAt (S : Scheme.{u} n) (x : Fin n) (c : Fin S.card) : Prop :=
   ∀ a G : Fin S.card, x ∉ S.toCellScheme.scope a → S.toCellScheme.scope G = univ →
     S.toCellScheme.grade a = S.toCellScheme.grade G →
     S.toCellScheme.grade c ≤ S.toCellScheme.grade a → S.rowAt a a ≠ ⊥ →
-      ∃ u, S.toCellScheme.gradedIndex u = S.toCellScheme.gradedIndex G ∧ S.rowAt u c < S.rowAt u a
+      ∃ u, S.toCellScheme.gradedIndex u = S.toCellScheme.gradedIndex G ∧
+        Label.LowerBlock (S.rowAt u c) (S.rowAt u a)
 
 end Scheme
 

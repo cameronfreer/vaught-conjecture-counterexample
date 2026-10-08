@@ -8,6 +8,7 @@ import VaughtConjecture.Continuation.CapRequestsDonorFace
 import VaughtConjecture.MainTheorem.CutoffCoatomChosenDonor
 import VaughtConjecture.Continuation.TopReadingApexSeed
 import VaughtConjecture.Continuation.CapRequestsPrivateMarker
+import VaughtConjecture.Extension.ProfileTowerReaders
 
 /-!
 # Work on h4: first-coatom completions for the calibrated (R4) inputs
@@ -332,13 +333,15 @@ variable {α : Ordinal.{u}} {m : ℕ}
 /-- **The cap dominates no live cell of the first coatom** (a clause on the context `T⁺` on `m + 1`
 points with cap `b`): for every cell `a` avoiding the last point, of grade at least that of `b`,
 reading itself other than `⊥`, and every cell `G` of full scope and the grade of `a`, some cell of
-the graded index of `G` reads `b` strictly below `a`. -/
+the graded index of `G` reads `b` in a block strictly below its reading of `a`
+(`Label.LowerBlock`; strict reading within one block is not enough,
+`CapRequests.cap_ne_bot_of_capBlockCovers`). -/
 def CapNonDominating (Tp : StageType.{u} α (m + 1)) (b : Fin Tp.card) : Prop :=
   ∀ a G : Fin Tp.card, Fin.last m ∉ Tp.toCellScheme.scope a → Tp.toCellScheme.scope G = univ →
     Tp.toCellScheme.grade a = Tp.toCellScheme.grade G →
     Tp.toCellScheme.grade b ≤ Tp.toCellScheme.grade a → Tp.toScheme.rowAt a a ≠ ⊥ →
       ∃ u, Tp.toCellScheme.gradedIndex u = Tp.toCellScheme.gradedIndex G ∧
-        Tp.toScheme.rowAt u b < Tp.toScheme.rowAt u a
+        Label.LowerBlock (Tp.toScheme.rowAt u b) (Tp.toScheme.rowAt u a)
 
 namespace FirstCoatomInput
 
@@ -376,7 +379,38 @@ theorem not_capDominatesAt_of_capNonDominating (hnd : X.Tp.CapNonDominating c.ca
   have h := hdom (X.leftCell u) hgi
   change _ ≤ X.seed.amalgam.toScheme.rowAt (X.leftCell u) (X.leftCell c.cap) at h
   rw [hrow, hrow] at h
-  exact absurd h (not_le.mpr hlt)
+  exact absurd h (not_le.mpr hlt.1)
+
+/-- **Under the clause, no live common-face cell is block-covered by the cap at its grade**: the
+input of `CapRequests.cap_ne_bot_of_capBlockCovers` does not occur. -/
+theorem not_capBlockCovers_of_capNonDominating (hnd : X.Tp.CapNonDominating c.cap)
+    {a G : Fin X.Tp.card} (ha : Fin.last m ∉ X.Tp.toCellScheme.scope a)
+    (hG : X.Tp.toCellScheme.scope G = univ)
+    (hag : X.Tp.toCellScheme.grade a = X.Tp.toCellScheme.grade G)
+    (hNa : X.Tp.toCellScheme.grade c.cap ≤ X.Tp.toCellScheme.grade a)
+    (hlive : X.Tp.toScheme.rowAt a a ≠ ⊥) :
+    ¬ (X.requests c).CapBlockCovers (X.leftCell a) (X.leftCell G) := by
+  intro hcov
+  obtain ⟨u, hu, hlb⟩ := hnd a G ha hG hag hNa hlive
+  have hrow (v b : Fin X.Tp.card) :
+      X.seed.amalgam.toScheme.rowAt (X.leftCell v) (X.leftCell b) = X.Tp.toScheme.rowAt v b :=
+    rowAt_faceCell X.restrictFace_amalgam_left v b
+  have hgi : X.seed.amalgam.toCellScheme.gradedIndex (X.leftCell u) =
+      X.seed.amalgam.toCellScheme.gradedIndex (X.leftCell G) := by
+    rw [Prod.ext_iff] at hu
+    refine Prod.ext ?_ ?_
+    · change X.seed.amalgam.toCellScheme.scope (X.leftCell u) =
+        X.seed.amalgam.toCellScheme.scope (X.leftCell G)
+      rw [scope_leftCell, scope_leftCell]
+      exact congrArg _ hu.1
+    · change X.seed.amalgam.toCellScheme.grade (X.leftCell u) =
+        X.seed.amalgam.toCellScheme.grade (X.leftCell G)
+      rw [grade_leftCell, grade_leftCell]
+      exact hu.2
+  obtain ⟨μ, i, j, hμ, hrc, hra⟩ := hcov (X.leftCell u) hgi
+  change X.seed.amalgam.toScheme.rowAt (X.leftCell u) (X.leftCell c.cap) = _ at hrc
+  rw [hrow] at hrc hra
+  exact absurd hra (not_le.mpr (hlb.2 μ i j hμ hrc))
 
 end FirstCoatomInput
 
