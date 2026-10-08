@@ -223,7 +223,6 @@ theorem isLawful_lab {a b : Label.{u}} (ha : IsSelfVisible 1 a) (hb : IsSelfVisi
     · fin_cases s <;> simp_all [lab]
     · fin_cases s <;> simp_all [lab]
 
-
 /-- A lawful section gives lawful labellings below every pair. -/
 private theorem isLawfulBelow_of_isLawful {w : Fin 5 → Label.{u}} (h : S.{u}.rows.IsLawful w)
     (X : Finset (Fin 2) × ℕ) : S.{u}.rows.IsLawfulBelow X (fun d ↦ w d) :=
@@ -444,7 +443,6 @@ theorem isLegal_S : S.{u}.IsLegal where
         ∃ d : Fin 5, cells.gradedIndex d = (B, (j : ℕ)) := by decide
     exact key B ⟨j, by omega⟩ hj0 hjB
 
-
 /-! ### The display as a stage type, its faces, and determination -/
 
 /-- **The display**: the scheme `S` labelled `⊤` at the cells `0`–`3` and `⊥` at the dead cell. -/
@@ -540,24 +538,6 @@ private theorem exists_context_cell (α : Ordinal.{u}) (i : Fin 5) (hi : i = 0 �
   change Fin.last 1 ∉ cells.scope i
   rcases hi with rfl | rfl <;> decide
 
-/-- **Rows on a face**: the row of a cell of a face at a cell of the face is the row of the
-corresponding cells. -/
-theorem rowAt_faceCell {α : Ordinal.{u}} {n m : ℕ} {E : StageType.{u} α n} {f : Fin m ↪ Fin n}
-    {t : StageType.{u} α m} (h : restrictFace f E = some t) (i j : Fin t.card) :
-    t.rowAt i j = E.rowAt (faceCell h i) (faceCell h j) := by
-  obtain ⟨hf, rfl⟩ := (restrictFace_eq_some_iff E f).mp h
-  have hle := E.toScheme.isLowerEmbedding_comap f
-  -- the cells of a face are the cells of the cell map
-  change (E.toScheme.comap f).rowAt i j = E.rowAt (E.toScheme.cellMap f i)
-    (E.toScheme.cellMap f j)
-  unfold Scheme.rowAt
-  split_ifs with h1 h2 h2
-  · rfl
-  · exact absurd ((hle.le_iff j i).mpr h1) h2
-  · exact absurd ((hle.le_iff j i).mp h2) h1
-  · rfl
-
-
 /-- A cell of a stage type on one point has full scope. -/
 private theorem scope_eq_univ {β : Ordinal.{u}} (t : StageType.{u} β 1) (z : Fin t.card) :
     t.toCellScheme.scope z = univ := by
@@ -593,7 +573,8 @@ theorem isSourceGapContextAt_context (α : Ordinal.{u}) {o r : Fin (context α).
   label_lost := by rw [← label_faceCell (restrictFace_context α), hr]; rfl
   mem_scope_lost := (scope_eq_univ _ r).symm ▸ mem_univ _
   gap_owner := by
-    rw [rowAt_faceCell (restrictFace_context α), rowAt_faceCell (restrictFace_context α), ho, hr,
+    rw [← StageType.rowAt_faceCell (restrictFace_context α),
+      ← StageType.rowAt_faceCell (restrictFace_context α), ho, hr,
       rowAt_D α 1 0 (by decide) (by decide), rowAt_D α 1 1 (by decide) le_rfl]
     simpa [val] using one_lt_omegaAddTwo.{u}
   gap_retained a _ ha := absurd (scope_eq_univ _ a ▸ mem_univ _) ha

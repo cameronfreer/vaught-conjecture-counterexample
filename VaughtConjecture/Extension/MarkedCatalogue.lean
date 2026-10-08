@@ -668,3 +668,79 @@ theorem exists_template_markedLayer {Mk : Finset (Fin S.card → Label.{u})}
     exact ⟨j₀, hj₀, .inl (by rw [hσ, markedSheet_natAdd])⟩
 
 end VaughtConjecture.Scheme
+
+/-! ### A separating fill in a sheet layer -/
+
+namespace VaughtConjecture.Scheme
+
+open Finset Label
+
+variable {n k M : ℕ} {S : Scheme.{u} n} {ε : Fin M → Fin S.card → Label.{u}}
+  {σ : Fin M → Bool} {κ : (Fin S.card → Label.{u}) → Label.{u}}
+  {hS : ∀ d, ¬ ((univ : Finset (Fin n)), k) ≤ S.toCellScheme.gradedIndex d}
+
+/-- **A separating fill forces a top reading the marker above `x` in a sheet layer.**  Let `q` be a
+lawful section of a sheet layer, `j` a new cell labelled `⊤` whose entry has `ε j r ≤ ε j x`, with
+`r` an old cell of grade `k` labelled `⊤`, `x` one of grade at most `k`, and `ε j r ≠ ⊥`.
+Given a fill `p` of the old cells agreeing with `ε j` capped at `ε j r` at the cells of grade at
+most `k`, with `p x < p r`, and a template for the lift along `j` at that cap, some new cell `j''`
+labelled `⊤` has `ε j'' x < ε j'' r`. -/
+theorem exists_top_sheetRow_lt (hε : ∀ i, ε i ∈ S.catalogue k) (hκ : ∀ e, κ e ∈ S.fieldGrid k)
+    (hκr : CapRespects S k κ) {q : Fin (S.sheetLayer k ε σ κ hS).card → Label.{u}}
+    (hq : (S.sheetLayer k ε σ κ hS).rows.IsLawful q) {j : Fin M} {x r : Fin S.card}
+    (hgr : S.toCellScheme.grade r = k) (hgx : S.toCellScheme.grade x ≤ k)
+    (hqj : q (Fin.natAdd S.card j) = ⊤) (hqr : q (Fin.castAdd M r) = ⊤)
+    (hread : ε j r ≤ ε j x) (hτ : ⊥ < ε j r) {p : Fin S.card → Label.{u}}
+    (hag : ∀ d, S.toCellScheme.grade d ≤ k → min (p d) (ε j r) = min (ε j d) (ε j r))
+    (hlt : p x < p r) {j₀ : Fin M}
+    (hj₀ : ε j₀ = orbitCode k (S.toCellScheme.splice k (fun _ ↦ ⊥) p))
+    (hσ : σ j₀ = σ j ∨ ε j r ≤ κ (ε j)) :
+    ∃ j'', q (Fin.natAdd S.card j'') = ⊤ ∧ ε j'' x < ε j'' r := by
+  set τ := ε j r
+  have hh : IsSelfVisible k τ := by
+    have h := (mem_catalogue.mp (hε j)).1.orderly r
+    rwa [hgr] at h
+  have hs : IsShort k τ := isShort_of_mem_codeGrid (mem_codeGrid_of_mem_catalogue (hε j) r)
+  obtain ⟨w₀, hw₀, hw₀p, hw₀S⟩ := exists_extension_sheetLayer (hS := hS) hε hκ hκr hh hs hτ hag
+    hj₀ hσ
+  have hb : (S.sheetLayer k ε σ κ hS).toCellScheme.gradedIndex (Fin.natAdd S.card j) =
+      ((univ : Finset (Fin n)), k) :=
+    appendFullCellsScheme_gradedIndex_natAdd S k _ j
+  have hmem (y : Fin (S.sheetLayer k ε σ κ hS).card)
+      (hy : y ∈ (S.sheetLayer k ε σ κ hS).toCellScheme.below
+        ((S.sheetLayer k ε σ κ hS).toCellScheme.gradedIndex (Fin.natAdd S.card j))) :
+      y ∈ (S.sheetLayer k ε σ κ hS).toCellScheme.below (univ, k) := hb ▸ hy
+  have hxb : Fin.castAdd M x ∈ (S.sheetLayer k ε σ κ hS).toCellScheme.below
+      ((S.sheetLayer k ε σ κ hS).toCellScheme.gradedIndex (Fin.natAdd S.card j)) := by
+    rw [hb]
+    exact castAdd_mem_below_sheetLayer hgx
+  have hrb : Fin.castAdd M r ∈ (S.sheetLayer k ε σ κ hS).toCellScheme.below
+      ((S.sheetLayer k ε σ κ hS).toCellScheme.gradedIndex (Fin.natAdd S.card j)) := by
+    rw [hb]
+    exact castAdd_mem_below_sheetLayer hgr.le
+  set w := CellScheme.Rows.extendBot ((univ : Finset (Fin n)), k) w₀
+  have hwy (y) (hy : y ∈ (S.sheetLayer k ε σ κ hS).toCellScheme.below (univ, k)) :
+      w y = w₀ ⟨y, hy⟩ := CellScheme.Rows.extendBot_of_mem w₀ hy
+  have hw : (S.sheetLayer k ε σ κ hS).rows.IsLawfulBelow
+      ((S.sheetLayer k ε σ κ hS).toCellScheme.gradedIndex (Fin.natAdd S.card j))
+      fun d ↦ w d := by
+    rw [hb]
+    exact CellScheme.Rows.isLawfulBelow_extendBot.mpr hw₀
+  have hrowj (y) (hy) : (S.sheetLayer k ε σ κ hS).rows.row (Fin.natAdd S.card j) ⟨y, hy⟩ =
+      S.sheetRow k ε σ κ j y := sheetLayer_row_natAdd j _
+  obtain ⟨v, hxv, hrv, hv, hqv, hlt'⟩ := hq.exists_top_row_lt hxb hrb
+    (by rw [appendFullCellsScheme_grade_castAdd, appendFullCellsScheme_grade_natAdd, hgr])
+    (by rw [appendFullCellsScheme_grade_castAdd, appendFullCellsScheme_grade_castAdd, hgr]
+        exact hgx)
+    hqj hqr (by rw [hrowj, hrowj, sheetRow_castAdd, sheetRow_castAdd]; exact hread) hw
+    (fun y hy ↦ by
+      rw [hrowj, hrowj, sheetRow_castAdd, hwy y (hmem y hy)]
+      exact hw₀S _)
+    (by
+      rw [hwy _ (hmem _ hxb), hwy _ (hmem _ hrb), hw₀p x hgx, hw₀p r hgr.le]
+      exact hlt)
+  obtain ⟨j'', rfl⟩ := exists_natAdd_eq_sheetLayer (hb ▸ hv : _ = ((univ : Finset (Fin n)), k))
+  refine ⟨j'', hqv, ?_⟩
+  rwa [sheetLayer_row_natAdd, sheetLayer_row_natAdd, sheetRow_castAdd, sheetRow_castAdd] at hlt'
+
+end VaughtConjecture.Scheme

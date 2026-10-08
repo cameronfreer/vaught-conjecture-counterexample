@@ -62,88 +62,16 @@ namespace VaughtConjecture
 
 open Finset Label
 
-/-! ### Rows of a face -/
-
 namespace StageType
 
 variable {α : Ordinal.{u}} {n m : ℕ} {D : StageType.{u} α n} {f : Fin m ↪ Fin n}
   {t : StageType.{u} α m}
-
-/-- **The rows of a face are the rows of its cells.** -/
-theorem rowAt_faceCell (h : restrictFace f D = some t) (i j : Fin t.card) :
-    D.toScheme.rowAt (faceCell h i) (faceCell h j) = t.toScheme.rowAt i j := by
-  obtain ⟨hf, rfl⟩ := (restrictFace_eq_some_iff D f).mp h
-  have hmem : faceCell h j ∈ D.toCellScheme.below (D.toCellScheme.gradedIndex (faceCell h i)) ↔
-      j ∈ (D.comap f hf).toCellScheme.below ((D.comap f hf).toCellScheme.gradedIndex i) := by
-    rw [CellScheme.mem_below, CellScheme.mem_below]
-    simp only [CellScheme.gradedIndex, Prod.mk_le_mk, scope_faceCell, grade_faceCell,
-      map_subset_map]
-  by_cases hj : j ∈ (D.comap f hf).toCellScheme.below ((D.comap f hf).toCellScheme.gradedIndex i)
-  · rw [Scheme.rowAt_of_mem (hmem.mpr hj), Scheme.rowAt_of_mem hj]
-    rfl
-  · rw [Scheme.rowAt_of_notMem (fun h' ↦ hj (hmem.mp h')), Scheme.rowAt_of_notMem hj]
-
-/-- **Faces depend on the labels of the visible cells only**: two stage types on one scheme whose
-labels agree at the cells visible through `f` have the same face along `f`. -/
-theorem restrictFace_congr_label {t s : StageType.{u} α n} (hS : t.toScheme = s.toScheme)
-    (hl : ∀ (i : Fin t.card) (j : Fin s.card), (i : ℕ) = j → i ∈ t.toScheme.visibleCells f →
-      t.label i = s.label j) :
-    restrictFace f t = restrictFace f s := by
-  obtain ⟨S, p, _, _, _, _⟩ := t
-  obtain ⟨S', p', _, _, _, _⟩ := s
-  obtain rfl : S = S' := hS
-  by_cases hf : univ.map f ∈ S.toCellScheme.faces
-  · rw [restrictFace_of_mem _ f hf, restrictFace_of_mem _ f hf]
-    refine congrArg some (ext rfl fun i j hij ↦ ?_)
-    simp only [comap_label]
-    obtain rfl : i = j := Fin.ext hij
-    exact hl _ _ rfl (S.cellMap_mem f i)
-  · rw [restrictFace_of_notMem _ f hf, restrictFace_of_notMem _ f hf]
 
 /-! ### The apex of a type labelled `⊥` -/
 
 section Apex
 
 variable {n : ℕ} {t : StageType.{u} α n} (ht : t.IsLegalBelowFullGrade) (hn : 0 < n)
-
-/-- The apex has graded index `(univ, n)`. -/
-theorem addApex_gradedIndex_last :
-    (t.addApex ht hn).toCellScheme.gradedIndex (Fin.last _) = (univ, n) :=
-  Scheme.appendFullCellScheme_gradedIndex_last _ _
-
-/-- The apex is the only cell of graded index `(univ, n)`. -/
-theorem eq_last_of_gradedIndex_addApex {z : Fin (t.addApex ht hn).card}
-    (hz : (t.addApex ht hn).toCellScheme.gradedIndex z = (univ, n)) : z = Fin.last _ :=
-  eq_of_grade_addApex ht hn (congrArg Prod.snd hz)
-
-/-- **The apex row of a type labelled `⊥` reads every other cell as `⊥`.** -/
-theorem rowAt_addApex_last_of_ne (hbot : ∀ d, t.label d = ⊥) {z : Fin (t.addApex ht hn).card}
-    (hz : z ≠ Fin.last _) : (t.addApex ht hn).toScheme.rowAt (Fin.last _) z = ⊥ := by
-  -- `t.addApex` has the cells of `t` and the apex
-  change Fin (t.card + 1) at z
-  induction z using Fin.lastCases with
-  | last => exact absurd rfl hz
-  | cast d =>
-    by_cases hd : d.castSucc ∈ (t.addApex ht hn).toCellScheme.below
-        ((t.addApex ht hn).toCellScheme.gradedIndex (Fin.last _))
-    · rw [Scheme.rowAt_of_mem hd]
-      -- the rows of `t.addApex` are those of `appendFullCell`
-      change (t.toScheme.appendFullCell n (apexRow ht) ht.not_le).rows.row (Fin.last _)
-        ⟨d.castSucc, hd⟩ = ⊥
-      rw [Scheme.appendFullCell_row_last, apexRow_castSucc, hbot d]
-      rfl
-    · exact Scheme.rowAt_of_notMem hd
-
-/-- **The apex row reads the apex not as `⊥`.** -/
-theorem rowAt_addApex_last_last :
-    (t.addApex ht hn).toScheme.rowAt (Fin.last _) (Fin.last _) ≠ ⊥ := by
-  rw [Scheme.rowAt_of_mem (S := (t.addApex ht hn).toScheme) (u := Fin.last _) (x := Fin.last _)
-    ((t.addApex ht hn).toCellScheme.mem_below_gradedIndex _)]
-  -- the rows of `t.addApex` are those of `appendFullCell`
-  change (t.toScheme.appendFullCell n (apexRow ht) ht.not_le).rows.row (Fin.last _)
-    ⟨Fin.last _, _⟩ ≠ ⊥
-  rw [Scheme.appendFullCell_row_last, apexRow_last, blockEncode_top]
-  exact WithBot.coe_ne_bot
 
 /-- **The apex of a type labelled `⊥` is a top cap and its own marker, and the type is a marked-cap
 context along every embedding of `n'` points with `n' + 1 < n`.** -/
@@ -184,8 +112,6 @@ theorem isMarkedCapContext_addApex (hbot : ∀ d, t.label d = ⊥) {n' : ℕ} (h
 end Apex
 
 end StageType
-
-/-! ### A right coatom type with a new top -/
 
 namespace TopReadingApexExample
 
@@ -251,102 +177,9 @@ noncomputable def seedTR (α : Ordinal.{u}) : Seed.{u} α 3 :=
 
 end TopReadingApexExample
 
-/-! ### An isolated cell carried from the left coatom -/
-
 namespace TowerProfile
 
 variable {α : Ordinal.{u}} {I : Seed.{u} α 3}
-
-/-- The rows of the profile layer at old cells are those of the amalgam. -/
-theorem rowAt_embed3 (a b : Fin I.amalgam.card) :
-    (scheme I).rowAt (embed3 I a) (embed3 I b) = I.amalgam.toScheme.rowAt a b := by
-  have hmem : embed3 I b ∈ (scheme I).toCellScheme.below
-      ((scheme I).toCellScheme.gradedIndex (embed3 I a)) ↔
-      b ∈ I.amalgam.toCellScheme.below (I.amalgam.toCellScheme.gradedIndex a) := by
-    rw [CellScheme.mem_below, CellScheme.mem_below, gradedIndex_embed3, gradedIndex_embed3]
-  by_cases hb : b ∈ I.amalgam.toCellScheme.below (I.amalgam.toCellScheme.gradedIndex a)
-  · rw [Scheme.rowAt_of_mem (hmem.mpr hb), Scheme.rowAt_of_mem hb]
-    have h := congrArg (fun R : I.amalgam.toCellScheme.Rows ↦ R.row a ⟨b, hb⟩)
-      (comap_rows_embed3 (I := I))
-    exact h
-  · rw [Scheme.rowAt_of_notMem (fun h' ↦ hb (hmem.mp h')), Scheme.rowAt_of_notMem hb]
-
-/-- The first coatom of `Fin 5` is the ground set without the last point. -/
-theorem univ_map_left_eq :
-    (univ : Finset (Fin 4)).map (Coatom.left 3) = univ.erase (Fin.last 4) := by
-  decide
-
-variable (I) in
-/-- The cell of the profile layer at a cell of the left coatom type. -/
-noncomputable def leftCell (a : Fin I.left.card) : Fin (scheme I).card :=
-  embed3 I (StageType.faceCell I.restrictFace_left a)
-
-/-- A cell of the profile layer avoiding the last point is the cell of a cell of the left type. -/
-theorem exists_leftCell_eq {y : Fin (scheme I).card}
-    (hy : Fin.last 4 ∉ (scheme I).toCellScheme.scope y) : ∃ z, leftCell I z = y := by
-  obtain ⟨d, rfl⟩ := mem_range_embed3 y fun h ↦ hy (h ▸ mem_univ _)
-  have hd : Fin.last 4 ∉ I.amalgam.toCellScheme.scope d := by
-    rwa [scope_embed3] at hy
-  obtain ⟨z, rfl⟩ := StageType.exists_faceCell_eq_of_last_notMem I.restrictFace_left hd
-  exact ⟨z, rfl⟩
-
-/-- The graded index of the cell of a cell of the left type. -/
-theorem gradedIndex_leftCell (z : Fin I.left.card) :
-    (scheme I).toCellScheme.gradedIndex (leftCell I z) =
-      ((I.left.toCellScheme.scope z).map (Coatom.left 3), I.left.toCellScheme.grade z) := by
-  rw [leftCell, gradedIndex_embed3]
-  exact Prod.ext (StageType.scope_faceCell _ z) (StageType.grade_faceCell _ z)
-
-/-- The rows of the profile layer at the cells of the left type are those of the left type. -/
-theorem rowAt_leftCell (a z : Fin I.left.card) :
-    (scheme I).rowAt (leftCell I a) (leftCell I z) = I.left.toScheme.rowAt a z := by
-  rw [leftCell, leftCell, rowAt_embed3, StageType.rowAt_faceCell]
-
-/-- The cells of the left type map injectively. -/
-theorem leftCell_injective : Function.Injective (leftCell I) := fun _ _ h ↦
-  Scheme.faceCell_injective _ ((embed3 I).injective h)
-
-/-- **An isolated cell of the left type is isolated in the profile layer** below the coatom
-`(univ.erase (Fin.last 4), 4)`: a cell `a` of the left type of graded index `(univ, 4)`, the only
-one there, whose row reads every other cell as `⊥` and itself not as `⊥`. -/
-theorem isolated_of_left {a : Fin I.left.card}
-    (ha : I.left.toCellScheme.gradedIndex a = (univ, 4))
-    (hu : ∀ z, I.left.toCellScheme.gradedIndex z = (univ, 4) → z = a)
-    (hrow : ∀ z, z ≠ a → I.left.toScheme.rowAt a z = ⊥) (hrr : I.left.toScheme.rowAt a a ≠ ⊥) :
-    (scheme I).toCellScheme.grade (leftCell I a) = 4 ∧
-      leftCell I a ∈ (scheme I).toCellScheme.below (univ.erase (Fin.last 4), 4) ∧
-      (∀ y ∈ (scheme I).toCellScheme.below (univ.erase (Fin.last 4), 4),
-        (scheme I).toCellScheme.gradedIndex (leftCell I a) ≤
-          (scheme I).toCellScheme.gradedIndex y → y = leftCell I a) ∧
-      (∀ y (hy : y ∈ (scheme I).toCellScheme.below
-          ((scheme I).toCellScheme.gradedIndex (leftCell I a))),
-        y ≠ leftCell I a → (scheme I).rows.row (leftCell I a) ⟨y, hy⟩ = ⊥) ∧
-      (scheme I).rows.row (leftCell I a)
-        ⟨leftCell I a, (scheme I).toCellScheme.mem_below_gradedIndex _⟩ ≠ ⊥ := by
-  have hsa : I.left.toCellScheme.scope a = univ := congrArg Prod.fst ha
-  have hga : I.left.toCellScheme.grade a = 4 := congrArg Prod.snd ha
-  have hgi : (scheme I).toCellScheme.gradedIndex (leftCell I a) = (univ.erase (Fin.last 4), 4) := by
-    rw [gradedIndex_leftCell, hsa, hga, univ_map_left_eq]
-  -- a cell below the coatom avoids the last point, so it is a cell of the left type
-  have hleft {y : Fin (scheme I).card}
-      (hy : y ∈ (scheme I).toCellScheme.below (univ.erase (Fin.last 4), 4)) :
-      ∃ z, leftCell I z = y :=
-    exists_leftCell_eq fun h ↦ by simpa using hy.1 h
-  refine ⟨congrArg Prod.snd hgi, by rw [CellScheme.mem_below, hgi], fun y hy hle ↦ ?_,
-    fun y hy hne ↦ ?_, ?_⟩
-  · obtain ⟨z, rfl⟩ := hleft hy
-    have heq : (scheme I).toCellScheme.gradedIndex (leftCell I z) = (univ.erase (Fin.last 4), 4) :=
-      le_antisymm hy (hgi ▸ hle)
-    rw [gradedIndex_leftCell, ← univ_map_left_eq] at heq
-    obtain ⟨h1, h2⟩ := Prod.ext_iff.mp heq
-    rw [map_inj] at h1
-    exact congrArg (leftCell I) (hu z (Prod.ext h1 h2))
-  · rw [hgi] at hy
-    obtain ⟨z, rfl⟩ := hleft hy
-    rw [← Scheme.rowAt_of_mem, rowAt_leftCell]
-    exact hrow z fun h ↦ hne (h ▸ rfl)
-  · rw [← Scheme.rowAt_of_mem, rowAt_leftCell]
-    exact hrr
 
 /-! ### The obstruction at `seedLL` -/
 
@@ -358,7 +191,6 @@ theorem isMarkedCapContext_TL (α : Ordinal.{u}) {n' : ℕ} (h : Fin n' ↪ Fin 
       (TL α).IsMarkedCapContext h :=
   StageType.isMarkedCapContext_addApex (t := TL₀ α) isLegalBelowFullGrade_SL (by omega)
     (fun _ ↦ rfl) h (by omega)
-
 
 open TwoFaceLiftExistsCounterexample in
 /-- **The obstruction over `TL`.**  For every seed whose left coatom type is `TL` (over the face

@@ -41,61 +41,6 @@ namespace VaughtConjecture
 
 open Finset Label
 
-namespace CellScheme.Rows.IsLawfulBelow
-
-variable {ι κ : Type*} {D : CellScheme ι κ} {R : D.Rows.{u}}
-
-/-- **Raising an isolated cell to `⊤`.**  Let `w` be lawful below `X` and `r` a cell below `X` that
-is the only cell below `X` at or above its graded index, whose row reads every other cell below it
-as `⊥` and itself not as `⊥`.  If `w r ≠ ⊥`, the labelling `w` with `r` sent to `⊤` is lawful below
-`X`. -/
-theorem update_top [DecidableEq ι] {X : Finset κ × ℕ} {w : ι → Label.{u}}
-    (hw : R.IsLawfulBelow X fun d ↦ w d) {r : ι} (hrX : r ∈ D.below X)
-    (huniq : ∀ y ∈ D.below X, D.gradedIndex r ≤ D.gradedIndex y → y = r)
-    (hrow : ∀ y (hy : y ∈ D.below (D.gradedIndex r)), y ≠ r → R.row r ⟨y, hy⟩ = ⊥)
-    (hrr : R.row r ⟨r, D.mem_below_gradedIndex r⟩ ≠ ⊥) (hwr : w r ≠ ⊥) :
-    R.IsLawfulBelow X fun d ↦ Function.update w r ⊤ d := by
-  obtain ⟨hvis, hloc, havail⟩ := isLawfulBelow_iff_forall.mp hw
-  have hle (d : ι) : w d ≤ Function.update w r ⊤ d := by
-    by_cases hd : d = r
-    · subst hd; rw [Function.update_self]; exact le_top
-    · rw [Function.update_of_ne hd]
-  refine isLawfulBelow_iff_forall.mpr ⟨fun d hd ↦ ?_, fun s hs ↦ ?_, fun s t ht hst hg ↦ ?_⟩
-  · by_cases hdr : d = r
-    · subst hdr; rw [Function.update_self]; exact isSelfVisible_top _
-    · rw [Function.update_of_ne hdr]; exact hvis d hd
-  · by_cases hsr : s = r
-    · subst hsr
-      refine transformsTo_of_eq_bot_iff _ (K := D.grade s) (fun d ↦ d.2.2) (isSelfVisible_top _)
-        _ _ fun d ↦ ?_
-      rw [Function.update_self, min_top_right]
-      by_cases hds : (d : ι) = s
-      · have hd : d = ⟨s, D.mem_below_gradedIndex s⟩ := Subtype.ext hds
-        subst hd
-        rw [Function.update_self, ite_eq_right hrr]
-      · rw [Function.update_of_ne hds, ite_eq_left (hrow d d.2 hds)]
-        -- the given labelling is `⊥` at `d`: locality at `s` reads `d` as `⊥`
-        have h := (hloc s hs).eq_bot (d := d) (hrow d d.2 hds)
-        change min (w d) (w s) = ⊥ at h
-        exact (min_eq_bot.mp h).resolve_right hwr
-    · -- no cell below `s` is `r`, so the labelling below `s` is unchanged
-      have hrs (d : D.below (D.gradedIndex s)) : (d : ι) ≠ r := fun hdr ↦
-        hsr (huniq s hs (hdr ▸ d.2))
-      have heq : (fun d : D.below (D.gradedIndex s) ↦
-          min (Function.update w r ⊤ d) (Function.update w r ⊤ s)) =
-          fun d : D.below (D.gradedIndex s) ↦ min (w d) (w s) := funext fun d ↦ by
-        rw [Function.update_of_ne (hrs d), Function.update_of_ne hsr]
-      rw [heq]
-      exact hloc s hs
-  · by_cases hsr : s = r
-    · subst hsr
-      have hts : t = s := huniq t ht ⟨hst, hg.le⟩
-      exact ⟨s, hts ▸ rfl, by rw [Function.update_self]⟩
-    · obtain ⟨u, hu, hsu⟩ := havail s t ht hst hg
-      exact ⟨u, hu, by rw [Function.update_of_ne hsr]; exact hsu.trans (hle u)⟩
-
-end CellScheme.Rows.IsLawfulBelow
-
 namespace TowerProfile
 
 open Scheme

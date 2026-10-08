@@ -42,22 +42,6 @@ namespace VaughtConjecture
 
 open Finset Label
 
-namespace StageType
-
-variable {β : Ordinal.{u}} {m : ℕ} {q : StageType.{u} β m} {c : Fin q.card}
-
-/-- **No cell above a top cap is labelled `⊤`.** -/
-theorem IsTopCap.label_ne_top_of_grade_lt (hc : q.IsTopCap c) {x : Fin q.card}
-    (hx : q.toCellScheme.grade c < q.toCellScheme.grade x) : q.label x ≠ ⊤ :=
-  fun h ↦ (hc.2.2 x h).not_gt hx
-
-/-- **No cell of grade above a top cap is a top cap.** -/
-theorem IsTopCap.not_isTopCap_of_grade_lt (hc : q.IsTopCap c) {x : Fin q.card}
-    (hx : q.toCellScheme.grade c < q.toCellScheme.grade x) : ¬ q.IsTopCap x :=
-  fun hx' ↦ hc.label_ne_top_of_grade_lt hx hx'.2.1
-
-end StageType
-
 namespace MarkedCapExclusions
 
 /-- The cells of the two-point type labelled `⊤` have the grade `2`. -/

@@ -673,6 +673,37 @@ theorem scope_faceCell (h : restrictFace f D = some t) (i : Fin t.card) :
     D.toCellScheme.scope (faceCell h i) = (t.toCellScheme.scope i).map f :=
   D.toScheme.scope_faceCell _ i
 
+/-- **The rows of a face are the rows of its cells.** -/
+theorem rowAt_faceCell (h : restrictFace f D = some t) (i j : Fin t.card) :
+    D.toScheme.rowAt (faceCell h i) (faceCell h j) = t.toScheme.rowAt i j := by
+  obtain ⟨hf, rfl⟩ := (restrictFace_eq_some_iff D f).mp h
+  have hmem : faceCell h j ∈ D.toCellScheme.below (D.toCellScheme.gradedIndex (faceCell h i)) ↔
+      j ∈ (D.comap f hf).toCellScheme.below ((D.comap f hf).toCellScheme.gradedIndex i) := by
+    rw [CellScheme.mem_below, CellScheme.mem_below]
+    simp only [CellScheme.gradedIndex, Prod.mk_le_mk, scope_faceCell, grade_faceCell,
+      map_subset_map]
+  by_cases hj : j ∈ (D.comap f hf).toCellScheme.below ((D.comap f hf).toCellScheme.gradedIndex i)
+  · rw [Scheme.rowAt_of_mem (hmem.mpr hj), Scheme.rowAt_of_mem hj]
+    rfl
+  · rw [Scheme.rowAt_of_notMem (fun h' ↦ hj (hmem.mp h')), Scheme.rowAt_of_notMem hj]
+
+/-- **Faces depend on the labels of the visible cells only**: two stage types on one scheme whose
+labels agree at the cells visible through `f` have the same face along `f`. -/
+theorem restrictFace_congr_label {t s : StageType.{u} α n} (hS : t.toScheme = s.toScheme)
+    (hl : ∀ (i : Fin t.card) (j : Fin s.card), (i : ℕ) = j → i ∈ t.toScheme.visibleCells f →
+      t.label i = s.label j) :
+    restrictFace f t = restrictFace f s := by
+  obtain ⟨S, p, _, _, _, _⟩ := t
+  obtain ⟨S', p', _, _, _, _⟩ := s
+  obtain rfl : S = S' := hS
+  by_cases hf : univ.map f ∈ S.toCellScheme.faces
+  · rw [restrictFace_of_mem _ f hf, restrictFace_of_mem _ f hf]
+    refine congrArg some (ext rfl fun i j hij ↦ ?_)
+    simp only [comap_label]
+    obtain rfl : i = j := Fin.ext hij
+    exact hl _ _ rfl (S.cellMap_mem f i)
+  · rw [restrictFace_of_notMem _ f hf, restrictFace_of_notMem _ f hf]
+
 /-- **Lawful sections restrict to a face.** -/
 theorem isLawful_comp_faceCell (h : restrictFace f D = some t) {a : Fin D.card → Label.{u}}
     (ha : D.rows.IsLawful a) : t.rows.IsLawful fun i ↦ a (faceCell h i) := by

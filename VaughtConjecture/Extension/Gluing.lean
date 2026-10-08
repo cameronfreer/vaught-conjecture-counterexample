@@ -67,45 +67,6 @@ namespace CellScheme.Rows
 
 variable {ι α : Type*} {D : CellScheme ι α} {R : D.Rows.{u}}
 
-/-! ### Lawfulness below a pair, pointwise -/
-
-/-- A cell below a cell below `X` is below `X`. -/
-private theorem mem_below_of_le {X : Finset α × ℕ} {d s : ι}
-    (hd : D.gradedIndex d ≤ D.gradedIndex s) (hs : s ∈ D.below X) : d ∈ D.below X :=
-  (le_trans hd hs : D.gradedIndex d ≤ X)
-
-/-- A cell whose scope lies in that of a cell below `X`, at the same grade, is below `X`. -/
-private theorem mem_below_of_scope_subset {X : Finset α × ℕ} {s t : ι}
-    (hst : D.scope s ⊆ D.scope t) (hg : D.grade s = D.grade t) (ht : t ∈ D.below X) :
-    s ∈ D.below X :=
-  mem_below_of_le ((D.gradedIndex_le_iff).mpr ⟨hst, hg.le⟩) ht
-
-/-- **Lawfulness below a pair, pointwise.**  A labelling `w` of all cells is lawful below `X`
-exactly when every cell below `X` has a label self-visible at its grade, the row of every cell
-`s` below `X` transforms to `d ↦ min (w d) (w s)` on the cells below `s`, and availability holds
-for every target cell below `X`. -/
-theorem isLawfulBelow_iff_forall {X : Finset α × ℕ} {w : ι → Label.{u}} :
-    R.IsLawfulBelow X (fun d ↦ w d) ↔
-      (∀ d ∈ D.below X, IsSelfVisible (D.grade d) (w d)) ∧
-      (∀ s ∈ D.below X, TransformsTo (fun d : D.below (D.gradedIndex s) ↦ D.grade d) (R.row s)
-        (fun d ↦ min (w d) (w s))) ∧
-      (∀ s t, t ∈ D.below X → D.scope s ⊆ D.scope t → D.grade s = D.grade t →
-        ∃ u, D.gradedIndex u = D.gradedIndex t ∧ w s ≤ w u) := by
-  constructor
-  · intro h
-    refine ⟨fun d hd ↦ h.orderly ⟨d, hd⟩, fun s hs ↦ ?_, fun s t ht hst hg ↦ ?_⟩
-    · exact (h.locality ⟨s, hs⟩).reindex fun d : D.below (D.gradedIndex s) ↦
-        ⟨⟨d.1, mem_below_of_le d.2 hs⟩, d.2⟩
-    · obtain ⟨u, hu, hle⟩ :=
-        h.availability ⟨s, mem_below_of_scope_subset hst hg ht⟩ ⟨t, ht⟩ hst hg
-      exact ⟨u, hu, hle⟩
-  · rintro ⟨ho, hl, ha⟩
-    refine ⟨fun d ↦ ho d d.2, fun s ↦ ?_, fun s t hst hg ↦ ?_⟩
-    · exact (hl s s.2).reindex (D' := (D.reindex ((↑) : D.below X → ι)).below
-        ((D.reindex ((↑) : D.below X → ι)).gradedIndex s)) fun t ↦ ⟨t.1.1, t.2⟩
-    · obtain ⟨u, hu, hle⟩ := ha s t t.2 hst hg
-      exact ⟨⟨u, mem_below_of_le hu.le t.2⟩, hu, hle⟩
-
 /-- **Gluing lawful labellings.**  If a labelling of all cells is lawful below `U` and below `V`,
 it is lawful below every pair `Y` whose cells lie below `U` or below `V`. -/
 theorem IsLawfulBelow.glue {U V Y : Finset α × ℕ} {w : ι → Label.{u}}

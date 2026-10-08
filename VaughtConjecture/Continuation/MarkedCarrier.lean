@@ -79,37 +79,6 @@ open scoped Ordinal
 
 /-! ### A cell read at least as a top under a top is a top -/
 
-namespace CellScheme.Rows.IsLawful
-
-variable {ι κ : Type*} {D : CellScheme ι κ} {R : D.Rows.{u}} {p : ι → Label.{u}}
-
-/-- **A cell read at least as a top by a top is a top**: in a lawful section `p`, if a cell `u`
-and a cell `s` below it are labelled `⊤`, and the row of `u` reads a cell `x` below `u` at least
-as `s`, then `x` is labelled `⊤`.  Locality at `u` has a suppressor that is `⊤` at the grade of
-`u` (since `p u = ⊤`), hence at the grade of `x`, and a shifter sending the entry at `s` to `⊤`
-(since `p s = ⊤`), hence also the entry at `x`.  No condition on the grade of `s` is needed. -/
-theorem eq_top_of_row_le (h : R.IsLawful p) {u s x : ι} (hs : s ∈ D.below (D.gradedIndex u))
-    (hx : x ∈ D.below (D.gradedIndex u)) (hpu : p u = ⊤) (hps : p s = ⊤)
-    (hrow : R.row u ⟨s, hs⟩ ≤ R.row u ⟨x, hx⟩) : p x = ⊤ := by
-  obtain ⟨g, σ, hw, heq⟩ := h.locality u
-  have hu := heq ⟨u, D.mem_below_gradedIndex u⟩
-  have hs' := heq ⟨s, hs⟩
-  have hx' := heq ⟨x, hx⟩
-  -- the labelling of locality at `u` is `d ↦ min (p d) (p u)`
-  change min (p u) (p u) = min (σ (R.row u ⟨u, _⟩)) (g (D.grade u)) at hu
-  change min (p s) (p u) = min (σ (R.row u ⟨s, hs⟩)) (g (D.grade s)) at hs'
-  change min (p x) (p u) = min (σ (R.row u ⟨x, hx⟩)) (g (D.grade x)) at hx'
-  rw [hpu, min_self] at hu
-  rw [hps, hpu, min_self] at hs'
-  rw [hpu, min_top_right] at hx'
-  have hgu : g (D.grade u) = ⊤ := (min_eq_top.mp hu.symm).2
-  have hσs : σ (R.row u ⟨s, hs⟩) = ⊤ := (min_eq_top.mp hs'.symm).1
-  have hgx : g (D.grade x) = ⊤ := top_le_iff.mp (hgu ▸ hw.antitone hx.2)
-  have hσx : σ (R.row u ⟨x, hx⟩) = ⊤ := top_le_iff.mp (hσs ▸ hw.monotone hrow)
-  rw [hx', hσx, hgx, min_self]
-
-end CellScheme.Rows.IsLawful
-
 namespace StageType
 
 variable {α : Ordinal.{u}} {k n : ℕ}
@@ -353,14 +322,6 @@ theorem HasMarkedCarriers.exists_coface_isDeterminedWithin (hcar : HasMarkedCarr
     hcr.2.1.1 hcr.2.2.1.le hD⟩
 
 /-! ### The cutoff form: top-marked carriers -/
-
-/-- The data of a marked-cap context along `h` with top cap `c` and marker `r`
-(`StageType.IsMarkedCapContext` is `∃ c r, t'.IsMarkedCapContextAt h c r`). -/
-def IsMarkedCapContextAt (t' : StageType.{u} α k) (h : Fin n ↪ Fin k) (c r : Fin t'.card) :
-    Prop :=
-  t'.IsTopCap c ∧ t'.IsMarker c r ∧ n + 1 < t'.toCellScheme.grade c ∧
-    ∀ a ∈ t'.visibleCells h, t'.label a = ⊤ →
-      visibilityReplace (t'.toCellScheme.grade c) (n + 1) (t'.rowAt c r) ≤ t'.rowAt c a
 
 /-- The **top-marked prescription** with top cap `c` and marker `r`: at the grade `N` of `c`, a
 cell of full scope reads every new cell of `d` labelled `⊤` at least as `r`.  It asks nothing

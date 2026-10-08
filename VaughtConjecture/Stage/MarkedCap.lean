@@ -130,6 +130,16 @@ theorem IsTopCap.mem_below (hc : q.IsTopCap c) {x : Fin q.card} (hx : q.label x 
   exact Prod.mk_le_mk.mpr ⟨by rw [hc.1]; exact subset_univ _,
     hc.2.2 x hx⟩
 
+/-- **No cell above a top cap is labelled `⊤`.** -/
+theorem IsTopCap.label_ne_top_of_grade_lt (hc : q.IsTopCap c) {x : Fin q.card}
+    (hx : q.toCellScheme.grade c < q.toCellScheme.grade x) : q.label x ≠ ⊤ :=
+  fun h ↦ (hc.2.2 x h).not_gt hx
+
+/-- **No cell of grade above a top cap is a top cap.** -/
+theorem IsTopCap.not_isTopCap_of_grade_lt (hc : q.IsTopCap c) {x : Fin q.card}
+    (hx : q.toCellScheme.grade c < q.toCellScheme.grade x) : ¬ q.IsTopCap x :=
+  fun hx' ↦ hc.label_ne_top_of_grade_lt hx hx'.2.1
+
 /-- **A legal stage type with a cell labelled `⊤` has a top cap**: completeness gives a cell of
 full scope at the largest grade `K` of a cell labelled `⊤`, and availability gives one such cell
 labelled `⊤`. -/
@@ -440,15 +450,30 @@ theorem ForcesThreshold.le_grade_and_visibilityReplace_rowAt_le (hβ : IsSuccLim
 
 /-! ### The marked-cap context -/
 
+/-- The data of a marked-cap context along `h` with top cap `c` and marker `r`
+(`StageType.IsMarkedCapContext` is `∃ c r, t'.IsMarkedCapContextAt h c r`). -/
+def IsMarkedCapContextAt (t' : StageType.{u} α k) (h : Fin n ↪ Fin k) (c r : Fin t'.card) :
+    Prop :=
+  t'.IsTopCap c ∧ t'.IsMarker c r ∧ n + 1 < t'.toCellScheme.grade c ∧
+    ∀ a ∈ t'.visibleCells h, t'.label a = ⊤ →
+      visibilityReplace (t'.toCellScheme.grade c) (n + 1) (t'.rowAt c r) ≤ t'.rowAt c a
+
 /-- A stage type `t'` on `k` points is a **marked-cap context** along `h : Fin n ↪ Fin k` when it
 has a top cap `c` of grade `N > n + 1` with a marker `r`, and at every cell `a` of the root (a cell
 visible through `h`) labelled `⊤` the row of `c` satisfies
-`visibilityReplace N (n + 1) (t'.rowAt c r) ≤ t'.rowAt c a`.  The grade of a top cap is the top
-grade of `t'`, the largest grade of a cell labelled `⊤`. -/
+`visibilityReplace N (n + 1) (t'.rowAt c r) ≤ t'.rowAt c a`: that is,
+`∃ c r, t'.IsMarkedCapContextAt h c r` (`StageType.isMarkedCapContext_iff_exists`).  The grade of
+a top cap is the top grade of `t'`, the largest grade of a cell labelled `⊤`. -/
 def IsMarkedCapContext (t' : StageType.{u} α k) (h : Fin n ↪ Fin k) : Prop :=
   ∃ c r, t'.IsTopCap c ∧ t'.IsMarker c r ∧ n + 1 < t'.toCellScheme.grade c ∧
     ∀ a ∈ t'.visibleCells h, t'.label a = ⊤ →
       visibilityReplace (t'.toCellScheme.grade c) (n + 1) (t'.rowAt c r) ≤ t'.rowAt c a
+
+/-- A marked-cap context is the data of one at a top cap and a marker
+(`StageType.IsMarkedCapContextAt`). -/
+theorem isMarkedCapContext_iff_exists {t' : StageType.{u} α k} {h : Fin n ↪ Fin k} :
+    t'.IsMarkedCapContext h ↔ ∃ c r, t'.IsMarkedCapContextAt h c r :=
+  Iff.rfl
 
 /-- **A marked-cap context is not top-free**: its top cap is labelled `⊤`. -/
 theorem IsMarkedCapContext.not_isTopFree {t' : StageType.{u} α k} {h : Fin n ↪ Fin k}

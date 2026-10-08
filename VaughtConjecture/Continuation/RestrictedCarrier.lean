@@ -56,33 +56,6 @@ namespace VaughtConjecture
 
 open Finset Label
 
-namespace CellScheme.Rows.IsLawfulBelow
-
-variable {ι κ : Type*} {D : CellScheme ι κ} {R : D.Rows.{u}}
-
-/-- **Reading rows tie every lawful labelling.**  Let every cell `v` of graded index `Y` read `r`
-at most as `x`, where `r` lies below `Y` with the grade of `Y` and `x` lies below `Y` with grade at
-most that of `r`.  Given a cell `t` of graded index `Y`, every labelling lawful below `Y` labels `r`
-at most as `x`. -/
-theorem le_of_forall_reads {Y : Finset κ × ℕ} {w : ι → Label.{u}}
-    (hw : R.IsLawfulBelow Y fun d ↦ w d) {r x t : ι} (hr : r ∈ D.below Y) (hx : x ∈ D.below Y)
-    (ht : D.gradedIndex t = Y) (hgr : D.grade r = D.grade t) (hgx : D.grade x ≤ D.grade r)
-    (hreads : ∀ v (hv : D.gradedIndex v = Y), R.row v ⟨r, hv ▸ hr⟩ ≤ R.row v ⟨x, hv ▸ hx⟩) :
-    w r ≤ w x := by
-  obtain ⟨-, hloc, havail⟩ := isLawfulBelow_iff_forall.mp hw
-  have htY : t ∈ D.below Y := by rw [CellScheme.mem_below, ht]
-  have hst : D.scope t = Y.1 := congrArg Prod.fst ht
-  obtain ⟨v, hv, hle⟩ := havail r t htY (by rw [hst]; exact hr.1) hgr
-  have hvY : D.gradedIndex v = Y := hv.trans ht
-  have hvb : v ∈ D.below Y := by rw [CellScheme.mem_below, hvY]
-  have h := (hloc v hvb).le_of_le (d := ⟨r, hvY ▸ hr⟩) (d' := ⟨x, hvY ▸ hx⟩) (hreads v hvY) hgx
-  -- locality at `v` reads `min (w d) (w v)`
-  change min (w r) (w v) ≤ min (w x) (w v) at h
-  rw [min_eq_left hle] at h
-  exact h.trans (min_le_left _ _)
-
-end CellScheme.Rows.IsLawfulBelow
-
 namespace TowerProfile
 
 open Scheme

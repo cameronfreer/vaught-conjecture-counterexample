@@ -52,23 +52,6 @@ theorem restrictFace_right_left (hLR : I.left = I.right) :
     StageType.restrictFace (Coatom.right m) I.amalgam = some I.left :=
   hLR ▸ I.restrictFace_right
 
-/-- **Rows on a face**: the row of a cell of a face at a cell of the face is the row of the
-corresponding cells. -/
-private theorem rowAt_faceCell' {n k : ℕ} {E : StageType.{u} α n} {f : Fin k ↪ Fin n}
-    {t : StageType.{u} α k} (h : StageType.restrictFace f E = some t) (i j : Fin t.card) :
-    t.rowAt i j = E.rowAt (StageType.faceCell h i) (StageType.faceCell h j) := by
-  obtain ⟨hf, rfl⟩ := (StageType.restrictFace_eq_some_iff E f).mp h
-  have hle := E.toScheme.isLowerEmbedding_comap f
-  -- the cells of a face are the cells of the cell map
-  change (E.toScheme.comap f).rowAt i j = E.rowAt (E.toScheme.cellMap f i)
-    (E.toScheme.cellMap f j)
-  unfold Scheme.rowAt
-  split_ifs with h1 h2 h2
-  · rfl
-  · exact absurd ((hle.le_iff j i).mpr h1) h2
-  · exact absurd ((hle.le_iff j i).mp h2) h1
-  · rfl
-
 variable (hLR : I.left = I.right)
 
 /-- A cell of the amalgam visible through a face is a cell of that face. -/
@@ -199,13 +182,14 @@ theorem isDoubling_amalgam :
     · have hd' : d ∈ I.amalgam.toScheme.visibleCells (Coatom.left m) := by
         simp only [Scheme.visibleCells, mem_filter, mem_univ, true_and] at ha ⊢
         exact hsub.trans ha
-      rw [rowAt_faceCell' I.restrictFace_left, I.faceCell_left_doublingCell hLR ha,
+      rw [← StageType.rowAt_faceCell I.restrictFace_left, I.faceCell_left_doublingCell hLR ha,
         I.faceCell_left_doublingCell hLR hd']
     · have ha' := (I.mem_visibleCells_or a).resolve_left ha
       have hd' : d ∈ I.amalgam.toScheme.visibleCells (Coatom.right m) := by
         simp only [Scheme.visibleCells, mem_filter, mem_univ, true_and] at ha' ⊢
         exact hsub.trans ha'
-      rw [rowAt_faceCell' (I.restrictFace_right_left hLR), I.faceCell_right_doublingCell hLR ha',
+      rw [← StageType.rowAt_faceCell (I.restrictFace_right_left hLR),
+        I.faceCell_right_doublingCell hLR ha',
         I.faceCell_right_doublingCell hLR hd']
   exists_lift c e hc := by
     rcases I.scope_eq_map hLR e with ⟨he, hs⟩ | ⟨he, hs⟩
