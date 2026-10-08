@@ -595,7 +595,7 @@ complement, so the codes of models meet countably many classes of `bfEquivSetoid
 InfinitaryLogic's `isThinOn_of_bfScattered` applies, with no López–Escobar.  This application is
 compiled conditional on the cap-to-model theorem, (R1), forcing donors at every countable block
 index, the continuation criterion, (R2) and (R3); the first and third are compiled
-(`MainTheorem.capToModel`, `forcingDonors_of_blockStage`), the others still to be proved
+(`MainTheorem.capToModel`, `forcingDonors_blockStage`), the others still to be proved
 (`densitySentence_isThinOnNatModels_of_terminalClassification_bfScattered`,
 `MainTheorem/ScatteredDomains`): `bfScattered_of_countable_compl` (`MainTheorem/Scatteredness`;
 cocountable sets of back-and-forth equivalent classes give `BFScattered`, through
@@ -646,8 +646,11 @@ minimality form, from countable truth sides, is kept.
   at every countable block stage, which at `0` gives `CapToModel`
   (`CapToModel.of_hasApexCoatomExtensions`), so `CapToModel` is not a premise of it; and
   `mem_expansionDomain_iff_le_lastStage`, `mem_expansionDomain_loss_iff_lastStage_eq`,
-  `lastStage_modelExpansionDomains_lt_qrank`, whose statements mention `modelExpansionDomains hcap
-  hnext` and so take `CapToModel` as well; each of these hypotheses is still to be proved.
+  `lastStage_modelExpansionDomains_lt_qrank`, whose statements mention
+  `modelExpansionDomains hcap hnext` and so take `CapToModel` as well; next-block uniqueness and
+  (R1) are still to be proved, and the coatom extension property with apex and `CapToModel` are
+  compiled in this repository (theorem named) (`StageType.hasApexCoatomExtensions_blockStage`,
+  `MainTheorem.capToModel`).
 
 The count does not use them, and no hypothesis of a main-theorem statement changes.  Global
 termination is not used.  The terminal expansion at the last stage (terminal refinement, item 3) is
@@ -963,7 +966,8 @@ composition beside the expansion-domain composition, which is unchanged:
   `…_of_presentations`, and `…_of_scatteredTails`, and the three theorems
   `vaughtCounterexample_allCarriers_of_expansionDomains`, `…_of_presentations`, and
   `…_of_scatteredTails`, each with the hypotheses of its counterpart on `ℕ` and the cap-to-model
-  theorem `CapToModel` (still to be proved), from which the absence of finite models is derived.
+  theorem `CapToModel` (compiled in this repository (theorem named), `MainTheorem.capToModel`), from
+  which the absence of finite models is derived.
 
 Recorded with it: the count uses only `FullPresentations` (`#X ≤ ℵ₁`), and bounded comparison is
 used only for thinness; the proof term of the main conditional theorem avoids `classTruth_separates`
@@ -1090,9 +1094,10 @@ repository with their premises explicit; no completion or unconditional theorem 
 None adds a hypothesis to the concrete compositions of the main theorem or makes a termination
 statement their premise. The abstract assembly in item 2 may assume its interface conditions as
 explicit arguments. Its concrete composition must instead derive those conditions from the
-current five hypotheses: (R1), the continuation criterion, (R2), block cover-hollow (R3), and
-the coatom extension property with apex at every countable block stage. The seven- and
-six-hypothesis forms and the separate restricted-R3 form are retained; the restricted five-form
+current four hypotheses: (R1), the continuation criterion, (R2), and block cover-hollow (R3); the
+coatom extension property with apex at every countable block stage is compiled in this repository
+(theorem named) (`StageType.hasApexCoatomExtensions_blockStage`). The seven-, six- and
+five-hypothesis forms and the separate restricted-R3 form are retained; the restricted five-form
 remains prospective. The statements are recorded here before the Lean assemblies, in this order.
 
 1. *The terminal-presentation instance* (`README.md`, "Reduction to full presentations", "The
@@ -1158,7 +1163,7 @@ remains prospective. The statements are recorded here before the Lean assemblies
    same-level terminal realization, and item 3, each with the premises above.
    *Completion criterion:* compiled; the docstring of the main-theorem statement records
    that condition (c) is not used. The abstract assembly has the explicit arguments just listed;
-   the concrete composition has exactly the five hypotheses of item 1, deriving the interface
+   the concrete composition has exactly the four hypotheses of item 1, deriving the interface
    conditions rather than assuming them. The seven- and six-hypothesis forms stay unchanged.
 3. *Niceness from maximal refinement* (`README.md`, item 5; conditionally compiled consequence).
    `HasTerminalRefinement.of_hasApexCoatomExtensions` derives `HasTerminalRefinement.{0}`
@@ -1270,8 +1275,10 @@ corresponding declarations here: compiled in this repository (theorem named), co
 (the hypotheses named), informal and not compiled, or prospective.  [AFK26] states Propositions
 4.32, 4.34 and 4.35 without proof and sketches the proof of Lemma 4.33.  It also states that the
 proof that its system `K[L]` is a Knight system has been formalized; in this repository every
-compiled form of the main theorem is conditional on the five named hypotheses of `DASHBOARD.md`
-(hypotheses 2, 4–6 and 8), or on hypotheses derived from them, each still to be proved.  The
+compiled form of the main theorem is conditional on named hypotheses, at fewest the four of
+`DASHBOARD.md` (hypotheses 2 and 4–6), or on hypotheses derived from them, each still to be proved;
+hypothesis 8 is compiled in this repository (theorem named) (`StageType.hasApexCoatomExtensions`).
+The
 docstrings of `VaughtConjecture/Correspondence` cite the numbering of the version of 5 October 2026.
 
 | Row | Source | Manuscript notion | Status |
@@ -1916,7 +1923,7 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     `η`.  Its raw form at one block, in the raw base encoding, is `ModelExpansion.subsingleton`
     (`Expansion/Uniqueness`), compiled in this repository (theorem named), conditional on
     `Expansion.NextBlockUniqueness`, still to be proved, which is derived from (R1) and
-    `ForcingDonors` (compiled, `forcingDonors_of_blockStage`) by
+    `ForcingDonors` (compiled, `forcingDonors_blockStage`) by
     `Expansion.NextBlockUniqueness.of_forcingDonors` (`Expansion/UniquenessOfForcing`), compiled in
     this repository (theorem named); its limit
     step is `Realization.eq_of_forall_reduce_eq` (`Realization/Limit`).  That theorem compares two
@@ -2245,8 +2252,9 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     hypothesis 8; row 55) and `isNice_of_hasTerminalRefinement` (row 30), both compiled
     conditionally; the composition into `FullPresentations` (row 27) is prospective.  [AFK26]
     states that this proof has been formalized; in this repository every compiled form of the
-    main theorem is conditional on the five named hypotheses (`DASHBOARD.md`), or on hypotheses
-    derived from them, each still to be proved.
+    main theorem is conditional on named hypotheses, at fewest the four of `DASHBOARD.md` ((R1), the
+    continuation criterion, (R2), (R3)), or on hypotheses derived from them, each still to be
+    proved; hypothesis 8 is compiled in this repository (theorem named).
 48. [AFK26, Theorem 2.19] (weak Knight systems and perfect sets of models): if `K` is a weak
     Knight system and, for every `β`, the members of the base `K_{-∞}` with no lift in `K_β`
     fall into countably many isomorphism classes, then `K_{-∞}` contains no perfect set of
@@ -3408,7 +3416,7 @@ Each checkpoint needs both its abstract API and a concrete application:
    donors is compiled conditional on the coatom extension property at
    `λ_{η+1}` (`forcingDonors_of_hasCoatomExtensions`, `Extension/ForcingDonorsCoatom`), by a finite
    construction without (R1) and without a completion, and with checkpoint 2.7 compiled it holds
-   at every block index with no hypothesis (`forcingDonors_of_blockStage`); before that, one- and
+   at every block index with no hypothesis (`forcingDonors_blockStage`); before that, one- and
    two-point inputs up to the threshold `4` were compiled unconditionally
    (`forcingDonorsUpTo_one_four`, `forcingDonorsUpTo_two_four`). The structural candidate
    (output 1) is compiled (`Realization.stableCandidate`, `Continuation/Candidate`), with exact
@@ -3582,9 +3590,10 @@ Each checkpoint needs both its abstract API and a concrete application:
    `CapToModel`, or from the coatom extension property at `ω`
    (`infinite_of_realize_densitySentence_of_hasCoatomExtensions`, with hypothesis
    `StageType.HasCoatomExtensions` at `ω`, compiled, `StageType.hasCoatomExtensions`); so the
-   reduction to `ℕ` for the density sentence needs no hypothesis for the absence of finite models.
+   reduction to `ℕ` for the density sentence needs no hypothesis for the absence of finite models
+   (`MainTheorem.infinite_of_realize_densitySentence`).
 
-   **The main theorem: three forms.**
+   **The main theorem: four forms.**
    `densitySentence_hasThinAlephOneSpectrum_of_terminalClassification`
    (`MainTheorem/ModelExpansionDomains`) is compiled conditionally on seven named hypotheses:
    `CapToModel`, (R1), forcing donors, `ContinuationCriterion`, (R2), (R3), and nonempty losses.
@@ -3615,8 +3624,15 @@ Each checkpoint needs both its abstract API and a concrete application:
    losses (from the coatom extension property with apex and next-block uniqueness).  No compiled
    theorem derives next-block uniqueness or countable losses from the coatom extension property
    with apex alone; both derivations use (R1).  The hypothesis count went from seven to six to five
-   only by these compiled derivations; no hypothesis is proved, and the seven- and six-hypothesis
-   forms are kept.  The five-hypothesis restricted form, with (R3) restricted, is a separate
+   by these compiled derivations, and from five to four by the proof of the coatom extension
+   property with apex (compiled in this repository (theorem named),
+   `StageType.hasApexCoatomExtensions`):
+   `densitySentence_hasThinAlephOneSpectrum_of_terminalClassification''`, with its form on all
+   countable carriers `vaughtCounterexample_allCarriers_of_terminalClassification''`
+   (`MainTheorem/Composition`), is compiled in this repository (theorem named) conditionally on
+   (R1), `ContinuationCriterion`, (R2) and (R3) exactly, each still to be proved.  The seven-, six-
+   and five-hypothesis forms are kept.  The five-hypothesis restricted form, with (R3) restricted,
+   is a separate
    statement (prospective).
 
 7. Acceptance lemma 1 (same-level maximal realization; `README.md`, "Reduction to full
@@ -3624,9 +3640,12 @@ Each checkpoint needs both its abstract API and a concrete application:
    `λ_β = blockStage β` that realizes every legal stage type at `λ_β`, receives every legal donor
    exactly over every actual root, and is cover-hollow and terminal at `β`, with a prescribed
    tuple covering a prescribed legal stage type.  Status: compiled conditional on
-   `StageType.HasApexCoatomExtensions (blockStage β)` and `ForcingDonors β`, both still to be
-   proved (`exists_sameLevelMaximal`, `exists_sameLevelMaximal_covers`,
-   `MainTheorem/SameLevelMaximal`).  The realization is the reconstruction of a Fraïssé limit of
+   `StageType.HasApexCoatomExtensions (blockStage β)` and `ForcingDonors β`
+   (`exists_sameLevelMaximal`, `exists_sameLevelMaximal_covers`, `MainTheorem/SameLevelMaximal`),
+   both compiled in this repository (theorem named) (`StageType.hasApexCoatomExtensions_blockStage`,
+   `forcingDonors_blockStage`), so compiled in this repository (theorem named) at every countable
+   `β` with no further hypothesis (`exists_sameLevelMaximal_covers'`).  The realization is the
+   reconstruction of a Fraïssé limit of
    the uncapped age of all legal charts (`exists_isFraisseLimit_legalAge`, under
    `StageType.HasCoatomExtensions` only), a model with exact receiving of legal donors under the
    apex form (`exists_saturated_reconstruct`); `ForcingDonors β` enters only for cover-hollowness
@@ -3810,7 +3829,8 @@ ones split):
   the cap during a lift at grade `2` is verified: the lift at grade `1` serves as the boundary lift
   into `(univ, 1)`, and the cap is kept on the new cells of grade `1`
   (`SmallArityOneExamples.exists_lift_fourCellPairSeed`). So 2.5 is complete.
-  `StageType.HasCoatomExtensions` needs every arity and is still to be proved (2.6–2.7).
+  `StageType.HasCoatomExtensions` needs every arity, and is compiled in this repository (theorem
+  named) at 2.7 (`StageType.hasCoatomExtensions`).
 - **2.6. Recursion on the grade.**  One grade step from the predecessor grade already
   established first, then the general step; lawfulness, consistency, the prefix equations, and
   unrestricted lifting (the last two defined with 2.6) are distinct statements.  The one grade step
@@ -3857,9 +3877,11 @@ ones split):
   with the zero stage handled explicitly.  That truncation to the stage fails at successor stages
   does not prove that the property fails there; that would need its own counterexample.  Whether
   it holds at successor stages is open and not needed.
-  Status: still to be proved (the statement is `StageType.HasApexCoatomExtensions` at the stages
-  that are zero or a limit), and not refuted. The completion below the full grade gives the apex
-  form (`StageType.HasApexCoatomExtensions.of_completionBelowFullGrade`,
+  Status: compiled in this repository (theorem named), `StageType.hasApexCoatomExtensions`
+  (`Extension/ProfileTowerCompletion`; the stage zero or a limit is the only hypothesis), through
+  `Seed.nonempty_completionBelowFullGrade` (see "The completion at every arity" below). The
+  completion below the full grade gives the apex form
+  (`StageType.HasApexCoatomExtensions.of_completionBelowFullGrade`,
   compiled in this repository (theorem named)), quantifying over the seeds of every arity. 2.7 is
   not conditioned on the universal two-face lift, which is false at every stage (2.6), and no
   theorem is stated under it. A *boundary triple*
@@ -4111,22 +4133,23 @@ ones split):
     bound (the construction of `Extension/ProfileCatalogue` with these as parameters);
   - `Extension/RankProfileScheme`: the rank-normalized catalogue at `m = 3` (`RankProfile.rankCat`,
     profiles lawful on the cut and fixed by the orbit code) and its profile scheme;
-  - `Extension/UpperDecoder`: the upper decoder at the cap grade `3`, an orbit decoder that reads
-    the gaps between codes upward, with capped agreement at the caps self-visible and short at `3`
-    and readable labels;
+  - `Extension/UpperDecoderAt`: the upper decoder (`Label.upperDecoderAt k K B`, the larger of the
+    orbit decoder and a gap value that reads the gaps between codes upward) at the grade `k` for the
+    cap grade `K`, with capped agreement at the caps self-visible and short at `K`
+    (`Label.min_upperDecoderAt_comp_eq` through any construction on the codes) and readable labels;
   - `Extension/TowerSection`: the tower section `Seed.towerSection` (one labelling of `T j` for each
-    profile, decoded upward), lawful, literal, in the code grid, capped-agreeing, readable;
+    profile, decoded upward at the cap grade `3`), lawful, literal, in the code grid,
+    capped-agreeing, readable;
   - `Extension/SectionInterface`: the clauses of a section operator through `T 2` read by a layer
     of profiles at `m = 3`; for every lawful literal section operator, capped agreement at every
     cap short at `3` (not only self-visible and short at `3`) is refuted at a collision
     (`SectionInterface.not_isCapAgreeingAt_of_collision`,
     `SectionInterface.not_isCapAgreeingAt_one_seedL`),
     and the tower section meets the clauses with the caps self-visible and short at `3`;
-  - `Extension/TowerProfileScheme`, `Extension/TowerProfileCompletion`: at `m = 3`, the layer of
-    rank-normalized profiles over `T 2` and the canonical field layer at the grade `4`
-    (`TowerProfile.completion`; `StageType.hasApexCoatomExtensions_of_le_three`);
-  - `Extension/UpperDecoderAt`: the upper decoder with the cap grade a parameter `K`, with
-    `Label.min_upperDecoderAt_comp_eq` (capped agreement through any construction on the codes);
+  - `Extension/TowerProfileScheme`, `Extension/TowerProfileCompletion`: the first instance, at
+    `m = 3`, of the levels below, kept as a test (`TowerProfile.completion`;
+    `StageType.hasApexCoatomExtensions_of_le_three`); the completion at every arity, `m = 3`
+    included, does not go through them;
   - `Extension/ProfileTower`: the levels at every arity (`ProfileTower.lvl`), the invariant
     `ProfileTower.Lvl.Good` and its preservation (`ProfileTower.Lvl.Good.next`);
   - `Extension/ProfileTowerCompletion`: the canonical field layer at the top grade over the level
@@ -4136,7 +4159,7 @@ ones split):
   - `Extension/ProfileTowerExamples`: the tests at `seedL` and at a seed on six points;
   - `MainTheorem/CoatomExtensionTheorem`: the consequences with hypothesis 8 discharged
     (`StageType.hasCoatomExtensions`, `StageType.exists_pinned_extension_of_isSuccPrelimit`,
-    `forcingDonors_of_blockStage`, `MainTheorem.capToModel`,
+    `forcingDonors_blockStage`, `MainTheorem.capToModel`,
     `MainTheorem.hasNonemptyLosses_of_nextBlockUniqueness`, `exists_sameLevelMaximal_covers'`,
     `ContinuationCriterion.of_stableCappedReceiving'`); the four-hypothesis form is in
     `MainTheorem/Composition`.
@@ -4309,8 +4332,11 @@ compatible with the faces over legal `t'` and `d` has a prescribed extension.  I
   still need finitely many fixed rows serving every lawful labelling, rows lawful on all of the
   extension (including the cells that are neither known cells nor the cell itself), and legality
   of the extension at every graded face.
-- `StageType.HasCompatibleEmptyPrescription α`: open; implied by the coatom extension property.
-- The coatom extension property (`StageType.HasCoatomExtensions α`): still to be proved, unchanged.
+- `StageType.HasCompatibleEmptyPrescription α`: implied by the coatom extension property
+(`StageType.HasCoatomExtensions.hasCompatibleEmptyPrescription`), so compiled in this repository
+(theorem named) at every stage that is zero or a limit (`StageType.hasCompatibleEmptyPrescription`).
+- The coatom extension property (`StageType.HasCoatomExtensions α`): compiled in this repository
+(theorem named) at every stage that is zero or a limit (`StageType.hasCoatomExtensions`).
 - Block-tight saturations ((R1), per block): undecided, unchanged.  The arrow from the core is
   vacuous at `CoupledGatedExtensionCounterexample.P α` for every `α > 1` (argued; item 5), so the
   core gives nothing here.

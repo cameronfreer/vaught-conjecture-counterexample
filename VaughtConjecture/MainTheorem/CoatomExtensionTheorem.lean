@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Extension.ForcingDonorsCoatom
+import VaughtConjecture.Extension.PrescribedFullRows
 import VaughtConjecture.Extension.ProfileTowerCompletion
+import VaughtConjecture.MainTheorem.AllCarriers
 import VaughtConjecture.MainTheorem.LowerBound
 import VaughtConjecture.MainTheorem.SameLevelMaximal
 
@@ -23,11 +25,13 @@ this repository (theorem named), with the hypotheses listed:
 * at every block stage `λ_η = ω + ω · η`, the coatom extension property with apex
   (`StageType.hasApexCoatomExtensions_blockStage`), and at every stage that is zero or a limit the
   plain coatom extension property (`StageType.hasCoatomExtensions`) and the exact pinned extension
-  (`StageType.exists_pinned_extension_of_isSuccPrelimit`; row 6 of the table of Layer 3, 3.4);
+  (`StageType.exists_pinned_extension_of_isSuccPrelimit`; row 6 of the table of Layer 3, 3.4),
+  and the compatibility of the empty prescription (`StageType.hasCompatibleEmptyPrescription`);
   no hypothesis besides the stage;
-* forcing donors at every block index (`forcingDonors_of_blockStage`); no hypothesis;
+* forcing donors at every block index (`forcingDonors_blockStage`); no hypothesis;
 * the cap-to-model theorem at `ω`, for the realizations on the carriers of every universe
-  (`MainTheorem.capToModel`); no hypothesis;
+  (`MainTheorem.capToModel`), and the absence of finite models of the density sentence
+  (`MainTheorem.infinite_of_realize_densitySentence`); no hypothesis;
 * nonempty losses of the expansion domains of the density sentence (condition 4), from next-block
   uniqueness alone (`MainTheorem.hasNonemptyLosses_of_nextBlockUniqueness`);
 * acceptance lemma 1, the same-level maximal realization at every countable block index
@@ -72,9 +76,15 @@ theorem StageType.exists_pinned_extension_of_isSuccPrelimit {α : Ordinal.{u}} {
       restrictFace (extendByLast f) Q = some d :=
   exists_pinned_extension (hasCoatomExtensions hα) hP hPf hd hdp
 
+/-- **The empty prescription is compatible at every stage that is zero or a limit**
+(`StageType.HasCoatomExtensions.hasCompatibleEmptyPrescription`). -/
+theorem StageType.hasCompatibleEmptyPrescription {α : Ordinal.{u}} (hα : Order.IsSuccPrelimit α) :
+    HasCompatibleEmptyPrescription.{u} α :=
+  (hasCoatomExtensions hα).hasCompatibleEmptyPrescription
+
 /-- **Forcing donors at every block index** (`forcingDonors_of_hasApexCoatomExtensions`, at the
 next block stage). -/
-theorem forcingDonors_of_blockStage (η : Ordinal.{u}) : ForcingDonors.{u} η :=
+theorem forcingDonors_blockStage (η : Ordinal.{u}) : ForcingDonors.{u} η :=
   forcingDonors_of_hasApexCoatomExtensions (StageType.hasApexCoatomExtensions_blockStage (η + 1))
 
 /-- **The continuation criterion from (R4) alone**
@@ -108,7 +118,7 @@ theorem exists_sameLevelMaximal_covers' {β : Ordinal.{0}} (hβ : β < ω₁)
       H.ExactReceivingWithin (fun m ↦ {D : StageType.{0} (blockStage β) m | D.IsLegal}) ∧
       H.IsCoverHollow ∧ H.IsTerminalAt β :=
   exists_sameLevelMaximal_covers hβ (StageType.hasApexCoatomExtensions_blockStage β)
-    (forcingDonors_of_blockStage β) X hp a
+    (forcingDonors_blockStage β) X hp a
 
 namespace MainTheorem
 
@@ -119,6 +129,14 @@ open Expansion
 theorem capToModel : CapToModel.{w} :=
   CapToModel.of_hasApexCoatomExtensions
     (hasApexCoatomExtensions Ordinal.isSuccLimit_omega0.isSuccPrelimit)
+
+/-- **The density sentence has no finite models**, on the carriers of every universe
+(`MainTheorem.infinite_of_realize_densitySentence_of_hasCoatomExtensions`, with the coatom extension
+property at `ω` compiled); no hypothesis. -/
+theorem infinite_of_realize_densitySentence {M : Type w} [baseLanguage.{u}.Structure M]
+    (h : baseLanguage.densitySentence.Realize M) : Infinite M :=
+  infinite_of_realize_densitySentence_of_hasCoatomExtensions
+    (StageType.hasCoatomExtensions Ordinal.isSuccLimit_omega0.isSuccPrelimit) h
 
 /-- **Nonempty losses of the expansion domains of the density sentence** (condition 4 of the
 reduction), from next-block uniqueness of models (`hnext`) alone

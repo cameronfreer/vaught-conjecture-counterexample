@@ -15,9 +15,9 @@ Roadmap, Layer 3, 3.4 (the cap-to-model theorem); the main theorem's hypothesis 
 The hypothesis `CapToModel.{w}` of the main theorem (a realization at stage `ω`, on a carrier in
 `Type w`, with a nonempty carrier, legal types, exact consistency, covering, and finite-cut
 receiving, is a model) follows from the coatom extension property with apex at `ω`
-(`CapToModel.of_hasApexCoatomExtensions`): it is the cap-to-model theorem at the nonzero limit
-stage `ω` (`Realization.isModel_of_hasFiniteCutReceiving`), whose two nonemptiness hypotheses hold
-at every legal type, uniformity under the plain coatom extension property
+(`CapToModel.of_hasApexCoatomExtensions`): it is the cap-to-model theorem at the nonzero limit stage
+`ω` (`Realization.isModel_of_hasFiniteCutReceiving`), whose two nonemptiness hypotheses hold at
+every legal type, uniformity under the plain coatom extension property
 (`StageType.nonempty_cofaces_inter_uniformityFamily`) and dominance under the form with apex
 (`StageType.nonempty_cofaces_inter_dominanceFamily`).  The coatom extension property with apex at
 `ω` is compiled (`StageType.hasApexCoatomExtensions`), so the cap-to-model theorem holds with no

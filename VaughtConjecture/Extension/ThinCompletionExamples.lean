@@ -13,13 +13,14 @@ the thin completion of `seedL`, `VaughtConjecture.Extension.ThinCompletion`); se
 items 2–4.
 
 * **The coatom extension of `TL` and `T5` with apex** (`exists_coatomExtension_seedL`): at every
-  stage `α`, a legal stage type on five points whose faces along the two coatoms are literally
-  `TL` and `T5`, labels included, with a cell of full scope and full grade carrying the largest
-  label.  It is the completion of the thin completion with the apex added
+  stage `α`, a legal stage type on five points whose faces along the two coatoms are literally `TL`
+  and `T5`, labels included, with a cell of full scope and full grade carrying the largest label.
+  It is the completion of the thin completion with the apex added
   (`CompletionBelowFullGrade.exists_coatomExtension_of_atStage`): the labels of the thin completion
   are `⊥` and `⊤`, which lie at every stage, so no truncation and no hypothesis on the stage is
-  needed.  So `seedL` is not a counterexample to `StageType.HasApexCoatomExtensions` at `m = 3`;
-  the property itself is still to be proved in general.
+  needed.  So `seedL` is not a counterexample to `StageType.HasApexCoatomExtensions` at `m = 3`; the
+  property itself is compiled in this repository (theorem named) in general by another construction
+  (`StageType.hasApexCoatomExtensions`).
 * **The separating cell of the thin completion** (`row_newCell_two_lt`): the row of its only cell
   at `(univ, 2)` reads the cell `({3}, 1)` at `1`, strictly below the cell `({4}, 1)`, read at
   `ω + 1`.  So the thin completion meets the necessary condition of

@@ -9,7 +9,8 @@ import VaughtConjecture.Extension.SectionInterface
 # A layer of rank-normalized profiles over the tower at the grade two
 
 Roadmap, Layer 3, 3.1, (R6), checkpoint 2.7 (the completion below the full grade at `m = 3`; here
-the tower `T 2` with a layer of profiles at the grade `3`, and its capped lifts at the grade `3`).
+the tower `T 2` with a layer of profiles at the grade `3`, and its capped lifts at the grade `3`;
+the first instance of the levels of `VaughtConjecture.Extension.ProfileTower`, kept as a test).
 
 Let `I` be a seed on five points.  The **profile layer over the tower** (`TowerProfile.scheme I`)
 is `T 2 = I.tower 2` followed by one cell of full scope and grade `3` for each profile of the
@@ -31,7 +32,7 @@ cell of a profile `P'` the agreement height of `P` and `P'` in `Label.grid 3 (2 
   `w` lawful below both coatoms at the grade `3` and agreeing with a profile `P` capped at `h` at
   the old cells extends by the field labelling of the orbit code `Q` of its old labels, read by
   their orbit decoder at `h`.  The decoder reads the values of the section of `Q` literally below
-  `h` because they are readable for `Q` (`Label.min_orbitDecoder_eq_of_isReadable`,
+  `h` because they are readable for `Q` (`Label.min_orbitDecoder_eq_of_isReadableAt`,
   `Seed.isReadable_towerSection`); the capped agreement with `P` is that of the sections.  The
   extension depends on the prescription and the cap, as the extension from the boundary allows;
   the rows depend on the profiles only.
@@ -340,7 +341,7 @@ equals `w` at the cells of scope other than the ground set and agrees with the f
 `P` capped at `h` at every cell below `(univ, 3)`.  It is the field labelling of the orbit code
 `Q` of the old labels of `w`, read by their orbit decoder at `h`: lawful by transport, literal at
 the old cells (`Label.orbitDecoder_orbitCode`), and capped at `h` at the other cells because their
-values are readable for `Q` (`Label.min_orbitDecoder_eq_of_isReadable`,
+values are readable for `Q` (`Label.min_orbitDecoder_eq_of_isReadableAt`,
 `Seed.isReadable_towerSection`) and agree with those of `P` capped at `h` (capped agreement of the
 sections, relative room of the orbit code). -/
 theorem exists_extension {P : Profile I} (hP : P ∈ rankCat I 3) {h : Label.{u}}
@@ -376,7 +377,7 @@ theorem exists_extension {P : Profile I} (hP : P ∈ rankCat I 3) {h : Label.{u}
     obtain ⟨z, -⟩ := z
     induction z using Fin.addCases with
     | left e =>
-      rw [min_orbitDecoder_eq_of_isReadable hh hQW (by
+      rw [min_orbitDecoder_eq_of_isReadableAt hh hQW (by
           rw [fieldLab_castAdd]
           exact Seed.isReadable_towerSection (B := gridBound I) orbitCode_orbitCode hQB 2 le_rfl e),
         fieldLab_castAdd, fieldLab_castAdd]
