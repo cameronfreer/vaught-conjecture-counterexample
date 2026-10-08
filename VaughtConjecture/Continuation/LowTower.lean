@@ -61,8 +61,9 @@ coatom from the private one, or the private coatom from the donor one) with the 
 serving profile, that is, the frontier condition of `VaughtConjecture.Continuation.LowExtension`.
 The part at the cap `⊥` holds over every good level
 (`ProfileTower.Lvl.Good.exists_cutLawful_of_coatom`: the trace on the common face lifted into the
-other coatom at `⊥` by bountifulness of the amalgam, and glued), so the only open hypothesis is the LOW step at the positive caps
-(`ProfileTower.Lvl.LowStep`; `ProfileTower.Lvl.Good.cappedLift_lowS_of_lowStep`).
+other coatom at `⊥` by bountifulness of the amalgam, and glued), so the only open hypothesis is
+the LOW step at the positive caps (`ProfileTower.Lvl.LowStep`;
+`ProfileTower.Lvl.Good.cappedLift_lowS_of_lowStep`).
 
 ## Placement
 
