@@ -6,7 +6,7 @@ Authors: Cameron Freer
 import VaughtConjecture.Extension.AdmittedCompletion
 import VaughtConjecture.Extension.AdmittedClassObstruction
 import VaughtConjecture.Extension.CapRequestsCode
-import VaughtConjecture.Extension.CapRequestsExamples
+import VaughtConjecture.Stage.MarkedCap
 
 /-!
 # Cap requests at the top grade: the lift provisions
