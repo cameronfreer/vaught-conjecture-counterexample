@@ -357,11 +357,10 @@ theorem isLawfulBelow_target {e f : Fin (scheme I).card → Label.{u}} {h : Labe
         rw [min_eq_left hel.le] at this
         rw [this]
         unfold raise
-        rw [if_neg (not_le.mpr hel)]
+        simp only [not_le.mpr hel, ↓reduceIte, le_refl]
       · have hge : h ≤ e (embed3 I d) := Label.le_of_min_eq_of_le' this.symm hl
         unfold raise
-        rw [if_pos hge]
-        exact le_top
+        simp only [hge, ↓reduceIte, le_top]
   refine (CellScheme.Rows.isLawfulBelow_iff_forall (w := q)).mpr
     ⟨fun d hd ↦ ?_, fun s hs ↦ ?_, fun s t ht hst hg ↦ ?_⟩
   · by_cases h4 : Fin.last 4 ∈ I.amalgam.toCellScheme.scope d
@@ -423,7 +422,7 @@ theorem isLawfulBelow_target {e f : Fin (scheme I).card → Label.{u}} {h : Labe
       exact hleu
 
 /-- **The fill at the short positive caps from the left coatom, from a refining server.**  Let `r`
-be a marker of grade `4` on the left coatom and `X` a set of cells of grade `1` through the point
+be a cell of the left coatom and `X` a set of cells of grade `1` through the point
 `4`.  Suppose that every labelling `f` lawful below the left coatom and not `⊥` at `r` is `⊥` on
 the common face, takes one value at the cells of grade `2` not `⊥` (that at `t₂`), at most every
 value not `⊥` at the cells of grade `1`, and is `⊥` at the cells of grade `3`.  Then
@@ -435,7 +434,6 @@ built by the lexicographic raise), glued at the grades `2` and `3`
 (`TowerProfile.exists_three_of_one`) and completed at the grade `4`
 (`TowerProfile.exists_isLawfulBelow_four`). -/
 theorem readingFillPos_left_of_refine {r : Fin (scheme I).card}
-    (hgr : (scheme I).toCellScheme.grade r = 4)
     (hrC : r ∈ (scheme I).toCellScheme.below (univ.erase (Fin.last 4), 4))
     {X : Finset (Fin (scheme I).card)}
     (hX : ∀ x ∈ X, ∃ y, embed3 I y = x ∧ Fin.last 4 ∈ I.amalgam.toCellScheme.scope y ∧
@@ -535,7 +533,7 @@ theorem readingFillPos_left_of_refine {r : Fin (scheme I).card}
       unfold raise at hqd ⊢
       split_ifs with hed
       · exact le_top
-      · rw [if_neg hed] at hqd; exact absurd hqd hed
+      · simp only [hed, ↓reduceIte] at hqd
     · simp only [hqdef, h4, ↓reduceIte] at hqd ⊢
       exact hfV _ (hCem d h4) (by
         rw [← CellScheme.gradedIndex_snd, gradedIndex_embed3, CellScheme.gradedIndex_snd]; omega)
@@ -582,8 +580,7 @@ theorem readingFillPos_left_of_refine {r : Fin (scheme I).card}
   rw [hgw _ (.inr hx3), hww₁ _ hgy', hw₁q y hgy.le]
   simp only [hqdef, hPy, ↓reduceIte]
   unfold raise
-  rw [if_pos hey]
-  exact le_top
+  simp only [hey, ↓reduceIte, le_top]
 
 end TowerProfile
 

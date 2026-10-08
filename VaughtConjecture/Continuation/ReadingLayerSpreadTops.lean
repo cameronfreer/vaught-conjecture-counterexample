@@ -384,7 +384,7 @@ theorem exists_coface_of_coatoms {t' tb : StageType.{u} α 4} {p : StageType.{u}
     ∃ D' ∈ t'.cofaces, restrictFace (extendByLast Fin.castSuccEmb) D' = some tb ∧
       ∃ δ : Label.{u}, IsPermittedCutoff α δ ∧
         IsDeterminedWithin (receivingFamily D' δ) t' (g.trans Fin.castSuccEmb) d :=
-  exists_coface_of_legal (I := Seed.ofCoatoms hlt htb.1 hpa htb.2) hL hR.label_eq
+  exists_coface_of_legal (I := Seed.ofCoatoms hlt htb.1 hpa htb.2) hL.apexCell hR.label_eq
     (isLegalBelowFullGrade_readingTop_of_rightTops hL hR) hα hn hd hcover
 
 /-- The apex type of a type on four points legal below the full grade. -/

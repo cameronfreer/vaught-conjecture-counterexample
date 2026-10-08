@@ -677,8 +677,19 @@ theorem grade_newTopsOf_le {Z : Finset (Fin I.right.card)} {x : Fin (scheme I).c
   rw [← CellScheme.gradedIndex_snd, gradedIndex_embed3, CellScheme.gradedIndex_snd]
   exact (StageType.grade_faceCell _ _).trans_le (I.right.grade_le _)
 
-variable {I} {a z₁ z₂ : Fin I.left.card} {m : ℕ} {ι : Fin m ↪ Fin 4}
-  (hL : LeftTie I.left ι a z₁ z₂) {Z : Finset (Fin I.right.card)}
+/-- **An apex cell** of a type on four points: the only cell at `(univ, 4)`, labelled `⊤`. -/
+structure ApexCell {β : Ordinal.{u}} (t' : StageType.{u} β 4) (a : Fin t'.card) : Prop where
+  gradedIndex_apex : t'.toCellScheme.gradedIndex a = (univ, 4)
+  eq_apex : ∀ z, t'.toCellScheme.gradedIndex z = (univ, 4) → z = a
+  label_apex : t'.label a = ⊤
+
+/-- The marker of a tie-keeping marker is an apex cell. -/
+theorem LeftTie.apexCell {β : Ordinal.{u}} {t' : StageType.{u} β 4} {m : ℕ}
+    {ι : Fin m ↪ Fin 4} {a z₁ z₂ : Fin t'.card} (hL : LeftTie t' ι a z₁ z₂) : ApexCell t' a :=
+  ⟨hL.gradedIndex_apex, hL.eq_apex, hL.label_apex⟩
+
+variable {I} {a : Fin I.left.card}
+  (hL : ApexCell I.left a) {Z : Finset (Fin I.right.card)}
   (hZ : ∀ z ∈ Z, I.right.label z = ⊤)
   (hleg : (readingTop I (leftCell I a) (newTopsOf I Z)).IsLegalBelowFullGrade)
 
@@ -824,17 +835,18 @@ theorem exists_coface_of_legal (hn : n ≤ 2)
 
 
 omit hZ hleg in
-include hL hα in
+include hα in
 /-- `TowerProfile.exists_coface_of_legal` with the legality from new tops below one of grade `1`
 (`TowerProfile.isLegalBelowFullGrade_readingTop_of_rightNewTops`). -/
-theorem exists_coface_of_leftTie {x₀ : Fin I.right.card} (hR : RightNewTops I.right Z x₀)
+theorem exists_coface_of_leftTie {z₁ z₂ : Fin I.left.card} {m : ℕ} {ι : Fin m ↪ Fin 4}
+    (hLT : LeftTie I.left ι a z₁ z₂) {x₀ : Fin I.right.card} (hR : RightNewTops I.right Z x₀)
     (hn : n ≤ 2) (hd : restrictFace (extendByLast g) I.right = some d)
     (hcover : ∀ j, Fin.last n ∈ d.toCellScheme.scope j → d.label j = ⊤ → faceCell hd j ∈ Z) :
     ∃ D' ∈ I.left.cofaces, restrictFace (extendByLast Fin.castSuccEmb) D' = some I.right ∧
       ∃ δ : Label.{u}, IsPermittedCutoff α δ ∧
         IsDeterminedWithin (receivingFamily D' δ) I.left (g.trans Fin.castSuccEmb) d :=
-  exists_coface_of_legal hL hR.label_eq (isLegalBelowFullGrade_readingTop_of_rightNewTops hL hR) hα
-    hn hd hcover
+  exists_coface_of_legal hLT.apexCell hR.label_eq
+    (isLegalBelowFullGrade_readingTop_of_rightNewTops hLT hR) hα hn hd hcover
 
 end TowerProfile
 
