@@ -42,17 +42,20 @@ No strong coding of the rows of `S` is used.
 **Completeness at the layer** (`Scheme.exists_gradedIndex_eq_lowLayer`): when `C` is nonempty,
 `(univ, K)` is the graded index of a cell; below it, the graded faces are those of `S`.
 
-**Bountifulness fails for this layer at a lowered donor top**
+**Extension of a whole old section at a lowered donor top**
 (`Scheme.not_isLawfulBelow_lowLayer_of_lowered`, compiled in this repository).  Let every profile
 of `C` be LOW and let `a ∈ C` have donor maximum below a cap `c ≤` its cutoff.  No labelling lawful
 below `(univ, K)` in the layer reads the owner (of grade `K`) and the lost top above `c`, a donor
-top at `c`, the proper donor fields as `a`, and the cell of `a` at least at `c`.  So whenever the
-section `a` with one donor top lowered to `c` is lawful on the old cells (a donor top of grade `K`
-not forced by availability), the capped lift from the old cells to `(univ, K)` at `a` and `c`
-fails, and the LOW layer is not bountiful.  The rows of the controllers of a LOW display therefore
-cannot read the old cells literally at LOW profiles with this catalogue: the controller layer of
-[Kni26, §3.3] reads them through a rendering of the profiles, which this file does not construct.
-Bountifulness of LOW displays is the open part of the construction (`StageType.HasLowLayers`, in
+top at `c`, the proper donor fields as `a`, and the cell of `a` at least at `c`.  So a lawful
+section of all the old cells that keeps the owner and the lost top above `c` and lowers a donor
+top to `c` has no extension through the new cells agreeing with the row of `a` capped at `c`.
+This is a fact about the rows of the layer, for every coding of its values.  It is **not** a
+failure of bountifulness: bountifulness lifts from one graded face `X < (univ, K)`, and no such
+face contains both the owner (grade `K`, scope the private face) and a donor top through the new
+point (its scope is not in the private face), so a lift may choose the owner and the lost top
+itself, at or near the cap.  Whether a lift can always choose them so (for instance by the lowering
+below the owner, `StageType.IsSourceGapContextAt.exists_isLawfulBelow`) is open.  Bountifulness
+of LOW displays is the open part of the construction (`StageType.HasLowLayers`, in
 `VaughtConjecture.MainTheorem.LowDisplayRoute`).
 
 ## Placement
@@ -228,19 +231,19 @@ theorem exists_natAdd_eq_lowLayer {s : Fin (S.lowLayer K G C hS).card}
 
 local notation "𝓛" => Scheme.lowLayer S K G C hS
 
-/-- **A LOW layer is not bountiful at a lowered donor top.**  Let every profile of `C` be LOW
-(for proper donor fields `N`, donor tops `T`, owner `o`, lost top `r` and the cutoff), and let
-`a ∈ C` with donor maximum below a cap `c ≤ a β`.  Then no labelling `p'` lawful below
+/-- **No extension of a whole old section with a lowered donor top.**  Let every profile of `C`
+be LOW (for proper donor fields `N`, donor tops `T`, owner `o`, lost top `r` and the cutoff),
+and let `a ∈ C` with donor maximum below a cap `c ≤ a β`.  Then no labelling `p'` lawful below
 `(univ, K)` in the LOW layer reads the owner (of grade `K`) and the lost top strictly above `c`,
 a donor top `x` at `c`, the proper donor fields as `a`, and the new cell of `a` at least at `c`.
 Availability at the owner gives a new cell `u` read above `c`; locality at `u` reads the old
 cells through the profile `e` of `u`.  If `e` is active, it reads `x` at least at the frontier,
 above `c`; if not, the agreement height of `e` and `a`, read at least at `c`, is either above the
 donor maximum of `a`, where `e` agrees with `a` on the proper donor fields and the cutoff and is
-active, or at most it, where `e` reads a proper donor field at least at `c`.  So the field-row
-design with a catalogue of LOW profiles has no capped lift from the old cells to `(univ, K)` at
-`a`, the cap `c`, and the section `a` with the donor top `x` lowered to `c`, whenever that section
-is lawful on the old cells. -/
+active, or at most it, where `e` reads a proper donor field at least at `c`.  A fact about the rows
+of the layer, for every coding.  It is not a failure of bountifulness: no graded face below
+`(univ, K)` contains both the owner and a donor top through the new point, so a capped lift from
+a graded face may choose the owner and the lost top itself. -/
 theorem not_isLawfulBelow_lowLayer_of_lowered {N : Finset (Fin S.card ⊕ Unit)}
     {T : Set (Fin S.card ⊕ Unit)} {o r x : Fin S.card}
     (hC : ∀ e ∈ C, IsLowAt K N T (Sum.inl o) (Sum.inl r) (Sum.inr ()) e) (hG : ⊥ ∈ G)
