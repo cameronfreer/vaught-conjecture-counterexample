@@ -116,6 +116,16 @@ structure HollowCoatomCutoffDetermination
             ∃ δ : Label.{u}, IsPermittedCutoff α δ ∧
               IsDeterminedWithin (receivingFamily D' δ) t' (g.trans Fin.castSuccEmb) d
 
+/-- **Coatom cutoff determination is antitone in the predicate**: coatom cutoff determination for
+`P` gives it for every predicate `P'` that implies `P`. -/
+theorem CoatomCutoffDetermination.mono
+    {P P' : ∀ {α : Ordinal.{u}} {n k : ℕ}, ℕ → StageType.{u} α k → (Fin n ↪ Fin k) → Prop}
+    (hdet : CoatomCutoffDetermination.{u} P)
+    (hP : ∀ ⦃α : Ordinal.{u}⦄ ⦃K n k : ℕ⦄ (t' : StageType.{u} α k) (h : Fin n ↪ Fin k),
+      P' K t' h → P K t' h) :
+    CoatomCutoffDetermination.{u} P' where
+  exists_coface _ _ _ _ t' g p hα ht' hP' := hdet.exists_coface t' g p hα ht' (hP _ _ hP')
+
 variable {α : Ordinal.{u}} {n k : ℕ}
 
 /-- **A coface of the coatom face through the donor**: at a limit stage, for a legal `t'` with
@@ -148,6 +158,29 @@ theorem CoatomCutoffDetermination.exists_coface_castSucc
   obtain ⟨tb, htb, htbd⟩ := exists_mem_cofaces_restrictFace_eq hα ht' hp ht hd
   obtain ⟨D', hD', -, hrest⟩ := hdet.exists_coface t' g p hα ht' hP hp tb htb d htbd hdK
   exact ⟨D', hD', hrest⟩
+
+/-- **The coatom form after a relabelling**: if, after relabelling the points of `t'` by `σ`, the
+root is `g.trans Fin.castSuccEmb`, `P` holds and the first coatom is a closed face, coatom cutoff
+determination gives the conclusion of cutoff determination over `t'` along the root
+`(g.trans Fin.castSuccEmb).trans σ.toEmbedding`: the castSucc case over `t'.reindex σ`
+(`CoatomCutoffDetermination.exists_coface_castSucc`), relabelled back
+(`StageType.reindex_extendPerm_symm_mem_cofaces`,
+`StageType.IsDeterminedWithin.reindex_extendPerm`). -/
+theorem CoatomCutoffDetermination.exists_coface_reindex
+    {P : ∀ {α : Ordinal.{u}} {n k : ℕ}, ℕ → StageType.{u} α k → (Fin n ↪ Fin k) → Prop}
+    (hdet : CoatomCutoffDetermination.{u} P) {K : ℕ} (hα : Order.IsSuccLimit α)
+    {t' : StageType.{u} α (k + 1)} (ht' : t'.IsLegal) (σ : Equiv.Perm (Fin (k + 1)))
+    {g : Fin n ↪ Fin k} (hP : P K (t'.reindex σ) (g.trans Fin.castSuccEmb))
+    {p : StageType.{u} α k} (hp : restrictFace Fin.castSuccEmb (t'.reindex σ) = some p)
+    {t : StageType.{u} α n}
+    (ht : restrictFace ((g.trans Fin.castSuccEmb).trans σ.toEmbedding) t' = some t)
+    {d : StageType.{u} α (n + 1)} (hd : d ∈ t.cofaces) (hdK : d.topGrade ≤ K) :
+    ∃ D' ∈ t'.cofaces, ∃ δ : Label.{u}, IsPermittedCutoff α δ ∧
+      IsDeterminedWithin (receivingFamily D' δ) t'
+        ((g.trans Fin.castSuccEmb).trans σ.toEmbedding) d := by
+  obtain ⟨D'', hD'', δ, hδ, hdet''⟩ := hdet.exists_coface_castSucc hα (ht'.reindex σ) hP hp
+    (by rwa [restrictFace_reindex]) hd hdK
+  exact ⟨_, reindex_extendPerm_symm_mem_cofaces hD'', δ, hδ, hdet''.reindex_extendPerm⟩
 
 /-- **The hollow coatom form at a root in the first coatom**: the statement of
 `CoatomCutoffDetermination.exists_coface_castSucc` without the bound on the top grade. -/
@@ -212,12 +245,7 @@ theorem CoatomCutoffDetermination.cutoffDetermination
       Function.Embedding.ext fun i ↦ by simp
     have hP' := hinv t' _ σ hP
     rw [hroot] at hP'
-    have ht'' : restrictFace (g.trans Fin.castSuccEmb) (t'.reindex σ) = some t := by
-      rw [restrictFace_reindex]
-      exact ht
-    obtain ⟨D'', hD'', δ, hδ, hdet''⟩ := hdet.exists_coface_castSucc hα (ht'.reindex σ) hP' hp
-      ht'' hd hdK
-    exact ⟨_, reindex_extendPerm_symm_mem_cofaces hD'', δ, hδ, hdet''.reindex_extendPerm⟩
+    exact hdet.exists_coface_reindex hα ht' σ hP' hp ht hd hdK
 
 /-- **Hollow cutoff determination from its coatom form**, under the hypotheses of
 `CoatomCutoffDetermination.cutoffDetermination` on the predicate. -/
