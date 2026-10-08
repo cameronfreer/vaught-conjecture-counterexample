@@ -200,6 +200,67 @@ theorem grade_lt_ladderTower (d : Fin (I.ladderTower H Γ A B' m).S.card) :
     exact ((I.isWellFormed_ladderTower (k := m) (by omega)).isWellFormed.grade_le_card d).trans_lt
       hlt
 
+/-! ### The controllers -/
+
+/-- The cells of the base in the ladder tower at the height `K`. -/
+noncomputable abbrev towerEmb (K : ℕ) :
+    Fin (I.ladderBase H).card → Fin (I.ladderTower H Γ A B' K).S.card :=
+  Scheme.layerTowerEmb (B := I.towerBase H) (C := I.towerCat Γ A) (G := fun k ↦ grid k B') K
+
+/-- **Every cell of full scope of the ladder tower is a ladder controller by construction**: at
+every height `K ≥ k + 1`, a cell of full scope at the grade `k + 2` is the cell of a state `R` of
+the catalogue at `k + 2` whose row reads `R` at every cell of the amalgam of grade at most `k + 2`
+and the positive table of `R`, at the base indices of its rank member, at every ladder point. -/
+theorem exists_controller_ladderTower (hcard : I.amalgam.card ≤ H) (k K : ℕ) (hK : k + 1 ≤ K)
+    (u : Fin (I.ladderTower H Γ A B' K).S.card)
+    (hu : (I.ladderTower H Γ A B' K).S.toCellScheme.gradedIndex u =
+      ((univ : Finset (Fin (m + 2))), k + 2)) :
+    ∃ R ∈ I.towerCat Γ A (k + 2), ∃ hR : I.amalgam.rows.IsLawful R,
+      (∀ d : Fin I.amalgam.card, I.amalgam.toCellScheme.grade d ≤ k + 2 →
+        (I.ladderTower H Γ A B' K).S.rowAt u (I.towerEmb K (Fin.castAdd _ d)) = R d) ∧
+      ∀ p, (I.ladderTower H Γ A B' K).S.rowAt u
+          (I.towerEmb K (Fin.natAdd _ (Scheme.ladderEquiv _ _ H p))) =
+        posTable R (Scheme.baseIndex H (Scheme.rankProf I.amalgam.toScheme H)
+          (Scheme.RankMember.ofLawful I.amalgam.isWellFormed hcard hR)
+          (Fin.natAdd _ (Scheme.ladderEquiv _ _ H p))) := by
+  obtain ⟨R, hRC, hrow⟩ := Scheme.exists_layerTower_controller (B := I.towerBase H)
+    (C := I.towerCat Γ A) (G := fun k ↦ grid k B') k K hK u hu
+  have hRl := (mem_towerCat.mp hRC).2.1
+  refine ⟨R, hRC, hRl, fun d hd ↦ ?_, fun p ↦ ?_⟩
+  · have h := hrow (Fin.castAdd _ d) (by
+      change (I.amalgam.toScheme.appendFullCellsScheme 1 _).grade (Fin.castAdd _ d) ≤ k + 2
+      rw [Scheme.appendFullCellsScheme_grade_castAdd]; exact hd)
+    exact h.trans (stateExt_castAdd hRl hcard d)
+  · have h := hrow (Fin.natAdd _ (Scheme.ladderEquiv _ _ H p)) (by
+      change (I.amalgam.toScheme.appendFullCellsScheme 1 _).grade (Fin.natAdd _ _) ≤ k + 2
+      rw [Scheme.appendFullCellsScheme_grade_natAdd]; omega)
+    exact h.trans
+      (stateExt_of_grade_one hRl hcard _ (Scheme.appendFullCellsScheme_grade_natAdd _ _ _ _))
+
+/-- **The ladder-controller clauses** for the cell of a state `R`: its rungs are read as the
+positive table, the top rung at least every value of `R`, and every positive value of `R` is a
+value of the table at a rung. -/
+theorem ladderController_clauses (hH : 0 < H) (hcard : I.amalgam.card ≤ H)
+    {R : Fin I.amalgam.card → Label.{u}} (hR : I.amalgam.rows.IsLawful R) :
+    (∀ i (hi : i < H), Scheme.baseIndex H (Scheme.rankProf I.amalgam.toScheme H)
+        (Scheme.RankMember.ofLawful I.amalgam.isWellFormed hcard hR)
+        (Fin.natAdd _ (Scheme.ladderEquiv _ _ H
+          (Scheme.RankMember.ofLawful I.amalgam.isWellFormed hcard hR, Sum.inl ⟨i, hi⟩))) =
+        i + 1) ∧
+      (∀ d, R d ≤ posTable R H) ∧
+      ∀ d, R d ≠ ⊥ → ∃ i < H, R d = posTable R (i + 1) := by
+  have hv := I.isSelfVisible_one_of_isLawful hR
+  have hrk (d : Fin I.amalgam.card) : rankVector R d ≤ H :=
+    (rankVector_le d).trans (by simpa using hcard)
+  refine ⟨fun i hi ↦ ?_, fun d ↦ le_posTable hv (hrk d), fun d hd ↦ ?_⟩
+  · have h := Scheme.baseIndex_self (Scheme.rankProf_le _ H)
+      ((Scheme.RankMember.ofLawful I.amalgam.isWellFormed hcard hR, Sum.inl ⟨i, hi⟩) :
+        Scheme.LadderPt I.amalgam.toScheme (Scheme.RankMember I.amalgam.toScheme H) H)
+    simpa [Scheme.ladderCeil] using h
+  · have h0 : rankVector R d ≠ 0 := fun h ↦ hd ((rankVector_eq_zero_iff d).mp h)
+    refine ⟨rankVector R d - 1, by have := hrk d; omega, ?_⟩
+    rw [show rankVector R d - 1 + 1 = rankVector R d by omega, posTable_rankVector hv]
+
 end Seed
 
 end VaughtConjecture
