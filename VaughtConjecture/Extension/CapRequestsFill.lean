@@ -389,3 +389,101 @@ theorem not_isWitness_of_raises {μ : Ordinal.{u}} (hμ : Order.IsSuccPrelimit �
 end CapRequests
 
 end VaughtConjecture
+
+/-! ### The (R4) completion reading the tops -/
+
+namespace VaughtConjecture
+
+open Finset Label ProfileTower CapRequests
+
+/-- **The correct completion reading the tops (R4)**: for a seed on `m + 2 ≥ 4` points and cap
+requests graded by the grades of the amalgam, with
+* the cap of scope the private coatom `univ.erase xp` and grade `N ≥ 3`,
+* the common face carrying no cell of grade at least `N` (`hface`),
+* `T` labelled `⊤` and `Z` labelled `⊥` in the glued labelling, off the private coatom and of grade
+  below `N` (the margin (M3)), and `F` empty,
+* the common face dead, or the donor following the root at every grade `N ≤ k ≤ m + 1` together
+  with the fill at the positive caps there,
+
+some completion below the full grade has every row of full scope at the grades `≥ N` correct.  The
+fills are `CapRequests.capFillBotAt_of_isDeadFace`, `CapRequests.capFillPosAt_of_isDeadFace` and
+`CapRequests.capFillBotAt_of_donorFollowsRoot`; the glued labelling is correct (`⊤` on `T`, `⊥` on
+`Z`), so its code is (`CapRequests.IsCorrect.code`). -/
+theorem Seed.exists_correctCompletion_T {α : Ordinal.{u}} {m : ℕ} (I : Seed.{u} α m) (hm : 2 ≤ m)
+    {r : CapRequests (Fin I.amalgam.card)} (hgr : r.IsGraded I.amalgam.toCellScheme.grade)
+    {xp xd : Fin (m + 2)} (hxp : xp ∈ (Pts : Finset (Fin (m + 2))))
+    (hxd : xd ∈ (Pts : Finset (Fin (m + 2)))) (hne : xd ≠ xp)
+    (hcapC : I.amalgam.toCellScheme.scope r.cap = univ.erase xp)
+    (hN3 : 3 ≤ I.amalgam.toCellScheme.grade r.cap)
+    (hface : ∀ x ∈ (Pts : Finset (Fin (m + 2))), x ≠ xp → ∀ d,
+      I.amalgam.toCellScheme.scope d ⊆ univ.erase xp ∩ univ.erase x →
+      I.amalgam.toCellScheme.grade d < I.amalgam.toCellScheme.grade r.cap)
+    (hT : ∀ y ∈ r.T, I.amalgam.label y = ⊤ ∧
+      ¬ I.amalgam.toCellScheme.scope y ⊆ univ.erase xp ∧
+      I.amalgam.toCellScheme.grade y < I.amalgam.toCellScheme.grade r.cap)
+    (hZ : ∀ z ∈ r.Z, I.amalgam.label z = ⊥ ∧
+      ¬ I.amalgam.toCellScheme.scope z ⊆ univ.erase xp ∧
+      I.amalgam.toCellScheme.grade z < I.amalgam.toCellScheme.grade r.cap)
+    (hF : r.F = ∅)
+    (hfill : IsDeadFace I xp xd ∨ ∀ k, I.amalgam.toCellScheme.grade r.cap ≤ k → k ≤ m + 1 →
+      DonorFollowsRoot r xp xd k ∧ CapFillPosAt r xp k) :
+    ∃ F : CompletionBelowFullGrade I,
+      F.HasAdmittedRows (I.amalgam.toCellScheme.grade r.cap) r.IsCorrect := by
+  have hT' (y) (hy : y ∈ r.T) := (⟨(hT y hy).1, (hT y hy).2.1⟩ :
+    I.amalgam.label y = ⊤ ∧ ¬ I.amalgam.toCellScheme.scope y ⊆ univ.erase xp)
+  have hZ' (z) (hz : z ∈ r.Z) := (⟨(hZ z hz).1, (hZ z hz).2.1⟩ :
+    I.amalgam.label z = ⊥ ∧ ¬ I.amalgam.toCellScheme.scope z ⊆ univ.erase xp)
+  -- The glued labelling and its code are correct.
+  have hglued : r.IsCorrect fun d ↦ I.amalgam.label d :=
+    isCorrect_of_forall (fun z hz ↦ (hZ z hz).1) (fun f hf ↦ by simp [hF] at hf)
+      fun y hy ↦ by rw [(hT y hy).1]; exact le_top
+  have hlab := (hglued.code hgr (m + 1)).hat hgr (m + 1)
+  refine I.exists_correctCompletion hm hgr hxp hcapC hN3 hface (fun k hk hkm ↦ ?_)
+    (fun k hk hkm ↦ ?_) hlab
+  · rcases hfill with hdead | hfol
+    · exact capFillBotAt_of_isDeadFace hgr hxp hxd hne hdead hT' hZ' hF k
+    · exact capFillBotAt_of_donorFollowsRoot hgr (by omega) hxp hxd hne (by omega) hkm hcapC.le
+        (hfol k hk hkm).1 hT' hZ' hF
+  · rcases hfill with hdead | hfol
+    · exact capFillPosAt_of_isDeadFace hgr (by omega) hxp hxd hne hdead (by omega) hkm
+        (fun y hy ↦ ⟨(hT y hy).2.1, (hT y hy).2.2.trans_le hk⟩)
+        (fun z hz ↦ ⟨(hZ z hz).2.1, (hZ z hz).2.2.trans_le hk⟩) hF hcapC.le
+    · exact (hfol k hk hkm).2
+
+/-- **The reading of the tops (R4)**: under the hypotheses of `Seed.exists_correctCompletion_T`,
+some completion below the full grade reads, in every labelling `q` lawful below `(univ, N)` with
+the marker at `λ + i` (`i < N`) at most the cap and the cap at least `λ + R`, every cell of `T`
+above every `γ < λ + R` (`CompletionBelowFullGrade.lt_label_of_hasAdmittedRows`). -/
+theorem Seed.exists_completion_lt_label_T {α : Ordinal.{u}} {m : ℕ} (I : Seed.{u} α m)
+    (hm : 2 ≤ m) {r : CapRequests (Fin I.amalgam.card)}
+    (hgr : r.IsGraded I.amalgam.toCellScheme.grade)
+    {xp xd : Fin (m + 2)} (hxp : xp ∈ (Pts : Finset (Fin (m + 2))))
+    (hxd : xd ∈ (Pts : Finset (Fin (m + 2)))) (hne : xd ≠ xp)
+    (hcapC : I.amalgam.toCellScheme.scope r.cap = univ.erase xp)
+    (hN3 : 3 ≤ I.amalgam.toCellScheme.grade r.cap)
+    (hface : ∀ x ∈ (Pts : Finset (Fin (m + 2))), x ≠ xp → ∀ d,
+      I.amalgam.toCellScheme.scope d ⊆ univ.erase xp ∩ univ.erase x →
+      I.amalgam.toCellScheme.grade d < I.amalgam.toCellScheme.grade r.cap)
+    (hT : ∀ y ∈ r.T, I.amalgam.label y = ⊤ ∧
+      ¬ I.amalgam.toCellScheme.scope y ⊆ univ.erase xp ∧
+      I.amalgam.toCellScheme.grade y < I.amalgam.toCellScheme.grade r.cap)
+    (hZ : ∀ z ∈ r.Z, I.amalgam.label z = ⊥ ∧
+      ¬ I.amalgam.toCellScheme.scope z ⊆ univ.erase xp ∧
+      I.amalgam.toCellScheme.grade z < I.amalgam.toCellScheme.grade r.cap)
+    (hF : r.F = ∅)
+    (hfill : IsDeadFace I xp xd ∨ ∀ k, I.amalgam.toCellScheme.grade r.cap ≤ k → k ≤ m + 1 →
+      DonorFollowsRoot r xp xd k ∧ CapFillPosAt r xp k) :
+    ∃ F : CompletionBelowFullGrade I, ∀ q : Fin F.scheme.card → Label.{u},
+      F.scheme.rows.IsLawfulBelow
+        ((univ : Finset (Fin (m + 2))), I.amalgam.toCellScheme.grade r.cap) (fun z ↦ q z) →
+      ∀ y ∈ r.T, ∀ (lam : Ordinal.{u}), Order.IsSuccPrelimit lam → ∀ i < r.N,
+        q (F.embed r.marker) = ((lam + i : Ordinal.{u}) : Label.{u}) →
+        q (F.embed r.marker) ≤ q (F.embed r.cap) →
+        ((lam + r.R : Ordinal.{u}) : Label.{u}) ≤ q (F.embed r.cap) →
+        ∀ γ : Label.{u}, γ < ((lam + r.R : Ordinal.{u}) : Label.{u}) → γ < q (F.embed y) := by
+  obtain ⟨F, hF'⟩ := I.exists_correctCompletion_T hm hgr hxp hxd hne hcapC hN3 hface hT hZ hF hfill
+  exact ⟨F, fun q hq y hy lam hlam i hi ha hmc hc γ hγ ↦
+    CompletionBelowFullGrade.lt_label_of_hasAdmittedRows hgr hF' hq hy (hT y hy).2.2.le hlam hi ha
+      hmc hc hγ⟩
+
+end VaughtConjecture
