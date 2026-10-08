@@ -47,10 +47,26 @@ grid and makes the orbit code of `W` with that cutoff LOW.  A cap at most a valu
 is in the code grid when it is self-visible and short (`Label.mem_codeGrid_of_le`).
 
 So the LOW step from a coatom asks, beyond these pieces, the lift through the common face into the
-other coatom with the frontier condition: from the donor coatom the private frontier at most the
-cap (`StageType.IsSourceGapContextAt.exists_frontier_le`, open in the case `h < u o ≤ R_K (u r)`
-with an unserved cell); from the private coatom the donor tops at least the prescribed frontier
-(donor raising, open at the tie and at the donor tops determined by the root).
+other coatom with the frontier condition.
+
+* From the donor coatom: the private frontier at most the cap
+  (`StageType.IsSourceGapContextAt.exists_frontier_le`): it holds when the frontier of the lifted
+  private face is already at most the cap, or when availability at the cells read by the owner
+  above the threshold and by the lift above the owner is served by cells read above the threshold
+  (`StageType.IsSourceGapContextAt.exists_lowering'`), in particular when `R_K (u r) < u o`
+  (`StageType.IsSourceGapContextAt.serve_of_lt`).  Open: the case `h < u o ≤ R_K (u r)` with an
+  unserved cell.
+* From the private coatom: the private face, the owner and the lost top included, is prescribed
+  (both are cells of the private coatom), and so are the serving profile and the cap, which come
+  from the ambient section; so neither the lowering of the private frontier nor a choice of anchor
+  avoiding the tie `h = R_K M` is available.  With the gap premise above, donor raising leaves a
+  designated donor top at least the frontier or exactly at the cap, the second only at the tie
+  (`Label.le_or_eq_of_raise`), where the LOW clause asks the frontier at most the cap
+  (`Label.frontier_le_of_min_eq`).  Open: at the tie, a donor face lawful at `K`, literal on the
+  root and agreeing with the serving profile capped at the cap, with every donor top (those
+  determined by the root included) at least the prescribed frontier.  A witness fixing the donor
+  maximum `M` fixes `R_K M`, so no witness image of a capped lift raises a top at the tie; a
+  raising has to read the tops through a row separating them from the proper donor cells.
 
 ## Placement
 
