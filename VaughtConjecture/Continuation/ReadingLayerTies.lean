@@ -37,11 +37,19 @@ itself.
   At the seed with `rightType`, three of the four fills hold: at `⊥` from the left coatom (the
   apex reads the common face as `⊥`) and both fills from the right coatom
   (`TowerProfile.readingFillBot_right_of_unique`, `TowerProfile.readingFillPos_right_of_unique`).
-  **Open**: the fill at the short positive caps from the left coatom.  Below a proper label the
-  given labelling is no longer fixed by the marker capped at its value, and the fill needs a
-  labelling that agrees with it on the left coatom and with the mark capped at the cap elsewhere:
-  a union of the two coatoms capped at the cap, which the profile layer gives only along its own
-  rows (`TowerProfile.extendsFromBoundary_row`).
+  **Open**: the fill at the short positive caps from the left coatom.
+* **That fill outside the band** (`TowerProfile.exists_fillPos_left_of_noBand`,
+  `TowerProfile.readingFillPos_left_of_noBand`, compiled): for a reading mark `e`, a cap `h` at or
+  below `e r` and `f` agreeing with `e` capped at `h`, if `f` has no value in the band `[h, f r)` at
+  the cells of the left coatom of grade at most `3`, the fill exists: the grade-`3` part of `f` is
+  lifted along the mark raised above `h`, capped at `f r`, and completed on the right coatom.  At
+  `seedThree` this decides every case but the band: a labelling `f` with a left cell of grade `1`
+  or `2` (the cells labelled `3`) valued in `[h, f r)`.  There the fill needs a labelling lawful
+  below `(univ, 3)` equal to `f` on the left coatom, at least `f r` on `X`, and agreeing with `e`
+  capped at `h`: a union of the two coatoms at the grade `3` capped at `h` along the arbitrary
+  ambient `e`.  The profile layer gives the union at the cap `⊥`
+  (`TowerProfile.exists_extension_bot`) and at positive caps along its own rows
+  (`TowerProfile.extendsFromBoundary_row`), not along an arbitrary ambient; not decided here.
 
 ## Placement
 
@@ -125,6 +133,138 @@ theorem le_of_row_le_marker {f : Fin (scheme I).card → Label.{u}}
   change min (f y₁) (f r) ≤ min (f y₂) (f r) at h
   rw [min_eq_left hfr] at h
   exact h.trans (min_le_left _ _)
+
+/-! ### The fill at the short caps from the left coatom, outside the band -/
+
+/-- **The fill at the short caps from the left coatom, outside the band.**  Let `e` be a reading
+mark, `h` a short positive cap at or below `e r`, and `f` lawful below the left coatom agreeing
+with `e` capped at `h`.  If `f` has no value in the band `[h, f r)` at the cells of the left
+coatom of grade at most `3`, the fill exists: the given labelling at the grade `3` is lifted to
+`(univ, 3)` along the mark raised above `h` (`Label.raise`), capped at `f r`
+(`TowerProfile.cappedLift_scheme_three`), so the cells of `X` are at least `f r`, and completed on
+the right coatom along the mark (`TowerProfile.exists_isLawfulBelow_four`). -/
+theorem exists_fillPos_left_of_noBand (hgr : (scheme I).toCellScheme.grade r = 4)
+    (hrC : r ∈ (scheme I).toCellScheme.below (univ.erase (Fin.last 4), 4))
+    (hX3 : ∀ x ∈ X, (scheme I).toCellScheme.grade x ≤ 3)
+    {e : Fin (scheme I).card → Label.{u}} (he : e ∈ (scheme I).readingMarks 4 r X)
+    {h : Label.{u}} (hh : IsSelfVisible 4 h) (hhb : ⊥ < h)
+    {f : Fin (scheme I).card → Label.{u}}
+    (hf : (scheme I).rows.IsLawfulBelow (univ.erase (Fin.last 4), 4) fun d ↦ f d)
+    (hfe : ∀ d ∈ (scheme I).toCellScheme.below (univ.erase (Fin.last 4), 4),
+      min (f d) h = min (e d) h) (hre : h ≤ e r)
+    (hband : ∀ d ∈ (scheme I).toCellScheme.below (univ.erase (Fin.last 4), 3),
+      h ≤ f d → f r ≤ f d) :
+    ∃ g : Fin (scheme I).card → Label.{u},
+      (scheme I).rows.IsLawfulBelow (univ, 4) (fun d ↦ g d) ∧
+      (∀ d ∈ (scheme I).toCellScheme.below (univ.erase (Fin.last 4), 4), g d = f d) ∧
+      (∀ d, min (g d) h = min (e d) h) ∧ ∀ x ∈ X, g r ≤ g x := by
+  classical
+  have hel : (scheme I).rows.IsLawful e :=
+    (Scheme.mem_catalogue.mp (Scheme.readingMarks_subset r X he)).1
+  set v := f r with hvdef
+  have hfr : h ≤ v := by
+    have := hfe r hrC
+    rw [min_eq_right hre] at this
+    exact min_eq_right_iff.mp this
+  have hv : IsSelfVisible 4 v := by
+    have := (CellScheme.Rows.isLawfulBelow_iff_forall.mp hf).1 r hrC
+    rwa [hgr] at this
+  -- the mark raised above `h`, below `(univ, 3)`
+  have hq : (scheme I).rows.IsLawfulBelow ((univ : Finset (Fin 5)), 3)
+      fun d ↦ raise h (e d) :=
+    (hel.isLawfulBelow _).map_of_min_eq (hel.isLawfulBelow _) (fun d ↦ d.2.2)
+      (isWitness_raise (K := 3) hh hhb) hhb.ne' fun d ↦ min_raise h (e d)
+  have hfC3 : (scheme I).rows.IsLawfulBelow (univ.erase (Fin.last 4), 3) fun d ↦ f d :=
+    hf.mono (X := (_, 3)) ⟨subset_rfl, by omega⟩
+  -- the lift at the grade `3`, capped at `v`
+  obtain ⟨w₃, hw₃, hw₃q, hw₃f⟩ := (CellScheme.Rows.cappedLift_iff_forall_exists _).mp
+    (cappedLift_scheme_three (I := I) (x := Fin.last 4) (by simp)) v (hv.mono (by omega))
+    (fun d ↦ f d) (fun d ↦ raise h (e d)) hfC3 hq fun d ↦ by
+      change min (raise h (e d)) v = min (f d) v
+      have hfd := hfe d ⟨d.2.1, d.2.2.trans (by omega)⟩
+      by_cases hed : h ≤ e (d : Fin (scheme I).card)
+      · rw [show raise h (e d) = ⊤ from ite_eq_left hed, min_top_left]
+        have hfh : h ≤ f d := by
+          rw [min_eq_right hed] at hfd
+          exact min_eq_right_iff.mp hfd
+        exact (min_eq_right (hband d d.2 hfh)).symm
+      · have hlt := not_le.mp hed
+        rw [show raise h (e d) = e d from ite_eq_right hed]
+        have hfd' : f d = e d := by
+          rw [min_eq_left hlt.le] at hfd
+          rcases le_or_gt h (f d) with hle | hgt
+          · rw [min_eq_right hle] at hfd; exact absurd hfd hlt.ne'
+          · rwa [min_eq_left hgt.le] at hfd
+        rw [hfd']
+  -- the boundary labelling: `f` below the left coatom, the lift elsewhere
+  set w : Fin (scheme I).card → Label.{u} := fun d ↦
+    if d ∈ (scheme I).toCellScheme.below (univ.erase (Fin.last 4), 4) then f d
+    else CellScheme.Rows.extendBot ((univ : Finset (Fin 5)), 3) w₃ d with hw
+  have hw3 (d : Fin (scheme I).card)
+      (hd : d ∈ (scheme I).toCellScheme.below ((univ : Finset (Fin 5)), 3)) :
+      w d = w₃ ⟨d, hd⟩ := by
+    rw [hw]; dsimp only
+    by_cases hdC : d ∈ (scheme I).toCellScheme.below (univ.erase (Fin.last 4), 4)
+    · rw [ite_eq_left hdC]
+      exact (hw₃f ⟨d, hdC.1, hd.2⟩).symm
+    · rw [ite_eq_right hdC, CellScheme.Rows.extendBot_of_mem w₃ hd]
+  have hwU : (scheme I).rows.IsLawfulBelow (univ.erase (Fin.last 4), 4) fun d ↦ w d :=
+    (CellScheme.Rows.isLawfulBelow_congr fun d hd ↦ ite_eq_left hd).mpr hf
+  have hwV : (scheme I).rows.IsLawfulBelow ((univ : Finset (Fin 5)), 3) fun d ↦ w d := by
+    convert hw₃ using 1
+    exact funext fun d ↦ hw3 d d.2
+  obtain ⟨g, hg, hgw, hga⟩ := exists_isLawfulBelow_four (x := Fin.last 4)
+    (y := Fin.castSucc (Fin.last 3)) (by simp) (by simp) (by decide) hwU hwV hel hh
+    fun d hd ↦ by
+      rcases hd with hd | hd
+      · rw [hw]; dsimp only; rw [ite_eq_left hd]; exact hfe d hd
+      · rw [hw3 d hd]
+        have h1 := hw₃q ⟨d, hd⟩
+        change min (w₃ ⟨d, hd⟩) v = min (raise h (e d)) v at h1
+        calc min (w₃ ⟨d, hd⟩) h = min (min (w₃ ⟨d, hd⟩) v) h := by
+              rw [min_assoc, min_eq_right hfr]
+          _ = min (min (raise h (e d)) v) h := by rw [h1]
+          _ = min (raise h (e d)) h := by rw [min_assoc, min_eq_right hfr]
+          _ = min (e d) h := min_raise h (e d)
+  refine ⟨g, hg, fun d hd ↦ (hgw d (.inl hd)).trans (ite_eq_left hd),
+    fun d ↦ hga d (mem_below_univ_four d), fun x hx ↦ ?_⟩
+  have hx3 : x ∈ (scheme I).toCellScheme.below ((univ : Finset (Fin 5)), 3) :=
+    ⟨subset_univ _, hX3 x hx⟩
+  rw [hgw r (.inl hrC), hgw x (.inr hx3), hw3 x hx3, hw]
+  dsimp only
+  rw [ite_eq_left hrC]
+  have h1 := hw₃q ⟨x, hx3⟩
+  change min (w₃ ⟨x, hx3⟩) v = min (raise h (e x)) v at h1
+  rw [show raise h (e x) = ⊤ from ite_eq_left (hre.trans (Scheme.le_of_mem_readingMarks he hx)),
+    min_top_left] at h1
+  exact min_eq_right_iff.mp h1
+
+/-- **The fill at the short caps from the left coatom, when no labelling has a value in the band**:
+if every labelling lawful below the left coatom has, at its cells of grade at most `3`, no value in
+`[h, f r)` for any positive cap `h ≤ f r`, the fill holds (below the cap at the marker by the fill
+of the profile layer, `TowerProfile.reads_of_lt`; at or above it by
+`TowerProfile.exists_fillPos_left_of_noBand`). -/
+theorem readingFillPos_left_of_noBand (hgr : (scheme I).toCellScheme.grade r = 4)
+    (hrC : r ∈ (scheme I).toCellScheme.below (univ.erase (Fin.last 4), 4))
+    (hX3 : ∀ x ∈ X, (scheme I).toCellScheme.grade x ≤ 3)
+    (hnoband : ∀ f : Fin (scheme I).card → Label.{u},
+      (scheme I).rows.IsLawfulBelow (univ.erase (Fin.last 4), 4) (fun d ↦ f d) →
+      ∀ h : Label.{u}, IsSelfVisible 4 h → ⊥ < h → h ≤ f r →
+      ∀ d ∈ (scheme I).toCellScheme.below (univ.erase (Fin.last 4), 3), h ≤ f d → f r ≤ f d) :
+    ReadingFillPos I r X (Fin.last 4) := by
+  intro e he h hh _ hhb f hf hfe
+  have hel : (scheme I).rows.IsLawful e :=
+    (Scheme.mem_catalogue.mp (Scheme.readingMarks_subset r X he)).1
+  by_cases hre : h ≤ e r
+  · have hfr : h ≤ f r := by
+      have := hfe r hrC
+      rw [min_eq_right hre] at this
+      exact min_eq_right_iff.mp this
+    exact exists_fillPos_left_of_noBand hgr hrC hX3 he hh hhb hf hfe hre
+      (hnoband f hf h hh hhb hfr)
+  · obtain ⟨g, hg, hgf, hga⟩ := exists_fill_four (x := Fin.last 4)
+      (y := Fin.castSucc (Fin.last 3)) (by simp) (by simp) (by decide) hf hel hh hfe
+    exact ⟨g, hg, hgf, hga, reads_of_lt he (not_le.mp hre) hga⟩
 
 /-! ### Gluing the two coatoms at the grade `4` -/
 
