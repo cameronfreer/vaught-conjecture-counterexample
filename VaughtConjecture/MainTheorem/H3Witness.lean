@@ -354,9 +354,9 @@ def RootLowBound (f : Prof (seed ht' hp htb)) : Prop :=
 prescription `f` lawful below the private coatom at a grade from the grade of the cap, not `⊥` at
 the cap and at the marker, and not `⊥` at the root cells not labelled `⊥`, has a witness at the
 root at its root cap (`H3.rootCap`), provided the lower bound at the root (`H3.RootLowBound`, a
-named condition: a finite ordinal root label, or `f ≥ n + 1` at the ordinal root cells): the
-witness of `Label.exists_witness_of_reading` for the bounded reading of the label of `t'` at
-the cap and the shifter of the locality of `f` at the cap, capped at the root cap; the root cells labelled `⊤` read at least the root cap by the marker inequality,
+named condition).  The witness is that of `Label.exists_witness_of_reading` for the bounded
+reading of the label of `t'` at the cap and the shifter of the locality of `f` at the cap, capped
+at the root cap; the root cells labelled `⊤` read at least the root cap by the marker inequality,
 those labelled `⊥` are `⊥` by the root bottoms. -/
 theorem rootWitness_of_locality {c r : Fin t'.card}
     (hctx : t'.IsMarkedCapContextAt (g.trans Fin.castSuccEmb) c r)
