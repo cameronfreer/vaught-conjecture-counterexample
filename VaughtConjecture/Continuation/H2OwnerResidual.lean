@@ -8,7 +8,22 @@ import VaughtConjecture.Continuation.H2OwnerGeneral
 /-!
 # The residual of owner lowering below the designated tops at grade `2` (work file)
 
-WORK FILE (branch `research/work-owner-general`).
+WORK FILE (branch `research/work-owner-general`).  No `sorry`.
+
+General-arity owner lowering below the designated tops (`H2.ownerLoweringBelow_of_topsAtLeastGrade`)
+assumes the named condition `H2.TopsAtLeastGrade`; two-point owner lowering is unconditional
+(`H2.ownerLoweringBelowAt_one`).  This file treats the residual of the named condition at grade
+`2`: a designated top `t` with `⊥ < g t < 2` at a cap `⊥` and a low maximum `⊥`.
+
+* **The mechanism** (`H2.eq_bot_of_reading_one_three`): a row reading a cell at `1` and a cell of no
+  smaller grade at `3` transforms the first to `⊥` only if it transforms the second to `⊥`.
+* **The conditional refutation** (`H2.not_ownerLoweringBelow_of_reading`): at a source-gap context
+  of grade `2` with the lost point last, whose owner is alone at its graded index and reads the
+  lost top at `1` and a root top of grade `2` at `3`, owner lowering below the designated tops fails
+  for every donor face with such a designated top and a root top value above `⊥`.  A legal context
+  meeting these hypotheses is described in `VaughtConjecture.Continuation.H2OwnerResidualInstance`
+  (argued; its legality is not compiled).  What is refuted is the owner-lowering input of the
+  clause at such a context, not the coatom statement.
 -/
 
 universe u
@@ -20,8 +35,8 @@ open Finset Label StageType FieldAdmission CellScheme
 /-- **A reading at `1` sent to `⊥` sends a reading at `3` to `⊥`**: if a row transforms to `q`,
 reads a cell `d` at `1` and a cell `d'` of grade at least that of `d` at `3`, and `q d = ⊥`, then
 `q d' = ⊥`.  Either the shifter sends `1` to `⊥`, and then (replacement at the threshold `4` with
-value `3`, under the guard `⊥`) it sends `3` to `⊥`; or the suppressor vanishes at the grade of `d`,
-hence at that of `d'`. -/
+value `3`, the shifter being `⊥` at `1`) it sends `3` to `⊥`; or the suppressor vanishes at the
+grade of `d`, hence at that of `d'`. -/
 theorem eq_bot_of_reading_one_three {D : Type*} {grade : D → ℕ} {p q : D → Label.{u}}
     (h : TransformsTo grade p q) {d d' : D} (hd : p d = 1) (hd' : p d' = ((3 : ℕ) : Label.{u}))
     (hg : grade d ≤ grade d') (hq : q d = ⊥) : q d' = ⊥ := by

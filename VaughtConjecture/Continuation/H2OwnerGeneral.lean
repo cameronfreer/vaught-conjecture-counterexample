@@ -45,14 +45,20 @@ the least label above `⊥` self-visible at `K`; it is at most every designated 
 at least `K`.  This holds at `K = 1` (`H2.topsAtLeastGrade_one`) and when the designated tops have
 grade `K` (`H2.topsAtLeastGrade_of_grade`).
 
-**The residual** (argued, not compiled): `h = ⊥`, low maximum `⊥`, and a designated top `t` of grade
-below `K` with `⊥ < g t < K`.  The frontier, self-visible at `K`, must then be `⊥`.  Capping at `⊥`
-fails: if the owner reads the lost top at `μ + j` and a root top at `μ + j'` in the same block
-(`j < K < j'`, so the strict gap `μ + K < μ + j'` holds), a witness sending `μ + j` to
-`⊥` sends `μ + j'` to `⊥` (replacement at a threshold above `j'`), so the lost top at `⊥` forces the
-root top or the owner to `⊥`; when the owner is the only cell of its graded index above that root
-top of grade `K`, availability keeps the owner above `⊥`.  So a context on three points with these
-readings and such a donor would refute owner lowering below the designated tops there.
+The two claims are separate: **two-point owner lowering is unconditional**
+(`H2.ownerLoweringBelowAt_one`); **general-arity owner lowering assumes `H2.TopsAtLeastGradeAt k`**
+(`H2.ownerLoweringBelowAt_of_topsAtLeastGradeAt`).
+
+**The residual** (the conditional refutation is compiled in
+`VaughtConjecture.Continuation.H2OwnerResidual`; the legal instance is argued): `h = ⊥`, low maximum
+`⊥`, and a designated top `t` of grade below `K` with `⊥ < g t < K`.  The frontier, self-visible at
+`K`, must then be `⊥`.  Capping at `⊥` fails: if the owner reads the lost top at `μ + j` and a root
+top at `μ + j'` in the same block (`j < K < j'`, so the strict gap `μ + K < μ + j'` holds), a
+witness sending `μ + j` to `⊥` sends `μ + j'` to `⊥` (replacement at a threshold above `j'`), so the
+lost top at `⊥` forces the root top or the owner to `⊥`; when the owner is the only cell of its
+graded index above that root top of grade `K`, availability keeps the owner above `⊥`.  So a context
+on three points with these readings and such a donor would refute owner lowering below the
+designated tops there.
 -/
 
 universe u
