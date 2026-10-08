@@ -193,7 +193,9 @@ theorem refiningServerOne (I : Seed.{u} α 3) : RefiningServerOne I :=
 `TowerProfile.RefiningServerOne` one grade up, the target on the layer at the grade `1`
 (`I.tower 1`, the amalgam and the cells of graded index `(univ, 1)`), in the profile layer through
 `TowerProfile.oneCell`.  Not proved here: the lexicographic construction does not apply
-(`Scheme.not_separates_of_agree_gridPoint`). -/
+(`Scheme.not_separates_of_agree_gridPoint`).  It holds under separating servers
+(`TowerProfile.refiningServerTwo_of_separating`) and fails at `seedL`
+(`TowerProfile.not_refiningServerTwo_seedL`). -/
 def RefiningServerTwo (I : Seed.{u} α 3) : Prop :=
   ∀ e : Fin (scheme I).card → Label.{u}, (scheme I).rows.IsLawfulBelow (univ, 2) (fun d ↦ e d) →
     ∀ h : Label.{u}, IsSelfVisible 4 h → ⊥ < h → ∀ V : Label.{u}, IsSelfVisible 2 V → h ≤ V →

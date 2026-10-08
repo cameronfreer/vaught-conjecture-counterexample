@@ -375,6 +375,9 @@ theorem exists_frozen_of_entry {i : Fin ((I.tower 1).catalogue 2).card}
     ∃ e : Fin (scheme I).card → Label.{u},
       (scheme I).rows.IsLawfulBelow (univ, 2) (fun d ↦ e d) ∧
       (∀ d, e (oneCell I d) = supportMap ((I.tower 1).catalogueEntry 2 i d)) ∧
+      (∀ j, 4 ≤ e (twoCell I (Fin.natAdd _ j)) → ∀ d,
+        min ((I.tower 1).catalogueEntry 2 j d) (((2 : Ordinal.{u})) : Label.{u}) =
+          min ((I.tower 1).catalogueEntry 2 i d) (((2 : Ordinal.{u})) : Label.{u})) ∧
       (∀ j, 4 ≤ e (twoCell I (Fin.natAdd _ j)) → FrozenServerTwo I e 4 j) ∧
       ¬ SeparatingServerTwo I e 4 := by
   classical
@@ -413,8 +416,10 @@ theorem exists_frozen_of_entry {i : Fin ((I.tower 1).catalogue 2).card}
       exact (hetwo d.1).trans (congrArg supportMap (hrf d).symm)
     rw [heq]
     exact hlaw
-  have hfrozen (j : Fin ((I.tower 1).catalogue 2).card)
-      (hj : 4 ≤ e (twoCell I (Fin.natAdd _ j))) : FrozenServerTwo I e 4 j := by
+  have hagree (j : Fin ((I.tower 1).catalogue 2).card)
+      (hj : 4 ≤ e (twoCell I (Fin.natAdd _ j))) (d : Fin (I.tower 1).card) :
+      min ((I.tower 1).catalogueEntry 2 j d) (((2 : Ordinal.{u})) : Label.{u}) =
+        min (b d) (((2 : Ordinal.{u})) : Label.{u}) := by
     rw [henew] at hj
     set g := agreementHeight ((I.tower 1).fieldGrid 2) b ((I.tower 1).catalogueEntry 2 j)
     have hg0 : g ≠ ⊥ := fun h0 ↦ by
@@ -428,14 +433,17 @@ theorem exists_frozen_of_entry {i : Fin ((I.tower 1).catalogue 2).card}
         have h2 : (((2 : Ordinal.{u})) : Label.{u}) ≤ gridPoint 2 c := by
           simpa [gridPoint] using this
         exact h2.trans_eq hc.symm
-    have h12 := min_eq_min_of_le' (hgag d₁) h2g
+    exact (min_eq_min_of_le' (hgag d) h2g).symm
+  have hfrozen (j : Fin ((I.tower 1).catalogue 2).card)
+      (hj : 4 ≤ e (twoCell I (Fin.natAdd _ j))) : FrozenServerTwo I e 4 j := by
+    have h12 := (hagree j hj d₁).symm
     rw [min_eq_left hb₁2.le] at h12
     refine ⟨d₁, hd₁, ?_, .inl ?_⟩
     · rw [heone, supportMap_of_ne_bot hb₁]
       exact le_top
     · refine not_le.mp fun hle ↦ hb₁2.ne ?_
       rw [h12, min_eq_right hle]
-  exact ⟨e, he, heone, hfrozen, not_separatingServerTwo_of_frozen hfrozen⟩
+  exact ⟨e, he, heone, hagree, hfrozen, not_separatingServerTwo_of_frozen hfrozen⟩
 
 /-- **The state where route (b) fails**: an entry `i` coding a cell of grade at most `2` below `2`
 and not by `⊥`, and a cell of grade `2` not by `⊥`. -/
@@ -450,7 +458,7 @@ def LowEntryTwo (I : Seed.{u} α 3) : Prop :=
 with the cap `4`, and no server separates there. -/
 theorem not_separatingServersTwo_of_lowEntry (hI : LowEntryTwo I) : ¬ SeparatingServersTwo I := by
   obtain ⟨i, ⟨d₁, hd₁, hb₁, hb₁2⟩, z₀, hz₀, hbz⟩ := hI
-  obtain ⟨e, he, heone, -, hns⟩ := exists_frozen_of_entry hd₁ hb₁ hb₁2
+  obtain ⟨e, he, heone, -, -, hns⟩ := exists_frozen_of_entry hd₁ hb₁ hb₁2
   intro hs
   refine hns (hs e he 4 ((isSelfVisible_ofNat 4).mpr le_rfl) (WithBot.bot_lt_coe _) ⟨z₀, hz₀, ?_⟩)
   rw [heone, supportMap_of_ne_bot hbz]
