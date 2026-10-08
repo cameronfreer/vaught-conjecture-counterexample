@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.MainTheorem.H3Witness
+import VaughtConjecture.Extension.SmallArityExamples
 
 /-!
 # The low truncation at the root blocks (work file for `h3`)
@@ -22,6 +23,12 @@ Work file (placement later), for the weakened lower bound at the root (`H3.RootL
   the low reads (`Label.exists_isWitness_interpolation`).
 * **The weakened lower bound at the root from the separation**
   (`H3.rootLowBound'_of_lowBlockSeparated`).
+* **The converse** (`H3.lowBlockSeparated_of_isLawful_lowTruncation`, so
+  `H3.isLawful_lowTruncation_iff`): at a failure of the separation the zero set of a witness of
+  the truncated locality contains the block of the low read, so the truncation is not lawful.
+  The second clause of `H3.RootLowBound'` is exactly the separation.
+* **Legality does not bound the row offsets by the grade** (`H3.exists_isLegal_rowOffset_gt_grade`:
+  a legal one-point scheme whose row reads its cell of grade `1` at `5`).
 * **A witness matching a small prescription is `⊥` below its block**
   (`H3.witness_eq_bot_below_block`): every witness image of `d.label` matching the prescription at
   a cap at least `n + 1`, at a root cell where the prescription is below `n + 1`, is `⊥` below the
@@ -295,6 +302,64 @@ theorem lowBlockSeparated_of_rowOffsets {d : StageType.{u} α (n + 1)}
       rw [this]
     rw [he]
     exact hlw
+
+/-- **The low truncation is lawful only when the rows separate the low labels by blocks.**  At a
+failure `(s, w, e)` of the separation, a witness of the truncated locality at `s` is `⊥` at the
+reading of `w` (the truncation is `⊥` at `w` and not `⊥` at `s`, so the suppressor is not `⊥` at
+the grade of `w`), hence on its block (zero sets of witnesses are closed under the replacements
+and downward), hence at the reading of `e`, while the truncation is not `⊥` at `e` or at `s`. -/
+theorem lowBlockSeparated_of_isLawful_lowTruncation {d : StageType.{u} α (n + 1)}
+    (h : d.rows.IsLawful (lowTruncation t d)) : LowBlockSeparated t d := by
+  intro s w e hs0 hsl h1 h2 h3 hle ⟨N, hN⟩
+  by_contra hne
+  have he0 : d.label e.1 ≠ ⊥ := fun h ↦ hne (.inl h)
+  have hel : ¬ (d.label e.1 ≠ ⊤ ∧ BelowRootBlocks t (d.label e.1)) := fun h ↦ hne (.inr h)
+  obtain ⟨gρ, ρ, hρ, heq⟩ := h.locality s
+  have hts : lowTruncation t d s = d.label s := lowCut_of_not hsl
+  have hte : lowTruncation t d e.1 = d.label e.1 := lowCut_of_not hel
+  have htw : lowTruncation t d w.1 = ⊥ := lowCut_of_low ⟨h2, h3⟩
+  have hsc : s ∈ d.toCellScheme.below (d.toCellScheme.gradedIndex s) :=
+    d.toCellScheme.mem_below_gradedIndex s
+  have hS := heq ⟨s, hsc⟩
+  have hW := heq w
+  have hE := heq e
+  change min (lowTruncation t d s) (lowTruncation t d s) = min (ρ (d.rows.row s ⟨s, hsc⟩))
+    (gρ (d.toCellScheme.grade s)) at hS
+  change min (lowTruncation t d w.1) (lowTruncation t d s) = min (ρ (d.rows.row s w))
+    (gρ (d.toCellScheme.grade w.1)) at hW
+  change min (lowTruncation t d e.1) (lowTruncation t d s) = min (ρ (d.rows.row s e))
+    (gρ (d.toCellScheme.grade e.1)) at hE
+  rw [hts, min_self] at hS
+  have hgs : gρ (d.toCellScheme.grade s) ≠ ⊥ := fun h0 ↦ hs0 (by rw [hS, h0, min_bot_right])
+  have hgw : gρ (d.toCellScheme.grade w.1) ≠ ⊥ := fun h0 ↦
+    hgs (le_bot_iff.mp (h0 ▸ hρ.antitone w.2.2))
+  rw [htw, min_bot_left] at hW
+  have hρw : ρ (d.rows.row s w) = ⊥ := (min_eq_bot.mp hW.symm).resolve_right hgw
+  have hρe : ρ (d.rows.row s e) = ⊥ := le_bot_iff.mp
+    ((hρ.apply_visibilityReplace_eq_bot hρw N le_rfl) ▸ hρ.monotone hN)
+  rw [hte, hts, hρe, min_bot_left] at hE
+  rcases min_eq_bot.mp hE with h' | h'
+  · exact he0 h'
+  · exact hs0 h'
+
+/-- **The low truncation is lawful exactly when the rows separate the low labels by blocks.** -/
+theorem isLawful_lowTruncation_iff {d : StageType.{u} α (n + 1)} :
+    d.rows.IsLawful (lowTruncation t d) ↔ LowBlockSeparated t d :=
+  ⟨lowBlockSeparated_of_isLawful_lowTruncation, isLawful_lowTruncation⟩
+
+/-- **Legality does not bound the row offsets by the grade**: the one-point scheme with one cell
+of grade `1` whose row reads it at `5` is legal (`SmallArityExamples.isLegal_onePointScheme`). -/
+theorem exists_isLegal_rowOffset_gt_grade :
+    ∃ S : Scheme.{u} 1, S.IsLegal ∧ ∃ (s : Fin S.card)
+      (w : S.toCellScheme.below (S.toCellScheme.gradedIndex s)),
+        S.rows.row s w = ((5 : ℕ) : Label.{u}) ∧ S.toCellScheme.grade s + 1 < 5 := by
+  refine ⟨SmallArityExamples.onePointScheme 1 fun _ ↦ ((5 : ℕ) : Label.{u}),
+    SmallArityExamples.isLegal_onePointScheme one_pos (fun _ _ _ ↦ le_rfl) (fun _ ↦ ?_)
+      (fun _ ↦ ?_), ⟨0, one_pos⟩, ⟨⟨0, one_pos⟩, CellScheme.mem_below_gradedIndex _ _⟩, rfl, ?_⟩
+  · exact lt_omega0_sq_iff.mpr (.inr ⟨0, 5, by simp⟩)
+  · exact (isSelfVisible_natCast 5).mpr (by omega)
+  · change 1 + 1 < 5
+    omega
 
 /-- **The weakened lower bound at the root from the separation by blocks**
 (`H3.isLawful_lowTruncation`). -/

@@ -91,9 +91,19 @@ def TopBandGap : Prop :=
         (requests ht' hp htb htbd c r (by have := hctx.2.2.1; omega)) (Fin.last (k + 1))
         (Fin.castSucc (Fin.last k)) k
 
-/-- **The band at the contexts with the cap at the top grade** (a named hypothesis): over every
-coface `tb` of the coatom face with face `d`, the band of the requests at the top cut grade
-(`CapRequests.CapFillPosBandAt` at `k + 1`). -/
+/-- **The band at the contexts with the cap at the top grade** (a named hypothesis).  Quantifier
+order: for every context (a legal `t'` on `k + 1` points with coatom face `p`, root face `t` along
+`g`, and a marked cap `c` with marker `r` at the top grade, `k < grade c`), then for every coface
+`tb` of `p` with face `d` along `extendByLast g`, then for every datum of the band at the top cut
+grade `k + 1` (a cap `h ≠ ⊥`, self-visible at `k + 1` and short, a cut-lawful profile `P` with
+correct requests, and a prescription `f` lawful below the private coatom, agreeing with `P` capped
+at `h`, with `h < f cap`), some cut-lawful `W` extends `f`, agrees with `P` capped at `h`, and has
+correct requests (`CapRequests.CapFillPosBandAt` at `k + 1`).  The route uses it at the gluing
+coface only; from it one completion of the seed is built (`H3.exists_classCompletion_of_fills₀`)
+before the members of the receiving family are quantified in the determination.  Exceptional
+case: at a context whose common face has a cell with an ordinal label at least `k + 1`, the gap
+(`H3.TopBandGap`) fails (`H3.not_bandGapBelowAt_of_label`) while the band can hold (the labels of
+the amalgam are a fill there), so the band, not the gap, is the hypothesis. -/
 def TopBand : Prop :=
   ∀ ⦃α : Ordinal.{u}⦄ ⦃n k : ℕ⦄ (t' : StageType.{u} α (k + 1)) (p : StageType.{u} α k)
     (ht' : t'.IsLegal) (hp : restrictFace Fin.castSuccEmb t' = some p)
