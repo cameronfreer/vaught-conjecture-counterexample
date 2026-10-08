@@ -46,27 +46,31 @@ condition when its donor maximum is below `min (P β) h`, the cutoff `min (P β)
 grid and makes the orbit code of `W` with that cutoff LOW.  A cap at most a value of the code grid
 is in the code grid when it is self-visible and short (`Label.mem_codeGrid_of_le`).
 
-So the LOW step from a coatom asks, beyond these pieces, the lift through the common face into the
-other coatom with the frontier condition.
+**The LOW step, assembled** (`ProfileTower.Lvl.Good.lowStep_donor`,
+`ProfileTower.Lvl.Good.lowStep_private`, `ProfileTower.Lvl.Good.cappedLift_lowS_of_unserved_tie`,
+compiled in this repository).  For the LOW designations (owner and lost top the copies of those of
+the private context, donor tops the copies of the tops of the donor, proper donor fields the
+copies of the proper cells of the donor of grade at most `K`, all below the donor coatom), the
+LOW step from either coatom, hence the capped lift into the LOW layer at the grade `K`, follows
+from exactly two named open cases:
 
-* From the donor coatom: the private frontier at most the cap
-  (`StageType.IsSourceGapContextAt.exists_frontier_le`): it holds when the frontier of the lifted
-  private face is already at most the cap, or when availability at the cells read by the owner
-  above the threshold and by the lift above the owner is served by cells read above the threshold
-  (`StageType.IsSourceGapContextAt.exists_lowering'`), in particular when `R_K (u r) < u o`
-  (`StageType.IsSourceGapContextAt.serve_of_lt`).  Open: the case `h < u o ≤ R_K (u r)` with an
-  unserved cell.
-* From the private coatom: the private face, the owner and the lost top included, is prescribed
-  (both are cells of the private coatom), and so are the serving profile and the cap, which come
-  from the ambient section; so neither the lowering of the private frontier nor a choice of anchor
-  avoiding the tie `h = R_K M` is available.  With the gap premise above, donor raising leaves a
-  designated donor top at least the frontier or exactly at the cap, the second only at the tie
-  (`Label.le_or_eq_of_raise`), where the LOW clause asks the frontier at most the cap
-  (`Label.frontier_le_of_min_eq`).  Open: at the tie, a donor face lawful at `K`, literal on the
-  root and agreeing with the serving profile capped at the cap, with every donor top (those
-  determined by the root included) at least the prescribed frontier.  A witness fixing the donor
-  maximum `M` fixes `R_K M`, so no witness image of a capped lift raises a top at the tie; a
-  raising has to read the tops through a row separating them from the proper donor cells.
+* `StageType.LowStepUnserved` (from the donor coatom): a lifted private face with
+  `h < u o ≤ R_K (u r)` and a cell read by the owner above the threshold and by the lift above the
+  owner, served only by cells read at most the threshold.  Otherwise the lift through the common
+  face (bountifulness of the amalgam), the lowering of the lost top
+  (`StageType.IsSourceGapContextAt.exists_frontier_le_of_unserved`), the gluing on the amalgam
+  and the coded cutoff give the step.
+* `StageType.LowStepTie` (from the private coatom): a donor face reading every donor top off the
+  root at least at the prescribed private frontier `c > h`, at the tie `h = R_K M` or when a donor
+  top is determined by the root.  Otherwise donor raising (`StageType.IsLowFamily.exists_raised`),
+  the root tops (at least `c` by the strict source gaps), the gluing and the coded cutoff give the
+  step; when `c ≤ h` the capped agreement with the serving profile suffices.
+
+From the private coatom the private face, the owner and the lost top included, is prescribed,
+and so are the serving profile and the cap, which come from the ambient section; so neither the
+lowering of the private frontier nor a choice of anchor avoiding the tie is available.  A witness
+fixing the donor maximum `M` fixes `R_K M`, so no witness image of a capped lift raises a top at
+the tie.
 
 ## Placement
 
@@ -562,3 +566,298 @@ theorem IsLowFamily.exists_raised (hF : IsLowFamily K t' tb p o r)
     exact absurd (hWh.trans h4) (not_le.mpr hRK)
 
 end VaughtConjecture.StageType
+
+/-! ### The LOW step from the private coatom -/
+
+namespace VaughtConjecture.ProfileTower
+
+open Finset Label CellScheme
+
+variable {α : Ordinal.{u}} {m : ℕ} {I : Seed.{u} α m} {N : Finset (Fin I.amalgam.card ⊕ Unit)}
+  {T : Set (Fin I.amalgam.card ⊕ Unit)} {o r : Fin I.amalgam.card} {g : ℕ} {L : Lvl I g}
+
+local notation "𝒞" => lowCat I (g + 1) N T o r
+
+/-- **The LOW step from the private coatom, except in the tie case.**  Let the private context be
+a source-gap context of grade `g + 1` with the lost point last, owner `o'` and lost top `r'`
+(copies `o`, `r`), the donor of top grade at most `g + 1`, the donor tops the copies of the tops of
+the donor, the copies of the proper donor cells of grade at most `g + 1` proper donor fields, and
+the proper donor fields cells below the donor coatom.  Given the tie case of the donor face
+(`StageType.LowStepTie`), the LOW step holds from the private coatom.  The trace of the
+prescription on the common face is lifted into the donor coatom capped at the cap; when the
+serving profile is active and the prescribed private frontier `c` is above the cap, the donor face
+is replaced by one reading every donor top off the root at least at `c`
+(`StageType.IsLowFamily.exists_raised`; the root tops are at least `c` by the strict source gaps);
+when `c` is at most the cap, the capped agreement with the serving profile already gives the
+frontier condition; the cutoff is coded by `exists_codedCutoff`. -/
+theorem Lvl.Good.lowStep_private (hL : L.Good) (hgm : g + 1 ≤ m) {o' r' : Fin I.left.card}
+    (hs : I.left.IsSourceGapContextAt (g + 1) Fin.castSuccEmb (Fin.last m) o' r')
+    (htb : I.right.topGrade ≤ g + 1)
+    (hTie : StageType.LowStepTie (g + 1) I.left I.right I.restrictFace_face_left
+      I.restrictFace_face_right o' r')
+    (ho : o = StageType.faceCell I.restrictFace_left o')
+    (hr : r = StageType.faceCell I.restrictFace_left r')
+    (hNQ : ∀ f ∈ N, ∃ d, f = Sum.inl d ∧ d ∈ I.amalgam.toCellScheme.below (coatD, g + 1))
+    (hTR : ∀ f ∈ T, ∃ t, I.right.label t = ⊤ ∧
+      f = Sum.inl (StageType.faceCell I.restrictFace_right t))
+    (hTtop : ∀ t, I.right.label t = ⊤ →
+      Sum.inl (StageType.faceCell I.restrictFace_right t) ∈ T)
+    (hLoN : ∀ t, I.right.label t ≠ ⊤ → I.right.toCellScheme.grade t ≤ g + 1 →
+      Sum.inl (StageType.faceCell I.restrictFace_right t) ∈ N) :
+    L.LowStep N T o r (Fin.last (m + 1)) := by
+  classical
+  intro P hP h hh hsh hb w hw hwP
+  obtain ⟨hPB, ⟨hPC, hPD⟩, hPo, hPlow⟩ := mem_lowCat.mp hP
+  have hNinr : Sum.inr () ∉ N := fun hf ↦ by obtain ⟨d, hd, -⟩ := hNQ _ hf; cases hd
+  have hTinr : Sum.inr () ∉ T := fun hf ↦ by obtain ⟨d, -, hd⟩ := hTR _ hf; cases hd
+  have hxP : Fin.last (m + 1) ∈ (Pts : Finset (Fin (m + 2))) := by simp
+  have hyP : Fin.castSucc (Fin.last m) ∈ (Pts : Finset (Fin (m + 2))) := by simp
+  have hxy : Fin.last (m + 1) ≠ Fin.castSucc (Fin.last m) := Seed.last_ne_castSucc
+  obtain ⟨hOf, hOcard⟩ := inter_props (I := I) hxP hyP hxy
+  have hcard (z : Fin (m + 2)) : #(univ.erase z) = m + 1 := Seed.card_erase z
+  set a : Prof I := fun d ↦ w (Fin.castAdd _ (L.embed d)) with ha_def
+  have ha : I.amalgam.rows.IsLawfulBelow (coatC, g + 1) fun d ↦ a d := by
+    have h1 := (L.isLawfulBelow_lowS_iff (C := 𝒞) (fun h' ↦ Seed.ne_univ_erase _
+      (univ_subset_iff.mp h'.1))).mp hw
+    exact (hL.isLawfulBelow_old_iff (X := (coatC, g + 1)) (Seed.ne_univ_erase _)
+      (w := fun e ↦ w (Fin.castAdd _ e))).mp h1
+  have haP (d : Fin I.amalgam.card) (hd : d ∈ I.amalgam.toCellScheme.below (coatC, g + 1)) :
+      min (a d) h = min (P (Sum.inl d)) h := hwP d hd.2 hd.1
+  set O : Finset (Fin (m + 2)) × ℕ := (coatC ∩ coatD, g + 1) with hO
+  have hOV : O ≤ (coatD, g + 1) := ⟨inter_subset_right, le_rfl⟩
+  have hOU : O ≤ (coatC, g + 1) := ⟨inter_subset_left, le_rfl⟩
+  have hlift : I.amalgam.rows.CappedLift hOV := I.isBountiful
+    ⟨hOf, Nat.succ_pos g, show g + 1 ≤ #(coatC ∩ coatD) by rw [hOcard]; omega⟩
+    ⟨I.erase_mem_faces hyP, Nat.succ_pos g, show g + 1 ≤ #(coatD) by rw [hcard]; omega⟩ hOV
+  obtain ⟨q', hq', hq'P, hq'a⟩ := (Rows.cappedLift_iff_forall_exists hOV).mp hlift h hh
+    (fun d ↦ a d) (fun d ↦ P (Sum.inl d)) (ha.mono hOU) hPD
+    fun d ↦ (haP d (I.amalgam.toCellScheme.below_mono hOU d.2)).symm
+  set A : Prof I := fun d ↦
+    if hd : d ∈ I.amalgam.toCellScheme.below (coatC, g + 1) then a d
+    else if hd' : d ∈ I.amalgam.toCellScheme.below (coatD, g + 1) then q' ⟨d, hd'⟩
+    else P (Sum.inl d) with hA
+  have hAC (d : Fin I.amalgam.card) (hd : d ∈ I.amalgam.toCellScheme.below (coatC, g + 1)) :
+      A d = a d := dite_eq_left hd
+  have hAD (d : Fin I.amalgam.card) (hd : d ∈ I.amalgam.toCellScheme.below (coatD, g + 1)) :
+      A d = q' ⟨d, hd⟩ := by
+    by_cases hdC : d ∈ I.amalgam.toCellScheme.below (coatC, g + 1)
+    · rw [hAC d hdC]
+      exact (hq'a ⟨d, ⟨subset_inter hdC.1 hd.1, hdC.2⟩⟩).symm
+    · exact (dite_eq_right hdC).trans (dite_eq_left hd)
+  have hAP (d : Fin I.amalgam.card) : min (A d) h = min (P (Sum.inl d)) h := by
+    by_cases hdC : d ∈ I.amalgam.toCellScheme.below (coatC, g + 1)
+    · rw [hAC d hdC]; exact haP d hdC
+    by_cases hdD : d ∈ I.amalgam.toCellScheme.below (coatD, g + 1)
+    · rw [hAD d hdD]; exact hq'P ⟨d, hdD⟩
+    · have hAd : A d = P (Sum.inl d) := (dite_eq_right hdC).trans (dite_eq_right hdD)
+      rw [hAd]
+  have hAlC : I.amalgam.rows.IsLawfulBelow (coatC, g + 1) fun d ↦ A d :=
+    (Rows.isLawfulBelow_congr fun d hd ↦ (hAC d hd).symm).mp ha
+  have hAlD : I.amalgam.rows.IsLawfulBelow (coatD, g + 1) fun d ↦ A d := by
+    convert hq' using 1
+    funext d
+    exact hAD d.1 d.2
+  have hfinish (W : Prof I) (hWD : I.amalgam.rows.IsLawfulBelow (coatD, g + 1) fun d ↦ W d)
+      (hWC : ∀ d ∈ I.amalgam.toCellScheme.below (coatC, g + 1), W d = A d)
+      (hWP : ∀ d, min (W d) h = min (P (Sum.inl d)) h)
+      (hfr : donorMax N (withCutoff W ⊥) < min (P (Sum.inr ())) h →
+        ∀ x ∈ T, frontier (g + 1) (Sum.inl o) (Sum.inl r) (withCutoff W ⊥) ≤ withCutoff W ⊥ x) :
+      ∃ (W : Prof I) (β : Label.{u}), IsCutLawful I (g + 1) W ∧
+        (∀ d, I.amalgam.toCellScheme.grade d ≤ g + 1 →
+          I.amalgam.toCellScheme.scope d ⊆ univ.erase (Fin.last (m + 1)) →
+            W d = w (Fin.castAdd _ (L.embed d))) ∧
+        (∀ d, min (W d) h = min (P (Sum.inl d)) h) ∧ β ∈ codeGrid (g + 1) (bound I) ∧
+        min β h = min (P (Sum.inr ())) h ∧
+        IsLowAt (g + 1) N T (Sum.inl o) (Sum.inl r) (Sum.inr ())
+          (withCutoff (orbitCode (g + 1) W) β) := by
+    obtain ⟨β, hβB, hβ, hlow⟩ := exists_codedCutoff hP hh hsh hWP hNinr hTinr hfr
+    exact ⟨W, β, ⟨(Rows.isLawfulBelow_congr fun d hd ↦ hWC d hd).mpr hAlC, hWD⟩,
+      fun d hd hds ↦ (hWC d ⟨hds, hd⟩).trans (hAC d ⟨hds, hd⟩), hWP, hβB, hβ, hlow⟩
+  by_cases hact : donorMax N (withCutoff A ⊥) < min (P (Sum.inr ())) h
+  swap
+  · exact hfinish A hAlD (fun _ _ ↦ rfl) hAP fun h' ↦ absurd h' hact
+  have hMh : donorMax N (withCutoff A ⊥) < h := hact.trans_le (min_le_right _ _)
+  have hNP : ∀ f ∈ N, P f = withCutoff A ⊥ f := by
+    intro f hf
+    obtain ⟨e, rfl, -⟩ := hNQ f hf
+    exact eq_of_min_eq_of_lt (hAP e) ((le_donorMax (a := withCutoff A ⊥) hf).trans_lt hMh)
+  have hPact : donorMax N P < P (Sum.inr ()) := by
+    rw [donorMax_congr hNP]
+    exact hact.trans_le (min_le_left _ _)
+  -- the prescribed private frontier
+  set c := frontier (g + 1) (Sum.inl o) (Sum.inl r) (withCutoff A ⊥) with hc_def
+  have hgap : ∀ x ∈ T, min c h ≤ P x := fun x hx ↦
+    min_frontier_le_of_isLowAt hPlow hPact hh (hAP o) (hAP r) x hx
+  by_cases hch : c ≤ h
+  · refine hfinish A hAlD (fun _ _ ↦ rfl) hAP fun _ x hx ↦ ?_
+    obtain ⟨t, -, rfl⟩ := hTR x hx
+    have h1 := hgap _ hx
+    rw [min_eq_left hch] at h1
+    have h2 : min c h ≤ min (A (StageType.faceCell I.restrictFace_right t)) h := by
+      rw [hAP]; exact le_min ((min_le_left _ _).trans h1) (min_le_right _ _)
+    rw [min_eq_left hch] at h2
+    exact h2.trans (min_le_left _ _)
+  have hhc : h < c := _root_.not_le.mp hch
+  -- the donor raising
+  have hF : StageType.IsLowFamily (g + 1) I.left I.right I.face o' r' :=
+    ⟨I.isLegal_left, I.isLegal_right, I.restrictFace_face_left, I.restrictFace_face_right, hs, htb⟩
+  set fcL := StageType.faceCell I.restrictFace_left with hfcL
+  set fcR := StageType.faceCell I.restrictFace_right with hfcR
+  set f : Fin I.left.card → Label.{u} := I.left.toCellScheme.splice (g + 1) (fun _ ↦ ⊥)
+    fun i ↦ A (fcL i) with hf_def
+  set R : Fin I.right.card → Label.{u} := I.right.toCellScheme.splice (g + 1) (fun _ ↦ ⊥)
+    fun j ↦ P (Sum.inl (fcR j)) with hR_def
+  have hf : H2.LawfulAt I.left (g + 1) f := lawfulAt_left hAlC
+  have hR : H2.LawfulAt I.right (g + 1) R := lawfulAt_right (W := amal P) hPD
+  have hfle (i : Fin I.left.card) (hi : I.left.toCellScheme.grade i ≤ g + 1) : f i = A (fcL i) :=
+    CellScheme.splice_of_le hi
+  have hRle (j : Fin I.right.card) (hj : I.right.toCellScheme.grade j ≤ g + 1) :
+      R j = P (Sum.inl (fcR j)) := CellScheme.splice_of_le hj
+  have hroot (x : Fin I.face.card) :
+      fcL (StageType.faceCell I.restrictFace_face_left x) =
+        fcR (StageType.faceCell I.restrictFace_face_right x) :=
+    StageType.faceCell_faceCell I.restrictFace_left I.restrictFace_right
+      I.restrictFace_face_left I.restrictFace_face_right x
+  have hag (x : Fin I.face.card) :
+      min (f (StageType.faceCell I.restrictFace_face_left x)) h =
+        min (R (StageType.faceCell I.restrictFace_face_right x)) h := by
+    have hg : I.left.toCellScheme.grade (StageType.faceCell I.restrictFace_face_left x) =
+        I.right.toCellScheme.grade (StageType.faceCell I.restrictFace_face_right x) := by
+      rw [StageType.grade_faceCell, StageType.grade_faceCell]
+    by_cases hx : I.left.toCellScheme.grade (StageType.faceCell I.restrictFace_face_left x) ≤ g + 1
+    · rw [hfle _ hx, hRle _ (hg ▸ hx), hroot]; exact hAP _
+    · rw [hf_def, hR_def, CellScheme.splice_of_lt (_root_.not_le.mp hx),
+        CellScheme.splice_of_lt (_root_.not_le.mp (hg ▸ hx))]
+  have hgo : I.left.toCellScheme.grade o' ≤ g + 1 := hs.grade_owner.le
+  have hgr : I.left.toCellScheme.grade r' ≤ g + 1 :=
+    hs.topGrade_eq ▸ StageType.grade_le_topGrade hs.label_lost
+  have hcf : c = min (f o') (visibilityReplace (g + 1) (g + 1) (f r')) := by
+    rw [hc_def, hfle o' hgo, hfle r' hgr, ← ho, ← hr]; rfl
+  have htop : ∀ t, I.right.label t = ⊤ → I.right.toCellScheme.grade t ≤ g + 1 →
+      t ∉ I.right.toScheme.visibleCells Fin.castSuccEmb → h ≤ R t := fun t ht hg _ ↦ by
+    rw [hRle t hg]
+    have := hgap _ (hTtop t ht)
+    rwa [min_eq_right hhc.le] at this
+  have hlow : ∀ t, I.right.label t ≠ ⊤ → I.right.toCellScheme.grade t ≤ g + 1 → R t < h :=
+    fun t ht hg ↦ by
+      rw [hRle t hg, hNP _ (hLoN t ht hg)]
+      exact (le_donorMax (a := withCutoff A ⊥) (hLoN t ht hg)).trans_lt hMh
+  obtain ⟨Wt, hWt, hWtr, hWtR, hWtc⟩ :=
+    hF.exists_raised hTie hh hb hhc hR hf hag hlow hcf htop
+  -- glue the raised donor face on the amalgam
+  have he := StageType.comap_toScheme_of_restrictFace I.restrictFace_right
+  have hX : Prod.map (Finset.map (Coatom.right m)) id ((univ : Finset (Fin (m + 1))), g + 1) =
+      (coatD, g + 1) := by
+    rw [Prod.map_apply, Coatom.univ_map_right]; rfl
+  have hinj : Function.Injective fcR := Scheme.faceCell_injective he
+  set wt' : Fin I.right.card → Label.{u} := fun j ↦
+    if I.right.toCellScheme.grade j ≤ g + 1 then Wt j else A (fcR j) with hwt'
+  set W : Prof I := Function.extend fcR wt' A with hW
+  have hWf (j : Fin I.right.card) : W (fcR j) = wt' j := hinj.extend_apply _ _ j
+  have hWle (j : Fin I.right.card) (hj : I.right.toCellScheme.grade j ≤ g + 1) :
+      W (fcR j) = Wt j := (hWf j).trans (ite_eq_left hj)
+  have hWgt (j : Fin I.right.card) (hj : ¬ I.right.toCellScheme.grade j ≤ g + 1) :
+      W (fcR j) = A (fcR j) := (hWf j).trans (ite_eq_right hj)
+  have hWC (d : Fin I.amalgam.card) (hd : d ∈ I.amalgam.toCellScheme.below (coatC, g + 1)) :
+      W d = A d := by
+    by_cases hex : ∃ j, fcR j = d
+    · obtain ⟨j, rfl⟩ := hex
+      have hgj : I.right.toCellScheme.grade j ≤ g + 1 := by
+        have := hd.2
+        rwa [CellScheme.gradedIndex_snd, StageType.grade_faceCell] at this
+      have hlj : Fin.last m ∉ I.right.toCellScheme.scope j := by
+        intro hm
+        have h1 : Fin.last (m + 1) ∈ I.amalgam.toCellScheme.scope (fcR j) := by
+          rw [hfcR, StageType.scope_faceCell]
+          exact mem_map.mpr ⟨Fin.last m, hm, by simp [Coatom.right]⟩
+        have h2 := hd.1 h1
+        simp at h2
+      obtain ⟨x, rfl⟩ := StageType.exists_faceCell_eq_of_last_notMem I.restrictFace_face_right hlj
+      rw [hWle _ hgj, hWtr x, ← hroot]
+      have hgx : I.left.toCellScheme.grade (StageType.faceCell I.restrictFace_face_left x) ≤
+          g + 1 := by
+        rw [StageType.grade_faceCell, ← StageType.grade_faceCell I.restrictFace_face_right]
+        exact hgj
+      exact hfle _ hgx
+    · exact Function.extend_apply' _ _ _ fun ⟨j, hj⟩ ↦ hex ⟨j, hj⟩
+  have hWD : I.amalgam.rows.IsLawfulBelow (coatD, g + 1) fun d ↦ W d := by
+    rw [← hX]
+    refine (Scheme.isLawfulBelow_faceCell_iff he _ W).mp ?_
+    exact (Rows.isLawfulBelow_congr (R := I.right.rows)
+      (X := ((univ : Finset (Fin (m + 1))), g + 1)) (w := fun j ↦ Wt j) (w' := fun j ↦ W (fcR j))
+      fun j hj ↦ (hWle j (show I.right.toCellScheme.grade j ≤ g + 1 from hj.2)).symm).mp hWt.1
+  have hWP (d : Fin I.amalgam.card) : min (W d) h = min (P (Sum.inl d)) h := by
+    by_cases hex : ∃ j, fcR j = d
+    · obtain ⟨j, rfl⟩ := hex
+      by_cases hgj : I.right.toCellScheme.grade j ≤ g + 1
+      · rw [hWle j hgj, hWtR j, hRle j hgj]
+      · rw [hWgt j hgj]; exact hAP _
+    · have hWd : W d = A d := Function.extend_apply' _ _ _ fun ⟨j, hj⟩ ↦ hex ⟨j, hj⟩
+      rw [hWd]; exact hAP d
+  refine hfinish W hWD hWC hWP fun _ x hx ↦ ?_
+  -- the frontier condition: the frontier is the prescribed one, at most every donor top
+  have hob : o ∈ I.amalgam.toCellScheme.below (coatC, g + 1) := by
+    rw [ho, CellScheme.mem_below, CellScheme.gradedIndex, StageType.scope_faceCell,
+      StageType.grade_faceCell]
+    exact ⟨(map_subset_map.mpr (subset_univ _)).trans Coatom.univ_map_left.le, hgo⟩
+  have hrb : r ∈ I.amalgam.toCellScheme.below (coatC, g + 1) := by
+    rw [hr, CellScheme.mem_below, CellScheme.gradedIndex, StageType.scope_faceCell,
+      StageType.grade_faceCell]
+    exact ⟨(map_subset_map.mpr (subset_univ _)).trans Coatom.univ_map_left.le, hgr⟩
+  have hfW : frontier (g + 1) (Sum.inl o) (Sum.inl r) (withCutoff W ⊥) = c := by
+    rw [hc_def]
+    unfold Label.frontier
+    change min (W o) (visibilityReplace (g + 1) (g + 1) (W r)) =
+      min (A o) (visibilityReplace (g + 1) (g + 1) (A r))
+    rw [hWC o hob, hWC r hrb]
+  rw [hfW]
+  obtain ⟨t, ht, rfl⟩ := hTR x hx
+  have hgt : I.right.toCellScheme.grade t ≤ g + 1 :=
+    (StageType.topGrade_le_iff.mp htb) t ht
+  change c ≤ W (fcR t)
+  by_cases hvis : t ∈ I.right.toScheme.visibleCells Fin.castSuccEmb
+  · obtain ⟨y, rfl⟩ := StageType.exists_faceCell_eq I.restrictFace_face_right hvis
+    rw [hWle _ hgt, hWtr y, hcf]
+    have hfo := H2.frontier_le_lawfulAt I.isLegal_left hs hf
+    refine hfo.2 _ ?_ (StageType.last_notMem_scope_faceCell I.restrictFace_face_left y)
+    rw [StageType.label_faceCell, ← StageType.label_faceCell I.restrictFace_face_right]
+    exact ht
+  · rw [hWle _ hgt]
+    exact hWtc t ht hgt hvis
+
+/-- **The capped lift from either coatom into the LOW layer over a good level, from the two
+named cases.**  Under the designations of `ProfileTower.Lvl.Good.lowStep_donor` and
+`ProfileTower.Lvl.Good.lowStep_private`, the unserved case of the private frontier
+(`StageType.LowStepUnserved`) and the tie case of the donor face (`StageType.LowStepTie`) give the
+capped lift from either coatom at the grade `g + 1` into `(univ, g + 1)`
+(`ProfileTower.Lvl.Good.cappedLift_lowS_of_lowStep`). -/
+theorem Lvl.Good.cappedLift_lowS_of_unserved_tie (hL : L.Good) (hgm : g + 1 ≤ m)
+    {o' r' : Fin I.left.card}
+    (hs : I.left.IsSourceGapContextAt (g + 1) Fin.castSuccEmb (Fin.last m) o' r')
+    (htb : I.right.topGrade ≤ g + 1)
+    (hU : StageType.LowStepUnserved (g + 1) I.left (Fin.last m) o' r')
+    (hTie : StageType.LowStepTie (g + 1) I.left I.right I.restrictFace_face_left
+      I.restrictFace_face_right o' r')
+    (ho : o = StageType.faceCell I.restrictFace_left o')
+    (hr : r = StageType.faceCell I.restrictFace_left r')
+    (hNQ : ∀ f ∈ N, ∃ d, f = Sum.inl d ∧ d ∈ I.amalgam.toCellScheme.below (coatD, g + 1))
+    (hTQ : ∀ f ∈ T, ∃ d, f = Sum.inl d ∧ d ∈ I.amalgam.toCellScheme.below (coatD, g + 1))
+    (hNroot : ∀ i, I.left.toCellScheme.grade i ≤ g + 1 →
+      Fin.last m ∉ I.left.toCellScheme.scope i → I.left.label i ≠ ⊤ →
+        Sum.inl (StageType.faceCell I.restrictFace_left i) ∈ N)
+    (hTR : ∀ f ∈ T, ∃ t, I.right.label t = ⊤ ∧
+      f = Sum.inl (StageType.faceCell I.restrictFace_right t))
+    (hTtop : ∀ t, I.right.label t = ⊤ →
+      Sum.inl (StageType.faceCell I.restrictFace_right t) ∈ T)
+    (hLoN : ∀ t, I.right.label t ≠ ⊤ → I.right.toCellScheme.grade t ≤ g + 1 →
+      Sum.inl (StageType.faceCell I.restrictFace_right t) ∈ N)
+    {x : Fin (m + 2)} (hx : x ∈ (Pts : Finset (Fin (m + 2)))) :
+    (L.lowS 𝒞).rows.CappedLift (X := (univ.erase x, g + 1))
+      (Y := ((univ : Finset (Fin (m + 2))), g + 1)) ⟨erase_subset _ _, le_rfl⟩ := by
+  refine hL.cappedLift_lowS_of_lowStep hgm hx ?_
+  rcases Finset.mem_insert.mp hx with rfl | hx'
+  · exact hL.lowStep_private hgm hs htb hTie ho hr hNQ hTR hTtop hLoN
+  · rw [Finset.mem_singleton.mp hx']
+    exact hL.lowStep_donor hgm hs hU ho hr hNQ hTQ hNroot
+
+end VaughtConjecture.ProfileTower
