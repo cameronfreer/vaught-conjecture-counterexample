@@ -76,8 +76,9 @@ theorem densitySentence_hasThinAlephOneSpectrum_of_coatomDeterminations_sourceGa
 `densitySentence_hasThinAlephOneSpectrum_of_coatomDeterminations_sourceGap_markedCap` with (R4)
 asked only at the inputs of the margin calibration (`StageType.GradedCapMarginCalibration`: an
 offset `R < N` above `γ` and a marker in the block of `λ_ξ`).  This (R4) hypothesis is implied
-by the one of the graded cap form (its inputs are among the inputs there), and no converse is
-claimed.  The acquisition of the margin calibration is
+by the one of the graded cap form
+(`StageType.HasCutoffFirstCoatomCompletions.gradedCapMargin`), and no converse is claimed, so this
+theorem implies the graded cap form.  The acquisition of the margin calibration is
 compiled (`Realization.IsModel.acquiresCalibratedContexts_gradedCapMargin`). -/
 theorem densitySentence_hasThinAlephOneSpectrum_of_coatomDeterminations_sourceGap_markedCap_margin
     (h4 : ∀ ξ < ω₁, HasCutoffFirstCoatomCompletions.{0} ξ (GradedCapMarginCalibration.{0} ξ))

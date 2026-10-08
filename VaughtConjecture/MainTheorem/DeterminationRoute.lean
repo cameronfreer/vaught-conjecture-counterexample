@@ -33,9 +33,12 @@ The thin `ℵ₁` spectrum of the density sentence follows from:
 * (R3): for a predicate `P₃` on contexts, hollow acquisition at cover-hollowness at a block stage
   (`Realization.HollowAcquisition`) and hollow cutoff determination
   (`Realization.HollowCutoffDetermination`, open).
-The predicates are parameters.  For (R2) the intended predicate is the source-gap context and for
-(R3) the marked-cap context (`StageType.IsMarkedCapContext`, defined in this repository); their
-acquisitions are not on this branch.
+The predicates are parameters.  For (R2) the intended predicate is the source-gap context
+(`StageType.IsSourceGapContext`) and for (R3) the marked-cap context
+(`StageType.IsMarkedCapContext`); both acquisitions are compiled
+(`Realization.residualAcquisition_isSourceGapContext`,
+`Realization.hollowAcquisition_isMarkedCapContext`), and the instantiated form is
+`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_coatomDeterminations_sourceGap_markedCap`.
 
 **The coatom form**
 (`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_coatomDeterminations`, and at the margin

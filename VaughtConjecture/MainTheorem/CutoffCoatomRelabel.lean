@@ -186,6 +186,15 @@ theorem GradedCapMarginCalibration.reindex {Tp : StageType.{u} (blockStage (ξ +
     exact ⟨μ, n, i, c', hμ, ho', hb'g ▸ hn, hb'g ▸ hi, by rw [hc'g, hb'g]; exact hc,
       hc'l.trans hcl⟩
 
+/-- **First-coatom completions for the graded cap calibration give them for the margin
+calibration**: the inputs of the margin calibration are inputs of the graded cap calibration
+(`StageType.GradedCapMarginCalibration.gradedCapCalibration`). -/
+theorem HasCutoffFirstCoatomCompletions.gradedCapMargin
+    (h : HasCutoffFirstCoatomCompletions ξ (GradedCapCalibration ξ)) :
+    HasCutoffFirstCoatomCompletions ξ (GradedCapMarginCalibration ξ) :=
+  fun _ _ Tp p tb f P hT hp htb hk hP D hD htbD γ hγ hC ↦
+    h Tp p tb f P hT hp htb hk hP D hD htbD γ hγ hC.gradedCapCalibration
+
 /-- **Cutoff stable recovery for the margin calibration from first-coatom completions**: the
 margin calibration is invariant under relabelling and forces a private point. -/
 theorem HasCutoffFirstCoatomCompletions.hasCutoffStableRecoverySchemes_gradedCapMargin
