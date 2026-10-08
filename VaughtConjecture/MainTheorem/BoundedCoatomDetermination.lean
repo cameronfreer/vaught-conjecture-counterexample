@@ -18,10 +18,12 @@ when `Q₀` is), of top grade at most `K`, and with every face of `Q₀` of top 
 face along the same embedding, literally.  It is `Q₀` capped above `K` (`StageType.capAbove`, in
 `VaughtConjecture.Stage.CapGrade`) at a cap above every label of `Q₀` other than `⊤`
 (`StageType.exists_cap_ne_top`): the cells of grade above `K` form an upper set and availability
-relates cells of equal grades, so the capped section is lawful by [Kni26, Lemma 2.5.8] with no side
-condition; the labels other than `⊤` are kept, and the cells labelled `⊤` of the capped type are
-those of `Q₀` of grade at most `K` (`StageType.capAbove_label_eq_top_iff`).  Nothing about the
-coding of the rows is used: the scheme is not changed.
+relates cells of equal grades, so the capped section is lawful by [Kni26, Lemma 2.5.8] with no
+availability condition (the cap premises `c < α` and self-visibility of `c` at the arity remain, and
+`StageType.exists_cap_ne_top` gives them at a limit stage); the labels other than `⊤` are kept, and
+the cells labelled `⊤` of the capped type are those of `Q₀` of grade at most `K`
+(`StageType.capAbove_label_eq_top_iff`).  Nothing about the coding of the rows is used: the scheme
+is not changed.
 
 **The bounded pinned extension** (`StageType.exists_pinned_extension_topGrade_le`).  At a limit
 stage, for a legal `P` of top grade at most `K`, a closed face `f` of `P` with restriction `p`,
@@ -50,7 +52,7 @@ determination follows by relabelling as for the coatom form
 **Source-gap contexts.**  A source-gap context of grade `K` has top grade `K`
 (`StageType.IsSourceGapContext.topGrade_eq`, in `VaughtConjecture.Continuation.SourceGapContext`),
 so its coatom face has top grade at most `K`
-(`StageType.IsSourceGapContextLast.topGrade_le_of_restrictFace`).  Hence:
+(`StageType.IsSourceGapContext.topGrade_le_of_restrictFace`).  Hence:
 * the bounded coatom form with the lost point last gives cutoff determination with the coatom off
   the lost point closed
   (`Realization.BoundedCoatomCutoffDetermination.cutoffDetermination_isSourceGapContextOff`, by the
@@ -151,11 +153,12 @@ theorem exists_mem_cofaces_restrictFace_eq_topGrade_le (hα : Order.IsSuccLimit 
 `CoatomCutoffDetermination` with the coface `tb` of the coatom face of top grade at most `K`.  At
 a limit stage, over every legal `t'` on `k + 1` points with `P K t' (g.trans Fin.castSuccEmb)` and
 face `p` along `Fin.castSuccEmb`, for every legal coface `tb` of `p` of top grade at most `K` whose
-face along `g` followed by the new point is a donor `d` of top grade at most `K`, some coface `D'`
+face along `g` followed by the new point is a donor `d` (of top grade at most `K`, as a face of
+`tb`, `StageType.topGrade_le_of_restrictFace`), some coface `D'`
 of `t'` with face `tb` along `extendByLast Fin.castSuccEmb` and some permitted cutoff `δ`
 determine `d` over `t'` along `g.trans Fin.castSuccEmb` within the receiving family of `D'` at
 `δ`.  The order of the quantifiers: the context `t'`, the root `g` and the coatom face `p` first;
-then the coface `tb` with its bound; then the donor `d` with its bound; and only then the coface
+then the coface `tb` with its bound; then the donor `d`; and only then the coface
 `D'` and the cutoff `δ`, which may depend on all of them, and not on any member of the receiving
 family.  Implied by the coatom form (`CoatomCutoffDetermination.boundedCoatom`).  Not proved for
 any `P` here. -/
@@ -169,19 +172,19 @@ structure BoundedCoatomCutoffDetermination
     Order.IsSuccLimit α → t'.IsLegal → P K t' (g.trans Fin.castSuccEmb) →
       restrictFace Fin.castSuccEmb t' = some p → ∀ tb ∈ p.cofaces, tb.topGrade ≤ K →
         ∀ d : StageType.{u} α (n + 1), restrictFace (extendByLast g) tb = some d →
-          d.topGrade ≤ K →
-            ∃ D' ∈ t'.cofaces, restrictFace (extendByLast Fin.castSuccEmb) D' = some tb ∧
-              ∃ δ : Label.{u}, IsPermittedCutoff α δ ∧
-                IsDeterminedWithin (receivingFamily D' δ) t' (g.trans Fin.castSuccEmb) d
+          ∃ D' ∈ t'.cofaces, restrictFace (extendByLast Fin.castSuccEmb) D' = some tb ∧
+            ∃ δ : Label.{u}, IsPermittedCutoff α δ ∧
+              IsDeterminedWithin (receivingFamily D' δ) t' (g.trans Fin.castSuccEmb) d
 
 variable {P : ∀ {α : Ordinal.{u}} {n k : ℕ}, ℕ → StageType.{u} α k → (Fin n ↪ Fin k) → Prop}
 
 /-- **The coatom form implies the bounded coatom form**: forget the cofaces `tb` of top grade
-above `K`. -/
+above `K`; the donor, a face of `tb`, has top grade at most `K`. -/
 theorem CoatomCutoffDetermination.boundedCoatom (hdet : CoatomCutoffDetermination.{u} P) :
     BoundedCoatomCutoffDetermination.{u} P where
-  exists_coface _ _ _ _ t' g p hα ht' hP hp tb htb _ d htbd hdK :=
-    hdet.exists_coface t' g p hα ht' hP hp tb htb d htbd hdK
+  exists_coface _ _ _ _ t' g p hα ht' hP hp tb htb htbK d htbd :=
+    hdet.exists_coface t' g p hα ht' hP hp tb htb d htbd
+      ((topGrade_le_of_restrictFace htbd).trans htbK)
 
 /-- **Cutoff determination at the first coatom from the bounded coatom form**, for a predicate
 `P` whose contexts of grade `K` have top grade at most `K` (`hK`).  For each input of cutoff
@@ -198,7 +201,7 @@ theorem BoundedCoatomCutoffDetermination.firstCoatom
   exists_coface _ _ _ _ t' g p hα ht' hP hp _ ht d hd hdK := by
     obtain ⟨tb, htb, htbd, htbK⟩ := exists_mem_cofaces_restrictFace_eq_topGrade_le hα ht' hp ht hd
       ((topGrade_le_of_restrictFace hp).trans (hK _ _ hP)) hdK
-    obtain ⟨D', hD', -, hrest⟩ := hdet.exists_coface t' g p hα ht' hP hp tb htb htbK d htbd hdK
+    obtain ⟨D', hD', -, hrest⟩ := hdet.exists_coface t' g p hα ht' hP hp tb htb htbK d htbd
     exact ⟨D', hD', hrest⟩
 
 /-- **Cutoff determination from the bounded coatom form**, for a predicate `P` whose contexts of

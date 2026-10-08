@@ -3894,11 +3894,12 @@ Each checkpoint needs both its abstract API and a concrete application:
    but cannot make it closed.
 
    **Bounded pinned extensions and the bounded (R2) form.**  Compiled in this repository (theorem
-   named): capping above a grade, `StageType.capAbove` (`Stage/CapGrade`), lawful with no side
-   condition (the cells of grade above `K` form an upper set, `StageType.lt_grade_upper`, and
-   availability relates cells of equal grades only); its cells labelled `⊤` are those of the type of
-   grade at most `K` (`StageType.capAbove_label_eq_top_iff`), and when the cap lies above every
-   label other than `⊤` every face whose cells labelled `⊤` have grade at most `K` is kept
+   named): capping above a grade, `StageType.capAbove` (`Stage/CapGrade`), lawful with no
+   availability condition (the cells of grade above `K` form an upper set,
+   `StageType.lt_grade_upper`, and availability relates cells of equal grades only; the cap premises
+   `c < α` and self-visibility of `c` at the arity remain); its cells labelled `⊤` are those of the
+   type of grade at most `K` (`StageType.capAbove_label_eq_top_iff`), and when the cap lies above
+   every label other than `⊤` every face whose cells labelled `⊤` have grade at most `K` is kept
    literally, labels above `K` included (`StageType.restrictFace_capAbove`); such a cap exists at a
    limit stage (`StageType.exists_cap_ne_top`).  The bounded pinned extension
    `StageType.exists_pinned_extension_topGrade_le (hα : Order.IsSuccLimit α) (hP : P.IsLegal)`
@@ -3924,8 +3925,9 @@ Each checkpoint needs both its abstract API and a concrete application:
    `(h4 : ∀ ξ < ω₁, HasCutoffFirstCoatomCompletions ξ (GradedCapCalibration ξ))`
    `(h2 : BoundedCoatomCutoffDetermination fun K t' h ↦ t'.IsSourceGapContextLast K h)`
    `(h3 : HollowCoatomCutoffDetermination fun t' h ↦ t'.IsMarkedCapContext h) :`
-   `HasThinAlephOneSpectrum densitySentence`.  The bounded (R2) form for source-gap contexts remains
-   open; no (R2) closure is claimed.
+   `HasThinAlephOneSpectrum densitySentence`.  The bounded (R2) form for `IsSourceGapContextLast`
+   (and for `IsSourceGapContext`) is not proved: the bounded receiving hypothesis remains open; no
+   (R2) closure is claimed.
 
 7. Acceptance lemma 1 (same-level maximal realization; `README.md`, "Reduction to full
    presentations"): for a countable `β`, on every countably infinite carrier, a model at
