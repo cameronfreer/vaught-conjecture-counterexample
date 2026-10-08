@@ -29,7 +29,9 @@ along `h` at its tops (`StageType.ReadsEachNewTopAtTops`).  The donor `d'` of th
 arbitrary: it is the output of the exact pinned extension; the reading is asked only for the new
 tops of `d`.  Compiled instances: the coatom `Fin.castSuccEmb` with the donor `d' = t'`, at every
 arity (`StageType.exists_coatomStep_self_succ`,
-`VaughtConjecture.Continuation.SourceGapDoubledTower`); donors other than `t'` are open.
+`VaughtConjecture.Continuation.SourceGapDoubledTower`), and every coatom `f` with the donor
+`d' = t'.reindex σ`, `Fin.castSuccEmb.trans σ = f` (`StageType.exists_coatomStep_self_any`,
+`VaughtConjecture.Continuation.SourceGapCoatomRelabel`); other donors are open.
 
 **The reduction** (`StageType.hasTopReadingPinnedExtensions_of_coatomSteps`, compiled in this
 repository): the coatom extension property and the coatom step at stage `α` give the top-reading
