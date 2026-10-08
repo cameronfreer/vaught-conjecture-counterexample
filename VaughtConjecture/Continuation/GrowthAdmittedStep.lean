@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Continuation.GrowthRequests
+import VaughtConjecture.Extension.OrbitCode
 
 /-!
 # The admitted step of the growth construction: the reads below the cap
@@ -24,6 +25,11 @@ read trivially, the exact read and the marker read because visibility replacemen
 commutes with capping at the cap value, self-visible at the threshold.  So every profile agreeing
 with an admitted one capped above its cap value is admitted, with no condition on the donor
 values above the cap value: **the admitted step holds below the cap value**.
+
+**Invariance under the orbit code** (`StageType.GrowthRequests.Admits.map`,
+`StageType.GrowthRequests.Admits.orbitMap`): the catalogue step asks admission of the orbit code
+of the extension; the orbit map at a grade at least the threshold is monotone, bottom exactly at
+bottom, and commutes with visibility replacement there, so it keeps admission.
 
 **Above the cap value** (`h ≤ c`) the reads of `s` and of `s'` agree only capped at `h`, while the
 requests read the donor below `c`: an exact read `visibilityReplace N i (s ρ)` with a value in
@@ -113,6 +119,47 @@ theorem admits_of_min_eq_of_lt {s s' : Fin t'.card → Label.{u}} {v v' : Fin D.
     exact hA.2.1 hf
   · rw [readMarker, ← hc, hread _ _ hR, hvc, ← hcc]
     exact hA.2.2 hy
+
+/-- **Admission is invariant under a relabelling of the values** by a monotone map that is bottom
+exactly at bottom and commutes with visibility replacement at the threshold with values at most the
+threshold: the reads of the requests are minima and visibility replacements of the values. -/
+theorem Admits.map {s : Fin t'.card → Label.{u}} {v : Fin D.card → Label.{u}}
+    (hadm : Q.Admits s v) {Ψ : Label.{u} → Label.{u}} (hΨ : Monotone Ψ)
+    (hΨb : ∀ x, Ψ x = ⊥ ↔ x = ⊥)
+    (hΨv : ∀ i ≤ Q.threshold, ∀ x, Ψ (visibilityReplace Q.threshold i x) =
+      visibilityReplace Q.threshold i (Ψ x))
+    (hoff : ∀ j ∈ Q.exacts, Q.offset j ≤ Q.threshold) (hR : Q.markerOffset ≤ Q.threshold) :
+    Q.Admits (Ψ ∘ s) (Ψ ∘ v) := by
+  intro hclass hcap j
+  have hA := hadm (fun x hx hx' ↦ hclass x hx ((hΨb _).mpr hx'))
+    (fun h ↦ hcap ((hΨb _).mpr h)) j
+  refine ⟨fun hz ↦ ?_, fun hf ↦ ?_, fun hy ↦ ?_⟩
+  · change min (Ψ (v j)) (Ψ (s Q.cap)) = ⊥
+    rw [← hΨ.map_min, hA.1 hz]
+    exact (hΨb ⊥).mpr rfl
+  · change min (Ψ (v j)) (Ψ (s Q.cap)) =
+      min (visibilityReplace Q.threshold (Q.offset j) (Ψ (s (Q.ref j)))) (Ψ (s Q.cap))
+    have h1 := hA.2.1 hf
+    rw [readExact] at h1
+    rw [← hΨ.map_min, h1, ← hΨv _ (hoff j hf), hΨ.map_min]
+  · change min (visibilityReplace Q.threshold Q.markerOffset (Ψ (s Q.marker))) (Ψ (s Q.cap)) ≤
+      min (Ψ (v j)) (Ψ (s Q.cap))
+    have h1 := hA.2.2 hy
+    rw [readMarker] at h1
+    rw [← hΨv _ hR, ← hΨ.map_min, ← hΨ.map_min]
+    exact hΨ h1
+
+/-- **Admission is invariant under the orbit code** at a grade at least the threshold: the orbit
+map of a labelling is a witness with the step suppressor (`Label.isWitness_orbitMap`), bottom
+exactly at bottom. -/
+theorem Admits.orbitMap {s : Fin t'.card → Label.{u}} {v : Fin D.card → Label.{u}}
+    (hadm : Q.Admits s v) {K : ℕ} (hK : Q.threshold ≤ K) {ι : Type*} [Fintype ι]
+    (w : ι → Label.{u}) (hoff : ∀ j ∈ Q.exacts, Q.offset j ≤ Q.threshold)
+    (hR : Q.markerOffset ≤ Q.threshold) :
+    Q.Admits (orbitMap K w ∘ s) (orbitMap K w ∘ v) :=
+  hadm.map (monotone_orbitMap K w) (fun _ ↦ orbitMap_eq_bot_iff)
+    (fun i hi x ↦ (isWitness_orbitMap K w).visibilityReplace_comm x _
+      (by rw [stepSuppressor_of_le hK]; exact le_top) i hi) hoff hR
 
 end StageType.GrowthRequests
 
