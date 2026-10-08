@@ -661,3 +661,70 @@ theorem Lvl.Good.cappedLift_lowS_of_top (hL : L.Good) (hgm : g + 1 ≤ m)
     hNQ hTQ hNroot hTR hTtop hLoN hx
 
 end VaughtConjecture.ProfileTower
+
+/-! ### The LOW designations of a seed -/
+
+namespace VaughtConjecture.ProfileTower
+
+open Finset Label CellScheme
+
+variable {α : Ordinal.{u}} {m : ℕ} (I : Seed.{u} α m)
+
+open Classical in
+/-- The **proper donor fields** of a seed at the grade `K`: the copies of the cells of the donor
+(the right face) of grade at most `K` not labelled `⊤`. -/
+noncomputable def lowN (K : ℕ) : Finset (Fin I.amalgam.card ⊕ Unit) :=
+  (univ.filter fun t ↦ I.right.label t ≠ ⊤ ∧ I.right.toCellScheme.grade t ≤ K).image
+    fun t ↦ Sum.inl (StageType.faceCell I.restrictFace_right t)
+
+/-- The **donor tops** of a seed: the copies of the cells of the donor labelled `⊤`. -/
+def lowT : Set (Fin I.amalgam.card ⊕ Unit) :=
+  {f | ∃ t, I.right.label t = ⊤ ∧ f = Sum.inl (StageType.faceCell I.restrictFace_right t)}
+
+variable {I}
+
+/-- A copy of a donor cell of grade at most `K` lies below the donor coatom at `K`. -/
+theorem faceCell_right_mem_below {K : ℕ} {t : Fin I.right.card}
+    (ht : I.right.toCellScheme.grade t ≤ K) :
+    StageType.faceCell I.restrictFace_right t ∈ I.amalgam.toCellScheme.below (coatD, K) := by
+  rw [CellScheme.mem_below, CellScheme.gradedIndex, StageType.scope_faceCell,
+    StageType.grade_faceCell]
+  exact ⟨(map_subset_map.mpr (subset_univ _)).trans Coatom.univ_map_right.le, ht⟩
+
+/-- **The capped lift from either coatom into the LOW layer over a good level, for the LOW
+designations of the seed**, when the private context is a source-gap context of grade `g + 1`
+with the lost point last and the donor has top grade `g + 1`, attained: the designation hypotheses
+of `ProfileTower.Lvl.Good.cappedLift_lowS_of_top` hold for `lowN`, `lowT` and the copies of the
+owner and the lost top. -/
+theorem Lvl.Good.cappedLift_lowS_seed {g : ℕ} {L : Lvl I g} (hL : L.Good) (hgm : g + 1 ≤ m)
+    {o' r' : Fin I.left.card}
+    (hs : I.left.IsSourceGapContextAt (g + 1) Fin.castSuccEmb (Fin.last m) o' r')
+    (htb : I.right.topGrade ≤ g + 1) {z : Fin I.right.card} (hz : I.right.label z = ⊤)
+    (hzK : I.right.toCellScheme.grade z = g + 1) {x : Fin (m + 2)}
+    (hx : x ∈ (Pts : Finset (Fin (m + 2)))) :
+    (L.lowS (lowCat I (g + 1) (lowN I (g + 1)) (lowT I)
+      (StageType.faceCell I.restrictFace_left o')
+      (StageType.faceCell I.restrictFace_left r'))).rows.CappedLift
+      (X := (univ.erase x, g + 1)) (Y := ((univ : Finset (Fin (m + 2))), g + 1))
+      ⟨erase_subset _ _, le_rfl⟩ := by
+  classical
+  refine hL.cappedLift_lowS_of_top hgm hs htb hz hzK rfl rfl ?_ ?_ ?_ ?_ ?_ ?_ hx
+  · intro f hf
+    obtain ⟨t, ht, rfl⟩ := mem_image.mp hf
+    exact ⟨_, rfl, faceCell_right_mem_below (mem_filter.mp ht).2.2⟩
+  · rintro f ⟨t, ht, rfl⟩
+    exact ⟨_, rfl, faceCell_right_mem_below (StageType.topGrade_le_iff.mp htb t ht)⟩
+  · intro i hi hl hit
+    obtain ⟨y, rfl⟩ := StageType.exists_faceCell_eq_of_last_notMem I.restrictFace_face_left hl
+    rw [StageType.faceCell_faceCell I.restrictFace_left I.restrictFace_right
+      I.restrictFace_face_left I.restrictFace_face_right y]
+    refine mem_image.mpr ⟨_, mem_filter.mpr ⟨mem_univ _, ?_, ?_⟩, rfl⟩
+    · rw [StageType.label_faceCell, ← StageType.label_faceCell I.restrictFace_face_left y]
+      exact hit
+    · rw [StageType.grade_faceCell, ← StageType.grade_faceCell I.restrictFace_face_left y]
+      exact hi
+  · exact fun f hf ↦ hf
+  · exact fun t ht ↦ ⟨t, ht, rfl⟩
+  · exact fun t ht htK ↦ mem_image.mpr ⟨t, mem_filter.mpr ⟨mem_univ _, ht, htK⟩, rfl⟩
+
+end VaughtConjecture.ProfileTower
