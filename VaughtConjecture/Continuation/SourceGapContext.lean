@@ -78,7 +78,10 @@ point last** (`StageType.IsSourceGapContextLast`) is a source-gap context whose 
 last point; it is the form at which the coatom form of determination is asked in
 `VaughtConjecture.MainTheorem.SourceGapLastRoute`.  Both imply `StageType.IsSourceGapContext`
 (`StageType.IsSourceGapContextOff.isSourceGapContext`,
-`StageType.IsSourceGapContextLast.isSourceGapContext`).
+`StageType.IsSourceGapContextLast.isSourceGapContext`).  A source-gap context of grade `K` has top
+grade `K` (`StageType.IsSourceGapContext.topGrade_eq`), so every face of one, the first coatom in
+particular, has top grade at most `K`
+(`StageType.IsSourceGapContext.topGrade_le_of_restrictFace`).
 
 **Determination is open.**  Cutoff determination for source-gap contexts
 (`Realization.CutoffDetermination`) is not attempted here.  With it and (R1) for every model at
@@ -388,6 +391,24 @@ theorem IsSourceGapContextLast.isSourceGapContext {K : ℕ} {t' : StageType.{u} 
     {h : Fin n ↪ Fin k} (hs : t'.IsSourceGapContextLast K h) : t'.IsSourceGapContext K h :=
   let ⟨l, o, r, _, hs⟩ := hs
   ⟨l, o, r, hs⟩
+
+/-- A source-gap context of grade `K` has top grade `K`. -/
+theorem IsSourceGapContext.topGrade_eq {K : ℕ} {t' : StageType.{u} α k} {h : Fin n ↪ Fin k}
+    (hs : t'.IsSourceGapContext K h) : t'.topGrade = K :=
+  let ⟨_, _, _, hs⟩ := hs
+  hs.topGrade_eq
+
+/-- A source-gap context of grade `K` with the lost point last has top grade `K`. -/
+theorem IsSourceGapContextLast.topGrade_eq {K : ℕ} {t' : StageType.{u} α k}
+    {h : Fin n ↪ Fin k} (hs : t'.IsSourceGapContextLast K h) : t'.topGrade = K :=
+  hs.isSourceGapContext.topGrade_eq
+
+/-- **The faces of a source-gap context of grade `K` have top grade at most `K`**, the first
+coatom in particular. -/
+theorem IsSourceGapContext.topGrade_le_of_restrictFace {K : ℕ} {t' : StageType.{u} α k}
+    {h : Fin n ↪ Fin k} (hs : t'.IsSourceGapContext K h) {f : Fin m ↪ Fin k}
+    {p : StageType.{u} α m} (hp : restrictFace f t' = some p) : p.topGrade ≤ K :=
+  (StageType.topGrade_le_of_restrictFace hp).trans hs.topGrade_eq.le
 
 /-! ### First loss -/
 

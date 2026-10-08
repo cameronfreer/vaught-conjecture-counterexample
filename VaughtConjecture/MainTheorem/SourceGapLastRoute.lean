@@ -21,12 +21,15 @@ at the source-gap contexts whose lost point is the last point (`StageType.IsSour
 Each item is compiled in this repository (theorem named).
 
 * **The reduction**
-  (`Realization.CoatomCutoffDetermination.cutoffDetermination_isSourceGapContextOff`): coatom
-  cutoff determination for `IsSourceGapContextLast` gives cutoff determination for the source-gap
-  contexts with the coatom off the lost point closed (`StageType.IsSourceGapContextOff`).  That
-  coatom is closed by hypothesis; the transposition of the lost point with the last point only
-  moves it to the coordinate first coatom (`Fin.castSuccEmb`), and makes the context one with the
-  lost point last (`Realization.CoatomCutoffDetermination.exists_coface_reindex`).  A relabelling
+  (`Realization.FirstCoatomCutoffDetermination.cutoffDetermination_isSourceGapContextOff`, and for
+  the coatom form
+  `Realization.CoatomCutoffDetermination.cutoffDetermination_isSourceGapContextOff`):
+  cutoff determination at the first coatom for `IsSourceGapContextLast` gives cutoff determination
+  for the source-gap contexts with the coatom off the lost point closed
+  (`StageType.IsSourceGapContextOff`).  That coatom is closed by hypothesis; the transposition of
+  the lost point with the last point only moves it to the coordinate first coatom
+  (`Fin.castSuccEmb`), and makes the context one with the lost point last
+  (`Realization.FirstCoatomCutoffDetermination.exists_coface_reindex`).  A relabelling
   never makes a coatom closed that is not.
 * **The acquisition** (`Realization.residualAcquisition_isSourceGapContextOff`, in
   `VaughtConjecture.Continuation.SourceGapContext`): the acquired source-gap contexts have the lost
@@ -71,14 +74,15 @@ theorem CoatomCutoffDetermination.isSourceGapContextLast
     CoatomCutoffDetermination.{u} fun K t' h ↦ t'.IsSourceGapContextLast K h :=
   hdet.mono fun _ _ _ _ _ _ hs ↦ hs.isSourceGapContext
 
-/-- **Cutoff determination with the coatom off the lost point closed, from the coatom form with
-the lost point last**: relabel the context by the transposition `σ` of the lost point `l` with the
-last point.  The relabelled context has the lost point last, its root avoids the last point, and
-its coordinate first coatom is the image of the complement of `l`, which is closed by the
-hypothesis (`IsSourceGapContextOff`); the transposition only moves it to the coordinate position.
-The coatom form applies there (`CoatomCutoffDetermination.exists_coface_reindex`). -/
-theorem CoatomCutoffDetermination.cutoffDetermination_isSourceGapContextOff
-    (hdet : CoatomCutoffDetermination.{u} fun K t' h ↦ t'.IsSourceGapContextLast K h) :
+/-- **Cutoff determination with the coatom off the lost point closed, from cutoff determination at
+the first coatom with the lost point last**: relabel the context by the transposition `σ` of the
+lost point `l` with the last point.  The relabelled context has the lost point last, its root
+avoids the last point, and its coordinate first coatom is the image of the complement of `l`,
+which is closed by the hypothesis (`IsSourceGapContextOff`); the transposition only moves it to the
+coordinate position.  The form at the first coatom applies there
+(`FirstCoatomCutoffDetermination.exists_coface_reindex`). -/
+theorem FirstCoatomCutoffDetermination.cutoffDetermination_isSourceGapContextOff
+    (hdet : FirstCoatomCutoffDetermination.{u} fun K t' h ↦ t'.IsSourceGapContextLast K h) :
     CutoffDetermination.{u} fun K t' h ↦ t'.IsSourceGapContextOff K h where
   exists_coface α K n k t' h hα ht' hP t ht d hd hdK := by
     obtain ⟨l, o, r, hs, hface⟩ := hP
@@ -113,6 +117,14 @@ theorem CoatomCutoffDetermination.cutoffDetermination_isSourceGapContextOff
     have := hdet.exists_coface_reindex hα ht' σ ⟨Fin.last j, o', r', by simp, hg ▸ hs'⟩ hp
       (hroot ▸ ht) hd hdK
     rwa [hroot] at this
+
+/-- **Cutoff determination with the coatom off the lost point closed, from the coatom form with
+the lost point last**: `FirstCoatomCutoffDetermination.cutoffDetermination_isSourceGapContextOff`
+through `CoatomCutoffDetermination.firstCoatom`. -/
+theorem CoatomCutoffDetermination.cutoffDetermination_isSourceGapContextOff
+    (hdet : CoatomCutoffDetermination.{u} fun K t' h ↦ t'.IsSourceGapContextLast K h) :
+    CutoffDetermination.{u} fun K t' h ↦ t'.IsSourceGapContextOff K h :=
+  hdet.firstCoatom.cutoffDetermination_isSourceGapContextOff
 
 end Realization
 
