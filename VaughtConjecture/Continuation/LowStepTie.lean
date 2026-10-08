@@ -27,7 +27,7 @@ and `⊥` where `θ` is `⊥`, is a witness bounded by `K`.
 
 **The raise through the template** (`StageType.exists_raised_of_dominated`, compiled in this
 repository).  Let `W₁` be a section of the donor lawful at `K` (bottom above `K`) dominated at `Z`:
-every cell of grade at most `K` is read by `W₁` at most at `Z`, and `W₁ Z ≠ ⊥`.  With `θ` the
+every cell of grade at most `K` is read by `W₁` at most at `Z`.  With `θ` the
 capped decoder of `W₁` at `Z` (`Scheme.exists_cappedDecoder`, from the locality of `W₁` at `Z`:
 `θ (row_Z d) = min (W₁ d) (W₁ Z)`, exact by domination), the section `ρ ∘ V`, spliced with `⊥`
 above `K`, is lawful at `K` (transport with `W₁` as lawful companion of the same bottom pattern,
@@ -132,7 +132,7 @@ variable {α : Ordinal.{u}} {n K : ℕ}
 
 /-- **The raise through the template.**  In a legal stage type `tb` on `n` points, let `Z` be a
 cell labelled `⊤` of graded index `(univ, K)`, `0 < K ≤ n`, `W₁` lawful at `K` and dominated at
-`Z` (`W₁ d ≤ W₁ Z` at every cell of grade at most `K`, `W₁ Z ≠ ⊥`), and `c` self-visible at `K`.
+`Z` (`W₁ d ≤ W₁ Z` at every cell of grade at most `K`), and `c` self-visible at `K`.
 Some `W` lawful at `K` equals `W₁` at every proper cell and every cell `W₁` reads as `⊥`, and
 reads every other top `d` of grade at most `K` as `max (W₁ d) c`: the raise map of the capped
 decoder of `W₁` at `Z` above the largest replaced reading of a proper cell, applied to the row of
@@ -141,7 +141,7 @@ theorem exists_raised_of_dominated {tb : StageType.{u} α n} (htb : tb.IsLegal) 
     (hKn : K ≤ n) {Z : Fin tb.card} (hZ : tb.label Z = ⊤)
     (hZi : tb.toCellScheme.gradedIndex Z = (univ, K)) {W₁ : Fin tb.card → Label.{u}}
     (hW₁ : LawfulAt tb K W₁) (hdom : ∀ d, tb.toCellScheme.grade d ≤ K → W₁ d ≤ W₁ Z)
-    (hZ0 : W₁ Z ≠ ⊥) {c : Label.{u}} (hc : IsSelfVisible K c) :
+    {c : Label.{u}} (hc : IsSelfVisible K c) :
     ∃ W : Fin tb.card → Label.{u}, LawfulAt tb K W ∧
       (∀ d, tb.toCellScheme.grade d ≤ K → tb.label d ≠ ⊤ → W d = W₁ d) ∧
       (∀ d, tb.toCellScheme.grade d ≤ K → W₁ d = ⊥ → W d = ⊥) ∧
@@ -149,7 +149,8 @@ theorem exists_raised_of_dominated {tb : StageType.{u} α n} (htb : tb.IsLegal) 
   classical
   obtain ⟨W', hW', hW'W⟩ := exists_ext_bot_at htb hK0 hKn hW₁
   have hgZ : tb.toCellScheme.grade Z = K := congrArg Prod.snd hZi
-  obtain ⟨θ, hθm, hθ0, -, hθc, hθb0, hθrow⟩ := Scheme.exists_cappedDecoder (S := tb.toScheme) hW' hgZ
+  obtain ⟨θ, hθm, hθ0, -, hθc, hθb0, hθrow⟩ :=
+    Scheme.exists_cappedDecoder (S := tb.toScheme) hW' hgZ
   have hbelow (d : Fin tb.card) (hd : tb.toCellScheme.grade d ≤ K) :
       d ∈ tb.toCellScheme.below (tb.toCellScheme.gradedIndex Z) := by
     rw [hZi]; exact ⟨subset_univ _, hd⟩
@@ -164,8 +165,8 @@ theorem exists_raised_of_dominated {tb : StageType.{u} α n} (htb : tb.IsLegal) 
     refine Finset.sup_induction (p := IsSelfVisible K) (isSelfVisible_bot K) ?_ ?_
     · intro a ha b hb
       rcases max_choice a b with h1 | h1
-      · change IsSelfVisible K (max a b); rw [h1]; exact ha
-      · change IsSelfVisible K (max a b); rw [h1]; exact hb
+      · rw [h1]; exact ha
+      · rw [h1]; exact hb
     · intro y _
       exact visibilityReplace_self_visibilityReplace le_rfl _
   have hprop (y : Fin tb.card) (hy : tb.toCellScheme.grade y ≤ K) (hyt : tb.label y ≠ ⊤) :
@@ -185,15 +186,16 @@ theorem exists_raised_of_dominated {tb : StageType.{u} α n} (htb : tb.IsLegal) 
       (raiseMap θ θb c ∘ fun e ↦ tb.rowAt Z e.1) :=
     (Scheme.isLawfulBelow_rowAt htb.isConsistent hZi).map_of_bot_iff hW₁.1 (fun d ↦ d.2.2) hρ
       fun d ↦ by
-        change raiseMap θ θb c (tb.rowAt Z d.1) = ⊥ ↔ W₁ d.1 = ⊥
         rw [raiseMap_eq_bot_iff, hθV d.1 d.2.2]
   set W : Fin tb.card → Label.{u} :=
     tb.toCellScheme.splice K (fun _ ↦ ⊥) fun d ↦ raiseMap θ θb c (tb.rowAt Z d) with hW
-  have hWle (d : Fin tb.card) (hd : tb.toCellScheme.grade d ≤ K) : W d = raiseMap θ θb c (tb.rowAt Z d) :=
+  have hWle (d : Fin tb.card) (hd : tb.toCellScheme.grade d ≤ K) :
+      W d = raiseMap θ θb c (tb.rowAt Z d) :=
     CellScheme.splice_of_le hd
   refine ⟨W, ⟨(CellScheme.Rows.isLawfulBelow_congr (R := tb.rows)
       (X := ((univ : Finset (Fin n)), K)) (w := fun d ↦ raiseMap θ θb c (tb.rowAt Z d))
-      (w' := W) fun d hd ↦ (hWle d (show tb.toCellScheme.grade d ≤ K from hd.2)).symm).mp hlawρ,
+      (w' := W) fun d hd ↦
+        (hWle d (show tb.toCellScheme.grade d ≤ K from hd.2)).symm).mp hlawρ,
       fun d hd ↦ CellScheme.splice_of_lt (not_le.mp hd)⟩,
     fun d hd hdt ↦ ?_, fun d hd h0 ↦ ?_, fun d hd hdt h0 ↦ ?_⟩
   · rw [hWle d hd]
@@ -206,5 +208,97 @@ theorem exists_raised_of_dominated {tb : StageType.{u} α n} (htb : tb.IsLegal) 
     have hθ0' : θ (tb.rowAt Z d) ≠ ⊥ := by rw [hθV d hd]; exact h0
     have hV0 : tb.rowAt Z d ≠ ⊥ := fun h ↦ hθ0' (by rw [h, hθ0])
     rw [raiseMap_of_lt hθ0' (htop d hd hdt hV0), hθV d hd]
+
+end VaughtConjecture.StageType
+
+/-! ### The tie case from donor domination -/
+
+namespace VaughtConjecture.StageType
+
+open Finset Label H2 FieldAdmission
+
+variable {α : Ordinal.{u}} {k : ℕ}
+
+variable (K : ℕ) (t' tb : StageType.{u} α (k + 1)) {p : StageType.{u} α k}
+  (hp : restrictFace Fin.castSuccEmb t' = some p) (hpb : restrictFace Fin.castSuccEmb tb = some p)
+  in
+/-- **Donor domination** (open): for a private face `f` and a donor face `R` lawful at `K` agreeing
+on the root capped at a cap `h` self-visible at `K`, some donor face lawful at `K`, literal on the
+root and agreeing with `R` capped at `h`, is dominated at a cell of the donor labelled `⊤` of
+graded index `(univ, K)`.  The donor-side counterpart of the domination by the owner. -/
+def DonorDomination : Prop :=
+  ∀ {h : Label.{u}}, IsSelfVisible K h → ∀ {R : Fin tb.card → Label.{u}}
+    {f : Fin t'.card → Label.{u}}, LawfulAt tb K R → LawfulAt t' K f →
+    (∀ x, min (f (faceCell hp x)) h = min (R (faceCell hpb x)) h) →
+    ∃ (W₁ : Fin tb.card → Label.{u}) (Z : Fin tb.card), LawfulAt tb K W₁ ∧
+      (∀ x, W₁ (faceCell hpb x) = f (faceCell hp x)) ∧ (∀ d, min (W₁ d) h = min (R d) h) ∧
+      tb.label Z = ⊤ ∧ tb.toCellScheme.gradedIndex Z = (univ, K) ∧
+      ∀ d, tb.toCellScheme.grade d ≤ K → W₁ d ≤ W₁ Z
+
+variable {K : ℕ} {t' tb : StageType.{u} α (k + 1)} {p : StageType.{u} α k} {o r : Fin t'.card}
+
+/-- **The tie case from donor domination.**  At a LOW family, donor domination gives the tie case
+of the donor face, indeed the conclusion of `StageType.LowStepTie` without its tie premise: the
+raise through the template (`StageType.exists_raised_of_dominated`) at the frontier `c` keeps the
+proper cells, keeps the root tops (at least `c` by the strict source gaps,
+`H2.frontier_le_lawfulAt`), keeps the capped agreement (the raised tops were at least the cap), and
+reads every donor top off the root, at the tie or determined by the root included, at least at
+`c`. -/
+theorem lowStepTie_of_donorDomination (hF : IsLowFamily K t' tb p o r)
+    (hD : DonorDomination K t' tb hF.face_private hF.face_donor) :
+    LowStepTie K t' tb hF.face_private hF.face_donor o r := by
+  classical
+  intro h c hh hb hhc R f hR hf hag hc htop _
+  obtain ⟨W₁, Z, hW₁, hW₁r, hW₁R, hZ, hZi, hdom⟩ := hD hh hR hf hag
+  have hs := hF.isSourceGapContextAt
+  have hK0 : 0 < K := hs.grade_owner ▸ t'.isWellFormed.isWellFormed.grade_pos o
+  have hKk : K ≤ k + 1 := hs.grade_owner ▸ t'.grade_le o
+  have hfo := frontier_le_lawfulAt hF.isLegal_private hs hf
+  have hcv : IsSelfVisible K c := by
+    rw [hc]
+    rcases min_choice (f o) (visibilityReplace K K (f r)) with h1 | h1 <;> rw [h1]
+    · exact hfo.1
+    · exact visibilityReplace_self_visibilityReplace le_rfl _
+  obtain ⟨W, hW, hWp, hW0, hWt⟩ :=
+    exists_raised_of_dominated hF.isLegal_donor hK0 hKk hZ hZi hW₁ hdom hcv
+  have hcb : ⊥ < c := hb.trans hhc
+  -- the root tops of `W₁` are at least `c`
+  have hroot_top (x : Fin p.card) (hx : tb.label (faceCell hF.face_donor x) = ⊤) :
+      c ≤ W₁ (faceCell hF.face_donor x) := by
+    rw [hW₁r, hc]
+    refine hfo.2 _ ?_ (last_notMem_scope_faceCell hF.face_private x)
+    rw [label_faceCell, ← label_faceCell hF.face_donor x]
+    exact hx
+  -- the tops of `W₁` of grade at most `K` are at least `h`
+  have hWh (d : Fin tb.card) (hdK : tb.toCellScheme.grade d ≤ K) (hd : tb.label d = ⊤) :
+      h ≤ W₁ d := by
+    by_cases hv : d ∈ tb.toScheme.visibleCells Fin.castSuccEmb
+    · obtain ⟨x, rfl⟩ := exists_faceCell_eq hF.face_donor hv
+      exact hhc.le.trans (hroot_top x hd)
+    · have h1 := hW₁R d
+      rw [min_eq_right (htop d hd hdK hv)] at h1
+      exact min_eq_right_iff.mp h1
+  refine ⟨W, hW, fun x ↦ ?_, fun d ↦ ?_, fun d hd hdK hv ↦ ?_⟩
+  · -- the root is literal
+    set d := faceCell hF.face_donor x
+    by_cases hdK : tb.toCellScheme.grade d ≤ K
+    · by_cases hdt : tb.label d = ⊤
+      · have hne : W₁ d ≠ ⊥ := ne_bot_of_gt (hcb.trans_le (hroot_top x hdt))
+        rw [hWt d hdK hdt hne, max_eq_left (hroot_top x hdt), hW₁r]
+      · rw [hWp d hdK hdt, hW₁r]
+    · rw [hW.2 d hdK, ← hW₁r, hW₁.2 d hdK]
+  · -- the capped agreement
+    by_cases hdK : tb.toCellScheme.grade d ≤ K
+    · by_cases hdt : tb.label d = ⊤
+      · have hhd := hWh d hdK hdt
+        have hne : W₁ d ≠ ⊥ := ne_bot_of_gt (hb.trans_le hhd)
+        rw [hWt d hdK hdt hne, ← hW₁R d, min_eq_right hhd,
+          min_eq_right (hhc.le.trans (le_max_right _ _))]
+      · rw [hWp d hdK hdt]; exact hW₁R d
+    · rw [hW.2 d hdK, hR.2 d hdK]
+  · -- the donor tops off the root are at least `c`
+    have hne : W₁ d ≠ ⊥ := ne_bot_of_gt (hb.trans_le (hWh d hdK hd))
+    rw [hWt d hdK hd hne]
+    exact le_max_right _ _
 
 end VaughtConjecture.StageType
