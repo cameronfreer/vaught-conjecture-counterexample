@@ -122,7 +122,11 @@ Notes on the rows, each with its marker:
   (`Seed.exists_rowCompletion₀` for `m ≥ 1`, `Seed.exists_rowCompletion` for `m ≥ 2`,
   `Seed.exists_admittedCompletion` for `m ≥ 1`; recognition
   `CompletionBelowFullGrade.adm_of_isLawfulBelow`; `Extension/RowCompletionZero`,
-  `Extension/Admission`).
+  `Extension/Admission`).  **Compiled, with the fills from the private coatom and the correct
+  glued labelling as hypotheses**: the completion with correct rows from the grade of the cap for
+  graded cap requests (`Seed.exists_correctCompletion`, `Seed.exists_correctCompletion_top`,
+  `Seed.exists_correctCompletion_T`; `Extension/CapRequestsGrade`, `Extension/CapRequestsTop`,
+  `Extension/CapRequestsFill`).
 - *Layer 3, receiving.*  Compiled: finite-extension receiving from finite-cut receiving, for an
   exactly consistent realization at a stage that is zero or a limit
   (`Realization.HasFiniteCutReceiving.hasFiniteExtensionReceiving`); gate recovery

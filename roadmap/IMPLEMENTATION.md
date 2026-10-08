@@ -4470,6 +4470,14 @@ ones split):
     code of the glued labelling (`Seed.exists_rowCompletion₀`, `Seed.exists_rowCompletion`,
     `Seed.exists_admittedCompletion`), and the obstruction to a bottom class on the rows
     (`ProfileTower.not_botLiftProvisionOf`);
+  - `Extension/CapRequests`, `Extension/CapRequestsCode`, `Extension/CapRequestsExamples`,
+    `Extension/CapRequestsTop`, `Extension/CapRequestsGrade`, `Extension/CapRequestsFill`: cap
+    requests and the correct completion from the grade of the cap (compiled in this repository
+    (theorem named)): correctness of a capped state (`CapRequests.IsCorrect`) and its closure
+    under witnesses, splice and orbit code, the instances at the reading type and at a marked-cap
+    context, the lift provisions from the donor coatom, and the correct completions
+    (`Seed.exists_correctCompletion`, `Seed.exists_correctCompletion_top`,
+    `Seed.exists_correctCompletion_T`), under the fills from the private coatom;
   - `MainTheorem/CoatomExtensionTheorem`: the consequences with hypothesis 8 discharged
     (`StageType.hasCoatomExtensions`, `StageType.exists_pinned_extension_of_isSuccPrelimit`,
     `forcingDonors_blockStage`, `MainTheorem.capToModel`,
