@@ -144,8 +144,8 @@ the order law, while lifts still order the twins both ways above level `1`.
 covering" (Layer 4, output 1).  Here the order law, locality, exact partial evaluation, the
 reduction, legality, covering and exact consistency need no more; availability needs, in
 addition, legal types (or the absence of twins).  The splice of two witnesses (roadmap, Layer
-3, the transformation lemma still to be proved there) is not used: locality comes from pointwise
-minima and collapse.
+3; compiled in a general form, `Label.TransformsTo.splice_bandMap`) is not used: locality comes
+from pointwise minima and collapse.
 
 **What is not claimed.**  The candidate is not claimed to be a model, and output 3 is not proved.
 Its modelhood is to follow from the cap-to-model theorem at `λ_{ξ+1}`

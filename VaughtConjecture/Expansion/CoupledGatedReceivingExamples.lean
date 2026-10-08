@@ -8,8 +8,9 @@ import VaughtConjecture.Expansion.CoupledGatedReceiving
 /-!
 # Examples for receiving from the coupled gated pinned extension property
 
-Special cases of `VaughtConjecture.Expansion.CoupledGatedReceiving`, under a named hypothesis
-that is open (`StageType.HasCoupledGatedPinnedExtensions`):
+Special cases of `VaughtConjecture.Expansion.CoupledGatedReceiving`, under a named hypothesis that
+is false at every stage above `1` (`StageType.HasCoupledGatedPinnedExtensions`,
+`CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`):
 
 * under the coupled gated pinned extension property at every countable limit stage, two base
   structures with model expansions to `λ_η`, for `η < ω₁`, have back-and-forth equivalent empty

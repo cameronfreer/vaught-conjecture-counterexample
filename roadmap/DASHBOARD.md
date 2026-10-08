@@ -27,7 +27,7 @@ percentage of 100 would not by itself mean that the hypotheses of a layer are pr
 | 1, finite kernel | 98% | `StageType.provisionalOffset` | the bound (d) of the offset (prospective) |
 | 2, realizations, syntax | 95% | `Realization.eq_of_eval_eq_some` | hull items 4–5 for realizations |
 | 3, the completion (R6) | 72% | `Seed.nonempty_completionBelowFullGrade_of_le_two` | the completion at `m ≥ 3` |
-| 3, receiving | 90% | `Expansion.finiteCutReceiving_of_hasCoupledGatedPinnedExtensions` | 4b-ii; (R2)–(R4) |
+| 3, receiving | 90% | `Realization.HasFiniteCutReceiving.hasFiniteExtensionReceiving` | (R1) (4b-ii refuted; the (R1) conditional theorems under it are to be retired in a separate change); (R2)–(R4) |
 | 4, continuation | 62% | `Realization.stableCandidate` | output 3: (R4), the apex property |
 | 5, domains, agreement | 85% | `Expansion.expansionDomain_loss_countable` | the hypotheses below |
 | 6, the bounds | 90% | `densitySentence_hasThinAlephOneSpectrum_of_terminalClassification` | the hypotheses below |
@@ -95,8 +95,16 @@ Notes on the rows, each with its marker:
   rows only, as corollaries of `CrossedCouplingCounterexample.not_hasOrderedLayerStep_seedHG` and
   `not_exists_orderedLayerStep_seedL_seedLM` through the iff: at `seedHG`
   (`Seed.not_canonicalMultiStep_oriented_seedHG`) and as one choice for `seedL` and `seedLM`
-  (`Seed.not_exists_canonicalMultiStep_oriented_seedL_seedLM`).  Open: copy rows giving the step of
-  the family for every seed on five points.  Still to be
+  (`Seed.not_exists_canonicalMultiStep_oriented_seedL_seedLM`).  Compiled, for every copy rows: the
+  orientation forced on a copy by a forcing from its coatom
+  (`Seed.MultiLayerStep.copyRows_lt_of_forcesTop`; at `seedHG` the copy of `(D, 2)` reads toward
+  `C` and the copy of `(C, 3)` toward `D`, at `seedL` and `seedLM` the copies of the forcing coatom
+  at the grades 2, 3; at `seed5` the copies of `(D, 2)`, `(D, 3)`, `Seed.copyRows_lt_of_T5_T5`).
+  Refuted, for the own-side rows only (`OrderedLayer.ownSideRows`, each copy reading its own
+  coatom's values other than `⊥` above the other's): at `seedHG`, `seedL`, `seedLM`
+  (`Seed.not_ownSideStep_seedHG`, `…_seedL`, `…_seedLM`), not the family nor the completion;
+  undecided at `seed4`, `seed5`, `seedLL`.  Open: copy rows giving the step of the family for every
+  seed on five points.  Still to be
   proved, not refuted: `StageType.HasCoatomExtensions`,
   `StageType.HasApexCoatomExtensions`.
 - *Layer 3, receiving.*  Compiled: finite-extension receiving from finite-cut receiving, for an
@@ -104,17 +112,25 @@ Notes on the rows, each with its marker:
   (`Realization.HasFiniteCutReceiving.hasFiniteExtensionReceiving`); gate recovery
   (`StageType.GatedExtension.recover`) and with the twin–gate coupling
   (`CellScheme.Rows.IsGate.recover_of_twinsReadGate`); (R1) conditional on
-  `StageType.HasCoupledGatedPinnedExtensions`, which is open
-  (`Realization.IsModel.hasFiniteCutReceiving_of_hasCoupledGatedPinnedExtensions`); the refutation
-  of the first form `StageType.HasGatedPinnedExtensions`
-  (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`); the coupled form at the refuting
-  input (`CoupledGateExamples.exists_coupledGatedExtension_comap_g₁`); the cap-to-model
-  theorem at a limit stage, conditional on the nonemptiness of the instances of uniformity and
-  dominance (`Realization.isModel_of_hasFiniteCutReceiving`); the top-free witnesses, steps 1–7,
+  `StageType.HasCoupledGatedPinnedExtensions`
+  (`Realization.IsModel.hasFiniteCutReceiving_of_hasCoupledGatedPinnedExtensions`), vacuous at every
+  stage above `1`, where that hypothesis is refuted
+  (`CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`); the bottom transport
+  condition that every coupled gated extension forces
+  (`StageType.CoupledGatedExtension.carriesBottoms`); the refutation of the first form
+  `StageType.HasGatedPinnedExtensions`
+  (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`); the coupled form at the inputs on
+  `GatedExtensionCounterexample.P α` (`CoupledGateExamples.exists_coupledGatedExtension_comap_g₁`,
+  `CoupledGateInstance.coupledGatedPinnedExtension_donor`, and with every anchored legal one-point
+  donor, `CoupledGateOnePointDonors.coupledGatedPinnedExtension_P`); the cap-to-model theorem at a
+  limit stage, conditional on the nonemptiness of the instances of uniformity and dominance
+  (`Realization.isModel_of_hasFiniteCutReceiving`); the top-free witnesses, steps 1–7,
   conditionally: steps 2–3 under `StageType.HasCoatomExtensions`, and step 7 under
   `StageType.HasApexCoatomExtensions` at `λ_η` and the uniqueness of model expansions at `λ_η`
-  (`nonempty_loss_of_hasApexCoatomExtensions`).  Still to be proved: 4b-ii, the gated
-  construction as data; (R2), (R3), (R4).
+  (`nonempty_loss_of_hasApexCoatomExtensions`).  Refuted: 4b-ii, the coupled gated pinned extension
+  property (`CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`).  Still to be
+  proved: (R1) by another construction, or by the coupled one restricted to the private contexts
+  that models acquire (prospective); (R2), (R3), (R4).
 - *Layer 4.*  Compiled: normalization, conditional on finite-extension receiving and forcing donors
   (`Realization.label_eq_stableLabel`); forcing donors, conditional on the coatom extension
   property (`forcingDonors_of_hasCoatomExtensions`); the structural candidate
@@ -188,6 +204,16 @@ Notes on the rows, each with its marker:
   and the coatom extension property with apex at every countable block stage: the maximal
   refinement of a prescribed model (`MainTheorem.exists_maximalRefinement`); rows 33–36, 38, 40
   stay S.
+- *Manuscript correspondence, [AFK26] of 7 October.*  The concordance cites the draft of
+  7 October 2026; rows 48–56 are new to the concordance, all S.  Adopted there and recorded without a change of
+  status: the block indexing of row 1 in §4, the fixed rows of rows 9 and 10, the corrections of
+  rows 41 and 42, the cap `-∞` of row 44, and clause 1 of row 45; its range clause of legality is
+  now strong coding (row 45).  [AFK26] states Propositions 4.32 (amalgamation of charts, where
+  hypothesis 8 enters), 4.34 and 4.35 without proof and sketches Lemma 4.33.  Their counterparts
+  here are compiled (the hereditary property, `hereditary_legalAge`, with no hypothesis) or
+  compiled conditionally on the hypotheses below, and every compiled form of the main theorem is
+  conditional on the five named hypotheses, or on hypotheses derived from them, each still to be
+  proved.
 - *Acceptance lemma 1 (same-level maximal realization).*  Compiled conditionally on
   `StageType.HasApexCoatomExtensions` at `λ_β` and `ForcingDonors β` (`exists_sameLevelMaximal`).
   Terminality of every cover-hollow realization at a block stage is compiled with no hypothesis
@@ -271,10 +297,11 @@ Status of each:
 
 1. `CapToModel`: still to be proved.  Compiled conditionally on the coatom extension property with
    apex at `ω` (`CapToModel.of_hasApexCoatomExtensions`), which is still to be proved.
-2. `Expansion.FiniteCutReceiving`: still to be proved.  Compiled conditionally on the coupled
-   gated pinned extension property
-   (`Expansion.finiteCutReceiving_of_hasCoupledGatedPinnedExtensions`), which is open (4b-ii).  It
-   is also used for the rigid-core comparison.
+2. `Expansion.FiniteCutReceiving`: still to be proved.  Compiled conditionally on the coupled gated
+   pinned extension property (`Expansion.finiteCutReceiving_of_hasCoupledGatedPinnedExtensions`),
+   which is refuted (4b-ii,
+   `CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`), so that conditional
+   theorem is vacuous.  It is also used for the rigid-core comparison.
 3. `ForcingDonors`: still to be proved.  Compiled conditionally on the coatom extension property
    at `λ_{ξ+1}` (`forcingDonors_of_hasCoatomExtensions`, `Extension/ForcingDonorsCoatom`), hence on
    the coatom extension property with apex at every countable block stage
@@ -294,23 +321,95 @@ Status of each:
    item 2), `Realization.ResidualAcquisition P`, and `Realization.CutoffDetermination P`
    (`Realization.residualReceiving_of_cutoffDetermination`), for a predicate `P` on acquired
    contexts not yet defined: the reduction is a template, and its hypotheses are not statements
-   still to be proved (no predicate `P` is defined in the library, and neither acquisition nor
+   still to be proved (no predicate `P` on pairs `(t', h)` is defined in the library, and neither acquisition nor
    determination is proved beyond the rigid-core instance).  For `P` always true, acquisition is
    immediate and determination fails (compiled; top-free roots,
    `Continuation/ExactReceivingExamples`), which shows only that determination is not vacuous.
    The cofaces in which the root is a rigid core need only (R1) in the same form
-   (`Realization.ResidualReceiving.of_not_isRigidCoreIn`).
+   (`Realization.ResidualReceiving.of_not_isRigidCoreIn`).  Templates with the donor, compiled
+   (`Continuation/AnchoredDetermination`): (R2) follows from (R1) in the same all-limit-stage form,
+   `Realization.DonorAcquisition Q P`, and `Realization.CutoffDonorDetermination P`
+   (`Realization.residualReceiving_of_cutoffDonorDetermination`).  For the anchored private
+   context (`StageType.IsAnchoredContext`), donor acquisition holds in every model
+   (`Realization.donorAcquisition_isAnchoredContext`) and cutoff determination with a donor is
+   refuted (`AnchoredDeterminationCounterexample.not_cutoffDonorDetermination`: a top-free anchored
+   context over the empty root, with the one-point donor labelled `⊤`).  This refutes the
+   predicate, not (R2).  A predicate for which determination holds must give, at a limit stage, at
+   each non-rigid donor (for legal `t'` satisfying it whose face along `h` has `d` as a legal
+   coface), a context that is not top-free, with a top available to a new cell of a coface
+   carrying the donor (`Realization.CutoffDonorDetermination.exists_hasAvailablePrivateTop`); a
+   rigid context suffices (`Realization.cutoffDonorDetermination_isRigidContext`), but its
+   acquisition is not proved.
+   With that condition built in (`Continuation/AvailableTopDetermination`), the anchored context
+   with a top (`StageType.IsAnchoredContextWithTop`; in a legal coface an available private top
+   is any top of the context, `StageType.hasAvailablePrivateTop_iff_not_isTopFree`): donor
+   acquisition holds in the models with no globally rigid core under the coatom extension property
+   at every limit stage, which is still to be proved and gives the coface carrying the donor
+   (`Realization.donorAcquisition_isAnchoredContextWithTop`); cutoff determination with a donor is
+   refuted (`AvailableTopDeterminationCounterexample.not_cutoffDonorDetermination`: a context
+   whose tops have grade 1, a donor with a new top of grade 2).  This refutes the predicate, not
+   (R2).  For a predicate for which determination holds, at a limit stage, over a legal context
+   satisfying it at a non-rigid donor (a legal one-point coface of the face of the context along
+   `h`), the top grade of the context is at least the grade of every new top of the donor
+   (`Realization.CutoffDonorDetermination.grade_le_topGrade`,
+   `Realization.CutoffDonorDetermination.topGrade_le`).  For the graded predicate
+   (`StageType.IsGradedTopContext`), residual donor acquisition for the donors of top grade at
+   most `K` holds under the coatom extension property at every limit stage
+   (`Realization.residualDonorAcquisition_isGradedTopContext`) and determination is open (it holds
+   at a compiled instance, and over a coface that reads the new tops as a private top,
+   `Realization.cutoffDonorDetermination_isReadingContext`); so (R2) is compiled conditionally on
+   (R1) in the stronger form above, the coatom extension property at every limit stage, and that
+   open determination statement
+   (`Realization.residualReceiving_of_cutoffDonorDetermination_isGradedTopContext`), a template.
 6. `Realization.HollowReceiving` for `Realization.IsCoverHollowAtBlock`: still to be proved (the
    growth construction).  Exactly reformulated as exact receiving of all legal types
    (`Realization.hollowReceiving_iff`).  A reduction is compiled: it follows from
    `Realization.HollowAcquisition H P` and `Realization.SchemeDetermination P` with
    `H := Realization.IsCoverHollowAtBlock` (`Realization.hollowReceiving_of_schemeDetermination`,
-   no receiving used), for a predicate `P` not yet defined: a template, as in item 5 (for `P`
-   always true, acquisition is immediate and determination fails, compiled).  With item 6, the
+   no receiving used), for a predicate `P`: a template, as in item 5.  One predicate for (R3) is
+   defined (the marked-cap context, below), with acquisition and determination open; for `P`
+   always true, acquisition is immediate and determination fails (compiled).  With item 6, the
    count uses (R3) at every cover-hollow model with unbounded growth, a globally rigid core
    included (item 6′ below excludes it).  (R3) forces a globally rigid core of a cover-hollow
    model with unbounded growth to be rigid in every legal donor over its type
    (`Realization.HollowReceiving.isRigidCoreIn`).
+   *A candidate predicate* (`Stage/MarkedCap`, `Continuation/MarkedCap`): the marked-cap context
+   `StageType.IsMarkedCapContext` (defined in this repository; acquisition and determination open),
+   a context with a top cap `c` (full scope, labelled `⊤`, at the top grade `N > n + 1`), a marker
+   `r` (least entry of the row of `c` at the cells labelled `⊤`), and `visibilityReplace N (n + 1)
+   (row c r) ≤ row c a` at every cell `a` of the root labelled `⊤`; with reference cells for a
+   donor, `StageType.IsAnchoredMarkedCapContext` (defined in this repository).  Cover-hollowness
+   reads the tops through forcing, and forcing is read by the rows (compiled in this repository
+   (theorem named): `StageType.ForcesThreshold.le_grade_and_visibilityReplace_rowAt_le`, and at a
+   cover-hollow realization with legal types
+   `Realization.IsCoverHollow.exists_forcesThreshold_rowAt`): for a legal rooted cover at a limit
+   stage `β`, with its lifts at `β + ω`, that forces `L` at a top of its root, `L ≤ N` and the row
+   inequality at `L` hold for every top cap and marker.  When the forcing comes from the order law
+   or from rows, the inequality already follows from the minimality of the marker; its content is in
+   thresholds forced by all lifts otherwise, which no compiled instance exhibits.  The proof is a
+   lawful lift whose labels at the tops are the band map of the row of the top cap from the block
+   of the marker (`StageType.IsMarker.exists_lift`); its locality is the two-witness splice of
+   Layer 3, 3.1 (`Label.TransformsTo.splice_bandMap`, compiled in this repository (theorem
+   named)).  `GatedExtensionCounterexample.P α` is a marked-cap context over the empty root
+   (compiled).  The finite step of acquisition is compiled
+   (`StageType.isMarkedCapContext_of_forcesThreshold`); one cover of top grade above `n + 1` forcing
+   `n + 1` at every top of a root at once is prospective, and `Realization.HollowAcquisition` and
+   `Realization.SchemeDetermination` for the predicate are open, so item 6 is not reduced.  The
+   three refuted determination statements are excluded: the empty root of the apex point and the
+   capped two-point context refuting the anchored context (`StageType.IsAnchoredContext`) are
+   top-free (compiled in this repository (theorem named)), and the context refuting the anchored
+   context with a top (`AvailableTopDeterminationCounterexample`) has top grade at most `1` over a
+   root on one point (the exclusion of every such context compiled in this repository (theorem
+   named); the bound on that context is proved there as a private statement).
+   The template with the
+   donor (`Realization.hollowReceiving_of_cutoffDonorDetermination`, any `H`, with (R1) in the
+   stronger form of item 5) gives nothing for the anchored context: donor acquisition holds for it
+   and cutoff determination with a donor is refuted for it, as in item 5; nor for the anchored
+   context with a top, refuted as in item 5.  For the graded predicate, donor acquisition holds in
+   every model satisfying `H` with unbounded growth under the coatom extension property at every
+   limit stage (`Realization.donorAcquisition_isGradedTopContext`) and determination is open, as in
+   item 5 (`Realization.hollowReceiving_of_cutoffDonorDetermination_isGradedTopContext`, any `H`,
+   a template).
 7. Nonempty losses: still to be proved.  Compiled conditionally on the coatom extension property
    with apex at every countable block stage and on next-block uniqueness
    (`hasNonemptyLosses_of_hasApexCoatomExtensions`, stated for the bundled domains, which also take
@@ -443,9 +542,25 @@ named hypothesis.
    (`Seed.not_exists_canonicalMultiStep_oriented_seedL_seedLM`): a refutation of oriented rows as a
    choice uniform in the seed, not of the family nor of the completion.  Neither
    compiled sufficient clause (the product clause below the top grade, the oriented ordered-layer
-   step) holds at every compiled seed.  Open: copy rows giving the step of the family for every seed
-   on five points (`Seed.HasCanonicalMultiStep` for every seed), and the completion at `m ≥ 3` for
-   every seed.
+   step) holds at every compiled seed.  Own-side copy rows (`OrderedLayer.ownSideRows`, defined for
+   every seed: each copy reads its own coatom's cells as its original does, shifted into a higher
+   block, every value other than `⊥` above every value it reads on the other coatom) are refuted
+   (negative special cases named) at `seedHG`, `seedL` and `seedLM` (`Seed.not_ownSideStep_seedHG`,
+   `…_seedL`, `…_seedLM`, from `Seed.not_ownSideStep_of_forcesTop`): there every step of the
+   family, for every copy rows, has a copy forced to read the other way
+   (`Seed.MultiLayerStep.copyRows_lt_of_forcesTop`, `Seed.copyRows_lt_two_of_TH_TG`,
+   `Seed.copyRows_lt_three_of_TH_TG`, `Seed.copyRows_lt_of_TL_T5`, `Seed.copyRows_lt_of_T5_TL`);
+   compiled in this repository (theorem named).  A refutation of the own-side rows, not of the
+   family nor of the completion; at `seed4`, `seed5`, `seedLL` the own-side step is undecided (at
+   `seed5` a forcing constrains the copies, `Seed.copyRows_lt_of_T5_T5`, but only with `P d₁ = ⊥`
+   (argued, not formalized), outside the refutation).  The direction of the shift is a choice: the
+   rows first specified were the mirror rows (other side shifted up), reversed to match `rowsHG` at
+   the grade 1 (`README.md` 2.7).  Through a cell `d₂` off the own side that the other original
+   reads above `⊥`, the necessary condition can refute only rows with the own side above, never the
+   mirror rows (argued, not formalized; on the common face it constrains the own original's row),
+   which are the next test.  Open: copy rows giving the step of the family for every seed on five
+   points (`Seed.HasCanonicalMultiStep` for every seed), which must meet the orientations forced
+   on the copies, and the completion at `m ≥ 3` for every seed.
    Profile catalogues (`Extension/ProfileCatalogue`, `Extension/ProfileCatalogueExamples`;
    compiled in this repository (theorem named) unless marked otherwise; a test of one scheme, not
    of the completion, `StageType.HasApexCoatomExtensions` or hypothesis 8): one new cell at
@@ -486,18 +601,31 @@ named hypothesis.
    special cases:
    `Continuation.CandidateCounterexamples.not_synchronizingCofaces_blockStage` (with two variants)
    and `Continuation.CandidateCounterexamples.not_twinOrdering_blockStage`.
-3. **4b-ii** (open): the gated construction as data, that is,
-   `StageType.HasCoupledGatedPinnedExtensions`.  Its first form,
+3. **4b-ii** (refuted): the gated construction as data, that is,
+   `StageType.HasCoupledGatedPinnedExtensions`, is false at every stage above `1`
+   (`CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`, compiled in this
+   repository (theorem named)).  The input: a legal private type on two points with a proper anchor
+   below the cap (a cell of grade `1` labelled `1`), the empty root, and a legal donor on one point
+   with two cells.  Every coupled gated extension forces the bottom transport condition
+   `StageType.CarriesBottoms` (`StageType.CoupledGatedExtension.carriesBottoms`): a lawful private
+   labelling is the private face of a lawful labelling of the display (bountifulness at the cap
+   `⊥`), and the one witness at the gate carries its values at the anchors, through `vr_n`, to the
+   donor face.  The private labelling that drops the anchor and keeps the cap is carried to a donor
+   labelling that the donor's rows forbid.  Only the clauses of a coupled gated extension are used,
+   not cap lowering (CL), so the refutation holds whatever the display.  Its first form,
    `StageType.HasGatedPinnedExtensions`, is refuted at every stage
-   (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`, compiled in this repository
-   (theorem named)).  The coupled form holds at the refuting input
-   (`CoupledGateExamples.exists_coupledGatedExtension_comap_g₁`, compiled in this repository
-   (theorem named)) and is open in general.  Its open point is cap lowering (CL), the uniform form
-   of what the construction needs, a strengthening not shown necessary: a failure of (CL) refutes
-   the coupled design only at a pair that a forcing prescription from an anchored legal donor
-   actually realizes.  At a stage where the hypothesis fails the conditional (R1)
-   (`Expansion.finiteCutReceiving_of_hasCoupledGatedPinnedExtensions`) is vacuous, and nothing
-   rules that out.
+   (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`).  The coupled form is compiled at
+   inputs without a proper anchor, on `GatedExtensionCounterexample.P α`, whose labels are `⊥` and
+   `⊤` (`CoupledGateExamples.exists_coupledGatedExtension_comap_g₁`,
+   `CoupledGateInstance.coupledGatedPinnedExtension_donor`, and with every anchored legal one-point
+   donor, `CoupledGateOnePointDonors.coupledGatedPinnedExtension_P`).  The conditional (R1)
+   (`Expansion.finiteCutReceiving_of_hasCoupledGatedPinnedExtensions`) is vacuous.  (R1) itself is
+   not refuted: open, whether the private contexts that models acquire
+   (`Realization.IsModel.exists_privateContext_isAnchored`) satisfy the bottom transport condition
+   with every anchored donor, and whether the coupled property restricted to them holds.  The
+   condition holds when the cap reads an anchor of every donor label below it in the block of its
+   reading of the cap itself (`StageType.carriesBottoms_of_row_mem_block`); it is necessary for the
+   property, not shown sufficient.
    *The attached gate* (a redesign, by step).  An attached gated extension
    (`StageType.AttachedGatedExtension`) has readers of graded index `(univ, n)`, each reading
    every new donor cell through the anchors; the row of the gate is `⊥` at the other twins and
@@ -639,11 +767,13 @@ named hypothesis.
    extension), implies parts of the routes' finite hypotheses at inputs where the route's
    prescription is compatible with the faces (`Extension/PrescribedFullRowsRoutes`, compiled in
    this repository (theorems named)); route by route:
-   - (R2)/(R3), the reading context of the route to determination with a private top (that route
-     is not on `main`): the core with a compatible reading prescription gives a reading context
+   - (R2)/(R3), the reading context of the route to determination with a private top
+     (`StageType.IsReadingContext`, `Continuation/AvailableTopDetermination`): the core with a
+     compatible reading prescription gives a reading context in its prescribed-row interface
      (`StageType.HasPrescribedFullRows.isReadingContext`); conversely a reading context makes some
      reading prescription compatible
      (`PrescribedFullRows.IsReadingContext.exists_isFaceCompatible`).
+     The composition of that interface with the determination templates is not compiled here.
      So, under the core and at a legal input, the reading-context property is equivalent to a
      choice of private tops with a compatible reading prescription.  Obtaining a reading context
      from a graded context with a top, the route's open step, is not derived from the core.
