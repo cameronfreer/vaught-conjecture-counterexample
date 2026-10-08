@@ -31,6 +31,15 @@ Roadmap, Layer 3 ((R3) of the table of 3.4).
   the old cell of the apex of `oneType` and the new top of `d` the old cell of the cell `{3}` of
   `rightType`, and every cell of graded index `(univ, 4)` reads the second at least as the first
   (`TowerProfile.rowAt_readingTop_le`).
+* **Determination at a cutoff** (`TopReadingApexExample.exists_isDeterminedWithin_carrierOne`,
+  compiled; through `TopReadingApexExample.exists_isDeterminedWithin_of_isTopReadingCarrier`):
+  for every donor `d` of `rightType` along the point `3`, some permitted cutoff `δ` has `d`
+  determined within the receiving family of the carrier at `δ`, along the empty root.  The apex of `oneType` is the top cap and the marker,
+  labelled `⊤`; a member literal on `oneType` is `⊤` there, so `⊤` at the new top of `d`.
+* **The root `{2, 3}` fails at the carrier**
+  (`TopReadingApexExample.not_isDeterminedWithin_rootTwoThree`, compiled): the carrier has no face
+  along `{2, 3, 4}`, a set in neither coatom, and the carrier itself, a member of each of its
+  receiving families, defeats determination along `rootTwoThree` for every donor and cutoff.
 
 ## Placement
 
@@ -184,6 +193,11 @@ theorem faceCell_completion (F : CompletionBelowFullGrade I) (hα : Order.IsSucc
     (i := Fin.cast (congrArg Scheme.card e₃).symm i)
     (k := Fin.cast (congrArg Scheme.card e₂).symm i) rfl
   exact h₁.trans (congrArg Fin.castSucc h₂)
+
+/-- The faces of the completion are those of the amalgam. -/
+theorem faces_completion (F : CompletionBelowFullGrade I) (hα : Order.IsSuccPrelimit α) :
+    (F.completion hα).toCellScheme.faces = I.amalgam.toCellScheme.faces :=
+  F.faces_eq
 
 /-- The old cells of the completion read as in the completed scheme. -/
 theorem rowAt_completion (F : CompletionBelowFullGrade I) (hα : Order.IsSuccPrelimit α)
@@ -354,6 +368,82 @@ theorem isTopReadingCarrier_carrierOne
       ((rowAt_readingTop_le (grade_marker_one hα).le (fun _ hx ↦ grade_newTops_one hα hx) hw
         (mem_image_of_mem _ (mem_singleton_self _))).trans_eq
         ((completionOne hα).rowAt_completion hα.isSuccPrelimit w _).symm)
+
+/-! ### Determination at a cutoff -/
+
+/-- The apex of `oneType` is a top cap. -/
+theorem isTopCap_oneType_last : (oneType hα).IsTopCap (Fin.last _) :=
+  ⟨StageType.addApex_scope_last (t := oneBase hα) isLegalBelowFullGrade_S (by omega),
+    label_oneType_last hα,
+    fun x _ ↦ ((oneType hα).grade_le x).trans_eq (grade_oneType_last hα).symm⟩
+
+/-- **The common face along the empty root**: the face of `oneType` along the empty root and the
+face of the donor along its first points agree. -/
+theorem exists_root_face (hd : restrictFace (extendByLast g) (rightType α) = some d) :
+    ∃ t, restrictFace (g.trans Fin.castSuccEmb) (oneType hα) = some t ∧
+      restrictFace Fin.castSuccEmb d = some t := by
+  have hg : (restrictFace g (faceT5 α)).isSome := by
+    rw [isSome_restrictFace_iff, univ_eq_empty, map_empty]
+    exact (faceT5 α).isWellFormed.isPlan.empty_mem
+  obtain ⟨t, ht⟩ := Option.isSome_iff_exists.mp hg
+  refine ⟨t, (restrictFace_trans _ _ _ (restrictFace_oneType hα)).symm.trans ht, ?_⟩
+  refine (restrictFace_trans _ _ _ hd).trans (((congrArg (restrictFace · (rightType α))
+    (castSuccEmb_trans_extendByLast g))).trans ?_)
+  exact (restrictFace_trans _ _ _ (restrictFace_rightType α)).symm.trans ht
+
+/-- **Cutoff determination at `oneType` from a top-reading carrier**: a top-reading carrier over
+`oneType` for a donor of `rightType` along the point `3`, with cap and marker the apex, is a coface of `oneType`, and determines the donor within its receiving family at a permitted
+cutoff. -/
+theorem exists_isDeterminedWithin_of_isTopReadingCarrier
+    (hd : restrictFace (extendByLast g) (rightType α) = some d) {D : StageType.{u} α 5}
+    (hD : (oneType hα).IsTopReadingCarrier (g.trans Fin.castSuccEmb) d (Fin.last _)
+      (Fin.last _) D) :
+    D ∈ (oneType hα).cofaces ∧ ∃ δ : Label.{u}, IsPermittedCutoff α δ ∧
+      IsDeterminedWithin (receivingFamily D δ) (oneType hα) (g.trans Fin.castSuccEmb) d := by
+  obtain ⟨t, ht, htd⟩ := exists_root_face hα hd
+  obtain ⟨δ, hδ, hδD⟩ := exists_isPermittedCutoff_gt hα D
+  exact ⟨⟨hD.isLegal, hD.restrictFace_castSucc⟩, δ, hδ,
+    isDeterminedWithin_receivingFamily_of_isTopReadingCarrier ht htd (isTopCap_oneType_last hα)
+      (label_oneType_last hα) (by rw [grade_oneType_last]; omega) hD hδD⟩
+
+/-- **The carrier determines every donor of `rightType` along the point `3` at a cutoff**
+(`TopReadingApexExample.exists_isDeterminedWithin_of_isTopReadingCarrier` at
+`TopReadingApexExample.isTopReadingCarrier_carrierOne`). -/
+theorem exists_isDeterminedWithin_carrierOne
+    (hd : restrictFace (extendByLast g) (rightType α) = some d) :
+    ∃ δ : Label.{u}, IsPermittedCutoff α δ ∧
+      IsDeterminedWithin (receivingFamily (carrierOne hα) δ) (oneType hα)
+        (g.trans Fin.castSuccEmb) d :=
+  (exists_isDeterminedWithin_of_isTopReadingCarrier hα hd
+    (isTopReadingCarrier_carrierOne hα hd)).2
+
+/-- **The root `{2, 3}` is not a root at the carrier**: the face of the carrier along `{2, 3, 4}`
+is undefined, as every face of the amalgam of a seed other than the ground set lies in one of the
+two coatoms. -/
+theorem restrictFace_rootTwoThree_carrierOne :
+    restrictFace (extendByLast rootTwoThree) (carrierOne hα) = none := by
+  rw [restrictFace_eq_none_iff]
+  intro hB
+  have hB' : univ.map (extendByLast rootTwoThree) ∈ (seedOne hα).amalgam.toCellScheme.faces :=
+    (completionOne hα).faces_completion hα.isSuccPrelimit ▸ hB
+  have hne : univ.map (extendByLast rootTwoThree) ≠ univ := by
+    intro h
+    have := congrArg Finset.card h
+    simp at this
+  rcases (seedOne hα).subset_or_subset _ hB' hne with h | h
+  · exact (mem_erase.mp (h (mem_map_of_mem _ (mem_univ (Fin.last 2))))).1
+      (extendByLast_last _)
+  · exact (mem_erase.mp (h (mem_map_of_mem _ (mem_univ (Fin.castSucc 1))))).1
+      ((extendByLast_castSucc _ _).trans rfl)
+
+/-- **Determination at the root `{2, 3}` fails at the carrier**: the carrier is a member of each
+of its receiving families with face `oneType`, and has no face along `{2, 3, 4}`. -/
+theorem not_isDeterminedWithin_rootTwoThree (e : StageType.{u} α 3) (δ : Label.{u}) :
+    ¬ IsDeterminedWithin (receivingFamily (carrierOne hα) δ) (oneType hα) rootTwoThree e :=
+  fun h ↦ by
+    have := h (carrierOne hα) ⟨rfl, fun i j hij ↦ by rw [Fin.ext hij]⟩ (carrierOne_mem_cofaces hα).2
+    rw [restrictFace_rootTwoThree_carrierOne] at this
+    exact absurd this (by simp)
 
 end TopReadingApexExample
 
