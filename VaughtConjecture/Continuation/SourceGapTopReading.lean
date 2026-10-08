@@ -219,7 +219,7 @@ theorem exists_covers_snoc_of_hasTopReadingPinnedExtensions (hα : Order.IsSuccL
     {K : ℕ} (hK : R.topGradeSup = K) {t : StageType.{u} α n} {c : Fin n → M} (hc : R.Covers t c)
     {d : StageType.{u} α (n + 1)} (hd : d ∈ t.cofaces) (hdK : d.topGrade ≤ K) :
     ∃ y : M, R.Covers d (Fin.snoc c y) := by
-  obtain ⟨k, t', c', e, hc', hcc', o, r, hs⟩ :=
+  obtain ⟨k, t', c', e, hc', hcc', -, o, r, hs⟩ :=
     exists_covers_isSourceGapContextAt hα hR hcore hK hc
   obtain ⟨D', hD', hD'd, hrd⟩ := hread t' _ _ o r (hR.isLegal _ _ hc'.eval_eq) hs t
     (restrictFace_of_covers hR.isConsistent hc hc' hcc') d hd hdK
