@@ -861,3 +861,50 @@ theorem Lvl.Good.cappedLift_lowS_of_unserved_tie (hL : L.Good) (hgm : g + 1 ≤ 
     exact hL.lowStep_donor hgm hs hU ho hr hNQ hTQ hNroot
 
 end VaughtConjecture.ProfileTower
+
+/-! ### The donor-side source gap -/
+
+namespace VaughtConjecture.StageType
+
+open Finset Label
+
+variable {α : Ordinal.{u}} {n : ℕ}
+
+/-- **The source gap at a top cell**: in a stage type `t`, the row of a cell `Z` labelled `⊤`
+reads every cell `x` below `Z` labelled `⊤` strictly above the replacement, at the grade of `Z`,
+of its reading of every cell `y` below `Z` with a proper label.  The labels below `Z` are the
+images of the row of `Z` under the witness of the locality of the labels at `Z`, which commutes
+with the replacement; a proper label has a proper replacement.  At a top cell of the donor of
+graded index `(univ, K)` this is the source gap through which a raising of the donor tops at the
+tie can read them apart from the proper donor cells. -/
+theorem visibilityReplace_rowAt_lt_of_top {t : StageType.{u} α n} {Z : Fin t.card}
+    (hZ : t.label Z = ⊤) {x y : Fin t.card}
+    (hx : x ∈ t.toCellScheme.below (t.toCellScheme.gradedIndex Z))
+    (hy : y ∈ t.toCellScheme.below (t.toCellScheme.gradedIndex Z)) (hxt : t.label x = ⊤)
+    (hyt : t.label y ≠ ⊤) :
+    visibilityReplace (t.toCellScheme.grade Z) (t.toCellScheme.grade Z) (t.rowAt Z y) <
+      t.rowAt Z x := by
+  obtain ⟨g, σ, hσ, heq⟩ := t.isLawful.locality Z
+  have hread (d : Fin t.card) (hd : d ∈ t.toCellScheme.below (t.toCellScheme.gradedIndex Z)) :
+      min (t.label d) (t.label Z) = min (σ (t.rowAt Z d)) (g (t.toCellScheme.grade d)) := by
+    rw [Scheme.rowAt_of_mem hd]
+    exact heq ⟨d, hd⟩
+  have hgZ : g (t.toCellScheme.grade Z) = ⊤ := by
+    have h := (hread Z (t.toCellScheme.mem_below_gradedIndex Z)).symm
+    rw [hZ, min_self] at h
+    exact (_root_.min_eq_top.mp h).2
+  have hlab (d : Fin t.card) (hd : d ∈ t.toCellScheme.below (t.toCellScheme.gradedIndex Z)) :
+      t.label d = σ (t.rowAt Z d) := by
+    have h := hread d hd
+    have hgd : g (t.toCellScheme.grade d) = ⊤ :=
+      top_le_iff.mp (hgZ ▸ hσ.antitone (show t.toCellScheme.grade d ≤ t.toCellScheme.grade Z
+        from hd.2))
+    rwa [hZ, min_top_right, hgd, min_top_right] at h
+  refine lt_of_not_ge fun hle ↦ hyt ?_
+  have h1 : σ (t.rowAt Z x) ≤ σ (visibilityReplace (t.toCellScheme.grade Z)
+      (t.toCellScheme.grade Z) (t.rowAt Z y)) := hσ.monotone hle
+  rw [← hlab x hx, hxt, hσ.visibilityReplace_comm _ _ (by rw [hgZ]; exact le_top) _ le_rfl,
+    ← hlab y hy, top_le_iff, visibilityReplace_eq_top_iff] at h1
+  exact h1
+
+end VaughtConjecture.StageType
