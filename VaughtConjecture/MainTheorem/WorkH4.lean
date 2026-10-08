@@ -22,7 +22,7 @@ grade below that of the cap) holds only when the cap has grade `m + 1`, the numb
 `T⁺`.
 -/
 
-universe u
+universe u v
 
 namespace VaughtConjecture
 
@@ -381,5 +381,38 @@ theorem not_capDominatesAt_of_capNonDominating (hnd : X.Tp.CapNonDominating c.ca
 end FirstCoatomInput
 
 end StageType
+
+/-! ### The control the model clauses lack for the context clause -/
+
+namespace StageType
+
+variable {α : Ordinal.{u}} {n : ℕ}
+
+/-- The **top pattern** at a cell: the stage types on `n + 1` points with scheme `S` labelled `⊤` at
+the cell of index `c`.  The clauses of a model (`Realization.IsModel`) realize cofaces with a given
+scheme (saturation) and with a given pattern of `⊥` below the full grade (the bottom pattern), but
+none with a given cell labelled `⊤`. -/
+def topPatternFamily (S : Scheme.{u} (n + 1)) (c : Fin S.card) : Set (StageType.{u} α (n + 1)) :=
+  {q | q.toScheme = S ∧ ∀ i : Fin q.card, (i : ℕ) = c → q.label i = ⊤}
+
+end StageType
+
+namespace Realization
+
+variable {α : Ordinal.{u}} {M : Type v} (R : Realization.{u, v} α M)
+
+/-- **Realization of the top pattern** (a named hypothesis, not a clause of `Realization.IsModel`):
+over every occurrence, a coface with a given scheme labelled `⊤` at a given cell is realized as
+soon as one exists.  Acquiring the context clause `StageType.CapNonDominating` along the lines of
+the acquisition of the margin calibration would ask for a one-point extension of the acquired
+occurrence whose scheme carries, at every graded index of full scope from the grade of the cap, a
+cell reading the cap below the live cells of the old occurrence, with the cap a new cell labelled
+`⊤`: saturation gives the scheme, but only this clause would give the label of the cap. -/
+def RealizesTopPattern : Prop :=
+  ∀ (x : R.Occurrence) (S : Scheme.{u} (x.arity + 1)) (c : Fin S.card),
+    (x.type.cofaces ∩ StageType.topPatternFamily S c).Nonempty →
+      R.RealizesOver x.tuple (StageType.topPatternFamily S c)
+
+end Realization
 
 end VaughtConjecture
