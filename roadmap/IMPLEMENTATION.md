@@ -4188,7 +4188,7 @@ argued, not formalized):
    `Realization/Receiving.lean`), as modelhood does (`Realization.IsModel.reduce`);
 3. the comparison and uniqueness theorems take receiving of each realization separately:
    `Realization.eq_of_reduce_eq_of_forcingDonors` (`Continuation/Normalization.lean`, with
-   `forcingDonors_of_blockStage`), `Expansion.exists_extend_covers` and
+   `forcingDonors_blockStage`), `Expansion.exists_extend_covers` and
    `Expansion.exists_extend_covers_back` (`Expansion/Agreement.lean`); only the compositions
    `Expansion.NextBlockUniqueness.of_forcingDonors` and `Expansion.bfEquiv_of_modelExpansions`
    take receiving of every model;
@@ -4209,14 +4209,18 @@ argued, not formalized):
   the same carrier and extends the occurrence at `λ_δ`; agreement below `c` survives reduction
   (`Label.min_reduce_of_le`).  The first test of the route: proved before any reorganization.
   Acceptance: the statement at every limit `δ`, with no hypothesis beyond the receiving of the
-  reductions.
+  reductions.  Status: compiled in a separate open change, not yet reviewed; prospective here.
 - **8b. Reduction and uniqueness for `𝒞`.**  Reduction from item 2 above; next-block
   uniqueness of receiving expansions from item 3 with no receiving hypothesis on other models;
   the counterparts of `ModelExpansion.subsingleton` and `ModelExpansion.nonempty_of_forall_lt`
   with 8a.
 - **8c. Logical comparison.**  The counterpart of `Expansion.bfEquiv_of_modelExpansions` for
   receiving expansions, the receiving of each expansion and of its reductions in place of
-  `Expansion.FiniteExtensionReceiving`.
+  `Expansion.FiniteExtensionReceiving`.  `Expansion.exists_extend_covers`, its `_back` form, and
+  `Expansion.exists_reduce_covers` state their output expansions existentially (only their
+  proofs use `ModelExpansion.reduceBlock`), so a receiving version needs these steps restated
+  with the reductions as outputs (`Expansion.exists_extend_covers_reduceBlock` and its `_back`
+  form, compiled in a separate open change).
 - **8d. The receiving continuation criterion.**  A receiving model at `λ_ξ`, not cover-hollow,
   with top-grade supremum `⊤`, has a receiving successor; the conclusion gives receiving as well
   as modelhood.  Conditionally on (R4), the stable candidate has finite-cut receiving
@@ -4232,36 +4236,42 @@ argued, not formalized):
   implication holds, so `Realization.IsCoverHollow.isTerminalAt` gives receiving-terminality.
 - **8f. Classification and the count.**  The terminal comparisons for receiving models, countable
   and nonempty receiving losses, and the count through the endpoint of item 5, unchanged.
+  Status: a form of the main theorem through receiving models, without (R1) as a hypothesis, is
+  compiled in a separate open change, not yet reviewed; prospective here.
 
-**The three finite reading constructions** (open; the warnings are compiled in separate open
-changes, not in the library).  Completion yields a lawful extension
+**The three finite reading constructions** (open; the warnings for (R2)–(R4) below are compiled
+in separate open changes, not in the library).  Completion yields a lawful extension
 (`Seed.nonempty_completionBelowFullGrade`); classification and continuation need a lawful
 extension whose rows read specified labels (`StageType.ReadsAtLeast`;
 `CellScheme.Rows.IsLawful.le_of_forall_row_le`).
 
 - (R2): extensions satisfying the per-top reading criterion for arbitrary relevant donors.  The
-  fixed-lost-top version, `StageType.HasSeparatedPinnedExtensions`, is refuted at every stage
+  version with one fixed **lost top** (an old top of the context read for every new top),
+  `StageType.HasSeparatedPinnedExtensions`, is refuted at every stage
   (`SeparationObstruction.not_hasSeparatedPinnedExtensions`, in a separate open change); the
   replacement reads each new top through its own old reference top.
 - (R3): uniform acquisition of marked-cap contexts (`StageType.IsMarkedCapContext`,
-  `Stage/MarkedCap.lean`) and reading carriers: marked closure for sufficiently rich marked
-  specifications; the empty specification solves nothing.
+  `Stage/MarkedCap.lean`) and **reading carriers** (legal one-point extensions carrying the donor
+  whose cells of full scope read the new tops): **marked closure** (an entry agreeing with a
+  marked one above its cap is marked) for sufficiently rich marked specifications of the
+  **leaf-and-marked layer** (a leaf cell for each catalogue entry, a marked cell for each chosen
+  entry); the empty specification solves nothing.
 - (R4): extensions with the required cap readings.  Ordinary profile completion can put an
   all-`⊥` row where a label must be read, so the completion theorem cannot be applied unchanged.
 
 No single universal reading theorem is required: the quantifiers of the three differ, and the
 stronger unifications examined are refuted
-(`PrescribedFullRowsCounterexample.not_hasPrescribedFullRowsAtLabels`; the fixed-lost-top form
-of (R2)).
+(`PrescribedFullRowsCounterexample.not_hasPrescribedFullRowsAtLabels`, compiled in this
+repository (theorem named); the fixed-lost-top form of (R2)).
 
 **Deferred from the first endpoint**, each a later result with its status unchanged: the
 equivalence with the original four-family sentence (checkpoint 4, the fidelity theorem); global
 stopping and maximal coverage of every prescribed base; the full manuscript correspondence
 ("Manuscript concordance"); the Scott-process and descriptive refinements (`COMPANIONS.md`).
 
-**Order.**  First, check the general completion against the semantic contract, integrate it,
-and instantiate its consequences (the four-hypothesis form; `MainTheorem.capToModel`,
-`forcingDonors_of_blockStage`, `MainTheorem.hasNonemptyLosses_of_nextBlockUniqueness`).
+**Order.**  First, check the general completion against the semantic contract and integrate it;
+its consequences are compiled (the four-hypothesis form; `MainTheorem.capToModel`,
+`forcingDonors_blockStage`, `MainTheorem.hasNonemptyLosses_of_nextBlockUniqueness`).
 Second, 8a, then 8b–8f.  Third, the three reading constructions, attacked directly with their
 exact requirements; each preservation lemma is tested against the compiled counterexamples
 before any conditional theorem is stated around it.
@@ -4545,7 +4555,9 @@ In the U1 row, `Expansion.FiniteCutReceiving` (countable limit stages) is a coro
 row, hypothesis 8 uses the apex property at every `λ_η`; the other targets use it, or its plain
 form, at arbitrary limit stages.
 
-**U1.  (R1) through an attached gated scheme** (first priority).
+**U1.  (R1) through an attached gated scheme** (first priority).  Under the receiving-models
+route (checkpoint 8), (R1) is postponed to a later fidelity theorem and U1 is no longer first;
+this departs intentionally from the ordering of 2026-10-07 recorded in this section.
 
 - *Conclusion.*  The per-model form at every limit stage, as
   `Realization.IsModel.hasFiniteCutReceiving_of_hasCoupledGatedPinnedExtensions` is stated: for
@@ -4831,7 +4843,8 @@ U4 alone is not asserted to give next-block uniqueness or nonempty losses.
 
 **Order.**  U1 first, beginning with its tests (a)–(c) and (f); then U2; U4 is compiled, and U1,
 step 2, and U3, step 5, use it; U3 after U1 for (R2).  With U1–U3 compiled, the four-hypothesis
-form has no hypothesis left.
+form has no hypothesis left.  This order is superseded for the first endpoint by that of
+checkpoint 8, where (R1) is postponed and U1 is no longer first.
 
 ## Placement record
 
