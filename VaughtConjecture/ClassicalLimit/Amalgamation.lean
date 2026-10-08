@@ -11,7 +11,8 @@ import VaughtConjecture.Stage.Cap
 
 Roadmap, the section "The top-free witnesses: the finite age and its classical limit", step 2
 (amalgamation and joint embedding proved directly for finite charts), here conditional on the coatom
-extension property, which is not proved, with the application of the classical existence theorem of
+extension property (compiled in this repository (theorem named) at every stage that is zero or a
+limit, `StageType.hasCoatomExtensions`), with the application of the classical existence theorem of
 step 3; Layer 3, 3.1, (R6) (the plain form of the coatom extension property gives the amalgamation
 of legal stage types over a common face, which capped is step 2).
 
@@ -44,8 +45,9 @@ Strong amalgamation (disjointness of the two images outside the common chart) is
 the coatom extension property at a limit stage, the age of top-free charts has the amalgamation and
 joint embedding properties (`amalgamation_topFreeAge`, `jointEmbedding_topFreeAge`) and, when there
 are countably many ordinals below the stage, is a Fraïssé class (`isFraisse_topFreeAge`; at `ω`,
-`isFraisse_topFreeAge_omega`).  None of these is proved outright: the coatom extension property is
-not proved (Hypotheses, below).
+`isFraisse_topFreeAge_omega`).  None of these is proved outright here: the coatom extension property
+is taken as a hypothesis (Hypotheses, below); it is compiled at every stage that is zero or a limit
+(`StageType.hasCoatomExtensions`).
 
 **Classical existence** (step 3), under the coatom extension property.
 `exists_isFraisseLimit_topFreeAge` is the classical existence theorem
@@ -58,9 +60,10 @@ ordinals below the stage (`hullLanguage.countable_functions`); at `ω` it is
 takes three hypotheses on the stage `α`, explicitly:
 
 * `hext : StageType.HasCoatomExtensions α`, the plain form of the coatom extension property at `α`.
-  It is not proved: it is the open part of statement (R6) of roadmap, Layer 3, 3.1, whose proof by
-  the completion of the coatom amalgam is checkpoints 2.1–2.7 there.  It gives the amalgam of two
-  legal stage types over a common face (`StageType.exists_amalgam`).
+  It is compiled in this repository (theorem named) at every stage that is zero or a limit
+  (`StageType.hasCoatomExtensions`; statement (R6) of roadmap, Layer 3, 3.1, by the completion of
+  the coatom amalgam, checkpoints 2.1–2.7 there).  It gives the amalgam of two legal stage types
+  over a common face (`StageType.exists_amalgam`).
 * `hα : Order.IsSuccPrelimit α`, so that above every ordinal below `α` there is an ordinal below `α`
   self-visible at a given arity, the cap.
 * `h0 : 0 < α`, so that the bound of the labels of a top-free stage type, and the cap, are ordinals
@@ -101,8 +104,9 @@ same stage type are the faces, along embeddings `i` and `j` with `f.trans i = g.
 legal top-free stage type.  It is the amalgam of `exists_amalgam` capped at an ordinal self-visible
 at its arity and above every label of `P` and `R` (`exists_cap`, `restrictFace_cap`).
 
-The coatom extension property `HasCoatomExtensions α` is not proved here: it is the open part of
-statement (R6) of roadmap, Layer 3, 3.1, checkpoints 2.1–2.7. -/
+The coatom extension property `HasCoatomExtensions α` is a hypothesis here; it is compiled at every
+stage that is zero or a limit (`StageType.hasApexCoatomExtensions`, `StageType.hasCoatomExtensions`;
+statement (R6) of roadmap, Layer 3, 3.1, checkpoint 2.7). -/
 theorem exists_isTopFree_amalgam (hext : HasCoatomExtensions.{u} α)
     (hα : Order.IsSuccPrelimit α) (h0 : 0 < α) {P : StageType.{u} α n} {R : StageType.{u} α k}
     (hP : P.IsLegal) (hPt : P.IsTopFree) (hR : R.IsLegal) (hRt : R.IsTopFree) {f : Fin m ↪ Fin n}
@@ -137,8 +141,9 @@ chart to a literally commuting square.  This is the hypothesis `hap` of
 face maps (`StageType.exists_eq_chartEmbedding`), and the amalgam is that of top-free stage types
 over the common face (`StageType.exists_isTopFree_amalgam`).
 
-The coatom extension property `StageType.HasCoatomExtensions α` is not proved here: it is the open
-part of statement (R6) of roadmap, Layer 3, 3.1, checkpoints 2.1–2.7. -/
+The coatom extension property `StageType.HasCoatomExtensions α` is a hypothesis here; it is compiled
+at every stage that is zero or a limit (`StageType.hasApexCoatomExtensions`,
+`StageType.hasCoatomExtensions`; statement (R6) of roadmap, Layer 3, 3.1, checkpoint 2.7). -/
 theorem exists_amalgam_topFreeChart (hext : StageType.HasCoatomExtensions.{u} α)
     (hα : Order.IsSuccPrelimit α) (h0 : 0 < α) (i j k : TopFreeIndex.{u} α)
     (f : topFreeChart α i ↪[hullLanguage.{u} α] topFreeChart α j)
@@ -163,8 +168,9 @@ two top-free charts embed into one top-free chart.  This is the hypothesis `hjep
 `isFraisse_representativeClass` for the top-free charts: the amalgamation of the two charts over the
 empty chart (`TopFreeIndex.restrictFace_empty`).
 
-The coatom extension property `StageType.HasCoatomExtensions α` is not proved here: it is the open
-part of statement (R6) of roadmap, Layer 3, 3.1, checkpoints 2.1–2.7. -/
+The coatom extension property `StageType.HasCoatomExtensions α` is a hypothesis here; it is compiled
+at every stage that is zero or a limit (`StageType.hasApexCoatomExtensions`,
+`StageType.hasCoatomExtensions`; statement (R6) of roadmap, Layer 3, 3.1, checkpoint 2.7). -/
 theorem exists_jointEmbedding_topFreeChart (hext : StageType.HasCoatomExtensions.{u} α)
     (hα : Order.IsSuccPrelimit α) (h0 : 0 < α) (i j : TopFreeIndex.{u} α) :
     ∃ k, Nonempty (topFreeChart α i ↪[hullLanguage.{u} α] topFreeChart α k) ∧
@@ -177,8 +183,9 @@ theorem exists_jointEmbedding_topFreeChart (hext : StageType.HasCoatomExtensions
 /-- **The age of top-free charts has the amalgamation property**, conditional on the coatom
 extension property at a limit stage.
 
-The coatom extension property `StageType.HasCoatomExtensions α` is not proved here: it is the open
-part of statement (R6) of roadmap, Layer 3, 3.1, checkpoints 2.1–2.7. -/
+The coatom extension property `StageType.HasCoatomExtensions α` is a hypothesis here; it is compiled
+at every stage that is zero or a limit (`StageType.hasApexCoatomExtensions`,
+`StageType.hasCoatomExtensions`; statement (R6) of roadmap, Layer 3, 3.1, checkpoint 2.7). -/
 theorem amalgamation_topFreeAge (hext : StageType.HasCoatomExtensions.{u} α)
     (hα : Order.IsSuccPrelimit α) (h0 : 0 < α) : Amalgamation (topFreeAge.{u} α) :=
   representativeClass_amalgamation _ (exists_amalgam_topFreeChart hext hα h0)
@@ -186,8 +193,9 @@ theorem amalgamation_topFreeAge (hext : StageType.HasCoatomExtensions.{u} α)
 /-- **The age of top-free charts has the joint embedding property**, conditional on the coatom
 extension property at a limit stage.
 
-The coatom extension property `StageType.HasCoatomExtensions α` is not proved here: it is the open
-part of statement (R6) of roadmap, Layer 3, 3.1, checkpoints 2.1–2.7. -/
+The coatom extension property `StageType.HasCoatomExtensions α` is a hypothesis here; it is compiled
+at every stage that is zero or a limit (`StageType.hasApexCoatomExtensions`,
+`StageType.hasCoatomExtensions`; statement (R6) of roadmap, Layer 3, 3.1, checkpoint 2.7). -/
 theorem jointEmbedding_topFreeAge (hext : StageType.HasCoatomExtensions.{u} α)
     (hα : Order.IsSuccPrelimit α) (h0 : 0 < α) : JointEmbedding (topFreeAge.{u} α) :=
   representativeClass_jointEmbedding _ (exists_jointEmbedding_topFreeChart hext hα h0)
@@ -199,8 +207,9 @@ stage `α`, with countably many ordinals below `α`: it is hereditary (`exists_e
 has the joint embedding and amalgamation properties, and has countably many isomorphism types of
 finitely generated members.
 
-The coatom extension property `StageType.HasCoatomExtensions α` is not proved here: it is the open
-part of statement (R6) of roadmap, Layer 3, 3.1, checkpoints 2.1–2.7. -/
+The coatom extension property `StageType.HasCoatomExtensions α` is a hypothesis here; it is compiled
+at every stage that is zero or a limit (`StageType.hasApexCoatomExtensions`,
+`StageType.hasCoatomExtensions`; statement (R6) of roadmap, Layer 3, 3.1, checkpoint 2.7). -/
 theorem isFraisse_topFreeAge (hext : StageType.HasCoatomExtensions.{u} α)
     (hα : Order.IsSuccPrelimit α) (h0 : 0 < α) (hcount : (Set.Iio α).Countable) :
     IsFraisse (topFreeAge.{u} α) :=
@@ -211,8 +220,9 @@ theorem isFraisse_topFreeAge (hext : StageType.HasCoatomExtensions.{u} α)
 /-- **The age of top-free charts at `ω` is a Fraïssé class**, conditional on the coatom extension
 property at `ω`.
 
-The coatom extension property `StageType.HasCoatomExtensions ω` is not proved here: it is the open
-part of statement (R6) of roadmap, Layer 3, 3.1, checkpoints 2.1–2.7. -/
+The coatom extension property `StageType.HasCoatomExtensions ω` is a hypothesis here; it is compiled
+at every stage that is zero or a limit (`StageType.hasApexCoatomExtensions`,
+`StageType.hasCoatomExtensions`; statement (R6) of roadmap, Layer 3, 3.1, checkpoint 2.7). -/
 theorem isFraisse_topFreeAge_omega (hext : StageType.HasCoatomExtensions.{u} ω) :
     IsFraisse (topFreeAge.{u} ω) :=
   isFraisse_topFreeAge hext Ordinal.isSuccLimit_omega0.isSuccPrelimit Ordinal.omega0_pos
@@ -226,8 +236,9 @@ on the coatom extension property at a limit stage `α` with countably many ordin
 countability of the function symbols of the hull language, needed to state `IsFraisseLimit`, is
 derived from that of the ordinals below `α` (`hullLanguage.countable_functions`), not assumed.
 
-The coatom extension property `StageType.HasCoatomExtensions α` is not proved here: it is the open
-part of statement (R6) of roadmap, Layer 3, 3.1, checkpoints 2.1–2.7. -/
+The coatom extension property `StageType.HasCoatomExtensions α` is a hypothesis here; it is compiled
+at every stage that is zero or a limit (`StageType.hasApexCoatomExtensions`,
+`StageType.hasCoatomExtensions`; statement (R6) of roadmap, Layer 3, 3.1, checkpoint 2.7). -/
 theorem exists_isFraisseLimit_topFreeAge (hext : StageType.HasCoatomExtensions.{u} α)
     (hα : Order.IsSuccPrelimit α) (h0 : 0 < α) (hcount : (Set.Iio α).Countable) :
     letI := hullLanguage.countable_functions hcount
@@ -242,8 +253,9 @@ theorem exists_isFraisseLimit_topFreeAge (hext : StageType.HasCoatomExtensions.{
 property at `ω`; the countability of the function symbols is the instance
 `hullLanguage.countable_functions_omega`.
 
-The coatom extension property `StageType.HasCoatomExtensions ω` is not proved here: it is the open
-part of statement (R6) of roadmap, Layer 3, 3.1, checkpoints 2.1–2.7. -/
+The coatom extension property `StageType.HasCoatomExtensions ω` is a hypothesis here; it is compiled
+at every stage that is zero or a limit (`StageType.hasApexCoatomExtensions`,
+`StageType.hasCoatomExtensions`; statement (R6) of roadmap, Layer 3, 3.1, checkpoint 2.7). -/
 theorem exists_isFraisseLimit_topFreeAge_omega (hext : StageType.HasCoatomExtensions.{u} ω) :
     ∃ (M : Bundled.{0} (hullLanguage.{u} ω).Structure) (_ : Countable M),
       IsFraisseLimit (topFreeAge.{u} ω) M :=

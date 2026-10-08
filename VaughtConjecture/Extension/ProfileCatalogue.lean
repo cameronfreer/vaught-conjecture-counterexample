@@ -79,16 +79,18 @@ and 5 of the refutation).
   `(ω + 1, ⊤, ⊤)`, a capped lift exists.  This configuration is not the refuted one (the cap is `3`,
   not `4`, so the seedL mechanism is absent by construction), the lift exists with the top layer
   `2` as well, and it is one ambient labelling and one cap, not the lift at every ambient
-  labelling.  At `N = 1` the same configuration has no lift (`not_exists_lift_tie_one`); `N = 2` is
-  open.
+  labelling.  At `N = 1`, `J = 3` the same configuration has no lift (`not_exists_lift_tie_one`;
+  for every `J ≥ 2`, `not_exists_lift_tie_one_of_two_le`); `N = 2` is open.
 * **Top layer `3` at the top of the bounded value set: the lift fails** (`not_exists_lift_top`,
-  `not_cappedLift_three`, every `N ≥ 1`).  At the field labelling of the top profile
+  `not_cappedLift_three`, every `N ≥ 1`; the lift fails at every top layer `J ≥ 2` as well,
+  `not_exists_lift_top_of_two_le`).  At the field labelling of the top profile
   `(ω * N + 1, ω * N + 2, ω * N + 1, ω * N + 2, ω * (N - 1) + 3)`, the cap `ω * (N - 1) + 3` and the
   prescription `(ω * N + 1, ⊤, ⊤)`, no capped lift exists: a profile reading `({3}, 1)` strictly
   below `({4}, 1)` and reaching the cap would need a normalized value of grade `1` above
-  `ω * N + 1` (`agreementHeight_top_lt`).  This is a failure of the same kind as those of fixed
-  alphabets at their top, with different combinatorics (`SmallArityExamples.cappedLift_fourCellSeed`
-  and `roadmap/README.md`, Layer 3, 3.1, (R6), 2.5), not the seedL mechanism.
+  `ω * N + 1` (`agreementHeight_top_lt`).  It is not the seedL mechanism.  The flat catalogue over
+  a fixed alphabet also fails to lift capped, at the top of its alphabet
+  (`SmallArityExamples.not_cappedLift_flatRows`, with different combinatorics); the two failures
+  are proved separately, and neither is derived from the other.
 
 **The fields of `Seed.MultiLayerStep` for the profile scheme** (with top layer `J = 2` or `3`).
 `pos` fails by construction (`mult I N J 3 = 0`: no new cell at `(univ, 4)`), so neither scheme can
@@ -435,8 +437,9 @@ theorem tripleProfile_apply (AC FC AD FD G : Label.{u}) (d : Fin I.amalgam.card)
       tripleLabelling AC FC AD FD G (I.amalgam.toCellScheme.gradedIndex d) := rfl
 
 /-- `tripleLabelling` at a graded index of a given kind. -/
-theorem tripleLabelling_of_kind {AC FC AD FD G : Label.{u}} {X : Finset (Fin 5) × ℕ} {c : Fin 6}
-    (h : tripleKind X = c) : tripleLabelling AC FC AD FD G X = ![⊥, AC, FC, AD, FD, G] c := by
+private theorem tripleLabelling_of_kind {AC FC AD FD G : Label.{u}} {X : Finset (Fin 5) × ℕ}
+    {c : Fin 6} (h : tripleKind X = c) :
+    tripleLabelling AC FC AD FD G X = ![⊥, AC, FC, AD, FD, G] c := by
   rw [tripleLabelling, h]
 
 /-- The live graded indices of the first coatom have grade `1` or `2`. -/
@@ -446,7 +449,7 @@ private theorem liveC_snd : ∀ Y ∈ TwoFaceLiftCounterexample.liveC, Y.2 = 1 �
 private theorem liveD_snd : ∀ Y ∈ TwoFaceLiftCounterexample.liveD, Y.2 = 1 ∨ Y.2 = 2 := by decide
 
 /-- The kinds of `tripleKind` have the grades of their parameters. -/
-theorem snd_of_tripleKind (X : Finset (Fin 5) × ℕ) :
+private theorem snd_of_tripleKind (X : Finset (Fin 5) × ℕ) :
     (tripleKind X = 1 ∨ tripleKind X = 3 → X.2 = 1) ∧
       (tripleKind X = 2 ∨ tripleKind X = 4 → X.2 = 2) ∧ (tripleKind X = 5 → X.2 = 3) := by
   unfold tripleKind
@@ -556,29 +559,30 @@ noncomputable abbrev liftProfile : Profile I :=
 noncomputable abbrev blockTwo : Ordinal.{u} := ω * ((2 : ℕ) : Ordinal.{u})
 
 /-- The start `ω * 2` of the block `2` is a limit. -/
-theorem isSuccPrelimit_blockTwo : Order.IsSuccPrelimit blockTwo.{u} :=
+private theorem isSuccPrelimit_blockTwo : Order.IsSuccPrelimit blockTwo.{u} :=
   Ordinal.isSuccPrelimit_iff_omega0_dvd.mpr (dvd_mul_right _ _)
 
 /-- The grid points of the blocks `0` and `1` lie below `ω * 2`. -/
-theorem gridPoint_lt_blockTwo {k b : ℕ} (hb : b < 2) :
+private theorem gridPoint_lt_blockTwo {k b : ℕ} (hb : b < 2) :
     gridPoint.{u} k b < (blockTwo : Label.{u}) := by
   rw [gridPoint, WithBot.coe_lt_coe, WithTop.coe_lt_coe, blockTwo]
   simpa using omega0_mul_add_natCast_lt (Nat.cast_lt.mpr hb) k 0
 
 /-- The grid points of the blocks from `2` on lie at or above `ω * 2`. -/
-theorem blockTwo_le_gridPoint {k b : ℕ} (hb : 2 ≤ b) : (blockTwo : Label.{u}) ≤ gridPoint k b := by
+private theorem blockTwo_le_gridPoint {k b : ℕ} (hb : 2 ≤ b) :
+    (blockTwo : Label.{u}) ≤ gridPoint k b := by
   rw [gridPoint, WithBot.coe_le_coe, WithTop.coe_le_coe, blockTwo]
   exact (mul_le_mul_right (Nat.cast_le.mpr hb) ω).trans le_self_add
 
 /-- The reduction to the block `2` keeps a label capped at `3`. -/
-theorem min_reduce_tieG (x : Label.{u}) : min (reduce blockTwo x) tieG = min x tieG := by
+private theorem min_reduce_tieG (x : Label.{u}) : min (reduce blockTwo x) tieG = min x tieG := by
   by_cases hx : x < (blockTwo : Label.{u})
   · rw [reduce_of_lt hx]
   · rw [reduce_of_le (not_lt.mp hx), min_top_left, min_eq_right]
     exact ((gridPoint_lt_blockTwo (by omega)).trans_le (not_lt.mp hx)).le
 
 /-- The reduction to the block `2` is a witness bounded by the grade `3`. -/
-theorem isWitness_reduce_blockTwo : IsWitness (stepSuppressor.{u} 3) (reduce blockTwo) :=
+private theorem isWitness_reduce_blockTwo : IsWitness (stepSuppressor.{u} 3) (reduce blockTwo) :=
   ⟨(IsWitness.id_step 3).antitone, (IsWitness.id_step 3).isSelfVisible, reduce_bot,
     monotone_reduce _, fun x k _ i _ ↦ reduce_visibilityReplace isSuccPrelimit_blockTwo k i x⟩
 
@@ -771,7 +775,7 @@ theorem tieProfile_mem_catalogue (hN : 1 ≤ N) {j : ℕ} (hj : j ≤ 3) :
     (gridPoint_le_gridPoint_iff_lex.mpr (by omega))
     (fun _ ↦ visibilityReplace_three_one_gridPoint_one 1)
     (gridPoint_le_gridPoint_iff_lex.mpr (by omega))
-      (gridPoint_le_gridPoint_iff_lex.mpr (by omega))
+    (gridPoint_le_gridPoint_iff_lex.mpr (by omega))
 
 /-- The cells `({3}, 1)`, `({0, 1, 2, 3}, 2)`, `({0, 1, 2}, 3)` and `({4}, 1)` of the amalgam. -/
 theorem exists_test_cells : ∃ d₁ sC gE d₂ : Fin I.amalgam.card,
@@ -906,7 +910,7 @@ theorem isLawfulBelow_ambientTwo (hN : 1 ≤ N) :
     (gridPoint_le_gridPoint_iff_lex.mpr (by omega))
     (fun _ ↦ visibilityReplace_three_one_gridPoint_one 1)
     (gridPoint_le_gridPoint_iff_lex.mpr (by omega))
-      (gridPoint_le_gridPoint_iff_lex.mpr (by omega))
+    (gridPoint_le_gridPoint_iff_lex.mpr (by omega))
   exact isLawfulBelow_fieldLabelling hL.1 hL.2
     (fun d hd ↦ CaseSplitCounterexample.tripleLabelling_eq_of_le_two hd _ _ _ _ _ _)
     (twoOld_le hN) fun j _ hj ↦ tieProfile_mem_catalogue hIL hIR hN (by omega)
@@ -1019,7 +1023,7 @@ theorem not_isLawfulBelow_three (hN : 2 ≤ N) {W : Fin (profileScheme I N 3).ca
         (gridPoint_le_gridPoint_iff_lex.mpr (by omega))
         (fun _ ↦ visibilityReplace_three_one_gridPoint_one 1)
         (gridPoint_le_gridPoint_iff_lex.mpr (by omega))
-      (gridPoint_le_gridPoint_iff_lex.mpr (by omega)),
+        (gridPoint_le_gridPoint_iff_lex.mpr (by omega)),
         ?_, fun h ↦ ?_⟩
       · rw [hPt]
         -- The tie profile at `({0, 1, 2}, 3)` is `3`.
@@ -1086,10 +1090,12 @@ whose capped observation the lift keeps) `fieldLabelling I N J (tieProfile I) (t
 agrees with the ambient labelling capped at `3`, for every bound `N ≥ 3` of the bounded value set.
 
 This is a configured lift, at one ambient labelling and one cap; it is not the capped lift at every
-ambient labelling, which fails (`not_cappedLift_two`, `not_cappedLift_three`). It is not the refuted
-configuration either: the cap is the tie profile's own value `3` at `({0, 1, 2}, 3)`, not `4`, so
-the seedL mechanism is absent by construction, and the lift holds with the top layer `2` as well. At
-`N = 1` the same configuration has no lift (`not_exists_lift_tie_one`); `N = 2` is open.
+ambient labelling, which fails for `J = 2, 3` (`not_cappedLift_two`, `not_cappedLift_three`). It is
+not the refuted configuration either: the cap is the tie profile's own value `3` at
+`({0, 1, 2}, 3)`, not `4`, so the seedL mechanism is absent by construction, and the lift holds with
+the top layer `2` as well. At
+`N = 1`, `J = 3` the same configuration has no lift (`not_exists_lift_tie_one`; for every `J ≥ 2`,
+`not_exists_lift_tie_one_of_two_le`); `N = 2` is open.
 
 The lift is the field labelling of the lift profile (`ω + 1` at the live cells of grade `1` of `C`,
 values in the blocks `2` and `3` at the other live cells), reduced to the block `2` (`Label.reduce`,
@@ -1158,7 +1164,7 @@ theorem topProfile_mem_catalogue (hN : 1 ≤ N) {j : ℕ} (hj : j ≤ 3) :
     (gridPoint_le_gridPoint_iff_lex.mpr (by omega))
     (fun _ ↦ visibilityReplace_three_one_gridPoint_one N)
     (gridPoint_le_gridPoint_iff_lex.mpr (by omega))
-      (gridPoint_le_gridPoint_iff_lex.mpr (by omega))
+    (gridPoint_le_gridPoint_iff_lex.mpr (by omega))
 
 /-- **The ambient labelling of the top profile is lawful below `(univ, 3)`.** -/
 theorem isLawfulBelow_ambientTop (hN : 1 ≤ N) :
@@ -1218,6 +1224,38 @@ theorem not_exists_lift_tie_one :
           (show ((coatomC, 3) : Finset (Fin 5) × ℕ) ≤ (univ, 3) from ⟨subset_univ _, le_rfl⟩))
           z) = prescription I 1 3 tieA z :=
   not_exists_lift_top hIL hIR le_rfl
+
+/-- **At the top of the bounded value set the lift fails at every top layer `J ≥ 2`**: the
+statement of `not_exists_lift_top` in the profile scheme with top layer `J`, by the same argument
+(`exists_separating_of_lift`, `agreementHeight_top_lt`). -/
+theorem not_exists_lift_top_of_two_le (hJ : 2 ≤ J) (hN : 1 ≤ N) :
+    ¬ ∃ w : (profileScheme I N J).toCellScheme.below ((univ : Finset (Fin 5)), 3) → Label.{u},
+      (profileScheme I N J).rows.IsLawfulBelow (univ, 3) w ∧
+      (∀ z, min (w z) (gridPoint 3 (N - 1)) =
+        min (fieldLabelling I N J (topProfile I N) (topProfile I N) z) (gridPoint 3 (N - 1))) ∧
+      ∀ z : (profileScheme I N J).toCellScheme.below (coatomC, 3),
+        w (Set.inclusion ((profileScheme I N J).toCellScheme.below_mono
+          (show ((coatomC, 3) : Finset (Fin 5) × ℕ) ≤ (univ, 3) from ⟨subset_univ _, le_rfl⟩))
+          z) = prescription I N J (gridPoint 1 N) z := by
+  rintro ⟨w, hw, hag, hres⟩
+  obtain ⟨d₁, d₂, i, hd₁, hd₂, hsep, hcap⟩ :=
+    exists_separating_of_lift hIL hIR hJ hN (gridPoint_ne_top 1 N) hw hag hres
+  rw [fieldLabelling_multiNewCell] at hcap
+  exact absurd (agreementHeight_top_lt hN (mem_catalogue.mp (entry_mem_of_lt_mult i)).1 hd₁ hd₂
+    hsep) (not_lt.mpr hcap)
+
+/-- **At the bound `N = 1`, the configured tie lift does not exist at any top layer `J ≥ 2`**
+(`not_exists_lift_top_of_two_le` at `N = 1`, where the top profile is the tie profile). -/
+theorem not_exists_lift_tie_one_of_two_le (hJ : 2 ≤ J) :
+    ¬ ∃ w : (profileScheme I 1 J).toCellScheme.below ((univ : Finset (Fin 5)), 3) → Label.{u},
+      (profileScheme I 1 J).rows.IsLawfulBelow (univ, 3) w ∧
+      (∀ z, min (w z) tieG =
+        min (fieldLabelling I 1 J (tieProfile I) (tieProfile I) z) tieG) ∧
+      ∀ z : (profileScheme I 1 J).toCellScheme.below (coatomC, 3),
+        w (Set.inclusion ((profileScheme I 1 J).toCellScheme.below_mono
+          (show ((coatomC, 3) : Finset (Fin 5) × ℕ) ≤ (univ, 3) from ⟨subset_univ _, le_rfl⟩))
+          z) = prescription I 1 J tieA z :=
+  not_exists_lift_top_of_two_le hIL hIR hJ le_rfl
 
 end Seeds
 

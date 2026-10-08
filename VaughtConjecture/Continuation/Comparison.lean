@@ -73,20 +73,21 @@ Layer 3 are stated here as hypotheses, at the strength of the table and at limit
   growth, over every cover, the empty one included, every one-point coface is the type of the cover
   extended by one point.
 
-Hollowness is not defined in this library yet: the predicate `H` is a parameter, to be fixed as
-the hollowness predicate of the continuation criterion (output 3 of higher-stage reconstruction),
-so that one predicate is used in both.  Both statements are still to be proved; by the table,
-both use, among other inputs, the coatom extension construction ((R6)), that is, the coatom
-extension property `StageType.HasCoatomExtensions`, which is not proved.  The families
-`{D | D legal, topGrade D ≤ K}` and `{D | D legal}` are closed under the face maps
-(`StageType.IsLegal.restrictFace`, `StageType.topGrade_le_of_restrictFace`), so the one-point
-form gives exact receiving within them (`Realization.ExactReceivingWithin.of_one_point`); every
-actual type of a model lies in them (top grade at most the top-grade supremum,
-`Occurrence.topGrade_le_topGradeSup`), and the initial match is the pair of empty covers.  Hence
-the residual comparison (`Realization.nonempty_equiv_of_residual`: two expansions with no cover
-that is a globally rigid core and with the same top-grade supremum `K`, under
-`ResidualReceiving`) and the hollow comparison (`Realization.nonempty_equiv_of_hollow`: two
-expansions satisfying `H` with unbounded growth, under `HollowReceiving H`).
+Hollowness is not defined in this library yet: the predicate `H` is a parameter, to be fixed as the
+hollowness predicate of the continuation criterion (output 3 of higher-stage reconstruction), so
+that one predicate is used in both.  Both statements are still to be proved; by the table, both use,
+among other inputs, the coatom extension construction ((R6)), that is, the coatom extension property
+`StageType.HasCoatomExtensions`, compiled in this repository (theorem named) at every stage that is
+zero or a limit (`StageType.hasCoatomExtensions`).  The families `{D | D legal, topGrade D ≤ K}` and
+`{D | D legal}` are closed under the face maps (`StageType.IsLegal.restrictFace`,
+`StageType.topGrade_le_of_restrictFace`), so the one-point form gives exact receiving within them
+(`Realization.ExactReceivingWithin.of_one_point`); every actual type of a model lies in them (top
+grade at most the top-grade supremum, `Occurrence.topGrade_le_topGradeSup`), and the initial match
+is the pair of empty covers.  Hence the residual comparison
+(`Realization.nonempty_equiv_of_residual`: two expansions with no cover that is a globally rigid
+core and with the same top-grade supremum `K`, under `ResidualReceiving`) and the hollow comparison
+(`Realization.nonempty_equiv_of_hollow`: two expansions satisfying `H` with unbounded growth, under
+`HollowReceiving H`).
 
 ## Placement
 

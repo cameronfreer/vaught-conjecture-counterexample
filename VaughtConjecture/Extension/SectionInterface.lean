@@ -13,16 +13,16 @@ Roadmap, Layer 3, 3.1, (R6), checkpoint 2.7 (the completion below the full grade
 the interface between the lower layers of the tower and a grade-`3` layer of rank-normalized
 profiles).
 
-Let `I` be a seed on five points and `T 2 = I.tower 2` the tower of field layers up to the grade
-`2` (module `VaughtConjecture.Extension.Tower`).  A grade-`3` layer of profiles over `T 2` gives
-the cell of a profile `P` of `RankProfile.rankCat I 3` a row reading the old cells by `P` and the
-new cells of `T 2` by a labelling chosen for `P`.  A **section operator** (`SectionOp`) is one
-function `σ` from profiles to labellings of the cells of `T 2`, fixed before any prescription,
-cap or ambient labelling.  The clauses asked of it, for the profiles of the catalogue:
+Let `I` be a seed on five points and `T 2 = I.tower 2` the tower of field layers up to the grade `2`
+(module `VaughtConjecture.Extension.Tower`).  A grade-`3` layer of profiles over `T 2` gives the
+cell of a profile `P` of `RankProfile.rankCat I 3` a row reading the old cells by `P` and the new
+cells of `T 2` by a labelling chosen for `P`.  A **section operator** (`SectionOp`) is one function
+`σ` from profiles to labellings of the cells of `T 2`, fixed before any prescription, cap or ambient
+labelling.  The clauses asked of it, for the profiles of the catalogue:
 
 * (i) **lawful** (`SectionOp.IsLawful`): `σ P` is lawful below `(univ, 2)` in `T 2`;
-* (ii) **short** (`SectionOp.IsShort`): every value of `σ P` is short at `3` and not the formal
-  top, as the rows of the cells at `(univ, 3)` must be for the one-grade lift;
+* (ii) **short** (`SectionOp.IsShort`): every value of `σ P` is short at `3` and not the formal top,
+  as the rows of the cells at `(univ, 3)` must be for the one-grade lift;
 * (iii) **literal** (`SectionOp.IsLiteral`): `σ P` reads every old cell by `P`;
 * (iv) **capped agreement at a cap `h`** (`SectionOp.IsCapAgreeingAt`): profiles `P`, `Q` of the
   catalogue that agree capped at `h` at every old cell have sections that agree capped at `h` at
@@ -33,44 +33,43 @@ extension from the boundary at the caps self-visible and short at `3`, and the c
 rows of a grade-`3` layer of profiles uses (iv) at agreement heights in `Label.grid 3`, which are
 self-visible and short at `3`.  So (iv) is needed at the caps self-visible and short at `3`.
 
-**The interface theorem** (`exists_sectionOp`; compiled in this repository, for every seed on
-five points).  The tower section operator `towerSectionOp`, the tower section at the grade `2`
+**The interface theorem** (`exists_sectionOp`; compiled in this repository, for every seed on five
+points).  The tower section operator `towerSectionOp`, the tower section at the grade `2`
 (`Seed.towerSection`, module `VaughtConjecture.Extension.TowerSection`) read by the upper decoder
-(`Label.upperDecoder`, module `VaughtConjecture.Extension.UpperDecoder`), satisfies (i)
-(`towerSectionOp_isLawful`), (ii) (`towerSectionOp_isShort`: its values lie in
+(`Label.upperDecoderAt` at the cap grade `3`, module `VaughtConjecture.Extension.UpperDecoderAt`),
+satisfies (i) (`towerSectionOp_isLawful`), (ii) (`towerSectionOp_isShort`: its values lie in
 `Label.codeGrid 3 (2 N + 2)`), (iii) (`towerSectionOp_isLiteral`), and (iv) at every cap
 self-visible and short at `3` (`towerSectionOp_isCapAgreeingAt`).  It is one function of the
 profile; its only hypothesis is the seed.  The orbit decoder of the tower's own extension at `⊥`
-reads an agreement height between the codes of two keys as the lower key, which breaks (iv) at a
-cap `ω * γ + 3` that is not short at the grade of the layer; the upper decoder reads it as the
-largest label of the code grid self-visible at `3` and at most the next value.
+reads an agreement height between the codes of two keys as the lower key, which breaks (iv) at a cap
+`ω * γ + 3` that is not short at the grade of the layer; the upper decoder reads it as the largest
+label of the code grid self-visible at `3` and at most the next value.
 
 **(iv) at every cap short at `3` fails** (`not_isCapAgreeingAt_of_collision`,
-`not_isCapAgreeingAt_one`, `not_isCapAgreeingAt_one_seedL`,
-`not_forall_isCapAgreeingAt_of_isShort`; refuted, negative special case named).  For every seed
-whose coatom types are `TL` and `T5` (`seedL` among them), and every section operator that is
-lawful and literal at the profiles of the catalogue, (iv) fails at the cap `1`, which is short at
-`3` (`isShort_three_one`) and not self-visible at `3` (`not_isSelfVisible_three_one`).  The two
-profiles are the profiles of five parameters
+`not_isCapAgreeingAt_one`, `not_isCapAgreeingAt_one_seedL`, `not_forall_isCapAgreeingAt_of_isShort`;
+refuted, negative special case named).  For every seed whose coatom types are `TL` and `T5` (`seedL`
+among them), and every section operator that is lawful and literal at the profiles of the catalogue,
+(iv) fails at the cap `1`, which is short at `3` (`isShort_three_one`) and not self-visible at `3`
+(`not_isSelfVisible_three_one`).  The two profiles are the profiles of five parameters
 (`ProfileCatalogue.tripleProfile`) `P₁ = (1, 2, 1, 2, ⊥)` and `Q₁ = (1, 2, 2, 2, ⊥)`; they lie in
-the catalogue (`tripleProfile_mem_rankCat`, all their values lie in the natural strip below
-`3`, which the orbit code keeps) and agree capped at `1`.  The argument: availability for `σ Q₁`
-from the cell at `({0, 1, 2, 3}, 2)`, labelled `2`, gives a cell `u` at `(univ, 2)` with
-`σ Q₁ u ≥ 2`; locality at `u` with `Q₁ ({3}, 1) = 1 < 2 = Q₁ ({4}, 1)` makes the row of `u` read
-`({3}, 1)` strictly below `({4}, 1)`; capped agreement at `1` gives `σ P₁ u ≥ 1`, hence
-`σ P₁ u > 1`, the label `1` not being self-visible at the grade `2` of `u`; and then `σ P₁` has a
-collision at `u` (`Label.eq_of_transformsTo_collision`): the label `1`, not self-visible at `2`,
-at both cells, below the label at `u`, which forces the row of `u` to read them alike.  The general
-form (`not_isCapAgreeingAt_of_collision`) holds for every seed on five points and every pair of
-profiles with such a collision.
+the catalogue (`tripleProfile_mem_rankCat`, all their values lie in the natural strip below `3`,
+which the orbit code keeps) and agree capped at `1`.  The argument: availability for `σ Q₁` from the
+cell at `({0, 1, 2, 3}, 2)`, labelled `2`, gives a cell `u` at `(univ, 2)` with `σ Q₁ u ≥ 2`;
+locality at `u` with `Q₁ ({3}, 1) = 1 < 2 = Q₁ ({4}, 1)` makes the row of `u` read `({3}, 1)`
+strictly below `({4}, 1)`; capped agreement at `1` gives `σ P₁ u ≥ 1`, hence `σ P₁ u > 1`, the label
+`1` not being self-visible at the grade `2` of `u`; and then `σ P₁` has a collision at `u`
+(`Label.eq_of_transformsTo_collision`): the label `1`, not self-visible at `2`, at both cells, below
+the label at `u`, which forces the row of `u` to read them alike.  The general form
+(`not_isCapAgreeingAt_of_collision`) holds for every seed on five points and every pair of profiles
+with such a collision.
 
 So the cap class of (iv) cannot be widened to the caps short at `3`; this refutes that widened
 statement, not (iv) at the caps self-visible and short at `3`.
 
 ## Placement
 
-Checkpoint 2.7 of the completion of the coatom extension construction (`roadmap/README.md`,
-Layer 3, 3.1, under "(R6)").
+Checkpoint 2.7 of the completion of the coatom extension construction (`roadmap/README.md`, Layer 3,
+3.1, under "(R6)").
 -/
 
 universe u
@@ -95,8 +94,8 @@ variable {I}
 def IsLawful (σ : SectionOp I) : Prop :=
   ∀ P ∈ rankCat I 3, (I.tower 2).rows.IsLawfulBelow ((univ : Finset (Fin 5)), 2) fun t ↦ σ P t
 
-/-- (ii) **Short**: every value of the section of a profile of the catalogue is short at `3` and
-not the formal top. -/
+/-- (ii) **Short**: every value of the section of a profile of the catalogue is short at `3` and not
+the formal top. -/
 def IsShort (σ : SectionOp I) : Prop :=
   ∀ P ∈ rankCat I 3, ∀ t, Label.IsShort 3 (σ P t) ∧ σ P t ≠ ⊤
 
@@ -111,14 +110,15 @@ def IsCapAgreeingAt (σ : SectionOp I) (h : Label.{u}) : Prop :=
 
 end SectionOp
 
-/-! ### The interface at the caps self-visible and short at `3` -/
+/-! ### The interface at the caps self-visible and short at `3`
+-/
 
 variable {I}
 
 variable (I) in
-/-- **The tower section operator**: the tower section at the grade `2`
-(`Seed.towerSection`), with the block bound `2 N + 2` of the catalogue (`RankProfile.gridBound`),
-read by the upper decoder (`Label.upperDecoder`).  One function of the profile. -/
+/-- **The tower section operator**: the tower section at the grade `2` (`Seed.towerSection`), with
+the block bound `2 N + 2` of the catalogue (`RankProfile.gridBound`), read by the upper decoder
+(`Label.upperDecoderAt` at the cap grade `3`).  One function of the profile. -/
 noncomputable def towerSectionOp : SectionOp I :=
   fun P ↦ I.towerSection (RankProfile.gridBound I) 2 P
 
@@ -131,8 +131,8 @@ theorem towerSectionOp_isLawful : (towerSectionOp I).IsLawful := fun P hP ↦ by
     (hC.mono (X := (OrderedLayer.coatomC, 2)) ⟨subset_rfl, by omega⟩)
     (hD.mono (X := (OrderedLayer.coatomD, 2)) ⟨subset_rfl, by omega⟩)
 
-/-- (ii) The tower section operator is short at `3` and never the formal top: its values lie in
-the code grid `codeGrid 3 (2 N + 2)`. -/
+/-- (ii) The tower section operator is short at `3` and never the formal top: its values lie in the
+code grid `codeGrid 3 (2 N + 2)`. -/
 theorem towerSectionOp_isShort : (towerSectionOp I).IsShort := fun P hP t ↦ by
   have hm := Seed.towerSection_mem_codeGrid 2 (by omega)
     (fun d ↦ RankProfile.mem_codeGrid_of_mem_rankCat hP d) t
@@ -142,8 +142,8 @@ theorem towerSectionOp_isShort : (towerSectionOp I).IsShort := fun P hP t ↦ by
 theorem towerSectionOp_isLiteral : (towerSectionOp I).IsLiteral := fun P d ↦
   Seed.towerSection_towerEmbed 2 P d
 
-/-- (iv) **The tower section operator agrees capped at every cap self-visible and short at
-`3`** (`Seed.min_towerSection_eq`). -/
+/-- (iv) **The tower section operator agrees capped at every cap self-visible and short at `3`**
+(`Seed.min_towerSection_eq`). -/
 theorem towerSectionOp_isCapAgreeingAt {h : Label.{u}} (hh : IsSelfVisible 3 h)
     (hs : Label.IsShort 3 h) : (towerSectionOp I).IsCapAgreeingAt h := fun _ hP _ _ hPQ t ↦
   Seed.min_towerSection_eq hh hs 2 le_rfl
@@ -157,15 +157,16 @@ theorem exists_sectionOp : ∃ σ : SectionOp I, σ.IsLawful ∧ σ.IsShort ∧ 
   ⟨towerSectionOp I, towerSectionOp_isLawful, towerSectionOp_isShort, towerSectionOp_isLiteral,
     fun _ hh hs ↦ towerSectionOp_isCapAgreeingAt hh hs⟩
 
-/-! ### The collision -/
+/-! ### The collision
+-/
 
 /-- **Capped agreement fails at a collision.**  Let `σ` be lawful and literal, and let `P`, `Q` be
-profiles of the catalogue that agree capped at a label `e` not self-visible at `2`.  Let `d₁`,
-`d₂` be cells of grade `1` and `s` a cell of grade `2` of the amalgam, with `P = e` at `d₁` and
-`d₂`, `Q d₁ = e < Q d₂ ≤ Q s`.  Then `σ` is not cap-agreeing at `e`: availability for `σ Q` from
-`s` gives a cell `u` at `(univ, 2)` with `σ Q u ≥ Q s`, locality there makes its row read `d₁`
-strictly below `d₂`, and capped agreement would put `σ P u` above `e`, a collision at `u` that
-forces the row to read `d₁` and `d₂` alike (`Label.eq_of_transformsTo_collision`). -/
+profiles of the catalogue that agree capped at a label `e` not self-visible at `2`.  Let `d₁`, `d₂`
+be cells of grade `1` and `s` a cell of grade `2` of the amalgam, with `P = e` at `d₁` and `d₂`,
+`Q d₁ = e < Q d₂ ≤ Q s`.  Then `σ` is not cap-agreeing at `e`: availability for `σ Q` from `s` gives
+a cell `u` at `(univ, 2)` with `σ Q u ≥ Q s`, locality there makes its row read `d₁` strictly below
+`d₂`, and capped agreement would put `σ P u` above `e`, a collision at `u` that forces the row to
+read `d₁` and `d₂` alike (`Label.eq_of_transformsTo_collision`). -/
 theorem not_isCapAgreeingAt_of_collision {σ : SectionOp I} (hlaw : σ.IsLawful)
     (hlit : σ.IsLiteral) {P Q : Profile I} (hP : P ∈ rankCat I 3) (hQ : Q ∈ rankCat I 3)
     {e : Label.{u}} (hev : ¬ IsSelfVisible 2 e) (hPQ : ∀ d, min (P d) e = min (Q d) e)
@@ -230,7 +231,8 @@ theorem not_isCapAgreeingAt_of_collision {σ : SectionOp I} (hlaw : σ.IsLawful)
     (show e < min (σ P u) (σ P u) by rw [min_self]; exact hPu)
   exact absurd heq hsep.ne
 
-/-! ### The seeds of `TL` and `T5` -/
+/-! ### The seeds of `TL` and `T5`
+-/
 
 section Seeds
 
@@ -295,9 +297,9 @@ theorem tripleProfile_mem_rankCat {AC FC AD FD : Label.{u}}
 
 /-- **(iv) fails at the cap `1`**, for every seed of the coatom types `TL` and `T5` and every
 section operator lawful and literal at the profiles of the catalogue: the profiles
-`P₁ = (1, 2, 1, 2, ⊥)` and `Q₁ = (1, 2, 2, 2, ⊥)` agree capped at `1`, and they collide at the
-cell at `(univ, 2)` that serves `Q₁` from `({0, 1, 2, 3}, 2)` (`not_isCapAgreeingAt_of_collision`).
-The cap `1` is short at `3` and not self-visible at `3`; the caps the one-grade lift uses are
+`P₁ = (1, 2, 1, 2, ⊥)` and `Q₁ = (1, 2, 2, 2, ⊥)` agree capped at `1`, and they collide at the cell
+at `(univ, 2)` that serves `Q₁` from `({0, 1, 2, 3}, 2)` (`not_isCapAgreeingAt_of_collision`).  The
+cap `1` is short at `3` and not self-visible at `3`; the caps the one-grade lift uses are
 self-visible at `3`. -/
 theorem not_isCapAgreeingAt_one {σ : SectionOp I} (hlaw : σ.IsLawful) (hlit : σ.IsLiteral) :
     ¬ σ.IsCapAgreeingAt (gridPoint 1 0) := by

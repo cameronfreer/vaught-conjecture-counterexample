@@ -66,14 +66,17 @@ logical agreement for `classTruth φ` and nonempty losses give departure and the
 no further hypothesis (`core_eq_empty_of_classTruth`, `mem_domain_iff_le_lastStage_of_classTruth`,
 `mem_loss_iff_lastStage_eq_of_classTruth`, `lastStage_lt_omega_one_of_classTruth`).
 
-**The expansion domains of the density sentence**, `modelExpansionDomains hcap hnext`, satisfy
-the sharp agreement under finite-cut receiving of models (`modelExpansionDomains_hasRankAgreement`,
+**The expansion domains of the density sentence**, `modelExpansionDomains hcap hnext`, satisfy the
+sharp agreement under finite-cut receiving of models (`modelExpansionDomains_hasRankAgreement`,
 through `Expansion.mem_modelsOf_iff_of_modelExpansions`), and nonempty losses under the coatom
 extension property with apex at every countable block stage
 (`hasNonemptyLosses_of_hasApexCoatomExtensions`).  So departure and the last stage hold for them
 (`expansionDomain_core_eq_empty`, `mem_expansionDomain_iff_le_lastStage`,
-`mem_expansionDomain_loss_iff_lastStage_eq`, `lastStage_modelExpansionDomains_lt_qrank`)
-conditional on the following hypotheses, each still to be proved:
+`mem_expansionDomain_loss_iff_lastStage_eq`, `lastStage_modelExpansionDomains_lt_qrank`) conditional
+on the following hypotheses, each still to be proved except the cap-to-model theorem, forcing donors
+and the coatom extension property with apex where listed, which are compiled in this repository
+(theorem named) (`MainTheorem.capToModel`, `forcingDonors_blockStage`,
+`StageType.hasApexCoatomExtensions_blockStage`):
 * the cap-to-model theorem at `ω` on `ℕ` (`hcap`; Layer 3, 3.4): the first domain is every class;
   it follows from `hext` at `0` (`CapToModel.of_hasApexCoatomExtensions`), so it is derived, not
   assumed, in `expansionDomain_core_eq_empty`, whose statement does not mention it, and kept in
@@ -83,7 +86,7 @@ conditional on the following hypotheses, each still to be proved:
   `Expansion.NextBlockUniqueness.of_forcingDonors`);
 * finite-cut receiving of models (`hrec`; (R1) of the table of Layer 3): the agreement;
 * the coatom extension property with apex at every countable block stage (`hext`; Layer 3, 3.1,
-  the open part of (R6)): the nonempty losses.
+  (R6), compiled as `StageType.hasApexCoatomExtensions_blockStage`): the nonempty losses.
 Countable losses (condition 2) are not used.
 
 ## Placement
@@ -388,11 +391,12 @@ variable (hcap : CapToModel.{0}) (hnext : NextBlockUniqueness.{0})
   (hext : ∀ η < ω₁, StageType.HasApexCoatomExtensions.{0} (blockStage η))
 
 include hnext hrec hext in
-/-- **Eventual departure for the expansion domains of the density sentence**: no class has a
-model expansion of a coded representative to every countable block stage, conditional on
-next-block uniqueness of models (`hnext`), finite-cut receiving of models (`hrec`) and the coatom
-extension property with apex at every countable block stage (`hext`), each still to be proved.
-The cap-to-model theorem is not assumed: it follows from `hext` at `0`
+/-- **Eventual departure for the expansion domains of the density sentence**: no class has a model
+expansion of a coded representative to every countable block stage, conditional on next-block
+uniqueness of models (`hnext`), finite-cut receiving of models (`hrec`) and the coatom extension
+property with apex at every countable block stage (`hext`; compiled in this repository (theorem
+named), `StageType.hasApexCoatomExtensions_blockStage`), the others still to be proved.  The
+cap-to-model theorem is not assumed: it follows from `hext` at `0`
 (`CapToModel.of_hasApexCoatomExtensions`). -/
 theorem expansionDomain_core_eq_empty : (⋂ ξ < ω₁, expansionDomain ξ) = ∅ :=
   have hcap : CapToModel.{0} := CapToModel.of_hasApexCoatomExtensions

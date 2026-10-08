@@ -65,7 +65,10 @@ for model expansions of base structures isomorphic to `B` on any carrier
    its raw form (`ModelExpansion.subsingleton`, from next-block uniqueness).
 
 **Hypotheses.**  The maximal refinement is compiled conditional on the following hypotheses, each
-still to be proved:
+still to be proved except the cap-to-model theorem, forcing donors and the coatom extension property
+with apex where listed, which are compiled in this repository (theorem named)
+(`MainTheorem.capToModel`, `forcingDonors_blockStage`,
+`StageType.hasApexCoatomExtensions_blockStage`):
 * `FiniteCutReceiving` ((R1) of the table of Layer 3; `hrec`): the agreement of step 3, through
   finite-extension receiving (`Expansion.FiniteCutReceiving.finiteExtensionReceiving`);
 * `NextBlockUniqueness` (next-block uniqueness of models, a consequence of normalization, Layer 4,
@@ -73,7 +76,8 @@ still to be proved:
   (`ModelExpansion.subsingleton`): the uniqueness of the model expansions of the top-free
   witnesses for the losses of step 2, the closure at limits of step 4, and the literal reduct of
   step 5;
-* `HasApexCoatomExtensions` at every countable block stage (Layer 3, 3.1, the open part of (R6);
+* `HasApexCoatomExtensions` at every countable block stage (Layer 3, 3.1, (R6), compiled as
+  `StageType.hasApexCoatomExtensions_blockStage`;
   `hext`): the nonempty losses of step 2, at `qrank σ` and at the next index.
 No global termination, no eventual departure for all classes, no countable-slot argument, and no
 continuation criterion is used: the bound concerns the one base structure `B`.  The countability
@@ -109,9 +113,10 @@ theorem exists_isolates (B : Type) [baseLanguage.{0}.Structure B] [Countable B] 
 /-! ### Two classes in every countable domain -/
 
 /-- **Every countable expansion domain contains two distinct classes**, under the coatom extension
-property with apex at the block stages `λ_η` and `λ_{η+1}` (`hext`, `hext'`) and next-block
-uniqueness of models (`hnext`), each still to be proved: a class in the loss at `η` and a class in
-the loss at `η + 1`, which lies in `D_{η+1} ⊆ D_η` (`nonempty_loss_of_hasApexCoatomExtensions`). -/
+property with apex at the block stages `λ_η` and `λ_{η+1}` (`hext`, `hext'`; compiled in this
+repository (theorem named), `StageType.hasApexCoatomExtensions_blockStage`) and next-block
+uniqueness of models (`hnext`, still to be proved): a class in the loss at `η` and a class in the
+loss at `η + 1`, which lies in `D_{η+1} ⊆ D_η` (`nonempty_loss_of_hasApexCoatomExtensions`). -/
 theorem expansionDomain_nontrivial (hnext : NextBlockUniqueness.{0}) {η : Ordinal.{0}}
     (hη : η < ω₁) (hext : HasApexCoatomExtensions.{0} (blockStage η))
     (hext' : HasApexCoatomExtensions.{0} (blockStage (η + 1))) :
@@ -149,12 +154,13 @@ theorem expansionDomain_subsingleton_of_isolates (hrec : FiniteCutReceiving.{0})
   exact Quotient.sound (isoSetoid_r_iff.mpr ⟨@Language.Equiv.comp _ ℕ B c.1.toStructure _ ℕ
     c'.1.toStructure e' (@Language.Equiv.symm _ B ℕ _ c.1.toStructure e)⟩)
 
-/-- **No model expansion at or above the rank of an isolating sentence**, conditional on
-finite-cut receiving of models (`hrec`), next-block uniqueness of models (`hnext`), and the coatom
-extension property with apex at every countable block stage (`hext`), each still to be proved: if
-`σ` isolates `B` and `qrank σ ≤ η < ω₁`, then `B` has no model expansion to `λ_η`; otherwise `D_η`
-would be a subsingleton (`expansionDomain_subsingleton_of_isolates`) containing two distinct
-classes (`expansionDomain_nontrivial`). -/
+/-- **No model expansion at or above the rank of an isolating sentence**, conditional on finite-cut
+receiving of models (`hrec`), next-block uniqueness of models (`hnext`), and the coatom extension
+property with apex at every countable block stage (`hext`; compiled in this repository (theorem
+named), `StageType.hasApexCoatomExtensions_blockStage`), the others still to be proved: if `σ`
+isolates `B` and `qrank σ ≤ η < ω₁`, then `B` has no model expansion to `λ_η`; otherwise `D_η` would
+be a subsingleton (`expansionDomain_subsingleton_of_isolates`) containing two distinct classes
+(`expansionDomain_nontrivial`). -/
 theorem isEmpty_modelExpansion_of_isolates (hrec : FiniteCutReceiving.{0})
     (hnext : NextBlockUniqueness.{0})
     (hext : ∀ η < ω₁, HasApexCoatomExtensions.{0} (blockStage η)) (hσ : Isolates σ B)
@@ -167,10 +173,11 @@ theorem isEmpty_modelExpansion_of_isolates (hrec : FiniteCutReceiving.{0})
 
 /-- **A strict bound on serving indices**: every serving index of `B` is below the quantifier rank
 of an isolating sentence `σ`, conditional on finite-cut receiving of models (`hrec`), next-block
-uniqueness of models (`hnext`), and the coatom extension property with apex at every countable
-block stage (`hext`), each still to be proved.  A model expansion to `λ_η` with `qrank σ ≤ η`
-reduces to one at `λ_{qrank σ}` (`ModelExpansion.reduceBlock`), which does not exist
-(`isEmpty_modelExpansion_of_isolates`). -/
+uniqueness of models (`hnext`), and the coatom extension property with apex at every countable block
+stage (`hext`; compiled in this repository (theorem named),
+`StageType.hasApexCoatomExtensions_blockStage`), the others still to be proved.  A model expansion
+to `λ_η` with `qrank σ ≤ η` reduces to one at `λ_{qrank σ}` (`ModelExpansion.reduceBlock`), which
+does not exist (`isEmpty_modelExpansion_of_isolates`). -/
 theorem lt_qrank_of_isolates (hrec : FiniteCutReceiving.{0}) (hnext : NextBlockUniqueness.{0})
     (hext : ∀ η < ω₁, HasApexCoatomExtensions.{0} (blockStage η)) (hσ : Isolates σ B)
     {η : Ordinal.{0}} (h : Nonempty (ModelExpansion B (blockStage η))) : η < σ.qrank := by
@@ -218,8 +225,9 @@ theorem exists_le_reduceBlock_eq_of_isTerminalAt (hnext : NextBlockUniqueness.{0
 /-- **An attained greatest serving index**: if `B` has a model expansion to `λ_β`, its serving
 indices have a greatest element `ρ`, with `β ≤ ρ < ω₁`, conditional on finite-cut receiving of
 models (`hrec`), next-block uniqueness of models (`hnext`), and the coatom extension property with
-apex at every countable block stage (`hext`), each still to be proved.  The serving indices are
-bounded by the quantifier rank of an isolating sentence (`lt_qrank_of_isolates`), which is
+apex at every countable block stage (`hext`; compiled in this repository (theorem named),
+`StageType.hasApexCoatomExtensions_blockStage`), the others still to be proved.  The serving indices
+are bounded by the quantifier rank of an isolating sentence (`lt_qrank_of_isolates`), which is
 countable (`qrank_lt_omega_one`), and bounded-stage attainment applies
 (`exists_isGreatest_servingIndex_of_le`). -/
 theorem exists_isGreatest_servingIndex (hrec : FiniteCutReceiving.{0})
@@ -232,13 +240,15 @@ theorem exists_isGreatest_servingIndex (hrec : FiniteCutReceiving.{0})
     (fun _ h ↦ (lt_qrank_of_isolates hrec hnext hext hσ h).le) (qrank_lt_omega_one σ)
   exact ⟨ρ, hρ, hβρ, hρσ.trans_lt (qrank_lt_omega_one σ)⟩
 
-/-- **Maximal refinement of a model expansion**: a model expansion `e` of `B` to `λ_β` is the
-stage reduction of a model expansion `f` of `B` to `λ_ρ`, with `β ≤ ρ < ω₁`, that is terminal at
-`ρ`, and `ρ` is the greatest serving index of `B`.  Conditional on finite-cut receiving of models
-(`hrec`), next-block uniqueness of models (`hnext`), and the coatom extension property with apex
-at every countable block stage (`hext`), each still to be proved.  Terminality: `ρ + 1` is not
-serving (`Realization.IsExpansionOf.isTerminalAt`); the literal reduct: literal uniqueness of a
-terminal model expansion (`exists_le_reduceBlock_eq_of_isTerminalAt`, by `hnext`). -/
+/-- **Maximal refinement of a model expansion**: a model expansion `e` of `B` to `λ_β` is the stage
+reduction of a model expansion `f` of `B` to `λ_ρ`, with `β ≤ ρ < ω₁`, that is terminal at `ρ`, and
+`ρ` is the greatest serving index of `B`.  Conditional on finite-cut receiving of models (`hrec`),
+next-block uniqueness of models (`hnext`), and the coatom extension property with apex at every
+countable block stage (`hext`; compiled in this repository (theorem named),
+`StageType.hasApexCoatomExtensions_blockStage`), the others still to be proved.  Terminality:
+`ρ + 1` is not serving (`Realization.IsExpansionOf.isTerminalAt`); the literal reduct: literal
+uniqueness of a terminal model expansion (`exists_le_reduceBlock_eq_of_isTerminalAt`, by `hnext`).
+-/
 theorem exists_maximalRefinement_of_modelExpansion (hrec : FiniteCutReceiving.{0})
     (hnext : NextBlockUniqueness.{0})
     (hext : ∀ η < ω₁, HasApexCoatomExtensions.{0} (blockStage η)) {β : Ordinal.{0}}
@@ -267,7 +277,10 @@ countable carrier `X` is the stage reduction, literally, of a model `W` at a blo
 the same carrier, with `β ≤ ρ < ω₁`, that is terminal at `ρ` and maximal: every model on `X` at a
 block stage `λ_η` with the base structure of `V` has `η ≤ ρ`.
 
-Compiled conditional on the following hypotheses, each still to be proved:
+Compiled conditional on the following hypotheses, each still to be proved except the cap-to-model
+theorem, forcing donors and the coatom extension property with apex where listed, which are compiled
+in this repository (theorem named) (`MainTheorem.capToModel`, `forcingDonors_blockStage`,
+`StageType.hasApexCoatomExtensions_blockStage`):
 * finite-cut receiving of models (`hrec`; `FiniteCutReceiving`, (R1) of the table of Layer 3):
   the agreement of the classes of a countable domain on an isolating sentence;
 * next-block uniqueness of models (`hnext`; `NextBlockUniqueness`, Layer 4, output 2), which

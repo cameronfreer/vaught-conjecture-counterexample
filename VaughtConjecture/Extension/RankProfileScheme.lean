@@ -15,29 +15,28 @@ Let `I` be any seed on five points.  The **rank-normalized catalogue at the grad
 (`rankCat I j`) is the set of profiles (labellings of all the cells of the amalgam) lawful on the
 grade-`j` cut and fixed by the orbit code at the grade `3` (`Label.orbitCode`), which places the
 values of a labelling by the ranks of their keys and keeps their finite parts below `3`; such
-profiles take their values in `Label.codeGrid 3 (2 N)` for `N` cells.  The **rank-normalized
-profile scheme** `rankScheme I J` is the profile scheme of
-`VaughtConjecture.Extension.ProfileScheme` over these catalogues, with agreement heights in
-`Label.grid 3 (2 N + 2)`.
+profiles take their values in `Label.codeGrid 3 (2 N)` for `N` cells.  The **rank-normalized profile
+scheme** `rankScheme I J` is the profile scheme of `VaughtConjecture.Extension.ProfileScheme` over
+these catalogues, with agreement heights in `Label.grid 3 (2 N + 2)`.
 
 **Extension from the boundary at the grade `3`** (`exists_extension`, `exists_extension_bot`).  For
 a top layer `J ≤ 3`, a profile `P` of the catalogue at the grade `3`, a cap `h` self-visible and
 short at `3` other than `⊥`, and a labelling `w` lawful below `(C, 3)` and `(D, 3)` agreeing with
-`P` capped at `h` at the old cells, the field labelling of the orbit code of `w`, read by the
-orbit decoder of `w` at `h`, is lawful below `(univ, 3)`, equal to `w` at the old cells, and agrees
-with the field labelling of `P` capped at `h` at every cell below `(univ, 3)`.  The ingredients are
-the relative room of the orbit code (`Label.min_orbitCode_eq`), the transfer of capped agreement to
-agreement heights at short caps (`Label.min_agreementHeight_eq_of_isShort`), the literal reading
-and the cap of the orbit decoder (`Label.orbitDecoder_orbitCode`, `Label.min_orbitDecoder_eq`), and
-the positive-cap transport (`CellScheme.Rows.IsLawfulBelow.map_of_min_eq`).  This holds for every
-seed on five points.
+`P` capped at `h` at the old cells, the field labelling of the orbit code of `w`, read by the orbit
+decoder of `w` at `h`, is lawful below `(univ, 3)`, equal to `w` at the old cells, and agrees with
+the field labelling of `P` capped at `h` at every cell below `(univ, 3)`.  The ingredients are the
+relative room of the orbit code (`Label.min_orbitCode_eq`), the transfer of capped agreement to
+agreement heights at short caps (`Label.min_agreementHeight_eq_of_isShort`), the literal reading and
+the cap of the orbit decoder (`Label.orbitDecoder_orbitCode`, `Label.min_orbitDecoder_eq`), and the
+positive-cap transport (`CellScheme.Rows.IsLawfulBelow.map_of_min_eq`).  This holds for every seed
+on five points.
 
 **Consequences** (every seed on five points; compiled in this repository (theorem named)):
 
 * the rows of the cells at `(univ, 3)` are lawful below `(univ, 3)`, short at `3` and never the
   formal top (`isLawfulBelow_rowBelow_three`, `isShort_ne_top_rowBelow`), and the rows extend from
-  the boundary along each of them at every short positive cap (`extendsFromBoundary_row`) and at
-  `⊥` (`extendsFromBoundary_bot`);
+  the boundary along each of them at every short positive cap (`extendsFromBoundary_row`) and at `⊥`
+  (`extendsFromBoundary_bot`);
 * **the capped lift at the grade `3` from the lift at the grade `2`** (`cappedLift_three_of_two`):
   in `rankScheme I 3`, if the rows lift capped from `(C, 2)` (resp. `(D, 2)`) into `(univ, 2)`, they
   lift capped from `(C, 3)` (resp. `(D, 3)`) into `(univ, 3)`, by the one-grade lift
@@ -57,8 +56,8 @@ completion below the full grade is claimed for any seed.
 
 ## Placement
 
-Checkpoint 2.7 of the completion of the coatom extension construction (`roadmap/README.md`,
-Layer 3, 3.1, under "(R6)").
+Checkpoint 2.7 of the completion of the coatom extension construction (`roadmap/README.md`, Layer 3,
+3.1, under "(R6)").
 -/
 
 universe u
@@ -70,12 +69,13 @@ open ProfileCatalogue (Profile IsCutLawful)
 
 variable {α : Ordinal.{u}} (I : Seed.{u} α 3)
 
-/-! ### The rank-normalized catalogues -/
+/-! ### The rank-normalized catalogues
+-/
 
 open Classical in
-/-- The **rank-normalized catalogue at the grade `j`**: the profiles lawful on the grade-`j` cut
-and fixed by the orbit code at the grade `3` (`Label.orbitCode`), which places the values by the
-ranks of their keys; their values lie in the code grid `Label.codeGrid 3 (2 N)` for `N` cells. -/
+/-- The **rank-normalized catalogue at the grade `j`**: the profiles lawful on the grade-`j` cut and
+fixed by the orbit code at the grade `3` (`Label.orbitCode`), which places the values by the ranks
+of their keys; their values lie in the code grid `Label.codeGrid 3 (2 N)` for `N` cells. -/
 noncomputable def rankCat (j : ℕ) : Finset (Profile I) :=
   (Fintype.piFinset fun _ ↦ codeGrid 3 (2 * I.amalgam.card)).filter
     fun P ↦ IsCutLawful I j P ∧ orbitCode 3 P = P
@@ -120,7 +120,8 @@ theorem bot_mem_rankCat (j : ℕ) : (fun _ ↦ ⊥ : Profile I) ∈ rankCat I j 
   mem_rankCat.mpr ⟨⟨Rows.isLawfulBelow_const_bot _, Rows.isLawfulBelow_const_bot _⟩,
     funext fun _ ↦ orbitCode_eq_bot_iff.mpr rfl⟩
 
-/-! ### Rows and field labellings -/
+/-! ### Rows and field labellings
+-/
 
 variable {cat : ℕ → Finset (Profile I)} {B J : ℕ}
 
@@ -137,8 +138,8 @@ theorem rowBelow_multiNewCell (k : Fin 4) (i : Fin (mult cat J k)) {Y : Finset (
       fieldLabelling cat B J (entry cat ((k : ℕ) + 1) i) (entry cat ((k : ℕ) + 1) i) d :=
   row_multiNewCell k i _
 
-/-- A cell below `(univ, k)` of scope other than the ground set is an old cell of grade at most
-`k`. -/
+/-- A cell below `(univ, k)` of scope other than the ground set is an old cell of grade at most `k`.
+-/
 theorem exists_old_of_mem_below {K : ℕ} {z : Fin (scheme cat B J).card}
     (hz : z ∈ (scheme cat B J).toCellScheme.below ((univ : Finset (Fin 5)), K))
     (hne : (scheme cat B J).toCellScheme.scope z ≠ univ) :
@@ -148,19 +149,20 @@ theorem exists_old_of_mem_below {K : ℕ} {z : Fin (scheme cat B J).card}
   have := hz.2
   rwa [gradedIndex_multiOldCell] at this
 
-/-! ### Extension from the boundary at the grade `3` -/
+/-! ### Extension from the boundary at the grade `3`
+-/
 
-/-- **Extension from the boundary along the field labelling of a profile, at a short cap.**  In
-the rank-normalized profile scheme with top layer `J ≤ 3`, let `P` be a profile of the catalogues
-of the grades `1, …, 3`, `h` a cap self-visible and short at `3` other than `⊥`, and `w` a
-labelling lawful below `(C, 3)` and `(D, 3)` that agrees with `P` capped at `h` at the old cells
-of grade at most `3`.  Then some labelling lawful below `(univ, 3)` equals `w` at the old cells
-and agrees with the field labelling of `P` capped at `h` at every cell below `(univ, 3)`.
+/-- **Extension from the boundary along the field labelling of a profile, at a short cap.**  In the
+rank-normalized profile scheme with top layer `J ≤ 3`, let `P` be a profile of the catalogues of the
+grades `1, …, 3`, `h` a cap self-visible and short at `3` other than `⊥`, and `w` a labelling lawful
+below `(C, 3)` and `(D, 3)` that agrees with `P` capped at `h` at the old cells of grade at most
+`3`.  Then some labelling lawful below `(univ, 3)` equals `w` at the old cells and agrees with the
+field labelling of `P` capped at `h` at every cell below `(univ, 3)`.
 
-The extension is the field labelling of the orbit code `Q` of `w` (completed by `P` at the cells
-of grade above `3`), read by the orbit decoder of `w` at `h`: `Q` agrees with `P` capped at `h`
-by the relative room of the orbit code (`Label.min_orbitCode_eq`), hence so do the agreement
-heights (`Label.min_agreementHeight_eq_of_isShort`); the decoder reads `Q` literally as `w`
+The extension is the field labelling of the orbit code `Q` of `w` (completed by `P` at the cells of
+grade above `3`), read by the orbit decoder of `w` at `h`: `Q` agrees with `P` capped at `h` by the
+relative room of the orbit code (`Label.min_orbitCode_eq`), hence so do the agreement heights
+(`Label.min_agreementHeight_eq_of_isShort`); the decoder reads `Q` literally as `w`
 (`Label.orbitDecoder_orbitCode`) and keeps the cap at the agreement heights
 (`Label.min_orbitDecoder_eq`); lawfulness is the positive-cap transport
 `CellScheme.Rows.IsLawfulBelow.map_of_min_eq`, with the field labelling of `P` as companion. -/
@@ -233,10 +235,10 @@ theorem exists_extension (hJ : J ≤ 3) {P : Profile I} (hP : P ∈ rankCat I 3)
   change orbitDecoder 3 W h (fieldLabelling (rankCat I) (gridBound I) J Q Q z.1) = w z.1
   rw [hd, fieldLabelling_multiOldCell, orbitDecoder_orbitCode hQW d, hWw d hd3]
 
-/-- **Extension from the boundary at the cap `⊥`.**  In the rank-normalized profile scheme with
-top layer `J ≤ 3`, every labelling lawful below `(C, 3)` and `(D, 3)` extends, unchanged at the
-old cells, to a labelling lawful below `(univ, 3)`: the field labelling of its orbit code, read by
-its orbit decoder at the least grid point `3`. -/
+/-- **Extension from the boundary at the cap `⊥`.**  In the rank-normalized profile scheme with top
+layer `J ≤ 3`, every labelling lawful below `(C, 3)` and `(D, 3)` extends, unchanged at the old
+cells, to a labelling lawful below `(univ, 3)`: the field labelling of its orbit code, read by its
+orbit decoder at the least grid point `3`. -/
 theorem exists_extension_bot (hJ : J ≤ 3) {w : Fin (rankScheme I J).card → Label.{u}}
     (hwC : (rankScheme I J).rows.IsLawfulBelow (coatomC, 3) fun z ↦ w z)
     (hwD : (rankScheme I J).rows.IsLawfulBelow (coatomD, 3) fun z ↦ w z) :
@@ -284,10 +286,11 @@ theorem exists_extension_bot (hJ : J ≤ 3) {w : Fin (rankScheme I J).card → L
     w z.1
   rw [hd, fieldLabelling_multiOldCell, orbitDecoder_orbitCode hQW d, hWw d hd3]
 
-/-! ### The serving rows at `(univ, 3)` and the lift at the grade `3` -/
+/-! ### The serving rows at `(univ, 3)` and the lift at the grade `3`
+-/
 
-/-- The cells at `(univ, 3)`: new cells of grade `3`, whose profile is in the catalogue at the
-grade `3`. -/
+/-- The cells at `(univ, 3)`: new cells of grade `3`, whose profile is in the catalogue at the grade
+`3`. -/
 theorem exists_profile_of_gradedIndex {u : Fin (rankScheme I J).card}
     (hu : (rankScheme I J).toCellScheme.gradedIndex u = ((univ : Finset (Fin 5)), 3)) :
     ∃ (i : Fin (mult (rankCat I) J 2)), u = multiNewCell I (mult (rankCat I) J) 2 i := by
@@ -304,8 +307,8 @@ theorem isLawfulBelow_row_of_rowBelow {u : Fin (rankScheme I J).card}
   subst hu
   exact h
 
-/-- **The row of a cell at `(univ, 3)` is lawful below `(univ, 3)`** (consistency), for a top
-layer `J ≤ 3`. -/
+/-- **The row of a cell at `(univ, 3)` is lawful below `(univ, 3)`** (consistency), for a top layer
+`J ≤ 3`. -/
 theorem isLawfulBelow_rowBelow_three (hJ : J ≤ 3) (i : Fin (mult (rankCat I) J 2))
     (hu : (rankScheme I J).toCellScheme.gradedIndex (multiNewCell I (mult (rankCat I) J) 2 i) =
       ((univ : Finset (Fin 5)), 3)) :
@@ -409,11 +412,11 @@ theorem extendsFromBoundary_bot (hJ : J ≤ 3) {U V : Finset (Fin 5) × ℕ} (hU
 
 /-- **The capped lift at the grade `3` from the lift at the grade `2`**, from either coatom, in the
 rank-normalized profile scheme with top layer `3`, for every seed on five points.  It is the
-one-grade lift `CellScheme.Rows.cappedLift_of_boundaries_short`: the boundary lifts are those of
-the amalgam (`OrderedLayer.cappedLift_multiOld`), the extension from the boundary at `⊥` is
+one-grade lift `CellScheme.Rows.cappedLift_of_boundaries_short`: the boundary lifts are those of the
+amalgam (`OrderedLayer.cappedLift_multiOld`), the extension from the boundary at `⊥` is
 `extendsFromBoundary_bot`, and every cell at `(univ, 3)` serves the positive caps
-(`isLawfulBelow_row_three`, `isShort_ne_top_rowBelow`, `extendsFromBoundary_row`).  The lift at
-the grade `2` is a hypothesis. -/
+(`isLawfulBelow_row_three`, `isShort_ne_top_rowBelow`, `extendsFromBoundary_row`).  The lift at the
+grade `2` is a hypothesis. -/
 theorem cappedLift_three_of_two {U V : Finset (Fin 5) × ℕ} (hUV : IsCoatomPair U V)
     (hlift : (rankScheme I 3).rows.CappedLift (X := (U.1, 2)) (Y := ((univ : Finset (Fin 5)), 2))
       ⟨subset_univ _, le_rfl⟩) :
@@ -475,7 +478,8 @@ theorem cappedLift_three_of_two {U V : Finset (Fin 5) × ℕ} (hUV : IsCoatomPai
       ⟨subset_univ _, le_rfl⟩ (fun d h1 h2 ↦ ⟨subset_inter h2.1 h1.1, h1.2⟩)
       (Rows.cappedLift_refl _) (cappedLift_multiOld hO hCf (by decide) _) hY hrow
 
-/-! ### Configured lifts at every field labelling -/
+/-! ### Configured lifts at every field labelling
+-/
 
 /-- **Extension from the boundary along the field labelling of any profile of the catalogue at the
 grade `3`**, at every cap self-visible and short at `3` other than `⊥`, for either order of the
@@ -499,14 +503,14 @@ theorem extendsFromBoundary_fieldLabelling (hJ : J ≤ 3) {U V : Finset (Fin 5) 
   exact ⟨r, hr, fun d hd ↦ hrw d (hUV.scope_ne hd), hrc⟩
 
 /-- **The configured lift at every field labelling** (top layer `J ≤ 3`, every seed on five points).
-For every profile `P` of the catalogue at the grade `3`, every cap `h` self-visible and short at
-`3` other than `⊥`, and every prescription `f` lawful below `(C, 3)` (or `(D, 3)`) that agrees
-with the field labelling of `P` capped at `h`, some labelling lawful below `(univ, 3)` restricts to
-`f` and agrees with the field labelling of `P` capped at `h`: the lift through the coatom and the
-common face (`CellScheme.Rows.exists_lift_of_boundary`) followed by the extension from the
-boundary (`extendsFromBoundary_fieldLabelling`).  It is a lift at the ambient labellings that are
-field labellings of profiles of the catalogue, at the short caps, not the capped lift at every
-ambient labelling. -/
+For every profile `P` of the catalogue at the grade `3`, every cap `h` self-visible and short at `3`
+other than `⊥`, and every prescription `f` lawful below `(C, 3)` (or `(D, 3)`) that agrees with the
+field labelling of `P` capped at `h`, some labelling lawful below `(univ, 3)` restricts to `f` and
+agrees with the field labelling of `P` capped at `h`: the lift through the coatom and the common
+face (`CellScheme.Rows.exists_lift_of_boundary`) followed by the extension from the boundary
+(`extendsFromBoundary_fieldLabelling`).  It is a lift at the ambient labellings that are field
+labellings of profiles of the catalogue, at the short caps, not the capped lift at every ambient
+labelling. -/
 theorem exists_lift_fieldLabelling (hJ : J ≤ 3) {U V : Finset (Fin 5) × ℕ}
     (hUV : IsCoatomPair U V) {P : Profile I} (hP : P ∈ rankCat I 3) {h : Label.{u}}
     (hh : IsSelfVisible 3 h) (hs : IsShort 3 h) (hb : h ≠ ⊥)
