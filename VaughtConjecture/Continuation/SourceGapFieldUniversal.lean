@@ -47,6 +47,12 @@ source-gap clauses of the two inputs, donor raising on the scheme of `T`
 (`FieldAdmission.donorRaising_S`), owner lowering on both schemes
 (`FieldAdmission.ownerLowering_S`, `FieldAdmission.ownerLowering_S2`).
 
+**A field bounded below by the root fails** (`FieldAdmission.not_exists_field_ge_root`,
+`FieldAdmission.not_fieldAboveRoot`): with the root at `ω + 1` (self-visible at `1`, not at `2`)
+and the cap `⊥`, no lawful donor face with that root and a field at least it satisfies the clause
+(`o' < y'`, and `r'` cannot carry the low maximum).  So a field cell whose lawful values are forced
+at least the root cannot carry the field; a free field, or one at most the root, is not refuted.
+
 **Status.**  Donor raising and owner lowering are hypotheses (named, not derived from legality);
 they hold at both inputs here.  No input violating them is compiled.
 
@@ -472,6 +478,67 @@ theorem isFieldAdmissionG_t2 {Lo Tops : Finset (Fin 5)}
   isFieldAdmissionG_of Set.univ (fun _ hf ↦ hf.orderly 3)
     (fun _ hf _ _ ↦ frontierAt_le_t2 hf) (donorRaising_S hTops fun _ hf ↦ hf.orderly 0)
     ownerLowering_S2
+
+/-! ### A field bounded below by the root fails -/
+
+/-- **A field at least the root is not served from the context coatom**: for a root value `a`
+self-visible at `1` but not at `2`, every lawful donor face with root `a` has `o' < a`, so with a
+field `b' ≥ a` the clause asks `o' ≥ b'` unless the low maximum reaches `b'`, which `r'` cannot
+(`min a r' = min o' r'`); for every designation with `o'` a top, the designated cells below the top
+among `e'`, `r'`. -/
+theorem not_exists_field_ge_root {a : Label.{u}} (ha : IsSelfVisible 1 a)
+    (ha2 : ¬ IsSelfVisible 2 a) {Lo Tops : Finset (Fin 5)}
+    (hLo : ∀ d ∈ Lo, d = 1 ∨ d = 4) (h3 : (3 : Fin 5) ∈ Tops) :
+    S.{u}.rows.IsLawful (lab a ⊥ ⊥) ∧
+      ¬ ∃ W : Fin 5 → Label.{u}, ∃ b' : Label.{u}, S.{u}.rows.IsLawful W ∧ W 0 = a ∧ a ≤ b' ∧
+        LowAt Lo Tops (lab a ⊥ ⊥) W b' := by
+  refine ⟨isLawful_lab ha (isSelfVisible_bot 2) (isSelfVisible_bot 2) bot_le (by simp), ?_⟩
+  rintro ⟨W, b', hW, hW0, hab, hlow⟩
+  obtain ⟨hWe, hwa, has⟩ := eq_lab_of_isLawful hW
+  rw [hW0] at hwa has
+  have hwlt : W 3 < a := lt_of_le_of_ne hwa fun he ↦ ha2 (he ▸ hW.orderly 3)
+  have ha0 : ⊥ < a := by
+    by_contra h0
+    rw [not_lt, le_bot_iff] at h0
+    exact ha2 (h0 ▸ isSelfVisible_bot 2)
+  have hW1 : W 1 = ⊥ := by rw [hWe]; rfl
+  by_cases hlt : Lo.sup W < b'
+  · exact absurd (((le_max_left _ _).trans (hlow hlt 3 h3)).trans_lt (hwlt.trans_le hab))
+      (lt_irrefl _)
+  · obtain ⟨d, hd, hdb⟩ : ∃ d ∈ Lo, b' ≤ W d := by
+      by_contra hne
+      simp only [not_exists, not_and, not_le] at hne
+      exact hlt ((Finset.sup_lt_iff (ha0.trans_le hab)).mpr hne)
+    rcases hLo d hd with rfl | rfl
+    · rw [hW1] at hdb
+      exact absurd (ha0.trans_le (hab.trans hdb)) (lt_irrefl _)
+    · have has' : min a (W 4) = a := min_eq_left (hab.trans hdb)
+      rw [has'] at has
+      exact absurd (has.le.trans (min_le_left _ _)) (not_le.mpr hwlt)
+
+/-- The label `ω + 1`, self-visible at `1` and not at `2`. -/
+noncomputable abbrev omegaAddOne : Label.{u} :=
+  (((Ordinal.omega0 : Ordinal.{u}) + (1 : ℕ) : Ordinal.{u}) : Label.{u})
+
+/-- **The instance**: at the cap `⊥`, the state of `⊥` labels (field `⊥`, at least the root) is
+admitted, the context face `(ω + 1, ⊥, ω + 1, ⊥, ⊥)` is lawful and agrees with it, and no donor
+face with a field at least its root serves it, for the twisted and the self designations. -/
+theorem not_fieldAboveRoot :
+    LowAt loU topsU (fun _ ↦ (⊥ : Label.{u})) (fun _ ↦ ⊥) ⊥ ∧
+      S.{u}.rows.IsLawful (lab omegaAddOne ⊥ ⊥) ∧
+      (¬ ∃ W : Fin 5 → Label.{u}, ∃ b' : Label.{u}, S.{u}.rows.IsLawful W ∧
+        W 0 = omegaAddOne ∧ omegaAddOne ≤ b' ∧ LowAt loU topsU (lab omegaAddOne ⊥ ⊥) W b') ∧
+      ¬ ∃ W : Fin 5 → Label.{u}, ∃ b' : Label.{u}, S.{u}.rows.IsLawful W ∧
+        W 0 = omegaAddOne ∧ omegaAddOne ≤ b' ∧
+        LowAt loSelf topsSelf (lab omegaAddOne ⊥ ⊥) W b' := by
+  have hω := Ordinal.isSuccLimit_omega0.isSuccPrelimit
+  have h1 : IsSelfVisible 1 omegaAddOne.{u} := isSelfVisible_coe_add hω (le_refl 1)
+  have h2 : ¬ IsSelfVisible 2 omegaAddOne.{u} :=
+    not_isSelfVisible_coe_add_natCast hω (show 1 < 2 by omega)
+  exact ⟨fun h ↦ absurd h (not_lt.mpr bot_le),
+    (not_exists_field_ge_root h1 h2 (Lo := loU) (Tops := topsU) (by decide) (by decide)).1,
+    (not_exists_field_ge_root h1 h2 (by decide) (by decide)).2,
+    (not_exists_field_ge_root h1 h2 (by decide) (by decide)).2⟩
 
 end FieldAdmission
 
