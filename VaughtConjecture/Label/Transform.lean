@@ -718,3 +718,137 @@ theorem reading_of_transformsTo {r : D → Label.{u}} (h : TransformsTo grade r 
     exact absurd (ha ▸ min_le_left _ _ : C ≤ σ 2) (not_le.mpr this)
 
 end VaughtConjecture.Label
+
+/-! ### The finite part at a reference cell -/
+
+namespace VaughtConjecture.Label
+
+open Ordinal
+
+variable {ι : Type*} {grade : ι → ℕ} {r q : ι → Label.{u}} {g : ℕ → Label.{u}}
+  {σ : Label.{u} → Label.{u}}
+
+/-- The coercion of ordinals to labels is injective. -/
+private theorem coe_ordinal_injective :
+    Function.Injective (fun o : Ordinal.{u} ↦ (o : Label.{u})) :=
+  WithBot.coe_injective.comp WithTop.coe_injective
+
+/-- `μ + j = μ + i` as labels forces `j = i`. -/
+private theorem natCast_eq_of_coe_add_eq {μ : Ordinal.{u}} {i j : ℕ}
+    (h : ((μ + j : Ordinal.{u}) : Label.{u}) = ((μ + i : Ordinal.{u}) : Label.{u})) : j = i := by
+  have h' : μ + (j : Ordinal.{u}) = μ + i := coe_ordinal_injective h
+  exact_mod_cast add_left_cancel h'
+
+/-- **Under the cap the shifter is exact**: if `q d = min (σ (r d)) (g (grade d))` for every
+`d`, a cell `a` of grade at most that of `b` with `q a = x < q b` has `σ (r a) = x`, and `x` lies
+below the suppressor at the grade of `b`. -/
+private theorem apply_eq_of_lt (hw : IsWitness g σ)
+    (heq : ∀ d, q d = min (σ (r d)) (g (grade d))) {a b : ι} {x : Label.{u}}
+    (hab : grade a ≤ grade b) (hqa : q a = x) (hxb : x < q b) :
+    σ (r a) = x ∧ x ≤ g (grade b) := by
+  have hgb : q b ≤ g (grade b) := (heq b).trans_le (min_le_right _ _)
+  refine ⟨?_, (hxb.trans_le hgb).le⟩
+  have h1 := heq a
+  rw [hqa] at h1
+  have hg : x < g (grade a) := (hxb.trans_le hgb).trans_le (hw.antitone hab)
+  rcases le_total (σ (r a)) (g (grade a)) with h2 | h2
+  · rw [min_eq_left h2] at h1
+    exact h1.symm
+  · rw [min_eq_right h2] at h1
+    exact absurd h1 hg.ne
+
+/-- **The shifter on a block.**  If a witness sends `ω · c + i` to `μ + i` (`μ` zero or a limit,
+`i < N`) below its suppressor at `N`, it sends `ω · c + j` to `μ + j` for every `j ≤ N`: it
+commutes with the visibility replacement at the threshold `N` that turns `i` into `j`. -/
+theorem IsWitness.apply_omega0_mul_add (hw : IsWitness g σ) {μ c : Ordinal.{u}}
+    (hμ : Order.IsSuccPrelimit μ) {N i j : ℕ} (hi : i < N) (hj : j ≤ N)
+    (hσ : σ ((ω * c + i : Ordinal.{u}) : Label.{u}) = ((μ + i : Ordinal.{u}) : Label.{u}))
+    (hg : ((μ + i : Ordinal.{u}) : Label.{u}) ≤ g N) :
+    σ ((ω * c + j : Ordinal.{u}) : Label.{u}) = ((μ + j : Ordinal.{u}) : Label.{u}) := by
+  have hc : Order.IsSuccPrelimit (ω * c) :=
+    Ordinal.isSuccPrelimit_iff_omega0_dvd.mpr (dvd_mul_right _ _)
+  have h := hw.visibilityReplace_comm _ N (hσ ▸ hg) j hj
+  rwa [visibilityReplace_coe_add_natCast hc hi, hσ, visibilityReplace_coe_add_natCast hμ hi] at h
+
+/-- **The finite part at a reference cell** (the reading of the cap row).  Let `r` transform to
+`q` over the grades `grade`, and let `a`, `b` be cells with the grade of `a` at most that of `b`.
+If `q a = μ + i` for `μ` zero or a limit, `i` below the grade of `b`, and `μ + i < q b`, then
+`r a = ω · c + i` for some ordinal `c`: `r` reads `a` at the finite part of its target. -/
+theorem TransformsTo.exists_eq_omega0_mul_add (h : TransformsTo grade r q) {μ : Ordinal.{u}}
+    (hμ : Order.IsSuccPrelimit μ) {a b : ι} {i : ℕ} (hab : grade a ≤ grade b)
+    (hi : i < grade b) (hqa : q a = ((μ + i : Ordinal.{u}) : Label.{u}))
+    (hib : ((μ + i : Ordinal.{u}) : Label.{u}) < q b) :
+    ∃ c : Ordinal.{u}, r a = ((ω * c + i : Ordinal.{u}) : Label.{u}) := by
+  obtain ⟨g, σ, hw, heq⟩ := h
+  obtain ⟨hσa, hg⟩ := apply_eq_of_lt hw heq hab hqa hib
+  -- commuting with visibility replacement at the grade of `b` and a value `j`
+  have hcm (j : ℕ) (hj : j ≤ grade b) :
+      σ (visibilityReplace (grade b) j (r a)) = ((μ + j : Ordinal.{u}) : Label.{u}) := by
+    rw [hw.visibilityReplace_comm _ _ (hσa ▸ hg) j hj, hσa,
+      visibilityReplace_coe_add_natCast hμ hi]
+  -- a replacement with a value other than `i` cannot fix the value at `a`
+  have hne (j : ℕ) (hj : j ≤ grade b) (hji : j ≠ i)
+      (hfix : visibilityReplace (grade b) j (r a) = r a) : False :=
+    hji (natCast_eq_of_coe_add_eq ((hcm j hj).symm.trans (by rw [hfix, hσa])))
+  generalize hx : r a = x at hσa hcm hne ⊢
+  induction x using recBotCoeTop with
+  | bot =>
+    rw [hw.map_bot] at hσa
+    exact absurd hσa WithBot.bot_ne_coe
+  | top => exact (hne _ le_rfl hi.ne' (visibilityReplace_top _ _)).elim
+  | coe o =>
+    obtain ⟨μ', hμ', j, rfl⟩ := exists_eq_add_natCast_isSuccPrelimit o
+    obtain ⟨c, rfl⟩ := Ordinal.isSuccPrelimit_iff_omega0_dvd.mp hμ'
+    refine ⟨c, ?_⟩
+    rcases lt_or_ge j (grade b) with hj | hj
+    · rcases eq_or_ne j i with rfl | hji
+      · rfl
+      · exact (hne j hj.le hji (visibilityReplace_coe_add_natCast hμ' hj j)).elim
+    · exact (hne _ le_rfl hi.ne' ((isSelfVisible_coe_add hμ' hj).visibilityReplace_eq _)).elim
+
+/-- **One code per block.**  Let `r` transform to `q` over the grades `grade`.  If two cells `a`
+and `a'` of grades at most that of `b` have targets `μ + i` and `μ + i'` in one block `μ` (zero or
+a limit), with `i, i'` below the grade of `b` and both targets below `q b`, and `r` reads them at
+`ω · c + i` and `ω · c' + i'`, then `c = c'`. -/
+theorem TransformsTo.eq_of_eq_omega0_mul_add (h : TransformsTo grade r q) {μ : Ordinal.{u}}
+    (hμ : Order.IsSuccPrelimit μ) {a a' b : ι} {i i' : ℕ} {c c' : Ordinal.{u}}
+    (hab : grade a ≤ grade b) (ha'b : grade a' ≤ grade b) (hi : i < grade b)
+    (hi' : i' < grade b) (hqa : q a = ((μ + i : Ordinal.{u}) : Label.{u}))
+    (hqa' : q a' = ((μ + i' : Ordinal.{u}) : Label.{u}))
+    (hib : ((μ + i : Ordinal.{u}) : Label.{u}) < q b)
+    (hi'b : ((μ + i' : Ordinal.{u}) : Label.{u}) < q b)
+    (hra : r a = ((ω * c + i : Ordinal.{u}) : Label.{u}))
+    (hra' : r a' = ((ω * c' + i' : Ordinal.{u}) : Label.{u})) : c = c' := by
+  obtain ⟨g, σ, hw, heq⟩ := h
+  obtain ⟨hσa, hg⟩ := apply_eq_of_lt hw heq hab hqa hib
+  obtain ⟨hσa', hg'⟩ := apply_eq_of_lt hw heq ha'b hqa' hi'b
+  rw [hra] at hσa
+  rw [hra'] at hσa'
+  have h₁ (j : ℕ) (hj : j ≤ grade b) := hw.apply_omega0_mul_add hμ hi hj hσa hg
+  have h₂ (j : ℕ) (hj : j ≤ grade b) := hw.apply_omega0_mul_add hμ hi' hj hσa' hg'
+  -- a strictly smaller code would be sent above a strictly larger one
+  have key {d d' : Ordinal.{u}}
+      (hd : ∀ j ≤ grade b, σ ((ω * d + j : Ordinal.{u}) : Label.{u}) =
+        ((μ + j : Ordinal.{u}) : Label.{u}))
+      (hd' : ∀ j ≤ grade b, σ ((ω * d' + j : Ordinal.{u}) : Label.{u}) =
+        ((μ + j : Ordinal.{u}) : Label.{u})) : ¬ d < d' := by
+    intro hlt
+    have hle : ((ω * d + grade b : Ordinal.{u}) : Label.{u}) ≤
+        ((ω * d' + (0 : ℕ) : Ordinal.{u}) : Label.{u}) := by
+      -- `ω · d + N < ω · d'` for `d < d'` and `N` finite
+      have h0 : ω * d + (grade b : Ordinal.{u}) < ω * d' :=
+        calc ω * d + (grade b : Ordinal.{u}) < ω * d + ω :=
+              (add_lt_add_iff_left _).mpr (natCast_lt_omega0 _)
+          _ = ω * Order.succ d := (Ordinal.mul_succ ω d).symm
+          _ ≤ ω * d' := mul_le_mul_right (Order.succ_le_of_lt hlt) _
+      rw [Nat.cast_zero, add_zero]
+      exact_mod_cast h0.le
+    have hσ := hw.monotone hle
+    rw [hd _ le_rfl, hd' 0 (Nat.zero_le _)] at hσ
+    have hle' : μ + (grade b : Ordinal.{u}) ≤ μ + ((0 : ℕ) : Ordinal.{u}) := by exact_mod_cast hσ
+    have : (grade b : Ordinal.{u}) ≤ ((0 : ℕ) : Ordinal.{u}) := (add_le_add_iff_left μ).mp hle'
+    have : grade b ≤ 0 := by exact_mod_cast this
+    omega
+  exact le_antisymm (not_lt.mp (key h₂ h₁)) (not_lt.mp (key h₁ h₂))
+
+end VaughtConjecture.Label

@@ -639,3 +639,22 @@ theorem cappedLift_three_seedL (α : Ordinal.{u}) :
     TwoFaceLiftExistsCounterexample.not_towerInvariant_three_seedL α⟩
 
 end VaughtConjecture.TowerProfile
+
+/-! ### The `⊥` profile -/
+
+namespace VaughtConjecture.TowerProfile
+
+open Finset Label CellScheme
+open ProfileCatalogue (Profile)
+open RankProfile (rankCat mem_rankCat)
+
+variable {α : Ordinal.{u}} {I : Seed.{u} α 3}
+
+/-- **The constant `⊥` profile is in the rank-normalized catalogue**: lawful below both coatoms,
+in the code grid, and fixed by the orbit code. -/
+theorem bot_mem_rankCat : (fun _ ↦ ⊥ : Profile I) ∈ rankCat I 3 := by
+  simp only [rankCat, Finset.mem_filter, Fintype.mem_piFinset]
+  refine ⟨fun _ ↦ Finset.mem_insert_self _ _, ⟨Rows.isLawfulBelow_const_bot _,
+    Rows.isLawfulBelow_const_bot _⟩, funext fun _ ↦ orbitCode_eq_bot_iff.mpr rfl⟩
+
+end VaughtConjecture.TowerProfile
