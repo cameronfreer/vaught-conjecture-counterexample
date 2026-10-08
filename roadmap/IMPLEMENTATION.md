@@ -5009,6 +5009,27 @@ witnesses).**
   `StageType.IsLegal.exists_isLawfulBelow_castSucc`, `StageType.not_forall_le_of_opposite`),
   `Extension/AttachedGateCounterexample`, `Extension/AttachedGateExamples`, and
   `Realization/AttachedGateReceiving`, beside `Realization/GateRecovery`.
+- The capped reading of the donor: `Extension/CappedDonorReading` (the reference data
+  `CappedDonorReading.PrivateReference`, the cut, activity, the capped reading, the capped-donor
+  lemma `CappedDonorReading.PrivateReference.HasMargin.isLawful_reading`, the reading at the actual
+  labels, and the three inputs `CappedDonorReading.AnchorInput`, `CappedDonorReading.TwoBlockInput`
+  and `CappedDonorReading.OppositeCellsInput`), in place, beside `Extension/AttachedGate`.  Generic
+  statements stated there so that their homes are unchanged:
+  `Label.IsWitness.min_const_of_isSelfVisible` belongs in `Extension/WitnessAlgebra`, beside
+  `Label.IsWitness.max`, and the block pieces (`CappedDonorReading.piece`,
+  `CappedDonorReading.piece_omega0_mul_add`, `CappedDonorReading.piece_omega0_mul_add_of_lt`,
+  `piece_bot`, `piece_top`, `piece_coe`,
+  `CappedDonorReading.monotone_piece`, `CappedDonorReading.piece_visibilityReplace`,
+  `CappedDonorReading.isWitness_piece`) beside its block arithmetic;
+  `Label.exists_eq_of_not_isSelfVisible`, `CappedDonorReading.finitePart` with
+  `natCast_finitePart`, `finitePart_omega0_mul_add` and `omega0_mul_div_add_finitePart`,
+  `CappedDonorReading.isSuccPrelimit_omega0_mul`, `CappedDonorReading.coe_omega0_mul_add_le_coe_iff`
+  and `CappedDonorReading.min_visibilityReplace_natCast` belong in `Label/Visibility`.
+  `CappedDonorReading.AnchorInput` carries its own copy of the two-point private type with the
+  reference cell `z₁` and of its one-point donor, whose module is not on `main`; the
+  copy declares `AnchorInput.rowValue` and `AnchorInput.donorRowValue` public where that module
+  declares them private, so replacing the copy by an import, once that module is on `main`, also
+  changes the visibility of those two definitions (or the copy's uses of them).
 
 **Exact residual and hollow receiving, (R2) and (R3) (Layer 3).**
 
