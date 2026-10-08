@@ -6,6 +6,7 @@ Authors: Cameron Freer
 import VaughtConjecture.Extension.ProfileTowerReaders
 import VaughtConjecture.Extension.ProfileTowerCompletion
 import VaughtConjecture.Extension.BotKeeping
+import VaughtConjecture.Extension.ProfileBotKeeping
 
 /-!
 # Readers of a cell within its layer, through the levels of the profile tower
@@ -190,6 +191,31 @@ theorem sameLayerReaders_towerCompletion {j : ℕ} (I : Seed.{u} α (j + 3))
   sameLayerReaders_appendFullCell (h := (towerCompletion I).isLegalBelowFullGrade.not_le)
     (by omega)
     ((lvl I (j + 1)).sameLayerReaders_top (sameLayerReaders_lvl (by omega) (j + 1) (by omega)))
+
+/-- **A bot-keeping completion with the profile tower exposed**: every seed on `j + 5` points has a
+bot-keeping completion below the full grade (as `Seed.exists_botKeeping`) on the scheme of the
+completion of the profile tower, whose completions at every limit stage have the same-layer
+readers.  The labelling is that of `ProfileTower.exists_botKeeping_of_three_le`; the scheme and
+the old cells are those of `ProfileTower.towerCompletion`. -/
+theorem exists_botKeeping_tower {j : ℕ} (I : Seed.{u} α (j + 3)) :
+    ∃ F : CompletionBelowFullGrade I, F.BotKeeping ∧ F.scheme = (lvl I (j + 1)).top ∧
+      ∀ hα : Order.IsSuccPrelimit α,
+        SameLayerReaders I (F.completion hα).toScheme fun a ↦ (F.embed a).castSucc := by
+  have hL := lvl_good (I := I) (by omega) j (by omega)
+  have hN := hL.next (by omega)
+  have hS := hL.sectionBotKeeping_next (lvl_sectionBotKeeping I (by omega) j (by omega))
+  obtain ⟨p, hp, hpe, hpb⟩ := hN.exists_botKeeping hS
+  obtain ⟨r, hr, hrp, hrb⟩ :=
+    Scheme.exists_botKeeping_fieldLayer (hS := (lvl I j).next.not_le) hp hpb
+  set F₀ := towerCompletion I
+  refine ⟨{ F₀ with label := r, isLawful := hr, label_embed := fun d ↦ ?_ }, hrb, rfl,
+    fun hα ↦ ?_⟩
+  · change r (Fin.castAdd _ ((lvl I j).next.embed d)) = I.amalgam.label d
+    rw [hrp]
+    exact hpe d
+  · exact sameLayerReaders_appendFullCell (h := (towerCompletion I).isLegalBelowFullGrade.not_le)
+      (by omega)
+      ((lvl I (j + 1)).sameLayerReaders_top (sameLayerReaders_lvl (by omega) (j + 1) (by omega)))
 
 end ProfileTower
 

@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.MainTheorem.WorkH4
+import VaughtConjecture.Extension.ProfileTowerLayers
 
 /-!
 # Acquiring a context whose caps dominate no live cell, through a completion
@@ -73,14 +74,134 @@ theorem StageType.capNonDominating_iff {α : Ordinal.{u}} {m : ℕ} (Tp : StageT
     (b : Fin Tp.card) : Tp.CapNonDominating b ↔ Tp.toScheme.CapNonDominatingAt (Fin.last m) b :=
   Iff.rfl
 
-/-- **Completions dominating no live cell** (a named hypothesis on seeds): every seed has a
-completion below the full grade whose completion, at every limit stage, satisfies
-`Scheme.CapNonDominatingAt` at the last point for every cell of full scope. -/
+/-- **Completions dominating no live cell** (a named hypothesis on seeds): every seed on `m + 2`
+points has a completion below the full grade whose completion, at every limit stage, satisfies
+`Scheme.CapNonDominatingAt` at the last point for every cell of full scope and grade
+`3 ≤ g ≤ m`. -/
 def CompletionNonDominating : Prop :=
   ∀ ⦃α : Ordinal.{u}⦄ ⦃m : ℕ⦄ (I : Seed.{u} α m), ∃ F : CompletionBelowFullGrade I,
     ∀ (hα : Order.IsSuccPrelimit α) (c : Fin (F.completion hα).card),
       (F.completion hα).toCellScheme.scope c = univ →
+      3 ≤ (F.completion hα).toCellScheme.grade c → (F.completion hα).toCellScheme.grade c ≤ m →
         (F.completion hα).toScheme.CapNonDominatingAt (Fin.last (m + 1)) c
+
+/-! ### `CompletionNonDominating` from the completion of the profile tower -/
+
+namespace Scheme
+
+variable {n : ℕ}
+
+/-- **The cross-layer part of the clause**: `Scheme.CapNonDominatingAt` at the cells `a` of grade
+strictly above that of `c`. -/
+def CapNonDominatingCrossAt (S : Scheme.{u} n) (x : Fin n) (c : Fin S.card) : Prop :=
+  ∀ a G : Fin S.card, x ∉ S.toCellScheme.scope a → S.toCellScheme.scope G = univ →
+    S.toCellScheme.grade a = S.toCellScheme.grade G →
+    S.toCellScheme.grade c < S.toCellScheme.grade a → S.rowAt a a ≠ ⊥ →
+      ∃ u, S.toCellScheme.gradedIndex u = S.toCellScheme.gradedIndex G ∧
+        Label.LowerBlock (S.rowAt u c) (S.rowAt u a)
+
+end Scheme
+
+namespace CompletionBelowFullGrade
+
+variable {α : Ordinal.{u}} {m : ℕ} {I : Seed.{u} α m} (F : CompletionBelowFullGrade I)
+
+/-- The old cells of a completion keep their rows. -/
+theorem rowAt_embed (a b : Fin I.amalgam.card) :
+    F.scheme.rowAt (F.embed a) (F.embed b) = I.amalgam.toScheme.rowAt a b := by
+  by_cases hb : b ∈ I.amalgam.toCellScheme.below (I.amalgam.toCellScheme.gradedIndex a)
+  · have hb' : F.embed b ∈ F.scheme.toCellScheme.below
+        (F.scheme.toCellScheme.gradedIndex (F.embed a)) := by
+      rw [CellScheme.mem_below, F.gradedIndex_embed, F.gradedIndex_embed]
+      exact hb
+    rw [Scheme.rowAt_of_mem hb', Scheme.rowAt_of_mem hb]
+    have h := congrArg (fun R : I.amalgam.toCellScheme.Rows ↦ R.row a ⟨b, hb⟩) F.comap_rows
+    exact h
+  · have hb' : F.embed b ∉ F.scheme.toCellScheme.below
+        (F.scheme.toCellScheme.gradedIndex (F.embed a)) := by
+      rw [CellScheme.mem_below, F.gradedIndex_embed, F.gradedIndex_embed]
+      exact hb
+    rw [Scheme.rowAt_of_notMem hb', Scheme.rowAt_of_notMem hb]
+
+/-- **A cell of the completion avoiding the last point is an old cell**, with the scope, grade and
+self-reading of its cell of the amalgam. -/
+theorem exists_old_completion (hα : Order.IsSuccPrelimit α) {a : Fin (F.completion hα).card}
+    (ha : Fin.last (m + 1) ∉ (F.completion hα).toCellScheme.scope a) :
+    ∃ a₀ : Fin I.amalgam.card, a = (F.embed a₀).castSucc ∧
+      I.amalgam.toCellScheme.scope a₀ = (F.completion hα).toCellScheme.scope a ∧
+      I.amalgam.toCellScheme.grade a₀ = (F.completion hα).toCellScheme.grade a ∧
+      I.amalgam.toScheme.rowAt a₀ a₀ = (F.completion hα).toScheme.rowAt a a := by
+  change Fin (F.scheme.card + 1) at a
+  induction a using Fin.lastCases with
+  | last =>
+    exfalso
+    apply ha
+    change Fin.last (m + 1) ∈ (F.scheme.appendFullCellScheme (m + 2)).scope (Fin.last _)
+    rw [Scheme.appendFullCellScheme_scope_last]
+    exact mem_univ _
+  | cast a =>
+    have hsc : (F.completion hα).toCellScheme.scope a.castSucc = F.scheme.toCellScheme.scope a :=
+      Scheme.appendFullCellScheme_scope_castSucc F.scheme (m + 2) a
+    have hgr : (F.completion hα).toCellScheme.grade a.castSucc = F.scheme.toCellScheme.grade a :=
+      Scheme.appendFullCellScheme_grade_castSucc F.scheme (m + 2) a
+    have hne : F.scheme.toCellScheme.scope a ≠ univ := fun h ↦ ha (by
+      rw [hsc, h]; exact mem_univ _)
+    obtain ⟨a₀, rfl⟩ := F.mem_range_embed a hne
+    refine ⟨a₀, rfl, ?_, ?_, ?_⟩
+    · rw [hsc, F.scope_embed]
+    · rw [hgr]
+      exact (congrArg Prod.snd (F.gradedIndex_embed a₀)).symm
+    · have h := Scheme.rowAt_appendFullCell_castSucc (S := (F.truncate hα).toScheme)
+        (j := m + 2) (r := StageType.apexRow (t := F.truncate hα) F.isLegalBelowFullGrade)
+        (h := F.isLegalBelowFullGrade.not_le) (F.embed a₀) (F.embed a₀)
+      exact (h.trans (F.rowAt_embed a₀ a₀)).symm
+
+end CompletionBelowFullGrade
+
+/-- **Layer separation at every grade of every seed of the profile tower** (a named condition on
+the catalogues). -/
+def TowerLayerSeparating : Prop :=
+  ∀ ⦃α : Ordinal.{u}⦄ ⦃j : ℕ⦄ (I : Seed.{u} α (j + 3)) (g : ℕ), 3 ≤ g → g ≤ j + 3 →
+    ProfileTower.LayerSeparating I g
+
+/-- **Cross-layer non-domination in the completion of the profile tower** (a named hypothesis on
+seeds): at every cell of full scope and grade `3 ≤ g ≤ m`, the clause at the cells of higher
+grade. -/
+def TowerCrossLayer : Prop :=
+  ∀ ⦃α : Ordinal.{u}⦄ ⦃j : ℕ⦄ (I : Seed.{u} α (j + 3)) (hα : Order.IsSuccPrelimit α)
+    (c : Fin ((ProfileTower.towerCompletion I).completion hα).card),
+    ((ProfileTower.towerCompletion I).completion hα).toCellScheme.scope c = univ →
+    3 ≤ ((ProfileTower.towerCompletion I).completion hα).toCellScheme.grade c →
+    ((ProfileTower.towerCompletion I).completion hα).toCellScheme.grade c ≤ j + 3 →
+      ((ProfileTower.towerCompletion I).completion hα).toScheme.CapNonDominatingCrossAt
+        (Fin.last (j + 3 + 1)) c
+
+/-- **Completions dominating no live cell from the profile tower**: the same-layer part of the
+clause holds in the completion of the profile tower under layer separation
+(`ProfileTower.sameLayerReaders_towerCompletion`), and the cross-layer part is
+`TowerCrossLayer`; seeds on fewer than five points have no cells of the grades concerned. -/
+theorem completionNonDominating_of_tower (hsep : TowerLayerSeparating.{u})
+    (hcross : TowerCrossLayer.{u}) : CompletionNonDominating.{u} := by
+  intro α m I
+  by_cases hm : 3 ≤ m
+  swap
+  · obtain ⟨F⟩ := I.nonempty_completionBelowFullGrade
+    exact ⟨F, fun _ c _ h3 hcm ↦ absurd (h3.trans hcm) hm⟩
+  obtain ⟨j, rfl⟩ : ∃ j, m = j + 3 := ⟨m - 3, by omega⟩
+  refine ⟨ProfileTower.towerCompletion I, fun hα c hc h3 hcm a G ha hG hag hca hlive ↦ ?_⟩
+  rcases hca.lt_or_eq with hlt | heq
+  · exact hcross I hα c hc h3 hcm a G ha hG hag hlt hlive
+  obtain ⟨a₀, rfl, hsc, hgr, hrow⟩ :=
+    (ProfileTower.towerCompletion I).exists_old_completion hα ha
+  obtain ⟨u, hu, hlb⟩ := ProfileTower.sameLayerReaders_towerCompletion I hα c hc h3 hcm
+    (hsep I _ h3 hcm) a₀ (hgr.trans heq.symm) (by rw [hrow]; exact hlive)
+    (by rw [hsc]; exact ha)
+  refine ⟨u, ?_, hlb⟩
+  rw [hu]
+  have hGs : ((ProfileTower.towerCompletion I).completion hα).toCellScheme.gradedIndex G =
+      ((univ : Finset (Fin (j + 3 + 2))),
+        ((ProfileTower.towerCompletion I).completion hα).toCellScheme.grade G) := Prod.ext hG rfl
+  rw [hGs, ← hag, ← hgr, hgr, heq]
 
 namespace StageType
 
@@ -89,13 +210,14 @@ variable {ξ : Ordinal.{u}}
 variable (ξ) in
 /-- **The margin calibration with a non-dominating cap**: the margin calibration with a floor
 (`StageType.GradedCapMarginCalibration'`), a last point `x` off the root whose complement is a
-face, and no cell of full scope dominating a live cell off `x`. -/
+face, and no cell of full scope and grade `3 ≤ g ≤ m - 2` dominating a live cell off `x`. -/
 def GradedCapMarginCalibrationND ⦃m k : ℕ⦄ (Tp : StageType.{u} (blockStage (ξ + 1)) m)
     (f : Fin k ↪ Fin m) (D : StageType.{u} (blockStage (ξ + 1)) (k + 1)) (γ : Ordinal.{u}) :
     Prop :=
   GradedCapMarginCalibration' ξ Tp f D γ ∧
     ∃ x : Fin m, (x : ℕ) + 1 = m ∧ (∀ i, f i ≠ x) ∧ univ.erase x ∈ Tp.toCellScheme.faces ∧
-      ∀ c : Fin Tp.card, Tp.toCellScheme.scope c = univ → Tp.toScheme.CapNonDominatingAt x c
+      ∀ c : Fin Tp.card, Tp.toCellScheme.scope c = univ → 3 ≤ Tp.toCellScheme.grade c →
+        Tp.toCellScheme.grade c + 2 ≤ m → Tp.toScheme.CapNonDominatingAt x c
 
 /-- **The margin calibration with a floor passes to cofaces**: if `T` has face `W` along `e`, the
 calibration of `W` along `f` is that of `T` along `f.trans e` (the cells of `W` are cells of `T`
@@ -249,9 +371,10 @@ theorem IsModel.acquiresCalibratedContexts_gradedCapMarginND (hR : R.IsModel)
     exact (Coatom.univ_map_left (m := w.arity)).symm
   · -- the clause holds on the scheme of the completion
     have key : ∀ S : Scheme.{u} (w.arity + 2), S = qs.toScheme → ∀ c : Fin S.card,
-        S.toCellScheme.scope c = univ → S.CapNonDominatingAt (Fin.last _) c := by
-      rintro S rfl c hc
-      exact hF hβ.isSuccPrelimit c hc
+        S.toCellScheme.scope c = univ → 3 ≤ S.toCellScheme.grade c →
+        S.toCellScheme.grade c + 2 ≤ w.arity + 2 → S.CapNonDominatingAt (Fin.last _) c := by
+      rintro S rfl c hc h3 hcm
+      exact hF hβ.isSuccPrelimit c hc h3 (by change qs.toCellScheme.grade c ≤ w.arity; omega)
     exact key _ hqS
 end Realization
 
