@@ -417,7 +417,213 @@ theorem requests_hface
   have := hd hm
   simp at this
 
+/-- The root followed by the new point misses the point `m` of the seed. -/
+theorem univ_map_donorEmb_ne : univ.map X.donorEmb ≠ univ := fun he ↦ by
+  have h := he ▸ mem_univ (Fin.last m).castSucc
+  obtain ⟨y, -, hy⟩ := mem_map.mp h
+  have hv := congrArg Fin.val hy
+  induction y using Fin.lastCases with
+  | last => simp at hv
+  | cast y =>
+    simp only [donorEmb, extendByLast_castSucc, Function.Embedding.trans_apply,
+      Fin.coe_castSuccEmb, Fin.val_castSucc, Fin.val_last] at hv
+    exact (X.f y).2.ne hv
+
+/-- The face of the completion along the donor's points is `D↓λ_ξ`. -/
+theorem restrictFace_completion_donor (F : CompletionBelowFullGrade X.seed) :
+    restrictFace X.donorEmb (F.completion (isSuccPrelimit_blockStage ξ)) =
+      some (X.D.reduce (isSuccPrelimit_blockStage ξ)) := by
+  rw [donorEmb, ← extendByLast_trans, ← restrictFace_trans _ (Coatom.right m) _
+    (F.restrictFace_right_completion (isSuccPrelimit_blockStage ξ)), seed_right,
+    restrictFace_reduce, X.restrictFace_tb, Option.map_some]
+
+/-- **Cutoff stable recovery at the first coatom from the private fills** (the (R4) reading).  Let
+`c` be cap data for the input (`StageType.MarginCapData`), with the cap of grade `N ≥ 3`, every cell
+of `T⁺` avoiding its last point of grade below `N` (`hface`, so the common face of the seed carries
+no cell of grade `N`), and the fills from the private coatom at every grade `N ≤ k' ≤ m + 1`
+(`CapRequests.CapFillBotAt`, `CapRequests.CapFillPosAt`, for the requests of the data).  Then the
+completion of the seed of `(T⁺↓λ_ξ, tb↓λ_ξ)` with correct rows from the grade `N`
+(`Seed.exists_correctCompletion`), with the apex, carries cutoff stable recovery for `T⁺`,
+`f.trans Fin.castSuccEmb`, `D` and `γ`, at a cutoff above every label of `D↓λ_ξ` other than `⊤`,
+and its face along the second coatom is `tb↓λ_ξ`.  For a stage type `Q'` at `λ_{ξ+1}` on its scheme
+with face `T⁺` and `Q'↓λ_ξ` in the receiving family: the cells of `D` labelled `⊥` or below `λ_ξ`
+are read through the receiving family; those labelled in the block of `λ_ξ` exactly from their
+references, and those labelled `⊤` above `γ`, through a cell of `(univ, N)` reached from the cap
+(`CompletionBelowFullGrade.label_eq_of_hasAdmittedRows`,
+`CompletionBelowFullGrade.lt_label_of_hasAdmittedRows`). -/
+theorem exists_isCutoffStableRecovery (hN3 : 3 ≤ X.Tp.toCellScheme.grade c.cap)
+    (hface : ∀ x : Fin X.Tp.card, Fin.last m ∉ X.Tp.toCellScheme.scope x →
+      X.Tp.toCellScheme.grade x < X.Tp.toCellScheme.grade c.cap)
+    (hbot : ∀ k', X.Tp.toCellScheme.grade c.cap ≤ k' → k' ≤ m + 1 →
+      CapRequests.CapFillBotAt (X.requests c) (Fin.last (m + 1)) k')
+    (hpos : ∀ k', X.Tp.toCellScheme.grade c.cap ≤ k' → k' ≤ m + 1 →
+      CapRequests.CapFillPosAt (X.requests c) (Fin.last (m + 1)) k') :
+    ∃ (q : StageType.{u} (blockStage ξ) (m + 2)) (δ : Label.{u}),
+      restrictFace (extendByLast Fin.castSuccEmb) q =
+          some (X.tb.reduce (isSuccPrelimit_blockStage ξ)) ∧
+        X.Tp.IsCutoffStableRecovery (X.f.trans Fin.castSuccEmb) X.D γ q δ := by
+  classical
+  have hα := isSuccPrelimit_blockStage ξ
+  have hgr := X.requests_isGraded c
+  have hNm : X.Tp.toCellScheme.grade c.cap ≤ m + 1 := X.Tp.grade_le c.cap
+  have hm : 2 ≤ m := by omega
+  have hxp : Fin.last (m + 1) ∈ (ProfileTower.Pts : Finset (Fin (m + 2))) := by
+    simp [ProfileTower.Pts]
+  have hcapC : X.seed.amalgam.toCellScheme.scope (X.requests c).cap =
+      univ.erase (Fin.last (m + 1)) := by
+    change X.seed.amalgam.toCellScheme.scope (X.leftCell c.cap) = _
+    rw [scope_leftCell, c.scope_cap]
+    ext y
+    simp only [mem_map, mem_univ, true_and, mem_erase, and_true]
+    exact ⟨fun ⟨x, hx⟩ ↦ hx ▸ Fin.castSucc_ne_last x, fun hy ↦ ⟨y.castPred hy, by simp⟩⟩
+  have hN3' : 3 ≤ X.seed.amalgam.toCellScheme.grade (X.requests c).cap := by
+    rw [grade_requests_cap]
+    exact hN3
+  have hlab := ((X.requests_isCorrect_label c).code hgr (m + 1)).hat hgr (m + 1)
+  obtain ⟨F, hF⟩ := X.seed.exists_correctCompletion hm hgr hxp hcapC hN3'
+    (X.requests_hface c hface) (fun k' hk hk' ↦ hbot k' (by rwa [grade_requests_cap] at hk) hk')
+    (fun k' hk hk' ↦ hpos k' (by rwa [grade_requests_cap] at hk) hk') hlab
+  -- the cutoff: above every label of `D↓λ_ξ` other than `⊤`
+  obtain ⟨δ₀, hδ₀, hDδ⟩ := (X.D.reduce hα).exists_lt_forall_label_lt (isSuccLimit_blockStage ξ)
+  have hqD := X.restrictFace_completion_donor F
+  refine ⟨F.completion hα, ((δ₀ : Ordinal.{u}) : Label.{u}), F.restrictFace_right_completion hα,
+    ⟨F.isLegal_completion hα, F.restrictFace_left_completion hα⟩,
+    isPermittedCutoff_coe.mpr hδ₀, ?_⟩
+  intro Q' hQ' hQ'T
+  obtain ⟨S, ℓ, hwf, hcod, hlaw, hat⟩ := Q'
+  obtain rfl : S = (F.completion hα).toScheme := hQ'.1
+  -- the labels of `Q'` at the old cells
+  set w : Fin F.scheme.card → Label.{u} := fun z ↦ ℓ z.castSucc with hw_def
+  have hgc := X.grade_requests_cap c
+  have hw := F.isLawfulBelow_castSucc hα hlaw
+    (N := X.seed.amalgam.toCellScheme.grade (X.requests c).cap) (by omega)
+  have hTp (b : Fin X.Tp.card) : w (F.embed (X.leftCell b)) = X.Tp.label b := by
+    rw [← label_faceCell hQ'T b]
+    exact congrArg ℓ (F.cellMap_completion hα (Coatom.left m) Coatom.univ_map_left_ne rfl).symm
+  -- the face of `Q'` along the donor's points
+  have hfmem : univ.map X.donorEmb ∈ (F.completion hα).toCellScheme.faces :=
+    ((restrictFace_eq_some_iff _ _).mp hqD).1
+  set Q'' : StageType.{u} (blockStage (ξ + 1)) (m + 2) :=
+    ⟨(F.completion hα).toScheme, ℓ, hwf, hcod, hlaw, hat⟩ with hQ''
+  refine ⟨Q''.comap X.donorEmb hfmem, restrictFace_of_mem Q'' X.donorEmb hfmem,
+    (comap_toScheme_of_restrictFace hqD :
+      (F.completion hα).toScheme.comap X.donorEmb = (X.D.reduce hα).toScheme), fun i j hij ↦ ?_⟩
+  have hQl : (Q''.comap X.donorEmb hfmem).label i = w (F.embed (X.donorCell j)) := by
+    rw [comap_label]
+    exact congrArg ℓ (F.cellMap_completion hα X.donorEmb X.univ_map_donorEmb_ne hij.symm)
+  rw [hQl]
+  set x := F.embed (X.donorCell j) with hx
+  -- the cap and the marker in `Q'`
+  have hcap : ((blockStage ξ + X.Tp.toCellScheme.grade c.cap : Ordinal.{u}) : Label.{u}) ≤
+      w (F.embed (X.requests c).cap) := by
+    change _ ≤ w (F.embed (X.leftCell c.cap))
+    rw [hTp]
+    exact c.le_label_cap
+  have hlt_cap {a : ℕ} (ha : a < X.Tp.toCellScheme.grade c.cap) :
+      ((blockStage ξ + a : Ordinal.{u}) : Label.{u}) < w (F.embed (X.requests c).cap) :=
+    lt_of_lt_of_le (by exact_mod_cast add_lt_add_right (Nat.cast_lt.mpr ha) _) hcap
+  have hjN : X.seed.amalgam.toCellScheme.grade (X.donorCell j) ≤
+      X.seed.amalgam.toCellScheme.grade (X.requests c).cap := by
+    rw [hgc]
+    exact X.grade_donorCell_le c j
+  -- the cells of `D` below `λ_ξ`: the receiving family
+  have hrecv (hlt : X.D.label j < ((blockStage ξ : Ordinal.{u}) : Label.{u})) :
+      w x = X.D.label j := by
+    have h := hQ'.2 x.castSucc x.castSucc rfl
+    have hq : (F.completion hα).label x.castSucc = X.D.label j := by
+      refine (StageType.addApex_label_castSucc (t := F.truncate hα) _ _ x).trans ?_
+      rw [hx, F.truncate_label_embed, label_donorCell, Label.reduce_of_lt hlt]
+    have hDlt : X.D.label j < ((δ₀ : Ordinal.{u}) : Label.{u}) := by
+      have h' := hDδ j
+      rw [reduce_label, Label.reduce_of_lt hlt] at h'
+      exact h' (ne_top_of_lt hlt)
+    rw [hq, min_eq_left hDlt.le] at h
+    change min (Label.reduce (blockStage ξ) (w x)) _ = _ at h
+    have hr : Label.reduce (blockStage ξ) (w x) = X.D.label j := by
+      rcases le_or_gt ((δ₀ : Ordinal.{u}) : Label.{u}) (Label.reduce (blockStage ξ) (w x))
+        with hge | hlt'
+      · rw [min_eq_right hge] at h
+        exact absurd h hDlt.ne'
+      · rwa [min_eq_left hlt'.le] at h
+    by_cases hle : ((blockStage ξ : Ordinal.{u}) : Label.{u}) ≤ w x
+    · rw [Label.reduce_of_le hle] at hr
+      exact absurd hr.symm (ne_top_of_lt hlt)
+    · rwa [Label.reduce_of_lt (not_le.mp hle)] at hr
+  refine ⟨fun hne ↦ ?_, fun hj ↦ ?_⟩
+  · rcases atStage_iff.mp (X.D.atStage j) with h | ⟨o, ho, h⟩ | h
+    · exact hrecv (by rw [h]; exact WithBot.bot_lt_coe _)
+    · rcases lt_or_ge o (blockStage ξ) with hlo | hle
+      · exact hrecv (by rw [← h]; exact_mod_cast hlo)
+      -- the block of `λ_ξ`: read exactly from the reference
+      rw [blockStage_add_one] at ho
+      obtain ⟨n, hn⟩ := Ordinal.exists_eq_add_natCast_of_le_of_lt_add_omega0 hle ho
+      have hnF : X.D.label j = ((blockStage ξ + n : Ordinal.{u}) : Label.{u}) := by
+        rw [← h, hn]
+      obtain ⟨μ, i', hμ, hon, hoff, hi', -, hrl⟩ := c.ref_spec j _ hnF
+      obtain ⟨rfl, hn'⟩ :=
+        (Label.add_natCast_eq_add_natCast_iff (isSuccPrelimit_blockStage ξ) hμ).mp hon
+      have href : w (F.embed ((X.requests c).ref (X.donorCell j))) =
+          ((blockStage ξ + i' : Ordinal.{u}) : Label.{u}) := by
+        rw [requests_ref, hTp, hrl]
+      have hres := CompletionBelowFullGrade.label_eq_of_hasAdmittedRows hgr hF hw
+        ⟨j, ⟨n, hnF⟩, rfl⟩ hjN hμ (k := i') hi' href (href ▸ (hlt_cap hi').le)
+        (by rw [requests_off]; exact hlt_cap hoff)
+      rw [requests_off] at hres
+      rw [hres, hnF, hn']
+    · exact absurd h hne
+  · exact CompletionBelowFullGrade.lt_label_of_hasAdmittedRows hgr hF hw ⟨j, hj, rfl⟩ hjN
+      (isSuccPrelimit_blockStage ξ) (i := c.i) c.i_lt
+      (by change w (F.embed (X.leftCell c.marker)) = _; rw [hTp, c.label_marker])
+      (by
+        change w (F.embed (X.leftCell c.marker)) ≤ _
+        rw [hTp, c.label_marker]
+        exact (hlt_cap c.i_lt).le)
+      (hlt_cap c.R_lt).le (by exact_mod_cast c.lt_R)
+
 end FirstCoatomInput
+
+end StageType
+
+/-! ### (R4) at the first coatom from the private fills -/
+
+namespace StageType
+
+variable {ξ : Ordinal.{u}}
+
+/-- **First-coatom completions for the margin calibration from the private fills** (h4 of the
+receiving route, reduced to the fills).  Suppose that at every input at the first coatom
+(`StageType.FirstCoatomInput`) satisfying the margin calibration, some cap data
+(`StageType.MarginCapData`, which the calibration always gives,
+`StageType.GradedCapMarginCalibration.nonempty_marginCapData`) has
+
+* a cap of grade at least `3`;
+* every cell of `T⁺` avoiding its last point of grade below that of the cap (`hface`: the common
+  face of the seed carries no cell of the cap's grade);
+* the fills from the private coatom at every grade from that of the cap to `m + 1`
+  (`CapRequests.CapFillBotAt`, `CapRequests.CapFillPosAt`), for the requests of the data.
+
+Then first-coatom completions for the margin calibration hold.  Every hypothesis is explicit; the
+correctness of the glued labelling is proved
+(`StageType.FirstCoatomInput.requests_isCorrect_label`), and the coatom extension property is not
+used.  None of the three conditions is proved here: the
+cap's grade and `hface` are conditions on the acquired context, and the fills are the open part of
+the construction. -/
+theorem hasCutoffFirstCoatomCompletions_of_capFills
+    (h : ∀ ⦃m k : ℕ⦄ (X : FirstCoatomInput.{u} ξ m k) (γ : Ordinal.{u}), 0 < k →
+      γ < blockStage (ξ + 1) →
+      GradedCapMarginCalibration ξ X.Tp (X.f.trans Fin.castSuccEmb) X.D γ →
+      ∃ c : MarginCapData X.Tp X.D γ, 3 ≤ X.Tp.toCellScheme.grade c.cap ∧
+        (∀ x : Fin X.Tp.card, Fin.last m ∉ X.Tp.toCellScheme.scope x →
+          X.Tp.toCellScheme.grade x < X.Tp.toCellScheme.grade c.cap) ∧
+        ∀ k', X.Tp.toCellScheme.grade c.cap ≤ k' → k' ≤ m + 1 →
+          CapRequests.CapFillBotAt (X.requests c) (Fin.last (m + 1)) k' ∧
+            CapRequests.CapFillPosAt (X.requests c) (Fin.last (m + 1)) k') :
+    HasCutoffFirstCoatomCompletions ξ (GradedCapMarginCalibration ξ) := by
+  intro m k Tp p tb f P hT hp htb hk hP D hD htbD γ hγ hC
+  let X : FirstCoatomInput.{u} ξ m k := ⟨Tp, p, tb, f, P, D, hT, hp, htb, hP, hD, htbD⟩
+  obtain ⟨c, h3, hface, hfill⟩ := h X γ hk hγ hC
+  exact X.exists_isCutoffStableRecovery c h3 hface (fun k' h₁ h₂ ↦ (hfill k' h₁ h₂).1)
+    fun k' h₁ h₂ ↦ (hfill k' h₁ h₂).2
 
 end StageType
 
