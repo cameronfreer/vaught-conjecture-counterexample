@@ -59,7 +59,9 @@ this context; donor raising and the other inputs of `H2.stateAdmission_one` are 
 through the designated tops: below the cap the frontier of the lowered face is that of the context
 face (agreement capped at `h`), and at or above the cap it must be at most the designated top.  So
 owner lowering may be weakened to **owner lowering below the designated tops**: the frontier of the
-lowered face at most every designated top of the donor face at least `h`.  With it in place of
+lowered face at most every designated top of the donor face at least `h` and above the designated
+cells `Lo`.  For `Lo` the cells of the donor labelled below `⊤`, the cells of the root labelled
+below `⊤` lie in `Lo`, so the obstruction above concerns no designated top.  With it in place of
 owner lowering, the clause is an admission of states at grade `1` under donor raising.  At the
 context above, with itself as donor and the designated tops among the cells `1` and `2`, both
 donor raising (`OwnerGradeOne.donorRaising_ctx`) and owner lowering below the designated tops
@@ -153,21 +155,24 @@ variable (rc rd) in
 /-- **Owner lowering below the designated tops** `Tops`: a lawful context face and a lawful donor
 face `g` agreeing with it on the root capped at `h` give a lawful context face with the root of
 the donor face, agreeing with the context face capped at `h`, whose frontier is at most every
-designated top of `g` at least `h`.  It follows from owner lowering
-(`H2.ownerLoweringBelow_of_ownerLowering`) and is what the donor provision of the clause uses. -/
+designated top `t` of `g` at least `h` and above the designated cells `Lo` (`Lo.sup g < g t`).
+It follows from owner lowering (`H2.ownerLoweringBelow_of_ownerLowering`) and is what the donor
+provision of the clause uses.  With `Lo` containing the cells of the root labelled below `⊤` (as
+for `Lo` the cells of the donor labelled below `⊤`), the lower bound of the frontier by such cells
+(`H2.le_frontierAt_one`) is below every designated top concerned. -/
 def OwnerLoweringBelow (o r : ιC) (K : ℕ) (C : (ιC → Label.{u}) → Prop)
-    (D : (ιD → Label.{u}) → Prop) (Tops : Finset ιD) : Prop :=
+    (D : (ιD → Label.{u}) → Prop) (Lo Tops : Finset ιD) : Prop :=
   ∀ {h : Label.{u}}, IsSelfVisible K h → ∀ {L : ιC → Label.{u}} {g : ιD → Label.{u}}, C L → D g →
     (∀ x, min (g (rd x)) h = min (L (rc x)) h) →
     ∃ W : ιC → Label.{u}, C W ∧ (∀ x, W (rc x) = g (rd x)) ∧ (∀ d, min (W d) h = min (L d) h) ∧
-      ∀ t ∈ Tops, h ≤ g t → frontierAt o r K W ≤ g t
+      ∀ t ∈ Tops, h ≤ g t → Lo.sup g < g t → frontierAt o r K W ≤ g t
 
 /-- Owner lowering gives owner lowering below every designation. -/
 theorem ownerLoweringBelow_of_ownerLowering {o r : ιC} {C : (ιC → Label.{u}) → Prop}
-    {D : (ιD → Label.{u}) → Prop} (hOL : OwnerLowering rc rd o r K C D) (Tops : Finset ιD) :
-    OwnerLoweringBelow rc rd o r K C D Tops := fun hh _ _ hL hg hroot ↦ by
+    {D : (ιD → Label.{u}) → Prop} (hOL : OwnerLowering rc rd o r K C D) (Lo Tops : Finset ιD) :
+    OwnerLoweringBelow rc rd o r K C D Lo Tops := fun hh _ _ hL hg hroot ↦ by
   obtain ⟨W, hW, hWr, hWL, hWF⟩ := hOL hh hL hg hroot
-  exact ⟨W, hW, hWr, hWL, fun _ _ ht ↦ hWF.trans ht⟩
+  exact ⟨W, hW, hWr, hWL, fun _ _ ht _ ↦ hWF.trans ht⟩
 
 /-- The designated cells below the top of an agreeing face, below a top under the cap, agree. -/
 private theorem sup_lt_of_lt_cap' {Lo : Finset ιD} {W R : ιD → Label.{u}} {h v : Label.{u}}
@@ -187,7 +192,7 @@ theorem selfLow_isStateAdmission_of_below {o r : ιC} {C : (ιC → Label.{u}) �
     {D : (ιD → Label.{u}) → Prop} {Lo Tops : Finset ιD} (A : Set ιR)
     (hCo : ∀ f, C f → IsSelfVisible K (f o))
     (hCF : ∀ f, C f → ∀ a ∈ A, frontierAt o r K f ≤ f (rc a))
-    (hDR : DonorRaising rc rd K C D A Tops) (hOL : OwnerLoweringBelow rc rd o r K C D Tops) :
+    (hDR : DonorRaising rc rd K C D A Tops) (hOL : OwnerLoweringBelow rc rd o r K C D Lo Tops) :
     IsStateAdmission rc rd K C D (SelfLowG o r K Lo Tops) where
   bot := fun _ _ h ↦ absurd h (by simp)
   comp := fun {σ} hσ hσ0 hc {L R} h t ht hlt ↦ by
@@ -238,7 +243,7 @@ theorem selfLow_isStateAdmission_of_below {o r : ιC} {C : (ιC → Label.{u}) �
         have e := hfR t
         rw [min_eq_right (not_lt.mp hRt)] at e
         exact min_eq_right_iff.mp e
-      exact hWF t ht hft
+      exact hWF t ht hft hlt
 
 end Below
 
@@ -253,7 +258,7 @@ theorem stateAdmission_one_of_below {t' : StageType.{u} α 2} {n : ℕ}
     (hDR : DonorRaising (StageType.faceCell hp) (StageType.faceCell htbp) 1 t'.rows.IsLawful
       tb.rows.IsLawful (rootTops hp l) Tops)
     (hOL : OwnerLoweringBelow (StageType.faceCell hp) (StageType.faceCell htbp) o r 1
-      t'.rows.IsLawful tb.rows.IsLawful Tops) :
+      t'.rows.IsLawful tb.rows.IsLawful Lo Tops) :
     IsStateAdmission (StageType.faceCell hp) (StageType.faceCell htbp) 1 t'.rows.IsLawful
       tb.rows.IsLawful (SelfLowG o r 1 Lo Tops) := by
   refine selfLow_isStateAdmission_of_below (rootTops hp l) (fun f hf ↦ ?_)
@@ -693,10 +698,10 @@ donor, for the designated tops among the cells `1` and `2`: the lowered face is
 the context face, with frontier at most `max h y`, and `y` is at most every top of the donor
 face. -/
 theorem ownerLoweringBelow_ctx (α : Ordinal.{u}) {p : StageType.{u} α 1}
-    (hp : restrictFace Fin.castSuccEmb (ctx α) = some p) {Tops : Finset (Fin (ctx α).card)}
-    (hTops : ∀ t ∈ Tops, t = cellC α 1 ∨ t = cellC α 2) :
+    (hp : restrictFace Fin.castSuccEmb (ctx α) = some p) (Lo : Finset (Fin (ctx α).card))
+    {Tops : Finset (Fin (ctx α).card)} (hTops : ∀ t ∈ Tops, t = cellC α 1 ∨ t = cellC α 2) :
     H2.OwnerLoweringBelow (faceCell hp) (faceCell hp) (cellC α 2) (cellC α 1) 1
-      (ctx α).rows.IsLawful (ctx α).rows.IsLawful Tops := by
+      (ctx α).rows.IsLawful (ctx α).rows.IsLawful Lo Tops := by
   intro h hh L g hL hg hroot
   obtain ⟨-, hL1, hL2, hL01, hL12⟩ := conditions_univ (isLawfulBelow_of_isLawful hL _)
   obtain ⟨hg0, -, -, hg01, hg12⟩ := conditions_univ (isLawfulBelow_of_isLawful hg _)
@@ -713,7 +718,7 @@ theorem ownerLoweringBelow_ctx (α : Ordinal.{u}) {p : StageType.{u} α 1}
   refine ⟨lab (g (cellC α 0)) (max (min (L (cellC α 1)) h) (g (cellC α 0)))
       (max (min (L (cellC α 2)) h) (g (cellC α 0))),
     isLawful_lab hg0 ((hL1.min hh).max hg0) ((hL2.min hh).max hg0) (le_max_right _ _)
-      (max_le_max (min_le_min_right _ hL12) le_rfl), fun x ↦ ?_, fun d ↦ ?_, fun t ht hht ↦ ?_⟩
+      (max_le_max (min_le_min_right _ hL12) le_rfl), fun x ↦ ?_, fun d ↦ ?_, fun t ht hht _ ↦ ?_⟩
   · rw [faceCell_eq_zero α hp x]
     rfl
   · have key : ∀ d : Fin 4, d = 0 ∨ d = 1 ∨ d = 2 ∨ d = 3 := by decide
@@ -810,6 +815,6 @@ theorem isStateAdmission_ctx (α : Ordinal.{u}) {p : StageType.{u} α 1}
     H2.IsStateAdmission (faceCell hp) (faceCell hp) 1 (ctx α).rows.IsLawful
       (ctx α).rows.IsLawful (H2.SelfLowG (cellC α 2) (cellC α 1) 1 Lo Tops) :=
   H2.stateAdmission_one_of_below (isSourceGapContextAt_ctx α (Function.Embedding.refl _)) hp hp
-    (donorRaising_ctx α hp _ hTops) (ownerLoweringBelow_ctx α hp hTops)
+    (donorRaising_ctx α hp _ hTops) (ownerLoweringBelow_ctx α hp Lo hTops)
 
 end VaughtConjecture.OwnerGradeOne
