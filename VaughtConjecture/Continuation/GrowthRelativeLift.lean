@@ -288,6 +288,66 @@ theorem Allowed.exists_lift_of_cap_le (Q : GrowthRequests t' d.toScheme) (hd : d
   exact ⟨v', ⟨hu', hv', hv'r, Q.admits_of_min_eq_of_le hadm hγb hag hv'cap hle
     (hu'.orderly Q.cap) hoff hR⟩, hv'cap⟩
 
+/-! ### The template from an encoding -/
+
+/-- **The template from an encoding of the donor.**  Let `enc` be a witness bounded by the arity
+`n + 1` of the donor that reflects `⊥` on the donor's labels, `H` (nonbottom, self-visible at
+`n + 1`) the marker read of the cleaned cap row `e`, and let `enc` send the donor's labels to the
+reads of `e`: bottom requests are bottom, exact requests to their reference reads (below `H`),
+high requests to `H`, and the root to `e` capped at `H`.  If the root section of `e` is lawful on
+the root face, then some lawful donor labelling is `e` on the root, reads the requests from `e`
+exactly, and satisfies the frame inequalities: the encoded donor (lawful by transport), with its
+root restored literally by the root lift at `H`. -/
+theorem exists_template_of_encoding (Q : GrowthRequests t' d.toScheme) (hd : d.IsLegal)
+    (hn : 0 < n) {eC : Fin t'.card → Label.{u}}
+    (heρ : p.rows.IsLawful fun i ↦ eC (t'.faceCell hte i))
+    {enc : Label.{u} → Label.{u}} (henc : IsWitness (stepSuppressor (n + 1)) enc)
+    (hbot : ∀ j, enc (d.label j) = ⊥ → d.label j = ⊥) {H : Label.{u}} (hH : H ≠ ⊥)
+    (hHvis : IsSelfVisible (n + 1) H)
+    (hroot : ∀ i, min (enc (d.label (d.faceCell hdp i))) H = min (eC (t'.faceCell hte i)) H)
+    (hZ : ∀ j ∈ Q.bottoms, d.label j = ⊥)
+    (hF : ∀ j ∈ Q.exacts, enc (d.label j) =
+      visibilityReplace Q.threshold (Q.offset j) (eC (Q.ref j)))
+    (hFlt : ∀ j ∈ Q.exacts, visibilityReplace Q.threshold (Q.offset j) (eC (Q.ref j)) < H)
+    (hT : ∀ j ∈ Q.highs, enc (d.label j) = H)
+    (hHm : min H (eC Q.cap) = Q.readMarker eC) :
+    ∃ V : Fin d.card → Label.{u}, d.rows.IsLawful V ∧
+      (∀ i, V (d.faceCell hdp i) = eC (t'.faceCell hte i)) ∧
+      (∀ j, Q.CorrectAt eC j (V j)) ∧
+      (Q.highs.Nonempty → ∀ j ∈ Q.exacts, Q.readExact eC j ≤ Q.readMarker eC) := by
+  have hV0 : d.rows.IsLawful (enc ∘ d.label) :=
+    d.isLawful.map_of_bot_iff d.isLawful (fun j ↦ d.grade_le j) henc
+      (fun j ↦ ⟨hbot j, fun h ↦ by rw [h, henc.map_bot]⟩)
+  obtain ⟨V, hV, hVr, hVcap⟩ := StageType.IsLegal.exists_rootLift hd hn hdp hV0 heρ hHvis
+    (fun i ↦ (hroot i).symm)
+  have hVF (j) (hj : j ∈ Q.exacts) :
+      V j = visibilityReplace Q.threshold (Q.offset j) (eC (Q.ref j)) := by
+    have h1 := hVcap j
+    simp only [Function.comp_apply] at h1
+    rw [hF j hj, min_eq_left (hFlt j hj).le] at h1
+    rcases le_total (V j) H with hle | hle
+    · rwa [min_eq_left hle] at h1
+    · rw [min_eq_right hle] at h1
+      exact absurd h1.symm (hFlt j hj).ne
+  have hVT (j) (hj : j ∈ Q.highs) : H ≤ V j := by
+    have h1 := hVcap j
+    simp only [Function.comp_apply] at h1
+    rw [hT j hj, min_self] at h1
+    exact min_eq_right_iff.mp h1
+  have hVZ (j) (hj : j ∈ Q.bottoms) : V j = ⊥ := by
+    have h1 := hVcap j
+    simp only [Function.comp_apply] at h1
+    rw [hZ j hj, henc.map_bot, min_eq_left bot_le] at h1
+    rcases min_eq_bot.mp h1 with h2 | h2
+    · exact h2
+    · exact absurd h2 hH
+  refine ⟨V, hV, hVr, fun j ↦ ⟨fun hz ↦ by rw [hVZ j hz, min_eq_left bot_le],
+    fun hf ↦ by rw [hVF j hf]; rfl, fun hy ↦ ?_⟩, fun _ j hj ↦ ?_⟩
+  · rw [← hHm]
+    exact min_le_min_right _ (hVT j hy)
+  · rw [readExact, ← hHm]
+    exact min_le_min_right _ (hFlt j hj).le
+
 end GrowthRequests
 
 end StageType
