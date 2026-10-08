@@ -2306,39 +2306,6 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     stage-dependent meaning of the top that `README.md` flags ("Reduction to full
     presentations").  A theorem relating "maximal at `β`" to "terminal at `β`, or lying in some
     `K_{β′}` with `β′ > β`" is still to be proved (informal; not compiled).
-    is equivalent to one satisfying clause 4.
-46. Statement only.  Compiled in this repository (theorem named), in `Stage/Legal`: the legal stage
-    types are closed under the face maps (`StageType.IsLegal.restrictFace`), reindexing
-    (`StageType.IsLegal.reindex`), and stage reduction (`StageType.isLegal_reduce_iff`), and there
-    are countably many on `n` points at a countable stage (`StageType.countable_setOf_isLegal`);
-    the base language has one relation symbol for each legal stage type at `ω` (`baseLanguage`,
-    `Language/Basic`).  Under the reading of note 43, the first clause of Lemma 4.28 (all
-    templates in `L` are legal templates) fails for the legal stage types here as they stand: at
-    every stage there is a legal stage type on a scheme violating clause 4
-    (`StageType.exists_isLegal_not_hasPrintedRange`, compiled in this repository (theorem named),
-    on `CodingExamples.pointRow 2`; note 45).  So a literal identification of `L` with the legal
-    stage types is ruled out, not pending.  Either of two results would address this range
-    obstruction, and neither
-    is chosen here: (a) a proof that the class restricted by clause 4 suffices for the main
-    theorem (it is not known to be preserved by the coatom amalgam and the completion, and
-    legality may not be strengthened, `README.md`, Layer 3, checkpoint 2.2); or (b) a correction
-    of clause 4 of Definition 4.27, recorded as C.  Under the coherent-rows reading of row 9 the
-    witness does not apply: it is the bottom labelling, its coherent local rows are all `⊥`, and
-    it satisfies clause 4; there clause 4 bounds the labels (note 43), and its effect on Lemma 4.28
-    is not recorded.  That the legal stage types form a template system of [AFK26] representing
-    every legal template up to relabelling isomorphism is still to be proved: under the reading of
-    note 43 after one of (a) and (b); under the coherent-rows reading it rests on item 1's fidelity
-    question (row 9, item 1: S) and row 45, with clause 4 bounding the labels.
-47. Statement only.  The corresponding statement here is the main theorem in its conditional
-    composition `vaughtCounterexample_of_expansionDomains` (`MainTheorem/Assembly`), compiled in
-    this repository (theorem named), whose hypotheses are still to be proved.  Under the reading
-    of note 43 a template carries no labelling, so `σ[L]` and `baseLanguage` are indexed by
-    different kinds of object (templates, legal stage types); their underlying schemes differ by
-    clause 4 (`CodingExamples.pointRow 2`, note 46), and a comparison of the two languages needs
-    the representation of item 1 (row 9) in any case.  So `σ[L]` cannot be literally
-    `densitySentence` as things stand; under the reading of note 43, their identification needs
-    one of the two resolutions of note 46, and then rows 12 and 13.  The first assertion of Theorem 4.29, about
-    the system `K[L]`, has no counterpart here (prospective).
 
 **Completion criteria, item by item** (the items of `README.md`, "Manuscript correspondence
 (required)").  For every item, each row of the concordance that it concerns is P or C, with its
@@ -3545,6 +3512,33 @@ Each checkpoint needs both its abstract API and a concrete application:
    (`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_receivingModels`), and every status
    above are unchanged.
 
+   *Receiving route from three finite coatom statements.*  Compiled in this repository
+   (theorem named):
+   `MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_coatomDeterminations_sourceGap_markedCap`
+   `(h4 : ∀ ξ < ω₁, HasCutoffFirstCoatomCompletions ξ (GradedCapCalibration ξ))`
+   `(h2 : CoatomCutoffDetermination fun K t' h ↦ t'.IsSourceGapContext K h)`
+   `(h3 : HollowCoatomCutoffDetermination fun t' h ↦ t'.IsMarkedCapContext h) :`
+   `HasThinAlephOneSpectrum densitySentence` (`MainTheorem/SourceGapMarkedCapRoute`), and the form
+   `…_margin` with `h4` at `StageType.GradedCapMarginCalibration`, implied by the graded cap form
+   (`StageType.HasCutoffFirstCoatomCompletions.gradedCapMargin`).  The three hypotheses are finite
+   statements about stage types and are open: (R4) cutoff completions at the first coatom, (R2)
+   coatom cutoff determination for the source-gap context, and (R3) hollow coatom cutoff
+   determination for the marked-cap context.  The coatom forms are stronger than the full forms
+   (`Realization.CutoffDetermination`, `Realization.HollowCutoffDetermination`,
+   `StageType.HasCutoffStableRecoverySchemes`): they imply them, and no converse is claimed; the
+   (R2) form ranges over every intermediate coface, also of top grade above `K`.  Every side
+   condition is compiled: the acquisitions (`Realization.residualAcquisition_isSourceGapContext`,
+   `Realization.hollowAcquisition_isMarkedCapContext`,
+   `Realization.IsModel.acquiresCalibratedContexts_gradedCap` and `…_gradedCapMargin`); roots not
+   onto (`StageType.not_isSourceGapContext_of_surjective`,
+   `StageType.IsMarkedCapContext.not_surjective`); invariance under relabelling
+   (`StageType.IsSourceGapContext.reindex`, `StageType.IsMarkedCapContext.reindex`,
+   `StageType.GradedCapCalibration.reindex`, `StageType.GradedCapMarginCalibration.reindex`); the
+   coatom extension property (`StageType.hasCoatomExtensions`); and the reductions to the receiving
+   forms (`Realization.receivingResidualReceiving_of_cutoffDetermination`,
+   `Realization.receivingHollowReceiving_of_cutoffDetermination`,
+   `Expansion.ReceivingStableCappedReceiving.of_hasCutoffStableRecoverySchemes_gradedCap`).
+
 7. Acceptance lemma 1 (same-level maximal realization; `README.md`, "Reduction to full
    presentations"): for a countable `β`, on every countably infinite carrier, a model at
    `λ_β = blockStage β` that realizes every legal stage type at `λ_β`, receives every legal donor
@@ -4000,9 +3994,6 @@ ones split):
   the family only: copy rows giving the step of the family for every seed on five points
   (`Seed.HasCanonicalMultiStep` for every seed), meeting the orientations forced on the copies,
   with the mirror rows the next test.
-  this refutes neither the family nor the completion. Open: copy rows giving the step of the family
-  for every seed on five points (`Seed.HasCanonicalMultiStep` for every seed), and the completion at
-  `m ≥ 3` for every seed.
   Profile catalogues (`Extension/ProfileCatalogue`, `Extension/ProfileCatalogueExamples`; compiled
   in this repository (theorem named) unless marked otherwise). A profile is a labelling of all the
   cells of the amalgam, normalized into the bounded value set `Label.grid k N` at the cells of grade
@@ -4076,17 +4067,6 @@ ones split):
     `MainTheorem.hasNonemptyLosses_of_nextBlockUniqueness`, `exists_sameLevelMaximal_covers'`,
     `ContinuationCriterion.of_stableCappedReceiving'`); the four-hypothesis form is in
     `MainTheorem/Composition`.
-  (`ProfileCatalogue.exists_lift_tie`), fails at `N = 1`
-  (`ProfileCatalogue.not_exists_lift_tie_one`), and is open at `N = 2`; it is not the refuted
-  configuration and not the lift at every ambient labelling. The fields of `Seed.MultiLayerStep` for
-  the profile scheme: `pos` fails for every `J ≤ 3` (`mult I N J 3 = 0`), `row_lt`,
-  `isLawfulBelow_row` and `exists_isLawful` are not proved, `cappedLift_left` at `k = 3` is refuted
-  for `J = 2, 3` and every other lift is not proved; so neither scheme is a completion as it stands.
-  At the seeds of `TH` and `TG` the grade-1 catalogue has two cells separating `({3}, 1)` and `({4},
-  1)` in the two orders (`ProfileCatalogue.exists_separating_cells_of`,
-  `ProfileCatalogue.exists_separating_cells_seedHG`). Open: normalization by rank (a proposed repair
-  until its preservation properties compile), the selected-section rows, the lift at every ambient,
-  the other fields, and the completion at `m ≥ 3` for every seed.
 
 The completion constructs lawful finite extensions and nothing more.  It imports only Layers
 0–1, the stage types, the amalgam, and the section theorem of `README.md`, Layer 3, 3.1 (with

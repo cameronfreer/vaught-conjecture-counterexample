@@ -29,9 +29,6 @@ percentage of 100 would not by itself mean that the hypotheses of a layer are pr
 | 3, the completion (R6) | 98% | `StageType.hasApexCoatomExtensions`, `Seed.nonempty_completionBelowFullGrade` | the statements at successor stages only (not needed) |
 | 3, receiving | 90% | `Realization.HasFiniteCutReceiving.hasFiniteExtensionReceiving` | (R1) (4b-ii refuted; the (R1) conditional theorems under it are to be retired in a separate change); (R2)–(R4) |
 | 4, continuation | 68% | `Realization.stableCandidate` | output 3: (R4) |
-| 3, the completion (R6) | 72% | `Seed.nonempty_completionBelowFullGrade_of_le_two` | the completion at `m ≥ 3` |
-| 3, receiving | 90% | `Expansion.finiteCutReceiving_of_hasCoupledGatedPinnedExtensions` | 4b-ii; (R2)–(R4) |
-| 4, continuation | 62% | `Realization.stableCandidate` | output 3: (R4), the apex property |
 | 5, domains, agreement | 85% | `Expansion.expansionDomain_loss_countable` | the hypotheses below |
 | 6, the bounds | 90% | `densitySentence_hasThinAlephOneSpectrum_of_terminalClassification` | the hypotheses below |
 | Manuscript correspondence | 25% | `CellScheme.Rows.printedRespects_iff`; the concordance rows (`IMPLEMENTATION.md`) | rows 2–5, 29 and 43 P, and row 14 for the printed definitions of [AFK26, §2] that it names; row 1 C, with its truncation function P; rows 6 and 44 S (one direction at `ω₁`); rows 8/11 P on corrected row 7 with domains S; row 15 P/C/P/S by part; the remaining rows S or C |
@@ -119,10 +116,6 @@ Notes on the rows, each with its marker:
   `ProfileTowerExamples.seed6_completion`), hence the coatom extension property with apex and the
   plain coatom extension property at every stage that is zero or a limit
   (`StageType.hasApexCoatomExtensions`, `StageType.hasCoatomExtensions`).
-  (`Seed.not_exists_canonicalMultiStep_oriented_seedL_seedLM`).  Open: copy rows giving the step of
-  the family for every seed on five points.  Still to be
-  proved, not refuted: `StageType.HasCoatomExtensions`,
-  `StageType.HasApexCoatomExtensions`.
 - *Layer 3, receiving.*  Compiled: finite-extension receiving from finite-cut receiving, for an
   exactly consistent realization at a stage that is zero or a limit
   (`Realization.HasFiniteCutReceiving.hasFiniteExtensionReceiving`); gate recovery
@@ -145,8 +138,6 @@ Notes on the rows, each with its marker:
   property (`CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`).  Still to be
   proved: (R1) by another construction, or by the coupled one restricted to the private contexts
   that models acquire (prospective); (R2), (R3), (R4).
-  (`nonempty_loss_of_hasApexCoatomExtensions`).  Still to be proved: 4b-ii, the gated
-  construction as data; (R2), (R3), (R4).
 - *Layer 4.*  Compiled: normalization, conditional on finite-extension receiving and forcing donors
   (`Realization.label_eq_stableLabel`); forcing donors, conditional on the coatom extension
   property (`forcingDonors_of_hasCoatomExtensions`), hence at every block index with no hypothesis
@@ -331,6 +322,33 @@ extension property with apex as a fourth hypothesis is kept
 (`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_receivingModels`).  The table below and
 the status of each hypothesis are unchanged.
 
+**Receiving route from three finite coatom statements.**  Compiled in this repository
+(theorem named):
+`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_coatomDeterminations_sourceGap_markedCap`
+`(h4 : ∀ ξ < ω₁, HasCutoffFirstCoatomCompletions ξ (GradedCapCalibration ξ))`
+`(h2 : CoatomCutoffDetermination fun K t' h ↦ t'.IsSourceGapContext K h)`
+`(h3 : HollowCoatomCutoffDetermination fun t' h ↦ t'.IsMarkedCapContext h) :`
+`HasThinAlephOneSpectrum densitySentence` (`MainTheorem/SourceGapMarkedCapRoute`), and the form
+`…_margin` with `h4` at `StageType.GradedCapMarginCalibration`, implied by the graded cap form
+(`StageType.HasCutoffFirstCoatomCompletions.gradedCapMargin`).  The three hypotheses are finite
+statements about stage types and are open: (R4) cutoff completions at the first coatom, (R2) coatom
+cutoff determination for the source-gap context, and (R3) hollow coatom cutoff determination for the
+marked-cap context.  The coatom forms are stronger than the full forms
+(`Realization.CutoffDetermination`, `Realization.HollowCutoffDetermination`,
+`StageType.HasCutoffStableRecoverySchemes`): they imply them, and no converse is claimed; the (R2)
+form ranges over every intermediate coface, also of top grade above `K`.  Every side condition is
+compiled: the acquisitions (`Realization.residualAcquisition_isSourceGapContext`,
+`Realization.hollowAcquisition_isMarkedCapContext`,
+`Realization.IsModel.acquiresCalibratedContexts_gradedCap` and `…_gradedCapMargin`); roots not onto
+(`StageType.not_isSourceGapContext_of_surjective`, `StageType.IsMarkedCapContext.not_surjective`);
+invariance under relabelling (`StageType.IsSourceGapContext.reindex`,
+`StageType.IsMarkedCapContext.reindex`, `StageType.GradedCapCalibration.reindex`,
+`StageType.GradedCapMarginCalibration.reindex`); the coatom extension property
+(`StageType.hasCoatomExtensions`); and the reductions to the receiving forms
+(`Realization.receivingResidualReceiving_of_cutoffDetermination`,
+`Realization.receivingHollowReceiving_of_cutoffDetermination`,
+`Expansion.ReceivingStableCappedReceiving.of_hasCutoffStableRecoverySchemes_gradedCap`).
+
 Each hypothesis is a separate statement with its own status.  Hypothesis 8 is compiled
 (`StageType.hasApexCoatomExtensions`).  Hypotheses 1 and 3 are derived from it and so compiled
 with no hypothesis (`MainTheorem.capToModel`, `forcingDonors_blockStage`); hypothesis 7 is
@@ -369,19 +387,6 @@ Status of each:
    forms derive them.  Before hypothesis 8 was compiled, the unconditional cases were the one- and
    two-point inputs up to the threshold `4` (`forcingDonorsUpTo_one_four`,
    `forcingDonorsUpTo_two_four`).
-1. `CapToModel`: still to be proved.  Compiled conditionally on the coatom extension property with
-   apex at `ω` (`CapToModel.of_hasApexCoatomExtensions`), which is still to be proved.
-2. `Expansion.FiniteCutReceiving`: still to be proved.  Compiled conditionally on the coupled
-   gated pinned extension property
-   (`Expansion.finiteCutReceiving_of_hasCoupledGatedPinnedExtensions`), which is open (4b-ii).  It
-   is also used for the rigid-core comparison.
-3. `ForcingDonors`: still to be proved.  Compiled conditionally on the coatom extension property
-   at `λ_{ξ+1}` (`forcingDonors_of_hasCoatomExtensions`, `Extension/ForcingDonorsCoatom`), hence on
-   the coatom extension property with apex at every countable block stage
-   (`forcingDonors_of_forall_hasApexCoatomExtensions`), hypothesis 8.  The six-hypothesis form
-   keeps forcing donors as its hypothesis `hF`; the five-hypothesis form derives them.
-   Unconditionally: one- and two-point inputs up to the threshold `4`
-   (`forcingDonorsUpTo_one_four`, `forcingDonorsUpTo_two_four`).
 4. `ContinuationCriterion`: still to be proved (sufficiency only; the converse is not stated).
    Compiled conditionally on (R4) and the coatom extension property with apex at every successor
    block stage (`ContinuationCriterion.of_hasApexCoatomExtensions`), and with the latter compiled,
@@ -437,7 +442,6 @@ Status of each:
    (R1) in the stronger form above, the coatom extension property at every limit stage (compiled,
    `StageType.hasCoatomExtensions`), and that open determination statement
    (`Realization.residualReceiving_of_cutoffDonorDetermination_isGradedTopContext`), a template.
-   (`Realization.ResidualReceiving.of_not_isRigidCoreIn`).
    *Source-gap contexts* (`Continuation/SourceGapContext`): `StageType.IsSourceGapContext K t' h`
    is defined in this repository (a lost point outside the root; an owner of full scope and grade
    `K = t'.topGrade` labelled `⊤`; a lost top through the lost point; strict source gaps
@@ -510,8 +514,6 @@ Status of each:
 7. Nonempty losses: compiled conditionally on next-block uniqueness alone
    (`MainTheorem.hasNonemptyLosses_of_nextBlockUniqueness`), from the coatom extension property
    with apex at every countable block stage and next-block uniqueness
-7. Nonempty losses: still to be proved.  Compiled conditionally on the coatom extension property
-   with apex at every countable block stage and on next-block uniqueness
    (`hasNonemptyLosses_of_hasApexCoatomExtensions`, stated for the bundled domains, which also take
    `CapToModel`; per block, `nonempty_loss_of_hasApexCoatomExtensions`); next-block uniqueness is
    derived from hypotheses 2 and 3.  Composed with hypotheses 2–6 in the six-hypothesis form, and
@@ -690,12 +692,6 @@ except as a named hypothesis.
    compiled in this repository (theorem named) unless marked otherwise; a test of one scheme, not
    of the completion, `StageType.HasApexCoatomExtensions` or hypothesis 8, which are compiled by
    another construction above): one new cell at
-   step) holds at every compiled seed.  Open: copy rows giving the step of the family for every seed
-   on five points (`Seed.HasCanonicalMultiStep` for every seed), and the completion at `m ≥ 3` for
-   every seed.
-   Profile catalogues (`Extension/ProfileCatalogue`, `Extension/ProfileCatalogueExamples`;
-   compiled in this repository (theorem named) unless marked otherwise; a test of one scheme, not
-   of the completion, `StageType.HasApexCoatomExtensions` or hypothesis 8): one new cell at
    `(univ, j)` per normalized profile (a labelling of all the cells of the amalgam, values in a
    fixed bounded value set `Label.grid k N`) lawful on the grade-`j` cut, rows by agreement heights
    of whole profiles (`ProfileCatalogue.profileScheme`, literally a `multiLayerScheme`).  Two
@@ -731,22 +727,6 @@ except as a named hypothesis.
    rank-normalized levels are agreement heights in one fixed grid `Label.grid 3 (2 N + 2)` per
    seed; what differs from this catalogue is the rank-normalized catalogue, the larger bound, the
    lower layers `T 2`, and the reading of the lower cells through the tower section.
-   general is argued from these two, not compiled; it refutes, as stated, the diagnosis that the
-   values of grade-2 profiles at `({0, 1, 2}, 3)` remove the obstruction.  A configured lift at the
-   tie profile with its own cap `3` exists for every top layer `J ≤ 3` and bound `N ≥ 3`
-   (`ProfileCatalogue.exists_lift_tie`; not the refuted configuration, and not the lift at every
-   ambient); at `N = 1` it fails (`ProfileCatalogue.not_exists_lift_tie_one`), `N = 2` is open.
-   With the grade-3 catalogue the scheme still does not lift capped from `(C, 3)`, at the top of its
-   bounded value set (`ProfileCatalogue.not_cappedLift_three`, negative special case named; a
-   failure of the same kind as `SmallArityExamples.cappedLift_fourCellSeed` and `README.md` 2.5,
-   with different combinatorics).  Normalization by rank, leaving room above every value, is a
-   proposed repair (prospective) until its preservation properties compile.  Of the fields of
-   `Seed.MultiLayerStep`: `pos` fails by construction for every `J ≤ 3` (no cell at `(univ, 4)`),
-   `row_lt`, `isLawfulBelow_row` and `exists_isLawful` are not proved, `cappedLift_left` at `k = 3`
-   is refuted for `J = 2, 3` and every other lift is not proved, so neither scheme is a completion
-   as it stands.  `seedHG`: the grade-1 catalogue has both forced separations
-   (`ProfileCatalogue.exists_separating_cells_seedHG`).  The completion at `m ≥ 3` for every seed
-   and hypothesis 8 stay open.
 2. **Stable availability at twins** (compiled): from legal types
    (`Realization.availability_stableSection_of_hasLegalTypes`), so every model at a block stage is
    stably lawful (`Realization.IsModel.isStablyLawful`), and so is every exactly consistent
