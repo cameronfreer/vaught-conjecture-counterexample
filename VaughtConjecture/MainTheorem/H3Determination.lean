@@ -49,6 +49,79 @@ theorem isLawful_comp_castSucc_completion {a' : Fin (F.completion hα).card → 
 
 end CompletionBelowFullGrade
 
+namespace CapRequests
+
+open ProfileTower CellScheme
+
+variable {α : Ordinal.{u}} {m : ℕ} {I : Seed.{u} α m} {r : CapRequests (Fin I.amalgam.card)}
+  {xp xd : Fin (m + 2)}
+
+/-- **The donor raise at `⊥`** at the grade `k`: every labelling `f` lawful below the private
+coatom at `k`, with the cap of grade at most `k` and not `⊥`, agrees on the common face below `k`
+with some labelling lawful below the donor coatom at `k` that is at least the marker value of `f`
+at every cell of `T`. -/
+def DonorRaiseBotAt (r : CapRequests (Fin I.amalgam.card)) (xp xd : Fin (m + 2)) (k : ℕ) : Prop :=
+  ∀ f : Prof I, I.amalgam.rows.IsLawfulBelow (univ.erase xp, k) (fun d ↦ f d) →
+    I.amalgam.toCellScheme.grade r.cap ≤ k → f r.cap ≠ ⊥ →
+    ∃ v : Prof I, I.amalgam.rows.IsLawfulBelow (univ.erase xd, k) (fun d ↦ v d) ∧
+      (∀ d ∈ I.amalgam.toCellScheme.below (univ.erase xp, k),
+        d ∈ I.amalgam.toCellScheme.below (univ.erase xd, k) → v d = f d) ∧
+      ∀ y ∈ r.T, r.markerValue f ≤ v y
+
+/-- **The fill at `⊥` from the donor raise**: the prescription on the private coatom, the donor
+raise elsewhere; lawful on both coatoms (they agree on the common face), correct (the cells of `T`
+are off the private coatom and read at least the marker value). -/
+theorem capFillBotAt_of_donorRaiseBotAt (hgr : r.IsGraded I.amalgam.toCellScheme.grade)
+    (hm : 0 < m) (hxp : xp ∈ (Pts : Finset (Fin (m + 2))))
+    (hxd : xd ∈ (Pts : Finset (Fin (m + 2)))) (hne : xd ≠ xp) {k : ℕ} (hk : 0 < k)
+    (hkm : k ≤ m + 1) (hcapC : I.amalgam.toCellScheme.scope r.cap ⊆ univ.erase xp)
+    (hmarkC : I.amalgam.toCellScheme.scope r.marker ⊆ univ.erase xp)
+    (hT : ∀ y ∈ r.T, ¬ I.amalgam.toCellScheme.scope y ⊆ univ.erase xp)
+    (hZ : r.Z = ∅) (hF : r.F = ∅) (hraise : DonorRaiseBotAt r xp xd k) :
+    CapFillBotAt r xp k := by
+  classical
+  intro f hf
+  by_cases hck : I.amalgam.toCellScheme.grade r.cap ≤ k ∧ f r.cap ≠ ⊥
+  swap
+  · obtain ⟨W, hW, hWf, -⟩ := exists_isCutLawful_of_coatom_le hm hk hkm hxp (isSelfVisible_bot k)
+      (P := fun _ ↦ ⊥) ⟨Rows.isLawfulBelow_const_bot _, Rows.isLawfulBelow_const_bot _⟩ hf
+      fun _ _ ↦ by simp
+    refine ⟨W, hW, hWf, isCorrect_of_cap_eq_bot ?_⟩
+    by_cases hg : I.amalgam.toCellScheme.grade r.cap ≤ k
+    · rw [hat_of_le hg, hWf _ ⟨hcapC, hg⟩]
+      exact not_not.mp fun h ↦ hck ⟨hg, h⟩
+    · exact hat_of_lt (not_le.mp hg)
+  obtain ⟨hg, hc⟩ := hck
+  obtain ⟨v, hv, hvf, hvT⟩ := hraise f hf hg hc
+  set W : Prof I := fun d ↦
+    if d ∈ I.amalgam.toCellScheme.below (univ.erase xp, k) then f d else v d with hW
+  have hWf (d) (hd : d ∈ I.amalgam.toCellScheme.below (univ.erase xp, k)) : W d = f d := by
+    rw [hW]; simp only [hd, ite_true]
+  have hWC : I.amalgam.rows.IsLawfulBelow (univ.erase xp, k) fun d ↦ W d :=
+    (Rows.isLawfulBelow_congr (w := f) (w' := W) fun d hd ↦ (hWf d hd).symm).mp hf
+  have hWD : I.amalgam.rows.IsLawfulBelow (univ.erase xd, k) fun d ↦ W d := by
+    refine (Rows.isLawfulBelow_congr (w := v) (w' := W) fun d hd ↦ ?_).mp hv
+    by_cases hdC : d ∈ I.amalgam.toCellScheme.below (univ.erase xp, k)
+    · rw [hWf d hdC]
+      exact hvf d hdC hd
+    · rw [hW]; simp only [hdC, ite_false]
+  have hmg : I.amalgam.toCellScheme.grade r.marker ≤ k := hgr.grade_marker_le.trans hg
+  refine ⟨W, lawful_pair hxp hxd hne.symm hWC hWD, hWf, ?_⟩
+  refine isCorrect_of_forall (fun z hz ↦ by simp [hZ] at hz) (fun f' hf' ↦ by simp [hF] at hf')
+    fun y hy ↦ ?_
+  have hyg : I.amalgam.toCellScheme.grade y ≤ k := (hgr.grade_le_of_mem_T y hy).trans hg
+  have hmv : r.markerValue (hat I k W) = r.markerValue f := by
+    unfold markerValue
+    rw [hat_of_le hmg, hat_of_le hg, hWf _ ⟨hmarkC, hmg⟩, hWf _ ⟨hcapC, hg⟩]
+  rw [hmv, hat_of_le hyg]
+  have hyW : W y = v y := by
+    rw [hW]
+    exact ite_eq_right fun h ↦ hT y hy h.1
+  rw [hyW]
+  exact hvT y hy
+
+end CapRequests
+
 namespace H3
 
 variable {α : Ordinal.{u}} {n k : ℕ}
@@ -310,6 +383,74 @@ theorem exists_correctCompletion_of {c r : Fin t'.card}
       (requests ht' hp htb hd c r (by omega)).cap = t'.toCellScheme.grade c := hcapg
   rwa [hcapg'] at h
 
+/-- **The correct completion from the donor raise** (`Seed.exists_correctCompletion` with
+`CapRequests.capFillBotAt_of_donorRaiseBotAt`): with `k ≥ 2`, the grade `N` of the cap at least
+`3`, the common face carrying no cell of grade at least `N`, the donor raise at `⊥` and the fill at
+the positive caps from the private coatom at every grade `N ≤ k' ≤ k + 1`. -/
+theorem exists_correctCompletion_of_raise {c r : Fin t'.card}
+    (hctx : t'.IsMarkedCapContextAt (g.trans Fin.castSuccEmb) c r) (hk : 2 ≤ k)
+    (hN3 : 3 ≤ t'.toCellScheme.grade c)
+    (hface : ∀ e, (seed ht' hp htb).amalgam.toCellScheme.scope e ⊆
+        univ.erase (Fin.last (k + 1)) ∩ univ.erase (Fin.castSucc (Fin.last k)) →
+      (seed ht' hp htb).amalgam.toCellScheme.grade e < t'.toCellScheme.grade c)
+    (hraise : ∀ k', t'.toCellScheme.grade c ≤ k' → k' ≤ k + 1 →
+      CapRequests.DonorRaiseBotAt (requests ht' hp htb hd c r (by omega)) (Fin.last (k + 1))
+        (Fin.castSucc (Fin.last k)) k')
+    (hpos : ∀ k', t'.toCellScheme.grade c ≤ k' → k' ≤ k + 1 →
+      CapRequests.CapFillPosAt (requests ht' hp htb hd c r (by omega)) (Fin.last (k + 1)) k') :
+    ∃ F : CompletionBelowFullGrade (seed ht' hp htb),
+      F.HasAdmittedRows (t'.toCellScheme.grade c)
+        (requests ht' hp htb hd c r (by omega)).IsCorrect := by
+  have hrc : t'.toCellScheme.grade r ≤ t'.toCellScheme.grade c := by
+    have h := hctx.2.1.2.1
+    rw [CellScheme.mem_below] at h
+    exact (Prod.le_def.mp h).2
+  have hn := hctx.2.2.1
+  have hgr := isGraded_requests ht' hp htb hd (r := r) (by omega) hrc hn
+  have hL := restrictFace_left_seed ht' hp htb
+  have hA := restrictFace_donor_seed ht' hp htb hd
+  have hcapg : (seed ht' hp htb).amalgam.toCellScheme.grade (faceCell hL c) =
+      t'.toCellScheme.grade c := grade_faceCell hL c
+  have hcapg' : (seed ht' hp htb).amalgam.toCellScheme.grade
+      (requests ht' hp htb hd c r (by omega)).cap = t'.toCellScheme.grade c := hcapg
+  have hcapC : (seed ht' hp htb).amalgam.toCellScheme.scope (faceCell hL c) =
+      univ.erase (Fin.last (k + 1)) := by
+    rw [scope_faceCell, hctx.1.1]
+    exact Coatom.univ_map_left
+  have hmarkC : (seed ht' hp htb).amalgam.toCellScheme.scope (faceCell hL r) ⊆
+      univ.erase (Fin.last (k + 1)) := by
+    rw [scope_faceCell, ← Coatom.univ_map_left]
+    exact map_subset_map.mpr (subset_univ _)
+  have hTlab (y) (hy : y ∈ (requests ht' hp htb hd c r (by omega)).T) :
+      (seed ht' hp htb).amalgam.label y = ⊤ ∧
+        ¬ (seed ht' hp htb).amalgam.toCellScheme.scope y ⊆ univ.erase (Fin.last (k + 1)) := by
+    obtain ⟨j, hj, hjl, rfl⟩ := hy
+    refine ⟨(label_faceCell hA j).trans hj, fun hsub ↦ ?_⟩
+    have hmem : Fin.last (k + 1) ∈
+        (seed ht' hp htb).amalgam.toCellScheme.scope (faceCell hA j) := by
+      rw [scope_faceCell]
+      exact mem_map.mpr ⟨Fin.last n, hjl, by simp⟩
+    simpa using hsub hmem
+  have hglued : (requests ht' hp htb hd c r (by omega)).IsCorrect
+      fun e ↦ (seed ht' hp htb).amalgam.label e :=
+    CapRequests.isCorrect_of_forall (fun z hz ↦ absurd hz (Set.notMem_empty _))
+      (fun f hf ↦ absurd hf (Set.notMem_empty _))
+      fun y hy ↦ by rw [(hTlab y hy).1]; exact le_top
+  have hlab := (hglued.code hgr (k + 1)).hat hgr (k + 1)
+  have h := (seed ht' hp htb).exists_correctCompletion hk hgr (xp := Fin.last (k + 1)) (by simp)
+    hcapC (by rw [hcapg']; exact hN3)
+    (fun x hx hxe e he ↦ by
+      have hx' : x = Fin.castSucc (Fin.last k) := by
+        simp only [ProfileTower.Pts, mem_insert, mem_singleton] at hx
+        exact hx.resolve_left hxe
+      subst hx'
+      exact (hface e he).trans_eq hcapg.symm)
+    (fun k' hk' hkm ↦ CapRequests.capFillBotAt_of_donorRaiseBotAt hgr (by omega) (by simp)
+      (by simp) Seed.last_ne_castSucc.symm (by rw [hcapg'] at hk'; omega) hkm hcapC.le hmarkC
+      (fun y hy ↦ (hTlab y hy).2) rfl rfl (hraise k' (hcapg' ▸ hk') hkm))
+    (fun k' hk' hkm ↦ hpos k' (hcapg' ▸ hk') hkm) hlab
+  rwa [hcapg'] at h
+
 end Completion
 
 /-! ### The open inputs (SCAFFOLD) -/
@@ -330,10 +471,13 @@ theorem exists_correctCompletion (hα : Order.IsSuccLimit α) {t' : StageType.{u
       F.HasAdmittedRows (t'.toCellScheme.grade c)
         (requests ht' hp htb hd c r (by have := hctx.2.2.1; omega)).IsCorrect := by
   by_cases hsmall : 2 ≤ k ∧ 3 ≤ t'.toCellScheme.grade c
-  · refine exists_correctCompletion_of ht' hp htb hd hctx hsmall.1 hsmall.2 ?_ ?_
-    · -- the common face carries no cell of grade at least the grade of the cap
+  · refine exists_correctCompletion_of_raise ht' hp htb hd hctx hsmall.1 hsmall.2 ?_ ?_ ?_
+    · -- `hface`: the common face carries no cell of grade at least the grade of the cap
+      -- (to be replaced by the donor provisions without `hface`, from the h4 lane)
       sorry
-    · -- the fills from the private coatom
+    · -- the donor raise at `⊥` (the fill at `⊥` from the private coatom)
+      sorry
+    · -- the fill at the positive caps from the private coatom
       sorry
   · -- the small cases: `k ≤ 1` or the cap of grade `2`
     sorry
