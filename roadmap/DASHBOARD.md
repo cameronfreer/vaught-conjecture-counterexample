@@ -276,6 +276,111 @@ clause), first; U2, `StableCappedReceiving` by calibrated receiving in the model
 continuation criterion; U3, (R3) and (R2) by exact recovery; U4, the apex property, compiled
 through the completion below the full grade at every arity.  The known failures (the gated and
 coupled inputs, the twin donors, the grade of private tops) are the tests of U1–U3.
+Under the receiving-models route (below), (R1) is postponed to a later fidelity theorem and U1
+is no longer first; this departs from the order of this section.
+
+## The receiving-models route
+
+The route adopted for a first complete proof (`README.md`, "The receiving models", after
+Layer 6; `IMPLEMENTATION.md`, checkpoint 8).  It changes no status, no percentage, and no entry
+of the table of named hypotheses below.  An item is *prospective*, and an argument is argued,
+not formalized, unless a theorem is named for it.
+
+**The class.**  At a block stage `α = λ_ξ`, `ξ < ω₁`, the class `𝒞_α` of realizations on
+countable carriers that are models (`Realization.IsModel`, the stage-model axioms) **and** have
+finite-cut receiving (`Realization.HasFiniteCutReceiving`, `Realization/Model.lean`); its members
+are the **receiving models**.  A **receiving expansion** of a countable base structure is a model
+expansion whose realization is a receiving model; a **receiving successor** of a receiving model
+at `λ_ξ` is a receiving model at `λ_{ξ+1}` on the same carrier whose stage reduction to `λ_ξ` is
+it; the receiving expansion domains are defined with receiving expansions (all prospective).
+Receiving is part of the definition, so existence, reduction, uniqueness, logical comparison,
+continuation, and classification are to be proved for `𝒞`.  This postpones, and does not weaken,
+the equivalence with the original presentation: (R1) becomes a later fidelity theorem relating
+models and receiving models.
+
+**Compiled support** (each compiled in this repository (theorem named); its use for `𝒞` argued,
+not formalized):
+
+- the density sentence expresses receiving: `baseLanguage.realize_densitySentence_iff`,
+  `baseLanguage.realize_toStructure_densitySentence_iff` (`Language/Density.lean`), with
+  `MainTheorem.capToModel` for the first domain;
+- receiving descends under stage reduction: `Realization.HasFiniteCutReceiving.reduce`
+  (`Realization/Receiving.lean`), with `Realization.IsModel.reduce`;
+- comparison and uniqueness take receiving one realization at a time:
+  `Realization.eq_of_reduce_eq_of_forcingDonors`, `Expansion.exists_extend_covers`,
+  `Expansion.exists_extend_covers_back`;
+- the top-free witnesses have receiving (ultrahomogeneous, with the age of top-free charts):
+  `hasFiniteCutReceiving_reconstruct`, `hasFiniteCutReceiving_reconstruct_reduce`
+  (`ClassicalLimit/Receiving.lean`); modelhood by
+  `isModel_reconstruct_of_hasApexCoatomExtensions`;
+- the count, given logical agreement, countable losses, and nonempty losses:
+  `MainTheorem.hasThinAlephOneSpectrum_of_filtration` (`MainTheorem/Spectrum.lean`), through
+  `MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_expansionDomains`.
+
+**Interfaces to build** (all prospective):
+
+| Item | Statement | Note |
+| --- | --- | --- |
+| (a) | receiving at `λ_δ`, `δ` a limit, from receiving of each earlier reduction | the first test |
+| (b) | reduction and uniqueness for `𝒞` | from the compiled support above |
+| (c) | logical comparison of receiving expansions | forth and back restated, see below |
+| (d) | the receiving continuation criterion | concludes receiving and modelhood |
+| (e) | receiving terminal and expansion interfaces | new interfaces, not renamings |
+| (f) | classification and the count | through the endpoint above, unchanged |
+
+Item (a) is the receiving counterpart of `Realization.IsModel.of_forall_reduce` and the first
+test of the route.  Item (c) is the counterpart of `Expansion.bfEquiv_of_modelExpansions`;
+`Expansion.exists_extend_covers`, `Expansion.exists_extend_covers_back`, and
+`Expansion.exists_reduce_covers` state their output expansions existentially, so a receiving
+version needs them restated with the reductions as outputs
+(`Expansion.exists_extend_covers_reduceBlock` and `Expansion.exists_extend_covers_back_reduceBlock`,
+compiled in a separate open change).  For item (e): "no receiving successor" does not imply "no
+successor that is a model" (`Realization.IsTerminalAt`).  Items (a) and (f) are compiled in a
+separate open change, not yet reviewed, (f) as a form of the main theorem without (R1) whose
+remaining hypotheses are the coatom extension property with apex at every countable block stage
+and (R4), (R2) and (R3) for receiving models (`Expansion.ReceivingStableCappedReceiving`,
+`Realization.ReceivingResidualReceiving`, and `Realization.HollowReceiving` for
+`Realization.IsReceivingCoverHollowAtBlock`); their status here stays prospective.  Nonempty
+receiving losses need next-block uniqueness of receiving expansions and receiving witnesses, not
+`MainTheorem.hasNonemptyLosses_of_nextBlockUniqueness`, whose hypothesis `hnext` is next-block
+uniqueness of all model expansions.
+
+**The three finite reading constructions** (the remaining hard mathematics; open).  Completion
+yields a lawful extension (`Seed.nonempty_completionBelowFullGrade`); classification and
+continuation need a lawful extension whose rows read specified labels.  `StageType.ReadsAtLeast`
+(grade of `x` at most that of `s`; at every cell of `(univ, grade s)`, row at `s` at most row at
+`x`) is satisfied by a row `⊥` at both cells, so a stronger requirement is stated where needed.
+The warnings for (R2)–(R4) below are compiled in separate open changes, not in the library.
+
+- (R2): extensions satisfying the per-top reading criterion for arbitrary relevant donors.  The
+  version with one fixed **lost top** (an old top of the context read for every new top) is
+  *refuted* in a separate open change (`StageType.HasSeparatedPinnedExtensions`, false at every
+  stage); the replacement reads each new top through its own old reference top.
+- (R3): uniform acquisition of marked-cap contexts (`StageType.IsMarkedCapContext`) and **reading
+  carriers** (legal one-point extensions carrying the donor whose cells of full scope read the
+  new tops); **marked closure** (an entry agreeing with a marked one above its cap is marked) for
+  sufficiently rich marked specifications of the **leaf-and-marked layer** (a leaf cell for each
+  catalogue entry, a marked cell for each chosen entry); the empty specification solves nothing.
+- (R4): cap-reading extensions (`StageType.IsCapReadingExtension`, prospective here): every cell
+  at `(univ, N)` reads each new cell through the cap (`StageType.ReadsThroughCap`, a value
+  `ω · c + n` at a new cell labelled `μ + n`, not `⊥`); the profile and leaf-and-marked
+  completions keep a cell whose row there is `⊥`, so they are not cap-reading extensions at a cap
+  of grade 3 or 4, and the completion theorem cannot be applied unchanged.
+
+No single universal reading theorem is required: the quantifiers differ, and the stronger
+unifications examined have been refuted
+(`PrescribedFullRowsCounterexample.not_hasPrescribedFullRowsAtLabels`, compiled in this
+repository (theorem named); and the fixed-lost-top form of (R2)).
+
+**Deferred from the first endpoint** (later results, statuses unchanged): the equivalence with the
+original four-family sentence; global stopping and maximal coverage of every prescribed base; the
+full manuscript correspondence; the Scott-process and descriptive refinements.
+
+**Order.**  (1) Check and integrate the general completion, whose consequences are compiled
+(hypothesis 7 from next-block uniqueness, `hnext`, which the completion alone does not give).
+(2) Build the receiving-models interface, item (a) first.  (3) Attack the three reading
+constructions directly with their exact requirements, testing each preservation lemma against the
+compiled counterexamples before any conditional theorem is stated around it.
 
 ## The named hypotheses of the main theorem
 
@@ -340,6 +445,10 @@ hypotheses 2 and 4–6 is derived from another in the library.
 | 6. (R3), exact hollow-growth receiving | `Realization.HollowReceiving` | the hollow comparison | yes | yes | yes | yes |
 | 7. nonempty losses (condition 4) | the hypothesis `hn` | the lower bound | yes | derived | derived | derived |
 | 8. the coatom extension property with apex | `StageType.HasApexCoatomExtensions` (every `λ_η`, `η < ω₁`) | hypotheses 1, 3 and 7 | no | yes | yes | compiled |
+
+Under the receiving-models route (above), the receiving hypothesis is part of the definition of
+the class, and (R1) is a fidelity statement relating models and receiving models; the table and
+the status of each hypothesis are unchanged.
 
 Status of each:
 
