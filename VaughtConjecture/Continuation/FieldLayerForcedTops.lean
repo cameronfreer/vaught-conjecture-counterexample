@@ -19,9 +19,10 @@ has `e x = e r` whenever the input labelling is `⊤` at `x` and at `r`".  The i
 for every lawful labelling, not only the canonical one:
 
 * **Forced tops** (`Scheme.eq_top_natAdd_of_le_agreementHeight`, compiled in this repository
-  (theorem named)): in a lawful labelling of the field layer, a new cell labelled `⊤` whose entry
-  `b` is `⊤` at an old cell `x` labelled `⊤` forces `⊤` at the new cell of every entry `e` whose
-  agreement height with `b` is at least `b x`.  This is `CellScheme.Rows.IsLawful.eq_top_of_row_le`
+  (theorem named)): in a lawful labelling of the field layer, a new cell labelled `⊤`, of catalogue
+  entry `b`, and an old cell `x` labelled `⊤` force `⊤` at the new cell of every entry `e` whose
+  agreement height with `b` is at least the value `b x` of the entry (the labelling, not the entry,
+  is `⊤` at the new cell).  This is `CellScheme.Rows.IsLawful.eq_top_of_row_le`
   at the new cell of `b`, whose row is `b` at the old cells and the agreement heights at the new
   ones.
 * **The instance** (`FieldLayerForcedTops.exists_forced_top`, compiled in this repository (theorem

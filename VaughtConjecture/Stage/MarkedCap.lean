@@ -54,7 +54,7 @@ follows from the minimality of the marker; the content of the statement lies in 
 by all lifts in some other way, which no compiled instance exhibits.
 
 **The marked-cap context** (`StageType.IsMarkedCapContext`, defined in this repository; acquisition
-and determination open).  A stage type `t'` on `k` points is a marked-cap context along
+proved, general determination open).  A stage type `t'` on `k` points is a marked-cap context along
 `h : Fin n ↪ Fin k` when it has a top cap `c` of grade `N > n + 1` and a marker `r` of `c` with
 `visibilityReplace N (n + 1) (t'.rowAt c r) ≤ t'.rowAt c a` at every cell `a` of the root (visible
 through `h`) labelled `⊤`.  The finite step from forcing is compiled: a legal rooted cover with a
@@ -66,9 +66,11 @@ have grades at most `n + 1` (`StageType.not_isMarkedCapContext_of_grade_le`).  T
 statements with the top grade, the form at a cover-hollow realization, and the exclusion of the
 determination counterexamples are in `VaughtConjecture.Continuation.MarkedCap`.
 
-Neither acquisition (`Realization.HollowAcquisition` for this predicate) nor determination
-(`Realization.SchemeDetermination` or `Realization.CutoffDetermination` for it) is stated or
-proved here, and nothing here proves or reduces (R3).
+Acquisition (`Realization.HollowAcquisition` for this predicate) is proved
+(`Realization.hollowAcquisition_isMarkedCapContext`, in
+`VaughtConjecture.Continuation.MarkedCarrierAcquisition`).  Determination in general
+(`Realization.SchemeDetermination` or `Realization.CutoffDetermination` for it) is open, and
+nothing here proves (R3).
 
 ## Placement
 

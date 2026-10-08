@@ -31,10 +31,10 @@ the canonical field layer.
   catalogue, the caps lie in the field grid, and the cap respects capped agreement of entries (the
   hypothesis `Scheme.CapRespects`).  So the layer is consistent (`Scheme.isConsistent_sheetLayer`);
   it is well formed, coded, and its new rows are short at `k` and never the formal top.
-* **Extension at the cap `⊥`** (`Scheme.exists_isLawfulBelow_sheetLayer`,
-  `Scheme.exists_isLawful_sheetLayer`): every labelling lawful below `(univ, k)` extends through
-  the new cells by the row of any new cell whose entry is the orbit code of its splice (the
-  **template**), read by the orbit decoder at the least grid point.
+* **Extension at the cap `⊥`** (`Scheme.exists_isLawfulBelow_sheetLayer`): every labelling
+  lawful below `(univ, k)` extends through the new cells by the row of any new cell whose entry is
+  the orbit code of its splice (the **template**), read by the orbit decoder at the least grid
+  point.
 * **Extension at a short positive cap** (`Scheme.exists_extension_sheetLayer`): along the row of a
   new cell `j`, by the row of a template `j₀` that lies in the sheet of `j` or whenever the cap is
   at most the cap of `j`.  At a cap above the cap of `j` and with the template in the other sheet,

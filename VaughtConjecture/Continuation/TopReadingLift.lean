@@ -358,9 +358,9 @@ fill replaced by a labelling `w` of the profile layer lawful below the coatom `(
 and below `(univ, 3)`, agreeing with the entry of `j` capped at its value at `r` there, with
 `w x < w r`, for `x` of grade at most `3` and `r` below the coatom: the fill is the extension of
 `w` below `(univ, 4)` (`TowerProfile.exists_isLawfulBelow_four`), which keeps `w` at `x` (below
-`(univ, 3)`) and at `r` (below the coatom).  Since the profile layer below `(univ, 3)` is unchanged,
-`w` differs from the entry only at the cells of the coatom of the grade `4`: the separating fill is
-a raise of `r` within the coatom. -/
+`(univ, 3)`) and at `r` (below the coatom).  The premise on `w` is capped agreement with the entry
+(at its value at `r`), so the separating fill is a raise of `r` within the coatom relative to that
+capped agreement. -/
 theorem exists_top_reads_lt_markedTop_of_raise {q : Fin (markedTop I D).card → Label.{u}}
     (hq : (markedTop I D).rows.IsLawful q) {j : Fin (((scheme I).catalogue 4).card + D.marks.card)}
     {x r : Fin (scheme I).card} (hgr : (scheme I).toCellScheme.grade r = 4)

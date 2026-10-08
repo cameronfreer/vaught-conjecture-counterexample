@@ -22,11 +22,10 @@ extension for the top-marked prescription is one
 **top-reading carriers** at every block stage (`StageType.HasTopReadingCarriers`, implied by
 `StageType.HasTopMarkedCarriers`;
 `Realization.hollowReceiving_withReceiving_of_hasTopReadingCarriers`).
-`StageType.HasTopReadingCarriers` is not a further open hypothesis standing in for a proof: it is
-the statement to be proved for contexts on at most four points (prospective), and above arity 3 it
-is the explicit remaining assumption of that theorem.  The route through the canonical completion
-is closed: there a new cell labelled `⊤` is forced at entries with different values where the
-input is `⊤` (`Continuation/FieldLayerForcedTops.lean`).
+`StageType.HasTopReadingCarriers` is assumed by that theorem at every arity; it is proved at no
+arity here.  Contexts on at most four points are proposed test cases (prospective).  The route
+through the canonical completion is closed: there a new cell labelled `⊤` is forced at entries
+with different values where the input is `⊤` (`Continuation/FieldLayerForcedTops.lean`).
 
 The cells of graded index `(univ, N)` with a label other than `⊤` are free: they may serve the
 availability of the lawful labellings that a reading cell cannot.
@@ -166,10 +165,9 @@ variable (α) in
 with top cap `c` and marker `r`, and every legal donor `d` that is a one-point coface of the face
 of `t'` along `h`, there is a top-reading carrier.
 
-Its role is fixed, and it is not to be restated under another name.  For contexts on at most four
-points it is the statement to be proved (prospective; not proved in this repository).  Above arity
-3 it is the explicit remaining assumption of
-`Realization.hollowReceiving_withReceiving_of_hasTopReadingCarriers`.  The canonical completion
+It is assumed at every arity by
+`Realization.hollowReceiving_withReceiving_of_hasTopReadingCarriers` and proved at no arity here;
+contexts on at most four points are proposed test cases (prospective).  The canonical completion
 does not prove it: there the new cells labelled `⊤` include entries with different values at two
 cells where the input is `⊤` (`FieldLayerForcedTops.exists_forced_top`,
 `FieldLayerForcedTops.orbitDecoder_fieldRow_eq_top`). -/

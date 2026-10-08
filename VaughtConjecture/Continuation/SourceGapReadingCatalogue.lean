@@ -45,7 +45,11 @@ cap, and by a leaf reading `ps` otherwise.  The labellings that **escape** are t
 does not read `ps`: they are served by a leaf not reading `ps`, along every lift (both coatoms, the
 cap `⊥` and every short positive cap).  A carrier whose labelling makes `⊤` only cells reading `ps`
 must keep those leaves below `⊤`; the forced-top constraint
-(`Scheme.eq_top_natAdd_of_le_agreementHeight`) is what can prevent it, and is not decided here.
+(`Scheme.eq_top_natAdd_of_le_agreementHeight`) is what can prevent it.  At the seed of the input
+with itself it does: the mixed entry is forced
+(`Scheme.IsMixedSite.exists_top_lt`, `MixedSeed.not_exists_reading_markedLayer`,
+`MixedSeed.not_exists_reading_fieldLayerOne`, in `VaughtConjecture.Continuation.SourceGapMixedEntry`
+and `VaughtConjecture.Continuation.SourceGapMixedSeed`).
 
 **The condition on the fill, and forced tops** (compiled in this repository).  A carrier reading at
 its tops through the new cells of a sheet layer needs its labelling to **keep its tops reading**
@@ -53,8 +57,10 @@ its tops through the new cells of a sheet layer needs its labelling to **keep it
 every sheet layer (`Scheme.eq_top_natAdd_sheetLayer`): a new cell `i` and an old cell `x` labelled
 `⊤` force `⊤` at every new cell `j` whose cross height with `i` is at least the entry of `i` at
 `x`.  So a labelling keeping its tops reading has every such `j` reading
-(`Scheme.KeepsTopsReading.readsPairs_of_le`).  Whether the entry of the mixed labelling is within
-that cross height of a top at a concrete input is not decided here.
+(`Scheme.KeepsTopsReading.readsPairs_of_le`).  At the seed of the input with itself the mixed
+labelling is within that cross height of a top (the obstruction of
+`VaughtConjecture.Continuation.SourceGapMixedEntry` and
+`VaughtConjecture.Continuation.SourceGapMixedSeed`).
 
 **At the arity three** (`TowerProfile.readingSpec`): the marked specification of the marked top with
 the reading marks and the ceiling cap exists for every reading of the profile layer at the grade

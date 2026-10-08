@@ -52,7 +52,8 @@ every new top of `d` with `⊤`.
   context is not compiled (prospective).
 * **No inversion under an apex** (`StageType.le_of_label_le_addApex`, `StageType.le_of_tie_addApex`,
   compiled): a lawful labelling of `t₀.addApex` with `⊤` at the apex keeps the order of the labels
-  (the apex row is the code of the labels), so with `s` the apex the schema never applies there.
+  of two cells `z₁`, `z₂` with `grade z₂ ≤ grade z₁` (the apex row is the code of the labels), so
+  with `s` the apex the schema never applies there.
   An instance of the schema with `s` the top cap needs a top cap whose row separates two root cells
   that its labels tie.
 * **Rigid roots** (`StageType.raisesNewTops_of_rigid`, compiled): if every lawful labelling of `t'`
