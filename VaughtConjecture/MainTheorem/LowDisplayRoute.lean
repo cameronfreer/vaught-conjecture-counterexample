@@ -199,7 +199,7 @@ coface is the LOW display of `(t', tb)`, and the cutoff is a permitted cutoff ab
 threshold. -/
 theorem BoundedCoatomCutoffDetermination.of_hasLowDisplays (hlow : HasLowDisplays.{u}) :
     BoundedCoatomCutoffDetermination.{u} fun K t' h ↦ t'.IsSourceGapContextLast K h where
-  exists_coface α K n k t' g p hα ht' hP hp tb htb hK d hd _ := by
+  exists_coface α K n k t' g p hα ht' hP hp tb htb hK d hd := by
     obtain ⟨l, o, r, hl, hs⟩ := hP
     obtain rfl : l = Fin.last k := Fin.ext (by simp only [Fin.val_last]; omega)
     obtain ⟨D, a, ha, hD⟩ :=

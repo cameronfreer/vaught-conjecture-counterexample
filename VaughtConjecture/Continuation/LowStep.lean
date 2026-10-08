@@ -70,7 +70,18 @@ From the private coatom the private face, the owner and the lost top included, i
 and so are the serving profile and the cap, which come from the ambient section; so neither the
 lowering of the private frontier nor a choice of anchor avoiding the tie is available.  A witness
 fixing the donor maximum `M` fixes `R_K M`, so no witness image of a capped lift raises a top at
-the tie.
+the tie.  A raising has to read the tops through a row separating them from the proper donor cells:
+the row of a top cell `Z` of the donor reads every top below `Z` above the replaced readings of the
+proper cells (`StageType.visibilityReplace_rowAt_lt_of_top`, compiled in this repository); a
+raising through it, literal on the root and agreeing with the ambient capped at the cap, is not
+constructed here.
+
+Both open cases are statements about one face: the unserved case about the private context
+alone, the tie case about the donor alone given the prescribed private frontier.  The gluing of
+the two faces on the amalgam and the layers below are compiled above; so the two cases do not come
+from the two-coatom geometry, and they reappear when the donor is attached along a smaller root
+(the tie case as a relative lift of the donor from that root, with the frontier read from the
+context section).
 
 ## Placement
 
