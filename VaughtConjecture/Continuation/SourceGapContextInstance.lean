@@ -25,7 +25,11 @@ context of grade `2`, with lost point `1`, owner `3`, and lost top `4`:
   top cell and the gaps at retained cells hold vacuously.
 
 The roots include the empty root and the root `{0}` along `Fin.castSuccEmb`; the face of `P α`
-on `{0}` is top-free.
+on `{0}` is top-free.  Along that root the lost point `1` is the last point, and its complement
+`{0}` is a closed face, so `P α` is also a source-gap context with the lost point last and with the
+coatom off the lost point closed (`GatedExtensionCounterexample.isSourceGapContextLast_P`,
+`GatedExtensionCounterexample.isSourceGapContextOff_P`): the coatom form of determination at
+`StageType.IsSourceGapContextLast` has legal inputs with the first coatom closed.
 
 **So the vacuity argument for (R2) is ruled out**
 (`Realization.not_forall_not_isSourceGapContext`): some legal stage type is a source-gap context,
@@ -86,6 +90,20 @@ theorem isSourceGapContextAt_P (α : Ordinal.{u}) {n : ℕ} (h : Fin n ↪ Fin 2
 theorem isSourceGapContext_P (α : Ordinal.{u}) :
     (P α).IsSourceGapContext 2 (Fin.castSuccEmb : Fin 1 ↪ Fin 2) :=
   ⟨1, _, _, isSourceGapContextAt_P α _ fun ⟨i, hi⟩ ↦ (Fin.castSucc_lt_last i).ne hi⟩
+
+/-- **`P α` is a source-gap context with the lost point last** along the root `{0}`. -/
+theorem isSourceGapContextLast_P (α : Ordinal.{u}) :
+    (P α).IsSourceGapContextLast 2 (Fin.castSuccEmb : Fin 1 ↪ Fin 2) :=
+  ⟨1, _, _, rfl, isSourceGapContextAt_P α _ fun ⟨i, hi⟩ ↦ (Fin.castSucc_lt_last i).ne hi⟩
+
+/-- **`P α` is a source-gap context with the coatom off the lost point closed** along the root
+`{0}`: the complement `{0}` of the lost point `1` is a closed face. -/
+theorem isSourceGapContextOff_P (α : Ordinal.{u}) :
+    (P α).IsSourceGapContextOff 2 (Fin.castSuccEmb : Fin 1 ↪ Fin 2) :=
+  ⟨1, _, _, isSourceGapContextAt_P α _ fun ⟨i, hi⟩ ↦ (Fin.castSucc_lt_last i).ne hi, by
+    -- the faces of `P α` are those of the interval plan on two points
+    change univ.erase 1 ∈ Geometry.intervalPlan (univ : Finset (Fin 2))
+    decide⟩
 
 end GatedExtensionCounterexample
 

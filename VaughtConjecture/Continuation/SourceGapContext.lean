@@ -68,6 +68,18 @@ and the root along the initial segment (`Realization.exists_covers_isSourceGapCo
 The last four steps concern stage types only and use no model
 (`StageType.exists_isSourceGapContextAt_comap`).
 
+**The coatom off the lost point is closed.**  In the acquired context the lost point is the last
+point `p` and the first coatom (the complement of `p`) is the face `B` of first loss, which is
+closed.  A **source-gap context with the coatom off the lost point closed**
+(`StageType.IsSourceGapContextOff`) is a source-gap context at a lost point `l` whose complement
+`univ.erase l` is a closed face; its residual acquisition is compiled
+(`Realization.residualAcquisition_isSourceGapContextOff`).  A **source-gap context with the lost
+point last** (`StageType.IsSourceGapContextLast`) is a source-gap context whose lost point is the
+last point; it is the form at which the coatom form of determination is asked in
+`VaughtConjecture.MainTheorem.SourceGapLastRoute`.  Both imply `StageType.IsSourceGapContext`
+(`StageType.IsSourceGapContextOff.isSourceGapContext`,
+`StageType.IsSourceGapContextLast.isSourceGapContext`).
+
 **Determination is open.**  Cutoff determination for source-gap contexts
 (`Realization.CutoffDetermination`) is not attempted here.  With it and (R1) for every model at
 every limit stage, (R2) follows
@@ -343,6 +355,40 @@ theorem not_isSourceGapContext_of_surjective {K : ℕ} {t' : StageType.{u} α k}
     {h : Fin n ↪ Fin k} (hh : Function.Surjective h) : ¬ t'.IsSourceGapContext K h :=
   fun ⟨_, _, _, hs⟩ ↦ hs.not_surjective hh
 
+/-- A **source-gap context with the coatom off the lost point closed**: a source-gap context of
+grade `K` along `h` at a lost point `l` (`IsSourceGapContextAt`) such that the complement
+`univ.erase l` of the lost point is a closed face of `t'`; equivalently, the lost point is an
+extreme point of the plan of `t'` (`StageType.erase_mem_faces_iff_mem_extremes`, by
+`Geometry.mem_extremes`).  Residual acquisition is compiled
+(`Realization.residualAcquisition_isSourceGapContextOff`); determination is open. -/
+def IsSourceGapContextOff (K : ℕ) (t' : StageType.{u} α k) (h : Fin n ↪ Fin k) : Prop :=
+  ∃ (l : Fin k) (o r : Fin t'.card), t'.IsSourceGapContextAt K h l o r ∧
+    univ.erase l ∈ t'.toCellScheme.faces
+
+/-- **The coatom off a point is closed exactly when the point is extreme**: `univ.erase l` is a
+closed face of `t'` if and only if `l` is an extreme point of the plan of `t'` (`Geometry.extremes`,
+`StageType.isPlan`). -/
+theorem erase_mem_faces_iff_mem_extremes {t' : StageType.{u} α k} {l : Fin k} :
+    univ.erase l ∈ t'.toCellScheme.faces ↔ l ∈ Geometry.extremes t'.toCellScheme.faces univ := by
+  simp [Geometry.mem_extremes]
+
+/-- A **source-gap context with the lost point last**: a source-gap context of grade `K` along `h`
+at a lost point `l` (`IsSourceGapContextAt`) that is the last of the `k` points. -/
+def IsSourceGapContextLast (K : ℕ) (t' : StageType.{u} α k) (h : Fin n ↪ Fin k) : Prop :=
+  ∃ (l : Fin k) (o r : Fin t'.card), (l : ℕ) + 1 = k ∧ t'.IsSourceGapContextAt K h l o r
+
+/-- A source-gap context with the coatom off the lost point closed is a source-gap context. -/
+theorem IsSourceGapContextOff.isSourceGapContext {K : ℕ} {t' : StageType.{u} α k}
+    {h : Fin n ↪ Fin k} (hs : t'.IsSourceGapContextOff K h) : t'.IsSourceGapContext K h :=
+  let ⟨l, o, r, hs, _⟩ := hs
+  ⟨l, o, r, hs⟩
+
+/-- A source-gap context with the lost point last is a source-gap context. -/
+theorem IsSourceGapContextLast.isSourceGapContext {K : ℕ} {t' : StageType.{u} α k}
+    {h : Fin n ↪ Fin k} (hs : t'.IsSourceGapContextLast K h) : t'.IsSourceGapContext K h :=
+  let ⟨l, o, r, _, hs⟩ := hs
+  ⟨l, o, r, hs⟩
+
 /-! ### First loss -/
 
 /-- A top grade that is positive is the grade of a top cell. -/
@@ -365,7 +411,8 @@ theorem exists_firstLoss {Q : StageType.{u} α m} {H : Set (Fin Q.card)} {G : Fi
     (hG : G ∈ Q.toCellScheme.faces)
     (hfull : ∀ d, Q.toCellScheme.scope d ⊆ G → Q.label d = ⊤ → d ∈ H)
     (hloss : ∃ d, Q.label d = ⊤ ∧ d ∉ H) :
-    ∃ (B : Finset (Fin m)) (p : Fin m), G ⊆ B ∧ p ∉ B ∧ insert p B ∈ Q.toCellScheme.faces ∧
+    ∃ (B : Finset (Fin m)) (p : Fin m), B ∈ Q.toCellScheme.faces ∧ G ⊆ B ∧ p ∉ B ∧
+      insert p B ∈ Q.toCellScheme.faces ∧
       (∀ d, Q.toCellScheme.scope d ⊆ B → Q.label d = ⊤ → d ∈ H) ∧
       ∃ r, Q.label r = ⊤ ∧ r ∉ H ∧ Q.toCellScheme.scope r ⊆ insert p B ∧
         p ∈ Q.toCellScheme.scope r := by
@@ -387,7 +434,7 @@ theorem exists_firstLoss {Q : StageType.{u} α m} {H : Set (Fin Q.card)} {G : Fi
     omega
   push Not at hnot
   obtain ⟨r, hrs, hr, hrH⟩ := hnot
-  refine ⟨B, p, hGB, hp, hpB, hBfull, r, hr, hrH, hrs, ?_⟩
+  refine ⟨B, p, hBf, hGB, hp, hpB, hBfull, r, hr, hrH, hrs, ?_⟩
   by_contra hpr
   exact hrH (hBfull r ((subset_insert_iff_of_notMem hpr).mp hrs) hr)
 
@@ -417,12 +464,14 @@ cell with scope in a closed face `G` and missing some top cell, and let a top ce
 `K` have scope in `G`.  Then every injective `g` with values in `G` factors as
 `ι ∘ Fin.castSucc ∘ e` through an enumeration `ι` of a closed face, and the face of `Q` along `ι`
 is a source-gap context of grade `K` along `e` followed by the initial segment, with the last
-point lost.
+point lost; the image under `ι` of its first coatom, `univ.map (Fin.castSuccEmb.trans ι)`, is a
+closed face of `Q`.
 
-First loss (`exists_firstLoss`) gives `B ⊇ G` and `p`; `ι` enumerates `insert p B` with `p` last;
-the owner is the cell of `H` of graded index `(insert p B, K)` (`exists_owner`, from `s₀`); the
-gaps are `CellScheme.Rows.IsLawful.visibilityReplace_row_lt` for the lawful section witnessing
-`H`, restricted to the face. -/
+First loss (`exists_firstLoss`) gives a closed `B ⊇ G` and `p`; `ι` enumerates `insert p B` with
+`p` last, so the first coatom is `B`; the owner is the cell of `H` of graded index
+`(insert p B, K)` (`exists_owner`, from `s₀`); the gaps are
+`CellScheme.Rows.IsLawful.visibilityReplace_row_lt` for the lawful section witnessing `H`,
+restricted to the face. -/
 theorem exists_isSourceGapContextAt_comap {Q : StageType.{u} α m} (hQ : Q.IsLegal) {K : ℕ}
     (hQK : Q.topGrade = K) {H : Set (Fin Q.card)} (hH : Q.IsAdmissibleTopSupport H)
     {G : Finset (Fin m)} (hG : G ∈ Q.toCellScheme.faces)
@@ -432,13 +481,15 @@ theorem exists_isSourceGapContextAt_comap {Q : StageType.{u} α m} (hQ : Q.IsLeg
     (hg : Function.Injective g) (hgG : ∀ i, g i ∈ G) :
     ∃ (k : ℕ) (ι : Fin (k + 1) ↪ Fin m) (hι : univ.map ι ∈ Q.toCellScheme.faces)
       (e : Fin n ↪ Fin k), (∀ i, ι (e i).castSucc = g i) ∧
+        univ.map (Fin.castSuccEmb.trans ι) ∈ Q.toCellScheme.faces ∧
         ∃ o r,
           (Q.comap ι hι).IsSourceGapContextAt K (e.trans Fin.castSuccEmb) (Fin.last k) o r := by
   classical
   -- the lawful section witnessing `H`
   obtain ⟨τ, hτ, hτH⟩ := hH.exists_isLawful
   -- first loss and the owner
-  obtain ⟨B, p, hGB, hpB, hF, hBfull, r, hr, hrH, hrF, hpr⟩ := exists_firstLoss hG hfull hloss
+  obtain ⟨B, p, hBf, hGB, hpB, hF, hBfull, r, hr, hrH, hrF, hpr⟩ :=
+    exists_firstLoss hG hfull hloss
   obtain ⟨o, ho, hoτ⟩ := exists_owner hQ hτ hF ((hτH s₀).mpr (hfull s₀ hs₀G hs₀))
     (hs₀G.trans (hGB.trans (subset_insert _ _)))
   rw [hs₀K] at ho
@@ -473,7 +524,18 @@ theorem exists_isSourceGapContextAt_comap {Q : StageType.{u} α m} (hQ : Q.IsLeg
   obtain ⟨e, he⟩ := exists_embedding_comp_eq hg (φ := φ) fun i ↦ by
     obtain ⟨j, hj⟩ : g i ∈ Set.range φ := hφr ▸ hGB (hgG i)
     exact ⟨j, hj⟩
-  refine ⟨k, ι, hF', e, fun i ↦ (hιc (e i)).trans (congrFun he i), ?_⟩
+  -- the first coatom of the face is `B`, closed
+  have hBι : univ.map (Fin.castSuccEmb.trans ι) = B := by
+    ext y
+    simp only [mem_map, mem_univ, true_and, Function.Embedding.trans_apply, Fin.coe_castSuccEmb]
+    constructor
+    · rintro ⟨i, rfl⟩
+      rw [hιc, ← mem_coe, ← hφr]
+      exact Set.mem_range_self i
+    · intro hy
+      obtain ⟨i, rfl⟩ : y ∈ Set.range φ := hφr ▸ hy
+      exact ⟨i, hιc i⟩
+  refine ⟨k, ι, hF', e, fun i ↦ (hιc (e i)).trans (congrFun he i), hBι ▸ hBf, ?_⟩
   -- the cells of `t'`
   have hvis {d : Fin Q.card} (hd : Q.toCellScheme.scope d ⊆ insert p B) :
       ∃ d', faceCell hι d' = d :=
@@ -577,7 +639,8 @@ variable {α : Ordinal.{u}} {M : Type w} {R : Realization.{u, w} α M} {n : ℕ}
 model at a limit stage with no cover that is a globally rigid core and with top-grade supremum
 `K`, every cover `c` of a stage type `t` extends to a cover `c'` of a stage type `t'` on `k + 1`
 points along `e` followed by the initial segment, and `t'` is a source-gap context of grade `K`
-along it with the last point lost.
+along it with the last point lost, and the first coatom of `t'` (the complement of the lost point)
+is a closed face.
 
 The **tail** is an occurrence `x₀` above which (in the inclusion order of supports) every
 occurrence has top grade `K` (`exists_forall_le_topGrade_eq`).  Covering gives an occurrence `z`
@@ -593,6 +656,7 @@ theorem exists_covers_isSourceGapContextAt (hα : Order.IsSuccLimit α) (hR : R.
     (hc : R.Covers t c) :
     ∃ (k : ℕ) (t' : StageType.{u} α (k + 1)) (c' : Fin (k + 1) → M) (e : Fin n ↪ Fin k),
       R.Covers t' c' ∧ c' ∘ (e.trans Fin.castSuccEmb) = c ∧
+        univ.map Fin.castSuccEmb ∈ t'.toCellScheme.faces ∧
         ∃ o r, t'.IsSourceGapContextAt K (e.trans Fin.castSuccEmb) (Fin.last k) o r := by
   classical
   -- the eventual top grade is positive: otherwise the empty tuple is a globally rigid core
@@ -642,11 +706,12 @@ theorem exists_covers_isSourceGapContextAt (hα : Order.IsSuccLimit α) (hR : R.
   have hgG (i : Fin n) : g i ∈ univ.map e₀ := by
     obtain ⟨j₀, hj₀⟩ := hpos i
     exact mem_map.mpr ⟨j₀, mem_univ _, hx.injective (hj₀.trans (congrFun hg i).symm)⟩
-  obtain ⟨k, ι, hι, e, he, o, r, hsg⟩ := StageType.exists_isSourceGapContextAt_comap
+  obtain ⟨k, ι, hι, e, he, hcf, o, r, hsg⟩ := StageType.exists_isSourceGapContextAt_comap
     (hR.isLegal _ _ hx.eval_eq) hQK hH hG hfull ⟨d₀, hd₀, hd₀H⟩
     ((StageType.label_faceCell hface s).trans hs)
     ((StageType.grade_faceCell hface s).trans (hsK.trans hzK)) hsG g.injective hgG
-  refine ⟨k, Q.comap ι hι, x ∘ ι, e, ⟨hx.injective.comp ι.injective, ?_⟩, ?_, o, r, hsg⟩
+  refine ⟨k, Q.comap ι hι, x ∘ ι, e, ⟨hx.injective.comp ι.injective, ?_⟩, ?_,
+    (StageType.map_univ_mem_comap_faces_iff Q ι Fin.castSuccEmb hι).mpr hcf, o, r, hsg⟩
   · have hxι : (⟨x ∘ ι, hx.injective.comp ι.injective⟩ : Fin (k + 1) ↪ M) =
         ι.trans ⟨x, hx.injective⟩ := Function.Embedding.ext fun _ ↦ rfl
     rw [hxι, hR.isConsistent _ Q ι hx.eval_eq, StageType.restrictFace_of_mem _ _ hι]
@@ -659,9 +724,21 @@ the acquired context of `exists_covers_isSourceGapContextAt`. -/
 theorem residualAcquisition_isSourceGapContext :
     ResidualAcquisition.{u, w} fun K t' h ↦ t'.IsSourceGapContext K h where
   exists_context _ _ _ _ hα hR hcore hK _ _ _ hc := by
-    obtain ⟨k, t', c', e, hc', hcc', o, r, hs⟩ :=
+    obtain ⟨k, t', c', e, hc', hcc', -, o, r, hs⟩ :=
       exists_covers_isSourceGapContextAt hα hR hcore hK hc
     exact ⟨k + 1, t', c', _, hc', hcc', Fin.last k, o, r, hs⟩
+
+/-- **Residual acquisition for source-gap contexts with the coatom off the lost point closed**
+(`ResidualAcquisition`), with no hypothesis: the acquired context of
+`exists_covers_isSourceGapContextAt`, whose first coatom, the complement of the last point, is
+closed. -/
+theorem residualAcquisition_isSourceGapContextOff :
+    ResidualAcquisition.{u, w} fun K t' h ↦ t'.IsSourceGapContextOff K h where
+  exists_context _ _ _ _ hα hR hcore hK _ _ _ hc := by
+    obtain ⟨k, t', c', e, hc', hcc', hcf, o, r, hs⟩ :=
+      exists_covers_isSourceGapContextAt hα hR hcore hK hc
+    refine ⟨k + 1, t', c', _, hc', hcc', Fin.last k, o, r, hs, ?_⟩
+    rwa [Fin.univ_castSuccEmb, erase_cons]
 
 /-- **(R2) from (R1) and cutoff determination for source-gap contexts**: the reduction
 `residualReceiving_of_cutoffDetermination` with the compiled acquisition
