@@ -52,6 +52,40 @@ cap at most the label of the reading cell.  So natural-strip readings fail when 
 new cells (on the face at `λ_ξ`) lie in two blocks below the gate's label; when the gate's label is
 at most those labels, this argument forces nothing.
 
+**Two blocks in the leaf-and-marked completion**
+(`StageType.IsGatedReadingExtension.label_lt_of_lt_omega0`,
+`TowerProfile.label_lt_of_isGatedReadingExtension_markedCompletion`).  A reader reading two new
+cells of `D` from blocks `μ₁ < μ₂` in the natural strip is labelled below `μ₂ + N` by every stage
+type with face `T⁺`.  In the leaf-and-marked completion every ceiling reads in the natural strip,
+so the ceilings and the gate are labelled below `μ₂ + 4`: the guard of the one-block lemma fails
+at the ceilings in every such labelling, and the escape stays open.  Recovery from a graded cap
+must pass through a reader that is not a ceiling and reads outside the natural strip; the wall
+constrains ceilings only.  Whether a gated reading extension over the leaf-and-marked completion
+exists at such an input is open: no seed with labels in two blocks below `λ_ξ` is constructed
+here.
+
+**The full catalogue at the reading grade.**  Each obstruction above, and those of
+`VaughtConjecture.Continuation.StableRecoveryProfileObstruction` and
+`VaughtConjecture.Continuation.StableRecoveryMarkedGate`, goes through a cell that the canonical
+catalogue at the grade `N` forces into the layer: the leaf whose row is `⊥` at the old cells, or
+the leaf or mark of the orbit code of an entry capped at the least grid point.  A layer over a
+restricted catalogue (for instance a symmetric one) avoids them if it gives the reading of (R4)
+the following, which are the fields of `StageType.IsGatedReadingExtension` and do not depend on
+the arity or on the shape of the catalogue:
+
+* readers only at `(univ, N)`: the reading clause is asked of a set `S` of cells there, not of
+  every cell there;
+* a gate at `(univ, N)` whose row is `⊥` at every other cell of `(univ, N)` outside `S`, with a
+  ceiling in `S`: the catalogue must not force a cell that the gate reads above `⊥` and that does
+  not read the new cells;
+* availability served by reading entries: in a lawful labelling not `⊥` at the gate, the cell
+  that availability reaches from the cap is a reader
+  (`CellScheme.Rows.IsLawful.exists_mem_le_of_readsOnly`), and when the new cells lie in two
+  blocks below `λ_ξ` it reads one of them outside the natural strip;
+* the gate not `⊥` through the display: a coface of `T⁺↓λ_ξ` on the scheme, not `⊥` at the gate;
+  the bottom-pattern clause of a model turns it into a realized labelling not `⊥` at the gate
+  (as for `Realization.IsModel.exists_attachedGate`).  The gate's label may be low.
+
 ## Placement
 
 This file belongs to Layer 4 of `roadmap/README.md`.
@@ -486,6 +520,96 @@ theorem not_natural_strip_of_lt_block {p : ι → Label.{u}} (h : R.IsLawful p) 
 
 end CellScheme.Rows.IsLawful
 
+/-! ### Two blocks read in the natural strip keep a reader low -/
+
+namespace StageType
+
+variable {ξ : Ordinal.{u}} {m k : ℕ}
+
+/-- A label `ω · c + n` below `ω` has `c = 0`. -/
+private theorem eq_zero_of_omega0_mul_add_lt {c : Ordinal.{u}} {n : ℕ}
+    (h : ((ω * c + n : Ordinal.{u}) : Label.{u}) < ((ω : Ordinal.{u}) : Label.{u})) : c = 0 := by
+  have h' : ω * c + n < ω := WithTop.coe_lt_coe.mp (WithBot.coe_lt_coe.mp h)
+  by_contra hc
+  exact absurd ((Ordinal.le_mul_left ω (pos_iff_ne_zero.mpr hc)).trans le_self_add)
+    (not_le.mpr h')
+
+/-- **Two blocks read in the natural strip keep a reader low.**  In a gated reading extension,
+let a reader `u` read two new cells of `D`, labelled `μ₁ + n₁` and `μ₂ + n₂` with `μ₁ < μ₂` (both
+zero or a limit), at values below `ω` (the natural strip).  Then every stage type `Q` on the scheme
+with face `T⁺` labels `u` below `μ₂ + N`, `N` the grade of the cap.  The references of the two
+cells are labelled `μ₁ + i₁` and `μ₂ + i₂` in `T⁺` and read by `u` at `i₁` and `i₂`
+(`StageType.ReadsThroughCap`, with block `0`); a label of `u` above `μ₂ + i₂` would put both in
+one block (`CellScheme.Rows.IsLawful.not_natural_strip_of_lt_block`, the cap there being `u`). -/
+theorem IsGatedReadingExtension.label_lt_of_lt_omega0 {Tp : StageType.{u} (blockStage (ξ + 1)) m}
+    {f : Fin k ↪ Fin m} {D : StageType.{u} (blockStage (ξ + 1)) (k + 1)} {b : Fin Tp.card}
+    {E : Scheme.{u} (m + 1)} {G : Fin E.card} {S : Set (Fin E.card)}
+    (h : IsGatedReadingExtension Tp f D b E G S) {u : Fin E.card} (hu : u ∈ S)
+    {j₁ j₂ : Fin D.card} (hj₁ : Fin.last k ∈ D.toCellScheme.scope j₁)
+    (hj₂ : Fin.last k ∈ D.toCellScheme.scope j₂) {μ₁ μ₂ : Ordinal.{u}}
+    (hμ₁ : Order.IsSuccPrelimit μ₁) (hμ₂ : Order.IsSuccPrelimit μ₂) (hμ : μ₁ < μ₂) {n₁ n₂ : ℕ}
+    (hD₁ : D.label j₁ = ((μ₁ + n₁ : Ordinal.{u}) : Label.{u}))
+    (hD₂ : D.label j₂ = ((μ₂ + n₂ : Ordinal.{u}) : Label.{u}))
+    {i₁ i₂ : Fin (E.comap (extendByLast f)).card} (hij₁ : (i₁ : ℕ) = j₁) (hij₂ : (i₂ : ℕ) = j₂)
+    (he₁ : E.cellMap (extendByLast f) i₁ ∈ E.toCellScheme.below (E.toCellScheme.gradedIndex u))
+    (he₂ : E.cellMap (extendByLast f) i₂ ∈ E.toCellScheme.below (E.toCellScheme.gradedIndex u))
+    (hs₁ : E.rows.row u ⟨_, he₁⟩ < ((ω : Ordinal.{u}) : Label.{u}))
+    (hs₂ : E.rows.row u ⟨_, he₂⟩ < ((ω : Ordinal.{u}) : Label.{u}))
+    (Q : StageType.{u} (blockStage (ξ + 1)) (m + 1)) (hQE : Q.toScheme = E)
+    (hQf : restrictFace Fin.castSuccEmb Q = some Tp) (v : Fin Q.card) (hv : (v : ℕ) = u) :
+    Q.label v < ((μ₂ + Tp.toCellScheme.grade b : Ordinal.{u}) : Label.{u}) := by
+  subst hQE
+  obtain rfl : v = u := Fin.ext hv
+  obtain ⟨-, -, hcT', -, -, hGidx, -, -, hreaders, -⟩ := h
+  obtain ⟨_, hcT⟩ := (restrictFace_eq_some_iff _ _).mp hQf
+  obtain ⟨hug, b', hb'b, hread⟩ := hreaders v hu
+  have hgc : Q.toCellScheme.grade (Q.cellMap Fin.castSuccEmb b') = Tp.toCellScheme.grade b :=
+    Scheme.grade_congr hcT' hb'b
+  have hvidx : Q.toCellScheme.gradedIndex v =
+      ((univ : Finset (Fin (m + 1))), Tp.toCellScheme.grade b) := hug.trans hGidx
+  have hgv : Q.toCellScheme.grade v = Tp.toCellScheme.grade b := congrArg Prod.snd hvidx
+  have hb : Q.cellMap Fin.castSuccEmb b' ∈
+      Q.toCellScheme.below (Q.toCellScheme.gradedIndex v) := by
+    rw [CellScheme.mem_below, hvidx]
+    exact ⟨subset_univ _, hgc.le⟩
+  -- the references of the two new cells, read at block `0`
+  obtain ⟨-, -, hord₁⟩ := hread i₁ j₁ hij₁ hj₁ he₁ hb
+  obtain ⟨-, a₁, a₁₀, x₁, c₁, haa₁, ha₁₀, hx₁, ha₁, hra₁, hre₁⟩ := hord₁ μ₁ n₁ hμ₁ hD₁
+  obtain ⟨-, -, hord₂⟩ := hread i₂ j₂ hij₂ hj₂ he₂ hb
+  obtain ⟨-, a₂, a₂₀, x₂, c₂, haa₂, ha₂₀, hx₂, ha₂, hra₂, hre₂⟩ := hord₂ μ₂ n₂ hμ₂ hD₂
+  have hc₁ : c₁ = 0 := eq_zero_of_omega0_mul_add_lt (hre₁ ▸ hs₁)
+  have hc₂ : c₂ = 0 := eq_zero_of_omega0_mul_add_lt (hre₂ ▸ hs₂)
+  subst hc₁ hc₂
+  rw [hgc] at hx₁ hx₂
+  by_contra hlt
+  rw [not_lt] at hlt
+  have hpe : Q.label (Q.cellMap Fin.castSuccEmb a₂) = ((μ₂ + x₂ : Ordinal.{u}) : Label.{u}) :=
+    (label_congr hcT haa₂).trans ha₂₀
+  have hlow : Q.label (Q.cellMap Fin.castSuccEmb a₂) < Q.label v := by
+    refine lt_of_lt_of_le ?_ hlt
+    rw [hpe]
+    exact WithBot.coe_lt_coe.mpr (WithTop.coe_lt_coe.mpr
+      ((add_lt_add_iff_left μ₂).mpr (Nat.cast_lt.mpr hx₂)))
+  exact CellScheme.Rows.IsLawful.not_natural_strip_of_lt_block Q.isLawful ha₁
+    (CellScheme.mem_below_gradedIndex _ v) ha₂ hμ₁ hμ₂ hμ ha₁.2 (hx₁.trans_eq hgv.symm)
+    (hx₂.trans_eq hgv.symm).le ha₂.2 (by rw [hra₁, mul_zero, zero_add])
+    (by rw [hra₂, mul_zero, zero_add]) ((label_congr hcT haa₁).trans ha₁₀) hpe le_rfl hlow
+
+/-- **The gate lies below each ceiling** in every stage type on a scheme `E`: a cell `K` of the
+graded index of `G` that the row of `G` reads at least as `G` itself is labelled at least as `G`
+(`CellScheme.Rows.IsLawful.le_of_row_self_le`, for a scheme given up to equality). -/
+theorem label_le_of_ceiling {E : Scheme.{u} (m + 1)} {G K : Fin E.card}
+    (hKG : E.toCellScheme.gradedIndex K = E.toCellScheme.gradedIndex G)
+    (hceil : E.rows.row G ⟨G, CellScheme.mem_below_gradedIndex _ G⟩ ≤ E.rows.row G ⟨K, hKG.le⟩)
+    (Q : StageType.{u} (blockStage (ξ + 1)) (m + 1)) (hQE : Q.toScheme = E) (v w : Fin Q.card)
+    (hv : (v : ℕ) = K) (hw : (w : ℕ) = G) : Q.label w ≤ Q.label v := by
+  subst hQE
+  obtain rfl : v = K := Fin.ext hv
+  obtain rfl : w = G := Fin.ext hw
+  exact Q.isLawful.le_of_row_self_le hKG hceil
+
+end StageType
+
 /-! ### The leaf-and-marked completion: only the natural strip -/
 
 namespace TowerProfile
@@ -633,6 +757,69 @@ theorem lt_of_isGatedReadingExtension_markedCompletion {k : ℕ} (f : Fin k ↪ 
       hK₀G₀.trans hG₀
     rw [← hrowE K₀ _ hx (hbelowE K₀ hK₀4)]
     exact hge.trans_eq ((𝔼).rows.row_congr rfl hz.symm)
+
+/-- **In the leaf-and-marked completion, two blocks keep the gate low.**  In the setting of
+`TowerProfile.lt_of_isGatedReadingExtension_markedCompletion`, let `Dn` have two new cells
+labelled `μ₁ + n₁` and `μ₂ + n₂` with `μ₁ < μ₂` (both zero or a limit).  Then every stage type
+`Q` on `𝔼` with face `T⁺` labels the gate at most a ceiling `K`, and `K` below `μ₂ + 4`.  The
+ceiling reads both new cells in the natural strip
+(`TowerProfile.lt_of_isGatedReadingExtension_markedCompletion`), so
+`StageType.IsGatedReadingExtension.label_lt_of_lt_omega0` applies at `K`.  Consequently (not
+stated separately) when `μ₂ < λ_ξ`, the reader that availability reaches from a graded cap
+(labelled at least `λ_ξ + 4 > μ₂ + 4`) is not a ceiling, and by the same theorem it reads one of
+the two new cells outside the natural strip, where the wall `Scheme.markedLayer_gate_false` does
+not apply. -/
+theorem label_lt_of_isGatedReadingExtension_markedCompletion {k : ℕ} (f : Fin k ↪ Fin 3)
+    (Dn : StageType.{u} (blockStage (ξ + 1)) (k + 1)) (b : Fin I.left.card)
+    (hb4 : I.left.toCellScheme.grade b = 4) {G : Fin (𝔼).card} {S : Set (Fin (𝔼).card)}
+    (h : StageType.IsGatedReadingExtension I.left (f.trans Fin.castSuccEmb) Dn b 𝔼 G S)
+    {K : Fin (𝔼).card} (hKS : K ∈ S)
+    (hKG : (𝔼).toCellScheme.gradedIndex K = (𝔼).toCellScheme.gradedIndex G)
+    (hceil : (𝔼).rows.row G ⟨G, CellScheme.mem_below_gradedIndex _ G⟩ ≤
+      (𝔼).rows.row G ⟨K, hKG.le⟩)
+    {j₁ j₂ : Fin Dn.card} (hj₁ : Fin.last k ∈ Dn.toCellScheme.scope j₁)
+    (hj₂ : Fin.last k ∈ Dn.toCellScheme.scope j₂) {μ₁ μ₂ : Ordinal.{u}}
+    (hμ₁ : Order.IsSuccPrelimit μ₁) (hμ₂ : Order.IsSuccPrelimit μ₂) (hμ : μ₁ < μ₂) {n₁ n₂ : ℕ}
+    (hD₁ : Dn.label j₁ = ((μ₁ + n₁ : Ordinal.{u}) : Label.{u}))
+    (hD₂ : Dn.label j₂ = ((μ₂ + n₂ : Ordinal.{u}) : Label.{u}))
+    (Q : StageType.{u} (blockStage (ξ + 1)) 5) (hQE : Q.toScheme = 𝔼)
+    (hQf : StageType.restrictFace Fin.castSuccEmb Q = some I.left) (v w : Fin Q.card)
+    (hv : (v : ℕ) = K) (hw : (w : ℕ) = G) :
+    Q.label w ≤ Q.label v ∧ Q.label v < ((μ₂ + 4 : Ordinal.{u}) : Label.{u}) := by
+  refine ⟨StageType.label_le_of_ceiling hKG hceil Q hQE v w hv hw, ?_⟩
+  have hK4 : (𝔼).toCellScheme.gradedIndex K = ((univ : Finset (Fin 5)), 4) := by
+    rw [hKG, h.gradedIndex_gate, hb4]
+  have hk3 : k ≤ 3 := by simpa using Fintype.card_le_of_embedding f
+  have hf := h.mem_faces_extendByLast
+  have hwf := h.isLegal.isWellFormed.comap (extendByLast (f.trans Fin.castSuccEmb)) hf
+  -- every new cell lies below the ceiling
+  have hbelow (i : Fin ((𝔼).comap (extendByLast (f.trans Fin.castSuccEmb))).card) :
+      (𝔼).cellMap (extendByLast (f.trans Fin.castSuccEmb)) i ∈
+        (𝔼).toCellScheme.below ((𝔼).toCellScheme.gradedIndex K) := by
+    have h1 := (hwf.isWellFormed.grade_le_card i).trans
+      ((card_le_univ _).trans_eq (Fintype.card_fin (k + 1)))
+    -- membership below is the order on graded indices
+    change _ ≤ (𝔼).toCellScheme.gradedIndex K
+    rw [hK4]
+    refine ⟨subset_univ _, ?_⟩
+    -- the grade of a cell of the face is the grade of its image
+    change ((𝔼).comap (extendByLast (f.trans Fin.castSuccEmb))).toCellScheme.grade i ≤ 4
+    omega
+  have hcard : ((𝔼).comap (extendByLast (f.trans Fin.castSuccEmb))).card = Dn.card :=
+    congrArg Scheme.card h.comap_extendByLast
+  have h4 : gridPoint.{u} 4 0 < ((ω : Ordinal.{u}) : Label.{u}) := by
+    rw [gridPoint, Nat.cast_zero, mul_zero, zero_add]
+    exact WithBot.coe_lt_coe.mpr (WithTop.coe_lt_coe.mpr (Ordinal.natCast_lt_omega0 4))
+  have hs (j : Fin Dn.card) (hj : Fin.last k ∈ Dn.toCellScheme.scope j) {μ : Ordinal.{u}}
+      (hμ : Order.IsSuccPrelimit μ) {n : ℕ}
+      (hD : Dn.label j = ((μ + n : Ordinal.{u}) : Label.{u})) :
+      (𝔼).rows.row K ⟨_, hbelow (Fin.cast hcard.symm j)⟩ < ((ω : Ordinal.{u}) : Label.{u}) :=
+    (lt_of_isGatedReadingExtension_markedCompletion D f Dn b hb4 h hKS hKG hceil hj hμ hD
+      (Fin.cast hcard.symm j) rfl (hbelow _)).trans h4
+  have key := h.label_lt_of_lt_omega0 hKS hj₁ hj₂ hμ₁ hμ₂ hμ hD₁ hD₂ (i₁ := Fin.cast hcard.symm j₁)
+    (i₂ := Fin.cast hcard.symm j₂) rfl rfl (hbelow _) (hbelow _) (hs j₁ hj₁ hμ₁ hD₁)
+    (hs j₂ hj₂ hμ₂ hD₂) Q hQE hQf v hv
+  rwa [hb4] at key
 
 end TowerProfile
 
