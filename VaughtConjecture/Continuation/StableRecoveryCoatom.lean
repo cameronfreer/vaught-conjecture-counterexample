@@ -153,9 +153,8 @@ It is the completion of the amalgam of the coatom pair `(T⁺, tb)` over `p`, wi
 cells at `(univ, N)` reading the new cells of `D` through the cap.  The intermediate coface `tb` is
 arbitrary.  With the coatom extension property it implies cap-reading extensions
 (`StageType.HasReadingCoatomCompletions.hasCapReadingExtensions`).  It is not proved, and no
-implication from or to the coatom extension property with apex (`StageType.HasApexCoatomExtensions`,
-still to be proved) is compiled; that property does not prescribe the rows of its cells of full
-scope. -/
+implication from or to the coatom extension property with apex (`StageType.HasApexCoatomExtensions`)
+is compiled; that property does not prescribe the rows of its cells of full scope. -/
 def HasReadingCoatomCompletions : Prop :=
   ∀ ⦃m k : ℕ⦄ (Tp : StageType.{u} (blockStage (ξ + 1)) (m + 1)) (g : Fin m ↪ Fin (m + 1))
     (p : StageType.{u} (blockStage (ξ + 1)) m) (tb : StageType.{u} (blockStage (ξ + 1)) (m + 1))
@@ -173,7 +172,9 @@ At an input of `StageType.HasCapReadingExtensions ξ` the calibration forces `k 
 (`StageType.exists_coatom_trans_eq`); the exact pinned extension over the face of `T⁺` along `g`
 (`StageType.exists_pinned_extension`, from the coatom extension property `hext`) gives an
 intermediate coface `tb` with face `D`; and the reading coatom completion of `(T⁺, tb)` is a
-cap-reading extension.  Both hypotheses are explicit and neither is proved. -/
+cap-reading extension.  Both hypotheses are explicit; the coatom extension property at the block
+stages is compiled (`StageType.hasCoatomExtensions`), reading coatom completions are not
+proved. -/
 theorem HasReadingCoatomCompletions.hasCapReadingExtensions
     (hext : HasCoatomExtensions.{u} (blockStage (ξ + 1))) (h : HasReadingCoatomCompletions ξ) :
     HasCapReadingExtensions ξ := by
@@ -200,7 +201,8 @@ extension property holds at every `λ_{ξ+1}` and reading coatom completions exi
 (`StageType.HasReadingCoatomCompletions.hasCapReadingExtensions`), stable recovery schemes for the
 graded cap calibration (`StageType.HasCapReadingExtensions.hasStableRecoverySchemes`) and their
 acquisition (`StableCappedReceiving.of_hasStableRecoverySchemes_gradedCap`).  Both hypotheses are
-explicit and neither is proved. -/
+explicit; the first is compiled (`StageType.hasCoatomExtensions` at the block stages), reading
+coatom completions are not proved. -/
 theorem StableCappedReceiving.of_hasReadingCoatomCompletions
     (hext : ∀ ξ < ω₁, StageType.HasCoatomExtensions.{0} (blockStage (ξ + 1)))
     (h : ∀ ξ < ω₁, StageType.HasReadingCoatomCompletions.{0} ξ) : StableCappedReceiving.{w} :=
@@ -214,7 +216,8 @@ for the intermediate coatom steps of (R4)
 (`StableCappedReceiving.of_hasReadingCoatomCompletions`) and for the coface instances at the next
 block (`ContinuationCriterion.of_hasApexCoatomExtensions`).  So (R4), and with it the continuation
 criterion, is reduced to hypothesis 8 and `StageType.HasReadingCoatomCompletions`; the latter is
-proved at no general input.  Both hypotheses are explicit and neither is proved. -/
+proved at no general input.  Both hypotheses are explicit; hypothesis 8 is compiled
+(`StageType.hasApexCoatomExtensions_blockStage`), reading coatom completions are not proved. -/
 theorem ContinuationCriterion.of_hasReadingCoatomCompletions
     (hext : ∀ ξ < ω₁, StageType.HasApexCoatomExtensions.{0} (blockStage (ξ + 1)))
     (h : ∀ ξ < ω₁, StageType.HasReadingCoatomCompletions.{0} ξ) : ContinuationCriterion.{w} :=

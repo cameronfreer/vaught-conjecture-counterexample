@@ -3468,14 +3468,46 @@ Each checkpoint needs both its abstract API and a concrete application:
    `StageType.exists_mem_cofaces_reduce_of_isLegal`; reading through a cap depends on its grade
    only, away from the formal top, `StageType.ReadsThroughCap.of_grade_eq`; the new named statement
    `StageType.HasCapReadingExtensions` (cap-reading extensions, `StageType.IsCapReadingExtension`;
-   open; no implication compiled from or to `StageType.HasApexCoatomExtensions`, itself still to
-   be proved) implies the finite statement,
+   open; no implication compiled from or to `StageType.HasApexCoatomExtensions`, itself compiled
+   at every block stage) implies the finite statement,
    `StageType.HasCapReadingExtensions.hasStableRecoverySchemes`; tests in
    `Continuation/StableRecoveryFullCapExamples`: the twin donors through `(univ, N)`, a full-scope
    cap at the interior context, and the interior scheme as a cap-reading extension for every
    full-scope graded cap there,
-   `Continuation.StableRecoveryInterior.isCapReadingExtension_interiorScheme`; `README.md`, Layer 4,
-   status, output 3).
+   `Continuation.StableRecoveryInterior.isCapReadingExtension_interiorScheme`; the cap row,
+   `Continuation/StableRecoveryCapRow`: a cell agreeing with the row of a full-scope graded cap on
+   the old cells and reading a new cell at the cap code of its label reads it through the cap,
+   `StageType.readsThroughCap_of_capRow`, and the new named statement
+   `StageType.HasCapRowExtensions` (open) implies `StageType.HasCapReadingExtensions`,
+   `StageType.HasCapRowExtensions.hasCapReadingExtensions`; reading coatom completions,
+   `Continuation/StableRecoveryCoatom`: a closed coatom through a closed face,
+   `StageType.exists_coatom_trans_eq`, and the new named statement
+   `StageType.HasReadingCoatomCompletions` (open; `StageType.IsReadingCoatomCompletion`) implies
+   `StageType.HasCapReadingExtensions` under `StageType.HasCoatomExtensions` at `λ_{ξ+1}`,
+   `StageType.HasReadingCoatomCompletions.hasCapReadingExtensions`, hence (R4) with that property
+   at every `λ_{ξ+1}`, `StableCappedReceiving.of_hasReadingCoatomCompletions`, and the continuation
+   criterion with hypothesis 8, `ContinuationCriterion.of_hasReadingCoatomCompletions` (hypothesis
+   8 is compiled, `StageType.hasApexCoatomExtensions_blockStage`; the statement with it discharged
+   is not stated); a reading labelling on the cells of every labelled extension,
+   `StageType.exists_codedReadingLabelling`, `Continuation/StableRecoveryCodedReading`; the clause
+   at one and two coatom steps, feasibility only, `Continuation/StableRecoveryCoatomExamples`;
+   recovery lifts from a closed face, `StageType.IsStableRecoveryScheme.of_comap` and
+   `StageType.IsStableRecoveryScheme.exists_lift`, and the face version, an exact reformulation
+   under `StageType.HasCoatomExtensions`, `StageType.hasStableRecoverySchemes_iff_exists_face`,
+   `Continuation/StableRecoveryLift`, with no recovery at the twin root alone,
+   `Continuation.StableRecoveryCounterexample.not_isStableRecoveryScheme_twinRoot`; the reading
+   along the orbit code, the splice and capped agreement,
+   `Continuation/StableRecoveryReadingInvariants`; and two refuted designs, each refuted as a
+   reading completion only, not `StageType.HasReadingCoatomCompletions` and not (R4): the profile
+   completion at `m = 3` at a cap of grade `3` or `4`,
+   `TowerProfile.not_isCapReadingExtension_completion`,
+   `Continuation/StableRecoveryProfileObstruction`, and the marked gate (every marked gate has cap
+   `⊥` and is `⊥` in some lawful labelling, `TowerProfile.exists_isLawful_markedTop_eq_bot`), with
+   the leaf-and-marked completion for every marked specification,
+   `TowerProfile.not_isCapReadingExtension_markedCompletion`,
+   `Continuation/StableRecoveryMarkedGate`; none of these establishes whether
+   `StageType.HasReadingCoatomCompletions` follows from hypothesis 8; `README.md`, Layer 4, status,
+   output 3).
    Step 7 is compiled conditionally (`README.md`, the section on the top-free witnesses): the loss
    at `η` under uniqueness at `λ_η` (`nonempty_loss_of_topFreeWitness`), and per block under
    `StageType.HasApexCoatomExtensions` at `λ_η` and uniqueness of the model expansions at `λ_η`

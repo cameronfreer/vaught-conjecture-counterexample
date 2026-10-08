@@ -853,11 +853,92 @@ except as a named hypothesis.
    (`Continuation.StableRecoveryInterior.isCapReadingExtension_interiorScheme`), so the clause of
    `HasCapReadingExtensions` holds at that input.  Status, each named statement separately:
    `HasStableRecoverySchemes ξ (GradedCapCalibration ξ)` open; `HasCapReadingExtensions ξ` open;
-   `HasApexCoatomExtensions` still to be proved; the only compiled implication among them is the one
-   above.  The acquisition of the design's cap of full scope and full grade is not compiled (at a
-   legal context the full scope is free, by `StageType.GradedCapCalibration.exists_univ_cap`; the
-   full grade is not, and the composition with
-   `Realization.IsModel.acquiresCalibratedContexts_gradedCap` is not stated).
+   `HasApexCoatomExtensions` compiled at every block stage
+   (`StageType.hasApexCoatomExtensions_blockStage`); the only compiled implication among the first
+   two is the one above.  The acquisition of the design's cap of full scope and full grade is not
+   compiled (at a legal context the full scope is free, by
+   `StageType.GradedCapCalibration.exists_univ_cap`; the full grade is not, and the composition
+   with `Realization.IsModel.acquiresCalibratedContexts_gradedCap` is not stated).
+   **The cap row** (`Continuation/StableRecoveryCapRow`, compiled in this repository (theorem
+   named)).  In a stage type, the row of a cell `b` of grade `N` reads a cell below it labelled
+   `μ + i` (`μ` zero or a limit, `i < N`, `μ + i` below the label of `b`) at `ω · c + i`, the same
+   finite part (`StageType.exists_row_eq_omega0_mul_add`), and two such cells of one block in one
+   block (`StageType.eq_of_row_eq_omega0_mul_add`); so the row of `b` defines a block code
+   (`StageType.capBlockCode`, `StageType.row_eq_capBlockCode`) and a cap code of labels
+   (`StageType.capCode`: `⊥` at `⊥`, the row of `b` at `b` at `⊤`, `ω · capBlockCode μ + n` at
+   `μ + n`).  For every `T⁺`, every full-scope graded cap `b` of `T⁺` for `D` and `γ` and every
+   scheme `E` on one more point with face `T⁺` along the first points, a cell of `E` whose row
+   agrees with the row of `b` on the old cells below it and reads a new cell at the cap code of a
+   label `ℓ` of `D` reads that cell through the cap as a cell labelled `ℓ`
+   (`StageType.readsThroughCap_of_capRow`).  New named statement, open:
+   `StageType.HasCapRowExtensions ξ` (cap-row extensions, `StageType.IsCapRowExtension`: a legal
+   scheme with the faces `T⁺` and `D` whose cells at `(univ, N)` agree with the cap row on the old
+   cells and read every new cell of `D` at the cap code of its label); compiled:
+   `StageType.HasCapRowExtensions.hasCapReadingExtensions`.  It prescribes the whole row on the old
+   cells, so it is stronger than `HasCapReadingExtensions`; whether the cap row always extends to a
+   lawful row at `(univ, N)` is not known.
+   **Reading coatom completions** (`Continuation/StableRecoveryCoatom`, compiled in this repository
+   (theorem named)).  A closed face of `k ≤ n` points of a stage type on `n + 1` points lies in a
+   closed coatom (`StageType.exists_coatom_trans_eq`).  New named statement, open:
+   `StageType.HasReadingCoatomCompletions ξ` (RCC): for every legal `T⁺` at `λ_{ξ+1}`, closed coatom
+   `g` with face `p`, legal coface `tb` of `p`, `f` of `k > 0` points into the coatom, coface `D`
+   that is the face of `tb` along `f` and the new point, `γ < λ_{ξ+1}` and full-scope graded cap
+   `b`, a reading coatom completion (`StageType.IsReadingCoatomCompletion`: a stage type with the
+   literal faces `T⁺` and `tb`, labels included, whose scheme is a cap-reading extension along
+   `f.trans g`).  Compiled implications, each with its hypotheses explicit:
+   `StageType.HasReadingCoatomCompletions.hasCapReadingExtensions` (under
+   `StageType.HasCoatomExtensions (blockStage (ξ + 1))`, through the exact pinned extension);
+   `StableCappedReceiving.of_hasReadingCoatomCompletions` ((R4), from `HasCoatomExtensions` at every
+   `λ_{ξ+1}` and RCC at every `ξ < ω₁`); `ContinuationCriterion.of_hasReadingCoatomCompletions`
+   (from hypothesis 8 at every `λ_{ξ+1}` and RCC at every `ξ < ω₁`).  Hypothesis 8 is compiled
+   (`StageType.hasApexCoatomExtensions_blockStage`); the statement with it discharged is not stated.
+   On the cells of every labelled extension a reading labelling exists
+   (`StageType.exists_codedReadingLabelling`, `Continuation/StableRecoveryCodedReading`: the coded
+   copy of the labels capped at the cap is lawful below `(univ, N)` and reads every new cell of `D`
+   through the cap, `StageType.ReadsThroughCapAt`; a cell at `(univ, N)` with that row reads through
+   the cap, `StageType.readsThroughCap_of_row_eq`); the open part is the completion at the cells of
+   full scope.  The clause of RCC holds at two inputs, feasibility only
+   (`Continuation/StableRecoveryCoatomExamples`): the reading input, one coatom step
+   (`Continuation.StableRecoveryReading.exists_isReadingCoatomCompletion`), and the twin donors,
+   two coatom steps (`Continuation.StableRecoveryTwin.exists_isReadingCoatomCompletion_twin`); in
+   both the intermediate coface is a face of the completing scheme.  RCC is proved at no general
+   input, and none of these constructions establishes whether RCC follows from hypothesis 8.
+   **Recovery lifts from a closed face** (`Continuation/StableRecoveryLift`, compiled in this
+   repository (theorem named)): a legal scheme with the faces `T⁺` and a stable recovery scheme of
+   a closed face of `T⁺` is a stable recovery scheme (`StageType.IsStableRecoveryScheme.of_comap`),
+   and under `HasCoatomExtensions` at `λ_{ξ+1}` one exists for a legal `T⁺`
+   (`StageType.IsStableRecoveryScheme.exists_lift`).  Under `HasCoatomExtensions`, stable recovery
+   schemes for a calibration are equivalent to stable recovery schemes at some closed face through
+   the root (`StageType.hasStableRecoverySchemes_iff_exists_face`): an exact reformulation, the face
+   may be the whole context, so no reduction.  At the twin donors the face of the root alone has no
+   stable recovery scheme
+   (`Continuation.StableRecoveryCounterexample.not_isStableRecoveryScheme_twinRoot`).
+   **The reading along the catalogue operations** (`Continuation/StableRecoveryReadingInvariants`,
+   compiled in this repository (theorem named)): a labelling reading a new cell through a cap of
+   grade `N ≤ k` keeps the reading under the orbit code at `k`
+   (`StageType.ReadsThroughCapAt.orbitCode`) and under the splice with `⊥` above `k`
+   (`StageType.ReadsThroughCapAt.splice`), and under capped agreement at a cap above every value
+   (`StageType.ReadsThroughCapAt.of_min_eq`); at a cap at most the value at the cell, some labelling
+   with the same capped values does not read it (`StageType.ReadsThroughCapAt.exists_not_of_le`).
+   **Two refuted designs** (compiled in this repository (theorem named)); each refutes the named
+   completion as a reading completion, not RCC and not (R4).  The profile completion at `m = 3`:
+   the constant `⊥` labelling is an entry of the canonical catalogue and of the profile catalogue
+   (`Scheme.bot_mem_catalogue`, `TowerProfile.bot_mem_rankCat`), so a cell at `(univ, N)` reads
+   every old cell as `⊥` (`TowerProfile.exists_top_row_eq_bot`, `N = 3, 4`), and the coatom
+   extension with apex built from `TowerProfile.completion` is not a cap-reading extension at a cap
+   of grade `3` or `4` above the arity of the root, for a new cell labelled `μ + n`
+   (`TowerProfile.not_isCapReadingExtension_completion`,
+   `Continuation/StableRecoveryProfileObstruction`).  The marked gate
+   (`Continuation/StableRecoveryMarkedGate`): a marked cell whose row is `⊥` at every leaf has cap
+   `⊥` (`Scheme.markedLayer_cap_eq_bot_of_row_leaf`, `Scheme.markedLayer_cap_eq_bot_of_readsOnly`),
+   is `⊥` in a lawful extension of every labelling
+   (`Scheme.exists_isLawfulBelow_markedLayer_eq_bot`) and in a lawful labelling of the marked top
+   extending the glued labelling, for every marked specification
+   (`TowerProfile.exists_isLawful_markedTop_eq_bot`), so no marked cell is a gate; and the
+   leaf-and-marked completion is not a cap-reading extension at a cap of grade `3` or `4`, for
+   every marked specification (`TowerProfile.not_isCapReadingExtension_markedCompletion`).
+   Status, each named statement separately: `HasCapRowExtensions ξ` open; RCC open;
+   `HasCapReadingExtensions ξ` open; (R4) still to be proved; hypothesis 8 compiled.
 6. **The attained least lift and structural successor leastness** (prospective).  One lift of a
    legal stage type at a limit stage `β` to `β + ω`, least at every cell (each minimum is attained
    separately: `StageType.exists_lift_label_eq_ofOffset`); the threshold forced by a cover is read
