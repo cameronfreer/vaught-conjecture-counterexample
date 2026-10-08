@@ -26,6 +26,12 @@ Work file (placement later).  Compiled in this repository (theorem named):
 * **The forced top needs a root top** (`H3.label_eq_top_of_forced`): the hypothesis on `d` holds
   only at a root cell labelled `⊤`, so it has no instance at the apex contexts compiled so far
   (`StageType.markedCapContextBelow'_addApex` asks the root labels to avoid `⊤`).
+* **Apex contexts with root tops** (`StageType.markedCapContextBelow'_addApex_of_top`): that
+  condition is not needed; the apex reads every cell labelled `⊤` at the code of `⊤`, fixed by the
+  replacement at the grade of the apex.  So acquired contexts with root cells labelled `⊤` exist.
+* **At a cap of the top grade the tops dominate** (`H3.donorTopsDominate_of_lt`): the common face
+  has no cell of grade at least the cap.  So the hypothesis of `H3.not_donorTopsDominate` on `p`
+  needs a cap below the top grade; the apex contexts have their cap at the top grade.
 -/
 
 universe u
@@ -169,6 +175,28 @@ theorem not_exists_raiseCoface_dominate {t' : StageType.{u} α (k + 1)} {p : Sta
   exact not_donorTopsDominate ht' hp htb hpt hd htbd (r := r) _ hj₀ hj₀l hforce haN hak le_rfl
     hcc hccb hwP hwPbot hwPc hsep (hdom (k + 1) (haN.trans hak) le_rfl)
 
+/-- **At a cap of the top grade the tops dominate** (with `h = ⊥`): the cells of the common face
+have grade at most `k`, below the grade of the cap, so there is nothing to dominate. -/
+theorem donorTopsDominate_of_lt {c r : Fin t'.card} (hc : 0 < t'.toCellScheme.grade c)
+    (hkN : k < t'.toCellScheme.grade c) (B : Set (Fin (seed ht' hp htb).amalgam.card))
+    (k' : ℕ) :
+    DonorTopsDominate (requests ht' hp htb htbd c r hc) B (Fin.last (k + 1))
+      (Fin.castSucc (Fin.last k)) k' := by
+  intro f _ _
+  refine ⟨⊥, isSelfVisible_bot _, fun e he hC hN ↦ absurd hN (not_le.mpr ?_),
+    fun _ _ ↦ bot_le⟩
+  have h1 := (seed ht' hp htb).amalgam.isWellFormed.isWellFormed.grade_le_card e
+  have hsub : (seed ht' hp htb).amalgam.toCellScheme.scope e ⊆
+      (univ.erase (Fin.last (k + 1))).erase (Fin.castSucc (Fin.last k)) := fun z hz ↦
+    mem_erase.mpr ⟨(mem_erase.mp (he.1 hz)).1, hC hz⟩
+  have h2 := card_le_card hsub
+  rw [card_erase_of_mem (mem_erase.mpr ⟨Seed.last_ne_castSucc.symm, mem_univ _⟩),
+    card_erase_of_mem (mem_univ _), card_univ, Fintype.card_fin] at h2
+  change _ < (seed ht' hp htb).amalgam.toCellScheme.grade (faceCell
+    (restrictFace_left_seed ht' hp htb) c)
+  rw [grade_faceCell]
+  omega
+
 end Dominate
 
 /-- **A forced top lies below a root cell labelled `⊤`**: if every lawful labelling of `d` is at
@@ -185,5 +213,48 @@ theorem label_eq_top_of_forced {t : StageType.{u} α n} {d : StageType.{u} α (n
   exact top_le_iff.mp h
 
 end H3
+
+namespace StageType
+
+variable {α : Ordinal.{u}} {k n : ℕ}
+
+/-- The code of the formal top is fixed by every replacement at the threshold `k`. -/
+theorem visibilityReplace_blockTopCode (V : Finset Label.{u}) {i : ℕ} :
+    visibilityReplace k i ((Label.blockTopCode V k : Ordinal.{u}) : Label.{u}) =
+      (Label.blockTopCode V k : Label.{u}) := by
+  unfold Label.blockTopCode
+  rw [Label.visibilityReplace_block]
+  simp
+
+/-- **An apex type is a context respecting the root bottoms, root tops allowed**: the statement of
+`StageType.markedCapContextBelow'_addApex` without the condition that the root labels avoid `⊤`.
+The apex is the cap and the marker; it reads every cell labelled `⊤` at the code of `⊤`, whose
+finite part is the grade `k` of the apex, so the replacement at `k` fixes it. -/
+theorem markedCapContextBelow'_addApex_of_top {t₀ : StageType.{u} α k}
+    (ht₀ : t₀.IsLegalBelowFullGrade) (hk : 0 < k) {h : Fin n ↪ Fin k} (hnk : n + 1 < k)
+    (hoff : ∀ y ∈ (t₀.addApex ht₀ hk).visibleCells h, ∀ (μ : Ordinal.{u}) (f : ℕ),
+      Order.IsSuccPrelimit μ → (t₀.addApex ht₀ hk).label y = ((μ + f : Ordinal.{u}) : Label.{u}) →
+        f < k) :
+    TiedRootCapRelabel.MarkedCapContextBelow' (t₀.addApex ht₀ hk) h := by
+  have hg : (t₀.addApex ht₀ hk).toCellScheme.grade (Fin.last _) = k :=
+    congrArg Prod.snd (addApex_gradedIndex_last ht₀ hk)
+  refine ⟨Fin.last _, Fin.last _, ⟨⟨addApex_scope_last ht₀ hk, addApex_label_last ht₀ hk,
+    fun x _ ↦ by rw [hg]; exact (t₀.addApex ht₀ hk).grade_le x⟩,
+    ⟨addApex_label_last ht₀ hk, (t₀.addApex ht₀ hk).toCellScheme.mem_below_gradedIndex _,
+      fun x hx _ ↦ le_of_eq ((rowAt_addApex_last ht₀ hk _).trans
+        ((congrArg (blockEncode (apexCodes ht₀) k) ((addApex_label_last ht₀ hk).trans
+          hx.symm)).trans (rowAt_addApex_last ht₀ hk x).symm))⟩,
+    by rw [hg]; exact hnk, fun a _ hat ↦ ?_⟩,
+    fun y hy μ f hμ hf ↦ by rw [hg]; exact hoff y hy μ f hμ hf,
+    fun y _ hyb ↦ (rowAt_addApex_last_eq_bot_iff ht₀ hk y).mpr hyb⟩
+  have h1 : (t₀.addApex ht₀ hk).toScheme.rowAt (Fin.last _) (Fin.last _) =
+      (Label.blockTopCode (apexCodes ht₀) k : Label.{u}) :=
+    (rowAt_addApex_last ht₀ hk _).trans (by rw [addApex_label_last]; rfl)
+  have h2 : (t₀.addApex ht₀ hk).toScheme.rowAt (Fin.last _) a =
+      (Label.blockTopCode (apexCodes ht₀) k : Label.{u}) :=
+    (rowAt_addApex_last ht₀ hk a).trans (by rw [hat]; rfl)
+  rw [hg, h1, h2, visibilityReplace_blockTopCode]
+
+end StageType
 
 end VaughtConjecture
