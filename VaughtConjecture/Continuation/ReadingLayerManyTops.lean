@@ -38,6 +38,17 @@ at least as the marker, and the clause of hollow coatom cutoff determination at 
   `TopReadingApexExample.not_markedCapContextBelow'_oneType_of`); donors exist along `{2}` and
   `{1, 2}` (`TopReadingApexExample.hollowCoatomCutoffDetermination_rootTwo`,
   `TopReadingApexExample.hollowCoatomCutoffDetermination_rootOneTwo`).
+* **Every seed with a tie-keeping marker and new tops** (`TowerProfile.exists_coface_of_leftTie`,
+  `TowerProfile.exists_coface_of_coatoms`, compiled under the hypotheses named): the same carrier
+  over any seed on five points whose left coatom type has a tie-keeping marker
+  (`TowerProfile.LeftTie`) and whose right coatom type has new tops `Z`
+  (`TowerProfile.RightNewTops`), for every root of at most two points and every donor whose new
+  tops labelled `⊤` lie in `Z`.
+* **Every acquired apex context** (`TowerProfile.exists_coface_of_addApex`, compiled under the
+  hypotheses named): at `t₀.addApex` with the conditions of
+  `StageType.markedCapContextBelow'_addApex` along a root `ι`, the common face labelled `⊥`, and
+  the tie shape (`htie`, `htwo`, `hthree`, `hlab`); the uniqueness of the apex, its grade and the
+  root bottoms are those of the apex row.
 
 ## Placement
 
@@ -636,5 +647,259 @@ theorem hollowCoatomCutoffDetermination_rootOneTwo :
       (markedCapContextBelow'_oneType_of hα (by omega)) d hd⟩
 
 end TopReadingApexExample
+
+/-! ### The clause at every seed with a tie-keeping marker and new tops -/
+
+namespace TowerProfile
+
+open TopReadingApexExample StageType
+
+variable {α : Ordinal.{u}} (I : Seed.{u} α 3)
+
+/-- The glued labelling of a seed on the profile layer. -/
+noncomputable def gluedOf : Fin (scheme I).card → Label.{u} :=
+  fun d ↦ (exists_isLawful_top (I := I)).choose (Fin.castAdd _ d)
+
+theorem isLawfulBelow_gluedOf :
+    (scheme I).rows.IsLawfulBelow (univ, 4) fun d ↦ gluedOf I d := by
+  have hq := (exists_isLawful_top (I := I)).choose_spec.1
+  have hL := hq.comap (Scheme.isLowerEmbedding_fieldLayer (scheme I) 4 not_univ_four_le)
+  rw [Scheme.comap_rows_fieldLayer] at hL
+  exact hL.isLawfulBelow _
+
+theorem gluedOf_embed3 (d : Fin I.amalgam.card) : gluedOf I (embed3 I d) = I.amalgam.label d :=
+  (exists_isLawful_top (I := I)).choose_spec.2 d
+
+variable {I} {a z₁ z₂ : Fin I.left.card} {m : ℕ} {ι : Fin m ↪ Fin 4}
+  (hL : LeftTie I.left ι a z₁ z₂) {Z : Finset (Fin I.right.card)} {x₀ : Fin I.right.card}
+  (hR : RightNewTops I.right Z x₀)
+
+/-- **The completion at a seed with a tie-keeping marker and new tops**: the restricted reading
+layer at the new tops `Z`, legal by `TowerProfile.isLegalBelowFullGrade_readingTop_of_rightNewTops`,
+with the glued labelling. -/
+noncomputable def completionAt : CompletionBelowFullGrade I :=
+  readingCompletion I _ _ (isLegalBelowFullGrade_readingTop_of_rightNewTops hL hR)
+    (leftCell_props (I := I) hL.gradedIndex_apex hL.eq_apex).1.le
+    (fun _ hx ↦ (grade_le_one_of_rightNewTops hR hx).trans (by omega)) (gluedOf I)
+    (isLawfulBelow_gluedOf I)
+    (fun x hx ↦ by
+      obtain ⟨z, hz, rfl⟩ := mem_image.mp hx
+      rw [gluedOf_embed3]
+      exact le_of_le_of_eq le_top ((StageType.label_faceCell _ _).trans (hR.label_eq z hz)).symm)
+    (gluedOf_embed3 I)
+
+variable (hα : Order.IsSuccLimit α)
+
+/-- **The carrier at a seed with a tie-keeping marker and new tops**: the completion, the apex
+added. -/
+noncomputable def carrierAt : StageType.{u} α 5 :=
+  (completionAt hL hR).completion hα.isSuccPrelimit
+
+theorem carrierAt_mem_cofaces : carrierAt hL hR hα ∈ I.left.cofaces :=
+  ⟨(completionAt hL hR).isLegal_completion _, (completionAt hL hR).restrictFace_left_completion _⟩
+
+theorem restrictFace_right_carrierAt :
+    restrictFace (extendByLast Fin.castSuccEmb) (carrierAt hL hR hα) = some I.right :=
+  (completionAt hL hR).restrictFace_right_completion _
+
+variable {n : ℕ} {g : Fin n ↪ Fin 3} {d : StageType.{u} α (n + 1)}
+
+theorem restrictFace_amalgam_at (hd : restrictFace (extendByLast g) I.right = some d) :
+    restrictFace (extendByLast (g.trans Fin.castSuccEmb)) I.amalgam = some d :=
+  (congrArg (restrictFace · I.amalgam) (extendByLast_trans g Fin.castSuccEmb)).symm.trans
+    ((restrictFace_trans _ _ _ I.restrictFace_right).symm.trans hd)
+
+theorem restrictFace_carrierAt (hd : restrictFace (extendByLast g) I.right = some d) :
+    restrictFace (extendByLast (g.trans Fin.castSuccEmb)) (carrierAt hL hR hα) = some d :=
+  (congrArg (restrictFace · (carrierAt hL hR hα)) (extendByLast_trans g Fin.castSuccEmb)).symm.trans
+    ((restrictFace_trans _ _ _ (restrictFace_right_carrierAt hL hR hα)).symm.trans hd)
+
+theorem faceCell_carrierAt (hn : n ≤ 2) (hd : restrictFace (extendByLast g) I.right = some d)
+    (j : Fin d.card) :
+    faceCell (restrictFace_carrierAt hL hR hα hd) j =
+      Fin.castSucc (Fin.castAdd _ (embed3 I (faceCell I.restrictFace_right (faceCell hd j)))) := by
+  refine ((completionAt hL hR).faceCell_completion hα.isSuccPrelimit
+    (univ_map_extendByLast_ne hn) _ (restrictFace_amalgam_at hd) j).trans ?_
+  refine congrArg (fun x ↦ Fin.castSucc (Fin.castAdd _ (embed3 I x))) ?_
+  have hcomp : restrictFace ((extendByLast g).trans (Coatom.right 3)) I.amalgam = some d :=
+    (restrictFace_trans _ _ _ I.restrictFace_right).symm.trans hd
+  exact (faceCell_congr (extendByLast_trans g Fin.castSuccEmb).symm _ hcomp j).trans
+    (faceCell_trans I.restrictFace_right hd hcomp j)
+
+theorem faceCell_marker_carrierAt :
+    faceCell (carrierAt_mem_cofaces hL hR hα).2 a =
+      Fin.castSucc (Fin.castAdd _ (leftCell I a)) :=
+  (completionAt hL hR).faceCell_completion hα.isSuccPrelimit Coatom.univ_map_left_ne _
+    I.restrictFace_left _
+
+/-- **The carrier is a top-reading carrier** at the apex `a` of the left coatom type (cap and
+marker) for every donor of the right coatom type whose new tops labelled `⊤` lie in `Z`. -/
+theorem isTopReadingCarrier_carrierAt (hn : n ≤ 2)
+    (hd : restrictFace (extendByLast g) I.right = some d)
+    (hcover : ∀ j, Fin.last n ∈ d.toCellScheme.scope j → d.label j = ⊤ → faceCell hd j ∈ Z) :
+    I.left.IsTopReadingCarrier (g.trans Fin.castSuccEmb) d a a (carrierAt hL hR hα) where
+  isLegal := (carrierAt_mem_cofaces hL hR hα).1
+  restrictFace_castSucc := (carrierAt_mem_cofaces hL hR hα).2
+  restrictFace_extendByLast := restrictFace_carrierAt hL hR hα hd
+  reads u hu _ j hj hjt := by
+    have hga : I.left.toCellScheme.grade a = 4 := congrArg Prod.snd hL.gradedIndex_apex
+    obtain ⟨w, rfl, hw⟩ := (completionAt hL hR).exists_castSucc_of_gradedIndex_completion
+      hα.isSuccPrelimit (k := 4) (by omega) (hu.trans (by rw [hga]))
+    rw [faceCell_marker_carrierAt, faceCell_carrierAt hL hR hα hn hd j]
+    exact ((completionAt hL hR).rowAt_completion hα.isSuccPrelimit w _).trans_le
+      ((rowAt_readingTop_le (leftCell_props (I := I) hL.gradedIndex_apex hL.eq_apex).1.le
+        (fun _ hx ↦ (grade_le_one_of_rightNewTops hR hx).trans (by omega)) hw
+        (mem_image_of_mem _ (hcover j hj hjt))).trans_eq
+        ((completionAt hL hR).rowAt_completion hα.isSuccPrelimit w _).symm)
+
+/-- `univ.map (g.trans Fin.castSuccEmb)` is the meet of the point sets of `extendByLast g` and of
+`Fin.castSuccEmb`. -/
+theorem univ_map_trans_castSuccEmb' {k : ℕ} (g : Fin n ↪ Fin k) :
+    univ.map (g.trans Fin.castSuccEmb) =
+      univ.map (extendByLast g) ⊓ univ.map (Fin.castSuccEmb : Fin k ↪ Fin (k + 1)) := by
+  ext x
+  simp only [mem_map, mem_univ, true_and, Finset.inf_eq_inter, mem_inter,
+    Function.Embedding.trans_apply, Fin.coe_castSuccEmb]
+  constructor
+  · rintro ⟨i, rfl⟩
+    exact ⟨⟨Fin.castSucc i, extendByLast_castSucc g i⟩, ⟨g i, rfl⟩⟩
+  · rintro ⟨⟨y, rfl⟩, ⟨z, hz⟩⟩
+    induction y using Fin.lastCases with
+    | last =>
+      rw [extendByLast_last] at hz
+      exact absurd hz (Fin.castSucc_lt_last z).ne
+    | cast i => exact ⟨i, (extendByLast_castSucc g i).symm⟩
+
+/-- **The common face along a root at a seed**: the face of the left coatom type along `g` and the
+face of the donor along its first points agree (the meet of two faces of the amalgam is a face). -/
+theorem exists_root_face_at (hd : restrictFace (extendByLast g) I.right = some d) :
+    ∃ t, restrictFace (g.trans Fin.castSuccEmb) I.left = some t ∧
+      restrictFace Fin.castSuccEmb d = some t := by
+  have hA := restrictFace_amalgam_at hd
+  have h₁ := ((restrictFace_eq_some_iff _ _).mp hA).1
+  have h₂ := ((restrictFace_eq_some_iff _ _).mp I.restrictFace_left).1
+  have hf : univ.map ((g.trans Fin.castSuccEmb).trans Fin.castSuccEmb) ∈
+      I.amalgam.toCellScheme.faces := by
+    rw [univ_map_trans_castSuccEmb']
+    exact I.amalgam.isWellFormed.isPlan.infClosed h₁ h₂
+  obtain ⟨t, ht⟩ := Option.isSome_iff_exists.mp ((isSome_restrictFace_iff _ _).mpr hf)
+  refine ⟨t, (restrictFace_trans _ _ _ I.restrictFace_left).trans ht, ?_⟩
+  exact (restrictFace_trans _ _ _ hA).trans ((congrArg (restrictFace · I.amalgam)
+    (castSuccEmb_trans_extendByLast (g.trans Fin.castSuccEmb))).trans ht)
+
+include hL hR hα in
+/-- **The clause of hollow coatom cutoff determination at every seed with a tie-keeping marker and
+new tops** (compiled under the hypotheses named): let the left coatom type of a seed on five points
+have a tie-keeping marker at its apex `a` (`TowerProfile.LeftTie`) and the right coatom type a set
+`Z` of new tops below one of grade `1` (`TowerProfile.RightNewTops`).  For every root `g` of at most
+two points and every donor `d` of the right coatom type along `extendByLast g` whose new tops
+labelled `⊤` lie in `Z`, the carrier `TowerProfile.carrierAt` is a coface of the left coatom type
+with face the right coatom type, determining `d` at a permitted cutoff. -/
+theorem exists_coface_of_leftTie (hn : n ≤ 2)
+    (hd : restrictFace (extendByLast g) I.right = some d)
+    (hcover : ∀ j, Fin.last n ∈ d.toCellScheme.scope j → d.label j = ⊤ → faceCell hd j ∈ Z) :
+    ∃ D' ∈ I.left.cofaces, restrictFace (extendByLast Fin.castSuccEmb) D' = some I.right ∧
+      ∃ δ : Label.{u}, IsPermittedCutoff α δ ∧
+        IsDeterminedWithin (receivingFamily D' δ) I.left (g.trans Fin.castSuccEmb) d := by
+  have hga : I.left.toCellScheme.grade a = 4 := congrArg Prod.snd hL.gradedIndex_apex
+  have hcap : I.left.IsTopCap a :=
+    ⟨congrArg Prod.fst hL.gradedIndex_apex, hL.label_apex,
+      fun x _ ↦ (I.left.grade_le x).trans_eq hga.symm⟩
+  obtain ⟨t, ht, htd⟩ := exists_root_face_at hd
+  obtain ⟨δ, hδ, hδD⟩ := exists_isPermittedCutoff_gt hα (carrierAt hL hR hα)
+  exact ⟨carrierAt hL hR hα, carrierAt_mem_cofaces hL hR hα, restrictFace_right_carrierAt hL hR hα,
+    δ, hδ, isDeterminedWithin_receivingFamily_of_isTopReadingCarrier ht htd hcap hL.label_apex
+      (by rw [hga]; omega) (isTopReadingCarrier_carrierAt hL hR hα hn hd hcover) hδD⟩
+
+include hα in
+/-- **The clause at a context and a coface** (`TowerProfile.exists_coface_of_leftTie` at the seed of
+the two coatom types): for a legal context `t'` with face `p` along `Fin.castSuccEmb` and a
+tie-keeping marker, every coface `tb` of `p` with new tops `Z`, every root of at most two points and
+every donor of `tb` whose new tops labelled `⊤` lie in `Z`. -/
+theorem exists_coface_of_coatoms {t' tb : StageType.{u} α 4} {p : StageType.{u} α 3}
+    (hlt : t'.IsLegal) (hpa : restrictFace Fin.castSuccEmb t' = some p) (htb : tb ∈ p.cofaces)
+    {a z₁ z₂ : Fin t'.card} {m : ℕ} {ι : Fin m ↪ Fin 4} (hL : LeftTie t' ι a z₁ z₂)
+    {Z : Finset (Fin tb.card)} {x₀ : Fin tb.card} (hR : RightNewTops tb Z x₀)
+    {n : ℕ} (g : Fin n ↪ Fin 3) (hn : n ≤ 2) {d : StageType.{u} α (n + 1)}
+    (hd : restrictFace (extendByLast g) tb = some d)
+    (hcover : ∀ j, Fin.last n ∈ d.toCellScheme.scope j → d.label j = ⊤ → faceCell hd j ∈ Z) :
+    ∃ D' ∈ t'.cofaces, restrictFace (extendByLast Fin.castSuccEmb) D' = some tb ∧
+      ∃ δ : Label.{u}, IsPermittedCutoff α δ ∧
+        IsDeterminedWithin (receivingFamily D' δ) t' (g.trans Fin.castSuccEmb) d :=
+  exists_coface_of_leftTie (I := Seed.ofCoatoms hlt htb.1 hpa htb.2) hL hR hα hn hd hcover
+
+/-- The apex type of a type on four points legal below the full grade. -/
+noncomputable abbrev apexOf {t₀ : StageType.{u} α 4} (ht₀ : t₀.IsLegalBelowFullGrade) :
+    StageType.{u} α 4 :=
+  t₀.addApex ht₀ (by omega)
+
+include hα in
+/-- **The clause at every acquired apex context of the `StageType.markedCapContextBelow'_addApex`
+family** (compiled under the hypotheses named): let `t' = t₀.addApex` be the apex context of a type
+`t₀` legal below the full grade, with the conditions of `StageType.markedCapContextBelow'_addApex`
+along a root `ι` (root labels never `⊤`, root offsets below `4`), the common face labelled `⊥`
+(`hface`), and the tie shape: root cells `z₁`, `z₂` of grades `1`, `2` (`z₂` labelled `⊥` or with
+the proper label of `z₁`), one value at the cells of grade `1` not labelled `⊥` (`htie`), one at
+those of grade `2` (`htwo`), the cells of grade `3` labelled `⊥` (`hthree`).  Then the clause of
+hollow coatom cutoff determination holds at `t'`, every coface `tb` of its face with new tops `Z`
+(`TowerProfile.RightNewTops`), every root `g` of at most two points, and every donor of `tb` along
+`extendByLast g` whose new tops labelled `⊤` lie in `Z`.  The apex is the cap and the marker; its
+uniqueness at `(univ, 4)`, its grade and the reading of the cells labelled `⊥` as `⊥` are those of
+the apex row. -/
+theorem exists_coface_of_addApex {t₀ : StageType.{u} α 4} (ht₀ : t₀.IsLegalBelowFullGrade)
+    {p : StageType.{u} α 3}
+    (hpa : restrictFace Fin.castSuccEmb (apexOf ht₀) = some p)
+    {m : ℕ} {ι : Fin m ↪ Fin 4} (hm : m + 1 < 4)
+    (hroot : ∀ y ∈ (apexOf ht₀).visibleCells ι,
+      (apexOf ht₀).label y ≠ ⊤)
+    (hoff : ∀ y ∈ (apexOf ht₀).visibleCells ι, ∀ (μ : Ordinal.{u}) (f : ℕ),
+      Order.IsSuccPrelimit μ →
+        (apexOf ht₀).label y = ((μ + f : Ordinal.{u}) : Label.{u}) → f < 4)
+    (hface : ∀ z, Fin.last 3 ∉ (apexOf ht₀).toCellScheme.scope z →
+      (apexOf ht₀).label z = ⊥)
+    {z₁ z₂ : Fin (apexOf ht₀).card}
+    (hz₁ : z₁ ∈ (apexOf ht₀).visibleCells ι)
+    (hz₂ : z₂ ∈ (apexOf ht₀).visibleCells ι)
+    (hg₁ : (apexOf ht₀).toCellScheme.grade z₁ = 1)
+    (hg₂ : (apexOf ht₀).toCellScheme.grade z₂ = 2)
+    (hlab : (apexOf ht₀).label z₂ = ⊥ ∨
+      ((apexOf ht₀).label z₂ = (apexOf ht₀).label z₁ ∧
+        IsProper ((apexOf ht₀).label z₂)))
+    (htie : ∀ q : Fin (apexOf ht₀).card → Label.{u},
+      (apexOf ht₀).rows.IsLawful q → ∀ z,
+        (apexOf ht₀).toCellScheme.grade z = 1 →
+          (apexOf ht₀).label z ≠ ⊥ → q z = q z₁)
+    (htwo : ∀ q : Fin (apexOf ht₀).card → Label.{u},
+      (apexOf ht₀).rows.IsLawful q → ∀ z,
+        (apexOf ht₀).toCellScheme.grade z = 2 →
+          (apexOf ht₀).label z ≠ ⊥ → q z = q z₂)
+    (hthree : ∀ z, (apexOf ht₀).toCellScheme.grade z = 3 →
+      (apexOf ht₀).label z = ⊥)
+    {tb : StageType.{u} α 4} (htb : tb ∈ p.cofaces)
+    {Z : Finset (Fin tb.card)} {x₀ : Fin tb.card} (hR : RightNewTops tb Z x₀)
+    {n : ℕ} (g : Fin n ↪ Fin 3) (hn : n ≤ 2) {d : StageType.{u} α (n + 1)}
+    (hd : restrictFace (extendByLast g) tb = some d)
+    (hcover : ∀ j, Fin.last n ∈ d.toCellScheme.scope j → d.label j = ⊤ → faceCell hd j ∈ Z) :
+    ∃ D' ∈ (apexOf ht₀).cofaces,
+      restrictFace (extendByLast Fin.castSuccEmb) D' = some tb ∧
+      ∃ δ : Label.{u}, IsPermittedCutoff α δ ∧
+        IsDeterminedWithin (receivingFamily D' δ) (apexOf ht₀)
+          (g.trans Fin.castSuccEmb) d := by
+  obtain ⟨c, r, hctx, hoff', hbot⟩ :=
+    StageType.markedCapContextBelow'_addApex ht₀ (by omega) hm hroot hoff
+  have hg4 : (t₀.addApex ht₀ (by omega)).toCellScheme.grade (Fin.last _) = 4 :=
+    congrArg Prod.snd (StageType.addApex_gradedIndex_last ht₀ (by omega))
+  have hc : c = Fin.last _ := by
+    refine StageType.eq_of_grade_addApex ht₀ (by omega) (le_antisymm
+      ((t₀.addApex ht₀ (by omega)).grade_le c) ?_)
+    exact hg4.symm.le.trans (hctx.1.2.2 _ (StageType.addApex_label_last ht₀ (by omega)))
+  subst hc
+  exact exists_coface_of_coatoms hα (StageType.isLegal_addApex _ _) hpa htb
+    (leftTie_of_acquired hctx hoff' hbot hg4
+      (fun _ hz ↦ StageType.eq_last_of_gradedIndex_addApex ht₀ (by omega) hz)
+      (fun z _ hz ↦ (StageType.rowAt_addApex_last_eq_bot_iff ht₀ (by omega) z).mpr hz)
+      hface hz₁ hz₂ hg₁ hg₂ hlab htie htwo hthree) hR g hn hd hcover
+
+end TowerProfile
 
 end VaughtConjecture
