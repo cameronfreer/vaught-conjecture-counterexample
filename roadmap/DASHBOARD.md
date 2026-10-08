@@ -475,6 +475,25 @@ invariance under relabelling (`StageType.IsSourceGapContext.reindex`,
 `Realization.receivingHollowReceiving_of_cutoffDetermination`,
 `Expansion.ReceivingStableCappedReceiving.of_hasCutoffStableRecoverySchemes_gradedCap`).
 
+**Receiving route with the lost point last.**  Compiled in this repository (theorem named):
+`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_coatomDeterminations_sourceGapLast_markedCap`
+`(h4 : ∀ ξ < ω₁, HasCutoffFirstCoatomCompletions ξ (GradedCapCalibration ξ))`
+`(h2 : CoatomCutoffDetermination fun K t' h ↦ t'.IsSourceGapContextLast K h)`
+`(h3 : HollowCoatomCutoffDetermination fun t' h ↦ t'.IsMarkedCapContext h) :`
+`HasThinAlephOneSpectrum densitySentence` (`MainTheorem/SourceGapLastRoute`).  (R4) and (R3) are
+as in the source-gap form; (R2) is asked only at the source-gap contexts whose lost point is the
+last point (`StageType.IsSourceGapContextLast`).  The (R2) hypothesis of the source-gap form
+implies it (`Realization.CoatomCutoffDetermination.isSourceGapContextLast`); no converse is
+claimed.  Acquisition proved; determination open.  The acquired source-gap contexts have the
+coatom off the lost point closed (`StageType.IsSourceGapContextOff`,
+`Realization.residualAcquisition_isSourceGapContextOff`, `Continuation/SourceGapContext`), and
+coatom cutoff determination for `IsSourceGapContextLast` gives cutoff determination for them by
+the transposition of the lost point with the last point
+(`Realization.CoatomCutoffDetermination.cutoffDetermination_off`).  Coatom cutoff determination
+for `IsSourceGapContextLast` is open.  The source-gap form does not reduce to it by a
+transposition: the closed coatoms of a context are the complements of the extreme points of its
+plan, at most two (`Geometry.IsPlan.card_extremes_le_two`).
+
 Each hypothesis is a separate statement with its own status.  Hypothesis 8 is compiled
 (`StageType.hasApexCoatomExtensions`).  Hypotheses 1 and 3 are derived from it and so compiled
 with no hypothesis (`MainTheorem.capToModel`, `forcingDonors_blockStage`); hypothesis 7 is
@@ -580,8 +599,10 @@ Status of each:
    acquisition for it is compiled in this repository
    (`Realization.residualAcquisition_isSourceGapContext`) with no hypothesis beyond those of
    `Realization.ResidualAcquisition`; its stage-type part needs no model
-   (`StageType.exists_isSourceGapContextAt_comap`).  Cutoff determination for it is open; with it
-   and (R1) at every limit stage, (R2) follows
+   (`StageType.exists_isSourceGapContextAt_comap`); the acquired contexts have the coatom off the
+   lost point closed (`StageType.IsSourceGapContextOff`, compiled in this repository,
+   `Realization.residualAcquisition_isSourceGapContextOff`).  Cutoff determination for it is
+   open; with it and (R1) at every limit stage, (R2) follows
    (`Realization.residualReceiving_of_cutoffDetermination_isSourceGapContext`).  If no legal
    stage type were a source-gap context, (R2) would hold outright
    (`Realization.residualReceiving_of_forall_not_isSourceGapContext`); but legal source-gap types
