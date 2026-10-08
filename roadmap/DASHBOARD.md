@@ -241,8 +241,10 @@ Notes on the rows, each with its marker:
   hypothesis 8 enters), 4.34 and 4.35 without proof and sketches Lemma 4.33.  Their counterparts
   here are compiled (the hereditary property, `hereditary_legalAge`, with no hypothesis) or
   compiled conditionally on the hypotheses below, and every compiled form of the main theorem is
-  conditional on named hypotheses, at fewest the four of the four-hypothesis form ((R1), the
-  continuation criterion, (R2), (R3)), each still to be proved; hypothesis 8 is compiled.
+  conditional on named hypotheses: on the retained all-model terminal-classification route, at
+  fewest the four of the four-hypothesis form ((R1), the continuation criterion, (R2), (R3)), and
+  on the receiving-models route the three of its three-hypothesis form ((R4), (R2) and (R3) for
+  receiving models), each still to be proved; hypothesis 8 is compiled.
 - *Acceptance lemma 1 (same-level maximal realization).*  Compiled conditionally on
   `StageType.HasApexCoatomExtensions` at `λ_β` and `ForcingDonors β` (`exists_sameLevelMaximal`),
   and with both compiled, at every `β < ω₁` with no further hypothesis
@@ -380,12 +382,15 @@ compiled counterexamples before any conditional theorem is stated around it.
 
 ## The named hypotheses of the main theorem
 
-Four forms of the main theorem on `ℕ` are compiled, each conditionally on named hypotheses.  Each
-later form is obtained from the one before it; all four are kept.  At present the fewest
-hypotheses are four.  The count went from seven to six to five by compiled derivations, and from
-five to four by a compiled proof of hypothesis 8 (`StageType.hasApexCoatomExtensions`, compiled
-in this repository (theorem named)); with it hypotheses 1 and 3 are compiled with no hypothesis,
-and hypothesis 7 from next-block uniqueness alone.  Hypotheses 2 and 4–6 are still to be proved.
+Four forms of the main theorem on `ℕ` by the all-model terminal-classification route (retained)
+are compiled, each conditionally on named hypotheses.  Each later form is obtained from the one
+before it; all four are kept.  On this route the fewest hypotheses are four.  The receiving-models
+route (below) has a separate form with three open hypotheses, (R4), (R2) and (R3) for receiving
+models; it changes nothing in this list or the table.  The count went from seven to six to five
+by compiled derivations, and from five to four by a compiled proof of hypothesis 8
+(`StageType.hasApexCoatomExtensions`, compiled in this repository (theorem named)); with it
+hypotheses 1 and 3 are compiled with no hypothesis, and hypothesis 7 from next-block uniqueness
+alone.  Hypotheses 2 and 4–6 are still to be proved.
 
 - **Seven hypotheses.**  `densitySentence_hasThinAlephOneSpectrum_of_terminalClassification`
   (`MainTheorem/ModelExpansionDomains`) is compiled conditionally on hypotheses 1–7 of the table
@@ -421,6 +426,25 @@ and hypothesis 7 from next-block uniqueness alone.  Hypotheses 2 and 4–6 are s
   hypotheses 2 and 4–6 exactly: (R1), the continuation criterion, (R2), and (R3).  It is the
   five-hypothesis form with hypothesis 8 given by its proof at every block stage
   (`StageType.hasApexCoatomExtensions_blockStage`).  Each of the four is still to be proved.
+
+**Receiving-models route.**  A separate form of the main theorem on `ℕ`, for the class `𝒞_α` of
+receiving models (`Realization.IsReceivingModel`: models with finite-cut receiving), is compiled
+in this repository (theorem named):
+`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_receivingModels'`
+(`MainTheorem/ReceivingRoute`; on all countable carriers,
+`MainTheorem.vaughtCounterexample_allCarriers_of_receivingModels'`), conditional on exactly three
+hypotheses: (R4) for receiving models (`hR4 : Expansion.ReceivingStableCappedReceiving`), (R2) for
+receiving models (`hres : Realization.ReceivingResidualReceiving`), and (R3) for receiving models
+(`hhol : Realization.HollowReceiving` with `Realization.IsReceivingCoverHollowAtBlock`).  Each is
+the original statement asked only of models with finite-cut receiving, and each follows from the
+original (`MainTheorem.receivingForms_of_stableCappedReceiving`).  The three are open.  (R1) is
+not a hypothesis of it and is not proved by it: receiving is a clause of the class, and (R1)
+stays a later fidelity theorem, here meaning a later theorem relating models and receiving models
+(two presentations of the tower), not the fidelity theorem of Layer 2 (the density sentence
+against the four-family sentence).  The form with the coatom
+extension property with apex as a fourth hypothesis is kept
+(`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_receivingModels`).  The table below and
+the status of each hypothesis are unchanged.
 
 Each hypothesis is a separate statement with its own status.  Hypothesis 8 is compiled
 (`StageType.hasApexCoatomExtensions`).  Hypotheses 1 and 3 are derived from it and so compiled
