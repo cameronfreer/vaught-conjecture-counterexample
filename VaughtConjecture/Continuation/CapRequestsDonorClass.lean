@@ -195,6 +195,115 @@ theorem botLiftProvisionOf_admits_donor (hm : 0 < m)
   rw [hat_of_le hNk]
   exact hWcap.trans (hhT y hy)
 
+/-- **The lift provision at the positive caps from the donor coatom for the admitted states**, at
+every grade `k` from the cap, when the tops of the donor dominate the common face: a prescribed
+profile out of the class is matched by the fill along it; one in the class is correct, and the
+fill along it is capped at the larger of the cap of the lift and the label of the condition. -/
+theorem capLiftProvisionOf_admits_donor (hm : 0 < m)
+    (hgr : r.IsGraded I.amalgam.toCellScheme.grade)
+    (hcapC : I.amalgam.toCellScheme.scope r.cap ⊆ univ.erase xp) {k : ℕ}
+    (hNk : I.amalgam.toCellScheme.grade r.cap ≤ k) (hkm : k ≤ m + 1)
+    (hxp : xp ∈ (Pts : Finset (Fin (m + 2)))) (hxd : xd ∈ (Pts : Finset (Fin (m + 2))))
+    (hne : xd ≠ xp) (hZ : r.Z = ∅) (hF : r.F = ∅)
+    (hT : ∀ y ∈ r.T, ¬ I.amalgam.toCellScheme.scope y ⊆ univ.erase xp ∧
+      y ∈ I.amalgam.toCellScheme.below (univ.erase xd, k))
+    (hBD : ∀ d ∈ B, d ∈ I.amalgam.toCellScheme.below (univ.erase xd, k))
+    (hdom : DonorTopsDominateAt r B xp xd k) :
+    CapLiftProvisionOf (r.Admits B ∅) k xd := fun h₀ hh₀ _ hb P hP f hf hfP ↦ by
+  classical
+  have hk0 : 0 < k := (I.amalgam.isWellFormed.isWellFormed.grade_pos r.cap).trans_le hNk
+  have hPc := mem_cat.mp (mem_rowCat.mp hP).1
+  obtain ⟨W, hW, hWf, hWP⟩ := exists_isCutLawful_of_coatom_le hm hk0 hkm hxd hh₀ hPc.1 hf hfP
+  by_cases hcl : ∀ d ∈ B, hat I k P d ≠ ⊥
+  swap
+  · push Not at hcl
+    obtain ⟨d, hdB, hd⟩ := hcl
+    rw [hat_of_le (hBD d hdB).2] at hd
+    have hWd : W d = ⊥ := by
+      have e := hWP d
+      rw [hd, min_bot_left, min_eq_bot] at e
+      exact e.resolve_right hb.ne'
+    exact ⟨W, hW, hWf, hWP, orbitCode_mem_rowCat_admits_of_eq_bot hW hdB (hBD d hdB).2 hWd⟩
+  have hPcorr : r.IsCorrect (hat I k P) :=
+    (mem_rowCat.mp hP).2 (inBottomClass_empty_iff_forall.mpr hcl)
+  have hfB : ∀ d ∈ B, f d ≠ ⊥ := fun d hdB hfd ↦ by
+    have e := hfP d (hBD d hdB)
+    rw [hfd, min_bot_left] at e
+    have hPd : P d ≠ ⊥ := by
+      have := hcl d hdB
+      rwa [hat_of_le (hBD d hdB).2] at this
+    exact (min_eq_bot.mp e.symm).elim hPd hb.ne'
+  obtain ⟨h, hh, hle, hhT⟩ := hdom f hf hfB
+  set h' := max h₀ h with hh'def
+  have hh' : IsSelfVisible k h' := hh₀.max hh
+  set N := I.amalgam.toCellScheme.grade r.cap
+  set W' : Prof I := fun d ↦
+    if I.amalgam.toCellScheme.scope d ⊆ univ.erase xp ∧ N ≤ I.amalgam.toCellScheme.grade d
+    then min (W d) h' else W d with hW'def
+  have hW'cut : IsCutLawful I k W' := hW.capAboveLe hxp hxd hne hh' fun d hd hdC hdN ↦ by
+    rw [hWf d hd]; exact (hle d hd hdC hdN).trans (le_max_right _ _)
+  have hW'D (d) (hd : d ∈ I.amalgam.toCellScheme.below (univ.erase xd, k)) : W' d = f d := by
+    simp only [hW'def]
+    split_ifs with hZ'
+    · rw [hWf d hd]; exact min_eq_left ((hle d hd hZ'.1 hZ'.2).trans (le_max_right _ _))
+    · exact hWf d hd
+  have hW'h (d : Fin I.amalgam.card) : min (W' d) h₀ = min (W d) h₀ := by
+    simp only [hW'def]
+    split_ifs
+    · rw [min_assoc, min_eq_right (le_max_left h₀ h)]
+    · rfl
+  have hW'cap : W' r.cap ≤ h' := by
+    simp only [hW'def]
+    split_ifs
+    · exact min_le_right _ _
+    · rename_i hn
+      exact absurd ⟨hcapC, le_rfl⟩ hn
+  have hNN : r.N ≤ N := hgr.le_grade_cap
+  have hcb : r.cap ∈ I.amalgam.toCellScheme.below (univ.erase xp, k) := ⟨hcapC, hNk⟩
+  have hcorr : r.IsCorrect (hat I k W') := by
+    by_cases hc : W' r.cap ≤ h₀
+    · -- below the cap of the lift: the state capped at its cap is that of `P`
+      have hPsv : IsSelfVisible N (P r.cap) := by
+        have := (Rows.isLawfulBelow_iff.mp (hPc.1.erase hxp)).orderly ⟨r.cap, hcb⟩
+        change IsSelfVisible (I.amalgam.toCellScheme.grade r.cap) (P r.cap) at this
+        exact this
+      set s : Prof I := fun d ↦ min (hat I k P d) h₀
+      have hs : r.IsCorrect s := hPcorr.cap hgr.off_le (hh₀.mono (hNN.trans hNk))
+      have hcap' : W' r.cap = min (P r.cap) h₀ := by
+        rw [← min_eq_left hc, hW'h, hWP]
+      have hs'cap : hat I k W' r.cap = s r.cap := by
+        simp only [s, hat_of_le hNk, hcap']
+      have hs'h (d : Fin I.amalgam.card) : min (hat I k W' d) h₀ = min (s d) h₀ := by
+        simp only [s]
+        rw [min_assoc, min_self]
+        exact min_hat_eq (fun e ↦ (hW'h e).trans (hWP e)) d
+      refine hs.of_min_eq hs'cap ?_ (fun x ↦ ?_) hgr.off_le
+      · simp only [s, hat_of_le hNk]
+        exact (hPsv.min (hh₀.mono hNk)).mono hNN
+      · have hsc : s r.cap = min (P r.cap) h₀ := by simp only [s, hat_of_le hNk]
+        rw [hs'cap, hsc]
+        calc min (hat I k W' x) (min (P r.cap) h₀)
+            = min (min (hat I k W' x) h₀) (P r.cap) := by
+              rw [min_comm (P r.cap) h₀, ← min_assoc]
+          _ = min (min (s x) h₀) (P r.cap) := by rw [hs'h]
+          _ = min (s x) (min (P r.cap) h₀) := by
+              simp only [s]
+              rw [min_comm (P r.cap) h₀, ← min_assoc (min (hat I k P x) h₀) h₀ (P r.cap),
+                min_assoc (hat I k P x) h₀ h₀, min_self]
+    · -- above the cap of the lift: the cap is at most `h`, below the tops
+      have hh'h : h' = h := by
+        refine max_eq_right ?_
+        by_contra hlt
+        exact hc (hW'cap.trans_eq (max_eq_left (le_of_lt (not_le.mp hlt))))
+      refine isCorrect_of_forall (fun z hz ↦ by simp [hZ] at hz)
+        (fun f' hf' ↦ by simp [hF] at hf') fun y hy ↦ ?_
+      rw [hat_of_le ((hgr.grade_le_of_mem_T y hy).trans hNk), hW'D y (hT y hy).2]
+      refine (min_le_right _ _).trans ?_
+      rw [hat_of_le hNk]
+      exact (hW'cap.trans_eq hh'h).trans (hhT y hy)
+  refine ⟨W', hW'cut, fun d hd ↦ hW'D d hd, fun d ↦ (hW'h d).trans (hWP d),
+    rowCat_isCorrect_subset_admits (orbitCode_mem_rowCat hgr (hNN.trans hNk) hW'cut hcorr)⟩
+
 end CapRequests
 
 end VaughtConjecture
