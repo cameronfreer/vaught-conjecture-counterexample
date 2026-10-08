@@ -29,10 +29,17 @@ of the root of the donor face, and every designated top concerned.
   `⊤`, every root cell is a designated cell below the top, and the residual holds.
 
 The residual can fail only through root cells labelled `⊤`: a root top `a` of grade at most `K`
-whose value in the donor face is above a designated top.  Then every lowered face has the value of
-`a` at `a`, and availability bounds the frontier from below by it as soon as the owner and the lost
-top are the only cells of graded indices above that of `a` (argued; on two points the lost top and
-the owner share the graded index `(univ, 1)` at `K = 1`, so the configuration needs three points).
+whose value in the donor face is above a designated top.  **It does fail at a legal context**
+(`OwnerGradeOneTop.not_rootBelowTopsAt_one`, module
+`VaughtConjecture.Continuation.H2OwnerAtTop`): at the owner lane's context `OwnerGradeOneTop.ctx`
+(two points, grade `1`) the lost top lies below the root top in every lawful labelling, so a donor
+face with the designated lost top below the root top violates it.  There owner lowering below the
+designated tops need not fail: the lost top, not the owner, has to be lowered.  So the cap through
+the lost point is too strong a route below the full grade; the cap on the cells read by the owner at
+most the lost top (the owner lane's construction at grade `1`) is the one to generalize.  Owner
+lowering below the designated tops itself fails only if the root top also bounds the lost top from
+below (the owner and the lost top alone at graded indices above that of the root top, same grade:
+three points at least; not compiled).
 -/
 
 universe u
