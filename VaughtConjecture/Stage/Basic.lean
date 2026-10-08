@@ -664,6 +664,64 @@ theorem exists_faceCell_eq_of_last_notMem {D : StageType.{u} α (k + 1)} {t' : S
   D.toScheme.exists_faceCell_eq _ (Scheme.mem_visibleCells.mpr fun _ hx ↦
     Fin.exists_castSucc_eq.mpr fun hxl ↦ hs (hxl ▸ hx))
 
+/-! ### The row of a cell at its finite part -/
+
+section FinitePart
+
+open Ordinal
+
+/-- **The cap row reads a reference cell at its finite part**: in a stage type `T`, let `b` be a
+cell (the cap) and `a` a cell below its graded index labelled `μ + i` (`μ` zero or a limit), with
+`i` below the grade of `b` and `μ + i` below the label of `b`.  Then the row of `b` reads `a` at
+`ω · c + i` for some ordinal `c`. -/
+theorem exists_row_eq_omega0_mul_add (T : StageType.{u} α n) {a b : Fin T.card}
+    (ha : a ∈ T.toCellScheme.below (T.toCellScheme.gradedIndex b)) {μ : Ordinal.{u}}
+    (hμ : Order.IsSuccPrelimit μ) {i : ℕ} (hi : i < T.toCellScheme.grade b)
+    (hTa : T.label a = ((μ + i : Ordinal.{u}) : Label.{u}))
+    (hab : ((μ + i : Ordinal.{u}) : Label.{u}) < T.label b) :
+    ∃ c : Ordinal.{u}, T.rows.row b ⟨a, ha⟩ = ((ω * c + i : Ordinal.{u}) : Label.{u}) :=
+  (T.isLawful.locality b).exists_eq_omega0_mul_add (a := ⟨a, ha⟩)
+    (b := ⟨b, T.toCellScheme.mem_below_gradedIndex b⟩) hμ ha.2 hi (by
+      -- the labelling of locality at `b` is `d ↦ min (T.label d) (T.label b)`
+      change min (T.label a) (T.label b) = _
+      rw [min_eq_left (hTa ▸ hab).le, hTa]) (by
+      -- the same labelling, at `b`
+      change _ < min (T.label b) (T.label b)
+      rwa [min_self])
+
+/-- **The cap row has one code per block**: two cells below the cap `b` labelled `μ + i` and
+`μ + i'` in one block, both below the label of `b` with `i, i'` below its grade, are read by the
+row of `b` in one block `ω · c`. -/
+theorem eq_of_row_eq_omega0_mul_add (T : StageType.{u} α n) {a a' b : Fin T.card}
+    (ha : a ∈ T.toCellScheme.below (T.toCellScheme.gradedIndex b))
+    (ha' : a' ∈ T.toCellScheme.below (T.toCellScheme.gradedIndex b)) {μ : Ordinal.{u}}
+    (hμ : Order.IsSuccPrelimit μ) {i i' : ℕ} {c c' : Ordinal.{u}}
+    (hi : i < T.toCellScheme.grade b) (hi' : i' < T.toCellScheme.grade b)
+    (hTa : T.label a = ((μ + i : Ordinal.{u}) : Label.{u}))
+    (hTa' : T.label a' = ((μ + i' : Ordinal.{u}) : Label.{u}))
+    (hab : ((μ + i : Ordinal.{u}) : Label.{u}) < T.label b)
+    (ha'b : ((μ + i' : Ordinal.{u}) : Label.{u}) < T.label b)
+    (hra : T.rows.row b ⟨a, ha⟩ = ((ω * c + i : Ordinal.{u}) : Label.{u}))
+    (hra' : T.rows.row b ⟨a', ha'⟩ = ((ω * c' + i' : Ordinal.{u}) : Label.{u})) : c = c' := by
+  have hq (x : Fin T.card) (hx : x ∈ T.toCellScheme.below (T.toCellScheme.gradedIndex b))
+      {o : Ordinal.{u}} (hx' : T.label x = (o : Label.{u})) (hxb : (o : Label.{u}) < T.label b) :
+      (fun d : T.toCellScheme.below (T.toCellScheme.gradedIndex b) ↦
+        min (T.label d) (T.label b)) ⟨x, hx⟩ = (o : Label.{u}) := by
+    -- the labelling of locality at `b`, at `x`
+    change min (T.label x) (T.label b) = _
+    rw [min_eq_left (hx' ▸ hxb).le, hx']
+  have hqb {o : Ordinal.{u}} (h : (o : Label.{u}) < T.label b) :
+      (o : Label.{u}) < (fun d : T.toCellScheme.below (T.toCellScheme.gradedIndex b) ↦
+        min (T.label d) (T.label b)) ⟨b, T.toCellScheme.mem_below_gradedIndex b⟩ := by
+    -- the labelling of locality at `b`, at `b`
+    change _ < min (T.label b) (T.label b)
+    rwa [min_self]
+  exact (T.isLawful.locality b).eq_of_eq_omega0_mul_add (a := ⟨a, ha⟩) (a' := ⟨a', ha'⟩)
+    (b := ⟨b, T.toCellScheme.mem_below_gradedIndex b⟩) hμ ha.2 ha'.2 hi hi' (hq a ha hTa hab)
+    (hq a' ha' hTa' ha'b) (hqb hab) (hqb ha'b) hra hra'
+
+end FinitePart
+
 end StageType
 
 end VaughtConjecture

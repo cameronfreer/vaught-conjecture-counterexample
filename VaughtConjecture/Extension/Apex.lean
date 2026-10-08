@@ -778,4 +778,20 @@ theorem row_addApex {n : ℕ} {t : StageType.{u} α n} (ht : t.IsLegalBelowFullG
 
 end StageType
 
+namespace Scheme
+
+/-- The row of an old cell at an old cell after appending a cell of full scope is the old row. -/
+theorem appendFullCell_row_castSucc_castSucc {n : ℕ} {S : Scheme.{u} n} {j : ℕ}
+    {r : Fin (S.card + 1) → Label.{u}}
+    {h : ∀ d, ¬ ((univ : Finset (Fin n)), j) ≤ S.toCellScheme.gradedIndex d} (s t : Fin S.card)
+    (ht : t ∈ S.toCellScheme.below (S.toCellScheme.gradedIndex s))
+    (ht' : t.castSucc ∈ (S.appendFullCell j r h).toCellScheme.below
+      ((S.appendFullCell j r h).toCellScheme.gradedIndex s.castSucc)) :
+    (S.appendFullCell j r h).rows.row s.castSucc ⟨_, ht'⟩ = S.rows.row s ⟨t, ht⟩ := by
+  have key := congrArg (fun R : S.toCellScheme.Rows ↦ R.row s ⟨t, ht⟩)
+    (comap_rows_castSucc (S := S) (j := j) (r := r) (h := h))
+  simpa only [CellScheme.Rows.comap_row] using key
+
+end Scheme
+
 end VaughtConjecture

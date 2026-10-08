@@ -692,4 +692,58 @@ theorem hasApexCoatomExtensions_of_le_three {α : Ordinal.{u}} (hα : Order.IsSu
 
 end StageType
 
+/-! ### The cells of the `⊥` entries -/
+
+namespace TowerProfile
+
+open ProfileCatalogue (Profile)
+open RankProfile (rankCat mem_rankCat)
+
+variable {α : Ordinal.{u}} {I : Seed.{u} α 3}
+
+/-- **The profile layer has a cell reading `⊥`**: the cell of the `⊥` profile has graded index
+`(univ, 3)` and its row is `⊥` at every cell of the amalgam. -/
+theorem exists_scheme_row_eq_bot :
+    ∃ u : Fin (scheme I).card,
+      (scheme I).toCellScheme.gradedIndex u = ((univ : Finset (Fin 5)), 3) ∧
+      ∀ (d : Fin I.amalgam.card)
+        (hd : embed3 I d ∈ (scheme I).toCellScheme.below ((scheme I).toCellScheme.gradedIndex u)),
+        (scheme I).rows.row u ⟨_, hd⟩ = ⊥ := by
+  obtain ⟨i, hi⟩ := exists_entry_eq (bot_mem_rankCat (I := I))
+  refine ⟨Fin.natAdd _ i, Scheme.appendFullCellsScheme_gradedIndex_natAdd _ 3 _ i,
+    fun d hd ↦ ?_⟩
+  rw [Scheme.appendFullCells_row_natAdd]
+  -- the row of the cell of a profile is its field labelling
+  change fieldLab I (entry I i) (embed3 I d) = ⊥
+  rw [embed3_apply, fieldLab_old, hi]
+
+/-- **The top layer has a cell reading `⊥` at the grade `3` and at the grade `4`**: for `N = 3` or
+`N = 4`, some cell of `TowerProfile.top I` at `(univ, N)` reads every old cell of the amalgam as
+`⊥` (the cell of the `⊥` entry of the profile layer, kept by the field layer, and the cell of the
+`⊥` entry of the field layer). -/
+theorem exists_top_row_eq_bot {N : ℕ} (hN : N = 3 ∨ N = 4) :
+    ∃ u : Fin (top I).card,
+      (top I).toCellScheme.gradedIndex u = ((univ : Finset (Fin 5)), N) ∧
+      ∀ (d : Fin I.amalgam.card)
+        (hd : embed4 I d ∈ (top I).toCellScheme.below ((top I).toCellScheme.gradedIndex u)),
+        (top I).rows.row u ⟨_, hd⟩ = ⊥ := by
+  rcases hN with rfl | rfl
+  · obtain ⟨u, hu, hrow⟩ := exists_scheme_row_eq_bot (I := I)
+    refine ⟨Fin.castAdd _ u, ?_, fun d hd ↦ ?_⟩
+    · rw [Scheme.appendFullCellsScheme_gradedIndex_castAdd, hu]
+    · have hd' : embed3 I d ∈ (scheme I).toCellScheme.below
+          ((scheme I).toCellScheme.gradedIndex u) := by
+        have := hd
+        rw [CellScheme.mem_below, embed4_apply, Scheme.appendFullCellsScheme_gradedIndex_castAdd,
+          Scheme.appendFullCellsScheme_gradedIndex_castAdd] at this
+        exact this
+      rw [← hrow d hd']
+      have key := congrArg (fun R : (scheme I).toCellScheme.Rows ↦ R.row u ⟨embed3 I d, hd'⟩)
+        (Scheme.comap_rows_fieldLayer (S := scheme I) (k := 4) (hS := not_univ_four_le))
+      exact key
+  · obtain ⟨u, hu, hrow⟩ := Scheme.exists_fieldLayer_row_eq_bot (scheme I) 4 not_univ_four_le
+    exact ⟨u, hu, fun d hd ↦ hrow (embed3 I d) hd⟩
+
+end TowerProfile
+
 end VaughtConjecture

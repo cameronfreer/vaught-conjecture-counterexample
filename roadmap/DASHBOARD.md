@@ -944,20 +944,20 @@ except as a named hypothesis.
    lawful row at `(univ, N)` is not known.
    **Reading coatom completions** (`Continuation/StableRecoveryCoatom`, compiled in this repository
    (theorem named)).  A closed face of `k ≤ n` points of a stage type on `n + 1` points lies in a
-   closed coatom (`StageType.exists_coatom_trans_eq`).  New named statement, open:
-   `StageType.HasReadingCoatomCompletions ξ` (RCC): for every legal `T⁺` at `λ_{ξ+1}`, closed coatom
-   `g` with face `p`, legal coface `tb` of `p`, `f` of `k > 0` points into the coatom, coface `D`
-   that is the face of `tb` along `f` and the new point, `γ < λ_{ξ+1}` and full-scope graded cap
-   `b`, a reading coatom completion (`StageType.IsReadingCoatomCompletion`: a stage type with the
-   literal faces `T⁺` and `tb`, labels included, whose scheme is a cap-reading extension along
-   `f.trans g`).  Compiled implications, each with its hypotheses explicit:
+   closed coatom (`StageType.exists_coatom_trans_eq`, in `Extension/PinnedExtension`).  New named
+   statement, open: `StageType.HasReadingCoatomCompletions ξ` (RCC): for every legal `T⁺` at
+   `λ_{ξ+1}`, closed coatom `g` with face `p`, legal coface `tb` of `p`, `f` of `k > 0` points into
+   the coatom, coface `D` that is the face of `tb` along `f` and the new point, `γ < λ_{ξ+1}` and
+   full-scope graded cap `b`, a reading coatom completion (`StageType.IsReadingCoatomCompletion`: a
+   stage type with the literal faces `T⁺` and `tb`, labels included, whose scheme is a cap-reading
+   extension along `f.trans g`).  Compiled implications, each with its hypotheses explicit:
    `StageType.HasReadingCoatomCompletions.hasCapReadingExtensions` (under
    `StageType.HasCoatomExtensions (blockStage (ξ + 1))`, through the exact pinned extension);
    `StableCappedReceiving.of_hasReadingCoatomCompletions` ((R4), from `HasCoatomExtensions` at every
-   `λ_{ξ+1}` and RCC at every `ξ < ω₁`); `ContinuationCriterion.of_hasReadingCoatomCompletions`
-   (from hypothesis 8 at every `λ_{ξ+1}` and RCC at every `ξ < ω₁`).  Hypothesis 8 is compiled
-   (`StageType.hasApexCoatomExtensions_blockStage`); no statement that uses its proof in place of
-   the hypothesis is stated.
+   `λ_{ξ+1}` and RCC at every `ξ < ω₁`); `ContinuationCriterion.of_hasReadingCoatomCompletions` (in
+   `MainTheorem/ReadingCoatomCompletions`; from hypothesis 8 at every `λ_{ξ+1}` and RCC at every
+   `ξ < ω₁`).  Hypothesis 8 is compiled (`StageType.hasApexCoatomExtensions_blockStage`); no
+   statement that uses its proof in place of the hypothesis is stated.
    On the cells of every labelled extension a reading labelling exists
    (`StageType.exists_codedReadingLabelling`, `Continuation/StableRecoveryCodedReading`: the coded
    copy of the labels capped at the cap is lawful below `(univ, N)` and reads every new cell of `D`

@@ -25,12 +25,15 @@ shows that, as built, it never reads an ordinally labelled new cell through a ca
 (`StageType.not_readsThroughCap_of_row_eq_bot`): the ordinal clause of `StageType.ReadsThroughCap`
 asks for the value `ω · c + n`.
 
-**The constant `⊥` labelling is an entry of both catalogues** (`Scheme.bot_mem_catalogue`,
-`TowerProfile.bot_mem_rankCat`): it is lawful (below both coatoms), bottom above every grade, and
-fixed by the orbit code (`Label.orbitCode_eq_bot_iff`), with values in the code grid.  So the field
-layer at the grade `k` has a cell at `(univ, k)` whose row is `⊥` at every old cell
-(`Scheme.exists_fieldLayer_row_eq_bot`), and the profile layer has a cell at `(univ, 3)` whose row
-is `⊥` at every cell of the amalgam (`TowerProfile.exists_scheme_row_eq_bot`).
+**The constant `⊥` labelling is an entry of both catalogues** (`Scheme.bot_mem_catalogue`, in
+`VaughtConjecture.Extension.FieldLayer`; `TowerProfile.bot_mem_rankCat`, in
+`VaughtConjecture.Extension.TowerProfileScheme`): it is lawful (below both coatoms), bottom above
+every grade, and fixed by the orbit code (`Label.orbitCode_eq_bot_iff`), with values in the code
+grid.  So the field layer at the grade `k` has a cell at `(univ, k)` whose row is `⊥` at every old
+cell (`Scheme.exists_fieldLayer_row_eq_bot`, in `VaughtConjecture.Extension.FieldLayer`), and the
+profile layer has a cell at `(univ, 3)` whose row is `⊥` at every cell of the amalgam
+(`TowerProfile.exists_scheme_row_eq_bot`; at the grades `3` and `4` of the top layer,
+`TowerProfile.exists_top_row_eq_bot`; both in `VaughtConjecture.Extension.TowerProfileCompletion`).
 
 **The obstruction** (`TowerProfile.not_isCapReadingExtension_completion`).  Let `I` be the seed of
 two legal coatom types `T⁺`, `tb` on four points over a common face, at a stage zero or a limit,
@@ -75,111 +78,7 @@ theorem not_readsThroughCap_of_row_eq_bot {α : Ordinal.{u}} {m : ℕ} {Tp : Sta
 
 end StageType
 
-/-! ### The `⊥` entry of the canonical catalogue -/
-
-namespace Scheme
-
-variable {n : ℕ}
-
-/-- **The constant `⊥` labelling is a catalogue entry**: lawful, bottom above `k`, and fixed by
-the orbit code. -/
-theorem bot_mem_catalogue (S : Scheme.{u} n) (k : ℕ) :
-    (fun _ ↦ ⊥ : Fin S.card → Label.{u}) ∈ S.catalogue k :=
-  mem_catalogue.mpr ⟨CellScheme.Rows.isLawful_const_bot, fun _ _ ↦ rfl,
-    funext fun _ ↦ orbitCode_eq_bot_iff.mpr rfl⟩
-
-/-- **The field layer has a cell reading `⊥`**: the cell of the `⊥` entry has graded index
-`(univ, k)` and its row is `⊥` at every old cell. -/
-theorem exists_fieldLayer_row_eq_bot (S : Scheme.{u} n) (k : ℕ)
-    (hS : ∀ d, ¬ ((univ : Finset (Fin n)), k) ≤ S.toCellScheme.gradedIndex d) :
-    ∃ u : Fin (S.fieldLayer k hS).card,
-      (S.fieldLayer k hS).toCellScheme.gradedIndex u = ((univ : Finset (Fin n)), k) ∧
-      ∀ (d : Fin S.card)
-        (hd : Fin.castAdd _ d ∈ (S.fieldLayer k hS).toCellScheme.below
-          ((S.fieldLayer k hS).toCellScheme.gradedIndex u)),
-        (S.fieldLayer k hS).rows.row u ⟨_, hd⟩ = ⊥ := by
-  obtain ⟨i, hi⟩ := exists_catalogueEntry_eq (bot_mem_catalogue S k)
-  refine ⟨Fin.natAdd _ i, appendFullCellsScheme_gradedIndex_natAdd S k _ i, fun d hd ↦ ?_⟩
-  rw [fieldLayer_row_natAdd, fieldRow_castAdd, hi]
-
-end Scheme
-
 /-! ### The profile completion -/
-
-namespace TowerProfile
-
-open ProfileCatalogue (Profile)
-open RankProfile (rankCat mem_rankCat)
-
-variable {α : Ordinal.{u}} {I : Seed.{u} α 3}
-
-/-- **The constant `⊥` profile is in the rank-normalized catalogue**: lawful below both coatoms,
-in the code grid, and fixed by the orbit code. -/
-theorem bot_mem_rankCat : (fun _ ↦ ⊥ : Profile I) ∈ rankCat I 3 := by
-  simp only [rankCat, Finset.mem_filter, Fintype.mem_piFinset]
-  refine ⟨fun _ ↦ Finset.mem_insert_self _ _, ⟨Rows.isLawfulBelow_const_bot _,
-    Rows.isLawfulBelow_const_bot _⟩, funext fun _ ↦ orbitCode_eq_bot_iff.mpr rfl⟩
-
-/-- **The profile layer has a cell reading `⊥`**: the cell of the `⊥` profile has graded index
-`(univ, 3)` and its row is `⊥` at every cell of the amalgam. -/
-theorem exists_scheme_row_eq_bot :
-    ∃ u : Fin (scheme I).card,
-      (scheme I).toCellScheme.gradedIndex u = ((univ : Finset (Fin 5)), 3) ∧
-      ∀ (d : Fin I.amalgam.card)
-        (hd : embed3 I d ∈ (scheme I).toCellScheme.below ((scheme I).toCellScheme.gradedIndex u)),
-        (scheme I).rows.row u ⟨_, hd⟩ = ⊥ := by
-  obtain ⟨i, hi⟩ := exists_entry_eq (bot_mem_rankCat (I := I))
-  refine ⟨Fin.natAdd _ i, Scheme.appendFullCellsScheme_gradedIndex_natAdd _ 3 _ i,
-    fun d hd ↦ ?_⟩
-  rw [Scheme.appendFullCells_row_natAdd]
-  -- the row of the cell of a profile is its field labelling
-  change fieldLab I (entry I i) (embed3 I d) = ⊥
-  rw [embed3_apply, fieldLab_old, hi]
-
-/-- **The top layer has a cell reading `⊥` at the grade `3` and at the grade `4`**: for `N = 3` or
-`N = 4`, some cell of `TowerProfile.top I` at `(univ, N)` reads every old cell of the amalgam as
-`⊥` (the cell of the `⊥` entry of the profile layer, kept by the field layer, and the cell of the
-`⊥` entry of the field layer). -/
-theorem exists_top_row_eq_bot {N : ℕ} (hN : N = 3 ∨ N = 4) :
-    ∃ u : Fin (top I).card,
-      (top I).toCellScheme.gradedIndex u = ((univ : Finset (Fin 5)), N) ∧
-      ∀ (d : Fin I.amalgam.card)
-        (hd : embed4 I d ∈ (top I).toCellScheme.below ((top I).toCellScheme.gradedIndex u)),
-        (top I).rows.row u ⟨_, hd⟩ = ⊥ := by
-  rcases hN with rfl | rfl
-  · obtain ⟨u, hu, hrow⟩ := exists_scheme_row_eq_bot (I := I)
-    refine ⟨Fin.castAdd _ u, ?_, fun d hd ↦ ?_⟩
-    · rw [Scheme.appendFullCellsScheme_gradedIndex_castAdd, hu]
-    · have hd' : embed3 I d ∈ (scheme I).toCellScheme.below
-          ((scheme I).toCellScheme.gradedIndex u) := by
-        have := hd
-        rw [CellScheme.mem_below, embed4_apply, Scheme.appendFullCellsScheme_gradedIndex_castAdd,
-          Scheme.appendFullCellsScheme_gradedIndex_castAdd] at this
-        exact this
-      rw [← hrow d hd']
-      have key := congrArg (fun R : (scheme I).toCellScheme.Rows ↦ R.row u ⟨embed3 I d, hd'⟩)
-        (Scheme.comap_rows_fieldLayer (S := scheme I) (k := 4) (hS := not_univ_four_le))
-      exact key
-  · obtain ⟨u, hu, hrow⟩ := Scheme.exists_fieldLayer_row_eq_bot (scheme I) 4 not_univ_four_le
-    exact ⟨u, hu, fun d hd ↦ hrow (embed3 I d) hd⟩
-
-end TowerProfile
-
-namespace Scheme
-
-/-- The row of an old cell at an old cell after appending a cell of full scope is the old row. -/
-theorem appendFullCell_row_castSucc_castSucc {n : ℕ} {S : Scheme.{u} n} {j : ℕ}
-    {r : Fin (S.card + 1) → Label.{u}}
-    {h : ∀ d, ¬ ((univ : Finset (Fin n)), j) ≤ S.toCellScheme.gradedIndex d} (s t : Fin S.card)
-    (ht : t ∈ S.toCellScheme.below (S.toCellScheme.gradedIndex s))
-    (ht' : t.castSucc ∈ (S.appendFullCell j r h).toCellScheme.below
-      ((S.appendFullCell j r h).toCellScheme.gradedIndex s.castSucc)) :
-    (S.appendFullCell j r h).rows.row s.castSucc ⟨_, ht'⟩ = S.rows.row s ⟨t, ht⟩ := by
-  have key := congrArg (fun R : S.toCellScheme.Rows ↦ R.row s ⟨t, ht⟩)
-    (comap_rows_castSucc (S := S) (j := j) (r := r) (h := h))
-  simpa only [CellScheme.Rows.comap_row] using key
-
-end Scheme
 
 namespace TowerProfile
 

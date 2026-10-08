@@ -3596,21 +3596,21 @@ Each checkpoint needs both its abstract API and a concrete application:
    `StageType.HasCapRowExtensions` (open) implies `StageType.HasCapReadingExtensions`,
    `StageType.HasCapRowExtensions.hasCapReadingExtensions`; reading coatom completions,
    `Continuation/StableRecoveryCoatom`: a closed coatom through a closed face,
-   `StageType.exists_coatom_trans_eq`, and the new named statement
+   `StageType.exists_coatom_trans_eq` (in `Extension/PinnedExtension`), and the new named statement
    `StageType.HasReadingCoatomCompletions` (open; `StageType.IsReadingCoatomCompletion`) implies
    `StageType.HasCapReadingExtensions` under `StageType.HasCoatomExtensions` at `λ_{ξ+1}`,
-   `StageType.HasReadingCoatomCompletions.hasCapReadingExtensions`, hence (R4) with that property
-   at every `λ_{ξ+1}`, `StableCappedReceiving.of_hasReadingCoatomCompletions`, and the continuation
-   criterion with hypothesis 8, `ContinuationCriterion.of_hasReadingCoatomCompletions` (hypothesis
-   8 is compiled, `StageType.hasApexCoatomExtensions_blockStage`; no statement that uses its proof
-   in place of the hypothesis is stated); a reading labelling on the cells of every labelled
-   extension, `StageType.exists_codedReadingLabelling`, `Continuation/StableRecoveryCodedReading`;
-   the clause at one and two coatom steps, feasibility only,
-   `Continuation/StableRecoveryCoatomExamples`; recovery lifts from a closed face,
-   `StageType.IsStableRecoveryScheme.of_comap` and `StageType.IsStableRecoveryScheme.exists_lift`,
-   and the face version, an exact reformulation under `StageType.HasCoatomExtensions`,
-   `StageType.hasStableRecoverySchemes_iff_exists_face`, `Continuation/StableRecoveryLift`, with no
-   recovery at the twin root alone,
+   `StageType.HasReadingCoatomCompletions.hasCapReadingExtensions`, hence (R4) with that property at
+   every `λ_{ξ+1}`, `StableCappedReceiving.of_hasReadingCoatomCompletions`, and the continuation
+   criterion with hypothesis 8, `ContinuationCriterion.of_hasReadingCoatomCompletions`
+   (`MainTheorem/ReadingCoatomCompletions`; hypothesis 8 is compiled,
+   `StageType.hasApexCoatomExtensions_blockStage`; no statement that uses its proof in place of the
+   hypothesis is stated); a reading labelling on the cells of every labelled extension,
+   `StageType.exists_codedReadingLabelling`, `Continuation/StableRecoveryCodedReading`; the clause
+   at one and two coatom steps, feasibility only, `Continuation/StableRecoveryCoatomExamples`;
+   recovery lifts from a closed face, `StageType.IsStableRecoveryScheme.of_comap` and
+   `StageType.IsStableRecoveryScheme.exists_lift`, and the face version, an exact reformulation
+   under `StageType.HasCoatomExtensions`, `StageType.hasStableRecoverySchemes_iff_exists_face`,
+   `Continuation/StableRecoveryLift`, with no recovery at the twin root alone,
    `Continuation.StableRecoveryCounterexample.not_isStableRecoveryScheme_twinRoot`; the reading
    along the orbit code, the splice and capped agreement,
    `Continuation/StableRecoveryReadingInvariants`; and two refuted designs, each refuted as a
@@ -3622,8 +3622,13 @@ Each checkpoint needs both its abstract API and a concrete application:
    `TowerProfile.exists_isLawful_markedTop_eq_bot`), with the leaf-and-marked completion for every
    marked specification, `TowerProfile.not_isCapReadingExtension_markedCompletion`,
    `Continuation/StableRecoveryMarkedGate`; none of these establishes whether
-   `StageType.HasReadingCoatomCompletions` follows from hypothesis 8; `README.md`, Layer 4, status,
-   output 3).
+   `StageType.HasReadingCoatomCompletions` follows from hypothesis 8; the generic lemmas these files
+   use are placed with their subjects: the finite part and one code per block in `Label/Transform`
+   and `Stage/Basic`, the orbit code on one block in `Extension/OrbitCode`, the `⊥` entries in
+   `Extension/FieldLayer`, `Extension/TowerProfileScheme` and `Extension/TowerProfileCompletion`,
+   the old rows after a full cell in `Extension/Apex`, and the marked cells read as `⊥` in
+   `Extension/MarkedCatalogue` and `Extension/MarkedCatalogueCompletion`; `README.md`, Layer 4,
+   status, output 3).
    Step 7 is compiled conditionally (`README.md`, the section on the top-free witnesses): the loss
    at `η` under uniqueness at `λ_η` (`nonempty_loss_of_topFreeWitness`), and per block under
    `StageType.HasApexCoatomExtensions` at `λ_η` and uniqueness of the model expansions at `λ_η`

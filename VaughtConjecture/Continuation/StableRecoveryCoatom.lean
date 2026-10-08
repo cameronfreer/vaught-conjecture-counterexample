@@ -4,7 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Continuation.StableRecoveryCapRow
-import VaughtConjecture.MainTheorem.CapToModel
 
 /-!
 # Reading coatom completions: (R4) from the coatom extension property and the last step
@@ -21,7 +20,8 @@ cap.  This file splits such an extension into a chain of coatom steps, all but t
 the coatom extension property, and isolates the last step as a new named statement.  Each item
 below is compiled in this repository (theorem named), unless marked otherwise.
 
-**A closed coatom through a closed face** (`StageType.exists_coatom_trans_eq`).  In a stage type on
+**A closed coatom through a closed face** (`StageType.exists_coatom_trans_eq`, in
+`VaughtConjecture.Extension.PinnedExtension`).  In a stage type on
 `n + 1` points, a closed face `f` of `k ≤ n` points lies in a closed face `g` of `n` points (a
 coatom): `f = f'.trans g`.  Points are added one at a time, each keeping the face closed (the
 faces form a plan, `Geometry.IsPlan.exists_insert_mem`).
@@ -51,8 +51,10 @@ root) gives a legal coface `tb` of the face of `T⁺` along `g` whose face along
 the new point is `D`; the last step is the reading coatom completion of `(T⁺, tb)`.  When `f` is
 itself a coatom no coatom extension is used.
 
-**(R4) and the continuation criterion** (`StableCappedReceiving.of_hasReadingCoatomCompletions`,
-`ContinuationCriterion.of_hasReadingCoatomCompletions`).  With
+**(R4) and the continuation criterion** (`StableCappedReceiving.of_hasReadingCoatomCompletions`;
+`ContinuationCriterion.of_hasReadingCoatomCompletions`, in
+`VaughtConjecture.MainTheorem.ReadingCoatomCompletions`, so that this file does not import
+`VaughtConjecture.MainTheorem.CapToModel`).  With
 `StableCappedReceiving.of_hasStableRecoverySchemes_gradedCap` and
 `StageType.HasCapReadingExtensions.hasStableRecoverySchemes`, (R4) follows from the coatom
 extension property at every `λ_{ξ+1}` and reading coatom completions at every `ξ < ω₁`; with
@@ -96,36 +98,6 @@ open Finset Label StageType
 open Ordinal hiding univ
 
 namespace StageType
-
-/-! ### A closed coatom through a closed face -/
-
-/-- **A closed coatom through a closed face**: in a stage type on `n + 1` points, every closed face
-`f` of `k ≤ n` points lies in a closed face of `n` points, `f = f'.trans g` with `univ.map g` a
-face.  Points are added one at a time, each keeping the face closed. -/
-theorem exists_coatom_trans_eq {α : Ordinal.{u}} {n k : ℕ} (T : StageType.{u} α (n + 1))
-    (f : Fin k ↪ Fin (n + 1)) (hf : univ.map f ∈ T.toCellScheme.faces) (hk : k ≤ n) :
-    ∃ (g : Fin n ↪ Fin (n + 1)) (f' : Fin k ↪ Fin n),
-      univ.map g ∈ T.toCellScheme.faces ∧ f'.trans g = f := by
-  induction hd : n - k using Nat.strong_induction_on generalizing k with
-  | _ d ih =>
-    subst hd
-    rcases hk.lt_or_eq with hlt | rfl
-    · -- a point outside the face whose addition keeps the face closed
-      have hplan := T.isWellFormed.isWellFormed.isPlan
-      rw [T.isWellFormed.ground_eq] at hplan
-      have hne : univ.map f ≠ univ := fun he ↦ by
-        have := congrArg Finset.card he
-        rw [card_map, Finset.card_univ, Finset.card_univ, Fintype.card_fin, Fintype.card_fin]
-          at this
-        omega
-      obtain ⟨x, hx, hxP⟩ := hplan.exists_insert_mem hf hne
-      have hx' : x ∉ Set.range f := fun ⟨i, hi⟩ ↦ hx (by simp [← hi])
-      obtain ⟨g, f₁, hg, hf₁⟩ := ih (n - (k + 1)) (by omega) (Fin.Embedding.snoc f hx')
-        (by rwa [Fin.Embedding.univ_map_snoc]) (by omega) rfl
-      refine ⟨g, Fin.castSuccEmb.trans f₁, hg, ?_⟩
-      rw [Function.Embedding.trans_assoc, hf₁]
-      exact Fin.Embedding.init_snoc f hx'
-    · exact ⟨f, Function.Embedding.refl _, hf, Function.Embedding.ext fun _ ↦ rfl⟩
 
 /-! ### The reading coatom completion -/
 
@@ -211,20 +183,5 @@ theorem StableCappedReceiving.of_hasReadingCoatomCompletions
     (h : ∀ ξ < ω₁, StageType.HasReadingCoatomCompletions.{0} ξ) : StableCappedReceiving.{w} :=
   .of_hasStableRecoverySchemes_gradedCap fun ξ hξ ↦
     ((h ξ hξ).hasCapReadingExtensions (hext ξ hξ)).hasStableRecoverySchemes
-
-/-- **The continuation criterion from hypothesis 8 and reading coatom completions**: if the coatom
-extension property with apex holds at every `λ_{ξ+1}` (hypothesis 8) and reading coatom
-completions exist at every `ξ < ω₁`, the continuation criterion holds.  Hypothesis 8 enters twice:
-for the intermediate coatom steps of (R4)
-(`StableCappedReceiving.of_hasReadingCoatomCompletions`) and for the coface instances at the next
-block (`ContinuationCriterion.of_hasApexCoatomExtensions`).  So (R4), and with it the continuation
-criterion, is reduced to hypothesis 8 and `StageType.HasReadingCoatomCompletions`; the latter is
-proved at no general input.  Both hypotheses are explicit; hypothesis 8 is compiled
-(`StageType.hasApexCoatomExtensions_blockStage`), reading coatom completions are not proved. -/
-theorem ContinuationCriterion.of_hasReadingCoatomCompletions
-    (hext : ∀ ξ < ω₁, StageType.HasApexCoatomExtensions.{0} (blockStage (ξ + 1)))
-    (h : ∀ ξ < ω₁, StageType.HasReadingCoatomCompletions.{0} ξ) : ContinuationCriterion.{w} :=
-  .of_hasApexCoatomExtensions
-    (.of_hasReadingCoatomCompletions (fun ξ hξ ↦ (hext ξ hξ).hasCoatomExtensions) h) hext
 
 end VaughtConjecture

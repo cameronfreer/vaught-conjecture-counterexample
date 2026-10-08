@@ -477,4 +477,84 @@ theorem markedTop_mark_reads {P : (Fin (scheme I).card → Label.{u}) → Prop}
 
 end TowerProfile
 
+/-! ### A marked cell read as `⊥` at every leaf, in the marked top -/
+
+namespace TowerProfile
+
+variable {α : Ordinal.{u}} {I : Seed.{u} α 3} (D : MarkedSpec I)
+
+/-- **No marked gate in the marked top.**  For every marked specification `D` of a seed on five
+points and every marked cell `m` whose row is `⊥` at every leaf (for instance a gate reading only
+marked cells), some lawful labelling of the marked top extends the glued labelling of the amalgam
+and is `⊥` at `m`.  So no marked cell is a gate that is not `⊥` in every lawful labelling with the
+face of the first coatom type. -/
+theorem exists_isLawful_markedTop_eq_bot (m : Fin D.marks.card)
+    (hleaf : ∀ (i : Fin ((scheme I).catalogue 4).card) (t), (markedTop I D).rows.row
+      (Fin.natAdd (scheme I).card (Fin.natAdd _ m)) t = ⊥ ∨
+        t.1 ≠ Fin.natAdd (scheme I).card (Fin.castAdd D.marks.card i)) :
+    ∃ q : Fin (markedTop I D).card → Label.{u}, (markedTop I D).rows.IsLawful q ∧
+      (∀ d, q (markedEmbed I D d) = I.amalgam.label d) ∧
+      q (Fin.natAdd (scheme I).card (Fin.natAdd _ m)) = ⊥ := by
+  have hm := Scheme.markedLayer_cap_eq_bot_of_row_leaf (hS := not_univ_four_le) D.marks_subset
+    D.cap_mem m hleaf
+  -- a lawful labelling of the profile layer extending the glued labelling
+  obtain ⟨q₀, hq₀, hq₀e⟩ := exists_isLawful_markedTop D
+  have hp : (scheme I).rows.IsLawful fun d ↦ q₀ (Fin.castAdd _ d) := by
+    have h := hq₀.comap (Scheme.isLowerEmbedding_castAdd (S := scheme I) 4 _ _ not_univ_four_le)
+    rwa [Scheme.comap_rows_sheetLayer (hS := not_univ_four_le)] at h
+  obtain ⟨r, hr, hrp, hrm⟩ := Scheme.exists_isLawfulBelow_markedLayer_eq_bot
+    (hS := not_univ_four_le) D.marks_subset D.cap_mem D.capRespects m hm
+    (p := fun d ↦ q₀ (Fin.castAdd _ d)) (hp.isLawfulBelow (univ, 4))
+  have hall (z : Fin (markedTop I D).card) : z ∈ (markedTop I D).toCellScheme.below (univ, 4) :=
+    ⟨subset_univ _, by
+      have := grade_markedTop_lt D z
+      -- the grade of the pair below is the grade of the cell
+      change (markedTop I D).toCellScheme.grade z ≤ 4
+      omega⟩
+  refine ⟨fun z ↦ r ⟨z, hall z⟩, hr.isLawful hall, fun d ↦ ?_, hrm⟩
+  have hd : (scheme I).toCellScheme.grade (embed3 I d) ≤ 4 := by
+    have h1 := (isLowerEmbedding_embed3 (I := I)).grade_eq d
+    have h2 := I.grade_lt d
+    omega
+  rw [← hq₀e d]
+  exact hrp (embed3 I d) hd
+
+/-- **The marked top has a cell reading `⊥` at the grade `3` and at the grade `4`**: the cell of the
+`⊥` profile of the profile layer, and the leaf of the `⊥` entry of the catalogue.  Both read every
+old cell of the amalgam as `⊥`. -/
+theorem exists_markedTop_row_eq_bot {N : ℕ} (hN : N = 3 ∨ N = 4) :
+    ∃ u : Fin (markedTop I D).card,
+      (markedTop I D).toCellScheme.gradedIndex u = ((univ : Finset (Fin 5)), N) ∧
+      ∀ (d : Fin I.amalgam.card)
+        (hd : markedEmbed I D d ∈
+          (markedTop I D).toCellScheme.below ((markedTop I D).toCellScheme.gradedIndex u)),
+        (markedTop I D).rows.row u ⟨_, hd⟩ = ⊥ := by
+  rcases hN with rfl | rfl
+  · obtain ⟨u, hu, hrow⟩ := exists_scheme_row_eq_bot (I := I)
+    refine ⟨Fin.castAdd _ u, ?_, fun d hd ↦ ?_⟩
+    · rw [Scheme.appendFullCellsScheme_gradedIndex_castAdd, hu]
+    · have hd' : embed3 I d ∈ (scheme I).toCellScheme.below
+          ((scheme I).toCellScheme.gradedIndex u) := by
+        have := hd
+        rw [CellScheme.mem_below, markedEmbed_apply,
+          Scheme.appendFullCellsScheme_gradedIndex_castAdd,
+          Scheme.appendFullCellsScheme_gradedIndex_castAdd] at this
+        exact this
+      rw [← hrow d hd']
+      have key := congrArg (fun R : (scheme I).toCellScheme.Rows ↦ R.row u ⟨embed3 I d, hd'⟩)
+        (Scheme.comap_rows_sheetLayer (S := scheme I) (k := 4) (hS := not_univ_four_le)
+          (ε := (scheme I).markedEntry 4 D.marks) (σ := Scheme.markedSheet _ _) (κ := D.cap))
+      exact key
+  · obtain ⟨j₀, hj₀, -⟩ := Scheme.exists_leaf_eq (Mk := D.marks) (Scheme.bot_mem_catalogue
+      (scheme I) 4)
+    refine ⟨Fin.natAdd _ j₀, Scheme.appendFullCellsScheme_gradedIndex_natAdd _ 4 _ j₀,
+      fun d hd ↦ ?_⟩
+    rw [Scheme.sheetLayer_row_natAdd (hS := not_univ_four_le)]
+    -- the row of a leaf at an old cell is its entry
+    change (scheme I).sheetRow 4 ((scheme I).markedEntry 4 D.marks) (Scheme.markedSheet _ _)
+      D.cap j₀ (Fin.castAdd _ (embed3 I d)) = ⊥
+    rw [Scheme.sheetRow_castAdd, hj₀]
+
+end TowerProfile
+
 end VaughtConjecture

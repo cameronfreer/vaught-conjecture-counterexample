@@ -916,3 +916,34 @@ theorem extendsFromBoundary_fieldLayer_of_fill {U V : Finset (Fin n) × ℕ}
   exact hgw e (hd.imp (hmem e).mp (hmem e).mp)
 
 end VaughtConjecture.Scheme
+
+/-! ### The `⊥` entry of the canonical catalogue -/
+
+namespace VaughtConjecture.Scheme
+
+open Finset Label CellScheme
+
+variable {n : ℕ}
+
+/-- **The constant `⊥` labelling is a catalogue entry**: lawful, bottom above `k`, and fixed by
+the orbit code. -/
+theorem bot_mem_catalogue (S : Scheme.{u} n) (k : ℕ) :
+    (fun _ ↦ ⊥ : Fin S.card → Label.{u}) ∈ S.catalogue k :=
+  mem_catalogue.mpr ⟨CellScheme.Rows.isLawful_const_bot, fun _ _ ↦ rfl,
+    funext fun _ ↦ orbitCode_eq_bot_iff.mpr rfl⟩
+
+/-- **The field layer has a cell reading `⊥`**: the cell of the `⊥` entry has graded index
+`(univ, k)` and its row is `⊥` at every old cell. -/
+theorem exists_fieldLayer_row_eq_bot (S : Scheme.{u} n) (k : ℕ)
+    (hS : ∀ d, ¬ ((univ : Finset (Fin n)), k) ≤ S.toCellScheme.gradedIndex d) :
+    ∃ u : Fin (S.fieldLayer k hS).card,
+      (S.fieldLayer k hS).toCellScheme.gradedIndex u = ((univ : Finset (Fin n)), k) ∧
+      ∀ (d : Fin S.card)
+        (hd : Fin.castAdd _ d ∈ (S.fieldLayer k hS).toCellScheme.below
+          ((S.fieldLayer k hS).toCellScheme.gradedIndex u)),
+        (S.fieldLayer k hS).rows.row u ⟨_, hd⟩ = ⊥ := by
+  obtain ⟨i, hi⟩ := exists_catalogueEntry_eq (bot_mem_catalogue S k)
+  refine ⟨Fin.natAdd _ i, appendFullCellsScheme_gradedIndex_natAdd S k _ i, fun d hd ↦ ?_⟩
+  rw [fieldLayer_row_natAdd, fieldRow_castAdd, hi]
+
+end VaughtConjecture.Scheme

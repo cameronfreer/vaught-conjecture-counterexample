@@ -25,8 +25,9 @@ item below is compiled in this repository (theorem named), unless marked otherwi
 
 * **Normalization keeps the reading** (`StageType.ReadsThroughCapAt.orbitCode`): if `r` reads `e`
   through a cap of grade `N ≤ k`, so does its orbit code at `k`.  Two values `ω · c + i` and
-  `ω · c + n` with `i, n < k` have one orbit key, keep their finite parts and move to one code
-  block (`Label.orbitCode_omega0_mul_add`); equal values have equal codes, and `⊥` is coded as `⊥`.
+  `ω · c + n` with `i, n < k` have one orbit key, keep their finite parts and move to one code block
+  (`Label.orbitCode_omega0_mul_add`, in `VaughtConjecture.Extension.OrbitCode`); equal values have
+  equal codes, and `⊥` is coded as `⊥`.
 * **Splicing with `⊥` above the grade keeps the reading** (`StageType.ReadsThroughCapAt.splice`):
   the reading involves cells of grade at most `N ≤ k` only.
 * **Capped agreement keeps the reading above every value**
@@ -59,42 +60,6 @@ namespace VaughtConjecture
 
 open Finset Label
 open Ordinal hiding univ
-
-/-! ### The orbit code on one block -/
-
-namespace Label
-
-variable {ι : Type*} [Fintype ι] {w : ι → Label.{u}} {k : ℕ}
-
-/-- **The orbit code keeps a block reading**: two values `ω · c + i` and `ω · c + n` of `w` with
-`i, n < k` are coded as `ω · c' + i` and `ω · c' + n` for one `c'`: they have one key, an orbit
-key, so they keep their finite parts and move to one code block. -/
-theorem orbitCode_omega0_mul_add {x y : ι} {c : Ordinal.{u}} {i n : ℕ} (hi : i < k) (hn : n < k)
-    (hx : w x = ((ω * c + i : Ordinal.{u}) : Label.{u}))
-    (hy : w y = ((ω * c + n : Ordinal.{u}) : Label.{u})) :
-    ∃ c' : Ordinal.{u}, orbitCode k w x = ((ω * c' + i : Ordinal.{u}) : Label.{u}) ∧
-      orbitCode k w y = ((ω * c' + n : Ordinal.{u}) : Label.{u}) := by
-  have hc : Order.IsSuccPrelimit (ω * c) :=
-    Ordinal.isSuccPrelimit_iff_omega0_dvd.mpr (dvd_mul_right _ _)
-  have hkey : visibilityReplace k k (w x) = visibilityReplace k k (w y) := by
-    rw [hx, hy, visibilityReplace_coe_add_natCast hc hi, visibilityReplace_coe_add_natCast hc hn]
-  have hxO : IsOrbitKey k w (w x) :=
-    isOrbitKey_of_not_isSelfVisible (by rw [hx]; exact not_isSelfVisible_coe_add_natCast hc hi)
-  have hyO : IsOrbitKey k w (w y) := (isOrbitKey_congr hkey).mp hxO
-  have hblock : codeBlock k w (w x) = codeBlock k w (w y) := codeBlock_congr hkey
-  -- the block move of an ordinal keeps its finite part
-  have hmove (j : ℕ) (y' : Label.{u}) :
-      moveToBlock y' ((ω * c + j : Ordinal.{u}) : Label.{u}) =
-        ((ω * blockIndex y' + j : Ordinal.{u}) : Label.{u}) := by
-    -- the block move of an ordinal label is the ordinal formula
-    change (((ω * blockIndex y' + (ω * c + j) % ω : Ordinal.{u}) : WithTop Ordinal.{u}) :
-      Label.{u}) = _
-    rw [Ordinal.mul_add_mod_self, Ordinal.mod_eq_of_lt (natCast_lt_omega0 j)]
-  refine ⟨blockIndex (gridPoint k (codeBlock k w (w x))), ?_, ?_⟩
-  · rw [orbitCode_apply, orbitMap_of_isOrbitKey hxO, hx, hmove]
-  · rw [orbitCode_apply, orbitMap_of_isOrbitKey hyO, ← hblock, hy, hmove]
-
-end Label
 
 /-! ### The reading along normalization, splicing and capped agreement -/
 
