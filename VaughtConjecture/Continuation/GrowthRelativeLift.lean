@@ -89,6 +89,77 @@ theorem correctAt_map {e s : Fin t'.card → Label.{u}} {j : Fin D.card} {ℓ : 
       visibilityReplace_min_of_isSelfVisible hR hvis] at h1
     exact h1
 
+/-- **The root lift on the donor**: a legal donor `d` with root face `p` (`0 < n`), a lawful
+section `v` of `d`, a lawful section `ρ` of `p` agreeing with `v` on the root capped at a cap `γ`
+self-visible at `n + 1`: some lawful section of `d` is `ρ` on the root and agrees with `v` capped
+at `γ`.  Bountifulness of `d` from the root face to the full face
+(`StageType.IsLegal.cappedLift_root_top`), with the root face read through the lower embedding of
+the face. -/
+theorem _root_.VaughtConjecture.StageType.IsLegal.exists_rootLift {d : StageType.{u} α (n + 1)}
+    (hd : d.IsLegal) (hn : 0 < n)
+    {p : StageType.{u} α n} (hdp : restrictFace Fin.castSuccEmb d = some p)
+    {v : Fin d.card → Label.{u}} (hv : d.rows.IsLawful v) {ρ : Fin p.card → Label.{u}}
+    (hρ : p.rows.IsLawful ρ) {γ : Label.{u}} (hγ : IsSelfVisible (n + 1) γ)
+    (hag : ∀ i, min (ρ i) γ = min (v (d.faceCell hdp i)) γ) :
+    ∃ v' : Fin d.card → Label.{u}, d.rows.IsLawful v' ∧ (∀ i, v' (d.faceCell hdp i) = ρ i) ∧
+      ∀ j, min (v' j) γ = min (v j) γ := by
+  classical
+  obtain ⟨hf, rfl⟩ := (restrictFace_eq_some_iff d _).mp hdp
+  set X : Finset (Fin (n + 1)) × ℕ := (univ.map Fin.castSuccEmb, n)
+  set Y : Finset (Fin (n + 1)) × ℕ := ((univ : Finset (Fin (n + 1))), n + 1)
+  have hXY : X ≤ Y := ⟨subset_univ _, Nat.le_succ n⟩
+  have hφ := d.toScheme.isLowerEmbedding_comap Fin.castSuccEmb
+  have himg : d.toScheme.cellMap Fin.castSuccEmb ''
+      (d.toScheme.comap Fin.castSuccEmb).toCellScheme.below
+        ((univ : Finset (Fin n)), n) = d.toCellScheme.below X := by
+    rw [Scheme.image_cellMap_below]
+    rfl
+  -- the root section, as a labelling of the cells below the root face
+  let r : d.toCellScheme.below X → Label.{u} := fun x ↦ ρ ((hφ.belowEquiv himg).symm x).1
+  have hr : d.rows.IsLawfulBelow X r := by
+    rw [← CellScheme.Rows.isLawfulBelow_comap_iff hφ himg]
+    have h1 : (d.rows.comap hφ).IsLawfulBelow ((univ : Finset (Fin n)), n) fun x ↦ ρ x.1 :=
+      hρ.isLawfulBelow _
+    convert h1 using 1
+    funext x
+    simp [r]
+  -- the cell of the root at a cell of the face
+  have hsymm (i : Fin (d.comap Fin.castSuccEmb hf).card)
+      (hi : i ∈ (d.toScheme.comap Fin.castSuccEmb).toCellScheme.below ((univ : Finset (Fin n)), n))
+      (hm : d.toScheme.cellMap Fin.castSuccEmb i ∈ d.toCellScheme.below X) :
+      ((hφ.belowEquiv himg).symm ⟨_, hm⟩).1 = i := by
+    have : (hφ.belowEquiv himg) ⟨i, hi⟩ = ⟨_, hm⟩ := Subtype.ext rfl
+    rw [← this, Equiv.symm_apply_apply]
+  have hfc (i : Fin (d.comap Fin.castSuccEmb hf).card) :
+      d.faceCell hdp i = d.toScheme.cellMap Fin.castSuccEmb i := rfl
+  have hface (i : Fin (d.comap Fin.castSuccEmb hf).card) :
+      i ∈ (d.toScheme.comap Fin.castSuccEmb).toCellScheme.below ((univ : Finset (Fin n)), n) :=
+    ⟨subset_univ _, (d.comap Fin.castSuccEmb hf).grade_le i⟩
+  have hmem (i : Fin (d.comap Fin.castSuccEmb hf).card) :
+      d.toScheme.cellMap Fin.castSuccEmb i ∈ d.toCellScheme.below X := by
+    rw [← himg]
+    exact ⟨i, hface i, rfl⟩
+  have hlift := hd.cappedLift_root_top hf hn
+  obtain ⟨q', hq', hq'cap, hq'r⟩ := (CellScheme.Rows.cappedLift_iff_forall_exists hXY).mp
+    hlift γ hγ r (fun x ↦ v x) hr (hv.isLawfulBelow _) (fun x ↦ by
+      obtain ⟨x, hx⟩ := x
+      rw [← himg] at hx
+      obtain ⟨i, hi, rfl⟩ := hx
+      simp only [r]
+      rw [hsymm i hi (hmem i), hag i]
+      rfl)
+  have hall (j : Fin d.card) : j ∈ d.toCellScheme.below Y := ⟨subset_univ _, d.grade_le j⟩
+  set w : Fin d.card → Label.{u} := fun j ↦ q' ⟨j, hall j⟩ with hw
+  have hwq : (fun j : d.toCellScheme.below Y ↦ w j) = q' := funext fun _ ↦ rfl
+  have hwl : d.rows.IsLawfulBelow Y fun j ↦ w j := by rw [hwq]; exact hq'
+  obtain ⟨hord, hloc, havail⟩ := CellScheme.Rows.isLawfulBelow_iff_forall.mp hwl
+  refine ⟨w, ⟨fun j ↦ hord j (hall j), fun s ↦ hloc s (hall s),
+    fun s t hst hg ↦ havail s t (hall t) hst hg⟩, fun i ↦ ?_, fun j ↦ hq'cap ⟨j, hall j⟩⟩
+  have h1 := hq'r ⟨_, hmem i⟩
+  simp only [r] at h1
+  rw [hsymm i (hface i) (hmem i)] at h1
+  exact h1
+
 /-! ### Allowed pairs, the template, and the relative lift -/
 
 variable {p : StageType.{u} α n} {e : Fin n ↪ Fin k} {d : StageType.{u} α (n + 1)}
@@ -177,6 +248,26 @@ theorem templateImage_isLawful {V : Fin d.card → Label.{u}} (hV : d.rows.IsLaw
     {N : ℕ} (hN : n + 1 ≤ N) {θ : Label.{u} → Label.{u}} (hθ : IsWitness (stepSuppressor N) θ)
     (hpat : ∀ j, θ (V j) = ⊥ ↔ V j = ⊥) : d.rows.IsLawful (θ ∘ V) :=
   hV.map_of_bot_iff hV (fun j ↦ (d.grade_le j).trans hN) hθ hpat
+
+/-- **The relative lift outside the class** (case 0): if the new section `u'` is not in the bottom
+class of the context below the cap, or reads the cap as `⊥`, admission is vacuous and the root
+lift of the donor at `γ` gives the lift.  The root has a point and `γ` is self-visible at the
+arity of the donor. -/
+theorem Allowed.exists_lift_of_not_class (Q : GrowthRequests t' d.toScheme) (hd : d.IsLegal)
+    (hn : 0 < n) {u u' : Fin t'.card → Label.{u}} {v : Fin d.card → Label.{u}}
+    (hall : Q.Allowed hte hdp u v) (hu' : t'.rows.IsLawful u') {γ : Label.{u}}
+    (hγ : IsSelfVisible (n + 1) γ) (hag : ∀ x, min (u' x) γ = min (u x) γ)
+    (hout : ¬ ((∀ x ∈ t'.toCellScheme.below (t'.toCellScheme.gradedIndex Q.cap),
+      u' x = ⊥ → t'.label x = ⊥) ∧ u' Q.cap ≠ ⊥)) :
+    ∃ v' : Fin d.card → Label.{u}, Q.Allowed hte hdp u' v' ∧ ∀ j, min (v' j) γ = min (v j) γ := by
+  obtain ⟨-, hv, hroot, -⟩ := hall
+  -- the root section of `u'`, lawful on the root face
+  have hρ : p.rows.IsLawful fun i ↦ u' (t'.faceCell hte i) := by
+    obtain ⟨hf, rfl⟩ := (restrictFace_eq_some_iff t' e).mp hte
+    exact hu'.comap (t'.isLowerEmbedding_comap e)
+  obtain ⟨v', hv', hv'r, hv'cap⟩ := StageType.IsLegal.exists_rootLift hd hn hdp hv hρ hγ
+    (fun i ↦ by rw [hroot i, hag])
+  exact ⟨v', ⟨hu', hv', hv'r, fun hcls hcap ↦ absurd ⟨hcls, hcap⟩ hout⟩, hv'cap⟩
 
 end GrowthRequests
 
