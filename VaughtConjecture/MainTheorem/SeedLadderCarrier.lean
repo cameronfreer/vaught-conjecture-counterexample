@@ -89,11 +89,12 @@ end CompletionBelowFullGrade
 namespace Seed
 
 variable {α : Ordinal.{u}} {m n : ℕ} (I : Seed.{u} α m) {e₀ : Fin n ↪ Fin m}
-  {d : StageType.{u} α (n + 1)} (hd : restrictFace (extendByLast e₀) I.right = some d)
+  {d : StageType.{u} α (n + 1)}
+  (hd : restrictFace (extendByLast (e₀.trans Fin.castSuccEmb)) I.amalgam = some d)
 
-include hd in
-/-- The donor is the face of the amalgam along the root followed by the new point. -/
-theorem restrictFace_donor_amalgam :
+/-- The face of the second coatom type along the root followed by the new point is the face of
+the amalgam along the root followed by the new point. -/
+theorem restrictFace_donor_amalgam (hd : restrictFace (extendByLast e₀) I.right = some d) :
     restrictFace (extendByLast (e₀.trans Fin.castSuccEmb)) I.amalgam = some d := by
   have hright : restrictFace (Coatom.right m) I.amalgam = some I.right := I.restrictFace_right
   rw [← extendByLast_trans, ← restrictFace_trans I.amalgam _ _ hright]
@@ -109,7 +110,7 @@ include hd in
 theorem comap_donor_amalgam_scheme :
     I.amalgam.toScheme.comap (extendByLast (e₀.trans Fin.castSuccEmb)) = d.toScheme :=
   congrArg StageType.toScheme
-    ((restrictFace_eq_some_iff _ _).mp (I.restrictFace_donor_amalgam hd)).2
+    ((restrictFace_eq_some_iff _ _).mp hd).2
 
 /-- The cell of the amalgam at a cell of the context. -/
 noncomputable def ctxCell (x : Fin I.left.card) : Fin I.amalgam.card :=
@@ -147,7 +148,8 @@ end Seed
 namespace Seed
 
 variable {α : Ordinal.{u}} {m n : ℕ} {I : Seed.{u} α m} {e₀ : Fin n ↪ Fin m}
-  {d : StageType.{u} α (n + 1)} (hd : restrictFace (extendByLast e₀) I.right = some d)
+  {d : StageType.{u} α (n + 1)}
+  (hd : restrictFace (extendByLast (e₀.trans Fin.castSuccEmb)) I.amalgam = some d)
 
 /-- **The ladder growth carrier at the seed position**, from the open bountifulness of the ladder
 tower: at a stage that is zero or a limit, for requests `Q` on the donor with threshold at least
@@ -181,11 +183,21 @@ theorem exists_ladderCarrier (hα : Order.IsSuccPrelimit α) (Q : GrowthRequests
       I.towerAdmits_bot hd Q _⟩⟩
   set F := ladderCompletion (A := A) hH hcard hΓ hΓω (I.towerAdmits_succ hd Q) hne hbount hlab
     with hF
+  have hdonne : univ.map (extendByLast (e₀.trans Fin.castSuccEmb)) ≠
+      (univ : Finset (Fin (m + 2))) := fun he ↦ by
+    have h := mem_univ (Fin.castSucc (Fin.last m) : Fin (m + 2))
+    rw [← he, mem_map] at h
+    obtain ⟨a, -, ha⟩ := h
+    induction a using Fin.lastCases with
+    | last => rw [extendByLast_last] at ha; exact absurd ha (Fin.castSucc_lt_last _).ne'
+    | cast a =>
+      rw [extendByLast_castSucc, Function.Embedding.trans_apply] at ha
+      have ha' := Fin.castSucc_injective _ ha
+      simp at ha'
   have hdX : restrictFace (extendByLast (e₀.trans Fin.castSuccEmb)) (F.completion hα) =
       some d := by
-    have hright := F.restrictFace_right_completion hα
-    rw [← extendByLast_trans, ← restrictFace_trans _ _ _ hright]
-    exact hd
+    exact (StageType.restrictFace_addApex _ _ _ hdonne).trans
+      ((F.restrictFace_withLabel _ _ (F.truncate_label_embed hα) _ hdonne).trans hd)
   let G := GrowthCarrier.ofExtension (F.isLegal_completion hα)
     (F.restrictFace_left_completion hα) hdX
   set T := I.ladderTower H Γ A B' m with hT
@@ -234,17 +246,6 @@ theorem exists_ladderCarrier (hα : Order.IsSuccPrelimit α) (Q : GrowthRequests
     F.cellMap_completion hα Fin.castSuccEmb Coatom.univ_map_left_ne
       (i := Fin.cast (congrArg Scheme.card I.comap_left_amalgam_scheme).symm x)
       (j := Fin.cast (congrArg Scheme.card G.comap_context).symm x) rfl
-  have hdonne : univ.map (extendByLast (e₀.trans Fin.castSuccEmb)) ≠
-      (univ : Finset (Fin (m + 2))) := fun he ↦ by
-    have h := mem_univ (Fin.castSucc (Fin.last m) : Fin (m + 2))
-    rw [← he, mem_map] at h
-    obtain ⟨a, -, ha⟩ := h
-    induction a using Fin.lastCases with
-    | last => rw [extendByLast_last] at ha; exact absurd ha (Fin.castSucc_lt_last _).ne'
-    | cast a =>
-      rw [extendByLast_castSucc, Function.Embedding.trans_apply] at ha
-      have ha' := Fin.castSucc_injective _ ha
-      simp at ha'
   have hdon (j : Fin d.card) : G.donorCell j = emb (Fin.castAdd _ (I.donCell hd j)) :=
     F.cellMap_completion hα _ hdonne
       (i := Fin.cast (congrArg Scheme.card (I.comap_donor_amalgam_scheme hd)).symm j)
