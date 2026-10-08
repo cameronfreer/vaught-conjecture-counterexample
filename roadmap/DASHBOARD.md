@@ -27,7 +27,7 @@ percentage of 100 would not by itself mean that the hypotheses of a layer are pr
 | 1, finite kernel | 98% | `StageType.provisionalOffset` | the bound (d) of the offset (prospective) |
 | 2, realizations, syntax | 95% | `Realization.eq_of_eval_eq_some` | hull items 4–5 for realizations |
 | 3, the completion (R6) | 72% | `Seed.nonempty_completionBelowFullGrade_of_le_two` | the completion at `m ≥ 3` |
-| 3, receiving | 90% | `Realization.HasFiniteCutReceiving.hasFiniteExtensionReceiving` | (R1) (4b-ii refuted; the (R1) conditional theorems under it are to be retired in a separate change); (R2)–(R4) |
+| 3, receiving | 90% | `Realization.HasFiniteCutReceiving.hasFiniteExtensionReceiving` | (R1) (4b-ii refuted; the (R1) conditional theorems under it are retired); (R2)–(R4) |
 | 4, continuation | 62% | `Realization.stableCandidate` | output 3: (R4), the apex property |
 | 5, domains, agreement | 85% | `Expansion.expansionDomain_loss_countable` | the hypotheses below |
 | 6, the bounds | 90% | `densitySentence_hasThinAlephOneSpectrum_of_terminalClassification` | the hypotheses below |
@@ -111,14 +111,9 @@ Notes on the rows, each with its marker:
   exactly consistent realization at a stage that is zero or a limit
   (`Realization.HasFiniteCutReceiving.hasFiniteExtensionReceiving`); gate recovery
   (`StageType.GatedExtension.recover`) and with the twin–gate coupling
-  (`CellScheme.Rows.IsGate.recover_of_twinsReadGate`); (R1) conditional on
-  `StageType.HasCoupledGatedPinnedExtensions`
-  (`Realization.IsModel.hasFiniteCutReceiving_of_hasCoupledGatedPinnedExtensions`), vacuous at every
-  stage above `1`, where that hypothesis is refuted
-  (`CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`); the bottom transport
-  condition that every coupled gated extension forces
-  (`StageType.CoupledGatedExtension.carriesBottoms`); the refutation of the first form
-  `StageType.HasGatedPinnedExtensions`
+  (`CellScheme.Rows.IsGate.recover_of_twinsReadGate`); the bottom transport condition that every
+  coupled gated extension forces (`StageType.CoupledGatedExtension.carriesBottoms`); the
+  refutation of the first form `StageType.HasGatedPinnedExtensions`
   (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`); the coupled form at the inputs on
   `GatedExtensionCounterexample.P α` (`CoupledGateExamples.exists_coupledGatedExtension_comap_g₁`,
   `CoupledGateInstance.coupledGatedPinnedExtension_donor`, and with every anchored legal one-point
@@ -128,9 +123,11 @@ Notes on the rows, each with its marker:
   conditionally: steps 2–3 under `StageType.HasCoatomExtensions`, and step 7 under
   `StageType.HasApexCoatomExtensions` at `λ_η` and the uniqueness of model expansions at `λ_η`
   (`nonempty_loss_of_hasApexCoatomExtensions`).  Refuted: 4b-ii, the coupled gated pinned extension
-  property (`CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`).  Still to be
-  proved: (R1) by another construction, or by the coupled one restricted to the private contexts
-  that models acquire (prospective); (R2), (R3), (R4).
+  property, at every stage above `1`
+  (`CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`); the (R1) theorems
+  stated conditional on it, vacuous there, are retired.  Still to be proved: (R1) by another
+  construction, or by the coupled one restricted to the private contexts that models acquire
+  (prospective); (R2), (R3), (R4).
 - *Layer 4.*  Compiled: normalization, conditional on finite-extension receiving and forcing donors
   (`Realization.label_eq_stableLabel`); forcing donors, conditional on the coatom extension
   property (`forcingDonors_of_hasCoatomExtensions`); the structural candidate
@@ -297,11 +294,11 @@ Status of each:
 
 1. `CapToModel`: still to be proved.  Compiled conditionally on the coatom extension property with
    apex at `ω` (`CapToModel.of_hasApexCoatomExtensions`), which is still to be proved.
-2. `Expansion.FiniteCutReceiving`: still to be proved.  Compiled conditionally on the coupled gated
-   pinned extension property (`Expansion.finiteCutReceiving_of_hasCoupledGatedPinnedExtensions`),
-   which is refuted (4b-ii,
+2. `Expansion.FiniteCutReceiving`: still to be proved.  The coupled gated pinned extension
+   property, under which it was compiled conditionally, is refuted at every stage above `1` (4b-ii,
    `CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`), so that conditional
-   theorem is vacuous.  It is also used for the rigid-core comparison.
+   was vacuous and is retired; no conditional form of (R1) remains compiled.  It is also used for
+   the rigid-core comparison.
 3. `ForcingDonors`: still to be proved.  Compiled conditionally on the coatom extension property
    at `λ_{ξ+1}` (`forcingDonors_of_hasCoatomExtensions`, `Extension/ForcingDonorsCoatom`), hence on
    the coatom extension property with apex at every countable block stage
@@ -621,9 +618,9 @@ named hypothesis.
    inputs without a proper anchor, on `GatedExtensionCounterexample.P α`, whose labels are `⊥` and
    `⊤` (`CoupledGateExamples.exists_coupledGatedExtension_comap_g₁`,
    `CoupledGateInstance.coupledGatedPinnedExtension_donor`, and with every anchored legal one-point
-   donor, `CoupledGateOnePointDonors.coupledGatedPinnedExtension_P`).  The conditional (R1)
-   (`Expansion.finiteCutReceiving_of_hasCoupledGatedPinnedExtensions`) is vacuous.  (R1) itself is
-   not refuted: open, whether the private contexts that models acquire
+   donor, `CoupledGateOnePointDonors.coupledGatedPinnedExtension_P`).  The (R1) theorems stated
+   conditional on the property were vacuous and are retired.  (R1) itself is not refuted: open,
+   whether the private contexts that models acquire
    (`Realization.IsModel.exists_privateContext_isAnchored`) satisfy the bottom transport condition
    with every anchored donor, and whether the coupled property restricted to them holds.  The
    condition holds when the cap reads an anchor of every donor label below it in the block of its

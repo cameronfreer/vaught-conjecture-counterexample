@@ -48,7 +48,7 @@ excludes, has no solution there.  So proving (CL) as stated does not establish t
 requirement of the construction is satisfied.
 
 **The requirement.**  `StageType.HasCoupledGatedPinnedExtensions` asks for a legal display, and
-its use (`Realization.IsModel.hasFiniteCutReceiving_of_hasCoupledGatedPinnedExtensions`) passes
+its use in an assembly of (R1) passes
 the full legality of the display to generalized saturation.  The new content sits at a forcing
 lift: `CappedLift` from a coatom `(F ∪ {y}, n)`, `y` the new point, to `(univ, n)`, for every cap
 `c` self-visible at `n` and every lawful ambient labelling of the display, not only its own

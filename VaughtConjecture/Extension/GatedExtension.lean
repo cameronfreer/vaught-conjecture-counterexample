@@ -76,9 +76,9 @@ above `1`** (`CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExten
 private type with a proper anchor below the cap, the readings of the gate carry a lawful private
 labelling that drops the anchor and keeps the cap to a labelling of the donor face that the donor's
 rows forbid (`StageType.CoupledGatedExtension.carriesBottoms`).  The definition is kept to state
-that refutation and the theorems conditional on it.  It holds at the input that refutes the gated
-pinned extension property: over the empty root, with the donor `P α|{0}` and the cap `3`, the
-private type `GatedExtensionCounterexample.P α` has a coupled gated extension
+that refutation and its instances; no theorem is stated under it.  It holds at the input that
+refutes the gated pinned extension property: over the empty root, with the donor `P α|{0}` and the
+cap `3`, the private type `GatedExtensionCounterexample.P α` has a coupled gated extension
 (`CoupledGateExamples.exists_coupledGatedExtension_comap_g₁`), whose gate has a twin not labelled
 `⊥` (`CoupledGateExamples.exists_coupledGatedExtension`; the display labels it `⊤`).  Every legal
 one-point extension of `P α` has such a twin
@@ -512,19 +512,5 @@ theorem carriesBottoms {c : Label.{u}} (hc : E.display.label E.cap = c) :
     exact hanc i' hez
 
 end CoupledGatedExtension
-
-/-- **The coupled gated pinned extension property forces the bottom transport condition** at each
-of its inputs: for a legal `P`, a face `f` with restriction `p`, a legal one-point coface `d` of
-`p`, and a cell `C` of `P` of graded index `(univ, n)` not labelled `⊥` below which `d` is
-anchored, with `m + 1 < n`, the condition holds for `P`, `d` and the label of `C`. -/
-theorem HasCoupledGatedPinnedExtensions.carriesBottoms
-    (h : HasCoupledGatedPinnedExtensions α) {P : StageType.{u} α n} {f : Fin m ↪ Fin n}
-    {p : StageType.{u} α m} {d : StageType.{u} α (m + 1)} {C : Fin P.card} (hP : P.IsLegal)
-    (hp : restrictFace f P = some p) (hd : d.IsLegal)
-    (hdp : restrictFace Fin.castSuccEmb d = some p)
-    (hC : P.toCellScheme.gradedIndex C = (univ, n)) (hC0 : P.label C ≠ ⊥) (hmn : m + 1 < n)
-    (ha : IsAnchored P C d) : CarriesBottoms P d (P.label C) := by
-  obtain ⟨E, hE⟩ := h P f p d C hP hp hd hdp hC hC0 hmn ha
-  exact E.carriesBottoms hE
 
 end VaughtConjecture.StageType

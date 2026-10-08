@@ -42,8 +42,8 @@ graded index `(univ, n)` labelled as the cap.
 * The donor face of `r` is a lawful labelling of `d`.
 
 So the readings of the gate carry the bottom pattern of every lawful private labelling, at the
-anchors, to a lawful labelling of the donor.  The coupled gated pinned extension property forces
-the condition at each of its inputs (`StageType.HasCoupledGatedPinnedExtensions.carriesBottoms`).
+anchors, to a lawful labelling of the donor.  So the coupled gated pinned extension property, at
+each of its inputs, asks for a private type and a donor that satisfy the condition.
 
 **When the condition holds** (`StageType.carriesBottoms_of_row_mem_block`).  If the row of the cap
 reads, for every donor label below the cap, an anchor of that label in the block of its reading of
@@ -93,16 +93,16 @@ labelled `⊤`.  So the bottom transport condition asks for a lawful labelling o
   (the legality of the display, its literal faces, the graded indices of the gate and the cap, the
   twin–gate coupling and the readings of the gate).  The identified obstruction survives the
   redesigns examined (the twins labelled `⊥`, and the twin–gate coupling); a redesign that weakens
-  the legality of the display at the private coatom is not covered.  So the conditional (R1)
-  (`Realization.IsModel.hasFiniteCutReceiving_of_hasCoupledGatedPinnedExtensions`,
-  `Expansion.finiteCutReceiving_of_hasCoupledGatedPinnedExtensions`) is vacuous at those stages.
+  the legality of the display at the private coatom is not covered.  The theorems that were
+  stated conditional on the property (finite-cut receiving for models, and its corollaries at the
+  countable limit stages) were vacuous at those stages and are retired.
 * It does not refute (R1), finite-cut receiving for all models: whether the private types that
   models acquire (`Realization.IsModel.exists_privateContext`) can carry such an anchor
   (a lawful labelling of the private type that is `⊥` at an anchor and not at the cap, with a donor
   whose rows read the transported pattern within one block) is not decided here.
 * The refuting private type has a unique cell of full scope and full grade, and cells of grade
-  `1` not labelled `⊥`; so neither of the conditions on private contexts asked about in
-  `VaughtConjecture.Realization.CoupledFiniteCutReceiving` (question (M4)) excludes it.
+  `1` not labelled `⊥`; so neither a unique cell of full scope and full grade, nor a marker of
+  grade below `n` not labelled `⊥`, as conditions on private contexts, excludes it.
 * The input has a proper anchor below the cap.  When every donor label below the cap is `⊥`, the
   condition is met by the donor's own labelling (`StageType.carriesBottoms_of_forall_label`);
   the instances of the property compiled at the private type `GatedExtensionCounterexample.P α`,

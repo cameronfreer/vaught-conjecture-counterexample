@@ -3307,14 +3307,13 @@ Each checkpoint needs both its abstract API and a concrete application:
    (`StageType.GatedExtension.recover`, `Realization/GateRecovery`), with no legality, no
    completion, and no (R6), and with the twin–gate coupling in place of the bottom pattern of the
    twins (`CellScheme.Rows.IsGate.recover_of_twinsReadGate`,
-   `StageType.CoupledGatedExtension.exists_restrictFace_mem_receivingFamily`); and 4b-iv,
-   conditional on the gated-extension property, stated as
+   `StageType.CoupledGatedExtension.exists_restrictFace_mem_receivingFamily`), are compiled in this
+   repository (theorem named).  4b-iv, conditional on the gated-extension property, stated as
    `StageType.HasCoupledGatedPinnedExtensions` (`Extension/GatedExtension`), with generalized
-   saturation over the private context, witnessed by the display, and no hypothesis on the stage
-   (`Realization.IsModel.hasFiniteCutReceiving_of_hasCoupledGatedPinnedExtensions`,
-   `Realization/CoupledFiniteCutReceiving`,
-   `Expansion.finiteCutReceiving_of_hasCoupledGatedPinnedExtensions`), are compiled in this
-   repository (theorem named). The first form of the property, `StageType.HasGatedPinnedExtensions`,
+   saturation over the private context, witnessed by the display, and no hypothesis on the stage,
+   was compiled and is retired: that property is refuted at every stage above `1` (below), so the
+   conditional was vacuous there; no conditional form of (R1) remains compiled.
+   The first form of the property, `StageType.HasGatedPinnedExtensions`,
    whose displays label the twins of the gate `⊥`, is refuted at every stage
    (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`, compiled in this repository
    (theorem named)); the coupled form replaces that clause by the condition on rows
@@ -3328,7 +3327,7 @@ Each checkpoint needs both its abstract API and a concrete application:
    `Extension/CoupledGatedExtensionCounterexample`, compiled in this repository (theorem named)).
    The mechanism is the bottom transport condition `StageType.CarriesBottoms`, which every coupled
    gated extension forces (`StageType.CoupledGatedExtension.carriesBottoms`, at each input of the
-   property `StageType.HasCoupledGatedPinnedExtensions.carriesBottoms`): a lawful labelling of the
+   property, for the coupled gated extension it asks for): a lawful labelling of the
    private type is the private face of a lawful labelling `q` of the display (bountifulness from the
    private face at the cap `⊥`); the cap is not `⊥` there, so neither is the gate `G`; the one
    witness at the gate commutes with `vr_n` up to `q G`, so a donor cell is `⊥` when every possible anchor
@@ -3351,9 +3350,9 @@ Each checkpoint needs both its abstract API and a concrete application:
    neither is stated in the library (prospective).  The condition holds when the cap reads an anchor
    of every donor label below it in the block of its reading of the cap itself
    (`StageType.carriesBottoms_of_row_mem_block`), which the refuting private type does not satisfy;
-   the condition is necessary for the property, not shown sufficient.  The conditional theorem is
-   vacuous at every stage above `1`; it receives one permitted cutoff at a time and is not exact
-   projected receiving. Projected-donor lifting is not part of checkpoint 4 (`README.md`, Layer 3,
+   the condition is necessary for the property, not shown sufficient.  The conditional theorem,
+   vacuous at every stage above `1`, is retired.
+   Projected-donor lifting is not part of checkpoint 4 (`README.md`, Layer 3,
    3.3, the density boundary). This status concerns (R1) only: (R2), (R3), and the fidelity theorem
    of this checkpoint remain to be proved; the cap-to-model theorem at a limit stage is compiled
    (`Realization.isModel_of_hasFiniteCutReceiving`, `Realization/CapToModel`) conditional on the
@@ -4356,8 +4355,8 @@ form, at arbitrary limit stages.
 
 **U1.  (R1) through an attached gated scheme** (first priority).
 
-- *Conclusion.*  The per-model form at every limit stage, as
-  `Realization.IsModel.hasFiniteCutReceiving_of_hasCoupledGatedPinnedExtensions` is stated: for
+- *Conclusion.*  The per-model form at every limit stage, as the retired conditional theorem of
+  checkpoint 4 (4b-iv) was stated: for
   every limit `α` and every `R : Realization α M`, `R.IsModel → R.HasFiniteCutReceiving`, that is,
   for every actual occurrence `x` (the root, kept as the literal tuple `x.tuple`, the empty root
   included), every `d ∈ x.type.cofaces`, and every permitted cutoff `δ`, `R` realizes over
@@ -4376,9 +4375,9 @@ form, at arbitrary limit stages.
   `StageType.exists_pinned_extension` (the compiled form in which step 2 uses the plain coatom
   extension property: one coatom extension for each private point outside the root); the catalogue,
   decoders, and owner alignment of checkpoints 2.3–2.5 (`Label.exists_ownerAlignment`,
-  `CellScheme.Rows.cappedLift_of_boundary`); the assembly of
-  `Realization.IsModel.hasFiniteCutReceiving_of_hasCoupledGatedPinnedExtensions`, with the coupled
-  property replaced by steps 2–4; `HasFiniteCutReceiving.hasFiniteExtensionReceiving`.
+  `CellScheme.Rows.cappedLift_of_boundary`); the assembly of the retired conditional theorem of
+  checkpoint 4 (4b-iv, in the history of `main`), with the coupled property replaced by steps
+  2–4; `HasFiniteCutReceiving.hasFiniteExtensionReceiving`.
 - *Missing steps*, each a theorem.  (1) *Acquisition*: a private context `u` with `x.tuple` as a
   literal face, of arity `N ≥ 4`, a reference cell for each block containing a proper label of `d`,
   and actual cut above `δ` (uniformity and high-arity dominance, [Kni26, Definition 3.2.1, clauses
