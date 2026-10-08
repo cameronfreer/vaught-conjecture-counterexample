@@ -30,8 +30,8 @@ common face has no cell above `K` (`k ≤ K`) it is bountifulness (`H2.extAbove_
 the root cells of grade in `(K, j]` are prescribed as well (the analogue at higher arity of
 `H2.GradeTwoExtAtOne`).
 
-**The assembly** (`H2.admittedCompletionsBelowAt_of_ext`, `H2.coatomCutoffDeterminationLast_of_ext`):
-the engine below the full grade on `k + 1 ≥ 2` points from the extension above `K` for `K < k`
+**The assembly** (`H2.admittedCompletionsBelowAt_of_ext`,
+`H2.coatomCutoffDeterminationLast_of_ext`): the engine below the full grade on `k + 1 ≥ 2` points from the extension above `K` for `K < k`
 (`H2.ExtAboveAt`); at `K = k` it needs nothing.  At three points (`k = 2`) the residual is the
 extension above the grade `1` (`H2.extAboveAt_two_iff`).
 -/
