@@ -4029,12 +4029,14 @@ ones split):
   bounded value set (`ProfileCatalogue.not_exists_lift_top`,
   `ProfileCatalogue.not_cappedLift_three`; refuted, negative special case named). A configured lift
   at the tie profile with its own cap `3` exists for every `J ≤ 3` and `N ≥ 3`
-  (`ProfileCatalogue.exists_lift_tie`), fails at `N = 1`
-  (`ProfileCatalogue.not_exists_lift_tie_one`), and is open at `N = 2`; it is not the refuted
-  configuration and not the lift at every ambient labelling. The fields of `Seed.MultiLayerStep` for
-  the profile scheme: `pos` fails for every `J ≤ 3` (`mult I N J 3 = 0`), `row_lt`,
-  `isLawfulBelow_row` and `exists_isLawful` are not proved, `cappedLift_left` at `k = 3` is refuted
-  for `J = 2, 3` and every other lift is not proved; so neither scheme is a completion as it stands.
+  (`ProfileCatalogue.exists_lift_tie`), fails at `N = 1`, `J = 3`
+  (`ProfileCatalogue.not_exists_lift_tie_one`; for every `J ≥ 2`,
+  `ProfileCatalogue.not_exists_lift_tie_one_of_two_le`), and is open at `N = 2`; it is not the
+  refuted configuration and not the lift at every ambient labelling. The fields of
+  `Seed.MultiLayerStep` for the profile scheme: `pos` fails for every `J ≤ 3`
+  (`mult I N J 3 = 0`), `row_lt`, `isLawfulBelow_row` and `exists_isLawful` are not proved,
+  `cappedLift_left` at `k = 3` is refuted for `J = 2, 3` and every other lift is not proved; so
+  neither scheme is a completion as it stands.
   At the seeds of `TH` and `TG` the grade-1 catalogue has two cells separating `({3}, 1)` and `({4},
   1)` in the two orders (`ProfileCatalogue.exists_separating_cells_of`,
   `ProfileCatalogue.exists_separating_cells_seedHG`). Open: normalization by rank (a proposed repair

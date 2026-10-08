@@ -577,22 +577,25 @@ named hypothesis.
    transfers (`ProfileCatalogue.not_exists_lift_two`, `ProfileCatalogue.not_cappedLift_two`,
    negative special case named); with the catalogue at the grade 3 added, that ambient is excluded
    (`ProfileCatalogue.not_isLawfulBelow_three`).  That the rows at the grade 3 see the cap in
-   general is argued from these two, not compiled; it refutes, as stated, the diagnosis that the
-   values of grade-2 profiles at `({0, 1, 2}, 3)` remove the obstruction.  A configured lift at the
-   tie profile with its own cap `3` exists for every top layer `J ≤ 3` and bound `N ≥ 3`
-   (`ProfileCatalogue.exists_lift_tie`; not the refuted configuration, and not the lift at every
-   ambient); at `N = 1` it fails (`ProfileCatalogue.not_exists_lift_tie_one`), `N = 2` is open.
+   general is argued from these two, not compiled; `ProfileCatalogue.not_exists_lift_two` refutes,
+   as stated, the diagnosis that the values of grade-2 profiles at `({0, 1, 2}, 3)` remove the
+   obstruction.  A configured lift at the tie profile with its own cap `3` exists for every top
+   layer `J ≤ 3` and bound `N ≥ 3` (`ProfileCatalogue.exists_lift_tie`; not the refuted
+   configuration, and not the lift at every ambient); at `N = 1`, `J = 3` it fails
+   (`ProfileCatalogue.not_exists_lift_tie_one`; for every `J ≥ 2`,
+   `ProfileCatalogue.not_exists_lift_tie_one_of_two_le`), `N = 2` is open.
    With the grade-3 catalogue the scheme still does not lift capped from `(C, 3)`, at the top of its
-   bounded value set (`ProfileCatalogue.not_cappedLift_three`, negative special case named; a
-   failure of the same kind as `SmallArityExamples.cappedLift_fourCellSeed` and `README.md` 2.5,
-   with different combinatorics).  Normalization by rank, leaving room above every value, is a
-   proposed repair (prospective) until its preservation properties compile.  Of the fields of
-   `Seed.MultiLayerStep`: `pos` fails by construction for every `J ≤ 3` (no cell at `(univ, 4)`),
-   `row_lt`, `isLawfulBelow_row` and `exists_isLawful` are not proved, `cappedLift_left` at `k = 3`
-   is refuted for `J = 2, 3` and every other lift is not proved, so neither scheme is a completion
-   as it stands.  `seedHG`: the grade-1 catalogue has both forced separations
-   (`ProfileCatalogue.exists_separating_cells_seedHG`).  The completion at `m ≥ 3` for every seed
-   and hypothesis 8 stay open.
+   bounded value set (`ProfileCatalogue.not_cappedLift_three`, negative special case named; the
+   flat catalogue over a fixed alphabet also fails at the top of its alphabet,
+   `SmallArityExamples.not_cappedLift_flatRows`, proved separately, with different combinatorics,
+   and neither failure is derived from the other).  Normalization by rank, leaving room above every
+   value, is a proposed repair (prospective) until its preservation properties compile.  Of the
+   fields of `Seed.MultiLayerStep`: `pos` fails by construction for every `J ≤ 3` (no cell at
+   `(univ, 4)`), `row_lt`, `isLawfulBelow_row` and `exists_isLawful` are not proved,
+   `cappedLift_left` at `k = 3` is refuted for `J = 2, 3` and every other lift is not proved, so
+   neither scheme is a completion as it stands.  `seedHG`: the grade-1 catalogue has both forced
+   separations (`ProfileCatalogue.exists_separating_cells_seedHG`).  The completion at `m ≥ 3` for
+   every seed and hypothesis 8 stay open.
 2. **Stable availability at twins** (compiled): from legal types
    (`Realization.availability_stableSection_of_hasLegalTypes`), so every model at a block stage is
    stably lawful (`Realization.IsModel.isStablyLawful`), and so is every exactly consistent
