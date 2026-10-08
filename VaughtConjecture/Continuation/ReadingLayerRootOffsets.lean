@@ -27,6 +27,9 @@ Roadmap, Layer 3 ((R3) of the table of 3.4).
   `TiedRootCapRelabel.MarkedCapContextBelow`, `TiedRootCapRelabel.MarkedCapContextBelow'`,
   defined here): the row of the cap reads the root cells labelled `⊥` as `⊥`; the marked-cap
   context with root offsets below the grade of its cap, with and without that property.
+* **Apex types as acquired contexts** (`StageType.markedCapContextBelow'_addApex`, compiled): an
+  apex added to a type legal below the full grade, along a root of `n` points with `n + 1 < k`,
+  root labels never `⊤` and root offsets below `k`.
 
 ## Placement
 
@@ -245,5 +248,32 @@ def MarkedCapContextBelow' (t' : StageType.{u} α k) (h : Fin n ↪ Fin k) : Pro
     t'.RootBottomRespected h c
 
 end TiedRootCapRelabel
+
+namespace StageType
+
+variable {α : Ordinal.{u}} {k n : ℕ}
+
+/-- **An apex type is a context respecting the root bottoms** along every root of `n` points with
+`n + 1 < k`, root labels never `⊤`, and root offsets below `k`. -/
+theorem markedCapContextBelow'_addApex {t₀ : StageType.{u} α k}
+    (ht₀ : t₀.IsLegalBelowFullGrade) (hk : 0 < k) {h : Fin n ↪ Fin k} (hnk : n + 1 < k)
+    (hroot : ∀ y ∈ (t₀.addApex ht₀ hk).visibleCells h, (t₀.addApex ht₀ hk).label y ≠ ⊤)
+    (hoff : ∀ y ∈ (t₀.addApex ht₀ hk).visibleCells h, ∀ (μ : Ordinal.{u}) (f : ℕ),
+      Order.IsSuccPrelimit μ → (t₀.addApex ht₀ hk).label y = ((μ + f : Ordinal.{u}) : Label.{u}) →
+        f < k) :
+    TiedRootCapRelabel.MarkedCapContextBelow' (t₀.addApex ht₀ hk) h := by
+  have hg : (t₀.addApex ht₀ hk).toCellScheme.grade (Fin.last _) = k :=
+    congrArg Prod.snd (addApex_gradedIndex_last ht₀ hk)
+  refine ⟨Fin.last _, Fin.last _, ⟨⟨addApex_scope_last ht₀ hk, addApex_label_last ht₀ hk,
+    fun x _ ↦ by rw [hg]; exact (t₀.addApex ht₀ hk).grade_le x⟩,
+    ⟨addApex_label_last ht₀ hk, (t₀.addApex ht₀ hk).toCellScheme.mem_below_gradedIndex _,
+      fun x hx _ ↦ le_of_eq ((rowAt_addApex_last ht₀ hk _).trans
+        ((congrArg (blockEncode (apexCodes ht₀) k) ((addApex_label_last ht₀ hk).trans
+          hx.symm)).trans (rowAt_addApex_last ht₀ hk x).symm))⟩,
+    by rw [hg]; exact hnk, fun a ha hat ↦ absurd hat (hroot a ha)⟩,
+    fun y hy μ f hμ hf ↦ by rw [hg]; exact hoff y hy μ f hμ hf,
+    fun y _ hyb ↦ (rowAt_addApex_last_eq_bot_iff ht₀ hk y).mpr hyb⟩
+
+end StageType
 
 end VaughtConjecture

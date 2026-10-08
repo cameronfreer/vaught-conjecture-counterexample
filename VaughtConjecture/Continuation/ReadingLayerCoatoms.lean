@@ -278,7 +278,9 @@ residual hypotheses are:
   off the root;
 * `hface`: the cells off the point `3` (the common face with the right coatom) are labelled `⊥` —
   a shape restriction;
-* `z₁`, `z₂`: root cells of grades `1`, `2` with one proper label, with `htie`, `htwo`, `hthree`
+* `z₁`, `z₂`: root cells of grades `1`, `2`, `z₂` labelled `⊥` (then the cap reads it as `⊥`, by
+  the root bottoms) or with the proper label of `z₁` (then the cap reads them alike, by the root
+  offsets), with `htie`, `htwo`, `hthree`
   (one value at the cells of grade `1` not labelled `⊥`, one value at those of grade `2`, the
   cells of grade `3` labelled `⊥`) — the shape of this family;
 * `hR`: the right coatom type raises at the point `3` and has a new top `x₀`
@@ -293,7 +295,8 @@ theorem isLegalBelowFullGrade_readingTop_of_acquired {n : ℕ} {h : Fin n ↪ Fi
     (hface : ∀ z, Fin.last 3 ∉ I.left.toCellScheme.scope z → I.left.label z = ⊥)
     {z₁ z₂ : Fin I.left.card} (hz₁ : z₁ ∈ I.left.visibleCells h) (hz₂ : z₂ ∈ I.left.visibleCells h)
     (hg₁ : I.left.toCellScheme.grade z₁ = 1) (hg₂ : I.left.toCellScheme.grade z₂ = 2)
-    (hlab : I.left.label z₂ = I.left.label z₁) (hprop : IsProper (I.left.label z₂))
+    (hlab : I.left.label z₂ = ⊥ ∨
+      (I.left.label z₂ = I.left.label z₁ ∧ IsProper (I.left.label z₂)))
     (htie : ∀ p : Fin I.left.card → Label.{u}, I.left.rows.IsLawful p → ∀ z,
       I.left.toCellScheme.grade z = 1 → I.left.label z ≠ ⊥ → p z = p z₁)
     (htwo : ∀ p : Fin I.left.card → Label.{u}, I.left.rows.IsLawful p → ∀ z,
@@ -312,8 +315,9 @@ theorem isLegalBelowFullGrade_readingTop_of_acquired {n : ℕ} {h : Fin n ↪ Fi
       face_bot := hface
       grade_one := hg₁
       grade_two := hg₂
-      row_tie := rowTie_of_rootOffsetsBelow hct hcs
-        (by have := Fintype.card_le_of_embedding h; simp at this; omega) hoff hz₁ hz₂ hlab hprop
+      row_tie := hlab.elim (fun h0 ↦ (le_of_eq (hbot z₂ hz₂ h0)).trans bot_le)
+        fun ⟨hl, hp⟩ ↦ rowTie_of_rootOffsetsBelow hct hcs
+          (by have := Fintype.card_le_of_embedding h; simp at this; omega) hoff hz₁ hz₂ hl hp
       tie_one := htie
       tie_two := htwo
       label_three := hthree }
