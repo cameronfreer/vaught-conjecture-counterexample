@@ -366,10 +366,12 @@ theorem Seed.exists_correctCompletion_top {α : Ordinal.{u}} {m : ℕ} (I : Seed
     ⟨I.amalgam.isLawful.isLawfulBelow _, I.amalgam.isLawful.isLawfulBelow _⟩
   have hlab' := code_mem_rowCat hgr hW hlab
   obtain ⟨j, rfl⟩ : ∃ j, m = j + 2 := ⟨m - 2, by omega⟩
-  have hL := lvl_good (I := I) hm j le_rfl
-  exact ⟨hL.admittedTopCompletion r.IsCorrect (fun x hx ↦ (hprov x hx).1)
+  have hL := (lvl_good (I := I) hm j le_rfl).toGoodOn fun k ↦ cat I k
+  have hdown : ∀ R ∈ rowCat r.IsCorrect (j + 2 + 1), code (j + 2) R ∈ cat I (j + 2) :=
+    fun R hR ↦ code_mem_cat_of_mem_cat (rowCat_subset _ _ hR)
+  exact ⟨hL.admittedTopCompletion r.IsCorrect hdown (fun x hx ↦ (hprov x hx).1)
     (fun x hx ↦ (hprov x hx).2) hlab', hL.hasAdmittedRows_admittedTopCompletion r.IsCorrect
-    (fun x hx ↦ (hprov x hx).1) (fun x hx ↦ (hprov x hx).2) hlab' le_rfl⟩
+    hdown (fun x hx ↦ (hprov x hx).1) (fun x hx ↦ (hprov x hx).2) hlab' le_rfl⟩
 
 namespace CapRequests
 

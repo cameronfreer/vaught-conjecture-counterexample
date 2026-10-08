@@ -164,16 +164,16 @@ theorem capLiftProvision_all_top (N : ℕ) (hm : 0 < m) {x : Fin (m + 2)}
 
 section Top
 
-variable {L : Lvl I m} (Rw : I.State → Prop)
+variable {L : Lvl I m} {D : ℕ → Finset (Prof I)} (Rw : I.State → Prop)
 
 /-- The old cells of the admitted top form a lower embedding of the amalgam. -/
-theorem Lvl.Good.isLowerEmbedding_nextSOn (hL : L.Good) (C : Finset (Prof I)) :
+theorem Lvl.GoodOn.isLowerEmbedding_nextSOn (hL : L.GoodOn D) (C : Finset (Prof I)) :
     I.amalgam.toCellScheme.IsLowerEmbedding (L.nextSOn C).toCellScheme (L.embedOn C) :=
   (Scheme.isLowerEmbedding_castAdd (S := L.S) (m + 1) C.card
     (fun i ↦ L.ΦOn C (entryOn C i)) L.not_le).comp hL.lowerEmb
 
 /-- The rows of the admitted top pull back to those of the amalgam. -/
-theorem Lvl.Good.comap_rows_nextSOn (hL : L.Good) (C : Finset (Prof I)) :
+theorem Lvl.GoodOn.comap_rows_nextSOn (hL : L.GoodOn D) (C : Finset (Prof I)) :
     (L.nextSOn C).rows.comap (hL.isLowerEmbedding_nextSOn C) = I.amalgam.rows := by
   have h := Rows.comap_comap (L.nextSOn C).rows
     (Scheme.isLowerEmbedding_castAdd (S := L.S) (m + 1) C.card
@@ -182,8 +182,9 @@ theorem Lvl.Good.comap_rows_nextSOn (hL : L.Good) (C : Finset (Prof I)) :
   exact h.symm
 
 /-- Every cell of the layer on `C` of scope other than the ground set is old. -/
-theorem Lvl.Good.mem_range_embedOn (hL : L.Good) {C : Finset (Prof I)} (z : Fin (L.nextSOn C).card)
-    (hz : (L.nextSOn C).toCellScheme.scope z ≠ univ) : z ∈ Set.range (L.embedOn C) := by
+theorem Lvl.GoodOn.mem_range_embedOn (hL : L.GoodOn D) {C : Finset (Prof I)}
+    (z : Fin (L.nextSOn C).card) (hz : (L.nextSOn C).toCellScheme.scope z ≠ univ) :
+    z ∈ Set.range (L.embedOn C) := by
   induction z using Fin.addCases with
   | right i => exact absurd (Scheme.appendFullCellsScheme_scope_natAdd _ _ _ i) hz
   | left z =>
@@ -192,7 +193,7 @@ theorem Lvl.Good.mem_range_embedOn (hL : L.Good) {C : Finset (Prof I)} (z : Fin 
     exact ⟨d, rfl⟩
 
 /-- Every cell of the layer on `C` at the grade `m + 1` has grade below `m + 2`. -/
-theorem Lvl.Good.grade_nextSOn_lt (hL : L.Good) {C : Finset (Prof I)}
+theorem Lvl.GoodOn.grade_nextSOn_lt (hL : L.GoodOn D) {C : Finset (Prof I)}
     (z : Fin (L.nextSOn C).card) : (L.nextSOn C).toCellScheme.grade z < m + 2 := by
   induction z using Fin.addCases with
   | right i => rw [Scheme.appendFullCellsScheme_grade_natAdd]; omega
@@ -200,7 +201,7 @@ theorem Lvl.Good.grade_nextSOn_lt (hL : L.Good) {C : Finset (Prof I)}
 
 /-- **Completeness below the full grade** of the layer on `C` at the grade `m + 1`, when `C` is
 not empty. -/
-theorem Lvl.Good.exists_gradedIndex_eq_nextSOn (hL : L.Good) {C : Finset (Prof I)}
+theorem Lvl.GoodOn.exists_gradedIndex_eq_nextSOn (hL : L.GoodOn D) {C : Finset (Prof I)}
     (hC : C.Nonempty) (X : Finset (Fin (m + 2)) × ℕ)
     (hX : X ∈ (L.nextSOn C).toCellScheme.gradedFaces) (hX2 : X.2 < m + 2) :
     ∃ d, (L.nextSOn C).toCellScheme.gradedIndex d = X := by
@@ -225,7 +226,8 @@ theorem Lvl.Good.exists_gradedIndex_eq_nextSOn (hL : L.Good) {C : Finset (Prof I
 
 /-- **The admitted top is bountiful**, under the lift provisions at `m + 1` for both coatoms
 (`CellScheme.Rows.isBountiful_of_coatoms`). -/
-theorem Lvl.Good.isBountiful_admittedNextS (hL : L.Good)
+theorem Lvl.GoodOn.isBountiful_admittedNextS (hL : L.GoodOn D)
+    (hdown : ∀ R ∈ rowCat Rw (m + 1), code m R ∈ D m)
     (hbot : ∀ x ∈ (Pts : Finset (Fin (m + 2))), BotLiftProvisionOf Rw (m + 1) x)
     (hcap : ∀ x ∈ (Pts : Finset (Fin (m + 2))), CapLiftProvisionOf Rw (m + 1) x) :
     (L.nextSOn (rowCat Rw (m + 1))).rows.IsBountiful := by
@@ -237,7 +239,7 @@ theorem Lvl.Good.isBountiful_admittedNextS (hL : L.Good)
     rcases Nat.lt_or_eq_of_le hj with hlt | rfl
     · exact (Lvl.cappedLift_nextSOn_iff _ fun h ↦ absurd h.2 (by simp only; omega)).mpr
         (hL.lift x hx j (by omega))
-    · exact hL.cappedLift_nextSOn_rowCat Rw le_rfl hx (hbot x hx) (hcap x hx)
+    · exact hL.cappedLift_nextSOn_rowCat Rw hdown le_rfl hx (hbot x hx) (hcap x hx)
   have hfaces : (L.nextSOn (rowCat Rw (m + 1))).toCellScheme.faces =
       I.amalgam.toCellScheme.faces := hL.faces
   have hgf : (L.nextSOn (rowCat Rw (m + 1))).toCellScheme.gradedFaces =
@@ -254,26 +256,28 @@ theorem Lvl.Good.isBountiful_admittedNextS (hL : L.Good)
     (hfull (by simp)) (hfull (by simp))
 
 /-- **The admitted top is legal below the full grade.** -/
-theorem Lvl.Good.isLegalBelowFullGrade_admittedNextS (hL : L.Good)
+theorem Lvl.GoodOn.isLegalBelowFullGrade_admittedNextS (hL : L.GoodOn D)
+    (hdown : ∀ R ∈ rowCat Rw (m + 1), code m R ∈ D m)
     (hbot : ∀ x ∈ (Pts : Finset (Fin (m + 2))), BotLiftProvisionOf Rw (m + 1) x)
     (hcap : ∀ x ∈ (Pts : Finset (Fin (m + 2))), CapLiftProvisionOf Rw (m + 1) x)
     (hne : (rowCat Rw (m + 1)).Nonempty) :
     (L.nextSOn (rowCat Rw (m + 1))).IsLegalBelowFullGrade where
   isWellFormed := hL.isWellFormed_nextSOn (by omega)
   isCoded := hL.isCoded_nextSOn (rowCat_subset Rw _)
-  isConsistent := hL.isConsistent_nextSOn (rowCat_subset Rw _)
-  isBountiful := hL.isBountiful_admittedNextS Rw hbot hcap
+  isConsistent := hL.isConsistent_nextSOn (rowCat_subset Rw _) hdown
+  isBountiful := hL.isBountiful_admittedNextS Rw hdown hbot hcap
   grade_lt := hL.grade_nextSOn_lt
   exists_gradedIndex_eq := hL.exists_gradedIndex_eq_nextSOn hne
 
 /-- **The glued labelling extends to a lawful section of the admitted top**, unchanged at the old
 cells, when its code at `m + 1` is admitted (`ProfileTower.Lvl.Good.exists_extensionOn_bot`). -/
-theorem Lvl.Good.exists_isLawful_admittedNextS (hL : L.Good)
+theorem Lvl.GoodOn.exists_isLawful_admittedNextS (hL : L.GoodOn D)
+    (hdown : ∀ R ∈ rowCat Rw (m + 1), code m R ∈ D m)
     (hlab : code (m + 1) (fun d ↦ I.amalgam.label d) ∈ rowCat Rw (m + 1)) :
     ∃ q : Fin (L.nextSOn (rowCat Rw (m + 1))).card → Label.{u},
       (L.nextSOn (rowCat Rw (m + 1))).rows.IsLawful q ∧
       ∀ d, q (L.embedOn (rowCat Rw (m + 1)) d) = I.amalgam.label d := by
-  obtain ⟨r, hr, hrW⟩ := hL.exists_extensionOn_bot (rowCat_subset Rw _) hlab
+  obtain ⟨r, hr, hrW⟩ := hL.exists_extensionOn_bot (rowCat_subset Rw _) hdown hlab
   have hall (z : Fin (L.nextSOn (rowCat Rw (m + 1))).card) :
       z ∈ (L.nextSOn (rowCat Rw (m + 1))).toCellScheme.below
         ((univ : Finset (Fin (m + 2))), m + 1) :=
@@ -288,7 +292,8 @@ theorem Lvl.Good.exists_isLawful_admittedNextS (hL : L.Good)
 
 /-- **The admitted top completion**: the admitted layer at the grade `m + 1` over a good level at
 the grade `m`, with the glued labelling extended through its admitted code. -/
-noncomputable def Lvl.Good.admittedTopCompletion (hL : L.Good)
+noncomputable def Lvl.GoodOn.admittedTopCompletion (hL : L.GoodOn D)
+    (hdown : ∀ R ∈ rowCat Rw (m + 1), code m R ∈ D m)
     (hbot : ∀ x ∈ (Pts : Finset (Fin (m + 2))), BotLiftProvisionOf Rw (m + 1) x)
     (hcap : ∀ x ∈ (Pts : Finset (Fin (m + 2))), CapLiftProvisionOf Rw (m + 1) x)
     (hlab : code (m + 1) (fun d ↦ I.amalgam.label d) ∈ rowCat Rw (m + 1)) :
@@ -300,19 +305,20 @@ noncomputable def Lvl.Good.admittedTopCompletion (hL : L.Good)
   comap_rows := hL.comap_rows_nextSOn _
   mem_range_embed := hL.mem_range_embedOn
   faces_eq := hL.faces
-  isLegalBelowFullGrade := hL.isLegalBelowFullGrade_admittedNextS Rw hbot hcap ⟨_, hlab⟩
-  label := (hL.exists_isLawful_admittedNextS Rw hlab).choose
-  isLawful := (hL.exists_isLawful_admittedNextS Rw hlab).choose_spec.1
-  label_embed := (hL.exists_isLawful_admittedNextS Rw hlab).choose_spec.2
+  isLegalBelowFullGrade := hL.isLegalBelowFullGrade_admittedNextS Rw hdown hbot hcap ⟨_, hlab⟩
+  label := (hL.exists_isLawful_admittedNextS Rw hdown hlab).choose
+  isLawful := (hL.exists_isLawful_admittedNextS Rw hdown hlab).choose_spec.1
+  label_embed := (hL.exists_isLawful_admittedNextS Rw hdown hlab).choose_spec.2
 
 /-- **The admitted top completion has admitted rows from every grade `N ≥ m + 1`**: its cells of
 full scope at the grades `≥ m + 1` are the new cells, whose rows are reading rows. -/
-theorem Lvl.Good.hasAdmittedRows_admittedTopCompletion (hL : L.Good)
+theorem Lvl.GoodOn.hasAdmittedRows_admittedTopCompletion (hL : L.GoodOn D)
+    (hdown : ∀ R ∈ rowCat Rw (m + 1), code m R ∈ D m)
     (hbot : ∀ x ∈ (Pts : Finset (Fin (m + 2))), BotLiftProvisionOf Rw (m + 1) x)
     (hcap : ∀ x ∈ (Pts : Finset (Fin (m + 2))), CapLiftProvisionOf Rw (m + 1) x)
     (hlab : code (m + 1) (fun d ↦ I.amalgam.label d) ∈ rowCat Rw (m + 1))
     {N : ℕ} (hN : m + 1 ≤ N) :
-    (hL.admittedTopCompletion Rw hbot hcap hlab).HasAdmittedRows N Rw := by
+    (hL.admittedTopCompletion Rw hdown hbot hcap hlab).HasAdmittedRows N Rw := by
   intro u j hu hj
   have hgu : (L.nextSOn (rowCat Rw (m + 1))).toCellScheme.grade u = j := congrArg Prod.snd hu
   have hlt : (L.nextSOn (rowCat Rw (m + 1))).toCellScheme.grade u < m + 2 := hL.grade_nextSOn_lt u
@@ -342,8 +348,11 @@ theorem Seed.exists_admittedCompletion_top {α : Ordinal.{u}} {m : ℕ} (I : See
     ∃ F : CompletionBelowFullGrade I, F.HasAdmittedRows A.N A.Adm := by
   obtain ⟨j, rfl⟩ : ∃ j, m = j + 2 := ⟨m - 2, by omega⟩
   have hL := lvl_good (I := I) hm j le_rfl
-  exact ⟨hL.admittedTopCompletion A.Row hbot hcap hlab, fun _ _ hu hj ↦
-    (hL.hasAdmittedRows_admittedTopCompletion A.Row hbot hcap hlab hN hu hj).adm⟩
+  have hL' := hL.toGoodOn fun k ↦ cat I k
+  have hdown : ∀ R ∈ rowCat A.Row (j + 2 + 1), code (j + 2) R ∈ cat I (j + 2) :=
+    fun R hR ↦ code_mem_cat_of_mem_cat (rowCat_subset _ _ hR)
+  exact ⟨hL'.admittedTopCompletion A.Row hdown hbot hcap hlab, fun _ _ hu hj ↦
+    (hL'.hasAdmittedRows_admittedTopCompletion A.Row hdown hbot hcap hlab hN hu hj).adm⟩
 
 /-- **An admitted completion from an admission with the lift provisions**, from the grade
 `A.N = m + 1`: the lift provisions are the fields of `Seed.LiftAdmission`. -/

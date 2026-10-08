@@ -72,26 +72,34 @@ variable {α : Ordinal.{u}} {m : ℕ} {I : Seed.{u} α m}
 /-! ### The lift provisions -/
 
 /-- **The lift provision at the cap `⊥`** at the grade `k` and the coatom `univ.erase x`, for a
-predicate `Rw` on states: every profile lawful below the coatom agrees below it with a profile
-lawful on the grade-`k` cut whose code at `k` lies in the catalogue of `Rw`. -/
-def BotLiftProvisionOf (Rw : I.State → Prop) (k : ℕ) (x : Fin (m + 2)) : Prop :=
+catalogue `C`: every profile lawful below the coatom agrees below it with a profile lawful on the
+grade-`k` cut whose code at `k` lies in `C`. -/
+def BotLiftProvisionIn (C : Finset (Prof I)) (k : ℕ) (x : Fin (m + 2)) : Prop :=
   ∀ f : Prof I, I.amalgam.rows.IsLawfulBelow (univ.erase x, k) (fun d ↦ f d) →
     ∃ W : Prof I, IsCutLawful I k W ∧
-      (∀ d ∈ I.amalgam.toCellScheme.below (univ.erase x, k), W d = f d) ∧
-        code k W ∈ rowCat Rw k
+      (∀ d ∈ I.amalgam.toCellScheme.below (univ.erase x, k), W d = f d) ∧ code k W ∈ C
 
 /-- **The lift provision at the positive caps** at the grade `k` and the coatom `univ.erase x`, for
-a predicate `Rw` on states: for every cap `h` self-visible and short at `k`, every profile `P` of
-the catalogue of `Rw` and every profile `f` lawful below the coatom agreeing with `P` capped at `h`
-below it, some profile lawful on the grade-`k` cut agrees with `f` below the coatom and with `P`
-capped at `h` everywhere, and has its orbit code at `k` in the catalogue of `Rw`. -/
-def CapLiftProvisionOf (Rw : I.State → Prop) (k : ℕ) (x : Fin (m + 2)) : Prop :=
-  ∀ h : Label.{u}, IsSelfVisible k h → IsShort k h → ⊥ < h → ∀ P ∈ rowCat Rw k,
+a catalogue `C`: for every cap `h` self-visible and short at `k`, every profile `P` of `C` and every
+profile `f` lawful below the coatom agreeing with `P` capped at `h` below it, some profile lawful
+on the grade-`k` cut agrees with `f` below the coatom and with `P` capped at `h` everywhere, and
+has its orbit code at `k` in `C`. -/
+def CapLiftProvisionIn (C : Finset (Prof I)) (k : ℕ) (x : Fin (m + 2)) : Prop :=
+  ∀ h : Label.{u}, IsSelfVisible k h → IsShort k h → ⊥ < h → ∀ P ∈ C,
     ∀ f : Prof I, I.amalgam.rows.IsLawfulBelow (univ.erase x, k) (fun d ↦ f d) →
       (∀ d ∈ I.amalgam.toCellScheme.below (univ.erase x, k), min (f d) h = min (P d) h) →
       ∃ W : Prof I, IsCutLawful I k W ∧
         (∀ d ∈ I.amalgam.toCellScheme.below (univ.erase x, k), W d = f d) ∧
-        (∀ d, min (W d) h = min (P d) h) ∧ orbitCode k W ∈ rowCat Rw k
+        (∀ d, min (W d) h = min (P d) h) ∧ orbitCode k W ∈ C
+
+/-- **The lift provision at the cap `⊥`** for a predicate `Rw` on states: for its catalogue. -/
+abbrev BotLiftProvisionOf (Rw : I.State → Prop) (k : ℕ) (x : Fin (m + 2)) : Prop :=
+  BotLiftProvisionIn (rowCat Rw k) k x
+
+/-- **The lift provision at the positive caps** for a predicate `Rw` on states: for its
+catalogue. -/
+abbrev CapLiftProvisionOf (Rw : I.State → Prop) (k : ℕ) (x : Fin (m + 2)) : Prop :=
+  CapLiftProvisionIn (rowCat Rw k) k x
 
 /-- **The lift provision at the cap `⊥`** for an admission: for its reading rows. -/
 abbrev BotLiftProvision (A : I.Admission) (k : ℕ) (x : Fin (m + 2)) : Prop :=
@@ -103,18 +111,18 @@ abbrev CapLiftProvision (A : I.Admission) (k : ℕ) (x : Fin (m + 2)) : Prop :=
 
 section Step
 
-variable {g : ℕ} {L : Lvl I g} {C : Finset (Prof I)}
+variable {g : ℕ} {L : Lvl I g} {C : Finset (Prof I)} {D : ℕ → Finset (Prof I)}
 
 /-! ### The old cells of the layer on a sub-catalogue -/
 
-theorem Lvl.Good.gradedIndex_embedOn (hL : L.Good) (d : Fin I.amalgam.card) :
+theorem Lvl.GoodOn.gradedIndex_embedOn (hL : L.GoodOn D) (d : Fin I.amalgam.card) :
     (L.nextSOn C).toCellScheme.gradedIndex (L.embedOn C d) =
       I.amalgam.toCellScheme.gradedIndex d :=
   (Scheme.appendFullCellsScheme_gradedIndex_castAdd _ _ _ _).trans (hL.gradedIndex_embed d)
 
 /-- A cell of the layer on `C` below a pair off the ground set is an old cell of the amalgam below
 that pair. -/
-theorem Lvl.Good.exists_embedOn_eq (hL : L.Good) {X : Finset (Fin (m + 2)) × ℕ}
+theorem Lvl.GoodOn.exists_embedOn_eq (hL : L.GoodOn D) {X : Finset (Fin (m + 2)) × ℕ}
     (hX : X.1 ≠ univ) {z : Fin (L.nextSOn C).card} (hz : z ∈ (L.nextSOn C).toCellScheme.below X) :
     ∃ d ∈ I.amalgam.toCellScheme.below X, L.embedOn C d = z := by
   induction z using Fin.addCases with
@@ -134,7 +142,7 @@ theorem Lvl.Good.exists_embedOn_eq (hL : L.Good) {X : Finset (Fin (m + 2)) × �
 
 /-- Lawfulness below a pair off the ground set in the layer on `C` is lawfulness in the amalgam,
 along the old cells. -/
-theorem Lvl.Good.isLawfulBelow_embedOn_iff (hL : L.Good) {X : Finset (Fin (m + 2)) × ℕ}
+theorem Lvl.GoodOn.isLawfulBelow_embedOn_iff (hL : L.GoodOn D) {X : Finset (Fin (m + 2)) × ℕ}
     (hX : X.1 ≠ univ) {v : Fin (L.nextSOn C).card → Label.{u}} :
     (L.nextSOn C).rows.IsLawfulBelow X (fun z ↦ v z) ↔
       I.amalgam.rows.IsLawfulBelow X (fun d ↦ v (L.embedOn C d)) := by
@@ -154,7 +162,7 @@ theorem Lvl.cappedLift_nextSOn_iff {X Y : Finset (Fin (m + 2)) × ℕ} (hXY : X 
   rw [← h.cappedLift_iff hXY le_rfl, Scheme.comap_rows_castAdd]
 
 /-- An old cell of grade at most `g + 1` lies below `(univ, g + 1)` in the layer on `C`. -/
-theorem Lvl.Good.embedOn_mem_below (hL : L.Good) {d : Fin I.amalgam.card}
+theorem Lvl.GoodOn.embedOn_mem_below (hL : L.GoodOn D) {d : Fin I.amalgam.card}
     (hd : I.amalgam.toCellScheme.grade d ≤ g + 1) :
     L.embedOn C d ∈ (L.nextSOn C).toCellScheme.below ((univ : Finset (Fin (m + 2))), g + 1) := by
   rw [CellScheme.mem_below, hL.gradedIndex_embedOn]
@@ -166,8 +174,8 @@ theorem Lvl.Good.embedOn_mem_below (hL : L.Good) {d : Fin I.amalgam.card}
 profile `W` lies in `C ⊆ cat I (g + 1)`, the row labelling of the code, read by the orbit decoder of
 the splice of `W` at the least grid point, is lawful below `(univ, g + 1)` and reads `W` at the old
 cells of grade at most `g + 1`. -/
-theorem Lvl.Good.exists_extensionOn_bot (hL : L.Good) (hC : C ⊆ cat I (g + 1)) {W : Prof I}
-    (hQ : code (g + 1) W ∈ C) :
+theorem Lvl.GoodOn.exists_extensionOn_bot (hL : L.GoodOn D) (hC : C ⊆ cat I (g + 1))
+    (hdown : ∀ R ∈ C, code g R ∈ D g) {W : Prof I} (hQ : code (g + 1) W ∈ C) :
     ∃ r : (L.nextSOn C).toCellScheme.below ((univ : Finset (Fin (m + 2))), g + 1) → Label.{u},
       (L.nextSOn C).rows.IsLawfulBelow (univ, g + 1) r ∧
       ∀ d (hd : I.amalgam.toCellScheme.grade d ≤ g + 1),
@@ -178,7 +186,7 @@ theorem Lvl.Good.exists_extensionOn_bot (hL : L.Good) (hC : C ⊆ cat I (g + 1))
       min (Q d) (gridPoint (g + 1) 0) = min (W₀ d) (gridPoint (g + 1) 0) :=
     min_orbitCode_gridPoint_zero d
   refine ⟨fun z ↦ orbitDecoder (g + 1) W₀ (gridPoint (g + 1) 0) (L.ΦOn C Q z),
-    (hL.isLawfulBelow_ΦOn (hC hQ) hQ).map_of_apply_eq_bot (fun z ↦ z.2.2)
+    (hL.isLawfulBelow_ΦOn (hC hQ) (hdown _ hQ) hQ).map_of_apply_eq_bot (fun z ↦ z.2.2)
       (isWitness_orbitDecoder (isSelfVisible_gridPoint _ 0) (gridPoint_ne_bot _ 0))
       (fun _ ↦ eq_bot_of_orbitDecoder_eq_bot (gridPoint_ne_bot _ 0)), fun d hd ↦ ?_⟩
   change orbitDecoder (g + 1) W₀ (gridPoint (g + 1) 0)
@@ -191,7 +199,8 @@ theorem Lvl.Good.exists_extensionOn_bot (hL : L.Good) (hC : C ⊆ cat I (g + 1))
 agreeing with `P` capped at `h` whose orbit code at `g + 1` lies in `C`.  The row labelling of the
 orbit code, read by the orbit decoder of `W` at `h`, is lawful below `(univ, g + 1)`, reads `W` at
 the old cells of grade at most `g + 1`, and agrees with the row labelling of `P` capped at `h`. -/
-theorem Lvl.Good.exists_extensionOn (hL : L.Good) (hC : C ⊆ cat I (g + 1)) {P : Prof I}
+theorem Lvl.GoodOn.exists_extensionOn (hL : L.GoodOn D) (hC : C ⊆ cat I (g + 1))
+    (hdown : ∀ R ∈ C, code g R ∈ D g) {P : Prof I}
     (hP : P ∈ C) {h : Label.{u}} (hh : IsSelfVisible (g + 1) h) (hs : IsShort (g + 1) h)
     (hb : h ≠ ⊥) {W : Prof I} (hQ : orbitCode (g + 1) W ∈ C)
     (hWP : ∀ d, min (W d) h = min (P d) h) :
@@ -224,7 +233,7 @@ theorem Lvl.Good.exists_extensionOn (hL : L.Good) (hC : C ⊆ cat I (g + 1)) {P 
       exact min_agreementHeight_eq_of_isShort hh hs
         (fun d ↦ ⟨hQB d, mem_codeGrid_of_mem_cat hPc d⟩) hQP _
   refine ⟨fun z ↦ orbitDecoder (g + 1) W h (L.ΦOn C Q z),
-    (hL.isLawfulBelow_ΦOn hQ3 hQ).map_of_apply_eq_bot (fun z ↦ z.2.2)
+    (hL.isLawfulBelow_ΦOn hQ3 (hdown _ hQ) hQ).map_of_apply_eq_bot (fun z ↦ z.2.2)
       (isWitness_orbitDecoder hh hb) (fun _ ↦ eq_bot_of_orbitDecoder_eq_bot hb), fun d hd ↦ ?_,
     hag⟩
   change orbitDecoder (g + 1) W h (L.ΦOn C Q (Fin.castAdd _ (L.embed d))) = W d
@@ -232,7 +241,6 @@ theorem Lvl.Good.exists_extensionOn (hL : L.Good) (hC : C ⊆ cat I (g + 1)) {P 
 
 /-! ### The lift from a coatom into an admitted layer -/
 
-variable (Rw : I.State → Prop)
 
 /-- **The capped lift from a coatom into the layer on the catalogue of a predicate `Rw`**, at the
 grade `g + 1 ≤ m + 1`, under the lift provisions for `Rw` at `⊥` and at the positive caps for that
@@ -241,14 +249,13 @@ coatom: the one-grade lift
 owner-capped lift at `⊥` by the provision at `⊥` and `Lvl.Good.exists_extensionOn_bot`, and the
 owner-capped lifts at the positive caps from the serving rows, by the provision at the positive caps
 and `Lvl.Good.exists_extensionOn`. -/
-theorem Lvl.Good.cappedLift_nextSOn_rowCat (hL : L.Good) (hgm : g + 1 ≤ m + 1)
+theorem Lvl.GoodOn.cappedLift_nextSOn (hL : L.GoodOn D) (hC : C ⊆ cat I (g + 1))
+    (hdown : ∀ R ∈ C, code g R ∈ D g) (hgm : g + 1 ≤ m + 1)
     {x : Fin (m + 2)} (hx : x ∈ (Pts : Finset (Fin (m + 2))))
-    (hbot : BotLiftProvisionOf Rw (g + 1) x) (hcap : CapLiftProvisionOf Rw (g + 1) x) :
-    (L.nextSOn (rowCat Rw (g + 1))).rows.CappedLift (X := (univ.erase x, g + 1))
+    (hbot : BotLiftProvisionIn C (g + 1) x) (hcap : CapLiftProvisionIn C (g + 1) x) :
+    (L.nextSOn C).rows.CappedLift (X := (univ.erase x, g + 1))
       (Y := ((univ : Finset (Fin (m + 2))), g + 1)) ⟨erase_subset _ _, le_rfl⟩ := by
   classical
-  set C := rowCat Rw (g + 1)
-  have hC : C ⊆ cat I (g + 1) := rowCat_subset Rw _
   have hne : (univ.erase x, g + 1).1 ≠ univ := Seed.ne_univ_erase x
   have hcard : #(univ.erase x) = m + 1 := Seed.card_erase x
   have hlift : (L.nextSOn C).rows.CappedLift (X := (univ.erase x, g))
@@ -288,7 +295,7 @@ theorem Lvl.Good.cappedLift_nextSOn_rowCat (hL : L.Good) (hgm : g + 1 ≤ m + 1)
     have hp' := hp.min_const_of_isSelfVisible (hp.isSelfVisible_of_gradedIndex_eq ho)
     obtain ⟨W, -, hWf, hWC⟩ := hbot (fun d ↦ Rows.extendBot (univ.erase x, g + 1)
       (fun e ↦ min (p e) (p o)) (L.embedOn C d)) (hold _ hp')
-    obtain ⟨r, hr, hrW⟩ := hL.exists_extensionOn_bot hC hWC
+    obtain ⟨r, hr, hrW⟩ := hL.exists_extensionOn_bot hC hdown hWC
     refine ⟨r, hr, fun e ↦ ?_, fun _ ↦ by simp⟩
     obtain ⟨d, hdb, hd, hde, hdp⟩ := hread _ e
     rw [← hde, hrW d hd, hWf d hdb, hdp]
@@ -305,7 +312,7 @@ theorem Lvl.Good.cappedLift_nextSOn_rowCat (hL : L.Good) (hgm : g + 1 ≤ m + 1)
         (L.nextSOn C).rows.rowBelow _ hu z = L.ΦOn C (entryOn C i) z :=
       Scheme.appendFullCells_row_natAdd i _
     have hmem := hL.ΦOn_mem_codeGrid (C := C) (mem_codeGrid_of_mem_cat (hC hPC))
-    refine ⟨hL.isConsistent_nextSOn hC _, fun z ↦ ?_, fun z ↦ ?_, ?_⟩
+    refine ⟨hL.isConsistent_nextSOn hC hdown _, fun z ↦ ?_, fun z ↦ ?_, ?_⟩
     · rw [hrowB]; exact isShort_of_mem_codeGrid (hmem _)
     · rw [hrowB]; exact ne_top_of_mem_codeGrid (hmem _)
     · intro h hh hhs hhb f hf _ hfS
@@ -325,7 +332,7 @@ theorem Lvl.Good.cappedLift_nextSOn_rowCat (hL : L.Good) (hgm : g + 1 ≤ m + 1)
         rw [Lvl.ΦOn_castAdd, hL.literal]
       obtain ⟨W, -, hWf, hWP, hWQ⟩ := hcap h hh hhs hhb _ hPC
         (fun d ↦ Rows.extendBot (univ.erase x, g + 1) f (L.embedOn C d)) (hold f hf) hfP
-      obtain ⟨r, hr, hrW, hrP⟩ := hL.exists_extensionOn hC hPC hh hhs hhb.ne' hWQ hWP
+      obtain ⟨r, hr, hrW, hrP⟩ := hL.exists_extensionOn hC hdown hPC hh hhs hhb.ne' hWQ hWP
       refine ⟨r, hr, fun e ↦ ?_, fun z ↦ by rw [hrowB]; exact hrP z⟩
       obtain ⟨d, hdb, hd, hde, hdp⟩ := hread f e
       rw [← hde, hrW d hd, hWf d hdb, hdp]
@@ -334,12 +341,23 @@ theorem Lvl.Good.cappedLift_nextSOn_rowCat (hL : L.Good) (hgm : g + 1 ≤ m + 1)
 /-- **The capped lift from a coatom into the admitted layer**, at the grade `g + 1 ≤ m + 1`, under
 the lift provisions of the admission (`ProfileTower.Lvl.Good.cappedLift_nextSOn_rowCat` for its
 reading rows). -/
-theorem Lvl.Good.cappedLift_admittedNextS (A : I.Admission) (hL : L.Good) (hgm : g + 1 ≤ m + 1)
+theorem Lvl.GoodOn.cappedLift_nextSOn_rowCat (Rw : I.State → Prop) (hL : L.GoodOn D)
+    (hdown : ∀ R ∈ rowCat Rw (g + 1), code g R ∈ D g) (hgm : g + 1 ≤ m + 1)
+    {x : Fin (m + 2)} (hx : x ∈ (Pts : Finset (Fin (m + 2))))
+    (hbot : BotLiftProvisionOf Rw (g + 1) x) (hcap : CapLiftProvisionOf Rw (g + 1) x) :
+    (L.nextSOn (rowCat Rw (g + 1))).rows.CappedLift (X := (univ.erase x, g + 1))
+      (Y := ((univ : Finset (Fin (m + 2))), g + 1)) ⟨erase_subset _ _, le_rfl⟩ :=
+  hL.cappedLift_nextSOn (rowCat_subset Rw _) hdown hgm hx hbot hcap
+
+/-- **The capped lift from a coatom into the admitted layer**, at the grade `g + 1 ≤ m + 1`, under
+the lift provisions of the admission and the downward clause. -/
+theorem Lvl.GoodOn.cappedLift_admittedNextS (A : I.Admission) (hL : L.GoodOn D)
+    (hdown : ∀ R ∈ admittedCat A (g + 1), code g R ∈ D g) (hgm : g + 1 ≤ m + 1)
     {x : Fin (m + 2)} (hx : x ∈ (Pts : Finset (Fin (m + 2))))
     (hbot : BotLiftProvision A (g + 1) x) (hcap : CapLiftProvision A (g + 1) x) :
     (L.admittedNextS A).rows.CappedLift (X := (univ.erase x, g + 1))
       (Y := ((univ : Finset (Fin (m + 2))), g + 1)) ⟨erase_subset _ _, le_rfl⟩ :=
-  hL.cappedLift_nextSOn_rowCat A.Row hgm hx hbot hcap
+  hL.cappedLift_nextSOn_rowCat A.Row hdown hgm hx hbot hcap
 
 end Step
 
@@ -411,26 +429,37 @@ theorem exists_isCutLawful_of_coatom {k : ℕ} (hk : 0 < k) (hkm : k ≤ m) {x :
 /-- **The trivial admission has the lift provision at `⊥`**, at every grade `0 < k ≤ m` and either
 coatom: the fill within the other coatom (`ProfileTower.exists_isCutLawful_of_coatom` at the cap
 `⊥`), whose code lies in the catalogue. -/
-theorem botLiftProvision_all (N : ℕ) {k : ℕ} (hk : 0 < k) (hkm : k ≤ m) {x : Fin (m + 2)}
-    (hx : x ∈ (Pts : Finset (Fin (m + 2)))) :
-    BotLiftProvision (Seed.Admission.all I N) k x := fun f hf ↦ by
+theorem botLiftProvisionIn_cat {k : ℕ} (hk : 0 < k) (hkm : k ≤ m) {x : Fin (m + 2)}
+    (hx : x ∈ (Pts : Finset (Fin (m + 2)))) : BotLiftProvisionIn (cat I k) k x := fun f hf ↦ by
   obtain ⟨W, hW, hWf, -⟩ := exists_isCutLawful_of_coatom hk hkm hx (isSelfVisible_bot k)
     (P := fun _ ↦ ⊥) ⟨Rows.isLawfulBelow_const_bot _, Rows.isLawfulBelow_const_bot _⟩ hf
     fun _ _ ↦ by simp
-  have hh := isCutLawful_hat hW
-  refine ⟨W, hW, hWf, mem_admittedCat.mpr ⟨mem_cat.mpr ⟨⟨hh.1.orbitCode fun d ↦ d.2.2,
-    hh.2.orbitCode fun d ↦ d.2.2⟩, orbitCode_orbitCode⟩, Seed.Admission.row_all N _⟩⟩
+  exact ⟨W, hW, hWf, code_mem_cat_of_isCutLawful hW⟩
+
+/-- The trivial admission has the lift provision at `⊥` at every grade `0 < k ≤ m`. -/
+theorem botLiftProvision_all (N : ℕ) {k : ℕ} (hk : 0 < k) (hkm : k ≤ m) {x : Fin (m + 2)}
+    (hx : x ∈ (Pts : Finset (Fin (m + 2)))) :
+    BotLiftProvision (Seed.Admission.all I N) k x := by
+  have h := botLiftProvisionIn_cat (I := I) hk hkm hx
+  rwa [← admittedCat_all N k] at h
 
 /-- **The trivial admission has the lift provision at the positive caps**, at every grade
 `0 < k ≤ m` and either coatom: the fill within the other coatom at the ambient `P`
 (`ProfileTower.exists_isCutLawful_of_coatom`), whose orbit code lies in the catalogue. -/
+theorem capLiftProvisionIn_cat {k : ℕ} (hk : 0 < k) (hkm : k ≤ m) {x : Fin (m + 2)}
+    (hx : x ∈ (Pts : Finset (Fin (m + 2)))) : CapLiftProvisionIn (cat I k) k x :=
+    fun h hh _ _ P hP f hf hfP ↦ by
+  obtain ⟨W, hW, hWf, hWP⟩ := exists_isCutLawful_of_coatom hk hkm hx hh (mem_cat.mp hP).1 hf hfP
+  exact ⟨W, hW, hWf, hWP, mem_cat.mpr ⟨⟨hW.1.orbitCode fun d ↦ d.2.2,
+    hW.2.orbitCode fun d ↦ d.2.2⟩, orbitCode_orbitCode⟩⟩
+
+/-- The trivial admission has the lift provision at the positive caps at every grade
+`0 < k ≤ m`. -/
 theorem capLiftProvision_all (N : ℕ) {k : ℕ} (hk : 0 < k) (hkm : k ≤ m) {x : Fin (m + 2)}
     (hx : x ∈ (Pts : Finset (Fin (m + 2)))) :
-    CapLiftProvision (Seed.Admission.all I N) k x := fun h hh _ _ P hP f hf hfP ↦ by
-  obtain ⟨W, hW, hWf, hWP⟩ := exists_isCutLawful_of_coatom hk hkm hx hh
-    (mem_cat.mp (mem_admittedCat.mp hP).1).1 hf hfP
-  exact ⟨W, hW, hWf, hWP, mem_admittedCat.mpr ⟨mem_cat.mpr ⟨⟨hW.1.orbitCode fun d ↦ d.2.2,
-    hW.2.orbitCode fun d ↦ d.2.2⟩, orbitCode_orbitCode⟩, Seed.Admission.row_all N _⟩⟩
+    CapLiftProvision (Seed.Admission.all I N) k x := by
+  have h := capLiftProvisionIn_cat (I := I) hk hkm hx
+  rwa [← admittedCat_all N k] at h
 
 /-- **The lift of the canonical next level, through the admitted layer of the trivial admission**:
 the trivial admission has both lift provisions, and its admitted layer is the next scheme of the
@@ -440,7 +469,8 @@ theorem Lvl.Good.cappedLift_next_of_all {g : ℕ} {L : Lvl I g} (hL : L.Good) (h
     {x : Fin (m + 2)} (hx : x ∈ (Pts : Finset (Fin (m + 2)))) (N : ℕ) :
     L.nextS.rows.CappedLift (X := (univ.erase x, g + 1))
       (Y := ((univ : Finset (Fin (m + 2))), g + 1)) ⟨erase_subset _ _, le_rfl⟩ := by
-  have h := hL.cappedLift_admittedNextS (Seed.Admission.all I N) (by omega) hx
+  have h := (hL.toGoodOn fun k ↦ cat I k).cappedLift_admittedNextS (Seed.Admission.all I N)
+    (fun R hR ↦ code_mem_cat_of_mem_cat (admittedCat_subset _ _ hR)) (by omega) hx
     (botLiftProvision_all N (Nat.succ_pos g) hgm hx)
     (capLiftProvision_all N (Nat.succ_pos g) hgm hx)
   rwa [Lvl.admittedNextS_all] at h

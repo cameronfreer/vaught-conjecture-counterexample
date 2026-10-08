@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Extension.AdmittedFieldLayer
-import VaughtConjecture.Extension.ProfileTowerCompletion
+import VaughtConjecture.Extension.LevelOn
 
 /-!
 # Admissions: restricted catalogues at the reading grades, and recognition
@@ -76,10 +76,10 @@ rank-normalized profiles, the **layer on a sub-catalogue** `C` (`ProfileTower.Lv
 appends one cell of full scope and grade `g + 1` for each profile of `C`, with the row labelling
 `ProfileTower.Lvl.ΦOn` (the section of the profile at the cells of the level, agreement heights at
 the new cells); on the whole catalogue it is the next scheme of the level
-(`ProfileTower.Lvl.nextSOn_cat`).  Per-entry legality (`ProfileTower.Lvl.Good.isLawfulBelow_ΦOn`),
+(`ProfileTower.Lvl.nextSOn_cat`).  Per-entry legality (`ProfileTower.Lvl.GoodOn.isLawfulBelow_ΦOn`),
 consistency, well-formedness and coding hold for every sub-catalogue of a good level.  The
 **admitted layer** (`ProfileTower.Lvl.admittedNextS`) is the layer on the admitted catalogue; its
-rows of full scope are reading rows (`ProfileTower.Lvl.Good.row_rowAt_admittedNextS`), hence
+rows of full scope are reading rows (`ProfileTower.Lvl.GoodOn.row_rowAt_admittedNextS`), hence
 admitted (`Seed.Admission.Row.adm`).  The top layer of a completion is a canonical field layer
 over the level; its admitted analogue is `ProfileTower.Lvl.admittedTop`, the admitted field layer
 (`Scheme.admittedFieldLayer`) for the reading rows read on the old cells.
@@ -442,7 +442,7 @@ theorem exists_entryOn_eq {C : Finset (Prof I)} {R : Prof I} (hR : R ∈ C) :
 
 section Step
 
-variable {g : ℕ} (L : Lvl I g) (C : Finset (Prof I))
+variable {g : ℕ} (L : Lvl I g) (C : Finset (Prof I)) {D : ℕ → Finset (Prof I)}
 
 /-- The row labelling of the layer on `C` at the grade `g + 1`: the section of `R` at the cells of
 the level, and the agreement heights of `R` with the profiles of `C`. -/
@@ -466,7 +466,7 @@ variable {L C}
     L.ΦOn C R (Fin.natAdd _ i) = agreementHeight (grid (g + 1) (bound I)) R (entryOn C i) :=
   Fin.append_right _ _ i
 
-theorem Lvl.Good.ΦOn_mem_codeGrid (hL : L.Good) {R : Prof I}
+theorem Lvl.GoodOn.ΦOn_mem_codeGrid (hL : L.GoodOn D) {R : Prof I}
     (hR : ∀ d, R d ∈ codeGrid (g + 1) (bound I)) (z : Fin (L.S.card + C.card)) :
     L.ΦOn C R z ∈ codeGrid (g + 1) (bound I) := by
   induction z using Fin.addCases with
@@ -486,8 +486,8 @@ theorem Lvl.isLawfulBelow_nextSOn_iff {X : Finset (Fin (m + 2)) × ℕ}
 
 /-- **Per-entry legality**: the row labelling on `C` of a profile of the catalogue at `g + 1` that
 lies in `C` is lawful below `(univ, g + 1)` in the layer on `C`. -/
-theorem Lvl.Good.isLawfulBelow_ΦOn (hL : L.Good) {R : Prof I} (hR : R ∈ cat I (g + 1))
-    (hRC : R ∈ C) :
+theorem Lvl.GoodOn.isLawfulBelow_ΦOn (hL : L.GoodOn D) {R : Prof I} (hR : R ∈ cat I (g + 1))
+    (hRD : code g R ∈ D g) (hRC : R ∈ C) :
     (L.nextSOn C).rows.IsLawfulBelow ((univ : Finset (Fin (m + 2))), g + 1)
       fun z ↦ L.ΦOn C R z := by
   classical
@@ -497,7 +497,7 @@ theorem Lvl.Good.isLawfulBelow_ΦOn (hL : L.Good) {R : Prof I} (hR : R ∈ cat I
       fun z ↦ L.ΦOn C R z := by
     refine (Lvl.isLawfulBelow_nextSOn_iff (by rintro ⟨-, h⟩; simp only at h; omega)).mpr ?_
     simpa only [Lvl.ΦOn_castAdd] using hL.lawful R ⟨hC.mono (X := (_, g)) ⟨subset_rfl, by omega⟩,
-      hD.mono (X := (_, g)) ⟨subset_rfl, by omega⟩⟩
+      hD.mono (X := (_, g)) ⟨subset_rfl, by omega⟩⟩ hRD
   have hcoat (x : Fin (m + 2))
       (hRX : I.amalgam.rows.IsLawfulBelow (univ.erase x, g + 1) fun d ↦ R d) :
       (L.nextSOn C).rows.IsLawfulBelow (univ.erase x, g + 1) fun z ↦ L.ΦOn C R z := by
@@ -570,13 +570,14 @@ theorem Lvl.Good.isLawfulBelow_ΦOn (hL : L.Good) {R : Prof I} (hR : R ∈ cat I
       exact le_gridPoint_of_mem_codeGrid (hL.ΦOn_mem_codeGrid hRB s)
 
 /-- **The layer on a sub-catalogue of a good level is consistent.** -/
-theorem Lvl.Good.isConsistent_nextSOn (hL : L.Good) (hC : C ⊆ cat I (g + 1)) :
+theorem Lvl.GoodOn.isConsistent_nextSOn (hL : L.GoodOn D) (hC : C ⊆ cat I (g + 1))
+    (hdown : ∀ R ∈ C, code g R ∈ D g) :
     (L.nextSOn C).rows.IsConsistent := by
   intro s
   induction s using Fin.addCases with
   | right i =>
     have hu := Scheme.appendFullCellsScheme_gradedIndex_natAdd L.S (g + 1) C.card i
-    have h := hL.isLawfulBelow_ΦOn (hC (entryOn_mem i)) (entryOn_mem i)
+    have h := hL.isLawfulBelow_ΦOn (hC (entryOn_mem i)) (hdown _ (entryOn_mem i)) (entryOn_mem i)
     rw [Scheme.appendFullCells_row_natAdd_eq]
     rw [show (L.nextSOn C).toCellScheme.gradedIndex (Fin.natAdd _ i) =
       ((univ : Finset (Fin (m + 2))), g + 1) from hu]
@@ -591,12 +592,12 @@ theorem Lvl.Good.isConsistent_nextSOn (hL : L.Good) (hC : C ⊆ cat I (g + 1)) :
     exact congrArg (fun R : L.S.toCellScheme.Rows ↦ R.row s t) Scheme.comap_rows_castAdd
 
 /-- **The layer on `C` over a good level is well formed**, for `g + 1 ≤ m + 2`. -/
-theorem Lvl.Good.isWellFormed_nextSOn (hL : L.Good) (hg : g + 1 ≤ m + 2) :
+theorem Lvl.GoodOn.isWellFormed_nextSOn (hL : L.GoodOn D) (hg : g + 1 ≤ m + 2) :
     (L.nextSOn C).IsWellFormed :=
   Scheme.isWellFormed_appendFullCells hL.wf (by omega) hg
 
 /-- **The layer on a sub-catalogue of a good level is coded.** -/
-theorem Lvl.Good.isCoded_nextSOn (hL : L.Good) (hC : C ⊆ cat I (g + 1)) :
+theorem Lvl.GoodOn.isCoded_nextSOn (hL : L.GoodOn D) (hC : C ⊆ cat I (g + 1)) :
     (L.nextSOn C).IsCoded :=
   Scheme.isCoded_appendFullCells hL.coded fun i d ↦ lt_omega0_sq_of_mem_codeGrid
     (hL.ΦOn_mem_codeGrid (mem_codeGrid_of_mem_cat (hC (entryOn_mem i))) d)
@@ -619,7 +620,7 @@ noncomputable def Lvl.embedOn (L : Lvl I g) (C : Finset (Prof I)) :
 
 /-- **The row of a cell of the layer on `C` of graded index `(univ, g + 1)`, read at the old cells,
 is the splice at `g + 1` of its profile.** -/
-theorem Lvl.Good.rowAt_nextSOn (hL : L.Good) {u : Fin (L.nextSOn C).card}
+theorem Lvl.GoodOn.rowAt_nextSOn (hL : L.GoodOn D) {u : Fin (L.nextSOn C).card}
     (hu : (L.nextSOn C).toCellScheme.gradedIndex u = ((univ : Finset (Fin (m + 2))), g + 1)) :
     ∃ R ∈ C, ∀ d, (L.nextSOn C).rowAt u (L.embedOn C d) = hat I (g + 1) R d := by
   obtain ⟨i, rfl⟩ := Lvl.exists_natAdd_eq_nextSOn hu
@@ -652,12 +653,13 @@ theorem Lvl.admittedNextS_all (N : ℕ) : L.admittedNextS (Seed.Admission.all I 
   rw [Lvl.admittedNextS, admittedCat_all, Lvl.nextSOn_cat]
 
 /-- **The admitted layer over a good level is consistent.** -/
-theorem Lvl.Good.isConsistent_admittedNextS (hL : L.Good) (A : I.Admission) :
+theorem Lvl.GoodOn.isConsistent_admittedNextS (hL : L.GoodOn D) (A : I.Admission)
+    (hdown : ∀ R ∈ admittedCat A (g + 1), code g R ∈ D g) :
     (L.admittedNextS A).rows.IsConsistent :=
-  hL.isConsistent_nextSOn (admittedCat_subset A _)
+  hL.isConsistent_nextSOn (admittedCat_subset A _) hdown
 
 /-- **The admitted layer over a good level is coded.** -/
-theorem Lvl.Good.isCoded_admittedNextS (hL : L.Good) (A : I.Admission) :
+theorem Lvl.GoodOn.isCoded_admittedNextS (hL : L.GoodOn D) (A : I.Admission) :
     (L.admittedNextS A).IsCoded :=
   hL.isCoded_nextSOn (admittedCat_subset A _)
 
@@ -670,7 +672,7 @@ theorem Lvl.exists_gradedIndex_eq_admittedNextS (A : I.Admission) (hA : A.Row fu
   exact ⟨Fin.natAdd _ i, Scheme.appendFullCellsScheme_gradedIndex_natAdd _ _ _ i⟩
 
 /-- **The rows of full scope of the admitted layer are reading rows**, read at the old cells. -/
-theorem Lvl.Good.row_rowAt_admittedNextS (hL : L.Good) (A : I.Admission)
+theorem Lvl.GoodOn.row_rowAt_admittedNextS (hL : L.GoodOn D) (A : I.Admission)
     {u : Fin (L.admittedNextS A).card}
     (hu : (L.admittedNextS A).toCellScheme.gradedIndex u =
       ((univ : Finset (Fin (m + 2))), g + 1)) :
