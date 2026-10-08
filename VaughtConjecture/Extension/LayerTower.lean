@@ -359,6 +359,27 @@ theorem mem_range_layerTowerEmb : ∀ k (z : Fin (layerTower B C G k).S.card),
         (Fin.natAdd _ i) ≠ univ at hz
       exact hz (appendFullCellsScheme_scope_natAdd _ _ _ i)
 
+/-- **Every cell of the tower of grade at most `1` is a cell of the base.** -/
+theorem mem_range_layerTowerEmb_of_grade : ∀ k (z : Fin (layerTower B C G k).S.card),
+    (layerTower B C G k).S.toCellScheme.grade z ≤ 1 →
+      z ∈ Set.range (layerTowerEmb (B := B) (C := C) (G := G) k)
+  | 0, z, _ => ⟨z, rfl⟩
+  | k + 1, z, hz => by
+    induction z using Fin.addCases with
+    | left z =>
+      have hz' : (layerTower B C G k).S.toCellScheme.grade z ≤ 1 := by
+        change ((layerTower B C G k).S.appendFullCellsScheme (k + 2) _).grade
+          (Fin.castAdd _ z) ≤ 1 at hz
+        rwa [appendFullCellsScheme_grade_castAdd] at hz
+      obtain ⟨t, rfl⟩ := mem_range_layerTowerEmb_of_grade k z hz'
+      exact ⟨t, rfl⟩
+    | right i =>
+      exfalso
+      change ((layerTower B C G k).S.appendFullCellsScheme (k + 2) _).grade
+        (Fin.natAdd _ i) ≤ 1 at hz
+      rw [appendFullCellsScheme_grade_natAdd] at hz
+      omega
+
 /-- **The tower reads the base as the base does.** -/
 theorem rowAt_layerTowerEmb (z x : Fin B.S.card) : ∀ k,
     (layerTower B C G k).S.rowAt (layerTowerEmb (B := B) (C := C) (G := G) k z)

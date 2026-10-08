@@ -93,6 +93,86 @@ theorem faces_ladderTower :
     (I.ladderTower H Γ A B' m).S.toCellScheme.faces = I.amalgam.toCellScheme.faces :=
   Scheme.faces_layerTower (B := I.towerBase H) (C := I.towerCat Γ A) (G := fun k ↦ grid k B') m
 
+/-- **Bountifulness of the ladder tower from the two coatom lifts**: below a pair of proper scope
+the tower is the amalgam (bountiful), into the full face of grade one it is the padded grade-one
+base (`Seed.cappedLift_ladderBase`), and the lifts from the two coatoms into the full faces of the
+grades `2, …, m + 1` give the rest (`CellScheme.Rows.isBountiful_of_coatoms`). -/
+theorem isBountiful_ladderTower_of_coatomLifts (hH : 0 < H) (hcard : I.amalgam.card ≤ H)
+    (hlift : ∀ x ∈ ({Fin.last (m + 1), Fin.castSucc (Fin.last m)} : Finset (Fin (m + 2))),
+      ∀ j, 2 ≤ j → j ≤ m + 1 →
+        (I.ladderTower H Γ A B' m).S.rows.CappedLift (X := (univ.erase x, j))
+          (Y := ((univ : Finset (Fin (m + 2))), j)) ⟨erase_subset _ _, le_rfl⟩) :
+    (I.ladderTower H Γ A B' m).S.rows.IsBountiful := by
+  classical
+  set T := I.ladderTower H Γ A B' m with hT
+  have hfacesT := I.faces_ladderTower H Γ A B'
+  -- the amalgam is a source prefix of the tower below every pair of proper scope
+  have hpre {Y : Finset (Fin (m + 2)) × ℕ} (hY : Y.1 ≠ univ) :
+      I.amalgam.toCellScheme.IsSourcePrefix T.S.toCellScheme (I.towerAmalgamEmb H Γ A B') Y :=
+    ⟨I.isLowerEmbedding_towerAmalgamEmb H Γ A B', I.scope_towerAmalgamEmb H Γ A B',
+      fun z hz ↦ I.mem_range_towerAmalgamEmb H Γ A B' z fun he ↦
+        hY (univ_subset_iff.mp (he ▸ (hz.1 : T.S.toCellScheme.scope z ⊆ Y.1)))⟩
+  have hgf {X : Finset (Fin (m + 2)) × ℕ} (hX : X ∈ T.S.toCellScheme.gradedFaces) :
+      X ∈ I.amalgam.toCellScheme.gradedFaces := ⟨hfacesT ▸ hX.1, hX.2⟩
+  have hproper : ∀ ⦃X Y : Finset (Fin (m + 2)) × ℕ⦄, X ∈ T.S.toCellScheme.gradedFaces →
+      Y ∈ T.S.toCellScheme.gradedFaces → ∀ h : X ≤ Y, Y.1 ≠ univ → T.S.rows.CappedLift h := by
+    intro X Y hX hY h hY1
+    rw [← ((hpre hY1).cappedLift_iff h le_rfl), I.comap_rows_towerAmalgamEmb H Γ A B']
+    exact I.isBountiful (hgf hX) (hgf hY) h
+  -- the base is a source prefix of the tower below the full face of grade one
+  have hbase : (I.ladderBase H).toCellScheme.IsSourcePrefix T.S.toCellScheme
+      (Scheme.layerTowerEmb (B := I.towerBase H) (C := I.towerCat Γ A) (G := fun k ↦ grid k B') m)
+      ((univ : Finset (Fin (m + 2))), 1) :=
+    ⟨Scheme.isLowerEmbedding_layerTowerEmb (B := I.towerBase H) (C := I.towerCat Γ A)
+        (G := fun k ↦ grid k B') m,
+      fun t ↦ Scheme.scope_layerTowerEmb (B := I.towerBase H) (C := I.towerCat Γ A)
+        (G := fun k ↦ grid k B') t m,
+      fun z hz ↦ Scheme.mem_range_layerTowerEmb_of_grade (B := I.towerBase H)
+        (C := I.towerCat Γ A) (G := fun k ↦ grid k B') m z hz.2⟩
+  have hone (x : Fin (m + 2)) (hxF : univ.erase x ∈ I.amalgam.toCellScheme.faces) :
+      T.S.rows.CappedLift (X := (univ.erase x, 1)) (Y := ((univ : Finset (Fin (m + 2))), 1))
+        ⟨erase_subset _ _, le_rfl⟩ := by
+    have hcl : T.S.rows.comap hbase.isLowerEmbedding = (I.ladderBase H).rows :=
+      Scheme.comap_rows_layerTowerEmb (B := I.towerBase H) (C := I.towerCat Γ A)
+        (G := fun k ↦ grid k B') m
+    rw [← (hbase.cappedLift_iff _ le_rfl), hcl]
+    have hcard' : 1 ≤ #(univ.erase x) := by
+      rw [card_erase_of_mem (mem_univ _), card_univ, Fintype.card_fin]; omega
+    exact I.cappedLift_ladderBase H hH hcard ⟨hxF, by omega, hcard'⟩
+      ⟨I.amalgam.isWellFormed.univ_mem_faces, by omega, by simp⟩ _ (.inr rfl)
+  have hfull (x : Fin (m + 2)) (hx : x ∈ ({Fin.last (m + 1), Fin.castSucc (Fin.last m)} :
+      Finset (Fin (m + 2)))) (hxF : univ.erase x ∈ I.amalgam.toCellScheme.faces) :
+      ∀ j ≤ #(univ.erase x), T.S.rows.CappedLift (X := (univ.erase x, j))
+        (Y := ((univ : Finset (Fin (m + 2))), j)) ⟨erase_subset _ _, le_rfl⟩ := by
+    intro j hj
+    rw [card_erase_of_mem (mem_univ _), card_univ, Fintype.card_fin] at hj
+    rcases Nat.lt_or_ge j 2 with hj2 | hj2
+    · rcases Nat.lt_or_ge j 1 with hj1 | hj1
+      · have hj0 : j = 0 := by omega
+        subst hj0
+        refine CellScheme.Rows.cappedLift_of_below_eq_empty ?_ _
+        ext z
+        simp only [Set.mem_empty_iff_false, iff_false]
+        intro hz
+        have h1 : T.S.toCellScheme.grade z ≤ 0 := hz.2
+        have h2 := (I.isWellFormed_ladderTower (H := H) (Γ := Γ) (A := A) (B' := B') (k := m)
+          (by omega)).isWellFormed.grade_pos z
+        exact Nat.lt_irrefl 0 (h2.trans_le h1)
+      · have hj1' : j = 1 := by omega
+        subst hj1'
+        exact hone x hxF
+    · exact hlift x hx j hj2 (by omega)
+  have hleftF : univ.erase (Fin.last (m + 1)) ∈ I.amalgam.toCellScheme.faces := by
+    rw [← Coatom.univ_map_left]
+    exact ((StageType.restrictFace_eq_some_iff _ _).mp I.restrictFace_left).1
+  have hrightF : univ.erase (Fin.castSucc (Fin.last m)) ∈ I.amalgam.toCellScheme.faces := by
+    rw [← Coatom.univ_map_right]
+    exact ((StageType.restrictFace_eq_some_iff _ _).mp I.restrictFace_right).1
+  refine CellScheme.Rows.isBountiful_of_coatoms (A := univ) (mem_univ (Fin.last (m + 1)))
+    (mem_univ (Fin.castSucc (Fin.last m))) (fun B hB hBu ↦ ?_) (hfacesT ▸ hleftF)
+    (hfacesT ▸ hrightF) hproper (hfull _ (by simp) hleftF) (hfull _ (by simp) hrightF)
+  exact I.subset_or_subset B (hfacesT ▸ hB) hBu
+
 variable {I H Γ A B'}
 
 /-- **The ladder tower as a completion below the full grade**, given its bountifulness and a lawful
