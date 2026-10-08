@@ -89,7 +89,7 @@ private theorem label_eq_of_restrictFace_eq {m : ℕ} {S : Scheme.{u} m}
 label of `D'` other than `⊤`.  In a member `q` of the receiving family, availability from the
 private top `w` gives a cell `u` of graded index `(univ, grade w)` labelled `⊤` in `q`; its label
 in `D'` is `⊤` (the cutoff keeps the other labels), so `u` reads the new top at least as `s`, and
-the new top is `⊤` in `q` (`CellScheme.Rows.IsLawful.eq_top_of_row_le`). -/
+the new top is `⊤` in `q` (`CellScheme.Rows.IsLawful.label_eq_top_of_row_le`). -/
 theorem ReadsEachNewTopAtTops.isDeterminedWithin {t' : StageType.{u} α k}
     {D' : StageType.{u} α (k + 1)} (hD' : D' ∈ t'.cofaces) {h : Fin n ↪ Fin k}
     {d : StageType.{u} α (n + 1)} (hD'd : restrictFace (extendByLast h) D' = some d)
@@ -162,7 +162,7 @@ theorem ReadsEachNewTopAtTops.isDeterminedWithin {t' : StageType.{u} α k}
         -- the rows of `q` and of `D'` are those of `S`
         change S.rowAt u s ≤ S.rowAt u x at hr
         rw [Scheme.rowAt_of_mem (hb hsw), Scheme.rowAt_of_mem (hb hxw)] at hr
-        exact hlaw.eq_top_of_row_le (s := ⟨s, hb hsw⟩) (x := ⟨x, hb hxw⟩) hwu hsq hr
+        exact hlaw.label_eq_top_of_row_le (s := ⟨s, hb hsw⟩) (x := ⟨x, hb hxw⟩) hwu hsq hr
       · exact hpriv x hxl
     · exact hnt x hxt
   rw [← hD'd]

@@ -15,9 +15,9 @@ with residual acquisition for source-gap contexts compiled in
 
 **Reading a top through a top.**  In a lawful section `τ`, if a cell `w` is labelled `⊤` and its
 row reads a cell `x` at least as a cell `s` labelled `⊤` (both below `w`), then `x` is labelled
-`⊤` (`CellScheme.Rows.IsLawful.eq_top_of_row_le`): the witness of locality at `w` has suppressor
-`⊤` up to the grade of `w` and shifter `⊤` at the row value of `s`.  In a legal stage type the
-reading cell need not be given: if `w` is labelled `⊤` and every cell of graded index
+`⊤` (`CellScheme.Rows.IsLawful.label_eq_top_of_row_le`): the witness of locality at `w` has
+suppressor `⊤` up to the grade of `w` and shifter `⊤` at the row value of `s`.  In a legal stage
+type the reading cell need not be given: if `w` is labelled `⊤` and every cell of graded index
 `(univ, grade w)` reads `x` at least as `s`, with `s` and `x` of grade at most that of `w`, then
 `x` is labelled `⊤` (`StageType.label_eq_top_of_forall_rowAt_le`, compiled in this repository);
 completeness gives a cell of that graded index and availability makes one of them `⊤`.  The
@@ -102,7 +102,7 @@ variable {ι β : Type*} {D : CellScheme ι β} {R : D.Rows} {τ : ι → Label.
 below `w` has `τ s = ⊤`, and the row of `w` reads a cell `x` below `w` at least as `s`, then
 `τ x = ⊤`.  The witness of locality at `w` has suppressor `⊤` up to the grade of `w` and shifter
 `⊤` at the row value of `s`; the shifter is monotone and the suppressor antitone. -/
-theorem eq_top_of_row_le (hτ : R.IsLawful τ) {w : ι} (hw : τ w = ⊤)
+theorem label_eq_top_of_row_le (hτ : R.IsLawful τ) {w : ι} (hw : τ w = ⊤)
     {s x : D.below (D.gradedIndex w)} (hs : τ s = ⊤) (hsx : R.row w s ≤ R.row w x) : τ x = ⊤ := by
   obtain ⟨g, σ, hwit, heq⟩ := hτ.locality w
   -- below `w`, the target of locality is `τ` itself, since `τ w = ⊤`
@@ -126,7 +126,7 @@ variable {α : Ordinal.{u}} {n m k : ℕ}
 `D`, let `w` and `s` be labelled `⊤`, with `s` and `x` of grade at most that of `w`.  If every cell
 of graded index `(univ, grade w)` reads `x` at least as `s` (`Scheme.rowAt`), then `x` is labelled
 `⊤`.  Completeness gives a cell of that graded index, availability of the labelling makes one of
-them `⊤`, and `CellScheme.Rows.IsLawful.eq_top_of_row_le` applies to it.  The grade of `x` is
+them `⊤`, and `CellScheme.Rows.IsLawful.label_eq_top_of_row_le` applies to it.  The grade of `x` is
 bounded by that of `w`, not by that of `s`. -/
 theorem label_eq_top_of_forall_rowAt_le {D : StageType.{u} α m} (hD : D.IsLegal)
     {w s x : Fin D.card} (hw : D.label w = ⊤) (hs : D.label s = ⊤)
@@ -152,7 +152,7 @@ theorem label_eq_top_of_forall_rowAt_le {D : StageType.{u} α m} (hD : D.IsLegal
     exact ⟨subset_univ _, hy⟩
   have hr := hread u hu
   rw [Scheme.rowAt_of_mem (hb hsw), Scheme.rowAt_of_mem (hb hxw)] at hr
-  exact D.isLawful.eq_top_of_row_le (s := ⟨s, hb hsw⟩) (x := ⟨x, hb hxw⟩) hwu hs hr
+  exact D.isLawful.label_eq_top_of_row_le (s := ⟨s, hb hsw⟩) (x := ⟨x, hb hxw⟩) hwu hs hr
 
 /-! ### Determination over a separating coface -/
 

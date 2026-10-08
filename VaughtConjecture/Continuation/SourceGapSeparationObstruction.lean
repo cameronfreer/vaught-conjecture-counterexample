@@ -15,8 +15,8 @@ Roadmap, Layer 3 ((R2) of the table of 3.4); the separated pinned extensions of
 separates the new tops through the lost top `r` at grade `K` (`StageType.SeparatesThrough`), and
 let `q` be a lawful labelling of `D'` in which `r` is `⊤` and has grade `K`.  Availability puts `r`
 below a cell `u` of graded index `(univ, K)` labelled `⊤`, and `u` reads every new top at least as
-`r`, so every new top is `⊤` in `q` (`CellScheme.Rows.IsLawful.eq_top_of_row_le`).  Every lawful
-labelling of `t'` extends to `D'` (bountifulness at the cap `⊥`,
+`r`, so every new top is `⊤` in `q` (`CellScheme.Rows.IsLawful.label_eq_top_of_row_le`).  Every
+lawful labelling of `t'` extends to `D'` (bountifulness at the cap `⊥`,
 `StageType.exists_isLawful_extend_of_restrictFace`).  So if `t'` has a lawful labelling with `r` at
 `⊤` and a root cell `y` not at `⊤`, and the donor bounds a new top `x` by `y` in every lawful
 labelling, no such `D'` exists.  The strict gaps do not prevent this: the owner can be lowered
@@ -481,7 +481,7 @@ theorem not_exists_separatesThrough (α : Ordinal.{u}) :
   have hgx : D'.toCellScheme.grade x ≤ 2 := by
     rw [grade_faceCell]; exact (by decide : (1 : ℕ) ≤ 2)
   rw [Scheme.rowAt_of_mem (hmem hgr), Scheme.rowAt_of_mem (hmem hgx)] at hread
-  have hxtop := hq.eq_top_of_row_le (s := ⟨_, hmem hgr⟩) (x := ⟨x, hmem hgx⟩) hqu hr hread
+  have hxtop := hq.label_eq_top_of_row_le (s := ⟨_, hmem hgr⟩) (x := ⟨x, hmem hgx⟩) hqu hr hread
   rw [hxtop] at hzy
   exact (low_lt_omegaAddTwo.trans_le le_top).ne (top_le_iff.mp hzy)
 
