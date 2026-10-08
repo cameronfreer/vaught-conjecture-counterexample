@@ -29,7 +29,10 @@ of the root of the donor face, and every designated top concerned.
   `⊤`, every root cell is a designated cell below the top, and the residual holds.
 
 The residual can fail only through root cells labelled `⊤`: a root top `a` of grade at most `K`
-whose value in the donor face is above a designated top.  **It does fail at a legal context**
+whose visibility-replaced value in the donor face (the replacement at `K` of the maximum over the
+root) exceeds a designated top; the raw value need not.  The implication proves sufficiency of the
+residual for owner lowering below the designated tops, not its necessity.  **It does fail at a
+legal context**
 (`OwnerGradeOneTop.not_rootBelowTopsAt_one`, module
 `VaughtConjecture.Continuation.H2OwnerAtTop`): at the owner lane's context `OwnerGradeOneTop.ctx`
 (two points, grade `1`) the lost top lies below the root top in every lawful labelling, so a donor
