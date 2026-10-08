@@ -59,7 +59,10 @@ displays exist; with the donors whose tops avoid the new point
 left are those with a donor top through the new point but none of grade `K`
 (`StageType.LowStepTieLow`), those with `K = k + 1` (the grade of a LOW family is positive,
 `StageType.IsLowFamily.grade_pos`), and those with a label other than `⊥` above `K < k`, for which
-the completed display carries no separator labelled `⊤` (`StageType.not_lowReadingFamily`).
+the completed display carries no separator labelled `⊤` (`StageType.not_lowReadingFamily`).  The
+acquisition of (R2) produces such families in every model with no globally rigid core
+(`Realization.exists_acquired_not_lowBotClass`); for them a level above the LOW layer reading the
+actual state suffices (`ProfileTower.ReadsActual.exists_isLowLayer`).
 
 ## Placement
 

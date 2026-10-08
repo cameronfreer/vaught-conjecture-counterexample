@@ -104,7 +104,8 @@ the context and the donor labelled `⊥` at every grade in `(K, k]`
 the completed display over the LOW layer with the actual labels).  Outside that class it is open:
 without a donor top of grade `K` the LOW step is the named case `StageType.LowStepTieLow`, and with
 a label other than `⊥` above `K < k` the completed display carries no separator labelled `⊤`
-(`StageType.not_lowReadingFamily`). -/
+(`StageType.not_lowReadingFamily`); the acquisition produces such families
+(`Realization.exists_acquired_not_lowBotClass`). -/
 def HasLowDisplays : Prop :=
   ∀ ⦃α : Ordinal.{u}⦄ ⦃K k : ℕ⦄ (t' tb : StageType.{u} α (k + 1)) (p : StageType.{u} α k)
     (o r : Fin t'.card), Order.IsSuccLimit α → IsLowFamily K t' tb p o r →
