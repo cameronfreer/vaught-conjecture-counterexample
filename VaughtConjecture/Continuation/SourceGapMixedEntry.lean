@@ -32,26 +32,33 @@ rows, which read only cells at least `ω * b + 2` or at `⊥`.  It is `⊤` at e
 `ω * b + 2` at the donor cells of grade `2`, and agrees with `e` capped at `ω * b + 2`.
 
 **The mixed entry is forced** (compiled in this repository,
-`Scheme.IsMixedSite.exists_top_lt`).  Let `L` be a sheet layer at grade `2` over a site whose
-entries lie in the canonical catalogue, every catalogue entry being the entry of some new cell, with
-caps at least the values of their entries (the leaf-and-marked layer with the ceiling cap is of this
-kind, with any marks).  Let `q` be a lawful labelling of `L` labelling `⊤` the four cells of grade
-`2`.  Then some new cell `j` is labelled `⊤` and its entry reads `o'` and `r'` strictly below every
-context cell `y`, `z`, `o`, `r`.  Proof: availability from `o` gives a new cell `u` labelled `⊤`;
-its entry `e` is lawful, orbit-canonical, and other than `⊥` at the four cells of grade `2`; the
-least of these values is a grid point `ω * b + 2`; the orbit code of the mixed labelling at `b` is a
-catalogue entry agreeing with `e` capped at `ω * b + 2` (`Label.min_orbitCode_eq`), so its cross
-height with `u` is at least that least value, and its cell is `⊤`
+`Scheme.IsMixedSite.exists_top_lt_of_serves`).  Let `L` be a sheet layer at grade `2` over a site
+whose entries lie in the canonical catalogue and which **serves the capped agreements**
+(`Scheme.ServesAgreements`: a catalogue entry agreeing with the entry of a new cell `i` capped at a
+grid point at most a value of that entry is the entry of a new cell `j` with sheet cap from `i` at
+least that point).  This holds when every catalogue entry is an entry and the caps are at least the
+values of their entries (`Scheme.servesAgreements_of_le`; the canonical field layer, and the
+leaf-and-marked layer with the ceiling cap), and in the leaf-and-marked layer for every set of
+marks marked-closed for its cap (`Scheme.servesAgreements_markedLayer`), the closure under which
+the lifts along marked cells hold.  Let `q` be a lawful labelling of `L` labelling `⊤` the four
+cells of grade `2`.  Then some new cell `j` is labelled `⊤` and its entry reads `o'` and `r'`
+strictly below every context cell `y`, `z`, `o`, `r`.  Proof: availability from `o` gives a new
+cell `u` labelled `⊤`; its entry `e` is lawful, orbit-canonical, and other than `⊥` at the four
+cells of grade `2`; the least of these values is a grid point `ω * b + 2`; the orbit code of the
+mixed labelling at `b` is a catalogue entry agreeing with `e` capped at `ω * b + 2`
+(`Label.min_orbitCode_eq`), so it is the entry of a new cell whose cross height with `u` is at
+least that least value, and that cell is `⊤`
 (`Scheme.eq_top_natAdd_sheetLayer`); the orbit code keeps the order of the keys
 (`Label.visibilityReplace_orbitCode_le_iff`), and `ω * b + 2 < ⊤`.
 
-No legality, bountifulness, choice of marks, or condition on the layer at grade `1` enters.  The
-canonical field layer is the sheet layer with one sheet (`Scheme.fieldLayer_eq_sheetLayer`), so it
-is covered as well.  In the form of a reading (`Scheme.IsMixedSite.not_exists_reading`): no context
-cell `s` is read at most as `o'` by every new cell labelled `⊤`.  Over the amalgam of two copies of
+No legality, bountifulness, choice of marks or caps beyond marked closure, or condition on the
+layer at grade `1` enters.  The canonical field layer is the sheet layer with one sheet
+(`Scheme.fieldLayer_eq_sheetLayer`), so it is covered as well.  In the form of a reading
+(`Scheme.IsMixedSite.not_exists_reading`): no context cell `s` is read at most as `o'` by every new
+cell labelled `⊤`.  Over the amalgam of two copies of
 `SeparationObstruction.T` and any layer of cells of full scope and grade `1` over it (the lower
 layer at the arity one, canonical or leaf-and-marked with any marks), this holds for the
-leaf-and-marked layer at grade `2` with any marks and the ceiling cap
+leaf-and-marked layer at grade `2` with any marks marked-closed for its cap
 (`MixedEntry.not_exists_reading_markedLayer`) and for the canonical field layer at grade `2`
 (`MixedEntry.not_exists_reading_fieldLayer`).
 
@@ -341,25 +348,70 @@ private theorem exists_eq_gridPoint {a : Fin S.card → Label.{u}} (ha : a ∈ S
     obtain rfl : f = 2 := le_antisymm hf hv
     exact ⟨b, hb, h⟩
 
+/-- The layer **serves the capped agreements** at grade `k`: every catalogue entry `a` agreeing
+with the entry of a new cell `i` capped at a grid point `ω * b + k` at most some value of that entry
+is the entry of a new cell `j` whose sheet cap from `i` is at least `ω * b + k`. -/
+def ServesAgreements (S : Scheme.{u} n) (k : ℕ) (ε : Fin M → Fin S.card → Label.{u})
+    (σ : Fin M → Bool) (κ : (Fin S.card → Label.{u}) → Label.{u}) : Prop :=
+  ∀ i, ∀ a ∈ S.catalogue k, ∀ b : ℕ, (∃ x, gridPoint k b ≤ ε i x) →
+    (∀ d, min (a d) (gridPoint k b) = min (ε i d) (gridPoint k b)) →
+      ∃ j, ε j = a ∧ gridPoint k b ≤ S.sheetCap ε σ κ i j
+
+/-- A layer with every catalogue entry an entry, and caps at least the values of their entries,
+serves the capped agreements. -/
+theorem servesAgreements_of_le {k : ℕ} (hκ : ∀ i x, ε i x ≤ κ (ε i))
+    (hall : ∀ a ∈ S.catalogue k, ∃ j, ε j = a) : S.ServesAgreements k ε σ κ := by
+  intro i a ha b ⟨x, hx⟩ _
+  obtain ⟨j, hj⟩ := hall a ha
+  refine ⟨j, hj, ?_⟩
+  rw [sheetCap]
+  split_ifs
+  exacts [le_top, hx.trans (hκ i x)]
+
+/-- **The leaf-and-marked layer serves the capped agreements** for every set of marks in the
+catalogue that is marked-closed for its cap: along a leaf, by the leaf of the entry; along a marked
+cell, by the leaf of the entry at a point at most its cap, and above its cap by the marked cell of
+the entry, which marked closure puts in the marks. -/
+theorem servesAgreements_markedLayer {k : ℕ} {Mk : Finset (Fin S.card → Label.{u})}
+    (hcl : MarkedClosed S k Mk κ) :
+    S.ServesAgreements k (S.markedEntry k Mk) (markedSheet _ Mk.card) κ := by
+  intro i a ha b _ hag
+  induction i using Fin.addCases with
+  | left i =>
+    obtain ⟨j, hj, hjs⟩ := exists_leaf_eq (Mk := Mk) ha
+    refine ⟨j, hj, ?_⟩
+    rw [sheetCap, ite_eq_left (by rw [markedSheet_castAdd, hjs])]
+    exact le_top
+  | right m =>
+    by_cases hle : gridPoint k b ≤ κ (S.markedEntry k Mk (Fin.natAdd _ m))
+    · obtain ⟨j, hj, hjs⟩ := exists_leaf_eq (Mk := Mk) ha
+      refine ⟨j, hj, ?_⟩
+      rw [sheetCap, ite_eq_right (by rw [markedSheet_natAdd, hjs]; decide)]
+      exact hle
+    · have hmk : S.markedEntry k Mk (Fin.natAdd _ m) ∈ Mk := by
+        rw [markedEntry_natAdd]; exact markEntry_mem Mk m
+      obtain ⟨j, hj, hjs⟩ := exists_mark_eq (k := k)
+        (hcl _ hmk a ha _ (isSelfVisible_gridPoint k b) (isShort_gridPoint k b)
+          (WithBot.bot_lt_coe _) hle hag)
+      refine ⟨j, hj, ?_⟩
+      rw [sheetCap, ite_eq_left (by rw [markedSheet_natAdd, hjs])]
+      exact le_top
+
 namespace IsMixedSite
 
 variable (hs : S.IsMixedSite y z o r z' o' r')
 include hs
 
 /-- **The mixed entry is forced at the tops.**  In a sheet layer at grade `2` over a site, with
-entries in the canonical catalogue, every catalogue entry the entry of a new cell, and caps at least
-the values of their entries, every lawful labelling `⊤` at the four cells of grade `2` labels `⊤` a
-new cell whose entry reads `o'` and `r'` strictly below every context cell. -/
-theorem exists_top_lt (hε : ∀ i, ε i ∈ S.catalogue 2) (hκ : ∀ i x, ε i x ≤ κ (ε i))
-    (hall : ∀ a ∈ S.catalogue 2, ∃ j, ε j = a) {q : Fin (S.card + M) → Label.{u}}
+entries in the canonical catalogue and some new cell, serving the capped agreements, every lawful
+labelling `⊤` at the four cells of grade `2` labels `⊤` a new cell whose entry reads `o'` and `r'`
+strictly below every context cell. -/
+theorem exists_top_lt_of_serves (hε : ∀ i, ε i ∈ S.catalogue 2) (j₀ : Fin M)
+    (hserve : S.ServesAgreements 2 ε σ κ) {q : Fin (S.card + M) → Label.{u}}
     (hq : (S.sheetLayer 2 ε σ κ hS).rows.IsLawful q)
     (htop : ∀ c, (c = o ∨ c = r ∨ c = o' ∨ c = r') → q (Fin.castAdd M c) = ⊤) :
     ∃ j, q (Fin.natAdd S.card j) = ⊤ ∧
       ∀ s, (s = y ∨ s = z ∨ s = o ∨ s = r) → ε j o' < ε j s ∧ ε j r' < ε j s := by
-  set L := S.sheetLayer 2 ε σ κ hS
-  -- some new cell: the code of the bottom labelling is a catalogue entry
-  obtain ⟨j₀, -⟩ := hall _ (orbitCode_splice_bot_mem_catalogue (S := S) (k := 2)
-    (p := fun _ ↦ ⊥) (CellScheme.Rows.isLawfulBelow_const_bot _))
   -- availability from `o` gives a new cell `u` labelled `⊤`
   obtain ⟨u, hu, hle⟩ := hq.availability (Fin.castAdd M o) (Fin.natAdd S.card j₀)
     (by rw [appendFullCellsScheme_scope_natAdd]; exact subset_univ _)
@@ -402,15 +454,11 @@ theorem exists_top_lt (hε : ∀ i, ε i ∈ S.catalogue 2) (hκ : ∀ i x, ε i
       min (orbitCode 2 g d) (gridPoint 2 b) = min (e d) (gridPoint 2 b) :=
     min_orbitCode_eq (isSelfVisible_gridPoint 2 b) (isShort_gridPoint 2 b) hecode hag d
   -- the cell of the code is labelled `⊤`
-  obtain ⟨j, hj⟩ := hall _ hmem
+  obtain ⟨j, hj, hcap⟩ := hserve i _ hmem b ⟨x₀, hbx.ge⟩ hcode
   have hcross : e x₀ ≤ S.crossHeight 2 ε σ κ i j := by
     rw [show e x₀ = gridPoint 2 b from hbx, crossHeight]
-    refine le_min (le_agreementHeight (gridPoint_mem_grid (by omega)) fun d ↦ ?_) ?_
-    · rw [hj]; exact (hcode d).symm
-    · rw [sheetCap]
-      split_ifs
-      · exact le_top
-      · exact hbx ▸ hκ i x₀
+    refine le_min (le_agreementHeight (gridPoint_mem_grid (by omega)) fun d ↦ ?_) hcap
+    rw [hj]; exact (hcode d).symm
   have hjtop : q (Fin.natAdd S.card j) = ⊤ :=
     eq_top_natAdd_sheetLayer hq (hg₀.le) hle (htop x₀ hx₀') hcross
   refine ⟨j, hjtop, fun s hsc ↦ ?_⟩
@@ -430,6 +478,18 @@ theorem exists_top_lt (hε : ∀ i, ε i ∈ S.catalogue 2) (hκ : ∀ i x, ε i
     exact ne_top_of_mem_codeGrid (grid_subset_codeGrid 2 b (gridPoint_mem_grid le_rfl)) h1
   rw [hj]
   exact ⟨hlt o' (.inl rfl), hlt r' (.inr rfl)⟩
+
+/-- **The mixed entry is forced at the tops**, for a layer with every catalogue entry an entry and
+caps at least the values of their entries. -/
+theorem exists_top_lt (hε : ∀ i, ε i ∈ S.catalogue 2) (hκ : ∀ i x, ε i x ≤ κ (ε i))
+    (hall : ∀ a ∈ S.catalogue 2, ∃ j, ε j = a) {q : Fin (S.card + M) → Label.{u}}
+    (hq : (S.sheetLayer 2 ε σ κ hS).rows.IsLawful q)
+    (htop : ∀ c, (c = o ∨ c = r ∨ c = o' ∨ c = r') → q (Fin.castAdd M c) = ⊤) :
+    ∃ j, q (Fin.natAdd S.card j) = ⊤ ∧
+      ∀ s, (s = y ∨ s = z ∨ s = o ∨ s = r) → ε j o' < ε j s ∧ ε j r' < ε j s :=
+  hs.exists_top_lt_of_serves hε (hall _ (orbitCode_splice_bot_mem_catalogue (S := S) (k := 2)
+    (p := fun _ ↦ ⊥) (CellScheme.Rows.isLawfulBelow_const_bot _))).choose
+    (servesAgreements_of_le hκ hall) hq htop
 
 end IsMixedSite
 
@@ -526,21 +586,20 @@ theorem IsMixedSite.rowAt_natAdd_castAdd (hs : S.IsMixedSite y z o r z' o' r') {
   rw [rowAt_of_mem (old_mem_below_new hs x j), sheetLayer_row_natAdd, sheetRow_castAdd]
 
 /-- **No context cell is read as low as `o'` at the tops**: in a layer as in
-`Scheme.IsMixedSite.exists_top_lt`, no context cell `s` is read at most as `o'` by every new cell
-labelled `⊤`. -/
+`Scheme.IsMixedSite.exists_top_lt_of_serves`, no context cell `s` is read at most as `o'` by every
+new cell labelled `⊤`. -/
 theorem IsMixedSite.not_exists_reading (hs : S.IsMixedSite y z o r z' o' r') {M : ℕ}
     {ε : Fin M → Fin S.card → Label.{u}} {σ : Fin M → Bool}
     {κ : (Fin S.card → Label.{u}) → Label.{u}}
     {hS : ∀ d, ¬ ((univ : Finset (Fin n)), 2) ≤ S.toCellScheme.gradedIndex d}
-    (hε : ∀ i, ε i ∈ S.catalogue 2) (hκ : ∀ i x, ε i x ≤ κ (ε i))
-    (hall : ∀ a ∈ S.catalogue 2, ∃ j, ε j = a) {q : Fin (S.card + M) → Label.{u}}
-    (hq : (S.sheetLayer 2 ε σ κ hS).rows.IsLawful q)
+    (hε : ∀ i, ε i ∈ S.catalogue 2) (j₀ : Fin M) (hserve : S.ServesAgreements 2 ε σ κ)
+    {q : Fin (S.card + M) → Label.{u}} (hq : (S.sheetLayer 2 ε σ κ hS).rows.IsLawful q)
     (htop : ∀ c, (c = o ∨ c = r ∨ c = o' ∨ c = r') → q (Fin.castAdd M c) = ⊤) :
     ¬ ∃ s, (s = y ∨ s = z ∨ s = o ∨ s = r) ∧ ∀ j, q (Fin.natAdd S.card j) = ⊤ →
       (S.sheetLayer 2 ε σ κ hS).rowAt (Fin.natAdd S.card j) (Fin.castAdd M s) ≤
         (S.sheetLayer 2 ε σ κ hS).rowAt (Fin.natAdd S.card j) (Fin.castAdd M o') := by
   rintro ⟨s, hsc, hread⟩
-  obtain ⟨j, hj, hlt⟩ := hs.exists_top_lt hε hκ hall hq htop
+  obtain ⟨j, hj, hlt⟩ := hs.exists_top_lt_of_serves hε j₀ hserve hq htop
   have h := hread j hj
   rw [hs.rowAt_natAdd_castAdd, hs.rowAt_natAdd_castAdd] at h
   exact (hlt s hsc).1.not_ge h
@@ -551,16 +610,16 @@ theorem IsMixedSite.not_exists_reading_of_eq (hs : S.IsMixedSite y z o r z' o' r
     {ε : Fin M → Fin S.card → Label.{u}} {σ : Fin M → Bool}
     {κ : (Fin S.card → Label.{u}) → Label.{u}}
     {hS : ∀ d, ¬ ((univ : Finset (Fin n)), 2) ≤ S.toCellScheme.gradedIndex d}
-    (hε : ∀ i, ε i ∈ S.catalogue 2) (hκ : ∀ i x, ε i x ≤ κ (ε i))
-    (hall : ∀ a ∈ S.catalogue 2, ∃ j, ε j = a) {rr : Fin M → Fin (S.card + M) → Label.{u}}
-    (hrr : rr = S.sheetRow 2 ε σ κ) {q : Fin (S.card + M) → Label.{u}}
+    (hε : ∀ i, ε i ∈ S.catalogue 2) (j₀ : Fin M) (hserve : S.ServesAgreements 2 ε σ κ)
+    {rr : Fin M → Fin (S.card + M) → Label.{u}} (hrr : rr = S.sheetRow 2 ε σ κ)
+    {q : Fin (S.card + M) → Label.{u}}
     (hq : (S.appendFullCells 2 M rr hS).rows.IsLawful q)
     (htop : ∀ c, (c = o ∨ c = r ∨ c = o' ∨ c = r') → q (Fin.castAdd M c) = ⊤) :
     ¬ ∃ s, (s = y ∨ s = z ∨ s = o ∨ s = r) ∧ ∀ j, q (Fin.natAdd S.card j) = ⊤ →
       (S.appendFullCells 2 M rr hS).rowAt (Fin.natAdd S.card j) (Fin.castAdd M s) ≤
         (S.appendFullCells 2 M rr hS).rowAt (Fin.natAdd S.card j) (Fin.castAdd M o') := by
   subst hrr
-  exact hs.not_exists_reading hε hκ hall hq htop
+  exact hs.not_exists_reading hε j₀ hserve hq htop
 
 /-- **The field rows are the sheet rows with one sheet** of the catalogue entries, at every cap. -/
 theorem fieldRow_eq_sheetRow {k : ℕ} (κ : (Fin S.card → Label.{u}) → Label.{u}) :
@@ -674,34 +733,34 @@ theorem isMixedSite_appendFullCells :
 
 /-- **The leaf-and-marked completion does not read `o'` at its tops.**  Over any layer of cells of
 full scope and grade `1` over the amalgam (the leaf-and-marked layer with any marks and caps, or
-the canonical field layer), in the leaf-and-marked layer at grade `2` with any marks and the
-ceiling cap, every lawful labelling `⊤` at `o`, `r`, `o'`, `r'` labels `⊤` a cell of full scope
-and grade `2` reading `o'` strictly below each of `y`, `z`, `o`, `r`. -/
+the canonical field layer), in the leaf-and-marked layer at grade `2` with any marks in the
+catalogue and any cap for which they are marked-closed (`Scheme.MarkedClosed`; the ceiling cap
+with any marks, `Scheme.markedClosed_ceilingCap`), every lawful labelling `⊤` at `o`, `r`, `o'`,
+`r'` labels `⊤` a cell of full scope and grade `2` reading `o'` strictly below each of `y`, `z`,
+`o`, `r`. -/
 theorem not_exists_reading_markedLayer
     (Mk : Finset (Fin (A.{u}.appendFullCells 1 M₁ rr (not_univ_le.{u} 1)).card → Label.{u}))
     (hMk : Mk ⊆ (A.{u}.appendFullCells 1 M₁ rr (not_univ_le.{u} 1)).catalogue 2)
+    {κ : (Fin (A.{u}.appendFullCells 1 M₁ rr (not_univ_le.{u} 1)).card → Label.{u}) → Label.{u}}
+    (hcl : (A.{u}.appendFullCells 1 M₁ rr (not_univ_le.{u} 1)).MarkedClosed 2 Mk κ)
     {hS : ∀ d, ¬ ((univ : Finset (Fin 3)), 2) ≤
       (A.{u}.appendFullCells 1 M₁ rr (not_univ_le.{u} 1)).toCellScheme.gradedIndex d}
     {q : Fin _ → Label.{u}}
-    (hq : ((A.{u}.appendFullCells 1 M₁ rr (not_univ_le.{u} 1)).markedLayer 2 Mk
-      ((A.{u}.appendFullCells 1 M₁ rr (not_univ_le.{u} 1)).ceilingCap 2) hS).rows.IsLawful q)
+    (hq : ((A.{u}.appendFullCells 1 M₁ rr (not_univ_le.{u} 1)).markedLayer 2 Mk κ
+      hS).rows.IsLawful q)
     (htop : ∀ c : Fin 9, (c = 3 ∨ c = 4 ∨ c = 7 ∨ c = 8) →
       q (Fin.castAdd _ (Fin.castAdd M₁ c)) = ⊤) :
     ¬ ∃ s : Fin 9, (s = 0 ∨ s = 2 ∨ s = 3 ∨ s = 4) ∧ ∀ j, q (Fin.natAdd _ j) = ⊤ →
-      ((A.{u}.appendFullCells 1 M₁ rr (not_univ_le.{u} 1)).markedLayer 2 Mk
-        ((A.{u}.appendFullCells 1 M₁ rr (not_univ_le.{u} 1)).ceilingCap 2) hS).rowAt
-          (Fin.natAdd _ j)
-          (Fin.castAdd _ (Fin.castAdd M₁ s)) ≤
-      ((A.{u}.appendFullCells 1 M₁ rr (not_univ_le.{u} 1)).markedLayer 2 Mk
-        ((A.{u}.appendFullCells 1 M₁ rr (not_univ_le.{u} 1)).ceilingCap 2) hS).rowAt
-          (Fin.natAdd _ j)
-          (Fin.castAdd _ (Fin.castAdd M₁ 7)) := by
+      ((A.{u}.appendFullCells 1 M₁ rr (not_univ_le.{u} 1)).markedLayer 2 Mk κ hS).rowAt
+          (Fin.natAdd _ j) (Fin.castAdd _ (Fin.castAdd M₁ s)) ≤
+      ((A.{u}.appendFullCells 1 M₁ rr (not_univ_le.{u} 1)).markedLayer 2 Mk κ hS).rowAt
+          (Fin.natAdd _ j) (Fin.castAdd _ (Fin.castAdd M₁ 7)) := by
   rintro ⟨s, hsc, hread⟩
   refine (isMixedSite_appendFullCells.{u} (M₁ := M₁) (rr := rr)).not_exists_reading
     (Scheme.markedEntry_mem hMk)
-    (fun i x ↦ (Scheme.lt_ceiling_of_mem_catalogue (Scheme.markedEntry_mem hMk i) x).le)
-    (fun a ha ↦ (Scheme.exists_leaf_eq ha).imp fun _ h ↦ h.1) hq
-    (fun c hc ↦ ?_) ⟨Fin.castAdd M₁ s, ?_, hread⟩
+    (Scheme.exists_leaf_eq (Mk := Mk) (Scheme.orbitCode_splice_bot_mem_catalogue
+      (p := fun _ ↦ ⊥) (CellScheme.Rows.isLawfulBelow_const_bot _))).choose
+    (Scheme.servesAgreements_markedLayer hcl) hq (fun c hc ↦ ?_) ⟨Fin.castAdd M₁ s, ?_, hread⟩
   · obtain ⟨c', rfl, hc'⟩ : ∃ c' : Fin 9, Fin.castAdd M₁ c' = c ∧
         (c' = 3 ∨ c' = 4 ∨ c' = 7 ∨ c' = 8) := by
       rcases hc with rfl | rfl | rfl | rfl
@@ -728,8 +787,11 @@ theorem not_exists_reading_fieldLayer
           (Fin.castAdd _ (Fin.castAdd M₁ 7)) := by
   rintro ⟨s, hsc, hread⟩
   refine (isMixedSite_appendFullCells.{u} (M₁ := M₁) (rr := rr)).not_exists_reading_of_eq
-    (fun i ↦ Scheme.catalogueEntry_mem i) (fun _ _ ↦ le_top)
-    (fun a ha ↦ Scheme.exists_catalogueEntry_eq ha) (Scheme.fieldRow_eq_sheetRow fun _ ↦ ⊤) hq
+    (fun i ↦ Scheme.catalogueEntry_mem i)
+    (Scheme.exists_catalogueEntry_eq (Scheme.orbitCode_splice_bot_mem_catalogue
+      (p := fun _ ↦ ⊥) (CellScheme.Rows.isLawfulBelow_const_bot _))).choose
+    (Scheme.servesAgreements_of_le (fun _ _ ↦ le_top) fun a ha ↦ Scheme.exists_catalogueEntry_eq ha)
+    (Scheme.fieldRow_eq_sheetRow fun _ ↦ ⊤) hq
     (fun c hc ↦ ?_) ⟨Fin.castAdd M₁ s, ?_, hread⟩
   · obtain ⟨c', rfl, hc'⟩ : ∃ c' : Fin 9, Fin.castAdd M₁ c' = c ∧
         (c' = 3 ∨ c' = 4 ∨ c' = 7 ∨ c' = 8) := by
