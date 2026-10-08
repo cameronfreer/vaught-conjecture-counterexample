@@ -4,9 +4,9 @@ By Nathanael Ackerman, Cameron Freer, and Robin Knight.
 
 A Lean 4 development toward a countable relational language and an $L_{\omega_1,\omega}$ sentence
 with exactly $\aleph_1$ countable models up to isomorphism and no perfect set of pairwise
-non-isomorphic countable models, together with the general theory it rests on. The construction
+non-isomorphic countable models, together with the general theory it rests on.  The construction
 follows Robin Knight's unpublished 2026 draft [Kni26] and the draft of Ackerman, Freer and Knight
-[AFK26] (see [`roadmap/REFERENCES.bib`](roadmap/REFERENCES.bib)). It is not a counterexample to the
+[AFK26] (see [`roadmap/REFERENCES.bib`](roadmap/REFERENCES.bib)).  It is not a counterexample to the
 first-order Vaught conjecture.
 
 It builds on [Mathlib](https://github.com/leanprover-community/mathlib4),
@@ -32,21 +32,21 @@ retained.
 
 ## Status
 
-The main theorem is compiled here *conditionally*. On the terminal-classification route,
+The main theorem is compiled here *conditionally*.  On the terminal-classification route,
 `MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_terminalClassification''` and
 `MainTheorem.vaughtCounterexample_allCarriers_of_terminalClassification''` prove the spectrum
 statement from four named hypotheses, `Expansion.FiniteCutReceiving`, `ContinuationCriterion`,
 `Realization.ResidualReceiving` and `Realization.HollowReceiving Realization.IsCoverHollowAtBlock`,
-each of which is open. On the receiving-models route,
+each of which is open.  On the receiving-models route,
 `MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_receivingModels'` and
 `MainTheorem.vaughtCounterexample_allCarriers_of_receivingModels'` prove it from three,
 `Expansion.ReceivingStableCappedReceiving`, `Realization.ReceivingResidualReceiving` and
-`Realization.HollowReceiving Realization.IsReceivingCoverHollowAtBlock`, each of which is open. The
+`Realization.HollowReceiving Realization.IsReceivingCoverHollowAtBlock`, each of which is open.  The
 finite coatom-extension property with apex is proved at every arity, at every stage that is zero or
 a limit and at every block stage (`StageType.hasApexCoatomExtensions`,
-`StageType.hasApexCoatomExtensions_blockStage`). [`roadmap/DASHBOARD.md`](roadmap/DASHBOARD.md)
+`StageType.hasApexCoatomExtensions_blockStage`).  [`roadmap/DASHBOARD.md`](roadmap/DASHBOARD.md)
 lists every named hypothesis with its status, and [`roadmap/README.md`](roadmap/README.md) the
-routes to proving them. No unconditional counterexample theorem is claimed in this repository.
+routes to proving them.  No unconditional counterexample theorem is claimed in this repository.
 
 ## Relation to the registered formalization
 
@@ -91,23 +91,22 @@ share a build.
 
 ## Contributing
 
-Work lands through pull requests, one topic each, in changes of a few hundred to a thousand
-lines: implementation, review against the [TauCeti review
-rubrics](https://github.com/TauCetiProject/TauCetiReview/tree/main/rubrics) (used as guidance),
-then external review before merging.  Each PR names the layer of
-[`roadmap/README.md`](roadmap/README.md) it advances (`Roadmap: Layer 3`), or `Roadmap: none` for
-infrastructure.  Mathlib style throughout; no compatibility shims.
-Prose, docstrings, and declaration names use mathematical terminology only: they speak of
-mathematical objects, hypotheses, constructions, and theorems, never of workflow roles such as
-producer, consumer, supplier, or certificate.  "Library conventions" in
+Work lands through pull requests, one topic each, in changes of a few hundred to a thousand lines:
+implementation, review against the [TauCeti review
+rubrics](https://github.com/TauCetiProject/TauCetiReview/tree/main/rubrics) (used as guidance), then
+external review before merging.  Each PR names the layer of [`roadmap/README.md`](roadmap/README.md)
+it advances (`Roadmap: Layer 3`), or `Roadmap: none` for infrastructure.  Mathlib style throughout;
+no compatibility shims.  Prose, docstrings, and declaration names use mathematical terminology only:
+they speak of mathematical objects, hypotheses, constructions, and theorems, never of workflow roles
+such as producer, consumer, supplier, or certificate.  "Library conventions" in
 [`roadmap/README.md`](roadmap/README.md#library-conventions) lists these conventions: the words to
 avoid, one word per notion, declaration names, `## Placement` sections, and the review rubrics.
 
 ## Citing
 
-For this repository, cite its URL and a commit hash. For the counterexample theorem itself, cite the
-registered formalization: Nathanael Ackerman, Cameron Freer and Robin Knight, *A counterexample to
-Vaught's conjecture for infinitary logic*, Palomar entry PALOMAR-2026-10-07-000001, version 1,
+For this repository, cite its URL and a commit hash.  For the counterexample theorem itself, cite
+the registered formalization: Nathanael Ackerman, Cameron Freer and Robin Knight, *A counterexample
+to Vaught's conjecture for infinitary logic*, Palomar entry PALOMAR-2026-10-07-000001, version 1,
 `cameronfreer/vaught-conjecture-palomar` at commit `032ccb7a25b0ff6227128aa0aeba549c5901ea9a`, 2026.
 Classification: MSC 2020 03C15, 03C75, 03E15; arXiv math.LO.
 
