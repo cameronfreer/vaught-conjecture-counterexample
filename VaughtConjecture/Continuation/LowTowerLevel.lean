@@ -243,4 +243,20 @@ theorem Lvl.Good.lowNext (hL : L.Good) (hgm : g + 1 ≤ m) {o' r' : Fin I.left.c
       (StageType.faceCell I.restrictFace_left r'))).Good :=
   hL.catNext hgm lowPred_withCut_bot fun _ hx ↦ hL.cappedLift_lowS_seed hgm hs htb hz hzK hx
 
+/-! ### The canonical levels above -/
+
+/-- The **canonical levels above a level**: `j` canonical next levels (`ProfileTower.Lvl.next`). -/
+noncomputable def Lvl.iter {g' : ℕ} (N : Lvl I g') : (j : ℕ) → Lvl I (g' + j)
+  | 0 => N
+  | j + 1 => (N.iter j).next
+
+/-- **The canonical levels above a good level are good**, up to the grade `m`
+(`ProfileTower.Lvl.Good.next`); with the LOW level (`ProfileTower.Lvl.Good.lowNext`) as base they
+complete the display above the controllers, and the last one, a next level, extends at `⊥`
+(`ProfileTower.Lvl.Good.hasBotExtension_next`), as `ProfileTower.Lvl.Good.completion` asks. -/
+theorem Lvl.Good.iter {g' : ℕ} {N : Lvl I g'} (hN : N.Good) :
+    ∀ j, g' + j ≤ m → (N.iter j).Good
+  | 0, _ => hN
+  | j + 1, h => (hN.iter j (by omega)).next (by omega)
+
 end VaughtConjecture.ProfileTower
