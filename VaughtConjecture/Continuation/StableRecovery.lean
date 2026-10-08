@@ -61,7 +61,9 @@ the label of `D`.  A reference cell read there lies below a graded index of grad
 is at most `N`.  (Informal; not compiled: the hypothesis is not confined to the graded index of
 `s`.  By bountifulness at the cap `⊥` and completeness, the reading forces the label of a new cell
 for the lawful labellings below every graded face of grade `N` of `E` containing the cap, a
-reference cell and that new cell.)
+reference cell and that new cell.  For a cap of full scope the only such graded face is
+`(univ, N)`: `Scheme.setOf_gradedFaces_univCap_eq_singleton`, in
+`VaughtConjecture.Continuation.StableRecoveryFullCap`.)
 
 **The graded cap calibration** (`StageType.GradedCapCalibration`): a cap `b` of grade `N > k`
 labelled at least `λ_ξ + N`, with `γ < λ_ξ + N`, and for every ordinal label `μ + n` of `D`

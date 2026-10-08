@@ -3649,7 +3649,62 @@ Each checkpoint needs both its abstract API and a concrete application:
    `Continuation/StableRecoveryInterior` and `Continuation/StableRecoveryInteriorScheme`; no second
    calibration is refuted; the next tests, prospective, are these features together, faces of grade
    `N` that are not nested, reference cells in two blocks for one donor, and `N > k + 2`; the finite
-   statement at every input is still to be proved; `README.md`, Layer 4, status, output 3).
+   statement at every input is still to be proved; a full-scope cap,
+   `Continuation/StableRecoveryFullCap`: every graded cap can be taken of full scope at a legal
+   context, `StageType.GradedCapCalibration.exists_univ_cap`; the graded faces of grade `N`
+   containing a full-scope cap and a new cell reduce to `(univ, N)`,
+   `Scheme.setOf_gradedFaces_univCap_eq_singleton` (faces only; the forcing of labels stays
+   informal); recovery from the cells at `(univ, N)`,
+   `StageType.IsStableRecoveryScheme.of_readsThroughCap_univ`; the coface from legality,
+   `StageType.exists_mem_cofaces_reduce_of_isLegal`; reading through a cap depends on its grade
+   only, away from the formal top, `StageType.ReadsThroughCap.of_grade_eq`; the new named statement
+   `StageType.HasCapReadingExtensions` (cap-reading extensions, `StageType.IsCapReadingExtension`;
+   open; no implication compiled from or to `StageType.HasApexCoatomExtensions`, itself compiled
+   at every block stage) implies the finite statement,
+   `StageType.HasCapReadingExtensions.hasStableRecoverySchemes`; tests in
+   `Continuation/StableRecoveryFullCapExamples`: the twin donors through `(univ, N)`, a full-scope
+   cap at the interior context, and the interior scheme as a cap-reading extension for every
+   full-scope graded cap there,
+   `Continuation.StableRecoveryInterior.isCapReadingExtension_interiorScheme`; the cap row,
+   `Continuation/StableRecoveryCapRow`: a cell agreeing with the row of a full-scope graded cap on
+   the old cells and reading a new cell at the cap code of its label reads it through the cap,
+   `StageType.readsThroughCap_of_capRow`, and the new named statement
+   `StageType.HasCapRowExtensions` (open) implies `StageType.HasCapReadingExtensions`,
+   `StageType.HasCapRowExtensions.hasCapReadingExtensions`; reading coatom completions,
+   `Continuation/StableRecoveryCoatom`: a closed coatom through a closed face,
+   `StageType.exists_coatom_trans_eq`, and the new named statement
+   `StageType.HasReadingCoatomCompletions` (open; `StageType.IsReadingCoatomCompletion`) implies
+   `StageType.HasCapReadingExtensions` under `StageType.HasCoatomExtensions` at `λ_{ξ+1}`,
+   `StageType.HasReadingCoatomCompletions.hasCapReadingExtensions`, hence (R4) with that property at
+   every `λ_{ξ+1}`, `StableCappedReceiving.of_hasReadingCoatomCompletions`, and the continuation
+   criterion with hypothesis 8, `ContinuationCriterion.of_hasReadingCoatomCompletions`
+   (`MainTheorem/ReadingCoatomCompletions`; hypothesis 8 is compiled,
+   `StageType.hasApexCoatomExtensions_blockStage`; no statement that uses its proof in place of the
+   hypothesis is stated); a reading labelling on the cells of every labelled extension,
+   `StageType.exists_codedReadingLabelling`, `Continuation/StableRecoveryCodedReading`; the clause
+   at one and two coatom steps, feasibility only, `Continuation/StableRecoveryCoatomExamples`;
+   recovery lifts from a closed face, `StageType.IsStableRecoveryScheme.of_comap` and
+   `StageType.IsStableRecoveryScheme.exists_lift`, and the face version, an exact reformulation
+   under `StageType.HasCoatomExtensions`, `StageType.hasStableRecoverySchemes_iff_exists_face`,
+   `Continuation/StableRecoveryLift`, with no recovery at the twin root alone,
+   `Continuation.StableRecoveryCounterexample.not_isStableRecoveryScheme_twinRoot`; the reading
+   along the orbit code, the splice and capped agreement,
+   `Continuation/StableRecoveryReadingInvariants`; and two refuted designs, each refuted as a
+   reading completion only, not `StageType.HasReadingCoatomCompletions` and not (R4): the profile
+   completion at `m = 3` at a cap of grade `3` or `4`,
+   `TowerProfile.not_isCapReadingExtension_completion`,
+   `Continuation/StableRecoveryProfileObstruction`, and the marked gate (every marked gate has cap
+   `⊥` and is `⊥` in some lawful labelling of the marked top,
+   `TowerProfile.exists_isLawful_markedTop_eq_bot`), with the leaf-and-marked completion for every
+   marked specification, `TowerProfile.not_isCapReadingExtension_markedCompletion`,
+   `Continuation/StableRecoveryMarkedGate`; none of these establishes whether
+   `StageType.HasReadingCoatomCompletions` follows from hypothesis 8; the generic lemmas these files
+   use are placed with their subjects: the finite part and one code per block in `Label/Transform`
+   and `Stage/Basic`, the orbit code on one block in `Extension/OrbitCode`, the `⊥` entries in
+   `Extension/FieldLayer`, `Extension/TowerProfileScheme` and `Extension/TowerProfileCompletion`,
+   the old rows after a full cell in `Extension/Apex`, and the marked cells read as `⊥` in
+   `Extension/MarkedCatalogue` and `Extension/MarkedCatalogueCompletion`; `README.md`, Layer 4,
+   status, output 3).
    Step 7 is compiled conditionally (`README.md`, the section on the top-free witnesses): the loss
    at `η` under uniqueness at `λ_η` (`nonempty_loss_of_topFreeWitness`), and per block under
    `StageType.HasApexCoatomExtensions` at `λ_η` and uniqueness of the model expansions at `λ_η`
