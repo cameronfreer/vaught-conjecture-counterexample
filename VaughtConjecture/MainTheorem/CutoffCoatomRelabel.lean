@@ -162,6 +162,39 @@ theorem HasCutoffFirstCoatomCompletions.hasCutoffStableRecoverySchemes_gradedCap
   (h.hasCutoffCoatomCompletions fun _ _ _ _ _ _ σ hC ↦
     hC.reindex σ _).hasCutoffStableRecoverySchemes fun _ _ _ _ _ _ hC ↦ hC.lt
 
+/-- **The margin calibration is invariant under relabelling**: like the graded cap calibration, it
+depends only on the labels and the grades of the cells of `T⁺`. -/
+theorem GradedCapMarginCalibration.reindex {Tp : StageType.{u} (blockStage (ξ + 1)) m}
+    {f : Fin k ↪ Fin m} {D : StageType.{u} (blockStage (ξ + 1)) (k + 1)} {γ : Ordinal.{u}}
+    (h : GradedCapMarginCalibration ξ Tp f D γ) (σ : Equiv.Perm (Fin m)) (f' : Fin k ↪ Fin m) :
+    GradedCapMarginCalibration ξ (Tp.reindex σ) f' D γ := by
+  have hcell (b : Fin Tp.card) : ∃ b' : Fin (Tp.reindex σ).card,
+      (Tp.reindex σ).label b' = Tp.label b ∧
+        (Tp.reindex σ).toCellScheme.grade b' = Tp.toCellScheme.grade b := by
+    obtain ⟨b', rfl⟩ := Tp.toScheme.surjective_cellMap_equiv σ b
+    exact ⟨b', rfl, rfl⟩
+  obtain ⟨b, hb, hk, ⟨R, hR, hγ⟩, ⟨a, i, hi, ha, hal⟩, href⟩ := h
+  obtain ⟨b', hb'l, hb'g⟩ := hcell b
+  obtain ⟨a', ha'l, ha'g⟩ := hcell a
+  refine ⟨b', ?_, ?_, ⟨R, hb'g ▸ hR, hγ⟩, ⟨a', i, hb'g ▸ hi, by rw [ha'g, hb'g]; exact ha,
+    ha'l.trans hal⟩, fun j o ho ↦ ?_⟩
+  · rw [hb'l, hb'g]
+    exact hb
+  · rwa [hb'g]
+  · obtain ⟨μ, n, i, c, hμ, ho', hn, hi, hc, hcl⟩ := href j o ho
+    obtain ⟨c', hc'l, hc'g⟩ := hcell c
+    exact ⟨μ, n, i, c', hμ, ho', hb'g ▸ hn, hb'g ▸ hi, by rw [hc'g, hb'g]; exact hc,
+      hc'l.trans hcl⟩
+
+/-- **Cutoff stable recovery for the margin calibration from first-coatom completions**: the
+margin calibration is invariant under relabelling and forces a private point. -/
+theorem HasCutoffFirstCoatomCompletions.hasCutoffStableRecoverySchemes_gradedCapMargin
+    (h : HasCutoffFirstCoatomCompletions ξ (GradedCapMarginCalibration ξ)) :
+    HasCutoffStableRecoverySchemes ξ (GradedCapMarginCalibration ξ) :=
+  (h.hasCutoffCoatomCompletions fun _ _ _ _ _ _ σ hC ↦
+    hC.reindex σ _).hasCutoffStableRecoverySchemes fun _ _ _ _ _ _ hC ↦
+      hC.gradedCapCalibration.lt
+
 end StageType
 
 end VaughtConjecture

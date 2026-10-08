@@ -86,12 +86,6 @@ theorem IsSourceGapContext.reindex {K : ℕ} {t' : StageType.{u} α k} {h : Fin 
   obtain ⟨r', rfl⟩ := hsurj r
   exact ⟨σ.symm l, o', r', hs.reindex⟩
 
-/-- **The root of a source-gap context is not onto**: it misses the lost point. -/
-theorem IsSourceGapContext.not_surjective {K : ℕ} {t' : StageType.{u} α k} {h : Fin n ↪ Fin k}
-    (hs : t'.IsSourceGapContext K h) : ¬ Function.Surjective h :=
-  let ⟨_, _, _, hs⟩ := hs
-  hs.not_surjective
-
 end StageType
 
 end VaughtConjecture

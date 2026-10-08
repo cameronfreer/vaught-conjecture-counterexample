@@ -17,7 +17,12 @@ items 5, 8 and 12.
 **The endpoint**
 (`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_coatomDeterminations_sourceGap_markedCap`).
 The thin `ℵ₁` spectrum of the density sentence follows from exactly three finite statements about
-stage types, each open:
+stage types, each open.  The coatom forms are stronger than the full forms
+(`Realization.CutoffDetermination`, `Realization.HollowCutoffDetermination`,
+`StageType.HasCutoffStableRecoverySchemes`): they imply them, and no converse is claimed.  The
+(R2) coatom form quantifies over every coface `tb` of the coatom face, also of top grade above
+`K`; a form restricted to `tb` of top grade at most `K` would need a truncation of the pinned
+extension in the reduction, which is not compiled.
 * (R4): cutoff completions at the first coatom for the graded cap calibration at every `ξ < ω₁`
   (`StageType.HasCutoffFirstCoatomCompletions`);
 * (R2): coatom cutoff determination for the source-gap context
@@ -28,7 +33,7 @@ Everything else is compiled in this repository (theorem named):
 * the acquisitions: `Realization.residualAcquisition_isSourceGapContext` and
   `Realization.hollowAcquisition_isMarkedCapContext`, and for (R4)
   `Realization.IsModel.acquiresCalibratedContexts_gradedCap`;
-* the roots of the contexts are not onto: `StageType.IsSourceGapContext.not_surjective` and
+* the roots of the contexts are not onto: `StageType.not_isSourceGapContext_of_surjective` and
   `StageType.IsMarkedCapContext.not_surjective`;
 * the contexts are invariant under relabelling: `StageType.IsSourceGapContext.reindex` and
   `StageType.IsMarkedCapContext.reindex`;
@@ -63,7 +68,25 @@ theorem densitySentence_hasThinAlephOneSpectrum_of_coatomDeterminations_sourceGa
     (h3 : HollowCoatomCutoffDetermination.{0} fun t' h ↦ t'.IsMarkedCapContext h) :
     HasThinAlephOneSpectrum densitySentence.{0} :=
   densitySentence_hasThinAlephOneSpectrum_of_coatomDeterminations_markedCap h4
-    residualAcquisition_isSourceGapContext h2 (fun _ _ _ _ _ _ hs ↦ hs.not_surjective)
+    residualAcquisition_isSourceGapContext h2
+    (fun _ _ _ _ _ _ hs hh ↦ not_isSourceGapContext_of_surjective hh hs)
+    (fun _ _ _ _ _ _ σ hs ↦ hs.reindex σ) hollowAcquisition_isMarkedCapContext h3
+
+/-- **The thin `ℵ₁` spectrum from three finite coatom statements, with the calibration margin**:
+`densitySentence_hasThinAlephOneSpectrum_of_coatomDeterminations_sourceGap_markedCap` with (R4)
+asked only at the inputs of the margin calibration (`StageType.GradedCapMarginCalibration`: an
+offset `R < N` above `γ` and a marker in the block of `λ_ξ`).  This (R4) hypothesis is implied
+by the one of the graded cap form (its inputs are among the inputs there), and no converse is
+claimed.  The acquisition of the margin calibration is
+compiled (`Realization.IsModel.acquiresCalibratedContexts_gradedCapMargin`). -/
+theorem densitySentence_hasThinAlephOneSpectrum_of_coatomDeterminations_sourceGap_markedCap_margin
+    (h4 : ∀ ξ < ω₁, HasCutoffFirstCoatomCompletions.{0} ξ (GradedCapMarginCalibration.{0} ξ))
+    (h2 : CoatomCutoffDetermination.{0} fun K t' h ↦ t'.IsSourceGapContext K h)
+    (h3 : HollowCoatomCutoffDetermination.{0} fun t' h ↦ t'.IsMarkedCapContext h) :
+    HasThinAlephOneSpectrum densitySentence.{0} :=
+  densitySentence_hasThinAlephOneSpectrum_of_coatomDeterminations_markedCap_margin h4
+    residualAcquisition_isSourceGapContext h2
+    (fun _ _ _ _ _ _ hs hh ↦ not_isSourceGapContext_of_surjective hh hs)
     (fun _ _ _ _ _ _ σ hs ↦ hs.reindex σ) hollowAcquisition_isMarkedCapContext h3
 
 end VaughtConjecture.MainTheorem

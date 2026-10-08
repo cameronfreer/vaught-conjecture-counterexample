@@ -38,7 +38,11 @@ The predicates are parameters.  For (R2) the intended predicate is the source-ga
 acquisitions are not on this branch.
 
 **The coatom form**
-(`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_coatomDeterminations`).
+(`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_coatomDeterminations`, and at the margin
+calibration
+`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_coatomDeterminations_markedCap_margin`).
+The coatom forms are stronger hypotheses than the full forms: they imply them (compiled), and no
+converse is claimed.
 The same with the three finite statements in their coatom forms
 (`StageType.HasCutoffFirstCoatomCompletions`, `Realization.CoatomCutoffDetermination`,
 `Realization.HollowCoatomCutoffDetermination`, all open), in which the root lies in the first
@@ -167,6 +171,29 @@ theorem densitySentence_hasThinAlephOneSpectrum_of_coatomDeterminations_markedCa
     HasThinAlephOneSpectrum densitySentence.{0} :=
   densitySentence_hasThinAlephOneSpectrum_of_coatomDeterminations h4 hacq₂ h2 hns₂ hinv₂ hacq₃ h3
     (fun _ _ _ _ _ ht ↦ ht.not_surjective) fun _ _ _ _ _ σ ht ↦ ht.reindex σ
+
+/-- **The thin `ℵ₁` spectrum from the coatom forms at the margin calibration, with the marked-cap
+context**: `densitySentence_hasThinAlephOneSpectrum_of_coatomDeterminations_markedCap` with (R4)
+asked only at the inputs of the margin calibration (`StageType.GradedCapMarginCalibration`), whose
+acquisition is compiled (`Realization.IsModel.acquiresCalibratedContexts_gradedCapMargin`). -/
+theorem densitySentence_hasThinAlephOneSpectrum_of_coatomDeterminations_markedCap_margin
+    {P₂ : ∀ {α : Ordinal.{0}} {n k : ℕ}, ℕ → StageType.{0} α k → (Fin n ↪ Fin k) → Prop}
+    (h4 : ∀ ξ < ω₁, HasCutoffFirstCoatomCompletions.{0} ξ (GradedCapMarginCalibration.{0} ξ))
+    (hacq₂ : ResidualAcquisition.{0, 0} P₂) (h2 : CoatomCutoffDetermination.{0} P₂)
+    (hns₂ : ∀ ⦃α : Ordinal.{0}⦄ ⦃K n k : ℕ⦄ (t' : StageType.{0} α k) (h : Fin n ↪ Fin k),
+      P₂ K t' h → ¬ Function.Surjective h)
+    (hinv₂ : ∀ ⦃α : Ordinal.{0}⦄ ⦃K n k : ℕ⦄ (t' : StageType.{0} α k) (h : Fin n ↪ Fin k)
+      (σ : Equiv.Perm (Fin k)), P₂ K t' h → P₂ K (t'.reindex σ) (h.trans σ.symm.toEmbedding))
+    (hacq₃ : HollowAcquisition.{0, 0} IsCoverHollowAtBlock fun t' h ↦ t'.IsMarkedCapContext h)
+    (h3 : HollowCoatomCutoffDetermination.{0} fun t' h ↦ t'.IsMarkedCapContext h) :
+    HasThinAlephOneSpectrum densitySentence.{0} :=
+  densitySentence_hasThinAlephOneSpectrum_of_receivingModels'
+    (.of_hasCutoffStableRecoverySchemes_gradedCapMargin fun ξ hξ ↦
+      (h4 ξ hξ).hasCutoffStableRecoverySchemes_gradedCapMargin)
+    (receivingResidualReceiving_of_cutoffDetermination hacq₂ (h2.cutoffDetermination hns₂ hinv₂))
+    (receivingHollowReceiving_of_cutoffDetermination hacq₃
+      (h3.hollowCutoffDetermination (fun _ _ _ _ _ ht ↦ ht.not_surjective)
+        fun _ _ _ _ _ σ ht ↦ ht.reindex σ))
 
 end MainTheorem
 

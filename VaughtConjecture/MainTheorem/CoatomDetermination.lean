@@ -38,10 +38,12 @@ any legal coface of `p` whose face along `g` followed by the new point is `d`.  
 `t'` with face `tb` along `extendByLast Fin.castSuccEmb` (a completion of the coatom pair
 `(t', tb)` over `p`) and one permitted cutoff `δ` are chosen for the input, and `d` must be
 determined over `t'` within the receiving family of `D'` at `δ`.  The donor side `tb` is not
-controlled by anything: the determination is asked only along the root.  The clause that `D'` has
-face `tb` is not used by the reductions below; without it the coatom form would be an exact
-reformulation of the original form at the inputs whose root lies in the first coatom, since `tb`
-always exists.
+controlled by anything: the determination is asked only along the root.  The coatom forms are
+stronger hypotheses than the original forms: they imply them (below), and no converse is claimed.
+In the (R2) form `tb` ranges over every legal coface of `p`, also of top grade above `K`.  The
+clause that `D'` has face `tb` is not used by the reductions below; without it the coatom form
+would be an exact reformulation of the original form at the inputs whose root lies in the first
+coatom, since `tb` always exists.
 
 **The reductions** (`Realization.CoatomCutoffDetermination.cutoffDetermination`,
 `Realization.HollowCoatomCutoffDetermination.hollowCutoffDetermination`).  For a predicate `P` on
