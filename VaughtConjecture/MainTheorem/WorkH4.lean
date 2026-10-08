@@ -6,6 +6,7 @@ Authors: Cameron Freer
 import VaughtConjecture.MainTheorem.CapRequestsRecovery
 import VaughtConjecture.Continuation.CapRequestsDonorFace
 import VaughtConjecture.MainTheorem.CutoffCoatomChosenDonor
+import VaughtConjecture.Continuation.TopReadingApexSeed
 
 /-!
 # Work on h4: first-coatom completions for the calibrated (R4) inputs
@@ -263,5 +264,62 @@ theorem hasCutoffFirstCoatomCompletionsEx'_of_fills
     fun k' h₁ h₂ ↦ (hc k' h₁ h₂).2.2⟩
 
 end StageType
+
+/-! ### Domination by the cap is a condition on the context -/
+
+namespace StageType.FirstCoatomInput
+
+variable {ξ : Ordinal.{u}} {m k : ℕ} (X : FirstCoatomInput.{u} ξ m k) {γ : Ordinal.{u}}
+  (c : MarginCapData X.Tp X.D γ)
+
+/-- **The cap of the requests dominates a cell of `T⁺` exactly when it does so in `T⁺`**: the cells
+of the graded index of the cap in the amalgam are the cells of `T⁺` of the graded index of the cap,
+with the rows of `T⁺`.  So domination by the cap (`CapRequests.CapDominates`), which breaks the lift
+at `⊥` from the donor coatom (`CapRequests.not_botLiftProvisionOf_donor`), does not depend on the
+intermediate coface `tb`. -/
+theorem capDominates_leftCell_iff (a : Fin X.Tp.card) :
+    (X.requests c).CapDominates (X.leftCell a) ↔
+      ∀ u : Fin X.Tp.card, X.Tp.toCellScheme.gradedIndex u = X.Tp.toCellScheme.gradedIndex c.cap →
+        X.Tp.toScheme.rowAt u a ≤ X.Tp.toScheme.rowAt u c.cap := by
+  have hrow (u b : Fin X.Tp.card) :
+      X.seed.amalgam.toScheme.rowAt (X.leftCell u) (X.leftCell b) = X.Tp.toScheme.rowAt u b := by
+    exact rowAt_faceCell X.restrictFace_amalgam_left u b
+  have hgi (u : Fin X.Tp.card) : X.seed.amalgam.toCellScheme.gradedIndex (X.leftCell u) =
+      ((X.Tp.toCellScheme.scope u).map (Coatom.left m), X.Tp.toCellScheme.grade u) :=
+    Prod.ext (X.scope_leftCell u) (X.grade_leftCell u)
+  have hgi_iff (u : Fin X.Tp.card) :
+      X.seed.amalgam.toCellScheme.gradedIndex (X.leftCell u) =
+          X.seed.amalgam.toCellScheme.gradedIndex (X.leftCell c.cap) ↔
+        X.Tp.toCellScheme.gradedIndex u = X.Tp.toCellScheme.gradedIndex c.cap := by
+    rw [hgi, hgi, Prod.mk.injEq, Prod.mk.injEq, map_inj]
+    rfl
+  constructor
+  · intro hdom u hu
+    have h := hdom (X.leftCell u) ((hgi_iff u).mpr hu)
+    change _ ≤ X.seed.amalgam.toScheme.rowAt (X.leftCell u) (X.leftCell c.cap) at h
+    rwa [hrow, hrow] at h
+  · intro h u' hu'
+    have hvis : u' ∈ X.seed.amalgam.toScheme.visibleCells (Coatom.left m) := by
+      rw [Scheme.mem_visibleCells]
+      intro y hy
+      have hy' : y ∈ X.seed.amalgam.toCellScheme.scope (X.leftCell c.cap) := by
+        have := congrArg Prod.fst hu'
+        change X.seed.amalgam.toCellScheme.scope u' =
+          X.seed.amalgam.toCellScheme.scope (X.leftCell c.cap) at this
+        rw [← this]
+        exact mem_coe.mp hy
+      rw [scope_leftCell] at hy'
+      obtain ⟨z, -, rfl⟩ := mem_map.mp hy'
+      exact ⟨z, rfl⟩
+    obtain ⟨b₀, rfl⟩ := X.seed.amalgam.toScheme.exists_faceCell_eq
+      (comap_toScheme_of_restrictFace X.restrictFace_amalgam_left) hvis
+    set b : Fin X.Tp.card := b₀
+    change X.seed.amalgam.toCellScheme.gradedIndex (X.leftCell b) = _ at hu'
+    change X.seed.amalgam.toScheme.rowAt (X.leftCell b) (X.leftCell a) ≤
+      X.seed.amalgam.toScheme.rowAt (X.leftCell b) (X.leftCell c.cap)
+    rw [hrow, hrow]
+    exact h b ((hgi_iff b).mp hu')
+
+end StageType.FirstCoatomInput
 
 end VaughtConjecture
