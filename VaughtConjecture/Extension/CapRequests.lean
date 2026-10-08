@@ -81,7 +81,7 @@ Each item below is compiled in this file (theorem named).
 ## The bottom class and admission
 
 A state is **in the bottom class** `ZA` on a set of cells `B` (`InBottomClass B ZA s`) when its
-`⊥` cells in `B` are exactly those of `ZA`.  The requests **admit** a state
+`⊥` cells in `B` are exactly those of `ZA`.  A state is **admitted** by the requests
 (`CapRequests.Admits`) when it is correct as soon as it is in the class.  Admission holds at the
 constant `⊥` state (`CapRequests.admits_bot`), is kept by capping
 (`CapRequests.Admits.cap`), and by the state of a transformation whose shifter reflects `⊥` and
@@ -467,7 +467,7 @@ namespace CapRequests
 
 variable (r : CapRequests ι)
 
-/-- The requests **admit** a state on the cells `B` with the bottom class `ZA`: the state is
+/-- A state is **admitted** by the requests on the cells `B` with the bottom class `ZA`: it is
 correct as soon as it is in the class. -/
 def Admits (B ZA : Set ι) (s : ι → Label.{u}) : Prop :=
   InBottomClass B ZA s → r.IsCorrect s

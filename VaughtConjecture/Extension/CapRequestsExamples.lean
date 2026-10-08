@@ -5,6 +5,7 @@ Authors: Cameron Freer
 -/
 import VaughtConjecture.Extension.CapRequests
 import VaughtConjecture.Continuation.StableRecoveryReading
+import VaughtConjecture.Stage.MarkedCap
 
 /-!
 # Cap requests at the reading type
@@ -37,6 +38,13 @@ of the donor face `{1, 2}` labelled `⊥`).  The requests `capReq` take the cap 
   admission is `CapRequests.Admits` on the private copy (`isAdmittedP_iff`).  With the marker at
   the cap, correctness is the capped reading of the high cells, read off
   `CapRequests.isCorrect_iff_of_marker_eq_cap`.
+* **A marked-cap context** (`IsMarkedCapContextAt`: a top cap `c` of grade `N > n + 1`, a marker
+  `r`, and the row of `c` reading every root cell labelled `⊤` at least as the replacement at `N`
+  with value `n + 1` of its value at `r`).  Its requests `ctxReq` take the cap `c`, the marker `r`
+  with offset `n + 1`, and `T` the root cells labelled `⊤`.  The marked-cap clause is correctness
+  of the row of `c` read as a state (`isCorrect_rowAt_of_isMarkedCapContextAt`), and the labels of
+  the context are correct, every state with cap and marker `⊤` being correct exactly when it is
+  `⊤` on `T` (`isCorrect_label_of_isMarkedCapContextAt`).
 -/
 
 universe u
@@ -285,5 +293,64 @@ example (hR : R < 2) (hC : IsSelfVisible 2 (sL C)) :
       exact hZ z hz
     · rintro _ ⟨y, hy, rfl⟩
       exact hT y hy
+
+/-! ### A marked-cap context -/
+
+section MarkedCap
+
+variable {α : Ordinal.{u}} {k n : ℕ}
+
+/-- The data of a marked-cap context along `h` with top cap `c` and marker `r`. -/
+def IsMarkedCapContextAt (t' : StageType.{u} α k) (h : Fin n ↪ Fin k) (c r : Fin t'.card) :
+    Prop :=
+  t'.IsTopCap c ∧ t'.IsMarker c r ∧ n + 1 < t'.toCellScheme.grade c ∧
+    ∀ a ∈ t'.visibleCells h, t'.label a = ⊤ →
+      visibilityReplace (t'.toCellScheme.grade c) (n + 1) (t'.rowAt c r) ≤ t'.rowAt c a
+
+/-- The requests of a marked-cap context: the top cap `c` with threshold its grade `N`, the
+marker `r` with offset `n + 1 < N`, `T` the cells of the root labelled `⊤`, and the cells `Z` and
+`F` empty. -/
+def ctxReq (t' : StageType.{u} α k) (h : Fin n ↪ Fin k) (c r : Fin t'.card)
+    (hN : n + 1 < t'.toCellScheme.grade c) : CapRequests (Fin t'.card) where
+  cap := c
+  N := t'.toCellScheme.grade c
+  R := n + 1
+  R_lt_N := hN
+  Z := ∅
+  F := ∅
+  T := {a | a ∈ t'.visibleCells h ∧ t'.label a = ⊤}
+  ref := id
+  off _ := 0
+  marker := r
+
+/-- **The marked-cap clause is correctness of the row of the top cap**: in a marked-cap context,
+the row of the top cap, read as a state, is correct for the requests of the context. -/
+theorem isCorrect_rowAt_of_isMarkedCapContextAt {t' : StageType.{u} α k} {h : Fin n ↪ Fin k}
+    {c r : Fin t'.card} (hctx : IsMarkedCapContextAt t' h c r) :
+    (ctxReq t' h c r hctx.2.2.1).IsCorrect (t'.rowAt c) where
+  eq_bot _ hz := hz.elim
+  eq_refValue _ hf := hf.elim
+  markerValue_le y hy := min_le_min_right _ (hctx.2.2.2 y hy.1 hy.2)
+
+/-- **The actual labels of a marked-cap context are a template**: with the top cap and the
+marker labelled `⊤`, the labels of the context are correct for the requests of the context, and
+every state with cap and marker `⊤` is correct exactly when it is `⊤` at the cells of `T`. -/
+theorem isCorrect_label_of_isMarkedCapContextAt {t' : StageType.{u} α k} {h : Fin n ↪ Fin k}
+    {c r : Fin t'.card} (hctx : IsMarkedCapContextAt t' h c r) :
+    (ctxReq t' h c r hctx.2.2.1).IsCorrect t'.label ∧
+      ∀ s : Fin t'.card → Label.{u}, s c = ⊤ → s r = ⊤ →
+        ((ctxReq t' h c r hctx.2.2.1).IsCorrect s ↔
+          ∀ y ∈ (ctxReq t' h c r hctx.2.2.1).T, s y = ⊤) := by
+  refine ⟨isCorrect_actual t' (fun _ hz ↦ hz.elim) (fun _ hf ↦ hf.elim) fun _ hy ↦ hy.2,
+    fun s hc hr ↦ ?_⟩
+  rw [isCorrect_iff_of_eq_top hc hr]
+  exact ⟨fun h ↦ h.2.2, fun h ↦ ⟨fun _ hz ↦ hz.elim, fun _ hf ↦ hf.elim, h⟩⟩
+
+/-- The top cap and the marker of a marked-cap context are labelled `⊤`. -/
+example {t' : StageType.{u} α k} {h : Fin n ↪ Fin k} {c r : Fin t'.card}
+    (hctx : IsMarkedCapContextAt t' h c r) : t'.label c = ⊤ ∧ t'.label r = ⊤ :=
+  ⟨hctx.1.2.1, hctx.2.1.1⟩
+
+end MarkedCap
 
 end VaughtConjecture.CapRequestsExamples
