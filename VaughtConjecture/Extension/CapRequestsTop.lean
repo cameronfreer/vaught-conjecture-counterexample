@@ -6,6 +6,7 @@ Authors: Cameron Freer
 import VaughtConjecture.Extension.AdmittedCompletion
 import VaughtConjecture.Extension.AdmittedClassObstruction
 import VaughtConjecture.Extension.CapRequestsCode
+import VaughtConjecture.Extension.CapRequestsExamples
 
 /-!
 # Cap requests at the top grade: the lift provisions
@@ -422,5 +423,103 @@ noncomputable def topLiftAdmission (hm : 2 ≤ m) (hgr : r.IsGraded I.amalgam.to
     rwa [← row_topAdmission hm hgr hcap hxp hbot hpos hlab] at h
 
 end CapRequests
+
+/-! ### At a seed whose left coatom type is a marked-cap context -/
+
+namespace CapRequests
+
+open StageType
+
+variable {α : Ordinal.{u}} {m : ℕ}
+
+/-- **The requests of a seed at the top cap of its left coatom type**: the cap and the marker are
+the cells of the amalgam of the top cap `c` and the marker `r` of the left type, the threshold is
+the top grade `m + 1`, the marker offset `R`, `T` the cells of the amalgam containing the last point
+(the donor cells off the left coatom) labelled `⊤`, and `Z`, `F` empty. -/
+noncomputable def seedTopReq (I : Seed.{u} α m) (c r : Fin I.left.card) (R : ℕ)
+    (hR : R < m + 1) : CapRequests (Fin I.amalgam.card) where
+  cap := faceCell I.restrictFace_left c
+  N := m + 1
+  R := R
+  R_lt_N := hR
+  Z := ∅
+  F := ∅
+  T := {y | Fin.last (m + 1) ∈ I.amalgam.toCellScheme.scope y ∧ I.amalgam.label y = ⊤}
+  ref := id
+  off _ := 0
+  marker := faceCell I.restrictFace_left r
+
+variable {I : Seed.{u} α m} {c r : Fin I.left.card} {R : ℕ} {hR : R < m + 1}
+
+/-- The cap of the requests of a top cap of full scope at the top grade has graded index
+`(univ.erase (Fin.last (m + 1)), m + 1)`, on the private coatom. -/
+theorem gradedIndex_seedTopReq_cap (hc : I.left.toCellScheme.scope c = univ)
+    (hg : I.left.toCellScheme.grade c = m + 1) :
+    I.amalgam.toCellScheme.gradedIndex (seedTopReq I c r R hR).cap =
+      (univ.erase (Fin.last (m + 1)), m + 1) := by
+  refine Prod.ext ?_ ?_
+  · change I.amalgam.toCellScheme.scope (faceCell I.restrictFace_left c) = _
+    rw [scope_faceCell, hc, Coatom.univ_map_left]
+  · change I.amalgam.toCellScheme.grade (faceCell I.restrictFace_left c) = _
+    rw [grade_faceCell, hg]
+
+/-- **The requests of a top cap at the top grade are graded** by the grades of the amalgam. -/
+theorem isGraded_seedTopReq (hg : I.left.toCellScheme.grade c = m + 1)
+    (hr : I.left.toCellScheme.grade r ≤ m + 1) :
+    (seedTopReq I c r R hR).IsGraded I.amalgam.toCellScheme.grade where
+  le_grade_cap := by
+    change m + 1 ≤ I.amalgam.toCellScheme.grade (faceCell I.restrictFace_left c)
+    rw [grade_faceCell, hg]
+  off_le _ hf := hf.elim
+  grade_le_of_mem_Z _ hz := hz.elim
+  grade_le_of_mem_F _ hf := hf.elim
+  grade_le_of_mem_T y _ := by
+    change I.amalgam.toCellScheme.grade y ≤
+      I.amalgam.toCellScheme.grade (faceCell I.restrictFace_left c)
+    rw [grade_faceCell, hg]
+    have := I.grade_lt y
+    omega
+  grade_ref_le _ hf := hf.elim
+  grade_marker_le := by
+    change I.amalgam.toCellScheme.grade (faceCell I.restrictFace_left r) ≤
+      I.amalgam.toCellScheme.grade (faceCell I.restrictFace_left c)
+    rw [grade_faceCell, grade_faceCell, hg]
+    exact hr
+
+/-- **The glued labelling is correct** for the requests of a top cap and a marker labelled `⊤`: the
+cells of `T` are labelled `⊤`. -/
+theorem isCorrect_seedTopReq_label (hc : I.left.label c = ⊤) (hr : I.left.label r = ⊤) :
+    (seedTopReq I c r R hR).IsCorrect fun d ↦ I.amalgam.label d := by
+  refine (isCorrect_iff_of_eq_top ?_ ?_).mpr ⟨fun _ hz ↦ hz.elim, fun _ hf ↦ hf.elim,
+    fun y hy ↦ hy.2⟩
+  · change I.amalgam.label (faceCell I.restrictFace_left c) = ⊤
+    rw [label_faceCell, hc]
+  · change I.amalgam.label (faceCell I.restrictFace_left r) = ⊤
+    rw [label_faceCell, hr]
+
+end CapRequests
+
+/-- **The correct completion at a marked-cap context at the top grade.**  For a seed on `m + 2 ≥ 4`
+points whose left coatom type is a marked-cap context along `h : Fin n ↪ Fin (m + 1)` with top cap
+`c` at the top grade `m + 1` and marker `r` (the predicate
+`CapRequestsExamples.IsMarkedCapContextAt`, copied verbatim), the requests of the seed at `c`,
+`r` with marker offset `n + 1` reading the donor cells labelled `⊤`, and the fills from the private
+coatom: some completion below the full grade has every row of full scope at the grade `m + 1`
+correct. -/
+theorem Seed.exists_correctCompletion_markedCap {α : Ordinal.{u}} {m : ℕ} (I : Seed.{u} α m)
+    (hm : 2 ≤ m) {n : ℕ} {h : Fin n ↪ Fin (m + 1)} {c r : Fin I.left.card}
+    (hctx : CapRequestsExamples.IsMarkedCapContextAt I.left h c r)
+    (hg : I.left.toCellScheme.grade c = m + 1)
+    (hbot : CapFillBot (seedTopReq I c r (n + 1) (hctx.2.2.1.trans_eq hg)) (Fin.last (m + 1)))
+    (hpos : CapFillPos (seedTopReq I c r (n + 1) (hctx.2.2.1.trans_eq hg)) (Fin.last (m + 1))) :
+    ∃ F : CompletionBelowFullGrade I,
+      F.HasAdmittedRows (m + 1) (seedTopReq I c r (n + 1) (hctx.2.2.1.trans_eq hg)).IsCorrect := by
+  have hrc : r ∈ I.left.toCellScheme.below (I.left.toCellScheme.gradedIndex c) := hctx.2.1.2.1
+  have hrg : I.left.toCellScheme.grade r ≤ m + 1 := by
+    have h2 : I.left.toCellScheme.grade r ≤ I.left.toCellScheme.grade c := hrc.2
+    omega
+  exact I.exists_correctCompletion_top hm (isGraded_seedTopReq hg hrg)
+    (gradedIndex_seedTopReq_cap hctx.1.1 hg) (by simp [Pts]) hbot hpos
+    (isCorrect_seedTopReq_label hctx.1.2.1 hctx.2.1.1)
 
 end VaughtConjecture
