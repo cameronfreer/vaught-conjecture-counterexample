@@ -206,6 +206,47 @@ theorem le_cap_of_capDominatesAt {X : Finset (Fin (m + 2)) × ℕ}
 theorem capDominates_iff_capDominatesAt (a : Fin I.amalgam.card) :
     r.CapDominates a ↔ r.CapDominatesAt a r.cap := Iff.rfl
 
+/-! ### Domination within the block of the cap -/
+
+variable (r) in
+/-- **The cap block-covers a cell `a` at the graded index of `G`**: every cell of that graded index
+reads the cap at an ordinal `μ + i` and `a` at most `μ + j`, within the block of its reading of the
+cap. -/
+def CapBlockCovers (a G : Fin I.amalgam.card) : Prop :=
+  ∀ u, I.amalgam.toCellScheme.gradedIndex u = I.amalgam.toCellScheme.gradedIndex G →
+    ∃ (μ : Ordinal.{u}) (i j : ℕ), Order.IsSuccPrelimit μ ∧
+      I.amalgam.toScheme.rowAt u r.cap = ((μ + i : Ordinal.{u}) : Label.{u}) ∧
+      I.amalgam.toScheme.rowAt u a ≤ ((μ + j : Ordinal.{u}) : Label.{u})
+
+/-- **A block-covered live cell keeps the cap live**: in a labelling lawful below a pair containing
+a cell `G` above the cap, with `a` of the grade of `G` and scope inside that of `G`, if `a` is not
+`⊥` then neither is the cap: availability reaches a cell `u` of the graded index of `G` at least
+`a`, and `u` keeps the block of its reading of the cap above `a`
+(`CellScheme.Rows.IsLawfulBelow.ne_bot_of_row_le_block`).  So strict non-domination
+(`StageType.CapNonDominating`) does not let the lift set the cap to `⊥` when the readers of `a`
+read the cap in the block of `a` or above. -/
+theorem cap_ne_bot_of_capBlockCovers {X : Finset (Fin (m + 2)) × ℕ}
+    {w : Fin I.amalgam.card → Label.{u}} (hw : I.amalgam.rows.IsLawfulBelow X fun d ↦ w d)
+    {a G : Fin I.amalgam.card} (hGX : G ∈ I.amalgam.toCellScheme.below X)
+    (hcG : r.cap ∈ I.amalgam.toCellScheme.below (I.amalgam.toCellScheme.gradedIndex G))
+    (has : I.amalgam.toCellScheme.scope a ⊆ I.amalgam.toCellScheme.scope G)
+    (hag : I.amalgam.toCellScheme.grade a = I.amalgam.toCellScheme.grade G)
+    (hcov : r.CapBlockCovers a G) (hwa : w a ≠ ⊥) : w r.cap ≠ ⊥ := by
+  obtain ⟨-, -, havail⟩ := Rows.isLawfulBelow_iff_forall.mp hw
+  obtain ⟨u, hu, hau⟩ := havail a G hGX has hag
+  have huX : u ∈ I.amalgam.toCellScheme.below X := by
+    rw [CellScheme.mem_below, hu]; exact hGX
+  have ha : a ∈ I.amalgam.toCellScheme.below (I.amalgam.toCellScheme.gradedIndex u) := by
+    rw [CellScheme.mem_below, hu]
+    exact ⟨has, hag.le⟩
+  have hc : r.cap ∈ I.amalgam.toCellScheme.below (I.amalgam.toCellScheme.gradedIndex u) := by
+    rw [hu]; exact hcG
+  obtain ⟨μ, i, j, hμ, hrc, hra⟩ := hcov u hu
+  rw [Scheme.rowAt_of_mem hc] at hrc
+  rw [Scheme.rowAt_of_mem ha] at hra
+  exact Rows.IsLawfulBelow.ne_bot_of_row_le_block hw huX hc ha hμ hrc hra
+    (ne_bot_of_le_ne_bot hwa hau) hwa
+
 end CapRequests
 
 end VaughtConjecture
