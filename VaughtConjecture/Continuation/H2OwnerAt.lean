@@ -40,6 +40,15 @@ most the lost top (the owner lane's construction at grade `1`) is the one to gen
 lowering below the designated tops itself fails only if the root top also bounds the lost top from
 below (the owner and the lost top alone at graded indices above that of the root top, same grade:
 three points at least; not compiled).
+
+**Status.** `H2.RootBelowTops` is refuted at `k = 1` (`OwnerGradeOneTop.not_rootBelowTopsAt_one`).
+The headline with it substituted, `H2.coatomCutoffDeterminationLastOnly_of_rootBelowTops`
+(module `VaughtConjecture.Continuation.H2OwnerAtTop`), rests on refuted inputs: the residual
+`H2.RootBelowTopsAt` is false at `k = 1` (it is assumed there only at `k ≥ 2`, where it is open and
+expected to fail by the same pattern), and the extension above `K` (`H2.ExtAboveAt`) is false at
+`k = 2`.  The route through this file is superseded by the owner lane's construction (a second
+capped lift at the next self-visible label above the least designated top, then a lift back
+restoring the root).
 -/
 
 universe u

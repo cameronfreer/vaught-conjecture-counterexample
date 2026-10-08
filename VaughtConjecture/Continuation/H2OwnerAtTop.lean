@@ -100,8 +100,9 @@ namespace VaughtConjecture.H2
 
 /-- **h2 with the lost point last with `H2.RootBelowTopsAt` in place of owner lowering below the
 designated tops** (`H2.coatomCutoffDeterminationLastOnly_of` with
-`H2.ownerLoweringBelowAt_of_rootBelowTopsAt`).  The residual `RootBelowTopsAt` fails at `k = 1`
-(`OwnerGradeOneTop.not_rootBelowTopsAt_one`); it is assumed here only at `k ≥ 2`. -/
+`H2.ownerLoweringBelowAt_of_rootBelowTopsAt`).  **It rests on refuted inputs**: the residual
+`RootBelowTopsAt` fails at `k = 1` (`OwnerGradeOneTop.not_rootBelowTopsAt_one`; it is assumed here
+only at `k ≥ 2`, where it is open), and `ExtAboveAt` fails at `k = 2`. -/
 theorem coatomCutoffDeterminationLastOnly_of_rootBelowTops
     (hres : ∀ k, 2 ≤ k → RootBelowTopsAt.{u} k) (hext : ∀ k, 2 ≤ k → ExtAboveAt.{u} k) :
     CoatomCutoffDeterminationLastOnly.{u} :=
