@@ -57,8 +57,10 @@ receiving is exactly receiving of every earlier reduction, and likewise for rece
 of receiving models is a receiving model (`Realization.IsReceivingModel.glue`).
 
 **Status.**  The receiving-limit lemma, its converse, and the limit step for receiving models are
-proved here.  Receiving at a successor block stage (the continuation of a receiving model, which
-must conclude receiving as well as modelhood) and existence of receiving models are not treated.
+proved here.  Receiving at a successor block stage is not inherited from reductions; the
+continuation of a receiving model, which must conclude receiving as well as modelhood, is stated
+in `VaughtConjecture.Expansion.ReceivingModels` (`Expansion.ReceivingContinuationCriterion`).
+Existence of receiving models is not treated.
 
 ## Placement
 
