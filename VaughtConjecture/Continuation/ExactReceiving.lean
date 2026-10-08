@@ -114,7 +114,7 @@ acquisition and scheme determination, with no receiving
 in the hollow case the acquired context has the private cap and the marker labelled `⊤`, the
 coface `D'` is on the constructed legal scheme of the growth construction, and the marker clause of
 `Correct` gives scheme determination.  Neither predicate `P` is defined here, neither acquisition
-nor determination is proved for any `P`, and determination is proved only in the rigid-core
+nor determination is proved here for any `P`, and determination is proved only in the rigid-core
 instance.  The predicate of the anchored private context, which takes the donor, is in
 `VaughtConjecture.Continuation.AnchoredDetermination`: acquisition holds for it in every model, and
 determination fails for it.
@@ -510,7 +510,7 @@ theorem restrictFace_of_covers (hR : R.IsConsistent) {t : StageType.{u} α n}
 /-- **(R2) from (R1), residual acquisition, and cutoff determination**, for any predicate `P` on
 acquired contexts.  (R1) is assumed for every model at every limit stage: the receiving
 hypothesis ranges over every limit stage at fixed universe levels and is not supplied by the
-countable-stage `Expansion.FiniteCutReceiving`.  No `P` is defined in the library; this is a
+countable-stage `Expansion.FiniteCutReceiving`.  No `P` is defined in this file; this is a
 template. -/
 theorem residualReceiving_of_cutoffDetermination
     {P : ∀ {α : Ordinal.{u}} {n k : ℕ}, ℕ → StageType.{u} α k → (Fin n ↪ Fin k) → Prop}
