@@ -34,8 +34,9 @@ Roadmap, Layer 3 ((R3) of the table of 3.4).
 * **Determination at a cutoff** (`TopReadingApexExample.exists_isDeterminedWithin_carrierOne`,
   compiled; through `TopReadingApexExample.exists_isDeterminedWithin_of_isTopReadingCarrier`):
   for every donor `d` of `rightType` along the point `3`, some permitted cutoff `δ` has `d`
-  determined within the receiving family of the carrier at `δ`, along the empty root.  The apex of `oneType` is the top cap and the marker,
-  labelled `⊤`; a member literal on `oneType` is `⊤` there, so `⊤` at the new top of `d`.
+  determined within the receiving family of the carrier at `δ`, along the empty root.  The apex of
+  `oneType` is the top cap and the marker, labelled `⊤`; a member literal on `oneType` is `⊤`
+  there, so `⊤` at the new top of `d`.
 * **The root `{2, 3}` fails at the carrier**
   (`TopReadingApexExample.not_isDeterminedWithin_rootTwoThree`, compiled): the carrier has no face
   along `{2, 3, 4}`, a set in neither coatom, and the carrier itself, a member of each of its
@@ -392,8 +393,8 @@ theorem exists_root_face (hd : restrictFace (extendByLast g) (rightType α) = so
   exact (restrictFace_trans _ _ _ (restrictFace_rightType α)).symm.trans ht
 
 /-- **Cutoff determination at `oneType` from a top-reading carrier**: a top-reading carrier over
-`oneType` for a donor of `rightType` along the point `3`, with cap and marker the apex, is a coface of `oneType`, and determines the donor within its receiving family at a permitted
-cutoff. -/
+`oneType` for a donor of `rightType` along the point `3`, with cap and marker the apex, is a coface
+of `oneType`, and determines the donor within its receiving family at a permitted cutoff. -/
 theorem exists_isDeterminedWithin_of_isTopReadingCarrier
     (hd : restrictFace (extendByLast g) (rightType α) = some d) {D : StageType.{u} α 5}
     (hD : (oneType hα).IsTopReadingCarrier (g.trans Fin.castSuccEmb) d (Fin.last _)
