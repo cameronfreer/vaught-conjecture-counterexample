@@ -22,8 +22,8 @@ clause of `Realization.IsModel`** (prospective):
 * `Realization.HollowFullTopSaturation`: every model at a limit stage, cover-hollow at a block
   stage, with unbounded growth, has full-top saturation.
 
-These three definitions are those of the raise-test lane (`Continuation/TiedRootCapAcquisition`
-there), with the same names and statements.
+These three definitions keep the names and statements they have in
+`VaughtConjecture.Continuation.TiedRootCapAcquisition`, a module not in this tree.
 
 Compiled in this repository (theorem named):
 
