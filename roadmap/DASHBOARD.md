@@ -115,11 +115,14 @@ Notes on the rows, each with its marker:
   tests at `seedL` and at a seed on six points, `ProfileTowerExamples.seedL_completion`,
   `ProfileTowerExamples.seed6_completion`), hence the coatom extension property with apex and the
   plain coatom extension property at every stage that is zero or a limit
-  (`StageType.hasApexCoatomExtensions`, `StageType.hasCoatomExtensions`).  **Compiled, with the
-  lift provisions and the downward clause as hypotheses**: the completion with admitted rows at the
-  reading grades (`Seed.exists_rowCompletion`, `Seed.exists_rowCompletion₀`,
-  `Seed.exists_admittedCompletion`; recognition `CompletionBelowFullGrade.adm_of_isLawfulBelow`;
-  `Extension/AdmittedTower`, `Extension/RowCompletionZero`, `Extension/Admission`).
+  (`StageType.hasApexCoatomExtensions`, and `StageType.HasApexCoatomExtensions.hasCoatomExtensions`
+  applied to it).  **Compiled, with the lift provisions at the grades `N ≤ k ≤ m + 1`, the downward
+  clause at the grades `N ≤ k ≤ m` and the code of the glued labelling in the catalogue at `m + 1`
+  as hypotheses**: the completion with admitted rows at the reading grades
+  (`Seed.exists_rowCompletion₀` for `m ≥ 1`, `Seed.exists_rowCompletion` for `m ≥ 2`,
+  `Seed.exists_admittedCompletion` for `m ≥ 1`; recognition
+  `CompletionBelowFullGrade.adm_of_isLawfulBelow`; `Extension/RowCompletionZero`,
+  `Extension/Admission`).
 - *Layer 3, receiving.*  Compiled: finite-extension receiving from finite-cut receiving, for an
   exactly consistent realization at a stage that is zero or a limit
   (`Realization.HasFiniteCutReceiving.hasFiniteExtensionReceiving`); gate recovery

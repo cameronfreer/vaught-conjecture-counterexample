@@ -9,14 +9,14 @@ import VaughtConjecture.Extension.Admission
 # The capped lifts of an admitted profile layer
 
 Roadmap, Layer 3, 3.1, (R6), the completion below the full grade with a restricted catalogue at the
-reading grades; third piece (bountifulness of an admitted layer).
+reading grades: bountifulness of an admitted layer.
 
 Let `L` be a good level at the grade `g` of the tower of rank-normalized profiles of a seed `I`,
 `k = g + 1 ≤ m + 1`, `A` an admission and `C` the admitted catalogue at `k`.  The admitted layer
 `L.admittedNextS A` (`ProfileTower.Lvl.admittedNextS`) appends one cell of full scope and grade `k`
 per admitted profile.  Its lifts below pairs not above `(univ, k)` are those of the level
 (`ProfileTower.Lvl.cappedLift_nextSOn_iff`).  This file proves the **lift from either coatom into
-`(univ, k)`** (`ProfileTower.Lvl.Good.cappedLift_admittedNextS`) under two **lift provisions** at
+`(univ, k)`** (`ProfileTower.Lvl.GoodOn.cappedLift_admittedNextS`) under two **lift provisions** at
 the coatom `C = univ.erase x`:
 
 * **at the cap `⊥`** (`ProfileTower.BotLiftProvision`): every profile `f` lawful below `(C, k)`
@@ -31,13 +31,13 @@ The other coatom is not prescribed: the provision chooses the cells of `D \ C` o
 
 **The two extensions through an admitted layer.**  For a sub-catalogue `C` of the catalogue at `k`:
 
-* at `⊥` (`ProfileTower.Lvl.Good.exists_extensionOn_bot`): if the code of `W` lies in `C`, the row
+* at `⊥` (`ProfileTower.Lvl.GoodOn.exists_extensionOn_bot`): if the code of `W` lies in `C`, the row
   labelling of the code read by the orbit decoder of the splice of `W` at the least grid point is
   lawful below `(univ, k)` and reads `W` at the old cells of grade at most `k`;
-* at a positive cap `h` (`ProfileTower.Lvl.Good.exists_extensionOn`): if the orbit code of `W` lies
-  in `C` and `W` agrees with a profile `P ∈ C` capped at `h`, the row labelling of the orbit code
-  read by the orbit decoder of `W` at `h` is lawful, reads `W` at the old cells of grade at most `k`
-  and agrees with the row labelling of `P` capped at `h`.
+* at a positive cap `h` (`ProfileTower.Lvl.GoodOn.exists_extensionOn`): if the orbit code of `W`
+  lies in `C` and `W` agrees with a profile `P ∈ C` capped at `h`, the row labelling of the orbit
+  code read by the orbit decoder of `W` at `h` is lawful, reads `W` at the old cells of grade at
+  most `k` and agrees with the row labelling of `P` capped at `h`.
 
 Both transport one row section of the layer by a witness that sends only `⊥` to `⊥`
 (`CellScheme.Rows.IsLawfulBelow.map_of_apply_eq_bot`).  The old cells are read literally, because
@@ -58,8 +58,8 @@ next level (`ProfileTower.Lvl.admittedNextS_all`), whose lift is
 
 ## Placement
 
-The engine of the restricted catalogue at the reading grades (`roadmap/README.md`, Layer 3, 3.1,
-under "(R6)"); third piece.
+The completion below the full grade with admitted rows at the reading grades
+(`roadmap/README.md`, Layer 3, 3.1, under "(R6)").
 -/
 
 universe u
@@ -247,9 +247,9 @@ theorem Lvl.GoodOn.exists_extensionOn (hL : L.GoodOn D) (hC : C ⊆ cat I (g + 1
 grade `g + 1 ≤ m + 1`, under the lift provisions for `Rw` at `⊥` and at the positive caps for that
 coatom: the one-grade lift
 `CellScheme.Rows.cappedLift_of_ownerCappedLift`, with the lift of the level at the grade `g`, the
-owner-capped lift at `⊥` by the provision at `⊥` and `Lvl.Good.exists_extensionOn_bot`, and the
+owner-capped lift at `⊥` by the provision at `⊥` and `Lvl.GoodOn.exists_extensionOn_bot`, and the
 owner-capped lifts at the positive caps from the serving rows, by the provision at the positive caps
-and `Lvl.Good.exists_extensionOn`. -/
+and `Lvl.GoodOn.exists_extensionOn`. -/
 theorem Lvl.GoodOn.cappedLift_nextSOn (hL : L.GoodOn D) (hC : C ⊆ cat I (g + 1))
     (hdown : ∀ R ∈ C, code g R ∈ D g) (hgm : g + 1 ≤ m + 1)
     {x : Fin (m + 2)} (hx : x ∈ (Pts : Finset (Fin (m + 2))))
@@ -339,9 +339,9 @@ theorem Lvl.GoodOn.cappedLift_nextSOn (hL : L.GoodOn D) (hC : C ⊆ cat I (g + 1
       rw [← hde, hrW d hd, hWf d hdb, hdp]
 
 
-/-- **The capped lift from a coatom into the admitted layer**, at the grade `g + 1 ≤ m + 1`, under
-the lift provisions of the admission (`ProfileTower.Lvl.Good.cappedLift_nextSOn_rowCat` for its
-reading rows). -/
+/-- **The capped lift from a coatom into the layer on the catalogue of a predicate `Rw`**, at the
+grade `g + 1 ≤ m + 1`, under the lift provisions of `Rw` and the downward clause
+(`ProfileTower.Lvl.GoodOn.cappedLift_nextSOn` for `C = rowCat Rw (g + 1)`). -/
 theorem Lvl.GoodOn.cappedLift_nextSOn_rowCat (Rw : I.State → Prop) (hL : L.GoodOn D)
     (hdown : ∀ R ∈ rowCat Rw (g + 1), code g R ∈ D g) (hgm : g + 1 ≤ m + 1)
     {x : Fin (m + 2)} (hx : x ∈ (Pts : Finset (Fin (m + 2))))
@@ -451,8 +451,7 @@ theorem capLiftProvisionIn_cat {k : ℕ} (hk : 0 < k) (hkm : k ≤ m) {x : Fin (
     (hx : x ∈ (Pts : Finset (Fin (m + 2)))) : CapLiftProvisionIn (cat I k) k x :=
     fun h hh _ _ P hP f hf hfP ↦ by
   obtain ⟨W, hW, hWf, hWP⟩ := exists_isCutLawful_of_coatom hk hkm hx hh (mem_cat.mp hP).1 hf hfP
-  exact ⟨W, hW, hWf, hWP, mem_cat.mpr ⟨⟨hW.1.orbitCode fun d ↦ d.2.2,
-    hW.2.orbitCode fun d ↦ d.2.2⟩, orbitCode_orbitCode⟩⟩
+  exact ⟨W, hW, hWf, hWP, orbitCode_mem_cat_of_isCutLawful hW⟩
 
 /-- The trivial admission has the lift provision at the positive caps at every grade
 `0 < k ≤ m`. -/

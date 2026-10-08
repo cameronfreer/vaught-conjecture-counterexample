@@ -38,8 +38,8 @@ on the family and the completion are in `VaughtConjecture.Extension.RowCompletio
 
 ## Placement
 
-The engine of the restricted catalogue at the reading grades (`roadmap/README.md`, Layer 3, 3.1,
-under "(R6)"); the admitted completion at every reading grade `N ≥ 3`.
+The completion below the full grade with admitted rows at the reading grades
+(`roadmap/README.md`, Layer 3, 3.1, under "(R6)").
 -/
 
 universe u
@@ -296,8 +296,7 @@ theorem capLiftProvisionIn_cat_top (hm : 0 < m) {x : Fin (m + 2)}
     (hx : x ∈ (Pts : Finset (Fin (m + 2)))) : CapLiftProvisionIn (cat I (m + 1)) (m + 1) x :=
     fun h hh _ _ P hP f hf hfP ↦ by
   obtain ⟨W, hW, hWf, hWP⟩ := exists_isCutLawful_of_coatom_top hm hx hh (mem_cat.mp hP).1 hf hfP
-  exact ⟨W, hW, hWf, hWP, mem_cat.mpr ⟨⟨hW.1.orbitCode fun d ↦ d.2.2,
-    hW.2.orbitCode fun d ↦ d.2.2⟩, orbitCode_orbitCode⟩⟩
+  exact ⟨W, hW, hWf, hWP, orbitCode_mem_cat_of_isCutLawful hW⟩
 
 /-- **The lift provisions for the family of a predicate**, at every grade `0 < k ≤ m + 1`: those
 of the predicate at the grades `≥ N`, those of the whole catalogue below. -/
