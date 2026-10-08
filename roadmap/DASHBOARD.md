@@ -586,12 +586,14 @@ Status of each:
    `Realization.ResidualAcquisition`; its stage-type part needs no model
    (`StageType.exists_isSourceGapContextAt_comap`).  Cutoff determination for it is open; with it
    and (R1) at every limit stage, (R2) follows
-   (`Realization.residualReceiving_of_cutoffDetermination_isSourceGapContext`).  Non-vacuity is
-   open, as a dichotomy: if no legal stage type is a source-gap context, (R2) holds outright
-   (`Realization.residualReceiving_of_forall_not_isSourceGapContext`), so either some legal type
-   is a source-gap context or (R2) holds; neither side is claimed.  No type built with
-   `StageType.addApex` is a source-gap context, the compiled completions included
-   (`StageType.not_isSourceGapContext_addApex`); nothing compiled exhibits an instance.  The
+   (`Realization.residualReceiving_of_cutoffDetermination_isSourceGapContext`).  If no legal
+   stage type were a source-gap context, (R2) would hold outright
+   (`Realization.residualReceiving_of_forall_not_isSourceGapContext`); but legal source-gap types
+   exist at every stage (`GatedExtensionCounterexample.isSourceGapContext_P`,
+   `Realization.not_forall_not_isSourceGapContext`, `Continuation/SourceGapContextInstance`), so
+   that vacuity argument is ruled out.  Their occurrence in a residual model is not proved, and
+   determination and (R2) stay open.  No type built with `StageType.addApex` is a source-gap
+   context, the compiled completions included (`StageType.not_isSourceGapContext_addApex`).  The
    predicate excludes the compiled determination counterexamples (not top-free, root not
    surjective).  An admissible top support is separated
    (`StageType.IsAdmissibleTopSupport.isSeparatedTopSupport`), so the residual hypothesis holds for

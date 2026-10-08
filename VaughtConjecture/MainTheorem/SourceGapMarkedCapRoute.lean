@@ -14,7 +14,7 @@ Roadmap, Layer 6 ("Status: the hypotheses of the main theorem"), for the receivi
 (`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_receivingModels'`); semantic contract,
 items 5, 8 and 12.
 
-**The endpoint**
+**The main theorem from three finite statements**
 (`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_coatomDeterminations_sourceGap_markedCap`).
 The thin `ℵ₁` spectrum of the density sentence follows from exactly three finite statements about
 stage types, each open.  The coatom forms are stronger than the full forms
