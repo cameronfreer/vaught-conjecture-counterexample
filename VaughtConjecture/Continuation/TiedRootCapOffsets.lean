@@ -141,4 +141,172 @@ theorem IsBoundedReading.eq_of_eq (hσ : IsBoundedReading N σ) (hN : 0 < N) {s 
 
 end Label
 
+/-! ### Bounded reading at a cell labelled `⊤` -/
+
+namespace StageType
+
+variable {α : Ordinal.{u}} {k n : ℕ}
+
+/-- **Bounded reading at a cell labelled `⊤`.**  If a lawful labelling `a` of `t'` is `⊤` at `c`,
+the shifter of its locality at `c` is a reading map bounded at the grade of `c` that reads the row
+of `c` as `a` below `c`: the suppressor is `⊤` at the grade of `c` (evaluate at `c`), hence at
+every smaller grade. -/
+theorem exists_isBoundedReading {t' : StageType.{u} α k} {a : Fin t'.card → Label.{u}}
+    (ha : t'.rows.IsLawful a) {c : Fin t'.card} (hc : a c = ⊤) :
+    ∃ σ, IsBoundedReading (t'.toCellScheme.grade c) σ ∧
+      ∀ d ∈ t'.toCellScheme.below (t'.toCellScheme.gradedIndex c), a d = σ (t'.rowAt c d) := by
+  obtain ⟨g, σ, hw, heq⟩ := ha.locality c
+  have hcc := heq ⟨c, t'.toCellScheme.mem_below_gradedIndex c⟩
+  change min (a c) (a c) = min (σ (t'.rows.row c ⟨c, _⟩)) (g (t'.toCellScheme.grade c)) at hcc
+  rw [hc, min_self] at hcc
+  have hgN : g (t'.toCellScheme.grade c) = ⊤ := (min_eq_top.mp hcc.symm).2
+  have hg {j : ℕ} (hj : j ≤ t'.toCellScheme.grade c) : g j = ⊤ :=
+    top_le_iff.mp (hgN ▸ hw.antitone hj)
+  refine ⟨σ, ⟨hw.map_bot, hw.monotone, fun x j i hj hi ↦
+    hw.visibilityReplace_comm x j (by rw [hg hj]; exact le_top) i hi⟩, fun d hd ↦ ?_⟩
+  have h := heq ⟨d, hd⟩
+  change min (a d) (a c) = min (σ (t'.rows.row c ⟨d, hd⟩)) (g (t'.toCellScheme.grade d)) at h
+  have hgd : t'.toCellScheme.grade d ≤ t'.toCellScheme.grade c := by
+    rw [CellScheme.mem_below] at hd
+    exact hd.2
+  rw [hc, min_top_right, hg hgd, min_top_right] at h
+  rw [h, Scheme.rowAt_of_mem hd]
+
+/-! ### Proper root ties -/
+
+/-- The **root offsets lie below `N`** along `h`: every label of a cell visible through `h` that
+is an ordinal `μ + f` (`μ` zero or a limit) has `f < N`. -/
+def RootOffsetsBelow (t' : StageType.{u} α k) (h : Fin n ↪ Fin k) (N : ℕ) : Prop :=
+  ∀ y ∈ t'.visibleCells h, ∀ (μ : Ordinal.{u}) (f : ℕ), Order.IsSuccPrelimit μ →
+    t'.label y = ((μ + f : Ordinal.{u}) : Label.{u}) → f < N
+
+/-- The row of `c` **keeps the proper root ties** along `h`: at two cells visible through `h` with
+labels in order, the first strictly below the second or an ordinal, the row of `c` reads them in
+the same order. -/
+def KeepsProperRootTies (t' : StageType.{u} α k) (h : Fin n ↪ Fin k) (c : Fin t'.card) : Prop :=
+  ∀ y₁ ∈ t'.visibleCells h, ∀ y₂ ∈ t'.visibleCells h, t'.label y₁ ≤ t'.label y₂ →
+    (t'.label y₁ < t'.label y₂ ∨ IsProper (t'.label y₁)) → t'.rowAt c y₁ ≤ t'.rowAt c y₂
+
+/-- **A cap labelled `⊤` keeps the proper root ties when the root offsets lie below its grade.**
+The labels below the cap are a bounded reading of its row: strict label order gives strict row
+order (monotonicity), and equal ordinal labels with offset below the grade give equal row entries
+(strip uniqueness, `Label.IsBoundedReading.eq_of_eq`; the rows are coded, so not `⊤`). -/
+theorem keepsProperRootTies_of_rootOffsetsBelow {t' : StageType.{u} α k} {h : Fin n ↪ Fin k}
+    {c : Fin t'.card} (hc : t'.label c = ⊤) (hcs : t'.toCellScheme.scope c = univ)
+    (hn : n ≤ t'.toCellScheme.grade c) (hoff : t'.RootOffsetsBelow h (t'.toCellScheme.grade c)) :
+    t'.KeepsProperRootTies h c := by
+  obtain ⟨σ, hσ, hread⟩ := exists_isBoundedReading t'.isLawful hc
+  have hpos : 0 < t'.toCellScheme.grade c := t'.isWellFormed.isWellFormed.grade_pos c
+  intro y₁ hy₁ y₂ hy₂ hle hcase
+  have hb₁ := mem_below_of_mem_visibleCells hcs hn hy₁
+  have hb₂ := mem_below_of_mem_visibleCells hcs hn hy₂
+  have hl₁ := hread y₁ hb₁
+  have hl₂ := hread y₂ hb₂
+  -- strict label order gives the row order
+  have hstrict (hlt : t'.label y₁ < t'.label y₂) : t'.rowAt c y₁ ≤ t'.rowAt c y₂ := by
+    by_contra hnot
+    have := hσ.monotone (not_le.mp hnot).le
+    rw [← hl₁, ← hl₂] at this
+    exact absurd hlt (not_lt.mpr this)
+  rcases hcase with hlt | hprop
+  · exact hstrict hlt
+  rcases hle.lt_or_eq with hlt | heq
+  · exact hstrict hlt
+  -- equal ordinal labels: strip uniqueness
+  obtain ⟨o, ho⟩ := hprop
+  obtain ⟨μ, hμ, f, rfl⟩ := exists_eq_add_natCast_isSuccPrelimit o
+  have hf := hoff y₁ hy₁ μ f hμ ho.symm
+  have hcode (y : Fin t'.card) (hy : y ∈ t'.toCellScheme.below (t'.toCellScheme.gradedIndex c)) :
+      t'.rowAt c y ≠ ⊤ := fun htop ↦ by
+    have := t'.isCoded c ⟨y, hy⟩
+    rw [← Scheme.rowAt_of_mem hy, htop] at this
+    exact absurd this (not_lt.mpr le_top)
+  refine (hσ.eq_of_eq hpos (hcode y₁ hb₁) (hcode y₂ hb₂) hμ hf ?_ ?_).le
+  · rw [← hl₁, ← ho]
+  · rw [← hl₂, ← heq, ← ho]
+
+/-- **No separation at offsets below the cap.**  At a marked-cap context along `h` with top cap
+`c` and marker `r` whose root offsets lie below the grade of `c`, every lawful labelling `a` of
+`t'` in the bottom class of `t'`, `⊤` at `c` and at `r`, keeps the order of the root labels:
+ordinal and strict ties by the proper root ties, ties at `⊤` by the row inequality of the context
+(the marker is read at `⊤`), ties at `⊥` by the bottom class. -/
+theorem le_of_rootOffsetsBelow {t' : StageType.{u} α k} {h : Fin n ↪ Fin k} {c r : Fin t'.card}
+    (hctx : t'.IsMarkedCapContextAt h c r)
+    (hoff : t'.RootOffsetsBelow h (t'.toCellScheme.grade c)) {a : Fin t'.card → Label.{u}}
+    (ha : t'.rows.IsLawful a) (hac : a c = ⊤) (har : a r = ⊤)
+    (hcl : ∀ z, a z = ⊥ ↔ t'.label z = ⊥) {y₁ y₂ : Fin t'.card} (hy₁ : y₁ ∈ t'.visibleCells h)
+    (hy₂ : y₂ ∈ t'.visibleCells h) (hl : t'.label y₁ ≤ t'.label y₂) : a y₁ ≤ a y₂ := by
+  obtain ⟨⟨hcs, hct, -⟩, ⟨-, hrb, -⟩, hn, hmark⟩ := hctx
+  obtain ⟨σ, hσ, hread⟩ := exists_isBoundedReading ha hac
+  have hkeep := keepsProperRootTies_of_rootOffsetsBelow hct hcs (by omega) hoff
+  have hb₁ := mem_below_of_mem_visibleCells hcs (by omega) hy₁
+  have hb₂ := mem_below_of_mem_visibleCells hcs (by omega) hy₂
+  by_cases hb : t'.label y₁ = ⊥
+  · rw [(hcl y₁).mpr hb]
+    exact bot_le
+  by_cases ht : t'.label y₁ = ⊤
+  · -- both are `⊤`: the marker inequality
+    have ht₂ : t'.label y₂ = ⊤ := top_le_iff.mp (ht ▸ hl)
+    have hm := hσ.monotone (hmark y₂ hy₂ ht₂)
+    rw [hσ.comm _ _ _ le_rfl (by omega), ← hread r hrb, har, visibilityReplace_top,
+      ← hread y₂ hb₂] at hm
+    rw [top_le_iff.mp hm]
+    exact le_top
+  · rw [hread y₁ hb₁, hread y₂ hb₂]
+    exact hσ.monotone (hkeep y₁ hy₁ y₂ hy₂ hl (.inr (isProper_iff_ne.mpr ⟨hb, ht⟩)))
+
+/-- **The refutation schema has no input at offsets below the cap.**  Over a marked-cap context
+`t'` along `h` with top cap `c`, marker `r` and root offsets below the grade of `c`, let a new top
+`j` of a donor `d` read the root cell `y₁` at most as the root cell `y₂`, of grade at most that of
+`y₁`.  Every lawful labelling of `t'` in the bottom class of `t'`, `⊤` at `c` and `r`, labels `y₁`
+at most as `y₂`.  So the inputs of `StageType.not_raisesNewTopsInClass_of_row_le` (and of the
+refutations built on the separating labelling) do not exist at such contexts. -/
+theorem le_of_tie_of_rootOffsetsBelow {t' : StageType.{u} α k} {h : Fin n ↪ Fin k}
+    {t : StageType.{u} α n} (ht : restrictFace h t' = some t) {d : StageType.{u} α (n + 1)}
+    (hd : restrictFace Fin.castSuccEmb d = some t) {c r : Fin t'.card}
+    (hctx : t'.IsMarkedCapContextAt h c r)
+    (hoff : t'.RootOffsetsBelow h (t'.toCellScheme.grade c)) {a : Fin t'.card → Label.{u}}
+    (ha : t'.rows.IsLawful a) (hac : a c = ⊤) (har : a r = ⊤)
+    (hcl : ∀ z, a z = ⊥ ↔ t'.label z = ⊥) {j : Fin d.card} (hjt : d.label j = ⊤)
+    {y₁ y₂ : Fin t.card}
+    (hy₁ : faceCell hd y₁ ∈ d.toCellScheme.below (d.toCellScheme.gradedIndex j))
+    (hy₂ : faceCell hd y₂ ∈ d.toCellScheme.below (d.toCellScheme.gradedIndex j))
+    (hrow : d.rows.row j ⟨_, hy₁⟩ ≤ d.rows.row j ⟨_, hy₂⟩)
+    (hg : t.toCellScheme.grade y₂ ≤ t.toCellScheme.grade y₁) :
+    a (faceCell ht y₁) ≤ a (faceCell ht y₂) := by
+  have hloc := (d.isLawful.locality j).le_of_le (d := ⟨_, hy₁⟩) (d' := ⟨_, hy₂⟩) hrow
+    (by rw [grade_faceCell, grade_faceCell]; exact hg)
+  change min (d.label (faceCell hd y₁)) (d.label j) ≤
+    min (d.label (faceCell hd y₂)) (d.label j) at hloc
+  rw [hjt, min_top_right, min_top_right, label_faceCell, label_faceCell] at hloc
+  exact le_of_rootOffsetsBelow hctx hoff ha hac har hcl (faceCell_mem_visibleCells ht y₁)
+    (faceCell_mem_visibleCells ht y₂) (by rwa [label_faceCell, label_faceCell])
+
+end StageType
+
+/-! ### The context with separated tied root cells breaks the offset bound -/
+
+namespace TiedRootCapCounterexample
+
+open StageType
+
+variable {α : Ordinal.{u}} (hα : Order.IsSuccLimit α)
+
+/-- **The context of `TiedRootCapCounterexample` has a root offset at the grade of its cap**: its
+root cells are labelled `3` and its cap has grade `3`; otherwise the separating labelling (in the
+bottom class, `⊤` at the cap and marker) would keep the tie of the root cells
+(`StageType.le_of_rootOffsetsBelow`). -/
+theorem not_rootOffsetsBelow :
+    ¬ (context hα).RootOffsetsBelow rootEmb ((context hα).toCellScheme.grade (capCell hα)) := by
+  intro hoff
+  have h := le_of_rootOffsetsBelow (isMarkedCapContextAt_context hα) hoff (isLawful_separating hα)
+    (separating_capCell hα) (separating_capCell hα) (separating_eq_bot_iff hα)
+    (faceCell_mem_visibleCells (restrictFace_context hα) (⟨1, by decide⟩ : Fin 2))
+    (faceCell_mem_visibleCells (restrictFace_context hα) (⟨0, by decide⟩ : Fin 2))
+    ((context_label_root hα _).trans (context_label_root hα _).symm).le
+  rw [separating_root, separating_root] at h
+  exact absurd (natCast_label_le.mp h) (by decide)
+
+end TiedRootCapCounterexample
+
 end VaughtConjecture
