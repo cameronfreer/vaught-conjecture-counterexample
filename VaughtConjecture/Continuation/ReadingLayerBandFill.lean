@@ -38,7 +38,9 @@ grade, not as a union of two lifts along `e`.
   below it being `e` below `h` and at least `V` (or `h`) at or above it; availability at those
   grades is that of `e`.  No union of two lifts and no extension from a boundary is used.
 * **The fill from the tie of the marker** (`TowerProfile.readingFillPos_left_of_tie`, compiled):
-  at a seed whose right coatom type is `rightType`, with the marker `r` of grade `4` on the left
+  at a seed whose right coatom type raises at the point `3` (`StageType.RowsRaiseAt`: its cells of
+  grade `1` through `3` read the cells through `3` as themselves and the others as `⊥`; `rightType`
+  does), with the marker `r` of grade `4` on the left
   coatom, a new top `x` of grade `1` through the point `4`, and cells `t₁`, `t₂` of grades `1`, `2`
   of the left coatom.  Hypotheses: in every labelling lawful below the left coatom and not `⊥` at
   `r`, the cells of grade `1` not `⊥` take the value at `t₁`, the only cell of grade `2` not `⊥` is
@@ -67,7 +69,8 @@ every proper root label has finite part below the grade of the cap (at `seedThre
 label is `3` and the grade is `4`).  The tie of the marker follows from it
 (`StageType.keepsProperRootTies_of_rootOffsetsBelow`, module
 `VaughtConjecture.Continuation.ReadingLayerRootOffsets`).  The structure hypotheses on the left
-coatom and the right coatom type `rightType` belong to this family of seeds.
+coatom are stated on the cells of the profile layer here; on the coatom types in the module
+`VaughtConjecture.Continuation.ReadingLayerCoatoms`.
 
 ## Placement
 
@@ -857,7 +860,8 @@ open TopReadingApexExample
 variable {α : Ordinal.{u}} {I : Seed.{u} α 3}
 
 /-- **The fill at the short positive caps from the left coatom, from the ties of the marker**, at a
-seed whose right coatom type is `rightType`.  Let `r` be a marker of grade `4` on the left coatom,
+seed whose right coatom type raises at the point `3` (`StageType.RowsRaiseAt`; `rightType` does,
+`TowerProfile.rowsRaiseAt_rightType`).  Let `r` be a marker of grade `4` on the left coatom,
 `x` a cell of the amalgam of grade `1` through the point `4` (a new top), and `t₁`, `t₂` cells of
 the left coatom of grades `1` and `2`.  Suppose that in every labelling `f` lawful below the left
 coatom and not `⊥` at `r` the cells of grade `1` not `⊥` take the value at `t₁`, the only cell of
@@ -874,8 +878,7 @@ in `[h, f r)`), the tie gives `h ≤ f t₁` and `f t₂ ≤ f t₁`; a server
 (`TowerProfile.exists_server_of_rightType`) reads `x` at `ω * β + 1` (a code of the grade `1`) and
 every cell of the left coatom below the block `β`; the fill from the server
 (`TowerProfile.exists_fill_of_server`, with `A = f t₁` and `V = max h (f t₂)`) is `⊤` at `x`. -/
-theorem readingFillPos_left_of_tie
-    (hR : StageType.restrictFace (Coatom.right 3) I.amalgam = some (rightType α))
+theorem readingFillPos_left_of_tie (hraise : I.right.RowsRaiseAt 3)
     {r : Fin (scheme I).card} (hgr : (scheme I).toCellScheme.grade r = 4)
     (hrC : r ∈ (scheme I).toCellScheme.below (univ.erase (Fin.last 4), 4))
     {xa : Fin I.amalgam.card} (hPx : Fin.last 4 ∈ I.amalgam.toCellScheme.scope xa)
@@ -971,7 +974,8 @@ theorem readingFillPos_left_of_tie
     · exact absurd (H3 f hf hfr0 d₀ hd₀C h3) hd₀0
   -- the server
   have hex : h ≤ e (embed3 I xa) := hre.trans (Scheme.le_of_mem_readingMarks he hxX)
-  obtain ⟨u, hu, hxu, hlt, hcode⟩ := exists_server_of_rightType hR (hel.isLawfulBelow _) hPx hgxa
+  obtain ⟨u, hu, hxu, hlt, hcode⟩ := exists_server_of_rightType I.restrictFace_right hraise
+    (hel.isLawfulBelow _) hPx hgxa
     (hhb.trans_le hex).ne'
   have hvis {d : Fin (scheme I).card} (hd : (scheme I).toCellScheme.grade d = 1) :
       IsSelfVisible 1 ((scheme I).rowAt u d) := by
@@ -1033,7 +1037,7 @@ theorem readingFillPos_left_seedThree :
         Finset (Fin (seedThree hα).right.card)).image fun z ↦ embed3 (seedThree hα)
           (StageType.faceCell (seedThree hα).restrictFace_right z)) (Fin.last 4) := by
   obtain ⟨hgr, hrC, -⟩ := apex_props hα
-  refine readingFillPos_left_of_tie (seedThree hα).restrictFace_right hgr hrC ?_ ?_
+  refine readingFillPos_left_of_tie rowsRaiseAt_rightType hgr hrC ?_ ?_
     (mem_image_of_mem _ (mem_singleton_self _))
     (fun x hx ↦ by obtain ⟨z, hz, rfl⟩ := mem_image.mp hx; rw [mem_singleton.mp hz])
     (leftS_mem hα ⟨9, by decide⟩) ((grade_leftS hα _).trans rfl)

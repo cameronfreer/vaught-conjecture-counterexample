@@ -28,11 +28,14 @@ below `x`.  This file shows that servers always exist at the seeds whose right c
   under the scopes, holding at grade `k` only, whose cells of grade `k` read the cells with `P`
   below them as themselves and the others as `⊥`, the orbit code of an entry raised to `⊤` at its
   cells with `P` at least its value at `x` is a raise.
-* **At `rightType`** (`TowerProfile.rowP_right`, `TowerProfile.exists_server_of_rightType`,
+* **At a right coatom type raising at the point `3`** (`StageType.RowsRaiseAt`, defined here;
+  `TowerProfile.rowsRaiseAt_rightType`, `TowerProfile.rowP_right`,
+  `TowerProfile.exists_server_of_rightType`,
   `TowerProfile.exists_server_above_cap_of_rightType`, compiled): with `P` the cells through the
-  point `4` (the right coatom off the common face), the live cells of grade `1` of `rightType` read
-  the live cells of grade `1` below them at `v1` and the others as `⊥`
-  (`TowerProfile.rowAt_S_live`).  So at every seed whose right coatom type is `rightType`, for every
+  point `4` (the right coatom off the common face).  The live cells of grade `1` of `rightType`
+  read the live cells of grade `1` below them at `v1` and the others as `⊥`
+  (`TowerProfile.rowAt_S_live`), so `rightType` raises at `3`.  At every seed whose right coatom
+  type raises at the point `3`, for every
   labelling lawful below `(univ, 4)` at least a positive cap `h` at a cell `x` of grade `1` through
   the point `4`, a server exists, one cell for every cell of grade at most `1` off that point.
 
@@ -366,58 +369,18 @@ theorem rowAt_S_live {a b : Fin 19} (ha : TwoFaceLiftCounterexample.cellGrade a 
   simp only [CaseSplitCounterexample.rows, hla, ha, hb, true_and]
   split_ifs <;> simp_all
 
-variable (hR : StageType.restrictFace (Coatom.right 3) I.amalgam = some (rightType α))
+/-- **The rows of a coatom type raise at the point `p`**: a cell of grade `1` through `p` reads the
+cells below it through `p` as it reads itself, and the others as `⊥`. -/
+def _root_.VaughtConjecture.StageType.RowsRaiseAt (tb : StageType.{u} α 4) (p : Fin 4) : Prop :=
+  ∀ s, p ∈ tb.toCellScheme.scope s → tb.toCellScheme.grade s = 1 →
+    ∀ d ∈ tb.toCellScheme.below (tb.toCellScheme.gradedIndex s),
+      (p ∈ tb.toCellScheme.scope d → tb.toScheme.rowAt s d = tb.toScheme.rowAt s s) ∧
+      (p ∉ tb.toCellScheme.scope d → tb.toScheme.rowAt s d = ⊥)
 
-include hR in
-/-- A cell of the amalgam inside the right coatom is a cell of `rightType`. -/
-theorem exists_right_cell {d : Fin I.amalgam.card}
-    (hd : I.amalgam.toCellScheme.scope d ⊆ univ.erase (Fin.castSucc (Fin.last 3))) :
-    ∃ z, StageType.faceCell hR z = d := by
-  obtain ⟨hf, he⟩ := (StageType.restrictFace_eq_some_iff _ _).mp hR
-  refine I.amalgam.toScheme.exists_faceCell_eq _ (Scheme.mem_visibleCells.mpr fun p hp ↦ ?_)
-  have hp' := hd (mem_coe.mp hp)
-  rw [← univ_map_right_eq] at hp'
-  obtain ⟨a, -, rfl⟩ := mem_map.mp hp'
-  exact ⟨a, rfl⟩
-
-include hR in
-/-- The point `4` lies in the scope of a cell of `rightType` carried to the amalgam exactly when
-the point `3` lies in its scope. -/
-theorem last_mem_scope_right (z : Fin (rightType α).card) :
-    Fin.last 4 ∈ I.amalgam.toCellScheme.scope (StageType.faceCell hR z) ↔
-      (3 : Fin 4) ∈ (rightType α).toCellScheme.scope z := by
-  rw [StageType.scope_faceCell, mem_map]
-  constructor
-  · rintro ⟨a, ha, hae⟩
-    have : a = 3 := by
-      have h3 : Coatom.right 3 3 = Fin.last 4 := by decide
-      exact (Coatom.right 3).injective (hae.trans h3.symm)
-    rwa [← this]
-  · intro h
-    exact ⟨3, h, by decide⟩
-
-include hR in
-/-- **The rows of the amalgam at a live cell of grade `1` of the right coatom** read the cells
-below it through the point `4` as they read the cell itself, and the others as `⊥`. -/
-theorem rowP_right (s : Fin I.amalgam.card) (hPs : Fin.last 4 ∈ I.amalgam.toCellScheme.scope s)
-    (hgs : I.amalgam.toCellScheme.grade s = 1) (d : Fin I.amalgam.card)
-    (hd : d ∈ I.amalgam.toCellScheme.below (I.amalgam.toCellScheme.gradedIndex s)) :
-    (Fin.last 4 ∈ I.amalgam.toCellScheme.scope d → I.amalgam.toScheme.rows.row s ⟨d, hd⟩ =
-        I.amalgam.toScheme.rows.row s ⟨s, I.amalgam.toCellScheme.mem_below_gradedIndex s⟩) ∧
-      (Fin.last 4 ∉ I.amalgam.toCellScheme.scope d →
-        I.amalgam.toScheme.rows.row s ⟨d, hd⟩ = ⊥) := by
-  have hsD : I.amalgam.toCellScheme.scope s ⊆ univ.erase (Fin.castSucc (Fin.last 3)) := by
-    rcases I.scope_subset_or (x := Fin.last 4) (y := Fin.castSucc (Fin.last 3)) (by simp)
-      (by simp) (by decide) s with h | h
-    · exact absurd (h hPs) (by simp)
-    · exact h
-  obtain ⟨zs, rfl⟩ := exists_right_cell hR hsD
-  obtain ⟨zd, rfl⟩ := exists_right_cell hR (hd.1.trans hsD)
-  have hgzs : (rightType α).toCellScheme.grade zs = 1 :=
-    (StageType.grade_faceCell hR zs).symm.trans hgs
-  have hgzd : (rightType α).toCellScheme.grade zd ≤ 1 :=
-    (StageType.grade_faceCell hR zd).symm.trans_le (hd.2.trans hgs.le)
-  -- both are old cells of `rightType`
+/-- **The rows of `rightType` raise at the point `3`** (`TowerProfile.rowAt_S_live`). -/
+theorem rowsRaiseAt_rightType : (rightType α).RowsRaiseAt 3 := by
+  intro zs hPzs hgzs zd hd
+  have hgzd : (rightType α).toCellScheme.grade zd ≤ 1 := hd.2.trans hgzs.le
   have hold (z : Fin (rightType α).card) (hz : (rightType α).toCellScheme.grade z ≤ 1) :
       ∃ a, Fin.castSucc a = z := by
     revert hz
@@ -430,13 +393,7 @@ theorem rowP_right (s : Fin I.amalgam.card) (hPs : Fin.last 4 ∈ I.amalgam.toCe
           isLegalBelowFullGrade_S (by omega))
       exact absurd (le_of_eq_of_le h4.symm hz) (by omega)
     | cast a => exact fun _ ↦ ⟨a, rfl⟩
-  have hsubz : (rightType α).toCellScheme.scope zd ⊆ (rightType α).toCellScheme.scope zs := by
-    have h : I.amalgam.toCellScheme.scope (StageType.faceCell hR zd) ⊆
-        I.amalgam.toCellScheme.scope (StageType.faceCell hR zs) := hd.1
-    rw [StageType.scope_faceCell hR, StageType.scope_faceCell hR, map_subset_map] at h
-    exact h
-  have hPzs := (last_mem_scope_right hR zs).mp hPs
-  have hPzd := last_mem_scope_right hR zd
+  have hsubz : (rightType α).toCellScheme.scope zd ⊆ (rightType α).toCellScheme.scope zs := hd.1
   obtain ⟨as, rfl⟩ := hold zs hgzs.le
   obtain ⟨ad, rfl⟩ := hold zd hgzd
   have hga : TwoFaceLiftCounterexample.cellGrade as = 1 :=
@@ -452,28 +409,93 @@ theorem rowP_right (s : Fin I.amalgam.card) (hPs : Fin.last 4 ∈ I.amalgam.toCe
     (hsc ad).symm.subset.trans (hsubz.trans (hsc as).subset)
   have hlive_s : CaseSplitCounterexample.live as = true :=
     (live_iff_three_mem as hga).mpr (Eq.mp (congrArg (3 ∈ ·) (hsc as)) hPzs)
-  have hrow (a : Fin (rightBase α).card) (hga' : TwoFaceLiftCounterexample.cellGrade a = 1)
-      (hsa : TwoFaceLiftCounterexample.cellScope a ⊆ TwoFaceLiftCounterexample.cellScope as)
-      (hm : StageType.faceCell hR (Fin.castSucc a) ∈ I.amalgam.toCellScheme.below
-        (I.amalgam.toCellScheme.gradedIndex (StageType.faceCell hR (Fin.castSucc as)))) :
-      I.amalgam.toScheme.rows.row _ ⟨_, hm⟩ =
-        if CaseSplitCounterexample.live a = true then TwoFaceLiftCounterexample.v1 else ⊥ :=
-    (Scheme.rowAt_of_mem hm).symm.trans ((StageType.rowAt_faceCell hR _ _).trans
-      ((rowAt_rightType_castSucc as a).trans (rowAt_S_live hga hlive_s hga' hsa)))
+  have r1 := (rowAt_rightType_castSucc (α := α) as ad).trans (rowAt_S_live hga hlive_s hgd hsub)
+  have r2 := (rowAt_rightType_castSucc (α := α) as as).trans
+    (rowAt_S_live hga hlive_s hga subset_rfl)
+  rw [hlive_s] at r2
   refine ⟨fun hPd ↦ ?_, fun hPd ↦ ?_⟩
-  · have hld : CaseSplitCounterexample.live ad = true :=
-      (live_iff_three_mem ad hgd).mpr (Eq.mp (congrArg (3 ∈ ·) (hsc ad)) (hPzd.mp hPd))
-    rw [hrow ad hgd hsub hd, hrow as hga subset_rfl, hld, hlive_s]
+  · rw [(live_iff_three_mem ad hgd).mpr (Eq.mp (congrArg (3 ∈ ·) (hsc ad)) hPd)] at r1
+    exact r1.trans r2.symm
   · have hld : CaseSplitCounterexample.live ad = false := by
       rcases h : CaseSplitCounterexample.live ad
       · rfl
-      · exact absurd (hPzd.mpr (Eq.mpr (congrArg (3 ∈ ·) (hsc ad))
-          ((live_iff_three_mem ad hgd).mp h))) hPd
-    rw [hrow ad hgd hsub hd, hld]
-    rfl
+      · exact absurd (Eq.mpr (congrArg (3 ∈ ·) (hsc ad)) ((live_iff_three_mem ad hgd).mp h)) hPd
+    rw [hld] at r1
+    exact r1
+
+variable {tb : StageType.{u} α 4}
+  (hR : StageType.restrictFace (Coatom.right 3) I.amalgam = some tb)
 
 include hR in
-/-- **Servers at a seed whose right coatom type is `rightType`.**  For every labelling `e` lawful
+/-- A cell of the amalgam inside the right coatom is a cell of the right coatom type. -/
+theorem exists_right_cell {d : Fin I.amalgam.card}
+    (hd : I.amalgam.toCellScheme.scope d ⊆ univ.erase (Fin.castSucc (Fin.last 3))) :
+    ∃ z, StageType.faceCell hR z = d := by
+  obtain ⟨hf, he⟩ := (StageType.restrictFace_eq_some_iff _ _).mp hR
+  refine I.amalgam.toScheme.exists_faceCell_eq _ (Scheme.mem_visibleCells.mpr fun p hp ↦ ?_)
+  have hp' := hd (mem_coe.mp hp)
+  rw [← univ_map_right_eq] at hp'
+  obtain ⟨a, -, rfl⟩ := mem_map.mp hp'
+  exact ⟨a, rfl⟩
+
+include hR in
+/-- The point `4` lies in the scope of a cell of the right coatom type carried to the amalgam
+exactly when the point `3` lies in its scope. -/
+theorem last_mem_scope_right (z : Fin tb.card) :
+    Fin.last 4 ∈ I.amalgam.toCellScheme.scope (StageType.faceCell hR z) ↔
+      (3 : Fin 4) ∈ tb.toCellScheme.scope z := by
+  rw [StageType.scope_faceCell, mem_map]
+  constructor
+  · rintro ⟨a, ha, hae⟩
+    have : a = 3 := by
+      have h3 : Coatom.right 3 3 = Fin.last 4 := by decide
+      exact (Coatom.right 3).injective (hae.trans h3.symm)
+    rwa [← this]
+  · intro h
+    exact ⟨3, h, by decide⟩
+
+include hR in
+/-- **The rows of the amalgam at a cell of grade `1` of the right coatom through the point `4`**,
+when the rows of the right coatom type raise at the point `3`: they read the cells below it through
+the point `4` as they read the cell itself, and the others as `⊥`. -/
+theorem rowP_right (hraise : tb.RowsRaiseAt 3) (s : Fin I.amalgam.card)
+    (hPs : Fin.last 4 ∈ I.amalgam.toCellScheme.scope s)
+    (hgs : I.amalgam.toCellScheme.grade s = 1) (d : Fin I.amalgam.card)
+    (hd : d ∈ I.amalgam.toCellScheme.below (I.amalgam.toCellScheme.gradedIndex s)) :
+    (Fin.last 4 ∈ I.amalgam.toCellScheme.scope d → I.amalgam.toScheme.rows.row s ⟨d, hd⟩ =
+        I.amalgam.toScheme.rows.row s ⟨s, I.amalgam.toCellScheme.mem_below_gradedIndex s⟩) ∧
+      (Fin.last 4 ∉ I.amalgam.toCellScheme.scope d →
+        I.amalgam.toScheme.rows.row s ⟨d, hd⟩ = ⊥) := by
+  have hsD : I.amalgam.toCellScheme.scope s ⊆ univ.erase (Fin.castSucc (Fin.last 3)) := by
+    rcases I.scope_subset_or (x := Fin.last 4) (y := Fin.castSucc (Fin.last 3)) (by simp)
+      (by simp) (by decide) s with h | h
+    · exact absurd (h hPs) (by simp)
+    · exact h
+  obtain ⟨zs, rfl⟩ := exists_right_cell hR hsD
+  obtain ⟨zd, rfl⟩ := exists_right_cell hR (hd.1.trans hsD)
+  have hgzs : tb.toCellScheme.grade zs = 1 := (StageType.grade_faceCell hR zs).symm.trans hgs
+  have hdz : zd ∈ tb.toCellScheme.below (tb.toCellScheme.gradedIndex zs) := by
+    have h1 : I.amalgam.toCellScheme.scope (StageType.faceCell hR zd) ⊆
+        I.amalgam.toCellScheme.scope (StageType.faceCell hR zs) := hd.1
+    have h2 : I.amalgam.toCellScheme.grade (StageType.faceCell hR zd) ≤
+        I.amalgam.toCellScheme.grade (StageType.faceCell hR zs) := hd.2
+    rw [StageType.scope_faceCell hR, StageType.scope_faceCell hR, map_subset_map] at h1
+    rw [StageType.grade_faceCell, StageType.grade_faceCell] at h2
+    exact Prod.mk_le_mk.mpr ⟨h1, h2⟩
+  obtain ⟨h1, h2⟩ := hraise zs ((last_mem_scope_right hR zs).mp hPs) hgzs zd hdz
+  have hrow (z : Fin tb.card) (hm : StageType.faceCell hR z ∈ I.amalgam.toCellScheme.below
+      (I.amalgam.toCellScheme.gradedIndex (StageType.faceCell hR zs))) :
+      I.amalgam.toScheme.rows.row _ ⟨_, hm⟩ = tb.toScheme.rowAt zs z :=
+    (Scheme.rowAt_of_mem hm).symm.trans (StageType.rowAt_faceCell hR _ _)
+  refine ⟨fun hPd ↦ ?_, fun hPd ↦ ?_⟩
+  · rw [hrow zd hd, hrow zs (I.amalgam.toCellScheme.mem_below_gradedIndex _)]
+    exact h1 ((last_mem_scope_right hR zd).mp hPd)
+  · rw [hrow zd hd]
+    exact h2 fun h ↦ hPd ((last_mem_scope_right hR zd).mpr h)
+
+include hR in
+/-- **Servers at a seed whose right coatom type raises at the point `3`** (`rightType` among them,
+`TowerProfile.rowsRaiseAt_rightType`).  For every labelling `e` lawful
 below `(univ, 1)` in the profile layer, every cell `x` of the amalgam of grade `1` through the
 point `4` (a cell of the right coatom off the common face, such as the new top `{3}` of
 `rightType`) not `⊥` in `e`, some cell of graded index `(univ, 1)` at least `e x` reads every cell
@@ -481,7 +503,8 @@ of grade at most `1` off the point `4` (the cells of the left coatom, such as th
 `3` by `threeType`) strictly below `x`, and reads `x` at a point of the code grid
 (`Scheme.exists_server_fieldLayer`, with the raise of `Scheme.exists_raise_entry` at the cells
 through the point `4`). -/
-theorem exists_server_of_rightType {e : Fin (scheme I).card → Label.{u}}
+theorem exists_server_of_rightType (hraise : tb.RowsRaiseAt 3)
+    {e : Fin (scheme I).card → Label.{u}}
     (he : (scheme I).rows.IsLawfulBelow (univ, 1) fun d ↦ e d) {x : Fin I.amalgam.card}
     (hPx : Fin.last 4 ∈ I.amalgam.toCellScheme.scope x)
     (hgx : I.amalgam.toCellScheme.grade x = 1) (hx0 : e (embed3 I x) ≠ ⊥) :
@@ -499,7 +522,7 @@ theorem exists_server_of_rightType {e : Fin (scheme I).card → Label.{u}}
         (P := fun d ↦ Fin.last 4 ∈ I.amalgam.toCellScheme.scope d)
         (fun _ _ hst hs ↦ hst hs)
         (fun d _ hd ↦ le_antisymm hd (I.amalgam.isWellFormed.isWellFormed.grade_pos d))
-        (fun s hs hgs d hd ↦ rowP_right hR s hs hgs d hd) hb hPx hgx hbx
+        (fun s hs hgs d hd ↦ rowP_right hR hraise s hs hgs d hd) hb hPx hgx hbx
   refine ⟨oneCell I (Fin.natAdd _ i), ?_, hxi, ?_⟩
   · exact (gradedIndex_oneCell (I := I) _).trans
       (Scheme.appendFullCellsScheme_gradedIndex_natAdd (I.tower 0) 1 _ i)
@@ -531,7 +554,8 @@ every labelling lawful below `(univ, 4)` at least a positive cap `h` at a cell `
 through the point `4`, and every cell `y` of grade at most `1` off it, some cell of graded index
 `(univ, 1)` at least `h` reads `y` strictly below `x` — a server, so the hypothesis of
 `TowerProfile.not_exists_fill_of_noServer` fails. -/
-theorem exists_server_above_cap_of_rightType {e : Fin (scheme I).card → Label.{u}}
+theorem exists_server_above_cap_of_rightType (hraise : tb.RowsRaiseAt 3)
+    {e : Fin (scheme I).card → Label.{u}}
     (he : (scheme I).rows.IsLawfulBelow (univ, 4) fun d ↦ e d) {x y : Fin I.amalgam.card}
     (hPx : Fin.last 4 ∈ I.amalgam.toCellScheme.scope x)
     (hgx : I.amalgam.toCellScheme.grade x = 1)
@@ -540,7 +564,7 @@ theorem exists_server_above_cap_of_rightType {e : Fin (scheme I).card → Label.
     (hxh : h ≤ e (embed3 I x)) :
     ∃ u, (scheme I).toCellScheme.gradedIndex u = ((univ : Finset (Fin 5)), 1) ∧ h ≤ e u ∧
       ¬ (scheme I).rowAt u (embed3 I x) ≤ (scheme I).rowAt u (embed3 I y) := by
-  obtain ⟨u, hu, hxu, hlt, -⟩ := exists_server_of_rightType hR
+  obtain ⟨u, hu, hxu, hlt, -⟩ := exists_server_of_rightType hR hraise
     (he.mono (X := ((univ : Finset (Fin 5)), 1)) ⟨subset_rfl, by omega⟩) hPx hgx
     (fun h0 ↦ (hhb.trans_le hxh).ne' h0)
   exact ⟨u, hu, hxh.trans hxu, not_le.mpr (hlt y hPy hgy)⟩
