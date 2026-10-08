@@ -12,47 +12,51 @@ import VaughtConjecture.Continuation.H2OneRaise
 WORK FILE (branch `research/work-owner-one`).  No `sorry`.
 
 The engine of top grade `1` runs on the **grade-`1` faces** (`H2.LawfulOne`: lawful below
-`(univ, 1)` and `⊥` at the cells of grade `2`).  Between them, owner lowering below the designated
-tops holds at grade `1` (`H2.ownerLoweringBelow_oneFace`) at a legal source-gap context of grade
-`1` on two points **every cell of whose graded index `(univ, 1)` the owner reads above the
-threshold** (`H2.ReadAboveAtOwnerIndex`, a named condition; it holds when the owner is the only
-cell of `(univ, 1)`, `H2.OwnerOnlyAtIndex`), for a legal donor with the same root face whose root
-cells are designated low or are root tops avoiding the lost point.
+`(univ, 1)` and `⊥` at the cells of grade `2`).  Between them, **owner lowering below the
+designated tops holds at grade `1`** (`H2.ownerLoweringBelow_oneFace`) at every legal source-gap
+context of grade `1` on two points, for every legal donor with the same root face whose root cells
+are designated low or are root tops avoiding the lost point.  No further condition is needed.
 
-**The construction.**  Take the capped lift from the root of the donor face at the cap `h`
-(bountifulness), and cap it at `c`, the least designated top concerned, at the cells read by the
-owner at most the **threshold** `visibilityReplace 1 1 (rowAt o r)` (`H2.capBelow`).  The lost top
-is among them, so the frontier is at most `c`.  The root is kept: the root tops avoiding the lost
-point are read strictly above the threshold (the strict source gaps), and the low root cells are
-below `c`.  The capped labelling is a grade-`1` face (`H2.lawfulOne_capBelow`):
-* at a capped cell, locality is that of the lift capped at `c`;
+**The capping below the threshold** (`H2.capBelow`, `H2.lawfulOne_capBelow_of_serve`).  Capping a
+grade-`1` face at a label `c > ⊥` self-visible at `1` at the cells read by the owner at most the
+**threshold** `visibilityReplace 1 1 (rowAt o r)` gives a grade-`1` face as soon as every source of
+availability into `(univ, 1)` has a server read above the threshold:
+* at a capped cell, locality is that of the face capped at `c`;
 * at a cell `s` not capped, the row of the owner is lawful (consistency), so its values below `s`,
   capped at its value at `s`, are a transformation `τ` of the row of `s`; the capped cells below
   `s` are those whose argument has `τ`-image at most the threshold, a set closed downward and
   invariant under replacement at `1`, and capping the shifter of `s` there gives a witness
   (`H2.isWitness_capBelow`);
-* availability into `(univ, 1)` is served by the serving cell of the lift, which is read above the
-  threshold and so not capped (the named condition is used only here); availability within a
-  graded index is served by the cell itself.
+* availability within a graded index other than `(univ, 1)` is served by the cell itself.
+The lost top is capped, the root tops avoiding the lost point are not (the strict source gaps), and
+the owner is not (the strict gap at the owner).
+
+**The construction.**  Let `W₁` be the capped lift at the cap `h` from the root of the donor face
+with the context face as ambient (bountifulness), and `c` the least designated top concerned.  If
+the frontier of `W₁` is at most `c`, `W₁` serves.  Otherwise the owner is above `c` in `W₁`; let
+`c'` be the next label above `c` self-visible at `1` (`H2.exists_next_isSelfVisible_one`: nothing
+lies strictly between).  Capping `W₁` everywhere at `c'` makes the owner a largest label (at `c'`),
+so it serves every source; capping the result below the threshold at `c`
+(`H2.lawfulOne_capBelow_of_max`) gives a grade-`1` face `L₁` with frontier at most `c`, agreeing
+with the context face capped at `h` and with the root of the donor face capped at `c'` (the capped
+root cells are low, below `c`).  The capped lift at the cap `c'` from the root of the donor face
+with ambient `L₁` then has the root of the donor face, agrees with the context face capped at `h`,
+and has the frontier of `L₁` (`FieldAdmission.frontierAt_cap`, the frontier of `L₁` being below
+`c'`).  The root is thus restored exactly by bountifulness at the cap `c'`, above every value the
+lowering touched.
 
 **Composition.**  With donor raising with the gap (`H2.donorRaisingGap_oneFace`) and the frontier
 bound (`H2.frontier_le_lawfulOne`), the clause is an admission of states between the grade-`1`
 faces (`H2.stateAdmission_oneFace_of_owner`, through `H2.selfLow_isStateAdmissionGap_of_below`),
 and the conclusion of the case of top grade `1` follows
 (`H2.exists_completion_recProp_one_of_owner`, through
-`H2.exists_completion_recProp_one_of_admission`).  Both contexts of
-`VaughtConjecture.Continuation.H2OwnerOne` have their owner alone at its graded index, so the
-clause is an admission of states between their grade-`1` faces
-(`OwnerGradeOne.isStateAdmission_oneFace`, `OwnerGradeOneTop.isStateAdmission_oneFace`): their
-refutations concern the full labellings.
+`H2.exists_completion_recProp_one_of_admission`), with no hypothesis beyond the designation.  At
+both contexts of `VaughtConjecture.Continuation.H2OwnerOne` the clause is an admission of states
+between the grade-`1` faces (`OwnerGradeOne.isStateAdmission_oneFace`,
+`OwnerGradeOneTop.isStateAdmission_oneFace`): their refutations concern the full labellings.
 
-**Open.**  Owner lowering below the designated tops between the grade-`1` faces without the named
-condition: a cell of `(univ, 1)` read by the owner at most the threshold may be the only server,
-in the capped lift, of a root top or of a cell of `({1}, 1)` read above the threshold, above the
-cap.  Lowering the owner instead (capping the lift at the cells of value at most the frontier,
-a sublevel set of the lift itself, which keeps every server) fails only at a root top whose value
-equals the frontier; neither construction covers the case where both happen, and no counterexample
-is known: forced ties propagate into the lawful row of the owner, against the strict gaps.
+The conditions `H2.ReadAboveAtOwnerIndex` and `H2.OwnerOnlyAtIndex` of an earlier form of this
+file are kept with `H2.lawfulOne_capBelow`; they are no longer used.
 -/
 
 universe u
@@ -150,14 +154,11 @@ variable {α : Ordinal.{u}} {t' : StageType.{u} α 2} {n : ℕ} {g₀ : Fin n �
 noncomputable def threshold (t' : StageType.{u} α 2) (o r : Fin t'.card) : Label.{u} :=
   visibilityReplace 1 1 (t'.rowAt o r)
 
-/-- **Every cell of the graded index of the owner is read by the owner above the threshold**
-(a named condition).  It holds when the owner is the only cell of its graded index
-(`H2.readAboveAtOwnerIndex_of_eq`, by the strict source gap at the owner).  It is used only for
-availability into `(univ, 1)` in `H2.lawfulOne_capBelow`: the cells of `(univ, 1)` serving a
-source are then never capped.  **Open case** (owner lowering below the designated tops between the
-grade-`1` faces without it): a cell `u ≠ o` of `(univ, 1)` read by the owner at most the threshold
-is the only server, in the capped lift, of a root top or of a cell of `({1}, 1)` read above the
-threshold whose value exceeds the cap, while the owner's value is below that source. -/
+/-- **Every cell of the graded index of the owner is read by the owner above the threshold**:
+a sufficient condition for capping below the threshold to keep a grade-`1` face
+(`H2.lawfulOne_capBelow`).  It holds when the owner is the only cell of its graded index
+(`H2.readAboveAtOwnerIndex_of_eq`).  Owner lowering below the designated tops no longer needs it
+(`H2.ownerLoweringBelow_oneFace`). -/
 def ReadAboveAtOwnerIndex (t' : StageType.{u} α 2) (o r : Fin t'.card) : Prop :=
   ∀ u, t'.toCellScheme.gradedIndex u = t'.toCellScheme.gradedIndex o →
     threshold t' o r < t'.rowAt o u
@@ -209,9 +210,12 @@ the capped set the targets are capped exactly at the arguments read below the th
 row of the owner (`H2.isWitness_capBelow`), a set closed downward in the row of the cell since the
 row of the owner is lawful (consistency); availability into the owner is served by the owner,
 which is read above the threshold. -/
-theorem lawfulOne_capBelow (hleg : t'.IsLegal) (hs : t'.IsSourceGapContextAt 1 g₀ l o r)
-    (hU : ReadAboveAtOwnerIndex t' o r)
-    {W : Fin t'.card → Label.{u}} (hW : LawfulOne t' W) {c : Label.{u}} (hc : IsSelfVisible 1 c)
+theorem lawfulOne_capBelow_of_serve (hleg : t'.IsLegal) (hs : t'.IsSourceGapContextAt 1 g₀ l o r)
+    {W : Fin t'.card → Label.{u}} (hW : LawfulOne t' W)
+    (hserve : ∀ s u, t'.toCellScheme.gradedIndex u = t'.toCellScheme.gradedIndex o → W s ≤ W u →
+      ∃ v, t'.toCellScheme.gradedIndex v = t'.toCellScheme.gradedIndex o ∧ W s ≤ W v ∧
+        threshold t' o r < t'.rowAt o v)
+    {c : Label.{u}} (hc : IsSelfVisible 1 c)
     (hc0 : ⊥ < c) : LawfulOne t' (capBelow t' o r W c) := by
   classical
   set X := t'.toCellScheme.gradedIndex o with hX
@@ -303,8 +307,9 @@ theorem lawfulOne_capBelow (hleg : t'.IsLegal) (hs : t'.IsSourceGapContextAt 1 g
       · have hto : t'.toCellScheme.gradedIndex t = t'.toCellScheme.gradedIndex o :=
           (Prod.ext hsu ht1).trans hgi.symm
         obtain ⟨u, hu, hle⟩ := hWa s t ht hst hg
-        refine ⟨u, hu, (capBelow_le W c s).trans (hle.trans ?_)⟩
-        rw [capBelow_of_not_le (not_le.mpr (hU u (hu.trans hto)))]
+        obtain ⟨v, hv, hsv, hθv⟩ := hserve s u (hu.trans hto) hle
+        refine ⟨v, hv.trans hto.symm, (capBelow_le W c s).trans (hsv.trans ?_)⟩
+        rw [capBelow_of_not_le (not_le.mpr hθv)]
       · refine ⟨s, ?_, le_rfl⟩
         have hne : (t'.toCellScheme.scope s).Nonempty := by
           have h1 := t'.isWellFormed.isWellFormed.grade_pos s
@@ -315,25 +320,68 @@ theorem lawfulOne_capBelow (hleg : t'.IsLegal) (hs : t'.IsSourceGapContextAt 1 g
   rw [hX, hgi] at key
   exact key
 
+/-- **Capping below the threshold keeps a grade-`1` face** when every cell of the owner's graded
+index is read above the threshold (`H2.lawfulOne_capBelow_of_serve`). -/
+theorem lawfulOne_capBelow (hleg : t'.IsLegal) (hs : t'.IsSourceGapContextAt 1 g₀ l o r)
+    (hU : ReadAboveAtOwnerIndex t' o r)
+    {W : Fin t'.card → Label.{u}} (hW : LawfulOne t' W) {c : Label.{u}} (hc : IsSelfVisible 1 c)
+    (hc0 : ⊥ < c) : LawfulOne t' (capBelow t' o r W c) :=
+  lawfulOne_capBelow_of_serve hleg hs hW (fun _ u hu hle ↦ ⟨u, hu, hle, hU u hu⟩) hc hc0
+
+/-- **Capping below the threshold keeps a grade-`1` face** when the owner carries the largest
+label (`H2.lawfulOne_capBelow_of_serve`: the owner serves every source and is read above the
+threshold by the strict gap at the owner). -/
+theorem lawfulOne_capBelow_of_max (hleg : t'.IsLegal) (hs : t'.IsSourceGapContextAt 1 g₀ l o r)
+    {W : Fin t'.card → Label.{u}} (hW : LawfulOne t' W) (hmax : ∀ d, W d ≤ W o)
+    {c : Label.{u}} (hc : IsSelfVisible 1 c) (hc0 : ⊥ < c) :
+    LawfulOne t' (capBelow t' o r W c) :=
+  lawfulOne_capBelow_of_serve hleg hs hW (fun s _ _ _ ↦ ⟨o, rfl, hmax s, hs.gap_owner⟩) hc hc0
+
+/-- A grade-`1` face capped at a label self-visible at `1` is a grade-`1` face. -/
+theorem lawfulOne_min {E : StageType.{u} α 2} {W : Fin E.card → Label.{u}} (hW : LawfulOne E W)
+    {c : Label.{u}} (hc : IsSelfVisible 1 c) : LawfulOne E fun d ↦ min (W d) c :=
+  ⟨hW.1.min_const_of_isSelfVisible hc, fun d hd ↦ by simp only [hW.2 d hd, bot_le, min_eq_left]⟩
+
 end Cap
+
+/-- **The next label self-visible at `1`**: above an ordinal label `c > ⊥` there is a label `c'`
+self-visible at `1` with nothing strictly between (every label above `c` is at least `c'`). -/
+theorem exists_next_isSelfVisible_one {c : Label.{u}} (hc0 : ⊥ < c) (hct : c ≠ ⊤) :
+    ∃ c' : Label.{u}, IsSelfVisible 1 c' ∧ c < c' ∧ ∀ x, c < x → c' ≤ x := by
+  induction c using recBotCoeTop with
+  | bot => exact absurd hc0 (lt_irrefl _)
+  | top => exact absurd rfl hct
+  | coe μ =>
+    obtain ⟨ν₀, hν₀, j, rfl⟩ := exists_eq_add_natCast_isSuccPrelimit μ
+    have hsucc : ν₀ + ((j + 1 : ℕ) : Ordinal.{u}) = Order.succ (ν₀ + (j : Ordinal.{u})) := by
+      rw [Order.succ_eq_add_one, add_assoc, Nat.cast_succ]
+    refine ⟨((ν₀ + ((j + 1 : ℕ) : Ordinal.{u}) : Ordinal.{u}) : Label.{u}),
+      isSelfVisible_coe_add hν₀ (by omega), ?_, fun x hx ↦ ?_⟩
+    · rw [hsucc]
+      exact WithBot.coe_lt_coe.mpr (WithTop.coe_lt_coe.mpr (Order.lt_succ _))
+    · induction x using recBotCoeTop with
+      | bot => exact absurd hx (not_lt_bot)
+      | top => exact le_top
+      | coe ν =>
+        rw [hsucc]
+        exact WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr
+          (Order.succ_le_of_lt (WithTop.coe_lt_coe.mp (WithBot.coe_lt_coe.mp hx))))
 
 /-! ### Owner lowering below the designated tops between the grade-`1` faces -/
 
 variable {α : Ordinal.{u}}
 
-/-- **Owner lowering below the designated tops between the grade-`1` faces at grade `1`**, at a
-legal source-gap context of grade `1` on two points whose cells of the owner's graded index are read
-by the owner above the threshold (`H2.ReadAboveAtOwnerIndex`), for a legal donor with the same root
-face, every root cell of the donor designated low or a root top avoiding the lost point.  The capped
-lift from the root of the donor face (bountifulness) is capped at the least designated top concerned
-at the cells read by the owner at most the replaced reading of the lost top
-(`H2.lawfulOne_capBelow`): the lost top is among them, so the frontier is at most the cap; the root
-top cells are read strictly above (the strict source gaps) and the low root cells are below the cap,
-so the root is kept. -/
+/-- **Owner lowering below the designated tops between the grade-`1` faces at grade `1`**, at
+every legal source-gap context of grade `1` on two points, for every legal donor with the same
+root face whose root cells are designated low or are root tops avoiding the lost point.  The
+capped lift `W₁` at `h` serves if its frontier is at most the least designated top `c` concerned;
+otherwise `W₁` capped at the next label `c'` self-visible at `1` above `c` has its maximum at the
+owner, its capping below the threshold at `c` is a grade-`1` face `L₁` with frontier at most `c`
+(`H2.lawfulOne_capBelow_of_max`), and the capped lift at `c'` from the root of the donor face with
+ambient `L₁` keeps the frontier of `L₁`. -/
 theorem ownerLoweringBelow_oneFace {t' : StageType.{u} α 2} (hleg : t'.IsLegal) {n : ℕ}
     {g₀ : Fin n ↪ Fin 1} {l : Fin 2} {o r : Fin t'.card}
     (hs : t'.IsSourceGapContextAt 1 (g₀.trans Fin.castSuccEmb) l o r)
-    (hU : ReadAboveAtOwnerIndex t' o r)
     {p : StageType.{u} α 1} (hp : restrictFace Fin.castSuccEmb t' = some p)
     {tb : StageType.{u} α 2} (htbleg : tb.IsLegal)
     (htbp : restrictFace Fin.castSuccEmb tb = some p) {Lo Tops : Finset (Fin tb.card)}
@@ -376,36 +424,72 @@ theorem ownerLoweringBelow_oneFace {t' : StageType.{u} α 2} (hleg : t'.IsLegal)
   have hLoc : Lo.sup g < c := by
     rw [hct]
     exact (le_visibilityReplace (k := 1) (i := 1) (by omega) _).trans_lt hlt₀
-  refine ⟨capBelow t' o r W1 c, lawfulOne_capBelow hleg hs hU hW1 hc hc0, fun x ↦ ?_,
-    fun d ↦ ?_, fun t ht hht hlt ↦ ?_⟩
-  · -- the root is kept
+  -- if the lift already has frontier at most the cap, it serves
+  by_cases hF : frontierAt o r 1 W1 ≤ c
+  · exact ⟨W1, hW1, hW1r, hW1L, fun t ht hht hlt ↦ hF.trans (hcS t ht hht hlt)⟩
+  have hFc : c < frontierAt o r 1 W1 := not_le.mp hF
+  have hct' : c ≠ ⊤ := fun e ↦ by rw [e] at hFc; exact not_top_lt hFc
+  -- the next label `c'` self-visible at `1`; the lift capped at `c'` has its maximum at the owner
+  obtain ⟨c', hc', hcc', hnext⟩ := exists_next_isSelfVisible_one hc0 hct'
+  have hW1o : c' ≤ W1 o := hnext _ (hFc.trans_le (min_le_left _ _))
+  set W2 : Fin t'.card → Label.{u} := fun d ↦ min (W1 d) c' with hW2def
+  have hW2 : LawfulOne t' W2 := lawfulOne_min hW1 hc'
+  have hW2o : W2 o = c' := min_eq_right hW1o
+  have hmax (d : Fin t'.card) : W2 d ≤ W2 o := hW2o ▸ min_le_right _ _
+  -- the ambient: capped below the threshold at `c`, the owner serving every source
+  set L1 := capBelow t' o r W2 c with hL1def
+  have hL1 : LawfulOne t' L1 := lawfulOne_capBelow_of_max hleg hs hW2 hmax hc hc0
+  have hroot1 (x : Fin p.card) : min (g (StageType.faceCell htbp x)) c' =
+      min (L1 (StageType.faceCell hp x)) c' := by
     by_cases hZ : t'.rowAt o (StageType.faceCell hp x) ≤ threshold t' o r
-    · rw [capBelow_of_le hZ, hW1r x]
-      refine min_eq_left ?_
-      rcases hroot x with hx | hx
-      · exact (Finset.le_sup hx).trans hLoc.le
-      · exact absurd hZ (not_le.mpr (hs.gap_retained _
-          ((StageType.label_faceCell hp x).trans (hA x hx).1) (hA x hx).2))
-    · rw [capBelow_of_not_le hZ, hW1r x]
-  · -- agreement capped at `h`
-    rw [← hW1L d]
+    · rw [hL1def, capBelow_of_le hZ]
+      change _ = min (min (min (W1 _) c') c) c'
+      rw [hW1r x]
+      have hgx : g (StageType.faceCell htbp x) ≤ c := by
+        rcases hroot x with hx | hx
+        · exact (Finset.le_sup hx).trans hLoc.le
+        · exact absurd hZ (not_le.mpr (hs.gap_retained _
+            ((StageType.label_faceCell hp x).trans (hA x hx).1) (hA x hx).2))
+      rw [min_eq_left (hgx.trans hcc'.le), min_eq_left hgx, min_eq_left (hgx.trans hcc'.le)]
+    · rw [hL1def, capBelow_of_not_le hZ]
+      change _ = min (min (W1 _) c') c'
+      rw [hW1r x, min_assoc, min_self]
+  -- the capped lift at `c'` from the root of the donor face, with ambient `L1`
+  obtain ⟨W, hW, hWr, hWL1⟩ :=
+    hasCappedLifts_lawfulOne_one htbleg htbp hleg hp hc' hL1 hg hroot1
+  have hhc' : h ≤ c' := hhc.trans hcc'.le
+  have hL1h (d : Fin t'.card) : min (L1 d) h = min (W1 d) h := by
     by_cases hZ : t'.rowAt o d ≤ threshold t' o r
-    · rw [capBelow_of_le hZ, min_assoc, min_eq_right hhc]
-    · rw [capBelow_of_not_le hZ]
-  · -- the frontier is at most the cap
+    · rw [hL1def, capBelow_of_le hZ]
+      change min (min (min (W1 d) c') c) h = _
+      rw [min_assoc, min_eq_right hhc, min_assoc, min_eq_right hhc']
+    · rw [hL1def, capBelow_of_not_le hZ]
+      change min (min (W1 d) c') h = _
+      rw [min_assoc, min_eq_right hhc']
+  have hFL1 : frontierAt o r 1 L1 ≤ c := by
     have hZr : t'.rowAt o r ≤ threshold t' o r := le_visibilityReplace (by omega) _
     refine (min_le_right _ _).trans ?_
-    rw [capBelow_of_le hZr, visibilityReplace_min le_rfl, hc.visibilityReplace_eq]
-    exact (min_le_right _ _).trans (hcS t ht hht hlt)
+    rw [hL1def, capBelow_of_le hZr, visibilityReplace_min le_rfl, hc.visibilityReplace_eq]
+    exact min_le_right _ _
+  have hFW : frontierAt o r 1 W = frontierAt o r 1 L1 :=
+    Label.eq_of_min_eq_of_lt (frontierAt_cap (o := o) (r := r) hc' hWL1).symm
+      (hFL1.trans_lt hcc')
+  refine ⟨W, hW, hWr, fun d ↦ ?_, fun t ht hht hlt ↦ ?_⟩
+  · calc min (W d) h = min (min (W d) c') h := by rw [min_assoc, min_eq_right hhc']
+      _ = min (min (L1 d) c') h := by rw [hWL1 d]
+      _ = min (L1 d) h := by rw [min_assoc, min_eq_right hhc']
+      _ = min (W1 d) h := hL1h d
+      _ = min (L d) h := hW1L d
+  · rw [hFW]
+    exact hFL1.trans (hcS t ht hht hlt)
 
-/-- **The state admission between the grade-`1` faces at grade `1`**, at a legal context whose
-cells of the owner's graded index are read above the threshold: donor raising with the gap
-(`H2.donorRaisingGap_oneFace`) and owner lowering below the designated tops
-(`H2.ownerLoweringBelow_oneFace`) in `H2.selfLow_isStateAdmissionGap_of_below`. -/
+/-- **The state admission between the grade-`1` faces at grade `1`**, at every legal context
+of grade `1` on two points: donor raising with the gap (`H2.donorRaisingGap_oneFace`) and owner
+lowering below the designated tops (`H2.ownerLoweringBelow_oneFace`) in
+`H2.selfLow_isStateAdmissionGap_of_below`. -/
 theorem stateAdmission_oneFace_of_owner {t' : StageType.{u} α 2} (hleg : t'.IsLegal) {n : ℕ}
     {g : Fin n ↪ Fin 1} {l : Fin 2} {o r : Fin t'.card}
     (hs : t'.IsSourceGapContextAt 1 (g.trans Fin.castSuccEmb) l o r)
-    (hU : ReadAboveAtOwnerIndex t' o r)
     {p : StageType.{u} α 1} (hp : restrictFace Fin.castSuccEmb t' = some p)
     {tb : StageType.{u} α 2} (htbleg : tb.IsLegal)
     (htbp : restrictFace Fin.castSuccEmb tb = some p) {Lo Tops : Finset (Fin tb.card)}
@@ -425,16 +509,15 @@ theorem stateAdmission_oneFace_of_owner {t' : StageType.{u} α 2} (hleg : t'.IsL
     (fun _ hf ↦ (frontier_le_lawfulOne hleg hs hp hf).1)
     (fun _ hf a ha ↦ (frontier_le_lawfulOne hleg hs hp hf).2 a (hA a ha).1 (hA a ha).2)
     (donorRaisingGap_oneFace hleg hp htbleg htbp hLo hTops hroot)
-    (ownerLoweringBelow_oneFace hleg hs hU hp htbleg htbp hA hroot1)
+    (ownerLoweringBelow_oneFace hleg hs hp htbleg htbp hA hroot1)
 
-/-- **h2 at two points, top grade `1`, at a context whose cells of the owner's graded index are read
-above the threshold**: the conclusion of `H2.exists_completion_recProp_one` from the state admission
-between the grade-`1` faces (`H2.stateAdmission_oneFace_of_owner`,
+/-- **h2 at two points, top grade `1`**: the conclusion of `H2.exists_completion_recProp_one`
+for a legal donor whose root cells are designated low or are root tops avoiding the lost point,
+from the state admission between the grade-`1` faces (`H2.stateAdmission_oneFace_of_owner`,
 `H2.exists_completion_recProp_one_of_admission`). -/
 theorem exists_completion_recProp_one_of_owner {t' : StageType.{u} α 2} (hleg : t'.IsLegal)
     {n : ℕ} {g : Fin n ↪ Fin 1} {l : Fin 2} {o r : Fin t'.card}
     (hs : t'.IsSourceGapContextAt 1 (g.trans Fin.castSuccEmb) l o r)
-    (hU : ReadAboveAtOwnerIndex t' o r)
     {p : StageType.{u} α 1} (hp : restrictFace Fin.castSuccEmb t' = some p)
     {tb : StageType.{u} α 2} (htbleg : tb.IsLegal)
     (htbp : restrictFace Fin.castSuccEmb tb = some p) {Lo Tops : Finset (Fin tb.card)}
@@ -448,7 +531,7 @@ theorem exists_completion_recProp_one_of_owner {t' : StageType.{u} α 2} (hleg :
     ∃ F : CompletionBelowFullGrade (Seed.ofCoatoms hleg htbleg hp htbp),
       RecProp F o r 1 Lo Tops :=
   exists_completion_recProp_one_of_admission hleg hs hp htbleg htbp hTops'
-    (stateAdmission_oneFace_of_owner hleg hs hU hp htbleg htbp hLo hTops hA hroot)
+    (stateAdmission_oneFace_of_owner hleg hs hp htbleg htbp hLo hTops hA hroot)
 
 end VaughtConjecture.H2
 
@@ -478,9 +561,7 @@ theorem isStateAdmission_oneFace (α : Ordinal.{u}) {p : StageType.{u} α 1}
       (SelfLowG (cellC α 2) (cellC α 1) 1
         (Lo.filter fun x ↦ (ctx α).toCellScheme.grade x ≤ 1) Tops) :=
   stateAdmission_oneFace_of_owner (isLegal_ctx α)
-    (isSourceGapContextAt_ctx α (Function.Embedding.refl (Fin 1)))
-    (readAboveAtOwnerIndex_of_eq (isSourceGapContextAt_ctx α (Function.Embedding.refl (Fin 1)))
-      (eq_owner α)) hp
+    (isSourceGapContextAt_ctx α (Function.Embedding.refl (Fin 1))) hp
     (isLegal_ctx α) hp hLo hTops (A := {x | p.label x = ⊤})
     (fun a ha ↦ ⟨ha, by
       rw [faceCell_eq_zero α hp a]
@@ -517,9 +598,7 @@ theorem isStateAdmission_oneFace (α : Ordinal.{u}) {p : StageType.{u} α 1}
       (SelfLowG (cellC α 2) (cellC α 1) 1
         (Lo.filter fun x ↦ (ctx α).toCellScheme.grade x ≤ 1) Tops) :=
   stateAdmission_oneFace_of_owner (isLegal_ctx α)
-    (isSourceGapContextAt_ctx α (Function.Embedding.refl (Fin 1)))
-    (readAboveAtOwnerIndex_of_eq (isSourceGapContextAt_ctx α (Function.Embedding.refl (Fin 1)))
-      (eq_owner α)) hp
+    (isSourceGapContextAt_ctx α (Function.Embedding.refl (Fin 1))) hp
     (isLegal_ctx α) hp hLo hTops (A := ∅) (fun _ h ↦ h.elim)
     (fun x ↦ .inl (hLo _ (by rw [faceCell_eq_zero α hp x]; exact fun h ↦ by simp [ctx, lab] at h)))
 
