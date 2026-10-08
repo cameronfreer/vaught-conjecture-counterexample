@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Continuation.ReadingLayerBand
+import VaughtConjecture.Continuation.ReadingLayerRootOffsets
 
 /-!
 # The band fill, and legality of the restricted reading layer at `seedThree`
@@ -41,28 +42,32 @@ grade, not as a union of two lifts along `e`.
   coatom, a new top `x` of grade `1` through the point `4`, and cells `t₁`, `t₂` of grades `1`, `2`
   of the left coatom.  Hypotheses: in every labelling lawful below the left coatom and not `⊥` at
   `r`, the cells of grade `1` not `⊥` take the value at `t₁`, the only cell of grade `2` not `⊥` is
-  `t₂`, the cells of grade `3` are `⊥`; and **the row of the marker reads `t₂` at most as `t₁`** (it
-  keeps their tie).  Then the fill holds for `X = {x}`.  In the band the tie gives `h ≤ f t₁` and
-  `f t₂ ≤ f t₁`; the server is `TowerProfile.exists_server_of_rightType` (one cell for all the
-  cells of the left coatom, reading `x` at a code of the grade `1`); the fill is the fill from the
-  server with `A = f t₁` and `V = max h (f t₂)`.
+  `t₂`, the cells of grade `3` are `⊥`; the marker is a cell `c` of the left coatom type labelled
+  `⊤`, of full scope and grade at least the arity of a root `ι`, with **the root offsets below its
+  grade** (`StageType.RootOffsetsBelow`, the acquisition condition), and `t₁`, `t₂` carry one
+  proper root label.  Then the fill holds for `X = {x}`: the marker keeps the tie of `t₁` and `t₂`
+  (`StageType.keepsProperRootTies_of_rootOffsetsBelow`), its row reading `t₂` at most as `t₁`.
+  In the band the tie gives `h ≤ f t₁` and `f t₂ ≤ f t₁`; the server is
+  `TowerProfile.exists_server_of_rightType` (one cell for all the cells of the left coatom,
+  reading `x` at a code of the grade `1`); the fill is the fill from the server with `A = f t₁`
+  and `V = max h (f t₂)`.
 * **At `seedThree`** (`TopReadingApexExample.readingFillPos_left_seedThree`,
   `TopReadingApexExample.isLegalBelowFullGrade_readingTop_seedThree`, compiled): the hypotheses
   hold with `t₁ = leftS 9` and `t₂ = leftS 15` (the cells at `({0, 1, 2, 3}, 1)` and
   `({0, 1, 2, 3}, 2)`): the apex reads the cells labelled `⊥` as `⊥` (`eq_bot_leftS`), the cells of
   grade `1` labelled `3` share the value at `leftS 9` (locality and availability there,
-  `eq_nine_of_grade_one`), and the apex reads `leftS 9` and `leftS 15`, both labelled `3`, at the
-  code of `3` (`rowAt_apex_nine_eq_fifteen`).  With the other three fills
+  `eq_nine_of_grade_one`), `leftS 9` and `leftS 15` are both labelled `3`, and the root offsets of
+  `threeType` lie below the grade `4` of its apex (`rootOffsetsBelow_threeType`, through the
+  identity root).  With the other three fills
   (`readingFills_seedThree`), **the restricted reading layer at `seedThree` is legal below the full
   grade** (`TowerProfile.isLegalBelowFullGrade_readingTop_iff`).
 
-**The schema.**  The compiled theorem takes the tie of the marker as a hypothesis on its row.  At
-`seedThree` the marker is an apex, whose row codes the root labels, so it reads equal labels
-alike.  For a cap that is not an apex, the condition under which its row keeps the ties of the
-proper root labels is the bound on their finite parts: every proper root label has finite part
-below the grade `N` of the cap (at `seedThree` the proper label is `3` and `N = 4`).  That
-implication is argued, not compiled here.  The structure hypotheses on the left coatom and the
-right coatom type `rightType` belong to this family of seeds.
+**The schema.**  The hypothesis on the marker in the compiled theorem is the acquisition condition:
+every proper root label has finite part below the grade of the cap (at `seedThree` the proper
+label is `3` and the grade is `4`).  The tie of the marker follows from it
+(`StageType.keepsProperRootTies_of_rootOffsetsBelow`, module
+`VaughtConjecture.Continuation.ReadingLayerRootOffsets`).  The structure hypotheses on the left
+coatom and the right coatom type `rightType` belong to this family of seeds.
 
 ## Placement
 
@@ -714,33 +719,43 @@ theorem eq_of_gradedIndex_leftS {a b : Fin CaseSplitCounterexample.S.{u}.card}
   rw [map_inj] at h1
   exact TwoFaceLiftCounterexample.gradedIndex_injective (Prod.ext h1 h2)
 
-/-- **The apex reads the cells at `{0, 1, 2, 3}` of grades `1` and `2` alike**: both are labelled
-`3`. -/
-theorem rowAt_apex_nine_eq_fifteen :
-    (scheme (seedThree hα)).rowAt (leftCell (seedThree hα) (Fin.last _))
-        (leftS hα (⟨15, by decide⟩ : Fin CaseSplitCounterexample.S.{u}.card)) =
-      (scheme (seedThree hα)).rowAt (leftCell (seedThree hα) (Fin.last _))
-        (leftS hα (⟨9, by decide⟩ : Fin CaseSplitCounterexample.S.{u}.card)) := by
-  have e1 := StageType.rowAt_addApex_last (t₀ := threeBase hα) isLegalBelowFullGrade_S
-    (by omega) (Fin.castSucc (⟨15, by decide⟩ : Fin CaseSplitCounterexample.S.{u}.card))
-  have e2 := StageType.rowAt_addApex_last (t₀ := threeBase hα) isLegalBelowFullGrade_S
-    (by omega) (Fin.castSucc (⟨9, by decide⟩ : Fin CaseSplitCounterexample.S.{u}.card))
-  have h15 : (threeType hα).label
-      (Fin.castSucc (⟨15, by decide⟩ : Fin CaseSplitCounterexample.S.{u}.card)) = lab3 := by
-    change CaseSplitCounterexample.labelling lab3 lab3 ⊥ (15 : Fin 19) = lab3
-    simp [CaseSplitCounterexample.labelling, CaseSplitCounterexample.live,
-      TwoFaceLiftCounterexample.cellGrade]
-  have h9 : (threeType hα).label
-      (Fin.castSucc (⟨9, by decide⟩ : Fin CaseSplitCounterexample.S.{u}.card)) = lab3 := by
-    change CaseSplitCounterexample.labelling lab3 lab3 ⊥ (9 : Fin 19) = lab3
-    simp [CaseSplitCounterexample.labelling, CaseSplitCounterexample.live,
-      TwoFaceLiftCounterexample.cellGrade]
-  rw [rowAt_apex_leftS, rowAt_apex_leftS]
-  change ((threeBase hα).addApex isLegalBelowFullGrade_S _).toScheme.rowAt _ _ =
-    ((threeBase hα).addApex isLegalBelowFullGrade_S _).toScheme.rowAt _ _
-  rw [e1, e2]
-  change blockEncode _ 4 ((threeType hα).label _) = blockEncode _ 4 ((threeType hα).label _)
-  rw [h15, h9]
+/-- Every cell is visible through the identity. -/
+theorem mem_visibleCells_refl {k : ℕ} (t' : StageType.{u} α k) (z : Fin t'.card) :
+    z ∈ t'.visibleCells (Function.Embedding.refl (Fin k)) :=
+  Scheme.mem_visibleCells.mpr fun x _ ↦ ⟨x, rfl⟩
+
+/-- The labelling `labelling 3 3 ⊥` takes the values `3` and `⊥`. -/
+theorem labelling_three_cases (a : Fin 19) :
+    CaseSplitCounterexample.labelling lab3 lab3 ⊥ a = (lab3 : Label.{u}) ∨
+      CaseSplitCounterexample.labelling lab3 lab3 ⊥ a = (⊥ : Label.{u}) := by
+  unfold CaseSplitCounterexample.labelling
+  split_ifs <;> simp
+
+/-- **The root offsets of `threeType` lie below `4`**, the grade of its apex: its only ordinal
+label is `3`. -/
+theorem rootOffsetsBelow_threeType :
+    (seedThree hα).left.RootOffsetsBelow (Function.Embedding.refl (Fin 4))
+      ((seedThree hα).left.toCellScheme.grade (Fin.last _)) := by
+  have hg4 : (seedThree hα).left.toCellScheme.grade (Fin.last _) = 4 :=
+    congrArg Prod.snd (StageType.addApex_gradedIndex_last (t := threeBase hα)
+      isLegalBelowFullGrade_S (by omega))
+  intro y _ μ f hμ hy
+  refine lt_of_lt_of_eq ?_ hg4.symm
+  rcases cases_left hα y with rfl | ⟨a, rfl⟩
+  · have h : (seedThree hα).left.label (Fin.last _) = ⊤ :=
+      StageType.addApex_label_last (t := threeBase hα) isLegalBelowFullGrade_S (by omega)
+    exact absurd (hy.symm.trans h) (fun h' ↦ WithTop.coe_ne_top (WithBot.coe_injective h'))
+  · have h : (seedThree hα).left.label (Fin.castSucc a : Fin (seedThree hα).left.card) =
+        CaseSplitCounterexample.labelling lab3 lab3 ⊥ a :=
+      StageType.addApex_label_castSucc (t := threeBase hα) isLegalBelowFullGrade_S (by omega) a
+    rcases labelling_three_cases a with h3 | h0
+    · have e := (hy.symm.trans h).trans h3
+      rw [lab3, natCast_label] at e
+      have h' : ((0 : Ordinal.{u}) + (3 : ℕ)) = μ + f := by
+        rw [zero_add]; exact (WithTop.coe_injective (WithBot.coe_injective e)).symm
+      have := ((add_natCast_eq_add_natCast_iff Ordinal.isSuccPrelimit_zero hμ).mp h').2
+      omega
+    · exact absurd ((hy.symm.trans h).trans h0) WithBot.coe_ne_bot
 
 section Band
 
@@ -846,9 +861,12 @@ seed whose right coatom type is `rightType`.  Let `r` be a marker of grade `4` o
 `x` a cell of the amalgam of grade `1` through the point `4` (a new top), and `t₁`, `t₂` cells of
 the left coatom of grades `1` and `2`.  Suppose that in every labelling `f` lawful below the left
 coatom and not `⊥` at `r` the cells of grade `1` not `⊥` take the value at `t₁`, the only cell of
-grade `2` not `⊥` is `t₂`, and the cells of grade `3` are `⊥`; and suppose **the marker keeps the
-tie of `t₁` and `t₂`**: its row reads `t₂` at most as `t₁`.  Then
-`ReadingFillPos I r X (Fin.last 4)` for `X = {x}`.
+grade `2` not `⊥` is `t₂`, and the cells of grade `3` are `⊥`.  Suppose the marker is the cell of
+a cell `c` of the left coatom type labelled `⊤`, of full scope and grade at least the arity of a
+root `ι`, with **the root offsets below its grade** (`StageType.RootOffsetsBelow`), and `t₁`, `t₂`
+are the cells of cells visible through `ι` carrying one proper label.  Then
+`ReadingFillPos I r X (Fin.last 4)` for `X = {x}`: the marker keeps the tie of `t₁` and `t₂`
+(`StageType.keepsProperRootTies_of_rootOffsetsBelow`), its row reading `t₂` at most as `t₁`.
 
 Below the cap at the marker it is the fill of the profile layer; outside the band,
 `TowerProfile.exists_fillPos_left_of_noBand`.  In the band (a cell of the left coatom with a value
@@ -880,11 +898,30 @@ theorem readingFillPos_left_of_tie
       (scheme I).rows.IsLawfulBelow (univ.erase (Fin.last 4), 4) (fun d ↦ f d) → f r ≠ ⊥ →
       ∀ d ∈ (scheme I).toCellScheme.below (univ.erase (Fin.last 4), 4),
         (scheme I).toCellScheme.grade d = 3 → f d = ⊥)
-    (hr₁ : t₁ ∈ (scheme I).toCellScheme.below ((scheme I).toCellScheme.gradedIndex r))
-    (hr₂ : t₂ ∈ (scheme I).toCellScheme.below ((scheme I).toCellScheme.gradedIndex r))
-    (hrow : (scheme I).rowAt r t₂ ≤ (scheme I).rowAt r t₁) :
+    {n : ℕ} {ι : Fin n ↪ Fin 4} {c z₁ z₂ : Fin I.left.card} (hrc : leftCell I c = r)
+    (hz₁ : leftCell I z₁ = t₁) (hz₂ : leftCell I z₂ = t₂) (hc : I.left.label c = ⊤)
+    (hcs : I.left.toCellScheme.scope c = univ) (hn : n ≤ I.left.toCellScheme.grade c)
+    (hoff : I.left.RootOffsetsBelow ι (I.left.toCellScheme.grade c))
+    (hv₁ : z₁ ∈ I.left.visibleCells ι) (hv₂ : z₂ ∈ I.left.visibleCells ι)
+    (hlab : I.left.label z₂ = I.left.label z₁) (hprop : IsProper (I.left.label z₂)) :
     ReadingFillPos I r X (Fin.last 4) := by
   classical
+  -- the marker keeps the tie of `t₁` and `t₂` (root offsets below its grade)
+  have hrow : (scheme I).rowAt r t₂ ≤ (scheme I).rowAt r t₁ := by
+    rw [← hrc, ← hz₁, ← hz₂, rowAt_leftCell, rowAt_leftCell]
+    exact StageType.keepsProperRootTies_of_rootOffsetsBelow hc hcs hn hoff z₂ hv₂ z₁ hv₁
+      hlab.le (.inr hprop)
+  have hbelow {z : Fin I.left.card} (hz : z ∈ I.left.visibleCells ι) :
+      leftCell I z ∈ (scheme I).toCellScheme.below
+        ((scheme I).toCellScheme.gradedIndex (leftCell I c)) := by
+    have h := StageType.mem_below_of_mem_visibleCells hcs hn hz
+    rw [CellScheme.mem_below, CellScheme.gradedIndex_le_iff] at h
+    rw [CellScheme.mem_below, gradedIndex_leftCell, gradedIndex_leftCell]
+    exact Prod.mk_le_mk.mpr ⟨map_subset_map.mpr h.1, h.2⟩
+  have hr₁ : t₁ ∈ (scheme I).toCellScheme.below ((scheme I).toCellScheme.gradedIndex r) :=
+    hz₁ ▸ hrc ▸ hbelow hv₁
+  have hr₂ : t₂ ∈ (scheme I).toCellScheme.below ((scheme I).toCellScheme.gradedIndex r) :=
+    hz₂ ▸ hrc ▸ hbelow hv₂
   intro e he h hh _ hhb f hf hfe
   have hel : (scheme I).rows.IsLawful e :=
     (Scheme.mem_catalogue.mp (Scheme.readingMarks_subset _ _ he)).1
@@ -987,8 +1024,8 @@ variable {α : Ordinal.{u}} (hα : Order.IsSuccLimit α)
 the apex of `threeType`, the new top the cell `{3}` of `rightType`): the cells of the left coatom
 not `⊥` are those labelled `3` (the apex reads the others as `⊥`, `eq_bot_leftS`); those of grade
 `1` take the value at `leftS 9` (`eq_nine_of_grade_one`), the one of grade `2` is `leftS 15`
-(`eq_fifteen_of_grade_two`), those of grade `3` are `⊥` (`eq_bot_of_grade_three`), and the apex,
-reading `leftS 9` and `leftS 15` at the code of `3`, keeps their tie (`rowAt_apex_nine_eq_fifteen`);
+(`eq_fifteen_of_grade_two`), those of grade `3` are `⊥` (`eq_bot_of_grade_three`), both are labelled
+`3`, and the root offsets lie below the grade `4` of the apex (`rootOffsetsBelow_threeType`);
 `TowerProfile.readingFillPos_left_of_tie` applies. -/
 theorem readingFillPos_left_seedThree :
     ReadingFillPos (seedThree hα) (leftCell (seedThree hα) (Fin.last _))
@@ -1003,9 +1040,14 @@ theorem readingFillPos_left_seedThree :
     (leftS_mem hα ⟨15, by decide⟩) ((grade_leftS hα _).trans rfl)
     (fun _ hf hfr _ hd hg h0 ↦ eq_nine_of_grade_one hf hfr hd hg h0)
     (fun _ hf hfr _ hd hg h0 ↦ eq_fifteen_of_grade_two hf hfr hd hg h0)
-    (fun _ hf hfr _ hd hg ↦ eq_bot_of_grade_three hf hfr hd hg)
-    (mem_below_marker hgr hrC (leftS_mem hα _)) (mem_below_marker hgr hrC (leftS_mem hα _))
-    (rowAt_apex_nine_eq_fifteen hα).le
+    (fun _ hf hfr _ hd hg ↦ eq_bot_of_grade_three hf hfr hd hg) (ι := Function.Embedding.refl _)
+    rfl rfl rfl
+    (StageType.addApex_label_last (t := threeBase hα) isLegalBelowFullGrade_S (by omega))
+    (StageType.addApex_scope_last (t := threeBase hα) isLegalBelowFullGrade_S (by omega))
+    (congrArg Prod.snd (StageType.addApex_gradedIndex_last (t := threeBase hα)
+      isLegalBelowFullGrade_S (by omega))).ge
+    (rootOffsetsBelow_threeType hα)
+    (mem_visibleCells_refl _ _) (mem_visibleCells_refl _ _) ?_ ?_
   · refine (last_mem_scope_right (seedThree hα).restrictFace_right _).mpr ?_
     change (3 : Fin 4) ∈ (Scheme.appendFullCellScheme CaseSplitCounterexample.S 4).scope
       (Fin.castSucc (⟨3, by decide⟩ : Fin CaseSplitCounterexample.S.{u}.card))
@@ -1016,6 +1058,17 @@ theorem readingFillPos_left_seedThree :
       (Fin.castSucc (⟨3, by decide⟩ : Fin CaseSplitCounterexample.S.{u}.card)) = 1
     rw [Scheme.appendFullCellScheme_grade_castSucc]
     rfl
+  · change CaseSplitCounterexample.labelling lab3 lab3 ⊥ (15 : Fin 19) =
+      CaseSplitCounterexample.labelling lab3 lab3 ⊥ (9 : Fin 19)
+    simp [CaseSplitCounterexample.labelling, CaseSplitCounterexample.live,
+      TwoFaceLiftCounterexample.cellGrade]
+  · change IsProper (CaseSplitCounterexample.labelling lab3 lab3 ⊥ (15 : Fin 19) : Label.{u})
+    have h15 : CaseSplitCounterexample.labelling lab3 lab3 ⊥ (15 : Fin 19) =
+        (lab3 : Label.{u}) := by
+      simp [CaseSplitCounterexample.labelling, CaseSplitCounterexample.live,
+        TwoFaceLiftCounterexample.cellGrade]
+    rw [h15, lab3, natCast_label]
+    exact ⟨_, rfl⟩
 
 /-- **The restricted reading layer is legal below the full grade at `seedThree`**, the first
 proper-labelled marker that keeps the tie of its root label: the four fill conditions hold
