@@ -28,7 +28,8 @@ rank vectors** (`Scheme.RankGlue`):
   (`Scheme.isLawful_render`) and agrees with that of `F` for `b`, hence with `v`, capped at `c`
   (`Scheme.min_render_eq_of_prefix`).
 
-Gluing is a closure property of the members; it is the remaining content of the lift.
+Gluing is a closure property of the members; the rank members (dense rank vectors with lawful
+tables) glue (`Scheme.rankGlue_rankMember`).
 
 ## References
 
