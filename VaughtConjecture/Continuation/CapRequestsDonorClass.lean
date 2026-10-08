@@ -28,15 +28,19 @@ named):
   coatom and not `⊥` on `B` has a label `h`, self-visible at `k`, at least its values at the cells
   of the common face of grade at least `N` and at most its values at the cells of `T`.
 * **The lift provisions in the class form** (`CapRequests.botLiftProvisionOf_admits_donor`,
-  `CapRequests.capLiftProvisionOf_admits_donor`), from the condition, with `Z` and `F` empty and
+  `CapRequests.capLiftProvisionOf_admits_donor`, at every grade from the cap
+  `CapRequests.liftProvisionsOf_admits_donor`), from the condition, with `Z` and `F` empty and
   the cells of `T` off the private coatom: at the positive caps, a prescribed profile out of the
   class is matched by any fill along it, and one in the class is correct; the cap is capped at the
   larger of the cap of the lift and `h`.
 
-The condition is what the obstruction of `VaughtConjecture.Continuation.CapRequestsDonorFace`
-leaves: there a cell of `T` at `⊥` (out of the class here) or below the forced value of the cap
-breaks the lift; here the cells of `T` are at least every common-face value above the grade of
-the cap.
+* **A small value at a top obstructs** (`CapRequests.not_botLiftProvisionOf_admits_donor`, with
+  `CapRequests.orbitMap_lt_orbitMap_of_lt`): a common-face cell `a` of the grade of the cap,
+  dominated by the cap, with `f a` at most the replaced marker value, and a cell `y` of `T` not `⊥`
+  with key below that of `f a`, leave no admitted lift: the lift is in the class, and its code reads
+  the marker value at least the code of `f a`, strictly above that of `f y`.  So without a
+  condition like `CapRequests.DonorTopsDominateAt` the lift fails also in the class form, at a
+  small value rather than at `⊥`.
 
 ## Placement
 
@@ -303,6 +307,105 @@ theorem capLiftProvisionOf_admits_donor (hm : 0 < m)
       exact (hW'cap.trans_eq hh'h).trans (hhT y hy)
   refine ⟨W', hW'cut, fun d hd ↦ hW'D d hd, fun d ↦ (hW'h d).trans (hWP d),
     rowCat_isCorrect_subset_admits (orbitCode_mem_rowCat hgr (hNN.trans hNk) hW'cut hcorr)⟩
+
+/-- **The lift provisions from the donor coatom for the admitted states at every grade from the
+cap** (the shape of the input `hdon` of the class-form engine): from the domination of the common
+face by the tops of the donor at every such grade, with `Z` and `F` empty, the cells of `T` on the
+donor side off the private coatom, and the cells of `B` on the donor side of grade at most that of
+the cap. -/
+theorem liftProvisionsOf_admits_donor (hm : 0 < m)
+    (hgr : r.IsGraded I.amalgam.toCellScheme.grade)
+    (hcapC : I.amalgam.toCellScheme.scope r.cap ⊆ univ.erase xp)
+    (hxp : xp ∈ (Pts : Finset (Fin (m + 2)))) (hxd : xd ∈ (Pts : Finset (Fin (m + 2))))
+    (hne : xd ≠ xp) (hZ : r.Z = ∅) (hF : r.F = ∅)
+    (hT : ∀ y ∈ r.T, ¬ I.amalgam.toCellScheme.scope y ⊆ univ.erase xp ∧
+      I.amalgam.toCellScheme.scope y ⊆ univ.erase xd)
+    (hB : ∀ d ∈ B, I.amalgam.toCellScheme.scope d ⊆ univ.erase xd ∧
+      I.amalgam.toCellScheme.grade d ≤ I.amalgam.toCellScheme.grade r.cap)
+    (hdom : ∀ k, I.amalgam.toCellScheme.grade r.cap ≤ k → k ≤ m + 1 →
+      DonorTopsDominateAt r B xp xd k) :
+    ∀ k, I.amalgam.toCellScheme.grade r.cap ≤ k → k ≤ m + 1 →
+      BotLiftProvisionOf (r.Admits B ∅) k xd ∧ CapLiftProvisionOf (r.Admits B ∅) k xd := by
+  intro k hNk hkm
+  have hT' : ∀ y ∈ r.T, ¬ I.amalgam.toCellScheme.scope y ⊆ univ.erase xp ∧
+      y ∈ I.amalgam.toCellScheme.below (univ.erase xd, k) := fun y hy ↦
+    ⟨(hT y hy).1, (hT y hy).2, (hgr.grade_le_of_mem_T y hy).trans hNk⟩
+  have hBD : ∀ d ∈ B, d ∈ I.amalgam.toCellScheme.below (univ.erase xd, k) := fun d hd ↦
+    ⟨(hB d hd).1, (hB d hd).2.trans hNk⟩
+  exact ⟨botLiftProvisionOf_admits_donor hm hgr hcapC hNk hkm hxp hxd hne hZ hF hT' hBD
+      (hdom k hNk hkm),
+    capLiftProvisionOf_admits_donor hm hgr hcapC hNk hkm hxp hxd hne hZ hF hT' hBD
+      (hdom k hNk hkm)⟩
+
+/-- **The orbit map separates keys**: a label below a key of `w` in the key order goes strictly
+below it. -/
+theorem orbitMap_lt_orbitMap_of_lt {k : ℕ} {w : Fin I.amalgam.card → Label.{u}}
+    {x y : Label.{u}} (hx0 : x ≠ ⊥) (hy : IsKey k w y)
+    (hxy : visibilityReplace k k x < visibilityReplace k k y) :
+    orbitMap k w x < orbitMap k w y := by
+  by_contra hle
+  rw [not_lt] at hle
+  have h := monotone_visibilityReplace (k := k) le_rfl hle
+  rw [visibilityReplace_orbitMap hy.ne_bot, visibilityReplace_orbitMap hx0,
+    gridPoint_le_gridPoint] at h
+  exact absurd (codeBlock_lt_codeBlock hx0 hy hxy) (not_lt.mpr h)
+
+/-- **A small value at a top obstructs the lift at `⊥` in the class form.**  Let a cell `a` of the
+grade of the cap, with scope inside that of the cap, be dominated by the cap, and let `f`, lawful
+below the donor coatom and not `⊥` on `B` (below the donor coatom), satisfy `f a ≤ vR N R (f r)` at
+the marker `r` (below the donor coatom), and be not `⊥` at a cell `y` of `T` whose key lies below
+that of `f a`.  Then no lift is admitted: the lift is in the class, its cap is at least `f a`, so
+its code reads the marker value at least the code of `f a`, strictly above the code of `f y`. -/
+theorem not_botLiftProvisionOf_admits_donor (hgr : r.IsGraded I.amalgam.toCellScheme.grade)
+    (hxp : xp ∈ (Pts : Finset (Fin (m + 2)))) {k : ℕ}
+    (hNk : I.amalgam.toCellScheme.grade r.cap ≤ k)
+    (hcapC : I.amalgam.toCellScheme.scope r.cap ⊆ univ.erase xp) {a : Fin I.amalgam.card}
+    (has : I.amalgam.toCellScheme.scope a ⊆ I.amalgam.toCellScheme.scope r.cap)
+    (hag : I.amalgam.toCellScheme.grade a = I.amalgam.toCellScheme.grade r.cap)
+    (hdom : r.CapDominates a) {f : Prof I}
+    (hf : I.amalgam.rows.IsLawfulBelow (univ.erase xd, k) fun d ↦ f d)
+    (hBD : ∀ d ∈ B, d ∈ I.amalgam.toCellScheme.below (univ.erase xd, k))
+    (hfB : ∀ d ∈ B, f d ≠ ⊥) (ha : a ∈ I.amalgam.toCellScheme.below (univ.erase xd, k))
+    (hmk : r.marker ∈ I.amalgam.toCellScheme.below (univ.erase xd, k))
+    (haM : f a ≤ visibilityReplace r.N r.R (f r.marker)) {y : Fin I.amalgam.card}
+    (hy : y ∈ r.T) (hyk : y ∈ I.amalgam.toCellScheme.below (univ.erase xd, k))
+    (hy0 : f y ≠ ⊥)
+    (hya : visibilityReplace k k (f y) < visibilityReplace k k (f a)) :
+    ¬ BotLiftProvisionOf (r.Admits B ∅) k xd := by
+  intro hprov
+  obtain ⟨W, hW, hWf, hc⟩ := hprov f hf
+  set w := hat I k W with hwdef
+  have hs (d : Fin I.amalgam.card) (hd : I.amalgam.toCellScheme.grade d ≤ k) :
+      hat I k (code k W) d = orbitMap k w (W d) := by
+    rw [hat_of_le hd, code, orbitCode_apply, hwdef, hat_of_le hd]
+  have hcl : InBottomClass B ∅ (hat I k (code k W)) := by
+    refine inBottomClass_empty_iff_forall.mpr fun d hdB ↦ ?_
+    rw [hs d (hBD d hdB).2, Ne, orbitMap_eq_bot_iff, hWf d (hBD d hdB)]
+    exact hfB d hdB
+  have hcorr := (mem_rowCat.mp hc).2 hcl
+  have hcb : r.cap ∈ I.amalgam.toCellScheme.below (univ.erase xp, k) := ⟨hcapC, hNk⟩
+  have hle : W a ≤ W r.cap := le_cap_of_capDominates (hW.erase hxp) hcb has hag hdom
+  rw [hWf a ha] at hle
+  have hφ := isWitness_orbitMap k w
+  have hNk' : r.N ≤ k := hgr.le_grade_cap.trans hNk
+  have hmg : I.amalgam.toCellScheme.grade r.marker ≤ k := hgr.grade_marker_le.trans hNk
+  have hyg : I.amalgam.toCellScheme.grade y ≤ k := (hgr.grade_le_of_mem_T y hy).trans hNk
+  have hmv : orbitMap k w (f a) ≤ r.markerValue (hat I k (code k W)) := by
+    unfold markerValue
+    rw [hs _ hmg, hs _ hNk, hWf _ hmk, ← hφ.visibilityReplace_comm _ r.N
+      (by rw [stepSuppressor_of_le hNk']; exact le_top) r.R r.R_lt_N.le]
+    exact le_min (hφ.monotone haM) (hφ.monotone hle)
+  have hfa0 : f a ≠ ⊥ := fun h ↦ by
+    rw [h, visibilityReplace_bot] at hya
+    exact not_lt_bot hya
+  have hwa : w a = f a := by rw [hwdef, hat_of_le ha.2, hWf a ha]
+  have hkey : IsKey k w (f a) := by
+    rw [← hwa]
+    exact isKey_apply_iff.mpr (by rw [hwa]; exact hfa0)
+  have hlt := orbitMap_lt_orbitMap_of_lt (w := w) hy0 hkey hya
+  have h := hcorr.markerValue_le y hy
+  rw [hs y hyg, hWf y hyk] at h
+  exact absurd ((hmv.trans h).trans (min_le_left _ _)) (not_le.mpr hlt)
 
 end CapRequests
 
