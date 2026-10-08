@@ -96,7 +96,12 @@ theorem IsSourceGapContextAt.castSuccEmb {t' : StageType.{u} α (k + 1)}
 /-- **LOW displays at source-gap contexts** (open): at every limit stage, every LOW family
 (`IsLowFamily`: a legal source-gap context `t'` of grade `K` on `k + 1` points with the lost point
 last, and a legal donor `tb` of top grade at most `K` with the same face `p` along
-`Fin.castSuccEmb`) has a LOW display at a threshold occurring at the stage. -/
+`Fin.castSuccEmb`) has a LOW display at a threshold occurring at the stage.
+
+Not proved.  The legality of a display carrying a LOW layer reduces, at the grade `K` of the
+controllers over a good level of the profile tower, to the LOW step on the amalgam
+(`ProfileTower.Lvl.LowStep`, `ProfileTower.Lvl.Good.cappedLift_lowS_of_lowStep`), a named
+hypothesis that is open; the layers above `K`, the separator and the reading are not assembled. -/
 def HasLowDisplays : Prop :=
   ∀ ⦃α : Ordinal.{u}⦄ ⦃K k : ℕ⦄ (t' tb : StageType.{u} α (k + 1)) (p : StageType.{u} α k)
     (o r : Fin t'.card), Order.IsSuccLimit α → IsLowFamily K t' tb p o r →
