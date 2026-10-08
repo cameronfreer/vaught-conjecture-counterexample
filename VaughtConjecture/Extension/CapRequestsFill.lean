@@ -33,6 +33,14 @@ labelling lawful below a pair is `⊥` at its cells of the common face
 * At the grade of the requested cells the raise is not available: no map raising above a short
   self-visible cap at `k` is a witness bounded by `k` (`CapRequests.not_isWitness_of_raises`).
 
+**The donor following the root** (`CapRequests.DonorFollowsRoot`,
+`CapRequests.capFillBotAt_of_donorFollowsRoot`): over a live common face, the fill at `⊥` holds
+when every prescription with the cap not `⊥` is, on the common face, the image of the glued
+labelling under a witness bounded by `k`, reflecting `⊥` and fixing `⊤`: the donor side is the glued
+labelling transported along it.  The transport fails across a tie of the glued labelling that the
+prescription separates (`CapRequests.not_exists_transport_of_tie`) and across an inversion
+(`CapRequests.not_exists_transport_of_inversion`).
+
 **Where the dead face fails** (`CapRequests.not_isDeadFace_of_label_ne_bot`): over a dead common
 face the glued labelling is `⊥` on it, so a seed whose common face carries a live label (for an
 (R4) input, a root cell or another cell of the coatom face labelled other than `⊥`) is not covered.
@@ -260,6 +268,94 @@ theorem capFillPosAt_of_isDeadFace (hgr : r.IsGraded I.amalgam.toCellScheme.grad
       exact min_le_min_right _ hP1
     have h4 : min (r.markerValue (hat I (K + 1) W)) h < h := h3.trans_lt hlt
     rwa [min_eq_left (not_le.mp fun h5 ↦ (min_eq_right h5 ▸ h4).false).le] at h3
+
+/-! ### The donor following the root -/
+
+variable (r xp xd) in
+/-- **The donor follows the root** at the grade `k`: for every labelling `f` lawful below the
+private coatom at `k` with the cap not `⊥`, some witness `ν` bounded by `k`, reflecting `⊥` and
+fixing `⊤`, carries the glued labelling to `f` at every cell of the common face of grade at most
+`k`. -/
+def DonorFollowsRoot (k : ℕ) : Prop :=
+  ∀ f : Prof I, I.amalgam.rows.IsLawfulBelow (univ.erase xp, k) (fun d ↦ f d) → f r.cap ≠ ⊥ →
+    ∃ ν : Label.{u} → Label.{u}, IsWitness (stepSuppressor k) ν ∧ (∀ x, ν x = ⊥ → x = ⊥) ∧
+      ν ⊤ = ⊤ ∧ ∀ d, I.amalgam.toCellScheme.scope d ⊆ univ.erase xp ∩ univ.erase xd →
+        I.amalgam.toCellScheme.grade d ≤ k → ν (I.amalgam.label d) = f d
+
+/-- **The fill at `⊥` from the private coatom when the donor follows the root**, at every grade
+`0 < k ≤ m + 1`, over a live common face: at a prescription with the cap `⊥` (or above the grade),
+the canonical fill; otherwise the private prescription with the glued labelling transported along
+the witness on the donor side (lawful by transport,
+`CellScheme.Rows.IsLawfulBelow.map_of_apply_eq_bot`; it agrees with the prescription on the common
+face).  With the glued labelling `⊤` on `T` and `⊥` on
+`Z`, these cells off the private coatom, and `F` empty. -/
+theorem capFillBotAt_of_donorFollowsRoot (hgr : r.IsGraded I.amalgam.toCellScheme.grade)
+    (hm : 0 < m) (hxp : xp ∈ (Pts : Finset (Fin (m + 2))))
+    (hxd : xd ∈ (Pts : Finset (Fin (m + 2)))) (hne : xd ≠ xp) {k : ℕ} (hk : 0 < k)
+    (hkm : k ≤ m + 1) (hcapC : I.amalgam.toCellScheme.scope r.cap ⊆ univ.erase xp)
+    (hfol : DonorFollowsRoot r xp xd k)
+    (hT : ∀ y ∈ r.T, I.amalgam.label y = ⊤ ∧ ¬ I.amalgam.toCellScheme.scope y ⊆ univ.erase xp)
+    (hZ : ∀ z ∈ r.Z, I.amalgam.label z = ⊥ ∧ ¬ I.amalgam.toCellScheme.scope z ⊆ univ.erase xp)
+    (hF : r.F = ∅) : CapFillBotAt r xp k := by
+  classical
+  intro f hf
+  by_cases hck : I.amalgam.toCellScheme.grade r.cap ≤ k ∧ f r.cap ≠ ⊥
+  swap
+  · -- The cap is `⊥` in the splice: the canonical fill.
+    obtain ⟨W, hW, hWf, -⟩ := exists_isCutLawful_of_coatom_le hm hk hkm hxp (isSelfVisible_bot k)
+      (P := fun _ ↦ ⊥) ⟨Rows.isLawfulBelow_const_bot _, Rows.isLawfulBelow_const_bot _⟩ hf
+      fun _ _ ↦ by simp
+    refine ⟨W, hW, hWf, isCorrect_of_cap_eq_bot ?_⟩
+    by_cases hg : I.amalgam.toCellScheme.grade r.cap ≤ k
+    · rw [hat_of_le hg, hWf _ ⟨hcapC, hg⟩]
+      exact not_not.mp fun h ↦ hck ⟨hg, h⟩
+    · exact hat_of_lt (not_le.mp hg)
+  obtain ⟨hg, hc⟩ := hck
+  obtain ⟨ν, hν, hνbot, hνtop, hνf⟩ := hfol f hf hc
+  set W : Prof I := fun d ↦
+    if d ∈ I.amalgam.toCellScheme.below (univ.erase xp, k) then f d else ν (I.amalgam.label d)
+    with hW
+  have hWf (d) (hd : d ∈ I.amalgam.toCellScheme.below (univ.erase xp, k)) : W d = f d := by
+    rw [hW]; simp only [hd, ite_true]
+  have hWC : I.amalgam.rows.IsLawfulBelow (univ.erase xp, k) fun d ↦ W d :=
+    (Rows.isLawfulBelow_congr (w := f) (w' := W) fun d hd ↦ (hWf d hd).symm).mp hf
+  have hνA : I.amalgam.rows.IsLawfulBelow (univ.erase xd, k) fun d ↦ ν (I.amalgam.label d) :=
+    (I.amalgam.isLawful.isLawfulBelow (univ.erase xd, k)).map_of_apply_eq_bot (fun d ↦ d.2.2) hν
+      fun _ h ↦ hνbot _ h
+  have hWD : I.amalgam.rows.IsLawfulBelow (univ.erase xd, k) fun d ↦ W d := by
+    refine (Rows.isLawfulBelow_congr (w := fun d ↦ ν (I.amalgam.label d)) (w' := W)
+      fun d hd ↦ ?_).mp hνA
+    by_cases hdC : d ∈ I.amalgam.toCellScheme.below (univ.erase xp, k)
+    · rw [hWf d hdC]
+      exact hνf d (subset_inter hdC.1 hd.1) hdC.2
+    · rw [hW]; simp only [hdC, ite_false]
+  have hoff {y : Fin I.amalgam.card} (hy : ¬ I.amalgam.toCellScheme.scope y ⊆ univ.erase xp) :
+      W y = ν (I.amalgam.label y) := by
+    rw [hW]
+    exact ite_eq_right fun h ↦ hy h.1
+  refine ⟨W, lawful_pair hxp hxd hne.symm hWC hWD, hWf, ?_⟩
+  refine isCorrect_of_forall (fun z hz ↦ ?_) (fun f' hf' ↦ by simp [hF] at hf') fun y hy ↦ ?_
+  · rw [hat_of_le ((hgr.grade_le_of_mem_Z z hz).trans hg), hoff (hZ z hz).2, (hZ z hz).1,
+      hν.map_bot]
+  · rw [hat_of_le ((hgr.grade_le_of_mem_T y hy).trans hg), hoff (hT y hy).2, (hT y hy).1, hνtop]
+    exact le_top
+
+/-- **The donor cannot follow the root across a tie**: if the glued labelling ties two cells that
+a prescription separates, no map carries the one to the other. -/
+theorem not_exists_transport_of_tie {f : Prof I} {d₁ d₂ : Fin I.amalgam.card}
+    (htie : I.amalgam.label d₁ = I.amalgam.label d₂) (hsep : f d₁ ≠ f d₂) :
+    ¬ ∃ ν : Label.{u} → Label.{u}, ν (I.amalgam.label d₁) = f d₁ ∧
+      ν (I.amalgam.label d₂) = f d₂ :=
+  fun ⟨_, h₁, h₂⟩ ↦ hsep (h₁.symm.trans (htie ▸ h₂))
+
+/-- **The donor cannot follow the root across an inversion**: if the glued labelling orders two
+cells one way and a prescription strictly the other way, no monotone map carries the one to the
+other. -/
+theorem not_exists_transport_of_inversion {f : Prof I} {d₁ d₂ : Fin I.amalgam.card}
+    (hlt : I.amalgam.label d₁ ≤ I.amalgam.label d₂) (hinv : f d₂ < f d₁) :
+    ¬ ∃ ν : Label.{u} → Label.{u}, Monotone ν ∧ ν (I.amalgam.label d₁) = f d₁ ∧
+      ν (I.amalgam.label d₂) = f d₂ :=
+  fun ⟨_, hν, h₁, h₂⟩ ↦ (h₁ ▸ h₂ ▸ hν hlt).not_gt hinv
 
 end CapRequests
 
