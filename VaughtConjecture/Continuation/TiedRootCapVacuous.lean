@@ -29,6 +29,10 @@ observed state; for the vacuous admission it needs a reading of the row that ref
   labelling is admitted (it is out of the class), and its image under `Label.keepTopShifter` (a
   witness) is in the class and not correct.  So the vacuous admission violates the law (A1) of the
   engine's admissions, and recognition does not transport the class from a state to a row.
+* **The apex respects the root bottoms** (`StageType.rowAt_addApex_last_eq_bot_iff`,
+  `StageType.rootBottomRespected_of_addApex`, compiled): a stage type on the scheme of an apex
+  type, literal on the root, has its apex reading the root cells labelled `⊥` as `⊥`; the scheme
+  alone fixes it.  The label of the apex is not fixed by the scheme.
 * **The acquisition property** (`Realization.RootBottomAcquisition`, a named statement,
   prospective): hollow acquisition of the marked-cap contexts with root offsets below the grade of
   the cap and the cap reading the root cells labelled `⊥` as `⊥`
@@ -174,6 +178,37 @@ theorem exists_vacAdm_not_vacAdm_keepTop (hD : D.IsLegal) :
       exact bot_ne_top h')
 
 end BottomRootCounterexample
+
+/-! ### The apex reads the root bottoms as `⊥` -/
+
+namespace StageType
+
+variable {α : Ordinal.{u}} {k n : ℕ}
+
+/-- **The apex reads a cell as `⊥` exactly when it is labelled `⊥`**: its row is the code of the
+labels. -/
+theorem rowAt_addApex_last_eq_bot_iff {t₀ : StageType.{u} α k} (ht₀ : t₀.IsLegalBelowFullGrade)
+    (hk : 0 < k) (z : Fin (t₀.addApex ht₀ hk).card) :
+    (t₀.addApex ht₀ hk).toScheme.rowAt (Fin.last _) z = ⊥ ↔ (t₀.addApex ht₀ hk).label z = ⊥ := by
+  rw [rowAt_addApex_last, blockEncode_eq_bot_iff]
+
+/-- **A relabelling of an apex type, literal on the root, has its apex respecting the root
+bottoms**: the scheme alone fixes the row of the apex, the code of the labels of `t₀.addApex`. -/
+theorem rootBottomRespected_of_addApex {t₀ : StageType.{u} α k}
+    (ht₀ : t₀.IsLegalBelowFullGrade) (hk : 0 < k) {q : StageType.{u} α k}
+    (hS : q.toScheme = (t₀.addApex ht₀ hk).toScheme) {h : Fin n ↪ Fin k}
+    (hl : ∀ (i : Fin q.card) (j : Fin (t₀.addApex ht₀ hk).card), (i : ℕ) = j →
+      i ∈ q.visibleCells h → q.label i = (t₀.addApex ht₀ hk).label j) :
+    ∃ c : Fin q.card, (c : ℕ) = t₀.card ∧ q.RootBottomRespected h c := by
+  obtain ⟨S, ℓ, h₁, h₂, h₃, h₄⟩ := q
+  change S = _ at hS
+  subst hS
+  refine ⟨Fin.last _, rfl, fun y hy hyb ↦ ?_⟩
+  change (t₀.addApex ht₀ hk).toScheme.rowAt (Fin.last _) y = ⊥
+  rw [rowAt_addApex_last_eq_bot_iff]
+  exact (hl y y rfl hy).symm.trans hyb
+
+end StageType
 
 /-! ### The acquisition of the root bottoms (a named statement) -/
 
