@@ -98,10 +98,13 @@ theorem IsSourceGapContextAt.castSuccEmb {t' : StageType.{u} α (k + 1)}
 last, and a legal donor `tb` of top grade at most `K` with the same face `p` along
 `Fin.castSuccEmb`) has a LOW display at a threshold occurring at the stage.
 
-Not proved.  The legality of a display carrying a LOW layer reduces, at the grade `K` of the
-controllers over a good level of the profile tower, to the LOW step on the amalgam
-(`ProfileTower.Lvl.LowStep`, `ProfileTower.Lvl.Good.cappedLift_lowS_of_lowStep`), a named
-hypothesis that is open; the layers above `K`, the separator and the reading are not assembled. -/
+Not proved.  It holds on the LOW families with a donor top of grade `K`, `0 < K ≤ k`, and
+the context and the donor labelled `⊥` at every grade in `(K, k]`
+(`StageType.hasLowDisplaysOn_lowBot`, in `VaughtConjecture.MainTheorem.LowDisplayReadingRoute`:
+the completed display over the LOW layer with the actual labels).  Outside that class it is open:
+without a donor top of grade `K` the LOW step is the named case `StageType.LowStepTieLow`, and with
+a label other than `⊥` above `K < k` the completed display carries no separator labelled `⊤`
+(`StageType.not_lowReadingFamily`). -/
 def HasLowDisplays : Prop :=
   ∀ ⦃α : Ordinal.{u}⦄ ⦃K k : ℕ⦄ (t' tb : StageType.{u} α (k + 1)) (p : StageType.{u} α k)
     (o r : Fin t'.card), Order.IsSuccLimit α → IsLowFamily K t' tb p o r →

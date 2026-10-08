@@ -42,7 +42,9 @@ context and of the donor of grade in `(K, m]` is labelled `⊥`.  So for a LOW f
 and a cell of grade in `(K, k]` not labelled `⊥` in the context or the donor, the completed display
 carries no separator labelled as `StageType.HasLowLayers` asks, whatever the LOW layer: the
 canonical levels above the controllers must be replaced, at their sections at the controllers,
-for the LOW construction to label its separator `⊤`.
+for the LOW construction to label its separator `⊤`.  Conversely, when the two faces are `⊥`
+above `K`, the reading holds (`ProfileTower.lowReading_of_bot`, in
+`VaughtConjecture.Continuation.LowDisplayActual`).
 
 ## Placement
 
