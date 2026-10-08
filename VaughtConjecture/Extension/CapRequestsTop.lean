@@ -160,6 +160,40 @@ theorem IsCutLawful.capTop {xp : Fin (m + 2)} (hxp : xp ∈ (Pts : Finset (Fin (
 
 end ProfileTower
 
+/-! ### The downward clause for correct states -/
+
+namespace ProfileTower
+
+variable {α : Ordinal.{u}} {m : ℕ} {I : Seed.{u} α m}
+
+/-- The splice at `k` of the splice at `k + 1` is the splice at `k`. -/
+theorem hat_hat_succ (k : ℕ) (R : Prof I) : hat I k (hat I (k + 1) R) = hat I k R :=
+    funext fun d ↦ by
+  by_cases hd : I.amalgam.toCellScheme.grade d ≤ k
+  · rw [hat_of_le hd, hat_of_le hd, hat_of_le (by omega)]
+  · rw [hat_of_lt (_root_.not_le.mp hd), hat_of_lt (_root_.not_le.mp hd)]
+
+end ProfileTower
+
+namespace CapRequests
+
+open ProfileTower
+
+variable {α : Ordinal.{u}} {m : ℕ} {I : Seed.{u} α m} {r : CapRequests (Fin I.amalgam.card)}
+
+/-- **The downward clause for the catalogues of correct states**: for requests graded by the
+grades of the amalgam, the code at `k` of a profile of the catalogue of correct states at `k + 1`
+lies in the catalogue of correct states at `k` (the splice and the orbit code keep correctness,
+`CapRequests.IsCorrect.code`, `CapRequests.IsCorrect.hat`). -/
+theorem code_mem_rowCat_of_mem_rowCat (hgr : r.IsGraded I.amalgam.toCellScheme.grade) {k : ℕ}
+    {R : Prof I} (hR : R ∈ rowCat r.IsCorrect (k + 1)) : code k R ∈ rowCat r.IsCorrect k := by
+  obtain ⟨hRc, hRr⟩ := mem_rowCat.mp hR
+  refine mem_rowCat.mpr ⟨code_mem_cat_of_mem_cat hRc, ?_⟩
+  have h := (hRr.code hgr k).hat hgr k
+  rwa [code, hat_hat_succ] at h
+
+end CapRequests
+
 /-! ### The lift provisions from the donor coatom -/
 
 namespace CapRequests
