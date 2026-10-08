@@ -111,7 +111,8 @@ grade is at least that of the donor.
   a pinned extension with a condition on the rows of its new cells of full scope (open; not stated
   in the library).  Informally (no implication is compiled), this condition is of the same kind as
   the twin–gate coupling `CellScheme.Rows.TwinsReadGate` of the coupled gated pinned extension
-  property (`StageType.HasCoupledGatedPinnedExtensions`), which is itself open.
+  property (`StageType.HasCoupledGatedPinnedExtensions`), which is false at every stage above `1`
+  (`CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`).
 
 **Templates** (`Realization.residualReceiving_of_residualDonorAcquisition`,
 `Realization.residualReceiving_of_cutoffDonorDetermination_isGradedTopContext`,

@@ -3338,18 +3338,37 @@ Each checkpoint needs both its abstract API and a concrete application:
    (`StageType.GatedExtension.recover`, `Realization/GateRecovery`), with no legality, no
    completion, and no (R6), and with the twin–gate coupling in place of the bottom pattern of the
    twins (`CellScheme.Rows.IsGate.recover_of_twinsReadGate`,
-   `StageType.CoupledGatedExtension.exists_restrictFace_mem_receivingFamily`); and 4b-iv,
-   conditional on the gated-extension property, stated as
+   `StageType.CoupledGatedExtension.exists_restrictFace_mem_receivingFamily`), are compiled in this
+   repository (theorem named).  4b-iv, conditional on the gated-extension property, stated as
    `StageType.HasCoupledGatedPinnedExtensions` (`Extension/GatedExtension`), with generalized
-   saturation over the private context, witnessed by the display, and no hypothesis on the stage
-   (`Realization.IsModel.hasFiniteCutReceiving_of_hasCoupledGatedPinnedExtensions`,
-   `Realization/CoupledFiniteCutReceiving`,
-   `Expansion.finiteCutReceiving_of_hasCoupledGatedPinnedExtensions`), are compiled in this
-   repository (theorem named). The first form of the property, `StageType.HasGatedPinnedExtensions`,
-   whose displays label the twins of the gate `⊥`, is refuted at every stage
-   (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`, compiled in this repository
-   (theorem named)); the coupled form replaces that clause by the condition on rows
-   `CellScheme.Rows.TwinsReadGate` and holds at the refuting input
+   saturation over the private context, witnessed by the display, and no hypothesis on the stage,
+   was compiled and is retired: that property is refuted at every stage above `1` (below), so the
+   conditional was vacuous there; no conditional form of (R1) remains compiled.  Recorded from that
+   assembly, for a later one through a gate: of the clauses of a model it used only uniformity and
+   high-arity dominance (for the private context), legality of types (the private type is legal),
+   exact consistency, and generalized saturation over the private context for the scheme of the
+   display, whose instance the display witnesses nonempty; not nonemptiness of the carrier, not
+   covering, and no hypothesis on the stage.  With the coupling, generalized saturation sufficed in
+   place of the bottom-pattern clause, whose family lies in the family of generalized saturation.
+   The private context of [Kni26, Lemma 8.1.1] carries a marker, which
+   `Realization.IsModel.exists_privateContext` does not acquire and the coupled gated extension does
+   not read.  Open questions on that lemma and the construction in its proof: (M1) in the scheme
+   built on the private points and the new point, which cells besides the gate have graded index
+   `(univ, n)`, and what are their entries at the gate and at the private cap: a unique gate, twins
+   labelled `⊥` (refuted on `GatedExtensionCounterexample.P α`), or twins coupled to the gate?  (M2)
+   Is the marker read by any row of that scheme, and with which entries: does every twin read it as
+   `⊥`, with the marker not labelled `⊥` (which forces the twins to `⊥`, excluded on `P α`), or does
+   the gate read every donor top through the marker, and does that reading replace the reading `top`
+   and make the lift that lowers the cap possible?  (M3) In the recovery argument, how is the case
+   excluded in which a twin, not the gate, serves availability for the cap: by a bottom pattern, by
+   a condition on the rows, by the marker, or not at all?  (M4), whether the private context of the
+   lemma excludes private types like the refuting one, is answered for two candidate conditions:
+   neither a unique cell of full scope and full grade nor a marker of grade below `n` not labelled
+   `⊥` excludes it (`Extension/CoupledGatedExtensionCounterexample`, module docstring).  The first
+   form of the property, `StageType.HasGatedPinnedExtensions`, whose displays label the twins of the
+   gate `⊥`, is refuted at every stage (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`,
+   compiled in this repository (theorem named)); the coupled form replaces that clause by the
+   condition on rows `CellScheme.Rows.TwinsReadGate` and holds at the refuting input
    (`CoupledGateExamples.exists_coupledGatedExtension_comap_g₁`, compiled in this repository
    (theorem named)), and at the donor labelled `⊤` on the same private type
    (`CoupledGateInstance.coupledGatedPinnedExtension_donor`), and with every anchored legal
@@ -3359,7 +3378,7 @@ Each checkpoint needs both its abstract API and a concrete application:
    `Extension/CoupledGatedExtensionCounterexample`, compiled in this repository (theorem named)).
    The mechanism is the bottom transport condition `StageType.CarriesBottoms`, which every coupled
    gated extension forces (`StageType.CoupledGatedExtension.carriesBottoms`, at each input of the
-   property `StageType.HasCoupledGatedPinnedExtensions.carriesBottoms`): a lawful labelling of the
+   property, for the coupled gated extension it asks for): a lawful labelling of the
    private type is the private face of a lawful labelling `q` of the display (bountifulness from the
    private face at the cap `⊥`); the cap is not `⊥` there, so neither is the gate `G`; the one
    witness at the gate commutes with `vr_n` up to `q G`, so a donor cell is `⊥` when every possible anchor
@@ -3467,18 +3486,13 @@ Each checkpoint needs both its abstract API and a concrete application:
    given a model at a stage above `ω`, and do not show that models are absent at any stage:
    `Realization.AcquiresCarryingContexts`, `Realization.HasCarryingSubfullContext` and (R1) are
    neither proved nor refuted.  The two vacuous conditional theorems are kept; retiring them is a
-   separate change.  Retirement audit of the receiving theorems conditional on the coupled property
-   (`Realization.IsModel.hasFiniteCutReceiving_of_hasCoupledGatedPinnedExtensions`,
-   `Expansion.finiteCutReceiving_of_hasCoupledGatedPinnedExtensions`,
-   `Expansion.finiteExtensionReceiving_of_hasCoupledGatedPinnedExtensions`), recorded, not
-   performed: no declaration of `Realization/TightCap`, `Realization/CarryingContext` or of the
-   statements moved from them calls them; the examples of
-   `Realization/CoupledFiniteCutReceivingExamples` include an inline reconstruction of the first
-   under the same hypothesis `StageType.HasCoupledGatedPinnedExtensions` (with the bottom-pattern
-   clause in place of generalized saturation), so their retirement audits the uses of that
-   hypothesis as well as the calls by name.  The extension property restricted to carrying contexts
-   is not stated (prospective), in either design; the condition is necessary for the property, not
-   shown sufficient.  One cap and one gate per block (`Realization/PerBlockCarrying`), a further
+   separate change.  The receiving theorems conditional on the coupled property are retired, with
+   their examples, one of which reconstructed the first of them inline under the same hypothesis
+   `StageType.HasCoupledGatedPinnedExtensions` (with the bottom-pattern clause in place of
+   generalized saturation); the audit covered the uses of that hypothesis as well as the calls by
+   name, and no declaration of `Realization/TightCap` or `Realization/CarryingContext` called them.
+   The extension property restricted to carrying contexts is not stated (prospective), in either
+   design; the condition is necessary for the property, not shown sufficient.  One cap and one gate per block (`Realization/PerBlockCarrying`), a further
    redesign of the private context and of the display: by the same-block lemma, the labels that a
    cap reads in its own block, strictly below its label and not self-visible at its grade, lie in
    one block, so the design takes one cap for each block of the donor's labels, and, since the
@@ -3537,9 +3551,7 @@ Each checkpoint needs both its abstract API and a concrete application:
    a saturation step, one grade below full.  So `Realization.AcquiresPerBlockContexts` is neither
    proved nor refuted; the per-block extension property restricted to per-block carrying contexts,
    which excludes the refuting input, is not stated (prospective), and agreement below the cutoff
-   would have to be re-derived gate by gate for it.  The conditional theorem is vacuous at every
-   stage above `1`; it receives one permitted cutoff at a time and is not exact
-   projected receiving. Projected-donor lifting is not part of checkpoint 4 (`README.md`, Layer 3,
+   would have to be re-derived gate by gate for it.  The conditional theorem, vacuous at every stage above `1`, is retired. Projected-donor lifting is not part of checkpoint 4 (`README.md`, Layer 3,
    3.3, the density boundary). This status concerns (R1) only: (R2), (R3), and the fidelity theorem
    of this checkpoint remain to be proved; the cap-to-model theorem at a limit stage is compiled
    (`Realization.isModel_of_hasFiniteCutReceiving`, `Realization/CapToModel`) conditional on the
@@ -3773,6 +3785,35 @@ Each checkpoint needs both its abstract API and a concrete application:
    extension property with apex as a hypothesis
    (`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_receivingModels`), and every status
    above are unchanged.
+
+   *Receiving route from three finite coatom statements.*  Compiled in this repository
+   (theorem named):
+   `MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_coatomDeterminations_sourceGap_markedCap`
+   `(h4 : ∀ ξ < ω₁, HasCutoffFirstCoatomCompletions ξ (GradedCapCalibration ξ))`
+   `(h2 : CoatomCutoffDetermination fun K t' h ↦ t'.IsSourceGapContext K h)`
+   `(h3 : HollowCoatomCutoffDetermination fun t' h ↦ t'.IsMarkedCapContext h) :`
+   `HasThinAlephOneSpectrum densitySentence` (`MainTheorem/SourceGapMarkedCapRoute`), and the form
+   `…_margin` with `h4` at `StageType.GradedCapMarginCalibration`.  The graded-cap hypothesis
+   implies the margin hypothesis (`StageType.HasCutoffFirstCoatomCompletions.gradedCapMargin`), so
+   the margin endpoint yields the graded-cap endpoint.  The three hypotheses are finite
+   statements about stage types and are open: (R4) cutoff completions at the first coatom (the
+   coatom `Fin.castSuccEmb`, which omits the last point), (R2) coatom cutoff determination for the
+   source-gap context, and (R3) hollow coatom cutoff determination for the marked-cap context.  The
+   coatom forms are stronger than the full forms (`Realization.CutoffDetermination`,
+   `Realization.HollowCutoffDetermination`, `StageType.HasCutoffStableRecoverySchemes`): they imply
+   them, and no converse is claimed; the (R2) form ranges over every intermediate coface, also of
+   top grade above `K`.  Every side condition is compiled: the acquisitions
+   (`Realization.residualAcquisition_isSourceGapContext`,
+   `Realization.hollowAcquisition_isMarkedCapContext`,
+   `Realization.IsModel.acquiresCalibratedContexts_gradedCap` and `…_gradedCapMargin`); roots not
+   onto (`StageType.not_isSourceGapContext_of_surjective`,
+   `StageType.IsMarkedCapContext.not_surjective`); invariance under relabelling
+   (`StageType.IsSourceGapContext.reindex`, `StageType.IsMarkedCapContext.reindex`,
+   `StageType.GradedCapCalibration.reindex`, `StageType.GradedCapMarginCalibration.reindex`); the
+   coatom extension property (`StageType.hasCoatomExtensions`); and the reductions to the receiving
+   forms (`Realization.receivingResidualReceiving_of_cutoffDetermination`,
+   `Realization.receivingHollowReceiving_of_cutoffDetermination`,
+   `Expansion.ReceivingStableCappedReceiving.of_hasCutoffStableRecoverySchemes_gradedCap`).
 
 7. Acceptance lemma 1 (same-level maximal realization; `README.md`, "Reduction to full
    presentations"): for a countable `β`, on every countably infinite carrier, a model at
@@ -4778,8 +4819,8 @@ form, at arbitrary limit stages.
 receiving-models route (checkpoint 8), (R1) is postponed to a later fidelity theorem and U1 is no
 longer first; this departs from the order of this section.
 
-- *Conclusion.*  The per-model form at every limit stage, as
-  `Realization.IsModel.hasFiniteCutReceiving_of_hasCoupledGatedPinnedExtensions` is stated: for
+- *Conclusion.*  The per-model form at every limit stage, as the retired conditional theorem of
+  checkpoint 4 (4b-iv) was stated: for
   every limit `α` and every `R : Realization α M`, `R.IsModel → R.HasFiniteCutReceiving`, that is,
   for every actual occurrence `x` (the root, kept as the literal tuple `x.tuple`, the empty root
   included), every `d ∈ x.type.cofaces`, and every permitted cutoff `δ`, `R` realizes over
@@ -4798,9 +4839,9 @@ longer first; this departs from the order of this section.
   `StageType.exists_pinned_extension` (the compiled form in which step 2 uses the plain coatom
   extension property: one coatom extension for each private point outside the root); the catalogue,
   decoders, and owner alignment of checkpoints 2.3–2.5 (`Label.exists_ownerAlignment`,
-  `CellScheme.Rows.cappedLift_of_boundary`); the assembly of
-  `Realization.IsModel.hasFiniteCutReceiving_of_hasCoupledGatedPinnedExtensions`, with the coupled
-  property replaced by steps 2–4; `HasFiniteCutReceiving.hasFiniteExtensionReceiving`.
+  `CellScheme.Rows.cappedLift_of_boundary`); the assembly of the retired conditional theorem of
+  checkpoint 4 (4b-iv, in the history of `main`), with the coupled property replaced by steps
+  2–4; `HasFiniteCutReceiving.hasFiniteExtensionReceiving`.
 - *Missing steps*, each a theorem.  (1) *Acquisition*: a private context `u` with `x.tuple` as a
   literal face, of arity `N ≥ 4`, a reference cell for each block containing a proper label of `d`,
   and actual cut above `δ` (uniformity and high-arity dominance, [Kni26, Definition 3.2.1, clauses
@@ -4976,8 +5017,13 @@ longer first; this departs from the order of this section.
   included.  (4) *Recovery*: every lawful labelling with the literal private face reads `D`
   exactly, tops included (`Correct` with the cap and the marker `⊤`).  (5) *Padding* (`README.md`,
   Layer 3, 3.4, "Base cases").
-- *Missing steps for (R2).*  The LOW construction of `README.md`, Layer 3, 3.3, as data: the private
-  context and the private gap acquired in the residual model; the display on the LOW scheme received
+- *Missing steps for (R2).*  The LOW construction of `README.md`, Layer 3, 3.3, as data.  The
+  private context and the private gap acquired in the residual model are compiled in the form of a
+  source-gap context (`Realization.residualAcquisition_isSourceGapContext`,
+  `Continuation/SourceGapContext`; legal source-gap types exist at every stage,
+  `Realization.not_forall_not_isSourceGapContext` in `Continuation/SourceGapContextInstance`, and
+  their occurrence in a residual model is not proved).  Missing: the
+  display on the LOW scheme received
   by (R1) in its form for finite covers at a cutoff above the rounded non-top donor maximum; the
   observations below that cutoff force `D`; then exact one-point receiving, one face at a time,
   along an increasing sequence of faces of `D` visible in its plan, each intermediate root received
@@ -5626,6 +5672,13 @@ witnesses).**
   so that the import closure of the main theorem contains no `Definability/` module.
   `Expansion/Losses`: Layer 5, in place. `Counting/Domains`:
   `Counting.countable_of_subsingleton_cover`, a general result of Layer 0, in place.
+- `Continuation/SourceGapContext` and its examples module: Layer 3, in place, beside
+  `Continuation/ExactReceiving` (it imports `Extension/Apex` for the apex check; the examples
+  module imports `Continuation/ExactReceivingExamples` for the apex-point checks).  It holds
+  `StageType.IsSourceGapContext`, separated top supports, first loss, the stage-type part
+  `StageType.exists_isSourceGapContextAt_comap`,
+  `Realization.residualAcquisition_isSourceGapContext`, the composed reduction, and the vacuity
+  dichotomy; determination for the predicate is open.
 - `Continuation/RestrictedHollow` and its examples module: Layer 4, in place; it holds
   `Realization.IsCoverHollowWithoutRigidCore` and its form at a block stage, the restricted
   terminal properties with their cover, and `Realization.HollowReceiving.withoutRigidCore`.  It

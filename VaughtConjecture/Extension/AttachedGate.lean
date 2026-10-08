@@ -18,10 +18,11 @@ the gate `⊥`; the universal form of that property fails at every stage
 (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`).  In a coupled gated extension
 (`StageType.CoupledGatedExtension`) every twin reads the gate at least as the private cap, so the
 gate dominates the cap in every lawful labelling; the universal coupled property
-(`StageType.HasCoupledGatedPinnedExtensions`) is open on `main` (a separate open change argues
-that it fails above stage `1`, through a lawful private labelling that is `⊥` at an anchor and not
-at the cap).  An **attached gated extension** puts the condition on the row of the gate instead,
-and places no condition on the labels of the twins:
+(`StageType.HasCoupledGatedPinnedExtensions`) is false at every stage above `1`
+(`CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`, through a lawful
+private labelling that is `⊥` at an anchor and not at the cap).  An **attached gated extension**
+puts the condition on the row of the gate instead, and places no condition on the labels of the
+twins:
 
 * a set of **readers**: cells of the graded index `(univ, n)` of the gate that are gates in the
   sense of `CellScheme.Rows.IsGate`, that is, whose rows read every new donor cell through an

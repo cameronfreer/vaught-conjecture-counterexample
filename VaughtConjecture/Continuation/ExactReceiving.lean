@@ -114,7 +114,7 @@ acquisition and scheme determination, with no receiving
 in the hollow case the acquired context has the private cap and the marker labelled `⊤`, the
 coface `D'` is on the constructed legal scheme of the growth construction, and the marker clause of
 `Correct` gives scheme determination.  Neither predicate `P` is defined here, neither acquisition
-nor determination is proved for any `P`, and determination is proved only in the rigid-core
+nor determination is proved here for any `P`, and determination is proved only in the rigid-core
 instance.  The predicate of the anchored private context, which takes the donor, is in
 `VaughtConjecture.Continuation.AnchoredDetermination`: acquisition holds for it in every model, and
 determination fails for it.
@@ -254,6 +254,28 @@ theorem not_isDeterminedWithin_saturationFamily_of_isTopFree (hα : Order.IsSucc
   obtain rfl := eq_of_isDeterminedWithin_refl hdet rfl hD'
   obtain ⟨c, hc, hcα, -, hcap⟩ := exists_cap_restrictFace hα ht hdt (o₀ := 0) hα.bot_lt
   exact hd (eq_of_isDeterminedWithin_refl (D' := D'.cap c hc hcα) hdet rfl hcap ▸ isTopFree_cap)
+
+/-! ### Determination under relabelling -/
+
+/-- **Determination relabels**: if `d` is determined over `t'.reindex σ` along `h''` within the
+receiving family of `D''` at `δ`, then `d` is determined over `t'` along `h''.trans σ` within the
+receiving family of `D''.reindex τ⁻¹` at `δ`, for the extension `τ` of `σ` fixing the new point.
+A member `q` of the second family with face `t'` reindexes along `τ` to a member of the first
+family with face `t'.reindex σ`. -/
+theorem IsDeterminedWithin.reindex_extendPerm {t' : StageType.{u} α k} {σ : Equiv.Perm (Fin k)}
+    {D'' : StageType.{u} α (k + 1)} {δ : Label.{u}} {h'' : Fin n ↪ Fin k}
+    {d : StageType.{u} α (n + 1)}
+    (hdet : IsDeterminedWithin (receivingFamily D'' δ) (t'.reindex σ) h'' d) :
+    IsDeterminedWithin (receivingFamily (D''.reindex (extendPerm σ).symm) δ) t'
+      (h''.trans σ.toEmbedding) d := by
+  intro q hq hqt
+  have hq' := reindex_mem_receivingFamily (extendPerm σ) hq
+  rw [reindex_reindex, Equiv.self_trans_symm, reindex_refl] at hq'
+  have hface : restrictFace Fin.castSuccEmb (q.reindex (extendPerm σ)) = some (t'.reindex σ) := by
+    rw [restrictFace_reindex, castSuccEmb_trans_extendPerm, ← restrictFace_trans q _ _ hqt,
+      restrictFace_equiv]
+  have h := hdet _ hq' hface
+  rwa [restrictFace_reindex, extendByLast_trans_extendPerm] at h
 
 end StageType
 
@@ -496,6 +518,34 @@ structure SchemeDetermination
         ∃ D' ∈ t'.cofaces,
           StageType.IsDeterminedWithin (StageType.saturationFamily D'.toScheme) t' h d
 
+/-! ### Hollow cutoff determination -/
+
+/-- **Hollow cutoff determination** for `P`, a statement about stage types: at a limit stage, over
+every legal `t'` with `P t' h`, every one-point coface `d` of the face of `t'` along `h` is
+determined over `t'` along `h` within the receiving family, at a permitted cutoff, of some coface
+of `t'`.  The coface and the cutoff are chosen for the input, before any member of the family.
+The statement of `CutoffDetermination` without the bound on the top grade of `d`.  Not proved for
+any `P` here. -/
+structure HollowCutoffDetermination
+    (P : ∀ {α : Ordinal.{u}} {n k : ℕ}, StageType.{u} α k → (Fin n ↪ Fin k) → Prop) : Prop where
+  /-- Every coface of the face is determined at a cutoff. -/
+  exists_coface ⦃α : Ordinal.{u}⦄ ⦃n k : ℕ⦄ (t' : StageType.{u} α k) (h : Fin n ↪ Fin k) :
+    Order.IsSuccLimit α → t'.IsLegal → P t' h → ∀ t : StageType.{u} α n,
+      StageType.restrictFace h t' = some t → ∀ d ∈ t.cofaces,
+        ∃ D' ∈ t'.cofaces, ∃ δ : Label.{u}, IsPermittedCutoff α δ ∧
+          StageType.IsDeterminedWithin (StageType.receivingFamily D' δ) t' h d
+
+/-- **Scheme determination gives hollow cutoff determination**: the receiving family of `D'` at
+any cutoff lies in the stage types on the scheme of `D'`, and the cutoff `0` is permitted at every
+limit stage. -/
+theorem HollowCutoffDetermination.of_schemeDetermination
+    {P : ∀ {α : Ordinal.{u}} {n k : ℕ}, StageType.{u} α k → (Fin n ↪ Fin k) → Prop}
+    (h : SchemeDetermination.{u} P) : HollowCutoffDetermination.{u} P where
+  exists_coface α n k t' g hα ht' hP t ht d hd := by
+    obtain ⟨D', hD', hdet⟩ := h.exists_coface t' g hα ht' hP t ht d hd
+    exact ⟨D', hD', ((0 : Ordinal.{u}) : Label.{u}), isPermittedCutoff_coe.mpr hα.bot_lt,
+      hdet.mono fun _ hq ↦ hq.1⟩
+
 /-- **The face of an acquired context**: under exact consistency, if `c'` covers `t'` and
 `c' ∘ h` is a cover `c` of `t`, the face of `t'` along `h` is `t`. -/
 theorem restrictFace_of_covers (hR : R.IsConsistent) {t : StageType.{u} α n}
@@ -510,7 +560,7 @@ theorem restrictFace_of_covers (hR : R.IsConsistent) {t : StageType.{u} α n}
 /-- **(R2) from (R1), residual acquisition, and cutoff determination**, for any predicate `P` on
 acquired contexts.  (R1) is assumed for every model at every limit stage: the receiving
 hypothesis ranges over every limit stage at fixed universe levels and is not supplied by the
-countable-stage `Expansion.FiniteCutReceiving`.  No `P` is defined in the library; this is a
+countable-stage `Expansion.FiniteCutReceiving`.  No `P` is defined in this file; this is a
 template. -/
 theorem residualReceiving_of_cutoffDetermination
     {P : ∀ {α : Ordinal.{u}} {n k : ℕ}, ℕ → StageType.{u} α k → (Fin n ↪ Fin k) → Prop}
