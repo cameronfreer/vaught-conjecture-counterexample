@@ -208,7 +208,7 @@ without sentence minimality and without López–Escobar; the composition for th
 from the back-and-forth form of condition 3 (`README.md`, the reduction to expansion domains and
 Layer 6), is compiled conditional on the cap-to-model theorem, (R1), forcing donors at every
 countable block index, the continuation criterion, (R2) and (R3), the first and third compiled
-(`MainTheorem.capToModel`, `forcingDonors_of_blockStage`) and the others still to be proved
+(`MainTheorem.capToModel`, `forcingDonors_blockStage`) and the others still to be proved
 (`densitySentence_isThinOnNatModels_of_terminalClassification_bfScattered`,
 `MainTheorem/ScatteredDomains`).  It is also compiled for full presentations with scattered tails
 (`densitySentence_isThinOnNatModels_of_scatteredTails`, through
@@ -903,7 +903,7 @@ is compiled conditionally on block determination (below).  None is an input to t
   block determination for them is compiled in this repository (theorem named) conditional on
   finite-extension receiving of the model expansions to `λ_{η+1}` (from (R1)) and on forcing donors
   at `η` (`ForcingDonors`), the first still to be proved, the second compiled,
-  `forcingDonors_of_blockStage` (`forcingThresholds_determines`; with these
+  `forcingDonors_blockStage` (`forcingThresholds_determines`; with these
   hypotheses at every block below `η`, `realize_blockFormula_forcingThresholds_iff`). Its form with
   finite-extension receiving of all models,
   `Expansion.FiniteExtensionReceiving.forcingThresholds_determines`

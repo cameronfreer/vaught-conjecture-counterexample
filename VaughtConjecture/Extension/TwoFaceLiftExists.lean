@@ -77,27 +77,27 @@ the raised `a` at the cap `c`; that union fill is not used.
 the full grade (`Seed.nonempty_completionBelowFullGrade_of_twoFaceLiftExists`, a hypothesis on the
 seed).
 
-**Where the step fails, and what is open.**  `2FL∃(j)` remains the exact hypothesis of the step.
-It holds at `j` for the seeds satisfying `2FL(j)`, for the seeds whose old cells of the grade
-`j + 1` are dead and which satisfy the invariant at `j`, and, at `j = 2`, for the seeds whose two
-coatom types are the type `T5` of the module `VaughtConjecture.Extension.CaseSplitCounterexample`.
-The step fails for a legal seed: for the seed `seedL` on five points of the module
+**Where the step fails, and what is open.**  `2FL∃(j)` remains the exact hypothesis of the step.  It
+holds at `j` for the seeds satisfying `2FL(j)`, for the seeds whose old cells of the grade `j + 1`
+are dead and which satisfy the invariant at `j`, and, at `j = 2`, for the seeds whose two coatom
+types are the type `T5` of the module `VaughtConjecture.Extension.CaseSplitCounterexample`.  The
+step fails for a legal seed: for the seed `seedL` on five points of the module
 `VaughtConjecture.Extension.TwoFaceLiftExistsCounterexample`, whose two coatom types differ,
 `2FL∃(2)` fails (`TwoFaceLiftExistsCounterexample.not_twoFaceLiftExists_two_seedL`), so the
 invariant of its tower fails at the top grade
 (`TwoFaceLiftExistsCounterexample.not_towerInvariant_top_seedL`) and `2FL∃(j)` at the grades
 `2 ≤ j < m` is false as a statement about every seed, at every stage
-(`TwoFaceLiftExistsCounterexample.not_forall_twoFaceLiftExists`).  The tower does not complete
-every seed.  Not refuted: a completion below the full grade of `seedL` by another construction,
-and `StageType.HasApexCoatomExtensions` and `StageType.HasCoatomExtensions`, which remain to be
-proved.  `seedL` has a completion below the full grade by other constructions
+(`TwoFaceLiftExistsCounterexample.not_forall_twoFaceLiftExists`).  The tower does not complete every
+seed.  `StageType.HasApexCoatomExtensions` and `StageType.HasCoatomExtensions` at the stages that
+are zero or a limit are compiled in this repository (theorem named), by another construction
+(`StageType.hasApexCoatomExtensions`, `StageType.hasCoatomExtensions`).  `seedL` has a completion
+below the full grade by other constructions
 (`ThinCompletion.nonempty_completionBelowFullGrade_seedL`, `ProfileTowerExamples.seedL_completion`).
-That module gives
-a necessary condition, argued and not formalized (a cell at `(univ, 2)` where the labelling reaches
-the cap and whose row reads the cell `({3}, 1)` strictly below the cell `({4}, 1)`; for the
-catalogue entry `a` and the cap `h` of the failure, no cell of the tower at `(univ, 2)` where `a`
-reaches `h` separates these two cells, while separating cells where `a < h` may exist), and a
-prospective candidate.
+That module gives a necessary condition, argued and not formalized (a cell at `(univ, 2)` where the
+labelling reaches the cap and whose row reads the cell `({3}, 1)` strictly below the cell
+`({4}, 1)`; for the catalogue entry `a` and the cap `h` of the failure, no cell of the tower at
+`(univ, 2)` where `a` reaches `h` separates these two cells, while separating cells where `a < h`
+may exist), and a prospective candidate.
 
 ## Placement
 

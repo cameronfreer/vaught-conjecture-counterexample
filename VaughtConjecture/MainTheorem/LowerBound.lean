@@ -251,9 +251,9 @@ theorem hasApexCoatomExtensions_omega_of_forall_blockStage
 
 /-- **Nonempty losses of the expansion domains of the density sentence** (condition 4 of the
 reduction; the lower bound), under the coatom extension property with apex at every countable block
-stage (`hext`; compiled, `StageType.hasApexCoatomExtensions_blockStage`) and next-block uniqueness
-of models (`hnext`, still to be proved; from it alone,
-`MainTheorem.hasNonemptyLosses_of_nextBlockUniqueness`). -/
+stage (`hext`; compiled in this repository (theorem named),
+`StageType.hasApexCoatomExtensions_blockStage`) and next-block uniqueness of models (`hnext`, still
+to be proved; from it alone, `MainTheorem.hasNonemptyLosses_of_nextBlockUniqueness`). -/
 theorem hasNonemptyLosses_of_hasApexCoatomExtensions (hcap : CapToModel.{0})
     (hnext : NextBlockUniqueness.{0})
     (hext : ∀ η < ω₁, HasApexCoatomExtensions.{0} (blockStage η)) :
@@ -264,12 +264,12 @@ theorem hasNonemptyLosses_of_hasApexCoatomExtensions (hcap : CapToModel.{0})
 /-- **The thin `ℵ₁` spectrum of the density sentence, with the nonempty losses derived from the
 coatom extension property with apex and next-block uniqueness**, conditional on the following
 hypotheses, each still to be proved except the cap-to-model theorem, forcing donors and the coatom
-extension property with apex where listed, which are compiled (`MainTheorem.capToModel`,
-`forcingDonors_of_blockStage`, `StageType.hasApexCoatomExtensions_blockStage`):
+extension property with apex where listed, which are compiled in this repository (theorem named)
+(`MainTheorem.capToModel`, `forcingDonors_blockStage`,
+`StageType.hasApexCoatomExtensions_blockStage`):
 * the coatom extension property with apex at every countable block stage (`hext`; Layer 3, 3.1,
   (R6), compiled as `StageType.hasApexCoatomExtensions_blockStage`), which also gives the
-  cap-to-model theorem at `ω`
-  (`CapToModel.of_hasApexCoatomExtensions`);
+  cap-to-model theorem at `ω` (`CapToModel.of_hasApexCoatomExtensions`);
 * next-block uniqueness of models (`hnext`; Layer 4, output 2);
 * finite-cut receiving of models (`hrec`; (R1) of the table of Layer 3);
 * countable losses of the expansion domains (`hc`; condition 2 of the reduction, Layers 4–5).

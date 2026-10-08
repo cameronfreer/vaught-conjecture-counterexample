@@ -10,33 +10,38 @@ import VaughtConjecture.Extension.UpperDecoderAt
 # Layers of rank-normalized profiles over the tower, at every arity
 
 Roadmap, Layer 3, 3.1, (R6), checkpoint 2.7 (the completion below the full grade, here at every
-arity `m`; the case `m = 3` is `VaughtConjecture.Extension.TowerProfileScheme`).
+arity `m ≥ 2`, `m = 3` included; the modules `VaughtConjecture.Extension.TowerProfileScheme` and
+`VaughtConjecture.Extension.TowerProfileCompletion` are the first instance, at `m = 3`, kept as a
+test, and the completion does not go through them, beyond the generic lemma
+`Scheme.extendsFromBoundary_fieldLayer_of_fill` stated in the second).
 
-Let `I` be a seed on `m + 2` points, with `N` cells in its amalgam.  A **profile** is a labelling
-of the cells of the amalgam (`ProfileTower.Prof`).  The **rank-normalized catalogue at the grade
-`k`** (`ProfileTower.cat I k`) is the finite set of profiles lawful below both coatoms at the grade
-`k` and fixed by the orbit code at `k`.  A **level at the grade `g`** (`ProfileTower.Lvl`) is a
-scheme, the old cells (the amalgam), and a **section operator** `σ`: a labelling of the scheme for
-each profile.
+Let `I` be a seed on `m + 2` points, with `N` cells in its amalgam.  A **profile** is a labelling of
+the cells of the amalgam (`ProfileTower.Prof`).  The **rank-normalized catalogue at the grade `k`**
+(`ProfileTower.cat I k`) is the finite set of profiles lawful below both coatoms at the grade `k`
+and fixed by the orbit code at `k`.  A **level at the grade `g`** (`ProfileTower.Lvl`) is a scheme,
+the old cells (the amalgam), and a **section operator** `σ`: a labelling of the scheme for each
+profile.
 
-**The levels** (`ProfileTower.lvl I j`, at the grade `j + 2`).  The base level is the tower
-`T 2` with the tower section (`Seed.towerSection`).  The next level of a level `L` at the grade `g`
+**The levels** (`ProfileTower.lvl I j`, at the grade `j + 2`).  The base level is the tower `T 2`
+with the tower section (`Seed.towerSection`).  The next level of a level `L` at the grade `g`
 (`ProfileTower.Lvl.next`) appends one cell of full scope and grade `g + 1` for each profile of the
 catalogue at `g + 1`; the row of the cell of a profile `R` (`ProfileTower.Lvl.Φ`) is the section
-`σ R` at the cells of `L`, and at the cell of a profile `R'` the agreement height of `R` and `R'`
-in the grid `Label.grid (g + 1) (2 N + 2)`, one grid per seed.  The rows depend on the profiles
-only: one scheme per seed, rows fixed before any prescription or cap.  The section operator of
-the next level (`ProfileTower.Lvl.nextσ`) reads, at the cells of grade at most `g + 1`, the row of
-the orbit code of the profile cut at `g + 1` through the upper decoder at the grade `g + 1` for
-caps at `g + 2` (`Label.upperDecoderAt`), and is the profile itself at the old cells above.
+`σ R` at the cells of `L`, and at the cell of a profile `R'` the agreement height of `R` and `R'` in
+the grid `Label.grid (g + 1) (2 N + 2)`, one grid per seed and grade.  The rows depend on the
+profiles only: one scheme per seed, rows fixed before any prescription or cap.  The section operator
+of the next level (`ProfileTower.Lvl.nextσ`) reads, at the cells of grade at most `g + 1`, the row
+of the orbit code of the profile cut at `g + 1` through the upper decoder at the grade `g + 1` for
+caps at `g + 2` (`Label.upperDecoderAt`: the larger of the orbit decoder and a gap value that reads
+the gaps between codes upward, `VaughtConjecture.Extension.UpperDecoderAt`), and is the profile
+itself at the old cells above.
 
 **The invariant** (`ProfileTower.Lvl.Good`): the old cells form a lower embedding of the amalgam
 with its rows and faces, every cell of proper scope old; the scheme is well formed, coded and
 consistent and carries a cell at every `(univ, j)`, `0 < j ≤ g`; the section operator is lawful on
 the profiles lawful on the grade-`g` cut, takes values in the code grid at `g + 1` for profiles
-there, is literal at the old cells, agrees capped at every cap self-visible and short at `g + 1`
-for profiles agreeing capped there, and is readable at `g + 1` for the orbit-canonical profiles;
-and the scheme lifts capped from either coatom into the full face at every grade `j ≤ g`.
+there, is literal at the old cells, agrees capped at every cap self-visible and short at `g + 1` for
+profiles agreeing capped there, and is readable at `g + 1` for the orbit-canonical profiles; and the
+scheme lifts capped from either coatom into the full face at every grade `j ≤ g`.
 
 * **The base level is good** (`ProfileTower.base_good`, `m ≥ 1`): the tower section, and the lifts
   of `T 2` from `2FL(1)` (`Seed.towerInvariant_succ`, `Seed.twoFaceLift_one`).
@@ -44,18 +49,17 @@ and the scheme lifts capped from either coatom into the full face at every grade
   (`ProfileTower.Lvl.Good.next`).  The row of a profile of the catalogue is lawful below
   `(univ, g + 1)` (`ProfileTower.Lvl.Good.isLawfulBelow_Φ`).  The lift at the grade `g + 1` from
   either coatom (`ProfileTower.Lvl.Good.cappedLift_next`) is the one-grade lift
-  `CellScheme.Rows.cappedLift_of_boundaries_short` with the boundary triples of the two coatoms
-  and their common face on `m` points, the extension from the boundary at `⊥`
-  (`ProfileTower.Lvl.Good.exists_extension_bot`) and at every cap self-visible and short at
-  `g + 1` (`ProfileTower.Lvl.Good.exists_extension`: the row of the orbit code of the old labels,
-  read by their orbit decoder at the cap, which reads the section literally because it is
-  readable, and agrees with the row of the prescribed profile because the section agrees capped).
-  The section operator of the next level keeps the invariant at `g + 2`: lawful through the upper
-  decoder, a witness (`ProfileTower.Lvl.Good.next_lawful`); capped agreement at the caps
-  self-visible and short at `g + 2` (`ProfileTower.Lvl.Good.next_capAgree`,
-  `Label.min_upperDecoderAt_comp_eq`); readable (`ProfileTower.Lvl.Good.next_readable`,
-  `Label.isReadableAt_upperDecoderAt_of_mem`); in the code grid
-  (`ProfileTower.Lvl.Good.next_mem`); literal (`ProfileTower.Lvl.Good.next_literal`).
+  `CellScheme.Rows.cappedLift_of_boundaries_short` with the boundary triples of the two coatoms and
+  their common face on `m` points, the extension from the boundary at `⊥`
+  (`ProfileTower.Lvl.Good.exists_extension_bot`) and at every cap self-visible and short at `g + 1`
+  (`ProfileTower.Lvl.Good.exists_extension`: the row of the orbit code of the old labels, read by
+  their orbit decoder at the cap, which reads the section literally because it is readable, and
+  agrees with the row of the prescribed profile because the section agrees capped).  The section
+  operator of the next level keeps the invariant at `g + 2`: lawful through the upper decoder, a
+  witness (`ProfileTower.Lvl.Good.next_lawful`); capped agreement at the caps self-visible and short
+  at `g + 2` (`ProfileTower.Lvl.Good.next_capAgree`, `Label.min_upperDecoderAt_comp_eq`); readable
+  (`ProfileTower.Lvl.Good.next_readable`, `Label.isReadableAt_upperDecoderAt_of_mem`); in the code
+  grid (`ProfileTower.Lvl.Good.next_mem`); literal (`ProfileTower.Lvl.Good.next_literal`).
 * **Every level up to the grade `m` is good** (`ProfileTower.lvl_good`, `m ≥ 2`).
 
 Compiled in this repository (theorem named), for every seed, with no hypothesis on the seed or the
@@ -65,8 +69,8 @@ The top layer at the grade `m + 1` and the completion below the full grade are i
 
 ## Placement
 
-Checkpoint 2.7 of the completion of the coatom extension construction (`roadmap/README.md`,
-Layer 3, 3.1, under "(R6)").
+Checkpoint 2.7 of the completion of the coatom extension construction (`roadmap/README.md`, Layer 3,
+3.1, under "(R6)").
 -/
 
 universe u
@@ -95,8 +99,8 @@ def IsCutLawful (k : ℕ) (P : Prof I) : Prop :=
     I.amalgam.rows.IsLawfulBelow (coatD, k) (fun d ↦ P d)
 
 open Classical in
-/-- The **rank-normalized catalogue at the grade `k`**: the profiles lawful on the grade-`k` cut
-and fixed by the orbit code at `k`; their values lie in `codeGrid k (2 N)`. -/
+/-- The **rank-normalized catalogue at the grade `k`**: the profiles lawful on the grade-`k` cut and
+fixed by the orbit code at `k`; their values lie in `codeGrid k (2 N)`. -/
 noncomputable def cat (k : ℕ) : Finset (Prof I) :=
   (Fintype.piFinset fun _ ↦ codeGrid k (2 * I.amalgam.card)).filter
     fun P ↦ IsCutLawful I k P ∧ orbitCode k P = P
@@ -133,12 +137,10 @@ noncomputable def hat (k : ℕ) (P : Prof I) : Prof I :=
 cells, every cell of grade at most `g` or of scope other than the ground set. -/
 structure Lvl (g : ℕ) where
   /-- The scheme. -/
-  S : Scheme.{u} (m + 2)
-  /-- The section operator. -/
-  σ : Prof I → Fin S.card → Label.{u}
-  /-- The old cells. -/
-  embed : Fin I.amalgam.card ↪o Fin S.card
-  /-- Every cell has grade at most `g` or scope other than the ground set. -/
+  S : Scheme.{u} (m + 2) /-- The section operator. -/
+  σ : Prof I → Fin S.card → Label.{u} /-- The old cells. -/
+  embed : Fin I.amalgam.card ↪o Fin S.card /-- Every cell has grade at most `g` or scope other than
+  the ground set. -/
   inv : ∀ d, S.toCellScheme.grade d ≤ g ∨ S.toCellScheme.scope d ≠ univ
 
 variable {I}
@@ -163,9 +165,9 @@ noncomputable abbrev Lvl.nextS {g : ℕ} (L : Lvl I g) : Scheme.{u} (m + 2) :=
 /-- The code of a profile at the grade `g + 1`: the orbit code of its splice. -/
 noncomputable abbrev code (k : ℕ) (P : Prof I) : Prof I := orbitCode k (hat I k P)
 
-/-- The section operator of the next level: at the cells of grade at most `g + 1`, the row
-labelling of the code of the profile, read by the upper decoder of the splice; above, the
-section of the level. -/
+/-- The section operator of the next level: at the cells of grade at most `g + 1`, the row labelling
+of the code of the profile, read by the upper decoder of the splice; above, the section of the
+level. -/
 noncomputable def Lvl.nextσ {g : ℕ} (L : Lvl I g) (P : Prof I) :
     Fin (L.S.card + (cat I (g + 1)).card) → Label.{u} := fun z ↦
   if (L.S.appendFullCellsScheme (g + 1) (cat I (g + 1)).card).grade z ≤ g + 1 then
@@ -186,8 +188,7 @@ noncomputable def Lvl.next {g : ℕ} (L : Lvl I g) : Lvl I (g + 1) where
 
 variable (I)
 
-/-- **The base level**, at the grade `2`: the tower `T 2` with its section
-(`Seed.towerSection`). -/
+/-- **The base level**, at the grade `2`: the tower `T 2` with its section (`Seed.towerSection`). -/
 noncomputable def base : Lvl I 2 where
   S := I.tower 2
   σ := I.towerSection (bound I) 2
@@ -199,7 +200,8 @@ noncomputable def lvl : (j : ℕ) → Lvl I (j + 2)
   | 0 => base I
   | j + 1 => (lvl j).next
 
-/-! ### Good levels -/
+/-! ### Good levels
+-/
 
 variable {I}
 
@@ -209,8 +211,8 @@ abbrev Pts : Finset (Fin (m + 2)) := {Fin.last (m + 1), Fin.castSucc (Fin.last m
 /-- **A good level** at the grade `g`: the old cells form a source of the amalgam, the scheme is
 well formed, coded and consistent, the section operator is lawful, in the code grid at `g + 1`,
 literal, agrees capped at every cap self-visible and short at `g + 1`, and is readable at `g + 1`
-for the orbit-canonical profiles; and the scheme lifts capped from either coatom into the full
-face at every grade `j ≤ g`. -/
+for the orbit-canonical profiles; and the scheme lifts capped from either coatom into the full face
+at every grade `j ≤ g`. -/
 structure Lvl.Good {g : ℕ} (L : Lvl I g) : Prop where
   lowerEmb : I.amalgam.toCellScheme.IsLowerEmbedding L.S.toCellScheme L.embed
   scope_embed : ∀ d, L.S.toCellScheme.scope (L.embed d) = I.amalgam.toCellScheme.scope d
@@ -257,7 +259,8 @@ theorem base_good (hm : 1 ≤ m) : (base I).Good where
     I.towerInvariant_succ (j := 1) hm I.towerInvariant_one I.twoFaceLift_one x hx j hj
   complete _ hj0 hj := I.exists_gradedIndex_eq_univ_tower_of_le hj0 2 hj
 
-/-! ### Old cells of a good level -/
+/-! ### Old cells of a good level
+-/
 
 section Step
 
@@ -318,7 +321,8 @@ theorem Lvl.Good.mem_below_cover (hL : L.Good) {x y : Fin (m + 2)} (hx : x ∈ (
   · refine .inr (.inr ?_)
     rw [CellScheme.mem_below, hL.gradedIndex_embed]; exact ⟨h, hd⟩
 
-/-! ### The row labellings of the next layer -/
+/-! ### The row labellings of the next layer
+-/
 
 @[simp] theorem Lvl.Φ_castAdd (R : Prof I) (e : Fin L.S.card) :
     L.Φ R (Fin.castAdd _ e) = L.σ R e := Fin.append_left _ _ e
@@ -344,8 +348,8 @@ theorem agreementHeight_self_ceiling' (k : ℕ) (R : Prof I) :
     agreementHeight (grid k (bound I)) R R = gridPoint k (bound I) :=
   agreementHeight_self (gridPoint_mem_grid le_rfl) (fun _ hx ↦ le_gridPoint_of_mem_grid hx) R
 
-/-- Lawfulness below a pair not above `(univ, g + 1)` in the next scheme is lawfulness in the
-level. -/
+/-- Lawfulness below a pair not above `(univ, g + 1)` in the next scheme is lawfulness in the level.
+-/
 theorem Lvl.isLawfulBelow_nextS_iff {X : Finset (Fin (m + 2)) × ℕ}
     (hX : ¬ ((univ : Finset (Fin (m + 2))), g + 1) ≤ X)
     {v : Fin (L.S.card + (cat I (g + 1)).card) → Label.{u}} :
@@ -353,8 +357,8 @@ theorem Lvl.isLawfulBelow_nextS_iff {X : Finset (Fin (m + 2)) × ℕ}
       L.S.rows.IsLawfulBelow X (fun d ↦ v (Fin.castAdd _ d)) :=
   Scheme.isLawfulBelow_appendFullCells_iff hX
 
-/-- **The row labelling of a profile of the catalogue at `g + 1` is lawful below
-`(univ, g + 1)`** in the next scheme. -/
+/-- **The row labelling of a profile of the catalogue at `g + 1` is lawful below `(univ, g + 1)`**
+in the next scheme. -/
 theorem Lvl.Good.isLawfulBelow_Φ (hL : L.Good) {R : Prof I} (hR : R ∈ cat I (g + 1)) :
     L.nextS.rows.IsLawfulBelow ((univ : Finset (Fin (m + 2))), g + 1) fun z ↦ L.Φ R z := by
   classical
@@ -436,7 +440,8 @@ theorem Lvl.Good.isLawfulBelow_Φ (hL : L.Good) {R : Prof I} (hR : R ∈ cat I (
       rw [Lvl.Φ_natAdd, hi₀, agreementHeight_self_ceiling']
       exact le_gridPoint_of_mem_codeGrid (hL.Φ_mem_codeGrid hRB s)
 
-/-! ### The structure of the next level -/
+/-! ### The structure of the next level
+-/
 
 theorem Lvl.next_S (L : Lvl I g) : L.next.S = L.nextS := rfl
 
@@ -514,7 +519,8 @@ theorem Lvl.cappedLift_nextS_iff {X Y : Finset (Fin (m + 2)) × ℕ} (hXY : X �
       fun d hd ↦ ⟨⟨d, Scheme.lt_card_of_mem_below hY hd⟩, rfl⟩⟩
   rw [← h.cappedLift_iff hXY le_rfl, Scheme.comap_rows_castAdd]
 
-/-! ### Extension from the boundary through the next layer -/
+/-! ### Extension from the boundary through the next layer
+-/
 
 theorem Lvl.Good.Φ_old (hL : L.Good) (R : Prof I) (d : Fin I.amalgam.card) :
     L.Φ R (Fin.castAdd _ (L.embed d)) = R d := by
@@ -558,10 +564,10 @@ theorem Lvl.Good.exists_old (hL : L.Good) {z : Fin L.nextS.card}
     exact this
 
 /-- **Extension from the boundary along the row labelling of a profile, at a positive cap
-self-visible and short at `g + 1`**: the row labelling of the orbit code `Q` of the old labels,
-read by their orbit decoder at the cap; it keeps the cap because the section of `Q` is readable for
-`Q` (`Lvl.Good.readable`) and agrees with that of the profile capped at the cap
-(`Lvl.Good.capAgree`). -/
+self-visible and short at `g + 1`**: the row labelling of the orbit code `Q` of the old labels, read
+by their orbit decoder at the cap; it keeps the cap because the section of `Q` is readable for `Q`
+(`Lvl.Good.readable`) and agrees with that of the profile capped at the cap (`Lvl.Good.capAgree`).
+-/
 theorem Lvl.Good.exists_extension (hL : L.Good) {P : Prof I} (hP : P ∈ cat I (g + 1))
     {h : Label.{u}} (hh : IsSelfVisible (g + 1) h) (hs : IsShort (g + 1) h) (hb : h ≠ ⊥)
     {w : Fin L.nextS.card → Label.{u}}
@@ -636,7 +642,8 @@ theorem Lvl.Good.exists_extension_bot (hL : L.Good) {w : Fin L.nextS.card → La
   change orbitDecoder (g + 1) W (gridPoint (g + 1) 0) (L.Φ Q z.1) = w z.1
   rw [hdz, hL.Φ_old, orbitDecoder_orbitCode hQW d, hW, Lvl.oldLabels_of_le hd]
 
-/-! ### The lift at the grade `g + 1` -/
+/-! ### The lift at the grade `g + 1`
+-/
 
 /-- The common face of the two coatoms is the face of the amalgam on `m` points. -/
 theorem inter_props {x y : Fin (m + 2)} (hx : x ∈ (Pts : Finset (Fin (m + 2))))
@@ -680,8 +687,8 @@ theorem Lvl.exists_natAdd_eq (L : Lvl I g) {u : Fin L.nextS.card}
 
 /-- **The capped lift at the grade `g + 1`, from either coatom**, in the next scheme, for
 `g + 1 ≤ m`: the one-grade lift `CellScheme.Rows.cappedLift_of_boundaries_short` with the lift at
-the grade `g` of the level, the boundary lifts of the amalgam through the common face, the
-extension from the boundary at `⊥` and at the caps self-visible and short at `g + 1`
+the grade `g` of the level, the boundary lifts of the amalgam through the common face, the extension
+from the boundary at `⊥` and at the caps self-visible and short at `g + 1`
 (`Lvl.Good.exists_extension`), and the serving cells at `(univ, g + 1)`. -/
 theorem Lvl.Good.cappedLift_next (hL : L.Good) (hgm : g + 1 ≤ m) {x : Fin (m + 2)}
     (hx : x ∈ (Pts : Finset (Fin (m + 2)))) :
@@ -763,7 +770,8 @@ theorem Lvl.Good.cappedLift_next (hL : L.Good) (hgm : g + 1 ≤ m) {x : Fin (m +
     rw [hrowB]
     exact hrc d
 
-/-! ### The section operator of the next level -/
+/-! ### The section operator of the next level
+-/
 
 theorem hat_of_le {k : ℕ} {P : Prof I} {d : Fin I.amalgam.card}
     (hd : I.amalgam.toCellScheme.grade d ≤ k) : hat I k P d = P d :=

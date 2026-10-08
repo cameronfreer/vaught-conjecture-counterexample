@@ -242,7 +242,7 @@ threshold `n` at `d`.  Forcing donors is applied to `p` read at `λ_{η+1}` (`St
 where the label of `d` is still the formal top, so every threshold is below it.
 
 Forcing donors `ForcingDonors η` is not proved here: it is a finite statement of Layer 4, output 2,
-compiled at every block index (`forcingDonors_of_blockStage`). -/
+compiled in this repository (theorem named) at every block index (`forcingDonors_blockStage`). -/
 theorem exists_forcesThreshold_of_label_eq_top {η : Ordinal.{u}} (hF : ForcingDonors.{u} η)
     {k : ℕ} {p : StageType.{u} (blockStage η) k} (hp : p.IsLegal) {d : Fin p.card}
     (hd : p.label d = ⊤) (n : ℕ) :
@@ -276,7 +276,7 @@ forced by a legal extension of the type of `x`
 is not an anchor at the top.
 
 Forcing donors `ForcingDonors ξ` is not proved here: it is a finite statement of Layer 4, output 2,
-compiled at every block index (`forcingDonors_of_blockStage`). -/
+compiled in this repository (theorem named) at every block index (`forcingDonors_blockStage`). -/
 theorem isCoverHollow_of_exactReceivingWithin (hF : ForcingDonors.{u} ξ) (hl : R.HasLegalTypes)
     (h : R.ExactReceivingWithin fun m ↦ {D : StageType.{u} (blockStage ξ) m | D.IsLegal}) :
     R.IsCoverHollow := by

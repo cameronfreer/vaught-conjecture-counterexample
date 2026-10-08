@@ -11,8 +11,8 @@ import VaughtConjecture.Stage.Cap
 
 Roadmap, the section "The top-free witnesses: the finite age and its classical limit", step 2
 (amalgamation and joint embedding proved directly for finite charts), here conditional on the coatom
-extension property (compiled at every stage that is zero or a limit,
-`StageType.hasCoatomExtensions`), with the application of the classical existence theorem of
+extension property (compiled in this repository (theorem named) at every stage that is zero or a
+limit, `StageType.hasCoatomExtensions`), with the application of the classical existence theorem of
 step 3; Layer 3, 3.1, (R6) (the plain form of the coatom extension property gives the amalgamation
 of legal stage types over a common face, which capped is step 2).
 
@@ -60,9 +60,10 @@ ordinals below the stage (`hullLanguage.countable_functions`); at `ω` it is
 takes three hypotheses on the stage `α`, explicitly:
 
 * `hext : StageType.HasCoatomExtensions α`, the plain form of the coatom extension property at `α`.
-  It is not proved: it is the open part of statement (R6) of roadmap, Layer 3, 3.1, whose proof by
-  the completion of the coatom amalgam is checkpoints 2.1–2.7 there.  It gives the amalgam of two
-  legal stage types over a common face (`StageType.exists_amalgam`).
+  It is compiled in this repository (theorem named) at every stage that is zero or a limit
+  (`StageType.hasCoatomExtensions`; statement (R6) of roadmap, Layer 3, 3.1, by the completion of
+  the coatom amalgam, checkpoints 2.1–2.7 there).  It gives the amalgam of two legal stage types
+  over a common face (`StageType.exists_amalgam`).
 * `hα : Order.IsSuccPrelimit α`, so that above every ordinal below `α` there is an ordinal below `α`
   self-visible at a given arity, the cap.
 * `h0 : 0 < α`, so that the bound of the labels of a top-free stage type, and the cap, are ordinals

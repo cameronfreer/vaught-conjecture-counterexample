@@ -9,7 +9,8 @@ import VaughtConjecture.Extension.TwoFaceLift
 /-!
 # The completion below the full grade at `m = 3`, for every seed
 
-Roadmap, Layer 3, 3.1, (R6), checkpoint 2.7 (the completion below the full grade at `m = 3`).
+Roadmap, Layer 3, 3.1, (R6), checkpoint 2.7 (the completion below the full grade at `m = 3`; the
+first instance of the construction of `VaughtConjecture.Extension.ProfileTower`, kept as a test).
 
 Let `I` be any seed on five points.  **The completion** (`TowerProfile.completion I`) is the scheme
 `TowerProfile.top I`: the tower `T 2` (grades `1`, `2`), the layer of rank-normalized profiles at
@@ -40,13 +41,15 @@ Every field of `CompletionBelowFullGrade` is proved; compiled in this repository
 
 So **every seed on five points has a completion below the full grade**
 (`TowerProfile.nonempty_completionBelowFullGrade`), with no hypothesis on the seed or the stage;
-`seedL` among them (`TowerProfile.nonempty_completionBelowFullGrade_seedL`).  With the completion
-of the tower at the arities `m ≤ 2`, **the coatom extension property with apex holds at the
-arities `m ≤ 3`** at every stage that is zero or a limit
-(`StageType.hasApexCoatomExtensions_of_le_three`, via
-`CompletionBelowFullGrade.exists_coatomExtension`: legal, literal faces along both coatoms, an
-apex).  The arities `m ≥ 4` are treated in
-`VaughtConjecture.Extension.ProfileTowerCompletion`.
+`seedL` among them (`TowerProfile.nonempty_completionBelowFullGrade_seedL`).  With the completion of
+the tower at the arities `m ≤ 2`, **the coatom extension property with apex holds at the arities
+`m ≤ 3`** at every stage that is zero or a limit (`StageType.hasApexCoatomExtensions_of_le_three`,
+via `CompletionBelowFullGrade.exists_coatomExtension`: legal, literal faces along both coatoms, an
+apex).  This module is the first instance of the construction, at `m = 3`, kept as a test: the
+completion at every arity, `m = 3` included, is
+`ProfileTower.nonempty_completionBelowFullGrade_of_three_le`
+(`VaughtConjecture.Extension.ProfileTowerCompletion`), and `StageType.hasApexCoatomExtensions` does
+not go through this module.
 
 The construction is not presented as an `OrderedLayer.multiLayerScheme` with a
 `Seed.MultiLayerStep`: the scheme is built as a sequence of `Scheme.appendFullCells` layers and

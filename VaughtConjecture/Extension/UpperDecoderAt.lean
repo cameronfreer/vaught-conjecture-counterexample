@@ -6,22 +6,46 @@ Authors: Cameron Freer
 import VaughtConjecture.Extension.OrbitCode
 
 /-!
-# The upper decoder at a layer of grade `k` below a cap grade `K`
+# The upper decoder: an orbit decoder that reads the gaps between codes upward
 
-Roadmap, Layer 3, 3.1, (R6), checkpoint 2.7 (the completion below the full grade at every arity).
+Roadmap, Layer 3, 3.1, (R6), checkpoint 2.7 (the completion below the full grade at every arity;
+here the label map behind the section operator of each level, with capped agreement at the caps
+self-visible and short at a cap grade `K`).
 
-The definitions and laws of `VaughtConjecture.Extension.UpperDecoder` with the cap grade `3`
-replaced by a parameter `K`: the gap value reads the largest member of `Label.codeGrid K B`
-self-visible at `K` below the next value (`Label.gapValueAt`), the upper decoder at a grade
-`k ≤ K` is a witness bounded by `k` (`Label.isWitness_upperDecoderAt`), reads the orbit code
-literally (`Label.upperDecoderAt_orbitCode`), and for `k < K` keeps capped agreement at every cap
-self-visible and short at `K` (`Label.min_upperDecoderAt_agreementHeight_eq`, and
-`Label.min_upperDecoderAt_comp_eq` for any construction on the orbit codes keeping capped agreement
-at the caps self-visible and short at `k`); it takes values in the code grid
-(`Label.upperDecoderAt_mem_codeGrid_of_mem`); the readable labels for an orbit-canonical
-labelling at `K` are kept (`Label.isReadableAt_upperDecoderAt`,
-`Label.isReadableAt_upperDecoderAt_of_mem`) and read literally below the cap by the orbit decoder
-at `K` (`Label.min_orbitDecoder_eq_of_isReadableAt`).
+The extension at the cap `⊥` through a canonical field layer at a grade `k` (the layer of one cell
+of full scope and grade `k` for each catalogue entry, `Scheme.fieldLayer`;
+`Scheme.exists_isLawfulBelow_fieldLayer`) reads the field row of the orbit code of a labelling `w`
+by the orbit decoder at the least grid point (`Label.orbitDecoder`).  That decoder reads a label
+strictly between the codes of two keys of `w` as the lower key: at an agreement height in such a
+gap the decoded label lies below the next value of `w`, however far above it that value is.  Two
+labellings that agree capped at a cap `h` self-visible and short at `K > k`, but not short at `k`,
+can then decode one agreement height below `h` and the other above it.
+
+**The upper decoder** (`Label.upperDecoderAt k K B w`) is the larger of the orbit decoder and the
+*gap value* (`Label.gapValueAt`): at a label `x` other than bottom, the least, over the cells `d`
+whose code has key at least the key of `x`, of the largest member of the code grid
+`Label.codeGrid K B` self-visible at `K` and at most `w d` (`Label.admissibleBelowAt`), and at most
+the grid point `ω * B + K`.  Compiled in this repository (theorem named):
+
+* for `k ≤ K` it is a witness bounded by the grade `k` (`Label.isWitness_upperDecoderAt`), sends
+  only bottom to bottom (`Label.eq_bot_of_upperDecoderAt_eq_bot`), and reads the orbit code
+  literally (`Label.upperDecoderAt_orbitCode`); it takes values in the code grid
+  (`Label.upperDecoderAt_mem_codeGrid`, `Label.upperDecoderAt_mem_codeGrid_of_mem`);
+* **capped agreement**, for `k < K`, at every cap `h` self-visible and short at `K`
+  (`Label.min_upperDecoderAt_agreementHeight_eq`, and `Label.min_upperDecoderAt_comp_eq` for any
+  construction on the orbit codes keeping capped agreement at the caps self-visible and short at
+  `k`): with `R` the number of keys of `w` below `h`, the grid point `Γ = ω * (2 R + 1) + k`
+  separates the codes of the values below `h` from those of the values at least `h`, so below `Γ`
+  the two decoders read the same cells, and at or above `Γ` the gap values are at least `h`;
+* **readable labels** (`Label.IsReadableAt K`): a label is readable for `Q` when it is bottom,
+  self-visible at `K`, or its key at `K` is an orbit key of `Q` or not a key of `Q`.  The orbit
+  decoder at the grade `K` reads a readable label literally below its cap
+  (`Label.min_orbitDecoder_eq_of_isReadableAt`), and the upper decoder keeps readability for an
+  orbit-canonical `Q` (`Label.isReadableAt_upperDecoderAt`,
+  `Label.isReadableAt_upperDecoderAt_of_mem`).
+
+At the cap grade `3` it is the decoder of the tower section (`Seed.towerSection`); at the grade
+`g + 2` it is the decoder of the level at the grade `g + 1` (`ProfileTower.Lvl.next`).
 
 ## Placement
 

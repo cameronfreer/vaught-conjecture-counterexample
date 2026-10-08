@@ -26,9 +26,9 @@ percentage of 100 would not by itself mean that the hypotheses of a layer are pr
 | 0, general results | 97% | `Counting.countable_of_subsingleton_cover` | prospective upstream interfaces |
 | 1, finite kernel | 98% | `StageType.provisionalOffset` | the bound (d) of the offset (prospective) |
 | 2, realizations, syntax | 95% | `Realization.eq_of_eval_eq_some` | hull items 4–5 for realizations |
-| 3, the completion (R6) | 72% | `StageType.hasApexCoatomExtensions`, `Seed.nonempty_completionBelowFullGrade` | none for the completion at any `m`; the step of the family of copy rows, as a question about that family |
+| 3, the completion (R6) | 98% | `StageType.hasApexCoatomExtensions`, `Seed.nonempty_completionBelowFullGrade` | the statements at successor stages only (not needed) |
 | 3, receiving | 90% | `Realization.HasFiniteCutReceiving.hasFiniteExtensionReceiving` | (R1) (4b-ii refuted; the (R1) conditional theorems under it are to be retired in a separate change); (R2)–(R4) |
-| 4, continuation | 62% | `Realization.stableCandidate` | output 3: (R4) |
+| 4, continuation | 68% | `Realization.stableCandidate` | output 3: (R4) |
 | 5, domains, agreement | 85% | `Expansion.expansionDomain_loss_countable` | the hypotheses below |
 | 6, the bounds | 90% | `densitySentence_hasThinAlephOneSpectrum_of_terminalClassification` | the hypotheses below |
 | Manuscript correspondence | 25% | `CellScheme.Rows.printedRespects_iff`; the concordance rows (`IMPLEMENTATION.md`) | rows 2–5, 29 and 43 P, and row 14 for the printed definitions of [AFK26, §2] that it names; row 1 C, with its truncation function P; rows 6 and 44 S (one direction at `ω₁`); rows 8/11 P on corrected row 7 with domains S; row 15 P/C/P/S by part; the remaining rows S or C |
@@ -137,8 +137,8 @@ Notes on the rows, each with its marker:
   conditionally: steps 2–3 under `StageType.HasCoatomExtensions`, and step 7 under
   `StageType.HasApexCoatomExtensions` at `λ_η` and the uniqueness of model expansions at `λ_η`
   (`nonempty_loss_of_hasApexCoatomExtensions`); both coatom extension properties are compiled at
-  every block stage (`StageType.hasApexCoatomExtensions_blockStage`), so steps 2–3 hold with no
-  hypothesis and step 7 needs only the uniqueness
+  every block stage (`StageType.hasApexCoatomExtensions_blockStage`), so steps 2–3 need only their
+  hypotheses on the stage and step 7 needs only the uniqueness
   (`MainTheorem.hasNonemptyLosses_of_nextBlockUniqueness`).  Refuted: 4b-ii, the coupled gated
   pinned extension
   property (`CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`).  Still to be
@@ -147,7 +147,7 @@ Notes on the rows, each with its marker:
 - *Layer 4.*  Compiled: normalization, conditional on finite-extension receiving and forcing donors
   (`Realization.label_eq_stableLabel`); forcing donors, conditional on the coatom extension
   property (`forcingDonors_of_hasCoatomExtensions`), hence at every block index with no hypothesis
-  (`forcingDonors_of_blockStage`); the structural candidate
+  (`forcingDonors_blockStage`); the structural candidate
   (`Realization.stableCandidate`), stably lawful for every model at a block stage
   (`Realization.IsModel.isStablyLawful`), and more generally for every exactly consistent covering
   realization with legal types at a block stage (`Realization.isStablyLawful_of_hasLegalTypes`);
@@ -252,7 +252,7 @@ Notes on the rows, each with its marker:
 - *Layer 6, thinness in scatteredness form.*  Compiled conditionally on the cap-to-model theorem,
   (R1), forcing donors at every countable block index, the continuation criterion, (R2) and (R3),
   with neither sentence separation nor López–Escobar; the cap-to-model theorem and forcing donors
-  are compiled (`MainTheorem.capToModel`, `forcingDonors_of_blockStage`), the other four are still
+  are compiled (`MainTheorem.capToModel`, `forcingDonors_blockStage`), the other four are still
   to be proved
   (`densitySentence_isThinOnNatModels_of_terminalClassification_bfScattered`).
 
@@ -313,7 +313,7 @@ and hypothesis 7 from next-block uniqueness alone.  Hypotheses 2 and 4–6 are s
 
 Each hypothesis is a separate statement with its own status.  Hypothesis 8 is compiled
 (`StageType.hasApexCoatomExtensions`).  Hypotheses 1 and 3 are derived from it and so compiled
-with no hypothesis (`MainTheorem.capToModel`, `forcingDonors_of_blockStage`); hypothesis 7 is
+with no hypothesis (`MainTheorem.capToModel`, `forcingDonors_blockStage`); hypothesis 7 is
 derived from it and next-block uniqueness (`MainTheorem.hasNonemptyLosses_of_nextBlockUniqueness`;
 next-block uniqueness from hypotheses 2 and 3); hypothesis 4 is derived from it together with (R4)
 (`ContinuationCriterion.of_hasApexCoatomExtensions`, and from (R4) alone,
@@ -343,7 +343,7 @@ Status of each:
    `CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`), so that conditional
    theorem is vacuous.  It is also used for the rigid-core comparison.
 3. `ForcingDonors`: compiled in this repository (theorem named), at every block index with no
-   hypothesis (`forcingDonors_of_blockStage`), from the coatom extension property at `λ_{ξ+1}`
+   hypothesis (`forcingDonors_blockStage`), from the coatom extension property at `λ_{ξ+1}`
    (`forcingDonors_of_hasCoatomExtensions`, `Extension/ForcingDonorsCoatom`) and hypothesis 8.  The
    six-hypothesis form keeps forcing donors as its hypothesis `hF`; the five- and four-hypothesis
    forms derive them.  Before hypothesis 8 was compiled, the unconditional cases were the one- and
@@ -529,7 +529,8 @@ except as a named hypothesis.
    the tower section; the level at the grade `g + 1` adds one cell of full scope for each profile
    (a labelling of the cells of the amalgam) of the rank-normalized catalogue at `g + 1` (lawful
    below both coatoms at `g + 1`, fixed by the orbit code), whose row is the section of the profile
-   on the cells below and the agreement heights with the other profiles in one fixed grid per seed;
+   on the cells below and the agreement heights with the other profiles in one fixed grid per seed
+   and grade;
    the section of the next level reads these rows through the upper decoder at the grade `g + 1`.
    The invariant (`ProfileTower.Lvl.Good`: section lawful, literal, in the code grid, agreeing
    capped at every cap self-visible and short at `g + 1`, readable; capped lifts from both coatoms
@@ -720,7 +721,7 @@ except as a named hypothesis.
    refuted.
 4. **Forcing donors** (compiled in this repository (theorem named)): from the coatom extension
    property (`forcingDonors_of_hasCoatomExtensions`) and its proof, at every block index with no
-   hypothesis (`forcingDonors_of_blockStage`).
+   hypothesis (`forcingDonors_blockStage`).
 5. **Output 3, part D, and (R4)** (still to be proved): (R4) over positive roots; the empty root by
    the coatom extension over the empty face and the coatom extension properties at `λ_{ξ+1}` are
    compiled (`StageType.hasApexCoatomExtensions_blockStage`); the
@@ -872,8 +873,9 @@ except as a named hypothesis.
      and the calibration is not compiled here.
    - The completion is not an instance (argued): under the core the coatom extension property is
      equivalent to the compatibility of the empty prescription
-     (`StageType.HasPrescribedFullRows.hasCoatomExtensions_iff`), an additional open hypothesis
-     (`StageType.HasCompatibleEmptyPrescription`), and the canonical multi-layer step fixes the
+     (`StageType.HasPrescribedFullRows.hasCoatomExtensions_iff`), now compiled in this repository
+     (theorem named) at every stage that is zero or a limit
+     (`StageType.hasCompatibleEmptyPrescription`), and the canonical multi-layer step fixes the
      shape of the completion.
 
    Compatibility is necessary (`StageType.IsPrescribedExtension.isFaceCompatible`, compiled).  The

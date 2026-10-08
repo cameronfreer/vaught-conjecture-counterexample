@@ -16,9 +16,9 @@ Finite-extension receiving of models at countable limit stages
 `Expansion.FiniteCutReceiving.finiteExtensionReceiving`; still to be proved) gives finite-extension
 receiving of every model expansion to a block stage `λ_{η+1}`, `η < ω₁`, since `λ_{η+1}` is a
 countable limit (`FiniteExtensionReceiving.hasFiniteExtensionReceiving_of_modelExpansion`).  With
-forcing donors at `η` (`ForcingDonors`, compiled at every block index,
-`forcingDonors_of_blockStage`) it gives block determination for the
-forcing thresholds (`FiniteExtensionReceiving.forcingThresholds_determines`).
+forcing donors at `η` (`ForcingDonors`, compiled at every block index, `forcingDonors_blockStage`)
+it gives block determination for the forcing thresholds
+(`FiniteExtensionReceiving.forcingThresholds_determines`).
 
 ## Placement
 
@@ -41,9 +41,9 @@ theorem FiniteExtensionReceiving.hasFiniteExtensionReceiving_of_modelExpansion
   hrec.receive (isSuccLimit_blockStage (η + 1))
     (blockStage_lt_omega_one ((Cardinal.isSuccLimit_omega 1).succ_lt hη)) R.1 R.2.isModel
 
-/-- **Block determination by the forcing thresholds**, conditional on finite-extension receiving
-of models (from (R1), still to be proved) and on forcing donors at `η` (compiled at every block
-index, `forcingDonors_of_blockStage`). -/
+/-- **Block determination by the forcing thresholds**, conditional on finite-extension receiving of
+models (from (R1), still to be proved) and on forcing donors at `η` (compiled in this repository
+(theorem named) at every block index, `forcingDonors_blockStage`). -/
 theorem FiniteExtensionReceiving.forcingThresholds_determines
     (hrec : FiniteExtensionReceiving.{w}) {η : Ordinal.{0}} (hF : ForcingDonors.{0} η)
     (hη : η < ω₁) : (forcingThresholds η).Determines.{w} :=
