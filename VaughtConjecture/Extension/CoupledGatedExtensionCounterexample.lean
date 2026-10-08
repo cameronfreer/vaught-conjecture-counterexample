@@ -46,6 +46,19 @@ So the readings of the gate carry the bottom pattern of every lawful private lab
 anchors, to a lawful labelling of the donor.  The coupled gated pinned extension property forces
 the condition at each of its inputs (`StageType.HasCoupledGatedPinnedExtensions.carriesBottoms`).
 
+**Several caps** (`StageType.CarriesBottomsPerBlock`, forced by every per-block coupled gated
+extension: `StageType.PerBlockCoupledGatedExtension.carriesBottomsPerBlock`; both in
+`VaughtConjecture.Extension.GatedExtension`).  The same argument, gate by gate, with one lawful
+labelling of the donor for all gates.  For one cap of full scope and full grade reading every
+label it is the condition above (`StageType.carriesBottomsPerBlock_one_iff`), and
+`StageType.CoupledGatedExtension.carriesBottoms` is that case, through the extension with one gate
+(`StageType.CoupledGatedExtension.toPerBlock`).  At the refuting input, whose donor has its proper
+labels in one block, it fails for every family of caps labelled above `1` in which some cap reads
+the donor label `1` and some cap reads the donor label `⊤` (`not_carriesBottomsPerBlock`,
+`not_carriesBottomsPerBlock_of_one_lt_grade`, `not_perBlockCoupledGatedExtension`), and with one
+cap of graded index `(univ, 1)` the condition at the grade `1` fails for every cap label above `1`
+(`not_carriesBottomsAt_one`).
+
 **When the condition holds** (`StageType.carriesBottoms_of_row_mem_block`).  If the row of the cap
 reads, for every donor label below the cap, an anchor of that label in the block of its reading of
 the cap itself, then no lawful labelling of `P` that keeps the cap drops that anchor
@@ -880,5 +893,112 @@ theorem exists_mem_dominanceFamily_not_carriesBottoms (α : Ordinal.{u})
   · -- The cell `4` is labelled `⊤` (`P`).
     change (⊤ : Label.{u}) ≠ ⊥
     simp
+
+/-! ### Several caps at the refuting input -/
+
+/-- **The refuting input of the coupled property fails the per-block condition** for every family
+of caps in which one cap labelled above `1` reads the donor label `1` and one cap labelled above
+`1` reads the donor label `⊤`.  The lawful labelling `⊥, ⊥, ⊥, ω + 1, ω + 2` keeps every cell
+labelled above `1` and drops the only possible anchor `z₁` of `e₁`, so the condition asks for a
+lawful labelling of the donor `⊥` at `e₁` and not at `e₂`, which the donor's rows forbid
+(`eq_bot_of_isLawful_donor`).  The donor's proper labels lie in one block, so here one gate per
+block is one gate. -/
+theorem not_carriesBottomsPerBlock (α : Ordinal.{u}) (hα : 1 < α) {k : ℕ}
+    {X : Fin k → Finset (Fin 2) × ℕ} {c : Fin k → Label.{u}} {L : Fin k → Set Label.{u}}
+    {t₁ t₂ : Fin k} (h₁ : (1 : Label.{u}) ∈ L t₁) (hc₁ : (1 : Label.{u}) < c t₁)
+    (h₂ : (⊤ : Label.{u}) ∈ L t₂) (hc₂ : (1 : Label.{u}) < c t₂) :
+    ¬ CarriesBottomsPerBlock (P α hα) (donor α hα) X c L := by
+  intro H
+  obtain ⟨ρ, hρ, hj⟩ := H (lab ⊥ (omegaAdd 1) (omegaAdd 2)) isLawful_lab_bot_omegaAdd
+  have h1top : (1 : Label.{u}) ≠ ⊤ := ne_of_lt (lt_of_lt_of_le hc₁ le_top)
+  -- A cap labelled above `1` is labelled `⊤`, at a cell that the labelling keeps.
+  have hkeep : ∀ t, (1 : Label.{u}) < c t → ∀ i, (P α hα).toCellScheme.gradedIndex i = X t →
+      (P α hα).label i = c t → lab ⊥ (omegaAdd 1) (omegaAdd 2) i ≠ ⊥ := by
+    intro t ht i _ hi
+    -- The labels of the private type are `lab 1 ⊤ ⊤` (`P`, by definition).
+    change lab 1 ⊤ ⊤ i = c t at hi
+    fin_cases i
+    · exact absurd (hi ▸ ht) not_lt_bot
+    · exact absurd (hi ▸ ht) not_lt_bot
+    · exact absurd (hi ▸ ht) (lt_irrefl _)
+    · exact WithBot.coe_ne_bot
+    · exact WithBot.coe_ne_bot
+  have h0 : ρ (0 : Fin 2) = ⊥ := by
+    refine (hj t₁ (hkeep t₁ hc₁) (0 : Fin 2) (Finset.mem_univ _)
+      (by change (1 : Label.{u}) ≠ ⊥; simp) h₁).1 (not_le_of_gt hc₁) fun i k' _ hik ↦ ?_
+    -- The labels of the private type and of the donor are `lab 1 ⊤ ⊤` and `donorLab 1 ⊤`.
+    change (1 : Label.{u}) = visibilityReplace _ k' (lab 1 ⊤ ⊤ i) at hik
+    fin_cases i
+    · rfl
+    · rfl
+    · rfl
+    · exact absurd (hik.trans (visibilityReplace_top _ _)) h1top
+    · exact absurd (hik.trans (visibilityReplace_top _ _)) h1top
+  have h1 : ρ (1 : Fin 2) ≠ ⊥ := by
+    refine (hj t₂ (hkeep t₂ hc₂) (1 : Fin 2) (Finset.mem_univ _)
+      (by change (⊤ : Label.{u}) ≠ ⊥; simp) h₂).2 fun i hi ↦ ?_
+    -- The labels of the private type and of the donor are `lab 1 ⊤ ⊤` and `donorLab 1 ⊤`.
+    change (∃ k' ≤ (X t₂).2, (⊤ : Label.{u}) = visibilityReplace _ k' (lab 1 ⊤ ⊤ i)) ∨
+      (c t₂ ≤ lab 1 ⊤ ⊤ i ∧ c t₂ ≤ ⊤) at hi
+    fin_cases i
+    · rcases hi with ⟨k', -, hk⟩ | ⟨hle, -⟩
+      · change (⊤ : Label.{u}) = Label.visibilityReplace _ k' ⊥ at hk; simp at hk
+      · exact absurd (lt_of_lt_of_le hc₂ hle) not_lt_bot
+    · rcases hi with ⟨k', -, hk⟩ | ⟨hle, -⟩
+      · change (⊤ : Label.{u}) = Label.visibilityReplace _ k' ⊥ at hk; simp at hk
+      · exact absurd (lt_of_lt_of_le hc₂ hle) not_lt_bot
+    · rcases hi with ⟨k', -, hk⟩ | ⟨hle, -⟩
+      · change (⊤ : Label.{u}) = Label.visibilityReplace _ k' 1 at hk
+        exact absurd (visibilityReplace_eq_top_iff.mp hk.symm) h1top
+      · exact absurd (lt_of_lt_of_le hc₂ hle) (lt_irrefl _)
+    · exact WithBot.coe_ne_bot
+    · exact WithBot.coe_ne_bot
+  exact h1 (eq_bot_of_isLawful_donor hρ h0)
+
+/-- **The refuting private type has no per-block caps above the root's arity plus one**: every
+family of cells of `P α` of grade above `0 + 1`, in which some cell reads the donor label `1` and
+some cell reads the donor label `⊤`, fails the per-block condition.  The only cell of grade `2` is
+the full cell, labelled `⊤` (`not_carriesBottomsPerBlock`).  So the refuting input is not a
+per-block carrying private type at any floor. -/
+theorem not_carriesBottomsPerBlock_of_one_lt_grade (α : Ordinal.{u}) (hα : 1 < α) {k : ℕ}
+    {C : Fin k → Fin (P α hα).card} {L : Fin k → Set Label.{u}}
+    (hC : ∀ t, 0 + 1 < (P α hα).toCellScheme.grade (C t)) {t₁ t₂ : Fin k}
+    (h₁ : (1 : Label.{u}) ∈ L t₁) (h₂ : (⊤ : Label.{u}) ∈ L t₂) :
+    ¬ CarriesBottomsPerBlock (P α hα) (donor α hα)
+      (fun t ↦ (P α hα).toCellScheme.gradedIndex (C t)) (fun t ↦ (P α hα).label (C t)) L := by
+  -- A cell of grade above `1` is the full cell `4`, labelled `⊤` (`P`, by definition).
+  have key : ∀ i : Fin 5, 0 + 1 < cellGrade i → (1 : Label.{u}) < lab 1 ⊤ ⊤ i := by
+    intro i h
+    fin_cases i <;> simp [cellGrade] at h
+    change (1 : Label.{u}) < ⊤
+    exact WithBot.coe_lt_coe.mpr (WithTop.coe_lt_top _)
+  have htop : ∀ t, (1 : Label.{u}) < (P α hα).label (C t) := fun t ↦ key (C t) (hC t)
+  exact not_carriesBottomsPerBlock α hα h₁ (htop t₁) h₂ (htop t₂)
+
+/-- **The refuting input has no per-block coupled gated extension reading the donor above `1`**:
+over the empty root, no per-block coupled gated extension of `P α` with the donor has a gate that
+reads the donor label `1` and a gate that reads the donor label `⊤`, both against caps labelled
+above `1` (`PerBlockCoupledGatedExtension.carriesBottomsPerBlock`, `not_carriesBottomsPerBlock`).
+So one gate per block does not remove the obstruction of the coupled property at this input, whose
+donor has its proper labels in one block. -/
+theorem not_perBlockCoupledGatedExtension (α : Ordinal.{u}) (hα : 1 < α) {f : Fin 0 ↪ Fin 2}
+    {k : ℕ} (E : PerBlockCoupledGatedExtension (P α hα) f (donor α hα) k) {t₁ t₂ : Fin k}
+    (h₁ : (1 : Label.{u}) ∈ E.readLabels t₁) (hc₁ : (1 : Label.{u}) < E.display.label (E.cap t₁))
+    (h₂ : (⊤ : Label.{u}) ∈ E.readLabels t₂)
+    (hc₂ : (1 : Label.{u}) < E.display.label (E.cap t₂)) : False :=
+  not_carriesBottomsPerBlock α hα h₁ hc₁ h₂ hc₂ E.carriesBottomsPerBlock
+
+/-- **The refuting input fails the bottom transport condition at the grade `1`**: no cap label
+above `1` at the cells of graded index `(univ, 1)` carries the bottoms there (the subfull cap of
+`Realization/TightCap`, one grade below the full grade `2`).  This is at `N = 1` over the empty
+root, where `Realization.HasCarryingSubfullContext` requires `x.arity + 1 < N`, which is false; so
+it refutes the bottom transport condition `StageType.CarriesBottomsAt` at the subfull grade, not a
+subfull carrying context.  It is `not_carriesBottomsPerBlock`
+with one cap of graded index `(univ, 1)` reading every label
+(`carriesBottomsPerBlock_one_iff_at`). -/
+theorem not_carriesBottomsAt_one (α : Ordinal.{u}) (hα : 1 < α) {c : Label.{u}}
+    (hc : (1 : Label.{u}) < c) : ¬ (P α hα).CarriesBottomsAt (donor α hα) c 1 := fun h ↦
+  not_carriesBottomsPerBlock α hα (t₁ := 0) (t₂ := 0) (Set.mem_univ _) hc (Set.mem_univ _) hc
+    (StageType.carriesBottomsPerBlock_one_iff_at.mpr h)
 
 end VaughtConjecture.CoupledGatedExtensionCounterexample

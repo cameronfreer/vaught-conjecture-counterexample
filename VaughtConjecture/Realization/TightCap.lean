@@ -94,10 +94,10 @@ grade to the private arity.  For the redesign:
 * stated: the anchoring and the bottom transport condition at a grade `k`
   (`StageType.IsAnchoredAt`, `StageType.CarriesBottomsAt`; at `k = n` they are `IsAnchored` and
   `CarriesBottoms`, `StageType.isAnchoredAt_iff`, `StageType.carriesBottomsAt_iff`), and a carrying
-  context with a subfull cap (`Realization.HasCarryingSubfullContext`).  That a coupled
-  gated extension with gate and cap of grade `k` would force `CarriesBottomsAt` at `k` is argued
-  from the proof of `StageType.CoupledGatedExtension.carriesBottoms`, not compiled: no such
-  extension is defined;
+  context with a subfull cap (`Realization.HasCarryingSubfullContext`).  A per-block coupled
+  gated extension with one gate whose cap has graded index `(univ, k)` and reads every label forces
+  `CarriesBottomsAt` at `k` (`StageType.PerBlockCoupledGatedExtension.carriesBottomsPerBlock` with
+  `StageType.carriesBottomsPerBlock_one_iff_at`; the composite is not stated as a theorem);
 * stated: **tight saturations** (`StageType.HasTightSaturations α`), a statement about legal stage
   types and schemes, not about models: over every legal `p` on `N` points, a legal one-point
   extension scheme with a coface of `p` whose cells of graded index `(univ, N)` are tight (read in
@@ -109,8 +109,8 @@ grade to the private arity.  For the redesign:
   (`Realization.IsModel.hasCarryingSubfullContext`); vacuous above `ω`, and at the stage `0`, where
   no floor lies below the stage.  Of the clauses of a model it uses uniformity, high-arity
   dominance, legality, exact consistency and generalized saturation.  It constructs no extension
-  in the redesign (no coupled gated extension with a cap of grade below full is defined) and does
-  not prove (R1).
+  in the redesign (a per-block coupled gated extension, `StageType.PerBlockCoupledGatedExtension`,
+  may have caps of grade below full, but none is constructed here) and does not prove (R1).
 
 **What is not claimed.**  `Realization.AcquiresCarryingContexts` and
 `Realization.HasCarryingSubfullContext` are neither proved nor refuted for all models: the
@@ -157,6 +157,30 @@ def HasTightSaturations : Prop :=
       ∀ q ∈ p.cofaces ∩ saturationFamily S, ∀ G : Fin q.card,
         q.toCellScheme.gradedIndex G = (univ, N) →
         ∀ z : Fin p.card, ¬ IsSelfVisible N (p.label z) → q.ReadsInOwnBlock G (p.label z)
+
+variable (α) in
+/-- **Block-tight saturations** (a named hypothesis on stage types and schemes, not on models):
+over every legal stage type `p` on `N` points and every block start `μ` (zero or a limit), there
+is a scheme `S` on `N + 1` points with a coface of `p` such that, in every coface of `p` on `S`,
+every cell of graded index `(univ, N)` reads, in its own block, every label of `p` in the block
+`[μ, μ + ω)` that is not self-visible at `N`.  It is `StageType.HasTightSaturations` restricted to
+the labels of one block (`HasTightSaturations.hasBlockTightSaturations`); the refutation of the
+latter above `ω` (`Realization.IsModel.not_hasTightSaturations`) reads two blocks at one cell, and
+does not apply. -/
+def HasBlockTightSaturations : Prop :=
+  ∀ {N : ℕ} (p : StageType.{u} α N), p.IsLegal → ∀ μ : Ordinal.{u}, Order.IsSuccPrelimit μ →
+    ∃ S : Scheme.{u} (N + 1), (p.cofaces ∩ saturationFamily S).Nonempty ∧
+      ∀ q ∈ p.cofaces ∩ saturationFamily S, ∀ G : Fin q.card,
+        q.toCellScheme.gradedIndex G = (univ, N) →
+        ∀ z : Fin p.card, ¬ IsSelfVisible N (p.label z) →
+          (∃ i : ℕ, p.label z = ((μ + i : Ordinal.{u}) : Label.{u})) →
+          q.ReadsInOwnBlock G (p.label z)
+
+/-- Tight saturations give block-tight saturations. -/
+theorem HasTightSaturations.hasBlockTightSaturations (h : HasTightSaturations α) :
+    HasBlockTightSaturations α := fun p hp _ _ ↦
+  let ⟨S, hS, ht⟩ := h p hp
+  ⟨S, hS, fun q hq G hG z hz _ ↦ ht q hq G hG z hz⟩
 
 /-- The **tight cap family** over `p` at the floor `γ`: the stage types on `n + 1` points with a
 cell of full grade labelled above `γ` that is tight: it reads, in its own block, a cell labelled `l`
