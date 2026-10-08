@@ -19,6 +19,11 @@ donor coatom at `K`.
 * **On three points** (`CapRequests.donorTopLiftAt_three`): at every cut grade `K + 1 ≤ 2` (all the
   cut grades of the band there); at `K = 1` the common face, of one point, has no cell of grade
   `2` (`CapRequests.donorTopLiftAt_of_face`).  No two-coatom lift is needed.
+* **Not at every seed** (`TopLiftCounterexample.not_donorTopLiftAt_seed`, module
+  `VaughtConjecture.MainTheorem.H3TopLiftSeed`): it fails at the cut grade `2` for a legal seed on
+  four points, with requests having no requested cells; the failure of the union fill with the
+  data of the band.  So between the cut grade `2` and the top it is a condition on the context, not
+  a consequence of legality or of a two-coatom lift.
 -/
 
 universe u
