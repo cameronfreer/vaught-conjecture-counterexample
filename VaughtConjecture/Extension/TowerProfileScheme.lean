@@ -260,15 +260,6 @@ theorem rowBelow_natAdd (i : Fin (mult I))
     (scheme I).rows.rowBelow _ hu d = fieldLab I (entry I i) d :=
   Scheme.appendFullCells_row_natAdd i _
 
-omit I in
-/-- A row lawful below a pair equal to the graded index of its cell is consistent there. -/
-private theorem isLawfulBelow_row_of_rowBelow {n : ℕ} {S : Scheme.{u} n} {u : Fin S.card}
-    {Y : Finset (Fin n) × ℕ} (hu : S.toCellScheme.gradedIndex u = Y)
-    (h : S.rows.IsLawfulBelow Y (S.rows.rowBelow u hu)) :
-    S.rows.IsLawfulBelow (S.toCellScheme.gradedIndex u) (S.rows.row u) := by
-  subst hu
-  exact h
-
 /-- **The rows of the cells at `(univ, 3)` are consistent, short at `3`, and never the formal
 top.** -/
 theorem row_natAdd_props (i : Fin (mult I))
@@ -283,7 +274,7 @@ theorem row_natAdd_props (i : Fin (mult I))
       convert isLawfulBelow_fieldLab (entry_mem (I := I) i) using 1
       funext d
       exact rowBelow_natAdd i hu d
-    exact isLawfulBelow_row_of_rowBelow hu h
+    exact RankProfile.isLawfulBelow_row_of_rowBelow hu h
   · rw [rowBelow_natAdd]; exact isShort_of_mem_codeGrid (fieldLab_mem_codeGrid (entry_mem i) _)
   · rw [rowBelow_natAdd]; exact ne_top_of_mem_codeGrid (fieldLab_mem_codeGrid (entry_mem i) _)
 

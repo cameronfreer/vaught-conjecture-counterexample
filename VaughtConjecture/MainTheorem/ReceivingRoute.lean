@@ -45,8 +45,11 @@ expansion to `λ_η`, which is the reconstructed realization by uniqueness of re
 higher stage (`reduce_ne_reconstruct`).
 
 **Thinness** (`MainTheorem.densitySentence_isThinOnNatModels_of_receivingModels`), conditional on
-the following hypotheses, of which the first two are compiled (`MainTheorem.capToModel`,
-`forcingDonors_blockStage`) and the others are still to be proved:
+the following hypotheses, of which the first three are compiled in this repository (theorem
+named) (`MainTheorem.capToModel`, `forcingDonors_blockStage`, and for `hinst`
+`MainTheorem.hasNonemptyCofaceInstances_blockStage_add_one`, which follows in one line from
+`StageType.HasNonemptyCofaceInstances.of_hasApexCoatomExtensions` and
+`StageType.hasApexCoatomExtensions_blockStage`) and the others are still to be proved:
 * the cap-to-model theorem at `ω` (`hcap`): the first domain;
 * forcing donors at every countable block index (`hF`): next-block uniqueness of receiving models
   (`Expansion.ReceivingNextBlockUniqueness.of_forcingDonors`), for the limit clause;
@@ -65,7 +68,10 @@ stage (`hext`), (R4) for receiving models (`hR4`), (R2) for receiving models (`h
 receiving models (`hhol`).  Derived from `hext`: the cap-to-model theorem
 (`CapToModel.of_hasApexCoatomExtensions`), forcing donors
 (`forcingDonors_of_forall_hasApexCoatomExtensions`), the coface instances
-(`StageType.HasNonemptyCofaceInstances.of_hasApexCoatomExtensions`) and the lower bound.
+(`StageType.HasNonemptyCofaceInstances.of_hasApexCoatomExtensions`; compiled with no hypothesis,
+`MainTheorem.hasNonemptyCofaceInstances_blockStage_add_one`) and the lower bound.  The countable
+losses, from the coface instances, (R4), (R2) and (R3) for receiving models, are
+`MainTheorem.receivingExpansionDomains_hasCountableLosses`.
 
 **The three-hypothesis form**
 (`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_receivingModels'`; on all countable
@@ -203,12 +209,35 @@ theorem receivingExpansionDomains_hasNonemptyLosses (hcap : CapToModel.{0})
 
 /-! ### The main theorem through receiving models -/
 
+/-- **The coface instances at every next block stage** `λ_{ξ+1}`: the coatom extension property
+with apex there (`StageType.hasApexCoatomExtensions_blockStage`) gives them
+(`StageType.HasNonemptyCofaceInstances.of_hasApexCoatomExtensions`); no hypothesis. -/
+theorem hasNonemptyCofaceInstances_blockStage_add_one (ξ : Ordinal.{u}) :
+    HasNonemptyCofaceInstances.{u} (blockStage (ξ + 1)) :=
+  .of_hasApexCoatomExtensions (StageType.hasApexCoatomExtensions_blockStage (ξ + 1))
+    (isSuccPrelimit_blockStage (ξ + 1))
+
+/-- **Countable losses of the receiving expansion domains** (condition 2), from the coface
+instances at every next block stage (`hinst`), (R4) for receiving models (`hR4`), through the
+continuation criterion for receiving models
+(`Expansion.ReceivingContinuationCriterion.of_receivingStableCappedReceiving`), and (R2) and (R3)
+for receiving models (`hres`, `hhol`). -/
+theorem receivingExpansionDomains_hasCountableLosses (hcap : CapToModel.{0})
+    (hu : ReceivingNextBlockUniqueness.{0})
+    (hinst : ∀ ξ < ω₁, HasNonemptyCofaceInstances.{0} (blockStage (ξ + 1)))
+    (hR4 : ReceivingStableCappedReceiving.{0}) (hres : ReceivingResidualReceiving.{0, 0})
+    (hhol : HollowReceiving.{0, 0} IsReceivingCoverHollowAtBlock) :
+    (receivingExpansionDomains hcap hu).HasCountableLosses :=
+  ⟨receivingExpansionDomain_loss_countable
+    (ReceivingContinuationCriterion.of_receivingStableCappedReceiving hR4 hinst) hres hhol⟩
+
 /-- **Thinness through receiving models**: the density sentence has no perfect set of pairwise
 nonisomorphic models coded on `ℕ`, conditional on the following hypotheses: the cap-to-model
 theorem at `ω` (`hcap`, compiled as `MainTheorem.capToModel`), forcing donors at every countable
 block index (`hF`, compiled as `forcingDonors_blockStage`), the coface instances at every next
-block stage (`hinst`), (R4) for receiving models (`hR4`), (R2) for receiving models (`hres`), and
-(R3) for receiving models (`hhol`).  (R1) is not a hypothesis. -/
+block stage (`hinst`, compiled as `hasNonemptyCofaceInstances_blockStage_add_one`), (R4) for
+receiving models (`hR4`), (R2) for receiving models (`hres`), and (R3) for receiving models
+(`hhol`).  (R1) is not a hypothesis. -/
 theorem densitySentence_isThinOnNatModels_of_receivingModels (hcap : CapToModel.{0})
     (hF : ∀ ξ < ω₁, ForcingDonors.{0} ξ)
     (hinst : ∀ ξ < ω₁, HasNonemptyCofaceInstances.{0} (blockStage (ξ + 1)))
@@ -218,8 +247,7 @@ theorem densitySentence_isThinOnNatModels_of_receivingModels (hcap : CapToModel.
   have hu := ReceivingNextBlockUniqueness.of_forcingDonors hF
   densitySentence_isThinOnNatModels_of_expansionDomains (receivingExpansionDomains hcap hu)
     (receivingExpansionDomains_hasLogicalAgreement hcap hu)
-    ⟨receivingExpansionDomain_loss_countable
-      (ReceivingContinuationCriterion.of_receivingStableCappedReceiving hR4 hinst) hres hhol⟩
+    (receivingExpansionDomains_hasCountableLosses hcap hu hinst hR4 hres hhol)
 
 /-- **The thin `ℵ₁` spectrum through receiving models**: the density sentence has exactly `ℵ₁`
 classes of models coded on `ℕ` and no perfect set of pairwise nonisomorphic ones, conditional on
@@ -242,13 +270,10 @@ theorem densitySentence_hasThinAlephOneSpectrum_of_receivingModels
     CapToModel.of_hasApexCoatomExtensions (hasApexCoatomExtensions_omega_of_forall_blockStage hext)
   have hu := ReceivingNextBlockUniqueness.of_forcingDonors
     (forcingDonors_of_forall_hasApexCoatomExtensions hext)
-  have hinst : ∀ ξ < ω₁, HasNonemptyCofaceInstances.{0} (blockStage (ξ + 1)) := fun ξ hξ ↦
-    .of_hasApexCoatomExtensions (hext (ξ + 1) ((Cardinal.isSuccLimit_omega 1).succ_lt hξ))
-      (isSuccPrelimit_blockStage (ξ + 1))
   densitySentence_hasThinAlephOneSpectrum_of_expansionDomains (receivingExpansionDomains hcap hu)
     (receivingExpansionDomains_hasLogicalAgreement hcap hu)
-    ⟨receivingExpansionDomain_loss_countable
-      (ReceivingContinuationCriterion.of_receivingStableCappedReceiving hR4 hinst) hres hhol⟩
+    (receivingExpansionDomains_hasCountableLosses hcap hu
+      (fun ξ _ ↦ hasNonemptyCofaceInstances_blockStage_add_one ξ) hR4 hres hhol)
     (receivingExpansionDomains_hasNonemptyLosses hcap hu hext)
 
 /-- **The receiving route from (R2), (R3) and (R4)**: the thin `ℵ₁` spectrum from the coatom
@@ -310,13 +335,10 @@ theorem vaughtCounterexample_allCarriers_of_receivingModels'
   have hcap : CapToModel.{0} := capToModel
   have hu := ReceivingNextBlockUniqueness.of_forcingDonors
     (forcingDonors_of_forall_hasApexCoatomExtensions hext)
-  have hinst : ∀ ξ < ω₁, HasNonemptyCofaceInstances.{0} (blockStage (ξ + 1)) := fun ξ _ ↦
-    .of_hasApexCoatomExtensions (StageType.hasApexCoatomExtensions_blockStage (ξ + 1))
-      (isSuccPrelimit_blockStage (ξ + 1))
   vaughtCounterexample_allCarriers_of_expansionDomains (receivingExpansionDomains hcap hu)
     (receivingExpansionDomains_hasLogicalAgreement hcap hu)
-    ⟨receivingExpansionDomain_loss_countable
-      (ReceivingContinuationCriterion.of_receivingStableCappedReceiving hR4 hinst) hres hhol⟩
+    (receivingExpansionDomains_hasCountableLosses hcap hu
+      (fun ξ _ ↦ hasNonemptyCofaceInstances_blockStage_add_one ξ) hR4 hres hhol)
     (receivingExpansionDomains_hasNonemptyLosses hcap hu hext) capToModel
 
 /-- **Comparison of the hypotheses**: (R4), (R2), and (R3) for cover-hollowness at a block stage
