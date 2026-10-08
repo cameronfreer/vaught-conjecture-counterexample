@@ -489,6 +489,15 @@ theorem restrictFace_completion_donor (F : CompletionBelowFullGrade X.seed) :
     (F.restrictFace_right_completion (isSuccPrelimit_blockStage ξ)), seed_right,
     restrictFace_reduce, X.restrictFace_tb, Option.map_some]
 
+/-- The cap of the requests has scope the private coatom `univ.erase (Fin.last (m + 1))`. -/
+theorem scope_requests_cap : X.seed.amalgam.toCellScheme.scope (X.requests c).cap =
+    univ.erase (Fin.last (m + 1)) := by
+  change X.seed.amalgam.toCellScheme.scope (X.leftCell c.cap) = _
+  rw [scope_leftCell, c.scope_cap]
+  ext y
+  simp only [mem_map, mem_univ, true_and, mem_erase, and_true]
+  exact ⟨fun ⟨x, hx⟩ ↦ hx ▸ Fin.castSucc_ne_last x, fun hy ↦ ⟨y.castPred hy, by simp⟩⟩
+
 /-- **Cutoff stable recovery at the first coatom from the private fills** (the (R4) reading).  Let
 `c` be cap data for the input (`StageType.MarginCapData`), with the cap of grade `N ≥ 3`, every cell
 of `T⁺` avoiding its last point of grade below `N` (`hface`, so the common face of the seed carries
@@ -504,9 +513,10 @@ the receiving family; those labelled in the block of `λ_ξ` exactly from their 
 labelled `⊤` above `γ`, through a cell of `(univ, N)` reached from the cap
 (`CompletionBelowFullGrade.label_eq_of_hasAdmittedRows`,
 `CompletionBelowFullGrade.lt_label_of_hasAdmittedRows`). -/
-theorem exists_isCutoffStableRecovery (hN3 : 3 ≤ X.Tp.toCellScheme.grade c.cap)
-    (hface : ∀ x : Fin X.Tp.card, Fin.last m ∉ X.Tp.toCellScheme.scope x →
-      X.Tp.toCellScheme.grade x < X.Tp.toCellScheme.grade c.cap)
+theorem exists_isCutoffStableRecovery' (hN3 : 3 ≤ X.Tp.toCellScheme.grade c.cap)
+    (hdon : ∀ k', X.Tp.toCellScheme.grade c.cap ≤ k' → k' ≤ m + 1 →
+      ProfileTower.BotLiftProvisionOf (X.requests c).IsCorrect k' (Fin.castSucc (Fin.last m)) ∧
+        ProfileTower.CapLiftProvisionOf (X.requests c).IsCorrect k' (Fin.castSucc (Fin.last m)))
     (hbot : ∀ k', X.Tp.toCellScheme.grade c.cap ≤ k' → k' ≤ m + 1 →
       CapRequests.CapFillBotAt (X.requests c) (Fin.last (m + 1)) k')
     (hpos : ∀ k', X.Tp.toCellScheme.grade c.cap ≤ k' → k' ≤ m + 1 →
@@ -522,19 +532,22 @@ theorem exists_isCutoffStableRecovery (hN3 : 3 ≤ X.Tp.toCellScheme.grade c.cap
   have hm : 2 ≤ m := by omega
   have hxp : Fin.last (m + 1) ∈ (ProfileTower.Pts : Finset (Fin (m + 2))) := by
     simp [ProfileTower.Pts]
-  have hcapC : X.seed.amalgam.toCellScheme.scope (X.requests c).cap =
-      univ.erase (Fin.last (m + 1)) := by
-    change X.seed.amalgam.toCellScheme.scope (X.leftCell c.cap) = _
-    rw [scope_leftCell, c.scope_cap]
-    ext y
-    simp only [mem_map, mem_univ, true_and, mem_erase, and_true]
-    exact ⟨fun ⟨x, hx⟩ ↦ hx ▸ Fin.castSucc_ne_last x, fun hy ↦ ⟨y.castPred hy, by simp⟩⟩
   have hN3' : 3 ≤ X.seed.amalgam.toCellScheme.grade (X.requests c).cap := by
     rw [grade_requests_cap]
     exact hN3
   have hlab := ((X.requests_isCorrect_label c).code hgr (m + 1)).hat hgr (m + 1)
-  obtain ⟨F, hF⟩ := X.seed.exists_correctCompletion hm hgr hxp hcapC hN3'
-    (X.requests_hface c hface) (fun k' hk hk' ↦ hbot k' (by rwa [grade_requests_cap] at hk) hk')
+  have hdon' : ∀ x ∈ (ProfileTower.Pts : Finset (Fin (m + 2))), x ≠ Fin.last (m + 1) → ∀ k',
+      X.seed.amalgam.toCellScheme.grade (X.requests c).cap ≤ k' → k' ≤ m + 1 →
+        ProfileTower.BotLiftProvisionOf (X.requests c).IsCorrect k' x ∧
+          ProfileTower.CapLiftProvisionOf (X.requests c).IsCorrect k' x := by
+    intro x hx hxl k' hk hk'
+    have hx' : x = Fin.castSucc (Fin.last m) := by
+      simp only [ProfileTower.Pts, mem_insert, mem_singleton] at hx
+      exact hx.resolve_left hxl
+    subst hx'
+    exact hdon k' (by rwa [grade_requests_cap] at hk) hk'
+  obtain ⟨F, hF⟩ := X.seed.exists_correctCompletion' hm hgr hN3' hdon'
+    (fun k' hk hk' ↦ hbot k' (by rwa [grade_requests_cap] at hk) hk')
     (fun k' hk hk' ↦ hpos k' (by rwa [grade_requests_cap] at hk) hk') hlab
   -- the cutoff: above every label of `D↓λ_ξ` other than `⊤`
   obtain ⟨δ₀, hδ₀, hDδ⟩ := (X.D.reduce hα).exists_lt_forall_label_lt (isSuccLimit_blockStage ξ)
@@ -643,6 +656,36 @@ theorem exists_isCutoffStableRecovery (hN3 : 3 ≤ X.Tp.toCellScheme.grade c.cap
         rw [hTp, c.label_marker]
         exact (hlt_cap c.i_lt).le)
       (hlt_cap c.R_lt).le (by exact_mod_cast c.lt_R)
+
+/-- **Cutoff stable recovery at the first coatom from the private fills, under `hface`**: every
+cell of `T⁺` avoiding its last point has grade below `N`, so the common face of the seed carries no
+cell of grade `N` and the lift provisions from the donor coatom hold
+(`CapRequests.botLiftProvisionOf_donor_le`, `CapRequests.capLiftProvisionOf_donor_le`). -/
+theorem exists_isCutoffStableRecovery (hN3 : 3 ≤ X.Tp.toCellScheme.grade c.cap)
+    (hface : ∀ x : Fin X.Tp.card, Fin.last m ∉ X.Tp.toCellScheme.scope x →
+      X.Tp.toCellScheme.grade x < X.Tp.toCellScheme.grade c.cap)
+    (hbot : ∀ k', X.Tp.toCellScheme.grade c.cap ≤ k' → k' ≤ m + 1 →
+      CapRequests.CapFillBotAt (X.requests c) (Fin.last (m + 1)) k')
+    (hpos : ∀ k', X.Tp.toCellScheme.grade c.cap ≤ k' → k' ≤ m + 1 →
+      CapRequests.CapFillPosAt (X.requests c) (Fin.last (m + 1)) k') :
+    ∃ (q : StageType.{u} (blockStage ξ) (m + 2)) (δ : Label.{u}),
+      restrictFace (extendByLast Fin.castSuccEmb) q =
+          some (X.tb.reduce (isSuccPrelimit_blockStage ξ)) ∧
+        X.Tp.IsCutoffStableRecovery (X.f.trans Fin.castSuccEmb) X.D γ q δ := by
+  have hNm : X.Tp.toCellScheme.grade c.cap ≤ m + 1 := X.Tp.grade_le c.cap
+  have hm : 0 < m := by omega
+  have hxp : Fin.last (m + 1) ∈ (ProfileTower.Pts : Finset (Fin (m + 2))) := by
+    simp [ProfileTower.Pts]
+  have hxd : Fin.castSucc (Fin.last m) ∈ (ProfileTower.Pts : Finset (Fin (m + 2))) := by
+    simp [ProfileTower.Pts]
+  have hne : Fin.castSucc (Fin.last m) ≠ Fin.last (m + 1) := Fin.castSucc_ne_last _
+  have hf := X.requests_hface c hface (Fin.castSucc (Fin.last m)) hxd hne
+  refine X.exists_isCutoffStableRecovery' c hN3 (fun k' hk hk' ↦ ?_) hbot hpos
+  rw [← grade_requests_cap] at hk
+  exact ⟨CapRequests.botLiftProvisionOf_donor_le hm (X.scope_requests_cap c) hk hk' hf hxp hxd
+      hne (X.requests_isGraded c),
+    CapRequests.capLiftProvisionOf_donor_le hm (X.requests_isGraded c) (X.scope_requests_cap c) hk
+      hk' hf hxp hxd hne⟩
 
 /-- **The fill at `⊥` when the donor follows the root**, for the requests of the cap data at a
 grade `0 < k' ≤ m + 1`, when no new cell of `D` is labelled in the block of `λ_ξ` (so `F` is

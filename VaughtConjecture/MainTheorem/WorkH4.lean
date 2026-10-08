@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.MainTheorem.CapRequestsRecovery
+import VaughtConjecture.Continuation.CapRequestsDonorFace
 
 /-!
 # Work on h4: first-coatom completions for the calibrated (R4) inputs
@@ -147,6 +148,71 @@ theorem hasCutoffFirstCoatomCompletions_apex_of_topFills
     omega
   exact X.exists_isCutoffStableRecovery c.toMarginCapData c.three_le (hface_of_grade_eq hc)
     (fun k' h₁ h₂ ↦ hk' k' h₁ h₂ ▸ hbot) fun k' h₁ h₂ ↦ hk' k' h₁ h₂ ▸ hpos
+
+end StageType
+
+/-! ### h4 at the floor calibration, from the fills at the grades from the cap -/
+
+namespace StageType
+
+variable {ξ : Ordinal.{u}}
+
+/-- **First-coatom completions for the margin calibration with a floor from the lift provisions of
+the donor coatom and the private fills** (h4 at `StageType.GradedCapMarginCalibration'`, caps of
+any grade `N ≥ 3`).  At every calibrated input, some cap data with a floor has, at every grade
+`N ≤ k' ≤ m + 1`, the lift provisions from the donor coatom (`univ.erase (castSucc (last m))`) and
+the fills from the private coatom; no condition on the common face. -/
+theorem hasCutoffFirstCoatomCompletions'_of_fills
+    (h : ∀ ⦃m k : ℕ⦄ (X : FirstCoatomInput.{u} ξ m k) (γ : Ordinal.{u}), 0 < k →
+      γ < blockStage (ξ + 1) →
+      GradedCapMarginCalibration' ξ X.Tp (X.f.trans Fin.castSuccEmb) X.D γ →
+      ∃ c : FloorCapData X.Tp (X.f.trans Fin.castSuccEmb) X.D γ,
+        ∀ k', X.Tp.toCellScheme.grade c.cap ≤ k' → k' ≤ m + 1 →
+          (ProfileTower.BotLiftProvisionOf (X.requests c.toMarginCapData).IsCorrect k'
+              (Fin.castSucc (Fin.last m)) ∧
+            ProfileTower.CapLiftProvisionOf (X.requests c.toMarginCapData).IsCorrect k'
+              (Fin.castSucc (Fin.last m))) ∧
+          CapRequests.CapFillBotAt (X.requests c.toMarginCapData) (Fin.last (m + 1)) k' ∧
+            CapRequests.CapFillPosAt (X.requests c.toMarginCapData) (Fin.last (m + 1)) k') :
+    HasCutoffFirstCoatomCompletions ξ (GradedCapMarginCalibration' ξ) := by
+  intro m k Tp p tb f P hT hp htb hk hP D hD htbD γ hγ hC
+  let X : FirstCoatomInput.{u} ξ m k := ⟨Tp, p, tb, f, P, D, hT, hp, htb, hP, hD, htbD⟩
+  obtain ⟨c, hc⟩ := h X γ hk hγ hC
+  exact X.exists_isCutoffStableRecovery' c.toMarginCapData c.three_le
+    (fun k' h₁ h₂ ↦ (hc k' h₁ h₂).1) (fun k' h₁ h₂ ↦ (hc k' h₁ h₂).2.1)
+    fun k' h₁ h₂ ↦ (hc k' h₁ h₂).2.2
+
+/-- **h4 at the floor calibration over a common face dead above the cap**: the lift provisions of
+the donor coatom hold when the common face of the seed is dead above the grade of the cap
+(`CapRequests.botLiftProvisionOf_donor_le'`, `CapRequests.capLiftProvisionOf_donor_le'`), so only
+the private fills remain. -/
+theorem hasCutoffFirstCoatomCompletions'_of_fills_isDeadAbove
+    (h : ∀ ⦃m k : ℕ⦄ (X : FirstCoatomInput.{u} ξ m k) (γ : Ordinal.{u}), 0 < k →
+      γ < blockStage (ξ + 1) →
+      GradedCapMarginCalibration' ξ X.Tp (X.f.trans Fin.castSuccEmb) X.D γ →
+      ∃ c : FloorCapData X.Tp (X.f.trans Fin.castSuccEmb) X.D γ,
+        CapRequests.IsDeadAbove X.seed (Fin.last (m + 1)) (Fin.castSucc (Fin.last m))
+          (X.Tp.toCellScheme.grade c.cap) ∧
+        ∀ k', X.Tp.toCellScheme.grade c.cap ≤ k' → k' ≤ m + 1 →
+          CapRequests.CapFillBotAt (X.requests c.toMarginCapData) (Fin.last (m + 1)) k' ∧
+            CapRequests.CapFillPosAt (X.requests c.toMarginCapData) (Fin.last (m + 1)) k') :
+    HasCutoffFirstCoatomCompletions ξ (GradedCapMarginCalibration' ξ) := by
+  refine hasCutoffFirstCoatomCompletions'_of_fills fun m k X γ hk hγ hC ↦ ?_
+  obtain ⟨c, hdead, hc⟩ := h X γ hk hγ hC
+  refine ⟨c, fun k' h₁ h₂ ↦ ⟨?_, hc k' h₁ h₂⟩⟩
+  have hNm : X.Tp.toCellScheme.grade c.cap ≤ m + 1 := X.Tp.grade_le c.cap
+  have hm : 0 < m := by have := c.three_le; omega
+  have hxp : Fin.last (m + 1) ∈ (ProfileTower.Pts : Finset (Fin (m + 2))) := by
+    simp [ProfileTower.Pts]
+  have hxd : Fin.castSucc (Fin.last m) ∈ (ProfileTower.Pts : Finset (Fin (m + 2))) := by
+    simp [ProfileTower.Pts]
+  have hne : Fin.castSucc (Fin.last m) ≠ Fin.last (m + 1) := Fin.castSucc_ne_last _
+  have hgN := X.grade_requests_cap c.toMarginCapData
+  rw [← hgN] at h₁ hdead
+  exact ⟨CapRequests.botLiftProvisionOf_donor_le' hm (X.scope_requests_cap _) h₁ h₂ hdead hxp
+      hxd hne (X.requests_isGraded _),
+    CapRequests.capLiftProvisionOf_donor_le' hm (X.requests_isGraded _) (X.scope_requests_cap _)
+      h₁ h₂ hdead hxp hxd hne⟩
 
 end StageType
 
