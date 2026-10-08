@@ -57,11 +57,9 @@ hence `⊥` at both root cells (the apex reads them as `⊥`; argued, not formal
   `Realization.IsModel` that `qs` makes nonempty) is a marked-cap context along the root with root
   offsets below its cap and its cap respecting the root bottoms
   (`TiedRootCapRelabel.MarkedCapContextBelow'`).
-* **The selective coface** (`BottomRootCounterexample.HasSelectiveCoface`, a named statement,
-  prospective): such a `qs` exists.  Not compiled, not refuted.  An apex added to a completion
-  below the full grade labelled literally on the root has the cell of grade `4` required
-  (`StageType.rootBottomRespected_of_addApex`); what remains is a lawful labelling, literal on the
-  context, `⊥` at every cell of graded index `(univ, 3)` reading a root cell other than `⊥`.
+* **The selective coface** (`BottomRootCounterexample.HasSelectiveCoface`): such a `qs` exists.
+  It is proved in `VaughtConjecture.Continuation.TiedRootCapSelective`
+  (`BottomRootCounterexample.hasSelectiveCoface`, through the tower of field layers).
 
 Clauses 4(b) and 4(c) of `Realization.IsModel` (uniformity, high-arity dominance) realize members
 of families on uncontrolled schemes, so they place no label at a prescribed cell (argued, not
@@ -327,8 +325,8 @@ def IsSelectiveCoface (qs : StageType.{u} α 4) : Prop :=
       (qs.toCellScheme.grade u = 4 ∨ qs.label u ≠ ⊥) →
         ∀ y ∈ qs.visibleCells (rootEmb.trans Fin.castSuccEmb), qs.rowAt u y = ⊥
 
-/-- **The selective coface** (a named statement, prospective; not compiled, not refuted): the
-context has a selective coface. -/
+/-- **The selective coface**: the context has a selective coface (proved as
+`BottomRootCounterexample.hasSelectiveCoface`). -/
 def HasSelectiveCoface : Prop := ∃ qs : StageType.{u} α 4, IsSelectiveCoface hα qs
 
 /-- **The bottom pattern of a selective coface acquires a cap respecting the root bottoms.**  Every
