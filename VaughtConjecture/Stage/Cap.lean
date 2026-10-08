@@ -225,19 +225,17 @@ cells in `Z` are labelled at most `c`, a type capped on `Z` restricts as the typ
 definedness included. -/
 theorem restrictFace_capOn_of_label_le {f : Fin m ↪ Fin n}
     (hf : ∀ d ∈ t.visibleCells f, Z d → t.label d ≤ c) :
-    restrictFace f (t.capOn Z c hc hcα hZ havail) = restrictFace f t := by
-  by_cases hfm : univ.map f ∈ t.toCellScheme.faces
-  · rw [restrictFace_of_mem t f hfm, restrictFace_of_mem (t.capOn Z c hc hcα hZ havail) f hfm]
-    refine congrArg some (ext rfl fun i j hij ↦ ?_)
-    obtain rfl : i = j := Fin.ext hij
-    -- the capped type has the scheme of `t`, so its cell under `i` is that of `t`; unfold the
+    restrictFace f (t.capOn Z c hc hcα hZ havail) = restrictFace f t :=
+  -- the capped type has the scheme of `t`, so faces are compared through the labels of the
+  -- visible cells (`StageType.restrictFace_congr_label`)
+  restrictFace_congr_label rfl fun i j hij hi ↦ by
+    -- the cells of the capped type are those of `t`: keep the cell `j` of `t`, and unfold the
     -- capped label there (`StageType.capOn_label`)
-    change (if Z (t.cellMap f i) then _ else _) = t.label (t.cellMap f i)
-    split_ifs with hZi
-    · exact min_eq_left (hf _ (t.cellMap_mem f i) hZi)
+    obtain rfl : j = i := (Fin.ext hij).symm
+    change (if Z j then min (t.label j) c else t.label j) = t.label j
+    split_ifs with hZj
+    · exact min_eq_left (hf j hi hZj)
     · rfl
-  · rw [restrictFace_of_notMem t f hfm,
-      restrictFace_of_notMem (t.capOn Z c hc hcα hZ havail) f hfm]
 
 /-- **Faces outside the upper set are unchanged**: along `f` whose visible cells are outside `Z`,
 a type capped on `Z` restricts as the type does, definedness included. -/
