@@ -195,7 +195,7 @@ theorem ladder_shadow_eq_bot_iff {D : Type*} (row : D → D → Label.{u}) (q : 
 
 /-! ### The order of the codes -/
 
-theorem omega0_mul_add_lt {a b : ℕ} (h : a < b) (r s : ℕ) :
+theorem ladderSource_block_lt {a b : ℕ} (h : a < b) (r s : ℕ) :
     ω * (a : Ordinal.{u}) + (r : Ordinal.{u}) < ω * (b : Ordinal.{u}) + (s : Ordinal.{u}) := by
   calc ω * (a : Ordinal.{u}) + (r : Ordinal.{u}) < ω * (a : Ordinal.{u}) + ω :=
         (add_lt_add_iff_left _).mpr (natCast_lt_omega0 r)
@@ -220,12 +220,12 @@ theorem ladderSource_lt {t m m' : ℕ} (h1 : 1 ≤ m) (hmm : m < m') (hm' : m' �
   split_ifs with hd
   · rw [Label.coe_lt_coe_iff]
     rcases Nat.lt_or_ge m (t - 1) with hlt | hge
-    · exact omega0_mul_add_lt hlt 2 3
+    · exact ladderSource_block_lt hlt 2 3
     · have : m = t - 1 := by omega
       subst this
       exact (add_lt_add_iff_left _).mpr (by exact_mod_cast (by omega : 2 < 3))
   · rw [Label.coe_lt_coe_iff]
-    exact omega0_mul_add_lt hmm 2 2
+    exact ladderSource_block_lt hmm 2 2
 
 /-- **The order of the codes**: for a positive rank `m ≤ t`, the code of `m` is at most the code
 of `i` exactly when `m ≤ min i t`. -/
