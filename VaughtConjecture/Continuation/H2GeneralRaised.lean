@@ -15,7 +15,7 @@ engine below the full grade needs less of it on each side:
 * **the donor side** (`H2.ExtAboveRaised`): the donor face may be raised to `⊤` at cells of grade at
   most `K` where it is at least the cap; the clause is kept under such raises of the donor face
   (`H2.selfLow_raise`: a raised designated top is at least every frontier, and raising a low cell
-  only makes the guards harder to meet);
+  only makes the antecedents harder to meet);
 * **the context side** (`H2.ExtFrontier`): the context face need not keep its part of grade at most
   `K` at all, only its frontier from above (`H2.selfLow_frontier`: the clause reads the context face
   only through the frontier).
