@@ -693,3 +693,104 @@ theorem hasApexCoatomExtensions_of_le_three {α : Ordinal.{u}} (hα : Order.IsSu
 end StageType
 
 end VaughtConjecture
+
+/-! ### An isolated cell carried from the left coatom -/
+
+namespace VaughtConjecture.TowerProfile
+
+open Finset Label
+
+variable {α : Ordinal.{u}} {I : Seed.{u} α 3}
+
+/-- The rows of the profile layer at old cells are those of the amalgam. -/
+theorem rowAt_embed3 (a b : Fin I.amalgam.card) :
+    (scheme I).rowAt (embed3 I a) (embed3 I b) = I.amalgam.toScheme.rowAt a b := by
+  have hmem : embed3 I b ∈ (scheme I).toCellScheme.below
+      ((scheme I).toCellScheme.gradedIndex (embed3 I a)) ↔
+      b ∈ I.amalgam.toCellScheme.below (I.amalgam.toCellScheme.gradedIndex a) := by
+    rw [CellScheme.mem_below, CellScheme.mem_below, gradedIndex_embed3, gradedIndex_embed3]
+  by_cases hb : b ∈ I.amalgam.toCellScheme.below (I.amalgam.toCellScheme.gradedIndex a)
+  · rw [Scheme.rowAt_of_mem (hmem.mpr hb), Scheme.rowAt_of_mem hb]
+    have h := congrArg (fun R : I.amalgam.toCellScheme.Rows ↦ R.row a ⟨b, hb⟩)
+      (comap_rows_embed3 (I := I))
+    exact h
+  · rw [Scheme.rowAt_of_notMem (fun h' ↦ hb (hmem.mp h')), Scheme.rowAt_of_notMem hb]
+
+/-- The first coatom of `Fin 5` is the ground set without the last point. -/
+theorem univ_map_left_eq :
+    (univ : Finset (Fin 4)).map (Coatom.left 3) = univ.erase (Fin.last 4) := by
+  decide
+
+variable (I) in
+/-- The cell of the profile layer at a cell of the left coatom type. -/
+noncomputable def leftCell (a : Fin I.left.card) : Fin (scheme I).card :=
+  embed3 I (StageType.faceCell I.restrictFace_left a)
+
+/-- A cell of the profile layer avoiding the last point is the cell of a cell of the left type. -/
+theorem exists_leftCell_eq {y : Fin (scheme I).card}
+    (hy : Fin.last 4 ∉ (scheme I).toCellScheme.scope y) : ∃ z, leftCell I z = y := by
+  obtain ⟨d, rfl⟩ := mem_range_embed3 y fun h ↦ hy (h ▸ mem_univ _)
+  have hd : Fin.last 4 ∉ I.amalgam.toCellScheme.scope d := by
+    rwa [scope_embed3] at hy
+  obtain ⟨z, rfl⟩ := StageType.exists_faceCell_eq_of_last_notMem I.restrictFace_left hd
+  exact ⟨z, rfl⟩
+
+/-- The graded index of the cell of a cell of the left type. -/
+theorem gradedIndex_leftCell (z : Fin I.left.card) :
+    (scheme I).toCellScheme.gradedIndex (leftCell I z) =
+      ((I.left.toCellScheme.scope z).map (Coatom.left 3), I.left.toCellScheme.grade z) := by
+  rw [leftCell, gradedIndex_embed3]
+  exact Prod.ext (StageType.scope_faceCell _ z) (StageType.grade_faceCell _ z)
+
+/-- The rows of the profile layer at the cells of the left type are those of the left type. -/
+theorem rowAt_leftCell (a z : Fin I.left.card) :
+    (scheme I).rowAt (leftCell I a) (leftCell I z) = I.left.toScheme.rowAt a z := by
+  rw [leftCell, leftCell, rowAt_embed3, StageType.rowAt_faceCell]
+
+/-- The cells of the left type map injectively. -/
+theorem leftCell_injective : Function.Injective (leftCell I) := fun _ _ h ↦
+  Scheme.faceCell_injective _ ((embed3 I).injective h)
+
+/-- **An isolated cell of the left type is isolated in the profile layer** below the coatom
+`(univ.erase (Fin.last 4), 4)`: a cell `a` of the left type of graded index `(univ, 4)`, the only
+one there, whose row reads every other cell as `⊥` and itself not as `⊥`. -/
+theorem isolated_of_left {a : Fin I.left.card}
+    (ha : I.left.toCellScheme.gradedIndex a = (univ, 4))
+    (hu : ∀ z, I.left.toCellScheme.gradedIndex z = (univ, 4) → z = a)
+    (hrow : ∀ z, z ≠ a → I.left.toScheme.rowAt a z = ⊥) (hrr : I.left.toScheme.rowAt a a ≠ ⊥) :
+    (scheme I).toCellScheme.grade (leftCell I a) = 4 ∧
+      leftCell I a ∈ (scheme I).toCellScheme.below (univ.erase (Fin.last 4), 4) ∧
+      (∀ y ∈ (scheme I).toCellScheme.below (univ.erase (Fin.last 4), 4),
+        (scheme I).toCellScheme.gradedIndex (leftCell I a) ≤
+          (scheme I).toCellScheme.gradedIndex y → y = leftCell I a) ∧
+      (∀ y (hy : y ∈ (scheme I).toCellScheme.below
+          ((scheme I).toCellScheme.gradedIndex (leftCell I a))),
+        y ≠ leftCell I a → (scheme I).rows.row (leftCell I a) ⟨y, hy⟩ = ⊥) ∧
+      (scheme I).rows.row (leftCell I a)
+        ⟨leftCell I a, (scheme I).toCellScheme.mem_below_gradedIndex _⟩ ≠ ⊥ := by
+  have hsa : I.left.toCellScheme.scope a = univ := congrArg Prod.fst ha
+  have hga : I.left.toCellScheme.grade a = 4 := congrArg Prod.snd ha
+  have hgi : (scheme I).toCellScheme.gradedIndex (leftCell I a) = (univ.erase (Fin.last 4), 4) := by
+    rw [gradedIndex_leftCell, hsa, hga, univ_map_left_eq]
+  -- a cell below the coatom avoids the last point, so it is a cell of the left type
+  have hleft {y : Fin (scheme I).card}
+      (hy : y ∈ (scheme I).toCellScheme.below (univ.erase (Fin.last 4), 4)) :
+      ∃ z, leftCell I z = y :=
+    exists_leftCell_eq fun h ↦ by simpa using hy.1 h
+  refine ⟨congrArg Prod.snd hgi, by rw [CellScheme.mem_below, hgi], fun y hy hle ↦ ?_,
+    fun y hy hne ↦ ?_, ?_⟩
+  · obtain ⟨z, rfl⟩ := hleft hy
+    have heq : (scheme I).toCellScheme.gradedIndex (leftCell I z) = (univ.erase (Fin.last 4), 4) :=
+      le_antisymm hy (hgi ▸ hle)
+    rw [gradedIndex_leftCell, ← univ_map_left_eq] at heq
+    obtain ⟨h1, h2⟩ := Prod.ext_iff.mp heq
+    rw [map_inj] at h1
+    exact congrArg (leftCell I) (hu z (Prod.ext h1 h2))
+  · rw [hgi] at hy
+    obtain ⟨z, rfl⟩ := hleft hy
+    rw [← Scheme.rowAt_of_mem, rowAt_leftCell]
+    exact hrow z fun h ↦ hne (h ▸ rfl)
+  · rw [← Scheme.rowAt_of_mem, rowAt_leftCell]
+    exact hrr
+
+end VaughtConjecture.TowerProfile

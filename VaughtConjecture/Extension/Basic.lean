@@ -5,6 +5,7 @@ Authors: Cameron Freer
 -/
 import Mathlib.Data.Fin.Tuple.Embedding
 import Mathlib.Data.Fintype.Basic
+import Mathlib.Data.Fintype.EquivFin
 
 /-!
 # Extending a face by one point
@@ -109,5 +110,49 @@ theorem univ_map_castLEEmb_ne {hkN : k ≤ N} (hlt : k < N) :
   have h1 : ((Fin.castLEEmb hkN y : Fin N) : ℕ) = k := Fin.ext_iff.mp hy
   have h2 : ((Fin.castLEEmb hkN y : Fin N) : ℕ) = y := rfl
   omega
+
+/-! ### Extending a permutation by the new point -/
+
+namespace StageType
+
+variable {n k : ℕ}
+
+/-- The **extension of a permutation fixing the new point**. -/
+noncomputable def extendPerm (σ : Equiv.Perm (Fin k)) : Equiv.Perm (Fin (k + 1)) :=
+  Equiv.ofBijective (extendByLast σ.toEmbedding)
+    (Finite.injective_iff_bijective.mp (extendByLast σ.toEmbedding).injective)
+
+@[simp] theorem extendPerm_castSucc (σ : Equiv.Perm (Fin k)) (i : Fin k) :
+    extendPerm σ i.castSucc = (σ i).castSucc := by
+  simp [extendPerm]
+
+@[simp] theorem extendPerm_last (σ : Equiv.Perm (Fin k)) : extendPerm σ (Fin.last k) = Fin.last k :=
+  by simp [extendPerm]
+
+theorem extendPerm_symm_castSucc (σ : Equiv.Perm (Fin k)) (i : Fin k) :
+    (extendPerm σ).symm i.castSucc = (σ.symm i).castSucc := by
+  rw [Equiv.symm_apply_eq, extendPerm_castSucc, Equiv.apply_symm_apply]
+
+/-- The first points followed by the extension are the permutation followed by the first points. -/
+theorem castSuccEmb_trans_extendPerm (σ : Equiv.Perm (Fin k)) :
+    Fin.castSuccEmb.trans (extendPerm σ).toEmbedding = σ.toEmbedding.trans Fin.castSuccEmb :=
+  Function.Embedding.ext fun i ↦ by simp
+
+/-- The first points followed by the inverse extension. -/
+theorem castSuccEmb_trans_extendPerm_symm (σ : Equiv.Perm (Fin k)) :
+    Fin.castSuccEmb.trans (extendPerm σ).symm.toEmbedding =
+      σ.symm.toEmbedding.trans Fin.castSuccEmb :=
+  Function.Embedding.ext fun i ↦ by simp [extendPerm_symm_castSucc]
+
+/-- A root followed by the new point, then the extension, is the relabelled root followed by the
+new point. -/
+theorem extendByLast_trans_extendPerm (σ : Equiv.Perm (Fin k)) (h : Fin n ↪ Fin k) :
+    (extendByLast h).trans (extendPerm σ).toEmbedding = extendByLast (h.trans σ.toEmbedding) := by
+  refine Function.Embedding.ext fun i ↦ ?_
+  induction i using Fin.lastCases with
+  | last => simp
+  | cast i => simp
+
+end StageType
 
 end VaughtConjecture

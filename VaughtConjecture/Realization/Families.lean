@@ -3,6 +3,7 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
+import VaughtConjecture.Extension.Basic
 import VaughtConjecture.Stage.Legal
 
 /-!
@@ -691,6 +692,24 @@ theorem exists_le_label_of_restrictFace {p : StageType.{u} α n} {q : StageType.
     (by rw [show q.toCellScheme.scope t = univ from congrArg Prod.fst ht]; exact subset_univ _)
     (by rw [hgr, show q.toCellScheme.grade t = _ from congrArg Prod.snd ht])
   exact ⟨G, hG.trans ht, hle⟩
+
+/-! ### Cofaces under relabelling -/
+
+section Relabel
+
+variable {k : ℕ}
+
+/-- **Cofaces relabel**: a coface `D''` of `t'.reindex σ` gives the coface `D''.reindex τ⁻¹` of
+`t'`, for the extension `τ` of `σ` fixing the new point. -/
+theorem reindex_extendPerm_symm_mem_cofaces {t' : StageType.{u} α k} {σ : Equiv.Perm (Fin k)}
+    {D'' : StageType.{u} α (k + 1)} (hD'' : D'' ∈ (t'.reindex σ).cofaces) :
+    D''.reindex (extendPerm σ).symm ∈ t'.cofaces := by
+  refine ⟨hD''.1.reindex _, ?_⟩
+  rw [restrictFace_reindex, castSuccEmb_trans_extendPerm_symm,
+    ← restrictFace_trans D'' _ _ hD''.2, restrictFace_equiv, reindex_reindex,
+    Equiv.symm_trans_self, reindex_refl]
+
+end Relabel
 
 end StageType
 
