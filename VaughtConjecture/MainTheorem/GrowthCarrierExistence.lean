@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.MainTheorem.CoatomExtensionTheorem
-import VaughtConjecture.Realization.GrowthCarrier
+import VaughtConjecture.Continuation.GrowthExactCarrier
 
 /-!
 # Legal growth carriers with literal faces exist
@@ -153,5 +153,31 @@ theorem recovers_eq_of_recovers_new {t' : StageType.{u} α J} {e : Fin n ↪ Fin
   · exact hnew v hv hctx i j hij hj
 
 end GrowthCarrier
+
+namespace StageType
+
+/-- **Exact growth carriers at the new cells**, the part of `StageType.HasExactGrowthCarriers` not
+given by `GrowthCarrier.recovers_root` (open): over every calibrated legal context, some growth
+carrier, with literal context and donor faces, recovers the labels of `d` from the labels of `t'`
+at every donor cell whose scope is not in the root. -/
+def HasExactGrowthCarriersAtNewCells
+    (C : ∀ {α : Ordinal.{u}} {n k : ℕ}, StageType.{u} α k → (Fin n ↪ Fin k) →
+      StageType.{u} α (n + 1) → Prop) : Prop :=
+  ∀ ⦃α : Ordinal.{u}⦄ ⦃n k : ℕ⦄ (t' : StageType.{u} α k) (h : Fin n ↪ Fin k),
+    Order.IsSuccLimit α → t'.IsLegal → ∀ t : StageType.{u} α n, restrictFace h t' = some t →
+      ∀ d ∈ t.cofaces, C t' h d → ∃ G : GrowthCarrier t'.toScheme d.toScheme h,
+        G.Recovers t'.label fun j ℓ ↦ j ∉ d.visibleCells Fin.castSuccEmb → ℓ = d.label j
+
+/-- Exact growth carriers at the new cells are exact growth carriers
+(`GrowthCarrier.recovers_eq_of_recovers_new`). -/
+theorem HasExactGrowthCarriersAtNewCells.hasExactGrowthCarriers
+    {C : ∀ {α : Ordinal.{u}} {n k : ℕ}, StageType.{u} α k → (Fin n ↪ Fin k) →
+      StageType.{u} α (n + 1) → Prop}
+    (h : HasExactGrowthCarriersAtNewCells C) : HasExactGrowthCarriers C :=
+  fun _ _ _ t' g hα ht' t ht d hd hC ↦
+    let ⟨G, hG⟩ := h t' g hα ht' t ht d hd hC
+    ⟨G, G.recovers_eq_of_recovers_new ht hd.2 hG⟩
+
+end StageType
 
 end VaughtConjecture
