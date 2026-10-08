@@ -11,7 +11,51 @@ import VaughtConjecture.MainTheorem.CutoffCoatomRelabel
 # Cutoff stable recovery from a correct completion
 
 Roadmap, Layer 4, output 3 of higher-stage reconstruction, and Layer 3, 3.3–3.4 ((R4) of the
-table of Layer 3: the reading through a proper cap, at the seed of the first coatom).
+table of Layer 3: the reading through a proper cap, at the seed of the first coatom).  Each item
+below is compiled in this repository (theorem named), unless marked otherwise.
+
+**The seed and the requests** (`StageType.FirstCoatomInput`, `.seed`, `.requests`).  An input of
+`StageType.HasCutoffFirstCoatomCompletions` is bundled as `StageType.FirstCoatomInput`; its seed is
+the amalgam of `T⁺↓λ_ξ` and `tb↓λ_ξ` over `p↓λ_ξ`.  Cap data (`StageType.MarginCapData`, from the
+margin calibration, `StageType.GradedCapMarginCalibration.nonempty_marginCapData`) give requests on
+the cells of the amalgam: `T` the new cells of `D` labelled `⊤`, `F` the new cells of `D` labelled
+in the block of `λ_ξ` with their references, `Z` empty.  They are graded
+(`StageType.FirstCoatomInput.requests_isGraded`) and the glued labelling is correct
+(`StageType.FirstCoatomInput.requests_isCorrect_label`: at `λ_ξ` the cap, the marker and the
+requested cells reduce to `⊤`).
+
+**The reading** (`StageType.FirstCoatomInput.exists_isCutoffStableRecovery`).  With the cap's grade
+`N ≥ 3`, the common face carrying no cell of grade `N` (`hface`) and the fills from the private
+coatom at every grade from `N` to the top (`CapRequests.CapFillBotAt`,
+`CapRequests.CapFillPosAt`), the completion of `Seed.exists_correctCompletion` with the apex
+carries cutoff stable recovery: the old cells of `D` are read through the face `T⁺`, the new cells
+labelled `⊥` or below `λ_ξ` through the receiving family, the new cells in the block of `λ_ξ`
+exactly from their references and the new top cells above `γ`, through a cell of `(univ, N)`
+reached from the cap.
+
+**h4 from the fills** (`StageType.hasCutoffFirstCoatomCompletions_of_capFills`,
+`StageType.hasCutoffFirstCoatomCompletions'_of_capFills`).  First-coatom completions follow for the
+margin calibration, and for the margin calibration with a floor
+(`StageType.GradedCapMarginCalibration'`: `3 ≤ N`, every cell of `D` of grade below `N`, the root's
+offsets below `N`; acquisition compiled,
+`Realization.IsModel.acquiresCalibratedContexts_gradedCapMargin'`), where `3 ≤ N` is discharged.
+
+**Open inputs, each with its obstruction.**
+* `hface`: false in general (the common face can carry cells of the cap's grade); without it
+  availability pins the cap above the labels of the common face at its grade (argued in
+  `VaughtConjecture.Extension.CapRequestsGrade`, not compiled).
+* `CapRequests.CapFillPosAt` over a live common face: the dead-face fill does not apply when the
+  common face carries a label other than `⊥` (`CapRequests.not_isDeadFace_of_label_ne_bot`), and
+  no other fill at the positive caps is compiled.
+* `CapRequests.CapFillBotAt`: from `CapRequests.DonorFollowsRoot` when no new cell of `D` lies in
+  the block of `λ_ξ` (`StageType.FirstCoatomInput.capFillBotAt_requests_of_donorFollowsRoot`);
+  `DonorFollowsRoot` fails across a tie or an inversion of the glued labelling
+  (`CapRequests.not_exists_transport_of_tie`, `CapRequests.not_exists_transport_of_inversion`).
+  A capped form (agreement only below the prescription at the cap) does not give the fill as
+  `CapRequests.capFillBotAt_of_donorFollowsRoot` proves it: the glued fill must agree with the
+  prescription exactly on the common face, which the cap does not bound (argued, not compiled).
+* The inputs with a new cell of `D` in the block of `λ_ξ` (`F` nonempty): no fill is compiled; the
+  fills above ask `F` empty.
 
 ## Placement
 
