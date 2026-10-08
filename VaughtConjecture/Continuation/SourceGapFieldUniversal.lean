@@ -3,6 +3,7 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
+import VaughtConjecture.Continuation.SourceGapAdmittedEngine
 import VaughtConjecture.Continuation.SourceGapFieldAdmission
 
 /-!
@@ -53,8 +54,18 @@ and the cap `⊥`, no lawful donor face with that root and a field at least it s
 (`o' < y'`, and `r'` cannot carry the low maximum).  So a field cell whose lawful values are forced
 at least the root cannot carry the field; a free field, or one at most the root, is not refuted.
 
-**Status.**  Donor raising and owner lowering are hypotheses (named, not derived from legality);
-they hold at both inputs here.  No input violating them is compiled.
+**Owner lowering from legality** (`FieldAdmission.ownerLowering_of_isLegal`): at a legal
+context whose top grade `K` exceeds the dimension `n > 0` of the root and bounds every grade, the
+capped lift from the root face (bountifulness) capped at `h` at the cells of grade `K`
+(`CellScheme.Rows.IsLawful.capTopGrade`) serves.  So at a legal source-gap context the clause is a
+field admission up to donor raising (`FieldAdmission.isFieldAdmissionG_of_donorRaising`); on two
+points with a one-point root and `K = 2`, `FieldAdmission.isFieldAdmissionG_two`.
+
+**Status.**  Donor raising is the one remaining hypothesis (named, not derived from legality: the
+capped lift controls the donor face only up to the cap, and raising the tops above it needs a
+construction that capping does not give); it holds at `T` and `t2`.  No input violating it is
+compiled.  The case `K = 1` on two points (owner at the grade of the root) is not covered by owner
+lowering from legality.
 
 ## Placement
 
@@ -539,6 +550,157 @@ theorem not_fieldAboveRoot :
     (not_exists_field_ge_root h1 h2 (Lo := loU) (Tops := topsU) (by decide) (by decide)).1,
     (not_exists_field_ge_root h1 h2 (by decide) (by decide)).2,
     (not_exists_field_ge_root h1 h2 (by decide) (by decide)).2⟩
+
+/-! ### Every source-gap context with a donor over its root -/
+
+/-- **The universal provisions at a source-gap context**: for a source-gap context `t'` along `g`
+with root face `s`, and a donor `tb` with the same root face along `gb`, the LOW clause with a
+separate field is a field admission (faces the lawful labellings of `t'` and of `tb`, root the
+cells of `s`), for every designation, as soon as donor raising (up to the root cells labelled `⊤`)
+and owner lowering hold.  The order law at the owner and the frontier bound
+(`StageType.IsSourceGapContextAt.frontier_le`) come from the context. -/
+theorem isFieldAdmissionG_of_isSourceGapContextAt {α : Ordinal.{u}} {k n p K : ℕ}
+    {t' : StageType.{u} α k} {g : Fin n ↪ Fin k} {l : Fin k} {o r : Fin t'.card}
+    (hs : t'.IsSourceGapContextAt K g l o r) {s : StageType.{u} α n}
+    (ht : StageType.restrictFace g t' = some s) {tb : StageType.{u} α p} {gb : Fin n ↪ Fin p}
+    (htb : StageType.restrictFace gb tb = some s) {Lo Tops : Finset (Fin tb.card)}
+    (hDR : DonorRaising (StageType.faceCell ht) (StageType.faceCell htb) K t'.rows.IsLawful
+      tb.rows.IsLawful {x | s.label x = ⊤} Tops)
+    (hOL : OwnerLowering (StageType.faceCell ht) (StageType.faceCell htb) o r K
+      t'.rows.IsLawful tb.rows.IsLawful) :
+    IsFieldAdmissionG (StageType.faceCell ht) (StageType.faceCell htb) K t'.rows.IsLawful
+      tb.rows.IsLawful (LowAtG o r K Lo Tops) := by
+  refine isFieldAdmissionG_of {x | s.label x = ⊤} (fun f hf ↦ ?_) (fun f hf x hx ↦ ?_) hDR hOL
+  · have := hf.orderly o
+    rwa [hs.grade_owner] at this
+  · refine hs.frontier_le hf ((StageType.label_faceCell ht x).trans hx) fun hl ↦ ?_
+    rw [StageType.scope_faceCell ht x] at hl
+    obtain ⟨i, -, hi⟩ := mem_map.mp hl
+    exact hs.notMem_range ⟨i, hi⟩
+
+/-! ### Owner lowering from legality -/
+
+/-- **Owner lowering holds at every legal context of top grade `K` above the dimension of its root
+whose cells have grade at most `K`** (on two points with a one-point root: `K = 2`).  The capped
+lift of the context from the root face, with the root of the donor face and the context face as
+ambient at the cap `h` (bountifulness), capped at `h` at the cells of grade `K`
+(`CellScheme.Rows.IsLawful.capTopGrade`): the root has grade at most its dimension, below `K`, so it
+is kept; the owner has grade `K`, so it is at most `h`. -/
+theorem ownerLowering_of_isLegal {α : Ordinal.{u}} {k n p K : ℕ} {t' : StageType.{u} α k}
+    (hleg : t'.IsLegal) {g : Fin n ↪ Fin k} {s : StageType.{u} α n}
+    (ht : StageType.restrictFace g t' = some s) {tb : StageType.{u} α p} {gb : Fin n ↪ Fin p}
+    (htb : StageType.restrictFace gb tb = some s) {o r : Fin t'.card}
+    (ho : t'.toCellScheme.grade o = K) (hn : 0 < n) (hnK : n < K)
+    (hK : ∀ d, t'.toCellScheme.grade d ≤ K) :
+    OwnerLowering (StageType.faceCell ht) (StageType.faceCell htb) o r K t'.rows.IsLawful
+      tb.rows.IsLawful := by
+  classical
+  intro h hh L gd hL hg hroot
+  obtain ⟨hf, -⟩ := (StageType.restrictFace_eq_some_iff (t := t') (f := g)).mp ht
+  have he := StageType.comap_toScheme_of_restrictFace ht
+  have hinj : Function.Injective (StageType.faceCell ht) := by
+    intro i j hij
+    have := (t'.toScheme.cellMap g).injective hij
+    exact Fin.cast_injective _ this
+  -- the root of the donor face, on the cells of the context
+  set x : Fin t'.card → Label.{u} :=
+    Function.extend (StageType.faceCell ht) (fun i ↦ gd (StageType.faceCell htb i)) (fun _ ↦ ⊥)
+  have hx (i : Fin s.card) : x (StageType.faceCell ht i) = gd (StageType.faceCell htb i) :=
+    hinj.extend_apply _ _ i
+  have hgs : s.rows.IsLawful fun i ↦ gd (StageType.faceCell htb i) :=
+    StageType.isLawful_comp_faceCell htb hg
+  have hpX : t'.rows.IsLawfulBelow (Prod.map (Finset.map g) id ((univ : Finset (Fin n)), n))
+      (fun d ↦ x d) := by
+    refine (Scheme.isLawfulBelow_faceCell_iff he _ x).mp ?_
+    convert hgs.isLawfulBelow ((univ : Finset (Fin n)), n) using 2 with i
+    exact hx i.1
+  have hKk : K ≤ k := ho ▸ t'.grade_le o
+  have hXY : Prod.map (Finset.map g) id ((univ : Finset (Fin n)), n) ≤
+      ((univ : Finset (Fin k)), K) := ⟨subset_univ _, hnK.le⟩
+  have hX : Prod.map (Finset.map g) id ((univ : Finset (Fin n)), n) ∈
+      t'.toCellScheme.gradedFaces := ⟨hf, hn, by simp⟩
+  have hY : ((univ : Finset (Fin k)), K) ∈ t'.toCellScheme.gradedFaces :=
+    ⟨t'.univ_mem_faces, hn.trans hnK, by simpa using hKk⟩
+  have hlift := (CellScheme.Rows.cappedLift_iff_forall_exists hXY).mp
+    (hleg.isBountiful hX hY hXY) h hh (fun d ↦ x d) (fun d ↦ L d) hpX
+    (hL.isLawfulBelow _) (fun d ↦ ?_)
+  rotate_left
+  · -- the prescription agrees with the context face capped at `h` on the root
+    have hvis : d.1 ∈ t'.toScheme.visibleCells g := by
+      refine Scheme.mem_visibleCells.mpr fun y hy ↦ ?_
+      have hy' : y ∈ (univ : Finset (Fin n)).map g := d.2.1 (mem_coe.mp hy)
+      obtain ⟨i, -, hi⟩ := mem_map.mp hy'
+      exact ⟨i, hi⟩
+    obtain ⟨i, hi⟩ := Scheme.exists_faceCell_eq he hvis
+    change min (L d.1) h = min (x d.1) h
+    rw [← hi]
+    change min (L (StageType.faceCell ht i)) h = min (x (StageType.faceCell ht i)) h
+    rw [hx]
+    exact (hroot i).symm
+  obtain ⟨q', hq', hq'L, hq'p⟩ := hlift
+  have hmem (d : Fin t'.card) : d ∈ t'.toCellScheme.below ((univ : Finset (Fin k)), K) :=
+    ⟨subset_univ _, hK d⟩
+  set W1 : Fin t'.card → Label.{u} := fun d ↦ q' ⟨d, hmem d⟩
+  have hW1 : t'.rows.IsLawful W1 := hq'.isLawful fun d ↦ hmem d
+  refine ⟨fun d ↦ if t'.toCellScheme.grade d = K then min (W1 d) h else W1 d,
+    hW1.capTopGrade hK hh, fun i ↦ ?_, fun d ↦ ?_, ?_⟩
+  · have hgi : t'.toCellScheme.grade (StageType.faceCell ht i) ≠ K := by
+      rw [StageType.grade_faceCell]
+      exact (lt_of_le_of_lt (s.grade_le i) hnK).ne
+    change (if t'.toCellScheme.grade (StageType.faceCell ht i) = K then
+      min (W1 (StageType.faceCell ht i)) h else W1 (StageType.faceCell ht i)) = _
+    rw [ite_eq_right hgi]
+    have hvX : StageType.faceCell ht i ∈ t'.toCellScheme.below
+        (Prod.map (Finset.map g) id ((univ : Finset (Fin n)), n)) :=
+      (CellScheme.mem_below _).mpr
+        ⟨show t'.toCellScheme.scope (StageType.faceCell ht i) ⊆ (univ : Finset (Fin n)).map g by
+          rw [StageType.scope_faceCell]; exact map_subset_map.mpr (subset_univ _),
+        show t'.toCellScheme.grade (StageType.faceCell ht i) ≤ n by
+          rw [StageType.grade_faceCell]; exact s.grade_le i⟩
+    have := hq'p ⟨_, hvX⟩
+    change q' ⟨StageType.faceCell ht i, _⟩ = x (StageType.faceCell ht i) at this
+    exact this.trans (hx i)
+  · have e := hq'L ⟨d, hmem d⟩
+    change min (W1 d) h = min (L d) h at e
+    change min (if t'.toCellScheme.grade d = K then min (W1 d) h else W1 d) h = min (L d) h
+    split_ifs
+    · rw [min_assoc, min_self, e]
+    · exact e
+  · refine (min_le_left _ _).trans ?_
+    simp only [ho, ite_true]
+    exact min_le_right _ _
+
+/-- **The universal provisions at a legal source-gap context, up to donor raising**: at a legal
+source-gap context of top grade `K` above the dimension `n > 0` of its root, with every cell of
+grade at most `K`, and a donor with the same root face, the LOW clause with a separate field is a
+field admission for every designation as soon as donor raising holds; owner lowering is
+`FieldAdmission.ownerLowering_of_isLegal`. -/
+theorem isFieldAdmissionG_of_donorRaising {α : Ordinal.{u}} {k n p K : ℕ}
+    {t' : StageType.{u} α k} (hleg : t'.IsLegal) {g : Fin n ↪ Fin k} {l : Fin k}
+    {o r : Fin t'.card} (hs : t'.IsSourceGapContextAt K g l o r) {s : StageType.{u} α n}
+    (ht : StageType.restrictFace g t' = some s) {tb : StageType.{u} α p} {gb : Fin n ↪ Fin p}
+    (htb : StageType.restrictFace gb tb = some s) (hn : 0 < n) (hnK : n < K)
+    (hK : ∀ d, t'.toCellScheme.grade d ≤ K) {Lo Tops : Finset (Fin tb.card)}
+    (hDR : DonorRaising (StageType.faceCell ht) (StageType.faceCell htb) K t'.rows.IsLawful
+      tb.rows.IsLawful {x | s.label x = ⊤} Tops) :
+    IsFieldAdmissionG (StageType.faceCell ht) (StageType.faceCell htb) K t'.rows.IsLawful
+      tb.rows.IsLawful (LowAtG o r K Lo Tops) :=
+  isFieldAdmissionG_of_isSourceGapContextAt hs ht htb hDR
+    (ownerLowering_of_isLegal hleg ht htb hs.grade_owner hn hnK hK)
+
+/-- **On two points**: at every legal source-gap context of top grade `2` on two points with a
+one-point root, and every donor with the same root face, the clause is a field admission for every
+designation as soon as donor raising holds. -/
+theorem isFieldAdmissionG_two {α : Ordinal.{u}} {p : ℕ} {t' : StageType.{u} α 2}
+    (hleg : t'.IsLegal) {g : Fin 1 ↪ Fin 2} {l : Fin 2} {o r : Fin t'.card}
+    (hs : t'.IsSourceGapContextAt 2 g l o r) {s : StageType.{u} α 1}
+    (ht : StageType.restrictFace g t' = some s) {tb : StageType.{u} α p} {gb : Fin 1 ↪ Fin p}
+    (htb : StageType.restrictFace gb tb = some s) {Lo Tops : Finset (Fin tb.card)}
+    (hDR : DonorRaising (StageType.faceCell ht) (StageType.faceCell htb) 2 t'.rows.IsLawful
+      tb.rows.IsLawful {x | s.label x = ⊤} Tops) :
+    IsFieldAdmissionG (StageType.faceCell ht) (StageType.faceCell htb) 2 t'.rows.IsLawful
+      tb.rows.IsLawful (LowAtG o r 2 Lo Tops) :=
+  isFieldAdmissionG_of_donorRaising hleg hs ht htb Nat.one_pos (by omega) t'.grade_le hDR
 
 end FieldAdmission
 
