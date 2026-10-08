@@ -158,8 +158,8 @@ theorem exists_old_completion (hα : Order.IsSuccPrelimit α) {a : Fin (F.comple
 
 end CompletionBelowFullGrade
 
-/-- **Layer separation at every grade of every seed of the profile tower** (a named condition on
-the catalogues). -/
+/-- **Layer separation at every grade of every seed of the profile tower** (proved:
+`towerLayerSeparating`). -/
 def TowerLayerSeparating : Prop :=
   ∀ ⦃α : Ordinal.{u}⦄ ⦃j : ℕ⦄ (I : Seed.{u} α (j + 3)) (g : ℕ), 3 ≤ g → g ≤ j + 3 →
     ProfileTower.LayerSeparating I g
@@ -202,6 +202,17 @@ theorem completionNonDominating_of_tower (hsep : TowerLayerSeparating.{u})
       ((univ : Finset (Fin (j + 3 + 2))),
         ((ProfileTower.towerCompletion I).completion hα).toCellScheme.grade G) := Prod.ext hG rfl
   rw [hGs, ← hag, ← hgr, hgr, heq]
+
+/-- **Layer separation holds at every grade of every seed of the profile tower**
+(`ProfileTower.layerSeparating`). -/
+theorem towerLayerSeparating : TowerLayerSeparating.{u} := fun _ _ I _ _ hg ↦
+  ProfileTower.layerSeparating I (by omega) hg
+
+/-- **Completions dominating no live cell from cross-layer non-domination**: the same-layer part
+holds in the completion of the profile tower (`towerLayerSeparating`). -/
+theorem completionNonDominating_of_crossLayer (hcross : TowerCrossLayer.{u}) :
+    CompletionNonDominating.{u} :=
+  completionNonDominating_of_tower towerLayerSeparating hcross
 
 namespace StageType
 

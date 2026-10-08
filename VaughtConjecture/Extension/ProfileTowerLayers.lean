@@ -7,6 +7,7 @@ import VaughtConjecture.Extension.ProfileTowerReaders
 import VaughtConjecture.Extension.ProfileTowerCompletion
 import VaughtConjecture.Extension.BotKeeping
 import VaughtConjecture.Extension.ProfileBotKeeping
+import VaughtConjecture.Extension.CapRequestsGrade
 
 /-!
 # Readers of a cell within its layer, through the levels of the profile tower
@@ -32,8 +33,15 @@ repository (theorem named):
   its reading of `a` (`ProfileTower.Lvl.Good.lowerBlock_rowAt_nextS` in the layer of `c`; the rows
   of the old cells are kept by the later layers, `Scheme.rowAt_appendFullCells_castAdd`).
 
-Layer separation is not established here.  At a profile `R_c` largest at `a` among the catalogue
-it asks for another profile with the same block at `a` disagreeing with `R_c` below that block.
+* **Layer separation holds** (`ProfileTower.layerSeparating`, for `0 < m` and every grade
+  `g ≤ m`): a live cell of the first coatom is not `⊥` in some profile of the catalogue
+  (`ProfileTower.exists_cat_ne_bot`: bountifulness of the first coatom type and the fill of the
+  other coatom), the amalgam has a cell `e` of grade `m + 1 > g`
+  (`ProfileTower.exists_grade_eq_top`), and changing that profile at `e` to `⊥` or `⊤` keeps it in
+  the catalogue; one of the two has a bottom pattern other than that of `R_c`, so its agreement
+  height with `R_c` is `⊥` (`ProfileTower.layerSeparating_of_live`).  This covers the profile
+  `R_c` largest at `a`: the separation is by the bottom pattern at a cell of higher grade, not by
+  the value at `a`.
 
 ## Placement
 
@@ -154,6 +162,108 @@ theorem layerSeparating_of_live {I : Seed.{u} α m} {g : ℕ}
     | bot => exact absurd h hRa
     | coe o => exact WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr (zero_le (a := o)))
     | top => exact le_top
+
+/-- **A live cell of the first coatom is live in the catalogue**: an old cell `a` of grade `g`
+avoiding the last point and reading itself other than `⊥` is not `⊥` in some profile of the
+catalogue at `g`, for `0 < m` and `g ≤ m + 1`.  The row of `a` in the first coatom type extends
+by bountifulness to a labelling lawful below `(univ, g)` there, hence below the first coatom of
+the amalgam (`Scheme.isLawfulBelow_comap_cellMap_iff`); the fill of the other coatom
+(`ProfileTower.exists_isCutLawful_of_coatom_le`) and the orbit code give a profile of the
+catalogue. -/
+theorem exists_cat_ne_bot {I : Seed.{u} α m} (hm : 0 < m) {g : ℕ} (hgm : g ≤ m + 1)
+    {a : Fin I.amalgam.card} (ha : I.amalgam.toCellScheme.grade a = g)
+    (hlive : I.amalgam.toScheme.rowAt a a ≠ ⊥)
+    (hlast : Fin.last (m + 1) ∉ I.amalgam.toCellScheme.scope a) : ∃ R ∈ cat I g, R a ≠ ⊥ := by
+  classical
+  have hTl : (I.amalgam.toScheme.comap Fin.castSuccEmb).IsLegal := by
+    rw [StageType.comap_toScheme_of_restrictFace I.restrictFace_left]
+    exact I.isLegal_left
+  have hvis : a ∈ I.amalgam.toScheme.visibleCells Fin.castSuccEmb := by
+    rw [Scheme.mem_visibleCells]
+    intro y hy
+    exact Fin.exists_castSucc_eq.mpr fun hyl ↦ hlast (hyl ▸ mem_coe.mp hy)
+  obtain ⟨a', rfl⟩ : a ∈ Set.range (I.amalgam.toScheme.cellMap Fin.castSuccEmb) := by
+    rw [Scheme.range_cellMap]
+    exact hvis
+  have hg' : (I.amalgam.toScheme.comap Fin.castSuccEmb).toCellScheme.grade a' = g := ha
+  have hg0 : 0 < g := hg' ▸ hTl.isWellFormed.isWellFormed.grade_pos a'
+  have hX : (I.amalgam.toScheme.comap Fin.castSuccEmb).toCellScheme.gradedIndex a' ∈
+      (I.amalgam.toScheme.comap Fin.castSuccEmb).toCellScheme.gradedFaces :=
+    hTl.isWellFormed.isWellFormed.gradedIndex_mem a'
+  have hY : ((univ : Finset (Fin (m + 1))), g) ∈
+      (I.amalgam.toScheme.comap Fin.castSuccEmb).toCellScheme.gradedFaces :=
+    ⟨hTl.isWellFormed.univ_mem_faces, hg0, by
+      change g ≤ #(univ : Finset (Fin (m + 1)))
+      simpa using hgm⟩
+  have hXY : (I.amalgam.toScheme.comap Fin.castSuccEmb).toCellScheme.gradedIndex a' ≤
+      ((univ : Finset (Fin (m + 1))), g) := ⟨subset_univ _, le_of_eq hg'⟩
+  obtain ⟨q', hq', hq'eq⟩ := CellScheme.Rows.IsBountiful.surjOn_isLawfulBelow _
+    hTl.isBountiful hX hY hXY (hTl.isConsistent a')
+  have ha'Y : a' ∈ (I.amalgam.toScheme.comap Fin.castSuccEmb).toCellScheme.below
+      ((univ : Finset (Fin (m + 1))), g) :=
+    (I.amalgam.toScheme.comap Fin.castSuccEmb).toCellScheme.below_mono hXY
+      ((I.amalgam.toScheme.comap Fin.castSuccEmb).toCellScheme.mem_below_gradedIndex a')
+  have hq'a : q' ⟨a', ha'Y⟩ ≠ ⊥ := by
+    have h := congrFun hq'eq
+      ⟨a', (I.amalgam.toScheme.comap Fin.castSuccEmb).toCellScheme.mem_below_gradedIndex a'⟩
+    change q' ⟨a', ha'Y⟩ = (I.amalgam.toScheme.comap Fin.castSuccEmb).rows.row a' _ at h
+    rw [h, Scheme.comap_row]
+    rwa [Scheme.rowAt_of_mem (I.amalgam.toCellScheme.mem_below_gradedIndex _)] at hlive
+  set x : Fin I.amalgam.card → Label.{u} := Function.extend
+    (I.amalgam.toScheme.cellMap Fin.castSuccEmb)
+    (fun i ↦ if h : i ∈ (I.amalgam.toScheme.comap Fin.castSuccEmb).toCellScheme.below
+        ((univ : Finset (Fin (m + 1))), g) then q' ⟨i, h⟩ else ⊥) fun _ ↦ ⊥ with hxdef
+  have hxi (i : Fin (I.amalgam.toScheme.comap Fin.castSuccEmb).card)
+      (hi : i ∈ (I.amalgam.toScheme.comap Fin.castSuccEmb).toCellScheme.below
+        ((univ : Finset (Fin (m + 1))), g)) :
+      x (I.amalgam.toScheme.cellMap Fin.castSuccEmb i) = q' ⟨i, hi⟩ := by
+    rw [hxdef, (I.amalgam.toScheme.cellMap Fin.castSuccEmb).injective.extend_apply]
+    simp [hi]
+  have hxT : (I.amalgam.toScheme.comap Fin.castSuccEmb).rows.IsLawfulBelow
+      ((univ : Finset (Fin (m + 1))), g)
+      fun i ↦ x (I.amalgam.toScheme.cellMap Fin.castSuccEmb i) := by
+    have e : (fun i : (I.amalgam.toScheme.comap Fin.castSuccEmb).toCellScheme.below
+        ((univ : Finset (Fin (m + 1))), g) ↦ x (I.amalgam.toScheme.cellMap Fin.castSuccEmb i)) =
+        q' := funext fun i ↦ hxi i.1 i.2
+    rw [e]
+    exact hq'
+  have hxS := (I.amalgam.toScheme.isLawfulBelow_comap_cellMap_iff Fin.castSuccEmb
+    ((univ : Finset (Fin (m + 1))), g) x).mp hxT
+  have hmapY : Prod.map (Finset.map (Fin.castSuccEmb : Fin (m + 1) ↪ Fin (m + 2))) id
+      ((univ : Finset (Fin (m + 1))), g) = (univ.erase (Fin.last (m + 1)), g) := by
+    simp only [Prod.map]
+    rw [show (univ : Finset (Fin (m + 1))).map Fin.castSuccEmb = univ.erase (Fin.last (m + 1))
+      from Coatom.univ_map_left]
+    rfl
+  rw [hmapY] at hxS
+  obtain ⟨W, hW, hWx, -⟩ := exists_isCutLawful_of_coatom_le hm hg0 hgm
+    (x := Fin.last (m + 1)) (by simp [Pts]) (isSelfVisible_bot g) (P := fun _ ↦ ⊥)
+    ⟨Rows.isLawfulBelow_const_bot _, Rows.isLawfulBelow_const_bot _⟩ hxS fun _ _ ↦ by simp
+  have haC : I.amalgam.toScheme.cellMap Fin.castSuccEmb a' ∈
+      I.amalgam.toCellScheme.below (univ.erase (Fin.last (m + 1)), g) :=
+    ⟨fun y hy ↦ mem_erase.mpr ⟨fun h ↦ hlast (h ▸ hy), mem_univ _⟩, ha.le⟩
+  refine ⟨orbitCode g W, mem_cat.mpr ⟨⟨hW.1.orbitCode fun d ↦ d.2.2,
+    hW.2.orbitCode fun d ↦ d.2.2⟩, orbitCode_orbitCode⟩, ?_⟩
+  rw [Ne, orbitCode_eq_bot_iff, hWx _ haC, hxi a' ha'Y]
+  exact hq'a
+
+/-- **The amalgam has a cell of the top grade `m + 1`**, from completeness of the first coatom
+type. -/
+theorem exists_grade_eq_top (I : Seed.{u} α m) :
+    ∃ e : Fin I.amalgam.card, I.amalgam.toCellScheme.grade e = m + 1 := by
+  obtain ⟨x, hx⟩ := I.isLegal_left.isComplete ((univ : Finset (Fin (m + 1))), m + 1)
+    ⟨I.left.univ_mem_faces, by omega, by simp⟩
+  exact ⟨StageType.faceCell I.restrictFace_left x,
+    (StageType.grade_faceCell I.restrictFace_left x).trans (congrArg Prod.snd hx)⟩
+
+/-- **Layer separation at every grade up to `m`**, for `0 < m`: the live cells of the first coatom
+are live in the catalogue (`ProfileTower.exists_cat_ne_bot`) and the amalgam has a cell of grade
+`m + 1` (`ProfileTower.exists_grade_eq_top`). -/
+theorem layerSeparating (I : Seed.{u} α m) (hm : 0 < m) {g : ℕ} (hgm : g ≤ m) :
+    LayerSeparating I g := by
+  obtain ⟨e, he⟩ := exists_grade_eq_top I
+  exact layerSeparating_of_live (fun a ha hlive hlast ↦ exists_cat_ne_bot hm (by omega) ha hlive
+    hlast) (e := e) (by omega)
 
 variable {I : Seed.{u} α m}
 
