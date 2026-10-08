@@ -60,7 +60,8 @@ theorem eq_top_of_admittedSelfLow {Lo Tops : Finset (Fin 5)}
     (hq : (admittedBy α (SelfLowG.{u} (3 : Fin 5) 4 2 Lo Tops)).rows.IsLawfulBelow
       ((univ : Finset (Fin 3)), 2) (fun x ↦ q x))
     (hctx : ∀ z, q (oL _ z) = lab ⊤ ⊤ ⊤ z) {t : Fin 5} (ht : t ∈ Tops)
-    (hlt : Lo.sup (fun x ↦ q (oR _ x)) < q (oR _ t)) : q (oR _ t) = ⊤ := by
+    (hlt : visibilityReplace 2 2 (Lo.sup (fun x ↦ q (oR _ x))) < q (oR _ t)) :
+    q (oR _ t) = ⊤ := by
   have hA := isLowAdmission_selfLow.{u} (Lo := Lo) hTops
   have hx₀ : (lowerT α).toCellScheme.grade (Fin.castAdd _ (lc α 3)) = 2 :=
     congrArg Prod.snd gradedIndex_left_three
@@ -73,7 +74,7 @@ theorem eq_top_of_admittedSelfLow {Lo Tops : Finset (Fin 5)}
     exact (hold _).symm
   have hR (z : Fin 5) : σ (donT a z) = q (oR _ z) := (hold _).symm
   have h := hcl t ht (by
-    change Lo.sup (fun z ↦ σ (donT a z)) < σ (donT a t)
+    change visibilityReplace 2 2 (Lo.sup fun z ↦ σ (donT a z)) < σ (donT a t)
     simp only [hR]
     exact hlt)
   change min (σ (privT a 3)) (visibilityReplace 2 2 (σ (privT a 4))) ≤ σ (donT a t) at h
@@ -123,7 +124,7 @@ theorem isDeterminedWithin_DU_selfLow (hα : Order.IsSuccPrelimit α) {v : Label
   refine eq_top_of_admittedSelfLow topsU_sub (hq.isLawfulBelow _) hqL (by simp [topsU]) ?_
   have hsup : loU.sup (fun x ↦ q (oR (SelfLowG.{u} (3 : Fin 5) 4 2 loU topsU) x)) = v := by
     simp [loU, he', hr']
-  rw [hsup]
+  rw [hsup, hv.visibilityReplace_eq]
   exact hvδ.trans_le ho'
 
 /-- **The input itself through the clause**: at a stage that is zero or a limit, every cutoff
@@ -150,10 +151,10 @@ theorem isDeterminedWithin_DS_selfLow (hα : Order.IsSuccPrelimit α) {δ : Labe
     simp [loSelf, he']
   refine ⟨?_, ?_⟩
   · refine eq_top_of_admittedSelfLow topsSelf_sub (hq.isLawfulBelow _) hqL (by simp [topsSelf]) ?_
-    rw [hsup]
+    rw [hsup, visibilityReplace_bot]
     exact hδ.trans_le (hge 3 rfl)
   · refine eq_top_of_admittedSelfLow topsSelf_sub (hq.isLawfulBelow _) hqL (by simp [topsSelf]) ?_
-    rw [hsup]
+    rw [hsup, visibilityReplace_bot]
     exact hδ.trans_le (hge 4 rfl)
 
 /-- **The coatom form for the twisted donor through the clause.** -/
