@@ -55,4 +55,19 @@ theorem residualAcquisition_ge2_iff :
     have : 1 ≤ K := by exact_mod_cast h1
     exact ⟨k, t', c', h, hc', hcc', hP, by omega⟩
 
+/-- **No residual model of top-grade supremum `1`** (a named hypothesis, not proved): every model
+at a limit stage with no cover that is a globally rigid core has top-grade supremum other than `1`.
+The analogue at `0` holds (`IsModel.one_le_topGradeSup`). -/
+def NoResidualGradeOne : Prop :=
+  ∀ ⦃α : Ordinal.{u}⦄ ⦃M : Type w⦄ ⦃R : Realization.{u, w} α M⦄,
+    Order.IsSuccLimit α → R.IsModel →
+    (¬ ∃ (k : ℕ) (p : StageType.{u} α k) (c : Fin k → M), R.Covers p c ∧
+      R.IsGloballyRigidCore c) → R.topGradeSup ≠ 1
+
+/-- **Residual acquisition at grade at least two**, under the exclusion of the residual grade
+`1`. -/
+theorem residualAcquisition_ge2 (h : NoResidualGradeOne.{u, w}) :
+    ResidualAcquisition.{u, w} (fun K t' h ↦ IsSourceGapContextGe2 K t' h) :=
+  residualAcquisition_ge2_iff.mpr h
+
 end VaughtConjecture.Realization
