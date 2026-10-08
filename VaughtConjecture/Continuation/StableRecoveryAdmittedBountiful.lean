@@ -239,8 +239,11 @@ theorem isWellFormed_admittedDoubledLower :
 lower layer at the grade `1` and the lifts from the two coatoms at the grade `2`: off the full face
 by the amalgam (a source prefix), and from either coatom into the full face at every grade. -/
 theorem isBountiful_admittedDoubledLower
-    (h1 : ∀ U : Finset (Fin 3), (I.doubledLower hLR).rows.CappedLift (X := (U, 1))
-      (Y := ((univ : Finset (Fin 3)), 1)) ⟨subset_univ _, le_rfl⟩)
+    (h1L : (I.doubledLower hLR).rows.CappedLift (X := (univ.erase (Fin.last 2), 1))
+      (Y := ((univ : Finset (Fin 3)), 1)) ⟨erase_subset _ _, le_rfl⟩)
+    (h1R : (I.doubledLower hLR).rows.CappedLift
+      (X := (univ.erase (Fin.castSucc (Fin.last 1)), 1))
+      (Y := ((univ : Finset (Fin 3)), 1)) ⟨erase_subset _ _, le_rfl⟩)
     (hL : ((I.doubledLower hLR).admittedFieldLayer 2 A
       (I.not_univ_two_le_doubledLower hLR)).rows.CappedLift
         (X := (univ.erase (Fin.last 2), 2)) (Y := ((univ : Finset (Fin 3)), 2))
@@ -271,27 +274,30 @@ theorem isBountiful_admittedDoubledLower
       ((univ : Finset (Fin 3)), 1) :=
     ⟨hemb, Scheme.appendFullCellsScheme_scope_castAdd _ _ _,
       fun d hd ↦ ⟨⟨d, Scheme.lt_card_of_mem_below (fun h ↦ absurd h.2 (by omega)) hd⟩, rfl⟩⟩
-  have hone (U : Finset (Fin 3)) : F.rows.CappedLift (X := (U, 1))
-      (Y := ((univ : Finset (Fin 3)), 1)) ⟨subset_univ _, le_rfl⟩ := by
+  have hone (U : Finset (Fin 3)) (hU : (I.doubledLower hLR).rows.CappedLift (X := (U, 1))
+      (Y := ((univ : Finset (Fin 3)), 1)) ⟨subset_univ _, le_rfl⟩) : F.rows.CappedLift
+        (X := (U, 1)) (Y := ((univ : Finset (Fin 3)), 1)) ⟨subset_univ _, le_rfl⟩ := by
     refine (hsp1.cappedLift_iff _ le_rfl).mp ?_
     change (F.rows.comap hemb).CappedLift _
     rw [e1]
-    exact h1 U
+    exact hU
   have hle (z : Fin 3) (j : ℕ) (hj : j ≤ #(univ.erase z)) : j ≤ 2 := by
     rw [card_erase_of_mem (mem_univ z)] at hj
     simpa using hj
-  have hfull (z : Fin 3) (hlift2 : F.rows.CappedLift (X := (univ.erase z, 2))
+  have hfull (z : Fin 3) (hlift1 : (I.doubledLower hLR).rows.CappedLift (X := (univ.erase z, 1))
+      (Y := ((univ : Finset (Fin 3)), 1)) ⟨erase_subset _ _, le_rfl⟩)
+      (hlift2 : F.rows.CappedLift (X := (univ.erase z, 2))
       (Y := ((univ : Finset (Fin 3)), 2)) ⟨erase_subset _ _, le_rfl⟩) (j : ℕ) (hj : j ≤ 2) :
       F.rows.CappedLift (X := (univ.erase z, j)) (Y := ((univ : Finset (Fin 3)), j))
         ⟨erase_subset _ _, le_rfl⟩ := by
     rcases (show j = 0 ∨ j = 1 ∨ j = 2 by omega) with rfl | rfl | rfl
     · exact (I.isWellFormed_admittedDoubledLower hLR).isWellFormed.cappedLift _ (Or.inl rfl) _
-    · exact hone _
+    · exact hone _ hlift1
     · exact hlift2
   refine CellScheme.Rows.isBountiful_of_coatoms (A := univ) (a := Fin.last 2)
     (b := Fin.castSucc (Fin.last 1)) (mem_univ _) (mem_univ _) I.subset_or_subset
     I.erase_last_mem_faces I.erase_castSucc_mem_faces (fun X Y hX hY hXY hYne ↦ ?_)
-    (fun j hj ↦ hfull _ hL j (hle _ j hj)) (fun j hj ↦ hfull _ hR j (hle _ j hj))
+    (fun j hj ↦ hfull _ h1L hL j (hle _ j hj)) (fun j hj ↦ hfull _ h1R hR j (hle _ j hj))
   -- off the full face: the amalgam is a source prefix
   have h : I.amalgam.toCellScheme.IsSourcePrefix F.toCellScheme
       (fun d ↦ Fin.castAdd _ (Fin.castAdd _ d)) Y := by
@@ -885,7 +891,8 @@ theorem cappedLift_admittedLayerP_right :
 
 /-- **The admitted layer at `P` is bountiful.** -/
 theorem isBountiful_admittedLayerP : (admittedLayerP β).rows.IsBountiful :=
-  (seedP β).isBountiful_admittedDoubledLower rfl (cappedLift_lowerP_one β)
+  (seedP β).isBountiful_admittedDoubledLower rfl (cappedLift_lowerP_one β _)
+    (cappedLift_lowerP_one β _)
     (cappedLift_admittedLayerP_left β) (cappedLift_admittedLayerP_right β)
 
 /-- **The admitted layer at `P` is legal below the full grade.** -/

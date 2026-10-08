@@ -622,7 +622,8 @@ theorem isLegalBelowFullGrade_admittedLayerS (hI : I.left.IsLegal) (ht : I.left.
     (hb : I.left.toCellScheme.grade b = 2) :
     (I.admittedLayerS hLR b).IsLegalBelowFullGrade :=
   I.isLegalBelowFullGrade_admittedDoubledLower hLR hI (admS_bot hb)
-    (I.isBountiful_admittedDoubledLower hLR (cappedLift_lowerS_one hd)
+    (I.isBountiful_admittedDoubledLower hLR (cappedLift_lowerS_one hd _)
+      (cappedLift_lowerS_one hd _)
       (cappedLift_admittedLayerS_left hd hI ht hb) (cappedLift_admittedLayerS_right hd hI hb))
 
 end Seed
