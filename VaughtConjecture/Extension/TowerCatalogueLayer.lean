@@ -32,6 +32,15 @@ catalogue cut out by an arbitrary **predicate** `A` on profiles with a cutoff
   closure of the catalogue under capped agreement from the coatom.  This is the one open
   hypothesis; the cap `⊥` is `ProfileTower.Lvl.Good.exists_cutLawful_of_coatom`.
 
+**Levels good on a set of profiles** (`ProfileTower.Lvl.GoodOn S`): every field of
+`ProfileTower.Lvl.Good`, with lawful sections asked only for the cut-lawful profiles of `S`.  Every
+statement of this file holds over such a level when the profiles of the catalogue lie in `S`
+(`ProfileTower.Lvl.GoodOn.isLawfulBelow_Φcat`, `ProfileTower.Lvl.GoodOn.catS_consistent`,
+`ProfileTower.Lvl.GoodOn.cappedLift_catS`, …): the lawfulness of the sections is used only at the
+profiles of the catalogue.  The statements over good levels are the case `S` everything
+(`ProfileTower.Lvl.Good.goodOn`).  This is the invariant above an admitted layer, where goodness on
+every profile fails (`ProfileTower.Lvl.Good.not_forall_admitted`).
+
 **Instances.**  The LOW layer is the instance with `A` the LOW clause at the cutoff (every profile
 with cutoff `⊥` is inactive, so LOW); the activation layer of the growth construction is the
 instance with `A` the admission of a profile by the requests on the bottom class
@@ -102,6 +111,90 @@ theorem bot_mem_predCat (hA0 : A fun _ ↦ ⊥) : (fun _ ↦ ⊥ : CProf I) ∈ 
 
 variable {g : ℕ} {L : Lvl I g}
 
+/-! ### Levels good on a set of profiles -/
+
+variable (S : Prof I → Prop) in
+/-- A level **good on a set `S` of profiles**: every field of `ProfileTower.Lvl.Good`, with the
+lawfulness of the sections asked only for the cut-lawful profiles of `S`.  A level carrying an
+admitted layer is good on the admitted profiles only (`ProfileTower.Lvl.Good.not_forall_admitted`
+rules out goodness on all profiles). -/
+structure Lvl.GoodOn (L : Lvl I g) : Prop where
+  lowerEmb : I.amalgam.toCellScheme.IsLowerEmbedding L.S.toCellScheme L.embed
+  scope_embed : ∀ d, L.S.toCellScheme.scope (L.embed d) = I.amalgam.toCellScheme.scope d
+  comap_rows : L.S.rows.comap lowerEmb = I.amalgam.rows
+  mem_range : ∀ z, L.S.toCellScheme.scope z ≠ univ → z ∈ Set.range L.embed
+  faces : L.S.toCellScheme.faces = I.amalgam.toCellScheme.faces
+  wf : L.S.IsWellFormed
+  coded : L.S.IsCoded
+  consistent : L.S.rows.IsConsistent
+  lawful : ∀ P, S P → IsCutLawful I g P →
+    L.S.rows.IsLawfulBelow ((univ : Finset (Fin (m + 2))), g) fun z ↦ L.σ P z
+  mem : ∀ P : Prof I, (∀ d, P d ∈ codeGrid (g + 1) (bound I)) →
+    ∀ z, L.σ P z ∈ codeGrid (g + 1) (bound I)
+  literal : ∀ P d, L.σ P (L.embed d) = P d
+  capAgree : ∀ P P' : Prof I, (∀ d, P d ∈ codeGrid (g + 1) (bound I)) → ∀ h : Label.{u},
+    IsSelfVisible (g + 1) h → IsShort (g + 1) h → (∀ d, min (P d) h = min (P' d) h) →
+    ∀ z, min (L.σ P z) h = min (L.σ P' z) h
+  readable : ∀ Q : Prof I, orbitCode (g + 1) Q = Q → (∀ d, Q d ∈ codeGrid (g + 1) (bound I)) →
+    ∀ z, IsReadableAt (g + 1) Q (L.σ Q z)
+  lift : ∀ x ∈ (Pts : Finset (Fin (m + 2))), ∀ j ≤ g,
+    L.S.rows.CappedLift (X := (univ.erase x, j)) (Y := ((univ : Finset (Fin (m + 2))), j))
+      ⟨erase_subset _ _, le_rfl⟩
+  complete : ∀ j, 0 < j → j ≤ g →
+    ∃ z, L.S.toCellScheme.gradedIndex z = ((univ : Finset (Fin (m + 2))), j)
+
+variable {S : Prof I → Prop}
+
+/-- A good level is good on every set of profiles. -/
+theorem Lvl.Good.goodOn (hL : L.Good) (S : Prof I → Prop) : L.GoodOn S :=
+  ⟨hL.lowerEmb, hL.scope_embed, hL.comap_rows, hL.mem_range, hL.faces, hL.wf, hL.coded,
+    hL.consistent, fun P _ hP ↦ hL.lawful P hP, hL.mem, hL.literal, hL.capAgree, hL.readable,
+    hL.lift, hL.complete⟩
+
+/-- A level good on all profiles is good. -/
+theorem Lvl.GoodOn.good (hL : L.GoodOn fun _ ↦ True) : L.Good :=
+  ⟨hL.lowerEmb, hL.scope_embed, hL.comap_rows, hL.mem_range, hL.faces, hL.wf, hL.coded,
+    hL.consistent, fun P hP ↦ hL.lawful P trivial hP, hL.mem, hL.literal, hL.capAgree,
+    hL.readable, hL.lift, hL.complete⟩
+
+theorem Lvl.GoodOn.gradedIndex_embed (hL : L.GoodOn S) (d : Fin I.amalgam.card) :
+    L.S.toCellScheme.gradedIndex (L.embed d) = I.amalgam.toCellScheme.gradedIndex d :=
+  Prod.ext (hL.scope_embed d) (hL.lowerEmb.grade_eq d)
+
+theorem Lvl.GoodOn.isSourcePrefix (hL : L.GoodOn S) {Y : Finset (Fin (m + 2)) × ℕ}
+    (hY : Y.1 ≠ univ) : I.amalgam.toCellScheme.IsSourcePrefix L.S.toCellScheme L.embed Y :=
+  ⟨hL.lowerEmb, hL.scope_embed, fun z hz ↦ hL.mem_range z fun he ↦
+    hY (univ_subset_iff.mp (he ▸ (hz.1 : L.S.toCellScheme.scope z ⊆ Y.1)))⟩
+
+theorem Lvl.GoodOn.isLawfulBelow_old_iff (hL : L.GoodOn S) {X : Finset (Fin (m + 2)) × ℕ}
+    (hX : X.1 ≠ univ) {w : Fin L.S.card → Label.{u}} :
+    L.S.rows.IsLawfulBelow X (fun z ↦ w z) ↔
+      I.amalgam.rows.IsLawfulBelow X (fun d ↦ w (L.embed d)) := by
+  have h := hL.isSourcePrefix hX
+  rw [← h.isLawfulBelow_iff le_rfl, hL.comap_rows]
+  rfl
+
+theorem Lvl.GoodOn.mem_range_of_lt (hL : L.GoodOn S) {z : Fin L.S.card}
+    (hz : g < L.S.toCellScheme.grade z) : z ∈ Set.range L.embed :=
+  hL.mem_range z ((L.inv z).resolve_left (by omega))
+
+theorem Lvl.GoodOn.mem_below_cover (hL : L.GoodOn S) {x y : Fin (m + 2)}
+    (hx : x ∈ (Pts : Finset _)) (hy : y ∈ (Pts : Finset _)) (hxy : x ≠ y) (z : Fin L.S.card)
+    (hz : z ∈ L.S.toCellScheme.below ((univ : Finset (Fin (m + 2))), g + 1)) :
+    z ∈ L.S.toCellScheme.below (univ.erase x, g + 1) ∨
+      z ∈ L.S.toCellScheme.below (univ, g) ∨ z ∈ L.S.toCellScheme.below (univ.erase y, g + 1) := by
+  by_cases hzg : L.S.toCellScheme.grade z ≤ g
+  · exact .inr (.inl ⟨subset_univ _, hzg⟩)
+  obtain ⟨d, rfl⟩ := hL.mem_range_of_lt (_root_.not_le.mp hzg)
+  have hd : I.amalgam.toCellScheme.grade d ≤ g + 1 := by
+    have := hz.2
+    rwa [hL.gradedIndex_embed] at this
+  rcases I.scope_subset_or hx hy hxy d with h | h
+  · refine .inl ?_
+    rw [CellScheme.mem_below, hL.gradedIndex_embed]; exact ⟨h, hd⟩
+  · refine .inr (.inr ?_)
+    rw [CellScheme.mem_below, hL.gradedIndex_embed]; exact ⟨h, hd⟩
+
 /-- The row labelling of a profile with a cutoff over a level at the grade `g`, for a finite set `C`
 of profiles with a cutoff: the section of its amalgam part at the cells of the level, and the
 agreement heights with the profiles of `C`, cutoff included. -/
@@ -129,7 +222,7 @@ theorem exists_equivFin_eq {R : CProf I} (hR : R ∈ C) : ∃ i, (C.equivFin.sym
   ⟨C.equivFin ⟨R, hR⟩, by simp⟩
 
 /-- The row labelling of a profile with values in the code grid lies in the code grid. -/
-theorem Lvl.Good.Φcat_mem_codeGrid (hL : L.Good) {R : CProf I}
+theorem Lvl.GoodOn.Φcat_mem_codeGrid (hL : L.GoodOn S) {R : CProf I}
     (hR : ∀ f, R f ∈ codeGrid (g + 1) (bound I)) (z : Fin (L.S.card + C.card)) :
     L.Φcat C R z ∈ codeGrid (g + 1) (bound I) := by
   induction z using Fin.addCases with
@@ -150,15 +243,16 @@ theorem Lvl.isLawfulBelow_catS_iff {X : Finset (Fin (m + 2)) × ℕ}
 /-- **The row labelling of a profile with a cutoff is lawful below `(univ, g + 1)`** in the
 catalogue layer, for a profile of `C` with values in the code grid and amalgam part lawful on the
 grade-`(g + 1)` cut. -/
-theorem Lvl.Good.isLawfulBelow_Φcat (hL : L.Good) {R : CProf I} (hRC : R ∈ C)
-    (hRB : ∀ f, R f ∈ codeGrid (g + 1) (bound I)) (hRc : IsCutLawful I (g + 1) (camal R)) :
+theorem Lvl.GoodOn.isLawfulBelow_Φcat (hL : L.GoodOn S) {R : CProf I} (hRC : R ∈ C)
+    (hRB : ∀ f, R f ∈ codeGrid (g + 1) (bound I)) (hRc : IsCutLawful I (g + 1) (camal R))
+    (hRS : S (camal R)) :
     (L.catS C).rows.IsLawfulBelow ((univ : Finset (Fin (m + 2))), g + 1) fun z ↦ L.Φcat C R z := by
   classical
   obtain ⟨hC, hD⟩ := hRc
   have hlow : (L.catS C).rows.IsLawfulBelow ((univ : Finset (Fin (m + 2))), g)
       fun z ↦ L.Φcat C R z := by
     refine (L.isLawfulBelow_catS_iff (by rintro ⟨-, h⟩; simp only at h; omega)).mpr ?_
-    simpa only [Lvl.Φcat_castAdd] using hL.lawful (camal R)
+    simpa only [Lvl.Φcat_castAdd] using hL.lawful (camal R) hRS
       ⟨hC.mono (X := (_, g)) ⟨subset_rfl, by omega⟩, hD.mono (X := (_, g)) ⟨subset_rfl, by omega⟩⟩
   have hcoat (x : Fin (m + 2))
       (hRX : I.amalgam.rows.IsLawfulBelow (univ.erase x, g + 1) fun d ↦ camal R d) :
@@ -236,15 +330,16 @@ theorem Lvl.Good.isLawfulBelow_Φcat (hL : L.Good) {R : CProf I} (hRC : R ∈ C)
 
 /-- **The catalogue layer over a good level is consistent**, when every profile of `C` has values in
 the code grid and amalgam part lawful on the grade-`(g + 1)` cut. -/
-theorem Lvl.Good.catS_consistent (hL : L.Good)
-    (hCsub : ∀ P ∈ C, (∀ f, P f ∈ codeGrid (g + 1) (bound I)) ∧ IsCutLawful I (g + 1) (camal P)) :
+theorem Lvl.GoodOn.catS_consistent (hL : L.GoodOn S)
+    (hCsub : ∀ P ∈ C, (∀ f, P f ∈ codeGrid (g + 1) (bound I)) ∧ IsCutLawful I (g + 1) (camal P))
+    (hCS : ∀ P ∈ C, S (camal P)) :
     (L.catS C).rows.IsConsistent := by
   intro s
   induction s using Fin.addCases with
   | right i =>
     have hu := Scheme.appendFullCellsScheme_gradedIndex_natAdd L.S (g + 1) C.card i
     have hm := (C.equivFin.symm i).2
-    have h := hL.isLawfulBelow_Φcat hm (hCsub _ hm).1 (hCsub _ hm).2
+    have h := hL.isLawfulBelow_Φcat hm (hCsub _ hm).1 (hCsub _ hm).2 (hCS _ hm)
     change (L.catS C).rows.IsLawfulBelow ((L.catS C).toCellScheme.gradedIndex (Fin.natAdd _ i))
       ((L.catS C).rows.row (Fin.natAdd _ i))
     rw [Scheme.appendFullCells_row_natAdd_eq]
@@ -273,7 +368,7 @@ theorem Lvl.cappedLift_catS_iff {X Y : Finset (Fin (m + 2)) × ℕ} (hXY : X ≤
 
 /-- A cell of the catalogue layer of scope other than the ground set below `(univ, g + 1)` is an old
 amalgam cell of grade at most `g + 1`. -/
-theorem Lvl.Good.exists_old_catS (hL : L.Good) {z : Fin (L.catS C).card}
+theorem Lvl.GoodOn.exists_old_catS (hL : L.GoodOn S) {z : Fin (L.catS C).card}
     (hz : z ∈ (L.catS C).toCellScheme.below ((univ : Finset (Fin (m + 2))), g + 1))
     (hne : (L.catS C).toCellScheme.scope z ≠ univ) :
     ∃ d, I.amalgam.toCellScheme.grade d ≤ g + 1 ∧ z = Fin.castAdd _ (L.embed d) := by
@@ -296,8 +391,9 @@ amalgam profile lawful on the grade-`(g + 1)` cut agreeing with the amalgam part
 the cutoff `β` lies in `C`.  Then some labelling lawful below `(univ, g + 1)` in the catalogue layer
 reads `W` at the amalgam cells of grade at most `g + 1` and agrees with the row of `P` capped at `h`
 everywhere. -/
-theorem Lvl.Good.exists_extension_cat (hL : L.Good)
+theorem Lvl.GoodOn.exists_extension_cat (hL : L.GoodOn S)
     (hCsub : ∀ P ∈ C, (∀ f, P f ∈ codeGrid (g + 1) (bound I)) ∧ IsCutLawful I (g + 1) (camal P))
+    (hCS : ∀ P ∈ C, S (camal P))
     {P : CProf I} (hP : P ∈ C) (hPo : orbitCode (g + 1) (camal P) = camal P) {h : Label.{u}}
     (hh : IsSelfVisible (g + 1) h) (hs : IsShort (g + 1) h) (hb : h ≠ ⊥) {W : Prof I}
     (hWP : ∀ d, min (W d) h = min (P (Sum.inl d)) h) {β : Label.{u}}
@@ -335,7 +431,7 @@ theorem Lvl.Good.exists_extension_cat (hL : L.Good)
           (bot_mem_grid _ _) _ _).1)]
       exact min_agreementHeight_eq_of_isShort hh hs (fun f ↦ ⟨hQB f, hPB f⟩) hQP _
   refine ⟨fun z ↦ orbitDecoder (g + 1) W h (L.Φcat C Q z),
-    (hL.isLawfulBelow_Φcat hQC hQB hQc).map_of_apply_eq_bot (fun z ↦ z.2.2)
+    (hL.isLawfulBelow_Φcat hQC hQB hQc (hCS _ hQC)).map_of_apply_eq_bot (fun z ↦ z.2.2)
       (isWitness_orbitDecoder hh hb) (fun _ ↦ eq_bot_of_orbitDecoder_eq_bot hb), fun d hd ↦ ?_,
     hag⟩
   change orbitDecoder (g + 1) W h (L.Φcat C Q (Fin.castAdd _ (L.embed d))) = W d
@@ -344,8 +440,9 @@ theorem Lvl.Good.exists_extension_cat (hL : L.Good)
 /-- **Extension through the catalogue layer at the cap `⊥`**: an amalgam profile lawful on the
 grade-`(g + 1)` cut whose orbit code with the cutoff `⊥` lies in `C` extends to a labelling lawful
 below `(univ, g + 1)` reading it at the amalgam cells of grade at most `g + 1`. -/
-theorem Lvl.Good.exists_extension_cat_bot (hL : L.Good)
+theorem Lvl.GoodOn.exists_extension_cat_bot (hL : L.GoodOn S)
     (hCsub : ∀ P ∈ C, (∀ f, P f ∈ codeGrid (g + 1) (bound I)) ∧ IsCutLawful I (g + 1) (camal P))
+    (hCS : ∀ P ∈ C, S (camal P))
     {W : Prof I} (hQC : withCut (orbitCode (g + 1) W) ⊥ ∈ C) :
     ∃ q : (L.catS C).toCellScheme.below ((univ : Finset (Fin (m + 2))), g + 1) → Label.{u},
       (L.catS C).rows.IsLawfulBelow (univ, g + 1) q ∧
@@ -360,7 +457,7 @@ theorem Lvl.Good.exists_extension_cat_bot (hL : L.Good)
       min (orbitCode (g + 1) W d) (gridPoint (g + 1) 0) = min (W d) (gridPoint (g + 1) 0) :=
     min_orbitCode_gridPoint_zero d
   refine ⟨fun z ↦ orbitDecoder (g + 1) W (gridPoint (g + 1) 0) (L.Φcat C Q z),
-    (hL.isLawfulBelow_Φcat hQC hQB hQc).map_of_apply_eq_bot (fun z ↦ z.2.2)
+    (hL.isLawfulBelow_Φcat hQC hQB hQc (hCS _ hQC)).map_of_apply_eq_bot (fun z ↦ z.2.2)
       (isWitness_orbitDecoder (isSelfVisible_gridPoint _ 0) (gridPoint_ne_bot _ 0))
       (fun _ ↦ eq_bot_of_orbitDecoder_eq_bot (gridPoint_ne_bot _ 0)), fun d hd ↦ ?_⟩
   change orbitDecoder (g + 1) W (gridPoint (g + 1) 0) (L.Φcat C Q (Fin.castAdd _ (L.embed d))) =
@@ -397,8 +494,9 @@ The one-grade lift `CellScheme.Rows.cappedLift_of_boundary_short` with the bound
 coatom three times, the lift of the level at the grade `g`, and the extension through the
 controllers (`ProfileTower.Lvl.Good.exists_extension_cat`,
 `ProfileTower.Lvl.Good.exists_extension_cat_bot`). -/
-theorem Lvl.Good.cappedLift_catS (hL : L.Good) (hgm : g + 1 ≤ m) {x : Fin (m + 2)}
+theorem Lvl.GoodOn.cappedLift_catS (hL : L.GoodOn S) (hgm : g + 1 ≤ m) {x : Fin (m + 2)}
     (hx : x ∈ (Pts : Finset (Fin (m + 2)))) (hA0 : A fun _ ↦ ⊥)
+    (hAS : ∀ P, A P → S (camal P))
     (hbot : ∀ w : Fin (L.catS 𝒞).card → Label.{u},
       (L.catS 𝒞).rows.IsLawfulBelow (univ.erase x, g + 1) (fun z ↦ w z) →
       ∃ W : Prof I, IsCutLawful I (g + 1) W ∧
@@ -422,6 +520,7 @@ theorem Lvl.Good.cappedLift_catS (hL : L.Good) (hgm : g + 1 ≤ m) {x : Fin (m +
   classical
   have hCsub : ∀ P ∈ 𝒞, (∀ f, P f ∈ codeGrid (g + 1) (bound I)) ∧
       IsCutLawful I (g + 1) (camal P) := fun P hP ↦ ⟨(mem_predCat.mp hP).1, (mem_predCat.mp hP).2.1⟩
+  have hCS : ∀ P ∈ 𝒞, S (camal P) := fun P hP ↦ hAS P (mem_predCat.mp hP).2.2.2
   have hcard (z : Fin (m + 2)) : #(univ.erase z) = m + 1 := Seed.card_erase z
   have hlift : (L.catS 𝒞).rows.CappedLift (X := (univ.erase x, g))
       (Y := ((univ : Finset (Fin (m + 2))), g)) ⟨erase_subset _ _, le_rfl⟩ :=
@@ -458,7 +557,7 @@ theorem Lvl.Good.cappedLift_catS (hL : L.Good) (hgm : g + 1 ≤ m) {x : Fin (m +
     obtain ⟨W, hW, hWw, hAW⟩ := hbot w hw
     have hQC : withCut (orbitCode (g + 1) W) ⊥ ∈ 𝒞 :=
       mem_predCat_of hW (mem_insert_self _ _) hAW
-    obtain ⟨q, hq, hqW⟩ := hL.exists_extension_cat_bot hCsub hQC
+    obtain ⟨q, hq, hqW⟩ := hL.exists_extension_cat_bot hCsub hCS hQC
     refine ⟨q, hq, fun z hz ↦ ?_, fun _ ↦ by simp⟩
     obtain ⟨z, hzY⟩ := z
     obtain ⟨d, hd, hds, rfl⟩ := hcoat (hz.elim id id)
@@ -473,7 +572,7 @@ theorem Lvl.Good.cappedLift_catS (hL : L.Good) (hgm : g + 1 ≤ m) {x : Fin (m +
         (L.catS 𝒞).rows.rowBelow _ hu z = L.Φcat 𝒞 P z :=
       Scheme.appendFullCells_row_natAdd (S := L.S) (k := g + 1)
         (r := fun i ↦ L.Φcat 𝒞 ((𝒞).equivFin.symm i).1) (h := L.not_le) i _
-    refine ⟨hL.catS_consistent hCsub _, fun z ↦ ?_, fun z ↦ ?_, fun h hh hs hb ↦ ?_⟩
+    refine ⟨hL.catS_consistent hCsub hCS _, fun z ↦ ?_, fun z ↦ ?_, fun h hh hs hb ↦ ?_⟩
     · rw [hrowB]; exact isShort_of_mem_codeGrid (hL.Φcat_mem_codeGrid hPB _)
     · rw [hrowB]; exact ne_top_of_mem_codeGrid (hL.Φcat_mem_codeGrid hPB _)
     · intro w hw _ hwS
@@ -488,7 +587,7 @@ theorem Lvl.Good.cappedLift_catS (hL : L.Good) (hgm : g + 1 ≤ m) {x : Fin (m +
         have h1 := hwS ⟨_, (L.catS 𝒞).toCellScheme.below_mono hle hm⟩ (.inl hm)
         rwa [hrowB, Lvl.Φcat_castAdd, hL.literal] at h1
       obtain ⟨W, β, hW, hWw, hWP, hβB, hβ, hlow⟩ := hstep P hP h hh hs hb w hw hwP
-      obtain ⟨q, hq, hqW, hqa⟩ := hL.exists_extension_cat hCsub hP hPo hh hs hb.ne' hWP hβ
+      obtain ⟨q, hq, hqW, hqa⟩ := hL.exists_extension_cat hCsub hCS hP hPo hh hs hb.ne' hWP hβ
         (mem_predCat_of hW hβB hlow)
       refine ⟨q, hq, fun z hz ↦ ?_, fun z ↦ by rw [hrowB]; exact hqa z⟩
       obtain ⟨z, hzY⟩ := z
@@ -500,7 +599,7 @@ theorem Lvl.Good.cappedLift_catS (hL : L.Good) (hgm : g + 1 ≤ m) {x : Fin (m +
 lawful below a coatom at the grade `g + 1` is, at the amalgam cells below the coatom, an amalgam
 profile lawful on the grade-`(g + 1)` cut: lift its trace on the common face into the other coatom
 at the cap `⊥` (bountifulness of the amalgam) and glue. -/
-theorem Lvl.Good.exists_cutLawful_of_coatom (hL : L.Good) (hgm : g + 1 ≤ m) {x : Fin (m + 2)}
+theorem Lvl.GoodOn.exists_cutLawful_of_coatom (hL : L.GoodOn S) (hgm : g + 1 ≤ m) {x : Fin (m + 2)}
     (hx : x ∈ (Pts : Finset (Fin (m + 2)))) {w : Fin (L.catS C).card → Label.{u}}
     (hw : (L.catS C).rows.IsLawfulBelow (univ.erase x, g + 1) (fun z ↦ w z)) :
     ∃ W : Prof I, IsCutLawful I (g + 1) W ∧
@@ -564,7 +663,7 @@ below a coatom that agrees there with `P` capped at `h` is, at the amalgam cells
 an amalgam profile lawful on the cut agreeing everywhere with `P` capped at `h`: the trace on the
 common face is lifted into the other coatom in the cap ball of `P` (bountifulness of the amalgam),
 and the cells above the cut keep `P`. -/
-theorem Lvl.Good.exists_cutLawful_of_coatom_cap (hL : L.Good) (hgm : g + 1 ≤ m)
+theorem Lvl.GoodOn.exists_cutLawful_of_coatom_cap (hL : L.GoodOn S) (hgm : g + 1 ≤ m)
     {x : Fin (m + 2)} (hx : x ∈ (Pts : Finset (Fin (m + 2)))) {P : Prof I}
     (hP : IsCutLawful I (g + 1) P) {h : Label.{u}} (hh : IsSelfVisible (g + 1) h)
     {w : Fin (L.catS C).card → Label.{u}}
@@ -649,8 +748,9 @@ def Lvl.CatStep (x : Fin (m + 2)) : Prop :=
 /-- **The capped lift from a coatom into the catalogue layer over a good level from the catalogue
 step**: the cap `⊥` is `ProfileTower.Lvl.Good.exists_cutLawful_of_coatom`, so the only hypothesis
 left is the catalogue step at the positive caps (`ProfileTower.Lvl.CatStep`). -/
-theorem Lvl.Good.cappedLift_catS_of_catStep (hL : L.Good) (hgm : g + 1 ≤ m) {x : Fin (m + 2)}
-    (hx : x ∈ (Pts : Finset (Fin (m + 2)))) (hAbot : ∀ W : Prof I, A (withCut W ⊥))
+theorem Lvl.GoodOn.cappedLift_catS_of_catStep (hL : L.GoodOn S) (hgm : g + 1 ≤ m) {x : Fin (m + 2)}
+    (hx : x ∈ (Pts : Finset (Fin (m + 2))))
+    (hAS : ∀ P, A P → S (camal P)) (hAbot : ∀ W : Prof I, A (withCut W ⊥))
     (hstep : L.CatStep A x) :
     (L.catS 𝒞).rows.CappedLift (X := (univ.erase x, g + 1))
       (Y := ((univ : Finset (Fin (m + 2))), g + 1)) ⟨erase_subset _ _, le_rfl⟩ :=
@@ -658,7 +758,7 @@ theorem Lvl.Good.cappedLift_catS_of_catStep (hL : L.Good) (hgm : g + 1 ≤ m) {x
     convert hAbot (fun _ ↦ ⊥) using 1
     funext f
     rcases f with d | z <;> rfl
-  hL.cappedLift_catS hgm hx hA0 (fun _ hw ↦ by
+  hL.cappedLift_catS hgm hx hA0 hAS (fun _ hw ↦ by
     obtain ⟨W, hW, hWw⟩ := hL.exists_cutLawful_of_coatom hgm hx hw
     exact ⟨W, hW, hWw, hAbot _⟩) hstep
 
@@ -677,11 +777,142 @@ def Lvl.CatStepBot (x : Fin (m + 2)) : Prop :=
 /-- **The capped lift from a coatom from the two catalogue steps**, for a predicate satisfied by
 the bottom profile: the step at the cap `⊥` (`ProfileTower.Lvl.CatStepBot`) and at the positive
 caps (`ProfileTower.Lvl.CatStep`). -/
+theorem Lvl.GoodOn.cappedLift_catS_of_steps (hL : L.GoodOn S) (hgm : g + 1 ≤ m) {x : Fin (m + 2)}
+    (hx : x ∈ (Pts : Finset (Fin (m + 2))))
+    (hAS : ∀ P, A P → S (camal P)) (hA0 : A fun _ ↦ ⊥) (hbot : L.CatStepBot A x)
+    (hstep : L.CatStep A x) :
+    (L.catS 𝒞).rows.CappedLift (X := (univ.erase x, g + 1))
+      (Y := ((univ : Finset (Fin (m + 2))), g + 1)) ⟨erase_subset _ _, le_rfl⟩ :=
+  hL.cappedLift_catS hgm hx hA0 hAS hbot hstep
+
+/-! ### The same over good levels (good on every profile) -/
+
+/-- `ProfileTower.Lvl.GoodOn.Φcat_mem_codeGrid` over a good level. -/
+theorem Lvl.Good.Φcat_mem_codeGrid (hL : L.Good) {R : CProf I}
+    (hR : ∀ f, R f ∈ codeGrid (g + 1) (bound I)) (z : Fin (L.S.card + C.card)) :
+    L.Φcat C R z ∈ codeGrid (g + 1) (bound I) := by
+  exact (hL.goodOn fun _ ↦ True).Φcat_mem_codeGrid hR z
+
+/-- `ProfileTower.Lvl.GoodOn.isLawfulBelow_Φcat` over a good level. -/
+theorem Lvl.Good.isLawfulBelow_Φcat (hL : L.Good) {R : CProf I} (hRC : R ∈ C)
+    (hRB : ∀ f, R f ∈ codeGrid (g + 1) (bound I)) (hRc : IsCutLawful I (g + 1) (camal R)) :
+    (L.catS C).rows.IsLawfulBelow ((univ : Finset (Fin (m + 2))), g + 1) fun z ↦ L.Φcat C R z := by
+  apply (hL.goodOn fun _ ↦ True).isLawfulBelow_Φcat <;>
+    first | assumption | exact trivial
+
+/-- `ProfileTower.Lvl.GoodOn.catS_consistent` over a good level. -/
+theorem Lvl.Good.catS_consistent (hL : L.Good)
+    (hCsub : ∀ P ∈ C, (∀ f, P f ∈ codeGrid (g + 1) (bound I)) ∧ IsCutLawful I (g + 1) (camal P)) :
+    (L.catS C).rows.IsConsistent := by
+  apply (hL.goodOn fun _ ↦ True).catS_consistent <;>
+    first | assumption | exact fun _ _ ↦ trivial
+
+/-- `ProfileTower.Lvl.GoodOn.exists_old_catS` over a good level. -/
+theorem Lvl.Good.exists_old_catS (hL : L.Good) {z : Fin (L.catS C).card}
+    (hz : z ∈ (L.catS C).toCellScheme.below ((univ : Finset (Fin (m + 2))), g + 1))
+    (hne : (L.catS C).toCellScheme.scope z ≠ univ) :
+    ∃ d, I.amalgam.toCellScheme.grade d ≤ g + 1 ∧ z = Fin.castAdd _ (L.embed d) := by
+  apply (hL.goodOn fun _ ↦ True).exists_old_catS <;>
+    assumption
+
+/-- `ProfileTower.Lvl.GoodOn.exists_extension_cat` over a good level. -/
+theorem Lvl.Good.exists_extension_cat (hL : L.Good)
+    (hCsub : ∀ P ∈ C, (∀ f, P f ∈ codeGrid (g + 1) (bound I)) ∧ IsCutLawful I (g + 1) (camal P))
+    {P : CProf I} (hP : P ∈ C) (hPo : orbitCode (g + 1) (camal P) = camal P) {h : Label.{u}}
+    (hh : IsSelfVisible (g + 1) h) (hs : IsShort (g + 1) h) (hb : h ≠ ⊥) {W : Prof I}
+    (hWP : ∀ d, min (W d) h = min (P (Sum.inl d)) h) {β : Label.{u}}
+    (hβ : min β h = min (P (Sum.inr ())) h) (hQC : withCut (orbitCode (g + 1) W) β ∈ C) :
+    ∃ q : (L.catS C).toCellScheme.below ((univ : Finset (Fin (m + 2))), g + 1) → Label.{u},
+      (L.catS C).rows.IsLawfulBelow (univ, g + 1) q ∧
+      (∀ d (hd : I.amalgam.toCellScheme.grade d ≤ g + 1),
+        q ⟨Fin.castAdd _ (L.embed d), by
+          rw [CellScheme.mem_below, Scheme.appendFullCellsScheme_gradedIndex_castAdd,
+            hL.gradedIndex_embed]; exact ⟨subset_univ _, hd⟩⟩ = W d) ∧
+      ∀ z, min (q z) h = min (L.Φcat C P z) h := by
+  apply (hL.goodOn fun _ ↦ True).exists_extension_cat <;>
+    first | assumption | exact fun _ _ ↦ trivial
+
+/-- `ProfileTower.Lvl.GoodOn.exists_extension_cat_bot` over a good level. -/
+theorem Lvl.Good.exists_extension_cat_bot (hL : L.Good)
+    (hCsub : ∀ P ∈ C, (∀ f, P f ∈ codeGrid (g + 1) (bound I)) ∧ IsCutLawful I (g + 1) (camal P))
+    {W : Prof I} (hQC : withCut (orbitCode (g + 1) W) ⊥ ∈ C) :
+    ∃ q : (L.catS C).toCellScheme.below ((univ : Finset (Fin (m + 2))), g + 1) → Label.{u},
+      (L.catS C).rows.IsLawfulBelow (univ, g + 1) q ∧
+      ∀ d (hd : I.amalgam.toCellScheme.grade d ≤ g + 1),
+        q ⟨Fin.castAdd _ (L.embed d), by
+          rw [CellScheme.mem_below, Scheme.appendFullCellsScheme_gradedIndex_castAdd,
+            hL.gradedIndex_embed]; exact ⟨subset_univ _, hd⟩⟩ = W d := by
+  apply (hL.goodOn fun _ ↦ True).exists_extension_cat_bot <;>
+    first | assumption | exact fun _ _ ↦ trivial
+
+/-- `ProfileTower.Lvl.GoodOn.cappedLift_catS` over a good level. -/
+theorem Lvl.Good.cappedLift_catS (hL : L.Good) (hgm : g + 1 ≤ m) {x : Fin (m + 2)}
+    (hx : x ∈ (Pts : Finset (Fin (m + 2)))) (hA0 : A fun _ ↦ ⊥)
+    (hbot : ∀ w : Fin (L.catS 𝒞).card → Label.{u},
+      (L.catS 𝒞).rows.IsLawfulBelow (univ.erase x, g + 1) (fun z ↦ w z) →
+      ∃ W : Prof I, IsCutLawful I (g + 1) W ∧
+        (∀ d, I.amalgam.toCellScheme.grade d ≤ g + 1 →
+          I.amalgam.toCellScheme.scope d ⊆ univ.erase x → W d = w (Fin.castAdd _ (L.embed d))) ∧
+        A (withCut (orbitCode (g + 1) W) ⊥))
+    (hstep : ∀ P ∈ 𝒞, ∀ h : Label.{u}, IsSelfVisible (g + 1) h → IsShort (g + 1) h → ⊥ < h →
+      ∀ w : Fin (L.catS 𝒞).card → Label.{u},
+      (L.catS 𝒞).rows.IsLawfulBelow (univ.erase x, g + 1) (fun z ↦ w z) →
+      (∀ d, I.amalgam.toCellScheme.grade d ≤ g + 1 →
+        I.amalgam.toCellScheme.scope d ⊆ univ.erase x →
+          min (w (Fin.castAdd _ (L.embed d))) h = min (P (Sum.inl d)) h) →
+      ∃ (W : Prof I) (β : Label.{u}), IsCutLawful I (g + 1) W ∧
+        (∀ d, I.amalgam.toCellScheme.grade d ≤ g + 1 →
+          I.amalgam.toCellScheme.scope d ⊆ univ.erase x → W d = w (Fin.castAdd _ (L.embed d))) ∧
+        (∀ d, min (W d) h = min (P (Sum.inl d)) h) ∧ β ∈ codeGrid (g + 1) (bound I) ∧
+        min β h = min (P (Sum.inr ())) h ∧
+        A (withCut (orbitCode (g + 1) W) β)) :
+    (L.catS 𝒞).rows.CappedLift (X := (univ.erase x, g + 1))
+      (Y := ((univ : Finset (Fin (m + 2))), g + 1)) ⟨erase_subset _ _, le_rfl⟩ := by
+  apply (hL.goodOn fun _ ↦ True).cappedLift_catS <;>
+    first | assumption | exact fun _ _ ↦ trivial
+
+/-- `ProfileTower.Lvl.GoodOn.exists_cutLawful_of_coatom` over a good level. -/
+theorem Lvl.Good.exists_cutLawful_of_coatom (hL : L.Good) (hgm : g + 1 ≤ m) {x : Fin (m + 2)}
+    (hx : x ∈ (Pts : Finset (Fin (m + 2)))) {w : Fin (L.catS C).card → Label.{u}}
+    (hw : (L.catS C).rows.IsLawfulBelow (univ.erase x, g + 1) (fun z ↦ w z)) :
+    ∃ W : Prof I, IsCutLawful I (g + 1) W ∧
+      ∀ d, I.amalgam.toCellScheme.grade d ≤ g + 1 →
+        I.amalgam.toCellScheme.scope d ⊆ univ.erase x → W d = w (Fin.castAdd _ (L.embed d)) := by
+  apply (hL.goodOn fun _ ↦ True).exists_cutLawful_of_coatom <;>
+    assumption
+
+/-- `ProfileTower.Lvl.GoodOn.exists_cutLawful_of_coatom_cap` over a good level. -/
+theorem Lvl.Good.exists_cutLawful_of_coatom_cap (hL : L.Good) (hgm : g + 1 ≤ m)
+    {x : Fin (m + 2)} (hx : x ∈ (Pts : Finset (Fin (m + 2)))) {P : Prof I}
+    (hP : IsCutLawful I (g + 1) P) {h : Label.{u}} (hh : IsSelfVisible (g + 1) h)
+    {w : Fin (L.catS C).card → Label.{u}}
+    (hw : (L.catS C).rows.IsLawfulBelow (univ.erase x, g + 1) (fun z ↦ w z))
+    (hwP : ∀ d, I.amalgam.toCellScheme.grade d ≤ g + 1 →
+      I.amalgam.toCellScheme.scope d ⊆ univ.erase x →
+        min (w (Fin.castAdd _ (L.embed d))) h = min (P d) h) :
+    ∃ W : Prof I, IsCutLawful I (g + 1) W ∧
+      (∀ d, I.amalgam.toCellScheme.grade d ≤ g + 1 →
+        I.amalgam.toCellScheme.scope d ⊆ univ.erase x → W d = w (Fin.castAdd _ (L.embed d))) ∧
+      ∀ d, min (W d) h = min (P d) h := by
+  apply (hL.goodOn fun _ ↦ True).exists_cutLawful_of_coatom_cap <;>
+    assumption
+
+/-- `ProfileTower.Lvl.GoodOn.cappedLift_catS_of_catStep` over a good level. -/
+theorem Lvl.Good.cappedLift_catS_of_catStep (hL : L.Good) (hgm : g + 1 ≤ m) {x : Fin (m + 2)}
+    (hx : x ∈ (Pts : Finset (Fin (m + 2)))) (hAbot : ∀ W : Prof I, A (withCut W ⊥))
+    (hstep : L.CatStep A x) :
+    (L.catS 𝒞).rows.CappedLift (X := (univ.erase x, g + 1))
+      (Y := ((univ : Finset (Fin (m + 2))), g + 1)) ⟨erase_subset _ _, le_rfl⟩ := by
+  apply (hL.goodOn fun _ ↦ True).cappedLift_catS_of_catStep <;>
+    first | assumption | exact fun _ _ ↦ trivial
+
+/-- `ProfileTower.Lvl.GoodOn.cappedLift_catS_of_steps` over a good level. -/
 theorem Lvl.Good.cappedLift_catS_of_steps (hL : L.Good) (hgm : g + 1 ≤ m) {x : Fin (m + 2)}
     (hx : x ∈ (Pts : Finset (Fin (m + 2)))) (hA0 : A fun _ ↦ ⊥) (hbot : L.CatStepBot A x)
     (hstep : L.CatStep A x) :
     (L.catS 𝒞).rows.CappedLift (X := (univ.erase x, g + 1))
-      (Y := ((univ : Finset (Fin (m + 2))), g + 1)) ⟨erase_subset _ _, le_rfl⟩ :=
-  hL.cappedLift_catS hgm hx hA0 hbot hstep
+      (Y := ((univ : Finset (Fin (m + 2))), g + 1)) ⟨erase_subset _ _, le_rfl⟩ := by
+  apply (hL.goodOn fun _ ↦ True).cappedLift_catS_of_steps <;>
+    first | assumption | exact fun _ _ ↦ trivial
 
 end VaughtConjecture.ProfileTower
