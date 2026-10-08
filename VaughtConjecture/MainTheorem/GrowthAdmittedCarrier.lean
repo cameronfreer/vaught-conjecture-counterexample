@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Continuation.GrowthControllerRecovery
-import VaughtConjecture.Continuation.GrowthRecognition
+import VaughtConjecture.Continuation.GrowthLadderRecognition
 import VaughtConjecture.Continuation.GrowthTemplate
 import VaughtConjecture.MainTheorem.GrowthPadding
 import VaughtConjecture.MainTheorem.GrowthRoute
@@ -165,6 +165,39 @@ theorem HasRecognizingGrowthCarriers.hasExactGrowthCarriers
     (GrowthRequests.hasRelativeLiftOnClass_of_hasRelativeLift hte hd.2 hex hQ hd.1 hn hrel)
   exact ⟨G, GrowthRequests.recovers_eq_of_recognizes hex hQ G hrec⟩
 
+/-- **Ladder growth carriers** (open): as `StageType.HasRecognizingGrowthCarriers`, with the
+recognition replaced by its source in the construction: a carrier with a cell of full scope at the
+threshold, a field ladder of height `H ≥ 1` (rungs of graded index `(univ, 1)` reading the diagonal
+and the preceding rank), and every cell of full scope at the threshold a ladder controller
+(`GrowthCarrier.IsLadderController`). -/
+def HasLadderGrowthCarriers : Prop :=
+  ∀ ⦃α : Ordinal.{u}⦄ ⦃n k : ℕ⦄ (t' : StageType.{u} α k) (e : Fin n ↪ Fin k),
+    Order.IsSuccLimit α → t'.IsLegal → ∀ (p : StageType.{u} α n)
+      (hte : restrictFace e t' = some p) (d : StageType.{u} α (n + 1)) (hd : d ∈ p.cofaces),
+      0 < n → ∀ Q : GrowthRequests t' d.toScheme,
+        (∀ j ℓ, Q.CorrectAt t'.label j ℓ ↔ ℓ = d.label j) → Q.Calibrated hte →
+        Q.HasRelativeLiftOnClass hte hd.2 →
+        ∃ G : GrowthCarrier t'.toScheme d.toScheme e,
+          (∃ w, G.scheme.toCellScheme.gradedIndex w = (univ, Q.threshold)) ∧
+          ∃ (Mb : Type) (H : ℕ) (r : Mb → ℕ → Fin G.scheme.card), 0 < H ∧
+            (∀ a, ∀ i < H, G.scheme.toCellScheme.gradedIndex (r a i) = (univ, 1)) ∧
+            (∀ a, ∀ i < H, G.scheme.rowAt (r a i) (r a i) = Label.ladderSource (i + 1) (i + 1)) ∧
+            (∀ a, ∀ i < H, 0 < i →
+              G.scheme.rowAt (r a i) (r a (i - 1)) = Label.ladderSource (i + 1) i) ∧
+            ∀ u, G.scheme.toCellScheme.gradedIndex u = (univ, Q.threshold) →
+              ∃ (a : Mb) (F : ℕ → Label.{u}), G.IsLadderController Q (H := H) r u a F
+
+/-- **Ladder growth carriers recognize**: `GrowthCarrier.recognizes_of_ladder`, the threshold being
+at least the arity of the donor. -/
+theorem HasLadderGrowthCarriers.hasRecognizingGrowthCarriers (h : HasLadderGrowthCarriers.{u}) :
+    HasRecognizingGrowthCarriers.{u} := by
+  intro α n k t' e hα ht' p hte d hd hn Q hex hQ hrel
+  obtain ⟨G, hfull, Mb, H, r, hH, hr, hrd, hrp, hctrl⟩ := h t' e hα ht' p hte d hd hn Q hex hQ hrel
+  refine ⟨G, G.recognizes_of_ladder Q (by have := hQ.arity; omega) hfull (fun j ↦ ?_) hH r hr hrd
+    hrp hctrl⟩
+  rw [GrowthCarrier.donorCell, Scheme.grade_faceCell]
+  exact (d.grade_le j).trans hQ.arity
+
 end StageType
 
 namespace Realization
@@ -244,6 +277,16 @@ theorem densitySentence_hasThinAlephOneSpectrum_of_recognizingCarriers
     HasThinAlephOneSpectrum densitySentence.{0} :=
   densitySentence_hasThinAlephOneSpectrum_of_growthCarriers_pos hstab hres
     hrec.hasExactGrowthCarriers
+
+/-- **The thin `ℵ₁` spectrum from ladder growth carriers** (`StageType.HasLadderGrowthCarriers`,
+open), through recognition from the field ladder.  The three hypotheses are open. -/
+theorem densitySentence_hasThinAlephOneSpectrum_of_ladderCarriers
+    (hstab : ∀ ξ < ω₁, HasStableGrowthCarriers.{0} ξ (GradedCapMarginCalibration.{0} ξ))
+    (hres : ReceivingResidualReceiving.{0, 0})
+    (hlad : HasLadderGrowthCarriers.{0}) :
+    HasThinAlephOneSpectrum densitySentence.{0} :=
+  densitySentence_hasThinAlephOneSpectrum_of_recognizingCarriers hstab hres
+    hlad.hasRecognizingGrowthCarriers
 
 end MainTheorem
 
