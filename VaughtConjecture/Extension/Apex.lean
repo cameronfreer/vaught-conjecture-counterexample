@@ -776,6 +776,118 @@ theorem row_addApex {n : ℕ} {t : StageType.{u} α n} (ht : t.IsLegalBelowFullG
       rw [Scheme.appendFullCellScheme_grade_castSucc]
       exact (ht.grade_lt d).ne
 
+/-! ### The apex row and the order of the labels -/
+
+section ApexRow
+
+variable {n : ℕ} {t : StageType.{u} α n} (ht : t.IsLegalBelowFullGrade) (hn : 0 < n)
+
+/-- The apex has graded index `(univ, n)`. -/
+theorem addApex_gradedIndex_last :
+    (t.addApex ht hn).toCellScheme.gradedIndex (Fin.last _) = (univ, n) :=
+  Scheme.appendFullCellScheme_gradedIndex_last _ _
+
+/-- The apex is the only cell of graded index `(univ, n)`. -/
+theorem eq_last_of_gradedIndex_addApex {z : Fin (t.addApex ht hn).card}
+    (hz : (t.addApex ht hn).toCellScheme.gradedIndex z = (univ, n)) : z = Fin.last _ :=
+  eq_of_grade_addApex ht hn (congrArg Prod.snd hz)
+
+/-- **The apex row of a type labelled `⊥` reads every other cell as `⊥`.** -/
+theorem rowAt_addApex_last_of_ne (hbot : ∀ d, t.label d = ⊥) {z : Fin (t.addApex ht hn).card}
+    (hz : z ≠ Fin.last _) : (t.addApex ht hn).toScheme.rowAt (Fin.last _) z = ⊥ := by
+  -- `t.addApex` has the cells of `t` and the apex
+  change Fin (t.card + 1) at z
+  induction z using Fin.lastCases with
+  | last => exact absurd rfl hz
+  | cast d =>
+    by_cases hd : d.castSucc ∈ (t.addApex ht hn).toCellScheme.below
+        ((t.addApex ht hn).toCellScheme.gradedIndex (Fin.last _))
+    · rw [Scheme.rowAt_of_mem hd]
+      -- the rows of `t.addApex` are those of `appendFullCell`
+      change (t.toScheme.appendFullCell n (apexRow ht) ht.not_le).rows.row (Fin.last _)
+        ⟨d.castSucc, hd⟩ = ⊥
+      rw [Scheme.appendFullCell_row_last, apexRow_castSucc, hbot d]
+      rfl
+    · exact Scheme.rowAt_of_notMem hd
+
+/-- **The apex row reads the apex not as `⊥`.** -/
+theorem rowAt_addApex_last_last :
+    (t.addApex ht hn).toScheme.rowAt (Fin.last _) (Fin.last _) ≠ ⊥ := by
+  rw [Scheme.rowAt_of_mem (S := (t.addApex ht hn).toScheme) (u := Fin.last _) (x := Fin.last _)
+    ((t.addApex ht hn).toCellScheme.mem_below_gradedIndex _)]
+  -- the rows of `t.addApex` are those of `appendFullCell`
+  change (t.toScheme.appendFullCell n (apexRow ht) ht.not_le).rows.row (Fin.last _)
+    ⟨Fin.last _, _⟩ ≠ ⊥
+  rw [Scheme.appendFullCell_row_last, apexRow_last, blockEncode_top]
+  exact WithBot.coe_ne_bot
+
+end ApexRow
+
+section ApexOrder
+
+variable {k : ℕ} {t₀ : StageType.{u} α k} (ht₀ : t₀.IsLegalBelowFullGrade) (hk : 0 < k)
+
+/-- The apex row reads every cell at the code of its label. -/
+theorem row_addApex_last_eq {z : Fin (t₀.addApex ht₀ hk).card}
+    (hz : z ∈ (t₀.addApex ht₀ hk).toCellScheme.below
+      ((t₀.addApex ht₀ hk).toCellScheme.gradedIndex (Fin.last _))) :
+    (t₀.addApex ht₀ hk).rows.row (Fin.last _) ⟨z, hz⟩ =
+      blockEncode (apexCodes ht₀) k ((t₀.addApex ht₀ hk).label z) := by
+  -- the rows of `t₀.addApex` are those of `appendFullCell`
+  change (t₀.toScheme.appendFullCell k (apexRow ht₀) ht₀.not_le).rows.row (Fin.last _) ⟨z, hz⟩ = _
+  rw [Scheme.appendFullCell_row_last]
+  change Fin (t₀.card + 1) at z
+  induction z using Fin.lastCases with
+  | last => rw [apexRow_last, addApex_label_last]
+  | cast d => rw [apexRow_castSucc, addApex_label_castSucc]
+
+/-- **A labelling with `⊤` at the apex keeps the order of the labels**: if the apex is labelled
+`⊤`, a cell labelled at most another of no larger grade is labelled at most it (locality at the
+apex, whose row is the code of the labels). -/
+theorem le_of_label_le_addApex {a : Fin (t₀.addApex ht₀ hk).card → Label.{u}}
+    (ha : (t₀.addApex ht₀ hk).rows.IsLawful a) (htop : a (Fin.last _) = ⊤)
+    {z₁ z₂ : Fin (t₀.addApex ht₀ hk).card}
+    (hl : (t₀.addApex ht₀ hk).label z₁ ≤ (t₀.addApex ht₀ hk).label z₂)
+    (hg : (t₀.addApex ht₀ hk).toCellScheme.grade z₂ ≤
+      (t₀.addApex ht₀ hk).toCellScheme.grade z₁) : a z₁ ≤ a z₂ := by
+  have hlast : (t₀.addApex ht₀ hk).toCellScheme.gradedIndex (Fin.last _) = (univ, k) :=
+    addApex_gradedIndex_last ht₀ hk
+  have hmem (z : Fin (t₀.addApex ht₀ hk).card) : z ∈ (t₀.addApex ht₀ hk).toCellScheme.below
+      ((t₀.addApex ht₀ hk).toCellScheme.gradedIndex (Fin.last _)) := by
+    rw [CellScheme.mem_below, hlast]
+    exact Prod.mk_le_mk.mpr ⟨subset_univ _, (t₀.addApex ht₀ hk).grade_le z⟩
+  have h := (ha.locality (Fin.last _)).le_of_le (d := ⟨z₁, hmem z₁⟩) (d' := ⟨z₂, hmem z₂⟩)
+    (by rw [row_addApex_last_eq, row_addApex_last_eq]; exact monotone_blockEncode hl) hg
+  change min (a z₁) (a (Fin.last _)) ≤ min (a z₂) (a (Fin.last _)) at h
+  rwa [htop, min_top_right, min_top_right] at h
+
+/-- **The refutation schema never applies under an apex at the apex.**  Over `t₀.addApex` along
+`h`, let a new top `j` of a donor `d` read the root cell `y₁` at most as the root cell `y₂`, of
+grade at most that of `y₁`.  Then every lawful labelling with `⊤` at the apex labels `y₁` at most
+as `y₂`: the labels of `d` tie them (locality at `j`), the labels of the root are those of `d`,
+and the apex keeps their order. -/
+theorem le_of_tie_addApex {h : Fin n ↪ Fin k} {t : StageType.{u} α n}
+    (ht : restrictFace h (t₀.addApex ht₀ hk) = some t) {d : StageType.{u} α (n + 1)}
+    (hd : restrictFace Fin.castSuccEmb d = some t)
+    {a : Fin (t₀.addApex ht₀ hk).card → Label.{u}} (ha : (t₀.addApex ht₀ hk).rows.IsLawful a)
+    (htop : a (Fin.last _) = ⊤) {j : Fin d.card} (hjt : d.label j = ⊤) {y₁ y₂ : Fin t.card}
+    (hy₁ : faceCell hd y₁ ∈ d.toCellScheme.below (d.toCellScheme.gradedIndex j))
+    (hy₂ : faceCell hd y₂ ∈ d.toCellScheme.below (d.toCellScheme.gradedIndex j))
+    (hrow : d.rows.row j ⟨_, hy₁⟩ ≤ d.rows.row j ⟨_, hy₂⟩)
+    (hg : t.toCellScheme.grade y₂ ≤ t.toCellScheme.grade y₁) :
+    a (faceCell ht y₁) ≤ a (faceCell ht y₂) := by
+  have hloc := (d.isLawful.locality j).le_of_le (d := ⟨_, hy₁⟩) (d' := ⟨_, hy₂⟩) hrow
+    (by rw [grade_faceCell, grade_faceCell]; exact hg)
+  change min (d.label (faceCell hd y₁)) (d.label j) ≤
+    min (d.label (faceCell hd y₂)) (d.label j) at hloc
+  rw [hjt, min_top_right, min_top_right, label_faceCell, label_faceCell] at hloc
+  refine le_of_label_le_addApex ht₀ hk ha htop ?_ ?_
+  · rwa [label_faceCell, label_faceCell]
+  · rw [grade_faceCell, grade_faceCell]
+    exact hg
+
+end ApexOrder
+
 end StageType
 
 end VaughtConjecture

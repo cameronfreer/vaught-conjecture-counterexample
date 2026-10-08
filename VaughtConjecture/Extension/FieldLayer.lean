@@ -221,6 +221,21 @@ theorem appendFullCells_row_castAdd {n k M' : ℕ} {S : Scheme.{u} n}
         (Scheme.not_le_gradedIndex_of_lt h s.isLt) t.2⟩, Scheme.mem_below_of_lt h s.isLt t⟩ :=
   dite_eq_left s.isLt
 
+/-- **Old cells are read after appending cells of full scope as before**, at every grade. -/
+theorem rowAt_appendFullCells_castAdd {n k M' : ℕ} {S : Scheme.{u} n}
+    {r' : Fin M' → Fin (S.card + M') → Label.{u}}
+    {h : ∀ d, ¬ ((univ : Finset (Fin n)), k) ≤ S.toCellScheme.gradedIndex d} (a d : Fin S.card) :
+    (S.appendFullCells k M' r' h).rowAt (Fin.castAdd M' a) (Fin.castAdd M' d) = S.rowAt a d := by
+  have hiff : Fin.castAdd M' d ∈ (S.appendFullCells k M' r' h).toCellScheme.below
+      ((S.appendFullCells k M' r' h).toCellScheme.gradedIndex (Fin.castAdd M' a)) ↔
+      d ∈ S.toCellScheme.below (S.toCellScheme.gradedIndex a) := by
+    rw [CellScheme.mem_below, CellScheme.mem_below, appendFullCellsScheme_gradedIndex_castAdd,
+      appendFullCellsScheme_gradedIndex_castAdd]
+  by_cases hd : d ∈ S.toCellScheme.below (S.toCellScheme.gradedIndex a)
+  · rw [rowAt_of_mem (hiff.mpr hd), rowAt_of_mem hd, appendFullCells_row_castAdd]
+    exact S.rows.row_congr rfl rfl
+  · rw [rowAt_of_notMem (mt hiff.mp hd), rowAt_of_notMem hd]
+
 variable (k M r h) in
 /-- **The old cells form a lower embedding** along `Fin.castAdd`. -/
 theorem isLowerEmbedding_castAdd :
@@ -914,5 +929,44 @@ theorem extendsFromBoundary_fieldLayer_of_fill {U V : Finset (Fin n) × ℕ}
   obtain ⟨e, he, rfl⟩ := exists_castAdd_eq_of_boundary (S := S) (k := k) (hS := hS) hU hV hd
   rw [hrg e he]
   exact hgw e (hd.imp (hmem e).mp (hmem e).mp)
+
+end VaughtConjecture.Scheme
+
+/-! ### Forced tops in the field layer -/
+
+namespace VaughtConjecture.Scheme
+
+open Finset Label
+
+variable {n k : ℕ} {S : Scheme.{u} n}
+  {hS : ∀ d, ¬ ((univ : Finset (Fin n)), k) ≤ S.toCellScheme.gradedIndex d}
+
+/-- **Forced tops in the field layer.**  In a lawful labelling `q` of the field layer, if the new
+cell of the entry `i` and the old cell `x` (of grade at most `k`) are labelled `⊤`, then the new
+cell of every entry `j` whose agreement height with the entry `i` is at least its value at `x` is
+labelled `⊤`. -/
+theorem eq_top_natAdd_of_le_agreementHeight {q : Fin (S.fieldLayer k hS).card → Label.{u}}
+    (hq : (S.fieldLayer k hS).rows.IsLawful q) {i j : Fin (S.catalogue k).card} {x : Fin S.card}
+    (hx : S.toCellScheme.grade x ≤ k) (hi : q (Fin.natAdd S.card i) = ⊤)
+    (hxq : q (Fin.castAdd _ x) = ⊤)
+    (hle : S.catalogueEntry k i x ≤
+      agreementHeight (S.fieldGrid k) (S.catalogueEntry k i) (S.catalogueEntry k j)) :
+    q (Fin.natAdd S.card j) = ⊤ := by
+  have hb : (S.fieldLayer k hS).toCellScheme.gradedIndex (Fin.natAdd S.card i) =
+      ((univ : Finset (Fin n)), k) :=
+    appendFullCellsScheme_gradedIndex_natAdd S k _ i
+  have hxb : Fin.castAdd _ x ∈
+      (S.fieldLayer k hS).toCellScheme.below
+        ((S.fieldLayer k hS).toCellScheme.gradedIndex (Fin.natAdd S.card i)) := by
+    rw [hb]
+    exact castAdd_mem_below hx
+  have hjb : Fin.natAdd S.card j ∈
+      (S.fieldLayer k hS).toCellScheme.below
+        ((S.fieldLayer k hS).toCellScheme.gradedIndex (Fin.natAdd S.card i)) := by
+    rw [hb]
+    exact natAdd_mem_below j
+  refine hq.eq_top_of_row_le hxb hjb hi hxq ?_
+  rw [fieldLayer_row_natAdd, fieldLayer_row_natAdd, fieldRow_castAdd, fieldRow_natAdd]
+  exact hle
 
 end VaughtConjecture.Scheme

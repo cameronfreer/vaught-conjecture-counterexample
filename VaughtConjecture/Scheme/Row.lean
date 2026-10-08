@@ -3,7 +3,7 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
-import VaughtConjecture.Label.Transform
+import VaughtConjecture.Label.StepWitness
 import VaughtConjecture.Scheme.Cell
 
 /-!
@@ -716,3 +716,218 @@ theorem ne_bot_of_row_mem_block (hq : R.IsLawful q) {z : ι} (hz : z ∈ D.below
   fun hqz ↦ hC (hq.eq_bot_of_row_le_block hz (D.mem_below_gradedIndex C) hμ hrz hrC.le hC hqz)
 
 end VaughtConjecture.CellScheme.Rows.IsLawful
+
+/-! ### Lawfulness below a pair, pointwise -/
+
+namespace VaughtConjecture.CellScheme.Rows
+
+open Finset Label
+
+variable {ι α : Type*} {D : CellScheme ι α} {R : D.Rows.{u}}
+
+/-- A cell below a cell below `X` is below `X`. -/
+theorem mem_below_of_le {X : Finset α × ℕ} {d s : ι}
+    (hd : D.gradedIndex d ≤ D.gradedIndex s) (hs : s ∈ D.below X) : d ∈ D.below X :=
+  (le_trans hd hs : D.gradedIndex d ≤ X)
+
+/-- A cell whose scope lies in that of a cell below `X`, at the same grade, is below `X`. -/
+theorem mem_below_of_scope_subset {X : Finset α × ℕ} {s t : ι}
+    (hst : D.scope s ⊆ D.scope t) (hg : D.grade s = D.grade t) (ht : t ∈ D.below X) :
+    s ∈ D.below X :=
+  mem_below_of_le ((D.gradedIndex_le_iff).mpr ⟨hst, hg.le⟩) ht
+
+/-- **Lawfulness below a pair, pointwise.**  A labelling `w` of all cells is lawful below `X`
+exactly when every cell below `X` has a label self-visible at its grade, the row of every cell
+`s` below `X` transforms to `d ↦ min (w d) (w s)` on the cells below `s`, and availability holds
+for every target cell below `X`. -/
+theorem isLawfulBelow_iff_forall {X : Finset α × ℕ} {w : ι → Label.{u}} :
+    R.IsLawfulBelow X (fun d ↦ w d) ↔
+      (∀ d ∈ D.below X, IsSelfVisible (D.grade d) (w d)) ∧
+      (∀ s ∈ D.below X, TransformsTo (fun d : D.below (D.gradedIndex s) ↦ D.grade d) (R.row s)
+        (fun d ↦ min (w d) (w s))) ∧
+      (∀ s t, t ∈ D.below X → D.scope s ⊆ D.scope t → D.grade s = D.grade t →
+        ∃ u, D.gradedIndex u = D.gradedIndex t ∧ w s ≤ w u) := by
+  constructor
+  · intro h
+    refine ⟨fun d hd ↦ h.orderly ⟨d, hd⟩, fun s hs ↦ ?_, fun s t ht hst hg ↦ ?_⟩
+    · exact (h.locality ⟨s, hs⟩).reindex fun d : D.below (D.gradedIndex s) ↦
+        ⟨⟨d.1, mem_below_of_le d.2 hs⟩, d.2⟩
+    · obtain ⟨u, hu, hle⟩ :=
+        h.availability ⟨s, mem_below_of_scope_subset hst hg ht⟩ ⟨t, ht⟩ hst hg
+      exact ⟨u, hu, hle⟩
+  · rintro ⟨ho, hl, ha⟩
+    refine ⟨fun d ↦ ho d d.2, fun s ↦ ?_, fun s t hst hg ↦ ?_⟩
+    · exact (hl s s.2).reindex (D' := (D.reindex ((↑) : D.below X → ι)).below
+        ((D.reindex ((↑) : D.below X → ι)).gradedIndex s)) fun t ↦ ⟨t.1.1, t.2⟩
+    · obtain ⟨u, hu, hle⟩ := ha s t t.2 hst hg
+      exact ⟨⟨u, mem_below_of_le hu.le t.2⟩, hu, hle⟩
+
+end VaughtConjecture.CellScheme.Rows
+
+/-! ### Reading at a top, separating lifts, and ties of rows -/
+
+namespace VaughtConjecture.CellScheme.Rows.IsLawful
+
+open Finset Label
+
+variable {ι κ : Type*} {D : CellScheme ι κ} {R : D.Rows.{u}} {p q : ι → Label.{u}}
+
+/-- **A cell read at least as a top by a top is a top**: in a lawful section `p`, if a cell `u`
+and a cell `s` below it are labelled `⊤`, and the row of `u` reads a cell `x` below `u` at least
+as `s`, then `x` is labelled `⊤`.  Locality at `u` has a suppressor that is `⊤` at the grade of
+`u` (since `p u = ⊤`), hence at the grade of `x`, and a shifter sending the entry at `s` to `⊤`
+(since `p s = ⊤`), hence also the entry at `x`.  No condition on the grade of `s` is needed. -/
+theorem eq_top_of_row_le (h : R.IsLawful p) {u s x : ι} (hs : s ∈ D.below (D.gradedIndex u))
+    (hx : x ∈ D.below (D.gradedIndex u)) (hpu : p u = ⊤) (hps : p s = ⊤)
+    (hrow : R.row u ⟨s, hs⟩ ≤ R.row u ⟨x, hx⟩) : p x = ⊤ := by
+  obtain ⟨g, σ, hw, heq⟩ := h.locality u
+  have hu := heq ⟨u, D.mem_below_gradedIndex u⟩
+  have hs' := heq ⟨s, hs⟩
+  have hx' := heq ⟨x, hx⟩
+  -- the labelling of locality at `u` is `d ↦ min (p d) (p u)`
+  change min (p u) (p u) = min (σ (R.row u ⟨u, _⟩)) (g (D.grade u)) at hu
+  change min (p s) (p u) = min (σ (R.row u ⟨s, hs⟩)) (g (D.grade s)) at hs'
+  change min (p x) (p u) = min (σ (R.row u ⟨x, hx⟩)) (g (D.grade x)) at hx'
+  rw [hpu, min_self] at hu
+  rw [hps, hpu, min_self] at hs'
+  rw [hpu, min_top_right] at hx'
+  have hgu : g (D.grade u) = ⊤ := (min_eq_top.mp hu.symm).2
+  have hσs : σ (R.row u ⟨s, hs⟩) = ⊤ := (min_eq_top.mp hs'.symm).1
+  have hgx : g (D.grade x) = ⊤ := top_le_iff.mp (hgu ▸ hw.antitone hx.2)
+  have hσx : σ (R.row u ⟨x, hx⟩) = ⊤ := top_le_iff.mp (hσs ▸ hw.monotone hrow)
+  rw [hx', hσx, hgx, min_self]
+
+/-- **A separating lift forces a top reading the marker above `x`.**  Let `q` be lawful, `u` a cell
+labelled `⊤` whose row reads `r` at most as `x`, with `r` of the grade of `u`, `x` of grade at most
+that of `r`, and `r` labelled `⊤`.  If a labelling `w` lawful below the graded index of `u` agrees
+with the row of `u` capped at its value at `r` and has `w x < w r`, then some cell `v` of the
+graded index of `u` is labelled `⊤` in `q` and its row reads `x` strictly below `r`. -/
+theorem exists_top_row_lt (hq : R.IsLawful q) {u x r : ι}
+    (hx : x ∈ D.below (D.gradedIndex u)) (hr : r ∈ D.below (D.gradedIndex u))
+    (hgr : D.grade r = D.grade u) (hgx : D.grade x ≤ D.grade r) (hqu : q u = ⊤) (hqr : q r = ⊤)
+    (hread : R.row u ⟨r, hr⟩ ≤ R.row u ⟨x, hx⟩) {w : ι → Label.{u}}
+    (hw : R.IsLawfulBelow (D.gradedIndex u) fun d ↦ w d)
+    (hcap : ∀ y (hy : y ∈ D.below (D.gradedIndex u)),
+      min (w y) (R.row u ⟨r, hr⟩) = min (R.row u ⟨y, hy⟩) (R.row u ⟨r, hr⟩))
+    (hlt : w x < w r) :
+    ∃ v, ∃ hxv : x ∈ D.below (D.gradedIndex v), ∃ hrv : r ∈ D.below (D.gradedIndex v),
+      D.gradedIndex v = D.gradedIndex u ∧ q v = ⊤ ∧ R.row v ⟨x, hxv⟩ < R.row v ⟨r, hrv⟩ := by
+  obtain ⟨-, hloc, havail⟩ := isLawfulBelow_iff_forall.mp hw
+  obtain ⟨v, hv, hwv⟩ := havail r u (D.mem_below_gradedIndex u) hr.1 hgr
+  set τ := R.row u ⟨r, hr⟩
+  have hvu : v ∈ D.below (D.gradedIndex u) := by rw [CellScheme.mem_below, hv]
+  -- the separating labelling is at least `τ` at `x`, hence above `τ` at `v`
+  have hxτ : τ ≤ w x := by
+    have h := hcap x hx
+    rw [min_eq_right hread] at h
+    exact min_eq_right_iff.mp h
+  have hvτ : τ ≤ R.row u ⟨v, hvu⟩ := by
+    have h := hcap v hvu
+    rw [min_eq_right (hxτ.trans (hlt.le.trans hwv))] at h
+    exact min_eq_right_iff.mp h.symm
+  have hqv : q v = ⊤ := hq.eq_top_of_row_le hr hvu hqu hqr hvτ
+  have hxv : x ∈ D.below (D.gradedIndex v) := by rw [hv]; exact hx
+  have hrv : r ∈ D.below (D.gradedIndex v) := by rw [hv]; exact hr
+  refine ⟨v, hxv, hrv, hv, hqv, lt_of_not_ge fun hle ↦ ?_⟩
+  -- locality of `w` at `v` is monotone in the row and antitone in the grade
+  have h := (hloc v hvu).le_of_le (d := ⟨r, hrv⟩) (d' := ⟨x, hxv⟩) hle hgx
+  change min (w r) (w v) ≤ min (w x) (w v) at h
+  rw [min_eq_left hwv, min_eq_left (hlt.le.trans hwv)] at h
+  exact absurd hlt (not_lt.mpr h)
+
+/-- **A cell read by its own row at most as a cell of no larger grade is labelled at most as it.**
+If the row of `r` reads `r` at most as a cell `y` below `r` of grade at most that of `r`, then every
+labelling lawful below a pair above `r` labels `r` at most as `y`: locality at `r` is monotone in
+the row and antitone in the grade.  So such a `y` ties `r` from above in every lawful labelling.
+It extends `CellScheme.Rows.IsLawful.le_of_row_self_le` (a cell of the same graded index) to cells
+of lower grade and to lawfulness below a pair. -/
+theorem le_of_row_self_le_below {X : Finset κ × ℕ} {w : ι → Label.{u}}
+    (hw : R.IsLawfulBelow X fun d ↦ w d) {r y : ι} (hrX : r ∈ D.below X)
+    (hy : y ∈ D.below (D.gradedIndex r)) (hgy : D.grade y ≤ D.grade r)
+    (hrow : R.row r ⟨r, D.mem_below_gradedIndex r⟩ ≤ R.row r ⟨y, hy⟩) : w r ≤ w y := by
+  have h := ((isLawfulBelow_iff_forall.mp hw).2.1 r hrX).le_of_le
+    (d := ⟨r, D.mem_below_gradedIndex r⟩) (d' := ⟨y, hy⟩) hrow hgy
+  -- locality at `r` reads `min (w d) (w r)`
+  change min (w r) (w r) ≤ min (w y) (w r) at h
+  rw [min_self] at h
+  exact h.trans (min_le_left _ _)
+
+end VaughtConjecture.CellScheme.Rows.IsLawful
+
+namespace VaughtConjecture.CellScheme.Rows.IsLawfulBelow
+
+open Finset Label
+
+variable {ι κ : Type*} {D : CellScheme ι κ} {R : D.Rows.{u}}
+
+/-- **Raising an isolated cell to `⊤`.**  Let `w` be lawful below `X` and `r` a cell below `X` that
+is the only cell below `X` at or above its graded index, whose row reads every other cell below it
+as `⊥` and itself not as `⊥`.  If `w r ≠ ⊥`, the labelling `w` with `r` sent to `⊤` is lawful below
+`X`. -/
+theorem update_top [DecidableEq ι] {X : Finset κ × ℕ} {w : ι → Label.{u}}
+    (hw : R.IsLawfulBelow X fun d ↦ w d) {r : ι} (hrX : r ∈ D.below X)
+    (huniq : ∀ y ∈ D.below X, D.gradedIndex r ≤ D.gradedIndex y → y = r)
+    (hrow : ∀ y (hy : y ∈ D.below (D.gradedIndex r)), y ≠ r → R.row r ⟨y, hy⟩ = ⊥)
+    (hrr : R.row r ⟨r, D.mem_below_gradedIndex r⟩ ≠ ⊥) (hwr : w r ≠ ⊥) :
+    R.IsLawfulBelow X fun d ↦ Function.update w r ⊤ d := by
+  obtain ⟨hvis, hloc, havail⟩ := isLawfulBelow_iff_forall.mp hw
+  have hle (d : ι) : w d ≤ Function.update w r ⊤ d := by
+    by_cases hd : d = r
+    · subst hd; rw [Function.update_self]; exact le_top
+    · rw [Function.update_of_ne hd]
+  refine isLawfulBelow_iff_forall.mpr ⟨fun d hd ↦ ?_, fun s hs ↦ ?_, fun s t ht hst hg ↦ ?_⟩
+  · by_cases hdr : d = r
+    · subst hdr; rw [Function.update_self]; exact isSelfVisible_top _
+    · rw [Function.update_of_ne hdr]; exact hvis d hd
+  · by_cases hsr : s = r
+    · subst hsr
+      refine transformsTo_of_eq_bot_iff _ (K := D.grade s) (fun d ↦ d.2.2) (isSelfVisible_top _)
+        _ _ fun d ↦ ?_
+      rw [Function.update_self, min_top_right]
+      by_cases hds : (d : ι) = s
+      · have hd : d = ⟨s, D.mem_below_gradedIndex s⟩ := Subtype.ext hds
+        subst hd
+        rw [Function.update_self, ite_eq_right hrr]
+      · rw [Function.update_of_ne hds, ite_eq_left (hrow d d.2 hds)]
+        -- the given labelling is `⊥` at `d`: locality at `s` reads `d` as `⊥`
+        have h := (hloc s hs).eq_bot (d := d) (hrow d d.2 hds)
+        change min (w d) (w s) = ⊥ at h
+        exact (min_eq_bot.mp h).resolve_right hwr
+    · -- no cell below `s` is `r`, so the labelling below `s` is unchanged
+      have hrs (d : D.below (D.gradedIndex s)) : (d : ι) ≠ r := fun hdr ↦
+        hsr (huniq s hs (hdr ▸ d.2))
+      have heq : (fun d : D.below (D.gradedIndex s) ↦
+          min (Function.update w r ⊤ d) (Function.update w r ⊤ s)) =
+          fun d : D.below (D.gradedIndex s) ↦ min (w d) (w s) := funext fun d ↦ by
+        rw [Function.update_of_ne (hrs d), Function.update_of_ne hsr]
+      rw [heq]
+      exact hloc s hs
+  · by_cases hsr : s = r
+    · subst hsr
+      have hts : t = s := huniq t ht ⟨hst, hg.le⟩
+      exact ⟨s, hts ▸ rfl, by rw [Function.update_self]⟩
+    · obtain ⟨u, hu, hsu⟩ := havail s t ht hst hg
+      exact ⟨u, hu, by rw [Function.update_of_ne hsr]; exact hsu.trans (hle u)⟩
+
+/-- **Reading rows tie every lawful labelling.**  Let every cell `v` of graded index `Y` read `r`
+at most as `x`, where `r` lies below `Y` with the grade of `Y` and `x` lies below `Y` with grade at
+most that of `r`.  Given a cell `t` of graded index `Y`, every labelling lawful below `Y` labels `r`
+at most as `x`. -/
+theorem le_of_forall_reads {Y : Finset κ × ℕ} {w : ι → Label.{u}}
+    (hw : R.IsLawfulBelow Y fun d ↦ w d) {r x t : ι} (hr : r ∈ D.below Y) (hx : x ∈ D.below Y)
+    (ht : D.gradedIndex t = Y) (hgr : D.grade r = D.grade t) (hgx : D.grade x ≤ D.grade r)
+    (hreads : ∀ v (hv : D.gradedIndex v = Y), R.row v ⟨r, hv ▸ hr⟩ ≤ R.row v ⟨x, hv ▸ hx⟩) :
+    w r ≤ w x := by
+  obtain ⟨-, hloc, havail⟩ := isLawfulBelow_iff_forall.mp hw
+  have htY : t ∈ D.below Y := by rw [CellScheme.mem_below, ht]
+  have hst : D.scope t = Y.1 := congrArg Prod.fst ht
+  obtain ⟨v, hv, hle⟩ := havail r t htY (by rw [hst]; exact hr.1) hgr
+  have hvY : D.gradedIndex v = Y := hv.trans ht
+  have hvb : v ∈ D.below Y := by rw [CellScheme.mem_below, hvY]
+  have h := (hloc v hvb).le_of_le (d := ⟨r, hvY ▸ hr⟩) (d' := ⟨x, hvY ▸ hx⟩) (hreads v hvY) hgx
+  -- locality at `v` reads `min (w d) (w v)`
+  change min (w r) (w v) ≤ min (w x) (w v) at h
+  rw [min_eq_left hle] at h
+  exact h.trans (min_le_left _ _)
+
+end VaughtConjecture.CellScheme.Rows.IsLawfulBelow

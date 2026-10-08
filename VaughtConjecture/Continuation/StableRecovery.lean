@@ -77,7 +77,12 @@ the formal top in `R` of grade `N` has stable label at least `λ_ξ + N`, by the
 above the arities of the occurrences of the reference cells and the marker, which bound their
 grades, and one occurrence containing them by covering, with exact consistency to carry labels and
 grades (`Realization.Occurrence.exists_label_grade_eq_of_trans_eq`).  No premise beyond the
-hypotheses of (R4) and the clauses of a model is used.  So (R4) follows from stable recovery
+hypotheses of (R4) and the clauses of a model is used.  The proof acquires more: the **margin
+calibration** (`StageType.GradedCapMarginCalibration`, an offset `R < N` with `γ < λ_ξ + R` and a
+marker labelled `λ_ξ + i` with `i < N` and grade at most `N`), acquired by the same argument
+(`Realization.IsModel.acquiresCalibratedContexts_gradedCapMargin`); the acquisition of the graded
+cap calibration is derived from it
+(`StageType.GradedCapMarginCalibration.gradedCapCalibration`).  So (R4) follows from stable recovery
 schemes for the graded cap calibration at every `ξ < ω₁`
 (`StableCappedReceiving.of_hasStableRecoverySchemes_gradedCap`), a finite statement that is open.
 By `StageType.IsStableRecoveryScheme.of_readsThroughCap` it holds at every instance at which some
@@ -349,6 +354,37 @@ theorem IsStableRecoveryScheme.of_readsThroughCap {Tp : StageType.{u} (blockStag
     exact hγ'.trans_le (hpb.trans (CellScheme.Rows.IsLawful.le_label_of_reading Q'.isLawful hb'
       he' heb (htop h) hbu))
 
+/-! ### The calibration margin -/
+
+variable (ξ) in
+/-- The **graded cap calibration with a margin**: the graded cap calibration
+(`StageType.GradedCapCalibration`) with, for the same cap `b` of grade `N`, (M1) an offset `R < N`
+with `γ < λ_ξ + R`, and (M2) a marker in the block of `λ_ξ`: a cell `a` labelled `λ_ξ + i` with
+`i < N` and of grade at most `N`. -/
+def GradedCapMarginCalibration ⦃m k : ℕ⦄ (Tp : StageType.{u} (blockStage (ξ + 1)) m)
+    (_ : Fin k ↪ Fin m) (D : StageType.{u} (blockStage (ξ + 1)) (k + 1)) (γ : Ordinal.{u}) :
+    Prop :=
+  ∃ b : Fin Tp.card,
+    ((blockStage ξ + Tp.toCellScheme.grade b : Ordinal.{u}) : Label.{u}) ≤ Tp.label b ∧
+    k < Tp.toCellScheme.grade b ∧
+    (∃ R : ℕ, R < Tp.toCellScheme.grade b ∧ γ < blockStage ξ + R) ∧
+    (∃ (a : Fin Tp.card) (i : ℕ), i < Tp.toCellScheme.grade b ∧
+      Tp.toCellScheme.grade a ≤ Tp.toCellScheme.grade b ∧
+      Tp.label a = ((blockStage ξ + i : Ordinal.{u}) : Label.{u})) ∧
+    ∀ (j : Fin D.card) (o : Ordinal.{u}), D.label j = o →
+      ∃ (μ : Ordinal.{u}) (n i : ℕ) (a : Fin Tp.card), Order.IsSuccPrelimit μ ∧ o = μ + n ∧
+        n < Tp.toCellScheme.grade b ∧ i < Tp.toCellScheme.grade b ∧
+        Tp.toCellScheme.grade a ≤ Tp.toCellScheme.grade b ∧
+        Tp.label a = ((μ + i : Ordinal.{u}) : Label.{u})
+
+/-- **The margin calibration is a graded cap calibration**: `γ < λ_ξ + R < λ_ξ + N`. -/
+theorem GradedCapMarginCalibration.gradedCapCalibration
+    {Tp : StageType.{u} (blockStage (ξ + 1)) m} {f : Fin k ↪ Fin m}
+    {D : StageType.{u} (blockStage (ξ + 1)) (k + 1)} {γ : Ordinal.{u}}
+    (h : GradedCapMarginCalibration ξ Tp f D γ) : GradedCapCalibration ξ Tp f D γ := by
+  obtain ⟨b, hb, hk, ⟨R, hR, hγ⟩, -, href⟩ := h
+  exact ⟨b, hb, hk, hγ.trans (add_lt_add_right (Nat.cast_lt.mpr hR) _), href⟩
+
 end StageType
 
 namespace Realization
@@ -380,22 +416,22 @@ theorem exists_coe_add_grade_le_stableCandidate_label (hgrow : R.topGradeSup = �
   · rw [h]
     exact_mod_cast add_le_add_right (Nat.cast_le.mpr hi) _
 
-/-- **Acquisition of the graded cap calibration**: a model `R` at `λ_ξ` that is not cover-hollow
-and has top-grade supremum `⊤` acquires calibrated contexts for the graded cap calibration.  Over
-an occurrence `x` of the candidate, for a coface `D` of its type and `γ ≤ λ_ξ + K`: uniformity
-gives reference cells for the blocks below `λ_ξ` of the labels of `D` in an occurrence `y`
-(`Realization.IsModel.exists_extend_uniformity`), non-hollowness a marker in an occurrence `z₀`
+/-- **Acquisition of the margin calibration**: a model `R` at `λ_ξ` that is not cover-hollow and
+has top-grade supremum `⊤` acquires calibrated contexts for the graded cap calibration with a
+margin.  Over an occurrence `x` of the candidate, for a coface `D` of its type and `γ ≤ λ_ξ + K`:
+uniformity gives reference cells for the blocks below `λ_ξ` of the labels of `D` in an occurrence
+`y` (`Realization.IsModel.exists_extend_uniformity`), non-hollowness a marker in an occurrence `z₀`
 (`Realization.exists_stableCandidate_label_eq_coe_add`), unbounded growth a cap of grade above
 every finite part involved, `K`, the arity of `x` and the arities of `y` and `z₀`
 (`Realization.exists_coe_add_grade_le_stableCandidate_label`), and covering one occurrence `w`
 containing them; exact consistency of `R` and of the candidate carries the labels and the grades
-to the stable type of `w`.  The grades of the reference cells are at most the arities of `y` and
-`z₀` (`StageType.grade_le`), hence at most that of the cap. -/
-theorem IsModel.acquiresCalibratedContexts_gradedCap (hR : R.IsModel) (hnh : ¬ R.IsCoverHollow)
-    (hgrow : R.topGradeSup = ⊤) :
-    AcquiresCalibratedContexts ξ (StageType.GradedCapCalibration ξ) R hR.isStablyLawful := by
+to the stable type of `w`.  The marker keeps its offset and grade below the grade `N` of the cap,
+and, since `|x| > 0`, the offset `R = K + 1` gives (M1). -/
+theorem IsModel.acquiresCalibratedContexts_gradedCapMargin (hR : R.IsModel)
+    (hnh : ¬ R.IsCoverHollow) (hgrow : R.topGradeSup = ⊤) :
+    AcquiresCalibratedContexts ξ (StageType.GradedCapMarginCalibration ξ) R hR.isStablyLawful := by
   classical
-  intro x _ D _ γ hγ
+  intro x hx D _ γ hγ
   have hlim := isSuccPrelimit_blockStage ξ
   have hpos : (0 : Ordinal.{u}) < blockStage ξ :=
     Ordinal.omega0_pos.trans_le (omega0_le_blockStage ξ)
@@ -451,7 +487,7 @@ theorem IsModel.acquiresCalibratedContexts_gradedCap (hR : R.IsModel) (hnh : ¬ 
     hgb₁.trans_eq hb'g.symm
   -- the bounds on the grade of the cap, stated for `W.type`, the stable type of `w`
   have hkN : x.arity < W.type.toCellScheme.grade b' := by omega
-  have hKN : K < W.type.toCellScheme.grade b' := by omega
+  have hRN : K + 1 < W.type.toCellScheme.grade b' := by omega
   have hBN : univ.sup B < W.type.toCellScheme.grade b' := by omega
   have hiN : i₀ < W.type.toCellScheme.grade b' := by omega
   have hK₁N : K₁ < W.type.toCellScheme.grade b' := by omega
@@ -459,13 +495,13 @@ theorem IsModel.acquiresCalibratedContexts_gradedCap (hR : R.IsModel) (hnh : ¬ 
   have ha'N : W.type.toCellScheme.grade a' ≤ W.type.toCellScheme.grade b' := by
     have := z₀.type.grade_le a₀
     omega
-  refine ⟨w, fy.trans g, by rw [Function.Embedding.trans_assoc, hg, hfy], b', ?_, hkN, ?_,
-    fun j o ho ↦ ?_⟩
+  refine ⟨w, fy.trans g, by rw [Function.Embedding.trans_assoc, hg, hfy], b', ?_, hkN,
+    ⟨K + 1, hRN, hK.trans_lt (add_lt_add_right (Nat.cast_lt.mpr (Nat.lt_succ_self K)) _)⟩,
+    ⟨a', i₀, hiN, ha'N, ha'l.trans ha₀⟩, fun j o ho ↦ ?_⟩
   · -- the cap: its label in `W.type` is its label in `z₁.type`
     change _ ≤ W.type.label b'
     rw [hb'l, hb'g]
     exact hb₁
-  · exact hK.trans_lt (add_lt_add_right (Nat.cast_lt.mpr hKN) _)
   · have hBj : B j ≤ univ.sup B := le_sup (mem_univ j)
     obtain ⟨n, hn, h | h⟩ := hB j o ho
     · -- a block below `λ_ξ`: the reference cell of `y`, moved to `w` with its label and grade
@@ -482,6 +518,27 @@ theorem IsModel.acquiresCalibratedContexts_gradedCap (hR : R.IsModel) (hnh : ¬ 
     · -- the block `λ_ξ`: the marker
       exact ⟨blockStage ξ, n, i₀, a', hlim, h, (hn.trans_le hBj).trans hBN, hiN, ha'N,
         ha'l.trans ha₀⟩
+
+/-- **Acquisition of the graded cap calibration**: a model `R` at `λ_ξ` that is not cover-hollow
+and has top-grade supremum `⊤` acquires calibrated contexts for the graded cap calibration; it is
+the acquisition of the margin calibration
+(`Realization.IsModel.acquiresCalibratedContexts_gradedCapMargin`), whose calibration is a graded
+cap calibration (`StageType.GradedCapMarginCalibration.gradedCapCalibration`).  Over
+an occurrence `x` of the candidate, for a coface `D` of its type and `γ ≤ λ_ξ + K`: uniformity
+gives reference cells for the blocks below `λ_ξ` of the labels of `D` in an occurrence `y`
+(`Realization.IsModel.exists_extend_uniformity`), non-hollowness a marker in an occurrence `z₀`
+(`Realization.exists_stableCandidate_label_eq_coe_add`), unbounded growth a cap of grade above
+every finite part involved, `K`, the arity of `x` and the arities of `y` and `z₀`
+(`Realization.exists_coe_add_grade_le_stableCandidate_label`), and covering one occurrence `w`
+containing them; exact consistency of `R` and of the candidate carries the labels and the grades
+to the stable type of `w`.  The grades of the reference cells are at most the arities of `y` and
+`z₀` (`StageType.grade_le`), hence at most that of the cap. -/
+theorem IsModel.acquiresCalibratedContexts_gradedCap (hR : R.IsModel) (hnh : ¬ R.IsCoverHollow)
+    (hgrow : R.topGradeSup = ⊤) :
+    AcquiresCalibratedContexts ξ (StageType.GradedCapCalibration ξ) R hR.isStablyLawful :=
+  fun x hx D hD γ hγ ↦
+    let ⟨w, f, hf, hC⟩ := hR.acquiresCalibratedContexts_gradedCapMargin hnh hgrow x hx D hD γ hγ
+    ⟨w, f, hf, hC.gradedCapCalibration⟩
 
 end Realization
 
