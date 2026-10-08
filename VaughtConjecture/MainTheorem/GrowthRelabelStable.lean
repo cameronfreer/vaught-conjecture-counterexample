@@ -57,8 +57,8 @@ theorem HasLadderGrowthCarriersStableAtSeed.ladderCarrierBody
     hlab hQ hrel
 
 /-- **(R3) from the stable ladder contract at the seed position**: exact calibrated requests are
-calibrated on the class, have the labels pair admitted, and bound the donor's top grade by the context's
-(`StageType.GrowthRequests.topGrade_le_of_exact`). -/
+calibrated on the class, have the labels pair admitted, and bound the donor's top grade by the
+context's (`StageType.GrowthRequests.topGrade_le_of_exact`). -/
 theorem HasLadderGrowthCarriersStableAtSeed.hasLadderGrowthCarriers
     (h : HasLadderGrowthCarriersStableAtSeed.{u}) : HasLadderGrowthCarriers.{u} :=
   fun _ _ _ t' e hα ht' p hte d hd hn Q hex hQ hrel ↦
