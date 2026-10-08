@@ -31,7 +31,9 @@ occurrence with itself.  Compiled in this repository (theorem named):
   from each catalogue profile of the cap's grade at a cell of grade at most the cap's), a reader of
   the higher grade reads the cap through the section of the level below at `⊥`; so
   `CompletionNonDominating` holds conditional on `TowerCrossSeparating`
-  (`completionNonDominating_of_crossSeparating`).
+  (`completionNonDominating_of_crossSeparating`).  Cross separation is equivalent to bottom
+  variation of the live profiles of the catalogue at the higher grade
+  (`towerCrossSeparating_iff_bottomVariation`).
 * **The margin calibration with a non-dominating cap** (`StageType.GradedCapMarginCalibrationND`):
   the margin calibration with a floor, a last point `x` off the root with `univ.erase x` a face,
   and the clause at `x` for every cell of full scope.
@@ -224,6 +226,24 @@ condition on the catalogues, `ProfileTower.CrossSeparating`). -/
 def TowerCrossSeparating : Prop :=
   ∀ ⦃α : Ordinal.{u}⦄ ⦃j : ℕ⦄ (I : Seed.{u} α (j + 3)) (N k : ℕ), 3 ≤ N → N < k →
     k ≤ j + 3 + 1 → ProfileTower.CrossSeparating I N k
+
+/-- **Bottom variation at every pair of grades of every seed of the profile tower**
+(`ProfileTower.BottomVariation`: at a live old cell, two live profiles of the catalogue differ in
+bottoms at a cell of grade at most the lower grade). -/
+def TowerBottomVariation : Prop :=
+  ∀ ⦃α : Ordinal.{u}⦄ ⦃j : ℕ⦄ (I : Seed.{u} α (j + 3)) (N k : ℕ), 3 ≤ N → N < k →
+    k ≤ j + 3 + 1 → ProfileTower.BottomVariation I N k
+
+/-- **Cross separation is bottom variation** (`ProfileTower.crossSeparating_iff_bottomVariation`):
+the named condition does not depend on the profile of the cap. -/
+theorem towerCrossSeparating_iff_bottomVariation :
+    TowerCrossSeparating.{u} ↔ TowerBottomVariation.{u} :=
+  ⟨fun h _ _ I N k h3 hlt hk ↦
+      (ProfileTower.crossSeparating_iff_bottomVariation (by omega) hlt.le hk).mp
+        (h I N k h3 hlt hk),
+    fun h _ _ I N k h3 hlt hk ↦
+      (ProfileTower.crossSeparating_iff_bottomVariation (by omega) hlt.le hk).mpr
+        (h I N k h3 hlt hk)⟩
 
 /-- A cell of the completion of the profile tower of grade at most `m` is a cell of the last
 level. -/

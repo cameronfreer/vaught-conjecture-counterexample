@@ -444,6 +444,44 @@ theorem topCrossReaders_lvl {j : ℕ} (I : Seed.{u} α (j + 3)) :
     rw [orbitCode_apply, hpc, orbitMap_bot] at h
     exact absurd h.symm WithBot.coe_ne_bot
 
+/-! ### Cross separation as a condition on the catalogue at the higher grade -/
+
+variable (I) in
+/-- **Bottom variation** from the grade `N` at the grade `j`: at every old cell `a` of grade `j`
+reading itself other than `⊥` and avoiding the last point, two profiles of the catalogue at `j`,
+both not `⊥` at `a`, differ in bottoms at a cell of grade at most `N`. -/
+def BottomVariation (N j : ℕ) : Prop :=
+  ∀ a : Fin I.amalgam.card, I.amalgam.toCellScheme.grade a = j →
+    I.amalgam.toScheme.rowAt a a ≠ ⊥ → Fin.last (m + 1) ∉ I.amalgam.toCellScheme.scope a →
+      ∃ R ∈ cat I j, R a ≠ ⊥ ∧ ∃ R' ∈ cat I j, R' a ≠ ⊥ ∧ ∃ d,
+        I.amalgam.toCellScheme.grade d ≤ N ∧ ¬ (R d = ⊥ ↔ R' d = ⊥)
+
+/-- The orbit code at a lower grade of a profile of the catalogue lies in the catalogue there and
+has the same bottoms. -/
+theorem orbitCode_mem_cat_of_le {N j : ℕ} (hNj : N ≤ j) {R : Prof I} (hR : R ∈ cat I j) :
+    orbitCode N R ∈ cat I N := by
+  obtain ⟨⟨h1, h2⟩, -⟩ := mem_cat.mp hR
+  exact mem_cat.mpr ⟨⟨(h1.mono (X := (coatC, N)) ⟨subset_rfl, hNj⟩).orbitCode fun d ↦ d.2.2,
+    (h2.mono (X := (coatD, N)) ⟨subset_rfl, hNj⟩).orbitCode fun d ↦ d.2.2⟩, orbitCode_orbitCode⟩
+
+/-- **Cross separation is bottom variation**: from the grade `N` to a grade `N ≤ j ≤ m + 1`, for
+`0 < m`.  Of two profiles differing in bottoms at a cell, one differs there from any third; and the
+orbit code at `N` of a profile live at `a` (`ProfileTower.exists_cat_ne_bot`) lies in the catalogue
+at `N` with the same bottoms (`ProfileTower.orbitCode_mem_cat_of_le`), so a change of bottoms from
+it is a change between two profiles live at `a`. -/
+theorem crossSeparating_iff_bottomVariation (hm : 0 < m) {N j : ℕ} (hNj : N ≤ j)
+    (hjm : j ≤ m + 1) : CrossSeparating I N j ↔ BottomVariation I N j := by
+  constructor
+  · intro h a ha hlive hlast
+    obtain ⟨R₀, hR₀, hR₀a⟩ := exists_cat_ne_bot hm hjm ha hlive hlast
+    obtain ⟨R, hR, hRa, d, hd, hne⟩ := h _ (orbitCode_mem_cat_of_le hNj hR₀) a ha hlive hlast
+    exact ⟨R, hR, hRa, R₀, hR₀, hR₀a, d, hd, by rwa [orbitCode_eq_bot_iff] at hne⟩
+  · intro h R_c _ a ha hlive hlast
+    obtain ⟨R, hR, hRa, R', hR', hR'a, d, hd, hne⟩ := h a ha hlive hlast
+    by_cases hc : (R d = ⊥ ↔ R_c d = ⊥)
+    · exact ⟨R', hR', hR'a, d, hd, fun h' ↦ hne (hc.trans h'.symm)⟩
+    · exact ⟨R, hR, hRa, d, hd, hc⟩
+
 end ProfileTower
 
 end VaughtConjecture
