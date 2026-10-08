@@ -378,6 +378,25 @@ theorem cappedLift_ladderBase_rankMember {hS : S.NoFullOne} (hwf : S.IsWellForme
     (ladderBase H (rankProf.{u} S H) hS).rows.CappedLift hXU :=
   cappedLift_ladderBase_one hwf hH (rankProf_le S H) (rankGlue_rankMember hwf hcard) hXU hX hold
 
+/-- **The lift into the full face of grade one through two faces**: if the cells of `S` of grade
+one lie below `U` or below `V` (two pairs below `(univ, 1)`), those below both lie below `O`, and
+`S` lifts capped from `I` to `U` and from `O` to `V`, then the ladder base over the rank members
+lifts capped from `I` to `(univ, 1)` (`CellScheme.Rows.cappedLift_of_union`).  For the attachment
+of a donor to a context along a root, `U` and `V` are the context and donor faces at grade one and
+`O` the root. -/
+theorem cappedLift_ladderBase_rankMember_of_union {hS : S.NoFullOne} (hwf : S.IsWellFormed)
+    (hH : 0 < H) (hcard : S.card ≤ H) {I U V O : Finset (Fin n) × ℕ}
+    (hIU : I ≤ U) (hOU : O ≤ U) (hOV : O ≤ V) (hUY : U ≤ ((univ : Finset (Fin n)), 1))
+    (hVY : V ≤ ((univ : Finset (Fin n)), 1)) (hI : ¬ ((univ : Finset (Fin n)), 1) ≤ I)
+    (hcover : ∀ d ∈ S.toCellScheme.below ((univ : Finset (Fin n)), 1),
+      d ∈ S.toCellScheme.below U ∨ d ∈ S.toCellScheme.below V)
+    (hinter : ∀ d ∈ S.toCellScheme.below U, d ∈ S.toCellScheme.below V →
+      d ∈ S.toCellScheme.below O)
+    (hleft : S.rows.CappedLift hIU) (hright : S.rows.CappedLift hOV) :
+    (ladderBase H (rankProf.{u} S H) hS).rows.CappedLift (hIU.trans hUY) :=
+  cappedLift_ladderBase_rankMember hwf hH hcard _ hI
+    (CellScheme.Rows.cappedLift_of_union hIU hOU hOV hUY hVY hcover hinter hleft hright)
+
 end Scheme
 
 end VaughtConjecture
