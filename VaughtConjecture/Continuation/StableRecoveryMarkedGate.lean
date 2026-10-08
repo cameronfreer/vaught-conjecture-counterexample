@@ -27,7 +27,8 @@ named), unless marked otherwise.
 **A marked gate has cap `⊥`** (`Scheme.markedLayer_cap_eq_bot_of_row_leaf`,
 `Scheme.markedLayer_cap_eq_bot_of_readsOnly`).  If the row of the marked cell `m` is `⊥` at every
 leaf (in particular if it reads only marked cells), its cap is `⊥`: the leaf with the same entry is
-read at the cross height `min (ceiling) (cap)`.
+read at the cross height `min (agreement height) (cap)`, and the agreement height of an entry with
+itself is the top point `gridPoint k (2 * S.card + 2)` of the field grid, above every cap.
 
 **A marked cell of cap `⊥` is `⊥` in a lawful extension of every labelling**
 (`Scheme.exists_isLawfulBelow_markedLayer_eq_bot`).  The extension at `⊥` through the leaf whose
@@ -64,7 +65,8 @@ variable {n k : ℕ} {S : Scheme.{u} n} {Mk : Finset (Fin S.card → Label.{u})}
 
 /-- **A marked cell whose row is `⊥` at every leaf has cap `⊥`.**  The leaf with the entry of the
 marked cell is read at the cross height `min (agreement height) (cap)`, and the agreement height of
-an entry with itself is the ceiling, above every cap in the field grid. -/
+an entry with itself is the top point `gridPoint k (2 * S.card + 2)` of the field grid, above every
+cap in the field grid. -/
 theorem markedLayer_cap_eq_bot_of_row_leaf (hMk : Mk ⊆ S.catalogue k)
     (hκ : ∀ e, κ e ∈ S.fieldGrid k) (m : Fin Mk.card)
     (hleaf : ∀ (i : Fin (S.catalogue k).card) (t), (S.markedLayer k Mk κ hS).rows.row

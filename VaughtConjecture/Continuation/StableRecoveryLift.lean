@@ -47,17 +47,18 @@ reading is again at its top graded face, where the completion of the last coatom
 coatom extension property at `λ_{ξ+1}`, stable recovery schemes for `C` are equivalent to: every
 input of `C` has a closed face `g` of `T⁺` through which the root factors (`f = f'.trans g`) and a
 stable recovery scheme for the face `p` of `T⁺` along `g`, `f'`, `D` and `γ`.  The face may be the
-whole context (`g` the identity), so this reduction by itself simplifies nothing; a gain needs a
-strictly smaller face.
+whole context (`g` the identity), so this reformulation by itself simplifies nothing; a gain needs
+a strictly smaller face.
 
-**The smallest face can fail** (`Continuation.StableRecoveryCounterexample.
-not_isStableRecoveryScheme_twinRoot`).  At the twin donors, the face along the root alone (the twin
-root, with the identity) has no stable recovery scheme for the first donor at any `γ`: the second
-donor is a stage type on the same scheme with the same face and the twins in the other order.  So
-a face carrying recovery must contain more than the root.  At both compiled inputs of
-`VaughtConjecture.Continuation.StableRecoveryCoatomExamples` the calibrated cap has grade equal to
-the number of points of the context, hence full scope (`StageType.gradedIndex_eq_univ_of_grade_eq`),
-so no proper closed face contains it (argued from those compiled facts; not stated as a theorem).
+**The smallest face can fail**
+(`Continuation.StableRecoveryCounterexample.not_isStableRecoveryScheme_twinRoot`).  At the twin
+donors, the face along the root alone (the twin root, with the identity) has no stable recovery
+scheme for the first donor at any `γ`: the second donor is a stage type on the same scheme with the
+same face and the twins in the other order.  So a face carrying recovery must contain more than the
+root.  At both compiled inputs of `VaughtConjecture.Continuation.StableRecoveryCoatomExamples` the
+calibrated cap has grade equal to the number of points of the context, hence full scope
+(`StageType.gradedIndex_eq_univ_of_grade_eq`), so no proper closed face contains it (argued from
+those compiled facts; not stated as a theorem).
 
 ## Placement
 

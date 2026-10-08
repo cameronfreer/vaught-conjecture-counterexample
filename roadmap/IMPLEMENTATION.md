@@ -3495,14 +3495,15 @@ Each checkpoint needs both its abstract API and a concrete application:
    `StageType.HasReadingCoatomCompletions.hasCapReadingExtensions`, hence (R4) with that property
    at every `λ_{ξ+1}`, `StableCappedReceiving.of_hasReadingCoatomCompletions`, and the continuation
    criterion with hypothesis 8, `ContinuationCriterion.of_hasReadingCoatomCompletions` (hypothesis
-   8 is compiled, `StageType.hasApexCoatomExtensions_blockStage`; the statement with it discharged
-   is not stated); a reading labelling on the cells of every labelled extension,
-   `StageType.exists_codedReadingLabelling`, `Continuation/StableRecoveryCodedReading`; the clause
-   at one and two coatom steps, feasibility only, `Continuation/StableRecoveryCoatomExamples`;
-   recovery lifts from a closed face, `StageType.IsStableRecoveryScheme.of_comap` and
-   `StageType.IsStableRecoveryScheme.exists_lift`, and the face version, an exact reformulation
-   under `StageType.HasCoatomExtensions`, `StageType.hasStableRecoverySchemes_iff_exists_face`,
-   `Continuation/StableRecoveryLift`, with no recovery at the twin root alone,
+   8 is compiled, `StageType.hasApexCoatomExtensions_blockStage`; no statement that uses its proof
+   in place of the hypothesis is stated); a reading labelling on the cells of every labelled
+   extension, `StageType.exists_codedReadingLabelling`, `Continuation/StableRecoveryCodedReading`;
+   the clause at one and two coatom steps, feasibility only,
+   `Continuation/StableRecoveryCoatomExamples`; recovery lifts from a closed face,
+   `StageType.IsStableRecoveryScheme.of_comap` and `StageType.IsStableRecoveryScheme.exists_lift`,
+   and the face version, an exact reformulation under `StageType.HasCoatomExtensions`,
+   `StageType.hasStableRecoverySchemes_iff_exists_face`, `Continuation/StableRecoveryLift`, with no
+   recovery at the twin root alone,
    `Continuation.StableRecoveryCounterexample.not_isStableRecoveryScheme_twinRoot`; the reading
    along the orbit code, the splice and capped agreement,
    `Continuation/StableRecoveryReadingInvariants`; and two refuted designs, each refuted as a
@@ -3510,9 +3511,9 @@ Each checkpoint needs both its abstract API and a concrete application:
    completion at `m = 3` at a cap of grade `3` or `4`,
    `TowerProfile.not_isCapReadingExtension_completion`,
    `Continuation/StableRecoveryProfileObstruction`, and the marked gate (every marked gate has cap
-   `⊥` and is `⊥` in some lawful labelling, `TowerProfile.exists_isLawful_markedTop_eq_bot`), with
-   the leaf-and-marked completion for every marked specification,
-   `TowerProfile.not_isCapReadingExtension_markedCompletion`,
+   `⊥` and is `⊥` in some lawful labelling of the marked top,
+   `TowerProfile.exists_isLawful_markedTop_eq_bot`), with the leaf-and-marked completion for every
+   marked specification, `TowerProfile.not_isCapReadingExtension_markedCompletion`,
    `Continuation/StableRecoveryMarkedGate`; none of these establishes whether
    `StageType.HasReadingCoatomCompletions` follows from hypothesis 8; `README.md`, Layer 4, status,
    output 3).

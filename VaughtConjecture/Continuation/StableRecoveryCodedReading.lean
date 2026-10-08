@@ -30,17 +30,17 @@ reads `e` at `ω · c + n` and some reference cell of `T⁺` labelled `μ + i` a
 through the cap (`StageType.readsThroughCap_of_row_eq`): the reading clause of
 `StageType.ReadsThroughCap` is a condition on the values of one labelling.
 
-**The coded reading labelling** (`StageType.exists_codedReadingLabelling`).  Let `A` be a stage
-type at `λ_{ξ+1}` on `m + 1` points whose faces along the first points and along `f` followed by
-the new point are `T⁺` and `D`, labels included (for instance the amalgam of a seed, whose labels
-are the glued labels, or any coatom extension), and let `b` be a graded cap of `T⁺` for `D`
-(`StageType.IsGradedCap`) of grade `N`.  The labels of `A` capped at the label of the cap are
-lawful below `(univ, N)` (the cap is self-visible at `N`, `CellScheme.Rows.IsLawfulBelow.min_const_
-of_isSelfVisible`); their coded copy (`Label.blockEncode`, `CellScheme.Rows.IsLawful.exists_
-blockEncode`) is lawful below `(univ, N)`, coded, at most its value at the cap, and reads every new
-cell of `D` through the cap: a label `μ + n` and its reference value `μ + i` lie in one value block
-and are coded as `ω · r + n` and `ω · r + i`; the formal top is capped to the label of the cap;
-`⊥` is coded as `⊥`.  The scope of the cap is not used.
+**The coded reading labelling** (`StageType.exists_codedReadingLabelling`).  Let `A` be a stage type
+at `λ_{ξ+1}` on `m + 1` points whose faces along the first points and along `f` followed by the new
+point are `T⁺` and `D`, labels included (for instance the amalgam of a seed, whose labels are the
+glued labels, or any coatom extension), and let `b` be a graded cap of `T⁺` for `D`
+(`StageType.IsGradedCap`) of grade `N`.  The labels of `A` capped at the label of the cap are lawful
+below `(univ, N)` (the cap is self-visible at `N`,
+`CellScheme.Rows.IsLawfulBelow.min_const_of_isSelfVisible`); their coded copy (`Label.blockEncode`,
+`CellScheme.Rows.IsLawful.exists_blockEncode`) is lawful below `(univ, N)`, coded, at most its value
+at the cap, and reads every new cell of `D` through the cap: a label `μ + n` and its reference value
+`μ + i` lie in one value block and are coded as `ω · r + n` and `ω · r + i`; the formal top is
+capped to the label of the cap; `⊥` is coded as `⊥`.  The scope of the cap is not used.
 
 **What is left of the reading coatom completion** (argued, not formalized).  In a completion of the
 amalgam of the last coatom pair, a cell at `(univ, N)` whose row is the coded reading labelling on

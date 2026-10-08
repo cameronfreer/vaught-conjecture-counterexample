@@ -42,13 +42,14 @@ produced it.
 
 **The reduction** (`StageType.HasReadingCoatomCompletions.hasCapReadingExtensions`).  The coatom
 extension property at `λ_{ξ+1}` (`StageType.HasCoatomExtensions`, implied by hypothesis 8, the
-coatom extension property with apex `StageType.HasApexCoatomExtensions`) and reading coatom
-completions at `ξ` give cap-reading extensions at `ξ`.  Take a closed coatom `g` of `T⁺` through
-the face `f` of the root; the exact pinned extension
-(`StageType.exists_pinned_extension`, one coatom extension for each point of the coatom outside
-the root) gives a legal coface `tb` of the face of `T⁺` along `g` whose face along the root
-followed by the new point is `D`; the last step is the reading coatom completion of `(T⁺, tb)`.
-When `f` is itself a coatom no coatom extension is used.
+coatom extension property with apex `StageType.HasApexCoatomExtensions`; both are compiled at the
+block stages, `StageType.hasCoatomExtensions`, `StageType.hasApexCoatomExtensions_blockStage`) and
+reading coatom completions at `ξ` give cap-reading extensions at `ξ`.  Take a closed coatom `g` of
+`T⁺` through the face `f` of the root; the exact pinned extension
+(`StageType.exists_pinned_extension`, one coatom extension for each point of the coatom outside the
+root) gives a legal coface `tb` of the face of `T⁺` along `g` whose face along the root followed by
+the new point is `D`; the last step is the reading coatom completion of `(T⁺, tb)`.  When `f` is
+itself a coatom no coatom extension is used.
 
 **(R4) and the continuation criterion** (`StableCappedReceiving.of_hasReadingCoatomCompletions`,
 `ContinuationCriterion.of_hasReadingCoatomCompletions`).  With
@@ -57,8 +58,10 @@ When `f` is itself a coatom no coatom extension is used.
 extension property at every `λ_{ξ+1}` and reading coatom completions at every `ξ < ω₁`; with
 `ContinuationCriterion.of_hasApexCoatomExtensions`, the continuation criterion follows from
 hypothesis 8 at every `λ_{ξ+1}` and reading coatom completions at every `ξ < ω₁`.  So (R4) is
-reduced, by a compiled implication, to hypothesis 8 (already among the named hypotheses) and the
-new named statement `StageType.HasReadingCoatomCompletions`.  The new statement is proved at no
+reduced, by a compiled implication, to hypothesis 8 (already among the named hypotheses, and
+compiled, `StageType.hasApexCoatomExtensions_blockStage`; no statement that uses its proof in place
+of the hypothesis is stated here) and the new named statement
+`StageType.HasReadingCoatomCompletions`.  The new statement is proved at no
 general input; its clause holds at two inputs, one and two coatom steps
 (`VaughtConjecture.Continuation.StableRecoveryCoatomExamples`), and its reading rows exist on the
 cells of the coatoms at every input (`StageType.exists_codedReadingLabelling`).

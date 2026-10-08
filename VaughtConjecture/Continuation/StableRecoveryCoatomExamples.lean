@@ -13,12 +13,13 @@ import VaughtConjecture.Continuation.StableRecoveryTwin
 Roadmap, Layer 4, output 3 of higher-stage reconstruction (the modelhood criterion), and Layer 3,
 3.3 (the private cap and the decoder of (R4)); semantic contract, item 8.
 
-Tests of `StageType.HasReadingCoatomCompletions` (`VaughtConjecture.Continuation.
-StableRecoveryCoatom`): at the input of `VaughtConjecture.Continuation.StableRecoveryReading`, where
-the root is itself a closed coatom of the context (one coatom step, `r = 1`), and at the twin
-donors of `VaughtConjecture.Continuation.StableRecoveryTwin`, where the root `{2}` lies in the
-closed coatom `{1, 2}` of the context `{0, 1, 2}` (two coatom steps, `r = 2`).  Each item below is
-compiled in this repository (theorem named).
+Tests of `StageType.HasReadingCoatomCompletions`
+(`VaughtConjecture.Continuation.StableRecoveryCoatom`): at the input of
+`VaughtConjecture.Continuation.StableRecoveryReading`, where the root is itself a closed coatom of
+the context (one coatom step, `r = 1`), and at the twin donors of
+`VaughtConjecture.Continuation.StableRecoveryTwin`, where the root `{2}` lies in the closed coatom
+`{1, 2}` of the context `{0, 1, 2}` (two coatom steps, `r = 2`).  Each item below is compiled in
+this repository (theorem named).
 
 **The reading type is a reading coatom completion**
 (`Continuation.StableRecoveryReading.isReadingCoatomCompletion_readingType`).  At the context type

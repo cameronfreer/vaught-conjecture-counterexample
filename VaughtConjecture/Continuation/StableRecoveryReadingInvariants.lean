@@ -29,16 +29,17 @@ item below is compiled in this repository (theorem named), unless marked otherwi
   block (`Label.orbitCode_omega0_mul_add`); equal values have equal codes, and `⊥` is coded as `⊥`.
 * **Splicing with `⊥` above the grade keeps the reading** (`StageType.ReadsThroughCapAt.splice`):
   the reading involves cells of grade at most `N ≤ k` only.
-* **Capped agreement keeps the reading above the values** (`StageType.ReadsThroughCapAt.of_min_eq`):
-  a labelling agreeing with `r` capped at a cap above every value of `r` is `r`.  **Not below a
-  value** (`StageType.ReadsThroughCapAt.exists_not_of_le`): if the value of `r` at `e` is at least
-  the cap, some labelling agreeing with `r` capped at the cap does not read `e` (the value `⊤` at
-  `e`).  So every lift lemma whose conclusion is capped agreement (`CellScheme.Rows.CappedLift`:
-  the lifts of the tower, `TowerProfile.cappedLift_three`, `TowerProfile.cappedLift_top_four`, the
-  extensions from the boundary) preserves the reading of a labelling whose reading values lie
-  below the cap, and preserves nothing about values at or above the cap; at the cap `⊥` (the
-  extensions at `⊥`, `TowerProfile.extendsFromBoundary_bot_top`) it preserves nothing.
-
+* **Capped agreement keeps the reading above every value**
+  (`StageType.ReadsThroughCapAt.of_min_eq`): a labelling agreeing with `r` capped at a cap strictly
+  above every value of `r` is `r`.  **Not below a value**
+  (`StageType.ReadsThroughCapAt.exists_not_of_le`): if the value of `r` at `e` is at least the cap,
+  some labelling agreeing with `r` capped at the cap does not read `e` (the value `⊤` at `e`).  So
+  every lift lemma whose conclusion is capped agreement (`CellScheme.Rows.CappedLift`: the lifts of
+  the tower, `TowerProfile.cappedLift_three`, `TowerProfile.cappedLift_top_four`, the extensions
+  from the boundary) preserves the reading of a labelling all of whose values lie strictly below the
+  cap, and, when the value at the read cell is at or above the cap, capped agreement alone does not
+  preserve that reading; at the cap `⊥` (the extensions at `⊥`,
+  `TowerProfile.extendsFromBoundary_bot_top`) it preserves nothing.
 **Which cells the reading clause needs** (read off the definitions).
 `StageType.IsCapReadingExtension` asks for `StageType.ReadsThroughCap` at every cell of graded index
 `(univ, N)`, a condition on rows with no labelling; its recovery
@@ -146,10 +147,10 @@ theorem ReadsThroughCapAt.of_min_eq (h : Tp.ReadsThroughCapAt E r b e ℓ) {c : 
       exact absurd h1 (hc x).ne'
   rwa [heq]
 
-/-- **Capped agreement at or below a reading value does not keep the reading**: if `r` reads `e`
-through the cap as a cell labelled `μ + n`, and the value of `r` at `e` is at least the cap `c`,
-then the labelling equal to `r` except for the formal top at `e` agrees with `r` capped at `c` and
-does not read `e` through the cap. -/
+/-- **Capped agreement at or below a value does not keep the reading**: if the value of `r` at `e`
+is at least the cap `c` (no reading of `e` by `r` is assumed), then the labelling equal to `r`
+except for the formal top at `e` agrees with `r` capped at `c` and does not read `e` through the
+cap as a cell labelled `μ + n`. -/
 theorem ReadsThroughCapAt.exists_not_of_le {μ : Ordinal.{u}} (hμ : Order.IsSuccPrelimit μ) (n : ℕ)
     {c : Label.{u}} (hce : c ≤ r e) :
     ∃ r' : Fin E.card → Label.{u}, (∀ x, min (r' x) c = min (r x) c) ∧

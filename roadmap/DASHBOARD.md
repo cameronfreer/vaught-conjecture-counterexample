@@ -892,7 +892,8 @@ except as a named hypothesis.
    `StableCappedReceiving.of_hasReadingCoatomCompletions` ((R4), from `HasCoatomExtensions` at every
    `λ_{ξ+1}` and RCC at every `ξ < ω₁`); `ContinuationCriterion.of_hasReadingCoatomCompletions`
    (from hypothesis 8 at every `λ_{ξ+1}` and RCC at every `ξ < ω₁`).  Hypothesis 8 is compiled
-   (`StageType.hasApexCoatomExtensions_blockStage`); the statement with it discharged is not stated.
+   (`StageType.hasApexCoatomExtensions_blockStage`); no statement that uses its proof in place of
+   the hypothesis is stated.
    On the cells of every labelled extension a reading labelling exists
    (`StageType.exists_codedReadingLabelling`, `Continuation/StableRecoveryCodedReading`: the coded
    copy of the labels capped at the cap is lawful below `(univ, N)` and reads every new cell of `D`
@@ -935,7 +936,8 @@ except as a named hypothesis.
    is `⊥` in a lawful extension of every labelling
    (`Scheme.exists_isLawfulBelow_markedLayer_eq_bot`) and in a lawful labelling of the marked top
    extending the glued labelling, for every marked specification
-   (`TowerProfile.exists_isLawful_markedTop_eq_bot`), so no marked cell is a gate; and the
+   (`TowerProfile.exists_isLawful_markedTop_eq_bot`), so no marked cell is a gate for the lawful
+   labellings of the marked top (the step to stage types is argued, not formalized); and the
    leaf-and-marked completion is not a cap-reading extension at a cap of grade `3` or `4`, for
    every marked specification (`TowerProfile.not_isCapReadingExtension_markedCompletion`).
    Status, each named statement separately: `HasCapRowExtensions ξ` open; RCC open;

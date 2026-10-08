@@ -22,7 +22,7 @@ is a stable recovery scheme by `StageType.IsStableRecoveryScheme.of_readsThrough
 coface of `T⁺↓λ_ξ` given by legality of the twin scheme
 (`StageType.exists_mem_cofaces_reduce_of_isLegal`).  The only cell at `(univ, 3)` is the reading
 cell; the hypotheses "the cap and the new cells lie below the reading cell" of
-`StageType.IsStableRecoveryScheme.of_readsThroughCap` are discharged by the general theorem.
+`StageType.IsStableRecoveryScheme.of_readsThroughCap` hold by the general theorem.
 `StableRecoveryTwin.exists_isStableRecoveryScheme_twinDonors_of_readsThroughCap_univ` restates
 `StableRecoveryTwin.exists_isStableRecoveryScheme_twinDonors` through this route.
 
