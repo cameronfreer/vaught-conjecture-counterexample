@@ -324,19 +324,6 @@ variable {D : Scheme.{u} (m + 2)} {T : Scheme.{u} (m + 1)} {π : Fin D.card → 
   {k M : ℕ} {r : Fin M → Fin (D.card + M) → Label.{u}}
   {h : ∀ d, ¬ ((univ : Finset (Fin (m + 2))), k) ≤ D.toCellScheme.gradedIndex d}
 
-/-- Old cells are read after appending cells of full scope as before. -/
-theorem rowAt_appendFullCells_castAdd' (a d : Fin D.card) :
-    (D.appendFullCells k M r h).rowAt (Fin.castAdd M a) (Fin.castAdd M d) = D.rowAt a d := by
-  have hiff : Fin.castAdd M d ∈ (D.appendFullCells k M r h).toCellScheme.below
-      ((D.appendFullCells k M r h).toCellScheme.gradedIndex (Fin.castAdd M a)) ↔
-      d ∈ D.toCellScheme.below (D.toCellScheme.gradedIndex a) := by
-    rw [CellScheme.mem_below, CellScheme.mem_below, appendFullCellsScheme_gradedIndex_castAdd,
-      appendFullCellsScheme_gradedIndex_castAdd]
-  by_cases hd : d ∈ D.toCellScheme.below (D.toCellScheme.gradedIndex a)
-  · rw [rowAt_of_mem (hiff.mpr hd), rowAt_of_mem hd, appendFullCells_row_castAdd]
-    exact D.rows.row_congr rfl rfl
-  · rw [rowAt_of_notMem (mt hiff.mp hd), rowAt_of_notMem hd]
-
 /-- **Appending the copies of full scope keeps the doubling**: at grade `k`, one new cell for each
 cell `e i` of `T` of graded index `(univ, k)`, every such cell having a new cell, with the row of
 `e i` read through `π` and `e`. -/
@@ -368,7 +355,7 @@ theorem IsDoubling.appendFullCells (hD : D.IsDoubling T π) {e : Fin M → Fin T
       have hd' : d' ∈ D.toCellScheme.below (D.toCellScheme.gradedIndex a) := by
         rwa [CellScheme.mem_below, appendFullCellsScheme_gradedIndex_castAdd,
           appendFullCellsScheme_gradedIndex_castAdd] at hd
-      rw [rowAt_appendFullCells_castAdd', Fin.append_left, Fin.append_left, hD.rowAt_eq a d' hd']
+      rw [rowAt_appendFullCells_castAdd, Fin.append_left, Fin.append_left, hD.rowAt_eq a d' hd']
   exists_lift c b hc := by
     induction b using Fin.addCases with
     | left b =>

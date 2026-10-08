@@ -523,19 +523,19 @@ theorem not_isMarkedCapContext_of_grade_le {t' : StageType.{u} α k}
     ¬ t'.IsMarkedCapContext h :=
   fun ⟨c, _, hc, _, hn, _⟩ ↦ (ht c hc.2.1).not_gt hn
 
-/-- **Forcing at the root gives a marked-cap context.**  Let `β` be a limit, `β + ω ≤ α`, `q` a
-legal stage type at `β` restricting along `f : Fin n ↪ Fin m` to `p`, and `c` a top cap of `q` of
-grade above `n + 1`.  If `(q, f)` forces the threshold `n + 1` at every cell of
-`p` labelled `⊤`, then `q` is a marked-cap context along `f`, with any marker of `c`. -/
-theorem isMarkedCapContext_of_forcesThreshold (hβ : IsSuccLimit β) (hα : β + ω ≤ α)
-    (hq : q.IsLegal) {f : Fin n ↪ Fin m} {p : StageType.{u} β n}
-    (hp : restrictFace f q = some p) (hc : q.IsTopCap c)
-    (hn : n + 1 < q.toCellScheme.grade c)
+/-- **Forcing at the root tops gives the row inequality at a given marker**: let `β` be a limit,
+`β + ω ≤ α`, `q` a legal stage type at `β` restricting along `f : Fin n ↪ Fin m` to `p`, `c` a
+top cap of `q` and `r` a marker of `c`.  If `(q, f)` forces `n + 1` at every cell of `p` labelled
+`⊤`, then `visibilityReplace N (n + 1) (q.rowAt c r) ≤ q.rowAt c a` at every cell `a` of `q`
+visible through `f` and labelled `⊤`. -/
+theorem IsMarker.visibilityReplace_le_of_forcesThreshold (hβ : Order.IsSuccLimit β)
+    (hα : β + ω ≤ α) (hq : q.IsLegal) {f : Fin n ↪ Fin m} {p : StageType.{u} β n}
+    (hp : restrictFace f q = some p) (hc : q.IsTopCap c) (hr : q.IsMarker c r)
     (hforce : ∀ d : Fin p.card, p.label d = ⊤ →
       ForcesThreshold α hβ.isSuccPrelimit q f p d (n + 1)) :
-    q.IsMarkedCapContext f := by
-  obtain ⟨r, hr⟩ := exists_isMarker hc.2.1
-  refine ⟨c, r, hc, hr, hn, fun a ha hat ↦ ?_⟩
+    ∀ a ∈ q.visibleCells f, q.label a = ⊤ →
+      visibilityReplace (q.toCellScheme.grade c) (n + 1) (q.rowAt c r) ≤ q.rowAt c a := by
+  intro a ha hat
   obtain ⟨hf, hqp⟩ := (restrictFace_eq_some_iff q f).mp hp
   have hcard : (q.comap f hf).card = p.card :=
     congrArg (fun s : StageType.{u} β n ↦ s.card) hqp
@@ -548,6 +548,21 @@ theorem isMarkedCapContext_of_forcesThreshold (hβ : IsSuccLimit β) (hα : β +
     exact (label_congr hqp.symm rfl).trans (comap_label q f hf i)
   exact (ForcesThreshold.le_grade_and_visibilityReplace_rowAt_le hβ hα hq hc hr (hforce d hd) hd
     fun i' hi' ↦ congrArg (q.cellMap f) (Fin.ext hi')).2
+
+/-- **Forcing at the root gives a marked-cap context.**  Let `β` be a limit, `β + ω ≤ α`, `q` a
+legal stage type at `β` restricting along `f : Fin n ↪ Fin m` to `p`, and `c` a top cap of `q` of
+grade above `n + 1`.  If `(q, f)` forces the threshold `n + 1` at every cell of
+`p` labelled `⊤`, then `q` is a marked-cap context along `f`, with any marker of `c`. -/
+theorem isMarkedCapContext_of_forcesThreshold (hβ : IsSuccLimit β) (hα : β + ω ≤ α)
+    (hq : q.IsLegal) {f : Fin n ↪ Fin m} {p : StageType.{u} β n}
+    (hp : restrictFace f q = some p) (hc : q.IsTopCap c)
+    (hn : n + 1 < q.toCellScheme.grade c)
+    (hforce : ∀ d : Fin p.card, p.label d = ⊤ →
+      ForcesThreshold α hβ.isSuccPrelimit q f p d (n + 1)) :
+    q.IsMarkedCapContext f := by
+  obtain ⟨r, hr⟩ := exists_isMarker hc.2.1
+  exact ⟨c, r, hc, hr, hn,
+    IsMarker.visibilityReplace_le_of_forcesThreshold hβ hα hq hp hc hr hforce⟩
 
 end StageType
 

@@ -223,12 +223,6 @@ theorem isLawful_lab {a b : Label.{u}} (ha : IsSelfVisible 1 a) (hb : IsSelfVisi
     · fin_cases s <;> simp_all [lab]
     · fin_cases s <;> simp_all [lab]
 
-/-- A lawful section gives lawful labellings below every pair. -/
-private theorem isLawfulBelow_of_isLawful {w : Fin 5 → Label.{u}} (h : S.{u}.rows.IsLawful w)
-    (X : Finset (Fin 2) × ℕ) : S.{u}.rows.IsLawfulBelow X (fun d ↦ w d) :=
-  CellScheme.Rows.isLawfulBelow_iff_forall.mpr
-    ⟨fun d _ ↦ h.orderly d, fun s _ ↦ h.locality s, fun s t _ hst hg ↦ h.availability s t hst hg⟩
-
 /-- **Lawful sections below `({0}, 1)`**, necessary conditions: self-visible at `1` at `0` and `1`,
 and `0` at most `1` (the cell `0` reads `0` at `1` and `1` at `ω + 2`). -/
 private theorem conditions_zero {w : Fin 5 → Label.{u}}
@@ -287,14 +281,6 @@ private theorem conditions_univ {w : Fin 5 → Label.{u}}
   exact ⟨ho 0 (m 0 (by decide)), ho 1 (m 1 (by decide)), h02, h13,
     h13 ▸ hav 0 (by decide)⟩
 
-/-- A section below `X`, extended by `⊥`, is lawful below `X`. -/
-private theorem isLawfulBelow_extendBot {X : Finset (Fin 2) × ℕ} {q : cells.below X → Label.{u}}
-    (hq : S.{u}.rows.IsLawfulBelow X q) :
-    S.{u}.rows.IsLawfulBelow X (fun d ↦ CellScheme.Rows.extendBot X q d) := by
-  convert hq using 1
-  funext d
-  exact CellScheme.Rows.extendBot_of_mem q d.2
-
 /-- **The capped lift from `({0}, 1)` to `(univ, 1)`**: the prescription `(a, b)` at `0`, `1`
 lifts to `(a, b, a, b, ⊥)`. -/
 private theorem cappedLift_zero
@@ -302,8 +288,8 @@ private theorem cappedLift_zero
     S.{u}.rows.CappedLift h := by
   classical
   refine (CellScheme.Rows.cappedLift_iff_forall_exists h).mpr fun c hc p q hp hq hpq ↦ ?_
-  obtain ⟨-, -, hq02, hq13, -⟩ := conditions_univ (isLawfulBelow_extendBot hq)
-  obtain ⟨hv0, hv1, h01⟩ := conditions_zero (isLawfulBelow_extendBot hp)
+  obtain ⟨-, -, hq02, hq13, -⟩ := conditions_univ (CellScheme.Rows.isLawfulBelow_extendBot.mpr hq)
+  obtain ⟨hv0, hv1, h01⟩ := conditions_zero (CellScheme.Rows.isLawfulBelow_extendBot.mpr hp)
   set wq := CellScheme.Rows.extendBot ((univ : Finset (Fin 2)), 1) q
   set wp := CellScheme.Rows.extendBot (({0} : Finset (Fin 2)), 1) p
   have hqw : ∀ d, q d = wq d := fun d ↦ (CellScheme.Rows.extendBot_of_mem q d.2).symm
@@ -314,7 +300,8 @@ private theorem cappedLift_zero
     have := hpq ⟨0, m0⟩; rwa [hqw, hpw] at this
   have hc1 : min (wq 1) c = min (wp 1) c := by
     have := hpq ⟨1, m1⟩; rwa [hqw, hpw] at this
-  refine ⟨fun d ↦ lab (wp 0) (wp 1) d, isLawfulBelow_of_isLawful (isLawful_lab hv0 hv1 h01) _,
+  refine ⟨fun d ↦ lab (wp 0) (wp 1) d,
+    CellScheme.Rows.IsLawful.isLawfulBelow (isLawful_lab hv0 hv1 h01) _,
     fun ⟨d, hd⟩ ↦ ?_, fun ⟨d, hd⟩ ↦ ?_⟩
   · rw [hqw]
     have hd' : cells.gradedIndex d ≤ ((univ : Finset (Fin 2)), 1) := hd
@@ -341,7 +328,8 @@ private theorem cappedLift_one
     S.{u}.rows.CappedLift h := by
   classical
   refine (CellScheme.Rows.cappedLift_iff_forall_exists h).mpr fun c hc p q hp hq hpq ↦ ?_
-  obtain ⟨-, hv1, hq02, hq13, hq01⟩ := conditions_univ (isLawfulBelow_extendBot hq)
+  obtain ⟨-, hv1, hq02, hq13, hq01⟩ :=
+    conditions_univ (CellScheme.Rows.isLawfulBelow_extendBot.mpr hq)
   set wq := CellScheme.Rows.extendBot ((univ : Finset (Fin 2)), 1) q
   set wp := CellScheme.Rows.extendBot (({1} : Finset (Fin 2)), 1) p
   have hqw : ∀ d, q d = wq d := fun d ↦ (CellScheme.Rows.extendBot_of_mem q d.2).symm
@@ -355,7 +343,7 @@ private theorem cappedLift_one
   have hmax : min (max (wq 1) (wp 2)) c = min (wq 1) c := by
     rw [min_max_distrib_right, ← hc2, ← hq02, max_eq_left (min_le_min_right c hq01)]
   refine ⟨fun d ↦ lab (wp 2) (max (wq 1) (wp 2)) d,
-    isLawfulBelow_of_isLawful (isLawful_lab hv2 (hv1.max hv2) (le_max_right _ _)) _,
+    CellScheme.Rows.IsLawful.isLawfulBelow (isLawful_lab hv2 (hv1.max hv2) (le_max_right _ _)) _,
     fun ⟨d, hd⟩ ↦ ?_, fun ⟨d, hd⟩ ↦ ?_⟩
   · rw [hqw]
     have hd' : cells.gradedIndex d ≤ ((univ : Finset (Fin 2)), 1) := hd
@@ -415,7 +403,7 @@ theorem isLegal_S : S.{u}.IsLegal where
       -- consistency at `s` is lawfulness of its row below its graded index
       change S.{u}.rows.IsLawfulBelow (cells.gradedIndex s) (S.{u}.rows.row s)
       rw [hrow]
-      exact isLawfulBelow_of_isLawful
+      exact CellScheme.Rows.IsLawful.isLawfulBelow
         (isLawful_lab isSelfVisible_one' isSelfVisible_omegaAddTwo one_lt_omegaAddTwo.le) _
   isBountiful := by
     refine CellScheme.Rows.isBountiful_iff_forall_cappedLift_fst.mpr fun X Y hX hY h ↦ ?_

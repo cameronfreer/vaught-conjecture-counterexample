@@ -221,6 +221,21 @@ theorem appendFullCells_row_castAdd {n k M' : ℕ} {S : Scheme.{u} n}
         (Scheme.not_le_gradedIndex_of_lt h s.isLt) t.2⟩, Scheme.mem_below_of_lt h s.isLt t⟩ :=
   dite_eq_left s.isLt
 
+/-- **Old cells are read after appending cells of full scope as before**, at every grade. -/
+theorem rowAt_appendFullCells_castAdd {n k M' : ℕ} {S : Scheme.{u} n}
+    {r' : Fin M' → Fin (S.card + M') → Label.{u}}
+    {h : ∀ d, ¬ ((univ : Finset (Fin n)), k) ≤ S.toCellScheme.gradedIndex d} (a d : Fin S.card) :
+    (S.appendFullCells k M' r' h).rowAt (Fin.castAdd M' a) (Fin.castAdd M' d) = S.rowAt a d := by
+  have hiff : Fin.castAdd M' d ∈ (S.appendFullCells k M' r' h).toCellScheme.below
+      ((S.appendFullCells k M' r' h).toCellScheme.gradedIndex (Fin.castAdd M' a)) ↔
+      d ∈ S.toCellScheme.below (S.toCellScheme.gradedIndex a) := by
+    rw [CellScheme.mem_below, CellScheme.mem_below, appendFullCellsScheme_gradedIndex_castAdd,
+      appendFullCellsScheme_gradedIndex_castAdd]
+  by_cases hd : d ∈ S.toCellScheme.below (S.toCellScheme.gradedIndex a)
+  · rw [rowAt_of_mem (hiff.mpr hd), rowAt_of_mem hd, appendFullCells_row_castAdd]
+    exact S.rows.row_congr rfl rfl
+  · rw [rowAt_of_notMem (mt hiff.mp hd), rowAt_of_notMem hd]
+
 variable (k M r h) in
 /-- **The old cells form a lower embedding** along `Fin.castAdd`. -/
 theorem isLowerEmbedding_castAdd :

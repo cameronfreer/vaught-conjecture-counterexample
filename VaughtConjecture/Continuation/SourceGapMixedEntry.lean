@@ -503,19 +503,6 @@ section Append
 variable {M : ℕ} {rr : Fin M → Fin (S.card + M) → Label.{u}}
   {h1 : ∀ d, ¬ ((univ : Finset (Fin n)), 1) ≤ S.toCellScheme.gradedIndex d}
 
-/-- Old cells are read after appending cells of full scope as before. -/
-theorem rowAt_appendFullCells_castAdd (c d : Fin S.card) :
-    (S.appendFullCells 1 M rr h1).rowAt (Fin.castAdd M c) (Fin.castAdd M d) = S.rowAt c d := by
-  have hiff : Fin.castAdd M d ∈ (S.appendFullCells 1 M rr h1).toCellScheme.below
-      ((S.appendFullCells 1 M rr h1).toCellScheme.gradedIndex (Fin.castAdd M c)) ↔
-      d ∈ S.toCellScheme.below (S.toCellScheme.gradedIndex c) := by
-    rw [CellScheme.mem_below, CellScheme.mem_below, appendFullCellsScheme_gradedIndex_castAdd,
-      appendFullCellsScheme_gradedIndex_castAdd]
-  by_cases hd : d ∈ S.toCellScheme.below (S.toCellScheme.gradedIndex c)
-  · rw [rowAt_of_mem (hiff.mpr hd), rowAt_of_mem hd, appendFullCells_row_castAdd]
-    exact S.rows.row_congr rfl rfl
-  · rw [rowAt_of_notMem (mt hiff.mp hd), rowAt_of_notMem hd]
-
 /-- An old cell does not read a new cell of full scope. -/
 theorem rowAt_appendFullCells_natAdd (c : Fin S.card) (i : Fin M) :
     (S.appendFullCells 1 M rr h1).rowAt (Fin.castAdd M c) (Fin.natAdd S.card i) = ⊥ := by

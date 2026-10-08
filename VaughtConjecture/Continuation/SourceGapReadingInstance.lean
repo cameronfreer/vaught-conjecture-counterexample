@@ -5,6 +5,7 @@ Authors: Cameron Freer
 -/
 import VaughtConjecture.Continuation.SourceGapReading
 import VaughtConjecture.Continuation.SourceGapSeparationObstruction
+import VaughtConjecture.Extension.CoupledGateExamples
 
 /-!
 # Reading each new top at the input refuting separation through the lost top
@@ -204,22 +205,7 @@ theorem isLawful_lab {v w s : Label.{u}} (hv : IsSelfVisible 1 v) (hw : IsSelfVi
     · exact (lab_congr hk.symm).le
     · rw [lab_of_kind.1 hk]; exact bot_le
 
-
 /-! ### Legality -/
-
-/-- A lawful section gives lawful labellings below every pair. -/
-private theorem isLawfulBelow_of_isLawful {w : Fin 13 → Label.{u}} (h : S.{u}.rows.IsLawful w)
-    (X : Finset (Fin 3) × ℕ) : S.{u}.rows.IsLawfulBelow X (fun d ↦ w d) :=
-  CellScheme.Rows.isLawfulBelow_iff_forall.mpr
-    ⟨fun d _ ↦ h.orderly d, fun s _ ↦ h.locality s, fun s t _ hst hg ↦ h.availability s t hst hg⟩
-
-/-- A section below `X`, extended by `⊥`, is lawful below `X`. -/
-private theorem isLawfulBelow_extendBot {X : Finset (Fin 3) × ℕ} {q : cells.below X → Label.{u}}
-    (hq : S.{u}.rows.IsLawfulBelow X q) :
-    S.{u}.rows.IsLawfulBelow X (fun d ↦ CellScheme.Rows.extendBot X q d) := by
-  convert hq using 1
-  funext d
-  exact CellScheme.Rows.extendBot_of_mem q d.2
 
 theorem isWellFormed_cells : cells.IsWellFormed :=
   ⟨inferInstance, isPlan_plan3, fun d ↦ by
@@ -247,16 +233,16 @@ theorem isConsistent_S : S.{u}.rows.IsConsistent := by
       S.{u}.rows.row c = fun d ↦ lab v w s d.1 := fun v w s h ↦ funext fun d ↦ h d.1
   rcases kind_cases c with hc | hc | hc | hc
   · rw [hrow ⊥ ⊥ ⊥ fun d ↦ by simp [rowValue, lab, hc]]
-    exact isLawfulBelow_of_isLawful (isLawful_lab (isSelfVisible_bot _) (isSelfVisible_bot _)
-      (isSelfVisible_bot _) le_rfl rfl) _
+    exact CellScheme.Rows.IsLawful.isLawfulBelow
+      (isLawful_lab (isSelfVisible_bot _) (isSelfVisible_bot _) (isSelfVisible_bot _) le_rfl rfl) _
   · rw [hrow L ⊥ ⊥ fun d ↦ by simp [rowValue, hc]]
-    exact isLawfulBelow_of_isLawful (isLawful_lab (isSelfVisible_L.mono (by omega))
+    exact CellScheme.Rows.IsLawful.isLawfulBelow (isLawful_lab (isSelfVisible_L.mono (by omega))
       (isSelfVisible_bot _) (isSelfVisible_bot _) bot_le (by simp)) _
   · rw [hrow H H L fun d ↦ by simp [rowValue, hc]]
-    exact isLawfulBelow_of_isLawful (isLawful_lab (isSelfVisible_H.mono (by omega))
+    exact CellScheme.Rows.IsLawful.isLawfulBelow (isLawful_lab (isSelfVisible_H.mono (by omega))
       isSelfVisible_H isSelfVisible_L le_rfl rfl) _
   · rw [hrow L L H fun d ↦ by simp [rowValue, hc]]
-    exact isLawfulBelow_of_isLawful (isLawful_lab (isSelfVisible_L.mono (by omega))
+    exact CellScheme.Rows.IsLawful.isLawfulBelow (isLawful_lab (isSelfVisible_L.mono (by omega))
       isSelfVisible_L isSelfVisible_H le_rfl rfl) _
 
 theorem isComplete_cells : cells.IsComplete := by
@@ -335,32 +321,6 @@ private theorem min_eq_min_at (hw : S.{u}.rows.IsLawfulBelow X (fun d ↦ w d)) 
     refine le_antisymm (hA.trans hBs.symm.le) ?_
     rw [hca, hB']
     exact le_min h hg
-
-/-- Order facts on two values `p ≤ w`, `q ≤ s` dominating `w` and `s` jointly. -/
-private theorem eq_of_le {p q w s : Label.{u}} (hp : p ≤ w) (hq : q ≤ s) (hw : w ≤ p ∨ w ≤ q)
-    (hs : s ≤ p ∨ s ≤ q) (h1 : min s p = min q p) (h2 : min w q = min p q) : p = w ∧ q = s := by
-  rcases le_total w s with hws | hsw
-  · rcases hs with hs | hs
-    · have hpw : p = w := le_antisymm hp (hws.trans hs)
-      have hsw' : s = w := le_antisymm (hs.trans hp) hws
-      subst hpw
-      refine ⟨rfl, ?_⟩
-      rw [hsw', min_self] at h1
-      exact le_antisymm hq (by rw [hsw']; exact h1.le.trans (min_le_left _ _))
-    · have hqs : q = s := le_antisymm hq hs
-      subst hqs
-      rw [min_eq_left hws, min_eq_left (hp.trans hws)] at h2
-      exact ⟨h2.symm, rfl⟩
-  · rcases hw with hw | hw
-    · have hpw : p = w := le_antisymm hp hw
-      subst hpw
-      rw [min_eq_left hsw, min_eq_left (hq.trans hsw)] at h1
-      exact ⟨rfl, h1.symm⟩
-    · have hqs : q = s := le_antisymm hq (hsw.trans hw)
-      have hwq : w = q := le_antisymm hw (hq.trans hsw)
-      subst hqs
-      rw [← hwq, min_self, min_eq_left hp] at h2
-      exact ⟨h2.symm, rfl⟩
 
 /-- **Below `({0, 1}, 1)`**: `e₁ = ⊥` and `z₁ = y`. -/
 private theorem conditions_face_one (hw : S.{u}.rows.IsLawfulBelow ({0, 1}, 1) (fun d ↦ w d)) :
@@ -476,9 +436,10 @@ theorem conditions_univ_two (hw : S.{u}.rows.IsLawfulBelow (univ, 2) (fun d ↦ 
       (by rw [hga]; rfl)
     rcases key2 u hu with rfl | rfl
     exacts [.inl hle, .inr hle]
-  obtain ⟨h10, h11⟩ := eq_of_le hp hq (hdom 3 (by decide) rfl) (hdom 4 (by decide) rfl)
+  obtain ⟨h10, h11⟩ := CoupledGateExamples.eq_and_eq_of_min_eq hp hq
     (eq_at hw (c := 10) (d := 4) (d' := 11) (by decide) (by decide) (by decide) rfl rfl)
     (eq_at hw (c := 11) (d := 3) (d' := 10) (by decide) (by decide) (by decide) rfl rfl)
+    (hdom 3 (by decide) rfl) (hdom 4 (by decide) rfl)
   refine ⟨fun d hd ↦ ?_, h30, h04, hv0, hv3, hv4⟩
   fin_cases d
   · rfl
@@ -511,7 +472,6 @@ private theorem conditions_univ_one (hw : S.{u}.rows.IsLawfulBelow (univ, 1) (fu
 
 end Necessity
 
-
 /-! ### Bountifulness -/
 
 /-- Capped agreement of two labellings constant on kinds, from that of their values. -/
@@ -539,11 +499,11 @@ private theorem cappedLift_of_lab {X Y : Finset (Fin 3) × ℕ} (h : X ≤ Y)
   set wq := CellScheme.Rows.extendBot Y q
   have hpw : ∀ d, p d = wp d := fun d ↦ (CellScheme.Rows.extendBot_of_mem p d.2).symm
   have hqw : ∀ d, q d = wq d := fun d ↦ (CellScheme.Rows.extendBot_of_mem q d.2).symm
-  obtain ⟨v, w, s, hl, hres, hcap⟩ := hlift c wp wq (isLawfulBelow_extendBot hp)
-    (isLawfulBelow_extendBot hq) fun d hd ↦ by
+  obtain ⟨v, w, s, hl, hres, hcap⟩ := hlift c wp wq (CellScheme.Rows.isLawfulBelow_extendBot.mpr hp)
+    (CellScheme.Rows.isLawfulBelow_extendBot.mpr hq) fun d hd ↦ by
       have := hpq ⟨d, hd⟩
       rwa [hqw, hpw] at this
-  exact ⟨fun d ↦ lab v w s d, isLawfulBelow_of_isLawful hl Y,
+  exact ⟨fun d ↦ lab v w s d, CellScheme.Rows.IsLawful.isLawfulBelow hl Y,
     fun d ↦ (hcap d.1 d.2).trans (by rw [hqw]), fun d ↦ (hres d.1 d.2).trans (hpw d).symm⟩
 
 /-- The lift from a coatom at the grade `2` to the full face, along `y`, `o`, `r` of the coatom. -/

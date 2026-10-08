@@ -332,23 +332,48 @@ def topMarkedPrescription (t' : StageType.{u} α k) (d : StageType.{u} α (n + 1
     ∀ j : Fin d.card, Fin.last n ∈ d.toCellScheme.scope j → d.label j = ⊤ →
       ρ (.inl r) ≤ ρ (.inr j)
 
-/-- **A top-marked carrier determines the donor at a cutoff.**  Let `t'` restrict along `h` to
-`t`, let `d` be a one-point coface of `t`, `c` a top cap of `t'` of grade `N ≥ n + 1`, and `r` a
-cell of `t'` labelled `⊤`.  If `D` is a prescribed extension for the top-marked prescription over
-`t'` carrying `d`, and the cutoff `δ` lies above every label of `D` other than `⊤`, then `d` is
-determined over `t'` along `h` within the receiving family of `D` at `δ`.  The labels below `δ`
-are kept by the receiving family, and a new cell labelled `⊤` in `d` is read at least as `r` by a
-cell of graded index `(univ, N)` labelled `⊤` (availability from the top cap), hence is `⊤`
-(`CellScheme.Rows.IsLawful.eq_top_of_row_le`). -/
-theorem isDeterminedWithin_receivingFamily_of_isPrescribedExtension {t' : StageType.{u} α k}
+/-- A **top-reading carrier** over `t'` along `h` for `d`, with top cap `c` and marker `r`: a legal
+one-point extension `D` of `t'` whose face along `extendByLast h` is `d`, such that every cell of
+`D` of graded index `(univ, N)` (`N` the grade of `c`) **labelled `⊤` in `D`** reads every new
+cell of `d` labelled `⊤` at least as `r`.  The cells of that graded index with a label other than
+`⊤` are unconstrained. -/
+structure IsTopReadingCarrier (t' : StageType.{u} α k) (h : Fin n ↪ Fin k)
+    (d : StageType.{u} α (n + 1)) (c r : Fin t'.card) (D : StageType.{u} α (k + 1)) : Prop where
+  /-- The carrier is legal. -/
+  isLegal : D.IsLegal
+  /-- Its face along the first points is `t'`. -/
+  restrictFace_castSucc : restrictFace Fin.castSuccEmb D = some t'
+  /-- Its face along `extendByLast h` is `d`. -/
+  restrictFace_extendByLast : restrictFace (extendByLast h) D = some d
+  /-- Every cell of graded index `(univ, N)` labelled `⊤` reads the new tops at least as `r`. -/
+  reads : ∀ u, D.toCellScheme.gradedIndex u = ((univ : Finset (Fin (k + 1))),
+      t'.toCellScheme.grade c) → D.label u = ⊤ → ∀ j : Fin d.card,
+      Fin.last n ∈ d.toCellScheme.scope j → d.label j = ⊤ →
+        D.rowAt u (faceCell restrictFace_castSucc r) ≤
+          D.rowAt u (faceCell restrictFace_extendByLast j)
+
+/-- **A prescribed extension for the top-marked prescription is a top-reading carrier**: it reads
+the new tops at every cell of graded index `(univ, N)`, labelled `⊤` or not. -/
+theorem IsPrescribedExtension.isTopReadingCarrier {t' : StageType.{u} α k} {h : Fin n ↪ Fin k}
+    {d : StageType.{u} α (n + 1)} {c r : Fin t'.card} {D : StageType.{u} α (k + 1)}
+    (hD : IsPrescribedExtension t' h d (topMarkedPrescription t' d c r) D) :
+    t'.IsTopReadingCarrier h d c r D := by
+  obtain ⟨hDl, h₁, h₂, he₁, he₂, hS⟩ := hD
+  exact ⟨hDl, h₁, h₂, fun u hu _ j hj hjt ↦ hS u _ hu rfl j hj hjt⟩
+
+/-- **A top-reading carrier determines the donor at a cutoff**, with the reading asked only at the
+cells labelled `⊤`: a member of the receiving family at a cutoff above the labels of
+`D` other than `⊤` is `⊤` at a cell only where `D` is, so the cell of graded index `(univ, N)`
+labelled `⊤` given by availability from the top cap is labelled `⊤` in `D` and reads the new tops
+at least as the marker. -/
+theorem isDeterminedWithin_receivingFamily_of_isTopReadingCarrier {t' : StageType.{u} α k}
     {h : Fin n ↪ Fin k} {t : StageType.{u} α n} {d : StageType.{u} α (n + 1)} {c r : Fin t'.card}
     (ht : restrictFace h t' = some t) (hd : restrictFace Fin.castSuccEmb d = some t)
     (hc : t'.IsTopCap c) (hr : t'.label r = ⊤) (hn : n + 1 ≤ t'.toCellScheme.grade c)
-    {D : StageType.{u} α (k + 1)}
-    (hD : IsPrescribedExtension t' h d (topMarkedPrescription t' d c r) D) {δ : Label.{u}}
+    {D : StageType.{u} α (k + 1)} (hD : t'.IsTopReadingCarrier h d c r D) {δ : Label.{u}}
     (hδ : ∀ j, D.label j ≠ ⊤ → D.label j < δ) :
     IsDeterminedWithin (receivingFamily D δ) t' h d := by
-  obtain ⟨hDl, h₁, h₂, he₁, he₂, hS⟩ := hD
+  obtain ⟨hDl, h₁, h₂, hS⟩ := hD
   rintro ⟨S, ℓ, hw, hcod, hl, hat⟩ ⟨hq, hcut⟩ hq₁
   -- the stage type `q` has the scheme of `D`
   change S = D.toScheme at hq
@@ -384,9 +409,13 @@ theorem isDeterminedWithin_receivingFamily_of_isPrescribedExtension {t' : StageT
           hbelow _ ((grade_faceCell h₂ j).trans_le ((d.grade_le j).trans hn))
         have hs : faceCell h₁ r ∈ D.toCellScheme.below (D.toCellScheme.gradedIndex u) :=
           hbelow _ ((grade_faceCell h₁ r).trans_le (hc.2.2 r hr))
-        have hrow := hS u N hu' rfl j hj hjt
-        -- the readings are those of the cells of `D` at `r` and at `j`
-        change D.rowAt u (faceCell h₁ r) ≤ D.rowAt u (faceCell h₂ j) at hrow
+        -- the cell `u` is labelled `⊤` in `D`: the receiving family keeps the labels below `δ`
+        have hDu : D.label u = ⊤ := by
+          by_contra hne
+          have hmin : min (ℓ u) δ = min (D.label u) δ := hcut u u rfl
+          rw [hℓu, min_eq_right le_top, min_eq_left (hδ u hne).le] at hmin
+          exact (hδ u hne).ne hmin.symm
+        have hrow := hS u hu' hDu j hj hjt
         rw [Scheme.rowAt_of_mem hs, Scheme.rowAt_of_mem hx] at hrow
         rw [hjt]
         exact hl.eq_top_of_row_le hs hx hℓu ((hold r).trans hr) hrow
@@ -416,6 +445,27 @@ theorem isDeterminedWithin_receivingFamily_of_isPrescribedExtension {t' : StageT
     congr 1
     exact Fin.ext hij
   rw [hcell, hlab]
+
+/-- **A top-marked carrier determines the donor at a cutoff.**  Let `t'` restrict along `h` to
+`t`, let `d` be a one-point coface of `t`, `c` a top cap of `t'` of grade `N ≥ n + 1`, and `r` a
+cell of `t'` labelled `⊤`.  If `D` is a prescribed extension for the top-marked prescription over
+`t'` carrying `d`, and the cutoff `δ` lies above every label of `D` other than `⊤`, then `d` is
+determined over `t'` along `h` within the receiving family of `D` at `δ`.  The labels below `δ`
+are kept by the receiving family, and a new cell labelled `⊤` in `d` is read at least as `r` by a
+cell of graded index `(univ, N)` labelled `⊤` (availability from the top cap), hence is `⊤`.  Such
+a prescribed extension is a top-reading carrier
+(`StageType.IsPrescribedExtension.isTopReadingCarrier`), so this is
+`StageType.isDeterminedWithin_receivingFamily_of_isTopReadingCarrier`. -/
+theorem isDeterminedWithin_receivingFamily_of_isPrescribedExtension {t' : StageType.{u} α k}
+    {h : Fin n ↪ Fin k} {t : StageType.{u} α n} {d : StageType.{u} α (n + 1)} {c r : Fin t'.card}
+    (ht : restrictFace h t' = some t) (hd : restrictFace Fin.castSuccEmb d = some t)
+    (hc : t'.IsTopCap c) (hr : t'.label r = ⊤) (hn : n + 1 ≤ t'.toCellScheme.grade c)
+    {D : StageType.{u} α (k + 1)}
+    (hD : IsPrescribedExtension t' h d (topMarkedPrescription t' d c r) D) {δ : Label.{u}}
+    (hδ : ∀ j, D.label j ≠ ⊤ → D.label j < δ) :
+    IsDeterminedWithin (receivingFamily D δ) t' h d :=
+  isDeterminedWithin_receivingFamily_of_isTopReadingCarrier ht hd hc hr hn hD.isTopReadingCarrier
+    hδ
 
 variable (α) in
 /-- **Top-marked carriers** at the stage `α` (a named hypothesis on stage types; open): over every
