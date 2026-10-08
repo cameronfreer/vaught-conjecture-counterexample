@@ -28,6 +28,7 @@ document.
 | (none; companions) | milestones A–C (`COMPANIONS.md`) | not core checkpoints |
 | Reduction to full presentations | the full-presentation route (below) | its own order (below) |
 | Manuscript correspondence (required) | the concordance (below) | its own criteria (below) |
+| The receiving models (after Layer 6) | 3–5, for the receiving models | 8 (below) |
 
 The general results of Layer 0 are used in layers 1 (lifting), 2 (finite hulls), 3 (the
 classical limit: Fraïssé existence, ultrahomogeneous extension, factorization of tuples through
@@ -3587,7 +3588,12 @@ Each checkpoint needs both its abstract API and a concrete application:
    expansions, and global termination are not used.  Unbounded top-grade growth of the realization
    is still to be proved and is not used.
 
-**A listed future repin, outside the order 1–7.**  A repin of InfinitaryLogic to a revision
+8. The receiving models ("Checkpoint 8: the receiving models", below; `README.md`, "The
+   receiving models"): the expansion-domain route for the class of models with finite-cut
+   receiving, beginning with the receiving-limit lemma (8a).  Status: prospective; its compiled
+   support is listed there, and no status above changes.
+
+**A listed future repin, outside the order 1–8.**  A repin of InfinitaryLogic to a revision
 containing `2cd44c3` (or the release tag that follows it) has been neither made nor decided.  A
 controlled move, if undertaken, would be a separate checkpoint, before the first application of
 the greatest-stage theorem or of Scott separation, done as the move to `e460cb6` (this
@@ -4126,6 +4132,116 @@ and prescriptions 3 and 4 forces 3 = 4 (`README.md`, Layer 1 and Layer 3, 3.1). 
 construction chosen builds grade by grade over the boundary, in one fixed order of its cells,
 chooses the full-scope cell that serves each lift (defined with 2.6) before extending on the
 other coatom, and tops out in a single apex cell.
+
+### Checkpoint 8: the receiving models
+
+The route adopted for a first complete proof (`README.md`, "The receiving models", after
+Layer 6).  This checkpoint changes no status recorded elsewhere in this file.  Every statement
+in it that names no compiled theorem is prospective; every argument that names none is argued,
+not formalized.
+
+**The class.**  At a block stage `α = λ_ξ`, `ξ < ω₁`, the class `𝒞_α` is the class of
+realizations at `α` on countable carriers that satisfy the stage-model axioms
+(`Realization.IsModel`) **and** finite-cut receiving (`Realization.HasFiniteCutReceiving`,
+`Realization/Model.lean`).  Its members are the **receiving models**; a **receiving expansion**
+is a model expansion whose realization is a receiving model; a **receiving successor** of a
+receiving model at `λ_ξ` is a receiving model at `λ_{ξ+1}` on the same carrier reducing to it;
+and the **receiving expansion domain** at `ξ` is the set of classes of models of the density
+sentence with a receiving expansion to `λ_ξ`.  None is defined in the library.
+
+Receiving is part of the definition, so existence, reduction, uniqueness, logical comparison,
+continuation, and classification are proved for `𝒞` itself.  This postpones the equivalence
+with the original presentation and does not weaken it: (R1) (`Expansion.FiniteCutReceiving`)
+becomes a later fidelity theorem relating the two presentations, models and receiving models,
+and keeps its status, still to be proved.
+
+**Compiled support** (compiled in this repository (theorem named); the consequences for `𝒞`
+argued, not formalized):
+
+1. the density sentence expresses receiving (`baseLanguage.realize_densitySentence_iff`,
+   `baseLanguage.realize_toStructure_densitySentence_iff`, `Language/Density.lean`); with the
+   cap-to-model theorem (`MainTheorem.capToModel`) the first receiving domain is every class;
+2. receiving descends under stage reduction (`Realization.HasFiniteCutReceiving.reduce`,
+   `Realization/Receiving.lean`), as modelhood does (`Realization.IsModel.reduce`);
+3. the comparison and uniqueness theorems take receiving of each realization separately:
+   `Realization.eq_of_reduce_eq_of_forcingDonors` (`Continuation/Normalization.lean`, with
+   `forcingDonors_of_blockStage`), `Expansion.exists_extend_covers` and
+   `Expansion.exists_extend_covers_back` (`Expansion/Agreement.lean`); only the compositions
+   `Expansion.NextBlockUniqueness.of_forcingDonors` and `Expansion.bfEquiv_of_modelExpansions`
+   take receiving of every model;
+4. the top-free witnesses have receiving (`hasFiniteCutReceiving_reconstruct`,
+   `hasFiniteCutReceiving_reconstruct_reduce`, `ClassicalLimit/Receiving.lean`);
+5. the generic endpoint finishes the count: `MainTheorem.hasThinAlephOneSpectrum_of_filtration`
+   (`MainTheorem/Spectrum.lean`), through
+   `MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_expansionDomains`
+   (`MainTheorem/Assembly.lean`), which does not ask which expansions define the domains.
+
+**Interfaces** (all prospective), in this order:
+
+- **8a. The receiving-limit lemma.**  For a limit `δ`, a realization at `λ_δ` whose stage
+  reduction to every earlier block stage has finite-cut receiving has finite-cut receiving (the
+  counterpart of `Realization.IsModel.of_forall_reduce`).  Sketch: for a permitted cutoff
+  `c < λ_δ`, choose an earlier block `ξ` with `c < λ_ξ` (`lt_blockStage_iff`); reduce the
+  request (`StageType.reduce_mem_cofaces`); receive in the reduction; the received point is on
+  the same carrier and extends the occurrence at `λ_δ`; agreement below `c` survives reduction
+  (`Label.min_reduce_of_le`).  The first test of the route: proved before any reorganization.
+  Acceptance: the statement at every limit `δ`, with no hypothesis beyond the receiving of the
+  reductions.
+- **8b. Reduction and uniqueness for `𝒞`.**  Reduction from item 2 above; next-block
+  uniqueness of receiving expansions from item 3 with no receiving hypothesis on other models;
+  the counterparts of `ModelExpansion.subsingleton` and `ModelExpansion.nonempty_of_forall_lt`
+  with 8a.
+- **8c. Logical comparison.**  The counterpart of `Expansion.bfEquiv_of_modelExpansions` for
+  receiving expansions, the receiving of each expansion and of its reductions in place of
+  `Expansion.FiniteExtensionReceiving`.
+- **8d. The receiving continuation criterion.**  A receiving model at `λ_ξ`, not cover-hollow,
+  with top-grade supremum `⊤`, has a receiving successor; the conclusion gives receiving as well
+  as modelhood.  Conditionally on (R4), the stable candidate has finite-cut receiving
+  (`Realization.hasFiniteCutReceiving_stableCandidate`, with the coface instances from
+  `StageType.HasNonemptyCofaceInstances.of_hasApexCoatomExtensions`) and is a model by it
+  (`Realization.isModel_stableCandidate_of_hasFiniteCutReceiving`); the composition is not
+  stated.
+- **8e. The receiving terminal and expansion interfaces.**  Receiving-terminality (no receiving
+  successor), receiving losses, and the cover of the receiving-terminal models.  "No receiving
+  successor" does not imply "no successor that is a model" (`Realization.IsTerminalAt`), so these
+  are new interfaces, not renamings of `Realization.IsTerminalAt`,
+  `Realization.HasTerminalProperty`, or `Expansion.expansionDomain_loss_countable`; the converse
+  implication holds, so `Realization.IsCoverHollow.isTerminalAt` gives receiving-terminality.
+- **8f. Classification and the count.**  The terminal comparisons for receiving models, countable
+  and nonempty receiving losses, and the count through the endpoint of item 5, unchanged.
+
+**The three finite reading constructions** (open; the warnings are compiled in separate open
+changes, not in the library).  Completion yields a lawful extension
+(`Seed.nonempty_completionBelowFullGrade`); classification and continuation need a lawful
+extension whose rows read specified labels (`StageType.ReadsAtLeast`;
+`CellScheme.Rows.IsLawful.le_of_forall_row_le`).
+
+- (R2): extensions satisfying the per-top reading criterion for arbitrary relevant donors.  The
+  fixed-lost-top version, `StageType.HasSeparatedPinnedExtensions`, is refuted at every stage
+  (`SeparationObstruction.not_hasSeparatedPinnedExtensions`, in a separate open change); the
+  replacement reads each new top through its own old reference top.
+- (R3): uniform acquisition of marked-cap contexts (`StageType.IsMarkedCapContext`,
+  `Stage/MarkedCap.lean`) and reading carriers: marked closure for sufficiently rich marked
+  specifications; the empty specification solves nothing.
+- (R4): extensions with the required cap readings.  Ordinary profile completion can put an
+  all-`⊥` row where a label must be read, so the completion theorem cannot be applied unchanged.
+
+No single universal reading theorem is required: the quantifiers of the three differ, and the
+stronger unifications examined are refuted
+(`PrescribedFullRowsCounterexample.not_hasPrescribedFullRowsAtLabels`; the fixed-lost-top form
+of (R2)).
+
+**Deferred from the first endpoint**, each a later result with its status unchanged: the
+equivalence with the original four-family sentence (checkpoint 4, the fidelity theorem); global
+stopping and maximal coverage of every prescribed base; the full manuscript correspondence
+("Manuscript concordance"); the Scott-process and descriptive refinements (`COMPANIONS.md`).
+
+**Order.**  First, check the general completion against the semantic contract, integrate it,
+and instantiate its consequences (the four-hypothesis form; `MainTheorem.capToModel`,
+`forcingDonors_of_blockStage`, `MainTheorem.hasNonemptyLosses_of_nextBlockUniqueness`).
+Second, 8a, then 8b–8f.  Third, the three reading constructions, attacked directly with their
+exact requirements; each preservation lemma is tested against the compiled counterexamples
+before any conditional theorem is stated around it.
 
 ## The common core of the receiving routes
 
