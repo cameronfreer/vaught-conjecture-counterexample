@@ -347,8 +347,9 @@ the status of each hypothesis are unchanged.
 `(h2 : CoatomCutoffDetermination fun K t' h ↦ t'.IsSourceGapContext K h)`
 `(h3 : HollowCoatomCutoffDetermination fun t' h ↦ t'.IsMarkedCapContext h) :`
 `HasThinAlephOneSpectrum densitySentence` (`MainTheorem/SourceGapMarkedCapRoute`), and the form
-`…_margin` with `h4` at `StageType.GradedCapMarginCalibration`, implied by the graded cap form
-(`StageType.HasCutoffFirstCoatomCompletions.gradedCapMargin`).  The three hypotheses are finite
+`…_margin` with `h4` at `StageType.GradedCapMarginCalibration`.  The graded-cap hypothesis implies
+the margin hypothesis (`StageType.HasCutoffFirstCoatomCompletions.gradedCapMargin`), so the margin
+endpoint yields the graded-cap endpoint.  The three hypotheses are finite
 statements about stage types and are open: (R4) cutoff completions at the first coatom (the coatom
 `Fin.castSuccEmb`, which omits the last point), (R2) coatom cutoff determination for the source-gap
 context, and (R3) hollow coatom cutoff determination for the marked-cap context.  The coatom forms
