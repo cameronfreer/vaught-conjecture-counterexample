@@ -23,14 +23,15 @@ labelling lawful below a pair is `⊥` at its cells of the common face
   completed by the glued labelling on the donor side; it is lawful on both coatoms (they agree on
   the dead common face), and its splice is correct (`⊤` on `T`, `⊥` on `Z`; or the cap is `⊥`
   above the grade).
-* **The fill at the positive caps** asks the donor side to agree with a prescribed correct profile
-  `P` capped at `h` and to be correct for the private prescription above `h`.  The natural donor
-  side, `P` raised to `⊤` above `h`, is not a transport by a witness bounded by the grade `k` of the
-  layer when `h` is short and self-visible at `k` (`CapRequests.not_isWitness_of_raises`): a short
-  self-visible cap at `k` has finite part exactly `k`, and the replacement at the threshold `k`
-  with the value `k` crosses it.  So the witness method of the raise reaches only the layers above
-  the grades of the raised cells, and the positive fill at the grade of the requested cells is
-  left open.
+* **The fill at the positive caps** (`CapRequests.capFillPosAt_of_isDeadFace`), at a grade `k ≥ 2`
+  **above the grades of the requested cells**, over a dead common face, with `F` empty: the donor
+  coatom is filled at the ambient `P`, raised to `⊤` above the cap `h` below the grade `k`
+  (`Label.raise`, a witness bounded by `k - 1` because `h` is self-visible at `k`), and lifted back
+  to the grade `k` at the cap `h` within the donor coatom (bountifulness of the amalgam).  The tops
+  are `⊤` where the fill is at least `h`, and read the marker value through `P` below `h`
+  (`CapRequests.min_markerValue_eq`).
+* At the grade of the requested cells the raise is not available: no map raising above a short
+  self-visible cap at `k` is a witness bounded by `k` (`CapRequests.not_isWitness_of_raises`).
 
 **Where the dead face fails** (`CapRequests.not_isDeadFace_of_label_ne_bot`): over a dead common
 face the glued labelling is `⊥` on it, so a seed whose common face carries a live label (for an
@@ -126,6 +127,139 @@ theorem capFillBotAt_of_isDeadFace (hgr : r.IsGraded I.amalgam.toCellScheme.grad
     · rw [hat_of_le ((hgr.grade_le_of_mem_T y hy).trans hck), hoff (hT y hy).2, (hT y hy).1]
       exact le_top
   · exact isCorrect_of_cap_eq_bot (hat_of_lt (not_le.mp hck))
+
+/-- The capped marker values agree when the states agree capped at a cap `h` self-visible at the
+threshold. -/
+theorem min_markerValue_eq {s s' : Fin I.amalgam.card → Label.{u}} {h : Label.{u}}
+    (hh : IsSelfVisible r.N h) (hag : ∀ d, min (s d) h = min (s' d) h) :
+    min (r.markerValue s) h = min (r.markerValue s') h := by
+  have hR : min (visibilityReplace r.N r.R (s r.marker)) h =
+      min (visibilityReplace r.N r.R (s' r.marker)) h := by
+    rw [← visibilityReplace_min_of_isSelfVisible r.R_lt_N.le hh,
+      ← visibilityReplace_min_of_isSelfVisible r.R_lt_N.le hh, hag]
+  calc min (r.markerValue s) h
+      = min (min (visibilityReplace r.N r.R (s r.marker)) h) (min (s r.cap) h) := by
+        rw [markerValue, min_min_min_comm, min_self]
+    _ = min (min (visibilityReplace r.N r.R (s' r.marker)) h) (min (s' r.cap) h) := by
+        rw [hR, hag]
+    _ = min (r.markerValue s') h := by rw [markerValue, min_min_min_comm, min_self]
+
+/-- **The fill at the positive caps from the private coatom over a dead common face**, at a grade
+`k ≥ 2` above the grades of the requested cells: the other coatom is filled at the ambient `P`,
+raised to `⊤` above the cap `h` below the grade `k` (`Label.raise`, a witness bounded by `k - 1`
+since `h` is self-visible at `k`), and lifted back to the grade `k` at the cap `h` within the donor
+coatom.  The tops then read the private marker: below `h` through the correctness of `P`, above `h`
+as `⊤`.  With `F` empty, `T` and `Z` off the private coatom and of grade below `k`, and the cap on
+the private coatom. -/
+theorem capFillPosAt_of_isDeadFace (hgr : r.IsGraded I.amalgam.toCellScheme.grade) (hm : 0 < m)
+    (hxp : xp ∈ (Pts : Finset (Fin (m + 2)))) (hxd : xd ∈ (Pts : Finset (Fin (m + 2))))
+    (hne : xd ≠ xp) (hdead : IsDeadFace I xp xd) {k : ℕ} (hk : 2 ≤ k) (hkm : k ≤ m + 1)
+    (hT : ∀ y ∈ r.T, ¬ I.amalgam.toCellScheme.scope y ⊆ univ.erase xp ∧
+      I.amalgam.toCellScheme.grade y < k)
+    (hZ : ∀ z ∈ r.Z, ¬ I.amalgam.toCellScheme.scope z ⊆ univ.erase xp ∧
+      I.amalgam.toCellScheme.grade z < k)
+    (hF : r.F = ∅) (hcapC : I.amalgam.toCellScheme.scope r.cap ⊆ univ.erase xp) :
+    CapFillPosAt r xp k := by
+  classical
+  intro h hh _ hb P hP hPc f hf hfP
+  obtain ⟨K, rfl⟩ : ∃ K, k = K + 1 := ⟨k - 1, by omega⟩
+  -- The fill of the donor coatom at the ambient `P`.
+  obtain ⟨W₀, hW₀, hW₀f, hW₀P⟩ := exists_isCutLawful_of_coatom_le hm (by omega) hkm hxp hh hP hf hfP
+  -- The raise below the grade `k`, within the donor coatom.
+  have hDK : ((univ.erase xd, K) : Finset (Fin (m + 2)) × ℕ) ≤ (univ.erase xd, K + 1) :=
+    ⟨subset_rfl, Nat.le_succ K⟩
+  have hp : I.amalgam.rows.IsLawfulBelow (univ.erase xd, K)
+      fun d ↦ Label.raise h (W₀ d) :=
+    ((hW₀.erase hxd).mono (X := (univ.erase xd, K)) hDK).map_of_apply_eq_bot (fun d ↦ d.2.2)
+      (isWitness_raise hh hb) (fun _ ↦ eq_bot_of_raise_eq_bot)
+  have hXf : ((univ.erase xd, K) : Finset (Fin (m + 2)) × ℕ) ∈
+      I.amalgam.toCellScheme.gradedFaces :=
+    ⟨I.erase_mem_faces hxd, by omega, by simp only; rw [Seed.card_erase]; omega⟩
+  have hYf : ((univ.erase xd, K + 1) : Finset (Fin (m + 2)) × ℕ) ∈
+      I.amalgam.toCellScheme.gradedFaces :=
+    ⟨I.erase_mem_faces hxd, by omega, by simp only; rw [Seed.card_erase]; omega⟩
+  obtain ⟨v, hv, hvP, hvp⟩ := (Rows.cappedLift_iff_forall_exists hDK).mp
+    (I.isBountiful hXf hYf hDK) h hh (fun d ↦ Label.raise h (W₀ d)) (fun d ↦ P d) hp
+    (hP.erase hxd) fun d ↦ by rw [min_raise, hW₀P]
+  -- The fill.
+  set W : Prof I := fun d ↦
+    if d ∈ I.amalgam.toCellScheme.below (univ.erase xp, K + 1) then f d
+    else if hD : d ∈ I.amalgam.toCellScheme.below (univ.erase xd, K + 1) then v ⟨d, hD⟩
+    else P d with hW
+  have hWv (d) (hd : d ∈ I.amalgam.toCellScheme.below (univ.erase xd, K + 1))
+      (hdC : d ∉ I.amalgam.toCellScheme.below (univ.erase xp, K + 1)) : W d = v ⟨d, hd⟩ := by
+    rw [hW]; simp only [hdC, hd, ite_false, dite_true]
+  have hvext : I.amalgam.rows.IsLawfulBelow (univ.erase xd, K + 1)
+      fun d ↦ Rows.extendBot (univ.erase xd, K + 1) v d := Rows.isLawfulBelow_extendBot.mpr hv
+  have hWf (d) (hd : d ∈ I.amalgam.toCellScheme.below (univ.erase xp, K + 1)) : W d = f d := by
+    rw [hW]; simp only [hd, ite_true]
+  have hWC : I.amalgam.rows.IsLawfulBelow (univ.erase xp, K + 1) fun d ↦ W d :=
+    (Rows.isLawfulBelow_congr (w := f) (w' := W) fun d hd ↦ (hWf d hd).symm).mp hf
+  have hWD : I.amalgam.rows.IsLawfulBelow (univ.erase xd, K + 1) fun d ↦ W d := by
+    refine (Rows.isLawfulBelow_congr (w' := W) fun d hd ↦ ?_).mp hvext
+    rw [Rows.extendBot_of_mem v hd]
+    by_cases hdC : d ∈ I.amalgam.toCellScheme.below (univ.erase xp, K + 1)
+    · have hface := subset_inter hdC.1 hd.1
+      have h1 := eq_bot_of_isDeadFace hdead hvext hd hface
+      rw [Rows.extendBot_of_mem v hd] at h1
+      rw [h1, hW]
+      simp only [hdC, ite_true]
+      rw [eq_bot_of_isDeadFace hdead hf hdC hface]
+    · exact (hWv d hd hdC).symm
+  -- The fill agrees with `P` capped at `h`.
+  have hWP (d : Fin I.amalgam.card) : min (W d) h = min (P d) h := by
+    by_cases hdC : d ∈ I.amalgam.toCellScheme.below (univ.erase xp, K + 1)
+    · rw [hW]; simp only [hdC, ite_true]; exact hfP d hdC
+    by_cases hdD : d ∈ I.amalgam.toCellScheme.below (univ.erase xd, K + 1)
+    · rw [hWv d hdD hdC]; exact hvP ⟨d, hdD⟩
+    · rw [hW]; simp only [hdC, hdD, ite_false, dite_false]
+  refine ⟨W, lawful_pair hxp hxd hne.symm hWC hWD, hWf, hWP, ?_⟩
+  -- Correctness of the splice.
+  by_cases hck : I.amalgam.toCellScheme.grade r.cap ≤ K + 1
+  swap
+  · exact isCorrect_of_cap_eq_bot (hat_of_lt (not_le.mp hck))
+  have hcapW : W r.cap = f r.cap := hWf _ ⟨hcapC, hck⟩
+  by_cases hc0 : W r.cap = ⊥
+  · exact isCorrect_of_cap_eq_bot (by rw [hat_of_le hck, hc0])
+  -- A requested donor cell below the grade `K + 1` carries the raised fill.
+  have hdon {d : Fin I.amalgam.card} (hdC : ¬ I.amalgam.toCellScheme.scope d ⊆ univ.erase xp)
+      (hdK : I.amalgam.toCellScheme.grade d < K + 1) : W d = Label.raise h (W₀ d) := by
+    have hdD : d ∈ I.amalgam.toCellScheme.below (univ.erase xd, K + 1) :=
+      ⟨(I.scope_subset_or hxp hxd hne.symm d).resolve_left hdC, hdK.le⟩
+    rw [hWv d hdD fun h' ↦ hdC h'.1]
+    exact hvp ⟨d, (I.scope_subset_or hxp hxd hne.symm d).resolve_left hdC,
+      show I.amalgam.toCellScheme.grade d ≤ K by omega⟩
+  have hhN : IsSelfVisible r.N h := hh.mono (hgr.le_grade_cap.trans hck)
+  refine isCorrect_of_forall (fun z hz ↦ ?_) (fun f' hf' ↦ by simp [hF] at hf') fun y hy ↦ ?_
+  · -- `Z`: through the correctness of `P`.
+    rw [hat_of_le (hZ z hz).2.le, hdon (hZ z hz).1 (hZ z hz).2]
+    have h1 := hPc.eq_bot z hz
+    rw [hat_of_le (hZ z hz).2.le, hat_of_le hck, min_eq_bot] at h1
+    rcases h1 with h1 | h1
+    · have h2 := hW₀P z
+      rw [h1, min_bot_left, min_eq_bot] at h2
+      rw [h2.resolve_right hb.ne', raise_bot hb]
+    · exfalso
+      have h2 := hWP r.cap
+      rw [h1, min_bot_left, min_eq_bot] at h2
+      exact hc0 (h2.resolve_right hb.ne')
+  · -- `T`: `⊤` above `h`, the marker value of `P` below.
+    rw [hat_of_le (hT y hy).2.le, hdon (hT y hy).1 (hT y hy).2]
+    by_cases hy0 : h ≤ W₀ y
+    · rw [Label.raise, ite_eq_left hy0]; exact le_top
+    rw [Label.raise, ite_eq_right hy0]
+    have hlt : W₀ y < h := not_le.mp hy0
+    have hmv := min_markerValue_eq (r := r) hhN (fun d ↦ min_hat_eq (k := K + 1) hWP d)
+    have hP1 : r.markerValue (hat I (K + 1) P) ≤ P y := by
+      have := hPc.markerValue_le y hy
+      rw [hat_of_le (hT y hy).2.le] at this
+      exact this.trans (min_le_left _ _)
+    have hPy : min (P y) h = W₀ y := by rw [← hW₀P, min_eq_left hlt.le]
+    have h3 : min (r.markerValue (hat I (K + 1) W)) h ≤ W₀ y := by
+      rw [hmv, ← hPy]
+      exact min_le_min_right _ hP1
+    have h4 : min (r.markerValue (hat I (K + 1) W)) h < h := h3.trans_lt hlt
+    rwa [min_eq_left (not_le.mp fun h5 ↦ (min_eq_right h5 ▸ h4).false).le] at h3
 
 end CapRequests
 
