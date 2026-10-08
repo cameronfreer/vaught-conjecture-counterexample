@@ -511,12 +511,13 @@ included (`StageType.restrictFace_capAbove`); such a cap exists at a limit stage
 `(hPf : restrictFace f P = some p) (hd : d.IsLegal) (hdp : restrictFace Fin.castSuccEmb d = some p)`
 `(hPK : P.topGrade ≤ K) (hdK : d.topGrade ≤ K) : ∃ Q, Q.IsLegal ∧`
 `restrictFace Fin.castSuccEmb Q = some P ∧ restrictFace (extendByLast f) Q = some d ∧ Q.topGrade ≤ K`
-(`MainTheorem/BoundedCoatomDetermination`) truncates the exact pinned extension above `K`.  The
-bounded coatom form `Realization.BoundedCoatomCutoffDetermination` asks (R2) only at the
-intermediate cofaces `tb` of the coatom face of top grade at most `K`; the coatom form implies it
-(`Realization.CoatomCutoffDetermination.boundedCoatom`), and no converse is claimed.  It gives
-cutoff determination at the first coatom (`Realization.FirstCoatomCutoffDetermination`) for every
-predicate whose contexts of grade `K` have top grade at most `K`
+(`MainTheorem/CoatomExtensionTheorem`) truncates the exact pinned extension above `K`
+(`StageType.exists_truncation_topGrade_le`, `Continuation/TopGradeTruncation`).  The bounded coatom
+form `Realization.BoundedCoatomCutoffDetermination` (`MainTheorem/BoundedCoatomDetermination`) asks
+(R2) only at the intermediate cofaces `tb` of the coatom face of top grade at most `K`; the coatom
+form implies it (`Realization.CoatomCutoffDetermination.boundedCoatom`), and no converse is claimed.
+It gives cutoff determination at the first coatom (`Realization.FirstCoatomCutoffDetermination`) for
+every predicate whose contexts of grade `K` have top grade at most `K`
 (`Realization.BoundedCoatomCutoffDetermination.firstCoatom`, hypothesis `hK`), and cutoff
 determination under `hK`, roots not onto and invariance under relabelling
 (`Realization.BoundedCoatomCutoffDetermination.cutoffDetermination`); for source-gap contexts `hK`

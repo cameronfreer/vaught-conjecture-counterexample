@@ -3906,9 +3906,11 @@ Each checkpoint needs both its abstract API and a concrete application:
    `(hPf : restrictFace f P = some p) (hd : d.IsLegal) (hdp : restrictFace Fin.castSuccEmb d = some p)`
    `(hPK : P.topGrade ≤ K) (hdK : d.topGrade ≤ K) : ∃ Q, Q.IsLegal ∧`
    `restrictFace Fin.castSuccEmb Q = some P ∧ restrictFace (extendByLast f) Q = some d ∧ Q.topGrade ≤ K`
-   (`MainTheorem/BoundedCoatomDetermination`) truncates the exact pinned extension above `K`.  The
-   bounded coatom form `Realization.BoundedCoatomCutoffDetermination` asks (R2) only at the
-   intermediate cofaces `tb` of the coatom face of top grade at most `K`; the coatom form implies it
+   (`MainTheorem/CoatomExtensionTheorem`) truncates the exact pinned extension above `K`
+   (`StageType.exists_truncation_topGrade_le`, `Continuation/TopGradeTruncation`).  The bounded
+   coatom form `Realization.BoundedCoatomCutoffDetermination`
+   (`MainTheorem/BoundedCoatomDetermination`) asks (R2) only at the intermediate cofaces `tb` of the
+   coatom face of top grade at most `K`; the coatom form implies it
    (`Realization.CoatomCutoffDetermination.boundedCoatom`), and no converse is claimed.  It gives
    cutoff determination at the first coatom (`Realization.FirstCoatomCutoffDetermination`) for every
    predicate whose contexts of grade `K` have top grade at most `K`
@@ -5801,10 +5803,15 @@ witnesses).**
   the instance of `StageType.capOn` at the cells of grade above a bound; the face lemma it uses,
   `StageType.restrictFace_capOn_of_label_le`, is in `Stage/Cap` beside `StageType.capOn`, and
   `StageType.restrictFace_capOn` is derived from it.
-- `MainTheorem/BoundedCoatomDetermination`: Layer 3, beside `MainTheorem/CoatomDetermination`.
-  `StageType.topGrade_capAbove_le`, `StageType.exists_truncation_topGrade_le` and
-  `StageType.exists_pinned_extension_topGrade_le` concern stage types only and go to `Stage/` and
-  `Extension/` when `StageType.topGrade` (`Continuation/Terminal`) moves to `Stage/`.
+- `Continuation/TopGradeTruncation`: Layer 4, beside `Continuation/Terminal`, which owns
+  `StageType.topGrade`.  It holds `StageType.topGrade_capAbove_le` and
+  `StageType.exists_truncation_topGrade_le` (over `Stage/CapGrade` and `Continuation/Terminal`);
+  they concern stage types only and go to `Stage/` when `StageType.topGrade` moves there.
+- `MainTheorem/CoatomExtensionTheorem`: the bounded pinned extension
+  `StageType.exists_pinned_extension_topGrade_le` is beside the exact pinned extension at a stage
+  that is zero or a limit (`StageType.exists_pinned_extension_of_isSuccPrelimit`).
+- `MainTheorem/BoundedCoatomDetermination`: Layer 3, beside `MainTheorem/CoatomDetermination`.  It
+  holds the bounded coatom form of (R2), its reductions and the main theorem with it.
 - `Continuation/RestrictedHollow` and its examples module: Layer 4, in place; it holds
   `Realization.IsCoverHollowWithoutRigidCore` and its form at a block stage, the restricted
   terminal properties with their cover, and `Realization.HollowReceiving.withoutRigidCore`.  It

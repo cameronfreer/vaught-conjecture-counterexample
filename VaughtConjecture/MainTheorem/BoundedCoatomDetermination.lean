@@ -3,7 +3,6 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
-import VaughtConjecture.Stage.CapGrade
 import VaughtConjecture.MainTheorem.SourceGapLastRoute
 
 /-!
@@ -12,25 +11,14 @@ import VaughtConjecture.MainTheorem.SourceGapLastRoute
 Roadmap, Layer 3 ((R2) of the table of 3.4, and 3.4: the exact pinned extension); semantic
 contract, item 5.
 
-**Truncation above a grade** (`StageType.exists_truncation_topGrade_le`).  At a limit stage, every
-stage type `Q₀` and every grade `K` give a stage type `Q` with the scheme of `Q₀` (so legal exactly
-when `Q₀` is), of top grade at most `K`, and with every face of `Q₀` of top grade at most `K` as a
-face along the same embedding, literally.  It is `Q₀` capped above `K` (`StageType.capAbove`, in
-`VaughtConjecture.Stage.CapGrade`) at a cap above every label of `Q₀` other than `⊤`
-(`StageType.exists_cap_ne_top`): the cells of grade above `K` form an upper set and availability
-relates cells of equal grades, so the capped section is lawful by [Kni26, Lemma 2.5.8] with no
-availability condition (the cap premises `c < α` and self-visibility of `c` at the arity remain, and
-`StageType.exists_cap_ne_top` gives them at a limit stage); the labels other than `⊤` are kept, and
-the cells labelled `⊤` of the capped type are those of `Q₀` of grade at most `K`
-(`StageType.capAbove_label_eq_top_iff`).  Nothing about the coding of the rows is used: the scheme
-is not changed.
-
-**The bounded pinned extension** (`StageType.exists_pinned_extension_topGrade_le`).  At a limit
-stage, for a legal `P` of top grade at most `K`, a closed face `f` of `P` with restriction `p`,
-and a legal coface `d` of `p` of top grade at most `K`, some legal one-point extension `Q` of `P`
-of top grade at most `K` has the face `d` along `extendByLast f`: truncate the exact pinned
-extension (`StageType.exists_pinned_extension_of_isSuccPrelimit`) above `K`; its two faces have
-top grade at most `K`, so both are kept.
+**The bounded pinned extension** (`StageType.exists_pinned_extension_topGrade_le`, in
+`VaughtConjecture.MainTheorem.CoatomExtensionTheorem`).  At a limit stage, for a legal `P` of top
+grade at most `K`, a closed face `f` of `P` with restriction `p`, and a legal coface `d` of `p` of
+top grade at most `K`, some legal one-point extension `Q` of `P` of top grade at most `K` has the
+face `d` along `extendByLast f`: the exact pinned extension truncated above `K`
+(`StageType.exists_truncation_topGrade_le`, in `VaughtConjecture.Continuation.TopGradeTruncation`:
+capping above `K`, `StageType.capAbove`, at a cap above every label other than `⊤`, keeps both
+faces literally, labels above `K` included).  Nothing about the coding of the rows is used.
 
 **The bounded coatom form of (R2)** (`Realization.BoundedCoatomCutoffDetermination`).  The coatom
 form (`Realization.CoatomCutoffDetermination`) asks determination for every legal coface `tb` of
@@ -72,9 +60,6 @@ finite construction of the carrier, open.
 
 This file belongs to Layer 3 of `roadmap/README.md`.
 
-## References
-
-Capping a lawful section is [Kni26, Lemma 2.5.8].
 -/
 
 universe u w
@@ -82,50 +67,6 @@ universe u w
 namespace VaughtConjecture
 
 open Finset Label
-
-namespace StageType
-
-variable {α : Ordinal.{u}} {n m k : ℕ}
-
-/-! ### Truncation above a grade -/
-
-/-- **A type capped above `K` has top grade at most `K`.** -/
-theorem topGrade_capAbove_le {t : StageType.{u} α n} {K : ℕ} {c : Ordinal.{u}}
-    {hc : IsSelfVisible n (c : Label)} {hcα : c < α} :
-    (t.capAbove K c hc hcα).topGrade ≤ K :=
-  -- the cells of the capped type are those of `t` (same scheme), so `d` is passed as a cell of `t`
-  topGrade_le_iff.mpr fun d hd ↦ (capAbove_label_eq_top_iff (t := t) (d := d)).mp hd |>.2
-
-/-- **Truncation above a grade**: at a limit stage, a stage type `t` and a grade `K` give a stage
-type with the scheme of `t`, legal exactly when `t` is, of top grade at most `K`, and with every
-face of `t` of top grade at most `K` as a face along the same embedding, labels included. -/
-theorem exists_truncation_topGrade_le (hα : Order.IsSuccLimit α) (t : StageType.{u} α n) (K : ℕ) :
-    ∃ q : StageType.{u} α n, q.toScheme = t.toScheme ∧ (q.IsLegal ↔ t.IsLegal) ∧
-      q.topGrade ≤ K ∧ ∀ ⦃m : ℕ⦄ (f : Fin m ↪ Fin n) (p : StageType.{u} α m),
-        restrictFace f t = some p → p.topGrade ≤ K → restrictFace f q = some p := by
-  obtain ⟨c, hcα, hc, hct⟩ := exists_cap_ne_top hα t n
-  exact ⟨t.capAbove K c hc hcα, rfl, Iff.rfl, topGrade_capAbove_le,
-    fun _ _ _ hp hpK ↦ restrictFace_capAbove hct hp fun _ hi ↦ (grade_le_topGrade hi).trans hpK⟩
-
-/-! ### The bounded pinned extension -/
-
-/-- **The bounded pinned extension**: at a limit stage, for a legal `P` of top grade at most `K`, a
-closed face `f` of `P` with restriction `p`, and a legal coface `d` of `p` of top grade at most `K`,
-some legal one-point extension `Q` of `P` of top grade at most `K` has the face `d` along
-`extendByLast f`.  The exact pinned extension, truncated above `K`. -/
-theorem exists_pinned_extension_topGrade_le (hα : Order.IsSuccLimit α) {P : StageType.{u} α n}
-    (hP : P.IsLegal) {f : Fin m ↪ Fin n} {p : StageType.{u} α m} {d : StageType.{u} α (m + 1)}
-    (hPf : restrictFace f P = some p) (hd : d.IsLegal)
-    (hdp : restrictFace Fin.castSuccEmb d = some p) {K : ℕ} (hPK : P.topGrade ≤ K)
-    (hdK : d.topGrade ≤ K) :
-    ∃ Q : StageType.{u} α (n + 1), Q.IsLegal ∧ restrictFace Fin.castSuccEmb Q = some P ∧
-      restrictFace (extendByLast f) Q = some d ∧ Q.topGrade ≤ K := by
-  obtain ⟨Q₀, hQ₀, hQP, hQd⟩ :=
-    exists_pinned_extension_of_isSuccPrelimit hα.isSuccPrelimit hP hPf hd hdp
-  obtain ⟨Q, -, hQl, hQK, hQf⟩ := exists_truncation_topGrade_le hα Q₀ K
-  exact ⟨Q, hQl.mpr hQ₀, hQf _ _ hQP hPK, hQf _ _ hQd hdK, hQK⟩
-
-end StageType
 
 namespace Realization
 
