@@ -4173,7 +4173,7 @@ and the **receiving expansion domain** at `ξ` is the set of classes of models o
 sentence with a receiving expansion to `λ_ξ`.  None is defined in the library.
 
 Receiving is part of the definition, so existence, reduction, uniqueness, logical comparison,
-continuation, and classification are proved for `𝒞` itself.  This postpones the equivalence
+continuation, and classification are to be proved for `𝒞` itself.  This postpones the equivalence
 with the original presentation and does not weaken it: (R1) (`Expansion.FiniteCutReceiving`)
 becomes a later fidelity theorem relating the two presentations, models and receiving models,
 and keeps its status, still to be proved.
@@ -4192,9 +4192,13 @@ argued, not formalized):
    `Expansion.exists_extend_covers_back` (`Expansion/Agreement.lean`); only the compositions
    `Expansion.NextBlockUniqueness.of_forcingDonors` and `Expansion.bfEquiv_of_modelExpansions`
    take receiving of every model;
-4. the top-free witnesses have receiving (`hasFiniteCutReceiving_reconstruct`,
-   `hasFiniteCutReceiving_reconstruct_reduce`, `ClassicalLimit/Receiving.lean`);
-5. the generic endpoint finishes the count: `MainTheorem.hasThinAlephOneSpectrum_of_filtration`
+4. the top-free witnesses have receiving: for an ultrahomogeneous structure whose age is the age
+   of top-free charts, at a stage zero or a limit (`hasFiniteCutReceiving_reconstruct`,
+   `hasFiniteCutReceiving_reconstruct_reduce`, `ClassicalLimit/Receiving.lean`); its modelhood
+   needs in addition the apex property at the stage
+   (`isModel_reconstruct_of_hasApexCoatomExtensions`; compiled at every block stage);
+5. the generic endpoint finishes the count, given logical agreement, countable losses, and
+   nonempty losses: `MainTheorem.hasThinAlephOneSpectrum_of_filtration`
    (`MainTheorem/Spectrum.lean`), through
    `MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_expansionDomains`
    (`MainTheorem/Assembly.lean`), which does not ask which expansions define the domains.
@@ -4236,7 +4240,14 @@ argued, not formalized):
   `Realization.HasTerminalProperty`, or `Expansion.expansionDomain_loss_countable`; the converse
   implication holds, so `Realization.IsCoverHollow.isTerminalAt` gives receiving-terminality.
 - **8f. Classification and the count.**  The terminal comparisons for receiving models, countable
-  and nonempty receiving losses, and the count through the endpoint of item 5, unchanged.
+  receiving losses, nonempty receiving losses, and the count through the endpoint of item 5,
+  unchanged.  Nonempty receiving losses need next-block uniqueness of receiving expansions (8b)
+  and the top-free witnesses as receiving models; the losses theorem of the original domains,
+  `MainTheorem.hasNonemptyLosses_of_nextBlockUniqueness`, takes next-block uniqueness of all model
+  expansions (`hnext`), which the completion alone does not give, and is not used unchanged.  On
+  the separate open change the receiving losses are derived from forcing donors through
+  next-block uniqueness of receiving models and the receiving witnesses (compiled in a separate
+  open change, not yet reviewed; prospective here).
   Status: a form of the main theorem through receiving models is compiled in a separate open
   change, not yet reviewed, without (R1) as a hypothesis; its remaining hypotheses are the coatom
   extension property with apex at every countable block stage and (R4), (R2) and (R3) for
@@ -4247,8 +4258,13 @@ argued, not formalized):
 **The three finite reading constructions** (open; the warnings for (R2)–(R4) below are compiled
 in separate open changes, not in the library).  Completion yields a lawful extension
 (`Seed.nonempty_completionBelowFullGrade`); classification and continuation need a lawful
-extension whose rows read specified labels (`StageType.ReadsAtLeast`;
-`CellScheme.Rows.IsLawful.le_of_forall_row_le`).
+extension whose rows read specified labels.  `StageType.ReadsAtLeast` (the same predicate as
+`PrescribedFullRows.ReadsAtLeast`) asks `x` of grade at most that of `s` and, at **every** cell
+of graded index `(univ, grade s)`, the row at `s` at most the row at `x`; it forces `p s ≤ p x`
+in every lawful section `p` (`CellScheme.Rows.IsLawful.le_of_forall_row_le`) when the graded
+index is inhabited, `s` has its grade and scope inside its scope, and `x` has scope inside it.
+A row `⊥` at both cells satisfies it, so it alone excludes no all-`⊥` row; a stronger
+requirement is stated with its construction below.
 
 - (R2): extensions satisfying the per-top reading criterion for arbitrary relevant donors.  The
   version with one fixed **lost top** (an old top of the context read for every new top),
@@ -4261,8 +4277,16 @@ extension whose rows read specified labels (`StageType.ReadsAtLeast`;
   marked one above its cap is marked) for sufficiently rich marked specifications of the
   **leaf-and-marked layer** (a leaf cell for each catalogue entry, a marked cell for each chosen
   entry); the empty specification solves nothing.
-- (R4): extensions with the required cap readings.  Ordinary profile completion can put an
-  all-`⊥` row where a label must be read, so the completion theorem cannot be applied unchanged.
+- (R4): extensions with the required cap readings: cap-reading extensions
+  (`StageType.IsCapReadingExtension`, in a separate open change; prospective here), whose cells
+  at `(univ, N)` read every new cell of the donor through the cap (`StageType.ReadsThroughCap`):
+  a new cell labelled `μ + n` is read at a value `ω · c + n`, not at `⊥`, stronger than
+  `StageType.ReadsAtLeast`.  The profile completion keeps at `(univ, N)` the cell of the constant
+  entry `⊥`, whose row at the new cell is `⊥`, so it is not a cap-reading extension at a cap of
+  grade 3 or 4, and neither is the leaf-and-marked completion
+  (`TowerProfile.not_isCapReadingExtension_completion`,
+  `TowerProfile.not_isCapReadingExtension_markedCompletion`, in a separate open change); the
+  completion theorem cannot be applied unchanged.
 
 No single universal reading theorem is required: the quantifiers of the three differ, and the
 stronger unifications examined are refuted
@@ -4275,8 +4299,10 @@ stopping and maximal coverage of every prescribed base; the full manuscript corr
 ("Manuscript concordance"); the Scott-process and descriptive refinements (`COMPANIONS.md`).
 
 **Order.**  First, check the general completion against the semantic contract and integrate it;
-its consequences are compiled (the four-hypothesis form; `MainTheorem.capToModel`,
-`forcingDonors_blockStage`, `MainTheorem.hasNonemptyLosses_of_nextBlockUniqueness`).
+its consequences are compiled (the four-hypothesis form; `MainTheorem.capToModel` and
+`forcingDonors_blockStage` with no hypothesis;
+`MainTheorem.hasNonemptyLosses_of_nextBlockUniqueness` conditional on next-block uniqueness,
+`hnext`, which the completion alone does not give).
 Second, 8a, then 8b–8f.  Third, the three reading constructions, attacked directly with their
 exact requirements; each preservation lemma is tested against the compiled counterexamples
 before any conditional theorem is stated around it.

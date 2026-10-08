@@ -299,10 +299,13 @@ not formalized):
 - comparison and uniqueness take receiving one realization at a time:
   `Realization.eq_of_reduce_eq_of_forcingDonors`, `Expansion.exists_extend_covers`,
   `Expansion.exists_extend_covers_back`;
-- the top-free witnesses have receiving: `hasFiniteCutReceiving_reconstruct`,
-  `hasFiniteCutReceiving_reconstruct_reduce` (`ClassicalLimit/Receiving.lean`);
-- the count: `MainTheorem.hasThinAlephOneSpectrum_of_filtration` (`MainTheorem/Spectrum.lean`),
-  through `MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_expansionDomains`.
+- the top-free witnesses have receiving (ultrahomogeneous, with the age of top-free charts):
+  `hasFiniteCutReceiving_reconstruct`, `hasFiniteCutReceiving_reconstruct_reduce`
+  (`ClassicalLimit/Receiving.lean`); modelhood by
+  `isModel_reconstruct_of_hasApexCoatomExtensions`;
+- the count, given logical agreement, countable losses, and nonempty losses:
+  `MainTheorem.hasThinAlephOneSpectrum_of_filtration` (`MainTheorem/Spectrum.lean`), through
+  `MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_expansionDomains`.
 
 **Interfaces to build** (all prospective):
 
@@ -327,12 +330,17 @@ separate open change, not yet reviewed, (f) as a form of the main theorem withou
 remaining hypotheses are the coatom extension property with apex at every countable block stage
 and (R4), (R2) and (R3) for receiving models (`Expansion.ReceivingStableCappedReceiving`,
 `Realization.ReceivingResidualReceiving`, and `Realization.HollowReceiving` for
-`Realization.IsReceivingCoverHollowAtBlock`); their status here stays prospective.
+`Realization.IsReceivingCoverHollowAtBlock`); their status here stays prospective.  Nonempty
+receiving losses need next-block uniqueness of receiving expansions and receiving witnesses, not
+`MainTheorem.hasNonemptyLosses_of_nextBlockUniqueness`, whose hypothesis `hnext` is next-block
+uniqueness of all model expansions.
 
 **The three finite reading constructions** (the remaining hard mathematics; open).  Completion
 yields a lawful extension (`Seed.nonempty_completionBelowFullGrade`); classification and
-continuation need a lawful extension whose rows read specified labels.  The warnings for
-(R2)–(R4) below are compiled in separate open changes, not in the library.
+continuation need a lawful extension whose rows read specified labels.  `StageType.ReadsAtLeast`
+(grade of `x` at most that of `s`; at every cell of `(univ, grade s)`, row at `s` at most row at
+`x`) is satisfied by a row `⊥` at both cells, so a stronger requirement is stated where needed.
+The warnings for (R2)–(R4) below are compiled in separate open changes, not in the library.
 
 - (R2): extensions satisfying the per-top reading criterion for arbitrary relevant donors.  The
   version with one fixed **lost top** (an old top of the context read for every new top) is
@@ -343,8 +351,11 @@ continuation need a lawful extension whose rows read specified labels.  The warn
   new tops); **marked closure** (an entry agreeing with a marked one above its cap is marked) for
   sufficiently rich marked specifications of the **leaf-and-marked layer** (a leaf cell for each
   catalogue entry, a marked cell for each chosen entry); the empty specification solves nothing.
-- (R4): extensions with the required cap readings; ordinary profile completion can put an all-`⊥`
-  row where a label must be read, so the completion theorem cannot be applied unchanged.
+- (R4): cap-reading extensions (`StageType.IsCapReadingExtension`, prospective here): every cell
+  at `(univ, N)` reads each new cell through the cap (`StageType.ReadsThroughCap`, a value
+  `ω · c + n` at a new cell labelled `μ + n`, not `⊥`); the profile and leaf-and-marked
+  completions keep a cell whose row there is `⊥`, so they are not cap-reading extensions at a cap
+  of grade 3 or 4, and the completion theorem cannot be applied unchanged.
 
 No single universal reading theorem is required: the quantifiers differ, and the stronger
 unifications examined have been refuted
@@ -355,7 +366,8 @@ repository (theorem named); and the fixed-lost-top form of (R2)).
 original four-family sentence; global stopping and maximal coverage of every prescribed base; the
 full manuscript correspondence; the Scott-process and descriptive refinements.
 
-**Order.**  (1) Check and integrate the general completion, whose consequences are compiled.
+**Order.**  (1) Check and integrate the general completion, whose consequences are compiled
+(hypothesis 7 from next-block uniqueness, `hnext`, which the completion alone does not give).
 (2) Build the receiving-models interface, item (a) first.  (3) Attack the three reading
 constructions directly with their exact requirements, testing each preservation lemma against the
 compiled counterexamples before any conditional theorem is stated around it.
