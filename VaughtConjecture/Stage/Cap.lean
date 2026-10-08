@@ -31,7 +31,9 @@ face (`VaughtConjecture.Continuation.AnchoredDetermination`).
 graded order, `t.capOn Z c` (`StageType.capOn`) caps at `c` only the cells of `Z`.  It is lawful
 when every cell outside `Z` whose scope lies in the scope of a cell of `Z` of the same grade is
 labelled at most `c` (`CellScheme.Rows.IsLawful.min_const_of_upper`), and its faces along
-embeddings whose visible cells are outside `Z` are those of `t` (`StageType.restrictFace_capOn`).
+embeddings whose visible cells in `Z` are labelled at most `c` are those of `t`
+(`StageType.restrictFace_capOn_of_label_le`), in particular along embeddings whose visible cells
+are outside `Z` (`StageType.restrictFace_capOn`).
 The cells through a point of grade above a bound are such a set
 (`VaughtConjecture.Continuation.AvailableTopDetermination`), and so are the cells of grade at least
 a bound (`VaughtConjecture.Continuation.AvailableTopDeterminationCounterexample`).
@@ -218,22 +220,30 @@ theorem capOn_label (d : Fin t.card) : (t.capOn Z c hc hcα hZ havail).label d =
     if Z d then min (t.label d) c else t.label d :=
   rfl
 
-/-- **Faces outside the upper set are unchanged**: along `f` whose visible cells are outside `Z`,
-a type capped on `Z` restricts as the type does, definedness included. -/
-theorem restrictFace_capOn {f : Fin m ↪ Fin n} (hf : ∀ d ∈ t.visibleCells f, ¬ Z d) :
+/-- **Faces whose capped cells are already below the cap are unchanged**: along `f` whose visible
+cells in `Z` are labelled at most `c`, a type capped on `Z` restricts as the type does,
+definedness included. -/
+theorem restrictFace_capOn_of_label_le {f : Fin m ↪ Fin n}
+    (hf : ∀ d ∈ t.visibleCells f, Z d → t.label d ≤ c) :
     restrictFace f (t.capOn Z c hc hcα hZ havail) = restrictFace f t := by
   by_cases hfm : univ.map f ∈ t.toCellScheme.faces
   · rw [restrictFace_of_mem t f hfm, restrictFace_of_mem (t.capOn Z c hc hcα hZ havail) f hfm]
     refine congrArg some (ext rfl fun i j hij ↦ ?_)
     obtain rfl : i = j := Fin.ext hij
-    have hZi : ¬ Z (t.cellMap f i) := hf _ (t.cellMap_mem f i)
     -- the capped type has the scheme of `t`, so its cell under `i` is that of `t`; unfold the
     -- capped label there (`StageType.capOn_label`)
     change (if Z (t.cellMap f i) then _ else _) = t.label (t.cellMap f i)
-    simp only [hZi, ↓reduceIte]
-    rfl
+    split_ifs with hZi
+    · exact min_eq_left (hf _ (t.cellMap_mem f i) hZi)
+    · rfl
   · rw [restrictFace_of_notMem t f hfm,
       restrictFace_of_notMem (t.capOn Z c hc hcα hZ havail) f hfm]
+
+/-- **Faces outside the upper set are unchanged**: along `f` whose visible cells are outside `Z`,
+a type capped on `Z` restricts as the type does, definedness included. -/
+theorem restrictFace_capOn {f : Fin m ↪ Fin n} (hf : ∀ d ∈ t.visibleCells f, ¬ Z d) :
+    restrictFace f (t.capOn Z c hc hcα hZ havail) = restrictFace f t :=
+  restrictFace_capOn_of_label_le fun d hd hZd ↦ absurd hZd (hf d hd)
 
 end CapOn
 

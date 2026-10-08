@@ -5795,9 +5795,10 @@ witnesses).**
   `StageType.IsSourceGapContextLast`) and `Realization.residualAcquisition_isSourceGapContextOff`;
   the reduction to the coatom form with the lost point last and the main theorem with it are in
   `MainTheorem/SourceGapLastRoute` (Layer 6).
-- `Stage/CapGrade`: Layer 1, in place.  It holds `StageType.restrictFace_capOn'` (faces whose
-  visible cells in the capped set are already below the cap) beside capping above a grade
-  (`StageType.capAbove`); it is a separate module so that `Stage/Cap` is unchanged.
+- `Stage/CapGrade`: Layer 1, in place.  It holds capping above a grade (`StageType.capAbove`),
+  the instance of `StageType.capOn` at the cells of grade above a bound; the face lemma it uses,
+  `StageType.restrictFace_capOn_of_label_le`, is in `Stage/Cap` beside `StageType.capOn`, and
+  `StageType.restrictFace_capOn` is derived from it.
 - `MainTheorem/BoundedCoatomDetermination`: Layer 3, beside `MainTheorem/CoatomDetermination`.
   `StageType.topGrade_capAbove_le`, `StageType.exists_truncation_topGrade_le` and
   `StageType.exists_pinned_extension_topGrade_le` concern stage types only and go to `Stage/` and
