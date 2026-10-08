@@ -27,6 +27,12 @@ Work file (placement later), for the weakened lower bound at the root (`H3.RootL
   `H3.isLawful_lowTruncation_iff`): at a failure of the separation the zero set of a witness of
   the truncated locality contains the block of the low read, so the truncation is not lawful.
   The second clause of `H3.RootLowBound'` is exactly the separation.
+* **The witness route at the root needs the separation** (`H3.lowBlockSeparated_of_witnessImage`):
+  every witness image of `d.label` matching a prescription below `n + 1` at an ordinal root cell
+  has the bottom pattern of the low truncation, so it is lawful only if the low truncation is
+  (`H3.isLawful_lowTruncation_of_bot_iff`, through `H3.isWitness_lowCut`).  With
+  `H3.rootLift_of_locality` this makes the separation the exact condition of the witness route
+  away from the floor at the root.
 * **Legality does not bound the row offsets by the grade** (`H3.exists_isLegal_rowOffset_gt_grade`:
   a legal one-point scheme whose row reads its cell of grade `1` at `5`).
 * **A witness matching a small prescription is `⊥` below its block**
@@ -407,6 +413,81 @@ theorem witness_eq_bot_below_block {ψ : Fin t.card → Label.{u}} {θ : Label.{
     by_contra hne
     exact absurd ((natCast_le_of_isSelfVisible hsv hne).trans hle) (not_le.mpr hψ)
   exact le_bot_iff.mp (hbot ▸ hΦ.monotone (le_visibilityReplace (by omega) y))
+
+/-- **The low cut is a witness** bounded by every grade: it is monotone, fixes `⊥`, and commutes
+with every replacement, which keeps `⊤` and the labels below the root blocks. -/
+theorem isWitness_lowCut (K : ℕ) : IsWitness (stepSuppressor.{u} K) (lowCut t) where
+  antitone := (IsWitness.id_step K).antitone
+  isSelfVisible := (IsWitness.id_step K).isSelfVisible
+  map_bot := lowCut_eq_bot_of_le le_rfl (.inl rfl)
+  monotone := lowCut_mono
+  visibilityReplace_comm x k _ i _ := by
+    have hiff : (visibilityReplace k i x ≠ ⊤ ∧ BelowRootBlocks t (visibilityReplace k i x)) ↔
+        (x ≠ ⊤ ∧ BelowRootBlocks t x) := by
+      refine and_congr (by simp) ⟨fun h x' μ j hμ hx ↦ (visibilityReplace_lt_iff hμ).mp
+        (h x' μ j hμ hx), fun h x' μ j hμ hx ↦ (visibilityReplace_lt_iff hμ).mpr (h x' μ j hμ hx)⟩
+    by_cases hx : x ≠ ⊤ ∧ BelowRootBlocks t x
+    · rw [lowCut_of_low hx, lowCut_of_low (hiff.mpr hx), visibilityReplace_bot]
+    · rw [lowCut_of_not hx, lowCut_of_not (fun h ↦ hx (hiff.mp h))]
+
+/-- **A lawful labelling with the bottom pattern of the low truncation makes it lawful**
+(`CellScheme.Rows.IsLawful.map_of_bot_iff` through the low cut). -/
+theorem isLawful_lowTruncation_of_bot_iff {d : StageType.{u} α (n + 1)}
+    {q : Fin d.card → Label.{u}} (hq : d.rows.IsLawful q)
+    (hbot : ∀ z, lowTruncation t d z = ⊥ ↔ q z = ⊥) : d.rows.IsLawful (lowTruncation t d) :=
+  d.isLawful.map_of_bot_iff hq (fun z ↦ d.grade_le z) (isWitness_lowCut (n + 1)) hbot
+
+/-- **The witness route at the root needs the separation by blocks.**  Let `Φ` be a witness
+bounded by `K ≥ n + 1`, at least `θ ≥ n + 1` at `⊤`, agreeing with `ψ` on the root capped at `θ`,
+with `ψ` not `⊥` at the root cells with ordinal labels and below `n + 1` at one of them.  If
+`Φ ∘ d.label` is lawful (the witness image at the root of `H3.rootLift_of_companion`), the rows of
+`d` separate the low labels by blocks.  The zero set of `Φ` on the labels of `d` is exactly that
+of the low truncation: `Φ` is `⊥` below the root blocks (`H3.witness_eq_bot_below_block`), and
+not `⊥` at a block start of an ordinal root label (its zero set is closed under the replacements)
+nor at `⊤`. -/
+theorem lowBlockSeparated_of_witnessImage {d : StageType.{u} α (n + 1)}
+    {ψ : Fin t.card → Label.{u}} {θ : Label.{u}} {K : ℕ} (hK : n + 1 ≤ K)
+    {Φ : Label.{u} → Label.{u}} (hΦ : IsWitness (stepSuppressor K) Φ)
+    (hθ : (((n + 1 : ℕ) : Ordinal.{u}) : Label.{u}) ≤ θ) (hθΦ : θ ≤ Φ ⊤)
+    (hroot : ∀ x, min (Φ (t.label x)) θ = min (ψ x) θ)
+    (hψ0 : ∀ x (o : Ordinal.{u}), t.label x = o → ψ x ≠ ⊥) {x₀ : Fin t.card}
+    {o₀ : Ordinal.{u}} (ho₀ : t.label x₀ = o₀)
+    (hψx₀ : ψ x₀ < (((n + 1 : ℕ) : Ordinal.{u}) : Label.{u}))
+    (hlaw : d.rows.IsLawful (Φ ∘ d.label)) : LowBlockSeparated t d := by
+  have hθ0 : θ ≠ ⊥ := ne_bot_of_le_ne_bot WithBot.coe_ne_bot hθ
+  obtain ⟨μ₀, hμ₀, i₀, rfl⟩ := exists_eq_add_natCast_isSuccPrelimit o₀
+  refine isLawful_lowTruncation_iff.mp (isLawful_lowTruncation_of_bot_iff hlaw fun z ↦ ?_)
+  change lowCut t (d.label z) = ⊥ ↔ Φ (d.label z) = ⊥
+  by_cases hl : d.label z ≠ ⊤ ∧ BelowRootBlocks t (d.label z)
+  · rw [lowCut_of_low hl]
+    exact ⟨fun _ ↦ witness_eq_bot_below_block hK hΦ hθ (hroot x₀) hψx₀ hμ₀ ho₀
+      (hl.2 x₀ μ₀ i₀ hμ₀ ho₀), fun _ ↦ rfl⟩
+  rw [lowCut_of_not hl]
+  refine ⟨fun h ↦ by rw [h, hΦ.map_bot], fun h ↦ ?_⟩
+  by_contra hne
+  by_cases ht : d.label z = ⊤
+  · rw [ht] at h
+    exact hθ0 (le_bot_iff.mp (h ▸ hθΦ))
+  -- an ordinal root label whose block start is at most the label of `z`
+  have hex : ∃ (x : Fin t.card) (μ : Ordinal.{u}) (i : ℕ), Order.IsSuccPrelimit μ ∧
+      t.label x = ((μ + i : Ordinal.{u}) : Label.{u}) ∧
+        ((μ : Ordinal.{u}) : Label.{u}) ≤ d.label z := by
+    by_contra hno
+    exact hl ⟨ht, fun x μ i hμ hx ↦ not_le.mp fun hle ↦ hno ⟨x, μ, i, hμ, hx, hle⟩⟩
+  obtain ⟨x, μ, i, hμ, hx, hle⟩ := hex
+  have hΦμ : Φ ((μ : Ordinal.{u}) : Label.{u}) = ⊥ := le_bot_iff.mp (h ▸ hΦ.monotone hle)
+  have hΦx : Φ (t.label x) = ⊥ := by
+    have e : visibilityReplace (i + 1) i ((μ : Ordinal.{u}) : Label.{u}) = t.label x := by
+      rw [hx, show ((μ : Ordinal.{u}) : Label.{u}) =
+        ((μ + ((0 : ℕ) : Ordinal.{u}) : Ordinal.{u}) : Label.{u}) by simp]
+      exact visibilityReplace_coe_add_natCast hμ (Nat.succ_pos _) _
+    rw [← e]
+    exact hΦ.apply_visibilityReplace_eq_bot hΦμ _ (Nat.le_succ _)
+  have h2 := hroot x
+  rw [hΦx, min_bot_left] at h2
+  rcases min_eq_bot.mp h2.symm with h3 | h3
+  · exact hψ0 x _ hx h3
+  · exact hθ0 h3
 
 end H3
 
