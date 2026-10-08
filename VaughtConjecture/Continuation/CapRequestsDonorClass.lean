@@ -38,9 +38,10 @@ named):
   `CapRequests.orbitMap_lt_orbitMap_of_lt`): a common-face cell `a` of the grade of the cap,
   dominated by the cap, with `f a` at most the replaced marker value, and a cell `y` of `T` not `⊥`
   with key below that of `f a`, leave no admitted lift: the lift is in the class, and its code reads
-  the marker value at least the code of `f a`, strictly above that of `f y`.  So without a
-  condition like `CapRequests.DonorTopsDominateAt` the lift fails also in the class form, at a
-  small value rather than at `⊥`.
+  the marker value at least the code of `f a`, strictly above that of `f y`.  The obstruction
+  refutes the unrestricted construction in the class form, at a small value rather than at `⊥`;
+  `CapRequests.DonorTopsDominateAt` is an assumed named condition (no implication from the lift
+  provision to it is compiled).
 
 ## Placement
 
