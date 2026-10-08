@@ -3,6 +3,7 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
+import VaughtConjecture.Continuation.MarkedCap
 import VaughtConjecture.Continuation.TopReadingApex
 import VaughtConjecture.Extension.ThinCompletionTLTL
 
@@ -19,8 +20,9 @@ profile layer below the coatom `(univ.erase (Fin.last 4), 4)`.  The apex added t
 `⊥` is such a cell (`StageType.rowAt_addApex_last_of_ne`, `StageType.rowAt_addApex_last_last`,
 `StageType.eq_last_of_gradedIndex_addApex`), and such a type is a marked-cap context along every
 embedding of `n'` points with `n' + 1 < n`, with the apex as top cap and marker
-(`StageType.isMarkedCapContext_addApex`); for `TwoFaceLiftExistsCounterexample.TL`,
-`TowerProfile.isMarkedCapContext_TL` (embeddings of at most two points).
+(`StageType.isMarkedCapContext_addApex`, in `Continuation/MarkedCap.lean`); for
+`TwoFaceLiftExistsCounterexample.TL`, `TowerProfile.isMarkedCapContext_TL` (embeddings of at most
+two points).
 
 * **The obstruction over `TL`** (`TowerProfile.exists_top_reads_lt_markedTop_TL`, compiled in this
   repository (theorem named)): for every seed with left coatom type `TL` and any legal right coatom
@@ -61,57 +63,6 @@ universe u
 namespace VaughtConjecture
 
 open Finset Label
-
-namespace StageType
-
-variable {α : Ordinal.{u}} {n m : ℕ} {D : StageType.{u} α n} {f : Fin m ↪ Fin n}
-  {t : StageType.{u} α m}
-
-/-! ### The apex of a type labelled `⊥` -/
-
-section Apex
-
-variable {n : ℕ} {t : StageType.{u} α n} (ht : t.IsLegalBelowFullGrade) (hn : 0 < n)
-
-/-- **The apex of a type labelled `⊥` is a top cap and its own marker, and the type is a marked-cap
-context along every embedding of `n'` points with `n' + 1 < n`.** -/
-theorem isMarkedCapContext_addApex (hbot : ∀ d, t.label d = ⊥) {n' : ℕ} (h : Fin n' ↪ Fin n)
-    (hn' : n' + 1 < n) :
-    (t.addApex ht hn).IsTopCap (Fin.last _) ∧ (t.addApex ht hn).IsMarker (Fin.last _) (Fin.last _) ∧
-      (t.addApex ht hn).IsMarkedCapContext h := by
-  have hlab (x : Fin (t.addApex ht hn).card) (hx : (t.addApex ht hn).label x = ⊤) :
-      x = Fin.last _ := by
-    -- `t.addApex` has the cells of `t` and the apex
-    change Fin (t.card + 1) at x
-    induction x using Fin.lastCases with
-    | last => rfl
-    | cast d =>
-      rw [addApex_label_castSucc, hbot d] at hx
-      exact absurd hx bot_ne_top
-  have hg : (t.addApex ht hn).toCellScheme.grade (Fin.last _) = n :=
-    congrArg Prod.snd (addApex_gradedIndex_last ht hn)
-  have hc : (t.addApex ht hn).IsTopCap (Fin.last _) :=
-    ⟨addApex_scope_last ht hn, addApex_label_last ht hn, fun x _ ↦ by
-      rw [hg]
-      exact (t.addApex ht hn).grade_le x⟩
-  have hr : (t.addApex ht hn).IsMarker (Fin.last _) (Fin.last _) :=
-    ⟨addApex_label_last ht hn, (t.addApex ht hn).toCellScheme.mem_below_gradedIndex _,
-      fun x hx _ ↦ by rw [hlab x hx]⟩
-  refine ⟨hc, hr, ⟨_, _, hc, hr, by rw [hg]; exact hn', fun a ha hat ↦ ?_⟩⟩
-  -- the only cell labelled `⊤` is the apex, of full scope, not visible through `n' < n` points
-  obtain rfl := hlab a hat
-  exfalso
-  have hsurj : Function.Surjective h := fun y ↦ by
-    have := Scheme.mem_visibleCells.mp ha
-    rw [addApex_scope_last] at this
-    exact this (mem_coe.mpr (mem_univ y))
-  have := Fintype.card_le_of_surjective _ hsurj
-  simp only [Fintype.card_fin] at this
-  omega
-
-end Apex
-
-end StageType
 
 namespace TopReadingApexExample
 

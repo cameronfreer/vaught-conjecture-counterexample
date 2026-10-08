@@ -36,9 +36,12 @@ Cover-hollowness gives a rooted cover `(q, f)` compatible with `x` that forces `
 legal, it has a top cap with a marker, `L` is at most its top grade `N`, and for every top cap `c`
 and every marker `r` of `c`, at the cell `e` of `q` transported from `a`,
 `visibilityReplace N L (q.rowAt c r) ≤ q.rowAt c e`.  No hypothesis beyond legality is used: no
-exact consistency, covering, receiving, growth, or forcing donors.  The cover depends on `L`; a
-single cover of large top grade forcing `n + 1` at every top of a root at once (the synchronization
-step of an acquisition) is prospective.
+exact consistency, covering, receiving, growth, or forcing donors.  The cover depends on `L`; from
+these local premises alone, a single cover of large top grade forcing `n + 1` at every top of a
+root at once is not obtained here.  At a model that is cover-hollow at a block stage and has
+unbounded growth, that synchronization is proved, using covering and the growth
+(`Realization.IsModel.exists_synchronized`, compiled in this repository (theorem named),
+`Continuation/MarkedCarrierAcquisition.lean`).
 
 **The determination counterexamples are excluded**, each by an instance of a general exclusion
 of `VaughtConjecture.Stage.MarkedCap` or of this file.
@@ -72,8 +75,15 @@ this repository (theorem named)): its cell of graded index `(univ, 2)` labelled 
 grade `2`, and over the empty root the row inequality is vacuous
 (`StageType.isMarkedCapContext_of_isTopCap_of_zero`).
 
-Acquisition and determination for the marked-cap context are open; nothing here proves or reduces
-(R3) (`Realization.HollowReceiving`).
+**The apex of a type labelled `⊥`.**  Adding the apex to a type labelled `⊥` on `n` points gives
+a marked-cap context along every embedding of `n'` points with `n' + 1 < n`, with the apex as top
+cap and marker (`StageType.isMarkedCapContext_addApex`, compiled in this repository (theorem
+named)).
+
+Acquisition for the marked-cap context is proved
+(`Realization.hollowAcquisition_isMarkedCapContext`, compiled in this repository (theorem named),
+`Continuation/MarkedCarrierAcquisition.lean`).  Determination for the marked-cap context in
+general remains open, and (R3) (`Realization.HollowReceiving`) is not proved.
 
 ## Placement
 
@@ -154,6 +164,50 @@ theorem IsAnchoredMarkedCapContext.isMarkedCapContext {h : Fin n ↪ Fin k}
     t'.IsMarkedCapContext h :=
   let ⟨c, r, hc, hr, hn, ha, _⟩ := ht
   ⟨c, r, hc, hr, hn, ha⟩
+
+/-! ### The apex of a type labelled `⊥` -/
+
+section Apex
+
+variable {n : ℕ} {t : StageType.{u} α n} (ht : t.IsLegalBelowFullGrade) (hn : 0 < n)
+
+/-- **The apex of a type labelled `⊥` is a top cap and its own marker, and the type is a marked-cap
+context along every embedding of `n'` points with `n' + 1 < n`.** -/
+theorem isMarkedCapContext_addApex (hbot : ∀ d, t.label d = ⊥) {n' : ℕ} (h : Fin n' ↪ Fin n)
+    (hn' : n' + 1 < n) :
+    (t.addApex ht hn).IsTopCap (Fin.last _) ∧ (t.addApex ht hn).IsMarker (Fin.last _) (Fin.last _) ∧
+      (t.addApex ht hn).IsMarkedCapContext h := by
+  have hlab (x : Fin (t.addApex ht hn).card) (hx : (t.addApex ht hn).label x = ⊤) :
+      x = Fin.last _ := by
+    -- `t.addApex` has the cells of `t` and the apex
+    change Fin (t.card + 1) at x
+    induction x using Fin.lastCases with
+    | last => rfl
+    | cast d =>
+      rw [addApex_label_castSucc, hbot d] at hx
+      exact absurd hx bot_ne_top
+  have hg : (t.addApex ht hn).toCellScheme.grade (Fin.last _) = n :=
+    congrArg Prod.snd (addApex_gradedIndex_last ht hn)
+  have hc : (t.addApex ht hn).IsTopCap (Fin.last _) :=
+    ⟨addApex_scope_last ht hn, addApex_label_last ht hn, fun x _ ↦ by
+      rw [hg]
+      exact (t.addApex ht hn).grade_le x⟩
+  have hr : (t.addApex ht hn).IsMarker (Fin.last _) (Fin.last _) :=
+    ⟨addApex_label_last ht hn, (t.addApex ht hn).toCellScheme.mem_below_gradedIndex _,
+      fun x hx _ ↦ by rw [hlab x hx]⟩
+  refine ⟨hc, hr, ⟨_, _, hc, hr, by rw [hg]; exact hn', fun a ha hat ↦ ?_⟩⟩
+  -- the only cell labelled `⊤` is the apex, of full scope, not visible through `n' < n` points
+  obtain rfl := hlab a hat
+  exfalso
+  have hsurj : Function.Surjective h := fun y ↦ by
+    have := Scheme.mem_visibleCells.mp ha
+    rw [addApex_scope_last] at this
+    exact this (mem_coe.mpr (mem_univ y))
+  have := Fintype.card_le_of_surjective _ hsurj
+  simp only [Fintype.card_fin] at this
+  omega
+
+end Apex
 
 end StageType
 
