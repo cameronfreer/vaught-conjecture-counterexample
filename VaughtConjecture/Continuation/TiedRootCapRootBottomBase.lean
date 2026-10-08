@@ -48,41 +48,6 @@ theorem exists_faceCell_eq {t' : StageType.{u} α k} {h : Fin n ↪ Fin k}
   exact ⟨Fin.cast (congrArg Scheme.card (comap_toScheme_of_restrictFace ht)) z, by
     simp [faceCell, Scheme.faceCell]⟩
 
-/-- The data of a marked-cap context along `h` with top cap `c` and marker `r`
-(`StageType.IsMarkedCapContext` is `∃ c r, t'.IsMarkedCapContextAt h c r`). -/
-def IsMarkedCapContextAt (t' : StageType.{u} α k) (h : Fin n ↪ Fin k) (c r : Fin t'.card) :
-    Prop :=
-  t'.IsTopCap c ∧ t'.IsMarker c r ∧ n + 1 < t'.toCellScheme.grade c ∧
-    ∀ a ∈ t'.visibleCells h, t'.label a = ⊤ →
-      visibilityReplace (t'.toCellScheme.grade c) (n + 1) (t'.rowAt c r) ≤ t'.rowAt c a
-
-/-- **Forcing at the root tops gives the row inequality at a given marker**: let `β` be a limit,
-`β + ω ≤ α`, `q` a legal stage type at `β` restricting along `f : Fin n ↪ Fin m` to `p`, `c` a
-top cap of `q` and `r` a marker of `c`.  If `(q, f)` forces `n + 1` at every cell of `p` labelled
-`⊤`, then `visibilityReplace N (n + 1) (q.rowAt c r) ≤ q.rowAt c a` at every cell `a` of `q`
-visible through `f` and labelled `⊤`. -/
-theorem IsMarker.visibilityReplace_le_of_forcesThreshold {q : StageType.{u} β m}
-    {c r : Fin q.card} (hβ : Order.IsSuccLimit β)
-    (hα : β + ω ≤ α) (hq : q.IsLegal) {f : Fin n ↪ Fin m} {p : StageType.{u} β n}
-    (hp : restrictFace f q = some p) (hc : q.IsTopCap c) (hr : q.IsMarker c r)
-    (hforce : ∀ d : Fin p.card, p.label d = ⊤ →
-      ForcesThreshold α hβ.isSuccPrelimit q f p d (n + 1)) :
-    ∀ a ∈ q.visibleCells f, q.label a = ⊤ →
-      visibilityReplace (q.toCellScheme.grade c) (n + 1) (q.rowAt c r) ≤ q.rowAt c a := by
-  intro a ha hat
-  obtain ⟨hf, hqp⟩ := (restrictFace_eq_some_iff q f).mp hp
-  have hcard : (q.comap f hf).card = p.card :=
-    congrArg (fun s : StageType.{u} β n ↦ s.card) hqp
-  obtain ⟨i, rfl⟩ : a ∈ Set.range (q.cellMap f) := by
-    rw [Scheme.range_cellMap]
-    exact ha
-  set d : Fin p.card := ⟨i, lt_of_lt_of_eq i.2 hcard⟩
-  have hd : p.label d = ⊤ := by
-    rw [← hat]
-    exact (label_congr hqp.symm rfl).trans (comap_label q f hf i)
-  exact (ForcesThreshold.le_grade_and_visibilityReplace_rowAt_le hβ hα hq hc hr (hforce d hd) hd
-    fun i' hi' ↦ congrArg (q.cellMap f) (Fin.ext hi')).2
-
 /-- The **root offsets lie below `N`** along `h`: every label of a cell visible through `h` that
 is an ordinal `μ + f` (`μ` zero or a limit) has `f < N`. -/
 def RootOffsetsBelow (t' : StageType.{u} α k) (h : Fin n ↪ Fin k) (N : ℕ) : Prop :=

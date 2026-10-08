@@ -24,7 +24,7 @@ this repository (theorem named):
   new cell of an entry reads the agreement height of that entry with the orbit code of the input,
   `⊥` when the two differ in their bottoms.
 * **Field layers keep bot-keeping** (`Scheme.exists_botKeeping_fieldLayer`), with the rows of the
-  old cells (`Scheme.rowAt_appendFullCells_castAdd`, `Scheme.rowAt_appendFullCell_castSucc`).
+  old cells (`Scheme.rowAt_appendFullCells_castAdd`, `Scheme.rowAt_appendFullCell_castSucc'`).
   Stage reduction keeps exactly the bottoms (`Label.reduce_eq_bot_iff`).
 * **The tower** (`Seed.exists_botKeeping_tower`) and its completion under the lifting invariant
   (`Seed.exists_botKeeping_of_towerInvariant`), at the arities `m ≤ 2` with no hypothesis
@@ -54,25 +54,6 @@ variable {α : Ordinal.{u}} {k : ℕ}
 section Apex
 
 variable {t₀ : StageType.{u} α k} (ht₀ : t₀.IsLegalBelowFullGrade) (hk : 0 < k)
-
-/-- The apex row reads every cell at the code of its label. -/
-theorem row_addApex_last_eq {z : Fin (t₀.addApex ht₀ hk).card}
-    (hz : z ∈ (t₀.addApex ht₀ hk).toCellScheme.below
-      ((t₀.addApex ht₀ hk).toCellScheme.gradedIndex (Fin.last _))) :
-    (t₀.addApex ht₀ hk).rows.row (Fin.last _) ⟨z, hz⟩ =
-      blockEncode (apexCodes ht₀) k ((t₀.addApex ht₀ hk).label z) := by
-  -- the rows of `t₀.addApex` are those of `appendFullCell`
-  change (t₀.toScheme.appendFullCell k (apexRow ht₀) ht₀.not_le).rows.row (Fin.last _) ⟨z, hz⟩ = _
-  rw [Scheme.appendFullCell_row_last]
-  change Fin (t₀.card + 1) at z
-  induction z using Fin.lastCases with
-  | last => rw [apexRow_last, addApex_label_last]
-  | cast d => rw [apexRow_castSucc, addApex_label_castSucc]
-
-/-- The apex has graded index `(univ, k)`. -/
-theorem addApex_gradedIndex_last :
-    (t₀.addApex ht₀ hk).toCellScheme.gradedIndex (Fin.last _) = (univ, k) :=
-  Scheme.appendFullCellScheme_gradedIndex_last _ _
 
 /-- Every cell lies below the apex. -/
 theorem mem_below_addApex_last (z : Fin (t₀.addApex ht₀ hk).card) :
@@ -173,7 +154,7 @@ theorem exists_isLawful_fieldLayer_bot {p : Fin S.card → Label.{u}} (hp : S.ro
     exact hpd
 
 /-- **The rows of the old cells after appending a cell of full scope** are their rows before. -/
-theorem rowAt_appendFullCell_castSucc {j : ℕ} {r : Fin (S.card + 1) → Label.{u}}
+theorem rowAt_appendFullCell_castSucc' {j : ℕ} {r : Fin (S.card + 1) → Label.{u}}
     {h : ∀ d, ¬ ((univ : Finset (Fin n)), j) ≤ S.toCellScheme.gradedIndex d} (u x : Fin S.card) :
     (S.appendFullCell j r h).rowAt u.castSucc x.castSucc = S.rowAt u x := by
   by_cases hx : x ∈ S.toCellScheme.below (S.toCellScheme.gradedIndex u)
@@ -233,7 +214,7 @@ theorem exists_completion_rowAt_eq_bot (hinv : I.TowerInvariant (m + 1))
     exact (StageType.rowAt_addApex_last_eq_bot_iff F.isLegalBelowFullGrade (Nat.succ_pos _)
       _).mpr hyb
   | cast d =>
-  refine (Scheme.rowAt_appendFullCell_castSucc (h := F.isLegalBelowFullGrade.not_le) d y').trans ?_
+  refine (Scheme.rowAt_appendFullCell_castSucc' (h := F.isLegalBelowFullGrade.not_le) d y').trans ?_
   have hsd : F.scheme.toCellScheme.scope d = univ :=
     (Scheme.appendFullCellScheme_scope_castSucc _ _ d).symm.trans hsu
   have hgd : m + 1 ≤ F.scheme.toCellScheme.grade d :=
@@ -291,23 +272,6 @@ proper scope labelled `⊥` as `⊥`. -/
 def BotKeeping (S : Scheme.{u} n) (r : Fin S.card → Label.{u}) : Prop :=
   ∀ u y, S.toCellScheme.scope u = univ → r u ≠ ⊥ → S.toCellScheme.scope y ≠ univ → r y = ⊥ →
     S.rowAt u y = ⊥
-
-/-- **The old cells keep their rows after appending cells of full scope.** -/
-theorem rowAt_appendFullCells_castAdd {k M : ℕ} {r : Fin M → Fin (S.card + M) → Label.{u}}
-    {h : ∀ d, ¬ ((univ : Finset (Fin n)), k) ≤ S.toCellScheme.gradedIndex d} (u x : Fin S.card) :
-    (S.appendFullCells k M r h).rowAt (Fin.castAdd M u) (Fin.castAdd M x) = S.rowAt u x := by
-  by_cases hx : x ∈ S.toCellScheme.below (S.toCellScheme.gradedIndex u)
-  · have hx' : Fin.castAdd M x ∈ (S.appendFullCells k M r h).toCellScheme.below
-        ((S.appendFullCells k M r h).toCellScheme.gradedIndex (Fin.castAdd M u)) := by
-      rw [CellScheme.mem_below] at hx ⊢
-      simpa using hx
-    rw [rowAt_of_mem hx', rowAt_of_mem hx, appendFullCells_row_castAdd]
-    rfl
-  · have hx' : Fin.castAdd M x ∉ (S.appendFullCells k M r h).toCellScheme.below
-        ((S.appendFullCells k M r h).toCellScheme.gradedIndex (Fin.castAdd M u)) := by
-      rw [CellScheme.mem_below] at hx ⊢
-      simpa using hx
-    rw [rowAt_of_notMem hx', rowAt_of_notMem hx]
 
 variable {k : ℕ} {hS : ∀ d, ¬ ((univ : Finset (Fin n)), k) ≤ S.toCellScheme.gradedIndex d}
 
@@ -393,7 +357,7 @@ theorem BotKeeping.rowAt_completion_eq_bot {F : CompletionBelowFullGrade I} (hF 
     exact (StageType.rowAt_addApex_last_eq_bot_iff F.isLegalBelowFullGrade (Nat.succ_pos _)
       _).mpr hyb
   | cast d =>
-  refine (Scheme.rowAt_appendFullCell_castSucc (h := F.isLegalBelowFullGrade.not_le) d
+  refine (Scheme.rowAt_appendFullCell_castSucc' (h := F.isLegalBelowFullGrade.not_le) d
     y').trans ?_
   have hlab (x : Fin (F.truncate hα).card) :
       (F.completion hα).label x.castSucc = Label.reduce α (F.label x) :=

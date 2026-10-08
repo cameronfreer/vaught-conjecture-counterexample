@@ -5,6 +5,8 @@ Authors: Cameron Freer
 -/
 import VaughtConjecture.Continuation.RootBottomDetermination
 import VaughtConjecture.MainTheorem.ReceivingRoute
+import VaughtConjecture.MainTheorem.ReceivingDetermination
+import VaughtConjecture.MainTheorem.CoatomDetermination
 
 /-!
 # The receiving route from cutoff determination at contexts respecting the root bottoms
@@ -22,8 +24,8 @@ receiving models) from hollow cutoff determination at the predicate
   (`Realization.hollowReceiving_of_hollowCutoffDetermination`).
 * `Realization.receivingHollowReceiving_of_markedCapContextBelow'`: from
   `HollowCutoffDetermination MarkedCapContextBelow'`, with no other hypothesis.
-* `Realization.receivingHollowReceiving_of_coatomCutoffDetermination`: from its coatom form, given
-  the named reduction `Realization.CoatomCutoffReduction`.
+* `Realization.receivingHollowReceiving_of_coatomCutoffDetermination`: from its coatom form
+  (`Realization.HollowCoatomCutoffDetermination.hollowCutoffDetermination`).
 * `MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_markedCapContextBelow'`: the thin `ℵ₁`
   spectrum from (R4) and (R2) for receiving models and
   `HollowCutoffDetermination.{0} MarkedCapContextBelow'`.
@@ -43,17 +45,6 @@ open Finset Label
 
 namespace Realization
 
-/-- **(R3) for receiving models from hollow acquisition and hollow cutoff determination**: hollow
-acquisition for cover-hollowness at a block stage and hollow cutoff determination, for one
-predicate `P`, give `HollowReceiving` for `IsReceivingCoverHollowAtBlock`, the (R3) hypothesis of
-the receiving route. -/
-theorem receivingHollowReceiving_of_cutoffDetermination
-    {P : ∀ {α : Ordinal.{u}} {n k : ℕ}, StageType.{u} α k → (Fin n ↪ Fin k) → Prop}
-    (hacq : HollowAcquisition.{u, w} IsCoverHollowAtBlock P)
-    (hdet : HollowCutoffDetermination.{u} P) :
-    HollowReceiving.{u, w} IsReceivingCoverHollowAtBlock :=
-  hollowReceiving_of_hollowCutoffDetermination hacq hdet fun _ _ _ h ↦ h
-
 /-- **(R3) for receiving models from cutoff determination at the acquired predicate**, with no
 other hypothesis. -/
 theorem receivingHollowReceiving_of_markedCapContextBelow'
@@ -62,15 +53,14 @@ theorem receivingHollowReceiving_of_markedCapContextBelow'
     HollowReceiving.{u, w} IsReceivingCoverHollowAtBlock :=
   receivingHollowReceiving_of_cutoffDetermination rootBottomAcquisition hdet
 
-/-- **(R3) for receiving models from the coatom form at the acquired predicate**, given the
-reduction from the coatom form (`Realization.CoatomCutoffReduction`). -/
+/-- **(R3) for receiving models from the coatom form at the acquired predicate**
+(`Realization.HollowCoatomCutoffDetermination.hollowCutoffDetermination` with the route inputs). -/
 theorem receivingHollowReceiving_of_coatomCutoffDetermination
-    (hred : CoatomCutoffReduction.{u})
     (h3' : HollowCoatomCutoffDetermination.{u}
       (fun t' h ↦ TiedRootCapRelabel.MarkedCapContextBelow' t' h)) :
     HollowReceiving.{u, w} IsReceivingCoverHollowAtBlock :=
   receivingHollowReceiving_of_markedCapContextBelow'
-    (hred _ h3' (markedCapContextBelow'_routeInputs.{u, w}).2.1
+    (h3'.hollowCutoffDetermination (markedCapContextBelow'_routeInputs.{u, w}).2.1
       (markedCapContextBelow'_routeInputs.{u, w}).2.2)
 
 end Realization
