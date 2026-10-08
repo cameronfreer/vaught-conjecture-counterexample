@@ -3672,7 +3672,7 @@ Each checkpoint needs both its abstract API and a concrete application:
    `StageType.HasCapRowExtensions` (open) implies `StageType.HasCapReadingExtensions`,
    `StageType.HasCapRowExtensions.hasCapReadingExtensions`; reading coatom completions,
    `Continuation/StableRecoveryCoatom`: a closed coatom through a closed face,
-   `StageType.exists_coatom_trans_eq` (in `Extension/PinnedExtension`), and the new named statement
+   `StageType.exists_coatom_trans_eq`, and the new named statement
    `StageType.HasReadingCoatomCompletions` (open; `StageType.IsReadingCoatomCompletion`) implies
    `StageType.HasCapReadingExtensions` under `StageType.HasCoatomExtensions` at `λ_{ξ+1}`,
    `StageType.HasReadingCoatomCompletions.hasCapReadingExtensions`, hence (R4) with that property at

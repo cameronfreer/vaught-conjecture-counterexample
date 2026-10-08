@@ -1154,7 +1154,7 @@ except as a named hypothesis.
    lawful row at `(univ, N)` is not known.
    **Reading coatom completions** (`Continuation/StableRecoveryCoatom`, compiled in this repository
    (theorem named)).  A closed face of `k ≤ n` points of a stage type on `n + 1` points lies in a
-   closed coatom (`StageType.exists_coatom_trans_eq`, in `Extension/PinnedExtension`).  New named
+   closed coatom (`StageType.exists_coatom_trans_eq`).  New named
    statement, open: `StageType.HasReadingCoatomCompletions ξ` (RCC): for every legal `T⁺` at
    `λ_{ξ+1}`, closed coatom `g` with face `p`, legal coface `tb` of `p`, `f` of `k > 0` points into
    the coatom, coface `D` that is the face of `tb` along `f` and the new point, `γ < λ_{ξ+1}` and
