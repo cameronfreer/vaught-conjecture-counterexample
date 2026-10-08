@@ -22,10 +22,9 @@ admission (availability gives a field cell at `(univ, 1)` at `⊤`, whose row re
 entry; `Scheme.exists_admitted_image_le`, the recognition of
 `Scheme.exists_admitted_image` on the cells of grade at most the grade of the layer).
 
-**h2 at top grade `1`** (`H2.exists_completion_recProp_one_of`): the shape of
-`H2.exists_completion_recProp_one`, from donor raising (`H2.DonorRaisingV`) and owner lowering
-(`FieldAdmission.OwnerLowering`) at the grade `1`, with the designated cells below the top read on
-their cells of grade `1`.
+The admission is an admission of states between the grade-`1` faces (`H2.LawfulOne`) of the two
+coatom types; **h2 at top grade `1`** from it is `H2.exists_completion_recProp_one_of_admission`
+(module `VaughtConjecture.Continuation.H2OneRaise`).
 -/
 
 universe u
@@ -121,8 +120,8 @@ theorem exists_gradedIndex_layerOne_right :
 
 section Engine
 
-variable (hS : IsStateAdmission (rootL (I := I)) rootR 1 I.left.rows.IsLawful
-  I.right.rows.IsLawful Adm) (hloc : ReadsOne I Adm) (hst : Adm I.left.label I.right.label)
+variable (hS : IsStateAdmission (rootL (I := I)) rootR 1 (LawfulOne I.left)
+  (LawfulOne I.right) Adm) (hloc : ReadsOne I Adm) (hst : Adm I.left.label I.right.label)
 
 include hS hloc hst in
 theorem cappedLift_layerTwo_left :
@@ -410,46 +409,5 @@ theorem stateAdmission_oneV {t' : StageType.{u} α 2} {n : ℕ}
   · have := hf.orderly o
     rwa [hs.grade_owner] at this
   · exact hs.frontier_le hf ((StageType.label_faceCell hp a).trans (hA a ha).1) (hA a ha).2
-
-/-- **h2 at two points, top grade `1`, from the provisions at grade `1`**: the conclusion of
-`H2.exists_completion_recProp_one`, from refined donor raising at the grade `1` for the designated
-cells below the top of grade `1`, and owner lowering at the grade `1` (both hypotheses); the root
-cells `A` of the raise are top cells of the common face avoiding the lost point (`H2.rootTops` is
-the instance, with `hA := fun _ h ↦ h`).  The
-completion is `Seed.oneCompletion`: the admitted layer at grade `1` over the amalgam, on the
-clause read on the copies, then the layer at grade `2`. -/
-theorem exists_completion_recProp_one_of {t' : StageType.{u} α 2} (hleg : t'.IsLegal) {n : ℕ}
-    {g : Fin n ↪ Fin 1} {l : Fin 2} {o r : Fin t'.card}
-    (hs : t'.IsSourceGapContextAt 1 (g.trans Fin.castSuccEmb) l o r) {p : StageType.{u} α 1}
-    (hp : restrictFace Fin.castSuccEmb t' = some p) {tb : StageType.{u} α 2}
-    (htbleg : tb.IsLegal) (htbp : restrictFace Fin.castSuccEmb tb = some p)
-    {Lo Tops : Finset (Fin tb.card)}
-    (hTops : ∀ x ∈ Tops, tb.label x = ⊤ ∧ tb.toCellScheme.grade x ≤ 1 ∧
-      x ∉ tb.toScheme.visibleCells Fin.castSuccEmb) {A : Set (Fin p.card)}
-    (hA : ∀ a ∈ A, p.label a = ⊤ ∧ l ∉ t'.toCellScheme.scope (StageType.faceCell hp a))
-    (hDR : DonorRaisingV (StageType.faceCell hp) (StageType.faceCell htbp) 1 t'.rows.IsLawful
-      tb.rows.IsLawful A (Lo.filter fun x ↦ tb.toCellScheme.grade x ≤ 1) Tops)
-    (hOL : OwnerLowering (StageType.faceCell hp) (StageType.faceCell htbp) o r 1
-      t'.rows.IsLawful tb.rows.IsLawful) :
-    ∃ F : CompletionBelowFullGrade (Seed.ofCoatoms hleg htbleg hp htbp),
-      RecProp F o r 1 Lo Tops := by
-  set Lo1 := Lo.filter fun x ↦ tb.toCellScheme.grade x ≤ 1 with hLo1
-  have hS := stateAdmission_oneV hs hp htbp (Lo := Lo1) hA hDR hOL
-  have hr1 : t'.toCellScheme.grade r ≤ 1 := hs.topGrade_eq ▸ grade_le_topGrade hs.label_lost
-  have hloc : ReadsOne (Seed.ofCoatoms hleg htbleg hp htbp) (SelfLowG o r 1 Lo1 Tops) := by
-    intro L L' R R' hL hR h t ht hlt
-    have hRt : R' t = R t := (hR t (hTops t ht).2.1).symm
-    have hsup : Lo1.sup R' = Lo1.sup R :=
-      Finset.sup_congr rfl fun x hx ↦ (hR x (Finset.mem_filter.mp hx).2).symm
-    have hfr : frontierAt o r 1 L' = frontierAt o r 1 L := by
-      unfold frontierAt
-      rw [← hL o hs.grade_owner.le, ← hL r hr1]
-    have h' := h t ht ((congrArg (visibilityReplace 1 1) hsup.symm).trans_lt (hlt.trans_eq hRt))
-    exact (le_of_eq hfr).trans (h'.trans_eq hRt.symm)
-  have hst : SelfLowG o r 1 Lo1 Tops t'.label tb.label := fun t ht _ ↦ (hTops t ht).1.symm ▸ le_top
-  refine ⟨oneCompletion hS hloc hst, fun q hq hqo t ht hlt ↦ ?_⟩
-  have hadm := adm_of_isLawful_layerTwo hS hloc (o := o) hs.grade_owner hq hqo
-  refine hadm t ht (lt_of_le_of_lt ?_ hlt)
-  exact monotone_visibilityReplace le_rfl (Finset.sup_mono (Finset.filter_subset _ _))
 
 end VaughtConjecture.H2

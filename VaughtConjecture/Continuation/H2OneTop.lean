@@ -144,8 +144,8 @@ theorem exists_root_of_left_mem {z : Fin I.left.card} {k : ℕ}
 
 section Step
 
-variable (hS : IsStateAdmission (rootL (I := I)) rootR 1 I.left.rows.IsLawful
-  I.right.rows.IsLawful Adm) (hloc : ReadsOne I Adm)
+variable (hS : IsStateAdmission (rootL (I := I)) rootR 1 (LawfulOne I.left)
+  (LawfulOne I.right) Adm) (hloc : ReadsOne I Adm)
 
 include hS hloc in
 /-- **The step to grade `2` from the first coatom.**  A labelling of the admitted layer at grade `1`

@@ -20,6 +20,16 @@ splices at `1` with bottom (the cells of grade `2` at `⊥`), glued on the amalg
 
 universe u
 
+namespace VaughtConjecture.H2
+
+/-- **A grade-`1` face** of a stage type on two points: lawful below `(univ, 1)` and `⊥` at the
+cells of grade `2`. -/
+def LawfulOne {α : Ordinal.{u}} (tb : StageType.{u} α 2) (W : Fin tb.card → Label.{u}) : Prop :=
+  tb.rows.IsLawfulBelow ((Finset.univ : Finset (Fin 2)), 1) (fun d ↦ W d) ∧
+    ∀ d, ¬ tb.toCellScheme.grade d ≤ 1 → W d = ⊥
+
+end VaughtConjecture.H2
+
 namespace VaughtConjecture.Seed
 
 open Finset Label CellScheme StageType H2
@@ -119,22 +129,89 @@ theorem isLawful_spl {E : StageType.{u} α 2} {p : Fin E.card → Label.{u}}
     E.rows.IsLawful (spl E p) :=
   Scheme.isLawful_splice_bot (S := E.toScheme) hp
 
+/-- The splice at `1` of a labelling lawful below `(univ, 1)` is a grade-`1` face. -/
+theorem lawfulOne_spl {E : StageType.{u} α 2} {p : Fin E.card → Label.{u}}
+    (hp : E.rows.IsLawfulBelow ((univ : Finset (Fin 2)), 1) (fun d ↦ p d)) :
+    LawfulOne E (spl E p) := by
+  refine ⟨?_, fun z hz ↦ spl_of_lt hz⟩
+  convert hp using 1
+  exact funext fun z ↦ spl_of_le z.2.2
+
 /-- The splice of the first side of a labelling of the amalgam lawful below the first coatom at
-grade `1`. -/
+grade `1` is a grade-`1` face. -/
 theorem isLawful_spl_left {f : Fin I.amalgam.card → Label.{u}}
     (hf : I.amalgam.rows.IsLawfulBelow (univ.erase (Fin.last 2), 1) (fun d ↦ f d)) :
-    I.left.rows.IsLawful (spl I.left fun z ↦ f (StageType.faceCell I.restrictFace_left z)) :=
-  isLawful_spl (E := I.left) (p := fun z ↦ f (StageType.faceCell I.restrictFace_left z))
+    LawfulOne I.left (spl I.left fun z ↦ f (StageType.faceCell I.restrictFace_left z)) :=
+  lawfulOne_spl (E := I.left) (p := fun z ↦ f (StageType.faceCell I.restrictFace_left z))
     ((amalgam_left_iff 1).mp hf)
 
 /-- The splice of the second side of a labelling of the amalgam lawful below the second coatom at
-grade `1`. -/
+grade `1` is a grade-`1` face. -/
 theorem isLawful_spl_right {f : Fin I.amalgam.card → Label.{u}}
     (hf : I.amalgam.rows.IsLawfulBelow (univ.erase (Fin.castSucc (Fin.last 1)), 1)
       (fun d ↦ f d)) :
-    I.right.rows.IsLawful (spl I.right fun z ↦ f (StageType.faceCell I.restrictFace_right z)) :=
-  isLawful_spl (E := I.right) (p := fun z ↦ f (StageType.faceCell I.restrictFace_right z))
+    LawfulOne I.right (spl I.right fun z ↦ f (StageType.faceCell I.restrictFace_right z)) :=
+  lawfulOne_spl (E := I.right) (p := fun z ↦ f (StageType.faceCell I.restrictFace_right z))
     ((amalgam_right_iff 1).mp hf)
+
+/-- The splice at `1` of the labels is a grade-`1` face. -/
+theorem lawfulOne_spl_label (E : StageType.{u} α 2) : LawfulOne E (spl E E.label) :=
+  lawfulOne_spl (E.isLawful.isLawfulBelow _)
+
+/-- The splices of the labels of the two coatom types agree at the common face. -/
+theorem spl_label_root (x : Fin I.face.card) :
+    spl I.left I.left.label (rootL x) = spl I.right I.right.label (rootR x) := by
+  rw [spl_of_le (grade_rootL_le x), spl_of_le (grade_rootR_le x)]
+  exact label_rootL I x
+
+/-- **Gluing two grade-`1` faces** agreeing at the common face: a labelling of the amalgam lawful
+below `(univ, 1)`. -/
+theorem exists_glue_one {sT : Fin I.left.card → Label.{u}} {sD : Fin I.right.card → Label.{u}}
+    (hsT : LawfulOne I.left sT) (hsD : LawfulOne I.right sD) (hroot : I.RootAgree sT sD) :
+    ∃ w : Fin I.amalgam.card → Label.{u},
+      I.amalgam.rows.IsLawfulBelow ((univ : Finset (Fin 3)), 1) (fun d ↦ w d) ∧
+      (∀ z, w (StageType.faceCell I.restrictFace_left z) = sT z) ∧
+      ∀ z, w (StageType.faceCell I.restrictFace_right z) = sD z := by
+  classical
+  set w : Fin I.amalgam.card → Label.{u} := fun d ↦
+    if hd : ∃ i, StageType.faceCell I.restrictFace_left i = d then sT hd.choose
+    else if hd' : ∃ i, StageType.faceCell I.restrictFace_right i = d then sD hd'.choose
+    else ⊥ with hwdef
+  have hwL (z : Fin I.left.card) : w (StageType.faceCell I.restrictFace_left z) = sT z := by
+    have hd : ∃ i, StageType.faceCell I.restrictFace_left i =
+        StageType.faceCell I.restrictFace_left z := ⟨z, rfl⟩
+    rw [hwdef]
+    exact (dite_eq_left hd).trans
+      (congrArg sT (faceCell_injective' I.restrictFace_left hd.choose_spec))
+  have hwR (z : Fin I.right.card) : w (StageType.faceCell I.restrictFace_right z) = sD z := by
+    by_cases hd : ∃ i, StageType.faceCell I.restrictFace_left i =
+        StageType.faceCell I.restrictFace_right z
+    · rw [hwdef]
+      exact (dite_eq_left hd).trans (hroot _ _ hd.choose_spec)
+    · have hd' : ∃ i, StageType.faceCell I.restrictFace_right i =
+          StageType.faceCell I.restrictFace_right z := ⟨z, rfl⟩
+      rw [hwdef]
+      exact (dite_eq_right hd).trans ((dite_eq_left hd').trans
+        (congrArg sD (faceCell_injective' I.restrictFace_right hd'.choose_spec)))
+  have hU : I.amalgam.rows.IsLawfulBelow (univ.erase (Fin.last 2), 1) fun d ↦ w d := by
+    refine (amalgam_left_iff 1).mpr ?_
+    convert hsT.1 using 1
+    exact funext fun i ↦ hwL i.1
+  have hV : I.amalgam.rows.IsLawfulBelow (univ.erase (Fin.castSucc (Fin.last 1)), 1)
+      fun d ↦ w d := by
+    refine (amalgam_right_iff 1).mpr ?_
+    convert hsD.1 using 1
+    exact funext fun i ↦ hwR i.1
+  refine ⟨w, CellScheme.Rows.IsLawfulBelow.glue hU hV fun d hd ↦ ?_, hwL, hwR⟩
+  rcases I.mem_visibleCells_or d with hv | hv
+  · refine Or.inl ⟨fun x hx ↦ ?_, hd.2⟩
+    obtain ⟨y, hy⟩ := Scheme.mem_visibleCells.mp hv hx
+    rw [← Coatom.univ_map_left (m := 1)]
+    exact mem_map.mpr ⟨y, mem_univ _, hy⟩
+  · refine Or.inr ⟨fun x hx ↦ ?_, hd.2⟩
+    obtain ⟨y, hy⟩ := Scheme.mem_visibleCells.mp hv hx
+    rw [← Coatom.univ_map_right (m := 1)]
+    exact mem_map.mpr ⟨y, mem_univ _, hy⟩
 
 /-! ### The admission on the amalgam -/
 
@@ -155,8 +232,8 @@ def ReadsOne : Prop :=
 
 section Admission
 
-variable (hS : IsStateAdmission (rootL (I := I)) rootR 1 I.left.rows.IsLawful
-  I.right.rows.IsLawful Adm) (hloc : ReadsOne I Adm)
+variable (hS : IsStateAdmission (rootL (I := I)) rootR 1 (LawfulOne I.left)
+  (LawfulOne I.right) Adm) (hloc : ReadsOne I Adm)
 include hS hloc
 
 /-- **The admission passes to the orbit code at `1` of the splice.** -/
@@ -177,11 +254,17 @@ end Admission
 
 section Provisions
 
-variable (hS : IsStateAdmission (rootL (I := I)) rootR 1 I.left.rows.IsLawful
-  I.right.rows.IsLawful Adm) (hloc : ReadsOne I Adm)
+variable (hS : IsStateAdmission (rootL (I := I)) rootR 1 (LawfulOne I.left)
+  (LawfulOne I.right) Adm) (hloc : ReadsOne I Adm)
 
 private theorem erase_ne_univ' (x : Fin 3) : univ.erase x ≠ univ :=
   fun he ↦ Finset.notMem_erase x univ (he.symm ▸ mem_univ x)
+
+include hloc in
+/-- The admission at the labels passes to their splices. -/
+theorem adm_spl_label (hst : Adm I.left.label I.right.label) :
+    Adm (spl I.left I.left.label) (spl I.right I.right.label) :=
+  hloc (fun _ hz ↦ (spl_of_le hz).symm) (fun _ hz ↦ (spl_of_le hz).symm) hst
 
 include hS hloc in
 /-- **The provision at the cap `⊥` from the first coatom, at grade `1`.** -/
@@ -191,12 +274,11 @@ theorem botOne_left (hst : Adm I.left.label I.right.label) {f : Fin I.amalgam.ca
       I.amalgam.rows.IsLawfulBelow ((univ : Finset (Fin 3)), 1) (fun d ↦ W d) ∧
       (∀ d ∈ I.amalgam.toCellScheme.below (univ.erase (Fin.last 2), 1), W d = f d) ∧
       AdmA I Adm (orbitCode 1 (I.amalgam.toCellScheme.splice 1 (fun _ ↦ ⊥) W)) := by
-  have hsT := isLawful_spl_left ( hf)
-  obtain ⟨sD, hsD, hroot, -, hadm⟩ := hS.context (isSelfVisible_bot 1) I.left.isLawful
-    I.right.isLawful (label_rootL I) hst hsT (fun _ ↦ by simp)
-  obtain ⟨W, hW, hWT, hWD⟩ := exists_isLawful_glue₂ hsT hsD
-    (rootAgree_of fun x ↦ (hroot x).symm)
-  refine ⟨W, hW.isLawfulBelow _, fun d hd ↦ ?_, admA_code hS hloc ?_⟩
+  have hsT := isLawful_spl_left hf
+  obtain ⟨sD, hsD, hroot, -, hadm⟩ := hS.context (isSelfVisible_bot 1) (lawfulOne_spl_label _)
+    (lawfulOne_spl_label _) spl_label_root (adm_spl_label hloc hst) hsT (fun _ ↦ by simp)
+  obtain ⟨W, hW, hWT, hWD⟩ := exists_glue_one hsT hsD (rootAgree_of fun x ↦ (hroot x).symm)
+  refine ⟨W, hW, fun d hd ↦ ?_, admA_code hS hloc ?_⟩
   · obtain ⟨z, rfl⟩ := exists_left_of_mem_below hd
     rw [hWT, spl_of_le ((StageType.grade_faceCell _ z).symm.trans_le hd.2)]
   · change Adm (fun z ↦ W _) (fun z ↦ W _)
@@ -213,11 +295,11 @@ theorem botOne_right (hst : Adm I.left.label I.right.label) {f : Fin I.amalgam.c
       (∀ d ∈ I.amalgam.toCellScheme.below (univ.erase (Fin.castSucc (Fin.last 1)), 1),
         W d = f d) ∧
       AdmA I Adm (orbitCode 1 (I.amalgam.toCellScheme.splice 1 (fun _ ↦ ⊥) W)) := by
-  have hsD := isLawful_spl_right ( hf)
-  obtain ⟨sT, hsT, hroot, -, hadm⟩ := hS.donor (isSelfVisible_bot 1) I.left.isLawful
-    I.right.isLawful (label_rootL I) hst hsD (fun _ ↦ by simp)
-  obtain ⟨W, hW, hWT, hWD⟩ := exists_isLawful_glue₂ hsT hsD (rootAgree_of hroot)
-  refine ⟨W, hW.isLawfulBelow _, fun d hd ↦ ?_, admA_code hS hloc ?_⟩
+  have hsD := isLawful_spl_right hf
+  obtain ⟨sT, hsT, hroot, -, hadm⟩ := hS.donor (isSelfVisible_bot 1) (lawfulOne_spl_label _)
+    (lawfulOne_spl_label _) spl_label_root (adm_spl_label hloc hst) hsD (fun _ ↦ by simp)
+  obtain ⟨W, hW, hWT, hWD⟩ := exists_glue_one hsT hsD (rootAgree_of hroot)
+  refine ⟨W, hW, fun d hd ↦ ?_, admA_code hS hloc ?_⟩
   · obtain ⟨z, rfl⟩ := exists_right_of_mem_below hd
     rw [hWD, spl_of_le ((StageType.grade_faceCell _ z).symm.trans_le hd.2)]
   · change Adm (fun z ↦ W _) (fun z ↦ W _)
@@ -251,8 +333,8 @@ theorem capOne_left {h : Label.{u}} (hh : IsSelfVisible 1 h)
       (∀ d ∈ I.amalgam.toCellScheme.below (univ.erase (Fin.last 2), 1), W d = f d) ∧
       (∀ d, I.amalgam.toCellScheme.grade d ≤ 1 → min (W d) h = min (a d) h) ∧
       AdmA I Adm (orbitCode 1 (I.amalgam.toCellScheme.splice 1 (fun _ ↦ ⊥) W)) := by
-  have hsT := isLawful_spl_left ( hf)
-  have hL := isLawful_spl_left ( (ha.isLawfulBelow (univ.erase (Fin.last 2), 1)))
+  have hsT := isLawful_spl_left hf
+  have hL := isLawful_spl_left (ha.isLawfulBelow (univ.erase (Fin.last 2), 1))
   have hR := isLawful_spl_right (
     (ha.isLawfulBelow (univ.erase (Fin.castSucc (Fin.last 1)), 1)))
   have hfL (z : Fin I.left.card) :
@@ -264,9 +346,8 @@ theorem capOne_left {h : Label.{u}} (hh : IsSelfVisible 1 h)
     · rw [spl_of_lt hz, spl_of_lt hz]
   obtain ⟨sD, hsD, hroot, hsDR, hadm⟩ :=
     hS.context hh hL hR (spl_root a) (adm_spl hloc hA) hsT hfL
-  obtain ⟨W, hW, hWT, hWD⟩ := exists_isLawful_glue₂ hsT hsD
-    (rootAgree_of fun x ↦ (hroot x).symm)
-  refine ⟨W, hW.isLawfulBelow _, fun d hd ↦ ?_, fun d hd ↦ ?_, admA_code hS hloc ?_⟩
+  obtain ⟨W, hW, hWT, hWD⟩ := exists_glue_one hsT hsD (rootAgree_of fun x ↦ (hroot x).symm)
+  refine ⟨W, hW, fun d hd ↦ ?_, fun d hd ↦ ?_, admA_code hS hloc ?_⟩
   · obtain ⟨z, rfl⟩ := exists_left_of_mem_below hd
     rw [hWT, spl_of_le ((StageType.grade_faceCell _ z).symm.trans_le hd.2)]
   · rcases I.mem_visibleCells_or d with hv | hv
@@ -303,8 +384,8 @@ theorem capOne_right {h : Label.{u}} (hh : IsSelfVisible 1 h)
         W d = f d) ∧
       (∀ d, I.amalgam.toCellScheme.grade d ≤ 1 → min (W d) h = min (a d) h) ∧
       AdmA I Adm (orbitCode 1 (I.amalgam.toCellScheme.splice 1 (fun _ ↦ ⊥) W)) := by
-  have hsD := isLawful_spl_right ( hf)
-  have hL := isLawful_spl_left ( (ha.isLawfulBelow (univ.erase (Fin.last 2), 1)))
+  have hsD := isLawful_spl_right hf
+  have hL := isLawful_spl_left (ha.isLawfulBelow (univ.erase (Fin.last 2), 1))
   have hR := isLawful_spl_right (
     (ha.isLawfulBelow (univ.erase (Fin.castSucc (Fin.last 1)), 1)))
   have hfR (z : Fin I.right.card) :
@@ -316,8 +397,8 @@ theorem capOne_right {h : Label.{u}} (hh : IsSelfVisible 1 h)
     · rw [spl_of_lt hz, spl_of_lt hz]
   obtain ⟨sT, hsT, hroot, hsTL, hadm⟩ :=
     hS.donor hh hL hR (spl_root a) (adm_spl hloc hA) hsD hfR
-  obtain ⟨W, hW, hWT, hWD⟩ := exists_isLawful_glue₂ hsT hsD (rootAgree_of hroot)
-  refine ⟨W, hW.isLawfulBelow _, fun d hd ↦ ?_, fun d hd ↦ ?_, admA_code hS hloc ?_⟩
+  obtain ⟨W, hW, hWT, hWD⟩ := exists_glue_one hsT hsD (rootAgree_of hroot)
+  refine ⟨W, hW, fun d hd ↦ ?_, fun d hd ↦ ?_, admA_code hS hloc ?_⟩
   · obtain ⟨z, rfl⟩ := exists_right_of_mem_below hd
     rw [hWD, spl_of_le ((StageType.grade_faceCell _ z).symm.trans_le hd.2)]
   · rcases I.mem_visibleCells_or d with hv | hv

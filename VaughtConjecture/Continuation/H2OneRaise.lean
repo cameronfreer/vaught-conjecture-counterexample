@@ -9,19 +9,26 @@ import VaughtConjecture.Continuation.H2Collapse
 /-!
 # Top grade `1` at two points: donor raising at grade `1` (work file)
 
-WORK FILE (branch `research/work-twolift`).
+WORK FILE (branch `research/work-twolift`).  No `sorry`.
 
 At grade `1` on two points the capped lift `H2.hasCappedLifts_of_isLegal` (which needs the arity
 of the root below the grade) and the witness closure of the lawful labellings of the donor (a
 witness bounded by the grade `1` need not keep the labels of the cells of grade `2` self-visible
-at `2`) are not available.  Both are recovered on the **grade-`1` faces** of the donor
-(`H2.LawfulOne`: lawful below `(univ, 1)`, `⊥` at the cells of grade `2`): the capped lift from
-the root to `(univ, 1)` is bountifulness (`H2.hasCappedLifts_lawfulOne`), and witnesses bounded
-by the grade `1` keep them (`H2.lawfulOne_map`).  So `H2.donorRaisingGap_of_cappedLift` gives
-donor raising with the gap on the grade-`1` faces, and it passes to the lawful labellings of the
-donor through **the extension from `(univ, 1)` to `(univ, 2)` capped at `h`**: bountifulness when
-`h` is self-visible at `2`, and otherwise (`h` of finite part `1`) the named hypothesis
-`H2.GradeTwoExtAtOne` (`H2.donorRaisingGap_one`).
+at `2`) are not available.  Both hold on the **grade-`1` faces** (`H2.LawfulOne`: lawful below
+`(univ, 1)`, `⊥` at the cells of grade `2`): the capped lift from the root is bountifulness
+(`H2.hasCappedLifts_lawfulOne_one`) and witnesses bounded by `1` keep them (`H2.lawfulOne_map`).
+So **donor raising with the gap between the grade-`1` faces holds with no hypothesis beyond the
+designation** (`H2.donorRaisingGap_oneFace`), the order law and the frontier bound hold there
+(`H2.frontier_le_lawfulOne`), and the clause is an admission of states between the grade-`1` faces
+under owner lowering there (`H2.stateAdmission_oneFace`).  The engine of
+`VaughtConjecture.Continuation.H2OneEngine` runs on exactly these faces, and
+`H2.exists_completion_recProp_one_of_admission` gives the conclusion of
+`H2.exists_completion_recProp_one` from any such admission.
+
+Donor raising between the full lawful labellings (`H2.donorRaisingGap_one`) passes through the
+extension from `(univ, 1)` to `(univ, 2)` capped at `h`: bountifulness when `h` is self-visible at
+`2`, and otherwise (`h` of finite part `1`) the named hypothesis `H2.GradeTwoExtAtOne`.  It is not
+needed by the engine.
 -/
 
 universe u
@@ -33,12 +40,6 @@ open Finset Label StageType FieldAdmission Seed CellScheme
 variable {α : Ordinal.{u}}
 
 /-! ### The grade-`1` faces of a donor -/
-
-/-- **A grade-`1` face** of a donor on two points: lawful below `(univ, 1)` and `⊥` at the cells of
-grade `2`. -/
-def LawfulOne (tb : StageType.{u} α 2) (W : Fin tb.card → Label.{u}) : Prop :=
-  tb.rows.IsLawfulBelow ((univ : Finset (Fin 2)), 1) (fun d ↦ W d) ∧
-    ∀ d, ¬ tb.toCellScheme.grade d ≤ 1 → W d = ⊥
 
 /-- **The extension from grade `1` to grade `2` at the caps of finite part `1`** (a hypothesis on
 the donor): at a cap `h` self-visible at `1` and not at `2`, a labelling lawful below `(univ, 1)`
@@ -250,8 +251,8 @@ theorem exists_completion_recProp_one_of_admission {t' : StageType.{u} α 2} (hl
     (htbleg : tb.IsLegal) (htbp : restrictFace Fin.castSuccEmb tb = some p)
     {Lo Tops : Finset (Fin tb.card)}
     (hTops : ∀ x ∈ Tops, tb.label x = ⊤ ∧ tb.toCellScheme.grade x ≤ 1)
-    (hS : IsStateAdmission (StageType.faceCell hp) (StageType.faceCell htbp) 1 t'.rows.IsLawful
-      tb.rows.IsLawful (SelfLowG o r 1 (Lo.filter fun x ↦ tb.toCellScheme.grade x ≤ 1) Tops)) :
+    (hS : IsStateAdmission (StageType.faceCell hp) (StageType.faceCell htbp) 1 (LawfulOne t')
+      (LawfulOne tb) (SelfLowG o r 1 (Lo.filter fun x ↦ tb.toCellScheme.grade x ≤ 1) Tops)) :
     ∃ F : CompletionBelowFullGrade (Seed.ofCoatoms hleg htbleg hp htbp),
       RecProp F o r 1 Lo Tops := by
   set Lo1 := Lo.filter fun x ↦ tb.toCellScheme.grade x ≤ 1 with hLo1
@@ -271,5 +272,128 @@ theorem exists_completion_recProp_one_of_admission {t' : StageType.{u} α 2} (hl
   have hadm := adm_of_isLawful_layerTwo hS hloc (o := o) hs.grade_owner hq hqo
   refine hadm t ht (lt_of_le_of_lt ?_ hlt)
   exact monotone_visibilityReplace le_rfl (Finset.sup_mono (Finset.filter_subset _ _))
+
+/-! ### Donor raising between the grade-`1` faces, with no hypothesis -/
+
+/-- The root of a grade-`1` face is lawful. -/
+theorem isLawful_root_of_lawfulOne {E : StageType.{u} α 2}
+    (hE : restrictFace Fin.castSuccEmb E = some p) {f : Fin E.card → Label.{u}}
+    (hf : LawfulOne E f) : p.rows.IsLawful fun i ↦ f (StageType.faceCell hE i) := by
+  have he := StageType.comap_toScheme_of_restrictFace hE
+  have hX : Prod.map (Finset.map Fin.castSuccEmb) id ((univ : Finset (Fin 1)), 1) ≤
+      ((univ : Finset (Fin 2)), 1) := ⟨subset_univ _, le_rfl⟩
+  have h1 : p.rows.IsLawfulBelow ((univ : Finset (Fin 1)), 1)
+      (fun i ↦ f (StageType.faceCell hE i)) :=
+    (Scheme.isLawfulBelow_faceCell_iff he _ f).mpr (by exact hf.1.mono hX)
+  exact h1.isLawful fun d ↦ ⟨subset_univ _, p.grade_le d⟩
+
+/-- **The capped lift between the grade-`1` faces**, from the root at grade `1`
+(bountifulness of the donor). -/
+theorem hasCappedLifts_lawfulOne_one {t' : StageType.{u} α 2} (hleg : t'.IsLegal)
+    (hp : restrictFace Fin.castSuccEmb t' = some p) (htbleg : tb.IsLegal)
+    (htbp : restrictFace Fin.castSuccEmb tb = some p) :
+    HasCappedLifts (StageType.faceCell hp) (StageType.faceCell htbp) 1 (LawfulOne t')
+      (LawfulOne tb) := by
+  intro h hh R f hR hf hagr
+  -- `f` extended at the cap `⊥` to a lawful labelling of the context, with the same root
+  obtain ⟨f', hf', hf'f⟩ := exists_ext_bot (tb := t') hleg hf
+  have hr (x : Fin p.card) : f' (StageType.faceCell hp x) = f (StageType.faceCell hp x) :=
+    hf'f _ ((StageType.grade_faceCell _ x).trans_le (p.grade_le x))
+  obtain ⟨W, hW, hWr, hWR⟩ := hasCappedLifts_lawfulOne hp htbleg htbp hh hR hf'
+    (fun x ↦ by rw [hr x]; exact hagr x)
+  exact ⟨W, hW, fun x ↦ (hWr x).trans (hr x), hWR⟩
+
+/-- **Donor raising with the gap between the grade-`1` faces at grade `1`**, with no hypothesis
+beyond the designation: every cell of the donor not labelled `⊤` is low, every cell labelled `⊤`
+of grade at most `1`, off the root and not determined by the root is designated, and every root
+cell is low or a root top in `A` (`H2.donorRaisingGap_of_cappedLift` with
+`H2.hasCappedLifts_lawfulOne_one` and `H2.lawfulOne_map`). -/
+theorem donorRaisingGap_oneFace {t' : StageType.{u} α 2} (hleg : t'.IsLegal)
+    (hp : restrictFace Fin.castSuccEmb t' = some p) (htbleg : tb.IsLegal)
+    (htbp : restrictFace Fin.castSuccEmb tb = some p)
+    {A : Set (Fin p.card)} {Lo Tops : Finset (Fin tb.card)}
+    (hLo : ∀ x, tb.label x ≠ ⊤ → x ∈ Lo)
+    (hTops : ∀ x, tb.label x = ⊤ → tb.toCellScheme.grade x ≤ 1 →
+      x ∉ tb.toScheme.visibleCells Fin.castSuccEmb → ¬ RootDet tb x → x ∈ Tops)
+    (hroot : ∀ x, StageType.faceCell htbp x ∈ Lo ∨ x ∈ A) :
+    DonorRaisingGap (StageType.faceCell hp) (StageType.faceCell htbp) 1 (LawfulOne t')
+      (LawfulOne tb) A (Lo.filter fun x ↦ tb.toCellScheme.grade x ≤ 1) Tops := by
+  set Lo1 := Lo.filter fun x ↦ tb.toCellScheme.grade x ≤ 1 with hLo1
+  have he := StageType.comap_toScheme_of_restrictFace htbp
+  have hrootg (x : Fin p.card) : tb.toCellScheme.grade (StageType.faceCell htbp x) ≤ 1 :=
+    (StageType.grade_faceCell _ x).trans_le (p.grade_le x)
+  have hcls : ∀ d, d ∈ Lo1 ∨ d ∈ Tops ∨ (∃ x, StageType.faceCell htbp x = d) ∨
+      IsRootDet (StageType.faceCell htbp) (LawfulOne tb) d := by
+    intro d
+    by_cases hdg : tb.toCellScheme.grade d ≤ 1
+    swap
+    · exact .inr (.inr (.inr fun W W' hW hW' _ ↦ (hW.2 d hdg).trans (hW'.2 d hdg).symm))
+    by_cases hdt : tb.label d = ⊤
+    swap
+    · exact .inl (mem_filter.mpr ⟨hLo d hdt, hdg⟩)
+    by_cases hdv : d ∈ tb.toScheme.visibleCells Fin.castSuccEmb
+    · obtain ⟨i, hi⟩ := Scheme.exists_faceCell_eq he hdv
+      exact .inr (.inr (.inl ⟨i, hi⟩))
+    by_cases hdr : RootDet tb d
+    · refine .inr (.inr (.inr fun W W' hW hW' hag ↦ ?_))
+      obtain ⟨V, hV, hVW⟩ := exists_ext_bot htbleg hW
+      obtain ⟨V', hV', hVW'⟩ := exists_ext_bot htbleg hW'
+      have key := hdr V V' hV hV' fun y hy ↦ by
+        obtain ⟨i, rfl⟩ := Scheme.exists_faceCell_eq he hy
+        exact (hVW _ (hrootg i)).trans ((hag i).trans (hVW' _ (hrootg i)).symm)
+      exact (hVW d hdg).symm.trans (key.trans (hVW' d hdg))
+    · exact .inr (.inl (hTops d hdt hdg hdv hdr))
+  exact @donorRaisingGap_of_cappedLift _ _ _ _ _ _ _ _ _ _ _
+    (hasCappedLifts_lawfulOne_one hleg hp htbleg htbp)
+    (fun hν hle _ hW ↦ lawfulOne_map hν hle hW)
+    (fun x ↦ (hroot x).imp_left fun h ↦
+      (mem_filter.mpr ⟨h, hrootg x⟩ : StageType.faceCell htbp x ∈ Lo1)) hcls
+
+/-- **The order law and the frontier bound on the grade-`1` faces of a context of grade `1`**:
+the owner is self-visible at `1`, and the frontier is at most every root top avoiding the lost
+point (`StageType.IsSourceGapContextAt.frontier_le`, through a lawful labelling with the same cells
+of grade `1`). -/
+theorem frontier_le_lawfulOne {t' : StageType.{u} α 2} (hleg : t'.IsLegal) {n : ℕ}
+    {g : Fin n ↪ Fin 1} {l : Fin 2} {o r : Fin t'.card}
+    (hs : t'.IsSourceGapContextAt 1 (g.trans Fin.castSuccEmb) l o r)
+    (hp : restrictFace Fin.castSuccEmb t' = some p) {f : Fin t'.card → Label.{u}}
+    (hf : LawfulOne t' f) :
+    IsSelfVisible 1 (f o) ∧ ∀ a, p.label a = ⊤ →
+      l ∉ t'.toCellScheme.scope (StageType.faceCell hp a) →
+        frontierAt o r 1 f ≤ f (StageType.faceCell hp a) := by
+  have ho : t'.toCellScheme.grade o ≤ 1 := hs.grade_owner.le
+  have hr : t'.toCellScheme.grade r ≤ 1 := hs.topGrade_eq ▸ grade_le_topGrade hs.label_lost
+  refine ⟨?_, fun a ha hla ↦ ?_⟩
+  · have := (Rows.isLawfulBelow_iff_forall.mp hf.1).1 o ⟨subset_univ _, ho⟩
+    rwa [hs.grade_owner] at this
+  obtain ⟨f', hf', hf'f⟩ := exists_ext_bot (tb := t') hleg hf
+  have hag : t'.toCellScheme.grade (StageType.faceCell hp a) ≤ 1 :=
+    (StageType.grade_faceCell _ a).trans_le (p.grade_le a)
+  have := hs.frontier_le hf' ((StageType.label_faceCell hp a).trans ha) hla
+  unfold frontierAt
+  rwa [hf'f o ho, hf'f r hr, hf'f _ hag] at this
+
+/-- **The state admission between the grade-`1` faces at grade `1`**, from donor raising with the
+gap (`H2.donorRaisingGap_oneFace`) and owner lowering between the grade-`1` faces (a
+hypothesis). -/
+theorem stateAdmission_oneFace {t' : StageType.{u} α 2} (hleg : t'.IsLegal) {n : ℕ}
+    {g : Fin n ↪ Fin 1} {l : Fin 2} {o r : Fin t'.card}
+    (hs : t'.IsSourceGapContextAt 1 (g.trans Fin.castSuccEmb) l o r)
+    (hp : restrictFace Fin.castSuccEmb t' = some p) (htbleg : tb.IsLegal)
+    (htbp : restrictFace Fin.castSuccEmb tb = some p) {Lo Tops : Finset (Fin tb.card)}
+    (hLo : ∀ x, tb.label x ≠ ⊤ → x ∈ Lo)
+    (hTops : ∀ x, tb.label x = ⊤ → tb.toCellScheme.grade x ≤ 1 →
+      x ∉ tb.toScheme.visibleCells Fin.castSuccEmb → ¬ RootDet tb x → x ∈ Tops)
+    {A : Set (Fin p.card)}
+    (hA : ∀ a ∈ A, p.label a = ⊤ ∧ l ∉ t'.toCellScheme.scope (StageType.faceCell hp a))
+    (hroot : ∀ x, StageType.faceCell htbp x ∈ Lo ∨ x ∈ A)
+    (hOL : OwnerLowering (StageType.faceCell hp) (StageType.faceCell htbp) o r 1 (LawfulOne t')
+      (LawfulOne tb)) :
+    IsStateAdmission (StageType.faceCell hp) (StageType.faceCell htbp) 1 (LawfulOne t')
+      (LawfulOne tb) (SelfLowG o r 1 (Lo.filter fun x ↦ tb.toCellScheme.grade x ≤ 1) Tops) :=
+  selfLow_isStateAdmissionGap A
+    (fun _ hf ↦ (frontier_le_lawfulOne hleg hs hp hf).1)
+    (fun _ hf a ha ↦ (frontier_le_lawfulOne hleg hs hp hf).2 a (hA a ha).1 (hA a ha).2)
+    (donorRaisingGap_oneFace hleg hp htbleg htbp hLo hTops hroot) hOL
 
 end VaughtConjecture.H2
