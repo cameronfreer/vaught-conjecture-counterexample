@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Continuation.ReadingLayerServers
+import VaughtConjecture.Continuation.MarkedCarrier
 
 /-!
 # Root offsets below the grade of a cap: the cap keeps the proper root ties
@@ -22,6 +23,10 @@ Roadmap, Layer 3 ((R3) of the table of 3.4).
   full scope and grade at least the root's arity, with the root offsets below its grade, the row of
   the cap reads root labels in strict order in the same order, and equal ordinal root labels at
   equal row values.
+* **Root bottoms respected and the acquired predicates** (`StageType.RootBottomRespected`,
+  `TiedRootCapRelabel.MarkedCapContextBelow`, `TiedRootCapRelabel.MarkedCapContextBelow'`,
+  defined here): the row of the cap reads the root cells labelled `⊥` as `⊥`; the marked-cap
+  context with root offsets below the grade of its cap, with and without that property.
 
 ## Placement
 
@@ -214,6 +219,31 @@ theorem keepsProperRootTies_of_rootOffsetsBelow {t' : StageType.{u} α k} {h : F
   · rw [← hl₁, ← ho]
   · rw [← hl₂, ← heq, ← ho]
 
+/-- The row of `c` **respects the root bottoms** along `h`: it reads every cell visible through
+`h` labelled `⊥` as `⊥`. -/
+def RootBottomRespected (t' : StageType.{u} α k) (h : Fin n ↪ Fin k) (c : Fin t'.card) : Prop :=
+  ∀ y ∈ t'.visibleCells h, t'.label y = ⊥ → t'.rowAt c y = ⊥
+
 end StageType
+
+namespace TiedRootCapRelabel
+
+open StageType
+
+variable {α : Ordinal.{u}} {n k : ℕ}
+
+/-- The **acquired marked-cap context** along `h`: a marked-cap context with top cap `c` and
+marker `r` whose root offsets lie below the grade of `c`. -/
+def MarkedCapContextBelow (t' : StageType.{u} α k) (h : Fin n ↪ Fin k) : Prop :=
+  ∃ c r, t'.IsMarkedCapContextAt h c r ∧ t'.RootOffsetsBelow h (t'.toCellScheme.grade c)
+
+/-- The **acquired marked-cap context with the root bottoms respected**: a marked-cap context
+with top cap `c` and marker `r`, root offsets below the grade of `c`, and the row of `c` reading
+the root cells labelled `⊥` as `⊥`. -/
+def MarkedCapContextBelow' (t' : StageType.{u} α k) (h : Fin n ↪ Fin k) : Prop :=
+  ∃ c r, t'.IsMarkedCapContextAt h c r ∧ t'.RootOffsetsBelow h (t'.toCellScheme.grade c) ∧
+    t'.RootBottomRespected h c
+
+end TiedRootCapRelabel
 
 end VaughtConjecture

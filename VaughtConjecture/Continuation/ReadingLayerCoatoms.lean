@@ -87,20 +87,25 @@ theorem isLawful_left_of_isLawfulBelow {f : Fin (scheme I).card → Label.{u}}
   funext z
   exact (hgf _ (leftCell_mem z)).symm
 
-/-- **A left coatom type with a tie-keeping marker** (for the restricted reading layer): an apex
-`a` (the only cell at `(univ, 4)`, labelled `⊤`, reading the cells labelled `⊥` as `⊥`), the face
-off the point `3` labelled `⊥`, **the root offsets below the grade `4` of the apex** (the
-acquisition condition, `StageType.RootOffsetsBelow` through the identity), and two cells `z₁`, `z₂`
-of grades `1`, `2` with one proper label such that: every lawful labelling takes one value at the
-cells of grade `1` not labelled `⊥` (that at `z₁`), the only cell of grade `2` not labelled `⊥` is
-`z₂`, and the cells of grade `3` are labelled `⊥`. -/
-structure LeftTie (t' : StageType.{u} α 4) (a z₁ z₂ : Fin t'.card) : Prop where
+/-- **A left coatom type with a tie-keeping marker** along a root `ι` (for the restricted reading
+layer): an apex `a` (the only cell at `(univ, 4)`, labelled `⊤`), whose row reads the root cells
+labelled `⊥` as `⊥` (`StageType.RootBottomRespected`) and the other cells labelled `⊥` as `⊥`; the
+face off the point `3` labelled `⊥`; **the root offsets below the grade `4` of the apex** (the
+acquisition condition, `StageType.RootOffsetsBelow`); and two root cells `z₁`, `z₂` of grades `1`,
+`2` with one proper label such that every lawful labelling takes one value at the cells of grade
+`1` not labelled `⊥` (that at `z₁`), the only cell of grade `2` not labelled `⊥` is `z₂`, and the
+cells of grade `3` are labelled `⊥`. -/
+structure LeftTie {n : ℕ} (t' : StageType.{u} α 4) (ι : Fin n ↪ Fin 4)
+    (a z₁ z₂ : Fin t'.card) : Prop where
   gradedIndex_apex : t'.toCellScheme.gradedIndex a = (univ, 4)
   eq_apex : ∀ z, t'.toCellScheme.gradedIndex z = (univ, 4) → z = a
   label_apex : t'.label a = ⊤
-  rowAt_apex : ∀ z, t'.label z = ⊥ → t'.toScheme.rowAt a z = ⊥
+  rootBottom : t'.RootBottomRespected ι a
+  rowAt_apex_off : ∀ z ∉ t'.visibleCells ι, t'.label z = ⊥ → t'.toScheme.rowAt a z = ⊥
   face_bot : ∀ z, Fin.last 3 ∉ t'.toCellScheme.scope z → t'.label z = ⊥
-  rootOffsetsBelow : t'.RootOffsetsBelow (Function.Embedding.refl (Fin 4)) 4
+  rootOffsetsBelow : t'.RootOffsetsBelow ι 4
+  mem_one : z₁ ∈ t'.visibleCells ι
+  mem_two : z₂ ∈ t'.visibleCells ι
   grade_one : t'.toCellScheme.grade z₁ = 1
   grade_two : t'.toCellScheme.grade z₂ = 2
   label_eq : t'.label z₂ = t'.label z₁
@@ -109,6 +114,15 @@ structure LeftTie (t' : StageType.{u} α 4) (a z₁ z₂ : Fin t'.card) : Prop w
     t'.toCellScheme.grade z = 1 → t'.label z ≠ ⊥ → p z = p z₁
   eq_two : ∀ z, t'.toCellScheme.grade z = 2 → t'.label z ≠ ⊥ → z = z₂
   label_three : ∀ z, t'.toCellScheme.grade z = 3 → t'.label z = ⊥
+
+/-- The apex of a left coatom type with a tie-keeping marker reads every cell labelled `⊥` as
+`⊥`: the root cells by `StageType.RootBottomRespected`, the others by hypothesis. -/
+theorem LeftTie.rowAt_apex {n : ℕ} {t' : StageType.{u} α 4} {ι : Fin n ↪ Fin 4}
+    {a z₁ z₂ : Fin t'.card} (hL : LeftTie t' ι a z₁ z₂) (z : Fin t'.card) (hz : t'.label z = ⊥) :
+    t'.toScheme.rowAt a z = ⊥ := by
+  by_cases hv : z ∈ t'.visibleCells ι
+  · exact hL.rootBottom z hv hz
+  · exact hL.rowAt_apex_off z hv hz
 
 /-- **A right coatom type with a new top** at `x₀`: its rows raise at the point `3`
 (`StageType.RowsRaiseAt`), and `x₀` is a cell of grade `1` through `3` labelled `⊤`. -/
@@ -128,7 +142,8 @@ noncomputable abbrev newTops (I : Seed.{u} α 3) (x₀ : Fin I.right.card) :
 /-- **The fill at the short positive caps from the left coatom, from the coatom types**
 (`TowerProfile.readingFillPos_left_of_tie`, with the conditions on the cells of the profile layer
 read on the left coatom type through `TowerProfile.isLawful_left_of_isLawfulBelow`). -/
-theorem readingFillPos_left_of_coatoms {a z₁ z₂ : Fin I.left.card} (hL : LeftTie I.left a z₁ z₂)
+theorem readingFillPos_left_of_coatoms {a z₁ z₂ : Fin I.left.card} {n : ℕ} {ι : Fin n ↪ Fin 4}
+    (hL : LeftTie I.left ι a z₁ z₂)
     {x₀ : Fin I.right.card} (hR : RightNewTop I.right x₀) :
     ReadingFillPos I (leftCell I a) (newTops I x₀) (Fin.last 4) := by
   obtain ⟨hgr, hrC, -⟩ := leftCell_props (I := I) hL.gradedIndex_apex hL.eq_apex
@@ -145,8 +160,7 @@ theorem readingFillPos_left_of_coatoms {a z₁ z₂ : Fin I.left.card} (hL : Lef
       ∃ z, leftCell I z = d :=
     exists_leftCell_eq (I := I) (TopReadingApexExample.last_notMem_of_subset
       ((scheme I).toCellScheme.gradedIndex_le_iff.mp ((CellScheme.mem_below _).mp hd)).1)
-  have hoff : I.left.RootOffsetsBelow (Function.Embedding.refl (Fin 4))
-      (I.left.toCellScheme.grade a) := by
+  have hoff : I.left.RootOffsetsBelow ι (I.left.toCellScheme.grade a) := by
     rw [hga]; exact hL.rootOffsetsBelow
   have hPx : Fin.last 4 ∈ I.amalgam.toCellScheme.scope
       (StageType.faceCell I.restrictFace_right x₀) :=
@@ -158,10 +172,9 @@ theorem readingFillPos_left_of_coatoms {a z₁ z₂ : Fin I.left.card} (hL : Lef
     (leftCell_mem z₁) ((grade_leftCell z₁).trans hL.grade_one)
     (leftCell_mem z₂) ((grade_leftCell z₂).trans hL.grade_two)
     (fun f hf hfr d hd hg h0 ↦ ?_) (fun f hf hfr d hd hg h0 ↦ ?_) (fun f hf hfr d hd hg ↦ ?_)
-    (ι := Function.Embedding.refl _) rfl rfl rfl hL.label_apex
-    (congrArg Prod.fst hL.gradedIndex_apex) hga.ge hoff
-    (TopReadingApexExample.mem_visibleCells_refl _ _)
-    (TopReadingApexExample.mem_visibleCells_refl _ _) hL.label_eq hL.isProper_label
+    (ι := ι) rfl rfl rfl hL.label_apex
+    (congrArg Prod.fst hL.gradedIndex_apex) ?_ hoff hL.mem_one hL.mem_two hL.label_eq
+    hL.isProper_label
   · obtain ⟨z, rfl⟩ := hcell hd
     exact hL.tie_one _ (isLawful_left_of_isLawfulBelow hf) z ((grade_leftCell z).symm.trans hg)
       fun hz ↦ h0 (hfr0 hf hfr z hz)
@@ -169,6 +182,9 @@ theorem readingFillPos_left_of_coatoms {a z₁ z₂ : Fin I.left.card} (hL : Lef
     rw [hL.eq_two z ((grade_leftCell z).symm.trans hg) fun hz ↦ h0 (hfr0 hf hfr z hz)]
   · obtain ⟨z, rfl⟩ := hcell hd
     exact hfr0 hf hfr z (hL.label_three z ((grade_leftCell z).symm.trans hg))
+  · rw [hga]
+    have := Fintype.card_le_of_embedding ι
+    simpa using this
 
 /-- **The restricted reading layer is legal below the full grade at every seed on five points
 whose left coatom type has a tie-keeping marker and whose right coatom type has a new top**: the
@@ -177,7 +193,8 @@ four fill conditions (`TowerProfile.readingFillBot_left_of_left`,
 `TowerProfile.readingFillPos_left_of_coatoms`), and
 `TowerProfile.isLegalBelowFullGrade_readingTop_iff`. -/
 theorem isLegalBelowFullGrade_readingTop_of_coatoms {a z₁ z₂ : Fin I.left.card}
-    (hL : LeftTie I.left a z₁ z₂) {x₀ : Fin I.right.card} (hR : RightNewTop I.right x₀) :
+    {n : ℕ} {ι : Fin n ↪ Fin 4} (hL : LeftTie I.left ι a z₁ z₂) {x₀ : Fin I.right.card}
+    (hR : RightNewTop I.right x₀) :
     (readingTop I (leftCell I a) (newTops I x₀)).IsLegalBelowFullGrade := by
   obtain ⟨hgr, hrC, huniq⟩ := leftCell_props (I := I) hL.gradedIndex_apex hL.eq_apex
   have hX3 : ∀ x ∈ newTops I x₀, (scheme I).toCellScheme.grade x ≤ 3 := by
@@ -301,15 +318,18 @@ theorem tie_one_threeType {p : Fin (threeType hα).card → Label.{u}}
 and `15` (at `(univ, 1)` and `(univ, 2)`, both labelled `3`); its only ordinal label is `3`, below
 the grade `4` of the apex. -/
 theorem leftTie_threeType :
-    LeftTie (threeType hα) (Fin.last _)
+    LeftTie (threeType hα) (Function.Embedding.refl (Fin 4)) (Fin.last _)
       (Fin.castSucc (⟨9, by decide⟩ : Fin CaseSplitCounterexample.S.{u}.card))
       (Fin.castSucc (⟨15, by decide⟩ : Fin CaseSplitCounterexample.S.{u}.card)) where
   gradedIndex_apex := gradedIndex_threeType_last hα
   eq_apex _ hz := StageType.eq_last_of_gradedIndex_addApex (t := threeBase hα)
     isLegalBelowFullGrade_S (by omega) hz
   label_apex := label_threeType_last hα
-  rowAt_apex z hz := (StageType.rowAt_addApex_last_eq_bot_iff (t₀ := threeBase hα)
+  rootBottom z _ hz := (StageType.rowAt_addApex_last_eq_bot_iff (t₀ := threeBase hα)
     isLegalBelowFullGrade_S (by omega) z).mpr hz
+  rowAt_apex_off z hz := absurd (mem_visibleCells_refl _ z) hz
+  mem_one := mem_visibleCells_refl _ _
+  mem_two := mem_visibleCells_refl _ _
   face_bot z hz := by
     rcases cases_threeType hα z with rfl | ⟨a, rfl⟩
     · exact absurd (Eq.mpr (congrArg (Fin.last 3 ∈ ·)
