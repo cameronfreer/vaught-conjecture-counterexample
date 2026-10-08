@@ -18,12 +18,12 @@ below `x`.  This file shows that servers always exist at the seeds whose right c
 
 * **Servers in a field layer** (`Scheme.exists_server_fieldLayer`, compiled in this repository
   (theorem named)): in the field layer at a grade `k`, a labelling lawful below `(univ, k)` not `⊥`
-  at an old cell `x` of grade `k` has a new cell at least its value at `x` whose entry reads `y`
-  strictly below `x`, provided every entry not `⊥` at `x` reading `x` at most as `y` has a
-  **raise**: an entry reading `y` strictly below `x` that agrees with it capped at its value at
-  `x`.  The cell serving `x` (availability) reads the cell of the raise at least as `x` (their
-  agreement height is at least that value, a grid point, `Scheme.mem_fieldGrid_of_mem_catalogue`),
-  so locality puts the raise at least at `x`.
+  at an old cell `x` of grade `k` has a new cell at least its value at `x` whose entry reads
+  every cell of a set `Q` strictly below `x`, provided every entry not `⊥` at `x` reading `x` at
+  most as some cell of `Q` has a **raise**: an entry reading every cell of `Q` strictly below `x`
+  that agrees with it capped at its value at `x`.  The cell serving `x` (availability) reads the
+  cell of the raise at least as `x` (their agreement height is at least that value, a grid point,
+  `Scheme.mem_fieldGrid_of_mem_catalogue`), so locality puts the raise at least at `x`.
 * **The raise** (`Scheme.exists_raise_entry`, compiled): for a property `P` of cells closed upward
   under the scopes, holding at grade `k` only, whose cells of grade `k` read the cells with `P`
   below them as themselves and the others as `⊥`, the orbit code of an entry raised to `⊤` at its
@@ -34,7 +34,7 @@ below `x`.  This file shows that servers always exist at the seeds whose right c
   the live cells of grade `1` below them at `v1` and the others as `⊥`
   (`TowerProfile.rowAt_S_live`).  So at every seed whose right coatom type is `rightType`, for every
   labelling lawful below `(univ, 4)` at least a positive cap `h` at a cell `x` of grade `1` through
-  the point `4`, and every cell `y` of grade at most `1` off it, a server exists.
+  the point `4`, a server exists, one cell for every cell of grade at most `1` off that point.
 
 **Verdict (step A)**: every reading mark at `seedThree` has a server at each band cell of grade
 `1`; the no-server obstruction does not refute the fill there.  Step B (the union with a server,
@@ -78,29 +78,27 @@ theorem mem_fieldGrid_of_mem_catalogue {b : Fin S.card → Label.{u}} (hb : b �
 variable {hS : ∀ d, ¬ ((univ : Finset (Fin n)), k) ≤ S.toCellScheme.gradedIndex d}
 
 /-- **Servers in a field layer.**  Let `w` be lawful below `(univ, k)` in the field layer at the
-grade `k`, `x` an old cell of grade `k` not `⊥` in `w`, `y` an old cell of grade at most `k`.
-Suppose every catalogue entry `b` that is not `⊥` at `x` and reads `x` at most as `y` has a
-*raise*: an entry reading `y` strictly below `x` that agrees with `b` capped at `b x`.  Then some
-new cell at least `w x` reads `y` strictly below `x`: the cell serving `x` (availability), or the
-cell of the raise of its entry, read by the serving cell at least as `x` (the agreement height of
-the two entries is at least `b x`) and so at least `w x` (locality). -/
+grade `k`, `x` an old cell of grade `k` not `⊥` in `w`, and `Q` a set of old cells.  Suppose
+every catalogue entry `b` that is not `⊥` at `x` and reads `x` at most as some cell of `Q` has a
+*raise*: an entry reading every cell of `Q` strictly below `x` that agrees with `b` capped at
+`b x`.  Then some new cell at least `w x` reads every cell of `Q` strictly below `x`: the cell
+serving `x` (availability), or the cell of the raise of its entry, read by the serving cell at
+least as `x` (the agreement height of the two entries is at least `b x`) and so at least `w x`
+(locality). -/
 theorem exists_server_fieldLayer {w : Fin (S.fieldLayer k hS).card → Label.{u}}
-    (hw : (S.fieldLayer k hS).rows.IsLawfulBelow (univ, k) fun d ↦ w d) {x y : Fin S.card}
-    (hgx : S.toCellScheme.grade x = k) (hgy : S.toCellScheme.grade y ≤ k)
+    (hw : (S.fieldLayer k hS).rows.IsLawfulBelow (univ, k) fun d ↦ w d) {x : Fin S.card}
+    {Q : Fin S.card → Prop} (hgx : S.toCellScheme.grade x = k)
     (hx0 : w (Fin.castAdd _ x) ≠ ⊥)
-    (hraise : ∀ b ∈ S.catalogue k, b x ≠ ⊥ → b x ≤ b y → ∃ b' ∈ S.catalogue k,
-      b' y < b' x ∧ ∀ d, min (b' d) (b x) = min (b d) (b x)) :
+    (hraise : ∀ b ∈ S.catalogue k, b x ≠ ⊥ → (∃ y, Q y ∧ b x ≤ b y) → ∃ b' ∈ S.catalogue k,
+      (∀ y, Q y → b' y < b' x) ∧ ∀ d, min (b' d) (b x) = min (b d) (b x)) :
     ∃ i, w (Fin.castAdd _ x) ≤ w (Fin.natAdd _ i) ∧
-      S.catalogueEntry k i y < S.catalogueEntry k i x := by
+      ∀ y, Q y → S.catalogueEntry k i y < S.catalogueEntry k i x := by
   obtain ⟨-, hloc, havail⟩ := CellScheme.Rows.isLawfulBelow_iff_forall.mp hw
   obtain ⟨i₀, -⟩ := exists_catalogueEntry_eq (orbitCode_splice_bot_mem_catalogue (S := S) (k := k)
     (p := fun _ ↦ ⊥) (CellScheme.Rows.isLawfulBelow_const_bot _))
   have hxb : Fin.castAdd (S.catalogue k).card x ∈
       (S.fieldLayer k hS).toCellScheme.below (univ, k) :=
     castAdd_mem_below (hS := hS) hgx.le
-  have hyb : Fin.castAdd (S.catalogue k).card y ∈
-      (S.fieldLayer k hS).toCellScheme.below (univ, k) :=
-    castAdd_mem_below (hS := hS) hgy
   obtain ⟨u, hu, hxu⟩ := havail (Fin.castAdd _ x) (Fin.natAdd _ i₀) (natAdd_mem_below i₀)
     (by rw [appendFullCellsScheme_scope_natAdd]; exact subset_univ _)
     (by rw [appendFullCellsScheme_grade_castAdd, appendFullCellsScheme_grade_natAdd, hgx])
@@ -110,9 +108,11 @@ theorem exists_server_fieldLayer {w : Fin (S.fieldLayer k hS).card → Label.{u}
   have hub : Fin.natAdd S.card i ∈ (S.fieldLayer k hS).toCellScheme.below (univ, k) :=
     natAdd_mem_below i
   set b := S.catalogueEntry k i with hbdef
-  by_cases hlt : b y < b x
+  by_cases hlt : ∀ y, Q y → b y < b x
   · exact ⟨i, hxu, hlt⟩
-  have hle : b x ≤ b y := not_lt.mp hlt
+  have hle : ∃ y, Q y ∧ b x ≤ b y := by
+    push Not at hlt
+    exact hlt
   have hxr : Fin.castAdd (S.catalogue k).card x ∈ (S.fieldLayer k hS).toCellScheme.below
       ((S.fieldLayer k hS).toCellScheme.gradedIndex (Fin.natAdd S.card i)) := by
     rw [hu']; exact hxb
@@ -151,8 +151,8 @@ theorem exists_server_fieldLayer {w : Fin (S.fieldLayer k hS).card → Label.{u}
 under the scopes, holding only at cells of grade `k` among those of grade at most `k`, such that
 the row of a cell of grade `k` with `P` reads the cells with `P` below it as it reads itself and
 the others as `⊥`.  For every catalogue entry `b` not `⊥` at a cell `x` of grade `k` with `P`,
-and every cell `y` without `P`, the orbit code of `b` raised to `⊤` at the cells with `P` at least
-`b x` is a catalogue entry that reads `y` strictly below `x` and agrees with `b` capped at `b x`. -/
+the orbit code of `b` raised to `⊤` at the cells with `P` at least `b x` is a catalogue entry that
+reads every cell without `P` strictly below `x` and agrees with `b` capped at `b x`. -/
 theorem exists_raise_entry {P : Fin S.card → Prop}
     (hPscope : ∀ s t, S.toCellScheme.scope s ⊆ S.toCellScheme.scope t → P s → P t)
     (hPk : ∀ d, P d → S.toCellScheme.grade d ≤ k → S.toCellScheme.grade d = k)
@@ -160,9 +160,10 @@ theorem exists_raise_entry {P : Fin S.card → Prop}
       ∀ d (hd : d ∈ S.toCellScheme.below (S.toCellScheme.gradedIndex s)),
         (P d → S.rows.row s ⟨d, hd⟩ = S.rows.row s ⟨s, S.toCellScheme.mem_below_gradedIndex s⟩) ∧
         (¬ P d → S.rows.row s ⟨d, hd⟩ = ⊥))
-    {b : Fin S.card → Label.{u}} (hb : b ∈ S.catalogue k) {x y : Fin S.card} (hPx : P x)
-    (hgx : S.toCellScheme.grade x = k) (hPy : ¬ P y) (hx0 : b x ≠ ⊥) :
-    ∃ b' ∈ S.catalogue k, b' y < b' x ∧ ∀ d, min (b' d) (b x) = min (b d) (b x) := by
+    {b : Fin S.card → Label.{u}} (hb : b ∈ S.catalogue k) {x : Fin S.card} (hPx : P x)
+    (hgx : S.toCellScheme.grade x = k) (hx0 : b x ≠ ⊥) :
+    ∃ b' ∈ S.catalogue k, (∀ y, ¬ P y → b' y < b' x) ∧
+      ∀ d, min (b' d) (b x) = min (b d) (b x) := by
   classical
   obtain ⟨hbl, hbk, hbo⟩ := mem_catalogue.mp hb
   set W : Fin S.card → Label.{u} := fun d ↦ if P d ∧ b x ≤ b d then ⊤ else b d with hWdef
@@ -243,9 +244,9 @@ theorem exists_raise_entry {P : Fin S.card → Prop}
   have hmem := orbitCode_splice_bot_mem_catalogue (S := S) (k := k) hW
   rw [hsplice] at hmem
   have hWx : W x = ⊤ := ite_eq_left ⟨hPx, le_rfl⟩
-  have hWy : W y = b y := ite_eq_right fun h ↦ hPy h.1
-  refine ⟨orbitCode k W, hmem, ?_, fun d ↦ ?_⟩
-  · by_contra hge
+  refine ⟨orbitCode k W, hmem, fun y hPy ↦ ?_, fun d ↦ ?_⟩
+  · have hWy : W y = b y := ite_eq_right fun h ↦ hPy h.1
+    by_contra hge
     have hge' := not_lt.mp hge
     by_cases hy0 : W y = ⊥
     · have h1 : orbitCode k W y = ⊥ := orbitCode_eq_bot_iff.mpr hy0
@@ -475,28 +476,30 @@ include hR in
 /-- **Servers at a seed whose right coatom type is `rightType`.**  For every labelling `e` lawful
 below `(univ, 1)` in the profile layer, every cell `x` of the amalgam of grade `1` through the
 point `4` (a cell of the right coatom off the common face, such as the new top `{3}` of
-`rightType`) not `⊥` in `e`, and every cell `y` of grade at most `1` off the point `4` (a cell of
-the left coatom, such as a cell labelled `3` by `threeType`), some cell of graded index
-`(univ, 1)` at least `e x` reads `y` strictly below `x`
+`rightType`) not `⊥` in `e`, some cell of graded index `(univ, 1)` at least `e x` reads every cell
+of grade at most `1` off the point `4` (the cells of the left coatom, such as the cells labelled
+`3` by `threeType`) strictly below `x`, and reads `x` at a point of the code grid
 (`Scheme.exists_server_fieldLayer`, with the raise of `Scheme.exists_raise_entry` at the cells
 through the point `4`). -/
 theorem exists_server_of_rightType {e : Fin (scheme I).card → Label.{u}}
-    (he : (scheme I).rows.IsLawfulBelow (univ, 1) fun d ↦ e d) {x y : Fin I.amalgam.card}
+    (he : (scheme I).rows.IsLawfulBelow (univ, 1) fun d ↦ e d) {x : Fin I.amalgam.card}
     (hPx : Fin.last 4 ∈ I.amalgam.toCellScheme.scope x)
-    (hgx : I.amalgam.toCellScheme.grade x = 1)
-    (hPy : Fin.last 4 ∉ I.amalgam.toCellScheme.scope y)
-    (hgy : I.amalgam.toCellScheme.grade y ≤ 1) (hx0 : e (embed3 I x) ≠ ⊥) :
+    (hgx : I.amalgam.toCellScheme.grade x = 1) (hx0 : e (embed3 I x) ≠ ⊥) :
     ∃ u, (scheme I).toCellScheme.gradedIndex u = ((univ : Finset (Fin 5)), 1) ∧
-      e (embed3 I x) ≤ e u ∧ (scheme I).rowAt u (embed3 I y) < (scheme I).rowAt u (embed3 I x) := by
+      e (embed3 I x) ≤ e u ∧
+      (∀ y, Fin.last 4 ∉ I.amalgam.toCellScheme.scope y → I.amalgam.toCellScheme.grade y ≤ 1 →
+        (scheme I).rowAt u (embed3 I y) < (scheme I).rowAt u (embed3 I x)) ∧
+      (scheme I).rowAt u (embed3 I x) ∈ codeGrid 1 (2 * (I.tower 0).card) := by
   classical
   obtain ⟨i, hxi, hlt⟩ := Scheme.exists_server_fieldLayer (S := I.tower 0) (k := 1)
     (hS := I.not_univ_succ_le_tower 0) (w := fun d ↦ e (oneCell I d))
-    (isLawfulBelow_one_of_scheme he) (x := x) (y := y) hgx hgy hx0 fun b hb hbx _ ↦
+    (isLawfulBelow_one_of_scheme he) (x := x)
+    (Q := fun y ↦ Fin.last 4 ∉ I.amalgam.toCellScheme.scope y) hgx hx0 fun b hb hbx _ ↦
       Scheme.exists_raise_entry (S := I.amalgam.toScheme) (k := 1)
         (P := fun d ↦ Fin.last 4 ∈ I.amalgam.toCellScheme.scope d)
         (fun _ _ hst hs ↦ hst hs)
         (fun d _ hd ↦ le_antisymm hd (I.amalgam.isWellFormed.isWellFormed.grade_pos d))
-        (fun s hs hgs d hd ↦ rowP_right hR s hs hgs d hd) hb hPx hgx hPy hbx
+        (fun s hs hgs d hd ↦ rowP_right hR s hs hgs d hd) hb hPx hgx hbx
   refine ⟨oneCell I (Fin.natAdd _ i), ?_, hxi, ?_⟩
   · exact (gradedIndex_oneCell (I := I) _).trans
       (Scheme.appendFullCellsScheme_gradedIndex_natAdd (I.tower 0) 1 _ i)
@@ -516,8 +519,11 @@ theorem exists_server_of_rightType {e : Fin (scheme I).card → Label.{u}}
       rw [Scheme.rowAt_of_mem hm]
       exact (Scheme.fieldLayer_row_natAdd (S := I.tower 0) (k := 1)
         (hS := I.not_univ_succ_le_tower 0) i _).trans (Scheme.fieldRow_castAdd _ z)
-    rw [hrow y hgy, hrow x hgx.le]
-    exact hlt
+    refine ⟨fun y hPy hgy ↦ ?_, ?_⟩
+    · rw [hrow y hgy, hrow x hgx.le]
+      exact hlt y hPy
+    · rw [hrow x hgx.le]
+      exact Scheme.mem_codeGrid_of_mem_catalogue (Scheme.catalogueEntry_mem i) x
 
 include hR in
 /-- **The band obstruction never applies at a seed whose right coatom type is `rightType`**: for
@@ -534,10 +540,10 @@ theorem exists_server_above_cap_of_rightType {e : Fin (scheme I).card → Label.
     (hxh : h ≤ e (embed3 I x)) :
     ∃ u, (scheme I).toCellScheme.gradedIndex u = ((univ : Finset (Fin 5)), 1) ∧ h ≤ e u ∧
       ¬ (scheme I).rowAt u (embed3 I x) ≤ (scheme I).rowAt u (embed3 I y) := by
-  obtain ⟨u, hu, hxu, hlt⟩ := exists_server_of_rightType hR
-    (he.mono (X := ((univ : Finset (Fin 5)), 1)) ⟨subset_rfl, by omega⟩) hPx hgx hPy hgy
+  obtain ⟨u, hu, hxu, hlt, -⟩ := exists_server_of_rightType hR
+    (he.mono (X := ((univ : Finset (Fin 5)), 1)) ⟨subset_rfl, by omega⟩) hPx hgx
     (fun h0 ↦ (hhb.trans_le hxh).ne' h0)
-  exact ⟨u, hu, hxh.trans hxu, not_le.mpr hlt⟩
+  exact ⟨u, hu, hxh.trans hxu, not_le.mpr (hlt y hPy hgy)⟩
 
 end TowerProfile
 
