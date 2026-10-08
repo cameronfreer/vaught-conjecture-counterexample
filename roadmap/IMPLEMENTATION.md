@@ -3870,6 +3870,25 @@ Each checkpoint needs both its abstract API and a concrete application:
    `Realization.receivingHollowReceiving_of_cutoffDetermination`,
    `Expansion.ReceivingStableCappedReceiving.of_hasCutoffStableRecoverySchemes_gradedCap`).
 
+   *Receiving route with the lost point last.*  Compiled in this repository (theorem named):
+   `MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_coatomDeterminations_sourceGapLast_markedCap`
+   `(h4 : ∀ ξ < ω₁, HasCutoffFirstCoatomCompletions ξ (GradedCapCalibration ξ))`
+   `(h2 : CoatomCutoffDetermination fun K t' h ↦ t'.IsSourceGapContextLast K h)`
+   `(h3 : HollowCoatomCutoffDetermination fun t' h ↦ t'.IsMarkedCapContext h) :`
+   `HasThinAlephOneSpectrum densitySentence` (`MainTheorem/SourceGapLastRoute`).  (R4) and (R3) are
+   as in the source-gap form; (R2) is asked only at the source-gap contexts whose lost point is the
+   last point (`StageType.IsSourceGapContextLast`).  The (R2) hypothesis of the source-gap form
+   implies it (`Realization.CoatomCutoffDetermination.isSourceGapContextLast`); no converse is
+   claimed.  Acquisition proved; determination open.  The acquired source-gap contexts have the
+   coatom off the lost point closed (`StageType.IsSourceGapContextOff`,
+   `Realization.residualAcquisition_isSourceGapContextOff`, `Continuation/SourceGapContext`), and
+   coatom cutoff determination for `IsSourceGapContextLast` gives cutoff determination for them by
+   the transposition of the lost point with the last point
+   (`Realization.CoatomCutoffDetermination.cutoffDetermination_off`).  Coatom cutoff determination
+   for `IsSourceGapContextLast` is open.  The source-gap form does not reduce to it by a
+   transposition: the closed coatoms of a context are the complements of the extreme points of its
+   plan, at most two (`Geometry.IsPlan.card_extremes_le_two`).
+
 7. Acceptance lemma 1 (same-level maximal realization; `README.md`, "Reduction to full
    presentations"): for a countable `β`, on every countably infinite carrier, a model at
    `λ_β = blockStage β` that realizes every legal stage type at `λ_β`, receives every legal donor
@@ -5733,7 +5752,11 @@ witnesses).**
   `StageType.IsSourceGapContext`, separated top supports, first loss, the stage-type part
   `StageType.exists_isSourceGapContextAt_comap`,
   `Realization.residualAcquisition_isSourceGapContext`, the composed reduction, and the vacuity
-  dichotomy; determination for the predicate is open.
+  dichotomy; determination for the predicate is open.  It also holds the forms with the coatom
+  off the lost point closed and with the lost point last (`StageType.IsSourceGapContextOff`,
+  `StageType.IsSourceGapContextLast`) and `Realization.residualAcquisition_isSourceGapContextOff`;
+  the reduction to the coatom form with the lost point last and the main theorem with it are in
+  `MainTheorem/SourceGapLastRoute` (Layer 6).
 - `Continuation/RestrictedHollow` and its examples module: Layer 4, in place; it holds
   `Realization.IsCoverHollowWithoutRigidCore` and its form at a block stage, the restricted
   terminal properties with their cover, and `Realization.HollowReceiving.withoutRigidCore`.  It
