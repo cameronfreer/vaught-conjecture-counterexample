@@ -101,29 +101,28 @@ need not be short at the grades of the layers it crosses.
   step assumes, and at the arity `2` the only one.  It holds at every arity (`Seed.twoFaceLift_one`,
   module `VaughtConjecture.Extension.TwoFaceLift`).
 * `2FL(j)` is a hypothesis on the seed here, at the grades `2 ≤ j + 1 ≤ m`: it is not a field of
-  `Seed` and is not derived from the bountifulness of the amalgam.  For `j ≥ 2` it is not a
-  property of every seed: `2FL(2)` fails for a legal seed on five points
+  `Seed` and is not derived from the bountifulness of the amalgam.  For `j ≥ 2` it is not a property
+  of every seed: `2FL(2)` fails for a legal seed on five points
   (`TwoFaceLiftCounterexample.not_twoFaceLift_two`, module
   `VaughtConjecture.Extension.TwoFaceLiftCounterexample`), a non-existence of the extension, not a
-  limitation of an encoding.  For that seed the old cells of the grade `3` are *dead* (`⊥` in
-  every labelling lawful below a coatom, `Seed.DeadAt 2`), and the step from deadness
-  (`Seed.towerInvariant_succ_of_dead`, module
-  `VaughtConjecture.Extension.DeadCellStep`), which uses the boundary triples of the step to the
-  top grade, gives the invariant without `2FL(2)`.  The hypothesis of the step, stated exactly, is
-  the existential two-face lift (`Seed.TwoFaceLiftExists`, module
-  `VaughtConjecture.Extension.TwoFaceLiftExists`), implied by `2FL(j)` (for `j ≤ m`) and by
-  deadness together with the invariant at `j`, and holding for a legal seed where neither
-  `2FL(j)` nor deadness does.  It fails at `j = 2` for another legal seed on five points
-  (`TwoFaceLiftExistsCounterexample.not_twoFaceLiftExists_two_seedL`, module
+  limitation of an encoding.  For that seed the old cells of the grade `3` are *dead* (`⊥` in every
+  labelling lawful below a coatom, `Seed.DeadAt 2`), and the step from deadness
+  (`Seed.towerInvariant_succ_of_dead`, module `VaughtConjecture.Extension.DeadCellStep`), which uses
+  the boundary triples of the step to the top grade, gives the invariant without `2FL(2)`.  The
+  hypothesis of the step, stated exactly, is the existential two-face lift
+  (`Seed.TwoFaceLiftExists`, module `VaughtConjecture.Extension.TwoFaceLiftExists`), implied by
+  `2FL(j)` (for `j ≤ m`) and by deadness together with the invariant at `j`, and holding for a legal
+  seed where neither `2FL(j)` nor deadness does.  It fails at `j = 2` for another legal seed on five
+  points (`TwoFaceLiftExistsCounterexample.not_twoFaceLiftExists_two_seedL`, module
   `VaughtConjecture.Extension.TwoFaceLiftExistsCounterexample`), so the tower does not complete
-  every seed; a completion of that seed by another construction is not refuted.  Bountifulness
-  and legality of the tower and the completion below the full grade are proved from the invariant
-  at the top grade in the module `VaughtConjecture.Extension.TwoFaceLift`: with no hypothesis at
-  the arities `m ≤ 2`, and for a seed satisfying `2FL(j)` at the grades `2 ≤ j < m` at every
-  arity.
+  every seed; a completion of that seed by another construction is not refuted.  Bountifulness and
+  legality of the tower and the completion below the full grade are proved from the invariant at the
+  top grade in the module `VaughtConjecture.Extension.TwoFaceLift`: with no hypothesis at the
+  arities `m ≤ 2`, and for a seed satisfying `2FL(j)` at the grades `2 ≤ j < m` at every arity.
   `StageType.HasApexCoatomExtensions` and `StageType.HasCoatomExtensions` at the stages that are
-  zero or a limit are still to be proved (their statement at those stages is not made here); they
-  are not refuted.
+  zero or a limit are compiled in this repository (theorem named) by the levels of rank-normalized
+  profiles over `T 2` (`StageType.hasApexCoatomExtensions`, `StageType.hasCoatomExtensions`), not by
+  the tower alone.
 
 **The union fill is refuted as a universal statement.**  With `V = (univ, j)` at every grade, as at
 the top grade, the step would fill the other coatom's cells of the grade `j + 1` over the union of
