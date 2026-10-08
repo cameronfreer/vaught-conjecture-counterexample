@@ -148,7 +148,7 @@ theorem coatomCutoffDeterminationTwo : CoatomCutoffDeterminationTwo.{u} := by
     intro x hxt hxv hxr hxd
     simp [Tops, hxt, hxv, hxr, hxd]
   obtain ⟨F, hF⟩ := exists_completion_recProp hleg hs hp htbleg htbp hLo hTops
-  obtain ⟨δ, hδ, hδlab⟩ := exists_cutoff hα tb
+  obtain ⟨c, δ, hc, hδlab, hδ, hcδ⟩ := exists_cutoff K hα tb
   have hR := F.restrictFace_right_completion hα'
   refine ⟨F.completion hα', ⟨F.isLegal_completion hα', F.restrictFace_left_completion hα'⟩, hR,
     δ, hδ, ?_⟩
@@ -156,7 +156,7 @@ theorem coatomCutoffDeterminationTwo : CoatomCutoffDeterminationTwo.{u} := by
     rw [← extendByLast_trans, ← restrictFace_trans _ _ _ hR]
     exact hd
   refine isDeterminedWithin_of_key (F.restrictFace_left_completion hα') hd'
-    fun ℓ hℓ hleft hcap ↦ key_completion F hα' hs.label_owner hs.label_lost hF hδ.1 hδlab hLo
+    fun ℓ hℓ hleft hcap ↦ key_completion F hα' hs.label_owner hs.label_lost hF hc hδlab hcδ hLo
       hmem ℓ hℓ hleft hcap
 
 end VaughtConjecture.H2
