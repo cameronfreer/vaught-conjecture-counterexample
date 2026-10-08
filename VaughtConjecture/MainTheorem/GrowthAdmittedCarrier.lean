@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Continuation.GrowthControllerRecovery
+import VaughtConjecture.Continuation.GrowthRecognition
 import VaughtConjecture.Continuation.GrowthTemplate
 import VaughtConjecture.MainTheorem.GrowthPadding
 import VaughtConjecture.MainTheorem.GrowthRoute
@@ -38,6 +39,15 @@ main theorem holds with the hypothesis `hexact` restricted to nonempty roots
 admitted growth carriers
 (`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_admittedCarriers`).
 These are implications; the hypotheses stay open.
+
+**Recognizing growth carriers** (`StageType.HasRecognizingGrowthCarriers`, open) replace the
+admitted carriers: no good level continues a layer whose cells at the threshold are all admitted
+(`ProfileTower.Lvl.Good.not_forall_admitted`).  The catalogue states are admitted on the exact class
+(`StageType.GrowthRequests.AdmitsOnClass`), and every lawful section, capped at a label above its
+cap value, is recognized as the image of such a state (`GrowthCarrier.Recognizes`); recovery
+follows (`GrowthCarrier.recovers_of_recognizes`), hence exact growth carriers at nonempty roots
+(`StageType.HasRecognizingGrowthCarriers.hasExactGrowthCarriers`) and the main theorem
+(`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_recognizingCarriers`).
 
 ## References
 
@@ -108,6 +118,53 @@ theorem HasAdmittedGrowthCarriers.hasExactGrowthCarriers (h : HasAdmittedGrowthC
   obtain ⟨G, hfull, hadm⟩ := h t' e hα ht' p hte d hd hn Q hex hQ hrel
   exact ⟨G, GrowthRequests.recovers_eq_of_admitted hex hQ G hfull hadm⟩
 
+/-- **Recognizing growth carriers** (open): at every legal context `t'` at a limit stage, with root
+`e`, face `p` and a one-point coface `d` of `p` (`0 < n`), for every requests `Q` read exactly at
+the labels of `t'`, calibrated and with the relative lift on the exact class, some growth carrier
+with the schemes of `t'` and `d` as literal faces recognizes admitted states in its lawful
+sections (`GrowthCarrier.Recognizes`).  This replaces `StageType.HasAdmittedGrowthCarriers`, whose
+"every cell of full scope at the threshold admitted" no good level can continue
+(`ProfileTower.Lvl.Good.not_forall_admitted`). -/
+def HasRecognizingGrowthCarriers : Prop :=
+  ∀ ⦃α : Ordinal.{u}⦄ ⦃n k : ℕ⦄ (t' : StageType.{u} α k) (e : Fin n ↪ Fin k),
+    Order.IsSuccLimit α → t'.IsLegal → ∀ (p : StageType.{u} α n)
+      (hte : restrictFace e t' = some p) (d : StageType.{u} α (n + 1)) (hd : d ∈ p.cofaces),
+      0 < n → ∀ Q : GrowthRequests t' d.toScheme,
+        (∀ j ℓ, Q.CorrectAt t'.label j ℓ ↔ ℓ = d.label j) → Q.Calibrated hte →
+        Q.HasRelativeLiftOnClass hte hd.2 →
+        ∃ G : GrowthCarrier t'.toScheme d.toScheme e, G.Recognizes Q
+
+/-- **Exact recovery from a recognizing carrier** for calibrated requests read exactly at the
+labels of `t'`: the labels of `t'` have exactly their own bottom pattern and the cap labelled other
+than `⊥` (`GrowthCarrier.recovers_of_recognizes`). -/
+theorem GrowthRequests.recovers_eq_of_recognizes {α : Ordinal.{u}} {n k : ℕ}
+    {t' : StageType.{u} α k} {e : Fin n ↪ Fin k} {p : StageType.{u} α n}
+    {hte : restrictFace e t' = some p} {d : StageType.{u} α (n + 1)}
+    {Q : GrowthRequests t' d.toScheme} (hex : ∀ j ℓ, Q.CorrectAt t'.label j ℓ ↔ ℓ = d.label j)
+    (hQ : Q.Calibrated hte) (G : GrowthCarrier t'.toScheme d.toScheme e)
+    (hrec : G.Recognizes Q) : G.Recovers t'.label fun j ℓ ↦ ℓ = d.label j := by
+  have hrecov := G.recovers_of_recognizes Q hrec
+    (fun j hj ↦ ⟨Q.mem_below_cap hQ.scope_cap (hQ.ref j hj).1, (hQ.ref j hj).2.1⟩)
+    ⟨Q.mem_below_cap hQ.scope_cap hQ.marker.1, hQ.marker.2.1⟩
+    (σ := t'.label) (fun _ _ ↦ Iff.rfl) hQ.label_cap
+  intro v hv hctx i j hij
+  exact (hex j _).mp (hrecov v hv hctx i j hij)
+
+/-- **Exact growth carriers for the calibration with a nonempty root from recognizing growth
+carriers**: the requests of `StageType.HollowReferenceCalibration'.exists_relativeLift` have the
+relative lift on the exact class
+(`StageType.GrowthRequests.hasRelativeLiftOnClass_of_hasRelativeLift`), and the recognizing
+carrier for them recovers the donor exactly. -/
+theorem HasRecognizingGrowthCarriers.hasExactGrowthCarriers
+    (h : HasRecognizingGrowthCarriers.{u}) :
+    HasExactGrowthCarriers.{u} HollowReferenceCalibrationPos := by
+  intro α n k t' e hα ht' p hte d hd hC
+  obtain ⟨hC, hn⟩ := hC
+  obtain ⟨Q, hex, hQ, hrel⟩ := hC.exists_relativeLift ht' hte hd.2 hd.1 hn
+  obtain ⟨G, hrec⟩ := h t' e hα ht' p hte d hd hn Q hex hQ
+    (GrowthRequests.hasRelativeLiftOnClass_of_hasRelativeLift hte hd.2 hex hQ hd.1 hn hrel)
+  exact ⟨G, GrowthRequests.recovers_eq_of_recognizes hex hQ G hrec⟩
+
 end StageType
 
 namespace Realization
@@ -176,6 +233,17 @@ theorem densitySentence_hasThinAlephOneSpectrum_of_admittedCarriers
     HasThinAlephOneSpectrum densitySentence.{0} :=
   densitySentence_hasThinAlephOneSpectrum_of_growthCarriers_pos hstab hres
     hadm.hasExactGrowthCarriers
+
+/-- **The thin `ℵ₁` spectrum from recognizing growth carriers**: (R3) from the recognizing carriers
+(`StageType.HasRecognizingGrowthCarriers`, open) through the compiled template, relative lift on
+the exact class and recovery by recognition.  The three hypotheses are open. -/
+theorem densitySentence_hasThinAlephOneSpectrum_of_recognizingCarriers
+    (hstab : ∀ ξ < ω₁, HasStableGrowthCarriers.{0} ξ (GradedCapMarginCalibration.{0} ξ))
+    (hres : ReceivingResidualReceiving.{0, 0})
+    (hrec : HasRecognizingGrowthCarriers.{0}) :
+    HasThinAlephOneSpectrum densitySentence.{0} :=
+  densitySentence_hasThinAlephOneSpectrum_of_growthCarriers_pos hstab hres
+    hrec.hasExactGrowthCarriers
 
 end MainTheorem
 
