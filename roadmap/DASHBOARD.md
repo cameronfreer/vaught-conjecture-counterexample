@@ -366,12 +366,42 @@ Status of each:
    (`Realization.hollowReceiving_iff`).  A reduction is compiled: it follows from
    `Realization.HollowAcquisition H P` and `Realization.SchemeDetermination P` with
    `H := Realization.IsCoverHollowAtBlock` (`Realization.hollowReceiving_of_schemeDetermination`,
-   no receiving used), for a predicate `P` not yet defined: a template, as in item 5 (for `P`
-   always true, acquisition is immediate and determination fails, compiled).  With item 6, the
+   no receiving used), for a predicate `P`: a template, as in item 5.  One predicate for (R3) is
+   defined (the marked-cap context, below), with acquisition and determination open; for `P`
+   always true, acquisition is immediate and determination fails (compiled).  With item 6, the
    count uses (R3) at every cover-hollow model with unbounded growth, a globally rigid core
    included (item 6′ below excludes it).  (R3) forces a globally rigid core of a cover-hollow
    model with unbounded growth to be rigid in every legal donor over its type
-   (`Realization.HollowReceiving.isRigidCoreIn`).  The template with the
+   (`Realization.HollowReceiving.isRigidCoreIn`).
+   *A candidate predicate* (`Stage/MarkedCap`, `Continuation/MarkedCap`): the marked-cap context
+   `StageType.IsMarkedCapContext` (defined in this repository; acquisition and determination open),
+   a context with a top cap `c` (full scope, labelled `⊤`, at the top grade `N > n + 1`), a marker
+   `r` (least entry of the row of `c` at the cells labelled `⊤`), and `visibilityReplace N (n + 1)
+   (row c r) ≤ row c a` at every cell `a` of the root labelled `⊤`; with reference cells for a
+   donor, `StageType.IsAnchoredMarkedCapContext` (defined in this repository).  Cover-hollowness
+   reads the tops through forcing, and forcing is read by the rows (compiled in this repository
+   (theorem named): `StageType.ForcesThreshold.le_grade_and_visibilityReplace_rowAt_le`, and at a
+   cover-hollow realization with legal types
+   `Realization.IsCoverHollow.exists_forcesThreshold_rowAt`): for a legal rooted cover at a limit
+   stage `β`, with its lifts at `β + ω`, that forces `L` at a top of its root, `L ≤ N` and the row
+   inequality at `L` hold for every top cap and marker.  When the forcing comes from the order law
+   or from rows, the inequality already follows from the minimality of the marker; its content is in
+   thresholds forced by all lifts otherwise, which no compiled instance exhibits.  The proof is a
+   lawful lift whose labels at the tops are the band map of the row of the top cap from the block
+   of the marker (`StageType.IsMarker.exists_lift`); its locality is the two-witness splice of
+   Layer 3, 3.1 (`Label.TransformsTo.splice_bandMap`, compiled in this repository (theorem
+   named)).  `GatedExtensionCounterexample.P α` is a marked-cap context over the empty root
+   (compiled).  The finite step of acquisition is compiled
+   (`StageType.isMarkedCapContext_of_forcesThreshold`); one cover of top grade above `n + 1` forcing
+   `n + 1` at every top of a root at once is prospective, and `Realization.HollowAcquisition` and
+   `Realization.SchemeDetermination` for the predicate are open, so item 6 is not reduced.  The
+   three refuted determination statements are excluded: the empty root of the apex point and the
+   capped two-point context refuting the anchored context (`StageType.IsAnchoredContext`) are
+   top-free (compiled in this repository (theorem named)), and the context refuting the anchored
+   context with a top (`AvailableTopDeterminationCounterexample`) has top grade at most `1` over a
+   root on one point (the exclusion of every such context compiled in this repository (theorem
+   named); the bound on that context is proved there as a private statement).
+   The template with the
    donor (`Realization.hollowReceiving_of_cutoffDonorDetermination`, any `H`, with (R1) in the
    stronger form of item 5) gives nothing for the anchored context: donor acquisition holds for it
    and cutoff determination with a donor is refuted for it, as in item 5; nor for the anchored
