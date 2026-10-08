@@ -225,6 +225,81 @@ theorem recovers_of_admittedControllers
     exact Scheme.visibilityReplace_le_of_controller hcons hv hcN hle hu' hmk.2
       ((hgc _).trans_le hmk.1) (hdon j) (hA.2.2 hy)
 
+/-- A **controller admitted on the class** of `t'` below the cap: a cell whose row satisfies the
+requests whenever its row reads no cell of `t'` below the cap as `⊥` unless `t'` does, and reads
+the cap above `⊥`.  This asks correctness of fewer rows than `IsAdmittedController`. -/
+def IsClassAdmittedController (u : Fin G.scheme.card) : Prop :=
+  (∀ x ∈ t'.toCellScheme.below (t'.toCellScheme.gradedIndex Q.cap),
+      G.scheme.rowAt u (G.contextCell x) = ⊥ → t'.label x = ⊥) →
+    G.scheme.rowAt u (G.contextCell Q.cap) ≠ ⊥ → G.IsAdmittedController Q u
+
+/-- **The admitted-controller recovery on the class**: as `recovers_of_admittedControllers`, with
+controllers admitted only on the class, for every context section `σ` with the bottom pattern of
+`t'` below the cap and a cap value other than `⊥`.  The bottom pattern transfers from `σ` to the
+row of the controller in one direction: a row value `⊥` is read as `⊥` (the map `Φ` of
+`Scheme.exists_controllerRead` fixes `⊥`), while a positive row value may be read as `⊥`. -/
+theorem recovers_of_classAdmittedControllers
+    (hfull : ∃ w, G.scheme.toCellScheme.gradedIndex w = (univ, Q.threshold))
+    (hadm : ∀ u, G.scheme.toCellScheme.gradedIndex u = (univ, Q.threshold) →
+      G.IsClassAdmittedController Q u)
+    (hdon : ∀ j, G.scheme.toCellScheme.grade (G.donorCell j) ≤ Q.threshold)
+    (href : ∀ j ∈ Q.exacts, t'.toCellScheme.grade (Q.ref j) ≤ Q.threshold ∧
+      Q.offset j ≤ Q.threshold)
+    (hmk : t'.toCellScheme.grade Q.marker ≤ Q.threshold ∧ Q.markerOffset ≤ Q.threshold)
+    {σ : Fin t'.card → Label.{u}}
+    (hclass : ∀ x ∈ t'.toCellScheme.below (t'.toCellScheme.gradedIndex Q.cap),
+      σ x = ⊥ → t'.label x = ⊥)
+    (hcap : σ Q.cap ≠ ⊥) : G.Recovers σ (Q.CorrectAt σ) := by
+  intro v hv hctx i j hij
+  have hcons : G.scheme.rows.IsConsistent := G.isLegal.isConsistent
+  have hvσ (x : Fin t'.card) : v (G.contextCell x) = σ x := hctx _ x rfl
+  have hgc (x : Fin t'.card) :
+      G.scheme.toCellScheme.grade (G.contextCell x) = t'.toCellScheme.grade x :=
+    G.scheme.grade_faceCell G.comap_context x
+  have hdj : G.scheme.cellMap (extendByLast e) i = G.donorCell j :=
+    congrArg (G.scheme.cellMap (extendByLast e)) (Fin.ext hij)
+  rw [hdj]
+  obtain ⟨w, hw⟩ := hfull
+  have hcN : G.scheme.toCellScheme.grade (G.contextCell Q.cap) = Q.threshold := hgc Q.cap
+  obtain ⟨u', hu'g, hle⟩ := hv.availability (G.contextCell Q.cap) w
+    (by rw [show G.scheme.toCellScheme.scope w = univ from congrArg Prod.fst hw]
+        exact subset_univ _)
+    (hcN.trans (congrArg Prod.snd hw).symm)
+  have hu' : G.scheme.toCellScheme.gradedIndex u' = (univ, Q.threshold) := hu'g.trans hw
+  obtain ⟨Φ, -, hΦb, -, hΦ⟩ := Scheme.exists_controllerRead hv
+    (Scheme.mem_below_of_gradedIndex_eq hu' hcN.le) hcN hle
+  have hvc : v (G.contextCell Q.cap) ≠ ⊥ := by rw [hvσ]; exact hcap
+  -- the row of the controller is in the class
+  have hrow : ∀ x ∈ t'.toCellScheme.below (t'.toCellScheme.gradedIndex Q.cap),
+      G.scheme.rowAt u' (G.contextCell x) = ⊥ → t'.label x = ⊥ := by
+    intro x hx hr
+    have hxN : G.scheme.toCellScheme.grade (G.contextCell x) ≤ Q.threshold := by
+      rw [hgc]
+      exact hx.2
+    have h := hΦ _ (Scheme.mem_below_of_gradedIndex_eq hu' hxN) hxN
+    rw [hr, min_eq_left bot_le, hΦb] at h
+    refine hclass x hx ?_
+    rw [← hvσ]
+    rcases min_eq_bot.mp h with h' | h'
+    · exact h'
+    · exact absurd h' hvc
+  have hrc : G.scheme.rowAt u' (G.contextCell Q.cap) ≠ ⊥ := by
+    intro hr
+    have h := hΦ _ (Scheme.mem_below_of_gradedIndex_eq hu' hcN.le) hcN.le
+    rw [min_self, hr, min_self, hΦb] at h
+    exact hvc h
+  have hA := hadm u' hu' hrow hrc j
+  refine ⟨fun hz ↦ ?_, fun hf ↦ ?_, fun hy ↦ ?_⟩
+  · rw [← hvσ]
+    exact Scheme.min_eq_bot_of_controller hv hcN hle hu' (hdon j) (hA.1 hz)
+  · rw [StageType.GrowthRequests.readExact, ← hvσ, ← hvσ]
+    have hr := href j hf
+    exact Scheme.min_eq_visibilityReplace_of_controller hcons hv hcN hle hu' hr.2 (hdon j)
+      ((hgc _).trans_le hr.1) (hA.2.1 hf)
+  · rw [StageType.GrowthRequests.readMarker, ← hvσ, ← hvσ]
+    exact Scheme.visibilityReplace_le_of_controller hcons hv hcN hle hu' hmk.2
+      ((hgc _).trans_le hmk.1) (hdon j) (hA.2.2 hy)
+
 end GrowthCarrier
 
 end VaughtConjecture
