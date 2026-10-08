@@ -7,7 +7,7 @@ import VaughtConjecture.Continuation.ReadingLayerBand
 import VaughtConjecture.Continuation.ReadingLayerRootOffsets
 
 /-!
-# The band fill, and legality of the restricted reading layer at `seedThree`
+# The band fill
 
 Roadmap, Layer 3 ((R3) of the table of 3.4).
 
@@ -53,16 +53,10 @@ grade, not as a union of two lifts along `e`.
   `TowerProfile.exists_server_of_rightType` (one cell for all the cells of the left coatom,
   reading `x` at a code of the grade `1`); the fill is the fill from the server with `A = f t₁`
   and `V = max h (f t₂)`.
-* **At `seedThree`** (`TopReadingApexExample.readingFillPos_left_seedThree`,
-  `TopReadingApexExample.isLegalBelowFullGrade_readingTop_seedThree`, compiled): the hypotheses
-  hold with `t₁ = leftS 9` and `t₂ = leftS 15` (the cells at `({0, 1, 2, 3}, 1)` and
-  `({0, 1, 2, 3}, 2)`): the apex reads the cells labelled `⊥` as `⊥` (`eq_bot_leftS`), the cells of
-  grade `1` labelled `3` share the value at `leftS 9` (locality and availability there,
-  `eq_nine_of_grade_one`), `leftS 9` and `leftS 15` are both labelled `3`, and the root offsets of
-  `threeType` lie below the grade `4` of its apex (`rootOffsetsBelow_threeType`, through the
-  identity root).  With the other three fills
-  (`readingFills_seedThree`), **the restricted reading layer at `seedThree` is legal below the full
-  grade** (`TowerProfile.isLegalBelowFullGrade_readingTop_iff`).
+* **At `seedThree`**: the hypotheses hold (module
+  `VaughtConjecture.Continuation.ReadingLayerCoatoms`, where they are stated as conditions on the
+  two coatom types and checked at `threeType` and `rightType`), so the restricted reading layer at
+  `seedThree` is legal below the full grade.
 
 **The schema.**  The hypothesis on the marker in the compiled theorem is the acquisition condition:
 every proper root label has finite part below the grade of the cap (at `seedThree` the proper
@@ -630,97 +624,9 @@ theorem eq_fifteen_of_live : ∀ a : Fin 19, TwoFaceLiftCounterexample.cellGrade
     CaseSplitCounterexample.live a = true → a = 15 := by
   decide
 
-/-- The cell of the profile layer of `seedThree` at a cell `a` of `S` on the left coatom. -/
-noncomputable abbrev leftS (a : Fin CaseSplitCounterexample.S.{u}.card) :
-    Fin (scheme (seedThree hα)).card :=
-  leftCell (seedThree hα) (Fin.castSucc a)
-
-/-- The graded index of `leftS a`. -/
-theorem gradedIndex_leftS (a : Fin CaseSplitCounterexample.S.{u}.card) :
-    (scheme (seedThree hα)).toCellScheme.gradedIndex (leftS hα a) =
-      ((TwoFaceLiftCounterexample.cellScope a).map (Coatom.left 3),
-        TwoFaceLiftCounterexample.cellGrade a) := by
-  refine (gradedIndex_leftCell (I := seedThree hα)
-    (Fin.castSucc a : Fin (seedThree hα).left.card)).trans ?_
-  change (((Scheme.appendFullCellScheme CaseSplitCounterexample.S 4).scope
-      (Fin.castSucc a)).map (Coatom.left 3),
-    (Scheme.appendFullCellScheme CaseSplitCounterexample.S 4).grade (Fin.castSucc a)) = _
-  rw [Scheme.appendFullCellScheme_scope_castSucc, Scheme.appendFullCellScheme_grade_castSucc]
-  rfl
-
-/-- The cells `leftS a` lie below the left coatom. -/
-theorem leftS_mem (a : Fin CaseSplitCounterexample.S.{u}.card) :
-    leftS hα a ∈ (scheme (seedThree hα)).toCellScheme.below (univ.erase (Fin.last 4), 4) := by
-  rw [CellScheme.mem_below, gradedIndex_leftS, ← univ_map_left_eq]
-  exact Prod.mk_le_mk.mpr ⟨map_subset_map.mpr (subset_univ _),
-    (show ∀ a : Fin 19, TwoFaceLiftCounterexample.cellGrade a ≤ 4 by decide) a⟩
-
-/-- The apex of `threeType` in the profile layer: of grade `4`, below the left coatom, and the only
-cell of the left coatom at or above its graded index. -/
-theorem apex_props :
-    (scheme (seedThree hα)).toCellScheme.grade (leftCell (seedThree hα) (Fin.last _)) = 4 ∧
-      leftCell (seedThree hα) (Fin.last _) ∈
-        (scheme (seedThree hα)).toCellScheme.below (univ.erase (Fin.last 4), 4) ∧
-      ∀ y ∈ (scheme (seedThree hα)).toCellScheme.below (univ.erase (Fin.last 4), 4),
-        (scheme (seedThree hα)).toCellScheme.gradedIndex (leftCell (seedThree hα) (Fin.last _)) ≤
-          (scheme (seedThree hα)).toCellScheme.gradedIndex y →
-            y = leftCell (seedThree hα) (Fin.last _) :=
-  leftCell_props (I := seedThree hα) (a := Fin.last _)
-    (StageType.addApex_gradedIndex_last (t := threeBase hα) isLegalBelowFullGrade_S (by omega))
-    fun _ hz ↦ StageType.eq_last_of_gradedIndex_addApex (t := threeBase hα)
-      isLegalBelowFullGrade_S (by omega) hz
-
 /-- A set inside the left coatom avoids the last point. -/
 theorem last_notMem_of_subset {s : Finset (Fin 5)} (hs : s ⊆ univ.erase (Fin.last 4)) :
     Fin.last 4 ∉ s := fun h ↦ Finset.notMem_erase (Fin.last 4) univ (hs h)
-
-/-- The cells of the left coatom type of `seedThree`: the apex and the cells of `S`. -/
-theorem cases_left (z : Fin (seedThree hα).left.card) :
-    z = Fin.last _ ∨ ∃ a : Fin CaseSplitCounterexample.S.{u}.card, z = Fin.castSucc a := by
-  change Fin ((threeBase hα).card + 1) at z
-  induction z using Fin.lastCases with
-  | last => exact .inl rfl
-  | cast a => exact .inr ⟨a, rfl⟩
-
-/-- A cell of the left coatom other than the apex is `leftS a`. -/
-theorem exists_leftS {d : Fin (scheme (seedThree hα)).card}
-    (hd : d ∈ (scheme (seedThree hα)).toCellScheme.below (univ.erase (Fin.last 4), 4))
-    (hg : (scheme (seedThree hα)).toCellScheme.grade d ≠ 4) : ∃ a, d = leftS hα a := by
-  obtain ⟨z, rfl⟩ := exists_leftCell_eq (I := seedThree hα) (y := d) (last_notMem_of_subset
-    ((scheme (seedThree hα)).toCellScheme.gradedIndex_le_iff.mp
-      ((CellScheme.mem_below _).mp hd)).1)
-  rcases cases_left hα z with rfl | ⟨a, rfl⟩
-  · exact absurd (apex_props hα).1 hg
-  · exact ⟨a, rfl⟩
-
-/-- The apex row at `leftS a` is the apex row of `threeType` at `a`. -/
-theorem rowAt_apex_leftS (a : Fin CaseSplitCounterexample.S.{u}.card) :
-    (scheme (seedThree hα)).rowAt (leftCell (seedThree hα) (Fin.last _)) (leftS hα a) =
-      (threeType hα).toScheme.rowAt (Fin.last _) (Fin.castSucc a) :=
-  rowAt_leftCell (I := seedThree hα) _ (Fin.castSucc a : Fin (seedThree hα).left.card)
-
-/-- The grade of `leftS a`. -/
-theorem grade_leftS (a : Fin CaseSplitCounterexample.S.{u}.card) :
-    (scheme (seedThree hα)).toCellScheme.grade (leftS hα a) =
-      TwoFaceLiftCounterexample.cellGrade a :=
-  ((scheme (seedThree hα)).toCellScheme.gradedIndex_snd).symm.trans
-    (congrArg Prod.snd (gradedIndex_leftS hα a))
-
-/-- The rows between the cells `leftS` are those of `S`. -/
-theorem rowAt_leftS (a b : Fin CaseSplitCounterexample.S.{u}.card) :
-    (scheme (seedThree hα)).rowAt (leftS hα a) (leftS hα b) =
-      CaseSplitCounterexample.S.rowAt a b :=
-  (rowAt_leftCell (I := seedThree hα) (Fin.castSucc a : Fin (seedThree hα).left.card)
-    (Fin.castSucc b : Fin (seedThree hα).left.card)).trans (rowAt_threeType_castSucc hα a b)
-
-/-- The cell `leftS a` at the graded index of `leftS b` is `leftS b`. -/
-theorem eq_of_gradedIndex_leftS {a b : Fin CaseSplitCounterexample.S.{u}.card}
-    (h : (scheme (seedThree hα)).toCellScheme.gradedIndex (leftS hα a) =
-      (scheme (seedThree hα)).toCellScheme.gradedIndex (leftS hα b)) : a = b := by
-  rw [gradedIndex_leftS, gradedIndex_leftS] at h
-  obtain ⟨h1, h2⟩ := Prod.ext_iff.mp h
-  rw [map_inj] at h1
-  exact TwoFaceLiftCounterexample.gradedIndex_injective (Prod.ext h1 h2)
 
 /-- Every cell is visible through the identity. -/
 theorem mem_visibleCells_refl {k : ℕ} (t' : StageType.{u} α k) (z : Fin t'.card) :
@@ -733,121 +639,6 @@ theorem labelling_three_cases (a : Fin 19) :
       CaseSplitCounterexample.labelling lab3 lab3 ⊥ a = (⊥ : Label.{u}) := by
   unfold CaseSplitCounterexample.labelling
   split_ifs <;> simp
-
-/-- **The root offsets of `threeType` lie below `4`**, the grade of its apex: its only ordinal
-label is `3`. -/
-theorem rootOffsetsBelow_threeType :
-    (seedThree hα).left.RootOffsetsBelow (Function.Embedding.refl (Fin 4))
-      ((seedThree hα).left.toCellScheme.grade (Fin.last _)) := by
-  have hg4 : (seedThree hα).left.toCellScheme.grade (Fin.last _) = 4 :=
-    congrArg Prod.snd (StageType.addApex_gradedIndex_last (t := threeBase hα)
-      isLegalBelowFullGrade_S (by omega))
-  intro y _ μ f hμ hy
-  refine lt_of_lt_of_eq ?_ hg4.symm
-  rcases cases_left hα y with rfl | ⟨a, rfl⟩
-  · have h : (seedThree hα).left.label (Fin.last _) = ⊤ :=
-      StageType.addApex_label_last (t := threeBase hα) isLegalBelowFullGrade_S (by omega)
-    exact absurd (hy.symm.trans h) (fun h' ↦ WithTop.coe_ne_top (WithBot.coe_injective h'))
-  · have h : (seedThree hα).left.label (Fin.castSucc a : Fin (seedThree hα).left.card) =
-        CaseSplitCounterexample.labelling lab3 lab3 ⊥ a :=
-      StageType.addApex_label_castSucc (t := threeBase hα) isLegalBelowFullGrade_S (by omega) a
-    rcases labelling_three_cases a with h3 | h0
-    · have e := (hy.symm.trans h).trans h3
-      rw [lab3, natCast_label] at e
-      have h' : ((0 : Ordinal.{u}) + (3 : ℕ)) = μ + f := by
-        rw [zero_add]; exact (WithTop.coe_injective (WithBot.coe_injective e)).symm
-      have := ((add_natCast_eq_add_natCast_iff Ordinal.isSuccPrelimit_zero hμ).mp h').2
-      omega
-    · exact absurd ((hy.symm.trans h).trans h0) WithBot.coe_ne_bot
-
-section Band
-
-variable {hα} {f : Fin (scheme (seedThree hα)).card → Label.{u}}
-  (hf : (scheme (seedThree hα)).rows.IsLawfulBelow (univ.erase (Fin.last 4), 4) fun d ↦ f d)
-  (hfr : f (leftCell (seedThree hα) (Fin.last _)) ≠ ⊥)
-
-include hf hfr in
-/-- A cell `leftS a` with `a` labelled `⊥` is `⊥` in every labelling lawful below the left
-coatom not `⊥` at the apex: the apex reads it as `⊥`. -/
-theorem eq_bot_leftS {a : Fin CaseSplitCounterexample.S.{u}.card}
-    (ha : CaseSplitCounterexample.labelling lab3 lab3 ⊥ a = (⊥ : Label.{u})) :
-    f (leftS hα a) = ⊥ := by
-  obtain ⟨hgr, hrC, -⟩ := apex_props hα
-  refine eq_bot_of_row_eq_bot hrC hf hfr (mem_below_marker hgr hrC (leftS_mem hα a)) ?_
-  rw [← Scheme.rowAt_of_mem, rowAt_apex_leftS]
-  exact (StageType.rowAt_addApex_last_eq_bot_iff (t₀ := threeBase hα) isLegalBelowFullGrade_S
-    (by omega) (Fin.castSucc a)).mpr
-    ((StageType.addApex_label_castSucc (t := threeBase hα) isLegalBelowFullGrade_S
-      (by omega) a).trans ha)
-
-include hf hfr in
-/-- The cells of grade `3` of the left coatom are `⊥`. -/
-theorem eq_bot_of_grade_three {d : Fin (scheme (seedThree hα)).card}
-    (hd : d ∈ (scheme (seedThree hα)).toCellScheme.below (univ.erase (Fin.last 4), 4))
-    (hg : (scheme (seedThree hα)).toCellScheme.grade d = 3) : f d = ⊥ := by
-  obtain ⟨a, rfl⟩ := exists_leftS hα hd (by omega)
-  exact eq_bot_leftS hf hfr
-    (labelling_three_eq_bot_of_grade ((grade_leftS hα a).symm.trans hg))
-
-include hf hfr in
-/-- The only cell of grade `2` of the left coatom not `⊥` is `leftS 15` (at `({0, 1, 2, 3}, 2)`). -/
-theorem eq_fifteen_of_grade_two {d : Fin (scheme (seedThree hα)).card}
-    (hd : d ∈ (scheme (seedThree hα)).toCellScheme.below (univ.erase (Fin.last 4), 4))
-    (hg : (scheme (seedThree hα)).toCellScheme.grade d = 2) (hf0 : f d ≠ ⊥) :
-    d = leftS hα (⟨15, by decide⟩ : Fin CaseSplitCounterexample.S.{u}.card) := by
-  obtain ⟨a, rfl⟩ := exists_leftS hα hd (by omega)
-  have hl : CaseSplitCounterexample.labelling lab3 lab3 ⊥ a ≠ (⊥ : Label.{u}) := fun h ↦
-    hf0 (eq_bot_leftS hf hfr h)
-  have h15 := eq_fifteen_of_live a ((grade_leftS hα a).symm.trans hg)
-    (live_of_labelling_three_ne_bot hl)
-  rw [show a = (⟨15, by decide⟩ : Fin CaseSplitCounterexample.S.{u}.card) from h15]
-
-include hf hfr in
-/-- **The cells of grade `1` of the left coatom not `⊥` share one value**, that of `leftS 9` (at
-`({0, 1, 2, 3}, 1)`): locality there (it reads them as itself) and availability (it is the only
-cell at its graded index). -/
-theorem eq_nine_of_grade_one {d : Fin (scheme (seedThree hα)).card}
-    (hd : d ∈ (scheme (seedThree hα)).toCellScheme.below (univ.erase (Fin.last 4), 4))
-    (hg : (scheme (seedThree hα)).toCellScheme.grade d = 1) (hf0 : f d ≠ ⊥) :
-    f d = f (leftS hα (⟨9, by decide⟩ : Fin CaseSplitCounterexample.S.{u}.card)) := by
-  obtain ⟨-, hfl, hfa⟩ := CellScheme.Rows.isLawfulBelow_iff_forall.mp hf
-  obtain ⟨a, rfl⟩ := exists_leftS hα hd (by omega)
-  have ha : TwoFaceLiftCounterexample.cellGrade a = 1 := (grade_leftS hα a).symm.trans hg
-  have hl : CaseSplitCounterexample.live a = true := live_of_labelling_three_ne_bot fun h ↦
-    hf0 (eq_bot_leftS hf hfr h)
-  set n9 : Fin CaseSplitCounterexample.S.{u}.card := ⟨9, by decide⟩ with hn9
-  have h9 : TwoFaceLiftCounterexample.cellGrade n9 = 1 := rfl
-  have hl9 : CaseSplitCounterexample.live n9 = true := rfl
-  have hs9 : TwoFaceLiftCounterexample.cellScope n9 = univ := rfl
-  have ht₁C := leftS_mem hα n9
-  have hmem : leftS hα a ∈ (scheme (seedThree hα)).toCellScheme.below
-      ((scheme (seedThree hα)).toCellScheme.gradedIndex (leftS hα n9)) := by
-    rw [CellScheme.mem_below, gradedIndex_leftS, gradedIndex_leftS, hs9, ha, h9]
-    exact Prod.mk_le_mk.mpr ⟨map_subset_map.mpr (subset_univ _), le_rfl⟩
-  have hrow : (scheme (seedThree hα)).rowAt (leftS hα n9) (leftS hα n9) =
-      (scheme (seedThree hα)).rowAt (leftS hα n9) (leftS hα a) := by
-    rw [rowAt_leftS, rowAt_leftS, rowAt_S_live h9 hl9 h9 subset_rfl,
-      rowAt_S_live h9 hl9 ha (hs9 ▸ subset_univ _), hl9, hl]
-  have h1 := (hfl _ ht₁C).le_of_le
-    (d := ⟨leftS hα n9, (scheme (seedThree hα)).toCellScheme.mem_below_gradedIndex _⟩)
-    (d' := ⟨leftS hα a, hmem⟩)
-    (by rw [← Scheme.rowAt_of_mem, ← Scheme.rowAt_of_mem, hrow])
-    (by rw [grade_leftS, grade_leftS, ha, h9])
-  change min (f (leftS hα n9)) (f (leftS hα n9)) ≤ min (f (leftS hα a)) (f (leftS hα n9)) at h1
-  rw [min_self] at h1
-  obtain ⟨v, hv, hle⟩ := hfa (leftS hα a) (leftS hα n9) ht₁C
-    ((scheme (seedThree hα)).toCellScheme.gradedIndex_le_iff.mp
-      ((CellScheme.mem_below _).mp hmem)).1
-    (by rw [grade_leftS, grade_leftS, ha, h9])
-  have hvC : v ∈ (scheme (seedThree hα)).toCellScheme.below (univ.erase (Fin.last 4), 4) := by
-    rw [CellScheme.mem_below, hv]; exact ht₁C
-  have hv1 : (scheme (seedThree hα)).toCellScheme.grade v = 1 := by
-    rw [← CellScheme.gradedIndex_snd, hv, CellScheme.gradedIndex_snd, grade_leftS, h9]
-  obtain ⟨b, rfl⟩ := exists_leftS hα hvC (by omega)
-  rw [eq_of_gradedIndex_leftS hα hv] at hle
-  exact le_antisymm hle (h1.trans (min_le_left _ _))
-
-end Band
 
 end TopReadingApexExample
 
@@ -1017,96 +808,5 @@ theorem readingFillPos_left_of_tie (hraise : I.right.RowsRaiseAt 3)
   exact le_top
 
 end TowerProfile
-
-namespace TopReadingApexExample
-
-open TwoFaceLiftExistsCounterexample CaseSplitCounterexample TowerProfile
-
-variable {α : Ordinal.{u}} (hα : Order.IsSuccLimit α)
-
-/-- **The fill at the short positive caps from the left coatom holds at `seedThree`** (the marker
-the apex of `threeType`, the new top the cell `{3}` of `rightType`): the cells of the left coatom
-not `⊥` are those labelled `3` (the apex reads the others as `⊥`, `eq_bot_leftS`); those of grade
-`1` take the value at `leftS 9` (`eq_nine_of_grade_one`), the one of grade `2` is `leftS 15`
-(`eq_fifteen_of_grade_two`), those of grade `3` are `⊥` (`eq_bot_of_grade_three`), both are labelled
-`3`, and the root offsets lie below the grade `4` of the apex (`rootOffsetsBelow_threeType`);
-`TowerProfile.readingFillPos_left_of_tie` applies. -/
-theorem readingFillPos_left_seedThree :
-    ReadingFillPos (seedThree hα) (leftCell (seedThree hα) (Fin.last _))
-      (({Fin.castSucc (⟨3, by decide⟩ : Fin CaseSplitCounterexample.S.{u}.card)} :
-        Finset (Fin (seedThree hα).right.card)).image fun z ↦ embed3 (seedThree hα)
-          (StageType.faceCell (seedThree hα).restrictFace_right z)) (Fin.last 4) := by
-  obtain ⟨hgr, hrC, -⟩ := apex_props hα
-  refine readingFillPos_left_of_tie rowsRaiseAt_rightType hgr hrC ?_ ?_
-    (mem_image_of_mem _ (mem_singleton_self _))
-    (fun x hx ↦ by obtain ⟨z, hz, rfl⟩ := mem_image.mp hx; rw [mem_singleton.mp hz])
-    (leftS_mem hα ⟨9, by decide⟩) ((grade_leftS hα _).trans rfl)
-    (leftS_mem hα ⟨15, by decide⟩) ((grade_leftS hα _).trans rfl)
-    (fun _ hf hfr _ hd hg h0 ↦ eq_nine_of_grade_one hf hfr hd hg h0)
-    (fun _ hf hfr _ hd hg h0 ↦ eq_fifteen_of_grade_two hf hfr hd hg h0)
-    (fun _ hf hfr _ hd hg ↦ eq_bot_of_grade_three hf hfr hd hg) (ι := Function.Embedding.refl _)
-    rfl rfl rfl
-    (StageType.addApex_label_last (t := threeBase hα) isLegalBelowFullGrade_S (by omega))
-    (StageType.addApex_scope_last (t := threeBase hα) isLegalBelowFullGrade_S (by omega))
-    (congrArg Prod.snd (StageType.addApex_gradedIndex_last (t := threeBase hα)
-      isLegalBelowFullGrade_S (by omega))).ge
-    (rootOffsetsBelow_threeType hα)
-    (mem_visibleCells_refl _ _) (mem_visibleCells_refl _ _) ?_ ?_
-  · refine (last_mem_scope_right (seedThree hα).restrictFace_right _).mpr ?_
-    change (3 : Fin 4) ∈ (Scheme.appendFullCellScheme CaseSplitCounterexample.S 4).scope
-      (Fin.castSucc (⟨3, by decide⟩ : Fin CaseSplitCounterexample.S.{u}.card))
-    rw [Scheme.appendFullCellScheme_scope_castSucc]
-    decide
-  · refine (StageType.grade_faceCell _ _).trans ?_
-    change (Scheme.appendFullCellScheme CaseSplitCounterexample.S 4).grade
-      (Fin.castSucc (⟨3, by decide⟩ : Fin CaseSplitCounterexample.S.{u}.card)) = 1
-    rw [Scheme.appendFullCellScheme_grade_castSucc]
-    rfl
-  · change CaseSplitCounterexample.labelling lab3 lab3 ⊥ (15 : Fin 19) =
-      CaseSplitCounterexample.labelling lab3 lab3 ⊥ (9 : Fin 19)
-    simp [CaseSplitCounterexample.labelling, CaseSplitCounterexample.live,
-      TwoFaceLiftCounterexample.cellGrade]
-  · change IsProper (CaseSplitCounterexample.labelling lab3 lab3 ⊥ (15 : Fin 19) : Label.{u})
-    have h15 : CaseSplitCounterexample.labelling lab3 lab3 ⊥ (15 : Fin 19) =
-        (lab3 : Label.{u}) := by
-      simp [CaseSplitCounterexample.labelling, CaseSplitCounterexample.live,
-        TwoFaceLiftCounterexample.cellGrade]
-    rw [h15, lab3, natCast_label]
-    exact ⟨_, rfl⟩
-
-/-- **The restricted reading layer is legal below the full grade at `seedThree`**, the first
-proper-labelled marker that keeps the tie of its root label: the four fill conditions hold
-(`readingFills_seedThree` and `readingFillPos_left_seedThree`), so
-`TowerProfile.isLegalBelowFullGrade_readingTop_iff` applies. -/
-theorem isLegalBelowFullGrade_readingTop_seedThree :
-    (readingTop (seedThree hα) (leftCell (seedThree hα) (Fin.last _))
-      (({Fin.castSucc (⟨3, by decide⟩ : Fin CaseSplitCounterexample.S.{u}.card)} :
-        Finset (Fin (seedThree hα).right.card)).image fun z ↦ embed3 (seedThree hα)
-          (StageType.faceCell (seedThree hα).restrictFace_right z))).IsLegalBelowFullGrade := by
-  obtain ⟨hb1, hb2, hp2⟩ := readingFills_seedThree hα
-  have hp1 : ReadingFillPos (seedThree hα) (leftCell (seedThree hα) (Fin.last _))
-      (({Fin.castSucc (⟨3, by decide⟩ : Fin CaseSplitCounterexample.S.{u}.card)} :
-        Finset (Fin (seedThree hα).right.card)).image fun z ↦ embed3 (seedThree hα)
-          (StageType.faceCell (seedThree hα).restrictFace_right z)) (Fin.last 4) := by
-    exact readingFillPos_left_seedThree hα
-  obtain ⟨hgr, -, -⟩ := apex_props hα
-  refine (isLegalBelowFullGrade_readingTop_iff hgr ?_).mpr ⟨fun z hz ↦ ?_, fun z hz ↦ ?_⟩
-  · intro x hx
-    obtain ⟨z, hz, rfl⟩ := mem_image.mp hx
-    rw [mem_singleton.mp hz, ← CellScheme.gradedIndex_snd, gradedIndex_embed3,
-      CellScheme.gradedIndex_snd]
-    refine (StageType.grade_faceCell _ _).trans_le ?_
-    change (Scheme.appendFullCellScheme CaseSplitCounterexample.S 4).grade
-      (Fin.castSucc (⟨3, by decide⟩ : Fin CaseSplitCounterexample.S.{u}.card)) ≤ 4
-    rw [Scheme.appendFullCellScheme_grade_castSucc]
-    decide
-  · rcases mem_insert.mp hz with rfl | hz
-    · exact hb1
-    · rw [mem_singleton.mp hz]; exact hb2
-  · rcases mem_insert.mp hz with rfl | hz
-    · exact hp1
-    · rw [mem_singleton.mp hz]; exact hp2
-
-end TopReadingApexExample
 
 end VaughtConjecture

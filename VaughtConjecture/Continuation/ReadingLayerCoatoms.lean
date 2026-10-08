@@ -26,6 +26,19 @@ from conditions on its two coatom types.
   `TowerProfile.isLegalBelowFullGrade_readingTop_of_coatoms`, compiled): under these conditions
   the four fill conditions hold, so the reading layer of the marker and the new top is legal below
   the full grade.
+* **At `seedThree`** (`TopReadingApexExample.leftTie_threeType`,
+  `TopReadingApexExample.rightNewTop_rightType`,
+  `TopReadingApexExample.readingFillPos_left_seedThree`,
+  `TopReadingApexExample.isLegalBelowFullGrade_readingTop_seedThree`, compiled): `threeType` has a
+  tie-keeping marker (its apex, with `z₁`, `z₂` the cells at `(univ, 1)` and `(univ, 2)`, both
+  labelled `3`; its only ordinal label is `3`, below the grade `4` of the apex; the cells of grade
+  `1` labelled `3` share one value by locality and availability at `z₁`,
+  `TopReadingApexExample.tie_one_threeType`), and `rightType` has a new top (its cell `{3}`;
+  `TowerProfile.rowsRaiseAt_rightType`).
+
+The conditions are explicit predicates on the coatom types; the marker condition is the
+acquisition condition (root offsets below the grade of the cap), from which the tie of the marker
+follows (`StageType.keepsProperRootTies_of_rootOffsetsBelow`).
 
 ## Placement
 
@@ -186,5 +199,209 @@ theorem isLegalBelowFullGrade_readingTop_of_coatoms {a z₁ z₂ : Fin I.left.ca
       exact readingFillPos_right_of_unique hgr hrC huniq hX3
 
 end TowerProfile
+
+/-! ### The instance `seedThree` -/
+
+namespace TopReadingApexExample
+
+open TwoFaceLiftExistsCounterexample CaseSplitCounterexample TowerProfile
+
+variable {α : Ordinal.{u}} (hα : Order.IsSuccLimit α)
+
+/-- The cells of `threeType`: the apex and the cells of `S`. -/
+theorem cases_threeType (z : Fin (threeType hα).card) :
+    z = Fin.last _ ∨ ∃ a : Fin CaseSplitCounterexample.S.{u}.card, z = Fin.castSucc a := by
+  change Fin ((threeBase hα).card + 1) at z
+  induction z using Fin.lastCases with
+  | last => exact .inl rfl
+  | cast a => exact .inr ⟨a, rfl⟩
+
+/-- The graded index of a cell of `S` in `threeType`. -/
+theorem gradedIndex_threeType_castSucc (a : Fin CaseSplitCounterexample.S.{u}.card) :
+    (threeType hα).toCellScheme.gradedIndex (Fin.castSucc a) =
+      (TwoFaceLiftCounterexample.cellScope a, TwoFaceLiftCounterexample.cellGrade a) :=
+  Scheme.appendFullCellScheme_gradedIndex_castSucc CaseSplitCounterexample.S 4 a
+
+/-- The graded index of the apex of `threeType`. -/
+theorem gradedIndex_threeType_last :
+    (threeType hα).toCellScheme.gradedIndex (Fin.last _) = (univ, 4) :=
+  StageType.addApex_gradedIndex_last (t := threeBase hα) isLegalBelowFullGrade_S (by omega)
+
+/-- The labels of `threeType` at the cells of `S`. -/
+theorem label_threeType_castSucc (a : Fin CaseSplitCounterexample.S.{u}.card) :
+    (threeType hα).label (Fin.castSucc a) = CaseSplitCounterexample.labelling lab3 lab3 ⊥ a :=
+  StageType.addApex_label_castSucc (t := threeBase hα) isLegalBelowFullGrade_S (by omega) a
+
+/-- The label of the apex of `threeType`. -/
+theorem label_threeType_last : (threeType hα).label (Fin.last _) = ⊤ :=
+  StageType.addApex_label_last (t := threeBase hα) isLegalBelowFullGrade_S (by omega)
+
+/-- The grade of a cell of `S` in `threeType`. -/
+theorem grade_threeType_castSucc (a : Fin CaseSplitCounterexample.S.{u}.card) :
+    (threeType hα).toCellScheme.grade (Fin.castSucc a) = TwoFaceLiftCounterexample.cellGrade a :=
+  congrArg Prod.snd (gradedIndex_threeType_castSucc hα a)
+
+/-- The apex of `threeType` has grade `4`. -/
+theorem grade_threeType_last : (threeType hα).toCellScheme.grade (Fin.last _) = 4 :=
+  congrArg Prod.snd (gradedIndex_threeType_last hα)
+
+/-- **The cells of grade `1` of `threeType` labelled `3` share one value in every lawful
+labelling**, that at the cell `9` (at `(univ, 1)`): locality there (it reads them as itself) and
+availability (it is the only cell at its graded index). -/
+theorem tie_one_threeType {p : Fin (threeType hα).card → Label.{u}}
+    (hp : (threeType hα).rows.IsLawful p) (z : Fin (threeType hα).card)
+    (hz : (threeType hα).toCellScheme.grade z = 1) (hl : (threeType hα).label z ≠ ⊥) :
+    p z = p (Fin.castSucc (⟨9, by decide⟩ : Fin CaseSplitCounterexample.S.{u}.card)) := by
+  set n9 : Fin CaseSplitCounterexample.S.{u}.card := ⟨9, by decide⟩ with hn9
+  rcases cases_threeType hα z with hzl | ⟨a, hza⟩
+  · exact absurd ((grade_threeType_last hα).symm.trans (hzl ▸ hz)) (by decide)
+  subst hza
+  have ha : TwoFaceLiftCounterexample.cellGrade a = 1 :=
+    (grade_threeType_castSucc hα a).symm.trans hz
+  have hla : CaseSplitCounterexample.live a = true :=
+    live_of_labelling_three_ne_bot ((label_threeType_castSucc hα a).symm.trans_ne hl)
+  have h9 : TwoFaceLiftCounterexample.cellGrade n9 = 1 := rfl
+  have hl9 : CaseSplitCounterexample.live n9 = true := rfl
+  have hs9 : TwoFaceLiftCounterexample.cellScope n9 = univ := rfl
+  have hmem : Fin.castSucc a ∈ (threeType hα).toCellScheme.below
+      ((threeType hα).toCellScheme.gradedIndex (Fin.castSucc n9)) :=
+    (gradedIndex_threeType_castSucc hα a).trans_le
+      (le_of_le_of_eq (Prod.mk_le_mk.mpr ⟨hs9 ▸ subset_univ _, ha.trans h9.symm |>.le⟩)
+        (gradedIndex_threeType_castSucc hα n9).symm)
+  have hrow : (threeType hα).toScheme.rowAt (Fin.castSucc n9) (Fin.castSucc n9) =
+      (threeType hα).toScheme.rowAt (Fin.castSucc n9) (Fin.castSucc a) := by
+    refine ((rowAt_threeType_castSucc hα n9 n9).trans (rowAt_S_live h9 hl9 h9 subset_rfl)).trans
+      (Eq.trans ?_ ((rowAt_threeType_castSucc hα n9 a).trans
+        (rowAt_S_live h9 hl9 ha (hs9 ▸ subset_univ _))).symm)
+    rw [hl9, hla]
+  have h1 := (hp.locality (Fin.castSucc n9)).le_of_le
+    (d := ⟨Fin.castSucc n9, (threeType hα).toCellScheme.mem_below_gradedIndex _⟩)
+    (d' := ⟨Fin.castSucc a, hmem⟩)
+    ((Scheme.rowAt_of_mem _).symm.trans_le (hrow.le.trans_eq (Scheme.rowAt_of_mem hmem)))
+    ((grade_threeType_castSucc hα a).trans_le
+      ((ha.trans h9.symm).le.trans_eq (grade_threeType_castSucc hα n9).symm))
+  change min (p (Fin.castSucc n9)) (p (Fin.castSucc n9)) ≤
+    min (p (Fin.castSucc a)) (p (Fin.castSucc n9)) at h1
+  rw [min_self] at h1
+  obtain ⟨v, hv, hle⟩ := hp.availability (Fin.castSucc a) (Fin.castSucc n9)
+    ((threeType hα).toCellScheme.gradedIndex_le_iff.mp ((CellScheme.mem_below _).mp hmem)).1
+    ((grade_threeType_castSucc hα a).trans
+      ((ha.trans h9.symm).trans (grade_threeType_castSucc hα n9).symm))
+  rcases cases_threeType hα v with hvl | ⟨b, hvb⟩
+  · exact absurd (congrArg Prod.snd ((gradedIndex_threeType_last hα).symm.trans
+      ((hvl ▸ hv).trans (gradedIndex_threeType_castSucc hα n9)))) (by decide)
+  subst hvb
+  have hb : b = n9 := TwoFaceLiftCounterexample.gradedIndex_injective
+    ((gradedIndex_threeType_castSucc hα b).symm.trans
+      (hv.trans (gradedIndex_threeType_castSucc hα n9)))
+  subst hb
+  exact le_antisymm hle (h1.trans (min_le_left _ _))
+
+/-- **`threeType` is a left coatom type with a tie-keeping marker**: the apex, and the cells `9`
+and `15` (at `(univ, 1)` and `(univ, 2)`, both labelled `3`); its only ordinal label is `3`, below
+the grade `4` of the apex. -/
+theorem leftTie_threeType :
+    LeftTie (threeType hα) (Fin.last _)
+      (Fin.castSucc (⟨9, by decide⟩ : Fin CaseSplitCounterexample.S.{u}.card))
+      (Fin.castSucc (⟨15, by decide⟩ : Fin CaseSplitCounterexample.S.{u}.card)) where
+  gradedIndex_apex := gradedIndex_threeType_last hα
+  eq_apex _ hz := StageType.eq_last_of_gradedIndex_addApex (t := threeBase hα)
+    isLegalBelowFullGrade_S (by omega) hz
+  label_apex := label_threeType_last hα
+  rowAt_apex z hz := (StageType.rowAt_addApex_last_eq_bot_iff (t₀ := threeBase hα)
+    isLegalBelowFullGrade_S (by omega) z).mpr hz
+  face_bot z hz := by
+    rcases cases_threeType hα z with rfl | ⟨a, rfl⟩
+    · exact absurd (Eq.mpr (congrArg (Fin.last 3 ∈ ·)
+        (congrArg Prod.fst (gradedIndex_threeType_last hα))) (mem_univ _)) hz
+    · refine (label_threeType_castSucc hα a).trans (labelling_bot_eq_bot_of_notMem a fun h3 ↦ hz ?_)
+      exact Eq.mpr (congrArg (Fin.last 3 ∈ ·)
+        (congrArg Prod.fst (gradedIndex_threeType_castSucc hα a))) h3
+  rootOffsetsBelow := by
+    intro y _ μ f hμ hy
+    rcases cases_threeType hα y with rfl | ⟨a, rfl⟩
+    · exact absurd ((label_threeType_last hα).symm.trans hy)
+        (fun h' ↦ WithTop.coe_ne_top (WithBot.coe_injective h'.symm))
+    · have hy' := (label_threeType_castSucc hα a).symm.trans hy
+      rcases labelling_three_cases a with h3 | h0
+      · have e := h3.symm.trans hy'
+        rw [lab3, natCast_label] at e
+        have h' : ((0 : Ordinal.{u}) + (3 : ℕ)) = μ + f := by
+          rw [zero_add]; exact WithTop.coe_injective (WithBot.coe_injective e)
+        have := ((add_natCast_eq_add_natCast_iff Ordinal.isSuccPrelimit_zero hμ).mp h').2
+        omega
+      · exact absurd (h0.symm.trans hy').symm WithBot.coe_ne_bot
+  grade_one := (grade_threeType_castSucc hα _).trans rfl
+  grade_two := (grade_threeType_castSucc hα _).trans rfl
+  label_eq := by
+    refine (label_threeType_castSucc hα _).trans (Eq.trans ?_ (label_threeType_castSucc hα _).symm)
+    change CaseSplitCounterexample.labelling lab3 lab3 ⊥ (15 : Fin 19) =
+      CaseSplitCounterexample.labelling lab3 lab3 ⊥ (9 : Fin 19)
+    simp [CaseSplitCounterexample.labelling, CaseSplitCounterexample.live,
+      TwoFaceLiftCounterexample.cellGrade]
+  isProper_label := by
+    have e := (label_threeType_castSucc hα
+      (⟨15, by decide⟩ : Fin CaseSplitCounterexample.S.{u}.card)).trans
+      (show CaseSplitCounterexample.labelling lab3 lab3 ⊥ (15 : Fin 19) = (lab3 : Label.{u}) by
+        simp [CaseSplitCounterexample.labelling, CaseSplitCounterexample.live,
+          TwoFaceLiftCounterexample.cellGrade])
+    exact ⟨((3 : ℕ) : Ordinal.{u}), (natCast_label 3).symm.trans e.symm⟩
+  tie_one p hp z hz hl := tie_one_threeType hα hp z hz hl
+  eq_two z hz hl := by
+    rcases cases_threeType hα z with rfl | ⟨a, rfl⟩
+    · exact absurd ((grade_threeType_last hα).symm.trans hz) (by decide)
+    · have ha : TwoFaceLiftCounterexample.cellGrade a = 2 :=
+        (grade_threeType_castSucc hα a).symm.trans hz
+      have h15 := eq_fifteen_of_live a ha (live_of_labelling_three_ne_bot
+        ((label_threeType_castSucc hα a).symm.trans_ne hl))
+      rw [show a = (⟨15, by decide⟩ : Fin CaseSplitCounterexample.S.{u}.card) from h15]
+      rfl
+  label_three z hz := by
+    rcases cases_threeType hα z with rfl | ⟨a, rfl⟩
+    · exact absurd ((grade_threeType_last hα).symm.trans hz) (by decide)
+    · exact (label_threeType_castSucc hα a).trans
+        (labelling_three_eq_bot_of_grade ((grade_threeType_castSucc hα a).symm.trans hz))
+
+/-- **`rightType` is a right coatom type with a new top** at its cell `{3}` (labelled `⊤`); its
+rows raise at the point `3` (`TowerProfile.rowsRaiseAt_rightType`). -/
+theorem rightNewTop_rightType (α : Ordinal.{u}) :
+    RightNewTop (rightType α)
+      (Fin.castSucc (⟨3, by decide⟩ : Fin CaseSplitCounterexample.S.{u}.card)) where
+  rowsRaiseAt := rowsRaiseAt_rightType
+  mem_scope := by
+    change (3 : Fin 4) ∈ (Scheme.appendFullCellScheme CaseSplitCounterexample.S 4).scope
+      (Fin.castSucc (⟨3, by decide⟩ : Fin CaseSplitCounterexample.S.{u}.card))
+    rw [Scheme.appendFullCellScheme_scope_castSucc]
+    decide
+  grade_eq := by
+    change (Scheme.appendFullCellScheme CaseSplitCounterexample.S 4).grade
+      (Fin.castSucc (⟨3, by decide⟩ : Fin CaseSplitCounterexample.S.{u}.card)) = 1
+    rw [Scheme.appendFullCellScheme_grade_castSucc]
+    rfl
+  label_eq := by
+    change CaseSplitCounterexample.labelling (⊤ : Label.{u}) ⊤ ⊥ (3 : Fin 19) = ⊤
+    simp [CaseSplitCounterexample.labelling, CaseSplitCounterexample.live,
+      TwoFaceLiftCounterexample.cellGrade]
+
+/-- **The fill at the short positive caps from the left coatom holds at `seedThree`**
+(`TowerProfile.readingFillPos_left_of_coatoms`, `leftTie_threeType`, `rightNewTop_rightType`). -/
+theorem readingFillPos_left_seedThree :
+    ReadingFillPos (seedThree hα) (leftCell (seedThree hα) (Fin.last _))
+      (newTops (seedThree hα)
+        (Fin.castSucc (⟨3, by decide⟩ : Fin CaseSplitCounterexample.S.{u}.card))) (Fin.last 4) :=
+  readingFillPos_left_of_coatoms (leftTie_threeType hα) (rightNewTop_rightType α)
+
+/-- **The restricted reading layer is legal below the full grade at `seedThree`**, the first
+proper-labelled marker that keeps the tie of its root label
+(`TowerProfile.isLegalBelowFullGrade_readingTop_of_coatoms`, `leftTie_threeType`,
+`rightNewTop_rightType`). -/
+theorem isLegalBelowFullGrade_readingTop_seedThree :
+    (readingTop (seedThree hα) (leftCell (seedThree hα) (Fin.last _))
+      (newTops (seedThree hα)
+        (Fin.castSucc (⟨3, by decide⟩ :
+          Fin CaseSplitCounterexample.S.{u}.card)))).IsLegalBelowFullGrade :=
+  isLegalBelowFullGrade_readingTop_of_coatoms (leftTie_threeType hα) (rightNewTop_rightType α)
+
+end TopReadingApexExample
 
 end VaughtConjecture
