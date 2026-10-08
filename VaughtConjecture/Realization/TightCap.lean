@@ -80,12 +80,13 @@ the arity) is therefore a **redesign**, not a repair.  The statements on rows th
 nested scopes, with the grade of the gate as the threshold; the stage-level structures fix that
 grade to the private arity.  For the redesign:
 * stated: the anchoring and the bottom transport condition at a grade `k`
-  (`StageType.IsAnchoredAt`, `StageType.CarriesBottomsAt`; at `k = n` they are `IsAnchored` and
-  `CarriesBottoms`, `StageType.isAnchoredAt_iff`, `StageType.carriesBottomsAt_iff`), and a carrying
-  context with a subfull cap (`Realization.HasCarryingSubfullContext`).  That a coupled
-  gated extension with gate and cap of grade `k` would force `CarriesBottomsAt` at `k` is argued
-  from the proof of `StageType.CoupledGatedExtension.carriesBottoms`, not compiled: no such
-  extension is defined;
+  (`StageType.IsAnchoredAt`, and `StageType.CarriesBottomsAt` in `Extension/GatedExtension`; at
+  `k = n` they are `IsAnchored` and `CarriesBottoms`, `StageType.isAnchoredAt_iff`,
+  `StageType.carriesBottomsAt_iff`), and a carrying context with a subfull cap
+  (`Realization.HasCarryingSubfullContext`).  A per-block coupled gated extension with one gate
+  whose cap has graded index `(univ, k)` and reads every label forces `CarriesBottomsAt` at `k`
+  (`StageType.PerBlockCoupledGatedExtension.carriesBottomsPerBlock` with
+  `StageType.carriesBottomsPerBlock_one_iff_at`; the composite is not stated as a theorem);
 * stated: **tight saturations** (`StageType.HasTightSaturations α`), a statement about legal stage
   types and schemes, not about models: over every legal `p` on `N` points, a legal one-point
   extension scheme with a coface of `p` whose cells of graded index `(univ, N)` are tight (read in
@@ -323,46 +324,6 @@ theorem isAnchoredAt_iff {P : StageType.{u} α n} {C : Fin P.card} {d : StageTyp
     IsAnchoredAt P C n d ↔ IsAnchored P C d :=
   Iff.rfl
 
-/-- The **bottom transport condition at the grade `k`**: `CarriesBottoms` with the cells of graded
-index `(univ, k)` labelled `c` in place of those of graded index `(univ, n)`, and visibility
-replacement at `k` in place of `n`.  At `k = n` it is `CarriesBottoms` (`carriesBottomsAt_iff`).
-It is the condition that the proof of `CoupledGatedExtension.carriesBottoms` would give for a gate
-and a cap of grade `k` (argued from that proof, not compiled: such a design is not defined in the
-library). -/
-def CarriesBottomsAt (P : StageType.{u} α n) (d : StageType.{u} α (m + 1)) (c : Label.{u})
-    (k : ℕ) : Prop :=
-  ∀ a : Fin P.card → Label.{u}, P.rows.IsLawful a →
-    (∀ i, P.toCellScheme.gradedIndex i = (univ, k) → P.label i = c → a i ≠ ⊥) →
-    ∃ ρ : Fin d.card → Label.{u}, d.rows.IsLawful ρ ∧
-      ∀ j, Fin.last m ∈ d.toCellScheme.scope j → d.label j ≠ ⊥ →
-        (¬ c ≤ d.label j →
-          (∀ i, ∀ k' ≤ k, d.label j = visibilityReplace k k' (P.label i) → a i = ⊥) → ρ j = ⊥) ∧
-        ((∀ i, ((∃ k' ≤ k, d.label j = visibilityReplace k k' (P.label i)) ∨
-            (c ≤ P.label i ∧ c ≤ d.label j)) → a i ≠ ⊥) → ρ j ≠ ⊥)
-
-/-- The bottom transport condition at the arity is `CarriesBottoms`. -/
-theorem carriesBottomsAt_iff {P : StageType.{u} α n} {d : StageType.{u} α (m + 1)}
-    {c : Label.{u}} : CarriesBottomsAt P d c n ↔ CarriesBottoms P d c :=
-  Iff.rfl
-
-/-- **One cap of full scope and grade `k` reading every label: the bottom transport condition at
-the grade `k`** (`CarriesBottomsAt`).  Forward, take the one cap; backward, where the private
-labelling drops the cap the labelling of the donor itself serves.  At `k = n` it is
-`carriesBottomsPerBlock_one_iff`. -/
-theorem carriesBottomsPerBlock_one_iff_at {P : StageType.{u} α n}
-    {d : StageType.{u} α (m + 1)} {c : Label.{u}} {k : ℕ} :
-    CarriesBottomsPerBlock P d (fun _ : Fin 1 ↦ ((univ : Finset (Fin n)), k)) (fun _ ↦ c)
-      (fun _ ↦ Set.univ) ↔ CarriesBottomsAt P d c k := by
-  constructor
-  · intro h a ha hcap
-    obtain ⟨ρ, hρ, hj⟩ := h a ha
-    exact ⟨ρ, hρ, fun j hj' hne ↦ hj 0 hcap j hj' hne trivial⟩
-  · intro h a ha
-    by_cases hcap : ∀ i, P.toCellScheme.gradedIndex i = (univ, k) → P.label i = c → a i ≠ ⊥
-    · obtain ⟨ρ, hρ, hj⟩ := h a ha hcap
-      exact ⟨ρ, hρ, fun _ _ j hj' hne _ ↦ hj j hj' hne⟩
-    · exact ⟨d.label, d.isLawful, fun _ h ↦ absurd h hcap⟩
-
 /-- **The bottom transport condition at the grade `k` holds at a cap that reads the donor's
 anchors in its own block**: let `C` be a cell of graded index `(univ, k)` of `P`, and suppose
 every new donor label neither `⊥` nor at least the label of `C` is `vr_k(l, k')`, `k' ≤ k`, for a
@@ -588,19 +549,6 @@ theorem exists_mem_dominanceFamily_not_carriesBottoms (α : Ordinal.{u})
     exact isSelfVisible_top 2
   · change (⊤ : Label.{u}) ≠ ⊥
     simp
-
-/-- **The refuting input fails the bottom transport condition at the grade `1`**: no cap label
-above `1` at the cells of graded index `(univ, 1)` carries the bottoms there (the subfull cap of
-`Realization/TightCap`, one grade below the full grade `2`).  This is at `N = 1` over the empty
-root, where `Realization.HasCarryingSubfullContext` requires `x.arity + 1 < N`, which is false; so
-it refutes the bottom transport condition `StageType.CarriesBottomsAt` at the subfull grade, not a
-subfull carrying context.  It is `not_carriesBottomsPerBlock`
-with one cap of graded index `(univ, 1)` reading every label
-(`carriesBottomsPerBlock_one_iff_at`). -/
-theorem not_carriesBottomsAt_one (α : Ordinal.{u}) (hα : 1 < α) {c : Label.{u}}
-    (hc : (1 : Label.{u}) < c) : ¬ (P α hα).CarriesBottomsAt (donor α hα) c 1 := fun h ↦
-  not_carriesBottomsPerBlock α hα (t₁ := 0) (t₂ := 0) (Set.mem_univ _) hc (Set.mem_univ _) hc
-    (StageType.carriesBottomsPerBlock_one_iff_at.mpr h)
 
 end CoupledGatedExtensionCounterexample
 

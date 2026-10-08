@@ -90,7 +90,10 @@ tuple is a stage type at `λ_{ξ+1}` on `E` (stable lawfulness, `Realization.IsM
 with face `T⁺` (exact consistency of the candidate); and its face along `f` followed by the new
 point is the candidate type of the received tuple.  The recovery is required for every stage type
 on `E` with face `T⁺`, the form of the recovery statement of the roadmap (3.2: for every
-restriction-compatible labelling), here applied to the stable labelling.
+restriction-compatible labelling), here applied to the stable labelling.  Since a coface of
+`T⁺↓λ_ξ` lies on `E`, for `m > 0` a set of points of `T⁺` with no extreme point of `T⁺` lies, with
+the new point, in a face of `E` other than its ground set
+(`StageType.IsStableRecoveryScheme.exists_face_ne_univ`).
 
 **The reduction of (R4)** (`StableCappedReceiving.of_stableRecoveryContexts`,
 `Realization.stablyReceivesAt_of_acquiresCalibratedContexts`).  (R4) follows from
@@ -109,18 +112,26 @@ and has top-grade supremum `⊤` (`Realization.IsModel.acquiresCalibratedContext
 attained proper stable label, a stable label above `λ_ξ + K` from unbounded growth, and covering).
 So (R4) follows from the single finite statement `StageType.HasStableRecoverySchemes ξ
 (StageType.MarkerCapCalibration ξ)` at every `ξ < ω₁`
-(`StableCappedReceiving.of_hasStableRecoverySchemes_markerCap`), which is new and open, and **may be
-false**.  Its cap is already the formal top at `λ_ξ` (a label at least `λ_ξ` reduces to `⊤`,
-`Label.reduce_of_le`).  What it lacks relative to the roadmap's design (Layer 3, 3.3) and to the
-coupled gate form of (R1) (`StageType.HasCoupledGatedPinnedExtensions`) is a cap of full scope and
-full grade `N` with stable value above `λ_ξ + ℓ > γ`, a marker offset below `N` (in the design
-only), a reference cell (an anchor, `StageType.IsAnchored`) for each block of a proper label of
-`D`, and the arity bound `k + 1 < m` for a root of `k` points in `T⁺` on `m` points.  The form of
-(R1) without the coupling, `StageType.HasGatedPinnedExtensions`, is refuted
+(`StableCappedReceiving.of_hasStableRecoverySchemes_markerCap`).  That statement is false at every
+`ξ` (`Continuation.StableRecoveryCounterexample.not_hasStableRecoverySchemes_markerCap`, in
+`VaughtConjecture.Continuation.StableRecoveryCounterexample`): over a root with no private point
+(`f` the identity) a stable recovery scheme is the scheme of `D`, and two lifts of one five-cell
+type order its twins both ways.  Its cap is already the formal top at `λ_ξ` (a label at least
+`λ_ξ` reduces to `⊤`, `Label.reduce_of_le`).  What it lacks relative to the roadmap's design
+(Layer 3, 3.3) and to the coupled gate form of (R1) (`StageType.HasCoupledGatedPinnedExtensions`)
+is a cap of full scope and full grade `N` with stable value above `λ_ξ + ℓ > γ`, a marker offset
+below `N` (in the design only), a reference cell (an anchor, `StageType.IsAnchored`) for each
+block of a proper label of `D`, and the arity bound `k + 1 < m` for a root of `k` points in `T⁺`
+on `m` points.  The form of (R1) without the coupling, `StageType.HasGatedPinnedExtensions`, is
+refuted
 (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`).  The recovery clause covers every
 stage type on the scheme with face `T⁺`, so every proper label of `D` at a new cell, also in a
 block below `λ_ξ` with no cell of `T⁺`, must be determined by the rows of the scheme from the
-labels of `T⁺` alone.  The acquisition of the roadmap's calibration, in particular a cap of full
+labels of `T⁺` alone.  The graded cap calibration (`StageType.GradedCapCalibration`, in
+`VaughtConjecture.Continuation.StableRecovery`) adds a cap of grade above the arity of the root,
+the reference offsets and the finite parts of `D`, labelled at least `λ_ξ` plus its grade, and
+reference cells of grade at most that of the cap; its acquisition is proved, and stable recovery
+schemes for it are open.  The acquisition of the roadmap's calibration, in particular a cap of full
 scope and full grade with a large stable value, is not proved.  The apex coatom extension property
 does not enter (R4): it enters output 3 only through the coface instances at `λ_{ξ+1}`.
 
@@ -222,14 +233,44 @@ def IsStableRecoveryScheme (Tp : StageType.{u} (blockStage (ξ + 1)) m) (f : Fin
             (D.label j ≠ ⊤ → Q.label i = D.label j) ∧
               (D.label j = ⊤ → (γ : Label.{u}) < Q.label i)
 
+/-- **Every stable recovery scheme over an interior set has a second face**: if `E` is a stable
+recovery scheme for `T⁺` on `m > 0` points and `S` is a set of points of `T⁺` containing no
+extreme point of its ground set (no `y` with `univ \ {y}` a face of `T⁺`), then some face of `E`
+other than its ground set contains `S` and the new point.  With `S` the scope of a cap of grade
+`N` this gives two graded faces of grade `N` of `E` containing the cap and the new point: that
+face and the ground set (informal; not compiled: that the face has at least `N` points, since it
+contains the scope of the cap).  The proof is `Scheme.exists_face_ne_univ_of_not_mem` at a
+coface of `T⁺↓λ_ξ` on `E`. -/
+theorem IsStableRecoveryScheme.exists_face_ne_univ {Tp : StageType.{u} (blockStage (ξ + 1)) m}
+    {f : Fin k ↪ Fin m} {D : StageType.{u} (blockStage (ξ + 1)) (k + 1)} {γ : Ordinal.{u}}
+    {E : Scheme.{u} (m + 1)}
+    (h : Tp.IsStableRecoveryScheme f D γ E) (hm : 0 < m) {S : Finset (Fin m)}
+    (hS : ∀ y : Fin m, Finset.univ.erase y ∈ Tp.toCellScheme.faces → y ∉ S) :
+    ∃ F ∈ E.toCellScheme.faces, F ≠ Finset.univ ∧ S.map Fin.castSuccEmb ⊆ F ∧ Fin.last m ∈ F := by
+  obtain ⟨⟨q, ⟨hql, hqf⟩, rfl⟩, -⟩ := h
+  obtain ⟨hf, hcomap⟩ := (restrictFace_eq_some_iff _ _).mp hqf
+  have hT : q.toScheme.comap Fin.castSuccEmb = Tp.toScheme :=
+    (congrArg StageType.toScheme hcomap).trans (reduce_toScheme _ _)
+  refine Scheme.exists_face_ne_univ_of_not_mem hql.isWellFormed hf hm fun y hy ↦ hS y ?_
+  rw [← hT, Scheme.mem_comap_faces]
+  exact hy
 variable (ξ) in
 /-- **Stable recovery schemes for a calibration `C`**, a finite statement about stage types with no
 realization: every legal stage type `T⁺` at `λ_{ξ+1}` satisfying `C` for an embedding `f`
 (of positive length), a coface `D` of the face of `T⁺` along `f`, and an ordinal `γ < λ_{ξ+1}`,
 has a stable recovery scheme.  In the roadmap's design (Layer 3, 3.1 and 3.3) `C` is the calibrated
 data of (R4) and the scheme is the growth construction, shared with (R3).  For the marker and cap
-calibration (`StageType.MarkerCapCalibration`, acquisition proved) it **may be false**, since that
-calibration lacks the full cap, the reference cells and the arity bound of the design. -/
+calibration (`StageType.MarkerCapCalibration`, acquisition proved) it is **false** at every `ξ`
+(`Continuation.StableRecoveryCounterexample.not_hasStableRecoverySchemes_markerCap`); for the
+graded cap calibration (`StageType.GradedCapCalibration`, acquisition proved) it is open; its
+conclusion holds at one input
+(`Continuation.StableRecoveryReading.exists_isStableRecoveryScheme_gradedCap`) and at the twin
+donors of the refutation above, with a context of three points
+(`Continuation.StableRecoveryTwin.exists_isStableRecoveryScheme_twinDonors`), with a proper cap and
+in lower blocks (`Continuation.StableRecoveryTwinFamily.exists_isStableRecoveryScheme_twinFamily`),
+with a new cell labelled the formal top
+(`Continuation.StableRecoveryTopCell.exists_isStableRecoveryScheme_topCell`), and with an interior
+cap (`Continuation.StableRecoveryInterior.exists_isStableRecoveryScheme_interiorCap`). -/
 def HasStableRecoverySchemes
     (C : ∀ ⦃m k : ℕ⦄, StageType.{u} (blockStage (ξ + 1)) m → (Fin k ↪ Fin m) →
       StageType.{u} (blockStage (ξ + 1)) (k + 1) → Ordinal.{u} → Prop) : Prop :=
@@ -246,9 +287,8 @@ variable (ξ) in
 the coupled gate form of (R1) (`StageType.HasCoupledGatedPinnedExtensions`), which also ask for a
 cap of full scope and full grade `N`, a marker offset below `N` (in the design only), reference
 cells for the blocks of the proper labels of `D` (anchors, `StageType.IsAnchored`), and the arity
-bound `k + 1 < m`.
-Stable recovery schemes for it (`StageType.HasStableRecoverySchemes`) are open and **may not
-exist**. -/
+bound `k + 1 < m`.  Stable recovery schemes for it do not exist
+(`Continuation.StableRecoveryCounterexample.not_hasStableRecoverySchemes_markerCap`). -/
 def MarkerCapCalibration ⦃m k : ℕ⦄ (Tp : StageType.{u} (blockStage (ξ + 1)) m) (_ : Fin k ↪ Fin m)
     (_ : StageType.{u} (blockStage (ξ + 1)) (k + 1)) (γ : Ordinal.{u}) : Prop :=
   (∃ (a : Fin Tp.card) (i : ℕ), Tp.label a = ((blockStage ξ + i : Ordinal.{u}) : Label.{u})) ∧
@@ -737,9 +777,9 @@ theorem StableCappedReceiving.of_stableRecoveryContexts (h : StableRecoveryConte
       hD γ hγ
 
 /-- **(R4) from one finite statement**: stable recovery schemes for the marker and cap calibration
-at every `ξ < ω₁`, a finite statement about stage types (open, and may be false: see
-`StageType.MarkerCapCalibration`), give (R4); the acquisition is proved
-(`Realization.IsModel.acquiresCalibratedContexts_markerCap`). -/
+at every `ξ < ω₁`, a finite statement about stage types, give (R4); the acquisition is proved
+(`Realization.IsModel.acquiresCalibratedContexts_markerCap`).  The hypothesis is false
+(`Continuation.StableRecoveryCounterexample.not_forall_hasStableRecoverySchemes_markerCap`). -/
 theorem StableCappedReceiving.of_hasStableRecoverySchemes_markerCap
     (h : ∀ ξ < ω₁,
       StageType.HasStableRecoverySchemes.{0} ξ (StageType.MarkerCapCalibration.{0} ξ)) :

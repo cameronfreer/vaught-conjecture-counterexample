@@ -3,7 +3,9 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
+import Mathlib.Tactic.Order
 import VaughtConjecture.Extension.OrderedLayerStep
+import VaughtConjecture.Extension.OrderedLayerTop
 import VaughtConjecture.Extension.FieldLayer
 
 /-!
@@ -51,6 +53,9 @@ step, has a multi-layer step with two new cells at `(univ, 1)`, one for each for
 and one at each other graded face of full scope
 (`CrossedCouplingCounterexample.multiLayerStep_HG`,
 `VaughtConjecture.Extension.CrossedCouplingCompletion`).
+The multiplicities `2, 2, 2, 2` with copies of the cells at `(C, k)` and `(D, k)` reading through
+their originals give the canonical multi-layer scheme of every seed
+(`VaughtConjecture.Extension.CanonicalMultiScheme`).
 
 ## Placement
 
@@ -171,6 +176,21 @@ theorem row_multiNewCell (k : Fin 4) (i : Fin (M k))
       Scheme.appendFullCells_row_natAdd (S := multiStage₂ I M r) i _
   | ⟨3, _⟩, i =>
     exact Scheme.appendFullCells_row_natAdd (S := multiStage₃ I M r) i t
+
+/-! ### Two new cells forced by their readings -/
+
+/-- **Two values forced by two opposite readings**: in a linear order, if `x₁ ≤ A_D`, `x₂ ≤ A_C`,
+`x₁` reads `A_C` as it reads `x₂`, `x₂` reads `A_D` as it reads `x₁`, and each of `A_C`, `A_D` is
+at most `x₁` or `x₂`, then `x₁ = A_D` and `x₂ = A_C`.  This forces the labels of two new cells of
+one graded index that read each other as two old cells, each at least its own label, each old
+cell being at most one of them. -/
+theorem eq_of_forced_pair {L : Type*} [LinearOrder L] {AC AD x1 x2 : L} (a1 : x1 ≤ AD)
+    (a2 : x2 ≤ AC) (c1 : min AC x1 = min x2 x1) (c2 : min AD x2 = min x1 x2)
+    (e : AD ≤ x1 ∨ AD ≤ x2) (f : AC ≤ x1 ∨ AC ≤ x2) : x1 = AD ∧ x2 = AC := by
+  rcases le_total AC x1 with h1 | h1 <;> rcases le_total x2 x1 with h2 | h2 <;>
+    rcases le_total AD x2 with h3 | h3 <;> rcases le_total x1 x2 with h4 | h4 <;>
+    simp only [min_eq_left, min_eq_right, h1, h2, h3, h4] at c1 c2 <;>
+    constructor <;> rcases e with e | e <;> rcases f with f | f <;> order
 
 /-! ### The old cells -/
 
@@ -324,6 +344,21 @@ theorem exists_multiOldCell_of_mem_below {s : Fin I.amalgam.card}
       d ∈ I.amalgam.toCellScheme.below (I.amalgam.toCellScheme.gradedIndex s) := by
   obtain ⟨d, rfl⟩ := (isLowerEmbedding_multiOldCell I M r).mem_range s z hz
   exact ⟨d, rfl, ((isLowerEmbedding_multiOldCell I M r).le_iff d s).mp hz⟩
+
+/-- The row of an old cell of grade `4` of a multi-layer scheme over a seed with bottom apexes is
+`⊥` exactly at the cells of grade other than `4`. -/
+theorem row_multiOldCell_eq_bot_iff (hI : I.HasBottomApexes) {a : Fin I.amalgam.card}
+    (ha : I.amalgam.toCellScheme.grade a = 4)
+    (z : (multiLayerScheme I M r).toCellScheme.below
+      ((multiLayerScheme I M r).toCellScheme.gradedIndex (multiOldCell I M a))) :
+    (multiLayerScheme I M r).rows.row (multiOldCell I M a) z = ⊥ ↔
+      (multiLayerScheme I M r).toCellScheme.grade z.1 ≠ 4 := by
+  obtain ⟨e, he, hea⟩ := exists_multiOldCell_of_mem_below z.2
+  have hrow : (multiLayerScheme I M r).rows.row (multiOldCell I M a) z =
+      I.amalgam.rows.row a ⟨e, hea⟩ := by
+    rw [← row_multiOldCell a e (he ▸ z.2) hea]
+    exact (multiLayerScheme I M r).rows.row_congr rfl he
+  rw [hrow, hI.row_apex ha, he, grade_multiOldCell]
 
 /-- An old cell is below a pair when its graded index is. -/
 theorem multiOldCell_mem_below {d : Fin I.amalgam.card} {X : Finset (Fin 5) × ℕ}

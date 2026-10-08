@@ -43,6 +43,9 @@ This file reduces the exact pinned extension to the coatom extension constructio
   a point `x` with the face extended by `x` closed (accessibility of the plan) is added to the
   face, the coatom extension amalgamates the restriction of `P` to the enlarged face with `d`,
   and the result is a one-point coface of the enlarged face.  Nothing about the stage `α` is used.
+  The coatom extensions used are those of stage types on `m' + 1` points with `m' < n`, for `P` on
+  `n` points, so the same construction works from those alone
+  (`StageType.exists_pinned_extension_of_lt`).
 * **The face of the whole chart** (`StageType.exists_pinned_extension_of_surjective`): when `f`
   is onto, no coatom extension is needed; `d` itself, reindexed, is the extension.  The **empty
   chart** is this case (`StageType.exists_pinned_extension_of_isEmpty`).  The **empty face** is an
@@ -226,12 +229,18 @@ theorem exists_pinned_extension_of_isEmpty {P : StageType.{u} α 0} {p : StageTy
 
 /-! ### The exact pinned extension -/
 
-/-- **The exact pinned extension** (row 6 of the table of Layer 3, 3.4), from the coatom extension
-property.  For a legal stage type `P` at stage `α`, a closed face `f` of `P` with restriction `p`,
-and a legal one-point coface `d` of `p`, there is a legal one-point pinned extension `Q` of `P`
-whose face along `extendByLast f` is exactly `d`.  One coatom extension is used for each point of
-`P` outside the face. -/
-theorem exists_pinned_extension (hext : HasCoatomExtensions.{u} α) {P : StageType.{u} α n}
+/-- **The exact pinned extension from coatom extensions below the arity**: the exact pinned
+extension of a legal stage type `P` on `n` points over a closed face `f`, from the coatom
+extensions of two legal stage types on `m' + 1` points for `m' < n` only.  One coatom extension is
+used for each point of `P` outside the face, at the arity of the face enlarged by the points
+already added. -/
+theorem exists_pinned_extension_of_lt
+    (hext : ∀ m' < n, ∀ (ta tb : StageType.{u} α (m' + 1)) (p : StageType.{u} α m'),
+      ta.IsLegal → tb.IsLegal → restrictFace Fin.castSuccEmb ta = some p →
+        restrictFace Fin.castSuccEmb tb = some p →
+          ∃ t : StageType.{u} α (m' + 2), t.IsLegal ∧ restrictFace Fin.castSuccEmb t = some ta ∧
+            restrictFace (extendByLast Fin.castSuccEmb) t = some tb)
+    {P : StageType.{u} α n}
     (hP : P.IsLegal) {f : Fin m ↪ Fin n} {p : StageType.{u} α m} {d : StageType.{u} α (m + 1)}
     (hPf : restrictFace f P = some p) (hd : d.IsLegal)
     (hdp : restrictFace Fin.castSuccEmb d = some p) :
@@ -260,17 +269,30 @@ theorem exists_pinned_extension (hext : HasCoatomExtensions.{u} α) {P : StageTy
     have hp' : p'.IsLegal := hP.restrictFace f' hPf'
     have hp'p : restrictFace Fin.castSuccEmb p' = some p := by
       rw [restrictFace_trans P f' _ hPf', hff', hPf]
-    -- One coatom extension: amalgamate `p'` and `d` over `p`.
-    obtain ⟨t, ht, htp', htd⟩ := hext m p' d p hp' hd hp'p hdp
-    -- The remaining points: `t` is a one-point coface of the enlarged face `p'`.
     have hmn : m < n := by
       have hle : m ≤ n := by simpa using Fintype.card_le_of_embedding f
       refine lt_of_le_of_ne hle fun he ↦ hsurj ?_
       exact ((Fintype.bijective_iff_injective_and_card f).mpr ⟨f.injective, by simp [he]⟩).2
+    -- One coatom extension: amalgamate `p'` and `d` over `p`.
+    obtain ⟨t, ht, htp', htd⟩ := hext m hmn p' d p hp' hd hp'p hdp
+    -- The remaining points: `t` is a one-point coface of the enlarged face `p'`.
     obtain ⟨Q, hQ, hQP, hQt⟩ := ih (n - (m + 1)) (by omega) hPf' ht htp' rfl
     refine ⟨Q, hQ, hQP, ?_⟩
     rw [← hff', ← extendByLast_trans,
       ← restrictFace_trans Q _ _ hQt, htd]
+
+/-- **The exact pinned extension** (row 6 of the table of Layer 3, 3.4), from the coatom extension
+property.  For a legal stage type `P` at stage `α`, a closed face `f` of `P` with restriction `p`,
+and a legal one-point coface `d` of `p`, there is a legal one-point pinned extension `Q` of `P`
+whose face along `extendByLast f` is exactly `d`.  One coatom extension is used for each point of
+`P` outside the face. -/
+theorem exists_pinned_extension (hext : HasCoatomExtensions.{u} α) {P : StageType.{u} α n}
+    (hP : P.IsLegal) {f : Fin m ↪ Fin n} {p : StageType.{u} α m} {d : StageType.{u} α (m + 1)}
+    (hPf : restrictFace f P = some p) (hd : d.IsLegal)
+    (hdp : restrictFace Fin.castSuccEmb d = some p) :
+    ∃ Q : StageType.{u} α (n + 1), Q.IsLegal ∧ restrictFace Fin.castSuccEmb Q = some P ∧
+      restrictFace (extendByLast f) Q = some d :=
+  exists_pinned_extension_of_lt (fun m' _ ↦ hext m') hP hPf hd hdp
 
 /-! ### The face must be closed -/
 
@@ -387,6 +409,43 @@ theorem exists_amalgam (hext : HasCoatomExtensions.{u} α) {P : StageType.{u} α
       rw [← Function.Embedding.trans_assoc, ← Function.Embedding.trans_assoc,
         castSuccEmb_trans_extendByLast, hgg'] at h
       rw [← h, Function.Embedding.trans_assoc]
+
+end StageType
+
+/-! ### The cells of a pinned extension -/
+
+namespace StageType
+
+variable {α : Ordinal.{u}} {k n : ℕ}
+
+/-- **The root of a pinned extension**: in a one-point extension `D` of `t'` whose face along
+`extendByLast h` is `d`, the cells of the common face `t` (the face of `t'` along `h` and of `d`
+along the initial segment) are the same cells of `D`, reached through `t'` or through `d`. -/
+theorem faceCell_faceCell {n' : ℕ} {D : StageType.{u} α (k + 1)} {t' : StageType.{u} α k}
+    {h : Fin n' ↪ Fin k} {t : StageType.{u} α n'} {d : StageType.{u} α (n' + 1)}
+    (h₁ : restrictFace Fin.castSuccEmb D = some t') (h₂ : restrictFace (extendByLast h) D = some d)
+    (ht : restrictFace h t' = some t) (hd : restrictFace Fin.castSuccEmb d = some t)
+    (i : Fin t.card) : faceCell h₁ (faceCell ht i) = faceCell h₂ (faceCell hd i) := by
+  obtain ⟨hf₁, rfl⟩ := (restrictFace_eq_some_iff D _).mp h₁
+  obtain ⟨hf₂, rfl⟩ := (restrictFace_eq_some_iff D _).mp h₂
+  -- `faceCell` unfolds to the cell maps of the two composite faces
+  change D.toScheme.cellMap _ ((D.toScheme.comap Fin.castSuccEmb).cellMap h _) =
+    D.toScheme.cellMap _ ((D.toScheme.comap (extendByLast h)).cellMap Fin.castSuccEmb _)
+  refine (Scheme.cellMap_cellMap _ _ (j := Fin.cast (congrArg Scheme.card
+    (D.toScheme.comap_comap _ _)) _) rfl).trans ((Scheme.cellMap_congr
+      (castSuccEmb_trans_extendByLast h).symm ?_).trans
+    (Scheme.cellMap_cellMap _ _ (j := Fin.cast (congrArg Scheme.card
+      (D.toScheme.comap_comap _ _)) _) rfl).symm)
+  rfl
+
+/-- The last point lies in the scope of a cell of the face along `extendByLast h` exactly when the
+last point lies in its scope in the face. -/
+theorem last_mem_scope_faceCell_iff {D : StageType.{u} α (k + 1)} {h : Fin n ↪ Fin k}
+    {d : StageType.{u} α (n + 1)} (h₂ : restrictFace (extendByLast h) D = some d)
+    (j : Fin d.card) :
+    Fin.last k ∈ D.toCellScheme.scope (faceCell h₂ j) ↔ Fin.last n ∈ d.toCellScheme.scope j := by
+  rw [scope_faceCell, mem_map, ← extendByLast_last h]
+  exact ⟨fun ⟨y, hy, hye⟩ ↦ (extendByLast h).injective hye ▸ hy, fun hy ↦ ⟨_, hy, rfl⟩⟩
 
 end StageType
 

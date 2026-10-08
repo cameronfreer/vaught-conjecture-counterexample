@@ -46,8 +46,21 @@ self-visible at the grade of every cell whose label is at least `c` keeps it law
 (`IsLawful.min_const`, [Kni26, Lemma 2.5.8]), in particular at a cap self-visible at a bound on all
 grades (`IsLawful.min_const_of_isSelfVisible`), and below a pair (`IsLawfulBelow.min_const`,
 `IsLawfulBelow.min_const_of_isSelfVisible`); capping at a cutoff that is not self-visible need
-not keep lawfulness.  Capping only the cells of the top grade `N` at a cap self-visible at `N`
-also keeps a lawful section lawful (`IsLawful.capTopGrade`).
+not keep lawfulness.  Capping only the cells whose scope contains a point `a` keeps lawfulness when
+availability carries no label above the cap into them from a cell avoiding `a`
+(`IsLawful.min_const_of_mem_scope`); more generally, capping only the cells of a set closed
+upward in the graded order keeps lawfulness when availability carries no label above the cap into
+the set (`IsLawful.min_const_of_upper`).  Capping only the cells of the top grade `N` at a cap
+self-visible at `N` also keeps a lawful section lawful (`IsLawful.capTopGrade`).
+
+**Reading cells through a row.**  In a lawful section `p`, let the label of a cell `s` be at least
+that of a cell `b` (a cap).  If the row of `s` reads a cell `a` and a cell `e` in one block, at
+`ω · c + i` and `ω · c + o`, with the grades of `a` and `e` at most that of `b`, `i < grade b`,
+`o ≤ grade b`, and `p a = μ + i` (`μ` zero or a limit) with `μ + i`, `μ + o` below `p b`, then
+`p e = μ + o` (`IsLawful.label_eq_of_reading`, from `Label.TransformsTo.eq_coe_add_of_reading`); a
+cell of grade at most that of `b` read as `b` has label at least `p b`
+(`IsLawful.le_label_of_reading`), and a cell read as `⊥` has label `⊥` when `p s ≠ ⊥`
+(`IsLawful.label_eq_bot_of_reading`).
 
 The constant bottom labelling is lawful for all rows (`isLawful_const_bot`), and a cell whose row is
 bottom at the cell itself has bottom label in every lawful section
@@ -261,6 +274,61 @@ theorem min_const_of_isSelfVisible {K : ℕ} (hp : R.IsLawful p) (hK : ∀ d, D.
     {c : Label.{u}} (hc : IsSelfVisible K c) : R.IsLawful fun d ↦ min (p d) c :=
   hp.min_const fun d _ ↦ hc.mono (hK d)
 
+/-- **Capping an upper set of cells.**  Let `c` be self-visible at a bound `K` on the grades, and
+let `Z` be a set of cells closed upward in the graded order.  Capping at `c` only the cells of `Z`
+keeps a lawful section lawful, provided availability carries no label above `c` into `Z`: every
+cell outside `Z` whose scope lies in the scope of a cell of `Z` of the same grade is labelled at
+most `c`.  Locality at a cell of `Z` is capped at `c` (`Label.TransformsTo.min_const`), and
+locality at a cell outside `Z` is unchanged, since the cells below it are outside `Z`.  The cells
+whose scope contains a point form such a set (`IsLawful.min_const_of_mem_scope`), and so do the
+cells whose scope contains a point and whose grade is at least a bound, and the cells of grade at
+least a bound. -/
+theorem min_const_of_upper (hp : R.IsLawful p) (Z : ι → Prop) [DecidablePred Z]
+    (hZ : ∀ d s, Z d → D.gradedIndex d ≤ D.gradedIndex s → Z s) {K : ℕ}
+    (hK : ∀ d, D.grade d ≤ K) {c : Label.{u}} (hc : IsSelfVisible K c)
+    (havail : ∀ s t, D.scope s ⊆ D.scope t → D.grade s = D.grade t → ¬ Z s → Z t → p s ≤ c) :
+    R.IsLawful fun d ↦ if Z d then min (p d) c else p d where
+  orderly d := by
+    split_ifs
+    · exact (hp.orderly d).min (hc.mono (hK d))
+    · exact hp.orderly d
+  locality s := by
+    by_cases hs : Z s
+    · convert (hp.locality s).min_const (fun d ↦ d.2.2) (hc.mono (hK s)) using 2 with d
+      by_cases hd : Z d
+      · simp only [hs, hd, ↓reduceIte]
+        rw [min_min_min_comm, min_self]
+      · simp only [hs, hd, ↓reduceIte, min_assoc]
+    · convert hp.locality s using 2 with d
+      -- the cells below `s` are outside `Z`
+      have hd : ¬ Z d := fun h ↦ hs (hZ _ _ h d.2)
+      simp only [hs, hd, ↓reduceIte]
+  availability s t hst hg := by
+    obtain ⟨u, hu, hle⟩ := hp.availability s t hst hg
+    refine ⟨u, hu, ?_⟩
+    have hut : Z u ↔ Z t := ⟨fun h ↦ hZ _ _ h hu.le, fun h ↦ hZ _ _ h hu.ge⟩
+    by_cases ht : Z t
+    · have hu' : Z u := hut.mpr ht
+      by_cases hs : Z s
+      · simpa only [hs, hu', ↓reduceIte] using min_le_min_right c hle
+      · simpa only [hs, hu', ↓reduceIte] using le_min hle (havail s t hst hg hs ht)
+    · have hs : ¬ Z s := fun h ↦ ht (hZ _ _ h ⟨hst, hg.le⟩)
+      have hu' : ¬ Z u := fun h ↦ ht (hut.mp h)
+      simpa only [hs, hu', ↓reduceIte] using hle
+
+/-- **Capping the cells through a point.**  Let `c` be self-visible at a bound `K` on the grades,
+and let `a` be a point.  Capping at `c` only the cells whose scope contains `a` keeps a lawful
+section lawful, provided availability carries no label above `c` into them: every cell whose
+scope avoids `a` and lies in the scope of a cell of the same grade containing `a` is labelled at
+most `c`.  The cells through `a` form a set closed upward in the graded order
+(`IsLawful.min_const_of_upper`). -/
+theorem min_const_of_mem_scope [DecidableEq α] (hp : R.IsLawful p) (a : α) {K : ℕ}
+    (hK : ∀ d, D.grade d ≤ K) {c : Label.{u}} (hc : IsSelfVisible K c)
+    (havail : ∀ s t, D.scope s ⊆ D.scope t → D.grade s = D.grade t → a ∉ D.scope s →
+      a ∈ D.scope t → p s ≤ c) :
+    R.IsLawful fun d ↦ if a ∈ D.scope d then min (p d) c else p d :=
+  hp.min_const_of_upper (a ∈ D.scope ·) (fun _ _ h hle ↦ hle.1 h) hK hc havail
+
 /-- **Capping the top grade**, the top-grade variant of [Kni26, Lemma 2.5.8].  If every grade is
 at most `N` and `c` is self-visible at `N`, then capping a lawful section at `c` at the cells of
 grade `N` only, and keeping it at the others, gives a lawful section.  At a cell of grade `N` the
@@ -294,6 +362,73 @@ theorem capTopGrade (hp : R.IsLawful p) {N : ℕ} (hN : ∀ d, D.grade d ≤ N)
       exact min_le_min_right c hle
     · simp only [h, hgu, ite_false]
       exact hle
+
+/-! ### Reading cells through a row -/
+
+section Reading
+
+open Ordinal
+
+/-- **Recovery of a proper label at a reading cell**: in a lawful section `p`, let `s` be a cell
+whose label is at least that of a cell `b` (the cap), and let the row of `s` read a reference cell
+`a` and a cell `e` in one block, at `ω · c + i` and `ω · c + o`, with the grades of `a` and `e` at
+most that of `b` and `i < grade b`, `o ≤ grade b`.  If `p a = μ + i` (`μ` zero or a limit) and
+`μ + i`, `μ + o` lie strictly below `p b`, then `p e = μ + o`. -/
+theorem label_eq_of_reading (h : R.IsLawful p) {s a b e : ι}
+    (ha : a ∈ D.below (D.gradedIndex s)) (hb : b ∈ D.below (D.gradedIndex s))
+    (he : e ∈ D.below (D.gradedIndex s)) {μ c : Ordinal.{u}} (hμ : Order.IsSuccPrelimit μ)
+    {i o : ℕ} (hab : D.grade a ≤ D.grade b) (hi : i < D.grade b) (ho : o ≤ D.grade b)
+    (heb : D.grade e ≤ D.grade b) (hra : R.row s ⟨a, ha⟩ = ((ω * c + i : Ordinal.{u}) : Label.{u}))
+    (hre : R.row s ⟨e, he⟩ = ((ω * c + o : Ordinal.{u}) : Label.{u}))
+    (hpa : p a = ((μ + i : Ordinal.{u}) : Label.{u})) (hbs : p b ≤ p s)
+    (hib : ((μ + i : Ordinal.{u}) : Label.{u}) < p b)
+    (hob : ((μ + o : Ordinal.{u}) : Label.{u}) < p b) :
+    p e = ((μ + o : Ordinal.{u}) : Label.{u}) := by
+  have hqb : min (p b) (p s) = p b := min_eq_left hbs
+  have key := (h.locality s).eq_coe_add_of_reading (a := ⟨a, ha⟩) (b := ⟨b, hb⟩) (e := ⟨e, he⟩)
+    hμ hab hi ho heb hra hre (by
+      -- the labelling of locality at `s` is `d ↦ min (p d) (p s)`
+      change min (p a) (p s) = _
+      rw [min_eq_left ((hpa ▸ hib).le.trans hbs), hpa]) (by
+      -- the same labelling, at the cap
+      change _ < min (p b) (p s)
+      rwa [hqb]) (by
+      -- the same labelling, at the cap
+      change _ < min (p b) (p s)
+      rwa [hqb])
+  -- the same labelling, at the new cell
+  change min (p e) (p s) = _ at key
+  rcases le_total (p e) (p s) with h1 | h1
+  · rwa [min_eq_left h1] at key
+  · rw [min_eq_right h1] at key
+    exact absurd key (hob.trans_le hbs).ne'
+
+/-- **A cell read like the cap is at least the cap**: in a lawful section `p`, if the row of a cell
+`s` with label at least that of `b` reads `e` as it reads `b`, and the grade of `e` is at most that
+of `b`, then `p b ≤ p e`. -/
+theorem le_label_of_reading (h : R.IsLawful p) {s b e : ι}
+    (hb : b ∈ D.below (D.gradedIndex s)) (he : e ∈ D.below (D.gradedIndex s))
+    (heb : D.grade e ≤ D.grade b) (hre : R.row s ⟨e, he⟩ = R.row s ⟨b, hb⟩) (hbs : p b ≤ p s) :
+    p b ≤ p e := by
+  have key := (h.locality s).le_of_le (d := ⟨b, hb⟩) (d' := ⟨e, he⟩) hre.symm.le heb
+  -- the labelling of locality at `s` is `d ↦ min (p d) (p s)`
+  change min (p b) (p s) ≤ min (p e) (p s) at key
+  rw [min_eq_left hbs] at key
+  exact key.trans (min_le_left _ _)
+
+/-- **A cell read as bottom is bottom**: in a lawful section `p`, if the row of a cell `s` with a
+label other than bottom reads `e` as `⊥`, then `p e = ⊥`. -/
+theorem label_eq_bot_of_reading (h : R.IsLawful p) {s e : ι}
+    (he : e ∈ D.below (D.gradedIndex s)) (hre : R.row s ⟨e, he⟩ = ⊥) (hs : p s ≠ ⊥) :
+    p e = ⊥ := by
+  have key := (h.locality s).eq_bot (d := ⟨e, he⟩) hre
+  -- the labelling of locality at `s` is `d ↦ min (p d) (p s)`
+  change min (p e) (p s) = ⊥ at key
+  rcases min_eq_iff.mp key with ⟨h1, -⟩ | ⟨h1, -⟩
+  · exact h1
+  · exact absurd h1 hs
+
+end Reading
 
 end IsLawful
 
@@ -464,3 +599,82 @@ theorem isConsistent_bot : (bot D : D.Rows.{u}).IsConsistent := fun _ ↦ isLawf
 end Rows
 
 end VaughtConjecture.CellScheme
+
+namespace VaughtConjecture
+
+/-! ### Forcing by a reading at every cell of a graded index -/
+
+namespace CellScheme.Rows
+
+variable {ι α : Type*} {D : CellScheme ι α} {R : D.Rows.{u}} {p : ι → Label.{u}}
+
+/-- **A reading at every cell of a graded index forces an order of labels.**  Let `Y` be the
+graded index of some cell, let `s` have grade `Y.2` and scope inside `Y.1`, and let `x` have scope
+inside `Y.1` and grade at most that of `s`.  If every cell of graded index `Y` reads `x` at least as
+it reads `s`, then every lawful section `p` has `p s ≤ p x`.  Availability puts `s` below a cell
+`u` of graded index `Y` with `p s ≤ p u`, and locality at `u` is monotone in the row value and
+antitone in the grade (`Label.TransformsTo.le_of_le`), so `p s = min (p s) (p u)` is at most
+`min (p x) (p u)`. -/
+theorem IsLawful.le_of_forall_row_le (hp : R.IsLawful p) {Y : Finset α × ℕ}
+    (hY : ∃ u, D.gradedIndex u = Y) {s x : ι} (hsY : D.scope s ⊆ Y.1) (hgs : D.grade s = Y.2)
+    (hxY : D.scope x ⊆ Y.1) (hgx : D.grade x ≤ D.grade s)
+    (hread : ∀ u, D.gradedIndex u = Y → ∀ a b : D.below (D.gradedIndex u), a.1 = s → b.1 = x →
+      R.row u a ≤ R.row u b) : p s ≤ p x := by
+  obtain ⟨u₀, hu₀⟩ := hY
+  have hsc : D.scope u₀ = Y.1 := congrArg Prod.fst hu₀
+  have hgr : D.grade u₀ = Y.2 := congrArg Prod.snd hu₀
+  obtain ⟨u, hu, hsu⟩ := hp.availability s u₀ (hsc ▸ hsY) (hgr ▸ hgs)
+  have huY : D.gradedIndex u = Y := hu.trans hu₀
+  have hs : s ∈ D.below (D.gradedIndex u) := by
+    rw [huY]; exact (D.gradedIndex_le_iff).mpr ⟨hsY, hgs.le⟩
+  have hx : x ∈ D.below (D.gradedIndex u) := by
+    rw [huY]; exact (D.gradedIndex_le_iff).mpr ⟨hxY, hgx.trans hgs.le⟩
+  have key := (hp.locality u).le_of_le (d := ⟨s, hs⟩) (d' := ⟨x, hx⟩)
+    (hread u huY ⟨s, hs⟩ ⟨x, hx⟩ rfl rfl) hgx
+  simp only [min_eq_left hsu] at key
+  exact key.trans (min_le_left _ _)
+
+end CellScheme.Rows
+
+end VaughtConjecture
+
+namespace VaughtConjecture.CellScheme.Rows.IsLawful
+
+open Label
+
+variable {ι α : Type*} {D : CellScheme ι α} {R : D.Rows.{u}} {G C : ι} {P : Set ι}
+  {w q : ι → Label.{u}}
+
+/-- **A cap that reads an anchor in its own block keeps it.**  If the row of `C` reads a cell `z`
+below it and `C` itself in one block `[μ, μ + ω)` (`μ` zero or a limit), then a lawful labelling
+that is not `⊥` at `C` is not `⊥` at `z`: a shifter sending the reading `μ + i` of `z` to `⊥`
+sends `vr_k(μ + i, i') = μ + i'` (for `k > i`) to `vr_k(⊥, i') = ⊥`, the guard of the commutation
+law holding at `⊥`, and `μ + i'` is the reading of `C`. -/
+theorem ne_bot_of_row_mem_block (hq : R.IsLawful q) {z : ι} (hz : z ∈ D.below (D.gradedIndex C))
+    {μ : Ordinal.{u}} (hμ : Order.IsSuccPrelimit μ) {i i' : ℕ}
+    (hrz : R.row C ⟨z, hz⟩ = ((μ + i : Ordinal.{u}) : Label.{u}))
+    (hrC : R.row C ⟨C, D.mem_below_gradedIndex C⟩ = ((μ + i' : Ordinal.{u}) : Label.{u}))
+    (hC : q C ≠ ⊥) : q z ≠ ⊥ := by
+  obtain ⟨g, σ, hw, heq⟩ := hq.locality C
+  have hCC : min (q C) (q C) = min (σ ((μ + i' : Ordinal.{u}) : Label.{u}))
+      (g (D.grade C)) := by
+    rw [← hrC]; exact heq ⟨C, D.mem_below_gradedIndex C⟩
+  have hzC : min (q z) (q C) = min (σ ((μ + i : Ordinal.{u}) : Label.{u})) (g (D.grade z)) := by
+    rw [← hrz]; exact heq ⟨z, hz⟩
+  rw [min_self] at hCC
+  intro hqz
+  have hg : g (D.grade z) ≠ ⊥ := by
+    have hle : g (D.grade C) ≤ g (D.grade z) := hw.antitone ((D.mem_below).mp hz).2
+    intro h0
+    exact hC (le_bot_iff.mp (hCC ▸ (min_le_right _ _).trans (hle.trans_eq h0)))
+  have hσ : σ ((μ + i : Ordinal.{u}) : Label.{u}) = ⊥ := by
+    rw [hqz, min_eq_left bot_le] at hzC
+    exact (min_eq_bot.mp hzC.symm).resolve_right hg
+  have hvr := visibilityReplace_coe_add_natCast (n := max i i' + 1) hμ
+    (show i < max i i' + 1 by omega) i'
+  have hcomm := hw.visibilityReplace_comm ((μ + i : Ordinal.{u}) : Label.{u}) (max i i' + 1)
+    (by rw [hσ]; exact bot_le) i' (by omega)
+  rw [hvr, hσ, visibilityReplace_bot] at hcomm
+  exact hC (by rw [hCC, hcomm, min_eq_left bot_le])
+
+end VaughtConjecture.CellScheme.Rows.IsLawful

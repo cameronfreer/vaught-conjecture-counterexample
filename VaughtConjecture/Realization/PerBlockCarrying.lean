@@ -29,11 +29,12 @@ from the clauses of `CellScheme.Rows.IsLawful`, not compiled).  One gate of the 
 is therefore part of the design.
 
 **Stated and compiled.**  The statements on stage types lie beside their subjects: the display
-with several gates beside `StageType.CoupledGatedExtension` (`Extension/GatedExtension`), the
-per-block condition and its necessity beside `StageType.CarriesBottoms`
-(`Extension/CoupledGatedExtensionCounterexample`), and the statements on readings in the own
-block, the condition at a grade `k` and the hypothesis on schemes beside `StageType.ReadsInOwnBlock`
-and `StageType.HasTightSaturations` (`Realization/TightCap`).  This file holds the contexts and the
+with several gates beside `StageType.CoupledGatedExtension`, and the per-block condition, its
+necessity and the condition at a grade `k` beside `StageType.CarriesBottoms` (all in
+`Extension/GatedExtension`); the statements on readings in the own block and the hypothesis on
+schemes beside `StageType.ReadsInOwnBlock` and `StageType.HasTightSaturations`
+(`Realization/TightCap`); the refutations at the refuting input in
+`Extension/CoupledGatedExtensionCounterexample`.  This file holds the contexts and the
 acquisition.
 * `StageType.PerBlockCoupledGatedExtension P f d k`: a legal display with literal faces `P` and `d`,
   and `k` gates, each with its own cap (a private cell of graded index `capIndex t`) and its own set
@@ -83,10 +84,17 @@ acquisition.
   extension schemes with prescribed rows, a completion problem of the kind of (R6).  Compiled: such
   a cap labelled beyond its block reads itself at a finite part above its grade
   (`StageType.label_le_of_readsInOwnBlock`).  The library's coding of rows allows this.
-* Argued, not compiled: the clauses of a model give a cell with both a prescribed row and a lower
-  bound on its label only in this way (availability from the face in a saturation step).  No clause
-  prescribes the row of a cell of full grade (`Realization/TightCap`).  So without a hypothesis on
-  schemes the acquisition is neither proved nor refuted here.
+* Guarded generalized saturation (`Realization.IsModel.saturation`, with
+  `StageType.saturationFamily`) fixes the whole scheme of a one-point step whenever its nonemptiness
+  guard holds, the rows of its cells of full grade included.  The missing guarantee is a high label
+  at a cell of full grade together with that row: every nonempty instance has a member labelled
+  `⊥` at every cell of full grade
+  (`StageType.exists_mem_cofaces_inter_saturationFamily_label_eq_bot`, compiled), and high-arity
+  dominance bounds such a label at a cell whose row it does not constrain (argued, not compiled;
+  `Realization/TightCap`).  The construction proved here uses one route to a cell with both a
+  prescribed row and a lower bound on its label: availability from the face in a saturation step,
+  one grade below full.  So without a hypothesis on schemes the acquisition is neither proved nor
+  refuted here.
 
 **The refuting input of the coupled property.**  Its donor has its proper labels in one block, so
 one gate per block is one gate there, and the obstruction remains.

@@ -170,16 +170,17 @@ theorem IsModel.exists_extend_dominance (x : R.Occurrence) {γ : Ordinal.{u}} (h
 /-! ### Reference cells for the blocks of a donor -/
 
 /-- **Reference cells for the blocks of a donor**, from uniformity and padding by dominance: over
-an occurrence `x` and for a donor `d` on `x.arity + 1` points, an occurrence `y` containing `x` as
-a literal face along `f`, of arity above `x.arity + 1 + N₀`, a floor `B` with `γ ≤ B < α`, a cell
-`C` of graded index `(univ, y.arity)` labelled above `B`, and for each cell `j` of `d` a block
-start `μ j` (zero or a limit) such that every ordinal label of `d` at `j` is `μ j + i` with
-`i < y.arity`, and a reference cell of the type of `y` labelled `μ j + k`, `k < y.arity`, at most
-`B`.  The reference cells are taken by uniformity at the block starts
+an occurrence `x` and for a donor `d` (on `x.arity + 1` points in the ordinary construction; the
+donor enters only through its labels, so any number `m` of points is allowed), an occurrence `y`
+containing `x` as a literal face along `f`, of arity above `x.arity + 1 + N₀`, a floor `B` with
+`γ ≤ B < α`, a cell `C` of graded index `(univ, y.arity)` labelled above `B`, and for each cell `j`
+of `d` a block start `μ j` (zero or a limit) such that every ordinal label of `d` at `j` is
+`μ j + i` with `i < y.arity`, and a reference cell of the type of `y` labelled `μ j + k`,
+`k < y.arity`, at most `B`.  The reference cells are taken by uniformity at the block starts
 (`IsModel.exists_extend_uniformity`); the arity is raised past their finite parts and those of the
 donor's labels by dominance at the floor `B` (`IsModel.exists_extend_dominance`), whose last step
 gives `C`. -/
-theorem IsModel.exists_referenceCells (x : R.Occurrence) (d : StageType.{u} α (x.arity + 1))
+theorem IsModel.exists_referenceCells (x : R.Occurrence) {m : ℕ} (d : StageType.{u} α m)
     {γ : Ordinal.{u}} (hγ : γ < α) (N₀ : ℕ) :
     ∃ (y : R.Occurrence) (f : Fin x.arity ↪ Fin y.arity) (C : Fin y.type.card) (B : Ordinal.{u})
       (μ : Fin d.card → Ordinal.{u}),
@@ -222,18 +223,19 @@ theorem IsModel.exists_referenceCells (x : R.Occurrence) (d : StageType.{u} α (
 /-! ### The private context -/
 
 /-- **The private context of the ordinary construction**, from the uniformity and dominance
-clauses alone: over an occurrence `x` and for a donor `d` on `x.arity + 1` points, an occurrence
-`y` containing `x` as a literal face along `f`, of arity above `x.arity + 1` and at least `N₀`,
-with a private cap `C` of graded index `(univ, y.arity)` labelled above `γ < α`, and for every
-proper donor label a reference cell `z`: the donor label is the visibility replacement at the
-threshold `y.arity` of the label of `z` with a value `i < y.arity`, that label is not self-visible
-at the threshold, and it lies strictly below the label of the cap.
+clauses alone: over an occurrence `x` and for a donor `d` (on `x.arity + 1` points in the ordinary
+construction; the donor enters only through its labels, so any number `m` of points is allowed),
+an occurrence `y` containing `x` as a literal face along `f`, of arity above `x.arity + 1` and at
+least `N₀`, with a private cap `C` of graded index `(univ, y.arity)` labelled above `γ < α`, and
+for every proper donor label a reference cell `z`: the donor label is the visibility replacement at
+the threshold `y.arity` of the label of `z` with a value `i < y.arity`, that label is not
+self-visible at the threshold, and it lies strictly below the label of the cap.
 
 The reference cells are taken by uniformity at the block starts of the donor's labels, the arity
 is raised past their finite parts by dominance at a floor above the reference cells and `γ`, and
 the cap comes from the last dominance step (`IsModel.exists_referenceCells`).  The only hypothesis
 on the stage is `γ < α`. -/
-theorem IsModel.exists_privateContext (x : R.Occurrence) (d : StageType.{u} α (x.arity + 1))
+theorem IsModel.exists_privateContext (x : R.Occurrence) {m : ℕ} (d : StageType.{u} α m)
     {γ : Ordinal.{u}} (hγ : γ < α) (N₀ : ℕ) :
     ∃ (y : R.Occurrence) (f : Fin x.arity ↪ Fin y.arity) (C : Fin y.type.card),
       f.trans y.tuple = x.tuple ∧ x.arity + 1 < y.arity ∧ N₀ ≤ y.arity ∧
@@ -252,13 +254,14 @@ theorem IsModel.exists_privateContext (x : R.Occurrence) (d : StageType.{u} α (
   · exact not_isSelfVisible_coe_add_natCast (hμ j).1 hk
   · exact lt_of_le_of_lt (WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr hkB)) hBC
 
-/-- **The private context, anchored**: over an occurrence `x` and for a donor `d` on
-`x.arity + 1` points, an occurrence `y` containing `x` as a literal face along `f` (with its type
-restricting along `f` to that of `x`), of arity above `x.arity + 1`, with a cell `C` of graded
-index `(univ, y.arity)` labelled above `γ < α`, below which `d` is anchored in the type of `y`.
-Only the uniformity, high-arity-dominance, and exact-consistency clauses are used. -/
-theorem IsModel.exists_privateContext_isAnchored (x : R.Occurrence)
-    (d : StageType.{u} α (x.arity + 1)) {γ : Ordinal.{u}} (hγ : γ < α) :
+/-- **The private context, anchored**: over an occurrence `x` and for a donor `d` (on
+`x.arity + 1` points in the ordinary construction, on any positive number `m + 1` of points here),
+an occurrence `y` containing `x` as a literal face along `f` (with its type restricting along `f`
+to that of `x`), of arity above `x.arity + 1`, with a cell `C` of graded index `(univ, y.arity)`
+labelled above `γ < α`, below which `d` is anchored in the type of `y`.  Only the uniformity,
+high-arity-dominance, and exact-consistency clauses are used. -/
+theorem IsModel.exists_privateContext_isAnchored (x : R.Occurrence) {m : ℕ}
+    (d : StageType.{u} α (m + 1)) {γ : Ordinal.{u}} (hγ : γ < α) :
     ∃ (y : R.Occurrence) (f : Fin x.arity ↪ Fin y.arity) (C : Fin y.type.card),
       f.trans y.tuple = x.tuple ∧ StageType.restrictFace f y.type = some x.type ∧
         x.arity + 1 < y.arity ∧ y.type.toCellScheme.gradedIndex C = (univ, y.arity) ∧
