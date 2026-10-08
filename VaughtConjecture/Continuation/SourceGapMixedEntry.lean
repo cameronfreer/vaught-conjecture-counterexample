@@ -66,9 +66,12 @@ The reading at the tops (`StageType.ReadsEachNewTopAtTops`) asks, for the new to
 `2`, some cell `s` of the context labelled `⊤` (`y`, `z`, `o` or `r`) read at most as `o'` by every
 cell of full scope and grade `2` labelled `⊤`.  So a coface reading each new top at its tops at
 this input, with the donor `T` itself, does not come from the completion at the arity one, canonical
-or leaf-and-marked (argued, not formalized: the identification of the cells of the amalgam of the
-seed with those of `MixedEntry.A`).  A reading coface exists at this input
-(`ReadingInstance.exists_readsEachNewTop_T`, through a display of kinds, not a catalogue layer).
+or leaf-and-marked: at the seed of `T` with itself this is compiled in
+`VaughtConjecture.Continuation.SourceGapMixedSeed` (`MixedSeed.isMixedSite`,
+`MixedSeed.not_exists_reading_fieldLayerOne`, `MixedSeed.not_exists_reading_markedLayer`).  A
+reading coface exists at this input (`ReadingInstance.exists_readsEachNewTop_T`, through a display
+of kinds; `StageType.exists_readsEachNewTop_T`, through the doubled completion), not through a
+catalogue layer.
 
 ## Placement
 
