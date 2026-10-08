@@ -40,10 +40,21 @@ everywhere, with correct splice.  Compiled in this file (theorem named):
   `f` capped at `M` on the cells of the common face below it.  The row of `u` is a datum of the
   donor, `f` any prescription; the gap is a sufficient condition for such refinement, not a
   necessary one.
+* **The gap at the grade `1`** (`CapRequests.bandGapBelowAt_of_le`,
+  `CapRequests.bandGapBelowAt_one`, `H3.markerValue_le_of_rowAt_le`,
+  `H3.bandGapBelowAt_one_of_rowAt_le`): the least value of `f` at least `h` on the finite common
+  face is a gap as soon as all such values are at least `M`; a cell `z` of `t'` read by the cap
+  at least at the marker (`rowAt c r ≤ rowAt c z`, `grade z ≤ grade r`; every cell labelled `⊤`)
+  carries at least `M` under every prescription, by locality at the cap.  So for a cap of grade
+  at most `2` the gap at the grade `1` holds when the cells of grade `1` of the common face are
+  read by the cap at least at the marker; a cell read below the marker may carry a value in
+  `[h, M)`, and then the raise must separate it.
 * **At an acquired context** (`H3.capFillPosBandAt_of_gap`, `H3.exists_classCompletion_of_gap`,
   `H3.exists_classCompletion_top_of_gap`): the band at every cut grade from the gap and the top
   grade of the donor coatom; at a cap of the top grade (`k < N`, the small caps with `k = 1`) the
-  completion from the donor raise and the gap at the cut grade `k + 1` alone.
+  completion from the donor raise and the gap at the cut grade `k + 1` alone; on three points
+  (`H3.exists_classCompletion_one_of_rowAt_le`) from the donor raise when the cells of grade `1`
+  of the common face are read by the cap at least at the marker.
 -/
 
 universe u
@@ -51,6 +62,19 @@ universe u
 namespace VaughtConjecture
 
 open Finset Label CellScheme ProfileTower
+
+/-- Visibility replacement with the value `0` does not increase a label. -/
+theorem Label.visibilityReplace_zero_le (k : ℕ) (x : Label.{u}) : visibilityReplace k 0 x ≤ x := by
+  induction x using recBotCoeTop with
+  | bot => exact le_rfl
+  | top => exact le_rfl
+  | coe o =>
+    rw [visibilityReplace_coe]
+    refine WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr ?_)
+    unfold Ordinal.visibilityReplace
+    split_ifs
+    · rw [Nat.cast_zero, add_zero]; exact Ordinal.mul_div_le o Ordinal.omega0
+    · rw [Ordinal.div_add_mod]
 
 namespace CapRequests
 
@@ -240,6 +264,55 @@ theorem bandGapBelowAt_of_lt {K : ℕ}
     BandGapBelowAt r xp xd K := fun h hh hs hb P hP hPc f hf hfP hfc ↦
   ⟨⊤, isSelfVisible_top K, le_top, le_top, fun d hdC hdD hhd ↦
     absurd hhd (not_le.mpr (hlt h hh hs hb P hP hPc f hf hfP hfc d hdC hdD))⟩
+
+/-- **The gap from the values on the common face**: if every value of `f` at least `h` at a cell
+of the common face below `K` is at least the marker value of `f` and self-visible at `K`, the gap
+holds with `c` the least such value (`⊤` if there is none): the face is finite. -/
+theorem bandGapBelowAt_of_le {K : ℕ}
+    (hle : ∀ h : Label.{u}, IsSelfVisible (K + 1) h → IsShort (K + 1) h → ⊥ < h →
+      ∀ P : Prof I, IsCutLawful I (K + 1) P → r.IsCorrect (hat I (K + 1) P) →
+      ∀ f : Prof I, I.amalgam.rows.IsLawfulBelow (univ.erase xp, K + 1) (fun d ↦ f d) →
+        (∀ d ∈ I.amalgam.toCellScheme.below (univ.erase xp, K + 1),
+          min (f d) h = min (P d) h) → h < f r.cap →
+        ∀ d ∈ I.amalgam.toCellScheme.below (univ.erase xp, K + 1),
+          d ∈ I.amalgam.toCellScheme.below (univ.erase xd, K) → h ≤ f d →
+          r.markerValue f ≤ f d ∧ IsSelfVisible K (f d)) :
+    BandGapBelowAt r xp xd K := by
+  classical
+  intro h hh hs hb P hP hPc f hf hfP hfc
+  have hle' := hle h hh hs hb P hP hPc f hf hfP hfc
+  set S := univ.filter fun d : Fin I.amalgam.card ↦
+    d ∈ I.amalgam.toCellScheme.below (univ.erase xp, K + 1) ∧
+      d ∈ I.amalgam.toCellScheme.below (univ.erase xd, K) ∧ h ≤ f d with hSdef
+  rcases S.eq_empty_or_nonempty with hS | hS
+  · refine ⟨⊤, isSelfVisible_top K, le_top, le_top, fun d hdC hdD hhd ↦ absurd ?_
+      (Finset.notMem_empty d)⟩
+    rw [← hS]
+    exact mem_filter.mpr ⟨mem_univ _, hdC, hdD, hhd⟩
+  obtain ⟨d₀, hd₀, hmin⟩ := S.exists_min_image f hS
+  obtain ⟨-, hd₀C, hd₀D, hhd₀⟩ := mem_filter.mp hd₀
+  obtain ⟨hM, hsv⟩ := hle' d₀ hd₀C hd₀D hhd₀
+  exact ⟨f d₀, hsv, hhd₀, hM, fun d hdC hdD hhd ↦
+    hmin d (mem_filter.mpr ⟨mem_univ _, hdC, hdD, hhd⟩)⟩
+
+/-- **The gap at the grade `1`** from the values on the common face: at `K = 1` every cell below
+the cut has grade `1`, so its value under `f` is self-visible at `1`. -/
+theorem bandGapBelowAt_one
+    (hle : ∀ h : Label.{u}, IsSelfVisible 2 h → IsShort 2 h → ⊥ < h →
+      ∀ P : Prof I, IsCutLawful I 2 P → r.IsCorrect (hat I 2 P) →
+      ∀ f : Prof I, I.amalgam.rows.IsLawfulBelow (univ.erase xp, 2) (fun d ↦ f d) →
+        (∀ d ∈ I.amalgam.toCellScheme.below (univ.erase xp, 2),
+          min (f d) h = min (P d) h) → h < f r.cap →
+        ∀ d ∈ I.amalgam.toCellScheme.below (univ.erase xp, 2),
+          d ∈ I.amalgam.toCellScheme.below (univ.erase xd, 1) → h ≤ f d →
+          r.markerValue f ≤ f d) :
+    BandGapBelowAt r xp xd 1 :=
+  bandGapBelowAt_of_le fun h hh hs hb P hP hPc f hf hfP hfc d hdC hdD hhd ↦
+    ⟨hle h hh hs hb P hP hPc f hf hfP hfc d hdC hdD hhd, by
+      have hsv := (Rows.isLawfulBelow_iff_forall.mp hf).1 d hdC
+      have hg : I.amalgam.toCellScheme.grade d = 1 :=
+        le_antisymm hdD.2 (I.amalgam.isWellFormed.isWellFormed.grade_pos d)
+      rwa [hg] at hsv⟩
 
 /-- **The donor raise in the band below the cut grade, across a gap.**  The cap `h` of the band is
 self-visible and short at the cut grade `K + 1`, so its finite part is `K + 1`, and raising to `⊤`
@@ -606,6 +679,115 @@ theorem exists_classCompletion_top_of_gap (hd : restrictFace (extendByLast g) tb
   have h1 := (seed ht' hp htb).amalgam.isWellFormed.isWellFormed.grade_le_card e
   have h2 := card_le_card he
   omega
+
+/-- **A cell read by the cap at least at the marker carries at least the marker value**: for `f`
+lawful below the private coatom at a cut grade at least the grade of the cap, and a cell `z` of
+`t'` with `rowAt c r ≤ rowAt c z` and `grade z ≤ grade r`, locality of `f` at the cap gives
+`min (f r) (f c) ≤ min (f z) (f c)`, hence the marker value of `f` is at most `f z`.  In
+particular at every cell of `t'` labelled `⊤` of grade at most that of the marker. -/
+theorem markerValue_le_of_rowAt_le (hd : restrictFace (extendByLast g) tb = some d)
+    {c r : Fin t'.card} (hctx : t'.IsMarkedCapContextAt (g.trans Fin.castSuccEmb) c r) {K : ℕ}
+    (hK : t'.toCellScheme.grade c ≤ K) {f : ProfileTower.Prof (seed ht' hp htb)}
+    (hf : (seed ht' hp htb).amalgam.rows.IsLawfulBelow (univ.erase (Fin.last (k + 1)), K)
+      (fun e ↦ f e)) {z : Fin t'.card} (hzr : t'.rowAt c r ≤ t'.rowAt c z)
+    (hgz : t'.toCellScheme.grade z ≤ t'.toCellScheme.grade r) :
+    (requests ht' hp htb hd c r (by have := hctx.2.2.1; omega)).markerValue f ≤
+      f (faceCell (restrictFace_left_seed ht' hp htb) z) := by
+  have hL := restrictFace_left_seed ht' hp htb
+  set A := (seed ht' hp htb).amalgam
+  have hrc : r ∈ t'.toCellScheme.below (t'.toCellScheme.gradedIndex c) := hctx.2.1.2.1
+  have hrc' : t'.toCellScheme.grade r ≤ t'.toCellScheme.grade c := by
+    rw [CellScheme.mem_below] at hrc
+    exact (Prod.le_def.mp hrc).2
+  have hcb : faceCell hL c ∈ A.toCellScheme.below (univ.erase (Fin.last (k + 1)), K) := by
+    refine ⟨?_, ?_⟩
+    · change A.toCellScheme.scope (faceCell hL c) ⊆ _
+      rw [scope_faceCell, hctx.1.1, Coatom.univ_map_left]
+    · change A.toCellScheme.grade (faceCell hL c) ≤ K
+      rw [grade_faceCell]; exact hK
+  have hmem (x : Fin t'.card) (hx : t'.toCellScheme.grade x ≤ t'.toCellScheme.grade c) :
+      faceCell hL x ∈ A.toCellScheme.below (A.toCellScheme.gradedIndex (faceCell hL c)) := by
+    rw [CellScheme.mem_below]
+    refine Prod.mk_le_mk.mpr ⟨?_, ?_⟩
+    · change A.toCellScheme.scope (faceCell hL x) ⊆ A.toCellScheme.scope (faceCell hL c)
+      rw [scope_faceCell, scope_faceCell, hctx.1.1]
+      exact map_subset_map.mpr (subset_univ _)
+    · change A.toCellScheme.grade (faceCell hL x) ≤ A.toCellScheme.grade (faceCell hL c)
+      rw [grade_faceCell, grade_faceCell]; exact hx
+  have hrm := hmem r hrc'
+  have hzm := hmem z (hgz.trans hrc')
+  obtain ⟨-, hloc, -⟩ := CellScheme.Rows.isLawfulBelow_iff_forall.mp hf
+  have hrow : A.rows.row (faceCell hL c) ⟨faceCell hL r, hrm⟩ ≤
+      A.rows.row (faceCell hL c) ⟨faceCell hL z, hzm⟩ := by
+    rw [← Scheme.rowAt_of_mem, ← Scheme.rowAt_of_mem]
+    rw [rowAt_faceCell, rowAt_faceCell]
+    exact hzr
+  have h1 := (hloc _ hcb).le_of_le (d := ⟨faceCell hL r, hrm⟩) (d' := ⟨faceCell hL z, hzm⟩) hrow
+    (by
+      change A.toCellScheme.grade (faceCell hL z) ≤ A.toCellScheme.grade (faceCell hL r)
+      rw [grade_faceCell, grade_faceCell]; exact hgz)
+  change min (f (faceCell hL r)) (f (faceCell hL c)) ≤
+    min (f (faceCell hL z)) (f (faceCell hL c)) at h1
+  calc (requests ht' hp htb hd c r _).markerValue f
+      ≤ min (f (faceCell hL r)) (f (faceCell hL c)) :=
+        min_le_min_right _ (Label.visibilityReplace_zero_le _ _)
+    _ ≤ min (f (faceCell hL z)) (f (faceCell hL c)) := h1
+    _ ≤ f (faceCell hL z) := min_le_left _ _
+
+/-- **The gap at the grade `1` for a cap of grade at most `2`**, when every cell of grade `1` of
+the common face (the cells of `t'` of grade `1` avoiding its last point) is read by the cap at
+least at the marker: then every prescription carries at least the marker value there
+(`H3.markerValue_le_of_rowAt_le`), and the gap holds (`CapRequests.bandGapBelowAt_one`).  At a
+cell of grade `1` read by the cap below the marker a prescription may take a value in `[h, M)`,
+and the raise must separate it from the new tops. -/
+theorem bandGapBelowAt_one_of_rowAt_le (hd : restrictFace (extendByLast g) tb = some d)
+    {c r : Fin t'.card} (hctx : t'.IsMarkedCapContextAt (g.trans Fin.castSuccEmb) c r)
+    (hN : t'.toCellScheme.grade c ≤ 2)
+    (hface : ∀ z : Fin t'.card, t'.toCellScheme.grade z = 1 →
+      Fin.last k ∉ t'.toCellScheme.scope z → t'.rowAt c r ≤ t'.rowAt c z) :
+    CapRequests.BandGapBelowAt (requests ht' hp htb hd c r (by have := hctx.2.2.1; omega))
+      (Fin.last (k + 1)) (Fin.castSucc (Fin.last k)) 1 := by
+  have hL := restrictFace_left_seed ht' hp htb
+  refine CapRequests.bandGapBelowAt_one fun h _ _ _ P _ _ f hf _ _ e heC heD _ ↦ ?_
+  have hlast : Fin.last (k + 1) ∉ (seed ht' hp htb).amalgam.toCellScheme.scope e := fun hm ↦
+    (mem_erase.mp (heC.1 hm)).1 rfl
+  obtain ⟨z, rfl⟩ := exists_faceCell_eq_of_last_notMem hL hlast
+  have hg1 : t'.toCellScheme.grade z = 1 := by
+    have h1 : (seed ht' hp htb).amalgam.toCellScheme.grade (faceCell hL z) ≤ 1 := heD.2
+    have h2 := (seed ht' hp htb).amalgam.isWellFormed.isWellFormed.grade_pos (faceCell hL z)
+    rw [grade_faceCell] at h1 h2
+    omega
+  have hzl : Fin.last k ∉ t'.toCellScheme.scope z := fun hm ↦ by
+    have h1 : Fin.castSucc (Fin.last k) ∈
+        (seed ht' hp htb).amalgam.toCellScheme.scope (faceCell hL z) := by
+      rw [scope_faceCell]
+      exact mem_map.mpr ⟨_, hm, rfl⟩
+    exact (mem_erase.mp (heD.1 h1)).1 rfl
+  have hgr : t'.toCellScheme.grade z ≤ t'.toCellScheme.grade r := by
+    rw [hg1]; exact t'.isWellFormed.isWellFormed.grade_pos r
+  exact markerValue_le_of_rowAt_le ht' hp htb hd hctx hN hf (hface z hg1 hzl) hgr
+
+/-- **The small caps on three points** (`k = 1`, the cap of grade `2`): the completion with rows
+admitted in the class from the donor raise alone, when the cells of grade `1` of the common face
+are read by the cap at least at the marker (`H3.exists_classCompletion_top_of_gap`,
+`H3.bandGapBelowAt_one_of_rowAt_le`). -/
+theorem exists_classCompletion_one_of_rowAt_le (hd : restrictFace (extendByLast g) tb = some d)
+    {c r : Fin t'.card} (hctx : t'.IsMarkedCapContextAt (g.trans Fin.castSuccEmb) c r)
+    (hkN : k < t'.toCellScheme.grade c) (hN : t'.toCellScheme.grade c ≤ 2)
+    (hraise : ∀ k', t'.toCellScheme.grade c ≤ k' → k' ≤ k + 1 →
+      CapRequests.DonorRaiseBotAtIn (requests ht' hp htb hd c r (by have := hctx.2.2.1; omega))
+        (classCells ht' hp htb hd) (Fin.last (k + 1)) (Fin.castSucc (Fin.last k)) k')
+    (hface : ∀ z : Fin t'.card, t'.toCellScheme.grade z = 1 →
+      Fin.last k ∉ t'.toCellScheme.scope z → t'.rowAt c r ≤ t'.rowAt c z) :
+    ∃ F : CompletionBelowFullGrade (seed ht' hp htb),
+      F.HasAdmittedRows (t'.toCellScheme.grade c)
+        ((requests ht' hp htb hd c r (by have := hctx.2.2.1; omega)).Admits
+          (classCells ht' hp htb hd) ∅) := by
+  have hn := hctx.2.2.1
+  have hck : t'.toCellScheme.grade c ≤ k + 1 := t'.grade_le c
+  obtain rfl : k = 1 := by omega
+  exact exists_classCompletion_top_of_gap ht' hp htb hd hctx hkN hraise
+    (bandGapBelowAt_one_of_rowAt_le ht' hp htb hd hctx hN hface)
 
 end Band
 
