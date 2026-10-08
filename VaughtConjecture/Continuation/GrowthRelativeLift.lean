@@ -32,9 +32,11 @@ applied to one template.
   `u'`.  With the capped decoder of `u'` at the cap (`Scheme.exists_cappedDecoder`) this is case 3
   of the relative lift; lawfulness of `θ ∘ V` is the transport of lawfulness through a witness
   with the bottom pattern of a lawful companion (`CellScheme.Rows.IsLawful.map_of_bot_iff`).
-* `StageType.GrowthRequests.HasTemplate` (open): a lawful donor template reading the requests
-  from the cleaned cap row, equal to it on the root, with the frame inequalities.
-* `StageType.GrowthRequests.HasRelativeLift` (open): the relative lift.
+* `StageType.GrowthRequests.HasTemplate`: a lawful donor template reading the requests from the
+  cleaned cap row, equal to it on the root, `⊥` at the bottom requests, with the frame
+  inequalities; `StageType.GrowthRequests.Calibrated`: the shape of the requests it is used with.
+* `StageType.GrowthRequests.HasRelativeLift`: the relative lift (proved from the template in
+  `Continuation/GrowthRelativeLiftCases.lean`).
 
 ## References
 
@@ -176,16 +178,41 @@ def Allowed (Q : GrowthRequests t' d.toScheme) (u : Fin t'.card → Label.{u})
   t'.rows.IsLawful u ∧ d.rows.IsLawful v ∧
     (∀ i, v (d.faceCell hdp i) = u (t'.faceCell hte i)) ∧ Q.Admits u v
 
-/-- **The template** (open): a lawful donor labelling reading the requests from the cleaned cap
-row, equal to it on the root, with the frame inequalities when high values are requested. -/
+/-- **The template**: a lawful donor labelling reading the requests from the cleaned cap row,
+equal to it on the root, `⊥` at the bottom requests, with the frame inequalities when high values
+are requested. -/
 def HasTemplate (Q : GrowthRequests t' d.toScheme) : Prop :=
   ∃ V : Fin d.card → Label.{u}, d.rows.IsLawful V ∧
     (∀ i, V (d.faceCell hdp i) = Q.cleanedCapRow (t'.faceCell hte i)) ∧
     (∀ j, Q.CorrectAt Q.cleanedCapRow j (V j)) ∧
     (Q.highs.Nonempty → ∀ j ∈ Q.exacts,
-      Q.readExact Q.cleanedCapRow j ≤ Q.readMarker Q.cleanedCapRow)
+      Q.readExact Q.cleanedCapRow j ≤ Q.readMarker Q.cleanedCapRow) ∧
+    ∀ j ∈ Q.bottoms, V j = ⊥
 
-/-- **The relative lift on the donor** (open): from an allowed pair `(u, v)` and a lawful section
+/-- **Calibrated requests** for the relative lift: every donor cell is a request; the cap has full
+scope and a label other than `⊥`; the references and the marker are labelled other than `⊥` and,
+with their offsets, lie at most at the threshold; the root cells lie below the cap and the cap row
+is already clean on them; and the threshold is at least the arity `n + 1` of the donor. -/
+structure Calibrated (Q : GrowthRequests t' d.toScheme) : Prop where
+  /-- Every donor cell is a bottom, an exact or a high request. -/
+  cover : ∀ j, j ∈ Q.bottoms ∨ j ∈ Q.exacts ∨ j ∈ Q.highs
+  /-- The cap has full scope. -/
+  scope_cap : t'.toCellScheme.scope Q.cap = univ
+  /-- The cap is not labelled `⊥`. -/
+  label_cap : t'.label Q.cap ≠ ⊥
+  /-- The references: grade and offset at most the threshold, label other than `⊥`. -/
+  ref : ∀ j ∈ Q.exacts, t'.toCellScheme.grade (Q.ref j) ≤ Q.threshold ∧
+    Q.offset j ≤ Q.threshold ∧ t'.label (Q.ref j) ≠ ⊥
+  /-- The marker: grade and offset at most the threshold, label other than `⊥`. -/
+  marker : t'.toCellScheme.grade Q.marker ≤ Q.threshold ∧ Q.markerOffset ≤ Q.threshold ∧
+    t'.label Q.marker ≠ ⊥
+  /-- The root cells lie below the cap, and the cleaning does not change the cap row on them. -/
+  root : ∀ i, t'.toCellScheme.grade (t'.faceCell hte i) ≤ Q.threshold ∧
+    Q.cleanedCapRow (t'.faceCell hte i) = t'.rowAt Q.cap (t'.faceCell hte i)
+  /-- The threshold is at least the arity of the donor. -/
+  arity : n + 1 ≤ Q.threshold
+
+/-- **The relative lift on the donor**: from an allowed pair `(u, v)` and a lawful section
 `u'` of the context agreeing with `u` capped at `γ`, self-visible at the threshold, some `v'` makes
 `(u', v')` allowed and agrees with `v` capped at `γ`. -/
 def HasRelativeLift (Q : GrowthRequests t' d.toScheme) : Prop :=
@@ -314,7 +341,8 @@ theorem exists_template_of_encoding (Q : GrowthRequests t' d.toScheme) (hd : d.I
     ∃ V : Fin d.card → Label.{u}, d.rows.IsLawful V ∧
       (∀ i, V (d.faceCell hdp i) = eC (t'.faceCell hte i)) ∧
       (∀ j, Q.CorrectAt eC j (V j)) ∧
-      (Q.highs.Nonempty → ∀ j ∈ Q.exacts, Q.readExact eC j ≤ Q.readMarker eC) := by
+      (Q.highs.Nonempty → ∀ j ∈ Q.exacts, Q.readExact eC j ≤ Q.readMarker eC) ∧
+      ∀ j ∈ Q.bottoms, V j = ⊥ := by
   have hV0 : d.rows.IsLawful (enc ∘ d.label) :=
     d.isLawful.map_of_bot_iff d.isLawful (fun j ↦ d.grade_le j) henc
       (fun j ↦ ⟨hbot j, fun h ↦ by rw [h, henc.map_bot]⟩)
@@ -342,7 +370,7 @@ theorem exists_template_of_encoding (Q : GrowthRequests t' d.toScheme) (hd : d.I
     · exact h2
     · exact absurd h2 hH
   refine ⟨V, hV, hVr, fun j ↦ ⟨fun hz ↦ by rw [hVZ j hz, min_eq_left bot_le],
-    fun hf ↦ by rw [hVF j hf]; rfl, fun hy ↦ ?_⟩, fun _ j hj ↦ ?_⟩
+    fun hf ↦ by rw [hVF j hf]; rfl, fun hy ↦ ?_⟩, fun _ j hj ↦ ?_, hVZ⟩
   · rw [← hHm]
     exact min_le_min_right _ (hVT j hy)
   · rw [readExact, ← hHm]

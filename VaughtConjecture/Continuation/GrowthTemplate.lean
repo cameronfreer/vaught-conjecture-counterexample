@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Continuation.GrowthReferenceCalibration
-import VaughtConjecture.Continuation.GrowthRelativeLift
+import VaughtConjecture.Continuation.GrowthRelativeLiftCases
 import VaughtConjecture.Continuation.SourceGapDoubledCompletion
 import VaughtConjecture.Label.BlockReading
 
@@ -28,6 +28,9 @@ the marker read (`Label.blockOf_add_le_of_read_top`); the block code with these 
 On the root the encoding is the cap row: cells labelled `⊥` by the cleaning, cells labelled `⊤` by
 the root-top inequality of the marked cap, ordinal cells by reading their codes in their block
 (`Label.blockOf_eq_of_read`, `Label.finNat_eq_of_read`).
+
+With the template, the requests have the relative lift on the donor
+(`StageType.HollowReferenceCalibration'.exists_relativeLift`).
 
 ## References
 
@@ -65,18 +68,15 @@ theorem rowAt_ne_top {t : StageType.{u} α k} (c x : Fin t.card) : t.rowAt c x �
 
 /-- **The template at a calibrated context.**  At a legal context `t'` calibrated along its root
 `e` for a legal donor `d` (root face `p`, `0 < n`), some requests on `d` are read exactly at the
-labels of `t'`, have a cap of full scope, references, marker and offsets at most the threshold, and
-a template. -/
+labels of `t'`, are calibrated (`StageType.GrowthRequests.Calibrated`: every cell a request, a cap
+of full scope, references, marker and offsets at most the threshold, the root below the cap with
+a clean cap row, the threshold above the arity), and have a template. -/
 theorem HollowReferenceCalibration'.exists_template {t' : StageType.{u} α k} (ht' : t'.IsLegal)
     {e : Fin n ↪ Fin k} {p : StageType.{u} α n} (hte : restrictFace e t' = some p)
     {d : StageType.{u} α (n + 1)} (hdp : restrictFace Fin.castSuccEmb d = some p)
     (hd : d.IsLegal) (hn : 0 < n) (hC : HollowReferenceCalibration' t' e d) :
     ∃ Q : GrowthRequests t' d.toScheme,
-      (∀ j ℓ, Q.CorrectAt t'.label j ℓ ↔ ℓ = d.label j) ∧
-      t'.toCellScheme.scope Q.cap = univ ∧
-      (∀ j ∈ Q.exacts, t'.toCellScheme.grade (Q.ref j) ≤ Q.threshold ∧
-        Q.offset j ≤ Q.threshold) ∧
-      (t'.toCellScheme.grade Q.marker ≤ Q.threshold ∧ Q.markerOffset ≤ Q.threshold) ∧
+      (∀ j ℓ, Q.CorrectAt t'.label j ℓ ↔ ℓ = d.label j) ∧ Q.Calibrated hte ∧
       Q.HasTemplate hte hdp := by
   classical
   obtain ⟨jj, g, h₀, c, r, hh, hmc, hoff, hbotR, href⟩ := hC
@@ -331,8 +331,32 @@ theorem HollowReferenceCalibration'.exists_template {t' : StageType.{u} α k} (h
       simp only [GrowthRequests.readMarker]
       change _ = min (visibilityReplace N (jj + 1) (Q.cleanedCapRow r)) _
       rw [heCr, visibilityReplace_coe])
-  exact ⟨Q, hexact, hscope, fun j hj ↦ ⟨hrefg j hj, (hexs j hj).2.2.1.le⟩,
-    ⟨hrg, show jj + 1 ≤ N by omega⟩, V, hV, hVr, hVc, hVf⟩
+  have hcov (j : Fin d.card) : j ∈ Q.bottoms ∨ j ∈ Q.exacts ∨ j ∈ Q.highs := by
+    by_cases hb : d.label j = ⊥
+    · exact Or.inl hb
+    by_cases ht : d.label j = ⊤
+    · exact Or.inr (Or.inr ht)
+    · exact Or.inr (Or.inl ⟨hb, ht⟩)
+  refine ⟨Q, hexact, ⟨hcov, hscope, by rw [hcap]; exact top_ne_bot,
+    fun j hj ↦ ⟨hrefg j hj, (hexs j hj).2.2.1.le, hrefb j hj⟩,
+    ⟨hrg, show jj + 1 ≤ N by omega, by rw [hmark]; exact top_ne_bot⟩,
+    fun i ↦ ⟨(hgvis _ (hvis i)).trans (by omega), hclean i⟩, show n + 1 ≤ N by omega⟩,
+    V, hV, hVr, hVc, hVf⟩
+
+/-- **The relative lift at a calibrated context.**  At a legal context `t'` calibrated along its
+root `e` for a legal donor `d` (root face `p`, `0 < n`), some calibrated requests on `d`, read
+exactly at the labels of `t'`, have the relative lift
+(`StageType.GrowthRequests.hasRelativeLift_of_template` with the template of
+`StageType.HollowReferenceCalibration'.exists_template`). -/
+theorem HollowReferenceCalibration'.exists_relativeLift {t' : StageType.{u} α k} (ht' : t'.IsLegal)
+    {e : Fin n ↪ Fin k} {p : StageType.{u} α n} (hte : restrictFace e t' = some p)
+    {d : StageType.{u} α (n + 1)} (hdp : restrictFace Fin.castSuccEmb d = some p)
+    (hd : d.IsLegal) (hn : 0 < n) (hC : HollowReferenceCalibration' t' e d) :
+    ∃ Q : GrowthRequests t' d.toScheme,
+      (∀ j ℓ, Q.CorrectAt t'.label j ℓ ↔ ℓ = d.label j) ∧ Q.Calibrated hte ∧
+      Q.HasRelativeLift hte hdp := by
+  obtain ⟨Q, hex, hQ, hT⟩ := hC.exists_template ht' hte hdp hd hn
+  exact ⟨Q, hex, hQ, GrowthRequests.hasRelativeLift_of_template hte hdp hQ hT hd hn⟩
 
 end StageType
 
