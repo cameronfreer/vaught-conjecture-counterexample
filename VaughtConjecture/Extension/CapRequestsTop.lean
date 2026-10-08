@@ -192,6 +192,14 @@ theorem code_mem_rowCat_of_mem_rowCat (hgr : r.IsGraded I.amalgam.toCellScheme.g
   have h := (hRr.code hgr k).hat hgr k
   rwa [code, hat_hat_succ] at h
 
+/-- **Below the grade of the cap every profile of the catalogue is correct**: its splice is `⊥` at
+the cap. -/
+theorem rowCat_isCorrect_of_lt {k : ℕ} (hk : k < I.amalgam.toCellScheme.grade r.cap) :
+    rowCat r.IsCorrect k = cat I k := by
+  ext R
+  rw [mem_rowCat]
+  exact ⟨fun h ↦ h.1, fun h ↦ ⟨h, isCorrect_of_cap_eq_bot (hat_of_lt hk)⟩⟩
+
 end CapRequests
 
 /-! ### The lift provisions from the donor coatom -/
