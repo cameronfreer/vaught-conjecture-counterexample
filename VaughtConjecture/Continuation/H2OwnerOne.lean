@@ -6,6 +6,7 @@ Authors: Cameron Freer
 import Mathlib.Data.Fin.VecNotation
 import Mathlib.Tactic.FinCases
 import VaughtConjecture.Continuation.H2One
+import VaughtConjecture.Continuation.H2Two
 import VaughtConjecture.Continuation.SourceGapOwnerPartnerObstruction
 
 /-!
