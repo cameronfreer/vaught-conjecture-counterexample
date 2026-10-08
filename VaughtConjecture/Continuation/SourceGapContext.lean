@@ -74,14 +74,17 @@ every limit stage, (R2) follows
 (`Realization.residualReceiving_of_cutoffDetermination_isSourceGapContext`, compiled in this
 repository, with determination a hypothesis).  Nothing here proves (R2).
 
-**Non-vacuity is open: a dichotomy.**  If no legal stage type is a source-gap context, (R2) holds
-outright: the compiled acquisition leaves no model at a limit stage with no cover that is a
-globally rigid core and with natural top-grade supremum
-(`Realization.residualReceiving_of_forall_not_isSourceGapContext`).  So either some legal stage
-type is a source-gap context, or (R2) holds; neither side is claimed here.  Whether a legal
-source-gap context exists is open: it needs a legal type whose owner row has a gap at a lost top
-(the row laws allow a locality witness sending every label from some point on to `⊤`), and
-nothing compiled exhibits one.  No stage type built with `StageType.addApex` is a source-gap context
+**Non-vacuity: legal source-gap types exist.**  If no legal stage type were a source-gap context,
+(R2) would hold outright: the compiled acquisition leaves no model at a limit stage with no cover
+that is a globally rigid core and with natural top-grade supremum
+(`Realization.residualReceiving_of_forall_not_isSourceGapContext`, a valid conditional theorem).
+Its hypothesis is false: a legal source-gap stage type exists at every stage
+(`GatedExtensionCounterexample.isSourceGapContext_P`,
+`Realization.not_forall_not_isSourceGapContext`, in
+`VaughtConjecture.Continuation.SourceGapContextInstance`), so the vacuity argument for (R2) is
+ruled out.  That is existence of a finite stage type; that such a type occurs as the type of a
+cover in a residual model is not proved here, and (R2) and determination stay open.  No stage type
+built with `StageType.addApex` is a source-gap context
 (`StageType.not_isSourceGapContext_addApex`): the owner must be the apex, whose row is the coded
 copy of the labels and reads every top cell at the code of `⊤`, so the gap at the owner fails
 (`Label.le_visibilityReplace`).
@@ -674,8 +677,9 @@ theorem residualReceiving_of_cutoffDetermination_isSourceGapContext
 
 /-- **If no legal stage type is a source-gap context, (R2) holds**: the compiled acquisition
 leaves no model at a limit stage with no cover that is a globally rigid core and with natural
-top-grade supremum, so (R2) holds vacuously.  So either some legal stage type is a source-gap
-context (open), or (R2) holds; neither side is claimed here. -/
+top-grade supremum, so (R2) holds vacuously.  The hypothesis is false: legal source-gap stage
+types exist at every stage (`Realization.not_forall_not_isSourceGapContext`), so this does not
+prove (R2); occurrence of such a type in a residual model is not proved. -/
 theorem residualReceiving_of_forall_not_isSourceGapContext
     (hvac : ∀ ⦃α : Ordinal.{u}⦄ ⦃n k K : ℕ⦄ (t' : StageType.{u} α k) (h : Fin n ↪ Fin k),
       t'.IsLegal → ¬ t'.IsSourceGapContext K h) :
