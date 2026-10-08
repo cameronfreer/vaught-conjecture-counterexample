@@ -27,24 +27,24 @@ read the cells below through the section of the level below (`ProfileTower.Lvl.n
 section of every canonical level, and every row of a cell of full scope above the grade of the
 controller, reads it as `⊥` (`ProfileTower.Lvl.iter_read_eq_bot`).
 
-**`⊤` at a controller forces `⊥` above it** (`ProfileTower.lowDisplay_label_eq_bot`, compiled in
-this repository).  Let `q` be a lawful labelling of the completed display at the stage, `⊤` at a
-controller `hi` of positive cutoff, of grade `K = g + 1`.  Every cell `u` of full scope and grade
-`j` with `K < j ≤ m` reads `hi` as `⊥`; locality at `u` at the cell `hi` below it gives
-`min ⊤ (q u) = σ ⊥ = ⊥`, so `q u = ⊥`; availability then puts every cell of grade `j` below a
-cell of graded index `(univ, j)`, so every cell of grade in `(K, m]` is labelled `⊥`.  The
-separator `hi` of a LOW layer has positive cutoff (its cutoff cut lies below its cutoff).
+**A positive label at a controller forces `⊥` above it** (`ProfileTower.lowDisplay_label_eq_bot`,
+compiled in this repository).  Let `q` be a lawful labelling of the completed display at the stage,
+not `⊥` (for instance `⊤`) at a controller `hi` of positive cutoff, of grade `K = g + 1`.  Every
+cell `u` of full scope and grade `j` with `K < j ≤ m` reads `hi` as `⊥`; locality at `u` at the cell
+`hi` below it gives `min (q hi) (q u) = σ ⊥ = ⊥`, so `q u = ⊥`; availability then puts every cell of
+grade `j` below a cell of graded index `(univ, j)`, so every cell of grade in `(K, m]` is labelled
+`⊥`.  The separator `hi` of a LOW layer has positive cutoff (its cutoff cut lies below its cutoff).
 
-**The decisive consequence** (`ProfileTower.face_label_eq_bot_of_lowDisplay`, compiled in this
-repository).  If the completed display over the catalogue layer has a lawful labelling extending
-the glued labels with `⊤` at a controller of positive cutoff, then every cell of the private
-context and of the donor of grade in `(K, m]` is labelled `⊥`.  So for a LOW family with `K < k`
-and a cell of grade in `(K, k]` not labelled `⊥` in the context or the donor, the completed display
-carries no separator labelled as `StageType.HasLowLayers` asks, whatever the LOW layer: the
-canonical levels above the controllers must be replaced, at their sections at the controllers,
-for the LOW construction to label its separator `⊤`.  Conversely, when the two faces are `⊥`
-above `K`, the reading holds (`ProfileTower.lowReading_of_bot`, in
-`VaughtConjecture.Continuation.LowDisplayActual`).
+**The decisive consequence** (`ProfileTower.face_label_eq_bot_of_lowDisplay`,
+`ProfileTower.lowDisplay_ctrl_eq_bot`, compiled in this repository).  If the completed display over
+the catalogue layer has a lawful labelling extending the glued labels with a label other than `⊥` at
+a controller of positive cutoff, then every cell of the private context and of the donor of grade in
+`(K, m]` is labelled `⊥`.  So for a LOW family with `K < k` and a cell of grade in `(K, k]` not
+labelled `⊥` in the context or the donor, the completed display carries no separator labelled as
+`StageType.HasLowLayers` asks, whatever the LOW layer: the canonical levels above the controllers
+must be replaced, at their sections at the controllers, for the LOW construction to label its
+separator `⊤`.  Conversely, when the two faces are `⊥` above `K`, the reading holds
+(`ProfileTower.lowReading_of_bot`, in `VaughtConjecture.Continuation.LowDisplayActual`).
 
 ## Placement
 
@@ -122,18 +122,18 @@ theorem Lvl.iter_read_eq_bot {g' : ℕ} (N : Lvl I g') {x : Fin N.S.card}
 
 /-! ### `⊤` at a controller forces `⊥` above it -/
 
-/-- **A cell reading a cell labelled `⊤` as `⊥` is labelled `⊥`**: locality at the cell, at the
-cell below it, gives `min ⊤ (label u) = σ ⊥ = ⊥`. -/
+/-- **A cell reading a cell labelled other than `⊥` as `⊥` is labelled `⊥`**: locality at the
+cell, at the cell below it, gives `min (label x) (label u) = σ ⊥ = ⊥`. -/
 theorem _root_.VaughtConjecture.StageType.label_eq_bot_of_rowAt_eq_bot {n : ℕ}
     (D : StageType.{u} α n) {u x : Fin D.card}
     (hx : x ∈ D.toCellScheme.below (D.toCellScheme.gradedIndex u))
-    (hrow : D.toScheme.rowAt u x = ⊥) (htop : D.label x = ⊤) : D.label u = ⊥ := by
+    (hrow : D.toScheme.rowAt u x = ⊥) (hpos : D.label x ≠ ⊥) : D.label u = ⊥ := by
   obtain ⟨gg, σ, hσ, heq⟩ := D.isLawful.locality u
   have h := heq ⟨x, hx⟩
   rw [Scheme.rowAt_of_mem hx] at hrow
   dsimp only at h
-  rw [hrow, hσ.map_bot, htop, min_eq_right le_top, min_eq_left bot_le] at h
-  exact h
+  rw [hrow, hσ.map_bot, min_eq_left bot_le] at h
+  exact (min_eq_bot.mp h).resolve_left hpos
 
 section Display
 
@@ -155,13 +155,13 @@ theorem isGradePrefix_top_display :
 
 local notation "𝒞" => predCat I (g + 1) A
 
-/-- **`⊤` at a controller of positive cutoff forces `⊥` at every cell of full scope above it**, up
-to the grade `m`: such a cell reads the controller as `⊥` (`ProfileTower.Lvl.iter_read_eq_bot`), and
-locality at it at the controller gives its label. -/
+/-- **A label other than `⊥` at a controller of positive cutoff forces `⊥` at every cell of full
+scope above it**, up to the grade `m`: such a cell reads the controller as `⊥`
+(`ProfileTower.Lvl.iter_read_eq_bot`), and locality at it at the controller gives its label. -/
 theorem lowDisplay_label_full_eq_bot {i : Fin (𝒞).card}
     (hi : ((𝒞).equivFin.symm i).1 (Sum.inr ()) ≠ ⊥)
     (htop : ((lowCompletion hL hN hA0).display hq hqα).label
-      (Fin.castSucc (lowCellMap j A L (Fin.natAdd L.S.card i))) = ⊤)
+      (Fin.castSucc (lowCellMap j A L (Fin.natAdd L.S.card i))) ≠ ⊥)
     {u : Fin ((lowCompletion hL hN hA0).display hq hqα).card}
     (hu : ((lowCompletion hL hN hA0).display hq hqα).toCellScheme.scope u = univ)
     (hug : g + 1 < ((lowCompletion hL hN hA0).display hq hqα).toCellScheme.grade u)
@@ -192,12 +192,13 @@ theorem lowDisplay_label_full_eq_bot {i : Fin (𝒞).card}
       exact hug.le
   exact StageType.label_eq_bot_of_rowAt_eq_bot _ hle ((hP.rowAt_eq _ _).trans hread) htop
 
-/-- **`⊤` at a controller of positive cutoff forces `⊥` at every cell above it**, up to the grade
-`m`: availability puts each such cell below a cell of full scope of its grade. -/
+/-- **A label other than `⊥` at a controller of positive cutoff forces `⊥` at every cell above
+it**, up to the grade `m`: availability puts each such cell below a cell of full scope of its grade.
+-/
 theorem lowDisplay_label_eq_bot {i : Fin (𝒞).card}
     (hi : ((𝒞).equivFin.symm i).1 (Sum.inr ()) ≠ ⊥)
     (htop : ((lowCompletion hL hN hA0).display hq hqα).label
-      (Fin.castSucc (lowCellMap j A L (Fin.natAdd L.S.card i))) = ⊤)
+      (Fin.castSucc (lowCellMap j A L (Fin.natAdd L.S.card i))) ≠ ⊥)
     {z : Fin ((lowCompletion hL hN hA0).display hq hqα).card}
     (hzg : g + 1 < ((lowCompletion hL hN hA0).display hq hqα).toCellScheme.grade z)
     (hzm : ((lowCompletion hL hN hA0).display hq hqα).toCellScheme.grade z ≤ g + 1 + j) :
@@ -220,20 +221,21 @@ theorem lowDisplay_label_eq_bot {i : Fin (𝒞).card}
   exact le_bot_iff.mp hzu
 
 include hq hqα in
-/-- **`⊤` at a controller of positive cutoff forces `⊥` on the two faces above it**: every cell of
+/-- **A label other than `⊥` at a controller of positive cutoff forces `⊥` on the two faces above
+it**: every cell of
 the private context and of the donor of grade in `(g + 1, m]` is labelled `⊥`, when `q` extends the
 glued labels. -/
 theorem face_label_eq_bot_of_lowDisplay
     (hqe : ∀ d, q ((lowCompletion hL hN hA0).embed d) = I.amalgam.label d) {i : Fin (𝒞).card}
     (hi : ((𝒞).equivFin.symm i).1 (Sum.inr ()) ≠ ⊥)
-    (htop : q (lowCellMap j A L (Fin.natAdd L.S.card i)) = ⊤) :
+    (htop : q (lowCellMap j A L (Fin.natAdd L.S.card i)) ≠ ⊥) :
     (∀ x : Fin I.left.card, g + 1 < I.left.toCellScheme.grade x →
       I.left.toCellScheme.grade x ≤ g + 1 + j → I.left.label x = ⊥) ∧
     ∀ x : Fin I.right.card, g + 1 < I.right.toCellScheme.grade x →
       I.right.toCellScheme.grade x ≤ g + 1 + j → I.right.label x = ⊥ := by
   have htop' : ((lowCompletion hL hN hA0).display hq hqα).label
-      (Fin.castSucc (lowCellMap j A L (Fin.natAdd L.S.card i))) = ⊤ :=
-    (CompletionBelowFullGrade.display_label_castSucc _ hq hqα _).trans htop
+      (Fin.castSucc (lowCellMap j A L (Fin.natAdd L.S.card i))) ≠ ⊥ := fun h ↦
+    htop ((CompletionBelowFullGrade.display_label_castSucc _ hq hqα _).symm.trans h)
   have h₁ := (lowCompletion hL hN hA0).restrictFace_left_display (hq := hq) (hqα := hqα) hqe
   have h₂ := (lowCompletion hL hN hA0).restrictFace_right_display (hq := hq) (hqα := hqα) hqe
   refine ⟨fun x hxg hxm ↦ ?_, fun x hxg hxm ↦ ?_⟩
@@ -243,6 +245,26 @@ theorem face_label_eq_bot_of_lowDisplay
   · rw [← StageType.label_faceCell h₂ x]
     exact lowDisplay_label_eq_bot hL hN hA0 hq hqα hi htop' (by rw [grade_faceCell]; exact hxg)
       (by rw [grade_faceCell]; exact hxm)
+
+include hq hqα in
+/-- **No separation with ordinal labels above the controllers**: if the private context or the
+donor has a cell of grade in `(g + 1, m]` not labelled `⊥`, every lawful labelling of the
+completed display extending the glued labels labels every controller of positive cutoff by `⊥`.
+So no controller of positive cutoff (the upper cell of a separator, whose cutoff is above its
+cutoff cut) is labelled above any cell; this holds for every labelling keeping the actual faces. -/
+theorem lowDisplay_ctrl_eq_bot
+    (hqe : ∀ d, q ((lowCompletion hL hN hA0).embed d) = I.amalgam.label d)
+    (hne : (∃ x : Fin I.left.card, g + 1 < I.left.toCellScheme.grade x ∧
+      I.left.toCellScheme.grade x ≤ g + 1 + j ∧ I.left.label x ≠ ⊥) ∨
+      ∃ x : Fin I.right.card, g + 1 < I.right.toCellScheme.grade x ∧
+        I.right.toCellScheme.grade x ≤ g + 1 + j ∧ I.right.label x ≠ ⊥)
+    {i : Fin (𝒞).card} (hi : ((𝒞).equivFin.symm i).1 (Sum.inr ()) ≠ ⊥) :
+    q (lowCellMap j A L (Fin.natAdd L.S.card i)) = ⊥ := by
+  by_contra hpos
+  obtain ⟨h₁, h₂⟩ := face_label_eq_bot_of_lowDisplay hL hN hA0 hq hqα hqe hi hpos
+  rcases hne with ⟨x, hxK, hxm, hx⟩ | ⟨x, hxK, hxm, hx⟩
+  · exact hx (h₁ x hxK hxm)
+  · exact hx (h₂ x hxK hxm)
 
 end Display
 
@@ -306,7 +328,8 @@ theorem LowReading.face_label_eq_bot {L : Lvl I g} {hL : L.Good} {hN : (L.catNex
     ∀ x : Fin I.right.card, g + 1 < I.right.toCellScheme.grade x →
       I.right.toCellScheme.grade x ≤ g + 1 + j → I.right.label x = ⊥ := by
   obtain ⟨q, hq, hqα, hqe, -, ihi, -, -, hlt, -, hhi⟩ := h
-  exact face_label_eq_bot_of_lowDisplay hL hN _ hq hqα hqe (ne_bot_of_gt hlt) hhi
+  exact face_label_eq_bot_of_lowDisplay hL hN _ hq hqα hqe (ne_bot_of_gt hlt)
+    (by rw [hhi]; exact top_ne_bot)
 
 end Reading
 

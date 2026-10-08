@@ -40,6 +40,14 @@ compose with the acquisition, and (R2) needs LOW displays at families with ordin
 `K`, where the completed display carries no separator labelled `⊤`
 (`StageType.not_lowReadingFamily`).
 
+**Neither exclusion nor transport through the completed display.**  Exclusion fails: over the
+occurrence above, every context along a root that is not onto keeps the ordinal label
+(`Realization.exists_label_above_of_covers`), whatever the acquisition.  A transport keeping the
+actual faces fails on the completed display: every lawful labelling of it extending the glued
+labels labels every controller of positive cutoff by `⊥` when a face has a label other than `⊥`
+above `K` (`ProfileTower.lowDisplay_ctrl_eq_bot`), so no separator is labelled at all.  The
+display for these families must change above `K` (`ProfileTower.ReadsActual`).
+
 ## Placement
 
 This file belongs to Layer 6 of `roadmap/README.md`.
