@@ -288,4 +288,87 @@ theorem exists_layerTower_controller (k : ℕ) :
     rw [rowAt_appendFullCells_castAdd]
     exact hrow t ht
 
+/-! ### The base inside the tower -/
+
+theorem strictMono_layerTowerEmb :
+    ∀ k, StrictMono (layerTowerEmb (B := B) (C := C) (G := G) k)
+  | 0 => strictMono_id
+  | k + 1 => (Fin.castAddOrderEmb _).strictMono.comp (strictMono_layerTowerEmb k)
+
+/-- **The base is a lower embedding into the tower.** -/
+theorem isLowerEmbedding_layerTowerEmb : ∀ k,
+    B.S.toCellScheme.IsLowerEmbedding (layerTower B C G k).S.toCellScheme
+      (layerTowerEmb (B := B) (C := C) (G := G) k)
+  | 0 => CellScheme.IsLowerEmbedding.of_equiv (Equiv.refl _) fun _ ↦ rfl
+  | k + 1 => (isLowerEmbedding_castAdd (S := (layerTower B C G k).S) (k + 2)
+      ((layerTower B C G k).entries (C (k + 2))).card
+      (fun i ↦ layerRow (layerTower B C G k).S (fun d ↦ d) (G (k + 2))
+        ((layerTower B C G k).entries (C (k + 2))) (layerEntry _ i))
+      (layerTower B C G k).not_le).comp (isLowerEmbedding_layerTowerEmb k)
+
+/-- **The rows of the tower pull back to those of the base.** -/
+theorem comap_rows_layerTowerEmb : ∀ k,
+    (layerTower B C G k).S.rows.comap (isLowerEmbedding_layerTowerEmb (C := C) (G := G) k) =
+      B.S.rows
+  | 0 => rfl
+  | k + 1 => by
+    have h1 := comap_rows_castAdd (S := (layerTower B C G k).S) (k := k + 2)
+      (M := ((layerTower B C G k).entries (C (k + 2))).card)
+      (r := fun i ↦ layerRow (layerTower B C G k).S (fun d ↦ d) (G (k + 2))
+        ((layerTower B C G k).entries (C (k + 2))) (layerEntry _ i))
+      (h := (layerTower B C G k).not_le)
+    exact (congrArg (fun R ↦ CellScheme.Rows.comap R
+      (isLowerEmbedding_layerTowerEmb (C := C) (G := G) k)) h1).trans
+      (comap_rows_layerTowerEmb k)
+
+/-- The base keeps its scopes in the tower. -/
+theorem scope_layerTowerEmb (t : Fin B.S.card) (k : ℕ) :
+    (layerTower B C G k).S.toCellScheme.scope (layerTowerEmb (B := B) (C := C) (G := G) k t) =
+      B.S.toCellScheme.scope t :=
+  congrArg Prod.fst (gradedIndex_layerTowerEmb t k)
+
+/-- **The faces of the tower are those of the base.** -/
+theorem faces_layerTower : ∀ k,
+    (layerTower B C G k).S.toCellScheme.faces = B.S.toCellScheme.faces
+  | 0 => rfl
+  | k + 1 => faces_layerTower k
+
+/-- **The ground set of the tower is that of the base.** -/
+theorem ground_layerTower : ∀ k,
+    (layerTower B C G k).S.toCellScheme.ground = B.S.toCellScheme.ground
+  | 0 => rfl
+  | k + 1 => ground_layerTower k
+
+/-- **Every cell of the tower of scope other than the ground set is a cell of the base.** -/
+theorem mem_range_layerTowerEmb : ∀ k (z : Fin (layerTower B C G k).S.card),
+    (layerTower B C G k).S.toCellScheme.scope z ≠ univ →
+      z ∈ Set.range (layerTowerEmb (B := B) (C := C) (G := G) k)
+  | 0, z, _ => ⟨z, rfl⟩
+  | k + 1, z, hz => by
+    induction z using Fin.addCases with
+    | left z =>
+      have hz' : (layerTower B C G k).S.toCellScheme.scope z ≠ univ := by
+        change ((layerTower B C G k).S.appendFullCellsScheme (k + 2) _).scope
+          (Fin.castAdd _ z) ≠ univ at hz
+        rwa [appendFullCellsScheme_scope_castAdd] at hz
+      obtain ⟨t, rfl⟩ := mem_range_layerTowerEmb k z hz'
+      exact ⟨t, rfl⟩
+    | right i =>
+      exfalso
+      change ((layerTower B C G k).S.appendFullCellsScheme (k + 2) _).scope
+        (Fin.natAdd _ i) ≠ univ at hz
+      exact hz (appendFullCellsScheme_scope_natAdd _ _ _ i)
+
+/-- **The tower reads the base as the base does.** -/
+theorem rowAt_layerTowerEmb (z x : Fin B.S.card) : ∀ k,
+    (layerTower B C G k).S.rowAt (layerTowerEmb (B := B) (C := C) (G := G) k z)
+      (layerTowerEmb k x) = B.S.rowAt z x
+  | 0 => rfl
+  | k + 1 => by
+    change ((layerTower B C G k).S.catalogueLayer (k + 2) (fun d ↦ d) (G (k + 2))
+      ((layerTower B C G k).entries (C (k + 2))) (layerTower B C G k).not_le).rowAt
+        (Fin.castAdd _ (layerTowerEmb k z)) (Fin.castAdd _ (layerTowerEmb k x)) = _
+    rw [rowAt_appendFullCells_castAdd]
+    exact rowAt_layerTowerEmb z x k
+
 end VaughtConjecture.Scheme
