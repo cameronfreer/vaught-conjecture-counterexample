@@ -19,7 +19,7 @@ private context and the donor as faces, in which the LOW layer over `L` is a gra
 along a cell map `ψ` (`Scheme.IsGradePrefix`), the cells of the two faces being the images of the
 old cells.  The completed display (`CompletionBelowFullGrade.display` over
 `ProfileTower.lowCompletion`) is such a `D` (`ProfileTower.isGradePrefix_lowDisplay`,
-`ProfileTower.faceCell_left_lowDisplay`, `ProfileTower.faceCell_right_lowDisplay`).
+`ProfileTower.faceCell_lowDisplay`).
 
 **The controllers of `D`** are the images of the controllers of the LOW layer
 (`ProfileTower.exists_ctrl_eq`): every cell of `D` of grade at most `K` is an image, and the
@@ -39,8 +39,9 @@ old cells the section is literal, so the entry reads `P` there
 * `rowAt_controller`: the agreement height in the grid at `K` of two entries, over all fields of
   `D`, is that of the two profiles over the profile fields
   (`ProfileTower.agreementHeight_lowFields`): the old cells carry the profiles literally
-  (`Lvl.Good.literal`), and the sections of profiles agreeing capped at a grid member agree
-  capped there (`Lvl.Good.capAgree`; grid members are self-visible and short);
+  (`ProfileTower.Lvl.Good.literal`), and the sections of profiles agreeing capped at a grid
+  member agree capped there (`ProfileTower.Lvl.Good.capAgree`; grid members are self-visible and
+  short);
 * `isLowAt`: the donor maximum of the entry over all proper donor cells bounds the donor maximum
   of the profile over the proper donor cells of grade at most `K`, and the donor tops, the owner,
   the lost top and the cutoff are read literally (`ProfileTower.isLowAt_lowFields`);
