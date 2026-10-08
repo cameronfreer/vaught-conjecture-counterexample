@@ -31,8 +31,24 @@ grade is bot-keeping (`CompletionBelowFullGrade.BotKeeping`) when its labelling 
   the completion of a bot-keeping completion of `BottomRootCounterexample.seedFour` is a selective
   coface of the context with root cells labelled `⊥`.
 
-The completion below the full grade at every arity (the profile tower) is not on this branch; its
-bot-keeping is not compiled here.
+* **A completion whose scheme is a field layer at the top grade**
+  (`CompletionBelowFullGrade.exists_botKeeping_of_eq_fieldLayer`, compiled): if `F₀.scheme` is
+  `S.fieldLayer (m + 1) hS` and `S` has a bot-keeping lawful section literal on the amalgam, the
+  relabelled `F₀` is a bot-keeping completion.
+
+The completion below the full grade at every arity (the profile tower,
+`Seed.nonempty_completionBelowFullGrade` on `main`) is not on this branch.  Its scheme is the field
+layer at the grade `m + 1` over the good level at the grade `m` (`ProfileTower.Lvl.top`), so by
+`CompletionBelowFullGrade.exists_botKeeping_of_eq_fieldLayer` it gives a bot-keeping completion
+from the named statement **level bot-keeping** (prospective, about `main`): the good level
+`ProfileTower.lvl I (m - 2)` at the grade `m` has a lawful section, literal on the amalgam, that is
+bot-keeping.  The candidate is the section operator at the amalgam labelling: at the cell of a
+profile `R` of the layer at a grade `j`, it is a composite of upper decoders (which send `⊥` to
+`⊥`) applied to the agreement height of a code of the labelling with `R`, and the code has the
+bottoms of the labelling at the cells of grade at most `j`; so a value other than `⊥` makes `R`
+`⊥` where the labelling is, and the row of that cell at an old cell is `R` there (the section is
+literal at the old cells).  Argued, not formalized; the base level (the tower section at the grade
+`2`) and lawfulness at the old cells of grade `m + 1` are to be checked on `main`.
 
 ## Placement
 
@@ -202,6 +218,48 @@ theorem exists_botKeeping_of_le_two (hm : m ≤ 2) :
   I.exists_botKeeping_of_towerInvariant (I.towerInvariant_of_le_two hm (m + 1) le_rfl)
 
 end Seed
+
+namespace CompletionBelowFullGrade
+
+variable {α : Ordinal.{u}} {m : ℕ} {I : Seed.{u} α m}
+
+/-- **A completion whose scheme is a field layer at the top grade is bot-keeping after
+relabelling**, as soon as the scheme below has a bot-keeping lawful section literal on the
+amalgam: the section extends through the layer (`Scheme.exists_botKeeping_fieldLayer`), and the
+old cells, of proper scope, lie below the layer. -/
+theorem exists_botKeeping_of_eq_fieldLayer (F₀ : CompletionBelowFullGrade I)
+    {S : Scheme.{u} (m + 2)}
+    {hS : ∀ d, ¬ ((univ : Finset (Fin (m + 2))), m + 1) ≤ S.toCellScheme.gradedIndex d}
+    (hsch : F₀.scheme = S.fieldLayer (m + 1) hS) {p : Fin S.card → Label.{u}}
+    (hp : S.rows.IsLawful p) (hpb : S.BotKeeping p)
+    (hpe : ∀ d (x : Fin S.card), (F₀.embed d : ℕ) = x → p x = I.amalgam.label d) :
+    ∃ F : CompletionBelowFullGrade I, F.BotKeeping := by
+  obtain ⟨r, hr, hrp, hrb⟩ := Scheme.exists_botKeeping_fieldLayer (hS := hS) hp hpb
+  obtain ⟨scheme, embed, hle, hsc, hrows, hrange, hfaces, hlegal, label, hlaw, hlab⟩ := F₀
+  change scheme = _ at hsch
+  subst hsch
+  refine ⟨⟨_, embed, hle, hsc, hrows, hrange, hfaces, hlegal, r, hr, fun d ↦ ?_⟩, hrb⟩
+  have hne : I.amalgam.toCellScheme.scope d ≠ univ := by
+    rcases I.tower_grade_le_or 0 d with h | h
+    · have := I.amalgam.isWellFormed.isWellFormed.grade_pos d
+      exact absurd h (by change ¬ I.amalgam.toCellScheme.grade d ≤ 0; omega)
+    · exact h
+  by_cases hlt : (embed d : ℕ) < S.card
+  · have he : embed d = Fin.castAdd _ ⟨embed d, hlt⟩ := Fin.ext rfl
+    rw [he, hrp]
+    exact hpe d _ rfl
+  · exfalso
+    have hk : (embed d : ℕ) - S.card < (S.catalogue (m + 1)).card := by
+      have := (embed d).isLt
+      change (embed d : ℕ) < S.card + (S.catalogue (m + 1)).card at this
+      omega
+    have he : embed d = Fin.natAdd _ ⟨(embed d : ℕ) - S.card, hk⟩ :=
+      Fin.ext (by simp only [Fin.val_natAdd]; omega)
+    refine hne ((hsc d).symm.trans ?_)
+    rw [he]
+    exact Scheme.appendFullCellsScheme_scope_natAdd S (m + 1) _ _
+
+end CompletionBelowFullGrade
 
 /-! ### The selective coface from a bot-keeping completion -/
 

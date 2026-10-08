@@ -40,7 +40,10 @@ every seed has a bot-keeping completion below the full grade
 **Status.**  `hcomp` is compiled at the arities `m ≤ 2` (`Seed.exists_botKeeping_of_le_two`), and
 under the lifting invariant at the top grade (`Seed.exists_botKeeping_of_towerInvariant`).  At
 every arity it is not compiled on this branch (prospective): the completion at every arity (the
-profile tower, `Seed.nonempty_completionBelowFullGrade` on `main`) is not on this branch.
+profile tower, `Seed.nonempty_completionBelowFullGrade` on `main`) is not on this branch.  It
+follows from level bot-keeping of the profile tower through
+`CompletionBelowFullGrade.exists_botKeeping_of_eq_fieldLayer` (see
+`VaughtConjecture.Continuation.TiedRootCapBotKeeping`).
 
 ## Placement
 
