@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Continuation.GrowthRecognition
+import VaughtConjecture.Extension.ProfileTowerCompletion
 import VaughtConjecture.Extension.TowerCatalogueLevel
 import VaughtConjecture.MainTheorem.GrowthCatalogueStep
 
@@ -142,6 +143,91 @@ theorem Lvl.GoodOn.admittedNext {g : ℕ} {L : Lvl I g}
         ⟨erase_subset _ _, le_rfl⟩) :
     (L.catNext (AdmittedCat hleft hdon Q)).GoodOn (GrowthAdmitsOnClass hleft hdon Q) :=
   hL.catNext hgm (fun _ h ↦ h) (fun _ hP _ ↦ hP.code hN hdN href hmk) admittedCat_bot hlift
+
+/-- **The admitted profiles are closed under the orbit code** at a grade at least the
+threshold. -/
+theorem GrowthAdmitsOnClass.orbitCode {W : Prof I} (h : GrowthAdmitsOnClass hleft hdon Q W)
+    {k : ℕ} (hk : Q.threshold ≤ k)
+    (href : ∀ j ∈ Q.exacts, Q.offset j ≤ Q.threshold) (hR : Q.markerOffset ≤ Q.threshold) :
+    GrowthAdmitsOnClass hleft hdon Q (orbitCode k W) :=
+  h.map (monotone_orbitMap k _) (fun _ ↦ orbitMap_eq_bot_iff)
+    (fun i hi x ↦ (isWitness_orbitMap k W).visibilityReplace_comm x _
+      (by rw [stepSuppressor_of_le hk]; exact le_top) i hi) href hR
+
+/-- The label of the amalgam at a cell of the context is the label of the context. -/
+theorem amalgam_label_ctxCell (x : Fin t'.card) :
+    I.amalgam.label (ctxCell hleft x) = t'.label x := by
+  subst hleft
+  exact StageType.label_faceCell I.restrictFace_left x
+
+/-- The label of the amalgam at a cell of the donor is the label of the donor. -/
+theorem amalgam_label_donCell (j : Fin d.card) : I.amalgam.label (donCell hdon j) = d.label j :=
+  StageType.label_faceCell hdon j
+
+/-- **The glued labels of the amalgam are admitted**, for requests read exactly at the labels of
+the context. -/
+theorem growthAdmitsOnClass_label (hex : ∀ j ℓ, Q.CorrectAt t'.label j ℓ ↔ ℓ = d.label j) :
+    GrowthAdmitsOnClass hleft hdon Q I.amalgam.label := by
+  intro _ _ j
+  have h1 : (fun x ↦ I.amalgam.label (ctxCell hleft x)) = t'.label :=
+    funext amalgam_label_ctxCell
+  rw [h1]
+  exact (hex j _).mpr (amalgam_label_donCell j)
+
+/-- **The admitted levels above a level good on the admitted profiles**, at grades at least the
+threshold, are good on the admitted profiles up to the grade `m`, given the lifts of every layer
+from the two coatoms (`ProfileTower.Lvl.GoodOn.catIter`). -/
+theorem Lvl.GoodOn.admittedIter {g' : ℕ} {N : Lvl I g'}
+    (hN : N.GoodOn (GrowthAdmitsOnClass hleft hdon Q)) (hthr : Q.threshold ≤ g' + 1)
+    (hdN : ∀ j, d.toCellScheme.grade j ≤ Q.threshold)
+    (href : ∀ j ∈ Q.exacts,
+      Q.ref j ∈ t'.toCellScheme.below (t'.toCellScheme.gradedIndex Q.cap) ∧
+        Q.offset j ≤ Q.threshold)
+    (hmk : Q.marker ∈ t'.toCellScheme.below (t'.toCellScheme.gradedIndex Q.cap) ∧
+      Q.markerOffset ≤ Q.threshold)
+    (hlift : ∀ j, g' + j + 1 ≤ m → ∀ x ∈ (Pts : Finset (Fin (m + 2))),
+      ((N.catIter (AdmittedCat hleft hdon Q) j).catS
+        (predCat I (g' + j + 1) (AdmittedCat hleft hdon Q))).rows.CappedLift
+        (X := (univ.erase x, g' + j + 1)) (Y := ((univ : Finset (Fin (m + 2))), g' + j + 1))
+        ⟨erase_subset _ _, le_rfl⟩) :
+    ∀ j, g' + j ≤ m →
+      (N.catIter (AdmittedCat hleft hdon Q) j).GoodOn (GrowthAdmitsOnClass hleft hdon Q) :=
+  hN.catIter (fun _ h ↦ h) (fun _ hk _ hP _ ↦ hP.code (by omega) hdN href hmk) admittedCat_bot
+    hlift
+
+/-- **The completion below the full grade of the admitted construction**: over a level good on
+the admitted profiles at a grade `g'` with the threshold at most `g' + 1`, the admitted levels up to
+the grade `m = g' + j` (`j ≥ 1`) and the top layer, given the lifts of every layer from the two
+coatoms and the bottom step at the top (`ProfileTower.Lvl.TopBotStep`); the last level extends at
+`⊥` on the admitted profiles (`ProfileTower.Lvl.GoodOn.hasBotExtensionOn_catNext`), and the glued
+labels of the amalgam are admitted (`ProfileTower.growthAdmitsOnClass_label`). -/
+theorem Lvl.GoodOn.nonempty_admittedCompletion {g' : ℕ} {N : Lvl I g'}
+    (hN : N.GoodOn (GrowthAdmitsOnClass hleft hdon Q)) (hthr : Q.threshold ≤ g' + 1)
+    (hex : ∀ j ℓ, Q.CorrectAt t'.label j ℓ ↔ ℓ = d.label j)
+    (hdN : ∀ j, d.toCellScheme.grade j ≤ Q.threshold)
+    (href : ∀ j ∈ Q.exacts,
+      Q.ref j ∈ t'.toCellScheme.below (t'.toCellScheme.gradedIndex Q.cap) ∧
+        Q.offset j ≤ Q.threshold)
+    (hmk : Q.marker ∈ t'.toCellScheme.below (t'.toCellScheme.gradedIndex Q.cap) ∧
+      Q.markerOffset ≤ Q.threshold)
+    {j : ℕ} (hj : g' + (j + 1) = m) (hm : 1 ≤ m)
+    (hlift : ∀ i, g' + i + 1 ≤ m → ∀ x ∈ (Pts : Finset (Fin (m + 2))),
+      ((N.catIter (AdmittedCat hleft hdon Q) i).catS
+        (predCat I (g' + i + 1) (AdmittedCat hleft hdon Q))).rows.CappedLift
+        (X := (univ.erase x, g' + i + 1)) (Y := ((univ : Finset (Fin (m + 2))), g' + i + 1))
+        ⟨erase_subset _ _, le_rfl⟩)
+    (hstep : ∀ M : Lvl I m, M.GoodOn (GrowthAdmitsOnClass hleft hdon Q) →
+      M.TopBotStep (GrowthAdmitsOnClass hleft hdon Q)) :
+    Nonempty (CompletionBelowFullGrade I) := by
+  have hgood := hN.admittedIter hthr hdN href hmk hlift
+  have hlast := hgood (j + 1) (by omega)
+  have hprev := hgood j (by omega)
+  have hbot : (N.catIter (AdmittedCat hleft hdon Q) (j + 1)).HasBotExtensionOn
+      (GrowthAdmitsOnClass hleft hdon Q) :=
+    hprev.hasBotExtensionOn_catNext (fun _ h ↦ h)
+      (fun _ hW _ ↦ hW.orbitCode (by omega) (fun i hi ↦ (href i hi).2) hmk.2)
+  subst hj
+  exact ⟨hlast.completion_of_step hbot (hstep _ hlast) (growthAdmitsOnClass_label hex) hm⟩
 
 end ProfileTower
 

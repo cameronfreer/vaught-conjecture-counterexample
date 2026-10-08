@@ -224,4 +224,66 @@ theorem Lvl.GoodOn.catNext (hL : L.GoodOn S) (hgm : g + 1 ≤ m) (hAS : ∀ P, A
     · obtain ⟨i₀, -⟩ := exists_equivFin_eq (C := 𝒞) (bot_mem_predCat hA0)
       exact ⟨Fin.natAdd _ i₀, Scheme.appendFullCellsScheme_gradedIndex_natAdd _ _ _ i₀⟩
 
+/-- **The catalogue level extends at `⊥` on `S'`**: a labelling lawful below both coatoms at the
+grade `g + 1` whose amalgam profile `W` lies in `S'` is extended below the full face through the
+row of the orbit code of `W` with the cutoff `⊥`
+(`ProfileTower.Lvl.GoodOn.exists_extension_cat_bot`), which lies in the catalogue. -/
+theorem Lvl.GoodOn.hasBotExtensionOn_catNext (hL : L.GoodOn S) (hAS : ∀ P, A P → S (camal P))
+    (hcode : ∀ W, S' W → IsCutLawful I (g + 1) W → A (withCut (orbitCode (g + 1) W) ⊥)) :
+    (L.catNext A).HasBotExtensionOn S' := by
+  intro w hwC hwD hwS
+  have hCsub : ∀ P ∈ 𝒞, (∀ f, P f ∈ codeGrid (g + 1) (bound I)) ∧
+      IsCutLawful I (g + 1) (camal P) := fun P hP ↦ ⟨(mem_predCat.mp hP).1, (mem_predCat.mp hP).2.1⟩
+  have hCS : ∀ P ∈ 𝒞, S (camal P) := fun P hP ↦ hAS P (mem_predCat.mp hP).2.2.2
+  let v : Fin (L.S.card + (𝒞).card) → Label.{u} := w
+  set W : Prof I := fun d ↦ v (Fin.castAdd _ (L.embed d)) with hW
+  have hcut (z : Fin (m + 2)) (hz : univ.erase z ≠ univ)
+      (hwz : (L.catS 𝒞).rows.IsLawfulBelow (univ.erase z, g + 1) fun d ↦ v d) :
+      I.amalgam.rows.IsLawfulBelow (univ.erase z, g + 1) fun d ↦ W d := by
+    have h1 := (L.isLawfulBelow_catS_iff (C := 𝒞) (X := (univ.erase z, g + 1))
+      (fun h ↦ hz (univ_subset_iff.mp h.1))).mp hwz
+    exact (hL.isLawfulBelow_old_iff (w := fun e ↦ v (Fin.castAdd _ e)) hz).mp h1
+  have hWc : IsCutLawful I (g + 1) W :=
+    ⟨hcut _ (Seed.ne_univ_erase _) hwC, hcut _ (Seed.ne_univ_erase _) hwD⟩
+  have hQC : withCut (orbitCode (g + 1) W) ⊥ ∈ 𝒞 :=
+    mem_predCat_of hWc (Finset.mem_insert_self _ _) (hcode W hwS hWc)
+  obtain ⟨q, hq, hqW⟩ := hL.exists_extension_cat_bot hCsub hCS hQC
+  refine ⟨q, hq, fun z hz ↦ ?_⟩
+  obtain ⟨z, hzb⟩ := z
+  change (L.catS 𝒞).toCellScheme.scope z ≠ univ at hz
+  change z ∈ (L.catS 𝒞).toCellScheme.below ((univ : Finset (Fin (m + 2))), g + 1) at hzb
+  change q ⟨z, hzb⟩ = v z
+  induction z using Fin.addCases with
+  | right i => exact absurd (Scheme.appendFullCellsScheme_scope_natAdd _ _ _ i) hz
+  | left e =>
+    have he : L.S.toCellScheme.scope e ≠ univ := by
+      rwa [Scheme.appendFullCellsScheme_scope_castAdd] at hz
+    obtain ⟨d, rfl⟩ := hL.mem_range e he
+    have hd : I.amalgam.toCellScheme.grade d ≤ g + 1 := by
+      have := hzb.2
+      rwa [Scheme.appendFullCellsScheme_gradedIndex_castAdd, hL.gradedIndex_embed] at this
+    exact hqW d hd
+
+variable (A) in
+/-- **The catalogue levels above a level**: `j` catalogue layers of `A`. -/
+noncomputable def Lvl.catIter {g' : ℕ} (N : Lvl I g') : (j : ℕ) → Lvl I (g' + j)
+  | 0 => N
+  | j + 1 => (N.catIter j).catNext A
+
+/-- **The catalogue levels above a level good on `S` are good on `S`**, up to the grade `m`, when
+the catalogues lie in `S`, the codes of the profiles of `S` with the cutoff `⊥` satisfy `A` at every
+grade above, `A` holds at the bottom profile, and every layer lifts from the two coatoms. -/
+theorem Lvl.GoodOn.catIter {g' : ℕ} {N : Lvl I g'} (hN : N.GoodOn S)
+    (hAS : ∀ P, A P → S (camal P))
+    (hcode : ∀ k, g' < k → ∀ P, S P → IsCutLawful I k P → A (withCut (code k P) ⊥))
+    (hA0 : A fun _ ↦ ⊥)
+    (hlift : ∀ j, g' + j + 1 ≤ m → ∀ x ∈ (Pts : Finset (Fin (m + 2))),
+      ((N.catIter A j).catS (predCat I (g' + j + 1) A)).rows.CappedLift
+        (X := (univ.erase x, g' + j + 1)) (Y := ((univ : Finset (Fin (m + 2))), g' + j + 1))
+        ⟨erase_subset _ _, le_rfl⟩) :
+    ∀ j, g' + j ≤ m → (N.catIter A j).GoodOn S
+  | 0, _ => hN
+  | j + 1, h => (hN.catIter hAS hcode hA0 hlift j (by omega)).catNext (by omega) hAS
+      (fun P hP hPc ↦ hcode _ (by omega) P hP hPc) hA0 (hlift j (by omega))
+
 end VaughtConjecture.ProfileTower

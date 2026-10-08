@@ -145,6 +145,15 @@ structure Lvl.GoodOn (L : Lvl I g) : Prop where
 
 variable {S : Prof I → Prop}
 
+variable (S) in
+/-- **Extension at the cap `⊥` below the full face on `S`**: as `ProfileTower.Lvl.HasBotExtension`,
+for the labellings lawful below both coatoms whose amalgam profile lies in `S`. -/
+def Lvl.HasBotExtensionOn (L : Lvl I g) : Prop :=
+  ∀ w : Fin L.S.card → Label.{u}, L.S.rows.IsLawfulBelow (coatC, g) (fun z ↦ w z) →
+    L.S.rows.IsLawfulBelow (coatD, g) (fun z ↦ w z) → S (fun d ↦ w (L.embed d)) →
+    ∃ r : L.S.toCellScheme.below ((univ : Finset (Fin (m + 2))), g) → Label.{u},
+      L.S.rows.IsLawfulBelow (univ, g) r ∧ ∀ z, L.S.toCellScheme.scope z.1 ≠ univ → r z = w z
+
 /-- A good level is good on every set of profiles. -/
 theorem Lvl.Good.goodOn (hL : L.Good) (S : Prof I → Prop) : L.GoodOn S :=
   ⟨hL.lowerEmb, hL.scope_embed, hL.comap_rows, hL.mem_range, hL.faces, hL.wf, hL.coded,
@@ -173,6 +182,13 @@ theorem Lvl.GoodOn.isLawfulBelow_old_iff (hL : L.GoodOn S) {X : Finset (Fin (m +
   have h := hL.isSourcePrefix hX
   rw [← h.isLawfulBelow_iff le_rfl, hL.comap_rows]
   rfl
+
+theorem Lvl.GoodOn.cappedLift_old (hL : L.GoodOn S) {X Y : Finset (Fin (m + 2)) × ℕ}
+    (hX : X ∈ I.amalgam.toCellScheme.gradedFaces) (hY : Y ∈ I.amalgam.toCellScheme.gradedFaces)
+    (hY1 : Y.1 ≠ univ) (h : X ≤ Y) : L.S.rows.CappedLift h := by
+  have hP := hL.isSourcePrefix hY1
+  rw [← hP.cappedLift_iff h le_rfl, hL.comap_rows]
+  exact I.isBountiful hX hY h
 
 theorem Lvl.GoodOn.mem_range_of_lt (hL : L.GoodOn S) {z : Fin L.S.card}
     (hz : g < L.S.toCellScheme.grade z) : z ∈ Set.range L.embed :=
