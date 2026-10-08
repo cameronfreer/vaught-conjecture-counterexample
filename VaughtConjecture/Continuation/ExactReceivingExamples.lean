@@ -41,24 +41,36 @@ open Finset StageType Realization
 
 namespace ExactReceivingExamples
 
-/-- The stage type at `ω` on one point with no cells. -/
-private def celllessType : StageType.{0} Ordinal.omega0 1 :=
+/-- The stage type on one point with no cells, at any stage and universe. -/
+def celllessTypeAt (α : Ordinal.{u}) : StageType.{u} α 1 :=
   ⟨cellless, fun _ ↦ ⊥, isLegalBelowFullGrade_cellless.isWellFormed,
     isLegalBelowFullGrade_cellless.isCoded, CellScheme.Rows.isLawful_const_bot,
     fun _ ↦ Label.atStage_bot⟩
 
+/-- The one-point type whose only cell is an apex of grade `1`, labelled `⊤`, at any stage. -/
+noncomputable def apexPointAt (α : Ordinal.{u}) : StageType.{u} α 1 :=
+  (celllessTypeAt α).addApex isLegalBelowFullGrade_cellless one_pos
+
+/-- The apex point is legal at every stage. -/
+theorem isLegal_apexPointAt (α : Ordinal.{u}) : (apexPointAt α).IsLegal :=
+  isLegal_addApex _ one_pos
+
+/-- The apex point is not top-free at any stage: its cell is labelled `⊤`. -/
+theorem not_isTopFree_apexPointAt (α : Ordinal.{u}) : ¬ (apexPointAt α).IsTopFree :=
+  fun h ↦ h (Fin.last _) (addApex_label_last _ one_pos)
+
 /-- **The apex point**: the stage type at `ω` on one point whose only cell is an apex of grade
 `1`, labelled `⊤`. -/
 noncomputable def apexPoint : StageType.{0} Ordinal.omega0 1 :=
-  celllessType.addApex isLegalBelowFullGrade_cellless one_pos
+  apexPointAt Ordinal.omega0
 
 /-- The apex point is legal. -/
 theorem isLegal_apexPoint : apexPoint.IsLegal :=
-  isLegal_addApex _ one_pos
+  isLegal_apexPointAt Ordinal.omega0
 
 /-- The apex point is not top-free: its cell is labelled `⊤`. -/
 theorem not_isTopFree_apexPoint : ¬ apexPoint.IsTopFree :=
-  fun h ↦ h (Fin.last _) (addApex_label_last _ one_pos)
+  not_isTopFree_apexPointAt Ordinal.omega0
 
 /-- The top grade of the apex point is at most `1`. -/
 theorem topGrade_apexPoint_le : apexPoint.topGrade ≤ 1 :=

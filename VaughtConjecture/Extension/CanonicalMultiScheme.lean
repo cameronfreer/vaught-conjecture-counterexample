@@ -102,8 +102,12 @@ give the step exactly when that ordered-layer step holds, an exact reformulation
 oriented rows give none at `seedHG`.  A seed *has a step of the canonical multi-layer scheme*
 (`Seed.HasCanonicalMultiStep`) when some copy rows give the step; it then has a completion below
 the full grade (`Seed.HasCanonicalMultiStep.nonempty_completionBelowFullGrade`).  Whether every
-seed has one is open; for instance rows under which each copy of `(B, k)` reads the parameters of
-its own coatom above those of the other (opposite orientations for the two copies of a grade).
+seed has one is open.  The own-side rows, under which each copy of `(B, k)` reads the cells of its
+own coatom above those of the other (opposite orientations for the two copies of a grade), are not
+such a choice: every step of the family at `seedHG`, `seedL` and `seedLM` has a copy forced to read
+the other way, so the own-side rows give those seeds no step
+(`VaughtConjecture.Extension.CanonicalMultiSchemeOwnSide`,
+`VaughtConjecture.Extension.CanonicalMultiSchemeOwnSideExamples`).
 
 ## Placement
 
@@ -127,6 +131,12 @@ open Finset Label CellScheme
 
 /-- The coatom of the `i`-th copy at each grade: `C` for `i = 0`, `D` for `i = 1`. -/
 def copyCoatom (i : Fin 2) : Finset (Fin 5) := if i = 0 then coatomC else coatomD
+
+/-- The coatom of the first copy is `C`. -/
+@[simp] theorem copyCoatom_zero : copyCoatom 0 = coatomC := rfl
+
+/-- The coatom of the second copy is `D`. -/
+@[simp] theorem copyCoatom_one : copyCoatom 1 = coatomD := rfl
 
 /-- The coatom of a copy is `C` or `D`. -/
 theorem copyCoatom_eq (i : Fin 2) : copyCoatom i = coatomC ∨ copyCoatom i = coatomD := by
@@ -777,5 +787,18 @@ theorem nonempty_completionBelowFullGrade_of_canonicalProductBelowTop (hI : I.Ha
         I.amalgam.rows.IsLawfulBelow (coatomD, (k : ℕ) + 1) (fun d ↦ R k i d)) :
     Nonempty (CompletionBelowFullGrade I) :=
   (canonicalMultiStep_of_productBelowTop hI hR3 hP hcode hpair).nonempty_completionBelowFullGrade
+
+/-- A multi-layer step lifts capped from each full coatom graded face `(copyCoatom i, k)` into
+`(univ, k)`. -/
+theorem MultiLayerStep.cappedLift_copyCoatom {M : Fin 4 → ℕ} {r : MultiRows I M}
+    (h : I.MultiLayerStep M r) (i : Fin 2) {k : ℕ} (hk1 : 1 ≤ k) (hk4 : k ≤ 4) :
+    (multiLayerScheme I M r).rows.CappedLift (X := (copyCoatom i, k))
+      (Y := ((univ : Finset (Fin 5)), k)) ⟨subset_univ _, le_rfl⟩ := by
+  have key : ∀ B : Finset (Fin 5), B = coatomC ∨ B = coatomD →
+      (multiLayerScheme I M r).rows.CappedLift (X := (B, k))
+        (Y := ((univ : Finset (Fin 5)), k)) ⟨subset_univ _, le_rfl⟩ := by
+    rintro B (rfl | rfl)
+    exacts [h.cappedLift_left k hk1 hk4, h.cappedLift_right k hk1 hk4]
+  exact key _ (copyCoatom_eq i)
 
 end VaughtConjecture.Seed

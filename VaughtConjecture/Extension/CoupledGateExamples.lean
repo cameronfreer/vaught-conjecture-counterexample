@@ -15,17 +15,18 @@ import VaughtConjecture.Extension.GatedExtensionCounterexample
 Roadmap, Layer 3, 3.2 (the ordinary construction (R1): the display and its gate) and 3.4, row
 (R1); the coupled gated extensions of `VaughtConjecture.Extension.GatedExtension`.
 
-**The theorem** (`exists_coupledGatedExtension_comap_g₁`).  The coupled gated pinned
-extension property (`StageType.HasCoupledGatedPinnedExtensions`) holds at the input at which the
-gated pinned extension property fails (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`):
-the private type `GatedExtensionCounterexample.P α`, the empty root, the donor `P α|{0}`, whose one
-cell is labelled `⊥`, and the cap `3`.  So the obstruction of
+**The theorem** (`exists_coupledGatedExtension_comap_g₁`).  The coupled gated pinned extension
+property (`StageType.HasCoupledGatedPinnedExtensions`) holds at the input at which the gated pinned
+extension property fails (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`): the private
+type `GatedExtensionCounterexample.P α`, the empty root, the donor `P α|{0}`, whose one cell is
+labelled `⊥`, and the cap `3`.  So the obstruction of
 `VaughtConjecture.Extension.GatedExtensionCounterexample`, which forces a twin of the gate not
-labelled `⊥` in every legal one-point extension of `P α`, does not refute the coupled property.
-Nothing more is proved about the coupled property, which is open: the donor labelled `⊤` on `P α`
-(which needs the cap of `P α` lowered in the lift from `({1, 2}, 2)`, the open point (CL) of
-`StageType.HasCoupledGatedPinnedExtensions`), donors with several new cells, and other private
-types are not compiled (prospective).
+labelled `⊥` in every legal one-point extension of `P α`, does not refute the coupled property.  The
+coupled property also holds at `P α` with the donor labelled `⊤`
+(`CoupledGateInstance.coupledGatedPinnedExtension_donor`, which needs the cap of `P α` lowered in
+the lift from `({1, 2}, 2)`), and it is false at every stage above `1`, at a private type with a
+proper anchor below the cap
+(`CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`).
 
 **The display `Q α`** (`Q`, `isLegal_Q`).  On three points with the interval plan, twelve cells;
 a cell is **dead** when its kind is `0`, **live** otherwise:
@@ -223,6 +224,17 @@ theorem reads_two_three : Reads ((2 : ℕ) : Label.{u}) ((3 : ℕ) : Label.{u}) 
       rw [min_eq_left (natCast_label_le.mpr (by decide : 2 ≤ 3))]; exact (min_top_right _).symm,
       (min_top_right _).symm⟩⟩
 
+/-- Capping both values at a label self-visible at `2` keeps the readings. -/
+theorem Reads.min {a b c : Label.{u}} (h : Reads a b) (hc : IsSelfVisible 2 c) :
+    Reads (min a c) (min b c) := by
+  obtain ⟨⟨g, σ, hw, ea, eb⟩, ⟨g', σ', hw', ec, ed⟩⟩ := h
+  refine ⟨⟨_, σ, hw.cap hc, ?_, ?_⟩, ⟨_, σ', hw'.cap hc, ?_, ?_⟩⟩ <;>
+    simp only [le_refl, ite_true]
+  · rw [ea, min_assoc]
+  · rw [← min_assoc (σ _) (g 2) c, ← eb, min_min_min_comm, min_self]
+  · rw [← min_assoc (σ' _) (g' 2) c, ← ec, min_min_min_comm, min_self]
+  · rw [ed, min_assoc]
+
 private theorem locality_lab (hr : Reads a b) (s : Fin 12) :
     TransformsTo (fun d : cells.below (cells.gradedIndex s) ↦ cells.grade d) (rows.row s)
       (fun d ↦ min (lab a b d) (lab a b s)) := by
@@ -356,7 +368,7 @@ theorem HasLiveEntries.reads_of_localities {R : cells.Rows.{u}} (hR : HasLiveEnt
 
 /-- In a linear order: from `x ≤ a`, `y ≤ b`, the two minimum equations, and the two
 dominations, `x = a` and `y = b`. -/
-private theorem eq_and_eq_of_min_eq {L : Type*} [LinearOrder L] {a b x y : L} (hxa : x ≤ a)
+theorem eq_and_eq_of_min_eq {L : Type*} [LinearOrder L] {a b x y : L} (hxa : x ≤ a)
     (hyb : y ≤ b)
     (h1 : min b x = min y x) (h2 : min a y = min x y) (ha : a ≤ x ∨ a ≤ y)
     (hb : b ≤ x ∨ b ≤ y) : x = a ∧ y = b := by
