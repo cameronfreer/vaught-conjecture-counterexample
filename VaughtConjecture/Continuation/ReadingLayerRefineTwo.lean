@@ -195,7 +195,9 @@ theorem refiningServerOne (I : Seed.{u} α 3) : RefiningServerOne I :=
 `TowerProfile.oneCell`.  Not proved here: the lexicographic construction does not apply
 (`Scheme.not_separates_of_agree_gridPoint`).  It holds under separating servers
 (`TowerProfile.refiningServerTwo_of_separating`) and fails at `seedL`
-(`TowerProfile.not_refiningServerTwo_seedL`). -/
+(`TowerProfile.not_refiningServerTwo_seedL`).  With the target capped by `V` at the cells of
+grade `2` at least `h` it holds at every seed (`TowerProfile.RefiningServerTwo'`,
+`TowerProfile.refiningServerTwo'`). -/
 def RefiningServerTwo (I : Seed.{u} α 3) : Prop :=
   ∀ e : Fin (scheme I).card → Label.{u}, (scheme I).rows.IsLawfulBelow (univ, 2) (fun d ↦ e d) →
     ∀ h : Label.{u}, IsSelfVisible 4 h → ⊥ < h → ∀ V : Label.{u}, IsSelfVisible 2 V → h ≤ V →
