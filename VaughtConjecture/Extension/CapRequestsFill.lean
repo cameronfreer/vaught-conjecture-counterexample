@@ -67,15 +67,14 @@ def IsDeadFace (I : Seed.{u} α m) (xp xd : Fin (m + 2)) : Prop :=
   ∀ d, I.amalgam.toCellScheme.scope d ⊆ univ.erase xp ∩ univ.erase xd →
     I.amalgam.rows.row d ⟨d, CellScheme.mem_below_gradedIndex _ d⟩ = ⊥
 
-/-- **A lawful labelling is `⊥` at a cell that reads itself as `⊥`.** -/
+/-- **A lawful labelling is `⊥` at a cell that reads itself as `⊥`**
+(`CellScheme.Rows.IsLawfulBelow.eq_bot_of_row_self_eq_bot`, on the amalgam). -/
 theorem eq_bot_of_row_self_eq_bot {X : Finset (Fin (m + 2)) × ℕ}
     {w : Fin I.amalgam.card → Label.{u}}
     (hw : I.amalgam.rows.IsLawfulBelow X fun d ↦ w d) {d : Fin I.amalgam.card}
     (hd : d ∈ I.amalgam.toCellScheme.below X)
-    (hdead : I.amalgam.rows.row d ⟨d, CellScheme.mem_below_gradedIndex _ d⟩ = ⊥) : w d = ⊥ := by
-  obtain ⟨-, hloc, -⟩ := Rows.isLawfulBelow_iff_forall.mp hw
-  have h := (hloc d hd).eq_bot (d := ⟨d, CellScheme.mem_below_gradedIndex _ d⟩) hdead
-  simpa using h
+    (hdead : I.amalgam.rows.row d ⟨d, CellScheme.mem_below_gradedIndex _ d⟩ = ⊥) : w d = ⊥ :=
+  hw.eq_bot_of_row_self_eq_bot hd hdead
 
 /-- **Over a dead common face, lawful labellings are `⊥` on it.** -/
 theorem eq_bot_of_isDeadFace {xp xd : Fin (m + 2)} (hdead : IsDeadFace I xp xd)
