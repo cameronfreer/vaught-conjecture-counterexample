@@ -72,6 +72,17 @@ theorem Lvl.catσ_of_le {P : Prof I} {z : Fin (L.S.card + (𝒞).card)}
       (L.Φcat 𝒞 (withCut (code (g + 1) P) ⊥) z) := by
   unfold Lvl.catσ; exact ite_eq_left hz
 
+/-- **The section of a catalogue level at its low cells sees the profile only up to its grade**:
+two profiles agreeing at the cells of grade at most `g + 1` have the same section at every cell of
+grade at most `g + 1` (the code and the upper decoder read the splice `hat I (g + 1) P` only).  So a
+table installed at cells of low grade is read by the controllers of the layer above only through the
+values of the profile at the cells of grade at most the grade of the level. -/
+theorem Lvl.catσ_eq_of_hat_eq {P P' : Prof I} (hPP : hat I (g + 1) P = hat I (g + 1) P')
+    {z : Fin (L.S.card + (𝒞).card)}
+    (hz : (L.S.appendFullCellsScheme (g + 1) (𝒞).card).grade z ≤ g + 1) :
+    L.catσ A P z = L.catσ A P' z := by
+  rw [L.catσ_of_le hz, L.catσ_of_le hz, hPP, code, code, hPP]
+
 theorem Lvl.GoodOn.exists_old_of_lt_cat (hL : L.GoodOn S) {z : Fin (L.S.card + (𝒞).card)}
     (hz : ¬ (L.S.appendFullCellsScheme (g + 1) (𝒞).card).grade z ≤ g + 1) :
     ∃ d, z = Fin.castAdd _ (L.embed d) := by

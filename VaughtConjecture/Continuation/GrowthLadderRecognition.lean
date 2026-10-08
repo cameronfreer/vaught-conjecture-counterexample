@@ -17,20 +17,24 @@ the rung itself and the code of the preceding rank at the preceding rung
 (`Label.ladderSource`, `Label.ladderSource_diag`).  Its controllers at the threshold are **ladder
 controllers** (`GrowthCarrier.IsLadderController`) when the row of each stores, on the context and
 donor cells, a state admitted on the exact class, reads the rungs of its member `a` as a table
-`F (i + 1)`, reads the top rung of `a` as itself, and every positive context value it stores below
-the cap is a value of the table.
+`F (i + 1)`, reads the top rung of `a` at least as high as the stored cap value, and every positive
+context value it stores below the cap is a value of the table.
 
 **Recognition from the ladder** (`GrowthCarrier.recognizes_of_ladder`).  Let `v` be a lawful
 section with a positive cap value and `u` a controller above the cap (availability).  The chart of
 the locality of `v` at `u`, capped at the cap, reads the stored state as `v` capped at its cap value
-(the controller read).  The top rung of the member of `u` is read as `u` itself, so `v` there is at
-least `v u > ⊥`; the predecessor steps of the ladder (`Label.eq_bot_of_ladder_predecessor`) make
+(the controller read).  The top rung of the member of `u` is read at least as high as the stored
+cap value, so `v` there is at least the cap value of `v`, positive; the predecessor steps of the
+ladder (`Label.eq_bot_of_ladder_predecessor`) make
 every rung positive, so the chart is positive at every value of the table, hence at every positive
 stored context value: it reflects `⊥`.  So the carrier recognizes admitted states
 (`GrowthCarrier.Recognizes`), and recovers by recognition (`GrowthCarrier.recovers_of_recognizes`).
 
 What remains of the construction is to install such a ladder and such controllers: the field
-ladder as cells of grade one, and the controllers' rows reading it as their members' tables.
+ladder as cells of grade one, and the controllers' rows reading it as their members' tables.  The
+controller's own diagonal (`agreementHeight R R` in a catalogue layer) is never compared with the
+ladder: the top rung need only dominate the stored cap value, which a table of the values of the
+stored state does (its top entry is the largest stored value).
 
 ## References
 
@@ -50,13 +54,14 @@ variable {α : Ordinal.{u}} {J n : ℕ} {t' : StageType.{u} α J} {D : Scheme.{u
 
 /-- A **ladder controller** for the member `a` with the table `F`: a cell whose row stores, on the
 context and donor cells, a state admitted on the exact class, reads the rung `r a i` as `F (i + 1)`
-and the top rung `r a (H - 1)` as itself, and stores below the cap only positive context values
-that are values of the table. -/
+and the top rung `r a (H - 1)` at least as high as the stored cap value, and stores below the cap
+only positive context values that are values of the table.  The controller's own diagonal is not
+read. -/
 def IsLadderController {Mb : Type*} {H : ℕ} (r : Mb → ℕ → Fin G.scheme.card)
     (u : Fin G.scheme.card) (a : Mb) (F : ℕ → Label.{u}) : Prop :=
   Q.AdmitsOnClass (fun x ↦ G.scheme.rowAt u (G.contextCell x))
       (fun j ↦ G.scheme.rowAt u (G.donorCell j)) ∧
-    G.scheme.rowAt u (r a (H - 1)) = G.scheme.rowAt u u ∧
+    G.scheme.rowAt u (G.contextCell Q.cap) ≤ G.scheme.rowAt u (r a (H - 1)) ∧
     (∀ i < H, G.scheme.rowAt u (r a i) = F (i + 1)) ∧
     ∀ x ∈ t'.toCellScheme.below (t'.toCellScheme.gradedIndex Q.cap),
       G.scheme.rowAt u (G.contextCell x) ≠ ⊥ →
@@ -137,13 +142,13 @@ theorem recognizes_of_ladder (hthr : 1 ≤ Q.threshold)
     congrArg Prod.snd (hr a i hi)
   have htop0 : v (r a (H - 1)) ≠ ⊥ := by
     have h := hq' (r a (H - 1)) ((hrg _ (by omega)).trans_le hthr)
-    rw [hrg _ (by omega), htop] at h
-    have h1 : v u ≤ min (v (r a (H - 1))) (v u) := by
-      rw [h, hvu]
-      exact min_le_min_left _ hgN
+    rw [hrg _ (by omega)] at h
+    have h1 : v c ≤ min (v (r a (H - 1))) (v u) := by
+      rw [h, hvc]
+      exact min_le_min (hwit.monotone htop) hgN
     intro h0
     rw [h0, min_eq_left bot_le, le_bot_iff] at h1
-    exact hvu0 h1
+    exact hc0 h1
   -- every rung of `a` is positive
   have hall1 (z : Fin G.scheme.card) (i : ℕ) (hi : i < H)
       (hz : z ∈ G.scheme.toCellScheme.below (G.scheme.toCellScheme.gradedIndex (r a i))) :
