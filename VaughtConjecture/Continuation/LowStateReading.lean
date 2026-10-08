@@ -411,7 +411,6 @@ theorem readsActualOn_sTower (hα : Order.IsSuccPrelimit α)
     have h1 := sTower_lo_le (L := L) (A := 𝒜) (lowNAll I) J Q ilo hilo hclt
     have h2 := upperDecoder_cutoff_le (K := g + 1) (k := g + J + 2) (by omega) (lowNAll I) P
     refine (hθw.monotone h1).trans_lt (h2.trans_lt ?_)
-    change visibilityReplace (g + 1) (g + 1) (donorMax (lowNAll I) P) < α
     rw [visibilityReplace_lt_iff hα]
     refine Finset.sup_lt_iff (WithBot.bot_lt_coe _) |>.mpr fun f hf ↦ ?_
     obtain ⟨t, ht, rfl⟩ := mem_image.mp hf
