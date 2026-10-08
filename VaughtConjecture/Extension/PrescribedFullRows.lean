@@ -78,20 +78,23 @@ and that compatibility give the coatom extension property
 (`StageType.HasPrescribedFullRows.hasCoatomExtensions`).  So under `HasPrescribedFullRows` the
 coatom extension property is equivalent to `StageType.HasCompatibleEmptyPrescription α`
 (`StageType.HasPrescribedFullRows.hasCoatomExtensions_iff`), a statement about lawful labellings of
-two faces alone, which is not proved here (it asks for coded readings of both faces with one
-transformation witness).  Conversely the coatom extension property gives a prescribed extension of
-the empty prescription at every input
+two faces alone (it asks for coded readings of both faces with one transformation witness), not
+proved here; it is compiled in this repository (theorem named) at every stage that is zero or a
+limit, from the coatom extension property (`StageType.hasCompatibleEmptyPrescription`, in
+`VaughtConjecture.MainTheorem.CoatomExtensionTheorem`).  Conversely the coatom extension property
+gives a prescribed extension of the empty prescription at every input
 (`StageType.HasCoatomExtensions.isPrescribedExtension_empty`).  So the empty prescription is the
 case of the core that the completion addresses: any general proof of `HasPrescribedFullRows`
-constructs, there, coatom extensions at every input where the empty prescription is compatible.
-The coatom extension property follows from completions below the full grade of every coatom seed
-(`StageType.HasCoatomExtensions.of_completionBelowFullGrade`), open as a statement about every
-seed at `m ≥ 3`; that construction
-is the first clause of a general proof that the existing completion results do not close.
+constructs, there, coatom extensions at every input where the empty prescription is compatible.  The
+coatom extension property follows from completions below the full grade of every coatom seed
+(`StageType.HasCoatomExtensions.of_completionBelowFullGrade`), compiled in this repository (theorem
+named) for every seed (`Seed.nonempty_completionBelowFullGrade`, `StageType.hasCoatomExtensions`);
+so that clause closes, through the completion and not through the core.
 
-**What is not claimed.**  Nothing here proves or refutes (R1)–(R4) or the completion.  The
-refutation concerns the form of the core compatible at the labels of `t'`.  That no clause of
-`Realization.IsModel` prescribes the row of a cell of full scope is argued, not compiled.
+**What is not claimed.**  Nothing here proves or refutes (R1)–(R4) or the completion (the completion
+is compiled elsewhere).  The refutation concerns the form of the core compatible at the labels of
+`t'`.  That no clause of `Realization.IsModel` prescribes the row of a cell of full scope is argued,
+not compiled.
 
 ## Placement
 

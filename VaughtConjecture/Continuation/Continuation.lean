@@ -242,9 +242,12 @@ theorem hasFiniteCutReceiving_stableCandidate (hξ : ξ < ω₁) (hR : R.IsModel
     exact ⟨u, hu, Q, mem_receivingFamily_of_capped hS hl, hQ⟩
 
 /-- **Output 3, conditionally**: the stable candidate of a model at `λ_ξ`, `ξ < ω₁`, that is not
-cover-hollow and has top-grade supremum `⊤` is a model at `λ_{ξ+1}`, conditional on (R4) (`hR4`)
-and the coface instances at `λ_{ξ+1}` (`hinst`), both still to be proved.  The model is stably
-lawful (`IsModel.isStablyLawful`); non-hollowness and unbounded growth enter only through (R4). -/
+cover-hollow and has top-grade supremum `⊤` is a model at `λ_{ξ+1}`, conditional on (R4) (`hR4`) and
+the coface instances at `λ_{ξ+1}` (`hinst`); (R4) is still to be proved, and the coface instances
+are compiled in this repository (theorem named) from the coatom extension property with apex
+(`StageType.HasNonemptyCofaceInstances.of_hasApexCoatomExtensions`,
+`StageType.hasApexCoatomExtensions_blockStage`).  The model is stably lawful
+(`IsModel.isStablyLawful`); non-hollowness and unbounded growth enter only through (R4). -/
 theorem isModel_stableCandidate (hξ : ξ < ω₁) (hR : R.IsModel) (hnh : ¬ R.IsCoverHollow)
     (hgrow : R.topGradeSup = ⊤) (hR4 : StableCappedReceiving.{w})
     (hinst : StageType.HasNonemptyCofaceInstances.{0} (blockStage (ξ + 1))) :
@@ -258,8 +261,8 @@ end Realization
 
 /-- **The continuation criterion from stable capped receiving**, conditional on (R4) (`hR4`) and the
 coface instances at every `λ_{ξ+1}` with `ξ < ω₁` (`hinst`; from the coatom extension property with
-apex there, which is compiled), the first still to be proved: the model expansion is the stable
-candidate, which is defined because every model is stably lawful. -/
+apex there, compiled in this repository (theorem named)), the first still to be proved: the model
+expansion is the stable candidate, which is defined because every model is stably lawful. -/
 theorem ContinuationCriterion.of_stableCappedReceiving (hR4 : StableCappedReceiving.{w})
     (hinst : ∀ ξ < ω₁, StageType.HasNonemptyCofaceInstances.{0} (blockStage (ξ + 1))) :
     ContinuationCriterion.{w} :=

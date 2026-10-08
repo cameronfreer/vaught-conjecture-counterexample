@@ -10,8 +10,9 @@ import VaughtConjecture.Extension.ProfileTower
 
 Roadmap, Layer 3, 3.1, (R6), checkpoint 2.7 (the completion below the full grade, at every arity
 `m ≥ 3`, `m = 3` included; `VaughtConjecture.Extension.TowerProfileCompletion` is the first
-instance, at `m = 3`, kept as a test, and `Seed.nonempty_completionBelowFullGrade` does not go
-through it).
+instance, at `m = 3`, kept as a test, and `Seed.nonempty_completionBelowFullGrade` does not import
+it; the generic extension from the boundary through a field layer,
+`Scheme.extendsFromBoundary_fieldLayer_of_fill`, is in `VaughtConjecture.Extension.FieldLayer`).
 
 Let `I` be a seed on `m + 2` points and `N` a good level at the grade `m` (a level satisfying the
 invariant `ProfileTower.Lvl.Good`, `VaughtConjecture.Extension.ProfileTower`) that extends at `⊥`

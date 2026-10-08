@@ -137,8 +137,10 @@ end Realization
 direction, still to be proved: a model at `λ_ξ`, for `ξ < ω₁`, that is not cover-hollow and has
 top-grade supremum `⊤` is the stage reduction of a model at `λ_{ξ+1}` on the same carrier.  It
 follows from (R4) of the table of Layer 3 with its empty-root base case and the apex coatom
-extension property at `λ_{ξ+1}`, neither of which is proved; the lawfulness of the stable
-candidate (output 1b) is proved for every model.  The converse is not part of the criterion. -/
+extension property at `λ_{ξ+1}`; (R4) is still to be proved, and the apex property is compiled in
+this repository (theorem named) (`StageType.hasApexCoatomExtensions_blockStage`; with it,
+`ContinuationCriterion.of_stableCappedReceiving'`); the lawfulness of the stable candidate (output
+1b) is proved for every model.  The converse is not part of the criterion. -/
 structure ContinuationCriterion : Prop where
   /-- A model that is not cover-hollow and has unbounded top-grade growth is the reduction of a
   model at the next block stage. -/
