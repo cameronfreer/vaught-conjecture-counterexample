@@ -88,22 +88,24 @@ noncomputable def rootCell (x : Fin t.card) : Fin (seed ht' hp htb).amalgam.card
 
 /-- **The donor raise over a gluing coface.**  If `tb` glues the lawful labellings of `p` and of
 `d` agreeing on the root, then at a grade `N ≤ k' ≤ k + 1` the donor raise in the class form holds
-as soon as every prescription not `⊥` at the cap has, on the root, a witness at a cap `θ`
-self-visible at `n + 1` and at least its marker value. -/
+as soon as every prescription not `⊥` at the cap and in the class has, on the root, a witness at
+a cap `θ` self-visible at `n + 1` and at least its marker value. -/
 theorem donorRaiseBotAtIn_of_gluesAt {c r : Fin t'.card} (hc : 0 < t'.toCellScheme.grade c)
     (hglue : GluesAt htb.2 htbd hpt hd.2) {k' : ℕ}
-    (hn : n < k') (hk' : k' ≤ k + 1)
+    (hn : n < k') (hk' : k' ≤ k + 1) (B : Set (Fin (seed ht' hp htb).amalgam.card))
     (hwit : ∀ f : ProfileTower.Prof (seed ht' hp htb),
       (seed ht' hp htb).amalgam.rows.IsLawfulBelow (univ.erase (Fin.last (k + 1)), k')
         (fun e ↦ f e) →
       f (requests ht' hp htb htbd c r hc).cap ≠ ⊥ →
+      (∀ e ∈ B, e ∈ (seed ht' hp htb).amalgam.toCellScheme.below
+        (univ.erase (Fin.last (k + 1)), k') → f e ≠ ⊥) →
       ∃ θ : Label.{u}, IsSelfVisible (n + 1) θ ∧
         (requests ht' hp htb htbd c r hc).markerValue f ≤ θ ∧
-        RootWitness hd.2 (fun x ↦ f (rootCell ht' hp htb hpt x)) θ) (B : Set _) :
+        RootWitness hd.2 (fun x ↦ f (rootCell ht' hp htb hpt x)) θ) :
     CapRequests.DonorRaiseBotAtIn (requests ht' hp htb htbd c r hc) B (Fin.last (k + 1))
       (Fin.castSucc (Fin.last k)) k' := by
   classical
-  intro f hf _ hcap _
+  intro f hf _ hcap hcl
   have hL := restrictFace_left_seed ht' hp htb
   have hR : restrictFace (Coatom.right k) (seed ht' hp htb).amalgam = some tb :=
     (seed ht' hp htb).restrictFace_right
@@ -135,7 +137,7 @@ theorem donorRaiseBotAtIn_of_gluesAt {c r : Fin t'.card} (hc : 0 < t'.toCellSche
     refine hwPle _ ?_
     rw [grade_faceCell]
     exact (t.grade_le x).trans hn.le
-  obtain ⟨θ, hθ, hmθ, K, hK, Φ, hΦ, hΦbot, hθΦ, hroot⟩ := hwit f hf hcap
+  obtain ⟨θ, hθ, hmθ, K, hK, Φ, hΦ, hΦbot, hθΦ, hroot⟩ := hwit f hf hcap hcl
   obtain ⟨vd, hvd, hvdψ, hvdtop⟩ := exists_isLawful_raise_top hd.1 hd.2 hψ hK hΦ hΦbot hθ hθΦ
     fun x ↦ by rw [hψf]; exact hroot x
   obtain ⟨w, hw, hwP', hwd⟩ := hglue wP hwP vd hvd fun i ↦ (hvdψ i).symm

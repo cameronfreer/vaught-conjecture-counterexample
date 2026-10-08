@@ -52,7 +52,8 @@ variable {α : Ordinal.{u}} {n k : ℕ}
 /-- **The donor raise over a gluing coface** (`H3.exists_gluingCoface`,
 `H3.donorRaiseBotAtIn_of_gluesAt`): some coface `tb` of `p` with face `d` has the donor raise in
 the class form at every grade `N ≤ k' ≤ k + 1` at which every prescription not `⊥` at the cap
-has a witness at the root at a cap self-visible at `n + 1` and at least its marker value. -/
+and in the class has a witness at the root at a cap self-visible at `n + 1` and at least its
+marker value. -/
 theorem exists_raiseCoface_gluing (hα : Order.IsSuccLimit α) {t' : StageType.{u} α (k + 1)}
     {p : StageType.{u} α k} (ht' : t'.IsLegal) (hp : restrictFace Fin.castSuccEmb t' = some p)
     {g : Fin n ↪ Fin k} {t : StageType.{u} α n}
@@ -66,6 +67,8 @@ theorem exists_raiseCoface_gluing (hα : Order.IsSuccLimit α) {t' : StageType.{
           (seed ht' hp htb).amalgam.rows.IsLawfulBelow (univ.erase (Fin.last (k + 1)), k')
             (fun e ↦ f e) →
           f (requests ht' hp htb htbd c r (by have := hctx.2.2.1; omega)).cap ≠ ⊥ →
+          (∀ e ∈ classCells ht' hp htb htbd, e ∈ (seed ht' hp htb).amalgam.toCellScheme.below
+            (univ.erase (Fin.last (k + 1)), k') → f e ≠ ⊥) →
           ∃ θ : Label.{u}, IsSelfVisible (n + 1) θ ∧
             (requests ht' hp htb htbd c r (by have := hctx.2.2.1; omega)).markerValue f ≤ θ ∧
             RootWitness hd.2 (fun x ↦ f (rootCell ht' hp htb hpt x)) θ) →
@@ -76,7 +79,7 @@ theorem exists_raiseCoface_gluing (hα : Order.IsSuccLimit α) {t' : StageType.{
   obtain ⟨tb, htb, htbd, hgl⟩ := exists_gluingCoface hα ht' hp hpt hd
   exact ⟨tb, htb, htbd, hpt, fun k' hk' hkm hwit ↦
     donorRaiseBotAtIn_of_gluesAt ht' hp htb hpt hd htbd _ hgl
-      (by have := hctx.2.2.1; omega) hkm hwit _⟩
+      (by have := hctx.2.2.1; omega) hkm _ hwit⟩
 
 set_option warningAsError false in
 /-- **SCAFFOLD (`sorry`), (S2): a donor coface with the raise and dominating tops.**  At an
