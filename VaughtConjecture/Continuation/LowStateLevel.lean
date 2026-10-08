@@ -40,7 +40,7 @@ level reads, at the cells of grade at most `g + 1`, the row of the **state code*
 splice), through the upper decoder of the splice; the orbit code over all fields is what keeps
 capped agreement (`Label.min_upperDecoderAt_comp_eq` over the fields).  For `C` the **state
 catalogue** of `A` (`ProfileTower.sCat`: states in the code grid, amalgam part lawful on the cut,
-fixed by the state code, satisfying `A`) the next state level is good, given that `A` holds with the
+satisfying `A`) the next state level is good, given that `A` holds with the
 cutoff `⊥`, is kept by the state code, and the layer lifts from the two coatoms at `g + 1`: the
 lift is the one hypothesis (for the LOW clause, the LOW step at the grade `g + 1`).  Its forgetful
 level extends at `⊥` (`ProfileTower.SLvl.Good.hasBotExtension_next`).
@@ -271,14 +271,15 @@ theorem scode_mem_codeGrid (k : ℕ) (P : CProf I) (f : Fin I.amalgam.card ⊕ U
 
 variable (I) in
 open Classical in
-/-- The **state catalogue** of `A` at the grade `k`: the states with values in the code grid,
-amalgam part lawful on the cut, fixed by the orbit code over all fields, satisfying `A`. -/
+/-- The **state catalogue** of `A` at the grade `k`: the states with values in the code grid and
+amalgam part lawful on the cut satisfying `A` (no normalization is imposed: the state code of a
+state lies in it, and so does the partner of a state of it). -/
 noncomputable def sCat (k : ℕ) (A : CProf I → Prop) : Finset (CProf I) :=
   (Fintype.piFinset fun _ ↦ codeGrid k (bound I)).filter fun P ↦
-    IsCutLawful I k (camal P) ∧ orbitCode k P = P ∧ A P
+    IsCutLawful I k (camal P) ∧ A P
 
 theorem mem_sCat {k : ℕ} {P : CProf I} : P ∈ sCat I k A ↔
-    (∀ f, P f ∈ codeGrid k (bound I)) ∧ IsCutLawful I k (camal P) ∧ orbitCode k P = P ∧ A P := by
+    (∀ f, P f ∈ codeGrid k (bound I)) ∧ IsCutLawful I k (camal P) ∧ A P := by
   classical
   simp only [sCat, Finset.mem_filter, Fintype.mem_piFinset]
 
@@ -294,7 +295,7 @@ theorem isCutLawful_camal_scode {k : ℕ} {P : CProf I} (hP : IsCutLawful I k (c
 /-- **The state code of a state lies in the state catalogue** when it satisfies `A`. -/
 theorem scode_mem_sCat {k : ℕ} {P : CProf I} (hP : IsCutLawful I k (camal P))
     (hA : A (scode k P)) : scode k P ∈ sCat I k A :=
-  mem_sCat.mpr ⟨scode_mem_codeGrid k P, isCutLawful_camal_scode hP, orbitCode_orbitCode, hA⟩
+  mem_sCat.mpr ⟨scode_mem_codeGrid k P, isCutLawful_camal_scode hP, hA⟩
 
 /-- **The state code of a profile with the cutoff `⊥`** is its code with the cutoff `⊥`. -/
 theorem scode_withCut_bot (k : ℕ) (W : Prof I) : scode k (withCut W ⊥) = withCut (code k W) ⊥ :=
@@ -542,7 +543,7 @@ theorem SLvl.Good.next (hN : N.Good A) (hgm : g + 1 ≤ m) (hA0 : ∀ W : Prof I
     (N.next 𝒮).Good A := by
   have hCsub : ∀ P ∈ 𝒮, (∀ f, P f ∈ codeGrid (g + 1) (bound I)) ∧
       IsCutLawful I (g + 1) (camal P) ∧ A P := fun P hP ↦
-    ⟨(mem_sCat.mp hP).1, (mem_sCat.mp hP).2.1, (mem_sCat.mp hP).2.2.2⟩
+    ⟨(mem_sCat.mp hP).1, (mem_sCat.mp hP).2.1, (mem_sCat.mp hP).2.2⟩
   have hemb := Scheme.isLowerEmbedding_castAdd (S := N.S) (g + 1) (𝒮).card
     (fun i ↦ N.Φs 𝒮 ((𝒮).equivFin.symm i).1) N.not_le
   have hcard : 2 * Fintype.card (Fin I.amalgam.card ⊕ Unit) = bound I := by
@@ -662,7 +663,7 @@ theorem SLvl.Good.next (hN : N.Good A) (hgm : g + 1 ≤ m) (hA0 : ∀ W : Prof I
       exact ⟨Fin.castAdd _ e, (Scheme.appendFullCellsScheme_gradedIndex_castAdd _ _ _ e).trans he⟩
     · have hbot : (fun _ ↦ ⊥ : CProf I) ∈ 𝒮 := by
         refine mem_sCat.mpr ⟨fun _ ↦ mem_insert_self _ _, (bot_mem_cat (I := I) _ |> mem_cat.mp).1,
-          funext fun _ ↦ orbitCode_eq_bot_iff.mpr rfl, ?_⟩
+          ?_⟩
         convert hA0 (fun _ ↦ ⊥) using 1
         funext f; rcases f with d | z <;> rfl
       obtain ⟨i₀, -⟩ := exists_equivFin_eq hbot
