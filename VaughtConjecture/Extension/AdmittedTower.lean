@@ -76,8 +76,6 @@ noncomputable def Lvl.nextOn : Lvl I (g + 1) where
       exact (L.inv d).imp_left fun h ↦ h.trans (Nat.le_succ g)
     | right i => exact .inl (Scheme.appendFullCellsScheme_grade_natAdd _ _ _ i).le
 
-/-- On the whole catalogue the next level on `C` is the next level. -/
-theorem Lvl.nextOn_cat : L.nextOn (cat I (g + 1)) = L.next := rfl
 
 variable {L C} {D : ℕ → Finset (Prof I)}
 

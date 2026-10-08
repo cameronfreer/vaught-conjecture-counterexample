@@ -472,9 +472,9 @@ open Finset ProfileTower
 
 variable {α : Ordinal.{u}} {m : ℕ} (I : Seed.{u} α m)
 
-/-- **An admission with the lift provisions**: an admission (with the coatom provision, the
-necessary clause) together with the lift provisions at `⊥` and at the positive caps, the
-sufficient clauses, at every grade `k` with `N ≤ k ≤ m + 1` and from either coatom. -/
+/-- **An admission with the lift provisions**: an admission together with the lift provisions for
+its reading rows at `⊥` and at the positive caps, at every grade `k` with `N ≤ k ≤ m + 1` and from
+either coatom. -/
 structure LiftAdmission extends I.Admission where
   /-- The lift provision at the cap `⊥`. -/
   botLift : ∀ ⦃k : ℕ⦄, N ≤ k → k ≤ m + 1 → ∀ ⦃x : Fin (m + 2)⦄,
