@@ -21,7 +21,8 @@ Work file (placement later), for the named condition `H3.RootWitness` of
   block start `λ` to a block start `κ`, `⊥` below `λ`, followed by a bounded reading.
 * **A witness inverting a bounded reading** (`Label.exists_witness_of_reading`).
 * **A witness at the root from the locality at the cap** (`H3.rootWitness_of_locality`), given a
-  lower bound at the root (`H3.RootLowBound`, a named condition).
+  lower bound at the root (`H3.RootLowBound`, a named condition: some root cell has a finite
+  ordinal label, or the prescription is at least `n + 1` at the root cells with ordinal labels).
 * **The donor raise over a gluing coface at an acquired context**
   (`H3.exists_raiseCoface_of_rootLowBound`), from the lower bound at the root (assumed).
 -/
@@ -147,9 +148,11 @@ theorem isSelfVisible_visibilityReplace_of_le {k i : ℕ} (hi : i ≤ k) (x : La
 /-- **A witness inverting a bounded reading on finitely many labels.**  Let `σ₀` be a bounded
 reading at `N > 0` reading finitely many row values `ρ x` (none `⊤`) as labels `ℓ x = σ₀ (ρ x)`
 whose finite parts lie below `N`, `ν` a bounded reading at `K ≤ N`, and `θ` self-visible at
-`K`.  For a label `c₀ ≠ ⊥`, self-visible at `K` and at most `ν (ρ x)` at every ordinal `ℓ x`,
-some witness `Φ` bounded by `K` sends no label other than `⊥` to `⊥`, sends `⊤` to at least
-`θ`, and sends every ordinal `ℓ x` to `ν (ρ x)`: the maximum of the
+`K`, with `ν` not `⊥` at the row values of the ordinal labels and its zero set closed under the
+replacements.  If some label `c₀ ≠ ⊥`, self-visible at `K`, is at most `ν (ρ x)` at every ordinal
+`ℓ x`, or some ordinal `ℓ x` is finite (its band piece is then `⊥` only at `⊥`), some witness
+`Φ` bounded by `K` sends no label other than `⊥` to `⊥`, sends `⊤` to at least `θ`, and sends
+every ordinal `ℓ x` to `ν (ρ x)`: the maximum of the
 constant `c₀` off `⊥`, the constant `θ` at `⊤`, and, for each `x`, the band map from the block of
 `ℓ x` to the block of `ρ x` followed by `ν` (no-separation: `Label.IsBoundedReading.strip`,
 `Label.IsBoundedReading.eq_of_eq`). -/
@@ -159,12 +162,22 @@ theorem exists_witness_of_reading {ι : Type*} [Finite ι] {ℓ ρ : ι → Labe
     (hoff : ∀ x (μ : Ordinal.{u}) (j : ℕ), Order.IsSuccPrelimit μ →
       ℓ x = ((μ + j : Ordinal.{u}) : Label.{u}) → j < N)
     (hKN : K ≤ N) {ν : Label.{u} → Label.{u}} (hν : IsBoundedReading K ν) {θ : Label.{u}}
-    (hθ : IsSelfVisible K θ) {c₀ : Label.{u}} (hc₀ : IsSelfVisible K c₀) (hc₀b : c₀ ≠ ⊥)
-    (hc₀ν : ∀ x (o : Ordinal.{u}), ℓ x = o → c₀ ≤ ν (ρ x)) :
+    (hθ : IsSelfVisible K θ)
+    (hνz : ∀ z, ν z = ⊥ → ∀ k i, i ≤ k → ν (visibilityReplace k i z) = ⊥)
+    (hν0 : ∀ x (o : Ordinal.{u}), ℓ x = o → ν (ρ x) ≠ ⊥)
+    (hlow : (∃ c₀ : Label.{u}, IsSelfVisible K c₀ ∧ c₀ ≠ ⊥ ∧
+        ∀ x (o : Ordinal.{u}), ℓ x = o → c₀ ≤ ν (ρ x)) ∨
+      ∃ (x : ι) (o : Ordinal.{u}), ℓ x = o ∧ o < Ordinal.omega0) :
     ∃ Φ : Label.{u} → Label.{u}, IsWitness (stepSuppressor.{u} K) Φ ∧
       (∀ y, Φ y = ⊥ → y = ⊥) ∧ θ ≤ Φ ⊤ ∧ ∀ x (o : Ordinal.{u}), ℓ x = o → Φ (ℓ x) = ν (ρ x) := by
   classical
   have := Fintype.ofFinite ι
+  obtain ⟨c₀, hc₀, hc₀ν, hcase⟩ : ∃ c₀ : Label.{u}, IsSelfVisible K c₀ ∧
+      (∀ x (o : Ordinal.{u}), ℓ x = o → c₀ ≤ ν (ρ x)) ∧
+      (c₀ ≠ ⊥ ∨ ∃ (x : ι) (o : Ordinal.{u}), ℓ x = o ∧ o < Ordinal.omega0) := by
+    rcases hlow with ⟨c₀, h1, h2, h3⟩ | h
+    · exact ⟨c₀, h1, h3, .inl h2⟩
+    · exact ⟨⊥, isSelfVisible_bot _, fun _ _ _ ↦ bot_le, .inr h⟩
   -- the blocks of the ordinal labels and of their row values
   have hdec (x : ι) : ∃ (lam κ : Ordinal.{u}) (j : ℕ), Order.IsSuccPrelimit lam ∧
       Order.IsSuccPrelimit κ ∧ ((∃ o : Ordinal.{u}, ℓ x = o) →
@@ -203,10 +216,50 @@ theorem exists_witness_of_reading {ι : Type*} [Finite ι] {ℓ ρ : ι → Labe
       (IsBoundedReading.finsetSup univ fun x _ ↦ hpiece_br x)
   have hrefl (y : Label.{u}) (hy : Φ y = ⊥) : y = ⊥ := by
     by_contra hne
-    have h : c₀ ≤ Φ y := by
-      simp only [hΦ, hne, ite_false]
-      exact (le_max_left _ _).trans (le_max_left _ _)
-    exact hc₀b (le_bot_iff.mp (hy ▸ h))
+    rcases hcase with hc₀b | ⟨x₀, o₀, ho₀, hω⟩
+    · have h : c₀ ≤ Φ y := by
+        simp only [hΦ, hne, ite_false]
+        exact (le_max_left _ _).trans (le_max_left _ _)
+      exact hc₀b (le_bot_iff.mp (hy ▸ h))
+    -- a root label in the finite block: its piece is not `⊥` off `⊥`
+    obtain ⟨hℓ₀, hρ₀, -⟩ := hblk x₀ ⟨o₀, ho₀⟩
+    have hlam0 : lam x₀ = 0 := by
+      have h1 : (lam x₀ : Ordinal.{u}) + j x₀ = o₀ :=
+        (WithTop.coe_injective (WithBot.coe_injective (ho₀.symm.trans hℓ₀))).symm
+      have hlt : lam x₀ < Ordinal.omega0 := lt_of_le_of_lt le_self_add (h1 ▸ hω)
+      obtain ⟨m, hm⟩ := Ordinal.lt_omega0.mp hlt
+      cases m with
+      | zero => simpa using hm
+      | succ m =>
+        exfalso
+        apply hlam x₀ (m : Ordinal.{u})
+        rw [hm, Nat.cast_succ, ← Order.succ_eq_add_one]
+        exact Order.covBy_succ _
+    have hκ0 : ν ((κ x₀ : Ordinal.{u}) : Label.{u}) ≠ ⊥ := fun h ↦ by
+      have h' := hνz _ h (j x₀ + 1) (j x₀) (Nat.le_succ _)
+      have e : visibilityReplace (j x₀ + 1) (j x₀) ((κ x₀ : Ordinal.{u}) : Label.{u}) =
+          ρ x₀ := by
+        rw [hρ₀, show ((κ x₀ : Ordinal.{u}) : Label.{u}) =
+          ((κ x₀ + ((0 : ℕ) : Ordinal.{u}) : Ordinal.{u}) : Label.{u}) by simp]
+        exact visibilityReplace_coe_add_natCast (hκ x₀) (Nat.succ_pos _) _
+      rw [e] at h'
+      exact hν0 x₀ o₀ ho₀ h'
+    have hpx : ν ((κ x₀ : Ordinal.{u}) : Label.{u}) ≤ piece x₀ y := by
+      have hnl : ¬ y < ((lam x₀ : Ordinal.{u}) : Label.{u}) := by
+        rw [hlam0]
+        intro hlt
+        induction y using recBotCoeTop with
+        | bot => exact hne rfl
+        | coe o => exact absurd hlt (not_lt.mpr (WithBot.coe_le_coe.mpr
+            (WithTop.coe_le_coe.mpr (zero_le (a := o)))))
+        | top => exact absurd hlt (not_lt.mpr le_top)
+      simp only [hpiece, show ∃ o : Ordinal.{u}, ℓ x₀ = o from ⟨o₀, ho₀⟩, hnl, ite_true,
+        ite_false]
+      exact hν.monotone (coe_le_bandMap hne)
+    have hle : piece x₀ y ≤ Φ y := by
+      simp only [hΦ]
+      exact (Finset.le_sup (f := fun x ↦ piece x y) (mem_univ x₀)).trans (le_max_right _ _)
+    exact hκ0 (le_bot_iff.mp (hy ▸ hpx.trans hle))
   refine ⟨Φ, hΦbr.isWitness hrefl, hrefl, ?_, fun x' o ho ↦ ?_⟩
   · simp only [hΦ, top_ne_bot, ite_false, ite_true]
     exact (le_max_right _ _).trans (le_max_left _ _)
@@ -287,11 +340,21 @@ noncomputable def rootCap (c r : Fin t'.card) (f : Prof (seed ht' hp htb)) : Lab
       (f (faceCell (restrictFace_left_seed ht' hp htb) r)))
     (f (faceCell (restrictFace_left_seed ht' hp htb) c))
 
+variable (n) in
+/-- **A lower bound at the root** for a prescription `f` (a named condition): some root cell has a
+finite ordinal label, or `f` is at least `n + 1` at every root cell with an ordinal label.  It is
+used only to keep the witness at the root away from `⊥` below the lowest block of the root
+labels. -/
+def RootLowBound (f : Prof (seed ht' hp htb)) : Prop :=
+  (∃ (x : Fin t.card) (o : Ordinal.{u}), t.label x = o ∧ o < Ordinal.omega0) ∨
+    ∀ x (o : Ordinal.{u}), t.label x = o →
+      (((n + 1 : ℕ) : Ordinal.{u}) : Label.{u}) ≤ f (rootCell ht' hp htb hpt x)
+
 /-- **A witness at the root from the locality at the cap.**  At an acquired context, a
 prescription `f` lawful below the private coatom at a grade from the grade of the cap, not `⊥` at
-the cap, has a witness at the root at its root cap (`H3.rootCap`), provided some label `c₀ ≠ ⊥`
-self-visible at `n + 1` lies below its values at the root cells with ordinal labels, capped at the
-root cap (a named condition): the witness of `Label.exists_witness_of_reading` for the bounded
+the cap and at the marker, and not `⊥` at the root cells not labelled `⊥`, has a witness at the
+root at its root cap (`H3.rootCap`), provided the lower bound at the root (`H3.RootLowBound`, a
+named condition: a finite ordinal root label, or `f ≥ n + 1` at the ordinal root cells): the witness of `Label.exists_witness_of_reading` for the bounded
 reading of the label of `t'` at the cap and the shifter of the locality of `f` at the cap, capped
 at the root cap; the root cells labelled `⊤` read at least the root cap by the marker inequality,
 those labelled `⊥` are `⊥` by the root bottoms. -/
@@ -304,9 +367,9 @@ theorem rootWitness_of_locality {c r : Fin t'.card}
       (fun e ↦ f e))
     (hck : t'.toCellScheme.grade c ≤ k')
     (hcap : f (faceCell (restrictFace_left_seed ht' hp htb) c) ≠ ⊥)
-    (hlow : ∃ c₀ : Label.{u}, c₀ ≠ ⊥ ∧ IsSelfVisible (n + 1) c₀ ∧
-      ∀ x (o : Ordinal.{u}), t.label x = o →
-        c₀ ≤ min (f (rootCell ht' hp htb hpt x)) (rootCap n ht' hp htb c r f)) :
+    (hmark : f (faceCell (restrictFace_left_seed ht' hp htb) r) ≠ ⊥)
+    (hcl : ∀ x, t.label x ≠ ⊥ → f (rootCell ht' hp htb hpt x) ≠ ⊥)
+    (hlow : RootLowBound n ht' hp htb hpt f) :
     RootWitness hd.2 (fun x ↦ f (rootCell ht' hp htb hpt x)) (rootCap n ht' hp htb c r f) := by
   classical
   set N := t'.toCellScheme.grade c with hNdef
@@ -382,13 +445,39 @@ theorem rootWitness_of_locality {c r : Fin t'.card}
             θ := by rw [hloc' _ (hbelow x)]
       _ = min (σf (t'.rowAt c (faceCell ht x))) θ := by
           rw [min_assoc, min_eq_right (hθg (hgrade x))]
-  obtain ⟨c₀, hc₀b, hc₀, hc₀ν⟩ := hlow
+  have hθ0 : θ ≠ ⊥ := by
+    intro h
+    rcases min_eq_bot.mp h with h' | h'
+    · exact hmark (visibilityReplace_eq_bot_iff.mp h')
+    · exact hcap h'
+  have hνz : ∀ z, ν z = ⊥ → ∀ k i, i ≤ k → ν (visibilityReplace k i z) = ⊥ := by
+    intro z hz k i hi
+    have hσ : σf z = ⊥ := (min_eq_bot.mp hz).resolve_right hθ0
+    change min (σf (visibilityReplace k i z)) θ = ⊥
+    rw [hw.apply_visibilityReplace_eq_bot hσ k hi, min_bot_left]
+  have hν0 : ∀ x (o : Ordinal.{u}), t.label x = o → ν (t'.rowAt c (faceCell ht x)) ≠ ⊥ := by
+    intro x o ho h
+    have h' : min (f (rootCell ht' hp htb hpt x)) θ = ⊥ := (hid x).trans h
+    rcases min_eq_bot.mp h' with h'' | h''
+    · exact hcl x (by rw [ho]; exact WithBot.coe_ne_bot) h''
+    · exact hθ0 h''
+  have hlow' : (∃ c₀ : Label.{u}, IsSelfVisible (n + 1) c₀ ∧ c₀ ≠ ⊥ ∧
+      ∀ x (o : Ordinal.{u}), t.label x = o → c₀ ≤ ν (t'.rowAt c (faceCell ht x))) ∨
+      ∃ (x : Fin t.card) (o : Ordinal.{u}), t.label x = o ∧ o < Ordinal.omega0 := by
+    rcases hlow with h | h
+    · exact .inr h
+    · refine .inl ⟨(((n + 1 : ℕ) : Ordinal.{u}) : Label.{u}), ?_, WithBot.coe_ne_bot,
+        fun x o ho ↦ ?_⟩
+      · rw [isSelfVisible_coe, Ordinal.mod_eq_of_lt (Ordinal.natCast_lt_omega0 _)]
+      · change _ ≤ min (σf _) θ
+        rw [← hid x]
+        exact le_min (h x o ho) (natCast_le_of_isSelfVisible hθsv hθ0)
   obtain ⟨Φ, hΦ, hrefl, hΦtop, hΦval⟩ := Label.exists_witness_of_reading (ι := Fin t.card)
     (ℓ := t.label) (ρ := fun x ↦ t'.rowAt c (faceCell ht x)) (by omega) hσ₀
     (fun x ↦ (label_faceCell ht x).symm.trans (hread₀ _ (hbelow x)))
     (fun x ↦ ((t'.isCoded.rowAt_lt c _).trans_le le_top).ne)
     (fun x μ j hμ h ↦ hoff _ (hvis x) μ j hμ ((label_faceCell ht x).trans h))
-    (by omega) hν hθsv hc₀ hc₀b fun x o ho ↦ (hc₀ν x o ho).trans_eq (hid x)
+    (by omega) hν hθsv hνz hν0 hlow'
   refine ⟨n + 1, le_rfl, Φ, hΦ, fun z h ↦ hrefl _ h, hΦtop, fun x ↦ ?_⟩
   induction hx : t.label x using Label.recBotCoeTop with
   | bot =>
@@ -425,16 +514,6 @@ theorem rootWitness_of_locality {c r : Fin t'.card}
       exact le_min h1 (hθg (hgrade x))
     exact (min_eq_right (h2.trans (min_le_left _ _))).symm
 
-variable (n) in
-/-- **A lower bound at the root** for a prescription `f` (a named condition): some label `c₀ ≠ ⊥`,
-self-visible at `n + 1`, lies below its values at the root cells with ordinal labels, capped at
-its root cap.  It holds, for instance, when `f` is at least `n + 1` there and not `⊥` at the
-marker. -/
-def RootLowBound (c r : Fin t'.card) (f : Prof (seed ht' hp htb)) : Prop :=
-  ∃ c₀ : Label.{u}, c₀ ≠ ⊥ ∧ IsSelfVisible (n + 1) c₀ ∧
-    ∀ x (o : Ordinal.{u}), t.label x = o →
-      c₀ ≤ min (f (rootCell ht' hp htb hpt x)) (rootCap n ht' hp htb c r f)
-
 end Witness
 
 /-- **The donor raise over a gluing coface at an acquired context**, from the lower bound at the
@@ -461,7 +540,7 @@ theorem exists_raiseCoface_of_rootLowBound (hα : Order.IsSuccLimit α)
           f (faceCell (restrictFace_left_seed ht' hp htb) r) ≠ ⊥ →
           (∀ e ∈ classCells ht' hp htb htbd, e ∈ (seed ht' hp htb).amalgam.toCellScheme.below
             (univ.erase (Fin.last (k + 1)), k') → f e ≠ ⊥) →
-          RootLowBound n ht' hp htb hpt c r f) →
+          RootLowBound n ht' hp htb hpt f) →
         CapRequests.DonorRaiseBotAtIn
           (requests ht' hp htb htbd c r (by have := hctx.2.2.1; omega))
           (classCells ht' hp htb htbd) (Fin.last (k + 1)) (Fin.castSucc (Fin.last k)) k' := by
@@ -474,8 +553,26 @@ theorem exists_raiseCoface_of_rootLowBound (hα : Order.IsSuccLimit α)
       fun _ h ↦ h, bot_le, fun _ ↦ by simp⟩
     change min (visibilityReplace _ _ (f (faceCell (restrictFace_left_seed ht' hp htb) r))) _ ≤ ⊥
     rw [hm, visibilityReplace_bot, min_bot_left]
+  have hroot : ∀ x, t.label x ≠ ⊥ → f (rootCell ht' hp htb hpt x) ≠ ⊥ := by
+    intro x hx
+    have he : rootCell ht' hp htb hpt x =
+        faceCell (restrictFace_left_seed ht' hp htb) (faceCell ht x) := by
+      change faceCell _ (faceCell hp (faceCell hpt x)) = _
+      rw [faceCell_trans rfl hp hpt ht x]
+    rw [he]
+    refine hcl _ (.inl ⟨faceCell ht x, t'.toScheme.faceCell_mem_visibleCells _ x,
+      (label_faceCell ht x).trans_ne hx, rfl⟩) ⟨?_, ?_⟩
+    · change (seed ht' hp htb).amalgam.toCellScheme.scope
+        (faceCell (restrictFace_left_seed ht' hp htb) (faceCell ht x)) ⊆ _
+      rw [scope_faceCell, ← Coatom.univ_map_left]
+      exact map_subset_map.mpr (subset_univ _)
+    · change (seed ht' hp htb).amalgam.toCellScheme.grade
+        (faceCell (restrictFace_left_seed ht' hp htb) (faceCell ht x)) ≤ k'
+      rw [grade_faceCell, grade_faceCell]
+      have := t.grade_le x
+      omega
   refine ⟨rootCap n ht' hp htb c r f, ?_, ?_,
-    rootWitness_of_locality ht' hp htb hpt hd hctx hoff hbot f hf hk' hcap
+    rootWitness_of_locality ht' hp htb hpt hd hctx hoff hbot f hf hk' hcap hm hroot
       (hlow f hf hcap hm hcl)⟩
   · have hcsv : IsSelfVisible (t'.toCellScheme.grade c)
         (f (faceCell (restrictFace_left_seed ht' hp htb) c)) := by
