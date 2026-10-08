@@ -12,7 +12,7 @@ Roadmap, Layer 3 ((R3) and (R4), the controller rows of the recognizing growth c
 
 A **complete state** is a lawful section `R` of the amalgam of a seed: all cells, all grades.  Its
 **positive table** (`Label.posTable R`) is `⊥` at `0` and above it the value table of `R`, at least
-the least positive value of `R`: it is monotone, self-visible at `1` when `R` is, positive at every
+`1`: it is monotone, self-visible at `1` when `R` is, positive at every
 positive rank, and reads `R` at its rank vector (`Label.posTable_rankVector`).
 
 **The extension of a state to the base** (`Seed.stateExt`): `R` on the cells of the amalgam, and on
@@ -38,11 +38,21 @@ namespace Label
 
 variable {ι : Type*} [Fintype ι] {Z : ι → Label.{u}}
 
-open Classical in
+/-- A label self-visible at `1` other than `⊥` is at least `1`. -/
+theorem one_le_of_isSelfVisible {x : Label.{u}} (hx : IsSelfVisible 1 x) (h0 : x ≠ ⊥) :
+    (1 : Label.{u}) ≤ x := by
+  induction x using recBotCoeTop with
+  | bot => exact absurd rfl h0
+  | coe o =>
+    have h1 : (1 : Ordinal.{u}) ≤ o % Ordinal.omega0 := by exact_mod_cast isSelfVisible_coe.mp hx
+    have h2 : (1 : Ordinal.{u}) ≤ o := h1.trans (Ordinal.mod_le _ _)
+    exact_mod_cast h2
+  | top => exact le_top
+
 /-- The **positive table** of `Z`: `⊥` at `0`, and at a positive rank the value table of `Z`, at
-least the least positive value of `Z`. -/
+least `1`. -/
 noncomputable def posTable (Z : ι → Label.{u}) (i : ℕ) : Label.{u} :=
-  if i = 0 then ⊥ else max (valueTable Z i) ((univ.filter fun e ↦ Z e ≠ ⊥).inf Z)
+  if i = 0 then ⊥ else max (valueTable Z i) 1
 
 theorem posTable_zero : posTable Z 0 = ⊥ := by simp [posTable]
 
@@ -54,37 +64,44 @@ theorem monotone_posTable : Monotone (posTable Z) := by
     exact max_le_max (monotone_valueTable hii') le_rfl
 
 theorem posTable_ne_bot {i : ℕ} (hi : i ≠ 0) : posTable Z i ≠ ⊥ := by
-  classical
   simp only [posTable, hi, ite_false]
-  have hm0 : (univ.filter fun e ↦ Z e ≠ ⊥).inf Z ≠ ⊥ := by
-    refine Finset.inf_induction (p := fun y ↦ y ≠ ⊥) (by simp) (fun x hx y hy ↦ ?_) ?_
-    · rcases min_choice x y with h | h <;> rw [h] <;> assumption
-    · intro e he; exact (mem_filter.mp he).2
-  exact fun h ↦ hm0 (le_bot_iff.mp ((le_max_right _ _).trans h.le))
+  exact fun h ↦ absurd (le_bot_iff.mp ((le_max_right _ _).trans h.le))
+    (WithBot.coe_ne_bot (a := (1 : WithTop Ordinal.{u})))
 
 theorem isSelfVisible_posTable (hZ : ∀ e, IsSelfVisible 1 (Z e)) (i : ℕ) :
     IsSelfVisible 1 (posTable Z i) := by
-  classical
   unfold posTable
   split_ifs
   · exact isSelfVisible_bot _
-  · exact (isSelfVisible_valueTable hZ i).max
-      (Finset.inf_induction (p := IsSelfVisible 1) (isSelfVisible_top _)
-        (fun _ ha _ hb ↦ ha.min hb) fun e _ ↦ hZ e)
+  · exact (isSelfVisible_valueTable hZ i).max (isSelfVisible_one.mpr le_rfl)
 
-/-- **The positive table reads `Z` at its rank vector.** -/
-theorem posTable_rankVector (d : ι) : posTable Z (rankVector Z d) = Z d := by
-  classical
+/-- **The positive table reads `Z` at its rank vector**, for `Z` self-visible at `1`. -/
+theorem posTable_rankVector (hZ : ∀ e, IsSelfVisible 1 (Z e)) (d : ι) :
+    posTable Z (rankVector Z d) = Z d := by
   by_cases h0 : rankVector Z d = 0
   · rw [h0, posTable_zero, (rankVector_eq_zero_iff d).mp h0]
-  · have hmd : (univ.filter fun e ↦ Z e ≠ ⊥).inf Z ≤ Z d := Finset.inf_le (mem_filter.mpr
-      ⟨mem_univ _, fun h ↦ h0 ((rankVector_eq_zero_iff d).mpr h)⟩)
+  · have hZd : Z d ≠ ⊥ := fun h ↦ h0 ((rankVector_eq_zero_iff d).mpr h)
     simp only [posTable, h0, ite_false]
-    rw [rankVector, valueTable_valueRank, max_eq_left hmd]
+    rw [rankVector, valueTable_valueRank, max_eq_left (one_le_of_isSelfVisible (hZ d) hZd)]
 
 /-- Every value of `Z` lies below the positive table at any rank at least its rank. -/
-theorem le_posTable {d : ι} {i : ℕ} (hi : rankVector Z d ≤ i) : Z d ≤ posTable Z i :=
-  (posTable_rankVector d).symm.le.trans (monotone_posTable hi)
+theorem le_posTable (hZ : ∀ e, IsSelfVisible 1 (Z e)) {d : ι} {i : ℕ}
+    (hi : rankVector Z d ≤ i) : Z d ≤ posTable Z i :=
+  (posTable_rankVector hZ d).symm.le.trans (monotone_posTable hi)
+
+/-- The positive table takes the values `⊥`, `1` and the values of `Z`. -/
+theorem posTable_eq (i : ℕ) : posTable Z i = ⊥ ∨ posTable Z i = 1 ∨ ∃ e, posTable Z i = Z e := by
+  classical
+  unfold posTable
+  split_ifs
+  · exact .inl rfl
+  · rcases max_choice (valueTable Z i) 1 with h | h <;> rw [h]
+    · by_cases hne : (univ.filter fun e ↦ valueRank Z (Z e) ≤ i).Nonempty
+      · obtain ⟨e, -, he⟩ := Finset.exists_mem_eq_sup _ hne Z
+        exact .inr (.inr ⟨e, he⟩)
+      · rw [not_nonempty_iff_eq_empty] at hne
+        exact .inl (by rw [valueTable, hne, sup_empty])
+    · exact .inr (.inl rfl)
 
 end Label
 
@@ -218,7 +235,7 @@ theorem stateExt_of_grade_one {R : Fin I.amalgam.card → Label.{u}}
   induction t using Fin.addCases with
   | left d =>
     rw [Fin.append_left, Scheme.baseIndex_castAdd, Scheme.rankProf_ofLawful,
-      posTable_rankVector]
+      posTable_rankVector (I.isSelfVisible_one_of_isLawful hR)]
   | right j => rw [Fin.append_right]
 
 /-- **The extension of a lawful state is a lawful section of the base.** -/
