@@ -51,10 +51,13 @@ grade in `(K, k]` not labelled `⊥` the reading fails (`StageType.not_lowReadin
 `StageType.hasLowDisplaysOn_lowBot`, compiled in this repository).  On the class
 `StageType.LowBotClass` (a donor top of grade `K`, `K ≤ k`, and the context and the donor
 labelled `⊥` at every grade in `(K, k]`; no condition on labels when `K = k`), LOW layers and LOW
-displays exist.
+displays exist; with the donors whose tops avoid the new point
+(`StageType.exists_isLowDisplay_of_forall_top_root`), LOW displays exist on the union
+(`StageType.hasLowDisplaysOn_lowBot_or_root`).
 
-**Not claimed.**  `StageType.HasLowDisplays` is not proved.  Outside `StageType.LowBotClass` the
-LOW families left are those without a donor top of grade `K` (`StageType.LowStepTieLow`), those
+**Not claimed.**  `StageType.HasLowDisplays` is not proved.  Outside that union the LOW families
+left are those with a donor top through the new point but none of grade `K`
+(`StageType.LowStepTieLow`), those
 with `K = k + 1` (the grade of a LOW family is positive, `StageType.IsLowFamily.grade_pos`), and
 those with a label other than `⊥` above `K < k`, for which the completed display carries no
 separator labelled `⊤` (`StageType.not_lowReadingFamily`).
@@ -247,5 +250,17 @@ theorem hasLowLayersOn_lowBot : HasLowLayersOn.{u} LowBotClass := by
 /-- **LOW displays on the class of the faces `⊥` above `K`**: (R2) for these LOW families. -/
 theorem hasLowDisplaysOn_lowBot : HasLowDisplaysOn.{u} LowBotClass :=
   hasLowLayersOn_lowBot.hasLowDisplaysOn
+
+/-- **LOW displays on the class of the faces `⊥` above `K` or of the donors without new tops**:
+`StageType.hasLowDisplaysOn_lowBot`, and the exact pinned extension when every donor top avoids
+the new point (`StageType.exists_isLowDisplay_of_forall_top_root`). -/
+theorem hasLowDisplaysOn_lowBot_or_root :
+    HasLowDisplaysOn.{u} fun α K k t' tb p o r ↦ LowBotClass α K k t' tb p o r ∨
+      ∀ x, tb.label x = ⊤ → Fin.last k ∉ tb.toCellScheme.scope x := by
+  intro α K k t' tb p o r hα hF hS
+  rcases hS with hS | hS
+  · exact hasLowDisplaysOn_lowBot t' tb p o r hα hF hS
+  · exact exists_isLowDisplay_of_forall_top_root hα hF.isLegal_private hF.face_private
+      ⟨hF.isLegal_donor, hF.face_donor⟩ hS
 
 end VaughtConjecture.StageType
