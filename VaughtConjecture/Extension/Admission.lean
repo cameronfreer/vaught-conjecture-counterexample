@@ -14,60 +14,41 @@ reading grades.
 
 Let `I` be a seed.  A **state** (`Seed.State`) is a labelling of the cells of the amalgam, the old
 cells of every completion.  An **admission** (`Seed.Admission`) from the grade `N` is a predicate
-`Adm` on states, a bottom class `InClass`, and a predicate `CapBot` (in the instances, the states
-whose private cap is `⊥`), with five laws:
+`Adm` on states, a bottom class `InClass`, and a predicate `CapBot` of states admitted
+unconditionally, with four laws:
 
 * **(A1) transforms** (`Seed.Admission.map`): admitted states are closed under the transformation
   image `s ↦ min (σ ∘ s) (g ∘ grade)` of every witness `(g, σ)`, over the grading of the amalgam;
   this is the form in which locality presents a row (`Label.TransformsTo`).  It is not closure
-  under `s ↦ σ ∘ s`: the shifter commutes with visibility replacement only under its suppressor.
-  For capped correctness it holds when the requests are graded by the grading of the amalgam, a
-  hypothesis of the instance;
+  under `s ↦ σ ∘ s`: the shifter commutes with visibility replacement only under its suppressor;
 * **(A2) caps** (`Seed.Admission.cap`): capping an admitted state at a label self-visible at a
   grade `k ≥ N` keeps it admitted;
 * **(A0) bottom** (`Seed.Admission.bot`, `Seed.Admission.adm_of_capBot`): the constant `⊥` and
-  the states of `CapBot` are admitted;
-* **(A3) provision** (`Seed.Admission.provision`, the clause `Seed.CoatomProvision`): at every
-  grade `k ≥ N`, `0 < k ≤ m + 1`, every state lawful below a coatom `(C, k)` agrees below `(C, k)`
-  with a state `W` lawful on the grade-`k` cut (`ProfileTower.IsCutLawful`) having the
-  **provision at `k`** (`Seed.ProvisionAt`): some cap `H` self-visible at `k`, at least every
-  value of `W` at a cell of grade `k`, has `min (ŵ_k) H` admitted, `ŵ_k` the splice of `W` at `k`
-  (`ProfileTower.hat`).
+  the states of `CapBot` are admitted.
 
 The rows allowed at the reading grades are the **reading rows** (`Seed.Admission.Row`): the
-admitted states in the class, and the states of `CapBot`.  So `Adm` is the relation read back
-(capped correctness, in the instances), closed under transformations, and the class enters only
-through the rows of the catalogue: the implication "in the class, then admitted" is not closed under
-transformations, since a witness given by locality need not reflect `⊥`, so recognition does not
-transport the class and the catalogue keeps only reading rows.
-
-**Why this form of the provision.**  Three forms are stated.
-
-* The **literal provision** (`Seed.LiteralProvision`: the splice of every state lawful on the
-  grade-`k` cut is admitted) is what the compiled lifts of the canonical layers use: each of
-  `Scheme.exists_isLawfulBelow_fieldLayer`, `Scheme.exists_extension_fieldLayer`,
-  `Scheme.isLawfulBelow_fieldLayer_upperDecoder`, `ProfileTower.Lvl.Good.exists_extension` and
-  `ProfileTower.Lvl.Good.exists_extension_bot` extends a boundary state by a witness image of the
-  row of the entry of the orbit code of the whole boundary state.
-* The **boundary provision** (`Seed.BoundaryProvision`: the provision at every state lawful on the
-  grade-`k` cut) is what an admitted layer needs for the extension at `⊥` from the boundary of the
-  two coatoms (the boundary triple at `⊥` of `CellScheme.Rows.cappedLift_of_boundaries_short` in
-  `ProfileTower.Lvl.Good.cappedLift_next` and `ProfileTower.Lvl.Good.cappedLift_top_succ`); the
-  literal provision implies it (`Seed.BoundaryProvision.of_literal`).
-* The **coatom provision** (`Seed.CoatomProvision`) is what bountifulness itself asks: it is
-  **necessary** for every admitted completion (`CompletionBelowFullGrade.coatomProvision`), since
-  the capped lift at `⊥` from one coatom extends every state lawful below it, and every labelling
-  lawful below `(univ, j)`, `j ≥ N`, has the provision at its old part
-  (`CompletionBelowFullGrade.provisionAt_of_isLawfulBelow`: availability at the old cells of grade
-  `j`, then recognition at a cell of `(univ, j)` of largest label).  It does not prescribe the
-  other coatom, so a state lawful on the cut whose capped splices are not admitted (a mixed state)
-  need not be extended.
+admitted states in the class, and the states of `CapBot`.  So `Adm` is the relation recognized
+(`CompletionBelowFullGrade.adm_of_isLawfulBelow`), closed under transformations, and the class
+enters only through the rows of the catalogue: the implication "in the class, then admitted" is not
+closed under transformations, since a witness given by locality need not reflect `⊥`, so
+recognition does not transport the class and the catalogue keeps only reading rows.
 
 **Recognition** (`CompletionBelowFullGrade.adm_of_isLawfulBelow`).  In a completion whose rows of
 full scope at the grades `≥ N` are admitted (`CompletionBelowFullGrade.HasAdmittedRows`), every
 labelling `q` lawful below `(univ, j)`, `j ≥ N`, has, at every cell `u` of graded index
 `(univ, j)`, the state `min (q̂_j) (q u)` admitted, `q̂_j` the splice at `j` of its old part: by
 locality at `u` the row of `u` transforms to it, and by (A1).
+
+**The coatom provision is a consequence** (`CompletionBelowFullGrade.coatomProvision`).  Every
+completion with admitted rows has the coatom provision (`Seed.CoatomProvision`): at every grade
+`k ≥ N`, `0 < k ≤ m + 1`, every state lawful below a coatom `(C, k)` agrees below `(C, k)` with a
+state `W` lawful on the grade-`k` cut (`ProfileTower.IsCutLawful`) having the provision at `k`
+(`Seed.ProvisionAt`: some cap `H` self-visible at `k`, at least every value of `W` at a cell of
+grade `k`, has `min (ŵ_k) H` admitted, `ŵ_k` the splice of `W` at `k`, `ProfileTower.hat`).  The
+capped lift at `⊥` from one coatom extends every state lawful below it, and every labelling lawful
+below `(univ, j)`, `j ≥ N`, has the provision at its old part
+(`CompletionBelowFullGrade.provisionAt_of_isLawfulBelow`: availability at the old cells of grade
+`j`, then recognition at a cell of `(univ, j)` of largest label).
 
 **The admitted catalogues and layers.**  The **admitted profile catalogue**
 (`ProfileTower.admittedCat`) is the set of rank-normalized profiles of the catalogue at the grade
@@ -77,26 +58,26 @@ appends one cell of full scope and grade `g + 1` for each profile of `C`, with t
 `ProfileTower.Lvl.ΦOn` (the section of the profile at the cells of the level, agreement heights at
 the new cells); on the whole catalogue it is the next scheme of the level
 (`ProfileTower.Lvl.nextSOn_cat`).  Per-entry legality (`ProfileTower.Lvl.GoodOn.isLawfulBelow_ΦOn`),
-consistency, well-formedness and coding hold for every sub-catalogue of a good level.  The
-**admitted layer** (`ProfileTower.Lvl.admittedNextS`) is the layer on the admitted catalogue; its
-rows of full scope are reading rows (`ProfileTower.Lvl.GoodOn.row_rowAt_admittedNextS`), hence
-admitted (`Seed.Admission.Row.adm`).  The top layer of a completion is a canonical field layer
-over the level; its admitted analogue is `ProfileTower.Lvl.admittedTop`, the admitted field layer
-(`Scheme.admittedFieldLayer`) for the reading rows read on the old cells.
+consistency, well-formedness and coding hold for every sub-catalogue of a level good relative to a
+family.  The **admitted layer** (`ProfileTower.Lvl.admittedNextS`) is the layer on the admitted
+catalogue; its rows of full scope are reading rows
+(`ProfileTower.Lvl.GoodOn.row_rowAt_admittedNextS`), hence admitted (`Seed.Admission.Row.adm`).
+The admitted analogue of the canonical field layer at the top grade is
+`ProfileTower.Lvl.admittedTop`, the admitted field layer (`Scheme.admittedFieldLayer`) for the
+reading rows read on the old cells.
 
 **The trivial admission** (`Seed.Admission.all`): every state admitted and a reading row.  Its
 admitted catalogue is the whole catalogue and its admitted layers are the canonical ones
 (`ProfileTower.admittedCat_all`, `ProfileTower.Lvl.admittedNextS_all`,
 `ProfileTower.Lvl.admittedTop_all`).
 
-Not proved here: bountifulness of an admitted layer from the provision (the lifts of the canonical
-layers do not apply, because the orbit code of a boundary state need not be admitted), and the
-admitted completion.
+The lifts into an admitted layer are in `VaughtConjecture.Extension.AdmittedLift`, and the
+completion with admitted rows in `VaughtConjecture.Extension.RowCompletionZero`.
 
 ## Placement
 
-The engine of the restricted catalogue at the reading grades (`roadmap/README.md`, Layer 3, 3.1,
-under "(R6)"); first and second pieces.
+The completion below the full grade with admitted rows at the reading grades
+(`roadmap/README.md`, Layer 3, 3.1, under "(R6)").
 -/
 
 universe u
@@ -119,12 +100,6 @@ def ProvisionAt (Adm : I.State → Prop) (k : ℕ) (W : I.State) : Prop :=
     (∀ d, I.amalgam.toCellScheme.grade d = k → W d ≤ H) ∧
       Adm fun d ↦ min (ProfileTower.hat I k W d) H
 
-/-- **The boundary provision from the grade `N`**: the provision at every grade `k ≥ N` and every
-state lawful on the grade-`k` cut, the boundary of the two coatoms at `k`.  It is what the
-extension at `⊥` from the boundary of the two coatoms asks of an admitted layer. -/
-def BoundaryProvision (N : ℕ) (Adm : I.State → Prop) : Prop :=
-  ∀ ⦃k : ℕ⦄, N ≤ k → ∀ ⦃W : I.State⦄, ProfileTower.IsCutLawful I k W → I.ProvisionAt Adm k W
-
 /-- **The coatom provision from the grade `N`**: at every grade `k ≥ N` with `0 < k ≤ m + 1` and
 either coatom `C`, every state lawful below `(C, k)` agrees below `(C, k)` with a state lawful on
 the grade-`k` cut that has the provision at `k`.  It is what the capped lift at `⊥` from one coatom
@@ -143,31 +118,7 @@ def IsTransformClosed (Adm : I.State → Prop) : Prop :=
   ∀ ⦃s : I.State⦄ ⦃g : ℕ → Label.{u}⦄ ⦃σ : Label.{u} → Label.{u}⦄, Adm s → IsWitness g σ →
     Adm fun d ↦ min (σ (s d)) (g (I.amalgam.toCellScheme.grade d))
 
-/-- **The literal provision from the grade `N`**: the splice at `k` of every state lawful on the
-grade-`k` cut is admitted, for every `k ≥ N`.  It is what the compiled lifts of the canonical layers
-use. -/
-def LiteralProvision (N : ℕ) (Adm : I.State → Prop) : Prop :=
-  ∀ ⦃k : ℕ⦄, N ≤ k → ∀ ⦃W : I.State⦄, ProfileTower.IsCutLawful I k W →
-    Adm (ProfileTower.hat I k W)
-
 variable {I}
-
-/-- **At a state with a top at the grade `k`, the provision is admission of the splice**: the cap
-must be `⊤`.  So a state lawful on the cut, `⊤` at a cell of grade `k`, whose splice is not
-admitted (the mixed state of a seed of a type with itself, under capped correctness) refutes the
-boundary provision. -/
-theorem provisionAt_iff_of_eq_top {Adm : I.State → Prop} {k : ℕ} {W : I.State}
-    {d₀ : Fin I.amalgam.card} (hd₀ : I.amalgam.toCellScheme.grade d₀ = k) (htop : W d₀ = ⊤) :
-    I.ProvisionAt Adm k W ↔ Adm (ProfileTower.hat I k W) := by
-  refine ⟨fun ⟨H, _, hle, hA⟩ ↦ ?_, fun h ↦ ⟨⊤, isSelfVisible_top _, fun _ _ ↦ le_top,
-    by simpa only [min_top_right] using h⟩⟩
-  obtain rfl : H = ⊤ := top_le_iff.mp (htop ▸ hle d₀ hd₀)
-  simpa only [min_top_right] using hA
-
-/-- **The literal provision implies the boundary provision**, at the cap `⊤`. -/
-theorem BoundaryProvision.of_literal {N : ℕ} {Adm : I.State → Prop}
-    (h : I.LiteralProvision N Adm) : I.BoundaryProvision N Adm := fun _ hk W hW ↦
-  ⟨⊤, isSelfVisible_top _, fun _ _ ↦ le_top, by simpa only [min_top_right] using h hk hW⟩
 
 end Seed
 
@@ -259,7 +210,6 @@ theorem provisionAt_of_isLawfulBelow (hmap : I.IsTransformClosed Adm)
   · have h := adm_of_isLawfulBelow hmap hF hj hq hu
     rwa [hhat] at h
 
-
 /-- **The coatom provision is necessary for an admitted completion.**  In a completion with admitted
 rows from the grade `N`, admitted states closed under transformation images, every state `W`
 lawful below a coatom `(C, k)`, `N ≤ k`, `0 < k ≤ m + 1`, agrees below `(C, k)` with a state
@@ -315,10 +265,10 @@ variable {α : Ordinal.{u}} {m : ℕ} {I : Seed.{u} α m}
 
 variable (I) in
 /-- **An admission from the grade `N`**: a predicate `Adm` on states, closed under transformation
-images (A1) and caps at grades `≥ N` (A2), holding at the constant `⊥` (A0), with the provision
-(A3); a bottom class `InClass` and a predicate `CapBot` (the states whose private cap is `⊥`),
-admitted unconditionally.  The rows allowed at the reading grades are the **reading rows**
-(`Seed.Admission.Row`): admitted states in the class, and the states of `CapBot`. -/
+images (A1) and caps at grades `≥ N` (A2), holding at the constant `⊥` (A0); a bottom class
+`InClass` and a predicate `CapBot` of states admitted unconditionally.  The rows allowed at the
+reading grades are the **reading rows** (`Seed.Admission.Row`): admitted states in the class, and
+the states of `CapBot`. -/
 structure Admission where
   /-- The least grade at which the rows of full scope are restricted. -/
   N : ℕ
@@ -326,7 +276,7 @@ structure Admission where
   Adm : I.State → Prop
   /-- The bottom class of the rows at the reading grades. -/
   InClass : I.State → Prop
-  /-- The states admitted unconditionally (private cap `⊥`). -/
+  /-- The states admitted unconditionally. -/
   CapBot : I.State → Prop
   /-- (A1) Admitted states are closed under transformation images over the grading of the
   amalgam. -/
@@ -338,8 +288,6 @@ structure Admission where
   bot : Adm fun _ ↦ ⊥
   /-- (A0) The states of `CapBot` are admitted. -/
   adm_of_capBot : ∀ ⦃s : I.State⦄, CapBot s → Adm s
-  /-- (A3) The coatom provision from the grade `N`. -/
-  provision : I.CoatomProvision N Adm
 
 namespace Admission
 
@@ -353,18 +301,9 @@ variable {A} in
 theorem Row.adm {s : I.State} (h : A.Row s) : A.Adm s :=
   h.elim (fun h ↦ h.2) fun h ↦ A.adm_of_capBot h
 
-/-- **The splice of an admitted state is admitted** (A1, at the step witness). -/
-theorem adm_hat {s : I.State} (hs : A.Adm s) (k : ℕ) : A.Adm (ProfileTower.hat I k s) := by
-  convert A.map hs (IsWitness.id_step k) using 1
-  funext d
-  by_cases hd : I.amalgam.toCellScheme.grade d ≤ k
-  · rw [ProfileTower.hat_of_le hd, stepSuppressor_of_le hd, id, min_top_right]
-  · rw [ProfileTower.hat_of_lt (not_le.mp hd), stepSuppressor_of_lt (not_le.mp hd), min_bot_right]
-
 variable (I) in
 /-- **The trivial admission** from the grade `N`: every state is admitted, in the class, and
-admitted unconditionally.  Its coatom provision is that of the canonical completion
-(`Seed.nonempty_completionBelowFullGrade`, `CompletionBelowFullGrade.coatomProvision`). -/
+admitted unconditionally. -/
 def all (N : ℕ) : I.Admission where
   N := N
   Adm _ := True
@@ -374,8 +313,6 @@ def all (N : ℕ) : I.Admission where
   cap _ _ _ _ _ _ := trivial
   bot := trivial
   adm_of_capBot _ _ := trivial
-  provision := (I.nonempty_completionBelowFullGrade.some).coatomProvision
-    (fun _ _ _ _ _ ↦ trivial) fun _ _ _ _ ↦ trivial
 
 /-- Every state is a reading row of the trivial admission. -/
 theorem row_all (N : ℕ) (s : I.State) : (all I N).Row s := .inr trivial
@@ -652,25 +589,6 @@ noncomputable abbrev Lvl.admittedNextS (A : I.Admission) : Scheme.{u} (m + 2) :=
 theorem Lvl.admittedNextS_all (N : ℕ) : L.admittedNextS (Seed.Admission.all I N) = L.nextS := by
   rw [Lvl.admittedNextS, admittedCat_all, Lvl.nextSOn_cat]
 
-/-- **The admitted layer over a good level is consistent.** -/
-theorem Lvl.GoodOn.isConsistent_admittedNextS (hL : L.GoodOn D) (A : I.Admission)
-    (hdown : ∀ R ∈ admittedCat A (g + 1), code g R ∈ D g) :
-    (L.admittedNextS A).rows.IsConsistent :=
-  hL.isConsistent_nextSOn (admittedCat_subset A _) hdown
-
-/-- **The admitted layer over a good level is coded.** -/
-theorem Lvl.GoodOn.isCoded_admittedNextS (hL : L.GoodOn D) (A : I.Admission) :
-    (L.admittedNextS A).IsCoded :=
-  hL.isCoded_nextSOn (admittedCat_subset A _)
-
-/-- **The admitted layer carries a cell at `(univ, g + 1)`**, the cell of the constant `⊥`, when it
-is a reading row. -/
-theorem Lvl.exists_gradedIndex_eq_admittedNextS (A : I.Admission) (hA : A.Row fun _ ↦ ⊥) :
-    ∃ u, (L.admittedNextS A).toCellScheme.gradedIndex u =
-      ((univ : Finset (Fin (m + 2))), g + 1) := by
-  obtain ⟨i, -⟩ := exists_entryOn_eq (bot_mem_admittedCat A (g + 1) hA)
-  exact ⟨Fin.natAdd _ i, Scheme.appendFullCellsScheme_gradedIndex_natAdd _ _ _ i⟩
-
 /-- **The rows of full scope of the admitted layer are reading rows**, read at the old cells. -/
 theorem Lvl.GoodOn.row_rowAt_admittedNextS (hL : L.GoodOn D) (A : I.Admission)
     {u : Fin (L.admittedNextS A).card}
@@ -696,6 +614,5 @@ theorem Lvl.admittedTop_all (N : Lvl I m) (K : ℕ) :
   Scheme.admittedFieldLayer_of_forall fun _ ↦ Seed.Admission.row_all K _
 
 end ProfileTower
-
 
 end VaughtConjecture

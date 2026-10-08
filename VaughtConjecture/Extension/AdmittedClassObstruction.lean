@@ -27,17 +27,16 @@ cap `c` at `⊥`).
   of a predicate `Rw` at `k` is `⊥` at `z` or at `c`, the lift provision at `⊥` fails at every
   profile lawful below the coatom other than `⊥` at `c` and `z` (the orbit code keeps `⊥`).
 
-So, for an admission whose reading rows at the grade `k` are in a bottom class `⊥` at a cell `z`
-of the private coatom, or have the cap `c` at `⊥` (the rows of the catalogue in the class or with
-the cap at `⊥`), the admitted completion asks every labelling lawful below the
-private coatom with the cap other than `⊥` to be `⊥` at `z`.  A class for which some lawful
-labelling of the private coatom violates this (a cell of the class read other than `⊥` by the row
-of the cap) admits no legal completion.
+So, for an admission whose reading rows at the grade `k` are in a bottom class `⊥` at a cell `z`,
+or have the cell `c` at `⊥`, with `z` and `c` below a coatom `(C, k)`, a completion whose rows at
+`(univ, k)` are such reading rows asks every labelling lawful below `(C, k)` that is not `⊥` at `c`
+to be `⊥` at `z`.  A class for which some lawful labelling below `(C, k)` violates this admits no
+completion whose rows at `(univ, k)` are in the class.
 
 ## Placement
 
-The engine of the restricted catalogue at the reading grades (`roadmap/README.md`, Layer 3, 3.1,
-under "(R6)"); an obstruction to the class form of the catalogue.
+The completion below the full grade with admitted rows at the reading grades
+(`roadmap/README.md`, Layer 3, 3.1, under "(R6)").
 -/
 
 universe u

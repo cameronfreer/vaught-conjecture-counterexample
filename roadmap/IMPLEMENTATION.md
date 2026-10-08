@@ -4401,13 +4401,14 @@ ones split):
     `Extension/AdmittedLift`, `Extension/AdmittedCompletion`, `Extension/AdmittedClassObstruction`,
     `Extension/AdmittedTower`, `Extension/RowCompletionZero`: the completion with admitted rows at
     the reading grades (compiled in this repository (theorem named)): levels good relative to a
-    family of catalogues (`ProfileTower.Lvl.GoodOn`), admissions and recognition
-    (`Seed.Admission`, `CompletionBelowFullGrade.adm_of_isLawfulBelow`), the lifts into an
-    admitted layer under the two lift provisions (`ProfileTower.Lvl.Good.cappedLift_admittedNextS`),
-    the completion on the catalogues of a predicate from a grade `N` under the lift provisions,
-    the downward clause and the code of the glued labelling (`Seed.exists_rowCompletion`,
-    `Seed.exists_rowCompletion₀`, `Seed.exists_admittedCompletion`), and the obstruction to a
-    bottom class on the rows (`ProfileTower.not_botLiftProvisionOf`);
+    family of catalogues (`ProfileTower.Lvl.GoodOn`; `ProfileTower.Lvl.good_iff_goodOn_cat`),
+    admissions and recognition (`Seed.Admission`, `CompletionBelowFullGrade.adm_of_isLawfulBelow`),
+    the lifts into an admitted layer under the two lift provisions
+    (`ProfileTower.Lvl.GoodOn.cappedLift_admittedNextS`), the completion on the catalogues of a
+    predicate from a grade `N` under the lift provisions, the downward clause at `N ≤ k ≤ m` and the
+    code of the glued labelling (`Seed.exists_rowCompletion₀`, `Seed.exists_rowCompletion`,
+    `Seed.exists_admittedCompletion`), and the obstruction to a bottom class on the rows
+    (`ProfileTower.not_botLiftProvisionOf`);
   - `Extension/CapRequests`, `Extension/CapRequestsCode`, `Extension/CapRequestsExamples`,
     `Extension/CapRequestsTop`, `Extension/CapRequestsGrade`, `Extension/CapRequestsFill`: cap
     requests and the correct completion from the grade of the cap (compiled in this repository

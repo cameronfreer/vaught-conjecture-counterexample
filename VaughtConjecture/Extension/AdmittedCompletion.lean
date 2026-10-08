@@ -13,43 +13,38 @@ reading grades; the admitted completion when the only reading grade is the top g
 
 Let `I` be a seed on `m + 2 ≥ 4` points and `L` the good level of the tower of rank-normalized
 profiles at the grade `m` (`ProfileTower.lvl`).  **The admitted top**
-(`ProfileTower.Lvl.Good.admittedTopCompletion`) is the admitted layer at the grade `m + 1` over `L`
-(`ProfileTower.Lvl.admittedNextS`: one cell of full scope and grade `m + 1` per admitted profile,
-with the row labelling of its profile).  Under
+(`ProfileTower.Lvl.GoodOn.admittedTopCompletion`) is the admitted layer at the grade `m + 1` over
+`L` (`ProfileTower.Lvl.admittedNextS`: one cell of full scope and grade `m + 1` per admitted
+profile, with the row labelling of its profile).  Under
 
 * the lift provisions at the grade `m + 1` for both coatoms (`ProfileTower.BotLiftProvision`,
   `ProfileTower.CapLiftProvision`), and
 * the admission of the code of the glued labelling of the amalgam at `m + 1`,
 
 it is a completion below the full grade whose rows of full scope at the grades `≥ m + 1` are
-admitted (`Seed.exists_admittedCompletion_top`):
+admitted (`ProfileTower.Lvl.GoodOn.hasAdmittedRows_admittedTopCompletion`):
 
 * legality below the full grade: well formed, coded, consistent (the layer on a sub-catalogue),
   complete (the cell of the code of the glued labelling at `(univ, m + 1)`), and bountiful
   (`CellScheme.Rows.isBountiful_of_coatoms`: off the ground set the lifts of the amalgam, from
   either coatom at the grades `j ≤ m` the lifts of the level, at `m + 1` the lift into the admitted
-  layer, `ProfileTower.Lvl.Good.cappedLift_admittedNextS`);
+  layer, `ProfileTower.Lvl.GoodOn.cappedLift_admittedNextS`);
 * the lawful labelling extending the glued labelling: the extension at `⊥` of the glued labelling
-  through its admitted code (`ProfileTower.Lvl.Good.exists_extensionOn_bot`);
+  through its admitted code (`ProfileTower.Lvl.GoodOn.exists_extensionOn_bot`);
 * admitted rows: the row of a cell of full scope at `m + 1` is the splice of its profile, a reading
-  row (`ProfileTower.Lvl.Good.row_rowAt_admittedNextS`).
+  row (`ProfileTower.Lvl.GoodOn.row_rowAt_admittedNextS`).
 
-The trivial admission (`Seed.Admission.all`) has the lift provisions at `m + 1`
-(`ProfileTower.botLiftProvision_all_top`, `ProfileTower.capLiftProvision_all_top`: the fill of the
-other coatom from the common face at the grade `m`, then within it from `m` to `m + 1`,
-`Seed.exists_lift_union_of_le`), and admits every code; so every seed on at least four points has a
-completion below the full grade whose top layer is a layer of rank-normalized profiles
-(`Seed.nonempty_completionBelowFullGrade_of_all`).
-
-Admitted layers at grades `≤ m` followed by further layers are not assembled here: the invariant of
-a good level (`ProfileTower.Lvl.Good.lawful`) asks the section operator to be lawful at every
-profile lawful on the cut, and after an admitted layer the section of a profile is the decoded row
-labelling of its code, a lawful section only when the code is admitted.
+The whole catalogue at the top grade has the lift provisions
+(`ProfileTower.botLiftProvisionIn_cat_top`, `ProfileTower.capLiftProvisionIn_cat_top` in
+`VaughtConjecture.Extension.AdmittedTower`), from
+the fill of the other coatom at the top grade (`ProfileTower.exists_isCutLawful_of_coatom_top`).
+The levels below the top on sub-catalogues, good relative to a family (`ProfileTower.Lvl.GoodOn`),
+are assembled in `VaughtConjecture.Extension.RowCompletionZero`.
 
 ## Placement
 
-The engine of the restricted catalogue at the reading grades (`roadmap/README.md`, Layer 3, 3.1,
-under "(R6)"); third and fourth pieces, at the top grade.
+The completion below the full grade with admitted rows at the reading grades
+(`roadmap/README.md`, Layer 3, 3.1, under "(R6)").
 -/
 
 universe u
@@ -140,39 +135,19 @@ theorem exists_isCutLawful_of_coatom_top (hm : 0 < m) {x : Fin (m + 2)}
   · rw [hW]
     simp only [hdC, hdD, ite_false, dite_false]
 
-/-- **The trivial admission has the lift provision at `⊥` at the top grade.** -/
-theorem botLiftProvision_all_top (N : ℕ) (hm : 0 < m) {x : Fin (m + 2)}
-    (hx : x ∈ (Pts : Finset (Fin (m + 2)))) :
-    BotLiftProvision (Seed.Admission.all I N) (m + 1) x := fun f hf ↦ by
-  obtain ⟨W, hW, hWf, -⟩ := exists_isCutLawful_of_coatom_top hm hx (isSelfVisible_bot _)
-    (P := fun _ ↦ ⊥) ⟨Rows.isLawfulBelow_const_bot _, Rows.isLawfulBelow_const_bot _⟩ hf
-    fun _ _ ↦ by simp
-  have hh := isCutLawful_hat hW
-  refine ⟨W, hW, hWf, mem_admittedCat.mpr ⟨mem_cat.mpr ⟨⟨hh.1.orbitCode fun d ↦ d.2.2,
-    hh.2.orbitCode fun d ↦ d.2.2⟩, orbitCode_orbitCode⟩, Seed.Admission.row_all N _⟩⟩
-
-/-- **The trivial admission has the lift provision at the positive caps at the top grade.** -/
-theorem capLiftProvision_all_top (N : ℕ) (hm : 0 < m) {x : Fin (m + 2)}
-    (hx : x ∈ (Pts : Finset (Fin (m + 2)))) :
-    CapLiftProvision (Seed.Admission.all I N) (m + 1) x := fun h hh _ _ P hP f hf hfP ↦ by
-  obtain ⟨W, hW, hWf, hWP⟩ := exists_isCutLawful_of_coatom_top hm hx hh
-    (mem_cat.mp (mem_admittedCat.mp hP).1).1 hf hfP
-  exact ⟨W, hW, hWf, hWP, mem_admittedCat.mpr ⟨mem_cat.mpr ⟨⟨hW.1.orbitCode fun d ↦ d.2.2,
-    hW.2.orbitCode fun d ↦ d.2.2⟩, orbitCode_orbitCode⟩, Seed.Admission.row_all N _⟩⟩
-
 /-! ### The admitted top over the level at the grade `m` -/
 
 section Top
 
 variable {L : Lvl I m} {D : ℕ → Finset (Prof I)} (Rw : I.State → Prop)
 
-/-- The old cells of the admitted top form a lower embedding of the amalgam. -/
+/-- The old cells of the layer on `C` form a lower embedding of the amalgam. -/
 theorem Lvl.GoodOn.isLowerEmbedding_nextSOn (hL : L.GoodOn D) (C : Finset (Prof I)) :
     I.amalgam.toCellScheme.IsLowerEmbedding (L.nextSOn C).toCellScheme (L.embedOn C) :=
   (Scheme.isLowerEmbedding_castAdd (S := L.S) (m + 1) C.card
     (fun i ↦ L.ΦOn C (entryOn C i)) L.not_le).comp hL.lowerEmb
 
-/-- The rows of the admitted top pull back to those of the amalgam. -/
+/-- The rows of the layer on `C` pull back to those of the amalgam. -/
 theorem Lvl.GoodOn.comap_rows_nextSOn (hL : L.GoodOn D) (C : Finset (Prof I)) :
     (L.nextSOn C).rows.comap (hL.isLowerEmbedding_nextSOn C) = I.amalgam.rows := by
   have h := Rows.comap_comap (L.nextSOn C).rows
@@ -270,7 +245,7 @@ theorem Lvl.GoodOn.isLegalBelowFullGrade_admittedNextS (hL : L.GoodOn D)
   exists_gradedIndex_eq := hL.exists_gradedIndex_eq_nextSOn hne
 
 /-- **The glued labelling extends to a lawful section of the admitted top**, unchanged at the old
-cells, when its code at `m + 1` is admitted (`ProfileTower.Lvl.Good.exists_extensionOn_bot`). -/
+cells, when its code at `m + 1` is admitted (`ProfileTower.Lvl.GoodOn.exists_extensionOn_bot`). -/
 theorem Lvl.GoodOn.exists_isLawful_admittedNextS (hL : L.GoodOn D)
     (hdown : ∀ R ∈ rowCat Rw (m + 1), code m R ∈ D m)
     (hlab : code (m + 1) (fun d ↦ I.amalgam.label d) ∈ rowCat Rw (m + 1)) :
@@ -335,49 +310,5 @@ end VaughtConjecture.ProfileTower
 namespace VaughtConjecture
 
 open Finset Label ProfileTower
-
-/-- **An admitted completion with the reading grade at the top**: for a seed on `m + 2 ≥ 4` points
-and an admission `A` from a grade `A.N ≥ m + 1`, with the lift provisions at `m + 1` for both
-coatoms and the code of the glued labelling admitted, some completion below the full grade has
-admitted rows from `A.N` (the admitted top over the level at the grade `m`). -/
-theorem Seed.exists_admittedCompletion_top {α : Ordinal.{u}} {m : ℕ} (I : Seed.{u} α m)
-    (hm : 2 ≤ m) (A : I.Admission) (hN : m + 1 ≤ A.N)
-    (hbot : ∀ x ∈ (Pts : Finset (Fin (m + 2))), BotLiftProvision A (m + 1) x)
-    (hcap : ∀ x ∈ (Pts : Finset (Fin (m + 2))), CapLiftProvision A (m + 1) x)
-    (hlab : code (m + 1) (fun d ↦ I.amalgam.label d) ∈ admittedCat A (m + 1)) :
-    ∃ F : CompletionBelowFullGrade I, F.HasAdmittedRows A.N A.Adm := by
-  obtain ⟨j, rfl⟩ : ∃ j, m = j + 2 := ⟨m - 2, by omega⟩
-  have hL := lvl_good (I := I) hm j le_rfl
-  have hL' := hL.toGoodOn fun k ↦ cat I k
-  have hdown : ∀ R ∈ rowCat A.Row (j + 2 + 1), code (j + 2) R ∈ cat I (j + 2) :=
-    fun R hR ↦ code_mem_cat_of_mem_cat (rowCat_subset _ _ hR)
-  exact ⟨hL'.admittedTopCompletion A.Row hdown hbot hcap hlab, fun _ _ hu hj ↦
-    (hL'.hasAdmittedRows_admittedTopCompletion A.Row hdown hbot hcap hlab hN hu hj).adm⟩
-
-/-- **An admitted completion from an admission with the lift provisions**, from the grade
-`A.N = m + 1`: the lift provisions are the fields of `Seed.LiftAdmission`. -/
-theorem Seed.exists_admittedCompletion_of_liftAdmission {α : Ordinal.{u}} {m : ℕ}
-    (I : Seed.{u} α m) (hm : 2 ≤ m) (A : I.LiftAdmission) (hN : A.N = m + 1)
-    (hlab : code (m + 1) (fun d ↦ I.amalgam.label d) ∈ admittedCat A.toAdmission (m + 1)) :
-    ∃ F : CompletionBelowFullGrade I, F.HasAdmittedRows A.N A.Adm :=
-  I.exists_admittedCompletion_top hm A.toAdmission hN.ge
-    (fun _ hx ↦ A.botLiftProvision hN.le le_rfl hx)
-    (fun _ hx ↦ A.capLiftProvision hN.le le_rfl hx) hlab
-
-/-- **Every seed on at least four points has a completion below the full grade whose top layer is
-a layer of rank-normalized profiles**: the admitted top of the trivial admission. -/
-theorem Seed.nonempty_completionBelowFullGrade_of_all {α : Ordinal.{u}} {m : ℕ}
-    (I : Seed.{u} α m) (hm : 2 ≤ m) : Nonempty (CompletionBelowFullGrade I) := by
-  have hlab : code (m + 1) (fun d ↦ I.amalgam.label d) ∈
-      admittedCat (Seed.Admission.all I (m + 1)) (m + 1) := by
-    have hW : IsCutLawful I (m + 1) fun d ↦ I.amalgam.label d :=
-      ⟨I.amalgam.isLawful.isLawfulBelow _, I.amalgam.isLawful.isLawfulBelow _⟩
-    have hh := isCutLawful_hat hW
-    exact mem_admittedCat.mpr ⟨mem_cat.mpr ⟨⟨hh.1.orbitCode fun d ↦ d.2.2,
-      hh.2.orbitCode fun d ↦ d.2.2⟩, orbitCode_orbitCode⟩, Seed.Admission.row_all _ _⟩
-  obtain ⟨F, -⟩ := I.exists_admittedCompletion_top hm (Seed.Admission.all I (m + 1)) le_rfl
-    (fun _ hx ↦ botLiftProvision_all_top _ (by omega) hx)
-    (fun _ hx ↦ capLiftProvision_all_top _ (by omega) hx) hlab
-  exact ⟨F⟩
 
 end VaughtConjecture

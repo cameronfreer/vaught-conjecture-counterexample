@@ -20,7 +20,15 @@ at the profiles lawful on the grade-`g` cut **whose code at `g` lies in `D g`**
 (`ProfileTower.Lvl.GoodOn.lawful`).  After a layer on a sub-catalogue, the section of a profile is
 the decoded row labelling of its code, which is a lawful section only when the code has a cell.
 
-* A good level is good relative to every family (`ProfileTower.Lvl.Good.toGoodOn`).
+* A good level is good relative to every family (`ProfileTower.Lvl.Good.toGoodOn`), and a good
+  level is exactly a level good relative to the canonical catalogues
+  (`ProfileTower.Lvl.good_iff_goodOn_cat`).  The statements relative to a family in these modules
+  specialize, at the canonical catalogues `D = cat I ·` and `C = cat I (g + 1)` (where
+  `ProfileTower.Lvl.nextSOn` and `ProfileTower.Lvl.ΦOn` are `ProfileTower.Lvl.nextS` and
+  `ProfileTower.Lvl.Φ` by definition), to those of `ProfileTower.Lvl.Good` in
+  `VaughtConjecture.Extension.ProfileTower`: for example `ProfileTower.Lvl.GoodOn.isLawfulBelow_ΦOn`
+  to `ProfileTower.Lvl.Good.isLawfulBelow_Φ`, and the old-cell statements below to the lemmas of
+  the same names for good levels.
 * The facts about the old cells of a good level that do not use the section operator hold for a
   level good relative to a family (`ProfileTower.Lvl.GoodOn.gradedIndex_embed`,
   `ProfileTower.Lvl.GoodOn.isLawfulBelow_old_iff`, `ProfileTower.Lvl.GoodOn.cappedLift_old`,
@@ -31,8 +39,8 @@ the decoded row labelling of its code, which is a lawful section only when the c
 
 ## Placement
 
-The engine of the restricted catalogue at the reading grades (`roadmap/README.md`, Layer 3, 3.1,
-under "(R6)"); the invariant below the top grade.
+The completion below the full grade with admitted rows at the reading grades
+(`roadmap/README.md`, Layer 3, 3.1, under "(R6)").
 -/
 
 universe u
@@ -60,6 +68,11 @@ theorem code_mem_cat_of_isCutLawful {k : ℕ} {P : Prof I} (hP : IsCutLawful I k
   obtain ⟨hC, hD⟩ := isCutLawful_hat hP
   exact mem_cat.mpr ⟨⟨hC.orbitCode fun d ↦ d.2.2, hD.orbitCode fun d ↦ d.2.2⟩,
     orbitCode_orbitCode⟩
+
+/-- **The orbit code of a profile lawful on the cut lies in the catalogue.** -/
+theorem orbitCode_mem_cat_of_isCutLawful {k : ℕ} {P : Prof I} (hP : IsCutLawful I k P) :
+    orbitCode k P ∈ cat I k :=
+  mem_cat.mpr ⟨⟨hP.1.orbitCode fun d ↦ d.2.2, hP.2.orbitCode fun d ↦ d.2.2⟩, orbitCode_orbitCode⟩
 
 /-- **A level good relative to a family of catalogues `D`** at the grade `g`: the properties of a
 good level (`ProfileTower.Lvl.Good`), with the section operator lawful only at the profiles lawful
@@ -110,6 +123,13 @@ theorem Lvl.Good.toGoodOn (hL : L.Good) (D : ℕ → Finset (Prof I)) : L.GoodOn
   readable := hL.readable
   lift := hL.lift
   complete := hL.complete
+
+/-- **A good level is a level good relative to the canonical catalogues**, and conversely: the code
+at `g` of a profile lawful on the grade-`g` cut lies in the catalogue at `g`
+(`ProfileTower.code_mem_cat_of_isCutLawful`). -/
+theorem Lvl.good_iff_goodOn_cat : L.Good ↔ L.GoodOn fun k ↦ cat I k :=
+  ⟨fun h ↦ h.toGoodOn _, fun h ↦
+    { h with lawful := fun P hP ↦ h.lawful P hP (code_mem_cat_of_isCutLawful hP) }⟩
 
 theorem Lvl.GoodOn.gradedIndex_embed (hL : L.GoodOn D) (d : Fin I.amalgam.card) :
     L.S.toCellScheme.gradedIndex (L.embed d) = I.amalgam.toCellScheme.gradedIndex d :=

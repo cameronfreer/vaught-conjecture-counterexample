@@ -422,12 +422,10 @@ variable {α : Ordinal.{u}} {m : ℕ} {I : Seed.{u} α m} {r : CapRequests (Fin 
 
 /-- **The admission of correct states at the top grade**, from the grade `m + 1`: correct states,
 no bottom class, the states with cap `⊥` admitted unconditionally; closed under transformation
-images by the grading, under caps by `CapRequests.IsCorrect.cap`; its coatom provision is that of
-the correct completion (`CompletionBelowFullGrade.coatomProvision`). -/
-noncomputable def topAdmission (hm : 2 ≤ m) (hgr : r.IsGraded I.amalgam.toCellScheme.grade)
-    (hcap : I.amalgam.toCellScheme.gradedIndex r.cap = (univ.erase xp, m + 1))
-    (hxp : xp ∈ (Pts : Finset (Fin (m + 2)))) (hbot : CapFillBot r xp) (hpos : CapFillPos r xp)
-    (hlab : r.IsCorrect fun d ↦ I.amalgam.label d) : I.Admission where
+images by the grading, under caps by `CapRequests.IsCorrect.cap`. -/
+noncomputable def topAdmission (hgr : r.IsGraded I.amalgam.toCellScheme.grade)
+    (hcap : I.amalgam.toCellScheme.gradedIndex r.cap = (univ.erase xp, m + 1)) :
+    I.Admission where
   N := m + 1
   Adm := r.IsCorrect
   InClass _ := True
@@ -437,34 +435,28 @@ noncomputable def topAdmission (hm : 2 ≤ m) (hgr : r.IsGraded I.amalgam.toCell
     hs.cap hgr.off_le (hh.mono ((hgr.le_grade_cap.trans (congrArg Prod.snd hcap).le).trans hk))
   bot := isCorrect_bot r
   adm_of_capBot _ h := isCorrect_of_cap_eq_bot h
-  provision :=
-    (I.exists_correctCompletion_top hm hgr hcap hxp hbot hpos hlab).choose.coatomProvision
-      (fun _ _ _ hs hw ↦ hs.map hgr hw)
-      (I.exists_correctCompletion_top hm hgr hcap hxp hbot hpos hlab).choose_spec
 
 /-- The reading rows of the admission of correct states are the correct states. -/
-theorem row_topAdmission (hm : 2 ≤ m) (hgr : r.IsGraded I.amalgam.toCellScheme.grade)
-    (hcap : I.amalgam.toCellScheme.gradedIndex r.cap = (univ.erase xp, m + 1))
-    (hxp : xp ∈ (Pts : Finset (Fin (m + 2)))) (hbot : CapFillBot r xp) (hpos : CapFillPos r xp)
-    (hlab : r.IsCorrect fun d ↦ I.amalgam.label d) :
-    (topAdmission hm hgr hcap hxp hbot hpos hlab).Row = r.IsCorrect :=
+theorem row_topAdmission (hgr : r.IsGraded I.amalgam.toCellScheme.grade)
+    (hcap : I.amalgam.toCellScheme.gradedIndex r.cap = (univ.erase xp, m + 1)) :
+    (topAdmission hgr hcap).Row = r.IsCorrect :=
   funext fun _ ↦ propext ⟨fun h ↦ h.elim (·.2) isCorrect_of_cap_eq_bot,
     fun h ↦ .inl ⟨trivial, h⟩⟩
 
 /-- **The admission of correct states with its lift provisions**, from the grade `m + 1`. -/
 noncomputable def topLiftAdmission (hm : 2 ≤ m) (hgr : r.IsGraded I.amalgam.toCellScheme.grade)
     (hcap : I.amalgam.toCellScheme.gradedIndex r.cap = (univ.erase xp, m + 1))
-    (hxp : xp ∈ (Pts : Finset (Fin (m + 2)))) (hbot : CapFillBot r xp) (hpos : CapFillPos r xp)
-    (hlab : r.IsCorrect fun d ↦ I.amalgam.label d) : I.LiftAdmission where
-  toAdmission := topAdmission hm hgr hcap hxp hbot hpos hlab
+    (hxp : xp ∈ (Pts : Finset (Fin (m + 2)))) (hbot : CapFillBot r xp)
+    (hpos : CapFillPos r xp) : I.LiftAdmission where
+  toAdmission := topAdmission hgr hcap
   botLift k hk hkm x hx := by
     obtain rfl : k = m + 1 := le_antisymm hkm hk
     have h := ((liftProvisionOf_of_fills (by omega) hgr hcap hxp hbot hpos) x hx).1
-    rwa [← row_topAdmission hm hgr hcap hxp hbot hpos hlab] at h
+    rwa [← row_topAdmission hgr hcap] at h
   capLift k hk hkm x hx := by
     obtain rfl : k = m + 1 := le_antisymm hkm hk
     have h := ((liftProvisionOf_of_fills (by omega) hgr hcap hxp hbot hpos) x hx).2
-    rwa [← row_topAdmission hm hgr hcap hxp hbot hpos hlab] at h
+    rwa [← row_topAdmission hgr hcap] at h
 
 end CapRequests
 

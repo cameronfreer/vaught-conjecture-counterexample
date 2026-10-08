@@ -27,8 +27,8 @@ satisfying the predicate.  As `Seed.exists_rowCompletion`, without asking `N ≥
 
 ## Placement
 
-The engine of the restricted catalogue at the reading grades (`roadmap/README.md`, Layer 3, 3.1,
-under "(R6)"), from the grade `0`.
+The completion below the full grade with admitted rows at the reading grades
+(`roadmap/README.md`, Layer 3, 3.1, under "(R6)").
 -/
 
 universe u
@@ -81,7 +81,7 @@ noncomputable def lvlOn₀ (D : ℕ → Finset (Prof I)) : (j : ℕ) → Lvl I j
 /-- **The levels on `D` from the grade `0` are good relative to `D`** up to the grade `m`, under
 the downward clause and the lift provisions at the grades `0 < k ≤ m`. -/
 theorem lvlOn₀_goodOn {D : ℕ → Finset (Prof I)} (hD : ∀ k, D k ⊆ cat I k)
-    (hdown : ∀ k, ∀ R ∈ D (k + 1), code k R ∈ D k)
+    (hdown : ∀ k, k + 1 ≤ m → ∀ R ∈ D (k + 1), code k R ∈ D k)
     (hbot : ∀ k, 0 < k → k ≤ m → ∀ x ∈ (Pts : Finset (Fin (m + 2))),
       BotLiftProvisionIn (D k) k x)
     (hcap : ∀ k, 0 < k → k ≤ m → ∀ x ∈ (Pts : Finset (Fin (m + 2))),
@@ -89,7 +89,7 @@ theorem lvlOn₀_goodOn {D : ℕ → Finset (Prof I)} (hD : ∀ k, D k ⊆ cat I
     (j : ℕ) → j ≤ m → (lvlOn₀ I D j).GoodOn D
   | 0, _ => base₀_good.toGoodOn D
   | j + 1, hj => (lvlOn₀_goodOn hD hdown hbot hcap j (by omega)).nextOn (by omega) (hD _)
-      (hdown _) (hbot _ (by omega) (by omega)) (hcap _ (by omega) (by omega))
+      (hdown _ hj) (hbot _ (by omega) (by omega)) (hcap _ (by omega) (by omega))
 
 /-- The rows of a level **read the catalogues of `D` at every grade**: the row of every cell of
 full scope, read at the old cells, is the splice at its grade `j` of a profile of `D j`. -/
@@ -107,8 +107,8 @@ theorem Lvl.GoodOn.rowsInAll_nextOn {g : ℕ} {L : Lvl I g} {D : ℕ → Finset 
     have he : L.S.toCellScheme.gradedIndex e = ((univ : Finset (Fin (m + 2))), j) :=
       (Scheme.appendFullCellsScheme_gradedIndex_castAdd _ _ _ e).symm.trans hz
     obtain ⟨R, hR, hrow⟩ := hrows e j he
-    exact ⟨R, hR, fun d ↦ (rowAt_appendFullCells_castAdd
-      (r := fun i ↦ L.ΦOn (D (g + 1)) (entryOn (D (g + 1)) i)) (h := L.not_le) e
+    exact ⟨R, hR, fun d ↦ (Scheme.rowAt_appendFullCells_castAdd
+      (r' := fun i ↦ L.ΦOn (D (g + 1)) (entryOn (D (g + 1)) i)) (h := L.not_le) e
       (L.embed d)).trans (hrow d)⟩
   | right i =>
     have hji : j = g + 1 := by
@@ -123,7 +123,7 @@ theorem Lvl.GoodOn.rowsInAll_nextOn {g : ℕ} {L : Lvl I g} {D : ℕ → Finset 
 
 /-- **The levels on `D` from the grade `0` read the catalogues of `D` at every grade.** -/
 theorem lvlOn₀_rowsInAll {D : ℕ → Finset (Prof I)} (hD : ∀ k, D k ⊆ cat I k)
-    (hdown : ∀ k, ∀ R ∈ D (k + 1), code k R ∈ D k)
+    (hdown : ∀ k, k + 1 ≤ m → ∀ R ∈ D (k + 1), code k R ∈ D k)
     (hbot : ∀ k, 0 < k → k ≤ m → ∀ x ∈ (Pts : Finset (Fin (m + 2))),
       BotLiftProvisionIn (D k) k x)
     (hcap : ∀ k, 0 < k → k ≤ m → ∀ x ∈ (Pts : Finset (Fin (m + 2))),
@@ -152,34 +152,35 @@ open Finset Label ProfileTower
 
 /-- **The completion on the catalogues of a predicate from every grade `N`**: for a seed on
 `m + 2 ≥ 3` points and a predicate `Rw` on states with the lift provisions at every grade
-`N ≤ k ≤ m + 1` from either coatom, the downward clause at the grades `≥ N` and, when
+`N ≤ k ≤ m + 1` from either coatom, the downward clause at the grades `N ≤ k ≤ m` and, when
 `N ≤ m + 1`, the code of the glued labelling at `m + 1` in the catalogue, some completion below the
 full grade has the row of every cell of full scope at a grade `≥ N` satisfying `Rw` (read at the
-old cells).  As `Seed.exists_rowCompletion`, with the levels on the family of `Rw` started at the
-grade `0` (the amalgam with the identity section, `ProfileTower.lvlOn₀`), so that neither `N ≥ 3`
-nor `m ≥ 2` is asked. -/
+old cells): the levels on the family of `Rw` started at the grade `0` (the amalgam with the
+identity section, `ProfileTower.lvlOn₀`) up to the grade `m`, then the layer on the catalogue of
+`Rw` at `m + 1`. -/
 theorem Seed.exists_rowCompletion₀ {α : Ordinal.{u}} {m : ℕ} (I : Seed.{u} α m)
     (hm : 0 < m) {N : ℕ} {Rw : I.State → Prop}
     (hbotP : ∀ k, N ≤ k → k ≤ m + 1 → ∀ x ∈ (Pts : Finset (Fin (m + 2))),
       BotLiftProvisionOf Rw k x)
     (hcapP : ∀ k, N ≤ k → k ≤ m + 1 → ∀ x ∈ (Pts : Finset (Fin (m + 2))),
       CapLiftProvisionOf Rw k x)
-    (hdown : ∀ k, N ≤ k → ∀ R ∈ rowCat Rw (k + 1), code k R ∈ rowCat Rw k)
+    (hdown : ∀ k, N ≤ k → k ≤ m → ∀ R ∈ rowCat Rw (k + 1), code k R ∈ rowCat Rw k)
     (hlab : N ≤ m + 1 → Rw (hat I (m + 1) (code (m + 1) fun d ↦ I.amalgam.label d))) :
     ∃ F : CompletionBelowFullGrade I, F.HasAdmittedRows N Rw := by
   classical
   set D := rowFamily I N Rw
   have hD (k : ℕ) : D k ⊆ cat I k := rowCat_subset _ k
   have hdD := rowFamily_down hdown
+  have hdD' (k : ℕ) (hk : k + 1 ≤ m) := hdD k (by omega)
   have hprov (k : ℕ) (hk0 : 0 < k) (hkm : k ≤ m + 1) (x : Fin (m + 2))
       (hx : x ∈ (Pts : Finset (Fin (m + 2)))) :=
     rowFamily_lift hm hbotP hcapP hk0 hkm hx
-  have hL := lvlOn₀_goodOn hD hdD (fun k hk hkm x hx ↦ (hprov k hk (by omega) x hx).1)
+  have hL := lvlOn₀_goodOn hD hdD' (fun k hk hkm x hx ↦ (hprov k hk (by omega) x hx).1)
     (fun k hk hkm x hx ↦ (hprov k hk (by omega) x hx).2) m le_rfl
-  have hR := lvlOn₀_rowsInAll hD hdD (fun k hk hkm x hx ↦ (hprov k hk (by omega) x hx).1)
+  have hR := lvlOn₀_rowsInAll hD hdD' (fun k hk hkm x hx ↦ (hprov k hk (by omega) x hx).1)
     (fun k hk hkm x hx ↦ (hprov k hk (by omega) x hx).2) m le_rfl
   set Rt : I.State → Prop := fun s ↦ N ≤ m + 1 → Rw s
-  have hdtop : ∀ R ∈ rowCat Rt (m + 1), code m R ∈ D m := hdD m
+  have hdtop : ∀ R ∈ rowCat Rt (m + 1), code m R ∈ D m := hdD m le_rfl
   have hbot (x) (hx : x ∈ (Pts : Finset (Fin (m + 2)))) :
       BotLiftProvisionOf Rt (m + 1) x := (hprov _ (by omega) le_rfl x hx).1
   have hcap (x) (hx : x ∈ (Pts : Finset (Fin (m + 2)))) :
@@ -212,8 +213,8 @@ theorem Seed.exists_rowCompletion₀ {α : Ordinal.{u}} {m : ℕ} (I : Seed.{u} 
     have hrow' (d : Fin I.amalgam.card) :
         (L.nextSOn (rowCat Rt (m + 1))).rowAt (Fin.castAdd _ e)
           (L.embedOn (rowCat Rt (m + 1)) d) = hat I k R d :=
-      (rowAt_appendFullCells_castAdd
-        (r := fun i ↦ L.ΦOn (rowCat Rt (m + 1)) (entryOn (rowCat Rt (m + 1)) i))
+      (Scheme.rowAt_appendFullCells_castAdd
+        (r' := fun i ↦ L.ΦOn (rowCat Rt (m + 1)) (entryOn (rowCat Rt (m + 1)) i))
         (h := L.not_le) e (L.embed d)).trans (hrow d)
     rw [funext hrow']
     have hR'' : R ∈ rowCat Rw k := by
@@ -221,5 +222,34 @@ theorem Seed.exists_rowCompletion₀ {α : Ordinal.{u}} {m : ℕ} (I : Seed.{u} 
       simp only [D, rowFamily_of_le Rw hk] at this
       exact this
     exact (mem_rowCat.mp hR'').2
+
+/-- **The completion on the catalogues of a predicate from a grade `N`**, for a seed on
+`m + 2 ≥ 4` points (`Seed.exists_rowCompletion₀`). -/
+theorem Seed.exists_rowCompletion {α : Ordinal.{u}} {m : ℕ} (I : Seed.{u} α m)
+    (hm : 2 ≤ m) {N : ℕ} {Rw : I.State → Prop}
+    (hbotP : ∀ k, N ≤ k → k ≤ m + 1 → ∀ x ∈ (Pts : Finset (Fin (m + 2))),
+      BotLiftProvisionOf Rw k x)
+    (hcapP : ∀ k, N ≤ k → k ≤ m + 1 → ∀ x ∈ (Pts : Finset (Fin (m + 2))),
+      CapLiftProvisionOf Rw k x)
+    (hdown : ∀ k, N ≤ k → k ≤ m → ∀ R ∈ rowCat Rw (k + 1), code k R ∈ rowCat Rw k)
+    (hlab : N ≤ m + 1 → Rw (hat I (m + 1) (code (m + 1) fun d ↦ I.amalgam.label d))) :
+    ∃ F : CompletionBelowFullGrade I, F.HasAdmittedRows N Rw :=
+  I.exists_rowCompletion₀ (by omega) hbotP hcapP hdown hlab
+
+/-- **The admitted completion**: for a seed on `m + 2 ≥ 3` points and an admission with the lift
+provisions (`Seed.LiftAdmission`) from a grade `N`, under the downward clause at the grades
+`N ≤ k ≤ m` and, when `N ≤ m + 1`, the admission of the code of the glued labelling at `m + 1`,
+some completion below the full grade has admitted rows from `N` (`Seed.exists_rowCompletion₀` for
+the reading rows). -/
+theorem Seed.exists_admittedCompletion {α : Ordinal.{u}} {m : ℕ} (I : Seed.{u} α m)
+    (hm : 0 < m) (A : I.LiftAdmission)
+    (hdown : ∀ k, A.N ≤ k → k ≤ m → ∀ R ∈ admittedCat A.toAdmission (k + 1),
+      code k R ∈ admittedCat A.toAdmission k)
+    (hlab : A.N ≤ m + 1 → A.Row (hat I (m + 1) (code (m + 1) fun d ↦ I.amalgam.label d))) :
+    ∃ F : CompletionBelowFullGrade I, F.HasAdmittedRows A.N A.Adm := by
+  obtain ⟨F, hF⟩ := I.exists_rowCompletion₀ hm (Rw := A.Row)
+    (fun _ hk hkm _ hx ↦ A.botLiftProvision hk hkm hx)
+    (fun _ hk hkm _ hx ↦ A.capLiftProvision hk hkm hx) hdown hlab
+  exact ⟨F, fun _ _ hu hj ↦ (hF hu hj).adm⟩
 
 end VaughtConjecture

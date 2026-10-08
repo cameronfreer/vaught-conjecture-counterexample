@@ -398,7 +398,7 @@ open Finset Label ProfileTower CapRequests
 
 /-- **The correct completion reading the tops (R4)**: for a seed on `m + 2 ≥ 4` points and cap
 requests graded by the grades of the amalgam, with
-* the cap of scope the private coatom `univ.erase xp` and grade `N ≥ 3`,
+* the cap of scope the private coatom `univ.erase xp` and grade `N`,
 * the common face carrying no cell of grade at least `N` (`hface`),
 * `T` labelled `⊤` and `Z` labelled `⊥` in the glued labelling, off the private coatom and of grade
   below `N` (the margin (M3)), and `F` empty,
@@ -438,7 +438,7 @@ theorem Seed.exists_correctCompletion_T {α : Ordinal.{u}} {m : ℕ} (I : Seed.{
     isCorrect_of_forall (fun z hz ↦ (hZ z hz).1) (fun f hf ↦ by simp [hF] at hf)
       fun y hy ↦ by rw [(hT y hy).1]; exact le_top
   have hlab := (hglued.code hgr (m + 1)).hat hgr (m + 1)
-  refine I.exists_correctCompletion hm hgr hxp hcapC hN3 hface (fun k hk hkm ↦ ?_)
+  refine I.exists_correctCompletion hm hgr hxp hcapC hface (fun k hk hkm ↦ ?_)
     (fun k hk hkm ↦ ?_) hlab
   · rcases hfill with hdead | hfol
     · exact capFillBotAt_of_isDeadFace hgr hxp hxd hne hdead hT' hZ' hF k
