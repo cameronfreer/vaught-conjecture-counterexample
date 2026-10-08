@@ -309,4 +309,111 @@ theorem not_rootOffsetsBelow :
 
 end TiedRootCapCounterexample
 
+/-! ### Acquisition with the root offsets below the grade of the cap -/
+
+namespace StageType
+
+variable {α : Ordinal.{u}} {k n : ℕ}
+
+/-- A marked-cap context whose root offsets lie below the grade of its top cap keeps the proper
+root ties at that cap. -/
+theorem IsMarkedCapContextAt.keepsProperRootTies {t' : StageType.{u} α k} {h : Fin n ↪ Fin k}
+    {c r : Fin t'.card} (hctx : t'.IsMarkedCapContextAt h c r)
+    (hoff : t'.RootOffsetsBelow h (t'.toCellScheme.grade c)) : t'.KeepsProperRootTies h c :=
+  keepsProperRootTies_of_rootOffsetsBelow hctx.1.2.1 hctx.1.1 (by have := hctx.2.2.1; omega) hoff
+
+/-- **A bound on the offsets of finitely many labels**: some `K` exceeds the offset `f` of every
+label `μ + f` (`μ` zero or a limit) among the labels of a stage type. -/
+theorem exists_offset_bound (t : StageType.{u} α n) :
+    ∃ K : ℕ, ∀ d (μ : Ordinal.{u}) (f : ℕ), Order.IsSuccPrelimit μ →
+      t.label d = ((μ + f : Ordinal.{u}) : Label.{u}) → f ≤ K := by
+  classical
+  have hd (d : Fin t.card) : ∃ K : ℕ, ∀ (μ : Ordinal.{u}) (f : ℕ), Order.IsSuccPrelimit μ →
+      t.label d = ((μ + f : Ordinal.{u}) : Label.{u}) → f ≤ K := by
+    by_cases hx : ∃ o : Ordinal.{u}, t.label d = o
+    · obtain ⟨o, ho⟩ := hx
+      obtain ⟨μ₀, hμ₀, j, rfl⟩ := exists_eq_add_natCast_isSuccPrelimit o
+      refine ⟨j, fun μ f hμ hf ↦ ?_⟩
+      have h := ho.symm.trans hf
+      exact ((add_natCast_eq_add_natCast_iff hμ₀ hμ).mp
+        (WithTop.coe_injective (WithBot.coe_injective h))).2.ge
+    · exact ⟨0, fun μ f _ hf ↦ absurd ⟨_, hf⟩ hx⟩
+  choose K hK using hd
+  exact ⟨univ.sup K, fun d μ f hμ hf ↦ (hK d μ f hμ hf).trans (le_sup (mem_univ d))⟩
+
+end StageType
+
+namespace Realization
+
+variable {ξ : Ordinal.{u}} {M : Type v} {R : Realization.{u, v} (blockStage ξ) M}
+
+/-- **Synchronization with a floor on the top grade**: as `Realization.IsModel.exists_synchronized`,
+with the top grade of `Z` moreover above a given `K` (unbounded growth gives an occurrence of top
+grade above `K`, and covering one containing it and `y`). -/
+theorem IsModel.exists_synchronized_floor (hR : R.IsModel) (hhol : R.IsCoverHollow)
+    (htop : R.topGradeSup = ⊤) (K : ℕ) (x y : R.Occurrence) {f : Fin x.arity ↪ Fin y.arity}
+    (hf : f.trans y.tuple = x.tuple) :
+    ∃ (Z : R.Occurrence) (gy : Fin y.arity ↪ Fin Z.arity), gy.trans Z.tuple = y.tuple ∧
+      y.arity + 1 < Z.type.topGrade ∧ K < Z.type.topGrade ∧ ∀ cc r, Z.type.IsTopCap cc →
+        Z.type.IsMarker cc r → ∀ a ∈ Z.type.visibleCells (f.trans gy), Z.type.label a = ⊤ →
+          visibilityReplace (Z.type.toCellScheme.grade cc) (x.arity + 1) (Z.type.rowAt cc r) ≤
+            Z.type.rowAt cc a := by
+  classical
+  -- an occurrence of top grade above `K`, and one containing it and `y`
+  obtain ⟨w, hw⟩ : ∃ w : R.Occurrence, K < w.type.topGrade := by
+    have hlt : ((K : ℕ) : ℕ∞) < R.topGradeSup := htop ▸ ENat.natCast_lt_top _
+    obtain ⟨w, hw⟩ := lt_iSup_iff.mp hlt
+    exact ⟨w, by exact_mod_cast hw⟩
+  obtain ⟨Y, hY⟩ := hR.isCovering.exists_subset_support (y.support ∪ w.support)
+  have hyY : y ≤ Y := subset_union_left.trans hY
+  have hwY : w ≤ Y := subset_union_right.trans hY
+  obtain ⟨gY, hgY, -⟩ := (Occurrence.le_iff_exists_restrictFace hR.isConsistent).mp hyY
+  have hfY : (f.trans gY).trans Y.tuple = x.tuple := by
+    rw [Function.Embedding.trans_assoc, hgY, hf]
+  obtain ⟨Z, gZ, hgZ, hNZ, hineq⟩ := hR.exists_synchronized hhol htop x Y hfY
+  have hYZ : Y ≤ Z := (Occurrence.le_iff_exists_restrictFace hR.isConsistent).mpr
+    ⟨gZ, hgZ, Occurrence.restrictFace_eq_some_of_trans_eq hR.isConsistent hgZ⟩
+  have hyar : y.arity ≤ Y.arity := by simpa using Fintype.card_le_of_embedding gY
+  refine ⟨Z, gY.trans gZ, ?_, by omega,
+    hw.trans_le ((Occurrence.topGrade_mono hR.isConsistent hwY).trans
+      (Occurrence.topGrade_mono hR.isConsistent hYZ)), fun cc r hcc hr a ha hat ↦ ?_⟩
+  · rw [Function.Embedding.trans_assoc, hgZ, hgY]
+  · exact hineq cc r hcc hr a (by rwa [Function.Embedding.trans_assoc]) hat
+
+/-- **Acquisition of marked-cap contexts with the root offsets below the grade of the cap**, with
+no hypothesis beyond those of `Realization.HollowAcquisition`: synchronization with a floor above
+every offset of the root's labels (`Realization.IsModel.exists_synchronized_floor`); the cells of
+the context visible through the root carry the root's labels. -/
+theorem hollowAcquisition_isMarkedCapContextBelow :
+    HollowAcquisition.{u, w} IsCoverHollowAtBlock fun t' h ↦
+      ∃ c r, t'.IsMarkedCapContextAt h c r ∧ t'.RootOffsetsBelow h (t'.toCellScheme.grade c) where
+  exists_context α M R hα hR hH htop n t c hc := by
+    obtain ⟨ξ, rfl, hhol⟩ := hH
+    set x : R.Occurrence := ⟨n, ⟨c, hc.injective⟩, t, hc.eval_eq⟩
+    obtain ⟨K, hK⟩ := StageType.exists_offset_bound t
+    obtain ⟨Z, gy, hgy, hNZ, hKZ, hineq⟩ := hR.exists_synchronized_floor hhol htop K x x
+      (f := Function.Embedding.refl _) (Function.Embedding.refl_trans _)
+    have hnt : ¬ Z.type.IsTopFree := fun htf ↦ by
+      rw [← StageType.topGrade_eq_zero_iff] at htf
+      omega
+    obtain ⟨cc, hcc⟩ := StageType.exists_isTopCap (hR.isLegal _ _ Z.eval_tuple) hnt
+    obtain ⟨r, hr⟩ := StageType.exists_isMarker hcc.2.1
+    have hfZ : ((Function.Embedding.refl _).trans gy).trans Z.tuple = x.tuple := by
+      rw [Function.Embedding.trans_assoc, hgy]
+      rfl
+    have htZ := Occurrence.restrictFace_eq_some_of_trans_eq hR.isConsistent hfZ
+    refine ⟨Z.arity, Z.type, Z.tuple, (Function.Embedding.refl _).trans gy,
+      covers_of_eval _ Z.eval_tuple, ?_, cc, r, ⟨hcc, hr, ?_, hineq cc r hcc hr⟩, ?_⟩
+    · funext i
+      exact DFunLike.congr_fun hgy i
+    · rw [hcc.grade_eq_topGrade]
+      exact hNZ
+    · intro y hy μ f hμ hf
+      obtain ⟨z, rfl⟩ := StageType.exists_faceCell_eq htZ hy
+      rw [StageType.label_faceCell] at hf
+      rw [hcc.grade_eq_topGrade]
+      exact (hK z μ f hμ hf).trans_lt hKZ
+
+end Realization
+
 end VaughtConjecture
