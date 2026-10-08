@@ -17,8 +17,9 @@ below `u`.  Locality at `u` gives a witness `(g, σ)` with `min (v d) (v u) = mi
 
 (`Scheme.exists_controllerRead`), and `Φ` is monotone, fixes `⊥`, and commutes with visibility
 replacement at the threshold `N` with every value `i ≤ N` (the commutation law of the witness
-below the suppressor at `N`, and `Label.IsWitness.lt_apply_visibilityReplace` above it).  So every relation of the form of the requests
-(`StageType.GrowthRequests.CorrectAt`) that the row of `u` satisfies, the section `v` satisfies:
+below the suppressor at `N`, and `Label.IsWitness.lt_apply_visibilityReplace` above it).  So
+every relation of the form of the requests (`StageType.GrowthRequests.CorrectAt`) that the row of
+`u` satisfies, the section `v` satisfies:
 bottom requests, exact requests read through a reference at an offset `≤ N`, and high requests
 read through a marker at an offset `≤ N` (`Scheme.min_eq_bot_of_controller`,
 `Scheme.min_eq_readExact_of_controller`, `Scheme.readMarker_le_of_controller`).
