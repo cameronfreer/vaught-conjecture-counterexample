@@ -4,9 +4,10 @@ By Nathanael Ackerman, Cameron Freer, and Robin Knight.
 
 A Lean 4 development toward a countable relational language and an $L_{\omega_1,\omega}$ sentence
 with exactly $\aleph_1$ countable models up to isomorphism and no perfect set of pairwise
-non-isomorphic countable models, together with the general theory it rests on.  The construction
+non-isomorphic countable models, together with the general theory it rests on. The construction
 follows Robin Knight's unpublished 2026 draft [Kni26] and the draft of Ackerman, Freer and Knight
-[AFK26] (see [`roadmap/REFERENCES.bib`](roadmap/REFERENCES.bib)).  It is not a counterexample to the first-order Vaught conjecture.
+[AFK26] (see [`roadmap/REFERENCES.bib`](roadmap/REFERENCES.bib)). It is not a counterexample to the
+first-order Vaught conjecture.
 
 It builds on [Mathlib](https://github.com/leanprover-community/mathlib4),
 [InfinitaryLogic](https://github.com/cameronfreer/infinitary-logic) (syntax and semantics of
@@ -31,21 +32,21 @@ retained.
 
 ## Status
 
-The main theorem is compiled here *conditionally*.  On the terminal-classification route,
+The main theorem is compiled here *conditionally*. On the terminal-classification route,
 `MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_terminalClassification''` and
 `MainTheorem.vaughtCounterexample_allCarriers_of_terminalClassification''` prove the spectrum
-statement from four named hypotheses, `Expansion.FiniteCutReceiving`,
-`ContinuationCriterion`, `Realization.ResidualReceiving` and
-`Realization.HollowReceiving Realization.IsCoverHollowAtBlock`, each of which is open.  On the receiving-models
-route, `MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_receivingModels'` and
+statement from four named hypotheses, `Expansion.FiniteCutReceiving`, `ContinuationCriterion`,
+`Realization.ResidualReceiving` and `Realization.HollowReceiving Realization.IsCoverHollowAtBlock`,
+each of which is open. On the receiving-models route,
+`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_receivingModels'` and
 `MainTheorem.vaughtCounterexample_allCarriers_of_receivingModels'` prove it from three,
 `Expansion.ReceivingStableCappedReceiving`, `Realization.ReceivingResidualReceiving` and
-`Realization.HollowReceiving Realization.IsReceivingCoverHollowAtBlock`, each of which is open.  The finite
-coatom-extension property with apex is proved at every arity, at every stage that is zero or a limit and at every block stage
-(`StageType.hasApexCoatomExtensions`, `StageType.hasApexCoatomExtensions_blockStage`).
-[`roadmap/DASHBOARD.md`](roadmap/DASHBOARD.md) lists every named hypothesis with its status, and
-[`roadmap/README.md`](roadmap/README.md) the routes to proving them.  No unconditional
-counterexample theorem is claimed in this repository.
+`Realization.HollowReceiving Realization.IsReceivingCoverHollowAtBlock`, each of which is open. The
+finite coatom-extension property with apex is proved at every arity, at every stage that is zero or
+a limit and at every block stage (`StageType.hasApexCoatomExtensions`,
+`StageType.hasApexCoatomExtensions_blockStage`). [`roadmap/DASHBOARD.md`](roadmap/DASHBOARD.md)
+lists every named hypothesis with its status, and [`roadmap/README.md`](roadmap/README.md) the
+routes to proving them. No unconditional counterexample theorem is claimed in this repository.
 
 ## Relation to the registered formalization
 
@@ -104,11 +105,11 @@ avoid, one word per notion, declaration names, `## Placement` sections, and the 
 
 ## Citing
 
-For this repository, cite its URL and a commit hash.  For the counterexample theorem itself, cite
-the registered formalization: Nathanael Ackerman, Cameron Freer and Robin Knight, *A counterexample
-to Vaught's conjecture for infinitary logic*, Palomar entry PALOMAR-2026-10-07-000001, version 1,
-`cameronfreer/vaught-conjecture-palomar` at commit `032ccb7a25b0ff6227128aa0aeba549c5901ea9a`, 2026.  Classification: MSC 2020 03C15,
-03C75, 03E15; arXiv math.LO.
+For this repository, cite its URL and a commit hash. For the counterexample theorem itself, cite the
+registered formalization: Nathanael Ackerman, Cameron Freer and Robin Knight, *A counterexample to
+Vaught's conjecture for infinitary logic*, Palomar entry PALOMAR-2026-10-07-000001, version 1,
+`cameronfreer/vaught-conjecture-palomar` at commit `032ccb7a25b0ff6227128aa0aeba549c5901ea9a`, 2026.
+Classification: MSC 2020 03C15, 03C75, 03E15; arXiv math.LO.
 
 ## License
 
