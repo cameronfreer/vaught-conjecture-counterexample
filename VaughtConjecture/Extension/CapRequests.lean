@@ -27,6 +27,21 @@ Write `c = s cap` and `vR N i` for visibility replacement at threshold `N` with 
 * `min (s f) c` is the reference value of `f`, for `f ∈ F`;
 * the marker value is at most `min (s y) c`, for `y ∈ T`.
 
+**The marker convention.**  The marker is a datum of the requests, and where it sits decides what
+correctness asks on `T`, hence what a construction of correct states must deliver.
+
+* **The marker a separate cell below the cap** (the intended convention).  In (R4) it is a cell
+  labelled `λ + i` with `i < N` (`λ` zero or a limit), so the marker value is `λ + R` under a cap
+  at least `λ + R`, and correctness asks `λ + R ≤ s y` on `T`, strictly less than the capped
+  reading when `λ + R` is below the cap.  In (R3) it is a cell labelled `⊤` (the marker of the top
+  cap, a cell below it at which the row of the cap is least among the cells labelled `⊤`).
+* **The marker at the cap** (the degenerate convention).  If the value of the cap is self-visible
+  at `N`, the marker value is the value of the cap (`CapRequests.markerValue_of_marker_eq_cap`),
+  and correctness on `T` is the **capped reading** `s cap ≤ s y`
+  (`CapRequests.isCorrect_iff_of_marker_eq_cap`).  It asks the most: a state correct with the
+  marker at the cap is correct for every marker (`CapRequests.IsCorrect.of_marker_eq_cap`), and a
+  state reading a cell of `T` below its own cap is not correct with the marker at the cap.
+
 ## The algebra of correctness
 
 Each item below is compiled in this file (theorem named).
@@ -319,6 +334,35 @@ theorem IsCorrect.eq_of_eq_top (hs : r.IsCorrect s) (hs' : r.IsCorrect s')
   · rw [hZ d hd, hZ' d hd]
   · rw [hF d hd, hF' d hd, href d hd]
   · rw [hT d hd, hT' d hd]
+
+/-! ### The marker at the cap -/
+
+/-- **The marker at the cap**: if the value of the cap is self-visible at `N`, the marker value is
+the value of the cap. -/
+theorem markerValue_of_marker_eq_cap (hm : r.marker = r.cap) (hc : IsSelfVisible r.N (s r.cap)) :
+    r.markerValue s = s r.cap := by
+  rw [markerValue, hm, hc.visibilityReplace_eq, min_self]
+
+/-- **Correctness with the marker at the cap is the capped reading on `T`**: for a cap value
+self-visible at `N`, a state is correct exactly when it is `⊥` on `Z` and the reference value on
+`F` under the cap, and every cell of `T` is at least the cap. -/
+theorem isCorrect_iff_of_marker_eq_cap (hm : r.marker = r.cap)
+    (hc : IsSelfVisible r.N (s r.cap)) :
+    r.IsCorrect s ↔ (∀ z ∈ r.Z, min (s z) (s r.cap) = ⊥) ∧
+      (∀ f ∈ r.F, min (s f) (s r.cap) = r.refValue s f) ∧ ∀ y ∈ r.T, s r.cap ≤ s y := by
+  have hT (y : ι) : r.markerValue s ≤ min (s y) (s r.cap) ↔ s r.cap ≤ s y := by
+    rw [markerValue_of_marker_eq_cap hm hc]
+    exact ⟨fun h ↦ h.trans (min_le_left _ _), fun h ↦ le_min h le_rfl⟩
+  exact ⟨fun h ↦ ⟨h.eq_bot, h.eq_refValue, fun y hy ↦ (hT y).mp (h.markerValue_le y hy)⟩,
+    fun ⟨hZ, hF, h⟩ ↦ ⟨hZ, hF, fun y hy ↦ (hT y).mpr (h y hy)⟩⟩
+
+/-- **The marker at the cap asks the most**: for a cap value self-visible at `N`, a state correct
+for the requests with the marker moved to the cap is correct for every marker. -/
+theorem IsCorrect.of_marker_eq_cap (hs : ({ r with marker := r.cap } : CapRequests ι).IsCorrect s)
+    (hc : IsSelfVisible r.N (s r.cap)) : r.IsCorrect s := by
+  obtain ⟨hZ, hF, hT⟩ :=
+    (isCorrect_iff_of_marker_eq_cap (r := { r with marker := r.cap }) rfl hc).mp hs
+  exact ⟨hZ, hF, fun y hy ↦ le_min ((min_le_right _ _).trans (hT y hy)) (min_le_right _ _)⟩
 
 /-! ### The readings -/
 

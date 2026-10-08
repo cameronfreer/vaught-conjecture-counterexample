@@ -28,6 +28,15 @@ of the donor face `{1, 2}` labelled `⊥`).  The requests `capReq` take the cap 
   and the new cell at `1` and the cap at `ω + 2`, so it is correct for the requests carried to the
   cells below `8`, and locality at `8` (`IsCorrect.of_transformsTo`) makes the labels below `8`,
   capped at the label of `8`, correct.
+* **The private type `P`** of `GatedExtensionCounterexample` (two points; dead cells `0`, `1`, `2`
+  and two cells `3`, `4` of full scope and grade `2`), with the self-donor: a state is a pair
+  `(sL, sR)` on the private and the donor copy, read here as one state `Sum.elim sL sR` on
+  `Fin 5 ⊕ Fin 5`.  Capped correctness at `P` (`IsCapCorrectP`: cap and marker on the private copy,
+  `Z = {1, 2}` and `T = {3, 4}` on the donor copy, nothing read exactly) is
+  `CapRequests.IsCorrect` for the requests `reqP` (`isCapCorrectP_iff`, for `R < 2`), and its
+  admission is `CapRequests.Admits` on the private copy (`isAdmittedP_iff`).  With the marker at
+  the cap, correctness is the capped reading of the high cells, read off
+  `CapRequests.isCorrect_iff_of_marker_eq_cap`.
 -/
 
 universe u
@@ -192,5 +201,89 @@ example : capReq8.IsCorrect fun d : Below8 ↦
     min ((readingType.{u} ξ).label d.1) ((readingType.{u} ξ).label (8 : Fin 10)) :=
   (isCorrect_row8 ξ).of_transformsTo isGraded_capReq8
     ((readingType ξ).isLawful.locality (8 : Fin 10))
+
+/-! ### The private type `P` of the gated extension counterexample -/
+
+/-- The donor cells requested `⊥` at `P`: the dead cells on the new point. -/
+def selfZ : Finset (Fin 5) := {1, 2}
+
+/-- The donor cells requested high at `P`: the two cells of full scope. -/
+def selfT : Finset (Fin 5) := {3, 4}
+
+/-- **The bottom class** of the private side at `P`: `⊥` exactly at the dead cells. -/
+def InBottomClassP (sL : Fin 5 → Label.{u}) : Prop :=
+  ∀ d, sL d = ⊥ ↔ d ∈ ({0, 1, 2} : Finset (Fin 5))
+
+/-- **Capped correctness at `P`** of a state (`sL` on the private copy, `sR` on the donor copy)
+for the cap `C`, the marker `a` and the marker offset `R`, at the threshold `N = 2`. -/
+def IsCapCorrectP (C a : Fin 5) (R : ℕ) (sL sR : Fin 5 → Label.{u}) : Prop :=
+  (∀ z ∈ selfZ, min (sR z) (sL C) = ⊥) ∧
+    ∀ y ∈ selfT, min (visibilityReplace 2 R (sL a)) (sL C) ≤ min (sR y) (sL C)
+
+/-- **Admission at `P`**: correct as soon as the private side is in the bottom class. -/
+def IsAdmittedP (C a : Fin 5) (R : ℕ) (sL sR : Fin 5 → Label.{u}) : Prop :=
+  InBottomClassP sL → IsCapCorrectP C a R sL sR
+
+/-- The requests at `P` on the private copy and the donor copy `Fin 5 ⊕ Fin 5`: the cap `C` and
+the marker `a` on the private copy, threshold `2`, offset `R < 2`, `Z` and `T` the donor copies of
+`selfZ` and `selfT`, and no cell read exactly. -/
+def reqP (C a : Fin 5) (R : ℕ) (hR : R < 2) : CapRequests (Fin 5 ⊕ Fin 5) where
+  cap := .inl C
+  N := 2
+  R := R
+  R_lt_N := hR
+  Z := Sum.inr '' (selfZ : Set (Fin 5))
+  F := ∅
+  T := Sum.inr '' (selfT : Set (Fin 5))
+  ref := id
+  off _ := 0
+  marker := .inl a
+
+variable {C a : Fin 5} {R : ℕ} {sL sR : Fin 5 → Label.{u}}
+
+/-- **Capped correctness at `P` is an instance of `CapRequests.IsCorrect`**, for `R < 2`. -/
+theorem isCapCorrectP_iff (hR : R < 2) :
+    IsCapCorrectP C a R sL sR ↔ (reqP C a R hR).IsCorrect (Sum.elim sL sR) := by
+  constructor
+  · rintro ⟨hZ, hT⟩
+    refine ⟨?_, fun f hf ↦ hf.elim, ?_⟩
+    · rintro _ ⟨z, hz, rfl⟩
+      exact hZ z hz
+    · rintro _ ⟨y, hy, rfl⟩
+      exact hT y hy
+  · intro h
+    exact ⟨fun z hz ↦ h.eq_bot _ ⟨z, hz, rfl⟩, fun y hy ↦ h.markerValue_le _ ⟨y, hy, rfl⟩⟩
+
+/-- The bottom class at `P` is `InBottomClass` on the private copy. -/
+theorem inBottomClassP_iff :
+    InBottomClassP sL ↔ InBottomClass (Set.range Sum.inl)
+      (Sum.inl '' ((({0, 1, 2} : Finset (Fin 5))) : Set (Fin 5))) (Sum.elim sL sR) := by
+  constructor
+  · rintro h _ ⟨d, rfl⟩
+    simpa using h d
+  · intro h d
+    simpa using h (.inl d) ⟨d, rfl⟩
+
+/-- **Admission at `P` is an instance of `CapRequests.Admits`**, for `R < 2`. -/
+theorem isAdmittedP_iff (hR : R < 2) :
+    IsAdmittedP C a R sL sR ↔ (reqP C a R hR).Admits (Set.range Sum.inl)
+      (Sum.inl '' ((({0, 1, 2} : Finset (Fin 5))) : Set (Fin 5))) (Sum.elim sL sR) := by
+  rw [IsAdmittedP, CapRequests.Admits, inBottomClassP_iff, isCapCorrectP_iff hR]
+
+/-- **With the marker at the cap, correctness at `P` is the capped reading** of the high cells,
+read off `CapRequests.isCorrect_iff_of_marker_eq_cap`. -/
+example (hR : R < 2) (hC : IsSelfVisible 2 (sL C)) :
+    IsCapCorrectP C C R sL sR ↔
+      (∀ z ∈ selfZ, min (sR z) (sL C) = ⊥) ∧ ∀ y ∈ selfT, sL C ≤ sR y := by
+  rw [isCapCorrectP_iff hR, isCorrect_iff_of_marker_eq_cap rfl hC]
+  constructor
+  · rintro ⟨hZ, -, hT⟩
+    exact ⟨fun z hz ↦ hZ _ ⟨z, hz, rfl⟩, fun y hy ↦ hT _ ⟨y, hy, rfl⟩⟩
+  · rintro ⟨hZ, hT⟩
+    refine ⟨?_, fun f hf ↦ hf.elim, ?_⟩
+    · rintro _ ⟨z, hz, rfl⟩
+      exact hZ z hz
+    · rintro _ ⟨y, hy, rfl⟩
+      exact hT y hy
 
 end VaughtConjecture.CapRequestsExamples
