@@ -19,7 +19,8 @@ faces are `H2.LawfulOne`), and at the grade `2` it is `H2.exists_completion_of_s
 So **at two points the completions with the reading property follow from owner lowering below the
 full grade alone** (`H2.hasRecCompletions_one_of_below`): the SCAFFOLD
 `H2.exists_completion_recProp_one` of `VaughtConjecture.Continuation.H2Two` is not needed once
-`H2.OwnerLoweringBelowAt 1` (owner lowering between the grade-`1` faces at grade `1`) holds.
+`H2.OwnerLoweringBelowAt 1` (owner lowering below the designated tops between the grade-`1` faces
+at grade `1`) holds.
 -/
 
 universe u
@@ -67,6 +68,6 @@ theorem admittedCompletionsAt_one : AdmittedCompletionsAt.{u} 1 := by
 grade** (no SCAFFOLD). -/
 theorem hasRecCompletions_one_of_below (hOL : OwnerLoweringBelowAt.{u} 1) :
     HasRecCompletions.{u} 1 :=
-  hasRecCompletions_of (donorRaisingAt 1) (ownerLoweringAt_of_below hOL) admittedCompletionsAt_one
+  hasRecCompletions_of_below hOL admittedCompletionsAt_one
 
 end VaughtConjecture.H2

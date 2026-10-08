@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Continuation.H2GeneralRaise
+import VaughtConjecture.Continuation.H2OwnerOne
 
 /-!
 # h2 at every arity: owner lowering on the grade-`K` faces (work file)
@@ -17,8 +18,9 @@ faces are the lawful labellings (`H2.lawfulAt_iff_isLawful`), and owner lowering
 alone suffices.
 
 **Below the full grade** (`K ≤ k`) the root has cells of grade `K`, which the cap at the grade `K`
-would move; owner lowering there is the named input `H2.OwnerLoweringBelowAt` (at two points and
-grade `1`, the open input of the grade-`1` lane).  `H2.ownerLoweringAt_of_below` assembles the two.
+would move; there owner lowering itself fails at some legal context (`OwnerGradeOne`), and the
+named input is owner lowering below the designated tops (`H2.OwnerLoweringBelowAt`, in the form
+`H2.OwnerLoweringBelow`).  `H2.hasRecCompletions_of_below` assembles it with the full grade.
 -/
 
 universe u
@@ -71,35 +73,53 @@ theorem ownerLoweringAt_full {k n : ℕ} {t' : StageType.{u} α (k + 1)} (hleg :
   · exact ownerLowering_of_isLegal hleg hp htbp hs.grade_owner hk (Nat.lt_succ_self k)
       t'.grade_le
 
-/-- **Owner lowering on the grade-`K` faces below the full grade** (`K ≤ k`), at a source-gap
-context on `k + 1` points with the lost point last (a named input). -/
+/-- **Owner lowering below the designated tops on the grade-`K` faces, below the full grade**
+(`K ≤ k`), at a source-gap context on `k + 1` points with the lost point last (a named input), in
+the form `H2.OwnerLoweringBelow` of `VaughtConjecture.Continuation.H2OwnerOne`, for every
+designation (non-top cells low, top cells of grade at most `K` off the root and not determined by
+the root on the grade-`K` faces designated).  At `k = 1` it is owner lowering below the designated
+tops between the grade-`1` faces (`H2.LawfulOne` is `H2.LawfulAt _ 1`).  Owner lowering itself
+(`H2.OwnerLoweringAt`) fails at some legal context of grade `1`
+(`OwnerGradeOne.not_ownerLowering_one`, on the lawful labellings; its obstruction is at cells of
+grade `1`). -/
 def OwnerLoweringBelowAt (k : ℕ) : Prop :=
   ∀ ⦃α : Ordinal.{u}⦄ ⦃K n : ℕ⦄ (t' : StageType.{u} α (k + 1)), t'.IsLegal →
     ∀ (g : Fin n ↪ Fin k) {o r : Fin t'.card},
     t'.IsSourceGapContextAt K (g.trans Fin.castSuccEmb) (Fin.last k) o r → K ≤ k →
     ∀ {p : StageType.{u} α k} (hp : restrictFace Fin.castSuccEmb t' = some p)
       {tb : StageType.{u} α (k + 1)}, tb.IsLegal →
-      ∀ (htbp : restrictFace Fin.castSuccEmb tb = some p),
-      OwnerLowering (StageType.faceCell hp) (StageType.faceCell htbp) o r K (LawfulAt t' K)
-        (LawfulAt tb K)
+      ∀ (htbp : restrictFace Fin.castSuccEmb tb = some p) {Lo Tops : Finset (Fin tb.card)},
+      (∀ x, tb.label x ≠ ⊤ → x ∈ Lo) →
+      (∀ x, tb.label x = ⊤ → tb.toCellScheme.grade x ≤ K →
+        x ∉ tb.toScheme.visibleCells Fin.castSuccEmb → ¬ RootDetAt tb K x → x ∈ Tops) →
+      OwnerLoweringBelow (StageType.faceCell hp) (StageType.faceCell htbp) o r K (LawfulAt t' K)
+        (LawfulAt tb K) (Lo.filter fun x ↦ tb.toCellScheme.grade x ≤ K) Tops
 
-/-- **Owner lowering on the grade-`K` faces** from the input below the full grade. -/
-theorem ownerLoweringAt_of_below {k : ℕ} (h : OwnerLoweringBelowAt.{u} k) :
-    OwnerLoweringAt.{u} k := by
-  intro α K n t' hleg g o r hs p hp tb htbleg htbp
+/-- **Completions with the reading property from owner lowering below the designated tops (below
+the full grade) and the engine**: donor raising is `H2.donorRaisingAt`, owner lowering at the full
+grade is `H2.ownerLoweringAt_full`, and the clause is an admission of states between the grade-`K`
+faces (`H2.selfLow_isStateAdmissionGap_of_below`). -/
+theorem hasRecCompletions_of_below {k : ℕ} (hOL : OwnerLoweringBelowAt.{u} k)
+    (hEN : AdmittedCompletionsAt.{u} k) : HasRecCompletions.{u} k := by
+  intro α K n t' hleg g o r hs p hp tb htbleg htbp Lo Tops hLo hLo' hTops _ hTops'
+  refine hEN t' hleg g hs hp htbleg htbp hLo hTops ?_
   have hKk : K ≤ k + 1 := hs.grade_owner ▸ t'.grade_le o
-  rcases Nat.lt_or_ge K (k + 1) with hlt | hge
-  · intro c
-    exact h t' hleg g hs (Nat.lt_succ_iff.mp hlt) hp htbleg htbp
-  · obtain rfl : K = k + 1 := le_antisymm hKk hge
-    intro c
-    exact ownerLoweringAt_full hleg hs hp htbp
+  have hOLb : OwnerLoweringBelow (StageType.faceCell hp) (StageType.faceCell htbp) o r K
+      (LawfulAt t' K) (LawfulAt tb K) (Lo.filter fun x ↦ tb.toCellScheme.grade x ≤ K) Tops := by
+    rcases Nat.lt_or_ge K (k + 1) with hlt | hge
+    · exact hOL t' hleg g hs (Nat.lt_succ_iff.mp hlt) hp htbleg htbp hLo' hTops'
+    · obtain rfl : K = k + 1 := le_antisymm hKk hge
+      exact ownerLoweringBelow_of_ownerLowering (ownerLoweringAt_full hleg hs hp htbp) _ _
+  refine selfLow_isStateAdmissionGap_of_below (rootTops' hp)
+    (fun _ hf ↦ (frontier_le_lawfulAt hleg hs hf).1) (fun _ hf a ha ↦ ?_)
+    (donorRaisingAt k t' hleg g hs hp htbleg htbp hLo' hTops') hOLb
+  exact (frontier_le_lawfulAt hleg hs hf).2 _ ((StageType.label_faceCell hp a).trans ha.1) ha.2
 
-/-- **h2 with the lost point last at every arity from owner lowering below the full grade and the
-engine** on the grade-`K` faces. -/
+/-- **h2 with the lost point last at every arity from owner lowering below the designated tops
+(below the full grade) and the engine** on the grade-`K` faces. -/
 theorem coatomCutoffDeterminationLast_of_below_engine (hOL : ∀ k, OwnerLoweringBelowAt.{u} k)
     (hEN : ∀ k, AdmittedCompletionsAt.{u} k) : CoatomCutoffDeterminationLast.{u} :=
-  coatomCutoffDeterminationLast_of_ownerLowering_engine (fun k ↦ ownerLoweringAt_of_below (hOL k))
-    hEN
+  coatomCutoffDeterminationLast_of_hasRecCompletions fun k ↦
+    hasRecCompletions_of_below (hOL k) (hEN k)
 
 end VaughtConjecture.H2
