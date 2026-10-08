@@ -166,29 +166,28 @@ theorem IsModel.exists_extend_dominance (x : R.Occurrence) {γ : Ordinal.{u}} (h
     obtain ⟨y, g, hg, hy, hC⟩ := step y'
     exact ⟨y, f'.trans g, by rw [Function.Embedding.trans_assoc, hg, hf'], by omega, hC⟩
 
-/-! ### The private context -/
+/-! ### Reference cells for the blocks of a donor -/
 
-/-- **The private context of the ordinary construction**, from the uniformity and dominance
-clauses alone: over an occurrence `x` and for a donor `d` (on `x.arity + 1` points in the ordinary
-construction; the donor enters only through its labels, so any number `m` of points is allowed),
-an occurrence `y` containing `x` as a literal face along `f`, of arity above `x.arity + 1` and at
-least `N₀`, with a private cap `C` of graded index `(univ, y.arity)` labelled above `γ < α`, and
-for every proper donor label a reference cell `z`: the donor label is the visibility replacement at
-the threshold `y.arity` of the label of `z` with a value `i < y.arity`, that label is not
-self-visible at the threshold, and it lies strictly below the label of the cap.
-
-The reference cells are taken by uniformity at the block starts of the donor's labels, the arity
-is raised past their finite parts by dominance at a floor above the reference cells and `γ`, and
-the cap comes from the last dominance step.  The only hypothesis on the stage is `γ < α`. -/
-theorem IsModel.exists_privateContext (x : R.Occurrence) {m : ℕ} (d : StageType.{u} α m)
+/-- **Reference cells for the blocks of a donor**, from uniformity and padding by dominance: over
+an occurrence `x` and for a donor `d` (on any number `m` of points; it enters only through its
+labels), an occurrence `y` containing `x` as a literal face along `f`, of arity above
+`x.arity + 1 + N₀`, a floor `B` with `γ ≤ B < α`, a cell `C` of graded index `(univ, y.arity)`
+labelled above `B`, and for each cell `j` of `d` a block start `μ j` (zero or a limit) such that
+every ordinal label of `d` at `j` is `μ j + i` with `i < y.arity`, and a reference cell of the type
+of `y` labelled `μ j + k`, `k < y.arity`, at most `B`.  The reference cells are taken by
+uniformity at the block starts (`IsModel.exists_extend_uniformity`); the arity is raised past
+their finite parts and those of the donor's labels by dominance at the floor `B`
+(`IsModel.exists_extend_dominance`), whose last step gives `C`. -/
+theorem IsModel.exists_referenceCells (x : R.Occurrence) {m : ℕ} (d : StageType.{u} α m)
     {γ : Ordinal.{u}} (hγ : γ < α) (N₀ : ℕ) :
-    ∃ (y : R.Occurrence) (f : Fin x.arity ↪ Fin y.arity) (C : Fin y.type.card),
-      f.trans y.tuple = x.tuple ∧ x.arity + 1 < y.arity ∧ N₀ ≤ y.arity ∧
-        y.type.toCellScheme.gradedIndex C = (univ, y.arity) ∧
-        (γ : Label.{u}) < y.type.label C ∧
-        ∀ (j : Fin d.card) (o : Ordinal.{u}), d.label j = o →
-          ∃ z, ∃ i < y.arity, d.label j = visibilityReplace y.arity i (y.type.label z) ∧
-            ¬ IsSelfVisible y.arity (y.type.label z) ∧ y.type.label z < y.type.label C := by
+    ∃ (y : R.Occurrence) (f : Fin x.arity ↪ Fin y.arity) (C : Fin y.type.card) (B : Ordinal.{u})
+      (μ : Fin d.card → Ordinal.{u}),
+      f.trans y.tuple = x.tuple ∧ x.arity + 1 + N₀ < y.arity ∧ γ ≤ B ∧ B < α ∧
+        y.type.toCellScheme.gradedIndex C = (univ, y.arity) ∧ (B : Label.{u}) < y.type.label C ∧
+        (∀ j, Order.IsSuccPrelimit (μ j) ∧
+          ∀ o : Ordinal.{u}, d.label j = o → ∃ i < y.arity, o = μ j + i) ∧
+        ∀ j, ∃ z, ∃ k < y.arity,
+          y.type.label z = ((μ j + k : Ordinal.{u}) : Label.{u}) ∧ μ j + k ≤ B := by
   -- the block start and a bound on the finite part of each label of the donor
   have hblock (j : Fin d.card) : ∃ μ : Ordinal.{u}, (Order.IsSuccPrelimit μ ∧ μ < α) ∧
       ∃ D : ℕ, ∀ o : Ordinal.{u}, d.label j = o → ∃ i < D, o = μ + i := by
@@ -210,17 +209,47 @@ theorem IsModel.exists_privateContext (x : R.Occurrence) {m : ℕ} (d : StageTyp
       exact hμ j
   obtain ⟨y, f₂, hf₂, hy, C, hC, hBC⟩ :=
     hR.exists_extend_dominance y₁ hBα (x.arity + 1 + N₀ + K + univ.sup D)
-  refine ⟨y, f₁.trans f₂, C, by rw [Function.Embedding.trans_assoc, hf₂, hf₁], by omega,
-    by omega, hC, lt_of_le_of_lt (WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr hγB)) hBC,
-    fun j o ho ↦ ?_⟩
-  obtain ⟨i, hi, rfl⟩ := hD j o ho
-  obtain ⟨z₁, k, hk, hz₁, hkB⟩ := hanc (μ j) (List.mem_ofFn.mpr ⟨j, rfl⟩)
-  obtain ⟨z, hz⟩ := Occurrence.exists_label_eq_of_trans_eq hR.isConsistent hf₂ z₁
-  have hDj : D j ≤ univ.sup D := le_sup (mem_univ j)
-  have hkn : k < y.arity := by omega
-  refine ⟨z, i, by omega, ?_, ?_, ?_⟩ <;> rw [hz, hz₁]
-  · rw [ho, visibilityReplace_coe_add_natCast (hμ j).1 hkn]
-  · exact not_isSelfVisible_coe_add_natCast (hμ j).1 hkn
+  refine ⟨y, f₁.trans f₂, C, B, μ, by rw [Function.Embedding.trans_assoc, hf₂, hf₁], by omega,
+    hγB, hBα, hC, hBC, fun j ↦ ⟨(hμ j).1, fun o ho ↦ ?_⟩, fun j ↦ ?_⟩
+  · obtain ⟨i, hi, rfl⟩ := hD j o ho
+    have hDj : D j ≤ univ.sup D := le_sup (mem_univ j)
+    exact ⟨i, by omega, rfl⟩
+  · obtain ⟨z₁, k, hk, hz₁, hkB⟩ := hanc (μ j) (List.mem_ofFn.mpr ⟨j, rfl⟩)
+    obtain ⟨z, hz⟩ := Occurrence.exists_label_eq_of_trans_eq hR.isConsistent hf₂ z₁
+    exact ⟨z, k, by omega, hz.trans hz₁, hkB⟩
+
+/-! ### The private context -/
+
+/-- **The private context of the ordinary construction**, from the uniformity and dominance
+clauses alone: over an occurrence `x` and for a donor `d` (on `x.arity + 1` points in the ordinary
+construction; the donor enters only through its labels, so any number `m` of points is allowed),
+an occurrence `y` containing `x` as a literal face along `f`, of arity above `x.arity + 1` and at
+least `N₀`, with a private cap `C` of graded index `(univ, y.arity)` labelled above `γ < α`, and
+for every proper donor label a reference cell `z`: the donor label is the visibility replacement at
+the threshold `y.arity` of the label of `z` with a value `i < y.arity`, that label is not
+self-visible at the threshold, and it lies strictly below the label of the cap.
+
+The reference cells are taken by uniformity at the block starts of the donor's labels, the arity
+is raised past their finite parts by dominance at a floor above the reference cells and `γ`, and
+the cap comes from the last dominance step (`IsModel.exists_referenceCells`).  The only hypothesis
+on the stage is `γ < α`. -/
+theorem IsModel.exists_privateContext (x : R.Occurrence) {m : ℕ} (d : StageType.{u} α m)
+    {γ : Ordinal.{u}} (hγ : γ < α) (N₀ : ℕ) :
+    ∃ (y : R.Occurrence) (f : Fin x.arity ↪ Fin y.arity) (C : Fin y.type.card),
+      f.trans y.tuple = x.tuple ∧ x.arity + 1 < y.arity ∧ N₀ ≤ y.arity ∧
+        y.type.toCellScheme.gradedIndex C = (univ, y.arity) ∧
+        (γ : Label.{u}) < y.type.label C ∧
+        ∀ (j : Fin d.card) (o : Ordinal.{u}), d.label j = o →
+          ∃ z, ∃ i < y.arity, d.label j = visibilityReplace y.arity i (y.type.label z) ∧
+            ¬ IsSelfVisible y.arity (y.type.label z) ∧ y.type.label z < y.type.label C := by
+  obtain ⟨y, f, C, B, μ, hf, hn, hγB, -, hC, hBC, hμ, href⟩ := hR.exists_referenceCells x d hγ N₀
+  refine ⟨y, f, C, hf, by omega, by omega, hC,
+    lt_of_le_of_lt (WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr hγB)) hBC, fun j o ho ↦ ?_⟩
+  obtain ⟨i, hi, rfl⟩ := (hμ j).2 o ho
+  obtain ⟨z, k, hk, hz, hkB⟩ := href j
+  refine ⟨z, i, hi, ?_, ?_, ?_⟩ <;> rw [hz]
+  · rw [ho, visibilityReplace_coe_add_natCast (hμ j).1 hk]
+  · exact not_isSelfVisible_coe_add_natCast (hμ j).1 hk
   · exact lt_of_le_of_lt (WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr hkB)) hBC
 
 /-- **The private context, anchored**: over an occurrence `x` and for a donor `d` (on

@@ -6,6 +6,7 @@ Authors: Cameron Freer
 import Mathlib.Data.Fin.VecNotation
 import Mathlib.Tactic.FinCases
 import VaughtConjecture.Extension.GatedExtensionCounterexample
+import VaughtConjecture.Realization.Families
 
 /-!
 # The coupled gated pinned extension property fails at every stage above `1`
@@ -112,6 +113,11 @@ labelled `⊤`.  So the bottom transport condition asks for a lawful labelling o
   bottom transport condition.  No occurrence of this input in an actual model is exhibited, and
   whether every model acquires a private context satisfying the condition
   (`Realization.AcquiresCarryingContexts`) is undecided.
+* The refuting private type lies in every dominance family over its face on the first point, with
+  its full cell labelled `⊤`, and does not carry there
+  (`exists_mem_dominanceFamily_not_carriesBottoms`).  This refutes only the finite sufficient
+  condition "every member of a dominance family carries the bottoms at its dominating cell"; no
+  occurrence of it in a model is exhibited.
 * The refuting private type has a unique cell of full scope and full grade, and cells of grade
   `1` not labelled `⊥`; so neither a unique cell of full scope and full grade, nor a marker of
   grade below `n` not labelled `⊥`, as conditions on private contexts, excludes it.
@@ -839,6 +845,39 @@ theorem exists_privateContext_not_carriesBottoms (α : Ordinal.{u}) (hα : 1 < �
     change IsSelfVisible 2 (⊤ : Label.{u})
     exact isSelfVisible_top 2
   · -- The cap is labelled `⊤` (`P`).
+    change (⊤ : Label.{u}) ≠ ⊥
+    simp
+
+/-! ### A member of every dominance family that does not carry -/
+
+/-- **A dominance step need not give a carrying cap**: the refuting private type `P α` is a coface
+of its face on the first point that lies in every dominance family, with its full cell `4`
+labelled `⊤` above every floor, and the bottom transport condition fails for it and the donor at
+that label (`not_carriesBottoms`).  So the finite condition "every member of a dominance family
+carries the bottoms at its dominating cell" is false; this refutes that sufficient condition, not
+the acquisition of carrying contexts by models.  It is a statement about stage types: no occurrence
+of `P α` in a model is exhibited. -/
+theorem exists_mem_dominanceFamily_not_carriesBottoms (α : Ordinal.{u})
+    (hα : 1 < α) :
+    ∃ (p : StageType.{u} α 1) (q : StageType.{u} α 2) (C : Fin q.card),
+      (∀ γ : Ordinal.{u}, q ∈ p.cofaces ∩ StageType.dominanceFamily γ) ∧
+      q.toCellScheme.gradedIndex C = (Finset.univ, 2) ∧
+      (∀ γ : Ordinal.{u}, (γ : Label.{u}) < q.label C) ∧
+      ¬ StageType.CarriesBottoms q (donor α hα) (q.label C) := by
+  have hf : univ.map (Fin.castSuccEmb : Fin 1 ↪ Fin 2) ∈ (P α hα).toCellScheme.faces := by
+    -- The faces of `P α` are the interval plan of `univ` (`cells`, by definition).
+    change _ ∈ Geometry.intervalPlan univ; decide +kernel
+  -- The cell `4` has grade `2` and is labelled `⊤` (`P`, by definition).
+  have htop : ∀ γ : Ordinal.{u}, (γ : Label.{u}) < (P α hα).label (4 : Fin 5) := fun γ ↦ by
+    change (γ : Label.{u}) < ⊤
+    exact WithBot.coe_lt_coe.mpr (WithTop.coe_lt_top γ)
+  refine ⟨(P α hα).comap Fin.castSuccEmb hf, P α hα, (4 : Fin 5), fun γ ↦
+    ⟨⟨isLegal_P α hα, StageType.restrictFace_of_mem _ _ hf⟩, (4 : Fin 5), rfl, htop γ⟩, rfl, htop,
+    not_carriesBottoms α hα ?_ ?_⟩
+  · -- The cell `4` is labelled `⊤` (`P`).
+    change IsSelfVisible 2 (⊤ : Label.{u})
+    exact isSelfVisible_top 2
+  · -- The cell `4` is labelled `⊤` (`P`).
     change (⊤ : Label.{u}) ≠ ⊥
     simp
 
