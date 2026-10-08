@@ -16,7 +16,8 @@ Roadmap, Layer 3 ((R3) of the table of 3.4).
 
 Ported verbatim from the lane `research/lane-r3-raise-test` (head 9017962), where they are spread
 over several modules: the marked-cap context at a given cap and marker
-(`StageType.IsMarkedCapContextAt`, from `MarkedCarrier`), the marker inequality from forcing
+(`StageType.IsMarkedCapContextAt`, from `MarkedCarrier`), visible cells as cells of a face
+(`StageType.exists_faceCell_eq`, from `TiedRootCap`), the marker inequality from forcing
 (`StageType.IsMarker.visibilityReplace_le_of_forcesThreshold`, from `MarkedCarrierAcquisition`),
 root offsets below a grade and their bound (`StageType.RootOffsetsBelow`,
 `StageType.exists_offset_bound`, from `TiedRootCapOffsets`), root bottoms respected and the
@@ -41,6 +42,16 @@ open scoped Ordinal
 namespace StageType
 
 variable {α β : Ordinal.{u}} {k m n : ℕ}
+
+/-- Every cell visible through `h` is a cell of the face along `h`. -/
+theorem exists_faceCell_eq {t' : StageType.{u} α k} {h : Fin n ↪ Fin k}
+    {t : StageType.{u} α n} (ht : restrictFace h t' = some t) {i : Fin t'.card}
+    (hi : i ∈ t'.visibleCells h) : ∃ y, faceCell ht y = i := by
+  obtain ⟨z, rfl⟩ : i ∈ Set.range (t'.toScheme.cellMap h) := by
+    rw [Scheme.range_cellMap]
+    exact hi
+  exact ⟨Fin.cast (congrArg Scheme.card (comap_toScheme_of_restrictFace ht)) z, by
+    simp [faceCell, Scheme.faceCell]⟩
 
 /-- The data of a marked-cap context along `h` with top cap `c` and marker `r`
 (`StageType.IsMarkedCapContext` is `∃ c r, t'.IsMarkedCapContextAt h c r`). -/
