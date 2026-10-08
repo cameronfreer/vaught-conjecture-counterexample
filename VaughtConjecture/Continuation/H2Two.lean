@@ -4,13 +4,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Continuation.H2Engine
+import VaughtConjecture.Continuation.TwoCoatomLift
 
 /-!
 # h2 at two points: the assembly (work file)
 
-WORK FILE (branch `research/work-h2`).  `H2.coatomCutoffDeterminationTwo` from three SCAFFOLD
-statements (each with `sorry`): `H2.donorRaising_two`, `H2.hasTwoCoatomLift_two`,
-`H2.exists_completion_recProp_one`.
+WORK FILE (branch `research/work-h2`).  `H2.coatomCutoffDeterminationTwo` from two SCAFFOLD
+statements (each with `sorry`): `H2.donorRaising_two`, `H2.exists_completion_recProp_one`.  The
+two-coatom lift `H2.hasTwoCoatomLift_two` is proved (`Seed.hasTwoCoatomLift`).
 -/
 
 universe u
@@ -60,15 +61,14 @@ theorem donorRaising_two {t' : StageType.{u} α 2} (hleg : t'.IsLegal) {n : ℕ}
       tb.rows.IsLawful (rootTops hp l) Tops := by
   sorry
 
-set_option warningAsError false in
-/-- **SCAFFOLD (contains `sorry`): the two-coatom lift** on the canonical lower layer of the seed
-of two legal stage types on two points with one common face (`Seed.HasTwoCoatomLift`, the open
-hypothesis of the (R4) lane, pooled). -/
+/-- **The two-coatom lift** on the canonical lower layer of the seed of two legal stage types on
+two points with one common face (`Seed.HasTwoCoatomLift`; every seed on three points has it,
+`Seed.hasTwoCoatomLift`). -/
 theorem hasTwoCoatomLift_two {t' : StageType.{u} α 2} (hleg : t'.IsLegal) {p : StageType.{u} α 1}
     (hp : restrictFace Fin.castSuccEmb t' = some p) {tb : StageType.{u} α 2}
     (htbleg : tb.IsLegal) (htbp : restrictFace Fin.castSuccEmb tb = some p) :
-    (Seed.ofCoatoms hleg htbleg hp htbp).HasTwoCoatomLift := by
-  sorry
+    (Seed.ofCoatoms hleg htbleg hp htbp).HasTwoCoatomLift :=
+  Seed.hasTwoCoatomLift _
 
 /-- **The admitted completion at two points and grade `2`**, from the state-level provisions of
 the clause and the two-coatom lift: the canonical layer at grade `1` of the amalgam, then the
