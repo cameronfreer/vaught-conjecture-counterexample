@@ -42,8 +42,23 @@ with the ambient donor face capped at the cap, can be chosen dominated at a top 
 through the template keeps the root (proper root cells are kept, root tops are at least the
 frontier already), keeps the capped agreement (the raised tops are at least the cap), and puts every
 donor top off the root, at the tie or determined by the root included, at least at the frontier.
-So the open part of the tie case is donor domination, the donor-side counterpart of the domination
-by the owner on the private side.
+**The tie case through a top cell** (`StageType.exists_raised_at_top`,
+`StageType.lowStepTie_of_top`, `StageType.lowStepTie_of_top_grade`, compiled in this repository).
+Domination is not needed: the ambient donor face `R` raised through the template at the frontier
+`c` reads every top at least at `c`, agrees with `R` capped at the cap (`R` reads the top cell at
+least at the cap), and agrees with the private face on the root capped at `c`; the capped lift at
+`c` from the root of the private face with this ambient is literal on the root and reads every
+top at least at `c`.  So the tie case holds whenever the donor has a top of grade `K`; the case of a
+donor whose tops off the root all have grades below `K` is the one left (no top cell of graded
+index `(univ, K)` to read through).
+
+**The unserved case below the full grade** (`StageType.lowStepUnserved_of_le`, compiled in this
+repository): owner lowering at the cap (`H2.exists_lowered_at`: the face capped at the next label
+self-visible at `K` above the cap carries its largest label at the owner, is capped below the
+threshold, and the root is restored by a capped lift), with the context as its own donor.  With it
+the capped lift into the LOW layer needs only the tie case
+(`ProfileTower.Lvl.Good.cappedLift_lowS_of_tie`), and none of the named cases when the donor has a
+top of grade `K` (`ProfileTower.Lvl.Good.cappedLift_lowS_of_top`).
 
 ## Placement
 
@@ -249,7 +264,7 @@ theorem lowStepTie_of_donorDomination (hF : IsLowFamily K t' tb p o r)
     (hD : DonorDomination K t' tb hF.face_private hF.face_donor) :
     LowStepTie K t' tb hF.face_private hF.face_donor o r := by
   classical
-  intro h c hh hb hhc R f hR hf hag hc htop _
+  intro h c hh hb hhc R f hR hf hag hc htop _ _
   obtain ⟨W₁, Z, hW₁, hW₁r, hW₁R, hZ, hZi, hdom⟩ := hD hh hR hf hag
   have hs := hF.isSourceGapContextAt
   have hK0 : 0 < K := hs.grade_owner ▸ t'.isWellFormed.isWellFormed.grade_pos o
@@ -386,6 +401,263 @@ theorem Lvl.Good.cappedLift_lowS_of_tie (hL : L.Good) (hgm : g + 1 ≤ m)
       (Y := ((univ : Finset (Fin (m + 2))), g + 1)) ⟨erase_subset _ _, le_rfl⟩ :=
   hL.cappedLift_lowS_of_unserved_tie hgm hs htb
     (StageType.lowStepUnserved_of_le I.isLegal_left hs hgm I.restrictFace_face_left) hTie ho hr
+    hNQ hTQ hNroot hTR hTtop hLoN hx
+
+end VaughtConjecture.ProfileTower
+
+/-! ### The tie case through a top cell, without domination -/
+
+namespace VaughtConjecture.StageType
+
+open Finset Label H2 FieldAdmission
+
+variable {α : Ordinal.{u}} {n K : ℕ}
+
+/-- **The raise through the template, capped at the top cell.**  As
+`StageType.exists_raised_of_dominated`, without domination but with `W₁ Z ≠ ⊥`: the raised face
+reads every proper cell `d` as `min (W₁ d) (W₁ Z)`, every cell `W₁` reads as `⊥` as `⊥`, and every
+other top `d` as `max (min (W₁ d) (W₁ Z)) c`. -/
+theorem exists_raised_at_top {tb : StageType.{u} α n} (htb : tb.IsLegal) (hK0 : 0 < K)
+    (hKn : K ≤ n) {Z : Fin tb.card} (hZ : tb.label Z = ⊤)
+    (hZi : tb.toCellScheme.gradedIndex Z = (univ, K)) {W₁ : Fin tb.card → Label.{u}}
+    (hW₁ : LawfulAt tb K W₁) (hZ0 : W₁ Z ≠ ⊥) {c : Label.{u}} (hc : IsSelfVisible K c) :
+    ∃ W : Fin tb.card → Label.{u}, LawfulAt tb K W ∧
+      (∀ d, tb.toCellScheme.grade d ≤ K → tb.label d ≠ ⊤ → W d = min (W₁ d) (W₁ Z)) ∧
+      (∀ d, tb.toCellScheme.grade d ≤ K → W₁ d = ⊥ → W d = ⊥) ∧
+      ∀ d, tb.toCellScheme.grade d ≤ K → tb.label d = ⊤ → W₁ d ≠ ⊥ →
+        W d = max (min (W₁ d) (W₁ Z)) c := by
+  classical
+  obtain ⟨W', hW', hW'W⟩ := exists_ext_bot_at htb hK0 hKn hW₁
+  have hgZ : tb.toCellScheme.grade Z = K := congrArg Prod.snd hZi
+  obtain ⟨θ, hθm, hθ0, -, hθc, hθb0, hθrow⟩ :=
+    Scheme.exists_cappedDecoder (S := tb.toScheme) hW' hgZ
+  have hbelow (d : Fin tb.card) (hd : tb.toCellScheme.grade d ≤ K) :
+      d ∈ tb.toCellScheme.below (tb.toCellScheme.gradedIndex Z) := by
+    rw [hZi]; exact ⟨subset_univ _, hd⟩
+  have hθV (d : Fin tb.card) (hd : tb.toCellScheme.grade d ≤ K) :
+      θ (tb.rowAt Z d) = min (W₁ d) (W₁ Z) := by
+    rw [hθrow d (hbelow d hd), hW'W d hd, hW'W Z hgZ.le]
+  have hθV0 (d : Fin tb.card) (hd : tb.toCellScheme.grade d ≤ K) :
+      θ (tb.rowAt Z d) = ⊥ ↔ W₁ d = ⊥ := by
+    rw [hθV d hd, min_eq_bot]
+    exact ⟨fun h ↦ h.resolve_right hZ0, .inl⟩
+  set Lo := univ.filter fun y ↦ tb.label y ≠ ⊤ ∧ tb.toCellScheme.grade y ≤ K with hLo
+  set θb := Lo.sup fun y ↦ visibilityReplace K K (tb.rowAt Z y) with hθb_def
+  have hθb : IsSelfVisible K θb := by
+    refine Finset.sup_induction (p := IsSelfVisible K) (isSelfVisible_bot K) ?_ ?_
+    · intro a ha b hb
+      rcases max_choice a b with h1 | h1
+      · rw [h1]; exact ha
+      · rw [h1]; exact hb
+    · intro y _
+      exact visibilityReplace_self_visibilityReplace le_rfl _
+  have hprop (y : Fin tb.card) (hy : tb.toCellScheme.grade y ≤ K) (hyt : tb.label y ≠ ⊤) :
+      tb.rowAt Z y ≤ θb :=
+    (le_visibilityReplace (by omega) _).trans
+      (Finset.le_sup (f := fun y ↦ visibilityReplace K K (tb.rowAt Z y))
+        (mem_filter.mpr ⟨mem_univ _, hyt, hy⟩))
+  have htop (x : Fin tb.card) (hx : tb.toCellScheme.grade x ≤ K) (hxt : tb.label x = ⊤)
+      (hx0 : tb.rowAt Z x ≠ ⊥) : θb < tb.rowAt Z x := by
+    refine (Finset.sup_lt_iff (bot_lt_iff_ne_bot.mpr hx0)).mpr fun y hy ↦ ?_
+    obtain ⟨-, hyt, hyK⟩ := mem_filter.mp hy
+    have := visibilityReplace_rowAt_lt_of_top hZ (hbelow x hx) (hbelow y hyK) hxt hyt
+    rwa [hgZ] at this
+  have hρ : IsWitness (stepSuppressor K) (raiseMap θ θb c) :=
+    isWitness_raiseMap hθm hθ0 hθc hθb0 hθb hc
+  have hlawρ : tb.rows.IsLawfulBelow ((univ : Finset (Fin n)), K)
+      (raiseMap θ θb c ∘ fun e ↦ tb.rowAt Z e.1) :=
+    (Scheme.isLawfulBelow_rowAt htb.isConsistent hZi).map_of_bot_iff hW₁.1 (fun d ↦ d.2.2) hρ
+      fun d ↦ by
+        rw [raiseMap_eq_bot_iff, hθV0 d.1 d.2.2]
+  set W : Fin tb.card → Label.{u} :=
+    tb.toCellScheme.splice K (fun _ ↦ ⊥) fun d ↦ raiseMap θ θb c (tb.rowAt Z d) with hW
+  have hWle (d : Fin tb.card) (hd : tb.toCellScheme.grade d ≤ K) :
+      W d = raiseMap θ θb c (tb.rowAt Z d) :=
+    CellScheme.splice_of_le hd
+  refine ⟨W, ⟨(CellScheme.Rows.isLawfulBelow_congr (R := tb.rows)
+      (X := ((univ : Finset (Fin n)), K)) (w := fun d ↦ raiseMap θ θb c (tb.rowAt Z d))
+      (w' := W) fun d hd ↦
+        (hWle d (show tb.toCellScheme.grade d ≤ K from hd.2)).symm).mp hlawρ,
+      fun d hd ↦ CellScheme.splice_of_lt (not_le.mp hd)⟩,
+    fun d hd hdt ↦ ?_, fun d hd h0 ↦ ?_, fun d hd hdt h0 ↦ ?_⟩
+  · rw [hWle d hd]
+    by_cases h0 : θ (tb.rowAt Z d) = ⊥
+    · rw [raiseMap_of_bot h0, ← hθV d hd, h0]
+    · rw [raiseMap_of_le h0 (hprop d hd hdt), hθV d hd]
+  · rw [hWle d hd]
+    exact raiseMap_of_bot ((hθV0 d hd).mpr h0)
+  · rw [hWle d hd]
+    have hθ0' : θ (tb.rowAt Z d) ≠ ⊥ := fun h ↦ h0 ((hθV0 d hd).mp h)
+    have hV0 : tb.rowAt Z d ≠ ⊥ := fun h ↦ hθ0' (by rw [h, hθ0])
+    rw [raiseMap_of_lt hθ0' (htop d hd hdt hV0), hθV d hd]
+
+variable {k : ℕ} {t' tb : StageType.{u} α (k + 1)} {p : StageType.{u} α k} {o r : Fin t'.card}
+
+/-- **The tie case holds when the donor has a top cell of graded index `(univ, K)`.**  At a LOW
+family whose donor has a cell labelled `⊤` of graded index `(univ, K)` (for instance a top of grade
+`K`, by availability), `StageType.LowStepTie` holds, indeed its conclusion without the tie premise.
+The ambient donor face `R` raised through the template (`StageType.exists_raised_at_top`) at the
+frontier `c` reads every top at least at `c`, agrees with `R` capped at the cap `h`, and agrees
+with the private face on the root capped at `c` (the proper root cells are below the cap, the root
+tops of the private face are at least `c` by the strict source gaps); the capped lift at `c` from
+the root of the private face with this ambient (bountifulness of the donor) is literal on the root
+and reads every top at least at `c`. -/
+theorem lowStepTie_of_top (hF : IsLowFamily K t' tb p o r) {Z : Fin tb.card}
+    (hZ : tb.label Z = ⊤) (hZi : tb.toCellScheme.gradedIndex Z = (univ, K)) :
+    LowStepTie K t' tb hF.face_private hF.face_donor o r := by
+  classical
+  intro h c hh hb hhc R f hR hf hag hc htop hlow _
+  have hs := hF.isSourceGapContextAt
+  have hK0 : 0 < K := hs.grade_owner ▸ t'.isWellFormed.isWellFormed.grade_pos o
+  have hKk : K ≤ k + 1 := hs.grade_owner ▸ t'.grade_le o
+  have hfo := frontier_le_lawfulAt hF.isLegal_private hs hf
+  have hcv : IsSelfVisible K c := by
+    rw [hc]
+    rcases min_choice (f o) (visibilityReplace K K (f r)) with h1 | h1 <;> rw [h1]
+    · exact hfo.1
+    · exact visibilityReplace_self_visibilityReplace le_rfl _
+  have hcb : ⊥ < c := hb.trans hhc
+  have hgZ : tb.toCellScheme.grade Z = K := congrArg Prod.snd hZi
+  have hZnv : Z ∉ tb.toScheme.visibleCells Fin.castSuccEmb := by
+    intro hv
+    have h1 : Fin.last k ∈ tb.toCellScheme.scope Z := by
+      rw [show tb.toCellScheme.scope Z = univ from congrArg Prod.fst hZi]; exact mem_univ _
+    obtain ⟨y, hy⟩ := Scheme.mem_visibleCells.mp hv h1
+    exact (Fin.castSucc_lt_last y).ne hy
+  have hRZ : h ≤ R Z := htop Z hZ hgZ.le hZnv
+  -- the root tops of `f` are at least `c`
+  have hroot_top (x : Fin p.card) (hx : tb.label (faceCell hF.face_donor x) = ⊤) :
+      c ≤ f (faceCell hF.face_private x) := by
+    rw [hc]
+    refine hfo.2 _ ?_ (last_notMem_scope_faceCell hF.face_private x)
+    rw [label_faceCell, ← label_faceCell hF.face_donor x]
+    exact hx
+  -- every top of `R` of grade at most `K` is at least `h`
+  have hRh (d : Fin tb.card) (hdK : tb.toCellScheme.grade d ≤ K) (hd : tb.label d = ⊤) :
+      h ≤ R d := by
+    by_cases hv : d ∈ tb.toScheme.visibleCells Fin.castSuccEmb
+    · obtain ⟨x, rfl⟩ := exists_faceCell_eq hF.face_donor hv
+      have h1 := hag x
+      have h2 : h ≤ f (faceCell hF.face_private x) := hhc.le.trans (hroot_top x hd)
+      rw [min_eq_right h2] at h1
+      exact min_eq_right_iff.mp h1.symm
+    · exact htop d hd hdK hv
+  obtain ⟨W', hW', hW'p, hW'0, hW't⟩ :=
+    exists_raised_at_top hF.isLegal_donor hK0 hKk hZ hZi hR (ne_bot_of_gt (hb.trans_le hRZ)) hcv
+  -- `W'` agrees with `R` capped at `h`
+  have hW'R (d : Fin tb.card) : min (W' d) h = min (R d) h := by
+    by_cases hdK : tb.toCellScheme.grade d ≤ K
+    · by_cases hdt : tb.label d = ⊤
+      · have h1 := hRh d hdK hdt
+        rw [hW't d hdK hdt (ne_bot_of_gt (hb.trans_le h1)), min_eq_right h1,
+          min_eq_right (hhc.le.trans (le_max_right _ _))]
+      · rw [hW'p d hdK hdt, min_assoc, min_eq_right hRZ]
+    · rw [hW'.2 d hdK, hR.2 d hdK]
+  -- the root of `f` agrees with `W'` capped at `c`
+  have hagc (x : Fin p.card) :
+      min (f (faceCell hF.face_private x)) c = min (W' (faceCell hF.face_donor x)) c := by
+    set d := faceCell hF.face_donor x
+    have hgd : tb.toCellScheme.grade d = t'.toCellScheme.grade (faceCell hF.face_private x) := by
+      rw [grade_faceCell, grade_faceCell]
+    by_cases hdK : tb.toCellScheme.grade d ≤ K
+    · by_cases hdt : tb.label d = ⊤
+      · have h1 := hRh d hdK hdt
+        rw [hW't d hdK hdt (ne_bot_of_gt (hb.trans_le h1)), min_eq_right (hroot_top x hdt),
+          min_eq_right (le_max_right _ _)]
+      · have hRd := hlow d hdt hdK
+        have hfx : f (faceCell hF.face_private x) = R d := eq_of_min_eq_of_lt (hag x).symm hRd
+        rw [hW'p d hdK hdt, hfx, min_eq_left (hRd.le.trans hRZ)]
+    · rw [hW'.2 d hdK, hf.2 _ (hgd ▸ hdK)]
+  obtain ⟨W, hW, hWr, hWc⟩ := hasCappedLifts_lawfulAt' hK0 hKk hF.isLegal_private
+    hF.face_private hF.isLegal_donor hF.face_donor hcv hW' hf hagc
+  refine ⟨W, hW, hWr, fun d ↦ ?_, fun d hd hdK hv ↦ ?_⟩
+  · calc min (W d) h = min (min (W d) c) h := by rw [min_assoc, min_eq_right hhc.le]
+      _ = min (min (W' d) c) h := by rw [hWc d]
+      _ = min (W' d) h := by rw [min_assoc, min_eq_right hhc.le]
+      _ = min (R d) h := hW'R d
+  · have h1 := hRh d hdK hd
+    have h2 := hWc d
+    rw [hW't d hdK hd (ne_bot_of_gt (hb.trans_le h1)),
+      min_eq_right (le_max_right _ c)] at h2
+    exact min_eq_right_iff.mp h2
+
+end VaughtConjecture.StageType
+
+/-! ### A top cell of full scope -/
+
+namespace VaughtConjecture.StageType
+
+open Finset Label
+
+variable {α : Ordinal.{u}} {n : ℕ}
+
+/-- **A top of grade `K` gives a top cell of graded index `(univ, K)`**, in a legal stage type:
+completeness gives a cell of that graded index, and availability of the labels one labelled `⊤`. -/
+theorem exists_top_cell_univ {t : StageType.{u} α n} (ht : t.IsLegal) {x : Fin t.card}
+    (hx : t.label x = ⊤) :
+    ∃ Z, t.label Z = ⊤ ∧ t.toCellScheme.gradedIndex Z = (univ, t.toCellScheme.grade x) := by
+  have hg : t.toCellScheme.grade x ≤ #(univ : Finset (Fin n)) := by
+    rw [card_univ, Fintype.card_fin]
+    exact t.grade_le x
+  obtain ⟨u₀, hu₀⟩ := (isLegal_iff.mp ht).2.2 (univ, t.toCellScheme.grade x)
+    ⟨t.univ_mem_faces, t.isWellFormed.isWellFormed.grade_pos x, hg⟩
+  have hsc : t.toCellScheme.scope x ⊆ t.toCellScheme.scope u₀ := by
+    rw [show t.toCellScheme.scope u₀ = univ from congrArg Prod.fst hu₀]
+    exact subset_univ _
+  obtain ⟨Z, hZ, hxZ⟩ := t.isLawful.availability x u₀ hsc (congrArg Prod.snd hu₀).symm
+  rw [hx, top_le_iff] at hxZ
+  exact ⟨Z, hxZ, hZ.trans hu₀⟩
+
+variable {k K : ℕ} {t' tb : StageType.{u} α (k + 1)} {p : StageType.{u} α k} {o r : Fin t'.card}
+
+/-- **The tie case when the donor has a top of grade `K`** (`StageType.lowStepTie_of_top` with the
+top cell of `StageType.exists_top_cell_univ`): for instance when the donor has top grade `K`. -/
+theorem lowStepTie_of_top_grade (hF : IsLowFamily K t' tb p o r) {x : Fin tb.card}
+    (hx : tb.label x = ⊤) (hxK : tb.toCellScheme.grade x = K) :
+    LowStepTie K t' tb hF.face_private hF.face_donor o r := by
+  obtain ⟨Z, hZ, hZi⟩ := exists_top_cell_univ hF.isLegal_donor hx
+  exact lowStepTie_of_top hF hZ (hxK ▸ hZi)
+
+end VaughtConjecture.StageType
+
+/-! ### The capped lift when the donor has a top of the grade -/
+
+namespace VaughtConjecture.ProfileTower
+
+open Finset Label CellScheme
+
+variable {α : Ordinal.{u}} {m : ℕ} {I : Seed.{u} α m} {N : Finset (Fin I.amalgam.card ⊕ Unit)}
+  {T : Set (Fin I.amalgam.card ⊕ Unit)} {o r : Fin I.amalgam.card} {g : ℕ} {L : Lvl I g}
+
+local notation "𝒞" => lowCat I (g + 1) N T o r
+
+/-- **The capped lift from either coatom into the LOW layer over a good level, when the donor has
+a top of grade `g + 1`**: the tie case holds (`StageType.lowStepTie_of_top_grade`), so the capped
+lift needs only the LOW designations. -/
+theorem Lvl.Good.cappedLift_lowS_of_top (hL : L.Good) (hgm : g + 1 ≤ m)
+    {o' r' : Fin I.left.card}
+    (hs : I.left.IsSourceGapContextAt (g + 1) Fin.castSuccEmb (Fin.last m) o' r')
+    (htb : I.right.topGrade ≤ g + 1) {z : Fin I.right.card} (hz : I.right.label z = ⊤)
+    (hzK : I.right.toCellScheme.grade z = g + 1)
+    (ho : o = StageType.faceCell I.restrictFace_left o')
+    (hr : r = StageType.faceCell I.restrictFace_left r')
+    (hNQ : ∀ f ∈ N, ∃ d, f = Sum.inl d ∧ d ∈ I.amalgam.toCellScheme.below (coatD, g + 1))
+    (hTQ : ∀ f ∈ T, ∃ d, f = Sum.inl d ∧ d ∈ I.amalgam.toCellScheme.below (coatD, g + 1))
+    (hNroot : ∀ i, I.left.toCellScheme.grade i ≤ g + 1 →
+      Fin.last m ∉ I.left.toCellScheme.scope i → I.left.label i ≠ ⊤ →
+        Sum.inl (StageType.faceCell I.restrictFace_left i) ∈ N)
+    (hTR : ∀ f ∈ T, ∃ t, I.right.label t = ⊤ ∧
+      f = Sum.inl (StageType.faceCell I.restrictFace_right t))
+    (hTtop : ∀ t, I.right.label t = ⊤ →
+      Sum.inl (StageType.faceCell I.restrictFace_right t) ∈ T)
+    (hLoN : ∀ t, I.right.label t ≠ ⊤ → I.right.toCellScheme.grade t ≤ g + 1 →
+      Sum.inl (StageType.faceCell I.restrictFace_right t) ∈ N)
+    {x : Fin (m + 2)} (hx : x ∈ (Pts : Finset (Fin (m + 2)))) :
+    (L.lowS 𝒞).rows.CappedLift (X := (univ.erase x, g + 1))
+      (Y := ((univ : Finset (Fin (m + 2))), g + 1)) ⟨erase_subset _ _, le_rfl⟩ :=
+  hL.cappedLift_lowS_of_tie hgm hs htb
+    (StageType.lowStepTie_of_top_grade (hF := ⟨I.isLegal_left, I.isLegal_right,
+      I.restrictFace_face_left, I.restrictFace_face_right, hs, htb⟩) hz hzK) ho hr
     hNQ hTQ hNroot hTR hTtop hLoN hx
 
 end VaughtConjecture.ProfileTower

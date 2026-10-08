@@ -488,7 +488,8 @@ variable (K : ℕ) (t' tb : StageType.{u} α (k + 1)) {p : StageType.{u} α k}
   (o r : Fin t'.card) in
 /-- **The tie case of the donor face** (open): for a private face `f` and a donor face `R`, lawful
 at `K`, agreeing on the root capped at a positive cap `h` below the frontier `c` of `f`, with
-every donor top off the root read by `R` at least at `h`, if the cap is the replaced low maximum
+every donor top off the root read by `R` at least at `h` and every proper donor cell below `h`,
+if the cap is the replaced low maximum
 of `R` (the tie) or some donor top off the root is determined by the root, some donor face lawful
 at `K`, literal on the root and agreeing with `R` capped at `h`, reads every donor top off the root
 at least at `c`. -/
@@ -499,6 +500,7 @@ def LowStepTie : Prop :=
     c = min (f o) (visibilityReplace K K (f r)) →
     (∀ t, tb.label t = ⊤ → tb.toCellScheme.grade t ≤ K →
       t ∉ tb.toScheme.visibleCells Fin.castSuccEmb → h ≤ R t) →
+    (∀ x, tb.label x ≠ ⊤ → tb.toCellScheme.grade x ≤ K → R x < h) →
     (h = visibilityReplace K K
         (((univ.filter fun x ↦ tb.label x ≠ ⊤).filter fun x ↦ tb.toCellScheme.grade x ≤ K).sup R) ∨
       ∃ t, tb.label t = ⊤ ∧ tb.toCellScheme.grade t ≤ K ∧
@@ -536,7 +538,7 @@ theorem IsLowFamily.exists_raised (hF : IsLowFamily K t' tb p o r)
     with hLo
   by_cases hres : h = visibilityReplace K K (Lo.sup R) ∨ ∃ t, tb.label t = ⊤ ∧
       tb.toCellScheme.grade t ≤ K ∧ t ∉ tb.toScheme.visibleCells Fin.castSuccEmb ∧ RootDetAt tb K t
-  · exact hT hh hb hhc hR hf hag hc htop hres
+  · exact hT hh hb hhc hR hf hag hc htop hlow hres
   obtain ⟨hnt, hnrd⟩ := not_or.mp hres
   push Not at hnrd
   set Tops : Finset (Fin tb.card) := univ.filter fun x ↦ tb.label x = ⊤ ∧
