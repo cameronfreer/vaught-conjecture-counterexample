@@ -357,11 +357,20 @@ theorem not_isSourceGapContext_of_surjective {K : ℕ} {t' : StageType.{u} α k}
 
 /-- A **source-gap context with the coatom off the lost point closed**: a source-gap context of
 grade `K` along `h` at a lost point `l` (`IsSourceGapContextAt`) such that the complement
-`univ.erase l` of the lost point is a closed face of `t'`.  Residual acquisition is compiled
+`univ.erase l` of the lost point is a closed face of `t'`; equivalently, the lost point is an
+extreme point of the plan of `t'` (`StageType.erase_mem_faces_iff_mem_extremes`, by
+`Geometry.mem_extremes`).  Residual acquisition is compiled
 (`Realization.residualAcquisition_isSourceGapContextOff`); determination is open. -/
 def IsSourceGapContextOff (K : ℕ) (t' : StageType.{u} α k) (h : Fin n ↪ Fin k) : Prop :=
   ∃ (l : Fin k) (o r : Fin t'.card), t'.IsSourceGapContextAt K h l o r ∧
     univ.erase l ∈ t'.toCellScheme.faces
+
+/-- **The coatom off a point is closed exactly when the point is extreme**: `univ.erase l` is a
+closed face of `t'` if and only if `l` is an extreme point of the plan of `t'` (`Geometry.extremes`,
+`StageType.isPlan`). -/
+theorem erase_mem_faces_iff_mem_extremes {t' : StageType.{u} α k} {l : Fin k} :
+    univ.erase l ∈ t'.toCellScheme.faces ↔ l ∈ Geometry.extremes t'.toCellScheme.faces univ := by
+  simp [Geometry.mem_extremes]
 
 /-- A **source-gap context with the lost point last**: a source-gap context of grade `K` along `h`
 at a lost point `l` (`IsSourceGapContextAt`) that is the last of the `k` points. -/
