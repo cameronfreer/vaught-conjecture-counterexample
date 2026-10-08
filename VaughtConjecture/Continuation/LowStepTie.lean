@@ -728,3 +728,81 @@ theorem Lvl.Good.cappedLift_lowS_seed {g : ℕ} {L : Lvl I g} (hL : L.Good) (hgm
   · exact fun t ht htK ↦ mem_image.mpr ⟨t, mem_filter.mpr ⟨mem_univ _, ht, htK⟩, rfl⟩
 
 end VaughtConjecture.ProfileTower
+
+/-! ### The tie case for donors with all tops below the grade -/
+
+namespace VaughtConjecture.StageType
+
+open Finset Label
+
+variable {α : Ordinal.{u}} {k : ℕ}
+
+variable (K : ℕ) (t' tb : StageType.{u} α (k + 1)) {p : StageType.{u} α k}
+  (hp : restrictFace Fin.castSuccEmb t' = some p) (hpb : restrictFace Fin.castSuccEmb tb = some p)
+  (o r : Fin t'.card) in
+/-- **The tie case for a donor without a top of grade `K`** (open): when no top of the donor has
+grade `K`, the tie case `StageType.LowStepTie`.  There is then no cell labelled `⊤` of graded index
+`(univ, K)` in the donor to read through; the reading grade is the grade `K` of the owner of the
+context, which the controllers must read, so it cannot be lowered to the top grade of the donor. -/
+def LowStepTieLow : Prop :=
+  (∀ x, tb.label x = ⊤ → tb.toCellScheme.grade x ≠ K) → LowStepTie K t' tb hp hpb o r
+
+variable {K : ℕ} {t' tb : StageType.{u} α (k + 1)} {p : StageType.{u} α k} {o r : Fin t'.card}
+
+/-- **The tie case from the case of a donor without a top of grade `K`**: with a top of grade `K`
+it is `StageType.lowStepTie_of_top_grade`. -/
+theorem lowStepTie_of_low (hF : IsLowFamily K t' tb p o r)
+    (hlow : LowStepTieLow K t' tb hF.face_private hF.face_donor o r) :
+    LowStepTie K t' tb hF.face_private hF.face_donor o r := by
+  by_cases h : ∃ x, tb.label x = ⊤ ∧ tb.toCellScheme.grade x = K
+  · obtain ⟨x, hx, hxK⟩ := h
+    exact lowStepTie_of_top_grade hF hx hxK
+  · exact hlow fun x hx hxK ↦ h ⟨x, hx, hxK⟩
+
+end VaughtConjecture.StageType
+
+namespace VaughtConjecture.ProfileTower
+
+open Finset Label CellScheme
+
+variable {α : Ordinal.{u}} {m : ℕ} {I : Seed.{u} α m}
+
+/-- **The capped lift from either coatom into the LOW layer for the seed's designations, from the
+case of a donor without a top of the grade** (`StageType.LowStepTieLow`); with a top of grade
+`g + 1` no case is left (`ProfileTower.Lvl.Good.cappedLift_lowS_seed`). -/
+theorem Lvl.Good.cappedLift_lowS_seed_of_low {g : ℕ} {L : Lvl I g} (hL : L.Good) (hgm : g + 1 ≤ m)
+    {o' r' : Fin I.left.card}
+    (hs : I.left.IsSourceGapContextAt (g + 1) Fin.castSuccEmb (Fin.last m) o' r')
+    (htb : I.right.topGrade ≤ g + 1)
+    (hlow : StageType.LowStepTieLow (g + 1) I.left I.right I.restrictFace_face_left
+      I.restrictFace_face_right o' r') {x : Fin (m + 2)}
+    (hx : x ∈ (Pts : Finset (Fin (m + 2)))) :
+    (L.lowS (lowCat I (g + 1) (lowN I (g + 1)) (lowT I)
+      (StageType.faceCell I.restrictFace_left o')
+      (StageType.faceCell I.restrictFace_left r'))).rows.CappedLift
+      (X := (univ.erase x, g + 1)) (Y := ((univ : Finset (Fin (m + 2))), g + 1))
+      ⟨erase_subset _ _, le_rfl⟩ := by
+  classical
+  refine hL.cappedLift_lowS_of_tie hgm hs htb
+    (StageType.lowStepTie_of_low (hF := ⟨I.isLegal_left, I.isLegal_right,
+      I.restrictFace_face_left, I.restrictFace_face_right, hs, htb⟩) hlow) rfl rfl
+    ?_ ?_ ?_ ?_ ?_ ?_ hx
+  · intro f hf
+    obtain ⟨t, ht, rfl⟩ := mem_image.mp hf
+    exact ⟨_, rfl, faceCell_right_mem_below (mem_filter.mp ht).2.2⟩
+  · rintro f ⟨t, ht, rfl⟩
+    exact ⟨_, rfl, faceCell_right_mem_below (StageType.topGrade_le_iff.mp htb t ht)⟩
+  · intro i hi hl hit
+    obtain ⟨y, rfl⟩ := StageType.exists_faceCell_eq_of_last_notMem I.restrictFace_face_left hl
+    rw [StageType.faceCell_faceCell I.restrictFace_left I.restrictFace_right
+      I.restrictFace_face_left I.restrictFace_face_right y]
+    refine mem_image.mpr ⟨_, mem_filter.mpr ⟨mem_univ _, ?_, ?_⟩, rfl⟩
+    · rw [StageType.label_faceCell, ← StageType.label_faceCell I.restrictFace_face_left y]
+      exact hit
+    · rw [StageType.grade_faceCell, ← StageType.grade_faceCell I.restrictFace_face_left y]
+      exact hi
+  · exact fun f hf ↦ hf
+  · exact fun t ht ↦ ⟨t, ht, rfl⟩
+  · exact fun t ht htK ↦ mem_image.mpr ⟨t, mem_filter.mpr ⟨mem_univ _, ht, htK⟩, rfl⟩
+
+end VaughtConjecture.ProfileTower
