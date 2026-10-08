@@ -236,6 +236,22 @@ theorem rowAt_appendFullCells_castAdd {n k M' : ℕ} {S : Scheme.{u} n}
     exact S.rows.row_congr rfl rfl
   · rw [rowAt_of_notMem (mt hiff.mp hd), rowAt_of_notMem hd]
 
+/-- **Old cells are read after appending one cell of full scope as before**, at every grade. -/
+theorem rowAt_appendFullCell_castSucc {n j : ℕ} {S : Scheme.{u} n}
+    {r : Fin (S.card + 1) → Label.{u}}
+    {h : ∀ d, ¬ ((univ : Finset (Fin n)), j) ≤ S.toCellScheme.gradedIndex d} (a d : Fin S.card) :
+    (S.appendFullCell j r h).rowAt a.castSucc d.castSucc = S.rowAt a d := by
+  have hiff : d.castSucc ∈ (S.appendFullCell j r h).toCellScheme.below
+      ((S.appendFullCell j r h).toCellScheme.gradedIndex a.castSucc) ↔
+      d ∈ S.toCellScheme.below (S.toCellScheme.gradedIndex a) := by
+    rw [CellScheme.mem_below, CellScheme.mem_below, appendFullCell_toCellScheme,
+      appendFullCellScheme_gradedIndex_castSucc, appendFullCellScheme_gradedIndex_castSucc]
+  by_cases hd : d ∈ S.toCellScheme.below (S.toCellScheme.gradedIndex a)
+  · rw [rowAt_of_mem (hiff.mpr hd), rowAt_of_mem hd]
+    exact congrArg (fun R : S.toCellScheme.Rows ↦ R.row a ⟨d, hd⟩)
+      (comap_rows_castSucc (S := S) (j := j) (r := r) (h := h))
+  · rw [rowAt_of_notMem (mt hiff.mp hd), rowAt_of_notMem hd]
+
 variable (k M r h) in
 /-- **The old cells form a lower embedding** along `Fin.castAdd`. -/
 theorem isLowerEmbedding_castAdd :

@@ -710,6 +710,11 @@ theorem isLawful_comp_faceCell (h : restrictFace f D = some t) {a : Fin D.card �
   obtain ⟨hf, rfl⟩ := (restrictFace_eq_some_iff D f).mp h
   exact ha.comap (D.toScheme.isLowerEmbedding_comap f)
 
+/-- **Every cell visible through `f` is a cell of the face along `f`.** -/
+theorem exists_faceCell_eq (h : restrictFace f D = some t) {i : Fin D.card}
+    (hi : i ∈ D.visibleCells f) : ∃ y, faceCell h y = i :=
+  D.toScheme.exists_faceCell_eq _ hi
+
 /-- A cell of the face along the first points avoids the last point. -/
 theorem last_notMem_scope_faceCell {D : StageType.{u} α (k + 1)} {t' : StageType.{u} α k}
     (h₁ : restrictFace Fin.castSuccEmb D = some t') (z : Fin t'.card) :

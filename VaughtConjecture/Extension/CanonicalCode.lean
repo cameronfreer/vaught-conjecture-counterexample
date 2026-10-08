@@ -556,6 +556,15 @@ theorem agreementHeight_spec (hG : ⊥ ∈ G) (a b : ι → Label.{u}) :
   rw [agreementHeight, hsup]
   exact mem_filter.mp hx
 
+/-- **An agreement height other than `⊥` keeps the bottoms**: where `a` is `⊥`, so is `b`. -/
+theorem eq_bot_of_agreementHeight_ne_bot {G : Finset Label.{u}} {a b : ι → Label.{u}}
+    (hG : ⊥ ∈ G) (h : agreementHeight G a b ≠ ⊥) {d : ι} (hd : a d = ⊥) : b d = ⊥ := by
+  have hspec := (agreementHeight_spec hG a b).2 d
+  rw [hd, min_eq_left bot_le] at hspec
+  rcases min_eq_bot.mp hspec.symm with h' | h'
+  · exact h'
+  · exact absurd h' h
+
 /-- Every member of `G` at which two labellings agree capped is at most their agreement height. -/
 theorem le_agreementHeight (hx : x ∈ G) (hag : ∀ d, min (a d) x = min (b d) x) :
     x ≤ agreementHeight G a b :=
