@@ -23,10 +23,10 @@ contexts with the cap at the top grade (`TiedRootCapRelabel.MarkedCapContextBelo
 * `H3.TopRootLowBound` (assumed): at a context with the cap at the top grade, over every coface
   `tb` of the coatom face with face `d`, every prescription lawful below the private coatom at the
   top cut grade, not `⊥` at the cap and at the marker, and not `⊥` at the cells of the class below
-  the private coatom, has a lower bound at the root (`H3.RootLowBound`: some root cell has a
-  finite ordinal label, or the prescription is at least `n + 1` at every root cell with an
-  ordinal label).  It gives the donor raise over the gluing coface
-  (`H3.exists_raiseCoface_of_rootLowBound`).
+  the private coatom, has a lower bound at the root (`H3.RootLowBound`: the prescription is at
+  least `n + 1` at every root cell with an ordinal label, or every label of `d` other than `⊥`
+  and `⊤` is at least the block start of some ordinal root label).  It gives the donor raise
+  over the gluing coface (`H3.exists_raiseCoface_of_rootLowBound`).
 * `H3.TopBandGap` (assumed): at such a context and coface, the gap of the band below the top cut
   grade (`CapRequests.BandGapBelowAt` at `k`: for every datum of the band some `c`, self-visible
   at `k`, at least `h` and at least the marker value, with no value of the prescription in
@@ -67,7 +67,7 @@ def TopRootLowBound : Prop :=
         f (faceCell (restrictFace_left_seed ht' hp htb) r) ≠ ⊥ →
         (∀ e ∈ classCells ht' hp htb htbd, e ∈ (seed ht' hp htb).amalgam.toCellScheme.below
           (univ.erase (Fin.last (k + 1)), k + 1) → f e ≠ ⊥) →
-        RootLowBound n ht' hp htb hpt f
+        RootLowBound n ht' hp htb hpt d f
 
 /-- **The gap of the band at the contexts with the cap at the top grade** (a named hypothesis):
 over every coface `tb` of the coatom face with face `d`, the gap of the band below the top cut
