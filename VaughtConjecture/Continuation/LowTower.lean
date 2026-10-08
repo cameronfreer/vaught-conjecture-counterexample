@@ -232,7 +232,9 @@ theorem Lvl.Good.cappedLift_lowS (hL : L.Good) (hgm : g + 1 ≤ m) {x : Fin (m +
           (withCutoff (orbitCode (g + 1) W) β)) :
     (L.lowS 𝒞).rows.CappedLift (X := (univ.erase x, g + 1))
       (Y := ((univ : Finset (Fin (m + 2))), g + 1)) ⟨erase_subset _ _, le_rfl⟩ :=
-  hL.cappedLift_catS hgm hx lowPred_withCut_bot hbot hstep
+  hL.cappedLift_catS hgm hx (fun hact ↦ absurd hact not_lt_bot) (fun w hw ↦ by
+    obtain ⟨W, hW, hWw⟩ := hbot w hw
+    exact ⟨W, hW, hWw, lowPred_withCut_bot _⟩) hstep
 
 /-- **The LOW step on the amalgam** from the coatom `univ.erase x` at the grade `g + 1`: the
 catalogue step (`ProfileTower.Lvl.CatStep`) for the LOW predicate.  Open. -/
