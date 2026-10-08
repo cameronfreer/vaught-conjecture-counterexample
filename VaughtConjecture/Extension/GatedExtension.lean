@@ -76,9 +76,10 @@ above `1`** (`CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExten
 private type with a proper anchor below the cap, the readings of the gate carry a lawful private
 labelling that drops the anchor and keeps the cap to a labelling of the donor face that the donor's
 rows forbid (`StageType.CoupledGatedExtension.carriesBottoms`).  The definition is kept to state
-that refutation and its instances; no theorem is stated under it.  It holds at the input that
-refutes the gated pinned extension property: over the empty root, with the donor `P α|{0}` and the
-cap `3`, the private type `GatedExtensionCounterexample.P α` has a coupled gated extension
+that refutation; no theorem is stated under it, and the instances cited next state its body at fixed
+inputs.  It holds at the input that refutes the gated pinned extension property: over the empty
+root, with the donor `P α|{0}` and the cap `3`, the private type `GatedExtensionCounterexample.P α`
+has a coupled gated extension
 (`CoupledGateExamples.exists_coupledGatedExtension_comap_g₁`), whose gate has a twin not labelled
 `⊥` (`CoupledGateExamples.exists_coupledGatedExtension`; the display labels it `⊤`).  Every legal
 one-point extension of `P α` has such a twin

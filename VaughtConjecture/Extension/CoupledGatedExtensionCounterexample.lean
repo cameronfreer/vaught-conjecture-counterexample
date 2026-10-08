@@ -42,8 +42,8 @@ graded index `(univ, n)` labelled as the cap.
 * The donor face of `r` is a lawful labelling of `d`.
 
 So the readings of the gate carry the bottom pattern of every lawful private labelling, at the
-anchors, to a lawful labelling of the donor.  So the coupled gated pinned extension property, at
-each of its inputs, asks for a private type and a donor that satisfy the condition.
+anchors, to a lawful labelling of the donor.  So the condition holds at every input of the coupled
+gated pinned extension property at which a coupled gated extension exists.
 
 **When the condition holds** (`StageType.carriesBottoms_of_row_mem_block`).  If the row of the cap
 reads, for every donor label below the cap, an anchor of that label in the block of its reading of

@@ -3312,12 +3312,32 @@ Each checkpoint needs both its abstract API and a concrete application:
    `StageType.HasCoupledGatedPinnedExtensions` (`Extension/GatedExtension`), with generalized
    saturation over the private context, witnessed by the display, and no hypothesis on the stage,
    was compiled and is retired: that property is refuted at every stage above `1` (below), so the
-   conditional was vacuous there; no conditional form of (R1) remains compiled.
-   The first form of the property, `StageType.HasGatedPinnedExtensions`,
-   whose displays label the twins of the gate `⊥`, is refuted at every stage
-   (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`, compiled in this repository
-   (theorem named)); the coupled form replaces that clause by the condition on rows
-   `CellScheme.Rows.TwinsReadGate` and holds at the refuting input
+   conditional was vacuous there; no conditional form of (R1) remains compiled.  Recorded from that
+   assembly, for a later one through a gate: of the clauses of a model it used only uniformity and
+   high-arity dominance (for the private context), legality of types (the private type is legal),
+   exact consistency, and generalized saturation over the private context for the scheme of the
+   display, whose instance the display witnesses nonempty; not nonemptiness of the carrier, not
+   covering, and no hypothesis on the stage.  With the coupling, generalized saturation sufficed in
+   place of the bottom-pattern clause, whose family lies in the family of generalized saturation.
+   The private context of [Kni26, Lemma 8.1.1] carries a marker, which
+   `Realization.IsModel.exists_privateContext` does not acquire and the coupled gated extension does
+   not read.  Open questions on that lemma and the construction in its proof: (M1) in the scheme
+   built on the private points and the new point, which cells besides the gate have graded index
+   `(univ, n)`, and what are their entries at the gate and at the private cap: a unique gate, twins
+   labelled `⊥` (refuted on `GatedExtensionCounterexample.P α`), or twins coupled to the gate?  (M2)
+   Is the marker read by any row of that scheme, and with which entries: does every twin read it as
+   `⊥`, with the marker not labelled `⊥` (which forces the twins to `⊥`, excluded on `P α`), or does
+   the gate read every donor top through the marker, and does that reading replace the reading `top`
+   and make the lift that lowers the cap possible?  (M3) In the recovery argument, how is the case
+   excluded in which a twin, not the gate, serves availability for the cap: by a bottom pattern, by
+   a condition on the rows, by the marker, or not at all?  (M4), whether the private context of the
+   lemma excludes private types like the refuting one, is answered for two candidate conditions:
+   neither a unique cell of full scope and full grade nor a marker of grade below `n` not labelled
+   `⊥` excludes it (`Extension/CoupledGatedExtensionCounterexample`, module docstring).  The first
+   form of the property, `StageType.HasGatedPinnedExtensions`, whose displays label the twins of the
+   gate `⊥`, is refuted at every stage (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`,
+   compiled in this repository (theorem named)); the coupled form replaces that clause by the
+   condition on rows `CellScheme.Rows.TwinsReadGate` and holds at the refuting input
    (`CoupledGateExamples.exists_coupledGatedExtension_comap_g₁`, compiled in this repository
    (theorem named)), and at the donor labelled `⊤` on the same private type
    (`CoupledGateInstance.coupledGatedPinnedExtension_donor`), and with every anchored legal

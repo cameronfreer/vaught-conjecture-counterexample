@@ -220,8 +220,8 @@ variable {ξ : Ordinal.{u}}
 
 The recovery clause is the counterpart for (R4) of the recovery of a coupled gated extension in
 (R1), where every stage type on the display with literal private face has a donor face in the
-receiving family (`StageType.CoupledGatedExtension.exists_restrictFace_mem_receivingFamily`, under
-`StageType.HasCoupledGatedPinnedExtensions`). -/
+receiving family (`StageType.CoupledGatedExtension.exists_restrictFace_mem_receivingFamily`, for a
+given coupled gated extension). -/
 def IsStableRecoveryScheme (Tp : StageType.{u} (blockStage (ξ + 1)) m) (f : Fin k ↪ Fin m)
     (D : StageType.{u} (blockStage (ξ + 1)) (k + 1)) (γ : Ordinal.{u}) (E : Scheme.{u} (m + 1)) :
     Prop :=
