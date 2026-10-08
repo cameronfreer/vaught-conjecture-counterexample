@@ -841,6 +841,26 @@ theorem row_addApex_last_eq {z : Fin (t₀.addApex ht₀ hk).card}
   | last => rw [apexRow_last, addApex_label_last]
   | cast d => rw [apexRow_castSucc, addApex_label_castSucc]
 
+/-- Every cell lies below the apex. -/
+theorem mem_below_addApex_last (z : Fin (t₀.addApex ht₀ hk).card) :
+    z ∈ (t₀.addApex ht₀ hk).toCellScheme.below
+      ((t₀.addApex ht₀ hk).toCellScheme.gradedIndex (Fin.last _)) := by
+  rw [CellScheme.mem_below, addApex_gradedIndex_last ht₀ hk]
+  exact Prod.mk_le_mk.mpr ⟨subset_univ _, (t₀.addApex ht₀ hk).grade_le z⟩
+
+/-- The apex reads every cell at the code of its label. -/
+theorem rowAt_addApex_last (z : Fin (t₀.addApex ht₀ hk).card) :
+    (t₀.addApex ht₀ hk).toScheme.rowAt (Fin.last _) z =
+      blockEncode (apexCodes ht₀) k ((t₀.addApex ht₀ hk).label z) := by
+  rw [Scheme.rowAt_of_mem (mem_below_addApex_last ht₀ hk z)]
+  exact row_addApex_last_eq ht₀ hk _
+
+/-- **The apex reads a cell as `⊥` exactly when it is labelled `⊥`**: its row is the code of the
+labels. -/
+theorem rowAt_addApex_last_eq_bot_iff (z : Fin (t₀.addApex ht₀ hk).card) :
+    (t₀.addApex ht₀ hk).toScheme.rowAt (Fin.last _) z = ⊥ ↔ (t₀.addApex ht₀ hk).label z = ⊥ := by
+  rw [rowAt_addApex_last, blockEncode_eq_bot_iff]
+
 /-- **A labelling with `⊤` at the apex keeps the order of the labels**: if the apex is labelled
 `⊤`, a cell labelled at most another of no larger grade is labelled at most it (locality at the
 apex, whose row is the code of the labels). -/

@@ -9,18 +9,19 @@ import VaughtConjecture.Continuation.MarkedCap
 import VaughtConjecture.Extension.BotKeeping
 
 /-!
-# Marked-cap contexts respecting the root bottoms (ported definitions)
+# Marked-cap contexts respecting the root bottoms (definitions)
 
 Roadmap, Layer 3 ((R3) of the table of 3.4).
 
 The definitions and lemmas used by the acquisition of marked-cap contexts respecting the root
-bottoms: the marked-cap context at a given cap and marker (`StageType.IsMarkedCapContextAt`),
-visible cells as cells of a face (`StageType.exists_faceCell_eq`), the marker inequality from
-forcing (`StageType.IsMarker.visibilityReplace_le_of_forcesThreshold`), root offsets below a grade
-and their bound (`StageType.RootOffsetsBelow`, `StageType.exists_offset_bound`), root bottoms
-respected (`StageType.RootBottomRespected`) and the predicate
-`TiedRootCapRelabel.MarkedCapContextBelow'`, and the named acquisition statement
-`Realization.RootBottomAcquisition`.  Compiled in this repository (theorem named).
+bottoms: root offsets below a grade and their bound (`StageType.RootOffsetsBelow`,
+`StageType.exists_offset_bound`), root bottoms respected (`StageType.RootBottomRespected`) and the
+predicate `TiedRootCapRelabel.MarkedCapContextBelow'`, and the named acquisition statement
+`Realization.RootBottomAcquisition`.  Compiled in this repository (theorem named).  The marked-cap
+context at a given cap and marker (`StageType.IsMarkedCapContextAt`) and the marker inequality
+from forcing (`StageType.IsMarker.visibilityReplace_le_of_forcesThreshold`) are in
+`VaughtConjecture.Stage.MarkedCap`; visible cells as cells of a face
+(`StageType.exists_faceCell_eq`) are in `VaughtConjecture.Stage.Basic`.
 
 ## Placement
 
@@ -32,56 +33,10 @@ universe u w
 namespace VaughtConjecture
 
 open Finset Label
-open scoped Ordinal
 
 namespace StageType
 
-variable {α β : Ordinal.{u}} {k m n : ℕ}
-
-/-- Every cell visible through `h` is a cell of the face along `h`. -/
-theorem exists_faceCell_eq {t' : StageType.{u} α k} {h : Fin n ↪ Fin k}
-    {t : StageType.{u} α n} (ht : restrictFace h t' = some t) {i : Fin t'.card}
-    (hi : i ∈ t'.visibleCells h) : ∃ y, faceCell ht y = i := by
-  obtain ⟨z, rfl⟩ : i ∈ Set.range (t'.toScheme.cellMap h) := by
-    rw [Scheme.range_cellMap]
-    exact hi
-  exact ⟨Fin.cast (congrArg Scheme.card (comap_toScheme_of_restrictFace ht)) z, by
-    simp [faceCell, Scheme.faceCell]⟩
-
-/-- The data of a marked-cap context along `h` with top cap `c` and marker `r`
-(`StageType.IsMarkedCapContext` is `∃ c r, t'.IsMarkedCapContextAt h c r`). -/
-def IsMarkedCapContextAt (t' : StageType.{u} α k) (h : Fin n ↪ Fin k) (c r : Fin t'.card) :
-    Prop :=
-  t'.IsTopCap c ∧ t'.IsMarker c r ∧ n + 1 < t'.toCellScheme.grade c ∧
-    ∀ a ∈ t'.visibleCells h, t'.label a = ⊤ →
-      visibilityReplace (t'.toCellScheme.grade c) (n + 1) (t'.rowAt c r) ≤ t'.rowAt c a
-
-/-- **Forcing at the root tops gives the row inequality at a given marker**: let `β` be a limit,
-`β + ω ≤ α`, `q` a legal stage type at `β` restricting along `f : Fin n ↪ Fin m` to `p`, `c` a
-top cap of `q` and `r` a marker of `c`.  If `(q, f)` forces `n + 1` at every cell of `p` labelled
-`⊤`, then `visibilityReplace N (n + 1) (q.rowAt c r) ≤ q.rowAt c a` at every cell `a` of `q`
-visible through `f` and labelled `⊤`. -/
-theorem IsMarker.visibilityReplace_le_of_forcesThreshold {q : StageType.{u} β m}
-    {c r : Fin q.card} (hβ : Order.IsSuccLimit β)
-    (hα : β + ω ≤ α) (hq : q.IsLegal) {f : Fin n ↪ Fin m} {p : StageType.{u} β n}
-    (hp : restrictFace f q = some p) (hc : q.IsTopCap c) (hr : q.IsMarker c r)
-    (hforce : ∀ d : Fin p.card, p.label d = ⊤ →
-      ForcesThreshold α hβ.isSuccPrelimit q f p d (n + 1)) :
-    ∀ a ∈ q.visibleCells f, q.label a = ⊤ →
-      visibilityReplace (q.toCellScheme.grade c) (n + 1) (q.rowAt c r) ≤ q.rowAt c a := by
-  intro a ha hat
-  obtain ⟨hf, hqp⟩ := (restrictFace_eq_some_iff q f).mp hp
-  have hcard : (q.comap f hf).card = p.card :=
-    congrArg (fun s : StageType.{u} β n ↦ s.card) hqp
-  obtain ⟨i, rfl⟩ : a ∈ Set.range (q.cellMap f) := by
-    rw [Scheme.range_cellMap]
-    exact ha
-  set d : Fin p.card := ⟨i, lt_of_lt_of_eq i.2 hcard⟩
-  have hd : p.label d = ⊤ := by
-    rw [← hat]
-    exact (label_congr hqp.symm rfl).trans (comap_label q f hf i)
-  exact (ForcesThreshold.le_grade_and_visibilityReplace_rowAt_le hβ hα hq hc hr (hforce d hd) hd
-    fun i' hi' ↦ congrArg (q.cellMap f) (Fin.ext hi')).2
+variable {α : Ordinal.{u}} {k n : ℕ}
 
 /-- The **root offsets lie below `N`** along `h`: every label of a cell visible through `h` that
 is an ordinal `μ + f` (`μ` zero or a limit) has `f < N`. -/

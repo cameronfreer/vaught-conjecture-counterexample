@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Continuation.RootBottomDetermination
+import VaughtConjecture.MainTheorem.CoatomDetermination
 import VaughtConjecture.MainTheorem.ReceivingRoute
 
 /-!
@@ -16,19 +17,22 @@ receiving models) from hollow cutoff determination at the predicate
 `TiedRootCapRelabel.MarkedCapContextBelow'`, which is acquired with no hypothesis
 (`Realization.rootBottomAcquisition`).  Compiled in this repository (theorem named):
 
-* `Realization.receivingHollowReceiving_of_cutoffDetermination`: hollow acquisition for
-  cover-hollowness at a block stage and hollow cutoff determination, for one predicate, give
-  `HollowReceiving IsReceivingCoverHollowAtBlock`
-  (`Realization.hollowReceiving_of_hollowCutoffDetermination`).
 * `Realization.receivingHollowReceiving_of_markedCapContextBelow'`: from
-  `HollowCutoffDetermination MarkedCapContextBelow'`, with no other hypothesis.
-* `Realization.receivingHollowReceiving_of_coatomCutoffDetermination`: from its coatom form, given
-  the named reduction `Realization.CoatomCutoffReduction`.
+  `HollowCutoffDetermination MarkedCapContextBelow'`, with no other hypothesis, through
+  `Realization.receivingHollowReceiving_of_cutoffDetermination` (in
+  `VaughtConjecture.MainTheorem.ReceivingDetermination`).
+* `Realization.receivingHollowReceiving_of_coatomCutoffDetermination`: from its coatom form
+  `HollowCoatomCutoffDetermination MarkedCapContextBelow'`, with no other hypothesis: the reduction
+  `Realization.HollowCoatomCutoffDetermination.hollowCutoffDetermination` (in
+  `VaughtConjecture.MainTheorem.CoatomDetermination`) applies, since the roots of the predicate are
+  never onto and the predicate is invariant under relabelling
+  (`Realization.markedCapContextBelow'_routeInputs`).
 * `MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_markedCapContextBelow'`: the thin `ℵ₁`
   spectrum from (R4) and (R2) for receiving models and
   `HollowCutoffDetermination.{0} MarkedCapContextBelow'`.
 
-(R3) is not proved here: hollow cutoff determination at `MarkedCapContextBelow'` is open.
+Acquisition is proved; general determination is open: hollow cutoff determination at
+`MarkedCapContextBelow'`, in either form, is not proved here.
 
 ## Placement
 
@@ -43,17 +47,6 @@ open Finset Label
 
 namespace Realization
 
-/-- **(R3) for receiving models from hollow acquisition and hollow cutoff determination**: hollow
-acquisition for cover-hollowness at a block stage and hollow cutoff determination, for one
-predicate `P`, give `HollowReceiving` for `IsReceivingCoverHollowAtBlock`, the (R3) hypothesis of
-the receiving route. -/
-theorem receivingHollowReceiving_of_cutoffDetermination
-    {P : ∀ {α : Ordinal.{u}} {n k : ℕ}, StageType.{u} α k → (Fin n ↪ Fin k) → Prop}
-    (hacq : HollowAcquisition.{u, w} IsCoverHollowAtBlock P)
-    (hdet : HollowCutoffDetermination.{u} P) :
-    HollowReceiving.{u, w} IsReceivingCoverHollowAtBlock :=
-  hollowReceiving_of_hollowCutoffDetermination hacq hdet fun _ _ _ h ↦ h
-
 /-- **(R3) for receiving models from cutoff determination at the acquired predicate**, with no
 other hypothesis. -/
 theorem receivingHollowReceiving_of_markedCapContextBelow'
@@ -62,15 +55,16 @@ theorem receivingHollowReceiving_of_markedCapContextBelow'
     HollowReceiving.{u, w} IsReceivingCoverHollowAtBlock :=
   receivingHollowReceiving_of_cutoffDetermination rootBottomAcquisition hdet
 
-/-- **(R3) for receiving models from the coatom form at the acquired predicate**, given the
-reduction from the coatom form (`Realization.CoatomCutoffReduction`). -/
+/-- **(R3) for receiving models from the coatom form at the acquired predicate**, with no other
+hypothesis: the coatom form gives the hollow form
+(`Realization.HollowCoatomCutoffDetermination.hollowCutoffDetermination`), since the roots of the
+predicate are never onto and the predicate is invariant under relabelling. -/
 theorem receivingHollowReceiving_of_coatomCutoffDetermination
-    (hred : CoatomCutoffReduction.{u})
     (h3' : HollowCoatomCutoffDetermination.{u}
       (fun t' h ↦ TiedRootCapRelabel.MarkedCapContextBelow' t' h)) :
     HollowReceiving.{u, w} IsReceivingCoverHollowAtBlock :=
   receivingHollowReceiving_of_markedCapContextBelow'
-    (hred _ h3' (markedCapContextBelow'_routeInputs.{u, w}).2.1
+    (h3'.hollowCutoffDetermination (markedCapContextBelow'_routeInputs.{u, w}).2.1
       (markedCapContextBelow'_routeInputs.{u, w}).2.2)
 
 end Realization
