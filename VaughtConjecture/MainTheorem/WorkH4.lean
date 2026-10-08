@@ -5,6 +5,7 @@ Authors: Cameron Freer
 -/
 import VaughtConjecture.MainTheorem.CapRequestsRecovery
 import VaughtConjecture.Continuation.CapRequestsDonorFace
+import VaughtConjecture.MainTheorem.CutoffCoatomChosenDonor
 
 /-!
 # Work on h4: first-coatom completions for the calibrated (R4) inputs
@@ -213,6 +214,53 @@ theorem hasCutoffFirstCoatomCompletions'_of_fills_isDeadAbove
       hxd hne (X.requests_isGraded _),
     CapRequests.capLiftProvisionOf_donor_le' hm (X.requests_isGraded _) (X.scope_requests_cap _)
       h₁ h₂ hdead hxp hxd hne⟩
+
+end StageType
+
+/-! ### h4 with a chosen intermediate coface -/
+
+namespace StageType
+
+variable {ξ : Ordinal.{u}}
+
+namespace FirstCoatomInput
+
+variable {m k : ℕ} (X : FirstCoatomInput.{u} ξ m k) {γ : Ordinal.{u}}
+
+/-- **The lift provisions and fills at an input**, for cap data `c`: at every grade
+`N ≤ k' ≤ m + 1` from the grade of the cap, the lift provisions from the donor coatom and the fills
+from the private coatom, for the requests of `c`. -/
+def HasFills (c : MarginCapData X.Tp X.D γ) : Prop :=
+  ∀ k', X.Tp.toCellScheme.grade c.cap ≤ k' → k' ≤ m + 1 →
+    (ProfileTower.BotLiftProvisionOf (X.requests c).IsCorrect k' (Fin.castSucc (Fin.last m)) ∧
+      ProfileTower.CapLiftProvisionOf (X.requests c).IsCorrect k' (Fin.castSucc (Fin.last m))) ∧
+    CapRequests.CapFillBotAt (X.requests c) (Fin.last (m + 1)) k' ∧
+      CapRequests.CapFillPosAt (X.requests c) (Fin.last (m + 1)) k'
+
+end FirstCoatomInput
+
+/-- **First-coatom completions with a chosen coface for the margin calibration with a floor**, from
+the lift provisions of the donor coatom and the private fills at a chosen intermediate coface. -/
+theorem hasCutoffFirstCoatomCompletionsEx'_of_fills
+    (h : ∀ ⦃m k : ℕ⦄ (Tp : StageType.{u} (blockStage (ξ + 1)) (m + 1))
+      (p : StageType.{u} (blockStage (ξ + 1)) m) (f : Fin k ↪ Fin m)
+      (P : StageType.{u} (blockStage (ξ + 1)) k) (hT : Tp.IsLegal)
+      (hp : restrictFace Fin.castSuccEmb Tp = some p), 0 < k →
+      ∀ (hP : restrictFace f p = some P) (D : StageType.{u} (blockStage (ξ + 1)) (k + 1))
+        (hD : D ∈ P.cofaces) (γ : Ordinal.{u}), γ < blockStage (ξ + 1) →
+      GradedCapMarginCalibration' ξ Tp (f.trans Fin.castSuccEmb) D γ →
+      ∃ (tb : StageType.{u} (blockStage (ξ + 1)) (m + 1)) (htb : tb ∈ p.cofaces)
+        (htbD : restrictFace (extendByLast f) tb = some D)
+        (c : FloorCapData Tp (f.trans Fin.castSuccEmb) D γ),
+        (⟨Tp, p, tb, f, P, D, hT, hp, htb, hP, hD, htbD⟩ : FirstCoatomInput.{u} ξ m k).HasFills
+          c.toMarginCapData) :
+    HasCutoffFirstCoatomCompletionsEx ξ (GradedCapMarginCalibration' ξ) := by
+  intro m k Tp p f P hT hp hk hP D hD γ hγ hC
+  obtain ⟨tb, htb, htbD, c, hc⟩ := h Tp p f P hT hp hk hP D hD γ hγ hC
+  let X : FirstCoatomInput.{u} ξ m k := ⟨Tp, p, tb, f, P, D, hT, hp, htb, hP, hD, htbD⟩
+  exact ⟨tb, htb, htbD, X.exists_isCutoffStableRecovery' c.toMarginCapData c.three_le
+    (fun k' h₁ h₂ ↦ (hc k' h₁ h₂).1) (fun k' h₁ h₂ ↦ (hc k' h₁ h₂).2.1)
+    fun k' h₁ h₂ ↦ (hc k' h₁ h₂).2.2⟩
 
 end StageType
 
