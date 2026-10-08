@@ -405,6 +405,9 @@ theorem mem_rowCat {Rw : I.State → Prop} {k : ℕ} {R : Prof I} :
   classical
   simp only [rowCat, Finset.mem_filter]
 
+theorem rowCat_subset (Rw : I.State → Prop) (k : ℕ) : rowCat Rw k ⊆ cat I k :=
+  fun _ hR ↦ (mem_rowCat.mp hR).1
+
 theorem mem_admittedCat {A : I.Admission} {k : ℕ} {R : Prof I} :
     R ∈ admittedCat A k ↔ R ∈ cat I k ∧ A.Row (hat I k R) :=
   mem_rowCat

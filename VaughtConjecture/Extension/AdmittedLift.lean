@@ -232,22 +232,23 @@ theorem Lvl.Good.exists_extensionOn (hL : L.Good) (hC : C ⊆ cat I (g + 1)) {P 
 
 /-! ### The lift from a coatom into an admitted layer -/
 
-variable (A : I.Admission)
+variable (Rw : I.State → Prop)
 
-/-- **The capped lift from a coatom into the admitted layer**, at the grade `g + 1 ≤ m + 1`, under
-the lift provisions at `⊥` and at the positive caps for that coatom: the one-grade lift
+/-- **The capped lift from a coatom into the layer on the catalogue of a predicate `Rw`**, at the
+grade `g + 1 ≤ m + 1`, under the lift provisions for `Rw` at `⊥` and at the positive caps for that
+coatom: the one-grade lift
 `CellScheme.Rows.cappedLift_of_ownerCappedLift`, with the lift of the level at the grade `g`, the
 owner-capped lift at `⊥` by the provision at `⊥` and `Lvl.Good.exists_extensionOn_bot`, and the
 owner-capped lifts at the positive caps from the serving rows, by the provision at the positive caps
 and `Lvl.Good.exists_extensionOn`. -/
-theorem Lvl.Good.cappedLift_admittedNextS (hL : L.Good) (hgm : g + 1 ≤ m + 1) {x : Fin (m + 2)}
-    (hx : x ∈ (Pts : Finset (Fin (m + 2)))) (hbot : BotLiftProvision A (g + 1) x)
-    (hcap : CapLiftProvision A (g + 1) x) :
-    (L.admittedNextS A).rows.CappedLift (X := (univ.erase x, g + 1))
+theorem Lvl.Good.cappedLift_nextSOn_rowCat (hL : L.Good) (hgm : g + 1 ≤ m + 1)
+    {x : Fin (m + 2)} (hx : x ∈ (Pts : Finset (Fin (m + 2))))
+    (hbot : BotLiftProvisionOf Rw (g + 1) x) (hcap : CapLiftProvisionOf Rw (g + 1) x) :
+    (L.nextSOn (rowCat Rw (g + 1))).rows.CappedLift (X := (univ.erase x, g + 1))
       (Y := ((univ : Finset (Fin (m + 2))), g + 1)) ⟨erase_subset _ _, le_rfl⟩ := by
   classical
-  set C := admittedCat A (g + 1)
-  have hC : C ⊆ cat I (g + 1) := admittedCat_subset A _
+  set C := rowCat Rw (g + 1)
+  have hC : C ⊆ cat I (g + 1) := rowCat_subset Rw _
   have hne : (univ.erase x, g + 1).1 ≠ univ := Seed.ne_univ_erase x
   have hcard : #(univ.erase x) = m + 1 := Seed.card_erase x
   have hlift : (L.nextSOn C).rows.CappedLift (X := (univ.erase x, g))
@@ -328,6 +329,17 @@ theorem Lvl.Good.cappedLift_admittedNextS (hL : L.Good) (hgm : g + 1 ≤ m + 1) 
       refine ⟨r, hr, fun e ↦ ?_, fun z ↦ by rw [hrowB]; exact hrP z⟩
       obtain ⟨d, hdb, hd, hde, hdp⟩ := hread f e
       rw [← hde, hrW d hd, hWf d hdb, hdp]
+
+
+/-- **The capped lift from a coatom into the admitted layer**, at the grade `g + 1 ≤ m + 1`, under
+the lift provisions of the admission (`ProfileTower.Lvl.Good.cappedLift_nextSOn_rowCat` for its
+reading rows). -/
+theorem Lvl.Good.cappedLift_admittedNextS (A : I.Admission) (hL : L.Good) (hgm : g + 1 ≤ m + 1)
+    {x : Fin (m + 2)} (hx : x ∈ (Pts : Finset (Fin (m + 2))))
+    (hbot : BotLiftProvision A (g + 1) x) (hcap : CapLiftProvision A (g + 1) x) :
+    (L.admittedNextS A).rows.CappedLift (X := (univ.erase x, g + 1))
+      (Y := ((univ : Finset (Fin (m + 2))), g + 1)) ⟨erase_subset _ _, le_rfl⟩ :=
+  hL.cappedLift_nextSOn_rowCat A.Row hgm hx hbot hcap
 
 end Step
 
