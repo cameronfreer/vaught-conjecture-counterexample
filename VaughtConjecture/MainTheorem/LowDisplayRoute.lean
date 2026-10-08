@@ -3,7 +3,7 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
-import VaughtConjecture.Continuation.LowDisplay
+import VaughtConjecture.Continuation.LowLayer
 import VaughtConjecture.MainTheorem.BoundedCoatomDetermination
 
 /-!
@@ -27,7 +27,10 @@ the cells of graded index `(univ, K)`, `StageType.IsControllerReading`) implies 
 (`StageType.HasControlledLowDisplays.hasSeparatedLowDisplays`, compiled in this repository).  In
 the controller form no lawful section of the display enters: a lawful section `q` with the
 private tops literal is `σ` of the row of some controller up to grade `K`
-(`StageType.exists_controller`, from completeness, availability and locality).
+(`StageType.exists_controller`, from completeness, availability and locality).  LOW layers
+(`StageType.HasLowLayers`: every controller of grade `K` carries a LOW profile, read by its row
+at the other cells and at agreement heights at the controllers, `StageType.IsLowLayer`) give the
+controller form (`StageType.HasLowLayers.hasControlledLowDisplays`, compiled in this repository).
 
 **The bounded coatom form from LOW displays**
 (`Realization.BoundedCoatomCutoffDetermination.of_hasLowDisplays`, compiled in this repository).
@@ -131,6 +134,29 @@ theorem HasControlledLowDisplays.hasSeparatedLowDisplays (h : HasControlledLowDi
   obtain ⟨D, h₁, h₂, lo, hi, hD, hlo, hhi, hlog, hhig, hX⟩ := h t' tb p o r hα hF
   exact ⟨D, lo, hi, IsSeparatedLowDisplay.of_controllerReading hF.isSourceGapContextAt
     hF.topGrade_donor hD h₁ h₂ hlo hhi hlog hhig hX⟩
+
+/-- **LOW layers at source-gap contexts** (open): every LOW family `(t', tb)` with owner `o` and
+lost top `r` has a legal display `D` with a LOW layer at grade `K` (`IsLowLayer`) whose separator
+`lo`, `hi` is labelled by a proper label and by `⊤`. -/
+def HasLowLayers : Prop :=
+  ∀ ⦃α : Ordinal.{u}⦄ ⦃K k : ℕ⦄ (t' tb : StageType.{u} α (k + 1)) (p : StageType.{u} α k)
+    (o r : Fin t'.card), Order.IsSuccLimit α → IsLowFamily K t' tb p o r →
+      ∃ (D : StageType.{u} α (k + 2)) (h₁ : restrictFace Fin.castSuccEmb D = some t')
+        (h₂ : restrictFace (extendByLast Fin.castSuccEmb) D = some tb) (G : Finset Label.{u})
+        (entry : Fin D.card → LowField D → Label.{u}) (s : LowField D → Label.{u})
+        (lo hi : Fin D.card), D.IsLegal ∧ D.label lo ≠ ⊤ ∧ D.label hi = ⊤ ∧
+          IsLowLayer K h₁ h₂ o r G entry s lo hi
+
+/-- **LOW layers give controlled LOW displays** (`StageType.IsLowLayer.isControllerReading`). -/
+theorem HasLowLayers.hasControlledLowDisplays (h : HasLowLayers.{u}) :
+    HasControlledLowDisplays.{u} := by
+  intro α K k t' tb p o r hα hF
+  obtain ⟨D, h₁, h₂, G, entry, s, lo, hi, hD, hlo, hhi, hL⟩ := h t' tb p o r hα hF
+  have hs := hF.isSourceGapContextAt
+  have hr : t'.toCellScheme.grade r ≤ K := hs.topGrade_eq ▸ grade_le_topGrade hs.label_lost
+  exact ⟨D, h₁, h₂, lo, hi, hD, hlo, hhi, (congrArg Prod.snd hL.gradedIndex_lo).le,
+    (congrArg Prod.snd hL.gradedIndex_hi).le,
+    hL.isControllerReading hs.grade_owner.le hr hF.topGrade_donor⟩
 
 /-- **Separated displays give LOW displays** (`StageType.exists_isLowDisplay_of_separated`). -/
 theorem HasSeparatedLowDisplays.hasLowDisplays (h : HasSeparatedLowDisplays.{u}) :
