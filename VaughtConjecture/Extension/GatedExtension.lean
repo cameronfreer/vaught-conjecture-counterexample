@@ -87,6 +87,18 @@ labelled `⊤` (`CoupledGateInstance.coupledGatedPinnedExtension_donor`).  **Cap
 the docstring of `StageType.HasCoupledGatedPinnedExtensions`, is a requirement of the construction
 at the lifts from faces containing the new point; the refutation does not use it.
 
+**Readings in the own block.**  The row of a cell `C` **reads a label `l` in its own block**
+(`StageType.ReadsInOwnBlock`) when it reads some cell below `C` labelled `l` in the block of its
+reading of `C` itself; a lawful labelling that keeps `C` keeps such a cell
+(`StageType.ReadsInOwnBlock.exists_ne_bot`).  The anchoring and the bottom transport condition are
+also stated at a grade `k` (`StageType.IsAnchoredAt`, `StageType.CarriesBottomsAt`; at `k = n`
+they are `IsAnchored` and `CarriesBottoms`), and the condition at `k` holds at a cap of graded
+index `(univ, k)` that reads an anchor of every donor label below it in its own block
+(`StageType.carriesBottomsAt_of_readsInOwnBlock`; at the arity,
+`StageType.carriesBottoms_of_row_mem_block`).  This serves only anchors in one block: two labels
+read in the own block, strictly below the label of `C` and not self-visible at its grade, are
+visibility replacements of each other (`StageType.eq_visibilityReplace_of_readsInOwnBlock`).
+
 ## Placement
 
 This file belongs to Layer 3 of `roadmap/README.md`.
@@ -379,6 +391,83 @@ theorem carriesBottoms_of_forall_label {P : StageType.{u} α n} {d : StageType.{
   ⟨d.label, d.isLawful, fun j hj hne ↦
     ⟨fun hlt _ ↦ ((hd j hj).resolve_left hne |> hlt).elim, fun _ ↦ hne⟩⟩
 
+/-! ### Readings in the cap's own block, at a given grade -/
+
+/-- The row of a cell `C` of `P` **reads a cell labelled `l` in its own block**: some cell `z`
+below `C`, labelled `l`, is read by the row of `C` in the block `[μ, μ + ω)` (`μ` zero or a limit)
+of its reading of `C` itself. -/
+def ReadsInOwnBlock (P : StageType.{u} α n) (C : Fin P.card) (l : Label.{u}) : Prop :=
+  ∃ z, ∃ hz : z ∈ P.toCellScheme.below (P.toCellScheme.gradedIndex C), P.label z = l ∧
+    ∃ μ : Ordinal.{u}, Order.IsSuccPrelimit μ ∧ ∃ i i' : ℕ,
+      P.rows.row C ⟨z, hz⟩ = ((μ + i : Ordinal.{u}) : Label.{u}) ∧
+      P.rows.row C ⟨C, P.toCellScheme.mem_below_gradedIndex C⟩ =
+        ((μ + i' : Ordinal.{u}) : Label.{u})
+
+/-- A lawful labelling not `⊥` at `C` is not `⊥` at a cell that the row of `C` reads, labelled
+`l`, in its own block (`CellScheme.Rows.IsLawful.ne_bot_of_row_mem_block`). -/
+theorem ReadsInOwnBlock.exists_ne_bot {P : StageType.{u} α n} {C : Fin P.card} {l : Label.{u}}
+    (h : P.ReadsInOwnBlock C l) {a : Fin P.card → Label.{u}} (ha : P.rows.IsLawful a)
+    (hC : a C ≠ ⊥) : ∃ z, P.label z = l ∧ a z ≠ ⊥ := by
+  obtain ⟨z, hz, hzl, μ, hμ, i, i', hrz, hrC⟩ := h
+  exact ⟨z, hzl, ha.ne_bot_of_row_mem_block hz hμ hrz hrC hC⟩
+
+/-- The donor `d` is **anchored at the grade `k`** in `P` below the cell `C`: every new donor cell
+whose label is neither `⊥` nor at least that of `C` is labelled `vr_k(P.label z, i)` for a cell
+`z` of `P` and some `i ≤ k`.  At `k = n` this is `IsAnchored` (`isAnchoredAt_iff`); a design with
+the gate at grade `k` reads the donor through visibility replacement at `k`. -/
+def IsAnchoredAt (P : StageType.{u} α n) (C : Fin P.card) (k : ℕ)
+    (d : StageType.{u} α (m + 1)) : Prop :=
+  ∀ j : Fin d.card, Fin.last m ∈ d.toCellScheme.scope j → d.label j ≠ ⊥ → d.label j < P.label C →
+    ∃ z : Fin P.card, ∃ i ≤ k, d.label j = visibilityReplace k i (P.label z)
+
+/-- Anchoring at the arity is `IsAnchored`. -/
+theorem isAnchoredAt_iff {P : StageType.{u} α n} {C : Fin P.card} {d : StageType.{u} α (m + 1)} :
+    IsAnchoredAt P C n d ↔ IsAnchored P C d :=
+  Iff.rfl
+
+/-- The **bottom transport condition at the grade `k`**: `CarriesBottoms` with the cells of graded
+index `(univ, k)` labelled `c` in place of those of graded index `(univ, n)`, and visibility
+replacement at `k` in place of `n`.  At `k = n` it is `CarriesBottoms` (`carriesBottomsAt_iff`).
+It is the condition that the proof of `CoupledGatedExtension.carriesBottoms` would give for a gate
+and a cap of grade `k` (argued from that proof, not compiled: such a design is not defined in the
+library). -/
+def CarriesBottomsAt (P : StageType.{u} α n) (d : StageType.{u} α (m + 1)) (c : Label.{u})
+    (k : ℕ) : Prop :=
+  ∀ a : Fin P.card → Label.{u}, P.rows.IsLawful a →
+    (∀ i, P.toCellScheme.gradedIndex i = (univ, k) → P.label i = c → a i ≠ ⊥) →
+    ∃ ρ : Fin d.card → Label.{u}, d.rows.IsLawful ρ ∧
+      ∀ j, Fin.last m ∈ d.toCellScheme.scope j → d.label j ≠ ⊥ →
+        (¬ c ≤ d.label j →
+          (∀ i, ∀ k' ≤ k, d.label j = visibilityReplace k k' (P.label i) → a i = ⊥) → ρ j = ⊥) ∧
+        ((∀ i, ((∃ k' ≤ k, d.label j = visibilityReplace k k' (P.label i)) ∨
+            (c ≤ P.label i ∧ c ≤ d.label j)) → a i ≠ ⊥) → ρ j ≠ ⊥)
+
+/-- The bottom transport condition at the arity is `CarriesBottoms`. -/
+theorem carriesBottomsAt_iff {P : StageType.{u} α n} {d : StageType.{u} α (m + 1)}
+    {c : Label.{u}} : CarriesBottomsAt P d c n ↔ CarriesBottoms P d c :=
+  Iff.rfl
+
+/-- **The bottom transport condition at the grade `k` holds at a cap that reads the donor's
+anchors in its own block**: let `C` be a cell of graded index `(univ, k)` of `P`, and suppose
+every new donor label neither `⊥` nor at least the label of `C` is `vr_k(l, k')`, `k' ≤ k`, for a
+label `l` that the row of `C` reads in its own block.
+Then a lawful labelling of `P` not `⊥` at `C` is not `⊥` at a cell labelled `l`, which is a
+possible anchor, and the labelling of the donor itself meets the condition.  At `k = n` this is
+`carriesBottoms_of_row_mem_block`, with the anchor given by its label. -/
+theorem carriesBottomsAt_of_readsInOwnBlock {P : StageType.{u} α n}
+    {d : StageType.{u} α (m + 1)} {C : Fin P.card} {k : ℕ}
+    (hC : P.toCellScheme.gradedIndex C = (univ, k))
+    (hread : ∀ j, Fin.last m ∈ d.toCellScheme.scope j → d.label j ≠ ⊥ → d.label j < P.label C →
+      ∃ l, (∃ k' ≤ k, d.label j = visibilityReplace k k' l) ∧ P.ReadsInOwnBlock C l) :
+    CarriesBottomsAt P d (P.label C) k := by
+  intro a ha hcap
+  refine ⟨d.label, d.isLawful, fun j hj hne ↦ ⟨fun hlt hdrop ↦ ?_, fun _ ↦ hne⟩⟩
+  obtain ⟨l, ⟨k', hk', hjl⟩, hl⟩ := hread j hj hne (lt_of_not_ge hlt)
+  obtain ⟨z, hzl, hz⟩ := hl.exists_ne_bot ha (hcap C hC rfl)
+  exact (hz (hdrop z k' hk' (hzl ▸ hjl))).elim
+
+/-! ### The bottom transport condition at the arity, from readings in the own block -/
+
 /-- **The bottom transport condition holds when the cap reads an anchor of every donor label below
 it in its own block.**  Let `C` be a cell of `P` of graded index `(univ, n)`, and suppose every new
 donor cell labelled neither `⊥` nor at least the label of `C` has an anchor `z`
@@ -397,12 +486,71 @@ theorem carriesBottoms_of_row_mem_block {P : StageType.{u} α n} {d : StageType.
             P.rows.row C ⟨z, hz⟩ = ((μ + i : Ordinal.{u}) : Label.{u}) ∧
             P.rows.row C ⟨C, P.toCellScheme.mem_below_gradedIndex C⟩ =
               ((μ + i' : Ordinal.{u}) : Label.{u})) :
-    CarriesBottoms P d (P.label C) := by
-  intro a ha hcap
-  refine ⟨d.label, d.isLawful, fun j hj hne ↦ ⟨fun hlt hdrop ↦ ?_, fun _ ↦ hne⟩⟩
-  obtain ⟨z, hz, k, hk, hzk, μ, hμ, i, i', hrz, hrC⟩ := hblock j hj hne (lt_of_not_ge hlt)
-  exact absurd (hdrop z k hk hzk)
-    (ha.ne_bot_of_row_mem_block hz hμ hrz hrC (hcap C hC rfl))
+    CarriesBottoms P d (P.label C) :=
+  -- the anchor `z` is a cell labelled `P.label z` that the row of `C` reads in its own block
+  carriesBottomsAt_iff.mp <| carriesBottomsAt_of_readsInOwnBlock hC fun j hj hne hlt ↦ by
+    obtain ⟨z, hz, k, hk, hzk, μ, hμ, i, i', hrz, hrC⟩ := hblock j hj hne hlt
+    exact ⟨P.label z, ⟨k, hk, hzk⟩, z, hz, rfl, μ, hμ, i, i', hrz, hrC⟩
+
+/-! ### Readings in the own block lie in one block -/
+
+/-- **Readings in the own block lie in one block**: if the row of a cell `C` reads, in its own
+block, cells labelled `l` and `l'`, both labels strictly below the label of `C` and neither
+self-visible at the grade `K` of `C`, then `l'` is a visibility replacement `vr_K(l, j)` of `l`
+for some `j ≤ K`; in particular `l` and `l'` lie in one block.  The locality witness at `C` sends
+each reading below the label of `C` to the label read; a reading with finite part at least `K`
+would make that label self-visible at `K`, and commutation with visibility replacement at the
+finite part of the second reading gives `l'`.  So the own-block mechanism
+(`carriesBottoms_of_row_mem_block`, `carriesBottomsAt_of_readsInOwnBlock`) serves anchors below
+the cap and not self-visible at its grade only within one block.  The labels `⊥` and `⊤` are
+self-visible at every grade, so the premises concern ordinal labels. -/
+theorem eq_visibilityReplace_of_readsInOwnBlock {P : StageType.{u} α n} {C : Fin P.card}
+    {l l' : Label.{u}} (h : P.ReadsInOwnBlock C l) (h' : P.ReadsInOwnBlock C l')
+    (hl : l < P.label C) (hl' : l' < P.label C)
+    (hv : ¬ IsSelfVisible (P.toCellScheme.grade C) l)
+    (hv' : ¬ IsSelfVisible (P.toCellScheme.grade C) l') :
+    ∃ j ≤ P.toCellScheme.grade C, l' = visibilityReplace (P.toCellScheme.grade C) j l := by
+  obtain ⟨z, hz, hzl, μ, hμ, i, i₀, hrz, hrC⟩ := h
+  obtain ⟨z', hz', hzl', μ', hμ', j, j₀, hrz', hrC'⟩ := h'
+  -- the block start of an ordinal label is unique (`Label.add_natCast_eq_add_natCast_iff`)
+  obtain rfl : μ = μ' := ((add_natCast_eq_add_natCast_iff hμ hμ').mp
+    (WithTop.coe_injective (WithBot.coe_injective (hrC.symm.trans hrC')))).1
+  obtain ⟨g, σ, hw, heq⟩ := P.isLawful.locality C
+  set K := P.toCellScheme.grade C
+  have hCg : P.label C ≤ g K := by
+    have := heq ⟨C, P.toCellScheme.mem_below_gradedIndex C⟩
+    simp only [min_self] at this
+    rw [this]; exact min_le_right _ _
+  -- the shifter sends the reading of a cell below `C` with label below `C` to its label
+  have hσ : ∀ (y : Fin P.card) (hy : y ∈ P.toCellScheme.below (P.toCellScheme.gradedIndex C)),
+      P.label y < P.label C → σ (P.rows.row C ⟨y, hy⟩) = P.label y := by
+    intro y hy hlt
+    have hgy : g K ≤ g (P.toCellScheme.grade y) :=
+      hw.antitone ((CellScheme.mem_below _).mp hy).2
+    have := heq ⟨y, hy⟩
+    simp only [min_eq_left hlt.le] at this
+    rcases min_eq_iff.mp this.symm with ⟨h1, -⟩ | ⟨h1, -⟩
+    · exact h1
+    · exact absurd (h1 ▸ hlt.trans_le (hCg.trans hgy)) (lt_irrefl _)
+  have hσz : σ ((μ + i : Ordinal.{u}) : Label.{u}) = l := by rw [← hrz, hσ z hz (hzl ▸ hl), hzl]
+  have hσz' : σ ((μ + j : Ordinal.{u}) : Label.{u}) = l' := by
+    rw [← hrz', hσ z' hz' (hzl' ▸ hl'), hzl']
+  -- a reading at a finite part at least `K` would make the label self-visible at `K`
+  have hfin : ∀ (k : ℕ) (m : Label.{u}), σ ((μ + k : Ordinal.{u}) : Label.{u}) = m →
+      m < P.label C → ¬ IsSelfVisible K m → k < K := by
+    intro k m hk hm hvm
+    by_contra hKk
+    have hc := hw.visibilityReplace_comm ((μ + k : Ordinal.{u}) : Label.{u}) K
+      (hk ▸ hm.le.trans hCg) K le_rfl
+    rw [isSelfVisible_coe_add hμ (not_lt.mp hKk), hk] at hc
+    exact hvm hc.symm
+  have hi : i < K := hfin i l hσz hl hv
+  have hj : j < K := hfin j l' hσz' hl' hv'
+  have hc := hw.visibilityReplace_comm ((μ + i : Ordinal.{u}) : Label.{u}) K
+    (hσz ▸ hl.le.trans hCg) j hj.le
+  rw [visibilityReplace_coe_add_natCast hμ hi j, hσz', hσz] at hc
+  exact ⟨j, hj.le, hc⟩
+
 
 namespace CoupledGatedExtension
 
