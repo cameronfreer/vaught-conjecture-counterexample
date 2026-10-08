@@ -38,13 +38,15 @@ Each item is compiled in this repository (theorem named).
   hypothesis of the source-gap form
   (`Realization.CoatomCutoffDetermination.isSourceGapContextLast`); no converse is claimed.
 
-The source-gap form does not reduce to the form with the lost point last by a transposition.  The
-closed coatoms of a context are the complements `univ.erase a` of the extreme points `a` of its
-plan (`Geometry.extremes`), and a plan has at most two extreme points
-(`Geometry.IsPlan.card_extremes_le_two`).  When the lost point is not one of them, its complement
-is not closed.  A relabelling can move that complement to the coordinate first coatom but cannot
-make it closed, and the coatom form is asked only where the first coatom is closed; so at such a
-context the source-gap form asks determination with the lost point on a closed first coatom.
+The reduction does not extend to the source-gap form by a relabelling.  The closed coatoms of a
+context are the complements `univ.erase a` of the extreme points `a` of its plan
+(`StageType.isPlan`, `Geometry.mem_extremes`, `StageType.erase_mem_faces_iff_mem_extremes`), at
+most two (`Geometry.IsPlan.card_extremes_le_two`).  At a context none of whose witnessing lost
+points is extreme, the coatom off each lost point is not closed: a relabelling can move it to the
+coordinate first coatom but cannot make it closed, and the coatom form is asked only where the
+first coatom is closed.  There the source-gap form asks determination with every witnessing lost
+point on a closed first coatom, and this file does not reduce that to the form with the lost point
+last.
 
 **Not claimed.**  Coatom cutoff determination for `IsSourceGapContextLast` is not proved, nor are
 (R4) and (R3), so the spectrum is not proved here.
