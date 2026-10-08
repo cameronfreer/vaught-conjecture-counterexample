@@ -464,7 +464,8 @@ cell with scope in a closed face `G` and missing some top cell, and let a top ce
 `K` have scope in `G`.  Then every injective `g` with values in `G` factors as
 `ι ∘ Fin.castSucc ∘ e` through an enumeration `ι` of a closed face, and the face of `Q` along `ι`
 is a source-gap context of grade `K` along `e` followed by the initial segment, with the last
-point lost; its first coatom (the face of `Q` along `Fin.castSuccEmb` followed by `ι`) is closed.
+point lost; the image under `ι` of its first coatom, `univ.map (Fin.castSuccEmb.trans ι)`, is a
+closed face of `Q`.
 
 First loss (`exists_firstLoss`) gives a closed `B ⊇ G` and `p`; `ι` enumerates `insert p B` with
 `p` last, so the first coatom is `B`; the owner is the cell of `H` of graded index

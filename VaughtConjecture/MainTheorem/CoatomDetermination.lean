@@ -55,12 +55,14 @@ form.  The root lies in a closed coatom (`StageType.exists_coatom_trans_eq`); a 
 the coatom the first one (`StageType.exists_perm_castSuccEmb_trans`); the exact pinned extension
 (`StageType.exists_pinned_extension`, from the coatom extension property at every stage that is
 zero or a limit, `StageType.hasCoatomExtensions`) gives `tb`; the coatom form gives the coface and
-the cutoff; and relabelling back gives determination over `t'`.  The coatom extension property is
-compiled, so it is not a hypothesis.  The castSucc cases
-(`Realization.CoatomCutoffDetermination.exists_coface_castSucc`,
+the cutoff; and relabelling back gives determination over `t'`
+(`Realization.CoatomCutoffDetermination.exists_coface_reindex`, the castSucc case over the
+relabelled context, relabelled back).  The coatom extension property is compiled, so it is not a
+hypothesis.  The castSucc cases (`Realization.CoatomCutoffDetermination.exists_coface_castSucc`,
 `Realization.HollowCoatomCutoffDetermination.exists_coface_castSucc`) need no relabelling and no
 invariance: they apply when the root of the acquired context already lies in the first coatom (the
-lost point last, in the acquisition of (R2)).
+lost point last, in the acquisition of (R2)).  Coatom cutoff determination is antitone in the
+predicate (`Realization.CoatomCutoffDetermination.mono`).
 
 **Not claimed.**  That the coatom forms hold for the source-gap or the marked-cap contexts: that is
 the finite construction of the carrier, open.
