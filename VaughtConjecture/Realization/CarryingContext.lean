@@ -77,6 +77,24 @@ asks for one carrying context, not that every acquired context carries.
     Whether a model must have, over every root, a private context whose cap reads anchors in its
     own block (or carries the bottoms otherwise), or whether some model has none for some donor,
     is undecided.
+  - **Where it stands** (`VaughtConjecture.Realization.TightCap`).  Generalized saturation and
+    the bottom pattern bound no label of full grade from below (each nonempty instance has a
+    member labelled `⊥` at every cell of full grade), and a member of a dominance family need not
+    carry (this refutes only the finite sufficient condition "every member of a dominance family
+    carries", not the acquisition).  A model that realizes tight caps (`Realization.HasTightCaps`,
+    not a clause of a model) acquires carrying contexts; but `HasTightCaps` is refuted for every
+    model at every stage above `ω` (`Realization.IsModel.not_hasTightCaps`), holds vacuously at
+    the stage `0` (no floor lies below it), and is open at the stages from `1` to `ω`.  One grade
+    below full, availability gives a cell with a row prescribed by
+    saturation and a label above the floor; under the hypothesis on schemes
+    `StageType.HasTightSaturations`, every model has carrying contexts with a cap of that grade
+    (`Realization.IsModel.hasCarryingSubfullContext`), a redesign of the private context; but
+    that hypothesis is false at every stage above `ω` at which a model exists
+    (`Realization.IsModel.not_hasTightSaturations`).  Both conditional theorems are vacuous above
+    `ω`; the two refutations assume a model at a stage above `ω`.  The obstruction: a cell reads
+    in its own block labels below its own and not self-visible at its grade only within one block
+    (`StageType.eq_visibilityReplace_of_readsInOwnBlock`).  Acquisition itself is neither proved
+    nor refuted (at the stage `0` it holds vacuously).
 * Not stated (prospective, the next step only once acquisition is decided): the coupled gated
   pinned extension property restricted to carrying private contexts, and (R1) from it with
   acquisition.  Nothing here is equivalent to (R1), and (R1) is neither proved nor refuted.
