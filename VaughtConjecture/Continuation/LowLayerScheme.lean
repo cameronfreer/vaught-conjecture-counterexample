@@ -42,8 +42,18 @@ No strong coding of the rows of `S` is used.
 **Completeness at the layer** (`Scheme.exists_gradedIndex_eq_lowLayer`): when `C` is nonempty,
 `(univ, K)` is the graded index of a cell; below it, the graded faces are those of `S`.
 
-**Bountifulness** of the displays built from LOW layers is not proved here: it is the open part
-of the construction (`StageType.HasLowLayers`, in `VaughtConjecture.MainTheorem.LowDisplayRoute`).
+**Bountifulness fails for this layer at a lowered donor top**
+(`Scheme.not_isLawfulBelow_lowLayer_of_lowered`, compiled in this repository).  Let every profile
+of `C` be LOW and let `a ∈ C` have donor maximum below a cap `c ≤` its cutoff.  No labelling lawful
+below `(univ, K)` in the layer reads the owner (of grade `K`) and the lost top above `c`, a donor
+top at `c`, the proper donor fields as `a`, and the cell of `a` at least at `c`.  So whenever the
+section `a` with one donor top lowered to `c` is lawful on the old cells (a donor top of grade `K`
+not forced by availability), the capped lift from the old cells to `(univ, K)` at `a` and `c`
+fails, and the LOW layer is not bountiful.  The rows of the controllers of a LOW display therefore
+cannot read the old cells literally at LOW profiles with this catalogue: the controller layer of
+[Kni26, §3.3] reads them through a rendering of the profiles, which this file does not construct.
+Bountifulness of LOW displays is the open part of the construction (`StageType.HasLowLayers`, in
+`VaughtConjecture.MainTheorem.LowDisplayRoute`).
 
 ## Placement
 
@@ -192,5 +202,169 @@ theorem rowAt_lowLayer_natAdd (i j : Fin C.card) :
       (S.appendFullCellsScheme K C.card).gradedIndex (Fin.natAdd S.card i)
     rw [appendFullCellsScheme_gradedIndex_natAdd, appendFullCellsScheme_gradedIndex_natAdd]
   rw [rowAt_of_mem hmem, appendFullCells_row_natAdd, lowRow_natAdd]
+
+end VaughtConjecture.Scheme
+
+/-! ### Lowering a donor top above the donor maximum -/
+
+namespace VaughtConjecture.Scheme
+
+open Finset Label
+
+variable {n : ℕ} {S : Scheme.{u} n} {K : ℕ} {G : Finset Label.{u}}
+  {C : Finset (Fin S.card ⊕ Unit → Label.{u})}
+  {hS : ∀ d, ¬ ((univ : Finset (Fin n)), K) ≤ S.toCellScheme.gradedIndex d}
+
+/-- A cell of the LOW layer of graded index `(univ, K)` is new. -/
+theorem exists_natAdd_eq_lowLayer {s : Fin (S.lowLayer K G C hS).card}
+    (hs : (S.lowLayer K G C hS).toCellScheme.gradedIndex s = (univ, K)) :
+    ∃ i, Fin.natAdd S.card i = s := by
+  by_cases hlt : (s : ℕ) < S.card
+  · refine absurd ?_ (hS ⟨s, hlt⟩)
+    rw [← appendFullCellsScheme_gradedIndex_of_lt hlt]
+    exact hs.ge
+  · have hs' : (s : ℕ) < S.card + C.card := s.2
+    exact ⟨⟨s - S.card, by omega⟩, Fin.ext (by simp; omega)⟩
+
+local notation "𝓛" => Scheme.lowLayer S K G C hS
+
+/-- **A LOW layer is not bountiful at a lowered donor top.**  Let every profile of `C` be LOW
+(for proper donor fields `N`, donor tops `T`, owner `o`, lost top `r` and the cutoff), and let
+`a ∈ C` with donor maximum below a cap `c ≤ a β`.  Then no labelling `p'` lawful below
+`(univ, K)` in the LOW layer reads the owner (of grade `K`) and the lost top strictly above `c`,
+a donor top `x` at `c`, the proper donor fields as `a`, and the new cell of `a` at least at `c`.
+Availability at the owner gives a new cell `u` read above `c`; locality at `u` reads the old
+cells through the profile `e` of `u`.  If `e` is active, it reads `x` at least at the frontier,
+above `c`; if not, the agreement height of `e` and `a`, read at least at `c`, is either above the
+donor maximum of `a`, where `e` agrees with `a` on the proper donor fields and the cutoff and is
+active, or at most it, where `e` reads a proper donor field at least at `c`.  So the field-row
+design with a catalogue of LOW profiles has no capped lift from the old cells to `(univ, K)` at
+`a`, the cap `c`, and the section `a` with the donor top `x` lowered to `c`, whenever that section
+is lawful on the old cells. -/
+theorem not_isLawfulBelow_lowLayer_of_lowered {N : Finset (Fin S.card ⊕ Unit)}
+    {T : Set (Fin S.card ⊕ Unit)} {o r x : Fin S.card}
+    (hC : ∀ e ∈ C, IsLowAt K N T (Sum.inl o) (Sum.inl r) (Sum.inr ()) e) (hG : ⊥ ∈ G)
+    (hgo : S.toCellScheme.grade o = K) (hgr : S.toCellScheme.grade r ≤ K)
+    (hgx : S.toCellScheme.grade x ≤ K) (hxT : Sum.inl x ∈ T)
+    (hN : ∀ f ∈ N, ∃ d, f = Sum.inl d ∧ S.toCellScheme.grade d ≤ K)
+    {i : Fin C.card} {c : Label.{u}} (hM : donorMax N (lowEntry S C i) < c)
+    (hcβ : c ≤ lowEntry S C i (Sum.inr ())) {p' : Fin (𝓛).card → Label.{u}}
+    (hp' : (𝓛).rows.IsLawfulBelow (univ, K) fun d ↦ p' d)
+    (hpo : c < p' (Fin.castAdd C.card o)) (hpr : c < p' (Fin.castAdd C.card r))
+    (hpx : p' (Fin.castAdd C.card x) = c)
+    (hpN : ∀ d, Sum.inl d ∈ N → p' (Fin.castAdd C.card d) = lowEntry S C i (Sum.inl d))
+    (hpi : c ≤ p' (Fin.natAdd S.card i)) : False := by
+  set a := lowEntry S C i with ha_def
+  obtain ⟨-, hloc, havail⟩ := CellScheme.Rows.isLawfulBelow_iff_forall.mp hp'
+  have hbelow_old {d : Fin S.card} (hd : S.toCellScheme.grade d ≤ K) :
+      Fin.castAdd C.card d ∈ (𝓛).toCellScheme.below (univ, K) :=
+    ⟨subset_univ _, (appendFullCellsScheme_grade_castAdd S K _ d).trans_le hd⟩
+  have hbelow_new (j : Fin C.card) : Fin.natAdd S.card j ∈ (𝓛).toCellScheme.below (univ, K) :=
+    (appendFullCellsScheme_gradedIndex_natAdd S K _ j).le
+  -- availability at the owner: a new cell `u` read at least as the owner
+  obtain ⟨u, hu, hou⟩ := havail (Fin.castAdd C.card o) (Fin.natAdd S.card i) (hbelow_new i)
+    (by simp) (by simp [hgo])
+  rw [appendFullCellsScheme_gradedIndex_natAdd] at hu
+  obtain ⟨j, rfl⟩ := exists_natAdd_eq_lowLayer hu
+  set e := lowEntry S C j with he_def
+  set v := p' (Fin.natAdd S.card j) with hv_def
+  have hcv : c < v := hpo.trans_le hou
+  -- locality at `u`
+  obtain ⟨g, σ, hσ, heq⟩ := hloc _ (hbelow_new j)
+  have hmem (y : Fin (𝓛).card) (hy : y ∈ (𝓛).toCellScheme.below (univ, K)) :
+      y ∈ (𝓛).toCellScheme.below ((𝓛).toCellScheme.gradedIndex (Fin.natAdd S.card j)) := by
+    rw [show (𝓛).toCellScheme.gradedIndex (Fin.natAdd S.card j) = (univ, K) from
+      appendFullCellsScheme_gradedIndex_natAdd S K _ j]
+    exact hy
+  have hread (y : Fin (𝓛).card) (hy : y ∈ (𝓛).toCellScheme.below (univ, K)) :
+      min (p' y) v =
+        min (σ ((𝓛).rowAt (Fin.natAdd S.card j) y)) (g ((𝓛).toCellScheme.grade y)) := by
+    rw [rowAt_of_mem (hmem y hy)]
+    exact heq ⟨y, hmem y hy⟩
+  have hgK : v ≤ g K := by
+    have h := hread _ (hbelow_new j)
+    rw [min_self] at h
+    have hgr : (𝓛).toCellScheme.grade (Fin.natAdd S.card j) = K :=
+      appendFullCellsScheme_grade_natAdd S K _ j
+    rw [hgr] at h
+    exact h.trans_le (min_le_right _ _)
+  have hg (y : Fin (𝓛).card) (hy : y ∈ (𝓛).toCellScheme.below (univ, K)) :
+      v ≤ g ((𝓛).toCellScheme.grade y) := hgK.trans (hσ.antitone hy.2)
+  -- reading the old cells through `e`
+  have hold {d : Fin S.card} (hd : S.toCellScheme.grade d ≤ K) :
+      min (p' (Fin.castAdd C.card d)) v = min (σ (e (Sum.inl d))) (g ((𝓛).toCellScheme.grade
+        (Fin.castAdd C.card d))) := by
+    rw [hread _ (hbelow_old hd), rowAt_lowLayer_castAdd j hd]
+  have hlow_exact {d : Fin S.card} (hd : S.toCellScheme.grade d ≤ K)
+      (hlt : p' (Fin.castAdd C.card d) < v) : σ (e (Sum.inl d)) = p' (Fin.castAdd C.card d) := by
+    have h := hold hd
+    rw [min_eq_left hlt.le] at h
+    have hgd := hg _ (hbelow_old hd)
+    rcases le_total (σ (e (Sum.inl d))) (g ((𝓛).toCellScheme.grade (Fin.castAdd C.card d))) with
+      h' | h'
+    · rw [min_eq_left h'] at h; exact h.symm
+    · rw [min_eq_right h'] at h; exact absurd (h ▸ hlt) (not_lt.mpr hgd)
+  have hhigh {d : Fin S.card} (hd : S.toCellScheme.grade d ≤ K)
+      (hlt : c < p' (Fin.castAdd C.card d)) : c < σ (e (Sum.inl d)) := by
+    have h := hold hd
+    have hgd := hg _ (hbelow_old hd)
+    by_contra hle
+    have h1 : min (σ (e (Sum.inl d))) (g ((𝓛).toCellScheme.grade (Fin.castAdd C.card d))) ≤ c :=
+      (min_le_left _ _).trans (not_lt.mp hle)
+    rw [← h] at h1
+    exact (lt_min hlt hcv).not_ge h1
+  have hσx : σ (e (Sum.inl x)) = c := by
+    rw [← hpx]; exact hlow_exact hgx (by rw [hpx]; exact hcv)
+  have hσo : c < σ (e (Sum.inl o)) := hhigh hgo.le hpo
+  have hσr : c < σ (e (Sum.inl r)) := hhigh hgr hpr
+  -- the profile `e` is not active
+  have hinact : ¬ donorMax N e < e (Sum.inr ()) := by
+    intro hact
+    have hfx := (le_max_right _ _).trans (hC e (lowEntry_mem S C j) hact _ hxT)
+    have hfr : min (e (Sum.inl o)) (e (Sum.inl r)) ≤ frontier K (Sum.inl o) (Sum.inl r) e :=
+      min_le_min le_rfl (le_visibilityReplace (by omega) _)
+    have := hσ.monotone (hfr.trans hfx)
+    rw [hσ.monotone.map_min, hσx] at this
+    exact (lt_min hσo hσr).not_ge this
+  -- the agreement height of `e` and `a` is read at least at `c`
+  have hκ : c ≤ σ (agreementHeight G e a) := by
+    have h := hread _ (hbelow_new i)
+    rw [rowAt_lowLayer_natAdd] at h
+    have h1 : c ≤ min (p' (Fin.natAdd S.card i)) v := le_min hpi hcv.le
+    rw [h] at h1
+    exact h1.trans (min_le_left _ _)
+  have hag := (agreementHeight_spec hG e a).2
+  set κ := agreementHeight G e a
+  by_cases hMκ : donorMax N a < κ
+  · -- `e` agrees with `a` on the proper donor fields and on the cutoff: it is active
+    have hNe : ∀ f ∈ N, e f = a f := fun f hf ↦
+      eq_of_min_eq_of_lt (hag f).symm ((le_donorMax hf).trans_lt hMκ)
+    apply hinact
+    rw [donorMax_congr hNe]
+    refine lt_of_lt_of_le (lt_min (hM.trans_le hcβ) hMκ) ?_
+    rw [← hag (Sum.inr ())]
+    exact min_le_left _ _
+  · -- `e` reads a proper donor field at least at `κ`, read below `c`
+    rcases N.eq_empty_or_nonempty with hNe | hNe
+    · rw [donorMax, hNe, sup_empty] at hMκ
+      have hκb : κ = ⊥ := le_bot_iff.mp (not_lt.mp hMκ)
+      rw [hκb, hσ.map_bot] at hκ
+      exact (bot_le.trans_lt ((bot_le.trans_lt hM))).ne' (le_bot_iff.mp hκ) |>.elim
+    · obtain ⟨f, hf, hfa⟩ := exists_mem_eq_sup N hNe a
+      obtain ⟨d, rfl, hd⟩ := hN f hf
+      have hef : κ ≤ e (Sum.inl d) := by
+        have h := hag (Sum.inl d)
+        have hκa : κ ≤ a (Sum.inl d) := by
+          have := not_lt.mp hMκ
+          rwa [donorMax, hfa] at this
+        rw [min_eq_right hκa] at h
+        exact min_eq_right_iff.mp h
+      have hpd : p' (Fin.castAdd C.card d) = a (Sum.inl d) := hpN d hf
+      have hdc : p' (Fin.castAdd C.card d) < c := by
+        rw [hpd]; exact (le_donorMax hf).trans_lt hM
+      have h1 := hlow_exact hd (hdc.trans hcv)
+      have h2 := hσ.monotone hef
+      rw [h1] at h2
+      exact (hκ.trans h2).not_gt hdc
 
 end VaughtConjecture.Scheme
