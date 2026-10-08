@@ -60,7 +60,15 @@ compiled, so it is not a hypothesis.  The castSucc cases
 (`Realization.CoatomCutoffDetermination.exists_coface_castSucc`,
 `Realization.HollowCoatomCutoffDetermination.exists_coface_castSucc`) need no relabelling and no
 invariance: they apply when the root of the acquired context already lies in the first coatom (the
-lost point last, in the acquisition of (R2)).
+lost point last, in the acquisition of (R2)).  The castSucc case of cutoff determination is
+recorded as cutoff determination at the first coatom
+(`Realization.FirstCoatomCutoffDetermination`, given by the coatom form,
+`Realization.CoatomCutoffDetermination.firstCoatom`), and the relabelling gives cutoff
+determination from it (`Realization.FirstCoatomCutoffDetermination.cutoffDetermination`).  The
+castSucc case uses the coatom form at one coface `tb` only, the exact pinned extension, and drops
+the clause that `D'` has face `tb`; so a form asking only for `tb` of top grade at most `K`
+suffices when the coatom face has top grade at most `K`
+(`VaughtConjecture.MainTheorem.BoundedCoatomDetermination`).
 
 **Not claimed.**  That the coatom forms hold for the source-gap or the marked-cap contexts: that is
 the finite construction of the carrier, open.
@@ -165,6 +173,32 @@ theorem HollowCoatomCutoffDetermination.exists_coface_castSucc
   obtain ⟨D', hD', -, hrest⟩ := hdet.exists_coface t' g p hα ht' hP hp tb htb d htbd
   exact ⟨D', hD', hrest⟩
 
+/-- **Cutoff determination at the first coatom** for `P`: the conclusion of cutoff determination
+(`Realization.CutoffDetermination`) at every input whose root is `g.trans Fin.castSuccEmb` and
+whose first coatom is a closed face `p`.  It is what the coatom forms are used for in the
+reductions below: `CoatomCutoffDetermination.exists_coface_castSucc` gives it from the coatom form,
+and the relabelling of `FirstCoatomCutoffDetermination.cutoffDetermination` gives cutoff
+determination from it.  Not proved for any `P` here. -/
+structure FirstCoatomCutoffDetermination
+    (P : ∀ {α : Ordinal.{u}} {n k : ℕ}, ℕ → StageType.{u} α k → (Fin n ↪ Fin k) → Prop) :
+    Prop where
+  /-- Every donor over the root in the first coatom is determined at a cutoff. -/
+  exists_coface ⦃α : Ordinal.{u}⦄ ⦃K n k : ℕ⦄ (t' : StageType.{u} α (k + 1))
+    (g : Fin n ↪ Fin k) (p : StageType.{u} α k) :
+    Order.IsSuccLimit α → t'.IsLegal → P K t' (g.trans Fin.castSuccEmb) →
+      restrictFace Fin.castSuccEmb t' = some p → ∀ t : StageType.{u} α n,
+        restrictFace (g.trans Fin.castSuccEmb) t' = some t → ∀ d ∈ t.cofaces, d.topGrade ≤ K →
+          ∃ D' ∈ t'.cofaces, ∃ δ : Label.{u}, IsPermittedCutoff α δ ∧
+            IsDeterminedWithin (receivingFamily D' δ) t' (g.trans Fin.castSuccEmb) d
+
+/-- **Coatom cutoff determination gives cutoff determination at the first coatom**
+(`CoatomCutoffDetermination.exists_coface_castSucc`). -/
+theorem CoatomCutoffDetermination.firstCoatom
+    {P : ∀ {α : Ordinal.{u}} {n k : ℕ}, ℕ → StageType.{u} α k → (Fin n ↪ Fin k) → Prop}
+    (hdet : CoatomCutoffDetermination.{u} P) : FirstCoatomCutoffDetermination.{u} P where
+  exists_coface _ _ _ _ _ _ _ hα ht' hP hp _ ht _ hd hdK :=
+    hdet.exists_coface_castSucc hα ht' hP hp ht hd hdK
+
 /-- **The root in the first coatom after relabelling**: for a legal `t'` with face `t` along a
 root `h` that is not onto, some relabelling `σ` of the points of `t'` and some `g` give
 `h = g.trans Fin.castSuccEmb` followed by `σ`, with the first coatom of `t'.reindex σ` a closed
@@ -187,13 +221,12 @@ theorem exists_perm_root_eq {t' : StageType.{u} α (k + 1)} {h : Fin n ↪ Fin (
   · rw [restrictFace_reindex, hσ]
     exact restrictFace_of_mem t' g' hg'
 
-/-- **Cutoff determination from its coatom form**, for a predicate `P` on contexts whose roots are
-never onto (`hns`) and which is invariant under relabelling the points of the context, with the
-root relabelled along (`hinv`).  The coatom extension property, used for the exact pinned
-extension, is compiled (`StageType.hasCoatomExtensions`). -/
-theorem CoatomCutoffDetermination.cutoffDetermination
+/-- **Cutoff determination from its form at the first coatom**, for a predicate `P` on contexts
+whose roots are never onto (`hns`) and which is invariant under relabelling the points of the
+context, with the root relabelled along (`hinv`). -/
+theorem FirstCoatomCutoffDetermination.cutoffDetermination
     {P : ∀ {α : Ordinal.{u}} {n k : ℕ}, ℕ → StageType.{u} α k → (Fin n ↪ Fin k) → Prop}
-    (hdet : CoatomCutoffDetermination.{u} P)
+    (hdet : FirstCoatomCutoffDetermination.{u} P)
     (hns : ∀ ⦃α : Ordinal.{u}⦄ ⦃K n k : ℕ⦄ (t' : StageType.{u} α k) (h : Fin n ↪ Fin k),
       P K t' h → ¬ Function.Surjective h)
     (hinv : ∀ ⦃α : Ordinal.{u}⦄ ⦃K n k : ℕ⦄ (t' : StageType.{u} α k) (h : Fin n ↪ Fin k)
@@ -215,9 +248,23 @@ theorem CoatomCutoffDetermination.cutoffDetermination
     have ht'' : restrictFace (g.trans Fin.castSuccEmb) (t'.reindex σ) = some t := by
       rw [restrictFace_reindex]
       exact ht
-    obtain ⟨D'', hD'', δ, hδ, hdet''⟩ := hdet.exists_coface_castSucc hα (ht'.reindex σ) hP' hp
-      ht'' hd hdK
+    obtain ⟨D'', hD'', δ, hδ, hdet''⟩ := hdet.exists_coface (t'.reindex σ) g p hα (ht'.reindex σ)
+      hP' hp t ht'' d hd hdK
     exact ⟨_, reindex_extendPerm_symm_mem_cofaces hD'', δ, hδ, hdet''.reindex_extendPerm⟩
+
+/-- **Cutoff determination from its coatom form**, for a predicate `P` on contexts whose roots are
+never onto (`hns`) and which is invariant under relabelling the points of the context, with the
+root relabelled along (`hinv`).  The coatom extension property, used for the exact pinned
+extension, is compiled (`StageType.hasCoatomExtensions`). -/
+theorem CoatomCutoffDetermination.cutoffDetermination
+    {P : ∀ {α : Ordinal.{u}} {n k : ℕ}, ℕ → StageType.{u} α k → (Fin n ↪ Fin k) → Prop}
+    (hdet : CoatomCutoffDetermination.{u} P)
+    (hns : ∀ ⦃α : Ordinal.{u}⦄ ⦃K n k : ℕ⦄ (t' : StageType.{u} α k) (h : Fin n ↪ Fin k),
+      P K t' h → ¬ Function.Surjective h)
+    (hinv : ∀ ⦃α : Ordinal.{u}⦄ ⦃K n k : ℕ⦄ (t' : StageType.{u} α k) (h : Fin n ↪ Fin k)
+      (σ : Equiv.Perm (Fin k)), P K t' h → P K (t'.reindex σ) (h.trans σ.symm.toEmbedding)) :
+    CutoffDetermination.{u} P :=
+  hdet.firstCoatom.cutoffDetermination hns hinv
 
 /-- **Hollow cutoff determination from its coatom form**, under the hypotheses of
 `CoatomCutoffDetermination.cutoffDetermination` on the predicate. -/

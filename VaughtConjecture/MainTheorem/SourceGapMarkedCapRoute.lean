@@ -21,8 +21,10 @@ stage types, each open.  The coatom forms are stronger than the full forms
 (`Realization.CutoffDetermination`, `Realization.HollowCutoffDetermination`,
 `StageType.HasCutoffStableRecoverySchemes`): they imply them, and no converse is claimed.  The
 (R2) coatom form quantifies over every coface `tb` of the coatom face, also of top grade above
-`K`; a form restricted to `tb` of top grade at most `K` would need a truncation of the pinned
-extension in the reduction, which is not compiled.
+`K`; the form restricted to `tb` of top grade at most `K`
+(`Realization.BoundedCoatomCutoffDetermination`) reduces to cutoff determination through the
+truncation of the pinned extension above `K`
+(`VaughtConjecture.MainTheorem.BoundedCoatomDetermination`).
 * (R4): cutoff completions at the first coatom for the graded cap calibration at every `ξ < ω₁`
   (`StageType.HasCutoffFirstCoatomCompletions`);
 * (R2): coatom cutoff determination for the source-gap context
