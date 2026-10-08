@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Continuation.StableRecoveryFullCap
+import VaughtConjecture.Extension.OrbitCode
 
 /-!
 # The row of the cap reads every reference cell at its finite part
@@ -153,13 +154,6 @@ theorem TransformsTo.exists_eq_omega0_mul_add (h : TransformsTo grade r q) {μ :
       · exact (hne j hj.le hji (visibilityReplace_coe_add_natCast hμ' hj j)).elim
     · exact (hne _ le_rfl hi.ne' ((isSelfVisible_coe_add hμ' hj).visibilityReplace_eq _)).elim
 
-/-- `ω · c + N < ω · c'` for `c < c'` and `N` finite. -/
-private theorem omega0_mul_add_natCast_lt {c c' : Ordinal.{u}} (h : c < c') (N : ℕ) :
-    ω * c + N < ω * c' := by
-  calc ω * c + N < ω * c + ω := (add_lt_add_iff_left _).mpr (natCast_lt_omega0 N)
-    _ = ω * Order.succ c := (Ordinal.mul_succ ω c).symm
-    _ ≤ ω * c' := mul_le_mul_right (Order.succ_le_of_lt h) _
-
 /-- **One code per block.**  Let `r` transform to `q` over the grades `grade`.  If two cells `a`
 and `a'` of grades at most that of `b` have targets `μ + i` and `μ + i'` in one block `μ` (zero or
 a limit), with `i, i'` below the grade of `b` and both targets below `q b`, and `r` reads them at
@@ -189,8 +183,7 @@ theorem TransformsTo.eq_of_eq_omega0_mul_add (h : TransformsTo grade r q) {μ : 
     intro hlt
     have hle : ((ω * d + grade b : Ordinal.{u}) : Label.{u}) ≤
         ((ω * d' + (0 : ℕ) : Ordinal.{u}) : Label.{u}) := by
-      rw [Nat.cast_zero, add_zero]
-      exact_mod_cast (omega0_mul_add_natCast_lt hlt _).le
+      exact_mod_cast (omega0_mul_add_natCast_lt hlt (grade b) ((0 : ℕ) : Ordinal.{u})).le
     have hσ := hw.monotone hle
     rw [hd _ le_rfl, hd' 0 (Nat.zero_le _)] at hσ
     have hle' : μ + (grade b : Ordinal.{u}) ≤ μ + ((0 : ℕ) : Ordinal.{u}) := by exact_mod_cast hσ
@@ -199,18 +192,11 @@ theorem TransformsTo.eq_of_eq_omega0_mul_add (h : TransformsTo grade r q) {μ : 
     omega
   exact le_antisymm (not_lt.mp (key h₂ h₁)) (not_lt.mp (key h₁ h₂))
 
-/-- The **block quotient** of a label: `o / ω` at an ordinal `o`, and `0` at `⊥` and `⊤`; the code
-`c` of a value `ω · c + i`. -/
-noncomputable def blockQuot : Label.{u} → Ordinal.{u} :=
-  recBotCoeTop (motive := fun _ ↦ Ordinal.{u}) 0 (fun o ↦ o / ω) 0
-
-/-- The block quotient of `ω · c + i` is `c`. -/
-theorem blockQuot_omega0_mul_add (c : Ordinal.{u}) (i : ℕ) :
-    blockQuot ((ω * c + i : Ordinal.{u}) : Label.{u}) = c := by
-  -- the block quotient of an ordinal label is its quotient by `ω`
-  change (ω * c + i) / ω = c
-  rw [Ordinal.mul_add_div _ omega0_ne_zero, Ordinal.div_eq_zero_of_lt (natCast_lt_omega0 i),
-    add_zero]
+/-- The block index (`Label.blockIndex`: `o / ω` at an ordinal `o`, `0` at `⊥` and `⊤`) of
+`ω · c + i` is `c`: the code `c` of a value `ω · c + i`. -/
+theorem blockIndex_omega0_mul_add (c : Ordinal.{u}) (i : ℕ) :
+    blockIndex ((ω * c + i : Ordinal.{u}) : Label.{u}) = c :=
+  omega0_mul_add_natCast_div c i
 
 end Label
 
@@ -271,7 +257,7 @@ theorem eq_of_row_eq_omega0_mul_add (T : StageType.{u} α n) {a a' b : Fin T.car
     (hq a' ha' hTa' ha'b) (hqb hab) (hqb ha'b) hra hra'
 
 open Classical in
-/-- The **block code of the cap** for a block `μ`: the block quotient of the value of the row of the
+/-- The **block code of the cap** for a block `μ`: the block index of the value of the row of the
 cap `b` at some cell below `b` labelled `μ + i`, with `i` below the grade of `b` and `μ + i`
 below the label of `b`, if there is one, and `0` otherwise.  It does not depend on the cell
 (`StageType.row_eq_capBlockCode`). -/
@@ -280,7 +266,7 @@ noncomputable def capBlockCode (T : StageType.{u} α n) (b : Fin T.card) (μ : O
   if h : ∃ (a : T.toCellScheme.below (T.toCellScheme.gradedIndex b)) (i : ℕ),
       T.label a = ((μ + i : Ordinal.{u}) : Label.{u}) ∧ i < T.toCellScheme.grade b ∧
         ((μ + i : Ordinal.{u}) : Label.{u}) < T.label b
-  then blockQuot (T.rows.row b h.choose) else 0
+  then blockIndex (T.rows.row b h.choose) else 0
 
 /-- **The cap row reads every reference cell at the cap's block code**: for a cell `a` below the
 cap `b` labelled `μ + i` (`μ` zero or a limit), with `i` below the grade of `b` and `μ + i` below
@@ -298,7 +284,7 @@ theorem row_eq_capBlockCode (T : StageType.{u} α n) {a b : Fin T.card}
   rw [capBlockCode, dite_eq_left hex]
   obtain ⟨i', hTa', hi', ha'b⟩ := hex.choose_spec
   obtain ⟨c', hc'⟩ := T.exists_row_eq_omega0_mul_add hex.choose.2 hμ hi' hTa' ha'b
-  rw [hc', blockQuot_omega0_mul_add, hc,
+  rw [hc', blockIndex_omega0_mul_add, hc,
     T.eq_of_row_eq_omega0_mul_add ha hex.choose.2 hμ hi hi' hTa hTa' hab ha'b hc hc']
 
 /-- The **cap code** of a label for the cap `b`: `⊥` at `⊥`; the value of the row of `b` at `b`
