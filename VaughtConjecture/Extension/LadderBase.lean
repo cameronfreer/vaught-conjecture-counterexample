@@ -29,7 +29,7 @@ Base indices for two members agree capped at the cut of their rank vectors
   ladder point is lawful, given the **rank tables are lawful at grade one**
   (`Scheme.RankTablesLawful`: for each member, every positive table read at the member's ranks on
   the cells of grade one, `⊥` above, is lawful on `S`).
-* `Scheme.isWellFormed_ladderBase`.
+* `Scheme.isWellFormed_ladderBase`, `Scheme.isCoded_ladderBase`.
 * `Scheme.isLawfulBelow_ladderBase_iff`, `Scheme.cappedLift_ladderBase_iff`: **off `(univ, 1)` the
   base is `S`**: lawfulness and capped lifts below pairs not above `(univ, 1)`, in particular from
   and between the original faces, are those of `S`.
@@ -288,6 +288,33 @@ theorem isConsistent_ladderBase {hS : S.NoFullOne} (hwf : S.IsWellFormed)
 theorem isWellFormed_ladderBase {hS : S.NoFullOne} (hwf : S.IsWellFormed) (hn : 1 ≤ n) :
     (ladderBase H prof hS).IsWellFormed :=
   isWellFormed_appendFullCells hwf (by omega) hn
+
+/-- The codes of the ladder lie below `ω ^ 2`. -/
+theorem _root_.VaughtConjecture.Label.ladderSource_lt_omega0_sq (t i : ℕ) :
+    ladderSource.{u} t i < ((Ordinal.omega0 ^ 2 : Ordinal.{u}) : Label.{u}) := by
+  rw [Label.lt_omega0_sq_iff]
+  unfold ladderSource
+  split_ifs
+  · exact Or.inl rfl
+  · exact Or.inr ⟨_, _, rfl⟩
+  · exact Or.inr ⟨_, _, rfl⟩
+
+/-- **The ladder base is coded**, given a coded `S`: the rows of the ladder points are codes of the
+ladder or `⊥`. -/
+theorem isCoded_ladderBase {hS : S.NoFullOne} (hc : S.IsCoded) :
+    (ladderBase H prof hS).IsCoded := by
+  refine isCoded_appendFullCells hc fun i t ↦ ?_
+  induction t using Fin.addCases with
+  | left d =>
+    unfold baseRow
+    rw [Fin.append_left]
+    split_ifs
+    · exact ladderSource_lt_omega0_sq _ _
+    · exact WithBot.bot_lt_coe _
+  | right j =>
+    unfold baseRow
+    rw [Fin.append_right]
+    exact ladderSource_lt_omega0_sq _ _
 
 /-! ### Off the full face the base is `S` -/
 
