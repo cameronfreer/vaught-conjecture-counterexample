@@ -68,6 +68,18 @@ and the root along the initial segment (`Realization.exists_covers_isSourceGapCo
 The last four steps concern stage types only and use no model
 (`StageType.exists_isSourceGapContextAt_comap`).
 
+**The coatom off the lost point is closed.**  In the acquired context the lost point is the last
+point `p` and the first coatom (the complement of `p`) is the face `B` of first loss, which is
+closed.  A **source-gap context with the coatom off the lost point closed**
+(`StageType.IsSourceGapContextOff`) is a source-gap context at a lost point `l` whose complement
+`univ.erase l` is a closed face; its residual acquisition is compiled
+(`Realization.residualAcquisition_isSourceGapContextOff`).  A **source-gap context with the lost
+point last** (`StageType.IsSourceGapContextLast`) is a source-gap context whose lost point is the
+last point; it is the form at which the coatom form of determination is asked in
+`VaughtConjecture.MainTheorem.SourceGapLastRoute`.  Both imply `StageType.IsSourceGapContext`
+(`StageType.IsSourceGapContextOff.isSourceGapContext`,
+`StageType.IsSourceGapContextLast.isSourceGapContext`).
+
 **Determination is open.**  Cutoff determination for source-gap contexts
 (`Realization.CutoffDetermination`) is not attempted here.  With it and (R1) for every model at
 every limit stage, (R2) follows
@@ -342,6 +354,31 @@ theorem not_isSourceGapContext_of_isTopFree {K : ℕ} {t' : StageType.{u} α k}
 theorem not_isSourceGapContext_of_surjective {K : ℕ} {t' : StageType.{u} α k}
     {h : Fin n ↪ Fin k} (hh : Function.Surjective h) : ¬ t'.IsSourceGapContext K h :=
   fun ⟨_, _, _, hs⟩ ↦ hs.not_surjective hh
+
+/-- A **source-gap context with the coatom off the lost point closed**: a source-gap context of
+grade `K` along `h` at a lost point `l` (`IsSourceGapContextAt`) such that the complement
+`univ.erase l` of the lost point is a closed face of `t'`.  Residual acquisition is compiled
+(`Realization.residualAcquisition_isSourceGapContextOff`); determination is open. -/
+def IsSourceGapContextOff (K : ℕ) (t' : StageType.{u} α k) (h : Fin n ↪ Fin k) : Prop :=
+  ∃ (l : Fin k) (o r : Fin t'.card), t'.IsSourceGapContextAt K h l o r ∧
+    univ.erase l ∈ t'.toCellScheme.faces
+
+/-- A **source-gap context with the lost point last**: a source-gap context of grade `K` along `h`
+at a lost point `l` (`IsSourceGapContextAt`) that is the last of the `k` points. -/
+def IsSourceGapContextLast (K : ℕ) (t' : StageType.{u} α k) (h : Fin n ↪ Fin k) : Prop :=
+  ∃ (l : Fin k) (o r : Fin t'.card), (l : ℕ) + 1 = k ∧ t'.IsSourceGapContextAt K h l o r
+
+/-- A source-gap context with the coatom off the lost point closed is a source-gap context. -/
+theorem IsSourceGapContextOff.isSourceGapContext {K : ℕ} {t' : StageType.{u} α k}
+    {h : Fin n ↪ Fin k} (hs : t'.IsSourceGapContextOff K h) : t'.IsSourceGapContext K h :=
+  let ⟨l, o, r, hs, _⟩ := hs
+  ⟨l, o, r, hs⟩
+
+/-- A source-gap context with the lost point last is a source-gap context. -/
+theorem IsSourceGapContextLast.isSourceGapContext {K : ℕ} {t' : StageType.{u} α k}
+    {h : Fin n ↪ Fin k} (hs : t'.IsSourceGapContextLast K h) : t'.IsSourceGapContext K h :=
+  let ⟨l, o, r, _, hs⟩ := hs
+  ⟨l, o, r, hs⟩
 
 /-! ### First loss -/
 
@@ -680,6 +717,18 @@ theorem residualAcquisition_isSourceGapContext :
     obtain ⟨k, t', c', e, hc', hcc', -, o, r, hs⟩ :=
       exists_covers_isSourceGapContextAt hα hR hcore hK hc
     exact ⟨k + 1, t', c', _, hc', hcc', Fin.last k, o, r, hs⟩
+
+/-- **Residual acquisition for source-gap contexts with the coatom off the lost point closed**
+(`ResidualAcquisition`), with no hypothesis: the acquired context of
+`exists_covers_isSourceGapContextAt`, whose first coatom, the complement of the last point, is
+closed. -/
+theorem residualAcquisition_isSourceGapContextOff :
+    ResidualAcquisition.{u, w} fun K t' h ↦ t'.IsSourceGapContextOff K h where
+  exists_context _ _ _ _ hα hR hcore hK _ _ _ hc := by
+    obtain ⟨k, t', c', e, hc', hcc', hcf, o, r, hs⟩ :=
+      exists_covers_isSourceGapContextAt hα hR hcore hK hc
+    refine ⟨k + 1, t', c', _, hc', hcc', Fin.last k, o, r, hs, ?_⟩
+    rwa [Fin.univ_castSuccEmb, erase_cons]
 
 /-- **(R2) from (R1) and cutoff determination for source-gap contexts**: the reduction
 `residualReceiving_of_cutoffDetermination` with the compiled acquisition
