@@ -53,6 +53,9 @@ context face, and its value `1` at the cell `0`, labelled `⊥` in the context, 
 owner lowering at the grade `1` fails at this legal context **for every legal donor** with the same
 root face, the context itself among them.  What is refuted is the clause `OwnerLowering … 1 …` at
 this context; donor raising and the other inputs of `H2.stateAdmission_one` are not addressed.
+The refutations of this file concern the full labellings (`rows.IsLawful`); the engine of top
+grade `1` runs on the grade-`1` faces (`H2.LawfulOne`), between which the clause is an admission of
+states at both contexts (`VaughtConjecture.Continuation.H2OwnerOneFace`).
 
 **Owner lowering below the designated tops** (`H2.OwnerLoweringBelow`,
 `H2.selfLow_isStateAdmissionGap_of_below`, `H2.stateAdmission_one_of_below`).  The donor provision
@@ -265,17 +268,18 @@ theorem stateAdmission_one_of_below {t' : StageType.{u} α 2} {n : ℕ}
     (hs : t'.IsSourceGapContextAt 1 (g.trans Fin.castSuccEmb) l o r) {p : StageType.{u} α 1}
     (hp : restrictFace Fin.castSuccEmb t' = some p) {tb : StageType.{u} α 2}
     (htbp : restrictFace Fin.castSuccEmb tb = some p) {Lo Tops : Finset (Fin tb.card)}
+    {A : Set (Fin p.card)}
+    (hA : ∀ a ∈ A, p.label a = ⊤ ∧ l ∉ t'.toCellScheme.scope (StageType.faceCell hp a))
     (hDR : DonorRaisingGap (StageType.faceCell hp) (StageType.faceCell htbp) 1 t'.rows.IsLawful
-      tb.rows.IsLawful (rootTops hp l) Lo Tops)
+      tb.rows.IsLawful A Lo Tops)
     (hOL : OwnerLoweringBelow (StageType.faceCell hp) (StageType.faceCell htbp) o r 1
       t'.rows.IsLawful tb.rows.IsLawful Lo Tops) :
     IsStateAdmission (StageType.faceCell hp) (StageType.faceCell htbp) 1 t'.rows.IsLawful
       tb.rows.IsLawful (SelfLowG o r 1 Lo Tops) := by
-  refine selfLow_isStateAdmissionGap_of_below (rootTops hp l) (fun f hf ↦ ?_)
-    (fun f hf a ha ↦ ?_) hDR hOL
+  refine selfLow_isStateAdmissionGap_of_below A (fun f hf ↦ ?_) (fun f hf a ha ↦ ?_) hDR hOL
   · have := hf.orderly o
     rwa [hs.grade_owner] at this
-  · exact hs.frontier_le hf ((StageType.label_faceCell hp a).trans ha.1) ha.2
+  · exact hs.frontier_le hf ((StageType.label_faceCell hp a).trans (hA a ha).1) (hA a ha).2
 
 end VaughtConjecture.H2
 
@@ -649,7 +653,9 @@ theorem eq_two_of_gradedIndex (α : Ordinal.{u}) (u : Fin (ctx α).card)
 root face: the root face `(1)` at the cell `0` (labelled `⊥` in the context) is lawful, so it
 extends to a lawful donor face (bountifulness at the cap `⊥`); at the cap `⊥` it agrees on the root
 with every context face, and its value `1` at the cell `0` is above the cap
-(`H2.not_ownerLowering_one_of_label_ne_top`). -/
+(`H2.not_ownerLowering_one_of_label_ne_top`).  This concerns the full labellings (`rows.IsLawful`);
+between the grade-`1` faces (`H2.LawfulOne`) the clause is an admission of states at this context
+(`OwnerGradeOne.isStateAdmission_oneFace`). -/
 theorem not_ownerLowering_one (α : Ordinal.{u}) {p : StageType.{u} α 1}
     (hp : restrictFace Fin.castSuccEmb (ctx α) = some p) {m : ℕ} {tb : StageType.{u} α m}
     (htb : tb.IsLegal) {gb : Fin 1 ↪ Fin m} (htbp : restrictFace gb tb = some p) :
@@ -825,6 +831,7 @@ theorem isStateAdmission_ctx (α : Ordinal.{u}) {p : StageType.{u} α 1}
     H2.IsStateAdmission (faceCell hp) (faceCell hp) 1 (ctx α).rows.IsLawful
       (ctx α).rows.IsLawful (H2.SelfLowG (cellC α 2) (cellC α 1) 1 Lo Tops) :=
   H2.stateAdmission_one_of_below (isSourceGapContextAt_ctx α (Function.Embedding.refl _)) hp hp
+    (A := ∅) (fun _ h ↦ h.elim)
     (H2.donorRaisingGap_of_V (H2.donorRaisingV_of (donorRaising_ctx α hp _ hTops)))
     (ownerLoweringBelow_ctx α hp Lo hTops)
 
@@ -1240,10 +1247,12 @@ private theorem isSelfVisible_one' : IsSelfVisible 1 (1 : Label.{u}) :=
 
 /-- **Owner lowering below the designated tops fails at the context**, with the context itself as
 donor, for every designation with the lost top `1` designated and the designated cells `Lo` within
-the cell `3`: at the cap `1`, with the context face `(2, 2, 2, 2)` and the donor face
-`(2, 1, 2, ⊥)`, the designated top `1` has value `1`, at least the cap and above the replaced
-maximum `⊥` of `Lo`, while every lowered face is at least `1` capped at `3`, so its frontier is
-above `1` (`OwnerGradeOneTop.one_lt_frontierAt`). -/
+the cell `3`: at the cap `1`, with the context face `(2, 2, 2, 2)` and the donor face `(2, 1, 2,
+⊥)`, the designated top `1` has value `1`, at least the cap and above the replaced maximum `⊥` of
+`Lo`, while every lowered face is at least `1` capped at `3`, so its frontier is above `1`
+(`OwnerGradeOneTop.one_lt_frontierAt`).  This concerns the full labellings (`rows.IsLawful`);
+between the grade-`1` faces (`H2.LawfulOne`) the clause is an admission of states at this context
+(`OwnerGradeOneTop.isStateAdmission_oneFace`). -/
 theorem not_ownerLoweringBelow (α : Ordinal.{u}) {p : StageType.{u} α 1}
     (hp : restrictFace Fin.castSuccEmb (ctx α) = some p) {Lo Tops : Finset (Fin (ctx α).card)}
     (hLo : ∀ x ∈ Lo, x = cellC α 3) (h1 : cellC α 1 ∈ Tops) :
@@ -1267,10 +1276,12 @@ theorem not_ownerLoweringBelow (α : Ordinal.{u}) {p : StageType.{u} α 1}
   exact absurd hF (not_le.mpr (one_lt_frontierAt α hW h3))
 
 /-- **The clause is not an admission of states at the context** with the context itself as donor,
-for every designation with the lost top `1` designated and the designated cells `Lo` within the
-cell `3`: the donor provision fails at the cap `1` for the context face `(2, 2, 2, 2)`, the donor
-face `(2, 2, 2, ⊥)` (a state of the clause: its frontier `2` is at most every designated top above
-the replaced maximum `⊥` of `Lo`), and the served donor face `(2, 1, 2, ⊥)`. -/
+for every designation with the lost top `1` designated and the designated cells `Lo` within the cell
+`3`: the donor provision fails at the cap `1` for the context face `(2, 2, 2, 2)`, the donor face
+`(2, 2, 2, ⊥)` (a state of the clause: its frontier `2` is at most every designated top above the
+replaced maximum `⊥` of `Lo`), and the served donor face `(2, 1, 2, ⊥)`.  This concerns the full
+labellings (`rows.IsLawful`); between the grade-`1` faces (`H2.LawfulOne`) the clause is an
+admission of states at this context (`OwnerGradeOneTop.isStateAdmission_oneFace`). -/
 theorem not_isStateAdmission (α : Ordinal.{u}) {p : StageType.{u} α 1}
     (hp : restrictFace Fin.castSuccEmb (ctx α) = some p) {Lo Tops : Finset (Fin (ctx α).card)}
     (hLo : ∀ x ∈ Lo, x = cellC α 3) (h1 : cellC α 1 ∈ Tops) :
@@ -1355,7 +1366,9 @@ theorem not_rootDet_one (α : Ordinal.{u}) : ¬ H2.RootDet (ctx α) (cellC α 1)
 /-- **The designation of the clause at two points** (the cells of the donor labelled below `⊤` as
 the designated cells, and among the designated tops every cell labelled `⊤` of grade at most `1`,
 off the root and not determined by the root): the clause is not an admission of states at the
-context with itself as donor, and owner lowering below the designated tops fails. -/
+context with itself as donor, and owner lowering below the designated tops fails.  This concerns the
+full labellings (`rows.IsLawful`); between the grade-`1` faces (`H2.LawfulOne`) the clause is an
+admission of states at this context (`OwnerGradeOneTop.isStateAdmission_oneFace`). -/
 theorem not_isStateAdmission_designated (α : Ordinal.{u}) {p : StageType.{u} α 1}
     (hp : restrictFace Fin.castSuccEmb (ctx α) = some p) {Lo Tops : Finset (Fin (ctx α).card)}
     (hLo : ∀ x ∈ Lo, (ctx α).label x ≠ ⊤)
