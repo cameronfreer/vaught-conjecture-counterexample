@@ -10,6 +10,16 @@ import VaughtConjecture.Continuation.ReadingLayerRefine
 
 Roadmap, Layer 3 ((R3) of the table of 3.4).
 
+* **Gluing** (`TowerProfile.exists_three_of_one`, compiled): a labelling of the grade `1` as given
+  by `TowerProfile.exists_one_of_target` glues with the raised and capped reading mark at the
+  grades `2` and `3`.
+* **The target** (`TowerProfile.isLawfulBelow_target`, `TowerProfile.isLawfulBelow_comp_embed3`,
+  compiled): `f` on the left coatom and `e` raised to `⊤` above the cap through the point `4` is
+  lawful below `(univ, 1)` on the amalgam when `f` is `⊥` on the common face.
+* **The fill from the left coatom without a tie at the grade `1`**
+  (`TowerProfile.readingFillPos_left_of_refine`, compiled): no tie at the grade `1`, no condition
+  on the rows of the right coatom type, no relation among the new tops.
+
 ## Placement
 
 This file belongs to Layer 3 of `roadmap/README.md`.

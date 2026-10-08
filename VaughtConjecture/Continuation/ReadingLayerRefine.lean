@@ -10,6 +10,21 @@ import VaughtConjecture.Continuation.ReadingLayerSpreadTops
 
 Roadmap, Layer 3 ((R3) of the table of 3.4).
 
+* **Shifts across a block** (`Label.shiftL`, `Label.subL`, defined here;
+  `Label.isWitness_piecewise`, compiled): a map that is one witness below a multiple `θ` of `ω`
+  and another above it is a witness.
+* **The lexicographic combination** (`CellScheme.Rows.IsLawfulBelow.lex`, compiled): `a` below `θ`
+  and `θ + q` above is lawful when `a` and `q` are and `a` is at least `θ` exactly where `q` is at
+  least a cap.  Availability is through `q` above `θ`; no uniqueness of graded indices is used.
+* **The refining server at the grade `1`** (`TowerProfile.exists_one_of_target`, compiled): for
+  every target `q` on the amalgam lawful below `(univ, 1)`, agreeing with the reading mark `e`
+  capped at `h` and at least `V` where at least `h`, with a cell of grade `1` where `e` is at least
+  `h`, some labelling of the profile layer lawful below `(univ, 1)` is `q` on the amalgam, agrees
+  with `e` capped at `h`, and is at least `V` where `e` is at least `h`.  It is the lexicographic
+  raise of an available entry across the block of its least code at the cells at least the cap,
+  extended through the cells of full scope (`Scheme.exists_extension_fieldLayer`) and decoded
+  piecewise.  This is the statement "a refining server exists at the grade `1`".
+
 ## Placement
 
 This file belongs to Layer 3 of `roadmap/README.md`.
@@ -178,7 +193,7 @@ theorem isWitness_piecewise {m : ℕ} {β : Ordinal.{u}} {c L U : Label.{u} → 
           rw [hcv, visibilityReplace_lt_omega0_mul_iff]; exact hx
         simp only [hx, hx', ↓reduceIte]
         exact hUcomm x (not_lt.mp hx) k hkm i hi
-    · -- above the bound the guard asks the value to be `⊥`
+    · -- above the bound the suppressor asks the value to be `⊥`
       rw [stepSuppressor_of_lt (not_le.mp hkm), le_bot_iff] at hk
       by_cases hx : c x < (((ω * β : Ordinal.{u})) : Label.{u})
       · simp only [hx, ↓reduceIte] at hk ⊢
