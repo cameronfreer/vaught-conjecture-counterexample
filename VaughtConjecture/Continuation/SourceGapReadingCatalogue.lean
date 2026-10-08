@@ -3,6 +3,7 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
+import VaughtConjecture.Continuation.SourceGapDetermination
 import VaughtConjecture.Extension.MarkedCatalogueCompletion
 
 /-!
@@ -45,6 +46,15 @@ does not read `ps`: they are served by a leaf not reading `ps`, along every lift
 cap `⊥` and every short positive cap).  A carrier whose labelling makes `⊤` only cells reading `ps`
 must keep those leaves below `⊤`; the forced-top constraint
 (`Scheme.eq_top_natAdd_of_le_agreementHeight`) is what can prevent it, and is not decided here.
+
+**The condition on the fill, and forced tops** (compiled in this repository).  A carrier reading at
+its tops through the new cells of a sheet layer needs its labelling to **keep its tops reading**
+(`Scheme.KeepsTopsReading`): every new cell labelled `⊤` has a reading entry.  Forced tops hold in
+every sheet layer (`Scheme.eq_top_natAdd_sheetLayer`): a new cell `i` and an old cell `x` labelled
+`⊤` force `⊤` at every new cell `j` whose cross height with `i` is at least the entry of `i` at
+`x`.  So a labelling keeping its tops reading has every such `j` reading
+(`Scheme.KeepsTopsReading.readsPairs_of_le`).  Whether the entry of the mixed labelling is within
+that cross height of a top at a concrete input is not decided here.
 
 **At the arity three** (`TowerProfile.readingSpec`): the marked specification of the marked top with
 the reading marks and the ceiling cap exists for every reading of the profile layer at the grade
@@ -169,6 +179,54 @@ theorem orbitCode_splice_mem_readingMarks {ps : Finset (Fin S.card × Fin S.card
   refine monotone_orbitMap k _ ?_
   rw [CellScheme.splice_of_le (hps p hp).1, CellScheme.splice_of_le (hps p hp).2]
   exact hr p hp
+
+/-! ### Forced tops in a sheet layer, and the condition on the fill -/
+
+variable {M : ℕ} {ε : Fin M → Fin S.card → Label.{u}} {σ : Fin M → Bool}
+  {κ : (Fin S.card → Label.{u}) → Label.{u}}
+  {hS : ∀ d, ¬ ((univ : Finset (Fin n)), k) ≤ S.toCellScheme.gradedIndex d}
+
+/-- **Forced tops in a sheet layer.**  In a lawful labelling `q` of a sheet layer, if the new cell
+`i` and an old cell `x` of grade at most `k` are labelled `⊤`, then the new cell `j` is labelled `⊤`
+whenever the entry of `i` at `x` is at most the cross height of `i` and `j` (the row of `i` reads
+`j` at least as `x`). -/
+theorem eq_top_natAdd_sheetLayer {q : Fin (S.card + M) → Label.{u}}
+    (hq : (S.sheetLayer k ε σ κ hS).rows.IsLawful q) {i j : Fin M} {x : Fin S.card}
+    (hx : S.toCellScheme.grade x ≤ k) (hi : q (Fin.natAdd S.card i) = ⊤)
+    (hxq : q (Fin.castAdd M x) = ⊤) (hle : ε i x ≤ S.crossHeight k ε σ κ i j) :
+    q (Fin.natAdd S.card j) = ⊤ := by
+  have hb : (S.sheetLayer k ε σ κ hS).toCellScheme.gradedIndex (Fin.natAdd S.card i) =
+      ((univ : Finset (Fin n)), k) := appendFullCellsScheme_gradedIndex_natAdd S k M i
+  have hxb : Fin.castAdd M x ∈ (S.sheetLayer k ε σ κ hS).toCellScheme.below
+      ((S.sheetLayer k ε σ κ hS).toCellScheme.gradedIndex (Fin.natAdd S.card i)) := by
+    rw [hb, CellScheme.mem_below, appendFullCellsScheme_gradedIndex_castAdd]
+    exact ⟨subset_univ _, hx⟩
+  have hjb : Fin.natAdd S.card j ∈ (S.sheetLayer k ε σ κ hS).toCellScheme.below
+      ((S.sheetLayer k ε σ κ hS).toCellScheme.gradedIndex (Fin.natAdd S.card i)) := by
+    rw [hb, CellScheme.mem_below, appendFullCellsScheme_gradedIndex_natAdd]
+  refine hq.label_eq_top_of_row_le hi (s := ⟨_, hxb⟩) (x := ⟨_, hjb⟩) hxq ?_
+  rw [sheetLayer_row_natAdd, sheetLayer_row_natAdd, sheetRow_castAdd, sheetRow_natAdd]
+  exact hle
+
+/-- A labelling of a sheet layer **keeps its tops reading `ps`**: every new cell it labels `⊤` has
+an entry reading `ps`.  This is the condition on the fill of a carrier whose reading cells are the
+new cells: the cells labelled `⊤` must read. -/
+def KeepsTopsReading (ps : Finset (Fin S.card × Fin S.card)) (ε : Fin M → Fin S.card → Label.{u})
+    (q : Fin (S.card + M) → Label.{u}) : Prop :=
+  ∀ j, q (Fin.natAdd S.card j) = ⊤ → ReadsPairs ps (ε j)
+
+/-- **The forced-top constraint on the fill**: a lawful labelling keeping its tops reading `ps`
+has, for every new cell `i` labelled `⊤` and every old cell `x` of grade at most `k` labelled `⊤`,
+every new cell `j` whose cross height with `i` is at least the entry of `i` at `x` reading `ps`.
+Contrapositively, a non-reading entry within that cross height of a top makes the condition
+fail. -/
+theorem KeepsTopsReading.readsPairs_of_le {ps : Finset (Fin S.card × Fin S.card)}
+    {q : Fin (S.card + M) → Label.{u}} (hq : (S.sheetLayer k ε σ κ hS).rows.IsLawful q)
+    (hkeep : KeepsTopsReading ps ε q) {i j : Fin M} {x : Fin S.card}
+    (hx : S.toCellScheme.grade x ≤ k) (hi : q (Fin.natAdd S.card i) = ⊤)
+    (hxq : q (Fin.castAdd M x) = ⊤) (hle : ε i x ≤ S.crossHeight k ε σ κ i j) :
+    ReadsPairs ps (ε j) :=
+  hkeep j (eq_top_natAdd_sheetLayer hq hx hi hxq hle)
 
 end Scheme
 
