@@ -22,7 +22,9 @@ height of `R` and `R'`.  Compiled in this repository (theorem named):
   strictly below `d`.  So, within one layer, the cell of `R'` is not read at least as `d` by every
   cell of its graded index as soon as some profile of the catalogue is larger than `R'` at `d`:
   this is the non-domination of `StageType.CapNonDominating` at the grade of the cap, for a cap
-  that is a cell of the layer.
+  that is a cell of the layer (`ProfileTower.Lvl.Good.exists_reader_lt`).  The profiles of the
+  catalogue are orbit codes, with values in the code grid (never `⊤`), so the condition fails when
+  the profile of the cap is largest at `d` among the profiles of the catalogue.
 
 ## Placement
 
@@ -85,6 +87,21 @@ theorem Lvl.Good.rowAt_nextS_natAdd_lt (hL : L.Good) (i i' : Fin (cat I (g + 1))
     L.Φ (entry I (g + 1) i) (Fin.castAdd _ (L.embed d))
   rw [Lvl.Φ_natAdd, hL.Φ_old]
   exact agreementHeight_lt_of_lt (bot_mem_grid _ _) h
+
+/-- **A cell of the layer is not dominated at a separable old cell**: if some profile of the
+catalogue at `g + 1` is larger than the profile of a cell `i'` of the layer at an old cell `d` of
+grade at most `g + 1`, some cell of the layer (of graded index `(univ, g + 1)`) reads the cell `i'`
+strictly below `d`. -/
+theorem Lvl.Good.exists_reader_lt (hL : L.Good) (i' : Fin (cat I (g + 1)).card)
+    {d : Fin I.amalgam.card} (hd : I.amalgam.toCellScheme.grade d ≤ g + 1)
+    (hsep : ∃ R ∈ cat I (g + 1), entry I (g + 1) i' d < R d) :
+    ∃ u : Fin L.nextS.card,
+      L.nextS.toCellScheme.gradedIndex u = ((univ : Finset (Fin (m + 2))), g + 1) ∧
+      L.nextS.rowAt u (Fin.natAdd _ i') < L.nextS.rowAt u (Fin.castAdd _ (L.embed d)) := by
+  obtain ⟨R, hR, hlt⟩ := hsep
+  obtain ⟨i, rfl⟩ := exists_entry_eq hR
+  exact ⟨Fin.natAdd _ i, Scheme.appendFullCellsScheme_gradedIndex_natAdd _ _ _ i,
+    hL.rowAt_nextS_natAdd_lt i i' hd hlt⟩
 
 end ProfileTower
 
