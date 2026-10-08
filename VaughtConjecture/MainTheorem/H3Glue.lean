@@ -239,6 +239,97 @@ theorem exists_gluingCoatomExtension (hα : Order.IsSuccPrelimit α) {m : ℕ}
   · rw [F.faceCell_completion hα Coatom.univ_map_right_ne h₂ hR y]
     exact (hwcast _).trans ((hrW _).trans (hWR y))
 
+/-- **The cells of a face of a face** are the cells of the composite face. -/
+theorem faceCell_trans {n m k : ℕ} {D : StageType.{u} α n} {f : Fin m ↪ Fin n}
+    {t : StageType.{u} α m} {g : Fin k ↪ Fin m} {s : StageType.{u} α k} {e : Fin k ↪ Fin n}
+    (hge : g.trans f = e) (h : restrictFace f D = some t) (h' : restrictFace g t = some s)
+    (h'' : restrictFace e D = some s) (i : Fin s.card) :
+    faceCell h'' i = faceCell h (faceCell h' i) := by
+  subst hge
+  obtain ⟨hf, rfl⟩ := (restrictFace_eq_some_iff D f).mp h
+  exact (Scheme.cellMap_cellMap (S := D.toScheme) f g rfl).symm
+
+/-- **The pinned extension with gluing**: at a stage that is zero or a limit, for a legal `P` on
+`n` points, a closed face `f` of `P` with restriction `p`, and a legal one-point coface `d` of `p`,
+some legal one-point extension `Q` of `P` with face `d` along `extendByLast f` glues the lawful
+labellings of `P` and `d` agreeing on `p` (the construction of
+`StageType.exists_pinned_extension_of_lt`, with the coatom extensions with gluing). -/
+theorem exists_gluingPinnedExtension (hα : Order.IsSuccPrelimit α) {n m : ℕ}
+    {P : StageType.{u} α n} (hP : P.IsLegal) {f : Fin m ↪ Fin n} {p : StageType.{u} α m}
+    {d : StageType.{u} α (m + 1)} (hPf : restrictFace f P = some p) (hd : d.IsLegal)
+    (hdp : restrictFace Fin.castSuccEmb d = some p) :
+    ∃ Q : StageType.{u} α (n + 1), Q.IsLegal ∧
+      ∃ (h₁ : restrictFace Fin.castSuccEmb Q = some P)
+        (h₂ : restrictFace (extendByLast f) Q = some d), GluesAt h₁ h₂ hPf hdp := by
+  induction hk : n - m using Nat.strong_induction_on generalizing m with
+  | _ k ih =>
+    subst hk
+    by_cases hsurj : Function.Surjective f
+    · obtain ⟨Q, hQ, h₁, h₂⟩ := exists_pinned_extension_of_surjective hsurj hPf hd hdp
+      refine ⟨Q, hQ, h₁, h₂, fun wP hwP wd hwd hagree ↦ ?_⟩
+      have hmn : m = n := by
+        have h1 := Fintype.card_le_of_embedding f
+        have h2 := Fintype.card_le_of_surjective f hsurj
+        simp only [Fintype.card_fin] at h1 h2
+        omega
+      subst hmn
+      have hsurj' : Function.Surjective (extendByLast f) := fun y ↦ by
+        induction y using Fin.lastCases with
+        | last => exact ⟨Fin.last m, by simp⟩
+        | cast y =>
+          obtain ⟨i, rfl⟩ := hsurj y
+          exact ⟨i.castSucc, by simp⟩
+      have hmap : (univ : Finset (Fin (m + 1))).map (extendByLast f) = univ :=
+        eq_univ_of_forall fun y ↦ by
+          obtain ⟨x, rfl⟩ := hsurj' y
+          exact mem_map_of_mem _ (mem_univ x)
+      have hlaw := isLawfulBelow_of_faceCell h₂ (x := faceExtend h₂ wd) (by
+        simpa only [faceExtend_faceCell] using hwd)
+      rw [hmap] at hlaw
+      refine ⟨faceExtend h₂ wd, hlaw.isLawful fun z ↦ ⟨subset_univ _, Q.grade_le z⟩,
+        fun x ↦ ?_, faceExtend_faceCell h₂ wd⟩
+      obtain ⟨i, rfl⟩ := exists_faceCell_eq hPf (i := x)
+        (Scheme.mem_visibleCells.mpr fun y _ ↦ hsurj y)
+      rw [faceCell_faceCell (h := f) h₁ h₂ hPf hdp i, faceExtend_faceCell]
+      exact (hagree i).symm
+    -- A point `x` outside the face whose addition keeps the face closed (accessibility).
+    have hfP : univ.map f ∈ P.toCellScheme.faces := ((restrictFace_eq_some_iff P f).mp hPf).1
+    have hplan := P.isWellFormed.isWellFormed.isPlan
+    rw [P.isWellFormed.ground_eq] at hplan
+    have hne : univ.map f ≠ univ := fun he ↦ hsurj fun y ↦ by
+      have hy : y ∈ univ.map f := he ▸ mem_univ y
+      simpa using hy
+    obtain ⟨x, hx, hxP⟩ := hplan.exists_insert_mem hfP hne
+    have hx' : x ∉ Set.range f := fun ⟨i, hi⟩ ↦ hx (by simp [← hi])
+    set f' := Fin.Embedding.snoc f hx'
+    have hff' : Fin.castSuccEmb.trans f' = f := Fin.Embedding.init_snoc f hx'
+    have hf'P : univ.map f' ∈ P.toCellScheme.faces := by rwa [Fin.Embedding.univ_map_snoc]
+    set p' := P.comap f' hf'P
+    have hPf' : restrictFace f' P = some p' := restrictFace_of_mem P f' hf'P
+    have hp' : p'.IsLegal := hP.restrictFace f' hPf'
+    have hp'p : restrictFace Fin.castSuccEmb p' = some p := by
+      rw [restrictFace_trans P f' _ hPf', hff', hPf]
+    have hmn : m < n := by
+      have hle : m ≤ n := by simpa using Fintype.card_le_of_embedding f
+      refine lt_of_le_of_ne hle fun he ↦ hsurj ?_
+      exact ((Fintype.bijective_iff_injective_and_card f).mpr ⟨f.injective, by simp [he]⟩).2
+    -- One coatom extension with gluing: amalgamate `p'` and `d` over `p`.
+    obtain ⟨t, ht, htp', htd, hglt⟩ := exists_gluingCoatomExtension hα hp' hd hp'p hdp
+    -- The remaining points.
+    obtain ⟨Q, hQ, hQP, hQt, hglQ⟩ := ih (n - (m + 1)) (by omega) hPf' ht htp' rfl
+    have hext : (extendByLast Fin.castSuccEmb).trans (extendByLast f') = extendByLast f := by
+      rw [extendByLast_trans, hff']
+    have h₂ : restrictFace (extendByLast f) Q = some d := by
+      rw [← hext, ← restrictFace_trans Q _ _ hQt, htd]
+    refine ⟨Q, hQ, hQP, h₂, fun wP hwP wd hwd hagree ↦ ?_⟩
+    have hwp' := isLawful_comp_faceCell hPf' hwP
+    obtain ⟨wt, hwt, hwtp', hwtd⟩ := hglt _ hwp' wd hwd fun i ↦ by
+      rw [← faceCell_trans hff' hPf' hp'p hPf i]
+      exact hagree i
+    obtain ⟨w, hw, hwP', hwt'⟩ := hglQ wP hwP wt hwt fun j ↦ (hwtp' j).symm
+    refine ⟨w, hw, hwP', fun y ↦ ?_⟩
+    rw [faceCell_trans hext hQt htd h₂ y, hwt', hwtd]
+
 end StageType
 
 end VaughtConjecture
