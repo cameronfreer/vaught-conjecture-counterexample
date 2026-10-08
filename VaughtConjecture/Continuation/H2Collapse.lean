@@ -22,6 +22,13 @@ low cell or a designated root top, at least `c`), keeps the agreement capped at 
 every designated top at least `h` to at least `c` or keeps it at most `B`.  For a cap `h` above
 `B` not self-visible at `K + 1`, the band raise above `h` itself leaves only the tops at exactly
 `h`; that case is a separate hypothesis (`H2.TieAtCap`).
+
+**Donor raising with the gap, no tie** (`H2.donorRaisingGap_of_cappedLift`): at a state of the
+clause every designated top above the replaced low maximum is at least `min c h`
+(`H2.DonorRaisingGap`).  If every cell is low, designated, a root cell, or determined by the root
+(`H2.IsRootDet`), then at a cap `h = μ + K` and a frontier cap `c > h` no cell of the capped lift
+has a label in `[μ, h)`, and the band raise of `[μ, c)` to `c` (a witness: replacement does not
+cross `μ`, `H2.coe_le_visibilityReplace_iff`) finishes; at `c ≤ h` the capped lift finishes.
 -/
 
 universe u
@@ -76,9 +83,10 @@ theorem min_bandRaise (B h c x : Label.{u}) : min (bandRaise B h c x) h = min x 
   · rfl
 
 /-- **The band raise is a witness bounded by the grade `K`**, for `B` and `c` self-visible at `K`
-and either `h ≤ B` or `h` self-visible at `K + 1`. -/
-theorem isWitness_bandRaise {K : ℕ} (hB : IsSelfVisible K B) (hc : IsSelfVisible K c)
-    (hh : h ≤ B ∨ IsSelfVisible (K + 1) h) : IsWitness (stepSuppressor K) (bandRaise B h c) where
+and either `h ≤ B` or `h` not crossed by replacement at thresholds `k ≤ K`. -/
+theorem isWitness_bandRaise_of_stable {K : ℕ} (hB : IsSelfVisible K B) (hc : IsSelfVisible K c)
+    (hh : h ≤ B ∨ ∀ k ≤ K, ∀ i ≤ k, ∀ x : Label.{u}, h ≤ visibilityReplace k i x ↔ h ≤ x) :
+    IsWitness (stepSuppressor K) (bandRaise B h c) where
   antitone := (IsWitness.id_step K).antitone
   isSelfVisible := (IsWitness.id_step K).isSelfVisible
   map_bot := bandRaise_of_not_mem fun h' ↦ not_lt_bot h'.1
@@ -103,7 +111,7 @@ theorem isWitness_bandRaise {K : ℕ} (hB : IsSelfVisible K B) (hc : IsSelfVisib
             exact ⟨e1.mp h1, hhB.trans (e1.mp h1).le⟩
           · rintro ⟨h1, -⟩
             exact ⟨e1.mpr h1, hhB.trans (e1.mpr h1).le⟩
-        · rw [e1, hh3.le_visibilityReplace_iff hk hi]
+        · rw [e1, hh3 k hk i hi]
       have hcc : visibilityReplace k i c = c := (hc.mono hk).visibilityReplace_eq i
       by_cases hJ : B < x ∧ h ≤ x ∧ x < c
       · rw [bandRaise_of_mem hJ, hcc]
@@ -123,6 +131,23 @@ theorem isWitness_bandRaise {K : ℕ} (hB : IsSelfVisible K B) (hc : IsSelfVisib
       have hx0 : x = ⊥ := le_bot_iff.mp (hx ▸ le_bandRaise B h c x)
       subst hx0
       rw [visibilityReplace_bot, hx, visibilityReplace_bot]
+
+/-- **The band raise is a witness bounded by the grade `K`**, for `B` and `c` self-visible at `K`
+and either `h ≤ B` or `h` self-visible at `K + 1`. -/
+theorem isWitness_bandRaise {K : ℕ} (hB : IsSelfVisible K B) (hc : IsSelfVisible K c)
+    (hh : h ≤ B ∨ IsSelfVisible (K + 1) h) : IsWitness (stepSuppressor K) (bandRaise B h c) :=
+  isWitness_bandRaise_of_stable hB hc
+    (hh.imp id fun hh3 _ hk _ hi x ↦ hh3.le_visibilityReplace_iff hk hi x)
+
+/-- Replacement does not cross an ordinal that is zero or a limit. -/
+theorem coe_le_visibilityReplace_iff {μ : Ordinal.{u}} (hμ : Order.IsSuccPrelimit μ) (k i : ℕ)
+    (x : Label.{u}) : (μ : Label.{u}) ≤ visibilityReplace k i x ↔ (μ : Label.{u}) ≤ x := by
+  induction x using recBotCoeTop with
+  | bot => simp
+  | top => simp
+  | coe o =>
+    rw [visibilityReplace_coe, WithBot.coe_le_coe, WithTop.coe_le_coe, WithBot.coe_le_coe,
+      WithTop.coe_le_coe, ← not_lt, ← not_lt, Ordinal.visibilityReplace_lt_iff hμ]
 
 /-! ### Refined donor raising from capped lifts -/
 
@@ -223,6 +248,144 @@ theorem donorRaisingV_of_cappedLift {C : (ιC → Label.{u}) → Prop}
       · left
         have : c ≤ W₁ t := not_lt.mp fun hlt ↦ hJ ⟨not_le.mp hle, hW₁t t hRt, hlt⟩
         exact this.trans (le_bandRaise _ _ _ _)
+
+/-- A cell of the served face is **determined by the root** when lawful served faces agreeing on
+the root agree at it. -/
+def IsRootDet (rd : ιR → ιD) (D : (ιD → Label.{u}) → Prop) (d : ιD) : Prop :=
+  ∀ W W' : ιD → Label.{u}, D W → D W' → (∀ x, W (rd x) = W' (rd x)) → W d = W' d
+
+/-- **Donor raising with the gap from capped lifts**, at any grade `K`, with no tie hypothesis:
+every root cell is a low cell or a designated root top, every cell of the served face is a low
+cell, a designated top, a root cell, or determined by the root, and the served faces are closed
+under witnesses bounded by `K` above the identity.
+
+At a cap `h = μ + K` (`μ` zero or a limit) above the replaced low maximum `B` of the capped lift
+`W₁`, with the frontier cap `c` above `h`: the band raise of `[μ, c)` to `c` is a witness, and no
+cell of `W₁` has a label in `[μ, h)` (a low cell is at most `B < μ`; a designated top there is at
+least `min c h = h` by the gap; a root cell is low or at least `c`; a cell determined by the root
+is fixed by the band raise, which fixes the root).  So the band raise of `W₁` keeps the agreement
+capped at `h` and raises every designated top at least `h` to at least `c`. -/
+theorem donorRaisingGap_of_cappedLift {C : (ιC → Label.{u}) → Prop}
+    {D : (ιD → Label.{u}) → Prop} {A : Set ιR} {Lo Tops : Finset ιD}
+    (hlift : HasCappedLifts rc rd K C D)
+    (hmap : ∀ {ν : Label.{u} → Label.{u}}, IsWitness (stepSuppressor K) ν → (∀ x, x ≤ ν x) →
+      ∀ {W : ιD → Label.{u}}, D W → D fun d ↦ ν (W d))
+    (hroot : ∀ x, rd x ∈ Lo ∨ x ∈ A)
+    (hcls : ∀ d, d ∈ Lo ∨ d ∈ Tops ∨ (∃ x, rd x = d) ∨ IsRootDet rd D d) :
+    DonorRaisingGap rc rd K C D A Lo Tops := by
+  intro h c hh hc R f hR hf hagr hA hgap
+  obtain ⟨W₁, hW₁, hW₁r, hW₁R⟩ := hlift hh hR hf hagr
+  set B := visibilityReplace K K (Lo.sup W₁) with hBdef
+  have hB : IsSelfVisible K B := visibilityReplace_self_visibilityReplace le_rfl _
+  have hW₁t : ∀ t, h ≤ R t → h ≤ W₁ t := fun t hRt ↦ by
+    have e := hW₁R t
+    rw [min_eq_right hRt] at e
+    exact min_eq_right_iff.mp e
+  have hloB : ∀ d ∈ Lo, W₁ d ≤ B := fun d hd ↦
+    (Finset.le_sup (f := W₁) hd).trans (le_visibilityReplace (by omega) _)
+  by_cases hgood : h ≤ B ∨ IsSelfVisible (K + 1) h
+  · -- the band raise of `(B, c) ∩ [h, c)`
+    have hν := isWitness_bandRaise hB hc hgood
+    refine ⟨fun d ↦ bandRaise B h c (W₁ d), hmap hν (le_bandRaise B h c) hW₁, fun x ↦ ?_,
+      fun d ↦ ?_, fun t _ hRt ↦ ?_⟩
+    · change bandRaise B h c (W₁ (rd x)) = f (rc x)
+      rw [hW₁r]
+      rcases hroot x with hx | hx
+      · refine bandRaise_of_le ?_
+        rw [← hW₁r]
+        exact hloB _ hx
+      · exact bandRaise_of_ge (hA x hx)
+    · change min (bandRaise B h c (W₁ d)) h = min (R d) h
+      rw [min_bandRaise, hW₁R]
+    · have hsup : B ≤ visibilityReplace K K (Lo.sup fun d ↦ bandRaise B h c (W₁ d)) :=
+        monotone_visibilityReplace le_rfl
+          (Finset.sup_mono_fun fun d _ ↦ le_bandRaise B h c (W₁ d))
+      by_cases hJ : B < W₁ t ∧ h ≤ W₁ t ∧ W₁ t < c
+      · left
+        change c ≤ bandRaise B h c (W₁ t)
+        rw [bandRaise_of_mem hJ]
+      · by_cases hle : W₁ t ≤ B
+        · right
+          change bandRaise B h c (W₁ t) ≤ _
+          rw [bandRaise_of_le hle]
+          exact hle.trans hsup
+        · left
+          have : c ≤ W₁ t := not_lt.mp fun hlt ↦ hJ ⟨not_le.mp hle, hW₁t t hRt, hlt⟩
+          exact this.trans (le_bandRaise _ _ _ _)
+  push Not at hgood
+  obtain ⟨hBh, hh3⟩ := hgood
+  -- a frontier cap at most `h`: the capped lift itself
+  by_cases hch : c ≤ h
+  · exact ⟨W₁, hW₁, hW₁r, hW₁R, fun t _ hRt ↦ .inl (hch.trans (hW₁t t hRt))⟩
+  have hhc : h < c := not_le.mp hch
+  -- the cap is `μ + K` with `μ` zero or a limit
+  have hhbot : h ≠ ⊥ := ne_bot_of_gt hBh
+  have hhtop : h ≠ ⊤ := fun e ↦ hh3 (e ▸ isSelfVisible_top _)
+  obtain ⟨o, rfl⟩ : ∃ o : Ordinal.{u}, h = (o : Label.{u}) := by
+    induction h using recBotCoeTop with
+    | bot => exact absurd rfl hhbot
+    | top => exact absurd rfl hhtop
+    | coe o => exact ⟨o, rfl⟩
+  obtain ⟨μ, hμ, j, rfl⟩ := exists_eq_add_natCast_isSuccPrelimit o
+  have hjK : j = K := by
+    have h1 := (isSelfVisible_coe_add_natCast_iff hμ).mp hh
+    have h2 : ¬ K + 1 ≤ j := fun h' ↦ hh3 ((isSelfVisible_coe_add_natCast_iff hμ).mpr h')
+    omega
+  subst j
+  set a : Label.{u} := (μ : Label.{u}) with ha
+  have hah : a ≤ ((μ + K : Ordinal.{u}) : Label.{u}) :=
+    WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr le_self_add)
+  have hBa : B < a := by
+    refine not_le.mp fun haB ↦ hBh.not_ge ?_
+    have e : visibilityReplace K K a = ((μ + K : Ordinal.{u}) : Label.{u}) := by
+      have := visibilityReplace_coe_add hμ K K 0
+      simp only [Nat.cast_zero, add_zero] at this
+      rcases Nat.eq_zero_or_pos K with hK0 | hK0
+      · subst hK0
+        rw [ha, visibilityReplace_coe, Ordinal.visibilityReplace_of_le (by simp)]
+        simp
+      · simpa only [hK0, ↓reduceIte] using this
+    rw [← e, ← hB.visibilityReplace_eq K]
+    exact monotone_visibilityReplace le_rfl haB
+  have hν := isWitness_bandRaise_of_stable (h := a) hB hc
+    (.inr fun k _ i _ x ↦ coe_le_visibilityReplace_iff hμ k i x)
+  set ψ := bandRaise B a c with hψ
+  have hψD : D fun d ↦ ψ (W₁ d) := hmap hν (le_bandRaise B a c) hW₁
+  have hrootfix : ∀ x, ψ (W₁ (rd x)) = W₁ (rd x) := fun x ↦ by
+    rcases hroot x with hx | hx
+    · exact bandRaise_of_le (hloB _ hx)
+    · exact bandRaise_of_ge ((hA x hx).trans (hW₁r x).ge)
+  -- no label of the capped lift in `[μ, h)`
+  have hwin : ∀ d, a ≤ W₁ d → ((μ + K : Ordinal.{u}) : Label.{u}) ≤ W₁ d := by
+    intro d had
+    by_contra hdh
+    push Not at hdh
+    have hRd : R d = W₁ d := Label.eq_of_min_eq_of_lt (hW₁R d) hdh
+    rcases hcls d with hd | hd | ⟨x, rfl⟩ | hd
+    · exact (hloB d hd).not_gt (hBa.trans_le had)
+    · have hsupR : Lo.sup R = Lo.sup W₁ := Finset.sup_congr rfl fun e he ↦
+        Label.eq_of_min_eq_of_lt (hW₁R e) (((hloB e he).trans_lt hBa).trans_le hah)
+      have := hgap d hd (by rw [hsupR, hRd]; exact hBa.trans_le had)
+      rw [min_eq_right hhc.le, hRd] at this
+      exact hdh.not_ge this
+    · rcases hroot x with hx | hx
+      · exact (hloB _ hx).not_gt (hBa.trans_le had)
+      · exact hdh.not_ge (hhc.le.trans ((hA x hx).trans (hW₁r x).ge))
+    · have e := hd _ _ hψD hW₁ hrootfix
+      rw [show ψ (W₁ d) = c from bandRaise_of_mem ⟨hBa.trans_le had, had, hdh.trans hhc⟩] at e
+      exact (hdh.trans hhc).ne' e
+  refine ⟨fun d ↦ ψ (W₁ d), hψD, fun x ↦ (hrootfix x).trans (hW₁r x), fun d ↦ ?_,
+    fun t _ hRt ↦ .inl ?_⟩
+  · change min (ψ (W₁ d)) _ = min (R d) _
+    by_cases had : a ≤ W₁ d
+    · have h1 := hwin d had
+      rw [← hW₁R d, min_eq_right h1, min_eq_right (h1.trans (le_bandRaise B a c (W₁ d)))]
+    · rw [show ψ (W₁ d) = W₁ d from bandRaise_of_not_mem fun h' ↦ had h'.2.1, hW₁R]
+  · change c ≤ ψ (W₁ t)
+    have h1 := hW₁t t hRt
+    by_cases htc : W₁ t < c
+    · rw [show ψ (W₁ t) = c from bandRaise_of_mem ⟨hBa.trans_le (hah.trans h1), hah.trans h1, htc⟩]
+    · exact (not_lt.mp htc).trans (le_bandRaise B a c (W₁ t))
 
 end Raising
 

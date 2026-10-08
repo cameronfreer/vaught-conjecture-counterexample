@@ -105,6 +105,25 @@ def DonorRaisingV (C : (ιC → Label.{u}) → Prop) (D : (ιD → Label.{u}) �
     ∃ W : ιD → Label.{u}, D W ∧ (∀ x, W (rd x) = f (rc x)) ∧ (∀ d, min (W d) h = min (R d) h) ∧
       ∀ t ∈ Tops, h ≤ R t → c ≤ W t ∨ W t ≤ visibilityReplace K K (Lo.sup W)
 
+variable (rc rd K) in
+/-- **Donor raising with the gap**: as `H2.DonorRaisingV`, given in addition that every designated
+top of the served face above the replaced low maximum is at least `min c h` (at a state of the
+clause, `c` the frontier cap of the context face, this is the clause itself). -/
+def DonorRaisingGap (C : (ιC → Label.{u}) → Prop) (D : (ιD → Label.{u}) → Prop) (A : Set ιR)
+    (Lo Tops : Finset ιD) : Prop :=
+  ∀ {h c : Label.{u}}, IsSelfVisible K h → IsSelfVisible K c → ∀ {R : ιD → Label.{u}}
+    {f : ιC → Label.{u}}, D R → C f → (∀ x, min (f (rc x)) h = min (R (rd x)) h) →
+    (∀ a ∈ A, c ≤ f (rc a)) →
+    (∀ t ∈ Tops, visibilityReplace K K (Lo.sup R) < R t → min c h ≤ R t) →
+    ∃ W : ιD → Label.{u}, D W ∧ (∀ x, W (rd x) = f (rc x)) ∧ (∀ d, min (W d) h = min (R d) h) ∧
+      ∀ t ∈ Tops, h ≤ R t → c ≤ W t ∨ W t ≤ visibilityReplace K K (Lo.sup W)
+
+/-- Refined donor raising gives donor raising with the gap. -/
+theorem donorRaisingGap_of_V {C : (ιC → Label.{u}) → Prop} {D : (ιD → Label.{u}) → Prop}
+    {A : Set ιR} {Lo Tops : Finset ιD} (hDR : DonorRaisingV rc rd K C D A Lo Tops) :
+    DonorRaisingGap rc rd K C D A Lo Tops :=
+  fun hh hc _ _ hR hf hroot hA _ ↦ hDR hh hc hR hf hroot hA
+
 /-- Donor raising gives the refined donor raising. -/
 theorem donorRaisingV_of {C : (ιC → Label.{u}) → Prop} {D : (ιD → Label.{u}) → Prop}
     {A : Set ιR} {Lo Tops : Finset ιD} (hDR : DonorRaising rc rd K C D A Tops) :
@@ -134,12 +153,12 @@ theorem sup_eq_of_lt_cap {Lo : Finset ιD} {W R : ιD → Label.{u}} {h v : Labe
   exact Label.eq_of_min_eq_of_lt (hWR d) hWd
 
 /-- **The clause is an admission of states** under the order law at the owner, the frontier bound
-at the root cells `A`, the refined donor raising, and owner lowering. -/
-theorem selfLow_isStateAdmissionV {o r : ιC} {C : (ιC → Label.{u}) → Prop}
+at the root cells `A`, donor raising with the gap, and owner lowering. -/
+theorem selfLow_isStateAdmissionGap {o r : ιC} {C : (ιC → Label.{u}) → Prop}
     {D : (ιD → Label.{u}) → Prop} {Lo Tops : Finset ιD} (A : Set ιR)
     (hCo : ∀ f, C f → IsSelfVisible K (f o))
     (hCF : ∀ f, C f → ∀ a ∈ A, frontierAt o r K f ≤ f (rc a))
-    (hDR : DonorRaisingV rc rd K C D A Lo Tops) (hOL : OwnerLowering rc rd o r K C D) :
+    (hDR : DonorRaisingGap rc rd K C D A Lo Tops) (hOL : OwnerLowering rc rd o r K C D) :
     IsStateAdmission rc rd K C D (SelfLowG o r K Lo Tops) where
   bot := fun _ _ h ↦ absurd h (by simp)
   comp := fun {σ} hσ hσ0 hc {L R} h t ht hlt ↦ by
@@ -158,7 +177,11 @@ theorem selfLow_isStateAdmissionV {o r : ιC} {C : (ιC → Label.{u}) → Prop}
     have hroot (x : ιR) : min (f (rc x)) h = min (R (rd x)) h := by rw [hfL, hy]
     have hsv : IsSelfVisible K (frontierAt o r K f) :=
       (hCo f hf).min (visibilityReplace_self_visibilityReplace le_rfl (f r))
-    obtain ⟨W, hW, hWr, hWR, hWt⟩ := hDR hh hsv hR hf hroot (hCF f hf)
+    have hgap : ∀ t ∈ Tops, visibilityReplace K K (Lo.sup R) < R t →
+        min (frontierAt o r K f) h ≤ R t := fun t ht hlt ↦ by
+      rw [frontierAt_cap (o := o) (r := r) hh hfL]
+      exact (min_le_left _ _).trans (hadm t ht hlt)
+    obtain ⟨W, hW, hWr, hWR, hWt⟩ := hDR hh hsv hR hf hroot (hCF f hf) hgap
     refine ⟨W, hW, hWr, hWR, fun t ht hlt ↦ ?_⟩
     by_cases hRt : R t < h
     · have hWt' : W t = R t := Label.eq_of_min_eq_of_lt (hWR t).symm hRt
@@ -191,6 +214,15 @@ theorem selfLow_isStateAdmissionV {o r : ιC} {C : (ιC → Label.{u}) → Prop}
         rw [min_eq_right (not_lt.mp hRt)] at e
         exact min_eq_right_iff.mp e
       exact hWF.trans hft
+
+/-- **The clause is an admission of states** under the refined donor raising. -/
+theorem selfLow_isStateAdmissionV {o r : ιC} {C : (ιC → Label.{u}) → Prop}
+    {D : (ιD → Label.{u}) → Prop} {Lo Tops : Finset ιD} (A : Set ιR)
+    (hCo : ∀ f, C f → IsSelfVisible K (f o))
+    (hCF : ∀ f, C f → ∀ a ∈ A, frontierAt o r K f ≤ f (rc a))
+    (hDR : DonorRaisingV rc rd K C D A Lo Tops) (hOL : OwnerLowering rc rd o r K C D) :
+    IsStateAdmission rc rd K C D (SelfLowG o r K Lo Tops) :=
+  selfLow_isStateAdmissionGap A hCo hCF (donorRaisingGap_of_V hDR) hOL
 
 /-- **The clause is an admission of states** under donor raising (the unrefined form). -/
 theorem selfLow_isStateAdmission {o r : ιC} {C : (ιC → Label.{u}) → Prop}
