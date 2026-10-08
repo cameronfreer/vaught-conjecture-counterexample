@@ -227,16 +227,11 @@ theorem mem_admittedCatalogue {a : Fin S.card → Label.{u}} :
 theorem admittedCatalogue_subset : S.admittedCatalogue k A ⊆ S.catalogue k :=
   fun _ ha ↦ (mem_admittedCatalogue.mp ha).1
 
-/-- The constant `⊥` is an entry of the canonical catalogue. -/
-theorem bot_mem_catalogue' : (fun _ ↦ ⊥ : Fin S.card → Label.{u}) ∈ S.catalogue k :=
-  mem_catalogue.mpr ⟨CellScheme.Rows.isLawful_const_bot, fun _ _ ↦ rfl,
-    funext fun _ ↦ orbitCode_eq_bot_iff.mpr rfl⟩
-
 /-- **The constant `⊥` is admitted when `A` holds there**, so that the admitted layer carries a
 cell at `(univ, k)`. -/
 theorem bot_mem_admittedCatalogue (hA : A fun _ ↦ ⊥) :
     (fun _ ↦ ⊥ : Fin S.card → Label.{u}) ∈ S.admittedCatalogue k A :=
-  mem_admittedCatalogue.mpr ⟨bot_mem_catalogue', hA⟩
+  mem_admittedCatalogue.mpr ⟨bot_mem_catalogue S k, hA⟩
 
 /-- **When `A` holds everywhere, the admitted catalogue is the canonical catalogue.** -/
 theorem admittedCatalogue_of_forall (hA : ∀ a, A a) : S.admittedCatalogue k A = S.catalogue k := by

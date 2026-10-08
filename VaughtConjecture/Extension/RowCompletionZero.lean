@@ -107,8 +107,8 @@ theorem Lvl.GoodOn.rowsInAll_nextOn {g : ℕ} {L : Lvl I g} {D : ℕ → Finset 
     have he : L.S.toCellScheme.gradedIndex e = ((univ : Finset (Fin (m + 2))), j) :=
       (Scheme.appendFullCellsScheme_gradedIndex_castAdd _ _ _ e).symm.trans hz
     obtain ⟨R, hR, hrow⟩ := hrows e j he
-    exact ⟨R, hR, fun d ↦ (rowAt_appendFullCells_castAdd
-      (r := fun i ↦ L.ΦOn (D (g + 1)) (entryOn (D (g + 1)) i)) (h := L.not_le) e
+    exact ⟨R, hR, fun d ↦ (Scheme.rowAt_appendFullCells_castAdd
+      (r' := fun i ↦ L.ΦOn (D (g + 1)) (entryOn (D (g + 1)) i)) (h := L.not_le) e
       (L.embed d)).trans (hrow d)⟩
   | right i =>
     have hji : j = g + 1 := by
@@ -212,8 +212,8 @@ theorem Seed.exists_rowCompletion₀ {α : Ordinal.{u}} {m : ℕ} (I : Seed.{u} 
     have hrow' (d : Fin I.amalgam.card) :
         (L.nextSOn (rowCat Rt (m + 1))).rowAt (Fin.castAdd _ e)
           (L.embedOn (rowCat Rt (m + 1)) d) = hat I k R d :=
-      (rowAt_appendFullCells_castAdd
-        (r := fun i ↦ L.ΦOn (rowCat Rt (m + 1)) (entryOn (rowCat Rt (m + 1)) i))
+      (Scheme.rowAt_appendFullCells_castAdd
+        (r' := fun i ↦ L.ΦOn (rowCat Rt (m + 1)) (entryOn (rowCat Rt (m + 1)) i))
         (h := L.not_le) e (L.embed d)).trans (hrow d)
     rw [funext hrow']
     have hR'' : R ∈ rowCat Rw k := by

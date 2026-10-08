@@ -39,10 +39,7 @@ any predicate on states, on the family `ProfileTower.rowFamily`): for an admissi
 provisions (`Seed.LiftAdmission`) from a grade `N ≥ 3`, the downward clause at the grades `≥ N`, and
 the code of the glued labelling admitted at `m + 1` when `N ≤ m + 1`, the family
 `D k = rowCat (N ≤ k → Row) k` (the whole catalogue below `N`, the admitted catalogue from `N`)
-gives a completion below the full grade with admitted rows from `N`.  For the trivial admission it
-is a completion of every seed on at least four points
-(`Seed.nonempty_completionBelowFullGrade_all`), through the levels of the tower
-(`ProfileTower.lvlOn_cat`).
+gives a completion below the full grade with admitted rows from `N`.
 
 ## Placement
 
@@ -250,26 +247,6 @@ end NextOn
 
 /-! ### The rows of the layers -/
 
-/-- The row of an old cell of a scheme with appended cells, read at an old cell, is its row. -/
-theorem rowAt_appendFullCells_castAdd {n k M : ℕ} {S : Scheme.{u} n}
-    {r : Fin M → Fin (S.card + M) → Label.{u}}
-    {h : ∀ d, ¬ ((univ : Finset (Fin n)), k) ≤ S.toCellScheme.gradedIndex d} (s x : Fin S.card) :
-    (S.appendFullCells k M r h).rowAt (Fin.castAdd M s) (Fin.castAdd M x) = S.rowAt s x := by
-  by_cases hx : x ∈ S.toCellScheme.below (S.toCellScheme.gradedIndex s)
-  · have hx' : Fin.castAdd M x ∈ (S.appendFullCells k M r h).toCellScheme.below
-        ((S.appendFullCells k M r h).toCellScheme.gradedIndex (Fin.castAdd M s)) := by
-      rw [CellScheme.mem_below, Scheme.appendFullCellsScheme_gradedIndex_castAdd,
-        Scheme.appendFullCellsScheme_gradedIndex_castAdd]
-      exact hx
-    rw [Scheme.rowAt_of_mem hx', Scheme.rowAt_of_mem hx, Scheme.appendFullCells_row_castAdd]
-    rfl
-  · have hx' : Fin.castAdd M x ∉ (S.appendFullCells k M r h).toCellScheme.below
-        ((S.appendFullCells k M r h).toCellScheme.gradedIndex (Fin.castAdd M s)) := by
-      rw [CellScheme.mem_below, Scheme.appendFullCellsScheme_gradedIndex_castAdd,
-        Scheme.appendFullCellsScheme_gradedIndex_castAdd]
-      exact hx
-    rw [Scheme.rowAt_of_notMem hx', Scheme.rowAt_of_notMem hx]
-
 /-- The rows of a level **read the catalogues of `D`**: the row of every cell of full scope at a
 grade `j ≥ 3`, read at the old cells, is the splice at `j` of a profile of `D j`. -/
 def Lvl.RowsIn {g : ℕ} (D : ℕ → Finset (Prof I)) (L : Lvl I g) : Prop :=
@@ -285,8 +262,8 @@ theorem Lvl.GoodOn.rowsIn_nextOn {g : ℕ} {L : Lvl I g} {D : ℕ → Finset (Pr
     have he : L.S.toCellScheme.gradedIndex e = ((univ : Finset (Fin (m + 2))), j) :=
       (Scheme.appendFullCellsScheme_gradedIndex_castAdd _ _ _ e).symm.trans hz
     obtain ⟨R, hR, hrow⟩ := hrows e j hj he
-    exact ⟨R, hR, fun d ↦ (rowAt_appendFullCells_castAdd
-      (r := fun i ↦ L.ΦOn (D (g + 1)) (entryOn (D (g + 1)) i)) (h := L.not_le) e
+    exact ⟨R, hR, fun d ↦ (Scheme.rowAt_appendFullCells_castAdd
+      (r' := fun i ↦ L.ΦOn (D (g + 1)) (entryOn (D (g + 1)) i)) (h := L.not_le) e
       (L.embed d)).trans (hrow d)⟩
   | right i =>
     have hji : j = g + 1 := by
@@ -495,8 +472,8 @@ theorem Seed.exists_rowCompletion {α : Ordinal.{u}} {m : ℕ} (I : Seed.{u} α 
     have hrow' (d : Fin I.amalgam.card) :
         (L.nextSOn (rowCat Rt (j + 2 + 1))).rowAt (Fin.castAdd _ e)
           (L.embedOn (rowCat Rt (j + 2 + 1)) d) = hat I k R d :=
-      (rowAt_appendFullCells_castAdd
-        (r := fun i ↦ L.ΦOn (rowCat Rt (j + 2 + 1)) (entryOn (rowCat Rt (j + 2 + 1)) i))
+      (Scheme.rowAt_appendFullCells_castAdd
+        (r' := fun i ↦ L.ΦOn (rowCat Rt (j + 2 + 1)) (entryOn (rowCat Rt (j + 2 + 1)) i))
         (h := L.not_le) e (L.embed d)).trans (hrow d)
     rw [funext hrow']
     exact (mem_rowCat.mp hR').2 hk
@@ -534,17 +511,5 @@ noncomputable def Seed.LiftAdmission.all {α : Ordinal.{u}} {m : ℕ} (I : Seed.
     rcases Nat.lt_or_eq_of_le hkm with hkm' | rfl
     · exact capLiftProvisionIn_cat (by omega) (by omega) hx
     · exact capLiftProvisionIn_cat_top hm hx
-
-/-- **Every seed on at least four points has a completion below the full grade**, through the
-levels on the family of the trivial admission from the grade `3` (all catalogues whole). -/
-theorem Seed.nonempty_completionBelowFullGrade_all {α : Ordinal.{u}} {m : ℕ} (I : Seed.{u} α m)
-    (hm : 2 ≤ m) : Nonempty (CompletionBelowFullGrade I) := by
-  obtain ⟨F, -⟩ := I.exists_admittedCompletion hm (Seed.LiftAdmission.all I 3 (by omega)
-    (by omega)) le_rfl (fun k _ R hR ↦ by
-      change R ∈ admittedCat (Seed.Admission.all I 3) (k + 1) at hR
-      change code k R ∈ admittedCat (Seed.Admission.all I 3) k
-      rw [admittedCat_all] at hR ⊢
-      exact code_mem_cat_of_mem_cat hR) fun _ ↦ .inr trivial
-  exact ⟨F⟩
 
 end VaughtConjecture

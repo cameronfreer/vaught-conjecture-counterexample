@@ -52,8 +52,9 @@ the provision and `exists_extensionOn`.
 
 **The trivial admission** (`Seed.Admission.all`) has both provisions, by the lift of the amalgam
 within the other coatom from the common face (`ProfileTower.botLiftProvision_all`,
-`ProfileTower.capLiftProvision_all`); so the lift recovers the lift of the canonical next level
-(`ProfileTower.Lvl.Good.cappedLift_next_of_all`).
+`ProfileTower.capLiftProvision_all`); on the whole catalogue the admitted layer is the canonical
+next level (`ProfileTower.Lvl.admittedNextS_all`), whose lift is
+`ProfileTower.Lvl.Good.cappedLift_next`.
 
 ## Placement
 
@@ -460,20 +461,6 @@ theorem capLiftProvision_all (N : ℕ) {k : ℕ} (hk : 0 < k) (hkm : k ≤ m) {x
     CapLiftProvision (Seed.Admission.all I N) k x := by
   have h := capLiftProvisionIn_cat (I := I) hk hkm hx
   rwa [← admittedCat_all N k] at h
-
-/-- **The lift of the canonical next level, through the admitted layer of the trivial admission**:
-the trivial admission has both lift provisions, and its admitted layer is the next scheme of the
-level (`ProfileTower.Lvl.admittedNextS_all`); so `ProfileTower.Lvl.Good.cappedLift_admittedNextS`
-recovers `ProfileTower.Lvl.Good.cappedLift_next`. -/
-theorem Lvl.Good.cappedLift_next_of_all {g : ℕ} {L : Lvl I g} (hL : L.Good) (hgm : g + 1 ≤ m)
-    {x : Fin (m + 2)} (hx : x ∈ (Pts : Finset (Fin (m + 2)))) (N : ℕ) :
-    L.nextS.rows.CappedLift (X := (univ.erase x, g + 1))
-      (Y := ((univ : Finset (Fin (m + 2))), g + 1)) ⟨erase_subset _ _, le_rfl⟩ := by
-  have h := (hL.toGoodOn fun k ↦ cat I k).cappedLift_admittedNextS (Seed.Admission.all I N)
-    (fun R hR ↦ code_mem_cat_of_mem_cat (admittedCat_subset _ _ hR)) (by omega) hx
-    (botLiftProvision_all N (Nat.succ_pos g) hgm hx)
-    (capLiftProvision_all N (Nat.succ_pos g) hgm hx)
-  rwa [Lvl.admittedNextS_all] at h
 
 end VaughtConjecture.ProfileTower
 

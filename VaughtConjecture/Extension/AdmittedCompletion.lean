@@ -37,9 +37,7 @@ admitted (`Seed.exists_admittedCompletion_top`):
 The trivial admission (`Seed.Admission.all`) has the lift provisions at `m + 1`
 (`ProfileTower.botLiftProvision_all_top`, `ProfileTower.capLiftProvision_all_top`: the fill of the
 other coatom from the common face at the grade `m`, then within it from `m` to `m + 1`,
-`Seed.exists_lift_union_of_le`), and admits every code; so every seed on at least four points has a
-completion below the full grade whose top layer is a layer of rank-normalized profiles
-(`Seed.nonempty_completionBelowFullGrade_of_all`).
+`Seed.exists_lift_union_of_le`), and admits every code.
 
 Admitted layers at grades `≤ m` followed by further layers are not assembled here: the invariant of
 a good level (`ProfileTower.Lvl.Good.lawful`) asks the section operator to be lawful at every
@@ -363,21 +361,5 @@ theorem Seed.exists_admittedCompletion_of_liftAdmission {α : Ordinal.{u}} {m : 
   I.exists_admittedCompletion_top hm A.toAdmission hN.ge
     (fun _ hx ↦ A.botLiftProvision hN.le le_rfl hx)
     (fun _ hx ↦ A.capLiftProvision hN.le le_rfl hx) hlab
-
-/-- **Every seed on at least four points has a completion below the full grade whose top layer is
-a layer of rank-normalized profiles**: the admitted top of the trivial admission. -/
-theorem Seed.nonempty_completionBelowFullGrade_of_all {α : Ordinal.{u}} {m : ℕ}
-    (I : Seed.{u} α m) (hm : 2 ≤ m) : Nonempty (CompletionBelowFullGrade I) := by
-  have hlab : code (m + 1) (fun d ↦ I.amalgam.label d) ∈
-      admittedCat (Seed.Admission.all I (m + 1)) (m + 1) := by
-    have hW : IsCutLawful I (m + 1) fun d ↦ I.amalgam.label d :=
-      ⟨I.amalgam.isLawful.isLawfulBelow _, I.amalgam.isLawful.isLawfulBelow _⟩
-    have hh := isCutLawful_hat hW
-    exact mem_admittedCat.mpr ⟨mem_cat.mpr ⟨⟨hh.1.orbitCode fun d ↦ d.2.2,
-      hh.2.orbitCode fun d ↦ d.2.2⟩, orbitCode_orbitCode⟩, Seed.Admission.row_all _ _⟩
-  obtain ⟨F, -⟩ := I.exists_admittedCompletion_top hm (Seed.Admission.all I (m + 1)) le_rfl
-    (fun _ hx ↦ botLiftProvision_all_top _ (by omega) hx)
-    (fun _ hx ↦ capLiftProvision_all_top _ (by omega) hx) hlab
-  exact ⟨F⟩
 
 end VaughtConjecture
