@@ -310,6 +310,134 @@ theorem crossLayerReaders_lvl (hm : 2 ≤ m) :
             · rw [hrow d hdg] at hiff
               exact hiff
 
+/-- **The section of a profile lawful on the cut at `m + 1`, extended by the profile at the old
+cells of the top grade, is lawful** on the level at the grade `m` (the labelling of
+`ProfileTower.Lvl.Good.exists_botKeeping`, for any such profile). -/
+theorem Lvl.Good.isLawful_extendSection {N : Lvl I m} (hN : N.Good) {P : Prof I}
+    (hP : IsCutLawful I (m + 1) P) :
+    N.S.rows.IsLawful fun z ↦ if N.S.toCellScheme.grade z ≤ m then N.σ P z
+      else Function.extend N.embed P (fun _ ↦ ⊥) z := by
+  classical
+  set p : Fin N.S.card → Label.{u} := fun z ↦ if N.S.toCellScheme.grade z ≤ m then N.σ P z
+    else Function.extend N.embed P (fun _ ↦ ⊥) z with hp_def
+  have hpe (d : Fin I.amalgam.card) : p (N.embed d) = P d := by
+    by_cases hg : N.S.toCellScheme.grade (N.embed d) ≤ m
+    · rw [hp_def]
+      simp only [hg, ite_true]
+      exact hN.literal P d
+    · rw [hp_def]
+      simp only [hg, ite_false]
+      exact N.embed.injective.extend_apply _ _ d
+  have hcut : IsCutLawful I m P :=
+    ⟨hP.1.mono (X := (coatC, m)) ⟨subset_rfl, by omega⟩,
+      hP.2.mono (X := (coatD, m)) ⟨subset_rfl, by omega⟩⟩
+  have hold (z : Fin (m + 2)) (hz : z ∈ (Pts : Finset (Fin (m + 2)))) :
+      N.S.rows.IsLawfulBelow (univ.erase z, m + 1) fun e ↦ p e := by
+    refine (hN.isLawfulBelow_old_iff (w := p) (Seed.ne_univ_erase z)).mpr ?_
+    refine (CellScheme.Rows.isLawfulBelow_congr (R := I.amalgam.rows) (X := (univ.erase z, m + 1))
+      (w := P) (w' := fun d ↦ p (N.embed d)) fun d _ ↦ (hpe d).symm).mp ?_
+    simp only [Pts, mem_insert, mem_singleton] at hz
+    rcases hz with rfl | rfl
+    · exact hP.1
+    · exact hP.2
+  have hlow : N.S.rows.IsLawfulBelow ((univ : Finset (Fin (m + 2))), m) fun e ↦ p e := by
+    refine (CellScheme.Rows.isLawfulBelow_congr (R := N.S.rows)
+      (X := ((univ : Finset (Fin (m + 2))), m)) (w := fun z ↦ N.σ P z) (w' := p)
+      fun z hz ↦ ?_).mp (hN.lawful P hcut)
+    have hz' : N.S.toCellScheme.grade z ≤ m := hz.2
+    rw [hp_def]
+    simp only [hz', ite_true]
+  have hglue : N.S.rows.IsLawfulBelow ((univ : Finset (Fin (m + 2))), m + 1) fun e ↦ p e :=
+    CellScheme.Rows.IsLawfulBelow.glue₃ (U := (univ.erase (Fin.last (m + 1)), m + 1))
+      (V := ((univ : Finset (Fin (m + 2))), m))
+      (W := (univ.erase (Fin.castSucc (Fin.last m)), m + 1)) (hold _ (by simp [Pts])) hlow
+      (hold _ (by simp [Pts]))
+      (hN.mem_below_cover (by simp) (by simp) Seed.last_ne_castSucc)
+  have hall (z : Fin N.S.card) :
+      z ∈ N.S.toCellScheme.below ((univ : Finset (Fin (m + 2))), m + 1) :=
+    ⟨subset_univ _, by
+      have := hN.grade_lt z
+      change N.S.toCellScheme.grade z ≤ m + 1
+      omega⟩
+  exact hglue.isLawful hall
+
+variable (I) in
+/-- **Cross-layer readers in the top layer**, for the readers of the top grade `m + 1`, a property
+of a level `N` at the grade `m`: every cell `c` of `N` of full scope and grade `3 ≤ g ≤ m` and every
+old cell `a` of grade `m + 1` reading itself other than `⊥` and avoiding the last point, with cross
+separation from `g` to `m + 1`, have a cell of the top layer of graded index `(univ, m + 1)`
+reading `c` as `⊥` and `a` not as `⊥`. -/
+def TopCrossReaders (N : Lvl I m) : Prop :=
+  ∀ c, N.S.toCellScheme.scope c = univ → 3 ≤ N.S.toCellScheme.grade c →
+    N.S.toCellScheme.grade c ≤ m →
+    ∀ a, I.amalgam.toCellScheme.grade a = m + 1 → I.amalgam.toScheme.rowAt a a ≠ ⊥ →
+      Fin.last (m + 1) ∉ I.amalgam.toCellScheme.scope a →
+      CrossSeparating I (N.S.toCellScheme.grade c) (m + 1) →
+        ∃ u, N.top.toCellScheme.gradedIndex u = ((univ : Finset (Fin (m + 2))), m + 1) ∧
+          LowerBlock (N.top.rowAt u (Fin.castAdd _ c)) (N.top.rowAt u (N.topEmbed a))
+
+/-- **Cross-layer readers of the top grade** at the last level of the profile tower: the reader is
+the cell of the field layer of the orbit code of the section of a profile given by cross
+separation, extended by the profile at the old cells of the top grade. -/
+theorem topCrossReaders_lvl {j : ℕ} (I : Seed.{u} α (j + 3)) :
+    TopCrossReaders I (lvl I (j + 1)) := by
+  classical
+  intro c hc h3 hcm a ha hlive hlast hsep
+  have hN := lvl_good (I := I) (by omega) (j + 1) (by omega)
+  obtain ⟨R_c, hR_c, hrow⟩ := lvl_exists_rowAt_eq (I := I) (by omega) (j + 1) (by omega) c hc h3
+  obtain ⟨R, hR, hRa, d, hdg, hd⟩ := hsep R_c hR_c a ha hlive hlast
+  have hP : IsCutLawful I (j + 3 + 1) R := (mem_cat.mp hR).1
+  set p : Fin (lvl I (j + 1)).S.card → Label.{u} := fun z ↦
+    if (lvl I (j + 1)).S.toCellScheme.grade z ≤ j + 3 then (lvl I (j + 1)).σ R z
+    else Function.extend (lvl I (j + 1)).embed R (fun _ ↦ ⊥) z with hp_def
+  have hpl : (lvl I (j + 1)).S.rows.IsLawful p := hN.isLawful_extendSection hP
+  set A := orbitCode (j + 3 + 1) p
+  have hA : A ∈ (lvl I (j + 1)).S.catalogue (j + 3 + 1) := by
+    refine Scheme.mem_catalogue.mpr ⟨?_, fun z hz ↦ absurd (hN.grade_lt z) (by omega),
+      orbitCode_orbitCode⟩
+    exact hpl.map_of_apply_eq_bot (K := j + 3 + 1)
+      (fun z ↦ by have := hN.grade_lt z; omega) (isWitness_orbitMap _ p)
+      fun _ ↦ orbitMap_eq_bot_iff.mp
+  obtain ⟨i, hi⟩ := Scheme.exists_catalogueEntry_eq hA
+  have hpc : p c = ⊥ := by
+    rw [hp_def]
+    simp only [show (lvl I (j + 1)).S.toCellScheme.grade c ≤ j + 3 from hcm, ite_true]
+    exact lvl_section_eq_bot (by omega) (j + 1) (by omega) c R hc h3
+      ⟨d, hdg, fun hiff ↦ hd (by rw [← hrow d hdg]; exact hiff)⟩
+  have hpa : p ((lvl I (j + 1)).embed a) = R a := by
+    have hg : ¬ (lvl I (j + 1)).S.toCellScheme.grade ((lvl I (j + 1)).embed a) ≤ j + 3 := by
+      rw [show (lvl I (j + 1)).S.toCellScheme.grade ((lvl I (j + 1)).embed a) =
+          I.amalgam.toCellScheme.grade a from
+        congrArg Prod.snd (hN.gradedIndex_embed a), ha]
+      omega
+    rw [hp_def]
+    simp only [hg, ite_false]
+    exact (lvl I (j + 1)).embed.injective.extend_apply _ _ a
+  refine ⟨Fin.natAdd _ i, Scheme.appendFullCellsScheme_gradedIndex_natAdd _ _ _ i, ?_⟩
+  have hrowc (z : Fin (lvl I (j + 1)).S.card)
+      (hz : (lvl I (j + 1)).S.toCellScheme.grade z ≤ j + 3 + 1) :
+      (lvl I (j + 1)).top.rowAt (Fin.natAdd _ i) (Fin.castAdd _ z) = A z := by
+    have hz' : Fin.castAdd ((lvl I (j + 1)).S.catalogue (j + 3 + 1)).card z ∈
+        (lvl I (j + 1)).top.toCellScheme.below
+        ((lvl I (j + 1)).top.toCellScheme.gradedIndex (Fin.natAdd (lvl I (j + 1)).S.card i)) := by
+      rw [CellScheme.mem_below]
+      change ((lvl I (j + 1)).S.appendFullCellsScheme (j + 3 + 1) _).gradedIndex _ ≤
+        ((lvl I (j + 1)).S.appendFullCellsScheme (j + 3 + 1) _).gradedIndex _
+      rw [Scheme.appendFullCellsScheme_gradedIndex_castAdd,
+        Scheme.appendFullCellsScheme_gradedIndex_natAdd]
+      exact ⟨subset_univ _, hz⟩
+    rw [Scheme.rowAt_of_mem hz', Scheme.fieldLayer_row_natAdd, Scheme.fieldRow_castAdd, hi]
+  rw [Lvl.topEmbed_apply, hrowc c (by omega),
+    hrowc ((lvl I (j + 1)).embed a) (by have := hN.grade_lt ((lvl I (j + 1)).embed a); omega)]
+  refine ⟨?_, fun μ i' j' _ h ↦ ?_⟩
+  · change orbitCode (j + 3 + 1) p c < orbitCode (j + 3 + 1) p ((lvl I (j + 1)).embed a)
+    rw [orbitCode_apply, hpc, orbitMap_bot, bot_lt_iff_ne_bot, orbitCode_apply, Ne,
+      orbitMap_eq_bot_iff, hpa]
+    exact hRa
+  · change orbitCode (j + 3 + 1) p c = _ at h
+    rw [orbitCode_apply, hpc, orbitMap_bot] at h
+    exact absurd h.symm WithBot.coe_ne_bot
+
 end ProfileTower
 
 end VaughtConjecture
