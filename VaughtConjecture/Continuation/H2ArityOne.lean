@@ -251,6 +251,14 @@ end Seed
 
 /-! ### The key step: the clause determines the donor face -/
 
+/-- A cell **determined by the root**: two lawful labellings agreeing at the root cells (visible
+through `Fin.castSuccEmb`) agree at it.  Such a cell is read from the root, literal in the members
+of a receiving family, and need not be designated. -/
+def RootDet {n : ℕ} (t : StageType.{u} α (n + 1)) (x : Fin t.card) : Prop :=
+  ∀ s s' : Fin t.card → Label.{u}, t.rows.IsLawful s → t.rows.IsLawful s' →
+    (∀ y ∈ t.toScheme.visibleCells Fin.castSuccEmb, s y = s' y) → s x = s' x
+
+
 section Key
 
 variable {I : Seed.{u} α 1}
@@ -275,7 +283,7 @@ theorem key_completion (F : CompletionBelowFullGrade I) (hα : Order.IsSuccPreli
     (hδ0 : ⊥ < δ) (hδ : ∀ x, I.right.label x ≠ ⊤ → I.right.label x < δ)
     (hLo : ∀ x ∈ Lo, I.right.label x ≠ ⊤) {n : ℕ} {g : Fin n ↪ Fin 1}
     (hTops : ∀ x, I.right.label x = ⊤ → x ∈ I.right.toScheme.visibleCells (extendByLast g) →
-      x ∉ I.right.toScheme.visibleCells Fin.castSuccEmb → x ∈ Tops)
+      x ∉ I.right.toScheme.visibleCells Fin.castSuccEmb → ¬ RootDet I.right x → x ∈ Tops)
     (ℓ : Fin (F.completion hα).card → Label.{u}) (hℓ : (F.completion hα).rows.IsLawful ℓ)
     (hleft : ∀ x ∈ (F.completion hα).toScheme.visibleCells Fin.castSuccEmb,
       ℓ x = (F.completion hα).label x)
@@ -302,6 +310,28 @@ theorem key_completion (F : CompletionBelowFullGrade I) (hα : Order.IsSuccPreli
       exact ⟨b, rfl⟩
     rw [hleft _ (castSucc_mem_visibleCells_addApex (t := T) F.isLegalBelowFullGrade
       (Nat.succ_pos _) hv), hlab, hTe, StageType.label_faceCell]
+  -- the root cells of the donor are read from the context face
+  have hrootcell (z : Fin I.right.card)
+      (hroot : z ∈ I.right.toScheme.visibleCells Fin.castSuccEmb) :
+      ℓ (Fin.castSucc (F.embed (don I z))) = I.right.label z := by
+    have hv : F.embed (don I z) ∈ T.toScheme.visibleCells Fin.castSuccEmb := by
+      refine Scheme.mem_visibleCells.mpr ?_
+      change ((F.scheme.toCellScheme.scope (F.embed (don I z)) : Set (Fin 3)) ⊆ _)
+      rw [F.scope_embed, StageType.scope_faceCell]
+      intro a ha
+      obtain ⟨b, hb, rfl⟩ := mem_map.mp (mem_coe.mp ha)
+      obtain ⟨c, rfl⟩ := Scheme.mem_visibleCells.mp hroot (mem_coe.mpr hb)
+      exact ⟨Fin.castSucc c, by simp [Coatom.right, Coatom.face]⟩
+    rw [hleft _ (castSucc_mem_visibleCells_addApex (t := T) F.isLegalBelowFullGrade
+      (Nat.succ_pos _) hv), hlab, hTe, StageType.label_faceCell]
+  -- the donor face of `ℓ` is lawful
+  have hdonL : I.right.rows.IsLawful fun z ↦ ℓ (Fin.castSucc (F.embed (don I z))) := by
+    have h2 : I.amalgam.rows.IsLawful fun d ↦ ℓ (Fin.castSucc (F.embed d)) := by
+      have h1 := (show F.scheme.rows.IsLawful fun x ↦ ℓ (Fin.castSucc x) from hqL).comap
+        F.isLowerEmbedding
+      rw [F.comap_rows] at h1
+      exact h1
+    exact StageType.isLawful_comp_faceCell I.restrictFace_right h2
   intro y hy
   obtain ⟨x, hx, rfl⟩ := exists_castSucc_of_mem_visibleCells_addApex (t := T)
     F.isLegalBelowFullGrade (Nat.succ_pos _) ⟨1, one_notMem_range g⟩ hy
@@ -335,16 +365,10 @@ theorem key_completion (F : CompletionBelowFullGrade I) (hα : Order.IsSuccPreli
   by_cases hz : I.right.label z = ⊤
   · by_cases hroot : z ∈ I.right.toScheme.visibleCells Fin.castSuccEmb
     · -- a root cell: visible through the first coatom
-      have hv : F.embed (don I z) ∈ T.toScheme.visibleCells Fin.castSuccEmb := by
-        refine Scheme.mem_visibleCells.mpr ?_
-        change ((F.scheme.toCellScheme.scope (F.embed (don I z)) : Set (Fin 3)) ⊆ _)
-        rw [F.scope_embed, StageType.scope_faceCell]
-        intro a ha
-        obtain ⟨b, hb, rfl⟩ := mem_map.mp (mem_coe.mp ha)
-        obtain ⟨c, rfl⟩ := Scheme.mem_visibleCells.mp hroot (mem_coe.mpr hb)
-        exact ⟨Fin.castSucc c, by simp [Coatom.right, Coatom.face]⟩
-      rw [hleft _ (castSucc_mem_visibleCells_addApex (t := T) F.isLegalBelowFullGrade
-        (Nat.succ_pos _) hv), hlab, hTe, StageType.label_faceCell]
+      exact hrootcell z hroot
+    by_cases hdet : RootDet I.right z
+    · -- a cell determined by the root
+      exact hdet _ _ hdonL I.right.isLawful fun y hy ↦ hrootcell y hy
     · -- a new top: the clause at the reader
       have hzv : z ∈ I.right.toScheme.visibleCells (extendByLast g) := by
         refine Scheme.mem_visibleCells.mpr fun a ha ↦ ?_
@@ -355,7 +379,7 @@ theorem key_completion (F : CompletionBelowFullGrade I) (hα : Order.IsSuccPreli
         obtain ⟨b, hb, hba⟩ := (hrange ▸ he' hmem :
           Coatom.right 1 a ∈ (fun i ↦ Coatom.right 1 i) '' Set.range (extendByLast g))
         exact (Coatom.right 1).injective hba ▸ hb
-      have hTz := hTops z hz hzv hroot
+      have hTz := hTops z hz hzv hroot hdet
       have hqo : (fun x ↦ ℓ (Fin.castSucc x)) (F.embed (ctx I o)) = ⊤ := by
         change ℓ (Fin.castSucc (F.embed (ctx I o))) = ⊤
         rw [hctx, hlo]

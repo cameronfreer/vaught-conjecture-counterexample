@@ -128,13 +128,15 @@ theorem coatomCutoffDeterminationTwo : CoatomCutoffDeterminationTwo.{u} := by
   intro α K n t' g p hα hleg ⟨l, o, r, hs⟩ hp tb ⟨htbleg, htbp⟩ d hd hdK
   have hα' := hα.isSuccPrelimit
   set Lo : Finset (Fin tb.card) := univ.filter fun x ↦ tb.label x ≠ ⊤
-  set Tops : Finset (Fin tb.card) := ((univ.filter fun x ↦ tb.label x = ⊤) ∩
-    tb.toScheme.visibleCells (extendByLast g)) \ tb.toScheme.visibleCells Fin.castSuccEmb
+  have := Classical.decPred (RootDet tb)
+  set Tops : Finset (Fin tb.card) := (((univ.filter fun x ↦ tb.label x = ⊤) ∩
+    tb.toScheme.visibleCells (extendByLast g)) \ tb.toScheme.visibleCells Fin.castSuccEmb) \
+      (univ.filter (RootDet tb))
   have hLo : ∀ x ∈ Lo, tb.label x ≠ ⊤ := fun x hx ↦ (mem_filter.mp hx).2
   have hTops : ∀ x ∈ Tops, tb.label x = ⊤ ∧ tb.toCellScheme.grade x ≤ K ∧
       x ∉ tb.toScheme.visibleCells Fin.castSuccEmb := by
     intro x hx
-    obtain ⟨hx1, hxr⟩ := mem_sdiff.mp hx
+    obtain ⟨hx1, hxr⟩ := mem_sdiff.mp (mem_sdiff.mp hx).1
     obtain ⟨hx2, hxv⟩ := mem_inter.mp hx1
     have hxt := (mem_filter.mp hx2).2
     refine ⟨hxt, ?_, hxr⟩
@@ -142,9 +144,9 @@ theorem coatomCutoffDeterminationTwo : CoatomCutoffDeterminationTwo.{u} := by
     have hdi : d.label i = ⊤ := (StageType.label_faceCell hd i).symm.trans hxt
     exact (StageType.grade_faceCell hd i).trans_le ((grade_le_topGrade hdi).trans hdK)
   have hmem : ∀ x, tb.label x = ⊤ → x ∈ tb.toScheme.visibleCells (extendByLast g) →
-      x ∉ tb.toScheme.visibleCells Fin.castSuccEmb → x ∈ Tops := by
-    intro x hxt hxv hxr
-    simp [Tops, hxt, hxv, hxr]
+      x ∉ tb.toScheme.visibleCells Fin.castSuccEmb → ¬ RootDet tb x → x ∈ Tops := by
+    intro x hxt hxv hxr hxd
+    simp [Tops, hxt, hxv, hxr, hxd]
   obtain ⟨F, hF⟩ := exists_completion_recProp hleg hs hp htbleg htbp hLo hTops
   obtain ⟨δ, hδ, hδlab⟩ := exists_cutoff hα tb
   have hR := F.restrictFace_right_completion hα'
