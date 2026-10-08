@@ -119,7 +119,11 @@ Notes on the rows, each with its marker:
   lift provisions and the downward clause as hypotheses**: the completion with admitted rows at the
   reading grades (`Seed.exists_rowCompletion`, `Seed.exists_rowCompletion₀`,
   `Seed.exists_admittedCompletion`; recognition `CompletionBelowFullGrade.adm_of_isLawfulBelow`;
-  `Extension/AdmittedTower`, `Extension/RowCompletionZero`, `Extension/Admission`).
+  `Extension/AdmittedTower`, `Extension/RowCompletionZero`, `Extension/Admission`).  **Compiled,
+  with the fills from the private coatom as hypotheses**: the completion with correct rows from the
+  grade of the cap for graded cap requests (`Seed.exists_correctCompletion`,
+  `Seed.exists_correctCompletion_top`, `Seed.exists_correctCompletion_T`;
+  `Extension/CapRequestsGrade`, `Extension/CapRequestsTop`, `Extension/CapRequestsFill`).
 - *Layer 3, receiving.*  Compiled: finite-extension receiving from finite-cut receiving, for an
   exactly consistent realization at a stage that is zero or a limit
   (`Realization.HasFiniteCutReceiving.hasFiniteExtensionReceiving`); gate recovery
