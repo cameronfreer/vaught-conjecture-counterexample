@@ -28,6 +28,10 @@ Hence:
 * `TowerProfile.separatingServerTwo_of_least`: a server whose least code of a cell at least `h` is
   self-visible at `2` separates; `TowerProfile.LeastCodesTwo I` implies
   `TowerProfile.SeparatingServersTwo I` and `TowerProfile.RefiningServerTwo I`.
+* `TowerProfile.exists_frozen_of_entry`, `TowerProfile.not_separatingServersTwo_of_lowEntry`: an
+  entry coding a cell below `2` and not by `⊥` (`TowerProfile.LowEntryTwo`) gives a lawful
+  labelling (the support of its field row) at which every server at least `4` is frozen, so
+  `TowerProfile.SeparatingServersTwo I` fails.
 
 ## Placement
 
@@ -324,6 +328,133 @@ theorem separatingServersTwo_of_leastCodes (hI : LeastCodesTwo I) : SeparatingSe
 /-- **A refining server exists at the grade `2` under least codes self-visible at `2`.** -/
 theorem refiningServerTwo_of_leastCodes (hI : LeastCodesTwo I) : RefiningServerTwo I :=
   refiningServerTwo_of_separating (separatingServersTwo_of_leastCodes hI)
+
+/-! ### A lawful labelling at which every server at least `4` is frozen -/
+
+/-- The support map: `⊥` at `⊥` and the formal top elsewhere. -/
+noncomputable def supportMap (t : Label.{u}) : Label.{u} := if t = ⊥ then ⊥ else ⊤
+
+theorem supportMap_eq_bot_iff {t : Label.{u}} : supportMap t = ⊥ ↔ t = ⊥ := by
+  unfold supportMap
+  split_ifs with ht <;> simp [ht]
+
+theorem supportMap_of_ne_bot {t : Label.{u}} (ht : t ≠ ⊥) : supportMap t = ⊤ := ite_eq_right ht
+
+/-- The support map is a witness at `2`. -/
+theorem isWitness_supportMap : IsWitness (stepSuppressor 2) (supportMap.{u}) where
+  antitone := (IsWitness.id_step 2).antitone
+  isSelfVisible := (IsWitness.id_step 2).isSelfVisible
+  map_bot := ite_eq_left rfl
+  monotone := fun x y hxy ↦ by
+    by_cases hx : x = ⊥
+    · rw [hx, show supportMap (⊥ : Label.{u}) = ⊥ from ite_eq_left rfl]
+      exact bot_le
+    · have hy : y ≠ ⊥ := fun hy ↦ hx (le_bot_iff.mp (hy ▸ hxy))
+      rw [supportMap_of_ne_bot hx, supportMap_of_ne_bot hy]
+  visibilityReplace_comm := fun x k _ i _ ↦ by
+    by_cases hx : x = ⊥
+    · rw [hx, visibilityReplace_bot, show supportMap (⊥ : Label.{u}) = ⊥ from ite_eq_left rfl,
+        visibilityReplace_bot]
+    · rw [supportMap_of_ne_bot hx, visibilityReplace_top, supportMap_of_ne_bot]
+      exact fun h ↦ hx (visibilityReplace_eq_bot_iff.mp h)
+
+/-- Agreement capped at a label carries to every smaller cap. -/
+theorem min_eq_min_of_le' {a b x y : Label.{u}} (h : min a x = min b x) (hy : y ≤ x) :
+    min a y = min b y := by
+  rw [← min_eq_right hy, ← min_assoc, h, min_assoc]
+
+/-- **A labelling at which every server at least `4` is frozen**, from an entry `i` coding a cell
+`d₁` of grade at most `2` below `2` and not by `⊥`: the support of the field row of the entry
+(`⊤` where it is not `⊥`), lawful below `(univ, 2)`.  The servers at least `4` in it are those
+agreeing with the entry `i` capped at `2`, and each codes `d₁` below `2`
+(`TowerProfile.FrozenServerTwo`); no separating server exists there. -/
+theorem exists_frozen_of_entry {i : Fin ((I.tower 1).catalogue 2).card}
+    {d₁ : Fin (I.tower 1).card} (hd₁ : (I.tower 1).toCellScheme.grade d₁ ≤ 2)
+    (hb₁ : (I.tower 1).catalogueEntry 2 i d₁ ≠ ⊥)
+    (hb₁2 : (I.tower 1).catalogueEntry 2 i d₁ < (((2 : Ordinal.{u})) : Label.{u})) :
+    ∃ e : Fin (scheme I).card → Label.{u},
+      (scheme I).rows.IsLawfulBelow (univ, 2) (fun d ↦ e d) ∧
+      (∀ d, e (oneCell I d) = supportMap ((I.tower 1).catalogueEntry 2 i d)) ∧
+      (∀ j, 4 ≤ e (twoCell I (Fin.natAdd _ j)) → FrozenServerTwo I e 4 j) ∧
+      ¬ SeparatingServerTwo I e 4 := by
+  classical
+  set b := (I.tower 1).catalogueEntry 2 i with hbdef
+  have hb : b ∈ (I.tower 1).catalogue 2 := Scheme.catalogueEntry_mem i
+  have hp : (I.tower 1).rows.IsLawfulBelow (univ, 2) fun d ↦ b d.1 :=
+    (Scheme.mem_catalogue.mp hb).1.isLawfulBelow _
+  obtain ⟨r, hr, -, hrc⟩ := Scheme.exists_extension_fieldLayer (S := I.tower 1) (k := 2)
+    (hS := I.not_univ_succ_le_tower 1) hp hb (h := ⊤) (isSelfVisible_top 2) bot_lt_top
+    (.inl fun o ho ↦ absurd ho (by simp)) fun _ _ ↦ rfl
+  have hrf (x : (I.tower 2).toCellScheme.below ((univ : Finset (Fin 5)), 2)) :
+      r x = (I.tower 1).fieldRow 2 b x.1 := by
+    simpa using hrc x
+  have hlaw : (I.tower 2).rows.IsLawfulBelow (univ, 2) (supportMap ∘ r) :=
+    hr.map_of_bot_iff hr (fun d ↦ d.2.2) isWitness_supportMap fun _ ↦ supportMap_eq_bot_iff
+  set e : Fin (scheme I).card → Label.{u} := fun x ↦
+    if hx : (x : ℕ) < (I.tower 2).card then supportMap ((I.tower 1).fieldRow 2 b ⟨x, hx⟩)
+    else ⊥ with hedef
+  have hetwo (y : Fin (I.tower 2).card) :
+      e (twoCell I y) = supportMap ((I.tower 1).fieldRow 2 b y) := by
+    have hy : ((twoCell I y : Fin (scheme I).card) : ℕ) < (I.tower 2).card := y.2
+    simp only [hedef, hy, ↓reduceDIte]
+    rfl
+  have heone (d : Fin (I.tower 1).card) : e (oneCell I d) = supportMap (b d) := by
+    refine (hetwo (Fin.castAdd _ d)).trans ?_
+    rw [Scheme.fieldRow_castAdd]
+  have henew (j : Fin ((I.tower 1).catalogue 2).card) :
+      e (twoCell I (Fin.natAdd _ j)) = supportMap (agreementHeight ((I.tower 1).fieldGrid 2) b
+        ((I.tower 1).catalogueEntry 2 j)) := by
+    refine (hetwo (Fin.natAdd _ j)).trans ?_
+    rw [Scheme.fieldRow_natAdd]
+  have he : (scheme I).rows.IsLawfulBelow (univ, 2) (fun d ↦ e d) := by
+    refine isLawfulBelow_scheme_of_two ?_
+    have heq : (fun d : (I.tower 2).toCellScheme.below ((univ : Finset (Fin 5)), 2) ↦
+        e (twoCell I d)) = supportMap ∘ r := funext fun d ↦ by
+      exact (hetwo d.1).trans (congrArg supportMap (hrf d).symm)
+    rw [heq]
+    exact hlaw
+  have hfrozen (j : Fin ((I.tower 1).catalogue 2).card)
+      (hj : 4 ≤ e (twoCell I (Fin.natAdd _ j))) : FrozenServerTwo I e 4 j := by
+    rw [henew] at hj
+    set g := agreementHeight ((I.tower 1).fieldGrid 2) b ((I.tower 1).catalogueEntry 2 j)
+    have hg0 : g ≠ ⊥ := fun h0 ↦ by
+      rw [h0, show supportMap (⊥ : Label.{u}) = ⊥ from ite_eq_left rfl] at hj
+      exact absurd hj (by simp)
+    obtain ⟨hgG, hgag⟩ := agreementHeight_spec (bot_mem_grid 2 _) b ((I.tower 1).catalogueEntry 2 j)
+    have h2g : (((2 : Ordinal.{u})) : Label.{u}) ≤ g := by
+      rcases mem_grid.mp hgG with h0 | ⟨c, -, hc⟩
+      · exact absurd h0 hg0
+      · have := (gridPoint_le_gridPoint (k := 2)).mpr (Nat.zero_le c)
+        have h2 : (((2 : Ordinal.{u})) : Label.{u}) ≤ gridPoint 2 c := by
+          simpa [gridPoint] using this
+        exact h2.trans_eq hc.symm
+    have h12 := min_eq_min_of_le' (hgag d₁) h2g
+    rw [min_eq_left hb₁2.le] at h12
+    refine ⟨d₁, hd₁, ?_, .inl ?_⟩
+    · rw [heone, supportMap_of_ne_bot hb₁]
+      exact le_top
+    · refine not_le.mp fun hle ↦ hb₁2.ne ?_
+      rw [h12, min_eq_right hle]
+  exact ⟨e, he, heone, hfrozen, not_separatingServerTwo_of_frozen hfrozen⟩
+
+/-- **The state where route (b) fails**: an entry `i` coding a cell of grade at most `2` below `2`
+and not by `⊥`, and a cell of grade `2` not by `⊥`. -/
+def LowEntryTwo (I : Seed.{u} α 3) : Prop :=
+  ∃ i : Fin ((I.tower 1).catalogue 2).card,
+    (∃ d₁, (I.tower 1).toCellScheme.grade d₁ ≤ 2 ∧ (I.tower 1).catalogueEntry 2 i d₁ ≠ ⊥ ∧
+      (I.tower 1).catalogueEntry 2 i d₁ < (((2 : Ordinal.{u})) : Label.{u})) ∧
+    ∃ z₀, (I.tower 1).toCellScheme.grade z₀ = 2 ∧ (I.tower 1).catalogueEntry 2 i z₀ ≠ ⊥
+
+/-- **Separating servers fail at a low entry**: the support labelling of
+`TowerProfile.exists_frozen_of_entry` meets every hypothesis of `TowerProfile.SeparatingServersTwo`
+with the cap `4`, and no server separates there. -/
+theorem not_separatingServersTwo_of_lowEntry (hI : LowEntryTwo I) : ¬ SeparatingServersTwo I := by
+  obtain ⟨i, ⟨d₁, hd₁, hb₁, hb₁2⟩, z₀, hz₀, hbz⟩ := hI
+  obtain ⟨e, he, heone, -, hns⟩ := exists_frozen_of_entry hd₁ hb₁ hb₁2
+  intro hs
+  refine hns (hs e he 4 ((isSelfVisible_ofNat 4).mpr le_rfl) (WithBot.bot_lt_coe _) ⟨z₀, hz₀, ?_⟩)
+  rw [heone, supportMap_of_ne_bot hbz]
+  exact le_top
 
 end TowerProfile
 
