@@ -85,8 +85,9 @@ set_option warningAsError false in
 /-- **SCAFFOLD (`sorry`), (S2): a donor coface with the raise and dominating tops.**  At an
 acquired context, every coface `d` of the root face has a coface `tb` of the coatom face `p` with
 face `d` along `extendByLast g` such that, at every grade from the grade of the cap, the donor
-raise in the class form holds and the tops of the donor dominate the common face
-(`H3.DonorTopsDominate`, assumed). -/
+raise in the class form holds and, when the cap lies below the top grade, the tops of the donor
+dominate the common face (`H3.DonorTopsDominate`, assumed; at a cap of the top grade they dominate
+for every coface, `H3.donorTopsDominate_of_lt`). -/
 theorem exists_raiseCoface (hα : Order.IsSuccLimit α) {t' : StageType.{u} α (k + 1)}
     {p : StageType.{u} α k} (ht' : t'.IsLegal) (hp : restrictFace Fin.castSuccEmb t' = some p)
     {g : Fin n ↪ Fin k} {t : StageType.{u} α n}
@@ -100,8 +101,9 @@ theorem exists_raiseCoface (hα : Order.IsSuccLimit α) {t' : StageType.{u} α (
         CapRequests.DonorRaiseBotAtIn
           (requests ht' hp htb htbd c r (by have := hctx.2.2.1; omega))
           (classCells ht' hp htb htbd) (Fin.last (k + 1)) (Fin.castSucc (Fin.last k)) k' ∧
-        DonorTopsDominate (requests ht' hp htb htbd c r (by have := hctx.2.2.1; omega))
-          (classCells ht' hp htb htbd) (Fin.last (k + 1)) (Fin.castSucc (Fin.last k)) k' := by
+        (t'.toCellScheme.grade c ≤ k →
+          DonorTopsDominate (requests ht' hp htb htbd c r (by have := hctx.2.2.1; omega))
+            (classCells ht' hp htb htbd) (Fin.last (k + 1)) (Fin.castSucc (Fin.last k)) k') := by
   sorry
 
 set_option warningAsError false in
