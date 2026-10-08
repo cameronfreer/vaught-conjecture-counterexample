@@ -42,9 +42,9 @@ the sense of donor raising (`H2.LawfulAt`).
 **The coded cutoff** (`ProfileTower.exists_codedCutoff`, compiled in this repository).  For an
 entry `P` of the LOW catalogue, a cap `h` self-visible and short at the grade, and an amalgam
 profile `W` agreeing with the amalgam part of `P` capped at `h` and satisfying the frontier
-condition when its donor maximum is below `min (P β) h`, the cutoff `min (P β) h` lies in the code grid and makes
-the orbit code of `W` with that cutoff LOW.  A cap at most a value of the code grid is in the code
-grid when it is self-visible and short (`Label.mem_codeGrid_of_le`).
+condition when its donor maximum is below `min (P β) h`, the cutoff `min (P β) h` lies in the code
+grid and makes the orbit code of `W` with that cutoff LOW.  A cap at most a value of the code grid
+is in the code grid when it is self-visible and short (`Label.mem_codeGrid_of_le`).
 
 So the LOW step from a coatom asks, beyond these pieces, the lift through the common face into the
 other coatom with the frontier condition: from the donor coatom the private frontier at most the
