@@ -143,6 +143,54 @@ theorem Lvl.sameLayerReaders_top (N : Lvl I m) (hN : SameLayerReaders I N.S N.em
       Scheme.appendFullCellsScheme_grade_natAdd _ _ _ i
     omega
 
+/-- **Appending one cell of full scope above the grade `m` keeps the same-layer readers.** -/
+theorem sameLayerReaders_appendFullCell {S : Scheme.{u} (m + 2)}
+    {e : Fin I.amalgam.card → Fin S.card} {k : ℕ} {r : Fin (S.card + 1) → Label.{u}}
+    {h : ∀ d, ¬ ((univ : Finset (Fin (m + 2))), k) ≤ S.toCellScheme.gradedIndex d} (hk : m < k)
+    (hS : SameLayerReaders I S e) :
+    SameLayerReaders I (S.appendFullCell k r h) fun a ↦ (e a).castSucc := fun c ↦ by
+  induction c using Fin.lastCases with
+  | last =>
+    intro _ _ hcm
+    have : (S.appendFullCell k r h).toCellScheme.grade (Fin.last _) = k :=
+      Scheme.appendFullCellScheme_grade_last S k
+    omega
+  | cast c =>
+    have hsc : (S.appendFullCell k r h).toCellScheme.scope c.castSucc = S.toCellScheme.scope c :=
+      Scheme.appendFullCellScheme_scope_castSucc S k c
+    have hgr : (S.appendFullCell k r h).toCellScheme.grade c.castSucc = S.toCellScheme.grade c :=
+      Scheme.appendFullCellScheme_grade_castSucc S k c
+    rw [hsc, hgr]
+    intro hc h3 hcm hsep a ha hlive hlast
+    obtain ⟨u, hu, hlb⟩ := hS c hc h3 hcm hsep a ha hlive hlast
+    refine ⟨u.castSucc, ?_, ?_⟩
+    · rw [← hu]
+      exact Scheme.appendFullCellScheme_gradedIndex_castSucc S k u
+    · rw [Scheme.rowAt_appendFullCell_castSucc, Scheme.rowAt_appendFullCell_castSucc]
+      exact hlb
+
+variable (I) in
+/-- **The completion of the profile tower** of a seed on `j + 5` points: the completion below the
+full grade over the good level at the grade `j + 3` (`ProfileTower.Lvl.Good.completion`); its
+scheme is the top layer of that level. -/
+noncomputable def towerCompletion {j : ℕ} (I : Seed.{u} α (j + 3)) :
+    CompletionBelowFullGrade I :=
+  ((lvl_good (I := I) (by omega) j (by omega)).next (by omega)).completion
+    (lvl_good (I := I) (by omega) j (by omega)).hasBotExtension_next (by omega)
+
+/-- The scheme of the completion of the profile tower is the top layer of its last level. -/
+theorem towerCompletion_scheme {j : ℕ} (I : Seed.{u} α (j + 3)) :
+    (towerCompletion I).scheme = (lvl I (j + 1)).top := rfl
+
+/-- **Same-layer readers in the completion of the profile tower**, with the apex. -/
+theorem sameLayerReaders_towerCompletion {j : ℕ} (I : Seed.{u} α (j + 3))
+    (hα : Order.IsSuccPrelimit α) :
+    SameLayerReaders I ((towerCompletion I).completion hα).toScheme
+      fun a ↦ ((towerCompletion I).embed a).castSucc :=
+  sameLayerReaders_appendFullCell (h := (towerCompletion I).isLegalBelowFullGrade.not_le)
+    (by omega)
+    ((lvl I (j + 1)).sameLayerReaders_top (sameLayerReaders_lvl (by omega) (j + 1) (by omega)))
+
 end ProfileTower
 
 end VaughtConjecture
