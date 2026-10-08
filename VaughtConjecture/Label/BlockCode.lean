@@ -3,6 +3,7 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
+import Mathlib.Data.Finset.Max
 import VaughtConjecture.Label.Transform
 
 /-!
@@ -263,5 +264,154 @@ theorem isWitness_code (hbotinv : ∀ x, B.code x = ⊥ → ∀ k i, i ≤ k →
       exact hbotinv x hx k i hi
 
 end BlockCode
+
+/-- Visibility replacement keeps the block. -/
+theorem blockOf_visibilityReplace (k i : ℕ) (a : Ordinal.{u}) :
+    blockOf (Ordinal.visibilityReplace k i a) = blockOf a := by
+  rw [visibilityReplace_eq_blockOf]
+  exact blockOf_add_natCast (isSuccPrelimit_blockOf a) _
+
+namespace BlockCode
+
+variable (B : BlockCode.{u})
+
+/-- The labels the code sends to `⊥` stay there under every visibility replacement. -/
+theorem code_visibilityReplace_eq_bot {x : Label.{u}} (hx : B.code x = ⊥) (k i : ℕ) :
+    B.code (visibilityReplace k i x) = ⊥ := by
+  induction x using Label.recBotCoeTop with
+  | bot => rfl
+  | top => exact absurd hx (by simp)
+  | coe a =>
+    rw [code_coe] at hx
+    rw [visibilityReplace_coe, code_coe]
+    rcases h : B.Λ (blockOf a) with _ | l
+    · exact B.codeOrd_of_none (by rw [blockOf_visibilityReplace]; exact h)
+    · rw [B.codeOrd_of_some h] at hx
+      exact absurd hx (by simp)
+
+/-- **The code is a witness bounded by the grade `R`.** -/
+theorem isWitness_code' : IsWitness (stepSuppressor B.R) B.code :=
+  B.isWitness_code fun _ hx k i _ ↦ B.code_visibilityReplace_eq_bot hx k i
+
+/-! ### A block code from finitely many listed blocks -/
+
+end BlockCode
+
+section OfFinset
+
+variable (N R : ℕ) (hR : R < N) (S : Finset Ordinal.{u}) (strip : Ordinal.{u} → Ordinal.{u})
+  (htop : Ordinal.{u})
+
+/-- The target of a block: the strip of the largest listed block at or below it. -/
+noncomputable def targetOf (μ : Ordinal.{u}) : Option Ordinal.{u} :=
+  if h : (S.filter fun μ' ↦ μ' ≤ μ).Nonempty then some (strip ((S.filter fun μ' ↦ μ' ≤ μ).max' h))
+  else none
+
+theorem targetOf_eq_none_iff (μ : Ordinal.{u}) :
+    targetOf S strip μ = none ↔ ¬ (S.filter fun μ' ↦ μ' ≤ μ).Nonempty := by
+  unfold targetOf
+  split_ifs with h <;> simp [h]
+
+theorem targetOf_eq_some {μ : Ordinal.{u}} (h : (S.filter fun μ' ↦ μ' ≤ μ).Nonempty) :
+    targetOf S strip μ = some (strip ((S.filter fun μ' ↦ μ' ≤ μ).max' h)) := by
+  unfold targetOf
+  rw [dite_eq_left h]
+
+theorem max'_filter_spec {μ : Ordinal.{u}} (h : (S.filter fun μ' ↦ μ' ≤ μ).Nonempty) :
+    (S.filter fun μ' ↦ μ' ≤ μ).max' h ∈ S ∧ (S.filter fun μ' ↦ μ' ≤ μ).max' h ≤ μ ∧
+      ∀ μ' ∈ S, μ' ≤ μ → μ' ≤ (S.filter fun μ' ↦ μ' ≤ μ).max' h := by
+  have hm := Finset.max'_mem _ h
+  rw [Finset.mem_filter] at hm
+  refine ⟨hm.1, hm.2, fun μ' hμ' hle ↦ Finset.le_max' _ _ ?_⟩
+  rw [Finset.mem_filter]
+  exact ⟨hμ', hle⟩
+
+/-- **A block code from finitely many listed blocks** with a strip function, zero or a limit,
+strictly increasing on them, with `strip μ + N ≤ htop`, and `R` at most the finite part of
+`htop`. -/
+noncomputable def BlockCode.ofFinset (hlim : ∀ μ ∈ S, Order.IsSuccPrelimit (strip μ))
+    (hle : ∀ μ ∈ S, strip μ + N ≤ htop)
+    (hstrict : ∀ μ ∈ S, ∀ μ' ∈ S, μ < μ' → strip μ < strip μ')
+    (hRtop : R ≤ finNat htop) : BlockCode.{u} where
+  N := N
+  R := R
+  R_lt_N := hR
+  Λ := targetOf S strip
+  listed := fun μ ↦ μ ∈ S
+  dec := fun _ ↦ Classical.propDecidable _
+  htop := htop
+  R_le_htop := hRtop
+  Λ_limit := by
+    intro μ l hl
+    by_cases h : (S.filter fun μ' ↦ μ' ≤ μ).Nonempty
+    · rw [targetOf_eq_some S strip h, Option.some.injEq] at hl
+      rw [← hl]
+      exact hlim _ (max'_filter_spec S h).1
+    · rw [(targetOf_eq_none_iff S strip μ).mpr h] at hl
+      exact absurd hl (Option.some_ne_none l).symm
+  Λ_le := by
+    intro μ l hl
+    by_cases h : (S.filter fun μ' ↦ μ' ≤ μ).Nonempty
+    · rw [targetOf_eq_some S strip h, Option.some.injEq] at hl
+      rw [← hl]
+      exact hle _ (max'_filter_spec S h).1
+    · rw [(targetOf_eq_none_iff S strip μ).mpr h] at hl
+      exact absurd hl (Option.some_ne_none l).symm
+  low_down := by
+    intro μ μ' hμμ' hnone
+    rw [targetOf_eq_none_iff] at hnone ⊢
+    intro ⟨ν, hν⟩
+    rw [Finset.mem_filter] at hν
+    exact hnone ⟨ν, Finset.mem_filter.mpr ⟨hν.1, hν.2.trans hμμ'⟩⟩
+  Λ_mono := by
+    intro μ μ' l l' hμμ' hl hl'
+    by_cases h : (S.filter fun ν ↦ ν ≤ μ).Nonempty
+    swap
+    · rw [(targetOf_eq_none_iff S strip μ).mpr h] at hl
+      exact absurd hl (Option.some_ne_none l).symm
+    by_cases h' : (S.filter fun ν ↦ ν ≤ μ').Nonempty
+    swap
+    · rw [(targetOf_eq_none_iff S strip μ').mpr h'] at hl'
+      exact absurd hl' (Option.some_ne_none l').symm
+    rw [targetOf_eq_some S strip h, Option.some.injEq] at hl
+    rw [targetOf_eq_some S strip h', Option.some.injEq] at hl'
+    rw [← hl, ← hl']
+    obtain ⟨hm1, hm2, -⟩ := max'_filter_spec S h
+    obtain ⟨hm1', -, hm3'⟩ := max'_filter_spec S h'
+    have hle' := hm3' _ hm1 (hm2.trans hμμ')
+    rcases hle'.lt_or_eq with hlt | heq
+    · exact (hstrict _ hm1 _ hm1' hlt).le
+    · rw [heq]
+  Λ_strict := by
+    intro μ μ' l l' hμμ' hμ'S hl hl'
+    by_cases h : (S.filter fun ν ↦ ν ≤ μ).Nonempty
+    swap
+    · rw [(targetOf_eq_none_iff S strip μ).mpr h] at hl
+      exact absurd hl (Option.some_ne_none l).symm
+    have h' : (S.filter fun ν ↦ ν ≤ μ').Nonempty := ⟨μ', Finset.mem_filter.mpr ⟨hμ'S, le_rfl⟩⟩
+    rw [targetOf_eq_some S strip h, Option.some.injEq] at hl
+    rw [targetOf_eq_some S strip h', Option.some.injEq] at hl'
+    rw [← hl, ← hl']
+    obtain ⟨hm1, hm2, -⟩ := max'_filter_spec S h
+    obtain ⟨-, -, hm3'⟩ := max'_filter_spec S h'
+    have hmax' : (S.filter fun ν ↦ ν ≤ μ').max' h' = μ' :=
+      le_antisymm (max'_filter_spec S h').2.1 (hm3' _ hμ'S le_rfl)
+    rw [hmax']
+    exact hstrict _ hm1 _ hμ'S (hm2.trans_lt hμμ')
+
+/-- A listed block's target is its own strip. -/
+theorem BlockCode.ofFinset_Λ (hlim : ∀ μ ∈ S, Order.IsSuccPrelimit (strip μ))
+    (hle : ∀ μ ∈ S, strip μ + N ≤ htop)
+    (hstrict : ∀ μ ∈ S, ∀ μ' ∈ S, μ < μ' → strip μ < strip μ')
+    (hRtop : R ≤ finNat htop) {μ : Ordinal.{u}} (hμ : μ ∈ S) :
+    (BlockCode.ofFinset N R hR S strip htop hlim hle hstrict hRtop).Λ μ = some (strip μ) := by
+  classical
+  have h : (S.filter fun ν ↦ ν ≤ μ).Nonempty := ⟨μ, Finset.mem_filter.mpr ⟨hμ, le_rfl⟩⟩
+  change targetOf S strip μ = some (strip μ)
+  rw [targetOf_eq_some S strip h]
+  congr 2
+  exact le_antisymm (max'_filter_spec S h).2.1 ((max'_filter_spec S h).2.2 _ hμ le_rfl)
+
+end OfFinset
 
 end VaughtConjecture.Label
