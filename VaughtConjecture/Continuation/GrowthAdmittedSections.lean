@@ -30,9 +30,9 @@ threshold of requests `Q`, every such cell a controller admitted on the class
   not the new point.  So the carrier has at least two coatoms, the context and `univ.erase y`.
 
 Together: on the second coatom, which carries the donor and the cells of the context not involving
-`y`, every lawful section must have a completion over the context, in every capped ball, whose
-reads (through the cap, a cell of full scope of the context and so outside the coatom) admit the
-donor values it already carries.  The relative lift on the donor
+`y`, every lawful section must have a completion over the context, in every capped ball, under whose
+reads (through the cap, a cell of full scope of the context and so outside the coatom) the donor
+values it already carries are correct.  The relative lift on the donor
 (`StageType.GrowthRequests.HasRelativeLift`) is the lift from the context coatom; this is the
 condition at the second coatom, and it is a property the restriction of the carrier to that coatom
 must have.

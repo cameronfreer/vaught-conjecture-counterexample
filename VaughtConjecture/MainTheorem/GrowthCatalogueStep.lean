@@ -188,7 +188,7 @@ theorem Lvl.Good.cappedLift_donor_of_open (hL : L.Good) (hgm : g + 1 ≤ m)
       (Y := ((univ : Finset (Fin (m + 2))), g + 1)) ⟨erase_subset _ _, le_rfl⟩ :=
   hL.cappedLift_catS_of_steps hgm (by simp [Pts]) (growthAdmits_bot hleft hdon Q) hbot hstep
 
-/-! ### Good levels above the threshold admit every cut-lawful profile -/
+/-! ### Above the threshold every cut-lawful profile of a good level is admitted -/
 
 /-- **A good level with admitted controllers admits every cut-lawful profile.**  If a good level
 at a grade `g` at least the threshold has its cells of full scope at the threshold admitted on the
