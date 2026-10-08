@@ -36,6 +36,14 @@ on this branch).
   separating labelling extends with `⊤` at the apex and inverts the tie), and a top-reading carrier
   labels every such cell below `⊤`.
 
+* **The reading layer fails here** (`TiedRootCapCounterexample.not_exists_fill_bot`, compiled):
+  in every carrier, no labelling lawful below `(univ, 3)` equal to the separating labelling on the
+  context reads the apex of the donor at least as the cap.  This is the failure of the fill at `⊥`
+  from the context coatom, the condition under which a reading layer at the grade of the cap
+  (every cell of graded index `(univ, 3)` reading the apex at least as the cap, as in the reading
+  layer of the (R3) lane at five points) is legal; such a layer would contradict
+  `TiedRootCapCounterexample.exists_cell_reads_lt`.
+
 **Status.**  Not compiled: a carrier with a lawful labelling, literal on the context and on the
 donor, that is `⊤` at no cell of graded index `(univ, 3)` reading the apex below the cap (while
 availability from the cap forces some such cell labelled `⊤`, which must then read it at least as
@@ -186,6 +194,60 @@ theorem exists_isDeterminedWithin_of_isTopReadingCarrier {D : StageType.{u} α 4
     isDeterminedWithin_receivingFamily_of_isTopReadingCarrier (restrictFace_context hα)
       (restrictFace_donor hα) (isMarkedCapContextAt_context hα).1 (context_label_cap hα)
       (by rw [context_grade_cap]; omega) hD hδD⟩
+
+/-- **The fill at `⊥` from the coatom of the context fails along the separating labelling**: in
+every carrier, no labelling lawful below `(univ, 3)` equal to the separating labelling on the
+context reads the apex of the donor at least as the cap.  It would be `⊤` at the apex, whose row
+ties the two root cells, which the separating labelling inverts.  This is the failure of the fill
+condition `ReadingFillBot` of the reading layer of the (R3) lane (its fill at `⊥` from the context
+coatom, with the reading of the apex against the cap), so no reading layer, a layer whose every
+cell of graded index `(univ, 3)` reads the apex at least as the cap, is part of a carrier here
+(`TiedRootCapCounterexample.exists_cell_reads_lt`). -/
+theorem not_exists_fill_bot {D : StageType.{u} α 4}
+    (h₁ : restrictFace Fin.castSuccEmb D = some (context hα))
+    (h₂ : restrictFace (extendByLast rootEmb) D = some (donor hα)) :
+    ¬ ∃ g : Fin D.card → Label.{u},
+      D.rows.IsLawfulBelow ((univ : Finset (Fin 4)), 3) (fun d ↦ g d) ∧
+      (∀ z, g (faceCell h₁ z) = separating hα z) ∧
+      g (faceCell h₁ (capCell hα)) ≤ g (faceCell h₂ (donorApex hα)) := by
+  rintro ⟨g, hg, hgz, hread⟩
+  obtain ⟨-, hloc, -⟩ := CellScheme.Rows.isLawfulBelow_iff_forall.mp hg
+  have hAtop : g (faceCell h₂ (donorApex hα)) = ⊤ :=
+    top_le_iff.mp (by rw [← separating_capCell hα, ← hgz]; exact hread)
+  have hAb : faceCell h₂ (donorApex hα) ∈ D.toCellScheme.below ((univ : Finset (Fin 4)), 3) := by
+    rw [CellScheme.mem_below]
+    refine Prod.mk_le_mk.mpr ⟨subset_univ _, ?_⟩
+    rw [grade_faceCell]
+    exact ((donor hα).grade_le _).trans (by omega)
+  have hy (i : Fin 2) : faceCell h₂ (faceCell (restrictFace_donor hα) i) ∈
+      D.toCellScheme.below (D.toCellScheme.gradedIndex (faceCell h₂ (donorApex hα))) := by
+    have hz := mem_below_donor_last hα (faceCell (restrictFace_donor hα) i)
+    rw [CellScheme.mem_below] at hz ⊢
+    obtain ⟨hs, hgr⟩ := Prod.mk_le_mk.mp hz
+    refine Prod.mk_le_mk.mpr ⟨?_, ?_⟩
+    · change D.toCellScheme.scope _ ⊆ D.toCellScheme.scope _
+      rw [scope_faceCell, scope_faceCell]
+      exact map_subset_map.mpr hs
+    · change D.toCellScheme.grade _ ≤ D.toCellScheme.grade _
+      rw [grade_faceCell, grade_faceCell]
+      exact hgr
+  have hrow (i : Fin 2) : D.rows.row (faceCell h₂ (donorApex hα)) ⟨_, hy i⟩ =
+      blockEncode (apexCodes (t := (donorLower hα).truncate hα.isSuccPrelimit)
+        (donorLower hα).isLegalBelowFullGrade) 2 three := by
+    rw [← Scheme.rowAt_of_mem (hy i), rowAt_faceCell h₂, Scheme.rowAt_of_mem
+      (mem_below_donor_last hα _)]
+    exact donor_row_root hα _ _
+  have hgy (i : Fin 2) : g (faceCell h₂ (faceCell (restrictFace_donor hα) i)) = rootRow i := by
+    rw [← faceCell_faceCell h₁ h₂ (restrictFace_context hα) (restrictFace_donor hα) i, hgz]
+    exact separating_root hα i
+  have hloc' := (hloc _ hAb).le_of_le (d := ⟨_, hy ⟨1, by decide⟩⟩) (d' := ⟨_, hy ⟨0, by decide⟩⟩)
+    (le_of_eq ((hrow _).trans (hrow _).symm)) (by
+      rw [grade_faceCell, grade_faceCell]
+      exact le_of_eq ((grade_faceCell (restrictFace_donor hα) (⟨0, by decide⟩ : Fin 2)).trans
+        (grade_faceCell (restrictFace_donor hα) (⟨1, by decide⟩ : Fin 2)).symm))
+  change min (g _) (g _) ≤ min (g _) (g _) at hloc'
+  rw [hAtop, min_top_right, min_top_right, hgy, hgy] at hloc'
+  exact absurd (natCast_label_le.mp hloc') (by decide)
 
 end TiedRootCapCounterexample
 
