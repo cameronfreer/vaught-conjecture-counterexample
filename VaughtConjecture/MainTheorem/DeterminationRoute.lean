@@ -7,7 +7,7 @@ import VaughtConjecture.Continuation.CutoffStableRecovery
 import VaughtConjecture.MainTheorem.CoatomDetermination
 import VaughtConjecture.MainTheorem.CutoffCoatomRelabel
 import VaughtConjecture.MainTheorem.ReceivingRoute
-import VaughtConjecture.Stage.MarkedCap
+import VaughtConjecture.Stage.MarkedCapRelabel
 
 /-!
 # The receiving route from three finite statements about stage types
@@ -48,7 +48,10 @@ coatom is compiled (the graded cap calibration is invariant under relabelling,
 `StageType.GradedCapCalibration.reindex`).
 For (R2) and (R3) the reduction asks that the roots of the contexts are never onto and that the
 predicate is invariant under relabelling the points of the context; for the marked-cap context the
-first is compiled (`StageType.IsMarkedCapContext.not_surjective`), and the second is not.
+two are compiled (`StageType.IsMarkedCapContext.not_surjective`,
+`StageType.IsMarkedCapContext.reindex`), so its coatom form needs only the hollow acquisition and
+the hollow coatom cutoff determination
+(`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_coatomDeterminations_markedCap`).
 
 **Not claimed.**  None of the finite statements is proved for the intended inputs, so the spectrum
 is not proved here.
@@ -144,6 +147,26 @@ theorem densitySentence_hasThinAlephOneSpectrum_of_coatomDeterminations
   densitySentence_hasThinAlephOneSpectrum_of_determinations
     (fun ξ hξ ↦ (h4 ξ hξ).hasCutoffStableRecoverySchemes_gradedCap)
     hacq₂ (h2.cutoffDetermination hns₂ hinv₂) hacq₃ (h3.hollowCutoffDetermination hns₃ hinv₃)
+
+/-- **The thin `ℵ₁` spectrum from the coatom forms, with the marked-cap context**:
+`densitySentence_hasThinAlephOneSpectrum_of_coatomDeterminations` with `P₃` the marked-cap context
+(`StageType.IsMarkedCapContext`), whose roots are never onto
+(`StageType.IsMarkedCapContext.not_surjective`) and which is invariant under relabelling
+(`StageType.IsMarkedCapContext.reindex`).  Its hollow acquisition (`hacq₃`) is a hypothesis
+here. -/
+theorem densitySentence_hasThinAlephOneSpectrum_of_coatomDeterminations_markedCap
+    {P₂ : ∀ {α : Ordinal.{0}} {n k : ℕ}, ℕ → StageType.{0} α k → (Fin n ↪ Fin k) → Prop}
+    (h4 : ∀ ξ < ω₁, HasCutoffFirstCoatomCompletions.{0} ξ (GradedCapCalibration.{0} ξ))
+    (hacq₂ : ResidualAcquisition.{0, 0} P₂) (h2 : CoatomCutoffDetermination.{0} P₂)
+    (hns₂ : ∀ ⦃α : Ordinal.{0}⦄ ⦃K n k : ℕ⦄ (t' : StageType.{0} α k) (h : Fin n ↪ Fin k),
+      P₂ K t' h → ¬ Function.Surjective h)
+    (hinv₂ : ∀ ⦃α : Ordinal.{0}⦄ ⦃K n k : ℕ⦄ (t' : StageType.{0} α k) (h : Fin n ↪ Fin k)
+      (σ : Equiv.Perm (Fin k)), P₂ K t' h → P₂ K (t'.reindex σ) (h.trans σ.symm.toEmbedding))
+    (hacq₃ : HollowAcquisition.{0, 0} IsCoverHollowAtBlock fun t' h ↦ t'.IsMarkedCapContext h)
+    (h3 : HollowCoatomCutoffDetermination.{0} fun t' h ↦ t'.IsMarkedCapContext h) :
+    HasThinAlephOneSpectrum densitySentence.{0} :=
+  densitySentence_hasThinAlephOneSpectrum_of_coatomDeterminations h4 hacq₂ h2 hns₂ hinv₂ hacq₃ h3
+    (fun _ _ _ _ _ ht ↦ ht.not_surjective) fun _ _ _ _ _ σ ht ↦ ht.reindex σ
 
 end MainTheorem
 
