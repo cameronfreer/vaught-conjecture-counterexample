@@ -21,6 +21,16 @@ Roadmap, Layer 3 ((R3) of the table of 3.4).
   `TopReadingApexExample.restrictFace_right_carrierOne`, compiled): the restricted reading layer at
   `seedOne` with the glued labelling, as a completion below the full grade, and the apex added: a
   legal coface of `oneType` whose face along `extendByLast Fin.castSuccEmb` is `rightType`.
+* **The cells of a proper face of a completion** (`CompletionBelowFullGrade.faceCell_completion`,
+  `CompletionBelowFullGrade.rowAt_completion`,
+  `CompletionBelowFullGrade.exists_castSucc_of_gradedIndex_completion`, compiled): the old cells,
+  with their rows.
+* **The carrier reads the new top** (`TopReadingApexExample.isTopReadingCarrier_carrierOne`,
+  compiled): for every donor `d` of `rightType` along the point `3` (the root empty), the carrier
+  is a top-reading carrier at the apex of `oneType` as cap and marker: in the carrier the marker is
+  the old cell of the apex of `oneType` and the new top of `d` the old cell of the cell `{3}` of
+  `rightType`, and every cell of graded index `(univ, 4)` reads the second at least as the first
+  (`TowerProfile.rowAt_readingTop_le`).
 
 ## Placement
 
@@ -48,6 +58,20 @@ theorem exists_faceCell_eq {t' : StageType.{u} α k} {h : Fin n ↪ Fin k}
     exact hi
   exact ⟨Fin.cast (congrArg Scheme.card (comap_toScheme_of_restrictFace ht)) z, by
     simp [faceCell, Scheme.faceCell]⟩
+
+/-- A cell of scope the new point is a cell of the face along `extendByLast Fin.castSuccEmb`, of
+scope the last point there. -/
+theorem exists_faceCell_right_of_scope {D : StageType.{u} α (k + 2)}
+    {tb : StageType.{u} α (k + 1)} (hR : restrictFace (extendByLast Fin.castSuccEmb) D = some tb)
+    {x : Fin D.card} (hx : D.toCellScheme.scope x = {Fin.last (k + 1)}) :
+    ∃ z, faceCell hR z = x ∧ tb.toCellScheme.scope z = {Fin.last k} := by
+  obtain ⟨z, hz⟩ := D.toScheme.exists_faceCell_eq (comap_toScheme_of_restrictFace hR) (d := x)
+    (Scheme.mem_visibleCells.mpr fun y hy ↦ by
+      rw [hx, coe_singleton, Set.mem_singleton_iff] at hy
+      exact ⟨Fin.last k, hy ▸ extendByLast_last _⟩)
+  refine ⟨z, hz, map_injective (extendByLast Fin.castSuccEmb) ?_⟩
+  rw [← scope_faceCell hR z, map_singleton, extendByLast_last]
+  exact (congrArg D.toCellScheme.scope hz).trans hx
 
 /-- **A permitted cutoff above the labels other than `⊤`**: at a limit stage, the labels of a
 stage type other than `⊤` lie below some permitted cutoff. -/
@@ -130,6 +154,63 @@ structure HollowCoatomCutoffDetermination
 
 end Realization
 
+namespace CompletionBelowFullGrade
+
+variable {α : Ordinal.{u}} {m : ℕ} {I : Seed.{u} α m}
+
+/-- **The cells of a proper face of the completion are the old cells**: along an embedding whose
+image is not the whole ground set, the cell of the completion at a cell of a face is the old cell
+of the amalgam at that cell. -/
+theorem faceCell_completion (F : CompletionBelowFullGrade I) (hα : Order.IsSuccPrelimit α)
+    {k : ℕ} {f : Fin k ↪ Fin (m + 2)} (hf : univ.map f ≠ univ) {s : StageType.{u} α k}
+    (h : StageType.restrictFace f (F.completion hα) = some s)
+    (h' : StageType.restrictFace f I.amalgam = some s) (i : Fin s.card) :
+    StageType.faceCell h i = Fin.castSucc (F.embed (StageType.faceCell h' i)) := by
+  have hT : StageType.restrictFace f (F.truncate hα) = some s :=
+    (StageType.restrictFace_addApex _ _ _ hf).symm.trans h
+  have e₂ := StageType.comap_toScheme_of_restrictFace hT
+  have e₃ := StageType.comap_toScheme_of_restrictFace h'
+  have h₁ := Scheme.cellMap_eq_of_strictMono_of_mem_range (S := (F.truncate hα).toScheme)
+    (T := (F.completion hα).toScheme) f (φ := Fin.castSucc) Fin.strictMono_castSucc
+    (Scheme.appendFullCellScheme_scope_castSucc _ _)
+    (StageType.mem_range_castSucc_of_addApex _ _ f hf)
+    (i := Fin.cast (congrArg Scheme.card e₂).symm i)
+    (k := Fin.cast (congrArg Scheme.card (StageType.comap_toScheme_of_restrictFace h)).symm i) rfl
+  have h₂ := Scheme.cellMap_eq_of_strictMono_of_mem_range (S := I.amalgam.toScheme)
+    (T := (F.truncate hα).toScheme) f (φ := F.embed) F.embed.strictMono F.scope_embed
+    (fun z hz ↦ F.mem_range_embed z fun he ↦ hf (eq_univ_of_forall fun x ↦ by
+      obtain ⟨y, rfl⟩ : x ∈ Set.range f := hz (mem_coe.mpr (he.symm ▸ mem_univ x))
+      exact mem_map_of_mem _ (mem_univ y)))
+    (i := Fin.cast (congrArg Scheme.card e₃).symm i)
+    (k := Fin.cast (congrArg Scheme.card e₂).symm i) rfl
+  exact h₁.trans (congrArg Fin.castSucc h₂)
+
+/-- The old cells of the completion read as in the completed scheme. -/
+theorem rowAt_completion (F : CompletionBelowFullGrade I) (hα : Order.IsSuccPrelimit α)
+    (a b : Fin F.scheme.card) :
+    (F.completion hα).rowAt (Fin.castSucc a) (Fin.castSucc b) = F.scheme.rowAt a b :=
+  Scheme.rowAt_of_comap (Scheme.isLowerEmbedding_castSucc _ _ F.isLegalBelowFullGrade.not_le)
+    Scheme.comap_rows_castSucc a b
+
+/-- A cell of the completion of full scope and grade below `m + 2` is an old cell. -/
+theorem exists_castSucc_of_gradedIndex_completion (F : CompletionBelowFullGrade I)
+    (hα : Order.IsSuccPrelimit α) {k : ℕ} (hk : k < m + 2) {u : Fin (F.completion hα).card}
+    (hu : (F.completion hα).toCellScheme.gradedIndex u = (univ, k)) :
+    ∃ w, Fin.castSucc w = u ∧ F.scheme.toCellScheme.gradedIndex w = (univ, k) := by
+  change Fin (F.scheme.card + 1) at u
+  induction u using Fin.lastCases with
+  | last =>
+    have h := congrArg Prod.snd hu
+    change (Scheme.appendFullCellScheme _ (m + 2)).grade (Fin.last _) = k at h
+    rw [Scheme.appendFullCellScheme_grade_last] at h
+    omega
+  | cast w =>
+    refine ⟨w, rfl, ?_⟩
+    change (Scheme.appendFullCellScheme _ (m + 2)).gradedIndex (Fin.castSucc w) = _ at hu
+    rwa [Scheme.appendFullCellScheme_gradedIndex_castSucc] at hu
+
+end CompletionBelowFullGrade
+
 /-! ### The completion at `seedOne` and its carrier -/
 
 namespace TopReadingApexExample
@@ -193,6 +274,86 @@ theorem carrierOne_mem_cofaces : carrierOne hα ∈ (oneType hα).cofaces :=
 theorem restrictFace_right_carrierOne :
     restrictFace (extendByLast Fin.castSuccEmb) (carrierOne hα) = some (rightType α) :=
   (completionOne hα).restrictFace_right_completion _
+
+/-! ### The carrier reads the new top at least as the marker -/
+
+/-- The only cell of `rightType` of scope `{3}` is the new top. -/
+theorem eq_topOne_of_scope {z : Fin (rightType α).card}
+    (hz : (rightType α).toCellScheme.scope z = {Fin.last 3}) : z = topOne := by
+  have key : ∀ y : Fin 19, TwoFaceLiftCounterexample.cellScope y = {Fin.last 3} → y = 3 := by decide
+  change Fin (CaseSplitCounterexample.S.{u}.card + 1) at z
+  induction z using Fin.lastCases with
+  | last =>
+    change (Scheme.appendFullCellScheme _ 4).scope (Fin.last _) = _ at hz
+    rw [Scheme.appendFullCellScheme_scope_last] at hz
+    exact absurd hz (by decide)
+  | cast y =>
+    change (Scheme.appendFullCellScheme _ 4).scope (Fin.castSucc y) = _ at hz
+    rw [Scheme.appendFullCellScheme_scope_castSucc] at hz
+    exact congrArg Fin.castSucc (key y hz)
+
+variable {g : Fin 0 ↪ Fin 3} {d : StageType.{u} α 1}
+
+/-- The face of the amalgam of `seedOne` along the point `4` is the donor. -/
+theorem restrictFace_amalgam_one (hd : restrictFace (extendByLast g) (rightType α) = some d) :
+    restrictFace (extendByLast (g.trans Fin.castSuccEmb)) (seedOne hα).amalgam = some d :=
+  (congrArg (restrictFace · (seedOne hα).amalgam) (extendByLast_trans g Fin.castSuccEmb)).symm.trans
+    ((restrictFace_trans _ _ _ (seedOne hα).restrictFace_right).symm.trans hd)
+
+/-- The face of the carrier along the point `4` is the donor. -/
+theorem restrictFace_carrierOne_one (hd : restrictFace (extendByLast g) (rightType α) = some d) :
+    restrictFace (extendByLast (g.trans Fin.castSuccEmb)) (carrierOne hα) = some d :=
+  (congrArg (restrictFace · (carrierOne hα)) (extendByLast_trans g Fin.castSuccEmb)).symm.trans
+    ((restrictFace_trans _ _ _ (restrictFace_right_carrierOne hα)).symm.trans hd)
+
+/-- The point `4` is a proper face. -/
+theorem univ_map_point_ne : univ.map (extendByLast (g.trans Fin.castSuccEmb)) ≠ univ := by
+  intro h
+  have := congrArg Finset.card h
+  simp at this
+
+/-- **The marker in the carrier** is the old cell of the apex of the left coatom type. -/
+theorem faceCell_marker_carrierOne :
+    faceCell (carrierOne_mem_cofaces hα).2 (Fin.last _) =
+      Fin.castSucc (Fin.castAdd _ (leftCell (seedOne hα) (Fin.last _))) :=
+  (completionOne hα).faceCell_completion hα.isSuccPrelimit Coatom.univ_map_left_ne _
+    (seedOne hα).restrictFace_left _
+
+/-- **The new top of the donor in the carrier** is the old cell of the new top of `rightType`. -/
+theorem faceCell_newTop_carrierOne (hd : restrictFace (extendByLast g) (rightType α) = some d)
+    {j : Fin d.card} (hj : Fin.last 0 ∈ d.toCellScheme.scope j) :
+    faceCell (restrictFace_carrierOne_one hα hd) j =
+      Fin.castSucc (Fin.castAdd _
+        (embed3 (seedOne hα) (faceCell (seedOne hα).restrictFace_right (topOne (α := α))))) := by
+  refine ((completionOne hα).faceCell_completion hα.isSuccPrelimit univ_map_point_ne _
+    (restrictFace_amalgam_one hα hd) j).trans (congrArg (fun x ↦ Fin.castSucc (Fin.castAdd _
+      (embed3 (seedOne hα) x))) ?_)
+  have hsj : d.toCellScheme.scope j = {Fin.last 0} :=
+    eq_singleton_iff_unique_mem.mpr ⟨hj, fun x _ ↦ Subsingleton.elim _ _⟩
+  have hs : (seedOne hα).amalgam.toCellScheme.scope (faceCell (restrictFace_amalgam_one hα hd) j)
+      = {Fin.last 4} := by
+    rw [scope_faceCell, hsj, map_singleton, extendByLast_last]
+  obtain ⟨z, hz, hzs⟩ := exists_faceCell_right_of_scope (seedOne hα).restrictFace_right hs
+  rw [← hz, eq_topOne_of_scope hzs]
+
+/-- **The carrier is a top-reading carrier** for every donor of `rightType` along the point `3`,
+the cap and the marker the apex of `oneType`: every cell of graded index `(univ, 4)` reads the new
+top at least as the marker (`TowerProfile.rowAt_readingTop_le`). -/
+theorem isTopReadingCarrier_carrierOne
+    (hd : restrictFace (extendByLast g) (rightType α) = some d) :
+    (oneType hα).IsTopReadingCarrier (g.trans Fin.castSuccEmb) d (Fin.last _) (Fin.last _)
+      (carrierOne hα) where
+  isLegal := (carrierOne_mem_cofaces hα).1
+  restrictFace_castSucc := (carrierOne_mem_cofaces hα).2
+  restrictFace_extendByLast := restrictFace_carrierOne_one hα hd
+  reads u hu _ j hj _ := by
+    obtain ⟨w, rfl, hw⟩ := (completionOne hα).exists_castSucc_of_gradedIndex_completion
+      hα.isSuccPrelimit (k := 4) (by omega) (hu.trans (by rw [grade_oneType_last]))
+    rw [faceCell_marker_carrierOne, faceCell_newTop_carrierOne hα hd hj]
+    exact ((completionOne hα).rowAt_completion hα.isSuccPrelimit w _).trans_le
+      ((rowAt_readingTop_le (grade_marker_one hα).le (fun _ hx ↦ grade_newTops_one hα hx) hw
+        (mem_image_of_mem _ (mem_singleton_self _))).trans_eq
+        ((completionOne hα).rowAt_completion hα.isSuccPrelimit w _).symm)
 
 end TopReadingApexExample
 
