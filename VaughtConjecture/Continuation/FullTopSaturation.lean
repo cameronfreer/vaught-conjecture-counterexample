@@ -21,6 +21,20 @@ clause of `Realization.IsModel`** (prospective):
   in `fullTopFamily S ρ`, a member of that family is realized over the occurrence.
 * `Realization.HollowFullTopSaturation`: every model at a limit stage, cover-hollow at a block
   stage, with unbounded growth, has full-top saturation.
+* `Realization.HollowFullTopSaturationReceiving`: the same for the models that also have the
+  finite-cut receiving property, the class of models of (R3) for receiving models.  It follows
+  from `HollowFullTopSaturation` (`Realization.HollowFullTopSaturation.receiving`).
+
+**Both are sub-cases of (R3)** (compiled): exact receiving of every one-point coface gives
+full-top saturation, since a one-point coface in the full-top family is itself received
+(`Realization.hasFullTopSaturation_of_hollowReceiving`); so `HollowReceiving IsCoverHollowAtBlock`
+gives `HollowFullTopSaturation` (`Realization.hollowFullTopSaturation_of_hollowReceiving`), and
+(R3) for receiving models gives `HollowFullTopSaturationReceiving`
+(`Realization.hollowFullTopSaturationReceiving_of_hollowReceiving`).  Neither is a consequence of
+the clauses of `IsModel` at the occurrence itself: setting every cell of full grade to `⊥` keeps a
+labelling lawful, so no scheme on the occurrence and one more point forces `⊤` at its cells of
+full grade; a proof goes through a larger tuple
+(`VaughtConjecture.Continuation.FullTopMarkerTie`).
 
 These three definitions keep the names and statements they have in
 `VaughtConjecture.Continuation.TiedRootCapAcquisition`, a module not in this tree.
@@ -38,6 +52,10 @@ Compiled in this repository (theorem named):
   `Realization.rootBottomAcquisition_of_botKeeping` with the realization of the completion of the
   seed of the extended type with itself, `⊤` at its apex, by full-top saturation in place of the
   bottom-pattern clause.
+* `Realization.hollowAcquisition_markedCapContextBelowTop'_receiving`: conditional on
+  `HollowFullTopSaturationReceiving`, the same acquisition in the receiving models; both forms are
+  instances of `Realization.hollowAcquisition_markedCapContextBelowTop'_of`, for any class of
+  cover-hollow realizations at a block stage with full-top saturation.
 
 ## Placement
 
@@ -77,6 +95,50 @@ saturation. -/
 def HollowFullTopSaturation : Prop :=
   ∀ ⦃α : Ordinal.{u}⦄ ⦃M : Type w⦄ (R : Realization.{u, w} α M), Order.IsSuccLimit α →
     R.IsModel → R.IsCoverHollowAtBlock → R.topGradeSup = ⊤ → R.HasFullTopSaturation
+
+/-- **Full-top saturation of the hollow receiving models** (a named statement, prospective): every
+model at a limit stage that is cover-hollow at a block stage, has the finite-cut receiving
+property, and has unbounded growth has full-top saturation.  It is `HollowFullTopSaturation` for
+the models with finite-cut receiving, the class of models of (R3) for receiving models
+(`Realization.IsReceivingCoverHollowAtBlock`). -/
+def HollowFullTopSaturationReceiving : Prop :=
+  ∀ ⦃α : Ordinal.{u}⦄ ⦃M : Type w⦄ (R : Realization.{u, w} α M), Order.IsSuccLimit α →
+    R.IsModel → R.IsCoverHollowAtBlock → R.HasFiniteCutReceiving → R.topGradeSup = ⊤ →
+      R.HasFullTopSaturation
+
+/-- Full-top saturation of the hollow models gives it for the hollow receiving models. -/
+theorem HollowFullTopSaturation.receiving (h : HollowFullTopSaturation.{u, w}) :
+    HollowFullTopSaturationReceiving.{u, w} :=
+  fun _ _ R hα hR hH _ htop ↦ h R hα hR hH htop
+
+/-- **Exact receiving gives full-top saturation**: if, in a model satisfying `H` at a limit stage
+with unbounded growth, every one-point coface of the type of a cover is received exactly
+(`HollowReceiving H`), then that model has full-top saturation: a member of the full-top family
+that is a one-point coface of the type of the occurrence is itself received. -/
+theorem hasFullTopSaturation_of_hollowReceiving
+    {H : ∀ {α : Ordinal.{u}} {M : Type w}, Realization.{u, w} α M → Prop}
+    (hrec : HollowReceiving.{u, w} H) {R : Realization.{u, w} α M}
+    (hα : Order.IsSuccLimit α) (hR : R.IsModel) (hH : H R) (htop : R.topGradeSup = ⊤) :
+    R.HasFullTopSaturation := by
+  intro x S ρ ⟨D, hD, hDS⟩
+  obtain ⟨y, hy⟩ := hrec.exists_covers hα hR hH htop x.type x.tuple
+    (covers_of_eval x.tuple x.eval_tuple) D hD
+  refine ⟨⟨_, hy.injective⟩, Function.Embedding.ext fun i ↦ ?_, D, hDS, hy.eval_eq⟩
+  simp
+
+/-- **Full-top saturation of the hollow models is a sub-case of (R3)**: exact hollow-growth
+receiving for cover-hollowness at a block stage gives `HollowFullTopSaturation`. -/
+theorem hollowFullTopSaturation_of_hollowReceiving
+    (hrec : HollowReceiving.{u, w} IsCoverHollowAtBlock) : HollowFullTopSaturation.{u, w} :=
+  fun _ _ _ hα hR hH htop ↦ hasFullTopSaturation_of_hollowReceiving hrec hα hR hH htop
+
+/-- **Full-top saturation of the hollow receiving models is a sub-case of (R3) for receiving
+models**: exact hollow-growth receiving for the models cover-hollow at a block stage with the
+finite-cut receiving property gives `HollowFullTopSaturationReceiving`. -/
+theorem hollowFullTopSaturationReceiving_of_hollowReceiving
+    (hrec : HollowReceiving.{u, w} fun R ↦ R.IsCoverHollowAtBlock ∧ R.HasFiniteCutReceiving) :
+    HollowFullTopSaturationReceiving.{u, w} :=
+  fun _ _ _ hα hR hH hrc htop ↦ hasFullTopSaturation_of_hollowReceiving hrec hα hR ⟨hH, hrc⟩ htop
 
 end Realization
 
@@ -160,19 +222,25 @@ end StageType
 
 namespace Realization
 
-/-- **Hollow acquisition of contexts with the cap at the top grade**, conditional on
-`HollowFullTopSaturation`, a clause on hollow models that is not a clause of `IsModel`.  The
-construction of `Realization.rootBottomAcquisition_of_botKeeping`: synchronize the root to an
-occurrence `Z` of top grade above `n + 1` and the root offsets, extend it by one point (high-arity
-dominance at `0`) to `Z₁` of type `q₀`, complete the seed of `q₀` with itself; full-top saturation
-realizes over `Z₁` a type on the scheme of the completion, `⊤` at its apex, whose face along the
-first points is `q₀`, literal on the root. -/
-theorem hollowAcquisition_markedCapContextBelowTop' (hsat : HollowFullTopSaturation.{u, w}) :
-    HollowAcquisition.{u, w} IsCoverHollowAtBlock
+/-- **Hollow acquisition of contexts with the cap at the top grade**, for every class `H` of
+cover-hollow realizations at a block stage, conditional on full-top saturation of the models in
+`H` at a limit stage with unbounded growth.  The construction of
+`Realization.rootBottomAcquisition_of_botKeeping`: synchronize the root to an occurrence `Z` of
+top grade above `n + 1` and the root offsets, extend it by one point (high-arity dominance at `0`)
+to `Z₁` of type `q₀`, complete the seed of `q₀` with itself; full-top saturation realizes over
+`Z₁` a type on the scheme of the completion, `⊤` at its apex, whose face along the first points is
+`q₀`, literal on the root. -/
+theorem hollowAcquisition_markedCapContextBelowTop'_of
+    {H : ∀ {α : Ordinal.{u}} {M : Type w}, Realization.{u, w} α M → Prop}
+    (hHH : ∀ ⦃α : Ordinal.{u}⦄ ⦃M : Type w⦄ ⦃R : Realization.{u, w} α M⦄, H R →
+      R.IsCoverHollowAtBlock)
+    (hsat : ∀ ⦃α : Ordinal.{u}⦄ ⦃M : Type w⦄ (R : Realization.{u, w} α M),
+      Order.IsSuccLimit α → R.IsModel → H R → R.topGradeSup = ⊤ → R.HasFullTopSaturation) :
+    HollowAcquisition.{u, w} H
       (fun t' h ↦ TiedRootCapRelabel.MarkedCapContextBelowTop' t' h) where
   exists_context α M R hα hR hH htop n t c hc := by
     have hsatR := hsat R hα hR hH htop
-    obtain ⟨ξ, rfl, hhol⟩ := hH
+    obtain ⟨ξ, rfl, hhol⟩ := hHH hH
     have hβ := isSuccLimit_blockStage ξ
     set x : R.Occurrence := ⟨n, ⟨c, hc.injective⟩, t, hc.eval_eq⟩
     obtain ⟨K, hK⟩ := StageType.exists_offset_bound t
@@ -236,6 +304,27 @@ theorem hollowAcquisition_markedCapContextBelowTop' (hsat : HollowFullTopSaturat
       have := hK z μ f hμ hf'
       omega
 
+/-- **Hollow acquisition of contexts with the cap at the top grade**, conditional on
+`HollowFullTopSaturation`, a clause on hollow models that is not a clause of `IsModel`, implied by
+(R3) (`Realization.hollowFullTopSaturation_of_hollowReceiving`).  The construction of
+`Realization.hollowAcquisition_markedCapContextBelowTop'_of`. -/
+theorem hollowAcquisition_markedCapContextBelowTop' (hsat : HollowFullTopSaturation.{u, w}) :
+    HollowAcquisition.{u, w} IsCoverHollowAtBlock
+      (fun t' h ↦ TiedRootCapRelabel.MarkedCapContextBelowTop' t' h) :=
+  hollowAcquisition_markedCapContextBelowTop'_of (fun _ _ _ h ↦ h) hsat
+
+/-- **Hollow acquisition of contexts with the cap at the top grade in the receiving models**,
+conditional on `HollowFullTopSaturationReceiving`, full-top saturation of the models cover-hollow
+at a block stage with finite-cut receiving, implied by (R3) for receiving models
+(`Realization.hollowFullTopSaturationReceiving_of_hollowReceiving`).  The construction of
+`Realization.hollowAcquisition_markedCapContextBelowTop'_of`. -/
+theorem hollowAcquisition_markedCapContextBelowTop'_receiving
+    (hsat : HollowFullTopSaturationReceiving.{u, w}) :
+    HollowAcquisition.{u, w} (fun R ↦ R.IsCoverHollowAtBlock ∧ R.HasFiniteCutReceiving)
+      (fun t' h ↦ TiedRootCapRelabel.MarkedCapContextBelowTop' t' h) :=
+  hollowAcquisition_markedCapContextBelowTop'_of (fun _ _ _ h ↦ h.1)
+    fun _ _ R hα hR hH htop ↦ hsat R hα hR hH.1 hH.2 htop
+
 /-- **The route inputs at the contexts with the cap at the top grade**, conditional on
 `HollowFullTopSaturation`, a clause on hollow models that is not a clause of `IsModel`: hollow
 acquisition, non-surjectivity, invariance under relabelling. -/
@@ -249,6 +338,23 @@ theorem markedCapContextBelowTop'_routeInputs (hsat : HollowFullTopSaturation.{u
           TiedRootCapRelabel.MarkedCapContextBelowTop' (t'.reindex σ)
             (h.trans σ.symm.toEmbedding)) :=
   ⟨hollowAcquisition_markedCapContextBelowTop' hsat,
+    fun _ _ _ _ _ ht ↦ ht.1.not_surjective,
+    fun _ _ _ t' _ σ ht ↦ ⟨ht.1.reindex σ, (StageType.topGrade_reindex t' σ).trans ht.2⟩⟩
+
+/-- **The route inputs at the contexts with the cap at the top grade in the receiving models**,
+conditional on `HollowFullTopSaturationReceiving`: hollow acquisition in the models cover-hollow
+at a block stage with finite-cut receiving, non-surjectivity, invariance under relabelling. -/
+theorem markedCapContextBelowTop'_routeInputs_receiving
+    (hsat : HollowFullTopSaturationReceiving.{u, w}) :
+    HollowAcquisition.{u, w} (fun R ↦ R.IsCoverHollowAtBlock ∧ R.HasFiniteCutReceiving)
+        (fun t' h ↦ TiedRootCapRelabel.MarkedCapContextBelowTop' t' h) ∧
+      (∀ ⦃α : Ordinal.{u}⦄ ⦃n k : ℕ⦄ (t' : StageType.{u} α k) (h : Fin n ↪ Fin k),
+        TiedRootCapRelabel.MarkedCapContextBelowTop' t' h → ¬ Function.Surjective h) ∧
+      (∀ ⦃α : Ordinal.{u}⦄ ⦃n k : ℕ⦄ (t' : StageType.{u} α k) (h : Fin n ↪ Fin k)
+        (σ : Equiv.Perm (Fin k)), TiedRootCapRelabel.MarkedCapContextBelowTop' t' h →
+          TiedRootCapRelabel.MarkedCapContextBelowTop' (t'.reindex σ)
+            (h.trans σ.symm.toEmbedding)) :=
+  ⟨hollowAcquisition_markedCapContextBelowTop'_receiving hsat,
     fun _ _ _ _ _ ht ↦ ht.1.not_surjective,
     fun _ _ _ t' _ σ ht ↦ ⟨ht.1.reindex σ, (StageType.topGrade_reindex t' σ).trans ht.2⟩⟩
 

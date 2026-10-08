@@ -14,12 +14,13 @@ Work file (placement later).  (R3) for receiving models and the thin `ℵ₁` sp
 contexts with the cap at the top grade (`TiedRootCapRelabel.MarkedCapContextBelowTop'`), with no
 `sorry`, from three named hypotheses:
 
-* `Realization.HollowFullTopSaturation` (assumed): **a clause on hollow models that is not a
-  clause of `IsModel`**: every model at a limit stage, cover-hollow at a block stage, with
-  unbounded growth, realizes over every occurrence a member of every full-top family
-  (`Realization.fullTopFamily S ρ`: scheme `S`, `⊤` at the cells of full grade where `ρ` is `⊤`)
-  containing a one-point coface of its type.  It gives the acquisition
-  (`Realization.hollowAcquisition_markedCapContextBelowTop'`).
+* `Realization.HollowFullTopSaturationReceiving` (assumed), or its strengthening
+  `Realization.HollowFullTopSaturation`: **a clause on hollow models that is not a clause of
+  `IsModel`, and a sub-case of (R3)**: every model at a limit stage, cover-hollow at a block
+  stage, with finite-cut receiving and unbounded growth, realizes over every occurrence a member
+  of every full-top family (`Realization.fullTopFamily S ρ`: scheme `S`, `⊤` at the cells of full
+  grade where `ρ` is `⊤`) containing a one-point coface of its type.  It gives the acquisition
+  (`Realization.hollowAcquisition_markedCapContextBelowTop'_receiving`).
 * `H3.TopRootLowBound` (assumed): at a context with the cap at the top grade, over every coface
   `tb` of the coatom face with face `d`, every prescription lawful below the private coatom at the
   top cut grade, not `⊥` at the cap and at the marker, and not `⊥` at the cells of the class below
@@ -41,8 +42,19 @@ contexts with the cap at the top grade (`TiedRootCapRelabel.MarkedCapContextBelo
 The lift provisions from the donor coatom (`H3.donorLiftProvisions_of_lt`) and the domination
 of the donor tops (`H3.donorTopsDominate_of_lt`) are compiled at the top grade.
 
-* `H3.hollowCoatomCutoffDeterminationExists_top`, `H3.receivingHollowReceiving_top`,
-  `MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_markedCapContextBelowTop'`.
+* `H3.hollowCoatomCutoffDeterminationExists_top`, `H3.receivingHollowReceiving_topReceiving`,
+  `MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_markedCapContextBelowTopReceiving`:
+  the route with the saturation hypothesis weakened to the receiving models
+  (`Realization.HollowFullTopSaturationReceiving`), the class of models of (R3) for receiving
+  models; the acquisition is asked only there.
+* `H3.receivingHollowReceiving_top`,
+  `MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_markedCapContextBelowTop'`: the same
+  from `Realization.HollowFullTopSaturation` (`Realization.HollowFullTopSaturation.receiving`).
+
+The saturation hypothesis is a sub-case of the conclusion: (R3) for receiving models gives
+`HollowFullTopSaturationReceiving`
+(`Realization.hollowFullTopSaturationReceiving_of_hollowReceiving`), and (R3) gives
+`HollowFullTopSaturation` (`Realization.hollowFullTopSaturation_of_hollowReceiving`).
 -/
 
 universe u w
@@ -172,16 +184,29 @@ theorem hollowCoatomCutoffDeterminationExists_top (hlow : TopRootLowBound.{u})
       F.restrictFace_right_completion _, δ, hδ, hdet⟩
 
 /-- **(R3) for receiving models through the contexts with the cap at the top grade**,
+conditional on `HollowFullTopSaturationReceiving` (full-top saturation of the models cover-hollow
+at a block stage with finite-cut receiving: a sub-case of (R3) for receiving models, not a clause
+of `IsModel`), the weakened lower bound at the root and the band (assumed).  The acquisition is
+asked only of the receiving models (`Realization.hollowReceiving_of_hollowCutoffDetermination`). -/
+theorem receivingHollowReceiving_topReceiving
+    (hsat : Realization.HollowFullTopSaturationReceiving.{u, w})
+    (hlow : TopRootLowBound.{u}) (hband : TopBand.{u}) :
+    Realization.HollowReceiving.{u, w} Realization.IsReceivingCoverHollowAtBlock :=
+  Realization.hollowReceiving_of_hollowCutoffDetermination
+    (Realization.markedCapContextBelowTop'_routeInputs_receiving hsat).1
+    ((hollowCoatomCutoffDeterminationExists_top hlow hband).hollowCutoffDetermination
+      (Realization.markedCapContextBelowTop'_routeInputs_receiving.{u, w} hsat).2.1
+      (Realization.markedCapContextBelowTop'_routeInputs_receiving.{u, w} hsat).2.2)
+    fun _ _ _ h ↦ ⟨h, h.2⟩
+
+/-- **(R3) for receiving models through the contexts with the cap at the top grade**,
 conditional on `HollowFullTopSaturation` (a clause on hollow models that is not a clause of
-`IsModel`), the weakened lower bound at the root and the band (assumed). -/
+`IsModel`, a sub-case of (R3)), the weakened lower bound at the root and the band (assumed): the
+form `H3.receivingHollowReceiving_topReceiving` with the stronger saturation statement. -/
 theorem receivingHollowReceiving_top (hsat : Realization.HollowFullTopSaturation.{u, w})
     (hlow : TopRootLowBound.{u}) (hband : TopBand.{u}) :
     Realization.HollowReceiving.{u, w} Realization.IsReceivingCoverHollowAtBlock :=
-  Realization.receivingHollowReceiving_of_cutoffDetermination
-    (Realization.markedCapContextBelowTop'_routeInputs hsat).1
-    ((hollowCoatomCutoffDeterminationExists_top hlow hband).hollowCutoffDetermination
-      (Realization.markedCapContextBelowTop'_routeInputs.{u, w} hsat).2.1
-      (Realization.markedCapContextBelowTop'_routeInputs.{u, w} hsat).2.2)
+  receivingHollowReceiving_topReceiving hsat.receiving hlow hband
 
 end H3
 
@@ -189,17 +214,30 @@ namespace MainTheorem
 
 open FirstOrder Language Structure baseLanguage Expansion Realization Ordinal
 
+/-- **The thin `ℵ₁` spectrum through the contexts with the cap at the top grade, receiving
+form**: the three-hypothesis receiving route with (R3) for receiving models replaced by
+`HollowFullTopSaturationReceiving` (full-top saturation of the receiving models cover-hollow at a
+block stage, a sub-case of (R3) for receiving models, not a clause of `IsModel`), the weakened
+lower bound at the root, and the band (assumed). -/
+theorem densitySentence_hasThinAlephOneSpectrum_of_markedCapContextBelowTopReceiving
+    (hR4 : ReceivingStableCappedReceiving.{0}) (hres : ReceivingResidualReceiving.{0, 0})
+    (hsat : HollowFullTopSaturationReceiving.{0, 0}) (hlow : H3.TopRootLowBound.{0})
+    (hband : H3.TopBand.{0}) :
+    HasThinAlephOneSpectrum densitySentence.{0} :=
+  densitySentence_hasThinAlephOneSpectrum_of_receivingModels' hR4 hres
+    (H3.receivingHollowReceiving_topReceiving hsat hlow hband)
+
 /-- **The thin `ℵ₁` spectrum through the contexts with the cap at the top grade**: the
 three-hypothesis receiving route with (R3) for receiving models replaced by
-`HollowFullTopSaturation` (a clause on hollow models that is not a clause of `IsModel`), the
-weakened lower bound at the root, and the band (assumed). -/
+`HollowFullTopSaturation` (a clause on hollow models that is not a clause of `IsModel`, a sub-case
+of (R3)), the weakened lower bound at the root, and the band (assumed). -/
 theorem densitySentence_hasThinAlephOneSpectrum_of_markedCapContextBelowTop'
     (hR4 : ReceivingStableCappedReceiving.{0}) (hres : ReceivingResidualReceiving.{0, 0})
     (hsat : HollowFullTopSaturation.{0, 0}) (hlow : H3.TopRootLowBound.{0})
     (hband : H3.TopBand.{0}) :
     HasThinAlephOneSpectrum densitySentence.{0} :=
-  densitySentence_hasThinAlephOneSpectrum_of_receivingModels' hR4 hres
-    (H3.receivingHollowReceiving_top hsat hlow hband)
+  densitySentence_hasThinAlephOneSpectrum_of_markedCapContextBelowTopReceiving hR4 hres
+    hsat.receiving hlow hband
 
 end MainTheorem
 
