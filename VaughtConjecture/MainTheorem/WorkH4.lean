@@ -1,0 +1,153 @@
+/-
+Copyright (c) 2026 Cameron Freer. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Cameron Freer
+-/
+import VaughtConjecture.MainTheorem.CapRequestsRecovery
+
+/-!
+# Work on h4: first-coatom completions for the calibrated (R4) inputs
+
+Work file (placement later).
+
+**The common face condition forces the cap to the top grade** (`StageType.lt_of_hface`):
+for a legal `T⁺` on `m + 1` points with a face along the first `m` points, completeness gives a
+cell of every grade `0 < N ≤ m` with scope that face; so the condition `hface` of
+`StageType.hasCutoffFirstCoatomCompletions'_of_capFills` (every cell avoiding the last point has
+grade below that of the cap) holds only when the cap has grade `m + 1`, the number of points of
+`T⁺`.
+-/
+
+universe u
+
+namespace VaughtConjecture
+
+open Finset Label
+
+namespace StageType
+
+variable {α : Ordinal.{u}} {m : ℕ}
+
+/-- **Completeness puts a cell of every grade `0 < N ≤ m` on the face along the first `m`
+points.** -/
+theorem exists_grade_eq_of_restrictFace {Tp : StageType.{u} α (m + 1)}
+    {p : StageType.{u} α m} (hT : Tp.IsLegal) (hp : restrictFace Fin.castSuccEmb Tp = some p)
+    {N : ℕ} (hN0 : 0 < N) (hNm : N ≤ m) :
+    ∃ x : Fin Tp.card, Fin.last m ∉ Tp.toCellScheme.scope x ∧ Tp.toCellScheme.grade x = N := by
+  obtain ⟨hf, -⟩ := (restrictFace_eq_some_iff Tp Fin.castSuccEmb).mp hp
+  obtain ⟨x, hx⟩ := hT.isComplete (univ.map (Fin.castSuccEmb : Fin m ↪ Fin (m + 1)), N)
+    ⟨hf, hN0, by rw [card_map, card_univ, Fintype.card_fin]; exact hNm⟩
+  refine ⟨x, ?_, congrArg Prod.snd hx⟩
+  rw [show Tp.toCellScheme.scope x = univ.map Fin.castSuccEmb from congrArg Prod.fst hx]
+  simp
+
+/-- **The common face condition forces the cap to the top grade**: if every cell of a legal `T⁺`
+on `m + 1` points avoiding its last point has grade below `N > 0`, and `T⁺` has a face along its
+first `m` points, then `m < N`. -/
+theorem lt_of_hface {Tp : StageType.{u} α (m + 1)} {p : StageType.{u} α m} (hT : Tp.IsLegal)
+    (hp : restrictFace Fin.castSuccEmb Tp = some p) {N : ℕ} (hN0 : 0 < N)
+    (hface : ∀ x : Fin Tp.card, Fin.last m ∉ Tp.toCellScheme.scope x →
+      Tp.toCellScheme.grade x < N) : m < N := by
+  by_contra hle
+  obtain ⟨x, hx, hxN⟩ := exists_grade_eq_of_restrictFace hT hp hN0 (not_lt.mp hle)
+  exact absurd (hface x hx) (by omega)
+
+/-- **A cap at the top grade satisfies the common face condition**: every cell of `T⁺` avoiding its
+last point has grade at most `m`, below the grade `m + 1` of the cap. -/
+theorem hface_of_grade_eq {Tp : StageType.{u} α (m + 1)} {c : Fin Tp.card}
+    (hc : Tp.toCellScheme.grade c = m + 1) (x : Fin Tp.card)
+    (hx : Fin.last m ∉ Tp.toCellScheme.scope x) :
+    Tp.toCellScheme.grade x < Tp.toCellScheme.grade c := by
+  have h1 := Tp.isWellFormed.isWellFormed.grade_le_card x
+  have h2 : #(Tp.toCellScheme.scope x) ≤ #((univ : Finset (Fin (m + 1))).erase (Fin.last m)) :=
+    card_le_card fun y hy ↦ mem_erase.mpr ⟨fun h ↦ hx (h ▸ hy), mem_univ y⟩
+  rw [card_erase_of_mem (mem_univ _), card_univ, Fintype.card_fin] at h2
+  omega
+
+/-- A cell of grade the number of points has full scope. -/
+theorem scope_eq_univ_of_grade_eq {n : ℕ} {t : StageType.{u} α n} {c : Fin t.card}
+    (hc : t.toCellScheme.grade c = n) : t.toCellScheme.scope c = univ :=
+  eq_univ_of_card _ (le_antisymm (card_le_univ _) (by
+    have := t.isWellFormed.isWellFormed.grade_le_card c
+    rw [Fintype.card_fin]
+    omega))
+
+end StageType
+
+/-! ### The apex calibration -/
+
+namespace StageType
+
+variable {ξ : Ordinal.{u}} {m k : ℕ}
+
+variable (ξ) in
+/-- The **apex calibration**: the margin calibration with a floor
+(`StageType.GradedCapMarginCalibration'`) together with an **apex cap**, a cell of grade the number
+of points of `T⁺` labelled at least `λ_ξ` plus that number.  The clauses of the floor calibration
+at a cap of grade `N` hold at every grade at least `N`, so the apex cap carries them all
+(`StageType.ApexCapCalibration.exists_floorCapData`). -/
+def ApexCapCalibration ⦃m k : ℕ⦄ (Tp : StageType.{u} (blockStage (ξ + 1)) m)
+    (f : Fin k ↪ Fin m) (D : StageType.{u} (blockStage (ξ + 1)) (k + 1)) (γ : Ordinal.{u}) :
+    Prop :=
+  GradedCapMarginCalibration' ξ Tp f D γ ∧
+    ∃ b : Fin Tp.card, Tp.toCellScheme.grade b = m ∧
+      ((blockStage ξ + m : Ordinal.{u}) : Label.{u}) ≤ Tp.label b
+
+/-- The root offsets below a grade lie below every larger grade. -/
+theorem RootOffsetsBelow.mono {n : ℕ} {t : StageType.{u} α n} {h : Fin k ↪ Fin n} {N N' : ℕ}
+    (hr : t.RootOffsetsBelow h N) (hNN : N ≤ N') : t.RootOffsetsBelow h N' :=
+  fun y hy μ f hμ hl ↦ (hr y hy μ f hμ hl).trans_le hNN
+
+/-- **The apex calibration gives cap data with a floor at the top grade.** -/
+theorem ApexCapCalibration.exists_floorCapData
+    {Tp : StageType.{u} (blockStage (ξ + 1)) (m + 1)} {f : Fin k ↪ Fin (m + 1)}
+    {D : StageType.{u} (blockStage (ξ + 1)) (k + 1)} {γ : Ordinal.{u}} (hT : Tp.IsLegal)
+    (h : ApexCapCalibration ξ Tp f D γ) :
+    ∃ c : FloorCapData Tp f D γ, Tp.toCellScheme.grade c.cap = m + 1 := by
+  obtain ⟨hC, b, hb, hbl⟩ := h
+  obtain ⟨c₀⟩ := hC.nonempty_floorCapData hT
+  have hN : Tp.toCellScheme.grade c₀.cap ≤ Tp.toCellScheme.grade b := by
+    rw [hb]
+    exact Tp.grade_le _
+  refine ⟨{ c₀ with
+    cap := b
+    scope_cap := scope_eq_univ_of_grade_eq hb
+    le_label_cap := by rw [hb]; exact hbl
+    lt_grade_cap := c₀.lt_grade_cap.trans_le hN
+    R_lt := c₀.R_lt.trans_le hN
+    i_lt := c₀.i_lt.trans_le hN
+    grade_marker_le := c₀.grade_marker_le.trans hN
+    ref_spec := fun j o ho ↦ by
+      obtain ⟨μ, i', hμ, hon, h1, h2, h3, h4⟩ := c₀.ref_spec j o ho
+      exact ⟨μ, i', hμ, hon, h1.trans_le hN, h2.trans_le hN, h3.trans hN, h4⟩
+    three_le := c₀.three_le.trans hN
+    succ_lt := c₀.succ_lt.trans_le hN
+    rootOffsetsBelow := c₀.rootOffsetsBelow.mono hN }, hb⟩
+
+/-- **First-coatom completions for the apex calibration from the fills at the top grade** (h4 of
+the receiving route at the apex calibration).  At every input at the first coatom satisfying the
+apex calibration, for the cap data with a floor at the top grade, the fills from the private coatom
+at the grade `m + 1` give first-coatom completions; the common face condition holds at the top
+grade (`StageType.hface_of_grade_eq`) and the fills are needed at that grade only. -/
+theorem hasCutoffFirstCoatomCompletions_apex_of_topFills
+    (h : ∀ ⦃m k : ℕ⦄ (X : FirstCoatomInput.{u} ξ m k) (γ : Ordinal.{u}), 0 < k →
+      γ < blockStage (ξ + 1) → ApexCapCalibration ξ X.Tp (X.f.trans Fin.castSuccEmb) X.D γ →
+      ∀ c : FloorCapData X.Tp (X.f.trans Fin.castSuccEmb) X.D γ,
+        X.Tp.toCellScheme.grade c.cap = m + 1 →
+        CapRequests.CapFillBotAt (X.requests c.toMarginCapData) (Fin.last (m + 1)) (m + 1) ∧
+          CapRequests.CapFillPosAt (X.requests c.toMarginCapData) (Fin.last (m + 1)) (m + 1)) :
+    HasCutoffFirstCoatomCompletions ξ (ApexCapCalibration ξ) := by
+  intro m k Tp p tb f P hT hp htb hk hP D hD htbD γ hγ hC
+  let X : FirstCoatomInput.{u} ξ m k := ⟨Tp, p, tb, f, P, D, hT, hp, htb, hP, hD, htbD⟩
+  obtain ⟨c, hc⟩ := hC.exists_floorCapData hT
+  obtain ⟨hbot, hpos⟩ := h X γ hk hγ hC c hc
+  have hk' (k' : ℕ) (h₁ : X.Tp.toCellScheme.grade c.cap ≤ k') (h₂ : k' ≤ m + 1) : k' = m + 1 := by
+    change Tp.toCellScheme.grade c.cap = m + 1 at hc
+    change Tp.toCellScheme.grade c.cap ≤ k' at h₁
+    omega
+  exact X.exists_isCutoffStableRecovery c.toMarginCapData c.three_le (hface_of_grade_eq hc)
+    (fun k' h₁ h₂ ↦ hk' k' h₁ h₂ ▸ hbot) fun k' h₁ h₂ ↦ hk' k' h₁ h₂ ▸ hpos
+
+end StageType
+
+end VaughtConjecture
