@@ -207,7 +207,8 @@ expansion domains, on which classes agree at bounded level) this yields conditio
 without sentence minimality and without López–Escobar; the composition for the expansion domains,
 from the back-and-forth form of condition 3 (`README.md`, the reduction to expansion domains and
 Layer 6), is compiled conditional on the cap-to-model theorem, (R1), forcing donors at every
-countable block index, the continuation criterion, (R2) and (R3), each still to be proved
+countable block index, the continuation criterion, (R2) and (R3), the first and third compiled
+(`MainTheorem.capToModel`, `forcingDonors_blockStage`) and the others still to be proved
 (`densitySentence_isThinOnNatModels_of_terminalClassification_bfScattered`,
 `MainTheorem/ScatteredDomains`).  It is also compiled for full presentations with scattered tails
 (`densitySentence_isThinOnNatModels_of_scatteredTails`, through
@@ -635,9 +636,9 @@ is compiled conditionally on block determination (below).  None is an input to t
   of the count (the countable complements `Q \ D_η`, the bound `|Q| ≤ ℵ₁`, the uncountability of
   `Q`) is used.  Under these hypotheses, the targets, in order (for the actual expansion domains,
   items 1 and 2 are compiled conditional on next-block uniqueness, finite-cut receiving ((R1)),
-  and the coatom extension
-  property with apex at every countable block stage, each still to be proved, which give
-  conditions 1, 3 and 4: `expansionDomain_core_eq_empty`; and, with `CapToModel` in the statement,
+  and the coatom extension property with apex at every countable block stage, the last compiled
+  (`StageType.hasApexCoatomExtensions_blockStage`), which give conditions 1, 3 and 4:
+  `expansionDomain_core_eq_empty`; and, with `CapToModel` in the statement,
   which the apex at `0` gives, `mem_expansionDomain_iff_le_lastStage`,
   `mem_expansionDomain_loss_iff_lastStage_eq`, `lastStage_modelExpansionDomains_lt_qrank`):
   1. **Eventual departure** (compiled in this repository (theorem named), abstractly:
@@ -901,7 +902,8 @@ is compiled conditionally on block determination (below).  None is an input to t
   constructed, the forcing thresholds (`forcingThresholds`, `Definability/BlockDetermination`), and
   block determination for them is compiled in this repository (theorem named) conditional on
   finite-extension receiving of the model expansions to `λ_{η+1}` (from (R1)) and on forcing donors
-  at `η` (`ForcingDonors`), both still to be proved (`forcingThresholds_determines`; with these
+  at `η` (`ForcingDonors`), the first still to be proved, the second compiled,
+  `forcingDonors_blockStage` (`forcingThresholds_determines`; with these
   hypotheses at every block below `η`, `realize_blockFormula_forcingThresholds_iff`). Its form with
   finite-extension receiving of all models,
   `Expansion.FiniteExtensionReceiving.forcingThresholds_determines`
@@ -1002,7 +1004,7 @@ is compiled conditionally on block determination (below).  None is an input to t
      carrier is nonempty and `R` is exactly consistent, covering, and has the finite-cut receiving
      property (`realize_toStructure_densitySentence_iff`, compiled in this repository (theorem
      named)); that `R` is then a model is the cap-to-model theorem (`README.md`, Layer 3, 3.4),
-     still to be proved.
+     compiled in this repository (theorem named) (`MainTheorem.capToModel`).
 
   **Qualifications.**  The absolute Scott contracts (the last two rows) carry the countability and
   fixed-carrier-universe qualifications of InfinitaryLogic's Scott theorems: they characterize the

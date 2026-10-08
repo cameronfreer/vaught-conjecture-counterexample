@@ -31,14 +31,15 @@ type `p` on `n` points and an injective tuple `a` of `X`, `H` can be chosen with
 `p`.
 
 Without terminality, the countable saturated realization (`exists_saturated_reconstruct`: a model
-realizing every legal stage type, with exact receiving of legal donors) needs only the first of
-the two hypotheses below.  Acceptance lemma 1 is conditional on two named hypotheses, each still
-to be proved:
+realizing every legal stage type, with exact receiving of legal donors) needs only the first of the
+two hypotheses below.  Acceptance lemma 1 is conditional on two named hypotheses, both compiled in
+this repository (theorem named) (`StageType.hasApexCoatomExtensions_blockStage`,
+`forcingDonors_blockStage`), so it holds at every countable `β` (`exists_sameLevelMaximal_covers'`):
 
 * `StageType.HasApexCoatomExtensions (blockStage β)`, the coatom extension property with apex at
-  `λ_β` (Layer 3, 3.1, the open part of (R6)).  Its plain form gives the amalgamation of legal
-  stage types, hence the classical limit of the age of all legal charts; the apex gives the
-  dominance instances of modelhood ([Kni26, Lemma 4.4.3]).
+  `λ_β` (Layer 3, 3.1, (R6), compiled as `StageType.hasApexCoatomExtensions_blockStage`).  Its plain
+  form gives the amalgamation of legal stage types, hence the classical limit of the age of all
+  legal charts; the apex gives the dominance instances of modelhood ([Kni26, Lemma 4.4.3]).
 * `ForcingDonors β` (`VaughtConjecture.Continuation.Normalization`; Layer 4, output 2).  It is
   used only at legal stage types at `λ_{β+1}` that are stage types at `λ_β` read at `λ_{β+1}`
   (`StageType.castLE`): at a cell labelled the formal top, every threshold is forced by some legal
@@ -98,8 +99,9 @@ at `λ_β` has a reconstructed realization that is a model, realizes every legal
 `λ_β`, and has exact receiving of every legal donor.  `M` is a Fraïssé limit of the age of legal
 charts.
 
-The coatom extension property with apex `StageType.HasApexCoatomExtensions (blockStage β)` is
-still to be proved: it is the open part of statement (R6) of roadmap, Layer 3, 3.1. -/
+The coatom extension property with apex `StageType.HasApexCoatomExtensions (blockStage β)` is a
+hypothesis here; it is compiled in this repository (theorem named),
+`StageType.hasApexCoatomExtensions_blockStage` (statement (R6) of roadmap, Layer 3, 3.1). -/
 theorem exists_saturated_reconstruct {β : Ordinal.{0}} (hβ : β < ω₁)
     (hext : StageType.HasApexCoatomExtensions.{0} (blockStage β)) :
     ∃ (M : Type) (_ : (hullLanguage.{0} (blockStage β)).Structure M), Countable M ∧
@@ -122,9 +124,10 @@ realization of `exists_saturated_reconstruct` is moreover cover-hollow
 (`Realization.isCoverHollow_of_exactReceivingWithin`) and terminal at `β`
 (`Realization.IsCoverHollow.isTerminalAt`).
 
-Both hypotheses are still to be proved: `StageType.HasApexCoatomExtensions (blockStage β)` is the
-open part of statement (R6) of roadmap, Layer 3, 3.1; `ForcingDonors β` is a finite statement of
-Layer 4, output 2. -/
+Both hypotheses are compiled: `StageType.HasApexCoatomExtensions (blockStage β)` (statement (R6) of
+roadmap, Layer 3, 3.1; `StageType.hasApexCoatomExtensions_blockStage`) and `ForcingDonors β`, a
+finite statement of Layer 4, output 2 (`forcingDonors_blockStage`); the form with neither is
+`exists_sameLevelMaximal_covers'`. -/
 theorem exists_sameLevelMaximal_reconstruct {β : Ordinal.{0}} (hβ : β < ω₁)
     (hext : StageType.HasApexCoatomExtensions.{0} (blockStage β)) (hF : ForcingDonors.{0} β) :
     ∃ (M : Type) (_ : (hullLanguage.{0} (blockStage β)).Structure M), Countable M ∧
@@ -167,9 +170,10 @@ countably infinite carrier `X`, some realization `H` at `λ_β = blockStage β` 
 It is the transport to `X` of the reconstruction of a Fraïssé limit of the age of legal charts
 (`exists_sameLevelMaximal_reconstruct`).
 
-Both hypotheses are still to be proved: `StageType.HasApexCoatomExtensions (blockStage β)` is the
-open part of statement (R6) of roadmap, Layer 3, 3.1; `ForcingDonors β` is a finite statement of
-Layer 4, output 2. -/
+Both hypotheses are compiled: `StageType.HasApexCoatomExtensions (blockStage β)` (statement (R6) of
+roadmap, Layer 3, 3.1; `StageType.hasApexCoatomExtensions_blockStage`) and `ForcingDonors β`, a
+finite statement of Layer 4, output 2 (`forcingDonors_blockStage`); the form with neither is
+`exists_sameLevelMaximal_covers'`. -/
 theorem exists_sameLevelMaximal_covers {β : Ordinal.{0}} (hβ : β < ω₁)
     (hext : StageType.HasApexCoatomExtensions.{0} (blockStage β)) (hF : ForcingDonors.{0} β)
     (X : Type) [Countable X] [Infinite X] {n : ℕ} {p : StageType.{0} (blockStage β) n}
@@ -197,11 +201,11 @@ theorem exists_sameLevelMaximal_covers {β : Ordinal.{0}} (hβ : β < ω₁)
     exact ⟨_, hcov n q c' hc'⟩
 
 /-- **Acceptance lemma 1, the same-level maximal realization** (`exists_sameLevelMaximal_covers`
-without the prescribed tuple), conditional on the coatom extension property with apex at `λ_β`
-and on forcing donors at `β`, both still to be proved: for a countable `β`, every countably
-infinite carrier `X` carries a model at `λ_β` that realizes every legal stage type at `λ_β`,
-receives every legal donor exactly over every actual root, and is cover-hollow and terminal at
-`β`. -/
+without the prescribed tuple), conditional on the coatom extension property with apex at `λ_β` and
+on forcing donors at `β`, both compiled (with neither, `exists_sameLevelMaximal_covers'`): for a
+countable `β`, every countably infinite carrier `X` carries a model at `λ_β` that realizes every
+legal stage type at `λ_β`, receives every legal donor exactly over every actual root, and is
+cover-hollow and terminal at `β`. -/
 theorem exists_sameLevelMaximal {β : Ordinal.{0}} (hβ : β < ω₁)
     (hext : StageType.HasApexCoatomExtensions.{0} (blockStage β)) (hF : ForcingDonors.{0} β)
     (X : Type) [Countable X] [Infinite X] :

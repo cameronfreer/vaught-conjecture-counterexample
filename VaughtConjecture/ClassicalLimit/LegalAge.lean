@@ -137,8 +137,9 @@ chart into legal charts are completed by embeddings into one legal chart to a li
 square.  The amalgam is that of `StageType.exists_amalgam`, not capped; no hypothesis on the stage
 is needed.
 
-The coatom extension property `StageType.HasCoatomExtensions α` is not proved here: it is the open
-part of statement (R6) of roadmap, Layer 3, 3.1. -/
+The coatom extension property `StageType.HasCoatomExtensions α` is a hypothesis here; it is compiled
+at every stage that is zero or a limit (`StageType.hasApexCoatomExtensions`,
+`StageType.hasCoatomExtensions`; statement (R6) of roadmap, Layer 3, 3.1, checkpoint 2.7). -/
 theorem exists_amalgam_legalChart (hext : StageType.HasCoatomExtensions.{u} α)
     (i j k : LegalIndex.{u} α) (f : legalChart α i ↪[hullLanguage.{u} α] legalChart α j)
     (g : legalChart α i ↪[hullLanguage.{u} α] legalChart α k) :
@@ -159,8 +160,9 @@ theorem exists_amalgam_legalChart (hext : StageType.HasCoatomExtensions.{u} α)
 /-- **Joint embedding of legal charts**, from the coatom extension property: the amalgamation of
 two legal charts over the empty chart.
 
-The coatom extension property `StageType.HasCoatomExtensions α` is not proved here: it is the open
-part of statement (R6) of roadmap, Layer 3, 3.1. -/
+The coatom extension property `StageType.HasCoatomExtensions α` is a hypothesis here; it is compiled
+at every stage that is zero or a limit (`StageType.hasApexCoatomExtensions`,
+`StageType.hasCoatomExtensions`; statement (R6) of roadmap, Layer 3, 3.1, checkpoint 2.7). -/
 theorem exists_jointEmbedding_legalChart (hext : StageType.HasCoatomExtensions.{u} α)
     (i j : LegalIndex.{u} α) :
     ∃ k, Nonempty (legalChart α i ↪[hullLanguage.{u} α] legalChart α k) ∧
@@ -173,8 +175,9 @@ theorem exists_jointEmbedding_legalChart (hext : StageType.HasCoatomExtensions.{
 /-- **The age of legal charts is a Fraïssé class**, conditional on the coatom extension property,
 when there are countably many ordinals below the stage.
 
-The coatom extension property `StageType.HasCoatomExtensions α` is not proved here: it is the open
-part of statement (R6) of roadmap, Layer 3, 3.1. -/
+The coatom extension property `StageType.HasCoatomExtensions α` is a hypothesis here; it is compiled
+at every stage that is zero or a limit (`StageType.hasApexCoatomExtensions`,
+`StageType.hasCoatomExtensions`; statement (R6) of roadmap, Layer 3, 3.1, checkpoint 2.7). -/
 theorem isFraisse_legalAge (hext : StageType.HasCoatomExtensions.{u} α)
     (hcount : (Set.Iio α).Countable) : IsFraisse (legalAge.{u} α) :=
   haveI := countable_legalIndex hcount
@@ -185,8 +188,9 @@ theorem isFraisse_legalAge (hext : StageType.HasCoatomExtensions.{u} α)
 when there are countably many ordinals below the stage: the classical existence theorem
 `exists_isFraisseLimit_representativeClass`.
 
-The coatom extension property `StageType.HasCoatomExtensions α` is not proved here: it is the open
-part of statement (R6) of roadmap, Layer 3, 3.1. -/
+The coatom extension property `StageType.HasCoatomExtensions α` is a hypothesis here; it is compiled
+at every stage that is zero or a limit (`StageType.hasApexCoatomExtensions`,
+`StageType.hasCoatomExtensions`; statement (R6) of roadmap, Layer 3, 3.1, checkpoint 2.7). -/
 theorem exists_isFraisseLimit_legalAge (hext : StageType.HasCoatomExtensions.{u} α)
     (hcount : (Set.Iio α).Countable) :
     letI := hullLanguage.countable_functions hcount
@@ -244,8 +248,9 @@ Finite-cut receiving comes from exact receiving, and the uniformity and dominanc
 the coatom extension property with apex (`StageType.nonempty_cofaces_inter_uniformityFamily`,
 `StageType.nonempty_cofaces_inter_dominanceFamily`).
 
-The coatom extension property with apex `StageType.HasApexCoatomExtensions α` is not proved here:
-it is the open part of statement (R6) of roadmap, Layer 3, 3.1. -/
+The coatom extension property with apex `StageType.HasApexCoatomExtensions α` is a hypothesis here;
+it is compiled at every stage that is zero or a limit (`StageType.hasApexCoatomExtensions`,
+`StageType.hasCoatomExtensions`; statement (R6) of roadmap, Layer 3, 3.1, checkpoint 2.7). -/
 theorem isModel_reconstruct_of_legalAge {M : Type} [(hullLanguage.{u} α).Structure M]
     (hext : StageType.HasApexCoatomExtensions.{u} α)
     (hage : (hullLanguage.{u} α).age M = legalAge α)
