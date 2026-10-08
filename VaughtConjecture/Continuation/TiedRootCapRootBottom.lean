@@ -18,8 +18,10 @@ every seed has a bot-keeping completion below the full grade
 (`CompletionBelowFullGrade.BotKeeping`).
 
 * **Synchronization with forcing** (`Realization.IsModel.exists_forcing_floor`, compiled in this
-  repository (theorem named)): as `Realization.IsModel.exists_synchronized_floor`, with the forcing
-  of the threshold `x.arity + 1` at every root cell labelled `⊤` as output.
+  repository (theorem named)): every occurrence is a literal face of an occurrence of top grade
+  above `x.arity + 1` and above a given `K`, at which the threshold `x.arity + 1` is forced at
+  every root cell labelled `⊤` (by covering, unbounded growth and cover-hollowness,
+  `Realization.IsTopAnchor`).
 * **The bottom pattern of a bot-keeping coface** (`StageType.markedCapContextBelow'_of_botKeeping`,
   compiled): over a legal `p₀` with a root face `p` along `h₀`, forcing at the root tops, and a cell
   labelled `⊤` of a grade `G` above `n + 1` and above the root offsets, every coface `q` of `p₀`
@@ -38,13 +40,10 @@ every seed has a bot-keeping completion below the full grade
   instance of its completion (clause 4(a)ii).  The extension by one point first makes the face
   along `Fin.castSuccEmb` of the seed exist (a coatom of the type of `Z` need not be a face).
 
-**Status.**  `hcomp` is compiled at the arities `m ≤ 2` (`Seed.exists_botKeeping_of_le_two`), and
-under the lifting invariant at the top grade (`Seed.exists_botKeeping_of_towerInvariant`).  At
-every arity it is not compiled on this branch (prospective): the completion at every arity (the
-profile tower, `Seed.nonempty_completionBelowFullGrade` on `main`) is not on this branch.  It
-follows from level bot-keeping of the profile tower through
-`CompletionBelowFullGrade.exists_botKeeping_of_eq_fieldLayer` (see
-`VaughtConjecture.Continuation.TiedRootCapBotKeeping`).
+**Status.**  `hcomp` is compiled at every arity (`Seed.exists_botKeeping`, through the tower at
+`m ≤ 2` and the profile tower at `m ≥ 3`), so `Realization.RootBottomAcquisition` holds with no
+hypothesis (`Realization.rootBottomAcquisition`, in
+`VaughtConjecture.Continuation.ProfileBotKeeping`).
 
 ## Placement
 

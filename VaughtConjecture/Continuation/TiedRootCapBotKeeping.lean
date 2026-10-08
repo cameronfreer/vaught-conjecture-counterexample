@@ -11,9 +11,7 @@ import VaughtConjecture.Extension.TwoFaceLift
 
 Roadmap, Layer 3 ((R3) of the table of 3.4).
 
-Ported verbatim from the lane `research/lane-r3-raise-test` (head 9017962, the generic parts of
-`TiedRootCapSelective` and `TiedRootCapBotKeeping`; the instances at the context of
-`BottomRootCounterexample` are not ported).
+Stage reduction keeps exactly the bottoms (`Label.reduce_eq_bot_iff`).
 
 A labelling `r` of a scheme is **bot-keeping** (`Scheme.BotKeeping`) when every cell of full scope
 not labelled `⊥` reads every cell of proper scope labelled `⊥` as `⊥`.  A completion below the full
@@ -161,15 +159,6 @@ namespace Seed
 
 variable {α : Ordinal.{u}} {m : ℕ} (I : Seed.{u} α m)
 
-/-- Stage reduction sends exactly `⊥` to `⊥`. -/
-private theorem reduce_eq_bot_iff {x : Label.{u}} : Label.reduce α x = ⊥ ↔ x = ⊥ := by
-  by_cases hx : x < α
-  · rw [reduce_of_lt hx]
-  · rw [reduce_of_le (not_lt.mp hx)]
-    refine ⟨fun h ↦ absurd h top_ne_bot, fun h ↦ ?_⟩
-    subst h
-    exact absurd (WithBot.bot_lt_coe _) hx
-
 /-- **A completion whose cells of full scope at the top grade keep the bottoms.**  Under the
 lifting invariant at the top grade, some completion below the full grade of `I` (the tower of field
 layers, labelled through its top layer by `Scheme.exists_isLawful_fieldLayer_bot`) has, after
@@ -216,8 +205,8 @@ theorem exists_completion_rowAt_eq_bot (hinv : I.TowerInvariant (m + 1))
     · have h4' : F.scheme.toCellScheme.grade d = m + 2 :=
         (Scheme.appendFullCellScheme_grade_castSucc _ _ d).symm.trans h4
       exact absurd h4' (F.isLegalBelowFullGrade.grade_lt d).ne
-    · exact fun hL0 ↦ hne ((hlab d).trans ((reduce_eq_bot_iff (α := α)).mpr hL0))
-  have hy'b : L y' = ⊥ := (reduce_eq_bot_iff (α := α)).mp ((hlab y').symm.trans hyb)
+    · exact fun hL0 ↦ hne ((hlab d).trans ((Label.reduce_eq_bot_iff (α := α)).mpr hL0))
+  have hy'b : L y' = ⊥ := (Label.reduce_eq_bot_iff (α := α)).mp ((hlab y').symm.trans hyb)
   have hy's : F.scheme.toCellScheme.scope y' ≠ univ := fun h ↦
     hys ((Scheme.appendFullCellScheme_scope_castSucc _ _ y').trans h)
   have hgy' : F.scheme.toCellScheme.grade y' < m + 2 := F.isLegalBelowFullGrade.grade_lt y'
@@ -346,15 +335,6 @@ variable {α : Ordinal.{u}} {m : ℕ} {I : Seed.{u} α m}
 /-- A completion below the full grade is **bot-keeping** when its labelling is. -/
 def BotKeeping (F : CompletionBelowFullGrade I) : Prop := F.scheme.BotKeeping F.label
 
-/-- Stage reduction sends exactly `⊥` to `⊥`. -/
-private theorem reduce_eq_bot_iff {x : Label.{u}} : Label.reduce α x = ⊥ ↔ x = ⊥ := by
-  by_cases hx : x < α
-  · rw [reduce_of_lt hx]
-  · rw [reduce_of_le (not_lt.mp hx)]
-    refine ⟨fun h ↦ absurd h top_ne_bot, fun h ↦ ?_⟩
-    subst h
-    exact absurd (WithBot.bot_lt_coe _) hx
-
 /-- **The apex keeps it**: in the completion of a bot-keeping completion, every cell of full scope
 that is the apex or not labelled `⊥` reads every cell of proper scope labelled `⊥` as `⊥`. -/
 theorem BotKeeping.rowAt_completion_eq_bot {F : CompletionBelowFullGrade I} (hF : F.BotKeeping)
@@ -382,12 +362,12 @@ theorem BotKeeping.rowAt_completion_eq_bot {F : CompletionBelowFullGrade I} (hF 
     StageType.addApex_label_castSucc (t := F.truncate hα) F.isLegalBelowFullGrade _ x
   refine hF d y' ((Scheme.appendFullCellScheme_scope_castSucc _ _ d).symm.trans hsu) ?_
     (fun h ↦ hys ((Scheme.appendFullCellScheme_scope_castSucc _ _ y').trans h))
-    ((reduce_eq_bot_iff (α := α)).mp ((hlab y').symm.trans hyb))
+    ((Label.reduce_eq_bot_iff (α := α)).mp ((hlab y').symm.trans hyb))
   rcases hu with h4 | hne
   · have h4' : F.scheme.toCellScheme.grade d = m + 2 :=
       (Scheme.appendFullCellScheme_grade_castSucc _ _ d).symm.trans h4
     exact absurd h4' (F.isLegalBelowFullGrade.grade_lt d).ne
-  · exact fun hL0 ↦ hne ((hlab d).trans ((reduce_eq_bot_iff (α := α)).mpr hL0))
+  · exact fun hL0 ↦ hne ((hlab d).trans ((Label.reduce_eq_bot_iff (α := α)).mpr hL0))
 
 end CompletionBelowFullGrade
 

@@ -14,18 +14,15 @@ import VaughtConjecture.Extension.CodedSection
 
 Roadmap, Layer 3 ((R3) of the table of 3.4).
 
-Ported verbatim from the lane `research/lane-r3-raise-test` (head 9017962), where they are spread
-over several modules: the marked-cap context at a given cap and marker
-(`StageType.IsMarkedCapContextAt`, from `MarkedCarrier`), visible cells as cells of a face
-(`StageType.exists_faceCell_eq`, from `TiedRootCap`), the marker inequality from forcing
-(`StageType.IsMarker.visibilityReplace_le_of_forcesThreshold`, from `MarkedCarrierAcquisition`),
-root offsets below a grade and their bound (`StageType.RootOffsetsBelow`,
-`StageType.exists_offset_bound`, from `TiedRootCapOffsets`), root bottoms respected and the
-predicate `TiedRootCapRelabel.MarkedCapContextBelow'` (from `TiedRootCapBottomRow`), the apex
-row (`StageType.rowAt_addApex_last_eq_bot_iff`, from `TiedRootCapAcquisition`, `RaisedNewTops`
-`TopReadingApexSeed` and `TiedRootCapVacuous`), and the named acquisition statement
-`Realization.RootBottomAcquisition` (from `TiedRootCapVacuous`).  Compiled in this repository
-(theorem named).
+The definitions and lemmas used by the acquisition of marked-cap contexts respecting the root
+bottoms: the marked-cap context at a given cap and marker (`StageType.IsMarkedCapContextAt`),
+visible cells as cells of a face (`StageType.exists_faceCell_eq`), the marker inequality from
+forcing (`StageType.IsMarker.visibilityReplace_le_of_forcesThreshold`), root offsets below a grade
+and their bound (`StageType.RootOffsetsBelow`, `StageType.exists_offset_bound`), root bottoms
+respected (`StageType.RootBottomRespected`) and the predicate
+`TiedRootCapRelabel.MarkedCapContextBelow'`, the apex row
+(`StageType.rowAt_addApex_last_eq_bot_iff`), and the named acquisition statement
+`Realization.RootBottomAcquisition`.  Compiled in this repository (theorem named).
 
 ## Placement
 
