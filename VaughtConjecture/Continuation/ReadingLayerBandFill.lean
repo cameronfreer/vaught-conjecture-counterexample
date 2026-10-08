@@ -650,26 +650,10 @@ open TopReadingApexExample
 
 variable {α : Ordinal.{u}} {I : Seed.{u} α 3}
 
-/-- **The fill at the short positive caps from the left coatom, from the ties of the marker**, at a
-seed whose right coatom type raises at the point `3` (`StageType.RowsRaiseAt`; `rightType` does,
-`TowerProfile.rowsRaiseAt_rightType`). Let `r` be a marker of grade `4` on the left coatom, `x` a
-cell of the amalgam of grade `1` through the point `4` (a new top), and `t₁`, `t₂` cells of the left
-coatom of grades `1` and `2`. Suppose that in every labelling `f` lawful below the left coatom and
-not `⊥` at `r` the cells of grade `1` not `⊥` take the value at `t₁`, the cells of grade `2` not `⊥`
-take the value at `t₂`, and the cells of grade `3` are `⊥`. Suppose the marker is the cell of a cell
-`c` of the left coatom type labelled `⊤`, of full scope and grade at least the arity of a root `ι`,
-with **the root offsets below its grade** (`StageType.RootOffsetsBelow`), and `t₁`, `t₂` are the
-cells of cells visible through `ι` carrying one proper label.  Then
-`ReadingFillPos I r X (Fin.last 4)` for `X = {x}`: the marker keeps the tie of `t₁` and `t₂`
-(`StageType.keepsProperRootTies_of_rootOffsetsBelow`), its row reading `t₂` at most as `t₁`.
-
-Below the cap at the marker it is the fill of the profile layer; outside the band,
-`TowerProfile.exists_fillPos_left_of_noBand`.  In the band (a cell of the left coatom with a value
-in `[h, f r)`), the tie gives `h ≤ f t₁` and `f t₂ ≤ f t₁`; a server
-(`TowerProfile.exists_server_of_rightType`) reads `x` at `ω * β + 1` (a code of the grade `1`) and
-every cell of the left coatom below the block `β`; the fill from the server
-(`TowerProfile.exists_fill_of_server`, with `A = f t₁` and `V = max h (f t₂)`) is `⊤` at `x`. -/
-theorem readingFillPos_left_of_tie (hraise : I.right.RowsRaiseAt 3)
+/-- **The fill at the short positive caps from the left coatom, from a tie of the marker's
+row** (the core of `TowerProfile.readingFillPos_left_of_tie`): the hypotheses of that theorem with
+the tie given directly, the row of the marker reading `t₂` at most as `t₁`. -/
+theorem readingFillPos_left_of_rowTie (hraise : I.right.RowsRaiseAt 3)
     {r : Fin (scheme I).card} (hgr : (scheme I).toCellScheme.grade r = 4)
     (hrC : r ∈ (scheme I).toCellScheme.below (univ.erase (Fin.last 4), 4))
     {xa : Fin I.amalgam.card} (hPx : Fin.last 4 ∈ I.amalgam.toCellScheme.scope xa)
@@ -692,30 +676,11 @@ theorem readingFillPos_left_of_tie (hraise : I.right.RowsRaiseAt 3)
       (scheme I).rows.IsLawfulBelow (univ.erase (Fin.last 4), 4) (fun d ↦ f d) → f r ≠ ⊥ →
       ∀ d ∈ (scheme I).toCellScheme.below (univ.erase (Fin.last 4), 4),
         (scheme I).toCellScheme.grade d = 3 → f d = ⊥)
-    {n : ℕ} {ι : Fin n ↪ Fin 4} {c z₁ z₂ : Fin I.left.card} (hrc : leftCell I c = r)
-    (hz₁ : leftCell I z₁ = t₁) (hz₂ : leftCell I z₂ = t₂) (hc : I.left.label c = ⊤)
-    (hcs : I.left.toCellScheme.scope c = univ) (hn : n ≤ I.left.toCellScheme.grade c)
-    (hoff : I.left.RootOffsetsBelow ι (I.left.toCellScheme.grade c))
-    (hv₁ : z₁ ∈ I.left.visibleCells ι) (hv₂ : z₂ ∈ I.left.visibleCells ι)
-    (hlab : I.left.label z₂ = I.left.label z₁) (hprop : IsProper (I.left.label z₂)) :
+    (hr₁ : t₁ ∈ (scheme I).toCellScheme.below ((scheme I).toCellScheme.gradedIndex r))
+    (hr₂ : t₂ ∈ (scheme I).toCellScheme.below ((scheme I).toCellScheme.gradedIndex r))
+    (hrow : (scheme I).rowAt r t₂ ≤ (scheme I).rowAt r t₁) :
     ReadingFillPos I r X (Fin.last 4) := by
   classical
-  -- the marker keeps the tie of `t₁` and `t₂` (root offsets below its grade)
-  have hrow : (scheme I).rowAt r t₂ ≤ (scheme I).rowAt r t₁ := by
-    rw [← hrc, ← hz₁, ← hz₂, rowAt_leftCell, rowAt_leftCell]
-    exact StageType.keepsProperRootTies_of_rootOffsetsBelow hc hcs hn hoff z₂ hv₂ z₁ hv₁
-      hlab.le (.inr hprop)
-  have hbelow {z : Fin I.left.card} (hz : z ∈ I.left.visibleCells ι) :
-      leftCell I z ∈ (scheme I).toCellScheme.below
-        ((scheme I).toCellScheme.gradedIndex (leftCell I c)) := by
-    have h := StageType.mem_below_of_mem_visibleCells hcs hn hz
-    rw [CellScheme.mem_below, CellScheme.gradedIndex_le_iff] at h
-    rw [CellScheme.mem_below, gradedIndex_leftCell, gradedIndex_leftCell]
-    exact Prod.mk_le_mk.mpr ⟨map_subset_map.mpr h.1, h.2⟩
-  have hr₁ : t₁ ∈ (scheme I).toCellScheme.below ((scheme I).toCellScheme.gradedIndex r) :=
-    hz₁ ▸ hrc ▸ hbelow hv₁
-  have hr₂ : t₂ ∈ (scheme I).toCellScheme.below ((scheme I).toCellScheme.gradedIndex r) :=
-    hz₂ ▸ hrc ▸ hbelow hv₂
   intro e he h hh _ hhb f hf hfe
   have hel : (scheme I).rows.IsLawful e :=
     (Scheme.mem_catalogue.mp (Scheme.readingMarks_subset _ _ he)).1
@@ -806,6 +771,74 @@ theorem readingFillPos_left_of_tie (hraise : I.right.RowsRaiseAt 3)
   refine ⟨g, hg, hgf, hga, fun x hx ↦ ?_⟩
   rw [hX x hx, hgxtop]
   exact le_top
+
+/-- **The fill at the short positive caps from the left coatom, from the ties of the marker**, at a
+seed whose right coatom type raises at the point `3` (`StageType.RowsRaiseAt`; `rightType` does,
+`TowerProfile.rowsRaiseAt_rightType`). Let `r` be a marker of grade `4` on the left coatom, `x` a
+cell of the amalgam of grade `1` through the point `4` (a new top), and `t₁`, `t₂` cells of the left
+coatom of grades `1` and `2`. Suppose that in every labelling `f` lawful below the left coatom and
+not `⊥` at `r` the cells of grade `1` not `⊥` take the value at `t₁`, the cells of grade `2` not `⊥`
+take the value at `t₂`, and the cells of grade `3` are `⊥`. Suppose the marker is the cell of a cell
+`c` of the left coatom type labelled `⊤`, of full scope and grade at least the arity of a root `ι`,
+with **the root offsets below its grade** (`StageType.RootOffsetsBelow`), and `t₁`, `t₂` are the
+cells of cells visible through `ι` carrying one proper label.  Then
+`ReadingFillPos I r X (Fin.last 4)` for `X = {x}`: the marker keeps the tie of `t₁` and `t₂`
+(`StageType.keepsProperRootTies_of_rootOffsetsBelow`), its row reading `t₂` at most as `t₁`.
+
+Below the cap at the marker it is the fill of the profile layer; outside the band,
+`TowerProfile.exists_fillPos_left_of_noBand`.  In the band (a cell of the left coatom with a value
+in `[h, f r)`), the tie gives `h ≤ f t₁` and `f t₂ ≤ f t₁`; a server
+(`TowerProfile.exists_server_of_rightType`) reads `x` at `ω * β + 1` (a code of the grade `1`) and
+every cell of the left coatom below the block `β`; the fill from the server
+(`TowerProfile.exists_fill_of_server`, with `A = f t₁` and `V = max h (f t₂)`) is `⊤` at `x`. -/
+theorem readingFillPos_left_of_tie (hraise : I.right.RowsRaiseAt 3)
+    {r : Fin (scheme I).card} (hgr : (scheme I).toCellScheme.grade r = 4)
+    (hrC : r ∈ (scheme I).toCellScheme.below (univ.erase (Fin.last 4), 4))
+    {xa : Fin I.amalgam.card} (hPx : Fin.last 4 ∈ I.amalgam.toCellScheme.scope xa)
+    (hgxa : I.amalgam.toCellScheme.grade xa = 1) {X : Finset (Fin (scheme I).card)}
+    (hxX : embed3 I xa ∈ X) (hX : ∀ x ∈ X, x = embed3 I xa)
+    {t₁ t₂ : Fin (scheme I).card}
+    (ht₁ : t₁ ∈ (scheme I).toCellScheme.below (univ.erase (Fin.last 4), 4))
+    (hg₁ : (scheme I).toCellScheme.grade t₁ = 1)
+    (ht₂ : t₂ ∈ (scheme I).toCellScheme.below (univ.erase (Fin.last 4), 4))
+    (hg₂ : (scheme I).toCellScheme.grade t₂ = 2)
+    (H1 : ∀ f : Fin (scheme I).card → Label.{u},
+      (scheme I).rows.IsLawfulBelow (univ.erase (Fin.last 4), 4) (fun d ↦ f d) → f r ≠ ⊥ →
+      ∀ d ∈ (scheme I).toCellScheme.below (univ.erase (Fin.last 4), 4),
+        (scheme I).toCellScheme.grade d = 1 → f d ≠ ⊥ → f d = f t₁)
+    (H2 : ∀ f : Fin (scheme I).card → Label.{u},
+      (scheme I).rows.IsLawfulBelow (univ.erase (Fin.last 4), 4) (fun d ↦ f d) → f r ≠ ⊥ →
+      ∀ d ∈ (scheme I).toCellScheme.below (univ.erase (Fin.last 4), 4),
+        (scheme I).toCellScheme.grade d = 2 → f d ≠ ⊥ → f d = f t₂)
+    (H3 : ∀ f : Fin (scheme I).card → Label.{u},
+      (scheme I).rows.IsLawfulBelow (univ.erase (Fin.last 4), 4) (fun d ↦ f d) → f r ≠ ⊥ →
+      ∀ d ∈ (scheme I).toCellScheme.below (univ.erase (Fin.last 4), 4),
+        (scheme I).toCellScheme.grade d = 3 → f d = ⊥)
+    {n : ℕ} {ι : Fin n ↪ Fin 4} {c z₁ z₂ : Fin I.left.card} (hrc : leftCell I c = r)
+    (hz₁ : leftCell I z₁ = t₁) (hz₂ : leftCell I z₂ = t₂) (hc : I.left.label c = ⊤)
+    (hcs : I.left.toCellScheme.scope c = univ) (hn : n ≤ I.left.toCellScheme.grade c)
+    (hoff : I.left.RootOffsetsBelow ι (I.left.toCellScheme.grade c))
+    (hv₁ : z₁ ∈ I.left.visibleCells ι) (hv₂ : z₂ ∈ I.left.visibleCells ι)
+    (hlab : I.left.label z₂ = I.left.label z₁) (hprop : IsProper (I.left.label z₂)) :
+    ReadingFillPos I r X (Fin.last 4) := by
+  -- the marker keeps the tie of `t₁` and `t₂` (root offsets below its grade)
+  have hrow : (scheme I).rowAt r t₂ ≤ (scheme I).rowAt r t₁ := by
+    rw [← hrc, ← hz₁, ← hz₂, rowAt_leftCell, rowAt_leftCell]
+    exact StageType.keepsProperRootTies_of_rootOffsetsBelow hc hcs hn hoff z₂ hv₂ z₁ hv₁
+      hlab.le (.inr hprop)
+  have hbelow {z : Fin I.left.card} (hz : z ∈ I.left.visibleCells ι) :
+      leftCell I z ∈ (scheme I).toCellScheme.below
+        ((scheme I).toCellScheme.gradedIndex (leftCell I c)) := by
+    have h := StageType.mem_below_of_mem_visibleCells hcs hn hz
+    rw [CellScheme.mem_below, CellScheme.gradedIndex_le_iff] at h
+    rw [CellScheme.mem_below, gradedIndex_leftCell, gradedIndex_leftCell]
+    exact Prod.mk_le_mk.mpr ⟨map_subset_map.mpr h.1, h.2⟩
+  have hr₁ : t₁ ∈ (scheme I).toCellScheme.below ((scheme I).toCellScheme.gradedIndex r) :=
+    hz₁ ▸ hrc ▸ hbelow hv₁
+  have hr₂ : t₂ ∈ (scheme I).toCellScheme.below ((scheme I).toCellScheme.gradedIndex r) :=
+    hz₂ ▸ hrc ▸ hbelow hv₂
+  exact readingFillPos_left_of_rowTie hraise hgr hrC hPx hgxa hxX hX ht₁ hg₁ ht₂ hg₂ H1 H2 H3
+    hr₁ hr₂ hrow
 
 end TowerProfile
 

@@ -37,15 +37,22 @@ from conditions on its two coatom types.
   `TowerProfile.rowsRaiseAt_rightType`).
 
 * **Acquired contexts** (`TowerProfile.isLegalBelowFullGrade_readingTop_of_acquired`,
+  `TowerProfile.isLegalBelowFullGrade_readingTop_of_acquired_offRoot`,
   `TowerProfile.arity_le_two_of_isMarkedCapContextAt`, `TowerProfile.arity_eq_two_of_acquired`,
-  `TopReadingApexExample.not_isMarkedCapContextAt_threeType`, compiled): when the left coatom type
-  is an acquired marked-cap context along a root `h` (`TiedRootCapRelabel.MarkedCapContextBelow'`
-  unpacked), the top cap gives the label `⊤` and the full scope of the apex, the root offsets and
-  the root bottoms; the residual hypotheses are the top grade `4` of the cap, its uniqueness at
-  `(univ, 4)`, the cells off the root labelled `⊥` read as `⊥` (of the kind of the root bottoms,
-  not given by `Realization.IsModel`), the common face labelled `⊥`, the tied root cells with the
-  structure of this family, and the right coatom condition.  The root then has exactly two
-  points; `seedThree` is not such a context (its tie is along the identity root).
+  compiled): when the left coatom type is an acquired marked-cap context along a root `h`
+  (`TiedRootCapRelabel.MarkedCapContextBelow'` unpacked), the top cap gives the label `⊤` and the
+  full scope of the apex, and the acquisition gives the root offsets and the root bottoms.  The
+  residual hypotheses are the top grade `4` of the cap, its uniqueness at `(univ, 4)`, the cells
+  off the root labelled `⊥` read as `⊥`, the common face labelled `⊥`, the tied cells with the
+  structure of this family, the right coatom condition, and either the tied cells on the root
+  (then the root has two points) or the offsets below the grade of the cap at every label.
+* **An acquired instance** (`TopReadingApexExample.markedCapContextBelow'_threeType`,
+  `TopReadingApexExample.isLegalBelowFullGrade_readingTop_seedThree_of_acquired`, compiled):
+  `threeType` is an acquired context along the root `{2, 3}`; the tied cell of grade `2` of this
+  family has full scope and is never a root cell
+  (`TopReadingApexExample.fifteen_notMem_visibleCells`), so the off-root form gives legality at
+  `seedThree`.  `seedThree` is not an acquired context along the identity
+  (`TopReadingApexExample.not_isMarkedCapContextAt_threeType`).
 
 The conditions are explicit predicates on the coatom types; the marker condition is the
 acquisition condition (root offsets below the grade of the cap), from which the tie of the marker
@@ -114,13 +121,9 @@ structure LeftTie {n : ℕ} (t' : StageType.{u} α 4) (ι : Fin n ↪ Fin 4)
   rootBottom : t'.RootBottomRespected ι a
   rowAt_apex_off : ∀ z ∉ t'.visibleCells ι, t'.label z = ⊥ → t'.toScheme.rowAt a z = ⊥
   face_bot : ∀ z, Fin.last 3 ∉ t'.toCellScheme.scope z → t'.label z = ⊥
-  rootOffsetsBelow : t'.RootOffsetsBelow ι 4
-  mem_one : z₁ ∈ t'.visibleCells ι
-  mem_two : z₂ ∈ t'.visibleCells ι
   grade_one : t'.toCellScheme.grade z₁ = 1
   grade_two : t'.toCellScheme.grade z₂ = 2
-  label_eq : t'.label z₂ = t'.label z₁
-  isProper_label : IsProper (t'.label z₂)
+  row_tie : t'.toScheme.rowAt a z₂ ≤ t'.toScheme.rowAt a z₁
   tie_one : ∀ p : Fin t'.card → Label.{u}, t'.rows.IsLawful p → ∀ z,
     t'.toCellScheme.grade z = 1 → t'.label z ≠ ⊥ → p z = p z₁
   tie_two : ∀ p : Fin t'.card → Label.{u}, t'.rows.IsLawful p → ∀ z,
@@ -135,6 +138,18 @@ theorem LeftTie.rowAt_apex {n : ℕ} {t' : StageType.{u} α 4} {ι : Fin n ↪ F
   by_cases hv : z ∈ t'.visibleCells ι
   · exact hL.rootBottom z hv hz
   · exact hL.rowAt_apex_off z hv hz
+
+/-- **The tie of the marker from the root offsets**: a cell `a` labelled `⊤`, of full scope and
+grade at least the arity of a root `ι`, with the root offsets below its grade, reads two root cells
+with one proper label alike (`StageType.keepsProperRootTies_of_rootOffsetsBelow`). -/
+theorem rowTie_of_rootOffsetsBelow {n : ℕ} {t' : StageType.{u} α 4} {ι : Fin n ↪ Fin 4}
+    {a z₁ z₂ : Fin t'.card} (hc : t'.label a = ⊤) (hcs : t'.toCellScheme.scope a = univ)
+    (hn : n ≤ t'.toCellScheme.grade a) (hoff : t'.RootOffsetsBelow ι (t'.toCellScheme.grade a))
+    (hv₁ : z₁ ∈ t'.visibleCells ι) (hv₂ : z₂ ∈ t'.visibleCells ι)
+    (hlab : t'.label z₂ = t'.label z₁) (hprop : IsProper (t'.label z₂)) :
+    t'.toScheme.rowAt a z₂ ≤ t'.toScheme.rowAt a z₁ :=
+  StageType.keepsProperRootTies_of_rootOffsetsBelow hc hcs hn hoff z₂ hv₂ z₁ hv₁ hlab.le
+    (.inr hprop)
 
 /-- **A right coatom type with a new top** at `x₀`: its rows raise at the point `3`
 (`StageType.RowsRaiseAt`), and `x₀` is a cell of grade `1` through `3` labelled `⊤`. -/
@@ -159,7 +174,6 @@ theorem readingFillPos_left_of_coatoms {a z₁ z₂ : Fin I.left.card} {n : ℕ}
     {x₀ : Fin I.right.card} (hR : RightNewTop I.right x₀) :
     ReadingFillPos I (leftCell I a) (newTops I x₀) (Fin.last 4) := by
   obtain ⟨hgr, hrC, -⟩ := leftCell_props (I := I) hL.gradedIndex_apex hL.eq_apex
-  have hga : I.left.toCellScheme.grade a = 4 := congrArg Prod.snd hL.gradedIndex_apex
   have hfr0 {f : Fin (scheme I).card → Label.{u}}
       (hf : (scheme I).rows.IsLawfulBelow (univ.erase (Fin.last 4), 4) fun d ↦ f d)
       (hfr : f (leftCell I a) ≠ ⊥) (z : Fin I.left.card) (hz : I.left.label z = ⊥) :
@@ -172,21 +186,26 @@ theorem readingFillPos_left_of_coatoms {a z₁ z₂ : Fin I.left.card} {n : ℕ}
       ∃ z, leftCell I z = d :=
     exists_leftCell_eq (I := I) (TopReadingApexExample.last_notMem_of_subset
       ((scheme I).toCellScheme.gradedIndex_le_iff.mp ((CellScheme.mem_below _).mp hd)).1)
-  have hoff : I.left.RootOffsetsBelow ι (I.left.toCellScheme.grade a) := by
-    rw [hga]; exact hL.rootOffsetsBelow
+  have hbelowApex (z : Fin I.left.card) : leftCell I z ∈ (scheme I).toCellScheme.below
+      ((scheme I).toCellScheme.gradedIndex (leftCell I a)) := by
+    have h := leftCell_mem (I := I) z
+    rw [CellScheme.mem_below] at h ⊢
+    have hsa : I.left.toCellScheme.scope a = univ := congrArg Prod.fst hL.gradedIndex_apex
+    have hga : I.left.toCellScheme.grade a = 4 := congrArg Prod.snd hL.gradedIndex_apex
+    rw [gradedIndex_leftCell, gradedIndex_leftCell, hsa, hga, univ_map_left_eq]
+    rw [gradedIndex_leftCell] at h
+    exact h
   have hPx : Fin.last 4 ∈ I.amalgam.toCellScheme.scope
       (StageType.faceCell I.restrictFace_right x₀) :=
     (last_mem_scope_right I.restrictFace_right x₀).mpr hR.mem_scope
-  refine readingFillPos_left_of_tie hR.rowsRaiseAt hgr hrC hPx
+  refine readingFillPos_left_of_rowTie hR.rowsRaiseAt hgr hrC hPx
     ((StageType.grade_faceCell _ _).trans hR.grade_eq)
     (mem_image_of_mem _ (mem_singleton_self _))
     (fun x hx ↦ by obtain ⟨z, hz, rfl⟩ := mem_image.mp hx; rw [mem_singleton.mp hz])
     (leftCell_mem z₁) ((grade_leftCell z₁).trans hL.grade_one)
     (leftCell_mem z₂) ((grade_leftCell z₂).trans hL.grade_two)
     (fun f hf hfr d hd hg h0 ↦ ?_) (fun f hf hfr d hd hg h0 ↦ ?_) (fun f hf hfr d hd hg ↦ ?_)
-    (ι := ι) rfl rfl rfl hL.label_apex
-    (congrArg Prod.fst hL.gradedIndex_apex) ?_ hoff hL.mem_one hL.mem_two hL.label_eq
-    hL.isProper_label
+    (hbelowApex z₁) (hbelowApex z₂) (by rw [rowAt_leftCell, rowAt_leftCell]; exact hL.row_tie)
   · obtain ⟨z, rfl⟩ := hcell hd
     exact hL.tie_one _ (isLawful_left_of_isLawfulBelow hf) z ((grade_leftCell z).symm.trans hg)
       fun hz ↦ h0 (hfr0 hf hfr z hz)
@@ -195,9 +214,6 @@ theorem readingFillPos_left_of_coatoms {a z₁ z₂ : Fin I.left.card} {n : ℕ}
       fun hz ↦ h0 (hfr0 hf hfr z hz)
   · obtain ⟨z, rfl⟩ := hcell hd
     exact hfr0 hf hfr z (hL.label_three z ((grade_leftCell z).symm.trans hg))
-  · rw [hga]
-    have := Fintype.card_le_of_embedding ι
-    simpa using this
 
 /-- **The restricted reading layer is legal below the full grade at every seed on five points
 whose left coatom type has a tie-keeping marker and whose right coatom type has a new top**: the
@@ -286,7 +302,6 @@ theorem isLegalBelowFullGrade_readingTop_of_acquired {n : ℕ} {h : Fin n ↪ Fi
     {x₀ : Fin I.right.card} (hR : RightNewTop I.right x₀) :
     (readingTop I (leftCell I c) (newTops I x₀)).IsLegalBelowFullGrade := by
   obtain ⟨⟨hcs, hct, -⟩, -, -, -⟩ := hctx
-  have hoff4 : I.left.RootOffsetsBelow h 4 := by rw [← hN]; exact hoff
   refine isLegalBelowFullGrade_readingTop_of_coatoms (ι := h) (z₁ := z₁) (z₂ := z₂) ?_ hR
   exact
     { gradedIndex_apex := Prod.ext hcs hN
@@ -295,13 +310,52 @@ theorem isLegalBelowFullGrade_readingTop_of_acquired {n : ℕ} {h : Fin n ↪ Fi
       rootBottom := hbot
       rowAt_apex_off := hbotoff
       face_bot := hface
-      rootOffsetsBelow := hoff4
-      mem_one := hz₁
-      mem_two := hz₂
       grade_one := hg₁
       grade_two := hg₂
-      label_eq := hlab
-      isProper_label := hprop
+      row_tie := rowTie_of_rootOffsetsBelow hct hcs
+        (by have := Fintype.card_le_of_embedding h; simp at this; omega) hoff hz₁ hz₂ hlab hprop
+      tie_one := htie
+      tie_two := htwo
+      label_three := hthree }
+
+/-- **Legality of the restricted reading layer at an acquired context, with the tied cells off the
+root.**  As `TowerProfile.isLegalBelowFullGrade_readingTop_of_acquired`, with the tied cells `z₁`,
+`z₂` not required to be root cells, and the root offsets strengthened to all the labels of the left
+coatom type (`hoffAll`, the root offsets along the identity, which contain those along `h`): the
+acquisition condition off the root. -/
+theorem isLegalBelowFullGrade_readingTop_of_acquired_offRoot {n : ℕ} {h : Fin n ↪ Fin 4}
+    {c r : Fin I.left.card} (hctx : I.left.IsMarkedCapContextAt h c r)
+    (hbot : I.left.RootBottomRespected h c)
+    (hN : I.left.toCellScheme.grade c = 4)
+    (huniq : ∀ z, I.left.toCellScheme.gradedIndex z = (univ, 4) → z = c)
+    (hbotoff : ∀ z ∉ I.left.visibleCells h, I.left.label z = ⊥ → I.left.toScheme.rowAt c z = ⊥)
+    (hface : ∀ z, Fin.last 3 ∉ I.left.toCellScheme.scope z → I.left.label z = ⊥)
+    (hoffAll : I.left.RootOffsetsBelow (Function.Embedding.refl (Fin 4))
+      (I.left.toCellScheme.grade c))
+    {z₁ z₂ : Fin I.left.card}
+    (hg₁ : I.left.toCellScheme.grade z₁ = 1) (hg₂ : I.left.toCellScheme.grade z₂ = 2)
+    (hlab : I.left.label z₂ = I.left.label z₁) (hprop : IsProper (I.left.label z₂))
+    (htie : ∀ p : Fin I.left.card → Label.{u}, I.left.rows.IsLawful p → ∀ z,
+      I.left.toCellScheme.grade z = 1 → I.left.label z ≠ ⊥ → p z = p z₁)
+    (htwo : ∀ p : Fin I.left.card → Label.{u}, I.left.rows.IsLawful p → ∀ z,
+      I.left.toCellScheme.grade z = 2 → I.left.label z ≠ ⊥ → p z = p z₂)
+    (hthree : ∀ z, I.left.toCellScheme.grade z = 3 → I.left.label z = ⊥)
+    {x₀ : Fin I.right.card} (hR : RightNewTop I.right x₀) :
+    (readingTop I (leftCell I c) (newTops I x₀)).IsLegalBelowFullGrade := by
+  obtain ⟨⟨hcs, hct, -⟩, -, -, -⟩ := hctx
+  refine isLegalBelowFullGrade_readingTop_of_coatoms (ι := h) (z₁ := z₁) (z₂ := z₂) ?_ hR
+  exact
+    { gradedIndex_apex := Prod.ext hcs hN
+      eq_apex := huniq
+      label_apex := hct
+      rootBottom := hbot
+      rowAt_apex_off := hbotoff
+      face_bot := hface
+      grade_one := hg₁
+      grade_two := hg₂
+      row_tie := rowTie_of_rootOffsetsBelow hct hcs (by rw [hN]) hoffAll
+        (TopReadingApexExample.mem_visibleCells_refl _ _)
+        (TopReadingApexExample.mem_visibleCells_refl _ _) hlab hprop
       tie_one := htie
       tie_two := htwo
       label_three := hthree }
@@ -414,11 +468,64 @@ theorem tie_one_threeType {p : Fin (threeType hα).card → Label.{u}}
   subst hb
   exact le_antisymm hle (h1.trans (min_le_left _ _))
 
-/-- **`threeType` is a left coatom type with a tie-keeping marker**: the apex, and the cells `9`
-and `15` (at `(univ, 1)` and `(univ, 2)`, both labelled `3`); its only ordinal label is `3`, below
-the grade `4` of the apex. -/
-theorem leftTie_threeType :
-    LeftTie (threeType hα) (Function.Embedding.refl (Fin 4)) (Fin.last _)
+/-- **The root offsets of `threeType` lie below `4`** along every root: its only ordinal label is
+`3`. -/
+theorem rootOffsetsBelow_threeType {n : ℕ} (ι : Fin n ↪ Fin 4) :
+    (threeType hα).RootOffsetsBelow ι 4 := by
+  intro y _ μ f hμ hy
+  rcases cases_threeType hα y with rfl | ⟨a, rfl⟩
+  · exact absurd ((label_threeType_last hα).symm.trans hy)
+      (fun h' ↦ WithTop.coe_ne_top (WithBot.coe_injective h'.symm))
+  · have hy' := (label_threeType_castSucc hα a).symm.trans hy
+    rcases labelling_three_cases a with h3 | h0
+    · have e := h3.symm.trans hy'
+      rw [lab3, natCast_label] at e
+      have h' : ((0 : Ordinal.{u}) + (3 : ℕ)) = μ + f := by
+        rw [zero_add]; exact WithTop.coe_injective (WithBot.coe_injective e)
+      have := ((add_natCast_eq_add_natCast_iff Ordinal.isSuccPrelimit_zero hμ).mp h').2
+      omega
+    · exact absurd (h0.symm.trans hy').symm WithBot.coe_ne_bot
+
+/-- The cells `9` and `15` of `threeType` are both labelled `3`. -/
+theorem label_fifteen_eq_nine :
+    (threeType hα).label (Fin.castSucc (⟨15, by decide⟩ : Fin CaseSplitCounterexample.S.{u}.card)) =
+      (threeType hα).label
+        (Fin.castSucc (⟨9, by decide⟩ : Fin CaseSplitCounterexample.S.{u}.card)) := by
+  refine (label_threeType_castSucc hα _).trans (Eq.trans ?_ (label_threeType_castSucc hα _).symm)
+  change CaseSplitCounterexample.labelling lab3 lab3 ⊥ (15 : Fin 19) =
+    CaseSplitCounterexample.labelling lab3 lab3 ⊥ (9 : Fin 19)
+  simp [CaseSplitCounterexample.labelling, CaseSplitCounterexample.live,
+    TwoFaceLiftCounterexample.cellGrade]
+
+/-- The label of the cell `15` of `threeType` is proper (it is `3`). -/
+theorem isProper_label_fifteen :
+    IsProper ((threeType hα).label
+      (Fin.castSucc (⟨15, by decide⟩ : Fin CaseSplitCounterexample.S.{u}.card))) := by
+  have e := (label_threeType_castSucc hα
+    (⟨15, by decide⟩ : Fin CaseSplitCounterexample.S.{u}.card)).trans
+    (show CaseSplitCounterexample.labelling lab3 lab3 ⊥ (15 : Fin 19) = (lab3 : Label.{u}) by
+      simp [CaseSplitCounterexample.labelling, CaseSplitCounterexample.live,
+        TwoFaceLiftCounterexample.cellGrade])
+  exact ⟨((3 : ℕ) : Ordinal.{u}), (natCast_label 3).symm.trans e.symm⟩
+
+/-- **The apex of `threeType` reads the cells `9` and `15` alike** (the root offsets below `4`
+along the identity root, `TowerProfile.rowTie_of_rootOffsetsBelow`). -/
+theorem rowTie_threeType :
+    (threeType hα).toScheme.rowAt (Fin.last _)
+        (Fin.castSucc (⟨15, by decide⟩ : Fin CaseSplitCounterexample.S.{u}.card)) ≤
+      (threeType hα).toScheme.rowAt (Fin.last _)
+        (Fin.castSucc (⟨9, by decide⟩ : Fin CaseSplitCounterexample.S.{u}.card)) :=
+  rowTie_of_rootOffsetsBelow (ι := Function.Embedding.refl (Fin 4)) (label_threeType_last hα)
+    (congrArg Prod.fst (gradedIndex_threeType_last hα))
+    (le_of_eq (grade_threeType_last hα).symm)
+    ((grade_threeType_last hα).symm ▸ rootOffsetsBelow_threeType hα _)
+    (mem_visibleCells_refl _ _) (mem_visibleCells_refl _ _) (label_fifteen_eq_nine hα)
+    (isProper_label_fifteen hα)
+
+/-- **`threeType` is a left coatom type with a tie-keeping marker** along every root: the apex,
+and the cells `9` and `15` (at `(univ, 1)` and `(univ, 2)`, both labelled `3`). -/
+theorem leftTie_threeType {n : ℕ} (ι : Fin n ↪ Fin 4) :
+    LeftTie (threeType hα) ι (Fin.last _)
       (Fin.castSucc (⟨9, by decide⟩ : Fin CaseSplitCounterexample.S.{u}.card))
       (Fin.castSucc (⟨15, by decide⟩ : Fin CaseSplitCounterexample.S.{u}.card)) where
   gradedIndex_apex := gradedIndex_threeType_last hα
@@ -427,9 +534,8 @@ theorem leftTie_threeType :
   label_apex := label_threeType_last hα
   rootBottom z _ hz := (StageType.rowAt_addApex_last_eq_bot_iff (t₀ := threeBase hα)
     isLegalBelowFullGrade_S (by omega) z).mpr hz
-  rowAt_apex_off z hz := absurd (mem_visibleCells_refl _ z) hz
-  mem_one := mem_visibleCells_refl _ _
-  mem_two := mem_visibleCells_refl _ _
+  rowAt_apex_off z _ hz := (StageType.rowAt_addApex_last_eq_bot_iff (t₀ := threeBase hα)
+    isLegalBelowFullGrade_S (by omega) z).mpr hz
   face_bot z hz := by
     rcases cases_threeType hα z with rfl | ⟨a, rfl⟩
     · exact absurd (Eq.mpr (congrArg (Fin.last 3 ∈ ·)
@@ -437,35 +543,9 @@ theorem leftTie_threeType :
     · refine (label_threeType_castSucc hα a).trans (labelling_bot_eq_bot_of_notMem a fun h3 ↦ hz ?_)
       exact Eq.mpr (congrArg (Fin.last 3 ∈ ·)
         (congrArg Prod.fst (gradedIndex_threeType_castSucc hα a))) h3
-  rootOffsetsBelow := by
-    intro y _ μ f hμ hy
-    rcases cases_threeType hα y with rfl | ⟨a, rfl⟩
-    · exact absurd ((label_threeType_last hα).symm.trans hy)
-        (fun h' ↦ WithTop.coe_ne_top (WithBot.coe_injective h'.symm))
-    · have hy' := (label_threeType_castSucc hα a).symm.trans hy
-      rcases labelling_three_cases a with h3 | h0
-      · have e := h3.symm.trans hy'
-        rw [lab3, natCast_label] at e
-        have h' : ((0 : Ordinal.{u}) + (3 : ℕ)) = μ + f := by
-          rw [zero_add]; exact WithTop.coe_injective (WithBot.coe_injective e)
-        have := ((add_natCast_eq_add_natCast_iff Ordinal.isSuccPrelimit_zero hμ).mp h').2
-        omega
-      · exact absurd (h0.symm.trans hy').symm WithBot.coe_ne_bot
   grade_one := (grade_threeType_castSucc hα _).trans rfl
   grade_two := (grade_threeType_castSucc hα _).trans rfl
-  label_eq := by
-    refine (label_threeType_castSucc hα _).trans (Eq.trans ?_ (label_threeType_castSucc hα _).symm)
-    change CaseSplitCounterexample.labelling lab3 lab3 ⊥ (15 : Fin 19) =
-      CaseSplitCounterexample.labelling lab3 lab3 ⊥ (9 : Fin 19)
-    simp [CaseSplitCounterexample.labelling, CaseSplitCounterexample.live,
-      TwoFaceLiftCounterexample.cellGrade]
-  isProper_label := by
-    have e := (label_threeType_castSucc hα
-      (⟨15, by decide⟩ : Fin CaseSplitCounterexample.S.{u}.card)).trans
-      (show CaseSplitCounterexample.labelling lab3 lab3 ⊥ (15 : Fin 19) = (lab3 : Label.{u}) by
-        simp [CaseSplitCounterexample.labelling, CaseSplitCounterexample.live,
-          TwoFaceLiftCounterexample.cellGrade])
-    exact ⟨((3 : ℕ) : Ordinal.{u}), (natCast_label 3).symm.trans e.symm⟩
+  row_tie := rowTie_threeType hα
   tie_one p hp z hz hl := tie_one_threeType hα hp z hz hl
   tie_two p _ z hz hl := by
     rcases cases_threeType hα z with rfl | ⟨a, rfl⟩
@@ -509,7 +589,8 @@ theorem readingFillPos_left_seedThree :
     ReadingFillPos (seedThree hα) (leftCell (seedThree hα) (Fin.last _))
       (newTops (seedThree hα)
         (Fin.castSucc (⟨3, by decide⟩ : Fin CaseSplitCounterexample.S.{u}.card))) (Fin.last 4) :=
-  readingFillPos_left_of_coatoms (leftTie_threeType hα) (rightNewTop_rightType α)
+  readingFillPos_left_of_coatoms (leftTie_threeType hα (Function.Embedding.refl _))
+    (rightNewTop_rightType α)
 
 /-- **The restricted reading layer is legal below the full grade at `seedThree`**, the first
 proper-labelled marker that keeps the tie of its root label
@@ -520,7 +601,8 @@ theorem isLegalBelowFullGrade_readingTop_seedThree :
       (newTops (seedThree hα)
         (Fin.castSucc (⟨3, by decide⟩ :
           Fin CaseSplitCounterexample.S.{u}.card)))).IsLegalBelowFullGrade :=
-  isLegalBelowFullGrade_readingTop_of_coatoms (leftTie_threeType hα) (rightNewTop_rightType α)
+  isLegalBelowFullGrade_readingTop_of_coatoms
+    (leftTie_threeType hα (Function.Embedding.refl _)) (rightNewTop_rightType α)
 
 /-- **`seedThree` is not an acquired context along the identity**: an acquired context on four
 points has a root of at most two points (`TowerProfile.arity_le_two_of_isMarkedCapContextAt`); the
@@ -528,6 +610,95 @@ tie at `threeType` is along the identity root. -/
 theorem not_isMarkedCapContextAt_threeType (c r : Fin (threeType hα).card) :
     ¬ (threeType hα).IsMarkedCapContextAt (Function.Embedding.refl (Fin 4)) c r := fun h ↦
   absurd (arity_le_two_of_isMarkedCapContextAt h) (by omega)
+
+/-- The root `{2, 3}` of `threeType`. -/
+def rootTwoThree : Fin 2 ↪ Fin 4 := ⟨![2, 3], by decide⟩
+
+/-- A cell of `threeType` labelled `⊤` is the apex. -/
+theorem eq_last_of_label_top {x : Fin (threeType hα).card} (hx : (threeType hα).label x = ⊤) :
+    x = Fin.last _ := by
+  rcases cases_threeType hα x with hxl | ⟨a, rfl⟩
+  · exact hxl
+  · exfalso
+    have hl := (label_threeType_castSucc hα a).symm.trans hx
+    rcases labelling_three_cases a with h3 | h0
+    · rw [h3, lab3, natCast_label] at hl
+      exact WithTop.coe_ne_top (WithBot.coe_injective hl)
+    · rw [h0] at hl
+      exact bot_ne_top hl
+
+/-- **The apex of `threeType` is a marked cap along the root `{2, 3}`** (top cap and its own
+marker; the root has no cell labelled `⊤`). -/
+theorem isMarkedCapContextAt_threeType :
+    (threeType hα).IsMarkedCapContextAt rootTwoThree (Fin.last _) (Fin.last _) := by
+  have hcs : (threeType hα).toCellScheme.scope (Fin.last _) = univ :=
+    congrArg Prod.fst (gradedIndex_threeType_last hα)
+  refine ⟨⟨hcs, label_threeType_last hα, fun x _ ↦
+      ((threeType hα).grade_le x).trans (grade_threeType_last hα).ge⟩,
+    ⟨label_threeType_last hα, (threeType hα).toCellScheme.mem_below_gradedIndex _,
+      fun x hx _ ↦ by rw [eq_last_of_label_top hα hx]⟩,
+    by rw [grade_threeType_last]; omega, fun a ha hat ↦ ?_⟩
+  exfalso
+  obtain rfl := eq_last_of_label_top hα hat
+  have h0 : ((0 : Fin 4) : Fin 4) ∈
+      ((threeType hα).toCellScheme.scope (Fin.last _) : Set (Fin 4)) := by
+    rw [hcs]; exact mem_univ _
+  obtain ⟨i, hi⟩ := Scheme.mem_visibleCells.mp ha h0
+  fin_cases i <;> simp [rootTwoThree] at hi
+
+/-- **`threeType` is an acquired marked-cap context along the root `{2, 3}`**
+(`TiedRootCapRelabel.MarkedCapContextBelow'`): the root offsets lie below the grade `4` of the apex
+(its only ordinal label is `3`), and the apex reads the cells labelled `⊥` as `⊥`. -/
+theorem markedCapContextBelow'_threeType :
+    TiedRootCapRelabel.MarkedCapContextBelow' (threeType hα) rootTwoThree :=
+  ⟨Fin.last _, Fin.last _, isMarkedCapContextAt_threeType hα,
+    (grade_threeType_last hα).symm ▸ rootOffsetsBelow_threeType hα _,
+    (leftTie_threeType hα rootTwoThree).rootBottom⟩
+
+/-- **The tied cell of grade `2` of `threeType` is never a root cell of an acquired context**: the
+cell `15` has full scope, so it is visible only through a root of four points, while an acquired
+context on four points has a root of at most two
+(`TowerProfile.arity_le_two_of_isMarkedCapContextAt`).
+So `TowerProfile.isLegalBelowFullGrade_readingTop_of_acquired` (tied cells on the root) has no
+instance with this family's tied cells; the off-root form applies. -/
+theorem fifteen_notMem_visibleCells {n : ℕ} (h : Fin n ↪ Fin 4) (hn : n ≤ 2) :
+    (Fin.castSucc (⟨15, by decide⟩ : Fin CaseSplitCounterexample.S.{u}.card) :
+      Fin (threeType hα).card) ∉ (threeType hα).visibleCells h := by
+  intro hv
+  have hset := Scheme.mem_visibleCells.mp hv
+  have hsub : (threeType hα).toCellScheme.scope
+      (Fin.castSucc (⟨15, by decide⟩ : Fin CaseSplitCounterexample.S.{u}.card)) ⊆ univ.map h :=
+    fun x hx ↦ by
+      obtain ⟨i, rfl⟩ := hset (mem_coe.mpr hx)
+      exact mem_map_of_mem _ (mem_univ i)
+  have hs : (threeType hα).toCellScheme.scope
+      (Fin.castSucc (⟨15, by decide⟩ : Fin CaseSplitCounterexample.S.{u}.card)) = univ := by
+    have := congrArg Prod.fst (gradedIndex_threeType_castSucc hα
+      (⟨15, by decide⟩ : Fin CaseSplitCounterexample.S.{u}.card))
+    exact this.trans (show TwoFaceLiftCounterexample.cellScope (15 : Fin 19) = univ by decide)
+  have := card_le_card hsub
+  rw [hs] at this
+  simp at this
+  omega
+
+/-- **An acquired instance of the legality of the restricted reading layer**: at `seedThree`, with
+the left coatom type `threeType` an acquired context along the root `{2, 3}`
+(`markedCapContextBelow'_threeType`),
+`TowerProfile.isLegalBelowFullGrade_readingTop_of_acquired_offRoot` applies (the cell `15` tied
+to the cell `9` is off the root, `fifteen_notMem_visibleCells`; the offsets of `threeType` lie
+below `4` at every label). -/
+theorem isLegalBelowFullGrade_readingTop_seedThree_of_acquired :
+    (readingTop (seedThree hα) (leftCell (seedThree hα) (Fin.last _))
+      (newTops (seedThree hα)
+        (Fin.castSucc (⟨3, by decide⟩ :
+          Fin CaseSplitCounterexample.S.{u}.card)))).IsLegalBelowFullGrade := by
+  have hL := leftTie_threeType hα rootTwoThree
+  exact isLegalBelowFullGrade_readingTop_of_acquired_offRoot (I := seedThree hα)
+    (isMarkedCapContextAt_threeType hα) hL.rootBottom (grade_threeType_last hα) hL.eq_apex
+    hL.rowAt_apex_off hL.face_bot
+    ((grade_threeType_last hα).symm ▸ rootOffsetsBelow_threeType hα _) hL.grade_one hL.grade_two
+    (label_fifteen_eq_nine hα) (isProper_label_fifteen hα) hL.tie_one hL.tie_two hL.label_three
+    (rightNewTop_rightType α)
 
 end TopReadingApexExample
 
