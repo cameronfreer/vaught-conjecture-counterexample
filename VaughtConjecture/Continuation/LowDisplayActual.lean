@@ -90,58 +90,60 @@ theorem amalgam_label_eq_bot {K M : ℕ}
 
 section Actual
 
-variable (g : ℕ) (N : Lvl I m) (u : Fin N.S.card)
+variable (θ : Label.{u} → Label.{u}) (G : ℕ) (N : Lvl I m) (u : Fin N.S.card)
 
 open Classical in
-/-- The **actual labels** of the level `N` at the grade `m` for a cell `u` of grade `g + 1`: the
-decoded row of `u` at the cells of grade at most `g + 1`, the glued labels at the other old
-cells, `⊥` elsewhere. -/
-noncomputable def actualLabels : Fin N.S.card → Label.{u} := fun z ↦
-  if N.S.toCellScheme.grade z ≤ g + 1 then sepDecoder I g (N.S.rowAt u z)
+/-- The **decoded labels** of the level `N` at the grade `m` for a cell `u` of grade `G` and a map
+`θ`: the image under `θ` of the row of `u` at the cells of grade at most `G`, the glued labels at
+the other old cells, `⊥` elsewhere. -/
+noncomputable def decodedLabels : Fin N.S.card → Label.{u} := fun z ↦
+  if N.S.toCellScheme.grade z ≤ G then θ (N.S.rowAt u z)
   else Function.extend N.embed I.amalgam.label (fun _ ↦ ⊥) z
 
-variable {g N u}
+variable {θ G N u}
 
-theorem actualLabels_of_le {z : Fin N.S.card} (hz : N.S.toCellScheme.grade z ≤ g + 1) :
-    actualLabels g N u z = sepDecoder I g (N.S.rowAt u z) := ite_eq_left hz
+theorem decodedLabels_of_le {z : Fin N.S.card} (hz : N.S.toCellScheme.grade z ≤ G) :
+    decodedLabels θ G N u z = θ (N.S.rowAt u z) := ite_eq_left hz
 
-/-- **The actual labels are the glued labels at the old cells**, when the decoded row reads the
-old cells of grade at most `g + 1` as the glued labels. -/
-theorem actualLabels_embed (hN : N.Good)
-    (hold : ∀ d, I.amalgam.toCellScheme.grade d ≤ g + 1 →
-      sepDecoder I g (N.S.rowAt u (N.embed d)) = I.amalgam.label d) (d : Fin I.amalgam.card) :
-    actualLabels g N u (N.embed d) = I.amalgam.label d := by
+/-- **The decoded labels are the glued labels at the old cells**, when the decoded row reads the
+old cells of grade at most `G` as the glued labels. -/
+theorem decodedLabels_embed (hN : N.Good)
+    (hold : ∀ d, I.amalgam.toCellScheme.grade d ≤ G →
+      θ (N.S.rowAt u (N.embed d)) = I.amalgam.label d) (d : Fin I.amalgam.card) :
+    decodedLabels θ G N u (N.embed d) = I.amalgam.label d := by
   have hgr := hN.lowerEmb.grade_eq d
-  by_cases hd : I.amalgam.toCellScheme.grade d ≤ g + 1
-  · rw [actualLabels_of_le (hgr ▸ hd), hold d hd]
-  · rw [actualLabels, ite_eq_right (by rw [hgr]; exact hd)]
+  by_cases hd : I.amalgam.toCellScheme.grade d ≤ G
+  · rw [decodedLabels_of_le (hgr ▸ hd), hold d hd]
+  · rw [decodedLabels, ite_eq_right (by rw [hgr]; exact hd)]
     exact N.embed.injective.extend_apply _ _ d
 
-/-- **The actual labels are lawful**, when the glued labels of grade in `(g + 1, m]` are `⊥` and
-the decoded row reads the old cells of grade at most `g + 1` as the glued labels. -/
-theorem isLawful_actualLabels (hN : N.Good)
-    (hu : N.S.toCellScheme.gradedIndex u = ((univ : Finset (Fin (m + 2))), g + 1))
-    (hold : ∀ d, I.amalgam.toCellScheme.grade d ≤ g + 1 →
-      sepDecoder I g (N.S.rowAt u (N.embed d)) = I.amalgam.label d)
-    (hbot : ∀ d, g + 1 < I.amalgam.toCellScheme.grade d → I.amalgam.toCellScheme.grade d ≤ m →
+/-- **The decoded labels are lawful**, for a witness `θ` bounded by `G` reflecting `⊥` and a cell
+`u` of graded index `(univ, G)`, when the glued labels of grade in `(G, m]` are `⊥` and the decoded
+row reads the old cells of grade at most `G` as the glued labels. -/
+theorem isLawful_decodedLabels (hN : N.Good) (hθ : IsWitness (stepSuppressor G) θ)
+    (hθb : ∀ x, θ x = ⊥ → x = ⊥)
+    (hu : N.S.toCellScheme.gradedIndex u = ((univ : Finset (Fin (m + 2))), G))
+    (hold : ∀ d, I.amalgam.toCellScheme.grade d ≤ G →
+      θ (N.S.rowAt u (N.embed d)) = I.amalgam.label d)
+    (hbot : ∀ d, G < I.amalgam.toCellScheme.grade d → I.amalgam.toCellScheme.grade d ≤ m →
       I.amalgam.label d = ⊥) :
-    N.S.rows.IsLawful (actualLabels g N u) := by
+    N.S.rows.IsLawful (decodedLabels θ G N u) := by
   classical
-  -- below `(univ, g + 1)`: the decoded row
-  have hK : N.S.rows.IsLawfulBelow ((univ : Finset (Fin (m + 2))), g + 1)
-      (fun d ↦ sepDecoder I g (N.S.rowAt u d)) :=
-    (Scheme.isLawfulBelow_rowAt hN.consistent hu).map_of_apply_eq_bot (fun z ↦ z.2.2)
-      isWitness_sepDecoder fun _ ↦ eq_bot_of_upperDecoderAt_eq_bot
-  -- below `(univ, m)`: `⊥` above `g + 1`
+  -- below `(univ, G)`: the decoded row
+  have hK : N.S.rows.IsLawfulBelow ((univ : Finset (Fin (m + 2))), G)
+      (fun d ↦ θ (N.S.rowAt u d)) :=
+    (Scheme.isLawfulBelow_rowAt hN.consistent hu).map_of_apply_eq_bot (fun z ↦ z.2.2) hθ
+      fun _ ↦ hθb _
+  -- below `(univ, m)`: `⊥` above `G`
   have hm : N.S.rows.IsLawfulBelow ((univ : Finset (Fin (m + 2))), m)
-      (fun d ↦ actualLabels g N u d) := by
+      (fun d ↦ decodedLabels θ G N u d) := by
     have h1 := Rows.isLawfulBelow_extendAbove (K := m)
-      (w := fun d ↦ sepDecoder I g (N.S.rowAt u d)) hK
-    refine (Rows.isLawfulBelow_congr (w := fun d ↦ if N.S.toCellScheme.grade d ≤ g + 1 then
-      sepDecoder I g (N.S.rowAt u d) else ⊥) (w' := actualLabels g N u) fun z hz ↦ ?_).mp h1
-    by_cases hzg : N.S.toCellScheme.grade z ≤ g + 1
-    · rw [ite_eq_left hzg, actualLabels_of_le hzg]
-    · rw [ite_eq_right hzg, actualLabels, ite_eq_right hzg]
+      (w := fun d ↦ θ (N.S.rowAt u d)) hK
+    refine (Rows.isLawfulBelow_congr (w := fun d ↦ if N.S.toCellScheme.grade d ≤ G then
+      θ (N.S.rowAt u d) else ⊥) (w' := decodedLabels θ G N u) fun z hz ↦ ?_).mp h1
+    by_cases hzg : N.S.toCellScheme.grade z ≤ G
+    · rw [ite_eq_left hzg, decodedLabels_of_le hzg]
+    · rw [ite_eq_right hzg, decodedLabels, ite_eq_right hzg]
       by_cases hzr : ∃ d, N.embed d = z
       · obtain ⟨d, rfl⟩ := hzr
         rw [N.embed.injective.extend_apply]
@@ -150,9 +152,9 @@ theorem isLawful_actualLabels (hN : N.Good)
       · exact (Function.extend_apply' I.amalgam.label (fun _ ↦ ⊥) z hzr).symm
   -- below the two coatoms at `m + 1`: the glued labels
   have hcoat (x : Fin (m + 2)) : N.S.rows.IsLawfulBelow (univ.erase x, m + 1)
-      (fun d ↦ actualLabels g N u d) :=
+      (fun d ↦ decodedLabels θ G N u d) :=
     (hN.isLawfulBelow_old_iff (X := (univ.erase x, m + 1)) (Seed.ne_univ_erase x)).mpr
-      ((Rows.isLawfulBelow_congr fun d _ ↦ (actualLabels_embed hN hold d).symm).mp
+      ((Rows.isLawfulBelow_congr fun d _ ↦ (decodedLabels_embed hN hold d).symm).mp
         (I.amalgam.isLawful.isLawfulBelow _))
   have hall (z : Fin N.S.card) :
       z ∈ N.S.toCellScheme.below ((univ : Finset (Fin (m + 2))), m + 1) := by
@@ -168,6 +170,35 @@ theorem isLawful_actualLabels (hN : N.Good)
     fun d _ ↦ hN.mem_below_cover (x := Fin.last (m + 1)) (y := Fin.castSucc (Fin.last m))
       (by simp) (by simp) Seed.last_ne_castSucc d (hall d)
   exact hglue.isLawful hall
+
+/-- The **actual labels** of the level `N` at the grade `m` for a cell `u` of grade `g + 1`: the
+decoded labels for the upper decoder of the glued labels at `g + 1`. -/
+noncomputable abbrev actualLabels (g : ℕ) (N' : Lvl I m) (u' : Fin N'.S.card) :
+    Fin N'.S.card → Label.{u} :=
+  decodedLabels (sepDecoder I g) (g + 1) N' u'
+
+variable {g : ℕ}
+
+theorem actualLabels_of_le {z : Fin N.S.card} (hz : N.S.toCellScheme.grade z ≤ g + 1) :
+    actualLabels g N u z = sepDecoder I g (N.S.rowAt u z) := decodedLabels_of_le hz
+
+theorem actualLabels_embed (hN : N.Good)
+    (hold : ∀ d, I.amalgam.toCellScheme.grade d ≤ g + 1 →
+      sepDecoder I g (N.S.rowAt u (N.embed d)) = I.amalgam.label d) (d : Fin I.amalgam.card) :
+    actualLabels g N u (N.embed d) = I.amalgam.label d :=
+  decodedLabels_embed hN hold d
+
+/-- **The actual labels are lawful**, when the glued labels of grade in `(g + 1, m]` are `⊥` and
+the decoded row reads the old cells of grade at most `g + 1` as the glued labels. -/
+theorem isLawful_actualLabels (hN : N.Good)
+    (hu : N.S.toCellScheme.gradedIndex u = ((univ : Finset (Fin (m + 2))), g + 1))
+    (hold : ∀ d, I.amalgam.toCellScheme.grade d ≤ g + 1 →
+      sepDecoder I g (N.S.rowAt u (N.embed d)) = I.amalgam.label d)
+    (hbot : ∀ d, g + 1 < I.amalgam.toCellScheme.grade d → I.amalgam.toCellScheme.grade d ≤ m →
+      I.amalgam.label d = ⊥) :
+    N.S.rows.IsLawful (actualLabels g N u) :=
+  isLawful_decodedLabels hN isWitness_sepDecoder (fun _ ↦ eq_bot_of_upperDecoderAt_eq_bot) hu
+    hold hbot
 
 end Actual
 
