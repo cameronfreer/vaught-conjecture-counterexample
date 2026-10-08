@@ -27,11 +27,12 @@ whose private cap is `⊥`), with five laws:
   grade `k ≥ N` keeps it admitted;
 * **(A0) bottom** (`Seed.Admission.bot`, `Seed.Admission.adm_of_capBot`): the constant `⊥` and
   the states of `CapBot` are admitted;
-* **(A3) provision** (`Seed.Admission.provision`, the clause `Seed.ProvisionClause`): for every
-  grade `k ≥ N` and every state `W` lawful on the grade-`k` cut (`ProfileTower.IsCutLawful`, the
-  boundary of the lifts from the two coatoms into the full face at the grade `k`), some cap `H`
-  self-visible at `k` and at least every value of `W` at a cell of grade `k` has
-  `min (ŵ_k) H` admitted, `ŵ_k` the splice of `W` at `k` (`ProfileTower.hat`).
+* **(A3) provision** (`Seed.Admission.provision`, the clause `Seed.CoatomProvision`): at every
+  grade `k ≥ N`, `0 < k ≤ m + 1`, every state lawful below a coatom `(C, k)` agrees below `(C, k)`
+  with a state `W` lawful on the grade-`k` cut (`ProfileTower.IsCutLawful`) having the
+  **provision at `k`** (`Seed.ProvisionAt`): some cap `H` self-visible at `k`, at least every
+  value of `W` at a cell of grade `k`, has `min (ŵ_k) H` admitted, `ŵ_k` the splice of `W` at `k`
+  (`ProfileTower.hat`).
 
 The rows allowed at the reading grades are the **reading rows** (`Seed.Admission.Row`): the
 admitted states in the class, and the states of `CapBot`.  So `Adm` is the relation read back
@@ -40,17 +41,27 @@ through the rows of the catalogue: the implication "in the class, then admitted"
 transformations, since a witness given by locality need not reflect `⊥`, so recognition does not
 transport the class and the catalogue keeps only reading rows.
 
-**Why this form of the provision.**  The **literal provision** (`Seed.LiteralProvision`: the
-splice of every boundary state is admitted) is what the compiled lifts of the canonical layers
-use: each of `Scheme.exists_isLawfulBelow_fieldLayer`, `Scheme.exists_extension_fieldLayer`,
-`Scheme.isLawfulBelow_fieldLayer_upperDecoder`, `ProfileTower.Lvl.Good.exists_extension` and
-`ProfileTower.Lvl.Good.exists_extension_bot` extends a boundary state by a witness image of the
-row of the entry of the orbit code of the whole boundary state.  It implies the provision
-(`Seed.ProvisionClause.of_literal`).  Conversely, the provision is **necessary** for an admitted
-completion: in every completion whose rows of full scope at the grades `≥ N` are admitted, every
-labelling lawful below `(univ, j)`, `j ≥ N`, has the provision at its old part
-(`CompletionBelowFullGrade.provisionAt_of_isLawfulBelow`), by availability at the old cells of
-grade `j` and recognition at a cell of `(univ, j)` of largest label.
+**Why this form of the provision.**  Three forms are stated.
+
+* The **literal provision** (`Seed.LiteralProvision`: the splice of every state lawful on the
+  grade-`k` cut is admitted) is what the compiled lifts of the canonical layers use: each of
+  `Scheme.exists_isLawfulBelow_fieldLayer`, `Scheme.exists_extension_fieldLayer`,
+  `Scheme.isLawfulBelow_fieldLayer_upperDecoder`, `ProfileTower.Lvl.Good.exists_extension` and
+  `ProfileTower.Lvl.Good.exists_extension_bot` extends a boundary state by a witness image of the
+  row of the entry of the orbit code of the whole boundary state.
+* The **boundary provision** (`Seed.BoundaryProvision`: the provision at every state lawful on the
+  grade-`k` cut) is what an admitted layer needs for the extension at `⊥` from the boundary of the
+  two coatoms (the boundary triple at `⊥` of `CellScheme.Rows.cappedLift_of_boundaries_short` in
+  `ProfileTower.Lvl.Good.cappedLift_next` and `ProfileTower.Lvl.Good.cappedLift_top_succ`); the
+  literal provision implies it (`Seed.BoundaryProvision.of_literal`).
+* The **coatom provision** (`Seed.CoatomProvision`) is what bountifulness itself asks: it is
+  **necessary** for every admitted completion (`CompletionBelowFullGrade.coatomProvision`), since
+  the capped lift at `⊥` from one coatom extends every state lawful below it, and every labelling
+  lawful below `(univ, j)`, `j ≥ N`, has the provision at its old part
+  (`CompletionBelowFullGrade.provisionAt_of_isLawfulBelow`: availability at the old cells of grade
+  `j`, then recognition at a cell of `(univ, j)` of largest label).  It does not prescribe the
+  other coatom, so a state lawful on the cut whose capped splices are not admitted (a mixed state)
+  need not be extended.
 
 **Recognition** (`CompletionBelowFullGrade.adm_of_isLawfulBelow`).  In a completion whose rows of
 full scope at the grades `≥ N` are admitted (`CompletionBelowFullGrade.HasAdmittedRows`), every
@@ -108,10 +119,29 @@ def ProvisionAt (Adm : I.State → Prop) (k : ℕ) (W : I.State) : Prop :=
     (∀ d, I.amalgam.toCellScheme.grade d = k → W d ≤ H) ∧
       Adm fun d ↦ min (ProfileTower.hat I k W d) H
 
-/-- **The provision clause from the grade `N`**: the provision at every grade `k ≥ N` and every
-state lawful on the grade-`k` cut. -/
-def ProvisionClause (N : ℕ) (Adm : I.State → Prop) : Prop :=
+/-- **The boundary provision from the grade `N`**: the provision at every grade `k ≥ N` and every
+state lawful on the grade-`k` cut, the boundary of the two coatoms at `k`.  It is what the
+extension at `⊥` from the boundary of the two coatoms asks of an admitted layer. -/
+def BoundaryProvision (N : ℕ) (Adm : I.State → Prop) : Prop :=
   ∀ ⦃k : ℕ⦄, N ≤ k → ∀ ⦃W : I.State⦄, ProfileTower.IsCutLawful I k W → I.ProvisionAt Adm k W
+
+/-- **The coatom provision from the grade `N`**: at every grade `k ≥ N` with `0 < k ≤ m + 1` and
+either coatom `C`, every state lawful below `(C, k)` agrees below `(C, k)` with a state lawful on
+the grade-`k` cut that has the provision at `k`.  It is what the capped lift at `⊥` from one coatom
+into the full face asks of an admitted completion (`CompletionBelowFullGrade.coatomProvision`). -/
+def CoatomProvision (N : ℕ) (Adm : I.State → Prop) : Prop :=
+  ∀ ⦃k : ℕ⦄, N ≤ k → 0 < k → k ≤ m + 1 → ∀ ⦃x : Fin (m + 2)⦄,
+    x ∈ (ProfileTower.Pts : Finset (Fin (m + 2))) → ∀ ⦃W : I.State⦄,
+      I.amalgam.rows.IsLawfulBelow (univ.erase x, k) (fun d ↦ W d) →
+      ∃ W' : I.State, ProfileTower.IsCutLawful I k W' ∧
+        (∀ d ∈ I.amalgam.toCellScheme.below (univ.erase x, k), W' d = W d) ∧
+          I.ProvisionAt Adm k W'
+
+/-- **Closure under transformation images** over the grading of the amalgam: for every witness
+`(g, σ)`, the state `d ↦ min (σ (s d)) (g (grade d))` is admitted when `s` is. -/
+def IsTransformClosed (Adm : I.State → Prop) : Prop :=
+  ∀ ⦃s : I.State⦄ ⦃g : ℕ → Label.{u}⦄ ⦃σ : Label.{u} → Label.{u}⦄, Adm s → IsWitness g σ →
+    Adm fun d ↦ min (σ (s d)) (g (I.amalgam.toCellScheme.grade d))
 
 /-- **The literal provision from the grade `N`**: the splice at `k` of every state lawful on the
 grade-`k` cut is admitted, for every `k ≥ N`.  It is what the compiled lifts of the canonical layers
@@ -122,10 +152,166 @@ def LiteralProvision (N : ℕ) (Adm : I.State → Prop) : Prop :=
 
 variable {I}
 
-/-- **The literal provision implies the provision**, at the cap `⊤`. -/
-theorem ProvisionClause.of_literal {N : ℕ} {Adm : I.State → Prop}
-    (h : I.LiteralProvision N Adm) : I.ProvisionClause N Adm := fun _ hk W hW ↦
+/-- **At a state with a top at the grade `k`, the provision is admission of the splice**: the cap
+must be `⊤`.  So a state lawful on the cut, `⊤` at a cell of grade `k`, whose splice is not
+admitted (the mixed state of a seed of a type with itself, under capped correctness) refutes the
+boundary provision. -/
+theorem provisionAt_iff_of_eq_top {Adm : I.State → Prop} {k : ℕ} {W : I.State}
+    {d₀ : Fin I.amalgam.card} (hd₀ : I.amalgam.toCellScheme.grade d₀ = k) (htop : W d₀ = ⊤) :
+    I.ProvisionAt Adm k W ↔ Adm (ProfileTower.hat I k W) := by
+  refine ⟨fun ⟨H, _, hle, hA⟩ ↦ ?_, fun h ↦ ⟨⊤, isSelfVisible_top _, fun _ _ ↦ le_top,
+    by simpa only [min_top_right] using h⟩⟩
+  obtain rfl : H = ⊤ := top_le_iff.mp (htop ▸ hle d₀ hd₀)
+  simpa only [min_top_right] using hA
+
+/-- **The literal provision implies the boundary provision**, at the cap `⊤`. -/
+theorem BoundaryProvision.of_literal {N : ℕ} {Adm : I.State → Prop}
+    (h : I.LiteralProvision N Adm) : I.BoundaryProvision N Adm := fun _ hk W hW ↦
   ⟨⊤, isSelfVisible_top _, fun _ _ ↦ le_top, by simpa only [min_top_right] using h hk hW⟩
+
+end Seed
+
+/-! ### Recognition -/
+
+namespace CompletionBelowFullGrade
+
+variable {α : Ordinal.{u}} {m : ℕ} {I : Seed.{u} α m} (F : CompletionBelowFullGrade I)
+  (N : ℕ) (Adm : I.State → Prop)
+
+/-- The **row state** of a cell `u`: its row read at the old cells (`⊥` at those not below it). -/
+noncomputable def rowState (u : Fin F.scheme.card) : I.State := fun d ↦ F.scheme.rowAt u (F.embed d)
+
+/-- The completion **has admitted rows** from the grade `N`: the row state of every cell of graded
+index `(univ, j)` with `j ≥ N` is admitted. -/
+def HasAdmittedRows : Prop :=
+  ∀ ⦃u : Fin F.scheme.card⦄ ⦃j : ℕ⦄, F.scheme.toCellScheme.gradedIndex u = (univ, j) → N ≤ j →
+    Adm (F.rowState u)
+
+variable {F N Adm}
+
+/-- **Recognition.**  In a completion with admitted rows, let `q` be lawful below `(univ, j)`,
+`j ≥ N`, and `u` a cell of graded index `(univ, j)`.  Then the splice at `j` of the old part of
+`q`, capped at `q u`, is admitted: by locality at `u` the row of `u` transforms to it, and admitted
+states are closed under transformation witnesses (A1). -/
+theorem adm_of_isLawfulBelow (hmap : I.IsTransformClosed Adm) (hF : F.HasAdmittedRows N Adm)
+    {j : ℕ} (hj : N ≤ j)
+    {q : Fin F.scheme.card → Label.{u}}
+    (hq : F.scheme.rows.IsLawfulBelow ((univ : Finset (Fin (m + 2))), j) fun z ↦ q z)
+    {u : Fin F.scheme.card} (hu : F.scheme.toCellScheme.gradedIndex u = (univ, j)) :
+    Adm fun d ↦ min (ProfileTower.hat I j (fun e ↦ q (F.embed e)) d) (q u) := by
+  obtain ⟨-, hloc, -⟩ := Rows.isLawfulBelow_iff_forall.mp hq
+  obtain ⟨g, σ, hw, heq⟩ := hloc u (by rw [CellScheme.mem_below, hu])
+  convert hmap (hF hu hj) hw using 1
+  funext d
+  have hgi := F.gradedIndex_embed d
+  by_cases hd : I.amalgam.toCellScheme.grade d ≤ j
+  · have hmem : F.embed d ∈ F.scheme.toCellScheme.below (F.scheme.toCellScheme.gradedIndex u) := by
+      rw [CellScheme.mem_below, hgi, hu]
+      exact ⟨subset_univ _, hd⟩
+    rw [ProfileTower.hat_of_le hd, rowState, Scheme.rowAt_of_mem hmem,
+      ← F.isLowerEmbedding.grade_eq d]
+    exact heq ⟨F.embed d, hmem⟩
+  · have hmem : F.embed d ∉ F.scheme.toCellScheme.below (F.scheme.toCellScheme.gradedIndex u) := by
+      rw [CellScheme.mem_below, hgi, hu]
+      exact fun h ↦ hd h.2
+    rw [ProfileTower.hat_of_lt (not_le.mp hd), rowState, Scheme.rowAt_of_notMem hmem, hw.map_bot,
+      min_bot_left, min_bot_left]
+
+/-- **The provision is necessary for an admitted completion.**  In a completion with admitted rows
+carrying a cell at `(univ, j)`, `j ≥ N`, every labelling `q` lawful below `(univ, j)` has the
+provision at the grade `j` at every state `W` agreeing with its old part at the cells of grade at
+most `j`: the cap is the largest label of `q` at the cells of `(univ, j)`, at least every value
+of `q` at an old cell of grade `j` by availability, and the capped splice is admitted by
+recognition at a cell carrying it. -/
+theorem provisionAt_of_isLawfulBelow (hmap : I.IsTransformClosed Adm)
+    (hF : F.HasAdmittedRows N Adm) {j : ℕ} (hj : N ≤ j)
+    (hex : ∃ u, F.scheme.toCellScheme.gradedIndex u = ((univ : Finset (Fin (m + 2))), j))
+    {q : Fin F.scheme.card → Label.{u}}
+    (hq : F.scheme.rows.IsLawfulBelow ((univ : Finset (Fin (m + 2))), j) fun z ↦ q z)
+    {W : I.State} (hW : ∀ d, I.amalgam.toCellScheme.grade d ≤ j → q (F.embed d) = W d) :
+    I.ProvisionAt Adm j W := by
+  classical
+  obtain ⟨ho, -, hav⟩ := Rows.isLawfulBelow_iff_forall.mp hq
+  set U := univ.filter fun z : Fin F.scheme.card ↦
+    F.scheme.toCellScheme.gradedIndex z = ((univ : Finset (Fin (m + 2))), j)
+  obtain ⟨u₀, hu₀⟩ := hex
+  obtain ⟨u, huU, hmax⟩ := U.exists_max_image q ⟨u₀, by simpa [U] using hu₀⟩
+  have hu : F.scheme.toCellScheme.gradedIndex u = ((univ : Finset (Fin (m + 2))), j) := by
+    simpa [U] using huU
+  have hub : u ∈ F.scheme.toCellScheme.below ((univ : Finset (Fin (m + 2))), j) := by
+    rw [CellScheme.mem_below, hu]
+  have hgu : F.scheme.toCellScheme.grade u = j := congrArg Prod.snd hu
+  have hhat : ProfileTower.hat I j (fun e ↦ q (F.embed e)) = ProfileTower.hat I j W := by
+    funext d
+    by_cases hd : I.amalgam.toCellScheme.grade d ≤ j
+    · rw [ProfileTower.hat_of_le hd, ProfileTower.hat_of_le hd, hW d hd]
+    · rw [ProfileTower.hat_of_lt (not_le.mp hd), ProfileTower.hat_of_lt (not_le.mp hd)]
+  refine ⟨q u, hgu ▸ ho u hub, fun d hd ↦ ?_, ?_⟩
+  · have hsc : F.scheme.toCellScheme.scope (F.embed d) ⊆ F.scheme.toCellScheme.scope u := by
+      have hsu : F.scheme.toCellScheme.scope u = univ := congrArg Prod.fst hu
+      rw [hsu]
+      exact subset_univ _
+    have hg : F.scheme.toCellScheme.grade (F.embed d) = F.scheme.toCellScheme.grade u := by
+      rw [F.isLowerEmbedding.grade_eq d, hd, hgu]
+    obtain ⟨v, hv, hle⟩ := hav (F.embed d) u hub hsc hg
+    rw [← hW d hd.le]
+    exact hle.trans (hmax v (by simpa [U, hu] using hv))
+  · have h := adm_of_isLawfulBelow hmap hF hj hq hu
+    rwa [hhat] at h
+
+
+/-- **The coatom provision is necessary for an admitted completion.**  In a completion with admitted
+rows from the grade `N`, admitted states closed under transformation images, every state `W`
+lawful below a coatom `(C, k)`, `N ≤ k`, `0 < k ≤ m + 1`, agrees below `(C, k)` with a state
+lawful on the grade-`k` cut having the provision at `k`: the capped lift at `⊥` from `(C, k)` into
+`(univ, k)` (bountifulness of the completion) extends `W` to a labelling lawful below `(univ, k)`,
+whose old part has the provision (`CompletionBelowFullGrade.provisionAt_of_isLawfulBelow`). -/
+theorem coatomProvision (hmap : I.IsTransformClosed Adm) (hF : F.HasAdmittedRows N Adm) :
+    I.CoatomProvision N Adm := by
+  classical
+  intro k hN hk0 hkm x hx W hW
+  have hL := F.isLegalBelowFullGrade
+  have hne : univ.erase x ≠ univ := Seed.ne_univ_erase x
+  have hfaces := F.faces_eq
+  have hX : (univ.erase x, k) ∈ F.scheme.toCellScheme.gradedFaces :=
+    ⟨hfaces ▸ I.erase_mem_faces hx, hk0, by simp only; rw [Seed.card_erase]; exact hkm⟩
+  have hY : ((univ : Finset (Fin (m + 2))), k) ∈ F.scheme.toCellScheme.gradedFaces :=
+    ⟨hL.isWellFormed.univ_mem_faces, hk0, by simp only [card_univ, Fintype.card_fin]; omega⟩
+  have hXY : ((univ.erase x, k) : Finset (Fin (m + 2)) × ℕ) ≤ (univ, k) :=
+    ⟨erase_subset _ _, le_rfl⟩
+  -- The state, carried to the cells of the completion.
+  set w : Fin F.scheme.card → Label.{u} := Function.extend F.embed W fun _ ↦ ⊥ with hw
+  have hwe (d : Fin I.amalgam.card) : w (F.embed d) = W d := F.embed.injective.extend_apply _ _ d
+  have hwX : F.scheme.rows.IsLawfulBelow (univ.erase x, k) fun z ↦ w z := by
+    rw [F.isLawfulBelow_embed_iff hne]
+    simpa only [hwe] using hW
+  obtain ⟨q', ⟨hq', -⟩, hq'w⟩ := hL.isBountiful hX hY hXY ⊥ (isSelfVisible_bot k)
+    (fun _ ↦ ⊥) (Rows.isLawfulBelow_const_bot _) ⟨hwX, fun _ ↦ by simp⟩
+  set q : Fin F.scheme.card → Label.{u} := Rows.extendBot ((univ : Finset (Fin (m + 2))), k) q'
+  have hqq' (z : F.scheme.toCellScheme.below ((univ : Finset (Fin (m + 2))), k)) : q z = q' z :=
+    Rows.extendBot_of_mem q' z.2
+  have hq : F.scheme.rows.IsLawfulBelow ((univ : Finset (Fin (m + 2))), k) fun z ↦ q z := by
+    convert hq' using 1
+    exact funext hqq'
+  have hcut (y : Fin (m + 2)) :
+      I.amalgam.rows.IsLawfulBelow (univ.erase y, k) fun d ↦ q (F.embed d) :=
+    (F.isLawfulBelow_embed_iff (Seed.ne_univ_erase y)).mp
+      (hq.mono (X := (univ.erase y, k)) ⟨erase_subset _ _, le_rfl⟩)
+  have hex := hL.exists_gradedIndex_eq _ hY (by simp only; omega)
+  refine ⟨fun d ↦ q (F.embed d), ⟨hcut _, hcut _⟩, fun d hd ↦ ?_,
+    provisionAt_of_isLawfulBelow hmap hF hN hex hq fun _ _ ↦ rfl⟩
+  have hdX : F.embed d ∈ F.scheme.toCellScheme.below (univ.erase x, k) := by
+    rw [CellScheme.mem_below, F.gradedIndex_embed]
+    exact hd
+  have h := congrFun hq'w ⟨F.embed d, hdX⟩
+  simp only [Function.comp_apply] at h
+  rw [← hwe d, ← h, ← hqq']
+
+end CompletionBelowFullGrade
+
+namespace Seed
+
+variable {α : Ordinal.{u}} {m : ℕ} {I : Seed.{u} α m}
 
 variable (I) in
 /-- **An admission from the grade `N`**: a predicate `Adm` on states, closed under transformation
@@ -144,8 +330,7 @@ structure Admission where
   CapBot : I.State → Prop
   /-- (A1) Admitted states are closed under transformation images over the grading of the
   amalgam. -/
-  map : ∀ ⦃s : I.State⦄ ⦃g : ℕ → Label.{u}⦄ ⦃σ : Label.{u} → Label.{u}⦄, Adm s →
-    IsWitness g σ → Adm fun d ↦ min (σ (s d)) (g (I.amalgam.toCellScheme.grade d))
+  map : I.IsTransformClosed Adm
   /-- (A2) Capping at a label self-visible at a grade `k ≥ N` keeps admission. -/
   cap : ∀ ⦃s : I.State⦄ ⦃k : ℕ⦄ ⦃h : Label.{u}⦄, N ≤ k → Adm s → IsSelfVisible k h →
     Adm fun d ↦ min (s d) h
@@ -153,8 +338,8 @@ structure Admission where
   bot : Adm fun _ ↦ ⊥
   /-- (A0) The states of `CapBot` are admitted. -/
   adm_of_capBot : ∀ ⦃s : I.State⦄, CapBot s → Adm s
-  /-- (A3) The provision from the grade `N`. -/
-  provision : I.ProvisionClause N Adm
+  /-- (A3) The coatom provision from the grade `N`. -/
+  provision : I.CoatomProvision N Adm
 
 namespace Admission
 
@@ -178,7 +363,8 @@ theorem adm_hat {s : I.State} (hs : A.Adm s) (k : ℕ) : A.Adm (ProfileTower.hat
 
 variable (I) in
 /-- **The trivial admission** from the grade `N`: every state is admitted, in the class, and
-admitted unconditionally. -/
+admitted unconditionally.  Its coatom provision is that of the canonical completion
+(`Seed.nonempty_completionBelowFullGrade`, `CompletionBelowFullGrade.coatomProvision`). -/
 def all (N : ℕ) : I.Admission where
   N := N
   Adm _ := True
@@ -188,7 +374,8 @@ def all (N : ℕ) : I.Admission where
   cap _ _ _ _ _ _ := trivial
   bot := trivial
   adm_of_capBot _ _ := trivial
-  provision := ProvisionClause.of_literal fun _ _ _ _ ↦ trivial
+  provision := (I.nonempty_completionBelowFullGrade.some).coatomProvision
+    (fun _ _ _ _ _ ↦ trivial) fun _ _ _ _ ↦ trivial
 
 /-- Every state is a reading row of the trivial admission. -/
 theorem row_all (N : ℕ) (s : I.State) : (all I N).Row s := .inr trivial
@@ -497,92 +684,5 @@ theorem Lvl.admittedTop_all (N : Lvl I m) (K : ℕ) :
 
 end ProfileTower
 
-/-! ### Recognition -/
-
-namespace CompletionBelowFullGrade
-
-variable {α : Ordinal.{u}} {m : ℕ} {I : Seed.{u} α m} (F : CompletionBelowFullGrade I)
-  (A : I.Admission)
-
-/-- The **row state** of a cell `u`: its row read at the old cells (`⊥` at those not below it). -/
-noncomputable def rowState (u : Fin F.scheme.card) : I.State := fun d ↦ F.scheme.rowAt u (F.embed d)
-
-/-- The completion **has admitted rows** for the admission `A`: the row state of every cell of
-graded index `(univ, j)` with `j ≥ A.N` is admitted. -/
-def HasAdmittedRows : Prop :=
-  ∀ ⦃u : Fin F.scheme.card⦄ ⦃j : ℕ⦄, F.scheme.toCellScheme.gradedIndex u = (univ, j) → A.N ≤ j →
-    A.Adm (F.rowState u)
-
-variable {F A}
-
-/-- **Recognition.**  In a completion with admitted rows, let `q` be lawful below `(univ, j)`,
-`j ≥ A.N`, and `u` a cell of graded index `(univ, j)`.  Then the splice at `j` of the old part of
-`q`, capped at `q u`, is admitted: by locality at `u` the row of `u` transforms to it, and admitted
-states are closed under transformation witnesses (A1). -/
-theorem adm_of_isLawfulBelow (hF : F.HasAdmittedRows A) {j : ℕ} (hj : A.N ≤ j)
-    {q : Fin F.scheme.card → Label.{u}}
-    (hq : F.scheme.rows.IsLawfulBelow ((univ : Finset (Fin (m + 2))), j) fun z ↦ q z)
-    {u : Fin F.scheme.card} (hu : F.scheme.toCellScheme.gradedIndex u = (univ, j)) :
-    A.Adm fun d ↦ min (ProfileTower.hat I j (fun e ↦ q (F.embed e)) d) (q u) := by
-  obtain ⟨-, hloc, -⟩ := Rows.isLawfulBelow_iff_forall.mp hq
-  obtain ⟨g, σ, hw, heq⟩ := hloc u (by rw [CellScheme.mem_below, hu])
-  convert A.map (hF hu hj) hw using 1
-  funext d
-  have hgi := F.gradedIndex_embed d
-  by_cases hd : I.amalgam.toCellScheme.grade d ≤ j
-  · have hmem : F.embed d ∈ F.scheme.toCellScheme.below (F.scheme.toCellScheme.gradedIndex u) := by
-      rw [CellScheme.mem_below, hgi, hu]
-      exact ⟨subset_univ _, hd⟩
-    rw [ProfileTower.hat_of_le hd, rowState, Scheme.rowAt_of_mem hmem,
-      ← F.isLowerEmbedding.grade_eq d]
-    exact heq ⟨F.embed d, hmem⟩
-  · have hmem : F.embed d ∉ F.scheme.toCellScheme.below (F.scheme.toCellScheme.gradedIndex u) := by
-      rw [CellScheme.mem_below, hgi, hu]
-      exact fun h ↦ hd h.2
-    rw [ProfileTower.hat_of_lt (not_le.mp hd), rowState, Scheme.rowAt_of_notMem hmem, hw.map_bot,
-      min_bot_left, min_bot_left]
-
-/-- **The provision is necessary for an admitted completion.**  In a completion with admitted rows
-carrying a cell at `(univ, j)`, `j ≥ A.N`, every labelling `q` lawful below `(univ, j)` has the
-provision at the grade `j` at every state `W` agreeing with its old part at the cells of grade at
-most `j`: the cap is the largest label of `q` at the cells of `(univ, j)`, at least every value
-of `q` at an old cell of grade `j` by availability, and the capped splice is admitted by
-recognition at a cell carrying it. -/
-theorem provisionAt_of_isLawfulBelow (hF : F.HasAdmittedRows A) {j : ℕ} (hj : A.N ≤ j)
-    (hex : ∃ u, F.scheme.toCellScheme.gradedIndex u = ((univ : Finset (Fin (m + 2))), j))
-    {q : Fin F.scheme.card → Label.{u}}
-    (hq : F.scheme.rows.IsLawfulBelow ((univ : Finset (Fin (m + 2))), j) fun z ↦ q z)
-    {W : I.State} (hW : ∀ d, I.amalgam.toCellScheme.grade d ≤ j → q (F.embed d) = W d) :
-    I.ProvisionAt A.Adm j W := by
-  classical
-  obtain ⟨ho, -, hav⟩ := Rows.isLawfulBelow_iff_forall.mp hq
-  set U := univ.filter fun z : Fin F.scheme.card ↦
-    F.scheme.toCellScheme.gradedIndex z = ((univ : Finset (Fin (m + 2))), j)
-  obtain ⟨u₀, hu₀⟩ := hex
-  obtain ⟨u, huU, hmax⟩ := U.exists_max_image q ⟨u₀, by simpa [U] using hu₀⟩
-  have hu : F.scheme.toCellScheme.gradedIndex u = ((univ : Finset (Fin (m + 2))), j) := by
-    simpa [U] using huU
-  have hub : u ∈ F.scheme.toCellScheme.below ((univ : Finset (Fin (m + 2))), j) := by
-    rw [CellScheme.mem_below, hu]
-  have hgu : F.scheme.toCellScheme.grade u = j := congrArg Prod.snd hu
-  have hhat : ProfileTower.hat I j (fun e ↦ q (F.embed e)) = ProfileTower.hat I j W := by
-    funext d
-    by_cases hd : I.amalgam.toCellScheme.grade d ≤ j
-    · rw [ProfileTower.hat_of_le hd, ProfileTower.hat_of_le hd, hW d hd]
-    · rw [ProfileTower.hat_of_lt (not_le.mp hd), ProfileTower.hat_of_lt (not_le.mp hd)]
-  refine ⟨q u, hgu ▸ ho u hub, fun d hd ↦ ?_, ?_⟩
-  · have hsc : F.scheme.toCellScheme.scope (F.embed d) ⊆ F.scheme.toCellScheme.scope u := by
-      have hsu : F.scheme.toCellScheme.scope u = univ := congrArg Prod.fst hu
-      rw [hsu]
-      exact subset_univ _
-    have hg : F.scheme.toCellScheme.grade (F.embed d) = F.scheme.toCellScheme.grade u := by
-      rw [F.isLowerEmbedding.grade_eq d, hd, hgu]
-    obtain ⟨v, hv, hle⟩ := hav (F.embed d) u hub hsc hg
-    rw [← hW d hd.le]
-    exact hle.trans (hmax v (by simpa [U, hu] using hv))
-  · have h := adm_of_isLawfulBelow hF hj hq hu
-    rwa [hhat] at h
-
-end CompletionBelowFullGrade
 
 end VaughtConjecture
