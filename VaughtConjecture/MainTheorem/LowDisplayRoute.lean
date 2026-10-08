@@ -21,7 +21,13 @@ threshold occurring at the stage: a legal `D` on `k + 2` points with faces `t'` 
 that every lawful section of the rows of `D` with the private face literal and the observation of
 `D` at a cutoff above the threshold has the donor face literal.  The separated form
 (`StageType.HasSeparatedLowDisplays`, the separator and its reading, [Kni26, §3.3]) implies it
-(`StageType.HasSeparatedLowDisplays.hasLowDisplays`, compiled in this repository).
+(`StageType.HasSeparatedLowDisplays.hasLowDisplays`, compiled in this repository), and the
+controller form (`StageType.HasControlledLowDisplays`: the separator reading through the rows of
+the cells of graded index `(univ, K)`, `StageType.IsControllerReading`) implies the separated form
+(`StageType.HasControlledLowDisplays.hasSeparatedLowDisplays`, compiled in this repository).  In
+the controller form no lawful section of the display enters: a lawful section `q` with the
+private tops literal is `σ` of the row of some controller up to grade `K`
+(`StageType.exists_controller`, from completeness, availability and locality).
 
 **The bounded coatom form from LOW displays**
 (`Realization.BoundedCoatomCutoffDetermination.of_hasLowDisplays`, compiled in this repository).
@@ -99,6 +105,32 @@ def HasSeparatedLowDisplays : Prop :=
   ∀ ⦃α : Ordinal.{u}⦄ ⦃K k : ℕ⦄ (t' tb : StageType.{u} α (k + 1)) (p : StageType.{u} α k)
     (o r : Fin t'.card), Order.IsSuccLimit α → IsLowFamily K t' tb p o r →
       ∃ (D : StageType.{u} α (k + 2)) (lo hi : Fin D.card), IsSeparatedLowDisplay t' tb D lo hi
+
+/-- **Controlled LOW displays at source-gap contexts** (open): the statement of
+`HasSeparatedLowDisplays` with the separator reading given by the controller reading
+(`IsControllerReading`) at grade `K`: every LOW family `(t', tb)` with owner `o` and lost top `r`
+has a legal display `D` with separator cells `lo`, `hi` of grade at most `K`, labelled by a proper
+label and by `⊤`, whose controllers of grade `K` read the private copies of `o` and `r`, the
+separator, and the donor tops as required.  A statement about the rows of the controllers of `D`;
+no lawful section of `D` other than its labels enters. -/
+def HasControlledLowDisplays : Prop :=
+  ∀ ⦃α : Ordinal.{u}⦄ ⦃K k : ℕ⦄ (t' tb : StageType.{u} α (k + 1)) (p : StageType.{u} α k)
+    (o r : Fin t'.card), Order.IsSuccLimit α → IsLowFamily K t' tb p o r →
+      ∃ (D : StageType.{u} α (k + 2)) (h₁ : restrictFace Fin.castSuccEmb D = some t')
+        (h₂ : restrictFace (extendByLast Fin.castSuccEmb) D = some tb) (lo hi : Fin D.card),
+        D.IsLegal ∧ D.label lo ≠ ⊤ ∧ D.label hi = ⊤ ∧ D.toCellScheme.grade lo ≤ K ∧
+          D.toCellScheme.grade hi ≤ K ∧
+          IsControllerReading D K (faceCell h₁ o) (faceCell h₁ r) lo hi
+            {i | ∃ x, tb.label x = ⊤ ∧ faceCell h₂ x = i}
+
+/-- **The controller reading gives separated displays**
+(`StageType.IsSeparatedLowDisplay.of_controllerReading`). -/
+theorem HasControlledLowDisplays.hasSeparatedLowDisplays (h : HasControlledLowDisplays.{u}) :
+    HasSeparatedLowDisplays.{u} := by
+  intro α K k t' tb p o r hα hF
+  obtain ⟨D, h₁, h₂, lo, hi, hD, hlo, hhi, hlog, hhig, hX⟩ := h t' tb p o r hα hF
+  exact ⟨D, lo, hi, IsSeparatedLowDisplay.of_controllerReading hF.isSourceGapContextAt
+    hF.topGrade_donor hD h₁ h₂ hlo hhi hlog hhig hX⟩
 
 /-- **Separated displays give LOW displays** (`StageType.exists_isLowDisplay_of_separated`). -/
 theorem HasSeparatedLowDisplays.hasLowDisplays (h : HasSeparatedLowDisplays.{u}) :

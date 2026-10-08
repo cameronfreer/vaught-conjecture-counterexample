@@ -45,6 +45,18 @@ in every section agreeing with `D` at the cutoff (`Label.lt_of_min_eq_of_min_eq`
 proper donor labels it keeps those labels; so a separated display with threshold above the label
 of `lo` and the proper donor labels is a LOW display.
 
+**Reading through a controller** (`StageType.exists_controller`,
+`StageType.IsControllerReading.label_eq_top`,
+`StageType.IsSeparatedLowDisplay.of_controllerReading`, compiled in this repository). In a legal
+stage type, a lawful section `q` that is `⊤` at a cell of grade `K` is, at every cell of grade at
+most `K`, the image `σ` of the row of some cell of graded index `(univ, K)` (a **controller**) under
+a locality witness `(g, σ)` with `g K = ⊤`: completeness gives a controller, availability makes `q`
+top at one of them, and locality there has target `q`. So the separator reading follows from the
+**controller reading** (`StageType.IsControllerReading`), a property of the rows of the controllers:
+for every controller and every such witness, if `σ` reads the owner and the lost top as `⊤` and the
+separator strictly increasing, it reads every donor top as `⊤`. This is the form in which [Kni26,
+§3.3] reads the donor through the controller of the actual state.
+
 **The instance without new tops** (`StageType.IsLowDisplay.of_forall_top_root` here, and
 `StageType.exists_isLowDisplay_of_forall_top_root` in
 `VaughtConjecture.MainTheorem.LowDisplayRoute`, compiled in this repository).  When every top of
@@ -295,6 +307,112 @@ theorem exists_isLowDisplay_of_separated (hα : Order.IsSuccLimit α) {lo hi : F
     IsLowDisplay.of_separated hD (ne_top_of_lt hoα') (ho lo hD.label_lo).le fun x hx ↦ ?_⟩
   rw [← label_faceCell hD.face_donor x] at hx ⊢
   exact (ho _ hx).le
+
+/-! ### Reading through a controller -/
+
+/-- **The top chart**: in a legal stage type `D` on `m` points, let `q` be a lawful section of the
+rows of `D` with `q s = ⊤` at a cell `s` of grade `K`.  Some cell `w` of graded index `(univ, K)`
+(a **controller**) has a locality witness `(g, σ)` with `g K = ⊤` such that `q` is `σ` of the row
+of `w` at every cell of grade at most `K`.  Completeness gives a cell of graded index
+`(univ, K)`, availability of `q` makes one of them `⊤`, and locality there has target `q`. -/
+theorem exists_controller {D : StageType.{u} α m} (hD : D.IsLegal) {q : Fin D.card → Label.{u}}
+    (hq : D.rows.IsLawful q) {s : Fin D.card} (hs : q s = ⊤) :
+    ∃ w : Fin D.card, D.toCellScheme.gradedIndex w = (univ, D.toCellScheme.grade s) ∧
+      ∃ (g : ℕ → Label.{u}) (σ : Label.{u} → Label.{u}), IsWitness g σ ∧
+        g (D.toCellScheme.grade s) = ⊤ ∧ ∀ d : Fin D.card,
+          D.toCellScheme.grade d ≤ D.toCellScheme.grade s → q d = σ (D.rowAt w d) := by
+  have hg : D.toCellScheme.grade s ≤ #(univ : Finset (Fin m)) := by
+    rw [card_univ, Fintype.card_fin]
+    exact D.grade_le s
+  obtain ⟨u₀, hu₀⟩ := (isLegal_iff.mp hD).2.2 (univ, D.toCellScheme.grade s)
+    ⟨D.univ_mem_faces, D.isWellFormed.isWellFormed.grade_pos s, hg⟩
+  have hsc : D.toCellScheme.scope s ⊆ D.toCellScheme.scope u₀ := by
+    rw [show D.toCellScheme.scope u₀ = univ from congrArg Prod.fst hu₀]
+    exact subset_univ _
+  obtain ⟨w, hw, hsw⟩ := hq.availability s u₀ hsc (congrArg Prod.snd hu₀).symm
+  rw [hu₀] at hw
+  rw [hs, top_le_iff] at hsw
+  have hb {y : Fin D.card} (hy : D.toCellScheme.grade y ≤ D.toCellScheme.grade s) :
+      y ∈ D.toCellScheme.below (D.toCellScheme.gradedIndex w) := by
+    rw [CellScheme.mem_below, hw]
+    exact ⟨subset_univ _, hy⟩
+  obtain ⟨g, σ, hwit, heq⟩ := hq.locality w
+  -- below `w`, the target of locality is `q` itself, since `q w = ⊤`
+  have hq' (d : D.toCellScheme.below (D.toCellScheme.gradedIndex w)) :
+      q d = min (σ (D.rows.row w d)) (g (D.toCellScheme.grade d)) := by
+    have := heq d
+    simp only [hsw, min_top_right] at this
+    exact this
+  have hgw : g (D.toCellScheme.grade s) = ⊤ := by
+    have h := (hq' ⟨w, D.toCellScheme.mem_below_gradedIndex w⟩).symm.trans hsw
+    rw [show D.toCellScheme.grade w = D.toCellScheme.grade s from congrArg Prod.snd hw] at h
+    exact (_root_.min_eq_top.mp h).2
+  refine ⟨w, hw, g, σ, hwit, hgw, fun d hd ↦ ?_⟩
+  rw [hq' ⟨d, hb hd⟩, Scheme.rowAt_of_mem (hb hd)]
+  have hgd : g (D.toCellScheme.grade d) = ⊤ := top_le_iff.mp (hgw ▸ hwit.antitone hd)
+  rw [hgd, min_top_right]
+
+/-- The **controller reading** of a stage type `D` at grade `K`, for the cells `o`, `r`
+(the private tops), the separator `lo`, `hi`, and a set `X` of cells (the donor tops): for every
+controller `w` (graded index `(univ, K)`) and every witness `(g, σ)` with `g K = ⊤`, if `σ` reads
+`o` and `r` through the row of `w` as `⊤` and `lo` strictly below `hi`, then it reads every cell
+of `X` as `⊤`.  A property of the rows of the controllers alone. -/
+def IsControllerReading (D : StageType.{u} α m) (K : ℕ) (o r lo hi : Fin D.card)
+    (X : Set (Fin D.card)) : Prop :=
+  ∀ w : Fin D.card, D.toCellScheme.gradedIndex w = (univ, K) →
+    ∀ (g : ℕ → Label.{u}) (σ : Label.{u} → Label.{u}), IsWitness g σ → g K = ⊤ →
+      σ (D.rowAt w o) = ⊤ → σ (D.rowAt w r) = ⊤ → σ (D.rowAt w lo) < σ (D.rowAt w hi) →
+        ∀ x ∈ X, σ (D.rowAt w x) = ⊤
+
+/-- **The controller reading gives the reading of every lawful section**: in a legal `D`, a
+lawful section `q` with `q o = q r = ⊤` and `q lo < q hi`, where `o` has grade `K` and `r`,
+`lo`, `hi` and the cells of `X` have grade at most `K`, reads every cell of `X` as `⊤`.  The top
+chart at `o` (`StageType.exists_controller`) gives a controller `w` with `q = σ ∘ (row of w)` up
+to grade `K`. -/
+theorem IsControllerReading.label_eq_top {D : StageType.{u} α m} (hD : D.IsLegal) {K : ℕ}
+    {o r lo hi : Fin D.card} {X : Set (Fin D.card)} (hX : IsControllerReading D K o r lo hi X)
+    (ho : D.toCellScheme.grade o = K) (hr : D.toCellScheme.grade r ≤ K)
+    (hlo : D.toCellScheme.grade lo ≤ K) (hhi : D.toCellScheme.grade hi ≤ K)
+    (hXK : ∀ x ∈ X, D.toCellScheme.grade x ≤ K) {q : Fin D.card → Label.{u}}
+    (hq : D.rows.IsLawful q) (hqo : q o = ⊤) (hqr : q r = ⊤) (hsep : q lo < q hi) :
+    ∀ x ∈ X, q x = ⊤ := by
+  obtain ⟨w, hw, g, σ, hwit, hg, hread⟩ := exists_controller hD hq hqo
+  rw [ho] at hw hg hread
+  intro x hx
+  rw [hread x (hXK x hx)]
+  refine hX w hw g σ hwit hg ?_ ?_ ?_ x hx
+  · rw [← hread o ho.le, hqo]
+  · rw [← hread r hr, hqr]
+  · rwa [← hread lo hlo, ← hread hi hhi]
+
+/-- **Separated displays from the controller reading**: a display `D` of `tb` over `t'` (legal,
+with the two faces) at a source-gap context of grade `K` with owner `o` and lost top `r`, with
+separator cells `lo`, `hi` of grade at most `K` labelled by a proper label and by `⊤`, is a
+separated LOW display when the controller reading holds at grade `K` for the private copies of
+`o` and `r`, the separator, and the donor copies of the tops of `tb` (of top grade at most `K`). -/
+theorem IsSeparatedLowDisplay.of_controllerReading {K n : ℕ} {h : Fin n ↪ Fin (k + 1)}
+    {l : Fin (k + 1)} {o r : Fin t'.card} (hs : t'.IsSourceGapContextAt K h l o r)
+    (htbK : tb.topGrade ≤ K) (hD : D.IsLegal) (h₁ : restrictFace Fin.castSuccEmb D = some t')
+    (h₂ : restrictFace (extendByLast Fin.castSuccEmb) D = some tb) {lo hi : Fin D.card}
+    (hlo : D.label lo ≠ ⊤) (hhi : D.label hi = ⊤) (hlog : D.toCellScheme.grade lo ≤ K)
+    (hhig : D.toCellScheme.grade hi ≤ K)
+    (hX : IsControllerReading D K (faceCell h₁ o) (faceCell h₁ r) lo hi
+      {i | ∃ x, tb.label x = ⊤ ∧ faceCell h₂ x = i}) :
+    IsSeparatedLowDisplay t' tb D lo hi where
+  isLegal := hD
+  face_private := h₁
+  face_donor := h₂
+  label_lo := hlo
+  label_hi := hhi
+  reading q hq hp hsep x hx := by
+    have hr : D.toCellScheme.grade (faceCell h₁ r) ≤ K := by
+      rw [grade_faceCell, ← hs.topGrade_eq]
+      exact grade_le_topGrade hs.label_lost
+    refine hX.label_eq_top hD (by rw [grade_faceCell]; exact hs.grade_owner) hr hlog hhig
+      ?_ hq (by rw [hp]; exact hs.label_owner) (by rw [hp]; exact hs.label_lost) hsep _ ⟨x, hx, rfl⟩
+    rintro _ ⟨y, hy, rfl⟩
+    rw [grade_faceCell]
+    exact topGrade_le_iff.mp htbK y hy
 
 /-! ### The instance without new tops -/
 
