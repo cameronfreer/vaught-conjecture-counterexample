@@ -45,21 +45,29 @@ in every section agreeing with `D` at the cutoff (`Label.lt_of_min_eq_of_min_eq`
 proper donor labels it keeps those labels; so a separated display with threshold above the label
 of `lo` and the proper donor labels is a LOW display.
 
-**The instance without new tops** (`StageType.exists_isLowDisplay_of_forall_top_root`, compiled in
-this repository).  When every top of the donor lies in the common face, every display is a LOW
-display at a threshold above its proper labels: donor tops are private cells, kept literally.  The
-display is the exact pinned extension of `t'` along `Fin.castSuccEmb` through `tb`
+**The instance without new tops** (`StageType.IsLowDisplay.of_forall_top_root` here, and
+`StageType.exists_isLowDisplay_of_forall_top_root` in
+`VaughtConjecture.MainTheorem.LowDisplayRoute`, compiled in this repository).  When every top of
+the donor lies in the common face, every display is a LOW display at a threshold above its proper
+labels: donor tops are private cells, kept literally.  The display is the exact pinned extension
+of `t'` along `Fin.castSuccEmb` through `tb`
 (`StageType.exists_pinned_extension`, from the compiled coatom extension property).
 
-**LOW displays at source-gap contexts** (`StageType.HasLowDisplays`, a statement about stage
-types; open).  At a limit stage, for every legal source-gap context `t'` of grade `K` with the lost
-point last, with coatom face `p`, and every legal coface `tb` of `p` of top grade at most `K`, the
-pair `(t', tb)` has a LOW display at a threshold other than `⊤`.  This is the finite theorem of
-the LOW construction [Kni26, §3.3]: the display is built on the coatom amalgam of `t'` and `tb`
-with full-scope rows of every grade up to `k + 2` added, the separator among the new full-scope
-cells of grade `K`, and the separator reading from the strict source gaps of the context.  Its
-proof is the construction of that scheme, its legality for the two-coface geometry, and the
-reading; not formalized here.  The coding of the rows is the native one (`Scheme.IsCoded`, row
+**The LOW family** (`StageType.IsLowFamily`): the inputs of the construction, a legal source-gap
+context `t'` of grade `K` with the lost point last and a legal donor `tb` of top grade at most `K`
+with the same face `p` (the root) along `Fin.castSuccEmb`.  The root is shared
+(`StageType.IsLowFamily.label_root`), the donor tops avoiding the new point are root cells
+(`StageType.IsLowFamily.exists_root_of_last_notMem`), and the strict source gaps hold at the
+private copies of the root tops (`StageType.IsLowFamily.gap_root`).
+
+**LOW displays at source-gap contexts** (`StageType.HasLowDisplays`, in
+`VaughtConjecture.MainTheorem.LowDisplayRoute`, a statement about stage types; open). At a limit
+stage, every LOW family `(t', tb)` has a LOW display at a threshold occurring at the stage. This is
+the finite theorem of the LOW construction [Kni26, §3.3]: the display is built on the coatom amalgam
+of `t'` and `tb` with full-scope rows of every grade up to `k + 2` added, the separator among the
+new full-scope cells of grade `K`, and the separator reading from the strict source gaps of the
+context. Its proof is the construction of that scheme, its legality for the two-coface geometry, and
+the reading; not formalized here. The coding of the rows is the native one (`Scheme.IsCoded`, row
 values below `ω²`): the construction keeps the rows of `t'` and `tb` literally and codes only its
 new rows.
 
@@ -322,6 +330,56 @@ theorem IsLowDisplay.of_forall_top_root (hD : D.IsLegal)
         rwa [label_faceCell] at this
       rw [label_faceCell] at h
       exact Label.eq_of_min_eq_of_lt h.symm (hxa.trans_lt haδ)
+
+/-! ### The LOW family -/
+
+/-- The **LOW family** at a source-gap context: a legal private context `t'` on `k + 1` points,
+a source-gap context of grade `K` with the lost point last, owner `o` and lost top `r`; a legal
+donor `tb` of top grade at most `K`; and their common face `p` along `Fin.castSuccEmb` (the
+**root**).  These are the inputs of the LOW construction [Kni26, §3.3]. -/
+structure IsLowFamily (K : ℕ) (t' tb : StageType.{u} α (k + 1)) (p : StageType.{u} α k)
+    (o r : Fin t'.card) : Prop where
+  /-- The private context is legal. -/
+  isLegal_private : t'.IsLegal
+  /-- The donor is legal. -/
+  isLegal_donor : tb.IsLegal
+  /-- The root is the face of the private context along the first points. -/
+  face_private : restrictFace Fin.castSuccEmb t' = some p
+  /-- The root is the face of the donor along the first points. -/
+  face_donor : restrictFace Fin.castSuccEmb tb = some p
+  /-- The private context is a source-gap context with the lost point last. -/
+  isSourceGapContextAt : t'.IsSourceGapContextAt K Fin.castSuccEmb (Fin.last k) o r
+  /-- The tops of the donor have grade at most `K`. -/
+  topGrade_donor : tb.topGrade ≤ K
+
+namespace IsLowFamily
+
+variable {K : ℕ} {p : StageType.{u} α k} {o r : Fin t'.card}
+
+/-- **The root is shared**: the private and donor copies of a root cell carry its label. -/
+theorem label_root (hF : IsLowFamily K t' tb p o r) (y : Fin p.card) :
+    t'.label (faceCell hF.face_private y) = tb.label (faceCell hF.face_donor y) := by
+  rw [label_faceCell, label_faceCell]
+
+/-- **The donor tops off the root are the new tops**: a top of the donor avoiding the new point is
+the donor copy of a root cell. -/
+theorem exists_root_of_last_notMem (hF : IsLowFamily K t' tb p o r) {x : Fin tb.card}
+    (hx : Fin.last k ∉ tb.toCellScheme.scope x) : ∃ y, faceCell hF.face_donor y = x :=
+  exists_faceCell_eq_of_last_notMem hF.face_donor hx
+
+/-- **The strict source gaps at the root tops**: the owner's row reads the private copy of every
+root cell labelled `⊤` strictly above its replaced reading of the lost top. -/
+theorem gap_root (hF : IsLowFamily K t' tb p o r) {y : Fin p.card} (hy : p.label y = ⊤) :
+    Label.visibilityReplace K K (t'.rowAt o r) < t'.rowAt o (faceCell hF.face_private y) :=
+  hF.isSourceGapContextAt.gap_retained _ (by rw [label_faceCell]; exact hy)
+    (last_notMem_scope_faceCell hF.face_private y)
+
+/-- **The tops of the donor have grade at most `K`.** -/
+theorem grade_le (hF : IsLowFamily K t' tb p o r) {x : Fin tb.card} (hx : tb.label x = ⊤) :
+    tb.toCellScheme.grade x ≤ K :=
+  (topGrade_le_iff.mp hF.topGrade_donor) x hx
+
+end IsLowFamily
 
 end StageType
 

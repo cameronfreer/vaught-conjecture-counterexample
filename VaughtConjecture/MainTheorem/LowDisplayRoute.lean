@@ -13,10 +13,10 @@ Roadmap, Layer 3 ((R2) of the table of 3.4, the LOW construction of 3.3) and Lay
 the hypotheses of the main theorem"); semantic contract, items 4, 5 and 8.
 
 **LOW displays at source-gap contexts** (`StageType.HasLowDisplays`, a statement about stage
-types; open).  At a limit stage, for every legal source-gap context `t'` of grade `K` on `k + 1`
-points with the lost point last (`StageType.IsSourceGapContextAt` along `Fin.castSuccEmb` at
-`Fin.last k`), with coatom face `p` along `Fin.castSuccEmb`, and every legal coface `tb` of `p` of
-top grade at most `K`, the pair `(t', tb)` has a LOW display (`StageType.IsLowDisplay`) at a
+types; open).  At a limit stage, every LOW family (`StageType.IsLowFamily`: a legal source-gap
+context `t'` of grade `K` on `k + 1` points with the lost point last, along `Fin.castSuccEmb` at
+`Fin.last k`, with coatom face `p` along `Fin.castSuccEmb`, and a legal coface `tb` of `p` of top
+grade at most `K`) has a LOW display (`StageType.IsLowDisplay`) at a
 threshold occurring at the stage: a legal `D` on `k + 2` points with faces `t'` and `tb`, such
 that every lawful section of the rows of `D` with the private face literal and the observation of
 `D` at a cutoff above the threshold has the donor face literal.  The separated form
@@ -84,31 +84,27 @@ theorem IsSourceGapContextAt.castSuccEmb {t' : StageType.{u} α (k + 1)}
   gap_owner := hs.gap_owner
   gap_retained := hs.gap_retained
 
-/-- **LOW displays at source-gap contexts** (open): at every limit stage, for every legal
-source-gap context `t'` of grade `K` on `k + 1` points with the lost point last, with coatom face
-`p`, and every legal coface `tb` of `p` of top grade at most `K`, the pair `(t', tb)` has a LOW
-display at a threshold occurring at the stage. -/
+/-- **LOW displays at source-gap contexts** (open): at every limit stage, every LOW family
+(`IsLowFamily`: a legal source-gap context `t'` of grade `K` on `k + 1` points with the lost point
+last, and a legal donor `tb` of top grade at most `K` with the same face `p` along
+`Fin.castSuccEmb`) has a LOW display at a threshold occurring at the stage. -/
 def HasLowDisplays : Prop :=
-  ∀ ⦃α : Ordinal.{u}⦄ ⦃K k : ℕ⦄ (t' : StageType.{u} α (k + 1)) (o r : Fin t'.card)
-    (p : StageType.{u} α k), Order.IsSuccLimit α → t'.IsLegal →
-      t'.IsSourceGapContextAt K Fin.castSuccEmb (Fin.last k) o r →
-      restrictFace Fin.castSuccEmb t' = some p → ∀ tb ∈ p.cofaces, tb.topGrade ≤ K →
-        ∃ (D : StageType.{u} α (k + 2)) (a : Label.{u}), AtStage α a ∧ IsLowDisplay t' tb D a
+  ∀ ⦃α : Ordinal.{u}⦄ ⦃K k : ℕ⦄ (t' tb : StageType.{u} α (k + 1)) (p : StageType.{u} α k)
+    (o r : Fin t'.card), Order.IsSuccLimit α → IsLowFamily K t' tb p o r →
+      ∃ (D : StageType.{u} α (k + 2)) (a : Label.{u}), AtStage α a ∧ IsLowDisplay t' tb D a
 
 /-- **Separated LOW displays at source-gap contexts** (open): the statement of `HasLowDisplays`
 with a separated display (`IsSeparatedLowDisplay`). -/
 def HasSeparatedLowDisplays : Prop :=
-  ∀ ⦃α : Ordinal.{u}⦄ ⦃K k : ℕ⦄ (t' : StageType.{u} α (k + 1)) (o r : Fin t'.card)
-    (p : StageType.{u} α k), Order.IsSuccLimit α → t'.IsLegal →
-      t'.IsSourceGapContextAt K Fin.castSuccEmb (Fin.last k) o r →
-      restrictFace Fin.castSuccEmb t' = some p → ∀ tb ∈ p.cofaces, tb.topGrade ≤ K →
-        ∃ (D : StageType.{u} α (k + 2)) (lo hi : Fin D.card), IsSeparatedLowDisplay t' tb D lo hi
+  ∀ ⦃α : Ordinal.{u}⦄ ⦃K k : ℕ⦄ (t' tb : StageType.{u} α (k + 1)) (p : StageType.{u} α k)
+    (o r : Fin t'.card), Order.IsSuccLimit α → IsLowFamily K t' tb p o r →
+      ∃ (D : StageType.{u} α (k + 2)) (lo hi : Fin D.card), IsSeparatedLowDisplay t' tb D lo hi
 
 /-- **Separated displays give LOW displays** (`StageType.exists_isLowDisplay_of_separated`). -/
 theorem HasSeparatedLowDisplays.hasLowDisplays (h : HasSeparatedLowDisplays.{u}) :
     HasLowDisplays.{u} := by
-  intro α K k t' o r p hα ht' hs hp tb htb hK
-  obtain ⟨D, lo, hi, hD⟩ := h t' o r p hα ht' hs hp tb htb hK
+  intro α K k t' tb p o r hα hF
+  obtain ⟨D, lo, hi, hD⟩ := h t' tb p o r hα hF
   obtain ⟨a, ha, hDa⟩ := exists_isLowDisplay_of_separated hα hD
   exact ⟨D, a, ha, hDa⟩
 
@@ -143,7 +139,8 @@ theorem BoundedCoatomCutoffDetermination.of_hasLowDisplays (hlow : HasLowDisplay
   exists_coface α K n k t' g p hα ht' hP hp tb htb hK d hd _ := by
     obtain ⟨l, o, r, hl, hs⟩ := hP
     obtain rfl : l = Fin.last k := Fin.ext (by simp only [Fin.val_last]; omega)
-    obtain ⟨D, a, ha, hD⟩ := hlow t' o r p hα ht' hs.castSuccEmb hp tb htb hK
+    obtain ⟨D, a, ha, hD⟩ :=
+      hlow t' tb p o r hα ⟨ht', htb.1, hp, htb.2, hs.castSuccEmb, hK⟩
     obtain ⟨δ, hδ, hdet⟩ := hD.exists_cutoff hα ha hd
     exact ⟨D, hD.mem_cofaces, hD.face_donor, δ, hδ, hdet⟩
 
