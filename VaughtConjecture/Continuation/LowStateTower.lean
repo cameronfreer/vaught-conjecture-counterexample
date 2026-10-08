@@ -370,7 +370,9 @@ def SepInv (P : CProf I) : Prop :=
     ∀ f ∈ N, P f ≠ ⊥ → ∀ k, visibilityReplace k k (P f) < visibilityReplace k k (P (Sum.inr ()))
 
 /-- **The state code keeps separated states**, at a grade `j ≥ K` above the designated fields. -/
-theorem sepInv_scode {K j : ℕ} (hF : FieldsLE K N T o) (hj : K ≤ j) {P : CProf I}
+theorem sepInv_scode {K j : ℕ}
+    (hT' : ∀ f ∈ T, ∃ d, f = Sum.inl d ∧ I.amalgam.toCellScheme.grade d ≤ K)
+    (ho' : I.amalgam.toCellScheme.grade o ≤ K) (hj : K ≤ j) {P : CProf I}
     (h : SepInv N T o P) : SepInv N T o (scode j P) := by
   obtain ⟨h0, ho, hT, hN⟩ := h
   have hhat : ∀ d, I.amalgam.toCellScheme.grade d ≤ K → hatS j P (Sum.inl d) = P (Sum.inl d) :=
@@ -380,8 +382,8 @@ theorem sepInv_scode {K j : ℕ} (hF : FieldsLE K N T o) (hj : K ≤ j) {P : CPr
   have hkey : IsKey j (hatS j P) (hatS j P (Sum.inr ())) := isKey_apply_iff.mpr h0
   refine ⟨?_, ?_, fun x hx ↦ ?_, fun f hf hf0 k ↦ ?_⟩
   · rw [hcode, Ne, orbitMap_eq_bot_iff]; exact h0
-  · rw [hcode, hcode, hhat o hF.2.2, ho]; rfl
-  · obtain ⟨d, rfl, hd⟩ := hF.2.1 x hx
+  · rw [hcode, hcode, hhat o ho', ho]; rfl
+  · obtain ⟨d, rfl, hd⟩ := hT' x hx
     rw [hcode, hcode, hhat d hd, hT _ hx]; rfl
   · rw [hcode, Ne, orbitMap_eq_bot_iff] at hf0
     have hle := hatS_le j P f
