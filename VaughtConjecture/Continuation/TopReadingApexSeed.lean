@@ -32,21 +32,24 @@ embedding of `n'` points with `n' + 1 < n`, with the apex as top cap and marker
   `CaseSplitCounterexample` labelled `⊤` at its live cells of grade at most `2`, with the apex
   added; legal, with the face of `T5` (its labels on `{0, 1, 2}` are `⊥`,
   `StageType.restrictFace_congr_label`), and `⊤` at its cell `{3}`.
-* **The obstruction at a marked-cap context with a new top**
+* **A reading obstruction for the completion family at `seedTR`**
   (`TowerProfile.exists_top_reads_lt_markedCompletion_seedTR`, compiled in this repository (theorem
   named)): in the seed `seedTR α` of `TL` and `rightType α`, for every marked specification `D`,
   the leaf-and-marked completion labels `⊤` a cell `x` of grade `1` on the new point (the image of
   `{3}`), and labels `⊤` some new cell of graded index `(univ, 4)` whose entry reads `x` strictly
-  below the apex of `TL`, the marker.  So no leaf-and-marked completion over `seedTR` (any marked
-  subset, any cap) carries the top reading of the new top `x` against the marker through its
-  labelling.  For the reading specification (`TowerProfile.MarkedSpec.reading` with `x` among the
-  read cells) the cell reading `x` below the marker is a leaf (argued, not formalized: its entry is
-  not a reading mark).
+  below the apex of `TL`.  So no leaf-and-marked completion over `seedTR` (any marked subset, any
+  cap) reads the new top `x` at least as the apex of `TL` through its labelling.  For the reading
+  specification (`TowerProfile.MarkedSpec.reading` with `x` among the read cells) the cell reading
+  `x` below the apex is a leaf (argued, not formalized: its entry is not a reading mark).
 
-This refutes the leaf-and-marked family at this context, through the labelling of
-`TowerProfile.markedCompletion`; it does not refute `StageType.HasTopReadingCarriers`, which
-quantifies over all legal carriers (argued, not formalized: a carrier outside the family may avoid
-the separating raise).
+**Scope.**  `seedTR` is not a marked-cap donor input: the full donor `rightType α` lies over the
+common face on three points, a root of size `n = 3`, while the top cap of `TL` has grade `N = 4`,
+so the bound `n + 1 < N` of `StageType.IsMarkedCapContext` fails (`TL` is a marked-cap context only
+along embeddings of at most two points).  The result is a reading obstruction for the
+leaf-and-marked completion family at this seed, through the labelling of
+`TowerProfile.markedCompletion`.  It
+refutes no universal carrier statement: neither `StageType.HasTopReadingCarriers`, nor top-marked
+carriers, nor (R3).
 
 ## Placement
 
@@ -417,12 +420,13 @@ theorem exists_top_reads_lt_markedCompletion_seedLL {α : Ordinal.{u}} (D : Mark
     (StageType.addApex_label_last (t := TL₀ α) isLegalBelowFullGrade_SL (by omega)))
 
 open TwoFaceLiftExistsCounterexample TopReadingApexExample in
-/-- **The obstruction at a marked-cap context with a new top.**  In the seed `seedTR α` (left
-coatom `TL`, a marked-cap context along every embedding of at most two points with its apex as top
-cap and marker, `isMarkedCapContext_TL`; right coatom `rightType α`), for every marked
-specification `D`, the leaf-and-marked completion labels `⊤` a cell `x` of grade `1` whose scope is
-the new point `4` (the cell `{3}` of the right type), and labels `⊤` some new cell of graded index
-`(univ, 4)` whose entry reads `x` strictly below the apex of `TL`. -/
+/-- **A reading obstruction for the completion family at `seedTR`.**  In the seed `seedTR α` (left
+coatom `TL`, right coatom `rightType α`), for every marked specification `D`, the leaf-and-marked
+completion labels `⊤` a cell `x` of grade `1` whose scope is the new point `4` (the cell `{3}` of
+the right type), and labels `⊤` some new cell of graded index `(univ, 4)` whose entry reads `x`
+strictly below the apex of `TL`.  This is not a marked-cap donor input (the donor's root has three
+points and the cap of `TL` grade `4`, so `n + 1 < N` fails); it bears on the completion family
+only, not on carriers in general or on (R3). -/
 theorem exists_top_reads_lt_markedCompletion_seedTR {α : Ordinal.{u}} (D : MarkedSpec (seedTR α)) :
     ∃ x : Fin (scheme (seedTR α)).card, (scheme (seedTR α)).toCellScheme.grade x = 1 ∧
       Fin.last 4 ∈ (scheme (seedTR α)).toCellScheme.scope x ∧
