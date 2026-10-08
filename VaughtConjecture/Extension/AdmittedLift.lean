@@ -12,7 +12,7 @@ Roadmap, Layer 3, 3.1, (R6), the completion below the full grade with a restrict
 reading grades; third piece (bountifulness of an admitted layer).
 
 Let `L` be a good level at the grade `g` of the tower of rank-normalized profiles of a seed `I`,
-`k = g + 1 ≤ m`, `A` an admission and `C` the admitted catalogue at `k`.  The admitted layer
+`k = g + 1 ≤ m + 1`, `A` an admission and `C` the admitted catalogue at `k`.  The admitted layer
 `L.admittedNextS A` (`ProfileTower.Lvl.admittedNextS`) appends one cell of full scope and grade `k`
 per admitted profile.  Its lifts below pairs not above `(univ, k)` are those of the level
 (`ProfileTower.Lvl.cappedLift_nextSOn_iff`).  This file proves the **lift from either coatom into
@@ -226,13 +226,13 @@ theorem Lvl.Good.exists_extensionOn (hL : L.Good) (hC : C ⊆ cat I (g + 1)) {P 
 
 variable (A : I.Admission)
 
-/-- **The capped lift from a coatom into the admitted layer**, at the grade `g + 1 ≤ m`, under the
-lift provisions at `⊥` and at the positive caps for that coatom: the one-grade lift
+/-- **The capped lift from a coatom into the admitted layer**, at the grade `g + 1 ≤ m + 1`, under
+the lift provisions at `⊥` and at the positive caps for that coatom: the one-grade lift
 `CellScheme.Rows.cappedLift_of_ownerCappedLift`, with the lift of the level at the grade `g`, the
 owner-capped lift at `⊥` by the provision at `⊥` and `Lvl.Good.exists_extensionOn_bot`, and the
 owner-capped lifts at the positive caps from the serving rows, by the provision at the positive caps
 and `Lvl.Good.exists_extensionOn`. -/
-theorem Lvl.Good.cappedLift_admittedNextS (hL : L.Good) (hgm : g + 1 ≤ m) {x : Fin (m + 2)}
+theorem Lvl.Good.cappedLift_admittedNextS (hL : L.Good) (hgm : g + 1 ≤ m + 1) {x : Fin (m + 2)}
     (hx : x ∈ (Pts : Finset (Fin (m + 2)))) (hbot : BotLiftProvision A (g + 1) x)
     (hcap : CapLiftProvision A (g + 1) x) :
     (L.admittedNextS A).rows.CappedLift (X := (univ.erase x, g + 1))
@@ -420,7 +420,7 @@ theorem Lvl.Good.cappedLift_next_of_all {g : ℕ} {L : Lvl I g} (hL : L.Good) (h
     {x : Fin (m + 2)} (hx : x ∈ (Pts : Finset (Fin (m + 2)))) (N : ℕ) :
     L.nextS.rows.CappedLift (X := (univ.erase x, g + 1))
       (Y := ((univ : Finset (Fin (m + 2))), g + 1)) ⟨erase_subset _ _, le_rfl⟩ := by
-  have h := hL.cappedLift_admittedNextS (Seed.Admission.all I N) hgm hx
+  have h := hL.cappedLift_admittedNextS (Seed.Admission.all I N) (by omega) hx
     (botLiftProvision_all N (Nat.succ_pos g) hgm hx)
     (capLiftProvision_all N (Nat.succ_pos g) hgm hx)
   rwa [Lvl.admittedNextS_all] at h
