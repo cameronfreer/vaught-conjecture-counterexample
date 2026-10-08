@@ -170,16 +170,15 @@ theorem IsModel.exists_extend_dominance (x : R.Occurrence) {γ : Ordinal.{u}} (h
 /-! ### Reference cells for the blocks of a donor -/
 
 /-- **Reference cells for the blocks of a donor**, from uniformity and padding by dominance: over
-an occurrence `x` and for a donor `d` (on `x.arity + 1` points in the ordinary construction; the
-donor enters only through its labels, so any number `m` of points is allowed), an occurrence `y`
-containing `x` as a literal face along `f`, of arity above `x.arity + 1 + N₀`, a floor `B` with
-`γ ≤ B < α`, a cell `C` of graded index `(univ, y.arity)` labelled above `B`, and for each cell `j`
-of `d` a block start `μ j` (zero or a limit) such that every ordinal label of `d` at `j` is
-`μ j + i` with `i < y.arity`, and a reference cell of the type of `y` labelled `μ j + k`,
-`k < y.arity`, at most `B`.  The reference cells are taken by uniformity at the block starts
-(`IsModel.exists_extend_uniformity`); the arity is raised past their finite parts and those of the
-donor's labels by dominance at the floor `B` (`IsModel.exists_extend_dominance`), whose last step
-gives `C`. -/
+an occurrence `x` and for a donor `d` (on any number `m` of points; it enters only through its
+labels), an occurrence `y` containing `x` as a literal face along `f`, of arity above
+`x.arity + 1 + N₀`, a floor `B` with `γ ≤ B < α`, a cell `C` of graded index `(univ, y.arity)`
+labelled above `B`, and for each cell `j` of `d` a block start `μ j` (zero or a limit) such that
+every ordinal label of `d` at `j` is `μ j + i` with `i < y.arity`, and a reference cell of the type
+of `y` labelled `μ j + k`, `k < y.arity`, at most `B`.  The reference cells are taken by
+uniformity at the block starts (`IsModel.exists_extend_uniformity`); the arity is raised past
+their finite parts and those of the donor's labels by dominance at the floor `B`
+(`IsModel.exists_extend_dominance`), whose last step gives `C`. -/
 theorem IsModel.exists_referenceCells (x : R.Occurrence) {m : ℕ} (d : StageType.{u} α m)
     {γ : Ordinal.{u}} (hγ : γ < α) (N₀ : ℕ) :
     ∃ (y : R.Occurrence) (f : Fin x.arity ↪ Fin y.arity) (C : Fin y.type.card) (B : Ordinal.{u})

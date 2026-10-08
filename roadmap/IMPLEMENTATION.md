@@ -3353,62 +3353,64 @@ Each checkpoint needs both its abstract API and a concrete application:
    (`Realization.IsModel.hasCarryingPrivateContext_of_forall_label`); a private context of the
    acquired form at which a coupled gated extension exists is carrying
    (`Realization.hasCarryingPrivateContext_of_coupledGatedExtension`), so acquisition is necessary
-   for the coupled route; the refuting input satisfies every conclusion of the acquisition at every
-   floor and fails the condition
-   (`CoupledGatedExtensionCounterexample.exists_privateContext_not_carriesBottoms`), so the
-   conclusions of the acquisition do not give it; and a lawful labelling that keeps a cell `C` drops
-   everything that the row of `C` reads below the end of the block of a dropped cell
-   (`CellScheme.Rows.IsLawful.eq_bot_of_row_le_block`), so it drops only cells that the row of `C`
-   reads in a block strictly below its reading of `C`
-   (`CellScheme.Rows.IsLawful.lt_row_self_of_eq_bot`).
-   Hence the condition holds when the cap reads an anchor of every donor label below it in the
-   block of its reading of the cap itself (`StageType.carriesBottoms_of_row_mem_block`), which the
-   refuting private type does not satisfy; it follows (not stated as a theorem) that it can fail
-   only at a donor cell all of whose anchors the cap reads in lower blocks.  Open: whether every
-   model at a limit stage acquires
-   carrying contexts.  The clauses of a model bound labels (dominance gives the private cap a label
-   above the floor) or prescribe schemes without a lower bound on a label of full grade
-   (generalized saturation, the bottom pattern at the grades below the new arity); none prescribes
-   the row of the private cap.  The two clauses of the condition are each met alone (by the
-   labelling `⊥` and by the donor's own labelling); what is open is the two together at the donor
-   cells whose anchors the cap reads below its own block.  Where acquisition stands
-   (`Realization/TightCap`).  The private cap has full grade, so it is a cell of the last
-   one-point step.  A cap reads the donor's anchors in its own block when every donor label below
-   it is a visibility replacement of a label that it reads in its own block
-   (`StageType.ReadsInOwnBlock`); such a cap carries.  A cap is tight (over a root type, at a
-   floor) when it reads in its own block every label of the root type at most the floor and not
-   self-visible at its grade.
-   Compiled in this repository (theorem named): every nonempty instance of generalized saturation
-   or of the bottom pattern has a member labelled `⊥` at every cell of full grade
-   (`StageType.exists_mem_cofaces_inter_saturationFamily_label_eq_bot`,
+   for the coupled route; the refuting input satisfies the finite stage-type and label conditions
+   of the acquisition output (at every floor, with `N₀ ≤ 2`) and fails the condition
+   (`CoupledGatedExtensionCounterexample.exists_privateContext_not_carriesBottoms`), so those
+   conditions alone do not give it, and no occurrence of that input in an actual model is
+   exhibited; and a lawful labelling that keeps a cell `C` and drops a cell that the row of `C`
+   reads at an ordinal drops everything that the row of `C` reads below the end of the block of
+   that reading (`CellScheme.Rows.IsLawful.eq_bot_of_row_le_block`, `Scheme/Row`), so, of the cells
+   that the row of `C` reads at ordinals, it drops only cells read in a block strictly below its
+   reading of `C` (`CellScheme.Rows.IsLawful.lt_row_self_of_eq_bot`); a cell read as `⊥` has no
+   block.  Hence the condition holds when the cap reads an anchor of every donor label below it in
+   the block of its reading of the cap itself (`StageType.carriesBottoms_of_row_mem_block`), which
+   the refuting private type does not satisfy; it follows (not stated as a theorem) that it can
+   fail only at a donor cell all of whose anchors the cap reads in lower blocks.  Undecided:
+   whether every model at a limit stage acquires carrying contexts from the full model axioms.  The
+   existing acquisition proof (uniformity, high-arity dominance, exact consistency) gives the
+   private cap a label above the floor and does not establish control of its row jointly with that
+   label; generalized saturation prescribes the whole scheme of a one-point extension, rows
+   included, whenever its nonemptiness guard holds, but no private context is shown in which a
+   prescribed row and a private cap above the floor occur together.  The two clauses of the
+   condition are each met alone (by the labelling `⊥` and by the donor's own labelling); what is
+   open is the two together at the donor cells whose anchors the cap reads below its own block.
+   Where acquisition stands (`Realization/TightCap`).  The private cap has full grade, so it is a
+   cell of the last one-point step.  A cap reads the donor's anchors in its own block when every
+   donor label below it is a visibility replacement of a label that it reads in its own block
+   (`StageType.ReadsInOwnBlock`); such a cap carries.  A cap is tight (over a root type, at a floor)
+   when it reads in its own block every label of the root type at most the floor and not
+   self-visible at its grade.  Compiled in this repository (theorem named): every nonempty instance
+   of generalized saturation or of the bottom pattern has a member labelled `⊥` at every cell of
+   full grade (`StageType.exists_mem_cofaces_inter_saturationFamily_label_eq_bot`,
    `StageType.exists_mem_cofaces_inter_bottomPatternFamily_label_eq_bot`), hence in no dominance
-   family (`StageType.exists_mem_cofaces_inter_saturationFamily_not_mem_dominanceFamily`); a
-   member of a dominance family need not carry
+   family (`StageType.exists_mem_cofaces_inter_saturationFamily_not_mem_dominanceFamily`); a member
+   of a dominance family need not carry
    (`CoupledGatedExtensionCounterexample.exists_mem_dominanceFamily_not_carriesBottoms`, a
-   refutation of that finite sufficient condition only); if a cell reads in its own block two
-   labels below its own, neither self-visible at its grade, one is a visibility replacement of the
-   other, so the two lie in one block (`StageType.eq_visibilityReplace_of_readsInOwnBlock`), and
-   the tight cap family over a root type with two such labels in different blocks is empty
-   (`StageType.tightCapFamily_eq_empty`).
-   Argued, not compiled: the clauses that prescribe rows therefore give no lower bound on a label
-   of full grade, and choosing the saturation scheme to contain an earlier dominating cell puts
-   that cell one grade below full.
-   Compiled conditionally: a model that realizes tight caps (`Realization.HasTightCaps`: over every
-   occurrence and floor, a member of `StageType.tightCapFamily`, which lies in the dominance
-   family) acquires carrying contexts
-   (`Realization.IsModel.acquiresCarryingContexts_of_hasTightCaps`).  `HasTightCaps` is not a
-   clause of a model; it is refuted for every model at every stage above `ω`
-   (`Realization.IsModel.not_hasTightCaps`, compiled: uniformity gives reference cells in the
-   blocks of `0` and `ω`), so that theorem is vacuous above `ω`, and it is open at stages ≤ `ω`.
-   One grade below full, availability from the face gives a cell of
-   graded index `(univ, N)` on `N + 1` points labelled at least as a given cell of the face
-   (`StageType.exists_le_label_of_restrictFace`, compiled), on a scheme that saturation
-   prescribes: the label bound and the row concern the same cell.  That is the position of the
-   gate; since `StageType.HasCoupledGatedPinnedExtensions` asks for a private cap of full grade, a
-   cap there is a redesign of the private context.  In that design the gate moves to grade `k`
-   too (cap and gate of equal grade), and the display and the conclusions toward (R1) (agreement
-   below the label of the cap) would have to be re-derived for it.  For it, the anchoring and the
-   bottom transport condition at a grade `k` are stated (`StageType.IsAnchoredAt`,
+   refutation of that finite sufficient condition only, with no occurrence in a model exhibited); if
+   a cell reads in its own block two labels below its own, neither self-visible at its grade, one is
+   a visibility replacement of the other, so the two lie in one block
+   (`StageType.eq_visibilityReplace_of_readsInOwnBlock`; the labels `⊥` and `⊤` are self-visible at
+   every grade), and the tight cap family over a root type with two such labels in different blocks
+   is empty (`StageType.tightCapFamily_eq_empty`).  Argued, not compiled: the clauses that prescribe
+   rows therefore give no lower bound on a label of full grade, and choosing the saturation scheme
+   to contain an earlier dominating cell puts that cell one grade below full.  Compiled
+   conditionally: a model that realizes tight caps (`Realization.HasTightCaps`: over every
+   occurrence and floor, a member of `StageType.tightCapFamily`, which lies in the dominance family)
+   acquires carrying contexts (`Realization.IsModel.acquiresCarryingContexts_of_hasTightCaps`).
+   `HasTightCaps` is not a clause of a model; it is refuted for every model at every stage above `ω`
+   (`Realization.IsModel.not_hasTightCaps`, compiled, given a model at a stage above `ω`: uniformity
+   gives reference cells in the blocks of `0` and `ω`), so that theorem is vacuous above `ω`.  At
+   the stage `0` no floor lies below the stage, so `HasTightCaps` and
+   `Realization.AcquiresCarryingContexts` hold vacuously (immediate from the definitions, not stated
+   as theorems); `HasTightCaps` is open at the stages from `1` to `ω`.  One grade below full,
+   availability from the face gives a cell of graded index `(univ, N)` on `N + 1` points labelled at
+   least as a given cell of the face (`StageType.exists_le_label_of_restrictFace`, compiled), on a
+   scheme that saturation prescribes: the label bound and the row concern the same cell.  That is
+   the position of the gate; since `StageType.HasCoupledGatedPinnedExtensions` asks for a private
+   cap of full grade, a cap there is a redesign of the private context.  In that design the gate
+   moves to grade `k` too (cap and gate of equal grade), and the display and the conclusions toward
+   (R1) (agreement below the label of the cap) would have to be re-derived for it.  For it, the
+   anchoring and the bottom transport condition at a grade `k` are stated (`StageType.IsAnchoredAt`,
    `StageType.CarriesBottomsAt`, equal to `IsAnchored` and `CarriesBottoms` at `k = n`), with the
    carrying context `Realization.HasCarryingSubfullContext`; a per-block coupled gated extension
    with one gate whose cap has graded index `(univ, k)` and reads every label forces
@@ -3416,55 +3418,67 @@ Each checkpoint needs both its abstract API and a concrete application:
    `StageType.carriesBottomsPerBlock_one_iff_at`; the composite is not stated as a theorem).
    The hypothesis `StageType.HasTightSaturations α` (on stage types and schemes, not models: over
    every legal `p` on `N` points, a legal one-point extension scheme with a coface of `p` whose
-   cells of graded index `(univ, N)` read in their own block every label of `p` not self-visible
-   at `N`) gives, for every model, every root, donor and floor below the stage, a carrying context
-   with a cap one grade below full (`Realization.IsModel.hasCarryingSubfullContext`, compiled
-   conditionally); it is false at every stage above `ω` at which a model exists
-   (`Realization.IsModel.not_hasTightSaturations`, compiled), so that theorem is vacuous above
-   `ω`, and it is undecided at stages ≤ `ω`.  The obstruction: reading anchors in the cap's own
-   block can serve only donors whose proper labels below the cap lie in one block (argued from
-   `StageType.eq_visibilityReplace_of_readsInOwnBlock`, not compiled: at a private context whose
-   arity exceeds the finite parts of the donor's labels, every proper donor label below the cap,
-   and its anchor, is not self-visible at the cap's grade).  The identified obstruction survives
-   the redesigns examined (the cap of full grade and the subfull cap); it says nothing about other
-   ways to obtain `StageType.CarriesBottoms`.  These refute only the two sufficient conditions:
+   cells of graded index `(univ, N)` read in their own block every label of `p` not self-visible at
+   `N`) gives, for every model, every root, donor and floor below the stage, a carrying context with
+   a cap one grade below full (`Realization.IsModel.hasCarryingSubfullContext`, compiled
+   conditionally; it constructs no extension in the redesign and does not prove (R1)); it is false
+   at every stage above `ω` at which a model exists (`Realization.IsModel.not_hasTightSaturations`,
+   compiled, given a model at a stage above `ω`), so that theorem is vacuous above `ω`, and it is
+   undecided at stages ≤ `ω`.  The obstruction: reading anchors in the cap's own block can serve
+   only donors whose proper labels below the cap, not self-visible at the cap's grade, lie in one
+   block (argued from `StageType.eq_visibilityReplace_of_readsInOwnBlock`, not compiled: when the
+   grade of the cap exceeds the finite parts of the donor's labels, every proper donor label below
+   the cap, and its anchor, is not self-visible at that grade; the bound is by the grade of the cap,
+   not the arity of the context, since at a cap of grade `N` on `N + 1` points a finite part `N` is
+   below the arity but self-visible at the grade).  The identified obstruction survives the
+   redesigns examined (the cap of full grade and the subfull cap); it says nothing about other ways
+   to obtain `StageType.CarriesBottoms`.  These refute only the two sufficient conditions, each
+   given a model at a stage above `ω`, and do not show that models are absent at any stage:
    `Realization.AcquiresCarryingContexts`, `Realization.HasCarryingSubfullContext` and (R1) are
    neither proved nor refuted.  The two vacuous conditional theorems are kept; retiring them is a
-   separate change.  The extension property restricted to carrying contexts is not stated
-   (prospective), in either design; the condition is necessary for the property, not shown
-   sufficient.  One cap and one gate per block (`Realization/PerBlockCarrying`), a further
+   separate change.  Retirement audit of the receiving theorems conditional on the coupled property
+   (`Realization.IsModel.hasFiniteCutReceiving_of_hasCoupledGatedPinnedExtensions`,
+   `Expansion.finiteCutReceiving_of_hasCoupledGatedPinnedExtensions`,
+   `Expansion.finiteExtensionReceiving_of_hasCoupledGatedPinnedExtensions`), recorded, not
+   performed: no declaration of `Realization/TightCap`, `Realization/CarryingContext` or of the
+   statements moved from them calls them; the examples of
+   `Realization/CoupledFiniteCutReceivingExamples` include an inline reconstruction of the first
+   under the same hypothesis `StageType.HasCoupledGatedPinnedExtensions` (with the bottom-pattern
+   clause in place of generalized saturation), so their retirement audits the uses of that
+   hypothesis as well as the calls by name.  The extension property restricted to carrying contexts
+   is not stated (prospective), in either design; the condition is necessary for the property, not
+   shown sufficient.  One cap and one gate per block (`Realization/PerBlockCarrying`), a further
    redesign of the private context and of the display: by the same-block lemma, the labels that a
    cap reads in its own block, strictly below its label and not self-visible at its grade, lie in
    one block, so the design takes one cap for each block of the donor's labels, and, since the
    statements on rows that a gate uses ask for a cap and a gate of equal grades (availability
-   compares cells of equal grade), one gate of the cap's grade for each cap (argued, not
-   compiled).  Stated: `StageType.PerBlockCoupledGatedExtension` (a legal display with literal
-   faces and `k` gates, each with its cap, its twin–gate coupling and its gate readings of a set of
-   donor labels; only the clauses the necessity lemma uses), the per-block bottom transport
-   condition `StageType.CarriesBottomsPerBlock` (one lawful donor labelling for each lawful private
-   labelling, with the two clauses of `StageType.CarriesBottoms` at every gate whose cap the private
-   labelling keeps; it is `CarriesBottoms` for one cap of full scope and full grade reading every
-   label, `StageType.carriesBottomsPerBlock_one_iff`; a coupled gated extension is a per-block one
-   with one gate, `StageType.CoupledGatedExtension.toPerBlock`, and
+   compares cells of equal grade), one gate of the cap's grade for each cap (argued, not compiled).
+   Stated: `StageType.PerBlockCoupledGatedExtension` (a legal display with literal faces and `k`
+   gates, each with its cap, its twin–gate coupling and its gate readings of a set of donor labels;
+   only the clauses the necessity lemma uses), the per-block bottom transport condition
+   `StageType.CarriesBottomsPerBlock` (one lawful donor labelling for each lawful private labelling,
+   with the two clauses of `StageType.CarriesBottoms` at every gate whose cap the private labelling
+   keeps; it is `CarriesBottoms` for one cap of full scope and full grade reading every label,
+   `StageType.carriesBottomsPerBlock_one_iff`; a coupled gated extension is a per-block one with one
+   gate, `StageType.CoupledGatedExtension.toPerBlock`, and
    `StageType.CoupledGatedExtension.carriesBottoms` is derived through these two), and
    `Realization.HasCarryingPerBlockContext`, `Realization.AcquiresPerBlockContexts` (caps of grade
-   above the root's arity plus one, labelled above the floor, each reading donor labels of one
-   block below its label, every new donor label read by some cap, anchoring at each cap's grade,
-   and the per-block condition).
-   Compiled in this repository (theorem named): necessity
+   above the root's arity plus one, labelled above the floor, each reading donor labels of one block
+   below its label, every new donor label read by some cap, anchoring at each cap's grade, and the
+   per-block condition).  Compiled in this repository (theorem named): necessity
    (`StageType.PerBlockCoupledGatedExtension.carriesBottomsPerBlock`,
    `Realization.hasCarryingPerBlockContext_of_perBlockCoupledGatedExtension`); the row condition,
    sufficient, not shown necessary (`StageType.carriesBottomsPerBlock_of_readsInOwnBlock`: each cap
    reads in its own block an anchor of every donor label below it that it reads); and at the
    refuting input of the coupled property, whose donor has its proper labels in one block, the
-   per-block condition fails for every family of caps labelled above `1` in which some cap reads
-   the donor label `1` and some cap reads the donor label `⊤`
+   per-block condition fails for every family of caps labelled above `1` in which some cap reads the
+   donor label `1` and some cap reads the donor label `⊤`
    (`CoupledGatedExtensionCounterexample.not_carriesBottomsPerBlock`; for every family of caps of
    grade above `0 + 1` with such readers,
    `CoupledGatedExtensionCounterexample.not_carriesBottomsPerBlock_of_one_lt_grade`, where the grade
-   bound replaces only the bound on the labels: with no labels read, the donor's own labelling
-   meets the condition; no per-block coupled gated extension there with a gate reading `1` and a
-   gate reading `⊤`, both against caps labelled above `1`,
+   bound replaces only the bound on the labels: with no labels read, the donor's own labelling meets
+   the condition; no per-block coupled gated extension there with a gate reading `1` and a gate
+   reading `⊤`, both against caps labelled above `1`,
    `CoupledGatedExtensionCounterexample.not_perBlockCoupledGatedExtension`).  So at the refuting
    input the bottom transport obstruction survives the redesigns examined, each refuted there by a
    compiled theorem: the cap of full grade
@@ -3480,22 +3494,20 @@ Each checkpoint needs both its abstract API and a concrete application:
    availability from the face give a cap one grade below full labelled above the floor whose row
    reads the block's reference cell in its own block; later steps keep it as a cell of a face,
    `StageType.exists_readsInOwnBlock_of_restrictFace`).  The hypothesis is `HasTightSaturations`
-   restricted to one block at a time (`StageType.HasTightSaturations.hasBlockTightSaturations`);
-   the refutation of the latter above `ω` reads two blocks at one cell and does not apply.
-   Undecided: whether `HasBlockTightSaturations` holds (legal one-point extension schemes with
-   prescribed rows, a completion problem of the kind of (R6)); compiled, that a cap labelled
-   beyond its block then reads itself at a finite part above its grade
-   (`StageType.label_le_of_readsInOwnBlock`), which the library's coding of rows allows.  Guarded
-   generalized saturation fixes the whole scheme of a one-point step, the rows of its cells of full
-   grade included; the missing guarantee is a high label at a cell of full grade together with
-   that row.  The construction proved here uses one route to a prescribed row and a lower bound on
-   a label at one cell: availability from the face in a saturation step, one grade below full.
-   So `Realization.AcquiresPerBlockContexts` is neither proved nor
-   refuted; the per-block extension property restricted to per-block carrying contexts, which
-   excludes the refuting input, is not stated (prospective), and agreement below the cutoff would
-   have to be re-derived gate by gate for it.  The conditional theorem on the coupled property,
-   `Realization.IsModel.hasFiniteCutReceiving_of_hasCoupledGatedPinnedExtensions`, is vacuous at
-   every stage above `1`; it receives one permitted cutoff at a time and is not exact
+   restricted to one block at a time (`StageType.HasTightSaturations.hasBlockTightSaturations`); the
+   refutation of the latter above `ω` reads two blocks at one cell and does not apply.  Undecided:
+   whether `HasBlockTightSaturations` holds (legal one-point extension schemes with prescribed rows,
+   a completion problem of the kind of (R6)); compiled, that a cap labelled beyond its block then
+   reads itself at a finite part above its grade (`StageType.label_le_of_readsInOwnBlock`), which
+   the library's coding of rows allows.  Guarded generalized saturation fixes the whole scheme of a
+   one-point step, the rows of its cells of full grade included; the missing guarantee is a high
+   label at a cell of full grade together with that row.  The construction proved here uses one
+   route to a prescribed row and a lower bound on a label at one cell: availability from the face in
+   a saturation step, one grade below full.  So `Realization.AcquiresPerBlockContexts` is neither
+   proved nor refuted; the per-block extension property restricted to per-block carrying contexts,
+   which excludes the refuting input, is not stated (prospective), and agreement below the cutoff
+   would have to be re-derived gate by gate for it.  The conditional theorem is vacuous at every
+   stage above `1`; it receives one permitted cutoff at a time and is not exact
    projected receiving. Projected-donor lifting is not part of checkpoint 4 (`README.md`, Layer 3,
    3.3, the density boundary). This status concerns (R1) only: (R2), (R3), and the fidelity theorem
    of this checkpoint remain to be proved; the cap-to-model theorem at a limit stage is compiled
@@ -5110,48 +5122,57 @@ witnesses).**
   (`Extension/PinnedExtension`); a lemma shared by the two, in a module both import (for instance
   `Extension/Basic`, or `Stage/` for the closed-point choice), is a later change of proofs only,
   with no statement change.
-- `Extension/CoupledGatedExtensionCounterexample`: of the statements on rows that do not concern
-  the refuting input, `CellScheme.Rows.IsLawful.eq_bot_of_gateReads`, `ne_bot_of_gateReads` and
-  `min_eq_visibilityReplace_of_min_eq` are in `Extension/Gate`, beside
-  `CellScheme.Rows.GateReads`, and `ne_bot_of_row_mem_block` is in `Scheme/Row`;
-  `eq_bot_of_row_le_block` and `lt_row_self_of_eq_bot`, still in the counterexample module, go
-  beside `ne_bot_of_row_mem_block`.  `StageType.CarriesBottoms`, its sufficient conditions and the
-  theorems that force it are in `Extension/GatedExtension`.
-- `Realization/CarryingContext`: Layer 3, the acquisition step of a repair of (R1), in place.
-- `Realization/PerBlockCarrying`: Layer 3, the per-block redesign; it holds only the statements
-  on realizations (the contexts, their necessity and their acquisition).  The statements on stage
-  types are beside their subjects: `StageType.PerBlockCoupledGatedExtension` and
-  `StageType.CoupledGatedExtension.toPerBlock` beside `StageType.CoupledGatedExtension`
-  (`Extension/GatedExtension`); `StageType.CarriesBottomsPerBlock`,
-  `StageType.carriesBottomsPerBlock_one_iff_at`, `StageType.carriesBottomsPerBlock_one_iff`
-  (derived from the former through `StageType.carriesBottomsAt_iff`) and
+- `Realization/CarryingContext`: Layer 3, the acquisition step of a repair of (R1), in place; it
+  imports `Extension/GatedExtension` (for `StageType.CarriesBottoms`) and
+  `Realization/PrivateContext`, not a counterexample module.  The row lemmas
+  `CellScheme.Rows.IsLawful.eq_bot_of_row_le_block` and `lt_row_self_of_eq_bot` are in
+  `Scheme/Row`, beside `ne_bot_of_row_mem_block`, which is now derived from the first (statement
+  unchanged).
+- `Realization/PerBlockCarrying`: Layer 3, the per-block redesign; it holds only the statements on
+  realizations (the contexts, their necessity and their acquisition, which uses
+  `Realization.IsModel.exists_referenceCells`).  The statements on stage types are beside their
+  subjects in `Extension/GatedExtension`: `StageType.PerBlockCoupledGatedExtension` and
+  `StageType.CoupledGatedExtension.toPerBlock` beside `StageType.CoupledGatedExtension`;
+  `StageType.exists_readsInOwnBlock_of_restrictFace` and `StageType.label_le_of_readsInOwnBlock`
+  beside `StageType.ReadsInOwnBlock`; `StageType.CarriesBottomsPerBlock`,
+  `StageType.carriesBottomsPerBlock_one_iff_at`, `StageType.carriesBottomsPerBlock_one_iff` (derived
+  from the former through `StageType.carriesBottomsAt_iff`),
+  `StageType.carriesBottomsPerBlock_of_readsInOwnBlock` and
   `StageType.PerBlockCoupledGatedExtension.carriesBottomsPerBlock` beside `StageType.CarriesBottoms`
-  (`Extension/GatedExtension`), where `StageType.CoupledGatedExtension.carriesBottoms` is derived
-  from them with one gate, together with `StageType.CarriesBottomsAt` and
-  `StageType.carriesBottomsAt_iff`, moved there from `Realization/TightCap`;
-  `StageType.carriesBottomsPerBlock_of_readsInOwnBlock`,
-  `StageType.exists_readsInOwnBlock_of_restrictFace`, `StageType.label_le_of_readsInOwnBlock`,
-  `StageType.HasBlockTightSaturations` and `StageType.HasTightSaturations.hasBlockTightSaturations`
-  beside `StageType.ReadsInOwnBlock` and `StageType.HasTightSaturations` (`Realization/TightCap`);
-  the refutations at the refuting input in the counterexample module
-  (`CoupledGatedExtensionCounterexample.not_carriesBottomsPerBlock`,
+  and `StageType.CarriesBottomsAt`, where `StageType.CoupledGatedExtension.carriesBottoms` is
+  derived from them with one gate (statement unchanged).  `StageType.HasBlockTightSaturations` and
+  `StageType.HasTightSaturations.hasBlockTightSaturations` are in `Realization/TightCap`, beside
+  `StageType.HasTightSaturations`; the refutations at the refuting input are in the counterexample
+  module (`CoupledGatedExtensionCounterexample.not_carriesBottomsPerBlock`,
   `not_carriesBottomsPerBlock_of_one_lt_grade`, `not_perBlockCoupledGatedExtension`,
-  `not_carriesBottomsAt_one`).  They move with those subjects when these move.
-- `Realization/PrivateContext`: `Realization.IsModel.exists_referenceCells` (the block starts and
-  finite parts of the donor's labels, the reference cells by uniformity, and the padding by
-  dominance) is the preparation shared by `Realization.IsModel.exists_privateContext`,
-  `Realization.IsModel.hasCarryingPrivateContext_of_hasTightCaps` and
-  `Realization.IsModel.hasCarryingPerBlockContext_of_hasBlockTightSaturations`, in place.
+  `not_carriesBottomsAt_one`).
 - `Realization/TightCap`: Layer 3, where that acquisition stands, in place for the statements on
   realizations (including `Realization.IsModel.not_hasTightCaps` and
-  `Realization.IsModel.not_hasTightSaturations`).  Its statements on stage types
-  (`StageType.botTopGrade` through `StageType.tightCapFamily_eq_empty`, including
-  `StageType.HasTightSaturations` and `StageType.eq_visibilityReplace_of_readsInOwnBlock`) go
-  with `StageType.CarriesBottoms`, beside which `StageType.CarriesBottomsAt` already is;
-  `StageType.exists_le_label_of_restrictFace` and the saturation and bottom-pattern statements to
-  `Realization/Families`; and
-  `CoupledGatedExtensionCounterexample.exists_mem_dominanceFamily_not_carriesBottoms` to the
-  counterexample module.
+  `Realization.IsModel.not_hasTightSaturations`) and for the tight cap family and tight
+  saturations (`StageType.HasTightSaturations`, `StageType.tightCapFamily`,
+  `StageType.tightCapFamily_subset_dominanceFamily`, `StageType.tightCapFamily_eq_empty`), which
+  are defined from the families of `Realization/Families` and the readings of
+  `Extension/GatedExtension`; it imports no counterexample module.  Moved, statements and full
+  names unchanged: the readings in the own block and the conditions at a grade
+  (`StageType.ReadsInOwnBlock`, `ReadsInOwnBlock.exists_ne_bot`, `IsAnchoredAt`,
+  `isAnchoredAt_iff`, `CarriesBottomsAt`, `carriesBottomsAt_iff`,
+  `carriesBottomsAt_of_readsInOwnBlock`, `eq_visibilityReplace_of_readsInOwnBlock`) to
+  `Extension/GatedExtension`, beside `StageType.CarriesBottoms`, where
+  `StageType.carriesBottoms_of_row_mem_block` is now derived from
+  `carriesBottomsAt_of_readsInOwnBlock` and `carriesBottomsAt_iff` (statement unchanged); the
+  statements on saturation and the bottom pattern at full grade (`StageType.botTopGrade` and its
+  three lemmas, `exists_mem_cofaces_inter_bottomPatternFamily_label_eq_bot`,
+  `exists_mem_cofaces_inter_saturationFamily_label_eq_bot`,
+  `exists_mem_cofaces_inter_saturationFamily_not_mem_dominanceFamily`) and
+  `StageType.exists_le_label_of_restrictFace` to `Realization/Families`; and
+  `CoupledGatedExtensionCounterexample.exists_mem_dominanceFamily_not_carriesBottoms` to
+  `Extension/CoupledGatedExtensionCounterexample`, beside `not_carriesBottoms` (that module now
+  imports `Realization/Families`).  The private block-start lemma of `Realization/TightCap` is
+  removed; its uses quote `Label.add_natCast_eq_add_natCast_iff` (`Label/Visibility`).  The
+  reference-cell preparation is shared: `Realization.IsModel.exists_referenceCells`
+  (`Realization/PrivateContext`, for a donor on any number of points) gives the block starts,
+  finite parts, reference cells and padding, and both `Realization.IsModel.exists_privateContext`
+  (statement unchanged) and `Realization.IsModel.hasCarryingPrivateContext_of_hasTightCaps` use it.
 
 - The attached gate: `Label.ne_bot_of_min_eq_of_ne_bot` is in `Label/Basic`;
   `CellScheme.Rows.ReadsOnly` and the row lemmas stated with it
@@ -5367,18 +5388,18 @@ witnesses).**
   refuted at every stage above `1`
   (`CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`), as is its first form
   `StageType.HasGatedPinnedExtensions`; whether every model acquires carrying private contexts
-  (`Realization.AcquiresCarryingContexts`) is open (compiled from `Realization.HasTightCaps`,
+  (`Realization.AcquiresCarryingContexts`) is undecided (compiled from `Realization.HasTightCaps`,
   which is not a clause of a model, is refuted for every model at every stage above `ω`,
-  `Realization.IsModel.not_hasTightCaps`, and is open at stages ≤ `ω`), and a construction for
-  them is prospective, including an attached gated extension (`StageType.AttachedGatedExtension`)
-  over every acquired private context (open); the hypothesis on schemes
-  `StageType.HasTightSaturations`, which gives carrying contexts with a cap one grade below full
-  (a redesign), is false at every stage above `ω` at which a model exists
-  (`Realization.IsModel.not_hasTightSaturations`) and undecided at stages ≤ `ω`, while
-  `Realization.HasCarryingSubfullContext` itself is neither proved nor refuted; per-block
-  contexts (`Realization.AcquiresPerBlockContexts`, one cap and one gate per block, a redesign)
-  are acquired conditional on `StageType.HasBlockTightSaturations`, which is undecided, and are
-  neither proved nor refuted for all models; (R2), (R3), (R4); and output 3, the proof of
+  `Realization.IsModel.not_hasTightCaps`, holds vacuously at the stage `0`, and is open at the
+  stages from `1` to `ω`); a construction for the private contexts that models acquire is
+  prospective, including an attached gated extension (`StageType.AttachedGatedExtension`) over every
+  acquired private context (open); the hypothesis on schemes `StageType.HasTightSaturations`, which
+  gives carrying contexts with a cap one grade below full (a redesign), is false at every stage
+  above `ω` at which a model exists (`Realization.IsModel.not_hasTightSaturations`) and undecided at
+  stages ≤ `ω`, while `Realization.HasCarryingSubfullContext` itself is neither proved nor refuted;
+  per-block contexts (`Realization.AcquiresPerBlockContexts`, one cap and one gate per block, a
+  redesign) are acquired conditional on `StageType.HasBlockTightSaturations`, which is undecided,
+  and are neither proved nor refuted for all models; (R2), (R3), (R4); and output 3, the proof of
   `ContinuationCriterion`.
 - The graded back-and-forth theorem (`README.md`, Layer 0), formerly listed here,
   is retired, not moved: both of its intended applications, approximate comparison of full

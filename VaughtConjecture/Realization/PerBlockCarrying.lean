@@ -29,10 +29,10 @@ from the clauses of `CellScheme.Rows.IsLawful`, not compiled).  One gate of the 
 is therefore part of the design.
 
 **Stated and compiled.**  The statements on stage types lie beside their subjects: the display
-with several gates beside `StageType.CoupledGatedExtension`, and the per-block condition, its
-necessity and the condition at a grade `k` beside `StageType.CarriesBottoms` (all in
-`Extension/GatedExtension`); the statements on readings in the own block and the hypothesis on
-schemes beside `StageType.ReadsInOwnBlock` and `StageType.HasTightSaturations`
+with several gates beside `StageType.CoupledGatedExtension`, the statements on readings in the own
+block beside `StageType.ReadsInOwnBlock`, and the per-block condition, its necessity and its row
+condition beside `StageType.CarriesBottoms` and `StageType.CarriesBottomsAt` (all in
+`Extension/GatedExtension`); the hypothesis on schemes beside `StageType.HasTightSaturations`
 (`Realization/TightCap`); the refutations at the refuting input in
 `Extension/CoupledGatedExtensionCounterexample`.  This file holds the contexts and the
 acquisition.
