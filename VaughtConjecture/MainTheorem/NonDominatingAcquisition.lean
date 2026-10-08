@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.MainTheorem.WorkH4
-import VaughtConjecture.Extension.ProfileTowerDeadSeed
+import VaughtConjecture.Extension.ProfileTowerDeadSeedSix
 
 /-!
 # Acquiring a context whose caps dominate no live cell, through a completion
@@ -37,7 +37,16 @@ occurrence with itself.  Compiled in this repository (theorem named):
 * **Cross separation fails at some seed** (`not_towerCrossSeparating`): at the seed
   `ProfileTowerDeadSeed.deadSeed`, whose cells of grade at most `3` are dead and whose first
   coatom has a live cell of grade `4`.  So `towerCrossLayer_of_crossSeparating` does not discharge
-  `TowerCrossLayer`; this refutes neither `TowerCrossLayer` nor (R4).
+  `TowerCrossLayer`.
+* **Cross-layer non-domination fails in the completion of the profile tower**
+  (`not_towerCrossLayer`, from `not_towerCrossLayer_of_dead` and
+  `not_capNonDominatingCrossAt_of_dead`): over dead grades at most `j + 3` with a live old cell
+  of grade `j + 4`, every cell of graded index `(univ, j + 4)` reads the cell of the bottom
+  profile of the layer at `j + 3` at full agreement, decoded into the top block
+  (`ProfileTower.Lvl.gridPoint_le_nextσ_of_dead`), above its reading of the live cell; the seed
+  is `ProfileTowerDeadSeedSix.seedSix`, on six points.  So `completionNonDominating_of_tower`
+  does not discharge `CompletionNonDominating`; this refutes neither `CompletionNonDominating`
+  (another completion may satisfy the clause) nor (R4).
 * **The margin calibration with a non-dominating cap** (`StageType.GradedCapMarginCalibrationND`):
   the margin calibration with a floor, a last point `x` off the root with `univ.erase x` a face,
   and the clause at `x` for every cell of full scope.
@@ -374,6 +383,133 @@ theorem towerCrossLayer_of_crossSeparating (h : TowerCrossSeparating.{u}) :
 theorem completionNonDominating_of_crossSeparating (h : TowerCrossSeparating.{u}) :
     CompletionNonDominating.{u} :=
   completionNonDominating_of_tower towerLayerSeparating (towerCrossLayer_of_crossSeparating h)
+
+/-- **Over dead low grades the completion of the profile tower dominates a live cell of the top
+level grade**: for a seed on `j + 6` points whose cells of grade at most `j + 3` read themselves as
+`⊥`, and an old cell `a` of grade `j + 4` avoiding the last point and reading itself other than
+`⊥`, the cell of the bottom profile of the layer at `j + 3` fails the cross-layer clause.  Every
+cell of graded index `(univ, j + 4)` is the cell of a profile of the catalogue at `j + 4`, which
+reads the cell of the bottom profile at full agreement, in the top block, and `a` by its profile,
+below it (`ProfileTower.Lvl.not_lowerBlock_of_dead`). -/
+theorem not_capNonDominatingCrossAt_of_dead {α : Ordinal.{u}} {j : ℕ} (I : Seed.{u} α (j + 1 + 3))
+    (hα : Order.IsSuccPrelimit α)
+    (hdead : ∀ d, I.amalgam.toCellScheme.grade d ≤ j + 2 + 1 → I.amalgam.toScheme.rowAt d d = ⊥)
+    {a : Fin I.amalgam.card} (ha : I.amalgam.toCellScheme.grade a = j + 1 + 3)
+    (hlive : I.amalgam.toScheme.rowAt a a ≠ ⊥)
+    (hlast : Fin.last (j + 1 + 3 + 1) ∉ I.amalgam.toCellScheme.scope a) :
+    ∃ c, ((ProfileTower.towerCompletion I).completion hα).toCellScheme.scope c = univ ∧
+      ((ProfileTower.towerCompletion I).completion hα).toCellScheme.grade c = j + 2 + 1 ∧
+      ¬ ((ProfileTower.towerCompletion I).completion hα).toScheme.CapNonDominatingCrossAt
+        (Fin.last (j + 1 + 3 + 1)) c := by
+  classical
+  have hL := ProfileTower.lvl_good (I := I) (by omega) (j + 1) (by omega)
+  obtain ⟨k₀, hk₀⟩ := ProfileTower.exists_entry_eq (ProfileTower.bot_mem_cat (I := I) (j + 2 + 1))
+  obtain ⟨kG, -⟩ := ProfileTower.exists_entry_eq
+    (ProfileTower.bot_mem_cat (I := I) (j + 1 + 2 + 1))
+  set F := (ProfileTower.towerCompletion I).completion hα with hF
+  set c₁ : Fin (ProfileTower.lvl I (j + 1)).S.card :=
+    Fin.natAdd (ProfileTower.lvl I j).S.card k₀ with hc₁
+  set c₂ : Fin (ProfileTower.lvl I (j + 1 + 1)).S.card := Fin.castAdd _ c₁ with hc₂
+  set G₂ : Fin (ProfileTower.lvl I (j + 1 + 1)).S.card :=
+    Fin.natAdd (ProfileTower.lvl I (j + 1)).S.card kG with hG₂
+  set cT : Fin (ProfileTower.lvl I (j + 1 + 1)).top.card := Fin.castAdd _ c₂ with hcT
+  set GT : Fin (ProfileTower.lvl I (j + 1 + 1)).top.card := Fin.castAdd _ G₂ with hGT
+  set aT : Fin (ProfileTower.lvl I (j + 1 + 1)).top.card :=
+    (ProfileTower.towerCompletion I).embed a with haT
+  have hrowc (u x : Fin (ProfileTower.lvl I (j + 1 + 1)).top.card) :
+      F.toScheme.rowAt u.castSucc x.castSucc = (ProfileTower.lvl I (j + 1 + 1)).top.rowAt u x :=
+    Scheme.rowAt_appendFullCell_castSucc
+      (S := ((ProfileTower.towerCompletion I).truncate hα).toScheme) (j := j + 1 + 3 + 2)
+      (r := StageType.apexRow (t := (ProfileTower.towerCompletion I).truncate hα)
+        (ProfileTower.towerCompletion I).isLegalBelowFullGrade)
+      (h := (ProfileTower.towerCompletion I).isLegalBelowFullGrade.not_le) u x
+  have hgi (u : Fin (ProfileTower.lvl I (j + 1 + 1)).top.card) :
+      F.toCellScheme.gradedIndex u.castSucc =
+        (ProfileTower.lvl I (j + 1 + 1)).top.toCellScheme.gradedIndex u :=
+    Scheme.appendFullCellScheme_gradedIndex_castSucc _ _ _
+  have hgi₂ (z : Fin (ProfileTower.lvl I (j + 1 + 1)).S.card) :
+      (ProfileTower.lvl I (j + 1 + 1)).top.toCellScheme.gradedIndex (Fin.castAdd _ z) =
+        (ProfileTower.lvl I (j + 1 + 1)).S.toCellScheme.gradedIndex z :=
+    Scheme.appendFullCellsScheme_gradedIndex_castAdd _ _ _ z
+  have hgic₂ : (ProfileTower.lvl I (j + 1 + 1)).S.toCellScheme.gradedIndex c₂ =
+      ((univ : Finset (Fin (j + 1 + 3 + 2))), j + 2 + 1) :=
+    (Scheme.appendFullCellsScheme_gradedIndex_castAdd _ _ _ c₁).trans
+      (Scheme.appendFullCellsScheme_gradedIndex_natAdd _ _ _ k₀)
+  have hgiG₂ : (ProfileTower.lvl I (j + 1 + 1)).S.toCellScheme.gradedIndex G₂ =
+      ((univ : Finset (Fin (j + 1 + 3 + 2))), j + 1 + 2 + 1) :=
+    Scheme.appendFullCellsScheme_gradedIndex_natAdd _ _ _ kG
+  have hc : F.toCellScheme.gradedIndex (cT.castSucc : Fin F.card) =
+      ((univ : Finset (Fin (j + 1 + 3 + 2))), j + 2 + 1) :=
+    (hgi cT).trans ((hgi₂ c₂).trans hgic₂)
+  refine ⟨cT.castSucc, congrArg Prod.fst hc, congrArg Prod.snd hc, fun h ↦ ?_⟩
+  have hga : F.toCellScheme.gradedIndex (aT.castSucc : Fin F.card) =
+      I.amalgam.toCellScheme.gradedIndex a :=
+    (hgi aT).trans ((ProfileTower.towerCompletion I).gradedIndex_embed a)
+  have hra : F.toScheme.rowAt (aT.castSucc : Fin F.card) aT.castSucc =
+      I.amalgam.toScheme.rowAt a a :=
+    (hrowc aT aT).trans ((ProfileTower.towerCompletion I).rowAt_embed a a)
+  have hG : F.toCellScheme.gradedIndex (GT.castSucc : Fin F.card) =
+      ((univ : Finset (Fin (j + 1 + 3 + 2))), j + 1 + 2 + 1) :=
+    (hgi GT).trans ((hgi₂ G₂).trans hgiG₂)
+  have hsa : F.toCellScheme.scope (aT.castSucc : Fin F.card) = I.amalgam.toCellScheme.scope a :=
+    congrArg Prod.fst hga
+  have hgra : F.toCellScheme.grade (aT.castSucc : Fin F.card) = I.amalgam.toCellScheme.grade a :=
+    congrArg Prod.snd hga
+  have hgrG : F.toCellScheme.grade (GT.castSucc : Fin F.card) = j + 1 + 2 + 1 :=
+    congrArg Prod.snd hG
+  have hgrc : F.toCellScheme.grade (cT.castSucc : Fin F.card) = j + 2 + 1 := congrArg Prod.snd hc
+  obtain ⟨u, hu, hlb⟩ := h aT.castSucc GT.castSucc (by rw [hsa]; exact hlast)
+    (congrArg Prod.fst hG) (by rw [hgra, hgrG, ha]) (by rw [hgra, hgrc, ha]; omega)
+    (by rw [hra]; exact hlive)
+  rw [hG] at hu
+  obtain ⟨u₂, rfl⟩ := exists_lvl_cell_towerCompletion I hα u
+    (by rw [show F.toCellScheme.grade u = _ from congrArg Prod.snd hu])
+  have hu₂ : (ProfileTower.lvl I (j + 1 + 1)).S.toCellScheme.gradedIndex u₂ =
+      ((univ : Finset (Fin (j + 1 + 3 + 2))), j + 1 + 2 + 1) :=
+    ((hgi₂ u₂).symm.trans (hgi _).symm).trans hu
+  rw [hrowc, hrowc] at hlb
+  change LowerBlock ((ProfileTower.lvl I (j + 1 + 1)).top.rowAt (Fin.castAdd _ u₂)
+      (Fin.castAdd _ c₂)) ((ProfileTower.lvl I (j + 1 + 1)).top.rowAt (Fin.castAdd _ u₂)
+      (Fin.castAdd _ ((ProfileTower.lvl I (j + 1 + 1)).embed a))) at hlb
+  rw [ProfileTower.Lvl.top_rowAt_castAdd, ProfileTower.Lvl.top_rowAt_castAdd] at hlb
+  obtain ⟨k, rfl⟩ : ∃ k : Fin (ProfileTower.cat I (j + 1 + 2 + 1)).card,
+      u₂ = Fin.natAdd (ProfileTower.lvl I (j + 1)).S.card k := by
+    change Fin ((ProfileTower.lvl I (j + 1)).S.card +
+      (ProfileTower.cat I (j + 1 + 2 + 1)).card) at u₂
+    induction u₂ using Fin.addCases with
+    | left z =>
+      exfalso
+      have hz := (Scheme.appendFullCellsScheme_gradedIndex_castAdd _ _ _ z).symm.trans hu₂
+      rcases (ProfileTower.lvl I (j + 1)).inv z with h' | h'
+      · have := congrArg Prod.snd hz
+        simp only [CellScheme.gradedIndex_snd] at this
+        omega
+      · exact h' (congrArg Prod.fst hz)
+    | right k => exact ⟨k, rfl⟩
+  exact (ProfileTower.lvl I j).not_lowerBlock_of_dead hL hdead hk₀ k (by omega) hlb
+
+/-- **Cross-layer non-domination fails at a seed with dead low grades**: a seed on six points or
+more whose cells of grade at most `j + 3` are dead, with a live old cell of grade `j + 4` avoiding
+the last point, refutes `TowerCrossLayer` (`not_capNonDominatingCrossAt_of_dead`). -/
+theorem not_towerCrossLayer_of_dead {α : Ordinal.{u}} {j : ℕ} (I : Seed.{u} α (j + 1 + 3))
+    (hα : Order.IsSuccPrelimit α)
+    (hdead : ∀ d, I.amalgam.toCellScheme.grade d ≤ j + 2 + 1 → I.amalgam.toScheme.rowAt d d = ⊥)
+    {a : Fin I.amalgam.card} (ha : I.amalgam.toCellScheme.grade a = j + 1 + 3)
+    (hlive : I.amalgam.toScheme.rowAt a a ≠ ⊥)
+    (hlast : Fin.last (j + 1 + 3 + 1) ∉ I.amalgam.toCellScheme.scope a) :
+    ¬ TowerCrossLayer.{u} := fun h ↦ by
+  obtain ⟨c, hc, hg, hn⟩ := not_capNonDominatingCrossAt_of_dead I hα hdead ha hlive hlast
+  exact hn (h I hα c hc (by omega) (by omega))
+
+/-- **Cross-layer non-domination in the completion of the profile tower fails**: at the seed
+`ProfileTowerDeadSeedSix.seedSix` on six points, whose cells of grade at most `3` are dead and
+whose first coatom has a live cell of grade `4` (`not_towerCrossLayer_of_dead`). -/
+theorem not_towerCrossLayer : ¬ TowerCrossLayer.{u} := by
+  obtain ⟨a, ha, hlive, hlast⟩ :=
+    ProfileTowerDeadSeedSix.exists_live_seedSix (α := (0 : Ordinal.{u})) Ordinal.isSuccPrelimit_zero
+  exact not_towerCrossLayer_of_dead (j := 0)
+    (ProfileTowerDeadSeedSix.seedSix 0 Ordinal.isSuccPrelimit_zero) Ordinal.isSuccPrelimit_zero
+    (fun d hd ↦ ProfileTowerDeadSeedSix.rowAt_seedSix_of_le _ d hd) ha hlive hlast
 
 namespace StageType
 

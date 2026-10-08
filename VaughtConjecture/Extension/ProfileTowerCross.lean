@@ -39,6 +39,16 @@ The change of bottoms is asked at a cell of grade at most `N`: the splice of the
 from `j` down to `N` makes every cell above `N` bottom on the side of the reader, so a difference
 there only arises from the profile of `c`.
 
+* **Cross separation is bottom variation** (`ProfileTower.crossSeparating_iff_bottomVariation`),
+  and it **fails over dead low grades** (`ProfileTower.not_crossSeparating_of_dead`).
+* **Full agreement decodes into the top block**
+  (`ProfileTower.Lvl.gridPoint_le_nextσ_of_hat_eq_bot`,
+  `ProfileTower.Lvl.gridPoint_le_nextσ_of_dead`): a reader whose splice is `⊥` reads the cell of the
+  bottom profile of the layer below at least at the grid point of the block `bound I`, above every
+  value of a profile of the catalogue (`ProfileTower.lt_gridPoint_bound_of_mem_cat`); over dead low
+  grades no reader of the next grade reads that cell in a lower block
+  (`ProfileTower.Lvl.not_lowerBlock_of_dead`).
+
 ## Placement
 
 Checkpoint 2.7 of the completion of the coatom extension construction (`roadmap/README.md`,
@@ -506,6 +516,88 @@ theorem not_crossSeparating_of_dead {N j : ℕ} (hNj : N ≤ j)
   intro h
   obtain ⟨R, hR, -, d, hd, hne⟩ := h _ (bot_mem_cat N) a ha hlive hlast
   exact hne (iff_of_true ((mem_cat.mp hR).1.eq_bot_of_dead (hd.trans hNj) (hdead d hd)) rfl)
+
+/-! ### Full agreement decodes into the top block -/
+
+/-- **A reading at full agreement lies in the top block**: at the cell of the constant bottom
+profile of the next layer, the section of a profile whose splice is constantly `⊥` is at least
+the grid point of the top block `bound I` at the grade `g + 2`.  The agreement height of the
+code with the entry is not `⊥` (the two are equal), and no cell has an orbit code with key at
+least its key, so the gap value is the grid point itself. -/
+theorem Lvl.gridPoint_le_nextσ_of_hat_eq_bot {g : ℕ} (L : Lvl I g) {P : Prof I}
+    (hP : hat I (g + 1) P = fun _ ↦ ⊥) {k₀ : Fin (cat I (g + 1)).card}
+    (hk₀ : entry I (g + 1) k₀ = fun _ ↦ ⊥) :
+    gridPoint (g + 2) (bound I) ≤ L.nextσ P (Fin.natAdd _ k₀) := by
+  classical
+  have hcode : code (g + 1) P = fun _ ↦ ⊥ := by
+    rw [code, hP]
+    exact funext fun _ ↦ by rw [orbitCode_apply, orbitMap_bot]
+  rw [Lvl.nextσ_of_le (by rw [Scheme.appendFullCellsScheme_grade_natAdd]), Lvl.Φ_natAdd, hcode,
+    hk₀, hP]
+  set x := agreementHeight (grid (g + 1) (bound I)) (fun _ : Fin I.amalgam.card ↦ (⊥ : Label.{u}))
+    (fun _ ↦ ⊥) with hx
+  have hx0 : x ≠ ⊥ := by
+    exact ne_bot_of_le_ne_bot (gridPoint_ne_bot (g + 1) (bound I))
+      (le_agreementHeight (gridPoint_mem_grid le_rfl) fun _ ↦ rfl)
+  refine le_max_of_le_right ?_
+  rw [gapValueAt_of_ne_bot hx0]
+  have hempty : ({d | visibilityReplace (g + 1) (g + 1) x ≤ visibilityReplace (g + 1) (g + 1)
+      (orbitCode (g + 1) (fun _ : Fin I.amalgam.card ↦ (⊥ : Label.{u})) d)} :
+      Finset (Fin I.amalgam.card)) = ∅ := by
+    refine Finset.eq_empty_of_forall_notMem fun d hd ↦ hx0 ?_
+    rw [mem_filter, orbitCode_apply, orbitMap_bot, visibilityReplace_bot, le_bot_iff,
+      visibilityReplace_eq_bot_iff] at hd
+    exact hd.2
+  rw [hempty, Finset.inf_empty, min_top_right]
+
+/-- **Over dead low grades, the readers of the next grade read the cell of the bottom profile in
+the top block**: if every cell of grade at most `g + 1` reads itself as `⊥`, the reader of every
+profile of the catalogue at `g + 2` reads the cell of the bottom profile of the layer at `g + 1`
+at least at the grid point of the top block. -/
+theorem Lvl.gridPoint_le_nextσ_of_dead {g : ℕ} (L : Lvl I g)
+    (hdead : ∀ d, I.amalgam.toCellScheme.grade d ≤ g + 1 → I.amalgam.toScheme.rowAt d d = ⊥)
+    {P : Prof I} (hP : P ∈ cat I (g + 2)) {k₀ : Fin (cat I (g + 1)).card}
+    (hk₀ : entry I (g + 1) k₀ = fun _ ↦ ⊥) :
+    gridPoint (g + 2) (bound I) ≤ L.nextσ P (Fin.natAdd _ k₀) := by
+  refine L.gridPoint_le_nextσ_of_hat_eq_bot (funext fun d ↦ ?_) hk₀
+  by_cases hd : I.amalgam.toCellScheme.grade d ≤ g + 1
+  · rw [hat_of_le hd]
+    exact (mem_cat.mp hP).1.eq_bot_of_dead (by omega) (hdead d hd)
+  · exact hat_of_lt (by omega)
+
+/-- **A profile of the catalogue reads below the top block**: its values lie below the grid point
+of the block `bound I` at its grade. -/
+theorem lt_gridPoint_bound_of_mem_cat {k : ℕ} {P : Prof I} (hP : P ∈ cat I k)
+    (d : Fin I.amalgam.card) : P d < gridPoint k (bound I) := by
+  rw [← (mem_cat.mp hP).2]
+  exact (le_gridPoint_of_mem_codeGrid (B := 2 * I.amalgam.card)
+    (orbitMap_mem_codeGrid (by simp) _)).trans_lt
+    (gridPoint_lt_gridPoint.mpr (by simp only [bound]; omega))
+
+/-- **Over dead low grades no reader of the grade `g + 2` reads the cell of the bottom profile in
+a lower block**: if every cell of grade at most `g + 1` reads itself as `⊥`, the cell of a profile
+of the catalogue at `g + 2` reads the cell of the bottom profile of the layer at `g + 1` in the
+top block (`ProfileTower.Lvl.gridPoint_le_nextσ_of_dead`) and every old cell of grade at most
+`g + 2` by its profile, below the top block. -/
+theorem Lvl.not_lowerBlock_of_dead {g : ℕ} (L : Lvl I g) (hL : L.next.Good)
+    (hdead : ∀ d, I.amalgam.toCellScheme.grade d ≤ g + 1 → I.amalgam.toScheme.rowAt d d = ⊥)
+    {k₀ : Fin (cat I (g + 1)).card} (hk₀ : entry I (g + 1) k₀ = fun _ ↦ ⊥)
+    (k : Fin (cat I (g + 1 + 1)).card) {d : Fin I.amalgam.card}
+    (hd : I.amalgam.toCellScheme.grade d ≤ g + 1 + 1) :
+    ¬ LowerBlock (L.next.nextS.rowAt (Fin.natAdd _ k)
+        (Fin.castAdd _ (Fin.natAdd L.S.card k₀ : Fin L.next.S.card)))
+      (L.next.nextS.rowAt (Fin.natAdd _ k) (Fin.castAdd _ (L.next.embed d))) := by
+  have hg₀ : L.next.S.toCellScheme.grade (Fin.natAdd L.S.card k₀ : Fin L.next.S.card) ≤
+      g + 1 + 1 :=
+    (Scheme.appendFullCellsScheme_grade_natAdd L.S (g + 1) _ k₀).le.trans (Nat.le_succ _)
+  have h1 : L.next.nextS.rowAt (Fin.natAdd _ k)
+      (Fin.castAdd _ (Fin.natAdd L.S.card k₀ : Fin L.next.S.card)) =
+      L.next.σ (entry I (g + 1 + 1) k) (Fin.natAdd L.S.card k₀) :=
+    L.next.rowAt_nextS_natAdd_castAdd k hg₀
+  rw [h1, hL.rowAt_nextS_natAdd_embed k hd]
+  intro hlb
+  exact absurd (hlb.1.trans (lt_gridPoint_bound_of_mem_cat (entry_mem k) d))
+    (not_lt.mpr (L.gridPoint_le_nextσ_of_dead hdead (entry_mem k) hk₀))
 
 end ProfileTower
 
