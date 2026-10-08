@@ -5,6 +5,7 @@ Authors: Cameron Freer
 -/
 import VaughtConjecture.Continuation.ReadingLayerServers
 import VaughtConjecture.Continuation.MarkedCarrier
+import VaughtConjecture.Continuation.ApexContexts
 
 /-!
 # Root offsets below the grade of a cap: the cap keeps the proper root ties
@@ -171,12 +172,6 @@ theorem exists_isBoundedReading {t' : StageType.{u} α k} {a : Fin t'.card → L
 
 /-! ### Proper root ties -/
 
-/-- The **root offsets lie below `N`** along `h`: every label of a cell visible through `h` that
-is an ordinal `μ + f` (`μ` zero or a limit) has `f < N`. -/
-def RootOffsetsBelow (t' : StageType.{u} α k) (h : Fin n ↪ Fin k) (N : ℕ) : Prop :=
-  ∀ y ∈ t'.visibleCells h, ∀ (μ : Ordinal.{u}) (f : ℕ), Order.IsSuccPrelimit μ →
-    t'.label y = ((μ + f : Ordinal.{u}) : Label.{u}) → f < N
-
 /-- The row of `c` **keeps the proper root ties** along `h`: at two cells visible through `h` with
 labels in order, the first strictly below the second or an ordinal, the row of `c` reads them in
 the same order. -/
@@ -222,11 +217,6 @@ theorem keepsProperRootTies_of_rootOffsetsBelow {t' : StageType.{u} α k} {h : F
   · rw [← hl₁, ← ho]
   · rw [← hl₂, ← heq, ← ho]
 
-/-- The row of `c` **respects the root bottoms** along `h`: it reads every cell visible through
-`h` labelled `⊥` as `⊥`. -/
-def RootBottomRespected (t' : StageType.{u} α k) (h : Fin n ↪ Fin k) (c : Fin t'.card) : Prop :=
-  ∀ y ∈ t'.visibleCells h, t'.label y = ⊥ → t'.rowAt c y = ⊥
-
 end StageType
 
 namespace TiedRootCapRelabel
@@ -240,39 +230,11 @@ marker `r` whose root offsets lie below the grade of `c`. -/
 def MarkedCapContextBelow (t' : StageType.{u} α k) (h : Fin n ↪ Fin k) : Prop :=
   ∃ c r, t'.IsMarkedCapContextAt h c r ∧ t'.RootOffsetsBelow h (t'.toCellScheme.grade c)
 
-/-- The **acquired marked-cap context with the root bottoms respected**: a marked-cap context
-with top cap `c` and marker `r`, root offsets below the grade of `c`, and the row of `c` reading
-the root cells labelled `⊥` as `⊥`. -/
-def MarkedCapContextBelow' (t' : StageType.{u} α k) (h : Fin n ↪ Fin k) : Prop :=
-  ∃ c r, t'.IsMarkedCapContextAt h c r ∧ t'.RootOffsetsBelow h (t'.toCellScheme.grade c) ∧
-    t'.RootBottomRespected h c
-
 end TiedRootCapRelabel
 
 namespace StageType
 
 variable {α : Ordinal.{u}} {k n : ℕ}
-
-/-- **An apex type is a context respecting the root bottoms** along every root of `n` points with
-`n + 1 < k`, root labels never `⊤`, and root offsets below `k`. -/
-theorem markedCapContextBelow'_addApex {t₀ : StageType.{u} α k}
-    (ht₀ : t₀.IsLegalBelowFullGrade) (hk : 0 < k) {h : Fin n ↪ Fin k} (hnk : n + 1 < k)
-    (hroot : ∀ y ∈ (t₀.addApex ht₀ hk).visibleCells h, (t₀.addApex ht₀ hk).label y ≠ ⊤)
-    (hoff : ∀ y ∈ (t₀.addApex ht₀ hk).visibleCells h, ∀ (μ : Ordinal.{u}) (f : ℕ),
-      Order.IsSuccPrelimit μ → (t₀.addApex ht₀ hk).label y = ((μ + f : Ordinal.{u}) : Label.{u}) →
-        f < k) :
-    TiedRootCapRelabel.MarkedCapContextBelow' (t₀.addApex ht₀ hk) h := by
-  have hg : (t₀.addApex ht₀ hk).toCellScheme.grade (Fin.last _) = k :=
-    congrArg Prod.snd (addApex_gradedIndex_last ht₀ hk)
-  refine ⟨Fin.last _, Fin.last _, ⟨⟨addApex_scope_last ht₀ hk, addApex_label_last ht₀ hk,
-    fun x _ ↦ by rw [hg]; exact (t₀.addApex ht₀ hk).grade_le x⟩,
-    ⟨addApex_label_last ht₀ hk, (t₀.addApex ht₀ hk).toCellScheme.mem_below_gradedIndex _,
-      fun x hx _ ↦ le_of_eq ((rowAt_addApex_last ht₀ hk _).trans
-        ((congrArg (blockEncode (apexCodes ht₀) k) ((addApex_label_last ht₀ hk).trans
-          hx.symm)).trans (rowAt_addApex_last ht₀ hk x).symm))⟩,
-    by rw [hg]; exact hnk, fun a ha hat ↦ absurd hat (hroot a ha)⟩,
-    fun y hy μ f hμ hf ↦ by rw [hg]; exact hoff y hy μ f hμ hf,
-    fun y _ hyb ↦ (rowAt_addApex_last_eq_bot_iff ht₀ hk y).mpr hyb⟩
 
 end StageType
 

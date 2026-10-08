@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Continuation.ReadingLayer
+import VaughtConjecture.Extension.BotKeeping
 
 /-!
 # The reading layer at a marker that is not isolated
@@ -491,22 +492,6 @@ namespace StageType
 
 variable {α : Ordinal.{u}} {k : ℕ} {t₀ : StageType.{u} α k} (ht₀ : t₀.IsLegalBelowFullGrade)
   (hk : 0 < k)
-
-/-- The apex row reads every cell at the code of its label (in the form of `Scheme.rowAt`). -/
-theorem rowAt_addApex_last (z : Fin (t₀.addApex ht₀ hk).card) :
-    (t₀.addApex ht₀ hk).toScheme.rowAt (Fin.last _) z =
-      blockEncode (apexCodes ht₀) k ((t₀.addApex ht₀ hk).label z) := by
-  have hz : z ∈ (t₀.addApex ht₀ hk).toCellScheme.below
-      ((t₀.addApex ht₀ hk).toCellScheme.gradedIndex (Fin.last _)) := by
-    rw [CellScheme.mem_below, addApex_gradedIndex_last ht₀ hk]
-    exact Prod.mk_le_mk.mpr ⟨subset_univ _, (t₀.addApex ht₀ hk).grade_le z⟩
-  rw [Scheme.rowAt_of_mem hz]
-  exact row_addApex_last_eq ht₀ hk hz
-
-/-- The apex row reads a cell as `⊥` exactly when it is labelled `⊥`. -/
-theorem rowAt_addApex_last_eq_bot_iff (z : Fin (t₀.addApex ht₀ hk).card) :
-    (t₀.addApex ht₀ hk).toScheme.rowAt (Fin.last _) z = ⊥ ↔ (t₀.addApex ht₀ hk).label z = ⊥ := by
-  rw [rowAt_addApex_last, blockEncode_eq_bot_iff]
 
 /-- The apex row reads a cell labelled `⊤` as it reads the apex. -/
 theorem rowAt_addApex_last_of_top {z : Fin (t₀.addApex ht₀ hk).card}

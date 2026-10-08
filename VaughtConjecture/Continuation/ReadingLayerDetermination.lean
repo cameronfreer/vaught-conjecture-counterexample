@@ -5,6 +5,8 @@ Authors: Cameron Freer
 -/
 import VaughtConjecture.Continuation.ReadingLayerAcquired
 import VaughtConjecture.Continuation.TopReadingCarrier
+import VaughtConjecture.Continuation.TiedRootCapRootBottomBase
+import VaughtConjecture.MainTheorem.CoatomDetermination
 
 /-!
 # Determination at a cutoff at the acquired context `oneType`
@@ -58,16 +60,6 @@ open Finset Label
 namespace StageType
 
 variable {α : Ordinal.{u}} {k n : ℕ}
-
-/-- Every cell visible through `h` is a cell of the face along `h`. -/
-theorem exists_faceCell_eq {t' : StageType.{u} α k} {h : Fin n ↪ Fin k}
-    {t : StageType.{u} α n} (ht : restrictFace h t' = some t) {i : Fin t'.card}
-    (hi : i ∈ t'.visibleCells h) : ∃ y, faceCell ht y = i := by
-  obtain ⟨z, rfl⟩ : i ∈ Set.range (t'.toScheme.cellMap h) := by
-    rw [Scheme.range_cellMap]
-    exact hi
-  exact ⟨Fin.cast (congrArg Scheme.card (comap_toScheme_of_restrictFace ht)) z, by
-    simp [faceCell, Scheme.faceCell]⟩
 
 /-- A cell of scope the new point is a cell of the face along `extendByLast Fin.castSuccEmb`, of
 scope the last point there. -/
@@ -147,20 +139,6 @@ end StageType
 namespace Realization
 
 open StageType
-
-/-- **Hollow coatom cutoff determination** for `P`: the statement of `CoatomCutoffDetermination`
-without the bound on the top grade of the donor.  Not proved for any `P` here. -/
-structure HollowCoatomCutoffDetermination
-    (P : ∀ {α : Ordinal.{u}} {n k : ℕ}, StageType.{u} α k → (Fin n ↪ Fin k) → Prop) : Prop where
-  /-- Every donor through a coface of the coatom face is determined at a cutoff. -/
-  exists_coface ⦃α : Ordinal.{u}⦄ ⦃n k : ℕ⦄ (t' : StageType.{u} α (k + 1))
-    (g : Fin n ↪ Fin k) (p : StageType.{u} α k) :
-    Order.IsSuccLimit α → t'.IsLegal → P t' (g.trans Fin.castSuccEmb) →
-      restrictFace Fin.castSuccEmb t' = some p → ∀ tb ∈ p.cofaces, ∀ d : StageType.{u} α (n + 1),
-        restrictFace (extendByLast g) tb = some d →
-          ∃ D' ∈ t'.cofaces, restrictFace (extendByLast Fin.castSuccEmb) D' = some tb ∧
-            ∃ δ : Label.{u}, IsPermittedCutoff α δ ∧
-              IsDeterminedWithin (receivingFamily D' δ) t' (g.trans Fin.castSuccEmb) d
 
 end Realization
 
