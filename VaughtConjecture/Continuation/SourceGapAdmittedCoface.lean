@@ -236,4 +236,145 @@ theorem mem_cofaces_DU (hα : Order.IsSuccPrelimit α) (hv : IsSelfVisible 2 v)
 
 end MixedSeed
 
+/-! ### Generic: faces and labels on one scheme, and restrictions of lawful labellings -/
+
+namespace StageType
+
+variable {α : Ordinal.{u}} {n m : ℕ}
+
+/-- **Stage types on one scheme with one face along `g` agree at the cells visible through it**
+(the argument of the private lemma of `VaughtConjecture.Continuation.SourceGapTopReading`). -/
+theorem label_eq_of_restrictFace_eq_some {S : Scheme.{u} m}
+    {ℓ ℓ' : Fin S.card → Label.{u}} {hw hw' : S.IsWellFormed} {hc hc' : S.IsCoded}
+    {hl : S.rows.IsLawful ℓ} {hl' : S.rows.IsLawful ℓ'} {ha : ∀ d, AtStage α (ℓ d)}
+    {ha' : ∀ d, AtStage α (ℓ' d)} {g : Fin n ↪ Fin m} {t : StageType.{u} α n}
+    (hq : restrictFace g (⟨S, ℓ, hw, hc, hl, ha⟩ : StageType.{u} α m) = some t)
+    (hD : restrictFace g (⟨S, ℓ', hw', hc', hl', ha'⟩ : StageType.{u} α m) = some t)
+    {y : Fin S.card} (hy : y ∈ S.visibleCells g) : ℓ y = ℓ' y := by
+  obtain ⟨hfq, hq⟩ := (restrictFace_eq_some_iff _ g).mp hq
+  obtain ⟨hfD, hD⟩ := (restrictFace_eq_some_iff _ g).mp hD
+  obtain ⟨i, rfl⟩ : y ∈ Set.range (S.cellMap g) := by
+    rw [Scheme.range_cellMap]
+    exact hy
+  exact label_congr (hq.trans hD.symm) (i := i) (j := i) rfl
+
+/-- **Stage types on one scheme agreeing at the cells visible through `g` have one face along
+`g`.** -/
+theorem restrictFace_eq_of_label_eq {S : Scheme.{u} m}
+    {ℓ ℓ' : Fin S.card → Label.{u}} {hw hw' : S.IsWellFormed} {hc hc' : S.IsCoded}
+    {hl : S.rows.IsLawful ℓ} {hl' : S.rows.IsLawful ℓ'} {ha : ∀ d, AtStage α (ℓ d)}
+    {ha' : ∀ d, AtStage α (ℓ' d)} {g : Fin n ↪ Fin m}
+    (h : ∀ y ∈ S.visibleCells g, ℓ y = ℓ' y) :
+    restrictFace g (⟨S, ℓ, hw, hc, hl, ha⟩ : StageType.{u} α m) =
+      restrictFace g (⟨S, ℓ', hw', hc', hl', ha'⟩ : StageType.{u} α m) := by
+  by_cases hf : univ.map g ∈ S.toCellScheme.faces
+  · rw [restrictFace_of_mem _ g hf, restrictFace_of_mem _ g hf]
+    refine congrArg some (ext rfl fun i j hij ↦ ?_)
+    rw [comap_label, comap_label]
+    obtain rfl : i = j := Fin.ext hij
+    exact h _ (S.cellMap_mem g i)
+  · rw [restrictFace_of_notMem _ g hf, restrictFace_of_notMem _ g hf]
+
+/-- A lawful labelling of a stage type with the apex is lawful on the old cells. -/
+theorem isLawful_castSucc_addApex {t : StageType.{u} α n} (ht : t.IsLegalBelowFullGrade)
+    (hn : 0 < n) {p : Fin (t.card + 1) → Label.{u}} (hp : (t.addApex ht hn).rows.IsLawful p) :
+    t.rows.IsLawful (p ∘ Fin.castSucc) := by
+  have h := hp.comap (Scheme.isLowerEmbedding_castSucc n (apexRow ht) ht.not_le)
+  have e : (t.toScheme.appendFullCell n (apexRow ht) ht.not_le).rows.comap
+      (Scheme.isLowerEmbedding_castSucc n (apexRow ht) ht.not_le) = t.rows :=
+    Scheme.comap_rows_castSucc (h := ht.not_le)
+  exact e ▸ h
+
+end StageType
+
+namespace Scheme
+
+/-- A lawful labelling after appending cells is lawful on the old cells. -/
+theorem isLawful_comp_castAdd {n k M : ℕ} {S : Scheme.{u} n}
+    {r : Fin M → Fin (S.card + M) → Label.{u}}
+    {h : ∀ d, ¬ ((univ : Finset (Fin n)), k) ≤ S.toCellScheme.gradedIndex d}
+    {p : Fin (S.card + M) → Label.{u}} (hp : (S.appendFullCells k M r h).rows.IsLawful p) :
+    S.rows.IsLawful (p ∘ Fin.castAdd M) := by
+  have h' := hp.comap (isLowerEmbedding_castAdd k M r h)
+  rwa [comap_rows_castAdd] at h'
+
+end Scheme
+
+/-! ### Generic: the stage type of a scheme with the apex, and determination there -/
+
+namespace StageType
+
+variable {α : Ordinal.{u}} {n : ℕ} {S : Scheme.{u} n} (hS : S.IsLegalBelowFullGrade)
+  {q : Fin S.card → Label.{u}} (hq : S.rows.IsLawful q) (hqα : ∀ d, AtStage α (q d)) (hn : 0 < n)
+
+/-- The stage type of a scheme legal below the full grade with a lawful labelling at the stage,
+with the apex. -/
+noncomputable abbrev apexOf : StageType.{u} α n := (ofLegalBelow S hS q hq hqα).addApex hS hn
+
+theorem apexOf_label_castSucc (x : Fin S.card) :
+    (apexOf hS hq hqα hn).label (Fin.castSucc x) = q x :=
+  addApex_label_castSucc (t := ofLegalBelow S hS q hq hqα) hS hn x
+
+theorem apexOf_scope_castSucc (x : Fin S.card) :
+    (apexOf hS hq hqα hn).toCellScheme.scope (Fin.castSucc x) = S.toCellScheme.scope x :=
+  Scheme.appendFullCellScheme_scope_castSucc _ _ x
+
+theorem apexOf_scope_last :
+    (apexOf hS hq hqα hn).toCellScheme.scope (Fin.last S.card) = univ :=
+  Scheme.appendFullCellScheme_scope_last _ _
+
+/-- An old cell visible through `f` stays visible after adding the apex. -/
+theorem apexOf_castSucc_mem_visibleCells {p : ℕ} {f : Fin p ↪ Fin n} {x : Fin S.card}
+    (hx : x ∈ S.visibleCells f) :
+    (Fin.castSucc x : Fin (apexOf hS hq hqα hn).card) ∈
+      (apexOf hS hq hqα hn).toScheme.visibleCells f :=
+  Scheme.mem_visibleCells.mpr ((congrArg (fun s : Finset (Fin n) ↦ (s : Set (Fin n)))
+    (apexOf_scope_castSucc hS hq hqα hn x)).subset.trans (Scheme.mem_visibleCells.mp hx))
+
+/-- A cell visible through a face missing a point is an old cell visible through it. -/
+theorem exists_castSucc_of_mem_visibleCells {p : ℕ} {f : Fin p ↪ Fin n}
+    (hf : ∃ a, a ∉ Set.range f) {y : Fin (S.card + 1)}
+    (hy : y ∈ (apexOf hS hq hqα hn).toScheme.visibleCells f) :
+    ∃ x ∈ S.visibleCells f, y = Fin.castSucc x := by
+  have hy' := Scheme.mem_visibleCells.mp hy
+  induction y using Fin.lastCases with
+  | last =>
+    obtain ⟨a, ha⟩ := hf
+    have hsl := apexOf_scope_last hS hq hqα hn
+    exact absurd (hy' (show a ∈ (((apexOf hS hq hqα hn).toCellScheme.scope (Fin.last S.card)) :
+      Set (Fin n)) from mem_coe.mpr (hsl ▸ mem_univ a))) ha
+  | cast x =>
+    refine ⟨x, Scheme.mem_visibleCells.mpr ?_, rfl⟩
+    exact (congrArg (fun s : Finset (Fin n) ↦ (s : Set (Fin n)))
+      (apexOf_scope_castSucc hS hq hqα hn x)).symm.subset.trans hy'
+
+/-- **Determination over a coface with the apex, from agreement on the donor face**: if every
+labelling of the scheme lawful, agreeing with the coface at the cells visible through the context
+face and capped at `δ` everywhere, agrees with it at the cells visible through the donor face, then
+the donor face is determined within the receiving family at `δ`. -/
+theorem isDeterminedWithin_apexOf {k p : ℕ} {S : Scheme.{u} (k + 1)}
+    (hS : S.IsLegalBelowFullGrade) {q : Fin S.card → Label.{u}} (hq : S.rows.IsLawful q)
+    (hqα : ∀ d, AtStage α (q d)) (hn : 0 < k + 1) {t' : StageType.{u} α k}
+    {h : Fin p ↪ Fin k} {d : StageType.{u} α (p + 1)} {δ : Label.{u}}
+    (hT : restrictFace Fin.castSuccEmb (apexOf hS hq hqα hn) = some t')
+    (hd : restrictFace (extendByLast h) (apexOf hS hq hqα hn) = some d)
+    (key : ∀ ℓ : Fin (S.card + 1) → Label.{u}, (apexOf hS hq hqα hn).rows.IsLawful ℓ →
+      (∀ x ∈ (apexOf hS hq hqα hn).toScheme.visibleCells Fin.castSuccEmb,
+        ℓ x = (apexOf hS hq hqα hn).label x) →
+      (∀ x, min (ℓ x) δ = min ((apexOf hS hq hqα hn).label x) δ) →
+      ∀ y ∈ (apexOf hS hq hqα hn).toScheme.visibleCells (extendByLast h),
+        ℓ y = (apexOf hS hq hqα hn).label y) :
+    IsDeterminedWithin (receivingFamily (apexOf hS hq hqα hn) δ) t' h d := by
+  intro Q hQ hQT
+  obtain ⟨hs, hlab⟩ := hQ
+  obtain ⟨S', ℓ', hw', hc', hl', ha'⟩ := Q
+  obtain rfl : S' = (apexOf hS hq hqα hn).toScheme := hs
+  have hleft (x) (hx : x ∈ (apexOf hS hq hqα hn).toScheme.visibleCells Fin.castSuccEmb) :
+      ℓ' x = (apexOf hS hq hqα hn).label x :=
+    label_eq_of_restrictFace_eq_some hQT hT hx
+  rw [← hd]
+  exact restrictFace_eq_of_label_eq (key ℓ' hl' hleft fun x ↦ hlab x x rfl)
+
+end StageType
+
 end VaughtConjecture
