@@ -136,6 +136,67 @@ theorem GradedCapMarginCalibration'.of_restrictFace {m n k : ℕ}
 
 end StageType
 
+namespace StageType
+
+variable {ξ : Ordinal.{u}}
+
+/-- **An embedding avoiding the last point factors through the first points.** -/
+theorem exists_trans_castSuccEmb {k m : ℕ} (f : Fin k ↪ Fin (m + 1))
+    (hf : ∀ i, f i ≠ Fin.last m) : ∃ f' : Fin k ↪ Fin m, f'.trans Fin.castSuccEmb = f :=
+  ⟨⟨fun i ↦ (f i).castPred (hf i), fun i j hij ↦ f.injective (by
+      have := congrArg Fin.castSucc hij
+      simpa using this)⟩, Function.Embedding.ext fun i ↦ Fin.castSucc_castPred (f i) (hf i)⟩
+
+/-- **Cutoff stable recovery for the calibration with a non-dominating cap from first-coatom
+completions with a chosen coface**: the root avoids the last point, whose complement is a face, so
+the input is an input at the first coatom; no relabelling is needed. -/
+theorem HasCutoffFirstCoatomCompletionsEx.hasCutoffStableRecoverySchemes_nd
+    (h : HasCutoffFirstCoatomCompletionsEx ξ (GradedCapMarginCalibrationND ξ)) :
+    HasCutoffStableRecoverySchemes ξ (GradedCapMarginCalibrationND ξ) := by
+  intro m k Tp f P hT hk hP D hD γ hγ hC
+  obtain ⟨-, x, hx, hfx, hxf, -⟩ := id hC
+  obtain ⟨m', rfl⟩ : ∃ m', m = m' + 1 := ⟨m - 1, by omega⟩
+  obtain rfl : x = Fin.last m' := Fin.ext (by simp; omega)
+  obtain ⟨f', rfl⟩ := exists_trans_castSuccEmb f hfx
+  have hmem : univ.map (Fin.castSuccEmb : Fin m' ↪ Fin (m' + 1)) ∈ Tp.toCellScheme.faces := by
+    convert hxf using 1
+    ext y
+    induction y using Fin.lastCases with
+    | last => simp
+    | cast y => simp [Fin.castSucc_ne_last]
+  have hTp : restrictFace Fin.castSuccEmb Tp = some (Tp.comap Fin.castSuccEmb hmem) :=
+    restrictFace_of_mem Tp _ hmem
+  have hpP : restrictFace f' (Tp.comap Fin.castSuccEmb hmem) = some P :=
+    (restrictFace_trans Tp Fin.castSuccEmb f' hTp).trans hP
+  obtain ⟨-, -, -, q, δ, -, hq⟩ := h Tp _ f' P hT hTp hk hpP D hD γ hγ hC
+  exact ⟨q, δ, hq⟩
+
+/-- **First-coatom completions with a chosen coface for the calibration with a non-dominating cap,
+from the fills** (the statement of `StageType.hasCutoffFirstCoatomCompletionsEx'_of_fills` with the
+clause `StageType.CapNonDominating` available to the fills). -/
+theorem hasCutoffFirstCoatomCompletionsEx_nd_of_fills
+    (h : ∀ ⦃m k : ℕ⦄ (Tp : StageType.{u} (blockStage (ξ + 1)) (m + 1))
+      (p : StageType.{u} (blockStage (ξ + 1)) m) (f : Fin k ↪ Fin m)
+      (P : StageType.{u} (blockStage (ξ + 1)) k) (hT : Tp.IsLegal)
+      (hp : restrictFace Fin.castSuccEmb Tp = some p), 0 < k →
+      ∀ (hP : restrictFace f p = some P) (D : StageType.{u} (blockStage (ξ + 1)) (k + 1))
+        (hD : D ∈ P.cofaces) (γ : Ordinal.{u}), γ < blockStage (ξ + 1) →
+      GradedCapMarginCalibrationND ξ Tp (f.trans Fin.castSuccEmb) D γ →
+      ∃ (tb : StageType.{u} (blockStage (ξ + 1)) (m + 1)) (htb : tb ∈ p.cofaces)
+        (htbD : restrictFace (extendByLast f) tb = some D)
+        (c : FloorCapData Tp (f.trans Fin.castSuccEmb) D γ),
+        (⟨Tp, p, tb, f, P, D, hT, hp, htb, hP, hD, htbD⟩ : FirstCoatomInput.{u} ξ m k).HasFills
+          c.toMarginCapData) :
+    HasCutoffFirstCoatomCompletionsEx ξ (GradedCapMarginCalibrationND ξ) := by
+  intro m k Tp p f P hT hp hk hP D hD γ hγ hC
+  obtain ⟨tb, htb, htbD, c, hc⟩ := h Tp p f P hT hp hk hP D hD γ hγ hC
+  let X : FirstCoatomInput.{u} ξ m k := ⟨Tp, p, tb, f, P, D, hT, hp, htb, hP, hD, htbD⟩
+  exact ⟨tb, htb, htbD, X.exists_isCutoffStableRecovery' c.toMarginCapData c.three_le
+    (fun k' h₁ h₂ ↦ (hc k' h₁ h₂).1) (fun k' h₁ h₂ ↦ (hc k' h₁ h₂).2.1)
+    fun k' h₁ h₂ ↦ (hc k' h₁ h₂).2.2⟩
+
+end StageType
+
 namespace Realization
 
 variable {ξ : Ordinal.{u}} {M : Type v} {R : Realization.{u, v} (blockStage ξ) M}
