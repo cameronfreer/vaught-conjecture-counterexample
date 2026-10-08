@@ -121,3 +121,90 @@ theorem isWitness_raiseMap (hθm : Monotone θ) (hθ0 : θ ⊥ = ⊥)
       rw [raiseMap_of_bot (hθb0 x hx k i hi), raiseMap_of_bot hx, visibilityReplace_bot]
 
 end VaughtConjecture.Label
+
+/-! ### The raise through the template -/
+
+namespace VaughtConjecture.StageType
+
+open Finset Label H2
+
+variable {α : Ordinal.{u}} {n K : ℕ}
+
+/-- **The raise through the template.**  In a legal stage type `tb` on `n` points, let `Z` be a
+cell labelled `⊤` of graded index `(univ, K)`, `0 < K ≤ n`, `W₁` lawful at `K` and dominated at
+`Z` (`W₁ d ≤ W₁ Z` at every cell of grade at most `K`, `W₁ Z ≠ ⊥`), and `c` self-visible at `K`.
+Some `W` lawful at `K` equals `W₁` at every proper cell and every cell `W₁` reads as `⊥`, and
+reads every other top `d` of grade at most `K` as `max (W₁ d) c`: the raise map of the capped
+decoder of `W₁` at `Z` above the largest replaced reading of a proper cell, applied to the row of
+`Z`. -/
+theorem exists_raised_of_dominated {tb : StageType.{u} α n} (htb : tb.IsLegal) (hK0 : 0 < K)
+    (hKn : K ≤ n) {Z : Fin tb.card} (hZ : tb.label Z = ⊤)
+    (hZi : tb.toCellScheme.gradedIndex Z = (univ, K)) {W₁ : Fin tb.card → Label.{u}}
+    (hW₁ : LawfulAt tb K W₁) (hdom : ∀ d, tb.toCellScheme.grade d ≤ K → W₁ d ≤ W₁ Z)
+    (hZ0 : W₁ Z ≠ ⊥) {c : Label.{u}} (hc : IsSelfVisible K c) :
+    ∃ W : Fin tb.card → Label.{u}, LawfulAt tb K W ∧
+      (∀ d, tb.toCellScheme.grade d ≤ K → tb.label d ≠ ⊤ → W d = W₁ d) ∧
+      (∀ d, tb.toCellScheme.grade d ≤ K → W₁ d = ⊥ → W d = ⊥) ∧
+      ∀ d, tb.toCellScheme.grade d ≤ K → tb.label d = ⊤ → W₁ d ≠ ⊥ → W d = max (W₁ d) c := by
+  classical
+  obtain ⟨W', hW', hW'W⟩ := exists_ext_bot_at htb hK0 hKn hW₁
+  have hgZ : tb.toCellScheme.grade Z = K := congrArg Prod.snd hZi
+  obtain ⟨θ, hθm, hθ0, -, hθc, hθb0, hθrow⟩ := Scheme.exists_cappedDecoder (S := tb.toScheme) hW' hgZ
+  have hbelow (d : Fin tb.card) (hd : tb.toCellScheme.grade d ≤ K) :
+      d ∈ tb.toCellScheme.below (tb.toCellScheme.gradedIndex Z) := by
+    rw [hZi]; exact ⟨subset_univ _, hd⟩
+  have hθV (d : Fin tb.card) (hd : tb.toCellScheme.grade d ≤ K) :
+      θ (tb.rowAt Z d) = W₁ d := by
+    rw [hθrow d (hbelow d hd), hW'W d hd, hW'W Z hgZ.le]
+    exact min_eq_left (hdom d hd)
+  -- the threshold separating the tops from the proper cells in the template
+  set Lo := univ.filter fun y ↦ tb.label y ≠ ⊤ ∧ tb.toCellScheme.grade y ≤ K with hLo
+  set θb := Lo.sup fun y ↦ visibilityReplace K K (tb.rowAt Z y) with hθb_def
+  have hθb : IsSelfVisible K θb := by
+    refine Finset.sup_induction (p := IsSelfVisible K) (isSelfVisible_bot K) ?_ ?_
+    · intro a ha b hb
+      rcases max_choice a b with h1 | h1
+      · change IsSelfVisible K (max a b); rw [h1]; exact ha
+      · change IsSelfVisible K (max a b); rw [h1]; exact hb
+    · intro y _
+      exact visibilityReplace_self_visibilityReplace le_rfl _
+  have hprop (y : Fin tb.card) (hy : tb.toCellScheme.grade y ≤ K) (hyt : tb.label y ≠ ⊤) :
+      tb.rowAt Z y ≤ θb :=
+    (le_visibilityReplace (by omega) _).trans
+      (Finset.le_sup (f := fun y ↦ visibilityReplace K K (tb.rowAt Z y))
+        (mem_filter.mpr ⟨mem_univ _, hyt, hy⟩))
+  have htop (x : Fin tb.card) (hx : tb.toCellScheme.grade x ≤ K) (hxt : tb.label x = ⊤)
+      (hx0 : tb.rowAt Z x ≠ ⊥) : θb < tb.rowAt Z x := by
+    refine (Finset.sup_lt_iff (bot_lt_iff_ne_bot.mpr hx0)).mpr fun y hy ↦ ?_
+    obtain ⟨-, hyt, hyK⟩ := mem_filter.mp hy
+    have := visibilityReplace_rowAt_lt_of_top hZ (hbelow x hx) (hbelow y hyK) hxt hyt
+    rwa [hgZ] at this
+  have hρ : IsWitness (stepSuppressor K) (raiseMap θ θb c) :=
+    isWitness_raiseMap hθm hθ0 hθc hθb0 hθb hc
+  have hlawρ : tb.rows.IsLawfulBelow ((univ : Finset (Fin n)), K)
+      (raiseMap θ θb c ∘ fun e ↦ tb.rowAt Z e.1) :=
+    (Scheme.isLawfulBelow_rowAt htb.isConsistent hZi).map_of_bot_iff hW₁.1 (fun d ↦ d.2.2) hρ
+      fun d ↦ by
+        change raiseMap θ θb c (tb.rowAt Z d.1) = ⊥ ↔ W₁ d.1 = ⊥
+        rw [raiseMap_eq_bot_iff, hθV d.1 d.2.2]
+  set W : Fin tb.card → Label.{u} :=
+    tb.toCellScheme.splice K (fun _ ↦ ⊥) fun d ↦ raiseMap θ θb c (tb.rowAt Z d) with hW
+  have hWle (d : Fin tb.card) (hd : tb.toCellScheme.grade d ≤ K) : W d = raiseMap θ θb c (tb.rowAt Z d) :=
+    CellScheme.splice_of_le hd
+  refine ⟨W, ⟨(CellScheme.Rows.isLawfulBelow_congr (R := tb.rows)
+      (X := ((univ : Finset (Fin n)), K)) (w := fun d ↦ raiseMap θ θb c (tb.rowAt Z d))
+      (w' := W) fun d hd ↦ (hWle d (show tb.toCellScheme.grade d ≤ K from hd.2)).symm).mp hlawρ,
+      fun d hd ↦ CellScheme.splice_of_lt (not_le.mp hd)⟩,
+    fun d hd hdt ↦ ?_, fun d hd h0 ↦ ?_, fun d hd hdt h0 ↦ ?_⟩
+  · rw [hWle d hd]
+    by_cases h0 : θ (tb.rowAt Z d) = ⊥
+    · rw [raiseMap_of_bot h0, ← hθV d hd, h0]
+    · rw [raiseMap_of_le h0 (hprop d hd hdt), hθV d hd]
+  · rw [hWle d hd]
+    exact raiseMap_of_bot (by rw [hθV d hd]; exact h0)
+  · rw [hWle d hd]
+    have hθ0' : θ (tb.rowAt Z d) ≠ ⊥ := by rw [hθV d hd]; exact h0
+    have hV0 : tb.rowAt Z d ≠ ⊥ := fun h ↦ hθ0' (by rw [h, hθ0])
+    rw [raiseMap_of_lt hθ0' (htop d hd hdt hV0), hθV d hd]
+
+end VaughtConjecture.StageType
