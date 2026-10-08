@@ -40,6 +40,54 @@ namespace VaughtConjecture.H2
 
 open Finset Label StageType FieldAdmission
 
+/-! ### The grade-`K` faces -/
+
+/-- The **grade-`K` faces** of a stage type: labellings lawful below `(univ, K)` and `⊥` above. -/
+def LawfulAt {α : Ordinal.{u}} {m : ℕ} (t : StageType.{u} α m) (K : ℕ)
+    (W : Fin t.card → Label.{u}) : Prop :=
+  t.rows.IsLawfulBelow ((univ : Finset (Fin m)), K) (fun d ↦ W d) ∧
+    ∀ d, ¬ t.toCellScheme.grade d ≤ K → W d = ⊥
+
+/-- A grade-`K` face extends at the cap `⊥` to a lawful labelling, unchanged at the grades at most
+`K` (bountifulness from `(univ, K)` to `(univ, m)`). -/
+theorem exists_ext_bot_at {α : Ordinal.{u}} {m K : ℕ} {t : StageType.{u} α m} (hleg : t.IsLegal)
+    (hK0 : 0 < K) (hKm : K ≤ m) {W : Fin t.card → Label.{u}} (hW : LawfulAt t K W) :
+    ∃ W', t.rows.IsLawful W' ∧ ∀ d, t.toCellScheme.grade d ≤ K → W' d = W d := by
+  have hle : (((univ : Finset (Fin m)), K) : Finset (Fin m) × ℕ) ≤ ((univ : Finset (Fin m)), m) :=
+    ⟨subset_rfl, hKm⟩
+  obtain ⟨q', hq', -, hq'w⟩ := (CellScheme.Rows.cappedLift_iff_forall_exists hle).mp
+    (hleg.isBountiful ⟨t.univ_mem_faces, hK0, by simpa using hKm⟩
+      ⟨t.univ_mem_faces, hK0.trans_le hKm, by simp⟩ hle) ⊥ (isSelfVisible_bot m)
+    (fun d ↦ W d) (fun _ ↦ ⊥) hW.1 (CellScheme.Rows.isLawfulBelow_const_bot _) (fun _ ↦ by simp)
+  have hall (d : Fin t.card) : d ∈ t.toCellScheme.below ((univ : Finset (Fin m)), m) :=
+    ⟨subset_univ _, t.grade_le d⟩
+  exact ⟨fun d ↦ q' ⟨d, hall d⟩, hq'.isLawful hall, fun d hd ↦ hq'w ⟨d, subset_univ _, hd⟩⟩
+
+/-- A cell **determined by the root on the grade-`K` faces**: two grade-`K` faces agreeing at
+the root cells agree at it. -/
+def RootDetAt {α : Ordinal.{u}} {m : ℕ} (t : StageType.{u} α (m + 1)) (K : ℕ)
+    (x : Fin t.card) : Prop :=
+  ∀ s s' : Fin t.card → Label.{u}, LawfulAt t K s → LawfulAt t K s' →
+    (∀ y ∈ t.toScheme.visibleCells Fin.castSuccEmb, s y = s' y) → s x = s' x
+
+/-- A cell of grade at most `K` determined by the root on the grade-`K` faces is determined by the
+root (truncate lawful labellings above `K`). -/
+theorem rootDet_of_rootDetAt {α : Ordinal.{u}} {m K : ℕ} {t : StageType.{u} α (m + 1)}
+    {x : Fin t.card}
+    (hx : t.toCellScheme.grade x ≤ K) (h : RootDetAt t K x) : RootDet t x := by
+  classical
+  intro s s' hs hs' hag
+  have htr (q : Fin t.card → Label.{u}) (hq : t.rows.IsLawful q) :
+      LawfulAt t K fun d ↦ if t.toCellScheme.grade d ≤ K then q d else ⊥ := by
+    refine ⟨?_, fun d hd ↦ ite_eq_right hd⟩
+    convert hq.isLawfulBelow ((univ : Finset (Fin (m + 1))), K) using 1
+    exact funext fun d ↦ ite_eq_left d.2.2
+  have := h _ _ (htr s hs) (htr s' hs') fun y hy ↦ by
+    split_ifs
+    · exact hag y hy
+    · rfl
+  simpa [hx] using this
+
 /-! ### The target and its input -/
 
 /-- **Coatom cutoff determination for source-gap contexts with the lost point last**, on `k + 1`
@@ -69,6 +117,8 @@ def HasRecCompletions (k : ℕ) : Prop :=
         x ∉ tb.toScheme.visibleCells Fin.castSuccEmb) →
       (∀ x, tb.label x = ⊤ → tb.toCellScheme.grade x ≤ K →
         x ∉ tb.toScheme.visibleCells Fin.castSuccEmb → ¬ RootDet tb x → x ∈ Tops) →
+      (∀ x, tb.label x = ⊤ → tb.toCellScheme.grade x ≤ K →
+        x ∉ tb.toScheme.visibleCells Fin.castSuccEmb → ¬ RootDetAt tb K x → x ∈ Tops) →
       ∃ F : CompletionBelowFullGrade (Seed.ofCoatoms hleg htbleg hp htbp),
         RecProp F o r K Lo Tops
 
@@ -89,10 +139,10 @@ theorem exists_coface_last {α : Ordinal.{u}} {K n k : ℕ} (hrec : HasRecComple
         IsDeterminedWithin (receivingFamily D' δ) t' (g.trans Fin.castSuccEmb) d := by
   have hα' := hα.isSuccPrelimit
   set Lo : Finset (Fin tb.card) := univ.filter fun x ↦ tb.label x ≠ ⊤
-  have := Classical.decPred (RootDet tb)
+  have := Classical.decPred (RootDetAt tb K)
   set Tops : Finset (Fin tb.card) := ((univ.filter fun x ↦ tb.label x = ⊤ ∧
     tb.toCellScheme.grade x ≤ K) \ tb.toScheme.visibleCells Fin.castSuccEmb) \
-      (univ.filter (RootDet tb))
+      (univ.filter (RootDetAt tb K))
   have hLo : ∀ x ∈ Lo, tb.label x ≠ ⊤ := fun x hx ↦ (mem_filter.mp hx).2
   have hTops : ∀ x ∈ Tops, tb.label x = ⊤ ∧ tb.toCellScheme.grade x ≤ K ∧
       x ∉ tb.toScheme.visibleCells Fin.castSuccEmb := by
@@ -106,8 +156,12 @@ theorem exists_coface_last {α : Ordinal.{u}} {K n k : ℕ} (hrec : HasRecComple
       obtain ⟨i, rfl⟩ := Scheme.exists_faceCell_eq (comap_toScheme_of_restrictFace hd) hxv
       have hdi : d.label i = ⊤ := (StageType.label_faceCell hd i).symm.trans hxt
       exact (StageType.grade_faceCell hd i).trans_le ((grade_le_topGrade hdi).trans hdK)
-    simp [Tops, hxt, hg, hxr, hxd]
+    have hxd' : ¬ RootDetAt tb K x := fun h ↦ hxd (rootDet_of_rootDetAt hg h)
+    simp [Tops, hxt, hg, hxr, hxd']
   obtain ⟨F, hF⟩ := hrec t' hleg g hs hp htbleg htbp hLo (fun x hx ↦ by simp [Lo, hx]) hTops
+    (fun x h1 h2 h3 h4 ↦ by
+      have h4' : ¬ RootDetAt tb K x := fun h ↦ h4 (rootDet_of_rootDetAt h2 h)
+      simp [Tops, h1, h2, h3, h4'])
     fun x h1 h2 h3 h4 ↦ by simp [Tops, h1, h2, h3, h4]
   obtain ⟨c, δ, hc, hδlab, hδ, hcδ⟩ := exists_cutoff K hα tb
   have hR := F.restrictFace_right_completion hα'
@@ -132,7 +186,7 @@ theorem coatomCutoffDeterminationLast_of_hasRecCompletions
 /-- **Completions with the reading property at two points** (`H2.exists_completion_recProp` at the
 lost point `1`, modulo the SCAFFOLD `H2.exists_completion_recProp_one`). -/
 theorem hasRecCompletions_one : HasRecCompletions.{u} 1 := by
-  intro α K n t' hleg g o r hs p hp tb htbleg htbp Lo Tops hLo hLo' hTops hTops'
+  intro α K n t' hleg g o r hs p hp tb htbleg htbp Lo Tops hLo hLo' hTops hTops' _
   refine exists_completion_recProp hleg hs hp htbleg htbp hTops hTops' (fun hK ↦ ?_)
     fun _ hT ↦ donorRaising_two_one hp htbleg htbp hLo' hT
   subst hK
@@ -144,29 +198,6 @@ every root cell avoids the lost point). -/
 def rootTops' {α : Ordinal.{u}} {k : ℕ} {t' : StageType.{u} α (k + 1)} {p : StageType.{u} α k}
     (hp : restrictFace Fin.castSuccEmb t' = some p) : Set (Fin p.card) :=
   {a | p.label a = ⊤ ∧ Fin.last k ∉ t'.toCellScheme.scope (StageType.faceCell hp a)}
-
-/-! ### The grade-`K` faces -/
-
-/-- The **grade-`K` faces** of a stage type: labellings lawful below `(univ, K)` and `⊥` above. -/
-def LawfulAt {α : Ordinal.{u}} {m : ℕ} (t : StageType.{u} α m) (K : ℕ)
-    (W : Fin t.card → Label.{u}) : Prop :=
-  t.rows.IsLawfulBelow ((univ : Finset (Fin m)), K) (fun d ↦ W d) ∧
-    ∀ d, ¬ t.toCellScheme.grade d ≤ K → W d = ⊥
-
-/-- A grade-`K` face extends at the cap `⊥` to a lawful labelling, unchanged at the grades at most
-`K` (bountifulness from `(univ, K)` to `(univ, m)`). -/
-theorem exists_ext_bot_at {α : Ordinal.{u}} {m K : ℕ} {t : StageType.{u} α m} (hleg : t.IsLegal)
-    (hK0 : 0 < K) (hKm : K ≤ m) {W : Fin t.card → Label.{u}} (hW : LawfulAt t K W) :
-    ∃ W', t.rows.IsLawful W' ∧ ∀ d, t.toCellScheme.grade d ≤ K → W' d = W d := by
-  have hle : (((univ : Finset (Fin m)), K) : Finset (Fin m) × ℕ) ≤ ((univ : Finset (Fin m)), m) :=
-    ⟨subset_rfl, hKm⟩
-  obtain ⟨q', hq', -, hq'w⟩ := (CellScheme.Rows.cappedLift_iff_forall_exists hle).mp
-    (hleg.isBountiful ⟨t.univ_mem_faces, hK0, by simpa using hKm⟩
-      ⟨t.univ_mem_faces, hK0.trans_le hKm, by simp⟩ hle) ⊥ (isSelfVisible_bot m)
-    (fun d ↦ W d) (fun _ ↦ ⊥) hW.1 (CellScheme.Rows.isLawfulBelow_const_bot _) (fun _ ↦ by simp)
-  have hall (d : Fin t.card) : d ∈ t.toCellScheme.below ((univ : Finset (Fin m)), m) :=
-    ⟨subset_univ _, t.grade_le d⟩
-  exact ⟨fun d ↦ q' ⟨d, hall d⟩, hq'.isLawful hall, fun d hd ↦ hq'w ⟨d, subset_univ _, hd⟩⟩
 
 /-- **The order law at the owner and the frontier bound on the grade-`K` faces** of a legal
 source-gap context of grade `K`. -/
@@ -203,7 +234,7 @@ def DonorRaisingAt (k : ℕ) : Prop :=
       ∀ (htbp : restrictFace Fin.castSuccEmb tb = some p) {Lo Tops : Finset (Fin tb.card)},
       (∀ x, tb.label x ≠ ⊤ → x ∈ Lo) →
       (∀ x, tb.label x = ⊤ → tb.toCellScheme.grade x ≤ K →
-        x ∉ tb.toScheme.visibleCells Fin.castSuccEmb → ¬ RootDet tb x → x ∈ Tops) →
+        x ∉ tb.toScheme.visibleCells Fin.castSuccEmb → ¬ RootDetAt tb K x → x ∈ Tops) →
       DonorRaisingGap (StageType.faceCell hp) (StageType.faceCell htbp) K (LawfulAt t' K)
         (LawfulAt tb K) (rootTops' hp) (Lo.filter fun x ↦ tb.toCellScheme.grade x ≤ K) Tops
 
@@ -243,7 +274,7 @@ and owner lowering on the grade-`K` faces give the admission of states of the cl
 `H2.frontier_le_lawfulAt`), and the engine gives the completion. -/
 theorem hasRecCompletions_of {k : ℕ} (hDR : DonorRaisingAt.{u} k) (hOL : OwnerLoweringAt.{u} k)
     (hEN : AdmittedCompletionsAt.{u} k) : HasRecCompletions.{u} k := by
-  intro α K n t' hleg g o r hs p hp tb htbleg htbp Lo Tops hLo hLo' hTops hTops'
+  intro α K n t' hleg g o r hs p hp tb htbleg htbp Lo Tops hLo hLo' hTops _ hTops'
   refine hEN t' hleg g hs hp htbleg htbp hLo hTops ?_
   refine selfLow_isStateAdmissionGap (rootTops' hp) (fun _ hf ↦ (frontier_le_lawfulAt hleg hs hf).1)
     (fun _ hf a ha ↦ ?_) (hDR t' hleg g hs hp htbleg htbp hLo' hTops')
