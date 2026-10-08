@@ -22,6 +22,11 @@ Work file (placement later), for the weakened lower bound at the root (`H3.RootL
   the low reads (`Label.exists_isWitness_interpolation`).
 * **The weakened lower bound at the root from the separation**
   (`H3.rootLowBound'_of_lowBlockSeparated`).
+* **A witness matching a small prescription is `⊥` below its block**
+  (`H3.witness_eq_bot_below_block`): every witness image of `d.label` matching the prescription at
+  a cap at least `n + 1`, at a root cell where the prescription is below `n + 1`, is `⊥` below the
+  block of that root cell; so the witness route needs a lawful labelling of `d` that is `⊥` at the
+  cells labelled there.
 * **The separation when the row offsets are at most the grade**
   (`H3.lowBlockSeparated_of_rowOffsets`): a read in the block of a low read and above it is a
   replacement of it at the grade of `s`, and the capped witness commutes with the replacements
@@ -300,6 +305,43 @@ theorem rootLowBound'_of_lowBlockSeparated {k : ℕ} {t' : StageType.{u} α (k +
     {f : ProfileTower.Prof (seed ht' hp htb)} (h : LowBlockSeparated t d) :
     RootLowBound' n ht' hp htb hpt d f :=
   .inr (isLawful_lowTruncation h)
+
+/-- **A witness matching a small prescription is `⊥` below its block.**  Let `Φ` be a witness
+bounded by a grade `K ≥ n + 1` agreeing with `ψ` at a root cell `x` capped at a label
+`θ ≥ n + 1`, with `ψ x < n + 1` and the label of `x` in the block of `μ` (`μ` zero or a limit).
+Then `Φ` is `⊥` at every label below `μ`: such a label `y` lies below its replacement at `K`,
+self-visible at `K`, which `Φ` sends to a label self-visible at `n + 1` and below `n + 1`.  So
+every witness image of `d.label` matching the prescription is `⊥` at the cells of `d` labelled
+below the block of `x`, and is lawful only if some lawful labelling of `d` is `⊥` there
+(`CellScheme.Rows.isLawful_comp_iff_exists_bot_iff`). -/
+theorem witness_eq_bot_below_block {ψ : Fin t.card → Label.{u}} {θ : Label.{u}} {K : ℕ}
+    (hK : n + 1 ≤ K) {Φ : Label.{u} → Label.{u}} (hΦ : IsWitness (stepSuppressor K) Φ)
+    (hθ : (((n + 1 : ℕ) : Ordinal.{u}) : Label.{u}) ≤ θ) {x : Fin t.card}
+    (hroot : min (Φ (t.label x)) θ = min (ψ x) θ)
+    (hψ : ψ x < (((n + 1 : ℕ) : Ordinal.{u}) : Label.{u})) {μ : Ordinal.{u}} {i : ℕ}
+    (hμ : Order.IsSuccPrelimit μ) (hx : t.label x = ((μ + i : Ordinal.{u}) : Label.{u}))
+    {y : Label.{u}} (hy : y < ((μ : Ordinal.{u}) : Label.{u})) : Φ y = ⊥ := by
+  have hψθ : ψ x < θ := hψ.trans_le hθ
+  have hΦx : Φ (t.label x) = ψ x := by
+    rw [min_eq_left hψθ.le] at hroot
+    rcases min_choice (Φ (t.label x)) θ with h | h
+    · rw [h] at hroot
+      exact hroot
+    · rw [h] at hroot
+      exact absurd hroot hψθ.ne'
+  set y' := visibilityReplace K K y
+  have hy' : y' ≤ t.label x := by
+    rw [hx]
+    refine ((visibilityReplace_lt_iff hμ).mpr hy).le.trans ?_
+    exact WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr le_self_add)
+  have hsv : IsSelfVisible (n + 1) (Φ y') :=
+    (hΦ.isSelfVisible_apply (isSelfVisible_visibilityReplace_self K y)
+      (by rw [stepSuppressor_of_le le_rfl]; exact le_top)).mono hK
+  have hle : Φ y' ≤ ψ x := hΦx ▸ hΦ.monotone hy'
+  have hbot : Φ y' = ⊥ := by
+    by_contra hne
+    exact absurd ((natCast_le_of_isSelfVisible hsv hne).trans hle) (not_le.mpr hψ)
+  exact le_bot_iff.mp (hbot ▸ hΦ.monotone (le_visibilityReplace (by omega) y))
 
 end H3
 
