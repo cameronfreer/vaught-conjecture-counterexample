@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Continuation.SourceGapContext
+import VaughtConjecture.Extension.AlignedEncoding
 import VaughtConjecture.Extension.SectionTheorem
 
 /-!
@@ -22,7 +23,8 @@ it.
 **The lowering map** (`Label.lowerMap θ c`): `⊥` at `⊥`, the cap `c` on `(⊥, θ]`, `⊤` above `θ`.
 For `θ` and `c` self-visible at `K` and `c ≠ ⊥` it is a witness bounded by grade `K` that sends
 only `⊥` to `⊥` (`Label.isWitness_lowerMap`): visibility replacement at a threshold `k ≤ K` keeps
-`(⊥, θ]` and its complement (`Label.lt_visibilityReplace_of_lt`).  So the lowering map of a
+`(⊥, θ]` and its complement (`Label.lt_visibilityReplace_of_lt`, in
+`VaughtConjecture.Extension.AlignedEncoding`).  So the lowering map of a
 lawful row is lawful (`CellScheme.Rows.IsLawful.map_of_bot_reflecting`).
 
 **The lowering** (`StageType.IsSourceGapContextAt.exists_lowering`, compiled in this repository).
@@ -59,16 +61,6 @@ open Finset
 namespace Label
 
 variable {k i K : ℕ} {θ c x : Label.{u}}
-
-/-- **Visibility replacement keeps a label above a self-visible threshold above it.** -/
-theorem lt_visibilityReplace_of_lt (hθ : IsSelfVisible k θ) (hi : i ≤ k) (h : θ < x) :
-    θ < visibilityReplace k i x := by
-  refine lt_of_not_ge fun hle ↦ h.not_ge ?_
-  calc x ≤ visibilityReplace k k x := le_visibilityReplace (by omega) x
-    _ = visibilityReplace k k (visibilityReplace k i x) :=
-      (visibilityReplace_self_visibilityReplace hi x).symm
-    _ ≤ visibilityReplace k k θ := monotone_visibilityReplace le_rfl hle
-    _ = θ := hθ
 
 /-- The **lowering map**: `⊥` at `⊥`, `c` on `(⊥, θ]`, and `⊤` above `θ`. -/
 noncomputable def lowerMap (θ c : Label.{u}) (x : Label.{u}) : Label.{u} :=
@@ -123,10 +115,31 @@ theorem isWitness_lowerMap (hθ : IsSelfVisible K θ) (hcv : IsSelfVisible K c) 
           (monotone_visibilityReplace hi hxθ).trans_eq (hθk.visibilityReplace_eq i)
         rw [lowerMap_of_le hv0 hvθ, lowerMap_of_le hx0 hxθ, (hcv.mono hk).visibilityReplace_eq]
       · have hlt := not_le.mp hxθ
-        rw [lowerMap_of_lt (lt_visibilityReplace_of_lt hθk hi hlt), lowerMap_of_lt hlt,
+        rw [lowerMap_of_lt (lt_visibilityReplace_of_lt hi hθk hlt), lowerMap_of_lt hlt,
           visibilityReplace_top]
     · rw [stepSuppressor_of_lt (not_le.mp hk), le_bot_iff, lowerMap_eq_bot_iff hc] at hx
       rw [hx, visibilityReplace_bot, lowerMap_bot, visibilityReplace_bot]
+
+/-- **A raised donor top above the cap**: if a donor top `W` is at least the cap `h` (self-visible
+at `K`, above the donor maximum `M`), and donor raising with the gap leaves it at least `c` or at
+most `R_K M`, then it is at least `c` or exactly `h`.  So the LOW clause at cutoff `h` and frontier
+`c` holds at it exactly when `c ≤ W` or `c ≤ h`. -/
+theorem le_or_eq_of_raise {M h c W : Label.{u}} (hh : IsSelfVisible K h) (hM : M < h)
+    (hW : h ≤ W) (hraise : c ≤ W ∨ W ≤ visibilityReplace K K M) : c ≤ W ∨ W = h := by
+  rcases hraise with h1 | h1
+  · exact .inl h1
+  · exact .inr (le_antisymm (h1.trans (visibilityReplace_le_of_le le_rfl hh hM.le)) hW)
+
+/-- **The LOW clause after raising**: under `Label.le_or_eq_of_raise`, `max h c ≤ W` whenever
+`c ≤ h` or the raise lands at `c`. -/
+theorem max_le_of_raise {M h c W : Label.{u}} (hh : IsSelfVisible K h) (hM : M < h)
+    (hW : h ≤ W) (hraise : c ≤ W ∨ W ≤ visibilityReplace K K M) (hc : c ≤ h ∨ c ≤ W) :
+    max h c ≤ W := by
+  rcases le_or_eq_of_raise hh hM hW hraise with h1 | h1
+  · exact max_le hW h1
+  · rcases hc with h2 | h2
+    · exact max_le hW (h2.trans hW)
+    · exact max_le hW h2
 
 end Label
 
@@ -264,6 +277,45 @@ theorem IsSourceGapContextAt.exists_installation (ht' : t'.IsLegal)
   by_cases htop : t'.label d = ⊤
   · exact .inl (hs.gap_retained d htop hl)
   · exact .inr (hroot d hd hl htop)
+
+/-- **The private installation from a lift capped at its owner.**  In a legal source-gap context
+of grade `K` with lost point `l`, owner `o` and lost top `r`, let `u` be lawful below `(univ, K)`
+(for instance a capped lift of the root prescription, by bountifulness), `c` self-visible at `K`
+with `⊥ < c ≤ u o`.  If every cell of grade at most `K` avoiding `l` is at most `u o` (the
+**residual condition**: no root cell is prescribed above the owner), and every such cell that is
+not a top of `t'` is at most `c`, then some `v` lawful below `(univ, K)` agrees with `u` capped at
+`c`, reads the lost top at most `c`, and equals `u` at the owner and at every cell of grade at
+most `K` avoiding `l`.  The lift is first capped at its owner's label (lawful, dominated by the
+owner, unchanged on the root by the residual condition, unchanged at `c` since `c ≤ u o`), then
+lowered (`StageType.IsSourceGapContextAt.exists_installation`). -/
+theorem IsSourceGapContextAt.exists_installation_of_le_owner (ht' : t'.IsLegal)
+    (hs : t'.IsSourceGapContextAt K h l o r) {u : Fin t'.card → Label.{u}}
+    (hu : t'.rows.IsLawfulBelow (univ, K) fun d ↦ u d) {c : Label.{u}}
+    (hcv : IsSelfVisible K c) (hc : ⊥ < c) (hco : c ≤ u o)
+    (hres : ∀ d, t'.toCellScheme.grade d ≤ K → l ∉ t'.toCellScheme.scope d → u d ≤ u o)
+    (hroot : ∀ d, t'.toCellScheme.grade d ≤ K → l ∉ t'.toCellScheme.scope d → t'.label d ≠ ⊤ →
+      u d ≤ c) :
+    ∃ v : Fin t'.card → Label.{u}, t'.rows.IsLawfulBelow (univ, K) (fun d ↦ v d) ∧
+      (∀ d, t'.toCellScheme.grade d ≤ K → min (v d) c = min (u d) c) ∧ v r ≤ c ∧ v o = u o ∧
+      ∀ d, t'.toCellScheme.grade d ≤ K → l ∉ t'.toCellScheme.scope d → v d = u d := by
+  -- the owner's label is self-visible at `K`
+  have hgo : t'.toCellScheme.grade o = K := hs.grade_owner
+  have hob : o ∈ t'.toCellScheme.below (univ, K) := ⟨subset_univ _, hgo.le⟩
+  have hUv : IsSelfVisible K (u o) := by
+    have := (CellScheme.Rows.isLawfulBelow_iff_forall.mp hu).1 o hob
+    rwa [hgo] at this
+  -- cap the lift at its owner
+  set u₁ : Fin t'.card → Label.{u} := fun d ↦ min (u d) (u o) with hu₁
+  have hu₁l : t'.rows.IsLawfulBelow (univ, K) fun d ↦ u₁ d :=
+    hu.min_const_of_isSelfVisible (c := u o) hUv
+  have hu₁o : u₁ o = u o := min_self _
+  obtain ⟨v, hv, hcap, hr, hvo, hroot'⟩ := hs.exists_installation ht' hu₁l
+    (fun d _ ↦ by rw [hu₁o]; exact min_le_right _ _) hcv hc
+    (fun d hd hl ht ↦ (min_le_left _ _).trans (hroot d hd hl ht))
+  refine ⟨v, hv, fun d hd ↦ ?_, hr, hvo.trans hu₁o, fun d hd hl ↦ ?_⟩
+  · rw [hcap d hd, hu₁, min_assoc, min_eq_right hco]
+  · rw [hroot' d hd hl, hu₁]
+    exact min_eq_left (hres d hd hl)
 
 end StageType
 
