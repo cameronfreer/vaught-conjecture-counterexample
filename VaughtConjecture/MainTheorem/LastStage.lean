@@ -407,9 +407,11 @@ theorem expansionDomain_core_eq_empty : (⋂ ξ < ω₁, expansionDomain ξ) = �
 
 include hcap hnext hrec hext
 
-/-- **The expansion domains of the density sentence are the tails of the last stage**: a class
-lies in `expansionDomain β` exactly when `β` is at most its last stage, conditional on `hcap`,
-`hnext`, `hrec` and `hext`, each still to be proved. -/
+/-- **The expansion domains of the density sentence are the tails of the last stage**: a class lies
+in `expansionDomain β` exactly when `β` is at most its last stage, conditional on `hcap`, `hnext`,
+`hrec` and `hext`; `hnext` and `hrec` are still to be proved, `hcap` and `hext` are compiled in this
+repository (theorem named) (`MainTheorem.capToModel`,
+`StageType.hasApexCoatomExtensions_blockStage`). -/
 theorem mem_expansionDomain_iff_le_lastStage {q : DensityClass} {β : Ordinal.{0}} :
     q ∈ expansionDomain β ↔ β ≤ (modelExpansionDomains hcap hnext).lastStage q :=
   ExpansionDomains.mem_domain_iff_le_lastStage_of_classTruth
@@ -417,7 +419,9 @@ theorem mem_expansionDomain_iff_le_lastStage {q : DensityClass} {β : Ordinal.{0
     (hasNonemptyLosses_of_hasApexCoatomExtensions hcap hnext hext)
 
 /-- **The losses of the expansion domains of the density sentence are the fibres of the last
-stage**, conditional on `hcap`, `hnext`, `hrec` and `hext`, each still to be proved. -/
+stage**, conditional on `hcap`, `hnext`, `hrec` and `hext`; `hnext` and `hrec` are still to be
+proved, `hcap` and `hext` are compiled in this repository (theorem named) (`MainTheorem.capToModel`,
+`StageType.hasApexCoatomExtensions_blockStage`). -/
 theorem mem_expansionDomain_loss_iff_lastStage_eq {q : DensityClass} {β : Ordinal.{0}} :
     q ∈ expansionDomain β \ expansionDomain (β + 1) ↔
       (modelExpansionDomains hcap hnext).lastStage q = β :=

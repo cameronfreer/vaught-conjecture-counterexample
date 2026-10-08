@@ -32,9 +32,11 @@ extension property with apex at every countable block stage `λ_η = ω + ω · 
 * (R2), exact residual receiving (`hres`);
 * (R3), exact hollow-growth receiving for cover-hollowness at a block stage (`hhol`).
 
-Each is still to be proved except the first, now compiled (the four-hypothesis form, below).  The
-statements formerly taken as hypotheses are derived as follows, each by a theorem compiled in this
-repository:
+Two of them are now compiled in this repository (theorem named): `hext`
+(`StageType.hasApexCoatomExtensions_blockStage`; the four-hypothesis form, below) and `hF`
+(`forcingDonors_blockStage`).  (R1), the continuation criterion, (R2) and (R3) are still to be
+proved.  The statements formerly taken as hypotheses are derived as follows, each by a theorem
+compiled in this repository:
 
 * the cap-to-model theorem at `ω`, from `hext` at `η = 0`
   (`CapToModel.of_hasApexCoatomExtensions`; for the carriers of every universe);
@@ -56,9 +58,9 @@ sentence, with the cap-to-model theorem on the carriers of the universe `w` also
 `hext` at `η = 0`.
 
 The continuation criterion remains a hypothesis.  It follows from (R4) and `hext` at the successor
-blocks (`ContinuationCriterion.of_hasApexCoatomExtensions`), but (R4) is itself still to be proved
-and the criterion is a consequence of it together with `hext` at the successor blocks, so
-replacing the criterion by (R4) would give a weaker theorem with as many hypotheses.
+blocks (`ContinuationCriterion.of_hasApexCoatomExtensions`), and so from (R4) alone
+(`ContinuationCriterion.of_stableCappedReceiving'`, `hext` being compiled), but (R4) is itself still
+to be proved, so replacing the criterion by (R4) would not reduce the number of hypotheses.
 
 These theorems are conditional; the main theorem of the roadmap has none of these hypotheses.  The
 theorem with seven hypotheses is kept beside them.  The six-hypothesis form comes from it by the
@@ -108,8 +110,10 @@ open scoped Ordinal
 /-- **The thin `ℵ₁` spectrum of the density sentence from the terminal classification and the coatom
 extension property with apex at every countable block stage**: the density sentence has exactly `ℵ₁`
 classes of models coded on `ℕ` and no perfect set of pairwise nonisomorphic ones, conditional on the
-following six hypotheses, each still to be proved except the last, now compiled
-(`StageType.hasApexCoatomExtensions_blockStage`):
+following six hypotheses; forcing donors (`hF`) and the coatom extension property with apex (`hext`)
+are now compiled in this repository (theorem named) (`forcingDonors_blockStage`,
+`StageType.hasApexCoatomExtensions_blockStage`), and (R1), the continuation criterion, (R2) and (R3)
+are still to be proved:
 * finite-cut receiving of models (`hrec`; (R1) of the table of Layer 3): next-block uniqueness,
   logical agreement, and the rigid-core comparison;
 * forcing donors at every countable block index (`hF`; a finite construction of Layer 3):
@@ -140,11 +144,13 @@ theorem densitySentence_hasThinAlephOneSpectrum_of_terminalClassification_of_has
 classification and the coatom extension property with apex at every countable block stage**: the
 conclusion of `vaughtCounterexample_allCarriers_of_expansionDomains` for the expansion domains of
 the density sentence, conditional on the six hypotheses of
-`densitySentence_hasThinAlephOneSpectrum_of_terminalClassification_of_hasApexCoatomExtensions`, each
-still to be proved except `hext`, now compiled.  The cap-to-model theorem, at `ω` on `ℕ` for the
-first domain and on the carriers of the universe `w` for the reduction to `ℕ`, is derived from
-`hext` at `η = 0` (`CapToModel.of_hasApexCoatomExtensions`); next-block uniqueness, countable losses
-and nonempty losses are derived as for the spectrum. -/
+`densitySentence_hasThinAlephOneSpectrum_of_terminalClassification_of_hasApexCoatomExtensions`, of
+which `hF` and `hext` are now compiled in this repository (theorem named)
+(`forcingDonors_blockStage`, `StageType.hasApexCoatomExtensions_blockStage`) and (R1), the
+continuation criterion, (R2) and (R3) are still to be proved.  The cap-to-model
+theorem, at `ω` on `ℕ` for the first domain and on the carriers of the universe `w` for the
+reduction to `ℕ`, is derived from `hext` at `η = 0` (`CapToModel.of_hasApexCoatomExtensions`);
+next-block uniqueness, countable losses and nonempty losses are derived as for the spectrum. -/
 theorem vaughtCounterexample_allCarriers_of_terminalClassification_of_hasApexCoatomExtensions
     (hrec : FiniteCutReceiving.{0}) (hF : ∀ ξ < ω₁, ForcingDonors.{0} ξ)
     (hcont : ContinuationCriterion.{0}) (hres : Realization.ResidualReceiving.{0, 0})
@@ -169,8 +175,9 @@ theorem vaughtCounterexample_allCarriers_of_terminalClassification_of_hasApexCoa
 extension property with apex at every countable block stage, with forcing donors derived**: the
 conclusion of
 `densitySentence_hasThinAlephOneSpectrum_of_terminalClassification_of_hasApexCoatomExtensions`,
-conditional on the following five hypotheses, each still to be proved except the last, now compiled
-(`StageType.hasApexCoatomExtensions_blockStage`):
+conditional on the following five hypotheses; the last (`hext`) is now compiled in this repository
+(theorem named) (`StageType.hasApexCoatomExtensions_blockStage`), and (R1), the continuation
+criterion, (R2) and (R3) are still to be proved:
 * finite-cut receiving of models (`hrec`; (R1) of the table of Layer 3);
 * the continuation criterion (`hcont`; output 3 of higher-stage reconstruction, Layer 4);
 * exact residual receiving (`hres`; (R2) of the table of Layer 3);
@@ -200,10 +207,11 @@ classification and the coatom extension property with apex at every countable bl
 forcing donors derived**: the conclusion of
 `vaughtCounterexample_allCarriers_of_terminalClassification_of_hasApexCoatomExtensions`, conditional
 on the five hypotheses of
-`densitySentence_hasThinAlephOneSpectrum_of_terminalClassification_of_hasApexCoatomExtensions'`,
-each still to be proved except `hext`, now compiled.  Forcing donors at every countable block index
-are derived from `hext` at the next block stage (`forcingDonors_of_forall_hasApexCoatomExtensions`);
-the other statements are derived as for the six-hypothesis form. -/
+`densitySentence_hasThinAlephOneSpectrum_of_terminalClassification_of_hasApexCoatomExtensions'`, of
+which `hext` is now compiled in this repository (theorem named) and (R1), the continuation
+criterion, (R2) and (R3) are still to be proved.  Forcing donors at every countable block index are
+derived from `hext` at the next block stage (`forcingDonors_of_forall_hasApexCoatomExtensions`); the
+other statements are derived as for the six-hypothesis form. -/
 theorem vaughtCounterexample_allCarriers_of_terminalClassification_of_hasApexCoatomExtensions'
     (hrec : FiniteCutReceiving.{0}) (hcont : ContinuationCriterion.{0})
     (hres : Realization.ResidualReceiving.{0, 0})

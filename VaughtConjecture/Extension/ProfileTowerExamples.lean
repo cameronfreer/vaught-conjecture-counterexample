@@ -13,16 +13,17 @@ Two compiled instances of `ProfileTower.nonempty_completionBelowFullGrade_of_thr
 
 * at `m = 3`, the asymmetric seed `seedL`, where the step of the tower fails at the grade `3`
   (`TwoFaceLiftExistsCounterexample.not_towerInvariant_three_seedL`), has the completion through the
-  levels of rank-normalized profiles (`ProfileTowerExamples.seedL_completion`);
+  levels of rank-normalized profiles (`ProfileTower.lvl`, `VaughtConjecture.Extension.ProfileTower`;
+  `ProfileTowerExamples.seedL_completion`);
 * at `m = 4`, the seed `ProfileTowerExamples.seed6 hα` on six points: its coatom types are legal
   stage types on five points with face `TL` along `Fin.castSuccEmb`, the coatom extensions with apex
-  of `seedL` and of `seedLL` (`TowerProfile.completion`,
+  of `seedL` and of `seedLL` (`Seed.nonempty_completionBelowFullGrade`,
   `CompletionBelowFullGrade.exists_coatomExtension`).  Their faces along
   `extendByLast Fin.castSuccEmb` are `T5` and `TL` (`ProfileTowerExamples.seed6_faces`), so the two
   coatoms of the seed carry different types on the second point set.  It has a completion below the
   full grade and the coatom extension with apex (`ProfileTowerExamples.seed6_completion`,
   `ProfileTowerExamples.exists_coatomExtension_seed6`); compiled in this repository (theorem named).
-  -/
+-/
 
 universe u
 
@@ -46,7 +47,7 @@ theorem exists_extension_seedL (hα : Order.IsSuccPrelimit α) :
       StageType.restrictFace (extendByLast Fin.castSuccEmb) t =
         some (CaseSplitCounterexample.T5 α) ∧
       ∃ d, t.toCellScheme.gradedIndex d = (univ, 5) ∧ ∀ e, t.label e ≤ t.label d :=
-  (TowerProfile.completion (seedL α)).exists_coatomExtension hα
+  (Seed.nonempty_completionBelowFullGrade (seedL α)).some.exists_coatomExtension hα
 
 /-- The coatom extension with apex of `seedLL`, on five points. -/
 theorem exists_extension_seedLL (hα : Order.IsSuccPrelimit α) :
@@ -54,7 +55,7 @@ theorem exists_extension_seedLL (hα : Order.IsSuccPrelimit α) :
       StageType.restrictFace Fin.castSuccEmb t = some (TL α) ∧
       StageType.restrictFace (extendByLast Fin.castSuccEmb) t = some (TL α) ∧
       ∃ d, t.toCellScheme.gradedIndex d = (univ, 5) ∧ ∀ e, t.label e ≤ t.label d :=
-  (TowerProfile.completion (seedLL α)).exists_coatomExtension hα
+  (Seed.nonempty_completionBelowFullGrade (seedLL α)).some.exists_coatomExtension hα
 
 /-- **A seed on six points**: the coatom extensions of `seedL` and of `seedLL`, over their common
 face `TL` along `Fin.castSuccEmb`. -/

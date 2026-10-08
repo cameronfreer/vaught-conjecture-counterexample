@@ -1004,7 +1004,7 @@ is compiled conditionally on block determination (below).  None is an input to t
      carrier is nonempty and `R` is exactly consistent, covering, and has the finite-cut receiving
      property (`realize_toStructure_densitySentence_iff`, compiled in this repository (theorem
      named)); that `R` is then a model is the cap-to-model theorem (`README.md`, Layer 3, 3.4),
-     still to be proved.
+     compiled in this repository (theorem named) (`MainTheorem.capToModel`).
 
   **Qualifications.**  The absolute Scott contracts (the last two rows) carry the countability and
   fixed-carrier-universe qualifications of InfinitaryLogic's Scott theorems: they characterize the

@@ -23,10 +23,12 @@ reduction to `λ_η` (`StageType.ForcesThreshold`).  The donor is a stage type, 
 involves a realization: the construction uses no uniqueness of expansions, no (R1), no receiving,
 and no termination.
 
-**The forcing-donor property is not proved here in general.**  It follows at every input from
-the coatom extension property at `λ_{η+1}` (`forcingDonors_of_hasCoatomExtensions`, in
-`VaughtConjecture.Extension.ForcingDonorsCoatom`).  What is proved here, unconditionally or from
-completions at given arities:
+**The forcing-donor property is not proved here in general.**  It follows at every input from the
+coatom extension property at `λ_{η+1}` (`forcingDonors_of_hasCoatomExtensions`, in
+`VaughtConjecture.Extension.ForcingDonorsCoatom`), and so is compiled in this repository (theorem
+named) at every block index (`forcingDonors_blockStage`, in
+`VaughtConjecture.MainTheorem.CoatomExtensionTheorem`).  What is proved here, unconditionally or
+from completions at given arities:
 
 * **One-point inputs, `n ≤ 4`, unconditionally** (`exists_forcingDonor_onePoint`).
 * **One-point inputs at every `n`, given completions up to the arity `n - 2`**
