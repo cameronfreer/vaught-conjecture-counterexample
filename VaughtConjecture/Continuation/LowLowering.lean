@@ -368,6 +368,21 @@ theorem IsSourceGapContextAt.serve_of_lt (hs : t'.IsSourceGapContextAt K h l o r
     rw [hθdef, hσ.visibilityReplace_comm _ K (by rw [h2]; exact hur.le.trans hgK) K le_rfl, h2]
   exact (h1.trans (hσ.monotone hle)).not_gt (h3 ▸ hlt)
 
+/-- **A section dominated by its owner where the owner reads high is served**: no cell read above
+the threshold is read above the owner, so the serving hypothesis of
+`IsSourceGapContextAt.exists_lowering'` holds vacuously.  So the unserved case
+(`StageType.LowStepUnserved`) arises only for lifts not dominated at the owner, the private-side
+counterpart of `StageType.DonorDomination`. -/
+theorem IsSourceGapContextAt.serve_of_dom {u : Fin t'.card → Label.{u}}
+    (hdom : ∀ d, t'.toCellScheme.grade d ≤ K →
+      visibilityReplace K K (t'.rowAt o r) < t'.rowAt o d → u d ≤ u o) :
+    ∀ s t, t'.toCellScheme.scope s ⊆ t'.toCellScheme.scope t →
+      t'.toCellScheme.grade s = t'.toCellScheme.grade t → t'.toCellScheme.grade t ≤ K →
+      visibilityReplace K K (t'.rowAt o r) < t'.rowAt o s → u o < u s →
+      ∃ w, t'.toCellScheme.gradedIndex w = t'.toCellScheme.gradedIndex t ∧ u s ≤ u w ∧
+        visibilityReplace K K (t'.rowAt o r) < t'.rowAt o w :=
+  fun s _ _ hg ht hEs hso ↦ absurd (hdom s (hg ▸ ht) hEs) (not_le.mpr hso)
+
 /-- **The lowering below a cap** in a legal source-gap context of grade `K`, for a section `u`
 dominated by its owner where the owner reads high (`IsSourceGapContextAt.exists_lowering'`). -/
 theorem IsSourceGapContextAt.exists_lowering (ht' : t'.IsLegal)
