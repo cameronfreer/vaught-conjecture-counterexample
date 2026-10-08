@@ -28,10 +28,10 @@ one graded index) coming from the legality of the realized covers (in
 * **the nonempty coface instances at `λ_{ξ+1}`** (`StageType.HasNonemptyCofaceInstances`, in
   `VaughtConjecture.Realization.Families`): the amalgam of a legal stage type with a legal stage
   type on one point over the empty face, and nonempty uniformity and dominance instances among the
-  cofaces of every legal stage type.  All three follow from the coatom extension property with
-  apex at `λ_{ξ+1}` (`StageType.HasNonemptyCofaceInstances.of_hasApexCoatomExtensions`, in
+  cofaces of every legal stage type.  All three follow from the coatom extension property with apex
+  at `λ_{ξ+1}` (`StageType.HasNonemptyCofaceInstances.of_hasApexCoatomExtensions`, in
   `VaughtConjecture.Extension.FamilyCofaces`, which this layer does not import); that property is
-  not proved.
+  compiled in this repository (theorem named) (`StageType.hasApexCoatomExtensions_blockStage`).
 
 **(R4)** (`StableCappedReceiving`).  For a model `R` at `λ_ξ`, `ξ < ω₁`, not cover-hollow, with
 top-grade supremum `⊤`, and its stable candidate `R.stableCandidate hR.isStablyLawful`: over every
@@ -242,9 +242,12 @@ theorem hasFiniteCutReceiving_stableCandidate (hξ : ξ < ω₁) (hR : R.IsModel
     exact ⟨u, hu, Q, mem_receivingFamily_of_capped hS hl, hQ⟩
 
 /-- **Output 3, conditionally**: the stable candidate of a model at `λ_ξ`, `ξ < ω₁`, that is not
-cover-hollow and has top-grade supremum `⊤` is a model at `λ_{ξ+1}`, conditional on (R4) (`hR4`)
-and the coface instances at `λ_{ξ+1}` (`hinst`), both still to be proved.  The model is stably
-lawful (`IsModel.isStablyLawful`); non-hollowness and unbounded growth enter only through (R4). -/
+cover-hollow and has top-grade supremum `⊤` is a model at `λ_{ξ+1}`, conditional on (R4) (`hR4`) and
+the coface instances at `λ_{ξ+1}` (`hinst`); (R4) is still to be proved, and the coface instances
+are compiled in this repository (theorem named) from the coatom extension property with apex
+(`StageType.HasNonemptyCofaceInstances.of_hasApexCoatomExtensions`,
+`StageType.hasApexCoatomExtensions_blockStage`).  The model is stably lawful
+(`IsModel.isStablyLawful`); non-hollowness and unbounded growth enter only through (R4). -/
 theorem isModel_stableCandidate (hξ : ξ < ω₁) (hR : R.IsModel) (hnh : ¬ R.IsCoverHollow)
     (hgrow : R.topGradeSup = ⊤) (hR4 : StableCappedReceiving.{w})
     (hinst : StageType.HasNonemptyCofaceInstances.{0} (blockStage (ξ + 1))) :
@@ -256,10 +259,10 @@ end Realization
 
 /-! ### The continuation criterion -/
 
-/-- **The continuation criterion from stable capped receiving**, conditional on (R4) (`hR4`) and
-the coface instances at every `λ_{ξ+1}` with `ξ < ω₁` (`hinst`; from the coatom extension property
-with apex there), both still to be proved: the model expansion is the stable candidate, which is
-defined because every model is stably lawful. -/
+/-- **The continuation criterion from stable capped receiving**, conditional on (R4) (`hR4`) and the
+coface instances at every `λ_{ξ+1}` with `ξ < ω₁` (`hinst`; from the coatom extension property with
+apex there, compiled in this repository (theorem named)), the first still to be proved: the model
+expansion is the stable candidate, which is defined because every model is stably lawful. -/
 theorem ContinuationCriterion.of_stableCappedReceiving (hR4 : StableCappedReceiving.{w})
     (hinst : ∀ ξ < ω₁, StageType.HasNonemptyCofaceInstances.{0} (blockStage (ξ + 1))) :
     ContinuationCriterion.{w} :=

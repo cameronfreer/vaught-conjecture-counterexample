@@ -108,7 +108,8 @@ nonempty (`nonempty_of_topFreeAge_subset`, the one-point chart being in its age)
 reconstructed realization is exactly consistent and covering with legal top-free types, and the
 structure of `M` is that of the reconstructed realization.  The limit is a
 hypothesis, not constructed: its existence (`exists_isFraisseLimit_topFreeAge`) depends on the
-coatom extension property `StageType.HasCoatomExtensions α`, which is not proved, and on the
+coatom extension property `StageType.HasCoatomExtensions α` (compiled in this repository (theorem
+named) at every stage that is zero or a limit, `StageType.hasCoatomExtensions`), and on the
 hypotheses on the stage `α` stated there; none of these enters this file.
 
 **What this file does not contain.**  Each item names the hypotheses it will need beyond those
@@ -660,8 +661,9 @@ the reconstructed realization is exactly consistent and covering with legal top-
 structure of the limit in the hull language is the structure of its reconstructed realization.
 
 The limit is a hypothesis.  Only its age is used, not its ultrahomogeneity; its existence
-(`exists_isFraisseLimit_topFreeAge`) is conditional on the coatom extension property, which is not
-proved, and is not used here. -/
+(`exists_isFraisseLimit_topFreeAge`) is conditional on the coatom extension property (compiled in
+this repository (theorem named) at every stage that is zero or a limit,
+`StageType.hasCoatomExtensions`), and is not used here. -/
 theorem reconstruct_of_isFraisseLimit [Countable (Σ l, (hullLanguage.{u} α).Functions l)]
     [Countable M] (hM : IsFraisseLimit (topFreeAge.{u} α) M) :
     Nonempty M ∧ (reconstruct α M).IsConsistent ∧ (reconstruct α M).IsCovering ∧

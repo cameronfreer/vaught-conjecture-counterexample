@@ -47,10 +47,11 @@ the donor (`StageType.isAnchoredContextWithTop_iff`).
   rigid core, top-grade supremum `K`) `K ≥ 1` (`Realization.IsModel.one_le_topGradeSup`); in the
   hollow case the supremum is `⊤`.  The top comes from an occurrence inside the context, not from
   the private cap; in the residual case its grade is at most `K`;
-* the coatom extension property at the stage (`StageType.HasCoatomExtensions α`, [Kni26,
-  Corollary 4.3.22] without the apex; still to be proved), for the coface carrying the donor: the
-  exact pinned extension (`StageType.exists_pinned_extension`).  It is the plain form, not the
-  form with the apex (`StageType.HasApexCoatomExtensions α`); the form with the apex implies it
+* the coatom extension property at the stage (`StageType.HasCoatomExtensions α`, [Kni26, Corollary
+  4.3.22] without the apex; compiled in this repository (theorem named) at every stage that is zero
+  or a limit, `StageType.hasCoatomExtensions`), for the coface carrying the donor: the exact pinned
+  extension (`StageType.exists_pinned_extension`).  It is the plain form, not the form with the apex
+  (`StageType.HasApexCoatomExtensions α`); the form with the apex implies it
   (`StageType.HasApexCoatomExtensions.hasCoatomExtensions`).
 
 The last hypothesis is not particular to this predicate.  Determination at a coface needs the
@@ -120,9 +121,9 @@ any predicate `H`, follow from (R1) for every model at every limit stage, the co
 property at every limit stage, and cutoff determination with a donor for the graded predicate.  (R1)
 is assumed in the universes of the conclusion, stronger in stage range than
 `Expansion.FiniteCutReceiving` (limit stages below `ω₁`, universe `0`), which does not supply it;
-the coatom extension property is still to be proved; determination for the graded predicate is
-open.  These are templates, not reductions: the acquisitions are proved under the coatom extension
-property; the other hypotheses are not.
+the coatom extension property is compiled (`StageType.hasCoatomExtensions`); determination for the
+graded predicate is open.  These are templates, not reductions: the acquisitions are proved under
+the coatom extension property; the other hypotheses are not.
 
 ## Placement
 

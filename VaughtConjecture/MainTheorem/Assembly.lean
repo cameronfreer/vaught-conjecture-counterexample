@@ -501,7 +501,7 @@ theorem ExpansionDomains.HasNonemptyLosses.hasModelOnNat {D : ExpansionDomains D
 is exactly consistent, covering, and has the finite-cut receiving property is a model.  It is a
 statement of Layer 3, not proved here; it follows from the coatom extension property with apex at
 `ω` (`CapToModel.of_hasApexCoatomExtensions`, in `VaughtConjecture.MainTheorem.CapToModel`), which
-is still to be proved. -/
+is compiled (`StageType.hasApexCoatomExtensions`; with it, `MainTheorem.capToModel`). -/
 structure CapToModel : Prop where
   /-- The realizations with the structural clauses and finite-cut receiving are models. -/
   isModel : ∀ {M : Type w} (R : Realization.{0, w} ω M), Nonempty M → R.HasLegalTypes →

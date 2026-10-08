@@ -594,10 +594,11 @@ theorem forall_stablyReceivesAt_iff_hasFiniteCutReceiving (hR : R.IsModel)
 
 /-! ### Models with a model expansion -/
 
-/-- **A model expansion is the candidate**, conditional on forcing donors at `ξ` (still to be
-proved) and on finite-extension receiving of the expansion (from (R1), still to be proved): an
-exactly consistent realization `R'` at `λ_{ξ+1}` with legal types and reduction `R` is the stable
-candidate of `R` (normalization, `Realization.label_eq_stableLabel`). -/
+/-- **A model expansion is the candidate**, conditional on forcing donors at `ξ` (compiled in this
+repository (theorem named) at every block index, `forcingDonors_blockStage`) and on finite-extension
+receiving of the expansion (from (R1), still to be proved): an exactly consistent realization `R'`
+at `λ_{ξ+1}` with legal types and reduction `R` is the stable candidate of `R` (normalization,
+`Realization.label_eq_stableLabel`). -/
 theorem eq_stableCandidate_of_reduce_eq (hF : ForcingDonors.{u} ξ)
     {R' : Realization.{u, v} (blockStage (ξ + 1)) M} (hR' : R'.IsConsistent)
     (hl' : R'.HasLegalTypes) (hrec' : R'.HasFiniteExtensionReceiving)
@@ -626,11 +627,12 @@ theorem eq_stableCandidate_of_reduce_eq (hF : ForcingDonors.{u} ξ)
     obtain rfl : i = j := Fin.ext hij
     exact (congrFun heq i).symm
 
-/-- **(R4) at a model with a model expansion**, conditional on forcing donors at `ξ` (still to be
-proved): if `R` is the reduction of an exactly consistent realization `R'` at `λ_{ξ+1}` with legal
-types and finite-cut receiving, then (R4) holds at every occurrence of the candidate of `R`, every
-coface and every `γ < λ_{ξ+1}`.  Non-hollowness and unbounded growth are not used.  This is derived
-from the expansion `R'` and cannot be used to construct it. -/
+/-- **(R4) at a model with a model expansion**, conditional on forcing donors at `ξ` (compiled in
+this repository (theorem named) at every block index, `forcingDonors_blockStage`): if `R` is the
+reduction of an exactly consistent realization `R'` at `λ_{ξ+1}` with legal types and finite-cut
+receiving, then (R4) holds at every occurrence of the candidate of `R`, every coface and every
+`γ < λ_{ξ+1}`.  Non-hollowness and unbounded growth are not used.  This is derived from the
+expansion `R'` and cannot be used to construct it. -/
 theorem stablyReceivesAt_of_reduce_eq (hF : ForcingDonors.{u} ξ)
     {R' : Realization.{u, v} (blockStage (ξ + 1)) M} (hR' : R'.IsConsistent)
     (hl' : R'.HasLegalTypes) (hrec' : R'.HasFiniteCutReceiving)
