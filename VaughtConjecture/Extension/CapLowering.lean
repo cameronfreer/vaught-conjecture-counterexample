@@ -47,12 +47,11 @@ exactly `c` (`capLowering_eq_of_isLawful`); the case `v < c`, which the hypothes
 excludes, has no solution there.  So proving (CL) as stated does not establish that the
 requirement of the construction is satisfied.
 
-**The requirement.**  `StageType.HasCoupledGatedPinnedExtensions` asks for a legal display, and
-its use (`Realization.IsModel.hasFiniteCutReceiving_of_hasCoupledGatedPinnedExtensions`) passes
-the full legality of the display to generalized saturation.  The new content sits at a forcing
-lift: `CappedLift` from a coatom `(F ∪ {y}, n)`, `y` the new point, to `(univ, n)`, for every cap
-`c` self-visible at `n` and every lawful ambient labelling of the display, not only its own
-labelling.  Four parts are named here: three at that lift, and the rows.
+**The requirement.**  `StageType.HasCoupledGatedPinnedExtensions` asks for a legal display, and an
+assembly of (R1) from it would pass the full legality of the display to generalized saturation.
+The new content sits at a forcing lift: `CappedLift` from a coatom `(F ∪ {y}, n)`, `y` the new
+point, to `(univ, n)`, for every cap `c` self-visible at `n` and every lawful ambient labelling of
+the display, not only its own labelling.  Four parts are named: three at that lift, and the rows.
 1. **The private half at an arbitrary ambient.**  The private face of a lawful labelling of the
    display is an arbitrary lawful labelling of `P`.  This half is compiled here
    (`capLowering_of_isLawful`).

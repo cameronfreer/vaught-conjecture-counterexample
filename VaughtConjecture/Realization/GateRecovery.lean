@@ -64,8 +64,8 @@ since the display is a legal coface of the private type in that family.  With th
 generalized saturation suffices in place of the bottom-pattern clause; a route to (R1) through these
 pieces needs coupled gated extensions over every private context
 (`StageType.HasCoupledGatedPinnedExtensions`, a named hypothesis that is false at every stage above
-`1`, `CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`), and finite-cut
-receiving is proved conditional on it in `VaughtConjecture.Realization.CoupledFiniteCutReceiving`.
+`1`, `CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`), so finite-cut
+receiving is not stated conditional on it.
 
 ## Placement
 
