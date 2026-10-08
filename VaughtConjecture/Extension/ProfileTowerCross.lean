@@ -121,6 +121,12 @@ theorem Lvl.rowAt_nextS_natAdd_castAdd {g : ℕ} (L : Lvl I g) (k : Fin (cat I (
   rw [Scheme.rowAt_of_mem hz', Scheme.appendFullCells_row_natAdd]
   exact Lvl.Φ_castAdd _ _
 
+/-- The old cells keep their rows in the field layer over a level. -/
+theorem Lvl.top_rowAt_castAdd (N : Lvl I m) (u x : Fin N.S.card) :
+    N.top.rowAt (Fin.castAdd _ u) (Fin.castAdd _ x) = N.S.rowAt u x :=
+  Scheme.rowAt_appendFullCells_castAdd (k := m + 1)
+    (r := fun i ↦ N.S.fieldRow (m + 1) (N.S.catalogueEntry (m + 1) i)) (h := N.not_le) u x
+
 /-- **The section is `⊥` at a cell whose rows differ in bottoms from the profile**, in every good
 level. -/
 theorem lvl_section_eq_bot (hm : 2 ≤ m) : ∀ i, i + 2 ≤ m → ∀ (c : Fin (lvl I i).S.card)

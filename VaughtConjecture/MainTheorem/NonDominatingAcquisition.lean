@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.MainTheorem.WorkH4
-import VaughtConjecture.Extension.ProfileTowerLayers
+import VaughtConjecture.Extension.ProfileTowerCross
 
 /-!
 # Acquiring a context whose caps dominate no live cell, through a completion
@@ -23,10 +23,15 @@ occurrence with itself.  Compiled in this repository (theorem named):
   block strictly above `c` by some cell of every graded index `(univ, grade a)` of the scheme.
 * **Completions dominating no live cell** (`CompletionNonDominating`, a named hypothesis on seeds,
   not on models): every seed has a completion below the full grade whose completion (with the apex)
-  satisfies the clause at the last point for every cell of full scope.  Its same-layer part is
-  `ProfileTower.Lvl.Good.lowerBlock_rowAt_nextS` (a profile whose code at `a` lies in a higher block
-  than that of the cap); the cross-layer readings are open.  The one refactor needed to discharge
-  it from the profile tower is exposing the tower inside `Seed.exists_botKeeping`.
+  satisfies the clause at the last point for every cell of full scope.  It holds in the completion
+  of the profile tower (`completionNonDominating_of_tower`) given same-layer separation, which is
+  proved (`towerLayerSeparating`), and cross-layer non-domination (`TowerCrossLayer`).
+* **Cross-layer non-domination from cross separation** (`towerCrossLayer_of_crossSeparating`):
+  under `TowerCrossSeparating` (a live profile of the grade of the cell read differs in bottoms
+  from each catalogue profile of the cap's grade at a cell of grade at most the cap's), a reader of
+  the higher grade reads the cap through the section of the level below at `⊥`; so
+  `CompletionNonDominating` holds conditional on `TowerCrossSeparating`
+  (`completionNonDominating_of_crossSeparating`).
 * **The margin calibration with a non-dominating cap** (`StageType.GradedCapMarginCalibrationND`):
   the margin calibration with a floor, a last point `x` off the root with `univ.erase x` a face,
   and the clause at `x` for every cell of full scope.
@@ -213,6 +218,132 @@ holds in the completion of the profile tower (`towerLayerSeparating`). -/
 theorem completionNonDominating_of_crossLayer (hcross : TowerCrossLayer.{u}) :
     CompletionNonDominating.{u} :=
   completionNonDominating_of_tower towerLayerSeparating hcross
+
+/-- **Cross separation at every pair of grades of every seed of the profile tower** (a named
+condition on the catalogues, `ProfileTower.CrossSeparating`). -/
+def TowerCrossSeparating : Prop :=
+  ∀ ⦃α : Ordinal.{u}⦄ ⦃j : ℕ⦄ (I : Seed.{u} α (j + 3)) (N k : ℕ), 3 ≤ N → N < k →
+    k ≤ j + 3 + 1 → ProfileTower.CrossSeparating I N k
+
+/-- A cell of the completion of the profile tower of grade at most `m` is a cell of the last
+level. -/
+theorem exists_lvl_cell_towerCompletion {α : Ordinal.{u}} {j : ℕ} (I : Seed.{u} α (j + 3))
+    (hα : Order.IsSuccPrelimit α) (c : Fin ((ProfileTower.towerCompletion I).completion hα).card)
+    (hc : ((ProfileTower.towerCompletion I).completion hα).toCellScheme.grade c ≤ j + 3) :
+    ∃ c₂ : Fin (ProfileTower.lvl I (j + 1)).S.card,
+      c = (Fin.castAdd ((ProfileTower.lvl I (j + 1)).S.catalogue (j + 3 + 1)).card
+        c₂).castSucc := by
+  change Fin (((ProfileTower.towerCompletion I).truncate hα).card + 1) at c
+  induction c using Fin.lastCases with
+  | last =>
+    exfalso
+    have h := Scheme.appendFullCellScheme_grade_last
+      ((ProfileTower.towerCompletion I).truncate hα).toScheme (j + 3 + 2)
+    change ((ProfileTower.towerCompletion I).completion hα).toCellScheme.grade (Fin.last _) =
+      j + 3 + 2 at h
+    omega
+  | cast c₁ =>
+    have hg := Scheme.appendFullCellScheme_grade_castSucc
+      ((ProfileTower.towerCompletion I).truncate hα).toScheme (j + 3 + 2) c₁
+    change ((ProfileTower.towerCompletion I).completion hα).toCellScheme.grade c₁.castSucc =
+      (ProfileTower.lvl I (j + 1)).top.toCellScheme.grade c₁ at hg
+    rw [hg] at hc
+    change Fin ((ProfileTower.lvl I (j + 1)).S.card +
+      ((ProfileTower.lvl I (j + 1)).S.catalogue (j + 3 + 1)).card) at c₁
+    induction c₁ using Fin.addCases with
+    | left c₂ => exact ⟨c₂, rfl⟩
+    | right i =>
+      exfalso
+      have h2 : (ProfileTower.lvl I (j + 1)).top.toCellScheme.grade (Fin.natAdd _ i) =
+          j + 3 + 1 := Scheme.appendFullCellsScheme_grade_natAdd _ _ _ i
+      omega
+
+/-- **Cross-layer non-domination in the completion of the profile tower from cross separation**:
+the readers of the grades up to `m` are those of the levels (`ProfileTower.crossLayerReaders_lvl`),
+those of the grade `m + 1` those of the field layer (`ProfileTower.topCrossReaders_lvl`). -/
+theorem towerCrossLayer_of_crossSeparating (h : TowerCrossSeparating.{u}) :
+    TowerCrossLayer.{u} := by
+  intro α j I hα c hc h3 hcm a G ha hG hag hlt hlive
+  obtain ⟨a₀, rfl, hsc, hgr, hrow⟩ := (ProfileTower.towerCompletion I).exists_old_completion hα ha
+  obtain ⟨c₂, rfl⟩ := exists_lvl_cell_towerCompletion I hα c hcm
+  have hgc : ((ProfileTower.towerCompletion I).completion hα).toCellScheme.grade
+      (Fin.castAdd ((ProfileTower.lvl I (j + 1)).S.catalogue (j + 3 + 1)).card c₂).castSucc =
+      (ProfileTower.lvl I (j + 1)).S.toCellScheme.grade c₂ :=
+    (Scheme.appendFullCellScheme_grade_castSucc _ _ _).trans
+      (Scheme.appendFullCellsScheme_grade_castAdd _ _ _ _)
+  have hscc : ((ProfileTower.towerCompletion I).completion hα).toCellScheme.scope
+      (Fin.castAdd ((ProfileTower.lvl I (j + 1)).S.catalogue (j + 3 + 1)).card c₂).castSucc =
+      (ProfileTower.lvl I (j + 1)).S.toCellScheme.scope c₂ :=
+    (Scheme.appendFullCellScheme_scope_castSucc _ _ _).trans
+      (Scheme.appendFullCellsScheme_scope_castAdd _ _ _ _)
+  rw [hgc] at h3 hcm hlt
+  rw [hscc] at hc
+  rw [← hgr] at hlt
+  have hlive₀ : I.amalgam.toScheme.rowAt a₀ a₀ ≠ ⊥ := by rw [hrow]; exact hlive
+  have hlast₀ : Fin.last (j + 3 + 1) ∉ I.amalgam.toCellScheme.scope a₀ := by rw [hsc]; exact ha
+  have hGs : ((ProfileTower.towerCompletion I).completion hα).toCellScheme.gradedIndex G =
+      ((univ : Finset (Fin (j + 3 + 2))), I.amalgam.toCellScheme.grade a₀) :=
+    Prod.ext hG (hag.symm.trans hgr.symm)
+  have ha₀m : I.amalgam.toCellScheme.grade a₀ ≤ j + 3 + 1 := by
+    have h1 := I.amalgam.isWellFormed.isWellFormed.grade_le_card a₀
+    have h2 : #(I.amalgam.toCellScheme.scope a₀) ≤ #((univ : Finset (Fin (j + 3 + 2))).erase
+        (Fin.last (j + 3 + 1))) := card_le_card fun y hy ↦
+      mem_erase.mpr ⟨fun h ↦ hlast₀ (h ▸ hy), mem_univ _⟩
+    rw [card_erase_of_mem (mem_univ _), card_univ, Fintype.card_fin] at h2
+    omega
+  have hsep := h I _ _ h3 hlt ha₀m
+  -- the rows of the completion at the cells of the top layer
+  have hrowc (u x : Fin (ProfileTower.lvl I (j + 1)).top.card) :
+      ((ProfileTower.towerCompletion I).completion hα).toScheme.rowAt u.castSucc x.castSucc =
+        (ProfileTower.lvl I (j + 1)).top.rowAt u x :=
+    Scheme.rowAt_appendFullCell_castSucc
+      (S := ((ProfileTower.towerCompletion I).truncate hα).toScheme) (j := j + 3 + 2)
+      (r := StageType.apexRow (t := (ProfileTower.towerCompletion I).truncate hα)
+        (ProfileTower.towerCompletion I).isLegalBelowFullGrade)
+      (h := (ProfileTower.towerCompletion I).isLegalBelowFullGrade.not_le) u x
+  have hgiu (u : Fin (ProfileTower.lvl I (j + 1)).top.card) :
+      ((ProfileTower.towerCompletion I).completion hα).toCellScheme.gradedIndex u.castSucc =
+        (ProfileTower.lvl I (j + 1)).top.toCellScheme.gradedIndex u :=
+    Scheme.appendFullCellScheme_gradedIndex_castSucc _ _ _
+  rcases Nat.lt_or_ge (I.amalgam.toCellScheme.grade a₀) (j + 3 + 1) with hlt' | hge
+  · obtain ⟨u, hu, hlb⟩ := ProfileTower.crossLayerReaders_lvl (I := I) (by omega) (j + 1)
+      (by omega) c₂ hc h3 a₀ hlt (by omega) hlive₀ hlast₀ hsep
+    set M := ((ProfileTower.lvl I (j + 1)).S.catalogue (j + 3 + 1)).card
+    have hgi' : ((ProfileTower.towerCompletion I).completion hα).toCellScheme.gradedIndex
+        (Fin.castAdd M u).castSucc =
+        ((ProfileTower.towerCompletion I).completion hα).toCellScheme.gradedIndex G :=
+      (hgiu (Fin.castAdd M u)).trans
+        ((Scheme.appendFullCellsScheme_gradedIndex_castAdd _ _ _ u).trans (hu.trans hGs.symm))
+    have key : LowerBlock
+        (((ProfileTower.towerCompletion I).completion hα).toScheme.rowAt
+          (Fin.castAdd M u).castSucc (Fin.castAdd M c₂).castSucc)
+        (((ProfileTower.towerCompletion I).completion hα).toScheme.rowAt
+          (Fin.castAdd M u).castSucc
+          (Fin.castAdd M ((ProfileTower.lvl I (j + 1)).embed a₀)).castSucc) := by
+      rw [hrowc, hrowc, ProfileTower.Lvl.top_rowAt_castAdd,
+        ProfileTower.Lvl.top_rowAt_castAdd]
+      exact hlb
+    exact ⟨(Fin.castAdd M u).castSucc, hgi', key⟩
+  · have ha₀ : I.amalgam.toCellScheme.grade a₀ = j + 3 + 1 := by omega
+    rw [ha₀] at hsep
+    obtain ⟨u, hu, hlb⟩ := ProfileTower.topCrossReaders_lvl I c₂ hc h3 hcm a₀ ha₀ hlive₀ hlast₀
+      hsep
+    have hgi' : ((ProfileTower.towerCompletion I).completion hα).toCellScheme.gradedIndex
+        u.castSucc = ((ProfileTower.towerCompletion I).completion hα).toCellScheme.gradedIndex G :=
+      (hgiu u).trans (hu.trans (by rw [hGs, ha₀]))
+    have key : LowerBlock
+        (((ProfileTower.towerCompletion I).completion hα).toScheme.rowAt u.castSucc
+          (Fin.castAdd ((ProfileTower.lvl I (j + 1)).S.catalogue (j + 3 + 1)).card c₂).castSucc)
+        (((ProfileTower.towerCompletion I).completion hα).toScheme.rowAt u.castSucc
+          ((ProfileTower.lvl I (j + 1)).topEmbed a₀).castSucc) := by
+      rw [hrowc, hrowc]
+      exact hlb
+    exact ⟨u.castSucc, hgi', key⟩
+
+/-- **Completions dominating no live cell from cross separation.** -/
+theorem completionNonDominating_of_crossSeparating (h : TowerCrossSeparating.{u}) :
+    CompletionNonDominating.{u} :=
+  completionNonDominating_of_tower towerLayerSeparating (towerCrossLayer_of_crossSeparating h)
 
 namespace StageType
 
