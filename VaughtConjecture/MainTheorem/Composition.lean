@@ -16,13 +16,13 @@ to expansion domains (conditions 1–4), and the section on the top-free witness
 `IMPLEMENTATION.md`, checkpoints 5 and 6; semantic contract, items 5 and 9.
 
 `densitySentence_hasThinAlephOneSpectrum_of_terminalClassification`
-(`VaughtConjecture.MainTheorem.ModelExpansionDomains`) proves the thin `ℵ₁` spectrum of the
-density sentence conditional on seven named hypotheses: the cap-to-model theorem at `ω`
-(`CapToModel`), (R1), forcing donors at every countable block, the continuation criterion, (R2),
-(R3) for cover-hollowness at a block stage, and nonempty losses of the expansion domains
-(condition 4).  The theorems of the six-hypothesis form replace the first and the last by one
-hypothesis, the coatom extension property with apex at every countable block stage
-`λ_η = ω + ω · η`, `η < ω₁` (`StageType.HasApexCoatomExtensions`; Layer 3, 3.1, (R6), compiled as
+(`VaughtConjecture.MainTheorem.ModelExpansionDomains`) proves the thin `ℵ₁` spectrum of the density
+sentence conditional on seven named hypotheses: the cap-to-model theorem at `ω` (`CapToModel`),
+(R1), forcing donors at every countable block, the continuation criterion, (R2), (R3) for
+cover-hollowness at a block stage, and nonempty losses of the expansion domains (condition 4).  The
+theorems of the six-hypothesis form replace the first and the last by one hypothesis, the coatom
+extension property with apex at every countable block stage `λ_η = ω + ω · η`, `η < ω₁`
+(`StageType.HasApexCoatomExtensions`; Layer 3, 3.1, (R6), compiled as
 `StageType.hasApexCoatomExtensions_blockStage`), leaving six:
 
 * the coatom extension property with apex at every countable block stage (`hext`);
@@ -105,10 +105,10 @@ namespace VaughtConjecture.MainTheorem
 open FirstOrder Language Structure baseLanguage Expansion StageType
 open scoped Ordinal
 
-/-- **The thin `ℵ₁` spectrum of the density sentence from the terminal classification and the
-coatom extension property with apex at every countable block stage**: the density sentence has
-exactly `ℵ₁` classes of models coded on `ℕ` and no perfect set of pairwise nonisomorphic ones,
-conditional on the following six hypotheses, each still to be proved except the last, now compiled
+/-- **The thin `ℵ₁` spectrum of the density sentence from the terminal classification and the coatom
+extension property with apex at every countable block stage**: the density sentence has exactly `ℵ₁`
+classes of models coded on `ℕ` and no perfect set of pairwise nonisomorphic ones, conditional on the
+following six hypotheses, each still to be proved except the last, now compiled
 (`StageType.hasApexCoatomExtensions_blockStage`):
 * finite-cut receiving of models (`hrec`; (R1) of the table of Layer 3): next-block uniqueness,
   logical agreement, and the rigid-core comparison;
@@ -122,8 +122,8 @@ conditional on the following six hypotheses, each still to be proved except the 
 * the coatom extension property with apex at every countable block stage (`hext`; Layer 3, 3.1,
   (R6), compiled as `StageType.hasApexCoatomExtensions_blockStage`): the cap-to-model theorem at `ω`
   and the top-free witnesses.
-Derived, not assumed: the cap-to-model theorem at `ω` (`CapToModel.of_hasApexCoatomExtensions`,
-from `hext` at `η = 0`), next-block uniqueness (`Expansion.NextBlockUniqueness.of_forcingDonors`),
+Derived, not assumed: the cap-to-model theorem at `ω` (`CapToModel.of_hasApexCoatomExtensions`, from
+`hext` at `η = 0`), next-block uniqueness (`Expansion.NextBlockUniqueness.of_forcingDonors`),
 countable losses (`Expansion.expansionDomain_loss_countable`), and nonempty losses
 (`hasNonemptyLosses_of_hasApexCoatomExtensions`). -/
 theorem densitySentence_hasThinAlephOneSpectrum_of_terminalClassification_of_hasApexCoatomExtensions
@@ -140,12 +140,11 @@ theorem densitySentence_hasThinAlephOneSpectrum_of_terminalClassification_of_has
 classification and the coatom extension property with apex at every countable block stage**: the
 conclusion of `vaughtCounterexample_allCarriers_of_expansionDomains` for the expansion domains of
 the density sentence, conditional on the six hypotheses of
-`densitySentence_hasThinAlephOneSpectrum_of_terminalClassification_of_hasApexCoatomExtensions`,
-each still to be proved except `hext`, now compiled.  The cap-to-model theorem, at `ω` on `ℕ` for
-the first domain and on the
-carriers of the universe `w` for the reduction to `ℕ`, is derived from `hext` at `η = 0`
-(`CapToModel.of_hasApexCoatomExtensions`); next-block uniqueness, countable losses and nonempty
-losses are derived as for the spectrum. -/
+`densitySentence_hasThinAlephOneSpectrum_of_terminalClassification_of_hasApexCoatomExtensions`, each
+still to be proved except `hext`, now compiled.  The cap-to-model theorem, at `ω` on `ℕ` for the
+first domain and on the carriers of the universe `w` for the reduction to `ℕ`, is derived from
+`hext` at `η = 0` (`CapToModel.of_hasApexCoatomExtensions`); next-block uniqueness, countable losses
+and nonempty losses are derived as for the spectrum. -/
 theorem vaughtCounterexample_allCarriers_of_terminalClassification_of_hasApexCoatomExtensions
     (hrec : FiniteCutReceiving.{0}) (hF : ∀ ξ < ω₁, ForcingDonors.{0} ξ)
     (hcont : ContinuationCriterion.{0}) (hres : Realization.ResidualReceiving.{0, 0})
@@ -166,9 +165,9 @@ theorem vaughtCounterexample_allCarriers_of_terminalClassification_of_hasApexCoa
     (hasNonemptyLosses_of_hasApexCoatomExtensions hcap hnext hext)
     (CapToModel.of_hasApexCoatomExtensions hω)
 
-/-- **The thin `ℵ₁` spectrum of the density sentence from the terminal classification and the
-coatom extension property with apex at every countable block stage, with forcing donors
-derived**: the conclusion of
+/-- **The thin `ℵ₁` spectrum of the density sentence from the terminal classification and the coatom
+extension property with apex at every countable block stage, with forcing donors derived**: the
+conclusion of
 `densitySentence_hasThinAlephOneSpectrum_of_terminalClassification_of_hasApexCoatomExtensions`,
 conditional on the following five hypotheses, each still to be proved except the last, now compiled
 (`StageType.hasApexCoatomExtensions_blockStage`):
@@ -199,13 +198,12 @@ theorem
 /-- **A thin uncountable infinitary class on all countable carriers, from the terminal
 classification and the coatom extension property with apex at every countable block stage, with
 forcing donors derived**: the conclusion of
-`vaughtCounterexample_allCarriers_of_terminalClassification_of_hasApexCoatomExtensions`,
-conditional on the five hypotheses of
+`vaughtCounterexample_allCarriers_of_terminalClassification_of_hasApexCoatomExtensions`, conditional
+on the five hypotheses of
 `densitySentence_hasThinAlephOneSpectrum_of_terminalClassification_of_hasApexCoatomExtensions'`,
-each still to be proved except `hext`, now compiled.  Forcing donors at every countable block
-index are derived from `hext`
-at the next block stage (`forcingDonors_of_forall_hasApexCoatomExtensions`); the other
-statements are derived as for the six-hypothesis form. -/
+each still to be proved except `hext`, now compiled.  Forcing donors at every countable block index
+are derived from `hext` at the next block stage (`forcingDonors_of_forall_hasApexCoatomExtensions`);
+the other statements are derived as for the six-hypothesis form. -/
 theorem vaughtCounterexample_allCarriers_of_terminalClassification_of_hasApexCoatomExtensions'
     (hrec : FiniteCutReceiving.{0}) (hcont : ContinuationCriterion.{0})
     (hres : Realization.ResidualReceiving.{0, 0})
@@ -227,8 +225,8 @@ conditional on exactly the following four hypotheses, each still to be proved:
 * finite-cut receiving of models (`hrec`; (R1) of the table of Layer 3);
 * the continuation criterion (`hcont`; output 3 of higher-stage reconstruction, Layer 4);
 * exact residual receiving (`hres`; (R2) of the table of Layer 3);
-* exact hollow-growth receiving for cover-hollowness at a block stage (`hhol`; (R3) of the table
-  of Layer 3).
+* exact hollow-growth receiving for cover-hollowness at a block stage (`hhol`; (R3) of the table of
+  Layer 3).
 The coatom extension property with apex at every countable block stage is not assumed: it is
 `StageType.hasApexCoatomExtensions_blockStage`, compiled in this repository (theorem named).  The
 other statements are derived as in the five-hypothesis form. -/
@@ -246,8 +244,8 @@ classification**: the conclusion of
 conditional on exactly the four hypotheses of
 `densitySentence_hasThinAlephOneSpectrum_of_terminalClassification''` ((R1), the continuation
 criterion, (R2), (R3)), each still to be proved.  The coatom extension property with apex at every
-countable block stage is `StageType.hasApexCoatomExtensions_blockStage`, compiled in this
-repository (theorem named). -/
+countable block stage is `StageType.hasApexCoatomExtensions_blockStage`, compiled in this repository
+(theorem named). -/
 theorem vaughtCounterexample_allCarriers_of_terminalClassification''
     (hrec : FiniteCutReceiving.{0}) (hcont : ContinuationCriterion.{0})
     (hres : Realization.ResidualReceiving.{0, 0})

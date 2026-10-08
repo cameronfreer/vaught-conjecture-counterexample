@@ -57,15 +57,15 @@ one occurrence `ψ` gives; its new point is off the whole root.
   reconstructed type is top-free.
 
 **What is used.**  The root is a whole occurrence, so the face of the chart of `p` to which the
-donor is attached is the whole chart, and the one-point pinned extension of that chart by `d` is
-`d` itself: the case of (R6) of the table of Layer 3, 3.4, where the face is onto, which needs no
-coatom extension (`StageType.exists_pinned_extension_of_surjective`; here `d` is used directly, as
-a coface of `p`).  Capped, it is (R5) in that case.  So step 6 uses only the equality of ages,
-ultrahomogeneity, and capping: neither the coatom extension property
-`StageType.HasCoatomExtensions` nor modelhood (`Realization.IsModel`) is a hypothesis of any
-statement here.  Only the *existence* of a Fraïssé limit of the age of top-free charts
-(`exists_isFraisseLimit_topFreeAge`) needs the coatom extension property (compiled at every stage
-that is zero or a limit, `StageType.hasCoatomExtensions`).
+donor is attached is the whole chart, and the one-point pinned extension of that chart by `d` is `d`
+itself: the case of (R6) of the table of Layer 3, 3.4, where the face is onto, which needs no coatom
+extension (`StageType.exists_pinned_extension_of_surjective`; here `d` is used directly, as a coface
+of `p`).  Capped, it is (R5) in that case.  So step 6 uses only the equality of ages,
+ultrahomogeneity, and capping: neither the coatom extension property `StageType.HasCoatomExtensions`
+nor modelhood (`Realization.IsModel`) is a hypothesis of any statement here.  Only the *existence*
+of a Fraïssé limit of the age of top-free charts (`exists_isFraisseLimit_topFreeAge`) needs the
+coatom extension property (compiled in this repository (theorem named) at every stage that is zero
+or a limit, `StageType.hasCoatomExtensions`).
 
 **Finite-extension receiving** (`hasFiniteExtensionReceiving_reconstruct`): the reconstructed
 realization is exactly consistent (`isConsistent_reconstruct`), so finite-cut receiving gives
@@ -164,8 +164,9 @@ top-free coface of the root's type, is received exactly
 
 Only the equality of ages, ultrahomogeneity, and capping are used: neither the coatom extension
 property `StageType.HasCoatomExtensions` nor modelhood is a hypothesis.  The existence of such a
-structure (`exists_isFraisseLimit_topFreeAge`) needs the coatom extension property (compiled at
-every stage that is zero or a limit, `StageType.hasCoatomExtensions`). -/
+structure (`exists_isFraisseLimit_topFreeAge`) needs the coatom extension property (compiled in this
+repository (theorem named) at every stage that is zero or a limit, `StageType.hasCoatomExtensions`).
+-/
 theorem hasFiniteCutReceiving_reconstruct (hα : Order.IsSuccPrelimit α) :
     (reconstruct α M).HasFiniteCutReceiving := by
   intro x d hd c hc
@@ -202,9 +203,10 @@ end Receiving
 
 /-- **Receiving for the reconstructed realization of a Fraïssé limit** of the age of top-free
 charts, at a stage that is zero or a limit (roadmap, the top-free witnesses, step 6).  The limit is
-a hypothesis: its existence (`exists_isFraisseLimit_topFreeAge`) needs the coatom extension
-property `StageType.HasCoatomExtensions`, which is not proved; receiving itself uses only its age
-and its ultrahomogeneity. -/
+a hypothesis: its existence (`exists_isFraisseLimit_topFreeAge`) needs the coatom extension property
+`StageType.HasCoatomExtensions` (compiled in this repository (theorem named) at every stage that is
+zero or a limit, `StageType.hasCoatomExtensions`); receiving itself uses only its age and its
+ultrahomogeneity. -/
 theorem hasFiniteCutReceiving_reconstruct_of_isFraisseLimit
     [Countable (Σ l, (hullLanguage.{u} α).Functions l)] [Countable M]
     (hα : Order.IsSuccPrelimit α) (hM : IsFraisseLimit (topFreeAge.{u} α) M) :
@@ -261,10 +263,11 @@ carrier (`nonempty_of_topFreeAge_subset`), exact consistency and covering
 (`hasLegalTypes_reconstruct_reduce`), by `baseLanguage.realize_toStructure_densitySentence_iff`.
 
 This is the base-reduct part of step 7.  Modelhood of the reconstructed realization at `α`, given
-the nonemptiness of the uniformity and dominance instances, is `isModel_reconstruct`; infinitude
-and terminality are `infinite_of_age_eq_of_hasCoatomExtensions` and `reduce_ne_reconstruct`.  The
+the nonemptiness of the uniformity and dominance instances, is `isModel_reconstruct`; infinitude and
+terminality are `infinite_of_age_eq_of_hasCoatomExtensions` and `reduce_ne_reconstruct`.  The
 existence of a Fraïssé limit of the age of top-free charts (`exists_isFraisseLimit_topFreeAge`)
-needs the coatom extension property `StageType.HasCoatomExtensions`, which is not proved. -/
+needs the coatom extension property `StageType.HasCoatomExtensions`, compiled in this repository
+(theorem named) at every stage that is zero or a limit (`StageType.hasCoatomExtensions`). -/
 theorem realize_densitySentence_reconstruct_reduce
     (hage : (hullLanguage.{u} α).age M = topFreeAge α)
     (hu : (hullLanguage.{u} α).IsUltrahomogeneous M) (hα : Order.IsSuccPrelimit α)

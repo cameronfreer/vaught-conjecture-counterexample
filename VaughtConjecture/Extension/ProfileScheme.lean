@@ -12,13 +12,13 @@ The construction of `VaughtConjecture.Extension.ProfileCatalogue`, with the cata
 and the block bound of the cut grid as parameters: for a family `cat` of finite sets of profiles
 (labellings of the cells of the amalgam) and a bound `B`, the scheme `scheme cat B J` has one new
 cell at `(univ, j)` per entry of `cat j`, `j ≤ J`, whose row reads the old cells by its profile and
-the new cells by agreement heights of whole profiles in `Label.grid 3 B`.  The field labellings
-of such a scheme are lawful below `(univ, K)`, `K ≤ 3` (`isLawfulBelow_fieldLabelling`).
+the new cells by agreement heights of whole profiles in `Label.grid 3 B`.  The field labellings of
+such a scheme are lawful below `(univ, K)`, `K ≤ 3` (`isLawfulBelow_fieldLabelling`).
 
 ## Placement
 
-Checkpoint 2.7 of the completion of the coatom extension construction (`roadmap/README.md`,
-Layer 3, 3.1, under "(R6)").
+Checkpoint 2.7 of the completion of the coatom extension construction (`roadmap/README.md`, Layer 3,
+3.1, under "(R6)").
 -/
 
 universe u
@@ -49,10 +49,11 @@ theorem exists_entry_eq {j : ℕ} {P : Profile I} (hP : P ∈ cat j) :
   rw [entry, dite_eq_left ((cat j).equivFin ⟨P, hP⟩).2]
   simp
 
-/-! ### The profile scheme -/
+/-! ### The profile scheme
+-/
 
-/-- The multiplicities of the profile scheme with top layer `J`: one new cell at `(univ, k + 1)`
-per entry of the catalogue at the grade `k + 1` for `k + 1 ≤ J`, and none above. -/
+/-- The multiplicities of the profile scheme with top layer `J`: one new cell at `(univ, k + 1)` per
+entry of the catalogue at the grade `k + 1` for `k + 1 ≤ J`, and none above. -/
 noncomputable def mult (J : ℕ) (k : Fin 4) : ℕ :=
   if (k : ℕ) < J then (cat ((k : ℕ) + 1)).card else 0
 
@@ -72,9 +73,8 @@ noncomputable def rows (J : ℕ) : MultiRows I (mult cat J) := fun k i z ↦
   if hz : (z : ℕ) < I.amalgam.card then entry cat ((k : ℕ) + 1) i ⟨z, hz⟩
   else agreementHeight (grid 3 B) (entry cat ((k : ℕ) + 1) i) (cellProfile cat J z)
 
-/-- **The profile scheme with top layer `J`**: the amalgam followed by one new cell at
-`(univ, j)` per entry of the catalogue at the grade `j`, for `1 ≤ j ≤ min J 4`, with the rows
-`rows cat B J`. -/
+/-- **The profile scheme with top layer `J`**: the amalgam followed by one new cell at `(univ, j)`
+per entry of the catalogue at the grade `j`, for `1 ≤ j ≤ min J 4`, with the rows `rows cat B J`. -/
 noncomputable abbrev scheme (J : ℕ) : Scheme.{u} 5 :=
   multiLayerScheme I (mult cat J) (rows cat B J)
 
@@ -101,8 +101,8 @@ theorem entry_mem_of_lt_mult {k : Fin 4} (i : Fin (mult cat J k)) :
     entry cat ((k : ℕ) + 1) i ∈ cat ((k : ℕ) + 1) :=
   entry_mem (lt_card_of_lt_mult i)
 
-/-- The new cell of grade `k + 1` with index `i` carries the entry `i` of the catalogue at the
-grade `k + 1`. -/
+/-- The new cell of grade `k + 1` with index `i` carries the entry `i` of the catalogue at the grade
+`k + 1`. -/
 theorem cellProfile_multiNewCell (k : Fin 4) (i : Fin (mult cat J k)) :
     cellProfile cat J (multiNewCell I (mult cat J) k i) = entry cat ((k : ℕ) + 1) i := by
   match k, i with
@@ -159,7 +159,8 @@ theorem rows_multiNewCell (k : Fin 4) (i : ℕ) (k' : Fin 4) (i' : Fin (mult cat
   rw [rows, dite_eq_right (fun h ↦ absurd h (not_lt.mpr (le_val_multiNewCell k' i'))),
     cellProfile_multiNewCell]
 
-/-! ### Field labellings -/
+/-! ### Field labellings
+-/
 
 variable (cat B J) in
 /-- The **field labelling** of `L` and `P`: `L` at the old cells, and at a new cell the agreement
@@ -195,12 +196,11 @@ theorem agreementHeight_self_eq (P : Profile I) :
 
 /-- **The field labelling is lawful below `(univ, K)`, `K ≤ 3`.**  Let `L` be lawful below `(C, K)`
 and `(D, K)`, at most the ceiling of the cut grid, and equal to `P` at the cells of grade at most
-`J`, and let `P` be an entry of the catalogue at every grade `1 ≤ j ≤ J`.  The row of the new
-cell of a profile `P'` reads by `P'` and the field labelling reads by `P`: the two agree capped at
-the agreement height of `P` and `P'`, the label of that cell, at the old cells by its definition
-and at the new cells by the ultrametric inequality
-(`Label.agreementHeight_tri`); availability into `(univ, j)` is given by the cell of `P`, whose
-label is the ceiling. -/
+`J`, and let `P` be an entry of the catalogue at every grade `1 ≤ j ≤ J`.  The row of the new cell
+of a profile `P'` reads by `P'` and the field labelling reads by `P`: the two agree capped at the
+agreement height of `P` and `P'`, the label of that cell, at the old cells by its definition and at
+the new cells by the ultrametric inequality (`Label.agreementHeight_tri`); availability into
+`(univ, j)` is given by the cell of `P`, whose label is the ceiling. -/
 theorem isLawfulBelow_fieldLabelling {K : ℕ} (hK : K ≤ 3) {L P : Profile I}
     (hLC : I.amalgam.rows.IsLawfulBelow (coatomC, K) fun d ↦ L d)
     (hLD : I.amalgam.rows.IsLawfulBelow (coatomD, K) fun d ↦ L d)

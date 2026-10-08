@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Extension.Tower
-import VaughtConjecture.Extension.UpperDecoder
+import VaughtConjecture.Extension.UpperDecoderAt
 
 /-!
 # A section through the tower, decoded upward, with capped agreement
@@ -17,7 +17,7 @@ Let `I` be a seed and `B` a block bound.  The **tower section** `Seed.towerSecti
 labelling `w` of the amalgam is the labelling of the cells of `T j = I.tower j` built layer by
 layer: `w` at the old cells, and at the new cells of the layer at the grade `j + 1` the field row
 of the orbit code of the splice at `j + 1` of the section below, read by the upper decoder
-(`Label.upperDecoder`), which reads the gaps between codes upward
+(`Label.upperDecoderAt` at the cap grade `3`), which reads the gaps between codes upward
 (`Seed.layerSection`).  It is one function of `w`: it depends on no cap, prescription or ambient
 labelling.
 
@@ -34,7 +34,8 @@ labelling.
 * **Capped agreement** (`Seed.min_towerSection_eq`): for `j ≤ 2`, if `w` takes its values in
   `Label.codeGrid 3 B` and `w'` agrees with `w` capped at a cap `h` self-visible and short at `3`,
   their sections agree capped at `h` at every cell of `T j`
-  (`Label.min_upperDecoder_agreementHeight_eq` at each layer, the layers having grades `1, 2 < 3`).
+  (`Label.min_upperDecoderAt_agreementHeight_eq` at each layer, the layers having grades
+  `1, 2 < 3`).
 
 ## Placement
 
@@ -62,11 +63,11 @@ through the upper decoder, a witness bounded by `k` sending only bottom to botto
 theorem isLawfulBelow_fieldLayer_upperDecoder (hk : k ≤ 3) {p : Fin S.card → Label.{u}}
     (hp : S.rows.IsLawfulBelow (univ, k) fun d ↦ p d) :
     (S.fieldLayer k hS).rows.IsLawfulBelow (univ, k) fun x ↦
-      upperDecoder k B (S.toCellScheme.splice k (fun _ ↦ ⊥) p)
+      upperDecoderAt k 3 B (S.toCellScheme.splice k (fun _ ↦ ⊥) p)
         (S.fieldRow k (orbitCode k (S.toCellScheme.splice k (fun _ ↦ ⊥) p)) x) :=
   ((isLawful_fieldRow (hS := hS) (orbitCode_splice_bot_mem_catalogue hp)).isLawfulBelow _)
-    |>.map_of_apply_eq_bot (fun x ↦ x.2.2) (isWitness_upperDecoder hk)
-      fun _ ↦ eq_bot_of_upperDecoder_eq_bot
+    |>.map_of_apply_eq_bot (fun x ↦ x.2.2) (isWitness_upperDecoderAt (K := 3) hk)
+      fun _ ↦ eq_bot_of_upperDecoderAt_eq_bot
 
 end Scheme
 
@@ -86,7 +87,7 @@ height of the orbit code of the splice of `p` with the catalogue entry of `i`, r
 decoder. -/
 noncomputable def layerSection (j : ℕ) (p : Fin (I.tower j).card → Label.{u})
     (i : Fin ((I.tower j).catalogue (j + 1)).card) : Label.{u} :=
-  upperDecoder (j + 1) B (I.layerSplice j p)
+  upperDecoderAt (j + 1) 3 B (I.layerSplice j p)
     (agreementHeight ((I.tower j).fieldGrid (j + 1)) (orbitCode (j + 1) (I.layerSplice j p))
       ((I.tower j).catalogueEntry (j + 1) i))
 
@@ -132,7 +133,7 @@ theorem isLawfulBelow_withLayer {j : ℕ} (hj : j + 1 ≤ 3)
     (hp : (I.tower j).rows.IsLawfulBelow (univ, j + 1) fun d ↦ p d) :
     (I.tower (j + 1)).rows.IsLawfulBelow (univ, j + 1) fun x ↦ I.withLayer B j p x := by
   set W : Fin (I.tower (j + 1)).card → Label.{u} := fun z ↦
-    upperDecoder (j + 1) B (I.layerSplice j p)
+    upperDecoderAt (j + 1) 3 B (I.layerSplice j p)
       ((I.tower j).fieldRow (j + 1) (orbitCode (j + 1) (I.layerSplice j p)) z) with hW
   have h : (I.tower (j + 1)).rows.IsLawfulBelow (univ, j + 1) fun x ↦ W x :=
     Scheme.isLawfulBelow_fieldLayer_upperDecoder (I.tower j) (j + 1) B
@@ -141,15 +142,15 @@ theorem isLawfulBelow_withLayer {j : ℕ} (hj : j + 1 ≤ 3)
   induction x using Fin.addCases with
   | left e =>
     -- The two labellings at the old cell `e`, in the cells of `T j` followed by the layer.
-    change upperDecoder (j + 1) B (I.layerSplice j p)
+    change upperDecoderAt (j + 1) 3 B (I.layerSplice j p)
         ((I.tower j).fieldRow (j + 1) (orbitCode (j + 1) (I.layerSplice j p)) (Fin.castAdd _ e)) =
       Fin.append p (I.layerSection B j p) (Fin.castAdd _ e)
-    rw [Scheme.fieldRow_castAdd, upperDecoder_orbitCode, Fin.append_left]
+    rw [Scheme.fieldRow_castAdd, upperDecoderAt_orbitCode, Fin.append_left]
     exact CellScheme.splice_of_le
       ((Scheme.appendFullCellsScheme_grade_castAdd (I.tower j) (j + 1) _ e).symm.trans_le hx.2)
   | right i =>
     -- The two labellings at the new cell `i`, in the cells of `T j` followed by the layer.
-    change upperDecoder (j + 1) B (I.layerSplice j p)
+    change upperDecoderAt (j + 1) 3 B (I.layerSplice j p)
         ((I.tower j).fieldRow (j + 1) (orbitCode (j + 1) (I.layerSplice j p)) (Fin.natAdd _ i)) =
       Fin.append p (I.layerSection B j p) (Fin.natAdd _ i)
     rw [Scheme.fieldRow_natAdd, Fin.append_right]
@@ -214,7 +215,7 @@ theorem towerSection_mem_codeGrid : (j : ℕ) → j ≤ 3 → {w : Fin I.amalgam
     | left t => rw [towerSection_castAdd]; exact towerSection_mem_codeGrid j (by omega) hw t
     | right i =>
       rw [towerSection_natAdd]
-      exact upperDecoder_mem_codeGrid hj
+      exact upperDecoderAt_mem_codeGrid (by omega)
         (layerSplice_mem_codeGrid (towerSection_mem_codeGrid j (by omega) hw))
         (agreementHeight_spec (bot_mem_grid _ _) _ _).1
 
@@ -240,24 +241,24 @@ theorem min_towerSection_eq {h : Label.{u}} (hh : IsSelfVisible 3 h) (hs : IsSho
           exact ih t
         · rw [layerSplice, layerSplice, CellScheme.splice_of_lt (not_le.mp ht),
             CellScheme.splice_of_lt (not_le.mp ht)]
-      exact min_upperDecoder_agreementHeight_eq (by omega)
+      exact min_upperDecoderAt_agreementHeight_eq (by omega)
         (by simp only [Fintype.card_fin]; omega) hh hs
         (fun t ↦ le_gridPoint_of_mem_codeGrid
           (layerSplice_mem_codeGrid (towerSection_mem_codeGrid j (by omega) hw) t)) hsp _
 
 /-- **The tower section of an orbit-canonical labelling is readable for it**, for `j ≤ 2`, when
 its values lie in the code grid: the orbit decoder at the grade `3` of every labelling coded by it
-reads the section literally below its cap (`Label.min_orbitDecoder_eq_of_isReadable`). -/
+reads the section literally below its cap (`Label.min_orbitDecoder_eq_of_isReadableAt`). -/
 theorem isReadable_towerSection {Q : Fin I.amalgam.card → Label.{u}} (hQ : orbitCode 3 Q = Q)
     (hQB : ∀ d, Q d ∈ codeGrid 3 B) :
-    (j : ℕ) → j ≤ 2 → ∀ t, IsReadable Q (I.towerSection B j Q t)
-  | 0, _, t => isReadable_apply Q t
+    (j : ℕ) → j ≤ 2 → ∀ t, IsReadableAt 3 Q (I.towerSection B j Q t)
+  | 0, _, t => isReadableAt_apply Q t
   | j + 1, hj, t => by
     induction t using Fin.addCases with
     | left t => rw [towerSection_castAdd]; exact isReadable_towerSection hQ hQB j (by omega) t
     | right i =>
       rw [towerSection_natAdd]
-      refine isReadable_upperDecoder hQ hj
+      refine isReadableAt_upperDecoderAt hQ (by omega)
         (layerSplice_mem_codeGrid (towerSection_mem_codeGrid j (by omega) hQB)) (fun t ↦ ?_)
         (agreementHeight_spec (bot_mem_grid _ _) _ _).1
       by_cases ht : (I.tower j).toCellScheme.grade t ≤ j + 1

@@ -64,10 +64,11 @@ variable {ξ : Ordinal.{0}} {M : Type w} {R : Realization.{0, w} (blockStage ξ)
 
 /-- **(R4) at one model is the existence of a model expansion**, under (R1) (`hrec`), forcing donors
 at `ξ` (`hF`) and the coface instances at `λ_{ξ+1}` (`hinst`), the first still to be proved, the
-other two compiled (`forcingDonors_of_blockStage`, `StageType.hasApexCoatomExtensions_blockStage`):
-for a model `R` at `λ_ξ`, `ξ < ω₁`, (R4) at every occurrence of positive arity of its candidate,
-every coface and every `γ < λ_{ξ+1}` holds exactly when `R` is the reduction of a model at
-`λ_{ξ+1}`.  Non-hollowness and unbounded growth are not used. -/
+other two compiled in this repository (theorem named) (`forcingDonors_blockStage`,
+`StageType.hasApexCoatomExtensions_blockStage`): for a model `R` at `λ_ξ`, `ξ < ω₁`, (R4) at every
+occurrence of positive arity of its candidate, every coface and every `γ < λ_{ξ+1}` holds exactly
+when `R` is the reduction of a model at `λ_{ξ+1}`.  Non-hollowness and unbounded growth are not
+used. -/
 theorem forall_stablyReceivesAt_iff_exists_model (hξ : ξ < ω₁) (hR : R.IsModel)
     (hrec : Expansion.FiniteCutReceiving.{w}) (hF : ForcingDonors.{0} ξ)
     (hinst : StageType.HasNonemptyCofaceInstances.{0} (blockStage (ξ + 1))) :
@@ -88,10 +89,10 @@ end Realization
 
 namespace Expansion
 
-/-- **(R4) from the continuation criterion**, under (R1) (`hrec`) and forcing donors at every `ξ <
-ω₁` (`hF`; compiled, `forcingDonors_of_blockStage`), the first still to be proved: the model
-expansion given by the criterion is the
-candidate, whose finite-cut receiving is (R4). -/
+/-- **(R4) from the continuation criterion**, under (R1) (`hrec`) and forcing donors at every
+`ξ < ω₁` (`hF`; compiled in this repository (theorem named), `forcingDonors_blockStage`), the first
+still to be proved: the model expansion given by the criterion is the candidate, whose finite-cut
+receiving is (R4). -/
 theorem stableCappedReceiving_of_continuationCriterion (hcont : ContinuationCriterion.{w})
     (hrec : FiniteCutReceiving.{w}) (hF : ∀ ξ < ω₁, ForcingDonors.{0} ξ) :
     StableCappedReceiving.{w} :=
@@ -105,7 +106,7 @@ theorem stableCappedReceiving_of_continuationCriterion (hcont : ContinuationCrit
 
 /-- **(R4) is the continuation criterion**, under (R1) (`hrec`), forcing donors at every `ξ < ω₁`
 (`hF`) and the coface instances at every `λ_{ξ+1}`, `ξ < ω₁` (`hinst`), the first still to be
-proved, the other two compiled (`forcingDonors_of_blockStage`,
+proved, the other two compiled in this repository (theorem named) (`forcingDonors_blockStage`,
 `StageType.hasApexCoatomExtensions_blockStage`). -/
 theorem stableCappedReceiving_iff_continuationCriterion (hrec : FiniteCutReceiving.{w})
     (hF : ∀ ξ < ω₁, ForcingDonors.{0} ξ)

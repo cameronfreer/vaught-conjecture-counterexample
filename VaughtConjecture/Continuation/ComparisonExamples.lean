@@ -25,7 +25,8 @@ import VaughtConjecture.Continuation.Comparison
   (`Realization.exactReceivingWithin_isTopFree`) and directly
   (`exists_reconstruct_eval_eq_of_isTopFree`).  Such a structure is assumed here; its existence
   (`exists_isFraisseLimit_topFreeAge`) needs the coatom extension property
-  `StageType.HasCoatomExtensions`, which is not proved.
+  `StageType.HasCoatomExtensions`, compiled in this repository (theorem named) at every stage that
+  is zero or a limit (`StageType.hasCoatomExtensions`).
 * **Closure of the residual family.**  The legal stage types of top grade at most `K` are closed
   under the face maps and under reindexing.
 -/

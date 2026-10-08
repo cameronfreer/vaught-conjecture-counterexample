@@ -9,14 +9,18 @@ import VaughtConjecture.Extension.ProfileTower
 # The completion below the full grade at every arity
 
 Roadmap, Layer 3, 3.1, (R6), checkpoint 2.7 (the completion below the full grade, at every arity
-`m`; the case `m = 3` is `VaughtConjecture.Extension.TowerProfileCompletion`).
+`m ≥ 3`, `m = 3` included; `VaughtConjecture.Extension.TowerProfileCompletion` is the first
+instance, at `m = 3`, kept as a test, and `Seed.nonempty_completionBelowFullGrade` does not go
+through it).
 
-Let `I` be a seed on `m + 2` points and `N` a good level at the grade `m`
-(`ProfileTower.Lvl.Good`, `VaughtConjecture.Extension.ProfileTower`) that extends at `⊥` from the
-two coatoms at the grade `m` (`ProfileTower.Lvl.HasBotExtension`).  **The top layer**
-(`ProfileTower.Lvl.top`) is the canonical field layer at the grade `m + 1` over `N`
-(`Scheme.fieldLayer`); no bottom apex is assumed.  Every field of `CompletionBelowFullGrade` is
-proved (`ProfileTower.Lvl.Good.completion`); compiled in this repository (theorem named):
+Let `I` be a seed on `m + 2` points and `N` a good level at the grade `m` (a level satisfying the
+invariant `ProfileTower.Lvl.Good`, `VaughtConjecture.Extension.ProfileTower`) that extends at `⊥`
+from the two coatoms at the grade `m` (`ProfileTower.Lvl.HasBotExtension`).  **The top layer**
+(`ProfileTower.Lvl.top`) is the canonical field layer at the grade `m + 1` over `N` (one cell of
+full scope and grade `m + 1` for each orbit-canonical labelling lawful below the full face at that
+grade, with its field row; `Scheme.fieldLayer`); no bottom apex is assumed.  Every field of
+`CompletionBelowFullGrade` is proved (`ProfileTower.Lvl.Good.completion`); compiled in this
+repository (theorem named):
 
 * the old cells: a lower embedding keeping scopes and rows, every cell of proper scope old, the
   faces those of the amalgam (`ProfileTower.Lvl.Good.isLowerEmbedding_top`,
@@ -24,9 +28,9 @@ proved (`ProfileTower.Lvl.Good.completion`); compiled in this repository (theore
 * **legality below the full grade** (`ProfileTower.Lvl.Good.isLegalBelowFullGrade_top`): well
   formed, coded and consistent, complete below the grade `m + 2`
   (`ProfileTower.Lvl.Good.exists_gradedIndex_eq_top`), and bountiful
-  (`ProfileTower.Lvl.Good.isBountiful_top`, `CellScheme.Rows.isBountiful_of_coatoms`): off the
-  full face the lifts are those of the amalgam; from either coatom into the full face, at the
-  grades `j ≤ m` the lifts of the level, and at the grade `m + 1` the one-grade lift
+  (`ProfileTower.Lvl.Good.isBountiful_top`, `CellScheme.Rows.isBountiful_of_coatoms`): off the full
+  face the lifts are those of the amalgam; from either coatom into the full face, at the grades
+  `j ≤ m` the lifts of the level, and at the grade `m + 1` the one-grade lift
   (`ProfileTower.Lvl.Good.cappedLift_top_succ`) with the extension at `⊥`
   (`ProfileTower.Lvl.Good.extendsFromBoundary_bot_top`) and, at the caps short at `m + 1`, the
   extension that lifts within the other coatom from the grade `m`, the common face on `m` points
@@ -35,19 +39,19 @@ proved (`ProfileTower.Lvl.Good.completion`); compiled in this repository (theore
 * the lawful labelling extending the glued one (`ProfileTower.Lvl.Good.exists_isLawful_top`).
 
 The level at the grade `m ≥ 3` is the next level of the good level at `m - 1`, so it is good and
-extends at `⊥` (`ProfileTower.Lvl.Good.next`, `ProfileTower.Lvl.Good.hasBotExtension_next`).
-Hence **every seed on `m + 2 ≥ 5` points has a completion below the full grade**
-(`ProfileTower.nonempty_completionBelowFullGrade_of_three_le`), and with the completion of the
-tower at `m ≤ 2`, **every seed has one** (`Seed.nonempty_completionBelowFullGrade`).  So **the
-coatom extension property with apex holds at every stage that is zero or a limit**
+extends at `⊥` (`ProfileTower.Lvl.Good.next`, `ProfileTower.Lvl.Good.hasBotExtension_next`).  Hence
+**every seed on `m + 2 ≥ 5` points has a completion below the full grade**
+(`ProfileTower.nonempty_completionBelowFullGrade_of_three_le`), and with the completion of the tower
+at `m ≤ 2`, **every seed has one** (`Seed.nonempty_completionBelowFullGrade`).  So **the coatom
+extension property with apex holds at every stage that is zero or a limit**
 (`StageType.hasApexCoatomExtensions`, through
 `StageType.HasApexCoatomExtensions.of_completionBelowFullGrade`); compiled in this repository
 (theorem named), with the single hypothesis `Order.IsSuccPrelimit α`.
 
 ## Placement
 
-Checkpoint 2.7 of the completion of the coatom extension construction (`roadmap/README.md`,
-Layer 3, 3.1, under "(R6)").
+Checkpoint 2.7 of the completion of the coatom extension construction (`roadmap/README.md`, Layer 3,
+3.1, under "(R6)").
 -/
 
 universe u
@@ -58,23 +62,23 @@ open Finset Label CellScheme
 
 variable {α : Ordinal.{u}} {m : ℕ} {I : Seed.{u} α m}
 
-/-- **The top layer** over a level at the grade `m`: the canonical field layer at the grade
-`m + 1`. -/
+/-- **The top layer** over a level at the grade `m`: the canonical field layer at the grade `m + 1`.
+-/
 noncomputable abbrev Lvl.top (N : Lvl I m) : Scheme.{u} (m + 2) := N.S.fieldLayer (m + 1) N.not_le
 
 section Top
 
 variable {N : Lvl I m}
 
-/-- **The boundary labelling at the grade `m + 1`, completed on a good level at the grade `m`.**
-Let `C = univ.erase x`, `D = univ.erase y` be the two coatoms, `w` a labelling of the level lawful
-below `(C, m + 1)` and `(univ, m)`, and `a` a lawful section of it agreeing with `w` capped at `h`
+/-- **The boundary labelling at the grade `m + 1`, completed on a good level at the grade `m`.** Let
+`C = univ.erase x`, `D = univ.erase y` be the two coatoms, `w` a labelling of the level lawful below
+`(C, m + 1)` and `(univ, m)`, and `a` a lawful section of it agreeing with `w` capped at `h`
 (self-visible at `m + 1`) on the cells below `(C, m + 1)` or `(univ, m)`.  Some labelling lawful
-below `(univ, m + 1)` is `w` on those cells and agrees with `a` capped at `h` below
-`(univ, m + 1)`: below `(D, m + 1)` there are only old cells, where the boundary labelling is
-lifted within `D` from the grade `m` (`Seed.exists_lift_union_of_le`: the common face carries no
-cell of the grade `m + 1`), and the three pieces are glued
-(`CellScheme.Rows.IsLawfulBelow.glue₃`, `Lvl.Good.mem_below_cover`). -/
+below `(univ, m + 1)` is `w` on those cells and agrees with `a` capped at `h` below `(univ, m + 1)`:
+below `(D, m + 1)` there are only old cells, where the boundary labelling is lifted within `D` from
+the grade `m` (`Seed.exists_lift_union_of_le`: the common face carries no cell of the grade
+`m + 1`), and the three pieces are glued (`CellScheme.Rows.IsLawfulBelow.glue₃`,
+`Lvl.Good.mem_below_cover`). -/
 theorem Lvl.Good.exists_isLawfulBelow_top (hN : N.Good) {x y : Fin (m + 2)}
     (hx : x ∈ (Pts : Finset (Fin (m + 2)))) (hy : y ∈ (Pts : Finset (Fin (m + 2))))
     (hxy : x ≠ y) {w : Fin N.S.card → Label.{u}}
@@ -153,8 +157,8 @@ theorem Lvl.Good.exists_isLawfulBelow_top (hN : N.Good) {x y : Fin (m + 2)}
       rw [hv't t]
       exact hva t
 
-/-- **Extension from the boundary at the grade `m + 1`, at a short positive cap**, along the row
-of every cell of the top layer: the boundary labelling is completed on the level
+/-- **Extension from the boundary at the grade `m + 1`, at a short positive cap**, along the row of
+every cell of the top layer: the boundary labelling is completed on the level
 (`Lvl.Good.exists_isLawfulBelow_top`) and extended through the new cells
 (`Scheme.extendsFromBoundary_fieldLayer_of_fill`). -/
 theorem Lvl.Good.extendsFromBoundary_top (hN : N.Good) {x y : Fin (m + 2)}
@@ -171,8 +175,8 @@ theorem Lvl.Good.extendsFromBoundary_top (hN : N.Good) {x y : Fin (m + 2)}
       (Scheme.mem_catalogue.mp ha).1 hh hag) hu
 
 /-- **Extension at the cap `⊥` through the top layer** from the two coatoms at the grade `m + 1`:
-the restriction to the level is extended below `(univ, m)` (`Lvl.HasBotExtension`), glued with
-the old cells of the grade `m + 1`, and extended through the top layer
+the restriction to the level is extended below `(univ, m)` (`Lvl.HasBotExtension`), glued with the
+old cells of the grade `m + 1`, and extended through the top layer
 (`Scheme.exists_isLawfulBelow_fieldLayer`). -/
 theorem Lvl.Good.extendsFromBoundary_bot_top (hN : N.Good) (hB : N.HasBotExtension)
     {x y : Fin (m + 2)} (hx : x ∈ (Pts : Finset (Fin (m + 2))))
@@ -237,7 +241,8 @@ theorem Lvl.Good.extendsFromBoundary_bot_top (hN : N.Good) (hB : N.HasBotExtensi
     rw [Scheme.appendFullCellsScheme_scope_castAdd, hs] at this
     exact Seed.ne_univ_erase y (univ_subset_iff.mp this)
 
-/-! ### The lifts of the top layer -/
+/-! ### The lifts of the top layer
+-/
 
 /-- **Lifts below a pair not above `(univ, m + 1)`** are those of the level. -/
 theorem Lvl.cappedLift_top_iff {X Y : Finset (Fin (m + 2)) × ℕ} (hXY : X ≤ Y)
@@ -253,8 +258,7 @@ theorem Lvl.Good.cappedLift_top_old (hN : N.Good) {X Y : Finset (Fin (m + 2)) ×
   (Lvl.cappedLift_top_iff h fun h' ↦ hY1 (univ_subset_iff.mp h'.1)).mpr
     (hN.cappedLift_old hX hY hY1 h)
 
-/-- **The lifts at the grades `j ≤ m`**, from either coatom into `(univ, j)`
-(`Lvl.Good.lift`). -/
+/-- **The lifts at the grades `j ≤ m`**, from either coatom into `(univ, j)` (`Lvl.Good.lift`). -/
 theorem Lvl.Good.cappedLift_top_le (hN : N.Good) {x : Fin (m + 2)}
     (hx : x ∈ (Pts : Finset (Fin (m + 2)))) {j : ℕ} (hj : j ≤ m) :
     N.top.rows.CappedLift (X := (univ.erase x, j)) (Y := ((univ : Finset (Fin (m + 2))), j))
@@ -263,10 +267,9 @@ theorem Lvl.Good.cappedLift_top_le (hN : N.Good) {x : Fin (m + 2)}
 
 /-- **The lift at the grade `m + 1`**, from either coatom into `(univ, m + 1)`, by the one-grade
 lift with the boundary triples of the top step of the tower: at `⊥`, the two coatoms and their
-common face (`Lvl.Good.extendsFromBoundary_bot_top`); at the positive caps,
-`U = (C, m + 1)`, `V = (univ, m)`, `O = (C, m)`, with the lift at the grade `m`
-(`Lvl.Good.cappedLift_top_le`) and the extension that lifts within the other coatom
-(`Lvl.Good.extendsFromBoundary_top`). -/
+common face (`Lvl.Good.extendsFromBoundary_bot_top`); at the positive caps, `U = (C, m + 1)`,
+`V = (univ, m)`, `O = (C, m)`, with the lift at the grade `m` (`Lvl.Good.cappedLift_top_le`) and the
+extension that lifts within the other coatom (`Lvl.Good.extendsFromBoundary_top`). -/
 theorem Lvl.Good.cappedLift_top_succ (hN : N.Good) (hB : N.HasBotExtension) (hm : 1 ≤ m)
     {x : Fin (m + 2)} (hx : x ∈ (Pts : Finset (Fin (m + 2)))) :
     N.top.rows.CappedLift (X := (univ.erase x, m + 1))
@@ -312,7 +315,8 @@ theorem Lvl.Good.cappedLift_top_succ (hN : N.Good) (hB : N.HasBotExtension) (hm 
       fun d ↦ (Scheme.isShort_ne_top_row_fieldLayer (hS := N.not_le) i _).2,
       fun h hh hs hbot ↦ hN.extendsFromBoundary_top hx hy hxy hu hh hs hbot⟩
 
-/-! ### Legality below the full grade -/
+/-! ### Legality below the full grade
+-/
 
 /-- **The top layer is bountiful** (`CellScheme.Rows.isBountiful_of_coatoms`). -/
 theorem Lvl.Good.isBountiful_top (hN : N.Good) (hB : N.HasBotExtension) (hm : 1 ≤ m) :
@@ -352,8 +356,8 @@ theorem Lvl.Good.grade_top_lt (hN : N.Good) (z : Fin N.top.card) :
   | right i => rw [Scheme.appendFullCellsScheme_grade_natAdd]; omega
   | left z => rw [Scheme.appendFullCellsScheme_grade_castAdd]; exact hN.grade_lt z
 
-/-- **Completeness below the full grade**: every graded face of grade below `m + 2` carries a
-cell: an old cell off the ground set, at `(univ, j)` for `j ≤ m` a cell of the level
+/-- **Completeness below the full grade**: every graded face of grade below `m + 2` carries a cell:
+an old cell off the ground set, at `(univ, j)` for `j ≤ m` a cell of the level
 (`Lvl.Good.complete`), and at `(univ, m + 1)` a cell of the top layer. -/
 theorem Lvl.Good.exists_gradedIndex_eq_top (hN : N.Good) (X : Finset (Fin (m + 2)) × ℕ)
     (hX : X ∈ N.top.toCellScheme.gradedFaces) (hX2 : X.2 < m + 2) :
@@ -388,7 +392,8 @@ theorem Lvl.Good.isLegalBelowFullGrade_top (hN : N.Good) (hB : N.HasBotExtension
   grade_lt := hN.grade_top_lt
   exists_gradedIndex_eq := hN.exists_gradedIndex_eq_top
 
-/-! ### The completion -/
+/-! ### The completion
+-/
 
 /-- The old cells of the top layer. -/
 noncomputable def Lvl.topEmbed (N : Lvl I m) : Fin I.amalgam.card ↪o Fin N.top.card :=
@@ -469,9 +474,9 @@ theorem Lvl.Good.exists_isLawful_top (hN : N.Good) (hB : N.HasBotExtension) :
     rw [CellScheme.mem_below, hN.gradedIndex_topEmbed]
     exact ⟨h, by have := (hall (N.topEmbed d)).2; rwa [hN.gradedIndex_topEmbed] at this⟩
 
-/-- **The completion below the full grade over a good level at the grade `m`** that extends at
-`⊥`: the level and the canonical field layer at the grade `m + 1`, with the glued labelling
-extended (`Lvl.Good.exists_isLawful_top`). -/
+/-- **The completion below the full grade over a good level at the grade `m`** that extends at `⊥`:
+the level and the canonical field layer at the grade `m + 1`, with the glued labelling extended
+(`Lvl.Good.exists_isLawful_top`). -/
 noncomputable def Lvl.Good.completion (hN : N.Good) (hB : N.HasBotExtension) (hm : 1 ≤ m) :
     CompletionBelowFullGrade I where
   scheme := N.top
@@ -488,11 +493,12 @@ noncomputable def Lvl.Good.completion (hN : N.Good) (hB : N.HasBotExtension) (hm
 
 end Top
 
-/-! ### Every seed has a completion below the full grade -/
+/-! ### Every seed has a completion below the full grade
+-/
 
 /-- **Every seed on `m + 2 ≥ 5` points has a completion below the full grade**: the level at the
-grade `m` (`ProfileTower.lvl`, good by `ProfileTower.lvl_good` and `Lvl.Good.next`, extending at
-`⊥` by `Lvl.Good.hasBotExtension_next`) and the canonical field layer at the grade `m + 1`
+grade `m` (`ProfileTower.lvl`, good by `ProfileTower.lvl_good` and `Lvl.Good.next`, extending at `⊥`
+by `Lvl.Good.hasBotExtension_next`) and the canonical field layer at the grade `m + 1`
 (`Lvl.Good.completion`). -/
 theorem nonempty_completionBelowFullGrade_of_three_le (I : Seed.{u} α m) (hm : 3 ≤ m) :
     Nonempty (CompletionBelowFullGrade I) := by
@@ -504,8 +510,8 @@ end VaughtConjecture.ProfileTower
 
 namespace VaughtConjecture
 
-/-- **Every seed has a completion below the full grade**, at every arity `m`: the completion of
-the tower at `m ≤ 2` (`Seed.nonempty_completionBelowFullGrade_of_le_two`), and the levels of
+/-- **Every seed has a completion below the full grade**, at every arity `m`: the completion of the
+tower at `m ≤ 2` (`Seed.nonempty_completionBelowFullGrade_of_le_two`), and the levels of
 rank-normalized profiles with the top field layer at `m ≥ 3`
 (`ProfileTower.nonempty_completionBelowFullGrade_of_three_le`). -/
 theorem Seed.nonempty_completionBelowFullGrade {α : Ordinal.{u}} {m : ℕ} (I : Seed.{u} α m) :

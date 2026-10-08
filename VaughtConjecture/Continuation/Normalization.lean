@@ -59,12 +59,13 @@ family of rooted covers is not needed by any statement here and is not formalize
   `λ_η` has the reduction of the donor (`StageType.reduce_eq_of_mem_receivingFamily`).  This is not
   exact projected receiving (semantic contract, item 12).
 * **Forcing donors** (`ForcingDonors η`), a finite statement about legal stage types with no
-  realization: whenever a legal `t` at `λ_{η+1}` has label at least `λ_η + n` at a cell `d`
-  reducing to the formal top, some legal `D` at `λ_{η+1}` has `t` as its face along some `g`, and
-  `(D↓λ_η, g)` forces `n` at `d`.  It is still to be proved: a finite construction of Layer 3 (new
-  points, a full-scope cell tied to `d` by its row, and completeness above it), to be built from
-  the completion below the full grade (Layer 3), without (R1).  Its case `n ≤` the grade of `d`
-  holds with `D = t` by the order law (`StageType.forcesThreshold_of_le_grade`).
+  realization: whenever a legal `t` at `λ_{η+1}` has label at least `λ_η + n` at a cell `d` reducing
+  to the formal top, some legal `D` at `λ_{η+1}` has `t` as its face along some `g`, and
+  `(D↓λ_η, g)` forces `n` at `d`.  It is compiled in this repository (theorem named) at every block
+  index (`forcingDonors_blockStage`): a finite construction of Layer 3 (new points, a full-scope
+  cell tied to `d` by its row, and completeness above it), from the coatom extension property
+  (`forcingDonors_of_hasCoatomExtensions`), without (R1).  Its case `n ≤` the grade of `d` holds
+  with `D = t` by the order law (`StageType.forcesThreshold_of_le_grade`).
 * **The threshold lemma** (`Realization.le_label_iff_exists_forcesThreshold`): for `R` exactly
   consistent, with legal types and finite-extension receiving, and given forcing donors at `η`,
   `λ_η + n ≤ t.label d` exactly when some rooted cover of `c` in `R↓λ_η` forces `n` at `d`.  The
@@ -79,9 +80,10 @@ family of rooted covers is not needed by any statement here and is not formalize
 
 **Conditional and unconditional.**  Soundness is unconditional.  Completeness — the threshold
 lemma, normalization of labels and determination by the reduction — is conditional on
-finite-extension receiving of the realizations at `λ_{η+1}`, which follows from (R1) of the table
-of Layer 3 (finite-cut receiving of models; still to be proved), and on forcing donors at `η`
-(still to be proved).  The four extension clauses of a model enter only through (R1).
+finite-extension receiving of the realizations at `λ_{η+1}`, which follows from (R1) of the table of
+Layer 3 (finite-cut receiving of models; still to be proved), and on forcing donors at `η` (compiled
+in this repository (theorem named) at every block index, `forcingDonors_blockStage`).  The four
+extension clauses of a model enter only through (R1).
 
 **What is not assumed or claimed.**
 
@@ -139,11 +141,12 @@ end Realization
 
 /-- **Forcing donors** at the block index `η`: for every legal stage type `t` at `λ_{η+1}`, every
 cell `d` of `t` reducing to the formal top at `λ_η` and every `n` with `λ_η + n ≤ t.label d`, some
-legal stage type `D` at `λ_{η+1}` has `t` as its face along some `g`, and `(D↓λ_η, g)` forces `n`
-at `d`.  A finite statement about stage types, with no realization.  It is still to be proved.  It
-is derived from the coatom extension property at the next block stage `λ_{η+1}`
-(`forcingDonors_of_hasCoatomExtensions`, in `VaughtConjecture.Extension.ForcingDonorsCoatom`), by
-a finite construction of Layer 3 without (R1) and without a completion. -/
+legal stage type `D` at `λ_{η+1}` has `t` as its face along some `g`, and `(D↓λ_η, g)` forces `n` at
+`d`.  A finite statement about stage types, with no realization, compiled in this repository
+(theorem named) at every block index (`forcingDonors_blockStage`).  It is derived from the coatom
+extension property at the next block stage `λ_{η+1}` (`forcingDonors_of_hasCoatomExtensions`, in
+`VaughtConjecture.Extension.ForcingDonorsCoatom`), by a finite construction of Layer 3 without (R1)
+and without a completion. -/
 def ForcingDonors (η : Ordinal.{u}) : Prop :=
   ∀ ⦃k : ℕ⦄ (t : StageType.{u} (blockStage (η + 1)) k), t.IsLegal → ∀ d : Fin t.card,
     (t.reduce (isSuccPrelimit_blockStage η)).label d = ⊤ → ∀ n : ℕ,
@@ -165,12 +168,12 @@ variable {η : Ordinal.{u}} {R : Realization.{u, v} (blockStage (η + 1)) M}
   {t : StageType.{u} (blockStage (η + 1)) k} {c : Fin k → M}
 
 /-- **The threshold lemma**, conditional on finite-extension receiving (from (R1), still to be
-proved) and on forcing donors at `η` (compiled at every block index, `forcingDonors_of_blockStage`):
-if `c` covers `t` in `R` and the cell
-`d` of `t` reduces to the formal top at `λ_η`, then the label of `d` is at least `λ_η + n` exactly
-when some rooted cover of `c` in the reduction of `R` to `λ_η` forces `n` at `d`.  Hypotheses by
-use: `hR` (soundness, from right to left); `hl`, `hd` and `hF` (the donor, from left to right);
-`hrec` (realizing the donor's reduction, from left to right); `hc` (both directions). -/
+proved) and on forcing donors at `η` (compiled in this repository (theorem named) at every block
+index, `forcingDonors_blockStage`): if `c` covers `t` in `R` and the cell `d` of `t` reduces to the
+formal top at `λ_η`, then the label of `d` is at least `λ_η + n` exactly when some rooted cover of
+`c` in the reduction of `R` to `λ_η` forces `n` at `d`.  Hypotheses by use: `hR` (soundness, from
+right to left); `hl`, `hd` and `hF` (the donor, from left to right); `hrec` (realizing the donor's
+reduction, from left to right); `hc` (both directions). -/
 theorem le_label_iff_exists_forcesThreshold (hR : R.IsConsistent) (hl : R.HasLegalTypes)
     (hrec : R.HasFiniteExtensionReceiving) (hF : ForcingDonors.{u} η) (hc : R.Covers t c)
     (d : Fin t.card) (hd : (t.reduce (isSuccPrelimit_blockStage η)).label d = ⊤) (n : ℕ) :
@@ -250,10 +253,10 @@ variable {η : Ordinal.{u}} {R : Realization.{u, v} (blockStage (η + 1)) M}
   {t : StageType.{u} (blockStage (η + 1)) k} {c : Fin k → M}
 
 /-- **Normalization of labels**, conditional on finite-extension receiving (from (R1), still to be
-proved) and on forcing donors at `η` (compiled at every block index, `forcingDonors_of_blockStage`):
-at a cover `c` of `t` in `R`, the label
-of a cell of `t` reducing to the formal top at `λ_η` is its stable label, computed in the reduction
-of `R` to `λ_η` from the root `t↓λ_η`. -/
+proved) and on forcing donors at `η` (compiled in this repository (theorem named) at every block
+index, `forcingDonors_blockStage`): at a cover `c` of `t` in `R`, the label of a cell of `t`
+reducing to the formal top at `λ_η` is its stable label, computed in the reduction of `R` to `λ_η`
+from the root `t↓λ_η`. -/
 theorem label_eq_stableLabel (hR : R.IsConsistent) (hl : R.HasLegalTypes)
     (hrec : R.HasFiniteExtensionReceiving) (hF : ForcingDonors.{u} η) (hc : R.Covers t c)
     (d : Fin t.card) (hd : (t.reduce (isSuccPrelimit_blockStage η)).label d = ⊤) :
@@ -265,10 +268,10 @@ theorem label_eq_stableLabel (hR : R.IsConsistent) (hl : R.HasLegalTypes)
         (coe_add_le_stableLabel_iff (hc.reduce _) hd).symm
 
 /-- **Determination by the reduction**, conditional on finite-extension receiving of both
-realizations (from (R1), still to be proved) and on forcing donors at `η` (compiled at every block
-index, `forcingDonors_of_blockStage`): two
-exactly consistent realizations at `λ_{η+1}` with legal types and equal reductions to `λ_η` are
-equal.  No uniqueness or coherence of expansions is assumed. -/
+realizations (from (R1), still to be proved) and on forcing donors at `η` (compiled in this
+repository (theorem named) at every block index, `forcingDonors_blockStage`): two exactly consistent
+realizations at `λ_{η+1}` with legal types and equal reductions to `λ_η` are equal.  No uniqueness
+or coherence of expansions is assumed. -/
 theorem eq_of_reduce_eq_of_forcingDonors (hF : ForcingDonors.{u} η)
     {R' : Realization.{u, v} (blockStage (η + 1)) M} (hR : R.IsConsistent)
     (hR' : R'.IsConsistent) (hl : R.HasLegalTypes) (hl' : R'.HasLegalTypes)

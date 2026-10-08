@@ -51,10 +51,11 @@ open Ordinal
 
 namespace Expansion
 
-/-- **Determination of models at a block stage by their reduction**, conditional on
-finite-extension receiving of models (from (R1), still to be proved) and on forcing donors at `ξ`
-(still to be proved): two models at `λ_{ξ+1}`, `ξ < ω₁`, with equal reductions to `λ_ξ` are
-equal.  Receiving applies at `λ_{ξ+1}`, a countable limit stage. -/
+/-- **Determination of models at a block stage by their reduction**, conditional on finite-extension
+receiving of models (from (R1), still to be proved) and on forcing donors at `ξ` (compiled in this
+repository (theorem named) at every block index, `forcingDonors_blockStage`): two models at
+`λ_{ξ+1}`, `ξ < ω₁`, with equal reductions to `λ_ξ` are equal.  Receiving applies at `λ_{ξ+1}`, a
+countable limit stage. -/
 theorem FiniteExtensionReceiving.eq_of_reduce_eq_of_forcingDonors
     (hrec : FiniteExtensionReceiving.{w}) {ξ : Ordinal.{0}} (hF : ForcingDonors.{0} ξ)
     (hξ : ξ < ω₁) {M : Type w} {R R' : Realization.{0, w} (blockStage (ξ + 1)) M}
@@ -68,8 +69,8 @@ theorem FiniteExtensionReceiving.eq_of_reduce_eq_of_forcingDonors
 
 /-- **Next-block uniqueness from finite-cut receiving and forcing donors**: (R1) of the table of
 Layer 3 (`hrec`, still to be proved) and forcing donors at every countable block index (`hF`;
-compiled, `forcingDonors_of_blockStage`) give next-block uniqueness of models on the carriers in the
-universe `w`. -/
+compiled in this repository (theorem named), `forcingDonors_blockStage`) give next-block uniqueness
+of models on the carriers in the universe `w`. -/
 theorem NextBlockUniqueness.of_forcingDonors (hrec : FiniteCutReceiving.{w})
     (hF : ∀ ξ < ω₁, ForcingDonors.{0} ξ) : NextBlockUniqueness.{w} :=
   ⟨fun hξ _ _ hR hR' h ↦

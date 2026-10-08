@@ -12,18 +12,17 @@ import VaughtConjecture.Extension.ThinCompletionTLTL
 Two compiled instances of `ProfileTower.nonempty_completionBelowFullGrade_of_three_le`:
 
 * at `m = 3`, the asymmetric seed `seedL`, where the step of the tower fails at the grade `3`
-  (`TwoFaceLiftExistsCounterexample.not_towerInvariant_three_seedL`), has the completion through
-  the levels of rank-normalized profiles (`ProfileTowerExamples.seedL_completion`);
+  (`TwoFaceLiftExistsCounterexample.not_towerInvariant_three_seedL`), has the completion through the
+  levels of rank-normalized profiles (`ProfileTowerExamples.seedL_completion`);
 * at `m = 4`, the seed `ProfileTowerExamples.seed6 hα` on six points: its coatom types are legal
-  stage types on five points with face `TL` along `Fin.castSuccEmb`, the coatom extensions with
-  apex of `seedL` and of `seedLL` (`TowerProfile.completion`,
+  stage types on five points with face `TL` along `Fin.castSuccEmb`, the coatom extensions with apex
+  of `seedL` and of `seedLL` (`TowerProfile.completion`,
   `CompletionBelowFullGrade.exists_coatomExtension`).  Their faces along
-  `extendByLast Fin.castSuccEmb` are `T5` and `TL` (`ProfileTowerExamples.seed6_faces`), so the
-  two coatoms of the seed carry different types on the second point set.  It has a completion
-  below the full grade and the coatom extension with apex (`ProfileTowerExamples.seed6_completion`,
-  `ProfileTowerExamples.exists_coatomExtension_seed6`); compiled in this repository (theorem
-  named).
--/
+  `extendByLast Fin.castSuccEmb` are `T5` and `TL` (`ProfileTowerExamples.seed6_faces`), so the two
+  coatoms of the seed carry different types on the second point set.  It has a completion below the
+  full grade and the coatom extension with apex (`ProfileTowerExamples.seed6_completion`,
+  `ProfileTowerExamples.exists_coatomExtension_seed6`); compiled in this repository (theorem named).
+  -/
 
 universe u
 
@@ -64,8 +63,8 @@ noncomputable def seed6 (hα : Order.IsSuccPrelimit α) : Seed.{u} α 4 :=
     (exists_extension_seedLL hα).choose_spec.1
     (exists_extension_seedL hα).choose_spec.2.1 (exists_extension_seedLL hα).choose_spec.2.1
 
-/-- The faces of the two coatom types of `seed6` along `extendByLast Fin.castSuccEmb` are `T5`
-and `TL`. -/
+/-- The faces of the two coatom types of `seed6` along `extendByLast Fin.castSuccEmb` are `T5` and
+`TL`. -/
 theorem seed6_faces (hα : Order.IsSuccPrelimit α) :
     StageType.restrictFace (extendByLast Fin.castSuccEmb) (seed6 hα).left =
         some (CaseSplitCounterexample.T5 α) ∧
