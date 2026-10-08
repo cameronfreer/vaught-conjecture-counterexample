@@ -3,6 +3,7 @@ Copyright (c) 2026 Cameron Freer. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
+import VaughtConjecture.Continuation.TopGradeTruncation
 import VaughtConjecture.Extension.ForcingDonorsCoatom
 import VaughtConjecture.Extension.PrescribedFullRows
 import VaughtConjecture.Extension.ProfileTowerCompletion
@@ -26,6 +27,9 @@ this repository (theorem named), with the hypotheses listed:
   (`StageType.hasApexCoatomExtensions_blockStage`), and at every stage that is zero or a limit the
   plain coatom extension property (`StageType.hasCoatomExtensions`) and the exact pinned extension
   (`StageType.exists_pinned_extension_of_isSuccPrelimit`; row 6 of the table of Layer 3, 3.4),
+  and at a limit stage its truncation above a bound `K` on the top grades of its two faces
+  (`StageType.exists_pinned_extension_topGrade_le`, from
+  `StageType.exists_truncation_topGrade_le`),
   and the compatibility of the empty prescription (`StageType.hasCompatibleEmptyPrescription`);
   no hypothesis besides the stage;
 * forcing donors at every block index (`forcingDonors_blockStage`); no hypothesis;
@@ -75,6 +79,22 @@ theorem StageType.exists_pinned_extension_of_isSuccPrelimit {α : Ordinal.{u}} {
     ∃ Q : StageType.{u} α (n + 1), Q.IsLegal ∧ restrictFace Fin.castSuccEmb Q = some P ∧
       restrictFace (extendByLast f) Q = some d :=
   exists_pinned_extension (hasCoatomExtensions hα) hP hPf hd hdp
+
+/-- **The bounded pinned extension**: at a limit stage, for a legal `P` of top grade at most `K`, a
+closed face `f` of `P` with restriction `p`, and a legal coface `d` of `p` of top grade at most `K`,
+some legal one-point extension `Q` of `P` of top grade at most `K` has the face `d` along
+`extendByLast f`.  The exact pinned extension, truncated above `K`. -/
+theorem StageType.exists_pinned_extension_topGrade_le {α : Ordinal.{u}} {n m : ℕ}
+    (hα : Order.IsSuccLimit α) {P : StageType.{u} α n} (hP : P.IsLegal) {f : Fin m ↪ Fin n}
+    {p : StageType.{u} α m} {d : StageType.{u} α (m + 1)} (hPf : restrictFace f P = some p)
+    (hd : d.IsLegal) (hdp : restrictFace Fin.castSuccEmb d = some p) {K : ℕ}
+    (hPK : P.topGrade ≤ K) (hdK : d.topGrade ≤ K) :
+    ∃ Q : StageType.{u} α (n + 1), Q.IsLegal ∧ restrictFace Fin.castSuccEmb Q = some P ∧
+      restrictFace (extendByLast f) Q = some d ∧ Q.topGrade ≤ K := by
+  obtain ⟨Q₀, hQ₀, hQP, hQd⟩ :=
+    exists_pinned_extension_of_isSuccPrelimit hα.isSuccPrelimit hP hPf hd hdp
+  obtain ⟨Q, -, hQl, hQK, hQf⟩ := exists_truncation_topGrade_le hα Q₀ K
+  exact ⟨Q, hQl.mpr hQ₀, hQf _ _ hQP hPK, hQf _ _ hQd hdK, hQK⟩
 
 /-- **The empty prescription is compatible at every stage that is zero or a limit**
 (`StageType.HasCoatomExtensions.hasCompatibleEmptyPrescription`). -/
