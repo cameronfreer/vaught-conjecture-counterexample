@@ -453,6 +453,17 @@ theorem IsMarkedCapContext.not_isTopFree {t' : StageType.{u} α k} {h : Fin n �
     (ht : t'.IsMarkedCapContext h) : ¬ t'.IsTopFree :=
   fun htf ↦ let ⟨c, _, hc, _⟩ := ht; htf c hc.2.1
 
+/-- **The root of a marked-cap context is not onto**: its top cap has grade above `n + 1`, at most
+the number `k` of points of the context, so `n < k`. -/
+theorem IsMarkedCapContext.not_surjective {t' : StageType.{u} α k} {h : Fin n ↪ Fin k}
+    (ht : t'.IsMarkedCapContext h) :
+    ¬ Function.Surjective h := by
+  obtain ⟨c, -, -, -, hn, -⟩ := ht
+  intro hs
+  have hkn : k ≤ n := by simpa using Fintype.card_le_of_surjective h hs
+  have := t'.grade_le c
+  omega
+
 /-- A top-free stage type is a marked-cap context along no embedding. -/
 theorem not_isMarkedCapContext_of_isTopFree {t' : StageType.{u} α k} (ht : t'.IsTopFree)
     (h : Fin n ↪ Fin k) : ¬ t'.IsMarkedCapContext h :=

@@ -74,17 +74,6 @@ namespace VaughtConjecture
 
 open Ordinal hiding univ
 
-/-- **The root of a marked-cap context is not onto**: its top cap has grade above `n + 1`, at most
-the number `k` of points of the context, so `n < k`. -/
-theorem StageType.IsMarkedCapContext.not_surjective {α : Ordinal.{u}} {n k : ℕ}
-    {t' : StageType.{u} α k} {h : Fin n ↪ Fin k} (ht : t'.IsMarkedCapContext h) :
-    ¬ Function.Surjective h := by
-  obtain ⟨c, -, -, -, hn, -⟩ := ht
-  intro hs
-  have hkn : k ≤ n := by simpa using Fintype.card_le_of_surjective h hs
-  have := t'.grade_le c
-  omega
-
 namespace MainTheorem
 
 open FirstOrder Language baseLanguage Realization StageType

@@ -12,8 +12,8 @@ Roadmap, Layer 3 ((R3) of the table of 3.4: the marked-cap context of the hollow
 
 Reindexing a stage type along a bijection `σ` of its points keeps every cell
 (`Scheme.surjective_cellMap_equiv`), with its label, its grade, and the rows between cells
-(`StageType.rowAt_reindex`).  So the marked-cap context (`StageType.IsMarkedCapContext`) is
-invariant under relabelling, with the root relabelled along
+(`StageType.rowAt_reindex`, in `VaughtConjecture.Stage.Basic`).  So the marked-cap context
+(`StageType.IsMarkedCapContext`) is invariant under relabelling, with the root relabelled along
 (`StageType.IsMarkedCapContext.reindex`).  Each item is compiled in this repository (theorem
 named).
 
@@ -31,30 +31,6 @@ open Finset Label
 namespace StageType
 
 variable {α : Ordinal.{u}} {n k : ℕ}
-
-/-- **Rows under reindexing**: the row of a cell of `t.reindex σ` at a cell is the row of the
-corresponding cells of `t`. -/
-theorem rowAt_reindex (t : StageType.{u} α k) (σ : Equiv.Perm (Fin k))
-    (i j : Fin (t.reindex σ).card) :
-    (t.reindex σ).rowAt i j =
-      t.rowAt (t.toScheme.cellMap σ.toEmbedding i) (t.toScheme.cellMap σ.toEmbedding j) := by
-  have hle := t.toScheme.isLowerEmbedding_comap σ.toEmbedding
-  change (t.toScheme.comap σ.toEmbedding).rowAt i j = t.rowAt _ _
-  unfold Scheme.rowAt
-  split_ifs with h1 h2 h2
-  · rfl
-  · exact absurd ((hle.le_iff j i).mpr h1) h2
-  · exact absurd ((hle.le_iff j i).mp h2) h1
-  · rfl
-
-/-- **Below under reindexing**: a cell of `t.reindex σ` lies below another exactly when the
-corresponding cells of `t` do. -/
-theorem mem_below_reindex_iff (t : StageType.{u} α k) (σ : Equiv.Perm (Fin k))
-    (i j : Fin (t.reindex σ).card) :
-    j ∈ (t.reindex σ).toCellScheme.below ((t.reindex σ).toCellScheme.gradedIndex i) ↔
-      t.toScheme.cellMap σ.toEmbedding j ∈
-        t.toCellScheme.below (t.toCellScheme.gradedIndex (t.toScheme.cellMap σ.toEmbedding i)) :=
-  ((t.toScheme.isLowerEmbedding_comap σ.toEmbedding).le_iff j i).symm
 
 /-- **The marked-cap context is invariant under relabelling**: if `t'` is a marked-cap context
 along `h`, then `t'.reindex σ` is one along `h.trans σ⁻¹`.  The top cap, the marker and the cells

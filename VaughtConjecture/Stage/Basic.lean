@@ -388,6 +388,36 @@ theorem map_reindex_restrictFace (e : Fin k ≃ Fin m) :
   rw [restrictFace_equiv, ← Equiv.trans_toEmbedding, restrictFace_equiv] at h
   exact Option.some_injective _ h
 
+section ReindexRows
+
+variable {k : ℕ}
+
+/-- **Rows under reindexing**: the row of a cell of `t.reindex σ` at a cell is the row of the
+corresponding cells of `t`. -/
+theorem rowAt_reindex (t : StageType.{u} α k) (σ : Equiv.Perm (Fin k))
+    (i j : Fin (t.reindex σ).card) :
+    (t.reindex σ).rowAt i j =
+      t.rowAt (t.toScheme.cellMap σ.toEmbedding i) (t.toScheme.cellMap σ.toEmbedding j) := by
+  have hle := t.toScheme.isLowerEmbedding_comap σ.toEmbedding
+  change (t.toScheme.comap σ.toEmbedding).rowAt i j = t.rowAt _ _
+  unfold Scheme.rowAt
+  split_ifs with h1 h2 h2
+  · rfl
+  · exact absurd ((hle.le_iff j i).mpr h1) h2
+  · exact absurd ((hle.le_iff j i).mp h2) h1
+  · rfl
+
+/-- **Below under reindexing**: a cell of `t.reindex σ` lies below another exactly when the
+corresponding cells of `t` do. -/
+theorem mem_below_reindex_iff (t : StageType.{u} α k) (σ : Equiv.Perm (Fin k))
+    (i j : Fin (t.reindex σ).card) :
+    j ∈ (t.reindex σ).toCellScheme.below ((t.reindex σ).toCellScheme.gradedIndex i) ↔
+      t.toScheme.cellMap σ.toEmbedding j ∈
+        t.toCellScheme.below (t.toCellScheme.gradedIndex (t.toScheme.cellMap σ.toEmbedding i)) :=
+  ((t.toScheme.isLowerEmbedding_comap σ.toEmbedding).le_iff j i).symm
+
+end ReindexRows
+
 /-! ### Stage reduction -/
 
 /-- **Stage reduction** of a stage type to a stage `β` that is zero or a limit [Kni26, §3.1]: the

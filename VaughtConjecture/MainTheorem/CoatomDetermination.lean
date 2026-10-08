@@ -22,8 +22,10 @@ their **coatom forms**, in which the root lies in the first coatom `Fin.castSucc
 is the face of a coface `tb` of the coatom face.  Each item below is compiled in this repository
 (theorem named), unless marked otherwise.
 
-**Relabelling** (`StageType.extendPerm`, `StageType.reindex_extendPerm_symm_mem_cofaces`,
-`StageType.IsDeterminedWithin.reindex_extendPerm`).  For a permutation `σ` of the points of `t'`,
+**Relabelling** (`StageType.extendPerm`, in `VaughtConjecture.Extension.Basic`;
+`StageType.reindex_extendPerm_symm_mem_cofaces`, in `VaughtConjecture.Realization.Families`;
+`StageType.IsDeterminedWithin.reindex_extendPerm`, in
+`VaughtConjecture.Continuation.ExactReceiving`).  For a permutation `σ` of the points of `t'`,
 let `τ` be its extension fixing the new point.  A coface `D''` of `t'.reindex σ` gives the coface
 `D''.reindex τ⁻¹` of `t'`, and determination of `d` over `t'.reindex σ` along `h''` within the
 receiving family of `D''` at `δ` gives determination of `d` over `t'` along `h''.trans σ` within
@@ -74,78 +76,6 @@ namespace VaughtConjecture
 
 open Finset Label
 
-namespace StageType
-
-variable {α : Ordinal.{u}} {n k : ℕ}
-
-/-! ### Relabelling -/
-
-/-- The **extension of a permutation fixing the new point**. -/
-noncomputable def extendPerm (σ : Equiv.Perm (Fin k)) : Equiv.Perm (Fin (k + 1)) :=
-  permOfEmbedding (extendByLast σ.toEmbedding)
-
-@[simp] theorem extendPerm_castSucc (σ : Equiv.Perm (Fin k)) (i : Fin k) :
-    extendPerm σ i.castSucc = (σ i).castSucc := by
-  simp [extendPerm]
-
-@[simp] theorem extendPerm_last (σ : Equiv.Perm (Fin k)) : extendPerm σ (Fin.last k) = Fin.last k :=
-  by simp [extendPerm]
-
-theorem extendPerm_symm_castSucc (σ : Equiv.Perm (Fin k)) (i : Fin k) :
-    (extendPerm σ).symm i.castSucc = (σ.symm i).castSucc := by
-  rw [Equiv.symm_apply_eq, extendPerm_castSucc, Equiv.apply_symm_apply]
-
-/-- The first points followed by the extension are the permutation followed by the first points. -/
-theorem castSuccEmb_trans_extendPerm (σ : Equiv.Perm (Fin k)) :
-    Fin.castSuccEmb.trans (extendPerm σ).toEmbedding = σ.toEmbedding.trans Fin.castSuccEmb :=
-  Function.Embedding.ext fun i ↦ by simp
-
-/-- The first points followed by the inverse extension. -/
-theorem castSuccEmb_trans_extendPerm_symm (σ : Equiv.Perm (Fin k)) :
-    Fin.castSuccEmb.trans (extendPerm σ).symm.toEmbedding =
-      σ.symm.toEmbedding.trans Fin.castSuccEmb :=
-  Function.Embedding.ext fun i ↦ by simp [extendPerm_symm_castSucc]
-
-/-- A root followed by the new point, then the extension, is the relabelled root followed by the
-new point. -/
-theorem extendByLast_trans_extendPerm (σ : Equiv.Perm (Fin k)) (h : Fin n ↪ Fin k) :
-    (extendByLast h).trans (extendPerm σ).toEmbedding = extendByLast (h.trans σ.toEmbedding) := by
-  refine Function.Embedding.ext fun i ↦ ?_
-  induction i using Fin.lastCases with
-  | last => simp
-  | cast i => simp
-
-/-- **Cofaces relabel**: a coface `D''` of `t'.reindex σ` gives the coface `D''.reindex τ⁻¹` of
-`t'`, for the extension `τ` of `σ` fixing the new point. -/
-theorem reindex_extendPerm_symm_mem_cofaces {t' : StageType.{u} α k} {σ : Equiv.Perm (Fin k)}
-    {D'' : StageType.{u} α (k + 1)} (hD'' : D'' ∈ (t'.reindex σ).cofaces) :
-    D''.reindex (extendPerm σ).symm ∈ t'.cofaces := by
-  refine ⟨hD''.1.reindex _, ?_⟩
-  rw [restrictFace_reindex, castSuccEmb_trans_extendPerm_symm,
-    ← restrictFace_trans D'' _ _ hD''.2, restrictFace_equiv, reindex_reindex,
-    Equiv.symm_trans_self, reindex_refl]
-
-/-- **Determination relabels**: if `d` is determined over `t'.reindex σ` along `h''` within the
-receiving family of `D''` at `δ`, then `d` is determined over `t'` along `h''.trans σ` within the
-receiving family of `D''.reindex τ⁻¹` at `δ`, for the extension `τ` of `σ` fixing the new point.
-A member `q` of the second family with face `t'` reindexes along `τ` to a member of the first
-family with face `t'.reindex σ`. -/
-theorem IsDeterminedWithin.reindex_extendPerm {t' : StageType.{u} α k} {σ : Equiv.Perm (Fin k)}
-    {D'' : StageType.{u} α (k + 1)} {δ : Label.{u}} {h'' : Fin n ↪ Fin k}
-    {d : StageType.{u} α (n + 1)}
-    (hdet : IsDeterminedWithin (receivingFamily D'' δ) (t'.reindex σ) h'' d) :
-    IsDeterminedWithin (receivingFamily (D''.reindex (extendPerm σ).symm) δ) t'
-      (h''.trans σ.toEmbedding) d := by
-  intro q hq hqt
-  have hq' := reindex_mem_receivingFamily (extendPerm σ) hq
-  rw [reindex_reindex, Equiv.self_trans_symm, reindex_refl] at hq'
-  have hface : restrictFace Fin.castSuccEmb (q.reindex (extendPerm σ)) = some (t'.reindex σ) := by
-    rw [restrictFace_reindex, castSuccEmb_trans_extendPerm, ← restrictFace_trans q _ _ hqt,
-      restrictFace_equiv]
-  have h := hdet _ hq' hface
-  rwa [restrictFace_reindex, extendByLast_trans_extendPerm] at h
-
-end StageType
 namespace Realization
 
 open StageType

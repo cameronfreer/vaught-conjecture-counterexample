@@ -26,7 +26,8 @@ receiving models.  It is the argument of `Realization.residualReceiving_of_cutof
 with finite-cut receiving of every model at every limit stage replaced by finite-cut receiving of
 the given model.
 
-**Hollow cutoff determination** (`Realization.HollowCutoffDetermination`, a statement about stage
+**Hollow cutoff determination** (`Realization.HollowCutoffDetermination`, in
+`VaughtConjecture.Continuation.ExactReceiving`, a statement about stage
 types, open for every predicate of interest): cutoff determination without the bound on the top
 grade of the donor.  For every input, one coface `D'` of the context and one permitted cutoff `δ`
 are chosen, and then every member of the receiving family of `D'` at `δ` with face the context
@@ -78,34 +79,6 @@ theorem receivingResidualReceiving_of_cutoffDetermination
     rw [← hcc']
     exact exists_covers_snoc_of_isDeterminedWithin hR.isConsistent hc'
       (hrec.realizesOver_receivingFamily hc' hD' hδ) hdet'
-
-/-! ### Hollow cutoff determination -/
-
-/-- **Hollow cutoff determination** for `P`, a statement about stage types: at a limit stage, over
-every legal `t'` with `P t' h`, every one-point coface `d` of the face of `t'` along `h` is
-determined over `t'` along `h` within the receiving family, at a permitted cutoff, of some coface
-of `t'`.  The coface and the cutoff are chosen for the input, before any member of the family.
-The statement of `CutoffDetermination` without the bound on the top grade of `d`.  Not proved for
-any `P` here. -/
-structure HollowCutoffDetermination
-    (P : ∀ {α : Ordinal.{u}} {n k : ℕ}, StageType.{u} α k → (Fin n ↪ Fin k) → Prop) : Prop where
-  /-- Every coface of the face is determined at a cutoff. -/
-  exists_coface ⦃α : Ordinal.{u}⦄ ⦃n k : ℕ⦄ (t' : StageType.{u} α k) (h : Fin n ↪ Fin k) :
-    Order.IsSuccLimit α → t'.IsLegal → P t' h → ∀ t : StageType.{u} α n,
-      StageType.restrictFace h t' = some t → ∀ d ∈ t.cofaces,
-        ∃ D' ∈ t'.cofaces, ∃ δ : Label.{u}, IsPermittedCutoff α δ ∧
-          StageType.IsDeterminedWithin (StageType.receivingFamily D' δ) t' h d
-
-/-- **Scheme determination gives hollow cutoff determination**: the receiving family of `D'` at
-any cutoff lies in the stage types on the scheme of `D'`, and the cutoff `0` is permitted at every
-limit stage. -/
-theorem HollowCutoffDetermination.of_schemeDetermination
-    {P : ∀ {α : Ordinal.{u}} {n k : ℕ}, StageType.{u} α k → (Fin n ↪ Fin k) → Prop}
-    (h : SchemeDetermination.{u} P) : HollowCutoffDetermination.{u} P where
-  exists_coface α n k t' g hα ht' hP t ht d hd := by
-    obtain ⟨D', hD', hdet⟩ := h.exists_coface t' g hα ht' hP t ht d hd
-    exact ⟨D', hD', ((0 : Ordinal.{u}) : Label.{u}), isPermittedCutoff_coe.mpr hα.bot_lt,
-      hdet.mono fun _ hq ↦ hq.1⟩
 
 /-! ### (R3) for receiving models -/
 

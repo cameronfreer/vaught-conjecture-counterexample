@@ -13,7 +13,8 @@ Roadmap, Layer 3 ((R2) of the table of 3.4: the source-gap context of the residu
 
 Reindexing a stage type along a bijection `σ` of its points keeps every cell
 (`Scheme.surjective_cellMap_equiv`), with its label, its grade, the rows between cells
-(`StageType.rowAt_reindex`), and its top grade (`StageType.topGrade_reindex`).  So the source-gap
+(`StageType.rowAt_reindex`, in `VaughtConjecture.Stage.Basic`), and its top grade
+(`StageType.topGrade_reindex`, in `VaughtConjecture.Continuation.Terminal`).  So the source-gap
 context (`StageType.IsSourceGapContextAt`, `StageType.IsSourceGapContext`) is invariant under
 relabelling, with the root and the lost point relabelled along
 (`StageType.IsSourceGapContextAt.reindex`, `StageType.IsSourceGapContext.reindex`).  Each item is
@@ -33,16 +34,6 @@ open Finset Label
 namespace StageType
 
 variable {α : Ordinal.{u}} {n k : ℕ}
-
-/-- **The top grade under reindexing**: reindexing along a bijection keeps the cells labelled `⊤`
-with their grades. -/
-theorem topGrade_reindex (t : StageType.{u} α k) (σ : Equiv.Perm (Fin k)) :
-    (t.reindex σ).topGrade = t.topGrade := by
-  have hsurj := t.toScheme.surjective_cellMap_equiv σ
-  refine le_antisymm (topGrade_le_iff.mpr fun d hd ↦ grade_le_topGrade (t := t) hd)
-    (topGrade_le_iff.mpr fun d hd ↦ ?_)
-  obtain ⟨d', rfl⟩ := hsurj d
-  exact grade_le_topGrade (t := t.reindex σ) (d := d') hd
 
 /-- **The source-gap clauses are invariant under relabelling**: if `t'` satisfies them along `h`
 at the lost point `l`, the owner `o` and the lost top `r`, then `t'.reindex σ` satisfies them along
