@@ -27,7 +27,9 @@ everywhere, with correct splice.  Compiled in this file (theorem named):
   it is not one at the cut grade).  If `f` takes no value in `[h, c)` on the common face below the
   cut grade, `c ≥ M` self-visible, the capped lift at `c` from the common face along the raised
   `P` (bountifulness of the amalgam) is the donor raise below the cut grade.  This is the raise of
-  the new tops of grade below the cut grade, at the grade `1` for the small caps.
+  the new tops of grade below the cut grade, at the grade `1` for the small caps; with `c = ⊤`
+  when `f` is below `h` on the common face (`CapRequests.bandGapBelowAt_of_lt`, for instance `f`
+  is `⊥` there, the condition of the fill at the grade `1` of the reading layer).
 * **The top grade of the donor coatom** (`CapRequests.DonorTopLiftAt`, a named hypothesis: the
   lift from the union of the common face at the cut grade and the donor coatom below it);
   `CapRequests.donorRaiseBandAt_of_below_of_topLift`.  It holds when the common face has no cell
@@ -224,6 +226,20 @@ def BandGapBelowAt (K : ℕ) : Prop :=
       ∃ c : Label.{u}, IsSelfVisible K c ∧ h ≤ c ∧ r.markerValue f ≤ c ∧
         ∀ d ∈ I.amalgam.toCellScheme.below (univ.erase xp, K + 1),
           d ∈ I.amalgam.toCellScheme.below (univ.erase xd, K) → h ≤ f d → c ≤ f d
+
+/-- **The gap with `c = ⊤`**: if every prescription of the band is below `h` on the common face
+below the grade `K` (for instance `⊥` there), the gap holds with the cap `⊤`. -/
+theorem bandGapBelowAt_of_lt {K : ℕ}
+    (hlt : ∀ h : Label.{u}, IsSelfVisible (K + 1) h → IsShort (K + 1) h → ⊥ < h →
+      ∀ P : Prof I, IsCutLawful I (K + 1) P → r.IsCorrect (hat I (K + 1) P) →
+      ∀ f : Prof I, I.amalgam.rows.IsLawfulBelow (univ.erase xp, K + 1) (fun d ↦ f d) →
+        (∀ d ∈ I.amalgam.toCellScheme.below (univ.erase xp, K + 1),
+          min (f d) h = min (P d) h) → h < f r.cap →
+        ∀ d ∈ I.amalgam.toCellScheme.below (univ.erase xp, K + 1),
+          d ∈ I.amalgam.toCellScheme.below (univ.erase xd, K) → f d < h) :
+    BandGapBelowAt r xp xd K := fun h hh hs hb P hP hPc f hf hfP hfc ↦
+  ⟨⊤, isSelfVisible_top K, le_top, le_top, fun d hdC hdD hhd ↦
+    absurd hhd (not_le.mpr (hlt h hh hs hb P hP hPc f hf hfP hfc d hdC hdD))⟩
 
 /-- **The donor raise in the band below the cut grade, across a gap.**  The cap `h` of the band is
 self-visible and short at the cut grade `K + 1`, so its finite part is `K + 1`, and raising to `⊤`
