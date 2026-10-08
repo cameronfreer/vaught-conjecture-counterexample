@@ -168,6 +168,44 @@ theorem not_botLiftProvisionOf_donor_of_markerCovers
   not_exists_correct_lift_donor_of_markerCovers hgr hxp hNk hcapC hmC has hag hdom hcov ha hfa hy
     hyk hfy (hprov f hf)
 
+
+/-! ### Domination at every grade from the cap -/
+
+variable (r) in
+/-- **The cap dominates a cell `a` at the graded index of a cell `G`**: every cell of the graded
+index of `G` reads the cap at least as it reads `a`. -/
+def CapDominatesAt (a G : Fin I.amalgam.card) : Prop :=
+  ∀ u, I.amalgam.toCellScheme.gradedIndex u = I.amalgam.toCellScheme.gradedIndex G →
+    I.amalgam.toScheme.rowAt u a ≤ I.amalgam.toScheme.rowAt u r.cap
+
+/-- **A cell dominated at a higher graded index lies below the cap**: if `a` has the grade of a
+cell `G` above the cap, with scope inside that of `G`, and every cell of the graded index of `G`
+reads the cap at least as `a`, then every labelling lawful below a pair containing `G` has
+`w a ≤ w cap`. -/
+theorem le_cap_of_capDominatesAt {X : Finset (Fin (m + 2)) × ℕ}
+    {w : Fin I.amalgam.card → Label.{u}} (hw : I.amalgam.rows.IsLawfulBelow X fun d ↦ w d)
+    {a G : Fin I.amalgam.card} (hGX : G ∈ I.amalgam.toCellScheme.below X)
+    (hcG : r.cap ∈ I.amalgam.toCellScheme.below (I.amalgam.toCellScheme.gradedIndex G))
+    (has : I.amalgam.toCellScheme.scope a ⊆ I.amalgam.toCellScheme.scope G)
+    (hag : I.amalgam.toCellScheme.grade a = I.amalgam.toCellScheme.grade G)
+    (hdom : r.CapDominatesAt a G) : w a ≤ w r.cap := by
+  refine (Rows.le_of_capped_readers (y₃ := r.cap) (y₄ := r.cap) hw hGX has hag
+    fun u hu _ ↦ ?_).1
+  have ha : a ∈ I.amalgam.toCellScheme.below (I.amalgam.toCellScheme.gradedIndex u) := by
+    rw [CellScheme.mem_below, hu]
+    exact ⟨has, hag.le⟩
+  have hc : r.cap ∈ I.amalgam.toCellScheme.below (I.amalgam.toCellScheme.gradedIndex u) := by
+    rw [hu]; exact hcG
+  have hrow := hdom u hu
+  rw [Scheme.rowAt_of_mem ha, Scheme.rowAt_of_mem hc] at hrow
+  have hgc : I.amalgam.toCellScheme.grade r.cap ≤ I.amalgam.toCellScheme.grade a := by
+    rw [hag]; exact hcG.2
+  exact ⟨ha, hc, hc, hgc, hgc, hrow, hrow⟩
+
+/-- `CapRequests.CapDominates` is domination at the graded index of the cap. -/
+theorem capDominates_iff_capDominatesAt (a : Fin I.amalgam.card) :
+    r.CapDominates a ↔ r.CapDominatesAt a r.cap := Iff.rfl
+
 end CapRequests
 
 end VaughtConjecture
