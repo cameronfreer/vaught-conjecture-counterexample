@@ -151,16 +151,6 @@ theorem cutoffDetermination_isSourceGapContext_of_reading
     obtain ⟨δ, hδα, hδ⟩ := D'.exists_lt_forall_label_lt hα
     exact ⟨D', hD', δ, isPermittedCutoff_iff.mpr ⟨δ, hδα, rfl⟩, hrd.isDeterminedWithin hD' hD'd hδ⟩
 
-/-- The face of an acquired context along `h` is the type of the original cover. -/
-private theorem restrictFace_of_covers'' (hR : R.IsConsistent) {t : StageType.{u} α n}
-    {c : Fin n → M} (hc : R.Covers t c) {k : ℕ} {t' : StageType.{u} α k} {c' : Fin k → M}
-    (hc' : R.Covers t' c') {h : Fin n ↪ Fin k} (hcc' : c' ∘ h = c) :
-    StageType.restrictFace h t' = some t := by
-  rw [← hR ⟨c', hc'.injective⟩ t' h hc'.eval_eq, ← hc.eval_eq]
-  congr 1
-  ext i
-  exact congrFun hcc' i
-
 /-- **Exact residual receiving in one model from reading pinned extensions at its stage**, with
 (R1) for that model only. -/
 theorem exists_covers_snoc_of_hasReadingPinnedExtensions (hα : Order.IsSuccLimit α)
@@ -174,7 +164,7 @@ theorem exists_covers_snoc_of_hasReadingPinnedExtensions (hα : Order.IsSuccLimi
   obtain ⟨k, t', c', e, hc', hcc', o, r, hs⟩ :=
     exists_covers_isSourceGapContextAt hα hR hcore hK hc
   obtain ⟨D', hD', hD'd, hrd⟩ := hread t' _ _ o r (hR.isLegal _ _ hc'.eval_eq) hs t
-    (restrictFace_of_covers'' hR.isConsistent hc hc' hcc') d hd hdK
+    (restrictFace_of_covers hR.isConsistent hc hc' hcc') d hd hdK
   obtain ⟨δ, hδα, hδ⟩ := D'.exists_lt_forall_label_lt hα
   rw [← hcc']
   exact exists_covers_snoc_of_isDeterminedWithin hR.isConsistent hc'

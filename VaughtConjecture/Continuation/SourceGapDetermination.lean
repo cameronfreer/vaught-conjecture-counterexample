@@ -301,16 +301,6 @@ theorem cutoffDetermination_isSourceGapContext
 
 variable {α : Ordinal.{u}} {M : Type w} {R : Realization.{u, w} α M} {n : ℕ}
 
-/-- The face of an acquired context along `h` is the type of the original cover. -/
-private theorem restrictFace_of_covers' (hR : R.IsConsistent) {t : StageType.{u} α n}
-    {c : Fin n → M} (hc : R.Covers t c) {k : ℕ} {t' : StageType.{u} α k} {c' : Fin k → M}
-    (hc' : R.Covers t' c') {h : Fin n ↪ Fin k} (hcc' : c' ∘ h = c) :
-    StageType.restrictFace h t' = some t := by
-  rw [← hR ⟨c', hc'.injective⟩ t' h hc'.eval_eq, ← hc.eval_eq]
-  congr 1
-  ext i
-  exact congrFun hcc' i
-
 /-- **Exact residual receiving in one model, from separated pinned extensions at its stage**: in a
 model `R` at a limit stage `α` with finite-cut receiving ((R1) for `R` alone), with no cover that is
 a globally rigid core and with top-grade supremum `K`, if the separated pinned extension property
@@ -328,7 +318,7 @@ theorem exists_covers_snoc_of_hasSeparatedPinnedExtensions (hα : Order.IsSuccLi
   obtain ⟨k, t', c', e, hc', hcc', o, r, hs⟩ :=
     exists_covers_isSourceGapContextAt hα hR hcore hK hc
   obtain ⟨D', hD', hD'd, hsp⟩ := hsep t' _ _ o r (hR.isLegal _ _ hc'.eval_eq) hs t
-    (restrictFace_of_covers' hR.isConsistent hc hc' hcc') d hd hdK
+    (restrictFace_of_covers hR.isConsistent hc hc' hcc') d hd hdK
   obtain ⟨δ, hδα, hδ⟩ := D'.exists_lt_forall_label_lt hα
   rw [← hcc']
   exact exists_covers_snoc_of_isDeterminedWithin hR.isConsistent hc'
