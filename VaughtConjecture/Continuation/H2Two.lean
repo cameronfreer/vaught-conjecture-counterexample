@@ -186,7 +186,11 @@ set_option warningAsError false in
 /-- **SCAFFOLD (contains `sorry`): the case of top grade `1`**, with the designation (non-top
 cells low; top cells of grade at most `1` off the root and not determined by the root designated;
 root cells low or designated root tops), as donor raising at grade `1` needs
-(`H2.donorRaisingGap_oneFace`, `H2.exists_completion_recProp_one_of_admission`). -/
+(`H2.donorRaisingGap_oneFace`, `H2.exists_completion_recProp_one_of_admission`).  Off the critical
+path: at the lost point `1`, when the owner is alone at its graded index, it is
+`H2.exists_completion_recProp_one_of_only` (`VaughtConjecture.Continuation.H2Final`, which this
+file cannot import), and the assembled statement `H2.coatomCutoffDeterminationLastOnly_of` does not
+use this one. -/
 theorem exists_completion_recProp_one {t' : StageType.{u} α 2} (hleg : t'.IsLegal) {n : ℕ}
     {g : Fin n ↪ Fin 1} {l : Fin 2} {o r : Fin t'.card}
     (hs : t'.IsSourceGapContextAt 1 (g.trans Fin.castSuccEmb) l o r) {p : StageType.{u} α 1}
