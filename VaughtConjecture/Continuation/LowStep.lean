@@ -64,7 +64,9 @@ from exactly two named open cases:
   root at least at the prescribed private frontier `c > h`, at the tie `h = R_K M` or when a donor
   top is determined by the root.  Otherwise donor raising (`StageType.IsLowFamily.exists_raised`),
   the root tops (at least `c` by the strict source gaps), the gluing and the coded cutoff give the
-  step; when `c ≤ h` the capped agreement with the serving profile suffices.
+  step; when `c ≤ h` the capped agreement with the serving profile suffices.  The tie case itself
+  follows from donor domination, a capped lift dominated at a top cell of the donor
+  (`StageType.lowStepTie_of_donorDomination`, in `VaughtConjecture.Continuation.LowStepTie`).
 
 From the private coatom the private face, the owner and the lost top included, is prescribed,
 and so are the serving profile and the cap, which come from the ambient section; so neither the
