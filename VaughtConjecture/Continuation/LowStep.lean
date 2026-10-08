@@ -457,3 +457,108 @@ theorem Lvl.Good.lowStep_donor (hL : L.Good) (hgm : g + 1 ≤ m) {o' r' : Fin I.
   exact hPx
 
 end VaughtConjecture.ProfileTower
+
+/-! ### The LOW step from the private coatom: the donor face -/
+
+namespace VaughtConjecture.StageType
+
+open Finset Label H2 FieldAdmission
+
+variable {α : Ordinal.{u}} {k : ℕ}
+
+variable (K : ℕ) (t' tb : StageType.{u} α (k + 1)) {p : StageType.{u} α k}
+  (hp : restrictFace Fin.castSuccEmb t' = some p) (hpb : restrictFace Fin.castSuccEmb tb = some p)
+  (o r : Fin t'.card) in
+/-- **The tie case of the donor face** (open): for a private face `f` and a donor face `R`, lawful
+at `K`, agreeing on the root capped at a cap `h` below the frontier `c` of `f`, with every donor top
+off the root read by `R` at least at `h`, if the cap is the replaced low maximum of `R` (the tie)
+or some donor top off the root is determined by the root, some donor face lawful at `K`, literal on
+the root and agreeing with `R` capped at `h`, reads every donor top off the root at least at `c`.
+-/
+def LowStepTie : Prop :=
+  ∀ {h c : Label.{u}}, IsSelfVisible K h → h < c → ∀ {R : Fin tb.card → Label.{u}}
+    {f : Fin t'.card → Label.{u}}, LawfulAt tb K R → LawfulAt t' K f →
+    (∀ x, min (f (faceCell hp x)) h = min (R (faceCell hpb x)) h) →
+    c = min (f o) (visibilityReplace K K (f r)) →
+    (∀ t, tb.label t = ⊤ → tb.toCellScheme.grade t ≤ K →
+      t ∉ tb.toScheme.visibleCells Fin.castSuccEmb → h ≤ R t) →
+    (h = visibilityReplace K K
+        (((univ.filter fun x ↦ tb.label x ≠ ⊤).filter fun x ↦ tb.toCellScheme.grade x ≤ K).sup R) ∨
+      ∃ t, tb.label t = ⊤ ∧ tb.toCellScheme.grade t ≤ K ∧
+        t ∉ tb.toScheme.visibleCells Fin.castSuccEmb ∧ RootDetAt tb K t) →
+    ∃ W : Fin tb.card → Label.{u}, LawfulAt tb K W ∧
+      (∀ x, W (faceCell hpb x) = f (faceCell hp x)) ∧ (∀ d, min (W d) h = min (R d) h) ∧
+      ∀ t, tb.label t = ⊤ → tb.toCellScheme.grade t ≤ K →
+        t ∉ tb.toScheme.visibleCells Fin.castSuccEmb → c ≤ W t
+
+variable {K : ℕ} {t' tb : StageType.{u} α (k + 1)} {p : StageType.{u} α k} {o r : Fin t'.card}
+
+/-- **The donor face from the private coatom, except in the tie case.**  At a LOW family, for a
+private face `f` and a donor face `R` lawful at `K` agreeing on the root capped at `h`, with the
+frontier `c` of `f` above `h` and every donor top off the root read by `R` at least at `h`, some
+donor face lawful at `K`, literal on the root and agreeing with `R` capped at `h`, reads every donor
+top off the root at least at `c`: by donor raising with the gap (`IsLowFamily.donorRaisingGap`)
+off the tie, where the second outcome would put a top at most the replaced low maximum, below
+the cap; and by `LowStepTie` at the tie or at a donor top determined by the root. -/
+theorem IsLowFamily.exists_raised (hF : IsLowFamily K t' tb p o r)
+    (hT : LowStepTie K t' tb hF.face_private hF.face_donor o r) {h c : Label.{u}}
+    (hh : IsSelfVisible K h) (hb : ⊥ < h) (hhc : h < c) {R : Fin tb.card → Label.{u}}
+    {f : Fin t'.card → Label.{u}} (hR : LawfulAt tb K R) (hf : LawfulAt t' K f)
+    (hag : ∀ x, min (f (faceCell hF.face_private x)) h = min (R (faceCell hF.face_donor x)) h)
+    (hlow : ∀ x, tb.label x ≠ ⊤ → tb.toCellScheme.grade x ≤ K → R x < h)
+    (hc : c = min (f o) (visibilityReplace K K (f r)))
+    (htop : ∀ t, tb.label t = ⊤ → tb.toCellScheme.grade t ≤ K →
+      t ∉ tb.toScheme.visibleCells Fin.castSuccEmb → h ≤ R t) :
+    ∃ W : Fin tb.card → Label.{u}, LawfulAt tb K W ∧
+      (∀ x, W (faceCell hF.face_donor x) = f (faceCell hF.face_private x)) ∧
+      (∀ d, min (W d) h = min (R d) h) ∧
+      ∀ t, tb.label t = ⊤ → tb.toCellScheme.grade t ≤ K →
+        t ∉ tb.toScheme.visibleCells Fin.castSuccEmb → c ≤ W t := by
+  classical
+  set Lo := (univ.filter fun x ↦ tb.label x ≠ ⊤).filter fun x ↦ tb.toCellScheme.grade x ≤ K
+    with hLo
+  by_cases hres : h = visibilityReplace K K (Lo.sup R) ∨ ∃ t, tb.label t = ⊤ ∧
+      tb.toCellScheme.grade t ≤ K ∧ t ∉ tb.toScheme.visibleCells Fin.castSuccEmb ∧ RootDetAt tb K t
+  · exact hT hh hhc hR hf hag hc htop hres
+  obtain ⟨hnt, hnrd⟩ := not_or.mp hres
+  push Not at hnrd
+  set Tops : Finset (Fin tb.card) := univ.filter fun x ↦ tb.label x = ⊤ ∧
+    tb.toCellScheme.grade x ≤ K ∧ x ∉ tb.toScheme.visibleCells Fin.castSuccEmb ∧
+      ¬ RootDetAt tb K x with hTops
+  have hdes : ∀ x, tb.label x = ⊤ → tb.toCellScheme.grade x ≤ K →
+      x ∉ tb.toScheme.visibleCells Fin.castSuccEmb → ¬ RootDetAt tb K x → x ∈ Tops :=
+    fun x h1 h2 h3 h4 ↦ mem_filter.mpr ⟨mem_univ _, h1, h2, h3, h4⟩
+  -- the frontier `c` is self-visible, and the root tops of `f` are at least `c`
+  have hfo := (frontier_le_lawfulAt hF.isLegal_private hF.isSourceGapContextAt hf)
+  have hcv : IsSelfVisible K c := by
+    rw [hc]
+    rcases min_choice (f o) (visibilityReplace K K (f r)) with h1 | h1 <;> rw [h1]
+    · exact hfo.1
+    · exact visibilityReplace_self_visibilityReplace le_rfl _
+  obtain ⟨W, hW, hWr, hWR, hWt⟩ := hF.donorRaisingGap hdes hh hcv hR hf hag (fun a ha ↦ by
+      rw [hc]
+      have := hfo.2 (faceCell hF.face_private a) (by rw [label_faceCell]; exact ha.1) ha.2
+      exact this)
+    fun t ht _ ↦ by
+      obtain ⟨-, h1, h2, h3, -⟩ := mem_filter.mp ht
+      exact (min_le_right _ _).trans (htop t h1 h2 h3)
+  refine ⟨W, hW, hWr, hWR, fun t h1 h2 h3 ↦ ?_⟩
+  have hRt := htop t h1 h2 h3
+  have hWh : h ≤ W t := by
+    have := hWR t
+    rw [min_eq_right hRt] at this
+    exact min_eq_right_iff.mp this
+  -- the low maximum of `W` is that of `R`, below the cap, and off the tie its replacement is too
+  have hLoR : Lo.sup R < h := (Finset.sup_lt_iff hb).mpr fun x hx ↦ by
+    obtain ⟨h1, h2⟩ := mem_filter.mp hx
+    exact hlow x (mem_filter.mp h1).2 h2
+  have hLoW : Lo.sup W = Lo.sup R := Finset.sup_congr rfl fun x hx ↦
+    (eq_of_min_eq_of_lt (hWR x).symm ((Finset.le_sup (f := R) hx).trans_lt hLoR))
+  have hRK : visibilityReplace K K (Lo.sup R) < h :=
+    lt_of_le_of_ne (visibilityReplace_le_of_le le_rfl hh hLoR.le) (Ne.symm hnt)
+  rcases hWt t (mem_filter.mpr ⟨mem_univ _, h1, h2, h3, hnrd t h1 h2 h3⟩) hRt with h4 | h4
+  · exact h4
+  · rw [hLoW] at h4
+    exact absurd (hWh.trans h4) (not_le.mpr hRK)
+
+end VaughtConjecture.StageType
