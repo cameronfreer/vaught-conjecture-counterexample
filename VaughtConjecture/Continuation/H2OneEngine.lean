@@ -398,20 +398,24 @@ theorem stateAdmission_oneV {t' : StageType.{u} α 2} {n : ℕ}
     (hs : t'.IsSourceGapContextAt 1 (g.trans Fin.castSuccEmb) l o r) {p : StageType.{u} α 1}
     (hp : restrictFace Fin.castSuccEmb t' = some p) {tb : StageType.{u} α 2}
     (htbp : restrictFace Fin.castSuccEmb tb = some p) {Lo Tops : Finset (Fin tb.card)}
+    {A : Set (Fin p.card)}
+    (hA : ∀ a ∈ A, p.label a = ⊤ ∧ l ∉ t'.toCellScheme.scope (StageType.faceCell hp a))
     (hDR : DonorRaisingV (StageType.faceCell hp) (StageType.faceCell htbp) 1 t'.rows.IsLawful
-      tb.rows.IsLawful (rootTops hp l) Lo Tops)
+      tb.rows.IsLawful A Lo Tops)
     (hOL : OwnerLowering (StageType.faceCell hp) (StageType.faceCell htbp) o r 1
       t'.rows.IsLawful tb.rows.IsLawful) :
     IsStateAdmission (StageType.faceCell hp) (StageType.faceCell htbp) 1 t'.rows.IsLawful
       tb.rows.IsLawful (SelfLowG o r 1 Lo Tops) := by
-  refine selfLow_isStateAdmissionV (rootTops hp l) (fun f hf ↦ ?_) (fun f hf a ha ↦ ?_) hDR hOL
+  refine selfLow_isStateAdmissionV A (fun f hf ↦ ?_) (fun f hf a ha ↦ ?_) hDR hOL
   · have := hf.orderly o
     rwa [hs.grade_owner] at this
-  · exact hs.frontier_le hf ((StageType.label_faceCell hp a).trans ha.1) ha.2
+  · exact hs.frontier_le hf ((StageType.label_faceCell hp a).trans (hA a ha).1) (hA a ha).2
 
 /-- **h2 at two points, top grade `1`, from the provisions at grade `1`**: the conclusion of
 `H2.exists_completion_recProp_one`, from refined donor raising at the grade `1` for the designated
-cells below the top of grade `1`, and owner lowering at the grade `1` (both hypotheses).  The
+cells below the top of grade `1`, and owner lowering at the grade `1` (both hypotheses); the root
+cells `A` of the raise are top cells of the common face avoiding the lost point (`H2.rootTops` is
+the instance, with `hA := fun _ h ↦ h`).  The
 completion is `Seed.oneCompletion`: the admitted layer at grade `1` over the amalgam, on the
 clause read on the copies, then the layer at grade `2`. -/
 theorem exists_completion_recProp_one_of {t' : StageType.{u} α 2} (hleg : t'.IsLegal) {n : ℕ}
@@ -421,15 +425,16 @@ theorem exists_completion_recProp_one_of {t' : StageType.{u} α 2} (hleg : t'.Is
     (htbleg : tb.IsLegal) (htbp : restrictFace Fin.castSuccEmb tb = some p)
     {Lo Tops : Finset (Fin tb.card)}
     (hTops : ∀ x ∈ Tops, tb.label x = ⊤ ∧ tb.toCellScheme.grade x ≤ 1 ∧
-      x ∉ tb.toScheme.visibleCells Fin.castSuccEmb)
+      x ∉ tb.toScheme.visibleCells Fin.castSuccEmb) {A : Set (Fin p.card)}
+    (hA : ∀ a ∈ A, p.label a = ⊤ ∧ l ∉ t'.toCellScheme.scope (StageType.faceCell hp a))
     (hDR : DonorRaisingV (StageType.faceCell hp) (StageType.faceCell htbp) 1 t'.rows.IsLawful
-      tb.rows.IsLawful (rootTops hp l) (Lo.filter fun x ↦ tb.toCellScheme.grade x ≤ 1) Tops)
+      tb.rows.IsLawful A (Lo.filter fun x ↦ tb.toCellScheme.grade x ≤ 1) Tops)
     (hOL : OwnerLowering (StageType.faceCell hp) (StageType.faceCell htbp) o r 1
       t'.rows.IsLawful tb.rows.IsLawful) :
     ∃ F : CompletionBelowFullGrade (Seed.ofCoatoms hleg htbleg hp htbp),
       RecProp F o r 1 Lo Tops := by
   set Lo1 := Lo.filter fun x ↦ tb.toCellScheme.grade x ≤ 1 with hLo1
-  have hS := stateAdmission_oneV hs hp htbp (Lo := Lo1) hDR hOL
+  have hS := stateAdmission_oneV hs hp htbp (Lo := Lo1) hA hDR hOL
   have hr1 : t'.toCellScheme.grade r ≤ 1 := hs.topGrade_eq ▸ grade_le_topGrade hs.label_lost
   have hloc : ReadsOne (Seed.ofCoatoms hleg htbleg hp htbp) (SelfLowG o r 1 Lo1 Tops) := by
     intro L L' R R' hL hR h t ht hlt
