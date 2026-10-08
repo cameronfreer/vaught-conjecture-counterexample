@@ -23,9 +23,12 @@ stage types, each open.  The coatom forms are stronger than the full forms
 (R2) coatom form quantifies over every coface `tb` of the coatom face, also of top grade above
 `K`; the form restricted to `tb` of top grade at most `K`
 (`Realization.BoundedCoatomCutoffDetermination`) gives cutoff determination for every predicate
-whose contexts of grade `K` have top grade at most `K`, through the truncation of the pinned
-extension above `K` (`Realization.BoundedCoatomCutoffDetermination.cutoffDetermination`, in
-`VaughtConjecture.MainTheorem.BoundedCoatomDetermination`).
+whose contexts of grade `K` have top grade at most `K`, whose roots are never onto, and which is
+invariant under relabelling the points of the context with the root relabelled along, through the
+truncation of the pinned extension above `K`
+(`Realization.BoundedCoatomCutoffDetermination.cutoffDetermination`, in
+`VaughtConjecture.MainTheorem.BoundedCoatomDetermination`); the three premises are compiled for the
+source-gap context (`Realization.BoundedCoatomCutoffDetermination.cutoffDetermination_sourceGap`).
 * (R4): cutoff completions at the first coatom for the graded cap calibration at every `ξ < ω₁`
   (`StageType.HasCutoffFirstCoatomCompletions`);
 * (R2): coatom cutoff determination for the source-gap context
