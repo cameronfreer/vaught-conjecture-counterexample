@@ -181,6 +181,25 @@ theorem relabel_contextCell (y : Fin (C.comap σ.toEmbedding).card) :
   exact congrArg (G.scheme.cellMap Fin.castSuccEmb)
     (C.faceCell_symm_cellMap_of_eq σ G.comap_context h2 y)
 
+/-- **Sections read back**: every lawful section of the relabelled carrier is read along the
+bijection of the cells from a lawful section of the carrier. -/
+theorem exists_isLawful_relabel {v : Fin (G.relabel σ).scheme.card → Label.{u}}
+    (hv : (G.relabel σ).scheme.rows.IsLawful v) :
+    ∃ w : Fin G.scheme.card → Label.{u}, G.scheme.rows.IsLawful w ∧
+      ∀ i, w (G.scheme.cellMap (extendPerm σ).symm.toEmbedding i) = v i := by
+  let f := (extendPerm σ).symm.toEmbedding
+  let φ : Fin (G.relabel σ).scheme.card ≃ Fin G.scheme.card :=
+    Equiv.ofBijective (G.scheme.cellMap f)
+      ⟨(G.scheme.cellMap f).injective, G.scheme.surjective_cellMap_equiv _⟩
+  let w : Fin G.scheme.card → Label.{u} := fun x ↦ v (φ.symm x)
+  have hwv (i : Fin (G.relabel σ).scheme.card) : w (G.scheme.cellMap f i) = v i :=
+    congrArg v (φ.symm_apply_apply i)
+  have hfun : (fun i : Fin (G.scheme.comap f).card ↦ w (G.scheme.cellMap f i)) = v :=
+    funext hwv
+  refine ⟨w, (G.scheme.isLawful_comap_perm_iff (extendPerm σ).symm w).mp ?_, hwv⟩
+  rw [hfun]
+  exact hv
+
 /-- **Recovery in the face formulation**: a carrier recovers `ρ` from `s` exactly when every lawful
 section equal to `s` at the context cells satisfies `ρ` at the donor cells. -/
 theorem recovers_iff {e : Fin n ↪ Fin J} (G : GrowthCarrier C P e) (s : Fin C.card → Label.{u})
@@ -206,19 +225,7 @@ theorem Recovers.relabel {s : Fin C.card → Label.{u}} {ρ : Fin P.card → Lab
     (h : G.Recovers (fun y ↦ s (C.cellMap σ.toEmbedding y)) ρ) : (G.relabel σ).Recovers s ρ := by
   rw [recovers_iff] at h ⊢
   intro v hv hctx j
-  let f := (extendPerm σ).symm.toEmbedding
-  let φ : Fin (G.relabel σ).scheme.card ≃ Fin G.scheme.card :=
-    Equiv.ofBijective (G.scheme.cellMap f)
-      ⟨(G.scheme.cellMap f).injective, G.scheme.surjective_cellMap_equiv _⟩
-  let w : Fin G.scheme.card → Label.{u} := fun x ↦ v (φ.symm x)
-  have hwv (i : Fin (G.relabel σ).scheme.card) : w (G.scheme.cellMap f i) = v i :=
-    congrArg v (φ.symm_apply_apply i)
-  have hfun : (fun i : Fin (G.scheme.comap f).card ↦ w (G.scheme.cellMap f i)) = v :=
-    funext hwv
-  have hw : G.scheme.rows.IsLawful w := by
-    refine (G.scheme.isLawful_comap_perm_iff (extendPerm σ).symm w).mp ?_
-    rw [hfun]
-    exact hv
+  obtain ⟨w, hw, hwv⟩ := G.exists_isLawful_relabel σ hv
   have hd := h w hw (fun y ↦
     (congrArg w (relabel_contextCell σ G y)).symm.trans ((hwv _).trans (hctx _))) j
   have e1 : w (G.scheme.faceCell (extendByLast e'') G.comap_donor j) =

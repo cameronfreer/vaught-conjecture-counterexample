@@ -45,6 +45,12 @@ most that of the context.  At this position the growth seed exists for every inp
   ladder carriers at the seed position
   (`MainTheorem.densitySentence_hasThinAlephOneSpectrum_of_ladderCarriersAtSeed`).
 
+The recognizing form itself transfers as well: recognizing (or ladder) growth carriers at the
+seed position give `StageType.HasRecognizingGrowthCarriers` at every context
+(`StageType.HasRecognizingGrowthCarriersAtSeed.hasRecognizingGrowthCarriers`, in
+`VaughtConjecture.MainTheorem.GrowthRelabelInputs`), the requests being relabelled with the context
+and the top-grade clause of the seed position being automatic for exact calibrated requests.
+
 These are implications; the contracts at the seed position stay open.
 
 ## References
