@@ -236,6 +236,22 @@ theorem rowAt_appendFullCells_castAdd {n k M' : ℕ} {S : Scheme.{u} n}
     exact S.rows.row_congr rfl rfl
   · rw [rowAt_of_notMem (mt hiff.mp hd), rowAt_of_notMem hd]
 
+/-- **Old cells are read after appending one cell of full scope as before**, at every grade. -/
+theorem rowAt_appendFullCell_castSucc {n j : ℕ} {S : Scheme.{u} n}
+    {r : Fin (S.card + 1) → Label.{u}}
+    {h : ∀ d, ¬ ((univ : Finset (Fin n)), j) ≤ S.toCellScheme.gradedIndex d} (a d : Fin S.card) :
+    (S.appendFullCell j r h).rowAt a.castSucc d.castSucc = S.rowAt a d := by
+  have hiff : d.castSucc ∈ (S.appendFullCell j r h).toCellScheme.below
+      ((S.appendFullCell j r h).toCellScheme.gradedIndex a.castSucc) ↔
+      d ∈ S.toCellScheme.below (S.toCellScheme.gradedIndex a) := by
+    rw [CellScheme.mem_below, CellScheme.mem_below, appendFullCell_toCellScheme,
+      appendFullCellScheme_gradedIndex_castSucc, appendFullCellScheme_gradedIndex_castSucc]
+  by_cases hd : d ∈ S.toCellScheme.below (S.toCellScheme.gradedIndex a)
+  · rw [rowAt_of_mem (hiff.mpr hd), rowAt_of_mem hd]
+    exact congrArg (fun R : S.toCellScheme.Rows ↦ R.row a ⟨d, hd⟩)
+      (comap_rows_castSucc (S := S) (j := j) (r := r) (h := h))
+  · rw [rowAt_of_notMem (mt hiff.mp hd), rowAt_of_notMem hd]
+
 variable (k M r h) in
 /-- **The old cells form a lower embedding** along `Fin.castAdd`. -/
 theorem isLowerEmbedding_castAdd :
@@ -968,5 +984,36 @@ theorem eq_top_natAdd_of_le_agreementHeight {q : Fin (S.fieldLayer k hS).card �
   refine hq.eq_top_of_row_le hxb hjb hi hxq ?_
   rw [fieldLayer_row_natAdd, fieldLayer_row_natAdd, fieldRow_castAdd, fieldRow_natAdd]
   exact hle
+
+end VaughtConjecture.Scheme
+
+/-! ### The `⊥` entry of the canonical catalogue -/
+
+namespace VaughtConjecture.Scheme
+
+open Finset Label CellScheme
+
+variable {n : ℕ}
+
+/-- **The constant `⊥` labelling is a catalogue entry**: lawful, bottom above `k`, and fixed by
+the orbit code. -/
+theorem bot_mem_catalogue (S : Scheme.{u} n) (k : ℕ) :
+    (fun _ ↦ ⊥ : Fin S.card → Label.{u}) ∈ S.catalogue k :=
+  mem_catalogue.mpr ⟨CellScheme.Rows.isLawful_const_bot, fun _ _ ↦ rfl,
+    funext fun _ ↦ orbitCode_eq_bot_iff.mpr rfl⟩
+
+/-- **The field layer has a cell reading `⊥`**: the cell of the `⊥` entry has graded index
+`(univ, k)` and its row is `⊥` at every old cell. -/
+theorem exists_fieldLayer_row_eq_bot (S : Scheme.{u} n) (k : ℕ)
+    (hS : ∀ d, ¬ ((univ : Finset (Fin n)), k) ≤ S.toCellScheme.gradedIndex d) :
+    ∃ u : Fin (S.fieldLayer k hS).card,
+      (S.fieldLayer k hS).toCellScheme.gradedIndex u = ((univ : Finset (Fin n)), k) ∧
+      ∀ (d : Fin S.card)
+        (hd : Fin.castAdd _ d ∈ (S.fieldLayer k hS).toCellScheme.below
+          ((S.fieldLayer k hS).toCellScheme.gradedIndex u)),
+        (S.fieldLayer k hS).rows.row u ⟨_, hd⟩ = ⊥ := by
+  obtain ⟨i, hi⟩ := exists_catalogueEntry_eq (bot_mem_catalogue S k)
+  refine ⟨Fin.natAdd _ i, appendFullCellsScheme_gradedIndex_natAdd S k _ i, fun d hd ↦ ?_⟩
+  rw [fieldLayer_row_natAdd, fieldRow_castAdd, hi]
 
 end VaughtConjecture.Scheme
