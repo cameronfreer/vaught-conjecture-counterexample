@@ -13,7 +13,7 @@ controllers when the faces carry labels other than `⊥` above `K`); semantic co
 and 8.
 
 A **state** is a profile with a cutoff (`ProfileTower.CProf`): the labels of the amalgam cells and
-one more field, the cutoff, independent of them.  Above the grade `K` of the controllers the
+one more field, the cutoff, free of them.  Above the grade `K` of the controllers the
 padding of [AFK26] indexes the sections by states: the section of a state reads every controller
 through the cutoff of the state itself (`VaughtConjecture.Continuation.LowPaddingObstruction`
 shows why a cutoff read off the amalgam profile cannot).
