@@ -574,19 +574,19 @@ theorem lt_gridPoint_bound_of_mem_cat {k : ℕ} {P : Prof I} (hP : P ∈ cat I k
     (orbitMap_mem_codeGrid (by simp) _)).trans_lt
     (gridPoint_lt_gridPoint.mpr (by simp only [bound]; omega))
 
-/-- **Over dead low grades no reader of the grade `g + 2` reads the cell of the bottom profile in
-a lower block**: if every cell of grade at most `g + 1` reads itself as `⊥`, the cell of a profile
-of the catalogue at `g + 2` reads the cell of the bottom profile of the layer at `g + 1` in the
-top block (`ProfileTower.Lvl.gridPoint_le_nextσ_of_dead`) and every old cell of grade at most
-`g + 2` by its profile, below the top block. -/
-theorem Lvl.not_lowerBlock_of_dead {g : ℕ} (L : Lvl I g) (hL : L.next.Good)
+/-- **Over dead low grades every reader of the grade `g + 2` reads the cell of the bottom profile
+above its old cells**: if every cell of grade at most `g + 1` reads itself as `⊥`, the cell of a
+profile of the catalogue at `g + 2` reads every old cell of grade at most `g + 2` by its profile,
+below the top block, and the cell of the bottom profile of the layer at `g + 1` in the top block
+(`ProfileTower.Lvl.gridPoint_le_nextσ_of_dead`). -/
+theorem Lvl.rowAt_lt_of_dead {g : ℕ} (L : Lvl I g) (hL : L.next.Good)
     (hdead : ∀ d, I.amalgam.toCellScheme.grade d ≤ g + 1 → I.amalgam.toScheme.rowAt d d = ⊥)
     {k₀ : Fin (cat I (g + 1)).card} (hk₀ : entry I (g + 1) k₀ = fun _ ↦ ⊥)
     (k : Fin (cat I (g + 1 + 1)).card) {d : Fin I.amalgam.card}
     (hd : I.amalgam.toCellScheme.grade d ≤ g + 1 + 1) :
-    ¬ LowerBlock (L.next.nextS.rowAt (Fin.natAdd _ k)
-        (Fin.castAdd _ (Fin.natAdd L.S.card k₀ : Fin L.next.S.card)))
-      (L.next.nextS.rowAt (Fin.natAdd _ k) (Fin.castAdd _ (L.next.embed d))) := by
+    L.next.nextS.rowAt (Fin.natAdd _ k) (Fin.castAdd _ (L.next.embed d)) <
+      L.next.nextS.rowAt (Fin.natAdd _ k)
+        (Fin.castAdd _ (Fin.natAdd L.S.card k₀ : Fin L.next.S.card)) := by
   have hg₀ : L.next.S.toCellScheme.grade (Fin.natAdd L.S.card k₀ : Fin L.next.S.card) ≤
       g + 1 + 1 :=
     (Scheme.appendFullCellsScheme_grade_natAdd L.S (g + 1) _ k₀).le.trans (Nat.le_succ _)
@@ -595,9 +595,20 @@ theorem Lvl.not_lowerBlock_of_dead {g : ℕ} (L : Lvl I g) (hL : L.next.Good)
       L.next.σ (entry I (g + 1 + 1) k) (Fin.natAdd L.S.card k₀) :=
     L.next.rowAt_nextS_natAdd_castAdd k hg₀
   rw [h1, hL.rowAt_nextS_natAdd_embed k hd]
-  intro hlb
-  exact absurd (hlb.1.trans (lt_gridPoint_bound_of_mem_cat (entry_mem k) d))
-    (not_lt.mpr (L.gridPoint_le_nextσ_of_dead hdead (entry_mem k) hk₀))
+  exact (lt_gridPoint_bound_of_mem_cat (entry_mem k) d).trans_le
+    (L.gridPoint_le_nextσ_of_dead hdead (entry_mem k) hk₀)
+
+/-- **Over dead low grades no reader of the grade `g + 2` reads the cell of the bottom profile in
+a lower block** than an old cell (`ProfileTower.Lvl.rowAt_lt_of_dead`). -/
+theorem Lvl.not_lowerBlock_of_dead {g : ℕ} (L : Lvl I g) (hL : L.next.Good)
+    (hdead : ∀ d, I.amalgam.toCellScheme.grade d ≤ g + 1 → I.amalgam.toScheme.rowAt d d = ⊥)
+    {k₀ : Fin (cat I (g + 1)).card} (hk₀ : entry I (g + 1) k₀ = fun _ ↦ ⊥)
+    (k : Fin (cat I (g + 1 + 1)).card) {d : Fin I.amalgam.card}
+    (hd : I.amalgam.toCellScheme.grade d ≤ g + 1 + 1) :
+    ¬ LowerBlock (L.next.nextS.rowAt (Fin.natAdd _ k)
+        (Fin.castAdd _ (Fin.natAdd L.S.card k₀ : Fin L.next.S.card)))
+      (L.next.nextS.rowAt (Fin.natAdd _ k) (Fin.castAdd _ (L.next.embed d))) := fun hlb ↦
+  absurd hlb.1 (not_lt.mpr (L.rowAt_lt_of_dead hL hdead hk₀ k hd).le)
 
 end ProfileTower
 

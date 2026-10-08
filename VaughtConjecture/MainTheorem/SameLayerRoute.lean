@@ -131,6 +131,30 @@ theorem HasCutoffFirstCoatomCompletionsEx.hasCutoffStableRecoverySchemes_ndSame
   obtain ⟨-, -, -, q, δ, -, hq⟩ := h Tp _ f' P hT hTp hk hpP D hD γ hγ hC
   exact ⟨q, δ, hq⟩
 
+/-- **First-coatom completions with a chosen coface for the calibration at the grade of the cap,
+from the fills** (the statement of `StageType.hasCutoffFirstCoatomCompletionsEx_nd_of_fills` with
+the clause at the grade of the cap available to the fills). -/
+theorem hasCutoffFirstCoatomCompletionsEx_ndSame_of_fills
+    (h : ∀ ⦃m k : ℕ⦄ (Tp : StageType.{u} (blockStage (ξ + 1)) (m + 1))
+      (p : StageType.{u} (blockStage (ξ + 1)) m) (f : Fin k ↪ Fin m)
+      (P : StageType.{u} (blockStage (ξ + 1)) k) (hT : Tp.IsLegal)
+      (hp : restrictFace Fin.castSuccEmb Tp = some p), 0 < k →
+      ∀ (hP : restrictFace f p = some P) (D : StageType.{u} (blockStage (ξ + 1)) (k + 1))
+        (hD : D ∈ P.cofaces) (γ : Ordinal.{u}), γ < blockStage (ξ + 1) →
+      GradedCapMarginCalibrationNDSame ξ Tp (f.trans Fin.castSuccEmb) D γ →
+      ∃ (tb : StageType.{u} (blockStage (ξ + 1)) (m + 1)) (htb : tb ∈ p.cofaces)
+        (htbD : restrictFace (extendByLast f) tb = some D)
+        (c : FloorCapData Tp (f.trans Fin.castSuccEmb) D γ),
+        (⟨Tp, p, tb, f, P, D, hT, hp, htb, hP, hD, htbD⟩ : FirstCoatomInput.{u} ξ m k).HasFills
+          c.toMarginCapData) :
+    HasCutoffFirstCoatomCompletionsEx ξ (GradedCapMarginCalibrationNDSame ξ) := by
+  intro m k Tp p f P hT hp hk hP D hD γ hγ hC
+  obtain ⟨tb, htb, htbD, c, hc⟩ := h Tp p f P hT hp hk hP D hD γ hγ hC
+  let X : FirstCoatomInput.{u} ξ m k := ⟨Tp, p, tb, f, P, D, hT, hp, htb, hP, hD, htbD⟩
+  exact ⟨tb, htb, htbD, X.exists_isCutoffStableRecovery' c.toMarginCapData c.three_le
+    (fun k' h₁ h₂ ↦ (hc k' h₁ h₂).1) (fun k' h₁ h₂ ↦ (hc k' h₁ h₂).2.1)
+    fun k' h₁ h₂ ↦ (hc k' h₁ h₂).2.2⟩
+
 end StageType
 
 namespace Realization
