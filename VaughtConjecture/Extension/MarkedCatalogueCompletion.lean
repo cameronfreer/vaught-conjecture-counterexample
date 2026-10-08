@@ -475,6 +475,21 @@ theorem markedTop_mark_reads {P : (Fin (scheme I).card → Label.{u}) → Prop}
       D.cap (Fin.natAdd _ m) (Fin.castAdd _ d) :=
   Scheme.markedLayer_mark_reads hP m
 
+/-- **The reading of the marked cells is an invariant of every lawful labelling.**  The rows of the
+marked top do not depend on a labelling, so in every lawful section of it (in particular in every
+labelling produced by the lifts, `extendsFromBoundary_markedTop` and
+`extendsFromBoundary_bot_markedTop`, at `⊥` and at every short cap, from either coatom) every
+marked cell satisfies `P` on its reading of the old cells when every member of `marks` does.  The
+form that depends on the labelling (every new cell labelled `⊤` reads as `P` asks) is not an
+invariant: the leaves read every catalogue entry, and a section may label a leaf `⊤`. -/
+theorem forall_isLawful_mark_reads {P : (Fin (scheme I).card → Label.{u}) → Prop}
+    (hP : ∀ e ∈ D.marks, P e) :
+    ∀ q : Fin (markedTop I D).card → Label.{u}, (markedTop I D).rows.IsLawful q →
+      ∀ m : Fin D.marks.card,
+        P fun d ↦ (scheme I).sheetRow 4 ((scheme I).markedEntry 4 D.marks)
+          (Scheme.markedSheet _ _) D.cap (Fin.natAdd _ m) (Fin.castAdd _ d) :=
+  fun _ _ m ↦ markedTop_mark_reads D hP m
+
 end TowerProfile
 
 /-! ### A marked cell read as `⊥` at every leaf, in the marked top -/

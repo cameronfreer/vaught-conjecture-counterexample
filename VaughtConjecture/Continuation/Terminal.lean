@@ -179,6 +179,16 @@ theorem topGrade_le_iff {K : ℕ} :
   classical
   simp [topGrade]
 
+/-- **The top grade under reindexing**: reindexing along a bijection keeps the cells labelled `⊤`
+with their grades. -/
+theorem topGrade_reindex (t : StageType.{u} α k) (σ : Equiv.Perm (Fin k)) :
+    (t.reindex σ).topGrade = t.topGrade := by
+  have hsurj := t.toScheme.surjective_cellMap_equiv σ
+  refine le_antisymm (topGrade_le_iff.mpr fun d hd ↦ grade_le_topGrade (t := t) hd)
+    (topGrade_le_iff.mpr fun d hd ↦ ?_)
+  obtain ⟨d', rfl⟩ := hsurj d
+  exact grade_le_topGrade (t := t.reindex σ) (d := d') hd
+
 /-- **The top grade is `0` exactly for top-free types**, since grades are positive. -/
 theorem topGrade_eq_zero_iff : t.topGrade = 0 ↔ t.IsTopFree := by
   rw [← Nat.le_zero, topGrade_le_iff]

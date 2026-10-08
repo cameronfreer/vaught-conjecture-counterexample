@@ -388,6 +388,36 @@ theorem map_reindex_restrictFace (e : Fin k ≃ Fin m) :
   rw [restrictFace_equiv, ← Equiv.trans_toEmbedding, restrictFace_equiv] at h
   exact Option.some_injective _ h
 
+section ReindexRows
+
+variable {k : ℕ}
+
+/-- **Rows under reindexing**: the row of a cell of `t.reindex σ` at a cell is the row of the
+corresponding cells of `t`. -/
+theorem rowAt_reindex (t : StageType.{u} α k) (σ : Equiv.Perm (Fin k))
+    (i j : Fin (t.reindex σ).card) :
+    (t.reindex σ).rowAt i j =
+      t.rowAt (t.toScheme.cellMap σ.toEmbedding i) (t.toScheme.cellMap σ.toEmbedding j) := by
+  have hle := t.toScheme.isLowerEmbedding_comap σ.toEmbedding
+  change (t.toScheme.comap σ.toEmbedding).rowAt i j = t.rowAt _ _
+  unfold Scheme.rowAt
+  split_ifs with h1 h2 h2
+  · rfl
+  · exact absurd ((hle.le_iff j i).mpr h1) h2
+  · exact absurd ((hle.le_iff j i).mp h2) h1
+  · rfl
+
+/-- **Below under reindexing**: a cell of `t.reindex σ` lies below another exactly when the
+corresponding cells of `t` do. -/
+theorem mem_below_reindex_iff (t : StageType.{u} α k) (σ : Equiv.Perm (Fin k))
+    (i j : Fin (t.reindex σ).card) :
+    j ∈ (t.reindex σ).toCellScheme.below ((t.reindex σ).toCellScheme.gradedIndex i) ↔
+      t.toScheme.cellMap σ.toEmbedding j ∈
+        t.toCellScheme.below (t.toCellScheme.gradedIndex (t.toScheme.cellMap σ.toEmbedding i)) :=
+  ((t.toScheme.isLowerEmbedding_comap σ.toEmbedding).le_iff j i).symm
+
+end ReindexRows
+
 /-! ### Stage reduction -/
 
 /-- **Stage reduction** of a stage type to a stage `β` that is zero or a limit [Kni26, §3.1]: the
@@ -642,6 +672,37 @@ noncomputable def faceCell (h : restrictFace f D = some t) (i : Fin t.card) : Fi
 theorem scope_faceCell (h : restrictFace f D = some t) (i : Fin t.card) :
     D.toCellScheme.scope (faceCell h i) = (t.toCellScheme.scope i).map f :=
   D.toScheme.scope_faceCell _ i
+
+/-- **The rows of a face are the rows of its cells.** -/
+theorem rowAt_faceCell (h : restrictFace f D = some t) (i j : Fin t.card) :
+    D.toScheme.rowAt (faceCell h i) (faceCell h j) = t.toScheme.rowAt i j := by
+  obtain ⟨hf, rfl⟩ := (restrictFace_eq_some_iff D f).mp h
+  have hmem : faceCell h j ∈ D.toCellScheme.below (D.toCellScheme.gradedIndex (faceCell h i)) ↔
+      j ∈ (D.comap f hf).toCellScheme.below ((D.comap f hf).toCellScheme.gradedIndex i) := by
+    rw [CellScheme.mem_below, CellScheme.mem_below]
+    simp only [CellScheme.gradedIndex, Prod.mk_le_mk, scope_faceCell, grade_faceCell,
+      map_subset_map]
+  by_cases hj : j ∈ (D.comap f hf).toCellScheme.below ((D.comap f hf).toCellScheme.gradedIndex i)
+  · rw [Scheme.rowAt_of_mem (hmem.mpr hj), Scheme.rowAt_of_mem hj]
+    rfl
+  · rw [Scheme.rowAt_of_notMem (fun h' ↦ hj (hmem.mp h')), Scheme.rowAt_of_notMem hj]
+
+/-- **Faces depend on the labels of the visible cells only**: two stage types on one scheme whose
+labels agree at the cells visible through `f` have the same face along `f`. -/
+theorem restrictFace_congr_label {t s : StageType.{u} α n} (hS : t.toScheme = s.toScheme)
+    (hl : ∀ (i : Fin t.card) (j : Fin s.card), (i : ℕ) = j → i ∈ t.toScheme.visibleCells f →
+      t.label i = s.label j) :
+    restrictFace f t = restrictFace f s := by
+  obtain ⟨S, p, _, _, _, _⟩ := t
+  obtain ⟨S', p', _, _, _, _⟩ := s
+  obtain rfl : S = S' := hS
+  by_cases hf : univ.map f ∈ S.toCellScheme.faces
+  · rw [restrictFace_of_mem _ f hf, restrictFace_of_mem _ f hf]
+    refine congrArg some (ext rfl fun i j hij ↦ ?_)
+    simp only [comap_label]
+    obtain rfl : i = j := Fin.ext hij
+    exact hl _ _ rfl (S.cellMap_mem f i)
+  · rw [restrictFace_of_notMem _ f hf, restrictFace_of_notMem _ f hf]
 
 /-- **Lawful sections restrict to a face.** -/
 theorem isLawful_comp_faceCell (h : restrictFace f D = some t) {a : Fin D.card → Label.{u}}

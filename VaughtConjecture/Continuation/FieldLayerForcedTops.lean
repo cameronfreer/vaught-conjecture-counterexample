@@ -19,9 +19,10 @@ has `e x = e r` whenever the input labelling is `⊤` at `x` and at `r`".  The i
 for every lawful labelling, not only the canonical one:
 
 * **Forced tops** (`Scheme.eq_top_natAdd_of_le_agreementHeight`, compiled in this repository
-  (theorem named)): in a lawful labelling of the field layer, a new cell labelled `⊤` whose entry
-  `b` is `⊤` at an old cell `x` labelled `⊤` forces `⊤` at the new cell of every entry `e` whose
-  agreement height with `b` is at least `b x`.  This is `CellScheme.Rows.IsLawful.eq_top_of_row_le`
+  (theorem named)): in a lawful labelling of the field layer, a new cell labelled `⊤`, of catalogue
+  entry `b`, and an old cell `x` labelled `⊤` force `⊤` at the new cell of every entry `e` whose
+  agreement height with `b` is at least the value `b x` of the entry (the labelling, not the entry,
+  is `⊤` at the new cell).  This is `CellScheme.Rows.IsLawful.eq_top_of_row_le`
   at the new cell of `b`, whose row is `b` at the old cells and the agreement heights at the new
   ones.
 * **The instance** (`FieldLayerForcedTops.exists_forced_top`, compiled in this repository (theorem
@@ -50,41 +51,6 @@ universe u
 namespace VaughtConjecture
 
 open Finset Label
-
-namespace Scheme
-
-variable {n k : ℕ} {S : Scheme.{u} n}
-  {hS : ∀ d, ¬ ((univ : Finset (Fin n)), k) ≤ S.toCellScheme.gradedIndex d}
-
-/-- **Forced tops in the field layer.**  In a lawful labelling `q` of the field layer, if the new
-cell of the entry `i` and the old cell `x` (of grade at most `k`) are labelled `⊤`, then the new
-cell of every entry `j` whose agreement height with the entry `i` is at least its value at `x` is
-labelled `⊤`. -/
-theorem eq_top_natAdd_of_le_agreementHeight {q : Fin (S.fieldLayer k hS).card → Label.{u}}
-    (hq : (S.fieldLayer k hS).rows.IsLawful q) {i j : Fin (S.catalogue k).card} {x : Fin S.card}
-    (hx : S.toCellScheme.grade x ≤ k) (hi : q (Fin.natAdd S.card i) = ⊤)
-    (hxq : q (Fin.castAdd _ x) = ⊤)
-    (hle : S.catalogueEntry k i x ≤
-      agreementHeight (S.fieldGrid k) (S.catalogueEntry k i) (S.catalogueEntry k j)) :
-    q (Fin.natAdd S.card j) = ⊤ := by
-  have hb : (S.fieldLayer k hS).toCellScheme.gradedIndex (Fin.natAdd S.card i) =
-      ((univ : Finset (Fin n)), k) :=
-    appendFullCellsScheme_gradedIndex_natAdd S k _ i
-  have hxb : Fin.castAdd _ x ∈
-      (S.fieldLayer k hS).toCellScheme.below
-        ((S.fieldLayer k hS).toCellScheme.gradedIndex (Fin.natAdd S.card i)) := by
-    rw [hb]
-    exact castAdd_mem_below hx
-  have hjb : Fin.natAdd S.card j ∈
-      (S.fieldLayer k hS).toCellScheme.below
-        ((S.fieldLayer k hS).toCellScheme.gradedIndex (Fin.natAdd S.card i)) := by
-    rw [hb]
-    exact natAdd_mem_below j
-  refine hq.eq_top_of_row_le hxb hjb hi hxq ?_
-  rw [fieldLayer_row_natAdd, fieldLayer_row_natAdd, fieldRow_castAdd, fieldRow_natAdd]
-  exact hle
-
-end Scheme
 
 namespace FieldLayerForcedTops
 

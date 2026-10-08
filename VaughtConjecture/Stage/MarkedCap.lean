@@ -54,7 +54,7 @@ follows from the minimality of the marker; the content of the statement lies in 
 by all lifts in some other way, which no compiled instance exhibits.
 
 **The marked-cap context** (`StageType.IsMarkedCapContext`, defined in this repository; acquisition
-and determination open).  A stage type `t'` on `k` points is a marked-cap context along
+proved, general determination open).  A stage type `t'` on `k` points is a marked-cap context along
 `h : Fin n ↪ Fin k` when it has a top cap `c` of grade `N > n + 1` and a marker `r` of `c` with
 `visibilityReplace N (n + 1) (t'.rowAt c r) ≤ t'.rowAt c a` at every cell `a` of the root (visible
 through `h`) labelled `⊤`.  The finite step from forcing is compiled: a legal rooted cover with a
@@ -66,9 +66,11 @@ have grades at most `n + 1` (`StageType.not_isMarkedCapContext_of_grade_le`).  T
 statements with the top grade, the form at a cover-hollow realization, and the exclusion of the
 determination counterexamples are in `VaughtConjecture.Continuation.MarkedCap`.
 
-Neither acquisition (`Realization.HollowAcquisition` for this predicate) nor determination
-(`Realization.SchemeDetermination` or `Realization.CutoffDetermination` for it) is stated or
-proved here, and nothing here proves or reduces (R3).
+Acquisition (`Realization.HollowAcquisition` for this predicate) is proved
+(`Realization.hollowAcquisition_isMarkedCapContext`, in
+`VaughtConjecture.Continuation.MarkedCarrierAcquisition`).  Determination in general
+(`Realization.SchemeDetermination` or `Realization.CutoffDetermination` for it) is open, and
+nothing here proves (R3).
 
 ## Placement
 
@@ -127,6 +129,16 @@ theorem IsTopCap.mem_below (hc : q.IsTopCap c) {x : Fin q.card} (hx : q.label x 
   change q.toCellScheme.gradedIndex x ≤ q.toCellScheme.gradedIndex c
   exact Prod.mk_le_mk.mpr ⟨by rw [hc.1]; exact subset_univ _,
     hc.2.2 x hx⟩
+
+/-- **No cell above a top cap is labelled `⊤`.** -/
+theorem IsTopCap.label_ne_top_of_grade_lt (hc : q.IsTopCap c) {x : Fin q.card}
+    (hx : q.toCellScheme.grade c < q.toCellScheme.grade x) : q.label x ≠ ⊤ :=
+  fun h ↦ (hc.2.2 x h).not_gt hx
+
+/-- **No cell of grade above a top cap is a top cap.** -/
+theorem IsTopCap.not_isTopCap_of_grade_lt (hc : q.IsTopCap c) {x : Fin q.card}
+    (hx : q.toCellScheme.grade c < q.toCellScheme.grade x) : ¬ q.IsTopCap x :=
+  fun hx' ↦ hc.label_ne_top_of_grade_lt hx hx'.2.1
 
 /-- **A legal stage type with a cell labelled `⊤` has a top cap**: completeness gives a cell of
 full scope at the largest grade `K` of a cell labelled `⊤`, and availability gives one such cell
@@ -438,20 +450,46 @@ theorem ForcesThreshold.le_grade_and_visibilityReplace_rowAt_le (hβ : IsSuccLim
 
 /-! ### The marked-cap context -/
 
+/-- The data of a marked-cap context along `h` with top cap `c` and marker `r`
+(`StageType.IsMarkedCapContext` is `∃ c r, t'.IsMarkedCapContextAt h c r`). -/
+def IsMarkedCapContextAt (t' : StageType.{u} α k) (h : Fin n ↪ Fin k) (c r : Fin t'.card) :
+    Prop :=
+  t'.IsTopCap c ∧ t'.IsMarker c r ∧ n + 1 < t'.toCellScheme.grade c ∧
+    ∀ a ∈ t'.visibleCells h, t'.label a = ⊤ →
+      visibilityReplace (t'.toCellScheme.grade c) (n + 1) (t'.rowAt c r) ≤ t'.rowAt c a
+
 /-- A stage type `t'` on `k` points is a **marked-cap context** along `h : Fin n ↪ Fin k` when it
 has a top cap `c` of grade `N > n + 1` with a marker `r`, and at every cell `a` of the root (a cell
 visible through `h`) labelled `⊤` the row of `c` satisfies
-`visibilityReplace N (n + 1) (t'.rowAt c r) ≤ t'.rowAt c a`.  The grade of a top cap is the top
-grade of `t'`, the largest grade of a cell labelled `⊤`. -/
+`visibilityReplace N (n + 1) (t'.rowAt c r) ≤ t'.rowAt c a`: that is,
+`∃ c r, t'.IsMarkedCapContextAt h c r` (`StageType.isMarkedCapContext_iff_exists`).  The grade of
+a top cap is the top grade of `t'`, the largest grade of a cell labelled `⊤`. -/
 def IsMarkedCapContext (t' : StageType.{u} α k) (h : Fin n ↪ Fin k) : Prop :=
   ∃ c r, t'.IsTopCap c ∧ t'.IsMarker c r ∧ n + 1 < t'.toCellScheme.grade c ∧
     ∀ a ∈ t'.visibleCells h, t'.label a = ⊤ →
       visibilityReplace (t'.toCellScheme.grade c) (n + 1) (t'.rowAt c r) ≤ t'.rowAt c a
 
+/-- A marked-cap context is the data of one at a top cap and a marker
+(`StageType.IsMarkedCapContextAt`). -/
+theorem isMarkedCapContext_iff_exists {t' : StageType.{u} α k} {h : Fin n ↪ Fin k} :
+    t'.IsMarkedCapContext h ↔ ∃ c r, t'.IsMarkedCapContextAt h c r :=
+  Iff.rfl
+
 /-- **A marked-cap context is not top-free**: its top cap is labelled `⊤`. -/
 theorem IsMarkedCapContext.not_isTopFree {t' : StageType.{u} α k} {h : Fin n ↪ Fin k}
     (ht : t'.IsMarkedCapContext h) : ¬ t'.IsTopFree :=
   fun htf ↦ let ⟨c, _, hc, _⟩ := ht; htf c hc.2.1
+
+/-- **The root of a marked-cap context is not onto**: its top cap has grade above `n + 1`, at most
+the number `k` of points of the context, so `n < k`. -/
+theorem IsMarkedCapContext.not_surjective {t' : StageType.{u} α k} {h : Fin n ↪ Fin k}
+    (ht : t'.IsMarkedCapContext h) :
+    ¬ Function.Surjective h := by
+  obtain ⟨c, -, -, -, hn, -⟩ := ht
+  intro hs
+  have hkn : k ≤ n := by simpa using Fintype.card_le_of_surjective h hs
+  have := t'.grade_le c
+  omega
 
 /-- A top-free stage type is a marked-cap context along no embedding. -/
 theorem not_isMarkedCapContext_of_isTopFree {t' : StageType.{u} α k} (ht : t'.IsTopFree)
@@ -485,19 +523,19 @@ theorem not_isMarkedCapContext_of_grade_le {t' : StageType.{u} α k}
     ¬ t'.IsMarkedCapContext h :=
   fun ⟨c, _, hc, _, hn, _⟩ ↦ (ht c hc.2.1).not_gt hn
 
-/-- **Forcing at the root gives a marked-cap context.**  Let `β` be a limit, `β + ω ≤ α`, `q` a
-legal stage type at `β` restricting along `f : Fin n ↪ Fin m` to `p`, and `c` a top cap of `q` of
-grade above `n + 1`.  If `(q, f)` forces the threshold `n + 1` at every cell of
-`p` labelled `⊤`, then `q` is a marked-cap context along `f`, with any marker of `c`. -/
-theorem isMarkedCapContext_of_forcesThreshold (hβ : IsSuccLimit β) (hα : β + ω ≤ α)
-    (hq : q.IsLegal) {f : Fin n ↪ Fin m} {p : StageType.{u} β n}
-    (hp : restrictFace f q = some p) (hc : q.IsTopCap c)
-    (hn : n + 1 < q.toCellScheme.grade c)
+/-- **Forcing at the root tops gives the row inequality at a given marker**: let `β` be a limit,
+`β + ω ≤ α`, `q` a legal stage type at `β` restricting along `f : Fin n ↪ Fin m` to `p`, `c` a
+top cap of `q` and `r` a marker of `c`.  If `(q, f)` forces `n + 1` at every cell of `p` labelled
+`⊤`, then `visibilityReplace N (n + 1) (q.rowAt c r) ≤ q.rowAt c a` at every cell `a` of `q`
+visible through `f` and labelled `⊤`. -/
+theorem IsMarker.visibilityReplace_le_of_forcesThreshold (hβ : Order.IsSuccLimit β)
+    (hα : β + ω ≤ α) (hq : q.IsLegal) {f : Fin n ↪ Fin m} {p : StageType.{u} β n}
+    (hp : restrictFace f q = some p) (hc : q.IsTopCap c) (hr : q.IsMarker c r)
     (hforce : ∀ d : Fin p.card, p.label d = ⊤ →
       ForcesThreshold α hβ.isSuccPrelimit q f p d (n + 1)) :
-    q.IsMarkedCapContext f := by
-  obtain ⟨r, hr⟩ := exists_isMarker hc.2.1
-  refine ⟨c, r, hc, hr, hn, fun a ha hat ↦ ?_⟩
+    ∀ a ∈ q.visibleCells f, q.label a = ⊤ →
+      visibilityReplace (q.toCellScheme.grade c) (n + 1) (q.rowAt c r) ≤ q.rowAt c a := by
+  intro a ha hat
   obtain ⟨hf, hqp⟩ := (restrictFace_eq_some_iff q f).mp hp
   have hcard : (q.comap f hf).card = p.card :=
     congrArg (fun s : StageType.{u} β n ↦ s.card) hqp
@@ -510,6 +548,21 @@ theorem isMarkedCapContext_of_forcesThreshold (hβ : IsSuccLimit β) (hα : β +
     exact (label_congr hqp.symm rfl).trans (comap_label q f hf i)
   exact (ForcesThreshold.le_grade_and_visibilityReplace_rowAt_le hβ hα hq hc hr (hforce d hd) hd
     fun i' hi' ↦ congrArg (q.cellMap f) (Fin.ext hi')).2
+
+/-- **Forcing at the root gives a marked-cap context.**  Let `β` be a limit, `β + ω ≤ α`, `q` a
+legal stage type at `β` restricting along `f : Fin n ↪ Fin m` to `p`, and `c` a top cap of `q` of
+grade above `n + 1`.  If `(q, f)` forces the threshold `n + 1` at every cell of
+`p` labelled `⊤`, then `q` is a marked-cap context along `f`, with any marker of `c`. -/
+theorem isMarkedCapContext_of_forcesThreshold (hβ : IsSuccLimit β) (hα : β + ω ≤ α)
+    (hq : q.IsLegal) {f : Fin n ↪ Fin m} {p : StageType.{u} β n}
+    (hp : restrictFace f q = some p) (hc : q.IsTopCap c)
+    (hn : n + 1 < q.toCellScheme.grade c)
+    (hforce : ∀ d : Fin p.card, p.label d = ⊤ →
+      ForcesThreshold α hβ.isSuccPrelimit q f p d (n + 1)) :
+    q.IsMarkedCapContext f := by
+  obtain ⟨r, hr⟩ := exists_isMarker hc.2.1
+  exact ⟨c, r, hc, hr, hn,
+    IsMarker.visibilityReplace_le_of_forcesThreshold hβ hα hq hp hc hr hforce⟩
 
 end StageType
 

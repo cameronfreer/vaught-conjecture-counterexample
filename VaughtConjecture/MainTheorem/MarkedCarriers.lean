@@ -26,8 +26,9 @@ repository (theorem named)), so the conclusion holds conditional on:
 * marked carriers at every block stage (`hcar`; in place of (R3));
 * the coatom extension property with apex at every countable block stage (`hext`).
 
-Each is still to be proved.  No implication between marked carriers and the coatom extension
-property is compiled.
+The first four are still to be proved.  The coatom extension property with apex is compiled
+(`StageType.hasApexCoatomExtensions_blockStage`); its binder is kept.  No implication between
+marked carriers and the coatom extension property is compiled.
 
 `densitySentence_hasThinAlephOneSpectrum_of_hasTopMarkedCarriers` has the same hypotheses with
 top-marked carriers (`StageType.HasTopMarkedCarriers`, open; the cutoff form, which prescribes only
@@ -52,7 +53,8 @@ open scoped Ordinal
 the density sentence has exactly `ℵ₁` classes of models coded on `ℕ` and no perfect set of
 pairwise nonisomorphic ones, conditional on (R1) (`hrec`), the continuation criterion (`hcont`),
 (R2) (`hres`), marked carriers at every block stage (`hcar`), and the coatom extension property
-with apex at every countable block stage (`hext`), each still to be proved.  (R3) for
+with apex at every countable block stage (`hext`).  The first four are still to be proved; `hext`
+is compiled (`StageType.hasApexCoatomExtensions_blockStage`) and its binder is kept.  (R3) for
 cover-hollowness at a block stage is derived (`Realization.hollowReceiving_of_hasMarkedCarriers`).
 -/
 theorem densitySentence_hasThinAlephOneSpectrum_of_hasMarkedCarriers
@@ -68,7 +70,8 @@ theorem densitySentence_hasThinAlephOneSpectrum_of_hasMarkedCarriers
 of (R3)**: the conclusion of
 `vaughtCounterexample_allCarriers_of_terminalClassification_of_hasApexCoatomExtensions'`,
 conditional on the five hypotheses of
-`densitySentence_hasThinAlephOneSpectrum_of_hasMarkedCarriers`, each still to be proved. -/
+`densitySentence_hasThinAlephOneSpectrum_of_hasMarkedCarriers`; all but `hext` are still to be
+proved, and `hext` is compiled (`StageType.hasApexCoatomExtensions_blockStage`). -/
 theorem vaughtCounterexample_allCarriers_of_hasMarkedCarriers
     (hrec : FiniteCutReceiving.{0}) (hcont : ContinuationCriterion.{0})
     (hres : Realization.ResidualReceiving.{0, 0})
@@ -87,7 +90,9 @@ theorem vaughtCounterexample_allCarriers_of_hasMarkedCarriers
 the conclusion of `densitySentence_hasThinAlephOneSpectrum_of_hasMarkedCarriers`, conditional on
 (R1) (`hrec`), the continuation criterion (`hcont`), (R2) (`hres`), top-marked carriers at every
 block stage (`hcar`), and the coatom extension property with apex at every countable block stage
-(`hext`), each still to be proved.  The hollow comparison uses (R3) for cover-hollow models with
+(`hext`).  The first four are still to be proved; `hext` is compiled
+(`StageType.hasApexCoatomExtensions_blockStage`) and its binder is kept.  The hollow comparison
+uses (R3) for cover-hollow models with
 finite-cut receiving, derived from `hcar`
 (`Realization.hollowReceiving_withReceiving_of_hasTopMarkedCarriers`); `hrec` gives the hollow
 models of the count finite-cut receiving

@@ -21,7 +21,7 @@ root.  By covering one occurrence contains `y`, an occurrence of large top grade
 of the root a rooted cover forcing `x.arity + 1` there, which cover-hollowness provides
 (`Realization.IsTopAnchor`).  Forcing passes to the occurrence along the faces
 (`StageType.ForcesThreshold.trans_face`), and the rows of a top cap read it
-(`StageType.IsMarker.visibilityReplace_le_of_forcesThreshold`, from
+(`StageType.IsMarker.visibilityReplace_le_of_forcesThreshold` in `Stage/MarkedCap.lean`, from
 `StageType.ForcesThreshold.le_grade_and_visibilityReplace_rowAt_le`).
 
 **Acquisition.**  `Realization.hollowAcquisition_isMarkedCapContext` (compiled in this repository
@@ -67,38 +67,6 @@ namespace VaughtConjecture
 
 open Finset Label
 open scoped Ordinal
-
-namespace StageType
-
-variable {α β : Ordinal.{u}} {m n : ℕ} {q : StageType.{u} β m} {c r : Fin q.card}
-
-/-- **Forcing at the root tops gives the row inequality at a given marker**: let `β` be a limit,
-`β + ω ≤ α`, `q` a legal stage type at `β` restricting along `f : Fin n ↪ Fin m` to `p`, `c` a
-top cap of `q` and `r` a marker of `c`.  If `(q, f)` forces `n + 1` at every cell of `p` labelled
-`⊤`, then `visibilityReplace N (n + 1) (q.rowAt c r) ≤ q.rowAt c a` at every cell `a` of `q`
-visible through `f` and labelled `⊤`. -/
-theorem IsMarker.visibilityReplace_le_of_forcesThreshold (hβ : Order.IsSuccLimit β)
-    (hα : β + ω ≤ α) (hq : q.IsLegal) {f : Fin n ↪ Fin m} {p : StageType.{u} β n}
-    (hp : restrictFace f q = some p) (hc : q.IsTopCap c) (hr : q.IsMarker c r)
-    (hforce : ∀ d : Fin p.card, p.label d = ⊤ →
-      ForcesThreshold α hβ.isSuccPrelimit q f p d (n + 1)) :
-    ∀ a ∈ q.visibleCells f, q.label a = ⊤ →
-      visibilityReplace (q.toCellScheme.grade c) (n + 1) (q.rowAt c r) ≤ q.rowAt c a := by
-  intro a ha hat
-  obtain ⟨hf, hqp⟩ := (restrictFace_eq_some_iff q f).mp hp
-  have hcard : (q.comap f hf).card = p.card :=
-    congrArg (fun s : StageType.{u} β n ↦ s.card) hqp
-  obtain ⟨i, rfl⟩ : a ∈ Set.range (q.cellMap f) := by
-    rw [Scheme.range_cellMap]
-    exact ha
-  set d : Fin p.card := ⟨i, lt_of_lt_of_eq i.2 hcard⟩
-  have hd : p.label d = ⊤ := by
-    rw [← hat]
-    exact (label_congr hqp.symm rfl).trans (comap_label q f hf i)
-  exact (ForcesThreshold.le_grade_and_visibilityReplace_rowAt_le hβ hα hq hc hr (hforce d hd) hd
-    fun i' hi' ↦ congrArg (q.cellMap f) (Fin.ext hi')).2
-
-end StageType
 
 namespace Realization
 
