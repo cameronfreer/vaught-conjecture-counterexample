@@ -33,7 +33,7 @@ the acquisition of a cap respecting the root bottoms over an occurrence of this 
 
 So the clause at this context holds exactly when some carrier determines at a stage above its
 labels (`StageType.isDeterminedWithin_of_exists`), that is, when some carrier `D` and stage `δ`
-admit no lawful labelling of the scheme of `D`, literal on the context, agreeing with `D` below
+have no lawful labelling of the scheme of `D`, literal on the context, agreeing with `D` below
 `δ`, at least `δ` where `D` is `⊤`, and below `⊤` at the apex of the donor.  Neither such a
 carrier nor the failure of every carrier is compiled (prospective).  The separation of the root
 cells enters only through `BottomRootCounterexample.exists_cell_reads_lt`: a member of a receiving
