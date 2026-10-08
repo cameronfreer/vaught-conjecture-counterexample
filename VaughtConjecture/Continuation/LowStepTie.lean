@@ -21,7 +21,7 @@ from the proper cells in `V`.
 
 **The raise map** (`Label.raiseMap`, `Label.isWitness_raiseMap`, compiled in this repository).
 For a map `θ` fixing `⊥`, monotone, commuting with visibility replacement at every threshold
-`k ≤ K` with no guard and keeping its bottom under every replacement, a threshold `θ_b` and a cap
+`k ≤ K` unconditionally and keeping its bottom under every replacement, a threshold `θ_b` and a cap
 `c`, both self-visible at `K`, the map `ρ` equal to `θ` at and below `θ_b`, to `max (θ v) c` above,
 and `⊥` where `θ` is `⊥`, is a witness bounded by `K`.
 
