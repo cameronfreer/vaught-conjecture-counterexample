@@ -84,8 +84,12 @@ tuples of two base structures with model expansions to `λ_η` are back-and-fort
 passage from a sentence to a formula with no free variables (`BoundedFormulaω.openBounds`, which
 keeps the quantifier rank and the semantics), the two structures agree on every sentence of
 quantifier rank at most `η` (`realize_iff_of_modelExpansions`), and so do two codes on `ℕ`
-(`mem_modelsOf_iff_of_modelExpansions`).  The case `η = 0` needs no hypothesis, since the forth
-and back laws are vacuous there (`VaughtConjecture.Expansion.AgreementExamples`).
+(`mem_modelsOf_iff_of_modelExpansions`).  More generally, the initial match may be any common
+chart: covers `c` and `d` of one stage type at `λ_η` in model expansions of `M` and `N`, and a
+selector `s`, give back-and-forth equivalent tuples `c ∘ s` and `d ∘ s` at `η`
+(`ModelExpansion.bfEquiv_comp_of_covers`), which satisfy the same formulas of quantifier rank at
+most `η` (`ModelExpansion.realize_comp_iff_of_covers`).  The case `η = 0` needs no hypothesis,
+since the forth and back laws are vacuous there (`VaughtConjecture.Expansion.AgreementExamples`).
 
 ## Placement
 
@@ -328,5 +332,49 @@ theorem mem_modelsOf_iff_of_modelExpansions (hrec : FiniteExtensionReceiving.{0}
   @realize_iff_of_modelExpansions ℕ ℕ c₁.toStructure c₂.toStructure hrec η hη h₁ h₂ θ hθ
 
 end Expansion
+
+/-! ### Comparison from a common chart -/
+
+namespace ModelExpansion
+
+open Expansion
+
+variable {M N : Type w} [baseLanguage.{0}.Structure M] [baseLanguage.{0}.Structure N]
+
+/-- **Comparison from a common chart**: if model expansions `e` of `M` and `f` of `N` to `λ_η`,
+for `η < ω₁`, have covers `c` and `d` of one stage type `t` at `λ_η` on `k` points, then for
+every selector `s : Fin n → Fin k`, repetitions and the empty tuple allowed, the selected tuples
+`c ∘ s` and `d ∘ s` are back-and-forth equivalent at `η` in the base language.  The initial match
+is the given common chart with the selector `s` (`ExpansionMatchData.Match`), and the theorem is
+`ExpansionMatchData.bfEquiv_of_match` for `expansionMatchData`.  With `n = 0` it compares the two
+structures; with `s` the identity it compares the covers themselves.
+
+This is conditional on finite-extension receiving of models (`hrec`), which the forth and back
+laws require (`exists_extend_covers`, `exists_extend_covers_back`); it follows from finite-cut
+receiving of models (`FiniteCutReceiving.finiteExtensionReceiving`), which is (R1), open. -/
+theorem bfEquiv_comp_of_covers (hrec : FiniteExtensionReceiving.{w}) {η : Ordinal.{0}}
+    (hη : η < ω₁) (e : ModelExpansion M (blockStage η)) (f : ModelExpansion N (blockStage η))
+    {k : ℕ} {t : StageType.{0} (blockStage η) k} {c : Fin k → M} {d : Fin k → N}
+    (hc : e.1.Covers t c) (hd : f.1.Covers t d) {n : ℕ} (s : Fin n → Fin k) :
+    BFEquiv (L := baseLanguage.{0}) η n (c ∘ s) (d ∘ s) :=
+  (expansionMatchData hrec M N hη).bfEquiv_of_match
+    ⟨le_rfl, e, f, k, t, c, d, hc, hd, s, rfl, rfl⟩
+
+/-- **Formula agreement from a common chart**: under the hypotheses of `bfEquiv_comp_of_covers`,
+the selected tuples `c ∘ s` and `d ∘ s` satisfy the same formulas of quantifier rank at most `η`
+with free variables in `Fin n`, by InfinitaryLogic's `BFEquiv_implies_agreeQR`.
+
+This is conditional on finite-extension receiving of models (`hrec`), which follows from
+finite-cut receiving of models (`FiniteCutReceiving.finiteExtensionReceiving`); that is (R1),
+open. -/
+theorem realize_comp_iff_of_covers (hrec : FiniteExtensionReceiving.{w}) {η : Ordinal.{0}}
+    (hη : η < ω₁) (e : ModelExpansion M (blockStage η)) (f : ModelExpansion N (blockStage η))
+    {k : ℕ} {t : StageType.{0} (blockStage η) k} {c : Fin k → M} {d : Fin k → N}
+    (hc : e.1.Covers t c) (hd : f.1.Covers t d) {n : ℕ} (s : Fin n → Fin k)
+    (φ : baseLanguage.{0}.Formulaω (Fin n)) (hφ : φ.qrank ≤ η) :
+    φ.Realize (c ∘ s) ↔ φ.Realize (d ∘ s) :=
+  BFEquiv_implies_agreeQR η _ _ (e.bfEquiv_comp_of_covers hrec hη f hc hd s) φ hφ
+
+end ModelExpansion
 
 end VaughtConjecture

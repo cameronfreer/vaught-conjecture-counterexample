@@ -144,8 +144,8 @@ the order law, while lifts still order the twins both ways above level `1`.
 covering" (Layer 4, output 1).  Here the order law, locality, exact partial evaluation, the
 reduction, legality, covering and exact consistency need no more; availability needs, in
 addition, legal types (or the absence of twins).  The splice of two witnesses (roadmap, Layer
-3, the transformation lemma still to be proved there) is not used: locality comes from pointwise
-minima and collapse.
+3; compiled in a general form, `Label.TransformsTo.splice_bandMap`) is not used: locality comes
+from pointwise minima and collapse.
 
 **What is not claimed.**  The candidate is not claimed to be a model, and output 3 is not proved.
 Its modelhood is to follow from the cap-to-model theorem at `λ_{ξ+1}`
@@ -171,11 +171,6 @@ namespace VaughtConjecture
 open Finset Ordinal StageType
 
 /-! ### Auxiliary facts -/
-
-/-- `β ≤ β + n` as labels. -/
-private theorem coe_le_coe_add (β : Ordinal.{u}) (n : ℕ) :
-    (β : Label.{u}) ≤ ((β + n : Ordinal.{u}) : Label.{u}) :=
-  WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr le_self_add)
 
 /-- `β + n < β + N` as labels for `n < N`. -/
 private theorem coe_add_lt_coe_add (β : Ordinal.{u}) {n N : ℕ} (h : n < N) :
@@ -350,7 +345,7 @@ private theorem exists_isLawful_collapse_inf'_aux (hS : S.IsConsistent) (hc : S.
       le_antisymm ((inf'_le _ hj₀).trans_eq (((hℓ j₀).2 (mem_filter.mp hj₀).2).1 e he))
         (le_inf' _ _ fun j hj ↦ (((hℓ j).2 (mem_filter.mp hj).2).1 e he).ge)
     rw [ite_eq_right he, hinf, Label.collapse,
-      Label.reduce_of_lt (((t.atStage e).resolve_right he).trans_le (coe_le_coe_add β N))]
+      Label.reduce_of_lt (((t.atStage e).resolve_right he).trans_le (Label.coe_le_coe_add β N))]
 
 end Rooted
 
@@ -736,7 +731,7 @@ theorem not_isModel_stableCandidate_of_stableLabel_le {K : ℕ}
   · rw [stableSection_of_eq_top hd]
     exact hK w t ht d hd
   · rw [stableSection_of_ne_top hd]
-    exact ((t.atStage d).resolve_right hd).le.trans (coe_le_coe_add _ K)
+    exact ((t.atStage d).resolve_right hd).le.trans (Label.coe_le_coe_add _ K)
 
 /-! ### A model expansion -/
 
@@ -806,7 +801,7 @@ theorem availability_stableSection_iff {u : Fin k ↪ M} {t : StageType.{u} (blo
       by_contra hwt
       rw [stableSection_of_ne_top hwt] at hle
       exact (h₁.trans hle).not_gt (((t.atStage w).resolve_right hwt).trans_le
-        (WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr le_self_add)))
+        (Label.coe_le_coe_add _ _))
     refine ⟨w, hw, hwt, ?_⟩
     have h₂ := h₁.trans hle
     rw [stableSection_of_eq_top hwt] at h₂

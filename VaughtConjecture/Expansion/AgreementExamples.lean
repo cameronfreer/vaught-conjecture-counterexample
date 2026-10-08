@@ -100,6 +100,18 @@ example {α : Ordinal.{0}} {k : ℕ} {e : ModelExpansion M (blockStage (α + 1))
       e'.1.Covers t' c' ∧ f'.1.Covers t' d' ∧ c' ∘ j = c ∧ d' ∘ j = d ∧ d' i' = d i :=
   exists_extend_covers_back_of_mem_range hc hd ⟨i, rfl⟩
 
+/-! ### Comparison from a common chart -/
+
+/-- Two covers of one stage type at `λ_η` are themselves back-and-forth equivalent at `η`: the
+comparison from a common chart with the identity selector, conditional on finite-cut receiving of
+models. -/
+example (h : FiniteCutReceiving.{w}) {η : Ordinal.{0}} (hη : η < ω₁)
+    (e : ModelExpansion M (blockStage η)) (f : ModelExpansion N (blockStage η)) {k : ℕ}
+    {t : StageType.{0} (blockStage η) k} {c : Fin k → M} {d : Fin k → N}
+    (hc : e.1.Covers t c) (hd : f.1.Covers t d) :
+    BFEquiv (L := baseLanguage.{0}) η k c d :=
+  e.bfEquiv_comp_of_covers h.finiteExtensionReceiving hη f hc hd id
+
 /-! ### Receiving -/
 
 /-- Finite-extension receiving gives finite-cut receiving (the donors on one more point). -/

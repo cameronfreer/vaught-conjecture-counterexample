@@ -44,7 +44,7 @@ of grade `n`, so (CL) for every `v ≥ c` is its case `v = c` followed by `c ≤
 `capLowering_of_isLawful`).  When the ambient value at `C` is at least `c`, no labelling in the cap
 ball is below `c` at `C` (immediate from the cap ball at `C`), and the lowered value at `C` is
 exactly `c` (`capLowering_eq_of_isLawful`); the case `v < c`, which the hypothesis `c ≤ v`
-excludes, has no solution there.  So proving (CL) as stated does not establish that the open
+excludes, has no solution there.  So proving (CL) as stated does not establish that the
 requirement of the construction is satisfied.
 
 **The requirement.**  `StageType.HasCoupledGatedPinnedExtensions` asks for a legal display, and
@@ -61,7 +61,7 @@ labelling.  Four parts are named here: three at that lift, and the rows.
    (`StageType.CoupledGatedExtension.cap_le_gate`), so then no lift exists.  The anchor readings
    alone do not force it: at a cap `c` at most the gate, every labelling in the cap ball satisfies
    them at the gate value `c` (`CellScheme.Rows.IsLawful.min_eq_visibilityReplace_of_min_eq`, in
-   `VaughtConjecture.Extension.CoupledGatedExtensionCounterexample`); jointly with the rest of the
+   `VaughtConjecture.Extension.Gate`); jointly with the rest of the
    display this is open.  At the instance of `VaughtConjecture.Extension.CoupledGateInstance` it
    does not occur, since every lift of the display there exists (`CoupledGateInstance.isLegal_Q`).
 3. **Joint lawfulness.**  The lowered private labelling must extend to one labelling of the
@@ -76,7 +76,7 @@ labelling.  Four parts are named here: three at that lift, and the rows.
 4. **The rows of the display.**  For every anchored legal donor, rows satisfying
    `CellScheme.Rows.IsGate` and `CellScheme.Rows.TwinsReadGate` must exist.  This is open.
 
-The new content of the open point sits at the lifts from coatoms containing the new point (parts 2
+The new content of the requirement sits at the lifts from coatoms containing the new point (parts 2
 and 3), jointly with the gate, the twins and the donor cells, at every lawful ambient labelling.
 The hypothesis needs more at every input: the rows (part 4), consistency and completeness of the
 display, and bountifulness at its other pairs of graded faces.  Those pairs include the lift from

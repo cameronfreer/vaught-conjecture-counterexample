@@ -6,6 +6,7 @@ Authors: Cameron Freer
 import Mathlib.Data.Fin.VecNotation
 import Mathlib.Tactic.FinCases
 import VaughtConjecture.Extension.GatedExtensionCounterexample
+import VaughtConjecture.Realization.Families
 
 /-!
 # The coupled gated pinned extension property fails at every stage above `1`
@@ -51,11 +52,12 @@ the cap itself, then no lawful labelling of `P` that keeps the cap drops that an
 (`CellScheme.Rows.IsLawful.ne_bot_of_row_mem_block`: a shifter sending the reading of the anchor to
 `⊥` sends its whole block to `⊥`), and the donor's own labelling meets the condition.  The
 condition is necessary for the property, not shown sufficient.  More generally, a lawful labelling
-that keeps a cell `C` and drops a cell `x` drops every cell that the row of `C` reads below the end
-of the block of its reading of `x` (`CellScheme.Rows.IsLawful.eq_bot_of_row_le_block`), so the
-row of `C` reads `C` above that block (`CellScheme.Rows.IsLawful.lt_row_self_of_eq_bot`): at a
-private cap of full scope and full grade, the condition can fail only at a donor cell all of whose
-anchors the cap reads in blocks strictly below the block of its reading of itself.
+that keeps a cell `C` and drops a cell `x` that the row of `C` reads at an ordinal drops every
+cell that the row of `C` reads below the end of the block of that reading
+(`CellScheme.Rows.IsLawful.eq_bot_of_row_le_block`), so the row of `C` reads `C` above that block
+(`CellScheme.Rows.IsLawful.lt_row_self_of_eq_bot`).  These concern cells read at ordinals: a cell
+read as `⊥` has no block (the dead cells of the input below are read as `⊥`, and are `⊥` in every
+lawful labelling that keeps the cap).
 
 **The anchor readings at a positive cap**
 (`CellScheme.Rows.IsLawful.min_eq_visibilityReplace_of_min_eq`).  Part 2 of the requirement named
@@ -105,11 +107,17 @@ labelled `⊤`.  So the bottom transport condition asks for a lawful labelling o
   models acquire (`Realization.IsModel.exists_privateContext`) can carry such an anchor
   (a lawful labelling of the private type that is `⊥` at an anchor and not at the cap, with a donor
   whose rows read the transported pattern within one block) is not decided here.  The refuting
-  input has the form of an acquired private context: it satisfies every conclusion of
-  `Realization.IsModel.exists_privateContext` and of its anchored form, at every floor
-  (`exists_privateContext_not_carriesBottoms`), so those conclusions do not give the condition.
-  Whether every model acquires a private context satisfying it
-  (`Realization.AcquiresCarryingContexts`) is open.
+  input satisfies the finite stage-type and label conditions of the output of
+  `Realization.IsModel.exists_privateContext` (with `N₀ ≤ 2`) and of its anchored form, at every
+  floor (`exists_privateContext_not_carriesBottoms`), so those conditions alone do not give the
+  bottom transport condition.  No occurrence of this input in an actual model is exhibited, and
+  whether every model acquires a private context satisfying the condition
+  (`Realization.AcquiresCarryingContexts`) is undecided.
+* The refuting private type lies in every dominance family over its face on the first point, with
+  its full cell labelled `⊤`, and does not carry there
+  (`exists_mem_dominanceFamily_not_carriesBottoms`).  This refutes only the finite sufficient
+  condition "every member of a dominance family carries the bottoms at its dominating cell"; no
+  occurrence of it in a model is exhibited.
 * The refuting private type has a unique cell of full scope and full grade, and cells of grade
   `1` not labelled `⊥`; so neither of the conditions on private contexts asked about in
   `VaughtConjecture.Realization.CoupledFiniteCutReceiving` (question (M4)) excludes it.
@@ -127,367 +135,6 @@ This file belongs to Layer 3 of `roadmap/README.md`.
 -/
 
 universe u
-
-namespace VaughtConjecture
-
-open Finset Label
-
-/-! ### The readings of a gate carry `⊥` from the anchors to the donor cells -/
-
-namespace CellScheme.Rows.IsLawful
-
-variable {ι α : Type*} {D : CellScheme ι α} {R : D.Rows.{u}} {G C : ι} {P : Set ι}
-  {w q : ι → Label.{u}}
-
-/-- **A reading carries `⊥` from the anchors.**  Let `q` be lawful with `q G ≠ ⊥`, and let the
-row of the gate `G` read a donor cell `e` whose display label is neither `⊥` nor at least that of
-the cap `C`.  If `q` is `⊥` at every private cell `z` whose display label `w z` is sent to `w e` by
-a visibility replacement `vr_N(·, i)`, `i ≤ N` (`N` the grade of `G`), then `q e = ⊥`: the one
-witness at the gate commutes with the replacement below `q G`. -/
-theorem eq_bot_of_gateReads (hq : R.IsLawful q) (hG : q G ≠ ⊥)
-    {e : D.below (D.gradedIndex G)} (h : GateReads R G C P w e) (hwe : w e ≠ ⊥)
-    (hCe : ¬ w C ≤ w e)
-    (hz : ∀ z : D.below (D.gradedIndex G), z.1 ∈ P → ∀ i ≤ D.grade G,
-      w e = visibilityReplace (D.grade G) i (w z) → q z = ⊥) : q e = ⊥ := by
-  obtain ⟨g, σ, hw, hgN, heq⟩ := hq.exists_gateWitness G
-  cases h with
-  | bot hwe' _ => exact absurd hwe' hwe
-  | botAnchor _ _ _ hwe' _ => exact absurd hwe' hwe
-  | top _ _ _ heC _ => exact absurd heC hCe
-  | ref z hzP i hi hwe' hrow =>
-    have hz' : min (σ (R.row G z)) (q G) = min (q z) (q G) := (heq z).symm
-    have h' := hw.min_apply_visibilityReplace (hq.orderly G) hgN hz' hi
-    rw [← hrow, ← heq e, hz z hzP i hi hwe', visibilityReplace_bot, min_eq_left bot_le] at h'
-    exact (min_eq_bot.mp h').resolve_right hG
-
-/-- **A reading keeps `⊥` away from the donor cells.**  Let `q` be lawful with `q G ≠ ⊥`, and let
-the row of the gate `G` read a donor cell `e` whose display label is not `⊥`.  If `q` is not `⊥`
-at any private cell `z` that can serve the reading of `e` (as an anchor, `w e = vr_N(w z, i)` with
-`i ≤ N`, or as a private cell labelled at least the cap `C` when `e` is), then `q e ≠ ⊥`. -/
-theorem ne_bot_of_gateReads (hq : R.IsLawful q) (hG : q G ≠ ⊥)
-    {e : D.below (D.gradedIndex G)} (h : GateReads R G C P w e) (hwe : w e ≠ ⊥)
-    (hz : ∀ z : D.below (D.gradedIndex G), z.1 ∈ P →
-      ((∃ i ≤ D.grade G, w e = visibilityReplace (D.grade G) i (w z)) ∨
-        (w C ≤ w z ∧ w C ≤ w e)) → q z ≠ ⊥) : q e ≠ ⊥ := by
-  obtain ⟨g, σ, hw, hgN, heq⟩ := hq.exists_gateWitness G
-  have hmin : ∀ x : D.below (D.gradedIndex G), min (q x) (q G) ≠ ⊥ → q x ≠ ⊥ :=
-    fun x hx hqx ↦ hx (by rw [hqx, min_eq_left bot_le])
-  cases h with
-  | bot hwe' _ => exact absurd hwe' hwe
-  | botAnchor _ _ _ hwe' _ => exact absurd hwe' hwe
-  | ref z hzP i hi hwe' hrow =>
-    have hz' : min (σ (R.row G z)) (q G) = min (q z) (q G) := (heq z).symm
-    have h' := hw.min_apply_visibilityReplace (hq.orderly G) hgN hz' hi
-    rw [← hrow, ← heq e] at h'
-    refine hmin e ?_
-    rw [h']
-    exact fun h0 ↦ (min_eq_bot.mp h0).elim
-      (fun h1 ↦ hz z hzP (.inl ⟨i, hi, hwe'⟩) (visibilityReplace_eq_bot_iff.mp h1)) hG
-  | top z hzP hzC heC hrow =>
-    refine hmin e fun h0 ↦ ?_
-    have hle : min (q z) (q G) ≤ min (q e) (q G) := by
-      rw [heq z, heq e]; exact min_le_min_right _ (hw.monotone hrow)
-    rw [h0, le_bot_iff] at hle
-    exact (min_eq_bot.mp hle).elim (hz z hzP (.inr ⟨hzC, heC⟩)) hG
-
-
-/-- **An anchor reading does not force the gate below a cap that the gate exceeds.**  Let `q` be
-lawful, `c ≤ q G` a cap self-visible at the grade `N` of the gate `G`, and let the row of `G` read
-a donor cell `e` as `vr_N` of its reading of an anchor `z`.  Then every labelling `q'` that agrees
-with `q` capped at `c` at `z` and at `e` satisfies the reading at the gate value `c`:
-`min (q' e) c = min (vr_N(q' z, i)) c`.  So in a lift at the cap `c` the anchor readings are
-consistent with a gate lowered to `c`; whether the whole locality at the gate holds there is the
-joint lawfulness of the lift, not addressed here. -/
-theorem min_eq_visibilityReplace_of_min_eq (hq : R.IsLawful q)
-    {z e : D.below (D.gradedIndex G)} {i : ℕ} (hi : i ≤ D.grade G)
-    (hrow : R.row G e = visibilityReplace (D.grade G) i (R.row G z)) {c : Label.{u}}
-    (hc : IsSelfVisible (D.grade G) c) (hcG : c ≤ q G) {q' : ι → Label.{u}}
-    (hz : min (q' z) c = min (q z) c) (he : min (q' e) c = min (q e) c) :
-    min (q' e) c = min (visibilityReplace (D.grade G) i (q' z)) c := by
-  obtain ⟨g, σ, hw, hgN, heq⟩ := hq.exists_gateWitness G
-  have hz' : min (σ (R.row G z)) (q G) = min (q z) (q G) := (heq z).symm
-  have h' := hw.min_apply_visibilityReplace (hq.orderly G) hgN hz' hi
-  rw [← hrow, ← heq e] at h'
-  -- Cap the reading at `c ≤ q G`.
-  have hcap : min (q e) c = min (visibilityReplace (D.grade G) i (q z)) c := by
-    rw [← min_eq_right hcG, ← min_assoc, h', min_assoc]
-  rw [he, hcap, ← visibilityReplace_min_of_isSelfVisible hi hc, ← hz,
-    visibilityReplace_min_of_isSelfVisible hi hc]
-
-/-- **A cap that reads an anchor in its own block keeps it.**  If the row of `C` reads a cell `z`
-below it and `C` itself in one block `[μ, μ + ω)` (`μ` zero or a limit), then a lawful labelling
-that is not `⊥` at `C` is not `⊥` at `z`: a shifter sending the reading `μ + i` of `z` to `⊥`
-sends `vr_k(μ + i, i') = μ + i'` (for `k > i`) to `vr_k(⊥, i') = ⊥`, the guard of the commutation
-law holding at `⊥`, and `μ + i'` is the reading of `C`. -/
-theorem ne_bot_of_row_mem_block (hq : R.IsLawful q) {z : ι} (hz : z ∈ D.below (D.gradedIndex C))
-    {μ : Ordinal.{u}} (hμ : Order.IsSuccPrelimit μ) {i i' : ℕ}
-    (hrz : R.row C ⟨z, hz⟩ = ((μ + i : Ordinal.{u}) : Label.{u}))
-    (hrC : R.row C ⟨C, D.mem_below_gradedIndex C⟩ = ((μ + i' : Ordinal.{u}) : Label.{u}))
-    (hC : q C ≠ ⊥) : q z ≠ ⊥ := by
-  obtain ⟨g, σ, hw, heq⟩ := hq.locality C
-  have hCC : min (q C) (q C) = min (σ ((μ + i' : Ordinal.{u}) : Label.{u}))
-      (g (D.grade C)) := by
-    rw [← hrC]; exact heq ⟨C, D.mem_below_gradedIndex C⟩
-  have hzC : min (q z) (q C) = min (σ ((μ + i : Ordinal.{u}) : Label.{u})) (g (D.grade z)) := by
-    rw [← hrz]; exact heq ⟨z, hz⟩
-  rw [min_self] at hCC
-  intro hqz
-  have hg : g (D.grade z) ≠ ⊥ := by
-    have hle : g (D.grade C) ≤ g (D.grade z) := hw.antitone ((D.mem_below).mp hz).2
-    intro h0
-    exact hC (le_bot_iff.mp (hCC ▸ (min_le_right _ _).trans (hle.trans_eq h0)))
-  have hσ : σ ((μ + i : Ordinal.{u}) : Label.{u}) = ⊥ := by
-    rw [hqz, min_eq_left bot_le] at hzC
-    exact (min_eq_bot.mp hzC.symm).resolve_right hg
-  have hvr := visibilityReplace_coe_add_natCast (n := max i i' + 1) hμ
-    (show i < max i i' + 1 by omega) i'
-  have hcomm := hw.visibilityReplace_comm ((μ + i : Ordinal.{u}) : Label.{u}) (max i i' + 1)
-    (by rw [hσ]; exact bot_le) i' (by omega)
-  rw [hvr, hσ, visibilityReplace_bot] at hcomm
-  exact hC (by rw [hCC, hcomm, min_eq_left bot_le])
-
-/-- **A labelling that keeps a cell drops only whole blocks of its row.**  Let `q` be lawful and
-not `⊥` at a cell `C`, and let `x`, `y` be cells below `C` such that the row of `C` reads `x` at
-`μ + i` (`μ` zero or a limit) and `y` at most at `μ + j`, so at most the end of the block of `x`.
-If `q` is `⊥` at `x`, it is `⊥` at `y`.  The witness `(g, σ)` of locality at `C` has `g ≠ ⊥` at
-the grades below `C` (it bounds `q C`), so `σ (μ + i) = ⊥`; by the commutation law, whose guard
-holds at `⊥`, `σ` sends the whole block `[μ, μ + ω)`, and so everything below its end, to `⊥`.
-With `y = C` this is `ne_bot_of_row_mem_block`. -/
-theorem eq_bot_of_row_le_block (hq : R.IsLawful q) {x y : ι}
-    (hx : x ∈ D.below (D.gradedIndex C)) (hy : y ∈ D.below (D.gradedIndex C))
-    {μ : Ordinal.{u}} (hμ : Order.IsSuccPrelimit μ) {i j : ℕ}
-    (hrx : R.row C ⟨x, hx⟩ = ((μ + i : Ordinal.{u}) : Label.{u}))
-    (hry : R.row C ⟨y, hy⟩ ≤ ((μ + j : Ordinal.{u}) : Label.{u})) (hC : q C ≠ ⊥)
-    (hqx : q x = ⊥) : q y = ⊥ := by
-  obtain ⟨g, σ, hw, heq⟩ := hq.locality C
-  have hCC : min (q C) (q C) = min (σ (R.row C ⟨C, D.mem_below_gradedIndex C⟩))
-      (g (D.grade C)) := heq ⟨C, D.mem_below_gradedIndex C⟩
-  rw [min_self] at hCC
-  have hg : g (D.grade x) ≠ ⊥ := by
-    have hle : g (D.grade C) ≤ g (D.grade x) := hw.antitone ((D.mem_below).mp hx).2
-    intro h0
-    exact hC (le_bot_iff.mp (hCC ▸ (min_le_right _ _).trans (hle.trans_eq h0)))
-  have hσ : σ ((μ + i : Ordinal.{u}) : Label.{u}) = ⊥ := by
-    have hxC : min (q x) (q C) = min (σ ((μ + i : Ordinal.{u}) : Label.{u}))
-        (g (D.grade x)) := by
-      rw [← hrx]; exact heq ⟨x, hx⟩
-    rw [hqx, min_eq_left bot_le] at hxC
-    exact (min_eq_bot.mp hxC.symm).resolve_right hg
-  have hvr := visibilityReplace_coe_add_natCast (n := max i j + 1) hμ
-    (show i < max i j + 1 by omega) j
-  have hcomm := hw.visibilityReplace_comm ((μ + i : Ordinal.{u}) : Label.{u}) (max i j + 1)
-    (by rw [hσ]; exact bot_le) j (by omega)
-  rw [hvr, hσ, visibilityReplace_bot] at hcomm
-  have hσy : σ (R.row C ⟨y, hy⟩) = ⊥ := le_bot_iff.mp (hcomm ▸ hw.monotone hry)
-  have hyC : min (q y) (q C) = min (σ (R.row C ⟨y, hy⟩)) (g (D.grade y)) := heq ⟨y, hy⟩
-  rw [hσy, min_eq_left bot_le] at hyC
-  exact (min_eq_bot.mp hyC).resolve_right hC
-
-/-- **A dropped cell is read below the block of the keeping cell.**  If `q` is lawful, not `⊥` at
-a cell `C`, and `⊥` at a cell `x` that the row of `C` reads at `μ + i` (`μ` zero or a limit), then
-the row of `C` reads `C` itself above the whole block `[μ, μ + ω)` (`eq_bot_of_row_le_block` with
-`y = C`).  So, of the cells that the row of `C` reads at ordinals, a lawful labelling that keeps
-`C` drops only cells read in a block strictly below the block of its reading of `C`. -/
-theorem lt_row_self_of_eq_bot (hq : R.IsLawful q) {x : ι} (hx : x ∈ D.below (D.gradedIndex C))
-    {μ : Ordinal.{u}} (hμ : Order.IsSuccPrelimit μ) {i : ℕ}
-    (hrx : R.row C ⟨x, hx⟩ = ((μ + i : Ordinal.{u}) : Label.{u})) (hC : q C ≠ ⊥)
-    (hqx : q x = ⊥) (j : ℕ) :
-    ((μ + j : Ordinal.{u}) : Label.{u}) < R.row C ⟨C, D.mem_below_gradedIndex C⟩ :=
-  lt_of_not_ge fun h ↦
-    hC (hq.eq_bot_of_row_le_block hx (D.mem_below_gradedIndex C) hμ hrx h hC hqx)
-
-end CellScheme.Rows.IsLawful
-
-namespace StageType
-
-variable {α : Ordinal.{u}} {n m : ℕ}
-
-/-! ### The bottom transport condition -/
-
-/-- The **bottom transport condition** for a private type `P` on `n` points, a one-point donor `d`
-(on `m + 1` points, the last one new) and a cap label `c`: every lawful labelling `a` of `P` that
-is not `⊥` at the cells of `P` of graded index `(univ, n)` labelled `c` has a lawful labelling `ρ`
-of `d` such that, at every new donor cell `j` (one whose scope contains the new point) not
-labelled `⊥`,
-* `ρ j = ⊥` if `d.label j` is not at least `c` and `a` is `⊥` at every cell `i` of `P` with
-  `d.label j = vr_n(P.label i, k)` for some `k ≤ n` (every possible anchor of `j`);
-* `ρ j ≠ ⊥` if `a` is not `⊥` at any cell `i` of `P` that is a possible anchor of `j` or is
-  labelled at least `c` when `j` is.
-
-Every coupled gated extension forces it (`CoupledGatedExtension.carriesBottoms`). -/
-def CarriesBottoms (P : StageType.{u} α n) (d : StageType.{u} α (m + 1)) (c : Label.{u}) :
-    Prop :=
-  ∀ a : Fin P.card → Label.{u}, P.rows.IsLawful a →
-    (∀ i, P.toCellScheme.gradedIndex i = (univ, n) → P.label i = c → a i ≠ ⊥) →
-    ∃ ρ : Fin d.card → Label.{u}, d.rows.IsLawful ρ ∧
-      ∀ j, Fin.last m ∈ d.toCellScheme.scope j → d.label j ≠ ⊥ →
-        (¬ c ≤ d.label j →
-          (∀ i, ∀ k ≤ n, d.label j = visibilityReplace n k (P.label i) → a i = ⊥) → ρ j = ⊥) ∧
-        ((∀ i, ((∃ k ≤ n, d.label j = visibilityReplace n k (P.label i)) ∨
-            (c ≤ P.label i ∧ c ≤ d.label j)) → a i ≠ ⊥) → ρ j ≠ ⊥)
-
-/-- **The bottom transport condition holds without donor labels strictly below the cap**: if every
-new donor cell is labelled `⊥` or at least `c`, the labelling of `d` itself meets the condition.
-So the condition can fail only through a donor label strictly between `⊥` and `c`, which an
-anchored donor reads through an anchor. -/
-theorem carriesBottoms_of_forall_label {P : StageType.{u} α n} {d : StageType.{u} α (m + 1)}
-    {c : Label.{u}}
-    (hd : ∀ j, Fin.last m ∈ d.toCellScheme.scope j → d.label j = ⊥ ∨ c ≤ d.label j) :
-    CarriesBottoms P d c := fun _ _ _ ↦
-  ⟨d.label, d.isLawful, fun j hj hne ↦
-    ⟨fun hlt _ ↦ ((hd j hj).resolve_left hne |> hlt).elim, fun _ ↦ hne⟩⟩
-
-/-- **The bottom transport condition holds when the cap reads an anchor of every donor label below
-it in its own block.**  Let `C` be a cell of `P` of graded index `(univ, n)`, and suppose every new
-donor cell labelled neither `⊥` nor at least the label of `C` has an anchor `z`
-(`d.label j = vr_n(P.label z, k)`, `k ≤ n`) that the row of `C` reads in the block of its reading
-of `C` itself.  Then a lawful labelling of `P` not `⊥` at `C` is not `⊥` at that anchor
-(`CellScheme.Rows.IsLawful.ne_bot_of_row_mem_block`), and the labelling of `d` itself meets the
-condition.  The private type of `CoupledGatedExtensionCounterexample` fails the hypothesis: its cap
-reads the anchor `z₁` at `1` and itself at `ω + 2`. -/
-theorem carriesBottoms_of_row_mem_block {P : StageType.{u} α n} {d : StageType.{u} α (m + 1)}
-    {C : Fin P.card} (hC : P.toCellScheme.gradedIndex C = (univ, n))
-    (hblock : ∀ j, Fin.last m ∈ d.toCellScheme.scope j → d.label j ≠ ⊥ →
-      d.label j < P.label C →
-      ∃ z, ∃ hz : z ∈ P.toCellScheme.below (P.toCellScheme.gradedIndex C), ∃ k ≤ n,
-        d.label j = visibilityReplace n k (P.label z) ∧ ∃ μ : Ordinal.{u},
-          Order.IsSuccPrelimit μ ∧ ∃ i i' : ℕ,
-            P.rows.row C ⟨z, hz⟩ = ((μ + i : Ordinal.{u}) : Label.{u}) ∧
-            P.rows.row C ⟨C, P.toCellScheme.mem_below_gradedIndex C⟩ =
-              ((μ + i' : Ordinal.{u}) : Label.{u})) :
-    CarriesBottoms P d (P.label C) := by
-  intro a ha hcap
-  refine ⟨d.label, d.isLawful, fun j hj hne ↦ ⟨fun hlt hdrop ↦ ?_, fun _ ↦ hne⟩⟩
-  obtain ⟨z, hz, k, hk, hzk, μ, hμ, i, i', hrz, hrC⟩ := hblock j hj hne (lt_of_not_ge hlt)
-  exact absurd (hdrop z k hk hzk)
-    (ha.ne_bot_of_row_mem_block hz hμ hrz hrC (hcap C hC rfl))
-
-namespace CoupledGatedExtension
-
-variable {P : StageType.{u} α n} {f : Fin m ↪ Fin n} {d : StageType.{u} α (m + 1)}
-  (E : CoupledGatedExtension P f d)
-
-/-- A cell of the display whose scope contains the new point is not a private cell. -/
-private theorem not_mem_visible_castSuccEmb {e : Fin E.display.card}
-    (he : Fin.last n ∈ E.display.toCellScheme.scope e) :
-    e ∉ E.display.toCellScheme.visible (Set.range Fin.castSuccEmb) := fun h ↦ by
-  obtain ⟨i, hi⟩ := h he
-  exact (Fin.castSucc_lt_last i).ne hi
-
-/-- **The gate carries `⊥` from the anchors to a donor cell.**  Let `r` be a lawful labelling of
-the display that is not `⊥` at the cap, and `e` a donor cell containing the new point, labelled
-neither `⊥` nor at least the cap in the display.  If `r` is `⊥` at every private cell whose label
-is sent to the label of `e` by a visibility replacement `vr_n(·, i)`, `i ≤ n`, then `r e = ⊥`. -/
-theorem eq_bot_of_isLawful {r : Fin E.display.card → Label.{u}}
-    (hr : E.display.rows.IsLawful r) (hcap : r E.cap ≠ ⊥) {e : Fin E.display.card}
-    (he : e ∈ E.display.toCellScheme.visible (Set.range (extendByLast f)))
-    (hnew : Fin.last n ∈ E.display.toCellScheme.scope e) (hwe : E.display.label e ≠ ⊥)
-    (hCe : ¬ E.display.label E.cap ≤ E.display.label e)
-    (hz : ∀ z ∈ E.display.toCellScheme.visible (Set.range Fin.castSuccEmb), ∀ i ≤ n,
-      E.display.label e = visibilityReplace n i (E.display.label z) → r z = ⊥) : r e = ⊥ := by
-  have hG : r E.gate ≠ ⊥ := fun h ↦ hcap (le_bot_iff.mp (h ▸ E.cap_le_gate hr))
-  have hgr := E.grade_gate
-  exact hr.eq_bot_of_gateReads hG (E.isGate.reads e he (E.not_mem_visible_castSuccEmb hnew))
-    hwe hCe fun z hzP i hi hez ↦ hz z hzP i (by rwa [hgr] at hi) (by rwa [hgr] at hez)
-
-/-- **The gate keeps `⊥` away from a donor cell.**  Let `r` be a lawful labelling of the display
-that is not `⊥` at the cap, and `e` a donor cell containing the new point, not labelled `⊥` in the
-display.  If `r` is not `⊥` at any private cell whose label is sent to the label of `e` by a
-visibility replacement `vr_n(·, i)`, `i ≤ n`, nor at any private cell labelled at least the cap
-when `e` is, then `r e ≠ ⊥`. -/
-theorem ne_bot_of_isLawful {r : Fin E.display.card → Label.{u}}
-    (hr : E.display.rows.IsLawful r) (hcap : r E.cap ≠ ⊥) {e : Fin E.display.card}
-    (he : e ∈ E.display.toCellScheme.visible (Set.range (extendByLast f)))
-    (hnew : Fin.last n ∈ E.display.toCellScheme.scope e) (hwe : E.display.label e ≠ ⊥)
-    (hz : ∀ z ∈ E.display.toCellScheme.visible (Set.range Fin.castSuccEmb),
-      ((∃ i ≤ n, E.display.label e = visibilityReplace n i (E.display.label z)) ∨
-        (E.display.label E.cap ≤ E.display.label z ∧
-          E.display.label E.cap ≤ E.display.label e)) → r z ≠ ⊥) : r e ≠ ⊥ := by
-  have hG : r E.gate ≠ ⊥ := fun h ↦ hcap (le_bot_iff.mp (h ▸ E.cap_le_gate hr))
-  have hgr := E.grade_gate
-  refine hr.ne_bot_of_gateReads hG (E.isGate.reads e he (E.not_mem_visible_castSuccEmb hnew))
-    hwe fun z hzP h ↦ hz z hzP ?_
-  rcases h with ⟨i, hi, hez⟩ | h
-  · exact .inl ⟨i, by rwa [hgr] at hi, by rwa [hgr] at hez⟩
-  · exact .inr h
-
-/-- **Every coupled gated extension forces the bottom transport condition** for its private type,
-its donor and the label of its cap.  A lawful labelling of `P` extends to a lawful labelling `r`
-of the display (bountifulness from the private face at the cap `⊥`); `r` is not `⊥` at the cap,
-hence not at the gate (`cap_le_gate`); the donor face of `r` is lawful for `d`, and the readings of
-the gate carry `⊥` from the anchors (`eq_bot_of_isLawful`, `ne_bot_of_isLawful`). -/
-theorem carriesBottoms {c : Label.{u}} (hc : E.display.label E.cap = c) :
-    CarriesBottoms P d c := by
-  obtain ⟨hfP, hP⟩ := (restrictFace_eq_some_iff _ _).mp E.restrictFace_castSuccEmb
-  obtain ⟨hfd, hd⟩ := (restrictFace_eq_some_iff _ _).mp E.restrictFace_extendByLast
-  suffices key : CarriesBottoms (E.display.comap Fin.castSuccEmb hfP)
-      (E.display.comap (extendByLast f) hfd) c by
-    rw [hP, hd] at key; exact key
-  intro a ha hcapa
-  obtain ⟨r, hr, -, hra⟩ := Scheme.IsLegal.exists_isLawful_extend E.isLegal hfP
-    (isSelfVisible_bot (n + 1)) ha CellScheme.Rows.isLawful_const_bot
-    fun _ ↦ by simp only [min_bot_right]
-  -- The private cells are the cells of the private face.
-  have hpriv : ∀ z ∈ E.display.toCellScheme.visible (Set.range Fin.castSuccEmb),
-      ∃ i, E.display.toScheme.cellMap Fin.castSuccEmb i = z := fun z hz ↦ by
-    have : z ∈ Set.range (E.display.toScheme.cellMap Fin.castSuccEmb) := by
-      rw [Scheme.range_cellMap, mem_coe, Scheme.mem_visibleCells]; exact hz
-    exact this
-  -- The cap is the cell of the private face labelled `c`, of graded index `(univ, n)` there.
-  have hcap : r E.cap ≠ ⊥ := by
-    obtain ⟨i, hi⟩ := hpriv E.cap E.isGate.cap_mem
-    have hgi : (E.display.comap Fin.castSuccEmb hfP).toCellScheme.gradedIndex i = (univ, n) := by
-      have h := E.display.toScheme.map_comap_gradedIndex Fin.castSuccEmb i
-      rw [hi, E.gradedIndex_cap] at h
-      obtain ⟨h1, h2⟩ := Prod.ext_iff.mp h
-      exact Prod.ext ((Finset.map_injective _) h1) h2
-    rw [← hi, hra i]
-    refine hcapa i hgi ?_
-    -- The labels of the private face are those of its cells (`comap_label`, by definition).
-    change E.display.label (E.display.toScheme.cellMap Fin.castSuccEmb i) = c
-    rw [hi, hc]
-  refine ⟨fun j ↦ r (E.display.toScheme.cellMap (extendByLast f) j),
-    hr.comap (E.display.toScheme.isLowerEmbedding_comap _), fun j hj hjb ↦ ?_⟩
-  set e := E.display.toScheme.cellMap (extendByLast f) j
-  have he : e ∈ E.display.toCellScheme.visible (Set.range (extendByLast f)) :=
-    Scheme.mem_visibleCells.mp (E.display.toScheme.cellMap_mem _ j)
-  have hnew : Fin.last n ∈ E.display.toCellScheme.scope e := by
-    -- The scope of a cell of the donor face is the preimage of the scope of its cell
-    -- (`Scheme.comap_scope`, by definition).
-    have hj' : Fin.last m ∈ (E.display.toCellScheme.scope e).preimage (extendByLast f)
-        (extendByLast f).injective.injOn := hj
-    simpa using mem_preimage.mp hj'
-  have hle : E.display.label e = (E.display.comap (extendByLast f) hfd).label j := rfl
-  refine ⟨fun hCe hanc ↦ E.eq_bot_of_isLawful hr hcap he hnew hjb (by rwa [hc, hle])
-      fun z hz i hi hez ↦ ?_,
-    fun hanc ↦ E.ne_bot_of_isLawful hr hcap he hnew hjb fun z hz hez ↦ ?_⟩
-  · obtain ⟨i', rfl⟩ := hpriv z hz
-    rw [hra i']
-    exact hanc i' i hi hez
-  · obtain ⟨i', rfl⟩ := hpriv z hz
-    rw [hra i']
-    rw [hc] at hez
-    exact hanc i' hez
-
-end CoupledGatedExtension
-
-/-- **The coupled gated pinned extension property forces the bottom transport condition** at each
-of its inputs: for a legal `P`, a face `f` with restriction `p`, a legal one-point coface `d` of
-`p`, and a cell `C` of `P` of graded index `(univ, n)` not labelled `⊥` below which `d` is
-anchored, with `m + 1 < n`, the condition holds for `P`, `d` and the label of `C`. -/
-theorem HasCoupledGatedPinnedExtensions.carriesBottoms
-    (h : HasCoupledGatedPinnedExtensions α) {P : StageType.{u} α n} {f : Fin m ↪ Fin n}
-    {p : StageType.{u} α m} {d : StageType.{u} α (m + 1)} {C : Fin P.card} (hP : P.IsLegal)
-    (hp : restrictFace f P = some p) (hd : d.IsLegal)
-    (hdp : restrictFace Fin.castSuccEmb d = some p)
-    (hC : P.toCellScheme.gradedIndex C = (univ, n)) (hC0 : P.label C ≠ ⊥) (hmn : m + 1 < n)
-    (ha : IsAnchored P C d) : CarriesBottoms P d (P.label C) := by
-  obtain ⟨E, hE⟩ := h P f p d C hP hp hd hdp hC hC0 hmn ha
-  exact E.carriesBottoms hE
-
-end StageType
-
-end VaughtConjecture
 
 namespace VaughtConjecture.CoupledGatedExtensionCounterexample
 
@@ -511,8 +158,8 @@ private theorem lt_omega_visibilityReplace {x : Label.{u}}
         visibilityReplace k i (n : Label.{u}) := rfl
     rw [h, Label.visibilityReplace_natCast]
     split_ifs
-    · exact WithBot.coe_lt_coe.mpr (WithTop.coe_lt_coe.mpr (Ordinal.natCast_lt_omega0 i))
-    · exact WithBot.coe_lt_coe.mpr (WithTop.coe_lt_coe.mpr (Ordinal.natCast_lt_omega0 n))
+    · exact natCast_label_lt_omega i
+    · exact natCast_label_lt_omega n
   | top => exact absurd hx (not_lt.mpr le_top)
 
 /-- Sending the labels below `ω` to `⊥` is a witness, with the suppressor `⊤`: visibility
@@ -556,36 +203,14 @@ private theorem omega_le_omegaAdd (j : ℕ) :
   have h' : ω + (j : Ordinal.{u}) < ω := WithTop.coe_lt_coe.mp (WithBot.coe_lt_coe.mp h)
   exact absurd h' (not_lt.mpr le_self_add)
 
-private theorem natCast_lt_omega (n : ℕ) :
-    ((n : ℕ) : Label.{u}) < ((ω : Ordinal.{u}) : Label.{u}) := by
-  rw [← WithBot.coe_natCast, ← WithTop.coe_natCast]
-  exact WithBot.coe_lt_coe.mpr (WithTop.coe_lt_coe.mpr (Ordinal.natCast_lt_omega0 n))
-
 private theorem omegaAdd_le_omegaAdd {i j : ℕ} (h : i ≤ j) : omegaAdd.{u} i ≤ omegaAdd j :=
   WithBot.coe_le_coe.mpr (WithTop.coe_le_coe.mpr (add_le_add_right (Nat.cast_le.mpr h) _))
 
 private theorem natCast_le_omegaAdd (n j : ℕ) : ((n : ℕ) : Label.{u}) ≤ omegaAdd j :=
-  (natCast_lt_omega n).le.trans (not_lt.mp (omega_le_omegaAdd j))
+  (natCast_label_lt_omega n).le.trans (not_lt.mp (omega_le_omegaAdd j))
 
 private theorem natCast_lt_omegaAdd (n j : ℕ) : ((n : ℕ) : Label.{u}) < omegaAdd j :=
-  (natCast_lt_omega n).trans_le (not_lt.mp (omega_le_omegaAdd j))
-
-private theorem natCast_lt_top (n : ℕ) : ((n : ℕ) : Label.{u}) < ⊤ := by
-  rw [← WithBot.coe_natCast, ← WithTop.coe_natCast]
-  exact WithBot.coe_lt_coe.mpr (WithTop.coe_lt_top _)
-
-private theorem natCast_ne_bot (n : ℕ) : ((n : ℕ) : Label.{u}) ≠ ⊥ := by
-  rw [← WithBot.coe_natCast]; exact WithBot.coe_ne_bot
-
-private theorem natCast_lt_natCast {a b : ℕ} (h : a < b) :
-    ((a : ℕ) : Label.{u}) < ((b : ℕ) : Label.{u}) := by
-  rw [← WithBot.coe_natCast, ← WithBot.coe_natCast, WithBot.coe_lt_coe, ← WithTop.coe_natCast,
-    ← WithTop.coe_natCast, WithTop.coe_lt_coe]
-  exact Nat.cast_lt.mpr h
-
-private theorem natCast_lt_omega0_sq (n : ℕ) :
-    ((n : ℕ) : Label.{u}) < ((ω ^ 2 : Ordinal.{u}) : Label.{u}) :=
-  lt_omega0_sq_iff.mpr (.inr ⟨0, n, by simp; rfl⟩)
+  (natCast_label_lt_omega n).trans_le (not_lt.mp (omega_le_omegaAdd j))
 
 private theorem omegaAdd_lt_omega0_sq (j : ℕ) :
     omegaAdd.{u} j < ((ω ^ 2 : Ordinal.{u}) : Label.{u}) :=
@@ -677,7 +302,7 @@ private theorem three_le_omegaAdd (j : ℕ) : ((3 : ℕ) : Label.{u}) ≤ omegaA
   natCast_le_omegaAdd 3 j
 
 private theorem not_three_le_one : ¬ ((3 : ℕ) : Label.{u}) ≤ ((1 : ℕ) : Label.{u}) :=
-  not_le.mpr (natCast_lt_natCast (by decide))
+  not_le.mpr (natCast_label_lt.mpr (by decide))
 
 private theorem one_lt_omegaAdd (j : ℕ) : ((1 : ℕ) : Label.{u}) < omegaAdd j :=
   natCast_lt_omegaAdd 1 j
@@ -793,7 +418,7 @@ theorem isWellFormed_S : S.{u}.IsWellFormed where
 private theorem rowValue_lt (s t : Fin 5) :
     rowValue.{u} s t < ((ω ^ 2 : Ordinal.{u}) : Label.{u}) := by
   have hbot : (⊥ : Label.{u}) < ((ω ^ 2 : Ordinal.{u}) : Label.{u}) := WithBot.bot_lt_coe _
-  have h1 := natCast_lt_omega0_sq.{u} 1
+  have h1 := natCast_label_lt_omega0_sq.{u} 1
   have h2 := omegaAdd_lt_omega0_sq.{u} 1
   have h3 := omegaAdd_lt_omega0_sq.{u} 2
   fin_cases s <;> fin_cases t <;> first | exact hbot | exact h1 | exact h2 | exact h3
@@ -826,17 +451,6 @@ theorem isConsistent_rows : rows.{u}.IsConsistent := by
     obtain ⟨t, -⟩ := t
     fin_cases t <;> simp [rows, rowValue, lab, code]
 
-/-- Below a pair, a dead cell is `⊥` in every lawful labelling. -/
-private theorem eq_bot_of_dead {X : Finset (Fin 2) × ℕ} {x : Fin 5 → Label.{u}}
-    (hx : rows.IsLawfulBelow X (fun d ↦ x d)) (d : Fin 5) (hd : d ∈ cells.below X)
-    (hdead : d = 0 ∨ d = 1) : x d = ⊥ := by
-  obtain ⟨-, hl, -⟩ := Rows.isLawfulBelow_iff_forall.mp hx
-  have := (hl d hd).eq_bot (d := ⟨d, cells.mem_below_gradedIndex d⟩) (by
-    -- The diagonal entry of the row of a dead cell is `⊥` (`rows`, by definition).
-    change rowValue d d = ⊥
-    rcases hdead with rfl | rfl <;> rfl)
-  simpa using this
-
 private theorem dead_of_ssubset : ∀ A B : Finset (Fin 2),
     A ∈ Geometry.intervalPlan (univ : Finset (Fin 2)) → A ⊆ B → A ≠ B → ∀ d : Fin 5,
       cellScope d ⊆ A → d = 0 ∨ d = 1 := by
@@ -848,20 +462,13 @@ theorem isBountiful_rows : rows.{u}.IsBountiful := by
   refine Rows.isBountiful_iff_forall_cappedLift_fst.mpr fun X Y hX hY h ↦ ?_
   by_cases hXY : X.1 = Y.1
   · exact Rows.cappedLift_of_fst_eq _ hXY
-  refine (Rows.cappedLift_iff_forall_exists _).mpr fun c _ p q hp hq _ ↦ ?_
-  refine ⟨q, hq, fun _ ↦ rfl, fun d ↦ ?_⟩
-  have hq' : rows.IsLawfulBelow (Y.1, X.2) (fun d ↦ Rows.extendBot (Y.1, X.2) q d) :=
-    Rows.isLawfulBelow_extendBot.mpr hq
-  have hp' : rows.IsLawfulBelow X (fun d ↦ Rows.extendBot X p d) :=
-    Rows.isLawfulBelow_extendBot.mpr hp
-  have hd' : d.1 ∈ cells.below (Y.1, X.2) :=
-    cells.below_mono (show X ≤ (Y.1, X.2) from ⟨h.1, le_rfl⟩) d.2
-  have hdead := dead_of_ssubset X.1 Y.1 hX.1 h.1 hXY d.1 d.2.1
-  have e1 := eq_bot_of_dead hq' d.1 hd' hdead
-  have e2 := eq_bot_of_dead hp' d.1 d.2 hdead
-  rw [Rows.extendBot_of_mem _ hd'] at e1
-  rw [Rows.extendBot_of_mem _ d.2] at e2
-  exact e1.trans e2.symm
+  refine Rows.cappedLift_of_forall_row_self_eq_bot (R := rows.{u})
+    (X := X) (Y := (Y.1, X.2)) ⟨h.1, le_rfl⟩ ?_
+  intro d hd
+  have hdead := dead_of_ssubset X.1 Y.1 hX.1 h.1 hXY d hd.1
+  -- The diagonal entry of the row of a dead cell is `⊥` (`rows`, by definition).
+  change rowValue d d = ⊥
+  rcases hdead with rfl | rfl <;> rfl
 
 private theorem exists_cell_of_mem_intervalPlan :
     ∀ B ∈ Geometry.intervalPlan (univ : Finset (Fin 2)), ∀ k ≤ 2,
@@ -875,12 +482,6 @@ theorem isComplete_cells : cells.IsComplete := by
     (hX.2.2.trans ((card_le_univ _).trans_eq (by simp))) hX.2.1 hX.2.2
   exact ⟨d, Prod.ext hd1 hd2⟩
 
-private theorem atStage_one {α : Ordinal.{u}} (hα : 1 < α) : AtStage α (1 : Label.{u}) :=
-  .inl (by
-    have : ((1 : Ordinal.{u}) : Label.{u}) < (α : Label.{u}) :=
-      WithBot.coe_lt_coe.mpr (WithTop.coe_lt_coe.mpr hα)
-    simpa using this)
-
 /-- **The private type** on two points: the dead cells `{0}`, `{1}`, the cells `z₁`, `z₂` of
 graded index `(univ, 1)` labelled `1` and `⊤`, and the full cell labelled `⊤`.  The label `1` of
 `z₁` is not self-visible at `2`: `z₁` is a proper anchor at the threshold `2`. -/
@@ -892,7 +493,7 @@ noncomputable def P (α : Ordinal.{u}) (hα : 1 < α) : StageType.{u} α 2 where
   isLawful := isLawful_lab_one_top_top
   atStage d := by
     fin_cases d
-    exacts [atStage_bot, atStage_bot, atStage_one hα, atStage_top, atStage_top]
+    exacts [atStage_bot, atStage_bot, (Label.atStage_one.mpr hα), atStage_top, atStage_top]
 
 /-- **The private type is legal.** -/
 theorem isLegal_P (α : Ordinal.{u}) (hα : 1 < α) : (P α hα).IsLegal :=
@@ -1011,8 +612,8 @@ theorem isWellFormed_donorScheme : donorScheme.{u}.IsWellFormed where
 theorem isCoded_donorScheme : donorScheme.{u}.IsCoded := fun s t ↦ by
   -- The row values are `1` and `2` (`donorRows`, by definition).
   change donorRowValue s t.1 < _
-  have h1 := natCast_lt_omega0_sq.{u} 1
-  have h2 := natCast_lt_omega0_sq.{u} 2
+  have h1 := natCast_label_lt_omega0_sq.{u} 1
+  have h2 := natCast_label_lt_omega0_sq.{u} 2
   simp only [Nat.cast_one, Nat.cast_ofNat] at h1 h2
   unfold donorRowValue; split_ifs <;> assumption
 
@@ -1058,7 +659,7 @@ noncomputable def donor (α : Ordinal.{u}) (hα : 1 < α) : StageType.{u} α 1 w
   isWellFormed := isWellFormed_donorScheme
   isCoded := isCoded_donorScheme
   isLawful := isLawful_donorLab_one_top
-  atStage d := by fin_cases d; exacts [atStage_one hα, atStage_top]
+  atStage d := by fin_cases d; exacts [(Label.atStage_one.mpr hα), atStage_top]
 
 /-- **The donor is legal.** -/
 theorem isLegal_donor (α : Ordinal.{u}) (hα : 1 < α) : (donor α hα).IsLegal :=
@@ -1070,7 +671,7 @@ theorem isLegal_donor (α : Ordinal.{u}) (hα : 1 < α) : (donor α hα).IsLegal
 open StageType GatedExtensionExample
 
 private theorem one_ne_top : (1 : Label.{u}) ≠ ⊤ :=
-  ne_of_lt (by simpa using natCast_lt_top.{u} 1)
+  ne_of_lt (by simpa using (natCast_label_lt_omega.{u} 1).trans_le le_top)
 
 /-- A label other than `⊥` that is self-visible at `2` is not at most `1`. -/
 private theorem not_le_one_of_isSelfVisible {c : Label.{u}} (hc : IsSelfVisible 2 c)
@@ -1088,7 +689,7 @@ private theorem not_le_one_of_isSelfVisible {c : Label.{u}} (hc : IsSelfVisible 
     have hsv : IsSelfVisible 2 (k : Label.{u}) := hc
     rw [isSelfVisible_natCast] at hsv
     omega
-  | top => exact not_le.mpr (by simpa using natCast_lt_top.{u} 1)
+  | top => exact not_le.mpr (by simpa using (natCast_label_lt_omega.{u} 1).trans_le le_top)
 
 /-- **The bottom transport condition fails** for the private type, the donor, and every cap
 label `c ≠ ⊥` self-visible at `2`.  The lawful labelling `⊥, ⊥, ⊥, ω + 1, ω + 2` of the private
@@ -1105,7 +706,8 @@ theorem not_carriesBottoms (α : Ordinal.{u}) (hα : 1 < α) {c : Label.{u}}
           i = 4 := by decide
       rw [h4 i hi]; exact omegaAdd_ne_bot 2
   have h0 : ρ (0 : Fin 2) = ⊥ := by
-    refine (hj (0 : Fin 2) (Finset.mem_univ _) (by change (1 : Label.{u}) ≠ ⊥; simp)).1 hc1
+    refine (hj (0 : Fin 2) (Finset.mem_univ _) (by
+      change (1 : Label.{u}) ≠ ⊥; simp)).1 hc1
       fun i k _ hik ↦ ?_
     -- The labels of the private type and of the donor are `lab 1 ⊤ ⊤` and `donorLab 1 ⊤`.
     change (1 : Label.{u}) = visibilityReplace 2 k (lab 1 ⊤ ⊤ i) at hik
@@ -1180,21 +782,22 @@ theorem not_hasCoupledGatedPinnedExtensions (α : Ordinal.{u}) (hα : 1 < α) :
     (by change (⊤ : Label.{u}) ≠ ⊥; simp) (by omega) hanc
   exact (isEmpty_coupledGatedExtension α hα emptyRoot).false E
 
-/-! ### The refuting input has the form of an acquired private context -/
+/-! ### The refuting input meets the finite conditions of an acquired private context -/
 
-/-- **The conclusions of the acquisition of a private context do not give the bottom transport
-condition.**  The refuting input satisfies, with private arity `2` over the empty root, every
-conclusion that `Realization.IsModel.exists_privateContext` and its anchored form give for an
-acquired private context (`y.type := P α`, at every floor `γ < α` and every `N₀ ≤ 2`): a legal
-private type with the root as a literal face, a legal donor with the same root face, arity above
-`0 + 1`, a cell `C = 4` of graded index `(univ, 2)` labelled above every `γ < α`, for every ordinal
-donor label a reference cell (`z₁`, labelled `1 = vr_2(1, 1)`, not self-visible at `2`, below the
-label of `C`), and anchoring below `C`; and the bottom transport condition fails there
-(`not_carriesBottoms`).  So the clauses of a model that the acquisition uses (uniformity,
-high-arity dominance, exact consistency), through these conclusions alone, do not give the
-condition.  The row of `C` reads `z₁` at `1` and `C` itself at `ω + 2`, a block higher
-(`CellScheme.Rows.IsLawful.lt_row_self_of_eq_bot`); a model is not shown to have such a private
-context, and not shown to lack one of another form. -/
+/-- **The finite conditions of an acquired private context do not give the bottom transport
+condition.**  The refuting input satisfies, with private arity `2` over the empty root, the finite
+stage-type and label conditions of the output of `Realization.IsModel.exists_privateContext` and
+of its anchored form (`y.type := P α`, at every floor `γ < α`, with `N₀ ≤ 2`): a legal private
+type with the root as a literal face, a legal donor with the same root face, arity above `0 + 1`,
+a cell `C = 4` of graded index `(univ, 2)` labelled above every `γ < α`, for every ordinal donor
+label a reference cell (`z₁`, labelled `1 = vr_2(1, 1)`, not self-visible at `2`, below the label
+of `C`), and anchoring below `C`; and the bottom transport condition fails there
+(`not_carriesBottoms`).  This is a statement about stage types at one input: no occurrence of it
+in an actual model is exhibited.  The row of `C` reads `z₁` at `1` and `C` itself at `ω + 2`, a
+block higher (`CellScheme.Rows.IsLawful.lt_row_self_of_eq_bot`).  The existing acquisition proof
+(uniformity, high-arity dominance, exact consistency) does not establish control of this row
+jointly with the label of `C` above the floor; whether models acquire a private context
+satisfying the condition from the full model axioms is undecided. -/
 theorem exists_privateContext_not_carriesBottoms (α : Ordinal.{u}) (hα : 1 < α) :
     ∃ (P : StageType.{u} α 2) (f : Fin 0 ↪ Fin 2) (p : StageType.{u} α 0)
       (d : StageType.{u} α (0 + 1)) (C : Fin P.card),
@@ -1224,10 +827,12 @@ theorem exists_privateContext_not_carriesBottoms (α : Ordinal.{u}) (hα : 1 < �
   · fin_cases j
     · -- The cell `e₁` is labelled `1 = vr_2(1, 1)`, the label of `z₁` (`P`, `donor`).
       refine ⟨(2 : Fin 5), 1, by omega, h1, ?_, ?_⟩
-      · change ¬ IsSelfVisible 2 (1 : Label.{u})
+      · -- The label of `z₁` is `1` (`P`).
+        change ¬ IsSelfVisible 2 (1 : Label.{u})
         rw [← Nat.cast_one, isSelfVisible_natCast]; omega
-      · change (1 : Label.{u}) < ⊤
-        simpa using natCast_lt_top.{u} 1
+      · -- The labels of `z₁` and of the cap are `1` and `⊤` (`P`).
+        change (1 : Label.{u}) < ⊤
+        exact lt_of_le_of_ne le_top one_ne_top
     · -- The cell `e₂` is labelled `⊤`, not an ordinal.
       exact absurd hj (by
         change (⊤ : Label.{u}) ≠ _
@@ -1236,9 +841,44 @@ theorem exists_privateContext_not_carriesBottoms (α : Ordinal.{u}) (hα : 1 < �
     · exact ⟨(2 : Fin 5), 1, by omega, h1⟩
     · -- The cell `e₂` is labelled `⊤`, not below the label `⊤` of the cap.
       exact absurd hlt (by change ¬ (⊤ : Label.{u}) < ⊤; exact lt_irrefl _)
-  · change IsSelfVisible 2 (⊤ : Label.{u})
+  · -- The cap is labelled `⊤` (`P`).
+    change IsSelfVisible 2 (⊤ : Label.{u})
     exact isSelfVisible_top 2
-  · change (⊤ : Label.{u}) ≠ ⊥
+  · -- The cap is labelled `⊤` (`P`).
+    change (⊤ : Label.{u}) ≠ ⊥
+    simp
+
+/-! ### A member of every dominance family that does not carry -/
+
+/-- **A dominance step need not give a carrying cap**: the refuting private type `P α` is a coface
+of its face on the first point that lies in every dominance family, with its full cell `4`
+labelled `⊤` above every floor, and the bottom transport condition fails for it and the donor at
+that label (`not_carriesBottoms`).  So the finite condition "every member of a dominance family
+carries the bottoms at its dominating cell" is false; this refutes that sufficient condition, not
+the acquisition of carrying contexts by models.  It is a statement about stage types: no occurrence
+of `P α` in a model is exhibited. -/
+theorem exists_mem_dominanceFamily_not_carriesBottoms (α : Ordinal.{u})
+    (hα : 1 < α) :
+    ∃ (p : StageType.{u} α 1) (q : StageType.{u} α 2) (C : Fin q.card),
+      (∀ γ : Ordinal.{u}, q ∈ p.cofaces ∩ StageType.dominanceFamily γ) ∧
+      q.toCellScheme.gradedIndex C = (Finset.univ, 2) ∧
+      (∀ γ : Ordinal.{u}, (γ : Label.{u}) < q.label C) ∧
+      ¬ StageType.CarriesBottoms q (donor α hα) (q.label C) := by
+  have hf : univ.map (Fin.castSuccEmb : Fin 1 ↪ Fin 2) ∈ (P α hα).toCellScheme.faces := by
+    -- The faces of `P α` are the interval plan of `univ` (`cells`, by definition).
+    change _ ∈ Geometry.intervalPlan univ; decide +kernel
+  -- The cell `4` has grade `2` and is labelled `⊤` (`P`, by definition).
+  have htop : ∀ γ : Ordinal.{u}, (γ : Label.{u}) < (P α hα).label (4 : Fin 5) := fun γ ↦ by
+    change (γ : Label.{u}) < ⊤
+    exact WithBot.coe_lt_coe.mpr (WithTop.coe_lt_top γ)
+  refine ⟨(P α hα).comap Fin.castSuccEmb hf, P α hα, (4 : Fin 5), fun γ ↦
+    ⟨⟨isLegal_P α hα, StageType.restrictFace_of_mem _ _ hf⟩, (4 : Fin 5), rfl, htop γ⟩, rfl, htop,
+    not_carriesBottoms α hα ?_ ?_⟩
+  · -- The cell `4` is labelled `⊤` (`P`).
+    change IsSelfVisible 2 (⊤ : Label.{u})
+    exact isSelfVisible_top 2
+  · -- The cell `4` is labelled `⊤` (`P`).
+    change (⊤ : Label.{u}) ≠ ⊥
     simp
 
 end VaughtConjecture.CoupledGatedExtensionCounterexample

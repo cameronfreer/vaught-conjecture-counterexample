@@ -67,6 +67,19 @@ The library's `bfEquivSetoid φ η` is its restriction to the codes of models of
 (`bfEquivSetoid_eq_comap`, true by definition and a quotation of InfinitaryLogic's statement), as
 `isoSetoid φ` is the restriction of `structureIsoSetoid L`.
 
+**Scatteredness from countable complements.**  Let `S η` be a set of isomorphism classes of coded
+models of `φ` for each level `η`.  If, for every `η < ω₁`, the complement of `S η` is countable and
+any two codes whose classes lie in `S η` are back-and-forth equivalent at `η`, then the codes of
+models of `φ` are back-and-forth scattered (InfinitaryLogic's `BFScattered (ModelsOf φ)`;
+`bfScattered_of_countable_compl`; no countability of the language is used).  The proof is
+InfinitaryLogic's `bfScattered_of_countable_bfObservations` for the observation at `η` sending a
+code to `none` when its class lies in `S η` and to `some` of its class otherwise: its realized
+values are `none` and the countably many classes outside `S η`; equal observations `none` give
+back-and-forth equivalence by the hypothesis on `S η`, and equal observations `some q` give
+isomorphic codes, which are back-and-forth equivalent at every level (InfinitaryLogic's
+`isoSetoid_refines_bfEquivSetoid`).  It is applied to the expansion domains of the density
+sentence in `VaughtConjecture.MainTheorem.ScatteredDomains`.
+
 ## Placement
 
 This file belongs to Layer 6 of `roadmap/README.md`.
@@ -121,6 +134,38 @@ theorem offDiag_noniso {P : Set (StructureSpace L)}
     (hP : ∀ x ∈ P, ∀ y ∈ P, (structureIsoSetoid L).r x y → x = y) :
     ∀ p ∈ P.offDiag, ¬ (structureIsoSetoid L).r p.1 p.2 :=
   not_structureIso_of_mem_offDiag hP
+
+/-! ### Back-and-forth scatteredness from countable complements -/
+
+open Classical in
+/-- **Back-and-forth scatteredness from cocountable sets of back-and-forth equivalent classes**:
+if for every `η < ω₁` the set `S η` of classes of coded models of `φ` has countable complement and
+any two codes with classes in `S η` are back-and-forth equivalent at `η`, then the codes of models
+of `φ` are back-and-forth scattered (InfinitaryLogic's `BFScattered`).  By InfinitaryLogic's
+`bfScattered_of_countable_bfObservations`, with the observation at `η` that forgets the class of a
+code exactly when it lies in `S η`. -/
+theorem bfScattered_of_countable_compl {φ : L.Sentenceω}
+    (S : Ordinal.{0} → Set (Quotient (isoSetoid φ)))
+    (hS : ∀ η < Ordinal.omega 1, (S η)ᶜ.Countable)
+    (hbf : ∀ η < Ordinal.omega 1, ∀ c d : ModelsOf φ, Quotient.mk _ c ∈ S η →
+      Quotient.mk _ d ∈ S η → CodeBFEquiv η c.1 d.1) :
+    BFScattered (ModelsOf φ) := by
+  refine bfScattered_of_countable_bfObservations (ModelsOf φ)
+    (fun η c ↦ if Quotient.mk (isoSetoid φ) c ∈ S η then none else some (Quotient.mk _ c))
+    (fun η hη ↦ (((hS η hη).image some).insert none).mono ?_) fun η hη c d h ↦ ?_
+  · rintro _ ⟨c, rfl⟩
+    by_cases hc : Quotient.mk (isoSetoid φ) c ∈ S η
+    · simp [hc]
+    · simp only [hc, ↓reduceIte]
+      exact Or.inr ⟨_, hc, rfl⟩
+  · by_cases hc : Quotient.mk (isoSetoid φ) c ∈ S η <;>
+      by_cases hd : Quotient.mk (isoSetoid φ) d ∈ S η <;>
+      simp only [hc, hd, ↓reduceIte, reduceCtorEq, Option.some.injEq] at h
+    · exact hbf η hη c d hc hd
+    · -- `bfEquivSetoid φ η` is `CodeBFEquiv η` on the underlying codes
+      exact codeBFEquivSetoid_r_iff.mp <| (Setoid.comap_rel _ _ c d).mp <|
+        FirstOrder.Language.bfEquivSetoid_eq_comap φ η ▸
+          isoSetoid_refines_bfEquivSetoid φ η (Quotient.exact h)
 
 /-! ### Thinness -/
 

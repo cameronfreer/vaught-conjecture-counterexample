@@ -75,7 +75,8 @@ realized on the donor face for an arbitrary lawful private labelling (case 3 bel
 to `(univ, n + 1)` (the cell `11` below).  At this instance all of it is compiled (`isLegal_Q`,
 `exists_coupledGatedExtension_donor`).
 
-**The display `Q α`** (`Q`, `isLegal_Q`).  On three points with the interval plan, twelve cells.
+**The display `Q α`** (`Q`, `isLegal_Q`).  On three points with the interval plan, the twelve
+cells of `CoupledGateExamples.Q` (`CoupledGateExamples.cells`), with other kinds, rows and labels.
 A cell is **dead** when its kind is `0`, **live** otherwise; the cells of kind `3` are the
 **donor class**.
 
@@ -101,8 +102,10 @@ A cell is **dead** when its kind is `0`, **live** otherwise; the cells of kind `
 * **Lawful labellings.**  They are the labellings `lab a b x`: `a` at kind `1`, `b` at kind `2`,
   `x` at the donor class.  Here the pair `(a, b)` is lawful on `P α`, `x` is self-visible at `1`,
   and `a, b ≤ x`.  The cells `9` and `10` copy `C₁` and `C₂` (`eq_of_isLawfulBelow_univ_two`), as in
-  `CoupledGateExamples.Q`.  The bound `a, b ≤ x` comes from the localities at `9` and `10`, which
-  read the donor class as their own cell.
+  `CoupledGateExamples.Q` and by the same argument: the rows between the cells `3`, `4`, `9` and
+  `10` are those of `CoupledGateExamples.Q`
+  (`CoupledGateExamples.HasLiveEntries.eq_of_isLawfulBelow_univ_two`).  The bound `a, b ≤ x`
+  comes from the localities at `9` and `10`, which read the donor class as their own cell.
 
 **Legality.**  By bountifulness at a fixed grade (`Rows.isBountiful_iff_forall_cappedLift_fst`),
 there are five cases.
@@ -138,22 +141,16 @@ universe u
 namespace VaughtConjecture.CoupledGateInstance
 
 open Finset Label CellScheme
+open CoupledGateExamples (cellScope cellGrade cells Reads reads_self reads_three_two
+  reads_two_three HasLiveEntries eq_of_gradedIndex_nine eq_five_of_scope eq_five_of_mem_visible
+  mem_faces_castSuccEmb visible_castSuccEmb_iff faces_agree scope_agree grade_agree
+  univ_map_extendByLast_emptyRoot mem_faces_extendByLast_emptyRoot range_castSuccEmb)
 
 /-! ### The scheme -/
-
-/-- The scopes of the twelve cells. -/
-def cellScope : Fin 12 → Finset (Fin 3) :=
-  ![{0}, {1}, {0, 1}, {0, 1}, {0, 1}, {2}, {1, 2}, {1, 2}, univ, univ, univ, univ]
-
-/-- The grades of the twelve cells. -/
-def cellGrade : Fin 12 → ℕ := ![1, 1, 1, 2, 2, 1, 1, 2, 1, 2, 2, 3]
 
 /-- `0`: dead; `1`: the full private cell `C₁` and its copy `9`; `2`: `C₂` and its copy `10`;
 `3`: the donor cell `5` and its copies `6` and `8`. -/
 def kind : Fin 12 → ℕ := ![0, 0, 0, 1, 2, 3, 3, 0, 3, 1, 2, 0]
-
-/-- The cells, on the interval plan of the three points. -/
-def cells : CellScheme (Fin 12) (Fin 3) := ⟨univ, Geometry.intervalPlan univ, cellScope, cellGrade⟩
 
 private noncomputable def rowValue (s t : Fin 12) : Label.{u} :=
   if kind s = 0 ∨ kind t = 0 then ⊥
@@ -192,10 +189,6 @@ private theorem exists_partner : ∀ s t : Fin 12, cellScope s ⊆ cellScope t �
       (kind s = 0 ∨ kind u = kind s) := by
   decide +kernel
 
-private theorem eq_of_gradedIndex_nine : ∀ u : Fin 12,
-    (cellScope u, cellGrade u) = (cellScope 9, cellGrade 9) → u = 9 ∨ u = 10 := by
-  decide +kernel
-
 private theorem eq_of_gradedIndex_six : ∀ u : Fin 12,
     (cellScope u, cellGrade u) = (cellScope 6, cellGrade 6) → u = 6 := by
   decide +kernel
@@ -217,8 +210,6 @@ private theorem eq_of_kind_two : ∀ d : Fin 12, kind d = 2 → d = 4 ∨ d = 10
 private theorem eq_of_kind_three : ∀ d : Fin 12, kind d = 3 → d = 5 ∨ d = 6 ∨ d = 8 := by
   decide +kernel
 
-private theorem eq_five_of_scope : ∀ d : Fin 12, cellScope d ⊆ {2} → d = 5 := by decide +kernel
-
 /-- Every cell below `(A, k)` is dead. -/
 private def AllDead (A : Finset (Fin 3)) (k : ℕ) : Prop :=
   ∀ d, cellScope d ⊆ A → cellGrade d ≤ k → kind d = 0
@@ -237,11 +228,6 @@ private theorem case_split : ∀ A B : Finset (Fin 3),
     B ∈ Geometry.intervalPlan (univ : Finset (Fin 3)) → A ⊆ B → ∀ k : Fin 4, 0 < (k : ℕ) →
       (k : ℕ) ≤ #A → A = B ∨ AllDead A k ∨ (A = {0, 1} ∧ (k : ℕ) = 2 ∧ B = univ) ∨
         (A = {1, 2} ∧ (k : ℕ) = 2 ∧ B = univ) ∨ ((k : ℕ) = 1 ∧ 2 ∈ A) := by
-  decide +kernel
-
-private theorem exists_cell : ∀ B : Finset (Fin 3),
-    B ∈ Geometry.intervalPlan (univ : Finset (Fin 3)) → ∀ k : Fin 4, 0 < (k : ℕ) → (k : ℕ) ≤ #B →
-      ∃ d : Fin 12, cellScope d = B ∧ cellGrade d = k := by
   decide +kernel
 
 /-! ### Labels and row values -/
@@ -270,57 +256,12 @@ private theorem rowValue_three (hs : kind s ≠ 0) (ht : kind t ≠ 0)
     rowValue.{u} s t = ((3 : ℕ) : Label.{u}) := by
   unfold rowValue; split_ifs <;> simp_all
 
-private theorem two_lt_three : ((2 : ℕ) : Label.{u}) < ((3 : ℕ) : Label.{u}) := by
-  rw [← WithBot.coe_natCast, ← WithBot.coe_natCast, WithBot.coe_lt_coe, ← WithTop.coe_natCast,
-    ← WithTop.coe_natCast, WithTop.coe_lt_coe]
-  exact Nat.cast_lt.mpr (by decide)
-
-private theorem sv_two : IsSelfVisible 2 ((2 : ℕ) : Label.{u}) := by simp
-
-private theorem sv_three : IsSelfVisible 2 ((3 : ℕ) : Label.{u}) := by simp
-
-private theorem sv_three_one : IsSelfVisible 1 ((3 : ℕ) : Label.{u}) := by simp
-
-private theorem topShifter_natCast (n : ℕ) : topShifter ((n : ℕ) : Label.{u}) = ⊤ := by
-  simp [topShifter]
-
 /-! ### Lawful labellings `lab a b x` -/
-
-/-- The two readings that make `lab a b x` local at the full cells on the private points. -/
-private def Reads (a b : Label.{u}) : Prop :=
-  (∃ g σ, IsWitness g σ ∧ a = min (σ ((3 : ℕ) : Label.{u})) (g 2) ∧
-      min b a = min (σ ((2 : ℕ) : Label.{u})) (g 2)) ∧
-  (∃ g σ, IsWitness g σ ∧ min a b = min (σ ((2 : ℕ) : Label.{u})) (g 2) ∧
-      b = min (σ ((3 : ℕ) : Label.{u})) (g 2))
 
 /-- The data of a lawful labelling `lab a b x`: self-visibility, the two readings, and the
 domination of the two full private cells by the donor class. -/
 private def LawfulTriple (a b x : Label.{u}) : Prop :=
   IsSelfVisible 2 a ∧ IsSelfVisible 2 b ∧ IsSelfVisible 1 x ∧ Reads a b ∧ a ≤ x ∧ b ≤ x
-
-private theorem topWitness {K : ℕ} {a : Label.{u}} (ha : IsSelfVisible K a) :
-    IsWitness (constStepSuppressor K a) topShifter :=
-  isWitness_topShifter (antitone_constStepSuppressor _ _) (isSelfVisible_constStepSuppressor ha)
-
-private theorem reads_self (ha : IsSelfVisible 2 a) : Reads a a :=
-  ⟨⟨_, _, topWitness ha, by rw [topShifter_natCast]; simp [constStepSuppressor],
-      by rw [topShifter_natCast]; simp [constStepSuppressor]⟩,
-    ⟨_, _, topWitness ha, by rw [topShifter_natCast]; simp [constStepSuppressor],
-      by rw [topShifter_natCast]; simp [constStepSuppressor]⟩⟩
-
-private theorem reads_three_two : Reads ((3 : ℕ) : Label.{u}) ((2 : ℕ) : Label.{u}) :=
-  ⟨⟨_, id, IsWitness.id_top, (min_top_right _).symm, by
-      rw [min_eq_left two_lt_three.le]; exact (min_top_right _).symm⟩,
-    ⟨_, _, topWitness sv_two, by
-      rw [min_eq_right two_lt_three.le, topShifter_natCast]; simp [constStepSuppressor],
-      by rw [topShifter_natCast]; simp [constStepSuppressor]⟩⟩
-
-private theorem reads_two_three : Reads ((2 : ℕ) : Label.{u}) ((3 : ℕ) : Label.{u}) :=
-  ⟨⟨_, _, topWitness sv_two, by rw [topShifter_natCast]; simp [constStepSuppressor], by
-      rw [min_eq_right two_lt_three.le, topShifter_natCast]; simp [constStepSuppressor]⟩,
-    ⟨_, id, IsWitness.id_top, by
-      rw [min_eq_left two_lt_three.le]; exact (min_top_right _).symm,
-      (min_top_right _).symm⟩⟩
 
 /-- Locality at a cell of kind `1` or `2` from a reading `(g, σ)` of the cell's own label `a`:
 the suppressor capped at `a` (`IsWitness.cap`) reads the donor class at `a`. -/
@@ -381,7 +322,7 @@ private theorem isLawful_lab (h : LawfulTriple a b x) : rows.{u}.IsLawful (lab a
         (fun _ h ↦ lab_two h) (fun _ h ↦ lab_three h) (fun _ h ↦ lab_zero h)
     · exact locality_full hw' hb ed ec hbx s 2 1 h2 (.inr rfl) rfl _ (fun _ h ↦ lab_two h)
         (fun _ h ↦ lab_one h) (fun _ h ↦ lab_three h) (fun _ h ↦ lab_zero h)
-    · refine ⟨_, _, topWitness hx, fun d ↦ ?_⟩
+    · refine ⟨_, _, isWitness_constStepSuppressor_topShifter hx, fun d ↦ ?_⟩
       -- The rows are `rowValue` and the grades `cellGrade` (by definition).
       change min (lab a b x d.1) (lab a b x s) = min (topShifter (rowValue s d.1))
         (constStepSuppressor 1 x (cellGrade d.1))
@@ -402,115 +343,26 @@ private theorem isLawful_lab (h : LawfulTriple a b x) : rows.{u}.IsLawful (lab a
 
 /-! ### Every lawful labelling is a `lab a b x` -/
 
-/-- Dead cells are `⊥` in every labelling lawful below a pair above them. -/
-private theorem eq_bot_of_dead {X : Finset (Fin 3) × ℕ} {w : Fin 12 → Label.{u}}
-    (hw : rows.IsLawfulBelow X (fun d ↦ w d)) {d : Fin 12} (hd : d ∈ cells.below X)
-    (h0 : kind d = 0) : w d = ⊥ := by
-  obtain ⟨-, hl, -⟩ := Rows.isLawfulBelow_iff_forall.mp hw
-  have h := (hl d hd).eq_bot (d := ⟨d, cells.mem_below_gradedIndex d⟩)
-    (rowValue_zero_left (t := d) h0)
-  simpa using h
-
-private theorem mem_below_of {s d : Fin 12} (h1 : cellScope d ⊆ cellScope s)
-    (h2 : cellGrade d ≤ cellGrade s) : d ∈ cells.below (cells.gradedIndex s) := ⟨h1, h2⟩
-
-/-- The localities at the two full private cells give the two readings. -/
-private theorem reads_of_localities {w : Fin 12 → Label.{u}}
-    (h3 : TransformsTo (fun d : cells.below (cells.gradedIndex 3) ↦ cells.grade d) (rows.row 3)
-      (fun d ↦ min (w d) (w 3)))
-    (h4 : TransformsTo (fun d : cells.below (cells.gradedIndex 4) ↦ cells.grade d) (rows.row 4)
-      (fun d ↦ min (w d) (w 4))) : Reads (w 3) (w 4) := by
-  obtain ⟨g, σ, hw, heq⟩ := h3
-  obtain ⟨g', σ', hw', heq'⟩ := h4
-  have e33 := heq ⟨3, mem_below_of (s := 3) subset_rfl le_rfl⟩
-  have e34 := heq ⟨4, mem_below_of (s := 3) (by decide) le_rfl⟩
-  have e43 := heq' ⟨3, mem_below_of (s := 4) (by decide) le_rfl⟩
-  have e44 := heq' ⟨4, mem_below_of (s := 4) subset_rfl le_rfl⟩
-  -- The rows are `rowValue` and the grades `cellGrade` (by definition).
-  change min (w 3) (w 3) = min (σ (rowValue 3 3)) (g 2) at e33
-  change min (w 4) (w 3) = min (σ (rowValue 3 4)) (g 2) at e34
-  change min (w 3) (w 4) = min (σ' (rowValue 4 3)) (g' 2) at e43
-  change min (w 4) (w 4) = min (σ' (rowValue 4 4)) (g' 2) at e44
-  rw [rowValue_three (s := 3) (t := 3) (by decide) (by decide) (by decide), min_self] at e33
-  rw [rowValue_three (s := 4) (t := 4) (by decide) (by decide) (by decide), min_self] at e44
-  rw [rowValue_two (s := 3) (t := 4) (by decide) (by decide) (by decide)] at e34
-  rw [rowValue_two (s := 4) (t := 3) (by decide) (by decide) (by decide)] at e43
-  exact ⟨⟨g, σ, hw, e33, e34⟩, ⟨g', σ', hw', e43, e44⟩⟩
-
-/-- In a linear order: from `x ≤ a`, `y ≤ b`, the two minimum equations, and the two
-dominations, `x = a` and `y = b`. -/
-private theorem eq_and_eq_of_min_eq {L : Type*} [LinearOrder L] {a b x y : L} (hxa : x ≤ a)
-    (hyb : y ≤ b)
-    (h1 : min b x = min y x) (h2 : min a y = min x y) (ha : a ≤ x ∨ a ≤ y)
-    (hb : b ≤ x ∨ b ≤ y) : x = a ∧ y = b := by
-  constructor
-  · rcases ha with h | h
-    · exact le_antisymm hxa h
-    · by_contra hne
-      have hlt : x < a := lt_of_le_of_ne hxa hne
-      rw [min_eq_left h, min_eq_left (hlt.le.trans h)] at h2
-      exact hne h2.symm
-  · rcases hb with h | h
-    · by_contra hne
-      have hlt : y < b := lt_of_le_of_ne hyb hne
-      rw [min_eq_left h, min_eq_left (hlt.le.trans h)] at h1
-      exact hne h1.symm
-    · exact le_antisymm hyb h
+/-- The rows have the live entries of the rows of `CoupledGateExamples.Q`: the cells `3`, `4`,
+`9` and `10` have the kinds `1` and `2` there and here, and read each other alike. -/
+private theorem hasLiveEntries_rows : HasLiveEntries rows.{u} := fun s t hs ht _ ↦ by
+  have key : ∀ d : Fin 12, CoupledGateExamples.kind d ≠ 0 →
+      kind d = CoupledGateExamples.kind d ∧ kind d ≠ 0 ∧ kind d ≠ 3 := by
+    decide +kernel
+  obtain ⟨es, hs0, hs3⟩ := key s hs
+  obtain ⟨et, ht0, ht3⟩ := key t ht
+  -- The rows are `rowValue` (by definition).
+  change rowValue s t = _
+  split_ifs with h
+  · exact rowValue_three hs0 ht0 (by omega)
+  · exact rowValue_two hs0 ht0 ⟨by omega, hs3, ht3⟩
 
 /-- **Below `(univ, 2)` the gate and the twin copy the two full private cells**: every labelling
 lawful below `(univ, 2)` has `w 9 = w 3` and `w 10 = w 4`. -/
 theorem eq_of_isLawfulBelow_univ_two {w : Fin 12 → Label.{u}}
     (hw : rows.IsLawfulBelow ((univ : Finset (Fin 3)), 2) (fun d ↦ w d)) :
-    w 9 = w 3 ∧ w 10 = w 4 := by
-  obtain ⟨-, hl, ha⟩ := Rows.isLawfulBelow_iff_forall.mp hw
-  have hb : ∀ d : Fin 12, cellGrade d ≤ 2 → d ∈ cells.below ((univ : Finset (Fin 3)), 2) :=
-    fun d hd ↦ ⟨subset_univ _, hd⟩
-  obtain ⟨g, σ, -, heq⟩ := hl 9 (hb 9 le_rfl)
-  obtain ⟨g', σ', -, heq'⟩ := hl 10 (hb 10 le_rfl)
-  have e93 := heq ⟨3, mem_below_of (s := 9) (by decide) le_rfl⟩
-  have e94 := heq ⟨4, mem_below_of (s := 9) (by decide) le_rfl⟩
-  have e99 := heq ⟨9, mem_below_of (s := 9) subset_rfl le_rfl⟩
-  have e910 := heq ⟨10, mem_below_of (s := 9) subset_rfl le_rfl⟩
-  have e103 := heq' ⟨3, mem_below_of (s := 10) (by decide) le_rfl⟩
-  have e104 := heq' ⟨4, mem_below_of (s := 10) (by decide) le_rfl⟩
-  have e109 := heq' ⟨9, mem_below_of (s := 10) subset_rfl le_rfl⟩
-  have e1010 := heq' ⟨10, mem_below_of (s := 10) subset_rfl le_rfl⟩
-  -- The rows are `rowValue` and the grades `cellGrade` (by definition).
-  change min (w 3) (w 9) = min (σ (rowValue 9 3)) (g 2) at e93
-  change min (w 4) (w 9) = min (σ (rowValue 9 4)) (g 2) at e94
-  change min (w 9) (w 9) = min (σ (rowValue 9 9)) (g 2) at e99
-  change min (w 10) (w 9) = min (σ (rowValue 9 10)) (g 2) at e910
-  change min (w 3) (w 10) = min (σ' (rowValue 10 3)) (g' 2) at e103
-  change min (w 4) (w 10) = min (σ' (rowValue 10 4)) (g' 2) at e104
-  change min (w 9) (w 10) = min (σ' (rowValue 10 9)) (g' 2) at e109
-  change min (w 10) (w 10) = min (σ' (rowValue 10 10)) (g' 2) at e1010
-  rw [rowValue_three (s := 9) (t := 3) (by decide) (by decide) (by decide)] at e93
-  rw [rowValue_three (s := 9) (t := 9) (by decide) (by decide) (by decide)] at e99
-  rw [rowValue_three (s := 10) (t := 4) (by decide) (by decide) (by decide)] at e104
-  rw [rowValue_three (s := 10) (t := 10) (by decide) (by decide) (by decide)] at e1010
-  rw [rowValue_two (s := 9) (t := 4) (by decide) (by decide) (by decide)] at e94
-  rw [rowValue_two (s := 9) (t := 10) (by decide) (by decide) (by decide)] at e910
-  rw [rowValue_two (s := 10) (t := 3) (by decide) (by decide) (by decide)] at e103
-  rw [rowValue_two (s := 10) (t := 9) (by decide) (by decide) (by decide)] at e109
-  rw [min_self] at e99 e1010
-  rw [← e99] at e93
-  rw [← e910] at e94
-  rw [← e1010] at e104
-  rw [← e109] at e103
-  have hxa : w 9 ≤ w 3 := calc
-    w 9 = min (w 3) (w 9) := e93.symm
-    _ ≤ w 3 := min_le_left _ _
-  have hyb : w 10 ≤ w 4 := calc
-    w 10 = min (w 4) (w 10) := e104.symm
-    _ ≤ w 4 := min_le_left _ _
-  have av : ∀ s : Fin 12, cellScope s ⊆ cellScope 9 → cellGrade s = cellGrade 9 →
-      w s ≤ w 9 ∨ w s ≤ w 10 := by
-    intro s hs hg
-    obtain ⟨u, hu, hle⟩ := ha s 9 (hb 9 le_rfl) hs hg
-    rcases eq_of_gradedIndex_nine u hu with rfl | rfl
-    · exact .inl hle
-    · exact .inr hle
-  exact eq_and_eq_of_min_eq hxa hyb e94 e103 (av 3 (by decide) rfl) (av 4 (by decide) rfl)
+    w 9 = w 3 ∧ w 10 = w 4 :=
+  hasLiveEntries_rows.eq_of_isLawfulBelow_univ_two hw
 
 /-- A live cell `s` above the donor cell `5`, of grade at least that of `5`, reads `5` and itself
 at `3`; so its locality bounds it by `5`: `w s ≤ w 5`. -/
@@ -577,9 +429,10 @@ private theorem lawfulTriple_of_isLawfulBelow_univ_two {w : Fin 12 → Label.{u}
   have m : ∀ d : Fin 12, cellGrade d ≤ 2 → d ∈ cells.below ((univ : Finset (Fin 3)), 2) :=
     fun d hd ↦ ⟨subset_univ _, hd⟩
   refine ⟨⟨ho 3 (m 3 le_rfl), ho 4 (m 4 le_rfl), ho 5 (m 5 (by decide)),
-    reads_of_localities (hl 3 (m 3 le_rfl)) (hl 4 (m 4 le_rfl)), h35, h45⟩, fun d hd ↦ ?_⟩
+    hasLiveEntries_rows.reads_of_localities (hl 3 (m 3 le_rfl)) (hl 4 (m 4 le_rfl)), h35, h45⟩,
+    fun d hd ↦ ?_⟩
   rcases kind_cases d with h0 | h1 | h2 | h3
-  · rw [eq_bot_of_dead hw hd h0, lab_zero h0]
+  · rw [hw.eq_bot_of_row_self_eq_bot hd (rowValue_zero_left h0), lab_zero h0]
   · rw [lab_one h1]
     rcases eq_of_kind_one d h1 with rfl | rfl
     · rfl
@@ -592,10 +445,6 @@ private theorem lawfulTriple_of_isLawfulBelow_univ_two {w : Fin 12 → Label.{u}
 
 /-! ### Legality -/
 
-private theorem left_eq_of_min_eq_of_lt {a c v : Label.{u}} (h : min a c = v) (hv : v < c) :
-    a = v :=
-  ((min_eq_iff.mp h).resolve_right fun h' ↦ hv.ne' h'.1).1
-
 private theorem kind_of_scope_zero_one : ∀ d : Fin 12, cellScope d ⊆ {0, 1} → kind d ≠ 3 := by
   decide +kernel
 
@@ -605,20 +454,6 @@ private theorem kind_of_scope_one_two : ∀ d : Fin 12, cellScope d ⊆ {1, 2} �
 
 private theorem grade_le_two_or_dead : ∀ d : Fin 12, cellGrade d ≤ 2 ∨ kind d = 0 := by
   decide +kernel
-
-/-- If every cell below `X` is dead, the rows lift capped from `X`: keep the ambient labelling. -/
-private theorem cappedLift_of_dead {X Y : Finset (Fin 3) × ℕ}
-    (hX : ∀ d ∈ cells.below X, kind d = 0) (h : X ≤ Y) : rows.{u}.CappedLift h := by
-  refine (Rows.cappedLift_iff_forall_exists h).mpr fun c _ p q hp hq _ ↦
-    ⟨q, hq, fun _ ↦ rfl, fun d ↦ ?_⟩
-  have hq' := Rows.isLawfulBelow_extendBot.mpr hq
-  have hp' := Rows.isLawfulBelow_extendBot.mpr hp
-  have hdY : d.1 ∈ cells.below Y := cells.below_mono h d.2
-  have e1 := eq_bot_of_dead hq' hdY (hX d d.2)
-  have e2 := eq_bot_of_dead hp' d.2 (hX d d.2)
-  rw [Rows.extendBot_of_mem _ hdY] at e1
-  rw [Rows.extendBot_of_mem _ d.2] at e2
-  exact e1.trans e2.symm
 
 /-- **The lift from the private coatom** `({0, 1}, 2)` to `(univ, 2)`: keep the prescribed full
 private cells, copy them to the gate and the twin, and keep the donor class, raised to `⊤` when it
@@ -640,7 +475,7 @@ private theorem cappedLift_private
   have m3 : (3 : Fin 12) ∈ cells.below (({0, 1} : Finset (Fin 3)), 2) := ⟨by decide, le_rfl⟩
   have m4 : (4 : Fin 12) ∈ cells.below (({0, 1} : Finset (Fin 3)), 2) := ⟨by decide, le_rfl⟩
   obtain ⟨hor, hl, -⟩ := Rows.isLawfulBelow_iff_forall.mp hP'
-  have hr : Reads (w 3) (w 4) := reads_of_localities (hl 3 m3) (hl 4 m4)
+  have hr : Reads (w 3) (w 4) := hasLiveEntries_rows.reads_of_localities (hl 3 m3) (hl 4 m4)
   obtain ⟨⟨-, -, hv5, -, hv35, hv45⟩, hvlab⟩ := lawfulTriple_of_isLawfulBelow_univ_two hQ'
   have hc3 : min (v 3) c = min (w 3) c := by
     rw [hvq 3 (cells.below_mono h m3), hwp 3 m3]; exact hpq ⟨3, m3⟩
@@ -677,7 +512,7 @@ private theorem cappedLift_private
   · change lab (w 3) (w 4) x' d.1 = p d
     rw [← hwp d.1 d.2]
     rcases kind_cases d.1 with h0 | h1 | h2 | h3
-    · rw [eq_bot_of_dead hP' d.2 h0, lab_zero h0]
+    · rw [hP'.eq_bot_of_row_self_eq_bot d.2 (rowValue_zero_left h0), lab_zero h0]
     · obtain h' := eq_three_of_below d.1 d.2.1 h1
       rw [lab_one h1, h']
     · obtain h' := eq_four_of_below d.1 d.2.1 h2
@@ -751,7 +586,7 @@ private theorem cappedLift_donor
   · change lab a' b' (w 5) d.1 = p d
     rw [← hwp d.1 d.2]
     rcases kind_of_scope_one_two d.1 d.2.1 with h0 | h3
-    · rw [eq_bot_of_dead hP' d.2 h0, lab_zero h0]
+    · rw [hP'.eq_bot_of_row_self_eq_bot d.2 (rowValue_zero_left h0), lab_zero h0]
     · rw [lab_three h3, eq_five hP' d.2 h3]
 
 /-- **The lifts at grade `1`** from a face containing the new point: below such pairs every cell
@@ -783,13 +618,13 @@ private theorem cappedLift_grade_one {X Y : Finset (Fin 3) × ℕ} (h : X ≤ Y)
   · change min (lab ⊥ ⊥ (w 5) d.1) c = min (q d) c
     rw [← hvq d.1 d.2]
     rcases hY d.1 d.2 with h0 | h3
-    · rw [lab_zero h0, eq_bot_of_dead hQ' d.2 h0]
+    · rw [lab_zero h0, hQ'.eq_bot_of_row_self_eq_bot d.2 (rowValue_zero_left h0)]
     · rw [lab_three h3, eq_five hQ' d.2 h3]; exact hc5.symm
   -- The same, for the agreement with the prescription `p` below `X`.
   · change lab ⊥ ⊥ (w 5) d.1 = p d
     rw [← hwp d.1 d.2]
     rcases hY d.1 (cells.below_mono h d.2) with h0 | h3
-    · rw [eq_bot_of_dead hP' d.2 h0, lab_zero h0]
+    · rw [hP'.eq_bot_of_row_self_eq_bot d.2 (rowValue_zero_left h0), lab_zero h0]
     · rw [lab_three h3, eq_five hP' d.2 h3]
 
 /-- The rows are bountiful: within a face, below pairs where every cell is dead, the lifts from
@@ -801,7 +636,8 @@ theorem isBountiful_rows : rows.{u}.IsBountiful := by
   rcases case_split X.1 Y.1 hX.1 hY.1 h.1 ⟨X.2, hk⟩ hX.2.1 hX.2.2 with
     heq | hdead | ⟨h1, h2, h3⟩ | ⟨h1, h2, h3⟩ | ⟨h1, h2⟩
   · exact Rows.cappedLift_of_fst_eq _ heq
-  · exact cappedLift_of_dead (fun d hd ↦ hdead d hd.1 hd.2) _
+  · exact Rows.cappedLift_of_forall_row_self_eq_bot _ fun d hd ↦
+      rowValue_zero_left (hdead d hd.1 hd.2)
   · obtain ⟨X1, X2⟩ := X
     obtain ⟨Y1, Y2⟩ := Y
     simp only at h1 h2 h3
@@ -820,18 +656,8 @@ theorem isBountiful_rows : rows.{u}.IsBountiful := by
       simp only at h1; rw [h1]; rfl
     · have := hd.2; simp only at h1; change cellGrade d ≤ X.2 at this; omega
 
-/-- The scheme is well formed. -/
-theorem isWellFormed_S : S.{u}.IsWellFormed where
-  ground_eq := rfl
-  isWellFormed := ⟨inferInstance, Geometry.isPlan_intervalPlan univ, fun d ↦ by
-    simp only [mem_gradedFaces]
-    revert d; decide +kernel⟩
-
-private theorem natCast_lt_omega0_sq (n : ℕ) :
-    ((n : ℕ) : Label.{u}) < ((Ordinal.omega0 ^ 2 : Ordinal.{u}) : Label.{u}) := by
-  rw [← WithBot.coe_natCast, WithBot.coe_lt_coe, ← WithTop.coe_natCast, WithTop.coe_lt_coe]
-  refine (Ordinal.natCast_lt_omega0 n).trans_le ?_
-  rw [pow_two]; exact Ordinal.le_mul_left _ Ordinal.omega0_pos
+/-- The scheme is well formed: its cells are those of `CoupledGateExamples.Q`. -/
+theorem isWellFormed_S : S.{u}.IsWellFormed := ⟨rfl, CoupledGateExamples.isWellFormed_cells⟩
 
 /-- The entries of the rows are `⊥`, `2` and `3`, all below `ω ^ 2`. -/
 theorem isCoded_S : S.{u}.IsCoded := fun s t ↦ by
@@ -840,19 +666,19 @@ theorem isCoded_S : S.{u}.IsCoded := fun s t ↦ by
   unfold rowValue
   split_ifs
   · exact WithBot.bot_lt_coe _
-  · exact natCast_lt_omega0_sq 2
-  · exact natCast_lt_omega0_sq 3
+  · exact natCast_label_lt_omega0_sq 2
+  · exact natCast_label_lt_omega0_sq 3
 
 private theorem lawfulTriple_three_two_three :
     LawfulTriple ((3 : ℕ) : Label.{u}) ((2 : ℕ) : Label.{u}) ((3 : ℕ) : Label.{u}) :=
-  ⟨sv_three, sv_two, sv_three_one, reads_three_two, le_rfl, two_lt_three.le⟩
+  ⟨by simp, by simp, by simp, reads_three_two, le_rfl, natCast_label_le.mpr (by decide)⟩
 
 private theorem lawfulTriple_two_three_three :
     LawfulTriple ((2 : ℕ) : Label.{u}) ((3 : ℕ) : Label.{u}) ((3 : ℕ) : Label.{u}) :=
-  ⟨sv_two, sv_three, sv_three_one, reads_two_three, two_lt_three.le, le_rfl⟩
+  ⟨by simp, by simp, by simp, reads_two_three, natCast_label_le.mpr (by decide), le_rfl⟩
 
 private theorem lawfulTriple_bot_bot_three : LawfulTriple (⊥ : Label.{u}) ⊥ ((3 : ℕ) : Label.{u}) :=
-  ⟨isSelfVisible_bot _, isSelfVisible_bot _, sv_three_one, reads_self (isSelfVisible_bot _),
+  ⟨isSelfVisible_bot _, isSelfVisible_bot _, by simp, reads_self (isSelfVisible_bot _),
     bot_le, bot_le⟩
 
 private theorem lawfulTriple_top : LawfulTriple (⊤ : Label.{u}) ⊤ ⊤ :=
@@ -904,14 +730,6 @@ theorem isConsistent_rows : rows.{u}.IsConsistent := by
         · rw [rowValue_three (by omega) (by omega) (by omega), lab_three t3]
     rw [this]; exact (isLawful_lab lawfulTriple_bot_bot_three).isLawfulBelow _
 
-/-- Every graded face of the plan carries a cell. -/
-theorem isComplete_cells : cells.IsComplete := by
-  intro X hX
-  have hk : X.2 < 4 := by
-    have := hX.2.2; have := card_le_univ X.1; simp only [Fintype.card_fin] at this; omega
-  obtain ⟨d, hd1, hd2⟩ := exists_cell X.1 hX.1 ⟨X.2, hk⟩ hX.2.1 hX.2.2
-  exact ⟨d, Prod.ext hd1 hd2⟩
-
 /-! ### The display as a stage type, with literal faces -/
 
 open StageType GatedExtensionExample
@@ -927,35 +745,11 @@ noncomputable def Q (α : Ordinal.{u}) : StageType.{u} α 3 where
 
 /-- **The display is legal.** -/
 theorem isLegal_Q (α : Ordinal.{u}) : (Q α).IsLegal :=
-  StageType.isLegal_iff.mpr ⟨isConsistent_rows, isBountiful_rows, isComplete_cells⟩
+  StageType.isLegal_iff.mpr
+    ⟨isConsistent_rows, isBountiful_rows, CoupledGateExamples.isComplete_cells⟩
 
 /-- The cells of the display, by their index. -/
 def cellQ (α : Ordinal.{u}) (i : Fin 12) : Fin (Q α).card := i
-
-private theorem mem_faces_castSuccEmb (α : Ordinal.{u}) :
-    univ.map (Fin.castSuccEmb : Fin 2 ↪ Fin 3) ∈ (Q α).toCellScheme.faces := by
-  -- The faces of the display are the interval plan (by definition).
-  change _ ∈ Geometry.intervalPlan univ; decide +kernel
-
-private theorem visible_castSuccEmb_iff : ∀ d : Fin 12,
-    cellScope d ⊆ univ.map (Fin.castSuccEmb : Fin 2 ↪ Fin 3) ↔ (d : ℕ) < 5 := by decide +kernel
-
-private theorem faces_agree : ∀ C : Finset (Fin 2),
-    C.map (Fin.castSuccEmb : Fin 2 ↪ Fin 3) ∈ Geometry.intervalPlan (univ : Finset (Fin 3)) ↔
-      C ∈ Geometry.intervalPlan (univ : Finset (Fin 2)) := by decide +kernel
-
-private theorem scope_agree : ∀ i : Fin 5,
-    (cellScope (Fin.castLE (by decide : 5 ≤ 12) i)).preimage (Fin.castSuccEmb : Fin 2 ↪ Fin 3)
-      Fin.castSuccEmb.injective.injOn = GatedExtensionCounterexample.cellScope i := by
-  intro i
-  ext x
-  rw [Finset.mem_preimage]
-  revert i x
-  decide +kernel
-
-private theorem grade_agree : ∀ i : Fin 5,
-    cellGrade (Fin.castLE (by decide : 5 ≤ 12) i) = GatedExtensionCounterexample.cellGrade i := by
-  decide +kernel
 
 private theorem rows_agree (s t : Fin 5)
     (h : t ∈ GatedExtensionCounterexample.cells.below
@@ -974,7 +768,8 @@ private theorem labels_agree (j : Fin 5) :
 theorem restrictFace_Q (α : Ordinal.{u}) :
     restrictFace Fin.castSuccEmb (Q α) = some (GatedExtensionCounterexample.P α) := by
   rw [restrictFace_eq_some_iff]
-  refine ⟨mem_faces_castSuccEmb α, ?_⟩
+  refine ⟨show univ.map (Fin.castSuccEmb : Fin 2 ↪ Fin 3) ∈ (Q α).toCellScheme.faces from
+    mem_faces_castSuccEmb, ?_⟩
   let e : Fin 5 → Fin (Q α).card := fun i ↦ Fin.castLE (by decide : 5 ≤ 12) i
   have he : StrictMono e := fun _ _ h ↦ h
   have hr : ∀ d, d ∈ Set.range e ↔ d ∈ (Q α).toScheme.visibleCells Fin.castSuccEmb := by
@@ -1019,15 +814,11 @@ theorem restrictFace_Q (α : Ordinal.{u}) :
 
 /-! ### The donor face and the root -/
 
-private theorem univ_map_extendByLast_emptyRoot :
-    univ.map (extendByLast emptyRoot) = ({2} : Finset (Fin 3)) := by
-  rw [univ_map_extendByLast]; decide +kernel
-
 /-- The donor face `{2}` is a face of the display. -/
 theorem mem_faces_extendByLast (α : Ordinal.{u}) :
-    univ.map (extendByLast emptyRoot) ∈ (Q α).toCellScheme.faces := by
-  -- The faces of the display are the interval plan (by definition).
-  rw [univ_map_extendByLast_emptyRoot]; change _ ∈ Geometry.intervalPlan univ; decide +kernel
+    univ.map (extendByLast emptyRoot) ∈ (Q α).toCellScheme.faces :=
+  -- The cells of the display are `CoupledGateExamples.cells` (by definition).
+  mem_faces_extendByLast_emptyRoot
 
 /-- **The donor labelled `⊤`**: the face `{2}` of the display, one cell, labelled `⊤`. -/
 noncomputable def donor (α : Ordinal.{u}) : StageType.{u} α 1 :=
@@ -1047,25 +838,13 @@ theorem restrictFace_donor_castSuccEmb (α : Ordinal.{u}) :
 theorem isLegal_donor (α : Ordinal.{u}) : (donor α).IsLegal :=
   (isLegal_Q α).restrictFace _ (restrictFace_donor α)
 
-private theorem range_extendByLast :
-    Set.range (extendByLast emptyRoot) = (({2} : Finset (Fin 3)) : Set (Fin 3)) := by
-  rw [← univ_map_extendByLast_emptyRoot]; simp
-
-private theorem eq_five_of_visible (α : Ordinal.{u}) (e : Fin (Q α).card)
-    (he : e ∈ (Q α).toCellScheme.visible (Set.range (extendByLast emptyRoot))) :
-    e = cellQ α 5 := by
-  -- A cell is visible when its scope lies in the range (by definition).
-  change ((cellScope e : Finset (Fin 3)) : Set (Fin 3)) ⊆ _ at he
-  rw [range_extendByLast, coe_subset] at he
-  exact eq_five_of_scope e he
-
 /-- **Every cell of the donor is labelled `⊤`**: its cells are the cell `5` of the display. -/
 theorem label_donor (α : Ordinal.{u}) (j : Fin (donor α).card) : (donor α).label j = ⊤ := by
   -- The labels of the donor face are the labels of its cells (`comap_label`, by definition).
   change (Q α).label ((Q α).cellMap (extendByLast emptyRoot) j) = ⊤
   have hj := (Q α).cellMap_mem (extendByLast emptyRoot) j
   rw [Scheme.mem_visibleCells] at hj
-  rw [eq_five_of_visible α _ hj]
+  rw [eq_five_of_mem_visible hj]
   rfl
 
 /-- The donor has exactly one cell. -/
@@ -1117,10 +896,6 @@ theorem isLawful_capLowered (α : Ordinal.{u}) {c v : Label.{u}} (hc : IsSelfVis
     · rw [lab_three h3, lab_three h3, min_top_left, min_eq_right hcv], rfl, rfl⟩
 
 /-! ### The coupled gated extensions -/
-
-private theorem range_castSuccEmb :
-    Set.range (Fin.castSuccEmb : Fin 2 ↪ Fin 3) = (({0, 1} : Finset (Fin 3)) : Set (Fin 3)) := by
-  ext x; fin_cases x <;> simp [Fin.ext_iff]
 
 private theorem mem_visible_castSuccEmb (α : Ordinal.{u}) (d : Fin 12)
     (hd : cellScope d ⊆ {0, 1}) :
@@ -1175,12 +950,12 @@ private noncomputable def E (α : Ordinal.{u}) (C G : Fin 12) (hC : C = 3 ∧ G 
         change lab ⊤ ⊤ ⊤ C ≠ ⊥
         rcases hC with ⟨rfl, -⟩ | ⟨rfl, -⟩ <;> simp [lab, kind]
       le_gate := fun e he ↦ by
-        rw [eq_five_of_visible α e he]
+        rw [eq_five_of_mem_visible he]
         -- The graded index of a cell is its scope and grade (by definition).
         change (cellScope 5, cellGrade 5) ≤ (cellScope G, cellGrade G)
         rcases hC with ⟨-, rfl⟩ | ⟨-, rfl⟩ <;> exact ⟨by decide, by decide⟩
       reads := fun e he _ ↦ by
-        obtain rfl := eq_five_of_visible α e he
+        obtain rfl := eq_five_of_mem_visible he
         -- The donor cell is labelled `⊤`, at least the cap: the row of the gate reads it at
         -- `3`, as it reads the cap.
         refine .top ⟨cellQ α C, ?_⟩ ?_ le_rfl ?_ ?_

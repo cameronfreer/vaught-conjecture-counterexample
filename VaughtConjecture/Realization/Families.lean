@@ -90,6 +90,15 @@ observation at any cap `c ≤ β` that is self-visible at the top grade (`exists
 against the labels of the coface, and the result is reduced to stage `α`.  This lifting is used in
 the reduction of the guarded generalized-saturation and bottom-pattern clauses of a model.
 
+**No lower bound at full grade.**  Relabelling every cell of full grade `⊥` (`botTopGrade`) keeps
+a type in its saturation and bottom-pattern families and among the cofaces of its face, so every
+nonempty instance of either family has a member labelled `⊥` at every cell of full grade
+(`exists_mem_cofaces_inter_saturationFamily_label_eq_bot`,
+`exists_mem_cofaces_inter_bottomPatternFamily_label_eq_bot`), hence a member in no dominance
+family (`exists_mem_cofaces_inter_saturationFamily_not_mem_dominanceFamily`).  **Availability from
+the face**: in a legal coface `q` of `p`, every cell of `p` has a cell of `q` of full scope and the
+same grade labelled at least as high (`exists_le_label_of_restrictFace`).
+
 ## References
 
 The cofaces and the four families are the sets `U ⊆ (S^α ι_{n,n+1})⁻¹(p)` of clause 4 of
@@ -575,6 +584,113 @@ structure HasNonemptyCofaceInstances : Prop where
   has a label above `γ` at a cell of grade `n + 1`. -/
   dominance ⦃n : ℕ⦄ (p : StageType.{u} α n) : p.IsLegal → ∀ γ : Ordinal.{u}, γ < α →
     (p.cofaces ∩ dominanceFamily γ).Nonempty
+
+/-! ### Saturation gives no lower bound on a label of full grade -/
+
+/-- The stage type `q` with every cell of full grade relabelled `⊥`; lawful by
+`CellScheme.Rows.IsLawful.capTopGrade` at the cap `⊥`. -/
+noncomputable def botTopGrade (q : StageType.{u} α (n + 1)) : StageType.{u} α (n + 1) where
+  toScheme := q.toScheme
+  label i := if q.toCellScheme.grade i = n + 1 then ⊥ else q.label i
+  isWellFormed := q.isWellFormed
+  isCoded := q.isCoded
+  isLawful := by
+    simpa only [min_bot_right] using
+      q.isLawful.capTopGrade q.grade_le (isSelfVisible_bot (n + 1))
+  atStage i := by
+    split_ifs
+    · exact atStage_bot
+    · exact q.atStage i
+
+/-- Below full grade the labels of `botTopGrade` are those of `q`. -/
+theorem botTopGrade_label_of_grade_le (q : StageType.{u} α (n + 1)) {i : Fin q.card}
+    (hi : q.toCellScheme.grade i ≤ n) : q.botTopGrade.label i = q.label i := by
+  -- `botTopGrade` labels by an `if` on the grade (by definition)
+  change (if _ then _ else _) = _
+  split_ifs with h
+  · omega
+  · rfl
+
+/-- At full grade `botTopGrade` is labelled `⊥`. -/
+theorem botTopGrade_label_of_grade_eq (q : StageType.{u} α (n + 1)) {i : Fin q.card}
+    (hi : q.toCellScheme.grade i = n + 1) : q.botTopGrade.label i = ⊥ := by
+  -- `botTopGrade` labels by an `if` on the grade (by definition)
+  change (if _ then _ else _) = _
+  split_ifs
+  rfl
+
+/-- Relabelling the cells of full grade `⊥` does not change the face along the initial segment. -/
+theorem restrictFace_castSuccEmb_botTopGrade (q : StageType.{u} α (n + 1)) :
+    restrictFace Fin.castSuccEmb q.botTopGrade = restrictFace Fin.castSuccEmb q := by
+  by_cases hf : univ.map Fin.castSuccEmb ∈ q.toCellScheme.faces
+  · rw [restrictFace_of_mem q.botTopGrade Fin.castSuccEmb hf, restrictFace_of_mem q _ hf]
+    refine congrArg some (ext rfl fun i j hij ↦ ?_)
+    have hgr : q.toCellScheme.grade (q.cellMap Fin.castSuccEmb i) ≤ n := by
+      have h := congrArg Prod.snd (q.toScheme.map_comap_gradedIndex Fin.castSuccEmb i)
+      exact h.symm.trans_le ((q.comap Fin.castSuccEmb hf).grade_le i)
+    simp only [comap_label]
+    rw [Fin.ext hij] at hgr ⊢
+    exact q.botTopGrade_label_of_grade_le hgr
+  · rw [restrictFace_of_notMem q.botTopGrade Fin.castSuccEmb hf, restrictFace_of_notMem q _ hf]
+
+/-- **The bottom-pattern clause bounds no label of full grade from below**: every nonempty
+instance of the bottom-pattern family among the cofaces of `p` has a member whose cells of full
+grade are all labelled `⊥` (`botTopGrade`: the face and the bottom pattern below full grade are
+unchanged). -/
+theorem exists_mem_cofaces_inter_bottomPatternFamily_label_eq_bot {p : StageType.{u} α n}
+    {S : Scheme.{u} (n + 1)} {ρ : Fin S.card → Label.{u}}
+    (h : (p.cofaces ∩ bottomPatternFamily S ρ).Nonempty) :
+    ∃ q ∈ p.cofaces ∩ bottomPatternFamily S ρ,
+      ∀ i, q.toCellScheme.grade i = n + 1 → q.label i = ⊥ := by
+  obtain ⟨q, ⟨hq, hqp⟩, hqS, hpat⟩ := h
+  refine ⟨q.botTopGrade, ⟨⟨hq, (restrictFace_castSuccEmb_botTopGrade q).trans hqp⟩, hqS,
+    fun i j hij hi ↦ ?_⟩, fun i ↦ q.botTopGrade_label_of_grade_eq⟩
+  rw [q.botTopGrade_label_of_grade_le hi]
+  exact hpat i j hij hi
+
+/-- **The saturation clause bounds no label of full grade from below**: every nonempty instance
+of generalized saturation among the cofaces of `p` has a member whose cells of full grade are all
+labelled `⊥`. -/
+theorem exists_mem_cofaces_inter_saturationFamily_label_eq_bot {p : StageType.{u} α n}
+    {S : Scheme.{u} (n + 1)} (h : (p.cofaces ∩ saturationFamily S).Nonempty) :
+    ∃ q ∈ p.cofaces ∩ saturationFamily S,
+      ∀ i, q.toCellScheme.grade i = n + 1 → q.label i = ⊥ := by
+  obtain ⟨q, hq, hqS⟩ := h
+  exact ⟨q.botTopGrade, ⟨⟨hq.1, (restrictFace_castSuccEmb_botTopGrade q).trans hq.2⟩, hqS⟩,
+    fun i ↦ q.botTopGrade_label_of_grade_eq⟩
+
+/-- **A prescribed scheme does not meet a dominance family by force**: every nonempty instance of
+generalized saturation among the cofaces of `p` has a member in no dominance family.  So no clause
+of a model asks for a coface on a prescribed scheme with a label of full grade above a floor. -/
+theorem exists_mem_cofaces_inter_saturationFamily_not_mem_dominanceFamily
+    {p : StageType.{u} α n} {S : Scheme.{u} (n + 1)}
+    (h : (p.cofaces ∩ saturationFamily S).Nonempty) :
+    ∃ q ∈ p.cofaces ∩ saturationFamily S, ∀ γ : Ordinal.{u}, q ∉ dominanceFamily γ := by
+  obtain ⟨q, hq, hbot⟩ := exists_mem_cofaces_inter_saturationFamily_label_eq_bot h
+  refine ⟨q, hq, fun γ ⟨i, hi, hγi⟩ ↦ ?_⟩
+  rw [hbot i hi] at hγi
+  exact not_lt_bot hγi
+
+/-! ### Availability from the face -/
+
+/-- **Availability from the face**: in a legal stage type `q` on `n + 1` points whose face along
+the initial segment is `p`, every cell `T` of `p` has a cell of `q` of full scope, with the grade
+of `T`, labelled at least as `T`. -/
+theorem exists_le_label_of_restrictFace {p : StageType.{u} α n} {q : StageType.{u} α (n + 1)}
+    (hq : q.IsLegal) (h : restrictFace Fin.castSuccEmb q = some p) (T : Fin p.card) :
+    ∃ G : Fin q.card, q.toCellScheme.gradedIndex G = (univ, p.toCellScheme.grade T) ∧
+      p.label T ≤ q.label G := by
+  obtain ⟨hf, rfl⟩ := (restrictFace_eq_some_iff _ _).mp h
+  have hgi := q.toScheme.map_comap_gradedIndex Fin.castSuccEmb T
+  have hgr : q.toCellScheme.grade (q.cellMap Fin.castSuccEmb T) =
+      (q.comap Fin.castSuccEmb hf).toCellScheme.grade T := (congrArg Prod.snd hgi).symm
+  obtain ⟨t, ht⟩ := hq.isComplete (univ, (q.comap Fin.castSuccEmb hf).toCellScheme.grade T)
+    ⟨q.univ_mem_faces, (q.comap Fin.castSuccEmb hf).isWellFormed.isWellFormed.grade_pos T,
+      ((q.comap Fin.castSuccEmb hf).grade_le T).trans (by simp)⟩
+  obtain ⟨G, hG, hle⟩ := q.isLawful.availability (q.cellMap Fin.castSuccEmb T) t
+    (by rw [show q.toCellScheme.scope t = univ from congrArg Prod.fst ht]; exact subset_univ _)
+    (by rw [hgr, show q.toCellScheme.grade t = _ from congrArg Prod.snd ht])
+  exact ⟨G, hG.trans ht, hle⟩
 
 end StageType
 
