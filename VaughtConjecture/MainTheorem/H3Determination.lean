@@ -20,8 +20,11 @@ Work file for `h3`: `HollowCoatomCutoffDetermination MarkedCapContextBelow'`.
 * `H3.isDeterminedWithin_of_hasAdmittedRows`: a completion of the seed of the context and the
   coatom coface whose rows from the grade of the cap are correct determines the donor at a
   permitted cutoff (recognition at the cell reached by availability from the cap).
-* `H3.exists_correctCompletion`: SCAFFOLD (`sorry`): such a completion exists.
-* `H3.hollowCoatomCutoffDetermination`, `H3.receivingHollowReceiving`: the assembly.
+* `H3.exists_correctCompletion_of_fills`: such a completion from the donor lift provisions, an
+  extension of the row of the cap, the capped donor raise and the band.
+
+The open inputs and the assembly are in `VaughtConjecture.MainTheorem.H3Class`, through rows
+admitted in a bottom class.
 -/
 
 universe u w
@@ -676,76 +679,6 @@ theorem exists_correctCompletion_of_fills {c r : Fin t'.card}
   rwa [hcapg'] at h
 
 end Completion
-
-/-! ### The open inputs (SCAFFOLD) -/
-
-set_option warningAsError false in
-/-- **SCAFFOLD (`sorry`)**: at an acquired context, the seed of the context and the coatom coface
-has a completion whose rows of full scope from the grade of the cap are correct.  Reduced by
-`H3.exists_correctCompletion_of_fills` to five inputs, each a `sorry` here: (S1) the lift
-provisions from the donor coatom, (S2) an extension of the row of the cap, (S3) the capped donor
-raise above the grade of the cap, (S4) the band of the fill at the positive caps, and (S5) the
-small cases `k ≤ 1` or `N = 2`. -/
-theorem exists_correctCompletion (hα : Order.IsSuccLimit α) {t' : StageType.{u} α (k + 1)}
-    {p : StageType.{u} α k} {tb : StageType.{u} α (k + 1)} (ht' : t'.IsLegal)
-    (hp : restrictFace Fin.castSuccEmb t' = some p) (htb : tb ∈ p.cofaces) {g : Fin n ↪ Fin k}
-    {d : StageType.{u} α (n + 1)} (hd : restrictFace (extendByLast g) tb = some d)
-    {c r : Fin t'.card} (hctx : t'.IsMarkedCapContextAt (g.trans Fin.castSuccEmb) c r)
-    (hoff : t'.RootOffsetsBelow (g.trans Fin.castSuccEmb) (t'.toCellScheme.grade c))
-    (hbot : t'.RootBottomRespected (g.trans Fin.castSuccEmb) c) :
-    ∃ F : CompletionBelowFullGrade (seed ht' hp htb),
-      F.HasAdmittedRows (t'.toCellScheme.grade c)
-        (requests ht' hp htb hd c r (by have := hctx.2.2.1; omega)).IsCorrect := by
-  by_cases hsmall : 2 ≤ k ∧ 3 ≤ t'.toCellScheme.grade c
-  · refine exists_correctCompletion_of_fills ht' hp htb hd hctx hsmall.1 hsmall.2 ?_ ?_ ?_ ?_
-    · -- (S1) the lift provisions from the donor coatom (without `hface`)
-      sorry
-    · -- (S2) an extension of the row of the cap (the fill at `⊥` at the grade of the cap)
-      sorry
-    · -- (S3) the capped donor raise above the grade of the cap
-      sorry
-    · -- (S4) the band of the fill at the positive caps
-      sorry
-  · -- (S5) the small cases: `k ≤ 1` or the cap of grade `2`
-    sorry
-
-/-! ### Assembly -/
-
-/-- **The existential coatom form at the contexts respecting the root bottoms** (through the
-SCAFFOLD `H3.exists_correctCompletion`; the donor coface is, for now, the pinned extension). -/
-theorem hollowCoatomCutoffDeterminationExists :
-    Realization.HollowCoatomCutoffDeterminationExists.{u}
-      (fun t' h ↦ TiedRootCapRelabel.MarkedCapContextBelow' t' h) where
-  exists_coface α n k t' g p hα ht' hP hp t ht d hd := by
-    obtain ⟨c, r, hctx, hoff, hbot⟩ := hP
-    obtain ⟨tb, htb, htbd⟩ := Realization.exists_mem_cofaces_restrictFace_eq hα ht' hp ht hd
-    obtain ⟨F, hF⟩ := exists_correctCompletion hα ht' hp htb htbd hctx hoff hbot
-    obtain ⟨δ, hδ, hdet⟩ := isDeterminedWithin_of_hasAdmittedRows ht' hp htb hα htbd hctx.1
-      hctx.2.1 hctx.2.2.1 F hF
-    exact ⟨tb, htb, htbd, F.completion hα.isSuccPrelimit,
-      ⟨F.isLegal_completion _, F.restrictFace_left_completion _⟩,
-      F.restrictFace_right_completion _, δ, hδ, hdet⟩
-
-/-- **The coatom form** (through the SCAFFOLD; every donor coface). -/
-theorem hollowCoatomCutoffDetermination :
-    Realization.HollowCoatomCutoffDetermination.{u}
-      (fun t' h ↦ TiedRootCapRelabel.MarkedCapContextBelow' t' h) where
-  exists_coface α n k t' g p hα ht' hP hp tb htb d hd := by
-    obtain ⟨c, r, hctx, hoff, hbot⟩ := hP
-    obtain ⟨F, hF⟩ := exists_correctCompletion hα ht' hp htb hd hctx hoff hbot
-    obtain ⟨δ, hδ, hdet⟩ := isDeterminedWithin_of_hasAdmittedRows ht' hp htb hα hd hctx.1
-      hctx.2.1 hctx.2.2.1 F hF
-    exact ⟨F.completion hα.isSuccPrelimit,
-      ⟨F.isLegal_completion _, F.restrictFace_left_completion _⟩,
-      F.restrictFace_right_completion _, δ, hδ, hdet⟩
-
-/-- **(R3) for receiving models** through the existential coatom form (SCAFFOLD). -/
-theorem receivingHollowReceiving :
-    Realization.HollowReceiving.{u, w} Realization.IsReceivingCoverHollowAtBlock :=
-  Realization.receivingHollowReceiving_of_markedCapContextBelow'
-    (hollowCoatomCutoffDeterminationExists.hollowCutoffDetermination
-      (Realization.markedCapContextBelow'_routeInputs.{u, w}).2.1
-      (Realization.markedCapContextBelow'_routeInputs.{u, w}).2.2)
 
 end H3
 
