@@ -77,7 +77,7 @@ theorem mem_towerCat {Γ : Finset Label.{u}} {A : ℕ → (Fin I.amalgam.card �
 
 /-- **The ladder tower** of a seed, with values of the states in `Γ`, predicates `A`, and agreement
 heights in the grids of block bound `B'`. -/
-noncomputable def ladderTower (Γ : Finset Label.{u})
+noncomputable abbrev ladderTower (Γ : Finset Label.{u})
     (A : ℕ → (Fin I.amalgam.card → Label.{u}) → Prop) (B' : ℕ) (k : ℕ) :
     Scheme.LayerTower.{u} (m + 2) (Fin I.amalgam.card → Label.{u}) k :=
   Scheme.layerTower (I.towerBase H) (I.towerCat Γ A) (fun k ↦ grid k B') k
