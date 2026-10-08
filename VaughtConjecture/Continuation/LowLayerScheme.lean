@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Cameron Freer
 -/
 import VaughtConjecture.Continuation.LowProfile
-import VaughtConjecture.Extension.FieldLayer
+import VaughtConjecture.Extension.CatalogueLayer
 
 /-!
 # The LOW layer scheme
@@ -12,8 +12,10 @@ import VaughtConjecture.Extension.FieldLayer
 Roadmap, Layer 3 ((R2) of the table of 3.4, the LOW construction of 3.3); semantic contract,
 items 3, 4 and 8.
 
-The layer of controllers of the LOW construction [Kni26, §3.3], built with the appending of cells
-of full scope of `VaughtConjecture.Extension.FieldLayer`.  Let `S` be a scheme on `n` points with
+The layer of controllers of the LOW construction [Kni26, §3.3] over an arbitrary scheme: the
+catalogue layer of `VaughtConjecture.Extension.CatalogueLayer` with the cutoff as an extra field
+(`Scheme.lowLayer = Scheme.catalogueLayer` with the old cells read through `Sum.inl`; the theorems
+of this file are its instances).  Let `S` be a scheme on `n` points with
 no cell above `(univ, K)`, `G` a finite set of labels, and `C` a finite catalogue of **profiles**,
 labellings of the **fields** `Fin S.card ⊕ Unit` (the cells of `S` and one more field, the
 cutoff).  The **LOW layer** (`Scheme.lowLayer S K G C hS`) appends to `S` one cell of scope `univ`
@@ -53,10 +55,10 @@ This is a fact about the rows of the layer, for every coding of its values.  It 
 failure of bountifulness: bountifulness lifts from one graded face `X < (univ, K)`, and no such
 face contains both the owner (grade `K`, scope the private face) and a donor top through the new
 point (its scope is not in the private face), so a lift may choose the owner and the lost top
-itself, at or near the cap.  Whether a lift can always choose them so (for instance by the lowering
-below the owner, `StageType.IsSourceGapContextAt.exists_isLawfulBelow`) is open.  Bountifulness
-of LOW displays is the open part of the construction (`StageType.HasLowLayers`, in
-`VaughtConjecture.MainTheorem.LowDisplayRoute`).
+itself, at or near the cap.  Over the profile tower the lift is compiled when the donor has a top
+of grade `K` (`ProfileTower.Lvl.Good.cappedLift_lowS_seed`), and the completed display carries a
+LOW layer (`ProfileTower.isLowLayer_lowDisplay`, in
+`VaughtConjecture.Continuation.LowDisplayLayer`).
 
 ## Placement
 
@@ -72,127 +74,92 @@ open Finset Label
 variable {n : ℕ} (S : Scheme.{u} n) (K : ℕ) (G : Finset Label.{u})
   (C : Finset (Fin S.card ⊕ Unit → Label.{u}))
 
-/-- The profile of the `i`-th new cell. -/
-noncomputable def lowEntry (i : Fin C.card) : Fin S.card ⊕ Unit → Label.{u} :=
-  (C.equivFin.symm i).1
+/-- The profile of the `i`-th new cell (`Scheme.layerEntry`). -/
+noncomputable abbrev lowEntry (i : Fin C.card) : Fin S.card ⊕ Unit → Label.{u} :=
+  layerEntry C i
 
-theorem lowEntry_mem (i : Fin C.card) : lowEntry S C i ∈ C := (C.equivFin.symm i).2
+theorem lowEntry_mem (i : Fin C.card) : lowEntry S C i ∈ C := layerEntry_mem i
 
 theorem exists_lowEntry_eq {a : Fin S.card ⊕ Unit → Label.{u}} (ha : a ∈ C) :
     ∃ i, lowEntry S C i = a :=
-  ⟨C.equivFin ⟨a, ha⟩, by simp [lowEntry]⟩
+  exists_layerEntry_eq ha
 
-/-- The **LOW row** of a profile `a`: `a` on the old cells, and on the new cell of a profile `b`
-the agreement height of `a` and `b` in `G`. -/
-noncomputable def lowRow (a : Fin S.card ⊕ Unit → Label.{u}) : Fin (S.card + C.card) → Label.{u} :=
-  Fin.append (fun d ↦ a (Sum.inl d)) fun j ↦ agreementHeight G a (lowEntry S C j)
+/-- The **LOW row** of a profile `a` (`Scheme.layerRow` with the old cells read through
+`Sum.inl`): `a` on the old cells, and on the new cell of a profile `b` the agreement height of `a`
+and `b` in `G`. -/
+noncomputable abbrev lowRow (a : Fin S.card ⊕ Unit → Label.{u}) :
+    Fin (S.card + C.card) → Label.{u} :=
+  layerRow S Sum.inl G C a
 
 variable {S G C} in
-@[simp] theorem lowRow_castAdd (a : Fin S.card ⊕ Unit → Label.{u}) (d : Fin S.card) :
+theorem lowRow_castAdd (a : Fin S.card ⊕ Unit → Label.{u}) (d : Fin S.card) :
     lowRow S G C a (Fin.castAdd _ d) = a (Sum.inl d) :=
-  Fin.append_left _ _ d
+  layerRow_castAdd a d
 
 variable {S G C} in
-@[simp] theorem lowRow_natAdd (a : Fin S.card ⊕ Unit → Label.{u}) (j : Fin C.card) :
+theorem lowRow_natAdd (a : Fin S.card ⊕ Unit → Label.{u}) (j : Fin C.card) :
     lowRow S G C a (Fin.natAdd _ j) = agreementHeight G a (lowEntry S C j) :=
-  Fin.append_right _ _ j
+  layerRow_natAdd a j
 
-/-- **The LOW layer**: `S` with one cell of scope `univ` and grade `K` for each profile of `C`,
-whose row is the LOW row of the profile. -/
+/-- **The LOW layer**: the catalogue layer (`Scheme.catalogueLayer`) of `C` with the old cells read
+through `Sum.inl`, one cell of scope `univ` and grade `K` for each profile of `C`, whose row is the
+LOW row of the profile. -/
 noncomputable abbrev lowLayer
     (hS : ∀ d, ¬ ((univ : Finset (Fin n)), K) ≤ S.toCellScheme.gradedIndex d) : Scheme.{u} n :=
-  S.appendFullCells K C.card (fun i ↦ lowRow S G C (lowEntry S C i)) hS
+  S.catalogueLayer K Sum.inl G C hS
 
 variable {S K G C} {hS : ∀ d, ¬ ((univ : Finset (Fin n)), K) ≤ S.toCellScheme.gradedIndex d}
 
-/-- **Two LOW rows agree capped at the agreement height of their profiles.** -/
+/-- **Two LOW rows agree capped at the agreement height of their profiles**
+(`Scheme.min_layerRow_agreementHeight`). -/
 theorem min_lowRow_agreementHeight (hG : ⊥ ∈ G) (a b : Fin S.card ⊕ Unit → Label.{u})
     (x : Fin (S.card + C.card)) :
     min (lowRow S G C a x) (agreementHeight G a b) =
-      min (lowRow S G C b x) (agreementHeight G a b) := by
-  induction x using Fin.addCases with
-  | left d =>
-    rw [lowRow_castAdd, lowRow_castAdd]
-    exact (agreementHeight_spec hG a b).2 _
-  | right j =>
-    rw [lowRow_natAdd, lowRow_natAdd]
-    exact agreementHeight_tri hG a b _
+      min (lowRow S G C b x) (agreementHeight G a b) :=
+  min_layerRow_agreementHeight hG a b x
 
 /-- **The LOW row of a profile is a lawful section of the LOW layer**, for a profile `a` of `C`
 lawful on the old cells, when `⊥ ∈ G`, the members of `G` are self-visible at `K`, and some member
-`y` of `G` lies above every member of `G` and every value of `a`. -/
+`y` of `G` lies above every member of `G` and every value of `a` (`Scheme.isLawful_layerRow`). -/
 theorem isLawful_lowRow (hG : ⊥ ∈ G) (hvis : ∀ x ∈ G, IsSelfVisible K x) {y : Label.{u}}
     (hy : y ∈ G) (hmax : ∀ x ∈ G, x ≤ y) {a : Fin S.card ⊕ Unit → Label.{u}} (ha : a ∈ C)
     (hlaw : S.rows.IsLawful fun d ↦ a (Sum.inl d)) (hay : ∀ f, a f ≤ y) :
-    (S.lowLayer K G C hS).rows.IsLawful (lowRow S G C a) := by
-  refine isLawful_appendFullCells ?_ (fun i ↦ ?_) (fun i ↦ ?_) fun s _ ↦ ?_
-  · convert hlaw using 1
-    exact funext fun d ↦ lowRow_castAdd a d
-  · rw [lowRow_natAdd]
-    exact hvis _ (agreementHeight_spec hG _ _).1
-  · have hc := hvis _ (agreementHeight_spec hG a (lowEntry S C i)).1
-    convert (TransformsTo.refl (fun t : (S.appendFullCellsScheme K C.card).below
-      ((S.appendFullCellsScheme K C.card).gradedIndex (Fin.natAdd S.card i)) ↦
-        (S.appendFullCellsScheme K C.card).grade t)
-          fun t ↦ lowRow S G C (lowEntry S C i) t.1)
-      |>.min_const (K := K) (fun t ↦ t.2.2.trans (appendFullCellsScheme_grade_natAdd S K _ i).le)
-        hc using 1
-    funext t
-    rw [lowRow_natAdd]
-    exact min_lowRow_agreementHeight hG a _ t.1
-  · obtain ⟨i, hi⟩ := exists_lowEntry_eq S C ha
-    refine ⟨i, ?_⟩
-    rw [lowRow_natAdd, hi, agreementHeight_self hy hmax]
-    induction s using Fin.addCases with
-    | left d => rw [lowRow_castAdd]; exact hay _
-    | right j => rw [lowRow_natAdd]; exact hmax _ (agreementHeight_spec hG _ _).1
+    (S.lowLayer K G C hS).rows.IsLawful (lowRow S G C a) :=
+  isLawful_layerRow hG hvis hy hmax ha hlaw hay
 
 /-- **The LOW layer is consistent**, under the hypotheses of `Scheme.isLawful_lowRow` for every
-profile of `C`. -/
+profile of `C` (`Scheme.isConsistent_catalogueLayer`). -/
 theorem isConsistent_lowLayer (hcons : S.rows.IsConsistent) (hG : ⊥ ∈ G)
     (hvis : ∀ x ∈ G, IsSelfVisible K x) {y : Label.{u}} (hy : y ∈ G) (hmax : ∀ x ∈ G, x ≤ y)
     (hC : ∀ a ∈ C, S.rows.IsLawful (fun d ↦ a (Sum.inl d)) ∧ ∀ f, a f ≤ y) :
     (S.lowLayer K G C hS).rows.IsConsistent :=
-  isConsistent_appendFullCells hcons fun i ↦ isLawful_lowRow hG hvis hy hmax (lowEntry_mem S C i)
-    (hC _ (lowEntry_mem S C i)).1 (hC _ (lowEntry_mem S C i)).2
+  isConsistent_catalogueLayer hcons hG hvis hy hmax hC
 
 /-- **The LOW layer is well formed** when `(univ, K)` is a graded face. -/
 theorem isWellFormed_lowLayer (hwf : S.IsWellFormed) (hK0 : 0 < K) (hKn : K ≤ n) :
     (S.lowLayer K G C hS).IsWellFormed :=
-  isWellFormed_appendFullCells hwf hK0 hKn
+  isWellFormed_catalogueLayer hwf hK0 hKn
 
 /-- **The LOW layer is coded** when the profiles and `G` lie below `ω ^ 2`. -/
 theorem isCoded_lowLayer (hc : S.IsCoded) (hG : ⊥ ∈ G)
     (hGω : ∀ x ∈ G, x < ((Ordinal.omega0 ^ 2 : Ordinal.{u}) : Label.{u}))
     (hCω : ∀ a ∈ C, ∀ f, a f < ((Ordinal.omega0 ^ 2 : Ordinal.{u}) : Label.{u})) :
     (S.lowLayer K G C hS).IsCoded :=
-  isCoded_appendFullCells hc fun i x ↦ by
-    induction x using Fin.addCases with
-    | left d => rw [lowRow_castAdd]; exact hCω _ (lowEntry_mem S C i) _
-    | right j => rw [lowRow_natAdd]; exact hGω _ (agreementHeight_spec hG _ _).1
+  isCoded_catalogueLayer hc hG hGω hCω
 
 /-- **Completeness at the layer**: when `C` is nonempty, `(univ, K)` is the graded index of a
 new cell. -/
 theorem exists_gradedIndex_eq_lowLayer (hC : C.Nonempty) :
-    ∃ s, (S.lowLayer K G C hS).toCellScheme.gradedIndex s = (univ, K) := by
-  obtain ⟨a, ha⟩ := hC
-  obtain ⟨i, -⟩ := exists_lowEntry_eq S C ha
-  exact ⟨Fin.natAdd S.card i, appendFullCellsScheme_gradedIndex_natAdd S K _ i⟩
+    ∃ s, (S.lowLayer K G C hS).toCellScheme.gradedIndex s = (univ, K) :=
+  exists_gradedIndex_eq_catalogueLayer hC
 
 /-- **The LOW layer reads an old cell at the profile**: the new cell of a profile reads every old
-cell of grade at most `K` at the profile. -/
+cell of grade at most `K` at the profile (`Scheme.rowAt_catalogueLayer_castAdd`). -/
 theorem rowAt_lowLayer_castAdd (i : Fin C.card) {d : Fin S.card}
     (hd : S.toCellScheme.grade d ≤ K) :
     (S.lowLayer K G C hS).rowAt (Fin.natAdd S.card i) (Fin.castAdd C.card d) =
-      lowEntry S C i (Sum.inl d) := by
-  have hmem : Fin.castAdd C.card d ∈ (S.lowLayer K G C hS).toCellScheme.below
-      ((S.lowLayer K G C hS).toCellScheme.gradedIndex (Fin.natAdd S.card i)) := by
-    rw [CellScheme.mem_below]
-    change (S.appendFullCellsScheme K C.card).gradedIndex (Fin.castAdd C.card d) ≤
-      (S.appendFullCellsScheme K C.card).gradedIndex (Fin.natAdd S.card i)
-    rw [appendFullCellsScheme_gradedIndex_castAdd, appendFullCellsScheme_gradedIndex_natAdd]
-    exact ⟨subset_univ _, hd⟩
-  rw [rowAt_of_mem hmem, appendFullCells_row_natAdd, lowRow_castAdd]
+      lowEntry S C i (Sum.inl d) :=
+  rowAt_catalogueLayer_castAdd i hd
 
 /-- **The LOW layer reads a new cell at the agreement height** of the two profiles. -/
 theorem rowAt_lowLayer_natAdd (i j : Fin C.card) :
@@ -204,7 +171,9 @@ theorem rowAt_lowLayer_natAdd (i j : Fin C.card) :
     change (S.appendFullCellsScheme K C.card).gradedIndex (Fin.natAdd S.card j) ≤
       (S.appendFullCellsScheme K C.card).gradedIndex (Fin.natAdd S.card i)
     rw [appendFullCellsScheme_gradedIndex_natAdd, appendFullCellsScheme_gradedIndex_natAdd]
-  rw [rowAt_of_mem hmem, appendFullCells_row_natAdd, lowRow_natAdd]
+  rw [rowAt_of_mem hmem]
+  exact (appendFullCells_row_natAdd (S := S) (k := K) (M := C.card)
+    (r := fun i ↦ lowRow S G C (lowEntry S C i)) (h := hS) i _).trans (layerRow_natAdd _ j)
 
 end VaughtConjecture.Scheme
 
@@ -218,16 +187,13 @@ variable {n : ℕ} {S : Scheme.{u} n} {K : ℕ} {G : Finset Label.{u}}
   {C : Finset (Fin S.card ⊕ Unit → Label.{u})}
   {hS : ∀ d, ¬ ((univ : Finset (Fin n)), K) ≤ S.toCellScheme.gradedIndex d}
 
-/-- A cell of the LOW layer of graded index `(univ, K)` is new. -/
+/-- A cell of the LOW layer of graded index `(univ, K)` is new
+(`Scheme.exists_eq_natAdd_of_gradedIndex_catalogueLayer`). -/
 theorem exists_natAdd_eq_lowLayer {s : Fin (S.lowLayer K G C hS).card}
     (hs : (S.lowLayer K G C hS).toCellScheme.gradedIndex s = (univ, K)) :
     ∃ i, Fin.natAdd S.card i = s := by
-  by_cases hlt : (s : ℕ) < S.card
-  · refine absurd ?_ (hS ⟨s, hlt⟩)
-    rw [← appendFullCellsScheme_gradedIndex_of_lt hlt]
-    exact hs.ge
-  · have hs' : (s : ℕ) < S.card + C.card := s.2
-    exact ⟨⟨s - S.card, by omega⟩, Fin.ext (by simp; omega)⟩
+  obtain ⟨i, rfl⟩ := exists_eq_natAdd_of_gradedIndex_catalogueLayer hs
+  exact ⟨i, rfl⟩
 
 local notation "𝓛" => Scheme.lowLayer S K G C hS
 
