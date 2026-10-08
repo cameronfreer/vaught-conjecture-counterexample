@@ -76,9 +76,10 @@ above `1`** (`CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExten
 private type with a proper anchor below the cap, the readings of the gate carry a lawful private
 labelling that drops the anchor and keeps the cap to a labelling of the donor face that the donor's
 rows forbid (`StageType.CoupledGatedExtension.carriesBottoms`).  The definition is kept to state
-that refutation and the theorems conditional on it.  It holds at the input that refutes the gated
-pinned extension property: over the empty root, with the donor `P α|{0}` and the cap `3`, the
-private type `GatedExtensionCounterexample.P α` has a coupled gated extension
+that refutation; no theorem is stated under it, and the instances cited next state its body at fixed
+inputs.  It holds at the input that refutes the gated pinned extension property: over the empty
+root, with the donor `P α|{0}` and the cap `3`, the private type `GatedExtensionCounterexample.P α`
+has a coupled gated extension
 (`CoupledGateExamples.exists_coupledGatedExtension_comap_g₁`), whose gate has a twin not labelled
 `⊥` (`CoupledGateExamples.exists_coupledGatedExtension`; the display labels it `⊤`).  Every legal
 one-point extension of `P α` has such a twin
@@ -98,6 +99,21 @@ index `(univ, k)` that reads an anchor of every donor label below it in its own 
 `StageType.carriesBottoms_of_row_mem_block`).  This serves only anchors in one block: two labels
 read in the own block, strictly below the label of `C` and not self-visible at its grade, are
 visibility replacements of each other (`StageType.eq_visibilityReplace_of_readsInOwnBlock`).
+
+**Several gates.**  A **per-block coupled gated extension**
+(`StageType.PerBlockCoupledGatedExtension P f d k`) has `k` gates, each with its own cap, a private
+cell of a given graded index, its own twin–gate coupling, and the readings of the donor cells whose
+labels lie in a given set; cap and gate of each pair have equal grades, as the clauses of
+`CellScheme.Rows.IsGate` ask.  A coupled gated extension is one with one gate, whose cap has graded
+index `(univ, n)` and reads every label (`StageType.CoupledGatedExtension.toPerBlock`).  It is the
+display of the per-block design of `VaughtConjecture.Realization.PerBlockCarrying`.  Beside
+`StageType.CarriesBottoms` lie the condition at a grade `k` (`StageType.CarriesBottomsAt`) and the
+per-block condition (`StageType.CarriesBottomsPerBlock`), which every per-block coupled gated
+extension forces (`StageType.PerBlockCoupledGatedExtension.carriesBottomsPerBlock`); for one cap of
+graded index `(univ, k)` reading every label the per-block condition is the condition at `k`
+(`StageType.carriesBottomsPerBlock_one_iff_at`), and at `k = n` it is `CarriesBottoms`
+(`StageType.carriesBottomsPerBlock_one_iff`), through which
+`StageType.CoupledGatedExtension.carriesBottoms` is derived.
 
 ## Placement
 
@@ -286,6 +302,64 @@ theorem label_gate_ne_bot : E.display.label E.gate ≠ ⊥ := fun h ↦
 
 end CoupledGatedExtension
 
+/-- A **per-block coupled gated extension** of `P` on `n` points over the face `f`, with donor `d`
+on `m + 1` points and `k` gates: a legal display on `n + 1` points whose two faces are literally
+`P` and `d`, with, for each `t : Fin k`, a gate `gate t` and a cap `cap t`, a private cell of
+graded index `capIndex t` in `P`; the twins of each gate read it at least as its cap
+(`CellScheme.Rows.TwinsReadGate`), and the row of each gate reads, against its cap, the donor cells
+whose labels lie in `readLabels t` (`CellScheme.Rows.IsGate`, whose clauses ask that cap and gate
+have equal grades and nested scopes).  A coupled gated extension is the case of one gate, with the
+gate and cap of graded index `(univ, n)` (`CoupledGatedExtension.gradedIndex_gate`) and every label
+read (`CoupledGatedExtension.toPerBlock`).  Only the clauses that the per-block bottom transport
+condition uses are stated
+(`PerBlockCoupledGatedExtension.carriesBottomsPerBlock`); no universal extension property for it
+is stated. -/
+structure PerBlockCoupledGatedExtension (P : StageType.{u} α n) (f : Fin m ↪ Fin n)
+    (d : StageType.{u} α (m + 1)) (k : ℕ) where
+  /-- The display. -/
+  display : StageType.{u} α (n + 1)
+  /-- The display is legal. -/
+  isLegal : display.IsLegal
+  /-- The private face of the display is literally `P`. -/
+  restrictFace_castSuccEmb : restrictFace Fin.castSuccEmb display = some P
+  /-- The donor face of the display is literally `d`. -/
+  restrictFace_extendByLast : restrictFace (extendByLast f) display = some d
+  /-- The gates. -/
+  gate : Fin k → Fin display.card
+  /-- The caps, private cells of the display. -/
+  cap : Fin k → Fin display.card
+  /-- The graded index of each cap in the private type. -/
+  capIndex : Fin k → Finset (Fin n) × ℕ
+  /-- Each cap has the graded index `capIndex t` of the private type, on the private points. -/
+  gradedIndex_cap : ∀ t, display.toCellScheme.gradedIndex (cap t) =
+    ((capIndex t).1.map Fin.castSuccEmb, (capIndex t).2)
+  /-- The labels of the donor cells that each gate reads. -/
+  readLabels : Fin k → Set Label.{u}
+  /-- The twins of each gate read the gate at least as its cap. -/
+  twinsReadGate : ∀ t, display.rows.TwinsReadGate (gate t) (cap t)
+  /-- The gate data: the row of each gate reads every donor cell whose label it reads. -/
+  isGate : ∀ t, display.rows.IsGate (gate t) (cap t)
+    (display.toCellScheme.visible (Set.range Fin.castSuccEmb))
+    {e | e ∈ display.toCellScheme.visible (Set.range (extendByLast f)) ∧
+      display.label e ∈ readLabels t} display.label
+
+/-- **A coupled gated extension is a per-block one with one gate**: its gate and its cap, of graded
+index `(univ, n)`, with every donor label read. -/
+def CoupledGatedExtension.toPerBlock {P : StageType.{u} α n} {f : Fin m ↪ Fin n}
+    {d : StageType.{u} α (m + 1)} (E : CoupledGatedExtension P f d) :
+    PerBlockCoupledGatedExtension P f d 1 where
+  display := E.display
+  isLegal := E.isLegal
+  restrictFace_castSuccEmb := E.restrictFace_castSuccEmb
+  restrictFace_extendByLast := E.restrictFace_extendByLast
+  gate _ := E.gate
+  cap _ := E.cap
+  capIndex _ := (univ, n)
+  gradedIndex_cap _ := E.gradedIndex_cap
+  readLabels _ := Set.univ
+  twinsReadGate _ := E.twinsReadGate
+  isGate _ := by simpa only [Set.mem_univ, and_true, Set.ofPred_mem_eq] using E.isGate
+
 /-- **The readings of a gate force anchoring**, for a display `Q` with literal faces `P` and `d`:
 if the row of a cell `G` of grade `n` reads every new donor cell against a cap `C'` labelled as the
 cell `C` of `P`, the donor is anchored in `P` below `C`. -/
@@ -411,6 +485,68 @@ theorem ReadsInOwnBlock.exists_ne_bot {P : StageType.{u} α n} {C : Fin P.card} 
   obtain ⟨z, hz, hzl, μ, hμ, i, i', hrz, hrC⟩ := h
   exact ⟨z, hzl, ha.ne_bot_of_row_mem_block hz hμ hrz hrC hC⟩
 
+/-- **A face keeps its readings in the own block**: if `p` is the face of `q` along `f`, every
+cell `C` of `p` is a cell of `q` with the label and the grade of `C` that reads, in its own block,
+every label that `C` reads in its own block (the rows of a face are the rows of its cells). -/
+theorem exists_readsInOwnBlock_of_restrictFace {p : StageType.{u} α m} {q : StageType.{u} α n}
+    {f : Fin m ↪ Fin n} (h : restrictFace f q = some p) (C : Fin p.card) :
+    ∃ C' : Fin q.card, q.label C' = p.label C ∧
+      q.toCellScheme.grade C' = p.toCellScheme.grade C ∧
+      ∀ l, p.ReadsInOwnBlock C l → q.ReadsInOwnBlock C' l := by
+  obtain ⟨hf, rfl⟩ := (restrictFace_eq_some_iff _ _).mp h
+  refine ⟨q.cellMap f C, rfl, rfl, fun l ⟨z, hz, hzl, μ, hμ, i, i', hrz, hrC⟩ ↦
+    ⟨q.cellMap f z, ((q.toScheme.isLowerEmbedding_comap f).le_iff z C).mpr hz, hzl, μ, hμ, i, i',
+      hrz, hrC⟩⟩
+
+/-- **The self-reading of a cell labelled beyond a label that it reads in its own block**: let the
+row of `C` read, in its own block `[μ, μ + ω)`, the label `l` of a cell `z` below it at the finite
+part `i` and `C` itself at the finite part `i'`, with `l` below the label of `C` and not
+self-visible at the grade `K` of `C`.  If `i' ≤ K`, the label of `C` is at most `vr_K(l, i')`,
+that is, within the block of `l`.  So a cap labelled beyond the block of a label that it reads in
+its own block reads itself at a finite part above its grade.  The proof uses the locality clause
+of the lawfulness of the labels of `P` at `C`: its witness sends the reading of `z` to `l` and
+commutes with visibility replacement at `K`. -/
+theorem label_le_of_readsInOwnBlock {P : StageType.{u} α n} {C : Fin P.card} {l : Label.{u}}
+    (h : P.ReadsInOwnBlock C l) (hl : l < P.label C)
+    (hv : ¬ IsSelfVisible (P.toCellScheme.grade C) l) :
+    ∃ z, ∃ hz : z ∈ P.toCellScheme.below (P.toCellScheme.gradedIndex C), P.label z = l ∧
+      ∃ μ : Ordinal.{u}, Order.IsSuccPrelimit μ ∧ ∃ i i' : ℕ,
+      P.rows.row C ⟨z, hz⟩ = ((μ + i : Ordinal.{u}) : Label.{u}) ∧
+      P.rows.row C ⟨C, P.toCellScheme.mem_below_gradedIndex C⟩ =
+        ((μ + i' : Ordinal.{u}) : Label.{u}) ∧
+      (i' ≤ P.toCellScheme.grade C →
+        P.label C ≤ visibilityReplace (P.toCellScheme.grade C) i' l) := by
+  obtain ⟨z, hz, hzl, μ, hμ, i, i', hrz, hrC⟩ := h
+  refine ⟨z, hz, hzl, μ, hμ, i, i', hrz, hrC, fun hi' ↦ ?_⟩
+  obtain ⟨g, σ, hw, heq⟩ := P.isLawful.locality C
+  set K := P.toCellScheme.grade C
+  have hCg : P.label C ≤ g K := by
+    have := heq ⟨C, P.toCellScheme.mem_below_gradedIndex C⟩
+    simp only [min_self] at this
+    rw [this]; exact min_le_right _ _
+  have hCσ : P.label C ≤ σ ((μ + i' : Ordinal.{u}) : Label.{u}) := by
+    have := heq ⟨C, P.toCellScheme.mem_below_gradedIndex C⟩
+    simp only [min_self] at this
+    rw [this, ← hrC]; exact min_le_left _ _
+  have hσz : σ ((μ + i : Ordinal.{u}) : Label.{u}) = l := by
+    have hgy : g K ≤ g (P.toCellScheme.grade z) :=
+      hw.antitone ((CellScheme.mem_below _).mp hz).2
+    have := heq ⟨z, hz⟩
+    simp only [hzl, min_eq_left hl.le] at this
+    rcases min_eq_iff.mp this.symm with ⟨h1, -⟩ | ⟨h1, -⟩
+    · rw [← hrz]; exact h1
+    · exact absurd (h1 ▸ hl.trans_le (hCg.trans hgy)) (lt_irrefl _)
+  have hiK : i < K := by
+    by_contra hKk
+    have hc := hw.visibilityReplace_comm ((μ + i : Ordinal.{u}) : Label.{u}) K
+      (hσz ▸ hl.le.trans hCg) K le_rfl
+    rw [isSelfVisible_coe_add hμ (not_lt.mp hKk), hσz] at hc
+    exact hv hc.symm
+  have hc := hw.visibilityReplace_comm ((μ + i : Ordinal.{u}) : Label.{u}) K
+    (hσz ▸ hl.le.trans hCg) i' hi'
+  rw [visibilityReplace_coe_add_natCast hμ hiK i', hσz] at hc
+  exact hCσ.trans_eq hc
+
 /-- The donor `d` is **anchored at the grade `k`** in `P` below the cell `C`: every new donor cell
 whose label is neither `⊥` nor at least that of `C` is labelled `vr_k(P.label z, i)` for a cell
 `z` of `P` and some `i ≤ k`.  At `k = n` this is `IsAnchored` (`isAnchoredAt_iff`); a design with
@@ -428,9 +564,9 @@ theorem isAnchoredAt_iff {P : StageType.{u} α n} {C : Fin P.card} {d : StageTyp
 /-- The **bottom transport condition at the grade `k`**: `CarriesBottoms` with the cells of graded
 index `(univ, k)` labelled `c` in place of those of graded index `(univ, n)`, and visibility
 replacement at `k` in place of `n`.  At `k = n` it is `CarriesBottoms` (`carriesBottomsAt_iff`).
-It is the condition that the proof of `CoupledGatedExtension.carriesBottoms` would give for a gate
-and a cap of grade `k` (argued from that proof, not compiled: such a design is not defined in the
-library). -/
+It is the per-block condition for one cap of graded index `(univ, k)` reading every label
+(`carriesBottomsPerBlock_one_iff_at`), so a per-block coupled gated extension with one such gate
+forces it (`PerBlockCoupledGatedExtension.carriesBottomsPerBlock`). -/
 def CarriesBottomsAt (P : StageType.{u} α n) (d : StageType.{u} α (m + 1)) (c : Label.{u})
     (k : ℕ) : Prop :=
   ∀ a : Fin P.card → Label.{u}, P.rows.IsLawful a →
@@ -552,6 +688,159 @@ theorem eq_visibilityReplace_of_readsInOwnBlock {P : StageType.{u} α n} {C : Fi
   exact ⟨j, hj.le, hc⟩
 
 
+/-! ### The bottom transport condition for several caps -/
+
+/-- The **per-block bottom transport condition** for a private type `P` on `n` points, a one-point
+donor `d` on `m + 1` points, and `k` caps given by their graded indices `X t` and labels `c t`,
+each with a set `L t` of donor labels that it reads: every lawful labelling `a` of `P` has one
+lawful labelling `ρ` of `d` such that, for every `t` at which `a` is not `⊥` at the cells of `P` of
+graded index `X t` labelled `c t`, at every new donor cell `j` not labelled `⊥` with label in
+`L t`, the two clauses of `CarriesBottoms` hold with the cap label `c t` and visibility replacement
+at the grade of `X t`.  With one cap of graded index `(univ, n)` reading every label it is
+`CarriesBottoms` (`carriesBottomsPerBlock_one_iff`).  Every per-block coupled gated extension
+forces it (`PerBlockCoupledGatedExtension.carriesBottomsPerBlock`). -/
+def CarriesBottomsPerBlock (P : StageType.{u} α n) (d : StageType.{u} α (m + 1)) {k : ℕ}
+    (X : Fin k → Finset (Fin n) × ℕ) (c : Fin k → Label.{u}) (L : Fin k → Set Label.{u}) :
+    Prop :=
+  ∀ a : Fin P.card → Label.{u}, P.rows.IsLawful a →
+    ∃ ρ : Fin d.card → Label.{u}, d.rows.IsLawful ρ ∧ ∀ t,
+      (∀ i, P.toCellScheme.gradedIndex i = X t → P.label i = c t → a i ≠ ⊥) →
+      ∀ j, Fin.last m ∈ d.toCellScheme.scope j → d.label j ≠ ⊥ → d.label j ∈ L t →
+        (¬ c t ≤ d.label j →
+          (∀ i, ∀ k' ≤ (X t).2, d.label j = visibilityReplace (X t).2 k' (P.label i) →
+            a i = ⊥) → ρ j = ⊥) ∧
+        ((∀ i, ((∃ k' ≤ (X t).2, d.label j = visibilityReplace (X t).2 k' (P.label i)) ∨
+            (c t ≤ P.label i ∧ c t ≤ d.label j)) → a i ≠ ⊥) → ρ j ≠ ⊥)
+
+/-- **One cap of full scope and grade `k` reading every label: the bottom transport condition at
+the grade `k`** (`CarriesBottomsAt`).  Forward, take the one cap; backward, where the private
+labelling drops the cap the labelling of the donor itself serves.  At `k = n` it is
+`carriesBottomsPerBlock_one_iff`. -/
+theorem carriesBottomsPerBlock_one_iff_at {P : StageType.{u} α n}
+    {d : StageType.{u} α (m + 1)} {c : Label.{u}} {k : ℕ} :
+    CarriesBottomsPerBlock P d (fun _ : Fin 1 ↦ ((univ : Finset (Fin n)), k)) (fun _ ↦ c)
+      (fun _ ↦ Set.univ) ↔ CarriesBottomsAt P d c k := by
+  constructor
+  · intro h a ha hcap
+    obtain ⟨ρ, hρ, hj⟩ := h a ha
+    exact ⟨ρ, hρ, fun j hj' hne ↦ hj 0 hcap j hj' hne trivial⟩
+  · intro h a ha
+    by_cases hcap : ∀ i, P.toCellScheme.gradedIndex i = (univ, k) → P.label i = c → a i ≠ ⊥
+    · obtain ⟨ρ, hρ, hj⟩ := h a ha hcap
+      exact ⟨ρ, hρ, fun _ _ j hj' hne _ ↦ hj j hj' hne⟩
+    · exact ⟨d.label, d.isLawful, fun _ h ↦ absurd h hcap⟩
+
+/-- **One cap of full scope and full grade reading every label: the bottom transport
+condition.**  The case `k = n` of `carriesBottomsPerBlock_one_iff_at`, through
+`carriesBottomsAt_iff`. -/
+theorem carriesBottomsPerBlock_one_iff {P : StageType.{u} α n} {d : StageType.{u} α (m + 1)}
+    {c : Label.{u}} :
+    CarriesBottomsPerBlock P d (fun _ : Fin 1 ↦ ((univ : Finset (Fin n)), n)) (fun _ ↦ c)
+      (fun _ ↦ Set.univ) ↔ CarriesBottoms P d c :=
+  carriesBottomsPerBlock_one_iff_at.trans carriesBottomsAt_iff
+
+/-- **The per-block condition holds at caps that read their anchors in their own block**: let
+`C t` be cells of `P`, and suppose that every new donor label `l ∈ L t`, neither `⊥` nor at least
+the label of `C t`, is `vr_K(l', k')`, `k' ≤ K` the grade of `C t`, for a label `l'` that the row
+of `C t` reads in its own block (`ReadsInOwnBlock`).  Then a lawful labelling of `P` not `⊥` at
+`C t` is not `⊥` at a cell labelled `l'`, a possible anchor, and the labelling of the donor itself
+meets the condition.  By `eq_visibilityReplace_of_readsInOwnBlock`, the labels `l'` that one cap
+reads in this way, below its label and not self-visible at its grade, lie in one block. -/
+theorem carriesBottomsPerBlock_of_readsInOwnBlock {P : StageType.{u} α n}
+    {d : StageType.{u} α (m + 1)} {k : ℕ} {C : Fin k → Fin P.card} {L : Fin k → Set Label.{u}}
+    (hread : ∀ t j, Fin.last m ∈ d.toCellScheme.scope j → d.label j ≠ ⊥ → d.label j ∈ L t →
+      d.label j < P.label (C t) →
+      ∃ l, (∃ k' ≤ P.toCellScheme.grade (C t),
+        d.label j = visibilityReplace (P.toCellScheme.grade (C t)) k' l) ∧
+        P.ReadsInOwnBlock (C t) l) :
+    CarriesBottomsPerBlock P d (fun t ↦ P.toCellScheme.gradedIndex (C t)) (fun t ↦ P.label (C t))
+      L := by
+  intro a ha
+  refine ⟨d.label, d.isLawful, fun t hcap j hj hne hL ↦ ⟨fun hlt hdrop ↦ ?_, fun _ ↦ hne⟩⟩
+  obtain ⟨l, ⟨k', hk', hjl⟩, hl⟩ := hread t j hj hne hL (lt_of_not_ge hlt)
+  obtain ⟨z, hzl, hz⟩ := hl.exists_ne_bot ha (hcap (C t) rfl rfl)
+  exact (hz (hdrop z k' hk' (hzl ▸ hjl))).elim
+
+namespace PerBlockCoupledGatedExtension
+
+variable {P : StageType.{u} α n} {f : Fin m ↪ Fin n} {d : StageType.{u} α (m + 1)} {k : ℕ}
+  (E : PerBlockCoupledGatedExtension P f d k)
+
+/-- **Every per-block coupled gated extension forces the per-block bottom transport condition**
+for its private type, its donor, and its caps with the labels they read.  A lawful labelling of
+`P` extends to a lawful labelling `r` of the display (bountifulness at the cap `⊥`); where `r` is
+not `⊥` at the cap of `t`, it is not `⊥` at the gate of `t` (the twin–gate coupling), and the
+readings of that gate carry `⊥` from the anchors (`CellScheme.Rows.IsLawful.eq_bot_of_gateReads`,
+`CellScheme.Rows.IsLawful.ne_bot_of_gateReads`); the donor face of `r` is one labelling of `d` for
+all gates at once.  With one gate it gives `CoupledGatedExtension.carriesBottoms`. -/
+theorem carriesBottomsPerBlock :
+    CarriesBottomsPerBlock P d E.capIndex (fun t ↦ E.display.label (E.cap t)) E.readLabels := by
+  obtain ⟨hfP, hP⟩ := (restrictFace_eq_some_iff _ _).mp E.restrictFace_castSuccEmb
+  obtain ⟨hfd, hd⟩ := (restrictFace_eq_some_iff _ _).mp E.restrictFace_extendByLast
+  suffices key : CarriesBottomsPerBlock (E.display.comap Fin.castSuccEmb hfP)
+      (E.display.comap (extendByLast f) hfd) E.capIndex (fun t ↦ E.display.label (E.cap t))
+      E.readLabels by
+    rw [hP, hd] at key; exact key
+  intro a ha
+  obtain ⟨r, hr, -, hra⟩ := Scheme.IsLegal.exists_isLawful_extend E.isLegal hfP
+    (isSelfVisible_bot (n + 1)) ha CellScheme.Rows.isLawful_const_bot
+    fun _ ↦ by simp only [min_bot_right]
+  -- The private cells are the cells of the private face.
+  have hpriv : ∀ z ∈ E.display.toCellScheme.visible (Set.range Fin.castSuccEmb),
+      ∃ i, E.display.toScheme.cellMap Fin.castSuccEmb i = z := fun z hz ↦ by
+    have : z ∈ Set.range (E.display.toScheme.cellMap Fin.castSuccEmb) := by
+      rw [Scheme.range_cellMap, mem_coe, Scheme.mem_visibleCells]; exact hz
+    exact this
+  refine ⟨fun j ↦ r (E.display.toScheme.cellMap (extendByLast f) j),
+    hr.comap (E.display.toScheme.isLowerEmbedding_comap _), fun t hcapa j hj hjb hjL ↦ ?_⟩
+  -- The cap of `t` is the private cell of graded index `capIndex t` labelled as it.
+  have hcap : r (E.cap t) ≠ ⊥ := by
+    obtain ⟨i, hi⟩ := hpriv (E.cap t) (E.isGate t).cap_mem
+    have hgi : (E.display.comap Fin.castSuccEmb hfP).toCellScheme.gradedIndex i =
+        E.capIndex t := by
+      have h := E.display.toScheme.map_comap_gradedIndex Fin.castSuccEmb i
+      rw [hi, E.gradedIndex_cap t] at h
+      obtain ⟨h1, h2⟩ := Prod.ext_iff.mp h
+      exact Prod.ext ((Finset.map_injective _) h1) h2
+    rw [← hi, hra i]
+    refine hcapa i hgi ?_
+    -- The labels of the private face are those of its cells (`comap_label`, by definition).
+    change E.display.label (E.display.toScheme.cellMap Fin.castSuccEmb i) = _
+    rw [hi]
+  have hG : r (E.gate t) ≠ ⊥ := fun h ↦ hcap (le_bot_iff.mp (h ▸
+    CellScheme.Rows.cap_le_gate_of_twinsReadGate hr (E.isGate t).scope_cap_subset
+      (E.isGate t).grade_cap (E.twinsReadGate t)))
+  have hgr : E.display.toCellScheme.grade (E.gate t) = (E.capIndex t).2 :=
+    (E.isGate t).grade_cap.symm.trans (congrArg Prod.snd (E.gradedIndex_cap t))
+  set e := E.display.toScheme.cellMap (extendByLast f) j
+  have he : e ∈ E.display.toCellScheme.visible (Set.range (extendByLast f)) :=
+    Scheme.mem_visibleCells.mp (E.display.toScheme.cellMap_mem _ j)
+  have hnew : Fin.last n ∈ E.display.toCellScheme.scope e := by
+    -- The scope of a cell of the donor face is the preimage of the scope of its cell
+    -- (`Scheme.comap_scope`, by definition).
+    have hj' : Fin.last m ∈ (E.display.toCellScheme.scope e).preimage (extendByLast f)
+        (extendByLast f).injective.injOn := hj
+    simpa using mem_preimage.mp hj'
+  have hle : E.display.label e = (E.display.comap (extendByLast f) hfd).label j := rfl
+  have heP : e ∉ E.display.toCellScheme.visible (Set.range Fin.castSuccEmb) := fun h ↦ by
+    obtain ⟨i, hi⟩ := h hnew
+    exact (Fin.castSucc_lt_last i).ne hi
+  have hreads := (E.isGate t).reads e ⟨he, hle ▸ hjL⟩ heP
+  refine ⟨fun hCe hanc ↦ hr.eq_bot_of_gateReads hG hreads (hle ▸ hjb) (hle ▸ hCe)
+      fun z hz i hi hez ↦ ?_,
+    fun hanc ↦ hr.ne_bot_of_gateReads hG hreads (hle ▸ hjb) fun z hz hez ↦ ?_⟩
+  · obtain ⟨i', hi'⟩ := hpriv z.1 hz
+    rw [← hi', hra i']
+    rw [hgr, ← hi'] at hez
+    rw [hgr] at hi
+    exact hanc i' i hi hez
+  · obtain ⟨i', hi'⟩ := hpriv z.1 hz
+    rw [← hi', hra i']
+    rw [hgr, ← hi'] at hez
+    exact hanc i' hez
+
+end PerBlockCoupledGatedExtension
+
 namespace CoupledGatedExtension
 
 variable {P : StageType.{u} α n} {f : Fin m ↪ Fin n} {d : StageType.{u} α (m + 1)}
@@ -602,77 +891,18 @@ theorem ne_bot_of_isLawful {r : Fin E.display.card → Label.{u}}
   · exact .inr h
 
 /-- **Every coupled gated extension forces the bottom transport condition** for its private type,
-its donor and the label of its cap.  A lawful labelling of `P` extends to a lawful labelling `r`
+its donor and the label of its cap: it is the per-block extension with its one gate
+(`toPerBlock`), whose condition (`PerBlockCoupledGatedExtension.carriesBottomsPerBlock`) is, for
+one cap of full scope and full grade reading every label, the bottom transport condition
+(`carriesBottomsPerBlock_one_iff`).  A lawful labelling of `P` extends to a lawful labelling `r`
 of the display (bountifulness from the private face at the cap `⊥`); `r` is not `⊥` at the cap,
 hence not at the gate (`cap_le_gate`); the donor face of `r` is lawful for `d`, and the readings of
-the gate carry `⊥` from the anchors (`eq_bot_of_isLawful`, `ne_bot_of_isLawful`). -/
+the gate carry `⊥` from the anchors (`CellScheme.Rows.IsLawful.eq_bot_of_gateReads`,
+`CellScheme.Rows.IsLawful.ne_bot_of_gateReads`). -/
 theorem carriesBottoms {c : Label.{u}} (hc : E.display.label E.cap = c) :
-    CarriesBottoms P d c := by
-  obtain ⟨hfP, hP⟩ := (restrictFace_eq_some_iff _ _).mp E.restrictFace_castSuccEmb
-  obtain ⟨hfd, hd⟩ := (restrictFace_eq_some_iff _ _).mp E.restrictFace_extendByLast
-  suffices key : CarriesBottoms (E.display.comap Fin.castSuccEmb hfP)
-      (E.display.comap (extendByLast f) hfd) c by
-    rw [hP, hd] at key; exact key
-  intro a ha hcapa
-  obtain ⟨r, hr, -, hra⟩ := Scheme.IsLegal.exists_isLawful_extend E.isLegal hfP
-    (isSelfVisible_bot (n + 1)) ha CellScheme.Rows.isLawful_const_bot
-    fun _ ↦ by simp only [min_bot_right]
-  -- The private cells are the cells of the private face.
-  have hpriv : ∀ z ∈ E.display.toCellScheme.visible (Set.range Fin.castSuccEmb),
-      ∃ i, E.display.toScheme.cellMap Fin.castSuccEmb i = z := fun z hz ↦ by
-    have : z ∈ Set.range (E.display.toScheme.cellMap Fin.castSuccEmb) := by
-      rw [Scheme.range_cellMap, mem_coe, Scheme.mem_visibleCells]; exact hz
-    exact this
-  -- The cap is the cell of the private face labelled `c`, of graded index `(univ, n)` there.
-  have hcap : r E.cap ≠ ⊥ := by
-    obtain ⟨i, hi⟩ := hpriv E.cap E.isGate.cap_mem
-    have hgi : (E.display.comap Fin.castSuccEmb hfP).toCellScheme.gradedIndex i = (univ, n) := by
-      have h := E.display.toScheme.map_comap_gradedIndex Fin.castSuccEmb i
-      rw [hi, E.gradedIndex_cap] at h
-      obtain ⟨h1, h2⟩ := Prod.ext_iff.mp h
-      exact Prod.ext ((Finset.map_injective _) h1) h2
-    rw [← hi, hra i]
-    refine hcapa i hgi ?_
-    -- The labels of the private face are those of its cells (`comap_label`, by definition).
-    change E.display.label (E.display.toScheme.cellMap Fin.castSuccEmb i) = c
-    rw [hi, hc]
-  refine ⟨fun j ↦ r (E.display.toScheme.cellMap (extendByLast f) j),
-    hr.comap (E.display.toScheme.isLowerEmbedding_comap _), fun j hj hjb ↦ ?_⟩
-  set e := E.display.toScheme.cellMap (extendByLast f) j
-  have he : e ∈ E.display.toCellScheme.visible (Set.range (extendByLast f)) :=
-    Scheme.mem_visibleCells.mp (E.display.toScheme.cellMap_mem _ j)
-  have hnew : Fin.last n ∈ E.display.toCellScheme.scope e := by
-    -- The scope of a cell of the donor face is the preimage of the scope of its cell
-    -- (`Scheme.comap_scope`, by definition).
-    have hj' : Fin.last m ∈ (E.display.toCellScheme.scope e).preimage (extendByLast f)
-        (extendByLast f).injective.injOn := hj
-    simpa using mem_preimage.mp hj'
-  have hle : E.display.label e = (E.display.comap (extendByLast f) hfd).label j := rfl
-  refine ⟨fun hCe hanc ↦ E.eq_bot_of_isLawful hr hcap he hnew hjb (by rwa [hc, hle])
-      fun z hz i hi hez ↦ ?_,
-    fun hanc ↦ E.ne_bot_of_isLawful hr hcap he hnew hjb fun z hz hez ↦ ?_⟩
-  · obtain ⟨i', rfl⟩ := hpriv z hz
-    rw [hra i']
-    exact hanc i' i hi hez
-  · obtain ⟨i', rfl⟩ := hpriv z hz
-    rw [hra i']
-    rw [hc] at hez
-    exact hanc i' hez
+    CarriesBottoms P d c :=
+  hc ▸ carriesBottomsPerBlock_one_iff.mp E.toPerBlock.carriesBottomsPerBlock
 
 end CoupledGatedExtension
-
-/-- **The coupled gated pinned extension property forces the bottom transport condition** at each
-of its inputs: for a legal `P`, a face `f` with restriction `p`, a legal one-point coface `d` of
-`p`, and a cell `C` of `P` of graded index `(univ, n)` not labelled `⊥` below which `d` is
-anchored, with `m + 1 < n`, the condition holds for `P`, `d` and the label of `C`. -/
-theorem HasCoupledGatedPinnedExtensions.carriesBottoms
-    (h : HasCoupledGatedPinnedExtensions α) {P : StageType.{u} α n} {f : Fin m ↪ Fin n}
-    {p : StageType.{u} α m} {d : StageType.{u} α (m + 1)} {C : Fin P.card} (hP : P.IsLegal)
-    (hp : restrictFace f P = some p) (hd : d.IsLegal)
-    (hdp : restrictFace Fin.castSuccEmb d = some p)
-    (hC : P.toCellScheme.gradedIndex C = (univ, n)) (hC0 : P.label C ≠ ⊥) (hmn : m + 1 < n)
-    (ha : IsAnchored P C d) : CarriesBottoms P d (P.label C) := by
-  obtain ⟨E, hE⟩ := h P f p d C hP hp hd hdp hC hC0 hmn ha
-  exact E.carriesBottoms hE
 
 end VaughtConjecture.StageType
