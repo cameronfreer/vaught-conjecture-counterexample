@@ -27,7 +27,7 @@ percentage of 100 would not by itself mean that the hypotheses of a layer are pr
 | 1, finite kernel | 98% | `StageType.provisionalOffset` | the bound (d) of the offset (prospective) |
 | 2, realizations, syntax | 95% | `Realization.eq_of_eval_eq_some` | hull items 4–5 for realizations |
 | 3, the completion (R6) | 98% | `StageType.hasApexCoatomExtensions`, `Seed.nonempty_completionBelowFullGrade` | the statements at successor stages only (not needed) |
-| 3, receiving | 90% | `Realization.HasFiniteCutReceiving.hasFiniteExtensionReceiving` | (R1) (4b-ii refuted; the three (R1) conditional theorems under it are to be retired in a separate change, which audits the uses of the refuted hypothesis as well as the calls by name; `IMPLEMENTATION.md`, checkpoint 4); (R2)–(R4) |
+| 3, receiving | 90% | `Realization.HasFiniteCutReceiving.hasFiniteExtensionReceiving` | (R1) (4b-ii refuted; the (R1) conditional theorems under it are retired, after an audit of the uses of the refuted hypothesis as well as the calls by name; `IMPLEMENTATION.md`, checkpoint 4); (R2)–(R4) |
 | 4, continuation | 68% | `Realization.stableCandidate` | output 3: (R4) |
 | 5, domains, agreement | 85% | `Expansion.expansionDomain_loss_countable` | the hypotheses below |
 | 6, the bounds | 90% | `densitySentence_hasThinAlephOneSpectrum_of_terminalClassification` | the hypotheses below |
@@ -120,14 +120,9 @@ Notes on the rows, each with its marker:
   exactly consistent realization at a stage that is zero or a limit
   (`Realization.HasFiniteCutReceiving.hasFiniteExtensionReceiving`); gate recovery
   (`StageType.GatedExtension.recover`) and with the twin–gate coupling
-  (`CellScheme.Rows.IsGate.recover_of_twinsReadGate`); (R1) conditional on
-  `StageType.HasCoupledGatedPinnedExtensions`
-  (`Realization.IsModel.hasFiniteCutReceiving_of_hasCoupledGatedPinnedExtensions`), vacuous at every
-  stage above `1`, where that hypothesis is refuted
-  (`CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`); the bottom transport
-  condition that every coupled gated extension forces
-  (`StageType.CoupledGatedExtension.carriesBottoms`); the refutation of the first form
-  `StageType.HasGatedPinnedExtensions`
+  (`CellScheme.Rows.IsGate.recover_of_twinsReadGate`); the bottom transport condition that every
+  coupled gated extension forces (`StageType.CoupledGatedExtension.carriesBottoms`); the
+  refutation of the first form `StageType.HasGatedPinnedExtensions`
   (`GatedExtensionCounterexample.not_hasGatedPinnedExtensions`); the coupled form at the inputs on
   `GatedExtensionCounterexample.P α` (`CoupledGateExamples.exists_coupledGatedExtension_comap_g₁`,
   `CoupledGateInstance.coupledGatedPinnedExtension_donor`, and with every anchored legal one-point
@@ -139,9 +134,10 @@ Notes on the rows, each with its marker:
   (`nonempty_loss_of_hasApexCoatomExtensions`); both coatom extension properties are compiled at
   every block stage (`StageType.hasApexCoatomExtensions_blockStage`), so steps 2–3 need only their
   hypotheses on the stage and step 7 needs only the uniqueness
-  (`MainTheorem.hasNonemptyLosses_of_nextBlockUniqueness`).  Refuted: 4b-ii, the coupled gated
-  pinned extension property
-  (`CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`).  Undecided: the
+  (`MainTheorem.hasNonemptyLosses_of_nextBlockUniqueness`).  Refuted: 4b-ii, the coupled gated pinned extension
+  property, at every stage above `1`
+  (`CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`); the (R1) theorems
+  stated conditional on it, vacuous there, are retired.  Undecided: the
   acquisition of carrying private contexts by every model (`Realization.AcquiresCarryingContexts`,
   item 3 below); compiled conditionally: from tight caps
   (`Realization.IsModel.acquiresCarryingContexts_of_hasTightCaps`, not a clause of a model), and
@@ -509,11 +505,11 @@ Status of each:
    (`MainTheorem.capToModel`, for the realizations on the carriers of every universe), from the
    coatom extension property with apex at `ω` (`CapToModel.of_hasApexCoatomExtensions`) and its
    proof (`StageType.hasApexCoatomExtensions`).
-2. `Expansion.FiniteCutReceiving`: still to be proved.  Compiled conditionally on the coupled gated
-   pinned extension property (`Expansion.finiteCutReceiving_of_hasCoupledGatedPinnedExtensions`),
-   which is refuted (4b-ii,
+2. `Expansion.FiniteCutReceiving`: still to be proved.  The coupled gated pinned extension
+   property, under which it was compiled conditionally, is refuted at every stage above `1` (4b-ii,
    `CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`), so that conditional
-   theorem is vacuous.  It is also used for the rigid-core comparison.
+   was vacuous and is retired; no conditional form of (R1) remains compiled.  It is also used for
+   the rigid-core comparison.
 3. `ForcingDonors`: compiled in this repository (theorem named), at every block index with no
    hypothesis (`forcingDonors_blockStage`), from the coatom extension property at `λ_{ξ+1}`
    (`forcingDonors_of_hasCoatomExtensions`, `Extension/ForcingDonorsCoatom`) and hypothesis 8.  The
@@ -895,9 +891,9 @@ except as a named hypothesis.
    inputs without a proper anchor, on `GatedExtensionCounterexample.P α`, whose labels are `⊥` and
    `⊤` (`CoupledGateExamples.exists_coupledGatedExtension_comap_g₁`,
    `CoupledGateInstance.coupledGatedPinnedExtension_donor`, and with every anchored legal one-point
-   donor, `CoupledGateOnePointDonors.coupledGatedPinnedExtension_P`).  The conditional (R1)
-   (`Expansion.finiteCutReceiving_of_hasCoupledGatedPinnedExtensions`) is vacuous.  (R1) itself is
-   not refuted.  The condition holds when the cap reads an anchor of every donor label below it in
+   donor, `CoupledGateOnePointDonors.coupledGatedPinnedExtension_P`).  The (R1) theorems stated
+   conditional on the property were vacuous and are retired.  (R1) itself is not refuted.  The
+   condition holds when the cap reads an anchor of every donor label below it in
    the block of its reading of the cap itself (`StageType.carriesBottoms_of_row_mem_block`); it is
    necessary for the property, not shown sufficient.  **Acquisition, the first step of a repair**
    (undecided): whether every model acquires carrying private contexts
