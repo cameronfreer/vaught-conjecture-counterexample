@@ -25,6 +25,10 @@ Work file (placement later), for the named condition `H3.RootWitness` of
   ordinal label, or the prescription is at least `n + 1` at the root cells with ordinal labels).
 * **The donor raise over a gluing coface at an acquired context**
   (`H3.exists_raiseCoface_of_rootLowBound`), from the lower bound at the root (assumed).
+* **The residual of the lower bound** (`H3.not_rootWitness`): if a label of `d` other than `⊥`,
+  self-visible at `n + 1`, lies below the label of a root cell at which the prescription is below
+  `n + 1`, no witness at the root exists (a witness bounded by `n + 1` sends that label to a value
+  at least `n + 1`).
 -/
 
 universe u
@@ -622,6 +626,36 @@ theorem exists_raiseCoface_of_rootLowBound (hα : Order.IsSuccLimit α)
       rwa [grade_faceCell] at h
     exact (Label.isSelfVisible_visibilityReplace_of_le (by omega) _).min (hcsv.mono (by omega))
   · exact min_le_min_right _ (visibilityReplace_le_visibilityReplace (Nat.zero_le _) _)
+
+end H3
+
+namespace H3
+
+open Label StageType
+
+/-- **No witness at the root below the self-visible labels of the donor** (the residual of
+`H3.RootLowBound`): if a label `m ≠ ⊥` of `d`, self-visible at `n + 1`, lies below the label of a
+root cell `x` at which the prescription is below `n + 1`, and the cap `θ` is at least `n + 1`,
+there is no witness at the root.  A witness bounded by a grade at least `n + 1` keeps `m`
+self-visible at `n + 1` and away from `⊥`, so at least `n + 1`, hence at least `n + 1` at the label
+of `x`, while it must agree with the prescription there below `θ`. -/
+theorem not_rootWitness {α : Ordinal.{u}} {n : ℕ} {d : StageType.{u} α (n + 1)}
+    {t : StageType.{u} α n} (hdt : restrictFace Fin.castSuccEmb d = some t)
+    {ψ : Fin t.card → Label.{u}} {θ : Label.{u}}
+    (hθ : (((n + 1 : ℕ) : Ordinal.{u}) : Label.{u}) ≤ θ) {z : Fin d.card} (hz : d.label z ≠ ⊥)
+    (hzv : IsSelfVisible (n + 1) (d.label z)) {x : Fin t.card} (hzx : d.label z ≤ t.label x)
+    (hψ : ψ x < (((n + 1 : ℕ) : Ordinal.{u}) : Label.{u})) : ¬ RootWitness hdt ψ θ := by
+  rintro ⟨K, hK, Φ, hΦ, hrefl, -, hroot⟩
+  have hΦz : Φ (d.label z) ≠ ⊥ := fun h ↦ hz (hrefl z h)
+  have hsv : IsSelfVisible (n + 1) (Φ (d.label z)) :=
+    hΦ.isSelfVisible_apply hzv (by rw [stepSuppressor_of_le hK]; exact le_top)
+  have h1 : (((n + 1 : ℕ) : Ordinal.{u}) : Label.{u}) ≤ Φ (t.label x) :=
+    (natCast_le_of_isSelfVisible hsv hΦz).trans (hΦ.monotone hzx)
+  have h2 := hroot x
+  have h3 : (((n + 1 : ℕ) : Ordinal.{u}) : Label.{u}) ≤ min (ψ x) θ := by
+    rw [← h2]
+    exact le_min h1 hθ
+  exact absurd ((h3.trans (min_le_left _ _)).trans_lt hψ) (lt_irrefl _)
 
 end H3
 
