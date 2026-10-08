@@ -62,6 +62,13 @@ cell of grade at most that of `b` read as `b` has label at least `p b`
 (`IsLawful.le_label_of_reading`), and a cell read as `⊥` has label `⊥` when `p s ≠ ⊥`
 (`IsLawful.label_eq_bot_of_reading`).
 
+**Dropping cells by blocks.**  A lawful section `q` not `⊥` at a cell `C` that is `⊥` at a cell
+`x` read by the row of `C` at `μ + i` (`μ` zero or a limit) is `⊥` at every cell that row reads at
+most `μ + j`, so at most the end of the block of `x` (`IsLawful.eq_bot_of_row_le_block`); so the
+row of `C` reads `C` above that whole block (`IsLawful.lt_row_self_of_eq_bot`), and `q` is not `⊥`
+at a cell read in the block of the reading of `C` (`IsLawful.ne_bot_of_row_mem_block`).  These
+concern cells read at ordinals; a cell read as `⊥` has no block.
+
 The constant bottom labelling is lawful for all rows (`isLawful_const_bot`), and a cell whose row is
 bottom at the cell itself has bottom label in every lawful section
 (`IsLawful.eq_bot_of_row_self_eq_bot`).  The rows are **consistent** (`Rows.IsConsistent`) when
@@ -645,36 +652,67 @@ open Label
 variable {ι α : Type*} {D : CellScheme ι α} {R : D.Rows.{u}} {G C : ι} {P : Set ι}
   {w q : ι → Label.{u}}
 
+/-- **A labelling that keeps a cell drops only whole blocks of its row.**  Let `q` be lawful and
+not `⊥` at a cell `C`, and let `x`, `y` be cells below `C` such that the row of `C` reads `x` at
+`μ + i` (`μ` zero or a limit) and `y` at most at `μ + j`, so at most the end of the block of `x`.
+If `q` is `⊥` at `x`, it is `⊥` at `y`.  The witness `(g, σ)` of locality at `C` has `g ≠ ⊥` at
+the grades below `C` (it bounds `q C`), so `σ (μ + i) = ⊥`; by the commutation law, whose guard
+holds at `⊥`, `σ` sends the whole block `[μ, μ + ω)`, and so everything below its end, to `⊥`.
+With `y = C` this is `ne_bot_of_row_mem_block`. -/
+theorem eq_bot_of_row_le_block (hq : R.IsLawful q) {x y : ι}
+    (hx : x ∈ D.below (D.gradedIndex C)) (hy : y ∈ D.below (D.gradedIndex C))
+    {μ : Ordinal.{u}} (hμ : Order.IsSuccPrelimit μ) {i j : ℕ}
+    (hrx : R.row C ⟨x, hx⟩ = ((μ + i : Ordinal.{u}) : Label.{u}))
+    (hry : R.row C ⟨y, hy⟩ ≤ ((μ + j : Ordinal.{u}) : Label.{u})) (hC : q C ≠ ⊥)
+    (hqx : q x = ⊥) : q y = ⊥ := by
+  obtain ⟨g, σ, hw, heq⟩ := hq.locality C
+  have hCC : min (q C) (q C) = min (σ (R.row C ⟨C, D.mem_below_gradedIndex C⟩))
+      (g (D.grade C)) := heq ⟨C, D.mem_below_gradedIndex C⟩
+  rw [min_self] at hCC
+  have hg : g (D.grade x) ≠ ⊥ := by
+    have hle : g (D.grade C) ≤ g (D.grade x) := hw.antitone ((D.mem_below).mp hx).2
+    intro h0
+    exact hC (le_bot_iff.mp (hCC ▸ (min_le_right _ _).trans (hle.trans_eq h0)))
+  have hσ : σ ((μ + i : Ordinal.{u}) : Label.{u}) = ⊥ := by
+    have hxC : min (q x) (q C) = min (σ ((μ + i : Ordinal.{u}) : Label.{u}))
+        (g (D.grade x)) := by
+      rw [← hrx]; exact heq ⟨x, hx⟩
+    rw [hqx, min_eq_left bot_le] at hxC
+    exact (min_eq_bot.mp hxC.symm).resolve_right hg
+  have hvr := visibilityReplace_coe_add_natCast (n := max i j + 1) hμ
+    (show i < max i j + 1 by omega) j
+  have hcomm := hw.visibilityReplace_comm ((μ + i : Ordinal.{u}) : Label.{u}) (max i j + 1)
+    (by rw [hσ]; exact bot_le) j (by omega)
+  rw [hvr, hσ, visibilityReplace_bot] at hcomm
+  have hσy : σ (R.row C ⟨y, hy⟩) = ⊥ := le_bot_iff.mp (hcomm ▸ hw.monotone hry)
+  have hyC : min (q y) (q C) = min (σ (R.row C ⟨y, hy⟩)) (g (D.grade y)) := heq ⟨y, hy⟩
+  rw [hσy, min_eq_left bot_le] at hyC
+  exact (min_eq_bot.mp hyC).resolve_right hC
+
+/-- **A dropped cell is read below the block of the keeping cell.**  If `q` is lawful, not `⊥` at
+a cell `C`, and `⊥` at a cell `x` that the row of `C` reads at `μ + i` (`μ` zero or a limit), then
+the row of `C` reads `C` itself above the whole block `[μ, μ + ω)` (`eq_bot_of_row_le_block` with
+`y = C`).  So, of the cells that the row of `C` reads at ordinals, a lawful labelling that keeps
+`C` drops only cells read in a block strictly below the block of its reading of `C`; a cell read
+as `⊥` has no block. -/
+theorem lt_row_self_of_eq_bot (hq : R.IsLawful q) {x : ι} (hx : x ∈ D.below (D.gradedIndex C))
+    {μ : Ordinal.{u}} (hμ : Order.IsSuccPrelimit μ) {i : ℕ}
+    (hrx : R.row C ⟨x, hx⟩ = ((μ + i : Ordinal.{u}) : Label.{u})) (hC : q C ≠ ⊥)
+    (hqx : q x = ⊥) (j : ℕ) :
+    ((μ + j : Ordinal.{u}) : Label.{u}) < R.row C ⟨C, D.mem_below_gradedIndex C⟩ :=
+  lt_of_not_ge fun h ↦
+    hC (hq.eq_bot_of_row_le_block hx (D.mem_below_gradedIndex C) hμ hrx h hC hqx)
+
 /-- **A cap that reads an anchor in its own block keeps it.**  If the row of `C` reads a cell `z`
 below it and `C` itself in one block `[μ, μ + ω)` (`μ` zero or a limit), then a lawful labelling
 that is not `⊥` at `C` is not `⊥` at `z`: a shifter sending the reading `μ + i` of `z` to `⊥`
 sends `vr_k(μ + i, i') = μ + i'` (for `k > i`) to `vr_k(⊥, i') = ⊥`, the guard of the commutation
-law holding at `⊥`, and `μ + i'` is the reading of `C`. -/
+law holding at `⊥`, and `μ + i'` is the reading of `C` (`eq_bot_of_row_le_block` with `y = C`). -/
 theorem ne_bot_of_row_mem_block (hq : R.IsLawful q) {z : ι} (hz : z ∈ D.below (D.gradedIndex C))
     {μ : Ordinal.{u}} (hμ : Order.IsSuccPrelimit μ) {i i' : ℕ}
     (hrz : R.row C ⟨z, hz⟩ = ((μ + i : Ordinal.{u}) : Label.{u}))
     (hrC : R.row C ⟨C, D.mem_below_gradedIndex C⟩ = ((μ + i' : Ordinal.{u}) : Label.{u}))
-    (hC : q C ≠ ⊥) : q z ≠ ⊥ := by
-  obtain ⟨g, σ, hw, heq⟩ := hq.locality C
-  have hCC : min (q C) (q C) = min (σ ((μ + i' : Ordinal.{u}) : Label.{u}))
-      (g (D.grade C)) := by
-    rw [← hrC]; exact heq ⟨C, D.mem_below_gradedIndex C⟩
-  have hzC : min (q z) (q C) = min (σ ((μ + i : Ordinal.{u}) : Label.{u})) (g (D.grade z)) := by
-    rw [← hrz]; exact heq ⟨z, hz⟩
-  rw [min_self] at hCC
-  intro hqz
-  have hg : g (D.grade z) ≠ ⊥ := by
-    have hle : g (D.grade C) ≤ g (D.grade z) := hw.antitone ((D.mem_below).mp hz).2
-    intro h0
-    exact hC (le_bot_iff.mp (hCC ▸ (min_le_right _ _).trans (hle.trans_eq h0)))
-  have hσ : σ ((μ + i : Ordinal.{u}) : Label.{u}) = ⊥ := by
-    rw [hqz, min_eq_left bot_le] at hzC
-    exact (min_eq_bot.mp hzC.symm).resolve_right hg
-  have hvr := visibilityReplace_coe_add_natCast (n := max i i' + 1) hμ
-    (show i < max i i' + 1 by omega) i'
-  have hcomm := hw.visibilityReplace_comm ((μ + i : Ordinal.{u}) : Label.{u}) (max i i' + 1)
-    (by rw [hσ]; exact bot_le) i' (by omega)
-  rw [hvr, hσ, visibilityReplace_bot] at hcomm
-  exact hC (by rw [hCC, hcomm, min_eq_left bot_le])
+    (hC : q C ≠ ⊥) : q z ≠ ⊥ :=
+  fun hqz ↦ hC (hq.eq_bot_of_row_le_block hz (D.mem_below_gradedIndex C) hμ hrz hrC.le hC hqz)
 
 end VaughtConjecture.CellScheme.Rows.IsLawful

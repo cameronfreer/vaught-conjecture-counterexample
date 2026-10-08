@@ -140,10 +140,11 @@ Notes on the rows, each with its marker:
   every block stage (`StageType.hasApexCoatomExtensions_blockStage`), so steps 2–3 need only their
   hypotheses on the stage and step 7 needs only the uniqueness
   (`MainTheorem.hasNonemptyLosses_of_nextBlockUniqueness`).  Refuted: 4b-ii, the coupled gated
-  pinned extension
-  property (`CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`).  Still to be
-  proved: (R1) by another construction, or by the coupled one restricted to the private contexts
-  that models acquire (prospective); (R2), (R3), (R4).
+  pinned extension property
+  (`CoupledGatedExtensionCounterexample.not_hasCoupledGatedPinnedExtensions`).  Undecided: the
+  acquisition of carrying private contexts by every model (`Realization.AcquiresCarryingContexts`,
+  item 3 below).  Still to be proved: (R1) by another construction, or by the coupled one
+  restricted to carrying private contexts (prospective); (R2), (R3), (R4).
 - *Layer 4.*  Compiled: normalization, conditional on finite-extension receiving and forcing donors
   (`Realization.label_eq_stableLabel`); forcing donors, conditional on the coatom extension
   property (`forcingDonors_of_hasCoatomExtensions`), hence at every block index with no hypothesis
@@ -697,12 +698,25 @@ except as a named hypothesis.
    `CoupledGateInstance.coupledGatedPinnedExtension_donor`, and with every anchored legal one-point
    donor, `CoupledGateOnePointDonors.coupledGatedPinnedExtension_P`).  The conditional (R1)
    (`Expansion.finiteCutReceiving_of_hasCoupledGatedPinnedExtensions`) is vacuous.  (R1) itself is
-   not refuted: open, whether the private contexts that models acquire
-   (`Realization.IsModel.exists_privateContext_isAnchored`) satisfy the bottom transport condition
-   with every anchored donor, and whether the coupled property restricted to them holds.  The
-   condition holds when the cap reads an anchor of every donor label below it in the block of its
-   reading of the cap itself (`StageType.carriesBottoms_of_row_mem_block`); it is necessary for the
-   property, not shown sufficient.
+   not refuted.  The condition holds when the cap reads an anchor of every donor label below it in
+   the block of its reading of the cap itself (`StageType.carriesBottoms_of_row_mem_block`); it is
+   necessary for the property, not shown sufficient.  **Acquisition, the first step of a repair**
+   (undecided): whether every model acquires carrying private contexts
+   (`Realization.AcquiresCarryingContexts`, stated in `Realization/CarryingContext`: over every
+   root, for every coface and floor, a private context of the acquired form satisfying the
+   condition).  Compiled: for donors whose new cells are labelled `⊥` or `⊤`
+   (`Realization.IsModel.hasCarryingPrivateContext_of_forall_label`); necessity for the coupled
+   route (`Realization.hasCarryingPrivateContext_of_coupledGatedExtension`); the refuting input
+   satisfies the finite stage-type and label conditions of the acquisition output, with `N₀ ≤ 2`,
+   and fails the condition
+   (`CoupledGatedExtensionCounterexample.exists_privateContext_not_carriesBottoms`; no occurrence
+   in an actual model is exhibited); and, of the cells that the cap's row reads at ordinals, a
+   lawful private labelling that keeps the cap drops only those read in a block strictly below its
+   reading of itself (`CellScheme.Rows.IsLawful.lt_row_self_of_eq_bot`).  The existing acquisition
+   proof does not establish control of the cap's row jointly with its label above the floor
+   (generalized saturation prescribes a whole scheme when its nonemptiness guard holds);
+   acquisition from the full model axioms is undecided.  The coupled property restricted to
+   carrying contexts is not stated (prospective).
    *The attached gate* (a redesign, by step).  An attached gated extension
    (`StageType.AttachedGatedExtension`) has readers of graded index `(univ, n)`, each reading
    every new donor cell through the anchors; the row of the gate is `⊥` at the other twins and
