@@ -269,6 +269,25 @@ theorem Allowed.exists_lift_of_not_class (Q : GrowthRequests t' d.toScheme) (hd 
     (fun i ↦ by rw [hroot i, hag])
   exact ⟨v', ⟨hu', hv', hv'r, fun hcls hcap ↦ absurd ⟨hcls, hcap⟩ hout⟩, hv'cap⟩
 
+/-- **The relative lift at or below the cap value** (case 1): if the cap value of the new section
+`u'` is at most `γ > ⊥`, the root lift of the donor at `γ` gives the lift, and admission passes by
+capping at the cap value (`StageType.GrowthRequests.admits_of_min_eq_of_le`). -/
+theorem Allowed.exists_lift_of_cap_le (Q : GrowthRequests t' d.toScheme) (hd : d.IsLegal)
+    (hn : 0 < n) {u u' : Fin t'.card → Label.{u}} {v : Fin d.card → Label.{u}}
+    (hall : Q.Allowed hte hdp u v) (hu' : t'.rows.IsLawful u') {γ : Label.{u}}
+    (hγ : IsSelfVisible (n + 1) γ) (hγb : γ ≠ ⊥) (hag : ∀ x, min (u' x) γ = min (u x) γ)
+    (hle : u' Q.cap ≤ γ) (hoff : ∀ j ∈ Q.exacts, Q.offset j ≤ Q.threshold)
+    (hR : Q.markerOffset ≤ Q.threshold) :
+    ∃ v' : Fin d.card → Label.{u}, Q.Allowed hte hdp u' v' ∧ ∀ j, min (v' j) γ = min (v j) γ := by
+  obtain ⟨-, hv, hroot, hadm⟩ := hall
+  have hρ : p.rows.IsLawful fun i ↦ u' (t'.faceCell hte i) := by
+    obtain ⟨hf, rfl⟩ := (restrictFace_eq_some_iff t' e).mp hte
+    exact hu'.comap (t'.isLowerEmbedding_comap e)
+  obtain ⟨v', hv', hv'r, hv'cap⟩ := StageType.IsLegal.exists_rootLift hd hn hdp hv hρ hγ
+    (fun i ↦ by rw [hroot i, hag])
+  exact ⟨v', ⟨hu', hv', hv'r, Q.admits_of_min_eq_of_le hadm hγb hag hv'cap hle
+    (hu'.orderly Q.cap) hoff hR⟩, hv'cap⟩
+
 end GrowthRequests
 
 end StageType
