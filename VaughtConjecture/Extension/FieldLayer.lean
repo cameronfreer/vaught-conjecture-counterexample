@@ -75,6 +75,11 @@ entry `a` is its **field row** (`Scheme.fieldRow`): `a` on the old cells, the ag
   the old cells (`Scheme.isLawfulBelow_castAdd_of_boundary`), and the two extensions above give the
   extension from the boundary at the cap `⊥`, and at every positive cap along every new row when no
   old cell has a grade below `k`.
+* **Extension from the boundary from a fill below the layer**
+  (`Scheme.extendsFromBoundary_fieldLayer_of_fill`): at a cap self-visible and short at `k`, if
+  every boundary labelling agreeing capped with a catalogue entry is, on the boundary, some
+  labelling lawful below `(univ, k)` agreeing capped with that entry, then the field layer extends
+  from the boundary along every new row; old cells of lower grade are allowed.
 
 ## Placement
 
@@ -846,5 +851,68 @@ theorem extendsFromBoundary_fieldLayer
   refine ⟨r, hr, fun d hd ↦ ?_, fun d ↦ by rw [hrowBelow]; exact hrS d⟩
   obtain ⟨e, he, rfl⟩ := exists_castAdd_eq_of_boundary hU hV hd
   exact hrp e he
+
+end VaughtConjecture.Scheme
+
+namespace VaughtConjecture.Scheme
+
+open Finset Label CellScheme
+
+/-! ### Extension from the boundary through a field layer, from a fill below it -/
+
+variable {n : ℕ} (S : Scheme.{u} n) (k : ℕ)
+  {hS : ∀ d, ¬ ((univ : Finset (Fin n)), k) ≤ S.toCellScheme.gradedIndex d}
+
+/-- **Extension from the boundary through a field layer, from a fill below it.**  Let `U` and `V`
+be pairs of grade at most `k` not above `(univ, k)`, and `h` self-visible and short at `k` with
+`⊥ < h`.  If, along every catalogue entry `a`, every labelling of `S` lawful below `U` and `V`
+that agrees with `a` capped at `h` on their cells is, on those cells, some labelling lawful below
+`(univ, k)` agreeing with `a` capped at `h` below `(univ, k)`, then the field layer extends from
+the boundary of `U` and `V` at `h` along the row of every new cell
+(`Scheme.exists_extension_fieldLayer` at the short cap). -/
+theorem extendsFromBoundary_fieldLayer_of_fill {U V : Finset (Fin n) × ℕ}
+    (hU : ¬ ((univ : Finset (Fin n)), k) ≤ U) (hV : ¬ ((univ : Finset (Fin n)), k) ≤ V)
+    (hUk : U.2 ≤ k) (hVk : V.2 ≤ k)
+    {h : Label.{u}} (hh : IsSelfVisible k h) (hs : IsShort k h) (hbot : ⊥ < h)
+    (hfill : ∀ a ∈ S.catalogue k, ∀ w : Fin S.card → Label.{u},
+      S.rows.IsLawfulBelow U (fun e ↦ w e) → S.rows.IsLawfulBelow V (fun e ↦ w e) →
+      (∀ e, e ∈ S.toCellScheme.below U ∨ e ∈ S.toCellScheme.below V →
+        min (w e) h = min (a e) h) →
+      ∃ g : Fin S.card → Label.{u}, S.rows.IsLawfulBelow (univ, k) (fun e ↦ g e) ∧
+        (∀ e, e ∈ S.toCellScheme.below U ∨ e ∈ S.toCellScheme.below V → g e = w e) ∧
+        ∀ e ∈ S.toCellScheme.below (univ, k), min (g e) h = min (a e) h)
+    {u : Fin (S.fieldLayer k hS).card}
+    (hu : (S.fieldLayer k hS).toCellScheme.gradedIndex u = (univ, k)) :
+    (S.fieldLayer k hS).rows.ExtendsFromBoundary U V (univ, k) h
+      ((S.fieldLayer k hS).rows.rowBelow u hu) := by
+  intro w hwU hwV hwS
+  obtain ⟨i, rfl⟩ := exists_natAdd_eq (S := S) (k := k) (hS := hS) hu
+  set a := S.catalogueEntry k i
+  have ha := catalogueEntry_mem (S := S) (k := k) i
+  have hrowBelow (d : (S.fieldLayer k hS).toCellScheme.below (univ, k)) :
+      (S.fieldLayer k hS).rows.rowBelow (Fin.natAdd _ i) hu d = S.fieldRow k a d.1 :=
+    fieldLayer_row_natAdd (hS := hS) i _
+  have hw₁U : S.rows.IsLawfulBelow U fun e ↦ w (Fin.castAdd _ e) :=
+    (isLawfulBelow_appendFullCells_iff (S := S) (k := k) (h := hS) (v := w) hU).mp hwU
+  have hw₁V : S.rows.IsLawfulBelow V fun e ↦ w (Fin.castAdd _ e) :=
+    (isLawfulBelow_appendFullCells_iff (S := S) (k := k) (h := hS) (v := w) hV).mp hwV
+  have hmem {X : Finset (Fin n) × ℕ} (e : Fin S.card) :
+      Fin.castAdd (S.catalogue k).card e ∈ (S.fieldLayer k hS).toCellScheme.below X ↔
+        e ∈ S.toCellScheme.below X := by
+    rw [CellScheme.mem_below, CellScheme.mem_below, appendFullCellsScheme_gradedIndex_castAdd]
+  have hag (e : Fin S.card)
+      (he : e ∈ S.toCellScheme.below U ∨ e ∈ S.toCellScheme.below V) :
+      min (w (Fin.castAdd _ e)) h = min (a e) h := by
+    have hle : S.toCellScheme.grade e ≤ k :=
+      he.elim (fun h' ↦ h'.2.trans hUk) fun h' ↦ h'.2.trans hVk
+    have := hwS ⟨_, castAdd_mem_below (hS := hS) hle⟩ (he.imp (hmem e).mpr (hmem e).mpr)
+    rwa [hrowBelow, fieldRow_castAdd] at this
+  obtain ⟨g, hg, hgw, hga⟩ := hfill a ha (fun e ↦ w (Fin.castAdd _ e)) hw₁U hw₁V hag
+  obtain ⟨r, hr, hrg, hrS⟩ := exists_extension_fieldLayer (S := S) (k := k) (hS := hS) (p := g) hg
+    ha hh hbot (.inl hs) fun d hd ↦ hga d ⟨subset_univ _, hd⟩
+  refine ⟨r, hr, fun d hd ↦ ?_, fun d ↦ by rw [hrowBelow]; exact hrS d⟩
+  obtain ⟨e, he, rfl⟩ := exists_castAdd_eq_of_boundary (S := S) (k := k) (hS := hS) hU hV hd
+  rw [hrg e he]
+  exact hgw e (hd.imp (hmem e).mp (hmem e).mp)
 
 end VaughtConjecture.Scheme

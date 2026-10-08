@@ -697,7 +697,8 @@ age and not recognized afterwards in a model constructed otherwise.
    closure, with no hypothesis: `exists_equiv_topFreeChart` (exactly the hypothesis `hsub` of
    `isFraisse_representativeClass`) and `hereditary_topFreeAge` (`ClassicalLimit/Age`). Amalgamation
    and joint embedding, conditional on the coatom extension property `StageType.HasCoatomExtensions`
-   at the stage (still to be proved) and on a stage that is a nonzero limit:
+   at the stage (compiled in this repository (theorem named) at every stage that is zero or a limit,
+   `StageType.hasCoatomExtensions`) and on a stage that is a nonzero limit:
    `exists_amalgam_topFreeChart`, `exists_jointEmbedding_topFreeChart`, and `isFraisse_topFreeAge`
    (`ClassicalLimit/Amalgamation`), through the capped amalgam `StageType.exists_isTopFree_amalgam`;
    the special cases are in `ClassicalLimit/AmalgamationExamples`, stated for an arbitrary top-free
@@ -1723,13 +1724,16 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
       `CellScheme.Rows.IsBountiful.printedBountiful` at a single stage, which row 6 lacks.
 16. The completion of checkpoints 2.1–2.7 replaces it; the bountifulness of the printed completion
     is unproved, not refuted.
-17. `StageType.HasApexCoatomExtensions` (`Extension/PinnedExtension`), a hypothesis.
+17. `StageType.HasApexCoatomExtensions` (`Extension/PinnedExtension`), compiled in this repository
+(theorem named) at every stage that is zero or a limit (`StageType.hasApexCoatomExtensions`).
 18. `StageType.exists_extension` (`Extension/PinnedExtension`), conditional on
-    `StageType.HasCoatomExtensions`, still to be proved.
+`StageType.HasCoatomExtensions`, compiled in this repository (theorem named) at every stage that is
+zero or a limit (`StageType.hasCoatomExtensions`).
 19. `StageType.nonempty_cofaces_inter_uniformityFamily` and
     `StageType.nonempty_cofaces_inter_dominanceFamily` (`Extension/FamilyCofaces`), conditional on
     `StageType.HasCoatomExtensions` and `StageType.HasApexCoatomExtensions` respectively, both
-    still to be proved.
+    compiled in this repository (theorem named) at every stage that is zero or a limit
+    (`StageType.hasCoatomExtensions`, `StageType.hasApexCoatomExtensions`).
 20. The classical limit of the uncapped age (`README.md`, the section on the top-free witnesses):
     prospective.
 21. `Realization.IsModel.exists_privateContext` (`Realization/PrivateContext`); status S.  Only
@@ -1885,7 +1889,9 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     base encoding, maximal (and terminal) model expansions of the base structure of a model on a
     countable carrier are compiled conditional on `Expansion.FiniteCutReceiving` ((R1)),
     `Expansion.NextBlockUniqueness`, and `StageType.HasApexCoatomExtensions` at every countable
-    block stage, each still to be proved: `MainTheorem.exists_isGreatest_servingIndex` and
+    block stage, the first two still to be proved and the last compiled in this repository (theorem
+    named) (`StageType.hasApexCoatomExtensions_blockStage`):
+    `MainTheorem.exists_isGreatest_servingIndex` and
     `MainTheorem.exists_maximalRefinement_of_modelExpansion` (`MainTheorem/MaximalRefinement`).  The
     row stays S: the hypotheses are open, and the notion of the manuscript is read in the common
     invariant encoding.
@@ -1961,8 +1967,10 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     injectivity of model reduction.  Through the Scott route no global termination theorem is
     used; the stage index is not assumed countable.  Compiled conditional on
     `Expansion.FiniteCutReceiving` ((R1)), `Expansion.NextBlockUniqueness`, and
-    `StageType.HasApexCoatomExtensions` at every countable block stage, each still to be proved,
-    through the Scott route: `MainTheorem.exists_maximalRefinement`
+    `StageType.HasApexCoatomExtensions` at every countable block stage, the first two still to be
+    proved and the last compiled in this repository (theorem named)
+    (`StageType.hasApexCoatomExtensions_blockStage`), through the Scott route:
+    `MainTheorem.exists_maximalRefinement`
     (`MainTheorem/MaximalRefinement`): a model `V` at `λ_β` on a countable carrier `X` is the stage
     reduction to `λ_β`, literally, of a model `W` at `λ_ρ` on `X`, `β ≤ ρ < ω₁`, terminal at `ρ`,
     and every model on `X` at a block stage `λ_η` with the base structure of `V` has `η ≤ ρ`;
@@ -2028,8 +2036,10 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     unconditional).
     Steps 1–5, in the raw base encoding, are compiled
     conditional on `Expansion.FiniteCutReceiving` ((R1)), `Expansion.NextBlockUniqueness`, and
-    `StageType.HasApexCoatomExtensions` at every countable block stage, each still to be proved
-    (`MainTheorem/MaximalRefinement`): the isolating sentence `MainTheorem.exists_isolates` (the
+    `StageType.HasApexCoatomExtensions` at every countable block stage, the first two still to be
+    proved and the last compiled in this repository (theorem named)
+    (`StageType.hasApexCoatomExtensions_blockStage`; `MainTheorem/MaximalRefinement`): the isolating
+    sentence `MainTheorem.exists_isolates` (the
     Scott sentence, through `scottSentence_characterizes`), of quantifier rank below `ω₁`
     (`MainTheorem.qrank_lt_omega_one`, `MainTheorem/Spectrum`); two classes in each countable
     domain, `MainTheorem.expansionDomain_nontrivial` (per block,
@@ -2229,8 +2239,9 @@ The items are those of `README.md`, "Manuscript correspondence (required)".  Not
     (Propositions 4.32–4.35, rows 53–56).  The corresponding statement here is the main theorem in
     its conditional compositions: `vaughtCounterexample_of_expansionDomains`
     (`MainTheorem/Assembly`), compiled in this repository (theorem named), whose hypotheses are
-    still to be proved, and the five-hypothesis form of `DASHBOARD.md`, conditional on hypotheses
-    2, 4–6 and 8, each still to be proved.  *History.*  Under the reading of note 43 a template of
+    still to be proved, and the four-hypothesis form of `DASHBOARD.md`, conditional on hypotheses 2
+    and 4–6, each still to be proved (hypothesis 8 is compiled in this repository (theorem named),
+    `StageType.hasApexCoatomExtensions`).  *History.*  Under the reading of note 43 a template of
     the version of 5 October 2026 carried no labelling, so `σ[L]` and `baseLanguage` were indexed
     by different kinds of object (templates, legal stage types), and their underlying schemes
     differed by its clause 4 (`CodingExamples.pointRow 2`, note 46); the first assertion of its
@@ -3155,7 +3166,8 @@ The development produces the following, and only these, as hypotheses of library
   closure, joint embedding, and amalgamation with the literal commuting square (steps 1–2).  These
   are compiled in this repository (theorem named), in `ClassicalLimit/Age` and
   `ClassicalLimit/Amalgamation`, with joint embedding and amalgamation conditional on the coatom
-  extension property `StageType.HasCoatomExtensions` (still to be proved);
+  extension property `StageType.HasCoatomExtensions` (compiled in this repository (theorem named) at
+  every stage that is zero or a limit, `StageType.hasCoatomExtensions`);
   `isFraisse_representativeClass` and the classical existence theorem are applied there
   (`isFraisse_topFreeAge`, `exists_isFraisseLimit_topFreeAge`, step 3), under the same condition;
 - **orbit formulas (first interface):** for every finite tuple `a` of a countable top-free model
@@ -3537,8 +3549,7 @@ Each checkpoint needs both its abstract API and a concrete application:
    `FullPresentations` with its comparison and lower-bound hypotheses, as hypotheses, and, for the
    statements about countable models on arbitrary carriers, the cap-to-model theorem `CapToModel`
    (compiled, `MainTheorem.capToModel`).  The absence of finite models used by the reduction to `ℕ`
-   comes from
-   `CapToModel`, or from the coatom extension property at `ω`
+   comes from `CapToModel`, or from the coatom extension property at `ω`
    (`infinite_of_realize_densitySentence_of_hasCoatomExtensions`, with hypothesis
    `StageType.HasCoatomExtensions` at `ω`, compiled, `StageType.hasCoatomExtensions`); so the
    reduction to `ℕ` for the density sentence needs no hypothesis for the absence of finite models
@@ -3583,8 +3594,7 @@ Each checkpoint needs both its abstract API and a concrete application:
    (`MainTheorem/Composition`), is compiled in this repository (theorem named) conditionally on
    (R1), `ContinuationCriterion`, (R2) and (R3) exactly, each still to be proved.  The seven-, six-
    and five-hypothesis forms are kept.  The five-hypothesis restricted form, with (R3) restricted,
-   is a separate
-   statement (prospective).
+   is a separate statement (prospective).
 
 7. Acceptance lemma 1 (same-level maximal realization; `README.md`, "Reduction to full
    presentations"): for a countable `β`, on every countably infinite carrier, a model at
@@ -4284,10 +4294,11 @@ compatible with the faces over legal `t'` and `d` has a prescribed extension.  I
   extension (including the cells that are neither known cells nor the cell itself), and legality
   of the extension at every graded face.
 - `StageType.HasCompatibleEmptyPrescription α`: implied by the coatom extension property
-(`StageType.HasCoatomExtensions.hasCompatibleEmptyPrescription`), so compiled in this repository
-(theorem named) at every stage that is zero or a limit (`StageType.hasCompatibleEmptyPrescription`).
+  (`StageType.HasCoatomExtensions.hasCompatibleEmptyPrescription`), so compiled in this repository
+  (theorem named) at every stage that is zero or a limit
+  (`StageType.hasCompatibleEmptyPrescription`).
 - The coatom extension property (`StageType.HasCoatomExtensions α`): compiled in this repository
-(theorem named) at every stage that is zero or a limit (`StageType.hasCoatomExtensions`).
+  (theorem named) at every stage that is zero or a limit (`StageType.hasCoatomExtensions`).
 - Block-tight saturations ((R1), per block): undecided, unchanged.  The arrow from the core is
   vacuous at `CoupledGatedExtensionCounterexample.P α` for every `α > 1` (argued; item 5), so the
   core gives nothing here.
